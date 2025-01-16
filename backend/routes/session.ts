@@ -6,7 +6,7 @@ const sessionRouter = Router();
 const videoService = createVideoService();
 const sessionService = getSessionStorageService();
 
-sessionRouter.get('/:room', async (req: Request, res: Response) => {
+sessionRouter.get('/:room', async (req: Request<{ room: string }>, res: Response) => {
   try {
     const { room: roomName } = req.params;
     const sessionId = await sessionService.getSession(roomName);
@@ -32,7 +32,7 @@ sessionRouter.get('/:room', async (req: Request, res: Response) => {
   }
 });
 
-sessionRouter.post('/:room/startArchive', async (req: Request, res: Response) => {
+sessionRouter.post('/:room/startArchive', async (req: Request<{ room: string }>, res: Response) => {
   try {
     const { room: roomName } = req.params;
     const sessionId = await sessionService.getSession(roomName);
@@ -52,22 +52,25 @@ sessionRouter.post('/:room/startArchive', async (req: Request, res: Response) =>
   }
 });
 
-sessionRouter.post('/:room/:archiveId/stopArchive', async (req: Request, res: Response) => {
-  try {
-    const { archiveId } = req.params;
-    if (archiveId) {
-      const responseArchiveId = await videoService.stopArchive(archiveId);
-      res.json({
-        archiveId: responseArchiveId,
-        status: 200,
-      });
+sessionRouter.post(
+  '/:room/:archiveId/stopArchive',
+  async (req: Request<{ room: string; archiveId: string }>, res: Response) => {
+    try {
+      const { archiveId } = req.params;
+      if (archiveId) {
+        const responseArchiveId = await videoService.stopArchive(archiveId);
+        res.json({
+          archiveId: responseArchiveId,
+          status: 200,
+        });
+      }
+    } catch (error: unknown) {
+      res.status(500).send({ message: (error as Error).message ?? error });
     }
-  } catch (error: unknown) {
-    res.status(500).send({ message: (error as Error).message ?? error });
   }
-});
+);
 
-sessionRouter.get('/:room/archives', async (req: Request, res: Response) => {
+sessionRouter.get('/:room/archives', async (req: Request<{ room: string }>, res: Response) => {
   try {
     const { room: roomName } = req.params;
     const sessionId = await sessionService.getSession(roomName);
