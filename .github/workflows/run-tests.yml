@@ -99,8 +99,7 @@ jobs:
       - name: Install electron dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y x11-xkb-utils xserver-xorg-core x11-apps
-          sudo apt-get install libgtk2.0-0 libgtk-3-0 libgbm-dev libnotify-dev libnss3 libxss1 libasound2t64 libxtst6 xauth xvfb
+          sudo apt-get install -y libgtk-3-0t64 libx11-xcb1 libxcomposite1 libxrandr2 libxdamage1 libxi6 libxtst6 libnss3 libasound2t64
 
       - name: Run unit tests
         if: steps.check-skip-ci.outputs.result == 'false'
