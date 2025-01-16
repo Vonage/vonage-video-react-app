@@ -55,11 +55,11 @@ await jest.unstable_mockModule('../opentok', () => {
   };
 });
 
-const { getOrCreateSession } = await import('../routes/session');
+const { blockSafeGetOrCreateSession } = await import('../routes/session');
 
 // TODO: cleanup this file and simplify mocks / imports
 describe('getOrCreateSession', () => {
-  it('should only create one session for simultaneous requests', async () => {
+  it('should only create one session for 2 simultaneous requests', async () => {
     mockVcrSessionStorage.getSession.mockReturnValue('');
     getCredentialsMock.mockResolvedValueOnce({
       sessionId: 'session1',
@@ -71,11 +71,37 @@ describe('getOrCreateSession', () => {
       token: 'someToken',
       apiKey: 'someApiKey',
     });
-    const request1 = getOrCreateSession('my-new-room');
-    const request2 = getOrCreateSession('my-new-room');
+    const request1 = blockSafeGetOrCreateSession('my-new-room');
+    const request2 = blockSafeGetOrCreateSession('my-new-room');
     const response1 = await request1;
     const response2 = await request2;
     expect(response1.sessionId).toEqual('session1');
     expect(response2.sessionId).toEqual('session1');
+  });
+
+  it('should only create one session for 4 simultaneous requests', async () => {
+    mockVcrSessionStorage.getSession.mockReturnValue('');
+    getCredentialsMock.mockResolvedValueOnce({
+      sessionId: 'session1',
+      token: 'someToken',
+      apiKey: 'someApiKey',
+    });
+    getCredentialsMock.mockResolvedValueOnce({
+      sessionId: 'session2',
+      token: 'someToken',
+      apiKey: 'someApiKey',
+    });
+    const request1 = blockSafeGetOrCreateSession('my-new-room');
+    const request2 = blockSafeGetOrCreateSession('my-new-room');
+    const request3 = blockSafeGetOrCreateSession('my-new-room');
+    const request4 = blockSafeGetOrCreateSession('my-new-room');
+    const response1 = await request1;
+    const response2 = await request2;
+    const response3 = await request3;
+    const response4 = await request4;
+    expect(response1.sessionId).toEqual('session1');
+    expect(response2.sessionId).toEqual('session1');
+    expect(response3.sessionId).toEqual('session1');
+    expect(response4.sessionId).toEqual('session1');
   });
 });

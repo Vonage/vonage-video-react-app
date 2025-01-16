@@ -1,12 +1,13 @@
 import { Request, Response, Router } from 'express';
 import createVideoService from '../videoServiceFactory';
 import getSessionStorageService from '../sessionStorageService';
+import blockCallsForArgs from '../helpers/blockCallsForArgs';
 
 const sessionRouter = Router();
 const videoService = createVideoService();
 const sessionService = getSessionStorageService();
 
-const getOrCreateSession = async (roomName: string) => {
+export const getOrCreateSession = async (roomName: string) => {
   let sessionId = await sessionService.getSession(roomName);
   let data;
   if (sessionId) {
@@ -22,10 +23,12 @@ const getOrCreateSession = async (roomName: string) => {
   };
 };
 
+export const blockSafeGetOrCreateSession = blockCallsForArgs(getOrCreateSession);
+
 sessionRouter.get('/:room', async (req: Request<{ room: string }>, res: Response) => {
   try {
     const { room: roomName } = req.params;
-    const { data, sessionId } = await getOrCreateSession(roomName);
+    const { data, sessionId } = await blockSafeGetOrCreateSession(roomName);
     res.json({
       sessionId,
       token: data.token,
