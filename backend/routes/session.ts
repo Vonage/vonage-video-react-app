@@ -9,23 +9,20 @@ const sessionService = getSessionStorageService();
 sessionRouter.get('/:room', async (req: Request<{ room: string }>, res: Response) => {
   try {
     const { room: roomName } = req.params;
-    const sessionId = await sessionService.getSession(roomName);
+    let sessionId = await sessionService.getSession(roomName);
+    let data;
     if (sessionId) {
-      const data = videoService.generateToken(sessionId);
-      res.json({
-        sessionId,
-        token: data.token,
-        apiKey: data.apiKey,
-      });
+      data = videoService.generateToken(sessionId);
     } else {
-      const data = await videoService.getCredentials();
+      data = await videoService.getCredentials();
+      sessionId = data.sessionId;
       await sessionService.setSession(roomName, data.sessionId);
-      res.json({
-        sessionId: data.sessionId,
-        token: data.token,
-        apiKey: data.apiKey,
-      });
     }
+    res.json({
+      sessionId,
+      token: data.token,
+      apiKey: data.apiKey,
+    });
   } catch (error: unknown) {
     const message = error instanceof Error ? error.message : error;
     res.status(500).send({ message });
