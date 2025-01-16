@@ -6,18 +6,26 @@ const sessionRouter = Router();
 const videoService = createVideoService();
 const sessionService = getSessionStorageService();
 
+const getOrCreateSession = async (roomName: string) => {
+  let sessionId = await sessionService.getSession(roomName);
+  let data;
+  if (sessionId) {
+    data = videoService.generateToken(sessionId);
+  } else {
+    data = await videoService.getCredentials();
+    sessionId = data.sessionId;
+    await sessionService.setSession(roomName, data.sessionId);
+  }
+  return {
+    data,
+    sessionId,
+  };
+};
+
 sessionRouter.get('/:room', async (req: Request<{ room: string }>, res: Response) => {
   try {
     const { room: roomName } = req.params;
-    let sessionId = await sessionService.getSession(roomName);
-    let data;
-    if (sessionId) {
-      data = videoService.generateToken(sessionId);
-    } else {
-      data = await videoService.getCredentials();
-      sessionId = data.sessionId;
-      await sessionService.setSession(roomName, data.sessionId);
-    }
+    const { data, sessionId } = await getOrCreateSession(roomName);
     res.json({
       sessionId,
       token: data.token,
