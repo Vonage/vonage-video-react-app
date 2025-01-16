@@ -99,6 +99,7 @@ jobs:
       - name: Install electron dependencies
         run: |
           sudo apt-get update
+          sudo apt-get install -y x11-xkb-utils xserver-xorg-core x11-apps
           sudo apt-get install libgtk2.0-0 libgtk-3-0 libgbm-dev libnotify-dev libnss3 libxss1 libasound2t64 libxtst6 xauth xvfb
 
       - name: Run unit tests
@@ -116,5 +117,5 @@ jobs:
       - name: Run integration tests
         if: steps.check-skip-ci.outputs.result == 'false'
         run: |
-          Xvfb :99 & export DISPLAY=:99
+          Xvfb :99 -screen 0 1920x1080x24 & export DISPLAY=:99
           yarn test:integration
