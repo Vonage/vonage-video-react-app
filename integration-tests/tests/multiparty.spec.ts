@@ -62,6 +62,10 @@ test('should display username on publisher and subscribers', async ({
 
   await pageOne.waitForSelector('.publisher', { state: 'visible' });
 
+  await pageOne
+    .getByTestId('publisher-container')
+    .getByText('User One')
+    .waitFor({ state: 'visible' });
   expect(await pageOne.getByTestId('publisher-container').getByText('User One')).toBeVisible();
 
   const pageTwo = await context.newPage();
@@ -91,6 +95,8 @@ test('should display initials on publisher and subscribers', async ({
   await waitAndClickFirefox(pageOne, browserName);
 
   await pageOne.waitForSelector('.publisher', { state: 'visible' });
+
+  await pageOne.getByText(/SO/).waitFor({ state: 'visible' });
   await expect(await pageOne.getByText(/SO/)).toBeVisible();
 
   const pageTwo = await context.newPage();
