@@ -99,7 +99,12 @@ jobs:
       - name: Install electron dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y libgtk-3-0 libx11-xcb1 libxcomposite1 libxrandr2 libxdamage1 libxi6 libxtst6 libnss3 libasound2
+          sudo apt-get install -y --no-install-recommends \
+            libasound2 libasound2-data libasound2-plugins \
+            libx11-xcb1 libxcomposite1 libxdamage1 libxrandr2 \
+            libgbm-dev libgtk-3-0 libnss3 libatk1.0-0 libcups2 \
+            fonts-liberation
+          apt-cache policy libasound2
 
       # - name: Run unit tests
       #   if: steps.check-skip-ci.outputs.result == 'false'
@@ -116,5 +121,7 @@ jobs:
       - name: Run integration tests
         if: steps.check-skip-ci.outputs.result == 'false'
         run: |
-          Xvfb :99 -screen 0 1920x1080x24 & export DISPLAY=:99
+          sudo apt-get install -y xvfb
+          Xvfb :99 -screen 0 1920x1080x24 &
+          export DISPLAY=:99
           yarn test:integration
