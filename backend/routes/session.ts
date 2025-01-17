@@ -10,15 +10,12 @@ const sessionService = getSessionStorageService();
 export const getOrCreateSession = async (roomName: string) => {
   let sessionId = await sessionService.getSession(roomName);
   let data;
-  if (sessionId) {
-    data = videoService.generateToken(sessionId);
-  } else {
+  if (!sessionId) {
     data = await videoService.getCredentials();
     sessionId = data.sessionId;
     await sessionService.setSession(roomName, data.sessionId);
   }
   return {
-    data,
     sessionId,
   };
 };
@@ -28,7 +25,8 @@ export const blockSafeGetOrCreateSession = blockCallsForArgs(getOrCreateSession)
 sessionRouter.get('/:room', async (req: Request<{ room: string }>, res: Response) => {
   try {
     const { room: roomName } = req.params;
-    const { data, sessionId } = await blockSafeGetOrCreateSession(roomName);
+    const { sessionId } = await blockSafeGetOrCreateSession(roomName);
+    const data = videoService.generateToken(sessionId);
     res.json({
       sessionId,
       token: data.token,

@@ -7,11 +7,8 @@ const blockCallsForArgs = <T>(fn: (key: string, ...args: any[]) => T) => {
   const callsInProgress: PromiseMap = {};
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   return async (key: string, ...args: any[]): Promise<ReturnType<typeof fn>> => {
-    console.log('checking for key', callsInProgress[key]);
     if (callsInProgress[key]) {
-      console.log('awaiting resolver');
       await callsInProgress[key].promise;
-      console.log('await finished', callsInProgress);
     } else {
       const promiseWithResolvers = Promise.withResolvers<null>();
       callsInProgress[key] = promiseWithResolvers;
