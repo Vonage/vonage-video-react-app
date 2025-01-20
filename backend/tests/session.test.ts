@@ -3,20 +3,9 @@ import request from 'supertest';
 import { Server } from 'http';
 import { Archive } from 'opentok';
 import InMemorySessionStorage from '../storage/inMemorySessionStorage'; // Import the session storage
+import mockOpentokConfig from '../helpers/__mocks__/config';
 
-await jest.unstable_mockModule('../helpers/config', () => {
-  return {
-    default: jest.fn().mockImplementation(() => {
-      return {
-        apiKey: 'test-api-key',
-        apiSecret: 'test-api-secret',
-        applicationId: 'test-application-id',
-        privateKey: 'test-private-key',
-        provider: 'opentok',
-      };
-    }),
-  };
-});
+await jest.unstable_mockModule('../helpers/config', mockOpentokConfig);
 
 const mockVcrSessionStorage = {
   getSession: jest.fn().mockReturnValue('someSessionId'),

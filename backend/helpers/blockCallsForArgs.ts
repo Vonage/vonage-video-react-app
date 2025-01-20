@@ -2,11 +2,14 @@ type PromiseMap = {
   [key: string]: PromiseWithResolvers<null>;
 };
 
-// eslint-disable-next-line @typescript-eslint/ban-types, @typescript-eslint/no-explicit-any
-const blockCallsForArgs = <T>(fn: (key: string, ...args: any[]) => T) => {
+/**
+ * Util to block simultaneous calls to a function until the first call resolves
+ * @param {Function} fn - function to be blocked, first argument must be a string key
+ * @returns {Function} wrapped function
+ */
+const blockCallsForArgs = <T>(fn: (key: string, ...args: unknown[]) => T) => {
   const callsInProgress: PromiseMap = {};
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  return async (key: string, ...args: any[]): Promise<ReturnType<typeof fn>> => {
+  return async (key: string, ...args: unknown[]): Promise<ReturnType<typeof fn>> => {
     if (callsInProgress[key]) {
       await callsInProgress[key].promise;
     } else {
