@@ -22,7 +22,7 @@ const createSessionMock = jest.fn<() => Promise<{ sessionId: string }>>().mockRe
   sessionId: 'some-session',
 });
 
-await jest.unstable_mockModule('../opentok', () => {
+await jest.unstable_mockModule('../videoService/opentokVideoService.ts', () => {
   return {
     default: jest.fn().mockImplementation(() => {
       return {

@@ -16,7 +16,7 @@ jest.mock('../storage/vcrSessionStorage', () => {
   return jest.fn().mockImplementation(() => mockVcrSessionStorage);
 });
 
-await jest.unstable_mockModule('../opentok', () => {
+await jest.unstable_mockModule('../videoService/opentokVideoService.ts', () => {
   return {
     default: jest.fn().mockImplementation(() => {
       return {
