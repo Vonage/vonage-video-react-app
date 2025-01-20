@@ -59,11 +59,6 @@ class VonageVideoService implements VideoService {
     await this.vonageVideo.stopArchive(archiveId);
     return 'Archive stopped successfully';
   }
-
-  async getCredentials(): Promise<{ sessionId: string; token: string; apiKey: string }> {
-    const { sessionId, token } = await this.createSessionAndToken();
-    return { sessionId, token, apiKey: this.config.applicationId };
-  }
 }
 
 export default VonageVideoService;

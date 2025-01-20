@@ -7,10 +7,4 @@ export interface VideoService {
   startArchive(roomName: string, sessionId: string): Promise<Archive | SingleArchiveResponse>;
   stopArchive(archiveId: string): Promise<string>;
   listArchives(sessionId: string): Promise<Archive[] | SingleArchiveResponse[] | undefined>;
-  getCredentials(): Promise<{
-    sessionId: string;
-    token: string;
-    applicationId?: string;
-    apiKey?: string;
-  }>;
 }

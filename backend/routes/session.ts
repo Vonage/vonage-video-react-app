@@ -7,7 +7,7 @@ const sessionRouter = Router();
 const videoService = createVideoService();
 const sessionService = getSessionStorageService();
 
-export const getOrCreateSession = async (roomName: string) => {
+export const getOrCreateSession = blockCallsForArgs(async (roomName: string) => {
   let sessionId = await sessionService.getSession(roomName);
   if (!sessionId) {
     const session = await videoService.createSession();
@@ -17,14 +17,12 @@ export const getOrCreateSession = async (roomName: string) => {
   return {
     sessionId,
   };
-};
-
-export const blockSafeGetOrCreateSession = blockCallsForArgs(getOrCreateSession);
+});
 
 sessionRouter.get('/:room', async (req: Request<{ room: string }>, res: Response) => {
   try {
     const { room: roomName } = req.params;
-    const { sessionId } = await blockSafeGetOrCreateSession(roomName);
+    const { sessionId } = await getOrCreateSession(roomName);
     const data = videoService.generateToken(sessionId);
     res.json({
       sessionId,

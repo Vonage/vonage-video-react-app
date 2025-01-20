@@ -39,7 +39,9 @@ await jest.unstable_mockModule('../opentok', () => {
             token: 'someToken',
             apiKey: 'someApiKey',
           }),
-        createSession: jest.fn(),
+        createSession: jest
+          .fn<() => Promise<{ sessionId: string }>>()
+          .mockResolvedValue({ sessionId: 'someSessionId' }),
         listArchives: jest
           .fn<() => Promise<Archive[]>>()
           .mockResolvedValue([{ id: 'archive1' }, { id: 'archive2' }] as unknown as Archive[]),
