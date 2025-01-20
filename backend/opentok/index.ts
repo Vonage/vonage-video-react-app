@@ -17,17 +17,14 @@ class OpenTokVideoService implements VideoService {
     return 'moderator';
   }
 
-  createSessionAndToken(): Promise<{ sessionId: string; token: string }> {
+  createSession(): Promise<{ sessionId: string }> {
     return new Promise((resolve, reject) => {
       this.opentok.createSession({ mediaMode: 'routed' }, (error, session) => {
         if (error || !session) {
           reject(error ?? new Error('Unknown error occurred, no session created.'));
         } else {
           const { sessionId } = session;
-          const token = this.opentok.generateToken(sessionId, {
-            role: OpenTokVideoService.getTokenRole(),
-          });
-          resolve({ sessionId, token });
+          resolve({ sessionId });
         }
       });
     });
@@ -89,11 +86,6 @@ class OpenTokVideoService implements VideoService {
         }
       });
     });
-  }
-
-  async getCredentials(): Promise<{ sessionId: string; token: string; apiKey: string }> {
-    const { sessionId, token } = await this.createSessionAndToken();
-    return { sessionId, token, apiKey: this.config.apiKey };
   }
 }
 

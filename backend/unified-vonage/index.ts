@@ -24,12 +24,9 @@ class VonageVideoService implements VideoService {
     return 'moderator';
   }
 
-  async createSessionAndToken(): Promise<{ sessionId: string; token: string }> {
+  async createSession(): Promise<{ sessionId: string }> {
     const { sessionId } = await this.vonageVideo.createSession({ mediaMode: MediaMode.ROUTED });
-    const token = this.vonageVideo.generateClientToken(sessionId, {
-      role: VonageVideoService.getTokenRole(),
-    });
-    return { sessionId, token };
+    return { sessionId };
   }
 
   async listArchives(sessionId: string): Promise<SingleArchiveResponse[]> {

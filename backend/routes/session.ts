@@ -9,11 +9,10 @@ const sessionService = getSessionStorageService();
 
 export const getOrCreateSession = async (roomName: string) => {
   let sessionId = await sessionService.getSession(roomName);
-  let data;
   if (!sessionId) {
-    data = await videoService.getCredentials();
-    sessionId = data.sessionId;
-    await sessionService.setSession(roomName, data.sessionId);
+    const session = await videoService.createSession();
+    sessionId = session.sessionId;
+    await sessionService.setSession(roomName, sessionId);
   }
   return {
     sessionId,
