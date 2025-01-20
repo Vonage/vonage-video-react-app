@@ -71,9 +71,13 @@
     "typescript": "^5.4.5"
   },
   "resolutions": {
-    "wrap-ansi": "7.0.0"
-  },
-  "dependencies": {
-    "rollup": "^4.22.4"
+    "wrap-ansi": "7.0.0",
+    "path-to-regexp": "^0.1.12",
+    "express": "^4.21.2",
+    "axios": "^1.7.4",
+    "cross-spawn": "^7.0.5",
+    "rollup": "^4.22.4",
+    "vite": "^5.4.11",
+    "nanoid": "^3.3.8"
   }
 }
