@@ -1,5 +1,5 @@
 import { Request, Response, Router } from 'express';
-import createVideoService from '../videoServiceFactory';
+import createVideoService from '../videoService/videoServiceFactory';
 import getSessionStorageService from '../sessionStorageService';
 import blockCallsForArgs from '../helpers/blockCallsForArgs';
 

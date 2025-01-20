@@ -1,5 +1,5 @@
 import OpenTok, { Archive, Role } from 'opentok';
-import { VideoService } from '../videoServiceInterface';
+import { VideoService } from './videoServiceInterface';
 import { OpentokConfig } from '../types/config';
 
 class OpenTokVideoService implements VideoService {

@@ -77,7 +77,6 @@ describe('blockCallsForArgs', () => {
 
   it('does not block calls for other keys', async () => {
     const fn1Promise = Promise.withResolvers();
-
     const fn = jest
       .fn<(key: string) => Promise<string>>()
       .mockImplementation(async (key: string) => {

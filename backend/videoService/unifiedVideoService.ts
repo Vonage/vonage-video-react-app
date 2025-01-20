@@ -1,7 +1,7 @@
 /* eslint-disable no-underscore-dangle */
 import { Auth } from '@vonage/auth';
 import { LayoutType, MediaMode, Resolution, SingleArchiveResponse, Video } from '@vonage/video';
-import { VideoService } from '../videoServiceInterface';
+import { VideoService } from './videoServiceInterface';
 import { VonageConfig } from '../types/config';
 
 class VonageVideoService implements VideoService {
