@@ -4,16 +4,19 @@ on:
   pull_request:
     types: [edited, opened]
 
+permissions:
+  contents: read
+
 jobs:
   run:
-    runs-on: [self-hosted]
+    runs-on: ubuntu-22.04
     steps:
       - name: Validate PR title
         run: |
           set -e
 
           pr_name="${{ github.event.pull_request.title }}"
-          echo "PR Title: '$pr_name'"
+          echo "PR Title: '${pr_name}'"
 
           # Regex to check following:
           # Starts with "VIDCS-" followed by digits
