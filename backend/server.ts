@@ -19,6 +19,11 @@ app.use(bodyParser.json());
 app.set('trust proxy', true);
 app.use(router);
 
+app.use((req, res, next) => {
+  res.setHeader('X-Robots-Tag', 'noindex, nofollow');
+  next();
+});
+
 app.use(express.static(path.join(dirName, './dist')));
 
 app.get('/*', (_req: Request, res: Response) => {
