@@ -81,4 +81,40 @@ describe('AudioInputOutputDevice Component', () => {
     const outputDevicesElement = screen.queryByTestId('output-devices');
     expect(outputDevicesElement).not.toBeInTheDocument();
   });
+
+  it('renders the speaker test if the browser supports audio output device selection', () => {
+    (util.isGetActiveAudioOutputDeviceSupported as Mock).mockReturnValue(true);
+
+    render(
+      <AudioOutputProvider>
+        <AudioInputOutputDevices
+          handleToggle={mockHandleToggle}
+          isOpen
+          anchorRef={mockAnchorRef}
+          handleClose={mockHandleClose}
+        />
+      </AudioOutputProvider>
+    );
+
+    const outputDevicesElement = screen.getByTestId('output-devices');
+    expect(outputDevicesElement).toBeInTheDocument();
+  });
+
+  it('does not render the speaker test devices if the browser does not support audio output device selection', () => {
+    (util.isGetActiveAudioOutputDeviceSupported as Mock).mockReturnValue(false);
+
+    render(
+      <AudioOutputProvider>
+        <AudioInputOutputDevices
+          handleToggle={mockHandleToggle}
+          isOpen
+          anchorRef={mockAnchorRef}
+          handleClose={mockHandleClose}
+        />
+      </AudioOutputProvider>
+    );
+
+    const soundTest = screen.queryByTestId('soundTest');
+    expect(soundTest).not.toBeInTheDocument();
+  });
 });
