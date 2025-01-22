@@ -6,6 +6,7 @@ import { useNavigate } from 'react-router-dom';
 import useUserContext from '../../../hooks/useUserContext';
 import { UserType } from '../../../Context/user';
 import useRoomName from '../../../hooks/useRoomName';
+import isValidRoomName from '../../../utils/isValidRoomName';
 
 export type UserNameInputProps = {
   username: string;
@@ -67,7 +68,9 @@ const UsernameInput = ({ username, setUsername }: UserNameInputProps): ReactElem
   const handleJoinClick = (event: MouseEvent) => {
     event.preventDefault();
     if (validateForm() && roomName) {
-      const sanitizedRoomName = encodeURIComponent(roomName);
+      if (!isValidRoomName(roomName)) {
+        return;
+      }
       setUser((prevUser: UserType) => ({
         ...prevUser,
         defaultSettings: {
@@ -79,7 +82,7 @@ const UsernameInput = ({ username, setUsername }: UserNameInputProps): ReactElem
       // This takes the user to the meeting room and allows them to enter it
       // Otherwise if they entered the room directly, they are going to be redirected back to the waiting room
       // Setting hasAccess is required so that we are not redirected back to the waiting room
-      navigate(`/room/${sanitizedRoomName}`, {
+      navigate(`/room/${roomName}`, {
         state: {
           hasAccess: true,
         },

@@ -11,6 +11,7 @@ import RightPanel from '../../components/MeetingRoom/RightPanel';
 import useRoomName from '../../hooks/useRoomName';
 import useHeight from '../../hooks/useHeight';
 import { PUBLISHING_BLOCKED_CAPTION } from '../../utils/constants';
+import isValidRoomName from '../../utils/isValidRoomName';
 
 /**
  * MeetingRoom Component
@@ -49,9 +50,8 @@ const MeetingRoom = (): ReactElement => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (joinRoom && roomName) {
-      const sanitizedRoomName = encodeURIComponent(roomName);
-      joinRoom(sanitizedRoomName);
+    if (joinRoom && isValidRoomName(roomName)) {
+      joinRoom(roomName);
     }
     return () => {
       // Ensure to disconnect session when unmounting meeting room in order

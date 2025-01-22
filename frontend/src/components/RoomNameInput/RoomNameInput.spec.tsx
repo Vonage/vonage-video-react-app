@@ -12,21 +12,60 @@ describe('RoomNameInputComponent', () => {
     setHasError = vi.fn();
   });
 
-  it('should set the room name if the input is valid', () => {
-    render(
-      <RoomNameInput
-        setRoomName={setRoomName}
-        setHasError={setHasError}
-        roomName="test-room"
-        hasError={false}
-      />
-    );
+  describe('should set the room name', () => {
+    const testCases = [
+      { input: 'test_room' },
+      { input: 'test+room' },
+      { input: 'another-test_room' },
+      { input: '123testroom' },
+    ];
 
-    const input = screen.getByRole('textbox');
-    fireEvent.change(input, { target: { value: 'new-test-room' } });
+    testCases.forEach(({ input }) => {
+      it('if the input is valid', () => {
+        render(
+          <RoomNameInput
+            setRoomName={setRoomName}
+            setHasError={setHasError}
+            roomName="test-room"
+            hasError={false}
+          />
+        );
 
-    expect(setHasError).toHaveBeenCalledWith(false);
-    expect(setRoomName).toHaveBeenCalledWith('new-test-room');
+        const inputBox = screen.getByRole('textbox');
+        fireEvent.change(inputBox, { target: { value: input } });
+
+        expect(setHasError).toHaveBeenCalledWith(false);
+        expect(setRoomName).toHaveBeenCalledWith(input);
+      });
+    });
+  });
+
+  describe('should reject the name', () => {
+    const testCases = [
+      { input: 'test@room' },
+      { input: 'invalid#name' },
+      { input: 'invalid/room/name' },
+      { input: 'invalid%room%name' },
+    ];
+
+    testCases.forEach(({ input }) => {
+      it('if the input is invalid', () => {
+        render(
+          <RoomNameInput
+            setRoomName={setRoomName}
+            setHasError={setHasError}
+            roomName="test-room"
+            hasError={false}
+          />
+        );
+
+        const inputBox = screen.getByRole('textbox');
+        fireEvent.change(inputBox, { target: { value: input } });
+
+        expect(setHasError).toHaveBeenCalledWith(true);
+        expect(setRoomName).not.toHaveBeenCalledWith(input);
+      });
+    });
   });
 
   it('should set the room name as lowercase even if the parameter is a mix of both lower and upper case', () => {
