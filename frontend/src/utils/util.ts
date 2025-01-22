@@ -45,7 +45,9 @@ export const isGetActiveAudioOutputDeviceSupported = () => {
 
   const isFirefox = userAgent.includes('firefox');
 
-  return !isFirefox && !isWebKit();
+  const isAndroid = userAgent.includes('android');
+
+  return !isFirefox && !isWebKit() && !isAndroid;
 };
 
 /**
