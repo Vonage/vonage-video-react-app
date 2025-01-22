@@ -8,7 +8,6 @@ import { PopperChildrenProps } from '@mui/base';
 import InputDevices from './InputDevices';
 import OutputDevices from './OutputDevices';
 import ReduceNoiseTestSpeakers from './ReduceNoiseTestSpeakers';
-import { isGetActiveAudioOutputDeviceSupported } from '../../../utils/util';
 
 export type AudioInputOutputDevicesProps = {
   handleToggle: () => void;
@@ -78,13 +77,11 @@ const AudioInputOutputDevices = ({
                   handleToggle={handleToggle}
                   customLightBlueColor={customLightBlueColor}
                 />
-                {isGetActiveAudioOutputDeviceSupported() && (
-                  <OutputDevices
-                    data-testid="output-devices"
-                    handleToggle={handleToggle}
-                    customLightBlueColor={customLightBlueColor}
-                  />
-                )}
+                <OutputDevices
+                  data-testid="output-devices"
+                  handleToggle={handleToggle}
+                  customLightBlueColor={customLightBlueColor}
+                />
                 <ReduceNoiseTestSpeakers customLightBlueColor={customLightBlueColor} />
               </Paper>
             </ClickAwayListener>

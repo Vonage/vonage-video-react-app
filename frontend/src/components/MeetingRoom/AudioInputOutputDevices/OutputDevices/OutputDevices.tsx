@@ -6,10 +6,13 @@ import {
   setAudioOutputDevice,
   getActiveAudioOutputDevice,
 } from '@vonage/client-sdk-video';
-import { useState, useEffect, MouseEvent, ReactElement } from 'react';
+import { MouseEvent, ReactElement, useEffect } from 'react';
 import useDevices from '../../../../hooks/useDevices';
 import DropdownSeparator from '../../DropdownSeparator';
 import useAudioOutputContext from '../../../../hooks/useAudioOutputContext';
+import { isGetActiveAudioOutputDeviceSupported } from '../../../../utils/util';
+
+const defaultOutputDevices = [{ deviceId: 'default', label: 'System Default' }];
 
 export type OutputDevicesProps = {
   handleToggle: () => void;
@@ -30,17 +33,11 @@ const OutputDevices = ({
   customLightBlueColor,
 }: OutputDevicesProps): ReactElement => {
   const { audioOutput, setAudioOutput } = useAudioOutputContext();
-  const [devicesAvailable, setDevicesAvailable] = useState<AudioOutputDevice[] | null>(null);
-  const { allMediaDevices } = useDevices();
-
-  useEffect(() => {
-    setDevicesAvailable(allMediaDevices.audioOutputDevices);
-  }, [allMediaDevices]);
-
-  const changeAudioOutput = async (deviceId: string) => {
-    await setAudioOutputDevice(deviceId);
-    setAudioOutput(deviceId);
-  };
+  const {
+    allMediaDevices: { audioOutputDevices },
+  } = useDevices();
+  const devicesAvailable =
+    audioOutputDevices.length > 0 ? audioOutputDevices : defaultOutputDevices;
 
   useEffect(() => {
     const getActiveAudioOutputDeviceLabel = async () => {
@@ -50,16 +47,19 @@ const OutputDevices = ({
     getActiveAudioOutputDeviceLabel();
   }, [setAudioOutput]);
 
-  const handleChangeAudioOutput = (event: MouseEvent<HTMLLIElement>) => {
+  const handleChangeAudioOutput = async (event: MouseEvent<HTMLLIElement>) => {
     const menuItem = event.target as HTMLLIElement;
     handleToggle();
 
-    const selectedDevice = devicesAvailable?.find((device: AudioOutputDevice) => {
-      return device.label === menuItem.textContent;
-    });
+    if (isGetActiveAudioOutputDeviceSupported()) {
+      const deviceId = devicesAvailable?.find((device: AudioOutputDevice) => {
+        return device.label === menuItem.textContent;
+      })?.deviceId;
 
-    if (selectedDevice?.deviceId) {
-      changeAudioOutput(selectedDevice.deviceId);
+      if (deviceId) {
+        await setAudioOutputDevice(deviceId);
+        setAudioOutput(deviceId);
+      }
     }
   };
 
@@ -79,7 +79,7 @@ const OutputDevices = ({
       </Box>
       <MenuList>
         {devicesAvailable?.map((device: AudioOutputDevice) => {
-          const isSelected = device.deviceId === audioOutput;
+          const isSelected = device.deviceId === audioOutput || devicesAvailable.length === 1;
           return (
             <MenuItem
               key={device.deviceId}

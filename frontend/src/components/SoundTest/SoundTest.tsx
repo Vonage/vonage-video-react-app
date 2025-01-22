@@ -21,7 +21,7 @@ const SoundTest = ({ children }: SoundTestProps): ReactElement => {
 
   useEffect(() => {
     if (audioOutput) {
-      audio.setSinkId(audioOutput);
+      audio.setSinkId?.(audioOutput);
     }
   }, [audio, audioOutput]);
 
