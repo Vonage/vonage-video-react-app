@@ -18,7 +18,9 @@ const useAudioOutput = (): AudioOutputContextType => {
   const [audioOutput, setAudioOutput] = useState<AudioDeviceId>();
 
   useEffect(() => {
+    debugger;
     getActiveAudioOutputDevice().then((audioOutputDevice) => {
+      debugger;
       if (audioOutputDevice.deviceId) {
         setAudioOutput(audioOutputDevice.deviceId);
       }

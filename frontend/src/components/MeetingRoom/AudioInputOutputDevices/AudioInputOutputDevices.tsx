@@ -78,7 +78,6 @@ const AudioInputOutputDevices = ({
                   customLightBlueColor={customLightBlueColor}
                 />
                 <OutputDevices
-                  data-testid="output-devices"
                   handleToggle={handleToggle}
                   customLightBlueColor={customLightBlueColor}
                 />

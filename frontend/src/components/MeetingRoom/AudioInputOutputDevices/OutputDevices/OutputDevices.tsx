@@ -41,7 +41,9 @@ const OutputDevices = ({
 
   useEffect(() => {
     const getActiveAudioOutputDeviceLabel = async () => {
+      debugger;
       const activeOutputDevice = await getActiveAudioOutputDevice();
+      debugger;
       setAudioOutput(activeOutputDevice.deviceId);
     };
     getActiveAudioOutputDeviceLabel();
@@ -75,9 +77,9 @@ const OutputDevices = ({
         }}
       >
         <VolumeUpIcon sx={{ fontSize: 24, mr: 2 }} />
-        <Typography data-testid="output-devices">Speakers</Typography>
+        <Typography data-testid="output-device-title">Speakers</Typography>
       </Box>
-      <MenuList>
+      <MenuList data-testid="output-devices">
         {devicesAvailable?.map((device: AudioOutputDevice) => {
           const isSelected = device.deviceId === audioOutput || devicesAvailable.length === 1;
           return (

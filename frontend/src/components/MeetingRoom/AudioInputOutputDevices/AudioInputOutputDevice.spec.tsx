@@ -4,6 +4,35 @@ import { MutableRefObject } from 'react';
 import * as util from '../../../utils/util';
 import AudioInputOutputDevices from './AudioInputOutputDevices';
 import { AudioOutputProvider } from '../../../Context/AudioOutputProvider';
+import {
+  audioInputDevices,
+  audioOutputDevices,
+  nativeDevices,
+  videoInputDevices,
+} from '../../../utils/mockData/device';
+
+const {
+  mockHasMediaProcessorSupport,
+  mockGetDevices,
+  mockGetAudioOutputDevices,
+  mockSetAudioOutputDevice,
+  mockGetActiveAudioOutputDevice,
+} = vi.hoisted(() => {
+  return {
+    mockGetDevices: vi.fn(),
+    mockGetAudioOutputDevices: vi.fn(),
+    mockSetAudioOutputDevice: vi.fn(),
+    mockHasMediaProcessorSupport: vi.fn().mockReturnValue(true),
+    mockGetActiveAudioOutputDevice: vi.fn().mockResolvedValue({ deviceId: null, label: null }),
+  };
+});
+vi.mock('@vonage/client-sdk-video', () => ({
+  getActiveAudioOutputDevice: mockGetActiveAudioOutputDevice,
+  getAudioOutputDevices: mockGetAudioOutputDevices,
+  getDevices: mockGetDevices,
+  hasMediaProcessorSupport: mockHasMediaProcessorSupport,
+  setAudioOutputDevice: mockSetAudioOutputDevice,
+}));
 
 vi.mock('../../../utils/util', async () => {
   const actual = await vi.importActual<typeof import('../../../utils/util')>('../../../utils/util');
@@ -24,13 +53,15 @@ describe('AudioInputOutputDevice Component', () => {
   beforeEach(() => {
     vi.resetAllMocks();
 
+    mockGetDevices.mockImplementation((cb) => cb([...audioInputDevices, ...videoInputDevices]));
+    mockGetAudioOutputDevices.mockResolvedValue(audioOutputDevices);
     Object.defineProperty(global.navigator, 'mediaDevices', {
       writable: true,
       value: {
         enumerateDevices: vi.fn(
           () =>
             new Promise<MediaDeviceInfo[]>((res) => {
-              res([]);
+              res(nativeDevices as MediaDeviceInfo[]);
             })
         ),
         addEventListener: vi.fn(() => []),
@@ -61,6 +92,8 @@ describe('AudioInputOutputDevice Component', () => {
     );
 
     const outputDevicesElement = screen.getByTestId('output-devices');
+    expect(outputDevicesElement).toHaveTextContent('System Default');
+    expect(outputDevicesElement).toHaveTextContent('MacBook Pro Speakers (Built-in)');
     expect(outputDevicesElement).toBeInTheDocument();
   });
 
@@ -79,7 +112,7 @@ describe('AudioInputOutputDevice Component', () => {
     );
 
     const outputDevicesElement = screen.queryByTestId('output-devices');
-    expect(outputDevicesElement).not.toBeInTheDocument();
+    expect(outputDevicesElement).toHaveTextContent('System Default');
   });
 
   it('renders the speaker test if the browser supports audio output device selection', () => {

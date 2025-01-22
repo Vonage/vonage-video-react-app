@@ -9,7 +9,6 @@ import usePreviewPublisherContext from '../../../hooks/usePreviewPublisherContex
 import useDevices from '../../../hooks/useDevices';
 import useIsSmallViewport from '../../../hooks/useIsSmallViewport';
 import useAudioOutputContext from '../../../hooks/useAudioOutputContext';
-import { isGetActiveAudioOutputDeviceSupported } from '../../../utils/util';
 
 export type ControlPanelProps = {
   handleAudioInputOpen: (
