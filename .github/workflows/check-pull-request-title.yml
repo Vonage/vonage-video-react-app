@@ -16,7 +16,6 @@ jobs:
           set -e
 
           pr_name="${{ github.event.pull_request.title }}"
-          echo "PR Title: '${pr_name}'"
 
           # Regex to check following:
           # Starts with "VIDCS-" followed by digits
