@@ -16,7 +16,7 @@ export type SoundTestProps = {
  */
 const SoundTest = ({ children }: SoundTestProps): ReactElement => {
   const [audioIsPlaying, setAudioIsPlaying] = useState(false);
-  const audio = useMemo(() => new Audio('http://localhost:3345/sound.mp3'), []);
+  const audio = useMemo(() => new Audio('/sound.mp3'), []);
   const { audioOutput } = useAudioOutputContext();
 
   useEffect(() => {
