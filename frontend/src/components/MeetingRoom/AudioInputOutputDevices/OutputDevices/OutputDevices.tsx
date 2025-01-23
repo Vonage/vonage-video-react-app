@@ -32,15 +32,17 @@ const OutputDevices = ({
   const {
     allMediaDevices: { audioOutputDevices },
   } = useDevices();
-  const devicesAvailable =
-    audioOutputDevices.length > 0 ? audioOutputDevices : defaultOutputDevices;
+
+  const isAudioOutputSupported = isGetActiveAudioOutputDeviceSupported();
+
+  const availableDevices = isAudioOutputSupported ? audioOutputDevices : defaultOutputDevices;
 
   const handleChangeAudioOutput = async (event: MouseEvent<HTMLLIElement>) => {
     const menuItem = event.target as HTMLLIElement;
     handleToggle();
 
-    if (isGetActiveAudioOutputDeviceSupported()) {
-      const deviceId = devicesAvailable?.find((device: AudioOutputDevice) => {
+    if (isAudioOutputSupported) {
+      const deviceId = availableDevices?.find((device: AudioOutputDevice) => {
         return device.label === menuItem.textContent;
       })?.deviceId;
 
@@ -66,8 +68,8 @@ const OutputDevices = ({
         <Typography data-testid="output-device-title">Speakers</Typography>
       </Box>
       <MenuList data-testid="output-devices">
-        {devicesAvailable?.map((device: AudioOutputDevice) => {
-          const isSelected = device.deviceId === audioOutput || devicesAvailable.length === 1;
+        {availableDevices?.map((device: AudioOutputDevice) => {
+          const isSelected = device.deviceId === audioOutput || availableDevices.length === 1;
           return (
             <MenuItem
               key={device.deviceId}

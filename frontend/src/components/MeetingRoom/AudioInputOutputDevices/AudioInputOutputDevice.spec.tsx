@@ -43,7 +43,7 @@ vi.mock('../../../utils/util', async () => {
 });
 
 // This is returned by Vonage SDK if audioOutput is not supported
-// const vonageDefaultEmptyOutputDevice = { deviceId: null, label: null };
+const vonageDefaultEmptyOutputDevice = { deviceId: null, label: null };
 
 describe('AudioInputOutputDevice Component', () => {
   const nativeMediaDevices = global.navigator.mediaDevices;
@@ -54,6 +54,7 @@ describe('AudioInputOutputDevice Component', () => {
   const mockHandleClose = vi.fn();
 
   beforeEach(() => {
+    vi.resetAllMocks();
     mockGetDevices.mockImplementation((cb) =>
       cb(null, [...audioInputDevices, ...videoInputDevices])
     );
@@ -111,7 +112,7 @@ describe('AudioInputOutputDevice Component', () => {
 
   it('renders the default output device if the browser does not support setting audioOutput device', async () => {
     (util.isGetActiveAudioOutputDeviceSupported as Mock).mockReturnValue(false);
-    mockGetAudioOutputDevices.mockResolvedValue([]);
+    mockGetAudioOutputDevices.mockResolvedValue([vonageDefaultEmptyOutputDevice]);
     render(
       <AudioOutputProvider>
         <AudioInputOutputDevices
@@ -134,39 +135,44 @@ describe('AudioInputOutputDevice Component', () => {
     await expect((outputDevicesElement.firstChild as HTMLOptionElement).selected).toBe(true);
   });
 
-  it('renders the speaker test if the browser supports audio output device selection', () => {
+  it('renders the speaker test if the browser supports audio output device selection', async () => {
     (util.isGetActiveAudioOutputDeviceSupported as Mock).mockReturnValue(true);
 
-    render(
-      <AudioOutputProvider>
-        <AudioInputOutputDevices
-          handleToggle={mockHandleToggle}
-          isOpen
-          anchorRef={mockAnchorRef}
-          handleClose={mockHandleClose}
-        />
-      </AudioOutputProvider>
+    await act(() =>
+      render(
+        <AudioOutputProvider>
+          <AudioInputOutputDevices
+            handleToggle={mockHandleToggle}
+            isOpen
+            anchorRef={mockAnchorRef}
+            handleClose={mockHandleClose}
+          />
+        </AudioOutputProvider>
+      )
     );
 
     const outputDevicesElement = screen.getByTestId('output-devices');
     expect(outputDevicesElement).toBeInTheDocument();
   });
 
-  it('renders the speaker test devices if the browser does not support audio output device selection', () => {
+  it('renders the speaker test devices if the browser does not support audio output device selection', async () => {
     (util.isGetActiveAudioOutputDeviceSupported as Mock).mockReturnValue(false);
+    mockGetAudioOutputDevices.mockResolvedValue([vonageDefaultEmptyOutputDevice]);
 
-    render(
-      <AudioOutputProvider>
-        <AudioInputOutputDevices
-          handleToggle={mockHandleToggle}
-          isOpen
-          anchorRef={mockAnchorRef}
-          handleClose={mockHandleClose}
-        />
-      </AudioOutputProvider>
+    await act(() =>
+      render(
+        <AudioOutputProvider>
+          <AudioInputOutputDevices
+            handleToggle={mockHandleToggle}
+            isOpen
+            anchorRef={mockAnchorRef}
+            handleClose={mockHandleClose}
+          />
+        </AudioOutputProvider>
+      )
     );
 
     const soundTest = screen.queryByTestId('soundTest');
-    expect(soundTest).not.toBeInTheDocument();
+    expect(soundTest).toBeInTheDocument();
   });
 });
