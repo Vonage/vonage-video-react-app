@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
 import { describe, beforeEach, it, Mock, vi, expect, afterAll } from 'vitest';
 import { MutableRefObject } from 'react';
 import * as util from '../../../utils/util';
@@ -23,7 +23,7 @@ const {
     mockGetAudioOutputDevices: vi.fn(),
     mockSetAudioOutputDevice: vi.fn(),
     mockHasMediaProcessorSupport: vi.fn().mockReturnValue(true),
-    mockGetActiveAudioOutputDevice: vi.fn().mockResolvedValue({ deviceId: null, label: null }),
+    mockGetActiveAudioOutputDevice: vi.fn(),
   };
 });
 vi.mock('@vonage/client-sdk-video', () => ({
@@ -42,6 +42,9 @@ vi.mock('../../../utils/util', async () => {
   };
 });
 
+// This is returned by Vonage SDK if audioOutput is not supported
+// const vonageDefaultEmptyOutputDevice = { deviceId: null, label: null };
+
 describe('AudioInputOutputDevice Component', () => {
   const nativeMediaDevices = global.navigator.mediaDevices;
   const mockHandleToggle = vi.fn();
@@ -51,9 +54,10 @@ describe('AudioInputOutputDevice Component', () => {
   const mockHandleClose = vi.fn();
 
   beforeEach(() => {
-    vi.resetAllMocks();
-
-    mockGetDevices.mockImplementation((cb) => cb([...audioInputDevices, ...videoInputDevices]));
+    mockGetDevices.mockImplementation((cb) =>
+      cb(null, [...audioInputDevices, ...videoInputDevices])
+    );
+    mockGetActiveAudioOutputDevice.mockResolvedValue(audioOutputDevices[0]);
     mockGetAudioOutputDevices.mockResolvedValue(audioOutputDevices);
     Object.defineProperty(global.navigator, 'mediaDevices', {
       writable: true,
@@ -77,7 +81,7 @@ describe('AudioInputOutputDevice Component', () => {
     });
   });
 
-  it('renders the output devices if the browser supports it', () => {
+  it('renders the output devices if the browser supports it', async () => {
     (util.isGetActiveAudioOutputDeviceSupported as Mock).mockReturnValue(true);
 
     render(
@@ -92,14 +96,17 @@ describe('AudioInputOutputDevice Component', () => {
     );
 
     const outputDevicesElement = screen.getByTestId('output-devices');
-    expect(outputDevicesElement).toHaveTextContent('System Default');
-    expect(outputDevicesElement).toHaveTextContent('MacBook Pro Speakers (Built-in)');
-    expect(outputDevicesElement).toBeInTheDocument();
+    await waitFor(() => expect(outputDevicesElement.children).to.have.length(3));
+    const firstChild = outputDevicesElement.firstChild as HTMLOptionElement;
+    expect(outputDevicesElement.firstChild).toHaveTextContent('System Default');
+    expect(firstChild.selected).toBe(true);
+    expect(outputDevicesElement.children[1]).toHaveTextContent('Soundcore Life A2 NC (Bluetooth)');
+    expect(outputDevicesElement.children[2]).toHaveTextContent('MacBook Pro Speakers (Built-in)');
   });
 
-  it('does not render the output devices if the browser does not support it', () => {
+  it('does not render the output devices if the browser does not support it', async () => {
     (util.isGetActiveAudioOutputDeviceSupported as Mock).mockReturnValue(false);
-
+    mockGetAudioOutputDevices.mockResolvedValue([]);
     render(
       <AudioOutputProvider>
         <AudioInputOutputDevices
@@ -111,8 +118,11 @@ describe('AudioInputOutputDevice Component', () => {
       </AudioOutputProvider>
     );
 
-    const outputDevicesElement = screen.queryByTestId('output-devices');
-    expect(outputDevicesElement).toHaveTextContent('System Default');
+    const outputDevicesElement = screen.getByTestId('output-devices');
+    await waitFor(() => expect(outputDevicesElement.children).to.have.length(3));
+    expect(outputDevicesElement.firstChild).toHaveTextContent('System Default');
+    expect(outputDevicesElement.children[1]).toHaveTextContent('Soundcore Life A2 NC (Bluetooth)');
+    expect(outputDevicesElement.children[2]).toHaveTextContent('MacBook Pro Speakers (Built-in)');
   });
 
   it('renders the speaker test if the browser supports audio output device selection', () => {

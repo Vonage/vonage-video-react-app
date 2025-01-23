@@ -1,12 +1,8 @@
 import { Box, MenuItem, MenuList, Typography } from '@mui/material';
 import CheckIcon from '@mui/icons-material/Check';
 import VolumeUpIcon from '@mui/icons-material/VolumeUp';
-import {
-  AudioOutputDevice,
-  setAudioOutputDevice,
-  getActiveAudioOutputDevice,
-} from '@vonage/client-sdk-video';
-import { MouseEvent, ReactElement, useEffect } from 'react';
+import { AudioOutputDevice, setAudioOutputDevice } from '@vonage/client-sdk-video';
+import { MouseEvent, ReactElement } from 'react';
 import useDevices from '../../../../hooks/useDevices';
 import DropdownSeparator from '../../DropdownSeparator';
 import useAudioOutputContext from '../../../../hooks/useAudioOutputContext';
@@ -38,16 +34,6 @@ const OutputDevices = ({
   } = useDevices();
   const devicesAvailable =
     audioOutputDevices.length > 0 ? audioOutputDevices : defaultOutputDevices;
-
-  useEffect(() => {
-    const getActiveAudioOutputDeviceLabel = async () => {
-      debugger;
-      const activeOutputDevice = await getActiveAudioOutputDevice();
-      debugger;
-      setAudioOutput(activeOutputDevice.deviceId);
-    };
-    getActiveAudioOutputDeviceLabel();
-  }, [setAudioOutput]);
 
   const handleChangeAudioOutput = async (event: MouseEvent<HTMLLIElement>) => {
     const menuItem = event.target as HTMLLIElement;

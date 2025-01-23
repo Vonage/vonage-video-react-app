@@ -1,5 +1,5 @@
-import { useCallback, useEffect, useState } from 'react';
 import { getActiveAudioOutputDevice, setAudioOutputDevice } from '@vonage/client-sdk-video';
+import { useCallback, useEffect, useState } from 'react';
 
 export type AudioDeviceId = string | null | undefined;
 
@@ -18,9 +18,7 @@ const useAudioOutput = (): AudioOutputContextType => {
   const [audioOutput, setAudioOutput] = useState<AudioDeviceId>();
 
   useEffect(() => {
-    debugger;
     getActiveAudioOutputDevice().then((audioOutputDevice) => {
-      debugger;
       if (audioOutputDevice.deviceId) {
         setAudioOutput(audioOutputDevice.deviceId);
       }
