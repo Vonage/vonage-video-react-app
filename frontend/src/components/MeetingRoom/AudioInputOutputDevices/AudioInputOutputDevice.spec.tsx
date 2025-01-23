@@ -1,4 +1,4 @@
-import { render, screen, waitFor } from '@testing-library/react';
+import { act, render, screen, waitFor } from '@testing-library/react';
 import { describe, beforeEach, it, Mock, vi, expect, afterAll } from 'vitest';
 import { MutableRefObject } from 'react';
 import * as util from '../../../utils/util';
@@ -81,7 +81,7 @@ describe('AudioInputOutputDevice Component', () => {
     });
   });
 
-  it('renders the output devices if the browser supports it', async () => {
+  it('renders the output devices if the browser supports setting audioOutput device', async () => {
     (util.isGetActiveAudioOutputDeviceSupported as Mock).mockReturnValue(true);
 
     render(
@@ -102,9 +102,14 @@ describe('AudioInputOutputDevice Component', () => {
     expect(firstChild.selected).toBe(true);
     expect(outputDevicesElement.children[1]).toHaveTextContent('Soundcore Life A2 NC (Bluetooth)');
     expect(outputDevicesElement.children[2]).toHaveTextContent('MacBook Pro Speakers (Built-in)');
+
+    await act(() => (outputDevicesElement.children[2] as HTMLOptionElement).click?.());
+
+    expect(mockSetAudioOutputDevice).toHaveBeenCalledWith(audioOutputDevices[2].deviceId);
+    await expect((outputDevicesElement.children[2] as HTMLOptionElement).selected).toBe(true);
   });
 
-  it('does not render the output devices if the browser does not support it', async () => {
+  it('renders the default output device if the browser does not support setting audioOutput device', async () => {
     (util.isGetActiveAudioOutputDeviceSupported as Mock).mockReturnValue(false);
     mockGetAudioOutputDevices.mockResolvedValue([]);
     render(
