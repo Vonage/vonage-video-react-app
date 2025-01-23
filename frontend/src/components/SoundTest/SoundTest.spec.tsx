@@ -110,4 +110,28 @@ describe('SoundTest', () => {
     const displayedText = screen.getByText('Stop testing');
     expect(displayedText).toBeInTheDocument();
   });
+
+  it('does not throw if setSinkId is undefined', () => {
+    global.Audio = vi.fn().mockImplementation(() => ({
+      play: playMock,
+      pause: pauseMock,
+      currentTime: 9001,
+      setSinkId: vi.fn(),
+    }));
+    render(
+      <AudioOutputProvider>
+        <SoundTest>
+          <SportsFootballIcon />
+        </SoundTest>
+      </AudioOutputProvider>
+    );
+
+    const renderedSoundTest = screen.getByTestId('soundTest');
+    act(() => {
+      renderedSoundTest.click();
+    });
+
+    const displayedText = screen.getByText('Stop testing');
+    expect(displayedText).toBeInTheDocument();
+  });
 });

@@ -152,7 +152,7 @@ describe('AudioInputOutputDevice Component', () => {
     expect(outputDevicesElement).toBeInTheDocument();
   });
 
-  it('does not render the speaker test devices if the browser does not support audio output device selection', () => {
+  it('renders the speaker test devices if the browser does not support audio output device selection', () => {
     (util.isGetActiveAudioOutputDeviceSupported as Mock).mockReturnValue(false);
 
     render(
