@@ -28,9 +28,7 @@ await jest.unstable_mockModule('../videoService/opentokVideoService.ts', () => {
             token: 'someToken',
             apiKey: 'someApiKey',
           }),
-        createSession: jest
-          .fn<() => Promise<{ sessionId: string }>>()
-          .mockResolvedValue({ sessionId: 'someSessionId' }),
+        createSession: jest.fn<() => Promise<string>>().mockResolvedValue('someSessionId'),
         listArchives: jest
           .fn<() => Promise<Archive[]>>()
           .mockResolvedValue([{ id: 'archive1' }, { id: 'archive2' }] as unknown as Archive[]),

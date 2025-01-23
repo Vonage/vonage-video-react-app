@@ -1,27 +1,14 @@
 import { Request, Response, Router } from 'express';
 import createVideoService from '../videoService/videoServiceFactory';
 import getSessionStorageService from '../sessionStorageService';
-import blockCallsForArgs from '../helpers/blockCallsForArgs';
+import createGetOrCreateSession from './getOrCreateSession';
 
 const sessionRouter = Router();
 const videoService = createVideoService();
 const sessionService = getSessionStorageService();
-
-/**
- * Gets or creates a session in a thread safe (async operation safe) way.
- * The function is wrapped in blockCallsForArgs to ensure that simultaneous calls for a room name return the same session.
- * Not blocking these calls would result in separate sessions being created for the same room name.
- * @param {string} roomName - name of the meeting room
- * @returns {Promise<string>} the sessionId
- */
-export const getOrCreateSession = blockCallsForArgs(async (roomName: string) => {
-  let sessionId = await sessionService.getSession(roomName);
-  if (!sessionId) {
-    const session = await videoService.createSession();
-    sessionId = session.sessionId;
-    await sessionService.setSession(roomName, sessionId);
-  }
-  return sessionId;
+const getOrCreateSession = createGetOrCreateSession({
+  videoService,
+  sessionService,
 });
 
 sessionRouter.get('/:room', async (req: Request<{ room: string }>, res: Response) => {

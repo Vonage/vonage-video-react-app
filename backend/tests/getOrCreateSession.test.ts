@@ -1,8 +1,7 @@
 import { describe, expect, it, jest } from '@jest/globals';
-import { Archive } from 'opentok';
-import mockOpentokConfig from '../helpers/__mocks__/config';
-
-await jest.unstable_mockModule('../helpers/config', mockOpentokConfig);
+import createGetOrCreateSession from '../routes/getOrCreateSession';
+import { SessionStorage } from '../storage/sessionStorage';
+import { VideoService } from '../videoService/videoServiceInterface';
 
 const mockSessionsInStorage: { [key: string]: string } = {};
 const mockVcrSessionStorage = {
@@ -11,56 +10,29 @@ const mockVcrSessionStorage = {
     mockSessionsInStorage[key] = sessionId;
   },
 };
+const createSessionMock = jest.fn<() => Promise<string>>().mockResolvedValue('some-session');
 
-await jest.unstable_mockModule('../storage/inMemorySessionStorage.ts', () => {
-  return {
-    default: jest.fn().mockImplementation(() => mockVcrSessionStorage),
-  };
-});
-
-const createSessionMock = jest.fn<() => Promise<{ sessionId: string }>>().mockResolvedValue({
-  sessionId: 'some-session',
-});
-
-await jest.unstable_mockModule('../videoService/opentokVideoService.ts', () => {
-  return {
-    default: jest.fn().mockImplementation(() => {
-      return {
-        startArchive: jest.fn<() => Promise<string>>().mockResolvedValue('archiveId'),
-        stopArchive: jest.fn<() => Promise<string>>().mockRejectedValue('invalid archive'),
-        generateToken: jest
-          .fn<() => Promise<{ token: string; apiKey: string }>>()
-          .mockResolvedValue({
-            token: 'someToken',
-            apiKey: 'someApiKey',
-          }),
-        createSession: createSessionMock,
-        listArchives: jest
-          .fn<() => Promise<Archive[]>>()
-          .mockResolvedValue([{ id: 'archive1' }, { id: 'archive2' }] as unknown as Archive[]),
-      };
-    }),
-  };
-});
-
-const { getOrCreateSession } = await import('../routes/session');
+const mockVideoService = {
+  createSession: createSessionMock,
+};
 
 describe('getOrCreateSession', () => {
+  let getOrCreateSession: ReturnType<typeof createGetOrCreateSession>;
   beforeEach(() => {
-    // Clear in memory session storage before each test
     Object.getOwnPropertyNames(mockSessionsInStorage).forEach((prop) => {
       delete mockSessionsInStorage[prop];
     });
+    // Clear in memory session storage before each test
     createSessionMock.mockReset();
+    getOrCreateSession = createGetOrCreateSession({
+      sessionService: mockVcrSessionStorage as unknown as SessionStorage,
+      videoService: mockVideoService as unknown as VideoService,
+    });
   });
 
   it('should only create one session for 2 simultaneous requests with the same room name', async () => {
-    createSessionMock.mockResolvedValueOnce({
-      sessionId: 'session1',
-    });
-    createSessionMock.mockResolvedValueOnce({
-      sessionId: 'session2',
-    });
+    createSessionMock.mockResolvedValueOnce('session1');
+    createSessionMock.mockResolvedValueOnce('session2');
     const request1 = getOrCreateSession('my-new-room');
     const request2 = getOrCreateSession('my-new-room');
     const sessionId1 = await request1;
@@ -70,12 +42,8 @@ describe('getOrCreateSession', () => {
   });
 
   it('should create two sessions for 2 simultaneous requests with different room names', async () => {
-    createSessionMock.mockResolvedValueOnce({
-      sessionId: 'session1',
-    });
-    createSessionMock.mockResolvedValueOnce({
-      sessionId: 'session2',
-    });
+    createSessionMock.mockResolvedValueOnce('session1');
+    createSessionMock.mockResolvedValueOnce('session2');
     const request1 = getOrCreateSession('my-new-room');
     const request2 = getOrCreateSession('my-new-room2');
     const sessionId1 = await request1;
@@ -85,12 +53,8 @@ describe('getOrCreateSession', () => {
   });
 
   it('should only create one session for 4 simultaneous requests with the same room name', async () => {
-    createSessionMock.mockResolvedValueOnce({
-      sessionId: 'session1',
-    });
-    createSessionMock.mockResolvedValueOnce({
-      sessionId: 'session2',
-    });
+    createSessionMock.mockResolvedValueOnce('session1');
+    createSessionMock.mockResolvedValueOnce('session2');
     const request1 = getOrCreateSession('my-new-room');
     const request2 = getOrCreateSession('my-new-room');
     const request3 = getOrCreateSession('my-new-room');
@@ -106,18 +70,10 @@ describe('getOrCreateSession', () => {
   });
 
   it('should create four sessions for 4 simultaneous requests with different same room names', async () => {
-    createSessionMock.mockResolvedValueOnce({
-      sessionId: 'session1',
-    });
-    createSessionMock.mockResolvedValueOnce({
-      sessionId: 'session2',
-    });
-    createSessionMock.mockResolvedValueOnce({
-      sessionId: 'session3',
-    });
-    createSessionMock.mockResolvedValueOnce({
-      sessionId: 'session4',
-    });
+    createSessionMock.mockResolvedValueOnce('session1');
+    createSessionMock.mockResolvedValueOnce('session2');
+    createSessionMock.mockResolvedValueOnce('session3');
+    createSessionMock.mockResolvedValueOnce('session4');
     const request1 = getOrCreateSession('my-new-room');
     const request2 = getOrCreateSession('my-new-room2');
     const request3 = getOrCreateSession('my-new-room3');

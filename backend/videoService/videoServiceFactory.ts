@@ -1,5 +1,5 @@
 import { VideoService } from './videoServiceInterface';
-import VonageVideoService from './unifiedVideoService';
+import VonageVideoService from './vonageVideoService';
 import OpenTokVideoService from './opentokVideoService';
 import loadConfig from '../helpers/config';
 

@@ -17,14 +17,14 @@ class OpenTokVideoService implements VideoService {
     return 'moderator';
   }
 
-  createSession(): Promise<{ sessionId: string }> {
+  createSession(): Promise<string> {
     return new Promise((resolve, reject) => {
       this.opentok.createSession({ mediaMode: 'routed' }, (error, session) => {
         if (error || !session) {
           reject(error ?? new Error('Unknown error occurred, no session created.'));
         } else {
           const { sessionId } = session;
-          resolve({ sessionId });
+          resolve(sessionId);
         }
       });
     });
