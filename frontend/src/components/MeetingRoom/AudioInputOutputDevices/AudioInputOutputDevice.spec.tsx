@@ -124,10 +124,14 @@ describe('AudioInputOutputDevice Component', () => {
     );
 
     const outputDevicesElement = screen.getByTestId('output-devices');
-    await waitFor(() => expect(outputDevicesElement.children).to.have.length(3));
+    await waitFor(() => expect(outputDevicesElement.children).to.have.length(1));
     expect(outputDevicesElement.firstChild).toHaveTextContent('System Default');
-    expect(outputDevicesElement.children[1]).toHaveTextContent('Soundcore Life A2 NC (Bluetooth)');
-    expect(outputDevicesElement.children[2]).toHaveTextContent('MacBook Pro Speakers (Built-in)');
+    expect((outputDevicesElement.firstChild as HTMLOptionElement).selected).toBe(true);
+
+    await act(() => (outputDevicesElement.firstChild as HTMLOptionElement).click?.());
+
+    expect(mockSetAudioOutputDevice).not.toHaveBeenCalled();
+    await expect((outputDevicesElement.firstChild as HTMLOptionElement).selected).toBe(true);
   });
 
   it('renders the speaker test if the browser supports audio output device selection', () => {
