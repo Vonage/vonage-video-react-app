@@ -43,8 +43,6 @@ const ChatInput = (): ReactElement => {
 
   const handleCompositionEnd = () => {
     setIsComposing(false);
-    // Ensure text is updated after composition ends
-    setText((prevText) => prevText);
   };
 
   return (
