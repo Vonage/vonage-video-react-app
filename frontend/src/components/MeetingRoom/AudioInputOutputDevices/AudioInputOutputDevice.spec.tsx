@@ -1,4 +1,4 @@
-import { act, render, screen, waitFor } from '@testing-library/react';
+import { act, fireEvent, queryByText, render, screen, waitFor } from '@testing-library/react';
 import { describe, beforeEach, it, Mock, vi, expect, afterAll } from 'vitest';
 import { MutableRefObject } from 'react';
 import * as util from '../../../utils/util';
@@ -10,6 +10,7 @@ import {
   nativeDevices,
   videoInputDevices,
 } from '../../../utils/mockData/device';
+import { EventEmitter } from 'stream';
 
 const {
   mockHasMediaProcessorSupport,
@@ -52,6 +53,7 @@ describe('AudioInputOutputDevice Component', () => {
     current: document.createElement('input'),
   } as MutableRefObject<HTMLInputElement>;
   const mockHandleClose = vi.fn();
+  let deviceChangeListener: EventEmitter;
 
   beforeEach(() => {
     vi.resetAllMocks();
@@ -60,6 +62,7 @@ describe('AudioInputOutputDevice Component', () => {
     );
     mockGetActiveAudioOutputDevice.mockResolvedValue(audioOutputDevices[0]);
     mockGetAudioOutputDevices.mockResolvedValue(audioOutputDevices);
+    deviceChangeListener = new EventEmitter();
     Object.defineProperty(global.navigator, 'mediaDevices', {
       writable: true,
       value: {
@@ -69,8 +72,8 @@ describe('AudioInputOutputDevice Component', () => {
               res(nativeDevices as MediaDeviceInfo[]);
             })
         ),
-        addEventListener: vi.fn(() => []),
-        removeEventListener: vi.fn(() => []),
+        addEventListener: vi.fn((event, listener) => deviceChangeListener.on(event, listener)),
+        removeEventListener: vi.fn((event, listener) => deviceChangeListener.off(event, listener)),
       },
     });
   });
@@ -174,5 +177,47 @@ describe('AudioInputOutputDevice Component', () => {
 
     const soundTest = screen.queryByTestId('soundTest');
     expect(soundTest).toBeInTheDocument();
+  });
+
+  it('updates audio output device list if device is removed', async () => {
+    (util.isGetActiveAudioOutputDeviceSupported as Mock).mockReturnValue(true);
+
+    render(
+      <AudioOutputProvider>
+        <AudioInputOutputDevices
+          handleToggle={mockHandleToggle}
+          isOpen
+          anchorRef={mockAnchorRef}
+          handleClose={mockHandleClose}
+        />
+      </AudioOutputProvider>
+    );
+
+    const outputDevicesElement = screen.getByTestId('output-devices');
+
+    // Check initial list is correct
+    await waitFor(() => expect(outputDevicesElement.children).to.have.length(3));
+    const firstChild = outputDevicesElement.firstChild as HTMLOptionElement;
+    expect(outputDevicesElement.firstChild).toHaveTextContent('System Default');
+    expect(firstChild.selected).toBe(true);
+    expect(outputDevicesElement.children[1]).toHaveTextContent('Soundcore Life A2 NC (Bluetooth)');
+    expect(outputDevicesElement.children[2]).toHaveTextContent('MacBook Pro Speakers (Built-in)');
+
+    // select device 2
+    await act(() => (outputDevicesElement.children[1] as HTMLOptionElement).click?.());
+    expect(mockSetAudioOutputDevice).toHaveBeenCalledWith(audioOutputDevices[1].deviceId);
+    await expect((outputDevicesElement.children[1] as HTMLOptionElement).selected).toBe(true);
+
+    // Simulate device 2 removal
+    mockGetActiveAudioOutputDevice.mockResolvedValue(audioOutputDevices[0]);
+    mockGetAudioOutputDevices.mockResolvedValue([audioOutputDevices[0], audioOutputDevices[2]]);
+    mockGetActiveAudioOutputDevice.mockResolvedValue(audioOutputDevices[0]);
+    await act(() => deviceChangeListener.emit('devicechange'));
+    await waitFor(() => expect(outputDevicesElement.children).to.have.length(2));
+    expect(outputDevicesElement.firstChild).toHaveTextContent('System Default');
+    expect(firstChild.selected).toBe(true);
+    expect(outputDevicesElement.children[1]).toHaveTextContent('MacBook Pro Speakers (Built-in)');
+    const removedDevice = queryByText(outputDevicesElement, 'Soundcore Life A2 NC (Bluetooth)');
+    expect(removedDevice).not.toBeInTheDocument();
   });
 });
