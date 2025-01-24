@@ -2,7 +2,7 @@ name: Auto-set Base Branch to Develop
 
 on:
   pull_request:
-    types: [opened]
+    # types: [opened]
 
 jobs:
   set-base-branch:
@@ -13,11 +13,11 @@ jobs:
 
       - name: Check and Update Base Branch
         run: |
-          if [ "${{ github.event.pull_request.base.ref }}" != "develop" ]; then
+          if [ "${{ github.event.pull_request.base.ref }}" == "main" ]; then
             gh pr edit ${{ github.event.pull_request.number }} --base develop
             echo "Base branch updated to 'develop'.";
           else
-            echo "Base branch is already 'develop'.";
+            echo "Base branch is not 'main'.";
           fi
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
