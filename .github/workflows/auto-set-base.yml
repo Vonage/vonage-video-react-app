@@ -1,0 +1,20 @@
+name: Auto-set Base Branch to Develop
+
+on:
+  pull_request:
+    types: [opened]
+
+jobs:
+  set-base-branch:
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Check and Update Base Branch
+        run: |
+          if [ "${{ github.event.pull_request.base.ref }}" != "develop" ]; then
+            gh pr edit ${{ github.event.pull_request.number }} --base develop
+            echo "Base branch updated to 'develop'.";
+          else
+            echo "Base branch is already 'develop'.";
+          fi
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
