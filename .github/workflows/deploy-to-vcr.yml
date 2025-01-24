@@ -3,7 +3,7 @@ name: Deploy to VCR
 on:
   pull_request:
     branches:
-      - main
+      - develop
     types: [closed]
 
 permissions:

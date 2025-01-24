@@ -3,20 +3,9 @@ import request from 'supertest';
 import { Server } from 'http';
 import { Archive } from 'opentok';
 import InMemorySessionStorage from '../storage/inMemorySessionStorage'; // Import the session storage
+import mockOpentokConfig from '../helpers/__mocks__/config';
 
-await jest.unstable_mockModule('../helpers/config', () => {
-  return {
-    default: jest.fn().mockImplementation(() => {
-      return {
-        apiKey: 'test-api-key',
-        apiSecret: 'test-api-secret',
-        applicationId: 'test-application-id',
-        privateKey: 'test-private-key',
-        provider: 'opentok',
-      };
-    }),
-  };
-});
+await jest.unstable_mockModule('../helpers/config', mockOpentokConfig);
 
 const mockVcrSessionStorage = {
   getSession: jest.fn().mockReturnValue('someSessionId'),
@@ -27,7 +16,7 @@ jest.mock('../storage/vcrSessionStorage', () => {
   return jest.fn().mockImplementation(() => mockVcrSessionStorage);
 });
 
-await jest.unstable_mockModule('../opentok', () => {
+await jest.unstable_mockModule('../videoService/opentokVideoService.ts', () => {
   return {
     default: jest.fn().mockImplementation(() => {
       return {
@@ -39,17 +28,10 @@ await jest.unstable_mockModule('../opentok', () => {
             token: 'someToken',
             apiKey: 'someApiKey',
           }),
-        createSession: jest.fn(),
+        createSession: jest.fn<() => Promise<string>>().mockResolvedValue('someSessionId'),
         listArchives: jest
           .fn<() => Promise<Archive[]>>()
           .mockResolvedValue([{ id: 'archive1' }, { id: 'archive2' }] as unknown as Archive[]),
-        getCredentials: jest
-          .fn<() => Promise<{ sessionId: string; token: string; apiKey: string }>>()
-          .mockResolvedValue({
-            sessionId: 'someSessionId',
-            token: 'someToken',
-            apiKey: 'someApiKey',
-          }),
       };
     }),
   };
