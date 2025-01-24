@@ -8,6 +8,9 @@ jobs:
   set-base-branch:
     runs-on: ubuntu-22.04
     steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+
       - name: Check and Update Base Branch
         run: |
           if [ "${{ github.event.pull_request.base.ref }}" != "develop" ]; then
