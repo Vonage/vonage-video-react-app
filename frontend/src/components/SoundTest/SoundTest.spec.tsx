@@ -4,11 +4,13 @@ import SportsFootballIcon from '@mui/icons-material/SportsFootball';
 import SoundTest from './SoundTest';
 import useAudioOutputContext from '../../hooks/useAudioOutputContext';
 import { AudioOutputContextType, AudioOutputProvider } from '../../Context/AudioOutputProvider';
+import { nativeDevices } from '../../utils/mockData/device';
 
 vi.mock('../../hooks/useAudioOutputContext');
 const mockUseAudioOutputContext = useAudioOutputContext as Mock<[], AudioOutputContextType>;
 
 describe('SoundTest', () => {
+  const nativeMediaDevices = global.navigator.mediaDevices;
   const nativeAudio = global.Audio;
   let audioOutputContext: AudioOutputContextType;
   const playMock = vi.fn();
@@ -16,7 +18,19 @@ describe('SoundTest', () => {
 
   beforeEach(() => {
     vi.resetAllMocks();
-
+    Object.defineProperty(global.navigator, 'mediaDevices', {
+      writable: true,
+      value: {
+        enumerateDevices: vi.fn(
+          () =>
+            new Promise<MediaDeviceInfo[]>((res) => {
+              res(nativeDevices as MediaDeviceInfo[]);
+            })
+        ),
+        addEventListener: vi.fn(() => []),
+        removeEventListener: vi.fn(() => []),
+      },
+    });
     global.Audio = vi.fn().mockImplementation(() => ({
       play: playMock,
       pause: pauseMock,
@@ -35,6 +49,10 @@ describe('SoundTest', () => {
 
   afterAll(() => {
     global.Audio = nativeAudio;
+    Object.defineProperty(global.navigator, 'mediaDevices', {
+      writable: true,
+      value: nativeMediaDevices,
+    });
   });
 
   it('renders', () => {

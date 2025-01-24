@@ -1,8 +1,8 @@
 import { Box, MenuItem, MenuList, Typography } from '@mui/material';
 import CheckIcon from '@mui/icons-material/Check';
 import VolumeUpIcon from '@mui/icons-material/VolumeUp';
-import { AudioOutputDevice, setAudioOutputDevice } from '@vonage/client-sdk-video';
 import { MouseEvent, ReactElement } from 'react';
+import type { AudioOutputDevice } from '@vonage/client-sdk-video';
 import useDevices from '../../../../hooks/useDevices';
 import DropdownSeparator from '../../DropdownSeparator';
 import useAudioOutputContext from '../../../../hooks/useAudioOutputContext';
@@ -28,7 +28,7 @@ const OutputDevices = ({
   handleToggle,
   customLightBlueColor,
 }: OutputDevicesProps): ReactElement => {
-  const { audioOutput, setAudioOutput } = useAudioOutputContext();
+  const { currentAudioOutputDevice, setAudioOutputDevice } = useAudioOutputContext();
   const {
     allMediaDevices: { audioOutputDevices },
   } = useDevices();
@@ -48,7 +48,6 @@ const OutputDevices = ({
 
       if (deviceId) {
         await setAudioOutputDevice(deviceId);
-        setAudioOutput(deviceId);
       }
     }
   };
@@ -69,7 +68,8 @@ const OutputDevices = ({
       </Box>
       <MenuList data-testid="output-devices">
         {availableDevices?.map((device: AudioOutputDevice) => {
-          const isSelected = device.deviceId === audioOutput || availableDevices.length === 1;
+          const isSelected =
+            device.deviceId === currentAudioOutputDevice || availableDevices.length === 1;
           return (
             <MenuItem
               key={device.deviceId}

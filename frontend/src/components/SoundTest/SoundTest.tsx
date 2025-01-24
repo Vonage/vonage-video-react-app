@@ -16,26 +16,26 @@ export type SoundTestProps = {
  */
 const SoundTest = ({ children }: SoundTestProps): ReactElement => {
   const [audioIsPlaying, setAudioIsPlaying] = useState(false);
-  const audio = useMemo(() => new Audio('/sound.mp3'), []);
-  const { audioOutput } = useAudioOutputContext();
+  const audioElement = useMemo(() => new Audio('/sound.mp3'), []);
+  const { currentAudioOutputDevice } = useAudioOutputContext();
 
   useEffect(() => {
-    if (audioOutput) {
-      audio.setSinkId?.(audioOutput);
+    if (currentAudioOutputDevice) {
+      audioElement.setSinkId?.(currentAudioOutputDevice);
     }
-  }, [audio, audioOutput]);
+  }, [audioElement, currentAudioOutputDevice]);
 
   const handlePlayAudio = useCallback(() => {
     if (!audioIsPlaying) {
-      audio.play();
+      audioElement.play();
       setAudioIsPlaying(true);
     } else {
       // Stop playing the audio and reset the playback to the beginning of the track.
-      audio.pause();
-      audio.currentTime = 0;
+      audioElement.pause();
+      audioElement.currentTime = 0;
       setAudioIsPlaying(false);
     }
-  }, [audio, audioIsPlaying]);
+  }, [audioElement, audioIsPlaying]);
 
   return (
     <MenuItem onClick={handlePlayAudio} data-testid="soundTest">

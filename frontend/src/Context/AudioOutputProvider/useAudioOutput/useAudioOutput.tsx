@@ -1,11 +1,14 @@
-import { getActiveAudioOutputDevice, setAudioOutputDevice } from '@vonage/client-sdk-video';
+import {
+  getActiveAudioOutputDevice as getVonageActiveAudioOutputDevice,
+  setAudioOutputDevice as setVonageAudioOutputDevice,
+} from '@vonage/client-sdk-video';
 import { useCallback, useEffect, useState } from 'react';
 
 export type AudioDeviceId = string | null | undefined;
 
 export type AudioOutputContextType = {
-  audioOutput: string | undefined | null;
-  setAudioOutput: (deviceId: AudioDeviceId) => Promise<void>;
+  currentAudioOutputDevice: string | undefined | null;
+  setAudioOutputDevice: (deviceId: AudioDeviceId) => Promise<void>;
 };
 
 /**
@@ -15,26 +18,41 @@ export type AudioOutputContextType = {
  * @returns {AudioOutputContextType} audioOutput context
  */
 const useAudioOutput = (): AudioOutputContextType => {
-  const [audioOutput, setAudioOutput] = useState<AudioDeviceId>();
+  const [currentAudioOutputDevice, setCurrentAudioOutputDevice] = useState<AudioDeviceId>();
+  const { mediaDevices } = window.navigator;
 
-  useEffect(() => {
-    getActiveAudioOutputDevice().then((audioOutputDevice) => {
+  const updateCurrentAudioOutputDevice = useCallback(() => {
+    getVonageActiveAudioOutputDevice().then((audioOutputDevice) => {
       if (audioOutputDevice.deviceId) {
-        setAudioOutput(audioOutputDevice.deviceId);
+        setCurrentAudioOutputDevice(audioOutputDevice.deviceId);
       }
     });
   }, []);
 
-  const updateAudioOutput = useCallback(async (deviceId: AudioDeviceId) => {
+  useEffect(() => {
+    updateCurrentAudioOutputDevice();
+  }, [updateCurrentAudioOutputDevice]);
+
+  useEffect(() => {
+    // Add an event listener to update device list when the list changes (such as plugging or unplugging a device)
+    mediaDevices.addEventListener('devicechange', updateCurrentAudioOutputDevice);
+
+    return () => {
+      // Remove the event listener when component unmounts
+      mediaDevices.removeEventListener('devicechange', updateCurrentAudioOutputDevice);
+    };
+  }, [mediaDevices, updateCurrentAudioOutputDevice]);
+
+  const setAudioOutputDevice = useCallback(async (deviceId: AudioDeviceId) => {
     if (deviceId) {
-      await setAudioOutputDevice(deviceId);
-      setAudioOutput(deviceId);
+      await setVonageAudioOutputDevice(deviceId);
+      setCurrentAudioOutputDevice(deviceId);
     }
   }, []);
 
   return {
-    audioOutput,
-    setAudioOutput: updateAudioOutput,
+    currentAudioOutputDevice,
+    setAudioOutputDevice,
   };
 };
 
