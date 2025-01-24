@@ -1,6 +1,7 @@
-import { act, fireEvent, queryByText, render, screen, waitFor } from '@testing-library/react';
+import { act, queryByText, render, screen, waitFor } from '@testing-library/react';
 import { describe, beforeEach, it, Mock, vi, expect, afterAll } from 'vitest';
 import { MutableRefObject } from 'react';
+import { EventEmitter } from 'stream';
 import * as util from '../../../utils/util';
 import AudioInputOutputDevices from './AudioInputOutputDevices';
 import { AudioOutputProvider } from '../../../Context/AudioOutputProvider';
@@ -10,7 +11,6 @@ import {
   nativeDevices,
   videoInputDevices,
 } from '../../../utils/mockData/device';
-import { EventEmitter } from 'stream';
 
 const {
   mockHasMediaProcessorSupport,
