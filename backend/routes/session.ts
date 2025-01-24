@@ -1,38 +1,33 @@
 import { Request, Response, Router } from 'express';
-import createVideoService from '../videoServiceFactory';
+import createVideoService from '../videoService/videoServiceFactory';
 import getSessionStorageService from '../sessionStorageService';
+import createGetOrCreateSession from './getOrCreateSession';
 
 const sessionRouter = Router();
 const videoService = createVideoService();
 const sessionService = getSessionStorageService();
+const getOrCreateSession = createGetOrCreateSession({
+  videoService,
+  sessionService,
+});
 
-sessionRouter.get('/:room', async (req: Request, res: Response) => {
+sessionRouter.get('/:room', async (req: Request<{ room: string }>, res: Response) => {
   try {
     const { room: roomName } = req.params;
-    const sessionId = await sessionService.getSession(roomName);
-    if (sessionId) {
-      const data = videoService.generateToken(sessionId);
-      res.json({
-        sessionId,
-        token: data.token,
-        apiKey: data.apiKey,
-      });
-    } else {
-      const data = await videoService.getCredentials();
-      await sessionService.setSession(roomName, data.sessionId);
-      res.json({
-        sessionId: data.sessionId,
-        token: data.token,
-        apiKey: data.apiKey,
-      });
-    }
+    const sessionId = await getOrCreateSession(roomName);
+    const data = videoService.generateToken(sessionId);
+    res.json({
+      sessionId,
+      token: data.token,
+      apiKey: data.apiKey,
+    });
   } catch (error: unknown) {
     const message = error instanceof Error ? error.message : error;
     res.status(500).send({ message });
   }
 });
 
-sessionRouter.post('/:room/startArchive', async (req: Request, res: Response) => {
+sessionRouter.post('/:room/startArchive', async (req: Request<{ room: string }>, res: Response) => {
   try {
     const { room: roomName } = req.params;
     const sessionId = await sessionService.getSession(roomName);
@@ -52,22 +47,25 @@ sessionRouter.post('/:room/startArchive', async (req: Request, res: Response) =>
   }
 });
 
-sessionRouter.post('/:room/:archiveId/stopArchive', async (req: Request, res: Response) => {
-  try {
-    const { archiveId } = req.params;
-    if (archiveId) {
-      const responseArchiveId = await videoService.stopArchive(archiveId);
-      res.json({
-        archiveId: responseArchiveId,
-        status: 200,
-      });
+sessionRouter.post(
+  '/:room/:archiveId/stopArchive',
+  async (req: Request<{ room: string; archiveId: string }>, res: Response) => {
+    try {
+      const { archiveId } = req.params;
+      if (archiveId) {
+        const responseArchiveId = await videoService.stopArchive(archiveId);
+        res.json({
+          archiveId: responseArchiveId,
+          status: 200,
+        });
+      }
+    } catch (error: unknown) {
+      res.status(500).send({ message: (error as Error).message ?? error });
     }
-  } catch (error: unknown) {
-    res.status(500).send({ message: (error as Error).message ?? error });
   }
-});
+);
 
-sessionRouter.get('/:room/archives', async (req: Request, res: Response) => {
+sessionRouter.get('/:room/archives', async (req: Request<{ room: string }>, res: Response) => {
   try {
     const { room: roomName } = req.params;
     const sessionId = await sessionService.getSession(roomName);
