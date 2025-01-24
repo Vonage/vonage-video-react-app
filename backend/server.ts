@@ -19,6 +19,12 @@ app.use(bodyParser.json());
 app.set('trust proxy', true);
 app.use(router);
 
+app.use((req, res, next) => {
+  // This is needed to remove the deployed application from being indexed by Search engines
+  res.setHeader('X-Robots-Tag', 'noindex, nofollow');
+  next();
+});
+
 app.use(express.static(path.join(dirName, './dist')));
 
 app.get('/*', (_req: Request, res: Response) => {

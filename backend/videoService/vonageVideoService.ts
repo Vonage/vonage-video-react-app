@@ -1,7 +1,7 @@
 /* eslint-disable no-underscore-dangle */
 import { Auth } from '@vonage/auth';
 import { LayoutType, MediaMode, Resolution, SingleArchiveResponse, Video } from '@vonage/video';
-import { VideoService } from '../videoServiceInterface';
+import { VideoService } from './videoServiceInterface';
 import { VonageConfig } from '../types/config';
 
 class VonageVideoService implements VideoService {
@@ -24,12 +24,9 @@ class VonageVideoService implements VideoService {
     return 'moderator';
   }
 
-  async createSessionAndToken(): Promise<{ sessionId: string; token: string }> {
+  async createSession(): Promise<string> {
     const { sessionId } = await this.vonageVideo.createSession({ mediaMode: MediaMode.ROUTED });
-    const token = this.vonageVideo.generateClientToken(sessionId, {
-      role: VonageVideoService.getTokenRole(),
-    });
-    return { sessionId, token };
+    return sessionId;
   }
 
   async listArchives(sessionId: string): Promise<SingleArchiveResponse[]> {
@@ -61,11 +58,6 @@ class VonageVideoService implements VideoService {
   async stopArchive(archiveId: string): Promise<string> {
     await this.vonageVideo.stopArchive(archiveId);
     return 'Archive stopped successfully';
-  }
-
-  async getCredentials(): Promise<{ sessionId: string; token: string; apiKey: string }> {
-    const { sessionId, token } = await this.createSessionAndToken();
-    return { sessionId, token, apiKey: this.config.applicationId };
   }
 }
 
