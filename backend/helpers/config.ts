@@ -5,7 +5,7 @@ import { Config, FeedbackConfig } from '../types/config';
 dotenv.config({ path: path.resolve(process.cwd(), '.env') });
 
 const loadConfig = (): Config => {
-  const provider = process.env.VIDEO_SERVICE_PROVIDER ?? 'opentok';
+  const provider = process.env.VIDEO_SERVICE_PROVIDER ?? 'vonage';
 
   const feedbackConfig: FeedbackConfig = {
     url: process.env.JIRA_URL,
