@@ -1,7 +1,7 @@
 import util from 'util';
 import { describe, jest } from '@jest/globals';
-import blockCallsForArgs from '../../helpers/blockCallsForArgs';
-import delay from '../../helpers/delay';
+import blockCallsForArgs from '../helpers/blockCallsForArgs';
+import delay from '../helpers/delay';
 
 describe('blockCallsForArgs', () => {
   it('executes function with args', async () => {
