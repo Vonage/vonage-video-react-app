@@ -10,8 +10,8 @@ permissions:
   contents: read
 
 env:
-  OT_API_KEY: ${{secrets.API_KEY}}
-  OT_API_SECRET: ${{secrets.API_SECRET}}
+  VONAGE_APP_ID: ${{secrets.VONAGE_APP_ID}}
+  VONAGE_PRIVATE_KEY: ${{secrets.VONAGE_PRIVATE_KEY}}
 
 jobs:
   run:
