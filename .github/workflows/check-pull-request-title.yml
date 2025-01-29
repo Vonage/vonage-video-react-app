@@ -13,7 +13,7 @@ jobs:
     steps:
       - name: Validate PR title
         env:
-          pr_name: ${{ github.event.pull_request.title }}
+          PR_NAME: ${{ github.event.pull_request.title }}
         run: |
           set -e
 
@@ -23,7 +23,7 @@ jobs:
           # followed by the actual PR title text
           regex="^VIDCS-[0-9]+: [^ ].*$"
 
-          if echo "$pr_name" | grep -Eq "$regex"; then
+          if echo "$PR_NAME" | grep -Eq "$regex"; then
             echo "Acceptable title"
             exit 0
           else
