@@ -2,7 +2,7 @@ name: Auto-set Base Branch to Develop
 
 on:
   pull_request:
-    types: [opened]
+    # types: [opened]
 
 permissions:
   contents: read
