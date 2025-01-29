@@ -134,7 +134,7 @@ describe('SoundTest', () => {
       play: playMock,
       pause: pauseMock,
       currentTime: 9001,
-      setSinkId: vi.fn(),
+      setSinkId: undefined,
     }));
     render(
       <AudioOutputProvider>

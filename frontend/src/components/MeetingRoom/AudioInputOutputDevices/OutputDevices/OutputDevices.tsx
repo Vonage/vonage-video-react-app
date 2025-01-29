@@ -68,7 +68,7 @@ const OutputDevices = ({
       </Box>
       <MenuList data-testid="output-devices">
         {availableDevices?.map((device: AudioOutputDevice) => {
-          // If audio output device selection is not support we show the default device as selected
+          // If audio output device selection is not supported we show the default device as selected
           const isSelected =
             device.deviceId === currentAudioOutputDevice || availableDevices.length === 1;
           return (
