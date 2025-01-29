@@ -1,5 +1,6 @@
 import { ReactElement, useRef } from 'react';
 import { Publisher as OTPublisher } from '@vonage/client-sdk-video';
+import { CircularProgress } from '@mui/material';
 import useLayoutManager from '../../../hooks/useLayoutManager';
 import usePublisherContext from '../../../hooks/usePublisherContext';
 import useSessionContext from '../../../hooks/useSessionContext';
@@ -14,6 +15,7 @@ import getLayoutBoxes from '../../../utils/helpers/getLayoutBoxes';
 import useActiveSpeaker from '../../../hooks/useActiveSpeaker';
 
 export type VideoTileCanvasProps = {
+  connected: boolean | null;
   isSharingScreen: boolean;
   screensharingPublisher: OTPublisher | null;
   screenshareVideoElement: HTMLVideoElement | HTMLObjectElement | undefined;
@@ -29,6 +31,7 @@ export type VideoTileCanvasProps = {
  * @returns {ReactElement} VideoTileCanvas
  */
 const VideoTileCanvas = ({
+  connected,
   isSharingScreen,
   screensharingPublisher,
   screenshareVideoElement,
@@ -82,31 +85,41 @@ const VideoTileCanvas = ({
   return (
     <div ref={wrapRef} id="wrapper" className={`m-3 ${widthClass} ${heightClass}`}>
       <div id="video-container" className="relative w-full h-full">
-        {isPublishing && layoutBoxes.publisherBox && <Publisher box={layoutBoxes.publisherBox} />}
-        {isSharingScreen && (
-          <ScreenSharePublisher
-            publisher={screensharingPublisher}
-            box={layoutBoxes.localScreenshareBox}
-            element={screenshareVideoElement}
-          />
-        )}
-        {// Note: we still render hidden subscribers with flag `hidden`
-        // inside the subscriber component we will unsubscribe to video to save bandwidth
-        [...subscribersInDisplayOrder, ...hiddenSubscribers]?.map((subscriberWrapper, index) => (
-          <Subscriber
-            key={subscriberWrapper.id}
-            subscriberWrapper={subscriberWrapper}
-            isHidden={!subscribersInDisplayOrder.includes(subscriberWrapper)}
-            box={layoutBoxes.subscriberBoxes?.[index]}
-            isActiveSpeaker={activeSpeakerId === subscriberWrapper.id}
-          />
-        ))}
-        {!!hiddenSubscribers.length && layoutBoxes.hiddenParticipantsBox && (
-          <HiddenParticipantsTile
-            hiddenSubscribers={hiddenSubscribers}
-            box={layoutBoxes.hiddenParticipantsBox}
-            handleClick={toggleParticipantList}
-          />
+        {!connected ? (
+          <CircularProgress sx={{ position: 'absolute', top: '50%' }} />
+        ) : (
+          <>
+            {isPublishing && layoutBoxes.publisherBox && (
+              <Publisher box={layoutBoxes.publisherBox} />
+            )}
+            {isSharingScreen && (
+              <ScreenSharePublisher
+                publisher={screensharingPublisher}
+                box={layoutBoxes.localScreenshareBox}
+                element={screenshareVideoElement}
+              />
+            )}
+            {// Note: we still render hidden subscribers with flag `hidden`
+            // inside the subscriber component we will unsubscribe to video to save bandwidth
+            [...subscribersInDisplayOrder, ...hiddenSubscribers]?.map(
+              (subscriberWrapper, index) => (
+                <Subscriber
+                  key={subscriberWrapper.id}
+                  subscriberWrapper={subscriberWrapper}
+                  isHidden={!subscribersInDisplayOrder.includes(subscriberWrapper)}
+                  box={layoutBoxes.subscriberBoxes?.[index]}
+                  isActiveSpeaker={activeSpeakerId === subscriberWrapper.id}
+                />
+              )
+            )}
+            {!!hiddenSubscribers.length && layoutBoxes.hiddenParticipantsBox && (
+              <HiddenParticipantsTile
+                hiddenSubscribers={hiddenSubscribers}
+                box={layoutBoxes.hiddenParticipantsBox}
+                handleClick={toggleParticipantList}
+              />
+            )}
+          </>
         )}
       </div>
     </div>
