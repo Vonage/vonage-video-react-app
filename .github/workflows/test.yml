@@ -25,7 +25,7 @@ jobs:
         run: |
           if [ "$TARGET_BRANCH" = "main" ] && [ "$BASE_BRANCH" != "develop" ]; then
             echo "Switching base branch from $TARGET_BRANCH to develop..."
-            gh pr edit "$PR_NUMBER" --base "develop"
+            # gh pr edit "$PR_NUMBER" --base "develop"
             echo "Base branch updated to 'develop'."
           else
             echo "No changes needed: Target branch is '$TARGET_BRANCH' and base branch is '$BASE_BRANCH'."
