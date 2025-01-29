@@ -12,10 +12,10 @@ jobs:
     runs-on: ubuntu-22.04
     steps:
       - name: Validate PR title
+        env:
+          pr_name: ${{ github.event.pull_request.title }}
         run: |
           set -e
-
-          pr_name="${{ github.event.pull_request.title }}"
 
           # Regex to check following:
           # Starts with "VIDCS-" followed by digits

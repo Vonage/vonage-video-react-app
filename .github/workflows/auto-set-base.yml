@@ -17,10 +17,11 @@ jobs:
         uses: actions/checkout@v3
 
       - name: Check and Update Base Branch
+        env:
+          TARGET_BRANCH: ${{ github.event.pull_request.base.ref }}
+          BASE_BRANCH: ${{ github.event.pull_request.head.ref }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          TARGET_BRANCH="${{ github.event.pull_request.base.ref }}"
-          BASE_BRANCH="${{ github.event.pull_request.head.ref }}"
-
           if [ "$TARGET_BRANCH" = "main" ] && [ "$BASE_BRANCH" != "develop" ]; then
             echo "Switching base branch from $TARGET_BRANCH to develop..."
             gh pr edit "${{ github.event.pull_request.number }}" --base "develop"
@@ -28,5 +29,3 @@ jobs:
           else
             echo "No changes needed: Target branch is '$TARGET_BRANCH' and base branch is '$BASE_BRANCH'."
           fi
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
