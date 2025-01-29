@@ -101,9 +101,8 @@ describe('AudioInputOutputDevice Component', () => {
 
     const outputDevicesElement = screen.getByTestId('output-devices');
     await waitFor(() => expect(outputDevicesElement.children).to.have.length(3));
-    const firstChild = outputDevicesElement.firstChild as HTMLOptionElement;
     expect(outputDevicesElement.firstChild).toHaveTextContent('System Default');
-    expect(firstChild.selected).toBe(true);
+    expect((outputDevicesElement.firstChild as HTMLOptionElement).selected).toBe(true);
     expect(outputDevicesElement.children[1]).toHaveTextContent('Soundcore Life A2 NC (Bluetooth)');
     expect(outputDevicesElement.children[2]).toHaveTextContent('MacBook Pro Speakers (Built-in)');
 
@@ -197,9 +196,8 @@ describe('AudioInputOutputDevice Component', () => {
 
     // Check initial list is correct
     await waitFor(() => expect(outputDevicesElement.children).to.have.length(3));
-    const firstChild = outputDevicesElement.firstChild as HTMLOptionElement;
     expect(outputDevicesElement.firstChild).toHaveTextContent('System Default');
-    expect(firstChild.selected).toBe(true);
+    expect((outputDevicesElement.firstChild as HTMLOptionElement).selected).toBe(true);
     expect(outputDevicesElement.children[1]).toHaveTextContent('Soundcore Life A2 NC (Bluetooth)');
     expect(outputDevicesElement.children[2]).toHaveTextContent('MacBook Pro Speakers (Built-in)');
 
@@ -215,7 +213,7 @@ describe('AudioInputOutputDevice Component', () => {
     await act(() => deviceChangeListener.emit('devicechange'));
     await waitFor(() => expect(outputDevicesElement.children).to.have.length(2));
     expect(outputDevicesElement.firstChild).toHaveTextContent('System Default');
-    expect(firstChild.selected).toBe(true);
+    expect((outputDevicesElement.firstChild as HTMLOptionElement).selected).toBe(true);
     expect(outputDevicesElement.children[1]).toHaveTextContent('MacBook Pro Speakers (Built-in)');
     const removedDevice = queryByText(outputDevicesElement, 'Soundcore Life A2 NC (Bluetooth)');
     expect(removedDevice).not.toBeInTheDocument();
