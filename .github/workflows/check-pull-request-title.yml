@@ -12,11 +12,10 @@ jobs:
     runs-on: ubuntu-22.04
     steps:
       - name: Validate PR title
+        env:
+          pr_name: ${{ github.event.pull_request.title }}
         run: |
           set -e
-
-          pr_name="${{ github.event.pull_request.title }}"
-          echo "PR Title: '${pr_name}'"
 
           # Regex to check following:
           # Starts with "VIDCS-" followed by digits
@@ -24,7 +23,7 @@ jobs:
           # followed by the actual PR title text
           regex="^VIDCS-[0-9]+: [^ ].*$"
 
-          if [[ "$pr_name" =~ $regex ]]; then
+          if echo "$pr_name" | grep -Eq "$regex"; then
             echo "Acceptable title"
             exit 0
           else
