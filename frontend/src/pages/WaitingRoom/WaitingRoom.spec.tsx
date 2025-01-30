@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it, Mock, vi } from 'vitest';
+import { afterAll, beforeEach, describe, expect, it, Mock, vi } from 'vitest';
 import { act, render, screen, waitFor } from '@testing-library/react';
 import { ReactNode } from 'react';
 import { Publisher } from '@vonage/client-sdk-video';
@@ -67,8 +67,10 @@ const mockUsePreviewPublisherContext = usePreviewPublisherContext as Mock<
 >;
 const mockUsePermissions = usePermissions as Mock<[], PermissionsHookType>;
 const mockWaitUntilPlaying = vi.mocked(waitUntilPlaying);
+const reloadSpy = vi.fn();
 
 describe('WaitingRoom', () => {
+  const nativeWindowLocation = window.location;
   let previewPublisherContext: PreviewPublisherContextType;
   let mockPublisher: Publisher;
   let mockPublisherVideoElement: HTMLVideoElement;
@@ -104,6 +106,16 @@ describe('WaitingRoom', () => {
           res();
         })
     );
+    Object.defineProperty(window, 'location', {
+      value: {
+        reload: reloadSpy,
+      },
+      writable: true,
+    });
+  });
+
+  afterAll(() => {
+    window.location = nativeWindowLocation;
   });
 
   it('should render', () => {
@@ -145,5 +157,19 @@ describe('WaitingRoom', () => {
     await user.keyboard('{Enter}');
 
     expect(mockedDestroyPublisher).toHaveBeenCalled();
+  });
+
+  it('should reload window when device permissions change', async () => {
+    const { rerender } = render(<WaitingRoomWithProviders />);
+    expect(reloadSpy).not.toBeCalled();
+
+    act(() => {
+      mockUsePermissions.mockReturnValue({
+        accessStatus: DEVICE_ACCESS_STATUS.ACCESS_CHANGED,
+        setAccessStatus: vi.fn(),
+      });
+    });
+    rerender(<WaitingRoomWithProviders />);
+    expect(reloadSpy).not.toBeCalled();
   });
 });
