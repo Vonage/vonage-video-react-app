@@ -164,12 +164,9 @@ describe('WaitingRoom', () => {
     expect(reloadSpy).not.toBeCalled();
 
     act(() => {
-      mockUsePermissions.mockReturnValue({
-        accessStatus: DEVICE_ACCESS_STATUS.ACCESS_CHANGED,
-        setAccessStatus: vi.fn(),
-      });
+      previewPublisherContext.accessStatus = DEVICE_ACCESS_STATUS.ACCESS_CHANGED;
     });
     rerender(<WaitingRoomWithProviders />);
-    expect(reloadSpy).not.toBeCalled();
+    expect(reloadSpy).toBeCalled();
   });
 });
