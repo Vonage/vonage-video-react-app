@@ -110,7 +110,7 @@ const usePublisher = (): PublisherContextType => {
 
   // If we do not have audio input or video input access, we cannot publish.
   useEffect(() => {
-    if (!(deviceAccess.microphone && deviceAccess.camera)) {
+    if (deviceAccess?.microphone === false || deviceAccess.camera === false) {
       const device = deviceAccess.camera ? 'Microphone' : 'Camera';
       const accessDeniedError = createAccessDeniedError(device);
       setPublishingError(accessDeniedError);
