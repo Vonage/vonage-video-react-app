@@ -1,11 +1,12 @@
 import { render, screen } from '@testing-library/react';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
-import { describe, expect, it, Mock, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, Mock, vi } from 'vitest';
 import RoomContext from '../RoomContext';
 import useUserContext from '../../hooks/useUserContext';
 import { UserContextType } from '../user';
 import useAudioOutputContext from '../../hooks/useAudioOutputContext';
 import { AudioOutputContextType } from '../AudioOutputProvider';
+import { nativeDevices } from '../../utils/mockData/device';
 
 vi.mock('../../hooks/useUserContext');
 vi.mock('../../hooks/useAudioOutputContext');
@@ -24,13 +25,37 @@ const mockUserContextWithDefaultSettings = {
   },
 } as UserContextType;
 const mockUseAudioOutputContextValues = {
-  audioOutput: fakeAudioOutput,
+  currentAudioOutputDevice: fakeAudioOutput,
 } as AudioOutputContextType;
 
 mockUseUserContext.mockImplementation(() => mockUserContextWithDefaultSettings);
 mockUseAudioOutputContext.mockImplementation(() => mockUseAudioOutputContextValues);
 
 describe('RoomContext', () => {
+  const nativeMediaDevices = global.navigator.mediaDevices;
+  beforeEach(() => {
+    Object.defineProperty(global.navigator, 'mediaDevices', {
+      writable: true,
+      value: {
+        enumerateDevices: vi.fn(
+          () =>
+            new Promise<MediaDeviceInfo[]>((res) => {
+              res(nativeDevices as MediaDeviceInfo[]);
+            })
+        ),
+        addEventListener: vi.fn(() => []),
+        removeEventListener: vi.fn(() => []),
+      },
+    });
+  });
+
+  afterEach(() => {
+    Object.defineProperty(global.navigator, 'mediaDevices', {
+      writable: true,
+      value: nativeMediaDevices,
+    });
+  });
+
   it('renders content', () => {
     const TestComponent = () => <div data-testid="test-component">Test Component</div>;
 
@@ -50,12 +75,12 @@ describe('RoomContext', () => {
   it('provides context values to child components', () => {
     const TestComponent = () => {
       const { user } = useUserContext();
-      const { audioOutput } = useAudioOutputContext();
+      const { currentAudioOutputDevice } = useAudioOutputContext();
 
       return (
         <div>
           <div data-testid="user-name">{user.defaultSettings.name}</div>
-          <div data-testid="audio-output">{audioOutput}</div>
+          <div data-testid="audio-output">{currentAudioOutputDevice}</div>
         </div>
       );
     };

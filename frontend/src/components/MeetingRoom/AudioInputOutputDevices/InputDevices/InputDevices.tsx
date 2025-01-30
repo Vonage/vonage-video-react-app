@@ -2,7 +2,7 @@ import { Box, MenuItem, MenuList, Typography } from '@mui/material';
 import CheckIcon from '@mui/icons-material/Check';
 import { Device } from '@vonage/client-sdk-video';
 import MicNoneIcon from '@mui/icons-material/MicNone';
-import { useState, useEffect, MouseEvent as ReactMouseEvent, ReactElement } from 'react';
+import { MouseEvent as ReactMouseEvent, ReactElement } from 'react';
 import useDevices from '../../../../hooks/useDevices';
 import usePublisherContext from '../../../../hooks/usePublisherContext';
 
@@ -21,35 +21,23 @@ export type InputDevicesProps = {
  * @returns {ReactElement} - The InputDevices component.
  */
 const InputDevices = ({ handleToggle, customLightBlueColor }: InputDevicesProps): ReactElement => {
-  const { publisher, isPublishing } = usePublisherContext();
-  const [devicesAvailable, setDevicesAvailable] = useState<Device[] | null>(null);
-  const { allMediaDevices } = useDevices();
-  const [options, setOptions] = useState<string[]>([]);
+  const { publisher } = usePublisherContext();
+  const {
+    allMediaDevices: { audioInputDevices },
+  } = useDevices();
 
-  useEffect(() => {
-    setDevicesAvailable(allMediaDevices.audioInputDevices);
-  }, [publisher, allMediaDevices, devicesAvailable, isPublishing]);
-  const changeAudioSource = (deviceId: string) => {
-    publisher?.setAudioSource(deviceId);
-  };
-
-  useEffect(() => {
-    if (devicesAvailable) {
-      const audioDevicesAvailable: string[] = devicesAvailable.map((availableDevice: Device) => {
-        return availableDevice.label;
-      });
-      setOptions(audioDevicesAvailable);
-    }
-  }, [devicesAvailable]);
+  const options = audioInputDevices.map((availableDevice: Device) => {
+    return availableDevice.label;
+  });
 
   const handleChangeAudioSource = (event: ReactMouseEvent<HTMLLIElement>) => {
     const menuItem = event.target as HTMLLIElement;
     handleToggle();
-    const audioDeviceId = devicesAvailable?.find((device: Device) => {
+    const audioDeviceId = audioInputDevices?.find((device: Device) => {
       return device.label === menuItem.textContent;
     })?.deviceId;
     if (audioDeviceId) {
-      changeAudioSource(audioDeviceId);
+      publisher?.setAudioSource(audioDeviceId);
     }
   };
   return (
