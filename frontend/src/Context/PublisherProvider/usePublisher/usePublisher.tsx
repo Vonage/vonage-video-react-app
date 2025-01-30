@@ -9,6 +9,7 @@ import OT, {
 import usePublisherQuality, { NetworkQuality } from '../usePublisherQuality/usePublisherQuality';
 import usePublisherOptions from '../usePublisherOptions';
 import useSessionContext from '../../../hooks/useSessionContext';
+import { PUBLISHING_BLOCKED_CAPTION } from '../../../utils/constants';
 
 type PublisherStreamCreatedEvent = Event<'streamCreated', Publisher> & {
   stream: Stream;
@@ -18,12 +19,36 @@ type PublisherVideoElementCreatedEvent = Event<'videoElementCreated', Publisher>
   element: HTMLVideoElement | HTMLObjectElement;
 };
 
+type DeviceAccessStatus = {
+  microphone: boolean | undefined;
+  camera: boolean | undefined;
+};
+
+export type AccessDeniedEvent = Event<'accessDenied', Publisher> & {
+  message?: string;
+};
+
+type PublishingErrorType = {
+  header: string;
+  caption: string;
+};
+const publishingBlocked: PublishingErrorType = {
+  header: 'Difficulties joining room',
+  caption: PUBLISHING_BLOCKED_CAPTION,
+};
+const createAccessDeniedError = (device: string): PublishingErrorType => ({
+  header: `${device} access is denied`,
+  caption: `It seems your browser is blocked from accessing your ${device.toLowerCase()}. Reset the permission state through your browser's UI.`,
+});
+
+export type PublishingError = null | PublishingErrorType;
+
 export type PublisherContextType = {
   initializeLocalPublisher: () => void;
   isAudioEnabled: boolean;
   isForceMuted: boolean;
   isPublishing: boolean;
-  isPublishingError: boolean;
+  publishingError: PublishingError;
   isVideoEnabled: boolean;
   publish: () => Promise<void>;
   publisher: Publisher | null;
@@ -41,7 +66,7 @@ export type PublisherContextType = {
  * @property {() => void} initializeLocalPublisher - Method to initialize publisher
  * @property {boolean} isAudioEnabled - React state boolean showing if audio is enabled
  * @property {boolean} isPublishing - React state boolean showing if we are publishing
- * @property {boolean} isPublishingError - React state boolean showing if we are unable to publish to the session.
+ * @property {boolean} publishingError - React state showing any errors thrown while attempting to publish.
  * @property {boolean} isVideoEnabled - React state boolean showing if camera is on
  * @property {boolean} isForceMuted - React state boolean showing if the end user was force muted
  * @property {() => Promise<void>} publish - Method to publish to session
@@ -67,9 +92,29 @@ const usePublisher = (): PublisherContextType => {
   const [isAudioEnabled, setIsAudioEnabled] = useState(!!publisherOptions.publishAudio);
   const [stream, setStream] = useState<Stream | null>();
   const [isPublishingToSession, setIsPublishingToSession] = useState(false);
-  const [isPublishingError, setIsPublishingError] = useState(false);
+  const [publishingError, setPublishingError] = useState<PublishingError>(null);
   const mSession = useSessionContext();
+  const [deviceAccess, setDeviceAccess] = useState<DeviceAccessStatus>({
+    microphone: undefined,
+    camera: undefined,
+  });
   let publishAttempt: number = 0;
+
+  // If we do not have audio input or video input access, we cannot publish.
+  useEffect(() => {
+    if (!(deviceAccess.microphone && deviceAccess.camera)) {
+      const device = deviceAccess.camera ? 'Microphone' : 'Camera';
+      const accessDeniedError = createAccessDeniedError(device);
+      setPublishingError(accessDeniedError);
+    }
+  }, [deviceAccess]);
+
+  const handleAccessAllowed = () => {
+    setDeviceAccess({
+      microphone: true,
+      camera: true,
+    });
+  };
 
   const handleDestroyed = () => {
     publisherRef.current = null;
@@ -89,7 +134,15 @@ const usePublisher = (): PublisherContextType => {
     publisherRef.current = null;
   };
 
-  const handleAccessDenied = () => {
+  const handleAccessDenied = (event: AccessDeniedEvent) => {
+    // We check the first word of the message to see if the microphone or camera was denied access.
+    const deviceDeniedAccess =
+      event.message?.match(/^(\w*)/)?.[0] === 'microphone' ? 'microphone' : 'camera';
+    setDeviceAccess((prev) => ({
+      ...prev,
+      [deviceDeniedAccess]: false,
+    }));
+
     if (publisherRef.current) {
       publisherRef.current.destroy();
     }
@@ -129,6 +182,7 @@ const usePublisher = (): PublisherContextType => {
     publisher.on('accessDenied', handleAccessDenied);
     publisher.on('videoElementCreated', handleVideoElementCreated);
     publisher.on('muteForced', handleMuteForced);
+    publisher.on('accessAllowed', handleAccessAllowed);
   };
 
   /**
@@ -156,7 +210,7 @@ const usePublisher = (): PublisherContextType => {
     publishAttempt += 1;
 
     if (publishAttempt === 3) {
-      setIsPublishingError(true);
+      setPublishingError(publishingBlocked);
       setIsPublishingToSession(false);
       return true;
     }
@@ -247,7 +301,7 @@ const usePublisher = (): PublisherContextType => {
     isAudioEnabled,
     isForceMuted,
     isPublishing,
-    isPublishingError,
+    publishingError,
     isVideoEnabled,
     publish,
     publisher: publisherRef.current,

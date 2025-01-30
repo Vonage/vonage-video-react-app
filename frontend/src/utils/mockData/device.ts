@@ -13,6 +13,16 @@ export const defaultAudioDevice = {
 };
 
 /**
+ * Default mocked video input device.
+ * @property {string} deviceId - The unique identifier for the audio device.
+ * @property {string} kind - the type of media device.
+ */
+export const defaultVideoDevice = {
+  deviceId: 'default-video-device-id',
+  kind: 'videoInput',
+};
+
+/**
  * An object containing all available media devices.
  * @property {Array<object>} audioInputDevices - all available audio input devices.
  * @property {Array<object>} videoInputDevices - all available video input devices.

@@ -12,11 +12,13 @@ export const API_URL = window.location.origin.includes('localhost')
  * @property {string} PENDING - Status when the access to the device is pending.
  * @property {string} ACCEPTED - Status when the access to the device has been granted.
  * @property {string} REJECTED - Status when the access to the device was denied.
+ * @property {string} ACCESS_CHANGED - Status when the access to the device has changed from denied to granted.
  */
 export const DEVICE_ACCESS_STATUS = {
   PENDING: 'pending',
   ACCEPTED: 'accepted',
   REJECTED: 'rejected',
+  ACCESS_CHANGED: 'accessChanged',
 };
 
 /**

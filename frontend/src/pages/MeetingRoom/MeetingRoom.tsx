@@ -10,7 +10,6 @@ import EmojisOrigin from '../../components/MeetingRoom/EmojisOrigin';
 import RightPanel from '../../components/MeetingRoom/RightPanel';
 import useRoomName from '../../hooks/useRoomName';
 import useHeight from '../../hooks/useHeight';
-import { PUBLISHING_BLOCKED_CAPTION } from '../../utils/constants';
 import isValidRoomName from '../../utils/isValidRoomName';
 
 /**
@@ -25,14 +24,8 @@ import isValidRoomName from '../../utils/isValidRoomName';
 const MeetingRoom = (): ReactElement => {
   const roomName = useRoomName();
   const height = useHeight();
-  const {
-    publisher,
-    publish,
-    quality,
-    initializeLocalPublisher,
-    isPublishingError,
-    isVideoEnabled,
-  } = usePublisherContext();
+  const { publisher, publish, quality, initializeLocalPublisher, publishingError, isVideoEnabled } =
+    usePublisherContext();
   const {
     joinRoom,
     subscriberWrappers,
@@ -75,16 +68,17 @@ const MeetingRoom = (): ReactElement => {
   // If the user is unable to publish, we redirect them to the goodbye page.
   // This prevents users from subscribing to other participants in the room, and being unable to communicate with them.
   useEffect(() => {
-    if (isPublishingError) {
+    if (publishingError) {
+      const { header, caption } = publishingError;
       navigate('/goodbye', {
         state: {
-          header: 'Difficulties joining room',
-          caption: PUBLISHING_BLOCKED_CAPTION,
+          header,
+          caption,
           roomName,
         },
       });
     }
-  }, [isPublishingError, navigate, roomName]);
+  }, [publishingError, navigate, roomName]);
 
   return (
     <div data-testid="meetingRoom" className="meetingRoom w-screen" style={{ height }}>
