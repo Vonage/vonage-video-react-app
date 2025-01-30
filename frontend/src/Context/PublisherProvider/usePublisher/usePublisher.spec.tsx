@@ -1,6 +1,6 @@
 import { beforeEach, describe, it, expect, vi, Mock, afterAll, Mocked } from 'vitest';
 import { act, renderHook } from '@testing-library/react';
-import { initPublisher, Session, Stream } from '@vonage/client-sdk-video';
+import { initPublisher, Publisher, Session, Stream } from '@vonage/client-sdk-video';
 import EventEmitter from 'events';
 import usePublisher from './usePublisher';
 import useUserContext from '../../../hooks/useUserContext';
@@ -34,7 +34,10 @@ const mockStream = {
 } as unknown as Stream;
 
 describe('usePublisher', () => {
-  const mockPublisher = new EventEmitter();
+  const destroySpy = vi.fn();
+  const mockPublisher = Object.assign(new EventEmitter(), {
+    destroy: destroySpy,
+  }) as unknown as Publisher;
   let sessionContext: SessionContextType;
   let sessionMock: Mocked<Session>;
   const mockedInitPublisher = vi.fn();
@@ -143,6 +146,7 @@ describe('usePublisher', () => {
 
       act(() => {
         result.current.initializeLocalPublisher();
+        // @ts-expect-error We simulate the publisher stream being created.
         mockPublisher.emit('streamCreated', { stream: mockStream });
       });
       expect(initPublisher).toHaveBeenCalledOnce();
@@ -182,5 +186,31 @@ describe('usePublisher', () => {
       expect(result.current.publishingError).toEqual(publishingBlockedError);
       expect(mockedSessionPublish).toHaveBeenCalledTimes(2);
     });
+  });
+
+  it('should set publishingError and destroy publisher on receiving an accessDenied event', () => {
+    (initPublisher as Mock).mockImplementation(() => mockPublisher);
+    const { result } = renderHook(() => usePublisher());
+
+    act(() => {
+      result.current.initializeLocalPublisher();
+    });
+
+    expect(result.current.publishingError).toBeNull();
+
+    act(() => {
+      // @ts-expect-error We simulate user denying microphone permissions in a browser.
+      mockPublisher.emit('accessDenied', {
+        message: 'microphone permission denied during the call',
+      });
+    });
+
+    expect(result.current.publishingError).toEqual({
+      header: 'Camera access is denied',
+      caption:
+        "It seems your browser is blocked from accessing your camera. Reset the permission state through your browser's UI.",
+    });
+    expect(destroySpy).toHaveBeenCalled();
+    expect(result.current.publisher).toBeNull();
   });
 });
