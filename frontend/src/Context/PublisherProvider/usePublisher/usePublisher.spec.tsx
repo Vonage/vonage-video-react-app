@@ -188,7 +188,7 @@ describe('usePublisher', () => {
     });
   });
 
-  it('should set publishingError and destroy publisher on receiving an accessDenied event', () => {
+  it('should set publishingError and destroy publisher when receiving an accessDenied event', () => {
     (initPublisher as Mock).mockImplementation(() => mockPublisher);
     const { result } = renderHook(() => usePublisher());
 

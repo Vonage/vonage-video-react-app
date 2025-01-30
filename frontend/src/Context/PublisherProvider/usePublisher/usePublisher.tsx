@@ -32,11 +32,6 @@ export type AccessDeniedEvent = Event<'accessDenied', Publisher> & {
   message?: string;
 };
 
-const publishingBlocked: PublishingErrorType = {
-  header: 'Difficulties joining room',
-  caption: PUBLISHING_BLOCKED_CAPTION,
-};
-
 export type PublisherContextType = {
   initializeLocalPublisher: () => void;
   isAudioEnabled: boolean;
@@ -204,6 +199,10 @@ const usePublisher = (): PublisherContextType => {
     publishAttempt += 1;
 
     if (publishAttempt === 3) {
+      const publishingBlocked: PublishingErrorType = {
+        header: 'Difficulties joining room',
+        caption: PUBLISHING_BLOCKED_CAPTION,
+      };
       setPublishingError(publishingBlocked);
       setIsPublishingToSession(false);
       return true;
