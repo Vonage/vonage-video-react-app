@@ -10,6 +10,10 @@ import usePublisherQuality, { NetworkQuality } from '../usePublisherQuality/useP
 import usePublisherOptions from '../usePublisherOptions';
 import useSessionContext from '../../../hooks/useSessionContext';
 import { PUBLISHING_BLOCKED_CAPTION } from '../../../utils/constants';
+import getAccessDeniedError, {
+  PublishingError,
+  PublishingErrorType,
+} from '../../../utils/getAccessDeniedError/getAccessDeniedError';
 
 type PublisherStreamCreatedEvent = Event<'streamCreated', Publisher> & {
   stream: Stream;
@@ -28,28 +32,10 @@ export type AccessDeniedEvent = Event<'accessDenied', Publisher> & {
   message?: string;
 };
 
-/**
- * @typedef PublishingErrorType - Represents an error message displaying a header and a caption.
- * @property {string} header - The main title of the error message.
- * @property {string} caption - Additional context for the error.
- */
-export type PublishingErrorType = {
-  header: string;
-  caption: string;
-};
 const publishingBlocked: PublishingErrorType = {
   header: 'Difficulties joining room',
   caption: PUBLISHING_BLOCKED_CAPTION,
 };
-const createAccessDeniedError = (device: string): PublishingErrorType => ({
-  header: `${device} access is denied`,
-  caption: `It seems your browser is blocked from accessing your ${device.toLowerCase()}. Reset the permission state through your browser's UI.`,
-});
-
-/**
- * Represents an optional error, which is null if there is no error.
- */
-export type PublishingError = null | PublishingErrorType;
 
 export type PublisherContextType = {
   initializeLocalPublisher: () => void;
@@ -112,7 +98,7 @@ const usePublisher = (): PublisherContextType => {
   useEffect(() => {
     if (deviceAccess?.microphone === false || deviceAccess.camera === false) {
       const device = deviceAccess.camera ? 'Microphone' : 'Camera';
-      const accessDeniedError = createAccessDeniedError(device);
+      const accessDeniedError = getAccessDeniedError(device);
       setPublishingError(accessDeniedError);
     }
   }, [deviceAccess]);
