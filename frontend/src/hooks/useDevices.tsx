@@ -47,7 +47,6 @@ const useDevices = () => {
 
         // Vonage Video API's getAudioOutputDevices retrieves all audio output devices (speakers)
         let audioOutputDevices: AudioOutputDevice[] = await getAudioOutputDevices();
-
         // Rename the label of the default audio output to "System Default"
         audioOutputDevices = audioOutputDevices.map(renameDefaultAudioOutputDevice);
 
