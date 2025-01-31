@@ -3,8 +3,10 @@
 
 #### How should this be manually tested?
 
+
 #### What are the relevant tickets?
 A maintainer will add this ticket number.
+
 Resolves [VIDCS-](https://jira.vonage.com/browse/VIDCS-)
 
 #### Checklist
