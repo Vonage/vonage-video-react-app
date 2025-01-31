@@ -184,6 +184,17 @@ describe('MeetingRoom', () => {
     expect(screen.getByTestId('publisher-container')).toBeInTheDocument();
   });
 
+  it('should display spinner until session is connected', () => {
+    sessionContext.connected = false;
+    publisherContext.publisher = mockPublisher;
+    const { rerender } = render(<MeetingRoomWithProviders />);
+    rerender(<MeetingRoomWithProviders />);
+    sessionContext.connected = true;
+    expect(screen.getByTestId('progress-spinner')).toBeInTheDocument();
+    rerender(<MeetingRoomWithProviders />);
+    expect(screen.queryByTestId('progress-spinner')).not.toBeInTheDocument();
+  });
+
   it('should hide subscribers and show participant hidden tile', () => {
     sessionContext.connected = true;
     sessionContext.layoutMode = 'active-speaker';

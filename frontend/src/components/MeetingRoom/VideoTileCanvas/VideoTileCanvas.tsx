@@ -86,7 +86,10 @@ const VideoTileCanvas = ({
     <div ref={wrapRef} id="wrapper" className={`m-3 ${widthClass} ${heightClass}`}>
       <div id="video-container" className="relative w-full h-full">
         {!connected ? (
-          <CircularProgress sx={{ position: 'absolute', top: '50%' }} />
+          <CircularProgress
+            data-testid="progress-spinner"
+            sx={{ position: 'absolute', top: '50%' }}
+          />
         ) : (
           <>
             {isPublishing && layoutBoxes.publisherBox && (
