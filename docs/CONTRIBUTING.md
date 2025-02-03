@@ -25,6 +25,6 @@ When you're ready to start coding, fork this repository to your own GitHub accou
 
 Our *main* branch is the evergreen source of truth for the Vonage Video API Reference App for React. However, all new development should be done in the develop branch. Contributions should be made by branching off develop, and pull requests should be submitted against develop. Periodically, develop will be merged into main as a batch.
  
-Internally, we use Jira for issue tracking. Issue and feature branches use the format DEVELOPERNAME/TICKETNUMBER-SHORTDESCRIPTION e.g. alicesmith/VIDCS-123-fix-broken-icon. If you'd like to contribute a pull request, please use a branch on your fork with a descriptive name e.g. alicesmith/vonage-video-react-app/tree/fix-broken-icon.
+Internally, we use Jira for issue tracking. Issue and feature branches use the format DEVELOPERNAME/TICKETNUMBER-SHORTDESCRIPTION e.g. alicesmith/VIDCS-123-fix-broken-icon. If you'd like to contribute a pull request, please use a branch on your fork with a descriptive name e.g. fix-broken-icon.
 
 Release versions use the format rc-RELEASENUMBER number, e.g. rc-1.0.0. We use [semantic versioning](https://semver.org/) for our releases. 
