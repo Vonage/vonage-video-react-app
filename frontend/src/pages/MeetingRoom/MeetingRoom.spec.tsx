@@ -189,8 +189,8 @@ describe('MeetingRoom', () => {
     publisherContext.publisher = mockPublisher;
     const { rerender } = render(<MeetingRoomWithProviders />);
     rerender(<MeetingRoomWithProviders />);
-    sessionContext.connected = true;
     expect(screen.getByTestId('progress-spinner')).toBeInTheDocument();
+    sessionContext.connected = true;
     rerender(<MeetingRoomWithProviders />);
     expect(screen.queryByTestId('progress-spinner')).not.toBeInTheDocument();
   });
