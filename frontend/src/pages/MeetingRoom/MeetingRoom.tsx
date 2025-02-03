@@ -89,7 +89,6 @@ const MeetingRoom = (): ReactElement => {
   return (
     <div data-testid="meetingRoom" className="meetingRoom w-screen" style={{ height }}>
       <VideoTileCanvas
-        connected={connected}
         isSharingScreen={isSharingScreen}
         screensharingPublisher={screensharingPublisher}
         screenshareVideoElement={screenshareVideoElement}

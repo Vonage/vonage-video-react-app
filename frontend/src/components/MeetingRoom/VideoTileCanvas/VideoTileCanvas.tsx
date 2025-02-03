@@ -15,7 +15,6 @@ import getLayoutBoxes from '../../../utils/helpers/getLayoutBoxes';
 import useActiveSpeaker from '../../../hooks/useActiveSpeaker';
 
 export type VideoTileCanvasProps = {
-  connected: boolean | null;
   isSharingScreen: boolean;
   screensharingPublisher: OTPublisher | null;
   screenshareVideoElement: HTMLVideoElement | HTMLObjectElement | undefined;
@@ -31,7 +30,6 @@ export type VideoTileCanvasProps = {
  * @returns {ReactElement} VideoTileCanvas
  */
 const VideoTileCanvas = ({
-  connected,
   isSharingScreen,
   screensharingPublisher,
   screenshareVideoElement,
@@ -45,7 +43,7 @@ const VideoTileCanvas = ({
   const activeSpeakerId = useActiveSpeaker();
   const { isPublishing, publisher } = usePublisherContext();
   const getLayout = useLayoutManager();
-  const { subscriberWrappers, layoutMode } = useSessionContext();
+  const { connected, subscriberWrappers, layoutMode } = useSessionContext();
 
   // Determine if we will display a large video tile based on current layout mode and screenshare presence
   const isViewingScreenshare = subscriberWrappers.some((subWrapper) => subWrapper.isScreenshare);
