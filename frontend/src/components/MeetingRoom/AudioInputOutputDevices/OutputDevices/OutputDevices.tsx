@@ -1,15 +1,14 @@
 import { Box, MenuItem, MenuList, Typography } from '@mui/material';
 import CheckIcon from '@mui/icons-material/Check';
 import VolumeUpIcon from '@mui/icons-material/VolumeUp';
-import {
-  AudioOutputDevice,
-  setAudioOutputDevice,
-  getActiveAudioOutputDevice,
-} from '@vonage/client-sdk-video';
-import { useState, useEffect, MouseEvent, ReactElement } from 'react';
+import { MouseEvent, ReactElement } from 'react';
+import type { AudioOutputDevice } from '@vonage/client-sdk-video';
 import useDevices from '../../../../hooks/useDevices';
 import DropdownSeparator from '../../DropdownSeparator';
 import useAudioOutputContext from '../../../../hooks/useAudioOutputContext';
+import { isGetActiveAudioOutputDeviceSupported } from '../../../../utils/util';
+
+const defaultOutputDevices = [{ deviceId: 'default', label: 'System Default' }];
 
 export type OutputDevicesProps = {
   handleToggle: () => void;
@@ -29,37 +28,27 @@ const OutputDevices = ({
   handleToggle,
   customLightBlueColor,
 }: OutputDevicesProps): ReactElement => {
-  const { audioOutput, setAudioOutput } = useAudioOutputContext();
-  const [devicesAvailable, setDevicesAvailable] = useState<AudioOutputDevice[] | null>(null);
-  const { allMediaDevices } = useDevices();
+  const { currentAudioOutputDevice, setAudioOutputDevice } = useAudioOutputContext();
+  const {
+    allMediaDevices: { audioOutputDevices },
+  } = useDevices();
 
-  useEffect(() => {
-    setDevicesAvailable(allMediaDevices.audioOutputDevices);
-  }, [allMediaDevices]);
+  const isAudioOutputSupported = isGetActiveAudioOutputDeviceSupported();
 
-  const changeAudioOutput = async (deviceId: string) => {
-    await setAudioOutputDevice(deviceId);
-    setAudioOutput(deviceId);
-  };
+  const availableDevices = isAudioOutputSupported ? audioOutputDevices : defaultOutputDevices;
 
-  useEffect(() => {
-    const getActiveAudioOutputDeviceLabel = async () => {
-      const activeOutputDevice = await getActiveAudioOutputDevice();
-      setAudioOutput(activeOutputDevice.deviceId);
-    };
-    getActiveAudioOutputDeviceLabel();
-  }, [setAudioOutput]);
-
-  const handleChangeAudioOutput = (event: MouseEvent<HTMLLIElement>) => {
+  const handleChangeAudioOutput = async (event: MouseEvent<HTMLLIElement>) => {
     const menuItem = event.target as HTMLLIElement;
     handleToggle();
 
-    const selectedDevice = devicesAvailable?.find((device: AudioOutputDevice) => {
-      return device.label === menuItem.textContent;
-    });
+    if (isAudioOutputSupported) {
+      const deviceId = availableDevices?.find((device: AudioOutputDevice) => {
+        return device.label === menuItem.textContent;
+      })?.deviceId;
 
-    if (selectedDevice?.deviceId) {
-      changeAudioOutput(selectedDevice.deviceId);
+      if (deviceId) {
+        await setAudioOutputDevice(deviceId);
+      }
     }
   };
 
@@ -75,11 +64,13 @@ const OutputDevices = ({
         }}
       >
         <VolumeUpIcon sx={{ fontSize: 24, mr: 2 }} />
-        <Typography data-testid="output-devices">Speakers</Typography>
+        <Typography data-testid="output-device-title">Speakers</Typography>
       </Box>
-      <MenuList>
-        {devicesAvailable?.map((device: AudioOutputDevice) => {
-          const isSelected = device.deviceId === audioOutput;
+      <MenuList data-testid="output-devices">
+        {availableDevices?.map((device: AudioOutputDevice) => {
+          // If audio output device selection is not supported we show the default device as selected
+          const isSelected =
+            device.deviceId === currentAudioOutputDevice || availableDevices.length === 1;
           return (
             <MenuItem
               key={device.deviceId}

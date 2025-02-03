@@ -9,7 +9,6 @@ import ToggleOnIcon from '@mui/icons-material/ToggleOn';
 import usePublisherContext from '../../../../hooks/usePublisherContext';
 import DropdownSeparator from '../../DropdownSeparator';
 import SoundTest from '../../../SoundTest';
-import { isGetActiveAudioOutputDeviceSupported } from '../../../../utils/util';
 
 export type ReduceNoiseTestSpeakersProps = {
   customLightBlueColor: string;
@@ -85,11 +84,9 @@ const ReduceNoiseTestSpeakers = ({
             </IconButton>
           </MenuItem>
         )}
-        {isGetActiveAudioOutputDeviceSupported() && (
-          <SoundTest>
-            <VolumeUpIcon sx={{ fontSize: 24, mr: 2 }} />
-          </SoundTest>
-        )}
+        <SoundTest>
+          <VolumeUpIcon sx={{ fontSize: 24, mr: 2 }} />
+        </SoundTest>
       </MenuList>
     </>
   );

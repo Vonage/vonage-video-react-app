@@ -56,7 +56,7 @@ const ControlPanel = ({
   const { allMediaDevices } = useDevices();
   const { localAudioSource, localVideoSource, changeAudioSource, changeVideoSource } =
     usePreviewPublisherContext();
-  const { audioOutput, setAudioOutput } = useAudioOutputContext();
+  const { currentAudioOutputDevice, setAudioOutputDevice } = useAudioOutputContext();
 
   const buttonSx: SxProps = {
     borderRadius: '10px',
@@ -128,8 +128,8 @@ const ControlPanel = ({
           open={openAudioOutput}
           onClose={handleClose}
           anchorEl={anchorEl}
-          localSource={audioOutput}
-          deviceChangeHandler={setAudioOutput}
+          localSource={currentAudioOutputDevice}
+          deviceChangeHandler={setAudioOutputDevice}
           deviceType="audioOutput"
         />
       </div>
