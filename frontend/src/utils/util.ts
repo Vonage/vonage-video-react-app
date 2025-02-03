@@ -57,7 +57,8 @@ export const isGetActiveAudioOutputDeviceSupported = () => {
  */
 export const isMobile = (): boolean => {
   const { userAgent } = navigator;
-  const { device } = UAParser(userAgent);
+  const parser = new UAParser(userAgent);
+  const device = parser.getDevice();
 
   return device.type === 'mobile';
 };
