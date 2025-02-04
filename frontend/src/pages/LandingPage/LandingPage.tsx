@@ -16,7 +16,7 @@ import RoomJoinContainer from '../../components/RoomJoinContainer';
  */
 const LandingPage = (): ReactElement => {
   return (
-    <div className="bg-white flex h-full w-full justify-between flex-col">
+    <div className="flex h-full w-full bg-white justify-between flex-col">
       <Banner />
 
       <div className="bg-white flex w-full h-full items-center md:justify-center flex-col md:flex-row">
