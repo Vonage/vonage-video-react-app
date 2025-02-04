@@ -85,7 +85,7 @@ const MeetingRoom = (): ReactElement => {
   }, [isPublishingError, navigate, roomName]);
 
   return (
-    <div data-testid="meetingRoom" className="meetingRoom bg-darkGray-100 w-screen overflow-hidden">
+    <div data-testid="meetingRoom" className="meetingRoom bg-darkGray-100 w-screen">
       <VideoTileCanvas
         isSharingScreen={isSharingScreen}
         screensharingPublisher={screensharingPublisher}
