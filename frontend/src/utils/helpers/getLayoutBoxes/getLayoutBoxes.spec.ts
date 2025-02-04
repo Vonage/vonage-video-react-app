@@ -6,7 +6,7 @@ import { SubscriberWrapper } from '../../../types/session';
 
 vi.mock('./getLayoutElements');
 
-const createSubscriberWrapper = (id: string, isScreenshare = false) => {
+const createSubscriberWrapper = (id: string, isScreenshare = false, isPinned = false) => {
   return {
     id,
     subscriber: {
@@ -18,6 +18,7 @@ const createSubscriberWrapper = (id: string, isScreenshare = false) => {
       },
     },
     isScreenshare,
+    isPinned,
   } as unknown as SubscriberWrapper;
 };
 
@@ -37,6 +38,7 @@ const initialArguments: GetLayoutBoxesProps = {
   activeSpeakerId: undefined,
   hiddenSubscribers: [],
   isSharingScreen: false,
+  hasPinnedSubscribers: false,
   layoutMode: 'active-speaker',
   publisher: null,
   screensharingPublisher: null,
@@ -54,6 +56,7 @@ const initialArguments: GetLayoutBoxesProps = {
 const typicalRoomArguments: GetLayoutBoxesProps = {
   publisher: createPublisher(),
   isSharingScreen: true,
+  hasPinnedSubscribers: false,
   screensharingPublisher: createPublisher(),
   wrapRef: { current: {} } as unknown as MutableRefObject<HTMLElement | null>,
   subscribersInDisplayOrder: [

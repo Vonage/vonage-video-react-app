@@ -89,6 +89,7 @@ const createSubscriberWrapper = (id: string): SubscriberWrapper => {
     id,
     element: document.createElement('video'),
     isScreenshare: false,
+    isPinned: false,
     subscriber: mockSubscriber,
   };
 };
