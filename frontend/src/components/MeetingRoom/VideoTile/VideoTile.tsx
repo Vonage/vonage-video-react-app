@@ -1,5 +1,5 @@
 import { Box } from 'opentok-layout-js';
-import { ForwardedRef, forwardRef, ReactElement, ReactNode } from 'react';
+import { ForwardedRef, forwardRef, ReactElement, ReactNode, useState } from 'react';
 import getBoxStyle from '../../../utils/helpers/getBoxStyle';
 
 export type VideoTileProps = {
@@ -38,7 +38,7 @@ const VideoTile = forwardRef(
       <div
         id={id}
         data-testid={dataTestId}
-        className={`${className ?? ''} m-1 absolute flex items-center justify-center ${isHidden ? 'hidden' : ''} `}
+        className={`group/video-tile ${className ?? ''} m-1 absolute flex items-center justify-center ${isHidden ? 'hidden' : ''} `}
         style={getBoxStyle(box)}
       >
         <div
