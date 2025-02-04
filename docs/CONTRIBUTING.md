@@ -19,10 +19,12 @@ We always welcome feedback, if you've seen something that isn't quite right or y
 
 We're always open to pull requests, but these should be small and clearly described so that we can understand what you're trying to do. Feel free to open an issue first and get some discussion going.
 
-When you're ready to start coding, fork this repository to your own GitHub account and make your changes in a new branch. Once you're happy, open a pull request and explain what the change is and why you think we should include it in our project.
+When you're ready to start coding, fork this repository to your own GitHub account and make your changes in a new branch based on develop. Once you're happy, open a pull request to merge into develop and explain what the change is and why you think we should include it in our project.
 
 ### Branching 
 
-Our *main* branch is the evergreen source of truth for the Vonage Video API Reference App for React. Internally, we use Jira for issue tracking. Issue and feature branches use the format DEVELOPERNAME/TICKETNUMBER-SHORTDESCRIPTION e.g. alicesmith/VIDCS-123-fix-broken-icon. If you'd like to contribute a pull request, please use a branch on your fork with a descriptive name.
+Our *main* branch is the evergreen source of truth for the Vonage Video API Reference App for React. However, all new development should be done in the develop branch. Contributions should be made by branching off develop, and pull requests should be submitted against develop. Periodically, develop will be merged into main as a batch.
+ 
+Internally, we use Jira for issue tracking. Issue and feature branches use the format DEVELOPERNAME/TICKETNUMBER-SHORTDESCRIPTION e.g. alicesmith/VIDCS-123-fix-broken-icon. If you'd like to contribute a pull request, please use a branch on your fork with a descriptive name e.g. fix-broken-icon.
 
 Release versions use the format rc-RELEASENUMBER number, e.g. rc-1.0.0. We use [semantic versioning](https://semver.org/) for our releases. 
