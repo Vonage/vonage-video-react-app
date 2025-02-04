@@ -11,7 +11,6 @@ import usePublisherOptions from '../usePublisherOptions';
 import useSessionContext from '../../../hooks/useSessionContext';
 import { PUBLISHING_BLOCKED_CAPTION } from '../../../utils/constants';
 import getAccessDeniedError, {
-  PublishingError,
   PublishingErrorType,
 } from '../../../utils/getAccessDeniedError/getAccessDeniedError';
 
@@ -37,7 +36,7 @@ export type PublisherContextType = {
   isAudioEnabled: boolean;
   isForceMuted: boolean;
   isPublishing: boolean;
-  publishingError: PublishingError;
+  publishingError: PublishingErrorType;
   isVideoEnabled: boolean;
   publish: () => Promise<void>;
   publisher: Publisher | null;
@@ -81,7 +80,7 @@ const usePublisher = (): PublisherContextType => {
   const [isAudioEnabled, setIsAudioEnabled] = useState(!!publisherOptions.publishAudio);
   const [stream, setStream] = useState<Stream | null>();
   const [isPublishingToSession, setIsPublishingToSession] = useState(false);
-  const [publishingError, setPublishingError] = useState<PublishingError>(null);
+  const [publishingError, setPublishingError] = useState<PublishingErrorType>(null);
   const mSession = useSessionContext();
   const [deviceAccess, setDeviceAccess] = useState<DeviceAccessStatus>({
     microphone: undefined,
@@ -91,7 +90,7 @@ const usePublisher = (): PublisherContextType => {
 
   // If we do not have audio input or video input access, we cannot publish.
   useEffect(() => {
-    if (deviceAccess?.microphone === false || deviceAccess.camera === false) {
+    if (deviceAccess?.microphone === false || deviceAccess?.camera === false) {
       const device = deviceAccess.camera ? 'Microphone' : 'Camera';
       const accessDeniedError = getAccessDeniedError(device);
       setPublishingError(accessDeniedError);

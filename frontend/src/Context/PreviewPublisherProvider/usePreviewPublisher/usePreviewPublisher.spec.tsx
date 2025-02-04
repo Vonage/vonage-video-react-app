@@ -79,11 +79,11 @@ describe('usePreviewPublisher', () => {
     });
 
     it('should log access denied errors', () => {
+      const error = new Error(
+        "It hit me pretty hard, how there's no kind of sad in this world that will stop it turning."
+      );
+      error.name = 'OT_USER_MEDIA_ACCESS_DENIED';
       (initPublisher as Mock).mockImplementation((_, _args, callback) => {
-        const error = new Error(
-          "It hit me pretty hard, how there's no kind of sad in this world that will stop it turning."
-        );
-        error.name = 'OT_USER_MEDIA_ACCESS_DENIED';
         callback(error);
       });
 
@@ -91,7 +91,7 @@ describe('usePreviewPublisher', () => {
       act(() => {
         result.current.initLocalPublisher();
       });
-      expect(consoleErrorSpy).toHaveBeenCalled();
+      expect(consoleErrorSpy).toHaveBeenCalledWith('initPublisher error: ', error);
     });
   });
 
@@ -122,7 +122,7 @@ describe('usePreviewPublisher', () => {
       });
     });
 
-    it('calls setAccessStatus', async () => {
+    it('handles permission denial', async () => {
       mockedInitPublisher.mockReturnValue(mockPublisher);
       (initPublisher as Mock).mockImplementation(mockedInitPublisher);
 

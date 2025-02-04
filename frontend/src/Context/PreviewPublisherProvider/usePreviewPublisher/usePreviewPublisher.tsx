@@ -156,8 +156,7 @@ const usePreviewPublisher = (): PreviewPublisherContextType => {
    */
   const handleAccessDenied = useCallback(
     (event: AccessDeniedEvent) => {
-      const deviceDeniedAccess =
-        event.message?.match(/^(\w*)/)?.[0] === 'microphone' ? 'microphone' : 'camera';
+      const deviceDeniedAccess = event.message?.search('Microphone') ? 'microphone' : 'camera';
 
       setAccessStatus(DEVICE_ACCESS_STATUS.REJECTED);
 
