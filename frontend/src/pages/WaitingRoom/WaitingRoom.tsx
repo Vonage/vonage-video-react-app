@@ -72,34 +72,32 @@ const WaitingRoom = (): ReactElement => {
   };
 
   return (
-    <div className="h-full w-full bg-white">
-      <div className="w-full flex flex-col" data-testid="waitingRoom">
-        <Banner />
-        <div className="flex w-full">
-          <div className="w-full flex justify-center mb-8">
-            <div className="sm:min-h-[90vh] min-h-[80vh] flex flex-col md:flex-row items-center justify-center w-full">
-              <div className="flex-col max-w-full w-[508x] h-[420px] inline-flex">
-                <VideoContainer username={username} />
-                {accessStatus === DEVICE_ACCESS_STATUS.ACCEPTED && (
-                  <ControlPanel
-                    handleAudioInputOpen={handleAudioInputOpen}
-                    handleVideoInputOpen={handleVideoInputOpen}
-                    handleAudioOutputOpen={handleAudioOutputOpen}
-                    handleClose={handleClose}
-                    openAudioInput={openAudioInput}
-                    openVideoInput={openVideoInput}
-                    openAudioOutput={openAudioOutput}
-                    anchorEl={anchorEl}
-                  />
-                )}
-              </div>
-              <UsernameInput username={username} setUsername={setUsername} />
+    <div className="h-full w-full bg-white flex flex-col" data-testid="waitingRoom">
+      <Banner />
+      <div className="flex w-full">
+        <div className="w-full flex justify-center mb-8">
+          <div className="sm:min-h-[90vh] min-h-[80vh] flex flex-col md:flex-row items-center justify-center w-full">
+            <div className="flex-col max-w-full w-[508x] h-[420px] inline-flex">
+              <VideoContainer username={username} />
+              {accessStatus === DEVICE_ACCESS_STATUS.ACCEPTED && (
+                <ControlPanel
+                  handleAudioInputOpen={handleAudioInputOpen}
+                  handleVideoInputOpen={handleVideoInputOpen}
+                  handleAudioOutputOpen={handleAudioOutputOpen}
+                  handleClose={handleClose}
+                  openAudioInput={openAudioInput}
+                  openVideoInput={openVideoInput}
+                  openAudioOutput={openAudioOutput}
+                  anchorEl={anchorEl}
+                />
+              )}
             </div>
+            <UsernameInput username={username} setUsername={setUsername} />
           </div>
-          {accessStatus !== DEVICE_ACCESS_STATUS.ACCEPTED && (
-            <DeviceAccessAlert accessStatus={accessStatus} />
-          )}
         </div>
+        {accessStatus !== DEVICE_ACCESS_STATUS.ACCEPTED && (
+          <DeviceAccessAlert accessStatus={accessStatus} />
+        )}
       </div>
     </div>
   );
