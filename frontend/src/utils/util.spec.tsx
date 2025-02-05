@@ -111,3 +111,45 @@ describe('getAudioSourceDeviceId', () => {
     expect(result).toBe('');
   });
 });
+
+describe('isMobile', () => {
+  it('should return false for non-mobile devices', () => {
+    const tabletUAStrings = [
+      'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+      'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:120.0) Gecko/20100101 Firefox/120.0',
+      'Mozilla/5.0 (Windows NT 10.0; ARM64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+      'Mozilla/5.0 (iPad; CPU iPhone OS 13_2_3 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/13.0.3 Mobile/15E148 Safari/604.1',
+      'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36',
+    ];
+
+    tabletUAStrings.forEach((tabletUAString) => {
+      Object.defineProperty(navigator, 'userAgent', {
+        value: tabletUAString,
+        writable: true,
+      });
+      const result = util.isMobile();
+
+      expect(result).toEqual(false);
+    });
+  });
+
+  it('should return true for mobile devices', () => {
+    const mobileUAStrings = [
+      'Mozilla/5.0 (Linux; U; Android 4.0.2; en-us; Galaxy Nexus Build/ICL53F) AppleWebKit/534.30 (KHTML, like Gecko) Version/4.0 Mobile Safari/534.30',
+      'Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Mobile Safari/537.36',
+      'Mozilla/5.0 (iPhone; CPU iPhone OS 13_2 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) CriOS/131.0.0.0 Mobile/15E148 Safari/604.1',
+      'Mozilla/5.0 (Android 4.4; Mobile; rv:70.0) Gecko/70.0 Firefox/70.0',
+      'Mozilla/5.0 (iPhone; CPU iPhone OS 8_3 like Mac OS X) AppleWebKit/600.1.4 (KHTML, like Gecko) FxiOS/1.0 Mobile/12F69 Safari/600.1.4',
+    ];
+
+    mobileUAStrings.forEach((mobileUAString) => {
+      Object.defineProperty(navigator, 'userAgent', {
+        value: mobileUAString,
+        writable: true,
+      });
+      const result = util.isMobile();
+
+      expect(result).toEqual(true);
+    });
+  });
+});
