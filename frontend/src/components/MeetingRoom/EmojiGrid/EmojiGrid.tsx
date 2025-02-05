@@ -25,10 +25,10 @@ const EmojiGrid = ({ initiallyOpen = false }: EmojiGridProps): ReactElement => {
   // We want 30px of buffer on each side of the menu for mobile devices
   const minWidth = initiallyOpen ? `calc(100dvw - 30px)` : '100%';
   // Each button is 66px, 8px left and right padding = 280px for desktop
-  const maxWidth = initiallyOpen ? '100%' : '280px';
+  const maxWidth = initiallyOpen ? 'calc(100dvw - 30px)' : '280px';
   const transform = initiallyOpen ? 'translate(-50%, -20px)' : 'translateY(-5%)';
-  // We account for the 8px of left and right padding when moving the menu.
-  const left = initiallyOpen ? 'calc(50dvw - 14px)' : '';
+  // We account for the 9px translation from the HiddenToolBarItems.
+  const left = initiallyOpen ? 'calc(50dvw - 9px)' : '';
 
   const handleClose = () => {
     setOpen(false);
