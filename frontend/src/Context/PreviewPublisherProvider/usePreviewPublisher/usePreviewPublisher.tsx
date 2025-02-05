@@ -155,20 +155,24 @@ const usePreviewPublisher = (): PreviewPublisherContextType => {
    * @returns {void}
    */
   const handleAccessDenied = useCallback(
-    (event: AccessDeniedEvent) => {
+    async (event: AccessDeniedEvent) => {
       const deviceDeniedAccess = event.message?.startsWith('Microphone') ? 'microphone' : 'camera';
 
       setAccessStatus(DEVICE_ACCESS_STATUS.REJECTED);
 
-      // @ts-expect-error The camera and microphone permissions are supported on all major browsers.
-      window.navigator.permissions.query({ name: deviceDeniedAccess }).then((permissionStatus) => {
-        // eslint-disable-next-line no-param-reassign
+      try {
+        const permissionStatus = await window.navigator.permissions.query({
+          // @ts-expect-error The camera and microphone permissions are supported on all major browsers.
+          name: deviceDeniedAccess,
+        });
         permissionStatus.onchange = () => {
           if (permissionStatus.state === 'granted') {
             setAccessStatus(DEVICE_ACCESS_STATUS.ACCESS_CHANGED);
           }
         };
-      });
+      } catch (error) {
+        console.error(`Failed to query device permission for ${deviceDeniedAccess}: ${error}`);
+      }
     },
     [setAccessStatus]
   );
