@@ -9,7 +9,6 @@ import VideoTileCanvas from '../../components/MeetingRoom/VideoTileCanvas';
 import EmojisOrigin from '../../components/MeetingRoom/EmojisOrigin';
 import RightPanel from '../../components/MeetingRoom/RightPanel';
 import useRoomName from '../../hooks/useRoomName';
-import useHeight from '../../hooks/useHeight';
 import { PUBLISHING_BLOCKED_CAPTION } from '../../utils/constants';
 import isValidRoomName from '../../utils/isValidRoomName';
 
@@ -24,7 +23,6 @@ import isValidRoomName from '../../utils/isValidRoomName';
  */
 const MeetingRoom = (): ReactElement => {
   const roomName = useRoomName();
-  const height = useHeight();
   const {
     publisher,
     publish,
@@ -87,7 +85,7 @@ const MeetingRoom = (): ReactElement => {
   }, [isPublishingError, navigate, roomName]);
 
   return (
-    <div data-testid="meetingRoom" className="meetingRoom w-screen" style={{ height }}>
+    <div data-testid="meetingRoom" className="meetingRoom bg-darkGray-100 w-screen">
       <VideoTileCanvas
         isSharingScreen={isSharingScreen}
         screensharingPublisher={screensharingPublisher}

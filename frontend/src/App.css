@@ -1,12 +1,8 @@
 #root {
   margin: 0 auto;
   text-align: center;
-  height: 100vh;
-  width: 100vw;
-}
-
-body:has(div.meetingRoom) {
-  overflow: hidden; /* Hide scrollbars */
+  height: 100dvh;
+  width: 100dvw;
 }
 
 /*
