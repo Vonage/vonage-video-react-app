@@ -50,9 +50,13 @@ const MoreMobileItemsToggle = (): ReactElement => {
             {...TransitionProps}
             style={{
               transformOrigin: placement === 'bottom' ? 'center top' : 'center bottom',
+              width: 'calc(100dvw - 30px)',
+              left: '-15px',
+              position: 'relative',
+              translate: '0px -9px',
             }}
           >
-            <div className="font-normal text-left flex">
+            <div className="font-normal text-left flex w-full">
               {/* This may be different */}
               <ClickAwayListener onClickAway={handleClose}>
                 <Paper
@@ -63,9 +67,8 @@ const MoreMobileItemsToggle = (): ReactElement => {
                     padding: { xs: 1 },
                     borderRadius: 2,
                     zIndex: 1,
-                    transform: 'translateY(-5%)',
                     // Each button is 66px, 8px left and right padding
-                    maxWidth: 280,
+                    width: '100%',
                     position: 'relative',
                     display: 'flex',
                     justifyContent: 'center',
