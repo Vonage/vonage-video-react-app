@@ -15,12 +15,20 @@ describe('JiraFeedbackService', () => {
   };
 
   const mockPost = jest.spyOn(axios, 'post');
+  const originalEnv = process.env;
 
   beforeEach(() => {
+    jest.resetModules();
+    process.env = { ...originalEnv, VIDEO_SERVICE_PROVIDER: 'opentok' };
     jiraFeedbackService = new JiraFeedbackService();
   });
 
+  afterEach(() => {
+    process.env = originalEnv;
+  });
+
   it('should create a valid issue and return the issue key', async () => {
+    process.env.VIDEO_SERVICE_PROVIDER = 'opentok';
     const feedbackData: FeedbackData = {
       ...sharedData,
       attachment: '',
