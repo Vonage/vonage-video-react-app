@@ -1,5 +1,4 @@
 # Known Issues
-- `VIDCS-2829`: For Windows tablets, some functionality buttons are missing from the toolbar in the meeting room.
 - `VIDCS-2833`: Rotating a tablet or phone between landscape and portrait mode causes issues with the responsive layout with iOS Chrome and Safari.
 - `VIDCS-2963`: When using an iPhone camera as your video input device, disconnecting your iPhone camera may cause your video to freeze and the video input may not automatically switch.
 - `VIDCS-2987`: The publisher does not display a muted icon in the participant list when their audio is muted.
