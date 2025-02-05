@@ -26,7 +26,7 @@ const EmojiGrid = ({ initiallyOpen = false }: EmojiGridProps): ReactElement => {
   const minWidth = initiallyOpen ? `calc(100dvw - 30px)` : '100%';
   // Each button is 66px, 8px left and right padding = 280px for desktop
   const maxWidth = initiallyOpen ? 'calc(100dvw - 30px)' : '280px';
-  const transform = initiallyOpen ? 'translate(-50%, -20px)' : 'translateY(-5%)';
+  const transform = initiallyOpen ? 'translate(-50%, -18px)' : 'translateY(-5%)';
   // We account for the 9px translation from the HiddenToolBarItems.
   const left = initiallyOpen ? 'calc(50dvw - 9px)' : '';
 
