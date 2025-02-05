@@ -28,7 +28,6 @@ describe('JiraFeedbackService', () => {
   });
 
   it('should create a valid issue and return the issue key', async () => {
-    process.env.VIDEO_SERVICE_PROVIDER = 'opentok';
     const feedbackData: FeedbackData = {
       ...sharedData,
       attachment: '',
