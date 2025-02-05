@@ -124,8 +124,7 @@ const usePublisher = (): PublisherContextType => {
 
   const handleAccessDenied = (event: AccessDeniedEvent) => {
     // We check the first word of the message to see if the microphone or camera was denied access.
-    const deviceDeniedAccess =
-      event.message?.match(/^(\w*)/)?.[0] === 'microphone' ? 'microphone' : 'camera';
+    const deviceDeniedAccess = event.message?.startsWith('Microphone') ? 'microphone' : 'camera';
     setDeviceAccess((prev) => ({
       ...prev,
       [deviceDeniedAccess]: false,
