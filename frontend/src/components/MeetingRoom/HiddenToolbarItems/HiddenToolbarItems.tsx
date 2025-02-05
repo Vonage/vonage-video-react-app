@@ -1,0 +1,90 @@
+import { ReactElement, useRef, useState } from 'react';
+import { Grow, Paper, Popper, Tooltip } from '@mui/material';
+import MoreVertIcon from '@mui/icons-material/MoreVert';
+import { ClickAwayListener, PopperChildrenProps } from '@mui/base';
+import ToolbarButton from '../ToolbarButton';
+import useIsSmallViewport from '../../../hooks/useIsSmallViewport';
+import ArchivingToggle from '../ArchivingToggle';
+import EmojiGrid from '../EmojiGrid';
+import LayoutToggleButton from '../LayoutToggleButton';
+
+import useSessionContext from '../../../hooks/useSessionContext';
+
+/**
+ * MoreMobileItemsToggle Component
+ *
+ * Displays a clickable button that opens a grid of hidden toolbar buttons for smaller viewport devices.
+ * @returns {ReactElement} - The MoreMobileItemsToggle Component.
+ */
+const MoreMobileItemsToggle = (): ReactElement => {
+  const { subscriberWrappers } = useSessionContext();
+  const anchorRef = useRef<HTMLButtonElement>(null);
+  const [open, setOpen] = useState<boolean>(false);
+  const isSmallViewport = useIsSmallViewport();
+  const isViewingScreenShare = subscriberWrappers.some((subWrapper) => subWrapper.isScreenshare);
+
+  const handleClose = () => {
+    setOpen(false);
+  };
+
+  const handleToggle = () => {
+    setOpen((prevOpen) => !prevOpen);
+  };
+
+  return (
+    <div className={`${isSmallViewport ? 'inline' : 'hidden'}`}>
+      <Tooltip
+        title="Access additional toolbar items"
+        aria-label="open additional toolbar items menu"
+      >
+        <ToolbarButton
+          onClick={handleToggle}
+          icon={<MoreVertIcon style={{ color: `${!open ? 'white' : 'rgb(138, 180, 248)'}` }} />}
+          ref={anchorRef}
+        />
+      </Tooltip>
+
+      <Popper open={open} anchorEl={anchorRef.current} transition disablePortal placement="bottom">
+        {({ TransitionProps, placement }: PopperChildrenProps) => (
+          <Grow
+            {...TransitionProps}
+            style={{
+              transformOrigin: placement === 'bottom' ? 'center top' : 'center bottom',
+            }}
+          >
+            <div className="font-normal text-left flex">
+              {/* This may be different */}
+              <ClickAwayListener onClickAway={handleClose}>
+                <Paper
+                  className="flex justify-center items-center"
+                  sx={{
+                    backgroundColor: '#292D31',
+                    color: '#fff',
+                    padding: { xs: 1 },
+                    borderRadius: 2,
+                    zIndex: 1,
+                    transform: 'translateY(-5%)',
+                    // Each button is 66px, 8px left and right padding
+                    maxWidth: 280,
+                    position: 'relative',
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignContent: 'space-between',
+                    alignItems: 'center',
+                    paddingLeft: '12px',
+                  }}
+                >
+                  <LayoutToggleButton isScreenSharePresent={isViewingScreenShare} />
+                  <EmojiGrid initiallyOpen />
+                  <ArchivingToggle />
+                </Paper>
+              </ClickAwayListener>
+            </div>
+          </Grow>
+        )}
+      </Popper>
+    </div>
+  );
+};
+
+export default MoreMobileItemsToggle;

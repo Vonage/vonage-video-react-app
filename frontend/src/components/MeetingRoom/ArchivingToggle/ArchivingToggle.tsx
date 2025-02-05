@@ -3,7 +3,6 @@ import { Tooltip } from '@mui/material';
 import { ReactElement, useState } from 'react';
 import useRoomName from '../../../hooks/useRoomName';
 import ToolbarButton from '../ToolbarButton';
-import displayOnDesktop from '../../../utils/displayOnDesktop';
 import PopupDialog, { DialogTexts } from '../PopupDialog';
 import { startArchiving, stopArchiving } from '../../../api/archiving';
 import useSessionContext from '../../../hooks/useSessionContext';
@@ -69,7 +68,7 @@ const ArchivingToggle = (): ReactElement => {
   };
 
   return (
-    <div className={`hidden ${displayOnDesktop()}`}>
+    <>
       <Tooltip title={title} aria-label="video layout">
         <ToolbarButton
           onClick={handleButtonClick}
@@ -86,7 +85,7 @@ const ArchivingToggle = (): ReactElement => {
         handleActionClick={handleActionClick}
         actionText={actionText}
       />
-    </div>
+    </>
   );
 };
 export default ArchivingToggle;

@@ -12,6 +12,8 @@ import EmojiGrid from '../EmojiGrid';
 import ChatToggleButton from '../ChatToggleButton';
 import { RightPanelActiveTab } from '../../../hooks/useRightPanel';
 import ReportIssueButton from '../ReportIssueButton';
+import HiddenToolbarItems from '../HiddenToolbarItems';
+import useIsSmallViewport from '../../../hooks/useIsSmallViewport';
 
 export type ToolbarProps = {
   toggleShareScreen: () => void;
@@ -57,6 +59,7 @@ const Toolbar = ({
   const isReportIssueEnabled = import.meta.env.VITE_ENABLE_REPORT_ISSUE === 'true';
   const isViewingScreenShare = subscriberWrappers.some((subWrapper) => subWrapper.isScreenshare);
   const isScreenSharePresent = isViewingScreenShare || isSharingScreen;
+  const isSmallViewport = useIsSmallViewport();
   const handleLeave = useCallback(() => {
     if (!disconnect) {
       return;
@@ -72,14 +75,20 @@ const Toolbar = ({
       <div className="flex flex-1 justify-center">
         <AudioControlButton />
         <VideoControlButton />
-        <ScreenSharingButton
-          toggleScreenShare={toggleShareScreen}
-          isSharingScreen={isSharingScreen}
-          isViewingScreenShare={isViewingScreenShare}
-        />
-        <LayoutToggleButton isScreenSharePresent={isScreenSharePresent} />
-        <EmojiGrid />
-        <ArchivingToggle />
+        {isSmallViewport ? (
+          <HiddenToolbarItems />
+        ) : (
+          <>
+            <ScreenSharingButton
+              toggleScreenShare={toggleShareScreen}
+              isSharingScreen={isSharingScreen}
+              isViewingScreenShare={isViewingScreenShare}
+            />
+            <LayoutToggleButton isScreenSharePresent={isScreenSharePresent} />
+            <EmojiGrid />
+            <ArchivingToggle />
+          </>
+        )}
         <ExitButton handleLeave={handleLeave} />
       </div>
 

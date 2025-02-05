@@ -5,17 +5,23 @@ import { ClickAwayListener, PopperChildrenProps } from '@mui/base';
 import ToolbarButton from '../ToolbarButton';
 import emojiMap from '../../../utils/emojis';
 import SendEmojiButton from '../SendEmojiButton';
-import displayOnDesktop from '../../../utils/displayOnDesktop';
+
+export type EmojiGridProps = {
+  initiallyOpen?: boolean;
+};
 
 /**
  * EmojiGrid Component
  *
  * Displays a clickable button that opens a grid of emojis.
+ * @param {EmojiGridProps} props - the props for the component
+ *  @property {boolean} initiallyOpen - whether the emoji grid is open or not
  * @returns {ReactElement} - The EmojiGrid Component.
  */
-const EmojiGrid = (): ReactElement => {
+// Take in props for open
+const EmojiGrid = ({ initiallyOpen = false }: EmojiGridProps): ReactElement => {
   const anchorRef = useRef<HTMLButtonElement>(null);
-  const [open, setOpen] = useState<boolean>(false);
+  const [open, setOpen] = useState<boolean>(initiallyOpen);
 
   const handleClose = () => {
     setOpen(false);
@@ -26,7 +32,7 @@ const EmojiGrid = (): ReactElement => {
   };
 
   return (
-    <div className={`hidden ${displayOnDesktop()}`}>
+    <>
       <Tooltip title="Express yourself" aria-label="open sendable emoji menu">
         <ToolbarButton
           onClick={handleToggle}
@@ -70,7 +76,7 @@ const EmojiGrid = (): ReactElement => {
           </Grow>
         )}
       </Popper>
-    </div>
+    </>
   );
 };
 
