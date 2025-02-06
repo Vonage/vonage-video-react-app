@@ -5,10 +5,7 @@ import { ClickAwayListener, PopperChildrenProps } from '@mui/base';
 import ToolbarButton from '../ToolbarButton';
 import emojiMap from '../../../utils/emojis';
 import SendEmojiButton from '../SendEmojiButton';
-
-export type EmojiGridProps = {
-  initiallyOpen?: boolean;
-};
+import useIsSmallViewport from '../../../hooks/useIsSmallViewport';
 
 /**
  * EmojiGrid Component
@@ -19,16 +16,17 @@ export type EmojiGridProps = {
  * @returns {ReactElement} - The EmojiGrid Component.
  */
 // Take in props for open
-const EmojiGrid = ({ initiallyOpen = false }: EmojiGridProps): ReactElement => {
+const EmojiGrid = (): ReactElement => {
   const anchorRef = useRef<HTMLButtonElement>(null);
-  const [open, setOpen] = useState<boolean>(initiallyOpen);
+  const isSmallViewport = useIsSmallViewport();
+  const [open, setOpen] = useState<boolean>(false);
   // We want 30px of buffer on each side of the menu for mobile devices
-  const minWidth = initiallyOpen ? `calc(100dvw - 30px)` : '100%';
+  const minWidth = isSmallViewport ? `calc(100dvw - 30px)` : '100%';
   // Each button is 66px, 8px left and right padding = 280px for desktop
-  const maxWidth = initiallyOpen ? 'calc(100dvw - 30px)' : '280px';
-  const transform = initiallyOpen ? 'translate(-50%, -18px)' : 'translateY(-5%)';
+  const maxWidth = isSmallViewport ? 'calc(100dvw - 30px)' : '280px';
+  const transform = isSmallViewport ? 'translate(-50%, -18px)' : 'translateY(-5%)';
   // We account for the 9px translation from the HiddenToolBarItems.
-  const left = initiallyOpen ? 'calc(50dvw - 9px)' : '';
+  const left = isSmallViewport ? 'calc(50dvw - 9px)' : '';
 
   const handleClose = () => {
     setOpen(false);
