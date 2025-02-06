@@ -11,8 +11,6 @@ import useIsSmallViewport from '../../../hooks/useIsSmallViewport';
  * EmojiGrid Component
  *
  * Displays a clickable button that opens a grid of emojis.
- * @param {EmojiGridProps} props - the props for the component
- *  @property {boolean} initiallyOpen - whether the emoji grid is open or not
  * @returns {ReactElement} - The EmojiGrid Component.
  */
 // Take in props for open

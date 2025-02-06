@@ -78,7 +78,7 @@ const MoreMobileItemsToggle = (): ReactElement => {
                   }}
                 >
                   <LayoutToggleButton isScreenSharePresent={isViewingScreenShare} />
-                  <EmojiGrid initiallyOpen />
+                  <EmojiGrid />
                   <ArchivingToggle />
                 </Paper>
               </ClickAwayListener>
