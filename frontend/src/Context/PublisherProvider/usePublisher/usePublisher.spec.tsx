@@ -1,12 +1,13 @@
 import { beforeEach, describe, it, expect, vi, Mock, afterAll, Mocked } from 'vitest';
 import { act, renderHook } from '@testing-library/react';
-import { initPublisher, Session, Stream } from '@vonage/client-sdk-video';
+import { initPublisher, Publisher, Session, Stream } from '@vonage/client-sdk-video';
 import EventEmitter from 'events';
 import usePublisher from './usePublisher';
 import useUserContext from '../../../hooks/useUserContext';
 import { UserContextType } from '../../user';
 import useSessionContext from '../../../hooks/useSessionContext';
 import { SessionContextType } from '../../SessionProvider/session';
+import { PUBLISHING_BLOCKED_CAPTION } from '../../../utils/constants';
 
 vi.mock('@vonage/client-sdk-video');
 vi.mock('../../../hooks/useUserContext.tsx');
@@ -33,7 +34,10 @@ const mockStream = {
 } as unknown as Stream;
 
 describe('usePublisher', () => {
-  const mockPublisher = new EventEmitter();
+  const destroySpy = vi.fn();
+  const mockPublisher = Object.assign(new EventEmitter(), {
+    destroy: destroySpy,
+  }) as unknown as Publisher;
   let sessionContext: SessionContextType;
   let sessionMock: Mocked<Session>;
   const mockedInitPublisher = vi.fn();
@@ -142,6 +146,7 @@ describe('usePublisher', () => {
 
       act(() => {
         result.current.initializeLocalPublisher();
+        // @ts-expect-error We simulate the publisher stream being created.
         mockPublisher.emit('streamCreated', { stream: mockStream });
       });
       expect(initPublisher).toHaveBeenCalledOnce();
@@ -174,8 +179,53 @@ describe('usePublisher', () => {
         await result.current.publish();
       });
 
-      expect(result.current.isPublishingError).toEqual(true);
+      const publishingBlockedError = {
+        header: 'Difficulties joining room',
+        caption: PUBLISHING_BLOCKED_CAPTION,
+      };
+      expect(result.current.publishingError).toEqual(publishingBlockedError);
       expect(mockedSessionPublish).toHaveBeenCalledTimes(2);
     });
+  });
+
+  it('should set publishingError and destroy publisher when receiving an accessDenied event', () => {
+    (initPublisher as Mock).mockImplementation(() => mockPublisher);
+    const { result } = renderHook(() => usePublisher());
+
+    act(() => {
+      result.current.initializeLocalPublisher();
+    });
+
+    expect(result.current.publishingError).toBeNull();
+
+    act(() => {
+      // @ts-expect-error We simulate user denying microphone permissions in a browser.
+      mockPublisher.emit('accessDenied', {
+        message: 'microphone permission denied during the call',
+      });
+    });
+
+    expect(result.current.publishingError).toEqual({
+      header: 'Camera access is denied',
+      caption:
+        "It seems your browser is blocked from accessing your camera. Reset the permission state through your browser's UI.",
+    });
+    expect(destroySpy).toHaveBeenCalled();
+    expect(result.current.publisher).toBeNull();
+  });
+
+  it('should not set publishingError when receiving an accessAllowed event', () => {
+    (initPublisher as Mock).mockImplementation(() => mockPublisher);
+    const { result } = renderHook(() => usePublisher());
+
+    act(() => {
+      result.current.initializeLocalPublisher();
+
+      // @ts-expect-error We simulate allowing camera and microphone permissions in a browser.
+      mockPublisher.emit('accessAllowed');
+    });
+
+    expect(result.current.publishingError).toBeNull();
+    expect(result.current.publisher).toBe(mockPublisher);
   });
 });

@@ -43,6 +43,13 @@ const WaitingRoom = (): ReactElement => {
     };
   }, [initLocalPublisher, publisher, destroyPublisher]);
 
+  // After changing device permissions, reload the page to reflect the device's permission change.
+  useEffect(() => {
+    if (accessStatus === DEVICE_ACCESS_STATUS.ACCESS_CHANGED) {
+      window.location.reload();
+    }
+  }, [accessStatus]);
+
   const handleAudioInputOpen = (
     event: MouseEvent<HTMLButtonElement> | TouchEvent<HTMLButtonElement>
   ) => {

@@ -297,7 +297,11 @@ describe('MeetingRoom', () => {
   });
 
   it('should redirect user to goodbye page if unable to publish', () => {
-    publisherContext.isPublishingError = true;
+    const publishingBlockedError = {
+      header: 'Difficulties joining room',
+      caption: PUBLISHING_BLOCKED_CAPTION,
+    };
+    publisherContext.publishingError = publishingBlockedError;
     render(<MeetingRoomWithProviders />);
 
     expect(mockedNavigate).toHaveBeenCalledOnce();

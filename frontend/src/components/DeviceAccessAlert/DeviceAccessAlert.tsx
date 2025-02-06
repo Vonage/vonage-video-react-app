@@ -6,7 +6,7 @@ import { isWebKit } from '../../utils/util';
 const askDeviceMessage =
   'To join the video room, your browser will request access to your camera and microphone.';
 const deniedDeviceMessage =
-  'It seems your browser is blocked from accessing your camera and/or microphone.';
+  "It seems your browser is blocked from accessing your camera and/or microphone. Reset the permission state through your browser's UI.";
 
 export type DeviceAccessAlertProps = {
   accessStatus: string | null;

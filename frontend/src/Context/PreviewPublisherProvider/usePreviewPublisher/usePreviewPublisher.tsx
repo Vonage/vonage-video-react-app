@@ -6,6 +6,7 @@ import usePermissions from '../../../hooks/usePermissions';
 import useUserContext from '../../../hooks/useUserContext';
 import { DEVICE_ACCESS_STATUS } from '../../../utils/constants';
 import { UserType } from '../../user';
+import { AccessDeniedEvent } from '../../PublisherProvider/usePublisher/usePublisher';
 
 type PublisherVideoElementCreatedEvent = Event<'videoElementCreated', Publisher> & {
   element: HTMLVideoElement | HTMLObjectElement;
@@ -150,15 +151,31 @@ const usePreviewPublisher = (): PreviewPublisherContextType => {
   /**
    * Handle device permissions denial
    * used to inform the user they need to give permissions to devices to access the call
+   * after a user grants permissions to the denied device, trigger a reload.
    * @returns {void}
    */
-  const handleAccessDenied = useCallback(() => {
-    console.log('access denied');
+  const handleAccessDenied = useCallback(
+    async (event: AccessDeniedEvent) => {
+      const deviceDeniedAccess = event.message?.startsWith('Microphone') ? 'microphone' : 'camera';
 
-    setAccessStatus(DEVICE_ACCESS_STATUS.REJECTED);
+      setAccessStatus(DEVICE_ACCESS_STATUS.REJECTED);
 
-    publisherRef.current = null;
-  }, [setAccessStatus]);
+      try {
+        const permissionStatus = await window.navigator.permissions.query({
+          // @ts-expect-error The camera and microphone permissions are supported on all major browsers.
+          name: deviceDeniedAccess,
+        });
+        permissionStatus.onchange = () => {
+          if (permissionStatus.state === 'granted') {
+            setAccessStatus(DEVICE_ACCESS_STATUS.ACCESS_CHANGED);
+          }
+        };
+      } catch (error) {
+        console.error(`Failed to query device permission for ${deviceDeniedAccess}: ${error}`);
+      }
+    },
+    [setAccessStatus]
+  );
 
   const handleVideoElementCreated = (event: PublisherVideoElementCreatedEvent) => {
     setPublisherVideoElement(event.element);
@@ -172,7 +189,10 @@ const usePreviewPublisher = (): PreviewPublisherContextType => {
   }, []);
 
   const addPublisherListeners = useCallback(
-    (publisher: Publisher) => {
+    (publisher: Publisher | null) => {
+      if (!publisher) {
+        return;
+      }
       publisher.on('destroyed', handleDestroyed);
       publisher.on('accessDenied', handleAccessDenied);
       publisher.on('videoElementCreated', handleVideoElementCreated);
