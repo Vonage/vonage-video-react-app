@@ -10,9 +10,11 @@ permissions:
   contents: read
 
 env:
+  VIDEO_SERVICE_PROVIDER: ${{vars.VIDEO_SERVICE_PROVIDER}}
   OT_API_KEY: ${{secrets.API_KEY}}
   OT_API_SECRET: ${{secrets.API_SECRET}}
-  VIDEO_SERVICE_PROVIDER: ${{secrets.VIDEO_SERVICE_PROVIDER}}
+  VONAGE_APP_ID: ${{secrets.VONAGE_APP_ID}}
+  VONAGE_PRIVATE_KEY: ${{secrets.VONAGE_PRIVATE_KEY}}
 
 jobs:
   run:
@@ -117,5 +119,6 @@ jobs:
       - name: Run integration tests
         if: steps.check-skip-ci.outputs.result == 'false' && github.event.pull_request.head.repo.fork == false
         run: |
+          echo "VIDEO_SERVICE_PROVIDER: $VIDEO_SERVICE_PROVIDER"
           Xvfb :99 & export DISPLAY=:99
           yarn test:integration
