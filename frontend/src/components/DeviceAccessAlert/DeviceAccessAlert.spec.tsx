@@ -36,7 +36,7 @@ describe('DeviceAccessAlert', () => {
     // Check that the correct message is displayed
     expect(
       screen.getByText(
-        'It seems your browser is blocked from accessing your camera and/or microphone.'
+        "It seems your browser is blocked from accessing your camera and/or microphone. Reset the permission state through your browser's UI."
       )
     ).toBeInTheDocument();
 
