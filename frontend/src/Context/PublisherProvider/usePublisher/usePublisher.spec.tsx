@@ -213,4 +213,19 @@ describe('usePublisher', () => {
     expect(destroySpy).toHaveBeenCalled();
     expect(result.current.publisher).toBeNull();
   });
+
+  it('should not set publishingError when receiving an accessAllowed event', () => {
+    (initPublisher as Mock).mockImplementation(() => mockPublisher);
+    const { result } = renderHook(() => usePublisher());
+
+    act(() => {
+      result.current.initializeLocalPublisher();
+
+      // @ts-expect-error We simulate allowing camera and microphone permissions in a browser.
+      mockPublisher.emit('accessAllowed');
+    });
+
+    expect(result.current.publishingError).toBeNull();
+    expect(result.current.publisher).toBe(mockPublisher);
+  });
 });

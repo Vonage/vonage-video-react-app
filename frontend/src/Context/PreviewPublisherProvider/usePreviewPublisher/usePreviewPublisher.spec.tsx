@@ -99,6 +99,12 @@ describe('usePreviewPublisher', () => {
     const nativePermissions = global.navigator.permissions;
     const mockQuery = vi.fn();
     let mockedPermissionStatus: { onchange: null | (() => void); status: string };
+    const emitAccessDeniedError = () => {
+      // @ts-expect-error We simulate user denying microphone permissions in a browser.
+      mockPublisher.emit('accessDenied', {
+        message: 'Microphone permission denied during the call',
+      });
+    };
 
     beforeEach(() => {
       mockedPermissionStatus = {
@@ -133,14 +139,29 @@ describe('usePreviewPublisher', () => {
       });
       expect(result.current.accessStatus).toBe(DEVICE_ACCESS_STATUS.PENDING);
 
-      act(() => {
-        // @ts-expect-error We simulate user denying microphone permissions in a browser.
-        mockPublisher.emit('accessDenied', {
-          message: 'microphone permission denied during the call',
-        });
-      });
+      act(emitAccessDeniedError);
 
       expect(mockSetAccessStatus).toBeCalledWith(DEVICE_ACCESS_STATUS.REJECTED);
+    });
+
+    it('does not throw on older, unsupported browsers', async () => {
+      mockQuery.mockImplementation(() => {
+        throw new Error('Whoops');
+      });
+      mockedInitPublisher.mockReturnValue(mockPublisher);
+      (initPublisher as Mock).mockImplementation(mockedInitPublisher);
+
+      const { result } = renderHook(() => usePreviewPublisher());
+
+      act(() => {
+        result.current.initLocalPublisher();
+
+        expect(emitAccessDeniedError).not.toThrow();
+      });
+
+      expect(consoleErrorSpy).toHaveBeenCalledWith(
+        'Failed to query device permission for microphone: Error: Whoops'
+      );
     });
   });
 });
