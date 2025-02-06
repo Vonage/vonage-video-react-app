@@ -15,7 +15,7 @@ env:
 
 jobs:
   run:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
 
     steps:
       - name: Check for "skip-ci" label
@@ -107,14 +107,14 @@ jobs:
           yarn test
 
       - name: SonarCloud Scan
-        if: steps.check-skip-ci.outputs.result == 'false'
+        if: steps.check-skip-ci.outputs.result == 'false' && github.event.pull_request.head.repo.fork == false
         uses: SonarSource/sonarcloud-github-action@master
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # Needed to get PR information, if any
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
 
       - name: Run integration tests
-        if: steps.check-skip-ci.outputs.result == 'false'
+        if: steps.check-skip-ci.outputs.result == 'false' && github.event.pull_request.head.repo.fork == false
         run: |
           Xvfb :99 & export DISPLAY=:99
           yarn test:integration

@@ -9,8 +9,8 @@ import VideoTileCanvas from '../../components/MeetingRoom/VideoTileCanvas';
 import EmojisOrigin from '../../components/MeetingRoom/EmojisOrigin';
 import RightPanel from '../../components/MeetingRoom/RightPanel';
 import useRoomName from '../../hooks/useRoomName';
-import useHeight from '../../hooks/useHeight';
 import { PUBLISHING_BLOCKED_CAPTION } from '../../utils/constants';
+import isValidRoomName from '../../utils/isValidRoomName';
 
 /**
  * MeetingRoom Component
@@ -23,7 +23,6 @@ import { PUBLISHING_BLOCKED_CAPTION } from '../../utils/constants';
  */
 const MeetingRoom = (): ReactElement => {
   const roomName = useRoomName();
-  const height = useHeight();
   const {
     publisher,
     publish,
@@ -49,9 +48,8 @@ const MeetingRoom = (): ReactElement => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (joinRoom && roomName) {
-      const sanitizedRoomName = encodeURIComponent(roomName);
-      joinRoom(sanitizedRoomName);
+    if (joinRoom && isValidRoomName(roomName)) {
+      joinRoom(roomName);
     }
     return () => {
       // Ensure to disconnect session when unmounting meeting room in order
@@ -87,7 +85,7 @@ const MeetingRoom = (): ReactElement => {
   }, [isPublishingError, navigate, roomName]);
 
   return (
-    <div data-testid="meetingRoom" className="meetingRoom w-screen" style={{ height }}>
+    <div data-testid="meetingRoom" className="meetingRoom bg-darkGray-100 w-screen">
       <VideoTileCanvas
         isSharingScreen={isSharingScreen}
         screensharingPublisher={screensharingPublisher}

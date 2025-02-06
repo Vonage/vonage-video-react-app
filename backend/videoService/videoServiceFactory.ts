@@ -1,7 +1,7 @@
 import { VideoService } from './videoServiceInterface';
-import VonageVideoService from './unified-vonage';
-import OpenTokVideoService from './opentok';
-import loadConfig from './helpers/config';
+import VonageVideoService from './vonageVideoService';
+import OpenTokVideoService from './opentokVideoService';
+import loadConfig from '../helpers/config';
 
 const createVideoService = (): VideoService => {
   const config = loadConfig();

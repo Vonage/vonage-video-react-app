@@ -14,9 +14,14 @@ import useSessionContext from '../../../hooks/useSessionContext';
  */
 const ChatInput = (): ReactElement => {
   const [text, setText] = useState('');
+  const [isComposing, setIsComposing] = useState(false);
   const { sendChatMessage } = useSessionContext();
 
   const handleSendMessage = () => {
+    // Ensure composition has ended before sending the message
+    if (isComposing) {
+      return;
+    }
     const trimmedText = text.trim();
     if (trimmedText.length) {
       sendChatMessage(trimmedText);
@@ -26,10 +31,18 @@ const ChatInput = (): ReactElement => {
 
   const handleKeyDown = (e: KeyboardEvent<HTMLDivElement>) => {
     // If enter press then send message unless shift also pressed to allow for multiline messages
-    if (e.key === 'Enter' && !e.shiftKey) {
+    if (e.key === 'Enter' && !e.shiftKey && !isComposing) {
       e.preventDefault();
       handleSendMessage();
     }
+  };
+
+  const handleCompositionStart = () => {
+    setIsComposing(true);
+  };
+
+  const handleCompositionEnd = () => {
+    setIsComposing(false);
   };
 
   return (
@@ -40,6 +53,8 @@ const ChatInput = (): ReactElement => {
       placeholder="Send a message"
       onKeyDown={handleKeyDown}
       onChange={(e) => setText(e.target.value)}
+      onCompositionStart={handleCompositionStart}
+      onCompositionEnd={handleCompositionEnd}
       value={text}
       maxRows={5}
       fullWidth

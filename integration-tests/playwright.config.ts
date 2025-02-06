@@ -23,6 +23,7 @@ const executablePath = isMac ? '/Applications/Opera.app/Contents/MacOS/Opera' : 
 
 const fakeDeviceChromiumFlags = [
   ...chromiumFlags,
+  '--headless=new',
   '--use-fake-device-for-media-stream=device-count=5',
 ];
 
