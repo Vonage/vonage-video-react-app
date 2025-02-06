@@ -12,6 +12,7 @@ permissions:
 env:
   OT_API_KEY: ${{secrets.API_KEY}}
   OT_API_SECRET: ${{secrets.API_SECRET}}
+  VIDEO_SERVICE_PROVIDER: ${{secrets.VIDEO_SERVICE_PROVIDER}}
 
 jobs:
   run:
