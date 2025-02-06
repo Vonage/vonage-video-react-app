@@ -11,12 +11,12 @@ import LayoutToggleButton from '../LayoutToggleButton';
 import useSessionContext from '../../../hooks/useSessionContext';
 
 /**
- * MoreMobileItemsToggle Component
+ * HiddenToolbarItems Component
  *
  * Displays a clickable button that opens a grid of hidden toolbar buttons for smaller viewport devices.
- * @returns {ReactElement} - The MoreMobileItemsToggle Component.
+ * @returns {ReactElement} - The HiddenToolbarItems Component.
  */
-const MoreMobileItemsToggle = (): ReactElement => {
+const HiddenToolbarItems = (): ReactElement => {
   const { subscriberWrappers } = useSessionContext();
   const anchorRef = useRef<HTMLButtonElement>(null);
   const [open, setOpen] = useState<boolean>(false);
@@ -90,4 +90,4 @@ const MoreMobileItemsToggle = (): ReactElement => {
   );
 };
 
-export default MoreMobileItemsToggle;
+export default HiddenToolbarItems;
