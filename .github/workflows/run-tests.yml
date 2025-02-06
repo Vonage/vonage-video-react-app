@@ -110,8 +110,13 @@ jobs:
         if: steps.check-skip-ci.outputs.result == 'false' && github.event.pull_request.head.repo.fork == false
         uses: SonarSource/sonarcloud-github-action@master
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # Needed to get PR information, if any
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        with:
+          args: >
+            -Dsonar.pullrequest.key=${{ github.event.pull_request.number }}
+            -Dsonar.pullrequest.branch=${{ github.head_ref }}
+            -Dsonar.pullrequest.base=develop
 
       - name: Run integration tests
         if: steps.check-skip-ci.outputs.result == 'false' && github.event.pull_request.head.repo.fork == false
