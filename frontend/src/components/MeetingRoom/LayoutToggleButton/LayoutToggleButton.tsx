@@ -3,8 +3,8 @@ import Tooltip from '@mui/material/Tooltip';
 import WindowIcon from '@mui/icons-material/Window';
 import { ReactElement } from 'react';
 import useSessionContext from '../../../hooks/useSessionContext';
-import displayOnDesktop from '../../../utils/displayOnDesktop';
 import ToolbarButton from '../ToolbarButton';
+import { isMobile } from '../../../utils/util';
 
 type LayoutToggleButtonProps = {
   isScreenSharePresent: boolean;
@@ -17,7 +17,9 @@ type LayoutToggleButtonProps = {
  * @param {boolean} isScreenSharePresent - Indicates whether there is a screenshare currently in the session.
  * @returns {ReactElement} The LayoutToggleButton component.
  */
-const LayoutToggleButton = ({ isScreenSharePresent }: LayoutToggleButtonProps): ReactElement => {
+const LayoutToggleButton = ({
+  isScreenSharePresent,
+}: LayoutToggleButtonProps): ReactElement | false => {
   const { layoutMode, setLayoutMode } = useSessionContext();
   const isGrid = layoutMode === 'grid';
 
@@ -36,29 +38,33 @@ const LayoutToggleButton = ({ isScreenSharePresent }: LayoutToggleButtonProps): 
   };
 
   return (
-    <div className={`hidden ${displayOnDesktop()}`}>
-      <Tooltip
-        title={getTooltipTitle()}
-        sx={{
-          maxWidth: '800px',
-        }}
-        aria-label="video layout"
-      >
-        <ToolbarButton
-          onClick={handleClick}
-          icon={
-            !isGrid ? (
-              <ViewSidebarIcon className={isScreenSharePresent ? 'text-gray-500' : 'text-white'} />
-            ) : (
-              <WindowIcon className={isScreenSharePresent ? 'text-gray-500' : 'text-white'} />
-            )
-          }
+    !isMobile() && (
+      <div>
+        <Tooltip
+          title={getTooltipTitle()}
           sx={{
-            cursor: isScreenSharePresent ? 'not-allowed' : 'pointer',
+            maxWidth: '800px',
           }}
-        />
-      </Tooltip>
-    </div>
+          aria-label="video layout"
+        >
+          <ToolbarButton
+            onClick={handleClick}
+            icon={
+              !isGrid ? (
+                <ViewSidebarIcon
+                  className={isScreenSharePresent ? 'text-gray-500' : 'text-white'}
+                />
+              ) : (
+                <WindowIcon className={isScreenSharePresent ? 'text-gray-500' : 'text-white'} />
+              )
+            }
+            sx={{
+              cursor: isScreenSharePresent ? 'not-allowed' : 'pointer',
+            }}
+          />
+        </Tooltip>
+      </div>
+    )
   );
 };
 
