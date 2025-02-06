@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { describe, expect, it, beforeEach, jest } from '@jest/globals';
+import { describe, expect, it, beforeAll, afterAll, jest } from '@jest/globals';
 import FormData from 'form-data';
 import JiraFeedbackService from '../jiraFeedbackService';
 import { FeedbackData } from '../../types/feedback';
@@ -17,13 +17,13 @@ describe('JiraFeedbackService', () => {
   const mockPost = jest.spyOn(axios, 'post');
   const originalEnv = process.env;
 
-  beforeEach(() => {
+  beforeAll(() => {
     jest.resetModules();
     process.env = { ...originalEnv, VIDEO_SERVICE_PROVIDER: 'opentok' };
     jiraFeedbackService = new JiraFeedbackService();
   });
 
-  afterEach(() => {
+  afterAll(() => {
     process.env = originalEnv;
   });
 

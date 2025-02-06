@@ -1,14 +1,14 @@
-import { describe, expect, it, beforeEach, afterEach, jest } from '@jest/globals';
+import { describe, expect, it, beforeAll, afterAll, jest } from '@jest/globals';
 import { FeedbackService } from '../feedbackService';
 
 describe('getFeedbackService', () => {
   const originalEnv = process.env;
-  beforeEach(() => {
+  beforeAll(() => {
     jest.resetModules();
     process.env = { ...originalEnv, VIDEO_SERVICE_PROVIDER: 'opentok' };
   });
 
-  afterEach(() => {
+  afterAll(() => {
     process.env = originalEnv;
   });
 
