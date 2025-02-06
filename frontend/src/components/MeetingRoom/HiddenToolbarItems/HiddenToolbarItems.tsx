@@ -3,11 +3,9 @@ import { Grow, Paper, Popper, Tooltip } from '@mui/material';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import { ClickAwayListener, PopperChildrenProps } from '@mui/base';
 import ToolbarButton from '../ToolbarButton';
-import useIsSmallViewport from '../../../hooks/useIsSmallViewport';
 import ArchivingToggle from '../ArchivingToggle';
 import EmojiGrid from '../EmojiGrid';
 import LayoutToggleButton from '../LayoutToggleButton';
-
 import useSessionContext from '../../../hooks/useSessionContext';
 
 /**
@@ -20,7 +18,6 @@ const HiddenToolbarItems = (): ReactElement => {
   const { subscriberWrappers } = useSessionContext();
   const anchorRef = useRef<HTMLButtonElement>(null);
   const [open, setOpen] = useState<boolean>(false);
-  const isSmallViewport = useIsSmallViewport();
   const isViewingScreenShare = subscriberWrappers.some((subWrapper) => subWrapper.isScreenshare);
 
   const handleClose = () => {
@@ -32,7 +29,7 @@ const HiddenToolbarItems = (): ReactElement => {
   };
 
   return (
-    <div className={`${isSmallViewport ? 'inline' : 'hidden'}`}>
+    <>
       <Tooltip
         title="Access additional toolbar items"
         aria-label="open additional toolbar items menu"
@@ -86,7 +83,7 @@ const HiddenToolbarItems = (): ReactElement => {
           </Grow>
         )}
       </Popper>
-    </div>
+    </>
   );
 };
 
