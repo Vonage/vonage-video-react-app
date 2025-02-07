@@ -3,6 +3,7 @@ import { render, screen } from '@testing-library/react';
 import { useLocation } from 'react-router-dom';
 import useSpeakingDetector from '../../../hooks/useSpeakingDetector';
 import useIsSmallViewport from '../../../hooks/useIsSmallViewport';
+import displayOnDesktop from '../../../utils/displayOnDesktop';
 import Toolbar, { ToolbarProps } from './Toolbar';
 
 const mockedRoomName = { roomName: 'test-room-name' };
@@ -15,9 +16,11 @@ vi.mock('react-router-dom', () => ({
 
 vi.mock('../../../hooks/useSpeakingDetector');
 vi.mock('../../../hooks/useIsSmallViewport');
+vi.mock('../../../utils/displayOnDesktop');
 
 const mockUseSpeakingDetector = useSpeakingDetector as Mock<[], boolean>;
 const mockUseIsSmallViewport = useIsSmallViewport as Mock<[], boolean>;
+const mockDisplayOnDesktop = displayOnDesktop as Mock<[], '' | 'md:inline'>;
 
 describe('Toolbar', () => {
   beforeEach(() => {
@@ -59,7 +62,7 @@ describe('Toolbar', () => {
 
   it('on a small viewport, displays the HiddenToolbarItems button', () => {
     mockUseIsSmallViewport.mockReturnValue(true);
-    // @TODO: mock displayOnDesktop
+    mockDisplayOnDesktop.mockReturnValue('');
 
     render(<Toolbar {...defaultProps} />);
 
@@ -71,7 +74,7 @@ describe('Toolbar', () => {
 
   it('on a normal viewport, displays the all of the toolbar buttons', () => {
     mockUseIsSmallViewport.mockReturnValue(false);
-    // @TODO: mock displayOnDesktop
+    mockDisplayOnDesktop.mockReturnValue('md:inline');
 
     render(<Toolbar {...defaultProps} />);
 
