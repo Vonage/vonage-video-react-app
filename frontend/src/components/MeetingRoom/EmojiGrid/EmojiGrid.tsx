@@ -39,6 +39,7 @@ const EmojiGrid = (): ReactElement => {
       <Tooltip title="Express yourself" aria-label="open sendable emoji menu">
         <ToolbarButton
           onClick={handleToggle}
+          data-testid="emoji-grid-toggle"
           icon={<EmojiEmotions style={{ color: `${!open ? 'white' : 'rgb(138, 180, 248)'}` }} />}
           ref={anchorRef}
         />

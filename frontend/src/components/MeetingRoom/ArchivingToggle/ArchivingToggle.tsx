@@ -72,6 +72,7 @@ const ArchivingToggle = (): ReactElement => {
       <Tooltip title={title} aria-label="video layout">
         <ToolbarButton
           onClick={handleButtonClick}
+          data-testid="archiving-toggle"
           icon={
             <RadioButtonCheckedIcon
               style={{ color: `${isRecording ? 'rgb(239 68 68)' : 'white'}` }}
