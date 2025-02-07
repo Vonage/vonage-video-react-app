@@ -24,6 +24,7 @@ export type UserType = {
     noiseSuppression: boolean; // Whether noise suppression is enabled
     audioSource?: string; // The selected audio input source (optional)
     videoSource?: string; // The selected video input source (optional)
+    openEmojisGrid: boolean; // Whether the user kept their emojis grid open
   };
   issues: {
     reconnections: number; // The number of reconnections the user has experienced
@@ -49,6 +50,7 @@ const UserProvider = ({ children }: UserProviderProps): ReactElement => {
   const noiseSuppression = window.localStorage.getItem('noiseSuppression') === 'true';
   const blur = window.localStorage.getItem('backgroundBlur') === 'true';
   const name = window.localStorage.getItem('username') ?? '';
+  const openEmojisGrid = window.localStorage.getItem('openEmojisGrid') === 'true';
 
   const [user, setUser] = useState<UserType>({
     defaultSettings: {
@@ -59,6 +61,7 @@ const UserProvider = ({ children }: UserProviderProps): ReactElement => {
       noiseSuppression,
       audioSource: undefined,
       videoSource: undefined,
+      openEmojisGrid,
     },
     issues: {
       reconnections: 0, // Start with zero reconnections

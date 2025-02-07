@@ -7,6 +7,7 @@ export type ToolbarButtonProps = {
     | ((event: MouseEvent<HTMLButtonElement> | TouchEvent<HTMLButtonElement>) => void);
   icon: ReactElement;
   sx?: SxProps;
+  id?: string;
 };
 
 /**

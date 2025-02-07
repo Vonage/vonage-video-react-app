@@ -1,11 +1,13 @@
 import { Grid, Grow, Paper, Popper, Tooltip } from '@mui/material';
 import { EmojiEmotions } from '@mui/icons-material';
-import { ReactElement, useRef, useState } from 'react';
+import { ReactElement, useCallback, useRef, useState } from 'react';
 import { ClickAwayListener, PopperChildrenProps } from '@mui/base';
 import ToolbarButton from '../ToolbarButton';
 import emojiMap from '../../../utils/emojis';
 import SendEmojiButton from '../SendEmojiButton';
 import useIsSmallViewport from '../../../hooks/useIsSmallViewport';
+import useUserContext from '../../../hooks/useUserContext';
+import { UserType } from '../../../Context/user';
 
 /**
  * EmojiGrid Component
@@ -14,9 +16,12 @@ import useIsSmallViewport from '../../../hooks/useIsSmallViewport';
  * @returns {ReactElement} - The EmojiGrid Component.
  */
 const EmojiGrid = (): ReactElement => {
+  const { user, setUser } = useUserContext();
   const anchorRef = useRef<HTMLButtonElement>(null);
   const isSmallViewport = useIsSmallViewport();
-  const [open, setOpen] = useState<boolean>(false);
+  const [open, setOpen] = useState<boolean>(
+    isSmallViewport ? user.defaultSettings.openEmojisGrid : false
+  );
   // We want 30px of buffer on the sides of the menu for mobile devices
   const minWidth = isSmallViewport ? `calc(100dvw - 30px)` : '100%';
   // Each button is 66px, 8px left and right padding = 280px for desktop
@@ -25,12 +30,37 @@ const EmojiGrid = (): ReactElement => {
   // We account for the 9px translation from the HiddenToolBarItems.
   const left = isSmallViewport ? 'calc(50dvw - 9px)' : '';
 
-  const handleClose = () => {
+  const updateOpenEmojisGrid = useCallback(
+    (newValue: boolean) => {
+      setUser((prevUser: UserType) => ({
+        ...prevUser,
+        defaultSettings: {
+          ...prevUser.defaultSettings,
+          openEmojisGrid: newValue,
+        },
+      }));
+      window.localStorage.setItem('openEmojisGrid', JSON.stringify(newValue));
+    },
+    [setUser]
+  );
+
+  const handleClose = (event: MouseEvent | TouchEvent) => {
+    const target = event.target as HTMLElement;
     setOpen(false);
+
+    // If a user clicks the toggle button, we save their preference for later
+    if (target.closest('#emoji-grid-toggle')) {
+      updateOpenEmojisGrid(false);
+    }
   };
 
   const handleToggle = () => {
-    setOpen((prevOpen) => !prevOpen);
+    setOpen((prevOpen) => {
+      const newOpen = !prevOpen;
+      updateOpenEmojisGrid(newOpen);
+
+      return newOpen;
+    });
   };
 
   return (
@@ -39,6 +69,7 @@ const EmojiGrid = (): ReactElement => {
         <ToolbarButton
           onClick={handleToggle}
           data-testid="emoji-grid-toggle"
+          id="emoji-grid-toggle"
           icon={<EmojiEmotions style={{ color: `${!open ? 'white' : 'rgb(138, 180, 248)'}` }} />}
           ref={anchorRef}
         />
