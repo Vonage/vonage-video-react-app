@@ -1,4 +1,4 @@
-import { ReactElement, useEffect, useRef } from 'react';
+import { ReactElement, useEffect, useRef, useState } from 'react';
 import { Box } from 'opentok-layout-js';
 import { SubscriberWrapper } from '../../types/session';
 import AudioIndicator from '../MeetingRoom/AudioIndicator';
@@ -40,6 +40,7 @@ const Subscriber = ({
   const isScreenShare = subscriber?.stream?.videoType === 'screen';
   const subRef = useRef<HTMLDivElement>(null);
   const isTalking = useSubscriberTalking({ subscriber, isActiveSpeaker });
+  const [isTileHovered, setIsTileHovered] = useState<boolean>(false);
 
   useEffect(() => {
     // If hidden - Unsubscribe from video to save bandwidth and cpu
@@ -70,7 +71,7 @@ const Subscriber = ({
   const hasAudio = subscriberWrapper.subscriber.stream?.hasAudio;
   const audioIndicatorStyle =
     'rounded-xl absolute top-3 right-3 bg-darkGray-55 h-6 w-6 items-center justify-center flex m-auto';
-  const pinStyle = `${isPinned ? 'flex' : 'hidden'} group-hover/video-tile:flex rounded-xl absolute top-3 left-3 bg-darkGray-55 h-6 w-6 items-center justify-center m-auto`;
+  const pinStyle = `${isPinned ? 'flex' : 'hidden'} group-hover/video-tile:flex group-hover/video-tile:bg-darkGray-55 rounded-xl absolute top-3 left-3 h-6 w-6 items-center justify-center m-auto`;
   return (
     <VideoTile
       id={`${subscriberWrapper.id}`}
@@ -81,11 +82,14 @@ const Subscriber = ({
       hasVideo={!!hasVideo}
       ref={subRef}
       isTalking={isTalking}
+      onMouseEnter={() => setIsTileHovered(true)}
+      onMouseLeave={() => setIsTileHovered(false)}
     >
       {!isScreenShare && (
         <PinButton
           color="white"
           isPinned={isPinned}
+          isTileHovered={isTileHovered}
           pinStyle={pinStyle}
           toggleIsPinned={() => {
             pinSubscriber(subscriberWrapper.id);
