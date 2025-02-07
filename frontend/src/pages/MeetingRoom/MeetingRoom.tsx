@@ -6,11 +6,13 @@ import Toolbar from '../../components/MeetingRoom/Toolbar';
 import useSessionContext from '../../hooks/useSessionContext';
 import useScreenShare from '../../hooks/useScreenShare';
 import VideoTileCanvas from '../../components/MeetingRoom/VideoTileCanvas';
+import Header from '../../components/MeetingRoom/Header';
 import EmojisOrigin from '../../components/MeetingRoom/EmojisOrigin';
 import RightPanel from '../../components/MeetingRoom/RightPanel';
 import useRoomName from '../../hooks/useRoomName';
 import { PUBLISHING_BLOCKED_CAPTION } from '../../utils/constants';
 import isValidRoomName from '../../utils/isValidRoomName';
+import { isMobile } from '../../utils/util';
 
 /**
  * MeetingRoom Component
@@ -85,43 +87,47 @@ const MeetingRoom = (): ReactElement => {
   }, [isPublishingError, navigate, roomName]);
 
   return (
-    <div data-testid="meetingRoom" className="meetingRoom bg-darkGray-100 w-screen">
-      <VideoTileCanvas
-        isSharingScreen={isSharingScreen}
-        screensharingPublisher={screensharingPublisher}
-        screenshareVideoElement={screenshareVideoElement}
-        isRightPanelOpen={rightPanelActiveTab !== 'closed'}
-        toggleParticipantList={toggleParticipantList}
-      />
-      <RightPanel activeTab={rightPanelActiveTab} handleClose={closeRightPanel} />
-      <EmojisOrigin />
-      <Toolbar
-        isSharingScreen={isSharingScreen}
-        toggleShareScreen={toggleShareScreen}
-        rightPanelActiveTab={rightPanelActiveTab}
-        toggleParticipantList={toggleParticipantList}
-        toggleChat={toggleChat}
-        toggleReportIssue={toggleReportIssue}
-        participantCount={
-          subscriberWrappers.filter(({ isScreenshare }) => !isScreenshare).length + 1
-        }
-      />
-      {reconnecting && (
-        <ConnectionAlert
-          title="Lost connection"
-          message="Please verify your network connection"
-          severity="error"
+    <>
+      {/* {isMobile() && <Header />} */}
+      <div data-testid="meetingRoom" className="meetingRoom bg-darkGray-100 w-screen">
+        {isMobile() && <Header />}
+        <VideoTileCanvas
+          isSharingScreen={isSharingScreen}
+          screensharingPublisher={screensharingPublisher}
+          screenshareVideoElement={screenshareVideoElement}
+          isRightPanelOpen={rightPanelActiveTab !== 'closed'}
+          toggleParticipantList={toggleParticipantList}
         />
-      )}
-      {!reconnecting && quality !== 'good' && isVideoEnabled && (
-        <ConnectionAlert
-          closable
-          title="Video quality problem"
-          message="Please check your connectivity. Your video may be disabled to improve the user experience"
-          severity="warning"
+        <RightPanel activeTab={rightPanelActiveTab} handleClose={closeRightPanel} />
+        <EmojisOrigin />
+        <Toolbar
+          isSharingScreen={isSharingScreen}
+          toggleShareScreen={toggleShareScreen}
+          rightPanelActiveTab={rightPanelActiveTab}
+          toggleParticipantList={toggleParticipantList}
+          toggleChat={toggleChat}
+          toggleReportIssue={toggleReportIssue}
+          participantCount={
+            subscriberWrappers.filter(({ isScreenshare }) => !isScreenshare).length + 1
+          }
         />
-      )}
-    </div>
+        {reconnecting && (
+          <ConnectionAlert
+            title="Lost connection"
+            message="Please verify your network connection"
+            severity="error"
+          />
+        )}
+        {!reconnecting && quality !== 'good' && isVideoEnabled && (
+          <ConnectionAlert
+            closable
+            title="Video quality problem"
+            message="Please check your connectivity. Your video may be disabled to improve the user experience"
+            severity="warning"
+          />
+        )}
+      </div>
+    </>
   );
 };
 

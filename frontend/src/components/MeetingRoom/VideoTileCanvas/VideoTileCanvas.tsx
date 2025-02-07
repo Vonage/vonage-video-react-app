@@ -75,7 +75,7 @@ const VideoTileCanvas = ({
   });
 
   // Height is 100vh - toolbar height (80px) - 24px wrapper margin
-  const heightClass = '@apply h-[calc(100vh_-_104px)]';
+  const heightClass = '@apply h-[calc(100dvh_-_104px)]';
   // Width is 100vw - 360px panel width - 24px panel right margin - 24px wrapper margin
   const widthClass = isRightPanelOpen
     ? '@apply w-[calc(100vw_-_392px)]'
