@@ -54,7 +54,6 @@ const HiddenToolbarItems = (): ReactElement => {
             }}
           >
             <div className="font-normal text-left flex w-full">
-              {/* This may be different */}
               <ClickAwayListener onClickAway={handleClose}>
                 <Paper
                   className="flex justify-center items-center"
@@ -64,7 +63,6 @@ const HiddenToolbarItems = (): ReactElement => {
                     padding: { xs: 1 },
                     borderRadius: 2,
                     zIndex: 1,
-                    // Each button is 66px, 8px left and right padding
                     width: '100%',
                     position: 'relative',
                     display: 'flex',

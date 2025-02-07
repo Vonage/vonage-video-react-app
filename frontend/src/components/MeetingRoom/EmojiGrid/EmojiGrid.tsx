@@ -18,7 +18,7 @@ const EmojiGrid = (): ReactElement => {
   const anchorRef = useRef<HTMLButtonElement>(null);
   const isSmallViewport = useIsSmallViewport();
   const [open, setOpen] = useState<boolean>(false);
-  // We want 30px of buffer on each side of the menu for mobile devices
+  // We want 30px of buffer on the sides of the menu for mobile devices
   const minWidth = isSmallViewport ? `calc(100dvw - 30px)` : '100%';
   // Each button is 66px, 8px left and right padding = 280px for desktop
   const maxWidth = isSmallViewport ? 'calc(100dvw - 30px)' : '280px';
