@@ -6,7 +6,7 @@ import Toolbar from '../../components/MeetingRoom/Toolbar';
 import useSessionContext from '../../hooks/useSessionContext';
 import useScreenShare from '../../hooks/useScreenShare';
 import VideoTileCanvas from '../../components/MeetingRoom/VideoTileCanvas';
-import Header from '../../components/MeetingRoom/Header';
+import MobileHeader from '../../components/MeetingRoom/MobileHeader';
 import EmojisOrigin from '../../components/MeetingRoom/EmojisOrigin';
 import RightPanel from '../../components/MeetingRoom/RightPanel';
 import useRoomName from '../../hooks/useRoomName';
@@ -88,7 +88,7 @@ const MeetingRoom = (): ReactElement => {
 
   return (
     <div data-testid="meetingRoom" className="meetingRoom bg-darkGray-100 w-screen">
-      {isMobile() && <Header />}
+      {isMobile() && <MobileHeader />}
       <VideoTileCanvas
         isSharingScreen={isSharingScreen}
         screensharingPublisher={screensharingPublisher}

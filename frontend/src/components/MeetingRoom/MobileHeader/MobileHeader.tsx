@@ -7,7 +7,14 @@ import useSessionContext from '../../../hooks/useSessionContext';
 import useRoomName from '../../../hooks/useRoomName';
 import useRoomShareUrl from '../../../hooks/useRoomShareUrl';
 
-const Header = (): ReactElement => {
+/**
+ * MobileHeader Component
+ *
+ * This component shows a header bar in mobile that consists of recording on/off indicator,
+ * meeting room name, and copy-to-clipboard button.
+ * @returns {ReactElement} The mobile header component.
+ */
+const MobileHeader = (): ReactElement => {
   const { archiveId } = useSessionContext();
   const isRecording = !!archiveId;
   const roomName = useRoomName();
@@ -24,27 +31,32 @@ const Header = (): ReactElement => {
     }, 3000);
   };
   return (
-    <div className="flex items-center justify-between px-4 py-6 bg-darkGray-100 text-white">
-      <div className="flex items-center space-x-1">
+    <div
+      className="flex items-center justify-between px-4 py-6 bg-darkGray-100 text-white"
+      data-testId="mobileHeader"
+    >
+      <div className="flex items-center space-x-2 px-1">
         {isRecording && <RadioButtonCheckedIcon className="text-red-500" />}
         <div className="line-clamp-1">{roomName}</div>
       </div>
-      <IconButton
-        size="large"
-        sx={{ color: 'rgb(95, 99, 104)' }}
-        onClick={copyUrl}
-        disabled={isCopied}
-      >
-        <Tooltip title="" TransitionComponent={Fade} TransitionProps={{ timeout: 500 }}>
-          {isCopied ? (
-            <CheckIcon sx={{ color: 'rgba(26,115,232,.9)' }} />
-          ) : (
-            <ContentCopy className="text-white" />
-          )}
-        </Tooltip>
-      </IconButton>
+      <div className="-mx-2">
+        <IconButton
+          size="large"
+          sx={{ color: 'rgb(95, 99, 104)' }}
+          onClick={copyUrl}
+          disabled={isCopied}
+        >
+          <Tooltip title="" TransitionComponent={Fade} TransitionProps={{ timeout: 500 }}>
+            {isCopied ? (
+              <CheckIcon sx={{ color: 'rgba(26,115,232,.9)' }} />
+            ) : (
+              <ContentCopy className="text-white" />
+            )}
+          </Tooltip>
+        </IconButton>
+      </div>
     </div>
   );
 };
 
-export default Header;
+export default MobileHeader;

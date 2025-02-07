@@ -19,6 +19,7 @@ import useSessionContext from '../../hooks/useSessionContext';
 import useActiveSpeaker from '../../hooks/useActiveSpeaker';
 import useScreenShare, { UseScreenShareType } from '../../hooks/useScreenShare';
 import { PUBLISHING_BLOCKED_CAPTION } from '../../utils/constants';
+import { isMobile } from '../../utils/util';
 
 const mockedNavigate = vi.fn();
 const mockedParams = { roomName: 'test-room-name' };
@@ -41,6 +42,7 @@ vi.mock('../../hooks/useLayoutManager.tsx');
 vi.mock('../../hooks/useSessionContext.tsx');
 vi.mock('../../hooks/useActiveSpeaker.tsx');
 vi.mock('../../hooks/useScreenShare.tsx');
+vi.mock('../../utils/util');
 
 const mockUseDevices = useDevices as Mock<
   [],
@@ -62,6 +64,7 @@ const mockUseLayoutManager = useLayoutManager as Mock<[], GetLayout>;
 const mockUseSessionContext = useSessionContext as Mock<[], SessionContextType>;
 const mockUseActiveSpeaker = useActiveSpeaker as Mock<[], string | undefined>;
 const mockUseScreenShare = useScreenShare as Mock<[], UseScreenShareType>;
+const mockIsMobile = vi.mocked(isMobile);
 
 const MeetingRoomWithProviders = () => (
   <UserProvider>
@@ -148,12 +151,25 @@ describe('MeetingRoom', () => {
       screenshareVideoElement: undefined,
       screensharingPublisher: null,
     });
+    mockIsMobile.mockImplementation(() => false);
   });
 
   it('should render', () => {
     render(<MeetingRoomWithProviders />);
     const meetingRoom = screen.getByTestId('meetingRoom');
     expect(meetingRoom).not.toBeNull();
+  });
+
+  it('renders the mobile header bar if it is on mobile', () => {
+    mockIsMobile.mockImplementation(() => true);
+    render(<MeetingRoomWithProviders />);
+    expect(screen.getByTestId('mobileHeader')).not.toBeNull();
+  });
+
+  it('does not render the mobile header bar if it is on desktop', () => {
+    // we do not need to mock the isMobile value here given we already do it in beforeEach
+    render(<MeetingRoomWithProviders />);
+    expect(screen.queryByTestId('mobileHeader')).toBeNull();
   });
 
   it('should call joinRoom on render only once', () => {
