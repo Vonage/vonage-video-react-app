@@ -7,6 +7,8 @@ import AvatarInitials from '../AvatarInitials';
 import ScreenShareNameDisplay from '../ScreenShareNameDisplay';
 import NameDisplay from '../MeetingRoom/NameDisplay';
 import VideoTile from '../MeetingRoom/VideoTile';
+import PinButton from '../MeetingRoom/PinButton';
+import useSessionContext from '../../hooks/useSessionContext';
 
 export type SubscriberProps = {
   subscriberWrapper: SubscriberWrapper;
@@ -33,7 +35,8 @@ const Subscriber = ({
   box,
   isActiveSpeaker,
 }: SubscriberProps): ReactElement => {
-  const { subscriber } = subscriberWrapper;
+  const { pinSubscriber } = useSessionContext();
+  const { isPinned, subscriber } = subscriberWrapper;
   const isScreenShare = subscriber?.stream?.videoType === 'screen';
   const subRef = useRef<HTMLDivElement>(null);
   const isTalking = useSubscriberTalking({ subscriber, isActiveSpeaker });
@@ -67,7 +70,7 @@ const Subscriber = ({
   const hasAudio = subscriberWrapper.subscriber.stream?.hasAudio;
   const audioIndicatorStyle =
     'rounded-xl absolute top-3 right-3 bg-darkGray-55 h-6 w-6 items-center justify-center flex m-auto';
-
+  const pinStyle = `${isPinned ? 'flex' : 'hidden'} group-hover/video-tile:flex rounded-xl absolute top-3 left-3 bg-darkGray-55 h-6 w-6 items-center justify-center m-auto`;
   return (
     <VideoTile
       id={`${subscriberWrapper.id}`}
@@ -79,6 +82,17 @@ const Subscriber = ({
       ref={subRef}
       isTalking={isTalking}
     >
+      {!isScreenShare && (
+        <PinButton
+          color="white"
+          isPinned={isPinned}
+          pinStyle={pinStyle}
+          toggleIsPinned={() => {
+            pinSubscriber(subscriberWrapper.id);
+          }}
+          participantName={username}
+        />
+      )}
       {!isScreenShare && (
         <AudioIndicator
           hasAudio={hasAudio}
