@@ -32,7 +32,7 @@ const MobileHeader = (): ReactElement => {
   };
   return (
     <div
-      className="flex items-center justify-between px-4 py-6 bg-darkGray-100 text-white"
+      className="flex items-center justify-between px-4 py-4 bg-darkGray-100 text-white"
       data-testId="mobileHeader"
     >
       <div className="flex items-center space-x-2 px-1">

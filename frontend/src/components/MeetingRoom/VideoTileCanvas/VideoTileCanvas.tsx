@@ -75,10 +75,10 @@ const VideoTileCanvas = ({
     wrapRef,
   });
 
-  // Height is 100vh - toolbar height (80px) and header height (96px) - 24px wrapper margin on mobile
+  // Height is 100vh - toolbar height (80px) and header height (80px) - 24px wrapper margin on mobile
   // Height is 100vh - toolbar height (80px) - 24px wrapper margin on desktop
   const heightClass = isMobile()
-    ? '@apply h-[calc(100vh_-_200px)]'
+    ? '@apply h-[calc(100vh_-_184px)]'
     : '@apply h-[calc(100vh_-_104px)]';
 
   // Width is 100vw - 360px panel width - 24px panel right margin - 24px wrapper margin
