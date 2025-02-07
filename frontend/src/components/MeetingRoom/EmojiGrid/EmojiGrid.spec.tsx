@@ -59,6 +59,22 @@ describe('EmojiGrid', () => {
     expect(screen.queryByTestId('emoji-grid-toggle')).toBeVisible();
   });
 
+  it('toggling the emoji grid shows and hides the emoji(s)', () => {
+    render(<EmojiGrid />);
+
+    act(() => {
+      screen.getByRole('button').click();
+    });
+
+    expect(screen.queryByTestId('send-emoji-button')).toBeVisible();
+
+    act(() => {
+      screen.getByTestId('emoji-grid-toggle').click();
+    });
+
+    expect(screen.queryByTestId('send-emoji-button')).not.toBeVisible();
+  });
+
   it('when the emoji grid preference on mobile is open, emojis are displayed', () => {
     const openedEmojiGridUserContext = {
       ...defaultUserContext,
