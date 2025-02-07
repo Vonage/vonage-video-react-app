@@ -121,7 +121,7 @@ jobs:
             -Dsonar.pullrequest.branch="$PR_BRANCH"
             -Dsonar.pullrequest.base="$BASE_BRANCH"
 
-      - name: SonarCloud Branch Analysis On develop
+      - name: SonarCloud Branch Analysis On base branch
         if: steps.check-skip-ci.outputs.result == 'false' && github.event.pull_request.head.repo.fork == false
         uses: SonarSource/sonarcloud-github-action@master
         env:
