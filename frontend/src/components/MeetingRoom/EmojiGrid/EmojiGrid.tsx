@@ -13,7 +13,6 @@ import useIsSmallViewport from '../../../hooks/useIsSmallViewport';
  * Displays a clickable button that opens a grid of emojis.
  * @returns {ReactElement} - The EmojiGrid Component.
  */
-// Take in props for open
 const EmojiGrid = (): ReactElement => {
   const anchorRef = useRef<HTMLButtonElement>(null);
   const isSmallViewport = useIsSmallViewport();
