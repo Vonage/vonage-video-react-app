@@ -1,5 +1,5 @@
-import { afterEach, beforeEach, describe, expect, it, Mock, vi } from 'vitest';
-import { render, screen } from '@testing-library/react';
+import { afterAll, afterEach, beforeEach, describe, expect, it, Mock, vi } from 'vitest';
+import { act, render, screen } from '@testing-library/react';
 import { ReactElement } from 'react';
 import { Button } from '@mui/material';
 import useUserContext from '../../../hooks/useUserContext';
@@ -18,6 +18,7 @@ vi.mock('../../../utils/emojis', () => ({
 const mockUseUserContext = useUserContext as Mock<[], UserContextType>;
 const mockUseIsSmallViewport = useIsSmallViewport as Mock<[], boolean>;
 const mockSetUser = vi.fn();
+const mockSetItem = vi.fn();
 const mockSendEmojiButton = SendEmojiButton as Mock<[], ReactElement>;
 
 const defaultUserContext = {
@@ -32,13 +33,25 @@ const defaultUserContext = {
 const FakeSendEmojiButton = <Button data-testid="send-emoji-button" />;
 
 describe('EmojiGrid', () => {
+  const nativeWindowLocalStorage = window.localStorage;
+
   beforeEach(() => {
-    mockUseUserContext.mockReturnValue(defaultUserContext);
+    mockUseUserContext.mockImplementation(() => defaultUserContext);
     mockSendEmojiButton.mockReturnValue(FakeSendEmojiButton);
+    Object.defineProperty(window, 'localStorage', {
+      value: {
+        setItem: mockSetItem,
+      },
+      writable: true,
+    });
   });
 
   afterEach(() => {
     vi.resetAllMocks();
+  });
+
+  afterAll(() => {
+    window.localStorage = nativeWindowLocalStorage;
   });
 
   it('renders the grid', () => {
@@ -61,5 +74,18 @@ describe('EmojiGrid', () => {
     render(<EmojiGrid />);
 
     expect(screen.queryByTestId('send-emoji-button')).toBeVisible();
+  });
+
+  it('when toggling the emoji grid, your preference is saved', () => {
+    const localStorageSpy = vi.spyOn(window.localStorage, 'setItem');
+    render(<EmojiGrid />);
+
+    act(() => {
+      screen.getByRole('button').click();
+    });
+
+    expect(localStorageSpy).toBeCalledTimes(1);
+    expect(localStorageSpy).toHaveBeenCalledWith('openEmojisGrid', 'true');
+    expect(mockSetUser).toBeCalled();
   });
 });

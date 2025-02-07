@@ -20,7 +20,7 @@ const EmojiGrid = (): ReactElement => {
   const anchorRef = useRef<HTMLButtonElement>(null);
   const isSmallViewport = useIsSmallViewport();
   const [open, setOpen] = useState<boolean>(
-    isSmallViewport ? user.defaultSettings.openEmojisGrid : false
+    isSmallViewport ? user?.defaultSettings?.openEmojisGrid : false
   );
   // We want 30px of buffer on the sides of the menu for mobile devices
   const minWidth = isSmallViewport ? `calc(100dvw - 30px)` : '100%';
