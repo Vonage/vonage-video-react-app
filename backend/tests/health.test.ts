@@ -1,17 +1,10 @@
-import { afterAll, beforeAll, describe, expect, it, jest } from '@jest/globals';
+import { afterAll, beforeAll, describe, expect, it } from '@jest/globals';
 import request from 'supertest';
 import { Server } from 'http';
 
-jest.mock('../helpers/config', () => ({
-  default: jest.fn().mockReturnValue({
-    apiKey: 'test-api-key',
-    apiSecret: 'test-api-secret',
-    applicationId: 'test-application-id',
-    privateKey: 'test-private-key',
-    provider: 'opentok',
-  }),
-}));
-
+// This needs to be set before the server is imported
+// and the import of the startServer cannot happen inside describe
+process.env.VIDEO_SERVICE_PROVIDER = 'opentok';
 const startServer = (await import('../server')).default;
 
 describe('GET /_/health', () => {
