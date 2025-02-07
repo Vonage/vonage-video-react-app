@@ -87,47 +87,44 @@ const MeetingRoom = (): ReactElement => {
   }, [isPublishingError, navigate, roomName]);
 
   return (
-    <>
-      {/* {isMobile() && <Header />} */}
-      <div data-testid="meetingRoom" className="meetingRoom bg-darkGray-100 w-screen">
-        {isMobile() && <Header />}
-        <VideoTileCanvas
-          isSharingScreen={isSharingScreen}
-          screensharingPublisher={screensharingPublisher}
-          screenshareVideoElement={screenshareVideoElement}
-          isRightPanelOpen={rightPanelActiveTab !== 'closed'}
-          toggleParticipantList={toggleParticipantList}
+    <div data-testid="meetingRoom" className="meetingRoom bg-darkGray-100 w-screen">
+      {isMobile() && <Header />}
+      <VideoTileCanvas
+        isSharingScreen={isSharingScreen}
+        screensharingPublisher={screensharingPublisher}
+        screenshareVideoElement={screenshareVideoElement}
+        isRightPanelOpen={rightPanelActiveTab !== 'closed'}
+        toggleParticipantList={toggleParticipantList}
+      />
+      <RightPanel activeTab={rightPanelActiveTab} handleClose={closeRightPanel} />
+      <EmojisOrigin />
+      <Toolbar
+        isSharingScreen={isSharingScreen}
+        toggleShareScreen={toggleShareScreen}
+        rightPanelActiveTab={rightPanelActiveTab}
+        toggleParticipantList={toggleParticipantList}
+        toggleChat={toggleChat}
+        toggleReportIssue={toggleReportIssue}
+        participantCount={
+          subscriberWrappers.filter(({ isScreenshare }) => !isScreenshare).length + 1
+        }
+      />
+      {reconnecting && (
+        <ConnectionAlert
+          title="Lost connection"
+          message="Please verify your network connection"
+          severity="error"
         />
-        <RightPanel activeTab={rightPanelActiveTab} handleClose={closeRightPanel} />
-        <EmojisOrigin />
-        <Toolbar
-          isSharingScreen={isSharingScreen}
-          toggleShareScreen={toggleShareScreen}
-          rightPanelActiveTab={rightPanelActiveTab}
-          toggleParticipantList={toggleParticipantList}
-          toggleChat={toggleChat}
-          toggleReportIssue={toggleReportIssue}
-          participantCount={
-            subscriberWrappers.filter(({ isScreenshare }) => !isScreenshare).length + 1
-          }
+      )}
+      {!reconnecting && quality !== 'good' && isVideoEnabled && (
+        <ConnectionAlert
+          closable
+          title="Video quality problem"
+          message="Please check your connectivity. Your video may be disabled to improve the user experience"
+          severity="warning"
         />
-        {reconnecting && (
-          <ConnectionAlert
-            title="Lost connection"
-            message="Please verify your network connection"
-            severity="error"
-          />
-        )}
-        {!reconnecting && quality !== 'good' && isVideoEnabled && (
-          <ConnectionAlert
-            closable
-            title="Video quality problem"
-            message="Please check your connectivity. Your video may be disabled to improve the user experience"
-            severity="warning"
-          />
-        )}
-      </div>
-    </>
+      )}
+    </div>
   );
 };
 
