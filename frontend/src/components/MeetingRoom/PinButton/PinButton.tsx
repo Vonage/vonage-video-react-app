@@ -6,7 +6,6 @@ import PushPinOffIcon from '../../Icons/PushPinOffIcon';
 export type PinButtonProps = {
   color?: string;
   isPinned: boolean;
-  isTileHovered: boolean;
   participantName?: string;
   pinStyle?: string;
   toggleIsPinned: () => void;
@@ -27,7 +26,6 @@ const isInsideBox = (mouseEvent: MouseEvent, rect: DOMRect) => {
 const PinButton = ({
   color,
   isPinned,
-  isTileHovered,
   participantName,
   pinStyle,
   toggleIsPinned,
@@ -87,7 +85,11 @@ const PinButton = ({
             cursor: 'pointer',
           }}
         >
-          {isTileHovered && isPinned ? <PushPinOffIcon sx={iconSx} /> : <PushPinIcon sx={iconSx} />}
+          {isHoveringButton && isPinned ? (
+            <PushPinOffIcon sx={iconSx} />
+          ) : (
+            <PushPinIcon sx={iconSx} />
+          )}
         </IconButton>
       </Tooltip>
     </div>
