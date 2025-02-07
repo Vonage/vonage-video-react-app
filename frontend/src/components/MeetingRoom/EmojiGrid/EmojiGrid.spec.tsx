@@ -36,7 +36,7 @@ describe('EmojiGrid', () => {
   const nativeWindowLocalStorage = window.localStorage;
 
   beforeEach(() => {
-    mockUseUserContext.mockImplementation(() => defaultUserContext);
+    mockUseUserContext.mockReturnValue(defaultUserContext);
     mockSendEmojiButton.mockReturnValue(FakeSendEmojiButton);
     Object.defineProperty(window, 'localStorage', {
       value: {
