@@ -120,12 +120,14 @@ The Vonage Video API Reference App for React is currently supported on the lates
 ```console
 cp backend/.env.example backend/.env
 ```
+[Click here](backend/.env.example) to learn more about config variables used in the backend.
 
 Add your Vonage Video API credentials to the newly created .env file.
 
 ```console
 cp frontend/.env.example frontend/.env
 ```
+[Click here](frontend/.env.example) to learn more about config variables used in the frontend.
 
 ### Running the project
 
