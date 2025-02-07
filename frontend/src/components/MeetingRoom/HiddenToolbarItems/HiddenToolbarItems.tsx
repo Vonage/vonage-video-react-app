@@ -35,6 +35,7 @@ const HiddenToolbarItems = (): ReactElement => {
         aria-label="open additional toolbar items menu"
       >
         <ToolbarButton
+          data-testid="hidden-toolbar-items"
           onClick={handleToggle}
           icon={<MoreVertIcon style={{ color: `${!open ? 'white' : 'rgb(138, 180, 248)'}` }} />}
           ref={anchorRef}

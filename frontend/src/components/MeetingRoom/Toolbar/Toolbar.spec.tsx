@@ -66,6 +66,8 @@ describe('Toolbar', () => {
 
     render(<Toolbar {...defaultProps} />);
 
+    expect(screen.queryByTestId('hidden-toolbar-items')).toBeVisible();
+
     expect(screen.queryByTestId('archiving-toggle')).not.toBeInTheDocument();
     expect(screen.queryByTestId('screensharing-toggle')).not.toBeInTheDocument();
     expect(screen.queryByTestId('archiving-toggle')).not.toBeInTheDocument();
