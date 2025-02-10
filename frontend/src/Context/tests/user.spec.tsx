@@ -34,7 +34,7 @@ describe('UserContext', () => {
     const wrapper = ({ children }: { children: React.ReactNode }) => (
       <UserProvider>{children}</UserProvider>
     );
-    const expectedUser: UserType = {
+    const expectedUser = {
       defaultSettings: {
         publishAudio: true,
         publishVideo: true,
@@ -43,7 +43,6 @@ describe('UserContext', () => {
         noiseSuppression: false,
         audioSource: undefined,
         videoSource: undefined,
-        openEmojisGrid: false,
       },
       issues: {
         reconnections: 0,

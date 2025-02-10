@@ -5,8 +5,6 @@ import useSpeakingDetector from '../../../hooks/useSpeakingDetector';
 import useIsSmallViewport from '../../../hooks/useIsSmallViewport';
 import displayOnDesktop from '../../../utils/displayOnDesktop';
 import Toolbar, { ToolbarProps } from './Toolbar';
-import useUserContext from '../../../hooks/useUserContext';
-import { UserContextType } from '../../../Context/user';
 
 const mockedRoomName = { roomName: 'test-room-name' };
 
@@ -19,21 +17,10 @@ vi.mock('react-router-dom', () => ({
 vi.mock('../../../hooks/useSpeakingDetector');
 vi.mock('../../../hooks/useIsSmallViewport');
 vi.mock('../../../utils/displayOnDesktop');
-vi.mock('../../../hooks/useUserContext');
 
 const mockUseSpeakingDetector = useSpeakingDetector as Mock<[], boolean>;
 const mockUseIsSmallViewport = useIsSmallViewport as Mock<[], boolean>;
 const mockDisplayOnDesktop = displayOnDesktop as Mock<[], '' | 'md:inline'>;
-const mockUseUserContext = useUserContext as Mock<[], UserContextType>;
-
-const defaultUserContext = {
-  user: {
-    defaultSettings: {
-      openEmojisGrid: false,
-    },
-  },
-  setUser: vi.fn(),
-} as unknown as UserContextType;
 
 describe('Toolbar', () => {
   beforeEach(() => {
@@ -41,7 +28,6 @@ describe('Toolbar', () => {
       state: mockedRoomName,
     });
     mockUseSpeakingDetector.mockReturnValue(false);
-    mockUseUserContext.mockReturnValue(defaultUserContext);
   });
   afterAll(() => {
     vi.restoreAllMocks();
