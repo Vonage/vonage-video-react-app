@@ -35,7 +35,7 @@ const Subscriber = ({
   box,
   isActiveSpeaker,
 }: SubscriberProps): ReactElement => {
-  const { pinSubscriber } = useSessionContext();
+  const { isMaxPinned, pinSubscriber } = useSessionContext();
   const { isPinned, subscriber } = subscriberWrapper;
   const isScreenShare = subscriber?.stream?.videoType === 'screen';
   const subRef = useRef<HTMLDivElement>(null);
@@ -70,7 +70,7 @@ const Subscriber = ({
   const hasAudio = subscriberWrapper.subscriber.stream?.hasAudio;
   const audioIndicatorStyle =
     'rounded-xl absolute top-3 right-3 bg-darkGray-55 h-6 w-6 items-center justify-center flex m-auto';
-  const pinStyle = `${isPinned ? 'flex' : 'hidden'} group-hover/video-tile:flex group-hover/video-tile:bg-darkGray-55 rounded-xl absolute top-3 left-3 h-6 w-6 items-center justify-center m-auto`;
+  const pinStyle = `${isPinned ? 'flex' : 'hidden'} group-hover/video-tile:flex rounded-xl absolute top-3 left-3 h-6 w-6 items-center justify-center m-auto`;
   return (
     <VideoTile
       id={`${subscriberWrapper.id}`}
@@ -87,6 +87,7 @@ const Subscriber = ({
           color="white"
           isPinned={isPinned}
           pinStyle={pinStyle}
+          isMaxPinned={isMaxPinned}
           toggleIsPinned={() => {
             pinSubscriber(subscriberWrapper.id);
           }}

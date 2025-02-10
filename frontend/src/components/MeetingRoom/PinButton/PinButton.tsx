@@ -5,6 +5,7 @@ import PushPinOffIcon from '../../Icons/PushPinOffIcon';
 
 export type PinButtonProps = {
   color?: string;
+  isMaxPinned: boolean;
   isPinned: boolean;
   participantName?: string;
   pinStyle?: string;
@@ -25,18 +26,30 @@ const isInsideBox = (mouseEvent: MouseEvent, rect: DOMRect) => {
 
 const PinButton = ({
   color,
+  isMaxPinned,
   isPinned,
   participantName,
   pinStyle,
   toggleIsPinned,
 }: PinButtonProps): ReactElement | false => {
+  const isDisabled = isMaxPinned && !isPinned;
   const anchorRef = useRef<HTMLDivElement | null>(null);
   const eventRef = useRef<((this: Document, ev: MouseEvent) => void) | null>(null);
   const [isHoveringButton, setIsHoveringButton] = useState<boolean>(false);
   const iconSx = {
     fontSize: '18px',
-    color,
+    color: isDisabled ? 'rgba(255,255,255,.54)' : color,
     cursor: 'pointer',
+  };
+
+  const getTooltipText = () => {
+    if (isDisabled) {
+      return `You can't pin any more tiles`;
+    }
+    if (isPinned) {
+      return `Unpin ${participantName}'s video`;
+    }
+    return `Pin ${participantName}'s video`;
   };
 
   useEffect(() => {
@@ -71,12 +84,9 @@ const PinButton = ({
       onPointerLeave={() => setIsHoveringButton(false)}
       onBlur={() => setIsHoveringButton(false)}
     >
-      <Tooltip
-        title={isPinned ? `Unpin ${participantName}'s video` : `Pin ${participantName}'s video`}
-        disableFocusListener
-        open={isHoveringButton}
-      >
+      <Tooltip title={getTooltipText()} disableFocusListener open={isHoveringButton}>
         <IconButton
+          disabled={isDisabled}
           onClick={handleClick}
           sx={{
             height: 24,

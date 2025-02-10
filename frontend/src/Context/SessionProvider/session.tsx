@@ -32,6 +32,7 @@ import useChat from '../../hooks/useChat';
 import { SubscriberWrapper } from '../../types/session';
 import sortByDisplayPriority from '../../utils/sortByDisplayPriority';
 import { ChatMessageType } from '../../types/chat';
+import { isMobile } from '../../utils/util';
 
 export type { ChatMessageType } from '../../types/chat';
 
@@ -69,6 +70,7 @@ export type SessionContextType = {
   closeRightPanel: () => void;
   toggleReportIssue: () => void;
   pinSubscriber: (subscriberId: string) => void;
+  isMaxPinned: boolean;
 };
 
 /**
@@ -98,6 +100,7 @@ export const SessionContext = createContext<SessionContextType>({
   closeRightPanel: () => {},
   toggleReportIssue: () => {},
   pinSubscriber: () => {},
+  isMaxPinned: false,
 });
 
 export type ConnectionEventType = {
@@ -127,6 +130,8 @@ export type StreamCreatedEvent = Event<'streamCreated', Session> & {
 export type SessionProviderProps = {
   children: ReactNode;
 };
+
+const MAX_PIN_COUNT = isMobile() ? 1 : 3;
 
 /**
  * SessionProvider - React Context Provider for SessionProvider
@@ -187,6 +192,11 @@ const SessionProvider = ({ children }: SessionProviderProps): ReactElement => {
       return prevSubscriberWrappers;
     });
   }, []);
+
+  const isMaxPinned = useMemo(() => {
+    const pinnedCount = subscriberWrappers.filter((sub) => sub.isPinned).length;
+    return pinnedCount >= MAX_PIN_COUNT;
+  }, [subscriberWrappers]);
 
   /**
    * Marks a subscriber as pinned, and moves it to the top of the display order.
@@ -474,6 +484,7 @@ const SessionProvider = ({ children }: SessionProviderProps): ReactElement => {
       closeRightPanel,
       toggleReportIssue,
       pinSubscriber,
+      isMaxPinned,
     }),
     [
       activeSpeakerId,
@@ -499,6 +510,7 @@ const SessionProvider = ({ children }: SessionProviderProps): ReactElement => {
       closeRightPanel,
       toggleReportIssue,
       pinSubscriber,
+      isMaxPinned,
     ]
   );
 
