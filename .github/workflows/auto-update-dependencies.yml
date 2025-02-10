@@ -1,0 +1,36 @@
+name: auto-update-dependencies
+
+on:
+  push:
+    branches:
+      - behei-vonage/vidcs-3382-deps
+
+permissions:
+  contents: read
+
+jobs:
+  run:
+    runs-on: ubuntu-22.04
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Install dependencies
+        run: npm install axios
+      - name: Run dependency update script
+        run: node scripts/generateDependenciesList.js
+
+      - name: Commit and push changes
+        run: |
+          git config --local user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+          git add docs/DEPENDENCIES.md
+          git commit -a -m "updated dependencies list [auto-generated]"
+          git push
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
