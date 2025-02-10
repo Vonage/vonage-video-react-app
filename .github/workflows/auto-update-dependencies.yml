@@ -23,7 +23,7 @@ jobs:
       - name: Install dependencies
         run: npm install axios
       - name: Run dependency update script
-        run: node scripts/generateDependencies.js
+        run: node scripts/generateDependenciesList.js
 
       - name: Commit and push changes
         run: |
