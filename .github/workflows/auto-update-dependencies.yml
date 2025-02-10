@@ -3,7 +3,7 @@ name: auto-update-dependencies
 on:
   push:
     branches:
-      - behei-vonage/vidcs-3382-deps
+      - develop
 
 permissions:
   contents: read
