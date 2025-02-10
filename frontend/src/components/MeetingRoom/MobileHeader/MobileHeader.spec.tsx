@@ -1,5 +1,5 @@
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
-import { vi, describe, it, Mock, expect, beforeEach, afterEach } from 'vitest';
+import { vi, describe, it, Mock, expect, beforeEach, afterEach, beforeAll, afterAll } from 'vitest';
 import MobileHeader from './MobileHeader';
 import useSessionContext from '../../../hooks/useSessionContext';
 import useRoomName from '../../../hooks/useRoomName';
@@ -13,10 +13,7 @@ describe('MobileHeader component', () => {
   const mockedRoomName = 'test-room-name';
   let originalClipboard: Clipboard;
 
-  beforeEach(() => {
-    (useRoomName as Mock).mockReturnValue(mockedRoomName);
-    (useRoomShareUrl as Mock).mockReturnValue('https://example.com/room123');
-
+  beforeAll(() => {
     originalClipboard = navigator.clipboard;
     Object.assign(navigator, {
       clipboard: {
@@ -25,8 +22,16 @@ describe('MobileHeader component', () => {
     });
   });
 
-  afterEach(() => {
+  afterAll(() => {
     Object.assign(navigator, { clipboard: originalClipboard });
+  });
+
+  beforeEach(() => {
+    (useRoomName as Mock).mockReturnValue(mockedRoomName);
+    (useRoomShareUrl as Mock).mockReturnValue('https://example.com/test-room-name');
+  });
+
+  afterEach(() => {
     vi.clearAllMocks();
   });
 
@@ -62,7 +67,9 @@ describe('MobileHeader component', () => {
     fireEvent.click(copyButton);
 
     await waitFor(() => {
-      expect(navigator.clipboard.writeText).toHaveBeenCalledWith('https://example.com/room123');
+      expect(navigator.clipboard.writeText).toHaveBeenCalledWith(
+        'https://example.com/test-room-name'
+      );
       expect(screen.getByTestId('CheckIcon')).toBeInTheDocument();
     });
   });
