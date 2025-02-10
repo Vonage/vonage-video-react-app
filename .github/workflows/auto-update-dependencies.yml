@@ -21,7 +21,7 @@ jobs:
         with:
           node-version: 22
       - name: Install dependencies
-        run: npm install axios
+        run: npm install axios --no-save
       - name: Run dependency update script
         run: node scripts/generateDependenciesList.js
 
@@ -30,7 +30,7 @@ jobs:
           git config --local user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git config --local user.name "github-actions[bot]"
           git add docs/DEPENDENCIES.md
-          git commit -a -m "updated dependencies list [auto-generated]"
+          git commit -a -m "updated dependencies list [auto-generated]" || exit 0
           git push
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
