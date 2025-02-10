@@ -32,6 +32,7 @@ import useChat from '../../hooks/useChat';
 import { SubscriberWrapper } from '../../types/session';
 import sortByDisplayPriority from '../../utils/sortByDisplayPriority';
 import { ChatMessageType } from '../../types/chat';
+import useEmojiGrid from '../../hooks/useEmojiGrid';
 
 export type { ChatMessageType } from '../../types/chat';
 
@@ -68,6 +69,8 @@ export type SessionContextType = {
   toggleChat: () => void;
   closeRightPanel: () => void;
   toggleReportIssue: () => void;
+  openEmojiGrid: boolean;
+  setOpenEmojiGrid: Dispatch<SetStateAction<boolean>>;
 };
 
 /**
@@ -96,6 +99,8 @@ export const SessionContext = createContext<SessionContextType>({
   toggleChat: () => {},
   closeRightPanel: () => {},
   toggleReportIssue: () => {},
+  openEmojiGrid: false,
+  setOpenEmojiGrid: () => {},
 });
 
 export type ConnectionEventType = {
@@ -152,6 +157,7 @@ const SessionProvider = ({ children }: SessionProviderProps): ReactElement => {
     incrementUnreadCount,
     toggleReportIssue,
   } = useRightPanel();
+  const { openEmojiGrid, setOpenEmojiGrid } = useEmojiGrid();
 
   const handleChatSignal = ({ data }: { data: string }) => {
     if (data) {
@@ -445,6 +451,8 @@ const SessionProvider = ({ children }: SessionProviderProps): ReactElement => {
       toggleChat,
       closeRightPanel,
       toggleReportIssue,
+      openEmojiGrid,
+      setOpenEmojiGrid,
     }),
     [
       activeSpeakerId,
@@ -469,6 +477,8 @@ const SessionProvider = ({ children }: SessionProviderProps): ReactElement => {
       toggleChat,
       closeRightPanel,
       toggleReportIssue,
+      openEmojiGrid,
+      setOpenEmojiGrid,
     ]
   );
 

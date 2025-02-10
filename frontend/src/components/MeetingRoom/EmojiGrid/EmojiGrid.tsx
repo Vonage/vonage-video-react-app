@@ -6,8 +6,7 @@ import ToolbarButton from '../ToolbarButton';
 import emojiMap from '../../../utils/emojis';
 import SendEmojiButton from '../SendEmojiButton';
 import useIsSmallViewport from '../../../hooks/useIsSmallViewport';
-import useUserContext from '../../../hooks/useUserContext';
-import { UserType } from '../../../Context/user';
+import useSessionContext from '../../../hooks/useSessionContext';
 
 /**
  * EmojiGrid Component
@@ -16,12 +15,10 @@ import { UserType } from '../../../Context/user';
  * @returns {ReactElement} - The EmojiGrid Component.
  */
 const EmojiGrid = (): ReactElement => {
-  const { user, setUser } = useUserContext();
+  const { openEmojiGrid, setOpenEmojiGrid } = useSessionContext();
   const anchorRef = useRef<HTMLButtonElement>(null);
   const isSmallViewport = useIsSmallViewport();
-  const [open, setOpen] = useState<boolean>(
-    isSmallViewport ? user?.defaultSettings?.openEmojisGrid : false
-  );
+  const [open, setOpen] = useState<boolean>(isSmallViewport ? openEmojiGrid : false);
   // We want 30px of buffer on the sides of the menu for mobile devices
   const minWidth = isSmallViewport ? `calc(100dvw - 30px)` : '100%';
   // Each button is 66px, 8px left and right padding = 280px for desktop
@@ -32,16 +29,9 @@ const EmojiGrid = (): ReactElement => {
 
   const updateOpenEmojisGrid = useCallback(
     (newValue: boolean) => {
-      setUser((prevUser: UserType) => ({
-        ...prevUser,
-        defaultSettings: {
-          ...prevUser.defaultSettings,
-          openEmojisGrid: newValue,
-        },
-      }));
-      window.localStorage.setItem('openEmojisGrid', JSON.stringify(newValue));
+      setOpenEmojiGrid(newValue);
     },
-    [setUser]
+    [setOpenEmojiGrid]
   );
 
   const handleClose = (event: MouseEvent | TouchEvent) => {
