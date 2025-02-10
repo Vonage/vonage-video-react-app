@@ -58,6 +58,7 @@ describe('RedirectToWaitingRoom Component', () => {
   });
 
   it('renders the child component if the user set bypass to true', () => {
+    vi.stubEnv('VITE_ENABLE_REPORT_ISSUE', 'false');
     const { getByText } = render(
       <MemoryRouter initialEntries={['/room?bypass=true']}>
         <RedirectToWaitingRoom>
@@ -69,7 +70,21 @@ describe('RedirectToWaitingRoom Component', () => {
     expect(getByText('TestComponent')).toBeInTheDocument();
   });
 
+  it('renders the child component if the user set VITE_ENABLE_REPORT_ISSUE to true', () => {
+    vi.stubEnv('VITE_ENABLE_REPORT_ISSUE', 'true');
+    const { getByText } = render(
+      <MemoryRouter initialEntries={['/room']}>
+        <RedirectToWaitingRoom>
+          <TestComponent />
+        </RedirectToWaitingRoom>
+      </MemoryRouter>
+    );
+
+    expect(getByText('TestComponent')).toBeInTheDocument();
+  });
+
   it('renders the child component if the user has access', () => {
+    vi.stubEnv('VITE_ENABLE_REPORT_ISSUE', 'false');
     const { getByText } = render(
       <MemoryRouter initialEntries={[{ pathname: '/room', state: { hasAccess: true } }]}>
         <RedirectToWaitingRoom>
