@@ -81,12 +81,9 @@ const AudioIndicator = ({
             borderRadius: '50%',
             cursor: hasAudio ? 'pointer' : 'default',
           }}
+          onClick={hasAudio ? handleClick : undefined}
         >
-          {hasAudio ? (
-            <Mic sx={sxProperties} onClick={handleClick} />
-          ) : (
-            <MicOff sx={sxProperties} />
-          )}
+          {hasAudio ? <Mic sx={sxProperties} /> : <MicOff sx={sxProperties} />}
         </IconButton>
       </Tooltip>
       <PopupDialog
