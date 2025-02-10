@@ -1,7 +1,7 @@
 import { ReactElement, useState } from 'react';
 import RadioButtonCheckedIcon from '@mui/icons-material/RadioButtonChecked';
 import { ContentCopy } from '@mui/icons-material';
-import { IconButton, Tooltip, Fade } from '@mui/material';
+import { IconButton, Fade } from '@mui/material';
 import CheckIcon from '@mui/icons-material/Check';
 import useSessionContext from '../../../hooks/useSessionContext';
 import useRoomName from '../../../hooks/useRoomName';
@@ -40,20 +40,20 @@ const MobileHeader = (): ReactElement => {
         <div className="line-clamp-1">{roomName}</div>
       </div>
       <div className="-mx-2">
-        <IconButton
-          size="large"
-          sx={{ color: 'rgb(95, 99, 104)' }}
-          onClick={copyUrl}
-          disabled={isCopied}
-        >
-          <Tooltip title="" TransitionComponent={Fade} TransitionProps={{ timeout: 500 }}>
+        <Fade in timeout={500}>
+          <IconButton
+            size="large"
+            sx={{ color: 'rgb(95, 99, 104)' }}
+            onClick={copyUrl}
+            disabled={isCopied}
+          >
             {isCopied ? (
               <CheckIcon sx={{ color: 'rgba(26,115,232,.9)' }} />
             ) : (
               <ContentCopy className="text-white" />
             )}
-          </Tooltip>
-        </IconButton>
+          </IconButton>
+        </Fade>
       </div>
     </div>
   );
