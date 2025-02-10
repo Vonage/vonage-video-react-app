@@ -44,6 +44,7 @@ const LayoutToggleButton = ({ isScreenSharePresent }: LayoutToggleButtonProps): 
     >
       <ToolbarButton
         onClick={handleClick}
+        data-testid="layout-toggle"
         icon={
           !isGrid ? (
             <ViewSidebarIcon className={isScreenSharePresent ? 'text-gray-500' : 'text-white'} />
