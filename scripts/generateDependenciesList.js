@@ -6,8 +6,8 @@ const readFile = (path) => {
 };
 
 const generateDependenciesList = async () => {
-  const frontendPackageJson = readFile('../frontend/package.json');
-  const backendPackageJson = readFile('../backend/package.json');
+  const frontendPackageJson = readFile('./frontend/package.json');
+  const backendPackageJson = readFile('./backend/package.json');
 
   const frontendDependencies = {
     ...frontendPackageJson.dependencies,
@@ -32,7 +32,7 @@ ${backendMarkdownList.sort().join('\n')}
 `;
 
   const markdownContent = frontendSection + backendSection;
-  fs.writeFileSync('../docs/DEPENDENCIES.md', markdownContent, 'utf8');
+  fs.writeFileSync('./docs/DEPENDENCIES.md', markdownContent, 'utf8');
 };
 
 const createMarkdownList = async (dependencies) => {
