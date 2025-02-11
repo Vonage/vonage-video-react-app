@@ -160,13 +160,13 @@ describe('MeetingRoom', () => {
     expect(meetingRoom).not.toBeNull();
   });
 
-  it('renders the mobile header bar if it is on mobile', () => {
+  it('renders the small viewport header bar if it is on a small tab or device', () => {
     mockUseIsSmallViewport.mockImplementation(() => true);
     render(<MeetingRoomWithProviders />);
     expect(screen.getByTestId('smallViewportHeader')).not.toBeNull();
   });
 
-  it('does not render the mobile header bar if it is on desktop', () => {
+  it('does not render the small viewport header bar if it is on desktop', () => {
     // we do not need to mock the small port view value here given we already do it in beforeEach
     render(<MeetingRoomWithProviders />);
     expect(screen.queryByTestId('smallViewportHeader')).toBeNull();
