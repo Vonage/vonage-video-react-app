@@ -27,27 +27,20 @@ const EmojiGrid = (): ReactElement => {
   // We account for the 9px translation from the HiddenToolBarItems.
   const left = isSmallViewport ? 'calc(50dvw - 9px)' : '';
 
-  const updateOpenEmojisGrid = useCallback(
-    (newValue: boolean) => {
-      setOpenEmojiGrid(newValue);
-    },
-    [setOpenEmojiGrid]
-  );
-
   const handleClose = (event: MouseEvent | TouchEvent) => {
     const target = event.target as HTMLElement;
     setOpen(false);
 
     // If a user clicks the toggle button, we save their preference for later
     if (target.closest('#emoji-grid-toggle')) {
-      updateOpenEmojisGrid(false);
+      setOpenEmojiGrid(false);
     }
   };
 
   const handleToggle = () => {
     setOpen((prevOpen) => {
       const newOpen = !prevOpen;
-      updateOpenEmojisGrid(newOpen);
+      setOpenEmojiGrid(newOpen);
 
       return newOpen;
     });
