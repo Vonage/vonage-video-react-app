@@ -1,6 +1,6 @@
 import { Grid, Grow, Paper, Popper, Tooltip } from '@mui/material';
 import { EmojiEmotions } from '@mui/icons-material';
-import { ReactElement, useRef, useState } from 'react';
+import { ReactElement, useRef } from 'react';
 import { ClickAwayListener, PopperChildrenProps } from '@mui/base';
 import ToolbarButton from '../ToolbarButton';
 import emojiMap from '../../../utils/emojis';
@@ -18,7 +18,6 @@ const EmojiGrid = (): ReactElement => {
   const { openEmojiGrid, setOpenEmojiGrid } = useSessionContext();
   const anchorRef = useRef<HTMLButtonElement>(null);
   const isSmallViewport = useIsSmallViewport();
-  const [open, setOpen] = useState<boolean>(isSmallViewport ? openEmojiGrid : false);
   // We want 30px of buffer on the sides of the menu for mobile devices
   const minWidth = isSmallViewport ? `calc(100dvw - 30px)` : '100%';
   // Each button is 66px, 8px left and right padding = 280px for desktop
@@ -29,7 +28,6 @@ const EmojiGrid = (): ReactElement => {
 
   const handleClose = (event: MouseEvent | TouchEvent) => {
     const target = event.target as HTMLElement;
-    setOpen(false);
 
     // If a user clicks the toggle button, we save their preference for later
     if (target.closest('#emoji-grid-toggle')) {
@@ -38,7 +36,7 @@ const EmojiGrid = (): ReactElement => {
   };
 
   const handleToggle = () => {
-    setOpen((prevOpen) => {
+    setOpenEmojiGrid((prevOpen) => {
       const newOpen = !prevOpen;
       setOpenEmojiGrid(newOpen);
 
@@ -53,12 +51,22 @@ const EmojiGrid = (): ReactElement => {
           onClick={handleToggle}
           data-testid="emoji-grid-toggle"
           id="emoji-grid-toggle"
-          icon={<EmojiEmotions style={{ color: `${!open ? 'white' : 'rgb(138, 180, 248)'}` }} />}
+          icon={
+            <EmojiEmotions
+              style={{ color: `${!openEmojiGrid ? 'white' : 'rgb(138, 180, 248)'}` }}
+            />
+          }
           ref={anchorRef}
         />
       </Tooltip>
 
-      <Popper open={open} anchorEl={anchorRef.current} transition disablePortal placement="top">
+      <Popper
+        open={openEmojiGrid}
+        anchorEl={anchorRef.current}
+        transition
+        disablePortal
+        placement="top"
+      >
         {({ TransitionProps, placement }: PopperChildrenProps) => (
           <Grow
             {...TransitionProps}
@@ -85,7 +93,7 @@ const EmojiGrid = (): ReactElement => {
                   <Grid
                     container
                     spacing={0}
-                    display={open ? 'flex' : 'none'}
+                    display={openEmojiGrid ? 'flex' : 'none'}
                     sx={{
                       width: minWidth,
                     }}
