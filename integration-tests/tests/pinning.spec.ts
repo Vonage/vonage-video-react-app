@@ -39,18 +39,24 @@ test.describe('participant pinning', () => {
     await pageThree.waitForSelector('.publisher', { state: 'visible' });
     await pageThree.waitForSelector('.subscriber', { state: 'visible' });
 
-    await expect(await pageOne.locator('.subscriber').getByText('User Two')).toBeVisible();
+    await expect(await pageThree.locator('.subscriber').getByText('User Two')).toBeVisible();
 
-    const userTwoSubscriber = await pageOne
-      .getByTestId(/subscriber\-container/)
-      .filter({ has: pageOne.getByText('User Two') });
+    // Change view to grid layout
+    await pageThree.getByTestId('ViewSidebarIcon').click();
+    // Give the page some time to render the grid layout
+    await pageThree.waitForTimeout(500);
+
+    const userTwoSubscriber = await pageThree
+      .getByTestId(/subscriber-container/)
+      .filter({ has: pageThree.getByText('User Two') });
 
     await userTwoSubscriber.focus();
+    await userTwoSubscriber.hover();
 
     const pinUserTwoButton = await userTwoSubscriber.getByTestId('pin-button');
     await pinUserTwoButton.click();
 
-    const publisher = await pageOne.locator('.publisher');
+    const publisher = await pageThree.locator('.publisher');
     const userTwoSubscriberRet = await userTwoSubscriber.boundingBox();
     const publisherRect = await publisher.boundingBox();
     expect(userTwoSubscriberRet.width).toBeGreaterThan(1.2 * publisherRect.width);
