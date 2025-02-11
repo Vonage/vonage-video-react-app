@@ -3,7 +3,7 @@ name: auto-update-dependencies
 on:
   push:
     branches:
-      - develop
+      - behei-vonage/vidcs-3382-deps-2
 
 permissions:
   contents: read
@@ -24,14 +24,15 @@ jobs:
         run: npm install axios --no-save
       - name: Run dependency update script
         run: node scripts/generateDependenciesList.js
-
-      - name: Commit and push changes
+      - name: Do not commit yarn file
         run: |
-          git config --local user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git config --local user.name "github-actions[bot]"
-          git add docs/DEPENDENCIES.md
           git checkout -- yarn.lock
-          git commit -a -m "updated dependencies list [auto-generated]" || exit 0
-          git push
+      - name: Auto-commit updated dependencies file
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: 'update dependencies list [auto-generated]'
+          file_pattern: 'docs/DEPENDENCIES.md'
+          commit_user_name: 'github-actions[bot]'
+          commit_user_email: '41898282+github-actions[bot]@users.noreply.github.com'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
