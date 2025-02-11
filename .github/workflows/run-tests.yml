@@ -86,7 +86,7 @@ jobs:
 
       - name: Setup node
         if: steps.check-skip-ci.outputs.result == 'false'
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v3
         with:
           node-version: 22
           cache: npm
