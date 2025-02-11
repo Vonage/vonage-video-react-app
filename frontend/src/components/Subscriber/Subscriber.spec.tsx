@@ -10,12 +10,17 @@ describe('Subscriber', () => {
     cleanup();
   });
 
-  const createSubscriberWrapper = (id: string, isScreenshare: boolean): SubscriberWrapper => {
+  const createSubscriberWrapper = (
+    id: string,
+    isScreenshare: boolean,
+    isPinned: boolean = false
+  ): SubscriberWrapper => {
     const videoType = isScreenshare ? 'screen' : 'camera';
     return {
       id,
       element: document.createElement('video'),
       isScreenshare,
+      isPinned,
       subscriber: {
         on: vi.fn(),
         off: vi.fn(),
@@ -73,5 +78,65 @@ describe('Subscriber', () => {
 
     expect(screen.getByTestId(`subscriber-container-${mockedSubscriberId}`)).toBeVisible();
     expect(screen.queryByTestId('audio-indicator')).not.toBeInTheDocument();
+  });
+
+  it('should render a pin icon if the subscriber is pinned', () => {
+    const mockedSubscriberId = 'OT_7a0a1bfd-2892-4f5e-90e0-33dafdc7c373';
+    const subscriberWrapper = createSubscriberWrapper(mockedSubscriberId, false, true);
+    const mockedBox = createMockBox(10, 10, 10, 10);
+
+    render(
+      <Subscriber
+        subscriberWrapper={subscriberWrapper}
+        isHidden={false}
+        box={mockedBox}
+        isActiveSpeaker={false}
+      />
+    );
+
+    expect(screen.getByTestId(`subscriber-container-${mockedSubscriberId}`)).toBeVisible();
+    expect(screen.queryByTestId('pin-button')).toBeVisible();
+    // Checking classes because toBeVisible will not work for group hover states with tailwind https://github.com/testing-library/jest-dom/issues/510
+    expect(screen.queryByTestId('pin-button')).not.toHaveClass('hidden');
+  });
+
+  it('should show pin icon when subscriber is hovered', async () => {
+    const mockedSubscriberId = 'OT_7a0a1bfd-2892-4f5e-90e0-33dafdc7c373';
+    const subscriberWrapper = createSubscriberWrapper(mockedSubscriberId, false, false);
+    const mockedBox = createMockBox(10, 10, 10, 10);
+
+    render(
+      <Subscriber
+        subscriberWrapper={subscriberWrapper}
+        isHidden={false}
+        box={mockedBox}
+        isActiveSpeaker={false}
+      />
+    );
+
+    const subscriberContainer = screen.getByTestId(`subscriber-container-${mockedSubscriberId}`);
+    // Checking classes because toBeVisible will not work for group hover states with tailwind https://github.com/testing-library/jest-dom/issues/510
+    expect(subscriberContainer).toHaveClass('group/video-tile');
+    expect(screen.queryByTestId('pin-button')).toHaveClass('group-hover/video-tile:flex');
+    expect(screen.queryByTestId('pin-button')).toHaveClass('hidden');
+    expect(screen.queryByTestId('pin-button')).toHaveClass('hidden');
+  });
+
+  it('should not render pin icon when screenshare subscriber is hovered', async () => {
+    const mockedSubscriberId = 'OT_7a0a1bfd-2892-4f5e-90e0-33dafdc7c373';
+    const subscriberWrapper = createSubscriberWrapper(mockedSubscriberId, true);
+    const mockedBox = createMockBox(10, 10, 10, 10);
+
+    render(
+      <Subscriber
+        subscriberWrapper={subscriberWrapper}
+        isHidden={false}
+        box={mockedBox}
+        isActiveSpeaker={false}
+      />
+    );
+
+    expect(screen.getByTestId(`subscriber-container-${mockedSubscriberId}`)).toBeVisible();
+    expect(screen.queryByTestId('pin-button')).not.toBeInTheDocument();
   });
 });

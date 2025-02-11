@@ -17,6 +17,12 @@ const sortByDisplayPriority =
     if (wrapperB.isScreenshare) {
       return 1;
     }
+    if (wrapperA.isPinned) {
+      return -1;
+    }
+    if (wrapperB.isPinned) {
+      return 1;
+    }
     // We prioritize the active speaker after the screenshare so whoever is speaking is always displayed.
     if (wrapperA.id === activeSpeakerId) {
       return -1;

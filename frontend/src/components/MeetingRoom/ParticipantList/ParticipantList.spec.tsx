@@ -42,6 +42,7 @@ const createSubscriberWrapper = (
   return {
     id,
     element: document.createElement('video'),
+    isPinned: false,
     isScreenshare,
     subscriber: {
       videoWidth: () => 1280,

@@ -68,6 +68,7 @@ export type SessionContextType = {
   toggleChat: () => void;
   closeRightPanel: () => void;
   toggleReportIssue: () => void;
+  pinSubscriber: (subscriberId: string) => void;
 };
 
 /**
@@ -96,6 +97,7 @@ export const SessionContext = createContext<SessionContextType>({
   toggleChat: () => {},
   closeRightPanel: () => {},
   toggleReportIssue: () => {},
+  pinSubscriber: () => {},
 });
 
 export type ConnectionEventType = {
@@ -185,6 +187,31 @@ const SessionProvider = ({ children }: SessionProviderProps): ReactElement => {
       return prevSubscriberWrappers;
     });
   }, []);
+
+  /**
+   * Marks a subscriber as pinned, and moves it to the top of the display order.
+   * @param {string} id - The ID of the subscriber to pin.
+   */
+  const pinSubscriber = useCallback(
+    (id: string) => {
+      setSubscriberWrappers((previousSubscriberWrappers) => {
+        const subscriber = previousSubscriberWrappers.find(({ id: streamId }) => streamId === id);
+        if (subscriber) {
+          const pinnedSubscriber = {
+            ...subscriber,
+            isPinned: !subscriber.isPinned,
+          };
+          const subscribers = [
+            ...previousSubscriberWrappers.filter(({ id: streamId }) => streamId !== id),
+            pinnedSubscriber,
+          ].sort(sortByDisplayPriority(activeSpeakerId));
+          return subscribers;
+        }
+        return previousSubscriberWrappers;
+      });
+    },
+    [activeSpeakerId]
+  );
 
   // hook to keep track of the active speaker during the call and move it to the top of the display order
   useEffect(() => {
@@ -280,6 +307,7 @@ const SessionProvider = ({ children }: SessionProviderProps): ReactElement => {
             element,
             subscriber,
             isScreenshare,
+            isPinned: false,
             // subscriber.id is refers to the targetElement id and will be undefined when insertDefaultUI is false so we use streamId to track our subscriber
             id: streamId,
           };
@@ -445,6 +473,7 @@ const SessionProvider = ({ children }: SessionProviderProps): ReactElement => {
       toggleChat,
       closeRightPanel,
       toggleReportIssue,
+      pinSubscriber,
     }),
     [
       activeSpeakerId,
@@ -469,6 +498,7 @@ const SessionProvider = ({ children }: SessionProviderProps): ReactElement => {
       toggleChat,
       closeRightPanel,
       toggleReportIssue,
+      pinSubscriber,
     ]
   );
 

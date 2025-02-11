@@ -8,4 +8,5 @@ export type SubscriberWrapper = {
   subscriber: Subscriber;
   isScreenshare: boolean;
   id: string;
+  isPinned: boolean;
 };
