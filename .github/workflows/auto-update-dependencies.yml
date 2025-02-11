@@ -8,6 +8,9 @@ on:
 permissions:
   contents: read
 
+env:
+  BRANCH_NAME: 'behei-vonage/vidcs-3382-deps-2'
+
 jobs:
   run:
     runs-on: ubuntu-22.04
@@ -28,11 +31,14 @@ jobs:
         run: |
           git checkout -- yarn.lock
       - name: Auto-commit updated dependencies file
-        uses: stefanzweifel/git-auto-commit-action@v5
-        with:
-          commit_message: 'update dependencies list [auto-generated]'
-          file_pattern: 'docs/DEPENDENCIES.md'
-          commit_user_name: 'github-actions[bot]'
-          commit_user_email: '41898282+github-actions[bot]@users.noreply.github.com'
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          echo "Committing docs/DEPENDENCIES.md changes..."
+          FILE="docs/DEPENDENCIES.md"
+          CONTENT=$(base64 -w 0 "$FILE")
+          SHA=$(curl -s -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" "https://api.github.com/repos/${{ github.repository }}/contents/$FILE?ref=$BRANCH_NAME" | jq -r .sha)
+          if [ "$SHA" == "null" ]; then
+            SHA=""
+          fi
+          curl -s -X PUT -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+            -d "{\"message\":\"Auto-commit updated dependencies file\", \"content\":\"$CONTENT\", \"branch\":\"$BRANCH_NAME\", \"sha\":\"$SHA\"}" \
+            "https://api.github.com/repos/${{ github.repository }}/contents/$FILE"
