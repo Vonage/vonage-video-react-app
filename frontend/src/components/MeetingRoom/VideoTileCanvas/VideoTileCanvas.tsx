@@ -13,7 +13,7 @@ import getSubscribersToDisplay from '../../../utils/helpers/getSubscribersToDisp
 import useSubscribersInDisplayOrder from '../../../hooks/useSubscribersInDisplayOrder';
 import getLayoutBoxes from '../../../utils/helpers/getLayoutBoxes';
 import useActiveSpeaker from '../../../hooks/useActiveSpeaker';
-import { isMobile } from '../../../utils/util';
+import useIsSmallViewport from '../../../hooks/useIsSmallViewport';
 
 export type VideoTileCanvasProps = {
   isSharingScreen: boolean;
@@ -75,9 +75,11 @@ const VideoTileCanvas = ({
     wrapRef,
   });
 
+  const isSmallViewPort = useIsSmallViewport();
+
   // Height is 100vh - toolbar height (80px) and header height (80px) - 24px wrapper margin on mobile
   // Height is 100vh - toolbar height (80px) - 24px wrapper margin on desktop
-  const heightClass = isMobile()
+  const heightClass = isSmallViewPort
     ? '@apply h-[calc(100vh_-_184px)]'
     : '@apply h-[calc(100vh_-_104px)]';
 
