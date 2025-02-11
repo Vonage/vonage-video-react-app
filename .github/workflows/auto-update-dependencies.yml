@@ -3,13 +3,13 @@ name: auto-update-dependencies
 on:
   push:
     branches:
-      - behei-vonage/vidcs-3382-deps-3
+      - develop
 
 permissions:
   contents: read
 
 env:
-  BRANCH_NAME: 'behei-vonage/vidcs-3382-deps-3'
+  BRANCH_NAME: 'develop'
 
 jobs:
   run:
@@ -40,5 +40,5 @@ jobs:
             SHA=""
           fi
           curl -s -X PUT -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
-            -d "{\"message\":\"Auto-commit updated dependencies file\", \"content\":\"$CONTENT\", \"branch\":\"$BRANCH_NAME\", \"sha\":\"$SHA\"}" \
+            -d "{\"message\":\"Commit updated dependencies file [auto-generated]\", \"content\":\"$CONTENT\", \"branch\":\"$BRANCH_NAME\", \"sha\":\"$SHA\"}" \
             "https://api.github.com/repos/${{ github.repository }}/contents/$FILE"
