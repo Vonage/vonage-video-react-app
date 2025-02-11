@@ -11,7 +11,7 @@ import EmojisOrigin from '../../components/MeetingRoom/EmojisOrigin';
 import RightPanel from '../../components/MeetingRoom/RightPanel';
 import useRoomName from '../../hooks/useRoomName';
 import isValidRoomName from '../../utils/isValidRoomName';
-import { isMobile } from '../../utils/util';
+import useIsSmallViewport from '../../hooks/useIsSmallViewport';
 
 /**
  * MeetingRoom Component
@@ -41,6 +41,7 @@ const MeetingRoom = (): ReactElement => {
   const { isSharingScreen, screensharingPublisher, screenshareVideoElement, toggleShareScreen } =
     useScreenShare();
   const navigate = useNavigate();
+  const isSmallViewPort = useIsSmallViewport();
 
   useEffect(() => {
     if (joinRoom && isValidRoomName(roomName)) {
@@ -82,7 +83,7 @@ const MeetingRoom = (): ReactElement => {
 
   return (
     <div data-testid="meetingRoom" className="meetingRoom bg-darkGray-100 w-screen">
-      {isMobile() && <MobileHeader />}
+      {isSmallViewPort && <MobileHeader />}
       <VideoTileCanvas
         isSharingScreen={isSharingScreen}
         screensharingPublisher={screensharingPublisher}

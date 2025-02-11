@@ -27,7 +27,7 @@ describe('MobileHeader component', () => {
 
   beforeEach(() => {
     (useRoomName as Mock).mockReturnValue(mockedRoomName);
-    (useRoomShareUrl as Mock).mockReturnValue('https://example.com/test-room-name');
+    (useRoomShareUrl as Mock).mockReturnValue('https://example.com/room/test-room-name');
   });
 
   afterEach(() => {
@@ -67,7 +67,7 @@ describe('MobileHeader component', () => {
 
     await waitFor(() => {
       expect(navigator.clipboard.writeText).toHaveBeenCalledWith(
-        'https://example.com/test-room-name'
+        'https://example.com/room/test-room-name'
       );
       expect(screen.getByTestId('CheckIcon')).toBeInTheDocument();
     });
