@@ -111,7 +111,7 @@ jobs:
 
       - name: SonarCloud Scan
         if: steps.check-skip-ci.outputs.result == 'false' && github.event.pull_request.head.repo.fork == false
-        uses: SonarSource/sonarcloud-github-action@master
+        uses: SonarSource/sonarqube-scan-action@v4
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # Needed to get PR information, if any
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
