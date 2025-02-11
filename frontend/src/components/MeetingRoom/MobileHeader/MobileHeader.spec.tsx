@@ -11,10 +11,9 @@ vi.mock('../../../hooks/useRoomShareUrl');
 
 describe('MobileHeader component', () => {
   const mockedRoomName = 'test-room-name';
-  let originalClipboard: Clipboard;
+  const originalClipboard: Clipboard = navigator.clipboard;
 
   beforeAll(() => {
-    originalClipboard = navigator.clipboard;
     Object.assign(navigator, {
       clipboard: {
         writeText: vi.fn(),
