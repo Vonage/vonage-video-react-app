@@ -3,10 +3,13 @@ name: auto-update-dependencies
 on:
   push:
     branches:
-      - develop
+      - behei-vonage/vidcs-3382-deps
 
 permissions:
   contents: read
+
+env:
+  BRANCH_NAME: 'behei-vonage/vidcs-3382-deps'
 
 jobs:
   run:
@@ -24,14 +27,18 @@ jobs:
         run: npm install axios --no-save
       - name: Run dependency update script
         run: node scripts/generateDependenciesList.js
-
-      - name: Commit and push changes
+      - name: Do not commit yarn file
         run: |
-          git config --local user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git config --local user.name "github-actions[bot]"
-          git add docs/DEPENDENCIES.md
           git checkout -- yarn.lock
-          git commit -a -m "updated dependencies list [auto-generated]" || exit 0
-          git push
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Auto-commit updated dependencies file
+        run: |
+          echo "Committing docs/DEPENDENCIES.md changes..."
+          FILE="docs/DEPENDENCIES.md"
+          CONTENT=$(base64 -w 0 "$FILE")
+          SHA=$(curl -s -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" "https://api.github.com/repos/${{ github.repository }}/contents/$FILE?ref=$BRANCH_NAME" | jq -r .sha)
+          if [ "$SHA" == "null" ]; then
+            SHA=""
+          fi
+          curl -s -X PUT -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+            -d "{\"message\":\"Auto-commit updated dependencies file\", \"content\":\"$CONTENT\", \"branch\":\"$BRANCH_NAME\", \"sha\":\"$SHA\"}" \
+            "https://api.github.com/repos/${{ github.repository }}/contents/$FILE"
