@@ -1,6 +1,6 @@
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { vi, describe, it, Mock, expect, beforeEach, afterEach, beforeAll, afterAll } from 'vitest';
-import MobileHeader from './MobileHeader';
+import SmallViewportHeader from './SmallViewportHeader';
 import useSessionContext from '../../../hooks/useSessionContext';
 import useRoomName from '../../../hooks/useRoomName';
 import useRoomShareUrl from '../../../hooks/useRoomShareUrl';
@@ -9,7 +9,7 @@ vi.mock('../../../hooks/useSessionContext');
 vi.mock('../../../hooks/useRoomName');
 vi.mock('../../../hooks/useRoomShareUrl');
 
-describe('MobileHeader component', () => {
+describe('SmallViewportHeader component', () => {
   const mockedRoomName = 'test-room-name';
   const originalClipboard: Clipboard = navigator.clipboard;
 
@@ -37,7 +37,7 @@ describe('MobileHeader component', () => {
   it('renders the room name', () => {
     (useSessionContext as Mock).mockReturnValue({ archiveId: null });
 
-    render(<MobileHeader />);
+    render(<SmallViewportHeader />);
 
     expect(screen.getByText(mockedRoomName)).toBeInTheDocument();
   });
@@ -45,7 +45,7 @@ describe('MobileHeader component', () => {
   it('shows the recording icon if it is currently in progress', () => {
     (useSessionContext as Mock).mockReturnValue({ archiveId: '123-456' });
 
-    render(<MobileHeader />);
+    render(<SmallViewportHeader />);
 
     expect(screen.getByTestId('RadioButtonCheckedIcon')).toBeInTheDocument();
   });
@@ -53,14 +53,14 @@ describe('MobileHeader component', () => {
   it('does not show the recording icon if it there is not one happening', () => {
     (useSessionContext as Mock).mockReturnValue({ archiveId: null });
 
-    render(<MobileHeader />);
+    render(<SmallViewportHeader />);
 
     expect(screen.queryByTestId('RadioButtonCheckedIcon')).not.toBeInTheDocument();
   });
 
   it('copies room share URL to clipboard', async () => {
     (useSessionContext as Mock).mockReturnValue({ archiveId: null });
-    render(<MobileHeader />);
+    render(<SmallViewportHeader />);
 
     const copyButton = screen.getByTestId('ContentCopyIcon');
     fireEvent.click(copyButton);

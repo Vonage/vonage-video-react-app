@@ -8,13 +8,13 @@ import useRoomName from '../../../hooks/useRoomName';
 import useRoomShareUrl from '../../../hooks/useRoomShareUrl';
 
 /**
- * MobileHeader Component
+ * SmallViewportHeader Component
  *
- * This component shows a header bar in mobile that consists of recording on/off indicator,
+ * This component shows a header bar in smaller viewport devices that consists of recording on/off indicator,
  * meeting room name, and copy-to-clipboard button.
  * @returns {ReactElement} The mobile header component.
  */
-const MobileHeader = (): ReactElement => {
+const SmallViewportHeader = (): ReactElement => {
   const { archiveId } = useSessionContext();
   const isRecording = !!archiveId;
   const roomName = useRoomName();
@@ -33,7 +33,7 @@ const MobileHeader = (): ReactElement => {
   return (
     <div
       className="flex items-center justify-between px-4 pt-4 bg-darkGray-100 text-white"
-      data-testId="mobileHeader"
+      data-testId="smallViewportHeader"
     >
       <div className="flex items-center space-x-2 px-1">
         {isRecording && <RadioButtonCheckedIcon className="text-red-500" />}
@@ -59,4 +59,4 @@ const MobileHeader = (): ReactElement => {
   );
 };
 
-export default MobileHeader;
+export default SmallViewportHeader;

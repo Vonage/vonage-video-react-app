@@ -163,13 +163,13 @@ describe('MeetingRoom', () => {
   it('renders the mobile header bar if it is on mobile', () => {
     mockUseIsSmallViewport.mockImplementation(() => true);
     render(<MeetingRoomWithProviders />);
-    expect(screen.getByTestId('mobileHeader')).not.toBeNull();
+    expect(screen.getByTestId('smallViewportHeader')).not.toBeNull();
   });
 
   it('does not render the mobile header bar if it is on desktop', () => {
     // we do not need to mock the small port view value here given we already do it in beforeEach
     render(<MeetingRoomWithProviders />);
-    expect(screen.queryByTestId('mobileHeader')).toBeNull();
+    expect(screen.queryByTestId('smallViewportHeader')).toBeNull();
   });
 
   it('should call joinRoom on render only once', () => {
