@@ -60,7 +60,7 @@ describe('Toolbar', () => {
     expect(screen.getByTestId('report-issue-button')).toBeInTheDocument();
   });
 
-  it('on a small viewport, displays the HiddenToolbarItems button', () => {
+  it('on a small viewport, displays the PopupMenuToggleButton button', () => {
     mockUseIsSmallViewport.mockReturnValue(true);
     mockDisplayOnDesktop.mockReturnValue('');
 

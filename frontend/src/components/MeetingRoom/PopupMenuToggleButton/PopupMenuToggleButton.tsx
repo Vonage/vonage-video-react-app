@@ -9,12 +9,12 @@ import LayoutToggleButton from '../LayoutToggleButton';
 import useSessionContext from '../../../hooks/useSessionContext';
 
 /**
- * HiddenToolbarItems Component
+ * PopupMenuToggleButton Component
  *
  * Displays a clickable button that opens a grid of hidden toolbar buttons for smaller viewport devices.
- * @returns {ReactElement} - The HiddenToolbarItems Component.
+ * @returns {ReactElement} - The PopupMenuToggleButton Component.
  */
-const HiddenToolbarItems = (): ReactElement => {
+const PopupMenuToggleButton = (): ReactElement => {
   const { subscriberWrappers } = useSessionContext();
   const anchorRef = useRef<HTMLButtonElement>(null);
   const [open, setOpen] = useState<boolean>(false);
@@ -86,4 +86,4 @@ const HiddenToolbarItems = (): ReactElement => {
   );
 };
 
-export default HiddenToolbarItems;
+export default PopupMenuToggleButton;

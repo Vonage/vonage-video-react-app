@@ -1,6 +1,6 @@
 import { Grid, Grow, Paper, Popper, Tooltip } from '@mui/material';
 import { EmojiEmotions } from '@mui/icons-material';
-import { ReactElement, useCallback, useRef, useState } from 'react';
+import { ReactElement, useRef, useState } from 'react';
 import { ClickAwayListener, PopperChildrenProps } from '@mui/base';
 import ToolbarButton from '../ToolbarButton';
 import emojiMap from '../../../utils/emojis';
@@ -24,7 +24,7 @@ const EmojiGrid = (): ReactElement => {
   // Each button is 66px, 8px left and right padding = 280px for desktop
   const maxWidth = isSmallViewport ? 'calc(100dvw - 30px)' : '280px';
   const transform = isSmallViewport ? 'translate(-50%, -18px)' : 'translateY(-5%)';
-  // We account for the 9px translation from the HiddenToolBarItems.
+  // We account for the 9px translation from the PopupMenuToggleButton.
   const left = isSmallViewport ? 'calc(50dvw - 9px)' : '';
 
   const handleClose = (event: MouseEvent | TouchEvent) => {

@@ -12,7 +12,7 @@ import EmojiGrid from '../EmojiGrid';
 import ChatToggleButton from '../ChatToggleButton';
 import { RightPanelActiveTab } from '../../../hooks/useRightPanel';
 import ReportIssueButton from '../ReportIssueButton';
-import HiddenToolbarItems from '../HiddenToolbarItems';
+import PopupMenuToggleButton from '../PopupMenuToggleButton';
 import useIsSmallViewport from '../../../hooks/useIsSmallViewport';
 
 export type ToolbarProps = {
@@ -76,7 +76,7 @@ const Toolbar = ({
         <AudioControlButton />
         <VideoControlButton />
         {isSmallViewport ? (
-          <HiddenToolbarItems />
+          <PopupMenuToggleButton />
         ) : (
           <>
             <ScreenSharingButton
