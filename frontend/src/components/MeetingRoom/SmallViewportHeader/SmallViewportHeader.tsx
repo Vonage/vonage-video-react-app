@@ -12,7 +12,7 @@ import useRoomShareUrl from '../../../hooks/useRoomShareUrl';
  *
  * This component shows a header bar in smaller viewport devices that consists of recording on/off indicator,
  * meeting room name, and copy-to-clipboard button.
- * @returns {ReactElement} The mobile header component.
+ * @returns {ReactElement} The small viewport header component.
  */
 const SmallViewportHeader = (): ReactElement => {
   const { archiveId } = useSessionContext();
