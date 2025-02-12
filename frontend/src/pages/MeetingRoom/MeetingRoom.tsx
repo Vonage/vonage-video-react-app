@@ -31,7 +31,6 @@ const MeetingRoom = (): ReactElement => {
     disconnect,
     reconnecting,
     rightPanelActiveTab,
-    toggleChat,
     toggleParticipantList,
     closeRightPanel,
     toggleReportIssue,
@@ -94,7 +93,6 @@ const MeetingRoom = (): ReactElement => {
         toggleShareScreen={toggleShareScreen}
         rightPanelActiveTab={rightPanelActiveTab}
         toggleParticipantList={toggleParticipantList}
-        toggleChat={toggleChat}
         toggleReportIssue={toggleReportIssue}
         participantCount={
           subscriberWrappers.filter(({ isScreenshare }) => !isScreenshare).length + 1

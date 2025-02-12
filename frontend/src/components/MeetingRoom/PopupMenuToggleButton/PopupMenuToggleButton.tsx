@@ -7,6 +7,7 @@ import ArchivingToggle from '../ArchivingToggle';
 import EmojiGrid from '../EmojiGrid';
 import LayoutToggleButton from '../LayoutToggleButton';
 import useSessionContext from '../../../hooks/useSessionContext';
+import ChatToggleButton from '../ChatToggleButton';
 
 /**
  * PopupMenuToggleButton Component
@@ -76,6 +77,7 @@ const PopupMenuToggleButton = (): ReactElement => {
                   <LayoutToggleButton isScreenSharePresent={isViewingScreenShare} />
                   <EmojiGrid />
                   <ArchivingToggle />
+                  <ChatToggleButton />
                 </Paper>
               </ClickAwayListener>
             </div>
