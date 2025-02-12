@@ -1,10 +1,10 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { act, cleanup, render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { Subscriber as OTSubscriber } from '@vonage/client-sdk-video';
 import { Box } from 'opentok-layout-js';
 import { SubscriberWrapper } from '../../types/session';
 import Subscriber from './Subscriber';
-import userEvent from '@testing-library/user-event';
 
 describe('Subscriber', () => {
   afterEach(() => {
