@@ -119,6 +119,26 @@ describe('Subscriber', () => {
     expect(screen.getByTestId('pin-button')).toBeVisible();
   });
 
+  it('should show unpin icon when subscriber is hovered', async () => {
+    const mockedSubscriberId = 'OT_7a0a1bfd-2892-4f5e-90e0-33dafdc7c373';
+    const subscriberWrapper = createSubscriberWrapper(mockedSubscriberId, false, true);
+    const mockedBox = createMockBox(10, 10, 10, 10);
+
+    render(
+      <Subscriber
+        subscriberWrapper={subscriberWrapper}
+        isHidden={false}
+        box={mockedBox}
+        isActiveSpeaker={false}
+      />
+    );
+
+    const subscriberContainer = screen.getByTestId(`subscriber-container-${mockedSubscriberId}`);
+    expect(screen.queryByTestId('PushPinIcon')).toBeVisible();
+    await act(() => userEvent.hover(subscriberContainer));
+    expect(screen.getByTestId('PushPinOffIcon')).toBeVisible();
+  });
+
   it('should not render pin icon when screenshare subscriber is hovered', async () => {
     const mockedSubscriberId = 'OT_7a0a1bfd-2892-4f5e-90e0-33dafdc7c373';
     const subscriberWrapper = createSubscriberWrapper(mockedSubscriberId, true);
