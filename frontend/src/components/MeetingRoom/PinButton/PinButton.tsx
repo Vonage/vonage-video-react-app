@@ -1,6 +1,6 @@
 import PushPinIcon from '@mui/icons-material/PushPin';
 import { IconButton, Tooltip } from '@mui/material';
-import { ReactElement, useEffect, useRef, useState } from 'react';
+import { MouseEvent, ReactElement, useRef, useState } from 'react';
 import PushPinOffIcon from '../../Icons/PushPinOffIcon';
 import isMouseEventInsideBox from '../../../utils/isMouseEventInsideBox';
 
@@ -25,7 +25,6 @@ const PinButton = ({
 }: PinButtonProps): ReactElement | false => {
   const isDisabled = isMaxPinned && !isPinned;
   const anchorRef = useRef<HTMLDivElement | null>(null);
-  const eventRef = useRef<((this: Document, ev: MouseEvent) => void) | null>(null);
   const [isHoveringButton, setIsHoveringButton] = useState<boolean>(false);
   const iconSx = {
     fontSize: '18px',
@@ -43,27 +42,21 @@ const PinButton = ({
     return `Pin ${participantName}'s video`;
   };
 
-  useEffect(() => {
-    if (!eventRef.current) {
-      eventRef.current = (mouseMoveEvent) => {
-        if (eventRef.current) {
-          document.removeEventListener('mousemove', eventRef.current);
-        }
-        if (anchorRef.current) {
-          const divRect = anchorRef.current.getBoundingClientRect();
-          if (!isMouseEventInsideBox(mouseMoveEvent, divRect)) {
-            setIsHoveringButton(false);
-          }
-        }
-      };
-    }
-  }, []);
-
-  const handleClick = () => {
+  const handleClick = (clickEvent: MouseEvent<HTMLButtonElement>) => {
     toggleIsPinned();
-    if (eventRef.current) {
-      document.addEventListener('mousemove', eventRef.current);
-    }
+    // We set hovering to false manually since onMouseLeave is not invoked when the DOM Element is moved.
+    setIsHoveringButton(false);
+    // In case the DOM Element didn't move, which can happen if pinning while viewing screenshare -
+    // we use setTimeout to let the new layout render, then check if the element is still under the click event location.
+    // If so we re-enable the hover state.
+    setTimeout(() => {
+      if (anchorRef.current) {
+        const divRect = anchorRef.current.getBoundingClientRect();
+        if (isMouseEventInsideBox(clickEvent, divRect)) {
+          setIsHoveringButton(true);
+        }
+      }
+    }, 0);
   };
 
   const shouldShowIcon = isTileHovered || isPinned;

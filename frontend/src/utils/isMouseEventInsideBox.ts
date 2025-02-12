@@ -1,3 +1,5 @@
+import { MouseEvent } from 'react';
+
 /**
  * Util function to determine whether a mouse event e.g. a click
  * is inside the area of an element Rectangle
@@ -5,12 +7,12 @@
  * @param {DOMRect} rect - element rectangle
  * @returns {boolean} - whether event is inside rectangle
  */
-const isMouseEventInsideBox = (mouseEvent: MouseEvent, rect: DOMRect) => {
+const isMouseEventInsideBox = (mouseEvent: MouseEvent<HTMLElement>, rect: DOMRect) => {
   if (
-    mouseEvent.x >= rect.x &&
-    mouseEvent.x <= rect.x + rect.width &&
-    mouseEvent.y >= rect.y &&
-    mouseEvent.y <= rect.y + rect.height
+    mouseEvent.clientX >= rect.x &&
+    mouseEvent.clientX <= rect.x + rect.width &&
+    mouseEvent.clientY >= rect.y &&
+    mouseEvent.clientY <= rect.y + rect.height
   ) {
     return true;
   }
