@@ -1,9 +1,10 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import { cleanup, render, screen } from '@testing-library/react';
+import { act, cleanup, render, screen } from '@testing-library/react';
 import { Subscriber as OTSubscriber } from '@vonage/client-sdk-video';
 import { Box } from 'opentok-layout-js';
 import { SubscriberWrapper } from '../../types/session';
 import Subscriber from './Subscriber';
+import userEvent from '@testing-library/user-event';
 
 describe('Subscriber', () => {
   afterEach(() => {
@@ -96,8 +97,6 @@ describe('Subscriber', () => {
 
     expect(screen.getByTestId(`subscriber-container-${mockedSubscriberId}`)).toBeVisible();
     expect(screen.queryByTestId('pin-button')).toBeVisible();
-    // Checking classes because toBeVisible will not work for group hover states with tailwind https://github.com/testing-library/jest-dom/issues/510
-    expect(screen.queryByTestId('pin-button')).not.toHaveClass('hidden');
   });
 
   it('should show pin icon when subscriber is hovered', async () => {
@@ -115,11 +114,9 @@ describe('Subscriber', () => {
     );
 
     const subscriberContainer = screen.getByTestId(`subscriber-container-${mockedSubscriberId}`);
-    // Checking classes because toBeVisible will not work for group hover states with tailwind https://github.com/testing-library/jest-dom/issues/510
-    expect(subscriberContainer).toHaveClass('group/video-tile');
-    expect(screen.queryByTestId('pin-button')).toHaveClass('group-hover/video-tile:flex');
-    expect(screen.queryByTestId('pin-button')).toHaveClass('hidden');
-    expect(screen.queryByTestId('pin-button')).toHaveClass('hidden');
+    expect(screen.queryByTestId('pin-button')).not.toBeInTheDocument();
+    await act(() => userEvent.hover(subscriberContainer));
+    expect(screen.getByTestId('pin-button')).toBeVisible();
   });
 
   it('should not render pin icon when screenshare subscriber is hovered', async () => {

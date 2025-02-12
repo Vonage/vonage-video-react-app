@@ -77,30 +77,39 @@ const PinButton = ({
     }
   };
 
+  const shouldShowIcon = isTileHovered || isPinned;
   return (
-    <div
-      ref={anchorRef}
-      className={pinStyle}
-      data-testid="pin-button"
-      onPointerEnter={() => setIsHoveringButton(true)}
-      onPointerLeave={() => setIsHoveringButton(false)}
-      onBlur={() => setIsHoveringButton(false)}
-    >
-      <Tooltip title={getTooltipText()} disableFocusListener open={isHoveringButton}>
-        <IconButton
-          disabled={isDisabled}
-          onClick={handleClick}
-          sx={{
-            height: 24,
-            width: 24,
-            borderRadius: '50%',
-            cursor: 'pointer',
-          }}
-        >
-          {isTileHovered && isPinned ? <PushPinOffIcon sx={iconSx} /> : <PushPinIcon sx={iconSx} />}
-        </IconButton>
-      </Tooltip>
-    </div>
+    shouldShowIcon && (
+      <div
+        ref={anchorRef}
+        className={pinStyle}
+        data-testid="pin-button"
+        onPointerEnter={() => setIsHoveringButton(true)}
+        onPointerLeave={() => setIsHoveringButton(false)}
+        onBlur={() => setIsHoveringButton(false)}
+      >
+        <Tooltip title={getTooltipText()} disableFocusListener open={isHoveringButton}>
+          <IconButton
+            disabled={isDisabled}
+            onClick={handleClick}
+            sx={{
+              height: 24,
+              width: 24,
+              borderRadius: '50%',
+              cursor: 'pointer',
+              backgroundColor: isTileHovered ? 'rgb(32, 33, 36, .55)' : 'none',
+              '&:hover, &.Mui-focusVisible': { backgroundColor: 'rgb(32, 33, 36, .75)' },
+            }}
+          >
+            {isTileHovered && isPinned ? (
+              <PushPinOffIcon sx={iconSx} />
+            ) : (
+              <PushPinIcon sx={iconSx} />
+            )}
+          </IconButton>
+        </Tooltip>
+      </div>
+    )
   );
 };
 

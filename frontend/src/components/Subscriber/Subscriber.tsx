@@ -1,4 +1,4 @@
-import { ReactElement, useEffect, useRef } from 'react';
+import { ReactElement, useEffect, useRef, useState } from 'react';
 import { Box } from 'opentok-layout-js';
 import { SubscriberWrapper } from '../../types/session';
 import AudioIndicator from '../MeetingRoom/AudioIndicator';
@@ -71,7 +71,7 @@ const Subscriber = ({
   const hasAudio = subscriberWrapper.subscriber.stream?.hasAudio;
   const audioIndicatorStyle =
     'rounded-xl absolute top-3 right-3 bg-darkGray-55 h-6 w-6 items-center justify-center flex m-auto';
-  const pinStyle = `${isPinned ? 'flex' : 'hidden'} group-hover/video-tile:flex rounded-xl absolute top-3 left-3 h-6 w-6 items-center justify-center m-auto`;
+  const pinStyle = `flex rounded-xl absolute top-3 left-3 h-6 w-6 items-center justify-center m-auto`;
   return (
     <VideoTile
       id={`${subscriberWrapper.id}`}
