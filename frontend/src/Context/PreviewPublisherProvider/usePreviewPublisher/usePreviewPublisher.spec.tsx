@@ -31,7 +31,7 @@ const defaultSettings = {
   publishAudio: false,
   publishVideo: false,
   name: '',
-  blur: false,
+  blur: true,
   noiseSuppression: true,
 };
 const mockUserContextWithDefaultSettings = {
@@ -92,6 +92,25 @@ describe('usePreviewPublisher', () => {
         result.current.initLocalPublisher();
       });
       expect(consoleErrorSpy).toHaveBeenCalledWith('initPublisher error: ', error);
+    });
+
+    it('should apply background blur when initialized if set to true', () => {
+      mockedInitPublisher.mockReturnValue(mockPublisher);
+      (initPublisher as Mock).mockImplementation(mockedInitPublisher);
+      const { result } = renderHook(() => usePreviewPublisher());
+      act(() => {
+        result.current.initLocalPublisher();
+      });
+      expect(mockedInitPublisher).toHaveBeenCalledWith(
+        undefined,
+        expect.objectContaining({
+          videoFilter: expect.objectContaining({
+            type: 'backgroundBlur',
+            blurStrength: 'high',
+          }),
+        }),
+        expect.any(Function)
+      );
     });
   });
 
