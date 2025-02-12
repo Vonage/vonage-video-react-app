@@ -6,7 +6,6 @@ instance:
   region: aws.euw1
   entrypoint: [yarn, run-server]
   application-id: <APP_ID>
-  domains: $DOMAIN
   environment:
     - name: VIDEO_SERVICE_PROVIDER
       secret: VIDEO_SERVICE_PROVIDER
@@ -18,7 +17,7 @@ instance:
       secret: OT_API_KEY
     - name: OT_API_SECRET
       secret: OT_API_SECRET
-    - name: DOMAIN
+    - name: domains
       secret: DOMAIN
     - name: VITE_ENABLE_REPORT_ISSUE
       secret: VITE_ENABLE_REPORT_ISSUE
