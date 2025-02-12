@@ -23,12 +23,7 @@ const TestComponent = ({
 }): ReactElement => {
   const [openEmojiGrid, setOpenEmojiGrid] = useState<boolean>(defaultOpenEmojiGrid);
 
-  return (
-    <div>
-      <Button data-testid="clicked-away" type="button" />
-      <EmojiGrid openEmojiGrid={openEmojiGrid} setOpenEmojiGrid={setOpenEmojiGrid} />
-    </div>
-  );
+  return <EmojiGrid openEmojiGrid={openEmojiGrid} setOpenEmojiGrid={setOpenEmojiGrid} />;
 };
 
 describe('EmojiGrid', () => {
