@@ -36,12 +36,7 @@ const EmojiGrid = (): ReactElement => {
   };
 
   const handleToggle = () => {
-    setOpenEmojiGrid((prevOpen) => {
-      const newOpen = !prevOpen;
-      setOpenEmojiGrid(newOpen);
-
-      return newOpen;
-    });
+    setOpenEmojiGrid((prevOpen) => !prevOpen);
   };
 
   return (
