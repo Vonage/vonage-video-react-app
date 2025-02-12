@@ -60,7 +60,7 @@ const PopupMenuToggleButton = (): ReactElement => {
                 <Paper
                   className="flex justify-center items-center"
                   sx={{
-                    backgroundColor: '#292D31',
+                    backgroundColor: '#272c2f',
                     color: '#fff',
                     padding: { xs: 1 },
                     borderRadius: 2,

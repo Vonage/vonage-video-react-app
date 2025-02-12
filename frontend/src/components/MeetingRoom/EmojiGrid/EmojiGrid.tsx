@@ -28,7 +28,9 @@ const EmojiGrid = ({ openEmojiGrid, setOpenEmojiGrid }: EmojiGridProps): ReactEl
   const minWidth = isSmallViewport ? `calc(100dvw - 30px)` : '100%';
   // Each button is 66px, 8px left and right padding = 280px for desktop
   const maxWidth = isSmallViewport ? 'calc(100dvw - 30px)' : '280px';
-  const left = isSmallViewport ? 'calc(50dvw - 9px)' : '';
+  const transform = isSmallViewport ? 'translate(-50%, -18px)' : 'translateY(-5%)';
+  // We account for the 9px translation from the PopupMenuToggleButton.
+  const left = isSmallViewport ? 'calc(50dvw - 9px)' : undefined;
 
   const handleClickAway = (event: MouseEvent | TouchEvent) => {
     const target = event.target as HTMLElement;
@@ -77,13 +79,12 @@ const EmojiGrid = ({ openEmojiGrid, setOpenEmojiGrid }: EmojiGridProps): ReactEl
                 <Paper
                   className="flex justify-center items-center"
                   sx={{
-                    backgroundColor: 'rgb(32, 33, 36)',
+                    backgroundColor: isSmallViewport ? '#272c2f' : 'rgb(32, 33, 36)',
                     color: '#fff',
                     padding: { xs: 1 },
                     borderRadius: 2,
                     zIndex: 1,
-                    transform: 'translateY(-5%)',
-                    // Each button is 66px, 8px left and right padding
+                    transform,
                     maxWidth,
                     position: 'relative',
                     left,
@@ -95,6 +96,7 @@ const EmojiGrid = ({ openEmojiGrid, setOpenEmojiGrid }: EmojiGridProps): ReactEl
                     display={openEmojiGrid ? 'flex' : 'none'}
                     sx={{
                       width: minWidth,
+                      backgroundColor: isSmallViewport ? '#272c2f' : undefined,
                     }}
                   >
                     {Object.values(emojiMap).map((emoji) => {
