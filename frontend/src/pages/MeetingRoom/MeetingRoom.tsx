@@ -6,10 +6,12 @@ import Toolbar from '../../components/MeetingRoom/Toolbar';
 import useSessionContext from '../../hooks/useSessionContext';
 import useScreenShare from '../../hooks/useScreenShare';
 import VideoTileCanvas from '../../components/MeetingRoom/VideoTileCanvas';
+import SmallViewportHeader from '../../components/MeetingRoom/SmallViewportHeader';
 import EmojisOrigin from '../../components/MeetingRoom/EmojisOrigin';
 import RightPanel from '../../components/MeetingRoom/RightPanel';
 import useRoomName from '../../hooks/useRoomName';
 import isValidRoomName from '../../utils/isValidRoomName';
+import useIsSmallViewport from '../../hooks/useIsSmallViewport';
 
 /**
  * MeetingRoom Component
@@ -39,6 +41,7 @@ const MeetingRoom = (): ReactElement => {
   const { isSharingScreen, screensharingPublisher, screenshareVideoElement, toggleShareScreen } =
     useScreenShare();
   const navigate = useNavigate();
+  const isSmallViewPort = useIsSmallViewport();
 
   useEffect(() => {
     if (joinRoom && isValidRoomName(roomName)) {
@@ -80,6 +83,7 @@ const MeetingRoom = (): ReactElement => {
 
   return (
     <div data-testid="meetingRoom" className="meetingRoom bg-darkGray-100 w-screen">
+      {isSmallViewPort && <SmallViewportHeader />}
       <VideoTileCanvas
         isSharingScreen={isSharingScreen}
         screensharingPublisher={screensharingPublisher}
