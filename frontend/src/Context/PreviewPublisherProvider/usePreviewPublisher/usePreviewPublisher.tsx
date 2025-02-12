@@ -7,6 +7,7 @@ import useUserContext from '../../../hooks/useUserContext';
 import { DEVICE_ACCESS_STATUS } from '../../../utils/constants';
 import { UserType } from '../../user';
 import { AccessDeniedEvent } from '../../PublisherProvider/usePublisher/usePublisher';
+import usePublisherOptions from '../../PublisherProvider/usePublisherOptions';
 
 type PublisherVideoElementCreatedEvent = Event<'videoElementCreated', Publisher> & {
   element: HTMLVideoElement | HTMLObjectElement;
@@ -52,7 +53,7 @@ const usePreviewPublisher = (): PreviewPublisherContextType => {
   const [publisherVideoElement, setPublisherVideoElement] = useState<
     HTMLVideoElement | HTMLObjectElement
   >();
-
+  const publisherOptions = usePublisherOptions();
   const [speechLevel, setSpeechLevel] = useState(0);
   const { setAccessStatus, accessStatus } = usePermissions();
   const publisherRef = useRef<Publisher | null>(null);
@@ -212,7 +213,7 @@ const usePreviewPublisher = (): PreviewPublisherContextType => {
       return;
     }
 
-    publisherRef.current = initPublisher(undefined, { insertDefaultUI: false }, (err: unknown) => {
+    publisherRef.current = initPublisher(undefined, publisherOptions, (err: unknown) => {
       if (err instanceof Error) {
         publisherRef.current = null;
         if (err.name === 'OT_USER_MEDIA_ACCESS_DENIED') {
@@ -221,7 +222,7 @@ const usePreviewPublisher = (): PreviewPublisherContextType => {
       }
     });
     addPublisherListeners(publisherRef.current);
-  }, [addPublisherListeners]);
+  }, [addPublisherListeners, publisherOptions]);
 
   const destroyPublisher = useCallback(() => {
     if (publisherRef.current) {
