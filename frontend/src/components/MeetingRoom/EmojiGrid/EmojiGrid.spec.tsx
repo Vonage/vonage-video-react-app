@@ -41,11 +41,6 @@ describe('EmojiGrid', () => {
     vi.resetAllMocks();
   });
 
-  it('renders the emoji grid button', () => {
-    render(<TestComponent />);
-    expect(screen.queryByTestId('emoji-grid-toggle')).toBeVisible();
-  });
-
   it('toggling the emoji grid shows and hides the emoji(s)', () => {
     render(<TestComponent />);
 
@@ -65,12 +60,14 @@ describe('EmojiGrid', () => {
   it('on desktop, grid is closed by default', () => {
     render(<TestComponent defaultOpenEmojiGrid={false} />);
 
+    expect(screen.queryByTestId('emoji-grid-toggle')).toBeVisible();
     expect(screen.queryByTestId('send-emoji-button')).not.toBeInTheDocument();
   });
 
   it('on mobile, grid is open by default', () => {
     render(<TestComponent defaultOpenEmojiGrid />);
 
+    expect(screen.queryByTestId('emoji-grid-toggle')).toBeVisible();
     expect(screen.queryByTestId('send-emoji-button')).toBeVisible();
   });
 });
