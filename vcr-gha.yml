@@ -6,7 +6,7 @@ instance:
   region: aws.euw1
   entrypoint: [yarn, run-server]
   application-id: <APP_ID>
-  domains: [meet.vonagenetworks.net]
+  domains: <DOMAIN>
   environment:
     - name: VIDEO_SERVICE_PROVIDER
       secret: VIDEO_SERVICE_PROVIDER
