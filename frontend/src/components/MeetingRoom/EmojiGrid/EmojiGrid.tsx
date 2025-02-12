@@ -25,11 +25,9 @@ const EmojiGrid = ({ openEmojiGrid, setOpenEmojiGrid }: EmojiGridProps): ReactEl
   const anchorRef = useRef<HTMLButtonElement>(null);
   const isSmallViewport = useIsSmallViewport();
   // We want 30px of buffer on the sides of the menu for mobile devices
-  const minWidth = isSmallViewport ? `calc(100dvw - 30px)` : '264px';
+  const minWidth = isSmallViewport ? `calc(100dvw - 30px)` : '100%';
   // Each button is 66px, 8px left and right padding = 280px for desktop
   const maxWidth = isSmallViewport ? 'calc(100dvw - 30px)' : '280px';
-  const transform = isSmallViewport ? 'translate(-50%, -18px)' : 'translateY(-5%)';
-  // We account for the 9px translation from the PopupMenuToggleButton.
   const left = isSmallViewport ? 'calc(50dvw - 9px)' : '';
 
   const handleClickAway = (event: MouseEvent | TouchEvent) => {
@@ -51,8 +49,6 @@ const EmojiGrid = ({ openEmojiGrid, setOpenEmojiGrid }: EmojiGridProps): ReactEl
       <Tooltip title="Express yourself" aria-label="open sendable emoji menu">
         <ToolbarButton
           onClick={handleToggle}
-          data-testid="emoji-grid-toggle"
-          id="emoji-grid-toggle"
           icon={
             <EmojiEmotions
               style={{ color: `${!openEmojiGrid ? 'white' : 'rgb(138, 180, 248)'}` }}
@@ -81,15 +77,16 @@ const EmojiGrid = ({ openEmojiGrid, setOpenEmojiGrid }: EmojiGridProps): ReactEl
                 <Paper
                   className="flex justify-center items-center"
                   sx={{
-                    backgroundColor: '#292D31',
+                    backgroundColor: 'rgb(32, 33, 36)',
                     color: '#fff',
                     padding: { xs: 1 },
                     borderRadius: 2,
                     zIndex: 1,
-                    transform,
+                    transform: 'translateY(-5%)',
+                    // Each button is 66px, 8px left and right padding
                     maxWidth,
-                    left,
                     position: 'relative',
+                    left,
                   }}
                 >
                   <Grid
