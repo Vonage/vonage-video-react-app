@@ -2,6 +2,7 @@ import PushPinIcon from '@mui/icons-material/PushPin';
 import { IconButton, Tooltip } from '@mui/material';
 import { ReactElement, useEffect, useRef, useState } from 'react';
 import PushPinOffIcon from '../../Icons/PushPinOffIcon';
+import isMouseEventInsideBox from '../../../utils/isMouseEventInsideBox';
 
 export type PinButtonProps = {
   color?: string;
@@ -11,18 +12,6 @@ export type PinButtonProps = {
   participantName?: string;
   pinStyle?: string;
   toggleIsPinned: () => void;
-};
-
-const isInsideBox = (mouseEvent: MouseEvent, rect: DOMRect) => {
-  if (
-    mouseEvent.x >= rect.x &&
-    mouseEvent.x <= rect.x + rect.width &&
-    mouseEvent.y >= rect.y &&
-    mouseEvent.y <= rect.y + rect.height
-  ) {
-    return true;
-  }
-  return false;
 };
 
 const PinButton = ({
@@ -62,7 +51,7 @@ const PinButton = ({
         }
         if (anchorRef.current) {
           const divRect = anchorRef.current.getBoundingClientRect();
-          if (!isInsideBox(mouseMoveEvent, divRect)) {
+          if (!isMouseEventInsideBox(mouseMoveEvent, divRect)) {
             setIsHoveringButton(false);
           }
         }
