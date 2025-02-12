@@ -40,6 +40,7 @@ const Subscriber = ({
   const isScreenShare = subscriber?.stream?.videoType === 'screen';
   const subRef = useRef<HTMLDivElement>(null);
   const isTalking = useSubscriberTalking({ subscriber, isActiveSpeaker });
+  const [isTileHovered, setIsTileHovered] = useState<boolean>(false);
 
   useEffect(() => {
     // If hidden - Unsubscribe from video to save bandwidth and cpu
@@ -81,11 +82,14 @@ const Subscriber = ({
       hasVideo={!!hasVideo}
       ref={subRef}
       isTalking={isTalking}
+      onMouseEnter={() => setIsTileHovered(true)}
+      onMouseLeave={() => setIsTileHovered(false)}
     >
       {!isScreenShare && (
         <PinButton
           color="white"
           isPinned={isPinned}
+          isTileHovered={isTileHovered}
           pinStyle={pinStyle}
           isMaxPinned={isMaxPinned}
           toggleIsPinned={() => {

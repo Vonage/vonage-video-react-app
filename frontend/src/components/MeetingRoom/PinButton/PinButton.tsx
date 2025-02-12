@@ -7,6 +7,7 @@ export type PinButtonProps = {
   color?: string;
   isMaxPinned: boolean;
   isPinned: boolean;
+  isTileHovered: boolean;
   participantName?: string;
   pinStyle?: string;
   toggleIsPinned: () => void;
@@ -28,6 +29,7 @@ const PinButton = ({
   color,
   isMaxPinned,
   isPinned,
+  isTileHovered,
   participantName,
   pinStyle,
   toggleIsPinned,
@@ -95,11 +97,7 @@ const PinButton = ({
             cursor: 'pointer',
           }}
         >
-          {isHoveringButton && isPinned ? (
-            <PushPinOffIcon sx={iconSx} />
-          ) : (
-            <PushPinIcon sx={iconSx} />
-          )}
+          {isTileHovered && isPinned ? <PushPinOffIcon sx={iconSx} /> : <PushPinIcon sx={iconSx} />}
         </IconButton>
       </Tooltip>
     </div>
