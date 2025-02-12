@@ -3,13 +3,13 @@ name: auto-update-dependencies
 on:
   push:
     branches:
-      - develop
+      - test-vidcs-3382-deps-3
 
 permissions:
   contents: read
 
 env:
-  BRANCH_NAME: 'develop'
+  BRANCH_NAME: 'test-vidcs-3382-deps-3'
 
 jobs:
   run:
