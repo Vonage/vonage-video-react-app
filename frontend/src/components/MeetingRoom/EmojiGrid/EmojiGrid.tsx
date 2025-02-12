@@ -1,21 +1,27 @@
 import { Grid, Grow, Paper, Popper, Tooltip } from '@mui/material';
 import { EmojiEmotions } from '@mui/icons-material';
-import { ReactElement, useRef } from 'react';
+import { Dispatch, ReactElement, SetStateAction, useRef } from 'react';
 import { ClickAwayListener, PopperChildrenProps } from '@mui/base';
 import ToolbarButton from '../ToolbarButton';
 import emojiMap from '../../../utils/emojis';
 import SendEmojiButton from '../SendEmojiButton';
 import useIsSmallViewport from '../../../hooks/useIsSmallViewport';
-import useSessionContext from '../../../hooks/useSessionContext';
+
+export type EmojiGridProps = {
+  openEmojiGrid: boolean;
+  setOpenEmojiGrid: Dispatch<SetStateAction<boolean>>;
+};
 
 /**
  * EmojiGrid Component
  *
  * Displays a clickable button that opens a grid of emojis.
+ * @param {EmojiGridProps} props - the props for the component
+ *  @property {boolean} openEmojiGrid - whether the component will be open initially
+ *  @property {Dispatch<SetStateAction<boolean>>} setOpenEmojiGrid - toggle whether the emoji grid is shown or hidden
  * @returns {ReactElement} - The EmojiGrid Component.
  */
-const EmojiGrid = (): ReactElement => {
-  const { openEmojiGrid, setOpenEmojiGrid } = useSessionContext();
+const EmojiGrid = ({ openEmojiGrid, setOpenEmojiGrid }: EmojiGridProps): ReactElement => {
   const anchorRef = useRef<HTMLButtonElement>(null);
   const isSmallViewport = useIsSmallViewport();
   // We want 30px of buffer on the sides of the menu for mobile devices
@@ -26,13 +32,14 @@ const EmojiGrid = (): ReactElement => {
   // We account for the 9px translation from the PopupMenuToggleButton.
   const left = isSmallViewport ? 'calc(50dvw - 9px)' : '';
 
-  const handleClose = (event: MouseEvent | TouchEvent) => {
+  const handleClickAway = (event: MouseEvent | TouchEvent) => {
     const target = event.target as HTMLElement;
 
-    // If a user clicks the toggle button, we save their preference for later
-    if (target.closest('#emoji-grid-toggle')) {
-      setOpenEmojiGrid(false);
+    if (isSmallViewport && !target.closest('#emoji-grid-toggle')) {
+      return;
     }
+    // If a user clicks the toggle button, we save their preference for later
+    setOpenEmojiGrid(false);
   };
 
   const handleToggle = () => {
@@ -70,7 +77,7 @@ const EmojiGrid = (): ReactElement => {
             }}
           >
             <div className="font-normal text-left flex">
-              <ClickAwayListener onClickAway={handleClose}>
+              <ClickAwayListener onClickAway={handleClickAway}>
                 <Paper
                   className="flex justify-center items-center"
                   sx={{

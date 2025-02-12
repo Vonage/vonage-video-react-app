@@ -19,6 +19,7 @@ const PopupMenuToggleButton = (): ReactElement => {
   const anchorRef = useRef<HTMLButtonElement>(null);
   const [open, setOpen] = useState<boolean>(false);
   const isViewingScreenShare = subscriberWrappers.some((subWrapper) => subWrapper.isScreenshare);
+  const [openEmojiGridMobile, setOpenEmojiGridMobile] = useState<boolean>(true);
 
   const handleClose = () => {
     setOpen(false);
@@ -74,7 +75,10 @@ const PopupMenuToggleButton = (): ReactElement => {
                   }}
                 >
                   <LayoutToggleButton isScreenSharePresent={isViewingScreenShare} />
-                  <EmojiGrid />
+                  <EmojiGrid
+                    openEmojiGrid={openEmojiGridMobile}
+                    setOpenEmojiGrid={setOpenEmojiGridMobile}
+                  />
                   <ArchivingToggle />
                 </Paper>
               </ClickAwayListener>

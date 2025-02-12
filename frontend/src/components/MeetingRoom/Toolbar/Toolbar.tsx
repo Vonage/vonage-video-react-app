@@ -1,4 +1,4 @@
-import { ReactElement, useCallback } from 'react';
+import { ReactElement, useCallback, useState } from 'react';
 import AudioControlButton from '../AudioControlButton';
 import VideoControlButton from '../VideoControlButton';
 import ScreenSharingButton from '../../ScreenSharingButton';
@@ -66,6 +66,7 @@ const Toolbar = ({
     }
     disconnect();
   }, [disconnect]);
+  const [openEmojiGridDesktop, setOpenEmojiGridDesktop] = useState<boolean>(false);
 
   return (
     <div className="flex flex-col md:flex-row items-center absolute h-[80px] w-full bottom-0 left-0 bg-darkGray-100 md:justify-between p-4">
@@ -85,7 +86,10 @@ const Toolbar = ({
               isViewingScreenShare={isViewingScreenShare}
             />
             <LayoutToggleButton isScreenSharePresent={isScreenSharePresent} />
-            <EmojiGrid />
+            <EmojiGrid
+              openEmojiGrid={openEmojiGridDesktop}
+              setOpenEmojiGrid={setOpenEmojiGridDesktop}
+            />
             <ArchivingToggle />
           </>
         )}
