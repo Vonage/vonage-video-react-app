@@ -209,19 +209,18 @@ const SessionProvider = ({ children }: SessionProviderProps): ReactElement => {
   const pinSubscriber = useCallback(
     (id: string) => {
       setSubscriberWrappers((previousSubscriberWrappers) => {
-        const subscriber = previousSubscriberWrappers.find(({ id: streamId }) => streamId === id);
-        if (subscriber) {
-          const pinnedSubscriber = {
-            ...subscriber,
-            isPinned: !subscriber.isPinned,
-          };
-          const subscribers = [
-            ...previousSubscriberWrappers.filter(({ id: streamId }) => streamId !== id),
-            pinnedSubscriber,
-          ].sort(sortByDisplayPriority(activeSpeakerId));
-          return subscribers;
-        }
-        return previousSubscriberWrappers;
+        const subscribers = previousSubscriberWrappers
+          .map((subscriberWrapper) => {
+            if (subscriberWrapper.id === id) {
+              return {
+                ...subscriberWrapper,
+                isPinned: !subscriberWrapper.isPinned,
+              };
+            }
+            return subscriberWrapper;
+          })
+          .sort(sortByDisplayPriority(activeSpeakerId)); // Sorting by display priority will place this pinned participant above the rest
+        return subscribers;
       });
     },
     [activeSpeakerId]
