@@ -57,6 +57,7 @@ const EmojiGrid = ({ openEmojiGrid, setOpenEmojiGrid }: EmojiGridProps): ReactEl
             />
           }
           ref={anchorRef}
+          data-testid="emoji-grid-toggle"
         />
       </Tooltip>
 
