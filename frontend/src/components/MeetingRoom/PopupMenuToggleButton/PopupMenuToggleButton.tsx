@@ -7,6 +7,7 @@ import ArchivingToggle from '../ArchivingToggle';
 import EmojiGrid from '../EmojiGrid';
 import LayoutToggleButton from '../LayoutToggleButton';
 import useSessionContext from '../../../hooks/useSessionContext';
+import EmojiGridButton from '../EmojiGrid/EmojiGridButton';
 
 /**
  * PopupMenuToggleButton Component
@@ -75,17 +76,22 @@ const PopupMenuToggleButton = (): ReactElement => {
                   }}
                 >
                   <LayoutToggleButton isScreenSharePresent={isViewingScreenShare} />
-                  <EmojiGrid
+                  <ArchivingToggle />
+                  <EmojiGridButton
                     openEmojiGrid={openEmojiGridMobile}
                     setOpenEmojiGrid={setOpenEmojiGridMobile}
                   />
-                  <ArchivingToggle />
                 </Paper>
               </ClickAwayListener>
             </div>
           </Grow>
         )}
       </Popper>
+      <EmojiGrid
+        anchorRef={anchorRef}
+        openEmojiGrid={openEmojiGridMobile && open}
+        setOpenEmojiGrid={setOpenEmojiGridMobile}
+      />
     </>
   );
 };
