@@ -193,6 +193,10 @@ const SessionProvider = ({ children }: SessionProviderProps): ReactElement => {
     });
   }, []);
 
+  /**
+   * isMaxPinned {boolean} - whether the maximum number of allowed pinned participants has been reached.
+   * This is used to disable the pin buttons so no more participants can be pinned.
+   */
   const isMaxPinned = useMemo(() => {
     const pinnedCount = subscriberWrappers.filter((sub) => sub.isPinned).length;
     return pinnedCount >= MAX_PIN_COUNT;
