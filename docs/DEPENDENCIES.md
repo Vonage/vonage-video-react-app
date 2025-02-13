@@ -2,7 +2,7 @@
 - [@emotion/css](https://www.npmjs.com/package/@emotion/css) The Next Generation of CSS-in-JS.
 - [@emotion/react](https://www.npmjs.com/package/@emotion/react) > Simple styling in React.
 - [@emotion/styled](https://www.npmjs.com/package/@emotion/styled) styled API for emotion
-- [@mui/base](https://www.npmjs.com/package/@mui/base) Base UI is a library of headless ('unstyled') React components and low-level hooks. You gain complete control over your app's CSS and accessibility features.
+- [@mui/base](https://www.npmjs.com/package/@mui/base) MUI Base is a library of headless ('unstyled') React components and low-level hooks. You gain complete control over your app's CSS and accessibility features.
 - [@mui/icons-material](https://www.npmjs.com/package/@mui/icons-material) Material Design icons distributed as SVG React components.
 - [@mui/joy](https://www.npmjs.com/package/@mui/joy) Joy UI is an open-source React component library that implements MUI's own design principles. It's comprehensive and can be used in production out of the box.
 - [@mui/material](https://www.npmjs.com/package/@mui/material) Material UI is an open-source React component library that implements Google's Material Design. It's comprehensive and can be used in production out of the box.
@@ -14,15 +14,16 @@
 - [@types/react-dom](https://www.npmjs.com/package/@types/react-dom) TypeScript definitions for react-dom
 - [@types/react-router-dom](https://www.npmjs.com/package/@types/react-router-dom) TypeScript definitions for react-router-dom
 - [@types/react](https://www.npmjs.com/package/@types/react) TypeScript definitions for react
+- [@types/ua-parser-js](https://www.npmjs.com/package/@types/ua-parser-js) TypeScript definitions for ua-parser-js
 - [@types/uuid](https://www.npmjs.com/package/@types/uuid) TypeScript definitions for uuid
 - [@vitejs/plugin-react](https://www.npmjs.com/package/@vitejs/plugin-react) The default Vite plugin for React projects.
 - [@vitest/coverage-v8](https://www.npmjs.com/package/@vitest/coverage-v8) V8 coverage provider for Vitest
 - [@vitest/ui](https://www.npmjs.com/package/@vitest/ui) UI for Vitest
 - [@vonage/client-sdk-video](https://www.npmjs.com/package/@vonage/client-sdk-video) The OpenTok.js library lets you use OpenTok-powered video sessions on the web
 - [@vonage/vcr-sdk](https://www.npmjs.com/package/@vonage/vcr-sdk) This is the Node.JS SDK for [Vonage Cloud Runtime](https://developer.vonage.com/cloud-runtime). To use it you will need a Vonage account. Sign up for free at [vonage.com](https://dashboard.nexmo.com/sign-up?utm_source=DEV_REL&utm_medium=github&utm_campaig
+- [autolinker](https://www.npmjs.com/package/autolinker) Utility to automatically link the URLs, email addresses, phone numbers, hashtags, and mentions (Twitter, Instagram) in a given block of text/HTML
 - [autoprefixer](https://www.npmjs.com/package/autoprefixer) Parse CSS and add vendor prefixes to CSS rules using values from the Can I Use website
 - [axios](https://www.npmjs.com/package/axios) Promise based HTTP client for the browser and node.js
-- [autolinker](https://www.npmjs.com/package/autolinker) Auto-links URLs, phone numbers, email addresses, mentions, and hashtags in chat.
 - [events](https://www.npmjs.com/package/events) Node's event emitter for all engines.
 - [jsdom](https://www.npmjs.com/package/jsdom) A JavaScript implementation of many web standards
 - [lodash](https://www.npmjs.com/package/lodash) Lodash modular utilities.
