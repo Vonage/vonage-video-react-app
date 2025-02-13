@@ -127,7 +127,7 @@ jobs:
       - name: Auto-commit updated screenshots
         if: steps.check-update-screenshots.outputs.result == 'true'
         run: |
-          echo "Committing screenshots changes..."
+          echo "Committing screenshots..."
           FILE="integration-tests/tests/visualComparisons.spec.ts-snapshots/Landing-page-UI-test-1-firefox-linux.png"
           CONTENT=$(base64 -w 0 "$FILE")
           SHA=$(curl -s -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" "https://api.github.com/repos/${{ github.repository }}/contents/$FILE?ref=$BRANCH_NAME" | jq -r .sha)
