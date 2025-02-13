@@ -1,11 +1,5 @@
 import { useState, useRef, useCallback, useEffect } from 'react';
-import {
-  Publisher,
-  Event,
-  initPublisher,
-  VideoFilter,
-  hasMediaProcessorSupport,
-} from '@vonage/client-sdk-video';
+import { Publisher, Event, initPublisher, VideoFilter } from '@vonage/client-sdk-video';
 import setMediaDevices from '../../../utils/mediaDeviceUtils';
 import useDevices from '../../../hooks/useDevices';
 import usePermissions from '../../../hooks/usePermissions';
@@ -69,6 +63,11 @@ const usePreviewPublisher = (): PreviewPublisherContextType => {
   const [localVideoSource, setLocalVideoSource] = useState<string | undefined>(undefined);
   const [localAudioSource, setLocalAudioSource] = useState<string | undefined>(undefined);
 
+  const backgroundBlurFilter: VideoFilter = {
+    type: 'backgroundBlur',
+    blurStrength: 'high',
+  };
+
   /* This sets the default devices in use so that the user knows what devices they are using */
   useEffect(() => {
     setMediaDevices(publisherRef, allMediaDevices, setLocalAudioSource, setLocalVideoSource);
@@ -89,10 +88,7 @@ const usePreviewPublisher = (): PreviewPublisherContextType => {
     if (localBlur) {
       publisherRef.current.clearVideoFilter();
     } else {
-      publisherRef.current.applyVideoFilter({
-        type: 'backgroundBlur',
-        blurStrength: 'high',
-      });
+      publisherRef.current.applyVideoFilter(backgroundBlurFilter);
     }
     setLocalBlur(!localBlur);
     if (setUser) {
@@ -104,7 +100,7 @@ const usePreviewPublisher = (): PreviewPublisherContextType => {
         },
       }));
     }
-  }, [localBlur, setUser]);
+  }, [localBlur, setUser, backgroundBlurFilter]);
 
   /**
    * Change microphone
@@ -218,16 +214,11 @@ const usePreviewPublisher = (): PreviewPublisherContextType => {
       return;
     }
 
-    const backgroundBlurFilter: VideoFilter | undefined = localBlur
-      ? {
-          type: 'backgroundBlur',
-          blurStrength: 'high',
-        }
-      : undefined;
+    const videoFilter = localBlur ? backgroundBlurFilter : undefined;
 
     publisherRef.current = initPublisher(
       undefined,
-      { insertDefaultUI: false, videoFilter: backgroundBlurFilter },
+      { insertDefaultUI: false, videoFilter },
       (err: unknown) => {
         if (err instanceof Error) {
           publisherRef.current = null;
@@ -238,7 +229,10 @@ const usePreviewPublisher = (): PreviewPublisherContextType => {
       }
     );
     addPublisherListeners(publisherRef.current);
-  }, [addPublisherListeners, localBlur]);
+    // the local blur value gets rendered a few times which can cause this to be rendered a few times
+    // excluding from the dependencies to avoid that
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [addPublisherListeners]);
 
   const destroyPublisher = useCallback(() => {
     if (publisherRef.current) {
