@@ -63,11 +63,6 @@ const usePreviewPublisher = (): PreviewPublisherContextType => {
   const [localVideoSource, setLocalVideoSource] = useState<string | undefined>(undefined);
   const [localAudioSource, setLocalAudioSource] = useState<string | undefined>(undefined);
 
-  const backgroundBlurFilter: VideoFilter = {
-    type: 'backgroundBlur',
-    blurStrength: 'high',
-  };
-
   /* This sets the default devices in use so that the user knows what devices they are using */
   useEffect(() => {
     setMediaDevices(publisherRef, allMediaDevices, setLocalAudioSource, setLocalVideoSource);
@@ -88,7 +83,10 @@ const usePreviewPublisher = (): PreviewPublisherContextType => {
     if (localBlur) {
       publisherRef.current.clearVideoFilter();
     } else {
-      publisherRef.current.applyVideoFilter(backgroundBlurFilter);
+      publisherRef.current.applyVideoFilter({
+        type: 'backgroundBlur',
+        blurStrength: 'high',
+      });
     }
     setLocalBlur(!localBlur);
     if (setUser) {
@@ -100,7 +98,7 @@ const usePreviewPublisher = (): PreviewPublisherContextType => {
         },
       }));
     }
-  }, [localBlur, setUser, backgroundBlurFilter]);
+  }, [localBlur, setUser]);
 
   /**
    * Change microphone
@@ -214,7 +212,12 @@ const usePreviewPublisher = (): PreviewPublisherContextType => {
       return;
     }
 
-    const videoFilter = localBlur ? backgroundBlurFilter : undefined;
+    const videoFilter: VideoFilter | undefined = localBlur
+      ? {
+          type: 'backgroundBlur',
+          blurStrength: 'high',
+        }
+      : undefined;
 
     publisherRef.current = initPublisher(
       undefined,
