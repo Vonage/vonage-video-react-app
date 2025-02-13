@@ -11,7 +11,7 @@ export type PinButtonProps = {
   isTileHovered: boolean;
   participantName?: string;
   pinStyle?: string;
-  toggleIsPinned: () => void;
+  handleClick: (clickEvent: MouseEvent<HTMLButtonElement>) => void;
 };
 
 const PinButton = ({
@@ -21,7 +21,7 @@ const PinButton = ({
   isTileHovered,
   participantName,
   pinStyle,
-  toggleIsPinned,
+  handleClick,
 }: PinButtonProps): ReactElement | false => {
   const isDisabled = isMaxPinned && !isPinned;
   const anchorRef = useRef<HTMLDivElement | null>(null);
@@ -42,8 +42,8 @@ const PinButton = ({
     return `Pin ${participantName}'s video`;
   };
 
-  const handleClick = (clickEvent: MouseEvent<HTMLButtonElement>) => {
-    toggleIsPinned();
+  const onClick = (clickEvent: MouseEvent<HTMLButtonElement>) => {
+    handleClick(clickEvent);
     // We set hovering to false manually since onMouseLeave is not invoked when the DOM Element is moved.
     setIsHoveringButton(false);
     // In case the DOM Element didn't move, which can happen if pinning while viewing screenshare -
@@ -73,7 +73,7 @@ const PinButton = ({
         <Tooltip title={getTooltipText()} disableFocusListener open={isHoveringButton}>
           <IconButton
             disabled={isDisabled}
-            onClick={handleClick}
+            onClick={onClick}
             sx={{
               height: 24,
               width: 24,

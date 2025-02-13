@@ -1,4 +1,4 @@
-import { ReactElement, useEffect, useRef, useState } from 'react';
+import { MouseEvent, ReactElement, useEffect, useRef, useState } from 'react';
 import { Box } from 'opentok-layout-js';
 import { SubscriberWrapper } from '../../types/session';
 import AudioIndicator from '../MeetingRoom/AudioIndicator';
@@ -9,6 +9,7 @@ import NameDisplay from '../MeetingRoom/NameDisplay';
 import VideoTile from '../MeetingRoom/VideoTile';
 import PinButton from '../MeetingRoom/PinButton';
 import useSessionContext from '../../hooks/useSessionContext';
+import isMouseEventInsideBox from '../../utils/isMouseEventInsideBox';
 
 export type SubscriberProps = {
   subscriberWrapper: SubscriberWrapper;
@@ -65,6 +66,23 @@ const Subscriber = ({
     }
   }, [subscriberWrapper, isScreenShare]);
 
+  const handlePinClick = (clickEvent: MouseEvent<HTMLButtonElement>) => {
+    pinSubscriber(subscriberWrapper.id);
+    // We set hovering to false manually since onMouseLeave is not invoked when the DOM Element is moved.
+    setIsTileHovered(false);
+    // In case the DOM Element didn't move, which can happen if pinning while viewing screenshare -
+    // we use setTimeout to let the new layout render, then check if the element is still under the click event location.
+    // If so we re-enable the hover state.
+    setTimeout(() => {
+      if (subRef.current) {
+        const divRect = subRef.current.getBoundingClientRect();
+        if (isMouseEventInsideBox(clickEvent, divRect)) {
+          setIsTileHovered(true);
+        }
+      }
+    }, 0);
+  };
+
   const hasVideo = subscriberWrapper.subscriber?.stream?.hasVideo;
   const initials = subscriberWrapper.subscriber?.stream?.initials;
   const username = subscriberWrapper.subscriber?.stream?.name ?? '';
@@ -92,9 +110,7 @@ const Subscriber = ({
           isTileHovered={isTileHovered}
           pinStyle={pinStyle}
           isMaxPinned={isMaxPinned}
-          toggleIsPinned={() => {
-            pinSubscriber(subscriberWrapper.id);
-          }}
+          handleClick={handlePinClick}
           participantName={username}
         />
       )}
