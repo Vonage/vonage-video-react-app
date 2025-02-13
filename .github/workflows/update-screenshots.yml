@@ -1,6 +1,8 @@
 name: update-screenshots
 
-on: [pull_request, workflow_dispatch]
+on:
+  pull_request:
+    types: [opened, reopened, labeled]
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
