@@ -42,7 +42,7 @@ const VideoTile = forwardRef(
       <div
         id={id}
         data-testid={dataTestId}
-        className={`group/video-tile ${className ?? ''} m-1 absolute flex items-center justify-center ${isHidden ? 'hidden' : ''} `}
+        className={`${className ?? ''} m-1 absolute flex items-center justify-center ${isHidden ? 'hidden' : ''} `}
         style={getBoxStyle(box)}
         onMouseEnter={() => onMouseEnter?.()}
         onMouseLeave={() => onMouseLeave?.()}
