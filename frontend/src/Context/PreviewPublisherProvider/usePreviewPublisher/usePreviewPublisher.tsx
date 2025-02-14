@@ -1,5 +1,5 @@
 import { useState, useRef, useCallback, useEffect } from 'react';
-import { Publisher, Event, initPublisher } from '@vonage/client-sdk-video';
+import { Publisher, Event, initPublisher, VideoFilter } from '@vonage/client-sdk-video';
 import setMediaDevices from '../../../utils/mediaDeviceUtils';
 import useDevices from '../../../hooks/useDevices';
 import usePermissions from '../../../hooks/usePermissions';
@@ -47,7 +47,7 @@ export type PreviewPublisherContextType = {
  * @returns {PreviewPublisherContextType} preview context
  */
 const usePreviewPublisher = (): PreviewPublisherContextType => {
-  const { setUser } = useUserContext();
+  const { setUser, user } = useUserContext();
   const { allMediaDevices, getAllMediaDevices } = useDevices();
   const [publisherVideoElement, setPublisherVideoElement] = useState<
     HTMLVideoElement | HTMLObjectElement
@@ -57,7 +57,7 @@ const usePreviewPublisher = (): PreviewPublisherContextType => {
   const { setAccessStatus, accessStatus } = usePermissions();
   const publisherRef = useRef<Publisher | null>(null);
   const [isPublishing, setIsPublishing] = useState(false);
-  const [localBlur, setLocalBlur] = useState(false);
+  const [localBlur, setLocalBlur] = useState(user.defaultSettings.blur);
   const [isVideoEnabled, setIsVideoEnabled] = useState(true);
   const [isAudioEnabled, setIsAudioEnabled] = useState(true);
   const [localVideoSource, setLocalVideoSource] = useState<string | undefined>(undefined);
@@ -212,15 +212,29 @@ const usePreviewPublisher = (): PreviewPublisherContextType => {
       return;
     }
 
-    publisherRef.current = initPublisher(undefined, { insertDefaultUI: false }, (err: unknown) => {
-      if (err instanceof Error) {
-        publisherRef.current = null;
-        if (err.name === 'OT_USER_MEDIA_ACCESS_DENIED') {
-          console.error('initPublisher error: ', err);
+    const videoFilter: VideoFilter | undefined = localBlur
+      ? {
+          type: 'backgroundBlur',
+          blurStrength: 'high',
+        }
+      : undefined;
+
+    publisherRef.current = initPublisher(
+      undefined,
+      { insertDefaultUI: false, videoFilter },
+      (err: unknown) => {
+        if (err instanceof Error) {
+          publisherRef.current = null;
+          if (err.name === 'OT_USER_MEDIA_ACCESS_DENIED') {
+            console.error('initPublisher error: ', err);
+          }
         }
       }
-    });
+    );
     addPublisherListeners(publisherRef.current);
+    // the local blur value gets rendered a few times which can cause this to be rendered a few times
+    // excluding from the dependencies to avoid that
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [addPublisherListeners]);
 
   const destroyPublisher = useCallback(() => {
