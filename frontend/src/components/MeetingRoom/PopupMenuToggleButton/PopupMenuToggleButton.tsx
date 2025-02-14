@@ -1,12 +1,8 @@
 import { ReactElement, useRef, useState } from 'react';
-import { Grow, Paper, Popper, Tooltip } from '@mui/material';
+import { Tooltip } from '@mui/material';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
-import { ClickAwayListener, PopperChildrenProps } from '@mui/base';
 import ToolbarButton from '../ToolbarButton';
-import ArchivingToggle from '../ArchivingToggle';
-import LayoutToggleButton from '../LayoutToggleButton';
-import useSessionContext from '../../../hooks/useSessionContext';
-import EmojiGridButton from '../EmojiGridButton';
+import ToolbarOverflowMenu from '../ToolbarOverflowMenu';
 
 /**
  * PopupMenuToggleButton Component
@@ -15,18 +11,16 @@ import EmojiGridButton from '../EmojiGridButton';
  * @returns {ReactElement} - The PopupMenuToggleButton Component.
  */
 const PopupMenuToggleButton = (): ReactElement => {
-  const { subscriberWrappers } = useSessionContext();
   const anchorRef = useRef<HTMLButtonElement>(null);
   const [open, setOpen] = useState<boolean>(false);
-  const isViewingScreenShare = subscriberWrappers.some((subWrapper) => subWrapper.isScreenshare);
   const [openEmojiGridMobile, setOpenEmojiGridMobile] = useState<boolean>(true);
-
-  const handleClickAway = () => {
-    setOpen(false);
-  };
 
   const handleButtonToggle = () => {
     setOpen((prevOpen) => !prevOpen);
+  };
+
+  const handleClickAway = () => {
+    setOpen(false);
   };
 
   return (
@@ -42,50 +36,13 @@ const PopupMenuToggleButton = (): ReactElement => {
           ref={anchorRef}
         />
       </Tooltip>
-
-      <Popper open={open} anchorEl={anchorRef.current} transition disablePortal placement="bottom">
-        {({ TransitionProps, placement }: PopperChildrenProps) => (
-          <Grow
-            {...TransitionProps}
-            style={{
-              transformOrigin: placement === 'bottom' ? 'center top' : 'center bottom',
-              width: 'calc(100dvw - 30px)',
-              left: '-15px',
-              position: 'relative',
-              translate: '0px -9px',
-            }}
-          >
-            <div className="font-normal text-left flex w-full">
-              <ClickAwayListener onClickAway={handleClickAway}>
-                <Paper
-                  className="flex justify-center items-center"
-                  sx={{
-                    backgroundColor: '#272c2f',
-                    color: '#fff',
-                    padding: { xs: 1 },
-                    borderRadius: 2,
-                    zIndex: 1,
-                    width: '100%',
-                    position: 'relative',
-                    display: 'flex',
-                    justifyContent: 'center',
-                    alignContent: 'space-between',
-                    alignItems: 'center',
-                    paddingLeft: '12px',
-                  }}
-                >
-                  <LayoutToggleButton isScreenSharePresent={isViewingScreenShare} />
-                  <EmojiGridButton
-                    openEmojiGrid={openEmojiGridMobile}
-                    setOpenEmojiGrid={setOpenEmojiGridMobile}
-                  />
-                  <ArchivingToggle />
-                </Paper>
-              </ClickAwayListener>
-            </div>
-          </Grow>
-        )}
-      </Popper>
+      <ToolbarOverflowMenu
+        open={open}
+        openEmojiGrid={openEmojiGridMobile}
+        setOpenEmojiGrid={setOpenEmojiGridMobile}
+        anchorRef={anchorRef}
+        handleClickAway={handleClickAway}
+      />
     </>
   );
 };
