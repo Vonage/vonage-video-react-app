@@ -52,7 +52,6 @@ const EmojiGrid = ({
             sx={{
               position: 'fixed',
               bottom: '146px',
-              borderRadius: 2,
               left: '50%',
               translate: '-50% 0%',
             }}
@@ -63,7 +62,8 @@ const EmojiGrid = ({
               display={openEmojiGrid ? 'flex' : 'none'}
               sx={{
                 width: 'calc(100dvw - 30px)',
-                backgroundColor: isSmallViewport ? '#272c2f' : undefined,
+                backgroundColor: '#272c2f',
+                borderRadius: 2,
               }}
             >
               {Object.values(emojiMap).map((emoji) => (
