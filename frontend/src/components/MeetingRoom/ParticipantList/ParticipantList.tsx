@@ -100,7 +100,8 @@ const ParticipantList = ({ handleClose, isOpen }: ParticipantListProps): ReactEl
           {subscriberWrappers
             .filter(({ isScreenshare }) => !isScreenshare)
             .sort(compareNameAlphabetically)
-            .map(({ id, subscriber }) => {
+            .map((subscriberWrapper) => {
+              const { subscriber, id } = subscriberWrapper;
               const hasAudio = !!subscriber.stream?.hasAudio;
               const participantName = subscriber?.stream?.name ?? '';
               const participantStream = subscriber?.stream;
@@ -113,6 +114,7 @@ const ParticipantList = ({ handleClose, isOpen }: ParticipantListProps): ReactEl
                   name={participantName}
                   initials={getInitials(participantName)}
                   avatarColor={getParticipantColor(participantName)}
+                  subscriberWrapper={subscriberWrapper}
                 />
               );
             })}
