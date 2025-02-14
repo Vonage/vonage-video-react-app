@@ -51,7 +51,7 @@ const ScreenSharingButton = ({
   };
 
   return (
-    <div className={`hidden ${displayOnDesktop()}`} id="screen-sharing-button">
+    <div className={`hidden ${displayOnDesktop()}`}>
       <Tooltip title={title} aria-label="add">
         <ToolbarButton
           onClick={handleButtonClick}

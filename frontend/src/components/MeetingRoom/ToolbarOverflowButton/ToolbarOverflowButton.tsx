@@ -22,7 +22,7 @@ const ToolbarOverflowButton = (): ReactElement => {
 
   const handleClickAway = useCallback(() => {
     setOpen(false);
-    // We close the emoji grid its animation is in-sync with the overflow menu animation.
+    // We close the emoji grid so its animation is in-sync with the overflow menu animation.
     setOpenEmojiGridMobile((prevValue) => {
       if (timer.current === undefined) {
         timer.current = window.setTimeout(() => {

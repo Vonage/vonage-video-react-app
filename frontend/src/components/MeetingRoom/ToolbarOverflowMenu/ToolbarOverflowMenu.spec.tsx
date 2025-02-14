@@ -38,7 +38,7 @@ describe('ToolbarOverflowMenu', () => {
     expect(screen.getByTestId('toolbar-overflow-menu')).toBeVisible();
   });
 
-  it('is not rendered shown when closed', () => {
+  it('is not shown when closed', () => {
     render(<TestComponent />);
 
     expect(screen.queryByTestId('toolbar-overflow-menu')).not.toBeInTheDocument();
