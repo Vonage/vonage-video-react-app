@@ -5,12 +5,12 @@ import ToolbarButton from '../ToolbarButton';
 import ToolbarOverflowMenu from '../ToolbarOverflowMenu';
 
 /**
- * PopupMenuToggleButton Component
+ * ToolbarOverflowButton Component
  *
  * Displays a clickable button that opens a grid of hidden toolbar buttons for smaller viewport devices.
- * @returns {ReactElement} - The PopupMenuToggleButton Component.
+ * @returns {ReactElement} - The ToolbarOverflowButton Component.
  */
-const PopupMenuToggleButton = (): ReactElement => {
+const ToolbarOverflowButton = (): ReactElement => {
   const anchorRef = useRef<HTMLButtonElement>(null);
   const [open, setOpen] = useState<boolean>(false);
   const [openEmojiGridMobile, setOpenEmojiGridMobile] = useState<boolean>(true);
@@ -47,4 +47,4 @@ const PopupMenuToggleButton = (): ReactElement => {
   );
 };
 
-export default PopupMenuToggleButton;
+export default ToolbarOverflowButton;

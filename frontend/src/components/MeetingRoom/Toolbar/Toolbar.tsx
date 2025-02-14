@@ -11,7 +11,7 @@ import ArchivingToggle from '../ArchivingToggle';
 import ChatToggleButton from '../ChatToggleButton';
 import { RightPanelActiveTab } from '../../../hooks/useRightPanel';
 import ReportIssueButton from '../ReportIssueButton';
-import PopupMenuToggleButton from '../PopupMenuToggleButton';
+import ToolbarOverflowButton from '../ToolbarOverflowButton';
 import useIsSmallViewport from '../../../hooks/useIsSmallViewport';
 import EmojiGridButton from '../EmojiGridButton';
 
@@ -77,7 +77,7 @@ const Toolbar = ({
         <AudioControlButton />
         <VideoControlButton />
         {isSmallViewport ? (
-          <PopupMenuToggleButton />
+          <ToolbarOverflowButton />
         ) : (
           <>
             <ScreenSharingButton
