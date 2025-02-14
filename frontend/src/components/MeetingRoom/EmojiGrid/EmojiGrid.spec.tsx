@@ -1,6 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, Mock, vi } from 'vitest';
-import { act, render, screen } from '@testing-library/react';
-import { ReactElement, useState } from 'react';
+import { render, screen } from '@testing-library/react';
+import { ReactElement, useRef, useState } from 'react';
 import { Button } from '@mui/material';
 import EmojiGrid from './EmojiGrid';
 import useIsSmallViewport from '../../../hooks/useIsSmallViewport';
@@ -22,47 +22,62 @@ const TestComponent = ({
   defaultOpenEmojiGrid?: boolean;
 }): ReactElement => {
   const [openEmojiGrid, setOpenEmojiGrid] = useState<boolean>(defaultOpenEmojiGrid);
+  const anchorRef = useRef<HTMLButtonElement>(null);
 
-  return <EmojiGrid openEmojiGrid={openEmojiGrid} setOpenEmojiGrid={setOpenEmojiGrid} />;
+  return (
+    <>
+      <Button type="button" ref={anchorRef} />
+      <EmojiGrid
+        anchorRef={anchorRef}
+        openEmojiGrid={openEmojiGrid}
+        setOpenEmojiGrid={setOpenEmojiGrid}
+      />
+    </>
+  );
 };
 
 describe('EmojiGrid', () => {
   beforeEach(() => {
     mockSendEmojiButton.mockReturnValue(FakeSendEmojiButton);
-    mockUseIsSmallViewport.mockReturnValue(false);
   });
 
   afterEach(() => {
     vi.resetAllMocks();
   });
 
-  it('toggling the emoji grid shows and hides the emoji(s)', () => {
-    render(<TestComponent />);
-
-    act(() => {
-      screen.getByTestId('emoji-grid-toggle').click();
+  describe('on desktop', () => {
+    beforeEach(() => {
+      mockUseIsSmallViewport.mockReturnValue(false);
     });
 
-    expect(screen.queryByTestId('send-emoji-button')).toBeVisible();
+    it('displays emoji grid when open', () => {
+      render(<TestComponent defaultOpenEmojiGrid />);
 
-    act(() => {
-      screen.getByTestId('emoji-grid-toggle').click();
+      expect(screen.queryByTestId('send-emoji-button')).toBeVisible();
     });
 
-    expect(screen.queryByTestId('send-emoji-button')).not.toBeVisible();
+    it('displays nothing when closed', () => {
+      render(<TestComponent defaultOpenEmojiGrid={false} />);
+
+      expect(screen.queryByTestId('send-emoji-button')).not.toBeInTheDocument();
+    });
   });
 
-  it('on desktop, grid is closed by default', () => {
-    render(<TestComponent defaultOpenEmojiGrid={false} />);
+  describe('on mobile', () => {
+    beforeEach(() => {
+      mockUseIsSmallViewport.mockReturnValue(true);
+    });
 
-    expect(screen.queryByTestId('emoji-grid-toggle')).toBeVisible();
-    expect(screen.queryByTestId('send-emoji-button')).not.toBeInTheDocument();
-  });
+    it('displays emoji grid when open', () => {
+      render(<TestComponent defaultOpenEmojiGrid />);
 
-  it('on mobile, grid is open by default', () => {
-    render(<TestComponent defaultOpenEmojiGrid />);
+      expect(screen.queryByTestId('send-emoji-button')).toBeVisible();
+    });
 
-    expect(screen.queryByTestId('emoji-grid-toggle')).toBeVisible();
-    expect(screen.queryByTestId('send-emoji-button')).toBeVisible();
+    it('displays nothing when closed', () => {
+      render(<TestComponent defaultOpenEmojiGrid={false} />);
+
+      expect(screen.queryByTestId('send-emoji-button')).not.toBeVisible();
+    });
   });
 });
