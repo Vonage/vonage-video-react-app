@@ -4,7 +4,6 @@ import MoreVertIcon from '@mui/icons-material/MoreVert';
 import { ClickAwayListener, PopperChildrenProps } from '@mui/base';
 import ToolbarButton from '../ToolbarButton';
 import ArchivingToggle from '../ArchivingToggle';
-import EmojiGrid from '../EmojiGrid';
 import LayoutToggleButton from '../LayoutToggleButton';
 import useSessionContext from '../../../hooks/useSessionContext';
 import EmojiGridButton from '../EmojiGridButton';
@@ -20,7 +19,6 @@ const PopupMenuToggleButton = (): ReactElement => {
   const anchorRef = useRef<HTMLButtonElement>(null);
   const [open, setOpen] = useState<boolean>(false);
   const isViewingScreenShare = subscriberWrappers.some((subWrapper) => subWrapper.isScreenshare);
-  const emojiGridButtonRefMobile = useRef<HTMLButtonElement>(null);
   const [openEmojiGridMobile, setOpenEmojiGridMobile] = useState<boolean>(true);
 
   const handleClickAway = () => {
@@ -86,12 +84,6 @@ const PopupMenuToggleButton = (): ReactElement => {
                 >
                   <LayoutToggleButton isScreenSharePresent={isViewingScreenShare} />
                   <EmojiGridButton
-                    anchorRef={emojiGridButtonRefMobile}
-                    openEmojiGrid={openEmojiGridMobile}
-                    setOpenEmojiGrid={setOpenEmojiGridMobile}
-                  />
-                  <EmojiGrid
-                    anchorRef={emojiGridButtonRefMobile}
                     openEmojiGrid={openEmojiGridMobile}
                     setOpenEmojiGrid={setOpenEmojiGridMobile}
                   />

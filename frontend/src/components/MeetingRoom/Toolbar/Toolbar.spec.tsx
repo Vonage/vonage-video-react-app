@@ -74,7 +74,7 @@ describe('Toolbar', () => {
     expect(screen.queryByTestId('emoji-grid-toggle')).not.toBeInTheDocument();
   });
 
-  it('on a normal viewport, displays the all of the toolbar buttons', () => {
+  it('on a normal viewport, displays all of the toolbar buttons', () => {
     mockUseIsSmallViewport.mockReturnValue(false);
     mockDisplayOnDesktop.mockReturnValue('md:inline');
 
