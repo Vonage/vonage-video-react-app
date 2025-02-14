@@ -13,7 +13,6 @@ import ToolbarOverflowMenu from '../ToolbarOverflowMenu';
 const ToolbarOverflowButton = (): ReactElement => {
   const anchorRef = useRef<HTMLButtonElement>(null);
   const [open, setOpen] = useState<boolean>(false);
-  const [openEmojiGridMobile, setOpenEmojiGridMobile] = useState<boolean>(true);
 
   const handleButtonToggle = () => {
     setOpen((prevOpen) => !prevOpen);
@@ -36,13 +35,7 @@ const ToolbarOverflowButton = (): ReactElement => {
           ref={anchorRef}
         />
       </Tooltip>
-      <ToolbarOverflowMenu
-        open={open}
-        openEmojiGrid={openEmojiGridMobile}
-        setOpenEmojiGrid={setOpenEmojiGridMobile}
-        anchorRef={anchorRef}
-        handleClickAway={handleClickAway}
-      />
+      <ToolbarOverflowMenu open={open} anchorRef={anchorRef} handleClickAway={handleClickAway} />
     </>
   );
 };
