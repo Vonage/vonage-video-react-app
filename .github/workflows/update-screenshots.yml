@@ -18,7 +18,7 @@ env:
   OT_API_SECRET: ${{secrets.API_SECRET}}
   VONAGE_APP_ID: ${{secrets.VONAGE_APP_ID}}
   VONAGE_PRIVATE_KEY: ${{secrets.VONAGE_PRIVATE_KEY}}
-  BRANCH_NAME: ${{ github.ref_name }}
+  BRANCH_NAME: ${{ github.head_ref }}
   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
 jobs:
@@ -117,7 +117,7 @@ jobs:
       - name: Auto-commit updated screenshots
         if: steps.check-update-screenshots.outputs.result == 'true'
         run: |
-          echo "Committing screenshots to $BRANCH_NAME"
+          echo "Committing screenshots to "$BRANCH_NAME""
           FILES_CHANGED=$(git status --porcelain | awk '{print $2}')
           for file in $FILES_CHANGED; do
             CONTENT=$(base64 -w 0 "$file")
