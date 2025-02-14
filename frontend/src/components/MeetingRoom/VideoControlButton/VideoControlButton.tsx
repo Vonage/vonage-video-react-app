@@ -33,9 +33,9 @@ const VideoControlButton = (): ReactElement => {
   };
 
   return (
-    <div className="hidden xs:inline">
+    <div className="xs:inline hidden">
       <ButtonGroup
-        className="mt-1 mr-3 bg-notVeryGray-55"
+        className="bg-notVeryGray-55 mr-3 mt-1"
         disableElevation
         sx={{ borderRadius: '30px' }}
         variant="contained"
@@ -50,7 +50,7 @@ const VideoControlButton = (): ReactElement => {
           aria-haspopup="menu"
           title="Open"
           onClick={handleToggle}
-          className="h-12 w-12"
+          className="size-12"
           data-testid="video-dropdown-toggle"
         >
           {open ? (
@@ -65,7 +65,7 @@ const VideoControlButton = (): ReactElement => {
             edge="start"
             aria-label="videoCamera"
             size="small"
-            className="h-[50px] m-[3px] w-[50px] rounded-full shadow-md"
+            className="m-[3px] size-[50px] rounded-full shadow-md"
           >
             {isVideoEnabled ? (
               <VideocamIcon className="text-white" />

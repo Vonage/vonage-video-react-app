@@ -6,20 +6,22 @@
     "plugin:@typescript-eslint/recommended",
     "prettier",
     "plugin:jsdoc/recommended",
-    "plugin:@cspell/recommended"
+    "plugin:@cspell/recommended",
+    "plugin:tailwindcss/recommended"
   ],
   "parser": "@typescript-eslint/parser",
   "parserOptions": {
     "project": [
       "./backend/tsconfig.json",
       "./frontend/tsconfig.json",
-      "./integration-tests/tsconfig.json",
-    ],
+      "./integration-tests/tsconfig.json"
+    ]
   },
   "plugins": [
     "@typescript-eslint",
     "prettier",
     "jsdoc",
+    "tailwindcss"
   ],
   "root": false,
   "rules": {
@@ -43,6 +45,30 @@
           "language": "en-US"
         },
         "customWordListFile": "./customWordList.txt" 
+      }
+    ],
+    "tailwindcss/no-custom-classname": [
+      "error",
+      // the following is needed to ignore the custom colors in tailwind.config.js
+      {
+        "whitelist": [
+          "bg-darkGray-55",
+          "bg-darkGray-100",
+          "bg-notVeryGray-55",
+          "bg-notVeryGray-100",
+          "bg-primary-dark",
+          "emoji",
+          "meetingRoom",
+          "publisher",
+          "screen-subscriber",
+          "subscriber",
+          "text-darkGray",
+          "text-darkGray-55",
+          "text-darkGray-100",
+          "text-notVeryGray-55",
+          "text-notVeryGray-100",
+          "xs"
+        ]
       }
     ]
   },

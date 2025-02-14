@@ -59,7 +59,7 @@ const VideoContainer = ({ username }: VideoContainerProps): ReactElement => {
 
   return (
     <div
-      className="relative max-w-full w-[584px] bg-black h-[328px] flex flex-col items-center justify-center md:rounded-xl"
+      className="relative flex h-[328px] w-[584px] max-w-full flex-col items-center justify-center bg-black md:rounded-xl"
       // this was added because overflow: hidden causes issues with rendering
       // see https://stackoverflow.com/questions/77748631/element-rounded-corners-leaking-out-to-front-when-using-overflow-hidden
       style={{ WebkitMask: 'linear-gradient(#000 0 0)' }}
@@ -74,7 +74,7 @@ const VideoContainer = ({ username }: VideoContainerProps): ReactElement => {
         isVideoLoading={videoLoading}
       />
       {!videoLoading && (
-        <div className="absolute flex items-center justify-center top-[75%] bottom-0 left-0 right-0 h-fit">
+        <div className="absolute inset-x-0 bottom-0 top-3/4 flex h-fit items-center justify-center">
           {isAudioEnabled && (
             <div className="absolute left-6 top-8">
               <VoiceIndicatorIcon publisherAudioLevel={speechLevel} size={24} />

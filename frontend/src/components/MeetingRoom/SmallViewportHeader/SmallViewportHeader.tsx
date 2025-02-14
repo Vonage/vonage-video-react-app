@@ -32,7 +32,7 @@ const SmallViewportHeader = (): ReactElement => {
   };
   return (
     <div
-      className="flex items-center justify-between px-4 pt-4 bg-darkGray-100 text-white"
+      className="bg-darkGray-100 flex items-center justify-between px-4 pt-4 text-white"
       data-testId="smallViewportHeader"
     >
       <div className="flex items-center space-x-2 px-1">

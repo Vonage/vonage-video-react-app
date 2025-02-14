@@ -18,7 +18,7 @@ const NewRoomButton = ({ handleNewRoom }: NewRoomButtonProps): ReactElement => {
   return (
     <Button
       variant="contained"
-      className="h-14 mt-2"
+      className="mt-2 h-14"
       startIcon={<VideoCall />}
       onClick={handleNewRoom}
       fullWidth
@@ -30,7 +30,7 @@ const NewRoomButton = ({ handleNewRoom }: NewRoomButtonProps): ReactElement => {
         width: '18rem',
       }}
     >
-      <div className="text-center w-full flex justify-center items-center">Create room</div>
+      <div className="flex w-full items-center justify-center text-center">Create room</div>
     </Button>
   );
 };

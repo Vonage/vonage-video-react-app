@@ -18,7 +18,7 @@ export type NameDisplayProps = {
 const NameDisplay = ({ name, containerWidth }: NameDisplayProps): ReactElement => {
   return (
     <div
-      className={`absolute text-sm truncate text-white bottom-[10px] left-[10px] ${TEXT_SHADOW}`}
+      className={`absolute bottom-[10px] left-[10px] truncate text-sm text-white ${TEXT_SHADOW}`}
       style={{
         maxWidth: containerWidth - 32,
       }}
