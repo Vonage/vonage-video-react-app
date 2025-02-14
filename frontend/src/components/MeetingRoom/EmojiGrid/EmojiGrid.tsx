@@ -14,8 +14,9 @@ export type EmojiGridProps = {
 /**
  * EmojiGrid Component
  *
- * Displays a clickable button that opens a grid of emojis.
+ * Displays a grid of emojis.
  * @param {EmojiGridProps} props - the props for the component
+ *  @property {RefObject<HTMLButtonElement | null>} anchorRef - the button ref for the grid
  *  @property {boolean} openEmojiGrid - whether the component will be open initially
  *  @property {Dispatch<SetStateAction<boolean>>} setOpenEmojiGrid - toggle whether the emoji grid is shown or hidden
  * @returns {ReactElement} - The EmojiGrid Component.
