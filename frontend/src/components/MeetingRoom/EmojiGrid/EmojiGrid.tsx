@@ -1,8 +1,6 @@
-import { Box, Grid, Grow, Paper, Popper, Portal, Tooltip } from '@mui/material';
-import { EmojiEmotions } from '@mui/icons-material';
-import { Dispatch, ReactElement, SetStateAction, useRef } from 'react';
+import { Box, Grid, Grow, Paper, Popper, Portal } from '@mui/material';
+import { Dispatch, ReactElement, RefObject, SetStateAction } from 'react';
 import { ClickAwayListener, PopperChildrenProps } from '@mui/base';
-import ToolbarButton from '../ToolbarButton';
 import emojiMap from '../../../utils/emojis';
 import SendEmojiButton from '../SendEmojiButton';
 import useIsSmallViewport from '../../../hooks/useIsSmallViewport';
@@ -10,6 +8,7 @@ import useIsSmallViewport from '../../../hooks/useIsSmallViewport';
 export type EmojiGridProps = {
   openEmojiGrid: boolean;
   setOpenEmojiGrid: Dispatch<SetStateAction<boolean>>;
+  anchorRef: RefObject<HTMLButtonElement | null>;
 };
 
 /**
@@ -21,16 +20,12 @@ export type EmojiGridProps = {
  *  @property {Dispatch<SetStateAction<boolean>>} setOpenEmojiGrid - toggle whether the emoji grid is shown or hidden
  * @returns {ReactElement} - The EmojiGrid Component.
  */
-const EmojiGrid = ({ openEmojiGrid, setOpenEmojiGrid }: EmojiGridProps): ReactElement => {
-  const anchorRef = useRef<HTMLButtonElement>(null);
+const EmojiGrid = ({
+  anchorRef,
+  openEmojiGrid,
+  setOpenEmojiGrid,
+}: EmojiGridProps): ReactElement => {
   const isSmallViewport = useIsSmallViewport();
-  // We want 30px of buffer on the sides of the menu for mobile devices
-  const minWidth = isSmallViewport ? `calc(100dvw - 30px)` : '100%';
-  // Each button is 66px, 8px left and right padding = 280px for desktop
-  const maxWidth = isSmallViewport ? 'calc(100dvw - 30px)' : '280px';
-  const transform = isSmallViewport ? 'translate(-50%, -18px)' : 'translateY(-5%)';
-  // We account for the 9px translation from the PopupMenuToggleButton.
-  const left = isSmallViewport ? 'calc(50dvw - 9px)' : undefined;
 
   const handleClickAway = (event: MouseEvent | TouchEvent) => {
     const target = event.target as HTMLElement;
@@ -42,115 +37,92 @@ const EmojiGrid = ({ openEmojiGrid, setOpenEmojiGrid }: EmojiGridProps): ReactEl
     setOpenEmojiGrid(false);
   };
 
-  const handleToggle = () => {
-    setOpenEmojiGrid((prevOpen) => !prevOpen);
-  };
-
-  return (
-    <>
-      <Tooltip title="Express yourself" aria-label="open sendable emoji menu">
-        <ToolbarButton
-          onClick={handleToggle}
-          icon={
-            <EmojiEmotions
-              style={{ color: `${!openEmojiGrid ? 'white' : 'rgb(138, 180, 248)'}` }}
-            />
-          }
-          ref={anchorRef}
-          data-testid="emoji-grid-toggle"
-        />
-      </Tooltip>
-
-      {isSmallViewport ? (
-        openEmojiGrid && (
-          <Portal>
-            <ClickAwayListener onClickAway={handleClickAway}>
-              <Grow
-                in={openEmojiGrid}
-                style={{
-                  transformOrigin: 'center bottom',
-                }}
-                timeout={150}
-              >
-                <Box
-                  sx={{
-                    position: 'fixed',
-                    bottom: '146px',
-                    borderRadius: 2,
-                    left: '50%',
-                    translate: '-50% 0%',
-                  }}
-                >
-                  <Grid
-                    container
-                    spacing={0}
-                    display={openEmojiGrid ? 'flex' : 'none'}
-                    sx={{
-                      width: minWidth,
-                      backgroundColor: isSmallViewport ? '#272c2f' : undefined,
-                    }}
-                  >
-                    {Object.values(emojiMap).map((emoji) => {
-                      return <SendEmojiButton key={emoji} emoji={emoji} />;
-                    })}
-                  </Grid>
-                </Box>
-              </Grow>
-            </ClickAwayListener>
-          </Portal>
-        )
-      ) : (
-        <Popper
-          open={openEmojiGrid}
-          anchorEl={anchorRef.current}
-          transition
-          disablePortal
-          placement="bottom"
+  return isSmallViewport ? (
+    <Portal>
+      <ClickAwayListener onClickAway={handleClickAway}>
+        <Grow
+          in={openEmojiGrid}
+          style={{
+            transformOrigin: 'center bottom',
+          }}
+          timeout={150}
         >
-          {({ TransitionProps, placement }: PopperChildrenProps) => (
-            <Grow
-              {...TransitionProps}
-              style={{
-                transformOrigin: placement === 'bottom' ? 'center top' : 'center bottom',
+          <Box
+            sx={{
+              position: 'fixed',
+              bottom: '146px',
+              borderRadius: 2,
+              left: '50%',
+              translate: '-50% 0%',
+            }}
+          >
+            <Grid
+              container
+              spacing={0}
+              display={openEmojiGrid ? 'flex' : 'none'}
+              sx={{
+                width: 'calc(100dvw - 30px)',
+                backgroundColor: isSmallViewport ? '#272c2f' : undefined,
               }}
             >
-              <div className="font-normal text-left flex">
-                <ClickAwayListener onClickAway={handleClickAway}>
-                  <Paper
-                    className="flex justify-center items-center"
-                    sx={{
-                      backgroundColor: isSmallViewport ? '#272c2f' : 'rgb(32, 33, 36)',
-                      color: '#fff',
-                      padding: { xs: 1 },
-                      borderRadius: 2,
-                      zIndex: 1,
-                      transform,
-                      maxWidth,
-                      position: 'relative',
-                      left,
-                    }}
-                  >
-                    <Grid
-                      container
-                      spacing={0}
-                      display={openEmojiGrid ? 'flex' : 'none'}
-                      sx={{
-                        width: minWidth,
-                        backgroundColor: isSmallViewport ? '#272c2f' : undefined,
-                      }}
-                    >
-                      {Object.values(emojiMap).map((emoji) => {
-                        return <SendEmojiButton key={emoji} emoji={emoji} />;
-                      })}
-                    </Grid>
-                  </Paper>
-                </ClickAwayListener>
-              </div>
-            </Grow>
-          )}
-        </Popper>
+              {Object.values(emojiMap).map((emoji) => (
+                <SendEmojiButton key={emoji} emoji={emoji} />
+              ))}
+            </Grid>
+          </Box>
+        </Grow>
+      </ClickAwayListener>
+    </Portal>
+  ) : (
+    <Popper
+      open={openEmojiGrid}
+      anchorEl={anchorRef.current}
+      transition
+      disablePortal
+      placement="bottom"
+    >
+      {({ TransitionProps, placement }: PopperChildrenProps) => (
+        <Grow
+          {...TransitionProps}
+          style={{
+            transformOrigin: placement === 'bottom' ? 'center top' : 'center bottom',
+          }}
+        >
+          <div className="font-normal text-left flex">
+            <ClickAwayListener onClickAway={handleClickAway}>
+              <Paper
+                className="flex justify-center items-center"
+                sx={{
+                  backgroundColor: 'rgb(32, 33, 36)',
+                  color: '#fff',
+                  padding: { xs: 1 },
+                  borderRadius: 2,
+                  zIndex: 1,
+                  transform: 'translateY(-5%)',
+                  // Each button is 66px, 8px left and right padding = 280px
+                  maxWidth: '280px',
+                  position: 'relative',
+                }}
+              >
+                <Grid
+                  container
+                  spacing={0}
+                  display={openEmojiGrid ? 'flex' : 'none'}
+                  sx={{
+                    width: '100%',
+                    backgroundColor: undefined,
+                  }}
+                >
+                  {Object.values(emojiMap).map((emoji) => (
+                    <SendEmojiButton key={emoji} emoji={emoji} />
+                  ))}
+                </Grid>
+              </Paper>
+            </ClickAwayListener>
+          </div>
+        </Grow>
       )}
-    </>
+    </Popper>
   );
 };
 

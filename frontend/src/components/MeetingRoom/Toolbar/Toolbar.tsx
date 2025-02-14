@@ -1,4 +1,4 @@
-import { ReactElement, useCallback, useState } from 'react';
+import { ReactElement, useCallback, useRef, useState } from 'react';
 import AudioControlButton from '../AudioControlButton';
 import VideoControlButton from '../VideoControlButton';
 import ScreenSharingButton from '../../ScreenSharingButton';
@@ -14,6 +14,7 @@ import { RightPanelActiveTab } from '../../../hooks/useRightPanel';
 import ReportIssueButton from '../ReportIssueButton';
 import PopupMenuToggleButton from '../PopupMenuToggleButton';
 import useIsSmallViewport from '../../../hooks/useIsSmallViewport';
+import EmojiGridButton from '../EmojiGridButton';
 
 export type ToolbarProps = {
   toggleShareScreen: () => void;
@@ -66,6 +67,7 @@ const Toolbar = ({
     }
     disconnect();
   }, [disconnect]);
+  const emojiGridButtonRefDesktop = useRef<HTMLButtonElement>(null);
   const [openEmojiGridDesktop, setOpenEmojiGridDesktop] = useState<boolean>(false);
 
   return (
@@ -86,7 +88,13 @@ const Toolbar = ({
               isViewingScreenShare={isViewingScreenShare}
             />
             <LayoutToggleButton isScreenSharePresent={isScreenSharePresent} />
+            <EmojiGridButton
+              anchorRef={emojiGridButtonRefDesktop}
+              openEmojiGrid={openEmojiGridDesktop}
+              setOpenEmojiGrid={setOpenEmojiGridDesktop}
+            />
             <EmojiGrid
+              anchorRef={emojiGridButtonRefDesktop}
               openEmojiGrid={openEmojiGridDesktop}
               setOpenEmojiGrid={setOpenEmojiGridDesktop}
             />
