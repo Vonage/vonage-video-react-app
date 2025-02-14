@@ -33,10 +33,11 @@ export type ToolbarProps = {
  * - The current time and meeting room name
  * - The microphone state with the ability to toggle it on/off and open a drop-down with some audio settings
  * - The video state with the ability to toggle it on/off and open a dropdown with some video settings
- * - Screensharing button
+ * - Screensharing button (only on desktop devices)
  * - Button to toggle current layout (grid or active speaker)
  * - Button to express yourself (emojis)
  * - Button to open a pop-up to start meeting recording (archiving)
+ * - Button containing hidden toolbar items when the viewport is narrow
  * - Button to exit a meeting (redirects to the goodbye page)
  * @param {ToolbarProps} props - the props for the component
  *  @property {() => void} toggleScreenShare - the prop to toggle the screen share on and off
