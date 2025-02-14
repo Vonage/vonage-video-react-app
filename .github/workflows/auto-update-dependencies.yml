@@ -3,7 +3,7 @@ name: auto-update-dependencies
 on:
   push:
     branches:
-      - develop
+      - behei-vonage/vidcs-3393-sus
 
 permissions:
   contents: read
