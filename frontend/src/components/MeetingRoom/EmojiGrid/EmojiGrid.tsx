@@ -1,4 +1,4 @@
-import { Grid, Grow, Paper, Popper, Tooltip } from '@mui/material';
+import { Box, Grid, Grow, Paper, Popper, Portal, Tooltip } from '@mui/material';
 import { EmojiEmotions } from '@mui/icons-material';
 import { Dispatch, ReactElement, SetStateAction, useRef } from 'react';
 import { ClickAwayListener, PopperChildrenProps } from '@mui/base';
@@ -61,34 +61,24 @@ const EmojiGrid = ({ openEmojiGrid, setOpenEmojiGrid }: EmojiGridProps): ReactEl
         />
       </Tooltip>
 
-      <Popper
-        open={openEmojiGrid}
-        anchorEl={anchorRef.current}
-        transition
-        disablePortal
-        placement="bottom"
-      >
-        {({ TransitionProps, placement }: PopperChildrenProps) => (
-          <Grow
-            {...TransitionProps}
-            style={{
-              transformOrigin: placement === 'bottom' ? 'center top' : 'center bottom',
-            }}
-          >
-            <div className="font-normal text-left flex">
-              <ClickAwayListener onClickAway={handleClickAway}>
-                <Paper
-                  className="flex justify-center items-center"
+      {isSmallViewport ? (
+        openEmojiGrid && (
+          <Portal>
+            <ClickAwayListener onClickAway={handleClickAway}>
+              <Grow
+                in={openEmojiGrid}
+                style={{
+                  transformOrigin: 'center bottom',
+                }}
+                timeout={150}
+              >
+                <Box
                   sx={{
-                    backgroundColor: isSmallViewport ? '#272c2f' : 'rgb(32, 33, 36)',
-                    color: '#fff',
-                    padding: { xs: 1 },
+                    position: 'fixed',
+                    bottom: '146px',
                     borderRadius: 2,
-                    zIndex: 1,
-                    transform,
-                    maxWidth,
-                    position: 'relative',
-                    left,
+                    left: '50%',
+                    translate: '-50% 0%',
                   }}
                 >
                   <Grid
@@ -104,12 +94,62 @@ const EmojiGrid = ({ openEmojiGrid, setOpenEmojiGrid }: EmojiGridProps): ReactEl
                       return <SendEmojiButton key={emoji} emoji={emoji} />;
                     })}
                   </Grid>
-                </Paper>
-              </ClickAwayListener>
-            </div>
-          </Grow>
-        )}
-      </Popper>
+                </Box>
+              </Grow>
+            </ClickAwayListener>
+          </Portal>
+        )
+      ) : (
+        <Popper
+          open={openEmojiGrid}
+          anchorEl={anchorRef.current}
+          transition
+          disablePortal
+          placement="bottom"
+        >
+          {({ TransitionProps, placement }: PopperChildrenProps) => (
+            <Grow
+              {...TransitionProps}
+              style={{
+                transformOrigin: placement === 'bottom' ? 'center top' : 'center bottom',
+              }}
+            >
+              <div className="font-normal text-left flex">
+                <ClickAwayListener onClickAway={handleClickAway}>
+                  <Paper
+                    className="flex justify-center items-center"
+                    sx={{
+                      backgroundColor: isSmallViewport ? '#272c2f' : 'rgb(32, 33, 36)',
+                      color: '#fff',
+                      padding: { xs: 1 },
+                      borderRadius: 2,
+                      zIndex: 1,
+                      transform,
+                      maxWidth,
+                      position: 'relative',
+                      left,
+                    }}
+                  >
+                    <Grid
+                      container
+                      spacing={0}
+                      display={openEmojiGrid ? 'flex' : 'none'}
+                      sx={{
+                        width: minWidth,
+                        backgroundColor: isSmallViewport ? '#272c2f' : undefined,
+                      }}
+                    >
+                      {Object.values(emojiMap).map((emoji) => {
+                        return <SendEmojiButton key={emoji} emoji={emoji} />;
+                      })}
+                    </Grid>
+                  </Paper>
+                </ClickAwayListener>
+              </div>
+            </Grow>
+          )}
+        </Popper>
+      )}
     </>
   );
 };
