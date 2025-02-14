@@ -3,13 +3,13 @@ name: auto-update-dependencies
 on:
   push:
     branches:
-      - behei-vonage/vidcs-3393-sus
+      - develop
 
 permissions:
   contents: read
 
 env:
-  BRANCH_NAME: 'behei-vonage/vidcs-3393-sus'
+  BRANCH_NAME: ${{ github.head_ref }}
   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
 jobs:
