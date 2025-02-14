@@ -57,11 +57,6 @@
           "bg-notVeryGray-55",
           "bg-notVeryGray-100",
           "bg-primary-dark",
-          "emoji",
-          "meetingRoom",
-          "publisher",
-          "screen-subscriber",
-          "subscriber",
           "text-darkGray",
           "text-darkGray-55",
           "text-darkGray-100",
@@ -71,5 +66,5 @@
         ]
       }
     ]
-  },
+  }
 }
