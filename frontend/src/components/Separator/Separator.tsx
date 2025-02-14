@@ -15,6 +15,7 @@ export type SeparatorProps = {
 const Separator = ({ orientation = 'left' }: SeparatorProps): ReactElement => {
   return (
     <div
+      data-testId="separator"
       className={`w-6/12 border-b-2 border-solid border-slate-200 ${orientation === 'left' ? 'mr-4' : 'ml-4'}`}
     />
   );
