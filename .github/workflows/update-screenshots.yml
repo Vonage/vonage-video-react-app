@@ -1,6 +1,9 @@
 name: update-screenshots
 
-on: [pull_request, workflow_dispatch]
+on:
+  pull_request:
+    types: [opened, reopened, labeled]
+  workflow_dispatch:
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
@@ -15,7 +18,7 @@ env:
   OT_API_SECRET: ${{secrets.API_SECRET}}
   VONAGE_APP_ID: ${{secrets.VONAGE_APP_ID}}
   VONAGE_PRIVATE_KEY: ${{secrets.VONAGE_PRIVATE_KEY}}
-  BRANCH_NAME: 'develop'
+  BRANCH_NAME: ${{ github.ref_name }}
 
 jobs:
   run:
@@ -110,31 +113,18 @@ jobs:
           Xvfb :99 & export DISPLAY=:99
           yarn test:integrationUpdateScreenshots
 
-      # - name: Commit files
-      #   if: steps.check-update-screenshots.outputs.result == 'true'
-      #   run: |
-      #     git config --local user.email "41898282+github-actions[bot]@users.noreply.github.com"
-      #     git config --local user.name "github-actions[bot]"
-      #     git add .
-      #     git commit -a -m "Updating screenshots"
-
-      # - name: Push changes
-      #   if: steps.check-update-screenshots.outputs.result == 'true'
-      #   uses: ad-m/github-push-action@master
-      #   with:
-      #     github_token: ${{ secrets.GITHUB_TOKEN }}
-      #     branch: ${{ github.head_ref }}-update-screenshots
-
       - name: Auto-commit updated screenshots
         if: steps.check-update-screenshots.outputs.result == 'true'
         run: |
           echo "Committing screenshots..."
-          FILE="integration-tests/tests/visualComparisons.spec.ts-snapshots/Landing-page-UI-test-1-firefox-linux.png"
-          CONTENT=$(base64 -w 0 "$FILE")
-          SHA=$(curl -s -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" "https://api.github.com/repos/${{ github.repository }}/contents/$FILE?ref=$BRANCH_NAME" | jq -r .sha)
-          if [ "$SHA" == "null" ]; then
-            SHA=""
-          fi
-          curl -s -X PUT -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
-            -d "{\"message\":\"Commit updated dependencies file [auto-generated]\", \"content\":\"$CONTENT\", \"branch\":\"$BRANCH_NAME\", \"sha\":\"$SHA\"}" \
-            "https://api.github.com/repos/${{ github.repository }}/contents/$FILE"
+          FILES_CHANGED=$(git status --porcelain | awk '{print $2}')
+          for file in $FILES_CHANGED; do
+            CONTENT=$(base64 -w 0 "$file")
+            SHA=$(curl -s -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" "https://api.github.com/repos/${{ github.repository }}/contents/$file?ref=$BRANCH_NAME" | jq -r .sha)
+            if [ "$SHA" == "null" ]; then
+              SHA=""
+            fi
+            curl -s -X PUT -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+              -d "{\"message\":\"Commit updated dependencies file [auto-generated]\", \"content\":\"$CONTENT\", \"branch\":\"$BRANCH_NAME\", \"sha\":\"$SHA\"}" \
+              "https://api.github.com/repos/${{ github.repository }}/contents/$file"
+          done
