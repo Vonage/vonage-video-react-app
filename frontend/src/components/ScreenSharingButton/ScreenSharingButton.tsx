@@ -51,10 +51,11 @@ const ScreenSharingButton = ({
   };
 
   return (
-    <div className={`hidden ${displayOnDesktop()}`}>
+    <div className={`hidden ${displayOnDesktop()}`} id="screen-sharing-button">
       <Tooltip title={title} aria-label="add">
         <ToolbarButton
           onClick={handleButtonClick}
+          data-testid="screensharing-toggle"
           icon={
             !isSharingScreen ? (
               <ScreenShare className="text-white" />
