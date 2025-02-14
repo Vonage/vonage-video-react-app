@@ -9,7 +9,7 @@ import { ReactElement } from 'react';
 const DropdownSeparator = (): ReactElement => {
   return (
     <div
-      className="border-b border-solid w-12/12"
+      className="w-full border-b border-solid"
       style={{ borderColor: 'rgba(232, 234, 237, 0.25)' }}
     />
   );

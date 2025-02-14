@@ -29,7 +29,7 @@ const ConnectionAlert = ({
 
   return (
     !closed && (
-      <Stack className={`absolute top-1 left-1 ${maxWidth}`}>
+      <Stack className={`absolute left-1 top-1 ${maxWidth}`}>
         <Alert
           severity={severity}
           variant="standard"

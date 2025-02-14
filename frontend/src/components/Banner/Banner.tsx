@@ -11,7 +11,7 @@ import BannerLogo from '../BannerLogo';
  */
 const Banner = (): ReactElement => {
   return (
-    <div className="flex flex-row justify-between w-full">
+    <div className="flex w-full flex-row justify-between">
       <BannerLogo />
 
       <div className="flex px-4">

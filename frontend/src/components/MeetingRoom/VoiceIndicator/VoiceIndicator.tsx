@@ -39,7 +39,7 @@ const VoiceIndicatorIcon = ({
   return (
     <Box sx={{ ...sx }} key={20} display="flex" flexDirection="column" gap={2} alignItems="center">
       <div
-        className="flex gap-[8%] items-center justify-center"
+        className="flex items-center justify-center gap-[8%]"
         style={{
           height: size,
           width: size,
@@ -61,7 +61,7 @@ const VoiceIndicatorIcon = ({
             }}
           >
             <div
-              className="bg-primary-dark w-full h-2/3 rounded"
+              className="bg-primary-dark h-2/3 w-full rounded"
               style={{
                 height: `${height - 20}%`,
                 width: '80%',

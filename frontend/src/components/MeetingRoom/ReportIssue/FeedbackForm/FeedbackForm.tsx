@@ -72,7 +72,7 @@ const FeedbackForm = ({
     </Box>
   ) : (
     <form onSubmit={handleSubmit}>
-      <div className={`flex overflow-y-auto overflow-x-hidden flex-col ${heightClass}`}>
+      <div className={`flex flex-col overflow-y-auto overflow-x-hidden ${heightClass}`}>
         <Box ml="23px" mr="27px">
           <Typography
             variant="body2"
@@ -196,7 +196,7 @@ const FeedbackForm = ({
           <FilePicker onFileSelect={onFileSelect} />
         </Box>
       </div>
-      <div className="flex absolute bottom-6 inset-x-12">
+      <div className="absolute inset-x-12 bottom-6 flex">
         <Button
           type="submit"
           variant="contained"

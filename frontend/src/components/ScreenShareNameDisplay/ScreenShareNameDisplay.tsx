@@ -24,7 +24,7 @@ const ScreenShareNameDisplay = ({ name, box }: ScreenShareNameDisplayProps): Rea
         backgroundColor: 'rgba(60, 64, 67, 0.55)',
         maxWidth: box.width - 32,
       }}
-      className="absolute text-sm md:text-lg truncate bottom-[10px] left-[10px]"
+      className="absolute bottom-[10px] left-[10px] truncate text-sm md:text-lg"
     />
   );
 };

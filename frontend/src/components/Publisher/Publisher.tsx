@@ -55,7 +55,6 @@ const Publisher = ({ box }: PublisherProps): ReactElement => {
   return (
     <VideoTile
       id="publisher-container"
-      className="publisher"
       data-testid="publisher-container"
       box={box}
       ref={pubContainerRef}

@@ -9,7 +9,7 @@ import Separator from '../Separator';
  */
 const JoinContainerSeparator = (): ReactElement => {
   return (
-    <div className="w-full flex items-center">
+    <div className="flex w-full items-center">
       <Separator orientation="left" />
       or
       <Separator orientation="right" />

@@ -63,13 +63,11 @@ const ParticipantList = ({ handleClose, isOpen }: ParticipantListProps): ReactEl
     isOpen && (
       <>
         <RightPanelTitle title="Participants" handleClose={handleClose} />
-        <div className="h-[64px] flex flex-row items-center justify-between pl-6">
+        <div className="flex h-[64px] flex-row items-center justify-between pl-6">
           <div className="text-left">
-            <span className="font-bold text-sm text-darkGray tracking-normal font-bold">
-              Meeting URL:
-            </span>{' '}
+            <span className="text-darkGray text-sm font-bold tracking-normal">Meeting URL:</span>{' '}
             <br />
-            <span className="block max-w-64	font-normal text-sm text-darkGray tracking-normal truncate">
+            <span className="text-darkGray block	max-w-64 truncate text-sm font-normal tracking-normal">
               {window.location.href}
             </span>
           </div>

@@ -126,7 +126,7 @@ const FilePicker = ({
                 height={80}
                 ref={imageRef}
                 src={imageSrc}
-                className="object-cover w-full h-full"
+                className="size-full object-cover"
               />
               <Tooltip title="Delete screenshot">
                 <IconButton

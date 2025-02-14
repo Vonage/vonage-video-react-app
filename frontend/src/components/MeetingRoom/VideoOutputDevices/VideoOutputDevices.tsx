@@ -55,7 +55,7 @@ const VideoOutputDevices = ({
             transformOrigin: placement === 'bottom' ? 'center top' : 'center bottom',
           }}
         >
-          <div className="font-normal text-left">
+          <div className="text-left font-normal">
             <ClickAwayListener onClickAway={handleClose}>
               <Paper
                 sx={{

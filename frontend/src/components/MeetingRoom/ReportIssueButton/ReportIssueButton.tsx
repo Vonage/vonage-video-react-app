@@ -19,7 +19,7 @@ export type ReportIssueButtonProps = {
 const ReportIssueButton = ({ handleClick, isOpen }: ReportIssueButtonProps): ReactElement => {
   const anchorRef = useRef<HTMLButtonElement>(null);
   return (
-    <div className={`hidden ${displayOnDesktop()} pr-3 pl-3`}>
+    <div className={`hidden ${displayOnDesktop()} px-3`}>
       <Tooltip title="Report issue" aria-label="open report issue menu">
         <ToolbarButton
           data-testid="report-issue-button"

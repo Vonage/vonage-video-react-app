@@ -27,7 +27,7 @@ const FormSubmitted = ({
 }: FormSubmittedProps): ReactElement => {
   return (
     <>
-      <div className="flex justify-between items-center min-h-[80vh] overflow-y-auto overflow-x-hidden">
+      <div className="flex min-h-[80vh] items-center justify-between overflow-y-auto overflow-x-hidden">
         <Typography
           variant="body2"
           color="textPrimary"
@@ -69,7 +69,7 @@ const FormSubmitted = ({
           )}
         </Typography>
       </div>
-      <div className="flex absolute bottom-0 inset-x-0">
+      <div className="absolute inset-x-0 bottom-0 flex">
         <Button
           type="submit"
           variant="contained"

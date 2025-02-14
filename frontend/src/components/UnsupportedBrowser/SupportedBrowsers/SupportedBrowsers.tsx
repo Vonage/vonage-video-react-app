@@ -11,8 +11,8 @@ import SupportedBrowserListItem from '../SupportedBrowserListItem';
  */
 const SupportedBrowsers = (): ReactElement => {
   return (
-    <div className="ps-12 py-4 h-auto shrink w-[400px] text-left">
-      <h3 className="text-4xl text-black pb-5 w-full">Supported browsers:</h3>
+    <div className="h-auto w-[400px] shrink py-4 ps-12 text-left">
+      <h3 className="w-full pb-5 text-4xl text-black">Supported browsers:</h3>
 
       <div className="md:max-h-[480px] md:overflow-y-auto ">
         <List sx={{ overflowX: 'auto' }}>

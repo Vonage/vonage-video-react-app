@@ -24,7 +24,7 @@ const RightPanel = ({ activeTab, handleClose }: RightPanelProps): ReactElement =
   return (
     <div
       data-testid="right-panel"
-      className={`${height} w-[360px] bg-white absolute mt-4 mr-4 rounded top-0 overflow-hidden transition-[right] ${activeTab === 'closed' ? 'right-[-380px] hidden' : 'right-0'}`}
+      className={`${height} absolute top-0 mr-4 mt-4 w-[360px] overflow-hidden rounded bg-white transition-[right] ${activeTab === 'closed' ? 'right-[-380px] hidden' : 'right-0'}`}
     >
       <div>
         <ParticipantList handleClose={handleClose} isOpen={activeTab === 'participant-list'} />

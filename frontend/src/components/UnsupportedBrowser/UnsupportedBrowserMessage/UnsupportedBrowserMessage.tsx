@@ -11,9 +11,9 @@ const UnsupportedBrowserMessage = (): ReactElement => {
   const message = 'Please use one of our supported browsers.';
 
   return (
-    <div className="ps-12 py-4 h-auto shrink w-[400px] text-left">
-      <h2 className="text-5xl text-black pb-5 w-9/12">{header}</h2>
-      <h3 className="text-large text-slate-500">{message}</h3>
+    <div className="h-auto w-[400px] shrink py-4 ps-12 text-left">
+      <h2 className="w-9/12 pb-5 text-5xl text-black">{header}</h2>
+      <h3 className="text-lg text-slate-500">{message}</h3>
     </div>
   );
 };

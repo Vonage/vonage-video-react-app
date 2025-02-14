@@ -71,7 +71,6 @@ const Subscriber = ({
   return (
     <VideoTile
       id={`${subscriberWrapper.id}`}
-      className={isScreenShare ? 'screen-subscriber' : 'subscriber'}
       data-testid={`subscriber-container-${subscriberWrapper.id}`}
       isHidden={isHidden}
       box={box}

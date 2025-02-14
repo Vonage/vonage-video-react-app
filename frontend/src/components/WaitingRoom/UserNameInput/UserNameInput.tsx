@@ -92,14 +92,14 @@ const UsernameInput = ({ username, setUsername }: UserNameInputProps): ReactElem
 
   return (
     <ThemeProvider theme={theme}>
-      <form className="flex flex-col justify-center items-left md:max-w-[480px] w-full px-6 md:relative md:top-[-48px]">
-        <div className="flex items-center flex-col justify-end mt-4">
-          <div className="leading-8 mb-2 font-sans text-[28px]">Prepare to join:</div>
-          <div className="flex py-2 decoration-solid text-l flex-col content-end md:max-w-[480px] w-full">
+      <form className="flex w-full flex-col justify-center px-6 md:relative md:top-[-48px] md:max-w-[480px]">
+        <div className="mt-4 flex flex-col items-center justify-end">
+          <div className="mb-2 font-sans text-[28px] leading-8">Prepare to join:</div>
+          <div className="flex w-full flex-col content-end py-2 text-lg decoration-solid md:max-w-[480px]">
             <p className="truncate">{roomName}</p>
           </div>
-          <div className="leading-8 mt-6 font-sans text-[24px]">What is your name?</div>
-          <div className="w-full flex flex-wrap items-center justify-center mb-5">
+          <div className="mt-6 font-sans text-[24px] leading-8">What is your name?</div>
+          <div className="mb-5 flex w-full flex-wrap items-center justify-center">
             <TextField
               size="small"
               margin="dense"

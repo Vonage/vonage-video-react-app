@@ -43,10 +43,10 @@ const EmojiGrid = (): ReactElement => {
               transformOrigin: placement === 'bottom' ? 'center top' : 'center bottom',
             }}
           >
-            <div className="font-normal text-left flex">
+            <div className="flex text-left font-normal">
               <ClickAwayListener onClickAway={handleClose}>
                 <Paper
-                  className="flex justify-center items-center"
+                  className="flex items-center justify-center"
                   sx={{
                     backgroundColor: 'rgb(32, 33, 36)',
                     color: '#fff',

@@ -79,12 +79,12 @@ const WaitingRoom = (): ReactElement => {
   };
 
   return (
-    <div className="h-full w-full bg-white flex flex-col" data-testid="waitingRoom">
+    <div className="flex size-full flex-col bg-white" data-testid="waitingRoom">
       <Banner />
       <div className="flex w-full">
-        <div className="w-full flex justify-center mb-8">
-          <div className="sm:min-h-[90vh] min-h-[80vh] flex flex-col md:flex-row items-center justify-center w-full">
-            <div className="flex-col max-w-full w-[508x] h-[420px] inline-flex">
+        <div className="mb-8 flex w-full justify-center">
+          <div className="flex min-h-[80vh] w-full flex-col items-center justify-center sm:min-h-[90vh] md:flex-row">
+            <div className="inline-flex h-[420px] w-[508x] max-w-full flex-col">
               <VideoContainer username={username} />
               {accessStatus === DEVICE_ACCESS_STATUS.ACCEPTED && (
                 <ControlPanel
