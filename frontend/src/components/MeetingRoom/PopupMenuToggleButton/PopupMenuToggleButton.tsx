@@ -23,14 +23,6 @@ const PopupMenuToggleButton = (): ReactElement => {
 
   const handleClickAway = () => {
     setOpen(false);
-    // We close the emoji grid so the animations are synced up
-    setOpenEmojiGridMobile((prevOpenEmojiGrid) => {
-      // During the animation, we reset openEmojiGridMobile to its previous state
-      setTimeout(() => {
-        setOpenEmojiGridMobile(prevOpenEmojiGrid);
-      }, 250);
-      return false;
-    });
   };
 
   const handleButtonToggle = () => {
