@@ -92,6 +92,7 @@ const EmojiGrid = ({
             <ClickAwayListener onClickAway={handleClickAway}>
               <Paper
                 className="flex justify-center items-center"
+                data-testid="emoji-grid"
                 sx={{
                   backgroundColor: 'rgb(32, 33, 36)',
                   color: '#fff',

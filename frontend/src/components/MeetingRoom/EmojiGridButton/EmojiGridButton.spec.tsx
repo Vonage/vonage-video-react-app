@@ -1,14 +1,26 @@
 import { act, render, screen } from '@testing-library/react';
-import { afterEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, Mock, vi } from 'vitest';
+import { useState } from 'react';
 import EmojiGridButton from './EmojiGridButton';
+import useIsSmallViewport from '../../../hooks/useIsSmallViewport';
 
-const mockSetOpenEmojiGrid = vi.fn();
+vi.mock('../../../hooks/useIsSmallViewport');
+vi.mock('../../../utils/emojis', () => ({
+  default: { FAVORITE: '🦧' },
+}));
 
-const TestComponent = () => {
-  return <EmojiGridButton openEmojiGrid setOpenEmojiGrid={mockSetOpenEmojiGrid} />;
+const mockUseIsSmallViewport = useIsSmallViewport as Mock<[], boolean>;
+
+const TestComponent = ({ defaultOpenEmojiGrid = false }: { defaultOpenEmojiGrid?: boolean }) => {
+  const [openEmojiGrid, setOpenEmojiGrid] = useState(defaultOpenEmojiGrid);
+  return <EmojiGridButton openEmojiGrid={openEmojiGrid} setOpenEmojiGrid={setOpenEmojiGrid} />;
 };
 
 describe('EmojiGridButton', () => {
+  beforeEach(() => {
+    mockUseIsSmallViewport.mockReturnValue(false);
+  });
+
   afterEach(() => {
     vi.resetAllMocks();
   });
@@ -20,12 +32,14 @@ describe('EmojiGridButton', () => {
   });
 
   it('clicking opens the emoji grid', () => {
-    render(<TestComponent />);
+    const { rerender } = render(<TestComponent />);
+    expect(screen.queryByTestId('emoji-grid')).not.toBeInTheDocument();
 
     act(() => {
       screen.getByTestId('emoji-grid-toggle').click();
     });
 
-    expect(mockSetOpenEmojiGrid).toHaveBeenCalledTimes(1);
+    rerender(<TestComponent />);
+    expect(screen.getByTestId('emoji-grid')).toBeVisible();
   });
 });
