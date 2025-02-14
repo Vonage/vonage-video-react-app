@@ -15,8 +15,8 @@
   "scripts": {
     "build": "yarn workspace frontend build",
     "deploy-vcr": "yarn build && vcr deploy",
-    "deploy-vcr-local": "dotenv -- yarn deploy-vcr-local-with-env",
-    "deploy-vcr-local-with-env": "vcr deploy -f ./vcr_local.yml --app-id $VCR_APP_ID",
+    "deploy-vcr-local": "dotenv -- yarn _internal_vcr-local",
+    "_internal_vcr-local": "vcr deploy -f ./vcr_local.yml --app-id $VCR_APP_ID",
     "dev": "yarn && yarn workspace frontend dev & yarn workspace backend dev",
     "docs": "yarn workspace frontend docs",
     "docs:watch": "yarn workspace frontend docs:watch",
