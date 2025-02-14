@@ -46,7 +46,6 @@ const EmojiGrid = ({
           style={{
             transformOrigin: 'center bottom',
           }}
-          timeout={150}
         >
           <Box
             sx={{
@@ -111,7 +110,6 @@ const EmojiGrid = ({
                   display={openEmojiGrid ? 'flex' : 'none'}
                   sx={{
                     width: '100%',
-                    backgroundColor: undefined,
                   }}
                 >
                   {Object.values(emojiMap).map((emoji) => (

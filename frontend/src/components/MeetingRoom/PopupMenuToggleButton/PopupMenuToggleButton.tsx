@@ -23,11 +23,19 @@ const PopupMenuToggleButton = (): ReactElement => {
   const emojiGridButtonRefMobile = useRef<HTMLButtonElement>(null);
   const [openEmojiGridMobile, setOpenEmojiGridMobile] = useState<boolean>(true);
 
-  const handleClose = () => {
+  const handleClickAway = () => {
     setOpen(false);
+    // We close the emoji grid so the animations are synced up
+    setOpenEmojiGridMobile((prevOpenEmojiGrid) => {
+      // During the animation, we reset openEmojiGridMobile to its previous state
+      setTimeout(() => {
+        setOpenEmojiGridMobile(prevOpenEmojiGrid);
+      }, 250);
+      return false;
+    });
   };
 
-  const handleToggle = () => {
+  const handleButtonToggle = () => {
     setOpen((prevOpen) => !prevOpen);
   };
 
@@ -39,7 +47,7 @@ const PopupMenuToggleButton = (): ReactElement => {
       >
         <ToolbarButton
           data-testid="hidden-toolbar-items"
-          onClick={handleToggle}
+          onClick={handleButtonToggle}
           icon={<MoreVertIcon style={{ color: `${!open ? 'white' : 'rgb(138, 180, 248)'}` }} />}
           ref={anchorRef}
         />
@@ -58,7 +66,7 @@ const PopupMenuToggleButton = (): ReactElement => {
             }}
           >
             <div className="font-normal text-left flex w-full">
-              <ClickAwayListener onClickAway={handleClose}>
+              <ClickAwayListener onClickAway={handleClickAway}>
                 <Paper
                   className="flex justify-center items-center"
                   sx={{
