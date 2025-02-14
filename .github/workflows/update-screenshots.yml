@@ -19,6 +19,7 @@ env:
   VONAGE_APP_ID: ${{secrets.VONAGE_APP_ID}}
   VONAGE_PRIVATE_KEY: ${{secrets.VONAGE_PRIVATE_KEY}}
   BRANCH_NAME: ${{ github.head_ref }}
+  REPO_NAME: ${{ github.repository }}
   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
 jobs:
@@ -121,11 +122,11 @@ jobs:
           FILES_CHANGED=$(git status --porcelain | awk '{print $2}')
           for file in $FILES_CHANGED; do
             CONTENT=$(base64 -w 0 "$file")
-            SHA=$(curl -s -H "Authorization: token $GITHUB_TOKEN" "https://api.github.com/repos/${{ github.repository }}/contents/$file?ref=$BRANCH_NAME" | jq -r .sha)
+            SHA=$(curl -s -H "Authorization: token $GITHUB_TOKEN" "https://api.github.com/repos/$REPO_NAME/contents/$file?ref=$BRANCH_NAME" | jq -r .sha)
             if [ "$SHA" == "null" ]; then
               SHA=""
             fi
             curl -s -X PUT -H "Authorization: token $GITHUB_TOKEN" \
               -d "{\"message\":\"Commit updated dependencies file [auto-generated]\", \"content\":\"$CONTENT\", \"branch\":\"$BRANCH_NAME\", \"sha\":\"$SHA\"}" \
-              "https://api.github.com/repos/${{ github.repository }}/contents/$file"
+              "https://api.github.com/repos/$REPO_NAME/contents/$file"
           done
