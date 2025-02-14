@@ -183,7 +183,7 @@ If we need to update the expected screenshot due to UI changes, we can delete th
 
 For CI tests, we require screenshots for various browsers and operating systems because they [render interfaces with subtle differences](https://github.com/microsoft/playwright/issues/18240#issuecomment-1287546463).
 
-To capture CI-specific screenshots, you can use the `update-screenshots` job. This job is triggered by creating a pull request (PR) with the `update-screenshots` label on GitHub. Once triggered, it will capture new screenshots on the virtual machine (VM) and automatically push them to a new branch `current-branch-name-update-screenshots`. You can easily cherry-pick the commit from the new branch to the PR branch, sign the commit, and push it back to the PR.
+To capture CI-specific screenshots, you can use the `update-screenshots` job. This job is triggered by creating a pull request (PR) with the `update-screenshots` label on GitHub. Once triggered, it will capture new screenshots on the virtual machine (VM) and automatically push those to the PR's branch.
 
 ### Running the backend and frontend test suites
 
