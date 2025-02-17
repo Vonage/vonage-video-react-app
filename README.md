@@ -15,6 +15,7 @@
     - [Installing dependencies](#installing-dependencies)
     - [Dev mode](#dev-mode)
     - [Production mode](#production-mode)
+- [Deployment to Vonage Cloud Runtime](#deployment-to-vonage-cloud-runtime)
 - [Testing](#testing)
   - [Integration Tests](#integration-tests)
     - [Screenshot tests or Visual comparisons](#screenshot-tests-or-visual-comparisons)
@@ -156,6 +157,22 @@ yarn start
 ```
 
 The app and API are both served on  [http://localhost:3345/](http://localhost:3345/)
+
+## Deployment to Vonage Cloud Runtime
+
+You can easily deploy your local branch to Vonage Cloud Runtime (VCR) using the tools in this repository.
+
+First, set up your VCR application at https://developer.vonage.com/en/vonage-cloud-runtime/overview. One you have your application, get your application ID  and set it in your config  `VCR_APP_ID` in the top level `./env` file.
+You should use a separate application to your video application to avoid issues with your private key.
+
+Then create a workspace named `dev` (Or change the instance name in `./vcr_local.yml#L4`). See https://developer.vonage.com/en/vonage-cloud-runtime/getting-started/managing-projects.
+
+Install the `vcr` cli globally with `npm i -g vcr`.
+
+Then run `yarn deploy-vcr-local` to deploy your project.
+
+Note: This will deploy the project using your local code and .env files, which is useful for debugging.
+For a more centralized deployment to VCR see our GHA workflow `.github/workflows/deploy-to-vcr.yml`.
 
 ## Testing
 
