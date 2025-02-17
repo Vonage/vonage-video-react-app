@@ -162,7 +162,7 @@ The app and API are both served on  [http://localhost:3345/](http://localhost:33
 
 You can easily deploy your local branch to Vonage Cloud Runtime (VCR) using the tools in this repository. See https://developer.vonage.com/en/vonage-cloud-runtime/overview for an overview of Vonage Cloud Runtime.
 
-Firstly, install the VCR cli: https://developer.vonage.com/en/vonage-cloud-runtime/getting-started/working-locally#cli-installation
+Firstly, install the VCR cli: https://developer.vonage.com/en/vonage-cloud-runtime/getting-started/working-locally#cli-installation and run `vcr configure`.
 
 Then, set up a Vonage application at  https://dashboard.nexmo.com/applications/. Once you have your application, copy your application ID  and set it in your config as  `VCR_APP_ID` in the top level `./env` file.
 You should use a separate Vonage application to your video application to avoid issues with your private key.
