@@ -214,8 +214,6 @@ const usePreviewPublisher = (): PreviewPublisherContextType => {
       return;
     }
 
-    console.warn('defaultSettingsBlurRef.current: ', defaultSettingsBlurRef.current);
-
     const videoFilter: VideoFilter | undefined = defaultSettingsBlurRef.current
       ? {
           type: 'backgroundBlur',
