@@ -11,7 +11,6 @@ vi.mock('../../../hooks/useSessionContext', () => ({
     subscriberWrappers: [],
   }),
 }));
-vi.mock('react-router-dom');
 vi.mock('../../../hooks/useRoomName');
 
 const TestComponent = ({ defaultOpen = false }: { defaultOpen?: boolean }) => {

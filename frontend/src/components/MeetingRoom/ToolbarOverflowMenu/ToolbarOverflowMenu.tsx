@@ -16,6 +16,8 @@ export type ToolbarOverflowMenuProps = {
 
 /**
  * ToolbarOverflowMenu Component
+ *
+ * Displays a menu holding buttons that cannot be displayed on the toolbar due to a narrow device viewport width.
  * @param {ToolbarOverflowMenuProps} props - the props for the component
  *  @property {boolean} open - whether the component will be open
  *  @property {boolean} openEmojiGrid - whether the emoji grid will be open

@@ -8,7 +8,6 @@ import { UserContextType } from '../../../Context/user';
 
 vi.mock('../../../hooks/useSessionContext');
 vi.mock('../../../hooks/useUserContext');
-vi.mock('react-router-dom');
 vi.mock('../../../hooks/useRoomName');
 const mockUseSessionContext = useSessionContext as Mock<[], SessionContextType>;
 const mockUseUserContext = useUserContext as Mock<[], UserContextType>;
