@@ -95,7 +95,7 @@ describe('usePreviewPublisher', () => {
     });
 
     it('should apply background blur when initialized if set to true', () => {
-      mockedHasMediaProcessorSupport.mockReturnValue(() => true);
+      mockedHasMediaProcessorSupport.mockReturnValue(true);
       (hasMediaProcessorSupport as Mock).mockImplementation(mockedHasMediaProcessorSupport);
       mockedInitPublisher.mockReturnValue(mockPublisher);
       (initPublisher as Mock).mockImplementation(mockedInitPublisher);
@@ -110,6 +110,24 @@ describe('usePreviewPublisher', () => {
             type: 'backgroundBlur',
             blurStrength: 'high',
           }),
+        }),
+        expect.any(Function)
+      );
+    });
+
+    it('should not apply background blur when initialized if the device does not support it', () => {
+      mockedHasMediaProcessorSupport.mockReturnValue(false);
+      (hasMediaProcessorSupport as Mock).mockImplementation(mockedHasMediaProcessorSupport);
+      mockedInitPublisher.mockReturnValue(mockPublisher);
+      (initPublisher as Mock).mockImplementation(mockedInitPublisher);
+      const { result } = renderHook(() => usePreviewPublisher());
+      act(() => {
+        result.current.initLocalPublisher();
+      });
+      expect(mockedInitPublisher).toHaveBeenCalledWith(
+        undefined,
+        expect.objectContaining({
+          videoFilter: undefined,
         }),
         expect.any(Function)
       );
