@@ -128,6 +128,6 @@ jobs:
               SHA=""
             fi
             curl -s -X PUT -H "Authorization: token $GITHUB_TOKEN" \
-              -d "{\"message\":\"Commit updated dependencies file [auto-generated]\", \"content\":\"$CONTENT\", \"branch\":\"$BRANCH_NAME\", \"sha\":\"$SHA\"}" \
+              -d "{\"message\":\"Commit screenshot file: $file\", \"content\":\"$CONTENT\", \"branch\":\"$BRANCH_NAME\", \"sha\":\"$SHA\"}" \
               "https://api.github.com/repos/$REPO_NAME/contents/$file"
           done
