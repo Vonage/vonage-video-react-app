@@ -171,7 +171,7 @@ Now run `vcr init` and follow the steps to:
 2. choose an instance name
 3. select `nodejs22` for the runtime
 4. Select a region for your app
-5. Choose or create an application for deployment. :warning: You should use a separate Vonage application to your Vonage Video application to avoid issues with your private key
+5. Choose or create an application for deployment. :warning: You should use a separate Vonage application to your Vonage Video application (i.e. the value you used for `VONAGE_APP_ID` in the `backend/.env` file) to avoid issues with your private key
 6. Choose an application for debug, if you SKIP it will re-use the application from your deployment
 7. For the product template select SKIP
 
