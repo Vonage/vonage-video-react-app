@@ -50,4 +50,4 @@ build
 
 /scripts/allLicenseResults.json
 
-./vcr.yml
+vcr.yml
