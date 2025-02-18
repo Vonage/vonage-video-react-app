@@ -95,7 +95,6 @@ describe('usePreviewPublisher', () => {
     });
 
     it('should apply background blur when initialized if set to true', () => {
-      console.warn('OT.hasMediaProcessorSupport: ', hasMediaProcessorSupport());
       mockedHasMediaProcessorSupport.mockReturnValue(() => true);
       (hasMediaProcessorSupport as Mock).mockImplementation(mockedHasMediaProcessorSupport);
       mockedInitPublisher.mockReturnValue(mockPublisher);
