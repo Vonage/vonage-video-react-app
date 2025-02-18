@@ -57,6 +57,7 @@ const usePreviewPublisher = (): PreviewPublisherContextType => {
   const { setAccessStatus, accessStatus } = usePermissions();
   const publisherRef = useRef<Publisher | null>(null);
   const [isPublishing, setIsPublishing] = useState(false);
+  const defaultSettingsBlurRef = useRef<boolean>(user.defaultSettings.blur);
   const [localBlur, setLocalBlur] = useState(user.defaultSettings.blur);
   const [isVideoEnabled, setIsVideoEnabled] = useState(true);
   const [isAudioEnabled, setIsAudioEnabled] = useState(true);
@@ -89,6 +90,7 @@ const usePreviewPublisher = (): PreviewPublisherContextType => {
       });
     }
     setLocalBlur(!localBlur);
+    window.localStorage.setItem('backgroundBlur', JSON.stringify(!localBlur));
     if (setUser) {
       setUser((prevUser: UserType) => ({
         ...prevUser,
@@ -212,7 +214,9 @@ const usePreviewPublisher = (): PreviewPublisherContextType => {
       return;
     }
 
-    const videoFilter: VideoFilter | undefined = localBlur
+    console.warn('defaultSettingsBlurRef.current: ', defaultSettingsBlurRef.current);
+
+    const videoFilter: VideoFilter | undefined = defaultSettingsBlurRef.current
       ? {
           type: 'backgroundBlur',
           blurStrength: 'high',
@@ -232,9 +236,6 @@ const usePreviewPublisher = (): PreviewPublisherContextType => {
       }
     );
     addPublisherListeners(publisherRef.current);
-    // the local blur value gets rendered a few times which can cause this to be rendered a few times
-    // excluding from the dependencies to avoid that
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [addPublisherListeners]);
 
   const destroyPublisher = useCallback(() => {
