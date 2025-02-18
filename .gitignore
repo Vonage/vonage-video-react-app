@@ -49,3 +49,5 @@ sauce-connect.log
 build
 
 /scripts/allLicenseResults.json
+
+./vcr.yml
