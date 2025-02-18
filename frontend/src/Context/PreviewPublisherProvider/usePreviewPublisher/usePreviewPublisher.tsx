@@ -1,5 +1,11 @@
 import { useState, useRef, useCallback, useEffect } from 'react';
-import { Publisher, Event, initPublisher, VideoFilter } from '@vonage/client-sdk-video';
+import {
+  Publisher,
+  Event,
+  initPublisher,
+  VideoFilter,
+  hasMediaProcessorSupport,
+} from '@vonage/client-sdk-video';
 import setMediaDevices from '../../../utils/mediaDeviceUtils';
 import useDevices from '../../../hooks/useDevices';
 import usePermissions from '../../../hooks/usePermissions';
@@ -57,7 +63,7 @@ const usePreviewPublisher = (): PreviewPublisherContextType => {
   const { setAccessStatus, accessStatus } = usePermissions();
   const publisherRef = useRef<Publisher | null>(null);
   const [isPublishing, setIsPublishing] = useState(false);
-  const defaultSettingsBlurRef = useRef<boolean>(user.defaultSettings.blur);
+  const initialLocalBlurRef = useRef<boolean>(user.defaultSettings.blur);
   const [localBlur, setLocalBlur] = useState(user.defaultSettings.blur);
   const [isVideoEnabled, setIsVideoEnabled] = useState(true);
   const [isAudioEnabled, setIsAudioEnabled] = useState(true);
@@ -214,12 +220,13 @@ const usePreviewPublisher = (): PreviewPublisherContextType => {
       return;
     }
 
-    const videoFilter: VideoFilter | undefined = defaultSettingsBlurRef.current
-      ? {
-          type: 'backgroundBlur',
-          blurStrength: 'high',
-        }
-      : undefined;
+    const videoFilter: VideoFilter | undefined =
+      initialLocalBlurRef.current && hasMediaProcessorSupport()
+        ? {
+            type: 'backgroundBlur',
+            blurStrength: 'high',
+          }
+        : undefined;
 
     publisherRef.current = initPublisher(
       undefined,

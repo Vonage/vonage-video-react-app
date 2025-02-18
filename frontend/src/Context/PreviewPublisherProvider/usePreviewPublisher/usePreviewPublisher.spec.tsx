@@ -1,6 +1,6 @@
 import { act, cleanup, renderHook } from '@testing-library/react';
 import { afterAll, afterEach, beforeEach, describe, expect, it, Mock, vi } from 'vitest';
-import { initPublisher, Publisher } from '@vonage/client-sdk-video';
+import { hasMediaProcessorSupport, initPublisher, Publisher } from '@vonage/client-sdk-video';
 import EventEmitter from 'events';
 import usePreviewPublisher from './usePreviewPublisher';
 import { UserContextType } from '../../user';
@@ -19,7 +19,6 @@ vi.mock('@vonage/client-sdk-video');
 vi.mock('../../../hooks/useUserContext.tsx');
 vi.mock('../../../hooks/usePermissions.tsx');
 vi.mock('../../../hooks/useDevices.tsx');
-
 const mockUseUserContext = useUserContext as Mock<[], UserContextType>;
 const mockUsePermissions = usePermissions as Mock<[], PermissionsHookType>;
 const mockUseDevices = useDevices as Mock<
@@ -46,14 +45,15 @@ describe('usePreviewPublisher', () => {
     getVideoSource: () => defaultVideoDevice,
   }) as unknown as Publisher;
   const mockedInitPublisher = vi.fn();
+  const mockedHasMediaProcessorSupport = vi.fn();
   const consoleErrorSpy = vi.spyOn(console, 'error');
   const mockSetAccessStatus = vi.fn();
 
   beforeEach(() => {
     vi.resetAllMocks();
-
     mockUseUserContext.mockImplementation(() => mockUserContextWithDefaultSettings);
     (initPublisher as Mock).mockImplementation(mockedInitPublisher);
+    (hasMediaProcessorSupport as Mock).mockImplementation(mockedHasMediaProcessorSupport);
     mockUseDevices.mockReturnValue({
       getAllMediaDevices: vi.fn(),
       allMediaDevices,
@@ -95,6 +95,9 @@ describe('usePreviewPublisher', () => {
     });
 
     it('should apply background blur when initialized if set to true', () => {
+      console.warn('OT.hasMediaProcessorSupport: ', hasMediaProcessorSupport());
+      mockedHasMediaProcessorSupport.mockReturnValue(() => true);
+      (hasMediaProcessorSupport as Mock).mockImplementation(mockedHasMediaProcessorSupport);
       mockedInitPublisher.mockReturnValue(mockPublisher);
       (initPublisher as Mock).mockImplementation(mockedInitPublisher);
       const { result } = renderHook(() => usePreviewPublisher());
