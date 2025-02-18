@@ -79,8 +79,5 @@
     "rollup": "^4.22.4",
     "vite": "^5.4.12",
     "nanoid": "^3.3.8"
-  },
-  "dependencies": {
-    "dotenv-cli": "^8.0.0"
   }
 }
