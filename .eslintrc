@@ -62,7 +62,11 @@
           "text-darkGray-100",
           "text-notVeryGray-55",
           "text-notVeryGray-100",
-          "xs"
+          "xs",
+          // the following are used in playwright testing
+          "publisher",
+          "subscriber",
+          "screen-subscriber"
         ]
       }
     ]
