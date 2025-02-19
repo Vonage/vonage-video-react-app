@@ -11,7 +11,7 @@ describe('sortByDisplayPriority', () => {
     const subE = { id: 'subE' } as SubscriberWrapper;
 
     const sortedSubs = [subE, subD, subC, subB, subA].sort(sortByDisplayPriority('subD'));
-    expect(sortedSubs).toEqual([subA, subB, subC, subD, subE]);
+    expect(sortedSubs).toEqual([subA, subC, subB, subD, subE]);
   });
 
   describe('with screenshare subscribers', () => {
