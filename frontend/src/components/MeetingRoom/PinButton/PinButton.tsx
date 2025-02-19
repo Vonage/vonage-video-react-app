@@ -12,6 +12,18 @@ export type PinButtonProps = {
   handleClick: (clickEvent: MouseEvent<HTMLButtonElement>) => void;
 };
 
+/**
+ * PinButton Component
+ *
+ * This component renders a button to pin and unpin a participants video, as well as displaying current pinned status.
+ * @param {PinButtonProps} pinButtonProps - component props
+ *  @property {boolean} isMaxPinned - Indicates whether the maximum number of participants have already been pinned.
+ *  @property {boolean} isPinned - Indicates whether this participant is pinned.
+ *  @property {boolean} isTileHovered - Indicates whether the video tile is being hovered.
+ *  @property {string | undefined} participantName - the name of the participant that can be muted.
+ *  @property {Function} handleClick - click handler, used to toggle participant isPinned state.
+ * @returns {ReactElement | false} PinButton
+ */
 const PinButton = ({
   isMaxPinned,
   isPinned,
