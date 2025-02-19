@@ -58,7 +58,6 @@ const usePreviewPublisher = (): PreviewPublisherContextType => {
   const [publisherVideoElement, setPublisherVideoElement] = useState<
     HTMLVideoElement | HTMLObjectElement
   >();
-
   const [speechLevel, setSpeechLevel] = useState(0);
   const { setAccessStatus, accessStatus } = usePermissions();
   const publisherRef = useRef<Publisher | null>(null);
@@ -230,7 +229,7 @@ const usePreviewPublisher = (): PreviewPublisherContextType => {
 
     publisherRef.current = initPublisher(
       undefined,
-      { insertDefaultUI: false, videoFilter },
+      { insertDefaultUI: false, videoFilter, resolution: '1280x720' },
       (err: unknown) => {
         if (err instanceof Error) {
           publisherRef.current = null;
