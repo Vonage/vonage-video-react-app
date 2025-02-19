@@ -6,6 +6,7 @@ instance:
   region: aws.euw1
   build-script: './vcrBuild.sh'
   entrypoint: [yarn, run-server]
+  # The placeholder <DOMAIN> will be replaced by sed in .github/workflows/deploy-to-vcr.yml
   domains: <DOMAIN>
   environment:
     - name: VIDEO_SERVICE_PROVIDER
