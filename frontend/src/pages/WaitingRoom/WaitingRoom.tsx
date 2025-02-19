@@ -83,8 +83,8 @@ const WaitingRoom = (): ReactElement => {
       <Banner />
       <div className="flex w-full">
         <div className="mb-8 flex w-full justify-center">
-          <div className="flex min-h-[80vh] w-full flex-col items-center justify-center sm:min-h-[90vh] md:flex-row">
-            <div className="inline-flex h-[420px] w-[508x] max-w-full flex-col">
+          <div className="flex w-full flex-col items-center justify-center sm:min-h-[90vh] md:flex-row">
+            <div className="inline-flex h-[277px] max-w-full flex-col sm:h-[394px]">
               <VideoContainer username={username} />
               {accessStatus === DEVICE_ACCESS_STATUS.ACCEPTED && (
                 <ControlPanel

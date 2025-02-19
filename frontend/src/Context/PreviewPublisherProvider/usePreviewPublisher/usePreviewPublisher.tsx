@@ -52,7 +52,6 @@ const usePreviewPublisher = (): PreviewPublisherContextType => {
   const [publisherVideoElement, setPublisherVideoElement] = useState<
     HTMLVideoElement | HTMLObjectElement
   >();
-
   const [speechLevel, setSpeechLevel] = useState(0);
   const { setAccessStatus, accessStatus } = usePermissions();
   const publisherRef = useRef<Publisher | null>(null);
@@ -212,14 +211,18 @@ const usePreviewPublisher = (): PreviewPublisherContextType => {
       return;
     }
 
-    publisherRef.current = initPublisher(undefined, { insertDefaultUI: false }, (err: unknown) => {
-      if (err instanceof Error) {
-        publisherRef.current = null;
-        if (err.name === 'OT_USER_MEDIA_ACCESS_DENIED') {
-          console.error('initPublisher error: ', err);
+    publisherRef.current = initPublisher(
+      undefined,
+      { insertDefaultUI: false, resolution: '1280x720' },
+      (err: unknown) => {
+        if (err instanceof Error) {
+          publisherRef.current = null;
+          if (err.name === 'OT_USER_MEDIA_ACCESS_DENIED') {
+            console.error('initPublisher error: ', err);
+          }
         }
       }
-    });
+    );
     addPublisherListeners(publisherRef.current);
   }, [addPublisherListeners]);
 
