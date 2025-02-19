@@ -29,7 +29,7 @@
   0% {
     transform: translateX(0) rotate(0deg);
     opacity: 1;
-    bottom: -10%;
+    bottom: 0%;
   }
 
   20% {

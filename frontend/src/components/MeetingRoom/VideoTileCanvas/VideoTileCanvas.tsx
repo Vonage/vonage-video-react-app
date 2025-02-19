@@ -13,6 +13,7 @@ import getSubscribersToDisplay from '../../../utils/helpers/getSubscribersToDisp
 import useSubscribersInDisplayOrder from '../../../hooks/useSubscribersInDisplayOrder';
 import getLayoutBoxes from '../../../utils/helpers/getLayoutBoxes';
 import useActiveSpeaker from '../../../hooks/useActiveSpeaker';
+import useIsSmallViewport from '../../../hooks/useIsSmallViewport';
 
 export type VideoTileCanvasProps = {
   isSharingScreen: boolean;
@@ -74,8 +75,14 @@ const VideoTileCanvas = ({
     wrapRef,
   });
 
-  // Height is 100vh - toolbar height (80px) - 24px wrapper margin
-  const heightClass = '@apply h-[calc(100dvh_-_104px)]';
+  const isSmallViewPort = useIsSmallViewport();
+
+  // Height is 100dvh - toolbar height (80px) and header height (80px) - 24px wrapper margin on small viewport device
+  // Height is 100dvh - toolbar height (80px) - 24px wrapper margin on desktop
+  const heightClass = isSmallViewPort
+    ? '@apply h-[calc(100dvh_-_184px)]'
+    : '@apply h-[calc(100dvh_-_104px)]';
+
   // Width is 100vw - 360px panel width - 24px panel right margin - 24px wrapper margin
   const widthClass = isRightPanelOpen
     ? '@apply w-[calc(100vw_-_392px)]'
