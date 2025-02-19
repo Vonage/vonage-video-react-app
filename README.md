@@ -185,7 +185,7 @@ instance:
   name: my-instance-name
   runtime: nodejs22
   region: aws.euw1
-  build-script: './vcrBuildLocal.sh'
+  build-script: './vcrBuild.sh'
   entrypoint: [yarn, run-server]
   application-id: my-deployment-app-id
 debug:
