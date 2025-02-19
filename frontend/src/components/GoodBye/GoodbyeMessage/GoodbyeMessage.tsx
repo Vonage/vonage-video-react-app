@@ -29,7 +29,7 @@ const GoodByeMessage = ({ header, message, roomName }: GoodByeMessageProps): Rea
   return (
     <div className="ps-12 py-4 h-auto w-full shrink text-left">
       <h2 className="text-5xl text-black pb-5 w-9/12">{header}</h2>
-      <h3 className={`text-large text-slate-500 pr-12 ${isSmallViewport ? 'w-dvw' : 'w-[400px]'}`}>
+      <h3 className={`text-large text-slate-500 pr-12 ${isSmallViewport ? 'w-full' : 'w-[400px]'}`}>
         {message}
       </h3>
       <div className="flex flex-row mt-6 items-center pr-0">
