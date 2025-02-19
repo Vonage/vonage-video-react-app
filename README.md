@@ -194,6 +194,8 @@ debug:
 ```
 
 Now run `yarn deploy-vcr` to deploy your project.
+After a successful deployment the url of you instance will be shown in the output as 'Instance host address'.
+You can also check your instances at https://dashboard.nexmo.com/serverless/instances.
 
 Note: This will deploy the project using your local code and .env files, which is useful for debugging.
 For a more centralized deployment to VCR see our GHA workflow `.github/workflows/deploy-to-vcr.yml`.
