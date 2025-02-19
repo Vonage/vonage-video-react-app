@@ -203,7 +203,7 @@ const SessionProvider = ({ children }: SessionProviderProps): ReactElement => {
   }, [subscriberWrappers]);
 
   /**
-   * Marks a subscriber as pinned, and moves it to the top of the display order.
+   * Toggles a subscriber's isPinned field, and sorts subscribers by display priority.
    * @param {string} id - The ID of the subscriber to pin.
    */
   const pinSubscriber = useCallback(
