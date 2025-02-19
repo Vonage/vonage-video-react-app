@@ -4,7 +4,7 @@ instance:
   name: <add your instance name>
   runtime: nodejs22
   region: <add your region>
-  build-script: './vcrBuildLocal.sh'
+  build-script: './vcrBuild.sh'
   entrypoint: [yarn, run-server]
   application-id: <add your deployment application-id>
 debug:

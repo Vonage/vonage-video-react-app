@@ -4,7 +4,7 @@ instance:
   name: dev
   runtime: nodejs22
   region: aws.euw1
-  build-script: './vcrBuildLocal.sh'
+  build-script: './vcrBuild.sh'
   entrypoint: [yarn, run-server]
   application-id: <APP_ID>
   domains: [meet.vonagenetworks.net]
