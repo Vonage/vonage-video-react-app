@@ -71,7 +71,6 @@ describe('usePreviewPublisher', () => {
   describe('initLocalPublisher', () => {
     it('should call initPublisher', () => {
       mockedInitPublisher.mockReturnValue(mockPublisher);
-      (initPublisher as Mock).mockImplementation(mockedInitPublisher);
       const { result } = renderHook(() => usePreviewPublisher());
       result.current.initLocalPublisher();
 
@@ -96,9 +95,7 @@ describe('usePreviewPublisher', () => {
 
     it('should apply background blur when initialized if set to true', () => {
       mockedHasMediaProcessorSupport.mockReturnValue(true);
-      (hasMediaProcessorSupport as Mock).mockImplementation(mockedHasMediaProcessorSupport);
       mockedInitPublisher.mockReturnValue(mockPublisher);
-      (initPublisher as Mock).mockImplementation(mockedInitPublisher);
       const { result } = renderHook(() => usePreviewPublisher());
       act(() => {
         result.current.initLocalPublisher();
@@ -117,9 +114,7 @@ describe('usePreviewPublisher', () => {
 
     it('should not apply background blur when initialized if the device does not support it', () => {
       mockedHasMediaProcessorSupport.mockReturnValue(false);
-      (hasMediaProcessorSupport as Mock).mockImplementation(mockedHasMediaProcessorSupport);
       mockedInitPublisher.mockReturnValue(mockPublisher);
-      (initPublisher as Mock).mockImplementation(mockedInitPublisher);
       const { result } = renderHook(() => usePreviewPublisher());
       act(() => {
         result.current.initLocalPublisher();
@@ -169,7 +164,6 @@ describe('usePreviewPublisher', () => {
 
     it('handles permission denial', async () => {
       mockedInitPublisher.mockReturnValue(mockPublisher);
-      (initPublisher as Mock).mockImplementation(mockedInitPublisher);
 
       const { result } = renderHook(() => usePreviewPublisher());
 
@@ -188,7 +182,6 @@ describe('usePreviewPublisher', () => {
         throw new Error('Whoops');
       });
       mockedInitPublisher.mockReturnValue(mockPublisher);
-      (initPublisher as Mock).mockImplementation(mockedInitPublisher);
 
       const { result } = renderHook(() => usePreviewPublisher());
 
