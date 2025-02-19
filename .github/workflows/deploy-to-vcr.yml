@@ -44,7 +44,7 @@ jobs:
         run: |
           sed -i 's/<DOMAIN>/'"$DOMAIN"'/g' ${{ github.workspace }}/vcr.yml
           yarn build
-          vcr deploy --filename vcr.yml --app-id ${{secrets.APP_ID}} --api-key ${{ secrets.VCR_API_KEY }} --api-secret ${{ secrets.VCR_API_SECRET }} --region aws.euw1 --graphql-endpoint https://graphql.euw1.runtime.vonage.cloud/v1/graphql --timeout=15m  2>&1 | tee deploy-vcr-logs.log 
+          vcr deploy --filename vcr-gha.yml --app-id ${{secrets.APP_ID}} --api-key ${{ secrets.VCR_API_KEY }} --api-secret ${{ secrets.VCR_API_SECRET }} --region aws.euw1 --graphql-endpoint https://graphql.euw1.runtime.vonage.cloud/v1/graphql --timeout=15m  2>&1 | tee deploy-vcr-logs.log 
           echo "Checking if the deploy job is successful"
           if grep -Fxq '| Instance has been deployed!' ./deploy-vcr-logs.log ; then
             echo "success in deployment"
