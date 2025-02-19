@@ -164,7 +164,7 @@ You can easily deploy your local branch to Vonage Cloud Runtime (VCR) using the 
 
 Firstly, install the VCR cli: https://developer.vonage.com/en/vonage-cloud-runtime/getting-started/working-locally#cli-installation.
 
-Run `vcr configure` entering your Vonage API Key and Secret, and select a region.
+Run `vcr configure` entering your Vonage API Key and Secret, and select a region. You can find your API key and secret on the dashboard: https://dashboard.nexmo.com/.
 
 Now run `vcr init` and follow the steps to:
 1. choose a project name
