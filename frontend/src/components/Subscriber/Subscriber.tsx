@@ -89,7 +89,6 @@ const Subscriber = ({
   const hasAudio = subscriberWrapper.subscriber.stream?.hasAudio;
   const audioIndicatorStyle =
     'rounded-xl absolute top-3 right-3 bg-darkGray-55 h-6 w-6 items-center justify-center flex m-auto';
-  const pinStyle = `flex rounded-xl absolute top-3 left-3 h-6 w-6 items-center justify-center m-auto`;
   return (
     <VideoTile
       id={`${subscriberWrapper.id}`}
@@ -105,10 +104,8 @@ const Subscriber = ({
     >
       {!isScreenShare && (
         <PinButton
-          color="white"
           isPinned={isPinned}
           isTileHovered={isTileHovered}
-          pinStyle={pinStyle}
           isMaxPinned={isMaxPinned}
           handleClick={handlePinClick}
           participantName={username}

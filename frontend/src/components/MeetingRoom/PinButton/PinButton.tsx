@@ -5,22 +5,18 @@ import PushPinOffIcon from '../../Icons/PushPinOffIcon';
 import isMouseEventInsideBox from '../../../utils/isMouseEventInsideBox';
 
 export type PinButtonProps = {
-  color?: string;
   isMaxPinned: boolean;
   isPinned: boolean;
   isTileHovered: boolean;
   participantName?: string;
-  pinStyle?: string;
   handleClick: (clickEvent: MouseEvent<HTMLButtonElement>) => void;
 };
 
 const PinButton = ({
-  color,
   isMaxPinned,
   isPinned,
   isTileHovered,
   participantName,
-  pinStyle,
   handleClick,
 }: PinButtonProps): ReactElement | false => {
   const isDisabled = isMaxPinned && !isPinned;
@@ -28,7 +24,7 @@ const PinButton = ({
   const [isHoveringButton, setIsHoveringButton] = useState<boolean>(false);
   const iconSx = {
     fontSize: '18px',
-    color: isDisabled ? 'rgba(255,255,255,.54)' : color,
+    color: isDisabled ? 'rgba(255,255,255,.54)' : 'white',
     cursor: 'pointer',
   };
 
@@ -64,7 +60,7 @@ const PinButton = ({
     shouldShowIcon && (
       <div
         ref={anchorRef}
-        className={pinStyle}
+        className="flex rounded-xl absolute top-3 left-3 h-6 w-6 items-center justify-center m-auto"
         data-testid="pin-button"
         onPointerEnter={() => setIsHoveringButton(true)}
         onPointerLeave={() => setIsHoveringButton(false)}
