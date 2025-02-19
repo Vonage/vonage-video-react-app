@@ -5,7 +5,6 @@ instance:
   runtime: nodejs22
   region: aws.euw1
   entrypoint: [yarn, run-server]
-  application-id: <APP_ID>
   domains: <DOMAIN>
   environment:
     - name: VIDEO_SERVICE_PROVIDER
@@ -36,4 +35,3 @@ instance:
       secret: JIRA_EPIC_URL
 debug:
   entrypoint: [yarn, run-server]
-  application-id: <APP_ID>
