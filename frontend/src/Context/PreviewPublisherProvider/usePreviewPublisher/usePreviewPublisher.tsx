@@ -5,6 +5,7 @@ import {
   initPublisher,
   VideoFilter,
   hasMediaProcessorSupport,
+  PublisherProperties,
 } from '@vonage/client-sdk-video';
 import setMediaDevices from '../../../utils/mediaDeviceUtils';
 import useDevices from '../../../hooks/useDevices';
@@ -227,18 +228,20 @@ const usePreviewPublisher = (): PreviewPublisherContextType => {
           }
         : undefined;
 
-    publisherRef.current = initPublisher(
-      undefined,
-      { insertDefaultUI: false, videoFilter, resolution: '1280x720' },
-      (err: unknown) => {
-        if (err instanceof Error) {
-          publisherRef.current = null;
-          if (err.name === 'OT_USER_MEDIA_ACCESS_DENIED') {
-            console.error('initPublisher error: ', err);
-          }
+    const publisherOptions: PublisherProperties = {
+      insertDefaultUI: false,
+      videoFilter,
+      resolution: '1280x720',
+    };
+
+    publisherRef.current = initPublisher(undefined, publisherOptions, (err: unknown) => {
+      if (err instanceof Error) {
+        publisherRef.current = null;
+        if (err.name === 'OT_USER_MEDIA_ACCESS_DENIED') {
+          console.error('initPublisher error: ', err);
         }
       }
-    );
+    });
     addPublisherListeners(publisherRef.current);
   }, [addPublisherListeners]);
 
