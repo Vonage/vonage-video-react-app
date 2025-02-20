@@ -1,6 +1,6 @@
 {
   "name": "backend",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Express-based backend with authenticated routes.",
   "main": "index.js",
   "type": "module",
