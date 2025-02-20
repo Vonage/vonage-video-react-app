@@ -47,6 +47,8 @@ const VideoContainer = ({ username }: VideoContainerProps): ReactElement => {
       myVideoElement.style.marginLeft = 'auto';
       myVideoElement.style.marginRight = 'auto';
       myVideoElement.style.transform = 'scaleX(-1)';
+      myVideoElement.style.objectFit = 'contain';
+      myVideoElement.style.aspectRatio = '16 / 9';
       myVideoElement.style.boxShadow =
         '0 1px 2px 0 rgba(60, 64, 67, .3), 0 1px 3px 1px rgba(60, 64, 67, .15)';
 
