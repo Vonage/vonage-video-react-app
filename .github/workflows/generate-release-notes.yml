@@ -24,7 +24,7 @@ jobs:
       - name: Generate and read the changelog for this release
         run: |
           conventional-changelog -p angular -o CHANGELOG.md -r 1
-          echo "CHANGELOG=$(cat CHANGELOG.md | sed -z 's/\n/\\n/g')" >> $GITHUB_ENV
+          echo "CHANGELOG=$(cat CHANGELOG.md)" >> $GITHUB_ENV
           echo $CHANGELOG
 
       - name: Comment on PR
