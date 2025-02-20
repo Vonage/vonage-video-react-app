@@ -1,0 +1,21 @@
+name: generate-release-notes
+
+on: workflow_dispatch
+
+jobs:
+  build-and-setup:
+    runs-on: ubuntu-22.04
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3.0.2
+
+      - name: Setup node
+        uses: actions/setup-node@v3
+        with:
+          node-version: 22.4
+          cache: npm
+
+      - name: Install dependencies
+        run: |
+          npm install -g conventional-changelog-cli@5.0.0
