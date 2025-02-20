@@ -16,7 +16,18 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v3
 
+      - name: Check for "release-candidate" label
+        id: check-release-candidate
+        uses: actions/github-script@v6
+        with:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const pr = context.payload.pull_request;
+              const labels = pr.labels.map(label => label.name);
+              return labels.includes("release-candidate");
+
       - name: Check and Update Base Branch
+        if: steps.check-release-candidate.outputs.result == 'false'
         env:
           TARGET_BRANCH: ${{ github.event.pull_request.base.ref }}
           BASE_BRANCH: ${{ github.event.pull_request.head.ref }}
