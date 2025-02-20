@@ -1,5 +1,5 @@
 # Vonage Video API Reference App for React
-test
+
 ## Table of Contents
 <!-- TOC -->
 
