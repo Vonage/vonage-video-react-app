@@ -65,7 +65,7 @@ const Toolbar = ({
   }, [disconnect]);
 
   return (
-    <div className="bg-darkGray-100 absolute bottom-0 left-0 flex h-[80px] w-full flex-col items-center p-4 md:flex-row md:justify-between">
+    <div className="absolute bottom-0 left-0 flex h-[80px] w-full flex-col items-center bg-darkGray-100 p-4 md:flex-row md:justify-between">
       <div className="flex flex-1 justify-start overflow-hidden pr-2">
         <TimeRoomNameMeetingRoom />
       </div>

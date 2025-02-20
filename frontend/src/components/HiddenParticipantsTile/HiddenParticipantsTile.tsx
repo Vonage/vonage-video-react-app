@@ -32,7 +32,7 @@ const HiddenParticipantsTile = ({
     <button
       id="hidden-participants"
       data-testid="hidden-participants"
-      className="bg-notVeryGray-100 absolute m-1 flex cursor-pointer items-center justify-center rounded-xl transition-colors hover:bg-[rgb(76,80,82)]"
+      className="absolute m-1 flex cursor-pointer items-center justify-center rounded-xl bg-notVeryGray-100 transition-colors hover:bg-[rgb(76,80,82)]"
       style={getBoxStyle(box)}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}

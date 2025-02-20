@@ -33,10 +33,10 @@ const AudioControlButton = (): ReactElement => {
   };
 
   return (
-    <div className="xs:inline hidden">
+    <div className="hidden xs:inline">
       <MutedAlert anchorRef={anchorRef} />
       <ButtonGroup
-        className="bg-notVeryGray-55 mr-3 mt-1"
+        className="mr-3 mt-1 bg-notVeryGray-55"
         disableElevation
         sx={{ borderRadius: '30px' }}
         variant="contained"

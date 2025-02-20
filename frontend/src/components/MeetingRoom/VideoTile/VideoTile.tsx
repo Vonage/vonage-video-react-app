@@ -46,7 +46,7 @@ const VideoTile = forwardRef(
           ref={ref}
         />
         <div
-          className={`bg-notVeryGray-100 relative left-0 top-0 size-full overflow-hidden rounded-xl ${isTalking ? 'outline outline-2 outline-sky-500' : ''} ${hasVideo ? 'hidden' : ''}`}
+          className={`relative left-0 top-0 size-full overflow-hidden rounded-xl bg-notVeryGray-100 ${isTalking ? 'outline outline-2 outline-sky-500' : ''} ${hasVideo ? 'hidden' : ''}`}
         />
         {children}
       </div>

@@ -82,7 +82,7 @@ const MeetingRoom = (): ReactElement => {
   }, [publishingError, navigate, roomName]);
 
   return (
-    <div data-testid="meetingRoom" className="bg-darkGray-100 w-screen">
+    <div data-testid="meetingRoom" className="w-screen bg-darkGray-100">
       {isSmallViewPort && <SmallViewportHeader />}
       <VideoTileCanvas
         isSharingScreen={isSharingScreen}
