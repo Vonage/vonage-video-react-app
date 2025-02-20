@@ -1,6 +1,6 @@
 import { act, cleanup, renderHook } from '@testing-library/react';
 import { afterAll, afterEach, beforeEach, describe, expect, it, Mock, vi } from 'vitest';
-import { initPublisher, Publisher } from '@vonage/client-sdk-video';
+import { hasMediaProcessorSupport, initPublisher, Publisher } from '@vonage/client-sdk-video';
 import EventEmitter from 'events';
 import usePreviewPublisher from './usePreviewPublisher';
 import { UserContextType } from '../../user';
@@ -19,7 +19,6 @@ vi.mock('@vonage/client-sdk-video');
 vi.mock('../../../hooks/useUserContext.tsx');
 vi.mock('../../../hooks/usePermissions.tsx');
 vi.mock('../../../hooks/useDevices.tsx');
-
 const mockUseUserContext = useUserContext as Mock<[], UserContextType>;
 const mockUsePermissions = usePermissions as Mock<[], PermissionsHookType>;
 const mockUseDevices = useDevices as Mock<
@@ -31,7 +30,7 @@ const defaultSettings = {
   publishAudio: false,
   publishVideo: false,
   name: '',
-  blur: false,
+  blur: true,
   noiseSuppression: true,
 };
 const mockUserContextWithDefaultSettings = {
@@ -46,14 +45,15 @@ describe('usePreviewPublisher', () => {
     getVideoSource: () => defaultVideoDevice,
   }) as unknown as Publisher;
   const mockedInitPublisher = vi.fn();
+  const mockedHasMediaProcessorSupport = vi.fn();
   const consoleErrorSpy = vi.spyOn(console, 'error');
   const mockSetAccessStatus = vi.fn();
 
   beforeEach(() => {
     vi.resetAllMocks();
-
     mockUseUserContext.mockImplementation(() => mockUserContextWithDefaultSettings);
     (initPublisher as Mock).mockImplementation(mockedInitPublisher);
+    (hasMediaProcessorSupport as Mock).mockImplementation(mockedHasMediaProcessorSupport);
     mockUseDevices.mockReturnValue({
       getAllMediaDevices: vi.fn(),
       allMediaDevices,
@@ -71,7 +71,6 @@ describe('usePreviewPublisher', () => {
   describe('initLocalPublisher', () => {
     it('should call initPublisher', () => {
       mockedInitPublisher.mockReturnValue(mockPublisher);
-      (initPublisher as Mock).mockImplementation(mockedInitPublisher);
       const { result } = renderHook(() => usePreviewPublisher());
       result.current.initLocalPublisher();
 
@@ -92,6 +91,41 @@ describe('usePreviewPublisher', () => {
         result.current.initLocalPublisher();
       });
       expect(consoleErrorSpy).toHaveBeenCalledWith('initPublisher error: ', error);
+    });
+
+    it('should apply background blur when initialized if set to true', () => {
+      mockedHasMediaProcessorSupport.mockReturnValue(true);
+      mockedInitPublisher.mockReturnValue(mockPublisher);
+      const { result } = renderHook(() => usePreviewPublisher());
+      act(() => {
+        result.current.initLocalPublisher();
+      });
+      expect(mockedInitPublisher).toHaveBeenCalledWith(
+        undefined,
+        expect.objectContaining({
+          videoFilter: expect.objectContaining({
+            type: 'backgroundBlur',
+            blurStrength: 'high',
+          }),
+        }),
+        expect.any(Function)
+      );
+    });
+
+    it('should not apply background blur when initialized if the device does not support it', () => {
+      mockedHasMediaProcessorSupport.mockReturnValue(false);
+      mockedInitPublisher.mockReturnValue(mockPublisher);
+      const { result } = renderHook(() => usePreviewPublisher());
+      act(() => {
+        result.current.initLocalPublisher();
+      });
+      expect(mockedInitPublisher).toHaveBeenCalledWith(
+        undefined,
+        expect.objectContaining({
+          videoFilter: undefined,
+        }),
+        expect.any(Function)
+      );
     });
   });
 
@@ -130,7 +164,6 @@ describe('usePreviewPublisher', () => {
 
     it('handles permission denial', async () => {
       mockedInitPublisher.mockReturnValue(mockPublisher);
-      (initPublisher as Mock).mockImplementation(mockedInitPublisher);
 
       const { result } = renderHook(() => usePreviewPublisher());
 
@@ -149,7 +182,6 @@ describe('usePreviewPublisher', () => {
         throw new Error('Whoops');
       });
       mockedInitPublisher.mockReturnValue(mockPublisher);
-      (initPublisher as Mock).mockImplementation(mockedInitPublisher);
 
       const { result } = renderHook(() => usePreviewPublisher());
 

@@ -1,5 +1,12 @@
 import { useState, useRef, useCallback, useEffect } from 'react';
-import { Publisher, Event, initPublisher } from '@vonage/client-sdk-video';
+import {
+  Publisher,
+  Event,
+  initPublisher,
+  VideoFilter,
+  hasMediaProcessorSupport,
+  PublisherProperties,
+} from '@vonage/client-sdk-video';
 import setMediaDevices from '../../../utils/mediaDeviceUtils';
 import useDevices from '../../../hooks/useDevices';
 import usePermissions from '../../../hooks/usePermissions';
@@ -47,7 +54,7 @@ export type PreviewPublisherContextType = {
  * @returns {PreviewPublisherContextType} preview context
  */
 const usePreviewPublisher = (): PreviewPublisherContextType => {
-  const { setUser } = useUserContext();
+  const { setUser, user } = useUserContext();
   const { allMediaDevices, getAllMediaDevices } = useDevices();
   const [publisherVideoElement, setPublisherVideoElement] = useState<
     HTMLVideoElement | HTMLObjectElement
@@ -56,7 +63,8 @@ const usePreviewPublisher = (): PreviewPublisherContextType => {
   const { setAccessStatus, accessStatus } = usePermissions();
   const publisherRef = useRef<Publisher | null>(null);
   const [isPublishing, setIsPublishing] = useState(false);
-  const [localBlur, setLocalBlur] = useState(false);
+  const initialLocalBlurRef = useRef<boolean>(user.defaultSettings.blur);
+  const [localBlur, setLocalBlur] = useState(user.defaultSettings.blur);
   const [isVideoEnabled, setIsVideoEnabled] = useState(true);
   const [isAudioEnabled, setIsAudioEnabled] = useState(true);
   const [localVideoSource, setLocalVideoSource] = useState<string | undefined>(undefined);
@@ -88,6 +96,7 @@ const usePreviewPublisher = (): PreviewPublisherContextType => {
       });
     }
     setLocalBlur(!localBlur);
+    window.localStorage.setItem('backgroundBlur', JSON.stringify(!localBlur));
     if (setUser) {
       setUser((prevUser: UserType) => ({
         ...prevUser,
@@ -211,18 +220,28 @@ const usePreviewPublisher = (): PreviewPublisherContextType => {
       return;
     }
 
-    publisherRef.current = initPublisher(
-      undefined,
-      { insertDefaultUI: false, resolution: '1280x720' },
-      (err: unknown) => {
-        if (err instanceof Error) {
-          publisherRef.current = null;
-          if (err.name === 'OT_USER_MEDIA_ACCESS_DENIED') {
-            console.error('initPublisher error: ', err);
+    const videoFilter: VideoFilter | undefined =
+      initialLocalBlurRef.current && hasMediaProcessorSupport()
+        ? {
+            type: 'backgroundBlur',
+            blurStrength: 'high',
           }
+        : undefined;
+
+    const publisherOptions: PublisherProperties = {
+      insertDefaultUI: false,
+      videoFilter,
+      resolution: '1280x720',
+    };
+
+    publisherRef.current = initPublisher(undefined, publisherOptions, (err: unknown) => {
+      if (err instanceof Error) {
+        publisherRef.current = null;
+        if (err.name === 'OT_USER_MEDIA_ACCESS_DENIED') {
+          console.error('initPublisher error: ', err);
         }
       }
-    );
+    });
     addPublisherListeners(publisherRef.current);
   }, [addPublisherListeners]);
 
