@@ -30,9 +30,12 @@ import useRightPanel, { RightPanelActiveTab } from '../../hooks/useRightPanel';
 import logOnConnect from '../../utils/logOnConnect';
 import useChat from '../../hooks/useChat';
 import { SubscriberWrapper } from '../../types/session';
-import sortByDisplayPriority from '../../utils/sortByDisplayPriority';
 import { ChatMessageType } from '../../types/chat';
 import { isMobile } from '../../utils/util';
+import {
+  sortByDisplayPriority,
+  togglePinAndSortByDisplayOrder,
+} from '../../utils/sessionStateOperations';
 
 export type { ChatMessageType } from '../../types/chat';
 
@@ -209,18 +212,7 @@ const SessionProvider = ({ children }: SessionProviderProps): ReactElement => {
   const pinSubscriber = useCallback(
     (id: string) => {
       setSubscriberWrappers((previousSubscriberWrappers) => {
-        const subscribers = previousSubscriberWrappers
-          .map((subscriberWrapper) => {
-            if (subscriberWrapper.id === id) {
-              return {
-                ...subscriberWrapper,
-                isPinned: !subscriberWrapper.isPinned,
-              };
-            }
-            return subscriberWrapper;
-          })
-          .sort(sortByDisplayPriority(activeSpeakerId)); // Sorting by display priority will place this pinned participant above the rest
-        return subscribers;
+        return togglePinAndSortByDisplayOrder(id, previousSubscriberWrappers, activeSpeakerId);
       });
     },
     [activeSpeakerId]

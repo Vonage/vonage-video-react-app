@@ -5,8 +5,8 @@ import sortByDisplayPriority from './sortByDisplayPriority';
 describe('sortByDisplayPriority', () => {
   it('prioritizes subscribers in priority order', () => {
     const subA = { id: 'subA', isScreenshare: true } as SubscriberWrapper;
-    const subB = { id: 'subB', isPinned: true } as SubscriberWrapper;
-    const subC = { id: 'subC', isPinned: true } as SubscriberWrapper;
+    const subB = { id: 'subB', isScreenshare: false, isPinned: true } as SubscriberWrapper;
+    const subC = { id: 'subC', isScreenshare: false, isPinned: true } as SubscriberWrapper;
     const subD = { id: 'subD' } as SubscriberWrapper;
     const subE = { id: 'subE' } as SubscriberWrapper;
 
