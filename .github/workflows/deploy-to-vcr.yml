@@ -2,9 +2,9 @@ name: Deploy to VCR
 
 on:
   pull_request:
-    # branches:
-    #   - develop
-    # types: [closed]
+    branches:
+      - develop
+    types: [closed]
 
 permissions:
   contents: read
@@ -15,7 +15,7 @@ env:
 
 jobs:
   build-and-test:
-    # if: github.event.pull_request.merged == true
+    if: github.event.pull_request.merged == true
     runs-on: [vcp-runner]
 
     steps:
