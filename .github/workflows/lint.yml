@@ -28,21 +28,20 @@ jobs:
           npm -v
           npm install --global yarn
           yarn
-          echo "T E S T"
 
-      # - name: Check for lint issues
-      #   run: |
-      #     yarn lint && yarn prettier . --check
+      - name: Check for lint issues
+        run: |
+          yarn lint && yarn prettier . --check
 
-      # - name: Check for TS errors
-      #   run: |
-      #     yarn ts-check
+      - name: Check for TS errors
+        run: |
+          yarn ts-check
 
-      # - name: Check that new files are camelCase
-      #   run: |
-      #     yarn lint:filenames
+      - name: Check that new files are camelCase
+        run: |
+          yarn lint:filenames
 
-      # - name: Run license check
-      #   run: |
-      #     npx license-checker --json > scripts/allLicenseResults.json
-      #     node scripts/licenseCheck.js
+      - name: Run license check
+        run: |
+          npx license-checker --json > scripts/allLicenseResults.json
+          node scripts/licenseCheck.js
