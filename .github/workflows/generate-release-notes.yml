@@ -1,9 +1,7 @@
 name: generate-release-notes
 
 # on: workflow_dispatch
-on:
-  pull_request:
-    types: [edited, opened]
+on: [pull_request]
 
 jobs:
   build-and-setup:
