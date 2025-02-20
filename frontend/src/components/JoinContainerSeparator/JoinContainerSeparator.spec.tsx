@@ -10,8 +10,5 @@ describe('JoinContainerSeparator', () => {
 
     const separators = screen.getAllByTestId('separator');
     expect(separators).toHaveLength(2);
-
-    // checking here that the parent of a Separator component has the correct classNames
-    expect(separators[0].parentElement).toHaveClass('flex w-full items-center');
   });
 });

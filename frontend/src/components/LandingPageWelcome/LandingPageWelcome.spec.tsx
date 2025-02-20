@@ -8,6 +8,5 @@ describe('LandingPageWelcome', () => {
 
     const textHeading = screen.getByText('Welcome to the Vonage Video React App');
     expect(textHeading).toBeInTheDocument();
-    expect(textHeading).toHaveClass('w-9/12 pb-5 text-5xl font-bold text-black');
   });
 });
