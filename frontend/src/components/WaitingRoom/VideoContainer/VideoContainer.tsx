@@ -47,8 +47,8 @@ const VideoContainer = ({ username }: VideoContainerProps): ReactElement => {
       myVideoElement.style.marginLeft = 'auto';
       myVideoElement.style.marginRight = 'auto';
       myVideoElement.style.transform = 'scaleX(-1)';
-      myVideoElement.style.objectFit = 'cover';
-      myVideoElement.style.aspectRatio = '1.85 / 1';
+      myVideoElement.style.objectFit = 'contain';
+      myVideoElement.style.aspectRatio = '16 / 9';
       myVideoElement.style.boxShadow =
         '0 1px 2px 0 rgba(60, 64, 67, .3), 0 1px 3px 1px rgba(60, 64, 67, .15)';
 
@@ -60,7 +60,7 @@ const VideoContainer = ({ username }: VideoContainerProps): ReactElement => {
 
   return (
     <div
-      className="relative flex h-[25dvh] w-[584px] max-w-full flex-col items-center justify-center bg-black sm:h-[328px] md:rounded-xl"
+      className="relative max-w-full w-[584px] bg-black sm:h-[328px] flex flex-col items-center justify-center md:rounded-xl"
       // this was added because overflow: hidden causes issues with rendering
       // see https://stackoverflow.com/questions/77748631/element-rounded-corners-leaking-out-to-front-when-using-overflow-hidden
       style={{ WebkitMask: 'linear-gradient(#000 0 0)' }}
