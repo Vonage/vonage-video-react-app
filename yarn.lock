@@ -2386,10 +2386,10 @@
     "@vonage/jwt" "^1.11.0"
     debug "^4.3.4"
 
-"@vonage/client-sdk-video@^2.29.0":
-  version "2.29.0"
-  resolved "https://registry.yarnpkg.com/@vonage/client-sdk-video/-/client-sdk-video-2.29.0.tgz#055cb4abe8d55d6eb9cfbe6eb74625fd97974f2b"
-  integrity sha512-xpWwD28eC6TTwdBmZ8v/Z2URrNkLxeAl5vg2pLAJOkNgOzXuPw7MM1iKtztbKsao8aSW0pup9eYqVujIR4oc8g==
+"@vonage/client-sdk-video@^2.29.1":
+  version "2.29.1"
+  resolved "https://registry.yarnpkg.com/@vonage/client-sdk-video/-/client-sdk-video-2.29.1.tgz#c0cb65d7c8c517d1e6a5afab332d231d2596305d"
+  integrity sha512-yu0jILzBexsWvnbzUr5Ykt+fYdrEFnUeffUh1+toTu4Qe1JOh9VOGEqiLkRzo9veEYf8XO6jCr0qMfZV0sO+8Q==
 
 "@vonage/conversations@^1.4.0":
   version "1.4.0"
