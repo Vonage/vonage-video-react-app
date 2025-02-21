@@ -9,6 +9,7 @@ export type EmojiGridProps = {
   openEmojiGrid: boolean;
   setOpenEmojiGrid: Dispatch<SetStateAction<boolean>>;
   anchorRef: RefObject<HTMLButtonElement | null>;
+  parentOpen: boolean;
 };
 
 /**
@@ -19,12 +20,14 @@ export type EmojiGridProps = {
  *  @property {RefObject<HTMLButtonElement | null>} anchorRef - the button ref for the grid
  *  @property {boolean} openEmojiGrid - whether the component will be open initially
  *  @property {Dispatch<SetStateAction<boolean>>} setOpenEmojiGrid - toggle whether the emoji grid is shown or hidden
+ *  @property {boolean} parentOpen - whether the ToolbarOverflowMenu is open
  * @returns {ReactElement} - The EmojiGrid Component.
  */
 const EmojiGrid = ({
   anchorRef,
   openEmojiGrid,
   setOpenEmojiGrid,
+  parentOpen,
 }: EmojiGridProps): ReactElement => {
   const isSmallViewport = useIsSmallViewport();
 
@@ -42,7 +45,7 @@ const EmojiGrid = ({
     <Portal>
       <ClickAwayListener onClickAway={handleClickAway}>
         <Grow
-          in={openEmojiGrid}
+          in={parentOpen && openEmojiGrid}
           style={{
             transformOrigin: 'center bottom',
           }}

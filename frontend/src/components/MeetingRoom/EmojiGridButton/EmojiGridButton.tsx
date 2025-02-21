@@ -7,6 +7,7 @@ import EmojiGrid from '../EmojiGrid/EmojiGrid';
 export type EmojiGridProps = {
   openEmojiGrid: boolean;
   setOpenEmojiGrid: Dispatch<SetStateAction<boolean>>;
+  parentOpen: boolean;
 };
 
 /**
@@ -16,9 +17,14 @@ export type EmojiGridProps = {
  * @param {EmojiGridProps} props - the props for the component
  *  @property {boolean} openEmojiGrid - whether the component will be open initially
  *  @property {Dispatch<SetStateAction<boolean>>} setOpenEmojiGrid - toggle whether the emoji grid is shown or hidden
+ *  @property {boolean} parentOpen - whether the ToolbarOverflowMenu is open
  * @returns {ReactElement} - The EmojiGridButton Component.
  */
-const EmojiGridButton = ({ openEmojiGrid, setOpenEmojiGrid }: EmojiGridProps): ReactElement => {
+const EmojiGridButton = ({
+  openEmojiGrid,
+  setOpenEmojiGrid,
+  parentOpen,
+}: EmojiGridProps): ReactElement => {
   const anchorRef = useRef<HTMLButtonElement>(null);
   const handleToggle = () => {
     setOpenEmojiGrid((prevOpen) => !prevOpen);
@@ -43,6 +49,7 @@ const EmojiGridButton = ({ openEmojiGrid, setOpenEmojiGrid }: EmojiGridProps): R
         anchorRef={anchorRef}
         openEmojiGrid={openEmojiGrid}
         setOpenEmojiGrid={setOpenEmojiGrid}
+        parentOpen={parentOpen}
       />
     </>
   );

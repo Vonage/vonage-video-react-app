@@ -1,4 +1,4 @@
-import { ReactElement, useCallback, useRef, useState } from 'react';
+import { ReactElement, useRef, useState } from 'react';
 import { Tooltip } from '@mui/material';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import ToolbarButton from '../ToolbarButton';
@@ -14,26 +14,14 @@ const ToolbarOverflowButton = (): ReactElement => {
   const anchorRef = useRef<HTMLButtonElement>(null);
   const [open, setOpen] = useState<boolean>(false);
   const [openEmojiGridMobile, setOpenEmojiGridMobile] = useState<boolean>(true);
-  const timer = useRef<number | undefined>(undefined);
 
   const handleButtonToggle = () => {
     setOpen((prevOpen) => !prevOpen);
   };
 
-  const handleClickAway = useCallback(() => {
+  const handleClickAway = () => {
     setOpen(false);
-    // We close the emoji grid so its animation is in-sync with the overflow menu animation.
-    setOpenEmojiGridMobile((prevValue) => {
-      if (timer.current === undefined) {
-        timer.current = window.setTimeout(() => {
-          setOpenEmojiGridMobile(prevValue);
-          timer.current = undefined;
-          // The default Transition timer is 250
-        }, 250);
-      }
-      return false;
-    });
-  }, []);
+  };
 
   return (
     <>

@@ -73,6 +73,7 @@ const ToolbarOverflowMenu = ({
                 <EmojiGridButton
                   openEmojiGrid={openEmojiGrid}
                   setOpenEmojiGrid={setOpenEmojiGrid}
+                  parentOpen={open}
                 />
                 <ArchivingToggle />
               </Paper>
