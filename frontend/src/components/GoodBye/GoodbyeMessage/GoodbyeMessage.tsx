@@ -27,12 +27,12 @@ const GoodByeMessage = ({ header, message, roomName }: GoodByeMessageProps): Rea
     navigate(`/waiting-room/${roomName}`);
   };
   return (
-    <div className="ps-12 py-4 h-auto w-full shrink text-left">
-      <h2 className="text-5xl text-black pb-5 w-9/12">{header}</h2>
-      <h3 className={`text-large text-slate-500 pr-12 ${isSmallViewport ? 'w-full' : 'w-[400px]'}`}>
+    <div className="h-auto w-full shrink py-4 ps-12 text-left">
+      <h2 className="w-9/12 pb-5 text-5xl text-black">{header}</h2>
+      <h3 className={`pr-12 text-lg text-slate-500 ${isSmallViewport ? 'w-full' : 'w-[400px]'}`}>
         {message}
       </h3>
-      <div className="flex flex-row mt-6 items-center pr-0">
+      <div className="mt-6 flex flex-row items-center pr-0">
         <ReenterRoomButton handleReenter={handleReenter} roomName={roomName} />
 
         <GoToLandingPageButton handleLanding={handleLanding} />
