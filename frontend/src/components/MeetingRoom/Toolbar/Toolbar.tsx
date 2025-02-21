@@ -70,8 +70,8 @@ const Toolbar = ({
   const [openEmojiGridDesktop, setOpenEmojiGridDesktop] = useState<boolean>(false);
 
   return (
-    <div className="flex flex-col md:flex-row items-center absolute h-[80px] w-full bottom-0 left-0 bg-darkGray-100 md:justify-between p-4">
-      <div className="flex flex-1 overflow-hidden justify-start pr-2">
+    <div className="absolute bottom-0 left-0 flex h-[80px] w-full flex-col items-center bg-darkGray-100 p-4 md:flex-row md:justify-between">
+      <div className="flex flex-1 justify-start overflow-hidden pr-2">
         <TimeRoomNameMeetingRoom />
       </div>
       <div className="flex flex-1 justify-center">
@@ -97,7 +97,7 @@ const Toolbar = ({
         <ExitButton handleLeave={handleLeave} />
       </div>
 
-      <div className="hidden md:flex flex-1 justify-end">
+      <div className="hidden flex-1 justify-end md:flex">
         {isReportIssueEnabled && (
           <ReportIssueButton
             isOpen={rightPanelActiveTab === 'issues'}

@@ -11,7 +11,7 @@ const VideoLoading = (): ReactElement => {
   return (
     <div
       data-testid="VideoLoading"
-      className="absolute flex items-center justify-center w-dvw h-[328px] rounded-2xl bg-black"
+      className="absolute flex h-[328px] w-dvw items-center justify-center rounded-2xl bg-black"
     >
       <CircularProgress
         sx={{

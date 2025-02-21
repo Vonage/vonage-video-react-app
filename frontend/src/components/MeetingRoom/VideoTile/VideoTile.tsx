@@ -38,15 +38,15 @@ const VideoTile = forwardRef(
       <div
         id={id}
         data-testid={dataTestId}
-        className={`${className ?? ''} m-1 absolute flex items-center justify-center ${isHidden ? 'hidden' : ''} `}
+        className={`${className ?? ''} absolute m-1 flex items-center justify-center ${isHidden ? 'hidden' : ''} `}
         style={getBoxStyle(box)}
       >
         <div
-          className={`relative left-0 top-0 w-full h-full rounded-xl overflow-hidden ${isTalking ? 'outline outline-2 outline-sky-500' : ''} ${!hasVideo ? 'hidden' : ''}`}
+          className={`relative left-0 top-0 size-full overflow-hidden rounded-xl ${isTalking ? 'outline outline-2 outline-sky-500' : ''} ${!hasVideo ? 'hidden' : ''}`}
           ref={ref}
         />
         <div
-          className={`relative left-0 top-0 w-full h-full rounded-xl bg-notVeryGray-100 overflow-hidden ${isTalking ? 'outline outline-2 outline-sky-500' : ''} ${hasVideo ? 'hidden' : ''}`}
+          className={`relative left-0 top-0 size-full overflow-hidden rounded-xl bg-notVeryGray-100 ${isTalking ? 'outline outline-2 outline-sky-500' : ''} ${hasVideo ? 'hidden' : ''}`}
         />
         {children}
       </div>

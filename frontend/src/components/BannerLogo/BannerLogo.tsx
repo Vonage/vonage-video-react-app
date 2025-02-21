@@ -11,12 +11,12 @@ const BannerLogo = (): ReactElement => (
   <Link to="..">
     <div className="box-border">
       <img
-        className="h-[72px] pl-4 pr-8 hidden md:flex"
+        className="hidden h-[72px] pl-4 pr-8 md:flex"
         src="/images/vonage-logo-desktop.svg"
         alt="Vonage-logo"
       />
       <img
-        className="h-10 my-4 px-8 md:hidden"
+        className="my-4 h-10 px-8 md:hidden"
         src="/images/vonage-logo-mobile.svg"
         alt="Vonage-logo"
       />

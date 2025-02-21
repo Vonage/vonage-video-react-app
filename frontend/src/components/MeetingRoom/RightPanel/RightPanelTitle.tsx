@@ -18,8 +18,11 @@ export type RightPanelTitleProps = {
  */
 const RightPanelTitle = ({ handleClose, title }: RightPanelTitleProps): ReactElement => {
   return (
-    <div className="h-[64px] flex flex-row items-center justify-between pl-6 w-inherit">
-      <span className="font-normal text-lg text-darkGray tracking-normal">{title}</span>
+    <div
+      style={{ width: 'inherit' }}
+      className="flex h-[64px] flex-row items-center justify-between pl-6"
+    >
+      <span className="text-darkGray text-lg font-normal tracking-normal">{title}</span>
       <IconButton onClick={handleClose} size="large" sx={{ color: 'rgb(95, 99, 104)' }}>
         <Close />
       </IconButton>

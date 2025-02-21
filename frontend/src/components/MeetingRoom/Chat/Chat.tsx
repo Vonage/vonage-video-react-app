@@ -44,7 +44,7 @@ const Chat = ({ handleClose, isOpen }: ChatProps): ReactElement | false => {
             })}
           </List>
         </div>
-        <div className="flex absolute bottom-0 inset-x-0">
+        <div className="absolute inset-x-0 bottom-0 flex">
           <ChatInput />
         </div>
       </>
