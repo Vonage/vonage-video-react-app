@@ -1,8 +1,9 @@
-# Vonage Video API Reference App for React
+### Vonage Video API Reference App for React
 
 ## Table of Contents
 <!-- TOC -->
 
+- [Vonage Video API Reference App for React](#vonage-video-api-reference-app-for-react)
 - [Table of Contents](#table-of-contents)
 - [What is it?](#what-is-it)
 - [Why use it?](#why-use-it)
