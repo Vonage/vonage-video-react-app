@@ -15,6 +15,7 @@
     - [Installing dependencies](#installing-dependencies)
     - [Dev mode](#dev-mode)
     - [Production mode](#production-mode)
+- [Deployment to Vonage Cloud Runtime](#deployment-to-vonage-cloud-runtime)
 - [Testing](#testing)
   - [Integration Tests](#integration-tests)
     - [Screenshot tests or Visual comparisons](#screenshot-tests-or-visual-comparisons)
@@ -157,6 +158,48 @@ yarn start
 
 The app and API are both served on  [http://localhost:3345/](http://localhost:3345/)
 
+## Deployment to Vonage Cloud Runtime
+
+You can easily deploy your local branch to Vonage Cloud Runtime (VCR) using the tools in this repository. See https://developer.vonage.com/en/vonage-cloud-runtime/overview for an overview of Vonage Cloud Runtime.
+
+Firstly, install the VCR cli: https://developer.vonage.com/en/vonage-cloud-runtime/getting-started/working-locally#cli-installation.
+
+Run `vcr configure` entering your Vonage API Key and Secret, and select a region. You can find your API key and secret on the dashboard: https://dashboard.nexmo.com/.
+
+Now run `vcr init` and follow the steps to:
+1. choose a project name
+2. choose an instance name
+3. select `nodejs22` for the runtime
+4. Select a region for your app
+5. Choose or create an application for deployment. :warning: You should use a separate Vonage application to your Vonage Video application (i.e. the value you used for `VONAGE_APP_ID` in the `backend/.env` file) to avoid issues with your private key
+6. Choose an application for debug, if you SKIP it will re-use the application from your deployment
+7. For the product template select SKIP
+
+You will see a new file created `./vcr.yml`. This file is ignored by git so that each developer can have their own deployment setup locally. This file is still missing the `entrypoint` and `build-script` fields which you can copy and paste from `./vcr.yml.example`.
+
+Your file should now look something like this:
+```yaml
+project:
+  name: my-project-name
+instance:
+  name: my-instance-name
+  runtime: nodejs22
+  region: aws.euw1
+  build-script: './vcrBuild.sh'
+  entrypoint: [yarn, run-server]
+  application-id: my-deployment-app-id
+debug:
+  entrypoint: [yarn, run-server]
+  application-id: my-debug-app-id
+```
+
+Now run `yarn deploy-vcr` to deploy your project.
+After a successful deployment the url of you instance will be shown in the output as 'Instance host address'.
+You can also check your instances at https://dashboard.nexmo.com/serverless/instances.
+
+Note: This will deploy the project using your local code and .env files, which is useful for debugging.
+For a more centralized deployment to VCR see our GHA workflow `.github/workflows/deploy-to-vcr.yml`.
+
 ## Testing
 
 ### Integration Tests
@@ -183,7 +226,7 @@ If we need to update the expected screenshot due to UI changes, we can delete th
 
 For CI tests, we require screenshots for various browsers and operating systems because they [render interfaces with subtle differences](https://github.com/microsoft/playwright/issues/18240#issuecomment-1287546463).
 
-To capture CI-specific screenshots, you can use the `update-screenshots` job. This job is triggered by creating a pull request (PR) with the `update-screenshots` label on GitHub. Once triggered, it will capture new screenshots on the virtual machine (VM) and automatically push them to a new branch `current-branch-name-update-screenshots`. You can easily cherry-pick the commit from the new branch to the PR branch, sign the commit, and push it back to the PR.
+To capture CI-specific screenshots, you can use the `update-screenshots` job. This job is triggered by creating a pull request (PR) with the `update-screenshots` label on GitHub. Once triggered, it will capture new screenshots on the virtual machine (VM) and automatically push those to the PR's branch.
 
 ### Running the backend and frontend test suites
 

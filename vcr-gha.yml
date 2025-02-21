@@ -5,8 +5,8 @@ instance:
   runtime: nodejs22
   region: aws.euw1
   entrypoint: [yarn, run-server]
-  application-id: <APP_ID>
-  domains: [meet.vonagenetworks.net]
+  # The placeholder <DOMAIN> will be replaced by sed in .github/workflows/deploy-to-vcr.yml
+  domains: <DOMAIN>
   environment:
     - name: VIDEO_SERVICE_PROVIDER
       secret: VIDEO_SERVICE_PROVIDER
@@ -14,6 +14,10 @@ instance:
       secret: VONAGE_APP_ID
     - name: VONAGE_PRIVATE_KEY
       secret: VONAGE_PRIVATE_KEY
+    - name: OT_API_KEY
+      secret: OT_API_KEY
+    - name: OT_API_SECRET
+      secret: OT_API_SECRET
     - name: VITE_ENABLE_REPORT_ISSUE
       secret: VITE_ENABLE_REPORT_ISSUE
     - name: JIRA_URL
@@ -32,4 +36,3 @@ instance:
       secret: JIRA_EPIC_URL
 debug:
   entrypoint: [yarn, run-server]
-  application-id: <APP_ID>

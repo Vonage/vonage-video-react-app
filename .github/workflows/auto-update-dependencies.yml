@@ -9,7 +9,9 @@ permissions:
   contents: read
 
 env:
-  BRANCH_NAME: 'develop'
+  BRANCH_NAME: ${{ github.head_ref }}
+  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  GITHUB_REPOSITORY: ${{ github.repository }}
 
 jobs:
   run:
@@ -35,10 +37,10 @@ jobs:
           echo "Committing docs/DEPENDENCIES.md changes..."
           FILE="docs/DEPENDENCIES.md"
           CONTENT=$(base64 -w 0 "$FILE")
-          SHA=$(curl -s -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" "https://api.github.com/repos/${{ github.repository }}/contents/$FILE?ref=$BRANCH_NAME" | jq -r .sha)
+          SHA=$(curl -s -H "Authorization: token $GITHUB_TOKEN" "https://api.github.com/repos/$GITHUB_REPOSITORY/contents/$FILE?ref=$BRANCH_NAME" | jq -r .sha)
           if [ "$SHA" == "null" ]; then
             SHA=""
           fi
-          curl -s -X PUT -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+          curl -s -X PUT -H "Authorization: token $GITHUB_TOKEN" \
             -d "{\"message\":\"Commit updated dependencies file [auto-generated]\", \"content\":\"$CONTENT\", \"branch\":\"$BRANCH_NAME\", \"sha\":\"$SHA\"}" \
-            "https://api.github.com/repos/${{ github.repository }}/contents/$FILE"
+            "https://api.github.com/repos/$GITHUB_REPOSITORY/contents/$FILE"
