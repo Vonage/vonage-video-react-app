@@ -6,20 +6,22 @@
     "plugin:@typescript-eslint/recommended",
     "prettier",
     "plugin:jsdoc/recommended",
-    "plugin:@cspell/recommended"
+    "plugin:@cspell/recommended",
+    "plugin:tailwindcss/recommended"
   ],
   "parser": "@typescript-eslint/parser",
   "parserOptions": {
     "project": [
       "./backend/tsconfig.json",
       "./frontend/tsconfig.json",
-      "./integration-tests/tsconfig.json",
-    ],
+      "./integration-tests/tsconfig.json"
+    ]
   },
   "plugins": [
     "@typescript-eslint",
     "prettier",
     "jsdoc",
+    "tailwindcss"
   ],
   "root": false,
   "rules": {
@@ -44,6 +46,25 @@
         },
         "customWordListFile": "./customWordList.txt" 
       }
+    ],
+    "tailwindcss/no-custom-classname": [
+      "error",
+      // the following is needed to ignore the custom colors in tailwind.config.js
+      {
+        "whitelist": [
+          "bg-primary-dark",
+          "text-darkGray",
+          // the following are used in playwright testing
+          "publisher",
+          "subscriber",
+          "screen-subscriber"
+        ]
+      }
     ]
   },
+  "settings": {
+    "tailwindcss": {
+      "config": "./frontend/tailwind.config.js"
+    }
+  }
 }

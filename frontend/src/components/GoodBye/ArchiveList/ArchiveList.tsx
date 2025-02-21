@@ -87,14 +87,14 @@ const ArchiveList = ({ archives }: ArchiveListProps): ReactElement => {
     return (
       <>
         <WarningOutlinedIcon color="warning" />
-        <h3 className="text-large text-slate-500">
+        <h3 className="text-lg text-slate-500">
           There was an error loading recordings for this meeting
         </h3>
       </>
     );
   }
   if (!archives.length) {
-    return <h3 className="text-large text-slate-500">There are no recordings for this meeting</h3>;
+    return <h3 className="text-lg text-slate-500">There are no recordings for this meeting</h3>;
   }
   return (
     <div className="md:max-h-[480px] md:overflow-y-auto ">

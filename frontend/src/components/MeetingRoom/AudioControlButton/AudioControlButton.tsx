@@ -36,7 +36,7 @@ const AudioControlButton = (): ReactElement => {
     <div className="hidden xs:inline">
       <MutedAlert anchorRef={anchorRef} />
       <ButtonGroup
-        className="mt-1 mr-3 bg-notVeryGray-55"
+        className="mr-3 mt-1 bg-notVeryGray-55"
         disableElevation
         sx={{ borderRadius: '30px' }}
         variant="contained"
@@ -50,7 +50,7 @@ const AudioControlButton = (): ReactElement => {
           aria-label="audio devices dropdown"
           aria-haspopup="menu"
           onClick={handleToggle}
-          className="h-12 w-12"
+          className="size-12"
         >
           {open ? (
             <ArrowDropDown sx={{ color: 'rgb(138, 180, 248)' }} />
@@ -64,7 +64,7 @@ const AudioControlButton = (): ReactElement => {
             edge="start"
             aria-label="microphone"
             size="small"
-            className="h-[50px] m-[3px] w-[50px] rounded-full shadow-md"
+            className="m-[3px] size-[50px] rounded-full shadow-md"
           >
             {isAudioEnabled ? (
               <Mic className="text-white" />
