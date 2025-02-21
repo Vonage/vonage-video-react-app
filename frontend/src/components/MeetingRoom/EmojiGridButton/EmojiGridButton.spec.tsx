@@ -12,8 +12,14 @@ vi.mock('../../../utils/emojis', () => ({
 const mockUseIsSmallViewport = useIsSmallViewport as Mock<[], boolean>;
 
 const TestComponent = ({ defaultOpenEmojiGrid = false }: { defaultOpenEmojiGrid?: boolean }) => {
-  const [openEmojiGrid, setOpenEmojiGrid] = useState(defaultOpenEmojiGrid);
-  return <EmojiGridButton openEmojiGrid={openEmojiGrid} setOpenEmojiGrid={setOpenEmojiGrid} />;
+  const [isEmojiGridOpen, setIsEmojiGridOpen] = useState(defaultOpenEmojiGrid);
+  return (
+    <EmojiGridButton
+      isEmojiGridOpen={isEmojiGridOpen}
+      setIsEmojiGridOpen={setIsEmojiGridOpen}
+      isParentOpen
+    />
+  );
 };
 
 describe('EmojiGridButton', () => {

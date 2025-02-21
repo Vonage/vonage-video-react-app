@@ -12,15 +12,15 @@ import ToolbarOverflowMenu from '../ToolbarOverflowMenu';
  */
 const ToolbarOverflowButton = (): ReactElement => {
   const anchorRef = useRef<HTMLButtonElement>(null);
-  const [open, setOpen] = useState<boolean>(false);
+  const [isToolbarOverflowMenuOpen, setIsToolbarOverflowMenuOpen] = useState<boolean>(false);
   const [openEmojiGridMobile, setOpenEmojiGridMobile] = useState<boolean>(true);
 
   const handleButtonToggle = () => {
-    setOpen((prevOpen) => !prevOpen);
+    setIsToolbarOverflowMenuOpen((prevOpen) => !prevOpen);
   };
 
   const handleClickAway = () => {
-    setOpen(false);
+    setIsToolbarOverflowMenuOpen(false);
   };
 
   return (
@@ -32,14 +32,18 @@ const ToolbarOverflowButton = (): ReactElement => {
         <ToolbarButton
           data-testid="hidden-toolbar-items"
           onClick={handleButtonToggle}
-          icon={<MoreVertIcon style={{ color: `${!open ? 'white' : 'rgb(138, 180, 248)'}` }} />}
+          icon={
+            <MoreVertIcon
+              style={{ color: `${!isToolbarOverflowMenuOpen ? 'white' : 'rgb(138, 180, 248)'}` }}
+            />
+          }
           ref={anchorRef}
         />
       </Tooltip>
       <ToolbarOverflowMenu
-        open={open}
-        openEmojiGrid={openEmojiGridMobile}
-        setOpenEmojiGrid={setOpenEmojiGridMobile}
+        isToolbarOverflowMenuOpen={isToolbarOverflowMenuOpen}
+        isEmojiGridOpen={openEmojiGridMobile}
+        setIsEmojiGridOpen={setOpenEmojiGridMobile}
         anchorRef={anchorRef}
         handleClickAway={handleClickAway}
       />

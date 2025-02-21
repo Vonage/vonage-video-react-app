@@ -4,10 +4,10 @@ import EmojiGridMobile from './EmojiGridMobile';
 import EmojiGridDesktop from './EmojiGridDesktop';
 
 export type EmojiGridProps = {
-  openEmojiGrid: boolean;
-  setOpenEmojiGrid: Dispatch<SetStateAction<boolean>>;
+  isEmojiGridOpen: boolean;
+  setIsEmojiGridOpen: Dispatch<SetStateAction<boolean>>;
   anchorRef: RefObject<HTMLButtonElement | null>;
-  parentOpen: boolean;
+  isParentOpen: boolean;
 };
 
 /**
@@ -16,16 +16,16 @@ export type EmojiGridProps = {
  * Displays a grid of emojis.
  * @param {EmojiGridProps} props - the props for the component
  *  @property {RefObject<HTMLButtonElement | null>} anchorRef - the button ref for the grid
- *  @property {boolean} openEmojiGrid - whether the component will be open initially
- *  @property {Dispatch<SetStateAction<boolean>>} setOpenEmojiGrid - toggle whether the emoji grid is shown or hidden
- *  @property {boolean} parentOpen - whether the ToolbarOverflowMenu is open
+ *  @property {boolean} isEmojiGridOpen - whether the component will be open initially
+ *  @property {Dispatch<SetStateAction<boolean>>} setIsEmojiGridOpen - toggle whether the emoji grid is shown or hidden
+ *  @property {boolean} isParentOpen - whether the ToolbarOverflowMenu is open
  * @returns {ReactElement} - The EmojiGrid Component.
  */
 const EmojiGrid = ({
   anchorRef,
-  openEmojiGrid,
-  setOpenEmojiGrid,
-  parentOpen,
+  isEmojiGridOpen,
+  setIsEmojiGridOpen,
+  isParentOpen,
 }: EmojiGridProps): ReactElement => {
   const isSmallViewport = useIsSmallViewport();
 
@@ -36,19 +36,19 @@ const EmojiGrid = ({
       return;
     }
     // If a user clicks the toggle button, we save their preference for later
-    setOpenEmojiGrid(false);
+    setIsEmojiGridOpen(false);
   };
 
   return isSmallViewport ? (
     <EmojiGridMobile
       handleClickAway={handleClickAway}
-      openEmojiGrid={openEmojiGrid}
-      parentOpen={parentOpen}
+      isEmojiGridOpen={isEmojiGridOpen}
+      isParentOpen={isParentOpen}
     />
   ) : (
     <EmojiGridDesktop
       handleClickAway={handleClickAway}
-      openEmojiGrid={openEmojiGrid}
+      isEmojiGridOpen={isEmojiGridOpen}
       anchorRef={anchorRef}
     />
   );

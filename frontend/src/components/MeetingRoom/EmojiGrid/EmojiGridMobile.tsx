@@ -6,8 +6,8 @@ import emojiMap from '../../../utils/emojis';
 
 export type EmojiGridMobileProps = {
   handleClickAway: (event: MouseEvent | TouchEvent) => void;
-  openEmojiGrid: boolean;
-  parentOpen: boolean;
+  isEmojiGridOpen: boolean;
+  isParentOpen: boolean;
 };
 
 /**
@@ -16,19 +16,19 @@ export type EmojiGridMobileProps = {
  * Displays a grid of emojis for devices with small viewports.
  * @param {EmojiGridMobileProps} props - the props for the component
  *  @property {(event: MouseEvent | TouchEvent) => void} handleClickAway - handles clicking away from the emoji grid
- *  @property {boolean} openEmojiGrid - whether the component is open
- *  @property {boolean} parentOpen - whether the ToolbarOverflowMenu is open
+ *  @property {boolean} isEmojiGridOpen - whether the component is open
+ *  @property {boolean} isParentOpen - whether the ToolbarOverflowMenu is open
  * @returns {ReactElement} - The EmojiGridMobile Component
  */
 const EmojiGridMobile = ({
   handleClickAway,
-  parentOpen,
-  openEmojiGrid,
+  isParentOpen,
+  isEmojiGridOpen,
 }: EmojiGridMobileProps): ReactElement => (
   <Portal>
     <ClickAwayListener onClickAway={handleClickAway}>
       <Grow
-        in={parentOpen && openEmojiGrid}
+        in={isParentOpen && isEmojiGridOpen}
         style={{
           transformOrigin: 'center bottom',
         }}
@@ -44,7 +44,7 @@ const EmojiGridMobile = ({
           <Grid
             container
             spacing={0}
-            display={openEmojiGrid ? 'flex' : 'none'}
+            display={isEmojiGridOpen ? 'flex' : 'none'}
             sx={{
               width: 'calc(100dvw - 30px)',
               backgroundColor: '#272c2f',

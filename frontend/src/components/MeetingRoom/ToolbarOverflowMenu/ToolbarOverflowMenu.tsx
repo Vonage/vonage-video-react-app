@@ -7,9 +7,9 @@ import LayoutToggleButton from '../LayoutToggleButton';
 import useSessionContext from '../../../hooks/useSessionContext';
 
 export type ToolbarOverflowMenuProps = {
-  open: boolean;
-  openEmojiGrid: boolean;
-  setOpenEmojiGrid: Dispatch<SetStateAction<boolean>>;
+  isToolbarOverflowMenuOpen: boolean;
+  isEmojiGridOpen: boolean;
+  setIsEmojiGridOpen: Dispatch<SetStateAction<boolean>>;
   anchorRef: RefObject<HTMLButtonElement | null>;
   handleClickAway: () => void;
 };
@@ -19,17 +19,17 @@ export type ToolbarOverflowMenuProps = {
  *
  * Displays a menu holding buttons that cannot be displayed on the toolbar due to a narrow device viewport width.
  * @param {ToolbarOverflowMenuProps} props - the props for the component
- *  @property {boolean} open - whether the component will be open
- *  @property {boolean} openEmojiGrid - whether the emoji grid will be open
- *  @property {Dispatch<SetStateAction<boolean>>} setOpenEmojiGrid - toggle whether the emoji grid is shown or hidden
+ *  @property {boolean} isToolbarOverflowMenuOpen - whether the component will be open
+ *  @property {boolean} isEmojiGridOpen - whether the emoji grid will be open
+ *  @property {Dispatch<SetStateAction<boolean>>} setIsEmojiGridOpen - toggle whether the emoji grid is shown or hidden
  *  @property {RefObject<HTMLButtonElement | null>} anchorRef - the button ref for the menu
  *  @property {() => void} handleClickAway - hides the menu when user clicks away from the menu
  * @returns {ReactElement} - The ToolbarOverflowMenu component.
  */
 const ToolbarOverflowMenu = ({
-  open,
-  openEmojiGrid,
-  setOpenEmojiGrid,
+  isToolbarOverflowMenuOpen,
+  isEmojiGridOpen,
+  setIsEmojiGridOpen,
   anchorRef,
   handleClickAway,
 }: ToolbarOverflowMenuProps): ReactElement => {
@@ -37,7 +37,13 @@ const ToolbarOverflowMenu = ({
   const isViewingScreenShare = subscriberWrappers.some((subWrapper) => subWrapper.isScreenshare);
 
   return (
-    <Popper open={open} anchorEl={anchorRef.current} transition disablePortal placement="bottom">
+    <Popper
+      open={isToolbarOverflowMenuOpen}
+      anchorEl={anchorRef.current}
+      transition
+      disablePortal
+      placement="bottom"
+    >
       {({ TransitionProps, placement }: PopperChildrenProps) => (
         <Grow
           {...TransitionProps}
@@ -71,9 +77,9 @@ const ToolbarOverflowMenu = ({
               >
                 <LayoutToggleButton isScreenSharePresent={isViewingScreenShare} />
                 <EmojiGridButton
-                  openEmojiGrid={openEmojiGrid}
-                  setOpenEmojiGrid={setOpenEmojiGrid}
-                  parentOpen={open}
+                  isEmojiGridOpen={isEmojiGridOpen}
+                  setIsEmojiGridOpen={setIsEmojiGridOpen}
+                  isParentOpen={isToolbarOverflowMenuOpen}
                 />
                 <ArchivingToggle />
               </Paper>

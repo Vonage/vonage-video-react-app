@@ -88,8 +88,9 @@ const Toolbar = ({
             />
             <LayoutToggleButton isScreenSharePresent={isScreenSharePresent} />
             <EmojiGridButton
-              openEmojiGrid={openEmojiGridDesktop}
-              setOpenEmojiGrid={setOpenEmojiGridDesktop}
+              isEmojiGridOpen={openEmojiGridDesktop}
+              setIsEmojiGridOpen={setOpenEmojiGridDesktop}
+              isParentOpen
             />
             <ArchivingToggle />
           </>

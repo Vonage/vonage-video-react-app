@@ -21,7 +21,7 @@ const TestComponent = ({
 }: {
   defaultOpenEmojiGrid?: boolean;
 }): ReactElement => {
-  const [openEmojiGrid, setOpenEmojiGrid] = useState<boolean>(defaultOpenEmojiGrid);
+  const [isEmojiGridOpen, setIsEmojiGridOpen] = useState<boolean>(defaultOpenEmojiGrid);
   const anchorRef = useRef<HTMLButtonElement>(null);
 
   return (
@@ -29,9 +29,9 @@ const TestComponent = ({
       <Button type="button" ref={anchorRef} />
       <EmojiGrid
         anchorRef={anchorRef}
-        openEmojiGrid={openEmojiGrid}
-        setOpenEmojiGrid={setOpenEmojiGrid}
-        parentOpen
+        isEmojiGridOpen={isEmojiGridOpen}
+        setIsEmojiGridOpen={setIsEmojiGridOpen}
+        isParentOpen
       />
     </>
   );

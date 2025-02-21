@@ -6,7 +6,7 @@ import emojiMap from '../../../utils/emojis';
 
 export type EmojiGridDesktopProps = {
   handleClickAway: (event: MouseEvent | TouchEvent) => void;
-  openEmojiGrid: boolean;
+  isEmojiGridOpen: boolean;
   anchorRef: RefObject<HTMLButtonElement | null>;
 };
 
@@ -16,18 +16,18 @@ export type EmojiGridDesktopProps = {
  * Displays a grid of emojis for devices with larger viewports.
  * @param {EmojiGridDesktopProps} props - the props for the component
  *  @property {(event: MouseEvent | TouchEvent) => void} handleClickAway - handles clicking away from the emoji grid
- *  @property {boolean} openEmojiGrid - whether the component is open
+ *  @property {boolean} isEmojiGridOpen - whether the component is open
  *  @property {RefObject<HTMLButtonElement | null>} anchorRef - the button ref for the grid
  * @returns {ReactElement} - The EmojiGridDesktop Component
  */
 
 const EmojiGridDesktop = ({
   handleClickAway,
-  openEmojiGrid,
+  isEmojiGridOpen,
   anchorRef,
 }: EmojiGridDesktopProps): ReactElement => (
   <Popper
-    open={openEmojiGrid}
+    open={isEmojiGridOpen}
     anchorEl={anchorRef.current}
     transition
     disablePortal
@@ -60,7 +60,7 @@ const EmojiGridDesktop = ({
               <Grid
                 container
                 spacing={0}
-                display={openEmojiGrid ? 'flex' : 'none'}
+                display={isEmojiGridOpen ? 'flex' : 'none'}
                 sx={{
                   width: '100%',
                 }}

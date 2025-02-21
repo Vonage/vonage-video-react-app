@@ -5,9 +5,9 @@ import ToolbarButton from '../ToolbarButton';
 import EmojiGrid from '../EmojiGrid/EmojiGrid';
 
 export type EmojiGridProps = {
-  openEmojiGrid: boolean;
-  setOpenEmojiGrid: Dispatch<SetStateAction<boolean>>;
-  parentOpen: boolean;
+  isEmojiGridOpen: boolean;
+  setIsEmojiGridOpen: Dispatch<SetStateAction<boolean>>;
+  isParentOpen: boolean;
 };
 
 /**
@@ -15,19 +15,19 @@ export type EmojiGridProps = {
  *
  * Displays a clickable button to open a grid of emojis.
  * @param {EmojiGridProps} props - the props for the component
- *  @property {boolean} openEmojiGrid - whether the component will be open initially
- *  @property {Dispatch<SetStateAction<boolean>>} setOpenEmojiGrid - toggle whether the emoji grid is shown or hidden
- *  @property {boolean} parentOpen - whether the ToolbarOverflowMenu is open
+ *  @property {boolean} isEmojiGridOpen - whether the component will be open initially
+ *  @property {Dispatch<SetStateAction<boolean>>} setIsEmojiGridOpen - toggle whether the emoji grid is shown or hidden
+ *  @property {boolean} isParentOpen - whether the ToolbarOverflowMenu is open
  * @returns {ReactElement} - The EmojiGridButton Component.
  */
 const EmojiGridButton = ({
-  openEmojiGrid,
-  setOpenEmojiGrid,
-  parentOpen,
+  isEmojiGridOpen,
+  setIsEmojiGridOpen,
+  isParentOpen,
 }: EmojiGridProps): ReactElement => {
   const anchorRef = useRef<HTMLButtonElement>(null);
   const handleToggle = () => {
-    setOpenEmojiGrid((prevOpen) => !prevOpen);
+    setIsEmojiGridOpen((prevOpen) => !prevOpen);
   };
 
   return (
@@ -37,7 +37,7 @@ const EmojiGridButton = ({
           onClick={handleToggle}
           icon={
             <EmojiEmotions
-              style={{ color: `${!openEmojiGrid ? 'white' : 'rgb(138, 180, 248)'}` }}
+              style={{ color: `${!isEmojiGridOpen ? 'white' : 'rgb(138, 180, 248)'}` }}
             />
           }
           ref={anchorRef}
@@ -47,9 +47,9 @@ const EmojiGridButton = ({
 
       <EmojiGrid
         anchorRef={anchorRef}
-        openEmojiGrid={openEmojiGrid}
-        setOpenEmojiGrid={setOpenEmojiGrid}
-        parentOpen={parentOpen}
+        isEmojiGridOpen={isEmojiGridOpen}
+        setIsEmojiGridOpen={setIsEmojiGridOpen}
+        isParentOpen={isParentOpen}
       />
     </>
   );
