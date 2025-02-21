@@ -49,11 +49,11 @@ const ToolbarOverflowMenu = ({
             translate: '0px -9px',
           }}
         >
-          <div className="font-normal text-left flex w-full">
+          <div className="flex w-full text-left font-normal">
             <ClickAwayListener onClickAway={handleClickAway}>
               <Paper
                 data-testid="toolbar-overflow-menu"
-                className="flex justify-center items-center"
+                className="flex items-center justify-center"
                 sx={{
                   backgroundColor: '#272c2f',
                   color: '#fff',

@@ -1,8 +1,8 @@
 import { Box, Grid, Grow, Portal } from '@mui/material';
 import { ClickAwayListener } from '@mui/base';
+import { ReactElement } from 'react';
 import SendEmojiButton from '../SendEmojiButton';
 import emojiMap from '../../../utils/emojis';
-import { ReactElement } from 'react';
 
 export type EmojiGridMobileProps = {
   handleClickAway: (event: MouseEvent | TouchEvent) => void;
