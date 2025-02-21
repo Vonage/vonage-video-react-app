@@ -8,13 +8,7 @@ import ListItemIcon from '@mui/material/ListItemIcon';
 import PushPinOffIcon from '../../Icons/PushPinOffIcon';
 import { SubscriberWrapper } from '../../../types/session';
 import useSessionContext from '../../../hooks/useSessionContext';
-
-const truncateString = (str: string, maxLength: number) => {
-  if (str.length > maxLength) {
-    return `${str.slice(0, maxLength - 3)}...`;
-  }
-  return str;
-};
+import truncateString from '../../../utils/truncateString';
 
 type ParticipantListItemMenuToggleButtonProps = {
   participantName: string;
@@ -32,6 +26,7 @@ const ParticipantListItemMenuToggleButton = ({
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     setAnchorEl(event.currentTarget);
   };
+  const isDisabled = !isPinned && isMaxPinned;
   const handleClose = () => {
     setAnchorEl(null);
   };
@@ -48,7 +43,9 @@ const ParticipantListItemMenuToggleButton = ({
     return `Pin ${trimmedName}`;
   };
   const handlePinClick = () => {
-    pinSubscriber(id);
+    if (!isDisabled) {
+      pinSubscriber(id);
+    }
   };
 
   return (
@@ -65,11 +62,7 @@ const ParticipantListItemMenuToggleButton = ({
           horizontal: 250,
         }}
       >
-        <MenuItem
-          disabled={!isPinned && isMaxPinned}
-          sx={{ width: '280px' }}
-          onClick={handlePinClick}
-        >
+        <MenuItem disabled={isDisabled} sx={{ width: '280px' }} onClick={handlePinClick}>
           <ListItemIcon>
             {isPinned ? (
               <PushPinOffIcon fontSize="small" sx={{ color: 'black' }} />
