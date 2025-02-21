@@ -9,6 +9,7 @@ export type EmojiGridProps = {
   openEmojiGrid: boolean;
   setOpenEmojiGrid: Dispatch<SetStateAction<boolean>>;
   anchorRef: RefObject<HTMLButtonElement | null>;
+  parentOpen: boolean;
 };
 
 /**
@@ -25,6 +26,7 @@ const EmojiGrid = ({
   anchorRef,
   openEmojiGrid,
   setOpenEmojiGrid,
+  parentOpen,
 }: EmojiGridProps): ReactElement => {
   const isSmallViewport = useIsSmallViewport();
 
@@ -42,7 +44,7 @@ const EmojiGrid = ({
     <Portal>
       <ClickAwayListener onClickAway={handleClickAway}>
         <Grow
-          in={openEmojiGrid}
+          in={parentOpen && openEmojiGrid}
           style={{
             transformOrigin: 'center bottom',
           }}

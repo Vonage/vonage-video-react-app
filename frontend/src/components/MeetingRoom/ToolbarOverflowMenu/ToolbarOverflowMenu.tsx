@@ -71,6 +71,7 @@ const ToolbarOverflowMenu = ({
               >
                 <LayoutToggleButton isScreenSharePresent={isViewingScreenShare} />
                 <EmojiGridButton
+                  parentOpen={open}
                   openEmojiGrid={openEmojiGrid}
                   setOpenEmojiGrid={setOpenEmojiGrid}
                 />
