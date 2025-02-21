@@ -13,7 +13,7 @@ export type EmojiGridDesktopProps = {
 /**
  * EmojiGridDesktop Component
  *
- * Displays a grid of emojis for devices with small viewports.
+ * Displays a grid of emojis for devices with larger viewports.
  * @param {EmojiGridDesktopProps} props - the props for the component
  *  @property {(event: MouseEvent | TouchEvent) => void} handleClickAway - handles clicking away from the emoji grid
  *  @property {boolean} openEmojiGrid - whether the component is open
