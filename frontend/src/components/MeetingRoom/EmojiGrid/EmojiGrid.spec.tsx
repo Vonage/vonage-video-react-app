@@ -31,6 +31,7 @@ const TestComponent = ({
         anchorRef={anchorRef}
         openEmojiGrid={openEmojiGrid}
         setOpenEmojiGrid={setOpenEmojiGrid}
+        parentOpen
       />
     </>
   );
