@@ -16,25 +16,14 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v3
 
-      - name: Check for "release-candidate" label
-        id: check-release-candidate
-        uses: actions/github-script@v6
-        with:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          script: |
-            const pr = context.payload.pull_request;
-              const labels = pr.labels.map(label => label.name);
-              return labels.includes("release-candidate");
-
       - name: Check and Update Base Branch
-        if: steps.check-release-candidate.outputs.result == 'false'
         env:
           TARGET_BRANCH: ${{ github.event.pull_request.base.ref }}
           BASE_BRANCH: ${{ github.event.pull_request.head.ref }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           PR_NUMBER: ${{ github.event.pull_request.number }}
         run: |
-          if [ "$TARGET_BRANCH" = "main" ] && [ "$BASE_BRANCH" != "develop" ]; then
+          if [ "$TARGET_BRANCH" = "main" ] && [ "$BASE_BRANCH" != "develop" ] && [ "$BASE_BRANCH" != rc-* ]; then
             echo "Switching base branch from $TARGET_BRANCH to develop..."
             gh pr edit "$PR_NUMBER" --base "develop"
             echo "Base branch updated to 'develop'."
