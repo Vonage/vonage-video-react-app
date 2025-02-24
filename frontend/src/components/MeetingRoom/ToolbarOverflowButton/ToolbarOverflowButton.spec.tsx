@@ -55,12 +55,6 @@ describe('ToolbarOverflowButton', () => {
   });
 
   it('should have the unread messages badge present', () => {
-    const sessionContextWithMessages: SessionContextType = {
-      ...sessionContext,
-      unreadCount: 8,
-    } as unknown as SessionContextType;
-    mockUseSessionContext.mockReturnValue(sessionContextWithMessages);
-
     render(<ToolbarOverflowButton />);
 
     expect(screen.getByTestId('chat-toggle-unread-count')).toBeInTheDocument();
