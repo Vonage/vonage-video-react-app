@@ -1,5 +1,6 @@
-import { Avatar, ListItem, Typography } from '@mui/material';
 import { ReactElement } from 'react';
+import { Avatar, Badge, ListItem, Typography } from '@mui/material';
+import PushPinIcon from '@mui/icons-material/PushPin';
 import { Stream } from '@vonage/client-sdk-video';
 import AudioIndicator from '../AudioIndicator';
 import ParticipantListItemMenu from '../ParticipantListItemMenu';
@@ -59,16 +60,35 @@ const ParticipantListItem = ({
         </div>
       }
     >
-      <Avatar
+      <Badge
+        overlap="circular"
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
         sx={{
-          bgcolor: avatarColor,
-          width: '32px',
-          height: '32px',
-          fontSize: '14px',
+          '.MuiBadge-badge': {
+            backgroundColor: 'white',
+          },
         }}
+        invisible={!subscriberWrapper?.isPinned}
+        badgeContent={
+          <PushPinIcon
+            sx={{
+              fontSize: '14px',
+              position: 'fixed',
+            }}
+          />
+        }
       >
-        {initials}
-      </Avatar>
+        <Avatar
+          sx={{
+            bgcolor: avatarColor,
+            width: '32px',
+            height: '32px',
+            fontSize: '14px',
+          }}
+        >
+          {initials}
+        </Avatar>
+      </Badge>
       <Typography
         data-testid="participant-list-name"
         variant="inherit"
