@@ -41,6 +41,7 @@ const ToolbarOverflowButton = (): ReactElement => {
               color: 'white',
               backgroundColor: '#FA7B17',
             },
+            marginRight: '12px',
           }}
           overlap="circular"
         >
@@ -53,6 +54,9 @@ const ToolbarOverflowButton = (): ReactElement => {
               />
             }
             ref={anchorRef}
+            sx={{
+              marginRight: '0px',
+            }}
           />
         </Badge>
       </Tooltip>

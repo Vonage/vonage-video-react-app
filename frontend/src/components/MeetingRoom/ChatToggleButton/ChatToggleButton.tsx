@@ -38,6 +38,7 @@ const ChatToggleButton = ({
             color: 'white',
             backgroundColor: '#FA7B17',
           },
+          marginRight: '12px',
         }}
         overlap="circular"
       >
