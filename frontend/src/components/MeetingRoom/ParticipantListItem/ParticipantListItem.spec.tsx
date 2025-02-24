@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import { Stream } from '@vonage/client-sdk-video';
-import ParticipantListItem, { ParticipantListItemProps } from '../../ParticipantListItem';
+import ParticipantListItem, { ParticipantListItemProps } from './ParticipantListItem';
 
 describe('ParticipantListItem', () => {
   const mockStream: Stream = {
