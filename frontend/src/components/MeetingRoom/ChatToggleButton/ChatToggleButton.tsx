@@ -32,7 +32,6 @@ const ChatToggleButton = ({
       <Badge
         badgeContent={unreadCount}
         data-testid="chat-toggle-unread-count"
-        invisible={unreadCount === 0}
         sx={{
           '& .MuiBadge-badge': {
             color: 'white',
