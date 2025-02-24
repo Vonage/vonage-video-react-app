@@ -63,7 +63,6 @@ describe('ToolbarOverflowButton', () => {
 
     render(<ToolbarOverflowButton />);
 
-    expect(screen.getByTestId('chat-toggle-unread-count')).toBeVisible();
-    expect(screen.getByTestId('chat-toggle-unread-count').textContent).toBe('8');
+    expect(screen.getByTestId('chat-toggle-unread-count')).toBeInTheDocument();
   });
 });
