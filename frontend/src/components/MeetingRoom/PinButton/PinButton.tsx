@@ -72,7 +72,7 @@ const PinButton = ({
     shouldShowIcon && (
       <div
         ref={anchorRef}
-        className="flex rounded-xl absolute top-3 left-3 h-6 w-6 items-center justify-center m-auto"
+        className="absolute left-3 top-3 m-auto flex size-6 items-center justify-center rounded-xl"
         data-testid="pin-button"
         onPointerEnter={() => setIsHoveringButton(true)}
         onPointerLeave={() => setIsHoveringButton(false)}
