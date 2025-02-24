@@ -1,7 +1,7 @@
 import { ListItemIcon, ListItemText, MenuItem } from '@mui/material';
+import PushPinIcon from '@mui/icons-material/PushPin';
 import { SubscriberWrapper } from '../../../types/session';
 import PushPinOffIcon from '../../Icons/PushPinOffIcon';
-import truncateString from '../../../utils/truncateString';
 import useSessionContext from '../../../hooks/useSessionContext';
 
 type ParticipantPinMenuItemProps = {
@@ -17,16 +17,14 @@ const ParticipantPinMenuItem = ({
   const { isMaxPinned, pinSubscriber } = useSessionContext();
   const isDisabled = !isPinned && isMaxPinned;
 
-  const trimmedName = truncateString(participantName, 22);
-
   const getText = () => {
     if (isPinned) {
-      return `Unpin ${trimmedName}`;
+      return `Unpin ${participantName}`;
     }
     if (isMaxPinned) {
       return `You can't pin any more tiles`;
     }
-    return `Pin ${trimmedName}`;
+    return `Pin ${participantName}`;
   };
   const handlePinClick = () => {
     if (!isDisabled) {
@@ -39,10 +37,20 @@ const ParticipantPinMenuItem = ({
         {isPinned ? (
           <PushPinOffIcon fontSize="small" sx={{ color: 'black' }} />
         ) : (
-          <PushPinOffIcon fontSize="small" sx={{ color: 'black' }} />
+          <PushPinIcon fontSize="small" sx={{ color: 'black' }} />
         )}
       </ListItemIcon>
-      <ListItemText sx={{ maxWidth: '200px' }}>{getText()}</ListItemText>
+      <ListItemText
+        sx={{
+          '.MuiTypography-root': {
+            overflow: 'hidden',
+            'white-space': 'nowrap',
+            'text-overflow': 'ellipsis',
+          },
+        }}
+      >
+        {getText()}
+      </ListItemText>
     </MenuItem>
   );
 };
