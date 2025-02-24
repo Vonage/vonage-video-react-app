@@ -47,7 +47,7 @@ const RoomNameInput = ({
   return (
     <TextField
       id="room-name"
-      className="w-52 h-12 pr-2"
+      className="h-12 w-52 pr-2"
       placeholder="Enter room name"
       value={roomName}
       onChange={handleChange}
