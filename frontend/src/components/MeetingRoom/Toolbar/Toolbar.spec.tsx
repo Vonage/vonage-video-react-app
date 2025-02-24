@@ -2,6 +2,8 @@ import { describe, expect, it, vi, beforeEach, Mock, afterAll } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import { useLocation } from 'react-router-dom';
 import useSpeakingDetector from '../../../hooks/useSpeakingDetector';
+import useIsSmallViewport from '../../../hooks/useIsSmallViewport';
+import displayOnDesktop from '../../../utils/displayOnDesktop';
 import Toolbar, { ToolbarProps } from './Toolbar';
 
 const mockedRoomName = { roomName: 'test-room-name' };
@@ -13,8 +15,12 @@ vi.mock('react-router-dom', () => ({
 }));
 
 vi.mock('../../../hooks/useSpeakingDetector');
+vi.mock('../../../hooks/useIsSmallViewport');
+vi.mock('../../../utils/displayOnDesktop');
 
 const mockUseSpeakingDetector = useSpeakingDetector as Mock<[], boolean>;
+const mockUseIsSmallViewport = useIsSmallViewport as Mock<[], boolean>;
+const mockDisplayOnDesktop = displayOnDesktop as Mock<[], '' | 'md:inline'>;
 
 describe('Toolbar', () => {
   beforeEach(() => {
@@ -52,5 +58,31 @@ describe('Toolbar', () => {
     vi.stubEnv('VITE_ENABLE_REPORT_ISSUE', 'true');
     render(<Toolbar {...defaultProps} />);
     expect(screen.getByTestId('report-issue-button')).toBeInTheDocument();
+  });
+
+  it('on a small viewport, displays the ToolbarOverflowButton button', () => {
+    mockUseIsSmallViewport.mockReturnValue(true);
+    mockDisplayOnDesktop.mockReturnValue('');
+
+    render(<Toolbar {...defaultProps} />);
+
+    expect(screen.queryByTestId('hidden-toolbar-items')).toBeVisible();
+
+    expect(screen.queryByTestId('archiving-toggle')).not.toBeInTheDocument();
+    expect(screen.queryByTestId('screensharing-toggle')).not.toBeInTheDocument();
+    expect(screen.queryByTestId('archiving-toggle')).not.toBeInTheDocument();
+    expect(screen.queryByTestId('emoji-grid-toggle')).not.toBeInTheDocument();
+  });
+
+  it('on a normal viewport, displays all of the toolbar buttons', () => {
+    mockUseIsSmallViewport.mockReturnValue(false);
+    mockDisplayOnDesktop.mockReturnValue('md:inline');
+
+    render(<Toolbar {...defaultProps} />);
+
+    expect(screen.queryByTestId('archiving-toggle')).toBeVisible();
+    expect(screen.queryByTestId('screensharing-toggle')).toBeVisible();
+    expect(screen.queryByTestId('archiving-toggle')).toBeVisible();
+    expect(screen.queryByTestId('emoji-grid-toggle')).toBeVisible();
   });
 });
