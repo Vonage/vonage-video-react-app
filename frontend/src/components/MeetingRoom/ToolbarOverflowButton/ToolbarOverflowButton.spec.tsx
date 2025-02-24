@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it, Mock, vi } from 'vitest';
-import { act, render, screen } from '@testing-library/react';
+import { act, render, screen, within } from '@testing-library/react';
 import useSessionContext from '../../../hooks/useSessionContext';
 import { SessionContextType } from '../../../Context/SessionProvider/session';
 import ToolbarOverflowButton from './ToolbarOverflowButton';
@@ -24,6 +24,7 @@ const sessionContext = {
   subscriberWrappers: [],
   layoutMode: 'grid',
   setLayoutMode: vi.fn(),
+  unreadCount: 0,
 } as unknown as SessionContextType;
 
 describe('ToolbarOverflowButton', () => {
@@ -51,5 +52,30 @@ describe('ToolbarOverflowButton', () => {
     expect(screen.queryByTestId('layout-toggle')).toBeVisible();
     expect(screen.queryByTestId('emoji-grid-toggle')).toBeVisible();
     expect(screen.queryByTestId('archiving-toggle')).toBeVisible();
+  });
+
+  describe('unread messages', () => {
+    it('should show unread message number when number is 8', () => {
+      const unreadCount = 8;
+      const sessionContextWithMessages: SessionContextType = {
+        ...sessionContext,
+        unreadCount,
+      } as unknown as SessionContextType;
+      mockUseSessionContext.mockReturnValue(sessionContextWithMessages);
+
+      render(<ToolbarOverflowButton />);
+
+      expect(screen.getByTestId('hidden-toolbar-unread-count')).toBeVisible();
+      expect(screen.getByTestId('hidden-toolbar-unread-count').textContent).toBe('8');
+    });
+
+    it('should not show unread message number when number is 0', () => {
+      render(<ToolbarOverflowButton />);
+
+      const badge = within(screen.getByTestId('hidden-toolbar-unread-count')).getByText('0');
+      // Check badge is hidden:  MUI hides badge by setting dimensions to 0x0
+      expect(badge.offsetHeight).toBe(0);
+      expect(badge.offsetWidth).toBe(0);
+    });
   });
 });
