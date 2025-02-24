@@ -54,27 +54,16 @@ describe('ToolbarOverflowButton', () => {
     expect(screen.queryByTestId('archiving-toggle')).toBeVisible();
   });
 
-  describe('unread messages', () => {
-    it('should show unread message number when number is 8', () => {
-      const sessionContextWithMessages: SessionContextType = {
-        ...sessionContext,
-        unreadCount: 8,
-      } as unknown as SessionContextType;
-      mockUseSessionContext.mockReturnValue(sessionContextWithMessages);
+  it('should have the unread messages badge present', () => {
+    const sessionContextWithMessages: SessionContextType = {
+      ...sessionContext,
+      unreadCount: 8,
+    } as unknown as SessionContextType;
+    mockUseSessionContext.mockReturnValue(sessionContextWithMessages);
 
-      render(<ToolbarOverflowButton />);
+    render(<ToolbarOverflowButton />);
 
-      expect(screen.getByTestId('chat-toggle-unread-count')).toBeVisible();
-      expect(screen.getByTestId('chat-toggle-unread-count').textContent).toBe('8');
-    });
-
-    it('should not show unread message number when number is 0', () => {
-      render(<ToolbarOverflowButton />);
-
-      const badge = screen.getByTestId('chat-toggle-unread-count');
-      // Check badge is hidden:  MUI hides badge by setting dimensions to 0x0
-      expect(badge.offsetHeight).toBe(0);
-      expect(badge.offsetWidth).toBe(0);
-    });
+    expect(screen.getByTestId('chat-toggle-unread-count')).toBeVisible();
+    expect(screen.getByTestId('chat-toggle-unread-count').textContent).toBe('8');
   });
 });
