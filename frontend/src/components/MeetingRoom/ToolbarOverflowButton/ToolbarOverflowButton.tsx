@@ -1,19 +1,22 @@
 import { ReactElement, useRef, useState } from 'react';
-import { Tooltip } from '@mui/material';
+import { Tooltip, Badge } from '@mui/material';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import ToolbarButton from '../ToolbarButton';
 import ToolbarOverflowMenu from '../ToolbarOverflowMenu';
+import useSessionContext from '../../../hooks/useSessionContext';
 
 /**
  * ToolbarOverflowButton Component
  *
- * Displays a clickable button that opens a grid of hidden toolbar buttons for smaller viewport devices.
+ * Displays a clickable button that opens a grid of hidden toolbar buttons for smaller viewport devices. There
+ * is an unread chat messages indicator that is shown when there are messages to be viewed.
  * @returns {ReactElement} - The ToolbarOverflowButton Component.
  */
 const ToolbarOverflowButton = (): ReactElement => {
   const anchorRef = useRef<HTMLButtonElement>(null);
   const [isToolbarOverflowMenuOpen, setIsToolbarOverflowMenuOpen] = useState<boolean>(false);
   const [openEmojiGridMobile, setOpenEmojiGridMobile] = useState<boolean>(true);
+  const { unreadCount } = useSessionContext();
 
   const handleButtonToggle = () => {
     setIsToolbarOverflowMenuOpen((prevOpen) => !prevOpen);
@@ -29,16 +32,29 @@ const ToolbarOverflowButton = (): ReactElement => {
         title="Access additional toolbar items"
         aria-label="open additional toolbar items menu"
       >
-        <ToolbarButton
-          data-testid="hidden-toolbar-items"
-          onClick={handleButtonToggle}
-          icon={
-            <MoreVertIcon
-              style={{ color: `${!isToolbarOverflowMenuOpen ? 'white' : 'rgb(138, 180, 248)'}` }}
-            />
-          }
-          ref={anchorRef}
-        />
+        <Badge
+          badgeContent={unreadCount}
+          data-testid="hidden-toolbar-unread-count"
+          invisible={unreadCount === 0}
+          sx={{
+            '& .MuiBadge-badge': {
+              color: 'white',
+              backgroundColor: '#FA7B17',
+            },
+          }}
+          overlap="circular"
+        >
+          <ToolbarButton
+            data-testid="hidden-toolbar-items"
+            onClick={handleButtonToggle}
+            icon={
+              <MoreVertIcon
+                style={{ color: `${!isToolbarOverflowMenuOpen ? 'white' : 'rgb(138, 180, 248)'}` }}
+              />
+            }
+            ref={anchorRef}
+          />
+        </Badge>
       </Tooltip>
       <ToolbarOverflowMenu
         isToolbarOverflowMenuOpen={isToolbarOverflowMenuOpen}
