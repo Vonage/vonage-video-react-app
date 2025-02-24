@@ -9,7 +9,7 @@ import UnreadMessagesBadge from '../UnreadMessagesBadge';
  * ToolbarOverflowButton Component
  *
  * Displays a clickable button that opens a grid of hidden toolbar buttons for smaller viewport devices. There
- * is an unread chat messages indicator that is shown when there are messages to be viewed.
+ * is also an unread chat messages indicator that is shown when there are messages to be read.
  * @returns {ReactElement} - The ToolbarOverflowButton Component.
  */
 const ToolbarOverflowButton = (): ReactElement => {

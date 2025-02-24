@@ -18,14 +18,14 @@ describe('UnreadMessagesBadge', () => {
     mockUseSessionContext.mockReturnValue(sessionContext);
   });
 
-  it('should show unread message number when number is 8', () => {
-    const sessionContextWithMessages: SessionContextType = {
+  it('shows badge with correct unread message count', () => {
+    let sessionContextWithMessages: SessionContextType = {
       ...sessionContext,
       unreadCount: 8,
     } as unknown as SessionContextType;
     mockUseSessionContext.mockReturnValue(sessionContextWithMessages);
 
-    render(
+    const { rerender } = render(
       <UnreadMessagesBadge>
         <LittleButton />
       </UnreadMessagesBadge>
@@ -33,6 +33,19 @@ describe('UnreadMessagesBadge', () => {
 
     expect(screen.getByTestId('chat-toggle-unread-count')).toBeVisible();
     expect(screen.getByTestId('chat-toggle-unread-count').textContent).toBe('8');
+
+    sessionContextWithMessages = {
+      ...sessionContext,
+      unreadCount: 9,
+    } as unknown as SessionContextType;
+    mockUseSessionContext.mockReturnValue(sessionContextWithMessages);
+    rerender(
+      <UnreadMessagesBadge>
+        <LittleButton />
+      </UnreadMessagesBadge>
+    );
+    expect(screen.getByTestId('chat-toggle-unread-count')).toBeVisible();
+    expect(screen.getByTestId('chat-toggle-unread-count').textContent).toBe('9');
   });
 
   it('should not show unread message number when number is 0', () => {
