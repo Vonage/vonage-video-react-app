@@ -1,9 +1,9 @@
 import { ReactElement, useRef, useState } from 'react';
-import { Tooltip, Badge } from '@mui/material';
+import { Tooltip } from '@mui/material';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import ToolbarButton from '../ToolbarButton';
 import ToolbarOverflowMenu from '../ToolbarOverflowMenu';
-import useSessionContext from '../../../hooks/useSessionContext';
+import UnreadMessagesBadge from '../UnreadMessagesBadge';
 
 /**
  * ToolbarOverflowButton Component
@@ -16,7 +16,6 @@ const ToolbarOverflowButton = (): ReactElement => {
   const anchorRef = useRef<HTMLButtonElement>(null);
   const [isToolbarOverflowMenuOpen, setIsToolbarOverflowMenuOpen] = useState<boolean>(false);
   const [openEmojiGridMobile, setOpenEmojiGridMobile] = useState<boolean>(true);
-  const { unreadCount } = useSessionContext();
 
   const handleButtonToggle = () => {
     setIsToolbarOverflowMenuOpen((prevOpen) => !prevOpen);
@@ -32,19 +31,7 @@ const ToolbarOverflowButton = (): ReactElement => {
         title="Access additional toolbar items"
         aria-label="open additional toolbar items menu"
       >
-        <Badge
-          badgeContent={unreadCount}
-          data-testid="hidden-toolbar-unread-count"
-          invisible={unreadCount === 0}
-          sx={{
-            '& .MuiBadge-badge': {
-              color: 'white',
-              backgroundColor: '#FA7B17',
-            },
-            marginRight: '12px',
-          }}
-          overlap="circular"
-        >
+        <UnreadMessagesBadge>
           <ToolbarButton
             data-testid="hidden-toolbar-items"
             onClick={handleButtonToggle}
@@ -58,7 +45,7 @@ const ToolbarOverflowButton = (): ReactElement => {
               marginRight: '0px',
             }}
           />
-        </Badge>
+        </UnreadMessagesBadge>
       </Tooltip>
       <ToolbarOverflowMenu
         isToolbarOverflowMenuOpen={isToolbarOverflowMenuOpen}

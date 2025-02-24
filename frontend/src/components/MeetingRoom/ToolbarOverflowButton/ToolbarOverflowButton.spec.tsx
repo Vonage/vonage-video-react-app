@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it, Mock, vi } from 'vitest';
-import { act, render, screen, within } from '@testing-library/react';
+import { act, render, screen } from '@testing-library/react';
 import useSessionContext from '../../../hooks/useSessionContext';
 import { SessionContextType } from '../../../Context/SessionProvider/session';
 import ToolbarOverflowButton from './ToolbarOverflowButton';
@@ -64,14 +64,14 @@ describe('ToolbarOverflowButton', () => {
 
       render(<ToolbarOverflowButton />);
 
-      expect(screen.getByTestId('hidden-toolbar-unread-count')).toBeVisible();
-      expect(screen.getByTestId('hidden-toolbar-unread-count').textContent).toBe('8');
+      expect(screen.getByTestId('chat-toggle-unread-count')).toBeVisible();
+      expect(screen.getByTestId('chat-toggle-unread-count').textContent).toBe('8');
     });
 
     it('should not show unread message number when number is 0', () => {
       render(<ToolbarOverflowButton />);
 
-      const badge = within(screen.getByTestId('hidden-toolbar-unread-count')).getByText('0');
+      const badge = screen.getByTestId('chat-toggle-unread-count');
       // Check badge is hidden:  MUI hides badge by setting dimensions to 0x0
       expect(badge.offsetHeight).toBe(0);
       expect(badge.offsetWidth).toBe(0);
