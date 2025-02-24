@@ -27,8 +27,8 @@ const ReportIssueButton = ({ handleClick, isOpen }: ReportIssueButtonProps): Rea
           sx={{
             marginTop: '0px',
             marginRight: '0px',
-            width: isSmallViewport ? '42px' : undefined,
-            height: isSmallViewport ? '42px' : undefined,
+            width: isSmallViewport ? '42px' : '48px',
+            height: isSmallViewport ? '42px' : '48px',
           }}
           onClick={handleClick}
           icon={<FeedbackIcon style={{ color: `${!isOpen ? 'white' : 'rgb(138, 180, 248)'}` }} />}
