@@ -35,13 +35,7 @@ const LayoutToggleButton = ({ isScreenSharePresent }: LayoutToggleButtonProps): 
   };
 
   return (
-    <Tooltip
-      title={getTooltipTitle()}
-      sx={{
-        maxWidth: '800px',
-      }}
-      aria-label="video layout"
-    >
+    <Tooltip title={getTooltipTitle()} aria-label="video layout">
       <ToolbarButton
         onClick={handleClick}
         data-testid="layout-toggle"

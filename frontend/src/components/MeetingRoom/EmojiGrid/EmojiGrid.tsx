@@ -35,7 +35,8 @@ const EmojiGrid = ({
     if (isSmallViewport && !target.closest('#emoji-grid-toggle')) {
       return;
     }
-    // If a user clicks the toggle button, we save their preference for later
+    // If a user clicks the toggle button, we save their preference for later. If a user doesn't select
+    // the toggle, the clickAwayListener will close the grid.
     setIsEmojiGridOpen(false);
   };
 
