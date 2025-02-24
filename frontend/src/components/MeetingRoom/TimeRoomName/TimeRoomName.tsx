@@ -13,7 +13,7 @@ const TimeRoomName = (): ReactElement => {
   const roomName = useRoomName();
 
   return (
-    <div className="mt-1 ml-3 font-normal text-white truncate">
+    <div className="ml-3 mt-1 truncate font-normal text-white">
       {time} | {roomName}
     </div>
   );

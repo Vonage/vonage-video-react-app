@@ -7,11 +7,11 @@ import { ReactElement } from 'react';
  */
 const LandingPageWelcome = (): ReactElement => {
   return (
-    <div className="ps-12 py-4 h-auto  shrink max-w-xl text-left">
-      <h2 className="text-5xl font-bold text-black pb-5 w-9/12">
+    <div className="h-auto max-w-xl shrink  py-4 ps-12 text-left">
+      <h2 className="w-9/12 pb-5 text-5xl font-bold text-black">
         Welcome to the Vonage Video React App
       </h2>
-      <h3 className="text-large text-slate-500">Create a new room or join an existing one.</h3>
+      <h3 className="text-lg text-slate-500">Create a new room or join an existing one.</h3>
     </div>
   );
 };
