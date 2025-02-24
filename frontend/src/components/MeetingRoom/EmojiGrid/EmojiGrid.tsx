@@ -43,7 +43,7 @@ const EmojiGrid = ({
     <EmojiGridMobile
       handleClickAway={handleClickAway}
       isEmojiGridOpen={isEmojiGridOpen}
-      isParentOpen={isParentOpen}
+      isToolbarOpen={isParentOpen}
     />
   ) : (
     <EmojiGridDesktop
