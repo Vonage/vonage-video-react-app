@@ -6,6 +6,7 @@ import ToolbarButton from '../ToolbarButton';
 import PopupDialog, { DialogTexts } from '../PopupDialog';
 import { startArchiving, stopArchiving } from '../../../api/archiving';
 import useSessionContext from '../../../hooks/useSessionContext';
+import useIsSmallViewport from '../../../hooks/useIsSmallViewport';
 
 /**
  * ArchivingToggle Component
@@ -67,6 +68,7 @@ const ArchivingToggle = (): ReactElement => {
     handleDialogClick(isRecording ? 'stop' : 'start');
   };
 
+  const isSmallViewport = useIsSmallViewport();
   return (
     <>
       <Tooltip title={title} aria-label="video layout">
@@ -78,6 +80,10 @@ const ArchivingToggle = (): ReactElement => {
               style={{ color: `${isRecording ? 'rgb(239 68 68)' : 'white'}` }}
             />
           }
+          sx={{
+            width: isSmallViewport ? '42px' : '48px',
+            height: isSmallViewport ? '42px' : '48px',
+          }}
         />
       </Tooltip>
       <PopupDialog

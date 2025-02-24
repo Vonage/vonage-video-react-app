@@ -4,6 +4,9 @@ import { Dispatch, ReactElement, RefObject, SetStateAction } from 'react';
 import ArchivingToggle from '../ArchivingToggle';
 import EmojiGridButton from '../EmojiGridButton';
 import LayoutToggleButton from '../LayoutToggleButton';
+import ParticipantListToggleButton from '../ParticipantListToggleButton';
+import ChatToggleButton from '../ChatToggleButton';
+import ReportIssueButton from '../ReportIssueButton';
 import useSessionContext from '../../../hooks/useSessionContext';
 
 export type ToolbarOverflowMenuProps = {
@@ -33,9 +36,18 @@ const ToolbarOverflowMenu = ({
   anchorRef,
   handleClickAway,
 }: ToolbarOverflowMenuProps): ReactElement => {
-  const { subscriberWrappers } = useSessionContext();
+  const {
+    subscriberWrappers,
+    rightPanelActiveTab,
+    toggleParticipantList,
+    toggleChat,
+    toggleReportIssue,
+    unreadCount,
+  } = useSessionContext();
   const isViewingScreenShare = subscriberWrappers.some((subWrapper) => subWrapper.isScreenshare);
-
+  const participantCount =
+    subscriberWrappers.filter(({ isScreenshare }) => !isScreenshare).length + 1;
+  const isReportIssueEnabled = import.meta.env.VITE_ENABLE_REPORT_ISSUE === 'true';
   return (
     <Popper
       open={isToolbarOverflowMenuOpen}
@@ -82,6 +94,22 @@ const ToolbarOverflowMenu = ({
                   isParentOpen={isToolbarOverflowMenuOpen}
                 />
                 <ArchivingToggle />
+                {isReportIssueEnabled && (
+                  <ReportIssueButton
+                    isOpen={rightPanelActiveTab === 'issues'}
+                    handleClick={toggleReportIssue}
+                  />
+                )}
+                <ParticipantListToggleButton
+                  isOpen={rightPanelActiveTab === 'participant-list'}
+                  handleClick={toggleParticipantList}
+                  participantCount={participantCount}
+                />
+                <ChatToggleButton
+                  isOpen={rightPanelActiveTab === 'chat'}
+                  handleClick={toggleChat}
+                  unreadCount={unreadCount}
+                />
               </Paper>
             </ClickAwayListener>
           </div>

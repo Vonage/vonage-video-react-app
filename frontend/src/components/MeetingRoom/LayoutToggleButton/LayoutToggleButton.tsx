@@ -4,6 +4,7 @@ import WindowIcon from '@mui/icons-material/Window';
 import { ReactElement } from 'react';
 import useSessionContext from '../../../hooks/useSessionContext';
 import ToolbarButton from '../ToolbarButton';
+import useIsSmallViewport from '../../../hooks/useIsSmallViewport';
 
 type LayoutToggleButtonProps = {
   isScreenSharePresent: boolean;
@@ -34,6 +35,8 @@ const LayoutToggleButton = ({ isScreenSharePresent }: LayoutToggleButtonProps): 
     return isGrid ? 'Switch to Active Speaker layout' : 'Switch to Grid layout';
   };
 
+  const isSmallViewport = useIsSmallViewport();
+
   return (
     <Tooltip title={getTooltipTitle()} aria-label="video layout">
       <ToolbarButton
@@ -48,6 +51,8 @@ const LayoutToggleButton = ({ isScreenSharePresent }: LayoutToggleButtonProps): 
         }
         sx={{
           cursor: isScreenSharePresent ? 'not-allowed' : 'pointer',
+          width: isSmallViewport ? '42px' : '48px',
+          height: isSmallViewport ? '42px' : '48px',
         }}
       />
     </Tooltip>
