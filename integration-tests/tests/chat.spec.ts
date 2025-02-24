@@ -5,7 +5,7 @@ import { openMeetingRoomWithSettings, waitAndClickFirefox } from './utils';
 
 test.describe('chat', () => {
   test.skip(({ isMobile }) => isMobile, 'chat tests only supported on desktop');
-  test('should send chat messages and show unread number', async ({
+  test.only('should send chat messages and show unread number', async ({
     page: pageOne,
     context,
     browserName,
@@ -49,7 +49,13 @@ test.describe('chat', () => {
     // check unread notification is present on page two
     await expect(pageTwo.getByTestId('chat-toggle-unread-count')).toHaveText('1');
     await pageTwo.getByTestId('chat-toggle-unread-count').click();
-    await expect(pageTwo.getByTestId('chat-toggle-unread-count')).toHaveText('0');
+    // Check badge is hidden:  MUI hides badge by setting dimensions to 0x0
+    await pageTwo.waitForFunction(async () => {
+      const badge = document.querySelector(
+        '[data-testid="chat-toggle-unread-count"]'
+      ) as HTMLElement;
+      return badge.offsetHeight === 0 && badge.offsetWidth === 0;
+    });
 
     await expect(pageTwo.getByTestId('chat-message').getByRole('paragraph')).toHaveText(
       'Hi there, welcome to the meeting!'
