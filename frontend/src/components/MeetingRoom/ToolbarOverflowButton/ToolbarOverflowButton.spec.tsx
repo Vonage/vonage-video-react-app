@@ -56,10 +56,9 @@ describe('ToolbarOverflowButton', () => {
 
   describe('unread messages', () => {
     it('should show unread message number when number is 8', () => {
-      const unreadCount = 8;
       const sessionContextWithMessages: SessionContextType = {
         ...sessionContext,
-        unreadCount,
+        unreadCount: 8,
       } as unknown as SessionContextType;
       mockUseSessionContext.mockReturnValue(sessionContextWithMessages);
 
