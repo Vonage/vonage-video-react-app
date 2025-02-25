@@ -51,9 +51,8 @@ const LayoutToggleButton = ({ isScreenSharePresent }: LayoutToggleButtonProps): 
         }
         sx={{
           cursor: isScreenSharePresent ? 'not-allowed' : 'pointer',
-          width: isSmallViewport ? '42px' : '48px',
-          height: isSmallViewport ? '42px' : '48px',
         }}
+        isSmallViewPort={isSmallViewport}
       />
     </Tooltip>
   );

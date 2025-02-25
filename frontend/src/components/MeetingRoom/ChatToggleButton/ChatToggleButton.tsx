@@ -48,11 +48,10 @@ const ChatToggleButton = ({
           sx={{
             marginTop: '0px',
             marginRight: '0px',
-            width: isSmallViewport ? '42px' : '48px',
-            height: isSmallViewport ? '42px' : '48px',
           }}
           onClick={handleClick}
           icon={<ChatIcon sx={{ color: isOpen ? blue.A100 : 'white' }} />}
+          isSmallViewPort={isSmallViewport}
         />
       </Badge>
     </Tooltip>

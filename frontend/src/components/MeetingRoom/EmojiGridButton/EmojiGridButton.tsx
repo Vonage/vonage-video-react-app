@@ -41,12 +41,9 @@ const EmojiGridButton = ({
               style={{ color: `${!isEmojiGridOpen ? 'white' : 'rgb(138, 180, 248)'}` }}
             />
           }
-          sx={{
-            width: isSmallViewport ? '42px' : '48px',
-            height: isSmallViewport ? '42px' : '48px',
-          }}
           ref={anchorRef}
           data-testid="emoji-grid-toggle"
+          isSmallViewPort={isSmallViewport}
         />
       </Tooltip>
 
