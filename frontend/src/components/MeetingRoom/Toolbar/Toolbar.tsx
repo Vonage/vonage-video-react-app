@@ -7,7 +7,7 @@ import ExitButton from '../ExitButton';
 import useSessionContext from '../../../hooks/useSessionContext';
 import LayoutButton from '../LayoutButton';
 import ParticipantListButton from '../ParticipantListButton';
-import ArchivingToggle from '../ArchivingToggle';
+import ArchivingButton from '../ArchivingButton';
 import ChatButton from '../ChatButton';
 import { RightPanelActiveTab } from '../../../hooks/useRightPanel';
 import ReportIssueButton from '../ReportIssueButton';
@@ -92,7 +92,7 @@ const Toolbar = ({
               setIsEmojiGridOpen={setOpenEmojiGridDesktop}
               isParentOpen
             />
-            <ArchivingToggle />
+            <ArchivingButton />
           </>
         )}
         <ExitButton handleLeave={handleLeave} />

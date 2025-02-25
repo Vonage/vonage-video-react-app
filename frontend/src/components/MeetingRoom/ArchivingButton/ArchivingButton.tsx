@@ -8,14 +8,14 @@ import { startArchiving, stopArchiving } from '../../../api/archiving';
 import useSessionContext from '../../../hooks/useSessionContext';
 
 /**
- * ArchivingToggle Component
+ * ArchivingButton Component
  *
  * Displays a button and handles the archiving functionality. If a meeting is currently being recorded,
  * will confirm that a user wishes to stop the recording. If a meeting is not being recorded, prompts
  * the user before starting the archive.
- * @returns {ReactElement} - The ArchivingToggle component.
+ * @returns {ReactElement} - The ArchivingButton component.
  */
-const ArchivingToggle = (): ReactElement => {
+const ArchivingButton = (): ReactElement => {
   const roomName = useRoomName();
   const { archiveId } = useSessionContext();
   const isRecording = !!archiveId;
@@ -89,4 +89,4 @@ const ArchivingToggle = (): ReactElement => {
     </>
   );
 };
-export default ArchivingToggle;
+export default ArchivingButton;

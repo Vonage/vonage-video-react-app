@@ -1,7 +1,7 @@
 import { ClickAwayListener, PopperChildrenProps } from '@mui/base';
 import { Grow, Paper, Popper } from '@mui/material';
 import { Dispatch, ReactElement, RefObject, SetStateAction } from 'react';
-import ArchivingToggle from '../ArchivingToggle';
+import ArchivingButton from '../ArchivingButton';
 import EmojiGridButton from '../EmojiGridButton';
 import LayoutButton from '../LayoutButton';
 import useSessionContext from '../../../hooks/useSessionContext';
@@ -81,7 +81,7 @@ const ToolbarOverflowMenu = ({
                   setIsEmojiGridOpen={setIsEmojiGridOpen}
                   isParentOpen={isToolbarOverflowMenuOpen}
                 />
-                <ArchivingToggle />
+                <ArchivingButton />
               </Paper>
             </ClickAwayListener>
           </div>
