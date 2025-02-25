@@ -39,7 +39,7 @@ const ToolbarButton = forwardRef(function ToolbarButton(
         marginTop: '4px',
         marginRight: '12px',
         width: props.isSmallViewPort ? '42px' : '48px',
-        height: '48px',
+        height: props.isSmallViewPort ? '42px' : '48px',
         backgroundColor: 'rgba(60, 64, 67, 0.55)',
         '&:hover': {
           backgroundColor: 'rgba(60, 64, 67, 0.42)',
