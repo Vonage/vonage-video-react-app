@@ -6,12 +6,12 @@ import usePreviewPublisherContext from '../../../hooks/usePreviewPublisherContex
 import VideoContainerButton from '../VideoContainerButton';
 
 /**
- * MicToggleButton Component
+ * MicButton Component
  *
  * Toggles the user's microphone (published audio) and updates the icon accordingly.
- * @returns {ReactElement} - The MicToggleButton component.
+ * @returns {ReactElement} - The MicButton component.
  */
-const MicToggleButton = (): ReactElement => {
+const MicButton = (): ReactElement => {
   const { isAudioEnabled, toggleAudio } = usePreviewPublisherContext();
   const title = `Turn ${isAudioEnabled ? 'off' : 'on'} microphone`;
 
@@ -55,4 +55,4 @@ const MicToggleButton = (): ReactElement => {
   );
 };
 
-export default MicToggleButton;
+export default MicButton;

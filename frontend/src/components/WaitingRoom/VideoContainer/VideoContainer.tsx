@@ -1,6 +1,6 @@
 import { useRef, useState, useEffect, ReactElement } from 'react';
 import { Stack } from '@mui/material';
-import MicToggleButton from '../MicToggleButton';
+import MicButton from '../MicButton';
 import CameraButton from '../CameraButton';
 import BlurButton from '../BlurButton';
 import VideoLoading from '../VideoLoading';
@@ -82,7 +82,7 @@ const VideoContainer = ({ username }: VideoContainerProps): ReactElement => {
             </div>
           )}
           <Stack direction="row" spacing={2}>
-            <MicToggleButton />
+            <MicButton />
             <CameraButton />
           </Stack>
           <div className="absolute right-[20px]">
