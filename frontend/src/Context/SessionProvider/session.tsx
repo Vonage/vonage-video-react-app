@@ -30,8 +30,12 @@ import useRightPanel, { RightPanelActiveTab } from '../../hooks/useRightPanel';
 import logOnConnect from '../../utils/logOnConnect';
 import useChat from '../../hooks/useChat';
 import { SubscriberWrapper } from '../../types/session';
-import sortByDisplayPriority from '../../utils/sortByDisplayPriority';
 import { ChatMessageType } from '../../types/chat';
+import { isMobile } from '../../utils/util';
+import {
+  sortByDisplayPriority,
+  togglePinAndSortByDisplayOrder,
+} from '../../utils/sessionStateOperations';
 
 export type { ChatMessageType } from '../../types/chat';
 
@@ -68,6 +72,8 @@ export type SessionContextType = {
   toggleChat: () => void;
   closeRightPanel: () => void;
   toggleReportIssue: () => void;
+  pinSubscriber: (subscriberId: string) => void;
+  isMaxPinned: boolean;
 };
 
 /**
@@ -96,6 +102,8 @@ export const SessionContext = createContext<SessionContextType>({
   toggleChat: () => {},
   closeRightPanel: () => {},
   toggleReportIssue: () => {},
+  pinSubscriber: () => {},
+  isMaxPinned: false,
 });
 
 export type ConnectionEventType = {
@@ -125,6 +133,8 @@ export type StreamCreatedEvent = Event<'streamCreated', Session> & {
 export type SessionProviderProps = {
   children: ReactNode;
 };
+
+const MAX_PIN_COUNT = isMobile() ? 1 : 3;
 
 /**
  * SessionProvider - React Context Provider for SessionProvider
@@ -185,6 +195,28 @@ const SessionProvider = ({ children }: SessionProviderProps): ReactElement => {
       return prevSubscriberWrappers;
     });
   }, []);
+
+  /**
+   * isMaxPinned {boolean} - whether the maximum number of allowed pinned participants has been reached.
+   * This is used to disable the pin buttons so no more participants can be pinned.
+   */
+  const isMaxPinned = useMemo(() => {
+    const pinnedCount = subscriberWrappers.filter((sub) => sub.isPinned).length;
+    return pinnedCount >= MAX_PIN_COUNT;
+  }, [subscriberWrappers]);
+
+  /**
+   * Toggles a subscriber's isPinned field, and sorts subscribers by display priority.
+   * @param {string} id - The ID of the subscriber to pin.
+   */
+  const pinSubscriber = useCallback(
+    (id: string) => {
+      setSubscriberWrappers((previousSubscriberWrappers) => {
+        return togglePinAndSortByDisplayOrder(id, previousSubscriberWrappers, activeSpeakerId);
+      });
+    },
+    [activeSpeakerId]
+  );
 
   // hook to keep track of the active speaker during the call and move it to the top of the display order
   useEffect(() => {
@@ -280,6 +312,7 @@ const SessionProvider = ({ children }: SessionProviderProps): ReactElement => {
             element,
             subscriber,
             isScreenshare,
+            isPinned: false,
             // subscriber.id is refers to the targetElement id and will be undefined when insertDefaultUI is false so we use streamId to track our subscriber
             id: streamId,
           };
@@ -445,6 +478,8 @@ const SessionProvider = ({ children }: SessionProviderProps): ReactElement => {
       toggleChat,
       closeRightPanel,
       toggleReportIssue,
+      pinSubscriber,
+      isMaxPinned,
     }),
     [
       activeSpeakerId,
@@ -469,6 +504,8 @@ const SessionProvider = ({ children }: SessionProviderProps): ReactElement => {
       toggleChat,
       closeRightPanel,
       toggleReportIssue,
+      pinSubscriber,
+      isMaxPinned,
     ]
   );
 
