@@ -1,6 +1,7 @@
-import { Button, Grid } from '@mui/material';
+import { Button, Grid, GridSize } from '@mui/material';
 import { ReactElement } from 'react';
 import useEmoji from '../../../hooks/useEmoji';
+import useIsSmallViewport from '../../../hooks/useIsSmallViewport';
 
 export type SendEmojiButtonProps = {
   emoji: string;
@@ -15,11 +16,14 @@ export type SendEmojiButtonProps = {
  */
 const SendEmojiButton = ({ emoji }: SendEmojiButtonProps): ReactElement => {
   const { sendEmoji } = useEmoji();
+  const isSmallViewport = useIsSmallViewport();
+  const xs: GridSize = isSmallViewport ? 2 : 3;
+  const size = isSmallViewport ? 'small' : 'large';
 
   return (
-    <Grid item xs={3} className="flex justify-center">
+    <Grid item xs={xs} className="flex justify-center">
       <Button
-        size="large"
+        size={size}
         onClick={() => sendEmoji(emoji)}
         sx={{
           '&:hover': {
