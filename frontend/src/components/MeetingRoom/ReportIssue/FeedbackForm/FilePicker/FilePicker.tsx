@@ -2,6 +2,7 @@ import { ChangeEvent, useRef, useState, ReactElement } from 'react';
 import { Button, IconButton, Tooltip, Typography } from '@mui/material';
 import { Delete } from '@mui/icons-material';
 import captureScreenshot from '../../../../../utils/captureScreenshot';
+import { isMobile } from '../../../../../utils/util';
 
 // Setting the maximum file size to 20MB
 const maxFileSize = 2e7;
@@ -97,6 +98,8 @@ const FilePicker = ({
               variant="outlined"
               component="label"
               onClick={processScreenshot}
+              // Not actually hiding ATM
+              hidden={!!isMobile}
             >
               Capture screenshot
             </Button>
