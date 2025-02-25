@@ -1,4 +1,4 @@
-import { ReactElement, useCallback } from 'react';
+import { ReactElement, useCallback, useState } from 'react';
 import AudioControlButton from '../AudioControlButton';
 import VideoControlButton from '../VideoControlButton';
 import ScreenSharingButton from '../../ScreenSharingButton';
@@ -8,10 +8,12 @@ import useSessionContext from '../../../hooks/useSessionContext';
 import LayoutToggleButton from '../LayoutToggleButton';
 import ParticipantListToggleButton from '../ParticipantListToggleButton';
 import ArchivingToggle from '../ArchivingToggle';
-import EmojiGrid from '../EmojiGrid';
 import ChatToggleButton from '../ChatToggleButton';
 import { RightPanelActiveTab } from '../../../hooks/useRightPanel';
 import ReportIssueButton from '../ReportIssueButton';
+import ToolbarOverflowButton from '../ToolbarOverflowButton';
+import useIsSmallViewport from '../../../hooks/useIsSmallViewport';
+import EmojiGridButton from '../EmojiGridButton';
 
 export type ToolbarProps = {
   toggleShareScreen: () => void;
@@ -31,10 +33,11 @@ export type ToolbarProps = {
  * - The current time and meeting room name
  * - The microphone state with the ability to toggle it on/off and open a drop-down with some audio settings
  * - The video state with the ability to toggle it on/off and open a dropdown with some video settings
- * - Screensharing button
+ * - Screensharing button (only on desktop devices)
  * - Button to toggle current layout (grid or active speaker)
  * - Button to express yourself (emojis)
  * - Button to open a pop-up to start meeting recording (archiving)
+ * - Button containing hidden toolbar items when the viewport is narrow
  * - Button to exit a meeting (redirects to the goodbye page)
  * @param {ToolbarProps} props - the props for the component
  *  @property {() => void} toggleScreenShare - the prop to toggle the screen share on and off
@@ -57,12 +60,14 @@ const Toolbar = ({
   const isReportIssueEnabled = import.meta.env.VITE_ENABLE_REPORT_ISSUE === 'true';
   const isViewingScreenShare = subscriberWrappers.some((subWrapper) => subWrapper.isScreenshare);
   const isScreenSharePresent = isViewingScreenShare || isSharingScreen;
+  const isSmallViewport = useIsSmallViewport();
   const handleLeave = useCallback(() => {
     if (!disconnect) {
       return;
     }
     disconnect();
   }, [disconnect]);
+  const [openEmojiGridDesktop, setOpenEmojiGridDesktop] = useState<boolean>(false);
 
   return (
     <div className="absolute bottom-0 left-0 flex h-[80px] w-full flex-col items-center bg-darkGray-100 p-4 md:flex-row md:justify-between">
@@ -72,14 +77,24 @@ const Toolbar = ({
       <div className="flex flex-1 justify-center">
         <AudioControlButton />
         <VideoControlButton />
-        <ScreenSharingButton
-          toggleScreenShare={toggleShareScreen}
-          isSharingScreen={isSharingScreen}
-          isViewingScreenShare={isViewingScreenShare}
-        />
-        <LayoutToggleButton isScreenSharePresent={isScreenSharePresent} />
-        <EmojiGrid />
-        <ArchivingToggle />
+        {isSmallViewport ? (
+          <ToolbarOverflowButton />
+        ) : (
+          <>
+            <ScreenSharingButton
+              toggleScreenShare={toggleShareScreen}
+              isSharingScreen={isSharingScreen}
+              isViewingScreenShare={isViewingScreenShare}
+            />
+            <LayoutToggleButton isScreenSharePresent={isScreenSharePresent} />
+            <EmojiGridButton
+              isEmojiGridOpen={openEmojiGridDesktop}
+              setIsEmojiGridOpen={setOpenEmojiGridDesktop}
+              isParentOpen
+            />
+            <ArchivingToggle />
+          </>
+        )}
         <ExitButton handleLeave={handleLeave} />
       </div>
 

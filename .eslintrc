@@ -60,7 +60,8 @@
           "screen-subscriber"
         ]
       }
-    ]
+    ],
+    "tailwindcss/classnames-order": ["error"]
   },
   "settings": {
     "tailwindcss": {

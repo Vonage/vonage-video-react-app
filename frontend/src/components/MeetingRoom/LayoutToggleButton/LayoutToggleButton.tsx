@@ -4,7 +4,6 @@ import WindowIcon from '@mui/icons-material/Window';
 import { ReactElement } from 'react';
 import useSessionContext from '../../../hooks/useSessionContext';
 import ToolbarButton from '../ToolbarButton';
-import { isMobile } from '../../../utils/util';
 
 type LayoutToggleButtonProps = {
   isScreenSharePresent: boolean;
@@ -38,33 +37,22 @@ const LayoutToggleButton = ({
   };
 
   return (
-    !isMobile() && (
-      <div>
-        <Tooltip
-          title={getTooltipTitle()}
-          sx={{
-            maxWidth: '800px',
-          }}
-          aria-label="video layout"
-        >
-          <ToolbarButton
-            onClick={handleClick}
-            icon={
-              !isGrid ? (
-                <ViewSidebarIcon
-                  className={isScreenSharePresent ? 'text-gray-500' : 'text-white'}
-                />
-              ) : (
-                <WindowIcon className={isScreenSharePresent ? 'text-gray-500' : 'text-white'} />
-              )
-            }
-            sx={{
-              cursor: isScreenSharePresent ? 'not-allowed' : 'pointer',
-            }}
-          />
-        </Tooltip>
-      </div>
-    )
+    <Tooltip title={getTooltipTitle()} aria-label="video layout">
+      <ToolbarButton
+        onClick={handleClick}
+        data-testid="layout-toggle"
+        icon={
+          !isGrid ? (
+            <ViewSidebarIcon className={isScreenSharePresent ? 'text-gray-500' : 'text-white'} />
+          ) : (
+            <WindowIcon className={isScreenSharePresent ? 'text-gray-500' : 'text-white'} />
+          )
+        }
+        sx={{
+          cursor: isScreenSharePresent ? 'not-allowed' : 'pointer',
+        }}
+      />
+    </Tooltip>
   );
 };
 
