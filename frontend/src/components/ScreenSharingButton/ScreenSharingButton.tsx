@@ -4,7 +4,7 @@ import Tooltip from '@mui/material/Tooltip';
 import { ReactElement, useState } from 'react';
 import ToolbarButton from '../MeetingRoom/ToolbarButton';
 import PopupDialog, { DialogTexts } from '../MeetingRoom/PopupDialog';
-import displayOnDesktop from '../../utils/displayOnDesktop';
+import { isMobile } from '../../utils/util';
 
 export type ScreenShareButtonProps = {
   toggleScreenShare: () => void;
@@ -51,29 +51,31 @@ const ScreenSharingButton = ({
   };
 
   return (
-    <div className={`hidden ${displayOnDesktop()}`}>
-      <Tooltip title={title} aria-label="add">
-        <ToolbarButton
-          onClick={handleButtonClick}
-          data-testid="screensharing-toggle"
-          icon={
-            !isSharingScreen ? (
-              <ScreenShare className="text-white" />
-            ) : (
-              <ScreenOff className="text-red-500" />
-            )
-          }
-        />
-      </Tooltip>
-      {isViewingScreenShare && (
-        <PopupDialog
-          isOpen={isModalOpen}
-          handleClose={handleClose}
-          handleActionClick={handleActionClick}
-          actionText={actionText}
-        />
-      )}
-    </div>
+    !isMobile() && (
+      <div>
+        <Tooltip title={title} aria-label="add">
+          <ToolbarButton
+            onClick={handleButtonClick}
+            data-testid="screensharing-toggle"
+            icon={
+              !isSharingScreen ? (
+                <ScreenShare className="text-white" />
+              ) : (
+                <ScreenOff className="text-red-500" />
+              )
+            }
+          />
+        </Tooltip>
+        {isViewingScreenShare && (
+          <PopupDialog
+            isOpen={isModalOpen}
+            handleClose={handleClose}
+            handleActionClick={handleActionClick}
+            actionText={actionText}
+          />
+        )}
+      </div>
+    )
   );
 };
 
