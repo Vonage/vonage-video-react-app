@@ -94,12 +94,15 @@ const FilePicker = ({
         {!imageSrc ? (
           <>
             <Button
-              sx={{ width: '100%', textTransform: 'none', mb: 1 }}
+              sx={{
+                width: '100%',
+                textTransform: 'none',
+                mb: 1,
+                display: isMobile() ? 'none' : '',
+              }}
               variant="outlined"
               component="label"
               onClick={processScreenshot}
-              // Not actually hiding ATM
-              hidden={!!isMobile}
             >
               Capture screenshot
             </Button>
