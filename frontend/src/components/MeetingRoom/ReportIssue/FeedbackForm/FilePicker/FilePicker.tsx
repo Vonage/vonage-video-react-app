@@ -93,21 +93,22 @@ const FilePicker = ({
         )}
         {!imageSrc ? (
           <>
-            <Button
-              sx={{
-                width: '100%',
-                textTransform: 'none',
-                mb: 1,
-                // The screenshot capture relies on the getDisplayMedia browser API which is unsupported on mobile devices
-                // See: https://developer.mozilla.org/en-US/docs/Web/API/MediaDevices/getDisplayMedia#browser_compatibility
-                display: isMobile() ? 'none' : '',
-              }}
-              variant="outlined"
-              component="label"
-              onClick={processScreenshot}
-            >
-              Capture screenshot
-            </Button>
+            {!isMobile() && (
+              // The screenshot capture relies on the getDisplayMedia browser API which is unsupported on mobile devices
+              // See: https://developer.mozilla.org/en-US/docs/Web/API/MediaDevices/getDisplayMedia#browser_compatibility
+              <Button
+                sx={{
+                  width: '100%',
+                  textTransform: 'none',
+                  mb: 1,
+                }}
+                variant="outlined"
+                component="label"
+                onClick={processScreenshot}
+              >
+                Capture screenshot
+              </Button>
+            )}
             <Button
               sx={{ width: '100%', textTransform: 'none' }}
               variant="outlined"
