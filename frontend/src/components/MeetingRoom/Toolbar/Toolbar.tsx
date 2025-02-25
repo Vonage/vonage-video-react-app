@@ -56,7 +56,7 @@ const Toolbar = ({
   toggleReportIssue,
   participantCount,
 }: ToolbarProps): ReactElement => {
-  const { disconnect, unreadCount, subscriberWrappers } = useSessionContext();
+  const { disconnect, subscriberWrappers } = useSessionContext();
   const isReportIssueEnabled = import.meta.env.VITE_ENABLE_REPORT_ISSUE === 'true';
   const isViewingScreenShare = subscriberWrappers.some((subWrapper) => subWrapper.isScreenshare);
   const isScreenSharePresent = isViewingScreenShare || isSharingScreen;
@@ -110,11 +110,7 @@ const Toolbar = ({
           handleClick={toggleParticipantList}
           participantCount={participantCount}
         />
-        <ChatButton
-          isOpen={rightPanelActiveTab === 'chat'}
-          handleClick={toggleChat}
-          unreadCount={unreadCount}
-        />
+        <ChatButton isOpen={rightPanelActiveTab === 'chat'} handleClick={toggleChat} />
       </div>
     </div>
   );
