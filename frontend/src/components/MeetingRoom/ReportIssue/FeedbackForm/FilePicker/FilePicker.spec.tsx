@@ -1,10 +1,18 @@
 import { render, screen, fireEvent } from '@testing-library/react';
-import { describe, expect, it, vi, Mock } from 'vitest';
+import { describe, expect, it, vi, Mock, beforeEach } from 'vitest';
+import useIsSmallViewport from '../../../../../hooks/useIsSmallViewport';
 import FilePicker from './FilePicker';
 import '@testing-library/jest-dom';
 
+vi.mock('../../../../../hooks/useIsSmallViewport');
+const mockUseIsSmallViewport = useIsSmallViewport as Mock<[], boolean>;
+
 describe('FilePicker component', () => {
   const mockFileSelect = vi.fn();
+
+  beforeEach(() => {
+    mockUseIsSmallViewport.mockReturnValue(false);
+  });
 
   it('renders the "Add screenshot" button initially', () => {
     render(<FilePicker onFileSelect={mockFileSelect} />);
@@ -12,10 +20,18 @@ describe('FilePicker component', () => {
     expect(addButton).toBeInTheDocument();
   });
 
-  it('renders the "Capture screenshot" button initially', () => {
-    render(<FilePicker onFileSelect={mockFileSelect} />);
-    const addButton = screen.getByText(/capture screenshot/i);
-    expect(addButton).toBeInTheDocument();
+  describe('"Capture screenshot" button', () => {
+    it('is rendered on desktop viewports', () => {
+      render(<FilePicker onFileSelect={mockFileSelect} />);
+      const addButton = screen.getByText(/capture screenshot/i);
+      expect(addButton).toBeInTheDocument();
+    });
+
+    it('is not rendered on small viewports', () => {
+      mockUseIsSmallViewport.mockReturnValue(true);
+      const addButton = screen.queryByText(/capture screenshot/i);
+      expect(addButton).not.toBeInTheDocument();
+    });
   });
 
   it('uploads and previews a valid image file', async () => {
