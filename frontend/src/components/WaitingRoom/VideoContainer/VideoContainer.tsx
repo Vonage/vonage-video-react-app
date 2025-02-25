@@ -2,7 +2,7 @@ import { useRef, useState, useEffect, ReactElement } from 'react';
 import { Stack } from '@mui/material';
 import MicToggleButton from '../MicToggleButton';
 import CameraToggleButton from '../CameraToggleButton';
-import BlurToggleButton from '../BlurToggleButton';
+import BlurButton from '../BlurButton';
 import VideoLoading from '../VideoLoading';
 import waitUntilPlaying from '../../../utils/waitUntilPlaying';
 import useUserContext from '../../../hooks/useUserContext';
@@ -86,7 +86,7 @@ const VideoContainer = ({ username }: VideoContainerProps): ReactElement => {
             <CameraToggleButton />
           </Stack>
           <div className="absolute right-[20px]">
-            <BlurToggleButton />
+            <BlurButton />
           </div>
         </div>
       )}

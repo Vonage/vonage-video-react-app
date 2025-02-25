@@ -7,12 +7,12 @@ import BlurIcon from '../../Icons/Blur';
 import VideoContainerToggleButton from '../VideoContainerToggleButton';
 
 /**
- * BlurToggleButton Component
+ * BlurButton Component
  *
  * If the user's device supports the Vonage Media Processor, displays a button to toggle background blur on and off.
- * @returns {ReactElement | false} - The BlurToggleButton component.
+ * @returns {ReactElement | false} - The BlurButton component.
  */
-const BlurToggleButton = (): ReactElement | false => {
+const BlurButton = (): ReactElement | false => {
   const { toggleBlur, hasBlur } = usePreviewPublisherContext();
   const title = `Turn background blur ${hasBlur ? 'off' : 'on'}`;
 
@@ -55,4 +55,4 @@ const BlurToggleButton = (): ReactElement | false => {
   );
 };
 
-export default BlurToggleButton;
+export default BlurButton;
