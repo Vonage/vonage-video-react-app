@@ -8,7 +8,7 @@ import useSessionContext from '../../../hooks/useSessionContext';
 import LayoutToggleButton from '../LayoutToggleButton';
 import ParticipantListToggleButton from '../ParticipantListToggleButton';
 import ArchivingToggle from '../ArchivingToggle';
-import ChatToggleButton from '../ChatToggleButton';
+import ChatButton from '../ChatButton';
 import { RightPanelActiveTab } from '../../../hooks/useRightPanel';
 import ReportIssueButton from '../ReportIssueButton';
 import ToolbarOverflowButton from '../ToolbarOverflowButton';
@@ -110,7 +110,7 @@ const Toolbar = ({
           handleClick={toggleParticipantList}
           participantCount={participantCount}
         />
-        <ChatToggleButton
+        <ChatButton
           isOpen={rightPanelActiveTab === 'chat'}
           handleClick={toggleChat}
           unreadCount={unreadCount}

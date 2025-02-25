@@ -5,28 +5,24 @@ import { Badge } from '@mui/material';
 import { ReactElement } from 'react';
 import ToolbarButton from '../ToolbarButton';
 
-export type ChatToggleButtonProps = {
+export type ChatButtonProps = {
   handleClick: () => void;
   isOpen: boolean;
   unreadCount: number;
 };
 
 /**
- * ChatToggleButton Component
+ * ChatButton Component
  *
  * Toolbar button to open and close the chat panel.
  * Also displays an unread message count badge.
- * @param {ChatToggleButtonProps} props - the props for this component
+ * @param {ChatButtonProps} props - the props for this component
  *   @property {() => void} handleClick - click handler to toggle open chat panel
  *   @property {boolean} isOpen - true if chat is currently open, false if not
  *   @property {number} unreadCount - number of unread message, to be displayed in badge if non-zero
- * @returns {ReactElement} - ChatToggleButton
+ * @returns {ReactElement} - ChatButton
  */
-const ChatToggleButton = ({
-  handleClick,
-  isOpen,
-  unreadCount,
-}: ChatToggleButtonProps): ReactElement => {
+const ChatButton = ({ handleClick, isOpen, unreadCount }: ChatButtonProps): ReactElement => {
   return (
     <Tooltip title={isOpen ? 'Close chat' : 'Open chat'} aria-label="toggle chat">
       <Badge
@@ -54,4 +50,4 @@ const ChatToggleButton = ({
   );
 };
 
-export default ChatToggleButton;
+export default ChatButton;
