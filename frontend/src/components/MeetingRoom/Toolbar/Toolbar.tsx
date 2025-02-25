@@ -5,7 +5,7 @@ import ScreenSharingButton from '../../ScreenSharingButton';
 import TimeRoomNameMeetingRoom from '../TimeRoomName';
 import ExitButton from '../ExitButton';
 import useSessionContext from '../../../hooks/useSessionContext';
-import LayoutToggleButton from '../LayoutToggleButton';
+import LayoutButton from '../LayoutButton';
 import ParticipantListToggleButton from '../ParticipantListToggleButton';
 import ArchivingToggle from '../ArchivingToggle';
 import ChatButton from '../ChatButton';
@@ -86,7 +86,7 @@ const Toolbar = ({
               isSharingScreen={isSharingScreen}
               isViewingScreenShare={isViewingScreenShare}
             />
-            <LayoutToggleButton isScreenSharePresent={isScreenSharePresent} />
+            <LayoutButton isScreenSharePresent={isScreenSharePresent} />
             <EmojiGridButton
               isEmojiGridOpen={openEmojiGridDesktop}
               setIsEmojiGridOpen={setOpenEmojiGridDesktop}
