@@ -23,7 +23,7 @@ export type RightPanelProps = {
  */
 const RightPanel = ({ activeTab, handleClose }: RightPanelProps): ReactElement => {
   const isSmallViewport = useIsSmallViewport();
-  const width = isSmallViewport ? 'w-dvw' : 'v-dvw';
+  const width = isSmallViewport ? 'w-dvw' : 'w-[360px]';
   const margins = isSmallViewport ? 'm-0' : 'mr-4 mt-4';
   const className = `${height} absolute top-0 ${margins} ${width} overflow-hidden rounded bg-white transition-[right] ${activeTab === 'closed' ? 'right-[-380px] hidden' : 'right-0'}`;
 
