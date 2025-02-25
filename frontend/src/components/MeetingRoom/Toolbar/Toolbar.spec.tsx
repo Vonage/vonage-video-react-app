@@ -69,7 +69,7 @@ describe('Toolbar', () => {
     expect(screen.queryByTestId('hidden-toolbar-items')).toBeVisible();
 
     expect(screen.queryByTestId('archiving-button')).not.toBeInTheDocument();
-    expect(screen.queryByTestId('screensharing-toggle')).not.toBeInTheDocument();
+    expect(screen.queryByTestId('screensharing-button')).not.toBeInTheDocument();
     expect(screen.queryByTestId('archiving-button')).not.toBeInTheDocument();
     expect(screen.queryByTestId('emoji-grid-button')).not.toBeInTheDocument();
   });
@@ -81,7 +81,7 @@ describe('Toolbar', () => {
     render(<Toolbar {...defaultProps} />);
 
     expect(screen.queryByTestId('archiving-button')).toBeVisible();
-    expect(screen.queryByTestId('screensharing-toggle')).toBeVisible();
+    expect(screen.queryByTestId('screensharing-button')).toBeVisible();
     expect(screen.queryByTestId('archiving-button')).toBeVisible();
     expect(screen.queryByTestId('emoji-grid-button')).toBeVisible();
   });
