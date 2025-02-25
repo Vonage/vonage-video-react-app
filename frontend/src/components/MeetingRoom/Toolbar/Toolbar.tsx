@@ -6,7 +6,7 @@ import TimeRoomNameMeetingRoom from '../TimeRoomName';
 import ExitButton from '../ExitButton';
 import useSessionContext from '../../../hooks/useSessionContext';
 import LayoutButton from '../LayoutButton';
-import ParticipantListToggleButton from '../ParticipantListToggleButton';
+import ParticipantListButton from '../ParticipantListButton';
 import ArchivingToggle from '../ArchivingToggle';
 import ChatButton from '../ChatButton';
 import { RightPanelActiveTab } from '../../../hooks/useRightPanel';
@@ -105,7 +105,7 @@ const Toolbar = ({
             handleClick={toggleReportIssue}
           />
         )}
-        <ParticipantListToggleButton
+        <ParticipantListButton
           isOpen={rightPanelActiveTab === 'participant-list'}
           handleClick={toggleParticipantList}
           participantCount={participantCount}
