@@ -22,7 +22,7 @@ export type UseRightPanel = {
  */
 const useRightPanel = (): UseRightPanel => {
   const [rightPanelState, setRightPanelState] = useState<RightPanelState>({
-    activeTab: 'closed',
+    activeTab: 'chat',
     unreadCount: 0,
   });
 

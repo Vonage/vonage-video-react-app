@@ -3,8 +3,9 @@ import ParticipantList from '../ParticipantList/ParticipantList';
 import Chat from '../Chat';
 import ReportIssue from '../ReportIssue';
 import type { RightPanelActiveTab } from '../../../hooks/useRightPanel';
+import useIsSmallViewport from '../../../hooks/useIsSmallViewport';
 
-const height = '@apply h-[calc(100vh_-_96px)]';
+const height = '@apply h-[calc(100dvh_-_96px)]';
 
 export type RightPanelProps = {
   handleClose: () => void;
@@ -21,16 +22,16 @@ export type RightPanelProps = {
  * @returns {ReactElement} RightPanel Component
  */
 const RightPanel = ({ activeTab, handleClose }: RightPanelProps): ReactElement => {
+  const isSmallViewport = useIsSmallViewport();
+  const width = isSmallViewport ? 'w-dvw' : 'v-dvw';
+  const margins = isSmallViewport ? 'm-0' : 'mr-4 mt-4';
+  const className = `${height} absolute top-0 ${margins} ${width} overflow-hidden rounded bg-white transition-[right] ${activeTab === 'closed' ? 'right-[-380px] hidden' : 'right-0'}`;
+
   return (
-    <div
-      data-testid="right-panel"
-      className={`${height} absolute top-0 mr-4 mt-4 w-[360px] overflow-hidden rounded bg-white transition-[right] ${activeTab === 'closed' ? 'right-[-380px] hidden' : 'right-0'}`}
-    >
-      <div>
-        <ParticipantList handleClose={handleClose} isOpen={activeTab === 'participant-list'} />
-        <Chat handleClose={handleClose} isOpen={activeTab === 'chat'} />
-        <ReportIssue handleClose={handleClose} isOpen={activeTab === 'issues'} />
-      </div>
+    <div data-testid="right-panel" className={className}>
+      <ParticipantList handleClose={handleClose} isOpen={activeTab === 'participant-list'} />
+      <Chat handleClose={handleClose} isOpen={activeTab === 'chat'} />
+      <ReportIssue handleClose={handleClose} isOpen={activeTab === 'issues'} />
     </div>
   );
 };
