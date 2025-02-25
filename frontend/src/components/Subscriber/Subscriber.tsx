@@ -1,4 +1,4 @@
-import { ReactElement, useEffect, useRef } from 'react';
+import { MouseEvent, ReactElement, useEffect, useRef, useState } from 'react';
 import { Box } from 'opentok-layout-js';
 import { SubscriberWrapper } from '../../types/session';
 import AudioIndicator from '../MeetingRoom/AudioIndicator';
@@ -7,6 +7,9 @@ import AvatarInitials from '../AvatarInitials';
 import ScreenShareNameDisplay from '../ScreenShareNameDisplay';
 import NameDisplay from '../MeetingRoom/NameDisplay';
 import VideoTile from '../MeetingRoom/VideoTile';
+import PinButton from '../MeetingRoom/PinButton';
+import useSessionContext from '../../hooks/useSessionContext';
+import isMouseEventInsideBox from '../../utils/isMouseEventInsideBox';
 
 export type SubscriberProps = {
   subscriberWrapper: SubscriberWrapper;
@@ -33,10 +36,12 @@ const Subscriber = ({
   box,
   isActiveSpeaker,
 }: SubscriberProps): ReactElement => {
-  const { subscriber } = subscriberWrapper;
+  const { isMaxPinned, pinSubscriber } = useSessionContext();
+  const { isPinned, subscriber } = subscriberWrapper;
   const isScreenShare = subscriber?.stream?.videoType === 'screen';
   const subRef = useRef<HTMLDivElement>(null);
   const isTalking = useSubscriberTalking({ subscriber, isActiveSpeaker });
+  const [isTileHovered, setIsTileHovered] = useState<boolean>(false);
 
   useEffect(() => {
     // If hidden - Unsubscribe from video to save bandwidth and cpu
@@ -61,13 +66,29 @@ const Subscriber = ({
     }
   }, [subscriberWrapper, isScreenShare]);
 
+  const handlePinClick = (clickEvent: MouseEvent<HTMLButtonElement>) => {
+    pinSubscriber(subscriberWrapper.id);
+    // We set hovering to false manually since onMouseLeave is not invoked when the DOM Element is moved.
+    setIsTileHovered(false);
+    // In case the DOM Element didn't move, which can happen if pinning while viewing screenshare -
+    // we use setTimeout to let the new layout render, then check if the element is still under the click event location.
+    // If so we re-enable the hover state.
+    setTimeout(() => {
+      if (subRef.current) {
+        const divRect = subRef.current.getBoundingClientRect();
+        if (isMouseEventInsideBox(clickEvent, divRect)) {
+          setIsTileHovered(true);
+        }
+      }
+    }, 0);
+  };
+
   const hasVideo = subscriberWrapper.subscriber?.stream?.hasVideo;
   const initials = subscriberWrapper.subscriber?.stream?.initials;
   const username = subscriberWrapper.subscriber?.stream?.name ?? '';
   const hasAudio = subscriberWrapper.subscriber.stream?.hasAudio;
   const audioIndicatorStyle =
     'rounded-xl absolute top-3 right-3 bg-darkGray-55 h-6 w-6 items-center justify-center flex m-auto';
-
   return (
     <VideoTile
       id={`${subscriberWrapper.id}`}
@@ -78,7 +99,18 @@ const Subscriber = ({
       hasVideo={!!hasVideo}
       ref={subRef}
       isTalking={isTalking}
+      onMouseEnter={() => setIsTileHovered(true)}
+      onMouseLeave={() => setIsTileHovered(false)}
     >
+      {!isScreenShare && (
+        <PinButton
+          isPinned={isPinned}
+          isTileHovered={isTileHovered}
+          isMaxPinned={isMaxPinned}
+          handleClick={handlePinClick}
+          participantName={username}
+        />
+      )}
       {!isScreenShare && (
         <AudioIndicator
           hasAudio={hasAudio}

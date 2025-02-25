@@ -7,11 +7,13 @@ export const openMeetingRoomWithSettings = async ({
   roomName,
   username,
   videoOff = false,
+  audioOff = false,
 }: {
   page: Page;
   roomName: string;
   username: string;
   videoOff?: boolean;
+  audioOff?: boolean;
 }) => {
   await page.goto(`${baseURL}waiting-room/${roomName}`);
   await page.getByPlaceholder('Enter your name').fill(username);
@@ -19,6 +21,10 @@ export const openMeetingRoomWithSettings = async ({
   if (videoOff) {
     await page.getByTestId('VideocamIcon').click();
     await expect(page.getByTestId('VideocamOffIcon')).toBeVisible();
+  }
+  if (audioOff) {
+    await page.getByTestId('MicIcon').click();
+    await expect(page.getByTestId('MicOffIcon')).toBeVisible();
   }
   await page.getByRole('button', { name: 'Join' }).click();
 };
