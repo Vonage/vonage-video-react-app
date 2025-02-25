@@ -17,7 +17,9 @@ type LayoutToggleButtonProps = {
  * @param {boolean} isScreenSharePresent - Indicates whether there is a screenshare currently in the session.
  * @returns {ReactElement} The LayoutToggleButton component.
  */
-const LayoutToggleButton = ({ isScreenSharePresent }: LayoutToggleButtonProps): ReactElement => {
+const LayoutToggleButton = ({
+  isScreenSharePresent,
+}: LayoutToggleButtonProps): ReactElement | false => {
   const { layoutMode, setLayoutMode } = useSessionContext();
   const isGrid = layoutMode === 'grid';
 
