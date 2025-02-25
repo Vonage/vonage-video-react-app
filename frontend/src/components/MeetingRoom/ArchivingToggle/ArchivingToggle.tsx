@@ -80,6 +80,9 @@ const ArchivingToggle = (): ReactElement => {
               style={{ color: `${isRecording ? 'rgb(239 68 68)' : 'white'}` }}
             />
           }
+          sx={{
+            marginTop: isSmallViewport ? '0px' : '4px',
+          }}
           isSmallViewPort={isSmallViewport}
         />
       </Tooltip>

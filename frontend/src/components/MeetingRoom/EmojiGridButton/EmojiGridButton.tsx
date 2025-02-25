@@ -43,6 +43,9 @@ const EmojiGridButton = ({
           }
           ref={anchorRef}
           data-testid="emoji-grid-toggle"
+          sx={{
+            marginTop: isSmallViewport ? '0px' : '4px',
+          }}
           isSmallViewPort={isSmallViewport}
         />
       </Tooltip>

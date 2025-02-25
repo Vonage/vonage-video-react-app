@@ -53,6 +53,7 @@ const LayoutToggleButton = ({
         }
         sx={{
           cursor: isScreenSharePresent ? 'not-allowed' : 'pointer',
+          marginTop: isSmallViewport ? '0px' : '4px',
         }}
         isSmallViewPort={isSmallViewport}
       />
