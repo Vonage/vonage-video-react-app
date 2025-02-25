@@ -4,7 +4,7 @@ import { hasMediaProcessorSupport } from '@vonage/client-sdk-video';
 import { ReactElement } from 'react';
 import usePreviewPublisherContext from '../../../hooks/usePreviewPublisherContext';
 import BlurIcon from '../../Icons/Blur';
-import VideoContainerToggleButton from '../VideoContainerToggleButton';
+import VideoContainerButton from '../VideoContainerButton';
 
 /**
  * BlurButton Component
@@ -33,7 +33,7 @@ const BlurButton = (): ReactElement | false => {
         }}
       >
         <Tooltip title={title} aria-label="toggle background blur">
-          <VideoContainerToggleButton
+          <VideoContainerButton
             onClick={toggleBlur}
             isEnabled={!hasBlur}
             sx={{

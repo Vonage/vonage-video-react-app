@@ -3,7 +3,7 @@ import { MicOff } from '@mui/icons-material';
 import MicIcon from '@mui/icons-material/Mic';
 import { ReactElement } from 'react';
 import usePreviewPublisherContext from '../../../hooks/usePreviewPublisherContext';
-import VideoContainerToggleButton from '../VideoContainerToggleButton';
+import VideoContainerButton from '../VideoContainerButton';
 
 /**
  * MicToggleButton Component
@@ -31,7 +31,7 @@ const MicToggleButton = (): ReactElement => {
       }}
     >
       <Tooltip title={title} aria-label="toggle audio">
-        <VideoContainerToggleButton
+        <VideoContainerButton
           onClick={toggleAudio}
           isEnabled={isAudioEnabled}
           sx={{

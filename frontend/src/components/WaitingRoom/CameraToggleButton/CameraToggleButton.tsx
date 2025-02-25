@@ -3,7 +3,7 @@ import VideocamIcon from '@mui/icons-material/Videocam';
 import VideocamOffIcon from '@mui/icons-material/VideocamOff';
 import { ReactElement } from 'react';
 import usePreviewPublisherContext from '../../../hooks/usePreviewPublisherContext';
-import VideoContainerToggleButton from '../VideoContainerToggleButton';
+import VideoContainerButton from '../VideoContainerButton';
 
 /**
  * CameraToggleButton Component
@@ -30,7 +30,7 @@ const CameraToggleButton = (): ReactElement => {
       }}
     >
       <Tooltip title={title} aria-label="toggle video">
-        <VideoContainerToggleButton
+        <VideoContainerButton
           onClick={toggleVideo}
           sx={{
             backgroundColor: !isVideoEnabled ? 'rgb(234, 67, 53)' : '',
