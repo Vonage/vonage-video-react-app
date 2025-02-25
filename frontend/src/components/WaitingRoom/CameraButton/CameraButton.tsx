@@ -6,12 +6,12 @@ import usePreviewPublisherContext from '../../../hooks/usePreviewPublisherContex
 import VideoContainerButton from '../VideoContainerButton';
 
 /**
- * CameraToggleButton Component
+ * CameraButton Component
  *
  * Displays an overlay button to handle toggling video on and off for the preview publisher.
- * @returns {ReactElement} - The CameraToggleButton component.
+ * @returns {ReactElement} - The CameraButton component.
  */
-const CameraToggleButton = (): ReactElement => {
+const CameraButton = (): ReactElement => {
   const { isVideoEnabled, toggleVideo } = usePreviewPublisherContext();
   const title = `Turn ${isVideoEnabled ? 'off' : 'on'} camera`;
 
@@ -54,4 +54,4 @@ const CameraToggleButton = (): ReactElement => {
   );
 };
 
-export default CameraToggleButton;
+export default CameraButton;
