@@ -5,14 +5,14 @@ import ChatButton from './ChatButton';
 describe('ChatButton', () => {
   it('should show unread message number', () => {
     render(<ChatButton handleClick={() => {}} isOpen={false} unreadCount={10} />);
-    expect(screen.getByTestId('chat-toggle-unread-count')).toBeVisible();
-    expect(screen.getByTestId('chat-toggle-unread-count').textContent).toBe('10');
+    expect(screen.getByTestId('chat-button-unread-count')).toBeVisible();
+    expect(screen.getByTestId('chat-button-unread-count').textContent).toBe('10');
   });
 
   it('should not show unread message number when number is 0', () => {
     render(<ChatButton handleClick={() => {}} isOpen={false} unreadCount={0} />);
 
-    const badge = within(screen.getByTestId('chat-toggle-unread-count')).getByText('0');
+    const badge = within(screen.getByTestId('chat-button-unread-count')).getByText('0');
     // Check badge is hidden:  MUI hides badge by setting dimensions to 0x0
     expect(badge.offsetHeight).toBe(0);
     expect(badge.offsetWidth).toBe(0);

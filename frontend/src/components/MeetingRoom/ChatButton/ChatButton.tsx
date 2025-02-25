@@ -27,7 +27,7 @@ const ChatButton = ({ handleClick, isOpen, unreadCount }: ChatButtonProps): Reac
     <Tooltip title={isOpen ? 'Close chat' : 'Open chat'} aria-label="toggle chat">
       <Badge
         badgeContent={unreadCount}
-        data-testid="chat-toggle-unread-count"
+        data-testid="chat-button-unread-count"
         invisible={unreadCount === 0}
         sx={{
           '& .MuiBadge-badge': {

@@ -41,7 +41,7 @@ const EmojiGridButton = ({
             />
           }
           ref={anchorRef}
-          data-testid="emoji-grid-toggle"
+          data-testid="emoji-grid-button"
         />
       </Tooltip>
 

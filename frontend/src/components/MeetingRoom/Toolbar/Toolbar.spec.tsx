@@ -68,10 +68,10 @@ describe('Toolbar', () => {
 
     expect(screen.queryByTestId('hidden-toolbar-items')).toBeVisible();
 
-    expect(screen.queryByTestId('archiving-toggle')).not.toBeInTheDocument();
+    expect(screen.queryByTestId('archiving-button')).not.toBeInTheDocument();
     expect(screen.queryByTestId('screensharing-toggle')).not.toBeInTheDocument();
-    expect(screen.queryByTestId('archiving-toggle')).not.toBeInTheDocument();
-    expect(screen.queryByTestId('emoji-grid-toggle')).not.toBeInTheDocument();
+    expect(screen.queryByTestId('archiving-button')).not.toBeInTheDocument();
+    expect(screen.queryByTestId('emoji-grid-button')).not.toBeInTheDocument();
   });
 
   it('on a normal viewport, displays all of the toolbar buttons', () => {
@@ -80,9 +80,9 @@ describe('Toolbar', () => {
 
     render(<Toolbar {...defaultProps} />);
 
-    expect(screen.queryByTestId('archiving-toggle')).toBeVisible();
+    expect(screen.queryByTestId('archiving-button')).toBeVisible();
     expect(screen.queryByTestId('screensharing-toggle')).toBeVisible();
-    expect(screen.queryByTestId('archiving-toggle')).toBeVisible();
-    expect(screen.queryByTestId('emoji-grid-toggle')).toBeVisible();
+    expect(screen.queryByTestId('archiving-button')).toBeVisible();
+    expect(screen.queryByTestId('emoji-grid-button')).toBeVisible();
   });
 });

@@ -32,7 +32,7 @@ const EmojiGrid = ({
   const handleClickAway = (event: MouseEvent | TouchEvent) => {
     const target = event.target as HTMLElement;
 
-    if (isSmallViewport && !target.closest('#emoji-grid-toggle')) {
+    if (isSmallViewport && !target.closest('#emoji-grid-button')) {
       return;
     }
     // If a user clicks the toggle button, we save their preference for later. If a user doesn't select

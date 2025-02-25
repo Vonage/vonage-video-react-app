@@ -38,7 +38,7 @@ const LayoutButton = ({ isScreenSharePresent }: LayoutButtonProps): ReactElement
     <Tooltip title={getTooltipTitle()} aria-label="video layout">
       <ToolbarButton
         onClick={handleClick}
-        data-testid="layout-toggle"
+        data-testid="layout-button"
         icon={
           !isGrid ? (
             <ViewSidebarIcon className={isScreenSharePresent ? 'text-gray-500' : 'text-white'} />
