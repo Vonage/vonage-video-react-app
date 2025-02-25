@@ -57,6 +57,6 @@ describe('ToolbarOverflowButton', () => {
   it('should have the unread messages badge present', () => {
     render(<ToolbarOverflowButton />);
 
-    expect(screen.getByTestId('chat-toggle-unread-count')).toBeInTheDocument();
+    expect(screen.getByTestId('chat-button-unread-count')).toBeInTheDocument();
   });
 });
