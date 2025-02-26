@@ -7,7 +7,6 @@ import { DEVICE_ACCESS_STATUS } from '../../utils/constants';
 import DeviceAccessAlert from '../../components/DeviceAccessAlert';
 import Banner from '../../components/Banner';
 import useIsSmallViewport from '../../hooks/useIsSmallViewport';
-import useWindowWidth from '../../hooks/useWindowWidth';
 
 /**
  * WaitingRoom Component
@@ -32,9 +31,6 @@ const WaitingRoom = (): ReactElement => {
   const [openAudioOutput, setOpenAudioOutput] = useState<boolean>(false);
   const [username, setUsername] = useState(window.localStorage.getItem('username') ?? '');
   const isSmallViewport = useIsSmallViewport();
-  const deviceWidth = useWindowWidth();
-  const videoHeight = (deviceWidth * 9) / 16;
-  const videoHeightClass = `h-[${videoHeight}px]`;
 
   useEffect(() => {
     if (!publisher) {
@@ -91,7 +87,7 @@ const WaitingRoom = (): ReactElement => {
         <div className="mb-8 flex w-full justify-center">
           <div className="flex w-full flex-col items-center justify-center sm:min-h-[90vh] md:flex-row">
             <div
-              className={`max-w-full flex-col ${isSmallViewport ? videoHeightClass : 'h-[394px]'} sm: inline-flex`}
+              className={`max-w-full flex-col ${isSmallViewport ? '' : 'h-[394px]'} sm: inline-flex`}
             >
               <VideoContainer username={username} />
               {accessStatus === DEVICE_ACCESS_STATUS.ACCEPTED && (
