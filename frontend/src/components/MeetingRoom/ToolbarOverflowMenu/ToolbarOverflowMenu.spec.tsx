@@ -46,22 +46,22 @@ describe('ToolbarOverflowMenu', () => {
   it('renders all the available buttons including the Report Issue button if enabled', () => {
     vi.stubEnv('VITE_ENABLE_REPORT_ISSUE', 'true');
     render(<TestComponent defaultOpen />);
-    expect(screen.getByTestId('layout-toggle')).toBeVisible();
-    expect(screen.getByTestId('archiving-toggle')).toBeVisible();
+    expect(screen.getByTestId('layout-button')).toBeVisible();
+    expect(screen.getByTestId('archiving-button')).toBeVisible();
     expect(screen.getByTestId('emoji-grid-toggle')).toBeVisible();
     expect(screen.getByTestId('report-issue-button')).toBeVisible();
     expect(screen.getByTestId('participant-list-toggle')).toBeVisible();
-    expect(screen.getByTestId('chat-toggle')).toBeVisible();
+    expect(screen.getByTestId('chat-button')).toBeVisible();
   });
 
   it('does not render Report Issue button in overflow menu if it was disabled', () => {
     vi.stubEnv('VITE_ENABLE_REPORT_ISSUE', 'false');
     render(<TestComponent defaultOpen />);
-    expect(screen.getByTestId('layout-toggle')).toBeVisible();
-    expect(screen.getByTestId('archiving-toggle')).toBeVisible();
+    expect(screen.getByTestId('layout-button')).toBeVisible();
+    expect(screen.getByTestId('archiving-button')).toBeVisible();
     expect(screen.getByTestId('emoji-grid-toggle')).toBeVisible();
     expect(screen.queryByTestId('report-issue-button')).not.toBeInTheDocument();
     expect(screen.getByTestId('participant-list-toggle')).toBeVisible();
-    expect(screen.getByTestId('chat-toggle')).toBeVisible();
+    expect(screen.getByTestId('chat-button')).toBeVisible();
   });
 });

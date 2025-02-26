@@ -71,7 +71,7 @@ describe('Toolbar', () => {
     expect(screen.queryByTestId('archiving-button')).not.toBeInTheDocument();
     expect(screen.queryByTestId('screensharing-button')).not.toBeInTheDocument();
     expect(screen.queryByTestId('archiving-button')).not.toBeInTheDocument();
-    expect(screen.queryByTestId('emoji-grid-button')).not.toBeInTheDocument();
+    expect(screen.queryByTestId('emoji-grid-toggle')).not.toBeInTheDocument();
   });
 
   it('on a normal viewport, displays all of the toolbar buttons', () => {
@@ -83,6 +83,6 @@ describe('Toolbar', () => {
     expect(screen.queryByTestId('archiving-button')).toBeVisible();
     expect(screen.queryByTestId('screensharing-button')).toBeVisible();
     expect(screen.queryByTestId('archiving-button')).toBeVisible();
-    expect(screen.queryByTestId('emoji-grid-button')).toBeVisible();
+    expect(screen.queryByTestId('emoji-grid-toggle')).toBeVisible();
   });
 });

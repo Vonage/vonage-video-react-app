@@ -27,7 +27,7 @@ const ChatButton = ({ handleClick, isOpen }: ChatButtonProps): ReactElement => {
     <Tooltip title={isOpen ? 'Close chat' : 'Open chat'} aria-label="toggle chat">
       <UnreadMessagesBadge>
         <ToolbarButton
-          data-testid="chat-toggle"
+          data-testid="chat-button"
           sx={{
             marginTop: '0px',
             marginRight: '0px',
