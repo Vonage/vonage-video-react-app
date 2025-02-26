@@ -51,7 +51,9 @@ const LayoutButton = ({ isScreenSharePresent }: LayoutButtonProps): ReactElement
         }
         sx={{
           cursor: isScreenSharePresent ? 'not-allowed' : 'pointer',
+          // on the small view port devices we need to align the button
           marginTop: isSmallViewport ? '0px' : '4px',
+          marginLeft: isSmallViewport ? '12px' : '0px',
         }}
         isSmallViewPort={isSmallViewport}
       />
