@@ -1,5 +1,6 @@
 import { Avatar } from '@mui/material';
-import { ReactElement, useEffect, useState } from 'react';
+import { ReactElement } from 'react';
+import useWindowWidth from '../../../hooks/useWindowWidth';
 import AvatarInitials from '../../AvatarInitials';
 import useIsSmallViewport from '../../../hooks/useIsSmallViewport';
 
@@ -27,18 +28,6 @@ const PreviewAvatar = ({
   isVideoEnabled,
   isVideoLoading,
 }: PreviewAvatarProps): ReactElement | null => {
-  const useWindowWidth = () => {
-    const [width, setWidth] = useState(window.innerWidth);
-
-    useEffect(() => {
-      const handleResize = () => setWidth(window.innerWidth);
-      window.addEventListener('resize', handleResize);
-
-      return () => window.removeEventListener('resize', handleResize);
-    }, []);
-
-    return width;
-  };
   const displayWidth = useWindowWidth() * 0.46;
   const isSmallViewPort = useIsSmallViewport();
   const height = isSmallViewPort ? displayWidth : 328;
