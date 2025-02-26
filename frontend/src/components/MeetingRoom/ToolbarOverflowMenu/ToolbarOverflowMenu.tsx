@@ -1,9 +1,9 @@
 import { ClickAwayListener, PopperChildrenProps } from '@mui/base';
 import { Grow, Paper, Popper } from '@mui/material';
 import { Dispatch, ReactElement, RefObject, SetStateAction } from 'react';
-import ArchivingToggle from '../ArchivingToggle';
+import ArchivingButton from '../ArchivingButton';
 import EmojiGridButton from '../EmojiGridButton';
-import LayoutToggleButton from '../LayoutToggleButton';
+import LayoutButton from '../LayoutButton';
 import useSessionContext from '../../../hooks/useSessionContext';
 
 export type ToolbarOverflowMenuProps = {
@@ -75,13 +75,13 @@ const ToolbarOverflowMenu = ({
                   paddingLeft: '12px',
                 }}
               >
-                <LayoutToggleButton isScreenSharePresent={isViewingScreenShare} />
+                <LayoutButton isScreenSharePresent={isViewingScreenShare} />
                 <EmojiGridButton
                   isEmojiGridOpen={isEmojiGridOpen}
                   setIsEmojiGridOpen={setIsEmojiGridOpen}
                   isParentOpen={isToolbarOverflowMenuOpen}
                 />
-                <ArchivingToggle />
+                <ArchivingButton />
               </Paper>
             </ClickAwayListener>
           </div>

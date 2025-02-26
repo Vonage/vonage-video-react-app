@@ -270,7 +270,7 @@ describe('MeetingRoom', () => {
     rerender(<MeetingRoomWithProviders />);
     sessionContext.unreadCount = 4;
     rerender(<MeetingRoomWithProviders />);
-    expect(screen.getByTestId('chat-toggle-unread-count')).toHaveTextContent('4');
+    expect(screen.getByTestId('chat-button-unread-count')).toHaveTextContent('4');
   });
 
   describe('video quality problem alert', () => {
