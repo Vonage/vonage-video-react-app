@@ -12,6 +12,7 @@ import PreviewAvatar from '../PreviewAvatar';
 import VoiceIndicatorIcon from '../../MeetingRoom/VoiceIndicator/VoiceIndicator';
 import useIsSmallViewport from '../../../hooks/useIsSmallViewport';
 import VignetteEffect from '../VignetteEffect';
+import useWindowWidth from '../../../hooks/useWindowWidth';
 
 export type VideoContainerProps = {
   username: string;
@@ -34,6 +35,10 @@ const VideoContainer = ({ username }: VideoContainerProps): ReactElement => {
     usePreviewPublisherContext();
   const initials = getInitials(username);
   const isSmallViewport = useIsSmallViewport();
+  const deviceWidth = useWindowWidth();
+  const videoHeight = Math.round((deviceWidth * 9) / 16);
+  const videoHeightClass = `h-[${videoHeight}px]`;
+  const videoContainerClass = `relative flex aspect-video w-[584px] max-w-full flex-col items-center justify-center bg-black sm:h-[328px] md:rounded-xl`;
 
   useEffect(() => {
     if (publisherVideoElement && containerRef.current) {
@@ -42,7 +47,7 @@ const VideoContainer = ({ username }: VideoContainerProps): ReactElement => {
       myVideoElement.classList.add('video__element');
       myVideoElement.title = 'publisher-preview';
       myVideoElement.style.borderRadius = isSmallViewport ? '0px' : '12px';
-      myVideoElement.style.height = isSmallViewport ? '' : '328px';
+      myVideoElement.style.height = isSmallViewport ? `${videoHeight}px` : '328px';
       myVideoElement.style.width = isSmallViewport ? '100dvw' : '584px';
       myVideoElement.style.marginLeft = 'auto';
       myVideoElement.style.marginRight = 'auto';
@@ -56,11 +61,11 @@ const VideoContainer = ({ username }: VideoContainerProps): ReactElement => {
         setVideoLoading(false);
       });
     }
-  }, [isSmallViewport, publisherVideoElement]);
+  }, [isSmallViewport, publisherVideoElement, videoHeight]);
 
   return (
     <div
-      className="relative flex w-[584px] max-w-full flex-col items-center justify-center bg-black sm:h-[328px] md:rounded-xl"
+      className={videoContainerClass}
       // this was added because overflow: hidden causes issues with rendering
       // see https://stackoverflow.com/questions/77748631/element-rounded-corners-leaking-out-to-front-when-using-overflow-hidden
       style={{ WebkitMask: 'linear-gradient(#000 0 0)' }}
