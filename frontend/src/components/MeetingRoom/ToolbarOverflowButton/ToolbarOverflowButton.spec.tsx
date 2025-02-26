@@ -24,6 +24,7 @@ const sessionContext = {
   subscriberWrappers: [],
   layoutMode: 'grid',
   setLayoutMode: vi.fn(),
+  unreadCount: 0,
 } as unknown as SessionContextType;
 
 describe('ToolbarOverflowButton', () => {
@@ -51,5 +52,11 @@ describe('ToolbarOverflowButton', () => {
     expect(screen.queryByTestId('layout-toggle')).toBeVisible();
     expect(screen.queryByTestId('emoji-grid-toggle')).toBeVisible();
     expect(screen.queryByTestId('archiving-toggle')).toBeVisible();
+  });
+
+  it('should have the unread messages badge present', () => {
+    render(<ToolbarOverflowButton />);
+
+    expect(screen.getByTestId('chat-toggle-unread-count')).toBeInTheDocument();
   });
 });
