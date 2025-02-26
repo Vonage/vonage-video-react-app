@@ -60,7 +60,7 @@ const VideoContainer = ({ username }: VideoContainerProps): ReactElement => {
 
   return (
     <div
-      className="relative flex w-[584px] max-w-full flex-col items-center justify-center bg-black sm:h-[328px] md:rounded-xl"
+      className="relative flex aspect-video w-[584px] max-w-full flex-col items-center justify-center bg-black sm:h-[328px] md:rounded-xl"
       // this was added because overflow: hidden causes issues with rendering
       // see https://stackoverflow.com/questions/77748631/element-rounded-corners-leaking-out-to-front-when-using-overflow-hidden
       style={{ WebkitMask: 'linear-gradient(#000 0 0)' }}
