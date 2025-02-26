@@ -26,7 +26,7 @@ const ToolbarButton = forwardRef(function ToolbarButton(
   props: ToolbarButtonProps,
   ref: ForwardedRef<HTMLButtonElement>
 ) {
-  const { icon: Icon, sx = {}, ...rest } = props;
+  const { icon: Icon, sx = {}, isSmallViewPort, ...rest } = props;
 
   return (
     <IconButton
@@ -38,8 +38,8 @@ const ToolbarButton = forwardRef(function ToolbarButton(
         marginLeft: '0px',
         marginTop: '4px',
         marginRight: '12px',
-        width: props.isSmallViewPort ? '42px' : '48px',
-        height: props.isSmallViewPort ? '42px' : '48px',
+        width: isSmallViewPort ? '42px' : '48px',
+        height: isSmallViewPort ? '42px' : '48px',
         backgroundColor: 'rgba(60, 64, 67, 0.55)',
         '&:hover': {
           backgroundColor: 'rgba(60, 64, 67, 0.42)',
