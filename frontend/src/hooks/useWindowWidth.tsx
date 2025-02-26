@@ -1,9 +1,7 @@
 import { useEffect, useState } from 'react';
 
 /**
- * useWindowWidth
- *
- * Hook to find the current window width.
+ * React hook to find the current window width.
  * @returns {number} - How wide the current window is
  */
 const useWindowWidth = () => {
