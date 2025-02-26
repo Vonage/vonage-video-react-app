@@ -9,14 +9,14 @@ import useSessionContext from '../../../hooks/useSessionContext';
 import useIsSmallViewport from '../../../hooks/useIsSmallViewport';
 
 /**
- * ArchivingToggle Component
+ * ArchivingButton Component
  *
  * Displays a button and handles the archiving functionality. If a meeting is currently being recorded,
  * will confirm that a user wishes to stop the recording. If a meeting is not being recorded, prompts
  * the user before starting the archive.
- * @returns {ReactElement} - The ArchivingToggle component.
+ * @returns {ReactElement} - The ArchivingButton component.
  */
-const ArchivingToggle = (): ReactElement => {
+const ArchivingButton = (): ReactElement => {
   const roomName = useRoomName();
   const { archiveId } = useSessionContext();
   const isRecording = !!archiveId;
@@ -74,7 +74,7 @@ const ArchivingToggle = (): ReactElement => {
       <Tooltip title={title} aria-label="video layout">
         <ToolbarButton
           onClick={handleButtonClick}
-          data-testid="archiving-toggle"
+          data-testid="archiving-button"
           icon={
             <RadioButtonCheckedIcon
               style={{ color: `${isRecording ? 'rgb(239 68 68)' : 'white'}` }}
@@ -95,4 +95,4 @@ const ArchivingToggle = (): ReactElement => {
     </>
   );
 };
-export default ArchivingToggle;
+export default ArchivingButton;

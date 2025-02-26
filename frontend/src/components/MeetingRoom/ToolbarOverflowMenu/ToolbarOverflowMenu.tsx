@@ -1,12 +1,12 @@
 import { ClickAwayListener, PopperChildrenProps } from '@mui/base';
 import { Grow, Paper, Popper } from '@mui/material';
 import { Dispatch, ReactElement, RefObject, SetStateAction } from 'react';
-import ArchivingToggle from '../ArchivingToggle';
+import ArchivingButton from '../ArchivingButton';
 import EmojiGridButton from '../EmojiGridButton';
-import LayoutToggleButton from '../LayoutToggleButton';
-import ParticipantListToggleButton from '../ParticipantListToggleButton';
-import ChatToggleButton from '../ChatToggleButton';
+import ParticipantListButton from '../ParticipantListButton';
+import ChatButton from '../ChatButton';
 import ReportIssueButton from '../ReportIssueButton';
+import LayoutButton from '../LayoutButton';
 import useSessionContext from '../../../hooks/useSessionContext';
 
 export type ToolbarOverflowMenuProps = {
@@ -42,7 +42,6 @@ const ToolbarOverflowMenu = ({
     toggleParticipantList,
     toggleChat,
     toggleReportIssue,
-    unreadCount,
   } = useSessionContext();
   const isViewingScreenShare = subscriberWrappers.some((subWrapper) => subWrapper.isScreenshare);
   const participantCount =
@@ -87,29 +86,25 @@ const ToolbarOverflowMenu = ({
                   paddingLeft: '12px',
                 }}
               >
-                <LayoutToggleButton isScreenSharePresent={isViewingScreenShare} />
+                <LayoutButton isScreenSharePresent={isViewingScreenShare} />
                 <EmojiGridButton
                   isEmojiGridOpen={isEmojiGridOpen}
                   setIsEmojiGridOpen={setIsEmojiGridOpen}
                   isParentOpen={isToolbarOverflowMenuOpen}
                 />
-                <ArchivingToggle />
+                <ArchivingButton />
                 {isReportIssueEnabled && (
                   <ReportIssueButton
                     isOpen={rightPanelActiveTab === 'issues'}
                     handleClick={toggleReportIssue}
                   />
                 )}
-                <ParticipantListToggleButton
+                <ParticipantListButton
                   isOpen={rightPanelActiveTab === 'participant-list'}
                   handleClick={toggleParticipantList}
                   participantCount={participantCount}
                 />
-                <ChatToggleButton
-                  isOpen={rightPanelActiveTab === 'chat'}
-                  handleClick={toggleChat}
-                  unreadCount={unreadCount}
-                />
+                <ChatButton isOpen={rightPanelActiveTab === 'chat'} handleClick={toggleChat} />
               </Paper>
             </ClickAwayListener>
           </div>

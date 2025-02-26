@@ -6,20 +6,18 @@ import useSessionContext from '../../../hooks/useSessionContext';
 import ToolbarButton from '../ToolbarButton';
 import useIsSmallViewport from '../../../hooks/useIsSmallViewport';
 
-type LayoutToggleButtonProps = {
+type LayoutButtonProps = {
   isScreenSharePresent: boolean;
 };
 
 /**
- * LayoutToggleButton Component
+ * LayoutButton Component
  *
  * Displays a button to toggle the meeting room layout for the user between `grid` and `active-speaker`.
  * @param {boolean} isScreenSharePresent - Indicates whether there is a screenshare currently in the session.
- * @returns {ReactElement} The LayoutToggleButton component.
+ * @returns {ReactElement} The LayoutButton component.
  */
-const LayoutToggleButton = ({
-  isScreenSharePresent,
-}: LayoutToggleButtonProps): ReactElement | false => {
+const LayoutButton = ({ isScreenSharePresent }: LayoutButtonProps): ReactElement | false => {
   const { layoutMode, setLayoutMode } = useSessionContext();
   const isGrid = layoutMode === 'grid';
 
@@ -43,7 +41,7 @@ const LayoutToggleButton = ({
     <Tooltip title={getTooltipTitle()} aria-label="video layout">
       <ToolbarButton
         onClick={handleClick}
-        data-testid="layout-toggle"
+        data-testid="layout-button"
         icon={
           !isGrid ? (
             <ViewSidebarIcon className={isScreenSharePresent ? 'text-gray-500' : 'text-white'} />
@@ -61,4 +59,4 @@ const LayoutToggleButton = ({
   );
 };
 
-export default LayoutToggleButton;
+export default LayoutButton;

@@ -30,7 +30,7 @@ test.describe('chat', () => {
     await pageTwo.waitForSelector('.publisher', { state: 'visible' });
     await pageTwo.waitForSelector('.subscriber', { state: 'visible' });
 
-    const chatToggleButtonOne = await pageOne.getByTestId('chat-toggle-unread-count');
+    const chatToggleButtonOne = await pageOne.getByTestId('chat-button-unread-count');
     chatToggleButtonOne.click();
 
     // Check that chat open shows blue button
@@ -47,9 +47,15 @@ test.describe('chat', () => {
     await pageOne.getByTestId('SendIcon').click();
 
     // check unread notification is present on page two
-    await expect(pageTwo.getByTestId('chat-toggle-unread-count')).toHaveText('1');
-    await pageTwo.getByTestId('chat-toggle-unread-count').click();
-    await expect(pageTwo.getByTestId('chat-toggle-unread-count')).toHaveText('0');
+    await expect(pageTwo.getByTestId('chat-button-unread-count')).toHaveText('1');
+    await pageTwo.getByTestId('chat-button-unread-count').click();
+    // Check badge is hidden:  MUI hides badge by setting dimensions to 0x0
+    await pageTwo.waitForFunction(async () => {
+      const badge = document.querySelector(
+        '[data-testid="chat-button-unread-count"]'
+      ) as HTMLElement;
+      return badge.offsetHeight === 0 && badge.offsetWidth === 0;
+    });
 
     await expect(pageTwo.getByTestId('chat-message').getByRole('paragraph')).toHaveText(
       'Hi there, welcome to the meeting!'

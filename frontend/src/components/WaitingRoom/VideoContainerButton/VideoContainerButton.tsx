@@ -9,7 +9,7 @@ export type VideoContainerButtonProps = {
 };
 
 /**
- * VideoContainerToggleButton Component
+ * VideoContainerButton Component
  *
  * An overlay button for the preview publisher.
  * @param {VideoContainerButtonProps} props - The props for the component.
@@ -17,9 +17,9 @@ export type VideoContainerButtonProps = {
  *  @property {ReactElement} icon - The Icon element for the button.
  *  @property {SxProps} sx - The style properties for the component.
  *  @property {boolean} isEnabled - Whether the button is toggled or not.
- * @returns {ReactElement} The VideoContainerToggleButton component.
+ * @returns {ReactElement} The VideoContainerButton component.
  */
-const VideoContainerToggleButton = forwardRef(function VideoContainerToggleButton(
+const VideoContainerButton = forwardRef(function VideoContainerButton(
   props: VideoContainerButtonProps,
   ref: ForwardedRef<HTMLButtonElement>
 ): ReactElement {
@@ -39,4 +39,4 @@ const VideoContainerToggleButton = forwardRef(function VideoContainerToggleButto
   );
 });
 
-export default VideoContainerToggleButton;
+export default VideoContainerButton;

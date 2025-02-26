@@ -1,8 +1,8 @@
 import { useRef, useState, useEffect, ReactElement } from 'react';
 import { Stack } from '@mui/material';
-import MicToggleButton from '../MicToggleButton';
-import CameraToggleButton from '../CameraToggleButton';
-import BlurToggleButton from '../BlurToggleButton';
+import MicButton from '../MicButton';
+import CameraButton from '../CameraButton';
+import BlurButton from '../BlurButton';
 import VideoLoading from '../VideoLoading';
 import waitUntilPlaying from '../../../utils/waitUntilPlaying';
 import useUserContext from '../../../hooks/useUserContext';
@@ -82,11 +82,11 @@ const VideoContainer = ({ username }: VideoContainerProps): ReactElement => {
             </div>
           )}
           <Stack direction="row" spacing={2}>
-            <MicToggleButton />
-            <CameraToggleButton />
+            <MicButton />
+            <CameraButton />
           </Stack>
           <div className="absolute right-[20px]">
-            <BlurToggleButton />
+            <BlurButton />
           </div>
         </div>
       )}

@@ -5,10 +5,10 @@ import ScreenSharingButton from '../../ScreenSharingButton';
 import TimeRoomNameMeetingRoom from '../TimeRoomName';
 import ExitButton from '../ExitButton';
 import useSessionContext from '../../../hooks/useSessionContext';
-import LayoutToggleButton from '../LayoutToggleButton';
-import ParticipantListToggleButton from '../ParticipantListToggleButton';
-import ArchivingToggle from '../ArchivingToggle';
-import ChatToggleButton from '../ChatToggleButton';
+import LayoutButton from '../LayoutButton';
+import ParticipantListButton from '../ParticipantListButton';
+import ArchivingButton from '../ArchivingButton';
+import ChatButton from '../ChatButton';
 import { RightPanelActiveTab } from '../../../hooks/useRightPanel';
 import ReportIssueButton from '../ReportIssueButton';
 import ToolbarOverflowButton from '../ToolbarOverflowButton';
@@ -56,7 +56,7 @@ const Toolbar = ({
   toggleReportIssue,
   participantCount,
 }: ToolbarProps): ReactElement => {
-  const { disconnect, unreadCount, subscriberWrappers } = useSessionContext();
+  const { disconnect, subscriberWrappers } = useSessionContext();
   const isReportIssueEnabled = import.meta.env.VITE_ENABLE_REPORT_ISSUE === 'true';
   const isViewingScreenShare = subscriberWrappers.some((subWrapper) => subWrapper.isScreenshare);
   const isScreenSharePresent = isViewingScreenShare || isSharingScreen;
@@ -86,13 +86,13 @@ const Toolbar = ({
               isSharingScreen={isSharingScreen}
               isViewingScreenShare={isViewingScreenShare}
             />
-            <LayoutToggleButton isScreenSharePresent={isScreenSharePresent} />
+            <LayoutButton isScreenSharePresent={isScreenSharePresent} />
             <EmojiGridButton
               isEmojiGridOpen={openEmojiGridDesktop}
               setIsEmojiGridOpen={setOpenEmojiGridDesktop}
               isParentOpen
             />
-            <ArchivingToggle />
+            <ArchivingButton />
           </>
         )}
         <ExitButton handleLeave={handleLeave} />
@@ -105,16 +105,12 @@ const Toolbar = ({
             handleClick={toggleReportIssue}
           />
         )}
-        <ParticipantListToggleButton
+        <ParticipantListButton
           isOpen={rightPanelActiveTab === 'participant-list'}
           handleClick={toggleParticipantList}
           participantCount={participantCount}
         />
-        <ChatToggleButton
-          isOpen={rightPanelActiveTab === 'chat'}
-          handleClick={toggleChat}
-          unreadCount={unreadCount}
-        />
+        <ChatButton isOpen={rightPanelActiveTab === 'chat'} handleClick={toggleChat} />
       </div>
     </div>
   );

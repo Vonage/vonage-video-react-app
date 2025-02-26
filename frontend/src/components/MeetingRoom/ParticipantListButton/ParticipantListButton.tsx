@@ -12,7 +12,7 @@ export type ParticipantListButtonProps = {
   participantCount: number;
 };
 /**
- * ParticipantListToggleButton Component
+ * ParticipantListButton Component
  *
  * Toolbar button to open and close participant list
  * Also displays participant count badge
@@ -20,9 +20,9 @@ export type ParticipantListButtonProps = {
  *   @property {() => void} handleClick - click handler to toggle open participant list
  *   @property {boolean} isOpen - true if list is currently open, false if not
  *   @property {number} participantCount - number of current participants in call, to be displayed in badge
- * @returns {ReactElement} - ParticipantListToggleButton
+ * @returns {ReactElement} - ParticipantListButton
  */
-const ParticipantListToggleButton = ({
+const ParticipantListButton = ({
   handleClick,
   isOpen,
   participantCount,
@@ -60,4 +60,4 @@ const ParticipantListToggleButton = ({
   );
 };
 
-export default ParticipantListToggleButton;
+export default ParticipantListButton;
