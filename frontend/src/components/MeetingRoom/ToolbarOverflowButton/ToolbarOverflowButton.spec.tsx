@@ -41,22 +41,22 @@ describe('ToolbarOverflowButton', () => {
   it('toggling shows and hides the toolbar buttons', () => {
     render(<ToolbarOverflowButton />);
 
-    expect(screen.queryByTestId('layout-toggle')).not.toBeInTheDocument();
-    expect(screen.queryByTestId('emoji-grid-toggle')).not.toBeInTheDocument();
-    expect(screen.queryByTestId('archiving-toggle')).not.toBeInTheDocument();
+    expect(screen.queryByTestId('layout-button')).not.toBeInTheDocument();
+    expect(screen.queryByTestId('emoji-grid-button')).not.toBeInTheDocument();
+    expect(screen.queryByTestId('archiving-button')).not.toBeInTheDocument();
 
     act(() => {
       screen.getByTestId('hidden-toolbar-items').click();
     });
 
-    expect(screen.queryByTestId('layout-toggle')).toBeVisible();
-    expect(screen.queryByTestId('emoji-grid-toggle')).toBeVisible();
-    expect(screen.queryByTestId('archiving-toggle')).toBeVisible();
+    expect(screen.queryByTestId('layout-button')).toBeVisible();
+    expect(screen.queryByTestId('emoji-grid-button')).toBeVisible();
+    expect(screen.queryByTestId('archiving-button')).toBeVisible();
   });
 
   it('should have the unread messages badge present', () => {
     render(<ToolbarOverflowButton />);
 
-    expect(screen.getByTestId('chat-toggle-unread-count')).toBeInTheDocument();
+    expect(screen.getByTestId('chat-button-unread-count')).toBeInTheDocument();
   });
 });

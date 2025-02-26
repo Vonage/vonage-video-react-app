@@ -3,15 +3,15 @@ import VideocamIcon from '@mui/icons-material/Videocam';
 import VideocamOffIcon from '@mui/icons-material/VideocamOff';
 import { ReactElement } from 'react';
 import usePreviewPublisherContext from '../../../hooks/usePreviewPublisherContext';
-import VideoContainerToggleButton from '../VideoContainerToggleButton';
+import VideoContainerButton from '../VideoContainerButton';
 
 /**
- * CameraToggleButton Component
+ * CameraButton Component
  *
  * Displays an overlay button to handle toggling video on and off for the preview publisher.
- * @returns {ReactElement} - The CameraToggleButton component.
+ * @returns {ReactElement} - The CameraButton component.
  */
-const CameraToggleButton = (): ReactElement => {
+const CameraButton = (): ReactElement => {
   const { isVideoEnabled, toggleVideo } = usePreviewPublisherContext();
   const title = `Turn ${isVideoEnabled ? 'off' : 'on'} camera`;
 
@@ -30,7 +30,7 @@ const CameraToggleButton = (): ReactElement => {
       }}
     >
       <Tooltip title={title} aria-label="toggle video">
-        <VideoContainerToggleButton
+        <VideoContainerButton
           onClick={toggleVideo}
           sx={{
             backgroundColor: !isVideoEnabled ? 'rgb(234, 67, 53)' : '',
@@ -54,4 +54,4 @@ const CameraToggleButton = (): ReactElement => {
   );
 };
 
-export default CameraToggleButton;
+export default CameraButton;

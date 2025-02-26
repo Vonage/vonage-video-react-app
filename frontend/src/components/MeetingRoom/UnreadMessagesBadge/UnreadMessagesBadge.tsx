@@ -20,7 +20,7 @@ const UnreadMessagesBadge = ({ children }: UnreadMessagesBadgeProps): ReactEleme
   return (
     <Badge
       badgeContent={unreadCount}
-      data-testid="chat-toggle-unread-count"
+      data-testid="chat-button-unread-count"
       invisible={unreadCount === 0}
       sx={{
         '& .MuiBadge-badge': {
