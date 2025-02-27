@@ -1,5 +1,6 @@
-import { Alert, AlertTitle, Stack } from '@mui/material';
+import { Alert, AlertTitle, SxProps } from '@mui/material';
 import { ReactElement, useState } from 'react';
+import useIsSmallViewport from '../../../hooks/useIsSmallViewport';
 
 export type ConnectionAlertProps = {
   title: string;
@@ -8,7 +9,6 @@ export type ConnectionAlertProps = {
   severity: 'warning' | 'error';
 };
 
-const maxWidth = '@apply max-w-[calc(100vw_-_8px)]';
 /**
  * ConnectionAlert Component
  * An MUI Alert to display the title and message for connection issues.
@@ -26,26 +26,42 @@ const ConnectionAlert = ({
   severity,
 }: ConnectionAlertProps): ReactElement | false => {
   const [closed, setClosed] = useState(false);
+  const isSmallViewPort = useIsSmallViewport();
+  const sxProps: SxProps = isSmallViewPort
+    ? {
+        left: '50%',
+        transform: 'translate(-50%, 0%)',
+        // We account for the SmallViewportHeader
+        top: '64px',
+      }
+    : {
+        left: '0.25rem',
+        top: '0.25rem',
+        maxWidth: '360px',
+      };
 
   return (
     !closed && (
-      <Stack className={`absolute left-1 top-1 ${maxWidth}`}>
-        <Alert
-          severity={severity}
-          variant="standard"
-          color="error"
-          {...(closable
-            ? {
-                onClose: () => {
-                  setClosed(true);
-                },
-              }
-            : {})}
-        >
-          <AlertTitle>{title}</AlertTitle>
-          {message}
-        </Alert>
-      </Stack>
+      <Alert
+        severity={severity}
+        variant="standard"
+        color="error"
+        {...(closable
+          ? {
+              onClose: () => {
+                setClosed(true);
+              },
+            }
+          : {})}
+        sx={{
+          ...sxProps,
+          position: 'absolute',
+          width: '100%',
+        }}
+      >
+        <AlertTitle>{title}</AlertTitle>
+        {message}
+      </Alert>
     )
   );
 };
