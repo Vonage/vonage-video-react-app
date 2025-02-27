@@ -56,7 +56,7 @@ const ConnectionAlert = ({
           ...sxProps,
           position: 'absolute',
           width: '100%',
-          maxWidth: '360px',
+          maxWidth: '320px',
         }}
       >
         <AlertTitle>{title}</AlertTitle>
