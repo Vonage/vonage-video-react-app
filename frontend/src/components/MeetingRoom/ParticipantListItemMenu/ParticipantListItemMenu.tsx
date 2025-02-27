@@ -1,4 +1,4 @@
-import React from 'react';
+import { useState, MouseEvent } from 'react';
 import { IconButton, Menu } from '@mui/material';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import { SubscriberWrapper } from '../../../types/session';
@@ -13,9 +13,9 @@ const ParticipantListItemMenuToggleButton = ({
   participantName,
   subscriberWrapper,
 }: ParticipantListItemMenuToggleButtonProps) => {
-  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
-  const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+  const handleClick = (event: MouseEvent<HTMLButtonElement>) => {
     setAnchorEl(event.currentTarget);
   };
   const handleClose = () => {

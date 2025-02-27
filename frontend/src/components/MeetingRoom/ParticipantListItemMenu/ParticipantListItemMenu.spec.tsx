@@ -54,7 +54,7 @@ describe('ParticipantListItem', () => {
     expect(mockSessionContext.pinSubscriber).toHaveBeenCalledWith('subId');
   });
 
-  it('cannot pin participant if isMaxPinned is true', async () => {
+  it('cannot pin participant if maximum number of tiles are pinned', async () => {
     mockSessionContext = {
       isMaxPinned: true,
       pinSubscriber: vi.fn(),
@@ -68,7 +68,7 @@ describe('ParticipantListItem', () => {
     expect(mockSessionContext.pinSubscriber).not.toHaveBeenCalled();
   });
 
-  it('can still unpin participant if isMaxPinned is true', async () => {
+  it('can still unpin participant if maximum number of tiles are pinned', async () => {
     mockSessionContext = {
       isMaxPinned: true,
       pinSubscriber: vi.fn(),
