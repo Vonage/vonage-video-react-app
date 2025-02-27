@@ -8,6 +8,7 @@ export type ToolbarButtonProps = {
   icon: ReactElement;
   sx?: SxProps;
   id?: string;
+  isSmallViewPort?: boolean;
 };
 
 /**
@@ -16,14 +17,16 @@ export type ToolbarButtonProps = {
  * @param {ToolbarButtonProps} props - props for the component
  *   @property {Function} onClick - on click handler
  *   @property {ReactElement} icon - MUI Icon for button
- *   @property {SxProps} sx- optional MUI style object
+ *   @property {SxProps} sx - (optional) MUI style object
+ *   @property {string} id - (optional) the data-testid used in unit tests
+ *   @property {boolean} isSmallViewPort - (optional) indicates whether the device is a small view port.
  * @returns {ReactElement}
  */
 const ToolbarButton = forwardRef(function ToolbarButton(
   props: ToolbarButtonProps,
   ref: ForwardedRef<HTMLButtonElement>
 ) {
-  const { icon: Icon, sx = {}, ...rest } = props;
+  const { icon: Icon, sx = {}, isSmallViewPort, ...rest } = props;
 
   return (
     <IconButton
@@ -35,8 +38,8 @@ const ToolbarButton = forwardRef(function ToolbarButton(
         marginLeft: '0px',
         marginTop: '4px',
         marginRight: '12px',
-        width: '48px',
-        height: '48px',
+        width: isSmallViewPort ? '42px' : '48px',
+        height: isSmallViewPort ? '42px' : '48px',
         backgroundColor: 'rgba(60, 64, 67, 0.55)',
         '&:hover': {
           backgroundColor: 'rgba(60, 64, 67, 0.42)',

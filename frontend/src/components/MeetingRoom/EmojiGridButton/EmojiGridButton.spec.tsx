@@ -34,7 +34,7 @@ describe('EmojiGridButton', () => {
   it('renders', () => {
     render(<TestComponent />);
 
-    expect(screen.getByTestId('emoji-grid-button')).toBeVisible();
+    expect(screen.getByTestId('emoji-grid-toggle')).toBeVisible();
   });
 
   it('clicking opens the emoji grid', () => {
@@ -42,7 +42,7 @@ describe('EmojiGridButton', () => {
     expect(screen.queryByTestId('emoji-grid')).not.toBeInTheDocument();
 
     act(() => {
-      screen.getByTestId('emoji-grid-button').click();
+      screen.getByTestId('emoji-grid-toggle').click();
     });
 
     rerender(<TestComponent />);
