@@ -1,9 +1,10 @@
 import Fade from '@mui/material/Fade';
 import { useState, useEffect, ReactElement } from 'react';
-import { Alert, Box } from '@mui/material';
+import { Alert } from '@mui/material';
 import { MUTED_ALERT_MESSAGE, FORCE_MUTED_ALERT_MESSAGE } from '../../utils/constants';
 import useSpeakingDetector from '../../hooks/useSpeakingDetector';
 import usePublisherContext from '../../hooks/usePublisherContext';
+import useIsSmallViewport from '../../hooks/useIsSmallViewport';
 
 /**
  * MutedAlert Component
@@ -13,35 +14,35 @@ import usePublisherContext from '../../hooks/usePublisherContext';
  */
 const MutedAlert = (): ReactElement => {
   const { publisher, isAudioEnabled, isForceMuted } = usePublisherContext();
-  const [open, setOpen] = useState<boolean>(true);
+  const [open, setOpen] = useState<boolean>(false);
   const isSpeakingWhileMuted = useSpeakingDetector({
     isAudioEnabled,
     selectedMicrophoneId: publisher?.getAudioSource()?.id,
   });
+  const isSmallViewport = useIsSmallViewport();
+  const messageToDisplay = isForceMuted ? FORCE_MUTED_ALERT_MESSAGE : MUTED_ALERT_MESSAGE;
 
   useEffect(() => {
     setOpen(isForceMuted || isSpeakingWhileMuted);
   }, [isForceMuted, isSpeakingWhileMuted]);
 
   return (
-    <Box
-      sx={{
-        position: 'absolute',
-        bottom: '96px',
-        display: 'flex',
-        left: '50%',
-        transform: 'translate(-50%, 0%)',
-        width: '100%',
-        maxWidth: '320px',
-      }}
-    >
-      <Fade in={open}>
-        <Alert severity="warning" onClose={() => setOpen(false)}>
-          {isForceMuted && <span>{FORCE_MUTED_ALERT_MESSAGE}</span>}
-          {isSpeakingWhileMuted && !isForceMuted && <span>{MUTED_ALERT_MESSAGE}</span>}
-        </Alert>
-      </Fade>
-    </Box>
+    <Fade in={open}>
+      <Alert
+        severity="warning"
+        onClose={() => setOpen(false)}
+        sx={{
+          position: 'absolute',
+          bottom: isSmallViewport ? '80px' : '96px',
+          left: '50%',
+          transform: 'translate(-50%, 0%)',
+          width: '100%',
+          maxWidth: '320px',
+        }}
+      >
+        {messageToDisplay}
+      </Alert>
+    </Fade>
   );
 };
 
