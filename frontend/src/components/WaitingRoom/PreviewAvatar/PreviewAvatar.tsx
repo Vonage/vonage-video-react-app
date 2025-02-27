@@ -1,6 +1,8 @@
 import { Avatar } from '@mui/material';
 import { ReactElement } from 'react';
+import useWindowWidth from '../../../hooks/useWindowWidth';
 import AvatarInitials from '../../AvatarInitials';
+import useIsSmallViewport from '../../../hooks/useIsSmallViewport';
 
 export type PreviewAvatarProps = {
   username: string;
@@ -26,6 +28,10 @@ const PreviewAvatar = ({
   isVideoEnabled,
   isVideoLoading,
 }: PreviewAvatarProps): ReactElement | null => {
+  const smallDisplayDimensions = useWindowWidth() * 0.46;
+  const isSmallViewPort = useIsSmallViewport();
+  const height = isSmallViewPort ? smallDisplayDimensions : 328;
+  const width = isSmallViewPort ? smallDisplayDimensions : 584;
   if (isVideoEnabled || isVideoLoading) {
     return null;
   }
@@ -38,8 +44,8 @@ const PreviewAvatar = ({
         zIndex: isVideoEnabled ? 0 : 1,
       }}
       username={username}
-      height={328}
-      width={584}
+      height={height}
+      width={width}
     />
   ) : (
     <Avatar

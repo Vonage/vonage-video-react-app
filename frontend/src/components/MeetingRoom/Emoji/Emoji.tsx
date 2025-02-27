@@ -24,6 +24,7 @@ const Emoji = ({ emojiWrapper }: EmojiProps): ReactElement => {
     animationTimingFunction: 'linear',
     animationIterationCount: 1,
     maxWidth: '35%',
+    zIndex: 1,
   };
 
   return (
