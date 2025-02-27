@@ -312,7 +312,7 @@ const SessionProvider = ({ children }: SessionProviderProps): ReactElement => {
             element,
             subscriber,
             isScreenshare,
-            isPinned: !isMaxPinned,
+            isPinned: false,
             // subscriber.id is refers to the targetElement id and will be undefined when insertDefaultUI is false so we use streamId to track our subscriber
             id: streamId,
           };
