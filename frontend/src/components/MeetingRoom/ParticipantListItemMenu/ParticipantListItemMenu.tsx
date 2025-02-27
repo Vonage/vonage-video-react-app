@@ -1,4 +1,4 @@
-import { useState, MouseEvent } from 'react';
+import { useState, MouseEvent, ReactElement } from 'react';
 import { IconButton, Menu } from '@mui/material';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import { SubscriberWrapper } from '../../../types/session';
@@ -8,11 +8,19 @@ export type ParticipantListItemMenuProps = {
   participantName: string;
   subscriberWrapper: SubscriberWrapper;
 };
-
+/**
+ * ParticipantListItemMenu
+ * renders a kebab menu button which opens a menu containing a
+ * button to pin the participant.
+ * @param {ParticipantListItemMenuProps} props - component props.
+ *  @property {string} participantName - participant name.
+ *  @property {SubscriberWrapper} subscriberWrapper -  The SubscriberWrapper for the participant.
+ * @returns {ReactElement} - ParticipantListItemMenu
+ */
 const ParticipantListItemMenu = ({
   participantName,
   subscriberWrapper,
-}: ParticipantListItemMenuProps) => {
+}: ParticipantListItemMenuProps): ReactElement => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const isOpen = !!anchorEl;
   const handleClick = (event: MouseEvent<HTMLButtonElement>) => {

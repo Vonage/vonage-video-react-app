@@ -1,18 +1,27 @@
+import { ReactElement } from 'react';
 import { ListItemIcon, ListItemText, MenuItem } from '@mui/material';
 import PushPinIcon from '@mui/icons-material/PushPin';
 import { SubscriberWrapper } from '../../../types/session';
 import PushPinOffIcon from '../../Icons/PushPinOffIcon';
 import useSessionContext from '../../../hooks/useSessionContext';
 
-type ParticipantPinMenuItemProps = {
+export type ParticipantPinMenuItemProps = {
   participantName: string;
   subscriberWrapper: SubscriberWrapper;
 };
 
+/**
+ * ParticipantPinMenuItem
+ * renders a MenuItem button to pin or unpin a participant
+ * @param {ParticipantPinMenuItemProps} props - component props.
+ *  @property {string} participantName - participant name.
+ *  @property {SubscriberWrapper} subscriberWrapper -  The SubscriberWrapper for the participant.
+ * @returns {ReactElement} - ParticipantPinMenuItem
+ */
 const ParticipantPinMenuItem = ({
   participantName,
   subscriberWrapper,
-}: ParticipantPinMenuItemProps) => {
+}: ParticipantPinMenuItemProps): ReactElement => {
   const { isPinned, id } = subscriberWrapper;
   const { isMaxPinned, pinSubscriber } = useSessionContext();
   const isDisabled = !isPinned && isMaxPinned;
