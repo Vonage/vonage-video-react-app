@@ -22,7 +22,7 @@ export type ChatProps = {
  */
 const Chat = ({ handleClose, isOpen }: ChatProps): ReactElement | false => {
   const { messages } = useSessionContext();
-  const heightClass = '@apply h-[calc(100vh_-_240px)]';
+  const heightClass = '@apply h-[calc(100dvh_-_240px)]';
 
   return (
     isOpen && (

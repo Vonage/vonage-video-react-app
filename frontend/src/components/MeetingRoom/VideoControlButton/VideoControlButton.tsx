@@ -51,7 +51,7 @@ const VideoControlButton = (): ReactElement => {
           title="Open"
           onClick={handleToggle}
           className="size-12"
-          data-testid="video-dropdown-toggle"
+          data-testid="video-dropdown-button"
         >
           {open ? (
             <ArrowDropDown sx={{ color: 'rgb(138, 180, 248)' }} />

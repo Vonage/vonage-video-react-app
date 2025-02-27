@@ -71,7 +71,7 @@ const ControlPanel = ({
   };
 
   return (
-    <div className="m-auto my-4" data-testid="ControlPanel">
+    <div className="m-auto my-4 max-w-[100dvw]" data-testid="ControlPanel">
       <div className="flex flex-row justify-evenly min-[400px]:w-[400px]">
         <Button
           sx={buttonSx}

@@ -1,10 +1,17 @@
 import { render, screen, fireEvent } from '@testing-library/react';
-import { describe, expect, it, vi, Mock } from 'vitest';
+import { describe, expect, it, vi, Mock, beforeEach } from 'vitest';
 import FilePicker from './FilePicker';
+import * as util from '../../../../../utils/util';
 import '@testing-library/jest-dom';
+
+vi.mock('../../../../../utils/util', () => ({ isMobile: vi.fn() }));
 
 describe('FilePicker component', () => {
   const mockFileSelect = vi.fn();
+
+  beforeEach(() => {
+    (util.isMobile as Mock).mockImplementation(() => false);
+  });
 
   it('renders the "Add screenshot" button initially', () => {
     render(<FilePicker onFileSelect={mockFileSelect} />);
@@ -12,10 +19,18 @@ describe('FilePicker component', () => {
     expect(addButton).toBeInTheDocument();
   });
 
-  it('renders the "Capture screenshot" button initially', () => {
-    render(<FilePicker onFileSelect={mockFileSelect} />);
-    const addButton = screen.getByText(/capture screenshot/i);
-    expect(addButton).toBeInTheDocument();
+  describe('"Capture screenshot" button', () => {
+    it('is rendered on desktop devices', () => {
+      render(<FilePicker onFileSelect={mockFileSelect} />);
+      const addButton = screen.getByText(/capture screenshot/i);
+      expect(addButton).toBeInTheDocument();
+    });
+
+    it('is not rendered on mobile devices', () => {
+      (util.isMobile as Mock).mockImplementation(() => true);
+      const addButton = screen.queryByText(/capture screenshot/i);
+      expect(addButton).not.toBeInTheDocument();
+    });
   });
 
   it('uploads and previews a valid image file', async () => {

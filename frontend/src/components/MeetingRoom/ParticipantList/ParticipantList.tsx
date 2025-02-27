@@ -86,7 +86,7 @@ const ParticipantList = ({ handleClose, isOpen }: ParticipantListProps): ReactEl
             </Tooltip>
           </IconButton>
         </div>
-        <List sx={{ overflowX: 'auto', height: 'calc(100vh - 240px)' }}>
+        <List sx={{ overflowX: 'auto', height: 'calc(100dvh - 240px)' }}>
           <ParticipantListItem
             key="you"
             dataTestId="participant-list-item-you"

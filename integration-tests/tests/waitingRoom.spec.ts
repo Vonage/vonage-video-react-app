@@ -32,7 +32,7 @@ test('The buttons in the meeting room should match those in the waiting room wit
   // Skipping this step for FF as we don't support BG blur on FF
   // Also, skipping this step for mobile viewport as, currently BG blur button is not displayed for mobile view ports.
   if (browserName !== 'firefox' && !isMobile) {
-    await page.getByTestId('video-dropdown-toggle').click();
+    await page.getByTestId('video-dropdown-button').click();
 
     await expect(page.getByTestId('blur-text')).toBeVisible();
 
@@ -69,7 +69,7 @@ test('The buttons in the meeting room should match those in the waiting room wit
   // Skipping this step for FF as we don't support BG blur on FF
   // Also, skipping this step for mobile viewport as, currently BG blur button is not displayed for mobile view ports.
   if (browserName !== 'firefox' && !isMobile) {
-    await page.getByTestId('video-dropdown-toggle').click();
+    await page.getByTestId('video-dropdown-button').click();
 
     await expect(page.getByTestId('blur-text')).toBeVisible();
 

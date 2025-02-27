@@ -56,7 +56,7 @@ const ScreenSharingButton = ({
         <Tooltip title={title} aria-label="add">
           <ToolbarButton
             onClick={handleButtonClick}
-            data-testid="screensharing-toggle"
+            data-testid="screensharing-button"
             icon={
               !isSharingScreen ? (
                 <ScreenShare className="text-white" />

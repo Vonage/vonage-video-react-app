@@ -3,15 +3,15 @@ import { MicOff } from '@mui/icons-material';
 import MicIcon from '@mui/icons-material/Mic';
 import { ReactElement } from 'react';
 import usePreviewPublisherContext from '../../../hooks/usePreviewPublisherContext';
-import VideoContainerToggleButton from '../VideoContainerToggleButton';
+import VideoContainerButton from '../VideoContainerButton';
 
 /**
- * MicToggleButton Component
+ * MicButton Component
  *
  * Toggles the user's microphone (published audio) and updates the icon accordingly.
- * @returns {ReactElement} - The MicToggleButton component.
+ * @returns {ReactElement} - The MicButton component.
  */
-const MicToggleButton = (): ReactElement => {
+const MicButton = (): ReactElement => {
   const { isAudioEnabled, toggleAudio } = usePreviewPublisherContext();
   const title = `Turn ${isAudioEnabled ? 'off' : 'on'} microphone`;
 
@@ -31,7 +31,7 @@ const MicToggleButton = (): ReactElement => {
       }}
     >
       <Tooltip title={title} aria-label="toggle audio">
-        <VideoContainerToggleButton
+        <VideoContainerButton
           onClick={toggleAudio}
           isEnabled={isAudioEnabled}
           sx={{
@@ -55,4 +55,4 @@ const MicToggleButton = (): ReactElement => {
   );
 };
 
-export default MicToggleButton;
+export default MicButton;
