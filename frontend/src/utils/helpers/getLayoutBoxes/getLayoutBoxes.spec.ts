@@ -38,7 +38,7 @@ const initialArguments: GetLayoutBoxesProps = {
   activeSpeakerId: undefined,
   hiddenSubscribers: [],
   isSharingScreen: false,
-  hasPinnedSubscribers: false,
+  pinnedSubscriberCount: 0,
   layoutMode: 'active-speaker',
   publisher: null,
   screensharingPublisher: null,
@@ -56,7 +56,7 @@ const initialArguments: GetLayoutBoxesProps = {
 const typicalRoomArguments: GetLayoutBoxesProps = {
   publisher: createPublisher(),
   isSharingScreen: true,
-  hasPinnedSubscribers: false,
+  pinnedSubscriberCount: 0,
   screensharingPublisher: createPublisher(),
   wrapRef: { current: {} } as unknown as MutableRefObject<HTMLElement | null>,
   subscribersInDisplayOrder: [

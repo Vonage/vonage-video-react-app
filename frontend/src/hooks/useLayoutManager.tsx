@@ -4,7 +4,8 @@ import LayoutManager from '../utils/layoutManager';
 
 export type GetLayout = (
   containerDimensions: { height: number; width: number },
-  boxes: Element[]
+  boxes: Element[],
+  fixBigRatio: boolean
 ) => Box[];
 
 /**
