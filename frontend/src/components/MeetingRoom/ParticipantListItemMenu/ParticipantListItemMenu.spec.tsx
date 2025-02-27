@@ -34,8 +34,8 @@ describe('ParticipantListItem', () => {
 
   it('can pin participant', async () => {
     render(<ParticipantListItemMenu {...defaultProps} />);
-    const button = screen.getByRole('button');
-    await act(() => button.click());
+    const menuButton = screen.getByRole('button');
+    await act(() => menuButton.click());
     const pinButton = await screen.getByText('Pin John Doe');
     await act(() => pinButton.click());
     expect(mockSessionContext.pinSubscriber).toHaveBeenCalledWith('subId');
@@ -47,8 +47,8 @@ describe('ParticipantListItem', () => {
         {...{ ...defaultProps, subscriberWrapper: { ...mockSubscriberWrapper, isPinned: true } }}
       />
     );
-    const button = screen.getByRole('button');
-    await act(() => button.click());
+    const menuButton = screen.getByRole('button');
+    await act(() => menuButton.click());
     const pinButton = await screen.getByText('Unpin John Doe');
     await act(() => pinButton.click());
     expect(mockSessionContext.pinSubscriber).toHaveBeenCalledWith('subId');
@@ -61,8 +61,8 @@ describe('ParticipantListItem', () => {
     } as unknown as SessionContextType;
     mockUseSessionContext.mockImplementation(() => mockSessionContext);
     render(<ParticipantListItemMenu {...defaultProps} />);
-    const button = screen.getByRole('button');
-    await act(() => button.click());
+    const menuButton = screen.getByRole('button');
+    await act(() => menuButton.click());
     const pinButton = await screen.getByText(/You can't pin any more tiles/);
     await act(() => pinButton.click());
     expect(mockSessionContext.pinSubscriber).not.toHaveBeenCalled();
@@ -79,8 +79,8 @@ describe('ParticipantListItem', () => {
         {...{ ...defaultProps, subscriberWrapper: { ...mockSubscriberWrapper, isPinned: true } }}
       />
     );
-    const button = screen.getByRole('button');
-    await act(() => button.click());
+    const menuButton = screen.getByRole('button');
+    await act(() => menuButton.click());
     const pinButton = await screen.getByText('Unpin John Doe');
     await act(() => pinButton.click());
     expect(mockSessionContext.pinSubscriber).toHaveBeenCalledWith('subId');

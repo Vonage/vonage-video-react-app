@@ -4,17 +4,17 @@ import MoreVertIcon from '@mui/icons-material/MoreVert';
 import { SubscriberWrapper } from '../../../types/session';
 import ParticipantPinMenuItem from './ParticipantPinMenuItem';
 
-type ParticipantListItemMenuToggleButtonProps = {
+export type ParticipantListItemMenuProps = {
   participantName: string;
   subscriberWrapper: SubscriberWrapper;
 };
 
-const ParticipantListItemMenuToggleButton = ({
+const ParticipantListItemMenu = ({
   participantName,
   subscriberWrapper,
-}: ParticipantListItemMenuToggleButtonProps) => {
+}: ParticipantListItemMenuProps) => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
-  const open = Boolean(anchorEl);
+  const isOpen = !!anchorEl;
   const handleClick = (event: MouseEvent<HTMLButtonElement>) => {
     setAnchorEl(event.currentTarget);
   };
@@ -29,7 +29,7 @@ const ParticipantListItemMenuToggleButton = ({
       </IconButton>
       <Menu
         anchorEl={anchorEl}
-        open={open}
+        open={isOpen}
         onClose={handleClose}
         transformOrigin={{
           vertical: 'top',
@@ -45,4 +45,4 @@ const ParticipantListItemMenuToggleButton = ({
   );
 };
 
-export default ParticipantListItemMenuToggleButton;
+export default ParticipantListItemMenu;
