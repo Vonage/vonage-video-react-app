@@ -1,4 +1,3 @@
-// @flow
 import OpenTokLayoutManager, { Box, Element, LayoutContainer } from 'opentok-layout-js';
 
 // Opentok element methods videoHeight() and videoWidth() can return undefined so
