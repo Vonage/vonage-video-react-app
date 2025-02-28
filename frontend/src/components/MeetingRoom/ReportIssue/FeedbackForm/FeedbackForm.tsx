@@ -60,8 +60,9 @@ const FeedbackForm = ({
   onFileSelect,
 }: FeedbackFormType): ReactElement => {
   const isSmallViewport = useIsSmallViewport();
-  const heightClass = '@apply h-[calc(100dvh_-_240px)]';
-  const widthClass = isSmallViewport ? '@apply w-[calc(100dvw_-_48px)]' : '';
+  // Account for: 64px panel header + 80px toolbar if small viewport or 96px toolbar if normal viewport + (40px submit button + 24px submit button margin)
+  const height = isSmallViewport ? 'calc(100dvh - 208px)' : 'calc(100dvh - 224px)';
+  const width = isSmallViewport ? 'calc(100dvw - 50px)' : '310px';
 
   const getColorStyle = (value: string, maxLength: number) => {
     return value.length >= maxLength || value.length === 0 ? 'red' : 'inherit';
@@ -75,143 +76,152 @@ const FeedbackForm = ({
     </Box>
   ) : (
     <form onSubmit={handleSubmit}>
-      <div className={`flex flex-col overflow-y-auto overflow-x-hidden ${heightClass}`}>
-        <Box ml="23px" mr="27px">
-          <Typography
-            variant="body2"
-            data-testid="title-report-issue"
-            color="textPrimary"
-            sx={getStyleTypography()}
-          >
-            When you noticed this issue, what were you trying to do?
-          </Typography>
-          <TextField
-            fullWidth
-            variant="outlined"
-            name="title"
-            value={formData.title}
-            onChange={handleChange}
-            error={errors.title}
-            helperText={
-              <HelperText
-                colorStyle={getColorStyle(formData.title, REPORT_TITLE_LIMIT)}
-                errorType="Title"
-                textLimit={REPORT_TITLE_LIMIT}
-                isError={errors.title}
-                formText={formData.title}
-                testId="title-error"
-              />
-            }
-            sx={{
-              mb: '22px',
-            }}
-            inputProps={{ maxLength: REPORT_TITLE_LIMIT }}
-          />
-          <Typography
-            variant="body2"
-            data-testid="name-report-issue"
-            color="textPrimary"
-            sx={getStyleTypography()}
-          >
-            Tell us your name
-          </Typography>
-          <TextField
-            fullWidth
-            variant="outlined"
-            name="name"
-            value={formData.name}
-            onChange={handleChange}
-            error={errors.name}
-            helperText={
-              <HelperText
-                colorStyle={getColorStyle(formData.name, REPORT_NAME_LIMIT)}
-                errorType="Your name"
-                textLimit={REPORT_NAME_LIMIT}
-                isError={errors.name}
-                formText={formData.name}
-                testId="name-error"
-              />
-            }
-            sx={{
-              mr: 4,
-              mb: 2,
-            }}
-            inputProps={{ maxLength: REPORT_NAME_LIMIT }}
-          />
-
-          <Typography
-            data-testid="description-report-issue"
-            variant="body2"
-            color="textPrimary"
-            sx={getStyleTypography()}
-          >
-            Describe your issue
-          </Typography>
-
-          <TextField
-            fullWidth
-            variant="outlined"
-            multiline
-            rows={8}
-            name="issue"
-            value={formData.issue}
-            onChange={handleChange}
-            error={errors.issue}
-            helperText={
-              <HelperText
-                colorStyle={getColorStyle(formData.issue, REPORT_DESCRIPTION_LIMIT)}
-                errorType="Description"
-                textLimit={REPORT_DESCRIPTION_LIMIT}
-                isError={errors.issue}
-                formText={formData.issue}
-                testId="description-error"
-              />
-            }
-            sx={{
-              mr: 4,
-              mb: 1,
-            }}
-            inputProps={{ maxLength: REPORT_DESCRIPTION_LIMIT }}
-          />
-
-          <Typography
-            variant="body2"
-            color="textSecondary"
-            sx={{
-              ...getStyleTypography(),
-              fontSize: '0.8rem',
-              textAlign: 'left',
-            }}
-          >
-            Please do not include any sensitive information.
-          </Typography>
-          <Typography
-            variant="body2"
-            color="textPrimary"
-            sx={{
-              ...getStyleTypography(),
-              fontSize: '0.8rem',
-              textAlign: 'left',
-            }}
-          >
-            A screenshot will help us better understand the issue. (optional)
-          </Typography>
-          <FilePicker onFileSelect={onFileSelect} />
-        </Box>
-      </div>
-      <div className={`${widthClass} bottom-6 mx-[24px] flex`}>
-        <Button
-          type="submit"
-          variant="contained"
+      <Box
+        ml="25px"
+        mr="25px"
+        sx={{
+          overflowX: 'hidden',
+          overflowY: 'auto',
+          display: 'flex',
+          flexDirection: 'column',
+          height,
+        }}
+      >
+        <Typography
+          variant="body2"
+          data-testid="title-report-issue"
+          color="textPrimary"
+          sx={getStyleTypography()}
+        >
+          When you noticed this issue, what were you trying to do?
+        </Typography>
+        <TextField
           fullWidth
+          variant="outlined"
+          name="title"
+          value={formData.title}
+          onChange={handleChange}
+          error={errors.title}
+          helperText={
+            <HelperText
+              colorStyle={getColorStyle(formData.title, REPORT_TITLE_LIMIT)}
+              errorType="Title"
+              textLimit={REPORT_TITLE_LIMIT}
+              isError={errors.title}
+              formText={formData.title}
+              testId="title-error"
+            />
+          }
           sx={{
-            textTransform: 'none',
-            fontSize: '1rem',
+            mb: '22px',
+          }}
+          inputProps={{ maxLength: REPORT_TITLE_LIMIT }}
+        />
+        <Typography
+          variant="body2"
+          data-testid="name-report-issue"
+          color="textPrimary"
+          sx={getStyleTypography()}
+        >
+          Tell us your name
+        </Typography>
+        <TextField
+          fullWidth
+          variant="outlined"
+          name="name"
+          value={formData.name}
+          onChange={handleChange}
+          error={errors.name}
+          helperText={
+            <HelperText
+              colorStyle={getColorStyle(formData.name, REPORT_NAME_LIMIT)}
+              errorType="Your name"
+              textLimit={REPORT_NAME_LIMIT}
+              isError={errors.name}
+              formText={formData.name}
+              testId="name-error"
+            />
+          }
+          sx={{
+            mr: 4,
+            mb: 2,
+          }}
+          inputProps={{ maxLength: REPORT_NAME_LIMIT }}
+        />
+
+        <Typography
+          data-testid="description-report-issue"
+          variant="body2"
+          color="textPrimary"
+          sx={getStyleTypography()}
+        >
+          Describe your issue
+        </Typography>
+
+        <TextField
+          fullWidth
+          variant="outlined"
+          multiline
+          rows={8}
+          name="issue"
+          value={formData.issue}
+          onChange={handleChange}
+          error={errors.issue}
+          helperText={
+            <HelperText
+              colorStyle={getColorStyle(formData.issue, REPORT_DESCRIPTION_LIMIT)}
+              errorType="Description"
+              textLimit={REPORT_DESCRIPTION_LIMIT}
+              isError={errors.issue}
+              formText={formData.issue}
+              testId="description-error"
+            />
+          }
+          sx={{
+            mr: 4,
+            mb: 1,
+          }}
+          inputProps={{ maxLength: REPORT_DESCRIPTION_LIMIT }}
+        />
+
+        <Typography
+          variant="body2"
+          color="textSecondary"
+          sx={{
+            ...getStyleTypography(),
+            fontSize: '0.8rem',
+            textAlign: 'left',
           }}
         >
-          Send
-        </Button>
-      </div>
+          Please do not include any sensitive information.
+        </Typography>
+        <Typography
+          variant="body2"
+          color="textPrimary"
+          sx={{
+            ...getStyleTypography(),
+            fontSize: '0.8rem',
+            textAlign: 'left',
+          }}
+        >
+          A screenshot will help us better understand the issue. (optional)
+        </Typography>
+        <FilePicker onFileSelect={onFileSelect} />
+      </Box>
+
+      <Button
+        type="submit"
+        variant="contained"
+        fullWidth
+        sx={{
+          textTransform: 'none',
+          fontSize: '1rem',
+          margin: '12px 24px',
+          width,
+        }}
+      >
+        Send
+      </Button>
     </form>
   );
 };
