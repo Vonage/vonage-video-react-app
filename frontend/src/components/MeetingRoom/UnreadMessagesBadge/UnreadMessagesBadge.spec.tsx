@@ -31,8 +31,8 @@ describe('UnreadMessagesBadge', () => {
       </UnreadMessagesBadge>
     );
 
-    expect(screen.getByTestId('chat-toggle-unread-count')).toBeVisible();
-    expect(screen.getByTestId('chat-toggle-unread-count').textContent).toBe('8');
+    expect(screen.getByTestId('chat-button-unread-count')).toBeVisible();
+    expect(screen.getByTestId('chat-button-unread-count').textContent).toBe('8');
 
     sessionContextWithMessages = {
       ...sessionContext,
@@ -44,8 +44,8 @@ describe('UnreadMessagesBadge', () => {
         <LittleButton />
       </UnreadMessagesBadge>
     );
-    expect(screen.getByTestId('chat-toggle-unread-count')).toBeVisible();
-    expect(screen.getByTestId('chat-toggle-unread-count').textContent).toBe('9');
+    expect(screen.getByTestId('chat-button-unread-count')).toBeVisible();
+    expect(screen.getByTestId('chat-button-unread-count').textContent).toBe('9');
   });
 
   it('should not show unread message number when number is 0', () => {
@@ -55,7 +55,7 @@ describe('UnreadMessagesBadge', () => {
       </UnreadMessagesBadge>
     );
 
-    const badge = screen.getByTestId('chat-toggle-unread-count');
+    const badge = screen.getByTestId('chat-button-unread-count');
     // Check badge is hidden:  MUI hides badge by setting dimensions to 0x0
     expect(badge.offsetHeight).toBe(0);
     expect(badge.offsetWidth).toBe(0);

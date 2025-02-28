@@ -13,6 +13,8 @@ import useRoomName from '../../hooks/useRoomName';
 import isValidRoomName from '../../utils/isValidRoomName';
 import useIsSmallViewport from '../../hooks/useIsSmallViewport';
 
+const height = '@apply h-[calc(100dvh_-_80px)]';
+
 /**
  * MeetingRoom Component
  *
@@ -82,7 +84,7 @@ const MeetingRoom = (): ReactElement => {
   }, [publishingError, navigate, roomName]);
 
   return (
-    <div data-testid="meetingRoom" className="w-screen bg-darkGray-100">
+    <div data-testid="meetingRoom" className={`${height} w-screen bg-darkGray-100`}>
       {isSmallViewPort && <SmallViewportHeader />}
       <VideoTileCanvas
         isSharingScreen={isSharingScreen}

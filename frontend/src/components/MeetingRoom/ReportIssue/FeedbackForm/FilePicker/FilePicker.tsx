@@ -2,6 +2,7 @@ import { ChangeEvent, useRef, useState, ReactElement } from 'react';
 import { Button, IconButton, Tooltip, Typography } from '@mui/material';
 import { Delete } from '@mui/icons-material';
 import captureScreenshot from '../../../../../utils/captureScreenshot';
+import { isMobile } from '../../../../../utils/util';
 
 // Setting the maximum file size to 20MB
 const maxFileSize = 2e7;
@@ -92,14 +93,22 @@ const FilePicker = ({
         )}
         {!imageSrc ? (
           <>
-            <Button
-              sx={{ width: '100%', textTransform: 'none', mb: 1 }}
-              variant="outlined"
-              component="label"
-              onClick={processScreenshot}
-            >
-              Capture screenshot
-            </Button>
+            {!isMobile() && (
+              // The screenshot capture relies on the getDisplayMedia browser API which is unsupported on mobile devices
+              // See: https://developer.mozilla.org/en-US/docs/Web/API/MediaDevices/getDisplayMedia#browser_compatibility
+              <Button
+                sx={{
+                  width: '100%',
+                  textTransform: 'none',
+                  mb: 1,
+                }}
+                variant="outlined"
+                component="label"
+                onClick={processScreenshot}
+              >
+                Capture screenshot
+              </Button>
+            )}
             <Button
               sx={{ width: '100%', textTransform: 'none' }}
               variant="outlined"
