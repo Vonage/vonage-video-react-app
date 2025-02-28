@@ -53,15 +53,9 @@ const Subscriber = ({
     if (subscriberWrapper && subRef.current) {
       const { element } = subscriberWrapper;
       element.id = subscriberWrapper.id;
-      const objectFit = isScreenShare ? 'object-contain' : 'object-cover';
-      element.classList.add(
-        'video__element',
-        'w-full',
-        'h-full',
-        'absolute',
-        'rounded-xl',
-        objectFit
-      );
+      element.classList.add('video__element', 'w-full', 'h-full', 'absolute', 'rounded-xl');
+      element.style.objectFit = 'contain';
+      element.style.backgroundColor = 'rgba(60, 64, 67, 0.55)';
       subRef.current.appendChild(element);
     }
   }, [subscriberWrapper, isScreenShare]);
