@@ -60,8 +60,11 @@ const FeedbackForm = ({
   onFileSelect,
 }: FeedbackFormType): ReactElement => {
   const isSmallViewport = useIsSmallViewport();
-  // Account for: 64px panel header + 80px toolbar if small viewport or 96px toolbar if normal viewport + (40px submit button + 24px submit button margin)
+  // 224px = 64px panel header + 96px toolbar if normal viewport + (40px submit button + 24px submit button margin)
+  // 208px = 64px panel header + 80px toolbar if small viewport + (40px submit button + 24px submit button margin)
   const height = isSmallViewport ? 'calc(100dvh - 208px)' : 'calc(100dvh - 224px)';
+  // For small viewports: width = 100dvw - 50px of margin
+  // For desktop viewports: 310px = 360px RightPanel - 50px margin
   const width = isSmallViewport ? 'calc(100dvw - 50px)' : '310px';
 
   const getColorStyle = (value: string, maxLength: number) => {
