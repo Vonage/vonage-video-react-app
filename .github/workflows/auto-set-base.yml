@@ -23,7 +23,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           PR_NUMBER: ${{ github.event.pull_request.number }}
         run: |
-          if [ "$TARGET_BRANCH" = "main" ] && [ "$BASE_BRANCH" != "develop" ]; then
+          if [[ "$TARGET_BRANCH" == "main" && "$BASE_BRANCH" != "develop" && "$BASE_BRANCH" != rc-* ]]; then
             echo "Switching base branch from $TARGET_BRANCH to develop..."
             gh pr edit "$PR_NUMBER" --base "develop"
             echo "Base branch updated to 'develop'."
