@@ -29,13 +29,11 @@ const EmojiGrid = ({
 }: EmojiGridProps): ReactElement => {
   const isSmallViewport = useIsSmallViewport();
 
-  const handleClickAway = (event: MouseEvent | TouchEvent) => {
-    const target = event.target as HTMLElement;
-
-    if (isSmallViewport && !target.closest('#emoji-grid-toggle')) {
+  const handleClickAway = () => {
+    if (isSmallViewport) {
       return;
     }
-    // If a user clicks the toggle button, we save their preference for later. If a user doesn't select
+    // If a user clicks the toggle button on mobile, we save their preference for later. If a user doesn't select
     // the toggle, the clickAwayListener will close the grid.
     setIsEmojiGridOpen(false);
   };

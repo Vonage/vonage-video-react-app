@@ -7,6 +7,7 @@ import {
   REPORT_NAME_LIMIT,
 } from '../../../../utils/constants';
 import HelperText from './HelperText';
+import useIsSmallViewport from '../../../../hooks/useIsSmallViewport';
 
 export type FormType = {
   title: string;
@@ -58,7 +59,9 @@ const FeedbackForm = ({
   loading,
   onFileSelect,
 }: FeedbackFormType): ReactElement => {
-  const heightClass = '@apply h-[calc(100vh_-_240px)]';
+  const isSmallViewport = useIsSmallViewport();
+  const heightClass = '@apply h-[calc(100dvh_-_240px)]';
+  const widthClass = isSmallViewport ? '@apply w-[calc(100dvw_-_48px)]' : '';
 
   const getColorStyle = (value: string, maxLength: number) => {
     return value.length >= maxLength || value.length === 0 ? 'red' : 'inherit';
@@ -66,7 +69,7 @@ const FeedbackForm = ({
 
   return loading ? (
     <Box
-      sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '100vh' }}
+      sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '100dvh' }}
     >
       <CircularProgress />
     </Box>
@@ -196,7 +199,7 @@ const FeedbackForm = ({
           <FilePicker onFileSelect={onFileSelect} />
         </Box>
       </div>
-      <div className="absolute inset-x-12 bottom-6 flex">
+      <div className={`${widthClass} bottom-6 mx-[24px] flex`}>
         <Button
           type="submit"
           variant="contained"
@@ -204,7 +207,6 @@ const FeedbackForm = ({
           sx={{
             textTransform: 'none',
             fontSize: '1rem',
-            width: '18rem',
           }}
         >
           Send
