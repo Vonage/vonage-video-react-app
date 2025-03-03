@@ -1,6 +1,8 @@
 import { useState, MouseEvent, ReactElement } from 'react';
-import { IconButton, Menu } from '@mui/material';
+import { ClickAwayListener, Grow, IconButton, Paper, Popper } from '@mui/material';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
+// import { ClickAwayListener, Popper, PopperChildrenProps } from '@mui/base';
+import { PopperChildrenProps } from '@mui/base';
 import { SubscriberWrapper } from '../../../types/session';
 import ParticipantPinMenuItem from './ParticipantPinMenuItem';
 
@@ -35,21 +37,36 @@ const ParticipantListItemMenu = ({
       <IconButton onClick={handleClick} sx={{ marginRight: '-8px' }}>
         <MoreVertIcon sx={{ fontSize: '18px' }} />
       </IconButton>
-      <Menu
-        anchorEl={anchorEl}
-        open={isOpen}
-        onClose={handleClose}
-        transformOrigin={{
-          vertical: 'top',
-          horizontal: 250,
-        }}
-      >
-        <ParticipantPinMenuItem
-          handleClick={handleClose}
-          subscriberWrapper={subscriberWrapper}
-          participantName={participantName}
-        />
-      </Menu>
+      <Popper open={isOpen} anchorEl={anchorEl} transition placement="bottom-start">
+        {({ TransitionProps }: PopperChildrenProps) => (
+          <Grow
+            {...TransitionProps}
+            style={{
+              transformOrigin: 'center bottom',
+            }}
+          >
+            <div className="text-left font-normal">
+              <ClickAwayListener onClickAway={handleClose}>
+                <Paper
+                  elevation={4}
+                  sx={{
+                    paddingTop: 1,
+                    paddingBottom: 1,
+                    borderRadius: 1,
+                    position: 'relative',
+                  }}
+                >
+                  <ParticipantPinMenuItem
+                    handleClick={handleClose}
+                    subscriberWrapper={subscriberWrapper}
+                    participantName={participantName}
+                  />
+                </Paper>
+              </ClickAwayListener>
+            </div>
+          </Grow>
+        )}
+      </Popper>
     </>
   );
 };
