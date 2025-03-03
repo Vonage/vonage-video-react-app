@@ -39,7 +39,7 @@ describe('ParticipantListItem', () => {
     expect(screen.getByTestId('pin-menu-item')).toBeVisible();
     const pinButton = await screen.getByText('Pin John Doe');
     await act(() => pinButton.click());
-    expect(screen.getByTestId('pin-menu-item')).not.toBeVisible();
+    expect(screen.queryByTestId('pin-menu-item')).not.toBeInTheDocument();
   });
 
   it('can pin participant', async () => {
