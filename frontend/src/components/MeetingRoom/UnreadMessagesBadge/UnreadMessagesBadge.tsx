@@ -1,5 +1,5 @@
 import { Badge } from '@mui/material';
-import { ReactElement } from 'react';
+import { ForwardedRef, forwardRef, ReactElement } from 'react';
 import useSessionContext from '../../../hooks/useSessionContext';
 
 export type UnreadMessagesBadgeProps = {
@@ -14,11 +14,16 @@ export type UnreadMessagesBadgeProps = {
  *  @property {ReactElement} children - the ToolbarButton to be rendered
  * @returns {ReactElement} - The UnreadMessagesBadge component
  */
-const UnreadMessagesBadge = ({ children }: UnreadMessagesBadgeProps): ReactElement => {
+const UnreadMessagesBadge = forwardRef(function UnreadMessagesBadge(
+  props: UnreadMessagesBadgeProps,
+  ref: ForwardedRef<HTMLSpanElement>
+) {
+  const { children, ...rest } = props;
   const { unreadCount } = useSessionContext();
 
   return (
     <Badge
+      {...rest}
       badgeContent={unreadCount}
       data-testid="chat-button-unread-count"
       invisible={unreadCount === 0}
@@ -30,10 +35,11 @@ const UnreadMessagesBadge = ({ children }: UnreadMessagesBadgeProps): ReactEleme
         marginRight: '12px',
       }}
       overlap="circular"
+      ref={ref}
     >
       {children}
     </Badge>
   );
-};
+});
 
 export default UnreadMessagesBadge;
