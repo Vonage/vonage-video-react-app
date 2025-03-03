@@ -37,35 +37,24 @@ const ParticipantListItemMenu = ({
       <IconButton onClick={handleClick} sx={{ marginRight: '-8px' }}>
         <MoreVertIcon sx={{ fontSize: '18px' }} />
       </IconButton>
-      <Popper open={isOpen} anchorEl={anchorEl} transition placement="bottom-start">
-        {({ TransitionProps }: PopperChildrenProps) => (
-          <Grow
-            {...TransitionProps}
-            style={{
-              transformOrigin: 'center bottom',
+      <Popper open={isOpen} anchorEl={anchorEl} placement="bottom-start">
+        <ClickAwayListener onClickAway={handleClose}>
+          <Paper
+            elevation={4}
+            sx={{
+              paddingTop: 1,
+              paddingBottom: 1,
+              borderRadius: 1,
+              position: 'relative',
             }}
           >
-            <div className="text-left font-normal">
-              <ClickAwayListener onClickAway={handleClose}>
-                <Paper
-                  elevation={4}
-                  sx={{
-                    paddingTop: 1,
-                    paddingBottom: 1,
-                    borderRadius: 1,
-                    position: 'relative',
-                  }}
-                >
-                  <ParticipantPinMenuItem
-                    handleClick={handleClose}
-                    subscriberWrapper={subscriberWrapper}
-                    participantName={participantName}
-                  />
-                </Paper>
-              </ClickAwayListener>
-            </div>
-          </Grow>
-        )}
+            <ParticipantPinMenuItem
+              handleClick={handleClose}
+              subscriberWrapper={subscriberWrapper}
+              participantName={participantName}
+            />
+          </Paper>
+        </ClickAwayListener>
       </Popper>
     </>
   );
