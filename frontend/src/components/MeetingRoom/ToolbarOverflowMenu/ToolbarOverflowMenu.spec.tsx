@@ -50,7 +50,7 @@ describe('ToolbarOverflowMenu', () => {
     expect(screen.getByTestId('archiving-button')).toBeVisible();
     expect(screen.getByTestId('emoji-grid-toggle')).toBeVisible();
     expect(screen.getByTestId('report-issue-button')).toBeVisible();
-    expect(screen.getByTestId('participant-list-toggle')).toBeVisible();
+    expect(screen.getByTestId('participant-list-button')).toBeVisible();
     expect(screen.getByTestId('chat-button')).toBeVisible();
   });
 
@@ -61,7 +61,7 @@ describe('ToolbarOverflowMenu', () => {
     expect(screen.getByTestId('archiving-button')).toBeVisible();
     expect(screen.getByTestId('emoji-grid-toggle')).toBeVisible();
     expect(screen.queryByTestId('report-issue-button')).not.toBeInTheDocument();
-    expect(screen.getByTestId('participant-list-toggle')).toBeVisible();
+    expect(screen.getByTestId('participant-list-button')).toBeVisible();
     expect(screen.getByTestId('chat-button')).toBeVisible();
   });
 });

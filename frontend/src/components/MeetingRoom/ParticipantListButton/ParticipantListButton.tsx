@@ -45,7 +45,7 @@ const ParticipantListButton = ({
           overlap="circular"
         >
           <ToolbarButton
-            data-testid="participant-list-toggle"
+            data-testid="participant-list-button"
             sx={{
               marginTop: '0px',
               marginRight: '0px',
