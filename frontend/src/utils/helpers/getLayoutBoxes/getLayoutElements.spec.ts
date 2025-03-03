@@ -109,7 +109,7 @@ const hiddenParticipantTileLayoutElement = {
 
 describe('getLayoutElementArray', () => {
   let activeSpeakerId: string;
-  let hasPinnedSubscribers: boolean;
+  let pinnedSubscriberCount: number;
   let hiddenSubscribers: SubscriberWrapper[];
   let isSharingScreen: boolean;
   let layoutMode: LayoutMode;
@@ -119,7 +119,7 @@ describe('getLayoutElementArray', () => {
   let subscribersInDisplayOrder: SubscriberWrapper[];
   beforeEach(() => {
     activeSpeakerId = 'sub2';
-    hasPinnedSubscribers = false;
+    pinnedSubscriberCount = 0;
     hiddenSubscribers = [subscriber4];
     isSharingScreen = true;
     layoutMode = 'active-speaker';
@@ -132,7 +132,7 @@ describe('getLayoutElementArray', () => {
   it('returns elements in correct order', () => {
     const layoutElements = getLayoutElementArray({
       activeSpeakerId,
-      hasPinnedSubscribers,
+      pinnedSubscriberCount,
       hiddenSubscribers,
       isSharingScreen,
       layoutMode,
@@ -155,7 +155,7 @@ describe('getLayoutElementArray', () => {
   it('makes active speaker element big if screenshare is not present', () => {
     const layoutElements = getLayoutElementArray({
       activeSpeakerId: 'sub1',
-      hasPinnedSubscribers,
+      pinnedSubscriberCount,
       hiddenSubscribers: [],
       isSharingScreen: false,
       layoutMode,
@@ -176,7 +176,7 @@ describe('getLayoutElementArray', () => {
   it('does not make active speaker element big if layout-mode is grid', () => {
     const layoutElements = getLayoutElementArray({
       activeSpeakerId: 'sub1',
-      hasPinnedSubscribers,
+      pinnedSubscriberCount,
       hiddenSubscribers,
       isSharingScreen: false,
       layoutMode: 'grid',
@@ -198,7 +198,7 @@ describe('getLayoutElementArray', () => {
   it('makes screenshare big and fixedRatio, and active-speaker is small', () => {
     const layoutElements = getLayoutElementArray({
       activeSpeakerId: 'sub1',
-      hasPinnedSubscribers,
+      pinnedSubscriberCount,
       hiddenSubscribers: [],
       isSharingScreen: false,
       layoutMode,

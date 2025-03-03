@@ -26,6 +26,10 @@ const getLayoutBoxes = ({
   if (!wrapRef.current) {
     return {};
   }
+  // For multiple pinned participants with no screenshare we make all large tiles landscape
+  const shouldMakeLargeTilesLandscape =
+    layoutProps.pinnedSubscriberCount > 1 && !layoutProps.sessionHasScreenshare;
+
   // Boxes are returned at the same index as the layout Element passed in
   // See: https://github.com/aullman/opentok-layout-js/?tab=readme-ov-file#usage
   // So for us:
@@ -33,7 +37,11 @@ const getLayoutBoxes = ({
   // last index n - hidden tile participant if present
   // last index n after popping hidden tile - local screenshare box
   // remaining indices between 1 and n after popping screenshare - subscriber boxes in display order
-  const boxes = getLayout(wrapDimensions, getLayoutElementArray(layoutProps));
+  const boxes = getLayout(
+    wrapDimensions,
+    getLayoutElementArray(layoutProps),
+    shouldMakeLargeTilesLandscape
+  );
   const publisherBox = boxes.shift();
   const hiddenParticipantsBox = layoutProps.hiddenSubscribers.length ? boxes.pop() : undefined;
   const localScreenshareBox = layoutProps.isSharingScreen ? boxes.pop() : undefined;

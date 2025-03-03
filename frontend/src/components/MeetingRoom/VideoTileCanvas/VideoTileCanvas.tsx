@@ -50,7 +50,9 @@ const VideoTileCanvas = ({
   const isViewingScreenshare = subscriberWrappers.some((subWrapper) => subWrapper.isScreenshare);
   const sessionHasScreenshare = isViewingScreenshare || isSharingScreen;
   const isViewingLargeTile = sessionHasScreenshare || layoutMode === 'active-speaker';
-  const hasPinnedSubscribers = subscriberWrappers.some((subWrapper) => subWrapper.isPinned);
+  const pinnedSubscriberCount = subscriberWrappers.filter(
+    (subWrapper) => subWrapper.isPinned
+  ).length;
 
   // Check which subscribers we will display, in large calls we will hide some subscribers
   const { hiddenSubscribers, subscribersOnScreen } = getSubscribersToDisplay(
@@ -65,7 +67,7 @@ const VideoTileCanvas = ({
   const layoutBoxes = getLayoutBoxes({
     activeSpeakerId,
     getLayout,
-    hasPinnedSubscribers,
+    pinnedSubscriberCount,
     hiddenSubscribers,
     isSharingScreen,
     layoutMode,
