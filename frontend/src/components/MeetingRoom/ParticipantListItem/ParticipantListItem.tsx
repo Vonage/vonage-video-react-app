@@ -1,16 +1,20 @@
-import { Avatar, ListItem, Typography } from '@mui/material';
 import { ReactElement } from 'react';
+import { Avatar, Badge, ListItem, Typography } from '@mui/material';
+import PushPinIcon from '@mui/icons-material/PushPin';
 import { Stream } from '@vonage/client-sdk-video';
 import AudioIndicator from '../AudioIndicator';
+import ParticipantListItemMenu from '../ParticipantListItemMenu';
+import { SubscriberWrapper } from '../../../types/session';
 
 export type ParticipantListItemProps = {
   stream?: Stream;
   initials: string;
   hasAudio?: boolean;
   audioLevel?: number;
-  name?: string;
+  name: string;
   dataTestId: string;
   avatarColor: string;
+  subscriberWrapper?: SubscriberWrapper;
 };
 
 /**
@@ -29,36 +33,62 @@ export type ParticipantListItemProps = {
 const ParticipantListItem = ({
   audioLevel,
   avatarColor,
-  initials,
-  hasAudio,
-  stream,
-  name,
   dataTestId,
+  hasAudio,
+  initials,
+  name,
+  stream,
+  subscriberWrapper,
 }: ParticipantListItemProps): ReactElement => {
   return (
     <ListItem
-      sx={{ height: '56px' }}
+      sx={{ height: '56px', paddingRight: '68px' }}
       data-testid={dataTestId}
       secondaryAction={
-        <AudioIndicator
-          audioLevel={audioLevel}
-          hasAudio={hasAudio}
-          stream={stream}
-          participantName={name}
-          indicatorColor="black"
-        />
+        <div className="flex items-center justify-center">
+          <AudioIndicator
+            audioLevel={audioLevel}
+            hasAudio={hasAudio}
+            stream={stream}
+            participantName={name}
+            indicatorColor="black"
+            indicatorStyle="flex items-center justify-center"
+          />
+          {subscriberWrapper && (
+            <ParticipantListItemMenu participantName={name} subscriberWrapper={subscriberWrapper} />
+          )}
+        </div>
       }
     >
-      <Avatar
+      <Badge
+        overlap="circular"
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
         sx={{
-          bgcolor: avatarColor,
-          width: '32px',
-          height: '32px',
-          fontSize: '14px',
+          '.MuiBadge-badge': {
+            backgroundColor: 'white',
+          },
         }}
+        invisible={!subscriberWrapper?.isPinned}
+        badgeContent={
+          <PushPinIcon
+            sx={{
+              fontSize: '14px',
+              position: 'fixed',
+            }}
+          />
+        }
       >
-        {initials}
-      </Avatar>
+        <Avatar
+          sx={{
+            bgcolor: avatarColor,
+            width: '32px',
+            height: '32px',
+            fontSize: '14px',
+          }}
+        >
+          {initials}
+        </Avatar>
+      </Badge>
       <Typography
         data-testid="participant-list-name"
         variant="inherit"
