@@ -38,7 +38,7 @@ const initialArguments: GetLayoutBoxesProps = {
   activeSpeakerId: undefined,
   hiddenSubscribers: [],
   isSharingScreen: false,
-  hasPinnedSubscribers: false,
+  pinnedSubscriberCount: 0,
   layoutMode: 'active-speaker',
   publisher: null,
   screensharingPublisher: null,
@@ -56,7 +56,7 @@ const initialArguments: GetLayoutBoxesProps = {
 const typicalRoomArguments: GetLayoutBoxesProps = {
   publisher: createPublisher(),
   isSharingScreen: true,
-  hasPinnedSubscribers: false,
+  pinnedSubscriberCount: 0,
   screensharingPublisher: createPublisher(),
   wrapRef: { current: {} } as unknown as MutableRefObject<HTMLElement | null>,
   subscribersInDisplayOrder: [
@@ -182,5 +182,53 @@ describe('getLayoutBoxes', () => {
       publisherBox: 'publisherBox',
       subscriberBoxes: ['subscriber1Box', 'subscriber2Box', 'subscriber3Box'],
     });
+  });
+
+  it('should call getLayout with shouldMakeLargeTilesLandscape flag true for multiple pinned participants with no screenshare', () => {
+    const getLayoutMock = vi.fn().mockReturnValue([]);
+    const args = {
+      ...typicalRoomArguments,
+      sessionHasScreenshare: false,
+      getLayout: getLayoutMock,
+      pinnedSubscriberCount: 2,
+    };
+    getLayoutBoxes(args);
+    expect(getLayoutMock).toHaveBeenCalledWith(
+      typicalRoomArguments.wrapDimensions,
+      undefined,
+      true // shouldMakeLargeTilesLandscape
+    );
+  });
+
+  it('should call getLayout with shouldMakeLargeTilesLandscape flag false for multiple pinned participants with screenshare', () => {
+    const getLayoutMock = vi.fn().mockReturnValue([]);
+    const args = {
+      ...typicalRoomArguments,
+      sessionHasScreenshare: true,
+      getLayout: getLayoutMock,
+      pinnedSubscriberCount: 2,
+    };
+    getLayoutBoxes(args);
+    expect(getLayoutMock).toHaveBeenCalledWith(
+      typicalRoomArguments.wrapDimensions,
+      undefined,
+      false // shouldMakeLargeTilesLandscape
+    );
+  });
+
+  it('should call getLayout with shouldMakeLargeTilesLandscape flag false for single pinned participants with no screenshare', () => {
+    const getLayoutMock = vi.fn().mockReturnValue([]);
+    const args = {
+      ...typicalRoomArguments,
+      sessionHasScreenshare: false,
+      getLayout: getLayoutMock,
+      pinnedSubscriberCount: 1,
+    };
+    getLayoutBoxes(args);
+    expect(getLayoutMock).toHaveBeenCalledWith(
+      typicalRoomArguments.wrapDimensions,
+      undefined,
+      false // shouldMakeLargeTilesLandscape
+    );
   });
 });

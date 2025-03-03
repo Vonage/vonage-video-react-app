@@ -1,12 +1,7 @@
 import { useRef } from 'react';
-import { Box, Element } from 'opentok-layout-js';
 import LayoutManager from '../utils/layoutManager';
 
-export type GetLayout = (
-  containerDimensions: { height: number; width: number },
-  boxes: Element[]
-) => Box[];
-
+export type GetLayout = InstanceType<typeof LayoutManager>['getLayout'];
 /**
  * React hook to return a getLayout function as defined here:
  * https://github.com/aullman/opentok-layout-js?tab=readme-ov-file#usage
