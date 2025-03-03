@@ -42,7 +42,7 @@ describe('ToolbarOverflowButton', () => {
     render(<ToolbarOverflowButton />);
 
     expect(screen.queryByTestId('layout-button')).not.toBeInTheDocument();
-    expect(screen.queryByTestId('emoji-grid-toggle')).not.toBeInTheDocument();
+    expect(screen.queryByTestId('emoji-grid-button')).not.toBeInTheDocument();
     expect(screen.queryByTestId('archiving-button')).not.toBeInTheDocument();
 
     act(() => {
@@ -50,7 +50,7 @@ describe('ToolbarOverflowButton', () => {
     });
 
     expect(screen.queryByTestId('layout-button')).toBeVisible();
-    expect(screen.queryByTestId('emoji-grid-toggle')).toBeVisible();
+    expect(screen.queryByTestId('emoji-grid-button')).toBeVisible();
     expect(screen.queryByTestId('archiving-button')).toBeVisible();
   });
 

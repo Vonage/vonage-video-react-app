@@ -42,7 +42,7 @@ const EmojiGridButton = ({
             />
           }
           ref={anchorRef}
-          data-testid="emoji-grid-toggle"
+          data-testid="emoji-grid-button"
           sx={{
             marginTop: isSmallViewport ? '0px' : '4px',
           }}
