@@ -27,7 +27,7 @@ const getLayoutBoxes = ({
     return {};
   }
   // For multiple pinned participants with no screenshare we make all large tiles landscape
-  const fixLargeTilesLandscape =
+  const shouldMakeLargeTilesLandscape =
     layoutProps.pinnedSubscriberCount > 1 && !layoutProps.sessionHasScreenshare;
 
   // Boxes are returned at the same index as the layout Element passed in
@@ -40,7 +40,7 @@ const getLayoutBoxes = ({
   const boxes = getLayout(
     wrapDimensions,
     getLayoutElementArray(layoutProps),
-    fixLargeTilesLandscape
+    shouldMakeLargeTilesLandscape
   );
   const publisherBox = boxes.shift();
   const hiddenParticipantsBox = layoutProps.hiddenSubscribers.length ? boxes.pop() : undefined;
