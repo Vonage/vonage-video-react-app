@@ -7,6 +7,7 @@ import ToolbarButton from '../ToolbarButton';
 
 type LayoutButtonProps = {
   isScreenSharePresent: boolean;
+  handleClose: () => void;
 };
 
 /**
@@ -16,7 +17,10 @@ type LayoutButtonProps = {
  * @param {boolean} isScreenSharePresent - Indicates whether there is a screenshare currently in the session.
  * @returns {ReactElement} The LayoutButton component.
  */
-const LayoutButton = ({ isScreenSharePresent }: LayoutButtonProps): ReactElement | false => {
+const LayoutButton = ({
+  isScreenSharePresent,
+  handleClose,
+}: LayoutButtonProps): ReactElement | false => {
   const { layoutMode, setLayoutMode } = useSessionContext();
   const isGrid = layoutMode === 'grid';
 
@@ -25,6 +29,7 @@ const LayoutButton = ({ isScreenSharePresent }: LayoutButtonProps): ReactElement
       return;
     }
     setLayoutMode((prev) => (prev === 'grid' ? 'active-speaker' : 'grid'));
+    handleClose();
   };
 
   const getTooltipTitle = () => {

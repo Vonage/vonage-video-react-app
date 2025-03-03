@@ -75,13 +75,16 @@ const ToolbarOverflowMenu = ({
                   paddingLeft: '12px',
                 }}
               >
-                <LayoutButton isScreenSharePresent={isViewingScreenShare} />
+                <LayoutButton
+                  isScreenSharePresent={isViewingScreenShare}
+                  handleClose={handleClickAway}
+                />
                 <EmojiGridButton
                   isEmojiGridOpen={isEmojiGridOpen}
                   setIsEmojiGridOpen={setIsEmojiGridOpen}
                   isParentOpen={isToolbarOverflowMenuOpen}
                 />
-                <ArchivingButton />
+                <ArchivingButton handleClickAway={handleClickAway} />
               </Paper>
             </ClickAwayListener>
           </div>
