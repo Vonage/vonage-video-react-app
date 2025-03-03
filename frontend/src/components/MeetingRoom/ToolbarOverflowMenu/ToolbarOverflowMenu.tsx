@@ -5,6 +5,7 @@ import ArchivingButton from '../ArchivingButton';
 import EmojiGridButton from '../EmojiGridButton';
 import LayoutButton from '../LayoutButton';
 import useSessionContext from '../../../hooks/useSessionContext';
+import ScreenSharingButton from '../../ScreenSharingButton';
 
 export type ToolbarOverflowMenuProps = {
   isToolbarOverflowMenuOpen: boolean;
@@ -12,6 +13,8 @@ export type ToolbarOverflowMenuProps = {
   setIsEmojiGridOpen: Dispatch<SetStateAction<boolean>>;
   anchorRef: RefObject<HTMLButtonElement | null>;
   handleClickAway: () => void;
+  toggleShareScreen: () => void;
+  isSharingScreen: boolean;
 };
 
 /**
@@ -32,6 +35,8 @@ const ToolbarOverflowMenu = ({
   setIsEmojiGridOpen,
   anchorRef,
   handleClickAway,
+  toggleShareScreen,
+  isSharingScreen,
 }: ToolbarOverflowMenuProps): ReactElement => {
   const { subscriberWrappers } = useSessionContext();
   const isViewingScreenShare = subscriberWrappers.some((subWrapper) => subWrapper.isScreenshare);
@@ -75,6 +80,11 @@ const ToolbarOverflowMenu = ({
                   paddingLeft: '12px',
                 }}
               >
+                <ScreenSharingButton
+                  toggleScreenShare={toggleShareScreen}
+                  isSharingScreen={isSharingScreen}
+                  isViewingScreenShare={isViewingScreenShare}
+                />
                 <LayoutButton isScreenSharePresent={isViewingScreenShare} />
                 <EmojiGridButton
                   isEmojiGridOpen={isEmojiGridOpen}

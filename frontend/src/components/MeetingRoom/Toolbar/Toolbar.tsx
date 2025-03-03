@@ -12,8 +12,8 @@ import ChatButton from '../ChatButton';
 import { RightPanelActiveTab } from '../../../hooks/useRightPanel';
 import ReportIssueButton from '../ReportIssueButton';
 import ToolbarOverflowButton from '../ToolbarOverflowButton';
-import useIsSmallViewport from '../../../hooks/useIsSmallViewport';
 import EmojiGridButton from '../EmojiGridButton';
+import useShownButtons from '../../../hooks/useShowButtons';
 
 export type ToolbarProps = {
   toggleShareScreen: () => void;
@@ -60,7 +60,6 @@ const Toolbar = ({
   const isReportIssueEnabled = import.meta.env.VITE_ENABLE_REPORT_ISSUE === 'true';
   const isViewingScreenShare = subscriberWrappers.some((subWrapper) => subWrapper.isScreenshare);
   const isScreenSharePresent = isViewingScreenShare || isSharingScreen;
-  const isSmallViewport = useIsSmallViewport();
   const handleLeave = useCallback(() => {
     if (!disconnect) {
       return;
@@ -68,6 +67,7 @@ const Toolbar = ({
     disconnect();
   }, [disconnect]);
   const [openEmojiGridDesktop, setOpenEmojiGridDesktop] = useState<boolean>(false);
+  const shownButtons = useShownButtons();
 
   return (
     <div className="absolute bottom-0 left-0 flex h-[80px] w-full flex-col items-center bg-darkGray-100 p-4 md:flex-row md:justify-between">
@@ -77,40 +77,46 @@ const Toolbar = ({
       <div className="flex flex-1 justify-center">
         <AudioControlButton />
         <VideoControlButton />
-        {isSmallViewport ? (
-          <ToolbarOverflowButton />
-        ) : (
-          <>
-            <ScreenSharingButton
-              toggleScreenShare={toggleShareScreen}
-              isSharingScreen={isSharingScreen}
-              isViewingScreenShare={isViewingScreenShare}
-            />
-            <LayoutButton isScreenSharePresent={isScreenSharePresent} />
-            <EmojiGridButton
-              isEmojiGridOpen={openEmojiGridDesktop}
-              setIsEmojiGridOpen={setOpenEmojiGridDesktop}
-              isParentOpen
-            />
-            <ArchivingButton />
-          </>
+        <ToolbarOverflowButton
+          isSharingScreen={isSharingScreen}
+          toggleShareScreen={toggleShareScreen}
+        />
+        {shownButtons > 1 && (
+          <ScreenSharingButton
+            toggleScreenShare={toggleShareScreen}
+            isSharingScreen={isSharingScreen}
+            isViewingScreenShare={isViewingScreenShare}
+          />
         )}
+        {shownButtons > 2 && <LayoutButton isScreenSharePresent={isScreenSharePresent} />}
+        {shownButtons > 3 && (
+          <EmojiGridButton
+            isEmojiGridOpen={openEmojiGridDesktop}
+            setIsEmojiGridOpen={setOpenEmojiGridDesktop}
+            isParentOpen
+          />
+        )}
+        {shownButtons > 4 && <ArchivingButton />}
         <ExitButton handleLeave={handleLeave} />
       </div>
 
       <div className="hidden flex-1 justify-end md:flex">
-        {isReportIssueEnabled && (
+        {isReportIssueEnabled && shownButtons > 5 && (
           <ReportIssueButton
             isOpen={rightPanelActiveTab === 'issues'}
             handleClick={toggleReportIssue}
           />
         )}
-        <ParticipantListButton
-          isOpen={rightPanelActiveTab === 'participant-list'}
-          handleClick={toggleParticipantList}
-          participantCount={participantCount}
-        />
-        <ChatButton isOpen={rightPanelActiveTab === 'chat'} handleClick={toggleChat} />
+        {shownButtons > 6 && (
+          <ParticipantListButton
+            isOpen={rightPanelActiveTab === 'participant-list'}
+            handleClick={toggleParticipantList}
+            participantCount={participantCount}
+          />
+        )}
+        {shownButtons > 7 && (
+          <ChatButton isOpen={rightPanelActiveTab === 'chat'} handleClick={toggleChat} />
+        )}
       </div>
     </div>
   );

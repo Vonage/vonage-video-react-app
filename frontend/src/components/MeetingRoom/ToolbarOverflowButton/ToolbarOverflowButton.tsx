@@ -4,18 +4,31 @@ import MoreVertIcon from '@mui/icons-material/MoreVert';
 import ToolbarButton from '../ToolbarButton';
 import ToolbarOverflowMenu from '../ToolbarOverflowMenu';
 import UnreadMessagesBadge from '../UnreadMessagesBadge';
+import useIsSmallViewport from '../../../hooks/useIsSmallViewport';
+
+export type ToolbarOverflowButtonProps = {
+  toggleShareScreen: () => void;
+  isSharingScreen: boolean;
+};
 
 /**
  * ToolbarOverflowButton Component
  *
- * Displays a clickable button that opens a grid of hidden toolbar buttons for smaller viewport devices. There
+ * Displays a clickable button that opens a grid of hidden toolbar buttons for smaller viewports. There
  * is also an unread chat messages indicator that is shown when there are messages to be read.
- * @returns {ReactElement} - The ToolbarOverflowButton Component.
+ * @param root0
+ * @param root0.toggleShareScreen
+ * @param root0.isSharingScreen
+ * @returns {ReactElement | null} - The ToolbarOverflowButton Component.
  */
-const ToolbarOverflowButton = (): ReactElement => {
+const ToolbarOverflowButton = ({
+  toggleShareScreen,
+  isSharingScreen,
+}: ToolbarOverflowButtonProps): ReactElement | null => {
   const anchorRef = useRef<HTMLButtonElement>(null);
   const [isToolbarOverflowMenuOpen, setIsToolbarOverflowMenuOpen] = useState<boolean>(false);
   const [openEmojiGridMobile, setOpenEmojiGridMobile] = useState<boolean>(true);
+  const isSmallViewport = useIsSmallViewport();
 
   const handleButtonToggle = () => {
     setIsToolbarOverflowMenuOpen((prevOpen) => !prevOpen);
@@ -25,7 +38,7 @@ const ToolbarOverflowButton = (): ReactElement => {
     setIsToolbarOverflowMenuOpen(false);
   };
 
-  return (
+  return isSmallViewport ? (
     <>
       <Tooltip
         title="Access additional toolbar items"
@@ -53,9 +66,11 @@ const ToolbarOverflowButton = (): ReactElement => {
         setIsEmojiGridOpen={setOpenEmojiGridMobile}
         anchorRef={anchorRef}
         handleClickAway={handleClickAway}
+        toggleShareScreen={toggleShareScreen}
+        isSharingScreen={isSharingScreen}
       />
     </>
-  );
+  ) : null;
 };
 
 export default ToolbarOverflowButton;
