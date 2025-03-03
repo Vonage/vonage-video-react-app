@@ -27,32 +27,31 @@ const ParticipantListButton = ({
   participantCount,
 }: ParticipantListButtonProps): ReactElement => {
   return (
-    <div className="pr-3">
-      <Tooltip
-        title={isOpen ? 'Close participant list' : 'Open participant list'}
-        aria-label="toggle participant list"
+    <Tooltip
+      title={isOpen ? 'Close participant list' : 'Open participant list'}
+      aria-label="toggle participant list"
+    >
+      <Badge
+        badgeContent={participantCount}
+        sx={{
+          '& .MuiBadge-badge': {
+            color: 'white',
+            backgroundColor: 'rgb(95, 99, 104)',
+          },
+          marginRight: '12px',
+        }}
+        overlap="circular"
       >
-        <Badge
-          badgeContent={participantCount}
+        <ToolbarButton
           sx={{
-            '& .MuiBadge-badge': {
-              color: 'white',
-              backgroundColor: 'rgb(95, 99, 104)',
-            },
+            marginTop: '0px',
+            marginRight: '0px',
           }}
-          overlap="circular"
-        >
-          <ToolbarButton
-            sx={{
-              marginTop: '0px',
-              marginRight: '0px',
-            }}
-            onClick={handleClick}
-            icon={<PeopleIcon sx={{ color: isOpen ? blue.A100 : 'white' }} />}
-          />
-        </Badge>
-      </Tooltip>
-    </div>
+          onClick={handleClick}
+          icon={<PeopleIcon sx={{ color: isOpen ? blue.A100 : 'white' }} />}
+        />
+      </Badge>
+    </Tooltip>
   );
 };
 
