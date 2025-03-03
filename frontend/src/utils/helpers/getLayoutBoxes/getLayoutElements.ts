@@ -49,7 +49,7 @@ const getPublisherLayoutElement = (publisher: Publisher | null) => ({
  *  We display subscriber as large if it is screenshare or active speaker given that layout mode is active speaker and
  * screenshare is not being displayed
  * @param {SubscriberWrapper} subWrapper - Subscriber that we are checking
- * @param {boolean} hasPinnedSubscribers - whether there are currently pinned subscribers
+ * @param {number} pinnedSubscriberCount - the number of pinned participant tiles
  * @param {boolean} sessionHasScreenshare - whether there is currently a screenshare in the session
  * @param {LayoutMode} layoutMode - current layout mode
  * @param {(string | undefined)} activeSpeakerId - current active speaker id
@@ -58,7 +58,7 @@ const getPublisherLayoutElement = (publisher: Publisher | null) => ({
  */
 const shouldDisplayBig = (
   subWrapper: SubscriberWrapper,
-  hasPinnedSubscribers: boolean,
+  pinnedSubscriberCount: number,
   sessionHasScreenshare: boolean,
   layoutMode: LayoutMode,
   activeSpeakerId: string | undefined,
@@ -76,7 +76,7 @@ const shouldDisplayBig = (
 
     if (
       layoutMode === 'active-speaker' &&
-      hasPinnedSubscribers === false &&
+      pinnedSubscriberCount === 0 &&
       isActiveSpeaker(activeSpeakerId, subWrapper.id, index)
     ) {
       return true;
@@ -90,7 +90,7 @@ const shouldDisplayBig = (
  * - height and width from subscriber
  * - isBig for screenshare or active speaker
  * - fixedRatio only for screenshare
- * @param {boolean} hasPinnedSubscribers - whether there are currently pinned subscribers
+ * @param {number} pinnedSubscriberCount - the number of pinned subscribers
  * @param {SubscriberWrapper[]} subscribersInDisplayOrder - subscriber array in order to be displayed
  * @param {boolean} sessionHasScreenshare - boolean indicating if a screenshare is present in the session, used to determine whether to make the active speaker big or not
  * @param {LayoutMode} layoutMode - layout mode, to determine whether to make active speaker big or not
@@ -98,7 +98,7 @@ const shouldDisplayBig = (
  * @returns {Element[]} elements - array of subscriber Elements in order of display
  */
 const getSubscriberLayoutElements = (
-  hasPinnedSubscribers: boolean,
+  pinnedSubscriberCount: number,
   subscribersInDisplayOrder: SubscriberWrapper[],
   sessionHasScreenshare: boolean,
   layoutMode: LayoutMode,
@@ -109,7 +109,7 @@ const getSubscriberLayoutElements = (
       ...getVideoDimensions(subWrapper.subscriber),
       big: shouldDisplayBig(
         subWrapper,
-        hasPinnedSubscribers,
+        pinnedSubscriberCount,
         sessionHasScreenshare,
         layoutMode,
         activeSpeakerId,
@@ -147,7 +147,7 @@ const hiddenParticipantTileLayoutElement = {
 
 export type GetLayoutElementArrayProps = {
   activeSpeakerId: string | undefined;
-  hasPinnedSubscribers: boolean;
+  pinnedSubscriberCount: number;
   hiddenSubscribers: SubscriberWrapper[];
   isSharingScreen: boolean;
   layoutMode: LayoutMode;
@@ -164,7 +164,7 @@ export type GetLayoutElementArrayProps = {
  */
 const getLayoutElementArray = ({
   activeSpeakerId,
-  hasPinnedSubscribers,
+  pinnedSubscriberCount,
   hiddenSubscribers,
   isSharingScreen,
   layoutMode,
@@ -178,7 +178,7 @@ const getLayoutElementArray = ({
   const elements: MaybeElement[] = [
     getPublisherLayoutElement(publisher),
     ...getSubscriberLayoutElements(
-      hasPinnedSubscribers,
+      pinnedSubscriberCount,
       subscribersInDisplayOrder,
       sessionHasScreenshare,
       layoutMode,
