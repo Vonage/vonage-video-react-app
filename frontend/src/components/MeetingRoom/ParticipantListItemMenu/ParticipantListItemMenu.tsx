@@ -45,6 +45,7 @@ const ParticipantListItemMenu = ({
         }}
       >
         <ParticipantPinMenuItem
+          handleClick={handleClose}
           subscriberWrapper={subscriberWrapper}
           participantName={participantName}
         />

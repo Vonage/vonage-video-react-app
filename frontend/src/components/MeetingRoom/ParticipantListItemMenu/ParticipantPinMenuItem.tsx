@@ -6,6 +6,7 @@ import PushPinOffIcon from '../../Icons/PushPinOffIcon';
 import useSessionContext from '../../../hooks/useSessionContext';
 
 export type ParticipantPinMenuItemProps = {
+  handleClick: () => void;
   participantName: string;
   subscriberWrapper: SubscriberWrapper;
 };
@@ -14,11 +15,13 @@ export type ParticipantPinMenuItemProps = {
  * ParticipantPinMenuItem
  * renders a MenuItem button to pin or unpin a participant
  * @param {ParticipantPinMenuItemProps} props - component props.
+ *  @property {Function} handleClick - click handler for item
  *  @property {string} participantName - participant name.
  *  @property {SubscriberWrapper} subscriberWrapper -  The SubscriberWrapper for the participant.
  * @returns {ReactElement} - ParticipantPinMenuItem
  */
 const ParticipantPinMenuItem = ({
+  handleClick,
   participantName,
   subscriberWrapper,
 }: ParticipantPinMenuItemProps): ReactElement => {
@@ -39,9 +42,15 @@ const ParticipantPinMenuItem = ({
     if (!isDisabled) {
       pinSubscriber(id);
     }
+    handleClick();
   };
   return (
-    <MenuItem disabled={isDisabled} sx={{ width: '280px' }} onClick={handlePinClick}>
+    <MenuItem
+      data-testid="pin-menu-item"
+      disabled={isDisabled}
+      sx={{ width: '280px' }}
+      onClick={handlePinClick}
+    >
       <ListItemIcon>
         {isPinned ? (
           <PushPinOffIcon fontSize="small" sx={{ color: 'black' }} />
