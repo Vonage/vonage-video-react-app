@@ -1,8 +1,6 @@
 import { useState, MouseEvent, ReactElement } from 'react';
-import { ClickAwayListener, Grow, IconButton, Paper, Popper } from '@mui/material';
+import { ClickAwayListener, IconButton, Paper, Popper } from '@mui/material';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
-// import { ClickAwayListener, Popper, PopperChildrenProps } from '@mui/base';
-import { PopperChildrenProps } from '@mui/base';
 import { SubscriberWrapper } from '../../../types/session';
 import ParticipantPinMenuItem from './ParticipantPinMenuItem';
 
