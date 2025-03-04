@@ -9,6 +9,7 @@ import UnreadMessagesBadge from '../UnreadMessagesBadge';
 export type ChatButtonProps = {
   handleClick: () => void;
   isOpen: boolean;
+  handleClickAway: () => void;
 };
 
 /**
@@ -21,8 +22,12 @@ export type ChatButtonProps = {
  *   @property {boolean} isOpen - true if chat is currently open, false if not
  * @returns {ReactElement} - ChatButton
  */
-const ChatButton = ({ handleClick, isOpen }: ChatButtonProps): ReactElement => {
+const ChatButton = ({ handleClick, isOpen, handleClickAway }: ChatButtonProps): ReactElement => {
   const isSmallViewport = useIsSmallViewport();
+  const handleClose = () => {
+    handleClick();
+    handleClickAway();
+  };
   return (
     <Tooltip title={isOpen ? 'Close chat' : 'Open chat'} aria-label="toggle chat">
       <UnreadMessagesBadge>
@@ -32,7 +37,7 @@ const ChatButton = ({ handleClick, isOpen }: ChatButtonProps): ReactElement => {
             marginTop: '0px',
             marginRight: '0px',
           }}
-          onClick={handleClick}
+          onClick={handleClose}
           icon={<ChatIcon sx={{ color: isOpen ? blue.A100 : 'white' }} />}
           isSmallViewPort={isSmallViewport}
         />

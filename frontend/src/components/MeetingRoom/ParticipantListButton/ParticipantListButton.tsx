@@ -10,6 +10,7 @@ export type ParticipantListButtonProps = {
   handleClick: () => void;
   isOpen: boolean;
   participantCount: number;
+  handleClickAway: () => void;
 };
 /**
  * ParticipantListButton Component
@@ -26,8 +27,13 @@ const ParticipantListButton = ({
   handleClick,
   isOpen,
   participantCount,
+  handleClickAway,
 }: ParticipantListButtonProps): ReactElement => {
   const isSmallViewport = useIsSmallViewport();
+  const handleClose = () => {
+    handleClick();
+    handleClickAway();
+  };
   return (
     <div className="pr-3">
       <Tooltip
@@ -50,7 +56,7 @@ const ParticipantListButton = ({
               marginTop: '0px',
               marginRight: '0px',
             }}
-            onClick={handleClick}
+            onClick={handleClose}
             icon={<PeopleIcon sx={{ color: isOpen ? blue.A100 : 'white' }} />}
             isSmallViewPort={isSmallViewport}
           />

@@ -86,10 +86,7 @@ const ToolbarOverflowMenu = ({
                   paddingLeft: '12px',
                 }}
               >
-                <LayoutButton
-                  isScreenSharePresent={isViewingScreenShare}
-                  handleClose={handleClickAway}
-                />
+                <LayoutButton isScreenSharePresent={isViewingScreenShare} />
                 <EmojiGridButton
                   isEmojiGridOpen={isEmojiGridOpen}
                   setIsEmojiGridOpen={setIsEmojiGridOpen}
@@ -100,14 +97,20 @@ const ToolbarOverflowMenu = ({
                   <ReportIssueButton
                     isOpen={rightPanelActiveTab === 'issues'}
                     handleClick={toggleReportIssue}
+                    handleClickAway={handleClickAway}
                   />
                 )}
                 <ParticipantListButton
                   isOpen={rightPanelActiveTab === 'participant-list'}
                   handleClick={toggleParticipantList}
+                  handleClickAway={handleClickAway}
                   participantCount={participantCount}
                 />
-                <ChatButton isOpen={rightPanelActiveTab === 'chat'} handleClick={toggleChat} />
+                <ChatButton
+                  isOpen={rightPanelActiveTab === 'chat'}
+                  handleClick={toggleChat}
+                  handleClickAway={handleClickAway}
+                />
               </Paper>
             </ClickAwayListener>
           </div>
