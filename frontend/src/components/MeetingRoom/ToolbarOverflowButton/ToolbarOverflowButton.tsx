@@ -4,7 +4,7 @@ import MoreVertIcon from '@mui/icons-material/MoreVert';
 import ToolbarButton from '../ToolbarButton';
 import ToolbarOverflowMenu from '../ToolbarOverflowMenu';
 import UnreadMessagesBadge from '../UnreadMessagesBadge';
-import useIsSmallViewport from '../../../hooks/useIsSmallViewport';
+import useShownButtons from '../../../hooks/useShownButtons';
 
 export type ToolbarOverflowButtonProps = {
   toggleShareScreen: () => void;
@@ -27,7 +27,7 @@ const ToolbarOverflowButton = ({
 }: ToolbarOverflowButtonProps): ReactElement | null => {
   const [isToolbarOverflowMenuOpen, setIsToolbarOverflowMenuOpen] = useState<boolean>(false);
   const [openEmojiGridMobile, setOpenEmojiGridMobile] = useState<boolean>(true);
-  const isSmallViewport = useIsSmallViewport();
+  const shownButtons = useShownButtons();
 
   const handleButtonToggle = () => {
     setIsToolbarOverflowMenuOpen((prevOpen) => !prevOpen);
@@ -41,7 +41,7 @@ const ToolbarOverflowButton = ({
     setIsToolbarOverflowMenuOpen(false);
   };
 
-  return isSmallViewport ? (
+  return shownButtons < 9 ? (
     <>
       <Tooltip
         title="Access additional toolbar items"
