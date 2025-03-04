@@ -28,7 +28,9 @@ export type ToolbarOverflowMenuProps = {
  *  @property {boolean} isToolbarOverflowMenuOpen - whether the component will be open
  *  @property {boolean} isEmojiGridOpen - whether the emoji grid will be open
  *  @property {Dispatch<SetStateAction<boolean>>} setIsEmojiGridOpen - toggle whether the emoji grid is shown or hidden
- *  @property {() => void} handleClickAway - hides the menu when user clicks away from the menu
+ *  @property {(event: MouseEvent | TouchEvent) => void} handleClickAway - hides the menu when user clicks away from the menu
+ *  @property {Function} toggleShareScreen - toggles the user's screenshare
+ *  @property {boolean} isSharingScreen - whether the user is sharing their screen
  * @returns {ReactElement} - The ToolbarOverflowMenu component.
  */
 const ToolbarOverflowMenu = ({

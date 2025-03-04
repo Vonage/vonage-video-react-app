@@ -22,7 +22,7 @@ export type LayoutButtonProps = {
 const LayoutButton = ({
   isScreenSharePresent,
   isOverflowButton = false,
-}: LayoutButtonProps): ReactElement | false => {
+}: LayoutButtonProps): ReactElement => {
   const { layoutMode, setLayoutMode } = useSessionContext();
   const isGrid = layoutMode === 'grid';
 
