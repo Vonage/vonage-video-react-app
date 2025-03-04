@@ -13,7 +13,7 @@ import { RightPanelActiveTab } from '../../../hooks/useRightPanel';
 import ReportIssueButton from '../ReportIssueButton';
 import ToolbarOverflowButton from '../ToolbarOverflowButton';
 import EmojiGridButton from '../EmojiGridButton';
-import useShownButtons from '../../../hooks/useShowButtons';
+import useShownButtons from '../../../hooks/useShownButtons';
 
 export type ToolbarProps = {
   toggleShareScreen: () => void;
@@ -70,7 +70,7 @@ const Toolbar = ({
   const shownButtons = useShownButtons();
 
   return (
-    <div className="absolute bottom-0 left-0 flex h-[80px] w-full flex-col items-center bg-darkGray-100 p-4 md:flex-row md:justify-between">
+    <div className="absolute bottom-0 left-0 flex h-[80px] w-full items-center bg-darkGray-100 p-4 md:flex-row md:justify-between">
       <div className="flex flex-1 justify-start overflow-hidden pr-2">
         <TimeRoomNameMeetingRoom />
       </div>
@@ -100,7 +100,7 @@ const Toolbar = ({
         <ExitButton handleLeave={handleLeave} />
       </div>
 
-      <div className="hidden flex-1 justify-end md:flex">
+      <div className="flex flex-1 justify-end">
         {isReportIssueEnabled && shownButtons > 5 && (
           <ReportIssueButton
             isOpen={rightPanelActiveTab === 'issues'}
