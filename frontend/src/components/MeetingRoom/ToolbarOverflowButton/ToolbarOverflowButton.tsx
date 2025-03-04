@@ -4,7 +4,6 @@ import MoreVertIcon from '@mui/icons-material/MoreVert';
 import ToolbarButton from '../ToolbarButton';
 import ToolbarOverflowMenu from '../ToolbarOverflowMenu';
 import UnreadMessagesBadge from '../UnreadMessagesBadge';
-import useShownButtons from '../../../hooks/useShownButtons';
 
 export type ToolbarOverflowButtonProps = {
   toggleShareScreen: () => void;
@@ -19,15 +18,14 @@ export type ToolbarOverflowButtonProps = {
  * @param {ToolbarOverflowButtonProps} props - the props for the component
  * @property {Function} toggleShareScreen - toggles the user's screenshare
  * @property {boolean} isSharingScreen - whether the user is sharing their screen
- * @returns {ReactElement | null} - The ToolbarOverflowButton Component.
+ * @returns {ReactElement} - The ToolbarOverflowButton Component.
  */
 const ToolbarOverflowButton = ({
   toggleShareScreen,
   isSharingScreen,
-}: ToolbarOverflowButtonProps): ReactElement | null => {
+}: ToolbarOverflowButtonProps): ReactElement => {
   const [isToolbarOverflowMenuOpen, setIsToolbarOverflowMenuOpen] = useState<boolean>(false);
   const [openEmojiGridMobile, setOpenEmojiGridMobile] = useState<boolean>(true);
-  const shownButtons = useShownButtons();
 
   const handleButtonToggle = () => {
     setIsToolbarOverflowMenuOpen((prevOpen) => !prevOpen);
@@ -41,7 +39,7 @@ const ToolbarOverflowButton = ({
     setIsToolbarOverflowMenuOpen(false);
   };
 
-  return shownButtons < 9 ? (
+  return (
     <>
       <Tooltip
         title="Access additional toolbar items"
@@ -72,7 +70,7 @@ const ToolbarOverflowButton = ({
         isSharingScreen={isSharingScreen}
       />
     </>
-  ) : null;
+  );
 };
 
 export default ToolbarOverflowButton;
