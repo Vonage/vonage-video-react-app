@@ -1,6 +1,6 @@
-import { ClickAwayListener, PopperChildrenProps } from '@mui/base';
-import { Grow, Paper, Popper } from '@mui/material';
-import { Dispatch, ReactElement, RefObject, SetStateAction } from 'react';
+import { ClickAwayListener, Portal } from '@mui/base';
+import { Box, Grow } from '@mui/material';
+import { Dispatch, ReactElement, SetStateAction } from 'react';
 import ArchivingButton from '../ArchivingButton';
 import EmojiGridButton from '../EmojiGridButton';
 import ParticipantListButton from '../ParticipantListButton';
@@ -15,8 +15,7 @@ export type ToolbarOverflowMenuProps = {
   isToolbarOverflowMenuOpen: boolean;
   isEmojiGridOpen: boolean;
   setIsEmojiGridOpen: Dispatch<SetStateAction<boolean>>;
-  anchorRef: RefObject<HTMLButtonElement | null>;
-  handleClickAway: () => void;
+  handleClickAway: (event: MouseEvent | TouchEvent) => void;
   toggleShareScreen: () => void;
   isSharingScreen: boolean;
 };
@@ -29,7 +28,6 @@ export type ToolbarOverflowMenuProps = {
  *  @property {boolean} isToolbarOverflowMenuOpen - whether the component will be open
  *  @property {boolean} isEmojiGridOpen - whether the emoji grid will be open
  *  @property {Dispatch<SetStateAction<boolean>>} setIsEmojiGridOpen - toggle whether the emoji grid is shown or hidden
- *  @property {RefObject<HTMLButtonElement | null>} anchorRef - the button ref for the menu
  *  @property {() => void} handleClickAway - hides the menu when user clicks away from the menu
  * @returns {ReactElement} - The ToolbarOverflowMenu component.
  */
@@ -37,7 +35,6 @@ const ToolbarOverflowMenu = ({
   isToolbarOverflowMenuOpen,
   isEmojiGridOpen,
   setIsEmojiGridOpen,
-  anchorRef,
   handleClickAway,
   toggleShareScreen,
   isSharingScreen,
@@ -56,92 +53,74 @@ const ToolbarOverflowMenu = ({
   const shownButtons = useShownButtons();
 
   return (
-    <Popper
-      open={isToolbarOverflowMenuOpen}
-      anchorEl={anchorRef.current}
-      transition
-      disablePortal
-      placement="bottom"
-    >
-      {({ TransitionProps, placement }: PopperChildrenProps) => (
-        <Grow
-          {...TransitionProps}
-          style={{
-            transformOrigin: placement === 'bottom' ? 'center top' : 'center bottom',
-            width: 'calc(100dvw - 30px)',
-            left: '-15px',
-            position: 'relative',
-            translate: '0px -9px',
-          }}
-        >
-          <div className="flex w-full text-left font-normal">
-            <ClickAwayListener onClickAway={handleClickAway}>
-              <Paper
-                data-testid="toolbar-overflow-menu"
-                className="flex items-center justify-center"
-                sx={{
-                  backgroundColor: '#272c2f',
-                  color: '#fff',
-                  padding: { xs: 1 },
-                  borderRadius: 2,
-                  zIndex: 1,
-                  width: '100%',
-                  position: 'relative',
-                  display: 'flex',
-                  justifyContent: 'center',
-                  alignContent: 'space-between',
-                  alignItems: 'center',
-                  paddingLeft: '12px',
-                }}
-              >
-                {!(shownButtons > 1) && (
-                  <ScreenSharingButton
-                    toggleScreenShare={toggleShareScreen}
-                    isSharingScreen={isSharingScreen}
-                    isViewingScreenShare={isViewingScreenShare}
-                    isOverflowButton
-                  />
-                )}
-                {!(shownButtons > 2) && (
-                  <LayoutButton isScreenSharePresent={isViewingScreenShare} isOverflowButton />
-                )}
-                {!(shownButtons > 3) && (
-                  <EmojiGridButton
-                    isEmojiGridOpen={isEmojiGridOpen}
-                    setIsEmojiGridOpen={setIsEmojiGridOpen}
-                    isParentOpen={isToolbarOverflowMenuOpen}
-                    isOverflowButton
-                  />
-                )}
-                {!(shownButtons > 4) && <ArchivingButton isOverflowButton />}
-                {isReportIssueEnabled && !(shownButtons > 6) && (
-                  <ReportIssueButton
-                    isOpen={rightPanelActiveTab === 'issues'}
-                    handleClick={toggleReportIssue}
-                    isOverflowButton
-                  />
-                )}
-                {!(shownButtons > 7) && (
-                  <ParticipantListButton
-                    isOpen={rightPanelActiveTab === 'participant-list'}
-                    handleClick={toggleParticipantList}
-                    participantCount={participantCount}
-                    isOverflowButton
-                  />
-                )}
-                {!(shownButtons > 8) && (
-                  <ChatButton
-                    isOpen={rightPanelActiveTab === 'chat'}
-                    handleClick={toggleChat}
-                    isOverflowButton
-                  />
-                )}
-              </Paper>
-            </ClickAwayListener>
-          </div>
+    <Portal>
+      <ClickAwayListener onClickAway={handleClickAway}>
+        <Grow in={isToolbarOverflowMenuOpen}>
+          <Box
+            data-testid="toolbar-overflow-menu"
+            sx={{
+              backgroundColor: '#272c2f',
+              color: '#fff',
+              padding: { xs: 1 },
+              borderRadius: 2,
+              zIndex: 1,
+              width: 'calc(100dvw - 30px)',
+              display: 'flex',
+              justifyContent: 'center',
+              alignContent: 'space-between',
+              alignItems: 'center',
+              paddingLeft: '12px',
+              position: 'absolute',
+              left: '15px',
+              bottom: '80px',
+            }}
+          >
+            {!(shownButtons > 1) && (
+              <ScreenSharingButton
+                toggleScreenShare={toggleShareScreen}
+                isSharingScreen={isSharingScreen}
+                isViewingScreenShare={isViewingScreenShare}
+                isOverflowButton
+              />
+            )}
+            {!(shownButtons > 2) && (
+              <LayoutButton isScreenSharePresent={isViewingScreenShare} isOverflowButton />
+            )}
+            {!(shownButtons > 3) && (
+              <EmojiGridButton
+                isEmojiGridOpen={isEmojiGridOpen}
+                setIsEmojiGridOpen={setIsEmojiGridOpen}
+                isParentOpen={isToolbarOverflowMenuOpen}
+                isOverflowButton
+              />
+            )}
+            {!(shownButtons > 4) && <ArchivingButton isOverflowButton />}
+            {isReportIssueEnabled && !(shownButtons > 6) && (
+              <ReportIssueButton
+                isOpen={rightPanelActiveTab === 'issues'}
+                handleClick={toggleReportIssue}
+                isOverflowButton
+              />
+            )}
+            {!(shownButtons > 7) && (
+              <ParticipantListButton
+                isOpen={rightPanelActiveTab === 'participant-list'}
+                handleClick={toggleParticipantList}
+                participantCount={participantCount}
+                isOverflowButton
+              />
+            )}
+            {!(shownButtons > 8) && (
+              <ChatButton
+                isOpen={rightPanelActiveTab === 'chat'}
+                handleClick={toggleChat}
+                isOverflowButton
+              />
+            )}
+          </Box>
         </Grow>
-      )}
-    </Popper>
+      </ClickAwayListener>
+    </Portal>
   );
 };
 
