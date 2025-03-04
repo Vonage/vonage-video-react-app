@@ -6,6 +6,7 @@ import ToolbarButton from '../ToolbarButton';
 import PopupDialog, { DialogTexts } from '../PopupDialog';
 import { startArchiving, stopArchiving } from '../../../api/archiving';
 import useSessionContext from '../../../hooks/useSessionContext';
+import useIsSmallViewport from '../../../hooks/useIsSmallViewport';
 
 /**
  * ArchivingButton Component
@@ -71,6 +72,7 @@ const ArchivingButton = ({ handleClickAway }: { handleClickAway: () => void }): 
     handleDialogClick(isRecording ? 'stop' : 'start');
   };
 
+  const isSmallViewport = useIsSmallViewport();
   return (
     <>
       <Tooltip title={title} aria-label="video layout">
@@ -82,6 +84,10 @@ const ArchivingButton = ({ handleClickAway }: { handleClickAway: () => void }): 
               style={{ color: `${isRecording ? 'rgb(239 68 68)' : 'white'}` }}
             />
           }
+          sx={{
+            marginTop: isSmallViewport ? '0px' : '4px',
+          }}
+          isSmallViewPort={isSmallViewport}
         />
       </Tooltip>
       <PopupDialog

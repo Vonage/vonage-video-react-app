@@ -3,6 +3,7 @@ import { EmojiEmotions } from '@mui/icons-material';
 import { Dispatch, ReactElement, SetStateAction, useRef } from 'react';
 import ToolbarButton from '../ToolbarButton';
 import EmojiGrid from '../EmojiGrid/EmojiGrid';
+import useIsSmallViewport from '../../../hooks/useIsSmallViewport';
 
 export type EmojiGridProps = {
   isEmojiGridOpen: boolean;
@@ -29,7 +30,7 @@ const EmojiGridButton = ({
   const handleToggle = () => {
     setIsEmojiGridOpen((prevOpen) => !prevOpen);
   };
-
+  const isSmallViewport = useIsSmallViewport();
   return (
     <>
       <Tooltip title="Express yourself" aria-label="open sendable emoji menu">
@@ -42,6 +43,10 @@ const EmojiGridButton = ({
           }
           ref={anchorRef}
           data-testid="emoji-grid-button"
+          sx={{
+            marginTop: isSmallViewport ? '0px' : '4px',
+          }}
+          isSmallViewPort={isSmallViewport}
         />
       </Tooltip>
 
