@@ -3,6 +3,9 @@ import { Grow, Paper, Popper } from '@mui/material';
 import { Dispatch, ReactElement, RefObject, SetStateAction } from 'react';
 import ArchivingButton from '../ArchivingButton';
 import EmojiGridButton from '../EmojiGridButton';
+import ParticipantListButton from '../ParticipantListButton';
+import ChatButton from '../ChatButton';
+import ReportIssueButton from '../ReportIssueButton';
 import LayoutButton from '../LayoutButton';
 import useSessionContext from '../../../hooks/useSessionContext';
 
@@ -33,9 +36,17 @@ const ToolbarOverflowMenu = ({
   anchorRef,
   handleClickAway,
 }: ToolbarOverflowMenuProps): ReactElement => {
-  const { subscriberWrappers } = useSessionContext();
+  const {
+    subscriberWrappers,
+    rightPanelActiveTab,
+    toggleParticipantList,
+    toggleChat,
+    toggleReportIssue,
+  } = useSessionContext();
   const isViewingScreenShare = subscriberWrappers.some((subWrapper) => subWrapper.isScreenshare);
-
+  const participantCount =
+    subscriberWrappers.filter(({ isScreenshare }) => !isScreenshare).length + 1;
+  const isReportIssueEnabled = import.meta.env.VITE_ENABLE_REPORT_ISSUE === 'true';
   return (
     <Popper
       open={isToolbarOverflowMenuOpen}
@@ -82,6 +93,18 @@ const ToolbarOverflowMenu = ({
                   isParentOpen={isToolbarOverflowMenuOpen}
                 />
                 <ArchivingButton />
+                {isReportIssueEnabled && (
+                  <ReportIssueButton
+                    isOpen={rightPanelActiveTab === 'issues'}
+                    handleClick={toggleReportIssue}
+                  />
+                )}
+                <ParticipantListButton
+                  isOpen={rightPanelActiveTab === 'participant-list'}
+                  handleClick={toggleParticipantList}
+                  participantCount={participantCount}
+                />
+                <ChatButton isOpen={rightPanelActiveTab === 'chat'} handleClick={toggleChat} />
               </Paper>
             </ClickAwayListener>
           </div>

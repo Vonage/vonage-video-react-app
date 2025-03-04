@@ -4,6 +4,7 @@ import { blue } from '@mui/material/colors';
 import { Badge } from '@mui/material';
 import { ReactElement } from 'react';
 import ToolbarButton from '../ToolbarButton';
+import useIsSmallViewport from '../../../hooks/useIsSmallViewport';
 
 export type ParticipantListButtonProps = {
   handleClick: () => void;
@@ -26,6 +27,7 @@ const ParticipantListButton = ({
   isOpen,
   participantCount,
 }: ParticipantListButtonProps): ReactElement => {
+  const isSmallViewport = useIsSmallViewport();
   return (
     <div className="pr-3">
       <Tooltip
@@ -43,12 +45,14 @@ const ParticipantListButton = ({
           overlap="circular"
         >
           <ToolbarButton
+            data-testid="participant-list-button"
             sx={{
               marginTop: '0px',
               marginRight: '0px',
             }}
             onClick={handleClick}
             icon={<PeopleIcon sx={{ color: isOpen ? blue.A100 : 'white' }} />}
+            isSmallViewPort={isSmallViewport}
           />
         </Badge>
       </Tooltip>
