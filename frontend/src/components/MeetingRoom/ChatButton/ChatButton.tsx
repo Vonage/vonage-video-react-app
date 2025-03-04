@@ -9,7 +9,6 @@ import UnreadMessagesBadge from '../UnreadMessagesBadge';
 export type ChatButtonProps = {
   handleClick: () => void;
   isOpen: boolean;
-  handleClickAway?: () => void;
 };
 
 /**
@@ -20,17 +19,10 @@ export type ChatButtonProps = {
  * @param {ChatButtonProps} props - the props for this component
  *   @property {() => void} handleClick - click handler to toggle open chat panel
  *   @property {boolean} isOpen - true if chat is currently open, false if not
- *   @property {() => void} handleClickAway - click handler that closes the overflow menu in small view port devices.
  * @returns {ReactElement} - ChatButton
  */
-const ChatButton = ({ handleClick, isOpen, handleClickAway }: ChatButtonProps): ReactElement => {
+const ChatButton = ({ handleClick, isOpen }: ChatButtonProps): ReactElement => {
   const isSmallViewport = useIsSmallViewport();
-  const handleClose = () => {
-    handleClick();
-    if (isSmallViewport && handleClickAway) {
-      handleClickAway();
-    }
-  };
   return (
     <Tooltip title={isOpen ? 'Close chat' : 'Open chat'} aria-label="toggle chat">
       <UnreadMessagesBadge>
@@ -40,7 +32,7 @@ const ChatButton = ({ handleClick, isOpen, handleClickAway }: ChatButtonProps): 
             marginTop: '0px',
             marginRight: '0px',
           }}
-          onClick={handleClose}
+          onClick={handleClick}
           icon={<ChatIcon sx={{ color: isOpen ? blue.A100 : 'white' }} />}
           isSmallViewPort={isSmallViewport}
         />

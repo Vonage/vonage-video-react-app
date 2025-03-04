@@ -7,7 +7,6 @@ import useIsSmallViewport from '../../../hooks/useIsSmallViewport';
 export type ReportIssueButtonProps = {
   handleClick: () => void;
   isOpen: boolean;
-  handleClickAway?: () => void;
 };
 
 /**
@@ -17,22 +16,12 @@ export type ReportIssueButtonProps = {
  * @param {ReportIssueButtonProps} props - The props for the component.
  *  @property {() => void} handleClick - click handler, e.g open report issue form
  *  @property {boolean} isOpen - whether the report issue form should be shown
- *  @property {() => void} handleClickAway - (optional) click handler that closes the overflow menu in small view port devices.
  * @returns {ReactElement} The ReportIssueButton component.
  */
-const ReportIssueButton = ({
-  handleClick,
-  isOpen,
-  handleClickAway,
-}: ReportIssueButtonProps): ReactElement => {
+const ReportIssueButton = ({ handleClick, isOpen }: ReportIssueButtonProps): ReactElement => {
   const anchorRef = useRef<HTMLButtonElement>(null);
   const isSmallViewport = useIsSmallViewport();
-  const handleClose = () => {
-    handleClick();
-    if (isSmallViewport && handleClickAway) {
-      handleClickAway();
-    }
-  };
+
   return (
     <div className="pr-3">
       <Tooltip title="Report issue" aria-label="open report issue menu">
@@ -42,7 +31,7 @@ const ReportIssueButton = ({
             marginTop: '0px',
             marginRight: '0px',
           }}
-          onClick={handleClose}
+          onClick={handleClick}
           icon={<FeedbackIcon style={{ color: `${!isOpen ? 'white' : 'rgb(138, 180, 248)'}` }} />}
           ref={anchorRef}
           isSmallViewPort={isSmallViewport}

@@ -47,6 +47,14 @@ const ToolbarOverflowMenu = ({
   const participantCount =
     subscriberWrappers.filter(({ isScreenshare }) => !isScreenshare).length + 1;
   const isReportIssueEnabled = import.meta.env.VITE_ENABLE_REPORT_ISSUE === 'true';
+
+  const handleCloseMenu = (onClick?: () => void) => () => {
+    if (onClick) {
+      onClick();
+    }
+    handleClickAway();
+  };
+
   return (
     <Popper
       open={isToolbarOverflowMenuOpen}
@@ -92,24 +100,21 @@ const ToolbarOverflowMenu = ({
                   setIsEmojiGridOpen={setIsEmojiGridOpen}
                   isParentOpen={isToolbarOverflowMenuOpen}
                 />
-                <ArchivingButton handleClickAway={handleClickAway} />
+                <ArchivingButton handleCloseMenu={handleCloseMenu} />
                 {isReportIssueEnabled && (
                   <ReportIssueButton
                     isOpen={rightPanelActiveTab === 'issues'}
-                    handleClick={toggleReportIssue}
-                    handleClickAway={handleClickAway}
+                    handleClick={handleCloseMenu(toggleReportIssue)}
                   />
                 )}
                 <ParticipantListButton
                   isOpen={rightPanelActiveTab === 'participant-list'}
-                  handleClick={toggleParticipantList}
-                  handleClickAway={handleClickAway}
+                  handleClick={handleCloseMenu(toggleParticipantList)}
                   participantCount={participantCount}
                 />
                 <ChatButton
                   isOpen={rightPanelActiveTab === 'chat'}
-                  handleClick={toggleChat}
-                  handleClickAway={handleClickAway}
+                  handleClick={handleCloseMenu(toggleChat)}
                 />
               </Paper>
             </ClickAwayListener>
