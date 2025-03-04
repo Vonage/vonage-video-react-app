@@ -116,8 +116,13 @@ const ToolbarOverflowMenu = ({
                   isOpen={rightPanelActiveTab === 'participant-list'}
                   handleClick={toggleParticipantList}
                   participantCount={participantCount}
+                  isOverflowButton
                 />
-                <ChatButton isOpen={rightPanelActiveTab === 'chat'} handleClick={toggleChat} />
+                <ChatButton
+                  isOpen={rightPanelActiveTab === 'chat'}
+                  handleClick={toggleChat}
+                  isOverflowButton
+                />
               </Paper>
             </ClickAwayListener>
           </div>

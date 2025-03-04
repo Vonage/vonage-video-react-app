@@ -38,8 +38,8 @@ const ToolbarButton = forwardRef(function ToolbarButton(
         marginLeft: '0px',
         marginTop: '4px',
         marginRight: '12px',
-        width: isOverflowButton ? '42px' : '48px',
-        height: isOverflowButton ? '42px' : '48px',
+        width: isOverflowButton ? '35px' : '48px',
+        height: isOverflowButton ? '35px' : '48px',
         backgroundColor: 'rgba(60, 64, 67, 0.55)',
         '&:hover': {
           backgroundColor: 'rgba(60, 64, 67, 0.42)',
