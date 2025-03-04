@@ -2,11 +2,11 @@ import { Tooltip } from '@mui/material';
 import { ReactElement, useRef } from 'react';
 import FeedbackIcon from '@mui/icons-material/Feedback';
 import ToolbarButton from '../ToolbarButton';
-import useIsSmallViewport from '../../../hooks/useIsSmallViewport';
 
 export type ReportIssueButtonProps = {
   handleClick: () => void;
   isOpen: boolean;
+  isOverflowButton?: boolean;
 };
 
 /**
@@ -16,9 +16,13 @@ export type ReportIssueButtonProps = {
  * @param {ReportIssueButtonProps} props - The props for the component.
  * @returns {ReactElement} The ReportIssueButton component.
  */
-const ReportIssueButton = ({ handleClick, isOpen }: ReportIssueButtonProps): ReactElement => {
+const ReportIssueButton = ({
+  handleClick,
+  isOpen,
+  isOverflowButton = false,
+}: ReportIssueButtonProps): ReactElement => {
   const anchorRef = useRef<HTMLButtonElement>(null);
-  const isSmallViewport = useIsSmallViewport();
+
   return (
     <div className="pr-3">
       <Tooltip title="Report issue" aria-label="open report issue menu">
@@ -31,7 +35,7 @@ const ReportIssueButton = ({ handleClick, isOpen }: ReportIssueButtonProps): Rea
           onClick={handleClick}
           icon={<FeedbackIcon style={{ color: `${!isOpen ? 'white' : 'rgb(138, 180, 248)'}` }} />}
           ref={anchorRef}
-          isSmallViewPort={isSmallViewport}
+          isOverflowButton={isOverflowButton}
         />
       </Tooltip>
     </div>

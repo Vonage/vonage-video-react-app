@@ -4,12 +4,12 @@ import { blue } from '@mui/material/colors';
 import { Badge } from '@mui/material';
 import { ReactElement } from 'react';
 import ToolbarButton from '../ToolbarButton';
-import useIsSmallViewport from '../../../hooks/useIsSmallViewport';
 
 export type ParticipantListButtonProps = {
   handleClick: () => void;
   isOpen: boolean;
   participantCount: number;
+  isOverflowButton?: boolean;
 };
 /**
  * ParticipantListButton Component
@@ -20,14 +20,15 @@ export type ParticipantListButtonProps = {
  *   @property {() => void} handleClick - click handler to toggle open participant list
  *   @property {boolean} isOpen - true if list is currently open, false if not
  *   @property {number} participantCount - number of current participants in call, to be displayed in badge
+ *   @property {boolean} isOverflowButton - whether the button is in the ToolbarOverflowMenu
  * @returns {ReactElement} - ParticipantListButton
  */
 const ParticipantListButton = ({
   handleClick,
   isOpen,
   participantCount,
+  isOverflowButton = false,
 }: ParticipantListButtonProps): ReactElement => {
-  const isSmallViewport = useIsSmallViewport();
   return (
     <Tooltip
       title={isOpen ? 'Close participant list' : 'Open participant list'}
@@ -52,7 +53,7 @@ const ParticipantListButton = ({
           }}
           onClick={handleClick}
           icon={<PeopleIcon sx={{ color: isOpen ? blue.A100 : 'white' }} />}
-          isSmallViewPort={isSmallViewport}
+          isOverflowButton={isOverflowButton}
         />
       </Badge>
     </Tooltip>

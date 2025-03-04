@@ -71,7 +71,7 @@ const Toolbar = ({
 
   return (
     <div className="absolute bottom-0 left-0 flex h-[80px] w-full items-center bg-darkGray-100 p-4 md:flex-row md:justify-between">
-      <div className="flex flex-1 justify-start overflow-hidden pr-2">
+      <div className="flex justify-start overflow-hidden">
         <TimeRoomNameMeetingRoom />
       </div>
       <div className="flex flex-1 justify-center">
@@ -100,21 +100,30 @@ const Toolbar = ({
         <ExitButton handleLeave={handleLeave} />
       </div>
 
-      <div className="flex flex-1 justify-end">
-        {isReportIssueEnabled && shownButtons > 5 && (
+      <div
+        style={{
+          boxSizing: 'border-box',
+          // If we have no buttons in the container, we do not need a margin
+          marginLeft: shownButtons > 5 ? '12px' : '0px',
+          display: 'flex',
+          flex: '0 1 0%',
+          justifyContent: 'flex-end',
+        }}
+      >
+        {isReportIssueEnabled && shownButtons > 6 && (
           <ReportIssueButton
             isOpen={rightPanelActiveTab === 'issues'}
             handleClick={toggleReportIssue}
           />
         )}
-        {shownButtons > 6 && (
+        {shownButtons > 7 && (
           <ParticipantListButton
             isOpen={rightPanelActiveTab === 'participant-list'}
             handleClick={toggleParticipantList}
             participantCount={participantCount}
           />
         )}
-        {shownButtons > 7 && (
+        {shownButtons > 8 && (
           <ChatButton isOpen={rightPanelActiveTab === 'chat'} handleClick={toggleChat} />
         )}
       </div>

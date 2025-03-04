@@ -95,18 +95,21 @@ const ToolbarOverflowMenu = ({
                   toggleScreenShare={toggleShareScreen}
                   isSharingScreen={isSharingScreen}
                   isViewingScreenShare={isViewingScreenShare}
+                  isOverflowButton
                 />
-                <LayoutButton isScreenSharePresent={isViewingScreenShare} />
+                <LayoutButton isScreenSharePresent={isViewingScreenShare} isOverflowButton />
                 <EmojiGridButton
                   isEmojiGridOpen={isEmojiGridOpen}
                   setIsEmojiGridOpen={setIsEmojiGridOpen}
                   isParentOpen={isToolbarOverflowMenuOpen}
+                  isOverflowButton
                 />
-                <ArchivingButton />
+                <ArchivingButton isOverflowButton />
                 {isReportIssueEnabled && (
                   <ReportIssueButton
                     isOpen={rightPanelActiveTab === 'issues'}
                     handleClick={toggleReportIssue}
+                    isOverflowButton
                   />
                 )}
                 <ParticipantListButton

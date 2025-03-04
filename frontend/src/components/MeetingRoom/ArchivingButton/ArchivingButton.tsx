@@ -6,7 +6,10 @@ import ToolbarButton from '../ToolbarButton';
 import PopupDialog, { DialogTexts } from '../PopupDialog';
 import { startArchiving, stopArchiving } from '../../../api/archiving';
 import useSessionContext from '../../../hooks/useSessionContext';
-import useIsSmallViewport from '../../../hooks/useIsSmallViewport';
+
+export type ArchivingButtonProps = {
+  isOverflowButton?: boolean;
+};
 
 /**
  * ArchivingButton Component
@@ -14,9 +17,11 @@ import useIsSmallViewport from '../../../hooks/useIsSmallViewport';
  * Displays a button and handles the archiving functionality. If a meeting is currently being recorded,
  * will confirm that a user wishes to stop the recording. If a meeting is not being recorded, prompts
  * the user before starting the archive.
+ * @param root0
+ * @param root0.isOverflowButton
  * @returns {ReactElement} - The ArchivingButton component.
  */
-const ArchivingButton = (): ReactElement => {
+const ArchivingButton = ({ isOverflowButton = false }: ArchivingButtonProps): ReactElement => {
   const roomName = useRoomName();
   const { archiveId } = useSessionContext();
   const isRecording = !!archiveId;
@@ -68,7 +73,6 @@ const ArchivingButton = (): ReactElement => {
     handleDialogClick(isRecording ? 'stop' : 'start');
   };
 
-  const isSmallViewport = useIsSmallViewport();
   return (
     <>
       <Tooltip title={title} aria-label="video layout">
@@ -81,9 +85,9 @@ const ArchivingButton = (): ReactElement => {
             />
           }
           sx={{
-            marginTop: isSmallViewport ? '0px' : '4px',
+            marginTop: isOverflowButton ? '0px' : '4px',
           }}
-          isSmallViewPort={isSmallViewport}
+          isOverflowButton={isOverflowButton}
         />
       </Tooltip>
       <PopupDialog

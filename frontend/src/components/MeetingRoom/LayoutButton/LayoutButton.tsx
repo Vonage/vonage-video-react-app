@@ -4,20 +4,25 @@ import WindowIcon from '@mui/icons-material/Window';
 import { ReactElement } from 'react';
 import useSessionContext from '../../../hooks/useSessionContext';
 import ToolbarButton from '../ToolbarButton';
-import useIsSmallViewport from '../../../hooks/useIsSmallViewport';
 
-type LayoutButtonProps = {
+export type LayoutButtonProps = {
   isScreenSharePresent: boolean;
+  isOverflowButton?: boolean;
 };
 
 /**
  * LayoutButton Component
  *
  * Displays a button to toggle the meeting room layout for the user between `grid` and `active-speaker`.
- * @param {boolean} isScreenSharePresent - Indicates whether there is a screenshare currently in the session.
+ * @param {LayoutButtonProps} props - the props for the component
+ *  @property {boolean} isScreenSharePresent - Indicates whether there is a screenshare currently in the session.
+ *  @property {boolean} isOverflowButton - whether the button is in the ToolbarOverflowMenu
  * @returns {ReactElement} The LayoutButton component.
  */
-const LayoutButton = ({ isScreenSharePresent }: LayoutButtonProps): ReactElement | false => {
+const LayoutButton = ({
+  isScreenSharePresent,
+  isOverflowButton = false,
+}: LayoutButtonProps): ReactElement | false => {
   const { layoutMode, setLayoutMode } = useSessionContext();
   const isGrid = layoutMode === 'grid';
 
@@ -35,8 +40,6 @@ const LayoutButton = ({ isScreenSharePresent }: LayoutButtonProps): ReactElement
     return isGrid ? 'Switch to Active Speaker layout' : 'Switch to Grid layout';
   };
 
-  const isSmallViewport = useIsSmallViewport();
-
   return (
     <Tooltip title={getTooltipTitle()} aria-label="video layout">
       <ToolbarButton
@@ -52,10 +55,9 @@ const LayoutButton = ({ isScreenSharePresent }: LayoutButtonProps): ReactElement
         sx={{
           cursor: isScreenSharePresent ? 'not-allowed' : 'pointer',
           // on the small view port devices we need to align the button
-          marginTop: isSmallViewport ? '0px' : '4px',
-          marginLeft: isSmallViewport ? '12px' : '0px',
+          marginTop: isOverflowButton ? '0px' : '4px',
         }}
-        isSmallViewPort={isSmallViewport}
+        isOverflowButton={isOverflowButton}
       />
     </Tooltip>
   );

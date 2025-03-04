@@ -1,21 +1,30 @@
 import { ReactElement } from 'react';
 import useDateTime from '../../../hooks/useDateTime';
 import useRoomName from '../../../hooks/useRoomName';
+import useIsSmallViewport from '../../../hooks/useIsSmallViewport';
 
 /**
  *  TimeRoomName Component
  *
- *  This component shows the current time and room name.
- * @returns {ReactElement} - The Time and Room Name component.
+ *  This component shows the current time and room name for desktop-sized viewports.
+ * @returns {ReactElement | false} - The Time and Room Name component or false.
  */
-const TimeRoomName = (): ReactElement => {
+const TimeRoomName = (): ReactElement | false => {
   const { time } = useDateTime();
   const roomName = useRoomName();
+  const isSmallViewport = useIsSmallViewport();
 
   return (
-    <div className="ml-3 mt-1 truncate font-normal text-white">
-      {time} | {roomName}
-    </div>
+    !isSmallViewport && (
+      <div
+        className="ml-3 mt-1 truncate pr-2 font-normal text-white"
+        style={{
+          flex: '1 0 0%',
+        }}
+      >
+        {time} | {roomName}
+      </div>
+    )
   );
 };
 
