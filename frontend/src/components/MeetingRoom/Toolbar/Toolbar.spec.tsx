@@ -2,9 +2,8 @@ import { describe, expect, it, vi, beforeEach, Mock, afterAll } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import { useLocation } from 'react-router-dom';
 import useSpeakingDetector from '../../../hooks/useSpeakingDetector';
-import useIsSmallViewport from '../../../hooks/useIsSmallViewport';
-import displayOnDesktop from '../../../utils/displayOnDesktop';
 import Toolbar, { ToolbarProps } from './Toolbar';
+import useShownButtons from '../../../hooks/useShownButtons';
 
 const mockedRoomName = { roomName: 'test-room-name' };
 
@@ -15,12 +14,10 @@ vi.mock('react-router-dom', () => ({
 }));
 
 vi.mock('../../../hooks/useSpeakingDetector');
-vi.mock('../../../hooks/useIsSmallViewport');
-vi.mock('../../../utils/displayOnDesktop');
+vi.mock('../../../hooks/useShownButtons');
 
 const mockUseSpeakingDetector = useSpeakingDetector as Mock<[], boolean>;
-const mockUseIsSmallViewport = useIsSmallViewport as Mock<[], boolean>;
-const mockDisplayOnDesktop = displayOnDesktop as Mock<[], '' | 'md:inline'>;
+const mockUseShownButtons = useShownButtons as Mock<[], number>;
 
 describe('Toolbar', () => {
   beforeEach(() => {
@@ -28,6 +25,7 @@ describe('Toolbar', () => {
       state: mockedRoomName,
     });
     mockUseSpeakingDetector.mockReturnValue(false);
+    mockUseShownButtons.mockReturnValue(9);
   });
   afterAll(() => {
     vi.restoreAllMocks();
@@ -61,23 +59,19 @@ describe('Toolbar', () => {
   });
 
   it('on a small viewport, displays the ToolbarOverflowButton button', () => {
-    mockUseIsSmallViewport.mockReturnValue(true);
-    mockDisplayOnDesktop.mockReturnValue('');
+    mockUseShownButtons.mockReturnValue(0);
 
     render(<Toolbar {...defaultProps} />);
 
     expect(screen.queryByTestId('hidden-toolbar-items')).toBeVisible();
 
-    expect(screen.queryByTestId('archiving-button')).not.toBeInTheDocument();
-    expect(screen.queryByTestId('screensharing-button')).not.toBeInTheDocument();
-    expect(screen.queryByTestId('archiving-button')).not.toBeInTheDocument();
-    expect(screen.queryByTestId('emoji-grid-button')).not.toBeInTheDocument();
+    expect(screen.queryByTestId('archiving-button')).not.toBeVisible();
+    expect(screen.queryByTestId('screensharing-button')).not.toBeVisible();
+    expect(screen.queryByTestId('archiving-button')).not.toBeVisible();
+    expect(screen.queryByTestId('emoji-grid-button')).not.toBeVisible();
   });
 
   it('on a normal viewport, displays all of the toolbar buttons', () => {
-    mockUseIsSmallViewport.mockReturnValue(false);
-    mockDisplayOnDesktop.mockReturnValue('md:inline');
-
     render(<Toolbar {...defaultProps} />);
 
     expect(screen.queryByTestId('archiving-button')).toBeVisible();
