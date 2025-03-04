@@ -15,6 +15,9 @@ export type ReportIssueButtonProps = {
  *
  * Displays a clickable button to open/close the ReportIssue panel.
  * @param {ReportIssueButtonProps} props - The props for the component.
+ *  @property {() => void} handleClick - click handler, e.g open report issue form
+ *  @property {boolean} isOpen - whether the report issue form should be shown
+ *  @property {() => void} handleClickAway - click handler that closes the overflow menu in small view port devices.
  * @returns {ReactElement} The ReportIssueButton component.
  */
 const ReportIssueButton = ({
@@ -26,7 +29,9 @@ const ReportIssueButton = ({
   const isSmallViewport = useIsSmallViewport();
   const handleClose = () => {
     handleClick();
-    handleClickAway();
+    if (isSmallViewport) {
+      handleClickAway();
+    }
   };
   return (
     <div className="pr-3">

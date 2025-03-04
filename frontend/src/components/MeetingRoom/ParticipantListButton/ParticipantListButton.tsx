@@ -21,6 +21,7 @@ export type ParticipantListButtonProps = {
  *   @property {() => void} handleClick - click handler to toggle open participant list
  *   @property {boolean} isOpen - true if list is currently open, false if not
  *   @property {number} participantCount - number of current participants in call, to be displayed in badge
+ *   @property {() => void} handleClickAway - click handler that closes the overflow menu in small view port devices
  * @returns {ReactElement} - ParticipantListButton
  */
 const ParticipantListButton = ({
@@ -32,7 +33,9 @@ const ParticipantListButton = ({
   const isSmallViewport = useIsSmallViewport();
   const handleClose = () => {
     handleClick();
-    handleClickAway();
+    if (isSmallViewport) {
+      handleClickAway();
+    }
   };
   return (
     <div className="pr-3">

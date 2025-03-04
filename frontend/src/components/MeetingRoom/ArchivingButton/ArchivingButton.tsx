@@ -8,23 +8,27 @@ import { startArchiving, stopArchiving } from '../../../api/archiving';
 import useSessionContext from '../../../hooks/useSessionContext';
 import useIsSmallViewport from '../../../hooks/useIsSmallViewport';
 
+export type ArchivingButtonProps = {
+  handleClickAway: () => void;
+};
+
 /**
  * ArchivingButton Component
  *
  * Displays a button and handles the archiving functionality. If a meeting is currently being recorded,
  * will confirm that a user wishes to stop the recording. If a meeting is not being recorded, prompts
  * the user before starting the archive.
- * @param root0
- * @param root0.handleClose
- * @param root0.handleClickAway
+ * @param {ArchivingButtonProps} props - The props for the component.
+ *  @property {() => void} handleClickAway - click handler that closes the overflow menu in small view port devices.
  * @returns {ReactElement} - The ArchivingButton component.
  */
-const ArchivingButton = ({ handleClickAway }: { handleClickAway: () => void }): ReactElement => {
+const ArchivingButton = ({ handleClickAway }: ArchivingButtonProps): ReactElement => {
   const roomName = useRoomName();
   const { archiveId } = useSessionContext();
   const isRecording = !!archiveId;
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const title = isRecording ? 'Stop recording' : 'Start recording';
+  const isSmallViewport = useIsSmallViewport();
   const handleButtonClick = () => {
     setIsModalOpen((prev) => !prev);
   };
@@ -48,7 +52,9 @@ const ArchivingButton = ({ handleClickAway }: { handleClickAway: () => void }): 
 
   const handleClose = () => {
     setIsModalOpen(false);
-    handleClickAway();
+    if (isSmallViewport) {
+      handleClickAway();
+    }
   };
 
   const handleDialogClick = async (action: 'start' | 'stop') => {
@@ -72,7 +78,6 @@ const ArchivingButton = ({ handleClickAway }: { handleClickAway: () => void }): 
     handleDialogClick(isRecording ? 'stop' : 'start');
   };
 
-  const isSmallViewport = useIsSmallViewport();
   return (
     <>
       <Tooltip title={title} aria-label="video layout">

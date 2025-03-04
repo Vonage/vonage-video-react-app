@@ -20,13 +20,16 @@ export type ChatButtonProps = {
  * @param {ChatButtonProps} props - the props for this component
  *   @property {() => void} handleClick - click handler to toggle open chat panel
  *   @property {boolean} isOpen - true if chat is currently open, false if not
+ *   @property {() => void} handleClickAway - click handler that closes the overflow menu in small view port devices.
  * @returns {ReactElement} - ChatButton
  */
 const ChatButton = ({ handleClick, isOpen, handleClickAway }: ChatButtonProps): ReactElement => {
   const isSmallViewport = useIsSmallViewport();
   const handleClose = () => {
     handleClick();
-    handleClickAway();
+    if (isSmallViewport) {
+      handleClickAway();
+    }
   };
   return (
     <Tooltip title={isOpen ? 'Close chat' : 'Open chat'} aria-label="toggle chat">
