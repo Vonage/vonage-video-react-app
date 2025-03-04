@@ -9,6 +9,7 @@ import ReportIssueButton from '../ReportIssueButton';
 import LayoutButton from '../LayoutButton';
 import useSessionContext from '../../../hooks/useSessionContext';
 import ScreenSharingButton from '../../ScreenSharingButton';
+import useShownButtons from '../../../hooks/useShownButtons';
 
 export type ToolbarOverflowMenuProps = {
   isToolbarOverflowMenuOpen: boolean;
@@ -52,6 +53,8 @@ const ToolbarOverflowMenu = ({
   const participantCount =
     subscriberWrappers.filter(({ isScreenshare }) => !isScreenshare).length + 1;
   const isReportIssueEnabled = import.meta.env.VITE_ENABLE_REPORT_ISSUE === 'true';
+  const shownButtons = useShownButtons();
+
   return (
     <Popper
       open={isToolbarOverflowMenuOpen}
@@ -91,38 +94,48 @@ const ToolbarOverflowMenu = ({
                   paddingLeft: '12px',
                 }}
               >
-                <ScreenSharingButton
-                  toggleScreenShare={toggleShareScreen}
-                  isSharingScreen={isSharingScreen}
-                  isViewingScreenShare={isViewingScreenShare}
-                  isOverflowButton
-                />
-                <LayoutButton isScreenSharePresent={isViewingScreenShare} isOverflowButton />
-                <EmojiGridButton
-                  isEmojiGridOpen={isEmojiGridOpen}
-                  setIsEmojiGridOpen={setIsEmojiGridOpen}
-                  isParentOpen={isToolbarOverflowMenuOpen}
-                  isOverflowButton
-                />
-                <ArchivingButton isOverflowButton />
-                {isReportIssueEnabled && (
+                {!(shownButtons > 1) && (
+                  <ScreenSharingButton
+                    toggleScreenShare={toggleShareScreen}
+                    isSharingScreen={isSharingScreen}
+                    isViewingScreenShare={isViewingScreenShare}
+                    isOverflowButton
+                  />
+                )}
+                {!(shownButtons > 2) && (
+                  <LayoutButton isScreenSharePresent={isViewingScreenShare} isOverflowButton />
+                )}
+                {!(shownButtons > 3) && (
+                  <EmojiGridButton
+                    isEmojiGridOpen={isEmojiGridOpen}
+                    setIsEmojiGridOpen={setIsEmojiGridOpen}
+                    isParentOpen={isToolbarOverflowMenuOpen}
+                    isOverflowButton
+                  />
+                )}
+                {!(shownButtons > 4) && <ArchivingButton isOverflowButton />}
+                {isReportIssueEnabled && !(shownButtons > 6) && (
                   <ReportIssueButton
                     isOpen={rightPanelActiveTab === 'issues'}
                     handleClick={toggleReportIssue}
                     isOverflowButton
                   />
                 )}
-                <ParticipantListButton
-                  isOpen={rightPanelActiveTab === 'participant-list'}
-                  handleClick={toggleParticipantList}
-                  participantCount={participantCount}
-                  isOverflowButton
-                />
-                <ChatButton
-                  isOpen={rightPanelActiveTab === 'chat'}
-                  handleClick={toggleChat}
-                  isOverflowButton
-                />
+                {!(shownButtons > 7) && (
+                  <ParticipantListButton
+                    isOpen={rightPanelActiveTab === 'participant-list'}
+                    handleClick={toggleParticipantList}
+                    participantCount={participantCount}
+                    isOverflowButton
+                  />
+                )}
+                {!(shownButtons > 8) && (
+                  <ChatButton
+                    isOpen={rightPanelActiveTab === 'chat'}
+                    handleClick={toggleChat}
+                    isOverflowButton
+                  />
+                )}
               </Paper>
             </ClickAwayListener>
           </div>
