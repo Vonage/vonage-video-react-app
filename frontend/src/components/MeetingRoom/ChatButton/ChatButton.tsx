@@ -9,7 +9,7 @@ import UnreadMessagesBadge from '../UnreadMessagesBadge';
 export type ChatButtonProps = {
   handleClick: () => void;
   isOpen: boolean;
-  handleClickAway: () => void;
+  handleClickAway?: () => void;
 };
 
 /**
@@ -27,7 +27,7 @@ const ChatButton = ({ handleClick, isOpen, handleClickAway }: ChatButtonProps): 
   const isSmallViewport = useIsSmallViewport();
   const handleClose = () => {
     handleClick();
-    if (isSmallViewport) {
+    if (isSmallViewport && handleClickAway) {
       handleClickAway();
     }
   };

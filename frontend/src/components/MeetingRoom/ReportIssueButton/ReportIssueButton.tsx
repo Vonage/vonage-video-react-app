@@ -7,7 +7,7 @@ import useIsSmallViewport from '../../../hooks/useIsSmallViewport';
 export type ReportIssueButtonProps = {
   handleClick: () => void;
   isOpen: boolean;
-  handleClickAway: () => void;
+  handleClickAway?: () => void;
 };
 
 /**
@@ -17,7 +17,7 @@ export type ReportIssueButtonProps = {
  * @param {ReportIssueButtonProps} props - The props for the component.
  *  @property {() => void} handleClick - click handler, e.g open report issue form
  *  @property {boolean} isOpen - whether the report issue form should be shown
- *  @property {() => void} handleClickAway - click handler that closes the overflow menu in small view port devices.
+ *  @property {() => void} handleClickAway - (optional) click handler that closes the overflow menu in small view port devices.
  * @returns {ReactElement} The ReportIssueButton component.
  */
 const ReportIssueButton = ({
@@ -29,7 +29,7 @@ const ReportIssueButton = ({
   const isSmallViewport = useIsSmallViewport();
   const handleClose = () => {
     handleClick();
-    if (isSmallViewport) {
+    if (isSmallViewport && handleClickAway) {
       handleClickAway();
     }
   };

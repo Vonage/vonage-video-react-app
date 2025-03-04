@@ -10,7 +10,7 @@ export type ParticipantListButtonProps = {
   handleClick: () => void;
   isOpen: boolean;
   participantCount: number;
-  handleClickAway: () => void;
+  handleClickAway?: () => void;
 };
 /**
  * ParticipantListButton Component
@@ -33,7 +33,7 @@ const ParticipantListButton = ({
   const isSmallViewport = useIsSmallViewport();
   const handleClose = () => {
     handleClick();
-    if (isSmallViewport) {
+    if (isSmallViewport && handleClickAway) {
       handleClickAway();
     }
   };
