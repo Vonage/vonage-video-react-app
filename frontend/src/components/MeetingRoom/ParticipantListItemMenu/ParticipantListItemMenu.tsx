@@ -1,5 +1,5 @@
 import { useState, MouseEvent, ReactElement } from 'react';
-import { IconButton, Menu } from '@mui/material';
+import { ClickAwayListener, IconButton, Paper, Popper } from '@mui/material';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import { SubscriberWrapper } from '../../../types/session';
 import ParticipantPinMenuItem from './ParticipantPinMenuItem';
@@ -35,20 +35,25 @@ const ParticipantListItemMenu = ({
       <IconButton onClick={handleClick} sx={{ marginRight: '-8px' }}>
         <MoreVertIcon sx={{ fontSize: '18px' }} />
       </IconButton>
-      <Menu
-        anchorEl={anchorEl}
-        open={isOpen}
-        onClose={handleClose}
-        transformOrigin={{
-          vertical: 'top',
-          horizontal: 250,
-        }}
-      >
-        <ParticipantPinMenuItem
-          subscriberWrapper={subscriberWrapper}
-          participantName={participantName}
-        />
-      </Menu>
+      <Popper open={isOpen} anchorEl={anchorEl} placement="bottom-start">
+        <ClickAwayListener onClickAway={handleClose}>
+          <Paper
+            elevation={4}
+            sx={{
+              paddingTop: 1,
+              paddingBottom: 1,
+              borderRadius: 1,
+              position: 'relative',
+            }}
+          >
+            <ParticipantPinMenuItem
+              handleClick={handleClose}
+              subscriberWrapper={subscriberWrapper}
+              participantName={participantName}
+            />
+          </Paper>
+        </ClickAwayListener>
+      </Popper>
     </>
   );
 };

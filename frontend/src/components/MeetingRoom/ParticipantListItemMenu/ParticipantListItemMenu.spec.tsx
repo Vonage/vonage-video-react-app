@@ -32,6 +32,16 @@ describe('ParticipantListItem', () => {
     mockUseSessionContext.mockImplementation(() => mockSessionContext);
   });
 
+  it('closes menu after clicking menu item', async () => {
+    render(<ParticipantListItemMenu {...defaultProps} />);
+    const menuButton = screen.getByRole('button');
+    await act(() => menuButton.click());
+    expect(screen.getByTestId('pin-menu-item')).toBeVisible();
+    const pinButton = await screen.getByText('Pin John Doe');
+    await act(() => pinButton.click());
+    expect(screen.queryByTestId('pin-menu-item')).not.toBeInTheDocument();
+  });
+
   it('can pin participant', async () => {
     render(<ParticipantListItemMenu {...defaultProps} />);
     const menuButton = screen.getByRole('button');
