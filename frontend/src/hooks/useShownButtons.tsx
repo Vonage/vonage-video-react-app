@@ -11,7 +11,7 @@ const useShownButtons = () => {
       case width >= 726:
         return 6;
 
-      // We account for 12px for the right sidebar buttons
+      // We account for 12px for the right sidebar buttons' container.
       case width >= 666:
         return 5;
 
