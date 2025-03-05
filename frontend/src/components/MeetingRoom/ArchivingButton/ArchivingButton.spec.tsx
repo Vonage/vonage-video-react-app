@@ -1,6 +1,8 @@
-import { describe, expect, it, vi, beforeEach } from 'vitest';
-import { fireEvent, render, screen } from '@testing-library/react';
+import { describe, expect, it, vi, beforeEach, Mock } from 'vitest';
+import { render, screen, act, waitFor } from '@testing-library/react';
+import { startArchiving } from '../../../api/archiving';
 import ArchivingButton from './ArchivingButton';
+import useRoomName from '../../../hooks/useRoomName';
 
 vi.mock('../../../hooks/useSessionContext', () => ({
   default: () => ({
@@ -16,9 +18,11 @@ vi.mock('../../../api/archiving', () => ({
 
 describe('ArchivingButton', () => {
   const mockHandleCloseMenu = vi.fn();
+  const mockedRoomName = 'test-room-name';
 
   beforeEach(() => {
     vi.clearAllMocks();
+    (useRoomName as Mock).mockReturnValue(mockedRoomName);
   });
 
   it('renders the button correctly', () => {
@@ -28,7 +32,21 @@ describe('ArchivingButton', () => {
 
   it('opens the modal when the button is clicked', () => {
     render(<ArchivingButton handleCloseMenu={mockHandleCloseMenu} />);
-    fireEvent.click(screen.getByTestId('archiving-button'));
+    act(() => screen.getByTestId('archiving-button').click());
     expect(screen.getByText('Start Recording?')).toBeInTheDocument();
+  });
+
+  it('triggers the start archiving when button is pressed', async () => {
+    (startArchiving as Mock).mockResolvedValue({ data: { success: true } });
+    render(<ArchivingButton handleCloseMenu={mockHandleCloseMenu} />);
+
+    act(() => screen.getByTestId('archiving-button').click());
+    expect(screen.getByText('Start Recording?')).toBeInTheDocument();
+
+    // click the button to start archiving
+    act(() => screen.getByTestId('popup-dialog-primary-button').click());
+    await waitFor(() => {
+      expect(startArchiving).toHaveBeenCalledWith(mockedRoomName);
+    });
   });
 });
