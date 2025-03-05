@@ -50,6 +50,9 @@ const VideoTile = forwardRef(
         <div
           className={`relative left-0 top-0 size-full overflow-hidden rounded-xl ${isTalking ? 'outline outline-2 outline-sky-500' : ''} ${!hasVideo ? 'hidden' : ''}`}
           ref={ref}
+          style={{
+            backgroundColor: 'rgba(60, 64, 67, 0.55)',
+          }}
         />
         <div
           className={`relative left-0 top-0 size-full overflow-hidden rounded-xl bg-notVeryGray-100 ${isTalking ? 'outline outline-2 outline-sky-500' : ''} ${hasVideo ? 'hidden' : ''}`}

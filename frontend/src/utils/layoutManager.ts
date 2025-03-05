@@ -15,10 +15,7 @@ export type MaybeElement = {
 class LayoutManager {
   manager?: LayoutContainer;
 
-  init(
-    containerDimensions: { height: number; width: number },
-    shouldMakeLargeTilesLandscape: boolean = false
-  ) {
+  init(containerDimensions: { height: number; width: number }) {
     // Layout options see: https://github.com/aullman/opentok-layout-js?tab=readme-ov-file#usage
     this.manager = OpenTokLayoutManager({
       fixedRatio: false,
@@ -36,19 +33,15 @@ class LayoutManager {
       smallMaxHeight: Infinity,
       bigMaxWidth: Infinity,
       bigMaxHeight: Infinity,
-      bigMaxRatio: shouldMakeLargeTilesLandscape ? 9 / 16 : 3 / 2,
+      bigMaxRatio: 9 / 16,
       bigMinRatio: 9 / 16,
       bigFirst: true,
       containerWidth: containerDimensions.width,
       containerHeight: containerDimensions.height,
     });
   }
-  getLayout(
-    containerDimensions: { height: number; width: number },
-    elements: Element[],
-    shouldMakeLargeTilesLandscape: boolean
-  ): Box[] {
-    this.init(containerDimensions, shouldMakeLargeTilesLandscape);
+  getLayout(containerDimensions: { height: number; width: number }, elements: Element[]): Box[] {
+    this.init(containerDimensions);
     // Currently the layout manager doesn't support updating dimensions on the fly so we must re-create the manager every time
     // https://github.com/aullman/opentok-layout-js/issues/141
     return this.manager?.getLayout(elements)?.boxes ?? [];
