@@ -1,19 +1,40 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 
 const useShownButtons = () => {
-  const buttonWidth = 48;
-  const minimumSupportedViewport = 360;
-  const rightPanelMargin = 12;
+  // Minimum width: 354 = 107 + 107 + (48 + 12) + 48 + 32
+  const getNumberOfButtons = useCallback((width: number) => {
+    switch (true) {
+      case width >= 786:
+        return 7;
 
-  const [shownButtons, setShownButtons] = useState(
-    Math.floor((window.innerWidth - (minimumSupportedViewport + rightPanelMargin)) / buttonWidth)
-  );
+      case width >= 726:
+        return 6;
+
+      case width >= 654:
+        return 5;
+
+      case width >= 594:
+        return 4;
+
+      case width >= 534:
+        return 3;
+
+      case width >= 474:
+        return 2;
+
+      case width >= 414:
+        return 1;
+
+      default:
+        return 0;
+    }
+  }, []);
+
+  const [shownButtons, setShownButtons] = useState(getNumberOfButtons(window.innerWidth));
 
   useEffect(() => {
     const handleResize = () => {
-      const maxShownButtons = Math.floor(
-        (window.innerWidth - (minimumSupportedViewport + rightPanelMargin)) / buttonWidth
-      );
+      const maxShownButtons = getNumberOfButtons(window.innerWidth);
       setShownButtons(maxShownButtons);
     };
 

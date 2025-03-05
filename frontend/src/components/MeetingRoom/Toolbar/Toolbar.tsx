@@ -72,33 +72,33 @@ const Toolbar = ({
   return (
     <div className="absolute bottom-0 left-0 flex h-[80px] w-full items-center bg-darkGray-100 p-4 md:flex-row md:justify-between">
       <div className="flex justify-start overflow-hidden">
-        <TimeRoomNameMeetingRoom />
+        {shownButtons >= 7 && <TimeRoomNameMeetingRoom />}
       </div>
       <div className="flex flex-1 justify-center">
         <AudioControlButton />
         <VideoControlButton />
-        {shownButtons < 9 && (
+        {shownButtons <= 7 && (
           <ToolbarOverflowButton
             isSharingScreen={isSharingScreen}
             toggleShareScreen={toggleShareScreen}
           />
         )}
-        {shownButtons > 1 && (
+        {shownButtons >= 1 && (
           <ScreenSharingButton
             toggleScreenShare={toggleShareScreen}
             isSharingScreen={isSharingScreen}
             isViewingScreenShare={isViewingScreenShare}
           />
         )}
-        {shownButtons > 2 && <LayoutButton isScreenSharePresent={isScreenSharePresent} />}
-        {shownButtons > 3 && (
+        {shownButtons >= 2 && <LayoutButton isScreenSharePresent={isScreenSharePresent} />}
+        {shownButtons >= 3 && (
           <EmojiGridButton
             isEmojiGridOpen={openEmojiGridDesktop}
             setIsEmojiGridOpen={setOpenEmojiGridDesktop}
             isParentOpen
           />
         )}
-        {shownButtons > 4 && <ArchivingButton />}
+        {shownButtons >= 4 && <ArchivingButton />}
         <ExitButton handleLeave={handleLeave} />
       </div>
 
@@ -106,26 +106,26 @@ const Toolbar = ({
         style={{
           boxSizing: 'border-box',
           // If we have no buttons in the container, we do not need a margin
-          marginLeft: shownButtons > 5 ? '12px' : '0px',
+          marginLeft: shownButtons >= 5 ? '12px' : '0px',
           display: 'flex',
           flex: '0 1 0%',
           justifyContent: 'flex-end',
         }}
       >
-        {isReportIssueEnabled && shownButtons > 6 && (
+        {isReportIssueEnabled && shownButtons >= 5 && (
           <ReportIssueButton
             isOpen={rightPanelActiveTab === 'issues'}
             handleClick={toggleReportIssue}
           />
         )}
-        {shownButtons > 7 && (
+        {shownButtons >= 6 && (
           <ParticipantListButton
             isOpen={rightPanelActiveTab === 'participant-list'}
             handleClick={toggleParticipantList}
             participantCount={participantCount}
           />
         )}
-        {shownButtons > 8 && (
+        {shownButtons >= 7 && (
           <ChatButton isOpen={rightPanelActiveTab === 'chat'} handleClick={toggleChat} />
         )}
       </div>
