@@ -2,7 +2,7 @@ import { useCallback, useEffect, useState } from 'react';
 
 const useShownButtons = () => {
   // Minimum width: 354 = 107 audio selector + 107 video selector + (48 + 12) overflow menu + 48 exit button + 32px padding
-  // Each additional button is 60px including the width (48px) and margin (12px)
+  // Each additional button: 60px = 48px button width + 12px margin
   const getNumberOfButtons = useCallback((width: number) => {
     switch (true) {
       case width >= 786:

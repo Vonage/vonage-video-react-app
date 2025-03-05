@@ -77,7 +77,7 @@ const ToolbarOverflowMenu = ({
               bottom: '80px',
             }}
           >
-            {!(shownButtons >= 1) && (
+            {shownButtons <= 1 && (
               <ScreenSharingButton
                 toggleScreenShare={toggleShareScreen}
                 isSharingScreen={isSharingScreen}
@@ -85,10 +85,10 @@ const ToolbarOverflowMenu = ({
                 isOverflowButton
               />
             )}
-            {!(shownButtons >= 2) && (
+            {shownButtons <= 2 && (
               <LayoutButton isScreenSharePresent={isViewingScreenShare} isOverflowButton />
             )}
-            {!(shownButtons >= 3) && (
+            {shownButtons <= 3 && (
               <EmojiGridButton
                 isEmojiGridOpen={isEmojiGridOpen}
                 setIsEmojiGridOpen={setIsEmojiGridOpen}
@@ -96,15 +96,15 @@ const ToolbarOverflowMenu = ({
                 isOverflowButton
               />
             )}
-            {!(shownButtons >= 4) && <ArchivingButton isOverflowButton />}
-            {isReportIssueEnabled && !(shownButtons >= 5) && (
+            {shownButtons <= 4 && <ArchivingButton isOverflowButton />}
+            {isReportIssueEnabled && shownButtons <= 5 && (
               <ReportIssueButton
                 isOpen={rightPanelActiveTab === 'issues'}
                 handleClick={toggleReportIssue}
                 isOverflowButton
               />
             )}
-            {!(shownButtons >= 6) && (
+            {shownButtons <= 6 && (
               <ParticipantListButton
                 isOpen={rightPanelActiveTab === 'participant-list'}
                 handleClick={toggleParticipantList}
@@ -112,7 +112,7 @@ const ToolbarOverflowMenu = ({
                 isOverflowButton
               />
             )}
-            {!(shownButtons >= 7) && (
+            {shownButtons <= 7 && (
               <ChatButton
                 isOpen={rightPanelActiveTab === 'chat'}
                 handleClick={toggleChat}
