@@ -19,7 +19,7 @@ export type EmojiGridProps = {
  *  @property {boolean} isEmojiGridOpen - whether the component will be open initially
  *  @property {Dispatch<SetStateAction<boolean>>} setIsEmojiGridOpen - toggle whether the emoji grid is shown or hidden
  *  @property {boolean} isParentOpen - whether the ToolbarOverflowMenu is open
- *  @property {boolean} isOverflowButton - whether the button is in the ToolbarOverflowMenu
+ *  @property {boolean} isOverflowButton - (optional) whether the button is in the ToolbarOverflowMenu
  * @returns {ReactElement} - The EmojiGridButton Component.
  */
 const EmojiGridButton = ({

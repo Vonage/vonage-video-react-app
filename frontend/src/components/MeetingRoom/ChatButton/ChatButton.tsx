@@ -19,7 +19,7 @@ export type ChatButtonProps = {
  * @param {ChatButtonProps} props - the props for this component
  *   @property {() => void} handleClick - click handler to toggle open chat panel
  *   @property {boolean} isOpen - true if chat is currently open, false if not
- *   @property {boolean} isOverflowButton - whether the button is in the ToolbarOverflowMenu
+ *   @property {boolean} isOverflowButton - (optional) whether the button is in the ToolbarOverflowMenu
  * @returns {ReactElement} - ChatButton
  */
 const ChatButton = ({

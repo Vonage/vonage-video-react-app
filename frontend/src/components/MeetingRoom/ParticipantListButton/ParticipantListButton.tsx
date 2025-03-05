@@ -20,7 +20,7 @@ export type ParticipantListButtonProps = {
  *   @property {() => void} handleClick - click handler to toggle open participant list
  *   @property {boolean} isOpen - true if list is currently open, false if not
  *   @property {number} participantCount - number of current participants in call, to be displayed in badge
- *   @property {boolean} isOverflowButton - whether the button is in the ToolbarOverflowMenu
+ *   @property {boolean} isOverflowButton - (optional) whether the button is in the ToolbarOverflowMenu
  * @returns {ReactElement} - ParticipantListButton
  */
 const ParticipantListButton = ({

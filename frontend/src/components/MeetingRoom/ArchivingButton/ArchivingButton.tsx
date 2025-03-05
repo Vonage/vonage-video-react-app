@@ -18,7 +18,7 @@ export type ArchivingButtonProps = {
  * will confirm that a user wishes to stop the recording. If a meeting is not being recorded, prompts
  * the user before starting the archive.
  * @param {ArchivingButtonProps} props - the props for the component
- * @property {boolean} isOverflowButton - whether the button is in the ToolbarOverflowMenu
+ * @property {boolean} isOverflowButton - (optional) whether the button is in the ToolbarOverflowMenu
  * @returns {ReactElement} - The ArchivingButton component.
  */
 const ArchivingButton = ({ isOverflowButton = false }: ArchivingButtonProps): ReactElement => {

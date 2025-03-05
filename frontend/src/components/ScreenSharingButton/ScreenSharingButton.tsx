@@ -21,7 +21,7 @@ export type ScreenShareButtonProps = {
  *  @property {Function} toggleScreenShare - Function to toggle screenshare.
  *  @property {boolean} isSharingScreen - Whether the user is sharing their screen or not.
  *  @property {boolean} isViewingScreenShare - Indicates whether there is a screenshare currently in the session.
- *  @property {boolean} isOverflowButton - whether the button is in the ToolbarOverflowMenu
+ *  @property {boolean} isOverflowButton - (optional) whether the button is in the ToolbarOverflowMenu
  * @returns {ReactElement} - The ScreenSharingButton component
  */
 const ScreenSharingButton = ({
