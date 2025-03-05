@@ -14,14 +14,11 @@ export type ReportIssueButtonProps = {
  *
  * Displays a clickable button to open/close the ReportIssue panel.
  * @param {ReportIssueButtonProps} props - The props for the component.
- *  @property {() => void} handleClick - click handler, e.g open report issue form
- *  @property {boolean} isOpen - whether the report issue form should be shown
  * @returns {ReactElement} The ReportIssueButton component.
  */
 const ReportIssueButton = ({ handleClick, isOpen }: ReportIssueButtonProps): ReactElement => {
   const anchorRef = useRef<HTMLButtonElement>(null);
   const isSmallViewport = useIsSmallViewport();
-
   return (
     <div className="pr-3">
       <Tooltip title="Report issue" aria-label="open report issue menu">
