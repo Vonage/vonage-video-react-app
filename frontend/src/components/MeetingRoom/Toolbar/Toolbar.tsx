@@ -77,7 +77,7 @@ const Toolbar = ({
       <div className="flex flex-1 justify-center">
         <AudioControlButton />
         <VideoControlButton />
-        {shownButtons <= 7 && (
+        {shownButtons < 7 && (
           <ToolbarOverflowButton
             isSharingScreen={isSharingScreen}
             toggleShareScreen={toggleShareScreen}
