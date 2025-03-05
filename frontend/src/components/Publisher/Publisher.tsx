@@ -43,7 +43,6 @@ const Publisher = ({ box }: PublisherProps): ReactElement => {
         '-scale-x-100'
       );
       element.style.objectFit = 'contain';
-      element.style.backgroundColor = 'rgba(60, 64, 67, 0.55)';
       pubContainerRef.current.appendChild(element);
     }
   }, [element]);

@@ -55,7 +55,6 @@ const Subscriber = ({
       element.id = subscriberWrapper.id;
       element.classList.add('video__element', 'w-full', 'h-full', 'absolute', 'rounded-xl');
       element.style.objectFit = 'contain';
-      element.style.backgroundColor = 'rgba(60, 64, 67, 0.55)';
       subRef.current.appendChild(element);
     }
   }, [subscriberWrapper, isScreenShare]);
