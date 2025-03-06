@@ -31,10 +31,12 @@ const ToolbarOverflowButton = ({
     setIsToolbarOverflowMenuOpen((prevOpen) => !prevOpen);
   };
 
-  const handleClickAway = (event: MouseEvent | TouchEvent) => {
-    const target = event.target as HTMLElement;
-    if (target.closest('#hidden-toolbar-items')) {
-      return;
+  const handleClickAway = (event?: MouseEvent | TouchEvent) => {
+    if (event) {
+      const target = event.target as HTMLElement;
+      if (target.closest('#hidden-toolbar-items')) {
+        return;
+      }
     }
     setIsToolbarOverflowMenuOpen(false);
   };

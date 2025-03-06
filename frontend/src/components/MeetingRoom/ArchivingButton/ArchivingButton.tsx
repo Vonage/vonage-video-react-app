@@ -10,7 +10,7 @@ import useShownButtons from '../../../hooks/useShownButtons';
 
 export type ArchivingButtonProps = {
   isOverflowButton?: boolean;
-  handleClick?: () => void;
+  handleClick?: (event?: MouseEvent | TouchEvent) => void;
 };
 
 /**
@@ -20,9 +20,8 @@ export type ArchivingButtonProps = {
  * will confirm that a user wishes to stop the recording. If a meeting is not being recorded, prompts
  * the user before starting the archive.
  * @param {ArchivingButtonProps} props - the props for the component
- * @property {boolean} isOverflowButton - (optional) whether the button is in the ToolbarOverflowMenu
- * @param {ArchivingButtonProps} props - The props for the component.
- *  @property {() => void} handleClick - (optional) click handler that closes the overflow menu in small view port devices.
+ *  @property {boolean} isOverflowButton - (optional) whether the button is in the ToolbarOverflowMenu
+ *  @property {(event?: MouseEvent | TouchEvent) => void} handleClick - (optional) click handler that closes the overflow menu in small view port devices.
  * @returns {ReactElement} - The ArchivingButton component.
  */
 const ArchivingButton = ({
