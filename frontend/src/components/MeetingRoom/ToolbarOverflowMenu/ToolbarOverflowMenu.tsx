@@ -128,7 +128,9 @@ const ToolbarOverflowMenu = ({
               bottom: '80px',
             }}
           >
-            {mobileButtonArray.map((button, index) => (shownButtons <= index ? button : null))}
+            {mobileButtonArray.map((mobileButton, index) =>
+              shownButtons <= index ? mobileButton : null
+            )}
           </Box>
         </Grow>
       </ClickAwayListener>

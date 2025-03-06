@@ -113,9 +113,9 @@ const Toolbar = ({
       <div className="flex flex-1 justify-center">
         <AudioControlButton />
         <VideoControlButton />
-        {desktopButtonArray.map((button, index) =>
+        {desktopButtonArray.map((desktopButton, index) =>
           index < desktopButtonArray.length - RIGHT_PANEL_BUTTON_COUNT && shownButtons > index
-            ? button
+            ? desktopButton
             : null
         )}
         {shownButtons < desktopButtonArray.length && (
@@ -137,9 +137,9 @@ const Toolbar = ({
           justifyContent: 'flex-end',
         }}
       >
-        {desktopButtonArray.map((button, index) =>
+        {desktopButtonArray.map((desktopButton, index) =>
           index >= desktopButtonArray.length - RIGHT_PANEL_BUTTON_COUNT && shownButtons > index
-            ? button
+            ? desktopButton
             : null
         )}
       </div>
