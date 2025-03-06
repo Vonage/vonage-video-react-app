@@ -61,7 +61,7 @@ const ToolbarOverflowMenu = ({
   };
 
   const shownButtons = useShownButtons();
-  const mobileButtonArray = [
+  const overflowButtonArray = [
     <ScreenSharingButton
       toggleScreenShare={toggleShareScreen}
       isSharingScreen={isSharingScreen}
@@ -128,8 +128,8 @@ const ToolbarOverflowMenu = ({
               bottom: '80px',
             }}
           >
-            {mobileButtonArray.map((mobileButton, index) =>
-              shownButtons <= index ? mobileButton : null
+            {overflowButtonArray.map((overflowButton, index) =>
+              shownButtons <= index ? overflowButton : null
             )}
           </Box>
         </Grow>
