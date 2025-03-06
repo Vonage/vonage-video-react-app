@@ -8,7 +8,7 @@ import useIsSmallViewport from '../../../hooks/useIsSmallViewport';
 
 export type LayoutButtonProps = {
   isScreenSharePresent: boolean;
-  isPinnedPresent: boolean;
+  isPinningPresent: boolean;
 };
 
 /**
@@ -22,11 +22,11 @@ export type LayoutButtonProps = {
  */
 const LayoutButton = ({
   isScreenSharePresent,
-  isPinnedPresent,
+  isPinningPresent,
 }: LayoutButtonProps): ReactElement | false => {
   const { layoutMode, setLayoutMode } = useSessionContext();
   const isGrid = layoutMode === 'grid';
-  const isDisabled = isScreenSharePresent || isPinnedPresent;
+  const isDisabled = isScreenSharePresent || isPinningPresent;
 
   const handleClick = () => {
     if (isDisabled) {
@@ -39,7 +39,7 @@ const LayoutButton = ({
     if (isScreenSharePresent) {
       return 'Cannot switch layout while screen share is active';
     }
-    if (isPinnedPresent) {
+    if (isPinningPresent) {
       return 'Cannot switch layout while a participant is pinned';
     }
     return isGrid ? 'Switch to Active Speaker layout' : 'Switch to Grid layout';

@@ -89,7 +89,7 @@ const Toolbar = ({
             />
             <LayoutButton
               isScreenSharePresent={isScreenSharePresent}
-              isPinnedPresent={isPinnedPresent}
+              isPinningPresent={isPinnedPresent}
             />
             <EmojiGridButton
               isEmojiGridOpen={openEmojiGridDesktop}

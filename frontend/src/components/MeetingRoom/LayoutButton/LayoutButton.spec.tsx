@@ -12,19 +12,19 @@ describe('LayoutButton', () => {
   });
   it('should render the sidebar view icon if it is an active speaker layout', () => {
     (useSessionContext as Mock).mockReturnValue({ layoutMode: 'active-speaker' });
-    render(<LayoutButton isScreenSharePresent={false} isPinnedPresent={false} />);
+    render(<LayoutButton isScreenSharePresent={false} isPinningPresent={false} />);
     expect(screen.getByTestId('ViewSidebarIcon')).toBeInTheDocument();
   });
 
   it('should render the sidebar window icon if it is a grid layout', () => {
     (useSessionContext as Mock).mockReturnValue({ layoutMode: 'grid' });
-    render(<LayoutButton isScreenSharePresent={false} isPinnedPresent={false} />);
+    render(<LayoutButton isScreenSharePresent={false} isPinningPresent={false} />);
     expect(screen.getByTestId('WindowIcon')).toBeInTheDocument();
   });
 
   it('should render the tooltip title that mentions switching to grid layout', async () => {
     (useSessionContext as Mock).mockReturnValue({ layoutMode: 'active-speaker' });
-    render(<LayoutButton isScreenSharePresent={false} isPinnedPresent={false} />);
+    render(<LayoutButton isScreenSharePresent={false} isPinningPresent={false} />);
     const button = await screen.findByRole('button');
     await userEvent.hover(button);
     const tooltip = await screen.findByRole('tooltip');
@@ -34,7 +34,7 @@ describe('LayoutButton', () => {
 
   it('should render the tooltip title that mentions switching to active speaker layout', async () => {
     (useSessionContext as Mock).mockReturnValue({ layoutMode: 'grid' });
-    render(<LayoutButton isScreenSharePresent={false} isPinnedPresent={false} />);
+    render(<LayoutButton isScreenSharePresent={false} isPinningPresent={false} />);
     const button = await screen.findByRole('button');
     await userEvent.hover(button);
     const tooltip = await screen.findByRole('tooltip');
@@ -44,7 +44,7 @@ describe('LayoutButton', () => {
 
   it('should render the tooltip title that mentions switching layouts is not allowed when screenshare is present if currently in the grid mode', async () => {
     (useSessionContext as Mock).mockReturnValue({ layoutMode: 'grid' });
-    render(<LayoutButton isScreenSharePresent isPinnedPresent={false} />);
+    render(<LayoutButton isScreenSharePresent isPinningPresent={false} />);
     const button = await screen.findByRole('button');
     await userEvent.hover(button);
     const tooltip = await screen.findByRole('tooltip');
@@ -54,7 +54,7 @@ describe('LayoutButton', () => {
 
   it('should render the tooltip title that mentions switching layouts is not allowed when screenshare is present if currently in the active speaker mode', async () => {
     (useSessionContext as Mock).mockReturnValue({ layoutMode: 'active-speaker' });
-    render(<LayoutButton isScreenSharePresent isPinnedPresent={false} />);
+    render(<LayoutButton isScreenSharePresent isPinningPresent={false} />);
     const button = await screen.findByRole('button');
     await userEvent.hover(button);
     const tooltip = await screen.findByRole('tooltip');
@@ -64,7 +64,7 @@ describe('LayoutButton', () => {
 
   it('should render the tooltip title that mentions switching layouts is not allowed when a pinned participant is present', async () => {
     (useSessionContext as Mock).mockReturnValue({ layoutMode: 'grid' });
-    render(<LayoutButton isScreenSharePresent={false} isPinnedPresent />);
+    render(<LayoutButton isScreenSharePresent={false} isPinningPresent />);
     const button = await screen.findByRole('button');
     await userEvent.hover(button);
     const tooltip = await screen.findByRole('tooltip');

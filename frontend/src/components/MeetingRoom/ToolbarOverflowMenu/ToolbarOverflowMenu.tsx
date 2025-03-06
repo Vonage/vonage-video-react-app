@@ -91,7 +91,7 @@ const ToolbarOverflowMenu = ({
               >
                 <LayoutButton
                   isScreenSharePresent={isViewingScreenShare}
-                  isPinnedPresent={isPinnedPresent}
+                  isPinningPresent={isPinnedPresent}
                 />
                 <EmojiGridButton
                   isEmojiGridOpen={isEmojiGridOpen}
