@@ -57,7 +57,9 @@ const ArchivingButton = ({
 
   const handleClose = () => {
     setIsModalOpen(false);
-    if (shownButtons < 3 && handleClick) {
+
+    // If the ArchivingButton is in the ToolbarOverflowMenu, we close the modal and the menu
+    if (shownButtons < 4 && handleClick) {
       handleClick();
     }
   };
