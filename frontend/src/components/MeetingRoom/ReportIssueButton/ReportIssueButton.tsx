@@ -27,21 +27,19 @@ const ReportIssueButton = ({
   const anchorRef = useRef<HTMLButtonElement>(null);
 
   return (
-    <div className="pr-3">
-      <Tooltip title="Report issue" aria-label="open report issue menu">
-        <ToolbarButton
-          data-testid="report-issue-button"
-          sx={{
-            marginTop: '0px',
-            marginRight: '0px',
-          }}
-          onClick={handleClick}
-          icon={<FeedbackIcon style={{ color: `${!isOpen ? 'white' : 'rgb(138, 180, 248)'}` }} />}
-          ref={anchorRef}
-          isOverflowButton={isOverflowButton}
-        />
-      </Tooltip>
-    </div>
+    <Tooltip title="Report issue" aria-label="open report issue menu">
+      <ToolbarButton
+        data-testid="report-issue-button"
+        sx={{
+          marginTop: '0px',
+          marginRight: '12px',
+        }}
+        onClick={handleClick}
+        icon={<FeedbackIcon style={{ color: `${!isOpen ? 'white' : 'rgb(138, 180, 248)'}` }} />}
+        ref={anchorRef}
+        isOverflowButton={isOverflowButton}
+      />
+    </Tooltip>
   );
 };
 

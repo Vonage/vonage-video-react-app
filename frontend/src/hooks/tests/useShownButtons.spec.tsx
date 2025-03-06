@@ -24,6 +24,10 @@ const viewportsToTest = [
     expectedShownButtons: 4,
   },
   {
+    innerWidth: 643,
+    expectedShownButtons: 4,
+  },
+  {
     innerWidth: 666,
     expectedShownButtons: 5,
   },

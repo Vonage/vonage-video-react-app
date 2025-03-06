@@ -8,10 +8,10 @@ const useShownButtons = () => {
     // Each additional button: 60px = 48px button width + 12px margin
     const extraButtons = widthForExtraButtons / 60;
     if (extraButtons > 4) {
-      // We account for 12px for the right sidebar buttons' container.
-      return Math.round((widthForExtraButtons + 12) / 60);
+      // We account for 12px of margin used for the right sidebar buttons' container.
+      return Math.floor((widthForExtraButtons - 12) / 60);
     }
-    return Math.round(extraButtons);
+    return Math.floor(extraButtons);
   }, []);
 
   const [shownButtons, setShownButtons] = useState(getNumberOfButtons(window.innerWidth));
