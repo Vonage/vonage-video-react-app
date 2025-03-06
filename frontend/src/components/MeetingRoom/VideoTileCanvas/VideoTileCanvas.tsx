@@ -57,7 +57,8 @@ const VideoTileCanvas = ({
   // Check which subscribers we will display, in large calls we will hide some subscribers
   const { hiddenSubscribers, subscribersOnScreen } = getSubscribersToDisplay(
     subscriberWrappers,
-    isViewingLargeTile
+    isViewingLargeTile,
+    !!screensharingPublisher
   );
 
   // We keep track of the current position of subscribers so we can maintain position to avoid subscribers jumping around the screen

@@ -10,13 +10,21 @@ import { isMobile } from '../../util';
 /**
  * Util to get the maximum number of subscribers we should show on screen based on layout mode and device type
  * @param {boolean} isViewingLargeTile - is there a screenshare of large active speaker tile on screen
+ * @param {boolean} isPublishingScreenshare - whether we are publishing screenshare
  * @returns {number} maxSubscriberOnScreenCount - maximum number of subscribers to display
  */
-const getMaxSubscriberOnScreenCount = (isViewingLargeTile: boolean): number => {
+const getMaxSubscriberOnScreenCount = (
+  isViewingLargeTile: boolean,
+  isPublishingScreenshare: boolean
+): number => {
   if (isMobile()) {
     return isViewingLargeTile ? MAX_TILES_SPEAKER_VIEW_MOBILE : MAX_TILES_GRID_VIEW_MOBILE;
   }
-  return isViewingLargeTile ? MAX_TILES_SPEAKER_VIEW_DESKTOP : MAX_TILES_GRID_VIEW_DESKTOP;
+  const maxTileCount = isViewingLargeTile
+    ? MAX_TILES_SPEAKER_VIEW_DESKTOP
+    : MAX_TILES_GRID_VIEW_DESKTOP;
+
+  return isPublishingScreenshare ? maxTileCount - 1 : maxTileCount;
 };
 
 export type SubscribersToDisplayAndHide = {
@@ -28,14 +36,19 @@ export type SubscribersToDisplayAndHide = {
  * Util to separate subscribers into two arrays, the subscribers to display and subscribers that are hidden
  * @param {SubscriberWrapper[]} subscriberWrappers - SubscriberWrapper in display priority order
  * @param {boolean} isViewingLargeTile - is there a large tile (screenshare or active-speaker)
+ * @param {boolean} isPublishingScreenshare - whether we are publishing screenshare
  * @returns {SubscribersToDisplayAndHide} - Subscribers to be hidden and Subscribers to be shown
  * }}
  */
 const getSubscribersToDisplay = (
   subscriberWrappers: SubscriberWrapper[],
-  isViewingLargeTile: boolean
+  isViewingLargeTile: boolean,
+  isPublishingScreenshare: boolean
 ): SubscribersToDisplayAndHide => {
-  const maxSubscribersOnScreenCount = getMaxSubscriberOnScreenCount(isViewingLargeTile);
+  const maxSubscribersOnScreenCount = getMaxSubscriberOnScreenCount(
+    isViewingLargeTile,
+    isPublishingScreenshare
+  );
   const shouldHideSubscribers = subscriberWrappers.length > maxSubscribersOnScreenCount;
 
   // If hiding subscribers we slice at max - 1 to make room for hidden participant tile.
