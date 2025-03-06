@@ -1,35 +1,17 @@
 import { useCallback, useEffect, useState } from 'react';
 
 const useShownButtons = () => {
-  // Minimum width: 354 = 107 audio selector + 107 video selector + (48 + 12) overflow menu + 48 exit button + 32px padding
-  // Each additional button: 60px = 48px button width + 12px margin
   const getNumberOfButtons = useCallback((width: number) => {
-    switch (true) {
-      case width >= 786:
-        return 7;
-
-      case width >= 726:
-        return 6;
-
+    // Minimum width: 354 = 107 audio selector + 107 video selector + (48 + 12) overflow menu + 48 exit button + 32px padding
+    const widthForEssentialButtons = 107 + 107 + (48 + 12) + 48 + 32;
+    const widthForExtraButtons = width - widthForEssentialButtons;
+    // Each additional button: 60px = 48px button width + 12px margin
+    const extraButtons = widthForExtraButtons / 60;
+    if (extraButtons > 4) {
       // We account for 12px for the right sidebar buttons' container.
-      case width >= 666:
-        return 5;
-
-      case width >= 594:
-        return 4;
-
-      case width >= 534:
-        return 3;
-
-      case width >= 474:
-        return 2;
-
-      case width >= 414:
-        return 1;
-
-      default:
-        return 0;
+      return Math.round((widthForExtraButtons + 12) / 60);
     }
+    return Math.round(extraButtons);
   }, []);
 
   const [shownButtons, setShownButtons] = useState(getNumberOfButtons(window.innerWidth));
