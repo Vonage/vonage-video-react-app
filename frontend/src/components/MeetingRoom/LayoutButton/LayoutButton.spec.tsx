@@ -69,6 +69,6 @@ describe('LayoutButton', () => {
     await userEvent.hover(button);
     const tooltip = await screen.findByRole('tooltip');
     expect(tooltip).toBeInTheDocument();
-    expect(tooltip.textContent).toBe('Cannont switch layout while a participant is pinned');
+    expect(tooltip.textContent).toBe('Cannot switch layout while a participant is pinned');
   });
 });

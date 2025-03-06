@@ -40,7 +40,7 @@ const LayoutButton = ({
       return 'Cannot switch layout while screen share is active';
     }
     if (isPinnedPresent) {
-      return 'Cannont switch layout while a participant is pinned';
+      return 'Cannot switch layout while a participant is pinned';
     }
     return isGrid ? 'Switch to Active Speaker layout' : 'Switch to Grid layout';
   };
