@@ -14,6 +14,10 @@ import ReportIssueButton from '../ReportIssueButton';
 import ToolbarOverflowButton from '../ToolbarOverflowButton';
 import EmojiGridButton from '../EmojiGridButton';
 import useShownButtons from '../../../hooks/useShownButtons';
+import {
+  getCenterToolbarButtons,
+  getRightPanelButtons,
+} from '../../../utils/getVisibleToolbarButtons';
 import { RIGHT_PANEL_BUTTON_COUNT } from '../../../utils/constants';
 
 export type ToolbarProps = {
@@ -72,7 +76,7 @@ const Toolbar = ({
 
   // An array of buttons available for the toolbar. As the toolbar resizes, buttons may be hidden and moved to the
   // ToolbarOverflowMenu to ensure a responsive layout without compromising usability.
-  const toolbarButtonArray = [
+  const toolbarButtonArray: Array<ReactElement | false> = [
     <ScreenSharingButton
       toggleScreenShare={toggleShareScreen}
       isSharingScreen={isSharingScreen}
@@ -115,11 +119,7 @@ const Toolbar = ({
       <div className="flex flex-1 justify-center">
         <AudioControlButton />
         <VideoControlButton />
-        {toolbarButtonArray.map((toolbarButton, index) =>
-          index < toolbarButtonArray.length - RIGHT_PANEL_BUTTON_COUNT && shownButtons > index
-            ? toolbarButton
-            : null
-        )}
+        {getCenterToolbarButtons(toolbarButtonArray, shownButtons)}
         {shownButtons < toolbarButtonArray.length && (
           <ToolbarOverflowButton
             isSharingScreen={isSharingScreen}
@@ -132,18 +132,15 @@ const Toolbar = ({
       <div
         style={{
           boxSizing: 'border-box',
-          // If we have no buttons in the container, we do not need a margin
-          marginLeft: shownButtons >= 5 ? '12px' : '0px',
+          // If we have no right panel buttons to show in the container, we do not need a margin
+          marginLeft:
+            shownButtons >= toolbarButtonArray.length - RIGHT_PANEL_BUTTON_COUNT ? '12px' : '0px',
           display: 'flex',
           flex: '0 1 0%',
           justifyContent: 'flex-end',
         }}
       >
-        {toolbarButtonArray.map((toolbarButton, index) =>
-          index >= toolbarButtonArray.length - RIGHT_PANEL_BUTTON_COUNT && shownButtons > index
-            ? toolbarButton
-            : null
-        )}
+        {getRightPanelButtons(toolbarButtonArray, shownButtons)}
       </div>
     </div>
   );

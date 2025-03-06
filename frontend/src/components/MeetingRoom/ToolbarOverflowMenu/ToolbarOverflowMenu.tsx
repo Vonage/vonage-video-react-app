@@ -10,6 +10,7 @@ import LayoutButton from '../LayoutButton';
 import useSessionContext from '../../../hooks/useSessionContext';
 import ScreenSharingButton from '../../ScreenSharingButton';
 import useShownButtons from '../../../hooks/useShownButtons';
+import { getOverflowMenuButtons } from '../../../utils/getVisibleToolbarButtons';
 
 export type ToolbarOverflowMenuProps = {
   isOpen: boolean;
@@ -63,7 +64,7 @@ const ToolbarOverflowMenu = ({
   const shownButtons = useShownButtons();
   // An array of buttons available for the overflow menu. As the screen resizes, buttons may be hidden and moved to the
   // Toolbar to ensure a responsive layout without compromising usability.
-  const overflowButtonArray = [
+  const overflowButtonArray: Array<ReactElement | false> = [
     <ScreenSharingButton
       toggleScreenShare={toggleShareScreen}
       isSharingScreen={isSharingScreen}
@@ -130,9 +131,7 @@ const ToolbarOverflowMenu = ({
               bottom: '80px',
             }}
           >
-            {overflowButtonArray.map((overflowButton, index) =>
-              shownButtons <= index ? overflowButton : null
-            )}
+            {getOverflowMenuButtons(overflowButtonArray, shownButtons)}
           </Box>
         </Grow>
       </ClickAwayListener>
