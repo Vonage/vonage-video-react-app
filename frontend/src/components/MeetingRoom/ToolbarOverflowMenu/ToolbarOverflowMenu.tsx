@@ -61,6 +61,8 @@ const ToolbarOverflowMenu = ({
   };
 
   const shownButtons = useShownButtons();
+  // An array of buttons available for the overflow menu. As the screen resizes, buttons may be hidden and moved to the
+  // Toolbar to ensure a responsive layout without compromising usability.
   const overflowButtonArray = [
     <ScreenSharingButton
       toggleScreenShare={toggleShareScreen}

@@ -70,6 +70,8 @@ const Toolbar = ({
   const [openEmojiGridDesktop, setOpenEmojiGridDesktop] = useState<boolean>(false);
   const shownButtons = useShownButtons();
 
+  // An array of buttons available for the toolbar. As the toolbar resizes, buttons may be hidden and moved to the
+  // ToolbarOverflowMenu to ensure a responsive layout without compromising usability.
   const toolbarButtonArray = [
     <ScreenSharingButton
       toggleScreenShare={toggleShareScreen}
