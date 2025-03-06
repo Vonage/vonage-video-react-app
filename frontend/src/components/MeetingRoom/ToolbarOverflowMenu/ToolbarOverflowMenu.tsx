@@ -12,10 +12,10 @@ import ScreenSharingButton from '../../ScreenSharingButton';
 import useShownButtons from '../../../hooks/useShownButtons';
 
 export type ToolbarOverflowMenuProps = {
-  isToolbarOverflowMenuOpen: boolean;
+  isOpen: boolean;
   isEmojiGridOpen: boolean;
   setIsEmojiGridOpen: Dispatch<SetStateAction<boolean>>;
-  handleClickAway: (event: MouseEvent | TouchEvent) => void;
+  closeMenu: (event?: MouseEvent | TouchEvent) => void;
   toggleShareScreen: () => void;
   isSharingScreen: boolean;
 };
@@ -25,19 +25,19 @@ export type ToolbarOverflowMenuProps = {
  *
  * Displays a menu holding buttons that cannot be displayed on the toolbar due to a narrow device viewport width.
  * @param {ToolbarOverflowMenuProps} props - the props for the component
- *  @property {boolean} isToolbarOverflowMenuOpen - whether the component will be open
+ *  @property {boolean} isOpen - whether the component will be open
  *  @property {boolean} isEmojiGridOpen - whether the emoji grid will be open
  *  @property {Dispatch<SetStateAction<boolean>>} setIsEmojiGridOpen - toggle whether the emoji grid is shown or hidden
- *  @property {(event: MouseEvent | TouchEvent) => void} handleClickAway - hides the menu when user clicks away from the menu
+ *  @property {(event: MouseEvent | TouchEvent) => void} closeMenu - hides the menu when user clicks away from the menu
  *  @property {Function} toggleShareScreen - toggles the user's screenshare
  *  @property {boolean} isSharingScreen - whether the user is sharing their screen
  * @returns {ReactElement} - The ToolbarOverflowMenu component.
  */
 const ToolbarOverflowMenu = ({
-  isToolbarOverflowMenuOpen,
+  isOpen,
   isEmojiGridOpen,
   setIsEmojiGridOpen,
-  handleClickAway,
+  closeMenu,
   toggleShareScreen,
   isSharingScreen,
 }: ToolbarOverflowMenuProps): ReactElement => {
@@ -52,6 +52,14 @@ const ToolbarOverflowMenu = ({
   const participantCount =
     subscriberWrappers.filter(({ isScreenshare }) => !isScreenshare).length + 1;
   const isReportIssueEnabled = import.meta.env.VITE_ENABLE_REPORT_ISSUE === 'true';
+
+  const closeMenuWrapper = (onClick?: () => void) => () => {
+    if (onClick) {
+      onClick();
+    }
+    closeMenu();
+  };
+
   const shownButtons = useShownButtons();
   const buttonArray = [
     <ScreenSharingButton
@@ -64,34 +72,34 @@ const ToolbarOverflowMenu = ({
     <EmojiGridButton
       isEmojiGridOpen={isEmojiGridOpen}
       setIsEmojiGridOpen={setIsEmojiGridOpen}
-      isParentOpen={isToolbarOverflowMenuOpen}
+      isParentOpen={isOpen}
       isOverflowButton
     />,
-    <ArchivingButton isOverflowButton />,
+    <ArchivingButton isOverflowButton handleClick={closeMenu} />,
     isReportIssueEnabled && (
       <ReportIssueButton
         isOpen={rightPanelActiveTab === 'issues'}
-        handleClick={toggleReportIssue}
+        handleClick={closeMenuWrapper(toggleReportIssue)}
         isOverflowButton
       />
     ),
     <ParticipantListButton
       isOpen={rightPanelActiveTab === 'participant-list'}
-      handleClick={toggleParticipantList}
+      handleClick={closeMenuWrapper(toggleParticipantList)}
       participantCount={participantCount}
       isOverflowButton
     />,
     <ChatButton
       isOpen={rightPanelActiveTab === 'chat'}
-      handleClick={toggleChat}
+      handleClick={closeMenuWrapper(toggleChat)}
       isOverflowButton
     />,
   ];
 
   return (
     <Portal>
-      <ClickAwayListener onClickAway={handleClickAway}>
-        <Grow in={isToolbarOverflowMenuOpen}>
+      <ClickAwayListener onClickAway={closeMenu}>
+        <Grow in={isOpen}>
           <Box
             data-testid="toolbar-overflow-menu"
             sx={{

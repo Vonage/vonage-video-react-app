@@ -62,12 +62,12 @@ const ToolbarOverflowButton = ({
         </UnreadMessagesBadge>
       </Tooltip>
       <ToolbarOverflowMenu
-        isToolbarOverflowMenuOpen={isToolbarOverflowMenuOpen}
+        isOpen={isToolbarOverflowMenuOpen}
         isEmojiGridOpen={openEmojiGridMobile}
         setIsEmojiGridOpen={setOpenEmojiGridMobile}
-        handleClickAway={handleClickAway}
         toggleShareScreen={toggleShareScreen}
         isSharingScreen={isSharingScreen}
+        closeMenu={handleClickAway}
       />
     </>
   );

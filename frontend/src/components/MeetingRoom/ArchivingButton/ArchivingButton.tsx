@@ -6,9 +6,11 @@ import ToolbarButton from '../ToolbarButton';
 import PopupDialog, { DialogTexts } from '../PopupDialog';
 import { startArchiving, stopArchiving } from '../../../api/archiving';
 import useSessionContext from '../../../hooks/useSessionContext';
+import useShownButtons from '../../../hooks/useShownButtons';
 
 export type ArchivingButtonProps = {
   isOverflowButton?: boolean;
+  handleClick?: () => void;
 };
 
 /**
@@ -19,14 +21,20 @@ export type ArchivingButtonProps = {
  * the user before starting the archive.
  * @param {ArchivingButtonProps} props - the props for the component
  * @property {boolean} isOverflowButton - (optional) whether the button is in the ToolbarOverflowMenu
+ * @param {ArchivingButtonProps} props - The props for the component.
+ *  @property {() => void} handleClick - (optional) click handler that closes the overflow menu in small view port devices.
  * @returns {ReactElement} - The ArchivingButton component.
  */
-const ArchivingButton = ({ isOverflowButton = false }: ArchivingButtonProps): ReactElement => {
+const ArchivingButton = ({
+  isOverflowButton = false,
+  handleClick,
+}: ArchivingButtonProps): ReactElement => {
   const roomName = useRoomName();
   const { archiveId } = useSessionContext();
   const isRecording = !!archiveId;
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const title = isRecording ? 'Stop recording' : 'Start recording';
+  const shownButtons = useShownButtons();
   const handleButtonClick = () => {
     setIsModalOpen((prev) => !prev);
   };
@@ -50,6 +58,9 @@ const ArchivingButton = ({ isOverflowButton = false }: ArchivingButtonProps): Re
 
   const handleClose = () => {
     setIsModalOpen(false);
+    if (shownButtons < 3 && handleClick) {
+      handleClick();
+    }
   };
 
   const handleDialogClick = async (action: 'start' | 'stop') => {

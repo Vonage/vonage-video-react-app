@@ -26,10 +26,10 @@ const TestComponent = ({ defaultOpen = false }: { defaultOpen?: boolean }) => {
     <>
       <Button ref={anchorRef} />
       <ToolbarOverflowMenu
-        isToolbarOverflowMenuOpen={defaultOpen}
+        isOpen={defaultOpen}
         isEmojiGridOpen
         setIsEmojiGridOpen={mockOpenEmojiGrid}
-        handleClickAway={mockHandleClickAway}
+        closeMenu={mockHandleClickAway}
         toggleShareScreen={vi.fn()}
         isSharingScreen={false}
       />
