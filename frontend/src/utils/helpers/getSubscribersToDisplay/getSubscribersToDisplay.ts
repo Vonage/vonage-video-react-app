@@ -24,6 +24,7 @@ const getMaxSubscriberOnScreenCount = (
     ? MAX_TILES_SPEAKER_VIEW_DESKTOP
     : MAX_TILES_GRID_VIEW_DESKTOP;
 
+  // If we are publishing screenshare we allow one less subscriber on screen
   return isPublishingScreenshare ? maxTileCount - 1 : maxTileCount;
 };
 
