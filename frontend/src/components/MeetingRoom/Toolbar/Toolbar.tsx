@@ -69,6 +69,41 @@ const Toolbar = ({
   const [openEmojiGridDesktop, setOpenEmojiGridDesktop] = useState<boolean>(false);
   const shownButtons = useShownButtons();
 
+  const buttonArray = [
+    <ScreenSharingButton
+      toggleScreenShare={toggleShareScreen}
+      isSharingScreen={isSharingScreen}
+      isViewingScreenShare={isViewingScreenShare}
+      key="ScreenSharingButton"
+    />,
+    <LayoutButton isScreenSharePresent={isScreenSharePresent} key="LayoutButton" />,
+    <EmojiGridButton
+      isEmojiGridOpen={openEmojiGridDesktop}
+      setIsEmojiGridOpen={setOpenEmojiGridDesktop}
+      isParentOpen
+      key="EmojiGridButton"
+    />,
+    <ArchivingButton key="ArchivingButton" />,
+    isReportIssueEnabled && (
+      <ReportIssueButton
+        isOpen={rightPanelActiveTab === 'issues'}
+        handleClick={toggleReportIssue}
+        key="ReportIssueButton"
+      />
+    ),
+    <ParticipantListButton
+      isOpen={rightPanelActiveTab === 'participant-list'}
+      handleClick={toggleParticipantList}
+      participantCount={participantCount}
+      key="ParticipantListButton"
+    />,
+    <ChatButton
+      isOpen={rightPanelActiveTab === 'chat'}
+      handleClick={toggleChat}
+      key="ChatButton"
+    />,
+  ];
+
   return (
     <div className="absolute bottom-0 left-0 flex h-[80px] w-full items-center bg-darkGray-100 p-4 md:flex-row md:justify-between">
       <div className="flex justify-start overflow-hidden">
@@ -77,22 +112,9 @@ const Toolbar = ({
       <div className="flex flex-1 justify-center">
         <AudioControlButton />
         <VideoControlButton />
-        {shownButtons >= 1 && (
-          <ScreenSharingButton
-            toggleScreenShare={toggleShareScreen}
-            isSharingScreen={isSharingScreen}
-            isViewingScreenShare={isViewingScreenShare}
-          />
+        {buttonArray.map((button, index) =>
+          index < buttonArray.length - 3 && shownButtons > index ? button : null
         )}
-        {shownButtons >= 2 && <LayoutButton isScreenSharePresent={isScreenSharePresent} />}
-        {shownButtons >= 3 && (
-          <EmojiGridButton
-            isEmojiGridOpen={openEmojiGridDesktop}
-            setIsEmojiGridOpen={setOpenEmojiGridDesktop}
-            isParentOpen
-          />
-        )}
-        {shownButtons >= 4 && <ArchivingButton />}
         {shownButtons < 7 && (
           <ToolbarOverflowButton
             isSharingScreen={isSharingScreen}
@@ -112,21 +134,8 @@ const Toolbar = ({
           justifyContent: 'flex-end',
         }}
       >
-        {isReportIssueEnabled && shownButtons >= 5 && (
-          <ReportIssueButton
-            isOpen={rightPanelActiveTab === 'issues'}
-            handleClick={toggleReportIssue}
-          />
-        )}
-        {shownButtons >= 6 && (
-          <ParticipantListButton
-            isOpen={rightPanelActiveTab === 'participant-list'}
-            handleClick={toggleParticipantList}
-            participantCount={participantCount}
-          />
-        )}
-        {shownButtons >= 7 && (
-          <ChatButton isOpen={rightPanelActiveTab === 'chat'} handleClick={toggleChat} />
+        {buttonArray.map((button, index) =>
+          index >= buttonArray.length - 3 && shownButtons > index ? button : null
         )}
       </div>
     </div>
