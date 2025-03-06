@@ -51,7 +51,7 @@ const PopupDialog = ({
       </DialogContent>
       <DialogActions>
         <Button onClick={handleClose}>{actionText.secondaryActionText}</Button>
-        <Button onClick={handleActionClick} autoFocus>
+        <Button onClick={handleActionClick} autoFocus data-testId="popup-dialog-primary-button">
           {actionText.primaryActionText}
         </Button>
       </DialogActions>

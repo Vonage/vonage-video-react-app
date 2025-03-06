@@ -48,11 +48,11 @@ const ToolbarOverflowButton = (): ReactElement => {
         </UnreadMessagesBadge>
       </Tooltip>
       <ToolbarOverflowMenu
-        isToolbarOverflowMenuOpen={isToolbarOverflowMenuOpen}
+        isOpen={isToolbarOverflowMenuOpen}
         isEmojiGridOpen={openEmojiGridMobile}
         setIsEmojiGridOpen={setOpenEmojiGridMobile}
         anchorRef={anchorRef}
-        handleClickAway={handleClickAway}
+        closeMenu={handleClickAway}
       />
     </>
   );
