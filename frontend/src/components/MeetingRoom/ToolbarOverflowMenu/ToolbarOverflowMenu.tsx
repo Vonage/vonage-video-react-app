@@ -53,6 +53,40 @@ const ToolbarOverflowMenu = ({
     subscriberWrappers.filter(({ isScreenshare }) => !isScreenshare).length + 1;
   const isReportIssueEnabled = import.meta.env.VITE_ENABLE_REPORT_ISSUE === 'true';
   const shownButtons = useShownButtons();
+  const buttonArray = [
+    <ScreenSharingButton
+      toggleScreenShare={toggleShareScreen}
+      isSharingScreen={isSharingScreen}
+      isViewingScreenShare={isViewingScreenShare}
+      isOverflowButton
+    />,
+    <LayoutButton isScreenSharePresent={isViewingScreenShare} isOverflowButton />,
+    <EmojiGridButton
+      isEmojiGridOpen={isEmojiGridOpen}
+      setIsEmojiGridOpen={setIsEmojiGridOpen}
+      isParentOpen={isToolbarOverflowMenuOpen}
+      isOverflowButton
+    />,
+    <ArchivingButton isOverflowButton />,
+    isReportIssueEnabled && (
+      <ReportIssueButton
+        isOpen={rightPanelActiveTab === 'issues'}
+        handleClick={toggleReportIssue}
+        isOverflowButton
+      />
+    ),
+    <ParticipantListButton
+      isOpen={rightPanelActiveTab === 'participant-list'}
+      handleClick={toggleParticipantList}
+      participantCount={participantCount}
+      isOverflowButton
+    />,
+    <ChatButton
+      isOpen={rightPanelActiveTab === 'chat'}
+      handleClick={toggleChat}
+      isOverflowButton
+    />,
+  ];
 
   return (
     <Portal>
@@ -77,48 +111,7 @@ const ToolbarOverflowMenu = ({
               bottom: '80px',
             }}
           >
-            {shownButtons < 1 && (
-              <ScreenSharingButton
-                toggleScreenShare={toggleShareScreen}
-                isSharingScreen={isSharingScreen}
-                isViewingScreenShare={isViewingScreenShare}
-                isOverflowButton
-              />
-            )}
-            {shownButtons < 2 && (
-              <LayoutButton isScreenSharePresent={isViewingScreenShare} isOverflowButton />
-            )}
-            {shownButtons < 3 && (
-              <EmojiGridButton
-                isEmojiGridOpen={isEmojiGridOpen}
-                setIsEmojiGridOpen={setIsEmojiGridOpen}
-                isParentOpen={isToolbarOverflowMenuOpen}
-                isOverflowButton
-              />
-            )}
-            {shownButtons < 4 && <ArchivingButton isOverflowButton />}
-            {isReportIssueEnabled && shownButtons < 5 && (
-              <ReportIssueButton
-                isOpen={rightPanelActiveTab === 'issues'}
-                handleClick={toggleReportIssue}
-                isOverflowButton
-              />
-            )}
-            {shownButtons < 6 && (
-              <ParticipantListButton
-                isOpen={rightPanelActiveTab === 'participant-list'}
-                handleClick={toggleParticipantList}
-                participantCount={participantCount}
-                isOverflowButton
-              />
-            )}
-            {shownButtons < 7 && (
-              <ChatButton
-                isOpen={rightPanelActiveTab === 'chat'}
-                handleClick={toggleChat}
-                isOverflowButton
-              />
-            )}
+            {buttonArray.map((button, index) => (shownButtons <= index ? button : null))}
           </Box>
         </Grow>
       </ClickAwayListener>
