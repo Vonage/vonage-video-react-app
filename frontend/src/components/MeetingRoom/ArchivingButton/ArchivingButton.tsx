@@ -9,7 +9,7 @@ import useSessionContext from '../../../hooks/useSessionContext';
 import useIsSmallViewport from '../../../hooks/useIsSmallViewport';
 
 export type ArchivingButtonProps = {
-  handleCloseMenu?: () => void;
+  handleClick?: () => void;
 };
 
 /**
@@ -19,10 +19,10 @@ export type ArchivingButtonProps = {
  * will confirm that a user wishes to stop the recording. If a meeting is not being recorded, prompts
  * the user before starting the archive.
  * @param {ArchivingButtonProps} props - The props for the component.
- *  @property {() => void} handleClickAway - (optional) click handler that closes the overflow menu in small view port devices.
+ *  @property {() => void} handleClick - (optional) click handler that closes the overflow menu in small view port devices.
  * @returns {ReactElement} - The ArchivingButton component.
  */
-const ArchivingButton = ({ handleCloseMenu }: ArchivingButtonProps): ReactElement => {
+const ArchivingButton = ({ handleClick }: ArchivingButtonProps): ReactElement => {
   const roomName = useRoomName();
   const { archiveId } = useSessionContext();
   const isRecording = !!archiveId;
@@ -52,8 +52,8 @@ const ArchivingButton = ({ handleCloseMenu }: ArchivingButtonProps): ReactElemen
 
   const handleClose = () => {
     setIsModalOpen(false);
-    if (isSmallViewport && handleCloseMenu) {
-      handleCloseMenu();
+    if (isSmallViewport && handleClick) {
+      handleClick();
     }
   };
 

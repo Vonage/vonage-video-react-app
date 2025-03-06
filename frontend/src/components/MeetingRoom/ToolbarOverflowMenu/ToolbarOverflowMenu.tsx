@@ -10,11 +10,11 @@ import LayoutButton from '../LayoutButton';
 import useSessionContext from '../../../hooks/useSessionContext';
 
 export type ToolbarOverflowMenuProps = {
-  isToolbarOverflowMenuOpen: boolean;
+  isOpen: boolean;
   isEmojiGridOpen: boolean;
   setIsEmojiGridOpen: Dispatch<SetStateAction<boolean>>;
   anchorRef: RefObject<HTMLButtonElement | null>;
-  handleClickAway: () => void;
+  closeMenu: () => void;
 };
 
 /**
@@ -22,19 +22,19 @@ export type ToolbarOverflowMenuProps = {
  *
  * Displays a menu holding buttons that cannot be displayed on the toolbar due to a narrow device viewport width.
  * @param {ToolbarOverflowMenuProps} props - the props for the component
- *  @property {boolean} isToolbarOverflowMenuOpen - whether the component will be open
+ *  @property {boolean} isOpen - whether the component will be open
  *  @property {boolean} isEmojiGridOpen - whether the emoji grid will be open
  *  @property {Dispatch<SetStateAction<boolean>>} setIsEmojiGridOpen - toggle whether the emoji grid is shown or hidden
  *  @property {RefObject<HTMLButtonElement | null>} anchorRef - the button ref for the menu
- *  @property {() => void} handleClickAway - hides the menu when user clicks away from the menu
+ *  @property {() => void} closeMenu - hides the menu when user clicks away from the menu
  * @returns {ReactElement} - The ToolbarOverflowMenu component.
  */
 const ToolbarOverflowMenu = ({
-  isToolbarOverflowMenuOpen,
+  isOpen,
   isEmojiGridOpen,
   setIsEmojiGridOpen,
   anchorRef,
-  handleClickAway,
+  closeMenu,
 }: ToolbarOverflowMenuProps): ReactElement => {
   const {
     subscriberWrappers,
@@ -48,21 +48,15 @@ const ToolbarOverflowMenu = ({
     subscriberWrappers.filter(({ isScreenshare }) => !isScreenshare).length + 1;
   const isReportIssueEnabled = import.meta.env.VITE_ENABLE_REPORT_ISSUE === 'true';
 
-  const handleCloseMenu = (onClick?: () => void) => () => {
+  const closeMenuWrapper = (onClick?: () => void) => () => {
     if (onClick) {
       onClick();
     }
-    handleClickAway();
+    closeMenu();
   };
 
   return (
-    <Popper
-      open={isToolbarOverflowMenuOpen}
-      anchorEl={anchorRef.current}
-      transition
-      disablePortal
-      placement="bottom"
-    >
+    <Popper open={isOpen} anchorEl={anchorRef.current} transition disablePortal placement="bottom">
       {({ TransitionProps, placement }: PopperChildrenProps) => (
         <Grow
           {...TransitionProps}
@@ -75,7 +69,7 @@ const ToolbarOverflowMenu = ({
           }}
         >
           <div className="flex w-full text-left font-normal">
-            <ClickAwayListener onClickAway={handleClickAway}>
+            <ClickAwayListener onClickAway={closeMenu}>
               <Paper
                 data-testid="toolbar-overflow-menu"
                 className="flex items-center justify-center"
@@ -98,23 +92,23 @@ const ToolbarOverflowMenu = ({
                 <EmojiGridButton
                   isEmojiGridOpen={isEmojiGridOpen}
                   setIsEmojiGridOpen={setIsEmojiGridOpen}
-                  isParentOpen={isToolbarOverflowMenuOpen}
+                  isParentOpen={isOpen}
                 />
-                <ArchivingButton handleCloseMenu={handleCloseMenu} />
+                <ArchivingButton handleClick={closeMenu} />
                 {isReportIssueEnabled && (
                   <ReportIssueButton
                     isOpen={rightPanelActiveTab === 'issues'}
-                    handleClick={handleCloseMenu(toggleReportIssue)}
+                    handleClick={closeMenuWrapper(toggleReportIssue)}
                   />
                 )}
                 <ParticipantListButton
                   isOpen={rightPanelActiveTab === 'participant-list'}
-                  handleClick={handleCloseMenu(toggleParticipantList)}
+                  handleClick={closeMenuWrapper(toggleParticipantList)}
                   participantCount={participantCount}
                 />
                 <ChatButton
                   isOpen={rightPanelActiveTab === 'chat'}
-                  handleClick={handleCloseMenu(toggleChat)}
+                  handleClick={closeMenuWrapper(toggleChat)}
                 />
               </Paper>
             </ClickAwayListener>

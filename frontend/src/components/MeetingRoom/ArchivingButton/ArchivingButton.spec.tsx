@@ -26,19 +26,19 @@ describe('ArchivingButton', () => {
   });
 
   it('renders the button correctly', () => {
-    render(<ArchivingButton handleCloseMenu={mockHandleCloseMenu} />);
+    render(<ArchivingButton handleClick={mockHandleCloseMenu} />);
     expect(screen.getByTestId('archiving-button')).toBeInTheDocument();
   });
 
   it('opens the modal when the button is clicked', () => {
-    render(<ArchivingButton handleCloseMenu={mockHandleCloseMenu} />);
+    render(<ArchivingButton handleClick={mockHandleCloseMenu} />);
     act(() => screen.getByTestId('archiving-button').click());
     expect(screen.getByText('Start Recording?')).toBeInTheDocument();
   });
 
   it('triggers the start archiving when button is pressed', async () => {
     (startArchiving as Mock).mockResolvedValue({ data: { success: true } });
-    render(<ArchivingButton handleCloseMenu={mockHandleCloseMenu} />);
+    render(<ArchivingButton handleClick={mockHandleCloseMenu} />);
 
     act(() => screen.getByTestId('archiving-button').click());
     expect(screen.getByText('Start Recording?')).toBeInTheDocument();
