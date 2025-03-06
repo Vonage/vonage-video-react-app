@@ -1,4 +1,10 @@
 import { SubscriberWrapper } from '../../../types/session';
+import {
+  MAX_TILES_GRID_VIEW_DESKTOP,
+  MAX_TILES_GRID_VIEW_MOBILE,
+  MAX_TILES_SPEAKER_VIEW_DESKTOP,
+  MAX_TILES_SPEAKER_VIEW_MOBILE,
+} from '../../constants';
 import { isMobile } from '../../util';
 
 /**
@@ -8,9 +14,9 @@ import { isMobile } from '../../util';
  */
 const getMaxSubscriberOnScreenCount = (isViewingLargeTile: boolean): number => {
   if (isMobile()) {
-    return isViewingLargeTile ? 2 : 3;
+    return isViewingLargeTile ? MAX_TILES_SPEAKER_VIEW_MOBILE : MAX_TILES_GRID_VIEW_MOBILE;
   }
-  return isViewingLargeTile ? 5 : 9;
+  return isViewingLargeTile ? MAX_TILES_SPEAKER_VIEW_DESKTOP : MAX_TILES_GRID_VIEW_DESKTOP;
 };
 
 export type SubscribersToDisplayAndHide = {
