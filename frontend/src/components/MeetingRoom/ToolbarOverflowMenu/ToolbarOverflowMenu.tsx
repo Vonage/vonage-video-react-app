@@ -47,6 +47,7 @@ const ToolbarOverflowMenu = ({
   const participantCount =
     subscriberWrappers.filter(({ isScreenshare }) => !isScreenshare).length + 1;
   const isReportIssueEnabled = import.meta.env.VITE_ENABLE_REPORT_ISSUE === 'true';
+  const isPinnedPresent = subscriberWrappers.some((subWrapper) => subWrapper.isPinned);
 
   const closeMenuWrapper = (onClick?: () => void) => () => {
     if (onClick) {
@@ -88,7 +89,10 @@ const ToolbarOverflowMenu = ({
                   paddingLeft: '12px',
                 }}
               >
-                <LayoutButton isScreenSharePresent={isViewingScreenShare} />
+                <LayoutButton
+                  isScreenSharePresent={isViewingScreenShare}
+                  isPinnedPresent={isPinnedPresent}
+                />
                 <EmojiGridButton
                   isEmojiGridOpen={isEmojiGridOpen}
                   setIsEmojiGridOpen={setIsEmojiGridOpen}
