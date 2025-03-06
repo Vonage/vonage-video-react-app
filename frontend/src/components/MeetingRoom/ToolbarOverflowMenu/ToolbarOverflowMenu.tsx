@@ -67,20 +67,27 @@ const ToolbarOverflowMenu = ({
       isSharingScreen={isSharingScreen}
       isViewingScreenShare={isViewingScreenShare}
       isOverflowButton
+      key="ScreenSharingButton"
     />,
-    <LayoutButton isScreenSharePresent={isViewingScreenShare} isOverflowButton />,
+    <LayoutButton
+      isScreenSharePresent={isViewingScreenShare}
+      isOverflowButton
+      key="LayoutButton"
+    />,
     <EmojiGridButton
       isEmojiGridOpen={isEmojiGridOpen}
       setIsEmojiGridOpen={setIsEmojiGridOpen}
       isParentOpen={isOpen}
       isOverflowButton
+      key="EmojiGridButton"
     />,
-    <ArchivingButton isOverflowButton handleClick={closeMenu} />,
+    <ArchivingButton isOverflowButton handleClick={closeMenu} key="ArchivingButton" />,
     isReportIssueEnabled && (
       <ReportIssueButton
         isOpen={rightPanelActiveTab === 'issues'}
         handleClick={closeMenuWrapper(toggleReportIssue)}
         isOverflowButton
+        key="ReportIssueButton"
       />
     ),
     <ParticipantListButton
@@ -88,11 +95,13 @@ const ToolbarOverflowMenu = ({
       handleClick={closeMenuWrapper(toggleParticipantList)}
       participantCount={participantCount}
       isOverflowButton
+      key="ParticipantListButton"
     />,
     <ChatButton
       isOpen={rightPanelActiveTab === 'chat'}
       handleClick={closeMenuWrapper(toggleChat)}
       isOverflowButton
+      key="ChatButton"
     />,
   ];
 
