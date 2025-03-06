@@ -43,7 +43,7 @@ const viewportsToTest = [
 
 describe('useShownButtons', () => {
   beforeEach(() => {
-    vi.spyOn(global, 'innerWidth', 'get').mockReturnValue(360);
+    vi.spyOn(global, 'innerWidth', 'get').mockReturnValue(9_000);
     global.dispatchEvent(new Event('resize'));
   });
 
@@ -61,11 +61,15 @@ describe('useShownButtons', () => {
   describe('after resizing window width', () => {
     viewportsToTest.forEach((viewportToTest) => {
       it(`should return ${viewportToTest.expectedShownButtons} buttons when width is ${viewportToTest.innerWidth}`, () => {
+        const { result, rerender } = renderHook(() => useShownButtons());
+        expect(result.current).not.toBe(viewportToTest.expectedShownButtons);
+
         act(() => {
           vi.spyOn(global, 'innerWidth', 'get').mockReturnValue(viewportToTest.innerWidth);
           global.dispatchEvent(new Event('resize'));
         });
-        const { result } = renderHook(() => useShownButtons());
+        rerender();
+
         expect(result.current).toBe(viewportToTest.expectedShownButtons);
       });
     });
