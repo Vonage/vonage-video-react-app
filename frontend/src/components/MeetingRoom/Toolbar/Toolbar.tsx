@@ -14,6 +14,7 @@ import ReportIssueButton from '../ReportIssueButton';
 import ToolbarOverflowButton from '../ToolbarOverflowButton';
 import EmojiGridButton from '../EmojiGridButton';
 import useShownButtons from '../../../hooks/useShownButtons';
+import { RIGHT_PANEL_BUTTON_COUNT } from '../../../utils/constants';
 
 export type ToolbarProps = {
   toggleShareScreen: () => void;
@@ -69,7 +70,7 @@ const Toolbar = ({
   const [openEmojiGridDesktop, setOpenEmojiGridDesktop] = useState<boolean>(false);
   const shownButtons = useShownButtons();
 
-  const buttonArray = [
+  const desktopButtonArray = [
     <ScreenSharingButton
       toggleScreenShare={toggleShareScreen}
       isSharingScreen={isSharingScreen}
@@ -107,15 +108,17 @@ const Toolbar = ({
   return (
     <div className="absolute bottom-0 left-0 flex h-[80px] w-full items-center bg-darkGray-100 p-4 md:flex-row md:justify-between">
       <div className="flex justify-start overflow-hidden">
-        {shownButtons >= 7 && <TimeRoomNameMeetingRoom />}
+        {shownButtons >= desktopButtonArray.length && <TimeRoomNameMeetingRoom />}
       </div>
       <div className="flex flex-1 justify-center">
         <AudioControlButton />
         <VideoControlButton />
-        {buttonArray.map((button, index) =>
-          index < buttonArray.length - 3 && shownButtons > index ? button : null
+        {desktopButtonArray.map((button, index) =>
+          index < desktopButtonArray.length - RIGHT_PANEL_BUTTON_COUNT && shownButtons > index
+            ? button
+            : null
         )}
-        {shownButtons < 7 && (
+        {shownButtons < desktopButtonArray.length && (
           <ToolbarOverflowButton
             isSharingScreen={isSharingScreen}
             toggleShareScreen={toggleShareScreen}
@@ -134,8 +137,10 @@ const Toolbar = ({
           justifyContent: 'flex-end',
         }}
       >
-        {buttonArray.map((button, index) =>
-          index >= buttonArray.length - 3 && shownButtons > index ? button : null
+        {desktopButtonArray.map((button, index) =>
+          index >= desktopButtonArray.length - RIGHT_PANEL_BUTTON_COUNT && shownButtons > index
+            ? button
+            : null
         )}
       </div>
     </div>

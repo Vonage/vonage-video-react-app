@@ -76,6 +76,7 @@ export type SupportedBrowser = {
   browser: string;
   link: string;
 };
+
 /**
  * The browsers supported by Vonage Video API Reference App, and their download links.
  * @returns {SupportedBrowser[]}
@@ -87,3 +88,10 @@ export const SUPPORTED_BROWSERS = [
   { browser: 'Opera', link: 'https://www.opera.com/download' },
   { browser: 'Safari', link: 'https://www.apple.com/safari/' },
 ];
+
+/**
+ * The number of buttons used to control the Right Panel. This value determines the number
+ * of buttons shown on the right side of the Toolbar.
+ * @returns {number}
+ */
+export const RIGHT_PANEL_BUTTON_COUNT = 3;
