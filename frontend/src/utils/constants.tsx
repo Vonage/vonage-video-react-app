@@ -87,3 +87,10 @@ export const SUPPORTED_BROWSERS = [
   { browser: 'Opera', link: 'https://www.opera.com/download' },
   { browser: 'Safari', link: 'https://www.apple.com/safari/' },
 ];
+
+export const MAX_PIN_COUNT_MOBILE = 1;
+export const MAX_PIN_COUNT_DESKTOP = 3;
+export const MAX_TILES_GRID_VIEW_DESKTOP = 11;
+export const MAX_TILES_SPEAKER_VIEW_DESKTOP = 5;
+export const MAX_TILES_GRID_VIEW_MOBILE = 3;
+export const MAX_TILES_SPEAKER_VIEW_MOBILE = 2;
