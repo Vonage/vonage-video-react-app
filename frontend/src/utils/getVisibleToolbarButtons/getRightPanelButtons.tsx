@@ -11,6 +11,9 @@ export default (
   buttons: Array<ReactElement | false>,
   shownCount: number
 ): Array<ReactElement | null | false> =>
-  buttons.map((toolbarButton, index) =>
-    index >= buttons.length - RIGHT_PANEL_BUTTON_COUNT && shownCount > index ? toolbarButton : null
-  );
+  buttons.map((toolbarButton, index) => {
+    const isRightPanelButton = index >= buttons.length - RIGHT_PANEL_BUTTON_COUNT;
+    const shouldBeDisplayed = shownCount > index;
+
+    return isRightPanelButton && shouldBeDisplayed ? toolbarButton : null;
+  });

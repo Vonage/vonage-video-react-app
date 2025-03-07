@@ -5,7 +5,7 @@ import { useCallback, useEffect, useState } from 'react';
  * @returns {number} - The number of buttons to be shown on the toolbar.
  */
 const useShownButtons = (): number => {
-  const getNumberOfButtons = useCallback((width: number) => {
+  const getNumberOfButtons = useCallback((width: number): number => {
     // Minimum width: 354 = 107 audio selector + 107 video selector + (48 + 12) overflow menu + 48 exit button + 32px padding
     const widthForEssentialButtons = 107 + 107 + (48 + 12) + 48 + 32;
     const widthForExtraButtons = width - widthForEssentialButtons;

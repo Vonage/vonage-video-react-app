@@ -18,7 +18,7 @@ import {
   getCenterToolbarButtons,
   getRightPanelButtons,
 } from '../../../utils/getVisibleToolbarButtons';
-import { RIGHT_PANEL_BUTTON_COUNT } from '../../../utils/constants';
+import { RIGHT_PANEL_BUTTON_COUNT, isReportIssueEnabled } from '../../../utils/constants';
 
 export type ToolbarProps = {
   toggleShareScreen: () => void;
@@ -62,7 +62,6 @@ const Toolbar = ({
   participantCount,
 }: ToolbarProps): ReactElement => {
   const { disconnect, subscriberWrappers } = useSessionContext();
-  const isReportIssueEnabled = import.meta.env.VITE_ENABLE_REPORT_ISSUE === 'true';
   const isViewingScreenShare = subscriberWrappers.some((subWrapper) => subWrapper.isScreenshare);
   const isScreenSharePresent = isViewingScreenShare || isSharingScreen;
   const handleLeave = useCallback(() => {
@@ -76,7 +75,7 @@ const Toolbar = ({
 
   // An array of buttons available for the toolbar. As the toolbar resizes, buttons may be hidden and moved to the
   // ToolbarOverflowMenu to ensure a responsive layout without compromising usability.
-  const toolbarButtonArray: Array<ReactElement | false> = [
+  const toolbarButtons: Array<ReactElement | false> = [
     <ScreenSharingButton
       toggleScreenShare={toggleShareScreen}
       isSharingScreen={isSharingScreen}
@@ -110,17 +109,22 @@ const Toolbar = ({
       key="ChatButton"
     />,
   ];
+  const isToolbarExpanded = shownButtons >= toolbarButtons.length;
+  const shouldShowOverflowButton = shownButtons < toolbarButtons.length;
+  // If we have no right panel buttons to show in the container, we do not need a margin
+  const marginLeft =
+    shownButtons >= toolbarButtons.length - RIGHT_PANEL_BUTTON_COUNT ? '12px' : '0px';
 
   return (
     <div className="absolute bottom-0 left-0 flex h-[80px] w-full items-center bg-darkGray-100 p-4 md:flex-row md:justify-between">
       <div className="flex justify-start overflow-hidden">
-        {shownButtons >= toolbarButtonArray.length && <TimeRoomNameMeetingRoom />}
+        {isToolbarExpanded && <TimeRoomNameMeetingRoom />}
       </div>
       <div className="flex flex-1 justify-center">
         <AudioControlButton />
         <VideoControlButton />
-        {getCenterToolbarButtons(toolbarButtonArray, shownButtons)}
-        {shownButtons < toolbarButtonArray.length && (
+        {getCenterToolbarButtons(toolbarButtons, shownButtons)}
+        {shouldShowOverflowButton && (
           <ToolbarOverflowButton
             isSharingScreen={isSharingScreen}
             toggleShareScreen={toggleShareScreen}
@@ -132,15 +136,13 @@ const Toolbar = ({
       <div
         style={{
           boxSizing: 'border-box',
-          // If we have no right panel buttons to show in the container, we do not need a margin
-          marginLeft:
-            shownButtons >= toolbarButtonArray.length - RIGHT_PANEL_BUTTON_COUNT ? '12px' : '0px',
+          marginLeft,
           display: 'flex',
           flex: '0 1 0%',
           justifyContent: 'flex-end',
         }}
       >
-        {getRightPanelButtons(toolbarButtonArray, shownButtons)}
+        {getRightPanelButtons(toolbarButtons, shownButtons)}
       </div>
     </div>
   );

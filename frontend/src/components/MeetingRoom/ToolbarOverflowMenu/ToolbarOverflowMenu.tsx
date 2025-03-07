@@ -11,6 +11,7 @@ import useSessionContext from '../../../hooks/useSessionContext';
 import ScreenSharingButton from '../../ScreenSharingButton';
 import useShownButtons from '../../../hooks/useShownButtons';
 import { getOverflowMenuButtons } from '../../../utils/getVisibleToolbarButtons';
+import { isReportIssueEnabled } from '../../../utils/constants';
 
 export type ToolbarOverflowMenuProps = {
   isOpen: boolean;
@@ -52,7 +53,6 @@ const ToolbarOverflowMenu = ({
   const isViewingScreenShare = subscriberWrappers.some((subWrapper) => subWrapper.isScreenshare);
   const participantCount =
     subscriberWrappers.filter(({ isScreenshare }) => !isScreenshare).length + 1;
-  const isReportIssueEnabled = import.meta.env.VITE_ENABLE_REPORT_ISSUE === 'true';
 
   const closeMenuWrapper = (onClick?: () => void) => () => {
     if (onClick) {

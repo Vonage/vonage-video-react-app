@@ -6,7 +6,6 @@ import ToolbarButton from '../ToolbarButton';
 import PopupDialog, { DialogTexts } from '../PopupDialog';
 import { startArchiving, stopArchiving } from '../../../api/archiving';
 import useSessionContext from '../../../hooks/useSessionContext';
-import useShownButtons from '../../../hooks/useShownButtons';
 
 export type ArchivingButtonProps = {
   isOverflowButton?: boolean;
@@ -33,7 +32,6 @@ const ArchivingButton = ({
   const isRecording = !!archiveId;
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const title = isRecording ? 'Stop recording' : 'Start recording';
-  const shownButtons = useShownButtons();
   const handleButtonClick = () => {
     setIsModalOpen((prev) => !prev);
   };
@@ -59,7 +57,7 @@ const ArchivingButton = ({
     setIsModalOpen(false);
 
     // If the ArchivingButton is in the ToolbarOverflowMenu, we close the modal and the menu
-    if (shownButtons < 4 && handleClick) {
+    if (isOverflowButton && handleClick) {
       handleClick();
     }
   };

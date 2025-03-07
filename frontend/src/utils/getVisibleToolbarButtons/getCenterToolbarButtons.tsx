@@ -11,6 +11,9 @@ export default (
   buttons: Array<ReactElement | false>,
   shownCount: number
 ): Array<ReactElement | null | false> =>
-  buttons.map((button, index) =>
-    index < buttons.length - RIGHT_PANEL_BUTTON_COUNT && shownCount > index ? button : null
-  );
+  buttons.map((button, index) => {
+    const isInCenterOfToolbar = index < buttons.length - RIGHT_PANEL_BUTTON_COUNT;
+    const shouldBeDisplayed = shownCount > index;
+
+    return isInCenterOfToolbar && shouldBeDisplayed ? button : null;
+  });
