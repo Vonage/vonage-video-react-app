@@ -4,6 +4,7 @@ import { useRef } from 'react';
 import { Button } from '@mui/material';
 import ToolbarOverflowMenu from './ToolbarOverflowMenu';
 import * as util from '../../../utils/util';
+import isReportIssueEnabled from '../../../utils/isReportIssueEnabled';
 import useToolbarCount from '../../../hooks/useToolbarCount';
 
 vi.mock('../../../hooks/useSessionContext', () => ({
@@ -14,10 +15,12 @@ vi.mock('../../../hooks/useSessionContext', () => ({
 vi.mock('../../../hooks/useRoomName');
 vi.mock('../../../utils/util', () => ({ isMobile: vi.fn() }));
 vi.mock('../../../hooks/useToolbarCount');
+vi.mock('../../../utils/isReportIssueEnabled');
 
 const mockOpenEmojiGrid = vi.fn();
 const mockHandleClickAway = vi.fn();
 const mockUseToolbarCount = useToolbarCount as Mock<[], number>;
+const mockIsReportIssueEnabled = isReportIssueEnabled as Mock<[], boolean>;
 
 const TestComponent = ({ defaultOpen = false }: { defaultOpen?: boolean }) => {
   const anchorRef = useRef<HTMLButtonElement | null>(null);
@@ -41,6 +44,7 @@ describe('ToolbarOverflowMenu', () => {
   beforeEach(() => {
     (util.isMobile as Mock).mockImplementation(() => false);
     mockUseToolbarCount.mockReturnValue(0);
+    mockIsReportIssueEnabled.mockReturnValue(false);
   });
 
   afterEach(() => {
@@ -60,8 +64,9 @@ describe('ToolbarOverflowMenu', () => {
   });
 
   it('renders all the available buttons including the Report Issue button if enabled', () => {
-    vi.stubEnv('VITE_ENABLE_REPORT_ISSUE', 'true');
+    mockIsReportIssueEnabled.mockReturnValue(true);
     render(<TestComponent defaultOpen />);
+
     expect(screen.getByTestId('screensharing-button')).toBeVisible();
     expect(screen.getByTestId('layout-button')).toBeVisible();
     expect(screen.getByTestId('archiving-button')).toBeVisible();
@@ -72,8 +77,8 @@ describe('ToolbarOverflowMenu', () => {
   });
 
   it('does not render Report Issue button in overflow menu if it was disabled', () => {
-    vi.stubEnv('VITE_ENABLE_REPORT_ISSUE', 'false');
     render(<TestComponent defaultOpen />);
+
     expect(screen.getByTestId('screensharing-button')).toBeVisible();
     expect(screen.getByTestId('layout-button')).toBeVisible();
     expect(screen.getByTestId('archiving-button')).toBeVisible();

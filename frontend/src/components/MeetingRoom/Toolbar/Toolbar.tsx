@@ -18,7 +18,8 @@ import {
   getCenterToolbarButtons,
   getRightPanelButtons,
 } from '../../../utils/getVisibleToolbarButtons';
-import { RIGHT_PANEL_BUTTON_COUNT, isReportIssueEnabled } from '../../../utils/constants';
+import { RIGHT_PANEL_BUTTON_COUNT } from '../../../utils/constants';
+import isReportIssueEnabled from '../../../utils/isReportIssueEnabled';
 
 export type ToolbarProps = {
   toggleShareScreen: () => void;
@@ -90,7 +91,7 @@ const Toolbar = ({
       key="EmojiGridButton"
     />,
     <ArchivingButton key="ArchivingButton" />,
-    isReportIssueEnabled && (
+    isReportIssueEnabled() && (
       <ReportIssueButton
         isOpen={rightPanelActiveTab === 'issues'}
         handleClick={toggleReportIssue}

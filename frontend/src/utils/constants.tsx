@@ -1,3 +1,5 @@
+import isReportIssueEnabled from './isReportIssueEnabled/isReportIssueEnabled';
+
 /**
  * The base URL determined by the current environment.
  * @returns {string}
@@ -90,14 +92,8 @@ export const SUPPORTED_BROWSERS = [
 ];
 
 /**
- * Whether the Report Issue feature is enabled. See `frontend/env.example` for more information.
- * @returns {boolean}
- */
-export const isReportIssueEnabled = import.meta.env.VITE_ENABLE_REPORT_ISSUE === 'true';
-
-/**
  * The number of buttons used to control the Right Panel. This value determines the number
  * of buttons shown on the right side of the Toolbar.
  * @returns {number} The number of buttons present for the right panel
  */
-export const RIGHT_PANEL_BUTTON_COUNT = 3 - (isReportIssueEnabled ? 0 : 1);
+export const RIGHT_PANEL_BUTTON_COUNT = 3 - (isReportIssueEnabled() ? 0 : 1);

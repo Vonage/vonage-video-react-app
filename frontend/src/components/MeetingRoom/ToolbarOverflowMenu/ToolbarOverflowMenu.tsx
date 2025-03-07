@@ -11,7 +11,7 @@ import useSessionContext from '../../../hooks/useSessionContext';
 import ScreenSharingButton from '../../ScreenSharingButton';
 import useToolbarCount from '../../../hooks/useToolbarCount';
 import { getOverflowMenuButtons } from '../../../utils/getVisibleToolbarButtons';
-import { isReportIssueEnabled } from '../../../utils/constants';
+import isReportIssueEnabled from '../../../utils/isReportIssueEnabled';
 
 export type ToolbarOverflowMenuProps = {
   isOpen: boolean;
@@ -85,7 +85,7 @@ const ToolbarOverflowMenu = ({
       key="EmojiGridButton"
     />,
     <ArchivingButton isOverflowButton handleClick={closeMenu} key="ArchivingButton" />,
-    isReportIssueEnabled && (
+    isReportIssueEnabled() && (
       <ReportIssueButton
         isOpen={rightPanelActiveTab === 'issues'}
         handleClick={closeMenuWrapper(toggleReportIssue)}
