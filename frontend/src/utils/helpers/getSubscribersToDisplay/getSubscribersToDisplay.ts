@@ -6,23 +6,33 @@ export type SubscribersToDisplayAndHide = {
   subscribersOnScreen: SubscriberWrapper[];
 };
 
+export type GetSubscribersToDisplayProps = {
+  subscriberWrappers: SubscriberWrapper[];
+  isSharingScreen: boolean;
+  pinnedSubscriberCount: number;
+  isViewingLargeTile: boolean;
+};
+
 /**
  * Util to separate subscribers into two arrays, the subscribers to display and subscribers that are hidden
- * @param {SubscriberWrapper[]} subscriberWrappers - SubscriberWrapper in display priority order
- * @param {boolean} isViewingLargeTile - is there a large tile (screenshare or active-speaker)
- * @param {boolean} isPublishingScreenshare - whether we are publishing screenshare
+ * @param {GetSubscribersToDisplayProps} props- function props
+ *  @property {SubscriberWrapper[]} subscriberWrappers - SubscriberWrapper in display priority order
+ *  @property {boolean} isViewingLargeTile - is there a large tile (screenshare or active-speaker)
+ *  @property {boolean} isPublishingScreenshare - whether we are publishing screenshare
  * @returns {SubscribersToDisplayAndHide} - Subscribers to be hidden and Subscribers to be shown
  * }}
  */
-const getSubscribersToDisplay = (
-  subscriberWrappers: SubscriberWrapper[],
-  isViewingLargeTile: boolean,
-  isPublishingScreenshare: boolean
-): SubscribersToDisplayAndHide => {
-  const maxSubscribersOnScreenCount = getMaxSubscriberOnScreenCount(
+const getSubscribersToDisplay = ({
+  subscriberWrappers,
+  isViewingLargeTile,
+  isSharingScreen,
+  pinnedSubscriberCount,
+}: GetSubscribersToDisplayProps): SubscribersToDisplayAndHide => {
+  const maxSubscribersOnScreenCount = getMaxSubscriberOnScreenCount({
     isViewingLargeTile,
-    isPublishingScreenshare
-  );
+    isSharingScreen,
+    pinnedSubscriberCount,
+  });
   const shouldHideSubscribers = subscriberWrappers.length > maxSubscribersOnScreenCount;
 
   // If hiding subscribers we slice at max - 1 to make room for hidden participant tile.

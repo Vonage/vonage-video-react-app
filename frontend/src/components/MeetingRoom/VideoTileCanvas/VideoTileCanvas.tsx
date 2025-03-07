@@ -47,19 +47,21 @@ const VideoTileCanvas = ({
   const { connected, subscriberWrappers, layoutMode } = useSessionContext();
 
   // Determine if we will display a large video tile based on current layout mode and screenshare presence
-  const isViewingScreenshare = subscriberWrappers.some((subWrapper) => subWrapper.isScreenshare);
-  const sessionHasScreenshare = isViewingScreenshare || isSharingScreen;
-  const isViewingLargeTile = sessionHasScreenshare || layoutMode === 'active-speaker';
   const pinnedSubscriberCount = subscriberWrappers.filter(
     (subWrapper) => subWrapper.isPinned
   ).length;
+  const isViewingScreenshare = subscriberWrappers.some((subWrapper) => subWrapper.isScreenshare);
+  const sessionHasScreenshare = isViewingScreenshare || isSharingScreen;
+  const isViewingLargeTile =
+    sessionHasScreenshare || layoutMode === 'active-speaker' || !!pinnedSubscriberCount;
 
   // Check which subscribers we will display, in large calls we will hide some subscribers
-  const { hiddenSubscribers, subscribersOnScreen } = getSubscribersToDisplay(
+  const { hiddenSubscribers, subscribersOnScreen } = getSubscribersToDisplay({
     subscriberWrappers,
     isViewingLargeTile,
-    !!screensharingPublisher
-  );
+    isSharingScreen: !!screensharingPublisher,
+    pinnedSubscriberCount,
+  });
 
   // We keep track of the current position of subscribers so we can maintain position to avoid subscribers jumping around the screen
   const subscribersInDisplayOrder = useSubscribersInDisplayOrder(subscribersOnScreen);
