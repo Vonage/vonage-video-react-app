@@ -88,9 +88,27 @@ export const SUPPORTED_BROWSERS = [
   { browser: 'Safari', link: 'https://www.apple.com/safari/' },
 ];
 
+/**
+ * @constant {number} MAX_PIN_COUNT_MOBILE - the maximum number of pinned participants on mobile
+ */
 export const MAX_PIN_COUNT_MOBILE = 1;
+/**
+ * @constant {number} MAX_PIN_COUNT_DESKTOP - the maximum number of pinned participants on desktop
+ */
 export const MAX_PIN_COUNT_DESKTOP = 3;
+/**
+ * @constant {number} MAX_TILES_GRID_VIEW_DESKTOP - the maximum number of subscriber video tiles in grid view on desktop
+ */
 export const MAX_TILES_GRID_VIEW_DESKTOP = 11;
+/**
+ * @constant {number} MAX_TILES_SPEAKER_VIEW_DESKTOP - the maximum number of subscriber video tiles in active-speaker view on desktop
+ */
 export const MAX_TILES_SPEAKER_VIEW_DESKTOP = 5;
+/**
+ * @constant {number} MAX_TILES_GRID_VIEW_MOBILE - the maximum number of subscriber video tiles in grid view on mobile
+ */
 export const MAX_TILES_GRID_VIEW_MOBILE = 3;
+/**
+ * @constant {number} MAX_TILES_SPEAKER_VIEW_MOBILE - the maximum number of subscriber video tiles in active-speaker view on mobile
+ */
 export const MAX_TILES_SPEAKER_VIEW_MOBILE = 2;
