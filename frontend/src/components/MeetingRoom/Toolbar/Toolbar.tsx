@@ -60,7 +60,7 @@ const Toolbar = ({
   const isReportIssueEnabled = import.meta.env.VITE_ENABLE_REPORT_ISSUE === 'true';
   const isViewingScreenShare = subscriberWrappers.some((subWrapper) => subWrapper.isScreenshare);
   const isScreenSharePresent = isViewingScreenShare || isSharingScreen;
-  const isPinnedPresent = subscriberWrappers.some((subWrapper) => subWrapper.isPinned);
+  const isPinningPresent = subscriberWrappers.some((subWrapper) => subWrapper.isPinned);
   const isSmallViewport = useIsSmallViewport();
   const handleLeave = useCallback(() => {
     if (!disconnect) {
@@ -89,7 +89,7 @@ const Toolbar = ({
             />
             <LayoutButton
               isScreenSharePresent={isScreenSharePresent}
-              isPinningPresent={isPinnedPresent}
+              isPinningPresent={isPinningPresent}
             />
             <EmojiGridButton
               isEmojiGridOpen={openEmojiGridDesktop}

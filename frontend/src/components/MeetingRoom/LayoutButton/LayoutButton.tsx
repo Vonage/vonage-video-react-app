@@ -17,7 +17,7 @@ export type LayoutButtonProps = {
  * Displays a button to toggle the meeting room layout for the user between `grid` and `active-speaker`.
  * @param {LayoutButtonProps} props - the props for the component.
  *  @property {boolean} isScreenSharePresent - Indicates whether there is a screenshare currently in the session.
- *  @property {boolean} isPinnedPresent - Indicates whether there is a participant currently pinned.
+ *  @property {boolean} isPinningPresent - Indicates whether there is a participant currently pinned.
  * @returns {ReactElement} The LayoutButton component.
  */
 const LayoutButton = ({
