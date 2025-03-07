@@ -13,7 +13,7 @@ import { RightPanelActiveTab } from '../../../hooks/useRightPanel';
 import ReportIssueButton from '../ReportIssueButton';
 import ToolbarOverflowButton from '../ToolbarOverflowButton';
 import EmojiGridButton from '../EmojiGridButton';
-import useShownButtons from '../../../hooks/useShownButtons';
+import useToolbarCount from '../../../hooks/useToolbarCount';
 import {
   getCenterToolbarButtons,
   getRightPanelButtons,
@@ -71,7 +71,7 @@ const Toolbar = ({
     disconnect();
   }, [disconnect]);
   const [openEmojiGridDesktop, setOpenEmojiGridDesktop] = useState<boolean>(false);
-  const shownButtons = useShownButtons();
+  const shownButtons = useToolbarCount();
 
   // An array of buttons available for the toolbar. As the toolbar resizes, buttons may be hidden and moved to the
   // ToolbarOverflowMenu to ensure a responsive layout without compromising usability.

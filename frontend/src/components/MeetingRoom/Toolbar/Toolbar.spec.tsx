@@ -3,7 +3,7 @@ import { render, screen } from '@testing-library/react';
 import { useLocation } from 'react-router-dom';
 import useSpeakingDetector from '../../../hooks/useSpeakingDetector';
 import Toolbar, { ToolbarProps } from './Toolbar';
-import useShownButtons from '../../../hooks/useShownButtons';
+import useToolbarCount from '../../../hooks/useToolbarCount';
 
 const mockedRoomName = { roomName: 'test-room-name' };
 
@@ -14,10 +14,10 @@ vi.mock('react-router-dom', () => ({
 }));
 
 vi.mock('../../../hooks/useSpeakingDetector');
-vi.mock('../../../hooks/useShownButtons');
+vi.mock('../../../hooks/useToolbarCount');
 
 const mockUseSpeakingDetector = useSpeakingDetector as Mock<[], boolean>;
-const mockUseShownButtons = useShownButtons as Mock<[], number>;
+const mockUseToolbarCount = useToolbarCount as Mock<[], number>;
 
 describe('Toolbar', () => {
   beforeEach(() => {
@@ -25,7 +25,7 @@ describe('Toolbar', () => {
       state: mockedRoomName,
     });
     mockUseSpeakingDetector.mockReturnValue(false);
-    mockUseShownButtons.mockReturnValue(9);
+    mockUseToolbarCount.mockReturnValue(9);
   });
   afterAll(() => {
     vi.restoreAllMocks();
@@ -59,7 +59,7 @@ describe('Toolbar', () => {
   });
 
   it('on a small viewport, displays the ToolbarOverflowButton button', () => {
-    mockUseShownButtons.mockReturnValue(0);
+    mockUseToolbarCount.mockReturnValue(0);
 
     render(<Toolbar {...defaultProps} />);
 

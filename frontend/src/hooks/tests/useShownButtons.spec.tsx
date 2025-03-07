@@ -1,6 +1,6 @@
 import { renderHook, act } from '@testing-library/react';
 import { describe, it, expect, beforeEach, vi } from 'vitest';
-import useShownButtons from '../useShownButtons';
+import useToolbarCount from '../useToolbarCount';
 
 const viewportsToTest = [
   {
@@ -41,7 +41,7 @@ const viewportsToTest = [
   },
 ];
 
-describe('useShownButtons', () => {
+describe('useToolbarCount', () => {
   beforeEach(() => {
     vi.spyOn(global, 'innerWidth', 'get').mockReturnValue(9_000);
     global.dispatchEvent(new Event('resize'));
@@ -51,7 +51,7 @@ describe('useShownButtons', () => {
     viewportsToTest.forEach((viewportToTest) => {
       it(`should return ${viewportToTest.expectedShownButtons} buttons when width is ${viewportToTest.innerWidth}`, () => {
         vi.spyOn(global, 'innerWidth', 'get').mockReturnValue(viewportToTest.innerWidth);
-        const { result } = renderHook(() => useShownButtons());
+        const { result } = renderHook(() => useToolbarCount());
 
         expect(result.current).toBe(viewportToTest.expectedShownButtons);
       });
@@ -61,7 +61,7 @@ describe('useShownButtons', () => {
   describe('after resizing window width', () => {
     viewportsToTest.forEach((viewportToTest) => {
       it(`should return ${viewportToTest.expectedShownButtons} buttons when width is ${viewportToTest.innerWidth}`, () => {
-        const { result, rerender } = renderHook(() => useShownButtons());
+        const { result, rerender } = renderHook(() => useToolbarCount());
         expect(result.current).not.toBe(viewportToTest.expectedShownButtons);
 
         act(() => {

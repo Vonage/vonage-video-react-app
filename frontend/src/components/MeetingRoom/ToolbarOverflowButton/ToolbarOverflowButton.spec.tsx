@@ -5,16 +5,16 @@ import { SessionContextType } from '../../../Context/SessionProvider/session';
 import ToolbarOverflowButton from './ToolbarOverflowButton';
 import useUserContext from '../../../hooks/useUserContext';
 import { UserContextType } from '../../../Context/user';
-import useShownButtons from '../../../hooks/useShownButtons';
+import useToolbarCount from '../../../hooks/useToolbarCount';
 
 vi.mock('../../../hooks/useSessionContext');
 vi.mock('../../../hooks/useUserContext');
 vi.mock('../../../hooks/useRoomName');
-vi.mock('../../../hooks/useShownButtons');
+vi.mock('../../../hooks/useToolbarCount');
 const mockUseSessionContext = useSessionContext as Mock<[], SessionContextType>;
 const mockUseUserContext = useUserContext as Mock<[], UserContextType>;
 const mockSetUser = vi.fn();
-const mockUseShownButtons = useShownButtons as Mock<[], number>;
+const mockUseToolbarCount = useToolbarCount as Mock<[], number>;
 
 const defaultUserContext = {
   user: {
@@ -35,7 +35,7 @@ describe('ToolbarOverflowButton', () => {
   beforeEach(() => {
     mockUseSessionContext.mockReturnValue(sessionContext);
     mockUseUserContext.mockReturnValue(defaultUserContext);
-    mockUseShownButtons.mockReturnValue(0);
+    mockUseToolbarCount.mockReturnValue(0);
   });
 
   it('renders', () => {

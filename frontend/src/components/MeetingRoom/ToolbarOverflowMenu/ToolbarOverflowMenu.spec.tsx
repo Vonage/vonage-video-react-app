@@ -4,7 +4,7 @@ import { useRef } from 'react';
 import { Button } from '@mui/material';
 import ToolbarOverflowMenu from './ToolbarOverflowMenu';
 import * as util from '../../../utils/util';
-import useShownButtons from '../../../hooks/useShownButtons';
+import useToolbarCount from '../../../hooks/useToolbarCount';
 
 vi.mock('../../../hooks/useSessionContext', () => ({
   default: () => ({
@@ -13,11 +13,11 @@ vi.mock('../../../hooks/useSessionContext', () => ({
 }));
 vi.mock('../../../hooks/useRoomName');
 vi.mock('../../../utils/util', () => ({ isMobile: vi.fn() }));
-vi.mock('../../../hooks/useShownButtons');
+vi.mock('../../../hooks/useToolbarCount');
 
 const mockOpenEmojiGrid = vi.fn();
 const mockHandleClickAway = vi.fn();
-const mockUseShownButtons = useShownButtons as Mock<[], number>;
+const mockUseToolbarCount = useToolbarCount as Mock<[], number>;
 
 const TestComponent = ({ defaultOpen = false }: { defaultOpen?: boolean }) => {
   const anchorRef = useRef<HTMLButtonElement | null>(null);
@@ -40,7 +40,7 @@ const TestComponent = ({ defaultOpen = false }: { defaultOpen?: boolean }) => {
 describe('ToolbarOverflowMenu', () => {
   beforeEach(() => {
     (util.isMobile as Mock).mockImplementation(() => false);
-    mockUseShownButtons.mockReturnValue(0);
+    mockUseToolbarCount.mockReturnValue(0);
   });
 
   afterEach(() => {
