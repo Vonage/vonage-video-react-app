@@ -20,11 +20,11 @@ const TestComponent = ({ defaultOpen = false }: { defaultOpen?: boolean }) => {
     <>
       <Button ref={anchorRef} />
       <ToolbarOverflowMenu
-        isToolbarOverflowMenuOpen={defaultOpen}
+        isOpen={defaultOpen}
         isEmojiGridOpen
         setIsEmojiGridOpen={mockOpenEmojiGrid}
         anchorRef={anchorRef}
-        handleClickAway={mockHandleClickAway}
+        closeMenu={mockHandleClickAway}
       />
     </>
   );
