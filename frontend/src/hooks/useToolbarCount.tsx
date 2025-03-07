@@ -18,19 +18,19 @@ const useToolbarCount = (): number => {
     return Math.floor(extraButtons);
   }, []);
 
-  const [shownButtons, setShownButtons] = useState(getNumberOfButtons(window.innerWidth));
+  const [toolbarCount, setToolbarCount] = useState(getNumberOfButtons(window.innerWidth));
 
   useEffect(() => {
     const handleResize = () => {
-      const maxShownButtons = getNumberOfButtons(window.innerWidth);
-      setShownButtons(maxShownButtons);
+      const maxToolbarCount = getNumberOfButtons(window.innerWidth);
+      setToolbarCount(maxToolbarCount);
     };
 
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
   });
 
-  return shownButtons;
+  return toolbarCount;
 };
 
 export default useToolbarCount;

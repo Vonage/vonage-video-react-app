@@ -71,7 +71,7 @@ const Toolbar = ({
     disconnect();
   }, [disconnect]);
   const [openEmojiGridDesktop, setOpenEmojiGridDesktop] = useState<boolean>(false);
-  const shownButtons = useToolbarCount();
+  const toolbarCount = useToolbarCount();
 
   // An array of buttons available for the toolbar. As the toolbar resizes, buttons may be hidden and moved to the
   // ToolbarOverflowMenu to ensure a responsive layout without compromising usability.
@@ -109,11 +109,11 @@ const Toolbar = ({
       key="ChatButton"
     />,
   ];
-  const isToolbarExpanded = shownButtons >= toolbarButtons.length;
-  const shouldShowOverflowButton = shownButtons < toolbarButtons.length;
+  const isToolbarExpanded = toolbarCount >= toolbarButtons.length;
+  const shouldShowOverflowButton = toolbarCount < toolbarButtons.length;
   // If we have no right panel buttons to show in the container, we do not need a margin
   const marginLeft =
-    shownButtons >= toolbarButtons.length - RIGHT_PANEL_BUTTON_COUNT ? '12px' : '0px';
+    toolbarCount >= toolbarButtons.length - RIGHT_PANEL_BUTTON_COUNT ? '12px' : '0px';
 
   return (
     <div className="absolute bottom-0 left-0 flex h-[80px] w-full items-center bg-darkGray-100 p-4 md:flex-row md:justify-between">
@@ -123,7 +123,7 @@ const Toolbar = ({
       <div className="flex flex-1 justify-center">
         <AudioControlButton />
         <VideoControlButton />
-        {getCenterToolbarButtons(toolbarButtons, shownButtons)}
+        {getCenterToolbarButtons(toolbarButtons, toolbarCount)}
         {shouldShowOverflowButton && (
           <ToolbarOverflowButton
             isSharingScreen={isSharingScreen}
@@ -142,7 +142,7 @@ const Toolbar = ({
           justifyContent: 'flex-end',
         }}
       >
-        {getRightPanelButtons(toolbarButtons, shownButtons)}
+        {getRightPanelButtons(toolbarButtons, toolbarCount)}
       </div>
     </div>
   );

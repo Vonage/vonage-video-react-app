@@ -61,7 +61,7 @@ const ToolbarOverflowMenu = ({
     closeMenu();
   };
 
-  const shownButtons = useToolbarCount();
+  const toolbarCount = useToolbarCount();
   // An array of buttons available for the overflow menu. As the screen resizes, buttons may be hidden and moved to the
   // Toolbar to ensure a responsive layout without compromising usability.
   const overflowButtonArray: Array<ReactElement | false> = [
@@ -131,7 +131,7 @@ const ToolbarOverflowMenu = ({
               bottom: '80px',
             }}
           >
-            {getOverflowMenuButtons(overflowButtonArray, shownButtons)}
+            {getOverflowMenuButtons(overflowButtonArray, toolbarCount)}
           </Box>
         </Grow>
       </ClickAwayListener>
