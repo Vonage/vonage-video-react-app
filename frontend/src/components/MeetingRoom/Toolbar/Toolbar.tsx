@@ -116,12 +116,12 @@ const Toolbar = ({
   const toolbarRef = useRef<HTMLDivElement | null>(null);
   const mediaControlsRef = useRef<HTMLDivElement | null>(null);
   const rightPanelControlsRef = useRef<HTMLDivElement | null>(null);
-  const overFlowAndExitRef = useRef<HTMLDivElement | null>(null);
+  const overflowAndExitRef = useRef<HTMLDivElement | null>(null);
 
   const { centerToolbarButtons, rightToolbarButtons } = useToolbarButtons({
     toolbarRef,
     mediaControlsRef,
-    overFlowAndExitRef,
+    overflowAndExitRef,
     toolbarButtons,
   });
 
@@ -139,7 +139,7 @@ const Toolbar = ({
           <VideoControlButton />
         </div>
         {centerToolbarButtons}
-        <div ref={overFlowAndExitRef} className="flex flex-row">
+        <div ref={overflowAndExitRef} className="flex flex-row">
           {shouldShowOverflowButton && (
             <ToolbarOverflowButton
               isSharingScreen={isSharingScreen}
