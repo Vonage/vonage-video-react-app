@@ -1,4 +1,4 @@
-import { ReactElement, useCallback, useEffect, useRef, useState } from 'react';
+import { ReactElement, useCallback, useRef, useState } from 'react';
 import AudioControlButton from '../AudioControlButton';
 import VideoControlButton from '../VideoControlButton';
 import ScreenSharingButton from '../../ScreenSharingButton';
@@ -16,6 +16,7 @@ import EmojiGridButton from '../EmojiGridButton';
 import useToolbarCount from '../../../hooks/useToolbarCount';
 import { RIGHT_PANEL_BUTTON_COUNT } from '../../../utils/constants';
 import isReportIssueEnabled from '../../../utils/isReportIssueEnabled';
+import useToolbarButtons from '../../../hooks/useToolbarButtons';
 
 export type ToolbarProps = {
   toggleShareScreen: () => void;
@@ -117,64 +118,12 @@ const Toolbar = ({
   const rightPanelControlsRef = useRef<HTMLDivElement | null>(null);
   const overFlowAndExitRef = useRef<HTMLDivElement | null>(null);
 
-  type ToolbarButtons = Array<ReactElement | null | false>;
-
-  type UseToolbarButtons = {
-    centerToolbarButtons: ToolbarButtons;
-    rightToolbarButtons: ToolbarButtons;
-  };
-
-  /**
-   * React hook to determine which buttons should be displayed on the toolbar.
-   * @returns {UseToolbarButtons} The center and right toolbar buttons
-   */
-  const useToolbarButtons = (): UseToolbarButtons => {
-    const [centerToolbarButtons, setCenterToolbarButtons] = useState<ToolbarButtons>([]);
-    const [rightToolbarButtons, setRightToolbarButtons] = useState<ToolbarButtons>([]);
-    const buttonWidth = 60;
-
-    const observer = useRef(
-      new ResizeObserver(() => {
-        if (!(toolbarRef.current && mediaControlsRef.current && overFlowAndExitRef.current)) {
-          return;
-        }
-
-        const toolbarStyle = getComputedStyle(toolbarRef.current);
-        const toolbarPadding =
-          parseFloat(toolbarStyle.paddingLeft) + parseFloat(toolbarStyle.paddingRight);
-        const necessaryComponentsWidth =
-          mediaControlsRef.current.clientWidth +
-          overFlowAndExitRef.current.clientWidth +
-          toolbarPadding;
-        const toolbarForExtraButtons = toolbarRef.current.clientWidth - necessaryComponentsWidth;
-        const maxButtons = Math.floor(toolbarForExtraButtons / buttonWidth);
-
-        // We reserve a few buttons for the right panel
-        const maxButtonsForCenter = toolbarButtons.length - RIGHT_PANEL_BUTTON_COUNT;
-        // If there's more buttons able to be displayed, we only display the max for the center of the toolbar
-        const centerMaxButtons =
-          maxButtons > maxButtonsForCenter ? maxButtonsForCenter : maxButtons;
-
-        setCenterToolbarButtons(toolbarButtons.slice(0, centerMaxButtons));
-        setRightToolbarButtons(toolbarButtons.slice(centerMaxButtons, maxButtons));
-      })
-    );
-
-    useEffect(() => {
-      if (!toolbarRef.current) {
-        return;
-      }
-
-      observer.current.observe(toolbarRef.current);
-
-      // eslint-disable-next-line consistent-return, react-hooks/exhaustive-deps
-      return () => observer.current.disconnect();
-    }, []);
-
-    return { centerToolbarButtons, rightToolbarButtons };
-  };
-
-  const { centerToolbarButtons, rightToolbarButtons } = useToolbarButtons();
+  const { centerToolbarButtons, rightToolbarButtons } = useToolbarButtons({
+    toolbarRef,
+    mediaControlsRef,
+    overFlowAndExitRef,
+    toolbarButtons,
+  });
 
   return (
     <div
