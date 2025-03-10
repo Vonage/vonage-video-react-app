@@ -5,6 +5,11 @@ import useSpeakingDetector from '../../../hooks/useSpeakingDetector';
 import Toolbar, { ToolbarProps } from './Toolbar';
 import isReportIssueEnabled from '../../../utils/isReportIssueEnabled';
 import useToolbarCount from '../../../hooks/useToolbarCount';
+import useToolbarButtons, {
+  UseToolbarButtons,
+  UseToolbarButtonsProps,
+} from '../../../hooks/useToolbarButtons';
+import { RIGHT_PANEL_BUTTON_COUNT } from '../../../utils/constants';
 
 const mockedRoomName = { roomName: 'test-room-name' };
 
@@ -17,10 +22,15 @@ vi.mock('react-router-dom', () => ({
 vi.mock('../../../hooks/useSpeakingDetector');
 vi.mock('../../../hooks/useToolbarCount');
 vi.mock('../../../utils/isReportIssueEnabled');
+vi.mock('../../../hooks/useToolbarButtons');
 
 const mockUseSpeakingDetector = useSpeakingDetector as Mock<[], boolean>;
 const mockUseToolbarCount = useToolbarCount as Mock<[], number>;
 const mockIsReportIssueEnabled = isReportIssueEnabled as Mock<[], boolean>;
+const mockUseToolbarButtons = useToolbarButtons as Mock<
+  [UseToolbarButtonsProps],
+  UseToolbarButtons
+>;
 
 describe('Toolbar', () => {
   beforeEach(() => {
@@ -30,11 +40,23 @@ describe('Toolbar', () => {
     mockUseSpeakingDetector.mockReturnValue(false);
     mockUseToolbarCount.mockReturnValue(9);
     mockIsReportIssueEnabled.mockReturnValue(false);
+    mockUseToolbarButtons.mockImplementation(({ toolbarButtons }: UseToolbarButtonsProps) => {
+      const renderedToolbarButtons: UseToolbarButtons = {
+        centerToolbarButtons: toolbarButtons,
+        rightToolbarButtons: toolbarButtons.slice(
+          toolbarButtons.length - RIGHT_PANEL_BUTTON_COUNT,
+          toolbarButtons.length
+        ),
+      };
+      return renderedToolbarButtons;
+    });
   });
+
   afterAll(() => {
     vi.restoreAllMocks();
     vi.unstubAllEnvs();
   });
+
   const defaultProps: ToolbarProps = {
     toggleShareScreen: vi.fn(),
     isSharingScreen: false,
@@ -58,6 +80,10 @@ describe('Toolbar', () => {
 
   it('on a small viewport, displays the ToolbarOverflowButton button', () => {
     mockUseToolbarCount.mockReturnValue(0);
+    mockUseToolbarButtons.mockReturnValue({
+      centerToolbarButtons: [],
+      rightToolbarButtons: [],
+    });
 
     render(<Toolbar {...defaultProps} />);
 
