@@ -6,23 +6,30 @@ import useSessionContext from '../../../hooks/useSessionContext';
 import ToolbarButton from '../ToolbarButton';
 import useIsSmallViewport from '../../../hooks/useIsSmallViewport';
 
-type LayoutButtonProps = {
+export type LayoutButtonProps = {
   isScreenSharePresent: boolean;
+  isPinningPresent: boolean;
 };
 
 /**
  * LayoutButton Component
  *
  * Displays a button to toggle the meeting room layout for the user between `grid` and `active-speaker`.
- * @param {boolean} isScreenSharePresent - Indicates whether there is a screenshare currently in the session.
+ * @param {LayoutButtonProps} props - the props for the component.
+ *  @property {boolean} isScreenSharePresent - Indicates whether there is a screenshare currently in the session.
+ *  @property {boolean} isPinningPresent - Indicates whether there is a participant currently pinned.
  * @returns {ReactElement} The LayoutButton component.
  */
-const LayoutButton = ({ isScreenSharePresent }: LayoutButtonProps): ReactElement | false => {
+const LayoutButton = ({
+  isScreenSharePresent,
+  isPinningPresent,
+}: LayoutButtonProps): ReactElement | false => {
   const { layoutMode, setLayoutMode } = useSessionContext();
   const isGrid = layoutMode === 'grid';
+  const isDisabled = isScreenSharePresent || isPinningPresent;
 
   const handleClick = () => {
-    if (isScreenSharePresent) {
+    if (isDisabled) {
       return;
     }
     setLayoutMode((prev) => (prev === 'grid' ? 'active-speaker' : 'grid'));
@@ -31,6 +38,9 @@ const LayoutButton = ({ isScreenSharePresent }: LayoutButtonProps): ReactElement
   const getTooltipTitle = () => {
     if (isScreenSharePresent) {
       return 'Cannot switch layout while screen share is active';
+    }
+    if (isPinningPresent) {
+      return 'Cannot switch layout while a participant is pinned';
     }
     return isGrid ? 'Switch to Active Speaker layout' : 'Switch to Grid layout';
   };
@@ -44,13 +54,13 @@ const LayoutButton = ({ isScreenSharePresent }: LayoutButtonProps): ReactElement
         data-testid="layout-button"
         icon={
           !isGrid ? (
-            <ViewSidebarIcon className={isScreenSharePresent ? 'text-gray-500' : 'text-white'} />
+            <ViewSidebarIcon className={isDisabled ? 'text-gray-500' : 'text-white'} />
           ) : (
-            <WindowIcon className={isScreenSharePresent ? 'text-gray-500' : 'text-white'} />
+            <WindowIcon className={isDisabled ? 'text-gray-500' : 'text-white'} />
           )
         }
         sx={{
-          cursor: isScreenSharePresent ? 'not-allowed' : 'pointer',
+          cursor: isDisabled ? 'not-allowed' : 'pointer',
           // on the small view port devices we need to align the button
           marginTop: isSmallViewport ? '0px' : '4px',
           marginLeft: isSmallViewport ? '12px' : '0px',
