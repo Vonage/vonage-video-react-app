@@ -1,4 +1,4 @@
-import { ReactElement, useCallback, useState } from 'react';
+import { ReactElement, useCallback, useEffect, useRef, useState } from 'react';
 import AudioControlButton from '../AudioControlButton';
 import VideoControlButton from '../VideoControlButton';
 import ScreenSharingButton from '../../ScreenSharingButton';
@@ -14,10 +14,6 @@ import ReportIssueButton from '../ReportIssueButton';
 import ToolbarOverflowButton from '../ToolbarOverflowButton';
 import EmojiGridButton from '../EmojiGridButton';
 import useToolbarCount from '../../../hooks/useToolbarCount';
-import {
-  getCenterToolbarButtons,
-  getRightPanelButtons,
-} from '../../../utils/getVisibleToolbarButtons';
 import { RIGHT_PANEL_BUTTON_COUNT } from '../../../utils/constants';
 import isReportIssueEnabled from '../../../utils/isReportIssueEnabled';
 
@@ -116,22 +112,93 @@ const Toolbar = ({
   const marginLeft =
     toolbarCount >= toolbarButtons.length - RIGHT_PANEL_BUTTON_COUNT ? '12px' : '0px';
 
+  const toolbarRef = useRef<HTMLDivElement | null>(null);
+  const mediaControlsRef = useRef<HTMLDivElement | null>(null);
+  const rightPanelControlsRef = useRef<HTMLDivElement | null>(null);
+  const overFlowAndExitRef = useRef<HTMLDivElement | null>(null);
+
+  type ToolbarButtons = Array<ReactElement | null | false>;
+
+  type UseToolbarButtons = {
+    centerToolbarButtons: ToolbarButtons;
+    rightToolbarButtons: ToolbarButtons;
+  };
+
+  /**
+   * React hook to determine which buttons should be displayed on the toolbar.
+   * @returns {UseToolbarButtons} The center and right toolbar buttons
+   */
+  const useToolbarButtons = (): UseToolbarButtons => {
+    const [centerToolbarButtons, setCenterToolbarButtons] = useState<ToolbarButtons>([]);
+    const [rightToolbarButtons, setRightToolbarButtons] = useState<ToolbarButtons>([]);
+    const buttonWidth = 60;
+
+    const observer = useRef(
+      new ResizeObserver(() => {
+        if (!(toolbarRef.current && mediaControlsRef.current && overFlowAndExitRef.current)) {
+          return;
+        }
+
+        const toolbarStyle = getComputedStyle(toolbarRef.current);
+        const toolbarPadding =
+          parseFloat(toolbarStyle.paddingLeft) + parseFloat(toolbarStyle.paddingRight);
+        const necessaryComponentsWidth =
+          mediaControlsRef.current.clientWidth +
+          overFlowAndExitRef.current.clientWidth +
+          toolbarPadding;
+        const toolbarForExtraButtons = toolbarRef.current.clientWidth - necessaryComponentsWidth;
+        const maxButtons = Math.floor(toolbarForExtraButtons / buttonWidth);
+
+        // We reserve a few buttons for the right panel
+        const maxButtonsForCenter = toolbarButtons.length - RIGHT_PANEL_BUTTON_COUNT;
+        // If there's more buttons able to be displayed, we only display the max for the center of the toolbar
+        const centerMaxButtons =
+          maxButtons > maxButtonsForCenter ? maxButtonsForCenter : maxButtons;
+
+        setCenterToolbarButtons(toolbarButtons.slice(0, centerMaxButtons));
+        setRightToolbarButtons(toolbarButtons.slice(centerMaxButtons, maxButtons));
+      })
+    );
+
+    useEffect(() => {
+      if (!toolbarRef.current) {
+        return;
+      }
+
+      observer.current.observe(toolbarRef.current);
+
+      // eslint-disable-next-line consistent-return, react-hooks/exhaustive-deps
+      return () => observer.current.disconnect();
+    }, []);
+
+    return { centerToolbarButtons, rightToolbarButtons };
+  };
+
+  const { centerToolbarButtons, rightToolbarButtons } = useToolbarButtons();
+
   return (
-    <div className="absolute bottom-0 left-0 flex h-[80px] w-full items-center bg-darkGray-100 p-4 md:flex-row md:justify-between">
+    <div
+      ref={toolbarRef}
+      className="absolute bottom-0 left-0 flex h-[80px] w-full items-center bg-darkGray-100 p-4 md:flex-row md:justify-between"
+    >
       <div className="flex justify-start overflow-hidden">
         {isToolbarExpanded && <TimeRoomNameMeetingRoom />}
       </div>
       <div className="flex flex-1 justify-center">
-        <AudioControlButton />
-        <VideoControlButton />
-        {getCenterToolbarButtons(toolbarButtons, toolbarCount)}
-        {shouldShowOverflowButton && (
-          <ToolbarOverflowButton
-            isSharingScreen={isSharingScreen}
-            toggleShareScreen={toggleShareScreen}
-          />
-        )}
-        <ExitButton handleLeave={handleLeave} />
+        <div ref={mediaControlsRef} className="flex flex-row">
+          <AudioControlButton />
+          <VideoControlButton />
+        </div>
+        {centerToolbarButtons}
+        <div ref={overFlowAndExitRef} className="flex flex-row">
+          {shouldShowOverflowButton && (
+            <ToolbarOverflowButton
+              isSharingScreen={isSharingScreen}
+              toggleShareScreen={toggleShareScreen}
+            />
+          )}
+          <ExitButton handleLeave={handleLeave} />
+        </div>
       </div>
 
       <div
@@ -142,8 +209,9 @@ const Toolbar = ({
           flex: '0 1 0%',
           justifyContent: 'flex-end',
         }}
+        ref={rightPanelControlsRef}
       >
-        {getRightPanelButtons(toolbarButtons, toolbarCount)}
+        {rightToolbarButtons}
       </div>
     </div>
   );
