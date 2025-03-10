@@ -18,8 +18,12 @@ import useLayoutManager, { GetLayout } from '../../hooks/useLayoutManager';
 import useSessionContext from '../../hooks/useSessionContext';
 import useActiveSpeaker from '../../hooks/useActiveSpeaker';
 import useScreenShare, { UseScreenShareType } from '../../hooks/useScreenShare';
-import { PUBLISHING_BLOCKED_CAPTION } from '../../utils/constants';
+import { PUBLISHING_BLOCKED_CAPTION, RIGHT_PANEL_BUTTON_COUNT } from '../../utils/constants';
 import useIsSmallViewport from '../../hooks/useIsSmallViewport';
+import useToolbarButtons, {
+  UseToolbarButtons,
+  UseToolbarButtonsProps,
+} from '../../hooks/useToolbarButtons';
 
 const mockedNavigate = vi.fn();
 const mockedParams = { roomName: 'test-room-name' };
@@ -43,6 +47,7 @@ vi.mock('../../hooks/useSessionContext.tsx');
 vi.mock('../../hooks/useActiveSpeaker.tsx');
 vi.mock('../../hooks/useScreenShare.tsx');
 vi.mock('../../hooks/useIsSmallViewport');
+vi.mock('../../hooks/useToolbarButtons');
 
 const mockUseDevices = useDevices as Mock<
   [],
@@ -65,6 +70,10 @@ const mockUseSessionContext = useSessionContext as Mock<[], SessionContextType>;
 const mockUseActiveSpeaker = useActiveSpeaker as Mock<[], string | undefined>;
 const mockUseScreenShare = useScreenShare as Mock<[], UseScreenShareType>;
 const mockUseIsSmallViewport = useIsSmallViewport as Mock<[], boolean>;
+const mockUseToolbarButtons = useToolbarButtons as Mock<
+  [UseToolbarButtonsProps],
+  UseToolbarButtons
+>;
 
 const MeetingRoomWithProviders = () => (
   <UserProvider>
@@ -153,6 +162,16 @@ describe('MeetingRoom', () => {
       screensharingPublisher: null,
     });
     mockUseIsSmallViewport.mockImplementation(() => false);
+    mockUseToolbarButtons.mockImplementation(({ toolbarButtons }: UseToolbarButtonsProps) => {
+      const renderedToolbarButtons: UseToolbarButtons = {
+        centerToolbarButtons: toolbarButtons,
+        rightToolbarButtons: toolbarButtons.slice(
+          toolbarButtons.length - RIGHT_PANEL_BUTTON_COUNT,
+          toolbarButtons.length
+        ),
+      };
+      return renderedToolbarButtons;
+    });
   });
 
   it('should render', () => {
@@ -270,7 +289,7 @@ describe('MeetingRoom', () => {
     rerender(<MeetingRoomWithProviders />);
     sessionContext.unreadCount = 4;
     rerender(<MeetingRoomWithProviders />);
-    expect(screen.getByTestId('chat-button-unread-count')).toHaveTextContent('4');
+    expect(screen.queryAllByTestId('chat-button-unread-count')[0]).toHaveTextContent('4');
   });
 
   describe('video quality problem alert', () => {
