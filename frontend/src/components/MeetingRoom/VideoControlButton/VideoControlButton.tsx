@@ -33,7 +33,7 @@ const VideoControlButton = (): ReactElement => {
   };
 
   return (
-    <div className="hidden xs:inline">
+    <>
       <ButtonGroup
         className="mr-3 mt-1 bg-notVeryGray-55"
         disableElevation
@@ -82,7 +82,7 @@ const VideoControlButton = (): ReactElement => {
         isOpen={open}
         handleClose={handleClose}
       />
-    </div>
+    </>
   );
 };
 

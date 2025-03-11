@@ -33,7 +33,7 @@ const AudioControlButton = (): ReactElement => {
   };
 
   return (
-    <div className="hidden xs:inline">
+    <>
       <MutedAlert />
       <ButtonGroup
         className="mr-3 mt-1 bg-notVeryGray-55"
@@ -80,7 +80,7 @@ const AudioControlButton = (): ReactElement => {
         isOpen={open}
         handleClose={handleClose}
       />
-    </div>
+    </>
   );
 };
 
