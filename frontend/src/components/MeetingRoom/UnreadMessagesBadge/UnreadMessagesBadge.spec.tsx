@@ -61,7 +61,7 @@ describe('UnreadMessagesBadge', () => {
     expect(badge.offsetWidth).toBe(0);
   });
 
-  it('should not show unread message number when number is 0 and the toolbar is open', () => {
+  it('should not show unread message badge when message count is 0 and the toolbar is open', () => {
     render(
       <UnreadMessagesBadge isToolbarOverflowMenuOpen>
         <LittleButton />
@@ -74,7 +74,41 @@ describe('UnreadMessagesBadge', () => {
     expect(badge.offsetWidth).toBe(0);
   });
 
-  it('should not show unread message number when number is non zero and the toolbar is open', () => {
+  it('should not show unread message badge when message count is non zero and the toolbar is open', () => {
+    let sessionContextWithMessages: SessionContextType = {
+      ...sessionContext,
+      unreadCount: 0,
+    } as unknown as SessionContextType;
+    mockUseSessionContext.mockReturnValue(sessionContextWithMessages);
+    const { rerender } = render(
+      <UnreadMessagesBadge isToolbarOverflowMenuOpen>
+        <LittleButton />
+      </UnreadMessagesBadge>
+    );
+
+    const badge = screen.getByTestId('chat-button-unread-count');
+    // Check badge is hidden:  MUI hides badge by setting dimensions to 0x0
+    expect(badge.offsetHeight).toBe(0);
+    expect(badge.offsetWidth).toBe(0);
+
+    // a new message comes in
+    sessionContextWithMessages = {
+      ...sessionContext,
+      unreadCount: 1,
+    } as unknown as SessionContextType;
+    mockUseSessionContext.mockReturnValue(sessionContextWithMessages);
+    rerender(
+      <UnreadMessagesBadge isToolbarOverflowMenuOpen>
+        <LittleButton />
+      </UnreadMessagesBadge>
+    );
+
+    // the badge remains hidden since the overflow toolbar is currently opened
+    expect(badge.offsetHeight).toBe(0);
+    expect(badge.offsetWidth).toBe(0);
+  });
+
+  it('should not show unread message badge when a new message comes in and the toolbar is open', () => {
     const sessionContextWithMessages: SessionContextType = {
       ...sessionContext,
       unreadCount: 8,
