@@ -107,6 +107,8 @@ const Toolbar = ({
       key="ChatButton"
     />,
   ];
+
+  // @TODO: redo these
   const isToolbarExpanded = toolbarCount >= toolbarButtons.length;
   const shouldShowOverflowButton = toolbarCount < toolbarButtons.length;
   // If we have no right panel buttons to show in the container, we do not need a margin
@@ -122,6 +124,7 @@ const Toolbar = ({
     toolbarRef,
     mediaControlsRef,
     overflowAndExitRef,
+    rightPanelControlsRef,
     toolbarButtons,
   });
 

@@ -41,12 +41,10 @@ describe('Toolbar', () => {
     mockUseToolbarCount.mockReturnValue(9);
     mockIsReportIssueEnabled.mockReturnValue(false);
     mockUseToolbarButtons.mockImplementation(({ toolbarButtons }: UseToolbarButtonsProps) => {
+      const centerToolbarButtonsLimit = toolbarButtons.length - RIGHT_PANEL_BUTTON_COUNT;
       const renderedToolbarButtons: UseToolbarButtons = {
-        centerToolbarButtons: toolbarButtons,
-        rightToolbarButtons: toolbarButtons.slice(
-          toolbarButtons.length - RIGHT_PANEL_BUTTON_COUNT,
-          toolbarButtons.length
-        ),
+        centerToolbarButtons: toolbarButtons.slice(0, centerToolbarButtonsLimit),
+        rightToolbarButtons: toolbarButtons.slice(centerToolbarButtonsLimit, toolbarButtons.length),
       };
       return renderedToolbarButtons;
     });

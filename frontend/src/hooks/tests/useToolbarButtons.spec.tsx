@@ -32,6 +32,8 @@ describe('useToolbarButtons', () => {
   let toolbarRef: RefObject<HTMLDivElement>;
   let mediaControlsRef: RefObject<HTMLDivElement>;
   let overflowAndExitRef: RefObject<HTMLDivElement>;
+  let rightPanelControlsRef: RefObject<HTMLDivElement>;
+
   const toolbarButtons: ToolbarButtons = [
     <div key="A">Button_A</div>,
     <div key="B">Button_B</div>,
@@ -45,6 +47,7 @@ describe('useToolbarButtons', () => {
       toolbarRef,
       mediaControlsRef,
       overflowAndExitRef,
+      rightPanelControlsRef,
       toolbarButtons,
     });
 
@@ -58,8 +61,15 @@ describe('useToolbarButtons', () => {
 
   beforeEach(() => {
     toolbarRef = { current: document.createElement('div') };
+    if (toolbarRef.current) {
+      toolbarRef.current.id = 'toolbar-ref';
+    }
     mediaControlsRef = { current: document.createElement('div') };
     overflowAndExitRef = { current: document.createElement('div') };
+    rightPanelControlsRef = { current: document.createElement('div') };
+    if (rightPanelControlsRef.current) {
+      rightPanelControlsRef.current.id = 'right-panel-controls-ref';
+    }
 
     Object.defineProperty(mediaControlsRef.current, 'clientWidth', {
       configurable: true,
@@ -71,10 +81,15 @@ describe('useToolbarButtons', () => {
       writable: true,
       value: 108,
     });
-    vi.spyOn(window, 'getComputedStyle').mockImplementation(() => {
+    vi.spyOn(window, 'getComputedStyle').mockImplementation((elt: Element) => {
+      if (elt.id === 'toolbar-ref') {
+        return {
+          paddingLeft: '30px',
+          paddingRight: '30px',
+        } as CSSStyleDeclaration;
+      }
       return {
-        paddingLeft: '30px',
-        paddingRight: '30px',
+        marginLeft: '12px',
       } as CSSStyleDeclaration;
     });
   });
@@ -103,7 +118,7 @@ describe('useToolbarButtons', () => {
     Object.defineProperty(toolbarRef.current, 'clientWidth', {
       configurable: true,
       writable: true,
-      value: 442,
+      value: 454,
     });
 
     render(<TestComponent />);
@@ -116,7 +131,7 @@ describe('useToolbarButtons', () => {
     Object.defineProperty(toolbarRef.current, 'clientWidth', {
       configurable: true,
       writable: true,
-      value: 682,
+      value: 694,
     });
 
     render(<TestComponent />);
@@ -128,7 +143,7 @@ describe('useToolbarButtons', () => {
     Object.defineProperty(toolbarRef.current, 'clientWidth', {
       configurable: true,
       writable: true,
-      value: 562,
+      value: 574,
     });
 
     render(<TestComponent />);

@@ -6,6 +6,7 @@ export type UseToolbarButtonsProps = {
   toolbarRef: MutableRefObject<HTMLDivElement | null>;
   mediaControlsRef: MutableRefObject<HTMLDivElement | null>;
   overflowAndExitRef: MutableRefObject<HTMLDivElement | null>;
+  rightPanelControlsRef: MutableRefObject<HTMLDivElement | null>;
   toolbarButtons: ToolbarButtons;
 };
 
@@ -22,6 +23,7 @@ export type UseToolbarButtons = {
  *  @property {MutableRefObject<HTMLDivElement | null>} toolbarRef - The ref for the Toolbar
  *  @property {MutableRefObject<HTMLDivElement | null>} mediaControlsRef - The ref for the audio and video controls
  *  @property {MutableRefObject<HTMLDivElement | null>} overflowAndExitRef - The ref for the overflow and exit buttons
+ *  @property {MutableRefObject<HTMLDivElement | null>} rightPanelControlsRef - The ref for the right panel buttons
  *  @property {ToolbarButtons} toolbarButtons - The buttons to be rendered on the toolbar
  * @returns {UseToolbarButtons} The center and right toolbar buttons
  */
@@ -29,6 +31,7 @@ const useToolbarButtons = ({
   toolbarRef,
   mediaControlsRef,
   overflowAndExitRef,
+  rightPanelControlsRef,
   toolbarButtons,
 }: UseToolbarButtonsProps): UseToolbarButtons => {
   const observer = useRef<ResizeObserver | undefined>();
@@ -39,18 +42,28 @@ const useToolbarButtons = ({
   useEffect(() => {
     if (toolbarRef.current && !observer.current) {
       observer.current = new ResizeObserverPolyfill(() => {
-        if (!(toolbarRef.current && mediaControlsRef.current && overflowAndExitRef.current)) {
+        if (
+          !(
+            toolbarRef.current &&
+            mediaControlsRef.current &&
+            overflowAndExitRef.current &&
+            rightPanelControlsRef.current
+          )
+        ) {
           return;
         }
 
         const toolbarStyle = window.getComputedStyle(toolbarRef.current);
         const toolbarPadding =
           parseFloat(toolbarStyle.paddingLeft) + parseFloat(toolbarStyle.paddingRight);
+        const rightPanelControlsStyle = window.getComputedStyle(rightPanelControlsRef.current);
+        const rightPanelMargin = parseFloat(rightPanelControlsStyle.marginLeft);
         const necessaryComponentsWidth =
           mediaControlsRef.current.clientWidth +
           overflowAndExitRef.current.clientWidth +
           toolbarPadding;
-        const toolbarForExtraButtons = toolbarRef.current.clientWidth - necessaryComponentsWidth;
+        const toolbarForExtraButtons =
+          toolbarRef.current.clientWidth - necessaryComponentsWidth - rightPanelMargin;
         const maxButtons = Math.floor(toolbarForExtraButtons / buttonWidth);
 
         // We reserve a few buttons for the right panel
@@ -80,7 +93,7 @@ const useToolbarButtons = ({
         observer.current?.unobserve(observedToolbar);
       }
     };
-  }, [mediaControlsRef, overflowAndExitRef, toolbarButtons, toolbarRef]);
+  }, [mediaControlsRef, overflowAndExitRef, rightPanelControlsRef, toolbarButtons, toolbarRef]);
 
   return { centerToolbarButtons, rightToolbarButtons };
 };
