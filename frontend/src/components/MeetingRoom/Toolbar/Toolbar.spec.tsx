@@ -4,7 +4,6 @@ import { useLocation } from 'react-router-dom';
 import useSpeakingDetector from '../../../hooks/useSpeakingDetector';
 import Toolbar, { ToolbarProps } from './Toolbar';
 import isReportIssueEnabled from '../../../utils/isReportIssueEnabled';
-import useToolbarCount from '../../../hooks/useToolbarCount';
 import useToolbarButtons, {
   UseToolbarButtons,
   UseToolbarButtonsProps,
@@ -20,12 +19,10 @@ vi.mock('react-router-dom', () => ({
 }));
 
 vi.mock('../../../hooks/useSpeakingDetector');
-vi.mock('../../../hooks/useToolbarCount');
 vi.mock('../../../utils/isReportIssueEnabled');
 vi.mock('../../../hooks/useToolbarButtons');
 
 const mockUseSpeakingDetector = useSpeakingDetector as Mock<[], boolean>;
-const mockUseToolbarCount = useToolbarCount as Mock<[], number>;
 const mockIsReportIssueEnabled = isReportIssueEnabled as Mock<[], boolean>;
 const mockUseToolbarButtons = useToolbarButtons as Mock<
   [UseToolbarButtonsProps],
@@ -38,7 +35,6 @@ describe('Toolbar', () => {
       state: mockedRoomName,
     });
     mockUseSpeakingDetector.mockReturnValue(false);
-    mockUseToolbarCount.mockReturnValue(9);
     mockIsReportIssueEnabled.mockReturnValue(false);
     mockUseToolbarButtons.mockImplementation(({ toolbarButtons }: UseToolbarButtonsProps) => {
       const centerToolbarButtonsLimit = toolbarButtons.length - RIGHT_PANEL_BUTTON_COUNT;
@@ -77,7 +73,6 @@ describe('Toolbar', () => {
   });
 
   it('on a small viewport, displays the ToolbarOverflowButton button', () => {
-    mockUseToolbarCount.mockReturnValue(0);
     mockUseToolbarButtons.mockReturnValue({
       centerToolbarButtons: [],
       rightToolbarButtons: [],
@@ -87,10 +82,10 @@ describe('Toolbar', () => {
 
     expect(screen.queryByTestId('hidden-toolbar-items')).toBeVisible();
 
-    expect(screen.queryByTestId('archiving-button')).not.toBeVisible();
-    expect(screen.queryByTestId('screensharing-button')).not.toBeVisible();
-    expect(screen.queryByTestId('archiving-button')).not.toBeVisible();
-    expect(screen.queryByTestId('emoji-grid-button')).not.toBeVisible();
+    expect(screen.queryByTestId('archiving-button')).not.toBeInTheDocument();
+    expect(screen.queryByTestId('screensharing-button')).not.toBeInTheDocument();
+    expect(screen.queryByTestId('archiving-button')).not.toBeInTheDocument();
+    expect(screen.queryByTestId('emoji-grid-button')).not.toBeInTheDocument();
   });
 
   it('on a normal viewport, displays all of the toolbar buttons', () => {

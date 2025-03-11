@@ -13,7 +13,6 @@ import { RightPanelActiveTab } from '../../../hooks/useRightPanel';
 import ReportIssueButton from '../ReportIssueButton';
 import ToolbarOverflowButton from '../ToolbarOverflowButton';
 import EmojiGridButton from '../EmojiGridButton';
-import useToolbarCount from '../../../hooks/useToolbarCount';
 import { RIGHT_PANEL_BUTTON_COUNT } from '../../../utils/constants';
 import isReportIssueEnabled from '../../../utils/isReportIssueEnabled';
 import useToolbarButtons from '../../../hooks/useToolbarButtons';
@@ -69,7 +68,6 @@ const Toolbar = ({
     disconnect();
   }, [disconnect]);
   const [openEmojiGridDesktop, setOpenEmojiGridDesktop] = useState<boolean>(false);
-  const toolbarCount = useToolbarCount();
 
   // An array of buttons available for the toolbar. As the toolbar resizes, buttons may be hidden and moved to the
   // ToolbarOverflowMenu to ensure a responsive layout without compromising usability.
@@ -108,13 +106,6 @@ const Toolbar = ({
     />,
   ];
 
-  // @TODO: redo these
-  const isToolbarExpanded = toolbarCount >= toolbarButtons.length;
-  const shouldShowOverflowButton = toolbarCount < toolbarButtons.length;
-  // If we have no right panel buttons to show in the container, we do not need a margin
-  const marginLeft =
-    toolbarCount >= toolbarButtons.length - RIGHT_PANEL_BUTTON_COUNT ? '12px' : '0px';
-
   const toolbarRef = useRef<HTMLDivElement | null>(null);
   const mediaControlsRef = useRef<HTMLDivElement | null>(null);
   const rightPanelControlsRef = useRef<HTMLDivElement | null>(null);
@@ -127,6 +118,13 @@ const Toolbar = ({
     rightPanelControlsRef,
     toolbarButtons,
   });
+
+  const allButtonsToDisplay = [...centerToolbarButtons, ...rightToolbarButtons];
+  const isToolbarExpanded = allButtonsToDisplay.length >= toolbarButtons.length;
+  const shouldShowOverflowButton = allButtonsToDisplay.length < toolbarButtons.length;
+  // If we have no right panel buttons to show in the container, we do not need a margin
+  const marginLeft =
+    allButtonsToDisplay.length >= toolbarButtons.length - RIGHT_PANEL_BUTTON_COUNT ? '12px' : '0px';
 
   return (
     <div
