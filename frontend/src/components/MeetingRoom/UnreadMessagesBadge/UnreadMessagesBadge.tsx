@@ -22,13 +22,13 @@ const UnreadMessagesBadge = forwardRef(function UnreadMessagesBadge(
 ) {
   const { children, isToolbarOverflowMenuOpen, ...rest } = props;
   const { unreadCount } = useSessionContext();
-  const shouldDisplayMessageCount = unreadCount === 0 || isToolbarOverflowMenuOpen;
+  const isMessageCountBadgeInvisible = unreadCount === 0 || isToolbarOverflowMenuOpen;
   return (
     <Badge
       {...rest}
       badgeContent={unreadCount}
       data-testid="chat-button-unread-count"
-      invisible={shouldDisplayMessageCount}
+      invisible={isMessageCountBadgeInvisible}
       sx={{
         '& .MuiBadge-badge': {
           color: 'white',
