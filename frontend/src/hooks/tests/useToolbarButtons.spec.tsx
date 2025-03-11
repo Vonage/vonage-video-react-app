@@ -33,11 +33,11 @@ describe('useToolbarButtons', () => {
   let mediaControlsRef: RefObject<HTMLDivElement>;
   let overflowAndExitRef: RefObject<HTMLDivElement>;
   const toolbarButtons: ToolbarButtons = [
-    'Button_A',
-    'Button_B',
-    'Button_C',
-    'Button_D',
-    'Button_E',
+    <div key="A">Button_A</div>,
+    <div key="B">Button_B</div>,
+    <div key="C">Button_C</div>,
+    <div key="D">Button_D</div>,
+    <div key="E">Button_E</div>,
   ] as unknown as ToolbarButtons;
 
   const TestComponent = () => {
@@ -47,19 +47,17 @@ describe('useToolbarButtons', () => {
       overflowAndExitRef,
       toolbarButtons,
     });
+
     return (
-      <div data-testid="rendered-toolbar-buttons">
-        {toolbarButtonsToRender.centerToolbarButtons}
-        {toolbarButtonsToRender.rightToolbarButtons}
+      <div>
+        <div data-testid="center-buttons">{toolbarButtonsToRender.centerToolbarButtons}</div>
+        <div data-testid="right-buttons">{toolbarButtonsToRender.rightToolbarButtons}</div>
       </div>
     );
   };
 
   beforeEach(() => {
     toolbarRef = { current: document.createElement('div') };
-    if (toolbarRef.current) {
-      toolbarRef.current.id = 'mock-toolbar';
-    }
     mediaControlsRef = { current: document.createElement('div') };
     overflowAndExitRef = { current: document.createElement('div') };
 
@@ -98,32 +96,44 @@ describe('useToolbarButtons', () => {
 
     render(<TestComponent />);
 
-    expect(screen.getByTestId('rendered-toolbar-buttons')).toBeEmptyDOMElement();
+    expect(screen.queryAllByText(/Button_/).length).toBe(0);
   });
 
-  it('returns the first button when there is space for a button in the toolbar', () => {
+  it('returns only the first button when there is space for one button in the toolbar', () => {
     Object.defineProperty(toolbarRef.current, 'clientWidth', {
       configurable: true,
       writable: true,
-      value: 1,
+      value: 442,
     });
 
-    // const { result } = renderHook(() => {
-    //   useToolbarButtons({ toolbarRef, mediaControlsRef, overflowAndExitRef, toolbarButtons });
-    // });
+    render(<TestComponent />);
 
-    // expect(result.current).toEqual({
-    //   centerToolbarButtons: ['Button_A'],
-    //   rightToolbarButtons: [],
-    // });
-    expect(true).toBe(false);
+    expect(screen.getByText(/Button_A/)).toBeInTheDocument();
+    expect(screen.queryByText(/Button_B/)).not.toBeInTheDocument();
   });
 
-  it('contains no duplicated objects in the right array', () => {
-    expect(true).toBe(false);
+  it('returns no duplicated objects', () => {
+    Object.defineProperty(toolbarRef.current, 'clientWidth', {
+      configurable: true,
+      writable: true,
+      value: 682,
+    });
+
+    render(<TestComponent />);
+
+    expect(screen.getAllByText(/Button_/).length).toBe(toolbarButtons.length);
   });
 
   it('returns an empty right array if there is no space for extra buttons', () => {
-    expect(true).toBe(false);
+    Object.defineProperty(toolbarRef.current, 'clientWidth', {
+      configurable: true,
+      writable: true,
+      value: 562,
+    });
+
+    render(<TestComponent />);
+
+    expect(screen.getByTestId('center-buttons').childNodes.length).toBe(3);
+    expect(screen.getByTestId('right-buttons').childNodes.length).toBe(0);
   });
 });

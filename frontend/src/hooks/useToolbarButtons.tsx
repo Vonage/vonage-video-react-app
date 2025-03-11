@@ -81,8 +81,6 @@ const useToolbarButtons = ({
       }
     };
   }, [mediaControlsRef, overflowAndExitRef, toolbarButtons, toolbarRef]);
-  console.warn('centerTB', centerToolbarButtons);
-  console.warn('rightTB', rightToolbarButtons);
 
   return { centerToolbarButtons, rightToolbarButtons };
 };
