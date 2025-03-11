@@ -122,7 +122,40 @@ describe('UnreadMessagesBadge', () => {
     );
 
     // the badge remains hidden since the overflow toolbar is currently opened
+    expect(screen.getByTestId('chat-button-unread-count').offsetHeight).toBe(0);
+    expect(screen.getByTestId('chat-button-unread-count').offsetWidth).toBe(0);
+  });
+
+  it('should show the unread message badge when a new message comes in and the toolbar was opened at first but is now closed', () => {
+    let sessionContextWithMessages: SessionContextType = {
+      ...sessionContext,
+      unreadCount: 0,
+    } as unknown as SessionContextType;
+    mockUseSessionContext.mockReturnValue(sessionContextWithMessages);
+    const { rerender } = render(
+      <UnreadMessagesBadge isToolbarOverflowMenuOpen>
+        <LittleButton />
+      </UnreadMessagesBadge>
+    );
+
+    const badge = screen.getByTestId('chat-button-unread-count');
+    // Check badge is hidden:  MUI hides badge by setting dimensions to 0x0
     expect(badge.offsetHeight).toBe(0);
     expect(badge.offsetWidth).toBe(0);
+
+    // a new message comes in and toolbar has been closed
+    sessionContextWithMessages = {
+      ...sessionContext,
+      unreadCount: 1,
+    } as unknown as SessionContextType;
+    mockUseSessionContext.mockReturnValue(sessionContextWithMessages);
+    rerender(
+      <UnreadMessagesBadge isToolbarOverflowMenuOpen={false}>
+        <LittleButton />
+      </UnreadMessagesBadge>
+    );
+
+    expect(screen.getByTestId('chat-button-unread-count')).toBeVisible();
+    expect(screen.getByTestId('chat-button-unread-count').textContent).toBe('1');
   });
 });
