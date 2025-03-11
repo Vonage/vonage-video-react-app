@@ -9,7 +9,7 @@ export type UseToolbarButtonsProps = {
   toolbarButtons: ToolbarButtons;
 };
 
-export type ToolbarButtons = Array<ReactElement | null | false>;
+export type ToolbarButtons = Array<ReactElement | false>;
 
 export type UseToolbarButtons = {
   centerToolbarButtons: ToolbarButtons;
@@ -36,31 +36,34 @@ const useToolbarButtons = ({
   const [rightToolbarButtons, setRightToolbarButtons] = useState<ToolbarButtons>([]);
   const buttonWidth = 60;
 
-  observer.current = new ResizeObserverPolyfill(() => {
-    if (!(toolbarRef.current && mediaControlsRef.current && overflowAndExitRef.current)) {
-      return;
+  useEffect(() => {
+    if (toolbarRef.current && !observer.current) {
+      observer.current = new ResizeObserverPolyfill(() => {
+        if (!(toolbarRef.current && mediaControlsRef.current && overflowAndExitRef.current)) {
+          return;
+        }
+
+        const toolbarStyle = window.getComputedStyle(toolbarRef.current);
+        const toolbarPadding =
+          parseFloat(toolbarStyle.paddingLeft) + parseFloat(toolbarStyle.paddingRight);
+        const necessaryComponentsWidth =
+          mediaControlsRef.current.clientWidth +
+          overflowAndExitRef.current.clientWidth +
+          toolbarPadding;
+        const toolbarForExtraButtons = toolbarRef.current.clientWidth - necessaryComponentsWidth;
+        const maxButtons = Math.floor(toolbarForExtraButtons / buttonWidth);
+
+        // We reserve a few buttons for the right panel
+        const maxButtonsForCenter = toolbarButtons.length - RIGHT_PANEL_BUTTON_COUNT;
+        // If there's more buttons able to be displayed, we only display the max for the center of the toolbar
+        const centerMaxButtons =
+          maxButtons > maxButtonsForCenter ? maxButtonsForCenter : maxButtons;
+
+        setCenterToolbarButtons(toolbarButtons.slice(0, centerMaxButtons));
+        setRightToolbarButtons(toolbarButtons.slice(centerMaxButtons, maxButtons));
+      });
     }
 
-    const toolbarStyle = getComputedStyle(toolbarRef.current);
-    const toolbarPadding =
-      parseFloat(toolbarStyle.paddingLeft) + parseFloat(toolbarStyle.paddingRight);
-    const necessaryComponentsWidth =
-      mediaControlsRef.current.clientWidth +
-      overflowAndExitRef.current.clientWidth +
-      toolbarPadding;
-    const toolbarForExtraButtons = toolbarRef.current.clientWidth - necessaryComponentsWidth;
-    const maxButtons = Math.floor(toolbarForExtraButtons / buttonWidth);
-
-    // We reserve a few buttons for the right panel
-    const maxButtonsForCenter = toolbarButtons.length - RIGHT_PANEL_BUTTON_COUNT;
-    // If there's more buttons able to be displayed, we only display the max for the center of the toolbar
-    const centerMaxButtons = maxButtons > maxButtonsForCenter ? maxButtonsForCenter : maxButtons;
-
-    setCenterToolbarButtons(toolbarButtons.slice(0, centerMaxButtons));
-    setRightToolbarButtons(toolbarButtons.slice(centerMaxButtons, maxButtons));
-  });
-
-  useEffect(() => {
     if (!(toolbarRef.current && observer.current)) {
       return;
     }
@@ -77,7 +80,9 @@ const useToolbarButtons = ({
         observer.current?.unobserve(observedToolbar);
       }
     };
-  }, [toolbarRef]);
+  }, [mediaControlsRef, overflowAndExitRef, toolbarButtons, toolbarRef]);
+  console.warn('centerTB', centerToolbarButtons);
+  console.warn('rightTB', rightToolbarButtons);
 
   return { centerToolbarButtons, rightToolbarButtons };
 };
