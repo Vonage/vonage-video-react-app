@@ -15,7 +15,7 @@ const fakeToolbarButtons = [
 ] as unknown as Array<ReactElement | false>;
 
 describe('getOverflowMenuButtons', () => {
-  it('returns the last `2` buttons when `3` are shown', () => {
+  it('returns the last `2` buttons for the overflow menu when `3` are shown in the toolbar', () => {
     const expectedResults: Array<string | null> = [null, null, null, 'Button4', 'Button5'];
 
     expect(getOverflowMenuButtons(fakeToolbarButtons, 3)).toEqual(expectedResults);
@@ -27,7 +27,7 @@ describe('getOverflowMenuButtons', () => {
     expect(getOverflowMenuButtons(fakeToolbarButtons, 5)).toEqual(expectedResults);
   });
 
-  it('returns all buttons if none are to be displayed in the toolbar', () => {
+  it('returns all buttons for the overflow menu if none are displayed in the toolbar', () => {
     const expectedResults: Array<string | null> = [
       'Button1',
       'Button2',

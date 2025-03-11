@@ -19,7 +19,7 @@ export type ToolbarButtonProps = {
  *   @property {ReactElement} icon - MUI Icon for button
  *   @property {SxProps} sx - (optional) MUI style object
  *   @property {string} id - (optional) the data-testid used in unit tests
- *   @property {boolean} isOverflowButton - (optional) indicates whether the device is a small view port.
+ *   @property {boolean} isOverflowButton - (optional) whether the button is in the ToolbarOverflowMenu
  * @returns {ReactElement}
  */
 const ToolbarButton = forwardRef(function ToolbarButton(

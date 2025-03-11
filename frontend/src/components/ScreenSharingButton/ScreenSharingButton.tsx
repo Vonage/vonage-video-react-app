@@ -68,7 +68,6 @@ const ScreenSharingButton = ({
               )
             }
             sx={{
-              // on the small view port devices we need to align the button
               marginTop: isOverflowButton ? '0px' : '4px',
               marginLeft: isOverflowButton ? '12px' : '0px',
             }}

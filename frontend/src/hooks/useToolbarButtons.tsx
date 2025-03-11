@@ -61,19 +61,20 @@ const useToolbarButtons = ({
         const necessaryComponentsWidth =
           mediaControlsRef.current.clientWidth +
           overflowAndExitRef.current.clientWidth +
-          toolbarPadding;
-        const toolbarForExtraButtons =
-          toolbarRef.current.clientWidth - necessaryComponentsWidth - rightPanelMargin;
-        const maxButtons = Math.floor(toolbarForExtraButtons / buttonWidth);
+          toolbarPadding +
+          rightPanelMargin;
+
+        const spaceForExtraButtons = toolbarRef.current.clientWidth - necessaryComponentsWidth;
+        const maxButtons = Math.floor(spaceForExtraButtons / buttonWidth);
 
         // We reserve a few buttons for the right panel
         const maxButtonsForCenter = toolbarButtons.length - RIGHT_PANEL_BUTTON_COUNT;
         // If there's more buttons able to be displayed, we only display the max for the center of the toolbar
-        const centerMaxButtons =
+        const toolbarCenterLimit =
           maxButtons > maxButtonsForCenter ? maxButtonsForCenter : maxButtons;
 
-        setCenterToolbarButtons(toolbarButtons.slice(0, centerMaxButtons));
-        setRightToolbarButtons(toolbarButtons.slice(centerMaxButtons, maxButtons));
+        setCenterToolbarButtons(toolbarButtons.slice(0, toolbarCenterLimit));
+        setRightToolbarButtons(toolbarButtons.slice(toolbarCenterLimit, maxButtons));
       });
     }
 
