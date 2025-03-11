@@ -55,6 +55,7 @@ const ToolbarOverflowMenu = ({
   const isViewingScreenShare = subscriberWrappers.some((subWrapper) => subWrapper.isScreenshare);
   const participantCount =
     subscriberWrappers.filter(({ isScreenshare }) => !isScreenshare).length + 1;
+  const isPinningPresent = subscriberWrappers.some((subWrapper) => subWrapper.isPinned);
 
   const closeMenuWrapper = (onClick?: () => void) => () => {
     if (onClick) {
@@ -75,6 +76,7 @@ const ToolbarOverflowMenu = ({
     />,
     <LayoutButton
       isScreenSharePresent={isViewingScreenShare}
+      isPinningPresent={isPinningPresent}
       isOverflowButton
       key="LayoutButton"
     />,

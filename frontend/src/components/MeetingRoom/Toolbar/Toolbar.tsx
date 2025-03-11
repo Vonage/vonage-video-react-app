@@ -61,6 +61,7 @@ const Toolbar = ({
   const { disconnect, subscriberWrappers } = useSessionContext();
   const isViewingScreenShare = subscriberWrappers.some((subWrapper) => subWrapper.isScreenshare);
   const isScreenSharePresent = isViewingScreenShare || isSharingScreen;
+  const isPinningPresent = subscriberWrappers.some((subWrapper) => subWrapper.isPinned);
   const handleLeave = useCallback(() => {
     if (!disconnect) {
       return;
@@ -78,7 +79,11 @@ const Toolbar = ({
       isViewingScreenShare={isViewingScreenShare}
       key="ScreenSharingButton"
     />,
-    <LayoutButton isScreenSharePresent={isScreenSharePresent} key="LayoutButton" />,
+    <LayoutButton
+      isScreenSharePresent={isScreenSharePresent}
+      key="LayoutButton"
+      isPinningPresent={isPinningPresent}
+    />,
     <EmojiGridButton
       isEmojiGridOpen={openEmojiGridDesktop}
       setIsEmojiGridOpen={setOpenEmojiGridDesktop}
