@@ -10,7 +10,7 @@ import LayoutButton from '../LayoutButton';
 import useSessionContext from '../../../hooks/useSessionContext';
 import ScreenSharingButton from '../../ScreenSharingButton';
 import useToolbarCount from '../../../hooks/useToolbarCount';
-import { getOverflowMenuButtons } from '../../../utils/getVisibleToolbarButtons';
+import getOverflowMenuButtons from '../../../utils/getVisibleToolbarButtons';
 import isReportIssueEnabled from '../../../utils/isReportIssueEnabled';
 
 export type ToolbarOverflowMenuProps = {
