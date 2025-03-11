@@ -119,12 +119,12 @@ const Toolbar = ({
     toolbarButtons,
   });
 
-  const numberOfButtonsToDisplay = [...centerToolbarButtons, ...rightToolbarButtons].length;
-  const isToolbarExpanded = numberOfButtonsToDisplay >= toolbarButtons.length;
-  const shouldShowOverflowButton = numberOfButtonsToDisplay < toolbarButtons.length;
+  const toolbarButtonsDisplayed = [...centerToolbarButtons, ...rightToolbarButtons].length;
+  const isToolbarExpanded = toolbarButtonsDisplayed >= toolbarButtons.length;
+  const shouldShowOverflowButton = toolbarButtonsDisplayed < toolbarButtons.length;
   // If we have no right panel buttons to show in the container, we do not need a margin
   const marginLeft =
-    numberOfButtonsToDisplay >= toolbarButtons.length - RIGHT_PANEL_BUTTON_COUNT ? '12px' : '0px';
+    toolbarButtonsDisplayed >= toolbarButtons.length - RIGHT_PANEL_BUTTON_COUNT ? '12px' : '0px';
 
   return (
     <div
@@ -145,6 +145,7 @@ const Toolbar = ({
             <ToolbarOverflowButton
               isSharingScreen={isSharingScreen}
               toggleShareScreen={toggleShareScreen}
+              toolbarButtonsDisplayed={toolbarButtonsDisplayed}
             />
           )}
           <ExitButton handleLeave={handleLeave} />

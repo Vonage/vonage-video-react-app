@@ -5,7 +5,6 @@ import { Button } from '@mui/material';
 import ToolbarOverflowMenu from './ToolbarOverflowMenu';
 import * as util from '../../../utils/util';
 import isReportIssueEnabled from '../../../utils/isReportIssueEnabled';
-import useToolbarCount from '../../../hooks/useToolbarCount';
 
 vi.mock('../../../hooks/useSessionContext', () => ({
   default: () => ({
@@ -14,12 +13,10 @@ vi.mock('../../../hooks/useSessionContext', () => ({
 }));
 vi.mock('../../../hooks/useRoomName');
 vi.mock('../../../utils/util', () => ({ isMobile: vi.fn() }));
-vi.mock('../../../hooks/useToolbarCount');
 vi.mock('../../../utils/isReportIssueEnabled');
 
 const mockOpenEmojiGrid = vi.fn();
 const mockHandleClickAway = vi.fn();
-const mockUseToolbarCount = useToolbarCount as Mock<[], number>;
 const mockIsReportIssueEnabled = isReportIssueEnabled as Mock<[], boolean>;
 
 const TestComponent = ({ defaultOpen = false }: { defaultOpen?: boolean }) => {
@@ -35,6 +32,7 @@ const TestComponent = ({ defaultOpen = false }: { defaultOpen?: boolean }) => {
         closeMenu={mockHandleClickAway}
         toggleShareScreen={vi.fn()}
         isSharingScreen={false}
+        toolbarButtonsDisplayed={0}
       />
     </>
   );
@@ -43,7 +41,6 @@ const TestComponent = ({ defaultOpen = false }: { defaultOpen?: boolean }) => {
 describe('ToolbarOverflowMenu', () => {
   beforeEach(() => {
     (util.isMobile as Mock).mockImplementation(() => false);
-    mockUseToolbarCount.mockReturnValue(0);
     mockIsReportIssueEnabled.mockReturnValue(false);
   });
 

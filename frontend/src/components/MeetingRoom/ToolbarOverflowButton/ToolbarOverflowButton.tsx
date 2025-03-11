@@ -8,6 +8,7 @@ import UnreadMessagesBadge from '../UnreadMessagesBadge';
 export type ToolbarOverflowButtonProps = {
   toggleShareScreen: () => void;
   isSharingScreen: boolean;
+  toolbarButtonsDisplayed: number;
 };
 
 /**
@@ -18,11 +19,13 @@ export type ToolbarOverflowButtonProps = {
  * @param {ToolbarOverflowButtonProps} props - the props for the component
  * @property {Function} toggleShareScreen - toggles the user's screenshare
  * @property {boolean} isSharingScreen - whether the user is sharing their screen
+ * @property {number} toolbarButtonsDisplayed - total buttons displayed on the toolbar
  * @returns {ReactElement} - The ToolbarOverflowButton Component.
  */
 const ToolbarOverflowButton = ({
   toggleShareScreen,
   isSharingScreen,
+  toolbarButtonsDisplayed,
 }: ToolbarOverflowButtonProps): ReactElement => {
   const [isToolbarOverflowMenuOpen, setIsToolbarOverflowMenuOpen] = useState<boolean>(false);
   const [openEmojiGridMobile, setOpenEmojiGridMobile] = useState<boolean>(true);
@@ -70,6 +73,7 @@ const ToolbarOverflowButton = ({
         toggleShareScreen={toggleShareScreen}
         isSharingScreen={isSharingScreen}
         closeMenu={handleClickAway}
+        toolbarButtonsDisplayed={toolbarButtonsDisplayed}
       />
     </>
   );

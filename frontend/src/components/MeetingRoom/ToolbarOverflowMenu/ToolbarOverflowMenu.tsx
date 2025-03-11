@@ -9,7 +9,6 @@ import ReportIssueButton from '../ReportIssueButton';
 import LayoutButton from '../LayoutButton';
 import useSessionContext from '../../../hooks/useSessionContext';
 import ScreenSharingButton from '../../ScreenSharingButton';
-import useToolbarCount from '../../../hooks/useToolbarCount';
 import getOverflowMenuButtons from '../../../utils/getOverflowMenuButtons';
 import isReportIssueEnabled from '../../../utils/isReportIssueEnabled';
 
@@ -20,6 +19,7 @@ export type ToolbarOverflowMenuProps = {
   closeMenu: (event?: MouseEvent | TouchEvent) => void;
   toggleShareScreen: () => void;
   isSharingScreen: boolean;
+  toolbarButtonsDisplayed: number;
 };
 
 /**
@@ -33,6 +33,7 @@ export type ToolbarOverflowMenuProps = {
  *  @property {(event?: MouseEvent | TouchEvent) => void} closeMenu - hides the menu when user clicks away from the menu
  *  @property {Function} toggleShareScreen - toggles the user's screenshare
  *  @property {boolean} isSharingScreen - whether the user is sharing their screen
+ *  @property {number} toolbarButtonsDisplayed - total buttons displayed on the toolbar
  * @returns {ReactElement} - The ToolbarOverflowMenu component.
  */
 const ToolbarOverflowMenu = ({
@@ -42,6 +43,7 @@ const ToolbarOverflowMenu = ({
   closeMenu,
   toggleShareScreen,
   isSharingScreen,
+  toolbarButtonsDisplayed,
 }: ToolbarOverflowMenuProps): ReactElement => {
   const {
     subscriberWrappers,
@@ -61,7 +63,6 @@ const ToolbarOverflowMenu = ({
     closeMenu();
   };
 
-  const toolbarCount = useToolbarCount();
   // An array of buttons available for the overflow menu. As the screen resizes, buttons may be hidden and moved to the
   // Toolbar to ensure a responsive layout without compromising usability.
   const overflowButtonArray: Array<ReactElement | false> = [
@@ -131,7 +132,7 @@ const ToolbarOverflowMenu = ({
               bottom: '80px',
             }}
           >
-            {getOverflowMenuButtons(overflowButtonArray, toolbarCount)}
+            {getOverflowMenuButtons(overflowButtonArray, toolbarButtonsDisplayed)}
           </Box>
         </Grow>
       </ClickAwayListener>
