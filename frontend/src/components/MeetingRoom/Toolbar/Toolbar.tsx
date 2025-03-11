@@ -119,12 +119,12 @@ const Toolbar = ({
     toolbarButtons,
   });
 
-  const allButtonsToDisplay = [...centerToolbarButtons, ...rightToolbarButtons];
-  const isToolbarExpanded = allButtonsToDisplay.length >= toolbarButtons.length;
-  const shouldShowOverflowButton = allButtonsToDisplay.length < toolbarButtons.length;
+  const numberOfButtonsToDisplay = [...centerToolbarButtons, ...rightToolbarButtons].length;
+  const isToolbarExpanded = numberOfButtonsToDisplay >= toolbarButtons.length;
+  const shouldShowOverflowButton = numberOfButtonsToDisplay < toolbarButtons.length;
   // If we have no right panel buttons to show in the container, we do not need a margin
   const marginLeft =
-    allButtonsToDisplay.length >= toolbarButtons.length - RIGHT_PANEL_BUTTON_COUNT ? '12px' : '0px';
+    numberOfButtonsToDisplay >= toolbarButtons.length - RIGHT_PANEL_BUTTON_COUNT ? '12px' : '0px';
 
   return (
     <div
