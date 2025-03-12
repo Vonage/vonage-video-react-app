@@ -122,8 +122,9 @@ describe('UnreadMessagesBadge', () => {
     );
 
     // the badge remains hidden since the overflow toolbar is currently opened
-    expect(screen.getByTestId('chat-button-unread-count').offsetHeight).toBe(0);
-    expect(screen.getByTestId('chat-button-unread-count').offsetWidth).toBe(0);
+    const updatedBadge = screen.getByTestId('chat-button-unread-count');
+    expect(updatedBadge.offsetHeight).toBe(0);
+    expect(updatedBadge.offsetWidth).toBe(0);
   });
 
   it('should show the unread message badge when a new message comes in and the toolbar was opened at first but is now closed', () => {
@@ -155,7 +156,8 @@ describe('UnreadMessagesBadge', () => {
       </UnreadMessagesBadge>
     );
 
-    expect(screen.getByTestId('chat-button-unread-count')).toBeVisible();
-    expect(screen.getByTestId('chat-button-unread-count').textContent).toBe('1');
+    const updatedBadge = screen.getByTestId('chat-button-unread-count');
+    expect(updatedBadge).toBeVisible();
+    expect(updatedBadge.textContent).toBe('1');
   });
 });
