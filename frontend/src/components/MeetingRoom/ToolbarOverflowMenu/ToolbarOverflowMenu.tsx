@@ -45,13 +45,8 @@ const ToolbarOverflowMenu = ({
   isSharingScreen,
   toolbarButtonsDisplayed,
 }: ToolbarOverflowMenuProps): ReactElement => {
-  const {
-    subscriberWrappers,
-    rightPanelActiveTab,
-    toggleParticipantList,
-    toggleChat,
-    toggleReportIssue,
-  } = useSessionContext();
+  const { subscriberWrappers, toggleParticipantList, toggleChat, toggleReportIssue } =
+    useSessionContext();
   const isViewingScreenShare = subscriberWrappers.some((subWrapper) => subWrapper.isScreenshare);
   const participantCount =
     subscriberWrappers.filter(({ isScreenshare }) => !isScreenshare).length + 1;
@@ -90,25 +85,18 @@ const ToolbarOverflowMenu = ({
     <ArchivingButton isOverflowButton handleClick={closeMenu} key="ArchivingButton" />,
     isReportIssueEnabled() && (
       <ReportIssueButton
-        isOpen={rightPanelActiveTab === 'issues'}
         handleClick={closeMenuWrapper(toggleReportIssue)}
         isOverflowButton
         key="ReportIssueButton"
       />
     ),
     <ParticipantListButton
-      isOpen={rightPanelActiveTab === 'participant-list'}
       handleClick={closeMenuWrapper(toggleParticipantList)}
       participantCount={participantCount}
       isOverflowButton
       key="ParticipantListButton"
     />,
-    <ChatButton
-      isOpen={rightPanelActiveTab === 'chat'}
-      handleClick={closeMenuWrapper(toggleChat)}
-      isOverflowButton
-      key="ChatButton"
-    />,
+    <ChatButton handleClick={closeMenuWrapper(toggleChat)} isOverflowButton key="ChatButton" />,
   ];
 
   return (

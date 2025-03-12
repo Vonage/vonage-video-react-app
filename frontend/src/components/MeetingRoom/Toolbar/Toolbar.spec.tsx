@@ -55,7 +55,6 @@ describe('Toolbar', () => {
   const defaultProps: ToolbarProps = {
     toggleShareScreen: vi.fn(),
     isSharingScreen: false,
-    rightPanelActiveTab: 'closed',
     toggleParticipantList: vi.fn(),
     toggleChat: vi.fn(),
     toggleReportIssue: vi.fn(),

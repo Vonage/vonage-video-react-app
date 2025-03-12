@@ -5,7 +5,7 @@ import { openMeetingRoomWithSettings, waitAndClickFirefox } from './utils';
 
 test.describe('chat', () => {
   test.skip(({ isMobile }) => isMobile, 'chat tests only supported on desktop');
-  test('should send chat messages and show unread number', async ({
+  test.only('should send chat messages and show unread number', async ({
     page: pageOne,
     context,
     browserName,

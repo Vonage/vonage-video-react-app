@@ -9,7 +9,6 @@ import LayoutButton from '../LayoutButton';
 import ParticipantListButton from '../ParticipantListButton';
 import ArchivingButton from '../ArchivingButton';
 import ChatButton from '../ChatButton';
-import { RightPanelActiveTab } from '../../../hooks/useRightPanel';
 import ReportIssueButton from '../ReportIssueButton';
 import ToolbarOverflowButton from '../ToolbarOverflowButton';
 import EmojiGridButton from '../EmojiGridButton';
@@ -19,7 +18,6 @@ import useToolbarButtons from '../../../hooks/useToolbarButtons';
 export type ToolbarProps = {
   toggleShareScreen: () => void;
   isSharingScreen: boolean;
-  rightPanelActiveTab: RightPanelActiveTab;
   toggleParticipantList: () => void;
   toggleChat: () => void;
   toggleReportIssue: () => void;
@@ -51,7 +49,6 @@ export type ToolbarProps = {
 const Toolbar = ({
   isSharingScreen,
   toggleShareScreen,
-  rightPanelActiveTab,
   toggleParticipantList,
   toggleChat,
   toggleReportIssue,
@@ -91,23 +88,14 @@ const Toolbar = ({
     />,
     <ArchivingButton key="ArchivingButton" />,
     isReportIssueEnabled() && (
-      <ReportIssueButton
-        isOpen={rightPanelActiveTab === 'issues'}
-        handleClick={toggleReportIssue}
-        key="ReportIssueButton"
-      />
+      <ReportIssueButton handleClick={toggleReportIssue} key="ReportIssueButton" />
     ),
     <ParticipantListButton
-      isOpen={rightPanelActiveTab === 'participant-list'}
       handleClick={toggleParticipantList}
       participantCount={participantCount}
       key="ParticipantListButton"
     />,
-    <ChatButton
-      isOpen={rightPanelActiveTab === 'chat'}
-      handleClick={toggleChat}
-      key="ChatButton"
-    />,
+    <ChatButton handleClick={toggleChat} key="ChatButton" />,
   ];
 
   const toolbarRef = useRef<HTMLDivElement | null>(null);

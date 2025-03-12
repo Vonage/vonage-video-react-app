@@ -4,10 +4,10 @@ import { blue } from '@mui/material/colors';
 import { Badge } from '@mui/material';
 import { ReactElement } from 'react';
 import ToolbarButton from '../ToolbarButton';
+import useSessionContext from '../../../hooks/useSessionContext';
 
 export type ParticipantListButtonProps = {
   handleClick: () => void;
-  isOpen: boolean;
   participantCount: number;
   isOverflowButton?: boolean;
 };
@@ -18,17 +18,18 @@ export type ParticipantListButtonProps = {
  * Also displays participant count badge
  * @param {ParticipantListButtonProps} props - the props for this component
  *   @property {() => void} handleClick - click handler to toggle open participant list
- *   @property {boolean} isOpen - true if list is currently open, false if not
  *   @property {number} participantCount - number of current participants in call, to be displayed in badge
  *   @property {boolean} isOverflowButton - (optional) whether the button is in the ToolbarOverflowMenu
  * @returns {ReactElement} - ParticipantListButton
  */
 const ParticipantListButton = ({
   handleClick,
-  isOpen,
   participantCount,
   isOverflowButton = false,
 }: ParticipantListButtonProps): ReactElement => {
+  const { rightPanelActiveTab } = useSessionContext();
+  const isOpen = rightPanelActiveTab === 'participant-list';
+
   return (
     <Tooltip
       title={isOpen ? 'Close participant list' : 'Open participant list'}
