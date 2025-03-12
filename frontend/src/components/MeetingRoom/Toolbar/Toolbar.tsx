@@ -73,45 +73,44 @@ const Toolbar = ({
       toggleScreenShare={toggleShareScreen}
       isSharingScreen={isSharingScreen}
       isViewingScreenShare={isViewingScreenShare}
-      key="ScreenSharingButton"
+      key="ScreenSharingButtonDesktop"
     />,
     <LayoutButton
       isScreenSharePresent={isScreenSharePresent}
-      key="LayoutButton"
+      key="LayoutButtonDesktop"
       isPinningPresent={isPinningPresent}
     />,
     <EmojiGridButton
       isEmojiGridOpen={openEmojiGridDesktop}
       setIsEmojiGridOpen={setOpenEmojiGridDesktop}
       isParentOpen
-      key="EmojiGridButton"
+      key="EmojiGridButtonDesktop"
     />,
-    <ArchivingButton key="ArchivingButton" />,
+    <ArchivingButton key="ArchivingButtonDesktop" />,
     isReportIssueEnabled() && (
-      <ReportIssueButton handleClick={toggleReportIssue} key="ReportIssueButton" />
+      <ReportIssueButton handleClick={toggleReportIssue} key="ReportIssueButtonDesktop" />
     ),
     <ParticipantListButton
       handleClick={toggleParticipantList}
       participantCount={participantCount}
-      key="ParticipantListButton"
+      key="ParticipantListButtonDesktop"
     />,
-    <ChatButton handleClick={toggleChat} key="ChatButton" />,
+    <ChatButton handleClick={toggleChat} key="ChatButtonDesktop" />,
   ];
-
   const toolbarRef = useRef<HTMLDivElement | null>(null);
   const mediaControlsRef = useRef<HTMLDivElement | null>(null);
   const rightPanelControlsRef = useRef<HTMLDivElement | null>(null);
   const overflowAndExitRef = useRef<HTMLDivElement | null>(null);
 
-  const { centerToolbarButtons, rightToolbarButtons, displayTimeRoomName } = useToolbarButtons({
+  const { displayTimeRoomName, centerButtonLimit, rightButtonLimit } = useToolbarButtons({
     toolbarRef,
     mediaControlsRef,
     overflowAndExitRef,
     rightPanelControlsRef,
-    toolbarButtons,
+    numberOfToolbarButtons: toolbarButtons.length,
   });
 
-  const toolbarButtonsDisplayed = centerToolbarButtons.length + rightToolbarButtons.length;
+  const toolbarButtonsDisplayed = rightButtonLimit;
   const shouldShowOverflowButton = toolbarButtonsDisplayed < toolbarButtons.length;
 
   return (
@@ -127,7 +126,7 @@ const Toolbar = ({
           <AudioControlButton />
           <VideoControlButton />
         </div>
-        {centerToolbarButtons}
+        {toolbarButtons.map((toolbarButton, index) => index < centerButtonLimit && toolbarButton)}
         <div ref={overflowAndExitRef} className="flex min-w-[108px] flex-row">
           {shouldShowOverflowButton && (
             <ToolbarOverflowButton
@@ -150,7 +149,10 @@ const Toolbar = ({
         }}
         ref={rightPanelControlsRef}
       >
-        {rightToolbarButtons}
+        {toolbarButtons.map(
+          (toolbarButton, index) =>
+            index >= centerButtonLimit && index < rightButtonLimit && toolbarButton
+        )}
       </div>
     </div>
   );

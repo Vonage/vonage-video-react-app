@@ -1,4 +1,4 @@
-import { MutableRefObject, ReactElement, useEffect, useRef, useState } from 'react';
+import { MutableRefObject, useEffect, useRef, useState } from 'react';
 import { throttle } from 'lodash';
 import ResizeObserverPolyfill from 'resize-observer-polyfill';
 import { RIGHT_PANEL_BUTTON_COUNT } from '../utils/constants';
@@ -8,15 +8,13 @@ export type UseToolbarButtonsProps = {
   mediaControlsRef: MutableRefObject<HTMLDivElement | null>;
   overflowAndExitRef: MutableRefObject<HTMLDivElement | null>;
   rightPanelControlsRef: MutableRefObject<HTMLDivElement | null>;
-  toolbarButtons: ToolbarButtons;
+  numberOfToolbarButtons: number;
 };
 
-export type ToolbarButtons = Array<ReactElement | false>;
-
 export type UseToolbarButtons = {
-  centerToolbarButtons: ToolbarButtons;
-  rightToolbarButtons: ToolbarButtons;
   displayTimeRoomName: boolean;
+  centerButtonLimit: number;
+  rightButtonLimit: number;
 };
 
 /**
@@ -26,20 +24,20 @@ export type UseToolbarButtons = {
  *  @property {MutableRefObject<HTMLDivElement | null>} mediaControlsRef - The ref for the audio and video controls
  *  @property {MutableRefObject<HTMLDivElement | null>} overflowAndExitRef - The ref for the overflow and exit buttons
  *  @property {MutableRefObject<HTMLDivElement | null>} rightPanelControlsRef - The ref for the right panel buttons
- *  @property {ToolbarButtons} toolbarButtons - The buttons to be rendered on the toolbar
- * @returns {UseToolbarButtons} The center and right toolbar buttons, and whether to display the TimeRoomNameMeetingRoom component
+ * @returns {UseToolbarButtons} The center and right toolbar buttons' limits, and whether to display the TimeRoomNameMeetingRoom component
  */
 const useToolbarButtons = ({
   toolbarRef,
   mediaControlsRef,
   overflowAndExitRef,
   rightPanelControlsRef,
-  toolbarButtons,
+  numberOfToolbarButtons,
 }: UseToolbarButtonsProps): UseToolbarButtons => {
   const observer = useRef<ResizeObserver | undefined>();
-  const [centerToolbarButtons, setCenterToolbarButtons] = useState<ToolbarButtons>([]);
-  const [rightToolbarButtons, setRightToolbarButtons] = useState<ToolbarButtons>([]);
   const [displayTimeRoomName, setDisplayTimeRoomName] = useState<boolean>(false);
+
+  const [centerButtonLimit, setCenterButtonLimit] = useState<number>(0);
+  const [rightButtonLimit, setRightButtonLimit] = useState<number>(0);
   const buttonWidth = 60;
 
   useEffect(() => {
@@ -75,14 +73,14 @@ const useToolbarButtons = ({
           const maxButtons = Math.floor(spaceForExtraButtons / buttonWidth);
 
           // We reserve a few buttons for the right panel
-          const maxButtonsForCenter = toolbarButtons.length - RIGHT_PANEL_BUTTON_COUNT;
+          const maxButtonsForCenter = numberOfToolbarButtons - RIGHT_PANEL_BUTTON_COUNT;
           // If there's more buttons able to be displayed, we only display the max for the center of the toolbar
           const toolbarCenterLimit =
             maxButtons > maxButtonsForCenter ? maxButtonsForCenter : maxButtons;
 
-          setCenterToolbarButtons(toolbarButtons.slice(0, toolbarCenterLimit));
-          setRightToolbarButtons(toolbarButtons.slice(toolbarCenterLimit, maxButtons));
-          setDisplayTimeRoomName(maxButtons > toolbarButtons.length + 1);
+          setDisplayTimeRoomName(maxButtons > numberOfToolbarButtons + 1);
+          setCenterButtonLimit(toolbarCenterLimit);
+          setRightButtonLimit(maxButtons);
         },
         100,
         { leading: true, trailing: false }
@@ -109,9 +107,19 @@ const useToolbarButtons = ({
         observer.current?.unobserve(observedToolbar);
       }
     };
-  }, [mediaControlsRef, overflowAndExitRef, rightPanelControlsRef, toolbarButtons, toolbarRef]);
+  }, [
+    mediaControlsRef,
+    overflowAndExitRef,
+    rightPanelControlsRef,
+    numberOfToolbarButtons,
+    toolbarRef,
+  ]);
 
-  return { centerToolbarButtons, rightToolbarButtons, displayTimeRoomName };
+  return {
+    displayTimeRoomName,
+    centerButtonLimit,
+    rightButtonLimit,
+  };
 };
 
 export default useToolbarButtons;

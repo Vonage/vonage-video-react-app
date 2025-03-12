@@ -17,9 +17,9 @@ export type ToolbarOverflowButtonProps = {
  * Displays a clickable button that opens a grid of hidden toolbar buttons for smaller viewports. There
  * is also an unread chat messages indicator that is shown when there are messages to be read.
  * @param {ToolbarOverflowButtonProps} props - the props for the component
- * @property {Function} toggleShareScreen - toggles the user's screenshare
- * @property {boolean} isSharingScreen - whether the user is sharing their screen
- * @property {number} toolbarButtonsDisplayed - total buttons displayed on the toolbar
+ *  @property {Function} toggleShareScreen - toggles the user's screenshare
+ *  @property {boolean} isSharingScreen - whether the user is sharing their screen
+ *  @property {number} toolbarButtonsDisplayed - total buttons displayed on the toolbar
  * @returns {ReactElement} - The ToolbarOverflowButton Component.
  */
 const ToolbarOverflowButton = ({
