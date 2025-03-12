@@ -4,10 +4,10 @@ import { blue } from '@mui/material/colors';
 import { ReactElement } from 'react';
 import ToolbarButton from '../ToolbarButton';
 import UnreadMessagesBadge from '../UnreadMessagesBadge';
-import useSessionContext from '../../../hooks/useSessionContext';
 
 export type ChatButtonProps = {
   handleClick: () => void;
+  isOpen: boolean;
   isOverflowButton?: boolean;
 };
 
@@ -18,13 +18,15 @@ export type ChatButtonProps = {
  * Also displays an unread message count badge.
  * @param {ChatButtonProps} props - the props for this component
  *   @property {() => void} handleClick - click handler to toggle open chat panel
+ *   @property {boolean} isOpen - true if chat is currently open, false if not
  *   @property {boolean} isOverflowButton - (optional) whether the button is in the ToolbarOverflowMenu
  * @returns {ReactElement} - ChatButton
  */
-const ChatButton = ({ handleClick, isOverflowButton = false }: ChatButtonProps): ReactElement => {
-  const { rightPanelActiveTab } = useSessionContext();
-  const isOpen = rightPanelActiveTab === 'chat';
-
+const ChatButton = ({
+  handleClick,
+  isOpen,
+  isOverflowButton = false,
+}: ChatButtonProps): ReactElement => {
   return (
     <Tooltip title={isOpen ? 'Close chat' : 'Open chat'} aria-label="toggle chat">
       <UnreadMessagesBadge>

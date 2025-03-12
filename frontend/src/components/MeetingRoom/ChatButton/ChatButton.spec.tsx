@@ -8,7 +8,6 @@ vi.mock('../../../hooks/useSessionContext');
 const mockUseSessionContext = useSessionContext as Mock<[], SessionContextType>;
 const sessionContext = {
   unreadCount: 10,
-  rightPanelActiveTab: 'closed',
 } as unknown as SessionContextType;
 
 describe('ChatButton', () => {
@@ -17,7 +16,7 @@ describe('ChatButton', () => {
   });
 
   it('should show unread message number', () => {
-    render(<ChatButton handleClick={() => {}} />);
+    render(<ChatButton handleClick={() => {}} isOpen={false} />);
     expect(screen.getByTestId('chat-button-unread-count')).toBeVisible();
     expect(screen.getByTestId('chat-button-unread-count').textContent).toBe('10');
   });
@@ -28,7 +27,7 @@ describe('ChatButton', () => {
       unreadCount: 0,
     } as unknown as SessionContextType;
     mockUseSessionContext.mockReturnValue(sessionContextAllRead);
-    render(<ChatButton handleClick={() => {}} />);
+    render(<ChatButton handleClick={() => {}} isOpen={false} />);
 
     const badge = screen.getByTestId('chat-button-unread-count');
     // Check badge is hidden:  MUI hides badge by setting dimensions to 0x0
@@ -37,30 +36,19 @@ describe('ChatButton', () => {
   });
 
   it('should have a white icon when the list is closed', () => {
-    render(<ChatButton handleClick={() => {}} />);
+    render(<ChatButton handleClick={() => {}} isOpen={false} />);
     expect(screen.getByTestId('ChatIcon')).toHaveStyle('color: rgb(255, 255, 255)');
   });
 
-  describe('when the chat is open', () => {
-    const sessionContextPanelOpen = {
-      ...sessionContext,
-      rightPanelActiveTab: 'chat',
-    } as unknown as SessionContextType;
+  it('should have a blue icon when the chat is open', () => {
+    render(<ChatButton handleClick={() => {}} isOpen />);
+    expect(screen.getByTestId('ChatIcon')).toHaveStyle('color: rgb(130, 177, 255)');
+  });
 
-    beforeEach(() => {
-      mockUseSessionContext.mockReturnValue(sessionContextPanelOpen);
-    });
-
-    it('should have a blue icon when the chat is open', () => {
-      render(<ChatButton handleClick={() => {}} />);
-      expect(screen.getByTestId('ChatIcon')).toHaveStyle('color: rgb(130, 177, 255)');
-    });
-
-    it('should invoke callback on click', () => {
-      const handleClick = vi.fn();
-      render(<ChatButton handleClick={handleClick} />);
-      screen.getByRole('button').click();
-      expect(handleClick).toHaveBeenCalled();
-    });
+  it('should invoke callback on click', () => {
+    const handleClick = vi.fn();
+    render(<ChatButton handleClick={handleClick} isOpen />);
+    screen.getByRole('button').click();
+    expect(handleClick).toHaveBeenCalled();
   });
 });

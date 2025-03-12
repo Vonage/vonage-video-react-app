@@ -98,6 +98,7 @@ const MeetingRoom = (): ReactElement => {
       <Toolbar
         isSharingScreen={isSharingScreen}
         toggleShareScreen={toggleShareScreen}
+        rightPanelActiveTab={rightPanelActiveTab}
         toggleParticipantList={toggleParticipantList}
         toggleChat={toggleChat}
         toggleReportIssue={toggleReportIssue}
