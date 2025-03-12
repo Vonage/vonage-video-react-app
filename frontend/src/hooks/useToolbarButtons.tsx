@@ -4,6 +4,7 @@ import ResizeObserverPolyfill from 'resize-observer-polyfill';
 import { RIGHT_PANEL_BUTTON_COUNT } from '../utils/constants';
 
 export type UseToolbarButtonsProps = {
+  timeRoomNameRef: MutableRefObject<HTMLDivElement | null>;
   toolbarRef: MutableRefObject<HTMLDivElement | null>;
   mediaControlsRef: MutableRefObject<HTMLDivElement | null>;
   overflowAndExitRef: MutableRefObject<HTMLDivElement | null>;
@@ -27,6 +28,7 @@ export type UseToolbarButtons = {
  * @returns {UseToolbarButtons} The center and right toolbar buttons' limits, and whether to display the TimeRoomNameMeetingRoom component
  */
 const useToolbarButtons = ({
+  timeRoomNameRef,
   toolbarRef,
   mediaControlsRef,
   overflowAndExitRef,
@@ -46,6 +48,7 @@ const useToolbarButtons = ({
         () => {
           if (
             !(
+              timeRoomNameRef.current &&
               toolbarRef.current &&
               mediaControlsRef.current &&
               overflowAndExitRef.current &&
@@ -60,11 +63,14 @@ const useToolbarButtons = ({
             parseFloat(toolbarStyle.paddingLeft) + parseFloat(toolbarStyle.paddingRight);
           const rightPanelControlsStyle = window.getComputedStyle(rightPanelControlsRef.current);
           const rightPanelMargin = parseFloat(rightPanelControlsStyle.marginLeft);
+          const timeRoomNameStyle = window.getComputedStyle(timeRoomNameRef.current);
+          const timeRoomNameMargin = parseFloat(timeRoomNameStyle.marginRight);
           const necessaryComponentsWidth =
             mediaControlsRef.current.clientWidth +
             overflowAndExitRef.current.clientWidth +
             toolbarPadding +
-            rightPanelMargin;
+            rightPanelMargin +
+            timeRoomNameMargin;
 
           const spaceForExtraButtons = Math.max(
             0,
@@ -82,7 +88,7 @@ const useToolbarButtons = ({
           setCenterButtonLimit(toolbarCenterLimit);
           setRightButtonLimit(Math.min(numberOfToolbarButtons, maxButtons));
         },
-        100,
+        300,
         { leading: true, trailing: false }
       );
 
@@ -113,6 +119,7 @@ const useToolbarButtons = ({
     rightPanelControlsRef,
     numberOfToolbarButtons,
     toolbarRef,
+    timeRoomNameRef,
   ]);
 
   return {

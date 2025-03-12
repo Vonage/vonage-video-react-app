@@ -33,6 +33,7 @@ describe('useToolbarButtons', () => {
   let mediaControlsRef: RefObject<HTMLDivElement>;
   let overflowAndExitRef: RefObject<HTMLDivElement>;
   let rightPanelControlsRef: RefObject<HTMLDivElement>;
+  let timeRoomNameRef: RefObject<HTMLDivElement>;
 
   const numberOfToolbarButtons = 5;
 
@@ -44,8 +45,9 @@ describe('useToolbarButtons', () => {
     mediaControlsRef = { current: document.createElement('div') };
     overflowAndExitRef = { current: document.createElement('div') };
     rightPanelControlsRef = { current: document.createElement('div') };
-    if (rightPanelControlsRef.current) {
-      rightPanelControlsRef.current.id = 'right-panel-controls-ref';
+    timeRoomNameRef = { current: document.createElement('div') };
+    if (timeRoomNameRef.current) {
+      timeRoomNameRef.current.id = 'time-room-name';
     }
 
     Object.defineProperty(mediaControlsRef.current, 'clientWidth', {
@@ -63,6 +65,11 @@ describe('useToolbarButtons', () => {
         return {
           paddingLeft: '30px',
           paddingRight: '30px',
+        } as CSSStyleDeclaration;
+      }
+      if (elt.id === 'time-room-name') {
+        return {
+          marginRight: '12px',
         } as CSSStyleDeclaration;
       }
       return {
@@ -93,6 +100,7 @@ describe('useToolbarButtons', () => {
         overflowAndExitRef,
         rightPanelControlsRef,
         numberOfToolbarButtons,
+        timeRoomNameRef,
       })
     );
 
@@ -116,6 +124,7 @@ describe('useToolbarButtons', () => {
         overflowAndExitRef,
         rightPanelControlsRef,
         numberOfToolbarButtons,
+        timeRoomNameRef,
       })
     );
 
@@ -140,6 +149,7 @@ describe('useToolbarButtons', () => {
         overflowAndExitRef,
         rightPanelControlsRef,
         numberOfToolbarButtons,
+        timeRoomNameRef,
       })
     );
 
@@ -164,6 +174,7 @@ describe('useToolbarButtons', () => {
         overflowAndExitRef,
         rightPanelControlsRef,
         numberOfToolbarButtons,
+        timeRoomNameRef,
       })
     );
 

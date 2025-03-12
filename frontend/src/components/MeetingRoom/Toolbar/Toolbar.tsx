@@ -110,11 +110,13 @@ const Toolbar = ({
     />,
   ];
   const toolbarRef = useRef<HTMLDivElement | null>(null);
+  const timeRoomNameRef = useRef<HTMLDivElement | null>(null);
   const mediaControlsRef = useRef<HTMLDivElement | null>(null);
   const rightPanelControlsRef = useRef<HTMLDivElement | null>(null);
   const overflowAndExitRef = useRef<HTMLDivElement | null>(null);
 
   const { displayTimeRoomName, centerButtonLimit, rightButtonLimit } = useToolbarButtons({
+    timeRoomNameRef,
     toolbarRef,
     mediaControlsRef,
     overflowAndExitRef,
@@ -124,13 +126,20 @@ const Toolbar = ({
 
   const toolbarButtonsDisplayed = rightButtonLimit;
   const shouldShowOverflowButton = toolbarButtonsDisplayed < toolbarButtons.length;
+  const displayCenterToolbarButtons = (toolbarButton: ReactElement | false, index: number) =>
+    index < centerButtonLimit && toolbarButton;
+  const displayRightPanelButtons = (toolbarButton: ReactElement | false, index: number) =>
+    index >= centerButtonLimit && index < rightButtonLimit && toolbarButton;
 
   return (
     <div
       ref={toolbarRef}
       className="absolute bottom-0 left-0 flex h-[80px] w-full items-center bg-darkGray-100 p-4 md:flex-row md:justify-between"
     >
-      <div className="mr-3 flex justify-start overflow-hidden">
+      <div
+        ref={timeRoomNameRef}
+        className={`${toolbarButtonsDisplayed <= 1 ? '' : 'mr-3'} flex justify-start overflow-hidden`}
+      >
         {displayTimeRoomName && <TimeRoomNameMeetingRoom />}
       </div>
       <div className="flex flex-1 justify-center">
@@ -138,7 +147,7 @@ const Toolbar = ({
           <AudioControlButton />
           <VideoControlButton />
         </div>
-        {toolbarButtons.map((toolbarButton, index) => index < centerButtonLimit && toolbarButton)}
+        {toolbarButtons.map(displayCenterToolbarButtons)}
         <div ref={overflowAndExitRef} className="flex min-w-[108px] flex-row">
           {shouldShowOverflowButton && (
             <ToolbarOverflowButton
@@ -152,7 +161,7 @@ const Toolbar = ({
       </div>
 
       <div
-        className="ml-3"
+        className={toolbarButtonsDisplayed <= 1 ? '' : 'ml-3'}
         style={{
           boxSizing: 'border-box',
           display: 'flex',
@@ -161,10 +170,7 @@ const Toolbar = ({
         }}
         ref={rightPanelControlsRef}
       >
-        {toolbarButtons.map(
-          (toolbarButton, index) =>
-            index >= centerButtonLimit && index < rightButtonLimit && toolbarButton
-        )}
+        {toolbarButtons.map(displayRightPanelButtons)}
       </div>
     </div>
   );
