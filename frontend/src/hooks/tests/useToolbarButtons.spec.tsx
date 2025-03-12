@@ -90,7 +90,7 @@ describe('useToolbarButtons', () => {
     Object.defineProperty(toolbarRef.current, 'clientWidth', {
       configurable: true,
       writable: true,
-      value: 400,
+      value: 412,
     });
 
     const { result } = renderHook(() =>
@@ -114,7 +114,7 @@ describe('useToolbarButtons', () => {
     Object.defineProperty(toolbarRef.current, 'clientWidth', {
       configurable: true,
       writable: true,
-      value: 454,
+      value: 466,
     });
 
     const { result } = renderHook(() =>
@@ -139,7 +139,7 @@ describe('useToolbarButtons', () => {
     Object.defineProperty(toolbarRef.current, 'clientWidth', {
       configurable: true,
       writable: true,
-      value: 574,
+      value: 586,
     });
 
     const { result } = renderHook(() =>
@@ -164,7 +164,7 @@ describe('useToolbarButtons', () => {
     Object.defineProperty(toolbarRef.current, 'clientWidth', {
       configurable: true,
       writable: true,
-      value: 814,
+      value: 826,
     });
 
     const { result } = renderHook(() =>
