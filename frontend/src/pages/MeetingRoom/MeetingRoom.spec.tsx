@@ -169,6 +169,7 @@ describe('MeetingRoom', () => {
           toolbarButtons.length - RIGHT_PANEL_BUTTON_COUNT,
           toolbarButtons.length
         ),
+        displayTimeRoomName: false,
       };
       return renderedToolbarButtons;
     });

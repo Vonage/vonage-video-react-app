@@ -41,6 +41,7 @@ describe('Toolbar', () => {
       const renderedToolbarButtons: UseToolbarButtons = {
         centerToolbarButtons: toolbarButtons.slice(0, centerToolbarButtonsLimit),
         rightToolbarButtons: toolbarButtons.slice(centerToolbarButtonsLimit, toolbarButtons.length),
+        displayTimeRoomName: true,
       };
       return renderedToolbarButtons;
     });
@@ -76,6 +77,7 @@ describe('Toolbar', () => {
     mockUseToolbarButtons.mockReturnValue({
       centerToolbarButtons: [],
       rightToolbarButtons: [],
+      displayTimeRoomName: false,
     });
 
     render(<Toolbar {...defaultProps} />);
