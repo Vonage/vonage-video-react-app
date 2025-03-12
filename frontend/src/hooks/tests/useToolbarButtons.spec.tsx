@@ -1,7 +1,7 @@
 import { afterEach, afterAll, beforeEach, describe, expect, it, vi } from 'vitest';
-import { render, screen } from '@testing-library/react';
+import { renderHook } from '@testing-library/react';
 import { RefObject } from 'react';
-import useToolbarButtons, { ToolbarButtons } from '../useToolbarButtons';
+import useToolbarButtons from '../useToolbarButtons';
 
 vi.mock('resize-observer-polyfill', () => ({
   default: vi.fn((cb: ResizeObserverCallback) => {
@@ -34,30 +34,7 @@ describe('useToolbarButtons', () => {
   let overflowAndExitRef: RefObject<HTMLDivElement>;
   let rightPanelControlsRef: RefObject<HTMLDivElement>;
 
-  const toolbarButtons: ToolbarButtons = [
-    <div key="A">Button_A</div>,
-    <div key="B">Button_B</div>,
-    <div key="C">Button_C</div>,
-    <div key="D">Button_D</div>,
-    <div key="E">Button_E</div>,
-  ] as unknown as ToolbarButtons;
-
-  const TestComponent = () => {
-    const toolbarButtonsToRender = useToolbarButtons({
-      toolbarRef,
-      mediaControlsRef,
-      overflowAndExitRef,
-      rightPanelControlsRef,
-      toolbarButtons,
-    });
-
-    return (
-      <div>
-        <div data-testid="center-buttons">{toolbarButtonsToRender.centerToolbarButtons}</div>
-        <div data-testid="right-buttons">{toolbarButtonsToRender.rightToolbarButtons}</div>
-      </div>
-    );
-  };
+  const numberOfToolbarButtons = 5;
 
   beforeEach(() => {
     toolbarRef = { current: document.createElement('div') };
@@ -109,9 +86,20 @@ describe('useToolbarButtons', () => {
       value: 400,
     });
 
-    render(<TestComponent />);
+    const { result } = renderHook(() =>
+      useToolbarButtons({
+        toolbarRef,
+        mediaControlsRef,
+        overflowAndExitRef,
+        rightPanelControlsRef,
+        numberOfToolbarButtons,
+      })
+    );
 
-    expect(screen.queryAllByText(/Button_/).length).toBe(0);
+    const { centerButtonLimit, rightButtonLimit, displayTimeRoomName } = result.current;
+    expect(centerButtonLimit).toBe(0);
+    expect(rightButtonLimit).toBe(0);
+    expect(displayTimeRoomName).toBe(false);
   });
 
   it('returns only the first button when there is space for one button in the toolbar', () => {
@@ -121,34 +109,68 @@ describe('useToolbarButtons', () => {
       value: 454,
     });
 
-    render(<TestComponent />);
+    const { result } = renderHook(() =>
+      useToolbarButtons({
+        toolbarRef,
+        mediaControlsRef,
+        overflowAndExitRef,
+        rightPanelControlsRef,
+        numberOfToolbarButtons,
+      })
+    );
 
-    expect(screen.getByText(/Button_A/)).toBeInTheDocument();
-    expect(screen.queryByText(/Button_B/)).not.toBeInTheDocument();
+    const { centerButtonLimit, rightButtonLimit, displayTimeRoomName } = result.current;
+
+    expect(centerButtonLimit).toBe(1);
+    expect(rightButtonLimit).toBe(1);
+    expect(displayTimeRoomName).toBe(false);
   });
 
-  it('returns no duplicated objects', () => {
-    Object.defineProperty(toolbarRef.current, 'clientWidth', {
-      configurable: true,
-      writable: true,
-      value: 694,
-    });
-
-    render(<TestComponent />);
-
-    expect(screen.getAllByText(/Button_/).length).toBe(toolbarButtons.length);
-  });
-
-  it('returns an empty right array if there is no space for extra buttons', () => {
+  it('returns only the first three button when there is space for three button in the toolbar', () => {
     Object.defineProperty(toolbarRef.current, 'clientWidth', {
       configurable: true,
       writable: true,
       value: 574,
     });
 
-    render(<TestComponent />);
+    const { result } = renderHook(() =>
+      useToolbarButtons({
+        toolbarRef,
+        mediaControlsRef,
+        overflowAndExitRef,
+        rightPanelControlsRef,
+        numberOfToolbarButtons,
+      })
+    );
 
-    expect(screen.getByTestId('center-buttons').childNodes.length).toBe(3);
-    expect(screen.getByTestId('right-buttons').childNodes.length).toBe(0);
+    const { centerButtonLimit, rightButtonLimit, displayTimeRoomName } = result.current;
+
+    expect(centerButtonLimit).toBe(3);
+    expect(rightButtonLimit).toBe(3);
+    expect(displayTimeRoomName).toBe(false);
+  });
+
+  it('will display the TimeRoomName component and the max amount of right panel buttons', () => {
+    Object.defineProperty(toolbarRef.current, 'clientWidth', {
+      configurable: true,
+      writable: true,
+      value: 814,
+    });
+
+    const { result } = renderHook(() =>
+      useToolbarButtons({
+        toolbarRef,
+        mediaControlsRef,
+        overflowAndExitRef,
+        rightPanelControlsRef,
+        numberOfToolbarButtons,
+      })
+    );
+
+    const { centerButtonLimit, rightButtonLimit, displayTimeRoomName } = result.current;
+
+    expect(centerButtonLimit).toBe(3);
+    expect(rightButtonLimit).toBe(5);
+    expect(displayTimeRoomName).toBe(true);
   });
 });

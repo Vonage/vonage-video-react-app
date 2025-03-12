@@ -36,15 +36,16 @@ describe('Toolbar', () => {
     });
     mockUseSpeakingDetector.mockReturnValue(false);
     mockIsReportIssueEnabled.mockReturnValue(false);
-    mockUseToolbarButtons.mockImplementation(({ toolbarButtons }: UseToolbarButtonsProps) => {
-      const centerToolbarButtonsLimit = toolbarButtons.length - RIGHT_PANEL_BUTTON_COUNT;
-      const renderedToolbarButtons: UseToolbarButtons = {
-        centerToolbarButtons: toolbarButtons.slice(0, centerToolbarButtonsLimit),
-        rightToolbarButtons: toolbarButtons.slice(centerToolbarButtonsLimit, toolbarButtons.length),
-        displayTimeRoomName: true,
-      };
-      return renderedToolbarButtons;
-    });
+    mockUseToolbarButtons.mockImplementation(
+      ({ numberOfToolbarButtons }: UseToolbarButtonsProps) => {
+        const renderedToolbarButtons: UseToolbarButtons = {
+          displayTimeRoomName: true,
+          centerButtonLimit: numberOfToolbarButtons - RIGHT_PANEL_BUTTON_COUNT,
+          rightButtonLimit: numberOfToolbarButtons,
+        };
+        return renderedToolbarButtons;
+      }
+    );
   });
 
   afterAll(() => {
@@ -75,9 +76,9 @@ describe('Toolbar', () => {
 
   it('on a small viewport, displays the ToolbarOverflowButton button', () => {
     mockUseToolbarButtons.mockReturnValue({
-      centerToolbarButtons: [],
-      rightToolbarButtons: [],
       displayTimeRoomName: false,
+      centerButtonLimit: 0,
+      rightButtonLimit: 0,
     });
 
     render(<Toolbar {...defaultProps} />);

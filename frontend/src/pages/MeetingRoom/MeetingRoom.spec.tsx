@@ -162,17 +162,16 @@ describe('MeetingRoom', () => {
       screensharingPublisher: null,
     });
     mockUseIsSmallViewport.mockImplementation(() => false);
-    mockUseToolbarButtons.mockImplementation(({ toolbarButtons }: UseToolbarButtonsProps) => {
-      const renderedToolbarButtons: UseToolbarButtons = {
-        centerToolbarButtons: toolbarButtons,
-        rightToolbarButtons: toolbarButtons.slice(
-          toolbarButtons.length - RIGHT_PANEL_BUTTON_COUNT,
-          toolbarButtons.length
-        ),
-        displayTimeRoomName: false,
-      };
-      return renderedToolbarButtons;
-    });
+    mockUseToolbarButtons.mockImplementation(
+      ({ numberOfToolbarButtons }: UseToolbarButtonsProps) => {
+        const renderedToolbarButtons: UseToolbarButtons = {
+          displayTimeRoomName: true,
+          centerButtonLimit: numberOfToolbarButtons - RIGHT_PANEL_BUTTON_COUNT,
+          rightButtonLimit: numberOfToolbarButtons,
+        };
+        return renderedToolbarButtons;
+      }
+    );
   });
 
   it('should render', () => {

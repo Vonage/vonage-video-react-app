@@ -80,7 +80,7 @@ const useToolbarButtons = ({
 
           setDisplayTimeRoomName(maxButtons > numberOfToolbarButtons + 1);
           setCenterButtonLimit(toolbarCenterLimit);
-          setRightButtonLimit(maxButtons);
+          setRightButtonLimit(Math.min(numberOfToolbarButtons, maxButtons));
         },
         100,
         { leading: true, trailing: false }
