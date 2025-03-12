@@ -13,7 +13,6 @@ import { RightPanelActiveTab } from '../../../hooks/useRightPanel';
 import ReportIssueButton from '../ReportIssueButton';
 import ToolbarOverflowButton from '../ToolbarOverflowButton';
 import EmojiGridButton from '../EmojiGridButton';
-import { RIGHT_PANEL_BUTTON_COUNT } from '../../../utils/constants';
 import isReportIssueEnabled from '../../../utils/isReportIssueEnabled';
 import useToolbarButtons from '../../../hooks/useToolbarButtons';
 
@@ -116,7 +115,7 @@ const Toolbar = ({
   const rightPanelControlsRef = useRef<HTMLDivElement | null>(null);
   const overflowAndExitRef = useRef<HTMLDivElement | null>(null);
 
-  const { centerToolbarButtons, rightToolbarButtons } = useToolbarButtons({
+  const { centerToolbarButtons, rightToolbarButtons, displayTimeRoomName } = useToolbarButtons({
     toolbarRef,
     mediaControlsRef,
     overflowAndExitRef,
@@ -124,20 +123,16 @@ const Toolbar = ({
     toolbarButtons,
   });
 
-  const toolbarButtonsDisplayed = [...centerToolbarButtons, ...rightToolbarButtons].length;
-  const isToolbarExpanded = toolbarButtonsDisplayed >= toolbarButtons.length;
+  const toolbarButtonsDisplayed = centerToolbarButtons.length + rightToolbarButtons.length;
   const shouldShowOverflowButton = toolbarButtonsDisplayed < toolbarButtons.length;
-  // If we have no right panel buttons to show in the container, we do not need a margin
-  const marginLeft =
-    toolbarButtonsDisplayed >= toolbarButtons.length - RIGHT_PANEL_BUTTON_COUNT ? '12px' : '0px';
 
   return (
     <div
       ref={toolbarRef}
       className="absolute bottom-0 left-0 flex h-[80px] w-full items-center bg-darkGray-100 p-4 md:flex-row md:justify-between"
     >
-      <div className="flex justify-start overflow-hidden">
-        {isToolbarExpanded && <TimeRoomNameMeetingRoom />}
+      <div className="mr-3 flex justify-start overflow-hidden">
+        {displayTimeRoomName && <TimeRoomNameMeetingRoom />}
       </div>
       <div className="flex flex-1 justify-center">
         <div ref={mediaControlsRef} className="flex flex-row">
@@ -145,7 +140,7 @@ const Toolbar = ({
           <VideoControlButton />
         </div>
         {centerToolbarButtons}
-        <div ref={overflowAndExitRef} className="flex flex-row">
+        <div ref={overflowAndExitRef} className="flex min-w-[108px] flex-row">
           {shouldShowOverflowButton && (
             <ToolbarOverflowButton
               isSharingScreen={isSharingScreen}
@@ -158,9 +153,9 @@ const Toolbar = ({
       </div>
 
       <div
+        className="ml-3"
         style={{
           boxSizing: 'border-box',
-          marginLeft,
           display: 'flex',
           flex: '0 1 0%',
           justifyContent: 'flex-end',

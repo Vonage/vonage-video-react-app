@@ -62,6 +62,7 @@ const ToolbarOverflowButton = ({
             }
             sx={{
               marginRight: '0px',
+              width: '48px',
             }}
           />
         </UnreadMessagesBadge>

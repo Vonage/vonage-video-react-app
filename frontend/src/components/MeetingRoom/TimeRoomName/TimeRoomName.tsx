@@ -14,7 +14,7 @@ const TimeRoomName = (): ReactElement => {
 
   return (
     <div
-      className="ml-3 mt-1 truncate pr-2 font-normal text-white"
+      className="ml-3 mt-1 truncate font-normal text-white"
       style={{
         flex: '1 0 0%',
       }}
