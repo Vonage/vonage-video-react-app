@@ -216,7 +216,7 @@ describe('getLayoutBoxes', () => {
     );
   });
 
-  it('should call getLayout with shouldMakeLargeTilesLandscape flag false for single pinned participants with no screenshare', () => {
+  it('should call getLayout with shouldMakeLargeTilesLandscape flag true for single pinned participants with no screenshare', () => {
     const getLayoutMock = vi.fn().mockReturnValue([]);
     const args = {
       ...typicalRoomArguments,
