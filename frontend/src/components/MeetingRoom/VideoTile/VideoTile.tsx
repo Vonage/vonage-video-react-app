@@ -31,7 +31,7 @@ export type VideoTileProps = {
  *  @property {boolean} isTalking - (optional) whether the video has measurable audio
  *  @property {() => void} onMouseLeave - (optional) mouseLeave event handler
  *  @property {() => void} onMouseEnter - (optional) mouseEnter event handler
- *  @property {boolean} isScreenShare - (optional) whether the video is of a screenshare
+ *  @property {boolean} isScreenShare - (optional) whether the video is a screenshare
  * @returns {ReactElement} - The VideoTile component.
  */
 const VideoTile = forwardRef(
