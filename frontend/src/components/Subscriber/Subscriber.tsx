@@ -53,8 +53,15 @@ const Subscriber = ({
     if (subscriberWrapper && subRef.current) {
       const { element } = subscriberWrapper;
       element.id = subscriberWrapper.id;
-      element.classList.add('video__element', 'w-full', 'h-full', 'absolute', 'rounded-xl');
-      element.style.objectFit = 'contain';
+      const objectFit = isScreenShare ? 'object-contain' : 'object-cover';
+      element.classList.add(
+        'video__element',
+        'w-full',
+        'h-full',
+        'absolute',
+        'rounded-xl',
+        objectFit
+      );
       subRef.current.appendChild(element);
     }
   }, [subscriberWrapper, isScreenShare]);

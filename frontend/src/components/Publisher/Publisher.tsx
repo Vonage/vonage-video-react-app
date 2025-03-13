@@ -40,9 +40,9 @@ const Publisher = ({ box }: PublisherProps): ReactElement => {
         'absolute',
         'rounded-xl',
         'origin-[50%_50%]', // since we have disabled default UI, we need to mirror the publisher
-        '-scale-x-100'
+        '-scale-x-100',
+        'object-contain'
       );
-      element.style.objectFit = 'contain';
       pubContainerRef.current.appendChild(element);
     }
   }, [element]);

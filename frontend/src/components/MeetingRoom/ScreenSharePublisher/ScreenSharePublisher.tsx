@@ -27,7 +27,7 @@ const ScreenSharePublisher = ({
   const containerRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
     if (element && containerRef.current) {
-      element.classList.add('w-full', 'h-full', 'absolute', 'rounded-xl', 'object-contain');
+      element.classList.add('w-full', 'absolute', 'rounded-xl', 'object-cover');
       containerRef.current.appendChild(element);
     }
   }, [element]);
