@@ -1,6 +1,7 @@
 import { Tooltip } from '@mui/material';
 import { ReactElement, useRef } from 'react';
 import FeedbackIcon from '@mui/icons-material/Feedback';
+import { blue } from '@mui/material/colors';
 import ToolbarButton from '../ToolbarButton';
 import useIsSmallViewport from '../../../hooks/useIsSmallViewport';
 
@@ -21,7 +22,10 @@ const ReportIssueButton = ({ handleClick, isOpen }: ReportIssueButtonProps): Rea
   const isSmallViewport = useIsSmallViewport();
   return (
     <div className="pr-3">
-      <Tooltip title="Report issue" aria-label="open report issue menu">
+      <Tooltip
+        title={isOpen ? 'Close report issue form' : 'Open report issue form'}
+        aria-label="toggle report issue form"
+      >
         <ToolbarButton
           data-testid="report-issue-button"
           sx={{
@@ -29,7 +33,7 @@ const ReportIssueButton = ({ handleClick, isOpen }: ReportIssueButtonProps): Rea
             marginRight: '0px',
           }}
           onClick={handleClick}
-          icon={<FeedbackIcon style={{ color: `${!isOpen ? 'white' : 'rgb(138, 180, 248)'}` }} />}
+          icon={<FeedbackIcon sx={{ color: isOpen ? blue.A100 : 'white' }} />}
           ref={anchorRef}
           isSmallViewPort={isSmallViewport}
         />

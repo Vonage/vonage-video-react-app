@@ -31,7 +31,7 @@ const ToolbarOverflowButton = (): ReactElement => {
         title="Access additional toolbar items"
         aria-label="open additional toolbar items menu"
       >
-        <UnreadMessagesBadge>
+        <UnreadMessagesBadge isToolbarOverflowMenuOpen={isToolbarOverflowMenuOpen}>
           <ToolbarButton
             data-testid="hidden-toolbar-items"
             onClick={handleButtonToggle}

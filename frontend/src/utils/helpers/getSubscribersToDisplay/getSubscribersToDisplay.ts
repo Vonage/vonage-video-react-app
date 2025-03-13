@@ -1,35 +1,38 @@
 import { SubscriberWrapper } from '../../../types/session';
-import { isMobile } from '../../util';
-
-/**
- * Util to get the maximum number of subscribers we should show on screen based on layout mode and device type
- * @param {boolean} isViewingLargeTile - is there a screenshare of large active speaker tile on screen
- * @returns {number} maxSubscriberOnScreenCount - maximum number of subscribers to display
- */
-const getMaxSubscriberOnScreenCount = (isViewingLargeTile: boolean): number => {
-  if (isMobile()) {
-    return isViewingLargeTile ? 2 : 3;
-  }
-  return isViewingLargeTile ? 5 : 9;
-};
+import getMaxSubscriberOnScreenCount from '../getMaxSubscriberOnScreenCount';
 
 export type SubscribersToDisplayAndHide = {
   hiddenSubscribers: SubscriberWrapper[];
   subscribersOnScreen: SubscriberWrapper[];
 };
 
+export type GetSubscribersToDisplayProps = {
+  subscriberWrappers: SubscriberWrapper[];
+  isSharingScreen: boolean;
+  pinnedSubscriberCount: number;
+  isViewingLargeTile: boolean;
+};
+
 /**
  * Util to separate subscribers into two arrays, the subscribers to display and subscribers that are hidden
- * @param {SubscriberWrapper[]} subscriberWrappers - SubscriberWrapper in display priority order
- * @param {boolean} isViewingLargeTile - is there a large tile (screenshare or active-speaker)
+ * @param {GetSubscribersToDisplayProps} props- function props
+ *  @property {SubscriberWrapper[]} subscriberWrappers - SubscriberWrapper in display priority order
+ *  @property {boolean} isViewingLargeTile - is there a large tile (screenshare or active-speaker)
+ *  @property {boolean} isPublishingScreenshare - whether we are publishing screenshare
  * @returns {SubscribersToDisplayAndHide} - Subscribers to be hidden and Subscribers to be shown
  * }}
  */
-const getSubscribersToDisplay = (
-  subscriberWrappers: SubscriberWrapper[],
-  isViewingLargeTile: boolean
-): SubscribersToDisplayAndHide => {
-  const maxSubscribersOnScreenCount = getMaxSubscriberOnScreenCount(isViewingLargeTile);
+const getSubscribersToDisplay = ({
+  subscriberWrappers,
+  isViewingLargeTile,
+  isSharingScreen,
+  pinnedSubscriberCount,
+}: GetSubscribersToDisplayProps): SubscribersToDisplayAndHide => {
+  const maxSubscribersOnScreenCount = getMaxSubscriberOnScreenCount({
+    isViewingLargeTile,
+    isSharingScreen,
+    pinnedSubscriberCount,
+  });
   const shouldHideSubscribers = subscriberWrappers.length > maxSubscribersOnScreenCount;
 
   // If hiding subscribers we slice at max - 1 to make room for hidden participant tile.

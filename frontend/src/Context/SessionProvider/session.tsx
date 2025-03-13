@@ -36,6 +36,7 @@ import {
   sortByDisplayPriority,
   togglePinAndSortByDisplayOrder,
 } from '../../utils/sessionStateOperations';
+import { MAX_PIN_COUNT_DESKTOP, MAX_PIN_COUNT_MOBILE } from '../../utils/constants';
 
 export type { ChatMessageType } from '../../types/chat';
 
@@ -134,7 +135,7 @@ export type SessionProviderProps = {
   children: ReactNode;
 };
 
-const MAX_PIN_COUNT = isMobile() ? 1 : 3;
+const MAX_PIN_COUNT = isMobile() ? MAX_PIN_COUNT_MOBILE : MAX_PIN_COUNT_DESKTOP;
 
 /**
  * SessionProvider - React Context Provider for SessionProvider
