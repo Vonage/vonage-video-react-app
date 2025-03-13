@@ -193,7 +193,11 @@ describe('getLayoutBoxes', () => {
       pinnedSubscriberCount: 2,
     };
     getLayoutBoxes(args);
-    expect(getLayoutMock).toHaveBeenCalledWith(typicalRoomArguments.wrapDimensions, undefined);
+    expect(getLayoutMock).toHaveBeenCalledWith(
+      typicalRoomArguments.wrapDimensions,
+      undefined,
+      true // shouldMakeLargeTilesLandscape
+    );
   });
 
   it('should call getLayout with shouldMakeLargeTilesLandscape flag false for multiple pinned participants with screenshare', () => {
@@ -205,7 +209,11 @@ describe('getLayoutBoxes', () => {
       pinnedSubscriberCount: 2,
     };
     getLayoutBoxes(args);
-    expect(getLayoutMock).toHaveBeenCalledWith(typicalRoomArguments.wrapDimensions, undefined);
+    expect(getLayoutMock).toHaveBeenCalledWith(
+      typicalRoomArguments.wrapDimensions,
+      undefined,
+      false // shouldMakeLargeTilesLandscape
+    );
   });
 
   it('should call getLayout with shouldMakeLargeTilesLandscape flag false for single pinned participants with no screenshare', () => {
@@ -217,6 +225,10 @@ describe('getLayoutBoxes', () => {
       pinnedSubscriberCount: 1,
     };
     getLayoutBoxes(args);
-    expect(getLayoutMock).toHaveBeenCalledWith(typicalRoomArguments.wrapDimensions, undefined);
+    expect(getLayoutMock).toHaveBeenCalledWith(
+      typicalRoomArguments.wrapDimensions,
+      undefined,
+      true // shouldMakeLargeTilesLandscape
+    );
   });
 });

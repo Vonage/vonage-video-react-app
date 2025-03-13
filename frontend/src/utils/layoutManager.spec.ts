@@ -21,7 +21,7 @@ describe('LayoutManager', () => {
   });
 
   it('should create a new layout manager with options', () => {
-    layoutManager.getLayout({ width: 100, height: 150 }, []);
+    layoutManager.getLayout({ width: 100, height: 150 }, [], false);
     expect(mockConstructor).toHaveBeenCalledWith(
       expect.objectContaining({
         containerWidth: 100,
@@ -30,11 +30,20 @@ describe('LayoutManager', () => {
     );
   });
 
-  it('should set bigMaxRatio to 9 / 16', () => {
-    layoutManager.getLayout({ width: 100, height: 150 }, []);
+  it('should set bigMaxRatio to 9 / 16 if shouldMakeLargeTilesLandscape flag is true', () => {
+    layoutManager.getLayout({ width: 100, height: 150 }, [], true);
     expect(mockConstructor).toHaveBeenCalledWith(
       expect.objectContaining({
         bigMaxRatio: 9 / 16,
+      })
+    );
+  });
+
+  it('should set bigMaxRatio to 3 / 2 if shouldMakeLargeTilesLandscape flag is false', () => {
+    layoutManager.getLayout({ width: 100, height: 150 }, [], false);
+    expect(mockConstructor).toHaveBeenCalledWith(
+      expect.objectContaining({
+        bigMaxRatio: 3 / 2,
       })
     );
   });
@@ -49,7 +58,7 @@ describe('LayoutManager', () => {
       },
     ];
     mockGetLayout.mockReturnValue({ boxes });
-    const layoutBoxes = layoutManager.getLayout({ width: 100, height: 150 }, []);
+    const layoutBoxes = layoutManager.getLayout({ width: 100, height: 150 }, [], false);
     expect(layoutBoxes).toBe(boxes);
   });
 });
