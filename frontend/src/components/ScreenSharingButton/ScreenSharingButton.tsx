@@ -54,6 +54,8 @@ const ScreenSharingButton = ({
   };
 
   return (
+    // Screensharing relies on the getDisplayMedia browser API which is unsupported on mobile devices
+    // See: https://developer.mozilla.org/en-US/docs/Web/API/MediaDevices/getDisplayMedia#browser_compatibility
     !isMobile() && (
       <>
         <Tooltip title={title} aria-label="add">

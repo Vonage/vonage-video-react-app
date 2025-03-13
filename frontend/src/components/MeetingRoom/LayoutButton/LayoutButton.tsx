@@ -16,7 +16,6 @@ export type LayoutButtonProps = {
  *
  * Displays a button to toggle the meeting room layout for the user between `grid` and `active-speaker`.
  * @param {LayoutButtonProps} props - the props for the component.
- *  @property {LayoutButtonProps} props - the props for the component
  *  @property {boolean} isScreenSharePresent - Indicates whether there is a screenshare currently in the session.
  *  @property {boolean} isPinningPresent - Indicates whether there is a participant currently pinned.
  *  @property {boolean} isOverflowButton - (optional) whether the button is in the ToolbarOverflowMenu

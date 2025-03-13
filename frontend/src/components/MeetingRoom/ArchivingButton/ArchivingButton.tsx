@@ -9,7 +9,7 @@ import useSessionContext from '../../../hooks/useSessionContext';
 
 export type ArchivingButtonProps = {
   isOverflowButton?: boolean;
-  handleClick?: (event?: MouseEvent | TouchEvent) => void;
+  handleClick?: () => void;
 };
 
 /**

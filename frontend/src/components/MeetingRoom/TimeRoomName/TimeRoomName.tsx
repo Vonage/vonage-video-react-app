@@ -13,12 +13,7 @@ const TimeRoomName = (): ReactElement => {
   const roomName = useRoomName();
 
   return (
-    <div
-      className="ml-3 mt-1 truncate font-normal text-white"
-      style={{
-        flex: '1 0 0%',
-      }}
-    >
+    <div className="ml-3 mt-1 flex-1 truncate font-normal text-white">
       {time} | {roomName}
     </div>
   );

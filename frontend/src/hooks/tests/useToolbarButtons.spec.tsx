@@ -160,7 +160,7 @@ describe('useToolbarButtons', () => {
     expect(displayTimeRoomName).toBe(false);
   });
 
-  it('will display the TimeRoomName component and the max amount of right panel buttons', () => {
+  it('displays the time and room name as well as all of the buttons', () => {
     Object.defineProperty(toolbarRef.current, 'clientWidth', {
       configurable: true,
       writable: true,

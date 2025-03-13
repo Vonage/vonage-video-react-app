@@ -109,6 +109,7 @@ const Toolbar = ({
       key="ChatButton"
     />,
   ];
+  // We track the toolbar and the accompanying containers so we know which toolbar buttons to display, and whether the TimeRoomName should be displayed
   const toolbarRef = useRef<HTMLDivElement | null>(null);
   const timeRoomNameRef = useRef<HTMLDivElement | null>(null);
   const mediaControlsRef = useRef<HTMLDivElement | null>(null);
@@ -125,9 +126,11 @@ const Toolbar = ({
   });
 
   const toolbarButtonsDisplayed = rightButtonLimit;
+  // We display the overflow button when we don't have enough space to display all the toolbar buttons
   const shouldShowOverflowButton = toolbarButtonsDisplayed < toolbarButtons.length;
   const displayCenterToolbarButtons = (toolbarButton: ReactElement | false, index: number) =>
     index < centerButtonLimit && toolbarButton;
+  // Displays the right panel buttons - any additional buttons to be displayed that aren't in the center of the toolbar.
   const displayRightPanelButtons = (toolbarButton: ReactElement | false, index: number) =>
     index >= centerButtonLimit && index < rightButtonLimit && toolbarButton;
 
@@ -161,12 +164,12 @@ const Toolbar = ({
       </div>
 
       <div
-        className={toolbarButtonsDisplayed <= 1 ? '' : 'ml-3'}
         style={{
           boxSizing: 'border-box',
           display: 'flex',
           flex: '0 1 0%',
           justifyContent: 'flex-end',
+          marginLeft: toolbarButtonsDisplayed <= 1 ? undefined : '12px',
         }}
         ref={rightPanelControlsRef}
       >
