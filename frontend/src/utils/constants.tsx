@@ -111,8 +111,7 @@ export const MAX_TILES_GRID_VIEW_MOBILE = 3;
 export const MAX_TILES_SPEAKER_VIEW_MOBILE = 2;
 
 /**
- * The number of buttons used to control the Right Panel. This value determines the number
+ * @constant {number} RIGHT_PANEL_BUTTON_COUNT - The number of buttons used to control the Right Panel. This value determines the number
  * of buttons shown on the right side of the Toolbar.
- * @returns {number} The number of buttons present for the right panel
  */
 export const RIGHT_PANEL_BUTTON_COUNT = 3 - (isReportIssueEnabled() ? 0 : 1);

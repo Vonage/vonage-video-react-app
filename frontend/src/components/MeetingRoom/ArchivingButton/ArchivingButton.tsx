@@ -20,7 +20,7 @@ export type ArchivingButtonProps = {
  * the user before starting the archive.
  * @param {ArchivingButtonProps} props - the props for the component
  *  @property {boolean} isOverflowButton - (optional) whether the button is in the ToolbarOverflowMenu
- *  @property {(event?: MouseEvent | TouchEvent) => void} handleClick - (optional) click handler that closes the overflow menu in small view port devices.
+ *  @property {(event?: MouseEvent | TouchEvent) => void} handleClick - (optional) click handler that closes the overflow menu in small viewports.
  * @returns {ReactElement} - The ArchivingButton component.
  */
 const ArchivingButton = ({

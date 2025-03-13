@@ -16,13 +16,13 @@ const fakeToolbarButtons = [
 
 describe('getOverflowMenuButtons', () => {
   it('returns the last `2` buttons for the overflow menu when `3` are shown in the toolbar', () => {
-    const expectedResults: Array<string | null> = [null, null, null, 'Button4', 'Button5'];
+    const expectedResults: Array<string | null> = ['Button4', 'Button5'];
 
     expect(getOverflowMenuButtons(fakeToolbarButtons, 3)).toEqual(expectedResults);
   });
 
   it('returns an array with no buttons when all are displayed in the toolbar', () => {
-    const expectedResults: Array<string | null> = [null, null, null, null, null];
+    const expectedResults: Array<string | null> = [];
 
     expect(getOverflowMenuButtons(fakeToolbarButtons, 5)).toEqual(expectedResults);
   });

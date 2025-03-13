@@ -39,7 +39,7 @@ describe('ToolbarOverflowButton', () => {
       <ToolbarOverflowButton
         toggleShareScreen={vi.fn()}
         isSharingScreen={false}
-        toolbarButtonsDisplayed={0}
+        toolbarButtonsCount={0}
       />
     );
     expect(screen.queryByTestId('hidden-toolbar-items')).toBeInTheDocument();
@@ -50,7 +50,7 @@ describe('ToolbarOverflowButton', () => {
       <ToolbarOverflowButton
         toggleShareScreen={vi.fn()}
         isSharingScreen={false}
-        toolbarButtonsDisplayed={0}
+        toolbarButtonsCount={0}
       />
     );
 
@@ -72,7 +72,7 @@ describe('ToolbarOverflowButton', () => {
       <ToolbarOverflowButton
         toggleShareScreen={vi.fn()}
         isSharingScreen={false}
-        toolbarButtonsDisplayed={0}
+        toolbarButtonsCount={0}
       />
     );
 

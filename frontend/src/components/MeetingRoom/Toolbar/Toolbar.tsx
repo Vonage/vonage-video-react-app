@@ -153,7 +153,7 @@ const Toolbar = ({
             <ToolbarOverflowButton
               isSharingScreen={isSharingScreen}
               toggleShareScreen={toggleShareScreen}
-              toolbarButtonsDisplayed={toolbarButtonsDisplayed}
+              toolbarButtonsCount={toolbarButtonsDisplayed}
             />
           )}
           <ExitButton handleLeave={handleLeave} />

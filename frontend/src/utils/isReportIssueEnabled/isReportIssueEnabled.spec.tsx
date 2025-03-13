@@ -6,13 +6,13 @@ describe('isReportIssueEnabled', () => {
     vi.unstubAllEnvs();
   });
 
-  it('returns true when configured to be enabled', () => {
+  it('returns true when enabled', () => {
     vi.stubEnv('VITE_ENABLE_REPORT_ISSUE', 'true');
 
     expect(isReportIssueEnabled()).toBe(true);
   });
 
-  it('returns false when configured to be disabled', () => {
+  it('returns false when disabled', () => {
     vi.stubEnv('VITE_ENABLE_REPORT_ISSUE', 'false');
 
     expect(isReportIssueEnabled()).toBe(false);

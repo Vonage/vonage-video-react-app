@@ -19,7 +19,7 @@ export type ToolbarOverflowMenuProps = {
   closeMenu: (event?: MouseEvent | TouchEvent) => void;
   toggleShareScreen: () => void;
   isSharingScreen: boolean;
-  toolbarButtonsDisplayed: number;
+  toolbarButtonsCount: number;
 };
 
 /**
@@ -33,7 +33,7 @@ export type ToolbarOverflowMenuProps = {
  *  @property {(event?: MouseEvent | TouchEvent) => void} closeMenu - hides the menu when user clicks away from the menu
  *  @property {Function} toggleShareScreen - toggles the user's screenshare
  *  @property {boolean} isSharingScreen - whether the user is sharing their screen
- *  @property {number} toolbarButtonsDisplayed - total buttons displayed on the toolbar
+ *  @property {number} toolbarButtonsCount - number of buttons displayed on the toolbar
  * @returns {ReactElement} - The ToolbarOverflowMenu component.
  */
 const ToolbarOverflowMenu = ({
@@ -43,7 +43,7 @@ const ToolbarOverflowMenu = ({
   closeMenu,
   toggleShareScreen,
   isSharingScreen,
-  toolbarButtonsDisplayed,
+  toolbarButtonsCount,
 }: ToolbarOverflowMenuProps): ReactElement => {
   const {
     subscriberWrappers,
@@ -134,7 +134,7 @@ const ToolbarOverflowMenu = ({
               bottom: '80px',
             }}
           >
-            {getOverflowMenuButtons(overflowButtonArray, toolbarButtonsDisplayed)}
+            {getOverflowMenuButtons(overflowButtonArray, toolbarButtonsCount)}
           </Box>
         </Grow>
       </ClickAwayListener>

@@ -32,7 +32,7 @@ const TestComponent = ({ defaultOpen = false }: { defaultOpen?: boolean }) => {
         closeMenu={mockHandleClickAway}
         toggleShareScreen={vi.fn()}
         isSharingScreen={false}
-        toolbarButtonsDisplayed={0}
+        toolbarButtonsCount={0}
       />
     </>
   );
