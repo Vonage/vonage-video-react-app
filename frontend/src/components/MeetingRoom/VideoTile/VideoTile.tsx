@@ -21,6 +21,17 @@ export type VideoTileProps = {
  *
  * A reusable video tile component for publishers and subscribers.
  * @param {VideoTileProps} props - The props for the component
+ *  @property {string} 'data-testid' - Used for testing
+ *  @property {Box | undefined} box - Box specifying position and size of tile
+ *  @property {ReactNode} children - The content to be rendered
+ *  @property {string} className - (optional) - the className for the tile
+ *  @property {boolean} hasVideo - whether the video has video
+ *  @property {string} id - the id of the tile
+ *  @property {boolean} isHidden - (optional) whether the video tile is hidden
+ *  @property {boolean} isTalking - (optional) whether the video has measurable audio
+ *  @property {() => void} onMouseLeave - (optional) mouseLeave event handler
+ *  @property {() => void} onMouseEnter - (optional) mouseEnter event handler
+ *  @property {boolean} isScreenShare - (optional) whether the video is of a screenshare
  * @returns {ReactElement} - The VideoTile component.
  */
 const VideoTile = forwardRef(
