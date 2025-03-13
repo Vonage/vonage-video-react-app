@@ -13,6 +13,7 @@ export type VideoTileProps = {
   isTalking?: boolean;
   onMouseLeave?: () => void;
   onMouseEnter?: () => void;
+  isScreenshare?: boolean;
 };
 
 /**
@@ -35,6 +36,7 @@ const VideoTile = forwardRef(
       isTalking,
       onMouseEnter,
       onMouseLeave,
+      isScreenshare = false,
     }: VideoTileProps,
     ref: ForwardedRef<HTMLDivElement>
   ): ReactElement => {
@@ -43,7 +45,7 @@ const VideoTile = forwardRef(
         id={id}
         data-testid={dataTestId}
         className={`${className ?? ''} absolute m-1 flex items-center justify-center ${isHidden ? 'hidden' : ''} `}
-        style={getBoxStyle(box)}
+        style={getBoxStyle(box, isScreenshare)}
         onMouseEnter={() => onMouseEnter?.()}
         onMouseLeave={() => onMouseLeave?.()}
       >
