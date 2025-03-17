@@ -16,7 +16,9 @@ instance:
       secret: VONAGE_PRIVATE_KEY
     - name: OT_API_KEY
       secret: OT_API_KEY
+    # pragma: allowlist secret
     - name: OT_API_SECRET
+      # pragma: allowlist secret
       secret: OT_API_SECRET
     - name: VITE_ENABLE_REPORT_ISSUE
       secret: VITE_ENABLE_REPORT_ISSUE
