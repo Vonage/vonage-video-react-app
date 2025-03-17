@@ -1,5 +1,4 @@
-import { ClickAwayListener, Portal } from '@mui/base';
-import { Box, Grow } from '@mui/material';
+import { ClickAwayListener, Portal, Box, Grow } from '@mui/material';
 import { Dispatch, ReactElement, SetStateAction } from 'react';
 import ArchivingButton from '../ArchivingButton';
 import EmojiGridButton from '../EmojiGridButton';

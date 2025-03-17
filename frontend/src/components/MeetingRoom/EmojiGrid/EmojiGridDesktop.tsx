@@ -1,6 +1,6 @@
-import { Grid, Grow, Paper, Popper } from '@mui/material';
+import { Grid, Grow, Paper, Popper, ClickAwayListener } from '@mui/material';
 import { ReactElement, RefObject } from 'react';
-import { ClickAwayListener, PopperChildrenProps } from '@mui/base';
+import { PopperChildrenProps } from '@mui/base';
 import SendEmojiButton from '../SendEmojiButton';
 import emojiMap from '../../../utils/emojis';
 
