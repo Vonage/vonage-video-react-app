@@ -26,8 +26,9 @@ const getLayoutBoxes = ({
   if (!wrapRef.current) {
     return {};
   }
-
-  const shouldMakeLargeTilesLandscape = !layoutProps.sessionHasScreenshare;
+  // For multiple pinned participants with no screenshare we make all large tiles landscape
+  const shouldMakeLargeTilesLandscape =
+    layoutProps.pinnedSubscriberCount > 1 && !layoutProps.sessionHasScreenshare;
 
   // Boxes are returned at the same index as the layout Element passed in
   // See: https://github.com/aullman/opentok-layout-js/?tab=readme-ov-file#usage

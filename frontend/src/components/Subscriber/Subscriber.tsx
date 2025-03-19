@@ -53,13 +53,14 @@ const Subscriber = ({
     if (subscriberWrapper && subRef.current) {
       const { element } = subscriberWrapper;
       element.id = subscriberWrapper.id;
+      const objectFit = isScreenShare ? 'object-contain' : 'object-cover';
       element.classList.add(
         'video__element',
         'w-full',
         'h-full',
         'absolute',
         'rounded-xl',
-        'object-contain'
+        objectFit
       );
       subRef.current.appendChild(element);
     }
@@ -100,7 +101,6 @@ const Subscriber = ({
       isTalking={isTalking}
       onMouseEnter={() => setIsTileHovered(true)}
       onMouseLeave={() => setIsTileHovered(false)}
-      isScreenshare={isScreenShare}
     >
       {!isScreenShare && (
         <PinButton
