@@ -39,7 +39,7 @@ const Publisher = ({ box }: PublisherProps): ReactElement => {
         'h-full',
         'absolute',
         'rounded-xl',
-        'object-cover',
+        'object-contain',
         'origin-[50%_50%]', // since we have disabled default UI, we need to mirror the publisher
         '-scale-x-100'
       );
