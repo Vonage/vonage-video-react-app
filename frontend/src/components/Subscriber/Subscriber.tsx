@@ -59,8 +59,12 @@ const Subscriber = ({
         'h-full',
         'absolute',
         'rounded-xl',
-        'object-contain'
+        'object-cover'
       );
+      setTimeout(() => {
+        element.classList.remove('object-cover');
+        element.classList.add('object-contain');
+      });
       subRef.current.appendChild(element);
     }
   }, [subscriberWrapper, isScreenShare]);
