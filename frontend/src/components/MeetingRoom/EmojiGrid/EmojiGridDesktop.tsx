@@ -18,63 +18,63 @@ export type EmojiGridDesktopProps = {
  *  @property {(event: MouseEvent | TouchEvent) => void} handleClickAway - handles clicking away from the emoji grid
  *  @property {boolean} isEmojiGridOpen - whether the component is open
  *  @property {RefObject<HTMLButtonElement | null>} anchorRef - the button ref for the grid
- * @returns {ReactElement} - The EmojiGridDesktop Component
+ * @returns {ReactElement | null} - The EmojiGridDesktop Component
  */
 
 const EmojiGridDesktop = ({
   handleClickAway,
   isEmojiGridOpen,
   anchorRef,
-}: EmojiGridDesktopProps): ReactElement => (
-  <Popper
-    open={isEmojiGridOpen}
-    anchorEl={anchorRef.current}
-    transition
-    disablePortal
-    placement="bottom"
-  >
-    {({ TransitionProps, placement }: PopperChildrenProps) => (
-      <Grow
-        {...TransitionProps}
-        style={{
-          transformOrigin: placement === 'bottom' ? 'center top' : 'center bottom',
-        }}
-      >
-        <div className="flex text-left font-normal">
-          <ClickAwayListener onClickAway={handleClickAway}>
-            <Paper
-              className="flex items-center justify-center"
-              data-testid="emoji-grid"
-              sx={{
-                backgroundColor: 'rgb(32, 33, 36)',
-                color: '#fff',
-                padding: { xs: 1 },
-                borderRadius: 2,
-                zIndex: 1,
-                transform: 'translateY(-5%)',
-                // Each button is 66px, 8px left and right padding = 280px
-                maxWidth: '280px',
-                position: 'relative',
-              }}
-            >
-              <Grid
-                container
-                spacing={0}
-                display={isEmojiGridOpen ? 'flex' : 'none'}
+}: EmojiGridDesktopProps): ReactElement | null =>
+  anchorRef.current && (
+    <Popper
+      open={isEmojiGridOpen}
+      anchorEl={anchorRef.current}
+      transition
+      disablePortal
+      placement="bottom"
+    >
+      {({ TransitionProps, placement }: PopperChildrenProps) => (
+        <Grow
+          {...TransitionProps}
+          style={{
+            transformOrigin: placement === 'bottom' ? 'center top' : 'center bottom',
+          }}
+        >
+          <div className="flex text-left font-normal">
+            <ClickAwayListener onClickAway={handleClickAway}>
+              <Paper
+                className="flex items-center justify-center"
+                data-testid="emoji-grid"
                 sx={{
-                  width: '100%',
+                  backgroundColor: 'rgb(32, 33, 36)',
+                  color: '#fff',
+                  padding: { xs: 1 },
+                  borderRadius: 2,
+                  zIndex: 1,
+                  transform: 'translateY(-5%)',
+                  // Each button is 66px, 8px left and right padding = 280px
+                  maxWidth: '280px',
+                  position: 'relative',
                 }}
               >
-                {Object.values(emojiMap).map((emoji) => (
-                  <SendEmojiButton key={emoji} emoji={emoji} />
-                ))}
-              </Grid>
-            </Paper>
-          </ClickAwayListener>
-        </div>
-      </Grow>
-    )}
-  </Popper>
-);
-
+                <Grid
+                  container
+                  spacing={0}
+                  display={isEmojiGridOpen ? 'flex' : 'none'}
+                  sx={{
+                    width: '100%',
+                  }}
+                >
+                  {Object.values(emojiMap).map((emoji) => (
+                    <SendEmojiButton key={emoji} emoji={emoji} />
+                  ))}
+                </Grid>
+              </Paper>
+            </ClickAwayListener>
+          </div>
+        </Grow>
+      )}
+    </Popper>
+  );
 export default EmojiGridDesktop;

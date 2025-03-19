@@ -6,7 +6,7 @@ import EmojiGridDesktop from './EmojiGridDesktop';
 export type EmojiGridProps = {
   isEmojiGridOpen: boolean;
   setIsEmojiGridOpen: Dispatch<SetStateAction<boolean>>;
-  anchorRef: RefObject<HTMLButtonElement | null>;
+  anchorRef: RefObject<HTMLButtonElement>;
   isParentOpen: boolean;
 };
 
