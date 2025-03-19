@@ -77,4 +77,5 @@ const EmojiGridDesktop = ({
       )}
     </Popper>
   );
+
 export default EmojiGridDesktop;
