@@ -64,7 +64,7 @@ const Subscriber = ({
       setTimeout(() => {
         element.classList.remove('object-cover');
         element.classList.add('object-contain');
-      });
+      }, 450);
       subRef.current.appendChild(element);
     }
   }, [subscriberWrapper, isScreenShare]);
