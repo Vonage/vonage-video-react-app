@@ -37,6 +37,11 @@ export const videoInputDevices: Device[] = [
     label: 'FaceTime HD Camera (2C0E:82E3)',
     kind: 'videoInput',
   },
+  {
+    deviceId: 'ghfightu24958u8bhgjfbg89452utrghfjdn',
+    label: 'External Web Camera',
+    kind: 'videoInput',
+  },
 ];
 
 export const audioOutputDevices: AudioOutputDevice[] = [

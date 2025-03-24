@@ -1,69 +1,35 @@
-import { beforeEach, describe, expect, it, vi, afterAll } from 'vitest';
+import { beforeEach, describe, expect, it, vi, Mock } from 'vitest';
 import { render, screen } from '@testing-library/react';
+import { hasMediaProcessorSupport } from '@vonage/client-sdk-video';
 import { MutableRefObject } from 'react';
-import { EventEmitter } from 'stream';
 import VideoOutputDevices from './VideoOutputDevices';
-import {
-  audioInputDevices,
-  audioOutputDevices,
-  nativeDevices,
-  videoInputDevices,
-} from '../../../utils/mockData/device';
+import { allMediaDevices } from '../../../utils/mockData/device';
+import { AllMediaDevices } from '../../../types';
+import useDevices from '../../../hooks/useDevices';
 
-vi.mock('../../../hooks/useSessionContext');
-vi.mock('../../../hooks/useUserContext');
-vi.mock('../../../hooks/useRoomName');
+vi.mock('@vonage/client-sdk-video');
+vi.mock('../../../hooks/useDevices.tsx');
+const mockUseDevices = useDevices as Mock<
+  [],
+  { allMediaDevices: AllMediaDevices; getAllMediaDevices: () => void }
+>;
+
 const mockHandleToggle = vi.fn();
 const mockHandleClose = vi.fn();
 const mockAnchorRef = {
   current: document.createElement('input'),
 } as MutableRefObject<HTMLInputElement>;
 
-const { mockHasMediaProcessorSupport, mockGetDevices, mockGetAudioOutputDevices } = vi.hoisted(
-  () => {
-    return {
-      mockGetDevices: vi.fn(),
-      mockGetAudioOutputDevices: vi.fn(),
-      mockHasMediaProcessorSupport: vi.fn().mockReturnValue(true),
-    };
-  }
-);
-vi.mock('@vonage/client-sdk-video', () => ({
-  getAudioOutputDevices: mockGetAudioOutputDevices,
-  getDevices: mockGetDevices,
-  hasMediaProcessorSupport: mockHasMediaProcessorSupport,
-}));
-
 describe('VideoOutputDevices', () => {
-  const nativeMediaDevices = global.navigator.mediaDevices;
-  let deviceChangeListener: EventEmitter;
+  const mockedHasMediaProcessorSupport = vi.fn();
   beforeEach(() => {
     vi.resetAllMocks();
-    mockGetAudioOutputDevices.mockResolvedValue(audioOutputDevices);
-    mockGetDevices.mockImplementation((cb) =>
-      cb(null, [...audioInputDevices, ...videoInputDevices])
-    );
-    deviceChangeListener = new EventEmitter();
-    Object.defineProperty(global.navigator, 'mediaDevices', {
-      writable: true,
-      value: {
-        enumerateDevices: vi.fn(
-          () =>
-            new Promise<MediaDeviceInfo[]>((res) => {
-              res(nativeDevices as MediaDeviceInfo[]);
-            })
-        ),
-        addEventListener: vi.fn((event, listener) => deviceChangeListener.on(event, listener)),
-        removeEventListener: vi.fn((event, listener) => deviceChangeListener.off(event, listener)),
-      },
+    mockUseDevices.mockReturnValue({
+      getAllMediaDevices: vi.fn(),
+      allMediaDevices,
     });
-  });
-
-  afterAll(() => {
-    Object.defineProperty(global.navigator, 'mediaDevices', {
-      writable: true,
-      value: nativeMediaDevices,
-    });
+    (hasMediaProcessorSupport as Mock).mockImplementation(mockedHasMediaProcessorSupport);
+    mockedHasMediaProcessorSupport.mockReturnValue(false);
   });
 
   it('renders if opened', () => {
@@ -88,5 +54,19 @@ describe('VideoOutputDevices', () => {
       />
     );
     expect(screen.queryByTestId('video-output-devices-dropdown')).not.toBeInTheDocument();
+  });
+
+  it('renders the dropdown separator and background blur option when media processor is supported', () => {
+    mockedHasMediaProcessorSupport.mockReturnValue(true);
+    render(
+      <VideoOutputDevices
+        handleToggle={mockHandleToggle}
+        handleClose={mockHandleClose}
+        isOpen
+        anchorRef={mockAnchorRef}
+      />
+    );
+    expect(screen.queryByTestId('dropdown-separator')).toBeInTheDocument();
+    expect(screen.queryByText('Blur your background')).toBeInTheDocument();
   });
 });

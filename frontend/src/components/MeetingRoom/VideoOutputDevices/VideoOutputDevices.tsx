@@ -80,7 +80,6 @@ const VideoOutputDevices = ({
                   handleToggle={handleToggle}
                   customLightBlueColor={customLightBlueColor}
                 />
-
                 {hasMediaProcessorSupport() && (
                   <>
                     <DropdownSeparator />
