@@ -41,6 +41,7 @@ const VideoOutputDevices = ({
 
   return (
     <Popper
+      data-testid="video-output-devices-dropdown"
       open={isOpen}
       anchorEl={anchorRef.current}
       transition
