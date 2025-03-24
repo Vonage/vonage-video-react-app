@@ -133,7 +133,6 @@ const Toolbar = ({
   // Displays the right panel buttons - any additional buttons to be displayed that aren't in the center of the toolbar.
   const displayRightPanelButtons = (toolbarButton: ReactElement | false, index: number) =>
     index >= centerButtonLimit && index < rightButtonLimit && toolbarButton;
-  const widthClass = !shouldShowOverflowButton ? '@apply min-w-[calc(100%_+_60px)]' : '';
 
   return (
     <div
@@ -142,13 +141,11 @@ const Toolbar = ({
     >
       <div
         ref={timeRoomNameRef}
-        className={`${toolbarButtonsDisplayed <= 1 ? '' : 'mr-3'} flex justify-start overflow-hidden`}
+        className={`${toolbarButtonsDisplayed <= 1 ? '' : 'pr-2'} flex justify-start overflow-hidden`}
       >
         {displayTimeRoomName && <TimeRoomNameMeetingRoom />}
       </div>
-      <div
-        className={`absolute left-2/4 flex flex-1 -translate-x-2/4 justify-center ${widthClass}`}
-      >
+      <div className="flex flex-1 justify-center">
         <div ref={mediaControlsRef} className="flex flex-row">
           <AudioControlButton />
           <VideoControlButton />
