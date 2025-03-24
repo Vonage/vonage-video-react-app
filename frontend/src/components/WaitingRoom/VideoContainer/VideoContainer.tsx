@@ -3,7 +3,7 @@ import { Stack } from '@mui/material';
 import MicButton from '../MicButton';
 import CameraButton from '../CameraButton';
 import BlurButton from '../BlurButton';
-import VideoLoading from '../VideoLoading';
+import VideoLoading from '../../VideoLoading';
 import waitUntilPlaying from '../../../utils/waitUntilPlaying';
 import useUserContext from '../../../hooks/useUserContext';
 import usePreviewPublisherContext from '../../../hooks/usePreviewPublisherContext';

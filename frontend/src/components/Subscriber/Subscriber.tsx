@@ -10,7 +10,7 @@ import VideoTile from '../MeetingRoom/VideoTile';
 import PinButton from '../MeetingRoom/PinButton';
 import useSessionContext from '../../hooks/useSessionContext';
 import isMouseEventInsideBox from '../../utils/isMouseEventInsideBox';
-import SubscriberLoading from './SubscriberLoading';
+import VideoLoading from '../VideoLoading';
 
 export type SubscriberProps = {
   subscriberWrapper: SubscriberWrapper;
@@ -109,7 +109,7 @@ const Subscriber = ({
       onMouseLeave={() => setIsTileHovered(false)}
       isScreenshare={isScreenShare}
     >
-      {!isSubscriberLoaded && <SubscriberLoading />}
+      {!isSubscriberLoaded && <VideoLoading isSubscriber />}
       {!isScreenShare && (
         <PinButton
           isPinned={isPinned}
