@@ -137,7 +137,7 @@ const Toolbar = ({
   return (
     <div
       ref={toolbarRef}
-      className="absolute bottom-0 left-0 flex h-[80px] w-full items-center bg-darkGray-100 p-4 md:flex-row md:justify-between"
+      className="absolute bottom-0 left-0 flex h-[80px] w-full flex-col items-center bg-darkGray-100 p-4 md:flex-row md:justify-between"
     >
       <div
         ref={timeRoomNameRef}
