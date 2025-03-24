@@ -133,6 +133,7 @@ const Toolbar = ({
   // Displays the right panel buttons - any additional buttons to be displayed that aren't in the center of the toolbar.
   const displayRightPanelButtons = (toolbarButton: ReactElement | false, index: number) =>
     index >= centerButtonLimit && index < rightButtonLimit && toolbarButton;
+  const widthClass = !shouldShowOverflowButton ? '@apply w-[calc(100%_+_60px)]' : '';
 
   return (
     <div
@@ -145,13 +146,13 @@ const Toolbar = ({
       >
         {displayTimeRoomName && <TimeRoomNameMeetingRoom />}
       </div>
-      <div className="flex flex-1 justify-center">
+      <div className={`flex flex-1 justify-center ${widthClass}`}>
         <div ref={mediaControlsRef} className="flex flex-row">
           <AudioControlButton />
           <VideoControlButton />
         </div>
         {toolbarButtons.map(displayCenterToolbarButtons)}
-        <div ref={overflowAndExitRef} className="flex min-w-[108px] flex-row">
+        <div ref={overflowAndExitRef} className="flex flex-row">
           {shouldShowOverflowButton && (
             <ToolbarOverflowButton
               isSharingScreen={isSharingScreen}
