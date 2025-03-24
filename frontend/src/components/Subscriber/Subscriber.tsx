@@ -11,6 +11,7 @@ import PinButton from '../MeetingRoom/PinButton';
 import useSessionContext from '../../hooks/useSessionContext';
 import isMouseEventInsideBox from '../../utils/isMouseEventInsideBox';
 import VideoLoading from '../VideoLoading';
+import waitUntilPlaying from '../../utils/waitUntilPlaying';
 
 export type SubscriberProps = {
   subscriberWrapper: SubscriberWrapper;
@@ -63,11 +64,14 @@ const Subscriber = ({
         'rounded-xl',
         'hidden'
       );
-      setTimeout(() => {
-        element.classList.remove('hidden');
-        element.classList.add('object-contain');
-        setIsSubscriberLoaded(true);
-      }, 500);
+      // We display a loading indicator until the first video frames play
+      waitUntilPlaying(element).then(() => {
+        setTimeout(() => {
+          element.classList.remove('hidden');
+          element.classList.add('object-contain');
+          setIsSubscriberLoaded(true);
+        }, 200);
+      });
       subRef.current.appendChild(element);
     }
   }, [subscriberWrapper, isScreenShare]);
