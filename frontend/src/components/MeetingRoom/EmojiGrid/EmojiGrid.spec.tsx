@@ -54,7 +54,7 @@ describe('EmojiGrid', () => {
     it('displays emoji grid when open', () => {
       render(<TestComponent defaultOpenEmojiGrid />);
 
-      expect(screen.queryByTestId('send-emoji-button')).toBeVisible();
+      expect(screen.getByTestId('send-emoji-button')).toBeVisible();
     });
 
     it('displays nothing when closed', () => {
