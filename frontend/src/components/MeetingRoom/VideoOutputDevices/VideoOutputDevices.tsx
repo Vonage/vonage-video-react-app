@@ -8,7 +8,6 @@ import Popper from '@mui/material/Popper';
 import { PopperChildrenProps } from '@mui/base';
 import VideoDevices from './VideoDevices';
 import VideoDevicesOptions from './VideoDevicesOptions';
-import displayOnDesktop from '../../../utils/displayOnDesktop';
 import DropdownSeparator from '../DropdownSeparator';
 
 export type VideoOutputDevicesProps = {
@@ -42,6 +41,7 @@ const VideoOutputDevices = ({
 
   return (
     <Popper
+      data-testid="video-output-devices-dropdown"
       open={isOpen}
       anchorEl={anchorRef.current}
       transition
@@ -80,8 +80,7 @@ const VideoOutputDevices = ({
                   handleToggle={handleToggle}
                   customLightBlueColor={customLightBlueColor}
                 />
-
-                {hasMediaProcessorSupport() && displayOnDesktop() && (
+                {hasMediaProcessorSupport() && (
                   <>
                     <DropdownSeparator />
                     <VideoDevicesOptions customLightBlueColor={customLightBlueColor} />
