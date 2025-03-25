@@ -3,13 +3,12 @@ import Grow from '@mui/material/Grow';
 import Paper from '@mui/material/Paper';
 import Popper from '@mui/material/Popper';
 import { useTheme } from '@mui/material/styles';
-import { ReactElement, RefObject, useEffect, Dispatch, SetStateAction } from 'react';
-import ResizeObserver from 'resize-observer-polyfill';
+import { ReactElement, RefObject, Dispatch, SetStateAction } from 'react';
 import { PopperChildrenProps } from '@mui/base';
-import { HIDE_DROPDOWN_HEIGHT } from '../../../utils/constants';
 import InputDevices from './InputDevices';
 import OutputDevices from './OutputDevices';
 import ReduceNoiseTestSpeakers from './ReduceNoiseTestSpeakers';
+import useDropdownResizeObserver from '../../../hooks/useDropdownResizeObserver';
 
 export type AudioInputOutputDevicesProps = {
   handleToggle: () => void;
@@ -42,17 +41,7 @@ const AudioInputOutputDevices = ({
   const theme = useTheme();
   const customLightBlueColor = 'rgb(138, 180, 248)';
 
-  useEffect(() => {
-    const observer = new ResizeObserver(() => {
-      if (window.innerHeight < HIDE_DROPDOWN_HEIGHT) {
-        setIsOpen(false);
-      }
-    });
-
-    observer.observe(document.documentElement);
-
-    return () => observer.disconnect();
-  }, [setIsOpen]);
+  useDropdownResizeObserver(setIsOpen);
 
   return (
     <Popper

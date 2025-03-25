@@ -119,4 +119,4 @@ export const RIGHT_PANEL_BUTTON_COUNT = 3 - (isReportIssueEnabled() ? 0 : 1);
 /**
  * @constant {number} HIDE_DROPDOWN_HEIGHT - The minimum height required to display the Audio and Video control popups.
  */
-export const HIDE_DROPDOWN_HEIGHT = 600;
+export const HIDE_DROPDOWN_HEIGHT = 650;

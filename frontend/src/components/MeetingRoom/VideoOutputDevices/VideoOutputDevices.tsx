@@ -1,4 +1,4 @@
-import { ReactElement, RefObject } from 'react';
+import { ReactElement, RefObject, Dispatch, SetStateAction } from 'react';
 import { ClickAwayListener } from '@mui/material';
 import { hasMediaProcessorSupport } from '@vonage/client-sdk-video';
 import Grow from '@mui/material/Grow';
@@ -9,12 +9,14 @@ import { PopperChildrenProps } from '@mui/base';
 import VideoDevices from './VideoDevices';
 import VideoDevicesOptions from './VideoDevicesOptions';
 import DropdownSeparator from '../DropdownSeparator';
+import useDropdownResizeObserver from '../../../hooks/useDropdownResizeObserver';
 
 export type VideoOutputDevicesProps = {
   handleToggle: () => void;
   isOpen: boolean;
   anchorRef: RefObject<HTMLInputElement>;
   handleClose: (event: MouseEvent | TouchEvent) => void;
+  setIsOpen: Dispatch<SetStateAction<boolean>>;
 };
 
 /**
@@ -35,9 +37,12 @@ const VideoOutputDevices = ({
   isOpen,
   anchorRef,
   handleClose,
+  setIsOpen,
 }: VideoOutputDevicesProps): ReactElement => {
   const theme = useTheme();
   const customLightBlueColor = 'rgb(138, 180, 248)';
+
+  useDropdownResizeObserver(setIsOpen);
 
   return (
     <Popper

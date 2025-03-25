@@ -16,6 +16,7 @@ const mockUseDevices = useDevices as Mock<
 
 const mockHandleToggle = vi.fn();
 const mockHandleClose = vi.fn();
+const mockSetIsOpen = vi.fn();
 const mockAnchorRef = {
   current: document.createElement('input'),
 } as MutableRefObject<HTMLInputElement>;
@@ -39,6 +40,7 @@ describe('VideoOutputDevices', () => {
         handleClose={mockHandleClose}
         isOpen
         anchorRef={mockAnchorRef}
+        setIsOpen={mockSetIsOpen}
       />
     );
     expect(screen.queryByTestId('video-output-devices-dropdown')).toBeInTheDocument();
@@ -51,6 +53,7 @@ describe('VideoOutputDevices', () => {
         handleClose={mockHandleClose}
         isOpen={false}
         anchorRef={mockAnchorRef}
+        setIsOpen={mockSetIsOpen}
       />
     );
     expect(screen.queryByTestId('video-output-devices-dropdown')).not.toBeInTheDocument();
@@ -64,6 +67,7 @@ describe('VideoOutputDevices', () => {
         handleClose={mockHandleClose}
         isOpen
         anchorRef={mockAnchorRef}
+        setIsOpen={mockSetIsOpen}
       />
     );
     expect(screen.queryByTestId('dropdown-separator')).toBeVisible();
@@ -77,6 +81,7 @@ describe('VideoOutputDevices', () => {
         handleClose={mockHandleClose}
         isOpen
         anchorRef={mockAnchorRef}
+        setIsOpen={mockSetIsOpen}
       />
     );
     expect(screen.queryByTestId('dropdown-separator')).not.toBeInTheDocument();
