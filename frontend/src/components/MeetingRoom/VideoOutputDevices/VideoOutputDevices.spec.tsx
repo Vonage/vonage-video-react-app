@@ -66,7 +66,20 @@ describe('VideoOutputDevices', () => {
         anchorRef={mockAnchorRef}
       />
     );
-    expect(screen.queryByTestId('dropdown-separator')).toBeInTheDocument();
-    expect(screen.queryByText('Blur your background')).toBeInTheDocument();
+    expect(screen.queryByTestId('dropdown-separator')).toBeVisible();
+    expect(screen.queryByText('Blur your background')).toBeVisible();
+  });
+
+  it('does not render the dropdown separator and background blur option when media processor is not supported', () => {
+    render(
+      <VideoOutputDevices
+        handleToggle={mockHandleToggle}
+        handleClose={mockHandleClose}
+        isOpen
+        anchorRef={mockAnchorRef}
+      />
+    );
+    expect(screen.queryByTestId('dropdown-separator')).not.toBeInTheDocument();
+    expect(screen.queryByText('Blur your background')).not.toBeInTheDocument();
   });
 });
