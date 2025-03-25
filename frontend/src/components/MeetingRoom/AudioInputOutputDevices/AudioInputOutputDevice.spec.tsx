@@ -49,6 +49,7 @@ const vonageDefaultEmptyOutputDevice = { deviceId: null, label: null };
 describe('AudioInputOutputDevice Component', () => {
   const nativeMediaDevices = global.navigator.mediaDevices;
   const mockHandleToggle = vi.fn();
+  const mockSetIsOpen = vi.fn();
   const mockAnchorRef = {
     current: document.createElement('input'),
   } as MutableRefObject<HTMLInputElement>;
@@ -95,6 +96,7 @@ describe('AudioInputOutputDevice Component', () => {
           isOpen
           anchorRef={mockAnchorRef}
           handleClose={mockHandleClose}
+          setIsOpen={mockSetIsOpen}
         />
       </AudioOutputProvider>
     );
@@ -122,6 +124,7 @@ describe('AudioInputOutputDevice Component', () => {
           isOpen
           anchorRef={mockAnchorRef}
           handleClose={mockHandleClose}
+          setIsOpen={mockSetIsOpen}
         />
       </AudioOutputProvider>
     );
@@ -148,6 +151,7 @@ describe('AudioInputOutputDevice Component', () => {
             isOpen
             anchorRef={mockAnchorRef}
             handleClose={mockHandleClose}
+            setIsOpen={mockSetIsOpen}
           />
         </AudioOutputProvider>
       )
@@ -169,6 +173,7 @@ describe('AudioInputOutputDevice Component', () => {
             isOpen
             anchorRef={mockAnchorRef}
             handleClose={mockHandleClose}
+            setIsOpen={mockSetIsOpen}
           />
         </AudioOutputProvider>
       )
@@ -188,6 +193,7 @@ describe('AudioInputOutputDevice Component', () => {
           isOpen
           anchorRef={mockAnchorRef}
           handleClose={mockHandleClose}
+          setIsOpen={mockSetIsOpen}
         />
       </AudioOutputProvider>
     );

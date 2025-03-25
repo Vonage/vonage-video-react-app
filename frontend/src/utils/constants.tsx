@@ -115,3 +115,8 @@ export const MAX_TILES_SPEAKER_VIEW_MOBILE = 2;
  * of buttons shown on the right side of the Toolbar.
  */
 export const RIGHT_PANEL_BUTTON_COUNT = 3 - (isReportIssueEnabled() ? 0 : 1);
+
+/**
+ * @constant {number} HIDE_DROPDOWN_HEIGHT - The minimum height required to display the Audio and Video control popups.
+ */
+export const HIDE_DROPDOWN_HEIGHT = 600;

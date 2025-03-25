@@ -79,6 +79,7 @@ const AudioControlButton = (): ReactElement => {
         anchorRef={anchorRef}
         isOpen={open}
         handleClose={handleClose}
+        setIsOpen={setOpen}
       />
     </>
   );

@@ -3,8 +3,10 @@ import Grow from '@mui/material/Grow';
 import Paper from '@mui/material/Paper';
 import Popper from '@mui/material/Popper';
 import { useTheme } from '@mui/material/styles';
-import { ReactElement, RefObject } from 'react';
+import { ReactElement, RefObject, useEffect, Dispatch, SetStateAction } from 'react';
+import ResizeObserver from 'resize-observer-polyfill';
 import { PopperChildrenProps } from '@mui/base';
+import { HIDE_DROPDOWN_HEIGHT } from '../../../utils/constants';
 import InputDevices from './InputDevices';
 import OutputDevices from './OutputDevices';
 import ReduceNoiseTestSpeakers from './ReduceNoiseTestSpeakers';
@@ -14,6 +16,7 @@ export type AudioInputOutputDevicesProps = {
   isOpen: boolean;
   anchorRef: RefObject<HTMLInputElement>;
   handleClose: (event: MouseEvent | TouchEvent) => void;
+  setIsOpen: Dispatch<SetStateAction<boolean>>;
 };
 
 /**
@@ -26,6 +29,7 @@ export type AudioInputOutputDevicesProps = {
  *  @property {boolean} isOpen - Whether the menu is open or closed.
  *  @property {RefObject<HTMLInputElement>} anchorRef - The reference element for the AudioInputOutputDevices component
  *  @property {Function} handleClose - Function to close the menu.
+ *  @property {Dispatch<SetStateAction<boolean>>} setIsOpen - Sets the state of the isOpen variable.
  * @returns {ReactElement} - The AudioInputOutputDevices component.
  */
 const AudioInputOutputDevices = ({
@@ -33,9 +37,22 @@ const AudioInputOutputDevices = ({
   isOpen,
   anchorRef,
   handleClose,
-}: AudioInputOutputDevicesProps): ReactElement => {
+  setIsOpen,
+}: AudioInputOutputDevicesProps): ReactElement | false => {
   const theme = useTheme();
   const customLightBlueColor = 'rgb(138, 180, 248)';
+
+  useEffect(() => {
+    const observer = new ResizeObserver(() => {
+      if (window.innerHeight < HIDE_DROPDOWN_HEIGHT) {
+        setIsOpen(false);
+      }
+    });
+
+    observer.observe(document.documentElement);
+
+    return () => observer.disconnect();
+  }, [setIsOpen]);
 
   return (
     <Popper
