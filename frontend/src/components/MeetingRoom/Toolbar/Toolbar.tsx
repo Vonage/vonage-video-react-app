@@ -137,11 +137,11 @@ const Toolbar = ({
   return (
     <div
       ref={toolbarRef}
-      className="absolute bottom-0 left-0 flex h-[80px] w-full flex-col items-center bg-darkGray-100 p-4 md:flex-row md:justify-between"
+      className="absolute bottom-0 left-0 flex h-[80px] w-full flex-row items-center justify-between bg-darkGray-100 p-4"
     >
       <div
         ref={timeRoomNameRef}
-        className={`${toolbarButtonsDisplayed <= 1 ? '' : 'pr-2'} flex justify-start overflow-hidden`}
+        className={`${toolbarButtonsDisplayed <= 1 ? '' : 'pr-2'} ${!displayTimeRoomName && 'hidden'} flex flex-1 justify-start overflow-hidden`}
       >
         {displayTimeRoomName && <TimeRoomNameMeetingRoom />}
       </div>
@@ -164,12 +164,9 @@ const Toolbar = ({
       </div>
 
       <div
+        className={`box-border flex	justify-end${displayTimeRoomName && ' flex-1'}`}
         style={{
-          boxSizing: 'border-box',
-          display: 'flex',
-          flex: '0 1 0%',
-          justifyContent: 'flex-end',
-          marginLeft: toolbarButtonsDisplayed <= 1 ? undefined : '12px',
+          marginLeft: displayRightPanelButtons.length >= 1 ? undefined : '12px',
         }}
         ref={rightPanelControlsRef}
       >
