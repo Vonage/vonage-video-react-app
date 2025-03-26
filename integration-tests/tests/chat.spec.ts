@@ -3,17 +3,15 @@ import * as crypto from 'crypto';
 import { test } from '../fixtures/testWithLogging';
 import { openMeetingRoomWithSettings, waitAndClickFirefox } from './utils';
 
-async function chatToggleButton(pageOne, isMobile) {
-  const chatButton = await pageOne.getByTestId('chat-button', { exact: true });
+async function chatToggleButton(page, isMobile) {
+  const chatButton = await page.getByTestId('chat-button', { exact: true });
   if (isMobile) {
     console.log(isMobile);
-    await pageOne.getByTestId('MoreVertIcon').click();
-    await pageOne.mouse.move(0, 0);
-    await chatButton.click({ force: true });
-  }
-
-  if (!isMobile) {
-    await pageOne.getByTestId('chat-button-unread-count');
+    await page.getByTestId('MoreVertIcon').click();
+    await page.mouse.move(0, 0); // Moves cursor to top-left corner to hide tooltip
+    await chatButton.click();
+  } else {
+    await page.getByTestId('chat-button-unread-count');
     // Check that chat open shows blue button
     await chatButton.toHaveCSS('color', 'rgb(130, 177, 255)');
   }
