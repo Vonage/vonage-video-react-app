@@ -2,7 +2,7 @@ import { beforeEach, describe, expect, it, vi, Mock } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import { hasMediaProcessorSupport } from '@vonage/client-sdk-video';
 import { MutableRefObject } from 'react';
-import VideoOutputDevices from './VideoOutputDevices';
+import VideoSettingsMenu from './VideoSettingsMenu';
 import { allMediaDevices } from '../../../utils/mockData/device';
 import { AllMediaDevices } from '../../../types';
 import useDevices from '../../../hooks/useDevices';
@@ -21,7 +21,7 @@ const mockAnchorRef = {
   current: document.createElement('input'),
 } as MutableRefObject<HTMLInputElement>;
 
-describe('VideoOutputDevices', () => {
+describe('VideoSettingsMenu', () => {
   const mockedHasMediaProcessorSupport = vi.fn();
   beforeEach(() => {
     vi.resetAllMocks();
@@ -35,7 +35,7 @@ describe('VideoOutputDevices', () => {
 
   it('renders if opened', () => {
     render(
-      <VideoOutputDevices
+      <VideoSettingsMenu
         handleToggle={mockHandleToggle}
         handleClose={mockHandleClose}
         isOpen
@@ -43,12 +43,12 @@ describe('VideoOutputDevices', () => {
         setIsOpen={mockSetIsOpen}
       />
     );
-    expect(screen.queryByTestId('video-output-devices-dropdown')).toBeInTheDocument();
+    expect(screen.queryByTestId('video-settings-devices-dropdown')).toBeInTheDocument();
   });
 
   it('does not render if closed', () => {
     render(
-      <VideoOutputDevices
+      <VideoSettingsMenu
         handleToggle={mockHandleToggle}
         handleClose={mockHandleClose}
         isOpen={false}
@@ -56,13 +56,13 @@ describe('VideoOutputDevices', () => {
         setIsOpen={mockSetIsOpen}
       />
     );
-    expect(screen.queryByTestId('video-output-devices-dropdown')).not.toBeInTheDocument();
+    expect(screen.queryByTestId('video-settings-devices-dropdown')).not.toBeInTheDocument();
   });
 
   it('renders the dropdown separator and background blur option when media processor is supported', () => {
     mockedHasMediaProcessorSupport.mockReturnValue(true);
     render(
-      <VideoOutputDevices
+      <VideoSettingsMenu
         handleToggle={mockHandleToggle}
         handleClose={mockHandleClose}
         isOpen
@@ -76,7 +76,7 @@ describe('VideoOutputDevices', () => {
 
   it('does not render the dropdown separator and background blur option when media processor is not supported', () => {
     render(
-      <VideoOutputDevices
+      <VideoSettingsMenu
         handleToggle={mockHandleToggle}
         handleClose={mockHandleClose}
         isOpen

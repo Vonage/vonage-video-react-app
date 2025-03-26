@@ -6,7 +6,7 @@ import ButtonGroup from '@mui/material/ButtonGroup';
 import { ArrowDropUp, ArrowDropDown } from '@mui/icons-material';
 import { useState, useRef, ReactElement } from 'react';
 import usePublisherContext from '../../../hooks/usePublisherContext';
-import VideoOutputDevices from '../VideoOutputDevices';
+import VideoSettingsMenu from '../VideoSettingsMenu';
 
 /**
  * VideoControlButton Component
@@ -76,7 +76,7 @@ const VideoControlButton = (): ReactElement => {
         </Tooltip>
       </ButtonGroup>
 
-      <VideoOutputDevices
+      <VideoSettingsMenu
         handleToggle={handleToggle}
         anchorRef={anchorRef}
         isOpen={open}

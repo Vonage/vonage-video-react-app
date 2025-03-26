@@ -11,7 +11,7 @@ import VideoDevicesOptions from './VideoDevicesOptions';
 import DropdownSeparator from '../DropdownSeparator';
 import useDropdownResizeObserver from '../../../hooks/useDropdownResizeObserver';
 
-export type VideoOutputDevicesProps = {
+export type VideoSettingsMenuProps = {
   handleToggle: () => void;
   isOpen: boolean;
   anchorRef: RefObject<HTMLInputElement>;
@@ -20,25 +20,25 @@ export type VideoOutputDevicesProps = {
 };
 
 /**
- * VideoOutputDevices Component
+ * VideoSettingsMenu Component
  *
  * This component renders a pop up that includes options to:
  * - select video output device
  * - on supported devices, an option to blur the video background
- * @param {VideoOutputDevicesProps} props - the props for this component.
+ * @param {VideoSettingsMenuProps} props - the props for this component.
  *  @property {() => void} handleToggle - the function that handles the toggle of video output device.
  *  @property {boolean} isOpen - the prop that shows whether the pop up needs to be opened.
  *  @property {RefObject<HTMLInputElement>} anchorRef - the anchor element to attach the pop up to.
  *  @property {Function} handleClose - the function that handles the closing of the pop up.
  * @returns {ReactElement} - the video output devices pop up component.
  */
-const VideoOutputDevices = ({
+const VideoSettingsMenu = ({
   handleToggle,
   isOpen,
   anchorRef,
   handleClose,
   setIsOpen,
-}: VideoOutputDevicesProps): ReactElement => {
+}: VideoSettingsMenuProps): ReactElement => {
   const theme = useTheme();
   const customLightBlueColor = 'rgb(138, 180, 248)';
 
@@ -46,7 +46,7 @@ const VideoOutputDevices = ({
 
   return (
     <Popper
-      data-testid="video-output-devices-dropdown"
+      data-testid="video-settings-devices-dropdown"
       open={isOpen}
       anchorEl={anchorRef.current}
       transition
@@ -100,4 +100,4 @@ const VideoOutputDevices = ({
   );
 };
 
-export default VideoOutputDevices;
+export default VideoSettingsMenu;
