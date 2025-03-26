@@ -38,6 +38,7 @@ const InputDevices = ({ handleToggle, customLightBlueColor }: InputDevicesProps)
     })?.deviceId;
     if (audioDeviceId) {
       publisher?.setAudioSource(audioDeviceId);
+      window.localStorage.setItem('audioSource', audioDeviceId);
     }
   };
   return (

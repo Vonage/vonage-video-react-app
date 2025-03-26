@@ -14,6 +14,7 @@ import useUserContext from '../../../hooks/useUserContext';
 import { DEVICE_ACCESS_STATUS } from '../../../utils/constants';
 import { UserType } from '../../user';
 import { AccessDeniedEvent } from '../../PublisherProvider/usePublisher/usePublisher';
+import useValidMediaDevice from '../../../hooks/useValidMediaDevice';
 
 type PublisherVideoElementCreatedEvent = Event<'videoElementCreated', Publisher> & {
   element: HTMLVideoElement | HTMLObjectElement;
@@ -65,8 +66,8 @@ const usePreviewPublisher = (): PreviewPublisherContextType => {
   const [isPublishing, setIsPublishing] = useState(false);
   const initialLocalBlurRef = useRef<boolean>(user.defaultSettings.blur);
   const [localBlur, setLocalBlur] = useState(user.defaultSettings.blur);
-  const initialLocalAudioDeviceRef = useRef<string | undefined>(user.defaultSettings.audioSource);
-  const initialLocalVideoDeviceRef = useRef<string | undefined>(user.defaultSettings.videoSource);
+  // const initialLocalAudioDeviceRef = useRef<string | undefined>(user.defaultSettings.audioSource);
+  // const initialLocalVideoDeviceRef = useRef<string | undefined>(user.defaultSettings.videoSource);
   const [isVideoEnabled, setIsVideoEnabled] = useState(true);
   const [isAudioEnabled, setIsAudioEnabled] = useState(true);
   const [localVideoSource, setLocalVideoSource] = useState<string | undefined>(undefined);
@@ -216,7 +217,10 @@ const usePreviewPublisher = (): PreviewPublisherContextType => {
     [calculateAudioLevel, getAllMediaDevices, handleAccessDenied, setAccessStatus]
   );
 
-  const initLocalPublisher = useCallback(() => {
+  const audioSource = useValidMediaDevice(window.localStorage.getItem('audioSource'), 'audioinput');
+  const videoSource = useValidMediaDevice(window.localStorage.getItem('videoSource'), 'videoinput');
+
+  const initLocalPublisher = useCallback(async () => {
     if (publisherRef.current) {
       return;
     }
@@ -233,8 +237,8 @@ const usePreviewPublisher = (): PreviewPublisherContextType => {
       insertDefaultUI: false,
       videoFilter,
       resolution: '1280x720',
-      audioSource: initialLocalAudioDeviceRef.current,
-      videoSource: initialLocalVideoDeviceRef.current,
+      audioSource,
+      videoSource,
     };
 
     publisherRef.current = initPublisher(undefined, publisherOptions, (err: unknown) => {
@@ -246,7 +250,7 @@ const usePreviewPublisher = (): PreviewPublisherContextType => {
       }
     });
     addPublisherListeners(publisherRef.current);
-  }, [addPublisherListeners]);
+  }, [addPublisherListeners, audioSource, videoSource]);
 
   const destroyPublisher = useCallback(() => {
     if (publisherRef.current) {

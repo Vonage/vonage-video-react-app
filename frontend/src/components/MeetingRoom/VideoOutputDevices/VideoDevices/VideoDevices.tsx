@@ -28,6 +28,7 @@ const VideoDevices = ({ handleToggle, customLightBlueColor }: VideoDevicesProps)
 
   const changeVideoSource = (videoDeviceId: string) => {
     publisher?.setVideoSource(videoDeviceId);
+    window.localStorage.setItem('videoSource', videoDeviceId);
   };
 
   useEffect(() => {

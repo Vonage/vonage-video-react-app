@@ -51,6 +51,8 @@ const UserProvider = ({ children }: UserProviderProps): ReactElement => {
   const name = window.localStorage.getItem('username') ?? '';
   const audioSource = window.localStorage.getItem('audioSource') ?? undefined;
   const videoSource = window.localStorage.getItem('videoSource') ?? undefined;
+  console.warn('audioSource is: ', audioSource);
+  console.warn('videoSource is: ', videoSource);
 
   const [user, setUser] = useState<UserType>({
     defaultSettings: {
@@ -59,7 +61,7 @@ const UserProvider = ({ children }: UserProviderProps): ReactElement => {
       name,
       blur,
       noiseSuppression,
-      audioSource,
+      audioSource: undefined,
       videoSource,
     },
     issues: {
