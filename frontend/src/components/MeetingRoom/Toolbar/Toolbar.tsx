@@ -133,7 +133,10 @@ const Toolbar = ({
   // Displays the right panel buttons - any additional buttons to be displayed that aren't in the center of the toolbar.
   const displayRightPanelButtons = (toolbarButton: ReactElement | false, index: number) =>
     index >= centerButtonLimit && index < rightButtonLimit && toolbarButton;
-  const isDisplayingRightPanelButtons = displayRightPanelButtons.length >= 1;
+  // Array of `false` or right panel button ReactElements to display.
+  const rightPanelButtons = toolbarButtons.map(displayRightPanelButtons);
+  // We display the right panel if we have at least one right panel button to display.
+  const displayRightPanel = rightPanelButtons.reduce((sum, next) => sum + Number(!!next), 0) >= 1;
 
   return (
     <div
@@ -142,7 +145,7 @@ const Toolbar = ({
     >
       <div
         ref={timeRoomNameRef}
-        className={`${toolbarButtonsDisplayed <= 1 ? '' : 'pr-2'} ${!displayTimeRoomName && 'hidden'} flex flex-1 justify-start overflow-hidden`}
+        className={`${!displayRightPanel ? 'mr-3 ' : ''}${!displayTimeRoomName ? 'hidden ' : ''}flex flex-1 justify-start overflow-hidden`}
       >
         {displayTimeRoomName && <TimeRoomNameMeetingRoom />}
       </div>
@@ -165,13 +168,10 @@ const Toolbar = ({
       </div>
 
       <div
-        className={`box-border flex justify-end${displayTimeRoomName && ' flex-1'}`}
-        style={{
-          marginLeft: isDisplayingRightPanelButtons ? undefined : '12px',
-        }}
+        className={`${!displayRightPanel ? 'hidden ' : ''}${displayTimeRoomName ? 'flex-1 ' : ''}ml-3 box-border flex justify-end`}
         ref={rightPanelControlsRef}
       >
-        {toolbarButtons.map(displayRightPanelButtons)}
+        {rightPanelButtons}
       </div>
     </div>
   );
