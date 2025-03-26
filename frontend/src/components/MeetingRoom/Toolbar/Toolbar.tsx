@@ -164,7 +164,7 @@ const Toolbar = ({
       </div>
 
       <div
-        className={`box-border flex	justify-end${displayTimeRoomName && ' flex-1'}`}
+        className={`box-border flex justify-end${displayTimeRoomName && ' flex-1'}`}
         style={{
           marginLeft: displayRightPanelButtons.length >= 1 ? undefined : '12px',
         }}
