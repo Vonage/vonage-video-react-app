@@ -142,7 +142,7 @@ const Toolbar = ({
     >
       <div
         ref={timeRoomNameRef}
-        className={`${!displayTimeRoomName && 'hidden'} flex flex-1 justify-start overflow-hidden pr-2`}
+        className={`${toolbarButtonsDisplayed <= 1 ? '' : 'pr-2'} ${!displayTimeRoomName && 'hidden'} flex flex-1 justify-start overflow-hidden`}
       >
         {displayTimeRoomName && <TimeRoomNameMeetingRoom />}
       </div>
