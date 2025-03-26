@@ -1,14 +1,30 @@
-import { expect } from '@playwright/test';
+import { expect, selectors } from '@playwright/test';
 import * as crypto from 'crypto';
 import { test } from '../fixtures/testWithLogging';
 import { openMeetingRoomWithSettings, waitAndClickFirefox } from './utils';
 
+async function chatToggleButton(pageOne, isMobile) {
+  const chatButton = await pageOne.getByTestId('chat-button', { exact: true });
+  if (isMobile) {
+    console.log(isMobile);
+    await pageOne.getByTestId('MoreVertIcon').click();
+    await pageOne.mouse.move(0, 0);
+    await chatButton.click({ force: true });
+  }
+
+  if (!isMobile) {
+    await pageOne.getByTestId('chat-button-unread-count');
+    // Check that chat open shows blue button
+    await chatButton.toHaveCSS('color', 'rgb(130, 177, 255)');
+  }
+}
+
 test.describe('chat', () => {
-  test.skip(({ isMobile }) => isMobile, 'chat tests only supported on desktop');
   test('should send chat messages and show unread number', async ({
     page: pageOne,
     context,
     browserName,
+    isMobile,
   }) => {
     const roomName = crypto.randomBytes(5).toString('hex');
     const pageTwo = await context.newPage();
@@ -30,11 +46,7 @@ test.describe('chat', () => {
     await pageTwo.waitForSelector('.publisher', { state: 'visible' });
     await pageTwo.waitForSelector('.subscriber', { state: 'visible' });
 
-    const chatToggleButtonOne = await pageOne.getByTestId('chat-button-unread-count');
-    chatToggleButtonOne.click();
-
-    // Check that chat open shows blue button
-    await expect(pageOne.getByTestId('ChatIcon')).toHaveCSS('color', 'rgb(130, 177, 255)');
+    await chatToggleButton(pageOne, isMobile);
 
     // Send button is greyed out when text box empty
     await expect(pageOne.getByTestId('SendIcon')).toHaveCSS('color', 'rgb(178, 180, 182)');
@@ -47,8 +59,18 @@ test.describe('chat', () => {
     await pageOne.getByTestId('SendIcon').click();
 
     // check unread notification is present on page two
-    await expect(pageTwo.getByTestId('chat-button-unread-count')).toHaveText('1');
-    await pageTwo.getByTestId('chat-button-unread-count').click();
+    if (isMobile) {
+      await expect(
+        pageTwo
+          .getByTestId('chat-button-unread-count')
+          .filter({ has: pageTwo.locator('[data-testid="MoreVertIcon"]') })
+      ).toHaveText('1');
+      await chatToggleButton(pageTwo, isMobile);
+    } else {
+      await expect(pageTwo.getByTestId('chat-button-unread-count')).toHaveText('1');
+      await pageTwo.getByTestId('chat-button-unread-count').click();
+    }
+
     // Check badge is hidden:  MUI hides badge by setting dimensions to 0x0
     await pageTwo.waitForFunction(async () => {
       const badge = document.querySelector(
