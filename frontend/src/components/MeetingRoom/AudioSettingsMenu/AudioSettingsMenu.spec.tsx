@@ -3,7 +3,7 @@ import { describe, beforeEach, it, Mock, vi, expect, afterAll } from 'vitest';
 import { MutableRefObject } from 'react';
 import { EventEmitter } from 'stream';
 import * as util from '../../../utils/util';
-import AudioInputOutputDevices from './AudioInputOutputDevices';
+import AudioSettingsMenu from './AudioSettingsMenu';
 import { AudioOutputProvider } from '../../../Context/AudioOutputProvider';
 import {
   audioInputDevices,
@@ -46,7 +46,7 @@ vi.mock('../../../utils/util', async () => {
 // This is returned by Vonage SDK if audioOutput is not supported
 const vonageDefaultEmptyOutputDevice = { deviceId: null, label: null };
 
-describe('AudioInputOutputDevice Component', () => {
+describe('AudioSettingsMenu Component', () => {
   const nativeMediaDevices = global.navigator.mediaDevices;
   const mockHandleToggle = vi.fn();
   const mockSetIsOpen = vi.fn();
@@ -91,7 +91,7 @@ describe('AudioInputOutputDevice Component', () => {
 
     render(
       <AudioOutputProvider>
-        <AudioInputOutputDevices
+        <AudioSettingsMenu
           handleToggle={mockHandleToggle}
           isOpen
           anchorRef={mockAnchorRef}
@@ -119,7 +119,7 @@ describe('AudioInputOutputDevice Component', () => {
     mockGetAudioOutputDevices.mockResolvedValue([vonageDefaultEmptyOutputDevice]);
     render(
       <AudioOutputProvider>
-        <AudioInputOutputDevices
+        <AudioSettingsMenu
           handleToggle={mockHandleToggle}
           isOpen
           anchorRef={mockAnchorRef}
@@ -146,7 +146,7 @@ describe('AudioInputOutputDevice Component', () => {
     await act(() =>
       render(
         <AudioOutputProvider>
-          <AudioInputOutputDevices
+          <AudioSettingsMenu
             handleToggle={mockHandleToggle}
             isOpen
             anchorRef={mockAnchorRef}
@@ -168,7 +168,7 @@ describe('AudioInputOutputDevice Component', () => {
     await act(() =>
       render(
         <AudioOutputProvider>
-          <AudioInputOutputDevices
+          <AudioSettingsMenu
             handleToggle={mockHandleToggle}
             isOpen
             anchorRef={mockAnchorRef}
@@ -188,7 +188,7 @@ describe('AudioInputOutputDevice Component', () => {
 
     render(
       <AudioOutputProvider>
-        <AudioInputOutputDevices
+        <AudioSettingsMenu
           handleToggle={mockHandleToggle}
           isOpen
           anchorRef={mockAnchorRef}

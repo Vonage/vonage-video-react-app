@@ -10,7 +10,7 @@ import OutputDevices from './OutputDevices';
 import ReduceNoiseTestSpeakers from './ReduceNoiseTestSpeakers';
 import useDropdownResizeObserver from '../../../hooks/useDropdownResizeObserver';
 
-export type AudioInputOutputDevicesProps = {
+export type AudioSettingsMenuProps = {
   handleToggle: () => void;
   isOpen: boolean;
   anchorRef: RefObject<HTMLInputElement>;
@@ -19,25 +19,25 @@ export type AudioInputOutputDevicesProps = {
 };
 
 /**
- * AudioInputOutputDevices Component
+ * AudioSettingsMenu Component
  *
  * Displays the audio input and audio output devices (for non-WebKit browsers) in a selectable menu for the user to switch devices.
  * For supported browsers, displays the toggle for the Vonage Video API advanced noise suppression filter.
- * @param {AudioInputOutputDevicesProps} props - The props for the component.
+ * @param {AudioSettingsMenuProps} props - The props for the component.
  *  @property {() => void} handleToggle - Function to show or hide the menu.
  *  @property {boolean} isOpen - Whether the menu is open or closed.
- *  @property {RefObject<HTMLInputElement>} anchorRef - The reference element for the AudioInputOutputDevices component
+ *  @property {RefObject<HTMLInputElement>} anchorRef - The reference element for the AudioSettingsMenu component
  *  @property {Function} handleClose - Function to close the menu.
  *  @property {Dispatch<SetStateAction<boolean>>} setIsOpen - Sets the state of the isOpen variable.
- * @returns {ReactElement} - The AudioInputOutputDevices component.
+ * @returns {ReactElement} - The AudioSettingsMenu component.
  */
-const AudioInputOutputDevices = ({
+const AudioSettingsMenu = ({
   handleToggle,
   isOpen,
   anchorRef,
   handleClose,
   setIsOpen,
-}: AudioInputOutputDevicesProps): ReactElement | false => {
+}: AudioSettingsMenuProps): ReactElement | false => {
   const theme = useTheme();
   const customLightBlueColor = 'rgb(138, 180, 248)';
 
@@ -97,4 +97,4 @@ const AudioInputOutputDevices = ({
   );
 };
 
-export default AudioInputOutputDevices;
+export default AudioSettingsMenu;

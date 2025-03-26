@@ -6,7 +6,7 @@ import { MicOff, ArrowDropUp, ArrowDropDown } from '@mui/icons-material';
 import { useState, useRef, useCallback, ReactElement } from 'react';
 import MutedAlert from '../../MutedAlert';
 import usePublisherContext from '../../../hooks/usePublisherContext';
-import AudioInputOutputDevices from '../AudioInputOutputDevices';
+import AudioSettingsMenu from '../AudioSettingsMenu';
 
 /**
  * AudioControlButton Component
@@ -74,7 +74,7 @@ const AudioControlButton = (): ReactElement => {
           </IconButton>
         </Tooltip>
       </ButtonGroup>
-      <AudioInputOutputDevices
+      <AudioSettingsMenu
         handleToggle={handleToggle}
         anchorRef={anchorRef}
         isOpen={open}
