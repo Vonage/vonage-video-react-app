@@ -1,4 +1,4 @@
-import { expect, selectors } from '@playwright/test';
+import { expect } from '@playwright/test';
 import * as crypto from 'crypto';
 import { test } from '../fixtures/testWithLogging';
 import { openMeetingRoomWithSettings, waitAndClickFirefox } from './utils';
