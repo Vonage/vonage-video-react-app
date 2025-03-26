@@ -26,7 +26,7 @@ export type VideoSettingsMenuProps = {
  * - select video output device
  * - on supported devices, an option to blur the video background
  * @param {VideoSettingsMenuProps} props - the props for this component.
- *  @property {() => void} handleToggle - the function that handles the toggle of video output device.
+ *  @property {() => void} handleToggle - the function that handles the toggle of video input device.
  *  @property {boolean} isOpen - the prop that shows whether the pop up needs to be opened.
  *  @property {RefObject<HTMLInputElement>} anchorRef - the anchor element to attach the pop up to.
  *  @property {Function} handleClose - the function that handles the closing of the pop up.
