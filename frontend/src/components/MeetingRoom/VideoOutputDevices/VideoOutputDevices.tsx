@@ -42,7 +42,7 @@ const VideoOutputDevices = ({
   const theme = useTheme();
   const customLightBlueColor = 'rgb(138, 180, 248)';
 
-  useDropdownResizeObserver(setIsOpen);
+  useDropdownResizeObserver({ setIsOpen, dropDownRefElement: anchorRef.current });
 
   return (
     <Popper
