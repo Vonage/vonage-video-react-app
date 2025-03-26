@@ -49,6 +49,8 @@ const UserProvider = ({ children }: UserProviderProps): ReactElement => {
   const noiseSuppression = window.localStorage.getItem('noiseSuppression') === 'true';
   const blur = window.localStorage.getItem('backgroundBlur') === 'true';
   const name = window.localStorage.getItem('username') ?? '';
+  const audioSource = window.localStorage.getItem('audioSource') ?? undefined;
+  const videoSource = window.localStorage.getItem('videoSource') ?? undefined;
 
   const [user, setUser] = useState<UserType>({
     defaultSettings: {
@@ -57,8 +59,8 @@ const UserProvider = ({ children }: UserProviderProps): ReactElement => {
       name,
       blur,
       noiseSuppression,
-      audioSource: undefined,
-      videoSource: undefined,
+      audioSource,
+      videoSource,
     },
     issues: {
       reconnections: 0, // Start with zero reconnections

@@ -65,6 +65,8 @@ const usePreviewPublisher = (): PreviewPublisherContextType => {
   const [isPublishing, setIsPublishing] = useState(false);
   const initialLocalBlurRef = useRef<boolean>(user.defaultSettings.blur);
   const [localBlur, setLocalBlur] = useState(user.defaultSettings.blur);
+  const initialLocalAudioDeviceRef = useRef<string | undefined>(user.defaultSettings.audioSource);
+  const initialLocalVideoDeviceRef = useRef<string | undefined>(user.defaultSettings.videoSource);
   const [isVideoEnabled, setIsVideoEnabled] = useState(true);
   const [isAudioEnabled, setIsAudioEnabled] = useState(true);
   const [localVideoSource, setLocalVideoSource] = useState<string | undefined>(undefined);
@@ -170,7 +172,6 @@ const usePreviewPublisher = (): PreviewPublisherContextType => {
 
       try {
         const permissionStatus = await window.navigator.permissions.query({
-          // @ts-expect-error The camera and microphone permissions are supported on all major browsers.
           name: deviceDeniedAccess,
         });
         permissionStatus.onchange = () => {
@@ -232,6 +233,8 @@ const usePreviewPublisher = (): PreviewPublisherContextType => {
       insertDefaultUI: false,
       videoFilter,
       resolution: '1280x720',
+      audioSource: initialLocalAudioDeviceRef.current,
+      videoSource: initialLocalVideoDeviceRef.current,
     };
 
     publisherRef.current = initPublisher(undefined, publisherOptions, (err: unknown) => {
