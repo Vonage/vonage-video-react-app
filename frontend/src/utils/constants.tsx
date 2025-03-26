@@ -5,7 +5,7 @@ import isReportIssueEnabled from './isReportIssueEnabled/isReportIssueEnabled';
  */
 export const API_URL = window.location.origin.includes('localhost')
   ? 'http://localhost:3345'
-  : 'https://7264f8e645f9.ngrok.app';
+  : window.location.origin;
 
 /**
  * @constant {object} DEVICE_ACCESS_STATUS - An object representing various states for device access.

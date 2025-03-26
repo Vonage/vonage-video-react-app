@@ -37,9 +37,6 @@ const viteConfig = defineConfig({
       preventAssignment: true,
     }),
   ],
-  server: {
-    allowedHosts: ['7e37dd9eff9c.ngrok.app'],
-  },
 });
 
 export default mergeConfig(vitestConfig, viteConfig);
