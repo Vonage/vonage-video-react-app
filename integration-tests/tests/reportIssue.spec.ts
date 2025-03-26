@@ -2,22 +2,30 @@
 import { expect } from '@playwright/test';
 import { test, baseURL } from '../fixtures/testWithLogging';
 
+async function clickOnReportIssueButton(page, isMobile) {
+  if (isMobile) {
+    console.log(isMobile);
+    await page.getByTestId('MoreVertIcon').click();
+    await page.mouse.move(0, 0); // Moves cursor to top-left corner to hide tooltip
+  }
+  // check for the report issue button
+  const reportIssueButton = await page.getByTestId('report-issue-button');
+  await expect(reportIssueButton).toBeVisible();
+  await reportIssueButton.click();
+}
+
 test.describe('FeedbackForm Component', () => {
   const isReportIssueEnabled = !!process.env.VITE_ENABLE_REPORT_ISSUE;
   test.skip(!isReportIssueEnabled, 'Skipping tests if report issues are disabled');
-  test.skip(({ isMobile }) => isMobile, 'report issue test only supported on desktop');
   test.beforeEach(async ({ page }) => {
     const roomUrl = `${baseURL}room/test`;
     await page.goto(`${roomUrl}?bypass=true`);
   });
 
-  test('renders the form fields correctly', async ({ page }) => {
+  test('renders the form fields correctly', async ({ page, isMobile }) => {
     await page.waitForSelector('.publisher', { state: 'visible' });
-    // check for the report issue button
-    const reportIssueButton = await page.getByTestId('report-issue-button');
-    await expect(reportIssueButton).toBeVisible();
 
-    await reportIssueButton.click();
+    await clickOnReportIssueButton(page, isMobile);
     // Check for the title input field
     const titleInput = await page.locator('input[name="title"]');
     await expect(titleInput).toBeVisible();
@@ -35,10 +43,8 @@ test.describe('FeedbackForm Component', () => {
     await expect(submitButton).toBeVisible();
   });
 
-  test('shows validation error messages when fields are empty', async ({ page }) => {
-    const reportIssueButton = await page.getByTestId('report-issue-button');
-    await expect(reportIssueButton).toBeVisible();
-    await reportIssueButton.click();
+  test('shows validation error messages when fields are empty', async ({ page, isMobile }) => {
+    await clickOnReportIssueButton(page, isMobile);
     // Attempt to submit the form with empty fields
     await page.locator('button[type="submit"]').click();
 
