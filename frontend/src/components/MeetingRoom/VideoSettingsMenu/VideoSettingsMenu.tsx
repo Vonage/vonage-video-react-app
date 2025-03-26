@@ -23,7 +23,7 @@ export type VideoSettingsMenuProps = {
  * VideoSettingsMenu Component
  *
  * This component renders a pop up that includes options to:
- * - select video output device
+ * - select video input device
  * - on supported devices, an option to blur the video background
  * @param {VideoSettingsMenuProps} props - the props for this component.
  *  @property {() => void} handleToggle - the function that handles the toggle of video input device.
