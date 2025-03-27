@@ -16,9 +16,11 @@ const baseURL = 'http://127.0.0.1:3345/';
 const addLogger = (page: Page, context: BrowserContext) => {
   // Get page index to help identify which tab logs are coming from
   const index = context.pages().length;
-  // log all page Console Messages to node console
+  // log only errors of Console Messages to node console
   page.on('console', (msg) => {
-    console.log(`Browser console ${msg.type()} from page ${index}: ${msg.text()}`);
+    if (msg.type() === 'error') {
+      console.error(`Browser console error from page ${index}: ${msg.text()}`);
+    }
   });
   // log all uncaught page errors to node console
   page.on('pageerror', (err) => {
