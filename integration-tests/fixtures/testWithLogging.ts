@@ -16,14 +16,15 @@ const baseURL = 'http://127.0.0.1:3345/';
 const addLogger = (page: Page, context: BrowserContext) => {
   // Get page index to help identify which tab logs are coming from
   const index = context.pages().length;
-  // log only errors of Console Messages to node console
+  // log all page Console Messages to node console
   page.on('console', (msg) => {
-    if (msg.type() === 'error') {
-      console.error(`Browser console error from page ${index}: ${msg.text()}`);
-    }
+    console.log(`Browser console ${msg.type()} from page ${index}: ${msg.text()}`);
   });
   // log all uncaught page errors to node console
   page.on('pageerror', (err) => {
+    if (err.message.includes('too much recursion')) {
+      return; // Ignore this error
+    }
     console.error(`Browser uncaught error from page ${index}: "${err.message}" - ${err.stack}`);
   });
   return page;
