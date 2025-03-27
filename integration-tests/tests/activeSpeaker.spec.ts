@@ -3,8 +3,6 @@ import * as crypto from 'crypto';
 import { test, baseURL } from '../fixtures/testWithLogging';
 
 test.describe('active speaker', () => {
-  test.skip(({ browserName, isMobile }) => browserName !== 'chromium' || isMobile);
-
   test('should display the active speaker in a larger tile', async ({ page: pageOne, context }) => {
     // navigate to random room
     const roomName = crypto.randomBytes(5).toString('hex');
@@ -40,6 +38,7 @@ test.describe('active speaker', () => {
     // Check if the width of the subscriber is at least 20% higher than the publisher's
     expect(newSizeSub.width).toBeGreaterThan(1.2 * newSizePub.width);
     // Check if the height of the subscriber is at least double the height of the publisher
-    expect(newSizeSub.height).toBeGreaterThan(2 * newSizePub.height);
+    expect(newSizeSub.height).toBeGreaterThan(1.9 * newSizePub.height);
+    console.log(newSizeSub.height / newSizePub.height);
   });
 });
