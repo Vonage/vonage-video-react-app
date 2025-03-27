@@ -24,9 +24,6 @@ const addLogger = (page: Page, context: BrowserContext) => {
   });
   // log all uncaught page errors to node console
   page.on('pageerror', (err) => {
-    if (err.message.includes('too much recursion')) {
-      return; // Ignore this error
-    }
     console.error(`Browser uncaught error from page ${index}: "${err.message}" - ${err.stack}`);
   });
   return page;
