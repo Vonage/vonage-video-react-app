@@ -136,7 +136,7 @@ const Toolbar = ({
   // Array of `false` or right panel button ReactElements to display.
   const rightPanelButtons = toolbarButtons.map(displayRightPanelButtons);
   // We display the right panel if we have at least one right panel button to display.
-  const displayRightPanel = rightPanelButtons.reduce((sum, next) => sum + Number(!!next), 0) >= 1;
+  const displayRightPanel = rightPanelButtons.some((rightPanelButton) => !!rightPanelButton);
   // We hide the TimeRoomName container when there is no space, and remove its margin when we don't display the right panel container.
   const displayTimeRoomNameClass = `${!displayRightPanel ? 'mr-3 ' : ''}${!displayTimeRoomName ? 'hidden ' : ''}flex flex-1 justify-start overflow-hidden`;
   // We hide the right panel buttons container when there are no buttons to display, and grow/shrink it when we display the TimeRoomName container.
