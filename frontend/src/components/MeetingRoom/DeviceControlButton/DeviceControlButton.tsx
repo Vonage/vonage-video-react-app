@@ -20,7 +20,7 @@ export type DeviceControlButtonProps = {
  * This component displays a current status of audio/video device (camera/microphone enabled/disabled)
  * and shows a dropdown that displays available audio/video devices.
  * @param {DeviceControlButtonProps} props - the props for the component.
- *  @property {boolean} isAudioControl - indicates whether a device is an audio control, if set to false it is a video control.
+ *  @property {boolean} isAudioControl - (optional) indicates whether a device is an audio control, if set to false it is a video control.
  * @returns {ReactElement} The DeviceControlButton component.
  */
 const DeviceControlButton = ({ isAudioControl }: DeviceControlButtonProps): ReactElement => {
@@ -81,7 +81,7 @@ const DeviceControlButton = ({ isAudioControl }: DeviceControlButtonProps): Reac
             <ArrowDropUp className="text-gray-400" />
           )}
         </IconButton>
-        <Tooltip title={isAudioControl ? audioTitle : videoTitle} aria-label="add">
+        <Tooltip title={isAudioControl ? audioTitle : videoTitle} aria-label="device settings">
           <IconButton
             onClick={isAudioControl ? toggleAudio : toggleVideo}
             edge="start"
@@ -93,24 +93,14 @@ const DeviceControlButton = ({ isAudioControl }: DeviceControlButtonProps): Reac
           </IconButton>
         </Tooltip>
       </ButtonGroup>
-      {isAudioControl ? (
-        <DeviceSettingsMenu
-          isAudioControl
-          handleToggle={handleToggle}
-          anchorRef={anchorRef}
-          isOpen={open}
-          handleClose={handleClose}
-          setIsOpen={setOpen}
-        />
-      ) : (
-        <DeviceSettingsMenu
-          handleToggle={handleToggle}
-          anchorRef={anchorRef}
-          isOpen={open}
-          handleClose={handleClose}
-          setIsOpen={setOpen}
-        />
-      )}
+      <DeviceSettingsMenu
+        isAudioControl={isAudioControl || false}
+        handleToggle={handleToggle}
+        anchorRef={anchorRef}
+        isOpen={open}
+        handleClose={handleClose}
+        setIsOpen={setOpen}
+      />
     </>
   );
 };
