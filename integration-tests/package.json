@@ -1,6 +1,6 @@
 {
   "name": "integration-tests",
-  "version": "1.0.3",
+  "version": "1.1.0",
   "description": "integration test workspace for vonage video react app",
   "main": "main.js",
   "scripts": {
