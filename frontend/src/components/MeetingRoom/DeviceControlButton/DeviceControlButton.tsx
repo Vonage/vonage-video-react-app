@@ -8,8 +8,6 @@ import { MicOff, ArrowDropUp, ArrowDropDown } from '@mui/icons-material';
 import { useState, useRef, useCallback, ReactElement } from 'react';
 import MutedAlert from '../../MutedAlert';
 import usePublisherContext from '../../../hooks/usePublisherContext';
-// import AudioSettingsMenu from '../AudioSettingsMenu';
-// import VideoSettingsMenu from '../VideoSettingsMenu';
 import DeviceSettingsMenu from '../DeviceSettingsMenu';
 
 export type DeviceControlButtonProps = {
