@@ -84,7 +84,7 @@ const WaitingRoom = (): ReactElement => {
     <div className="flex size-full flex-col bg-white" data-testid="waitingRoom">
       <Banner />
       <div className="flex w-full">
-        <div className="mb-8 flex w-full justify-center">
+        <div className="flex w-full justify-center">
           <div className="flex w-full flex-col items-center justify-center sm:min-h-[90vh] md:flex-row">
             <div
               className={`max-w-full flex-col ${isSmallViewport ? '' : 'h-[394px]'} sm: inline-flex`}
