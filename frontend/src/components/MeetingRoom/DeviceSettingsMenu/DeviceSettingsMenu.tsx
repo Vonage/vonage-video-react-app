@@ -10,9 +10,9 @@ import InputDevices from '../AudioSettingsMenu/InputDevices';
 import OutputDevices from '../AudioSettingsMenu/OutputDevices';
 import ReduceNoiseTestSpeakers from '../AudioSettingsMenu/ReduceNoiseTestSpeakers';
 import useDropdownResizeObserver from '../../../hooks/useDropdownResizeObserver';
-import VideoDevices from '../VideoSettingsMenu/VideoDevices';
+import VideoDevices from '../VideoDevices';
 import DropdownSeparator from '../DropdownSeparator';
-import VideoDevicesOptions from '../VideoSettingsMenu/VideoDevicesOptions';
+import VideoDevicesOptions from '../VideoDevicesOptions';
 
 export type DeviceSettingsMenuProps = {
   isAudioControl?: boolean;
