@@ -137,16 +137,17 @@ const Toolbar = ({
   const rightPanelButtons = toolbarButtons.map(displayRightPanelButtons);
   // We display the right panel if we have at least one right panel button to display.
   const displayRightPanel = rightPanelButtons.reduce((sum, next) => sum + Number(!!next), 0) >= 1;
+  // We hide the TimeRoomName container when there is no space, and remove its margin when we don't display the right panel container.
+  const displayTimeRoomNameClass = `${!displayRightPanel ? 'mr-3 ' : ''}${!displayTimeRoomName ? 'hidden ' : ''}flex flex-1 justify-start overflow-hidden`;
+  // We hide the right panel buttons container when there are no buttons to display, and grow/shrink it when we display the TimeRoomName container.
+  const rightPanelButtonsClass = `${!displayRightPanel ? 'hidden ' : ''}${displayTimeRoomName ? 'flex-1 ' : ''}ml-3 box-border flex justify-end`;
 
   return (
     <div
       ref={toolbarRef}
       className="absolute bottom-0 left-0 flex h-[80px] w-full flex-row items-center justify-between bg-darkGray-100 p-4"
     >
-      <div
-        ref={timeRoomNameRef}
-        className={`${!displayRightPanel ? 'mr-3 ' : ''}${!displayTimeRoomName ? 'hidden ' : ''}flex flex-1 justify-start overflow-hidden`}
-      >
+      <div ref={timeRoomNameRef} className={displayTimeRoomNameClass}>
         {displayTimeRoomName && <TimeRoomNameMeetingRoom />}
       </div>
       <div className="flex flex-1 justify-center">
@@ -167,10 +168,7 @@ const Toolbar = ({
         </div>
       </div>
 
-      <div
-        className={`${!displayRightPanel ? 'hidden ' : ''}${displayTimeRoomName ? 'flex-1 ' : ''}ml-3 box-border flex justify-end`}
-        ref={rightPanelControlsRef}
-      >
+      <div className={rightPanelButtonsClass} ref={rightPanelControlsRef}>
         {rightPanelButtons}
       </div>
     </div>
