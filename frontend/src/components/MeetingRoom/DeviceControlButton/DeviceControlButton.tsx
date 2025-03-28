@@ -74,6 +74,7 @@ const DeviceControlButton = ({ isAudioControl }: DeviceControlButtonProps): Reac
           aria-haspopup="menu"
           onClick={handleToggle}
           className="size-12"
+          data-testid={isAudioControl ? 'audio-dropdown-button' : 'video-dropdown-button'}
         >
           {open ? (
             <ArrowDropDown sx={{ color: 'rgb(138, 180, 248)' }} />
