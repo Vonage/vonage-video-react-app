@@ -62,10 +62,9 @@ const DeviceSettingsMenu = ({
 
   return (
     <Popper
-      data-testId={
+      data-testid={
         isAudioControl ? 'audio-settings-devices-dropdown' : 'video-settings-devices-dropdown'
       }
-      // data-testid="video-settings-devices-dropdown"
       open={isOpen}
       anchorEl={anchorRef.current}
       transition
@@ -88,7 +87,9 @@ const DeviceSettingsMenu = ({
                   padding: { xs: 1, sm: 2 }, // responsive padding
                   borderRadius: 2,
                   zIndex: 1,
-                  transform: 'translateY(-2%) translateX(5%)', // default transform
+                  transform: isAudioControl
+                    ? 'translateY(-2%) translateX(5%)'
+                    : 'translateY(-5%) translateX(-15%)', // default transform
                   [theme.breakpoints.down(741)]: {
                     transform: isAudioControl
                       ? 'translateY(-2%) translateX(-10%)'
