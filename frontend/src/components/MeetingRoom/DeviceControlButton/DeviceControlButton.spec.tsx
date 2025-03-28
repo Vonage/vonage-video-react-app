@@ -6,7 +6,7 @@ import { PublisherContextType } from '../../../Context/PublisherProvider';
 import { defaultAudioDevice } from '../../../utils/mockData/device';
 import useSpeakingDetector from '../../../hooks/useSpeakingDetector';
 import usePublisherContext from '../../../hooks/usePublisherContext';
-import AudioControlButton from './AudioControlButton';
+import DeviceControlButton from './DeviceControlButton';
 
 vi.mock('../../../hooks/usePublisherContext.tsx');
 vi.mock('../../../hooks/useSpeakingDetector.tsx');
@@ -14,7 +14,7 @@ vi.mock('../../../hooks/useSpeakingDetector.tsx');
 const mockUsePublisherContext = usePublisherContext as Mock<[], PublisherContextType>;
 const mockUseSpeakingDetector = useSpeakingDetector as Mock<[], boolean>;
 
-describe('AudioControlButton', () => {
+describe('DeviceControlButton', () => {
   const nativeMediaDevices = global.navigator.mediaDevices;
   let mockPublisher: Publisher;
   let publisherContext: PublisherContextType;
@@ -63,8 +63,14 @@ describe('AudioControlButton', () => {
     });
   });
 
+  it('renders the video control button (default value)', () => {
+    render(<DeviceControlButton />);
+    expect(screen.getByLabelText('camera')).toBeInTheDocument();
+    expect(screen.getByTestId('ArrowDropUpIcon')).toBeInTheDocument();
+  });
+
   it('renders the audio control button', () => {
-    render(<AudioControlButton />);
+    render(<DeviceControlButton isAudioControl />);
     expect(screen.getByLabelText('microphone')).toBeInTheDocument();
     expect(screen.getByTestId('ArrowDropUpIcon')).toBeInTheDocument();
   });
