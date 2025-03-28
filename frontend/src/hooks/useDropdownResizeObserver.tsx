@@ -19,7 +19,7 @@ const useDropdownResizeObserver = ({
 }: UseDropdownResizeObserverProps) => {
   useEffect(() => {
     const observer = new ResizeObserver(() => {
-      const dropDownHeight = dropDownRefElement?.offsetHeight || 0;
+      const dropDownHeight = dropDownRefElement?.offsetHeight ?? 0;
 
       // The 15 multiplier accounts for cases where the measured height is lower
       // due to CSS transforms, dynamic rendering, etc.
