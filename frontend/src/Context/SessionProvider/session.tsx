@@ -135,6 +135,10 @@ export type SessionProviderProps = {
   children: ReactNode;
 };
 
+export type VideoElementCreatedEvent = Event<'videoElementCreated', Subscriber> & {
+  element: HTMLVideoElement | HTMLObjectElement;
+};
+
 const MAX_PIN_COUNT = isMobile() ? MAX_PIN_COUNT_MOBILE : MAX_PIN_COUNT_DESKTOP;
 
 /**
@@ -273,10 +277,6 @@ const SessionProvider = ({ children }: SessionProviderProps): ReactElement => {
     setConnections([]);
     session.current = null;
     setConnected(false);
-  };
-
-  type VideoElementCreatedEvent = Event<'videoElementCreated', Subscriber> & {
-    element: HTMLVideoElement | HTMLObjectElement;
   };
 
   /**
