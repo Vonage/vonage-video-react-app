@@ -28,12 +28,12 @@ export type DeviceSettingsMenuProps = {
  *
  * This component renders a pop up that includes options to:
  * - select audio input and output devices
- * - select video output device
+ * - select video input device
  * - on supported devices, an option to enable advanced noise suppression
  * - on supported devices, an option to blur the video background
  * @param {DeviceSettingsMenuProps} props - the props for this component.
  *  @property {boolean} deviceType - indicates the type of the device to control.
- *  @property {() => void} handleToggle - the function that handles the toggle of video output device.
+ *  @property {() => void} handleToggle - the function that handles the toggle of video input device.
  *  @property {boolean} isOpen - the prop that shows whether the pop up needs to be opened.
  *  @property {RefObject<HTMLInputElement>} anchorRef - the anchor element to attach the pop up to.
  *  @property {Function} handleClose - the function that handles the closing of the pop up.
