@@ -16,12 +16,13 @@ const usePublisherOptions = (): PublisherProperties => {
   const { user } = useUserContext();
 
   const publisherOptions: PublisherProperties = useMemo(() => {
-    const { name } = user.defaultSettings;
+    const { name, noiseSuppression, blur, audioSource, videoSource, publishAudio, publishVideo } =
+      user.defaultSettings;
     const initials = getInitials(name);
 
     // Enable Advanced Noise Suppression if user has enabled it in their settings and the device supports it
     const audioFilter: AudioFilter | undefined =
-      user.defaultSettings.noiseSuppression && hasMediaProcessorSupport()
+      noiseSuppression && hasMediaProcessorSupport()
         ? {
             type: 'advancedNoiseSuppression',
           }
@@ -29,7 +30,7 @@ const usePublisherOptions = (): PublisherProperties => {
 
     // Enable Background blur if user has enabled it in their settings and the device supports it
     const videoFilter: VideoFilter | undefined =
-      user.defaultSettings.blur && hasMediaProcessorSupport()
+      blur && hasMediaProcessorSupport()
         ? {
             type: 'backgroundBlur',
             blurStrength: 'high',
@@ -39,16 +40,16 @@ const usePublisherOptions = (): PublisherProperties => {
       audioFallback: {
         publisher: true,
       },
-      audioSource: user.defaultSettings.audioSource,
+      audioSource,
       initials,
       insertDefaultUI: false,
       name,
-      publishAudio: !!user.defaultSettings.publishAudio,
-      publishVideo: !!user.defaultSettings.publishVideo,
+      publishAudio: !!publishAudio,
+      publishVideo: !!publishVideo,
       resolution: '1280x720',
       audioFilter,
       videoFilter,
-      videoSource: user.defaultSettings.videoSource,
+      videoSource,
     };
   }, [user.defaultSettings]);
 

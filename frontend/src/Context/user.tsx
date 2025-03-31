@@ -7,6 +7,7 @@ import {
   Dispatch,
   ReactElement,
 } from 'react';
+import getCurrentDeviceId from '../utils/getCurrentDeviceId';
 
 // Define the shape of the User context
 export type UserContextType = {
@@ -49,10 +50,8 @@ const UserProvider = ({ children }: UserProviderProps): ReactElement => {
   const noiseSuppression = window.localStorage.getItem('noiseSuppression') === 'true';
   const blur = window.localStorage.getItem('backgroundBlur') === 'true';
   const name = window.localStorage.getItem('username') ?? '';
-  const audioSource = window.localStorage.getItem('audioSource') ?? undefined;
-  const videoSource = window.localStorage.getItem('videoSource') ?? undefined;
-  console.warn('audioSource is: ', audioSource);
-  console.warn('videoSource is: ', videoSource);
+  const audioSource = getCurrentDeviceId('audioinput');
+  const videoSource = getCurrentDeviceId('videoinput');
 
   const [user, setUser] = useState<UserType>({
     defaultSettings: {
@@ -61,7 +60,7 @@ const UserProvider = ({ children }: UserProviderProps): ReactElement => {
       name,
       blur,
       noiseSuppression,
-      audioSource: undefined,
+      audioSource,
       videoSource,
     },
     issues: {

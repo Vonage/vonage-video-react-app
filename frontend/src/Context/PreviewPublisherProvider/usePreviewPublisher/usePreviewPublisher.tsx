@@ -14,7 +14,7 @@ import useUserContext from '../../../hooks/useUserContext';
 import { DEVICE_ACCESS_STATUS } from '../../../utils/constants';
 import { UserType } from '../../user';
 import { AccessDeniedEvent } from '../../PublisherProvider/usePublisher/usePublisher';
-import useValidMediaDevice from '../../../hooks/useValidMediaDevice';
+import getCurrentDeviceId from '../../../utils/getCurrentDeviceId';
 
 type PublisherVideoElementCreatedEvent = Event<'videoElementCreated', Publisher> & {
   element: HTMLVideoElement | HTMLObjectElement;
@@ -217,8 +217,8 @@ const usePreviewPublisher = (): PreviewPublisherContextType => {
     [calculateAudioLevel, getAllMediaDevices, handleAccessDenied, setAccessStatus]
   );
 
-  const audioSource = useValidMediaDevice(window.localStorage.getItem('audioSource'), 'audioinput');
-  const videoSource = useValidMediaDevice(window.localStorage.getItem('videoSource'), 'videoinput');
+  const audioSource = getCurrentDeviceId('audioinput');
+  const videoSource = getCurrentDeviceId('videoinput');
 
   const initLocalPublisher = useCallback(async () => {
     if (publisherRef.current) {
