@@ -91,13 +91,14 @@ describe('DeviceSettingsMenu Component', () => {
   });
 
   describe('renders the audio settings menu', () => {
+    const deviceType = 'audio';
     it('and renders the output devices if the browser supports setting audioOutput device', async () => {
       (util.isGetActiveAudioOutputDeviceSupported as Mock).mockReturnValue(true);
 
       render(
         <AudioOutputProvider>
           <DeviceSettingsMenu
-            isAudioControl
+            deviceType={deviceType}
             handleToggle={mockHandleToggle}
             isOpen
             anchorRef={mockAnchorRef}
@@ -128,7 +129,7 @@ describe('DeviceSettingsMenu Component', () => {
       render(
         <AudioOutputProvider>
           <DeviceSettingsMenu
-            isAudioControl
+            deviceType={deviceType}
             handleToggle={mockHandleToggle}
             isOpen
             anchorRef={mockAnchorRef}
@@ -156,7 +157,7 @@ describe('DeviceSettingsMenu Component', () => {
         render(
           <AudioOutputProvider>
             <DeviceSettingsMenu
-              isAudioControl
+              deviceType={deviceType}
               handleToggle={mockHandleToggle}
               isOpen
               anchorRef={mockAnchorRef}
@@ -179,7 +180,7 @@ describe('DeviceSettingsMenu Component', () => {
         render(
           <AudioOutputProvider>
             <DeviceSettingsMenu
-              isAudioControl
+              deviceType={deviceType}
               handleToggle={mockHandleToggle}
               isOpen
               anchorRef={mockAnchorRef}
@@ -200,7 +201,7 @@ describe('DeviceSettingsMenu Component', () => {
       render(
         <AudioOutputProvider>
           <DeviceSettingsMenu
-            isAudioControl
+            deviceType={deviceType}
             handleToggle={mockHandleToggle}
             isOpen
             anchorRef={mockAnchorRef}
@@ -241,9 +242,11 @@ describe('DeviceSettingsMenu Component', () => {
   });
 
   describe('renders the video settings menu', () => {
+    const deviceType = 'video';
     it('if prompted', () => {
       render(
         <DeviceSettingsMenu
+          deviceType={deviceType}
           handleToggle={mockHandleToggle}
           handleClose={mockHandleClose}
           isOpen
@@ -257,6 +260,7 @@ describe('DeviceSettingsMenu Component', () => {
     it('but does not render it if closed', () => {
       render(
         <DeviceSettingsMenu
+          deviceType={deviceType}
           handleToggle={mockHandleToggle}
           handleClose={mockHandleClose}
           isOpen={false}
@@ -271,6 +275,7 @@ describe('DeviceSettingsMenu Component', () => {
       mockedHasMediaProcessorSupport.mockReturnValue(true);
       render(
         <DeviceSettingsMenu
+          deviceType={deviceType}
           handleToggle={mockHandleToggle}
           handleClose={mockHandleClose}
           isOpen
@@ -285,6 +290,7 @@ describe('DeviceSettingsMenu Component', () => {
     it('and does not render the dropdown separator and background blur option when media processor is not supported', () => {
       render(
         <DeviceSettingsMenu
+          deviceType={deviceType}
           handleToggle={mockHandleToggle}
           handleClose={mockHandleClose}
           isOpen

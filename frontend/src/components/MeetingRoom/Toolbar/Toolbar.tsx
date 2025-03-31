@@ -151,8 +151,8 @@ const Toolbar = ({
       </div>
       <div className="flex flex-1 justify-center">
         <div ref={mediaControlsRef} className="flex flex-row">
-          <DeviceControlButton isAudioControl />
-          <DeviceControlButton />
+          <DeviceControlButton deviceType="audio" />
+          <DeviceControlButton deviceType="video" />
         </div>
         {toolbarButtons.map(displayCenterToolbarButtons)}
         <div ref={overflowAndExitRef} className="flex flex-row">

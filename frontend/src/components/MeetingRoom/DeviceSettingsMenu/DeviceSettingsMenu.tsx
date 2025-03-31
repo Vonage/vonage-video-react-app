@@ -15,7 +15,7 @@ import DropdownSeparator from '../DropdownSeparator';
 import VideoDevicesOptions from '../VideoDevicesOptions';
 
 export type DeviceSettingsMenuProps = {
-  isAudioControl?: boolean;
+  deviceType: 'audio' | 'video';
   handleToggle: () => void;
   isOpen: boolean;
   anchorRef: RefObject<HTMLInputElement>;
@@ -27,31 +27,34 @@ export type DeviceSettingsMenuProps = {
  * DeviceSettingsMenu Component
  *
  * This component renders a pop up that includes options to:
- * - select audio input and output device
+ * - select audio input and output devices
  * - select video output device
+ * - on supported devices, an option to enable advanced noise suppression
  * - on supported devices, an option to blur the video background
  * @param {DeviceSettingsMenuProps} props - the props for this component.
+ *  @property {boolean} deviceType - indicates the type of the device to control.
  *  @property {() => void} handleToggle - the function that handles the toggle of video output device.
  *  @property {boolean} isOpen - the prop that shows whether the pop up needs to be opened.
  *  @property {RefObject<HTMLInputElement>} anchorRef - the anchor element to attach the pop up to.
  *  @property {Function} handleClose - the function that handles the closing of the pop up.
- * @returns {ReactElement} - the video output devices pop up component.
+ * @returns {ReactElement} - the DeviceSettingsMenu component.
  */
 const DeviceSettingsMenu = ({
-  isAudioControl,
+  deviceType,
   handleToggle,
   isOpen,
   anchorRef,
   handleClose,
   setIsOpen,
 }: DeviceSettingsMenuProps): ReactElement | false => {
+  const isAudio = deviceType === 'audio';
   const theme = useTheme();
   const customLightBlueColor = 'rgb(138, 180, 248)';
 
   useDropdownResizeObserver({ setIsOpen, dropDownRefElement: anchorRef.current });
 
   const renderSettingsMenu = () => {
-    if (isAudioControl) {
+    if (isAudio) {
       return (
         <>
           <InputDevices handleToggle={handleToggle} customLightBlueColor={customLightBlueColor} />
@@ -76,9 +79,7 @@ const DeviceSettingsMenu = ({
 
   return (
     <Popper
-      data-testid={
-        isAudioControl ? 'audio-settings-devices-dropdown' : 'video-settings-devices-dropdown'
-      }
+      data-testid={isAudio ? 'audio-settings-devices-dropdown' : 'video-settings-devices-dropdown'}
       open={isOpen}
       anchorEl={anchorRef.current}
       transition
@@ -101,16 +102,16 @@ const DeviceSettingsMenu = ({
                   padding: { xs: 1, sm: 2 }, // responsive padding
                   borderRadius: 2,
                   zIndex: 1,
-                  transform: isAudioControl
+                  transform: isAudio
                     ? 'translateY(-2%) translateX(5%)'
                     : 'translateY(-5%) translateX(-15%)', // default transform
                   [theme.breakpoints.down(741)]: {
-                    transform: isAudioControl
+                    transform: isAudio
                       ? 'translateY(-2%) translateX(-10%)'
                       : 'translateY(-5%) translateX(-40%)',
                   },
                   [theme.breakpoints.down(450)]: {
-                    transform: isAudioControl
+                    transform: isAudio
                       ? 'translateY(-2%) translateX(-5%)'
                       : 'translateY(-5%) translateX(-5%)',
                   },

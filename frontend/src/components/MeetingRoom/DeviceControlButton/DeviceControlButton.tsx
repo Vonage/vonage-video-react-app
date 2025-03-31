@@ -11,7 +11,7 @@ import usePublisherContext from '../../../hooks/usePublisherContext';
 import DeviceSettingsMenu from '../DeviceSettingsMenu';
 
 export type DeviceControlButtonProps = {
-  isAudioControl?: boolean;
+  deviceType: 'audio' | 'video';
 };
 
 /**
@@ -20,11 +20,12 @@ export type DeviceControlButtonProps = {
  * This component displays a current status of audio/video device (camera/microphone enabled/disabled)
  * and shows a dropdown that displays available audio/video devices.
  * @param {DeviceControlButtonProps} props - the props for the component.
- *  @property {boolean} isAudioControl - (optional) indicates whether a device is an audio control, if set to false it is a video control.
+ *  @property {boolean} deviceType - (optional) indicates the type of the device to control.
  * @returns {ReactElement} The DeviceControlButton component.
  */
-const DeviceControlButton = ({ isAudioControl }: DeviceControlButtonProps): ReactElement => {
+const DeviceControlButton = ({ deviceType }: DeviceControlButtonProps): ReactElement => {
   const { isVideoEnabled, toggleAudio, toggleVideo, isAudioEnabled } = usePublisherContext();
+  const isAudio = deviceType === 'audio';
   const [open, setOpen] = useState<boolean>(false);
   const anchorRef = useRef<HTMLInputElement>(null);
   const audioTitle = isAudioEnabled ? 'Disable microphone' : 'Enable microphone';
@@ -42,7 +43,7 @@ const DeviceControlButton = ({ isAudioControl }: DeviceControlButtonProps): Reac
   }, []);
 
   const renderControlIcon = () => {
-    if (isAudioControl) {
+    if (isAudio) {
       if (isAudioEnabled) {
         return <Mic className="text-white" />;
       }
@@ -57,7 +58,7 @@ const DeviceControlButton = ({ isAudioControl }: DeviceControlButtonProps): Reac
 
   return (
     <>
-      {isAudioControl && <MutedAlert />}
+      {isAudio && <MutedAlert />}
       <ButtonGroup
         className="mr-3 mt-1 bg-notVeryGray-55"
         disableElevation
@@ -70,11 +71,11 @@ const DeviceControlButton = ({ isAudioControl }: DeviceControlButtonProps): Reac
           size="small"
           aria-controls={open ? 'split-button-menu' : undefined}
           aria-expanded={open ? 'true' : undefined}
-          aria-label={isAudioControl ? 'audio devices dropdown' : 'video devices dropdown'}
+          aria-label={isAudio ? 'audio devices dropdown' : 'video devices dropdown'}
           aria-haspopup="menu"
           onClick={handleToggle}
           className="size-12"
-          data-testid={isAudioControl ? 'audio-dropdown-button' : 'video-dropdown-button'}
+          data-testid={isAudio ? 'audio-dropdown-button' : 'video-dropdown-button'}
         >
           {open ? (
             <ArrowDropDown sx={{ color: 'rgb(138, 180, 248)' }} />
@@ -82,11 +83,11 @@ const DeviceControlButton = ({ isAudioControl }: DeviceControlButtonProps): Reac
             <ArrowDropUp className="text-gray-400" />
           )}
         </IconButton>
-        <Tooltip title={isAudioControl ? audioTitle : videoTitle} aria-label="device settings">
+        <Tooltip title={isAudio ? audioTitle : videoTitle} aria-label="device settings">
           <IconButton
-            onClick={isAudioControl ? toggleAudio : toggleVideo}
+            onClick={isAudio ? toggleAudio : toggleVideo}
             edge="start"
-            aria-label={isAudioControl ? 'microphone' : 'camera'}
+            aria-label={isAudio ? 'microphone' : 'camera'}
             size="small"
             className="m-[3px] size-[50px] rounded-full shadow-md"
           >
@@ -95,7 +96,7 @@ const DeviceControlButton = ({ isAudioControl }: DeviceControlButtonProps): Reac
         </Tooltip>
       </ButtonGroup>
       <DeviceSettingsMenu
-        isAudioControl={isAudioControl || false}
+        deviceType={deviceType}
         handleToggle={handleToggle}
         anchorRef={anchorRef}
         isOpen={open}

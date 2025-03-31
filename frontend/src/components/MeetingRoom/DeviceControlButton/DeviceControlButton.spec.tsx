@@ -63,14 +63,14 @@ describe('DeviceControlButton', () => {
     });
   });
 
-  it('renders the video control button (default value)', () => {
-    render(<DeviceControlButton />);
+  it('renders the video control button', () => {
+    render(<DeviceControlButton deviceType="video" />);
     expect(screen.getByLabelText('camera')).toBeInTheDocument();
     expect(screen.getByTestId('ArrowDropUpIcon')).toBeInTheDocument();
   });
 
   it('renders the audio control button', () => {
-    render(<DeviceControlButton isAudioControl />);
+    render(<DeviceControlButton deviceType="audio" />);
     expect(screen.getByLabelText('microphone')).toBeInTheDocument();
     expect(screen.getByTestId('ArrowDropUpIcon')).toBeInTheDocument();
   });
