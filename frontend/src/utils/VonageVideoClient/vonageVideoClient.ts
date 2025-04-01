@@ -16,21 +16,21 @@ import { SubscriberWrapper } from '../../types/session';
 import createMovingAvgAudioLevelTracker from '../movingAverageAudioLevelTracker';
 
 class VonageVideoClient extends EventEmitter {
-  clientSession: Session;
-  clientSubscribers: Record<string, Subscriber>;
+  readonly #clientSession: Session;
+  #clientSubscribers: Record<string, Subscriber>;
 
   constructor(credential: Credential) {
     super();
     const { apiKey, sessionId } = credential;
-    this.clientSession = initSession(apiKey, sessionId);
-    this.clientSubscribers = {};
+    this.#clientSession = initSession(apiKey, sessionId);
+    this.#clientSubscribers = {};
     this.init(credential);
   }
 
   init(credential: Credential) {
     // Attach all event listeners
-    this.clientSession.on('streamPropertyChanged', this.handleStreamPropertyChanged);
-    this.clientSession.on('streamCreated', this.handleStreamCreated);
+    this.#clientSession.on('streamPropertyChanged', this.handleStreamPropertyChanged);
+    this.#clientSession.on('streamCreated', this.handleStreamCreated);
 
     this.connect(credential);
   }
@@ -43,13 +43,13 @@ class VonageVideoClient extends EventEmitter {
     const { apiKey, sessionId, token } = credential;
     try {
       await new Promise((resolve, reject) => {
-        this.clientSession.connect(token, (err?: OTError) => {
+        this.#clientSession.connect(token, (err?: OTError) => {
           if (err) {
             // We ignore the following lint warning because we are rejecting with an OTError object.
             reject(err); // NOSONAR
           } else {
-            logOnConnect(apiKey, sessionId, this.clientSession.connection?.connectionId);
-            resolve(this.clientSession.sessionId);
+            logOnConnect(apiKey, sessionId, this.#clientSession.connection?.connectionId);
+            resolve(this.#clientSession.sessionId);
           }
         });
       });
@@ -77,7 +77,7 @@ class VonageVideoClient extends EventEmitter {
       insertDefaultUI: false,
     };
 
-    const subscriber = this.clientSession.subscribe(stream, undefined, subscriberOptions);
+    const subscriber = this.#clientSession.subscribe(stream, undefined, subscriberOptions);
     this.subscribers[streamId] = subscriber;
 
     subscriber.on('videoElementCreated', (videoElementCreatedEvent: VideoElementCreatedEvent) => {
@@ -108,11 +108,11 @@ class VonageVideoClient extends EventEmitter {
   }
 
   get session() {
-    return this.clientSession;
+    return this.#clientSession;
   }
 
   get subscribers() {
-    return this.clientSubscribers;
+    return this.#clientSubscribers;
   }
 }
 
