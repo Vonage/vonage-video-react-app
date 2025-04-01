@@ -1,12 +1,16 @@
 let cachedDevices: MediaDeviceInfo[] = [];
 
 const updateDeviceList = async () => {
-  cachedDevices = await navigator.mediaDevices.enumerateDevices();
+  if (navigator.mediaDevices) {
+    cachedDevices = await navigator.mediaDevices.enumerateDevices();
+  }
 };
 
 const refreshDevices = () => {
   updateDeviceList();
-  navigator.mediaDevices.addEventListener('devicechange', updateDeviceList);
+  if (navigator.mediaDevices) {
+    navigator.mediaDevices.addEventListener('devicechange', updateDeviceList);
+  }
 };
 
 refreshDevices();
