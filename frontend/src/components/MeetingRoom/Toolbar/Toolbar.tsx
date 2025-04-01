@@ -1,6 +1,4 @@
 import { ReactElement, useCallback, useRef, useState } from 'react';
-import AudioControlButton from '../AudioControlButton';
-import VideoControlButton from '../VideoControlButton';
 import ScreenSharingButton from '../../ScreenSharingButton';
 import TimeRoomNameMeetingRoom from '../TimeRoomName';
 import ExitButton from '../ExitButton';
@@ -15,6 +13,7 @@ import ToolbarOverflowButton from '../ToolbarOverflowButton';
 import EmojiGridButton from '../EmojiGridButton';
 import isReportIssueEnabled from '../../../utils/isReportIssueEnabled';
 import useToolbarButtons from '../../../hooks/useToolbarButtons';
+import DeviceControlButton from '../DeviceControlButton';
 
 export type ToolbarProps = {
   toggleShareScreen: () => void;
@@ -152,8 +151,8 @@ const Toolbar = ({
       </div>
       <div className="flex flex-1 justify-center">
         <div ref={mediaControlsRef} className="flex flex-row">
-          <AudioControlButton />
-          <VideoControlButton />
+          <DeviceControlButton deviceType="audio" />
+          <DeviceControlButton deviceType="video" />
         </div>
         {toolbarButtons.map(displayCenterToolbarButtons)}
         <div ref={overflowAndExitRef} className="flex flex-row">

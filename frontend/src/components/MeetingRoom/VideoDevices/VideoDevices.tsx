@@ -3,8 +3,8 @@ import { Box, MenuItem, MenuList, Typography } from '@mui/material';
 import CheckIcon from '@mui/icons-material/Check';
 import VideocamIcon from '@mui/icons-material/Videocam';
 import { Device } from '@vonage/client-sdk-video';
-import useDevices from '../../../../hooks/useDevices';
-import usePublisherContext from '../../../../hooks/usePublisherContext';
+import useDevices from '../../../hooks/useDevices';
+import usePublisherContext from '../../../hooks/usePublisherContext';
 
 export type VideoDevicesProps = {
   handleToggle: () => void;

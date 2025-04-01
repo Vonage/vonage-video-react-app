@@ -6,9 +6,9 @@ import { hasMediaProcessorSupport } from '@vonage/client-sdk-video';
 import HeadsetIcon from '@mui/icons-material/Headset';
 import ToggleOffIcon from '@mui/icons-material/ToggleOff';
 import ToggleOnIcon from '@mui/icons-material/ToggleOn';
-import usePublisherContext from '../../../../hooks/usePublisherContext';
-import DropdownSeparator from '../../DropdownSeparator';
-import SoundTest from '../../../SoundTest';
+import usePublisherContext from '../../../hooks/usePublisherContext';
+import DropdownSeparator from '../DropdownSeparator';
+import SoundTest from '../../SoundTest';
 
 export type ReduceNoiseTestSpeakersProps = {
   customLightBlueColor: string;

@@ -3,10 +3,10 @@ import CheckIcon from '@mui/icons-material/Check';
 import VolumeUpIcon from '@mui/icons-material/VolumeUp';
 import { MouseEvent, ReactElement } from 'react';
 import type { AudioOutputDevice } from '@vonage/client-sdk-video';
-import useDevices from '../../../../hooks/useDevices';
-import DropdownSeparator from '../../DropdownSeparator';
-import useAudioOutputContext from '../../../../hooks/useAudioOutputContext';
-import { isGetActiveAudioOutputDeviceSupported } from '../../../../utils/util';
+import useDevices from '../../../hooks/useDevices';
+import DropdownSeparator from '../DropdownSeparator';
+import useAudioOutputContext from '../../../hooks/useAudioOutputContext';
+import { isGetActiveAudioOutputDeviceSupported } from '../../../utils/util';
 
 const defaultOutputDevices = [{ deviceId: 'default', label: 'System Default' }];
 
