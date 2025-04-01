@@ -66,8 +66,6 @@ const usePreviewPublisher = (): PreviewPublisherContextType => {
   const [isPublishing, setIsPublishing] = useState(false);
   const initialLocalBlurRef = useRef<boolean>(user.defaultSettings.blur);
   const [localBlur, setLocalBlur] = useState(user.defaultSettings.blur);
-  // const initialLocalAudioDeviceRef = useRef<string | undefined>(user.defaultSettings.audioSource);
-  // const initialLocalVideoDeviceRef = useRef<string | undefined>(user.defaultSettings.videoSource);
   const [isVideoEnabled, setIsVideoEnabled] = useState(true);
   const [isAudioEnabled, setIsAudioEnabled] = useState(true);
   const [localVideoSource, setLocalVideoSource] = useState<string | undefined>(undefined);
@@ -217,9 +215,6 @@ const usePreviewPublisher = (): PreviewPublisherContextType => {
     [calculateAudioLevel, getAllMediaDevices, handleAccessDenied, setAccessStatus]
   );
 
-  const audioSource = getCurrentDeviceId('audioinput');
-  const videoSource = getCurrentDeviceId('videoinput');
-
   const initLocalPublisher = useCallback(async () => {
     if (publisherRef.current) {
       return;
@@ -237,8 +232,8 @@ const usePreviewPublisher = (): PreviewPublisherContextType => {
       insertDefaultUI: false,
       videoFilter,
       resolution: '1280x720',
-      audioSource,
-      videoSource,
+      audioSource: getCurrentDeviceId('audioinput'),
+      videoSource: getCurrentDeviceId('videoinput'),
     };
 
     publisherRef.current = initPublisher(undefined, publisherOptions, (err: unknown) => {
@@ -250,7 +245,7 @@ const usePreviewPublisher = (): PreviewPublisherContextType => {
       }
     });
     addPublisherListeners(publisherRef.current);
-  }, [addPublisherListeners, audioSource, videoSource]);
+  }, [addPublisherListeners]);
 
   const destroyPublisher = useCallback(() => {
     if (publisherRef.current) {
