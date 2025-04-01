@@ -120,6 +120,7 @@ const usePreviewPublisher = (): PreviewPublisherContextType => {
       }
       publisherRef.current.setAudioSource(deviceId);
       setLocalAudioSource(deviceId);
+      window.localStorage.setItem('audioSource', deviceId);
       if (setUser) {
         setUser((prevUser: UserType) => ({
           ...prevUser,
@@ -144,6 +145,7 @@ const usePreviewPublisher = (): PreviewPublisherContextType => {
       }
       publisherRef.current.setVideoSource(deviceId);
       setLocalVideoSource(deviceId);
+      window.localStorage.setItem('videoSource', deviceId);
       if (setUser) {
         setUser((prevUser: UserType) => ({
           ...prevUser,
