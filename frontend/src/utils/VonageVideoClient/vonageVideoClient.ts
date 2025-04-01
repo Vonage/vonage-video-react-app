@@ -17,7 +17,7 @@ import createMovingAvgAudioLevelTracker from '../movingAverageAudioLevelTracker'
 
 class VonageVideoClient extends EventEmitter {
   readonly #clientSession: Session;
-  #clientSubscribers: Record<string, Subscriber>;
+  readonly #clientSubscribers: Record<string, Subscriber>;
 
   constructor(credential: Credential) {
     super();
