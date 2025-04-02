@@ -10,17 +10,16 @@ import {
   useEffect,
   ReactElement,
 } from 'react';
-import { Connection, Session, Stream, SubscriberProperties } from '@vonage/client-sdk-video';
+import { Connection, Stream } from '@vonage/client-sdk-video';
 import fetchCredentials from '../../api/fetchCredentials';
-import createMovingAvgAudioLevelTracker from '../../utils/movingAverageAudioLevelTracker';
 import useUserContext from '../../hooks/useUserContext';
 import ActiveSpeakerTracker from '../../utils/ActiveSpeakerTracker';
 import useRightPanel, { RightPanelActiveTab } from '../../hooks/useRightPanel';
 import {
   Credential,
   SignalEvent,
+  SubscriberAudioLevelUpdatedEvent,
   SubscriberWrapper,
-  VideoElementCreatedEvent,
 } from '../../types/session';
 import useChat from '../../hooks/useChat';
 import { ChatMessageType } from '../../types/chat';
@@ -215,75 +214,6 @@ const SessionProvider = ({ children }: SessionProviderProps): ReactElement => {
     setConnected(false);
   };
 
-  /**
-   * Subscribes to a stream in a session, managing the receiving audio and video from the remote party.
-   * We are disabling the default SDK UI to have more control on the display of the subscriber
-   * Ref for Vonage Unified https://vonage.github.io/conversation-docs/video-js-reference/latest/Session.html#subscribe
-   * Ref for Opentok https://tokbox.com/developer/sdks/js/reference/Session.html#subscribe
-   * @param {Stream} stream - The stream to which the user is subscribing.
-   * @param {Session} localSession - The session in which the stream is located.
-   * @param {SubscriberProperties} [options={}] - Optional properties to configure the subscriber.
-   * @returns {Promise<void>} A promise that resolves when the subscription is set up.
-   */
-  const subscribe = useCallback(
-    async (stream: Stream, localSession: Session, options: SubscriberProperties = {}) => {
-      const { streamId } = stream;
-      if (localSession) {
-        const finalOptions: SubscriberProperties = {
-          ...options,
-          insertMode: 'append',
-          width: '100%',
-          height: '100%',
-          preferredResolution: 'auto',
-          style: {
-            buttonDisplayMode: 'off',
-            nameDisplayMode: 'on',
-          },
-          insertDefaultUI: false,
-        };
-        const isScreenshare = stream.videoType === 'screen';
-        const subscriber = localSession.subscribe(stream, undefined, finalOptions);
-        subscriber.on('videoElementCreated', (event: VideoElementCreatedEvent) => {
-          const { element } = event;
-          const subscriberWrapper: SubscriberWrapper = {
-            element,
-            subscriber,
-            isScreenshare,
-            isPinned: false,
-            // subscriber.id is refers to the targetElement id and will be undefined when insertDefaultUI is false so we use streamId to track our subscriber
-            id: streamId,
-          };
-          // prepend new subscriber to beginning of array so that is is visible on joining
-          setSubscriberWrappers((previousSubscriberWrappers) =>
-            [subscriberWrapper, ...previousSubscriberWrappers].sort(
-              sortByDisplayPriority(activeSpeakerIdRef.current)
-            )
-          );
-        });
-
-        subscriber.on('destroyed', () => {
-          activeSpeakerTracker.current.onSubscriberDestroyed(streamId);
-          const isNotDestroyedStreamId = ({ id }: { id: string }) => streamId !== id;
-          setSubscriberWrappers((prevSubscriberWrappers) =>
-            prevSubscriberWrappers.filter(isNotDestroyedStreamId)
-          );
-        });
-
-        // Create moving average tracker and add handler for subscriber audioLevelUpdated event emitted periodically with subscriber audio volume
-        // See for reference: https://developer.vonage.com/en/video/guides/ui-customization/general-customization#adjusting-user-interface-based-on-audio-levels
-        const getMovingAverageAudioLevel = createMovingAvgAudioLevelTracker();
-        subscriber.on('audioLevelUpdated', ({ audioLevel }) => {
-          const { logMovingAvg } = getMovingAverageAudioLevel(audioLevel);
-          activeSpeakerTracker.current.onSubscriberAudioLevelUpdated({
-            subscriberId: streamId,
-            movingAvg: logMovingAvg,
-          });
-        });
-      }
-    },
-    []
-  );
-
   // function to set reconnecting status and to increase the number of reconnections the user has had
   // this reconnection count can be then used in the UI to provide user feedback or for post-call analytics
   const handleReconnecting = () => {
@@ -297,12 +227,38 @@ const SessionProvider = ({ children }: SessionProviderProps): ReactElement => {
     setReconnecting(false);
   };
 
-  const handleArchiveStarted = ({ id }: { id: string }) => {
+  const handleArchiveStarted = (id: string) => {
     setArchiveId(id);
   };
 
   const handleArchiveStopped = () => {
     setArchiveId(null);
+  };
+
+  const handleSubscriberVideoElementCreated = (subscriberWrapper: SubscriberWrapper) => {
+    setSubscriberWrappers((previousSubscriberWrappers) =>
+      [subscriberWrapper, ...previousSubscriberWrappers].sort(
+        sortByDisplayPriority(activeSpeakerIdRef.current)
+      )
+    );
+  };
+
+  const handleSubscriberDestroyed = (streamId: string) => {
+    activeSpeakerTracker.current.onSubscriberDestroyed(streamId);
+    const isNotDestroyedStreamId = ({ id }: { id: string }) => streamId !== id;
+    setSubscriberWrappers((prevSubscriberWrappers) =>
+      prevSubscriberWrappers.filter(isNotDestroyedStreamId)
+    );
+  };
+
+  const handleSubscriberAudioLevelUpdated = ({
+    movingAvg,
+    subscriberId,
+  }: SubscriberAudioLevelUpdatedEvent) => {
+    activeSpeakerTracker.current.onSubscriberAudioLevelUpdated({
+      subscriberId,
+      movingAvg,
+    });
   };
 
   /**
@@ -326,9 +282,9 @@ const SessionProvider = ({ children }: SessionProviderProps): ReactElement => {
       session.current.on('archiveStarted', handleArchiveStarted);
       session.current.on('archiveStopped', handleArchiveStopped);
       session.current.on('signal:chat', handleChatSignal);
-      // TODO: event for subscriberVideoElementCreated
-      // TODO: event for subscriberAudioLevelUpdated
-      // TODO: event for subscriberDestroyed
+      session.current.on('subscriberAudioLevelUpdated', handleSubscriberAudioLevelUpdated);
+      session.current.on('subscriberVideoElementCreated', handleSubscriberVideoElementCreated);
+      session.current.on('subscriberDestroyed', handleSubscriberDestroyed);
       await session.current.connect(credential);
       setConnected(true);
     } catch (err: unknown) {
