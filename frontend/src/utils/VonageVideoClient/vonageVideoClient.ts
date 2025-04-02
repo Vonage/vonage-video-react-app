@@ -14,11 +14,14 @@ import {
   StreamCreatedEvent,
   VideoElementCreatedEvent,
   SubscriberWrapper,
+  SignalEventType,
+  SignalType,
 } from '../../types/session';
 import logOnConnect from '../logOnConnect';
 import createMovingAvgAudioLevelTracker from '../movingAverageAudioLevelTracker';
 
 type VonageVideoClientEvents = {
+  signal: [SignalEventType];
   streamPropertyChanged: [];
   subscriberVideoElementCreated: [SubscriberWrapper];
   subscriberDestroyed: [{ id: string }];
@@ -43,26 +46,6 @@ class VonageVideoClient extends EventEmitter<VonageVideoClientEvents> {
     // Attach all event listeners
     this.#clientSession.on('streamPropertyChanged', this.handleStreamPropertyChanged);
     this.#clientSession.on('streamCreated', this.handleStreamCreated);
-  }
-
-  private readonly handleStreamPropertyChanged = () => {
-    this.emit('streamPropertyChanged');
-  };
-
-  async connect(credential: Credential) {
-    const { apiKey, sessionId, token } = credential;
-
-    await new Promise((resolve, reject) => {
-      this.#clientSession.connect(token, (err?: OTError) => {
-        if (err) {
-          // We ignore the following lint warning because we are rejecting with an OTError object.
-          reject(err); // NOSONAR
-        } else {
-          logOnConnect(apiKey, sessionId, this.#clientSession.connection?.connectionId);
-          resolve(this.#clientSession.sessionId);
-        }
-      });
-    });
   }
 
   private handleStreamCreated(event: StreamCreatedEvent) {
@@ -112,16 +95,24 @@ class VonageVideoClient extends EventEmitter<VonageVideoClientEvents> {
     });
   }
 
-  publish(publisher: Publisher) {
-    this.#clientSession.publish(publisher, (error) => {
-      if (error) {
-        throw new Error(`${error.name}: ${error.message}`);
-      }
-    });
-  }
+  private readonly handleStreamPropertyChanged = () => {
+    this.emit('streamPropertyChanged');
+  };
 
-  unpublish(publisher: Publisher) {
-    this.#clientSession.unpublish(publisher);
+  async connect(credential: Credential) {
+    const { apiKey, sessionId, token } = credential;
+
+    await new Promise((resolve, reject) => {
+      this.#clientSession.connect(token, (err?: OTError) => {
+        if (err) {
+          // We ignore the following lint warning because we are rejecting with an OTError object.
+          reject(err); // NOSONAR
+        } else {
+          logOnConnect(apiKey, sessionId, this.#clientSession.connection?.connectionId);
+          resolve(this.#clientSession.sessionId);
+        }
+      });
+    });
   }
 
   disconnect() {
@@ -131,6 +122,22 @@ class VonageVideoClient extends EventEmitter<VonageVideoClientEvents> {
 
   forceMuteStream(stream: Stream) {
     this.#clientSession.forceMuteStream(stream);
+  }
+
+  publish(publisher: Publisher) {
+    this.#clientSession.publish(publisher, (error) => {
+      if (error) {
+        throw new Error(`${error.name}: ${error.message}`);
+      }
+    });
+  }
+
+  signal(data: SignalType) {
+    this.#clientSession.signal(data);
+  }
+
+  unpublish(publisher: Publisher) {
+    this.#clientSession.unpublish(publisher);
   }
 
   get session() {

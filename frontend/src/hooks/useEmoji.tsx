@@ -34,7 +34,7 @@ const useEmoji = () => {
     const throttledFunc = throttle(
       (emoji: string) => {
         const data = JSON.stringify({ emoji, time: new Date().getTime() });
-        session?.signal({ type: 'emoji', data }, () => {});
+        session?.signal({ type: 'emoji', data });
       },
       500,
       { leading: true, trailing: false }

@@ -1,4 +1,4 @@
-import { Event, Session, Stream, Subscriber } from '@vonage/client-sdk-video';
+import { Connection, Event, Session, Stream, Subscriber } from '@vonage/client-sdk-video';
 
 /**
  * Wrapper for a subscriber, including the DOM element, the subscriber object, whether it's a screenshare subscriber and whether it has been pinned.
@@ -28,4 +28,15 @@ export type StreamCreatedEvent = Event<'streamCreated', Session> & {
 
 export type VideoElementCreatedEvent = Event<'videoElementCreated', Subscriber> & {
   element: HTMLVideoElement | HTMLObjectElement;
+};
+
+export type SignalEventType = {
+  type?: string;
+  data?: string;
+  from: Connection | null;
+};
+
+export type SignalType = {
+  type: 'emoji' | 'chat';
+  data: string;
 };
