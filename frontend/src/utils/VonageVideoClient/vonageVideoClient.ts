@@ -26,11 +26,9 @@ type VonageVideoClientEvents = {
   ['signal:emoji']: [SignalEvent];
   sessionReconnecting: [];
   sessionReconnected: [];
-  // sessionDisconnected
-  // connectionCreated
-  // connectionDestroyed
-  // archiveStarted
-  // archiveStopped
+  sessionDisconnected: [];
+  archiveStarted: [{ id: string }];
+  archiveStopped: [];
   streamPropertyChanged: [];
   subscriberVideoElementCreated: [SubscriberWrapper];
   subscriberDestroyed: [{ id: string }];
@@ -58,6 +56,9 @@ class VonageVideoClient extends EventEmitter<VonageVideoClientEvents> {
     this.#clientSession.on('signal', this.handleSignal);
     this.#clientSession.on('sessionReconnecting', this.handleReconnecting);
     this.#clientSession.on('sessionReconnected', this.handleReconnected);
+    this.#clientSession.on('sessionDisconnected', this.handleSessionDisconnected);
+    this.#clientSession.on('archiveStarted', this.handleArchiveStarted);
+    this.#clientSession.on('archiveStopped', this.handleArchiveStopped);
   }
 
   private handleStreamCreated(event: StreamCreatedEvent) {
@@ -126,6 +127,18 @@ class VonageVideoClient extends EventEmitter<VonageVideoClientEvents> {
 
   private handleReconnected() {
     this.emit('sessionReconnected');
+  }
+
+  private handleSessionDisconnected() {
+    this.emit('sessionDisconnected');
+  }
+
+  private handleArchiveStarted({ id }: { id: string }) {
+    this.emit('archiveStarted', { id });
+  }
+
+  private handleArchiveStopped() {
+    this.emit('archiveStopped');
   }
 
   async connect(credential: Credential) {
