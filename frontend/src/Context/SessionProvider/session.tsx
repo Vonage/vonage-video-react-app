@@ -38,7 +38,6 @@ export type LayoutMode = 'grid' | 'active-speaker';
 
 export type SessionContextType = {
   session: null | VonageVideoClient;
-  connections: null | Connection[];
   connect: null | ((credential: Credential) => Promise<void>);
   disconnect: null | (() => void);
   joinRoom: null | ((roomName: string) => Promise<void>);
@@ -67,7 +66,6 @@ export type SessionContextType = {
  */
 export const SessionContext = createContext<SessionContextType>({
   session: null,
-  connections: null,
   connect: null,
   disconnect: null,
   joinRoom: null,
@@ -202,7 +200,6 @@ const SessionProvider = ({ children }: SessionProviderProps): ReactElement => {
   }, [moveSubscriberToTopOfDisplayOrder, setActiveSpeakerIdAndRef]);
 
   const { user } = useUserContext();
-  const [connections, setConnections] = useState<Connection[]>([]);
   const [connected, setConnected] = useState(false);
 
   /**
@@ -212,29 +209,8 @@ const SessionProvider = ({ children }: SessionProviderProps): ReactElement => {
     forceUpdate((prev) => !prev);
   };
 
-  /**
-   * Handles the creation of a new connection. Adding it to the connection array
-   * @param {ConnectionEventType} e - The connection event object.
-   */
-  const handleConnectionCreated = (e: ConnectionEventType) => {
-    setConnections((prevConnections) => [...prevConnections, e.connection]);
-  };
-
-  /**
-   * Handles the destruction of a connection. Removing it from the connections array
-   * @param {ConnectionEventType} e - The connection event object.
-   */
-  const handleConnectionDestroyed = (e: ConnectionEventType) => {
-    setConnections((prevConnections) =>
-      [...prevConnections].filter(
-        (connection) => connection.connectionId !== e.connection.connectionId
-      )
-    );
-  };
-
   // handle the disconnect from session and clean up of the session object
   const handleSessionDisconnected = () => {
-    setConnections([]);
     session.current = null;
     setConnected(false);
   };
@@ -347,8 +323,6 @@ const SessionProvider = ({ children }: SessionProviderProps): ReactElement => {
       session.current.on('sessionReconnecting', handleReconnecting);
       session.current.on('sessionReconnected', handleReconnected);
       session.current.on('sessionDisconnected', handleSessionDisconnected);
-      session.current.on('connectionCreated', handleConnectionCreated);
-      session.current.on('connectionDestroyed', handleConnectionDestroyed);
       session.current.on('archiveStarted', handleArchiveStarted);
       session.current.on('archiveStopped', handleArchiveStopped);
       session.current.on('signal:chat', handleChatSignal);
@@ -404,7 +378,6 @@ const SessionProvider = ({ children }: SessionProviderProps): ReactElement => {
       activeSpeakerId,
       archiveId,
       session: session.current,
-      connections,
       connect,
       disconnect,
       joinRoom,
@@ -429,7 +402,6 @@ const SessionProvider = ({ children }: SessionProviderProps): ReactElement => {
       activeSpeakerId,
       archiveId,
       session,
-      connections,
       connect,
       disconnect,
       unreadCount,
