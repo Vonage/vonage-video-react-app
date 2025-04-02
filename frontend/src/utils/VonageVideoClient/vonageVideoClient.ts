@@ -22,6 +22,15 @@ import createMovingAvgAudioLevelTracker from '../movingAverageAudioLevelTracker'
 
 type VonageVideoClientEvents = {
   signal: [SignalEvent];
+  ['signal:chat']: [SignalEvent];
+  ['signal:emoji']: [SignalEvent];
+  sessionReconnecting: [];
+  sessionReconnected: [];
+  // sessionDisconnected
+  // connectionCreated
+  // connectionDestroyed
+  // archiveStarted
+  // archiveStopped
   streamPropertyChanged: [];
   subscriberVideoElementCreated: [SubscriberWrapper];
   subscriberDestroyed: [{ id: string }];
@@ -46,6 +55,9 @@ class VonageVideoClient extends EventEmitter<VonageVideoClientEvents> {
     // Attach all event listeners
     this.#clientSession.on('streamPropertyChanged', this.handleStreamPropertyChanged);
     this.#clientSession.on('streamCreated', this.handleStreamCreated);
+    this.#clientSession.on('signal', this.handleSignal);
+    this.#clientSession.on('sessionReconnecting', this.handleReconnecting);
+    this.#clientSession.on('sessionReconnected', this.handleReconnected);
   }
 
   private handleStreamCreated(event: StreamCreatedEvent) {
@@ -95,9 +107,26 @@ class VonageVideoClient extends EventEmitter<VonageVideoClientEvents> {
     });
   }
 
-  private readonly handleStreamPropertyChanged = () => {
+  private handleStreamPropertyChanged() {
     this.emit('streamPropertyChanged');
-  };
+  }
+
+  private handleSignal(event: SignalEvent) {
+    const { type } = event;
+    if (type === 'chat') {
+      this.emit('signal:chat', event);
+    } else if (type === 'emoji') {
+      this.emit('signal:emoji', event);
+    }
+  }
+
+  private handleReconnecting() {
+    this.emit('sessionReconnecting');
+  }
+
+  private handleReconnected() {
+    this.emit('sessionReconnected');
+  }
 
   async connect(credential: Credential) {
     const { apiKey, sessionId, token } = credential;

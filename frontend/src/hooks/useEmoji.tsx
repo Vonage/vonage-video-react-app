@@ -108,10 +108,10 @@ const useEmoji = () => {
   );
 
   useEffect(() => {
-    session?.on('signal', emojiHandler);
+    session?.on('signal:emoji', emojiHandler);
 
     return () => {
-      session?.off('signal', emojiHandler);
+      session?.off('signal:emoji', emojiHandler);
     };
   }, [emojiHandler, session]);
 

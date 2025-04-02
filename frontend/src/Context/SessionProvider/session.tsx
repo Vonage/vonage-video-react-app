@@ -16,7 +16,12 @@ import createMovingAvgAudioLevelTracker from '../../utils/movingAverageAudioLeve
 import useUserContext from '../../hooks/useUserContext';
 import ActiveSpeakerTracker from '../../utils/ActiveSpeakerTracker';
 import useRightPanel, { RightPanelActiveTab } from '../../hooks/useRightPanel';
-import { Credential, SubscriberWrapper, VideoElementCreatedEvent } from '../../types/session';
+import {
+  Credential,
+  SignalEvent,
+  SubscriberWrapper,
+  VideoElementCreatedEvent,
+} from '../../types/session';
 import useChat from '../../hooks/useChat';
 import { ChatMessageType } from '../../types/chat';
 import { isMobile } from '../../utils/util';
@@ -130,7 +135,7 @@ const SessionProvider = ({ children }: SessionProviderProps): ReactElement => {
     toggleReportIssue,
   } = useRightPanel();
 
-  const handleChatSignal = ({ data }: { data: string }) => {
+  const handleChatSignal = ({ data }: SignalEvent) => {
     if (data) {
       onChatMessage(data);
       incrementUnreadCount();
@@ -346,7 +351,6 @@ const SessionProvider = ({ children }: SessionProviderProps): ReactElement => {
       session.current.on('connectionDestroyed', handleConnectionDestroyed);
       session.current.on('archiveStarted', handleArchiveStarted);
       session.current.on('archiveStopped', handleArchiveStopped);
-      // @ts-expect-error signal:<type> is not ts compliant
       session.current.on('signal:chat', handleChatSignal);
       // TODO: event for subscriberVideoElementCreated
       // TODO: event for subscriberAudioLevelUpdated
