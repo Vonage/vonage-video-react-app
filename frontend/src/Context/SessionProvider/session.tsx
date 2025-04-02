@@ -10,26 +10,19 @@ import {
   useEffect,
   ReactElement,
 } from 'react';
-import { v4 as uuid } from 'uuid';
-import {
-  Connection,
-  Dimensions,
-  Session,
-  Stream,
-  Subscriber,
-  SubscriberProperties,
-  initSession,
-  Event,
-  OTError,
-} from '@vonage/client-sdk-video';
+import { Connection, Session, Stream, SubscriberProperties } from '@vonage/client-sdk-video';
 import fetchCredentials from '../../api/fetchCredentials';
 import createMovingAvgAudioLevelTracker from '../../utils/movingAverageAudioLevelTracker';
 import useUserContext from '../../hooks/useUserContext';
 import ActiveSpeakerTracker from '../../utils/ActiveSpeakerTracker';
 import useRightPanel, { RightPanelActiveTab } from '../../hooks/useRightPanel';
-import logOnConnect from '../../utils/logOnConnect';
+import {
+  Credential,
+  StreamCreatedEvent,
+  SubscriberWrapper,
+  VideoElementCreatedEvent,
+} from '../../types/session';
 import useChat from '../../hooks/useChat';
-import { SubscriberWrapper } from '../../types/session';
 import { ChatMessageType } from '../../types/chat';
 import { isMobile } from '../../utils/util';
 import {
@@ -37,22 +30,14 @@ import {
   togglePinAndSortByDisplayOrder,
 } from '../../utils/sessionStateOperations';
 import { MAX_PIN_COUNT_DESKTOP, MAX_PIN_COUNT_MOBILE } from '../../utils/constants';
+import VonageVideoClient from '../../utils/VonageVideoClient';
 
 export type { ChatMessageType } from '../../types/chat';
-
-export type ChangedStreamType = {
-  stream: Stream;
-  changedProperty: 'hasVideo' | 'hasAudio' | 'videoDimensions';
-  newValue: boolean | Dimensions;
-  oldValue: boolean | Dimensions;
-  token?: string;
-};
 
 export type LayoutMode = 'grid' | 'active-speaker';
 
 export type SessionContextType = {
-  session: null | Session;
-  changedStream: null | ChangedStreamType;
+  session: null | Session | VonageVideoClient;
   connections: null | Connection[];
   connect: null | ((credential: Credential) => Promise<void>);
   disconnect: null | (() => void);
@@ -82,7 +67,6 @@ export type SessionContextType = {
  */
 export const SessionContext = createContext<SessionContextType>({
   session: null,
-  changedStream: null,
   connections: null,
   connect: null,
   disconnect: null,
@@ -114,29 +98,11 @@ export type ConnectionEventType = {
 };
 
 /**
- * Represents the credentials required to connect to a session.
- * For Opentok the apiKey is the project Id
- * For Vonage Unified the apiKey is the application Id
- */
-export type Credential = {
-  apiKey: string;
-  sessionId: string;
-  token: string;
-};
-export type StreamCreatedEvent = Event<'streamCreated', Session> & {
-  stream: Stream;
-};
-
-/**
  * @typedef {object} SessionProviderProps
  * @property {ReactNode} children - The content to be rendered as children.
  */
 export type SessionProviderProps = {
   children: ReactNode;
-};
-
-export type VideoElementCreatedEvent = Event<'videoElementCreated', Subscriber> & {
-  element: HTMLVideoElement | HTMLObjectElement;
 };
 
 const MAX_PIN_COUNT = isMobile() ? MAX_PIN_COUNT_MOBILE : MAX_PIN_COUNT_DESKTOP;
@@ -150,7 +116,8 @@ const MAX_PIN_COUNT = isMobile() ? MAX_PIN_COUNT_MOBILE : MAX_PIN_COUNT_DESKTOP;
  * @returns {SessionContextType} a context provider for a publisher preview
  */
 const SessionProvider = ({ children }: SessionProviderProps): ReactElement => {
-  const session = useRef<Session | null>(null);
+  const [, forceUpdate] = useState<boolean>(false); // NOSONAR
+  const session = useRef<Session | null | VonageVideoClient>(null);
   const [reconnecting, setReconnecting] = useState(false);
   const [subscriberWrappers, setSubscriberWrappers] = useState<SubscriberWrapper[]>([]);
   const [layoutMode, setLayoutMode] = useState<LayoutMode>('active-speaker');
@@ -235,21 +202,14 @@ const SessionProvider = ({ children }: SessionProviderProps): ReactElement => {
   }, [moveSubscriberToTopOfDisplayOrder, setActiveSpeakerIdAndRef]);
 
   const { user } = useUserContext();
-  const [changedStream, setChangedStream] = useState<ChangedStreamType | null>(null);
   const [connections, setConnections] = useState<Connection[]>([]);
   const [connected, setConnected] = useState(false);
 
   /**
    * Handles changes to stream properties. This triggers a re-render when a stream property changes
-   * @param {ChangedStreamType} params - Object containing details about the changed stream.
    */
-  const handleStreamPropertyChanged = ({
-    stream,
-    changedProperty,
-    newValue,
-    oldValue,
-  }: ChangedStreamType) => {
-    setChangedStream({ stream, changedProperty, newValue, oldValue, token: uuid() });
+  const handleStreamPropertyChanged = () => {
+    forceUpdate((prev) => !prev);
   };
 
   /**
@@ -348,13 +308,6 @@ const SessionProvider = ({ children }: SessionProviderProps): ReactElement => {
     []
   );
 
-  // handle the subscription (Receiving media from remote parties)
-  const handleStreamCreated = (e: StreamCreatedEvent) => {
-    if (session.current) {
-      subscribe(e.stream, session.current);
-    }
-  };
-
   // function to set reconnecting status and to increase the number of reconnections the user has had
   // this reconnection count can be then used in the UI to provide user feedback or for post-call analytics
   const handleReconnecting = () => {
@@ -382,15 +335,15 @@ const SessionProvider = ({ children }: SessionProviderProps): ReactElement => {
    * @returns {Promise<void>} A promise that resolves when the session is connected.
    */
   const connect = useCallback(async (credential: Credential) => {
+    if (session.current) {
+      return;
+    }
     try {
-      const { apiKey, sessionId, token } = credential;
       // initialize the session object and set up the relevant event listeners
       // https://tokbox.com/developer/sdks/js/reference/Session.html#events for opentok
       // https://vonage.github.io/conversation-docs/video-js-reference/latest/Session.html#events for unified environment
-      session.current = initSession(apiKey, sessionId);
-
+      session.current = new VonageVideoClient(credential);
       session.current.on('streamPropertyChanged', handleStreamPropertyChanged);
-      session.current.on('streamCreated', handleStreamCreated);
       session.current.on('sessionReconnecting', handleReconnecting);
       session.current.on('sessionReconnected', handleReconnected);
       session.current.on('sessionDisconnected', handleSessionDisconnected);
@@ -400,19 +353,6 @@ const SessionProvider = ({ children }: SessionProviderProps): ReactElement => {
       session.current.on('archiveStopped', handleArchiveStopped);
       // @ts-expect-error signal:<type> is not ts compliant
       session.current.on('signal:chat', handleChatSignal);
-
-      await new Promise<string | undefined>((resolve, reject) => {
-        session.current?.connect(token, (err?: OTError) => {
-          if (err) {
-            // We ignore the following lint warning because we are rejecting with an OTError object.
-            reject(err); // NOSONAR
-          } else {
-            setConnected(true);
-            logOnConnect(apiKey, sessionId, session.current?.connection?.connectionId);
-            resolve(session.current?.sessionId);
-          }
-        });
-      });
     } catch (err: unknown) {
       if (err instanceof Error) {
         console.error(err);
@@ -460,7 +400,6 @@ const SessionProvider = ({ children }: SessionProviderProps): ReactElement => {
       activeSpeakerId,
       archiveId,
       session: session.current,
-      changedStream,
       connections,
       connect,
       disconnect,
@@ -486,7 +425,6 @@ const SessionProvider = ({ children }: SessionProviderProps): ReactElement => {
       activeSpeakerId,
       archiveId,
       session,
-      changedStream,
       connections,
       connect,
       disconnect,
