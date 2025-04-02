@@ -2,6 +2,7 @@
 import {
   initSession,
   OTError,
+  Publisher,
   Session,
   Stream,
   Subscriber,
@@ -17,47 +18,51 @@ import {
 import logOnConnect from '../logOnConnect';
 import createMovingAvgAudioLevelTracker from '../movingAverageAudioLevelTracker';
 
-class VonageVideoClient extends EventEmitter {
+type VonageVideoClientEvents = {
+  streamPropertyChanged: [];
+  subscriberVideoElementCreated: [SubscriberWrapper];
+  subscriberDestroyed: [{ id: string }];
+  subscriberAudioLevelUpdated: [{ movingAvg: number; subscriberId: string }];
+};
+
+class VonageVideoClient extends EventEmitter<VonageVideoClientEvents> {
   readonly #clientSession: Session;
   readonly #clientSubscribers: Record<string, Subscriber>;
+  private readonly credential: Credential;
 
   constructor(credential: Credential) {
     super();
-    const { apiKey, sessionId } = credential;
+    this.credential = credential;
+    const { apiKey, sessionId } = this.credential;
     this.#clientSession = initSession(apiKey, sessionId);
     this.#clientSubscribers = {};
-    this.init(credential);
+    this.init();
   }
 
-  private init(credential: Credential) {
+  private init() {
     // Attach all event listeners
     this.#clientSession.on('streamPropertyChanged', this.handleStreamPropertyChanged);
     this.#clientSession.on('streamCreated', this.handleStreamCreated);
-
-    this.connect(credential);
   }
 
   private readonly handleStreamPropertyChanged = () => {
     this.emit('streamPropertyChanged');
   };
 
-  private async connect(credential: Credential) {
+  async connect(credential: Credential) {
     const { apiKey, sessionId, token } = credential;
-    try {
-      await new Promise((resolve, reject) => {
-        this.#clientSession.connect(token, (err?: OTError) => {
-          if (err) {
-            // We ignore the following lint warning because we are rejecting with an OTError object.
-            reject(err); // NOSONAR
-          } else {
-            logOnConnect(apiKey, sessionId, this.#clientSession.connection?.connectionId);
-            resolve(this.#clientSession.sessionId);
-          }
-        });
+
+    await new Promise((resolve, reject) => {
+      this.#clientSession.connect(token, (err?: OTError) => {
+        if (err) {
+          // We ignore the following lint warning because we are rejecting with an OTError object.
+          reject(err); // NOSONAR
+        } else {
+          logOnConnect(apiKey, sessionId, this.#clientSession.connection?.connectionId);
+          resolve(this.#clientSession.sessionId);
+        }
       });
-    } catch (error: unknown) {
-      console.error(error);
-    }
+    });
   }
 
   private handleStreamCreated(event: StreamCreatedEvent) {
@@ -107,6 +112,18 @@ class VonageVideoClient extends EventEmitter {
     });
   }
 
+  publish(publisher: Publisher) {
+    this.#clientSession.publish(publisher, (error) => {
+      if (error) {
+        throw new Error(`${error.name}: ${error.message}`);
+      }
+    });
+  }
+
+  unpublish(publisher: Publisher) {
+    this.#clientSession.unpublish(publisher);
+  }
+
   disconnect() {
     this.#clientSession.disconnect();
     Object.keys(this.#clientSubscribers).forEach((key) => delete this.#clientSubscribers[key]);
@@ -122,6 +139,14 @@ class VonageVideoClient extends EventEmitter {
 
   get subscribers() {
     return this.#clientSubscribers;
+  }
+
+  get sessionId() {
+    return this.#clientSession.sessionId;
+  }
+
+  get connectionId() {
+    return this.#clientSession.connection?.connectionId;
   }
 }
 
