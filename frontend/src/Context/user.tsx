@@ -6,8 +6,10 @@ import {
   SetStateAction,
   Dispatch,
   ReactElement,
+  useRef,
 } from 'react';
-import getCurrentDeviceId from '../utils/getCurrentDeviceId';
+import createDeviceManager from '../utils/createDeviceManager';
+import { DeviceManagerType } from '../utils/createDeviceManager/createDeviceManager';
 
 // Define the shape of the User context
 export type UserContextType = {
@@ -50,8 +52,13 @@ const UserProvider = ({ children }: UserProviderProps): ReactElement => {
   const noiseSuppression = window.localStorage.getItem('noiseSuppression') === 'true';
   const blur = window.localStorage.getItem('backgroundBlur') === 'true';
   const name = window.localStorage.getItem('username') ?? '';
-  const audioSource = getCurrentDeviceId('audioinput');
-  const videoSource = getCurrentDeviceId('videoinput');
+  const deviceManagerRef = useRef<DeviceManagerType | null>(null);
+  if (!deviceManagerRef.current) {
+    deviceManagerRef.current = createDeviceManager();
+  }
+  deviceManagerRef.current?.updateDeviceList();
+  const audioSource = deviceManagerRef.current?.getConnectedDeviceId('audioinput');
+  const videoSource = deviceManagerRef.current?.getConnectedDeviceId('videoinput');
 
   const [user, setUser] = useState<UserType>({
     defaultSettings: {

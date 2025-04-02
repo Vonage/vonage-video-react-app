@@ -14,7 +14,8 @@ import useUserContext from '../../../hooks/useUserContext';
 import { DEVICE_ACCESS_STATUS } from '../../../utils/constants';
 import { UserType } from '../../user';
 import { AccessDeniedEvent } from '../../PublisherProvider/usePublisher/usePublisher';
-import getCurrentDeviceId from '../../../utils/getCurrentDeviceId';
+import createDeviceManager from '../../../utils/createDeviceManager';
+import { DeviceManagerType } from '../../../utils/createDeviceManager/createDeviceManager';
 
 type PublisherVideoElementCreatedEvent = Event<'videoElementCreated', Publisher> & {
   element: HTMLVideoElement | HTMLObjectElement;
@@ -70,6 +71,10 @@ const usePreviewPublisher = (): PreviewPublisherContextType => {
   const [isAudioEnabled, setIsAudioEnabled] = useState(true);
   const [localVideoSource, setLocalVideoSource] = useState<string | undefined>(undefined);
   const [localAudioSource, setLocalAudioSource] = useState<string | undefined>(undefined);
+  const deviceManagerRef = useRef<DeviceManagerType | null>(null);
+  if (!deviceManagerRef.current) {
+    deviceManagerRef.current = createDeviceManager();
+  }
 
   /* This sets the default devices in use so that the user knows what devices they are using */
   useEffect(() => {
@@ -231,12 +236,16 @@ const usePreviewPublisher = (): PreviewPublisherContextType => {
           }
         : undefined;
 
+    await deviceManagerRef.current?.updateDeviceList();
+    const audioSource = deviceManagerRef.current?.getConnectedDeviceId('audioinput');
+    const videoSource = deviceManagerRef.current?.getConnectedDeviceId('videoinput');
+
     const publisherOptions: PublisherProperties = {
       insertDefaultUI: false,
       videoFilter,
       resolution: '1280x720',
-      audioSource: getCurrentDeviceId('audioinput'),
-      videoSource: getCurrentDeviceId('videoinput'),
+      audioSource,
+      videoSource,
     };
 
     publisherRef.current = initPublisher(undefined, publisherOptions, (err: unknown) => {
