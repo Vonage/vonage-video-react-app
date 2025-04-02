@@ -40,3 +40,5 @@ export type SignalType = {
   type: 'emoji' | 'chat';
   data: string;
 };
+
+export type SubscriberAudioLevelUpdatedEvent = { movingAvg: number; subscriberId: string };
