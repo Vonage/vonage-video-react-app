@@ -14,14 +14,14 @@ import {
   StreamCreatedEvent,
   VideoElementCreatedEvent,
   SubscriberWrapper,
-  SignalEventType,
+  SignalEvent,
   SignalType,
 } from '../../types/session';
 import logOnConnect from '../logOnConnect';
 import createMovingAvgAudioLevelTracker from '../movingAverageAudioLevelTracker';
 
 type VonageVideoClientEvents = {
-  signal: [SignalEventType];
+  signal: [SignalEvent];
   streamPropertyChanged: [];
   subscriberVideoElementCreated: [SubscriberWrapper];
   subscriberDestroyed: [{ id: string }];

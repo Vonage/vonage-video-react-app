@@ -4,7 +4,7 @@ import { throttle } from 'lodash';
 import useSessionContext from './useSessionContext';
 import { EMOJI_DISPLAY_DURATION } from '../utils/constants';
 
-type SignalEventType = {
+type SignalEvent = {
   type?: string;
   data?: string;
   from: Connection | null;
@@ -81,10 +81,10 @@ const useEmoji = () => {
   /**
    * Manages signals sent by users in the room. Any emojis sent by the room's users
    * are processed in a data queue to be rendered in the application.
-   * @param {SignalEventType} signalEvent - Signal event dispatched by the session.
+   * @param {SignalEvent} signalEvent - Signal event dispatched by the session.
    */
   const emojiHandler = useCallback(
-    ({ type, data, from: sendingConnection }: SignalEventType) => {
+    ({ type, data, from: sendingConnection }: SignalEvent) => {
       if (type !== 'signal:emoji') {
         return;
       }
