@@ -1,18 +1,20 @@
+/* eslint-disable class-methods-use-this */
 import {
   initSession,
   OTError,
   Session,
+  Stream,
   Subscriber,
   SubscriberProperties,
 } from '@vonage/client-sdk-video';
-import { EventEmitter } from 'stream';
+import { EventEmitter } from 'events';
 import {
   Credential,
   StreamCreatedEvent,
   VideoElementCreatedEvent,
-} from '../../Context/SessionProvider/session';
+  SubscriberWrapper,
+} from '../../types/session';
 import logOnConnect from '../logOnConnect';
-import { SubscriberWrapper } from '../../types/session';
 import createMovingAvgAudioLevelTracker from '../movingAverageAudioLevelTracker';
 
 class VonageVideoClient extends EventEmitter {
@@ -27,7 +29,7 @@ class VonageVideoClient extends EventEmitter {
     this.init(credential);
   }
 
-  init(credential: Credential) {
+  private init(credential: Credential) {
     // Attach all event listeners
     this.#clientSession.on('streamPropertyChanged', this.handleStreamPropertyChanged);
     this.#clientSession.on('streamCreated', this.handleStreamCreated);
@@ -35,11 +37,11 @@ class VonageVideoClient extends EventEmitter {
     this.connect(credential);
   }
 
-  handleStreamPropertyChanged = () => {
+  private readonly handleStreamPropertyChanged = () => {
     this.emit('streamPropertyChanged');
   };
 
-  async connect(credential: Credential) {
+  private async connect(credential: Credential) {
     const { apiKey, sessionId, token } = credential;
     try {
       await new Promise((resolve, reject) => {
@@ -54,13 +56,11 @@ class VonageVideoClient extends EventEmitter {
         });
       });
     } catch (error: unknown) {
-      if (error instanceof Error) {
-        console.error(error);
-      }
+      console.error(error);
     }
   }
 
-  handleStreamCreated(event: StreamCreatedEvent) {
+  private handleStreamCreated(event: StreamCreatedEvent) {
     const { stream } = event;
     const { streamId, videoType } = stream;
     const isScreenshare = videoType === 'screen';
@@ -105,6 +105,15 @@ class VonageVideoClient extends EventEmitter {
       const { logMovingAvg } = getMovingAverageAudioLevel(audioLevel);
       this.emit('subscriberAudioLevelUpdated', { movingAvg: logMovingAvg, subscriberId: streamId });
     });
+  }
+
+  disconnect() {
+    this.#clientSession.disconnect();
+    Object.keys(this.#clientSubscribers).forEach((key) => delete this.#clientSubscribers[key]);
+  }
+
+  forceMuteStream(stream: Stream) {
+    this.#clientSession.forceMuteStream(stream);
   }
 
   get session() {
