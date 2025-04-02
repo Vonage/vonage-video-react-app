@@ -30,7 +30,7 @@ export type VideoElementCreatedEvent = Event<'videoElementCreated', Subscriber> 
   element: HTMLVideoElement | HTMLObjectElement;
 };
 
-export type SignalEventType = {
+export type SignalEvent = {
   type?: string;
   data?: string;
   from: Connection | null;
