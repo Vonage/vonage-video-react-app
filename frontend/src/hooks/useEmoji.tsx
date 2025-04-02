@@ -49,11 +49,11 @@ const useEmoji = () => {
    */
   const getIsYourConnection = useCallback(
     (sendingConnection: Connection): boolean => {
-      const yourConnection = session?.connection;
+      const yourConnection = session?.connectionId;
 
-      return sendingConnection.connectionId === yourConnection?.connectionId;
+      return sendingConnection.connectionId === yourConnection;
     },
-    [session?.connection]
+    [session?.connectionId]
   );
 
   /**

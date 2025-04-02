@@ -16,12 +16,7 @@ import createMovingAvgAudioLevelTracker from '../../utils/movingAverageAudioLeve
 import useUserContext from '../../hooks/useUserContext';
 import ActiveSpeakerTracker from '../../utils/ActiveSpeakerTracker';
 import useRightPanel, { RightPanelActiveTab } from '../../hooks/useRightPanel';
-import {
-  Credential,
-  StreamCreatedEvent,
-  SubscriberWrapper,
-  VideoElementCreatedEvent,
-} from '../../types/session';
+import { Credential, SubscriberWrapper, VideoElementCreatedEvent } from '../../types/session';
 import useChat from '../../hooks/useChat';
 import { ChatMessageType } from '../../types/chat';
 import { isMobile } from '../../utils/util';
@@ -37,7 +32,7 @@ export type { ChatMessageType } from '../../types/chat';
 export type LayoutMode = 'grid' | 'active-speaker';
 
 export type SessionContextType = {
-  session: null | Session | VonageVideoClient;
+  session: null | VonageVideoClient;
   connections: null | Connection[];
   connect: null | ((credential: Credential) => Promise<void>);
   disconnect: null | (() => void);
@@ -117,7 +112,7 @@ const MAX_PIN_COUNT = isMobile() ? MAX_PIN_COUNT_MOBILE : MAX_PIN_COUNT_DESKTOP;
  */
 const SessionProvider = ({ children }: SessionProviderProps): ReactElement => {
   const [, forceUpdate] = useState<boolean>(false); // NOSONAR
-  const session = useRef<Session | null | VonageVideoClient>(null);
+  const session = useRef<null | VonageVideoClient>(null);
   const [reconnecting, setReconnecting] = useState(false);
   const [subscriberWrappers, setSubscriberWrappers] = useState<SubscriberWrapper[]>([]);
   const [layoutMode, setLayoutMode] = useState<LayoutMode>('active-speaker');
@@ -353,6 +348,11 @@ const SessionProvider = ({ children }: SessionProviderProps): ReactElement => {
       session.current.on('archiveStopped', handleArchiveStopped);
       // @ts-expect-error signal:<type> is not ts compliant
       session.current.on('signal:chat', handleChatSignal);
+      // TODO: event for subscriberVideoElementCreated
+      // TODO: event for subscriberAudioLevelUpdated
+      // TODO: event for subscriberDestroyed
+      await session.current.connect(credential);
+      setConnected(true);
     } catch (err: unknown) {
       if (err instanceof Error) {
         console.error(err);
