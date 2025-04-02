@@ -1,4 +1,4 @@
-import { act, cleanup, renderHook } from '@testing-library/react';
+import { act, cleanup, renderHook, waitFor } from '@testing-library/react';
 import { afterAll, afterEach, beforeEach, describe, expect, it, Mock, vi } from 'vitest';
 import { hasMediaProcessorSupport, initPublisher, Publisher } from '@vonage/client-sdk-video';
 import EventEmitter from 'events';
@@ -69,15 +69,18 @@ describe('usePreviewPublisher', () => {
   });
 
   describe('initLocalPublisher', () => {
-    it('should call initPublisher', () => {
+    it('should call initPublisher', async () => {
       mockedInitPublisher.mockReturnValue(mockPublisher);
       const { result } = renderHook(() => usePreviewPublisher());
+
       result.current.initLocalPublisher();
 
-      expect(mockedInitPublisher).toHaveBeenCalled();
+      await waitFor(() => {
+        expect(mockedInitPublisher).toHaveBeenCalled();
+      });
     });
 
-    it('should log access denied errors', () => {
+    it('should log access denied errors', async () => {
       const error = new Error(
         "It hit me pretty hard, how there's no kind of sad in this world that will stop it turning."
       );
@@ -90,42 +93,48 @@ describe('usePreviewPublisher', () => {
       act(() => {
         result.current.initLocalPublisher();
       });
-      expect(consoleErrorSpy).toHaveBeenCalledWith('initPublisher error: ', error);
+      await waitFor(() => {
+        expect(consoleErrorSpy).toHaveBeenCalledWith('initPublisher error: ', error);
+      });
     });
 
-    it('should apply background blur when initialized if set to true', () => {
+    it('should apply background blur when initialized if set to true', async () => {
       mockedHasMediaProcessorSupport.mockReturnValue(true);
       mockedInitPublisher.mockReturnValue(mockPublisher);
       const { result } = renderHook(() => usePreviewPublisher());
       act(() => {
         result.current.initLocalPublisher();
       });
-      expect(mockedInitPublisher).toHaveBeenCalledWith(
-        undefined,
-        expect.objectContaining({
-          videoFilter: expect.objectContaining({
-            type: 'backgroundBlur',
-            blurStrength: 'high',
+      await waitFor(() => {
+        expect(mockedInitPublisher).toHaveBeenCalledWith(
+          undefined,
+          expect.objectContaining({
+            videoFilter: expect.objectContaining({
+              type: 'backgroundBlur',
+              blurStrength: 'high',
+            }),
           }),
-        }),
-        expect.any(Function)
-      );
+          expect.any(Function)
+        );
+      });
     });
 
-    it('should not apply background blur when initialized if the device does not support it', () => {
+    it('should not apply background blur when initialized if the device does not support it', async () => {
       mockedHasMediaProcessorSupport.mockReturnValue(false);
       mockedInitPublisher.mockReturnValue(mockPublisher);
       const { result } = renderHook(() => usePreviewPublisher());
       act(() => {
         result.current.initLocalPublisher();
       });
-      expect(mockedInitPublisher).toHaveBeenCalledWith(
-        undefined,
-        expect.objectContaining({
-          videoFilter: undefined,
-        }),
-        expect.any(Function)
-      );
+      await waitFor(() => {
+        expect(mockedInitPublisher).toHaveBeenCalledWith(
+          undefined,
+          expect.objectContaining({
+            videoFilter: undefined,
+          }),
+          expect.any(Function)
+        );
+      });
     });
   });
 

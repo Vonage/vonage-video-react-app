@@ -1,6 +1,5 @@
 export type DeviceManagerType = {
-  getConnectedDeviceId: (kind: 'videoinput' | 'audioinput') => string | undefined;
-  updateDeviceList: () => Promise<void>;
+  getConnectedDeviceId: (kind: 'videoinput' | 'audioinput') => Promise<string | undefined>;
 };
 
 /**
@@ -19,7 +18,10 @@ const createDeviceManager = (): DeviceManagerType => {
   };
 
   // Retrieves the stored device ID for the given kind and checks if it's still connected
-  const getConnectedDeviceId = (kind: 'videoinput' | 'audioinput'): string | undefined => {
+  const getConnectedDeviceId = async (
+    kind: 'videoinput' | 'audioinput'
+  ): Promise<string | undefined> => {
+    await updateDeviceList();
     const storageKey = kind === 'videoinput' ? 'videoSource' : 'audioSource';
     const storedDeviceId = window.localStorage.getItem(storageKey);
 
@@ -34,7 +36,7 @@ const createDeviceManager = (): DeviceManagerType => {
     return isStillConnected ? storedDeviceId : undefined;
   };
 
-  return { getConnectedDeviceId, updateDeviceList };
+  return { getConnectedDeviceId };
 };
 
 export default createDeviceManager;

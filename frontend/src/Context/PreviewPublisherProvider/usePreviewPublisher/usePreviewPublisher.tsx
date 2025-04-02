@@ -236,9 +236,8 @@ const usePreviewPublisher = (): PreviewPublisherContextType => {
           }
         : undefined;
 
-    await deviceManagerRef.current?.updateDeviceList();
-    const audioSource = deviceManagerRef.current?.getConnectedDeviceId('audioinput');
-    const videoSource = deviceManagerRef.current?.getConnectedDeviceId('videoinput');
+    const audioSource = await deviceManagerRef.current?.getConnectedDeviceId('audioinput');
+    const videoSource = await deviceManagerRef.current?.getConnectedDeviceId('videoinput');
 
     const publisherOptions: PublisherProperties = {
       insertDefaultUI: false,

@@ -56,9 +56,9 @@ const UserProvider = ({ children }: UserProviderProps): ReactElement => {
   if (!deviceManagerRef.current) {
     deviceManagerRef.current = createDeviceManager();
   }
-  deviceManagerRef.current?.updateDeviceList();
-  const audioSource = deviceManagerRef.current?.getConnectedDeviceId('audioinput');
-  const videoSource = deviceManagerRef.current?.getConnectedDeviceId('videoinput');
+  // deviceManagerRef.current?.updateDeviceList();
+  // const audioSource = deviceManagerRef.current?.getConnectedDeviceId('audioinput');
+  // const videoSource = deviceManagerRef.current?.getConnectedDeviceId('videoinput');
 
   const [user, setUser] = useState<UserType>({
     defaultSettings: {
@@ -67,8 +67,8 @@ const UserProvider = ({ children }: UserProviderProps): ReactElement => {
       name,
       blur,
       noiseSuppression,
-      audioSource,
-      videoSource,
+      // audioSource,
+      // videoSource,
     },
     issues: {
       reconnections: 0, // Start with zero reconnections
