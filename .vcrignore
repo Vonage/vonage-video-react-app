@@ -26,6 +26,5 @@ server.csr
 coverage/
 
 /.vscode
-build
 
 /scripts/allLicenseResults.json
