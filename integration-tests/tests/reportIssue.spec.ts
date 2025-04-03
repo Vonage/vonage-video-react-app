@@ -2,6 +2,13 @@
 import { expect } from '@playwright/test';
 import { test, baseURL } from '../fixtures/testWithLogging';
 
+/**
+ * Clicks on the "Report Issue" button in the application.
+ *
+ * @param {import('@playwright/test').Page} page - The Playwright page object.
+ * @param {boolean} isMobile - Whether the test is running on a mobile device.
+ * @returns {Promise<void>}
+ */
 async function clickOnReportIssueButton(page, isMobile) {
   if (isMobile) {
     console.log(isMobile);

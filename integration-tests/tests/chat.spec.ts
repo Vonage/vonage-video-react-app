@@ -3,6 +3,13 @@ import * as crypto from 'crypto';
 import { test } from '../fixtures/testWithLogging';
 import { openMeetingRoomWithSettings, waitAndClickFirefox } from './utils';
 
+/**
+ * Toggles the chat button in the application.
+ *
+ * @param {import('@playwright/test').Page} page - The Playwright page object.
+ * @param {boolean} isMobile - Whether the test is running on a mobile device.
+ * @returns {Promise<void>}
+ */
 async function chatToggleButton(page, isMobile) {
   const chatButton = await page.getByTestId('chat-button', { exact: true });
   if (isMobile) {
