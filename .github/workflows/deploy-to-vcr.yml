@@ -10,7 +10,6 @@ permissions:
   contents: read
 
 env:
-  VITE_ENABLE_REPORT_ISSUE: ${{secrets.VITE_ENABLE_REPORT_ISSUE}}
   DOMAIN: ${{secrets.DOMAIN}}
 
 jobs:
