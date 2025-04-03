@@ -1,6 +1,4 @@
 import { ReactElement, useCallback, useRef, useState } from 'react';
-import AudioControlButton from '../AudioControlButton';
-import VideoControlButton from '../VideoControlButton';
 import ScreenSharingButton from '../../ScreenSharingButton';
 import TimeRoomNameMeetingRoom from '../TimeRoomName';
 import ExitButton from '../ExitButton';
@@ -15,6 +13,7 @@ import ToolbarOverflowButton from '../ToolbarOverflowButton';
 import EmojiGridButton from '../EmojiGridButton';
 import isReportIssueEnabled from '../../../utils/isReportIssueEnabled';
 import useToolbarButtons from '../../../hooks/useToolbarButtons';
+import DeviceControlButton from '../DeviceControlButton';
 
 export type ToolbarProps = {
   toggleShareScreen: () => void;
@@ -133,25 +132,30 @@ const Toolbar = ({
   // Displays the right panel buttons - any additional buttons to be displayed that aren't in the center of the toolbar.
   const displayRightPanelButtons = (toolbarButton: ReactElement | false, index: number) =>
     index >= centerButtonLimit && index < rightButtonLimit && toolbarButton;
+  // Array of `false` or right panel button ReactElements to display.
+  const rightPanelButtons = toolbarButtons.map(displayRightPanelButtons);
+  // We display the right panel if we have at least one right panel button to display.
+  const displayRightPanel = rightPanelButtons.some((rightPanelButton) => !!rightPanelButton);
+  // We hide the TimeRoomName container when there is no space, and remove its margin when we don't display the right panel container.
+  const displayTimeRoomNameClass = `${!displayRightPanel ? 'mr-3 ' : ''}${!displayTimeRoomName ? 'hidden ' : ''}flex flex-1 justify-start overflow-hidden`;
+  // We hide the right panel buttons container when there are no buttons to display, and grow/shrink it when we display the TimeRoomName container.
+  const rightPanelButtonsClass = `${!displayRightPanel ? 'hidden ' : ''}${displayTimeRoomName ? 'flex-1 ' : ''}ml-3 box-border flex justify-end`;
 
   return (
     <div
       ref={toolbarRef}
-      className="absolute bottom-0 left-0 flex h-[80px] w-full items-center bg-darkGray-100 p-4 md:flex-row md:justify-between"
+      className="absolute bottom-0 left-0 flex h-[80px] w-full flex-row items-center justify-between bg-darkGray-100 p-4"
     >
-      <div
-        ref={timeRoomNameRef}
-        className={`${toolbarButtonsDisplayed <= 1 ? '' : 'mr-3'} flex justify-start overflow-hidden`}
-      >
+      <div ref={timeRoomNameRef} className={displayTimeRoomNameClass}>
         {displayTimeRoomName && <TimeRoomNameMeetingRoom />}
       </div>
       <div className="flex flex-1 justify-center">
         <div ref={mediaControlsRef} className="flex flex-row">
-          <AudioControlButton />
-          <VideoControlButton />
+          <DeviceControlButton deviceType="audio" />
+          <DeviceControlButton deviceType="video" />
         </div>
         {toolbarButtons.map(displayCenterToolbarButtons)}
-        <div ref={overflowAndExitRef} className="flex min-w-[108px] flex-row">
+        <div ref={overflowAndExitRef} className="flex flex-row">
           {shouldShowOverflowButton && (
             <ToolbarOverflowButton
               isSharingScreen={isSharingScreen}
@@ -163,17 +167,8 @@ const Toolbar = ({
         </div>
       </div>
 
-      <div
-        style={{
-          boxSizing: 'border-box',
-          display: 'flex',
-          flex: '0 1 0%',
-          justifyContent: 'flex-end',
-          marginLeft: toolbarButtonsDisplayed <= 1 ? undefined : '12px',
-        }}
-        ref={rightPanelControlsRef}
-      >
-        {toolbarButtons.map(displayRightPanelButtons)}
+      <div className={rightPanelButtonsClass} ref={rightPanelControlsRef}>
+        {rightPanelButtons}
       </div>
     </div>
   );

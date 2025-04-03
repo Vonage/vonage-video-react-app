@@ -3,8 +3,8 @@ import CheckIcon from '@mui/icons-material/Check';
 import { Device } from '@vonage/client-sdk-video';
 import MicNoneIcon from '@mui/icons-material/MicNone';
 import { MouseEvent as ReactMouseEvent, ReactElement } from 'react';
-import useDevices from '../../../../hooks/useDevices';
-import usePublisherContext from '../../../../hooks/usePublisherContext';
+import useDevices from '../../../hooks/useDevices';
+import usePublisherContext from '../../../hooks/usePublisherContext';
 
 export type InputDevicesProps = {
   handleToggle: () => void;
