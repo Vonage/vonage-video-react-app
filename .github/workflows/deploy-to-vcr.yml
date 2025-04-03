@@ -42,7 +42,7 @@ jobs:
 
       - name: Deploy vcr
         run: |
-          yarn build
+          # yarn build
           sed -i "s/<DOMAIN>/${DOMAIN}/g" "${{ github.workspace }}/vcr-gha.yml"
           # removing .vcrignore so that build files are sent to VCR
           # rm .vcrignore
