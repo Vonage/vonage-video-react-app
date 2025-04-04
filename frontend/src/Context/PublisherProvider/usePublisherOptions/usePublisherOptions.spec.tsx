@@ -4,7 +4,7 @@ import OT from '@vonage/client-sdk-video';
 import useUserContext from '../../../hooks/useUserContext';
 import { UserContextType } from '../../user';
 import usePublisherOptions from './usePublisherOptions';
-import localStorageMock from '../../../utils/localStorageMock';
+import localStorageMock from '../../../utils/mockData/localStorageMock';
 import DeviceManager from '../../../utils/DeviceManager';
 
 vi.mock('../../../hooks/useUserContext.tsx');

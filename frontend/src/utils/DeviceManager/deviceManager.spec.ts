@@ -1,6 +1,6 @@
 import { describe, test, expect, vi, beforeEach, afterEach, afterAll } from 'vitest';
 import DeviceManager from './deviceManager';
-import localStorageMock from '../localStorageMock';
+import localStorageMock from '../mockData/localStorageMock';
 
 describe('DeviceManager', () => {
   let enumerateDevicesMock: ReturnType<typeof vi.fn>;
