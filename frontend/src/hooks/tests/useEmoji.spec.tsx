@@ -2,16 +2,18 @@ import { describe, it, expect, vi, beforeEach, Mock, afterEach } from 'vitest';
 import { renderHook, act, waitFor } from '@testing-library/react';
 import { EventEmitter } from 'events';
 import { Connection } from '@vonage/client-sdk-video';
+import { MutableRefObject } from 'react';
 import useSessionContext from '../useSessionContext';
 import { SessionContextType } from '../../Context/SessionProvider/session';
 import useEmoji, { EmojiWrapper } from '../useEmoji';
+import VonageVideoClient from '../../utils/VonageVideoClient';
 
 vi.mock('../useSessionContext');
 
 const mockUseSessionContext = useSessionContext as Mock<[], SessionContextType>;
 
 describe('useEmoji', () => {
-  let mockSession: EventEmitter & { connection: Connection; signal: Mock };
+  let vonageVideoClient: MutableRefObject<VonageVideoClient | null>;
   let mockConnection: Connection;
   let mockSubscriberWrapperVideo: {
     subscriber: { stream: { connection: Connection; name: string } };
@@ -29,10 +31,12 @@ describe('useEmoji', () => {
 
   beforeEach(() => {
     // Create an EventEmitter to simulate the session
-    mockSession = Object.assign(new EventEmitter(), {
-      signal: vi.fn() as Mock,
-      connection: { connectionId: '123' } as Connection,
-    });
+    vonageVideoClient = {
+      current: Object.assign(new EventEmitter(), {
+        signal: vi.fn(),
+        connectionId: 'connection-id',
+      }) as unknown as VonageVideoClient,
+    };
 
     mockConnection = { connectionId: '456' } as Connection;
 
@@ -57,7 +61,7 @@ describe('useEmoji', () => {
     };
 
     const mockSessionContext = {
-      session: mockSession,
+      session: vonageVideoClient,
       subscriberWrappers: [mockSubscriberWrapperVideo, mockSubscriberWrapperScreen],
     } as unknown as SessionContextType;
 
@@ -73,14 +77,14 @@ describe('useEmoji', () => {
   describe('sendEmoji', () => {
     it('calls Session.signal with the emoji and current time', async () => {
       vi.setSystemTime(12_000_000);
-      const { result } = renderHook(() => useEmoji());
+      const { result } = renderHook(() => useEmoji({ vonageVideoClient }));
 
       act(() => {
         result.current.sendEmoji('❤️');
       });
 
-      expect(mockSession.signal).toBeCalledTimes(1);
-      expect(mockSession.signal).toBeCalledWith(
+      expect(vonageVideoClient.current?.signal).toBeCalledTimes(1);
+      expect(vonageVideoClient.current?.signal).toBeCalledWith(
         {
           type: 'emoji',
           data: '{"emoji":"❤️","time":12000000}',
@@ -91,28 +95,28 @@ describe('useEmoji', () => {
 
     it('when called multiple times, sendEmoji throttles calls to once every 500ms', async () => {
       vi.useFakeTimers();
-      const { result } = renderHook(() => useEmoji());
+      const { result } = renderHook(() => useEmoji({ vonageVideoClient }));
 
       act(() => {
         result.current.sendEmoji('❤️');
         result.current.sendEmoji('❤️');
       });
 
-      expect(mockSession.signal).toBeCalledTimes(1);
+      expect(vonageVideoClient.current?.signal).toBeCalledTimes(1);
 
       vi.advanceTimersByTime(250);
-      expect(mockSession.signal).toBeCalledTimes(1);
+      expect(vonageVideoClient.current?.signal).toBeCalledTimes(1);
 
       vi.advanceTimersByTime(251);
       act(() => {
         result.current.sendEmoji('❤️');
       });
-      expect(mockSession.signal).toBeCalledTimes(2);
+      expect(vonageVideoClient.current?.signal).toBeCalledTimes(2);
     });
   });
 
   it('adds emojis to the queue when a signal event is received and gets the correct sender name', async () => {
-    const { result } = renderHook(() => useEmoji());
+    const { result } = renderHook(() => useEmoji({ vonageVideoClient }));
 
     act(() => {
       // Simulate sending an emoji
@@ -121,14 +125,14 @@ describe('useEmoji', () => {
 
     // Mock emitting a signal event from another user's connection
     act(() => {
-      mockSession.emit('signal', {
+      vonageVideoClient.current?.emit('signal', {
         type: 'signal:emoji',
         data: JSON.stringify({
           emoji: '❤️',
           time: Date.now(),
           connectionId: mockConnection.connectionId, // Different from the session connection
         }),
-        from: { connectionId: '456' },
+        from: { connectionId: '456', creationTime: 1, data: 'some-data' },
       });
     });
 
