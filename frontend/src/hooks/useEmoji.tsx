@@ -60,11 +60,11 @@ const useEmoji = ({ vonageVideoClient }: UseEmojiProps): UseEmoji => {
    * @param {Connection} sendingConnection - The connection of a user.
    * @returns {boolean} - Returns `true` if the connection is the current user's, else `false`.
    */
-  const getIsYourConnection = useCallback(
+  const isOwnConnection = useCallback(
     (sendingConnection: Connection): boolean => {
-      const yourConnection = vonageVideoClient?.current?.connectionId;
+      const yourConnectionId = vonageVideoClient?.current?.connectionId;
 
-      return sendingConnection.connectionId === yourConnection;
+      return sendingConnection.connectionId === yourConnectionId;
     },
     [vonageVideoClient]
   );
@@ -72,6 +72,7 @@ const useEmoji = ({ vonageVideoClient }: UseEmojiProps): UseEmoji => {
   /**
    * Retrieves the user's name or `You` if you are the sender from a given Connection.
    * @param {Connection} sendingConnection - The connection object to evaluate.
+   * @param {SubscriberWrapper[]} subscriberWrappers - all subscriber wrappers in the session
    * @returns {string} The user's name, `You`, or an empty string.
    */
   const getSenderName = useCallback(
@@ -79,7 +80,7 @@ const useEmoji = ({ vonageVideoClient }: UseEmojiProps): UseEmoji => {
       sendingConnection: Connection,
       subscriberWrappers: SubscriberWrapper[]
     ): string | undefined => {
-      const isYou = getIsYourConnection(sendingConnection);
+      const isYou = isOwnConnection(sendingConnection);
       if (isYou) {
         return 'You';
       }
@@ -91,13 +92,14 @@ const useEmoji = ({ vonageVideoClient }: UseEmojiProps): UseEmoji => {
       );
       return sendingSubscriberWrapper?.subscriber.stream?.name;
     },
-    [getIsYourConnection]
+    [isOwnConnection]
   );
 
   /**
    * Manages signals sent by users in the room. Any emojis sent by the room's users
    * are processed in a data queue to be rendered in the application.
    * @param {SignalEvent} signalEvent - Signal event dispatched by the session.
+   * @param {SubscriberWrapper[]} subscriberWrappers - all subscriber wrappers in the session
    */
   const onEmoji = useCallback(
     ({ data, from: sendingConnection }: SignalEvent, subscriberWrappers: SubscriberWrapper[]) => {
