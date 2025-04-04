@@ -4,7 +4,7 @@ import { useState, useEffect, ReactElement } from 'react';
 import Grow from '@mui/material/Grow';
 import ToggleOffIcon from '@mui/icons-material/ToggleOff';
 import ToggleOnIcon from '@mui/icons-material/ToggleOn';
-import usePublisherContext from '../../../../hooks/usePublisherContext';
+import usePublisherContext from '../../../hooks/usePublisherContext';
 
 export type VideoDevicesOptionsProps = {
   customLightBlueColor: string;
