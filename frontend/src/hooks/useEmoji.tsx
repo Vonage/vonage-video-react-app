@@ -3,12 +3,7 @@ import { Connection } from '@vonage/client-sdk-video';
 import { throttle } from 'lodash';
 import useSessionContext from './useSessionContext';
 import { EMOJI_DISPLAY_DURATION } from '../utils/constants';
-
-type SignalEvent = {
-  type?: string;
-  data?: string;
-  from: Connection | null;
-};
+import { SignalEvent } from '../types/session';
 
 type EmojiDataType = {
   emoji: string;
@@ -84,10 +79,7 @@ const useEmoji = () => {
    * @param {SignalEvent} signalEvent - Signal event dispatched by the session.
    */
   const emojiHandler = useCallback(
-    ({ type, data, from: sendingConnection }: SignalEvent) => {
-      if (type !== 'signal:emoji') {
-        return;
-      }
+    ({ data, from: sendingConnection }: SignalEvent) => {
       if (data && sendingConnection) {
         const senderName = getSenderName(sendingConnection) ?? '';
         const { emoji, time }: EmojiDataType = JSON.parse(data);
