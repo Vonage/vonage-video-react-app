@@ -170,7 +170,6 @@ const usePreviewPublisher = (): PreviewPublisherContextType => {
 
       try {
         const permissionStatus = await window.navigator.permissions.query({
-          // @ts-expect-error The camera and microphone permissions are supported on all major browsers.
           name: deviceDeniedAccess,
         });
         permissionStatus.onchange = () => {
