@@ -22,6 +22,7 @@ import createMovingAvgAudioLevelTracker from '../movingAverageAudioLevelTracker'
 type VonageVideoClientEvents = {
   archiveStarted: [string];
   archiveStopped: [];
+  screenshareStreamCreated: [];
   sessionDisconnected: [];
   sessionReconnected: [];
   sessionReconnecting: [];
@@ -113,6 +114,10 @@ class VonageVideoClient extends EventEmitter<VonageVideoClientEvents> {
       const { logMovingAvg } = getMovingAverageAudioLevel(audioLevel);
       this.emit('subscriberAudioLevelUpdated', { movingAvg: logMovingAvg, subscriberId: streamId });
     });
+
+    if (isScreenshare) {
+      this.emit('screenshareStreamCreated');
+    }
   }
 
   private handleStreamPropertyChanged() {
