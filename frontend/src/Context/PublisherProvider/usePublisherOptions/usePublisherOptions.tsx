@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useRef, useEffect, useState } from 'react';
 import {
   PublisherProperties,
   VideoFilter,
@@ -7,53 +7,60 @@ import {
 } from '@vonage/client-sdk-video';
 import useUserContext from '../../../hooks/useUserContext';
 import getInitials from '../../../utils/getInitials';
+import DeviceManager from '../../../utils/DeviceManager';
 
 /**
  * React hook to get PublisherProperties combining default options and options set in UserContext
- * @returns {PublisherProperties} publisher properties object
+ * @returns {PublisherProperties | null} publisher properties object
  */
-const usePublisherOptions = (): PublisherProperties => {
+
+const usePublisherOptions = (): PublisherProperties | null => {
   const { user } = useUserContext();
+  const [options, setOptions] = useState<PublisherProperties | null>(null);
+  const deviceManagerRef = useRef<DeviceManager>();
 
-  const publisherOptions: PublisherProperties = useMemo(() => {
-    const { name, noiseSuppression, blur, audioSource, videoSource, publishAudio, publishVideo } =
-      user.defaultSettings;
-    const initials = getInitials(name);
+  useEffect(() => {
+    const setPublisherOptions = async () => {
+      if (!deviceManagerRef.current) {
+        deviceManagerRef.current = new DeviceManager();
+        await deviceManagerRef.current.init();
+      }
 
-    // Enable Advanced Noise Suppression if user has enabled it in their settings and the device supports it
-    const audioFilter: AudioFilter | undefined =
-      noiseSuppression && hasMediaProcessorSupport()
-        ? {
-            type: 'advancedNoiseSuppression',
-          }
-        : undefined;
+      const videoSource = deviceManagerRef.current.getConnectedDeviceId('videoinput');
+      const audioSource = deviceManagerRef.current.getConnectedDeviceId('audioinput');
 
-    // Enable Background blur if user has enabled it in their settings and the device supports it
-    const videoFilter: VideoFilter | undefined =
-      blur && hasMediaProcessorSupport()
-        ? {
-            type: 'backgroundBlur',
-            blurStrength: 'high',
-          }
-        : undefined;
-    return {
-      audioFallback: {
-        publisher: true,
-      },
-      audioSource,
-      initials,
-      insertDefaultUI: false,
-      name,
-      publishAudio: !!publishAudio,
-      publishVideo: !!publishVideo,
-      resolution: '1280x720',
-      audioFilter,
-      videoFilter,
-      videoSource,
+      const { name, noiseSuppression, blur, publishAudio, publishVideo } = user.defaultSettings;
+      const initials = getInitials(name);
+
+      const audioFilter: AudioFilter | undefined =
+        noiseSuppression && hasMediaProcessorSupport()
+          ? { type: 'advancedNoiseSuppression' }
+          : undefined;
+
+      const videoFilter: VideoFilter | undefined =
+        blur && hasMediaProcessorSupport()
+          ? { type: 'backgroundBlur', blurStrength: 'high' }
+          : undefined;
+
+      setOptions({
+        audioFallback: { publisher: true },
+        audioSource,
+        initials,
+        insertDefaultUI: false,
+        name,
+        publishAudio: !!publishAudio,
+        publishVideo: !!publishVideo,
+        resolution: '1280x720',
+        audioFilter,
+        videoFilter,
+        videoSource,
+      });
     };
+
+    setPublisherOptions();
   }, [user.defaultSettings]);
 
-  return publisherOptions;
+  return options;
 };
 
 export default usePublisherOptions;

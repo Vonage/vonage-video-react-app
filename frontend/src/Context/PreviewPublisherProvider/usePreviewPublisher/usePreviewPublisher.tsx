@@ -14,8 +14,7 @@ import useUserContext from '../../../hooks/useUserContext';
 import { DEVICE_ACCESS_STATUS } from '../../../utils/constants';
 import { UserType } from '../../user';
 import { AccessDeniedEvent } from '../../PublisherProvider/usePublisher/usePublisher';
-import createDeviceManager from '../../../utils/createDeviceManager';
-import { DeviceManagerType } from '../../../utils/createDeviceManager/createDeviceManager';
+import DeviceManager from '../../../utils/DeviceManager';
 
 type PublisherVideoElementCreatedEvent = Event<'videoElementCreated', Publisher> & {
   element: HTMLVideoElement | HTMLObjectElement;
@@ -71,10 +70,8 @@ const usePreviewPublisher = (): PreviewPublisherContextType => {
   const [isAudioEnabled, setIsAudioEnabled] = useState(true);
   const [localVideoSource, setLocalVideoSource] = useState<string | undefined>(undefined);
   const [localAudioSource, setLocalAudioSource] = useState<string | undefined>(undefined);
-  const deviceManagerRef = useRef<DeviceManagerType | null>(null);
-  if (!deviceManagerRef.current) {
-    deviceManagerRef.current = createDeviceManager();
-  }
+  const deviceManagerRef = useRef<DeviceManager>(new DeviceManager());
+  const [isDeviceManagerReady, setIsDeviceManagerReady] = useState<boolean>(false);
 
   /* This sets the default devices in use so that the user knows what devices they are using */
   useEffect(() => {
@@ -224,6 +221,8 @@ const usePreviewPublisher = (): PreviewPublisherContextType => {
   );
 
   const initLocalPublisher = useCallback(async () => {
+    let videoSource;
+    let audioSource;
     if (publisherRef.current) {
       return;
     }
@@ -236,8 +235,12 @@ const usePreviewPublisher = (): PreviewPublisherContextType => {
           }
         : undefined;
 
-    const audioSource = await deviceManagerRef.current?.getConnectedDeviceId('audioinput');
-    const videoSource = await deviceManagerRef.current?.getConnectedDeviceId('videoinput');
+    if (!isDeviceManagerReady) {
+      await deviceManagerRef.current.init();
+      videoSource = deviceManagerRef.current.getConnectedDeviceId('videoinput');
+      audioSource = deviceManagerRef.current.getConnectedDeviceId('audioinput');
+      setIsDeviceManagerReady(true);
+    }
 
     const publisherOptions: PublisherProperties = {
       insertDefaultUI: false,
@@ -256,7 +259,7 @@ const usePreviewPublisher = (): PreviewPublisherContextType => {
       }
     });
     addPublisherListeners(publisherRef.current);
-  }, [addPublisherListeners]);
+  }, [addPublisherListeners, isDeviceManagerReady]);
 
   const destroyPublisher = useCallback(() => {
     if (publisherRef.current) {

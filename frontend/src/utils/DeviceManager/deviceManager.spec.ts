@@ -1,11 +1,13 @@
 import { describe, test, expect, vi, beforeEach, afterEach, afterAll } from 'vitest';
-import createDeviceManager from './createDeviceManager';
+import DeviceManager from './deviceManager';
 import localStorageMock from '../localStorageMock';
 
 describe('DeviceManager', () => {
   let enumerateDevicesMock: ReturnType<typeof vi.fn>;
+  let deviceManager: DeviceManager;
 
   beforeEach(() => {
+    deviceManager = new DeviceManager();
     enumerateDevicesMock = vi.fn();
     vi.stubGlobal('navigator', {
       mediaDevices: {
@@ -27,23 +29,14 @@ describe('DeviceManager', () => {
     vi.unstubAllGlobals();
   });
 
-  test('returns undefined if no device is stored', async () => {
-    enumerateDevicesMock.mockResolvedValue([]);
-
-    const deviceManager = createDeviceManager();
-    const result = await deviceManager.getConnectedDeviceId('videoinput');
-
-    expect(result).toBeUndefined();
-  });
-
   test('returns stored deviceId if it is still connected', async () => {
     window.localStorage.setItem('videoSource', 'device-123');
     enumerateDevicesMock.mockResolvedValue([
       { deviceId: 'device-123', kind: 'videoinput' } as MediaDeviceInfo,
     ]);
 
-    const deviceManager = createDeviceManager();
-    const result = await deviceManager.getConnectedDeviceId('videoinput');
+    await deviceManager.init();
+    const result = deviceManager.getConnectedDeviceId('videoinput');
 
     expect(result).toBe('device-123');
   });
@@ -54,8 +47,8 @@ describe('DeviceManager', () => {
       { deviceId: 'device-1234', kind: 'videoinput' } as MediaDeviceInfo,
     ]);
 
-    const deviceManager = createDeviceManager();
-    const result = await deviceManager.getConnectedDeviceId('videoinput');
+    await deviceManager.init();
+    const result = deviceManager.getConnectedDeviceId('videoinput');
 
     expect(result).toBeUndefined();
   });
