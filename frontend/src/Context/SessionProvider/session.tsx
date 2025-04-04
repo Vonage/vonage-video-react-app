@@ -30,6 +30,7 @@ import {
 } from '../../utils/sessionStateOperations';
 import { MAX_PIN_COUNT_DESKTOP, MAX_PIN_COUNT_MOBILE } from '../../utils/constants';
 import VonageVideoClient from '../../utils/VonageVideoClient';
+import useEmoji, { EmojiWrapper } from '../../hooks/useEmoji';
 
 export type { ChatMessageType } from '../../types/chat';
 
@@ -58,6 +59,8 @@ export type SessionContextType = {
   toggleReportIssue: () => void;
   pinSubscriber: (subscriberId: string) => void;
   isMaxPinned: boolean;
+  sendEmoji: (emoji: string) => void;
+  emojiQueue: EmojiWrapper[];
 };
 
 /**
@@ -86,6 +89,8 @@ export const SessionContext = createContext<SessionContextType>({
   toggleReportIssue: () => {},
   pinSubscriber: () => {},
   isMaxPinned: false,
+  sendEmoji: () => {},
+  emojiQueue: [],
 });
 
 export type ConnectionEventType = {
@@ -123,6 +128,7 @@ const SessionProvider = ({ children }: SessionProviderProps): ReactElement => {
   const [activeSpeakerId, setActiveSpeakerId] = useState<string | undefined>();
   const activeSpeakerIdRef = useRef<string | undefined>(undefined);
   const { messages, onChatMessage, sendChatMessage } = useChat({ sessionRef: session });
+  const { sendEmoji, onEmoji, emojiQueue } = useEmoji({ vonageVideoClient: session });
   const {
     closeRightPanel,
     toggleParticipantList,
@@ -137,6 +143,10 @@ const SessionProvider = ({ children }: SessionProviderProps): ReactElement => {
       onChatMessage(data);
       incrementUnreadCount();
     }
+  };
+
+  const handleEmoji = (emojiEvent: SignalEvent) => {
+    onEmoji(emojiEvent, subscriberWrappers);
   };
 
   const setActiveSpeakerIdAndRef = useCallback((id: string | undefined) => {
@@ -282,6 +292,7 @@ const SessionProvider = ({ children }: SessionProviderProps): ReactElement => {
       session.current.on('archiveStarted', handleArchiveStarted);
       session.current.on('archiveStopped', handleArchiveStopped);
       session.current.on('signal:chat', handleChatSignal);
+      session.current.on('signal:emoji', handleEmoji);
       session.current.on('subscriberAudioLevelUpdated', handleSubscriberAudioLevelUpdated);
       session.current.on('subscriberVideoElementCreated', handleSubscriberVideoElementCreated);
       session.current.on('subscriberDestroyed', handleSubscriberDestroyed);
@@ -353,6 +364,8 @@ const SessionProvider = ({ children }: SessionProviderProps): ReactElement => {
       toggleReportIssue,
       pinSubscriber,
       isMaxPinned,
+      sendEmoji,
+      emojiQueue,
     }),
     [
       activeSpeakerId,
@@ -377,6 +390,8 @@ const SessionProvider = ({ children }: SessionProviderProps): ReactElement => {
       toggleReportIssue,
       pinSubscriber,
       isMaxPinned,
+      sendEmoji,
+      emojiQueue,
     ]
   );
 
