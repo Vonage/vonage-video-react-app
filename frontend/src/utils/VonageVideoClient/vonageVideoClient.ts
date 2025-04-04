@@ -116,10 +116,8 @@ class VonageVideoClient extends EventEmitter<VonageVideoClientEvents> {
 
   private handleSignal(event: SignalEvent) {
     const { type } = event;
-    if (type === 'chat') {
-      this.emit('signal:chat', event);
-    } else if (type === 'emoji') {
-      this.emit('signal:emoji', event);
+    if (type === 'signal:chat' || type === 'signal:emoji') {
+      this.emit(type, event);
     }
   }
 
