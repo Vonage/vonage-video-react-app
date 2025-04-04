@@ -37,7 +37,7 @@ const useCollectBrowserInformation = (): BrowserInformationType => {
       width: window.innerWidth,
       height: window.innerHeight,
     },
-    connectionId: session?.connection?.connectionId,
+    connectionId: session?.connectionId,
   };
 };
 

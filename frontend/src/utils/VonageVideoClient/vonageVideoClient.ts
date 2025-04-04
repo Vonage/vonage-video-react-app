@@ -35,7 +35,7 @@ type VonageVideoClientEvents = {
 };
 
 class VonageVideoClient extends EventEmitter<VonageVideoClientEvents> {
-  private readonly clientSession: Session;
+  private clientSession: Session | null;
   private readonly credential: Credential;
 
   constructor(credential: Credential) {
@@ -43,11 +43,13 @@ class VonageVideoClient extends EventEmitter<VonageVideoClientEvents> {
     this.credential = credential;
     const { apiKey, sessionId } = this.credential;
     this.clientSession = initSession(apiKey, sessionId);
-    this.init();
+    this.attachEventListeners();
   }
 
-  private init() {
-    // Attach all event listeners.
+  private attachEventListeners() {
+    if (!this.clientSession) {
+      return;
+    }
     this.clientSession.on('archiveStarted', (event) => this.handleArchiveStarted(event));
     this.clientSession.on('archiveStopped', () => this.handleArchiveStopped());
     this.clientSession.on('sessionDisconnected', () => this.handleSessionDisconnected());
@@ -66,6 +68,9 @@ class VonageVideoClient extends EventEmitter<VonageVideoClientEvents> {
    * @param {StreamCreatedEvent} event - The stream emitted when a stream is created
    */
   private handleStreamCreated(event: StreamCreatedEvent) {
+    if (this.clientSession === null) {
+      return;
+    }
     const { stream } = event;
     const { streamId, videoType } = stream;
     const isScreenshare = videoType === 'screen';
@@ -82,7 +87,7 @@ class VonageVideoClient extends EventEmitter<VonageVideoClientEvents> {
       insertDefaultUI: false,
     };
 
-    const subscriber = this.session.subscribe(stream, undefined, subscriberOptions);
+    const subscriber = this.clientSession.subscribe(stream, undefined, subscriberOptions);
 
     subscriber.on('videoElementCreated', (videoElementCreatedEvent: VideoElementCreatedEvent) => {
       const { element } = videoElementCreatedEvent;
@@ -145,28 +150,32 @@ class VonageVideoClient extends EventEmitter<VonageVideoClientEvents> {
     const { apiKey, sessionId, token } = credential;
 
     await new Promise((resolve, reject) => {
-      this.clientSession.connect(token, (err?: OTError) => {
+      if (!this.clientSession) {
+        reject(new Error('Session has not been initialized.'));
+      }
+      this.clientSession?.connect(token, (err?: OTError) => {
         if (err) {
           // We ignore the following lint warning because we are rejecting with an OTError object.
           reject(err); // NOSONAR
         } else {
-          logOnConnect(apiKey, sessionId, this.clientSession.connection?.connectionId);
-          resolve(this.clientSession.sessionId);
+          logOnConnect(apiKey, sessionId, this.clientSession?.connection?.connectionId);
+          resolve(this.clientSession?.sessionId);
         }
       });
     });
   }
 
   disconnect() {
-    this.clientSession.disconnect();
+    this.clientSession?.disconnect();
+    this.clientSession = null;
   }
 
   forceMuteStream(stream: Stream) {
-    this.clientSession.forceMuteStream(stream);
+    this.clientSession?.forceMuteStream(stream);
   }
 
   publish(publisher: Publisher) {
-    this.clientSession.publish(publisher, (error) => {
+    this.clientSession?.publish(publisher, (error) => {
       if (error) {
         throw new Error(`${error.name}: ${error.message}`);
       }
@@ -174,23 +183,19 @@ class VonageVideoClient extends EventEmitter<VonageVideoClientEvents> {
   }
 
   signal(data: SignalType) {
-    this.clientSession.signal(data);
+    this.clientSession?.signal(data);
   }
 
   unpublish(publisher: Publisher) {
-    this.clientSession.unpublish(publisher);
-  }
-
-  get session() {
-    return this.clientSession;
+    this.clientSession?.unpublish(publisher);
   }
 
   get sessionId() {
-    return this.clientSession.sessionId;
+    return this.clientSession?.sessionId;
   }
 
   get connectionId() {
-    return this.clientSession.connection?.connectionId;
+    return this.clientSession?.connection?.connectionId;
   }
 }
 
