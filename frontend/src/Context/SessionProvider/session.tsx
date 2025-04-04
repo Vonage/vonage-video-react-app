@@ -325,6 +325,7 @@ const SessionProvider = ({ children }: SessionProviderProps): ReactElement => {
   const disconnect = useCallback(() => {
     if (session.current) {
       session.current.disconnect();
+      session.current = null;
 
       setConnected(false);
     }
