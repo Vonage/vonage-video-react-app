@@ -36,7 +36,7 @@ export type PreviewPublisherContextType = {
   changeAudioSource: (deviceId: string) => void;
   changeVideoSource: (deviceId: string) => void;
   hasBlur: boolean;
-  initLocalPublisher: () => void;
+  initLocalPublisher: () => Promise<void>;
   speechLevel: number;
 };
 
