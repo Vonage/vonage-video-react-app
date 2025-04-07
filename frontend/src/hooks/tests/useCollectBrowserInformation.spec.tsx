@@ -11,9 +11,7 @@ describe('useCollectBrowserInformation', () => {
     (useSessionContext as Mock).mockReturnValue({
       session: {
         sessionId: 'someSessionId',
-        connection: {
-          connectionId: 'yourConnectionId',
-        },
+        connectionId: 'yourConnectionId',
       },
     });
 
