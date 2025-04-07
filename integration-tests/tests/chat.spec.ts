@@ -5,21 +5,23 @@ import { openMeetingRoomWithSettings, waitAndClickFirefox } from './utils';
 
 /**
  * Toggles the chat button in the application.
+ * - On mobile: opens the menu and clicks the chat button.
+ * - On desktop: clicks the unread count and verifies the chat icon is highlighted.
  *
  * @param {import('@playwright/test').Page} page - The Playwright page object.
- * @param {boolean} isMobile - Whether the test is running on a mobile device.
- * @returns {Promise<void>}
+ * @param {boolean} isMobile - Indicates whether the test is running on a mobile device.
+ * @returns {Promise<void>} Resolves when the toggle action is completed.
  */
 async function chatToggleButton(page, isMobile) {
   if (isMobile) {
     console.log(isMobile);
     await page.getByTestId('MoreVertIcon').click();
     await page.mouse.move(0, 0); // Moves cursor to top-left corner to hide tooltip
-    await page.getByTestId('chat-button', { exact: true });
+    await page.getByTestId('chat-button', { exact: true }).click;
   } else {
-    await page.getByTestId('chat-button-unread-count');
+    await page.getByTestId('chat-button-unread-count').click;
     // Check that chat open shows blue button
-    await expect(page.getByTestId('SendIcon')).toHaveCSS('color', 'rgb(130, 177, 255)');
+    await expect(page.getByTestId('ChatIcon')).toHaveCSS('color', 'rgb(130, 177, 255)');
   }
 }
 
