@@ -184,7 +184,7 @@ const usePublisher = (): PublisherContextType => {
 
   /**
    * Method to create local camera publisher.
-   * @param options
+   * @param {PublisherProperties} options - the publisher options to initialize the local publisher with
    */
   const initializeLocalPublisher = useCallback(
     (options?: PublisherProperties) => {
