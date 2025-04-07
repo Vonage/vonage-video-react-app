@@ -126,7 +126,7 @@ describe('MeetingRoom', () => {
       publisher: null,
       isPublishing: true,
       publish: vi.fn() as () => Promise<void>,
-      initializeLocalPublisher: vi.fn(async () => {
+      initializeLocalPublisher: vi.fn(() => {
         publisherContext.publisher = mockPublisher;
       }) as unknown as () => void,
     } as PublisherContextType;
