@@ -16,11 +16,11 @@ import DeviceManager from '../../../utils/DeviceManager';
 
 const usePublisherOptions = (): PublisherProperties | null => {
   const { user } = useUserContext();
-  const [options, setOptions] = useState<PublisherProperties | null>(null);
+  const [publisherOptions, setPublisherOptions] = useState<PublisherProperties | null>(null);
   const deviceManagerRef = useRef<DeviceManager>();
 
   useEffect(() => {
-    const setPublisherOptions = async () => {
+    const setOptions = async () => {
       if (!deviceManagerRef.current) {
         deviceManagerRef.current = new DeviceManager();
         await deviceManagerRef.current.init();
@@ -42,7 +42,7 @@ const usePublisherOptions = (): PublisherProperties | null => {
           ? { type: 'backgroundBlur', blurStrength: 'high' }
           : undefined;
 
-      setOptions({
+      setPublisherOptions({
         audioFallback: { publisher: true },
         audioSource,
         initials,
@@ -57,10 +57,10 @@ const usePublisherOptions = (): PublisherProperties | null => {
       });
     };
 
-    setPublisherOptions();
+    setOptions();
   }, [user.defaultSettings]);
 
-  return options;
+  return publisherOptions;
 };
 
 export default usePublisherOptions;

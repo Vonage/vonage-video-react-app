@@ -190,6 +190,7 @@ const usePublisher = (): PublisherContextType => {
     (options?: PublisherProperties) => {
       try {
         const publisher = initPublisher(undefined, options);
+        // Add listeners synchronously as some events could be fired before callback is invoked
         addPublisherListeners(publisher);
         publisherRef.current = publisher;
       } catch (error) {
