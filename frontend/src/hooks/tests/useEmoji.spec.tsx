@@ -7,6 +7,7 @@ import useSessionContext from '../useSessionContext';
 import { SessionContextType } from '../../Context/SessionProvider/session';
 import useEmoji, { EmojiWrapper } from '../useEmoji';
 import VonageVideoClient from '../../utils/VonageVideoClient';
+import { SignalEvent, SubscriberWrapper } from '../../types/session';
 
 vi.mock('../useSessionContext');
 
@@ -34,7 +35,7 @@ describe('useEmoji', () => {
     vonageVideoClient = {
       current: Object.assign(new EventEmitter(), {
         signal: vi.fn(),
-        connectionId: 'connection-id',
+        connectionId: '123',
       }) as unknown as VonageVideoClient,
     };
 
@@ -84,13 +85,10 @@ describe('useEmoji', () => {
       });
 
       expect(vonageVideoClient.current?.signal).toBeCalledTimes(1);
-      expect(vonageVideoClient.current?.signal).toBeCalledWith(
-        {
-          type: 'emoji',
-          data: '{"emoji":"❤️","time":12000000}',
-        },
-        expect.any(Function)
-      );
+      expect(vonageVideoClient.current?.signal).toBeCalledWith({
+        type: 'emoji',
+        data: '{"emoji":"❤️","time":12000000}',
+      });
     });
 
     it('when called multiple times, sendEmoji throttles calls to once every 500ms', async () => {
@@ -118,27 +116,74 @@ describe('useEmoji', () => {
   it('adds emojis to the queue when a signal event is received and gets the correct sender name', async () => {
     const { result } = renderHook(() => useEmoji({ vonageVideoClient }));
 
+    // Mock receiving a signal event from another user
     act(() => {
-      // Simulate sending an emoji
-      result.current.sendEmoji('❤️');
-    });
-
-    // Mock emitting a signal event from another user's connection
-    act(() => {
-      vonageVideoClient.current?.emit('signal', {
+      const signalEvent: SignalEvent = {
         type: 'signal:emoji',
         data: JSON.stringify({
           emoji: '❤️',
           time: Date.now(),
           connectionId: mockConnection.connectionId, // Different from the session connection
-        }),
+        }) as unknown as string,
         from: { connectionId: '456', creationTime: 1, data: 'some-data' },
-      });
+      };
+      const subscriberWrapper: SubscriberWrapper = {
+        subscriber: {
+          stream: {
+            connection: {
+              connectionId: '456',
+            },
+            name: 'John Doe',
+          },
+        },
+      } as unknown as SubscriberWrapper;
+      const subscriberWrappers = [subscriberWrapper];
+      result.current.onEmoji(signalEvent, subscriberWrappers);
     });
 
     const expectedEmojiWrapper: EmojiWrapper = {
       name: 'John Doe', // The mock connection user
       emoji: '❤️',
+      time: expect.any(Number),
+    };
+
+    // Use waitFor to check if emojiQueue contains the expected emoji
+    await waitFor(() => {
+      expect(result.current.emojiQueue).toContainEqual(expectedEmojiWrapper);
+    });
+  });
+
+  it('recognizes when a received signal event is from local user', async () => {
+    const { result } = renderHook(() => useEmoji({ vonageVideoClient }));
+
+    // Mock receiving a signal event from local user
+    act(() => {
+      const signalEvent: SignalEvent = {
+        type: 'signal:emoji',
+        data: JSON.stringify({
+          emoji: '😲',
+          time: Date.now(),
+          connectionId: mockConnection.connectionId, // Different from the session connection
+        }) as unknown as string,
+        from: { connectionId: '123', creationTime: 1, data: 'some-data' },
+      };
+      const subscriberWrapper: SubscriberWrapper = {
+        subscriber: {
+          stream: {
+            connection: {
+              connectionId: '123',
+            },
+            name: 'That be I',
+          },
+        },
+      } as unknown as SubscriberWrapper;
+      const subscriberWrappers = [subscriberWrapper];
+      result.current.onEmoji(signalEvent, subscriberWrappers);
+    });
+
+    const expectedEmojiWrapper: EmojiWrapper = {
+      name: 'You',
+      emoji: '😲',
       time: expect.any(Number),
     };
 
