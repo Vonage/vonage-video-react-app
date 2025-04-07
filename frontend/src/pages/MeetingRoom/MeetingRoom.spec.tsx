@@ -24,6 +24,7 @@ import useToolbarButtons, {
   UseToolbarButtons,
   UseToolbarButtonsProps,
 } from '../../hooks/useToolbarButtons';
+import usePublisherOptions from '../../Context/PublisherProvider/usePublisherOptions';
 
 const mockedNavigate = vi.fn();
 const mockedParams = { roomName: 'test-room-name' };
@@ -48,6 +49,7 @@ vi.mock('../../hooks/useActiveSpeaker.tsx');
 vi.mock('../../hooks/useScreenShare.tsx');
 vi.mock('../../hooks/useIsSmallViewport');
 vi.mock('../../hooks/useToolbarButtons');
+vi.mock('../../Context/PublisherProvider/usePublisherOptions');
 
 const mockUseDevices = useDevices as Mock<
   [],
@@ -124,7 +126,7 @@ describe('MeetingRoom', () => {
       publisher: null,
       isPublishing: true,
       publish: vi.fn() as () => Promise<void>,
-      initializeLocalPublisher: vi.fn(() => {
+      initializeLocalPublisher: vi.fn(async () => {
         publisherContext.publisher = mockPublisher;
       }) as unknown as () => void,
     } as PublisherContextType;
@@ -133,6 +135,7 @@ describe('MeetingRoom', () => {
       getAllMediaDevices: vi.fn(),
       allMediaDevices,
     });
+    (usePublisherOptions as Mock).mockReturnValue({});
 
     sessionContext = {
       joinRoom: vi.fn(),
@@ -209,9 +212,8 @@ describe('MeetingRoom', () => {
     expect(sessionContext.joinRoom).toHaveBeenCalledWith('test-room-name');
     sessionContext.connected = true;
     rerender(<MeetingRoomWithProviders />);
-    // @TODO: need to still figure out why this is failing
-    // expect(publisherContext.initializeLocalPublisher).toHaveBeenCalledTimes(1);
-    // expect(publisherContext.publish).toHaveBeenCalledTimes(1);
+    expect(publisherContext.initializeLocalPublisher).toHaveBeenCalledTimes(1);
+    expect(publisherContext.publish).toHaveBeenCalledTimes(1);
   });
 
   it('should display publisher', () => {
