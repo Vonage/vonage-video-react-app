@@ -77,7 +77,11 @@ class SpeakingDetector extends EventEmitter {
    */
   turnSpeakingDetectorOn = async () => {
     try {
+      if (!this.selectedMicrophoneId) {
+        return;
+      }
       this.audioContext = new AudioContext();
+
       this.stream = await navigator.mediaDevices.getUserMedia({
         audio: {
           deviceId: this.selectedMicrophoneId,
@@ -89,7 +93,6 @@ class SpeakingDetector extends EventEmitter {
 
       this.source.connect(this.analyser);
 
-      this.analyser.fftSize = 2048;
       const bufferLength = this.analyser.fftSize;
       const timeDomainData = new Uint8Array(bufferLength);
 

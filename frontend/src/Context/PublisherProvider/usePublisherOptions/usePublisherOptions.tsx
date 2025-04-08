@@ -7,7 +7,7 @@ import {
 } from '@vonage/client-sdk-video';
 import useUserContext from '../../../hooks/useUserContext';
 import getInitials from '../../../utils/getInitials';
-import DeviceManager from '../../../utils/DeviceManager';
+import DeviceStore from '../../../utils/DeviceStore';
 
 /**
  * React hook to get PublisherProperties combining default options and options set in UserContext
@@ -17,17 +17,17 @@ import DeviceManager from '../../../utils/DeviceManager';
 const usePublisherOptions = (): PublisherProperties | null => {
   const { user } = useUserContext();
   const [publisherOptions, setPublisherOptions] = useState<PublisherProperties | null>(null);
-  const deviceManagerRef = useRef<DeviceManager>();
+  const deviceStoreRef = useRef<DeviceStore>();
 
   useEffect(() => {
     const setOptions = async () => {
-      if (!deviceManagerRef.current) {
-        deviceManagerRef.current = new DeviceManager();
-        await deviceManagerRef.current.init();
+      if (!deviceStoreRef.current) {
+        deviceStoreRef.current = new DeviceStore();
+        await deviceStoreRef.current.init();
       }
 
-      const videoSource = deviceManagerRef.current.getConnectedDeviceId('videoinput');
-      const audioSource = deviceManagerRef.current.getConnectedDeviceId('audioinput');
+      const videoSource = deviceStoreRef.current.getConnectedDeviceId('videoinput');
+      const audioSource = deviceStoreRef.current.getConnectedDeviceId('audioinput');
 
       const { name, noiseSuppression, blur, publishAudio, publishVideo } = user.defaultSettings;
       const initials = getInitials(name);

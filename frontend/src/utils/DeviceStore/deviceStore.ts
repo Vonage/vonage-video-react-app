@@ -1,8 +1,8 @@
 /**
- * Device manager that retrieves the stored device ID for a given device type (audio or video)
+ * Device store that retrieves the stored device ID for a given device type (audio or video)
  * and checks if it is still connected.
  */
-export default class DeviceManager {
+export default class DeviceStore {
   private devices: MediaDeviceInfo[] = [];
 
   async init() {

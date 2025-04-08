@@ -1,13 +1,13 @@
 import { describe, test, expect, vi, beforeEach, afterEach, afterAll } from 'vitest';
-import DeviceManager from './deviceManager';
+import DeviceStore from './deviceStore';
 import localStorageMock from '../mockData/localStorageMock';
 
-describe('DeviceManager', () => {
+describe('DeviceStore', () => {
   let enumerateDevicesMock: ReturnType<typeof vi.fn>;
-  let deviceManager: DeviceManager;
+  let deviceStore: DeviceStore;
 
   beforeEach(() => {
-    deviceManager = new DeviceManager();
+    deviceStore = new DeviceStore();
     enumerateDevicesMock = vi.fn();
     vi.stubGlobal('navigator', {
       mediaDevices: {
@@ -35,8 +35,8 @@ describe('DeviceManager', () => {
       { deviceId: 'device-123', kind: 'videoinput' } as MediaDeviceInfo,
     ]);
 
-    await deviceManager.init();
-    const result = deviceManager.getConnectedDeviceId('videoinput');
+    await deviceStore.init();
+    const result = deviceStore.getConnectedDeviceId('videoinput');
 
     expect(result).toBe('device-123');
   });
@@ -47,8 +47,8 @@ describe('DeviceManager', () => {
       { deviceId: 'device-1234', kind: 'videoinput' } as MediaDeviceInfo,
     ]);
 
-    await deviceManager.init();
-    const result = deviceManager.getConnectedDeviceId('videoinput');
+    await deviceStore.init();
+    const result = deviceStore.getConnectedDeviceId('videoinput');
 
     expect(result).toBeUndefined();
   });

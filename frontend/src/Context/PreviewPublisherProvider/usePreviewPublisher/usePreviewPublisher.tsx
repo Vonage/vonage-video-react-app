@@ -14,7 +14,7 @@ import useUserContext from '../../../hooks/useUserContext';
 import { DEVICE_ACCESS_STATUS } from '../../../utils/constants';
 import { UserType } from '../../user';
 import { AccessDeniedEvent } from '../../PublisherProvider/usePublisher/usePublisher';
-import DeviceManager from '../../../utils/DeviceManager';
+import DeviceStore from '../../../utils/DeviceStore';
 
 type PublisherVideoElementCreatedEvent = Event<'videoElementCreated', Publisher> & {
   element: HTMLVideoElement | HTMLObjectElement;
@@ -70,8 +70,8 @@ const usePreviewPublisher = (): PreviewPublisherContextType => {
   const [isAudioEnabled, setIsAudioEnabled] = useState(true);
   const [localVideoSource, setLocalVideoSource] = useState<string | undefined>(undefined);
   const [localAudioSource, setLocalAudioSource] = useState<string | undefined>(undefined);
-  const deviceManagerRef = useRef<DeviceManager>(new DeviceManager());
-  const [isDeviceManagerReady, setIsDeviceManagerReady] = useState<boolean>(false);
+  const deviceStoreRef = useRef<DeviceStore>(new DeviceStore());
+  const [isDeviceStoreReady, setIsDeviceStoreReady] = useState<boolean>(false);
 
   /* This sets the default devices in use so that the user knows what devices they are using */
   useEffect(() => {
@@ -235,11 +235,11 @@ const usePreviewPublisher = (): PreviewPublisherContextType => {
           }
         : undefined;
 
-    if (!isDeviceManagerReady) {
-      await deviceManagerRef.current.init();
-      videoSource = deviceManagerRef.current.getConnectedDeviceId('videoinput');
-      audioSource = deviceManagerRef.current.getConnectedDeviceId('audioinput');
-      setIsDeviceManagerReady(true);
+    if (!isDeviceStoreReady) {
+      await deviceStoreRef.current.init();
+      videoSource = deviceStoreRef.current.getConnectedDeviceId('videoinput');
+      audioSource = deviceStoreRef.current.getConnectedDeviceId('audioinput');
+      setIsDeviceStoreReady(true);
     }
 
     const publisherOptions: PublisherProperties = {
@@ -259,7 +259,7 @@ const usePreviewPublisher = (): PreviewPublisherContextType => {
       }
     });
     addPublisherListeners(publisherRef.current);
-  }, [addPublisherListeners, isDeviceManagerReady]);
+  }, [addPublisherListeners, isDeviceStoreReady]);
 
   const destroyPublisher = useCallback(() => {
     if (publisherRef.current) {

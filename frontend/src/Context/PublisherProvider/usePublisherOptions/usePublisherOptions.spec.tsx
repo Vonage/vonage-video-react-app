@@ -5,7 +5,7 @@ import useUserContext from '../../../hooks/useUserContext';
 import { UserContextType } from '../../user';
 import usePublisherOptions from './usePublisherOptions';
 import localStorageMock from '../../../utils/mockData/localStorageMock';
-import DeviceManager from '../../../utils/DeviceManager';
+import DeviceStore from '../../../utils/DeviceStore';
 
 vi.mock('../../../hooks/useUserContext.tsx');
 
@@ -45,7 +45,7 @@ const mockUserContextWithCustomSettings = {
 
 describe('usePublisherOptions', () => {
   let enumerateDevicesMock: ReturnType<typeof vi.fn>;
-  let deviceManager: DeviceManager;
+  let deviceStore: DeviceStore;
   beforeEach(async () => {
     enumerateDevicesMock = vi.fn();
     vi.stubGlobal('navigator', {
@@ -57,9 +57,9 @@ describe('usePublisherOptions', () => {
       value: localStorageMock,
       writable: true,
     });
-    deviceManager = new DeviceManager();
+    deviceStore = new DeviceStore();
     enumerateDevicesMock.mockResolvedValue([]);
-    await deviceManager.init();
+    await deviceStore.init();
   });
 
   afterAll(() => {
@@ -106,7 +106,7 @@ describe('usePublisherOptions', () => {
       { deviceId: customSettings.videoSource, kind: 'videoinput' } as MediaDeviceInfo,
       { deviceId: customSettings.audioSource, kind: 'audioinput' } as MediaDeviceInfo,
     ]);
-    await deviceManager.init();
+    await deviceStore.init();
     mockUseUserContext.mockImplementation(() => mockUserContextWithCustomSettings);
     const { result } = renderHook(() => usePublisherOptions());
     await waitFor(() => {
