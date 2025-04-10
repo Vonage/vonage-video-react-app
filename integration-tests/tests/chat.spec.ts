@@ -13,12 +13,14 @@ import { openMeetingRoomWithSettings, waitAndClickFirefox } from './utils';
  */
 async function chatToggleButton(page, isMobile) {
   if (isMobile) {
-    console.log(isMobile);
+    const chatToggleButtonOne = page.getByTestId('chat-button', { exact: true });
+    chatToggleButtonOne.click();
     await page.getByTestId('MoreVertIcon').click();
     await page.mouse.move(0, 0); // Moves cursor to top-left corner to hide tooltip
-    await page.getByTestId('chat-button', { exact: true }).click;
+    chatToggleButtonOne.click();
   } else {
-    await page.getByTestId('chat-button-unread-count').click;
+    const chatToggleButtonOne = await page.getByTestId('chat-button-unread-count');
+    chatToggleButtonOne.click();
     // Check that chat open shows blue button
     await expect(page.getByTestId('ChatIcon')).toHaveCSS('color', 'rgb(130, 177, 255)');
   }
