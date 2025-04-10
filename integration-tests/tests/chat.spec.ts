@@ -7,7 +7,6 @@ import { openMeetingRoomWithSettings, waitAndClickFirefox } from './utils';
  * Toggles the chat button in the application.
  * - On mobile: opens the menu and clicks the chat button.
  * - On desktop: clicks the unread count and verifies the chat icon is highlighted.
- *
  * @param {import('@playwright/test').Page} page - The Playwright page object.
  * @param {boolean} isMobile - Indicates whether the test is running on a mobile device.
  * @returns {Promise<void>} Resolves when the toggle action is completed.
