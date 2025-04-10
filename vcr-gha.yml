@@ -5,6 +5,7 @@ instance:
   runtime: nodejs22
   region: aws.euw1
   entrypoint: [yarn, run-server]
+  build-script: './vcrGhaBuild.sh'
   # The placeholder <DOMAIN> will be replaced by sed in .github/workflows/deploy-to-vcr.yml
   domains: <DOMAIN>
   environment:
