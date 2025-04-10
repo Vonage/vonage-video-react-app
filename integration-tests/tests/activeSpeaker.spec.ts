@@ -44,8 +44,7 @@ test.describe('active speaker', () => {
 
     // Check if the width of the subscriber is at least 20% higher than the publisher's
     expect(newSizeSub.width).toBeGreaterThan(1.2 * newSizePub.width);
-    // Check if the height of the subscriber is at least double the height of the publisher
+    // Check if the height of the subscriber is at almost double the height of the publisher
     expect(newSizeSub.height).toBeGreaterThan(1.9 * newSizePub.height);
-    console.log(newSizeSub.height / newSizePub.height);
   });
 });

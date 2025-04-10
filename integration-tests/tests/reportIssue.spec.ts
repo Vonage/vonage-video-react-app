@@ -10,7 +10,6 @@ import { test, baseURL } from '../fixtures/testWithLogging';
  */
 async function clickOnReportIssueButton(page, isMobile) {
   if (isMobile) {
-    console.log(isMobile);
     await page.getByTestId('MoreVertIcon').click();
     await page.mouse.move(0, 0); // Moves cursor to top-left corner to hide tooltip
   }
