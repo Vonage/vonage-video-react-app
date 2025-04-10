@@ -1,9 +1,14 @@
 import { expect } from '@playwright/test';
 import * as crypto from 'crypto';
 import { test, baseURL } from '../fixtures/testWithLogging';
+import { waitAndClickFirefox } from './utils';
 
 test.describe('active speaker', () => {
-  test('should display the active speaker in a larger tile', async ({ page: pageOne, context }) => {
+  test('should display the active speaker in a larger tile', async ({
+    page: pageOne,
+    context,
+    browserName,
+  }) => {
     // navigate to random room
     const roomName = crypto.randomBytes(5).toString('hex');
     const roomUrl = `${baseURL}room/${roomName}?bypass=true`;
@@ -11,7 +16,7 @@ test.describe('active speaker', () => {
     const pageTwo = await context.newPage();
 
     await pageOne.goto(roomUrl);
-
+    await waitAndClickFirefox(pageOne, browserName);
     await expect(pageOne.getByTestId('MicNoneIcon')).toBeVisible();
 
     await pageOne.waitForSelector('.publisher', { state: 'visible' });
@@ -21,6 +26,8 @@ test.describe('active speaker', () => {
 
     // the second user will play an audio file defined in the playwright config and it will become the active speaker
     await pageTwo.goto(roomUrl);
+
+    await waitAndClickFirefox(pageTwo, browserName);
 
     const publisher = await pageOne.locator('.publisher');
 

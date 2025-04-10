@@ -20,6 +20,7 @@ test.describe('participant pinning', () => {
       username: 'User One',
       roomName,
       audioOff: true,
+      browserName,
     });
     // These clicks and waits are needed for firefox
     await waitAndClickFirefox(pageOne, browserName);
@@ -29,6 +30,7 @@ test.describe('participant pinning', () => {
       username: 'User Two',
       roomName,
       audioOff: true,
+      browserName,
     });
     await waitAndClickFirefox(pageTwo, browserName);
     await openMeetingRoomWithSettings({
@@ -36,6 +38,7 @@ test.describe('participant pinning', () => {
       username: 'User Three',
       roomName,
       audioOff: true,
+      browserName,
     });
     await waitAndClickFirefox(pageThree, browserName);
 

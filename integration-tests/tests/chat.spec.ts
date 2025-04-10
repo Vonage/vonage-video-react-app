@@ -14,7 +14,6 @@ import { openMeetingRoomWithSettings, waitAndClickFirefox } from './utils';
 async function chatToggleButton(page, isMobile) {
   if (isMobile) {
     const chatToggleButtonOne = page.getByTestId('chat-button', { exact: true });
-    chatToggleButtonOne.click();
     await page.getByTestId('MoreVertIcon').click();
     await page.mouse.move(0, 0); // Moves cursor to top-left corner to hide tooltip
     chatToggleButtonOne.click();

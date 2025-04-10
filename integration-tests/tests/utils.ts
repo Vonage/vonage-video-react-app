@@ -8,16 +8,18 @@ export const openMeetingRoomWithSettings = async ({
   username,
   videoOff = false,
   audioOff = false,
+  browserName,
 }: {
   page: Page;
   roomName: string;
   username: string;
   videoOff?: boolean;
   audioOff?: boolean;
+  browserName: String;
 }) => {
   await page.goto(`${baseURL}waiting-room/${roomName}`);
   await page.getByPlaceholder('Enter your name').fill(username);
-
+  await waitAndClickFirefox(page, browserName);
   if (videoOff) {
     await page.getByTestId('VideocamIcon').click();
     await expect(page.getByTestId('VideocamOffIcon')).toBeVisible();
