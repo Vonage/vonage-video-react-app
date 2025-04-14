@@ -164,13 +164,14 @@ const usePreviewPublisher = (): PreviewPublisherContextType => {
    */
   const handleAccessDenied = useCallback(
     async (event: AccessDeniedEvent) => {
-      const deviceDeniedAccess = event.message?.startsWith('Microphone') ? 'microphone' : 'camera';
+      const deviceDeniedAccess = (
+        event.message?.startsWith('Microphone') ? 'microphone' : 'camera'
+      ) as PermissionName;
 
       setAccessStatus(DEVICE_ACCESS_STATUS.REJECTED);
 
       try {
         const permissionStatus = await window.navigator.permissions.query({
-          // @ts-expect-error The camera and microphone permissions are supported on all major browsers.
           name: deviceDeniedAccess,
         });
         permissionStatus.onchange = () => {
