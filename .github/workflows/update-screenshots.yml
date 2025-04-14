@@ -117,7 +117,7 @@ jobs:
           yarn test:integrationUpdateScreenshots
 
       - name: Auto-commit updated screenshots
-        if: steps.check-update-screenshots.outputs.result == 'true'
+        if: always() && steps.check-update-screenshots.outputs.result == 'true'
         run: |
           echo "Committing screenshots to "$BRANCH_NAME""
           FILES_CHANGED=$(git status --porcelain | awk '{print $2}')

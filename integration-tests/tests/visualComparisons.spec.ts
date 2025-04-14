@@ -12,11 +12,7 @@ test('Landing page UI test', async ({ page }) => {
   await expect(page).toHaveScreenshot({});
 });
 
-test('Waiting page UI test', async ({ page, isMobile }) => {
-  // skipping this test for now on mobile viewport as we have a UI issue.
-  if (isMobile) {
-    test.skip();
-  }
+test('Waiting page UI test', async ({ page }) => {
   await expect(page).toHaveScreenshot({
     mask: [page.locator('.video__element')],
   });
