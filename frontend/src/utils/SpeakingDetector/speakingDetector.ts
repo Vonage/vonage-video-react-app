@@ -93,6 +93,8 @@ class SpeakingDetector extends EventEmitter {
 
       this.source.connect(this.analyser);
 
+      this.analyser.fftSize = 2048;
+
       const bufferLength = this.analyser.fftSize;
       const timeDomainData = new Uint8Array(bufferLength);
 
