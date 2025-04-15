@@ -69,7 +69,7 @@
     "license-checker": "^25.0.1",
     "lint-staged": "^15.2.2",
     "prettier": "^3.2.5",
-    "typescript": "^5.4.5"
+    "typescript": "^5.8.3"
   },
   "resolutions": {
     "wrap-ansi": "7.0.0",
