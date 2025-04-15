@@ -42,8 +42,7 @@
         "caughtErrors": "all",
         "caughtErrorsIgnorePattern": "^_",
         "destructuredArrayIgnorePattern": "^_",
-        "varsIgnorePattern": "^_",
-        "ignoreRestSiblings": true
+        "varsIgnorePattern": "^_"
       }
     ],
     "react/function-component-definition": "off",
