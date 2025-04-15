@@ -77,8 +77,12 @@ const usePublisher = (): PublisherContextType => {
   const [isPublishing, setIsPublishing] = useState(false);
   const publisherOptions = usePublisherOptions();
   const [isForceMuted, setIsForceMuted] = useState<boolean>(false);
-  const [isVideoEnabled, setIsVideoEnabled] = useState(false);
-  const [isAudioEnabled, setIsAudioEnabled] = useState(false);
+  const [isVideoEnabled, setIsVideoEnabled] = useState<boolean>(
+    publisherOptions?.publishVideo ?? false
+  );
+  const [isAudioEnabled, setIsAudioEnabled] = useState<boolean>(
+    publisherOptions?.publishAudio ?? false
+  );
   const [stream, setStream] = useState<Stream | null>();
   const [isPublishingToSession, setIsPublishingToSession] = useState(false);
   const [publishingError, setPublishingError] = useState<PublishingErrorType>(null);

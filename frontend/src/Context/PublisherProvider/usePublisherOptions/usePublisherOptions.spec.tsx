@@ -6,6 +6,7 @@ import { UserContextType } from '../../user';
 import usePublisherOptions from './usePublisherOptions';
 import localStorageMock from '../../../utils/mockData/localStorageMock';
 import DeviceStore from '../../../utils/DeviceStore';
+import { setStorageItem, STORAGE_KEYS } from '../../../utils/storage';
 
 vi.mock('../../../hooks/useUserContext.tsx');
 
@@ -100,8 +101,8 @@ describe('usePublisherOptions', () => {
 
   it('should use custom settings', async () => {
     vi.spyOn(OT, 'hasMediaProcessorSupport').mockReturnValue(true);
-    window.localStorage.setItem('videoSource', customSettings.videoSource);
-    window.localStorage.setItem('audioSource', customSettings.audioSource);
+    setStorageItem(STORAGE_KEYS.VIDEO_SOURCE, customSettings.videoSource);
+    setStorageItem(STORAGE_KEYS.AUDIO_SOURCE, customSettings.audioSource);
     enumerateDevicesMock.mockResolvedValue([
       { deviceId: customSettings.videoSource, kind: 'videoinput' } as MediaDeviceInfo,
       { deviceId: customSettings.audioSource, kind: 'audioinput' } as MediaDeviceInfo,

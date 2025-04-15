@@ -129,7 +129,7 @@ describe('MeetingRoom', () => {
       initializeLocalPublisher: vi.fn(() => {
         publisherContext.publisher = mockPublisher;
       }) as unknown as () => void,
-    } as PublisherContextType;
+    } as unknown as PublisherContextType;
     mockUsePublisherContext.mockImplementation(() => publisherContext);
     mockUseDevices.mockReturnValue({
       getAllMediaDevices: vi.fn(),

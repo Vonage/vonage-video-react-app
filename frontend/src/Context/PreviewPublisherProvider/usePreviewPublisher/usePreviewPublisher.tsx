@@ -15,6 +15,7 @@ import { DEVICE_ACCESS_STATUS } from '../../../utils/constants';
 import { UserType } from '../../user';
 import { AccessDeniedEvent } from '../../PublisherProvider/usePublisher/usePublisher';
 import DeviceStore from '../../../utils/DeviceStore';
+import { setStorageItem, STORAGE_KEYS } from '../../../utils/storage';
 
 type PublisherVideoElementCreatedEvent = Event<'videoElementCreated', Publisher> & {
   element: HTMLVideoElement | HTMLObjectElement;
@@ -122,7 +123,7 @@ const usePreviewPublisher = (): PreviewPublisherContextType => {
       }
       publisherRef.current.setAudioSource(deviceId);
       setLocalAudioSource(deviceId);
-      window.localStorage.setItem('audioSource', deviceId);
+      setStorageItem(STORAGE_KEYS.AUDIO_SOURCE, deviceId);
       if (setUser) {
         setUser((prevUser: UserType) => ({
           ...prevUser,
@@ -147,7 +148,7 @@ const usePreviewPublisher = (): PreviewPublisherContextType => {
       }
       publisherRef.current.setVideoSource(deviceId);
       setLocalVideoSource(deviceId);
-      window.localStorage.setItem('videoSource', deviceId);
+      setStorageItem(STORAGE_KEYS.VIDEO_SOURCE, deviceId);
       if (setUser) {
         setUser((prevUser: UserType) => ({
           ...prevUser,

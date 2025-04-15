@@ -5,6 +5,7 @@ import VideocamIcon from '@mui/icons-material/Videocam';
 import { Device } from '@vonage/client-sdk-video';
 import useDevices from '../../../hooks/useDevices';
 import usePublisherContext from '../../../hooks/usePublisherContext';
+import { setStorageItem, STORAGE_KEYS } from '../../../utils/storage';
 
 export type VideoDevicesProps = {
   handleToggle: () => void;
@@ -28,7 +29,7 @@ const VideoDevices = ({ handleToggle, customLightBlueColor }: VideoDevicesProps)
 
   const changeVideoSource = (videoDeviceId: string) => {
     publisher?.setVideoSource(videoDeviceId);
-    window.localStorage.setItem('videoSource', videoDeviceId);
+    setStorageItem(STORAGE_KEYS.VIDEO_SOURCE, videoDeviceId);
   };
 
   useEffect(() => {
