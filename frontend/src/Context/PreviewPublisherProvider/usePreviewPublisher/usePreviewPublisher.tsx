@@ -72,7 +72,6 @@ const usePreviewPublisher = (): PreviewPublisherContextType => {
   const [localVideoSource, setLocalVideoSource] = useState<string | undefined>(undefined);
   const [localAudioSource, setLocalAudioSource] = useState<string | undefined>(undefined);
   const deviceStoreRef = useRef<DeviceStore>(new DeviceStore());
-  const [isDeviceStoreReady, setIsDeviceStoreReady] = useState<boolean>(false);
 
   /* This sets the default devices in use so that the user knows what devices they are using */
   useEffect(() => {
@@ -222,8 +221,6 @@ const usePreviewPublisher = (): PreviewPublisherContextType => {
   );
 
   const initLocalPublisher = useCallback(async () => {
-    let videoSource;
-    let audioSource;
     if (publisherRef.current) {
       return;
     }
@@ -236,12 +233,9 @@ const usePreviewPublisher = (): PreviewPublisherContextType => {
           }
         : undefined;
 
-    if (!isDeviceStoreReady) {
-      await deviceStoreRef.current.init();
-      videoSource = deviceStoreRef.current.getConnectedDeviceId('videoinput');
-      audioSource = deviceStoreRef.current.getConnectedDeviceId('audioinput');
-      setIsDeviceStoreReady(true);
-    }
+    await deviceStoreRef.current.init();
+    const videoSource = deviceStoreRef.current.getConnectedDeviceId('videoinput');
+    const audioSource = deviceStoreRef.current.getConnectedDeviceId('audioinput');
 
     const publisherOptions: PublisherProperties = {
       insertDefaultUI: false,
@@ -260,7 +254,7 @@ const usePreviewPublisher = (): PreviewPublisherContextType => {
       }
     });
     addPublisherListeners(publisherRef.current);
-  }, [addPublisherListeners, isDeviceStoreReady]);
+  }, [addPublisherListeners]);
 
   const destroyPublisher = useCallback(() => {
     if (publisherRef.current) {
