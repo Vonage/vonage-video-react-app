@@ -33,7 +33,7 @@ export type AccessDeniedEvent = Event<'accessDenied', Publisher> & {
 };
 
 export type PublisherContextType = {
-  initializeLocalPublisher: (options?: PublisherProperties) => void;
+  initializeLocalPublisher: (options: PublisherProperties) => void;
   isAudioEnabled: boolean;
   isForceMuted: boolean;
   isPublishing: boolean;
@@ -187,7 +187,7 @@ const usePublisher = (): PublisherContextType => {
    * @param {PublisherProperties} options - the publisher options to initialize the local publisher with
    */
   const initializeLocalPublisher = useCallback(
-    (options?: PublisherProperties) => {
+    (options: PublisherProperties) => {
       try {
         const publisher = initPublisher(undefined, options);
         // Add listeners synchronously as some events could be fired before callback is invoked
