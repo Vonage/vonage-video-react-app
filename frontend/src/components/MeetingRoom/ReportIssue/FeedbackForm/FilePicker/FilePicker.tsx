@@ -63,7 +63,7 @@ const FilePicker = ({
       const screenshotData = await captureScreenshot();
       setImageSrc(screenshotData);
       onFileSelect(screenshotData);
-    } catch (error) {
+    } catch (_error) {
       // User cancelled screenshot, no action needed
     }
   };

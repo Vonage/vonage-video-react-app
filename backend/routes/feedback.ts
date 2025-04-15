@@ -13,7 +13,7 @@ feedbackRouter.post('/report', async (req: Request, res: Response) => {
       return res.status(200).json({ feedbackData });
     }
     return res.status(500).json({ message: 'Failed to create a report ticket' });
-  } catch (error) {
+  } catch (_error) {
     return res.status(500).json({ message: 'Error reporting issue' });
   }
 });

@@ -23,7 +23,7 @@ const VideoContainerButton = forwardRef(function VideoContainerButton(
   props: VideoContainerButtonProps,
   ref: ForwardedRef<HTMLButtonElement>
 ): ReactElement {
-  const { icon: Icon, sx = {}, isEnabled, ...rest } = props;
+  const { icon: Icon, sx = {}, ...rest } = props;
   return (
     <IconButton
       {...rest}
