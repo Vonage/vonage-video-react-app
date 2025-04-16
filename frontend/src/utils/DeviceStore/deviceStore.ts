@@ -1,3 +1,5 @@
+import { getStorageItem, STORAGE_KEYS } from '../storage';
+
 /**
  * Device store that retrieves the stored device ID for a given device type (audio or video)
  * and checks if it is still connected.
@@ -12,8 +14,8 @@ export default class DeviceStore {
   }
 
   getConnectedDeviceId(kind: 'audioinput' | 'videoinput'): string | undefined {
-    const key = kind === 'videoinput' ? 'videoSource' : 'audioSource';
-    const storedId = window.localStorage.getItem(key);
+    const key = kind === 'videoinput' ? STORAGE_KEYS.VIDEO_SOURCE : STORAGE_KEYS.AUDIO_SOURCE;
+    const storedId = getStorageItem(key);
     return this.devices.find((device) => device.kind === kind && device.deviceId === storedId)
       ?.deviceId;
   }
