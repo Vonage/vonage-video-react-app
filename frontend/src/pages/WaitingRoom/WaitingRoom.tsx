@@ -7,6 +7,7 @@ import { DEVICE_ACCESS_STATUS } from '../../utils/constants';
 import DeviceAccessAlert from '../../components/DeviceAccessAlert';
 import Banner from '../../components/Banner';
 import useIsSmallViewport from '../../hooks/useIsSmallViewport';
+import { getStorageItem, STORAGE_KEYS } from '../../utils/storage';
 
 /**
  * WaitingRoom Component
@@ -29,7 +30,7 @@ const WaitingRoom = (): ReactElement => {
   const [openAudioInput, setOpenAudioInput] = useState<boolean>(false);
   const [openVideoInput, setOpenVideoInput] = useState<boolean>(false);
   const [openAudioOutput, setOpenAudioOutput] = useState<boolean>(false);
-  const [username, setUsername] = useState(window.localStorage.getItem('username') ?? '');
+  const [username, setUsername] = useState(getStorageItem(STORAGE_KEYS.USERNAME) ?? '');
   const isSmallViewport = useIsSmallViewport();
 
   useEffect(() => {

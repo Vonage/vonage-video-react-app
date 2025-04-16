@@ -99,7 +99,7 @@ const usePreviewPublisher = (): PreviewPublisherContextType => {
       });
     }
     setLocalBlur(!localBlur);
-    window.localStorage.setItem('backgroundBlur', JSON.stringify(!localBlur));
+    setStorageItem(STORAGE_KEYS.BACKGROUND_BLUR, JSON.stringify(!localBlur));
     if (setUser) {
       setUser((prevUser: UserType) => ({
         ...prevUser,

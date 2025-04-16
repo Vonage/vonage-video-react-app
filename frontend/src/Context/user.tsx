@@ -7,6 +7,7 @@ import {
   Dispatch,
   ReactElement,
 } from 'react';
+import { getStorageItem, STORAGE_KEYS } from '../utils/storage';
 
 // Define the shape of the User context
 export type UserContextType = {
@@ -46,9 +47,9 @@ export type UserProviderProps = {
  */
 const UserProvider = ({ children }: UserProviderProps): ReactElement => {
   // Load initial settings from local storage
-  const noiseSuppression = window.localStorage.getItem('noiseSuppression') === 'true';
-  const blur = window.localStorage.getItem('backgroundBlur') === 'true';
-  const name = window.localStorage.getItem('username') ?? '';
+  const noiseSuppression = getStorageItem(STORAGE_KEYS.NOISE_SUPPRESSION) === 'true';
+  const blur = getStorageItem(STORAGE_KEYS.BACKGROUND_BLUR) === 'true';
+  const name = getStorageItem(STORAGE_KEYS.USERNAME) ?? '';
 
   const [user, setUser] = useState<UserType>({
     defaultSettings: {
