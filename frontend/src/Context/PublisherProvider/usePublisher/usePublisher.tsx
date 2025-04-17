@@ -1,10 +1,11 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useCallback } from 'react';
 import OT, {
   Publisher,
   Event,
   Stream,
   initPublisher,
   ExceptionEvent,
+  PublisherProperties,
 } from '@vonage/client-sdk-video';
 import usePublisherQuality, { NetworkQuality } from '../usePublisherQuality/usePublisherQuality';
 import usePublisherOptions from '../usePublisherOptions';
@@ -32,7 +33,7 @@ export type AccessDeniedEvent = Event<'accessDenied', Publisher> & {
 };
 
 export type PublisherContextType = {
-  initializeLocalPublisher: () => void;
+  initializeLocalPublisher: (options: PublisherProperties) => void;
   isAudioEnabled: boolean;
   isForceMuted: boolean;
   isPublishing: boolean;
@@ -76,8 +77,8 @@ const usePublisher = (): PublisherContextType => {
   const [isPublishing, setIsPublishing] = useState(false);
   const publisherOptions = usePublisherOptions();
   const [isForceMuted, setIsForceMuted] = useState<boolean>(false);
-  const [isVideoEnabled, setIsVideoEnabled] = useState(!!publisherOptions.publishVideo);
-  const [isAudioEnabled, setIsAudioEnabled] = useState(!!publisherOptions.publishAudio);
+  const [isVideoEnabled, setIsVideoEnabled] = useState<boolean>(false);
+  const [isAudioEnabled, setIsAudioEnabled] = useState<boolean>(false);
   const [stream, setStream] = useState<Stream | null>();
   const [isPublishingToSession, setIsPublishingToSession] = useState(false);
   const [publishingError, setPublishingError] = useState<PublishingErrorType>(null);
@@ -96,6 +97,15 @@ const usePublisher = (): PublisherContextType => {
       setPublishingError(accessDeniedError);
     }
   }, [deviceAccess]);
+
+  useEffect(() => {
+    if (!publisherOptions) {
+      return;
+    }
+
+    setIsVideoEnabled(!!publisherOptions.publishVideo);
+    setIsAudioEnabled(!!publisherOptions.publishAudio);
+  }, [publisherOptions]);
 
   const handleAccessAllowed = () => {
     setDeviceAccess({
@@ -162,7 +172,7 @@ const usePublisher = (): PublisherContextType => {
     }
   };
 
-  const addPublisherListeners = (publisher: Publisher) => {
+  const addPublisherListeners = useCallback((publisher: Publisher) => {
     publisher.on('destroyed', handleDestroyed);
     publisher.on('streamCreated', handleStreamCreated);
     publisher.on('streamDestroyed', handleStreamDestroyed);
@@ -170,23 +180,27 @@ const usePublisher = (): PublisherContextType => {
     publisher.on('videoElementCreated', handleVideoElementCreated);
     publisher.on('muteForced', handleMuteForced);
     publisher.on('accessAllowed', handleAccessAllowed);
-  };
+  }, []);
 
   /**
    * Method to create local camera publisher.
+   * @param {PublisherProperties} options - the publisher options to initialize the local publisher with
    */
-  const initializeLocalPublisher = () => {
-    try {
-      const publisher = initPublisher(undefined, publisherOptions);
-      // Add listeners synchronously as some events could be fired before callback is invoked
-      addPublisherListeners(publisher);
-      publisherRef.current = publisher;
-    } catch (error) {
-      if (error instanceof Error) {
-        console.warn(error.stack);
+  const initializeLocalPublisher = useCallback(
+    (options: PublisherProperties) => {
+      try {
+        const publisher = initPublisher(undefined, options);
+        // Add listeners synchronously as some events could be fired before callback is invoked
+        addPublisherListeners(publisher);
+        publisherRef.current = publisher;
+      } catch (error) {
+        if (error instanceof Error) {
+          console.warn(error.stack);
+        }
       }
-    }
-  };
+    },
+    [addPublisherListeners]
+  );
 
   /**
    * Helper function to handle retrying. We allow two attempts when publishing to the session and encountering an

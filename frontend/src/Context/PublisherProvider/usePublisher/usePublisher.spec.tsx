@@ -70,7 +70,7 @@ describe('usePublisher', () => {
     it('should call initPublisher', () => {
       const { result } = renderHook(() => usePublisher());
       act(() => {
-        result.current.initializeLocalPublisher();
+        result.current.initializeLocalPublisher({});
       });
 
       expect(mockedInitPublisher).toHaveBeenCalled();
@@ -83,7 +83,7 @@ describe('usePublisher', () => {
 
       const { result } = renderHook(() => usePublisher());
       act(() => {
-        result.current.initializeLocalPublisher();
+        result.current.initializeLocalPublisher({});
       });
 
       expect(consoleWarnSpy).toHaveBeenCalled();
@@ -96,7 +96,7 @@ describe('usePublisher', () => {
 
       const { result, rerender } = renderHook(() => usePublisher());
 
-      result.current.initializeLocalPublisher();
+      result.current.initializeLocalPublisher({});
       rerender();
       await result.current.publish();
 
@@ -112,7 +112,7 @@ describe('usePublisher', () => {
       const { result } = renderHook(() => usePublisher());
 
       act(() => {
-        result.current.initializeLocalPublisher();
+        result.current.initializeLocalPublisher({});
       });
 
       await act(async () => {
@@ -130,7 +130,7 @@ describe('usePublisher', () => {
       } as unknown as Mocked<Session>;
 
       const { result } = renderHook(() => usePublisher());
-      result.current.initializeLocalPublisher();
+      result.current.initializeLocalPublisher({});
       await result.current.publish();
 
       expect(consoleWarnSpy).toHaveBeenCalled();
@@ -145,7 +145,7 @@ describe('usePublisher', () => {
       const { result } = renderHook(() => usePublisher());
 
       act(() => {
-        result.current.initializeLocalPublisher();
+        result.current.initializeLocalPublisher({});
         // @ts-expect-error We simulate the publisher stream being created.
         mockPublisher.emit('streamCreated', { stream: mockStream });
       });
@@ -172,7 +172,7 @@ describe('usePublisher', () => {
       const { result } = renderHook(() => usePublisher());
 
       act(() => {
-        result.current.initializeLocalPublisher();
+        result.current.initializeLocalPublisher({});
       });
 
       await act(async () => {
@@ -193,7 +193,7 @@ describe('usePublisher', () => {
     const { result } = renderHook(() => usePublisher());
 
     act(() => {
-      result.current.initializeLocalPublisher();
+      result.current.initializeLocalPublisher({});
     });
 
     expect(result.current.publishingError).toBeNull();
@@ -219,7 +219,7 @@ describe('usePublisher', () => {
     const { result } = renderHook(() => usePublisher());
 
     act(() => {
-      result.current.initializeLocalPublisher();
+      result.current.initializeLocalPublisher({});
 
       // @ts-expect-error We simulate allowing camera and microphone permissions in a browser.
       mockPublisher.emit('accessAllowed');

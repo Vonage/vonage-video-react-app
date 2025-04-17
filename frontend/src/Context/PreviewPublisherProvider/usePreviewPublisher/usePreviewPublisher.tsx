@@ -14,6 +14,8 @@ import useUserContext from '../../../hooks/useUserContext';
 import { DEVICE_ACCESS_STATUS } from '../../../utils/constants';
 import { UserType } from '../../user';
 import { AccessDeniedEvent } from '../../PublisherProvider/usePublisher/usePublisher';
+import DeviceStore from '../../../utils/DeviceStore';
+import { setStorageItem, STORAGE_KEYS } from '../../../utils/storage';
 
 type PublisherVideoElementCreatedEvent = Event<'videoElementCreated', Publisher> & {
   element: HTMLVideoElement | HTMLObjectElement;
@@ -35,7 +37,7 @@ export type PreviewPublisherContextType = {
   changeAudioSource: (deviceId: string) => void;
   changeVideoSource: (deviceId: string) => void;
   hasBlur: boolean;
-  initLocalPublisher: () => void;
+  initLocalPublisher: () => Promise<void>;
   speechLevel: number;
 };
 
@@ -69,6 +71,7 @@ const usePreviewPublisher = (): PreviewPublisherContextType => {
   const [isAudioEnabled, setIsAudioEnabled] = useState(true);
   const [localVideoSource, setLocalVideoSource] = useState<string | undefined>(undefined);
   const [localAudioSource, setLocalAudioSource] = useState<string | undefined>(undefined);
+  const deviceStoreRef = useRef<DeviceStore>(new DeviceStore());
 
   /* This sets the default devices in use so that the user knows what devices they are using */
   useEffect(() => {
@@ -119,6 +122,7 @@ const usePreviewPublisher = (): PreviewPublisherContextType => {
       }
       publisherRef.current.setAudioSource(deviceId);
       setLocalAudioSource(deviceId);
+      setStorageItem(STORAGE_KEYS.AUDIO_SOURCE, deviceId);
       if (setUser) {
         setUser((prevUser: UserType) => ({
           ...prevUser,
@@ -143,6 +147,7 @@ const usePreviewPublisher = (): PreviewPublisherContextType => {
       }
       publisherRef.current.setVideoSource(deviceId);
       setLocalVideoSource(deviceId);
+      setStorageItem(STORAGE_KEYS.VIDEO_SOURCE, deviceId);
       if (setUser) {
         setUser((prevUser: UserType) => ({
           ...prevUser,
@@ -214,7 +219,7 @@ const usePreviewPublisher = (): PreviewPublisherContextType => {
     [calculateAudioLevel, getAllMediaDevices, handleAccessDenied, setAccessStatus]
   );
 
-  const initLocalPublisher = useCallback(() => {
+  const initLocalPublisher = useCallback(async () => {
     if (publisherRef.current) {
       return;
     }
@@ -227,10 +232,16 @@ const usePreviewPublisher = (): PreviewPublisherContextType => {
           }
         : undefined;
 
+    await deviceStoreRef.current.init();
+    const videoSource = deviceStoreRef.current.getConnectedDeviceId('videoinput');
+    const audioSource = deviceStoreRef.current.getConnectedDeviceId('audioinput');
+
     const publisherOptions: PublisherProperties = {
       insertDefaultUI: false,
       videoFilter,
       resolution: '1280x720',
+      audioSource,
+      videoSource,
     };
 
     publisherRef.current = initPublisher(undefined, publisherOptions, (err: unknown) => {
