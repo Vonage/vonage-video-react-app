@@ -23,7 +23,7 @@ const useArchives = ({ roomName }: UseArchivesProps): Archive[] | 'error' => {
           archiveData = await getArchives(roomName);
         } catch (error: unknown) {
           const message = error instanceof Error ? error.message : error;
-          console.log(`Error retrieving archive: ${message}`);
+          console.error(`Error retrieving archive: ${message}`);
           setArchives('error');
           return;
         }
