@@ -5,6 +5,7 @@ import Grow from '@mui/material/Grow';
 import ToggleOffIcon from '@mui/icons-material/ToggleOff';
 import ToggleOnIcon from '@mui/icons-material/ToggleOn';
 import usePublisherContext from '../../../hooks/usePublisherContext';
+import { setStorageItem, STORAGE_KEYS } from '../../../utils/storage';
 
 export type VideoDevicesOptionsProps = {
   customLightBlueColor: string;
@@ -25,7 +26,7 @@ const VideoDevicesOptions = ({ customLightBlueColor }: VideoDevicesOptionsProps)
   const handleToggle = async () => {
     const newState = !isToggled;
     setIsToggled(newState);
-    window.localStorage.setItem('backgroundBlur', JSON.stringify(newState));
+    setStorageItem(STORAGE_KEYS.BACKGROUND_BLUR, JSON.stringify(newState));
     if (newState) {
       await publisher?.applyVideoFilter({
         type: 'backgroundBlur',

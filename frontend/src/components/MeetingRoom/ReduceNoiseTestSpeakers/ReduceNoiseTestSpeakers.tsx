@@ -9,6 +9,7 @@ import ToggleOnIcon from '@mui/icons-material/ToggleOn';
 import usePublisherContext from '../../../hooks/usePublisherContext';
 import DropdownSeparator from '../DropdownSeparator';
 import SoundTest from '../../SoundTest';
+import { setStorageItem, STORAGE_KEYS } from '../../../utils/storage';
 
 export type ReduceNoiseTestSpeakersProps = {
   customLightBlueColor: string;
@@ -32,7 +33,7 @@ const ReduceNoiseTestSpeakers = ({
   const handleToggle = async () => {
     const newState = !isToggled;
     setIsToggled(newState);
-    window.localStorage.setItem('noiseSuppression', JSON.stringify(newState));
+    setStorageItem(STORAGE_KEYS.NOISE_SUPPRESSION, JSON.stringify(newState));
     if (newState) {
       await publisher?.applyAudioFilter({ type: 'advancedNoiseSuppression' });
     } else {

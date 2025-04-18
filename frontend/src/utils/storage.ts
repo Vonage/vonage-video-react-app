@@ -1,6 +1,9 @@
 export const STORAGE_KEYS = {
   AUDIO_SOURCE: 'audioSource',
   VIDEO_SOURCE: 'videoSource',
+  NOISE_SUPPRESSION: 'noiseSuppression',
+  BACKGROUND_BLUR: 'backgroundBlur',
+  USERNAME: 'username',
 };
 
 export const setStorageItem = (key: string, value: string) => {
