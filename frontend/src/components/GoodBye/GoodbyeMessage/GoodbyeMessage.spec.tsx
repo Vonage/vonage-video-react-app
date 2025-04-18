@@ -16,7 +16,7 @@ const mockNavigate = vi.fn();
 
 describe('GoodbyeMessage', () => {
   const headerMessage = 'This is a header message';
-  const goodbyeMessage = 'This is a header message';
+  const goodbyeMessage = 'This is a goodbye message';
   const roomName = 'This is a test room';
   beforeEach(() => {
     (useNavigate as Mock).mockReturnValue(mockNavigate);
