@@ -149,7 +149,7 @@ describe('MeetingRoom', () => {
       closeRightPanel: vi.fn(),
     } as unknown as SessionContextType;
     mockUseSpeakingDetector.mockReturnValue(false);
-    mockUseLayoutManager.mockImplementation(() => (dimensions, elements) => {
+    mockUseLayoutManager.mockImplementation(() => (_dimensions, elements) => {
       return Array(elements.length).fill({
         height: 720,
         left: 0,
@@ -265,7 +265,7 @@ describe('MeetingRoom', () => {
     sessionContext.layoutMode = 'active-speaker';
     const [sub1, sub2, sub3] = Array(3)
       .fill(0)
-      .map((s, index) => createSubscriberWrapper(`sub${index + 1}`));
+      .map((_s, index) => createSubscriberWrapper(`sub${index + 1}`));
     sessionContext.subscriberWrappers = [sub1];
     publisherContext.publisher = mockPublisher;
     const { rerender } = render(<MeetingRoomWithProviders />);

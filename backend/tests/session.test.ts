@@ -42,7 +42,7 @@ const startServer = (await import('../server')).default;
 describe.each([
   ['InMemorySessionStorage', new InMemorySessionStorage()],
   ['VcrSessionStorage', mockVcrSessionStorage],
-])('/session using %s', (storageName, sessionStorage) => {
+])('/session using %s', (_storageName, sessionStorage) => {
   let server: Server;
   const roomName = 'awesomeRoomName';
 

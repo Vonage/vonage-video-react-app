@@ -33,7 +33,6 @@ const MicButton = (): ReactElement => {
       <Tooltip title={title} aria-label="toggle audio">
         <VideoContainerButton
           onClick={toggleAudio}
-          isEnabled={isAudioEnabled}
           sx={{
             backgroundColor: !isAudioEnabled ? 'rgb(234, 67, 53)' : '',
             '&:hover': {

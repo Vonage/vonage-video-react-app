@@ -70,7 +70,7 @@ const mockWaitUntilPlaying = vi.mocked(waitUntilPlaying);
 const reloadSpy = vi.fn();
 
 describe('WaitingRoom', () => {
-  const nativeWindowLocation = window.location;
+  const nativeWindowLocation = window.location as string & Location;
   let previewPublisherContext: PreviewPublisherContextType;
   let mockPublisher: Publisher;
   let mockPublisherVideoElement: HTMLVideoElement;
