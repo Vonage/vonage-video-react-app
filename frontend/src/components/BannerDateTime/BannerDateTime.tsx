@@ -15,9 +15,13 @@ const BannerDateTime = (): ReactElement => {
       className="hidden items-center text-lg font-normal text-slate-500 md:flex"
       data-testid="dateAndTime"
     >
-      <span className="mr-1">{time}</span>
+      <span className="mr-1" data-testid="current-time">
+        {time}
+      </span>
       <span className="mr-1"> • </span>
-      <span className="mr-1">{date}</span>
+      <span className="mr-1" data-testid="current-date">
+        {date}
+      </span>
     </div>
   );
 };

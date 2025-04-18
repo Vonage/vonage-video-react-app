@@ -9,7 +9,7 @@ import GHRepoButton from '../GHRepoButton';
  */
 const BannerLinks = (): ReactElement => {
   return (
-    <div className="flex items-center">
+    <div className="flex items-center" data-testid="banner-links">
       <GHRepoButton />
     </div>
   );
