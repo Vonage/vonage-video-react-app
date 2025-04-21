@@ -31,13 +31,6 @@ jobs:
                   ]
                 },
                 {
-                  "type": "section",
-                  "text": {
-                    "type": "mrkdwn",
-                    "text": "📝 *Release Notes:*\n${{ github.event.release.body }}"
-                  }
-                },
-                {
                   "type": "actions",
                   "elements": [
                     {
