@@ -8,7 +8,7 @@ jobs:
   notify:
     runs-on: ubuntu-22.04
     steps:
-      - name: Send to slack channles
+      - name: Send to slack channels
         uses: slackapi/slack-github-action@v2.0.0
         with:
           webhook: ${{ secrets.SLACK_WEBHOOK_URL }}
