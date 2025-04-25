@@ -73,5 +73,30 @@ test.describe('participant pinning', () => {
     const publisherRect = await publisher.boundingBox();
     expect(userTwoSubscriberRet.width).toBeGreaterThan(1.2 * publisherRect.width);
     expect(userTwoSubscriberRet.height).toBeGreaterThan(2 * publisherRect.height);
+
+    // unpinning user 2 from the participants list
+    const participantsListButton = await pageThree.getByTestId('PeopleIcon');
+    await participantsListButton.click();
+
+    const participantItem = await pageThree.locator('[data-testid^="participant-list-item"]', {
+      hasText: 'User Two',
+    });
+    // Within that list item, find and click the MoreVert button
+    await participantItem.getByTestId('MoreVertIcon').click();
+
+    // const pinMenuItem = await pageThree.getByTestId('pin-menu-item');
+
+    // await pinMenuItem.getByText('Unpin User Two').click;
+    const unpinMenuItem = await pageThree
+      .locator('[data-testid^="pin-menu-item"]', {
+        hasText: 'Unpin User Two',
+      })
+      .click();
+
+    const newUserTwoSubscriberRet = await userTwoSubscriber.boundingBox();
+    const newPublisherRect = await publisher.boundingBox();
+
+    expect(newUserTwoSubscriberRet.width).toBe(newPublisherRect.width);
+    expect(newUserTwoSubscriberRet.height).toBe(newPublisherRect.height);
   });
 });
