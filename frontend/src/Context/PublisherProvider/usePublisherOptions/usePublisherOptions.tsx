@@ -17,7 +17,7 @@ import DeviceStore from '../../../utils/DeviceStore';
 const usePublisherOptions = (): PublisherProperties | null => {
   const { user } = useUserContext();
   const [publisherOptions, setPublisherOptions] = useState<PublisherProperties | null>(null);
-  const deviceStoreRef = useRef<DeviceStore>();
+  const deviceStoreRef = useRef<DeviceStore | null>(null);
 
   useEffect(() => {
     const setOptions = async () => {

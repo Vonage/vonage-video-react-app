@@ -18,7 +18,7 @@ export type DeviceSettingsMenuProps = {
   deviceType: 'audio' | 'video';
   handleToggle: () => void;
   isOpen: boolean;
-  anchorRef: RefObject<HTMLInputElement>;
+  anchorRef: RefObject<HTMLInputElement | null>;
   handleClose: (event: MouseEvent | TouchEvent) => void;
   setIsOpen: Dispatch<SetStateAction<boolean>>;
 };

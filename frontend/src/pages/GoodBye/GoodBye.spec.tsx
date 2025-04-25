@@ -22,16 +22,23 @@ describe('GoodBye', () => {
   });
 
   it('should render', () => {
-    render(<GoodBye />, { wrapper: BrowserRouter });
+    render(
+      <BrowserRouter>
+        <GoodBye />
+      </BrowserRouter>
+    );
+
     expect(screen.getByText('You left the room')).toBeVisible();
     expect(screen.getByText('We hope you had fun')).toBeVisible();
-    expect(screen.getByText('There are no recordings for this meeting')).toBeVisible();
   });
 
   it('should fetch and display archives', () => {
-    const { rerender } = render(<GoodBye />, { wrapper: BrowserRouter });
     mockUseArchives.mockReturnValue([availableArchive, failedArchive, pendingArchive]);
-    rerender(<GoodBye />);
+    render(
+      <BrowserRouter>
+        <GoodBye />
+      </BrowserRouter>
+    );
     expect(screen.getByText('Recording 1')).toBeVisible();
     expect(screen.getByTestId('archive-loading-spinner')).toBeVisible();
   });

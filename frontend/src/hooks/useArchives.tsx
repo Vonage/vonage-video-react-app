@@ -13,7 +13,7 @@ export type UseArchivesProps = {
  */
 const useArchives = ({ roomName }: UseArchivesProps): Archive[] | 'error' => {
   const [archives, setArchives] = useState<Archive[] | 'error'>([]);
-  const pollingIntervalRef = useRef<ReturnType<typeof setInterval> | undefined>();
+  const pollingIntervalRef = useRef<ReturnType<typeof setInterval> | undefined>(undefined);
 
   useEffect(() => {
     const fetchArchives = async () => {

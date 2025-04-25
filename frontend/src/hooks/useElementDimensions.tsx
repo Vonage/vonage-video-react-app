@@ -15,7 +15,7 @@ export type UseElementDimensionsProps = {
  */
 const useElementDimensions = ({ elementRef }: UseElementDimensionsProps): Dimensions => {
   const [elementDimensions, setElementDimensions] = useState<Dimensions>({ width: 0, height: 0 });
-  const resizeObserver = useRef<ResizeObserver | undefined>();
+  const resizeObserver = useRef<ResizeObserver | undefined>(undefined);
 
   useEffect(() => {
     const elementCurrent = elementRef.current;

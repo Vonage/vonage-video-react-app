@@ -35,7 +35,7 @@ const useToolbarButtons = ({
   rightPanelControlsRef,
   numberOfToolbarButtons,
 }: UseToolbarButtonsProps): UseToolbarButtons => {
-  const observer = useRef<ResizeObserver | undefined>();
+  const observer = useRef<ResizeObserver | undefined>(undefined);
   const [displayTimeRoomName, setDisplayTimeRoomName] = useState<boolean>(false);
 
   const [centerButtonLimit, setCenterButtonLimit] = useState<number>(0);

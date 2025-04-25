@@ -27,7 +27,7 @@ const DeviceControlButton = ({ deviceType }: DeviceControlButtonProps): ReactEle
   const { isVideoEnabled, toggleAudio, toggleVideo, isAudioEnabled } = usePublisherContext();
   const isAudio = deviceType === 'audio';
   const [open, setOpen] = useState<boolean>(false);
-  const anchorRef = useRef<HTMLInputElement>(null);
+  const anchorRef = useRef<HTMLInputElement | null>(null);
   const audioTitle = isAudioEnabled ? 'Disable microphone' : 'Enable microphone';
   const videoTitle = isVideoEnabled ? 'Disable video' : 'Enable video';
 
