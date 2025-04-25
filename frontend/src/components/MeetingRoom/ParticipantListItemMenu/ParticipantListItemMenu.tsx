@@ -35,7 +35,7 @@ const ParticipantListItemMenu = ({
       <IconButton onClick={handleClick} sx={{ marginRight: '-8px' }}>
         <MoreVertIcon sx={{ fontSize: '18px' }} />
       </IconButton>
-      <Popper open={isOpen} anchorEl={anchorEl} placement="bottom-start">
+      <Popper open={isOpen} anchorEl={anchorEl} placement="bottom-start" sx={{ zIndex: 10 }}>
         <ClickAwayListener onClickAway={handleClose}>
           <Paper
             elevation={4}
