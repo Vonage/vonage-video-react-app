@@ -78,7 +78,9 @@ const useToolbarButtons = ({
           );
           const maxButtons = Math.floor(spaceForExtraButtons / buttonWidth);
 
+          // We reserve a few buttons for the right panel
           const maxButtonsForCenter = numberOfToolbarButtons - RIGHT_PANEL_BUTTON_COUNT;
+          // If there's more buttons able to be displayed, we only display the max for the center of the toolbar
           const toolbarCenterLimit =
             maxButtons > maxButtonsForCenter ? maxButtonsForCenter : maxButtons;
 
@@ -99,6 +101,8 @@ const useToolbarButtons = ({
       return;
     }
 
+    // The cleanup function may not be pointing to the correct object/ref by the time it executes.
+    // We keep its reference so the cleanup function runs correctly.
     const observedToolbar = toolbarRef.current;
 
     observer.current.observe(toolbarRef.current);
