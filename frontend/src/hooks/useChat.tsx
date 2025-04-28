@@ -50,7 +50,7 @@ const useChat = ({ sessionRef }: UseChatProps): UseChat => {
         const { text, participantName } = JSON.parse(data);
         const message: ChatMessageType = {
           timestamp: Date.now(),
-          participantName: `${participantName || 'unknown user'}`,
+          participantName: `${participantName ?? 'unknown user'}`,
           message: text,
         };
         setMessages((prev) => [...prev, message]);
