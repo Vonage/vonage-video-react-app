@@ -103,6 +103,7 @@ const useToolbarButtons = ({
 
     observer.current.observe(toolbarRef.current);
 
+    // eslint-disable-next-line consistent-return
     return () => {
       if (observedToolbar) {
         observer.current?.unobserve(observedToolbar);

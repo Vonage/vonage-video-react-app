@@ -1,6 +1,6 @@
 import { act, renderHook } from '@testing-library/react';
 import { beforeEach, describe, expect, it, Mock, Mocked, vi } from 'vitest';
-import { MutableRefObject } from 'react';
+import { RefObject } from 'react';
 import { Session } from '@vonage/client-sdk-video';
 import useChat from '../useChat';
 import useUserContext from '../useUserContext';
@@ -16,7 +16,7 @@ const mockUserContext = {
 
 describe('useChat', () => {
   let sessionMock: Mocked<Session>;
-  let sessionRefMock: MutableRefObject<Session | null>;
+  let sessionRefMock: RefObject<Session | null>;
   beforeEach(() => {
     mockUseUserContext.mockImplementation(() => mockUserContext);
     sessionMock = {
@@ -24,7 +24,7 @@ describe('useChat', () => {
     } as unknown as Mocked<Session>;
     sessionRefMock = {
       current: sessionMock,
-    } as unknown as MutableRefObject<Session | null>;
+    } as unknown as RefObject<Session | null>;
   });
 
   it('onChatMessage should parse message and update messages state', () => {

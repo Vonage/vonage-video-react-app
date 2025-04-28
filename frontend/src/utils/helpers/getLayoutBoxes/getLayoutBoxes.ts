@@ -1,4 +1,4 @@
-import { MutableRefObject } from 'react';
+import { RefObject } from 'react';
 import { Dimensions } from '@vonage/client-sdk-video';
 import getLayoutElementArray, {
   GetLayoutElementArrayProps,
@@ -9,7 +9,7 @@ import { GetLayout } from '../../../hooks/useLayoutManager';
 export type GetLayoutBoxesProps = {
   getLayout: GetLayout;
   wrapDimensions: Dimensions;
-  wrapRef: MutableRefObject<HTMLElement | null>;
+  wrapRef: RefObject<HTMLElement | null>;
 } & GetLayoutElementArrayProps;
 
 /**

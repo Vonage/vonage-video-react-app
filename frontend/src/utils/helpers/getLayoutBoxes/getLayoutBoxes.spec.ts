@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from 'vitest';
-import { MutableRefObject } from 'react';
+import { RefObject } from 'react';
 import { Publisher } from '@vonage/client-sdk-video';
 import getLayoutBoxes, { GetLayoutBoxesProps } from './getLayoutBoxes';
 import { SubscriberWrapper } from '../../../types/session';
@@ -44,7 +44,7 @@ const initialArguments: GetLayoutBoxesProps = {
   screensharingPublisher: null,
   sessionHasScreenshare: false,
   subscribersInDisplayOrder: [],
-  wrapRef: { current: null } as unknown as MutableRefObject<HTMLElement | null>,
+  wrapRef: { current: null } as unknown as RefObject<HTMLElement | null>,
   getLayout: () => [],
   wrapDimensions: {
     height: 0,
@@ -58,7 +58,7 @@ const typicalRoomArguments: GetLayoutBoxesProps = {
   isSharingScreen: true,
   pinnedSubscriberCount: 0,
   screensharingPublisher: createPublisher(),
-  wrapRef: { current: {} } as unknown as MutableRefObject<HTMLElement | null>,
+  wrapRef: { current: {} } as unknown as RefObject<HTMLElement | null>,
   subscribersInDisplayOrder: [
     createSubscriberWrapper('sub1'),
     createSubscriberWrapper('sub2'),
@@ -98,7 +98,7 @@ describe('getLayoutBoxes', () => {
       publisher: createPublisher(),
       screensharingPublisher: createPublisher(),
       isSharingScreen: true,
-      wrapRef: { current: {} } as unknown as MutableRefObject<HTMLElement | null>,
+      wrapRef: { current: {} } as unknown as RefObject<HTMLElement | null>,
       subscribersInDisplayOrder: [
         createSubscriberWrapper('sub1'),
         createSubscriberWrapper('sub2'),

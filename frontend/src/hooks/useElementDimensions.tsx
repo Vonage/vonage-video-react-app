@@ -1,16 +1,16 @@
 import { Dimensions } from '@vonage/client-sdk-video';
 import { throttle } from 'lodash';
 import ResizeObserverPolyfill from 'resize-observer-polyfill';
-import { MutableRefObject, useEffect, useRef, useState } from 'react';
+import { RefObject, useEffect, useRef, useState } from 'react';
 
 export type UseElementDimensionsProps = {
-  elementRef: MutableRefObject<HTMLElement | null>;
+  elementRef: RefObject<HTMLElement | null>;
 };
 /**
  * Util hook to observe element resize changes and get element dimensions as react state.
  * State changes are throttled for performance
  * @param {UseElementDimensionsProps} props - the props for this hook
- *  @property {MutableRefObject<HTMLElement | null>} elementRef - HTMLElement ref object
+ *  @property {RefObject<HTMLElement | null>} elementRef - HTMLElement ref object
  * @returns {Dimensions} - element dimensions
  */
 const useElementDimensions = ({ elementRef }: UseElementDimensionsProps): Dimensions => {

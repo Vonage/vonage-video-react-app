@@ -1,7 +1,7 @@
 import { act, queryByText, render, screen, waitFor } from '@testing-library/react';
 import '@testing-library/dom';
 import { describe, beforeEach, it, Mock, vi, expect, afterAll } from 'vitest';
-import { MutableRefObject } from 'react';
+import { RefObject } from 'react';
 import { EventEmitter } from 'stream';
 import { hasMediaProcessorSupport } from '@vonage/client-sdk-video';
 import * as util from '../../../utils/util';
@@ -54,7 +54,7 @@ describe('DeviceSettingsMenu Component', () => {
   const mockSetIsOpen = vi.fn();
   const mockAnchorRef = {
     current: document.createElement('input'),
-  } as MutableRefObject<HTMLInputElement>;
+  } as RefObject<HTMLInputElement>;
   const mockHandleClose = vi.fn();
   let deviceChangeListener: EventEmitter;
   const mockedHasMediaProcessorSupport = vi.fn();
