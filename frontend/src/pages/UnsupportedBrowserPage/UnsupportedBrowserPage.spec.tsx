@@ -5,7 +5,11 @@ import UnsupportedBrowserPage from './UnsupportedBrowserPage';
 
 describe('UnsupportedBrowserPage', () => {
   it('should render', () => {
-    render(<UnsupportedBrowserPage />, { wrapper: BrowserRouter });
+    render(
+      <BrowserRouter>
+        <UnsupportedBrowserPage />
+      </BrowserRouter>
+    );
 
     expect(screen.getByText('Your browser is unsupported')).toBeInTheDocument();
     expect(screen.getByText('Firefox')).toBeInTheDocument();
