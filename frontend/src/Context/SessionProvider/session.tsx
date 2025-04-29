@@ -215,6 +215,8 @@ const SessionProvider = ({ children }: SessionProviderProps): ReactElement => {
    * Handles changes to stream properties. This triggers a re-render when a stream property changes
    */
   const handleStreamPropertyChanged = () => {
+    // Without a re-render during a stream change, we don't get visual indicators for a subscriber
+    // muting themselves or the initials being displayed.
     forceUpdate((prev) => !prev);
   };
 
