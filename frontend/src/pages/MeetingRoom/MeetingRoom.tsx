@@ -12,6 +12,7 @@ import RightPanel from '../../components/MeetingRoom/RightPanel';
 import useRoomName from '../../hooks/useRoomName';
 import isValidRoomName from '../../utils/isValidRoomName';
 import useIsSmallViewport from '../../hooks/useIsSmallViewport';
+import usePublisherOptions from '../../Context/PublisherProvider/usePublisherOptions';
 
 const height = '@apply h-[calc(100dvh_-_80px)]';
 
@@ -43,6 +44,7 @@ const MeetingRoom = (): ReactElement => {
   const { isSharingScreen, screensharingPublisher, screenshareVideoElement, toggleShareScreen } =
     useScreenShare();
   const navigate = useNavigate();
+  const publisherOptions = usePublisherOptions();
   const isSmallViewPort = useIsSmallViewport();
 
   useEffect(() => {
@@ -57,10 +59,14 @@ const MeetingRoom = (): ReactElement => {
   }, [roomName]);
 
   useEffect(() => {
-    if (!publisher) {
-      initializeLocalPublisher();
+    if (!publisherOptions) {
+      return;
     }
-  }, [initializeLocalPublisher, publisher]);
+
+    if (!publisher) {
+      initializeLocalPublisher(publisherOptions);
+    }
+  }, [initializeLocalPublisher, publisherOptions, publisher]);
 
   useEffect(() => {
     if (connected && publisher && publish) {

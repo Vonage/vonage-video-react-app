@@ -47,7 +47,6 @@ const CameraButton = (): ReactElement => {
               <VideocamOffIcon sx={{ fontSize: '24px', color: 'white' }} />
             )
           }
-          isEnabled={isVideoEnabled}
         />
       </Tooltip>
     </Box>

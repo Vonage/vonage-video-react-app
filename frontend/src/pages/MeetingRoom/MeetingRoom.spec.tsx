@@ -24,6 +24,7 @@ import useToolbarButtons, {
   UseToolbarButtons,
   UseToolbarButtonsProps,
 } from '../../hooks/useToolbarButtons';
+import usePublisherOptions from '../../Context/PublisherProvider/usePublisherOptions';
 
 const mockedNavigate = vi.fn();
 const mockedParams = { roomName: 'test-room-name' };
@@ -48,6 +49,7 @@ vi.mock('../../hooks/useActiveSpeaker.tsx');
 vi.mock('../../hooks/useScreenShare.tsx');
 vi.mock('../../hooks/useIsSmallViewport');
 vi.mock('../../hooks/useToolbarButtons');
+vi.mock('../../Context/PublisherProvider/usePublisherOptions');
 
 const mockUseDevices = useDevices as Mock<
   [],
@@ -110,6 +112,7 @@ describe('MeetingRoom', () => {
   let mockPublisher: Publisher;
   let sessionContext: SessionContextType;
   let publisherContext: PublisherContextType;
+
   beforeEach(() => {
     mockUseUserContext.mockImplementation(() => mockUserContext);
     mockPublisher = Object.assign(new EventEmitter(), {
@@ -126,12 +129,13 @@ describe('MeetingRoom', () => {
       initializeLocalPublisher: vi.fn(() => {
         publisherContext.publisher = mockPublisher;
       }) as unknown as () => void,
-    } as PublisherContextType;
+    } as unknown as PublisherContextType;
     mockUsePublisherContext.mockImplementation(() => publisherContext);
     mockUseDevices.mockReturnValue({
       getAllMediaDevices: vi.fn(),
       allMediaDevices,
     });
+    (usePublisherOptions as Mock).mockReturnValue({});
 
     sessionContext = {
       joinRoom: vi.fn(),
@@ -145,7 +149,7 @@ describe('MeetingRoom', () => {
       closeRightPanel: vi.fn(),
     } as unknown as SessionContextType;
     mockUseSpeakingDetector.mockReturnValue(false);
-    mockUseLayoutManager.mockImplementation(() => (dimensions, elements) => {
+    mockUseLayoutManager.mockImplementation(() => (_dimensions, elements) => {
       return Array(elements.length).fill({
         height: 720,
         left: 0,
@@ -261,7 +265,7 @@ describe('MeetingRoom', () => {
     sessionContext.layoutMode = 'active-speaker';
     const [sub1, sub2, sub3] = Array(3)
       .fill(0)
-      .map((s, index) => createSubscriberWrapper(`sub${index + 1}`));
+      .map((_s, index) => createSubscriberWrapper(`sub${index + 1}`));
     sessionContext.subscriberWrappers = [sub1];
     publisherContext.publisher = mockPublisher;
     const { rerender } = render(<MeetingRoomWithProviders />);

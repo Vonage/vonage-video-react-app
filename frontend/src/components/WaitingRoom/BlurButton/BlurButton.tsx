@@ -35,7 +35,6 @@ const BlurButton = (): ReactElement | false => {
         <Tooltip title={title} aria-label="toggle background blur">
           <VideoContainerButton
             onClick={toggleBlur}
-            isEnabled={!hasBlur}
             sx={{
               '&:hover': {
                 backgroundColor: 'rgba(255, 255, 255, 0.6)',

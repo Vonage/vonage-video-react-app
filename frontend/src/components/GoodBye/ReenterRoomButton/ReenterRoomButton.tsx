@@ -24,6 +24,7 @@ const ReenterRoomButton = ({
       <Button
         variant="outlined"
         className="h-12"
+        data-testid="reenterButton"
         sx={{
           textTransform: 'none',
           fontSize: '1rem',

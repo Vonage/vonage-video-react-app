@@ -7,6 +7,7 @@ import useUserContext from '../../../hooks/useUserContext';
 import { UserType } from '../../../Context/user';
 import useRoomName from '../../../hooks/useRoomName';
 import isValidRoomName from '../../../utils/isValidRoomName';
+import { setStorageItem, STORAGE_KEYS } from '../../../utils/storage';
 
 export type UserNameInputProps = {
   username: string;
@@ -78,7 +79,7 @@ const UsernameInput = ({ username, setUsername }: UserNameInputProps): ReactElem
           name: username,
         },
       }));
-      window.localStorage.setItem('username', username);
+      setStorageItem(STORAGE_KEYS.USERNAME, username);
       // This takes the user to the meeting room and allows them to enter it
       // Otherwise if they entered the room directly, they are going to be redirected back to the waiting room
       // Setting hasAccess is required so that we are not redirected back to the waiting room

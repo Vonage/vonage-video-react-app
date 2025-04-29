@@ -9,16 +9,16 @@ import { Link } from 'react-router-dom';
  */
 const BannerLogo = (): ReactElement => (
   <Link to="..">
-    <div className="box-border">
+    <div className="box-border" data-testid="banner-logo">
       <img
         className="hidden h-[72px] pl-4 pr-8 md:flex"
         src="/images/vonage-logo-desktop.svg"
-        alt="Vonage-logo"
+        alt="Vonage-desktop-logo"
       />
       <img
         className="my-4 h-10 px-8 md:hidden"
         src="/images/vonage-logo-mobile.svg"
-        alt="Vonage-logo"
+        alt="Vonage-mobile-logo"
       />
     </div>
   </Link>

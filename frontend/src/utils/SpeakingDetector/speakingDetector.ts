@@ -77,6 +77,9 @@ class SpeakingDetector extends EventEmitter {
    */
   turnSpeakingDetectorOn = async () => {
     try {
+      if (!this.selectedMicrophoneId) {
+        return;
+      }
       this.audioContext = new AudioContext();
       this.stream = await navigator.mediaDevices.getUserMedia({
         audio: {

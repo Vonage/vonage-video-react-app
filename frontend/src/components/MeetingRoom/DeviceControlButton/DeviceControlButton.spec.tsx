@@ -33,7 +33,7 @@ describe('DeviceControlButton', () => {
       initializeLocalPublisher: vi.fn(() => {
         publisherContext.publisher = mockPublisher;
       }) as unknown as () => void,
-    } as PublisherContextType;
+    } as unknown as PublisherContextType;
     mockUsePublisherContext.mockImplementation(() => publisherContext);
     mockUseSpeakingDetector.mockReturnValue(false);
 
