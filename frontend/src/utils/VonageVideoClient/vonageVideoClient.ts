@@ -27,18 +27,35 @@ type VonageVideoClientEvents = {
   sessionReconnected: [];
   sessionReconnecting: [];
   signal: [SignalEvent];
-  ['signal:chat']: [SignalEvent];
-  ['signal:emoji']: [SignalEvent];
+  'signal:chat': [SignalEvent];
+  'signal:emoji': [SignalEvent];
   streamPropertyChanged: [];
   subscriberVideoElementCreated: [SubscriberWrapper];
   subscriberDestroyed: [string];
   subscriberAudioLevelUpdated: [SubscriberAudioLevelUpdatedEvent];
 };
 
+/**
+ * VonageVideoClient class - Manages a Vonage Video session, including subscribing to streams,
+ * handling events, and emitting custom events for session-related actions. It serves to
+ * provide a structured interface for interacting with the Vonage Video API and to separate
+ * React logic from the Vonage Video API logic, allowing for easier testing and maintenance.
+ *
+ * This class extends `EventEmitter` to provide event-driven functionality.
+ *
+ * @class VonageVideoClient
+ * @augments {EventEmitter}
+ */
 class VonageVideoClient extends EventEmitter<VonageVideoClientEvents> {
   private clientSession: Session | null;
   private readonly credential: Credential;
 
+  /**
+   * Creates an instance of VonageVideoClient.
+   * Initializes the session and attaches event listeners.
+   *
+   * @param {Credential} credential - The API key, session ID, and token required to initialize the session.
+   */
   constructor(credential: Credential) {
     super();
     this.credential = credential;
@@ -47,6 +64,12 @@ class VonageVideoClient extends EventEmitter<VonageVideoClientEvents> {
     this.attachEventListeners();
   }
 
+  /**
+   * Attaches event listeners to the Vonage Video session.
+   * Handles various session events and emits corresponding custom events.
+   *
+   * @private
+   */
   private attachEventListeners() {
     if (!this.clientSession) {
       return;
@@ -66,7 +89,8 @@ class VonageVideoClient extends EventEmitter<VonageVideoClientEvents> {
    * We are disabling the default SDK UI to have more control on the display of the subscriber
    * Ref for Vonage Unified https://vonage.github.io/conversation-docs/video-js-reference/latest/Session.html#subscribe
    * Ref for Opentok https://tokbox.com/developer/sdks/js/reference/Session.html#subscribe
-   * @param {StreamCreatedEvent} event - The stream emitted when a stream is created
+   * @param {StreamCreatedEvent} event - The event emitted when a stream is created
+   * @private
    */
   private handleStreamCreated(event: StreamCreatedEvent) {
     if (this.clientSession === null) {
@@ -120,10 +144,21 @@ class VonageVideoClient extends EventEmitter<VonageVideoClientEvents> {
     }
   }
 
+  /**
+   * Emits an event when a stream property changes.
+   *
+   * @private
+   */
   private handleStreamPropertyChanged() {
     this.emit('streamPropertyChanged');
   }
 
+  /**
+   * Handles incoming signals and emits specific events based on the signal type.
+   *
+   * @param {SignalEvent} event - The signal event received from the session.
+   * @private
+   */
   private handleSignal(event: SignalEvent) {
     const { type } = event;
     if (type === 'signal:chat' || type === 'signal:emoji') {
@@ -131,27 +166,59 @@ class VonageVideoClient extends EventEmitter<VonageVideoClientEvents> {
     }
   }
 
+  /**
+   * Emits an event when the session is reconnecting.
+   *
+   * @private
+   */
   private handleReconnecting() {
     this.emit('sessionReconnecting');
   }
 
+  /**
+   * Emits an event when the session has reconnected.
+   *
+   * @private
+   */
   private handleReconnected() {
     this.emit('sessionReconnected');
   }
 
+  /**
+   * Emits an event when the session is disconnected.
+   *
+   * @private
+   */
   private handleSessionDisconnected() {
     this.emit('sessionDisconnected');
   }
 
+  /**
+   * Emits an event when an archive starts.
+   *
+   * @param {{ id: string }} param - The archive ID.
+   * @private
+   */
   private handleArchiveStarted({ id }: { id: string }) {
     this.emit('archiveStarted', id);
   }
 
+  /**
+   * Emits an event when an archive stops.
+   *
+   * @private
+   */
   private handleArchiveStopped() {
     this.emit('archiveStopped');
   }
 
-  async connect(credential: Credential) {
+  /**
+   * Connects to the Vonage Video session using the provided credentials.
+   *
+   * @param {Credential} credential - The API key, session ID, and token required to connect to the session.
+   * @returns {Promise<void>} Resolves when the connection is successful, rejects on error.
+   */
+  async connect(credential: Credential): Promise<void> {
     const { apiKey, sessionId, token } = credential;
 
     await new Promise((resolve, reject) => {
@@ -170,15 +237,29 @@ class VonageVideoClient extends EventEmitter<VonageVideoClientEvents> {
     });
   }
 
+  /**
+   * Disconnects from the current session and cleans up the session object.
+   */
   disconnect() {
     this.clientSession?.disconnect();
     this.clientSession = null;
   }
 
+  /**
+   * Forces a specific stream to be muted.
+   *
+   * @param {Stream} stream - The stream to be muted.
+   */
   forceMuteStream(stream: Stream) {
     this.clientSession?.forceMuteStream(stream);
   }
 
+  /**
+   * Publishes a stream to the session.
+   *
+   * @param {Publisher} publisher - The publisher object to be published.
+   * @throws {Error} Throws an error if publishing fails.
+   */
   publish(publisher: Publisher) {
     this.clientSession?.publish(publisher, (error) => {
       if (error) {
@@ -187,19 +268,39 @@ class VonageVideoClient extends EventEmitter<VonageVideoClientEvents> {
     });
   }
 
+  /**
+   * Sends a signal to all participants in the session.
+   *
+   * @param {SignalType} data - The signal data to be sent.
+   */
   signal(data: SignalType) {
     this.clientSession?.signal(data);
   }
 
+  /**
+   * Unpublishes a stream from the session.
+   *
+   * @param {Publisher} publisher - The publisher object to be unpublished.
+   */
   unpublish(publisher: Publisher) {
     this.clientSession?.unpublish(publisher);
   }
 
-  get sessionId() {
+  /**
+   * Gets the session ID of the current session.
+   *
+   * @returns {string | undefined} The session ID.
+   */
+  get sessionId(): string | undefined {
     return this.clientSession?.sessionId;
   }
 
-  get connectionId() {
+  /**
+   * Gets the connection ID of the current session.
+   *
+   * @returns {string | undefined} The connection ID.
+   */
+  get connectionId(): string | undefined {
     return this.clientSession?.connection?.connectionId;
   }
 }
