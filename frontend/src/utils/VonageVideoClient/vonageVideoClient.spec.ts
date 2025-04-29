@@ -1,5 +1,5 @@
-import { afterEach, describe, expect, it, Mock, vi } from 'vitest';
-import { initSession, Session } from '@vonage/client-sdk-video';
+import { afterEach, beforeEach, describe, expect, it, Mock, vi } from 'vitest';
+import { initSession, Session, Stream, Subscriber } from '@vonage/client-sdk-video';
 import EventEmitter from 'events';
 import logOnConnect from '../logOnConnect';
 import VonageVideoClient from './vonageVideoClient';
@@ -8,13 +8,22 @@ import { Credential } from '../../types/session';
 vi.mock('../logOnConnect');
 vi.mock('@vonage/client-sdk-video');
 
+type TestSubscriber = Subscriber & EventEmitter;
+const mockSubscriber = Object.assign(new EventEmitter(), {
+  id: 'test-id',
+}) as unknown as TestSubscriber;
+
 const mockLogOnConnect = logOnConnect as Mock<[], void>;
 const consoleErrorSpy = vi.spyOn(console, 'error');
-const mockInitSession = initSession as Mock<[], Session>;
+const mockInitSession = vi.fn();
 const mockConnect = vi.fn();
+const mockSubscribe = vi.fn().mockReturnValue(mockSubscriber);
+type TestSession = Session & EventEmitter;
+
 const mockSession = Object.assign(new EventEmitter(), {
   connect: mockConnect,
-}) as unknown as Session;
+  subscribe: mockSubscribe,
+}) as unknown as TestSession;
 
 const fakeCredentials: Credential = {
   apiKey: 'api-key',
@@ -23,8 +32,12 @@ const fakeCredentials: Credential = {
 };
 
 describe('VonageVideoClient', () => {
-  afterEach(() => {
+  beforeEach(() => {
     mockInitSession.mockReturnValue(mockSession);
+    (initSession as Mock).mockImplementation(mockInitSession);
+  });
+
+  afterEach(() => {
     vi.resetAllMocks();
   });
 
@@ -54,9 +67,41 @@ describe('VonageVideoClient', () => {
 
   describe('for subscribers', () => {
     describe('on stream creation', () => {
-      it('creates a subscriber', () => {});
+      it('emits an event containing a SubscriberWrapper', () =>
+        new Promise<void>((done) => {
+          const streamId = 'stream-id';
+          const vonageVideoClient = new VonageVideoClient(fakeCredentials);
 
-      it('emits an event containing a SubscriberWrapper', () => {});
+          vonageVideoClient.on('subscriberVideoElementCreated', (subscriberWrapper) => {
+            expect(subscriberWrapper.id).toBe(streamId);
+            expect(subscriberWrapper).toHaveProperty('subscriber');
+            done();
+          });
+
+          mockSession.emit('streamCreated', {
+            stream: { streamId } as unknown as Stream,
+          });
+          mockSubscriber.emit('videoElementCreated', {
+            element: document.createElement('video'),
+          });
+        }));
+
+      it('emits an event for screenshare subscribers', () =>
+        new Promise<void>((done) => {
+          const streamId = 'stream-id';
+          const vonageVideoClient = new VonageVideoClient(fakeCredentials);
+
+          vonageVideoClient.on('screenshareStreamCreated', () => {
+            done();
+          });
+
+          mockSession.emit('streamCreated', {
+            stream: { streamId, videoType: 'screen' } as unknown as Stream,
+          });
+          mockSubscriber.emit('videoElementCreated', {
+            element: document.createElement('video'),
+          });
+        }));
     });
 
     describe('on stream destroyed', () => {

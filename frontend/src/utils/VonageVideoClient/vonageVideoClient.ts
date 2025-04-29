@@ -42,7 +42,6 @@ type VonageVideoClientEvents = {
  * React logic from the Vonage Video API logic, allowing for easier testing and maintenance.
  *
  * This class extends `EventEmitter` to provide event-driven functionality.
- *
  * @class VonageVideoClient
  * @augments {EventEmitter}
  */
@@ -53,7 +52,6 @@ class VonageVideoClient extends EventEmitter<VonageVideoClientEvents> {
   /**
    * Creates an instance of VonageVideoClient.
    * Initializes the session and attaches event listeners.
-   *
    * @param {Credential} credential - The API key, session ID, and token required to initialize the session.
    */
   constructor(credential: Credential) {
@@ -67,7 +65,6 @@ class VonageVideoClient extends EventEmitter<VonageVideoClientEvents> {
   /**
    * Attaches event listeners to the Vonage Video session.
    * Handles various session events and emits corresponding custom events.
-   *
    * @private
    */
   private attachEventListeners() {
@@ -146,7 +143,6 @@ class VonageVideoClient extends EventEmitter<VonageVideoClientEvents> {
 
   /**
    * Emits an event when a stream property changes.
-   *
    * @private
    */
   private handleStreamPropertyChanged() {
@@ -155,7 +151,6 @@ class VonageVideoClient extends EventEmitter<VonageVideoClientEvents> {
 
   /**
    * Handles incoming signals and emits specific events based on the signal type.
-   *
    * @param {SignalEvent} event - The signal event received from the session.
    * @private
    */
@@ -168,7 +163,6 @@ class VonageVideoClient extends EventEmitter<VonageVideoClientEvents> {
 
   /**
    * Emits an event when the session is reconnecting.
-   *
    * @private
    */
   private handleReconnecting() {
@@ -177,7 +171,6 @@ class VonageVideoClient extends EventEmitter<VonageVideoClientEvents> {
 
   /**
    * Emits an event when the session has reconnected.
-   *
    * @private
    */
   private handleReconnected() {
@@ -186,7 +179,6 @@ class VonageVideoClient extends EventEmitter<VonageVideoClientEvents> {
 
   /**
    * Emits an event when the session is disconnected.
-   *
    * @private
    */
   private handleSessionDisconnected() {
@@ -195,7 +187,6 @@ class VonageVideoClient extends EventEmitter<VonageVideoClientEvents> {
 
   /**
    * Emits an event when an archive starts.
-   *
    * @param {{ id: string }} param - The archive ID.
    * @private
    */
@@ -205,7 +196,6 @@ class VonageVideoClient extends EventEmitter<VonageVideoClientEvents> {
 
   /**
    * Emits an event when an archive stops.
-   *
    * @private
    */
   private handleArchiveStopped() {
@@ -214,7 +204,6 @@ class VonageVideoClient extends EventEmitter<VonageVideoClientEvents> {
 
   /**
    * Connects to the Vonage Video session using the provided credentials.
-   *
    * @param {Credential} credential - The API key, session ID, and token required to connect to the session.
    * @returns {Promise<void>} Resolves when the connection is successful, rejects on error.
    */
@@ -247,7 +236,6 @@ class VonageVideoClient extends EventEmitter<VonageVideoClientEvents> {
 
   /**
    * Forces a specific stream to be muted.
-   *
    * @param {Stream} stream - The stream to be muted.
    */
   forceMuteStream(stream: Stream) {
@@ -256,7 +244,6 @@ class VonageVideoClient extends EventEmitter<VonageVideoClientEvents> {
 
   /**
    * Publishes a stream to the session.
-   *
    * @param {Publisher} publisher - The publisher object to be published.
    * @throws {Error} Throws an error if publishing fails.
    */
@@ -270,7 +257,6 @@ class VonageVideoClient extends EventEmitter<VonageVideoClientEvents> {
 
   /**
    * Sends a signal to all participants in the session.
-   *
    * @param {SignalType} data - The signal data to be sent.
    */
   signal(data: SignalType) {
@@ -279,7 +265,6 @@ class VonageVideoClient extends EventEmitter<VonageVideoClientEvents> {
 
   /**
    * Unpublishes a stream from the session.
-   *
    * @param {Publisher} publisher - The publisher object to be unpublished.
    */
   unpublish(publisher: Publisher) {
@@ -288,7 +273,6 @@ class VonageVideoClient extends EventEmitter<VonageVideoClientEvents> {
 
   /**
    * Gets the session ID of the current session.
-   *
    * @returns {string | undefined} The session ID.
    */
   get sessionId(): string | undefined {
@@ -297,7 +281,6 @@ class VonageVideoClient extends EventEmitter<VonageVideoClientEvents> {
 
   /**
    * Gets the connection ID of the current session.
-   *
    * @returns {string | undefined} The connection ID.
    */
   get connectionId(): string | undefined {
