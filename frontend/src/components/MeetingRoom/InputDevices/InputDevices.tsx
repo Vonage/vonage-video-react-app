@@ -5,6 +5,7 @@ import MicNoneIcon from '@mui/icons-material/MicNone';
 import { MouseEvent as ReactMouseEvent, ReactElement } from 'react';
 import useDevices from '../../../hooks/useDevices';
 import usePublisherContext from '../../../hooks/usePublisherContext';
+import { setStorageItem, STORAGE_KEYS } from '../../../utils/storage';
 
 export type InputDevicesProps = {
   handleToggle: () => void;
@@ -38,6 +39,7 @@ const InputDevices = ({ handleToggle, customLightBlueColor }: InputDevicesProps)
     })?.deviceId;
     if (audioDeviceId) {
       publisher?.setAudioSource(audioDeviceId);
+      setStorageItem(STORAGE_KEYS.AUDIO_SOURCE, audioDeviceId);
     }
   };
   return (

@@ -69,15 +69,16 @@ describe('usePreviewPublisher', () => {
   });
 
   describe('initLocalPublisher', () => {
-    it('should call initPublisher', () => {
+    it('should call initPublisher', async () => {
       mockedInitPublisher.mockReturnValue(mockPublisher);
       const { result } = renderHook(() => usePreviewPublisher());
-      result.current.initLocalPublisher();
+
+      await result.current.initLocalPublisher();
 
       expect(mockedInitPublisher).toHaveBeenCalled();
     });
 
-    it('should log access denied errors', () => {
+    it('should log access denied errors', async () => {
       const error = new Error(
         "It hit me pretty hard, how there's no kind of sad in this world that will stop it turning."
       );
@@ -87,19 +88,15 @@ describe('usePreviewPublisher', () => {
       });
 
       const { result } = renderHook(() => usePreviewPublisher());
-      act(() => {
-        result.current.initLocalPublisher();
-      });
+      await result.current.initLocalPublisher();
       expect(consoleErrorSpy).toHaveBeenCalledWith('initPublisher error: ', error);
     });
 
-    it('should apply background blur when initialized if set to true', () => {
+    it('should apply background blur when initialized if set to true', async () => {
       mockedHasMediaProcessorSupport.mockReturnValue(true);
       mockedInitPublisher.mockReturnValue(mockPublisher);
       const { result } = renderHook(() => usePreviewPublisher());
-      act(() => {
-        result.current.initLocalPublisher();
-      });
+      await result.current.initLocalPublisher();
       expect(mockedInitPublisher).toHaveBeenCalledWith(
         undefined,
         expect.objectContaining({
@@ -112,13 +109,11 @@ describe('usePreviewPublisher', () => {
       );
     });
 
-    it('should not apply background blur when initialized if the device does not support it', () => {
+    it('should not apply background blur when initialized if the device does not support it', async () => {
       mockedHasMediaProcessorSupport.mockReturnValue(false);
       mockedInitPublisher.mockReturnValue(mockPublisher);
       const { result } = renderHook(() => usePreviewPublisher());
-      act(() => {
-        result.current.initLocalPublisher();
-      });
+      await result.current.initLocalPublisher();
       expect(mockedInitPublisher).toHaveBeenCalledWith(
         undefined,
         expect.objectContaining({
