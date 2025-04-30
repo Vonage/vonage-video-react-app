@@ -87,7 +87,7 @@ test.describe('participant pinning', () => {
     // const pinMenuItem = await pageThree.getByTestId('pin-menu-item');
 
     // await pinMenuItem.getByText('Unpin User Two').click;
-    const unpinMenuItem = await pageThree
+    await pageThree
       .locator('[data-testid^="pin-menu-item"]', {
         hasText: 'Unpin User Two',
       })
