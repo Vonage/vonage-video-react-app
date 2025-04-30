@@ -36,6 +36,7 @@ describe('VonageVideoClient', () => {
       connect: mockConnect,
       subscribe: mockSubscribe,
       disconnect: mockDisconnect,
+      forceMuteStream: vi.fn(),
     }) as unknown as TestSession;
     mockInitSession.mockReturnValue(mockSession);
     (initSession as Mock).mockImplementation(mockInitSession);
@@ -74,8 +75,8 @@ describe('VonageVideoClient', () => {
       });
       await expect(() => vonageVideoClient?.connect()).rejects.toThrowError(fakeError);
 
-      expect(consoleErrorSpy).toHaveBeenCalledWith('Error connecting to session:', fakeError);
       expect(mockLogOnConnect).not.toHaveBeenCalled();
+      expect(consoleErrorSpy).toHaveBeenCalledWith('Error connecting to session:', fakeError);
       expect(vonageVideoClient).not.toBeUndefined();
     });
   });
@@ -111,9 +112,6 @@ describe('VonageVideoClient', () => {
           mockSession.emit('streamCreated', {
             stream: { streamId, videoType: 'screen' } as unknown as Stream,
           });
-          mockSubscriber.emit('videoElementCreated', {
-            element: document.createElement('video'),
-          });
         });
       }));
 
@@ -124,33 +122,54 @@ describe('VonageVideoClient', () => {
       mockSession.emit('streamCreated', {
         stream: { streamId, videoType: 'screen' } as unknown as Stream,
       });
-      mockSubscriber.emit('videoElementCreated', {
-        element: document.createElement('video'),
-      });
 
       const subscriberDestroyedPromise = new Promise((resolve) => {
         vonageVideoClient?.on('subscriberDestroyed', (destroyedStreamId) => {
           expect(destroyedStreamId).toBe(streamId);
           resolve(true);
         });
-      });
 
-      mockSubscriber.emit('destroyed');
+        mockSubscriber.emit('destroyed');
+      });
 
       await subscriberDestroyedPromise;
     });
 
-    it('emits an event when its audio level is updated', () => {
-      expect(true).toBe(false);
+    it('emits an event when its audio level is updated', async () => {
+      await vonageVideoClient?.connect();
+      const streamId = 'stream-id';
+      mockSession.emit('streamCreated', {
+        stream: { streamId } as unknown as Stream,
+      });
+      const audioLevelUpdatedPromise = new Promise((resolve) => {
+        vonageVideoClient?.on('subscriberAudioLevelUpdated', ({ movingAvg, subscriberId }) => {
+          expect(subscriberId).toBe(streamId);
+          expect(movingAvg).toBeDefined();
+          resolve(true);
+        });
+
+        mockSubscriber.emit('audioLevelUpdated', { audioLevel: 0.5 });
+      });
+
+      await audioLevelUpdatedPromise;
     });
   });
 
-  it('disconnect should disconnect from the session and cleanup', () => {
-    expect(true).toBe(false);
+  it('disconnect should disconnect from the session and cleanup', async () => {
+    await vonageVideoClient?.connect();
+    vonageVideoClient?.disconnect();
+    expect(mockDisconnect).toHaveBeenCalled();
   });
 
-  it('forceMuteStream should call forceMuteStream on the session', () => {
-    expect(true).toBe(false);
+  it('forceMuteStream should call forceMuteStream on the session', async () => {
+    const mockStream: Stream = {
+      streamId: 'stream-id',
+    } as unknown as Stream;
+
+    await vonageVideoClient?.connect();
+    vonageVideoClient?.forceMuteStream(mockStream);
+
+    expect(mockSession.forceMuteStream).toHaveBeenCalledWith(mockStream);
   });
 
   describe('publish', () => {

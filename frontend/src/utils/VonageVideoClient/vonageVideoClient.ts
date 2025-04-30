@@ -238,8 +238,8 @@ class VonageVideoClient extends EventEmitter<VonageVideoClientEvents> {
    * Forces a specific stream to be muted.
    * @param {Stream} stream - The stream to be muted.
    */
-  forceMuteStream(stream: Stream) {
-    this.clientSession?.forceMuteStream(stream);
+  async forceMuteStream(stream: Stream) {
+    await this.clientSession?.forceMuteStream(stream);
   }
 
   /**
