@@ -298,7 +298,7 @@ const SessionProvider = ({ children }: SessionProviderProps): ReactElement => {
       session.current.on('subscriberAudioLevelUpdated', handleSubscriberAudioLevelUpdated);
       session.current.on('subscriberVideoElementCreated', handleSubscriberVideoElementCreated);
       session.current.on('subscriberDestroyed', handleSubscriberDestroyed);
-      await session.current.connect(credential);
+      await session.current.connect();
       setConnected(true);
     } catch (err: unknown) {
       if (err instanceof Error) {
