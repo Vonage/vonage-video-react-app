@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, Mock, vi } from 'vitest';
-import { initSession, Session, Stream, Subscriber } from '@vonage/client-sdk-video';
+import { initSession, Publisher, Session, Stream, Subscriber } from '@vonage/client-sdk-video';
 import EventEmitter from 'events';
 import logOnConnect from '../logOnConnect';
 import VonageVideoClient from './vonageVideoClient';
@@ -19,6 +19,7 @@ const mockInitSession = vi.fn();
 const mockConnect = vi.fn();
 const mockSubscribe = vi.fn();
 const mockDisconnect = vi.fn();
+const mockPublish = vi.fn();
 type TestSession = Session & EventEmitter;
 
 const fakeCredentials: Credential = {
@@ -37,6 +38,8 @@ describe('VonageVideoClient', () => {
       subscribe: mockSubscribe,
       disconnect: mockDisconnect,
       forceMuteStream: vi.fn(),
+      publish: mockPublish,
+      unpublish: vi.fn(),
     }) as unknown as TestSession;
     mockInitSession.mockReturnValue(mockSession);
     (initSession as Mock).mockImplementation(mockInitSession);
@@ -173,17 +176,44 @@ describe('VonageVideoClient', () => {
   });
 
   describe('publish', () => {
-    it('should publish a stream to the session', () => {
-      expect(true).toBe(false);
+    const mockPublisher: Publisher = {
+      id: 'publisher-id',
+    } as unknown as Publisher;
+
+    it('should publish a stream to the session', async () => {
+      await vonageVideoClient?.connect();
+      vonageVideoClient?.publish(mockPublisher);
+      expect(mockSession.publish).toHaveBeenCalledWith(mockPublisher, expect.any(Function));
+      expect(mockSession.publish).toHaveBeenCalledTimes(1);
     });
 
-    it('should throw an error if publishing fails', () => {
-      expect(true).toBe(false);
+    it('should throw an error if publishing fails', async () => {
+      const error = new Error('Publishing failed');
+      error.message = 'Publishing failed';
+      error.name = 'oops';
+      mockPublish.mockImplementation((_, callback) => {
+        callback(error);
+      });
+
+      await vonageVideoClient?.connect();
+
+      expect(() => vonageVideoClient?.publish(mockPublisher)).toThrowError(
+        `${error.name}: ${error.message}`
+      );
     });
   });
 
-  it('unpublish should unpublish a stream from the session', () => {
-    expect(true).toBe(false);
+  it('unpublish should unpublish a stream from the session', async () => {
+    const mockPublisher: Publisher = {
+      id: 'publisher-id',
+    } as unknown as Publisher;
+
+    await vonageVideoClient?.connect();
+    vonageVideoClient?.publish(mockPublisher);
+    vonageVideoClient?.unpublish(mockPublisher);
+
+    expect(mockSession.unpublish).toHaveBeenCalledWith(mockPublisher);
+    expect(mockSession.unpublish).toHaveBeenCalledTimes(1);
   });
 
   describe('event handling', () => {
