@@ -17,13 +17,9 @@ const mockLogOnConnect = logOnConnect as Mock<[], void>;
 const consoleErrorSpy = vi.spyOn(console, 'error');
 const mockInitSession = vi.fn();
 const mockConnect = vi.fn();
-const mockSubscribe = vi.fn().mockReturnValue(mockSubscriber);
+const mockSubscribe = vi.fn();
+const mockDisconnect = vi.fn();
 type TestSession = Session & EventEmitter;
-
-const mockSession = Object.assign(new EventEmitter(), {
-  connect: mockConnect,
-  subscribe: mockSubscribe,
-}) as unknown as TestSession;
 
 const fakeCredentials: Credential = {
   apiKey: 'api-key',
@@ -32,29 +28,39 @@ const fakeCredentials: Credential = {
 };
 
 describe('VonageVideoClient', () => {
+  let vonageVideoClient: VonageVideoClient | null;
+  let mockSession: TestSession;
+
   beforeEach(() => {
+    mockSession = Object.assign(new EventEmitter(), {
+      connect: mockConnect,
+      subscribe: mockSubscribe,
+      disconnect: mockDisconnect,
+    }) as unknown as TestSession;
     mockInitSession.mockReturnValue(mockSession);
     (initSession as Mock).mockImplementation(mockInitSession);
+    mockConnect.mockImplementation((_, callback) => {
+      callback();
+    });
+    mockSubscribe.mockReturnValue(mockSubscriber);
+
+    vonageVideoClient = new VonageVideoClient(fakeCredentials);
   });
 
   afterEach(() => {
+    vonageVideoClient?.disconnect();
+    vonageVideoClient = null;
     vi.resetAllMocks();
   });
 
   it('constructor should initialize a session with the provided credentials', () => {
-    const vonageVideoClient = new VonageVideoClient(fakeCredentials);
-
     expect(mockInitSession).toHaveBeenCalled();
     expect(vonageVideoClient).not.toBeUndefined();
   });
 
   describe('connect to session', () => {
     it('logs on successful connection', async () => {
-      mockConnect.mockImplementation((_, callback) => {
-        callback();
-      });
-      const vonageVideoClient = new VonageVideoClient(fakeCredentials);
-      await vonageVideoClient.connect();
+      await vonageVideoClient?.connect();
 
       expect(mockLogOnConnect).toHaveBeenCalled();
       expect(consoleErrorSpy).not.toHaveBeenCalled();
@@ -66,8 +72,7 @@ describe('VonageVideoClient', () => {
       mockConnect.mockImplementation((_, callback) => {
         callback(fakeError);
       });
-      const vonageVideoClient = new VonageVideoClient(fakeCredentials);
-      await expect(() => vonageVideoClient.connect()).rejects.toThrowError(fakeError);
+      await expect(() => vonageVideoClient?.connect()).rejects.toThrowError(fakeError);
 
       expect(consoleErrorSpy).toHaveBeenCalledWith('Error connecting to session:', fakeError);
       expect(mockLogOnConnect).not.toHaveBeenCalled();
@@ -75,14 +80,12 @@ describe('VonageVideoClient', () => {
     });
   });
 
-  describe('for subscribers', () => {
-    describe('on stream creation', () => {
-      it('emits an event containing a SubscriberWrapper', () =>
-        new Promise<void>((done) => {
-          const streamId = 'stream-id';
-          const vonageVideoClient = new VonageVideoClient(fakeCredentials);
-
-          vonageVideoClient.on('subscriberVideoElementCreated', (subscriberWrapper) => {
+  describe('for subscriber stream created', () => {
+    it('emits an event containing a SubscriberWrapper', () =>
+      new Promise<void>((done) => {
+        const streamId = 'stream-id';
+        vonageVideoClient?.connect().then(() => {
+          vonageVideoClient?.on('subscriberVideoElementCreated', (subscriberWrapper) => {
             expect(subscriberWrapper.id).toBe(streamId);
             expect(subscriberWrapper).toHaveProperty('subscriber');
             done();
@@ -94,14 +97,14 @@ describe('VonageVideoClient', () => {
           mockSubscriber.emit('videoElementCreated', {
             element: document.createElement('video'),
           });
-        }));
+        });
+      }));
 
-      it('emits an event for screenshare subscribers', () =>
-        new Promise<void>((done) => {
-          const streamId = 'stream-id';
-          const vonageVideoClient = new VonageVideoClient(fakeCredentials);
-
-          vonageVideoClient.on('screenshareStreamCreated', () => {
+    it('emits an event for screenshare subscribers', () =>
+      new Promise<void>((done) => {
+        const streamId = 'stream-id';
+        vonageVideoClient?.connect().then(() => {
+          vonageVideoClient?.on('screenshareStreamCreated', () => {
             done();
           });
 
@@ -111,43 +114,86 @@ describe('VonageVideoClient', () => {
           mockSubscriber.emit('videoElementCreated', {
             element: document.createElement('video'),
           });
-        }));
+        });
+      }));
+
+    it('emits an event containing the streamId when the stream is destroyed', async () => {
+      const streamId = 'stream-id';
+      await vonageVideoClient?.connect();
+
+      mockSession.emit('streamCreated', {
+        stream: { streamId, videoType: 'screen' } as unknown as Stream,
+      });
+      mockSubscriber.emit('videoElementCreated', {
+        element: document.createElement('video'),
+      });
+
+      const subscriberDestroyedPromise = new Promise((resolve) => {
+        vonageVideoClient?.on('subscriberDestroyed', (destroyedStreamId) => {
+          expect(destroyedStreamId).toBe(streamId);
+          resolve(true);
+        });
+      });
+
+      mockSubscriber.emit('destroyed');
+
+      await subscriberDestroyedPromise;
     });
 
-    describe('on stream destroyed', () => {
-      it('removes the subscriber', () => {});
-
-      it('emits an event containing the streamId', () => {});
+    it('emits an event when its audio level is updated', () => {
+      expect(true).toBe(false);
     });
-
-    it('emits an event when audio level is updated', () => {});
   });
 
-  it('disconnect should disconnect from the session and cleanup', () => {});
+  it('disconnect should disconnect from the session and cleanup', () => {
+    expect(true).toBe(false);
+  });
 
-  it('forceMuteStream should call forceMuteStream on the session', () => {});
+  it('forceMuteStream should call forceMuteStream on the session', () => {
+    expect(true).toBe(false);
+  });
 
   describe('publish', () => {
-    it('should publish a stream to the session', () => {});
+    it('should publish a stream to the session', () => {
+      expect(true).toBe(false);
+    });
 
-    it('should throw an error if publishing fails', () => {});
+    it('should throw an error if publishing fails', () => {
+      expect(true).toBe(false);
+    });
   });
 
-  it('unpublish should unpublish a stream from the session', () => {});
+  it('unpublish should unpublish a stream from the session', () => {
+    expect(true).toBe(false);
+  });
 
   describe('event handling', () => {
-    it('should emit archiveStarted when an archive starts', () => {});
+    it('should emit archiveStarted when an archive starts', () => {
+      expect(true).toBe(false);
+    });
 
-    it('should emit archiveStopped when an archive stops', () => {});
+    it('should emit archiveStopped when an archive stops', () => {
+      expect(true).toBe(false);
+    });
 
-    it('should emit sessionDisconnected when the session disconnects', () => {});
+    it('should emit sessionDisconnected when the session disconnects', () => {
+      expect(true).toBe(false);
+    });
 
-    it('should emit sessionReconnected when the session reconnects', () => {});
+    it('should emit sessionReconnected when the session reconnects', () => {
+      expect(true).toBe(false);
+    });
 
-    it('should emit sessionReconnecting when the session is reconnecting', () => {});
+    it('should emit sessionReconnecting when the session is reconnecting', () => {
+      expect(true).toBe(false);
+    });
 
-    it('should emit signal:chat when a chat message is received', () => {});
+    it('should emit signal:chat when a chat message is received', () => {
+      expect(true).toBe(false);
+    });
 
-    it('should emit signal:emoji when an emoji is received', () => {});
+    it('should emit signal:emoji when an emoji is received', () => {
+      expect(true).toBe(false);
+    });
   });
 });
