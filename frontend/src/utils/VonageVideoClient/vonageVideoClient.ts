@@ -204,11 +204,10 @@ class VonageVideoClient extends EventEmitter<VonageVideoClientEvents> {
 
   /**
    * Connects to the Vonage Video session using the provided credentials.
-   * @param {Credential} credential - The API key, session ID, and token required to connect to the session.
    * @returns {Promise<void>} Resolves when the connection is successful, rejects on error.
    */
-  async connect(credential: Credential): Promise<void> {
-    const { apiKey, sessionId, token } = credential;
+  async connect(): Promise<void> {
+    const { apiKey, sessionId, token } = this.credential;
 
     await new Promise((resolve, reject) => {
       if (!this.clientSession) {
@@ -216,6 +215,7 @@ class VonageVideoClient extends EventEmitter<VonageVideoClientEvents> {
       }
       this.clientSession?.connect(token, (err?: OTError) => {
         if (err) {
+          console.error('Error connecting to session:', err);
           // We ignore the following lint warning because we are rejecting with an OTError object.
           reject(err); // NOSONAR
         } else {

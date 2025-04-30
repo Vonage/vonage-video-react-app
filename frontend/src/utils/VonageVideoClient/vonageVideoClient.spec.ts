@@ -49,53 +49,30 @@ describe('VonageVideoClient', () => {
   });
 
   describe('connect to session', () => {
-    it('logs on successful connection', () => {
+    it('logs on successful connection', async () => {
+      mockConnect.mockImplementation((_, callback) => {
+        callback();
+      });
       const vonageVideoClient = new VonageVideoClient(fakeCredentials);
+      await vonageVideoClient.connect();
 
       expect(mockLogOnConnect).toHaveBeenCalled();
       expect(consoleErrorSpy).not.toHaveBeenCalled();
       expect(vonageVideoClient).not.toBeUndefined();
     });
 
-    it('logs to console on unsuccessful connection', () => {
+    it('logs to console on unsuccessful connection', async () => {
       const fakeError = 'fake-error';
       mockConnect.mockImplementation((_, callback) => {
         callback(fakeError);
       });
       const vonageVideoClient = new VonageVideoClient(fakeCredentials);
+      await expect(() => vonageVideoClient.connect()).rejects.toThrowError(fakeError);
 
-      expect(mockLogOnConnect).toHaveBeenCalled();
-      expect(consoleErrorSpy).toHaveBeenCalledWith(fakeError);
+      expect(consoleErrorSpy).toHaveBeenCalledWith('Error connecting to session:', fakeError);
+      expect(mockLogOnConnect).not.toHaveBeenCalled();
       expect(vonageVideoClient).not.toBeUndefined();
     });
-  });
-
-  it('disconnect should disconnect from the session and cleanup', () => {});
-
-  it('forceMuteStream should call forceMuteStream on the session', () => {});
-
-  describe('publish', () => {
-    it('should publish a stream to the session', () => {});
-
-    it('should throw an error if publishing fails', () => {});
-  });
-
-  it('unpublish should unpublish a stream from the session', () => {});
-
-  describe('event handling', () => {
-    it('should emit archiveStarted when an archive starts', () => {});
-
-    it('should emit archiveStopped when an archive stops', () => {});
-
-    it('should emit sessionDisconnected when the session disconnects', () => {});
-
-    it('should emit sessionReconnected when the session reconnects', () => {});
-
-    it('should emit sessionReconnecting when the session is reconnecting', () => {});
-
-    it('should emit signal:chat when a chat message is received', () => {});
-
-    it('should emit signal:emoji when an emoji is received', () => {});
   });
 
   describe('for subscribers', () => {
@@ -144,5 +121,33 @@ describe('VonageVideoClient', () => {
     });
 
     it('emits an event when audio level is updated', () => {});
+  });
+
+  it('disconnect should disconnect from the session and cleanup', () => {});
+
+  it('forceMuteStream should call forceMuteStream on the session', () => {});
+
+  describe('publish', () => {
+    it('should publish a stream to the session', () => {});
+
+    it('should throw an error if publishing fails', () => {});
+  });
+
+  it('unpublish should unpublish a stream from the session', () => {});
+
+  describe('event handling', () => {
+    it('should emit archiveStarted when an archive starts', () => {});
+
+    it('should emit archiveStopped when an archive stops', () => {});
+
+    it('should emit sessionDisconnected when the session disconnects', () => {});
+
+    it('should emit sessionReconnected when the session reconnects', () => {});
+
+    it('should emit sessionReconnecting when the session is reconnecting', () => {});
+
+    it('should emit signal:chat when a chat message is received', () => {});
+
+    it('should emit signal:emoji when an emoji is received', () => {});
   });
 });
