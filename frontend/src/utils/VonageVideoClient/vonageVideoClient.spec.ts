@@ -1,9 +1,16 @@
 import { afterEach, beforeEach, describe, expect, it, Mock, vi } from 'vitest';
-import { initSession, Publisher, Session, Stream, Subscriber } from '@vonage/client-sdk-video';
+import {
+  Connection,
+  initSession,
+  Publisher,
+  Session,
+  Stream,
+  Subscriber,
+} from '@vonage/client-sdk-video';
 import EventEmitter from 'events';
 import logOnConnect from '../logOnConnect';
 import VonageVideoClient from './vonageVideoClient';
-import { Credential } from '../../types/session';
+import { Credential, SignalEvent } from '../../types/session';
 
 vi.mock('../logOnConnect');
 vi.mock('@vonage/client-sdk-video');
@@ -217,32 +224,109 @@ describe('VonageVideoClient', () => {
   });
 
   describe('event handling', () => {
-    it('should emit archiveStarted when an archive starts', () => {
-      expect(true).toBe(false);
+    it('should emit archiveStarted when an archive starts', async () => {
+      const archiveId = 'archive-id';
+
+      const archiveStartedPromise = new Promise((resolve) => {
+        vonageVideoClient?.on('archiveStarted', (id) => {
+          expect(id).toBe(archiveId);
+          resolve(true);
+        });
+
+        mockSession.emit('archiveStarted', {
+          id: archiveId,
+        });
+      });
+      await archiveStartedPromise;
     });
 
-    it('should emit archiveStopped when an archive stops', () => {
-      expect(true).toBe(false);
+    it('should emit archiveStopped when an archive stops', async () => {
+      const archiveStoppedPromise = new Promise((resolve) => {
+        vonageVideoClient?.on('archiveStopped', () => {
+          resolve(true);
+        });
+
+        mockSession.emit('archiveStopped');
+      });
+
+      return archiveStoppedPromise;
     });
 
-    it('should emit sessionDisconnected when the session disconnects', () => {
-      expect(true).toBe(false);
+    it('should emit sessionDisconnected when the session disconnects', async () => {
+      const sessionDisconnectedPromise = new Promise((resolve) => {
+        vonageVideoClient?.on('sessionDisconnected', () => {
+          resolve(true);
+        });
+
+        mockSession.emit('sessionDisconnected');
+      });
+      return sessionDisconnectedPromise;
     });
 
-    it('should emit sessionReconnected when the session reconnects', () => {
-      expect(true).toBe(false);
+    it('should emit sessionReconnected when the session reconnects', async () => {
+      const sessionReconnectedPromise = new Promise((resolve) => {
+        vonageVideoClient?.on('sessionReconnected', () => {
+          resolve(true);
+        });
+
+        mockSession.emit('sessionReconnected');
+      });
+      return sessionReconnectedPromise;
     });
 
-    it('should emit sessionReconnecting when the session is reconnecting', () => {
-      expect(true).toBe(false);
+    it('should emit sessionReconnecting when the session is reconnecting', async () => {
+      const sessionReconnectingPromise = new Promise((resolve) => {
+        vonageVideoClient?.on('sessionReconnecting', () => {
+          resolve(true);
+        });
+
+        mockSession.emit('sessionReconnecting');
+      });
+      return sessionReconnectingPromise;
     });
 
     it('should emit signal:chat when a chat message is received', () => {
-      expect(true).toBe(false);
+      const chatSignal: SignalEvent = {
+        type: 'signal:chat',
+        data: 'Hello, world!',
+        from: {
+          connectionId: 'connection-id',
+          creationTime: 0,
+          data: 'connection-data',
+        } as unknown as Connection,
+      };
+
+      const emitChatSignalPromise = new Promise((resolve) => {
+        vonageVideoClient?.on('signal:chat', (event) => {
+          expect(event).toEqual(chatSignal);
+          resolve(true);
+        });
+
+        mockSession.emit('signal', chatSignal);
+      });
+      return emitChatSignalPromise;
     });
 
     it('should emit signal:emoji when an emoji is received', () => {
-      expect(true).toBe(false);
+      const emojiSignal: SignalEvent = {
+        type: 'signal:emoji',
+        data: '👍',
+        from: {
+          connectionId: 'connection-id',
+          creationTime: 0,
+          data: 'connection-data',
+        } as unknown as Connection,
+      };
+
+      const emitEmojiSignalPromise = new Promise((resolve) => {
+        vonageVideoClient?.on('signal:emoji', (event) => {
+          expect(event).toEqual(emojiSignal);
+          resolve(true);
+        });
+
+        mockSession.emit('signal', emojiSignal);
+      });
+      return emitEmojiSignalPromise;
     });
   });
 });
