@@ -25,21 +25,13 @@ const vitestConfig: VitestUserConfigInterface = defineVitestConfig({
   },
 });
 
-const isTest = process.env.NODE_ENV === 'test' || process.env.VITE_TEST === 'true';
-
 // https://vitejs.dev/config/
 const viteConfig = defineConfig({
   optimizeDeps: {
     include: ['@emotion/react', '@emotion/styled', '@mui/material/Tooltip'],
   },
   plugins: [
-    react({
-      babel: {
-        plugins: isTest
-          ? [] // Disable babel-plugin-react-compiler in test environment
-          : [['babel-plugin-react-compiler', { target: '19' }]],
-      },
-    }),
+    react(),
     replace({
       'process.env.CI': process.env.CI,
       preventAssignment: true,
