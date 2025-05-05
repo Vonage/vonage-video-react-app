@@ -114,7 +114,6 @@ describe('DeviceSettingsMenu Component', () => {
       expect(
         (outputDevicesElement.firstChild as HTMLOptionElement).classList.contains('Mui-selected')
       ).toBe(true);
-      // check that the following element is not currently selected
       expect(
         (outputDevicesElement.children[1] as HTMLOptionElement).classList.contains('Mui-selected')
       ).toBe(false);
@@ -231,7 +230,6 @@ describe('DeviceSettingsMenu Component', () => {
       expect(
         (outputDevicesElement.firstChild as HTMLOptionElement).classList.contains('Mui-selected')
       ).toBe(true);
-      // check that the following element is not currently selected
       expect(
         (outputDevicesElement.children[1] as HTMLOptionElement).classList.contains('Mui-selected')
       ).toBe(false);
@@ -257,7 +255,6 @@ describe('DeviceSettingsMenu Component', () => {
       expect((outputDevicesElement.firstChild as Element).classList.contains('Mui-selected')).toBe(
         true
       );
-      // check that the following element is not currently selected
       expect((outputDevicesElement.children[1] as Element).classList.contains('Mui-selected')).toBe(
         false
       );
