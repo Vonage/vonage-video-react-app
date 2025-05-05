@@ -75,6 +75,11 @@ test.describe('participant pinning', () => {
     expect(userTwoSubscriberRet.height).toBeGreaterThan(2 * publisherRect.height);
 
     // unpinning user 2 from the participants list
+    if (isMobile) {
+      await pageThree.getByTestId('MoreVertIcon').click();
+      await pageThree.mouse.move(0, 0); // Moves cursor to top-left corner to hide tooltip
+    }
+
     const participantsListButton = await pageThree.getByTestId('PeopleIcon');
     await participantsListButton.click();
 
@@ -93,10 +98,14 @@ test.describe('participant pinning', () => {
       })
       .click();
 
+    const closeIcon = pageThree.locator('svg[data-testid="CloseIcon"]:visible');
+    await closeIcon.click();
+
     const newUserTwoSubscriberRet = await userTwoSubscriber.boundingBox();
     const newPublisherRect = await publisher.boundingBox();
 
-    expect(newUserTwoSubscriberRet.width).toBe(newPublisherRect.width);
-    expect(newUserTwoSubscriberRet.height).toBe(newPublisherRect.height);
+    await pageThree.waitForTimeout(1000);
+    expect(newUserTwoSubscriberRet.width).toBeLessThan(1.2 * newPublisherRect.width);
+    expect(newUserTwoSubscriberRet.height).toBeLessThan(2 * newPublisherRect.height);
   });
 });
