@@ -10,6 +10,8 @@ import VideoTile from '../MeetingRoom/VideoTile';
 import PinButton from '../MeetingRoom/PinButton';
 import useSessionContext from '../../hooks/useSessionContext';
 import isMouseEventInsideBox from '../../utils/isMouseEventInsideBox';
+import VideoLoading from '../VideoLoading';
+import waitUntilPlaying from '../../utils/waitUntilPlaying';
 
 export type SubscriberProps = {
   subscriberWrapper: SubscriberWrapper;
@@ -42,6 +44,7 @@ const Subscriber = ({
   const subRef = useRef<HTMLDivElement>(null);
   const isTalking = useSubscriberTalking({ subscriber, isActiveSpeaker });
   const [isTileHovered, setIsTileHovered] = useState<boolean>(false);
+  const [isSubscriberLoaded, setIsSubscriberLoaded] = useState<boolean>(false);
 
   useEffect(() => {
     // If hidden - Unsubscribe from video to save bandwidth and cpu
@@ -59,8 +62,16 @@ const Subscriber = ({
         'h-full',
         'absolute',
         'rounded-xl',
-        'object-contain'
+        'hidden'
       );
+      // We display a loading indicator until the first video frames play
+      waitUntilPlaying(element).then(() => {
+        setTimeout(() => {
+          element.classList.remove('hidden');
+          element.classList.add('object-contain');
+          setIsSubscriberLoaded(true);
+        }, 200);
+      });
       subRef.current.appendChild(element);
     }
   }, [subscriberWrapper, isScreenShare]);
@@ -102,6 +113,7 @@ const Subscriber = ({
       onMouseLeave={() => setIsTileHovered(false)}
       isScreenshare={isScreenShare}
     >
+      {!isSubscriberLoaded && <VideoLoading isSubscriber />}
       {!isScreenShare && (
         <PinButton
           isPinned={isPinned}
