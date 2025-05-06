@@ -242,7 +242,7 @@ const usePublisher = (): PublisherContextType => {
         return;
       }
 
-      mSession.session.publish(publisherRef.current);
+      mSession.publish(publisherRef.current);
       setIsPublishingToSession(true);
     } catch (err: unknown) {
       if (err instanceof Error) {

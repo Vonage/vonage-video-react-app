@@ -247,11 +247,14 @@ class VonageVideoClient extends EventEmitter<VonageVideoClientEvents> {
    * @param {Publisher} publisher - The publisher object to be published.
    * @throws {Error} Throws an error if publishing fails.
    */
-  publish(publisher: Publisher) {
-    this.clientSession?.publish(publisher, (error) => {
-      if (error) {
-        throw new Error(`${error.name}: ${error.message}`);
-      }
+  publish(publisher: Publisher): Promise<void> {
+    return new Promise((resolve, reject) => {
+      this.clientSession?.publish(publisher, (error) => {
+        if (error) {
+          reject(new Error(`${error.name}: ${error.message}`));
+        }
+        resolve();
+      });
     });
   }
 

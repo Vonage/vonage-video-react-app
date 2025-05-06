@@ -53,11 +53,11 @@ describe('usePublisher', () => {
     (initPublisher as Mock).mockImplementation(mockedInitPublisher);
 
     sessionMock = {
-      publish: mockedSessionPublish,
       unpublish: mockedSessionUnpublish,
     } as unknown as Mocked<Session>;
     sessionContext = {
       session: sessionMock,
+      publish: mockedSessionPublish,
     } as unknown as SessionContextType;
     mockUseSessionContext.mockReturnValue(sessionContext as unknown as SessionContextType);
   });
@@ -123,24 +123,23 @@ describe('usePublisher', () => {
     });
 
     it('should log errors', async () => {
-      sessionMock = {
-        publish: vi.fn(() => {
-          throw new Error('There is an error.');
-        }),
-      } as unknown as Mocked<Session>;
+      mockedSessionPublish.mockImplementation(() => {
+        throw new Error('There is an error.');
+      });
 
       const { result } = renderHook(() => usePublisher());
-      result.current.initializeLocalPublisher({});
-      await result.current.publish();
+
+      await act(async () => {
+        result.current.initializeLocalPublisher({});
+
+        await result.current.publish();
+      });
 
       expect(consoleWarnSpy).toHaveBeenCalled();
     });
 
     it('should only publish to session once', async () => {
       (initPublisher as Mock).mockImplementation(() => mockPublisher);
-      mockedSessionPublish.mockImplementation((_, callback) => {
-        callback();
-      });
 
       const { result } = renderHook(() => usePublisher());
 

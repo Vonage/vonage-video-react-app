@@ -10,7 +10,7 @@ import {
   useEffect,
   ReactElement,
 } from 'react';
-import { Connection, Stream } from '@vonage/client-sdk-video';
+import { Connection, Publisher, Stream } from '@vonage/client-sdk-video';
 import fetchCredentials from '../../api/fetchCredentials';
 import useUserContext from '../../hooks/useUserContext';
 import ActiveSpeakerTracker from '../../utils/ActiveSpeakerTracker';
@@ -61,6 +61,7 @@ export type SessionContextType = {
   isMaxPinned: boolean;
   sendEmoji: (emoji: string) => void;
   emojiQueue: EmojiWrapper[];
+  publish: (publisher: Publisher) => Promise<void>;
 };
 
 /**
@@ -91,6 +92,7 @@ export const SessionContext = createContext<SessionContextType>({
   isMaxPinned: false,
   sendEmoji: () => {},
   emojiQueue: [],
+  publish: async () => Promise.resolve(),
 });
 
 export type ConnectionEventType = {
@@ -343,6 +345,12 @@ const SessionProvider = ({ children }: SessionProviderProps): ReactElement => {
     }
   }, []);
 
+  const publish = useCallback(async (publisher: Publisher): Promise<void> => {
+    if (session.current) {
+      session.current.publish(publisher);
+    }
+  }, []);
+
   const value = useMemo(
     () => ({
       activeSpeakerId,
@@ -369,6 +377,7 @@ const SessionProvider = ({ children }: SessionProviderProps): ReactElement => {
       isMaxPinned,
       sendEmoji,
       emojiQueue,
+      publish,
     }),
     [
       activeSpeakerId,
@@ -395,6 +404,7 @@ const SessionProvider = ({ children }: SessionProviderProps): ReactElement => {
       isMaxPinned,
       sendEmoji,
       emojiQueue,
+      publish,
     ]
   );
 
