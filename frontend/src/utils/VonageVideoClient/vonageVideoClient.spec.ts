@@ -204,7 +204,7 @@ describe('VonageVideoClient', () => {
 
       await vonageVideoClient?.connect();
 
-      expect(() => vonageVideoClient?.publish(mockPublisher)).toThrowError(
+      expect(() => vonageVideoClient?.publish(mockPublisher)).rejects.toThrow(
         `${error.name}: ${error.message}`
       );
     });
