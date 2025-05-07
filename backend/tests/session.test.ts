@@ -122,7 +122,7 @@ describe.each([
         expect(res.statusCode).toEqual(404);
       });
 
-      it('returns a 500 when stopping an invalid captions in a room', async () => {
+      it('returns an invalid caption message when stopping an invalid captions in a room', async () => {
         const invalidCaptionId = 'wrongCaptionId';
         const res = await request(server)
           .post(`/session/${roomName}/${invalidCaptionId}/disableCaptions`)
