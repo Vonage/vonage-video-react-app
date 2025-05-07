@@ -2,7 +2,6 @@ import { useState, useRef, useCallback } from 'react';
 import { Publisher, initPublisher } from '@vonage/client-sdk-video';
 import useSessionContext from './useSessionContext';
 import useUserContext from './useUserContext';
-import { StreamCreatedEvent } from '../Context/SessionProvider/session';
 
 /**
  * @typedef {object} UseScreenShareType
@@ -46,14 +45,9 @@ const useScreenShare = (): UseScreenShareType => {
     }
   }, [session]);
 
-  const handleStreamCreated = useCallback(
-    async (event: StreamCreatedEvent) => {
-      if (event.stream.videoType === 'screen') {
-        unpublishScreenshare();
-      }
-    },
-    [unpublishScreenshare]
-  );
+  const handleStreamCreated = useCallback(async () => {
+    unpublishScreenshare();
+  }, [unpublishScreenshare]);
 
   // Using useCallback to memoize the function to avoid unnecessary re-renders
   const toggleShareScreen = useCallback(async () => {
@@ -99,10 +93,10 @@ const useScreenShare = (): UseScreenShareType => {
         // Publishing the screen sharing stream
         session.publish(screenSharingPub.current);
 
-        session?.on('streamCreated', handleStreamCreated);
+        session?.on('screenshareStreamCreated', handleStreamCreated);
       } else if (screenSharingPub.current) {
         unpublishScreenshare();
-        session?.off('streamCreated', handleStreamCreated);
+        session?.off('screenshareStreamCreated', handleStreamCreated);
       }
     }
   }, [

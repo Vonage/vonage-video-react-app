@@ -242,11 +242,7 @@ const usePublisher = (): PublisherContextType => {
         return;
       }
 
-      mSession.session.publish(publisherRef.current, (error) => {
-        if (error) {
-          throw new Error(`${error.name}: ${error.message}`);
-        }
-      });
+      mSession.publish(publisherRef.current);
       setIsPublishingToSession(true);
     } catch (err: unknown) {
       if (err instanceof Error) {

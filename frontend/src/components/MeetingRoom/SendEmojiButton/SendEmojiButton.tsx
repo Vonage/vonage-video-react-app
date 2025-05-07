@@ -1,7 +1,7 @@
 import { Button, Grid, GridSize } from '@mui/material';
 import { ReactElement } from 'react';
-import useEmoji from '../../../hooks/useEmoji';
 import useIsSmallViewport from '../../../hooks/useIsSmallViewport';
+import useSessionContext from '../../../hooks/useSessionContext';
 
 export type SendEmojiButtonProps = {
   emoji: string;
@@ -15,7 +15,7 @@ export type SendEmojiButtonProps = {
  * @returns {ReactElement} The SendEmojiButton component.
  */
 const SendEmojiButton = ({ emoji }: SendEmojiButtonProps): ReactElement => {
-  const { sendEmoji } = useEmoji();
+  const { sendEmoji } = useSessionContext();
   const isSmallViewport = useIsSmallViewport();
   const xs: GridSize = isSmallViewport ? 2 : 3;
   const size = isSmallViewport ? 'small' : 'large';

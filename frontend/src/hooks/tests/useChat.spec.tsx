@@ -1,10 +1,10 @@
 import { act, renderHook } from '@testing-library/react';
 import { beforeEach, describe, expect, it, Mock, Mocked, vi } from 'vitest';
-import { RefObject } from 'react';
-import { Session } from '@vonage/client-sdk-video';
+import { MutableRefObject } from 'react';
 import useChat from '../useChat';
 import useUserContext from '../useUserContext';
 import { UserContextType } from '../../Context/user';
+import VonageVideoClient from '../../utils/VonageVideoClient';
 
 vi.mock('../useUserContext.tsx');
 const mockUseUserContext = useUserContext as Mock<[], UserContextType>;
@@ -15,16 +15,16 @@ const mockUserContext = {
 } as UserContextType;
 
 describe('useChat', () => {
-  let sessionMock: Mocked<Session>;
-  let sessionRefMock: RefObject<Session | null>;
+  let sessionMock: Mocked<VonageVideoClient>;
+  let sessionRefMock: MutableRefObject<VonageVideoClient | null>;
   beforeEach(() => {
     mockUseUserContext.mockImplementation(() => mockUserContext);
     sessionMock = {
       signal: vi.fn(),
-    } as unknown as Mocked<Session>;
+    } as unknown as Mocked<VonageVideoClient>;
     sessionRefMock = {
       current: sessionMock,
-    } as unknown as RefObject<Session | null>;
+    } as unknown as MutableRefObject<VonageVideoClient | null>;
   });
 
   it('onChatMessage should parse message and update messages state', () => {
