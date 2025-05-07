@@ -22,6 +22,8 @@ await jest.unstable_mockModule('../videoService/opentokVideoService.ts', () => {
       return {
         startArchive: jest.fn<() => Promise<string>>().mockResolvedValue('archiveId'),
         stopArchive: jest.fn<() => Promise<string>>().mockRejectedValue('invalid archive'),
+        enableCaptions: jest.fn<() => Promise<string>>().mockResolvedValue('captionId'),
+        disableCaptions: jest.fn<() => Promise<string>>().mockResolvedValue('invalid caption'),
         generateToken: jest
           .fn<() => Promise<{ token: string; apiKey: string }>>()
           .mockResolvedValue({
@@ -70,28 +72,47 @@ describe.each([
   });
 
   describe('POST requests', () => {
-    it('returns a 200 when starting an archive in a room', async () => {
-      const res = await request(server)
-        .post(`/session/${roomName}/startArchive`)
-        .set('Content-Type', 'application/json');
-      expect(res.statusCode).toEqual(200);
+    describe('archiving', () => {
+      it('returns a 200 when starting an archive in a room', async () => {
+        const res = await request(server)
+          .post(`/session/${roomName}/startArchive`)
+          .set('Content-Type', 'application/json');
+        expect(res.statusCode).toEqual(200);
+      });
+
+      it('returns a 404 when starting an archive in a non-existent room', async () => {
+        const invalidRoomName = 'nonExistingRoomName';
+        const res = await request(server)
+          .post(`/session/${invalidRoomName}/startArchive`)
+          .set('Content-Type', 'application/json');
+        expect(res.statusCode).toEqual(404);
+      });
+
+      it('returns a 500 when stopping an invalid archive in a room', async () => {
+        const archiveId = 'b8-c9-d10';
+        const res = await request(server)
+          .post(`/session/${roomName}/${archiveId}/stopArchive`)
+          .set('Content-Type', 'application/json')
+          .set('Accept', 'application/json');
+        expect(res.statusCode).toEqual(500);
+      });
     });
 
-    it('returns a 404 when starting an archive in a non-existent room', async () => {
-      const invalidRoomName = 'nonExistingRoomName';
-      const res = await request(server)
-        .post(`/session/${invalidRoomName}/startArchive`)
-        .set('Content-Type', 'application/json');
-      expect(res.statusCode).toEqual(404);
-    });
+    describe('captions', () => {
+      it('returns a 200 when enabling captions in a room', async () => {
+        const res = await request(server)
+          .post(`/session/${roomName}/enableCaptions`)
+          .set('Content-Type', 'application/json');
+        expect(res.statusCode).toEqual(200);
+      });
 
-    it('returns a 500 when stopping an invalid archive in a room', async () => {
-      const archiveId = 'b8-c9-d10';
-      const res = await request(server)
-        .post(`/session/${roomName}/${archiveId}/stopArchive`)
-        .set('Content-Type', 'application/json')
-        .set('Accept', 'application/json');
-      expect(res.statusCode).toEqual(500);
+      it('returns a 200 when disabling captions in a room', async () => {
+        const captionId = 'someCaptionId';
+        const res = await request(server)
+          .post(`/session/${roomName}/${captionId}/disableCaptions`)
+          .set('Content-Type', 'application/json');
+        expect(res.statusCode).toEqual(200);
+      });
     });
   });
 });

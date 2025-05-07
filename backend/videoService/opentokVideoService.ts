@@ -1,6 +1,12 @@
 import OpenTok, { Archive, Role } from 'opentok';
+import axios from 'axios';
+import { projectToken } from 'opentok-jwt';
 import { VideoService } from './videoServiceInterface';
 import { OpentokConfig } from '../types/config';
+
+export type EnableCaptionResponse = {
+  captionsId: string;
+};
 
 class OpenTokVideoService implements VideoService {
   private readonly opentok: OpenTok;
@@ -86,6 +92,60 @@ class OpenTokVideoService implements VideoService {
         }
       });
     });
+  }
+
+  // The OpenTok API does not support enabling captions directly through the OpenTok SDK.
+  // Instead, we need to make a direct HTTP request to the OpenTok API endpoint to enable captions.
+  // This is not the case for Vonage Video Node SDK, which has a built-in method for enabling captions.
+  readonly API_URL = 'https://api.opentok.com/v2/project';
+
+  async enableCaptions(sessionId: string): Promise<EnableCaptionResponse> {
+    const expires = Math.floor(new Date().getTime() / 1000) + 24 * 60 * 60;
+    // Note that the project token is different from the session token.
+    // The project token is used to authenticate the request to the OpenTok API.
+    const projectJWT = projectToken(this.config.apiKey, this.config.apiSecret, expires);
+    const captionURL = `${this.API_URL}/${this.config.apiKey}/captions`;
+
+    const requestToken = this.generateToken(sessionId);
+    const { token } = requestToken;
+    const captionAxiosPostBody = {
+      sessionId,
+      token,
+      languageCode: 'en-US',
+      maxDuration: 1800,
+      partialCaptions: true,
+    };
+
+    const response = await axios.post(captionURL, captionAxiosPostBody, {
+      headers: {
+        'X-OPENTOK-AUTH': projectJWT,
+        'Content-Type': 'application/json',
+      },
+    });
+
+    const responseData: EnableCaptionResponse = {
+      captionsId: response.data.captionsId,
+    };
+    return responseData;
+  }
+
+  async disableCaptions(captionId: string): Promise<string> {
+    const expires = Math.floor(new Date().getTime() / 1000) + 24 * 60 * 60;
+    // Note that the project token is different from the session token.
+    // The project token is used to authenticate the request to the OpenTok API.
+    const projectJWT = projectToken(this.config.apiKey, this.config.apiSecret, expires);
+    const captionURL = `${this.API_URL}/${this.config.apiKey}/captions/${captionId}/stop`;
+    await axios.post(
+      captionURL,
+      {},
+      {
+        headers: {
+          'X-OPENTOK-AUTH': projectJWT,
+          'Content-Type': 'application/json',
+        },
+      }
+    );
+    return 'Captions stopped successfully';
   }
 }
 
