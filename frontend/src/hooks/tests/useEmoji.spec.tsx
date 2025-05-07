@@ -2,7 +2,7 @@ import { describe, it, expect, vi, beforeEach, Mock, afterEach } from 'vitest';
 import { renderHook, act, waitFor } from '@testing-library/react';
 import { EventEmitter } from 'events';
 import { Connection } from '@vonage/client-sdk-video';
-import { MutableRefObject } from 'react';
+import { RefObject } from 'react';
 import useSessionContext from '../useSessionContext';
 import { SessionContextType } from '../../Context/SessionProvider/session';
 import useEmoji, { EmojiWrapper } from '../useEmoji';
@@ -14,7 +14,7 @@ vi.mock('../useSessionContext');
 const mockUseSessionContext = useSessionContext as Mock<[], SessionContextType>;
 
 describe('useEmoji', () => {
-  let vonageVideoClient: MutableRefObject<VonageVideoClient | null>;
+  let vonageVideoClient: RefObject<VonageVideoClient | null>;
   let mockConnection: Connection;
   let mockSubscriberWrapperVideo: {
     subscriber: { stream: { connection: Connection; name: string } };

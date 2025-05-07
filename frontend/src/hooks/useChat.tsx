@@ -1,10 +1,10 @@
-import { MutableRefObject, useCallback, useState } from 'react';
+import { RefObject, useCallback, useState } from 'react';
 import useUserContext from './useUserContext';
 import { ChatMessageType } from '../types/chat';
 import VonageVideoClient from '../utils/VonageVideoClient';
 
 export type UseChatProps = {
-  sessionRef: MutableRefObject<VonageVideoClient | null>;
+  sessionRef: RefObject<VonageVideoClient | null>;
 };
 
 export type UseChat = {
@@ -15,7 +15,7 @@ export type UseChat = {
 /**
  * React hook to store ChatMessage array in state and provider functions for sending and receiving chat messages
  * @param {UseChatProps} props - props for the hook
- *   @property {MutableRefObject<VonageVideoClient | null>} sessionRef - reference to the Session object
+ *   @property {RefObject<VonageVideoClient | null>} sessionRef - reference to the Session object
  * @returns {UseChat} return object
  *   @property {ChatMessageType[]} messages - array of chat messages
  *   @property {(data: string) => void} onChatMessage - new message handler

@@ -1,4 +1,4 @@
-import { MutableRefObject, useCallback, useMemo, useState } from 'react';
+import { RefObject, useCallback, useMemo, useState } from 'react';
 import { Connection } from '@vonage/client-sdk-video';
 import { throttle } from 'lodash';
 import { EMOJI_DISPLAY_DURATION } from '../utils/constants';
@@ -11,7 +11,7 @@ type EmojiDataType = {
 };
 
 export type UseEmojiProps = {
-  vonageVideoClient: MutableRefObject<VonageVideoClient | null>;
+  vonageVideoClient: RefObject<VonageVideoClient | null>;
 };
 
 export type UseEmoji = {
@@ -29,7 +29,7 @@ export type EmojiWrapper = {
 /**
  * React hook to queue emojis into an array for display and provides functions for sending and receiving emojis.
  * @param {UseEmojiProps}  props - props for the hook
- *  @property {MutableRefObject<VonageVideoClient | null>} vonageVideoClient - ref for the Vonage Video Client
+ *  @property {RefObject<VonageVideoClient | null>} vonageVideoClient - ref for the Vonage Video Client
  * @returns {UseEmoji} returned object
  *  @property {(emoji: string) => void} sendEmoji - function to send emojis
  *  @property {EmojiWrapper[]} emojiQueue - emojis to display
