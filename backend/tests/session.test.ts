@@ -113,6 +113,25 @@ describe.each([
           .set('Content-Type', 'application/json');
         expect(res.statusCode).toEqual(200);
       });
+
+      it('returns a 404 when starting captions in a non-existent room', async () => {
+        const invalidRoomName = 'randomRoomName';
+        const res = await request(server)
+          .post(`/session/${invalidRoomName}/enableCaptions`)
+          .set('Content-Type', 'application/json');
+        expect(res.statusCode).toEqual(404);
+      });
+
+      it('returns a 500 when stopping an invalid captions in a room', async () => {
+        const invalidCaptionId = 'wrongCaptionId';
+        const res = await request(server)
+          .post(`/session/${roomName}/${invalidCaptionId}/disableCaptions`)
+          .set('Content-Type', 'application/json')
+          .set('Accept', 'application/json');
+
+        const responseBody = JSON.parse(res.text);
+        expect(responseBody.captionId).toEqual('invalid caption');
+      });
     });
   });
 });

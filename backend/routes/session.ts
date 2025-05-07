@@ -91,15 +91,11 @@ sessionRouter.post(
       const { room: roomName } = req.params;
       const sessionId = await sessionService.getSession(roomName);
       if (sessionId) {
-        if (videoService.enableCaptions) {
-          const captions = await videoService.enableCaptions(sessionId);
-          res.json({
-            captions,
-            status: 200,
-          });
-        } else {
-          res.status(500).json({ message: 'Captions service is unavailable' });
-        }
+        const captions = await videoService.enableCaptions(sessionId);
+        res.json({
+          captions,
+          status: 200,
+        });
       } else {
         res.status(404).json({ message: 'Room not found' });
       }
@@ -115,17 +111,11 @@ sessionRouter.post(
   async (req: Request<{ room: string; captionId: string }>, res: Response) => {
     try {
       const { captionId } = req.params;
-      if (captionId) {
-        if (videoService.disableCaptions) {
-          const responseCaptionId = await videoService.disableCaptions(captionId);
-          res.json({
-            captionId: responseCaptionId,
-            status: 200,
-          });
-        } else {
-          res.status(500).json({ message: 'Captions service is unavailable' });
-        }
-      }
+      const responseCaptionId = await videoService.disableCaptions(captionId);
+      res.json({
+        captionId: responseCaptionId,
+        status: 200,
+      });
     } catch (error: unknown) {
       res.status(500).send({ message: (error as Error).message ?? error });
     }

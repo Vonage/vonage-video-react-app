@@ -74,8 +74,13 @@ class VonageVideoService implements VideoService {
   }
 
   async disableCaptions(captionId: string): Promise<string> {
-    await this.vonageVideo.disableCaptions(captionId);
-    return 'Captions stopped successfully';
+    try {
+      await this.vonageVideo.disableCaptions(captionId);
+      return 'Captions stopped successfully';
+    } catch (error: unknown) {
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
+      throw new Error(`Failed to disable captions: ${errorMessage}`);
+    }
   }
 }
 

@@ -130,22 +130,28 @@ class OpenTokVideoService implements VideoService {
   }
 
   async disableCaptions(captionId: string): Promise<string> {
-    const expires = Math.floor(new Date().getTime() / 1000) + 24 * 60 * 60;
-    // Note that the project token is different from the session token.
-    // The project token is used to authenticate the request to the OpenTok API.
-    const projectJWT = projectToken(this.config.apiKey, this.config.apiSecret, expires);
-    const captionURL = `${this.API_URL}/${this.config.apiKey}/captions/${captionId}/stop`;
-    await axios.post(
-      captionURL,
-      {},
-      {
-        headers: {
-          'X-OPENTOK-AUTH': projectJWT,
-          'Content-Type': 'application/json',
-        },
-      }
-    );
-    return 'Captions stopped successfully';
+    try {
+      const expires = Math.floor(new Date().getTime() / 1000) + 24 * 60 * 60;
+      // Note that the project token is different from the session token.
+      // The project token is used to authenticate the request to the OpenTok API.
+      const projectJWT = projectToken(this.config.apiKey, this.config.apiSecret, expires);
+      const captionURL = `${this.API_URL}/${this.config.apiKey}/captions/${captionId}/stop`;
+
+      await axios.post(
+        captionURL,
+        {},
+        {
+          headers: {
+            'X-OPENTOK-AUTH': projectJWT,
+            'Content-Type': 'application/json',
+          },
+        }
+      );
+      return 'Captions stopped successfully';
+    } catch (error: unknown) {
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
+      throw new Error(`Failed to disable captions: ${errorMessage}`);
+    }
   }
 }
 
