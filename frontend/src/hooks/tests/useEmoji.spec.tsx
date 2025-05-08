@@ -11,7 +11,6 @@ const mockConnection = { connectionId: '456' } as Connection;
 describe('useEmoji', () => {
   afterEach(() => {
     vi.useRealTimers();
-    vi.restoreAllMocks();
     vi.resetAllMocks();
   });
 

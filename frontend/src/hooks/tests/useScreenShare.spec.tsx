@@ -1,9 +1,10 @@
 import { Mock, beforeEach, afterEach, describe, expect, it, vi } from 'vitest';
 import { renderHook, act } from '@testing-library/react';
-import { Publisher, Session, initPublisher } from '@vonage/client-sdk-video';
+import { Publisher, initPublisher } from '@vonage/client-sdk-video';
 import useScreenShare from '../useScreenShare';
 import useSessionContext from '../useSessionContext';
 import useUserContext from '../useUserContext';
+import VonageVideoClient from '../../utils/VonageVideoClient';
 
 // Mocking dependencies
 vi.mock('@vonage/client-sdk-video', () => ({
@@ -12,18 +13,18 @@ vi.mock('@vonage/client-sdk-video', () => ({
 
 vi.mock('../useSessionContext');
 vi.mock('../useUserContext');
+const mockPublish = vi.fn();
+const mockUnpublish = vi.fn();
 
 describe('useScreenSharing', () => {
-  let mockSession: Partial<Session>;
+  let mockVonageVideoClient: Partial<VonageVideoClient>;
   let mockPublisher: Partial<Publisher>;
   let mockUserContext: { user: { defaultSettings: { name: string } } };
 
   beforeEach(() => {
-    mockSession = {
-      publish: vi.fn(),
-      unpublish: vi.fn(),
+    mockVonageVideoClient = {
       on: vi.fn(),
-    } as unknown as Session;
+    } as unknown as VonageVideoClient;
 
     mockPublisher = {
       on: vi.fn() as Mock, // NOSONAR
@@ -32,7 +33,11 @@ describe('useScreenSharing', () => {
 
     mockUserContext = { user: { defaultSettings: { name: 'TestUser' } } };
 
-    (useSessionContext as Mock).mockReturnValue({ session: mockSession as Session });
+    (useSessionContext as Mock).mockReturnValue({
+      vonageVideoClient: mockVonageVideoClient,
+      publish: mockPublish,
+      unpublish: mockUnpublish,
+    });
     (useUserContext as Mock).mockReturnValue(mockUserContext);
     (initPublisher as Mock).mockReturnValue(mockPublisher as Publisher);
   });

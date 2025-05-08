@@ -37,7 +37,7 @@ export type { ChatMessageType } from '../../types/chat';
 export type LayoutMode = 'grid' | 'active-speaker';
 
 export type SessionContextType = {
-  session: null | VonageVideoClient;
+  vonageVideoClient: null | VonageVideoClient;
   connect: null | ((credential: Credential) => Promise<void>);
   disconnect: null | (() => void);
   joinRoom: null | ((roomName: string) => Promise<void>);
@@ -69,7 +69,7 @@ export type SessionContextType = {
  * Context to provide session-related data and actions.
  */
 export const SessionContext = createContext<SessionContextType>({
-  session: null,
+  vonageVideoClient: null,
   connect: null,
   disconnect: null,
   joinRoom: null,
@@ -386,7 +386,7 @@ const SessionProvider = ({ children }: SessionProviderProps): ReactElement => {
     () => ({
       activeSpeakerId,
       archiveId,
-      session: vonageVideoClient.current,
+      vonageVideoClient: vonageVideoClient.current,
       connect,
       disconnect,
       joinRoom,

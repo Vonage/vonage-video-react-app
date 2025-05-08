@@ -54,9 +54,9 @@ describe('usePublisher', () => {
     sessionContext = {
       publish: mockedSessionPublish,
       unpublish: mockedSessionUnpublish,
-      session: {},
+      connected: true,
     } as unknown as SessionContextType;
-    mockUseSessionContext.mockReturnValue(sessionContext as unknown as SessionContextType);
+    mockUseSessionContext.mockReturnValue(sessionContext);
   });
 
   afterAll(() => {
