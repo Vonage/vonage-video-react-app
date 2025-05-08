@@ -82,7 +82,7 @@ const usePublisher = (): PublisherContextType => {
   const [stream, setStream] = useState<Stream | null>();
   const [isPublishingToSession, setIsPublishingToSession] = useState(false);
   const [publishingError, setPublishingError] = useState<PublishingErrorType>(null);
-  const mSession = useSessionContext();
+  const { publish: sessionPublish, unpublish: sessionUnpublish, session } = useSessionContext();
   const [deviceAccess, setDeviceAccess] = useState<DeviceAccessStatus>({
     microphone: undefined,
     camera: undefined,
@@ -151,7 +151,7 @@ const usePublisher = (): PublisherContextType => {
    */
   const unpublish = () => {
     if (publisherRef?.current) {
-      mSession.session!.unpublish(publisherRef.current);
+      sessionUnpublish(publisherRef.current);
       setIsPublishingToSession(false);
       publishAttempt = 0;
     }
@@ -228,7 +228,7 @@ const usePublisher = (): PublisherContextType => {
    */
   const publish = async (): Promise<void> => {
     try {
-      if (!mSession.session) {
+      if (!session) {
         throw new Error('You are not connected to session');
       }
       if (!publisherRef.current) {
@@ -242,7 +242,7 @@ const usePublisher = (): PublisherContextType => {
         return;
       }
 
-      mSession.publish(publisherRef.current);
+      sessionPublish(publisherRef.current);
       setIsPublishingToSession(true);
     } catch (err: unknown) {
       if (err instanceof Error) {

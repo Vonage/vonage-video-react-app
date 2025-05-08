@@ -1,6 +1,6 @@
-import { beforeEach, describe, it, expect, vi, Mock, afterAll, Mocked } from 'vitest';
+import { beforeEach, describe, it, expect, vi, Mock, afterAll } from 'vitest';
 import { act, renderHook } from '@testing-library/react';
-import { initPublisher, Publisher, Session, Stream } from '@vonage/client-sdk-video';
+import { initPublisher, Publisher, Stream } from '@vonage/client-sdk-video';
 import EventEmitter from 'events';
 import usePublisher from './usePublisher';
 import useUserContext from '../../../hooks/useUserContext';
@@ -39,7 +39,6 @@ describe('usePublisher', () => {
     destroy: destroySpy,
   }) as unknown as Publisher;
   let sessionContext: SessionContextType;
-  let sessionMock: Mocked<Session>;
   const mockedInitPublisher = vi.fn();
   const mockedSessionPublish = vi.fn();
   const mockedSessionUnpublish = vi.fn();
@@ -52,12 +51,10 @@ describe('usePublisher', () => {
 
     (initPublisher as Mock).mockImplementation(mockedInitPublisher);
 
-    sessionMock = {
-      unpublish: mockedSessionUnpublish,
-    } as unknown as Mocked<Session>;
     sessionContext = {
-      session: sessionMock,
       publish: mockedSessionPublish,
+      unpublish: mockedSessionUnpublish,
+      session: {},
     } as unknown as SessionContextType;
     mockUseSessionContext.mockReturnValue(sessionContext as unknown as SessionContextType);
   });
@@ -96,11 +93,17 @@ describe('usePublisher', () => {
 
       const { result, rerender } = renderHook(() => usePublisher());
 
-      result.current.initializeLocalPublisher({});
-      rerender();
-      await result.current.publish();
+      act(() => {
+        result.current.initializeLocalPublisher({});
+      });
 
-      await result.current.unpublish();
+      rerender();
+
+      await act(async () => {
+        await result.current.publish();
+
+        result.current.unpublish();
+      });
       expect(mockedSessionUnpublish).toHaveBeenCalled();
     });
   });

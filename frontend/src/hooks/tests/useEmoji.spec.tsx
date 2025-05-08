@@ -1,74 +1,14 @@
-import { describe, it, expect, vi, beforeEach, Mock, afterEach } from 'vitest';
+import { describe, it, expect, vi, afterEach } from 'vitest';
 import { renderHook, act, waitFor } from '@testing-library/react';
-import { EventEmitter } from 'events';
 import { Connection } from '@vonage/client-sdk-video';
-import { RefObject } from 'react';
-import useSessionContext from '../useSessionContext';
-import { SessionContextType } from '../../Context/SessionProvider/session';
 import useEmoji, { EmojiWrapper } from '../useEmoji';
-import VonageVideoClient from '../../utils/VonageVideoClient';
 import { SignalEvent, SubscriberWrapper } from '../../types/session';
 
-vi.mock('../useSessionContext');
-
-const mockUseSessionContext = useSessionContext as Mock<[], SessionContextType>;
+const mockSignal = vi.fn();
+const mockYourConnectionId = '123';
+const mockConnection = { connectionId: '456' } as Connection;
 
 describe('useEmoji', () => {
-  let vonageVideoClient: RefObject<VonageVideoClient | null>;
-  let mockConnection: Connection;
-  let mockSubscriberWrapperVideo: {
-    subscriber: { stream: { connection: Connection; name: string } };
-    isScreenshare: boolean;
-  };
-  let mockSubscriberWrapperScreen: {
-    subscriber: {
-      stream: {
-        connection: Connection;
-        name: string;
-      };
-    };
-    isScreenshare: boolean;
-  };
-
-  beforeEach(() => {
-    // Create an EventEmitter to simulate the session
-    vonageVideoClient = {
-      current: Object.assign(new EventEmitter(), {
-        signal: vi.fn(),
-        connectionId: '123',
-      }) as unknown as VonageVideoClient,
-    };
-
-    mockConnection = { connectionId: '456' } as Connection;
-
-    mockSubscriberWrapperVideo = {
-      subscriber: {
-        stream: {
-          connection: mockConnection,
-          name: 'John Doe',
-        },
-      },
-      isScreenshare: false,
-    };
-
-    mockSubscriberWrapperScreen = {
-      subscriber: {
-        stream: {
-          connection: mockConnection,
-          name: `John Doe's screen`,
-        },
-      },
-      isScreenshare: true,
-    };
-
-    const mockSessionContext = {
-      session: vonageVideoClient,
-      subscriberWrappers: [mockSubscriberWrapperVideo, mockSubscriberWrapperScreen],
-    } as unknown as SessionContextType;
-
-    mockUseSessionContext.mockImplementation(() => mockSessionContext);
-  });
-
   afterEach(() => {
     vi.useRealTimers();
     vi.restoreAllMocks();
@@ -78,14 +18,16 @@ describe('useEmoji', () => {
   describe('sendEmoji', () => {
     it('calls Session.signal with the emoji and current time', async () => {
       vi.setSystemTime(12_000_000);
-      const { result } = renderHook(() => useEmoji({ vonageVideoClient }));
+      const { result } = renderHook(() =>
+        useEmoji({ signal: mockSignal, connectionId: mockYourConnectionId })
+      );
 
       act(() => {
         result.current.sendEmoji('❤️');
       });
 
-      expect(vonageVideoClient.current?.signal).toBeCalledTimes(1);
-      expect(vonageVideoClient.current?.signal).toBeCalledWith({
+      expect(mockSignal).toBeCalledTimes(1);
+      expect(mockSignal).toBeCalledWith({
         type: 'emoji',
         data: '{"emoji":"❤️","time":12000000}',
       });
@@ -93,28 +35,32 @@ describe('useEmoji', () => {
 
     it('when called multiple times, sendEmoji throttles calls to once every 500ms', async () => {
       vi.useFakeTimers();
-      const { result } = renderHook(() => useEmoji({ vonageVideoClient }));
+      const { result } = renderHook(() =>
+        useEmoji({ signal: mockSignal, connectionId: mockYourConnectionId })
+      );
 
       act(() => {
         result.current.sendEmoji('❤️');
         result.current.sendEmoji('❤️');
       });
 
-      expect(vonageVideoClient.current?.signal).toBeCalledTimes(1);
+      expect(mockSignal).toBeCalledTimes(1);
 
       vi.advanceTimersByTime(250);
-      expect(vonageVideoClient.current?.signal).toBeCalledTimes(1);
+      expect(mockSignal).toBeCalledTimes(1);
 
       vi.advanceTimersByTime(251);
       act(() => {
         result.current.sendEmoji('❤️');
       });
-      expect(vonageVideoClient.current?.signal).toBeCalledTimes(2);
+      expect(mockSignal).toBeCalledTimes(2);
     });
   });
 
   it('adds emojis to the queue when a signal event is received and gets the correct sender name', async () => {
-    const { result } = renderHook(() => useEmoji({ vonageVideoClient }));
+    const { result } = renderHook(() =>
+      useEmoji({ signal: mockSignal, connectionId: mockYourConnectionId })
+    );
 
     // Mock receiving a signal event from another user
     act(() => {
@@ -154,7 +100,9 @@ describe('useEmoji', () => {
   });
 
   it('recognizes when a received signal event is from local user', async () => {
-    const { result } = renderHook(() => useEmoji({ vonageVideoClient }));
+    const { result } = renderHook(() =>
+      useEmoji({ signal: mockSignal, connectionId: mockYourConnectionId })
+    );
 
     // Mock receiving a signal event from local user
     act(() => {

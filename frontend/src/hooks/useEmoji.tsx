@@ -1,9 +1,8 @@
-import { RefObject, useCallback, useMemo, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { Connection } from '@vonage/client-sdk-video';
 import { throttle } from 'lodash';
 import { EMOJI_DISPLAY_DURATION } from '../utils/constants';
-import { SignalEvent, SubscriberWrapper } from '../types/session';
-import VonageVideoClient from '../utils/VonageVideoClient';
+import { SignalEvent, SignalType, SubscriberWrapper } from '../types/session';
 
 type EmojiDataType = {
   emoji: string;
@@ -11,7 +10,8 @@ type EmojiDataType = {
 };
 
 export type UseEmojiProps = {
-  vonageVideoClient: RefObject<VonageVideoClient | null>;
+  signal: ((data: SignalType) => void) | undefined;
+  connectionId: string | undefined;
 };
 
 export type UseEmoji = {
@@ -29,13 +29,14 @@ export type EmojiWrapper = {
 /**
  * React hook to queue emojis into an array for display and provides functions for sending and receiving emojis.
  * @param {UseEmojiProps}  props - props for the hook
- *  @property {RefObject<VonageVideoClient | null>} vonageVideoClient - ref for the Vonage Video Client
+ *  @property {((data: SignalType) => void) | undefined} signal - function to send signal to all participants
+ *  @property {string | undefined} connectionId - the connection ID of the current user
  * @returns {UseEmoji} returned object
  *  @property {(emoji: string) => void} sendEmoji - function to send emojis
  *  @property {EmojiWrapper[]} emojiQueue - emojis to display
  *  @property {(event: SignalEvent, subscriberWrappers: SubscriberWrapper[]) => void} onEmoji - emoji handler
  */
-const useEmoji = ({ vonageVideoClient }: UseEmojiProps): UseEmoji => {
+const useEmoji = ({ signal, connectionId }: UseEmojiProps): UseEmoji => {
   const [emojiQueue, setEmojiQueue] = useState<EmojiWrapper[]>([]);
 
   /**
@@ -47,13 +48,16 @@ const useEmoji = ({ vonageVideoClient }: UseEmojiProps): UseEmoji => {
     const throttledFunc = throttle(
       (emoji: string) => {
         const data = JSON.stringify({ emoji, time: new Date().getTime() });
-        vonageVideoClient?.current?.signal({ type: 'emoji', data });
+        if (!signal) {
+          return;
+        }
+        signal({ type: 'emoji', data });
       },
       500,
       { leading: true, trailing: false }
     );
     return throttledFunc;
-  }, [vonageVideoClient]);
+  }, [signal]);
 
   /**
    * Checks if the given connection belongs to the current user.
@@ -62,11 +66,11 @@ const useEmoji = ({ vonageVideoClient }: UseEmojiProps): UseEmoji => {
    */
   const isOwnConnection = useCallback(
     (sendingConnection: Connection): boolean => {
-      const yourConnectionId = vonageVideoClient?.current?.connectionId;
+      const yourConnectionId = connectionId;
 
       return sendingConnection.connectionId === yourConnectionId;
     },
-    [vonageVideoClient]
+    [connectionId]
   );
 
   /**
