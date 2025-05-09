@@ -6890,6 +6890,13 @@ oniguruma-to-js@0.4.3:
   dependencies:
     regex "^4.3.2"
 
+opentok-jwt@^0.1.5:
+  version "0.1.5"
+  resolved "https://registry.yarnpkg.com/opentok-jwt/-/opentok-jwt-0.1.5.tgz#c7c84724fc4d287f3a08f4264f97935cbbdb624e"
+  integrity sha512-Ub3iQEYava3oHK9Xp+UePFw9mratzp98LuDx46qtfkAFzsIKePlwBbj6UZ4pGuJDXZ28BJWpnXZyRWMJK9IW6w==
+  dependencies:
+    jsonwebtoken "^9.0.0"
+
 opentok-layout-js@^5.4.0:
   version "5.4.0"
   resolved "https://registry.npmjs.org/opentok-layout-js/-/opentok-layout-js-5.4.0.tgz"

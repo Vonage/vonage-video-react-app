@@ -1,6 +1,13 @@
 /* eslint-disable no-underscore-dangle */
 import { Auth } from '@vonage/auth';
-import { LayoutType, MediaMode, Resolution, SingleArchiveResponse, Video } from '@vonage/video';
+import {
+  LayoutType,
+  MediaMode,
+  Resolution,
+  SingleArchiveResponse,
+  Video,
+  EnableCaptionResponse,
+} from '@vonage/video';
 import { VideoService } from './videoServiceInterface';
 import { VonageConfig } from '../types/config';
 
@@ -58,6 +65,22 @@ class VonageVideoService implements VideoService {
   async stopArchive(archiveId: string): Promise<string> {
     await this.vonageVideo.stopArchive(archiveId);
     return 'Archive stopped successfully';
+  }
+
+  async enableCaptions(sessionId: string): Promise<EnableCaptionResponse> {
+    const requestToken = this.generateToken(sessionId);
+    const { token } = requestToken;
+    return this.vonageVideo.enableCaptions(sessionId, token);
+  }
+
+  async disableCaptions(captionId: string): Promise<string> {
+    try {
+      await this.vonageVideo.disableCaptions(captionId);
+      return 'Captions stopped successfully';
+    } catch (error: unknown) {
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
+      throw new Error(`Failed to disable captions: ${errorMessage}`);
+    }
   }
 }
 

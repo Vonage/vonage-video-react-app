@@ -25,7 +25,8 @@
     "express": "^4.21.2",
     "form-data": "^4.0.1",
     "opentok": "^2.16.0",
-    "tsx": "^4.10.5"
+    "tsx": "^4.10.5",
+    "opentok-jwt": "^0.1.5"
   },
   "devDependencies": {
     "@jest/globals": "^29.7.0",
