@@ -22,9 +22,9 @@ export type BrowserInformationType = {
  * @returns {BrowserInformationType} The session and browser information from the user.
  */
 const useCollectBrowserInformation = (): BrowserInformationType => {
-  const { session } = useSessionContext();
+  const { vonageVideoClient } = useSessionContext();
   return {
-    sessionId: session?.sessionId,
+    sessionId: vonageVideoClient?.sessionId,
     browser: navigator.userAgent,
     screenResolution: `${window.screen.width}x${window.screen.height}`,
     referrer: document.referrer || 'No referrer',
@@ -37,7 +37,7 @@ const useCollectBrowserInformation = (): BrowserInformationType => {
       width: window.innerWidth,
       height: window.innerHeight,
     },
-    connectionId: session?.connection?.connectionId,
+    connectionId: vonageVideoClient?.connectionId,
   };
 };
 

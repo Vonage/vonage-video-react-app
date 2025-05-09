@@ -2,7 +2,6 @@ import { useState, useRef, useCallback } from 'react';
 import { Publisher, initPublisher } from '@vonage/client-sdk-video';
 import useSessionContext from './useSessionContext';
 import useUserContext from './useUserContext';
-import { StreamCreatedEvent } from '../Context/SessionProvider/session';
 
 /**
  * @typedef {object} UseScreenShareType
@@ -21,7 +20,7 @@ export type UseScreenShareType = {
  * @returns {UseScreenShareType} useScreenShare
  */
 const useScreenShare = (): UseScreenShareType => {
-  const { session } = useSessionContext();
+  const { vonageVideoClient, unpublish, publish } = useSessionContext();
   const { user } = useUserContext();
 
   // Using useRef to store the screen sharing publisher instance
@@ -41,23 +40,18 @@ const useScreenShare = (): UseScreenShareType => {
 
   const unpublishScreenshare = useCallback(() => {
     if (screenSharingPub.current) {
-      session?.unpublish(screenSharingPub.current);
+      unpublish(screenSharingPub.current);
       setIsSharingScreen(false);
     }
-  }, [session]);
+  }, [unpublish]);
 
-  const handleStreamCreated = useCallback(
-    async (event: StreamCreatedEvent) => {
-      if (event.stream.videoType === 'screen') {
-        unpublishScreenshare();
-      }
-    },
-    [unpublishScreenshare]
-  );
+  const handleStreamCreated = useCallback(async () => {
+    unpublishScreenshare();
+  }, [unpublishScreenshare]);
 
   // Using useCallback to memoize the function to avoid unnecessary re-renders
   const toggleShareScreen = useCallback(async () => {
-    if (session) {
+    if (vonageVideoClient) {
       if (!isSharingScreen) {
         // Initializing the publisher for screen sharing
         screenSharingPub.current = initPublisher(
@@ -97,21 +91,22 @@ const useScreenShare = (): UseScreenShareType => {
         });
 
         // Publishing the screen sharing stream
-        session.publish(screenSharingPub.current);
+        publish(screenSharingPub.current);
 
-        session?.on('streamCreated', handleStreamCreated);
+        vonageVideoClient?.on('screenshareStreamCreated', handleStreamCreated);
       } else if (screenSharingPub.current) {
         unpublishScreenshare();
-        session?.off('streamCreated', handleStreamCreated);
+        vonageVideoClient?.off('screenshareStreamCreated', handleStreamCreated);
       }
     }
   }, [
-    session,
+    vonageVideoClient,
     isSharingScreen,
     user.defaultSettings.name,
     handleStreamCreated,
     unpublishScreenshare,
     onScreenShareStopped,
+    publish,
   ]);
 
   return {
