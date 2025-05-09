@@ -30,7 +30,7 @@ export type EmojiWrapper = {
  * React hook to queue emojis into an array for display and provides functions for sending and receiving emojis.
  * @param {UseEmojiProps}  props - props for the hook
  *  @property {((data: SignalType) => void) | undefined} signal - function to send signal to all participants
- *  @property {() => string | undefined} getConnectionId - function to get the connection ID of the current user
+ *  @property {() => string | undefined} getConnectionId - get the connection ID of the current user
  * @returns {UseEmoji} returned object
  *  @property {(emoji: string) => void} sendEmoji - function to send emojis
  *  @property {EmojiWrapper[]} emojiQueue - emojis to display
@@ -67,9 +67,9 @@ const useEmoji = ({ signal, getConnectionId }: UseEmojiProps): UseEmoji => {
    */
   const isOwnConnection = useCallback(
     (sendingConnection: Connection): boolean => {
-      return sendingConnection.connectionId === getConnectionId();
+      return sendingConnection.connectionId === getConnectionId?.();
     },
-    [getConnectionId] // Dependency array ensures updates
+    [getConnectionId]
   );
   /**
    * Retrieves the user's name or `You` if you are the sender from a given Connection.
