@@ -1,5 +1,5 @@
 /// <reference types="vitest" />
-import { defineConfig, mergeConfig } from 'vite';
+import { defineConfig, loadEnv, mergeConfig } from 'vite';
 import type { UserConfig as VitestUserConfigInterface } from 'vitest/config';
 import { defineConfig as defineVitestConfig } from 'vitest/config';
 import react from '@vitejs/plugin-react';
@@ -26,17 +26,23 @@ const vitestConfig: VitestUserConfigInterface = defineVitestConfig({
 });
 
 // https://vitejs.dev/config/
-const viteConfig = defineConfig({
-  optimizeDeps: {
-    include: ['@emotion/react', '@emotion/styled', '@mui/material/Tooltip'],
-  },
-  plugins: [
-    react(),
-    replace({
-      'process.env.CI': process.env.CI,
-      preventAssignment: true,
-    }),
-  ],
-});
+export default defineConfig(({ mode }) => {
+  const env = loadEnv(mode, process.cwd());
 
-export default mergeConfig(vitestConfig, viteConfig);
+  return mergeConfig(vitestConfig, {
+    server: {
+      host: true,
+      allowedHosts: ['*', env.VITE_NGROK_DOMAIN],
+    },
+    optimizeDeps: {
+      include: ['@emotion/react', '@emotion/styled', '@mui/material/Tooltip'],
+    },
+    plugins: [
+      react(),
+      replace({
+        'process.env.CI': process.env.CI,
+        preventAssignment: true,
+      }),
+    ],
+  });
+});

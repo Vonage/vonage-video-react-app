@@ -1,4 +1,4 @@
-import express, { Express, Request, Response } from 'express';
+import express, { Express } from 'express';
 import path from 'path';
 import bodyParser from 'body-parser';
 import { fileURLToPath } from 'url';
@@ -26,10 +26,6 @@ app.use((_req, res, next) => {
 });
 
 app.use(express.static(path.join(dirName, './dist')));
-
-app.get('/*', (_req: Request, res: Response) => {
-  res.sendFile(path.join(dirName, 'dist', 'index.html'));
-});
 
 const startServer: () => Promise<Server> = () => {
   return new Promise((res) => {
