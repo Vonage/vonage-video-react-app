@@ -1,14 +1,18 @@
-import { describe, it, expect, vi, afterEach } from 'vitest';
+import { describe, it, expect, vi, afterEach, beforeEach } from 'vitest';
 import { renderHook, act, waitFor } from '@testing-library/react';
 import { Connection } from '@vonage/client-sdk-video';
 import useEmoji, { EmojiWrapper } from '../useEmoji';
 import { SignalEvent, SubscriberWrapper } from '../../types/session';
 
 const mockSignal = vi.fn();
-const mockYourConnectionId = '123';
+const mockGetConnectionId = vi.fn();
 const mockConnection = { connectionId: '456' } as Connection;
 
 describe('useEmoji', () => {
+  beforeEach(() => {
+    mockGetConnectionId.mockReturnValue('123');
+  });
+
   afterEach(() => {
     vi.useRealTimers();
     vi.resetAllMocks();
@@ -18,7 +22,7 @@ describe('useEmoji', () => {
     it('calls Session.signal with the emoji and current time', async () => {
       vi.setSystemTime(12_000_000);
       const { result } = renderHook(() =>
-        useEmoji({ signal: mockSignal, connectionId: mockYourConnectionId })
+        useEmoji({ signal: mockSignal, getConnectionId: mockGetConnectionId })
       );
 
       act(() => {
@@ -35,7 +39,7 @@ describe('useEmoji', () => {
     it('when called multiple times, sendEmoji throttles calls to once every 500ms', async () => {
       vi.useFakeTimers();
       const { result } = renderHook(() =>
-        useEmoji({ signal: mockSignal, connectionId: mockYourConnectionId })
+        useEmoji({ signal: mockSignal, getConnectionId: mockGetConnectionId })
       );
 
       act(() => {
@@ -58,7 +62,7 @@ describe('useEmoji', () => {
 
   it('adds emojis to the queue when a signal event is received and gets the correct sender name', async () => {
     const { result } = renderHook(() =>
-      useEmoji({ signal: mockSignal, connectionId: mockYourConnectionId })
+      useEmoji({ signal: mockSignal, getConnectionId: mockGetConnectionId })
     );
 
     // Mock receiving a signal event from another user
@@ -100,7 +104,7 @@ describe('useEmoji', () => {
 
   it('recognizes when a received signal event is from local user', async () => {
     const { result } = renderHook(() =>
-      useEmoji({ signal: mockSignal, connectionId: mockYourConnectionId })
+      useEmoji({ signal: mockSignal, getConnectionId: mockGetConnectionId })
     );
 
     // Mock receiving a signal event from local user

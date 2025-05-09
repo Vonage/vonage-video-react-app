@@ -134,9 +134,12 @@ const SessionProvider = ({ children }: SessionProviderProps): ReactElement => {
   const { messages, onChatMessage, sendChatMessage } = useChat({
     signal: vonageVideoClient.current?.signal,
   });
+  const getConnectionId = useCallback((): string | undefined => {
+    return vonageVideoClient.current?.connectionId;
+  }, []);
   const { sendEmoji, onEmoji, emojiQueue } = useEmoji({
     signal: vonageVideoClient.current?.signal,
-    connectionId: vonageVideoClient.current?.connectionId,
+    getConnectionId,
   });
   const {
     closeRightPanel,
@@ -154,9 +157,15 @@ const SessionProvider = ({ children }: SessionProviderProps): ReactElement => {
     }
   };
 
-  const handleEmoji = (emojiEvent: SignalEvent) => {
-    onEmoji(emojiEvent, subscriberWrappers);
-  };
+  const handleEmoji = useCallback(
+    (emojiEvent: SignalEvent) => {
+      setSubscriberWrappers((currentSubscriberWrappers) => {
+        onEmoji(emojiEvent, currentSubscriberWrappers);
+        return currentSubscriberWrappers; // Return unchanged state
+      });
+    },
+    [onEmoji]
+  );
 
   const setActiveSpeakerIdAndRef = useCallback((id: string | undefined) => {
     // We store the current active speaker id in a ref so it can be accessed later when sorting the subscriberWrappers for display.
@@ -258,7 +267,7 @@ const SessionProvider = ({ children }: SessionProviderProps): ReactElement => {
 
   const handleSubscriberVideoElementCreated = (subscriberWrapper: SubscriberWrapper) => {
     setSubscriberWrappers((previousSubscriberWrappers) =>
-      [subscriberWrapper, ...previousSubscriberWrappers].sort(
+      [subscriberWrapper, ...previousSubscriberWrappers].toSorted(
         sortByDisplayPriority(activeSpeakerIdRef.current)
       )
     );

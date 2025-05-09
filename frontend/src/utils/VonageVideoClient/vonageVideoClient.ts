@@ -67,7 +67,7 @@ class VonageVideoClient extends EventEmitter<VonageVideoClientEvents> {
    * Handles various session events and emits corresponding custom events.
    * @private
    */
-  private attachEventListeners() {
+  private attachEventListeners = () => {
     if (!this.clientSession) {
       return;
     }
@@ -79,7 +79,7 @@ class VonageVideoClient extends EventEmitter<VonageVideoClientEvents> {
     this.clientSession.on('signal', (event) => this.handleSignal(event));
     this.clientSession.on('streamPropertyChanged', () => this.handleStreamPropertyChanged());
     this.clientSession.on('streamCreated', (event) => this.handleStreamCreated(event));
-  }
+  };
 
   /**
    * Subscribes to a stream in a session, managing the receiving audio and video from the remote party.
@@ -89,7 +89,7 @@ class VonageVideoClient extends EventEmitter<VonageVideoClientEvents> {
    * @param {StreamCreatedEvent} event - The event emitted when a stream is created
    * @private
    */
-  private handleStreamCreated(event: StreamCreatedEvent) {
+  private handleStreamCreated = (event: StreamCreatedEvent) => {
     if (this.clientSession === null) {
       return;
     }
@@ -139,74 +139,74 @@ class VonageVideoClient extends EventEmitter<VonageVideoClientEvents> {
     if (isScreenshare) {
       this.emit('screenshareStreamCreated');
     }
-  }
+  };
 
   /**
    * Emits an event when a stream property changes.
    * @private
    */
-  private handleStreamPropertyChanged() {
+  private handleStreamPropertyChanged = () => {
     this.emit('streamPropertyChanged');
-  }
+  };
 
   /**
    * Handles incoming signals and emits specific events based on the signal type.
    * @param {SignalEvent} event - The signal event received from the session.
    * @private
    */
-  private handleSignal(event: SignalEvent) {
+  private handleSignal = (event: SignalEvent) => {
     const { type } = event;
     if (type === 'signal:chat' || type === 'signal:emoji') {
       this.emit(type, event);
     }
-  }
+  };
 
   /**
    * Emits an event when the session is reconnecting.
    * @private
    */
-  private handleReconnecting() {
+  private handleReconnecting = () => {
     this.emit('sessionReconnecting');
-  }
+  };
 
   /**
    * Emits an event when the session has reconnected.
    * @private
    */
-  private handleReconnected() {
+  private handleReconnected = () => {
     this.emit('sessionReconnected');
-  }
+  };
 
   /**
    * Emits an event when the session is disconnected.
    * @private
    */
-  private handleSessionDisconnected() {
+  private handleSessionDisconnected = () => {
     this.emit('sessionDisconnected');
-  }
+  };
 
   /**
    * Emits an event when an archive starts.
    * @param {{ id: string }} param - The archive ID.
    * @private
    */
-  private handleArchiveStarted({ id }: { id: string }) {
+  private handleArchiveStarted = ({ id }: { id: string }) => {
     this.emit('archiveStarted', id);
-  }
+  };
 
   /**
    * Emits an event when an archive stops.
    * @private
    */
-  private handleArchiveStopped() {
+  private handleArchiveStopped = () => {
     this.emit('archiveStopped');
-  }
+  };
 
   /**
    * Connects to the Vonage Video session using the provided credentials.
    * @returns {Promise<void>} Resolves when the connection is successful, rejects on error.
    */
-  async connect(): Promise<void> {
+  connect = async (): Promise<void> => {
     const { apiKey, sessionId, token } = this.credential;
 
     await new Promise((resolve, reject) => {
@@ -224,30 +224,30 @@ class VonageVideoClient extends EventEmitter<VonageVideoClientEvents> {
         }
       });
     });
-  }
+  };
 
   /**
    * Disconnects from the current session and cleans up the session object.
    */
-  disconnect() {
+  disconnect = () => {
     this.clientSession?.disconnect();
     this.clientSession = null;
-  }
+  };
 
   /**
    * Forces a specific stream to be muted.
    * @param {Stream} stream - The stream to be muted.
    */
-  async forceMuteStream(stream: Stream) {
+  forceMuteStream = async (stream: Stream) => {
     await this.clientSession?.forceMuteStream(stream);
-  }
+  };
 
   /**
    * Publishes a stream to the session.
    * @param {Publisher} publisher - The publisher object to be published.
    * @throws {Error} Throws an error if publishing fails.
    */
-  publish(publisher: Publisher): Promise<void> {
+  publish = (publisher: Publisher): Promise<void> => {
     return new Promise((resolve, reject) => {
       this.clientSession?.publish(publisher, (error) => {
         if (error) {
@@ -256,23 +256,23 @@ class VonageVideoClient extends EventEmitter<VonageVideoClientEvents> {
         resolve();
       });
     });
-  }
+  };
 
   /**
    * Sends a signal to all participants in the session.
    * @param {SignalType} data - The signal data to be sent.
    */
-  signal(data: SignalType) {
+  signal = (data: SignalType) => {
     this.clientSession?.signal(data);
-  }
+  };
 
   /**
    * Unpublishes a stream from the session.
    * @param {Publisher} publisher - The publisher object to be unpublished.
    */
-  unpublish(publisher: Publisher) {
+  unpublish = (publisher: Publisher) => {
     this.clientSession?.unpublish(publisher);
-  }
+  };
 
   /**
    * Gets the session ID of the current session.

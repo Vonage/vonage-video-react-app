@@ -11,7 +11,7 @@ type EmojiDataType = {
 
 export type UseEmojiProps = {
   signal: ((data: SignalType) => void) | undefined;
-  connectionId: string | undefined;
+  getConnectionId: () => string | undefined;
 };
 
 export type UseEmoji = {
@@ -30,13 +30,13 @@ export type EmojiWrapper = {
  * React hook to queue emojis into an array for display and provides functions for sending and receiving emojis.
  * @param {UseEmojiProps}  props - props for the hook
  *  @property {((data: SignalType) => void) | undefined} signal - function to send signal to all participants
- *  @property {string | undefined} connectionId - the connection ID of the current user
+ *  @property {() => string | undefined} getConnectionId - function to get the connection ID of the current user
  * @returns {UseEmoji} returned object
  *  @property {(emoji: string) => void} sendEmoji - function to send emojis
  *  @property {EmojiWrapper[]} emojiQueue - emojis to display
  *  @property {(event: SignalEvent, subscriberWrappers: SubscriberWrapper[]) => void} onEmoji - emoji handler
  */
-const useEmoji = ({ signal, connectionId }: UseEmojiProps): UseEmoji => {
+const useEmoji = ({ signal, getConnectionId }: UseEmojiProps): UseEmoji => {
   const [emojiQueue, setEmojiQueue] = useState<EmojiWrapper[]>([]);
 
   /**
@@ -47,10 +47,11 @@ const useEmoji = ({ signal, connectionId }: UseEmojiProps): UseEmoji => {
     // We limit emojis to being sent every 500ms.
     const throttledFunc = throttle(
       (emoji: string) => {
-        const data = JSON.stringify({ emoji, time: new Date().getTime() });
         if (!signal) {
           return;
         }
+
+        const data = JSON.stringify({ emoji, time: new Date().getTime() });
         signal({ type: 'emoji', data });
       },
       500,
@@ -66,13 +67,10 @@ const useEmoji = ({ signal, connectionId }: UseEmojiProps): UseEmoji => {
    */
   const isOwnConnection = useCallback(
     (sendingConnection: Connection): boolean => {
-      const yourConnectionId = connectionId;
-
-      return sendingConnection.connectionId === yourConnectionId;
+      return sendingConnection.connectionId === getConnectionId();
     },
-    [connectionId]
+    [getConnectionId] // Dependency array ensures updates
   );
-
   /**
    * Retrieves the user's name or `You` if you are the sender from a given Connection.
    * @param {Connection} sendingConnection - The connection object to evaluate.

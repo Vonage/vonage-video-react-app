@@ -38,7 +38,7 @@ describe('usePublisher', () => {
   const mockPublisher = Object.assign(new EventEmitter(), {
     destroy: destroySpy,
   }) as unknown as Publisher;
-  let sessionContext: SessionContextType;
+  let mockSessionContext: SessionContextType;
   const mockedInitPublisher = vi.fn();
   const mockedSessionPublish = vi.fn();
   const mockedSessionUnpublish = vi.fn();
@@ -51,12 +51,12 @@ describe('usePublisher', () => {
 
     (initPublisher as Mock).mockImplementation(mockedInitPublisher);
 
-    sessionContext = {
+    mockSessionContext = {
       publish: mockedSessionPublish,
       unpublish: mockedSessionUnpublish,
       connected: true,
     } as unknown as SessionContextType;
-    mockUseSessionContext.mockReturnValue(sessionContext);
+    mockUseSessionContext.mockReturnValue(mockSessionContext);
   });
 
   afterAll(() => {
