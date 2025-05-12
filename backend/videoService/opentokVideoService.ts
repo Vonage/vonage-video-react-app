@@ -106,37 +106,36 @@ class OpenTokVideoService implements VideoService {
     const projectJWT = projectToken(this.config.apiKey, this.config.apiSecret, expires);
     const captionURL = `${this.API_URL}/${this.config.apiKey}/captions`;
 
-    const requestToken = this.generateToken(sessionId);
-    const { token } = requestToken;
+    const { token } = this.generateToken(sessionId);
     const captionAxiosPostBody = {
       sessionId,
       token,
       languageCode: 'en-US',
       maxDuration: 1800,
+      // Enabling partial captions allows for more frequent updates to the captions.
+      // This is useful for real-time applications where the captions need to be updated frequently.
+      // However, it may also increase the number of inaccuracies in the captions.
       partialCaptions: true,
     };
 
-    const response = await axios.post(captionURL, captionAxiosPostBody, {
+    const {
+      data: { captionsId },
+    } = await axios.post(captionURL, captionAxiosPostBody, {
       headers: {
         'X-OPENTOK-AUTH': projectJWT,
         'Content-Type': 'application/json',
       },
     });
-
-    const responseData: EnableCaptionResponse = {
-      captionsId: response.data.captionsId,
-    };
-    return responseData;
+    return { captionsId };
   }
 
   async disableCaptions(captionId: string): Promise<string> {
+    const expires = Math.floor(new Date().getTime() / 1000) + 24 * 60 * 60;
+    // Note that the project token is different from the session token.
+    // The project token is used to authenticate the request to the OpenTok API.
+    const projectJWT = projectToken(this.config.apiKey, this.config.apiSecret, expires);
+    const captionURL = `${this.API_URL}/${this.config.apiKey}/captions/${captionId}/stop`;
     try {
-      const expires = Math.floor(new Date().getTime() / 1000) + 24 * 60 * 60;
-      // Note that the project token is different from the session token.
-      // The project token is used to authenticate the request to the OpenTok API.
-      const projectJWT = projectToken(this.config.apiKey, this.config.apiSecret, expires);
-      const captionURL = `${this.API_URL}/${this.config.apiKey}/captions/${captionId}/stop`;
-
       await axios.post(
         captionURL,
         {},
