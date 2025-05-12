@@ -107,10 +107,10 @@ class OpenTokVideoService implements VideoService {
     const captionURL = `${this.API_URL}/${this.config.apiKey}/captions`;
 
     const { token } = this.generateToken(sessionId);
-    const captionAxiosPostBody = {
-      sessionId,
-      token,
+    const captionOptions = {
+      // The following language codes are supported: en-US, en-AU, en-GB, fr-FR, fr-CA, de-DE, hi-IN, it-IT, pt-BR, ja-JP, ko-KR, zh-CN, zh-TW
       languageCode: 'en-US',
+      // The maximum duration of the captions in seconds. The default is 14,400 seconds (4 hours).
       maxDuration: 1800,
       // Enabling partial captions allows for more frequent updates to the captions.
       // This is useful for real-time applications where the captions need to be updated frequently.
@@ -118,15 +118,26 @@ class OpenTokVideoService implements VideoService {
       partialCaptions: true,
     };
 
-    const {
-      data: { captionsId },
-    } = await axios.post(captionURL, captionAxiosPostBody, {
-      headers: {
-        'X-OPENTOK-AUTH': projectJWT,
-        'Content-Type': 'application/json',
-      },
-    });
-    return { captionsId };
+    const captionAxiosPostBody = {
+      sessionId,
+      token,
+      ...captionOptions,
+    };
+
+    try {
+      const {
+        data: { captionsId },
+      } = await axios.post(captionURL, captionAxiosPostBody, {
+        headers: {
+          'X-OPENTOK-AUTH': projectJWT,
+          'Content-Type': 'application/json',
+        },
+      });
+      return { captionsId };
+    } catch (error: unknown) {
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
+      throw new Error(`Failed to enable captions: ${errorMessage}`);
+    }
   }
 
   async disableCaptions(captionId: string): Promise<string> {
