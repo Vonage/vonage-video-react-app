@@ -89,12 +89,6 @@ class VonageVideoService implements VideoService {
     }
   }
 
-  // async enableCaptions(sessionId: string): Promise<EnableCaptionResponse> {
-  //   const requestToken = this.generateToken(sessionId);
-  //   const { token } = requestToken;
-  //   return this.vonageVideo.enableCaptions(sessionId, token);
-  // }
-
   async disableCaptions(captionId: string): Promise<string> {
     try {
       await this.vonageVideo.disableCaptions(captionId);
