@@ -393,32 +393,32 @@ const SessionProvider = ({ children }: SessionProviderProps): ReactElement => {
 
   const value = useMemo(
     () => ({
-      activeSpeakerId,
-      archiveId,
+      activeSpeakerId, // good
+      archiveId, // good
       vonageVideoClient: vonageVideoClient.current,
-      connect,
-      disconnect,
+      connect, // good
+      disconnect, // good
       joinRoom,
-      forceMute,
-      connected,
-      unreadCount,
-      messages,
-      sendChatMessage,
-      reconnecting,
-      subscriberWrappers,
-      layoutMode,
-      setLayoutMode,
-      rightPanelActiveTab,
-      toggleParticipantList,
-      toggleChat,
-      closeRightPanel,
-      toggleReportIssue,
-      pinSubscriber,
-      isMaxPinned,
-      sendEmoji,
-      emojiQueue,
-      publish,
-      unpublish,
+      forceMute, // good
+      connected, // good
+      unreadCount, // good
+      messages, // good
+      sendChatMessage, // good
+      reconnecting, // good
+      subscriberWrappers, // good
+      layoutMode, // good
+      setLayoutMode, // good
+      rightPanelActiveTab, // good
+      toggleParticipantList, // good
+      toggleChat, // good
+      closeRightPanel, // good
+      toggleReportIssue, // good
+      pinSubscriber, // good
+      isMaxPinned, // good
+      sendEmoji, // good
+      emojiQueue, // good
+      publish, // good
+      unpublish, // good
     }),
     [
       activeSpeakerId,
