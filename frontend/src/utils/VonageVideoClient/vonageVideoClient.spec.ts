@@ -345,5 +345,16 @@ describe('VonageVideoClient', () => {
       });
       return emitEmojiSignalPromise;
     });
+
+    it('should emit streamPropertyChanged', () => {
+      const streamPropertyChangedPromise = new Promise((resolve) => {
+        vonageVideoClient?.on('streamPropertyChanged', () => {
+          resolve(true);
+        });
+
+        mockSession.emit('streamPropertyChanged');
+      });
+      return streamPropertyChangedPromise;
+    });
   });
 });
