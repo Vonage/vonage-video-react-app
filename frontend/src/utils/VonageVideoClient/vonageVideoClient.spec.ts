@@ -10,7 +10,7 @@ import {
 import EventEmitter from 'events';
 import logOnConnect from '../logOnConnect';
 import VonageVideoClient from './vonageVideoClient';
-import { Credential, SignalEvent } from '../../types/session';
+import { Credential, SignalEvent, SignalType } from '../../types/session';
 
 vi.mock('../logOnConnect');
 vi.mock('@vonage/client-sdk-video');
@@ -47,6 +47,10 @@ describe('VonageVideoClient', () => {
       forceMuteStream: vi.fn(),
       publish: mockPublish,
       unpublish: vi.fn(),
+      connection: {
+        connectionId: 'connection-id',
+      },
+      signal: vi.fn(),
     }) as unknown as TestSession;
     mockInitSession.mockReturnValue(mockSession);
     (initSession as Mock).mockImplementation(mockInitSession);
@@ -221,6 +225,19 @@ describe('VonageVideoClient', () => {
 
     expect(mockSession.unpublish).toHaveBeenCalledWith(mockPublisher);
     expect(mockSession.unpublish).toHaveBeenCalledTimes(1);
+  });
+
+  it('signal should send a signal to all participants in the session', async () => {
+    const signalData: SignalType = {
+      type: 'chat',
+      data: 'Hello, world!',
+    };
+
+    await vonageVideoClient?.connect();
+    vonageVideoClient?.signal(signalData);
+
+    expect(mockSession.signal).toHaveBeenCalledWith(signalData);
+    expect(mockSession.signal).toHaveBeenCalledTimes(1);
   });
 
   describe('event handling', () => {

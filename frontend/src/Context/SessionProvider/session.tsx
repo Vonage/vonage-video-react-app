@@ -334,13 +334,16 @@ const SessionProvider = ({ children }: SessionProviderProps): ReactElement => {
    * Joins a room by fetching the necessary credentials and connecting to the session.
    * @param {string} roomName - The name of the room to join.
    */
-  const joinRoom = useCallback(async (roomName: string) => {
-    fetchCredentials(roomName)
-      .then((credentials) => {
-        connect(credentials.data);
-      })
-      .catch(console.warn);
-  }, []);
+  const joinRoom = useCallback(
+    async (roomName: string) => {
+      fetchCredentials(roomName)
+        .then((credentials) => {
+          connect(credentials.data);
+        })
+        .catch(console.warn);
+    },
+    [connect]
+  );
 
   /**
    * Disconnects from the current session and cleans up session-related resources.

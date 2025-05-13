@@ -1,4 +1,5 @@
-import { describe, expect, it, vi, beforeEach, Mock, afterAll } from 'vitest';
+import { useEffect } from 'react';
+import { describe, expect, it, vi, beforeEach, Mock, afterAll, afterEach } from 'vitest';
 import { act, render, waitFor } from '@testing-library/react';
 import EventEmitter from 'events';
 import { Publisher, Stream } from '@vonage/client-sdk-video';
@@ -9,8 +10,6 @@ import useUserContext from '../../hooks/useUserContext';
 import VonageVideoClient from '../../utils/VonageVideoClient';
 import { Credential, SubscriberWrapper } from '../../types/session';
 import fetchCredentials from '../../api/fetchCredentials';
-import { useEffect } from 'react';
-import { join } from 'path';
 
 vi.mock('../../utils/ActiveSpeakerTracker');
 vi.mock('../../hooks/useUserContext');
