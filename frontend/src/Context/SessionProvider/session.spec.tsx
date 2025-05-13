@@ -9,6 +9,8 @@ import useUserContext from '../../hooks/useUserContext';
 import VonageVideoClient from '../../utils/VonageVideoClient';
 import { Credential, SubscriberWrapper } from '../../types/session';
 import fetchCredentials from '../../api/fetchCredentials';
+import { useEffect } from 'react';
+import { join } from 'path';
 
 vi.mock('../../utils/ActiveSpeakerTracker');
 vi.mock('../../hooks/useUserContext');
@@ -33,12 +35,13 @@ describe('SessionProvider', () => {
     };
   };
   let vonageVideoClient: VonageVideoClient;
+  let getByTestId: (id: string) => HTMLElement;
 
   const TestComponent = () => {
     const {
       activeSpeakerId,
       unpublish,
-      connect,
+      joinRoom,
       disconnect,
       subscriberWrappers,
       connected,
@@ -48,13 +51,13 @@ describe('SessionProvider', () => {
       pinSubscriber,
       isMaxPinned,
     } = useSessionContext();
-    if (connect) {
-      connect({
-        apiKey: 'apiKey',
-        sessionId: 'sessionId',
-        token: 'token',
-      } as unknown as Credential);
-    }
+
+    useEffect(() => {
+      if (joinRoom) {
+        joinRoom('TestComponentRoom');
+      }
+    }, [joinRoom]);
+
     return (
       <div>
         <button
@@ -113,7 +116,7 @@ describe('SessionProvider', () => {
     );
   };
 
-  beforeEach(() => {
+  beforeEach(async () => {
     activeSpeakerTracker = Object.assign(new EventEmitter(), {
       onSubscriberDestroyed: vi.fn(),
       onSubscriberAudioLevelUpdated: vi.fn(),
@@ -141,6 +144,20 @@ describe('SessionProvider', () => {
     mockedVonageVideoClient.mockImplementation(() => {
       return vonageVideoClient;
     });
+    mockFetchCredentials.mockResolvedValue({
+      apiKey: 'apiKey',
+      sessionId: 'sessionId',
+      token: 'token',
+    } as Credential);
+
+    await act(async () => {
+      const result = render(
+        <SessionProvider>
+          <TestComponent />
+        </SessionProvider>
+      );
+      getByTestId = result.getByTestId;
+    });
   });
 
   afterEach(() => {
@@ -152,12 +169,6 @@ describe('SessionProvider', () => {
   });
 
   it('should update activeSpeaker state when activeSpeakerTracker emits event', async () => {
-    const { getByTestId } = render(
-      <SessionProvider>
-        <TestComponent />
-      </SessionProvider>
-    );
-
     act(() =>
       activeSpeakerTracker.emit('activeSpeakerChanged', {
         previousActiveSpeaker: { subscriberId: undefined, movingAvg: 0 },
@@ -175,13 +186,7 @@ describe('SessionProvider', () => {
   });
 
   describe('unpublish', () => {
-    it('should call unpublish on VonageVideoClient', async () => {
-      const { getByTestId } = render(
-        <SessionProvider>
-          <TestComponent />
-        </SessionProvider>
-      );
-
+    it('should call unpublish on VonageVideoClient', () => {
       act(() => {
         getByTestId('unpublish').click();
       });
@@ -189,13 +194,7 @@ describe('SessionProvider', () => {
       expect(vonageVideoClient.unpublish).toHaveBeenCalledTimes(1);
     });
 
-    it('should not call unpublish on VonageVideoClient if not connected', async () => {
-      const { getByTestId } = render(
-        <SessionProvider>
-          <TestComponent />
-        </SessionProvider>
-      );
-
+    it('should not call unpublish on VonageVideoClient if not connected', () => {
       act(() => {
         getByTestId('disconnect').click();
         getByTestId('unpublish').click();
@@ -206,13 +205,7 @@ describe('SessionProvider', () => {
   });
 
   describe('subscriberWrappers', () => {
-    it('adding a new subscriber should add it to the subscriberWrappers', async () => {
-      const { getByTestId } = render(
-        <SessionProvider>
-          <TestComponent />
-        </SessionProvider>
-      );
-
+    it('adding a new subscriber should add it to the subscriberWrappers', () => {
       act(() => {
         vonageVideoClient.emit('subscriberVideoElementCreated', {
           id: 'sub1',
@@ -229,13 +222,7 @@ describe('SessionProvider', () => {
       expect(getByTestId('subscriberWrappers').children.length).toBe(2);
     });
 
-    it('removing a subscriber should remove it from the subscriberWrappers', async () => {
-      const { getByTestId } = render(
-        <SessionProvider>
-          <TestComponent />
-        </SessionProvider>
-      );
-
+    it('removing a subscriber should remove it from the subscriberWrappers', () => {
       act(() => {
         vonageVideoClient.emit('subscriberVideoElementCreated', {
           id: 'sub1',
@@ -252,23 +239,11 @@ describe('SessionProvider', () => {
 
   describe('session', () => {
     it('connect should call connect on VonageVideoClient and set connected to true', async () => {
-      const { getByTestId } = render(
-        <SessionProvider>
-          <TestComponent />
-        </SessionProvider>
-      );
-
       await waitFor(() => expect(getByTestId('connected')).toHaveTextContent('true'));
       expect(vonageVideoClient.connect).toHaveBeenCalledTimes(1);
     });
 
     it('disconnect should call disconnect on VonageVideoClient and set connected to false', async () => {
-      const { getByTestId } = render(
-        <SessionProvider>
-          <TestComponent />
-        </SessionProvider>
-      );
-
       act(() => {
         getByTestId('disconnect').click();
       });
@@ -278,12 +253,6 @@ describe('SessionProvider', () => {
     });
 
     it('when reconnecting session, sets reconnecting to true', async () => {
-      const { getByTestId } = render(
-        <SessionProvider>
-          <TestComponent />
-        </SessionProvider>
-      );
-
       act(() => {
         vonageVideoClient.emit('sessionReconnecting');
       });
@@ -292,12 +261,6 @@ describe('SessionProvider', () => {
     });
 
     it('when reconnected, sets reconnecting to false', async () => {
-      const { getByTestId } = render(
-        <SessionProvider>
-          <TestComponent />
-        </SessionProvider>
-      );
-
       act(() => {
         vonageVideoClient.emit('sessionReconnected');
       });
@@ -306,12 +269,6 @@ describe('SessionProvider', () => {
     });
 
     it('when re-connected, sets reconnecting to false', async () => {
-      const { getByTestId } = render(
-        <SessionProvider>
-          <TestComponent />
-        </SessionProvider>
-      );
-
       act(() => {
         vonageVideoClient.emit('sessionReconnected');
       });
@@ -320,12 +277,6 @@ describe('SessionProvider', () => {
     });
 
     it('when disconnected, sets connected to false', async () => {
-      const { getByTestId } = render(
-        <SessionProvider>
-          <TestComponent />
-        </SessionProvider>
-      );
-
       act(() => {
         vonageVideoClient.emit('sessionDisconnected');
       });
@@ -336,12 +287,6 @@ describe('SessionProvider', () => {
 
   describe('archiving', () => {
     it('should set archiveId when archiving starts', async () => {
-      const { getByTestId } = render(
-        <SessionProvider>
-          <TestComponent />
-        </SessionProvider>
-      );
-
       act(() => {
         vonageVideoClient.emit('archiveStarted', 'abc123');
       });
@@ -350,12 +295,6 @@ describe('SessionProvider', () => {
     });
 
     it('should set archiveId to null when archiving stops', async () => {
-      const { getByTestId } = render(
-        <SessionProvider>
-          <TestComponent />
-        </SessionProvider>
-      );
-
       act(() => {
         vonageVideoClient.emit('archiveStopped');
       });
@@ -366,12 +305,6 @@ describe('SessionProvider', () => {
 
   describe('pinning', () => {
     it('should move a pinned subscriber to the top of the list', async () => {
-      const { getByTestId } = render(
-        <SessionProvider>
-          <TestComponent />
-        </SessionProvider>
-      );
-
       act(() => {
         vonageVideoClient.emit('subscriberVideoElementCreated', {
           id: 'sub1',
@@ -398,17 +331,11 @@ describe('SessionProvider', () => {
     });
 
     it('pinning the maximum number of subscribers should set isMaxPinned to true', async () => {
-      const { getByTestId } = render(
-        <SessionProvider>
-          <TestComponent />
-        </SessionProvider>
-      );
       act(() => {
         vonageVideoClient.emit('subscriberVideoElementCreated', {
           id: 'sub1',
         } as unknown as SubscriberWrapper);
-      });
-      act(() => {
+
         vonageVideoClient.emit('subscriberVideoElementCreated', {
           id: 'sub2',
         } as unknown as SubscriberWrapper);
@@ -416,21 +343,15 @@ describe('SessionProvider', () => {
         vonageVideoClient.emit('subscriberVideoElementCreated', {
           id: 'sub3',
         } as unknown as SubscriberWrapper);
-      });
-      act(() => {
+
         getByTestId('pinSubscriber').click();
       });
+
       await waitFor(() => expect(getByTestId('isMaxPinned')).toHaveTextContent('true'));
     });
   });
 
   it('forceMute should call forceMute on VonageVideoClient', async () => {
-    const { getByTestId } = render(
-      <SessionProvider>
-        <TestComponent />
-      </SessionProvider>
-    );
-
     act(() => {
       getByTestId('forceMute').click();
     });
@@ -438,18 +359,8 @@ describe('SessionProvider', () => {
     await waitFor(() => expect(vonageVideoClient.forceMuteStream).toHaveBeenCalledTimes(1));
   });
 
-  it('joinRoom should call fetchCredentials and connect', async () => {
-    mockFetchCredentials.mockResolvedValue({
-      apiKey: 'apiKey',
-      sessionId: 'sessionId',
-      token: 'token',
-    });
-    const { getByTestId } = render(
-      <SessionProvider>
-        <TestComponent />
-      </SessionProvider>
-    );
-
-    // Having a crisis because connect is not used anywhere lol
+  it('joinRoom should call fetchCredentials and connect', () => {
+    expect(mockFetchCredentials).toHaveBeenCalledTimes(1);
+    expect(vonageVideoClient.connect).toHaveBeenCalledTimes(1);
   });
 });

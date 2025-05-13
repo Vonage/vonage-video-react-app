@@ -38,7 +38,6 @@ export type LayoutMode = 'grid' | 'active-speaker';
 
 export type SessionContextType = {
   vonageVideoClient: null | VonageVideoClient;
-  connect: null | ((credential: Credential) => Promise<void>);
   disconnect: null | (() => void);
   joinRoom: null | ((roomName: string) => Promise<void>);
   forceMute: null | ((stream: Stream) => Promise<void>);
@@ -70,7 +69,6 @@ export type SessionContextType = {
  */
 export const SessionContext = createContext<SessionContextType>({
   vonageVideoClient: null,
-  connect: null,
   disconnect: null,
   joinRoom: null,
   forceMute: null,
@@ -342,7 +340,6 @@ const SessionProvider = ({ children }: SessionProviderProps): ReactElement => {
         connect(credentials.data);
       })
       .catch(console.warn);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   /**
@@ -395,10 +392,9 @@ const SessionProvider = ({ children }: SessionProviderProps): ReactElement => {
     () => ({
       activeSpeakerId, // good
       archiveId, // good
-      vonageVideoClient: vonageVideoClient.current,
-      connect, // good
+      vonageVideoClient: vonageVideoClient.current, // good
       disconnect, // good
-      joinRoom,
+      joinRoom, // good
       forceMute, // good
       connected, // good
       unreadCount, // good
@@ -424,7 +420,6 @@ const SessionProvider = ({ children }: SessionProviderProps): ReactElement => {
       activeSpeakerId,
       archiveId,
       vonageVideoClient,
-      connect,
       disconnect,
       unreadCount,
       messages,
