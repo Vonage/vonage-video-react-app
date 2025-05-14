@@ -5,8 +5,9 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "dev": "tsx watch --ignore ./tests/**/*.test.ts index.ts",
+    "dev": "tsx watch index.ts",
     "start": "node --import tsx index.ts",
+    "debug": "node --inspect --watch --import tsx index.ts",
     "test": "NODE_OPTIONS=\"--experimental-vm-modules\" jest --maxWorkers=1 --coverage",
     "test:watch": "yarn test --watch",
     "ts-check": "tsc -p tsconfig.json"
