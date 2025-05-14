@@ -89,17 +89,16 @@ test.describe('participant pinning', () => {
     // Within that list item, find and click the MoreVert button
     await participantItem.getByTestId('MoreVertIcon').click();
 
-    // const pinMenuItem = await pageThree.getByTestId('pin-menu-item');
-
-    // await pinMenuItem.getByText('Unpin User Two').click;
     await pageThree
       .locator('[data-testid^="pin-menu-item"]', {
         hasText: 'Unpin User Two',
       })
       .click();
 
-    const closeIcon = pageThree.locator('svg[data-testid="CloseIcon"]:visible');
-    await closeIcon.click();
+    const closeIconButton = pageThree.locator(
+      '//span[contains(text(),"Participants")]/following-sibling::button'
+    );
+    await closeIconButton.click();
 
     const newUserTwoSubscriberRet = await userTwoSubscriber.boundingBox();
     const newPublisherRect = await publisher.boundingBox();
