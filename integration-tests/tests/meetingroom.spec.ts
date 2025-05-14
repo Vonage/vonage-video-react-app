@@ -41,12 +41,8 @@ test.describe('meeting room', () => {
     });
 
     await participantItem.getByTestId('MicIcon').click();
-    await pageOne.waitForSelector('[data-testid="popup-dialog-primary-button"]', {
-      state: 'visible',
-    });
-
     await pageOne.getByTestId('popup-dialog-primary-button').click();
-    await pageTwo.waitForSelector('[data-testid="MicOffToolbar"]', { state: 'visible' });
+
     await expect(pageTwo.getByTestId('MicOffToolbar')).toBeVisible();
   });
 });
