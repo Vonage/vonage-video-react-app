@@ -39,11 +39,14 @@ test.describe('meeting room', () => {
     const participantItem = await pageOne.locator('[data-testid^="participant-list-item"]', {
       hasText: 'User Two',
     });
-    // Within that list item, find and click the MoreVert button
+
     await participantItem.getByTestId('MicIcon').click();
+    await pageOne.waitForSelector('[data-testid="popup-dialog-primary-button"]', {
+      state: 'visible',
+    });
 
-    await pageOne.getByTestId('popup-dialog-primary-button').click;
-
+    await pageOne.getByTestId('popup-dialog-primary-button').click();
+    await pageTwo.waitForSelector('[data-testid="MicOffToolbar"]', { state: 'visible' });
     await expect(pageTwo.getByTestId('MicOffToolbar')).toBeVisible();
   });
 });
