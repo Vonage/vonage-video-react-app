@@ -9,6 +9,7 @@ import {
   SetStateAction,
   useEffect,
   ReactElement,
+  RefObject,
 } from 'react';
 import { v4 as uuid } from 'uuid';
 import {
@@ -37,6 +38,7 @@ import {
   togglePinAndSortByDisplayOrder,
 } from '../../utils/sessionStateOperations';
 import { MAX_PIN_COUNT_DESKTOP, MAX_PIN_COUNT_MOBILE } from '../../utils/constants';
+import { disableCaptions } from '../../api/captions';
 
 export type { ChatMessageType } from '../../types/chat';
 
@@ -75,6 +77,7 @@ export type SessionContextType = {
   toggleReportIssue: () => void;
   pinSubscriber: (subscriberId: string) => void;
   isMaxPinned: boolean;
+  currentCaptionsIdRef: RefObject<string | null>;
 };
 
 /**
@@ -105,6 +108,7 @@ export const SessionContext = createContext<SessionContextType>({
   toggleReportIssue: () => {},
   pinSubscriber: () => {},
   isMaxPinned: false,
+  currentCaptionsIdRef: { current: null },
 });
 
 export type ConnectionEventType = {
@@ -234,6 +238,8 @@ const SessionProvider = ({ children }: SessionProviderProps): ReactElement => {
   const [changedStream, setChangedStream] = useState<ChangedStreamType | null>(null);
   const [connections, setConnections] = useState<Connection[]>([]);
   const [connected, setConnected] = useState(false);
+  const currentCaptionsIdRef = useRef<string | null>(null);
+  const currentRoomNameRef = useRef<string | null>(null);
 
   /**
    * Handles changes to stream properties. This triggers a re-render when a stream property changes
@@ -269,10 +275,14 @@ const SessionProvider = ({ children }: SessionProviderProps): ReactElement => {
   };
 
   // handle the disconnect from session and clean up of the session object
-  const handleSessionDisconnected = () => {
+  const handleSessionDisconnected = async () => {
     setConnections([]);
     session.current = null;
     setConnected(false);
+    if (currentCaptionsIdRef.current && currentRoomNameRef.current) {
+      await disableCaptions(currentRoomNameRef.current, currentCaptionsIdRef.current);
+      currentCaptionsIdRef.current = null;
+    }
   };
 
   type VideoElementCreatedEvent = Event<'videoElementCreated', Subscriber> & {
@@ -426,6 +436,7 @@ const SessionProvider = ({ children }: SessionProviderProps): ReactElement => {
    * @param {string} roomName - The name of the room to join.
    */
   const joinRoom = useCallback(async (roomName: string) => {
+    currentRoomNameRef.current = roomName;
     fetchCredentials(roomName)
       .then((credentials) => {
         connect(credentials.data);
@@ -481,6 +492,7 @@ const SessionProvider = ({ children }: SessionProviderProps): ReactElement => {
       toggleReportIssue,
       pinSubscriber,
       isMaxPinned,
+      currentCaptionsIdRef,
     }),
     [
       activeSpeakerId,
@@ -507,6 +519,7 @@ const SessionProvider = ({ children }: SessionProviderProps): ReactElement => {
       toggleReportIssue,
       pinSubscriber,
       isMaxPinned,
+      currentCaptionsIdRef,
     ]
   );
 

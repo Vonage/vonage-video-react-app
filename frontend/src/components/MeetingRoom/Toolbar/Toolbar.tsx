@@ -6,6 +6,7 @@ import useSessionContext from '../../../hooks/useSessionContext';
 import LayoutButton from '../LayoutButton';
 import ParticipantListButton from '../ParticipantListButton';
 import ArchivingButton from '../ArchivingButton';
+import CaptionsButton from '../CaptionsButton';
 import ChatButton from '../ChatButton';
 import { RightPanelActiveTab } from '../../../hooks/useRightPanel';
 import ReportIssueButton from '../ReportIssueButton';
@@ -88,6 +89,7 @@ const Toolbar = ({
       isParentOpen
       key="EmojiGridButton"
     />,
+    <CaptionsButton key="CaptionsButton" subscriberWrappers={subscriberWrappers} />,
     <ArchivingButton key="ArchivingButton" />,
     isReportIssueEnabled() && (
       <ReportIssueButton

@@ -1,6 +1,7 @@
 import { ClickAwayListener, Portal, Box, Grow } from '@mui/material';
 import { Dispatch, ReactElement, SetStateAction } from 'react';
 import ArchivingButton from '../ArchivingButton';
+import CaptionsButton from '../CaptionsButton';
 import EmojiGridButton from '../EmojiGridButton';
 import ParticipantListButton from '../ParticipantListButton';
 import ChatButton from '../ChatButton';
@@ -87,6 +88,12 @@ const ToolbarOverflowMenu = ({
       key="EmojiGridButton"
     />,
     <ArchivingButton isOverflowButton handleClick={closeMenu} key="ArchivingButton" />,
+    <CaptionsButton
+      isOverflowButton
+      handleClick={closeMenu}
+      key="CaptionsButton"
+      subscriberWrappers={subscriberWrappers}
+    />,
     isReportIssueEnabled() && (
       <ReportIssueButton
         isOpen={rightPanelActiveTab === 'issues'}

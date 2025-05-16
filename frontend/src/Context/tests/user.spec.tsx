@@ -1,7 +1,7 @@
 /* eslint-disable react/button-has-type */
 import { describe, it, expect } from 'vitest';
 import { act, render, renderHook } from '@testing-library/react';
-import React from 'react';
+import { ReactNode } from 'react';
 import UserProvider, { UserType } from '../user';
 import useUserContext from '../../hooks/useUserContext';
 
@@ -31,7 +31,7 @@ const TestComponent = () => {
 
 describe('UserContext', () => {
   it('should be initialized with default values', () => {
-    const wrapper = ({ children }: { children: React.ReactNode }) => (
+    const wrapper = ({ children }: { children: ReactNode }) => (
       <UserProvider>{children}</UserProvider>
     );
     const expectedUser = {
@@ -43,6 +43,7 @@ describe('UserContext', () => {
         noiseSuppression: false,
         audioSource: undefined,
         videoSource: undefined,
+        publishCaptions: true,
       },
       issues: {
         reconnections: 0,

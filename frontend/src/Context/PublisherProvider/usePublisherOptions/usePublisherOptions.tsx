@@ -54,6 +54,7 @@ const usePublisherOptions = (): PublisherProperties | null => {
         audioFilter,
         videoFilter,
         videoSource,
+        publishCaptions: true,
       });
     };
 

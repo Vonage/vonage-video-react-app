@@ -115,3 +115,9 @@ export const MAX_TILES_SPEAKER_VIEW_MOBILE = 2;
  * of buttons shown on the right side of the Toolbar.
  */
 export const RIGHT_PANEL_BUTTON_COUNT = 3 - (isReportIssueEnabled() ? 0 : 1);
+
+/**
+ * @constant {number} CAPTION_TIMEOUT_MS - The duration in milliseconds for which captions are displayed.
+ * This is used to control how long the captions remain visible before they disappear.
+ */
+export const CAPTION_TIMEOUT_MS = 3000;

@@ -20,6 +20,7 @@ const defaultSettings = {
   noiseSuppression: true,
   audioSource: undefined,
   videoSource: undefined,
+  publishCaptions: true,
 };
 
 const customSettings = {
@@ -30,6 +31,7 @@ const customSettings = {
   noiseSuppression: false,
   audioSource: '68f1d1e6f11c629b1febe51a95f8f740f8ac5cd3d4c91419bd2b52bb1a9a01cd',
   videoSource: 'a68ec4e4a6bc10dc572bd806414b0da27d0aefb0ad822f7ba4cf9b226bb9b7c2',
+  publishCaptions: true,
 };
 
 const mockUserContextWithDefaultSettings = {
@@ -88,6 +90,7 @@ describe('usePublisherOptions', () => {
         videoFilter: undefined,
         name: '',
         initials: '',
+        publishCaptions: true,
       });
     });
   });
@@ -128,6 +131,7 @@ describe('usePublisherOptions', () => {
         },
         name: 'Foo Bar',
         initials: 'FB',
+        publishCaptions: true,
       });
     });
   });
