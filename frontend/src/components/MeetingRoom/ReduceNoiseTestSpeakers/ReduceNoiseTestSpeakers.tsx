@@ -74,10 +74,15 @@ const ReduceNoiseTestSpeakers = ({
             </Typography>
             <IconButton disableRipple>
               <Grow in={!isToggled} timeout={300}>
-                <ToggleOffIcon fontSize="large" sx={{ position: 'absolute', color: 'white' }} />
+                <ToggleOffIcon
+                  data-testid="toggle-off-icon"
+                  fontSize="large"
+                  sx={{ position: 'absolute', color: 'white' }}
+                />
               </Grow>
               <Grow in={isToggled} timeout={300}>
                 <ToggleOnIcon
+                  data-testid="toggle-on-icon"
                   fontSize="large"
                   sx={{ position: 'absolute', color: customLightBlueColor }}
                 />
