@@ -140,7 +140,6 @@ describe('usePublisher', () => {
 
       await act(async () => {
         result.current.initializeLocalPublisher({});
-
         await result.current.publish();
       });
 
