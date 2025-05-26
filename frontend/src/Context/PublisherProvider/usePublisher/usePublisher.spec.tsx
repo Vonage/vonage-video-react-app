@@ -1,6 +1,6 @@
-import { beforeEach, describe, it, expect, vi, Mock, afterAll, Mocked } from 'vitest';
+import { beforeEach, describe, it, expect, vi, Mock, afterAll } from 'vitest';
 import { act, renderHook, waitFor } from '@testing-library/react';
-import { initPublisher, Publisher, Session, Stream } from '@vonage/client-sdk-video';
+import { initPublisher, Publisher, Stream } from '@vonage/client-sdk-video';
 import EventEmitter from 'events';
 import usePublisher from './usePublisher';
 import useUserContext from '../../../hooks/useUserContext';
@@ -38,8 +38,7 @@ describe('usePublisher', () => {
   const mockPublisher = Object.assign(new EventEmitter(), {
     destroy: destroySpy,
   }) as unknown as Publisher;
-  let sessionContext: SessionContextType;
-  let sessionMock: Mocked<Session>;
+  let mockSessionContext: SessionContextType;
   const mockedInitPublisher = vi.fn();
   const mockedSessionPublish = vi.fn();
   const mockedSessionUnpublish = vi.fn();
@@ -52,14 +51,12 @@ describe('usePublisher', () => {
 
     (initPublisher as Mock).mockImplementation(mockedInitPublisher);
 
-    sessionMock = {
+    mockSessionContext = {
       publish: mockedSessionPublish,
       unpublish: mockedSessionUnpublish,
-    } as unknown as Mocked<Session>;
-    sessionContext = {
-      session: sessionMock,
+      connected: true,
     } as unknown as SessionContextType;
-    mockUseSessionContext.mockReturnValue(sessionContext as unknown as SessionContextType);
+    mockUseSessionContext.mockReturnValue(mockSessionContext);
   });
 
   afterAll(() => {
@@ -99,7 +96,11 @@ describe('usePublisher', () => {
       (initPublisher as Mock).mockImplementation(() => mockPublisher);
 
       const { result, rerender } = renderHook(() => usePublisher());
-      result.current.initializeLocalPublisher({});
+
+      act(() => {
+        result.current.initializeLocalPublisher({});
+      });
+
       rerender();
 
       await act(async () => {
@@ -131,15 +132,15 @@ describe('usePublisher', () => {
     });
 
     it('should log errors', async () => {
-      sessionMock = {
-        publish: vi.fn(() => {
-          throw new Error('There is an error.');
-        }),
-      } as unknown as Mocked<Session>;
+      mockedSessionPublish.mockImplementation(() => {
+        throw new Error('There is an error.');
+      });
 
       const { result } = renderHook(() => usePublisher());
-      result.current.initializeLocalPublisher({});
+
       await act(async () => {
+        result.current.initializeLocalPublisher({});
+
         await result.current.publish();
       });
 
@@ -150,9 +151,6 @@ describe('usePublisher', () => {
 
     it('should only publish to session once', async () => {
       (initPublisher as Mock).mockImplementation(() => mockPublisher);
-      mockedSessionPublish.mockImplementation((_, callback) => {
-        callback();
-      });
 
       const { result } = renderHook(() => usePublisher());
 

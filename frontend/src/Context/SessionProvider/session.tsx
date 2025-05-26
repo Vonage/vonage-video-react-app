@@ -10,26 +10,18 @@ import {
   useEffect,
   ReactElement,
 } from 'react';
-import { v4 as uuid } from 'uuid';
-import {
-  Connection,
-  Dimensions,
-  Session,
-  Stream,
-  Subscriber,
-  SubscriberProperties,
-  initSession,
-  Event,
-  OTError,
-} from '@vonage/client-sdk-video';
+import { Connection, Publisher, Stream } from '@vonage/client-sdk-video';
 import fetchCredentials from '../../api/fetchCredentials';
-import createMovingAvgAudioLevelTracker from '../../utils/movingAverageAudioLevelTracker';
 import useUserContext from '../../hooks/useUserContext';
 import ActiveSpeakerTracker from '../../utils/ActiveSpeakerTracker';
 import useRightPanel, { RightPanelActiveTab } from '../../hooks/useRightPanel';
-import logOnConnect from '../../utils/logOnConnect';
+import {
+  Credential,
+  SignalEvent,
+  SubscriberAudioLevelUpdatedEvent,
+  SubscriberWrapper,
+} from '../../types/session';
 import useChat from '../../hooks/useChat';
-import { SubscriberWrapper } from '../../types/session';
 import { ChatMessageType } from '../../types/chat';
 import { isMobile } from '../../utils/util';
 import {
@@ -37,24 +29,15 @@ import {
   togglePinAndSortByDisplayOrder,
 } from '../../utils/sessionStateOperations';
 import { MAX_PIN_COUNT_DESKTOP, MAX_PIN_COUNT_MOBILE } from '../../utils/constants';
+import VonageVideoClient from '../../utils/VonageVideoClient';
+import useEmoji, { EmojiWrapper } from '../../hooks/useEmoji';
 
 export type { ChatMessageType } from '../../types/chat';
-
-export type ChangedStreamType = {
-  stream: Stream;
-  changedProperty: 'hasVideo' | 'hasAudio' | 'videoDimensions';
-  newValue: boolean | Dimensions;
-  oldValue: boolean | Dimensions;
-  token?: string;
-};
 
 export type LayoutMode = 'grid' | 'active-speaker';
 
 export type SessionContextType = {
-  session: null | Session;
-  changedStream: null | ChangedStreamType;
-  connections: null | Connection[];
-  connect: null | ((credential: Credential) => Promise<void>);
+  vonageVideoClient: null | VonageVideoClient;
   disconnect: null | (() => void);
   joinRoom: null | ((roomName: string) => Promise<void>);
   forceMute: null | ((stream: Stream) => Promise<void>);
@@ -75,16 +58,17 @@ export type SessionContextType = {
   toggleReportIssue: () => void;
   pinSubscriber: (subscriberId: string) => void;
   isMaxPinned: boolean;
+  sendEmoji: (emoji: string) => void;
+  emojiQueue: EmojiWrapper[];
+  publish: (publisher: Publisher) => Promise<void>;
+  unpublish: (publisher: Publisher) => void;
 };
 
 /**
  * Context to provide session-related data and actions.
  */
 export const SessionContext = createContext<SessionContextType>({
-  session: null,
-  changedStream: null,
-  connections: null,
-  connect: null,
+  vonageVideoClient: null,
   disconnect: null,
   joinRoom: null,
   forceMute: null,
@@ -105,26 +89,16 @@ export const SessionContext = createContext<SessionContextType>({
   toggleReportIssue: () => {},
   pinSubscriber: () => {},
   isMaxPinned: false,
+  sendEmoji: () => {},
+  emojiQueue: [],
+  publish: async () => Promise.resolve(),
+  unpublish: () => {},
 });
 
 export type ConnectionEventType = {
   connection: Connection;
   reason?: string;
   id?: string;
-};
-
-/**
- * Represents the credentials required to connect to a session.
- * For Opentok the apiKey is the project Id
- * For Vonage Unified the apiKey is the application Id
- */
-export type Credential = {
-  apiKey: string;
-  sessionId: string;
-  token: string;
-};
-export type StreamCreatedEvent = Event<'streamCreated', Session> & {
-  stream: Stream;
 };
 
 /**
@@ -146,7 +120,8 @@ const MAX_PIN_COUNT = isMobile() ? MAX_PIN_COUNT_MOBILE : MAX_PIN_COUNT_DESKTOP;
  * @returns {SessionContextType} a context provider for a publisher preview
  */
 const SessionProvider = ({ children }: SessionProviderProps): ReactElement => {
-  const session = useRef<Session | null>(null);
+  const [, forceUpdate] = useState<boolean>(false); // NOSONAR
+  const vonageVideoClient = useRef<null | VonageVideoClient>(null);
   const [reconnecting, setReconnecting] = useState(false);
   const [subscriberWrappers, setSubscriberWrappers] = useState<SubscriberWrapper[]>([]);
   const [layoutMode, setLayoutMode] = useState<LayoutMode>('active-speaker');
@@ -154,7 +129,16 @@ const SessionProvider = ({ children }: SessionProviderProps): ReactElement => {
   const activeSpeakerTracker = useRef<ActiveSpeakerTracker>(new ActiveSpeakerTracker());
   const [activeSpeakerId, setActiveSpeakerId] = useState<string | undefined>();
   const activeSpeakerIdRef = useRef<string | undefined>(undefined);
-  const { messages, onChatMessage, sendChatMessage } = useChat({ sessionRef: session });
+  const { messages, onChatMessage, sendChatMessage } = useChat({
+    signal: vonageVideoClient.current?.signal,
+  });
+  const getConnectionId = useCallback((): string | undefined => {
+    return vonageVideoClient.current?.connectionId;
+  }, []);
+  const { sendEmoji, onEmoji, emojiQueue } = useEmoji({
+    signal: vonageVideoClient.current?.signal,
+    getConnectionId,
+  });
   const {
     closeRightPanel,
     toggleParticipantList,
@@ -164,12 +148,22 @@ const SessionProvider = ({ children }: SessionProviderProps): ReactElement => {
     toggleReportIssue,
   } = useRightPanel();
 
-  const handleChatSignal = ({ data }: { data: string }) => {
+  const handleChatSignal = ({ data }: SignalEvent) => {
     if (data) {
       onChatMessage(data);
       incrementUnreadCount();
     }
   };
+
+  const handleEmoji = useCallback(
+    (emojiEvent: SignalEvent) => {
+      setSubscriberWrappers((currentSubscriberWrappers) => {
+        onEmoji(emojiEvent, currentSubscriberWrappers);
+        return currentSubscriberWrappers; // Return unchanged state
+      });
+    },
+    [onEmoji]
+  );
 
   const setActiveSpeakerIdAndRef = useCallback((id: string | undefined) => {
     // We store the current active speaker id in a ref so it can be accessed later when sorting the subscriberWrappers for display.
@@ -231,128 +225,21 @@ const SessionProvider = ({ children }: SessionProviderProps): ReactElement => {
   }, [moveSubscriberToTopOfDisplayOrder, setActiveSpeakerIdAndRef]);
 
   const { user } = useUserContext();
-  const [changedStream, setChangedStream] = useState<ChangedStreamType | null>(null);
-  const [connections, setConnections] = useState<Connection[]>([]);
   const [connected, setConnected] = useState(false);
 
   /**
    * Handles changes to stream properties. This triggers a re-render when a stream property changes
-   * @param {ChangedStreamType} params - Object containing details about the changed stream.
    */
-  const handleStreamPropertyChanged = ({
-    stream,
-    changedProperty,
-    newValue,
-    oldValue,
-  }: ChangedStreamType) => {
-    setChangedStream({ stream, changedProperty, newValue, oldValue, token: uuid() });
-  };
-
-  /**
-   * Handles the creation of a new connection. Adding it to the connection array
-   * @param {ConnectionEventType} e - The connection event object.
-   */
-  const handleConnectionCreated = (e: ConnectionEventType) => {
-    setConnections((prevConnections) => [...prevConnections, e.connection]);
-  };
-
-  /**
-   * Handles the destruction of a connection. Removing it from the connections array
-   * @param {ConnectionEventType} e - The connection event object.
-   */
-  const handleConnectionDestroyed = (e: ConnectionEventType) => {
-    setConnections((prevConnections) =>
-      [...prevConnections].filter(
-        (connection) => connection.connectionId !== e.connection.connectionId
-      )
-    );
+  const handleStreamPropertyChanged = () => {
+    // Without a re-render during a stream change, we don't get visual indicators for a subscriber
+    // muting themselves or the initials being displayed.
+    forceUpdate((prev) => !prev);
   };
 
   // handle the disconnect from session and clean up of the session object
   const handleSessionDisconnected = () => {
-    setConnections([]);
-    session.current = null;
+    vonageVideoClient.current = null;
     setConnected(false);
-  };
-
-  type VideoElementCreatedEvent = Event<'videoElementCreated', Subscriber> & {
-    element: HTMLVideoElement | HTMLObjectElement;
-  };
-
-  /**
-   * Subscribes to a stream in a session, managing the receiving audio and video from the remote party.
-   * We are disabling the default SDK UI to have more control on the display of the subscriber
-   * Ref for Vonage Unified https://vonage.github.io/conversation-docs/video-js-reference/latest/Session.html#subscribe
-   * Ref for Opentok https://tokbox.com/developer/sdks/js/reference/Session.html#subscribe
-   * @param {Stream} stream - The stream to which the user is subscribing.
-   * @param {Session} localSession - The session in which the stream is located.
-   * @param {SubscriberProperties} [options={}] - Optional properties to configure the subscriber.
-   * @returns {Promise<void>} A promise that resolves when the subscription is set up.
-   */
-  const subscribe = useCallback(
-    async (stream: Stream, localSession: Session, options: SubscriberProperties = {}) => {
-      const { streamId } = stream;
-      if (localSession) {
-        const finalOptions: SubscriberProperties = {
-          ...options,
-          insertMode: 'append',
-          width: '100%',
-          height: '100%',
-          preferredResolution: 'auto',
-          style: {
-            buttonDisplayMode: 'off',
-            nameDisplayMode: 'on',
-          },
-          insertDefaultUI: false,
-        };
-        const isScreenshare = stream.videoType === 'screen';
-        const subscriber = localSession.subscribe(stream, undefined, finalOptions);
-        subscriber.on('videoElementCreated', (event: VideoElementCreatedEvent) => {
-          const { element } = event;
-          const subscriberWrapper: SubscriberWrapper = {
-            element,
-            subscriber,
-            isScreenshare,
-            isPinned: false,
-            // subscriber.id is refers to the targetElement id and will be undefined when insertDefaultUI is false so we use streamId to track our subscriber
-            id: streamId,
-          };
-          // prepend new subscriber to beginning of array so that is is visible on joining
-          setSubscriberWrappers((previousSubscriberWrappers) =>
-            [subscriberWrapper, ...previousSubscriberWrappers].sort(
-              sortByDisplayPriority(activeSpeakerIdRef.current)
-            )
-          );
-        });
-
-        subscriber.on('destroyed', () => {
-          activeSpeakerTracker.current.onSubscriberDestroyed(streamId);
-          const isNotDestroyedStreamId = ({ id }: { id: string }) => streamId !== id;
-          setSubscriberWrappers((prevSubscriberWrappers) =>
-            prevSubscriberWrappers.filter(isNotDestroyedStreamId)
-          );
-        });
-
-        // Create moving average tracker and add handler for subscriber audioLevelUpdated event emitted periodically with subscriber audio volume
-        // See for reference: https://developer.vonage.com/en/video/guides/ui-customization/general-customization#adjusting-user-interface-based-on-audio-levels
-        const getMovingAverageAudioLevel = createMovingAvgAudioLevelTracker();
-        subscriber.on('audioLevelUpdated', ({ audioLevel }) => {
-          const { logMovingAvg } = getMovingAverageAudioLevel(audioLevel);
-          activeSpeakerTracker.current.onSubscriberAudioLevelUpdated({
-            subscriberId: streamId,
-            movingAvg: logMovingAvg,
-          });
-        });
-      }
-    },
-    []
-  );
-
-  // handle the subscription (Receiving media from remote parties)
-  const handleStreamCreated = (e: StreamCreatedEvent) => {
-    if (session.current) {
-      subscribe(e.stream, session.current);
-    }
   };
 
   // function to set reconnecting status and to increase the number of reconnections the user has had
@@ -368,12 +255,38 @@ const SessionProvider = ({ children }: SessionProviderProps): ReactElement => {
     setReconnecting(false);
   };
 
-  const handleArchiveStarted = ({ id }: { id: string }) => {
+  const handleArchiveStarted = (id: string) => {
     setArchiveId(id);
   };
 
   const handleArchiveStopped = () => {
     setArchiveId(null);
+  };
+
+  const handleSubscriberVideoElementCreated = (subscriberWrapper: SubscriberWrapper) => {
+    setSubscriberWrappers((previousSubscriberWrappers) =>
+      [subscriberWrapper, ...previousSubscriberWrappers].toSorted(
+        sortByDisplayPriority(activeSpeakerIdRef.current)
+      )
+    );
+  };
+
+  const handleSubscriberDestroyed = (streamId: string) => {
+    activeSpeakerTracker.current.onSubscriberDestroyed(streamId);
+    const isNotDestroyedStreamId = ({ id }: { id: string }) => streamId !== id;
+    setSubscriberWrappers((prevSubscriberWrappers) =>
+      prevSubscriberWrappers.filter(isNotDestroyedStreamId)
+    );
+  };
+
+  const handleSubscriberAudioLevelUpdated = ({
+    movingAvg,
+    subscriberId,
+  }: SubscriberAudioLevelUpdatedEvent) => {
+    activeSpeakerTracker.current.onSubscriberAudioLevelUpdated({
+      subscriberId,
+      movingAvg,
+    });
   };
 
   /**
@@ -382,37 +295,33 @@ const SessionProvider = ({ children }: SessionProviderProps): ReactElement => {
    * @returns {Promise<void>} A promise that resolves when the session is connected.
    */
   const connect = useCallback(async (credential: Credential) => {
+    if (vonageVideoClient.current) {
+      return;
+    }
     try {
-      const { apiKey, sessionId, token } = credential;
       // initialize the session object and set up the relevant event listeners
       // https://tokbox.com/developer/sdks/js/reference/Session.html#events for opentok
       // https://vonage.github.io/conversation-docs/video-js-reference/latest/Session.html#events for unified environment
-      session.current = initSession(apiKey, sessionId);
-
-      session.current.on('streamPropertyChanged', handleStreamPropertyChanged);
-      session.current.on('streamCreated', handleStreamCreated);
-      session.current.on('sessionReconnecting', handleReconnecting);
-      session.current.on('sessionReconnected', handleReconnected);
-      session.current.on('sessionDisconnected', handleSessionDisconnected);
-      session.current.on('connectionCreated', handleConnectionCreated);
-      session.current.on('connectionDestroyed', handleConnectionDestroyed);
-      session.current.on('archiveStarted', handleArchiveStarted);
-      session.current.on('archiveStopped', handleArchiveStopped);
-      // @ts-expect-error signal:<type> is not ts compliant
-      session.current.on('signal:chat', handleChatSignal);
-
-      await new Promise<string | undefined>((resolve, reject) => {
-        session.current?.connect(token, (err?: OTError) => {
-          if (err) {
-            // We ignore the following lint warning because we are rejecting with an OTError object.
-            reject(err); // NOSONAR
-          } else {
-            setConnected(true);
-            logOnConnect(apiKey, sessionId, session.current?.connection?.connectionId);
-            resolve(session.current?.sessionId);
-          }
-        });
-      });
+      vonageVideoClient.current = new VonageVideoClient(credential);
+      vonageVideoClient.current.on('streamPropertyChanged', handleStreamPropertyChanged);
+      vonageVideoClient.current.on('sessionReconnecting', handleReconnecting);
+      vonageVideoClient.current.on('sessionReconnected', handleReconnected);
+      vonageVideoClient.current.on('sessionDisconnected', handleSessionDisconnected);
+      vonageVideoClient.current.on('archiveStarted', handleArchiveStarted);
+      vonageVideoClient.current.on('archiveStopped', handleArchiveStopped);
+      vonageVideoClient.current.on('signal:chat', handleChatSignal);
+      vonageVideoClient.current.on('signal:emoji', handleEmoji);
+      vonageVideoClient.current.on(
+        'subscriberAudioLevelUpdated',
+        handleSubscriberAudioLevelUpdated
+      );
+      vonageVideoClient.current.on(
+        'subscriberVideoElementCreated',
+        handleSubscriberVideoElementCreated
+      );
+      vonageVideoClient.current.on('subscriberDestroyed', handleSubscriberDestroyed);
+      await vonageVideoClient.current.connect();
+      setConnected(true);
     } catch (err: unknown) {
       if (err instanceof Error) {
         console.error(err);
@@ -425,21 +334,24 @@ const SessionProvider = ({ children }: SessionProviderProps): ReactElement => {
    * Joins a room by fetching the necessary credentials and connecting to the session.
    * @param {string} roomName - The name of the room to join.
    */
-  const joinRoom = useCallback(async (roomName: string) => {
-    fetchCredentials(roomName)
-      .then((credentials) => {
-        connect(credentials.data);
-      })
-      .catch(console.warn);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  const joinRoom = useCallback(
+    async (roomName: string) => {
+      fetchCredentials(roomName)
+        .then((credentials) => {
+          connect(credentials.data);
+        })
+        .catch(console.warn);
+    },
+    [connect]
+  );
 
   /**
    * Disconnects from the current session and cleans up session-related resources.
    */
   const disconnect = useCallback(() => {
-    if (session.current) {
-      session.current.disconnect();
+    if (vonageVideoClient.current) {
+      vonageVideoClient.current.disconnect();
+      vonageVideoClient.current = null;
 
       setConnected(false);
     }
@@ -450,19 +362,40 @@ const SessionProvider = ({ children }: SessionProviderProps): ReactElement => {
    * @param {Stream} stream - The stream that is going to be muted.
    */
   const forceMute = useCallback(async (stream: Stream) => {
-    if (session.current) {
-      session.current.forceMuteStream(stream);
+    if (vonageVideoClient.current) {
+      vonageVideoClient.current.forceMuteStream(stream);
     }
   }, []);
+
+  /**
+   * Publishes a stream to the session.
+   * @param {Publisher} publisher - The publisher object representing the stream to be published.
+   * @returns {Promise<void>} A promise that resolves when the stream is successfully published.
+   */
+  const publish = useCallback(async (publisher: Publisher): Promise<void> => {
+    if (vonageVideoClient.current) {
+      vonageVideoClient.current.publish(publisher);
+    }
+  }, []);
+
+  /**
+   * Unpublishes a stream from the session.
+   * @param {Publisher} publisher - The publisher object representing the stream to be unpublished.
+   */
+  const unpublish = useCallback(
+    (publisher: Publisher) => {
+      if (vonageVideoClient.current) {
+        vonageVideoClient.current.unpublish(publisher);
+      }
+    },
+    [vonageVideoClient]
+  );
 
   const value = useMemo(
     () => ({
       activeSpeakerId,
       archiveId,
-      session: session.current,
-      changedStream,
-      connections,
-      connect,
+      vonageVideoClient: vonageVideoClient.current,
       disconnect,
       joinRoom,
       forceMute,
@@ -481,14 +414,15 @@ const SessionProvider = ({ children }: SessionProviderProps): ReactElement => {
       toggleReportIssue,
       pinSubscriber,
       isMaxPinned,
+      sendEmoji,
+      emojiQueue,
+      publish,
+      unpublish,
     }),
     [
       activeSpeakerId,
       archiveId,
-      session,
-      changedStream,
-      connections,
-      connect,
+      vonageVideoClient,
       disconnect,
       unreadCount,
       messages,
@@ -507,6 +441,10 @@ const SessionProvider = ({ children }: SessionProviderProps): ReactElement => {
       toggleReportIssue,
       pinSubscriber,
       isMaxPinned,
+      sendEmoji,
+      emojiQueue,
+      publish,
+      unpublish,
     ]
   );
 

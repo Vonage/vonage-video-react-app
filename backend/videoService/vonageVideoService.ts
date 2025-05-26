@@ -1,6 +1,14 @@
 /* eslint-disable no-underscore-dangle */
 import { Auth } from '@vonage/auth';
-import { LayoutType, MediaMode, Resolution, SingleArchiveResponse, Video } from '@vonage/video';
+import {
+  LayoutType,
+  MediaMode,
+  Resolution,
+  SingleArchiveResponse,
+  Video,
+  EnableCaptionResponse,
+  CaptionOptions,
+} from '@vonage/video';
 import { VideoService } from './videoServiceInterface';
 import { VonageConfig } from '../types/config';
 
@@ -58,6 +66,37 @@ class VonageVideoService implements VideoService {
   async stopArchive(archiveId: string): Promise<string> {
     await this.vonageVideo.stopArchive(archiveId);
     return 'Archive stopped successfully';
+  }
+
+  async enableCaptions(sessionId: string): Promise<EnableCaptionResponse> {
+    const requestToken = this.generateToken(sessionId);
+    const { token } = requestToken;
+
+    try {
+      const captionOptions: CaptionOptions = {
+        // The maximum duration of the captions in seconds. The default is 14,400 seconds (4 hours).
+        maxDuration: 1800,
+        // Enabling partial captions allows for more frequent updates to the captions.
+        // This is useful for real-time applications where the captions need to be updated frequently.
+        // However, it may also increase the number of inaccuracies in the captions.
+        partialCaptions: 'true',
+      };
+      const captionsId = await this.vonageVideo.enableCaptions(sessionId, token, captionOptions);
+      return captionsId;
+    } catch (error: unknown) {
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
+      throw new Error(`Failed to enable captions: ${errorMessage}`);
+    }
+  }
+
+  async disableCaptions(captionId: string): Promise<string> {
+    try {
+      await this.vonageVideo.disableCaptions(captionId);
+      return 'Captions stopped successfully';
+    } catch (error: unknown) {
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
+      throw new Error(`Failed to disable captions: ${errorMessage}`);
+    }
   }
 }
 
