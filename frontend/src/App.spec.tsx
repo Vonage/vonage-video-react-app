@@ -39,7 +39,6 @@ describe('App routing', () => {
   it('renders LandingPage on unknown route', () => {
     window.history.pushState({}, '', '/unknown');
     render(<App />);
-    screen.debug(); // For debugging purposes
     expect(screen.getByText(/Landing Page/i)).toBeInTheDocument();
   });
 
