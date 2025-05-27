@@ -1,4 +1,4 @@
-import { ReactElement, useState } from 'react';
+import { ReactElement } from 'react';
 import { AvatarGroup } from '@mui/material';
 import { Box } from 'opentok-layout-js';
 import { SubscriberWrapper } from '../../types/session';
