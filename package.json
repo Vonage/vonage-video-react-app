@@ -15,7 +15,7 @@
   "scripts": {
     "build": "yarn workspace frontend build",
     "deploy-vcr": "vcr deploy",
-    "dev": "yarn && yarn workspace frontend dev & yarn workspace backend dev",
+    "dev": "yarn && concurrently 'yarn workspace frontend dev' 'yarn workspace backend dev'",
     "docs": "yarn workspace frontend docs",
     "docs:watch": "yarn workspace frontend docs:watch",
     "lint": "ESLINT_USE_FLAT_CONFIG=false yarn eslint . --ext .ts,.tsx",
@@ -25,7 +25,9 @@
     "run-server": "yarn workspace backend start",
     "start": "yarn workspace frontend build && yarn workspace backend start",
     "start:backend": "yarn workspace backend dev",
+    "debug:backend": "yarn workspace backend debug",
     "start:frontend": "yarn workspace frontend dev",
+    "forward:frontend": "npx ngrok http 5173",
     "test": "yarn test:backend && yarn test:frontend",
     "test:backend": "yarn workspace backend test",
     "test:backend:watch": "yarn workspace backend test:watch",
@@ -68,6 +70,7 @@
     "husky": "^9.0.11",
     "license-checker": "^25.0.1",
     "lint-staged": "^15.2.2",
+    "concurrently": "^9.1.2",
     "prettier": "^3.2.5",
     "typescript": "^5.8.3"
   },
@@ -75,10 +78,10 @@
     "wrap-ansi": "7.0.0",
     "path-to-regexp": "^0.1.12",
     "express": "^4.21.2",
-    "axios": "^1.7.8",
+    "axios": "^1.9.0",
     "cross-spawn": "^7.0.5",
     "rollup": "^4.22.4",
-    "vite": "^5.4.12",
+    "vite": "^5.4.19",
     "nanoid": "^3.3.8",
     "micromatch": "^4.0.8"
   }

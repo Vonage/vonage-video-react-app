@@ -5,8 +5,9 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "dev": "tsx watch --ignore ./tests/**/*.test.ts index.ts",
+    "dev": "tsx watch index.ts",
     "start": "node --import tsx index.ts",
+    "debug": "node --inspect --watch --import tsx index.ts",
     "test": "NODE_OPTIONS=\"--experimental-vm-modules\" jest --maxWorkers=1 --coverage",
     "test:watch": "yarn test --watch",
     "ts-check": "tsc -p tsconfig.json"
@@ -18,7 +19,7 @@
     "@vonage/server-sdk": "^3.16.0",
     "@vonage/vcr-sdk": "^1.3.0",
     "@vonage/video": "^1.17.0",
-    "axios": "^1.7.8",
+    "axios": "^1.9.0",
     "body-parser": "^1.20.3",
     "cors": "^2.8.5",
     "dotenv": "^16.0.3",
