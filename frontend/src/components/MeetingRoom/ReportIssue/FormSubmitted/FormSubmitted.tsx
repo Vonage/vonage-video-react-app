@@ -74,6 +74,7 @@ const FormSubmitted = ({
           type="submit"
           variant="contained"
           fullWidth
+          data-testid="close-button-form-submitted"
           onClick={handleCloseFormSubmitted}
           sx={{
             textTransform: 'none',

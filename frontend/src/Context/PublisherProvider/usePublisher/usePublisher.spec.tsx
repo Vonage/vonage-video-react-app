@@ -1,5 +1,5 @@
 import { beforeEach, describe, it, expect, vi, Mock, afterAll } from 'vitest';
-import { act, renderHook } from '@testing-library/react';
+import { act, renderHook, waitFor } from '@testing-library/react';
 import { initPublisher, Publisher, Stream } from '@vonage/client-sdk-video';
 import EventEmitter from 'events';
 import usePublisher from './usePublisher';
@@ -64,16 +64,18 @@ describe('usePublisher', () => {
   });
 
   describe('initializeLocalPublisher', () => {
-    it('should call initPublisher', () => {
+    it('should call initPublisher', async () => {
       const { result } = renderHook(() => usePublisher());
       act(() => {
         result.current.initializeLocalPublisher({});
       });
 
-      expect(mockedInitPublisher).toHaveBeenCalled();
+      await waitFor(() => {
+        expect(mockedInitPublisher).toHaveBeenCalled();
+      });
     });
 
-    it('should log errors', () => {
+    it('should log errors', async () => {
       (initPublisher as Mock).mockImplementation(() => {
         throw new Error('The second mouse gets the cheese.');
       });
@@ -83,7 +85,9 @@ describe('usePublisher', () => {
         result.current.initializeLocalPublisher({});
       });
 
-      expect(consoleWarnSpy).toHaveBeenCalled();
+      await waitFor(() => {
+        expect(consoleWarnSpy).toHaveBeenCalled();
+      });
     });
   });
 
@@ -101,10 +105,12 @@ describe('usePublisher', () => {
 
       await act(async () => {
         await result.current.publish();
-
         result.current.unpublish();
       });
-      expect(mockedSessionUnpublish).toHaveBeenCalled();
+
+      await waitFor(() => {
+        expect(mockedSessionUnpublish).toHaveBeenCalled();
+      });
     });
   });
 
@@ -134,11 +140,12 @@ describe('usePublisher', () => {
 
       await act(async () => {
         result.current.initializeLocalPublisher({});
-
         await result.current.publish();
       });
 
-      expect(consoleWarnSpy).toHaveBeenCalled();
+      await waitFor(() => {
+        expect(consoleWarnSpy).toHaveBeenCalled();
+      });
     });
 
     it('should only publish to session once', async () => {
@@ -190,7 +197,7 @@ describe('usePublisher', () => {
     });
   });
 
-  it('should set publishingError and destroy publisher when receiving an accessDenied event', () => {
+  it('should set publishingError and destroy publisher when receiving an accessDenied event', async () => {
     (initPublisher as Mock).mockImplementation(() => mockPublisher);
     const { result } = renderHook(() => usePublisher());
 
@@ -207,16 +214,18 @@ describe('usePublisher', () => {
       });
     });
 
-    expect(result.current.publishingError).toEqual({
-      header: 'Camera access is denied',
-      caption:
-        "It seems your browser is blocked from accessing your camera. Reset the permission state through your browser's UI.",
+    await waitFor(() => {
+      expect(result.current.publishingError).toEqual({
+        header: 'Camera access is denied',
+        caption:
+          "It seems your browser is blocked from accessing your camera. Reset the permission state through your browser's UI.",
+      });
+      expect(destroySpy).toHaveBeenCalled();
+      expect(result.current.publisher).toBeNull();
     });
-    expect(destroySpy).toHaveBeenCalled();
-    expect(result.current.publisher).toBeNull();
   });
 
-  it('should not set publishingError when receiving an accessAllowed event', () => {
+  it('should not set publishingError when receiving an accessAllowed event', async () => {
     (initPublisher as Mock).mockImplementation(() => mockPublisher);
     const { result } = renderHook(() => usePublisher());
 
@@ -227,7 +236,9 @@ describe('usePublisher', () => {
       mockPublisher.emit('accessAllowed');
     });
 
-    expect(result.current.publishingError).toBeNull();
-    expect(result.current.publisher).toBe(mockPublisher);
+    await waitFor(() => {
+      expect(result.current.publishingError).toBeNull();
+      expect(result.current.publisher).toBe(mockPublisher);
+    });
   });
 });
