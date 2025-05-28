@@ -1,4 +1,4 @@
-import { ReactElement, useState } from 'react';
+import { ReactElement } from 'react';
 import { AvatarGroup } from '@mui/material';
 import { Box } from 'opentok-layout-js';
 import { SubscriberWrapper } from '../../types/session';
@@ -27,15 +27,12 @@ const HiddenParticipantsTile = ({
 }: HiddenParticipantsTileProps): ReactElement => {
   const { height, width } = box;
   const diameter = Math.min(height, width) * 0.38;
-  const [isHovered, setIsHovered] = useState<boolean>(false);
   return (
     <button
       id="hidden-participants"
       data-testid="hidden-participants"
       className="absolute m-1 flex cursor-pointer items-center justify-center rounded-xl bg-notVeryGray-100 transition-colors hover:bg-[rgb(76,80,82)]"
       style={getBoxStyle(box)}
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
       onClick={handleClick}
       type="button"
     >
@@ -44,9 +41,6 @@ const HiddenParticipantsTile = ({
         className="border-none"
         sx={{
           '& .MuiAvatar-root': {
-            borderColor: isHovered ? 'rgb(76,80,82)' : 'rgb(60, 64, 67)',
-            transitionProperty: 'border-color',
-            transitionTimingFunction: 'cubic-bezier(0.4, 0, 0.2, 1)',
             transitionDuration: '150ms',
             height: `${diameter}px`,
             width: `${diameter}px`,
