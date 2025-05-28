@@ -16,8 +16,8 @@ describe('CaptionsBox', () => {
   const createSubscriberWrapper = (id: string): SubscriberWrapper => {
     const mockSubscriber = {
       id,
-      on: vi.fn(), // Mock the 'on' method using vitest's mock function
-      off: vi.fn(), // Mock the 'off' method
+      on: vi.fn(),
+      off: vi.fn(),
       videoWidth: () => 1280,
       videoHeight: () => 720,
       subscribeToVideo: () => {},

@@ -7,44 +7,31 @@ export type EnableCaptionsType = {
   };
 };
 
-/**
- * Send a request to start captions.
- * UPDATE THE LINK TO THE CAPTIONS API
- * @param {string} roomName - The name of the meeting room
- * change the return type to the correct one
- * @returns {Promise<AxiosResponse<EnableCaptionsType>>} The response from the archiving session.
- */
-export const enableCaptions = async (
-  roomName: string
-): Promise<
-  AxiosResponse<{
-    captions: {
-      captionsId: string;
-    };
-  }>
-> => {
-  return axios.post(`${API_URL}/session/${roomName}/enableCaptions`);
-};
-
 export type DisableCaptionsType = {
   status: number;
 };
 
 /**
+ * Send a request to start captions.
+ * More about enabling captions can be found here: https://developer.vonage.com/en/video/guides/live-caption#steps-to-enable-live-captions
+ * @param {string} roomName - The name of the meeting room
+ * @returns {Promise<AxiosResponse<EnableCaptionsType>>} The response from the archiving session.
+ */
+export const enableCaptions = async (
+  roomName: string
+): Promise<AxiosResponse<EnableCaptionsType>> => {
+  return axios.post(`${API_URL}/session/${roomName}/enableCaptions`);
+};
+
+/**
  * Send a request to stop captions.
- * UPDATE THE LINK TO THE CAPTIONS API
  * @param {string} roomName - The name of the meeting room
  * @param {string} captionId - The ID for the currently-enabled captions.
- *  change the return type to the correct one
  * @returns {Promise<AxiosResponse<DisableCaptionsType>>} The response from the captions session.
  */
 export const disableCaptions = async (
   roomName: string,
   captionId: string
-): Promise<
-  AxiosResponse<{
-    status: number;
-  }>
-> => {
+): Promise<AxiosResponse<DisableCaptionsType>> => {
   return await axios.post(`${API_URL}/session/${roomName}/${captionId}/disableCaptions`);
 };
