@@ -5,7 +5,9 @@ import useReceivingCaptions from '../../../../../hooks/useReceivingCaptions';
 import { CAPTION_TIMEOUT_MS } from '../../../../../utils/constants';
 
 export type SingleCaptionProps = {
-  subscriber: Subscriber;
+  subscriber: Subscriber | null;
+  isMobileView: boolean;
+  caption?: string;
 };
 
 /**
@@ -14,13 +16,24 @@ export type SingleCaptionProps = {
  * @property {Subscriber} subscriber - The subscriber object for which to display captions.
  * @returns {ReactElement | null } - The rendered caption or null if not receiving captions.
  */
-const SingleCaption = ({ subscriber }: SingleCaptionProps): ReactElement | null => {
-  const { captionText, isReceivingCaptions } = useReceivingCaptions({ subscriber });
+const SingleCaption = ({
+  subscriber,
+  isMobileView,
+  caption,
+}: SingleCaptionProps): ReactElement | null => {
+  const safeSubscriber = subscriber || undefined;
+  const { captionText: subscriberCaption, isReceivingCaptions } = useReceivingCaptions({
+    subscriber: safeSubscriber,
+  }) || { captionText: '', isReceivingCaptions: false };
+
+  const captionText = caption ?? subscriberCaption;
+  const isActive = Boolean(caption ?? isReceivingCaptions);
+
   const [visible, setVisible] = useState<boolean>(false);
   const timeoutRef = useRef<number | null>(null);
 
   useEffect(() => {
-    if (isReceivingCaptions && captionText) {
+    if (isActive && captionText) {
       setVisible(true);
       if (timeoutRef.current) {
         clearTimeout(timeoutRef.current);
@@ -33,14 +46,15 @@ const SingleCaption = ({ subscriber }: SingleCaptionProps): ReactElement | null 
         timeoutRef.current = null;
       }
     }
+
     return () => {
       if (timeoutRef.current) {
         clearTimeout(timeoutRef.current);
       }
     };
-  }, [captionText, isReceivingCaptions]);
+  }, [captionText, isActive]);
 
-  if (!visible) {
+  if (!visible || !captionText) {
     return null;
   }
 
@@ -54,10 +68,10 @@ const SingleCaption = ({ subscriber }: SingleCaptionProps): ReactElement | null 
           lineHeight: 1.4,
           textAlign: 'left',
           color: 'white',
-          fontSize: '1.1rem',
+          fontSize: isMobileView ? '1rem' : '1.25rem',
         }}
       >
-        <strong>{subscriber?.stream?.name}: </strong> {captionText}
+        <strong>{subscriber?.stream?.name ?? 'You'}: </strong> {captionText}
       </Typography>
     </div>
   );

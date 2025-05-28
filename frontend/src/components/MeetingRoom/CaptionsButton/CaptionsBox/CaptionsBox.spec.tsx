@@ -50,6 +50,7 @@ describe('CaptionsBox', () => {
       <CaptionsBox
         subscriberWrappers={[createSubscriberWrapper('subscriber-1')]}
         isCaptionsEnabled
+        isMobileView={false}
       />
     );
     expect(getByTestId('captions-box')).toBeInTheDocument();
@@ -60,6 +61,7 @@ describe('CaptionsBox', () => {
       <CaptionsBox
         subscriberWrappers={[createSubscriberWrapper('subscriber-1')]}
         isCaptionsEnabled={false}
+        isMobileView={false}
       />
     );
     expect(queryByTestId('captions-box')).not.toBeInTheDocument();

@@ -28,7 +28,7 @@ const CaptionsButton = ({
   handleClick,
   subscriberWrappers,
 }: CaptionsButtonProps): ReactElement => {
-  const { currentCaptionsIdRef } = useSessionContext();
+  const { currentCaptionsIdRef, ownCaptions } = useSessionContext();
   const roomName = useRoomName();
   const [captionsId, setCaptionsId] = useState<string>('');
   const [isCaptionsEnabled, setIsCaptionsEnabled] = useState<boolean>(false);
@@ -37,9 +37,8 @@ const CaptionsButton = ({
   const handleClose = () => {
     // If the CaptionsButton is in the ToolbarOverflowMenu, we close the modal and the menu
     if (isOverflowButton && handleClick) {
-      setTimeout(() => {
-        handleClick();
-      }, 1000); // brief delay to allow the user to see that the captions were enabled/disabled
+      // Close the menu immediately to improve mobile UX
+      handleClick();
     }
   };
 
@@ -68,9 +67,11 @@ const CaptionsButton = ({
   };
 
   const handleActionClick = () => {
-    handleClose();
-
+    // First handle captions toggle
     handleCaptions(isCaptionsEnabled ? 'disable' : 'enable');
+
+    // Then close the menu if needed
+    handleClose();
   };
 
   return (
@@ -96,7 +97,14 @@ const CaptionsButton = ({
           isOverflowButton={isOverflowButton}
         />
       </Tooltip>
-      <CaptionsBox subscriberWrappers={subscriberWrappers} isCaptionsEnabled={isCaptionsEnabled} />
+      {!isOverflowButton && (
+        <CaptionsBox
+          subscriberWrappers={subscriberWrappers}
+          localPublisherCaptions={ownCaptions}
+          isCaptionsEnabled={isCaptionsEnabled}
+          isMobileView={isOverflowButton}
+        />
+      )}
     </>
   );
 };

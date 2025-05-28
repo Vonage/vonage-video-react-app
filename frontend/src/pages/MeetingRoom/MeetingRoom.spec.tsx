@@ -148,6 +148,7 @@ describe('MeetingRoom', () => {
       toggleParticipantList: vi.fn(),
       closeRightPanel: vi.fn(),
       emojiQueue: [],
+      currentCaptionsIdRef: { current: null },
     } as unknown as SessionContextType;
     mockUseSpeakingDetector.mockReturnValue(false);
     mockUseLayoutManager.mockImplementation(() => (_dimensions, elements) => {

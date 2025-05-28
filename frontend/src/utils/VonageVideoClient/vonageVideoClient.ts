@@ -15,6 +15,7 @@ import {
   SignalEvent,
   SignalType,
   SubscriberAudioLevelUpdatedEvent,
+  LocalCaptionReceived,
 } from '../../types/session';
 import logOnConnect from '../logOnConnect';
 import createMovingAvgAudioLevelTracker from '../movingAverageAudioLevelTracker';
@@ -33,6 +34,7 @@ type VonageVideoClientEvents = {
   subscriberVideoElementCreated: [SubscriberWrapper];
   subscriberDestroyed: [string];
   subscriberAudioLevelUpdated: [SubscriberAudioLevelUpdatedEvent];
+  localCaptionReceived: [LocalCaptionReceived];
 };
 
 /**
@@ -253,6 +255,23 @@ class VonageVideoClient extends EventEmitter<VonageVideoClientEvents> {
         if (error) {
           reject(new Error(`${error.name}: ${error.message}`));
         }
+
+        // the following is needed for the local subscriber to be able to receive captions
+        // More information: https://developer.vonage.com/en/video/guides/live-caption#receiving-your-own-live-captions
+        if (publisher.stream) {
+          const hiddenSubscriber = this.clientSession?.subscribe(
+            publisher.stream,
+            document.createElement('div'),
+            {
+              audioVolume: 0,
+            }
+          );
+
+          hiddenSubscriber?.on('captionReceived', (captionEvent) => {
+            this.emit('localCaptionReceived', captionEvent);
+          });
+        }
+
         resolve();
       });
     });

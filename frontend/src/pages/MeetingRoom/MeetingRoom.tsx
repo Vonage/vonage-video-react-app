@@ -13,6 +13,7 @@ import useRoomName from '../../hooks/useRoomName';
 import isValidRoomName from '../../utils/isValidRoomName';
 import useIsSmallViewport from '../../hooks/useIsSmallViewport';
 import usePublisherOptions from '../../Context/PublisherProvider/usePublisherOptions';
+import CaptionsBox from '../../components/MeetingRoom/CaptionsButton/CaptionsBox';
 
 const height = '@apply h-[calc(100dvh_-_80px)]';
 
@@ -32,7 +33,9 @@ const MeetingRoom = (): ReactElement => {
   const {
     joinRoom,
     subscriberWrappers,
+    ownCaptions,
     connected,
+    currentCaptionsIdRef,
     disconnect,
     reconnecting,
     rightPanelActiveTab,
@@ -101,6 +104,17 @@ const MeetingRoom = (): ReactElement => {
       />
       <RightPanel activeTab={rightPanelActiveTab} handleClose={closeRightPanel} />
       <EmojisOrigin />
+      {/* Renders the CaptionsBox directly in the meeting room on small port devices to ensure that captions
+       are always visible and accessible in the limited viewport. 
+       This placement provides an optimal user experience for accessibility on smaller screens. */}
+      {isSmallViewPort && !!currentCaptionsIdRef.current && (
+        <CaptionsBox
+          subscriberWrappers={subscriberWrappers}
+          localPublisherCaptions={ownCaptions}
+          isCaptionsEnabled={!!currentCaptionsIdRef.current}
+          isMobileView={isSmallViewPort}
+        />
+      )}
       <Toolbar
         isSharingScreen={isSharingScreen}
         toggleShareScreen={toggleShareScreen}

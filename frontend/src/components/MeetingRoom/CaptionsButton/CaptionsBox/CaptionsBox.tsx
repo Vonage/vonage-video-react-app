@@ -6,6 +6,8 @@ import { SubscriberWrapper } from '../../../../types/session';
 export type CaptionsBoxType = {
   subscriberWrappers: SubscriberWrapper[];
   isCaptionsEnabled: boolean;
+  isMobileView: boolean;
+  localPublisherCaptions?: string | null;
 };
 
 /**
@@ -19,36 +21,48 @@ export type CaptionsBoxType = {
 const CaptionsBox = ({
   subscriberWrappers,
   isCaptionsEnabled,
+  isMobileView = false,
+  localPublisherCaptions,
 }: CaptionsBoxType): ReactElement | null => {
-  // Check if captions are enabled and if there are any subscribers
-  if (!isCaptionsEnabled || subscriberWrappers.length === 0) {
+  if (!isCaptionsEnabled) {
     return null;
   }
 
+  const sxBox = {
+    position: 'absolute',
+    bottom: isMobileView ? 100 : 80, // Position higher above controls on mobile
+    left: '50%',
+    transform: 'translateX(-50%)',
+    backgroundColor: 'rgba(0, 0, 0, 0.7)',
+    color: 'white',
+    px: 2,
+    py: isMobileView ? 1 : 1.5,
+    borderRadius: 2,
+    width: isMobileView ? '90vw' : 600,
+    height: isMobileView ? 150 : 200, // Slightly shorter on mobile
+    overflowY: 'auto',
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'flex-start',
+    alignItems: 'flex-start',
+  };
+
   return (
-    <Box
-      data-testid="captions-box"
-      sx={{
-        position: 'absolute',
-        bottom: 80,
-        left: '50%',
-        transform: 'translateX(-50%)',
-        backgroundColor: 'rgba(0, 0, 0, 0.7)',
-        color: 'white',
-        px: 2,
-        py: 1.5,
-        borderRadius: 2,
-        width: 600,
-        height: 100,
-        overflowY: 'auto',
-        display: 'flex',
-        flexDirection: 'column',
-        justifyContent: 'flex-start',
-        alignItems: 'flex-start',
-      }}
-    >
+    <Box data-testid="captions-box" sx={sxBox}>
+      {localPublisherCaptions && (
+        <SingleCaption
+          key="local-publisher"
+          subscriber={null}
+          isMobileView={isMobileView}
+          caption={localPublisherCaptions}
+        />
+      )}
       {(subscriberWrappers ?? []).map((wrapper, idx) => (
-        <SingleCaption key={wrapper.subscriber?.id || idx} subscriber={wrapper.subscriber} />
+        <SingleCaption
+          key={wrapper.subscriber?.id || idx}
+          subscriber={wrapper.subscriber}
+          isMobileView={isMobileView}
+        />
       ))}
     </Box>
   );

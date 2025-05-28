@@ -7,7 +7,7 @@ export type CaptionsType = {
 };
 
 export type ReceivingCaptionsProps = {
-  subscriber: Subscriber;
+  subscriber?: Subscriber;
 };
 
 /**
