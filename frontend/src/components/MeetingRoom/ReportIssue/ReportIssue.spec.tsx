@@ -30,7 +30,7 @@ describe('ReportIssue component', () => {
       data: {
         feedbackData: {
           message: 'It worked!',
-          ticketUrl: 'https://success.url',
+          ticketUrl: 'https://example.com',
         },
       },
     });

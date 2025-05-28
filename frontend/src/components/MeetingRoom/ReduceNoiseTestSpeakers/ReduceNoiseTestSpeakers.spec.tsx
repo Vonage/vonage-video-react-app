@@ -54,10 +54,6 @@ describe('ReduceNoiseTestSpeakers', () => {
     customLightBlueColor: '#A338E6',
   };
 
-  afterEach(() => {
-    vi.clearAllMocks();
-  });
-
   it('renders the component with the correct elements', () => {
     mockHasMediaProcessorSupport.mockReturnValue(true);
 

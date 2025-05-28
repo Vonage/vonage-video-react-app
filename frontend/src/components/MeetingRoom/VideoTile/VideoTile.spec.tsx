@@ -46,8 +46,8 @@ describe('VideoTile component', () => {
     expect(ref.current).not.toBeNull();
 
     // hasVideo true means first inner div is visible
-    const firstInnerDiv = container.querySelector('div > div:first-child')!;
-    expect(firstInnerDiv).not.toHaveClass('hidden');
+    const hasVideoTileDiv = container.querySelector('div > div:first-child')!;
+    expect(hasVideoTileDiv).not.toHaveClass('hidden');
   });
 
   it('hides tile when isHidden is true', () => {
@@ -62,8 +62,8 @@ describe('VideoTile component', () => {
 
     const container = screen.getByTestId('video-tile');
 
-    const firstInnerDiv = container.querySelector('div > div:first-child')!;
-    expect(firstInnerDiv).toHaveClass('outline', 'outline-2', 'outline-sky-500');
+    const hasVideoTileDiv = container.querySelector('div > div:first-child')!;
+    expect(hasVideoTileDiv).toHaveClass('outline', 'outline-2', 'outline-sky-500');
   });
 
   it('shows fallback div when hasVideo is false', () => {
@@ -71,11 +71,11 @@ describe('VideoTile component', () => {
 
     const container = screen.getByTestId('video-tile');
 
-    const firstInnerDiv = container.querySelector('div > div:first-child')!;
-    const secondInnerDiv = container.querySelector('div > div:last-child')!;
+    const hasVideoTileDiv = container.querySelector('div > div:first-child')!;
+    const notHasVideoTileDiv = container.querySelector('div > div:last-child')!;
 
-    expect(firstInnerDiv).toHaveClass('hidden');
-    expect(secondInnerDiv).not.toHaveClass('hidden');
+    expect(hasVideoTileDiv).toHaveClass('hidden');
+    expect(notHasVideoTileDiv).not.toHaveClass('hidden');
   });
 
   it('fires onMouseEnter and onMouseLeave events', () => {

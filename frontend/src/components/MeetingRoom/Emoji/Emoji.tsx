@@ -29,7 +29,7 @@ const Emoji = ({ emojiWrapper }: EmojiProps): ReactElement => {
 
   return (
     <div
-      data-testid="emoji-main-div"
+      data-testid="emoji-string-container"
       style={style}
       className="ml-5 flex flex-col text-5xl md:ml-[15%] md:text-6xl"
     >

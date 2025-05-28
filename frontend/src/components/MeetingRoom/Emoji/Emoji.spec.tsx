@@ -23,7 +23,7 @@ describe('Emoji component', () => {
   it('applies correct inline styles including animationDuration', () => {
     render(<Emoji emojiWrapper={{ ...emojiWrapper }} />);
 
-    const container = screen.getByTestId('emoji-main-div');
+    const container = screen.getByTestId('emoji-string-container');
     expect(container).toHaveStyle({
       position: 'absolute',
       animationName: 'moveEmoji',
@@ -43,7 +43,7 @@ describe('Emoji component', () => {
   it('applies expected Tailwind classes to container and Chip', () => {
     render(<Emoji emojiWrapper={{ ...emojiWrapper }} />);
 
-    const container = screen.getByTestId('emoji-main-div');
+    const container = screen.getByTestId('emoji-string-container');
     expect(container).toHaveClass(
       'ml-5',
       'flex',
