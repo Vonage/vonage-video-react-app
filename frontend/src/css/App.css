@@ -51,3 +51,21 @@
     bottom: 100%;
   }
 }
+
+/* 
+  HiddenParticipantsTile styles:
+  These rules style the avatar group shown when participants are hidden.
+  - The default border color is a dark gray.
+  - On hover, the border color becomes lighter to indicate interactivity.
+  - Smooth transition is applied to the border color for a subtle effect.
+*/
+#hidden-participants .MuiAvatarGroup-root .MuiAvatar-root {
+  border-color: rgb(60, 64, 67);
+  transition-property: border-color;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 150ms;
+}
+
+#hidden-participants:hover .MuiAvatarGroup-root .MuiAvatar-root {
+  border-color: rgb(76, 80, 82);
+}

@@ -1,4 +1,4 @@
-import '../../index.css';
+import '../../css/index.css';
 import { beforeEach, describe, expect, it, Mock, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import { Publisher, Subscriber } from '@vonage/client-sdk-video';
