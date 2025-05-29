@@ -232,7 +232,7 @@ const SessionProvider = ({ children }: SessionProviderProps): ReactElement => {
 
   /**
    * Handles changes to stream properties. This triggers a re-render when a stream property changes
-   * @param {StreamPropertyChangedEvent} event - The event containing the stream, changed property, and new value.
+   * @param {StreamPropertyChangedEvent} event - The event containing the stream, changed property, new value, and old value.
    */
   const handleStreamPropertyChanged = (event: StreamPropertyChangedEvent) => {
     const { stream, changedProperty, newValue, oldValue } = event;
