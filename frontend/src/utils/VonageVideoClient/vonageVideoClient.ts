@@ -146,7 +146,8 @@ class VonageVideoClient extends EventEmitter<VonageVideoClientEvents> {
 
   /**
    * Emits an event when a stream property changes.
-   * @param event
+   * @param {StreamPropertyChangedEvent} event - The event containing the stream and the changed property.
+   * The event includes the stream, the changed property, and the old and new values.
    * @private
    */
   private handleStreamPropertyChanged = (event: StreamPropertyChangedEvent) => {
