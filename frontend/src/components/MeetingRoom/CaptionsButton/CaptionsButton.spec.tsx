@@ -1,9 +1,8 @@
 import { describe, expect, it, vi, beforeEach, Mock } from 'vitest';
 import { render, screen, act, waitFor } from '@testing-library/react';
 import type { AxiosResponse } from 'axios';
-// revisit why this needs da route
 import { Subscriber } from '@vonage/client-sdk-video';
-import { enableCaptions, disableCaptions } from '../../../api/captions/routes';
+import { enableCaptions, disableCaptions } from '../../../api/captions';
 import CaptionsButton from './CaptionsButton';
 import useRoomName from '../../../hooks/useRoomName';
 import { SessionContextType } from '../../../Context/SessionProvider/session';
@@ -12,7 +11,7 @@ import { SubscriberWrapper } from '../../../types/session';
 
 vi.mock('../../../hooks/useSessionContext');
 vi.mock('../../../hooks/useRoomName');
-vi.mock('../../../api/captions/routes', () => ({
+vi.mock('../../../api/captions', () => ({
   enableCaptions: vi.fn(),
   disableCaptions: vi.fn(),
 }));
@@ -27,8 +26,8 @@ describe('CaptionsButton', () => {
   const createSubscriberWrapper = (id: string): SubscriberWrapper => {
     const mockSubscriber = {
       id,
-      on: vi.fn(), // Mock the 'on' method using vitest's mock function
-      off: vi.fn(), // Mock the 'off' method
+      on: vi.fn(),
+      off: vi.fn(),
       videoWidth: () => 1280,
       videoHeight: () => 720,
       subscribeToVideo: () => {},

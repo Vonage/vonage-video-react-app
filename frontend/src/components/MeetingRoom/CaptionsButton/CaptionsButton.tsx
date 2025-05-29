@@ -3,7 +3,7 @@ import { Tooltip } from '@mui/material';
 import { ReactElement, useState } from 'react';
 import useRoomName from '../../../hooks/useRoomName';
 import ToolbarButton from '../ToolbarButton';
-import { enableCaptions, disableCaptions } from '../../../api/captions/routes';
+import { enableCaptions, disableCaptions } from '../../../api/captions';
 import { SubscriberWrapper } from '../../../types/session';
 import CaptionsBox from './CaptionsBox';
 import useSessionContext from '../../../hooks/useSessionContext';

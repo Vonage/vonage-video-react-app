@@ -98,5 +98,6 @@ describe('Toolbar', () => {
     expect(screen.queryByTestId('screensharing-button')).toBeVisible();
     expect(screen.queryByTestId('archiving-button')).toBeVisible();
     expect(screen.queryByTestId('emoji-grid-button')).toBeVisible();
+    expect(screen.queryByTestId('captions-button')).toBeVisible();
   });
 });
