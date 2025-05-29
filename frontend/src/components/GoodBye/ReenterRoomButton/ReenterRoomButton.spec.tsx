@@ -9,11 +9,9 @@ describe('ReenterRoomButton', () => {
 
     render(<ReenterRoomButton roomName="room1" handleReenter={mockFn} />);
 
-    // Use user-event to simulate click
     const button = screen.getByTestId('reenterButton');
     await userEvent.click(button);
 
-    // Check button is correctly displayed
     expect(screen.getByText('Re-enter')).toBeInTheDocument();
     expect(mockFn).toHaveBeenCalled();
   });
@@ -23,7 +21,6 @@ describe('ReenterRoomButton', () => {
 
     render(<ReenterRoomButton roomName="" handleReenter={mockFn} />);
 
-    // Check button is hidden
     expect(screen.queryByTestId('reenterButton')).not.toBeInTheDocument();
     expect(screen.queryByText('Re-enter')).not.toBeInTheDocument();
     expect(mockFn).not.toHaveBeenCalled();

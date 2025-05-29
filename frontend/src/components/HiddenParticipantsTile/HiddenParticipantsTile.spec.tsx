@@ -6,7 +6,6 @@ import { SubscriberWrapper } from '../../types/session';
 import HiddenParticipantsTile from './index';
 
 describe('HiddenParticipantsTile', () => {
-  // Define the test props
   const box = { height: 100, width: 100, top: 0, left: 0 };
   const hiddenSubscribers = [
     {
@@ -32,7 +31,6 @@ describe('HiddenParticipantsTile', () => {
   it('should display two hidden participants', async () => {
     const mockFn = vi.fn();
 
-    // Define the test props
     const currentHiddenSubscribers = [
       ...hiddenSubscribers,
       {
@@ -63,20 +61,16 @@ describe('HiddenParticipantsTile', () => {
       />
     );
 
-    // Check that the button is rendered correctly with the appropriate data-testid. Click it.
     const button = screen.getByTestId('hidden-participants');
     expect(button).toBeInTheDocument();
     await userEvent.click(button);
 
-    // Simulate mouse enter/leave
     fireEvent.mouseEnter(button);
     fireEvent.mouseLeave(button);
 
-    // Check that the avatars (based on the initial letters) are displayed
     expect(screen.getByText('JD')).toBeInTheDocument();
     expect(screen.getByText('JS')).toBeInTheDocument();
 
-    // Assert that the handleClick function was called when the button is clicked
     expect(mockFn).toHaveBeenCalled();
   });
 
@@ -93,16 +87,13 @@ describe('HiddenParticipantsTile', () => {
       />
     );
 
-    // Check that the button is rendered correctly with the appropriate data-testid. Click it.
     const button = screen.getByTestId('hidden-participants');
     expect(button).toBeInTheDocument();
     await userEvent.click(button);
 
-    // Check that the avatars (based on the initial letters) are displayed
     expect(screen.getByText('JD')).toBeInTheDocument();
     expect(screen.queryByText('JS')).not.toBeInTheDocument();
 
-    // Assert that the handleClick function was called when the button is clicked
     expect(mockFn).toHaveBeenCalled();
   });
 });

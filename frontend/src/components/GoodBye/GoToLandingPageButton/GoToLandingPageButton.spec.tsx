@@ -9,11 +9,9 @@ describe('GoToLandingPageButton', () => {
 
     render(<GoToLandingPageButton handleLanding={mockFn} />);
 
-    // Use user-event to simulate click
     const button = screen.getByTestId('go-to-landing-button');
     await userEvent.click(button);
 
-    // Check button is correctly displayed
     expect(screen.getByText('Return to landing page')).toBeInTheDocument();
     expect(mockFn).toHaveBeenCalled();
   });

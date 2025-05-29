@@ -6,7 +6,6 @@ describe('PushPinOffIcon', () => {
   it('should display the correct PushPinOffIcon', async () => {
     render(<PushPinOffIcon sx={{ fontSize: '24px', color: 'white' }} />);
 
-    // Check icon is correctly displayed
     expect(screen.queryByTestId('PushPinOffIcon')).toBeInTheDocument();
   });
 });

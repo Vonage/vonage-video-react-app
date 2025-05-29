@@ -1,7 +1,7 @@
 import { render, screen, fireEvent } from '@testing-library/react';
 import { describe, it, beforeEach, vi, expect, Mock } from 'vitest';
 import ReportIssue from './ReportIssue';
-// Import the mocked function so we can override it in tests
+
 import reportIssue from '../../../api/reportFeedback';
 
 // Mock
@@ -9,7 +9,7 @@ vi.mock('../../../hooks/useCollectBrowserInformation', () => ({
   default: () => ({ browser: 'TestBrowser' }),
 }));
 vi.mock('../../../api/reportFeedback', () => ({
-  default: vi.fn(), // Just a jest.fn placeholder, will override later
+  default: vi.fn(),
 }));
 
 const mockHandleClose = vi.fn();
@@ -25,7 +25,6 @@ describe('ReportIssue component', () => {
   });
 
   it('renders form and submits data successfully', async () => {
-    // Override mock to resolve successfully
     (reportIssue as Mock).mockResolvedValue({
       data: {
         feedbackData: {
@@ -62,7 +61,6 @@ describe('ReportIssue component', () => {
   });
 
   it('displays error message when submission fails', async () => {
-    // Override mock to reject (simulate failure)
     (reportIssue as Mock).mockRejectedValue(new Error('Network error'));
 
     render(<ReportIssue isOpen handleClose={mockHandleClose} />);

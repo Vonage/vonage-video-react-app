@@ -14,7 +14,6 @@ describe('JoinExistingRoom', () => {
   it('should display the correct JoinExistingRoom', async () => {
     render(<JoinExistingRoom />);
 
-    // Check room is correctly displayed
     expect(screen.getByTestId('JoinExistingRoom')).toBeInTheDocument();
     expect(screen.getByTestId('KeyboardIcon')).toBeInTheDocument();
     expect(screen.getByText('Join')).toBeInTheDocument();

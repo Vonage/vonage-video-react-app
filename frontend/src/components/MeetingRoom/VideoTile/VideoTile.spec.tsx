@@ -4,7 +4,6 @@ import { createRef } from 'react';
 import { Box } from 'opentok-layout-js';
 import VideoTile, { VideoTileProps } from './VideoTile';
 
-// Mock getBoxStyle helper to return inline style for testing
 vi.mock('../../../utils/helpers/getBoxStyle', () => ({
   __esModule: true,
   default: (box: Box, isScreenshare: boolean) => ({

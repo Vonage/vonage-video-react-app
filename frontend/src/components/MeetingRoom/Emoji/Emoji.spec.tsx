@@ -13,10 +13,7 @@ describe('Emoji component', () => {
   it('renders emoji and name label correctly', () => {
     render(<Emoji emojiWrapper={{ ...emojiWrapper }} />);
 
-    // The emoji character should be rendered as text in the container
     expect(screen.getByText(emojiWrapper.emoji)).toBeInTheDocument();
-
-    // The Chip label should render the name
     expect(screen.getByText(emojiWrapper.name)).toBeInTheDocument();
   });
 
@@ -33,8 +30,6 @@ describe('Emoji component', () => {
       zIndex: '1',
     });
 
-    // Check animationDuration includes EMOJI_DISPLAY_DURATION + 100 ms
-    // It is a string like '2100ms' (if EMOJI_DISPLAY_DURATION is 2000)
     const duration = container.style.animationDuration;
     const expectedDuration = EMOJI_DISPLAY_DURATION + 100;
     expect(parseInt(duration, 10)).toBe(expectedDuration);

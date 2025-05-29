@@ -73,14 +73,12 @@ describe('VideoDevicesOptions Component', () => {
     const toggleButton = screen.getByLabelText('Toggle background blur');
     fireEvent.click(toggleButton);
 
-    // Call clearVideoFilter
     await waitFor(() => {
       expect(clearVideoFilter).toHaveBeenCalled();
     });
 
     fireEvent.click(toggleButton);
 
-    // Call applyVideoFilter
     await waitFor(() => {
       expect(applyVideoFilter).toHaveBeenCalledWith({
         type: 'backgroundBlur',
