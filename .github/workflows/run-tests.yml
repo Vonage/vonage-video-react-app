@@ -76,13 +76,14 @@ jobs:
 
       - name: Install opera latest
         run: |
-          sudo add-apt-repository 'deb https://deb.opera.com/opera-stable/ stable non-free'
-          wget -qO- https://deb.opera.com/archive.key | sudo apt-key add -
+          sudo mkdir -p /etc/apt/keyrings
+          curl -fsSL https://deb.opera.com/archive.key | gpg --dearmor | sudo tee /etc/apt/keyrings/opera.gpg > /dev/null
+          echo "deb [signed-by=/etc/apt/keyrings/opera.gpg] https://deb.opera.com/opera-stable/ stable non-free" | \
+            sudo tee /etc/apt/sources.list.d/opera-stable.list > /dev/null
           sudo apt-get update
           sudo apt-get install opera-stable -y
           echo "Check opera version"
           /usr/bin/opera --version
-          echo "Opera latest downloaded and installed"
 
       - name: Setup node
         if: steps.check-skip-ci.outputs.result == 'false'
