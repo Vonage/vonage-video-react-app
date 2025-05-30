@@ -37,7 +37,7 @@ export type SignalEvent = {
 };
 
 export type SignalType = {
-  type: 'emoji' | 'chat';
+  type: 'emoji' | 'chat' | 'captions';
   data: string;
 };
 

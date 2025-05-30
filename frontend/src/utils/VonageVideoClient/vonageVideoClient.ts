@@ -30,6 +30,7 @@ type VonageVideoClientEvents = {
   signal: [SignalEvent];
   'signal:chat': [SignalEvent];
   'signal:emoji': [SignalEvent];
+  'signal:captions': [SignalEvent];
   streamPropertyChanged: [];
   subscriberVideoElementCreated: [SubscriberWrapper];
   subscriberDestroyed: [string];
@@ -158,7 +159,7 @@ class VonageVideoClient extends EventEmitter<VonageVideoClientEvents> {
    */
   private handleSignal = (event: SignalEvent) => {
     const { type } = event;
-    if (type === 'signal:chat' || type === 'signal:emoji') {
+    if (type === 'signal:chat' || type === 'signal:emoji' || type === 'signal:captions') {
       this.emit(type, event);
     }
   };

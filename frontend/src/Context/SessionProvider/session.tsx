@@ -116,6 +116,16 @@ export type SessionProviderProps = {
   children: ReactNode;
 };
 
+/**
+ * @typedef {object} CaptionsSignalDataType
+ * @property {string} action - The action to be performed on captions (e.g., 'enable', 'disable', 'join', 'leave').
+ * @property {string} captionsId - The ID of the captions to be enabled or disabled.
+ */
+export type CaptionsSignalDataType = {
+  action: string;
+  captionsId: string;
+};
+
 const MAX_PIN_COUNT = isMobile() ? MAX_PIN_COUNT_MOBILE : MAX_PIN_COUNT_DESKTOP;
 
 /**
@@ -236,6 +246,86 @@ const SessionProvider = ({ children }: SessionProviderProps): ReactElement => {
   const [connected, setConnected] = useState(false);
   const currentCaptionsIdRef = useRef<string | null>(null);
   const currentRoomNameRef = useRef<string | null>(null);
+  const captionsActiveCountRef = useRef<number>(0);
+
+  /**
+   * Handles the captions signal received from the session.
+   * This function manages enabling, disabling, joining, and leaving captions.
+   * @param {SignalEvent} event - The signal event containing the data.
+   */
+  const handleCaptionsSignal = useCallback(({ data }: SignalEvent) => {
+    try {
+      let parsedData: CaptionsSignalDataType;
+      let action: string = '';
+      let captionsId: string = '';
+
+      try {
+        parsedData = JSON.parse(data as string);
+        action = parsedData.action;
+        captionsId = parsedData.captionsId;
+      } catch {
+        if (data) {
+          captionsId = data;
+          action = 'enable';
+        } else {
+          action = 'disable';
+        }
+      }
+
+      switch (action) {
+        case 'enable':
+          if (captionsId) {
+            currentCaptionsIdRef.current = captionsId;
+            captionsActiveCountRef.current += 1;
+          }
+          break;
+
+        case 'join':
+          captionsActiveCountRef.current += 1;
+          break;
+
+        case 'leave': {
+          const newCount = Math.max(0, captionsActiveCountRef.current - 1);
+          captionsActiveCountRef.current = newCount;
+
+          // If there are no other participants using captions, we disable them for the whole session.
+          // This is to ensure that captions are only disabled when there are other participants using them.
+          if (newCount === 0 && currentCaptionsIdRef.current && currentRoomNameRef.current) {
+            disableCaptions(currentRoomNameRef.current, currentCaptionsIdRef.current)
+              .then(() => {
+                currentCaptionsIdRef.current = null;
+
+                vonageVideoClient.current?.signal({
+                  type: 'captions',
+                  data: JSON.stringify({ action: 'disable' }),
+                });
+              })
+              .catch((err) => console.error('Error disabling captions:', err));
+          }
+          break;
+        }
+
+        case 'disable':
+          currentCaptionsIdRef.current = null;
+          captionsActiveCountRef.current = 0;
+          break;
+
+        default:
+          if (captionsId) {
+            currentCaptionsIdRef.current = captionsId;
+            captionsActiveCountRef.current = 1;
+          } else {
+            currentCaptionsIdRef.current = null;
+            captionsActiveCountRef.current = 0;
+          }
+          break;
+      }
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        console.error(err);
+      }
+    }
+  }, []);
 
   /**
    * Handles changes to stream properties. This triggers a re-render when a stream property changes
@@ -329,6 +419,7 @@ const SessionProvider = ({ children }: SessionProviderProps): ReactElement => {
       vonageVideoClient.current.on('archiveStarted', handleArchiveStarted);
       vonageVideoClient.current.on('archiveStopped', handleArchiveStopped);
       vonageVideoClient.current.on('signal:chat', handleChatSignal);
+      vonageVideoClient.current.on('signal:captions', handleCaptionsSignal);
       vonageVideoClient.current.on('signal:emoji', handleEmoji);
       vonageVideoClient.current.on(
         'subscriberAudioLevelUpdated',
