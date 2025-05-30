@@ -8,7 +8,7 @@ import SessionProvider from './session';
 import ActiveSpeakerTracker from '../../utils/ActiveSpeakerTracker';
 import useUserContext from '../../hooks/useUserContext';
 import VonageVideoClient from '../../utils/VonageVideoClient';
-import { Credential, SubscriberWrapper } from '../../types/session';
+import { Credential, StreamPropertyChangedEvent, SubscriberWrapper } from '../../types/session';
 import fetchCredentials from '../../api/fetchCredentials';
 
 vi.mock('../../utils/ActiveSpeakerTracker');
@@ -49,6 +49,7 @@ describe('SessionProvider', () => {
       forceMute,
       pinSubscriber,
       isMaxPinned,
+      lastStreamUpdate,
     } = useSessionContext();
 
     useEffect(() => {
@@ -111,6 +112,9 @@ describe('SessionProvider', () => {
         <span data-testid="reconnecting">{String(reconnecting)}</span>
         <span data-testid="archiveId">{String(archiveId)}</span>
         <span data-testid="isMaxPinned">{String(isMaxPinned)}</span>
+        <span data-testid="streamPropertyChanged">
+          {lastStreamUpdate ? JSON.stringify(lastStreamUpdate) : 'No updates'}
+        </span>
       </div>
     );
   };
@@ -281,6 +285,31 @@ describe('SessionProvider', () => {
       });
 
       await waitFor(() => expect(getByTestId('connected')).toHaveTextContent('false'));
+    });
+
+    it('when a stream property changes, it should update the state', async () => {
+      const streamPropertyChangedEvent = {
+        stream: {
+          id: 'stream1',
+        } as unknown as Stream,
+        changedProperty: 'hasVideo',
+        newValue: false,
+        oldValue: true,
+      } as unknown as StreamPropertyChangedEvent;
+
+      await waitFor(() => {
+        expect(getByTestId('streamPropertyChanged')).toHaveTextContent('No updates');
+      });
+
+      act(() => {
+        vonageVideoClient.emit('streamPropertyChanged', streamPropertyChangedEvent);
+      });
+
+      await waitFor(() => {
+        expect(getByTestId('streamPropertyChanged')).toHaveTextContent(
+          JSON.stringify(streamPropertyChangedEvent)
+        );
+      });
     });
   });
 

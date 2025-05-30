@@ -1,4 +1,4 @@
-import { act, queryByText, render, screen, waitFor } from '@testing-library/react';
+import { act, fireEvent, queryByText, render, screen, waitFor } from '@testing-library/react';
 import { describe, beforeEach, it, Mock, vi, expect, afterAll } from 'vitest';
 import { RefObject } from 'react';
 import { EventEmitter } from 'stream';
@@ -122,7 +122,9 @@ describe('DeviceSettingsMenu Component', () => {
       );
       expect(outputDevicesElement.children[2]).toHaveTextContent('MacBook Pro Speakers (Built-in)');
 
-      await act(() => (outputDevicesElement.children[2] as HTMLOptionElement).click?.());
+      await act(async () => {
+        fireEvent.click(outputDevicesElement.children[2]);
+      });
 
       expect(mockSetAudioOutputDevice).toHaveBeenCalledWith(audioOutputDevices[2].deviceId);
       expect(
@@ -153,7 +155,9 @@ describe('DeviceSettingsMenu Component', () => {
         (outputDevicesElement.firstChild as HTMLOptionElement).classList.contains('Mui-selected')
       ).toBe(true);
 
-      await act(() => (outputDevicesElement.firstChild as HTMLOptionElement).click?.());
+      await act(async () => {
+        fireEvent.click(outputDevicesElement.firstChild as HTMLOptionElement);
+      });
 
       expect(mockSetAudioOutputDevice).not.toHaveBeenCalled();
       await expect(
@@ -239,7 +243,10 @@ describe('DeviceSettingsMenu Component', () => {
       expect(outputDevicesElement.children[2]).toHaveTextContent('MacBook Pro Speakers (Built-in)');
 
       // select device 2
-      await act(() => (outputDevicesElement.children[1] as HTMLOptionElement).click?.());
+      await act(async () => {
+        fireEvent.click(outputDevicesElement.children[1] as HTMLOptionElement);
+      });
+
       expect(mockSetAudioOutputDevice).toHaveBeenCalledWith(audioOutputDevices[1].deviceId);
       await expect(
         (outputDevicesElement.children[1] as HTMLOptionElement).classList.contains('Mui-selected')
@@ -266,7 +273,7 @@ describe('DeviceSettingsMenu Component', () => {
 
   describe('renders the video settings menu', () => {
     const deviceType = 'video';
-    it('if prompted', () => {
+    it('if prompted', async () => {
       render(
         <DeviceSettingsMenu
           deviceType={deviceType}
@@ -277,7 +284,10 @@ describe('DeviceSettingsMenu Component', () => {
           setIsOpen={mockSetIsOpen}
         />
       );
-      expect(screen.queryByTestId('video-settings-devices-dropdown')).toBeInTheDocument();
+
+      await waitFor(() => {
+        expect(screen.queryByTestId('video-settings-devices-dropdown')).toBeInTheDocument();
+      });
     });
 
     it('but does not render it if closed', () => {
@@ -294,7 +304,7 @@ describe('DeviceSettingsMenu Component', () => {
       expect(screen.queryByTestId('video-settings-devices-dropdown')).not.toBeInTheDocument();
     });
 
-    it('and renders the dropdown separator and background blur option when media processor is supported', () => {
+    it('and renders the dropdown separator and background blur option when media processor is supported', async () => {
       mockedHasMediaProcessorSupport.mockReturnValue(true);
       render(
         <DeviceSettingsMenu
@@ -306,11 +316,14 @@ describe('DeviceSettingsMenu Component', () => {
           setIsOpen={mockSetIsOpen}
         />
       );
-      expect(screen.queryByTestId('dropdown-separator')).toBeVisible();
-      expect(screen.queryByText('Blur your background')).toBeVisible();
+
+      await waitFor(() => {
+        expect(screen.queryByTestId('dropdown-separator')).toBeVisible();
+        expect(screen.queryByText('Blur your background')).toBeVisible();
+      });
     });
 
-    it('and does not render the dropdown separator and background blur option when media processor is not supported', () => {
+    it('and does not render the dropdown separator and background blur option when media processor is not supported', async () => {
       render(
         <DeviceSettingsMenu
           deviceType={deviceType}
@@ -321,8 +334,11 @@ describe('DeviceSettingsMenu Component', () => {
           setIsOpen={mockSetIsOpen}
         />
       );
-      expect(screen.queryByTestId('dropdown-separator')).not.toBeInTheDocument();
-      expect(screen.queryByText('Blur your background')).not.toBeInTheDocument();
+
+      await waitFor(() => {
+        expect(screen.queryByTestId('dropdown-separator')).not.toBeInTheDocument();
+        expect(screen.queryByText('Blur your background')).not.toBeInTheDocument();
+      });
     });
   });
 });

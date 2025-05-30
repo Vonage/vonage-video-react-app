@@ -16,6 +16,7 @@ import {
   SignalType,
   SubscriberAudioLevelUpdatedEvent,
   LocalCaptionReceived,
+  StreamPropertyChangedEvent,
 } from '../../types/session';
 import logOnConnect from '../logOnConnect';
 import createMovingAvgAudioLevelTracker from '../movingAverageAudioLevelTracker';
@@ -32,6 +33,7 @@ type VonageVideoClientEvents = {
   'signal:emoji': [SignalEvent];
   'signal:captions': [SignalEvent];
   streamPropertyChanged: [];
+  streamPropertyChanged: [StreamPropertyChangedEvent];
   subscriberVideoElementCreated: [SubscriberWrapper];
   subscriberDestroyed: [string];
   subscriberAudioLevelUpdated: [SubscriberAudioLevelUpdatedEvent];
@@ -80,7 +82,9 @@ class VonageVideoClient extends EventEmitter<VonageVideoClientEvents> {
     this.clientSession.on('sessionReconnected', () => this.handleReconnected());
     this.clientSession.on('sessionReconnecting', () => this.handleReconnecting());
     this.clientSession.on('signal', (event) => this.handleSignal(event));
-    this.clientSession.on('streamPropertyChanged', () => this.handleStreamPropertyChanged());
+    this.clientSession.on('streamPropertyChanged', (event) =>
+      this.handleStreamPropertyChanged(event)
+    );
     this.clientSession.on('streamCreated', (event) => this.handleStreamCreated(event));
   };
 
@@ -146,10 +150,12 @@ class VonageVideoClient extends EventEmitter<VonageVideoClientEvents> {
 
   /**
    * Emits an event when a stream property changes.
+   * @param {StreamPropertyChangedEvent} event - The event containing the stream and the changed property.
+   * The event includes the stream, the changed property, and the old and new values.
    * @private
    */
-  private handleStreamPropertyChanged = () => {
-    this.emit('streamPropertyChanged');
+  private handleStreamPropertyChanged = (event: StreamPropertyChangedEvent) => {
+    this.emit('streamPropertyChanged', event);
   };
 
   /**
