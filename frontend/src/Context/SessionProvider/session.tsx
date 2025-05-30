@@ -248,6 +248,16 @@ const SessionProvider = ({ children }: SessionProviderProps): ReactElement => {
   const currentRoomNameRef = useRef<string | null>(null);
   const captionsActiveCountRef = useRef<number>(0);
 
+  useEffect(() => {
+    if (connected && vonageVideoClient.current) {
+      // Request captions status from existing participants
+      vonageVideoClient.current.signal({
+        type: 'captions',
+        data: JSON.stringify({ action: 'request-status' }),
+      });
+    }
+  }, [connected]);
+
   /**
    * Handles the captions signal received from the session.
    * This function manages enabling, disabling, joining, and leaving captions.
@@ -308,6 +318,29 @@ const SessionProvider = ({ children }: SessionProviderProps): ReactElement => {
         case 'disable':
           currentCaptionsIdRef.current = null;
           captionsActiveCountRef.current = 0;
+          break;
+
+        // Request status of captions from other users
+        case 'request-status':
+          if (currentCaptionsIdRef.current) {
+            // Slight delay to ensure requester is ready to receive
+            setTimeout(() => {
+              vonageVideoClient.current?.signal({
+                type: 'captions',
+                data: JSON.stringify({
+                  action: 'status-response',
+                  captionsId: currentCaptionsIdRef.current,
+                }),
+              });
+            }, 1000);
+          }
+          break;
+
+        case 'status-response':
+          // Handle the response from other users about captions status
+          if (!currentCaptionsIdRef.current && captionsId) {
+            currentCaptionsIdRef.current = captionsId;
+          }
           break;
 
         default:
