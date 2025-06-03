@@ -32,7 +32,6 @@ type VonageVideoClientEvents = {
   'signal:chat': [SignalEvent];
   'signal:emoji': [SignalEvent];
   'signal:captions': [SignalEvent];
-  streamPropertyChanged: [];
   streamPropertyChanged: [StreamPropertyChangedEvent];
   subscriberVideoElementCreated: [SubscriberWrapper];
   subscriberDestroyed: [string];
