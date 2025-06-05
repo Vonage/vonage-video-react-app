@@ -1,10 +1,13 @@
 import Fade from '@mui/material/Fade';
 import { useState, useEffect, ReactElement } from 'react';
-import { Alert } from '@mui/material';
-import { MUTED_ALERT_MESSAGE, FORCE_MUTED_ALERT_MESSAGE } from '../../utils/constants';
+import { Alert, useMediaQuery } from '@mui/material';
+import {
+  MUTED_ALERT_MESSAGE,
+  FORCE_MUTED_ALERT_MESSAGE,
+  SMALL_VIEWPORT,
+} from '../../utils/constants';
 import useSpeakingDetector from '../../hooks/useSpeakingDetector';
 import usePublisherContext from '../../hooks/usePublisherContext';
-import useIsSmallViewport from '../../hooks/useIsSmallViewport';
 
 /**
  * MutedAlert Component
@@ -19,7 +22,7 @@ const MutedAlert = (): ReactElement => {
     isAudioEnabled,
     selectedMicrophoneId: publisher?.getAudioSource()?.id,
   });
-  const isSmallViewport = useIsSmallViewport();
+  const isSmallViewport = useMediaQuery(`(max-width:${SMALL_VIEWPORT}px)`);
   const messageToDisplay = isForceMuted ? FORCE_MUTED_ALERT_MESSAGE : MUTED_ALERT_MESSAGE;
 
   useEffect(() => {

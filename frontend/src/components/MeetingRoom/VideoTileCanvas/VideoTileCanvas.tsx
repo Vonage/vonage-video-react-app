@@ -1,6 +1,6 @@
 import { ReactElement, useRef } from 'react';
 import { Publisher as OTPublisher } from '@vonage/client-sdk-video';
-import { CircularProgress } from '@mui/material';
+import { CircularProgress, useMediaQuery } from '@mui/material';
 import useLayoutManager from '../../../hooks/useLayoutManager';
 import usePublisherContext from '../../../hooks/usePublisherContext';
 import useSessionContext from '../../../hooks/useSessionContext';
@@ -13,7 +13,7 @@ import getSubscribersToDisplay from '../../../utils/helpers/getSubscribersToDisp
 import useSubscribersInDisplayOrder from '../../../hooks/useSubscribersInDisplayOrder';
 import getLayoutBoxes from '../../../utils/helpers/getLayoutBoxes';
 import useActiveSpeaker from '../../../hooks/useActiveSpeaker';
-import useIsSmallViewport from '../../../hooks/useIsSmallViewport';
+import { SMALL_VIEWPORT } from '../../../utils/constants';
 
 export type VideoTileCanvasProps = {
   isSharingScreen: boolean;
@@ -82,11 +82,11 @@ const VideoTileCanvas = ({
     wrapRef,
   });
 
-  const isSmallViewPort = useIsSmallViewport();
+  const isSmallViewport = useMediaQuery(`(max-width:${SMALL_VIEWPORT}px)`);
 
   // Height is 100dvh - toolbar height (80px) and header height (80px) - 24px wrapper margin on small viewport device
   // Height is 100dvh - toolbar height (80px) - 24px wrapper margin on desktop
-  const heightClass = isSmallViewPort
+  const heightClass = isSmallViewport
     ? '@apply h-[calc(100dvh_-_184px)]'
     : '@apply h-[calc(100dvh_-_104px)]';
 

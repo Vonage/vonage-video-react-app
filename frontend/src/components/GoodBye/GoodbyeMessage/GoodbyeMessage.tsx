@@ -1,8 +1,9 @@
 import { useNavigate } from 'react-router-dom';
 import { ReactElement } from 'react';
+import { useMediaQuery } from '@mui/material';
 import GoToLandingPageButton from '../GoToLandingPageButton';
 import ReenterRoomButton from '../ReenterRoomButton';
-import useIsSmallViewport from '../../../hooks/useIsSmallViewport';
+import { SMALL_VIEWPORT } from '../../../utils/constants';
 
 export type GoodByeMessageProps = {
   header: string;
@@ -17,7 +18,7 @@ export type GoodByeMessageProps = {
  * @returns {ReactElement} The GoodByeMessage component.
  */
 const GoodByeMessage = ({ header, message, roomName }: GoodByeMessageProps): ReactElement => {
-  const isSmallViewport = useIsSmallViewport();
+  const isSmallViewport = useMediaQuery(`(max-width:${SMALL_VIEWPORT}px)`);
   const navigate = useNavigate();
   const handleLanding = () => {
     navigate('/');

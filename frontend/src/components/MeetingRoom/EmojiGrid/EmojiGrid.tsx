@@ -1,7 +1,8 @@
 import { Dispatch, ReactElement, RefObject, SetStateAction } from 'react';
-import useIsSmallViewport from '../../../hooks/useIsSmallViewport';
+import { useMediaQuery } from '@mui/material';
 import EmojiGridMobile from './EmojiGridMobile';
 import EmojiGridDesktop from './EmojiGridDesktop';
+import { SMALL_VIEWPORT } from '../../../utils/constants';
 
 export type EmojiGridProps = {
   isEmojiGridOpen: boolean;
@@ -27,7 +28,7 @@ const EmojiGrid = ({
   setIsEmojiGridOpen,
   isParentOpen,
 }: EmojiGridProps): ReactElement => {
-  const isSmallViewport = useIsSmallViewport();
+  const isSmallViewport = useMediaQuery(`(max-width:${SMALL_VIEWPORT}px)`);
 
   const handleClickAway = () => {
     if (isSmallViewport) {

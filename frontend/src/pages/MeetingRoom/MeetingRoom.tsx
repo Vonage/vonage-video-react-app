@@ -1,5 +1,6 @@
 import { useEffect, ReactElement } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useMediaQuery } from '@mui/material';
 import usePublisherContext from '../../hooks/usePublisherContext';
 import ConnectionAlert from '../../components/MeetingRoom/ConnectionAlert';
 import Toolbar from '../../components/MeetingRoom/Toolbar';
@@ -11,8 +12,8 @@ import EmojisOrigin from '../../components/MeetingRoom/EmojisOrigin';
 import RightPanel from '../../components/MeetingRoom/RightPanel';
 import useRoomName from '../../hooks/useRoomName';
 import isValidRoomName from '../../utils/isValidRoomName';
-import useIsSmallViewport from '../../hooks/useIsSmallViewport';
 import usePublisherOptions from '../../Context/PublisherProvider/usePublisherOptions';
+import { SMALL_VIEWPORT } from '../../utils/constants';
 
 const height = '@apply h-[calc(100dvh_-_80px)]';
 
@@ -45,7 +46,7 @@ const MeetingRoom = (): ReactElement => {
     useScreenShare();
   const navigate = useNavigate();
   const publisherOptions = usePublisherOptions();
-  const isSmallViewPort = useIsSmallViewport();
+  const isSmallViewport = useMediaQuery(`(max-width:${SMALL_VIEWPORT}px)`);
 
   useEffect(() => {
     if (joinRoom && isValidRoomName(roomName)) {
@@ -91,7 +92,7 @@ const MeetingRoom = (): ReactElement => {
 
   return (
     <div data-testid="meetingRoom" className={`${height} w-screen bg-darkGray-100`}>
-      {isSmallViewPort && <SmallViewportHeader />}
+      {isSmallViewport && <SmallViewportHeader />}
       <VideoTileCanvas
         isSharingScreen={isSharingScreen}
         screensharingPublisher={screensharingPublisher}

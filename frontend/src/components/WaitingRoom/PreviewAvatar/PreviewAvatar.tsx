@@ -1,8 +1,8 @@
-import { Avatar } from '@mui/material';
+import { Avatar, useMediaQuery } from '@mui/material';
 import { ReactElement } from 'react';
 import useWindowWidth from '../../../hooks/useWindowWidth';
 import AvatarInitials from '../../AvatarInitials';
-import useIsSmallViewport from '../../../hooks/useIsSmallViewport';
+import { SMALL_VIEWPORT } from '../../../utils/constants';
 
 export type PreviewAvatarProps = {
   username: string;
@@ -29,9 +29,9 @@ const PreviewAvatar = ({
   isVideoLoading,
 }: PreviewAvatarProps): ReactElement | null => {
   const smallDisplayDimensions = useWindowWidth() * 0.46;
-  const isSmallViewPort = useIsSmallViewport();
-  const height = isSmallViewPort ? smallDisplayDimensions : 328;
-  const width = isSmallViewPort ? smallDisplayDimensions : 584;
+  const isSmallViewport = useMediaQuery(`(max-width:${SMALL_VIEWPORT}px)`);
+  const height = isSmallViewport ? smallDisplayDimensions : 328;
+  const width = isSmallViewport ? smallDisplayDimensions : 584;
   if (isVideoEnabled || isVideoLoading) {
     return null;
   }

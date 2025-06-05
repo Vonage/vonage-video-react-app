@@ -1,13 +1,13 @@
-import { TextField, Button, Typography, Box, CircularProgress } from '@mui/material';
+import { TextField, Button, Typography, Box, CircularProgress, useMediaQuery } from '@mui/material';
 import { FormEvent, ChangeEvent, ReactElement } from 'react';
 import FilePicker from './FilePicker';
 import {
   REPORT_TITLE_LIMIT,
   REPORT_DESCRIPTION_LIMIT,
   REPORT_NAME_LIMIT,
+  SMALL_VIEWPORT,
 } from '../../../../utils/constants';
 import HelperText from './HelperText';
-import useIsSmallViewport from '../../../../hooks/useIsSmallViewport';
 
 export type FormType = {
   title: string;
@@ -59,7 +59,7 @@ const FeedbackForm = ({
   loading,
   onFileSelect,
 }: FeedbackFormType): ReactElement => {
-  const isSmallViewport = useIsSmallViewport();
+  const isSmallViewport = useMediaQuery(`(max-width:${SMALL_VIEWPORT}px)`);
   // 224px = 64px panel header + 96px toolbar if normal viewport + (40px submit button + 24px submit button margin)
   // 208px = 64px panel header + 80px toolbar if small viewport + (40px submit button + 24px submit button margin)
   const height = isSmallViewport ? 'calc(100dvh - 208px)' : 'calc(100dvh - 224px)';

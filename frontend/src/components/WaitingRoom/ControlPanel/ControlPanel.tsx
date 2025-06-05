@@ -1,4 +1,4 @@
-import { Button, SxProps } from '@mui/material';
+import { Button, SxProps, useMediaQuery } from '@mui/material';
 import { ReactElement, MouseEvent, TouchEvent } from 'react';
 import MicNone from '@mui/icons-material/MicNone';
 import VideoCall from '@mui/icons-material/VideoCall';
@@ -7,8 +7,8 @@ import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import MenuDevicesWaitingRoom from '../MenuDevices';
 import usePreviewPublisherContext from '../../../hooks/usePreviewPublisherContext';
 import useDevices from '../../../hooks/useDevices';
-import useIsSmallViewport from '../../../hooks/useIsSmallViewport';
 import useAudioOutputContext from '../../../hooks/useAudioOutputContext';
+import { SMALL_VIEWPORT } from '../../../utils/constants';
 
 export type ControlPanelProps = {
   handleAudioInputOpen: (
@@ -52,7 +52,7 @@ const ControlPanel = ({
   openAudioOutput,
   anchorEl,
 }: ControlPanelProps): ReactElement => {
-  const isSmallViewport = useIsSmallViewport();
+  const isSmallViewport = useMediaQuery(`(max-width:${SMALL_VIEWPORT}px)`);
   const { allMediaDevices } = useDevices();
   const { localAudioSource, localVideoSource, changeAudioSource, changeVideoSource } =
     usePreviewPublisherContext();

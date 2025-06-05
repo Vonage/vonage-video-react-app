@@ -115,3 +115,9 @@ export const MAX_TILES_SPEAKER_VIEW_MOBILE = 2;
  * of buttons shown on the right side of the Toolbar.
  */
 export const RIGHT_PANEL_BUTTON_COUNT = 3 - (isReportIssueEnabled() ? 0 : 1);
+
+/**
+ * @constant {number} SMALL_VIEWPORT - The pixel width threshold used to determine if the viewport is considered small.
+ * Typically used as the max-width breakpoint for responsive layouts.
+ */
+export const SMALL_VIEWPORT = 768;

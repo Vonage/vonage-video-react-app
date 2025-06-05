@@ -1,6 +1,6 @@
-import { Alert, AlertTitle, SxProps } from '@mui/material';
+import { Alert, AlertTitle, SxProps, useMediaQuery } from '@mui/material';
 import { ReactElement, useState } from 'react';
-import useIsSmallViewport from '../../../hooks/useIsSmallViewport';
+import { SMALL_VIEWPORT } from '../../../utils/constants';
 
 export type ConnectionAlertProps = {
   title: string;
@@ -26,8 +26,8 @@ const ConnectionAlert = ({
   severity,
 }: ConnectionAlertProps): ReactElement | false => {
   const [closed, setClosed] = useState(false);
-  const isSmallViewPort = useIsSmallViewport();
-  const sxProps: SxProps = isSmallViewPort
+  const isSmallViewport = useMediaQuery(`(max-width:${SMALL_VIEWPORT}px)`);
+  const sxProps: SxProps = isSmallViewport
     ? {
         left: '50%',
         transform: 'translate(-50%, 0%)',
