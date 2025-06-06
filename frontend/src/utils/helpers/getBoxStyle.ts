@@ -16,8 +16,14 @@ const getBoxStyle = (box: Box | undefined, isScreenShare?: boolean): CSSProperti
     left: box.left,
     top: box.top,
     // We subtract the margins from width and height
-    width: box.width - VIDEO_TILE_MARGIN - (isScreenShare ? 0 : 6),
-    height: box.height - VIDEO_TILE_MARGIN,
+    width:
+      typeof box.width === 'number' && !Number.isNaN(box.width)
+        ? box.width - VIDEO_TILE_MARGIN - (isScreenShare ? 0 : 6)
+        : 0,
+    height:
+      typeof box.height === 'number' && !Number.isNaN(box.height)
+        ? box.height - VIDEO_TILE_MARGIN
+        : 0,
     aspectRatio: '16 / 9',
   };
 

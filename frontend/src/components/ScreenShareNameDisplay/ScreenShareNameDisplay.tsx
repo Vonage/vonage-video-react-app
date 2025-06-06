@@ -15,6 +15,7 @@ export type ScreenShareNameDisplayProps = {
  * @returns {ReactElement} The ScreenShareNameDisplay component.
  */
 const ScreenShareNameDisplay = ({ name, box }: ScreenShareNameDisplayProps): ReactElement => {
+  const safeMaxWidth = typeof box.width === 'number' && !Number.isNaN(box.width) ? box.width : 0;
   return (
     <Chip
       label={name}
@@ -22,7 +23,7 @@ const ScreenShareNameDisplay = ({ name, box }: ScreenShareNameDisplayProps): Rea
       sx={{
         color: 'white',
         backgroundColor: 'rgba(60, 64, 67, 0.55)',
-        maxWidth: box.width - 32,
+        maxWidth: Math.max(0, safeMaxWidth - 32),
       }}
       className="absolute bottom-[10px] left-[10px] truncate text-sm md:text-lg"
     />

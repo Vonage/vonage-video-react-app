@@ -16,11 +16,13 @@ export type NameDisplayProps = {
  * @returns {ReactElement} The NameDisplay component.
  */
 const NameDisplay = ({ name, containerWidth }: NameDisplayProps): ReactElement => {
+  const safeMaxWidth =
+    typeof containerWidth === 'number' && !Number.isNaN(containerWidth) ? containerWidth : 0;
   return (
     <div
       className={`absolute bottom-[10px] left-[10px] truncate text-sm text-white ${TEXT_SHADOW}`}
       style={{
-        maxWidth: containerWidth - 32,
+        maxWidth: Math.max(0, safeMaxWidth - 32),
       }}
     >
       <span>{name}</span>
