@@ -137,6 +137,7 @@ describe('SessionProvider', () => {
       connect: vi.fn().mockReturnValue(Promise.resolve()),
       disconnect: vi.fn(),
       forceMuteStream: vi.fn(),
+      signal: vi.fn(),
     }) as unknown as VonageVideoClient;
     (useUserContext as Mock).mockReturnValue(mockUserContext);
     const mockedActiveSpeakerTracker = vi.mocked(ActiveSpeakerTracker);

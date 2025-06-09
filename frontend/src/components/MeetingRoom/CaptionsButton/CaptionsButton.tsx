@@ -45,7 +45,7 @@ const CaptionsButton = ({
 
   const handleCaptions = async (action: 'enable' | 'disable') => {
     if (action === 'enable') {
-      if (currentCaptionsIdRef.current) {
+      if (currentCaptionsIdRef?.current) {
         setIsCaptionsEnabled(true);
         setCaptionsId(currentCaptionsIdRef.current);
 
