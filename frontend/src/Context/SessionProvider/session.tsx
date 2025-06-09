@@ -35,6 +35,7 @@ import { MAX_PIN_COUNT_DESKTOP, MAX_PIN_COUNT_MOBILE } from '../../utils/constan
 import { disableCaptions } from '../../api/captions';
 import VonageVideoClient from '../../utils/VonageVideoClient';
 import useEmoji, { EmojiWrapper } from '../../hooks/useEmoji';
+import handleCaptionsSignal from '../../utils/handleCaptionsSignal';
 
 export type { ChatMessageType } from '../../types/chat';
 
@@ -117,18 +118,6 @@ export type ConnectionEventType = {
  */
 export type SessionProviderProps = {
   children: ReactNode;
-};
-
-/**
- * @typedef {object} CaptionsSignalDataType
- * @property {string} action - The action to be performed on captions (e.g., 'enable', 'disable', 'join', 'leave').
- * @property {string} captionsId - The ID of the captions to be enabled or disabled.
- * @property {number} currentCount (optional) - The current count of active participants using captions.
- */
-export type CaptionsSignalDataType = {
-  action: string;
-  captionsId: string;
-  currentCount?: number;
 };
 
 const MAX_PIN_COUNT = isMobile() ? MAX_PIN_COUNT_MOBILE : MAX_PIN_COUNT_DESKTOP;
@@ -267,109 +256,6 @@ const SessionProvider = ({ children }: SessionProviderProps): ReactElement => {
   }, [connected]);
 
   /**
-   * Handles the captions signal received from the session.
-   * This function manages enabling, disabling, joining, and leaving captions.
-   * It also handles the functionality of notifying other participants about the current captions ID and the participant count.
-   * @param {SignalEvent} event - The signal event containing the data.
-   */
-  const handleCaptionsSignal = useCallback(({ data }: SignalEvent) => {
-    try {
-      const parsedData: CaptionsSignalDataType = JSON.parse(data as string);
-      const { action, captionsId, currentCount } = parsedData;
-
-      switch (action) {
-        case 'enable':
-          if (captionsId) {
-            currentCaptionsIdRef.current = captionsId;
-            vonageVideoClient.current?.signal({
-              type: 'captions',
-              data: JSON.stringify({
-                action: 'update-current-user-count',
-                currentCount: captionsActiveCountRef.current + 1,
-              }),
-            });
-          }
-          break;
-
-        case 'join':
-          captionsActiveCountRef.current += 1;
-          break;
-
-        case 'update-current-user-count':
-          if (currentCount) {
-            captionsActiveCountRef.current = currentCount;
-          }
-          break;
-
-        case 'leave': {
-          const newCount = Math.max(0, captionsActiveCountRef.current - 1);
-
-          // If there are no other participants using captions, we disable them for the whole session.
-          // This is to ensure that captions are only disabled when there are other participants using them.
-          if (newCount === 0 && currentCaptionsIdRef.current && currentRoomNameRef.current) {
-            disableCaptions(currentRoomNameRef.current, currentCaptionsIdRef.current)
-              .then(() => {
-                currentCaptionsIdRef.current = null;
-
-                vonageVideoClient.current?.signal({
-                  type: 'captions',
-                  data: JSON.stringify({ action: 'disable' }),
-                });
-              })
-              .catch((err) => console.error('Error disabling captions:', err));
-          }
-          // We signal the new count to other participants so they can update their tracking of the captions
-          vonageVideoClient.current?.signal({
-            type: 'captions',
-            data: JSON.stringify({
-              action: 'update-current-user-count',
-              currentCount: newCount,
-            }),
-          });
-          break;
-        }
-
-        case 'disable':
-          // We turn off the captions session-wide
-          currentCaptionsIdRef.current = null;
-          captionsActiveCountRef.current = 0;
-          break;
-
-        // Handle the case of captions status requests from other users
-        case 'request-status':
-          vonageVideoClient.current?.signal({
-            type: 'captions',
-            data: JSON.stringify({
-              action: 'status-response',
-              captionsId: currentCaptionsIdRef.current,
-              currentCount: captionsActiveCountRef.current,
-            }),
-          });
-          break;
-
-        // Handle the case of captions status responses from other users
-        case 'status-response':
-          if (!currentCaptionsIdRef.current && captionsId) {
-            currentCaptionsIdRef.current = captionsId;
-            if (currentCount) {
-              captionsActiveCountRef.current = currentCount;
-            }
-          }
-          break;
-
-        default:
-          // If the action is not recognized, we log it
-          console.warn(`Unknown captions action: ${action}`);
-          break;
-      }
-    } catch (err: unknown) {
-      if (err instanceof Error) {
-        console.error(err);
-      }
-    }
-  }, []);
-
-  /**
    * Handles changes to stream properties. This triggers a re-render when a stream property changes
    * @param {StreamPropertyChangedEvent} event - The event containing the stream, changed property, new value, and old value.
    */
@@ -463,7 +349,15 @@ const SessionProvider = ({ children }: SessionProviderProps): ReactElement => {
       vonageVideoClient.current.on('archiveStarted', handleArchiveStarted);
       vonageVideoClient.current.on('archiveStopped', handleArchiveStopped);
       vonageVideoClient.current.on('signal:chat', handleChatSignal);
-      vonageVideoClient.current.on('signal:captions', handleCaptionsSignal);
+      vonageVideoClient.current.on('signal:captions', (event: SignalEvent) => {
+        handleCaptionsSignal({
+          event,
+          currentCaptionsIdRef,
+          captionsActiveCountRef,
+          currentRoomNameRef,
+          vonageVideoClient: vonageVideoClient.current,
+        });
+      });
       vonageVideoClient.current.on('signal:emoji', handleEmoji);
       vonageVideoClient.current.on(
         'subscriberAudioLevelUpdated',
