@@ -123,6 +123,7 @@ export type SessionProviderProps = {
  * @typedef {object} CaptionsSignalDataType
  * @property {string} action - The action to be performed on captions (e.g., 'enable', 'disable', 'join', 'leave').
  * @property {string} captionsId - The ID of the captions to be enabled or disabled.
+ * @property {number} currentCount (optional) - The current count of active participants using captions.
  */
 export type CaptionsSignalDataType = {
   action: string;
@@ -268,28 +269,13 @@ const SessionProvider = ({ children }: SessionProviderProps): ReactElement => {
   /**
    * Handles the captions signal received from the session.
    * This function manages enabling, disabling, joining, and leaving captions.
+   * It also handles the functionality of notifying other participants about the current captions ID and the participant count.
    * @param {SignalEvent} event - The signal event containing the data.
    */
   const handleCaptionsSignal = useCallback(({ data }: SignalEvent) => {
     try {
-      let parsedData: CaptionsSignalDataType;
-      let action: string = '';
-      let captionsId: string = '';
-      let currentCount: number = 0;
-
-      try {
-        parsedData = JSON.parse(data as string);
-        action = parsedData.action;
-        captionsId = parsedData.captionsId;
-        currentCount = parsedData.currentCount as number;
-      } catch {
-        if (data) {
-          captionsId = data;
-          action = 'enable';
-        } else {
-          action = 'disable';
-        }
-      }
+      const parsedData: CaptionsSignalDataType = JSON.parse(data as string);
+      const { action, captionsId, currentCount } = parsedData;
 
       switch (action) {
         case 'enable':
@@ -310,7 +296,9 @@ const SessionProvider = ({ children }: SessionProviderProps): ReactElement => {
           break;
 
         case 'update-current-user-count':
-          captionsActiveCountRef.current = currentCount;
+          if (currentCount) {
+            captionsActiveCountRef.current = currentCount;
+          }
           break;
 
         case 'leave': {
@@ -363,7 +351,9 @@ const SessionProvider = ({ children }: SessionProviderProps): ReactElement => {
         case 'status-response':
           if (!currentCaptionsIdRef.current && captionsId) {
             currentCaptionsIdRef.current = captionsId;
-            captionsActiveCountRef.current = currentCount;
+            if (currentCount) {
+              captionsActiveCountRef.current = currentCount;
+            }
           }
           break;
 
