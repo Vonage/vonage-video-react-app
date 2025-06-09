@@ -1,7 +1,6 @@
 import { ClosedCaption, ClosedCaptionDisabled } from '@mui/icons-material';
 import { Tooltip } from '@mui/material';
 import { ReactElement, useState } from 'react';
-import { AxiosError } from 'axios';
 import useRoomName from '../../../hooks/useRoomName';
 import ToolbarButton from '../ToolbarButton';
 import { enableCaptions } from '../../../api/captions';

@@ -248,8 +248,11 @@ const SessionProvider = ({ children }: SessionProviderProps): ReactElement => {
 
   const { user } = useUserContext();
   const [connected, setConnected] = useState(false);
+  // This ref is used to track the current captions ID for captions management
   const currentCaptionsIdRef = useRef<string | null>(null);
+  // This ref is used to track the current room name for captions management
   const currentRoomNameRef = useRef<string | null>(null);
+  // This ref is used to track the number of active participants using captions
   const captionsActiveCountRef = useRef<number>(0);
 
   useEffect(() => {
