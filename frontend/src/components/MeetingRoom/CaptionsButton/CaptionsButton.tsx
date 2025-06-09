@@ -61,28 +61,6 @@ const CaptionsButton = ({
         });
       } else if (!captionsId && roomName) {
         try {
-          // For a new joiner, request status of the captions from others before trying to enable
-          if (vonageVideoClient) {
-            vonageVideoClient.signal({
-              type: 'captions',
-              data: JSON.stringify({
-                action: 'request-status',
-              }),
-            });
-
-            // Wait for a half a second to allow the status request to be processed
-            await new Promise<void>((resolve) => {
-              setTimeout(resolve, 500);
-            });
-
-            if (currentCaptionsIdRef.current) {
-              // If we received a captions ID from the status request, we can join it
-              // but we do not set isCaptionsEnabled to true here since user has not explicitly enabled captions
-              setCaptionsId(currentCaptionsIdRef.current);
-              return;
-            }
-          }
-
           const response = await enableCaptions(roomName);
           setCaptionsId(response.data.captions.captionsId);
           currentCaptionsIdRef.current = response.data.captions.captionsId;
@@ -96,25 +74,11 @@ const CaptionsButton = ({
               captionsId: response.data.captions.captionsId,
             }),
           });
-        } catch (err: unknown) {
-          const error = err as AxiosError;
+        } catch (err) {
           console.log(err);
-
-          // The most likely case is that captions are already enabled by another user
-          if (error.response && error.response.status === 500) {
-            // Request status one more time to get the captions ID
-            if (vonageVideoClient) {
-              vonageVideoClient.signal({
-                type: 'captions',
-                data: JSON.stringify({
-                  action: 'request-status',
-                }),
-              });
-            }
-          }
         }
       }
-    } else if (captionsId && roomName) {
+    } else if (action === 'disable' && captionsId && roomName) {
       try {
         setIsCaptionsEnabled(false);
         setCaptionsId('');

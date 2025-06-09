@@ -127,6 +127,7 @@ export type SessionProviderProps = {
 export type CaptionsSignalDataType = {
   action: string;
   captionsId: string;
+  currentCount?: number;
 };
 
 const MAX_PIN_COUNT = isMobile() ? MAX_PIN_COUNT_MOBILE : MAX_PIN_COUNT_DESKTOP;
@@ -252,9 +253,9 @@ const SessionProvider = ({ children }: SessionProviderProps): ReactElement => {
   const captionsActiveCountRef = useRef<number>(0);
 
   useEffect(() => {
-    if (connected && vonageVideoClient.current) {
+    if (connected && !currentCaptionsIdRef.current) {
       // Request captions status from existing participants
-      vonageVideoClient.current.signal({
+      vonageVideoClient.current?.signal({
         type: 'captions',
         data: JSON.stringify({ action: 'request-status' }),
       });
@@ -271,11 +272,13 @@ const SessionProvider = ({ children }: SessionProviderProps): ReactElement => {
       let parsedData: CaptionsSignalDataType;
       let action: string = '';
       let captionsId: string = '';
+      let currentCount: number = 0;
 
       try {
         parsedData = JSON.parse(data as string);
         action = parsedData.action;
         captionsId = parsedData.captionsId;
+        currentCount = parsedData.currentCount as number;
       } catch {
         if (data) {
           captionsId = data;
@@ -289,7 +292,13 @@ const SessionProvider = ({ children }: SessionProviderProps): ReactElement => {
         case 'enable':
           if (captionsId) {
             currentCaptionsIdRef.current = captionsId;
-            captionsActiveCountRef.current += 1;
+            vonageVideoClient.current?.signal({
+              type: 'captions',
+              data: JSON.stringify({
+                action: 'update-current-user-count',
+                currentCount: captionsActiveCountRef.current + 1,
+              }),
+            });
           }
           break;
 
@@ -297,9 +306,12 @@ const SessionProvider = ({ children }: SessionProviderProps): ReactElement => {
           captionsActiveCountRef.current += 1;
           break;
 
+        case 'update-current-user-count':
+          captionsActiveCountRef.current = currentCount;
+          break;
+
         case 'leave': {
           const newCount = Math.max(0, captionsActiveCountRef.current - 1);
-          captionsActiveCountRef.current = newCount;
 
           // If there are no other participants using captions, we disable them for the whole session.
           // This is to ensure that captions are only disabled when there are other participants using them.
@@ -315,45 +327,46 @@ const SessionProvider = ({ children }: SessionProviderProps): ReactElement => {
               })
               .catch((err) => console.error('Error disabling captions:', err));
           }
+          // We signal the new count to other participants so they can update their tracking of the captions
+          vonageVideoClient.current?.signal({
+            type: 'captions',
+            data: JSON.stringify({
+              action: 'update-current-user-count',
+              currentCount: newCount,
+            }),
+          });
           break;
         }
 
         case 'disable':
+          // We turn off the captions session-wide
           currentCaptionsIdRef.current = null;
           captionsActiveCountRef.current = 0;
           break;
 
-        // Request status of captions from other users
+        // Handle the case of captions status requests from other users
         case 'request-status':
-          if (currentCaptionsIdRef.current) {
-            // Slight delay to ensure requester is ready to receive
-            setTimeout(() => {
-              vonageVideoClient.current?.signal({
-                type: 'captions',
-                data: JSON.stringify({
-                  action: 'status-response',
-                  captionsId: currentCaptionsIdRef.current,
-                }),
-              });
-            }, 1000);
-          }
+          vonageVideoClient.current?.signal({
+            type: 'captions',
+            data: JSON.stringify({
+              action: 'status-response',
+              captionsId: currentCaptionsIdRef.current,
+              currentCount: captionsActiveCountRef.current,
+            }),
+          });
           break;
 
+        // Handle the case of captions status responses from other users
         case 'status-response':
-          // Handle the response from other users about captions status
           if (!currentCaptionsIdRef.current && captionsId) {
             currentCaptionsIdRef.current = captionsId;
+            captionsActiveCountRef.current = currentCount;
           }
           break;
 
         default:
-          if (captionsId) {
-            currentCaptionsIdRef.current = captionsId;
-            captionsActiveCountRef.current = 1;
-          } else {
-            currentCaptionsIdRef.current = null;
-            captionsActiveCountRef.current = 0;
-          }
+          // If the action is not recognized, we log it
+          console.warn(`Unknown captions action: ${action}`);
           break;
       }
     } catch (err: unknown) {
