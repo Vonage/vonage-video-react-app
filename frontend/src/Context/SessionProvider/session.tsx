@@ -65,6 +65,7 @@ export type SessionContextType = {
   isMaxPinned: boolean;
   currentCaptionsIdRef: RefObject<string | null>;
   ownCaptions: string | null;
+  captionsEnabled: boolean;
   sendEmoji: (emoji: string) => void;
   emojiQueue: EmojiWrapper[];
   publish: (publisher: Publisher) => Promise<void>;
@@ -99,6 +100,7 @@ export const SessionContext = createContext<SessionContextType>({
   isMaxPinned: false,
   currentCaptionsIdRef: { current: null },
   ownCaptions: null,
+  captionsEnabled: false,
   sendEmoji: () => {},
   emojiQueue: [],
   publish: async () => Promise.resolve(),
@@ -136,6 +138,7 @@ const SessionProvider = ({ children }: SessionProviderProps): ReactElement => {
   const [reconnecting, setReconnecting] = useState(false);
   const [subscriberWrappers, setSubscriberWrappers] = useState<SubscriberWrapper[]>([]);
   const [ownCaptions, setOwnCaptions] = useState<string | null>(null);
+  const [captionsEnabled, setCaptionsEnabled] = useState<boolean>(false);
   const [layoutMode, setLayoutMode] = useState<LayoutMode>('active-speaker');
   const [archiveId, setArchiveId] = useState<string | null>(null);
   const activeSpeakerTracker = useRef<ActiveSpeakerTracker>(new ActiveSpeakerTracker());
@@ -274,6 +277,7 @@ const SessionProvider = ({ children }: SessionProviderProps): ReactElement => {
     if (currentCaptionsIdRef.current && currentRoomNameRef.current) {
       await disableCaptions(currentRoomNameRef.current, currentCaptionsIdRef.current);
       currentCaptionsIdRef.current = null;
+      setCaptionsEnabled(false);
     }
   };
 
@@ -356,6 +360,7 @@ const SessionProvider = ({ children }: SessionProviderProps): ReactElement => {
           captionsActiveCountRef,
           currentRoomNameRef,
           vonageVideoClient: vonageVideoClient.current,
+          setCaptionsEnabled,
         });
       });
       vonageVideoClient.current.on('signal:emoji', handleEmoji);
@@ -466,6 +471,7 @@ const SessionProvider = ({ children }: SessionProviderProps): ReactElement => {
       isMaxPinned,
       currentCaptionsIdRef,
       ownCaptions,
+      captionsEnabled,
       sendEmoji,
       emojiQueue,
       publish,
@@ -496,6 +502,7 @@ const SessionProvider = ({ children }: SessionProviderProps): ReactElement => {
       isMaxPinned,
       currentCaptionsIdRef,
       ownCaptions,
+      captionsEnabled,
       sendEmoji,
       emojiQueue,
       publish,

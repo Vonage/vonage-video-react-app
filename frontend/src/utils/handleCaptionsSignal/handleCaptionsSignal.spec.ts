@@ -17,6 +17,7 @@ describe('handleCaptionsSignal', () => {
   let currentCaptionsIdRef: RefObject<string | null>;
   let captionsActiveCountRef: RefObject<number>;
   let currentRoomNameRef: RefObject<string | null>;
+  const setCaptionsEnabled = vi.fn();
 
   beforeEach(() => {
     vonageVideoClient = Object.assign(new EventEmitter(), {
@@ -47,6 +48,7 @@ describe('handleCaptionsSignal', () => {
       captionsActiveCountRef,
       currentRoomNameRef,
       vonageVideoClient,
+      setCaptionsEnabled,
     });
 
     expect(currentCaptionsIdRef.current).toBe(mockCaptionsId);
@@ -76,6 +78,7 @@ describe('handleCaptionsSignal', () => {
       captionsActiveCountRef,
       currentRoomNameRef,
       vonageVideoClient,
+      setCaptionsEnabled,
     });
 
     expect(currentCaptionsIdRef.current).toBeNull();
@@ -100,6 +103,7 @@ describe('handleCaptionsSignal', () => {
       captionsActiveCountRef,
       currentRoomNameRef,
       vonageVideoClient,
+      setCaptionsEnabled,
     });
 
     expect(captionsActiveCountRef.current).toBe(3);
@@ -121,6 +125,7 @@ describe('handleCaptionsSignal', () => {
       captionsActiveCountRef,
       currentRoomNameRef,
       vonageVideoClient,
+      setCaptionsEnabled,
     });
 
     expect(vonageVideoClient.signal).toHaveBeenCalledWith({
@@ -149,6 +154,7 @@ describe('handleCaptionsSignal', () => {
       captionsActiveCountRef,
       currentRoomNameRef,
       vonageVideoClient,
+      setCaptionsEnabled,
     });
 
     expect(captionsActiveCountRef.current).toBe(2);
@@ -171,6 +177,7 @@ describe('handleCaptionsSignal', () => {
       captionsActiveCountRef,
       currentRoomNameRef,
       vonageVideoClient,
+      setCaptionsEnabled,
     });
 
     expect(disableCaptions).toHaveBeenCalledWith('test-room', mockCaptionsId);
@@ -194,6 +201,7 @@ describe('handleCaptionsSignal', () => {
       captionsActiveCountRef,
       currentRoomNameRef,
       vonageVideoClient,
+      setCaptionsEnabled,
     });
 
     expect(vonageVideoClient.signal).toHaveBeenCalledWith({
@@ -224,6 +232,7 @@ describe('handleCaptionsSignal', () => {
       captionsActiveCountRef,
       currentRoomNameRef,
       vonageVideoClient,
+      setCaptionsEnabled,
     });
 
     expect(currentCaptionsIdRef.current).toBe(mockCaptionsId);
@@ -248,6 +257,7 @@ describe('handleCaptionsSignal', () => {
       captionsActiveCountRef,
       currentRoomNameRef,
       vonageVideoClient,
+      setCaptionsEnabled,
     });
 
     expect(consoleWarnSpy).toHaveBeenCalledWith('Unknown captions action: unknown-action');

@@ -1,5 +1,5 @@
 /* eslint-disable no-param-reassign */
-import { RefObject } from 'react';
+import { RefObject, Dispatch, SetStateAction } from 'react';
 import { SignalEvent } from '../../types/session';
 import { disableCaptions } from '../../api/captions';
 import VonageVideoClient from '../VonageVideoClient';
@@ -30,6 +30,7 @@ export type CaptionsHandleType = {
   captionsActiveCountRef: RefObject<number>;
   currentRoomNameRef: RefObject<string | null>;
   vonageVideoClient: VonageVideoClient | null;
+  setCaptionsEnabled: Dispatch<SetStateAction<boolean>>;
 };
 
 /**
@@ -49,6 +50,7 @@ const handleCaptionsSignal = ({
   captionsActiveCountRef,
   currentRoomNameRef,
   vonageVideoClient,
+  setCaptionsEnabled,
 }: CaptionsHandleType) => {
   try {
     const parsedData: CaptionsSignalDataType = JSON.parse(event.data as string);
@@ -58,6 +60,7 @@ const handleCaptionsSignal = ({
       case 'enable':
         if (captionsId) {
           currentCaptionsIdRef.current = captionsId;
+          setCaptionsEnabled(true);
           vonageVideoClient?.signal({
             type: 'captions',
             data: JSON.stringify({
@@ -69,6 +72,7 @@ const handleCaptionsSignal = ({
         break;
 
       case 'join':
+        setCaptionsEnabled(true);
         captionsActiveCountRef.current += 1;
         break;
 
@@ -80,6 +84,7 @@ const handleCaptionsSignal = ({
 
       case 'leave': {
         const newCount = Math.max(0, captionsActiveCountRef.current - 1);
+        setCaptionsEnabled(false);
 
         // If there are no other participants using captions, we disable them for the whole session.
         // This is to ensure that captions are only disabled when there are other participants using them.

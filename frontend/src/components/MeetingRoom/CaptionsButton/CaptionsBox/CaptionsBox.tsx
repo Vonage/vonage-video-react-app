@@ -30,7 +30,7 @@ const CaptionsBox = ({
 
   const sxBox = {
     position: 'absolute',
-    bottom: isMobileView ? 100 : 80, // Position higher above controls on mobile
+    bottom: isMobileView ? 100 : 80,
     left: '50%',
     transform: 'translateX(-50%)',
     backgroundColor: 'rgba(0, 0, 0, 0.7)',
@@ -39,7 +39,7 @@ const CaptionsBox = ({
     py: isMobileView ? 1 : 1.5,
     borderRadius: 2,
     width: isMobileView ? '90vw' : 600,
-    height: isMobileView ? 150 : 200, // Slightly shorter on mobile
+    height: isMobileView ? 150 : 200,
     overflowY: 'auto',
     display: 'flex',
     flexDirection: 'column',
