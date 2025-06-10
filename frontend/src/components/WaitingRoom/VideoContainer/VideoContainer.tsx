@@ -1,5 +1,5 @@
 import { useRef, useState, useEffect, ReactElement } from 'react';
-import { Stack, useMediaQuery } from '@mui/material';
+import { Stack } from '@mui/material';
 import MicButton from '../MicButton';
 import CameraButton from '../CameraButton';
 import BlurButton from '../BlurButton';
@@ -11,7 +11,7 @@ import getInitials from '../../../utils/getInitials';
 import PreviewAvatar from '../PreviewAvatar';
 import VoiceIndicatorIcon from '../../MeetingRoom/VoiceIndicator/VoiceIndicator';
 import VignetteEffect from '../VignetteEffect';
-import { SMALL_VIEWPORT } from '../../../utils/constants';
+import useIsSmallViewport from '../../../hooks/useIsSmallViewport';
 
 export type VideoContainerProps = {
   username: string;
@@ -33,7 +33,7 @@ const VideoContainer = ({ username }: VideoContainerProps): ReactElement => {
   const { publisherVideoElement, isVideoEnabled, isAudioEnabled, speechLevel } =
     usePreviewPublisherContext();
   const initials = getInitials(username);
-  const isSmallViewport = useMediaQuery(`(max-width:${SMALL_VIEWPORT}px)`);
+  const isSmallViewport = useIsSmallViewport();
 
   useEffect(() => {
     if (publisherVideoElement && containerRef.current) {

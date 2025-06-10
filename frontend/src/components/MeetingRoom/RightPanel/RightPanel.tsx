@@ -1,10 +1,9 @@
 import { ReactElement } from 'react';
-import { useMediaQuery } from '@mui/material';
 import ParticipantList from '../ParticipantList/ParticipantList';
 import Chat from '../Chat';
 import ReportIssue from '../ReportIssue';
 import type { RightPanelActiveTab } from '../../../hooks/useRightPanel';
-import { SMALL_VIEWPORT } from '../../../utils/constants';
+import useIsSmallViewport from '../../../hooks/useIsSmallViewport';
 
 export type RightPanelProps = {
   handleClose: () => void;
@@ -21,7 +20,7 @@ export type RightPanelProps = {
  * @returns {ReactElement} RightPanel Component
  */
 const RightPanel = ({ activeTab, handleClose }: RightPanelProps): ReactElement => {
-  const isSmallViewport = useMediaQuery(`(max-width:${SMALL_VIEWPORT}px)`);
+  const isSmallViewport = useIsSmallViewport();
   const width = isSmallViewport ? 'w-dvw' : 'w-[360px]';
   const margins = isSmallViewport ? 'm-0' : 'mr-4 mt-4';
   const height = isSmallViewport

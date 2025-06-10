@@ -1,13 +1,13 @@
 import { useState, useEffect, MouseEvent, ReactElement, TouchEvent } from 'react';
-import { useMediaQuery } from '@mui/material';
 import usePreviewPublisherContext from '../../hooks/usePreviewPublisherContext';
 import ControlPanel from '../../components/WaitingRoom/ControlPanel';
 import VideoContainer from '../../components/WaitingRoom/VideoContainer';
 import UsernameInput from '../../components/WaitingRoom/UserNameInput';
-import { DEVICE_ACCESS_STATUS, SMALL_VIEWPORT } from '../../utils/constants';
+import { DEVICE_ACCESS_STATUS } from '../../utils/constants';
 import DeviceAccessAlert from '../../components/DeviceAccessAlert';
 import Banner from '../../components/Banner';
 import { getStorageItem, STORAGE_KEYS } from '../../utils/storage';
+import useIsSmallViewport from '../../hooks/useIsSmallViewport';
 
 /**
  * WaitingRoom Component
@@ -31,7 +31,7 @@ const WaitingRoom = (): ReactElement => {
   const [openVideoInput, setOpenVideoInput] = useState<boolean>(false);
   const [openAudioOutput, setOpenAudioOutput] = useState<boolean>(false);
   const [username, setUsername] = useState(getStorageItem(STORAGE_KEYS.USERNAME) ?? '');
-  const isSmallViewport = useMediaQuery(`(max-width:${SMALL_VIEWPORT}px)`);
+  const isSmallViewport = useIsSmallViewport();
 
   useEffect(() => {
     if (!publisher) {

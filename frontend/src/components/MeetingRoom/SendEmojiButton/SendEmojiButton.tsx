@@ -1,7 +1,7 @@
-import { Button, Grid, GridSize, useMediaQuery } from '@mui/material';
+import { Button, Grid, GridSize } from '@mui/material';
 import { ReactElement } from 'react';
 import useSessionContext from '../../../hooks/useSessionContext';
-import { SMALL_VIEWPORT } from '../../../utils/constants';
+import useIsSmallViewport from '../../../hooks/useIsSmallViewport';
 
 export type SendEmojiButtonProps = {
   emoji: string;
@@ -16,7 +16,7 @@ export type SendEmojiButtonProps = {
  */
 const SendEmojiButton = ({ emoji }: SendEmojiButtonProps): ReactElement => {
   const { sendEmoji } = useSessionContext();
-  const isSmallViewport = useMediaQuery(`(max-width:${SMALL_VIEWPORT}px)`);
+  const isSmallViewport = useIsSmallViewport();
   const xs: GridSize = isSmallViewport ? 2 : 3;
   const size = isSmallViewport ? 'small' : 'large';
 
