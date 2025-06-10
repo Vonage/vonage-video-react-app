@@ -80,7 +80,6 @@ const handleCaptionsSignal = ({
 
       case 'leave': {
         const newCount = Math.max(0, captionsActiveCountRef.current - 1);
-        console.warn('new count is: ', newCount);
 
         // If there are no other participants using captions, we disable them for the whole session.
         // This is to ensure that captions are only disabled when there are other participants using them.
