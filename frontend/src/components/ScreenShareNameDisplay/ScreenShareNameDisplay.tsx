@@ -15,7 +15,7 @@ export type ScreenShareNameDisplayProps = {
  * @returns {ReactElement} The ScreenShareNameDisplay component.
  */
 const ScreenShareNameDisplay = ({ name, box }: ScreenShareNameDisplayProps): ReactElement => {
-  const safeMaxWidth = typeof box.width === 'number' && !Number.isNaN(box.width) ? box.width : 0;
+  const safeMaxWidth = typeof box.width === 'number' && Number.isFinite(box.width) ? box.width : 0;
   return (
     <Chip
       label={name}

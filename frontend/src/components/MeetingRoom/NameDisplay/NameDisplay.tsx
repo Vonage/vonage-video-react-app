@@ -17,7 +17,7 @@ export type NameDisplayProps = {
  */
 const NameDisplay = ({ name, containerWidth }: NameDisplayProps): ReactElement => {
   const safeMaxWidth =
-    typeof containerWidth === 'number' && !Number.isNaN(containerWidth) ? containerWidth : 0;
+    typeof containerWidth === 'number' && Number.isFinite(containerWidth) ? containerWidth : 0;
   return (
     <div
       className={`absolute bottom-[10px] left-[10px] truncate text-sm text-white ${TEXT_SHADOW}`}
