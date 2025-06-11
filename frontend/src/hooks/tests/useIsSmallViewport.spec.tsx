@@ -1,5 +1,5 @@
 import { renderHook } from '@testing-library/react';
-import { describe, it, expect, beforeEach, vi, afterEach } from 'vitest';
+import { describe, it, expect, beforeEach, vi, afterAll } from 'vitest';
 import useIsSmallViewport from '../useIsSmallViewport';
 import { SMALL_VIEWPORT } from '../../utils/constants';
 
@@ -9,7 +9,6 @@ const matchMediaCommon = {
   removeListener: vi.fn(),
   addEventListener: vi.fn(),
   removeEventListener: vi.fn(),
-  dispatchEvent: vi.fn(),
 };
 
 describe('useIsSmallViewport', () => {
@@ -23,7 +22,7 @@ describe('useIsSmallViewport', () => {
     }));
   });
 
-  afterEach(() => {
+  afterAll(() => {
     window.matchMedia = originalMatchMedia;
   });
 

@@ -1,6 +1,6 @@
 import { render, screen } from '@testing-library/react';
 import { MemoryRouter, useNavigate } from 'react-router-dom';
-import { describe, expect, it, Mock, vi, beforeEach, afterEach } from 'vitest';
+import { describe, expect, it, Mock, vi, beforeEach, afterAll } from 'vitest';
 import userEvent from '@testing-library/user-event';
 import GoodByeMessage from './GoodbyeMessage';
 import { SMALL_VIEWPORT } from '../../../utils/constants';
@@ -17,10 +17,23 @@ const mockNavigate = vi.fn();
 const headerMessage = 'This is a header message';
 const goodbyeMessage = 'This is a goodbye message';
 const roomName = 'This is a test room';
+const matchMediaCommon = {
+  onchange: null,
+  addListener: vi.fn(),
+  removeListener: vi.fn(),
+  addEventListener: vi.fn(),
+  removeEventListener: vi.fn(),
+};
 
 describe('GoodbyeMessage', () => {
+  const originalMatchMedia = window.matchMedia;
+
   beforeEach(() => {
     (useNavigate as Mock).mockReturnValue(mockNavigate);
+  });
+
+  afterAll(() => {
+    window.matchMedia = originalMatchMedia;
   });
 
   it('renders the header', () => {
@@ -55,30 +68,14 @@ describe('GoodbyeMessage', () => {
     await userEvent.click(reenterButton);
     expect(mockNavigate).toHaveBeenCalledWith(`/waiting-room/${roomName}`);
   });
-});
 
-describe('GoodbyeMessage screen less than SMALL_VIEWPORT', () => {
-  const originalMatchMedia = window.matchMedia;
-  beforeEach(() => {
-    (useNavigate as Mock).mockReturnValue(mockNavigate);
-
-    window.matchMedia = (query: string) => ({
+  it('renders correctly on screen less than SMALL_VIEWPORT', () => {
+    window.matchMedia = vi.fn().mockImplementation((query) => ({
       matches: new RegExp(`\\(max-width:\\s*${SMALL_VIEWPORT}px\\)`).test(query),
       media: query,
-      onchange: null,
-      addListener: vi.fn(),
-      removeListener: vi.fn(),
-      addEventListener: vi.fn(),
-      removeEventListener: vi.fn(),
-      dispatchEvent: vi.fn(),
-    });
-  });
+      ...matchMediaCommon,
+    }));
 
-  afterEach(() => {
-    window.matchMedia = originalMatchMedia;
-  });
-
-  it('renders correctly on small screens', () => {
     render(
       <MemoryRouter>
         <GoodByeMessage roomName={roomName} message={goodbyeMessage} header={headerMessage} />
@@ -89,30 +86,14 @@ describe('GoodbyeMessage screen less than SMALL_VIEWPORT', () => {
     expect(screen.getByTestId('goodbye-message')).toHaveClass('w-full');
     expect(screen.getByTestId('goodbye-message')).not.toHaveClass('w-[400px]');
   });
-});
 
-describe('GoodbyeMessage screen greater than SMALL_VIEWPORT', () => {
-  const originalMatchMedia = window.matchMedia;
-  beforeEach(() => {
-    (useNavigate as Mock).mockReturnValue(mockNavigate);
-
-    window.matchMedia = (query: string) => ({
+  it('renders correctly on screen greater than SMALL_VIEWPORT', () => {
+    window.matchMedia = vi.fn().mockImplementation((query) => ({
       matches: new RegExp(`\\(min-width:\\s*${SMALL_VIEWPORT + 1}px\\)`).test(query),
       media: query,
-      onchange: null,
-      addListener: vi.fn(),
-      removeListener: vi.fn(),
-      addEventListener: vi.fn(),
-      removeEventListener: vi.fn(),
-      dispatchEvent: vi.fn(),
-    });
-  });
+      ...matchMediaCommon,
+    }));
 
-  afterEach(() => {
-    window.matchMedia = originalMatchMedia;
-  });
-
-  it('renders correctly on large screens', () => {
     render(
       <MemoryRouter>
         <GoodByeMessage roomName={roomName} message={goodbyeMessage} header={headerMessage} />
