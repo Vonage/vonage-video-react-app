@@ -35,6 +35,7 @@ import { MAX_PIN_COUNT_DESKTOP, MAX_PIN_COUNT_MOBILE } from '../../utils/constan
 import VonageVideoClient from '../../utils/VonageVideoClient';
 import useEmoji, { EmojiWrapper } from '../../hooks/useEmoji';
 import handleCaptionsSignal from '../../utils/handleCaptionsSignal';
+import useRoomName from '../../hooks/useRoomName';
 
 export type { ChatMessageType } from '../../types/chat';
 
@@ -242,10 +243,10 @@ const SessionProvider = ({ children }: SessionProviderProps): ReactElement => {
   const [connected, setConnected] = useState(false);
   // This ref is used to track the current captions ID for captions management
   const currentCaptionsIdRef = useRef<string | null>(null);
-  // This ref is used to track the current room name for captions management
-  const currentRoomNameRef = useRef<string | null>(null);
   // This ref is used to track the number of active participants using captions
   const captionsActiveCountRef = useRef<number>(0);
+
+  const currentRoomName = useRoomName();
 
   useEffect(() => {
     if (connected && !currentCaptionsIdRef.current) {
@@ -273,7 +274,7 @@ const SessionProvider = ({ children }: SessionProviderProps): ReactElement => {
   const handleSessionDisconnected = async () => {
     vonageVideoClient.current = null;
     setConnected(false);
-    if (currentCaptionsIdRef.current && currentRoomNameRef.current) {
+    if (currentCaptionsIdRef.current && currentRoomName) {
       currentCaptionsIdRef.current = null;
       setIsCaptioningEnabled(false);
     }
@@ -356,7 +357,7 @@ const SessionProvider = ({ children }: SessionProviderProps): ReactElement => {
           event,
           currentCaptionsIdRef,
           captionsActiveCountRef,
-          currentRoomNameRef,
+          currentRoomName,
           vonageVideoClient: vonageVideoClient.current,
           setCaptionsEnabled: setIsCaptioningEnabled,
         });
@@ -388,7 +389,6 @@ const SessionProvider = ({ children }: SessionProviderProps): ReactElement => {
    */
   const joinRoom = useCallback(
     async (roomName: string) => {
-      currentRoomNameRef.current = roomName;
       fetchCredentials(roomName)
         .then((credentials) => {
           connect(credentials.data);

@@ -16,7 +16,8 @@ describe('handleCaptionsSignal', () => {
   let vonageVideoClient: VonageVideoClient;
   let currentCaptionsIdRef: RefObject<string | null>;
   let captionsActiveCountRef: RefObject<number>;
-  let currentRoomNameRef: RefObject<string | null>;
+
+  const currentRoomName: string = 'test-room';
   const setCaptionsEnabled = vi.fn();
 
   beforeEach(() => {
@@ -32,7 +33,6 @@ describe('handleCaptionsSignal', () => {
   it('should enable captions', () => {
     currentCaptionsIdRef = { current: null };
     captionsActiveCountRef = { current: 0 };
-    currentRoomNameRef = { current: 'test-room' };
 
     const event = {
       data: JSON.stringify({
@@ -46,7 +46,7 @@ describe('handleCaptionsSignal', () => {
       event,
       currentCaptionsIdRef,
       captionsActiveCountRef,
-      currentRoomNameRef,
+      currentRoomName,
       vonageVideoClient,
       setCaptionsEnabled,
     });
@@ -64,7 +64,6 @@ describe('handleCaptionsSignal', () => {
   it('should disable captions', () => {
     currentCaptionsIdRef = { current: mockCaptionsId };
     captionsActiveCountRef = { current: 1 };
-    currentRoomNameRef = { current: 'test-room' };
 
     const event = {
       data: JSON.stringify({
@@ -76,7 +75,7 @@ describe('handleCaptionsSignal', () => {
       event,
       currentCaptionsIdRef,
       captionsActiveCountRef,
-      currentRoomNameRef,
+      currentRoomName,
       vonageVideoClient,
       setCaptionsEnabled,
     });
@@ -88,7 +87,6 @@ describe('handleCaptionsSignal', () => {
   it('should increase the number of active captions user when joining the captions', () => {
     currentCaptionsIdRef = { current: mockCaptionsId };
     captionsActiveCountRef = { current: 2 };
-    currentRoomNameRef = { current: 'test-room' };
 
     const event = {
       data: JSON.stringify({
@@ -101,7 +99,7 @@ describe('handleCaptionsSignal', () => {
       event,
       currentCaptionsIdRef,
       captionsActiveCountRef,
-      currentRoomNameRef,
+      currentRoomName,
       vonageVideoClient,
       setCaptionsEnabled,
     });
@@ -112,7 +110,6 @@ describe('handleCaptionsSignal', () => {
   it('should signal out the new number of captions users when one leaves the captions', () => {
     currentCaptionsIdRef = { current: mockCaptionsId };
     captionsActiveCountRef = { current: 3 };
-    currentRoomNameRef = { current: 'test-room' };
     const event = {
       data: JSON.stringify({
         action: 'leave',
@@ -123,7 +120,7 @@ describe('handleCaptionsSignal', () => {
       event,
       currentCaptionsIdRef,
       captionsActiveCountRef,
-      currentRoomNameRef,
+      currentRoomName,
       vonageVideoClient,
       setCaptionsEnabled,
     });
@@ -140,7 +137,6 @@ describe('handleCaptionsSignal', () => {
   it('should update current user count', () => {
     currentCaptionsIdRef = { current: mockCaptionsId };
     captionsActiveCountRef = { current: 1 };
-    currentRoomNameRef = { current: 'test-room' };
     const event = {
       data: JSON.stringify({
         action: 'update-current-user-count',
@@ -152,7 +148,7 @@ describe('handleCaptionsSignal', () => {
       event,
       currentCaptionsIdRef,
       captionsActiveCountRef,
-      currentRoomNameRef,
+      currentRoomName,
       vonageVideoClient,
       setCaptionsEnabled,
     });
@@ -163,7 +159,6 @@ describe('handleCaptionsSignal', () => {
   it('should disable captions when the last user leaves', async () => {
     currentCaptionsIdRef = { current: mockCaptionsId };
     captionsActiveCountRef = { current: 1 };
-    currentRoomNameRef = { current: 'test-room' };
     const event = {
       data: JSON.stringify({
         action: 'leave',
@@ -175,7 +170,7 @@ describe('handleCaptionsSignal', () => {
       event,
       currentCaptionsIdRef,
       captionsActiveCountRef,
-      currentRoomNameRef,
+      currentRoomName,
       vonageVideoClient,
       setCaptionsEnabled,
     });
@@ -186,7 +181,6 @@ describe('handleCaptionsSignal', () => {
   it('should send out the current captions when there is a request for it', () => {
     currentCaptionsIdRef = { current: mockCaptionsId };
     captionsActiveCountRef = { current: 1 };
-    currentRoomNameRef = { current: 'test-room' };
     const event = {
       data: JSON.stringify({
         action: 'request-status',
@@ -199,7 +193,7 @@ describe('handleCaptionsSignal', () => {
       event,
       currentCaptionsIdRef,
       captionsActiveCountRef,
-      currentRoomNameRef,
+      currentRoomName,
       vonageVideoClient,
       setCaptionsEnabled,
     });
@@ -217,7 +211,6 @@ describe('handleCaptionsSignal', () => {
   it('should set the captions ID and count when receiving a status response', () => {
     currentCaptionsIdRef = { current: mockCaptionsId };
     captionsActiveCountRef = { current: 2 };
-    currentRoomNameRef = { current: 'test-room' };
     const event = {
       data: JSON.stringify({
         action: 'status-response',
@@ -230,7 +223,7 @@ describe('handleCaptionsSignal', () => {
       event,
       currentCaptionsIdRef,
       captionsActiveCountRef,
-      currentRoomNameRef,
+      currentRoomName,
       vonageVideoClient,
       setCaptionsEnabled,
     });
@@ -242,7 +235,6 @@ describe('handleCaptionsSignal', () => {
   it('should warn for unknown actions', () => {
     currentCaptionsIdRef = { current: null };
     captionsActiveCountRef = { current: 0 };
-    currentRoomNameRef = { current: 'test-room' };
     const consoleWarnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
 
     const event = {
@@ -255,7 +247,7 @@ describe('handleCaptionsSignal', () => {
       event,
       currentCaptionsIdRef,
       captionsActiveCountRef,
-      currentRoomNameRef,
+      currentRoomName,
       vonageVideoClient,
       setCaptionsEnabled,
     });

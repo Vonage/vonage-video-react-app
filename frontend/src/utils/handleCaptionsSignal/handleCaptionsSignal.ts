@@ -28,7 +28,7 @@ export type CaptionsHandleType = {
   event: SignalEvent;
   currentCaptionsIdRef: RefObject<string | null>;
   captionsActiveCountRef: RefObject<number>;
-  currentRoomNameRef: RefObject<string | null>;
+  currentRoomName: string;
   vonageVideoClient: VonageVideoClient | null;
   setCaptionsEnabled: Dispatch<SetStateAction<boolean>>;
 };
@@ -41,14 +41,14 @@ export type CaptionsHandleType = {
  * @property {SignalEvent} event - The signal event containing the data.
  * @property {RefObject<string | null>} currentCaptionsIdRef - Reference to the current captions ID
  * @property {RefObject<number>} captionsActiveCountRef - Reference to the count of active participants using captions
- * @property {RefObject<string | null>} currentRoomNameRef - Reference to the current room name
+ * @property {string} currentRoomName - Current room name
  * @property {RefObject | null} vonageVideoClient - The Vonage Video client instance
  */
 const handleCaptionsSignal = ({
   event,
   currentCaptionsIdRef,
   captionsActiveCountRef,
-  currentRoomNameRef,
+  currentRoomName,
   vonageVideoClient,
   setCaptionsEnabled,
 }: CaptionsHandleType) => {
@@ -88,8 +88,8 @@ const handleCaptionsSignal = ({
 
         // If there are no other participants using captions, we disable them for the whole session.
         // This is to ensure that captions are only disabled when there are other participants using them.
-        if (newCount === 0 && currentCaptionsIdRef.current && currentRoomNameRef.current) {
-          disableCaptions(currentRoomNameRef.current, currentCaptionsIdRef.current)
+        if (newCount === 0 && currentCaptionsIdRef.current && currentRoomName) {
+          disableCaptions(currentRoomName, currentCaptionsIdRef.current)
             .then(() => {
               currentCaptionsIdRef.current = null;
 
