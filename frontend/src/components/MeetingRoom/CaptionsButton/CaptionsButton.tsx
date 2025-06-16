@@ -48,9 +48,7 @@ const CaptionsButton = ({
         setIsCaptionsEnabled(true);
         setCaptionsId(currentCaptionsIdRef.current);
 
-        // we need to signal to other users that we are joining the captions
-        // This is to ensure that if the captions are already enabled, we just join them
-        // and not create a new captions session
+        // we can start publishing captions immediately without having to enable them
         vonageVideoClient?.signal({
           type: 'captions',
           data: JSON.stringify({

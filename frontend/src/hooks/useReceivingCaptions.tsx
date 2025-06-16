@@ -10,6 +10,12 @@ export type ReceivingCaptionsProps = {
   subscriber?: Subscriber | null;
 };
 
+export type CaptionReceivedType = {
+  streamId: string;
+  caption: string;
+  isFinal: boolean;
+};
+
 /**
  * Hook to manage receiving captions from a subscriber.
  * @param {ReceivingCaptionsProps} props - The props for the hook.
@@ -20,7 +26,7 @@ const useReceivingCaptions = ({ subscriber }: ReceivingCaptionsProps): CaptionsT
   const [isReceivingCaptions, setIsReceivingCaptions] = useState<boolean>(false);
 
   const captionUpdateHandler = useMemo(
-    () => (event: { streamId: string; caption: string; isFinal: boolean }) => {
+    () => (event: CaptionReceivedType) => {
       setIsReceivingCaptions(!!event.caption);
       setCaptionText(event.caption);
     },
