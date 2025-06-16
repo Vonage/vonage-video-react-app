@@ -1,8 +1,7 @@
 /* eslint-disable no-param-reassign */
 import { RefObject, Dispatch, SetStateAction } from 'react';
-import { SignalEvent } from '../../types/session';
+import { SignalEvent, SignalType } from '../../types/session';
 import { disableCaptions } from '../../api/captions';
-import VonageVideoClient from '../VonageVideoClient';
 
 /**
  * @typedef {object} CaptionsSignalDataType
@@ -29,7 +28,7 @@ export type CaptionsHandleType = {
   currentCaptionsIdRef: RefObject<string | null>;
   captionsActiveCountRef: RefObject<number>;
   currentRoomName: string;
-  vonageVideoClient: VonageVideoClient | null;
+  vonageVideoClientSignal: ((data: SignalType) => void) | undefined;
   setCaptionsEnabled: Dispatch<SetStateAction<boolean>>;
 };
 
@@ -49,7 +48,7 @@ const handleCaptionsSignal = ({
   currentCaptionsIdRef,
   captionsActiveCountRef,
   currentRoomName,
-  vonageVideoClient,
+  vonageVideoClientSignal,
   setCaptionsEnabled,
 }: CaptionsHandleType) => {
   try {
@@ -61,13 +60,15 @@ const handleCaptionsSignal = ({
         if (captionsId) {
           currentCaptionsIdRef.current = captionsId;
           setCaptionsEnabled(true);
-          vonageVideoClient?.signal({
-            type: 'captions',
-            data: JSON.stringify({
-              action: 'update-current-user-count',
-              currentCount: captionsActiveCountRef.current + 1,
-            }),
-          });
+          if (vonageVideoClientSignal) {
+            vonageVideoClientSignal({
+              type: 'captions',
+              data: JSON.stringify({
+                action: 'update-current-user-count',
+                currentCount: captionsActiveCountRef.current + 1,
+              }),
+            });
+          }
         }
         break;
 
@@ -93,17 +94,19 @@ const handleCaptionsSignal = ({
             .then(() => {
               currentCaptionsIdRef.current = null;
 
-              vonageVideoClient?.signal({
-                type: 'captions',
-                data: JSON.stringify({ action: 'disable' }),
-              });
+              if (vonageVideoClientSignal) {
+                vonageVideoClientSignal({
+                  type: 'captions',
+                  data: JSON.stringify({ action: 'disable' }),
+                });
+              }
             })
             .catch((err) => console.error('Error disabling captions:', err));
         }
 
         // If there are participants remaining, we signal the new count to other participants so they can update their tracking of the captions
-        if (newCount > 0) {
-          vonageVideoClient?.signal({
+        if (newCount > 0 && vonageVideoClientSignal) {
+          vonageVideoClientSignal({
             type: 'captions',
             data: JSON.stringify({
               action: 'update-current-user-count',
@@ -122,14 +125,16 @@ const handleCaptionsSignal = ({
 
       // Handle the case of sending out captions ID when requested
       case 'request-status':
-        vonageVideoClient?.signal({
-          type: 'captions',
-          data: JSON.stringify({
-            action: 'status-response',
-            captionsId: currentCaptionsIdRef.current,
-            currentCount: captionsActiveCountRef.current,
-          }),
-        });
+        if (vonageVideoClientSignal) {
+          vonageVideoClientSignal({
+            type: 'captions',
+            data: JSON.stringify({
+              action: 'status-response',
+              captionsId: currentCaptionsIdRef.current,
+              currentCount: captionsActiveCountRef.current,
+            }),
+          });
+        }
         break;
 
       // Handle the case of setting the captions ID and count when receiving a status response

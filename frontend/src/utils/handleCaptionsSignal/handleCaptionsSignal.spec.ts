@@ -1,33 +1,24 @@
 import { describe, expect, it, vi, beforeEach } from 'vitest';
 import { RefObject } from 'react';
-import EventEmitter from 'events';
 import handleCaptionsSignal from './handleCaptionsSignal';
-import VonageVideoClient from '../VonageVideoClient';
 import { SignalEvent } from '../../types/session';
 import { disableCaptions } from '../../api/captions';
 
-vi.mock('../VonageVideoClient');
 vi.mock('../../api/captions', () => ({
   disableCaptions: vi.fn(),
 }));
 const mockCaptionsId = '12345';
 
 describe('handleCaptionsSignal', () => {
-  let vonageVideoClient: VonageVideoClient;
   let currentCaptionsIdRef: RefObject<string | null>;
   let captionsActiveCountRef: RefObject<number>;
+  let vonageVideoClientSignal: ReturnType<typeof vi.fn>;
 
   const currentRoomName: string = 'test-room';
   const setCaptionsEnabled = vi.fn();
 
   beforeEach(() => {
-    vonageVideoClient = Object.assign(new EventEmitter(), {
-      signal: vi.fn(),
-    }) as unknown as VonageVideoClient;
-    const mockedVonageVideoClient = vi.mocked(VonageVideoClient);
-    mockedVonageVideoClient.mockImplementation(() => {
-      return vonageVideoClient;
-    });
+    vonageVideoClientSignal = vi.fn();
   });
 
   it('should enable captions', () => {
@@ -47,12 +38,12 @@ describe('handleCaptionsSignal', () => {
       currentCaptionsIdRef,
       captionsActiveCountRef,
       currentRoomName,
-      vonageVideoClient,
+      vonageVideoClientSignal,
       setCaptionsEnabled,
     });
 
     expect(currentCaptionsIdRef.current).toBe(mockCaptionsId);
-    expect(vonageVideoClient.signal).toHaveBeenCalledWith({
+    expect(vonageVideoClientSignal).toHaveBeenCalledWith({
       type: 'captions',
       data: JSON.stringify({
         action: 'update-current-user-count',
@@ -76,7 +67,7 @@ describe('handleCaptionsSignal', () => {
       currentCaptionsIdRef,
       captionsActiveCountRef,
       currentRoomName,
-      vonageVideoClient,
+      vonageVideoClientSignal,
       setCaptionsEnabled,
     });
 
@@ -100,7 +91,7 @@ describe('handleCaptionsSignal', () => {
       currentCaptionsIdRef,
       captionsActiveCountRef,
       currentRoomName,
-      vonageVideoClient,
+      vonageVideoClientSignal,
       setCaptionsEnabled,
     });
 
@@ -121,11 +112,11 @@ describe('handleCaptionsSignal', () => {
       currentCaptionsIdRef,
       captionsActiveCountRef,
       currentRoomName,
-      vonageVideoClient,
+      vonageVideoClientSignal,
       setCaptionsEnabled,
     });
 
-    expect(vonageVideoClient.signal).toHaveBeenCalledWith({
+    expect(vonageVideoClientSignal).toHaveBeenCalledWith({
       type: 'captions',
       data: JSON.stringify({
         action: 'update-current-user-count',
@@ -149,7 +140,7 @@ describe('handleCaptionsSignal', () => {
       currentCaptionsIdRef,
       captionsActiveCountRef,
       currentRoomName,
-      vonageVideoClient,
+      vonageVideoClientSignal,
       setCaptionsEnabled,
     });
 
@@ -171,7 +162,7 @@ describe('handleCaptionsSignal', () => {
       currentCaptionsIdRef,
       captionsActiveCountRef,
       currentRoomName,
-      vonageVideoClient,
+      vonageVideoClientSignal,
       setCaptionsEnabled,
     });
 
@@ -194,11 +185,11 @@ describe('handleCaptionsSignal', () => {
       currentCaptionsIdRef,
       captionsActiveCountRef,
       currentRoomName,
-      vonageVideoClient,
+      vonageVideoClientSignal,
       setCaptionsEnabled,
     });
 
-    expect(vonageVideoClient.signal).toHaveBeenCalledWith({
+    expect(vonageVideoClientSignal).toHaveBeenCalledWith({
       type: 'captions',
       data: JSON.stringify({
         action: 'status-response',
@@ -224,7 +215,7 @@ describe('handleCaptionsSignal', () => {
       currentCaptionsIdRef,
       captionsActiveCountRef,
       currentRoomName,
-      vonageVideoClient,
+      vonageVideoClientSignal,
       setCaptionsEnabled,
     });
 
@@ -248,7 +239,7 @@ describe('handleCaptionsSignal', () => {
       currentCaptionsIdRef,
       captionsActiveCountRef,
       currentRoomName,
-      vonageVideoClient,
+      vonageVideoClientSignal,
       setCaptionsEnabled,
     });
 

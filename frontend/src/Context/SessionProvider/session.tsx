@@ -358,7 +358,7 @@ const SessionProvider = ({ children }: SessionProviderProps): ReactElement => {
           currentCaptionsIdRef,
           captionsActiveCountRef,
           currentRoomName,
-          vonageVideoClient: vonageVideoClient.current,
+          vonageVideoClientSignal: vonageVideoClient.current?.signal,
           setCaptionsEnabled: setIsCaptioningEnabled,
         });
       });
