@@ -1,5 +1,5 @@
 import axios, { AxiosResponse } from 'axios';
-import { API_URL } from '../../utils/constants';
+import { API_URL } from '../utils/constants';
 
 export type EnableCaptionsType = {
   captions: {
@@ -8,7 +8,7 @@ export type EnableCaptionsType = {
 };
 
 export type DisableCaptionsType = {
-  status: number;
+  response: string;
 };
 
 /**
