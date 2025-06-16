@@ -49,7 +49,7 @@ describe('CaptionsBox', () => {
     const { getByTestId } = render(
       <CaptionsBox
         subscriberWrappers={[createSubscriberWrapper('subscriber-1')]}
-        isCaptionsEnabled
+        isCaptioningEnabled
         isMobileView={false}
       />
     );
@@ -60,7 +60,7 @@ describe('CaptionsBox', () => {
     const { queryByTestId } = render(
       <CaptionsBox
         subscriberWrappers={[createSubscriberWrapper('subscriber-1')]}
-        isCaptionsEnabled={false}
+        isCaptioningEnabled={false}
         isMobileView={false}
       />
     );

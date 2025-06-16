@@ -5,7 +5,7 @@ import { SubscriberWrapper } from '../../../../types/session';
 
 export type CaptionsBoxType = {
   subscriberWrappers: SubscriberWrapper[];
-  isCaptionsEnabled: boolean;
+  isCaptioningEnabled: boolean;
   isMobileView: boolean;
   localPublisherCaptions?: string | null;
 };
@@ -20,11 +20,11 @@ export type CaptionsBoxType = {
  */
 const CaptionsBox = ({
   subscriberWrappers,
-  isCaptionsEnabled,
+  isCaptioningEnabled,
   isMobileView = false,
   localPublisherCaptions,
 }: CaptionsBoxType): ReactElement | null => {
-  if (!isCaptionsEnabled) {
+  if (!isCaptioningEnabled) {
     return null;
   }
 

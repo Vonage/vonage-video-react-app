@@ -194,7 +194,7 @@ describe('MeetingRoom', () => {
 
   it('renders the captions box if it is on small tab or device and captions are enabled', () => {
     mockUseIsSmallViewport.mockImplementation(() => true);
-    sessionContext.captionsEnabled = true;
+    sessionContext.isCaptioningEnabled = true;
     render(<MeetingRoomWithProviders />);
     expect(screen.getByTestId('captions-box')).toBeInTheDocument();
   });

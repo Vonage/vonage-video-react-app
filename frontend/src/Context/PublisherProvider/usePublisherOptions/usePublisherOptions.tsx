@@ -29,7 +29,8 @@ const usePublisherOptions = (): PublisherProperties | null => {
       const videoSource = deviceStoreRef.current.getConnectedDeviceId('videoinput');
       const audioSource = deviceStoreRef.current.getConnectedDeviceId('audioinput');
 
-      const { name, noiseSuppression, blur, publishAudio, publishVideo } = user.defaultSettings;
+      const { name, noiseSuppression, blur, publishAudio, publishVideo, publishCaptions } =
+        user.defaultSettings;
       const initials = getInitials(name);
 
       const audioFilter: AudioFilter | undefined =
@@ -54,7 +55,7 @@ const usePublisherOptions = (): PublisherProperties | null => {
         audioFilter,
         videoFilter,
         videoSource,
-        publishCaptions: true,
+        publishCaptions,
       });
     };
 

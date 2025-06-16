@@ -131,7 +131,7 @@ const CaptionsButton = ({
         <CaptionsBox
           subscriberWrappers={subscriberWrappers}
           localPublisherCaptions={ownCaptions}
-          isCaptionsEnabled={isCaptionsEnabled}
+          isCaptioningEnabled={isCaptionsEnabled}
           isMobileView={isOverflowButton}
         />
       )}
