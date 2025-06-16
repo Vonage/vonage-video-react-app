@@ -10,7 +10,14 @@ import { disableCaptions } from '../../api/captions';
  * @property {number} currentCount (optional) - The current count of active participants using captions.
  */
 export type CaptionsSignalDataType = {
-  action: string;
+  action:
+    | 'enable'
+    | 'disable'
+    | 'join'
+    | 'leave'
+    | 'update-current-user-count'
+    | 'request-status'
+    | 'status-response';
   captionsId: string;
   currentCount?: number;
 };
@@ -53,7 +60,11 @@ const handleCaptionsSignal = ({
   setIsCaptioningEnabled,
 }: CaptionsHandleType) => {
   try {
-    const parsedData: CaptionsSignalDataType = JSON.parse(event.data as string);
+    if (!event.data) {
+      return;
+    }
+
+    const parsedData: CaptionsSignalDataType = JSON.parse(event.data);
     const { action, captionsId, currentCount } = parsedData;
 
     switch (action) {
