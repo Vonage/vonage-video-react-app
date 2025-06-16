@@ -21,7 +21,8 @@ export type CaptionsSignalDataType = {
  * @property {RefObject<string | null>} currentCaptionsIdRef - Reference to the current captions ID.
  * @property {RefObject<number>} captionsActiveCountRef - Reference to the count of active participants using captions.
  * @property {RefObject<string | null>} currentRoomNameRef - Reference to the current room name.
- * @property {VonageVideoClient | null} vonageVideoClient - The Vonage Video client instance.
+ * @property {((data: SignalType) => void) | undefined} vonageVideoClientSignal - The Vonage Video client signal function.
+ * @property {Dispatch<SetStateAction<boolean>>} setIsCaptioningEnabled - Function to set the captions enabled state.
  */
 export type CaptionsHandleType = {
   event: SignalEvent;
@@ -29,7 +30,7 @@ export type CaptionsHandleType = {
   captionsActiveCountRef: RefObject<number>;
   currentRoomName: string;
   vonageVideoClientSignal: ((data: SignalType) => void) | undefined;
-  setCaptionsEnabled: Dispatch<SetStateAction<boolean>>;
+  setIsCaptioningEnabled: Dispatch<SetStateAction<boolean>>;
 };
 
 /**
@@ -49,7 +50,7 @@ const handleCaptionsSignal = ({
   captionsActiveCountRef,
   currentRoomName,
   vonageVideoClientSignal,
-  setCaptionsEnabled,
+  setIsCaptioningEnabled,
 }: CaptionsHandleType) => {
   try {
     const parsedData: CaptionsSignalDataType = JSON.parse(event.data as string);
@@ -59,7 +60,7 @@ const handleCaptionsSignal = ({
       case 'enable':
         if (captionsId) {
           currentCaptionsIdRef.current = captionsId;
-          setCaptionsEnabled(true);
+          setIsCaptioningEnabled(true);
           if (vonageVideoClientSignal) {
             vonageVideoClientSignal({
               type: 'captions',
@@ -73,7 +74,7 @@ const handleCaptionsSignal = ({
         break;
 
       case 'join':
-        setCaptionsEnabled(true);
+        setIsCaptioningEnabled(true);
         captionsActiveCountRef.current += 1;
         break;
 
@@ -85,7 +86,7 @@ const handleCaptionsSignal = ({
 
       case 'leave': {
         const newCount = Math.max(0, captionsActiveCountRef.current - 1);
-        setCaptionsEnabled(false);
+        setIsCaptioningEnabled(false);
 
         // If there are no other participants using captions, we disable them for the whole session.
         // This is to ensure that captions are only disabled when there are other participants using them.

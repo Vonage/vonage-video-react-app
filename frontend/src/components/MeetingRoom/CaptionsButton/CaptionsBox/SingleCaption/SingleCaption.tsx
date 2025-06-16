@@ -23,19 +23,18 @@ const SingleCaption = ({
   isSmallViewPort,
   caption,
 }: SingleCaptionProps): ReactElement | null => {
-  const safeSubscriber = subscriber || undefined;
-  const { captionText: subscriberCaption, isReceivingCaptions } = useReceivingCaptions({
-    subscriber: safeSubscriber,
-  }) || { captionText: '', isReceivingCaptions: false };
+  const { captionText, isReceivingCaptions } = useReceivingCaptions({
+    subscriber,
+  });
 
-  const captionText = caption ?? subscriberCaption;
+  const displayCaption = caption ?? captionText;
   const isActive = Boolean(caption ?? isReceivingCaptions);
 
   const [visible, setVisible] = useState<boolean>(false);
   const timeoutRef = useRef<number | null>(null);
 
   useEffect(() => {
-    if (isActive && captionText) {
+    if (isActive && displayCaption) {
       setVisible(true);
       if (timeoutRef.current) {
         clearTimeout(timeoutRef.current);
@@ -54,9 +53,9 @@ const SingleCaption = ({
         clearTimeout(timeoutRef.current);
       }
     };
-  }, [captionText, isActive]);
+  }, [displayCaption, isActive]);
 
-  if (!visible || !captionText) {
+  if (!visible || !displayCaption) {
     return null;
   }
 
@@ -73,7 +72,7 @@ const SingleCaption = ({
           fontSize: isSmallViewPort ? '1rem' : '1.25rem',
         }}
       >
-        <strong>{subscriber?.stream?.name ?? 'You'}: </strong> {captionText}
+        <strong>{subscriber?.stream?.name ?? 'You'}: </strong> {displayCaption}
       </Typography>
     </div>
   );

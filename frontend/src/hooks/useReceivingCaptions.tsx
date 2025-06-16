@@ -7,7 +7,7 @@ export type CaptionsType = {
 };
 
 export type ReceivingCaptionsProps = {
-  subscriber?: Subscriber;
+  subscriber?: Subscriber | null;
 };
 
 /**
@@ -28,14 +28,10 @@ const useReceivingCaptions = ({ subscriber }: ReceivingCaptionsProps): CaptionsT
   );
 
   useEffect(() => {
-    if (subscriber) {
-      subscriber.on('captionReceived', captionUpdateHandler);
-    }
+    subscriber?.on('captionReceived', captionUpdateHandler);
 
     return () => {
-      if (subscriber) {
-        subscriber.off('captionReceived', captionUpdateHandler);
-      }
+      subscriber?.off('captionReceived', captionUpdateHandler);
     };
   }, [subscriber, captionUpdateHandler]);
 

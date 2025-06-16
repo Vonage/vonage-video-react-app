@@ -359,7 +359,7 @@ const SessionProvider = ({ children }: SessionProviderProps): ReactElement => {
           captionsActiveCountRef,
           currentRoomName,
           vonageVideoClientSignal: vonageVideoClient.current?.signal,
-          setCaptionsEnabled: setIsCaptioningEnabled,
+          setIsCaptioningEnabled,
         });
       });
       vonageVideoClient.current.on('signal:emoji', handleEmoji);
