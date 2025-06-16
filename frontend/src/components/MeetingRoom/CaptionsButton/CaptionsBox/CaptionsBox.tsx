@@ -3,10 +3,10 @@ import { Box } from '@mui/material';
 import SingleCaption from './SingleCaption';
 import { SubscriberWrapper } from '../../../../types/session';
 
-export type CaptionsBoxType = {
+export type CaptionsBoxProps = {
   subscriberWrappers: SubscriberWrapper[];
   isCaptioningEnabled: boolean;
-  isMobileView: boolean;
+  isSmallViewPort: boolean;
   localPublisherCaptions?: string | null;
 };
 
@@ -14,32 +14,35 @@ export type CaptionsBoxType = {
  * CaptionsBox Component
  *
  * This component shows a list of the captions that are currently in the meeting room.
- * @param {CaptionsBoxType} props - the props for the component.
+ * @param {CaptionsBoxProps} props - the props for the component.
  *  @property {SubscriberWrapper[]} subscriberWrappers - an array of subscriber wrappers.
+ *  @property {boolean} isCaptioningEnabled - whether captioning is enabled.
+ *  @property {boolean} isSmallViewPort - whether it is a small viewport (mobile view or small tab).
+ *  @property {string | null} localPublisherCaptions - the captions from the local publisher, if available.
  * @returns {ReactElement} The captions box component.
  */
 const CaptionsBox = ({
   subscriberWrappers,
   isCaptioningEnabled,
-  isMobileView = false,
+  isSmallViewPort = false,
   localPublisherCaptions,
-}: CaptionsBoxType): ReactElement | null => {
+}: CaptionsBoxProps): ReactElement | null => {
   if (!isCaptioningEnabled) {
     return null;
   }
 
   const sxBox = {
     position: 'absolute',
-    bottom: isMobileView ? 100 : 80,
+    bottom: isSmallViewPort ? 100 : 80,
     left: '50%',
     transform: 'translateX(-50%)',
     backgroundColor: 'rgba(0, 0, 0, 0.7)',
     color: 'white',
     px: 2,
-    py: isMobileView ? 1 : 1.5,
+    py: isSmallViewPort ? 1 : 1.5,
     borderRadius: 2,
-    width: isMobileView ? '90vw' : 600,
-    height: isMobileView ? 150 : 200,
+    width: isSmallViewPort ? '90vw' : 600,
+    height: isSmallViewPort ? 150 : 200,
     overflowY: 'auto',
     display: 'flex',
     flexDirection: 'column',
@@ -53,7 +56,7 @@ const CaptionsBox = ({
         <SingleCaption
           key="local-publisher"
           subscriber={null}
-          isMobileView={isMobileView}
+          isSmallViewPort={isSmallViewPort}
           caption={localPublisherCaptions}
         />
       )}
@@ -61,7 +64,7 @@ const CaptionsBox = ({
         <SingleCaption
           key={wrapper.subscriber?.id || idx}
           subscriber={wrapper.subscriber}
-          isMobileView={isMobileView}
+          isSmallViewPort={isSmallViewPort}
         />
       ))}
     </Box>

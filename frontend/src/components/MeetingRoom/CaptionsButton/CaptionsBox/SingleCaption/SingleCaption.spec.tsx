@@ -56,7 +56,7 @@ describe('SingleCaption', () => {
     const { getByText } = render(
       <SingleCaption
         subscriber={createSubscriberWrapper('subscriber-1').subscriber}
-        isMobileView={false}
+        isSmallViewPort={false}
         caption="Test Caption"
       />
     );
@@ -67,7 +67,7 @@ describe('SingleCaption', () => {
     const { queryByText } = render(
       <SingleCaption
         subscriber={createSubscriberWrapper('subscriber-1').subscriber}
-        isMobileView={false}
+        isSmallViewPort={false}
         caption=""
       />
     );

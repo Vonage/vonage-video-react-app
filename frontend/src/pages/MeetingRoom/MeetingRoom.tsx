@@ -112,7 +112,7 @@ const MeetingRoom = (): ReactElement => {
           subscriberWrappers={subscriberWrappers}
           localPublisherCaptions={ownCaptions}
           isCaptioningEnabled={isCaptioningEnabled}
-          isMobileView={isSmallViewPort}
+          isSmallViewPort={isSmallViewPort}
         />
       )}
       <Toolbar

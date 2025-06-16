@@ -6,19 +6,21 @@ import { CAPTION_TIMEOUT_MS } from '../../../../../utils/constants';
 
 export type SingleCaptionProps = {
   subscriber: Subscriber | null;
-  isMobileView: boolean;
+  isSmallViewPort: boolean;
   caption?: string;
 };
 
 /**
- * SingleCaption component to display captions for a specific subscriber.
+ * SingleCaption component to display captions for a specific user.
  * @param {SingleCaptionProps} props - The props for the component.
  * @property {Subscriber} subscriber - The subscriber object for which to display captions.
+ * @property {boolean} isSmallViewPort - whether it is a small viewport (mobile view or small tab).
+ * @property {string} caption - (optional) the caption text to display.
  * @returns {ReactElement | null } - The rendered caption or null if not receiving captions.
  */
 const SingleCaption = ({
   subscriber,
-  isMobileView,
+  isSmallViewPort,
   caption,
 }: SingleCaptionProps): ReactElement | null => {
   const safeSubscriber = subscriber || undefined;
@@ -68,7 +70,7 @@ const SingleCaption = ({
           lineHeight: 1.4,
           textAlign: 'left',
           color: 'white',
-          fontSize: isMobileView ? '1rem' : '1.25rem',
+          fontSize: isSmallViewPort ? '1rem' : '1.25rem',
         }}
       >
         <strong>{subscriber?.stream?.name ?? 'You'}: </strong> {captionText}
