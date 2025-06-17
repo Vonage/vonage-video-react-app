@@ -91,19 +91,9 @@ sessionRouter.post(
       const { room: roomName } = req.params;
       const sessionId = await sessionService.getSession(roomName);
       const getCaptionId = await sessionService.getCaptionId(roomName);
+      const newCaptionCount = await sessionService.addCaptionsUser(roomName);
 
-      if (getCaptionId) {
-        res.json({
-          captions: {
-            captionsId: getCaptionId,
-          },
-          status: 200,
-        });
-        await sessionService.addCaptionsUser(roomName);
-        return;
-      }
-
-      if (sessionId) {
+      if (newCaptionCount === 1 && sessionId) {
         const captions = await videoService.enableCaptions(sessionId);
         await sessionService.setCaptionId(roomName, captions.captionsId);
         await videoService.sendSignalToSession(sessionId, {
@@ -113,13 +103,13 @@ sessionRouter.post(
             captionsId: captions.captionsId,
           }),
         });
-        await sessionService.addCaptionsUser(roomName);
+        res.json({ captions, status: 200 });
+      } else {
+        // the captions were already enabled for this room
         res.json({
-          captions,
+          captions: { captionsId: getCaptionId },
           status: 200,
         });
-      } else {
-        res.status(404).json({ message: 'Room not found' });
       }
     } catch (error: unknown) {
       const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
@@ -135,6 +125,7 @@ sessionRouter.post(
       const { room: roomName, captionId } = req.params;
       const sessionId = await sessionService.getSession(roomName);
       const captionsUserCount = await sessionService.removeCaptionsUser(roomName);
+      console.warn('captionsUserCount: ', captionsUserCount);
       if (sessionId && captionsUserCount === 0) {
         const responseCaptionId = await videoService.disableCaptions(captionId);
         await videoService.sendSignalToSession(sessionId, {
@@ -151,7 +142,7 @@ sessionRouter.post(
         });
       } else {
         // If there are still users in the captions, we don't disable it
-        res.status(200).json({
+        res.json({
           message: 'Captions are still active for other users',
           status: 200,
         });

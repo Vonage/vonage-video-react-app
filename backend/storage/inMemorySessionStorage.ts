@@ -26,10 +26,7 @@ class InMemorySessionStorage implements SessionStorage {
   }
 
   async removeCaptionsUser(roomName: string): Promise<number> {
-    if (!this.captionsUserCount[roomName]) {
-      return 0;
-    }
-    this.captionsUserCount[roomName] = Math.max(0, this.captionsUserCount[roomName] - 1);
+    this.captionsUserCount[roomName] = (this.captionsUserCount[roomName] || 0) - 1;
     return this.captionsUserCount[roomName];
   }
 }

@@ -44,18 +44,13 @@ const CaptionsButton = ({
 
   const handleCaptions = async (action: 'enable' | 'disable') => {
     if (action === 'enable') {
-      if (currentCaptionsIdRef?.current) {
+      try {
+        const response = await enableCaptions(roomName);
+        setCaptionsId(response.data.captions.captionsId);
+        currentCaptionsIdRef.current = response.data.captions.captionsId;
         setIsCaptionsEnabled(true);
-        setCaptionsId(currentCaptionsIdRef.current);
-      } else if (!captionsId && roomName) {
-        try {
-          const response = await enableCaptions(roomName);
-          setCaptionsId(response.data.captions.captionsId);
-          currentCaptionsIdRef.current = response.data.captions.captionsId;
-          setIsCaptionsEnabled(true);
-        } catch (err) {
-          console.log(err);
-        }
+      } catch (err) {
+        console.log(err);
       }
     } else if (action === 'disable' && captionsId && roomName) {
       try {
