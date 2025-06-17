@@ -1,5 +1,4 @@
-import { describe, expect, it, vi } from 'vitest';
-import { RefObject } from 'react';
+import { describe, expect, it, vi, beforeEach } from 'vitest';
 import handleCaptionsSignal from './handleCaptionsSignal';
 import { SignalEvent } from '../../types/session';
 
@@ -9,32 +8,28 @@ vi.mock('../../api/captions', () => ({
 const mockCaptionsId = '12345';
 
 describe('handleCaptionsSignal', () => {
-  let currentCaptionsIdRef: RefObject<string | null>;
-  const setIsCaptioningEnabled = vi.fn();
+  const mockSetIsCaptioningEnabled = vi.fn();
+
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
 
   it('should enable captions', () => {
-    currentCaptionsIdRef = { current: null };
-
     const event = {
       data: JSON.stringify({
         action: 'enable',
         captionsId: mockCaptionsId,
-        currentCount: 1,
       }),
     } as unknown as SignalEvent;
 
     handleCaptionsSignal({
       event,
-      currentCaptionsIdRef,
-      setIsCaptioningEnabled,
+      setIsCaptioningEnabled: mockSetIsCaptioningEnabled,
     });
-
-    expect(currentCaptionsIdRef.current).toBe(mockCaptionsId);
+    expect(mockSetIsCaptioningEnabled).toHaveBeenCalledWith(true);
   });
 
   it('should disable captions', () => {
-    currentCaptionsIdRef = { current: mockCaptionsId };
-
     const event = {
       data: JSON.stringify({
         action: 'disable',
@@ -43,15 +38,12 @@ describe('handleCaptionsSignal', () => {
 
     handleCaptionsSignal({
       event,
-      currentCaptionsIdRef,
-      setIsCaptioningEnabled,
+      setIsCaptioningEnabled: mockSetIsCaptioningEnabled,
     });
-
-    expect(currentCaptionsIdRef.current).toBeNull();
+    expect(mockSetIsCaptioningEnabled).toHaveBeenCalledWith(false);
   });
 
   it('should warn for unknown actions', () => {
-    currentCaptionsIdRef = { current: null };
     const consoleWarnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
 
     const event = {
@@ -62,10 +54,10 @@ describe('handleCaptionsSignal', () => {
 
     handleCaptionsSignal({
       event,
-      currentCaptionsIdRef,
-      setIsCaptioningEnabled,
+      setIsCaptioningEnabled: mockSetIsCaptioningEnabled,
     });
 
+    expect(mockSetIsCaptioningEnabled).not.toHaveBeenCalled();
     expect(consoleWarnSpy).toHaveBeenCalledWith('Unknown captions action: unknown-action');
   });
 });

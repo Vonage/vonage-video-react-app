@@ -9,7 +9,6 @@ import {
   SetStateAction,
   useEffect,
   ReactElement,
-  RefObject,
 } from 'react';
 import { Connection, Publisher, Stream } from '@vonage/client-sdk-video';
 import fetchCredentials from '../../api/fetchCredentials';
@@ -62,7 +61,6 @@ export type SessionContextType = {
   toggleReportIssue: () => void;
   pinSubscriber: (subscriberId: string) => void;
   isMaxPinned: boolean;
-  currentCaptionsIdRef: RefObject<string | null>;
   ownCaptions: string | null;
   isCaptioningEnabled: boolean;
   sendEmoji: (emoji: string) => void;
@@ -97,7 +95,6 @@ export const SessionContext = createContext<SessionContextType>({
   toggleReportIssue: () => {},
   pinSubscriber: () => {},
   isMaxPinned: false,
-  currentCaptionsIdRef: { current: null },
   ownCaptions: null,
   isCaptioningEnabled: false,
   sendEmoji: () => {},
@@ -241,9 +238,6 @@ const SessionProvider = ({ children }: SessionProviderProps): ReactElement => {
   const { user } = useUserContext();
   const [connected, setConnected] = useState(false);
 
-  // This ref is used to track the current captions ID for captions management
-  const currentCaptionsIdRef = useRef<string | null>(null);
-
   /**
    * Handles changes to stream properties. This triggers a re-render when a stream property changes
    * @param {StreamPropertyChangedEvent} event - The event containing the stream, changed property, new value, and old value.
@@ -256,14 +250,11 @@ const SessionProvider = ({ children }: SessionProviderProps): ReactElement => {
   };
 
   // handle the disconnect from session and clean up of the session object
-  // as well as disabling captions locally if they were enabled
+  // as well as disabling the captions
   const handleSessionDisconnected = async () => {
     vonageVideoClient.current = null;
     setConnected(false);
-    if (currentCaptionsIdRef.current) {
-      currentCaptionsIdRef.current = null;
-      setIsCaptioningEnabled(false);
-    }
+    setIsCaptioningEnabled(false);
   };
 
   // function to set reconnecting status and to increase the number of reconnections the user has had
@@ -341,7 +332,6 @@ const SessionProvider = ({ children }: SessionProviderProps): ReactElement => {
       vonageVideoClient.current.on('signal:captions', (event: SignalEvent) => {
         handleCaptionsSignal({
           event,
-          currentCaptionsIdRef,
           setIsCaptioningEnabled,
         });
       });
@@ -450,7 +440,6 @@ const SessionProvider = ({ children }: SessionProviderProps): ReactElement => {
       toggleReportIssue,
       pinSubscriber,
       isMaxPinned,
-      currentCaptionsIdRef,
       ownCaptions,
       isCaptioningEnabled,
       sendEmoji,
@@ -481,7 +470,6 @@ const SessionProvider = ({ children }: SessionProviderProps): ReactElement => {
       toggleReportIssue,
       pinSubscriber,
       isMaxPinned,
-      currentCaptionsIdRef,
       ownCaptions,
       isCaptioningEnabled,
       sendEmoji,

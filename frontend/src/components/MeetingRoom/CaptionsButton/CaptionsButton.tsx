@@ -28,7 +28,7 @@ const CaptionsButton = ({
   handleClick,
   subscriberWrappers,
 }: CaptionsButtonProps): ReactElement => {
-  const { currentCaptionsIdRef, ownCaptions } = useSessionContext();
+  const { ownCaptions } = useSessionContext();
   const roomName = useRoomName();
   const [captionsId, setCaptionsId] = useState<string>('');
   const [isCaptionsEnabled, setIsCaptionsEnabled] = useState<boolean>(false);
@@ -47,7 +47,6 @@ const CaptionsButton = ({
       try {
         const response = await enableCaptions(roomName);
         setCaptionsId(response.data.captions.captionsId);
-        currentCaptionsIdRef.current = response.data.captions.captionsId;
         setIsCaptionsEnabled(true);
       } catch (err) {
         console.log(err);

@@ -153,7 +153,6 @@ describe('MeetingRoom', () => {
       toggleParticipantList: vi.fn(),
       closeRightPanel: vi.fn(),
       emojiQueue: [],
-      currentCaptionsIdRef: { current: null },
     } as unknown as SessionContextType;
     mockUseSpeakingDetector.mockReturnValue(false);
     mockUseLayoutManager.mockImplementation(() => (_dimensions, elements) => {
@@ -206,7 +205,6 @@ describe('MeetingRoom', () => {
 
   it('does not render the captions box if it is on small tab or device and captions are not enabled', () => {
     (mui.useMediaQuery as Mock).mockReturnValue(true);
-    sessionContext.currentCaptionsIdRef.current = null;
     render(<MeetingRoomWithProviders />);
     expect(screen.queryByTestId('captions-box')).not.toBeInTheDocument();
   });

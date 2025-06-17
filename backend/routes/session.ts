@@ -125,7 +125,6 @@ sessionRouter.post(
       const { room: roomName, captionId } = req.params;
       const sessionId = await sessionService.getSession(roomName);
       const captionsUserCount = await sessionService.removeCaptionsUser(roomName);
-      console.warn('captionsUserCount: ', captionsUserCount);
       if (sessionId && captionsUserCount === 0) {
         const responseCaptionId = await videoService.disableCaptions(captionId);
         await videoService.sendSignalToSession(sessionId, {

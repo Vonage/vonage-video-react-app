@@ -1,5 +1,4 @@
-/* eslint-disable no-param-reassign */
-import { RefObject, Dispatch, SetStateAction } from 'react';
+import { Dispatch, SetStateAction } from 'react';
 import { SignalEvent } from '../../types/session';
 
 /**
@@ -17,12 +16,10 @@ export type CaptionsSignalDataType = {
 /**
  * @typedef {object} CaptionsHandleType
  * @property {SignalEvent} event - The signal event containing the data.
- * @property {RefObject<string | null>} currentCaptionsIdRef - Reference to the current captions ID.
  * @property {Dispatch<SetStateAction<boolean>>} setIsCaptioningEnabled - Function to set the captions enabled state.
  */
 export type CaptionsHandleType = {
   event: SignalEvent;
-  currentCaptionsIdRef: RefObject<string | null>;
   setIsCaptioningEnabled: Dispatch<SetStateAction<boolean>>;
 };
 
@@ -32,13 +29,9 @@ export type CaptionsHandleType = {
  * It also handles the functionality of notifying other participants about the current captions ID and the participant count.
  * @param {CaptionsHandleType} props - Dependencies needed for the handler
  * @property {SignalEvent} event - The signal event containing the data.
- * @property {RefObject<string | null>} currentCaptionsIdRef - Reference to the current captions ID
+ * @property {Dispatch<SetStateAction<boolean>>} setIsCaptioningEnabled - Function to set the captions enabled state.
  */
-const handleCaptionsSignal = ({
-  event,
-  currentCaptionsIdRef,
-  setIsCaptioningEnabled,
-}: CaptionsHandleType) => {
+const handleCaptionsSignal = ({ event, setIsCaptioningEnabled }: CaptionsHandleType) => {
   try {
     if (!event.data) {
       return;
@@ -50,14 +43,11 @@ const handleCaptionsSignal = ({
     switch (action) {
       case 'enable':
         if (captionsId) {
-          currentCaptionsIdRef.current = captionsId;
           setIsCaptioningEnabled(true);
         }
         break;
 
       case 'disable':
-        // We turned off the captions session-wide
-        currentCaptionsIdRef.current = null;
         setIsCaptioningEnabled(false);
         break;
 
