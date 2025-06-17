@@ -19,6 +19,7 @@ export type CaptionReceivedType = {
 /**
  * Hook to manage receiving captions from a subscriber.
  * @param {ReceivingCaptionsProps} props - The props for the hook.
+ *  @property {Subscriber | null} subscriber - The subscriber object from which to receive captions.
  * @returns {CaptionsType} - The current caption text and whether captions are being received.
  */
 const useReceivingCaptions = ({ subscriber }: ReceivingCaptionsProps): CaptionsType => {

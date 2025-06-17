@@ -21,6 +21,7 @@ export type CaptionsButtonProps = {
  * @param {CaptionsButtonProps} props - the props for the component
  *  @property {boolean} isOverflowButton - (optional) whether the button is in the ToolbarOverflowMenu
  *  @property {(event?: MouseEvent | TouchEvent) => void} handleClick - (optional) click handler that closes the overflow menu in small viewports.
+ *  @property {SubscriberWrapper[]} subscriberWrappers - an array of subscribers to display captions for.
  * @returns {ReactElement} - The CaptionsButton component.
  */
 const CaptionsButton = ({
@@ -35,9 +36,7 @@ const CaptionsButton = ({
   const title = isCaptionsEnabled ? 'Disable captions' : 'Enable captions';
 
   const handleClose = () => {
-    // If the CaptionsButton is in the ToolbarOverflowMenu, we close the modal and the menu
     if (isOverflowButton && handleClick) {
-      // Close the menu immediately to improve mobile UX
       handleClick();
     }
   };
@@ -63,10 +62,7 @@ const CaptionsButton = ({
   };
 
   const handleActionClick = () => {
-    // First handle captions toggle
     handleCaptions(isCaptionsEnabled ? 'disable' : 'enable');
-
-    // Then close the menu if needed
     handleClose();
   };
 

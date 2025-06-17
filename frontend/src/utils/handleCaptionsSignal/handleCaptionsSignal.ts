@@ -5,12 +5,10 @@ import { SignalEvent } from '../../types/session';
  * @typedef {object} CaptionsSignalDataType
  * @property {string} action - The action to be performed on captions (e.g., 'enable', 'disable', 'join', 'leave').
  * @property {string} captionsId - The ID of the captions to be enabled or disabled.
- * @property {number} currentCount (optional) - The current count of active participants using captions.
  */
 export type CaptionsSignalDataType = {
   action: 'enable' | 'disable';
   captionsId: string;
-  currentCount?: number;
 };
 
 /**

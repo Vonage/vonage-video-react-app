@@ -10,10 +10,6 @@ await jest.unstable_mockModule('../helpers/config', mockOpentokConfig);
 const mockVcrSessionStorage = {
   getSession: jest.fn().mockReturnValue('someSessionId'),
   setSession: jest.fn().mockReturnValue(true),
-  getCaptionId: jest.fn().mockReturnValue('someCaptionId'),
-  setCaptionId: jest.fn(),
-  addCaptionsUser: jest.fn().mockReturnValue(1),
-  removeCaptionsUser: jest.fn().mockReturnValue(0),
 };
 
 jest.mock('../storage/vcrSessionStorage', () => {

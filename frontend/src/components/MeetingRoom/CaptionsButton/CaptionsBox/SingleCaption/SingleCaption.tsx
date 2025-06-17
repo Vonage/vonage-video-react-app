@@ -16,7 +16,7 @@ export type SingleCaptionProps = {
  * @property {Subscriber} subscriber - The subscriber object for which to display captions.
  * @property {boolean} isSmallViewPort - whether it is a small viewport (mobile view or small tab).
  * @property {string} caption - (optional) the caption text to display.
- * @returns {ReactElement | null } - The rendered caption or null if not receiving captions.
+ * @returns {ReactElement | null} - The rendered caption or null if not receiving captions.
  */
 const SingleCaption = ({
   subscriber,
