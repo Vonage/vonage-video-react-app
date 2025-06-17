@@ -32,9 +32,5 @@ class InMemorySessionStorage implements SessionStorage {
     this.captionsUserCount[roomName] = Math.max(0, this.captionsUserCount[roomName] - 1);
     return this.captionsUserCount[roomName];
   }
-
-  async getCaptionsUserCount(roomName: string): Promise<number> {
-    return this.captionsUserCount[roomName] || 0;
-  }
 }
 export default InMemorySessionStorage;

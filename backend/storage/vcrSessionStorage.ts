@@ -55,11 +55,5 @@ class VcrSessionStorage implements SessionStorage {
     await this.dbState.set(key, count.toString());
     return count;
   }
-
-  async getCaptionsUserCount(roomName: string): Promise<number> {
-    const key = `captionsUserCount:${roomName}`;
-    const count = await this.dbState.get(key);
-    return count ? parseInt(String(count), 10) : 0;
-  }
 }
 export default VcrSessionStorage;

@@ -35,7 +35,6 @@ import { MAX_PIN_COUNT_DESKTOP, MAX_PIN_COUNT_MOBILE } from '../../utils/constan
 import VonageVideoClient from '../../utils/VonageVideoClient';
 import useEmoji, { EmojiWrapper } from '../../hooks/useEmoji';
 import handleCaptionsSignal from '../../utils/handleCaptionsSignal';
-import useRoomName from '../../hooks/useRoomName';
 
 export type { ChatMessageType } from '../../types/chat';
 
@@ -241,22 +240,9 @@ const SessionProvider = ({ children }: SessionProviderProps): ReactElement => {
 
   const { user } = useUserContext();
   const [connected, setConnected] = useState(false);
+
   // This ref is used to track the current captions ID for captions management
   const currentCaptionsIdRef = useRef<string | null>(null);
-  // This ref is used to track the number of active participants using captions
-  const captionsActiveCountRef = useRef<number>(0);
-
-  const currentRoomName = useRoomName();
-
-  // useEffect(() => {
-  //   if (connected && !currentCaptionsIdRef.current) {
-  //     // Request captions status from existing participants
-  //     vonageVideoClient.current?.signal({
-  //       type: 'captions',
-  //       data: JSON.stringify({ action: 'request-status' }),
-  //     });
-  //   }
-  // }, [connected]);
 
   /**
    * Handles changes to stream properties. This triggers a re-render when a stream property changes
@@ -274,7 +260,7 @@ const SessionProvider = ({ children }: SessionProviderProps): ReactElement => {
   const handleSessionDisconnected = async () => {
     vonageVideoClient.current = null;
     setConnected(false);
-    if (currentCaptionsIdRef.current && currentRoomName) {
+    if (currentCaptionsIdRef.current) {
       currentCaptionsIdRef.current = null;
       setIsCaptioningEnabled(false);
     }
@@ -356,9 +342,6 @@ const SessionProvider = ({ children }: SessionProviderProps): ReactElement => {
         handleCaptionsSignal({
           event,
           currentCaptionsIdRef,
-          captionsActiveCountRef,
-          currentRoomName,
-          vonageVideoClientSignal: vonageVideoClient.current?.signal,
           setIsCaptioningEnabled,
         });
       });

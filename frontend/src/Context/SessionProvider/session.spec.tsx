@@ -10,7 +10,6 @@ import useUserContext from '../../hooks/useUserContext';
 import VonageVideoClient from '../../utils/VonageVideoClient';
 import { Credential, StreamPropertyChangedEvent, SubscriberWrapper } from '../../types/session';
 import fetchCredentials from '../../api/fetchCredentials';
-import useRoomName from '../../hooks/useRoomName';
 
 vi.mock('../../utils/ActiveSpeakerTracker');
 vi.mock('../../hooks/useUserContext');
@@ -21,10 +20,8 @@ vi.mock('../../utils/constants', () => ({
   MAX_PIN_COUNT_DESKTOP: 1,
 }));
 vi.mock('../../api/fetchCredentials');
-vi.mock('../../hooks/useRoomName');
 
 const mockFetchCredentials = fetchCredentials as Mock;
-const mockedRoomName = 'test-room-name';
 
 describe('SessionProvider', () => {
   let activeSpeakerTracker: ActiveSpeakerTracker;
@@ -165,7 +162,6 @@ describe('SessionProvider', () => {
       );
       getByTestId = result.getByTestId;
     });
-    (useRoomName as Mock).mockReturnValue(mockedRoomName);
   });
 
   afterEach(() => {

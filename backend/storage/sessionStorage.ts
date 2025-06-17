@@ -5,5 +5,4 @@ export interface SessionStorage {
   getCaptionId(roomName: string): Promise<string | null>;
   addCaptionsUser(roomName: string): Promise<number>;
   removeCaptionsUser(roomName: string): Promise<number>;
-  getCaptionsUserCount(roomName: string): Promise<number>;
 }
