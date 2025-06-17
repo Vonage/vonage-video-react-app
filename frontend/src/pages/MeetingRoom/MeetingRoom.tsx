@@ -11,9 +11,9 @@ import EmojisOrigin from '../../components/MeetingRoom/EmojisOrigin';
 import RightPanel from '../../components/MeetingRoom/RightPanel';
 import useRoomName from '../../hooks/useRoomName';
 import isValidRoomName from '../../utils/isValidRoomName';
-import useIsSmallViewport from '../../hooks/useIsSmallViewport';
 import usePublisherOptions from '../../Context/PublisherProvider/usePublisherOptions';
 import CaptionsBox from '../../components/MeetingRoom/CaptionsButton/CaptionsBox';
+import useIsSmallViewport from '../../hooks/useIsSmallViewport';
 
 const height = '@apply h-[calc(100dvh_-_80px)]';
 
@@ -48,7 +48,7 @@ const MeetingRoom = (): ReactElement => {
     useScreenShare();
   const navigate = useNavigate();
   const publisherOptions = usePublisherOptions();
-  const isSmallViewPort = useIsSmallViewport();
+  const isSmallViewport = useIsSmallViewport();
 
   useEffect(() => {
     if (joinRoom && isValidRoomName(roomName)) {
@@ -94,7 +94,7 @@ const MeetingRoom = (): ReactElement => {
 
   return (
     <div data-testid="meetingRoom" className={`${height} w-screen bg-darkGray-100`}>
-      {isSmallViewPort && <SmallViewportHeader />}
+      {isSmallViewport && <SmallViewportHeader />}
       <VideoTileCanvas
         isSharingScreen={isSharingScreen}
         screensharingPublisher={screensharingPublisher}

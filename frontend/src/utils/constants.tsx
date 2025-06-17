@@ -121,3 +121,9 @@ export const RIGHT_PANEL_BUTTON_COUNT = 3 - (isReportIssueEnabled() ? 0 : 1);
  * This is used to control how long the captions remain visible before they disappear.
  */
 export const CAPTION_TIMEOUT_MS = 3000;
+
+/*
+ * @constant {number} SMALL_VIEWPORT - The pixel width threshold used to determine if the viewport is considered small.
+ * Typically used as the max-width breakpoint for responsive layouts.
+ */
+export const SMALL_VIEWPORT = 768;

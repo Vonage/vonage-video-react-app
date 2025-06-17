@@ -82,11 +82,11 @@ const VideoTileCanvas = ({
     wrapRef,
   });
 
-  const isSmallViewPort = useIsSmallViewport();
+  const isSmallViewport = useIsSmallViewport();
 
   // Height is 100dvh - toolbar height (80px) and header height (80px) - 24px wrapper margin on small viewport device
   // Height is 100dvh - toolbar height (80px) - 24px wrapper margin on desktop
-  const heightClass = isSmallViewPort
+  const heightClass = isSmallViewport
     ? '@apply h-[calc(100dvh_-_184px)]'
     : '@apply h-[calc(100dvh_-_104px)]';
 

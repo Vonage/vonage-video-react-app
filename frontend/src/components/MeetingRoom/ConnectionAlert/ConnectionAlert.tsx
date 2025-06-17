@@ -26,8 +26,8 @@ const ConnectionAlert = ({
   severity,
 }: ConnectionAlertProps): ReactElement | false => {
   const [closed, setClosed] = useState(false);
-  const isSmallViewPort = useIsSmallViewport();
-  const sxProps: SxProps = isSmallViewPort
+  const isSmallViewport = useIsSmallViewport();
+  const sxProps: SxProps = isSmallViewport
     ? {
         left: '50%',
         transform: 'translate(-50%, 0%)',
