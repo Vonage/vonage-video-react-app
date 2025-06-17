@@ -90,6 +90,12 @@ sessionRouter.post(
     try {
       const { room: roomName } = req.params;
       const sessionId = await sessionService.getSession(roomName);
+
+      if (!sessionId) {
+        res.status(404).json({ message: 'Room not found' });
+        return;
+      }
+
       const getCaptionId = await sessionService.getCaptionId(roomName);
       const newCaptionCount = await sessionService.addCaptionsUser(roomName);
 
@@ -125,7 +131,13 @@ sessionRouter.post(
       const { room: roomName, captionId } = req.params;
       const sessionId = await sessionService.getSession(roomName);
       const captionsUserCount = await sessionService.removeCaptionsUser(roomName);
-      if (sessionId && captionsUserCount === 0) {
+
+      if (!sessionId) {
+        res.status(404).json({ message: 'Room not found' });
+        return;
+      }
+
+      if (captionsUserCount === 0) {
         const responseCaptionId = await videoService.disableCaptions(captionId);
         await videoService.sendSignalToSession(sessionId, {
           type: 'captions',
@@ -140,7 +152,6 @@ sessionRouter.post(
           status: 200,
         });
       } else {
-        // If there are still users in the captions, we don't disable it
         res.json({
           message: 'Captions are still active for other users',
           status: 200,

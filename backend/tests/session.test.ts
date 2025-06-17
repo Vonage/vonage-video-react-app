@@ -2,7 +2,7 @@ import { afterAll, beforeAll, describe, expect, it, jest } from '@jest/globals';
 import request from 'supertest';
 import { Server } from 'http';
 import { Archive } from 'opentok';
-import InMemorySessionStorage from '../storage/inMemorySessionStorage'; // Import the session storage
+import InMemorySessionStorage from '../storage/inMemorySessionStorage';
 import mockOpentokConfig from '../helpers/__mocks__/config';
 
 await jest.unstable_mockModule('../helpers/config', mockOpentokConfig);
@@ -10,6 +10,10 @@ await jest.unstable_mockModule('../helpers/config', mockOpentokConfig);
 const mockVcrSessionStorage = {
   getSession: jest.fn().mockReturnValue('someSessionId'),
   setSession: jest.fn().mockReturnValue(true),
+  getCaptionId: jest.fn().mockReturnValue('someCaptionId'),
+  setCaptionId: jest.fn(),
+  addCaptionsUser: jest.fn().mockReturnValue(1),
+  removeCaptionsUser: jest.fn().mockReturnValue(0),
 };
 
 jest.mock('../storage/vcrSessionStorage', () => {
@@ -34,6 +38,7 @@ await jest.unstable_mockModule('../videoService/opentokVideoService.ts', () => {
         listArchives: jest
           .fn<() => Promise<Archive[]>>()
           .mockResolvedValue([{ id: 'archive1' }, { id: 'archive2' }] as unknown as Archive[]),
+        sendSignalToSession: jest.fn(() => Promise.resolve()),
       };
     }),
   };

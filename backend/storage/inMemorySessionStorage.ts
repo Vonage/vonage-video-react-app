@@ -27,6 +27,10 @@ class InMemorySessionStorage implements SessionStorage {
 
   async removeCaptionsUser(roomName: string): Promise<number> {
     this.captionsUserCount[roomName] = (this.captionsUserCount[roomName] || 0) - 1;
+    if (this.captionsUserCount[roomName] < 0) {
+      // Ensure count does not go negative mostly for unit testing purposes
+      this.captionsUserCount[roomName] = 0;
+    }
     return this.captionsUserCount[roomName];
   }
 }
