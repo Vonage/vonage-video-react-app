@@ -107,12 +107,12 @@ const MeetingRoom = (): ReactElement => {
       {/* Renders the CaptionsBox directly in the meeting room on small port devices to ensure that captions
        are always visible and accessible in the limited viewport. 
        This placement provides an optimal user experience for accessibility on smaller screens. */}
-      {isSmallViewPort && isCaptioningEnabled && (
+      {isSmallViewport && isCaptioningEnabled && (
         <CaptionsBox
           subscriberWrappers={subscriberWrappers}
           localPublisherCaptions={ownCaptions}
           isCaptioningEnabled={isCaptioningEnabled}
-          isSmallViewPort={isSmallViewPort}
+          isSmallViewPort={isSmallViewport}
         />
       )}
       <Toolbar

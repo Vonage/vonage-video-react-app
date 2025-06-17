@@ -198,14 +198,14 @@ describe('MeetingRoom', () => {
   });
 
   it('renders the captions box if it is on small tab or device and captions are enabled', () => {
-    mockUseIsSmallViewport.mockImplementation(() => true);
+    (mui.useMediaQuery as Mock).mockReturnValue(true);
     sessionContext.isCaptioningEnabled = true;
     render(<MeetingRoomWithProviders />);
     expect(screen.getByTestId('captions-box')).toBeInTheDocument();
   });
 
   it('does not render the captions box if it is on small tab or device and captions are not enabled', () => {
-    mockUseIsSmallViewport.mockImplementation(() => true);
+    (mui.useMediaQuery as Mock).mockReturnValue(true);
     sessionContext.currentCaptionsIdRef.current = null;
     render(<MeetingRoomWithProviders />);
     expect(screen.queryByTestId('captions-box')).not.toBeInTheDocument();
