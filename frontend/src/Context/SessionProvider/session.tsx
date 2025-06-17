@@ -248,15 +248,15 @@ const SessionProvider = ({ children }: SessionProviderProps): ReactElement => {
 
   const currentRoomName = useRoomName();
 
-  useEffect(() => {
-    if (connected && !currentCaptionsIdRef.current) {
-      // Request captions status from existing participants
-      vonageVideoClient.current?.signal({
-        type: 'captions',
-        data: JSON.stringify({ action: 'request-status' }),
-      });
-    }
-  }, [connected]);
+  // useEffect(() => {
+  //   if (connected && !currentCaptionsIdRef.current) {
+  //     // Request captions status from existing participants
+  //     vonageVideoClient.current?.signal({
+  //       type: 'captions',
+  //       data: JSON.stringify({ action: 'request-status' }),
+  //     });
+  //   }
+  // }, [connected]);
 
   /**
    * Handles changes to stream properties. This triggers a re-render when a stream property changes

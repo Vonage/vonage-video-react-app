@@ -3,7 +3,7 @@ import { Tooltip } from '@mui/material';
 import { ReactElement, useState } from 'react';
 import useRoomName from '../../../hooks/useRoomName';
 import ToolbarButton from '../ToolbarButton';
-import { enableCaptions } from '../../../api/captions';
+import { disableCaptions, enableCaptions } from '../../../api/captions';
 import { SubscriberWrapper } from '../../../types/session';
 import CaptionsBox from './CaptionsBox';
 import useSessionContext from '../../../hooks/useSessionContext';
@@ -49,13 +49,13 @@ const CaptionsButton = ({
         setCaptionsId(currentCaptionsIdRef.current);
 
         // we can start publishing captions immediately without having to enable them
-        vonageVideoClient?.signal({
-          type: 'captions',
-          data: JSON.stringify({
-            action: 'join',
-            captionsId: currentCaptionsIdRef.current,
-          }),
-        });
+        // vonageVideoClient?.signal({
+        //   type: 'captions',
+        //   data: JSON.stringify({
+        //     action: 'join',
+        //     captionsId: currentCaptionsIdRef.current,
+        //   }),
+        // });
       } else if (!captionsId && roomName) {
         try {
           const response = await enableCaptions(roomName);
@@ -64,13 +64,13 @@ const CaptionsButton = ({
           setIsCaptionsEnabled(true);
 
           // we need to signal to other users that captions have been enabled
-          vonageVideoClient?.signal({
-            type: 'captions',
-            data: JSON.stringify({
-              action: 'enable',
-              captionsId: response.data.captions.captionsId,
-            }),
-          });
+          // vonageVideoClient?.signal({
+          //   type: 'captions',
+          //   data: JSON.stringify({
+          //     action: 'enable',
+          //     captionsId: response.data.captions.captionsId,
+          //   }),
+          // });
         } catch (err) {
           console.log(err);
         }
@@ -79,15 +79,15 @@ const CaptionsButton = ({
       try {
         setIsCaptionsEnabled(false);
         setCaptionsId('');
-
+        await disableCaptions(roomName, captionsId);
         // we need to signal to other users that we are leaving the captions
-        vonageVideoClient?.signal({
-          type: 'captions',
-          data: JSON.stringify({
-            action: 'leave',
-            captionsId,
-          }),
-        });
+        // vonageVideoClient?.signal({
+        //   type: 'captions',
+        //   data: JSON.stringify({
+        //     action: 'leave',
+        //     captionsId,
+        //   }),
+        // });
       } catch (err) {
         console.log(err);
       }

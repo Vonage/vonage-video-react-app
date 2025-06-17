@@ -1,4 +1,4 @@
-import OpenTok, { Archive, Role } from 'opentok';
+import OpenTok, { Archive, Role, SignalOptions } from 'opentok';
 import axios from 'axios';
 import { projectToken } from 'opentok-jwt';
 import { VideoService } from './videoServiceInterface';
@@ -162,6 +162,14 @@ class OpenTokVideoService implements VideoService {
       const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
       throw new Error(`Failed to disable captions: ${errorMessage}`);
     }
+  }
+
+  async sendSignalToSession(sessionId: string, signal: SignalOptions): Promise<void> {
+    this.opentok.signal(sessionId, null, signal, (error) => {
+      if (error) {
+        console.warn(`Failed to send signal to session ${sessionId}:`, error);
+      }
+    });
   }
 }
 
