@@ -10,14 +10,14 @@ class InMemorySessionStorage implements SessionStorage {
     this.sessions[roomName] = sessionId;
   }
 
-  private captionIds: { [key: string]: string } = {};
+  private captionsIds: { [key: string]: string } = {};
   private captionsUserCount: { [roomName: string]: number } = {};
-  async setCaptionId(roomName: string, captionId: string): Promise<void> {
-    this.captionIds[roomName] = captionId;
+  async setCaptionId(roomName: string, captionsId: string): Promise<void> {
+    this.captionsIds[roomName] = captionsId;
   }
 
-  async getCaptionId(roomName: string): Promise<string | null> {
-    return this.captionIds[roomName] || null;
+  async getCaptionsId(roomName: string): Promise<string | null> {
+    return this.captionsIds[roomName] || null;
   }
 
   async addCaptionsUser(roomName: string): Promise<number> {

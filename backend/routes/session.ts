@@ -97,24 +97,25 @@ sessionRouter.post(
         return;
       }
 
-      const getCaptionId = await sessionService.getCaptionId(roomName);
       const newCaptionCount = await sessionService.addCaptionsUser(roomName);
 
       if (newCaptionCount === 1 && sessionId) {
         const captions = await videoService.enableCaptions(sessionId);
-        await sessionService.setCaptionId(roomName, captions.captionsId);
+        const { captionsId } = captions;
+        await sessionService.setCaptionId(roomName, captionsId);
         await videoService.sendSignalToSession(sessionId, {
           type: 'captions',
           data: JSON.stringify({
             action: 'enable',
-            captionsId: captions.captionsId,
+            captionsId,
           }),
         });
-        res.json({ captions, status: 200 });
+        res.json({ captionsId, status: 200 });
       } else {
         // the captions were already enabled for this room
+        const captionsId = await sessionService.getCaptionsId(roomName);
         res.json({
-          captions: { captionsId: getCaptionId },
+          captionsId,
           status: 200,
         });
       }
@@ -126,15 +127,15 @@ sessionRouter.post(
 );
 
 sessionRouter.post(
-  '/:room/:captionId/disableCaptions',
-  async (req: Request<{ room: string; captionId: string }>, res: Response) => {
+  '/:room/:captionsId/disableCaptions',
+  async (req: Request<{ room: string; captionsId: string }>, res: Response) => {
     try {
-      const { room: roomName, captionId } = req.params;
+      const { room: roomName, captionsId } = req.params;
 
-      // Validate the captionId
+      // Validate the captionsId
       // the expected format is a UUID v4
       // for example: '123e4567-a12b-41a2-a123-123456789012'
-      const isValidCaptionId = validator.isUUID(captionId, 4);
+      const isValidCaptionId = validator.isUUID(captionsId, 4);
       if (!isValidCaptionId) {
         res.status(400).json({ message: 'Invalid caption ID' });
         return;
@@ -149,7 +150,7 @@ sessionRouter.post(
       }
 
       if (captionsUserCount === 0) {
-        const responseCaptionId = await videoService.disableCaptions(captionId);
+        const responseCaptionId = await videoService.disableCaptions(captionsId);
         await videoService.sendSignalToSession(sessionId, {
           type: 'captions',
           data: JSON.stringify({
@@ -159,7 +160,7 @@ sessionRouter.post(
         });
         await sessionService.setCaptionId(roomName, '');
         res.json({
-          captionId: responseCaptionId,
+          captionsId: responseCaptionId,
           status: 200,
         });
       } else {

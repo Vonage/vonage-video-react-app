@@ -23,39 +23,43 @@ class VcrSessionStorage implements SessionStorage {
     await this.dbState.expire(`sessions:${roomName}`, expirationTime);
   }
 
-  async setCaptionId(roomName: string, captionId: string): Promise<void> {
-    await this.dbState.set(`captionIds:${roomName}`, captionId);
-    await this.dbState.expire(`captionIds:${roomName}`, expirationTime);
+  async setCaptionId(roomName: string, captionsId: string): Promise<void> {
+    await this.dbState.set(`captionsIds:${roomName}`, captionsId);
+    await this.dbState.expire(`captionsIds:${roomName}`, expirationTime);
   }
 
-  async getCaptionId(roomName: string): Promise<string | null> {
-    const captionId: string | null = await this.dbState.get(`captionIds:${roomName}`);
-    if (!captionId) {
+  async getCaptionsId(roomName: string): Promise<string | null> {
+    const captionsId: string | null = await this.dbState.get(`captionsIds:${roomName}`);
+    if (!captionsId) {
       return null;
     }
-    await this.dbState.expire(`captionIds:${roomName}`, expirationTime);
-    return captionId;
+    await this.dbState.expire(`captionsIds:${roomName}`, expirationTime);
+    return captionsId;
   }
 
   async addCaptionsUser(roomName: string): Promise<number> {
     const key = `captionsUserCount:${roomName}`;
-    const current = await this.dbState.get(key);
-    const count = current ? parseInt(String(current), 10) + 1 : 1;
-    await this.dbState.set(key, count.toString());
+    const currentCaptionsUsersCount = await this.dbState.get(key);
+    const newCaptionsUsersCount = currentCaptionsUsersCount
+      ? parseInt(String(currentCaptionsUsersCount), 10) + 1
+      : 1;
+    await this.dbState.set(key, newCaptionsUsersCount.toString());
     await this.dbState.expire(key, expirationTime);
-    return count;
+    return newCaptionsUsersCount;
   }
 
   async removeCaptionsUser(roomName: string): Promise<number> {
     const key = `captionsUserCount:${roomName}`;
-    const current = await this.dbState.get(key);
-    const count = current ? parseInt(String(current), 10) - 1 : 0;
-    if (count < 0) {
+    const currentCaptionsUsersCount = await this.dbState.get(key);
+    const newCaptionsUsersCount = currentCaptionsUsersCount
+      ? parseInt(String(currentCaptionsUsersCount), 10) - 1
+      : 0;
+    if (newCaptionsUsersCount < 0) {
       await this.dbState.delete(key);
       return 0;
     }
-    await this.dbState.set(key, count.toString());
-    return count;
+    await this.dbState.set(key, newCaptionsUsersCount.toString());
+    return newCaptionsUsersCount;
   }
 }
 export default VcrSessionStorage;

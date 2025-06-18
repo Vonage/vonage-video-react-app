@@ -22,7 +22,7 @@ await jest.unstable_mockModule('../videoService/opentokVideoService.ts', () => {
       return {
         startArchive: jest.fn<() => Promise<string>>().mockResolvedValue('archiveId'),
         stopArchive: jest.fn<() => Promise<string>>().mockRejectedValue('invalid archive'),
-        enableCaptions: jest.fn<() => Promise<string>>().mockResolvedValue('captionId'),
+        enableCaptions: jest.fn<() => Promise<string>>().mockResolvedValue('captionsId'),
         disableCaptions: jest.fn<() => Promise<string>>().mockResolvedValue('invalid caption'),
         generateToken: jest
           .fn<() => Promise<{ token: string; apiKey: string }>>()
@@ -108,9 +108,9 @@ describe.each([
       });
 
       it('returns a 200 when disabling captions in a room', async () => {
-        const captionId = '123e4567-a12b-41a2-a123-123456789012';
+        const captionsId = '123e4567-a12b-41a2-a123-123456789012';
         const res = await request(server)
-          .post(`/session/${roomName}/${captionId}/disableCaptions`)
+          .post(`/session/${roomName}/${captionsId}/disableCaptions`)
           .set('Content-Type', 'application/json');
         expect(res.statusCode).toEqual(200);
       });
@@ -136,9 +136,9 @@ describe.each([
 
       it('returns a 404 when stopping captions in a non-existent room', async () => {
         const invalidRoomName = 'nonExistingRoomName';
-        const captionId = '123e4567-a12b-41a2-a123-123456789012';
+        const captionsId = '123e4567-a12b-41a2-a123-123456789012';
         const res = await request(server)
-          .post(`/session/${invalidRoomName}/${captionId}/disableCaptions`)
+          .post(`/session/${invalidRoomName}/${captionsId}/disableCaptions`)
           .set('Content-Type', 'application/json');
         expect(res.statusCode).toEqual(404);
       });
