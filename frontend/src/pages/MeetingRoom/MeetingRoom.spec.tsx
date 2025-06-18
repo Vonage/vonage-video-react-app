@@ -198,7 +198,7 @@ describe('MeetingRoom', () => {
 
   it('renders the captions box if it is on small tab or device and captions are enabled', () => {
     (mui.useMediaQuery as Mock).mockReturnValue(true);
-    sessionContext.isCaptioningEnabled = true;
+    sessionContext.isSessionCaptioningEnabled = true;
     render(<MeetingRoomWithProviders />);
     expect(screen.getByTestId('captions-box')).toBeInTheDocument();
   });

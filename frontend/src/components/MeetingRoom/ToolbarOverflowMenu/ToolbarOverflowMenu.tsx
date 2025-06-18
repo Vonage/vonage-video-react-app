@@ -80,6 +80,12 @@ const ToolbarOverflowMenu = ({
       isOverflowButton
       key="LayoutButton"
     />,
+    <CaptionsButton
+      isOverflowButton
+      handleClick={closeMenu}
+      key="CaptionsButton"
+      subscriberWrappers={subscriberWrappers}
+    />,
     <EmojiGridButton
       isEmojiGridOpen={isEmojiGridOpen}
       setIsEmojiGridOpen={setIsEmojiGridOpen}
@@ -88,12 +94,6 @@ const ToolbarOverflowMenu = ({
       key="EmojiGridButton"
     />,
     <ArchivingButton isOverflowButton handleClick={closeMenu} key="ArchivingButton" />,
-    <CaptionsButton
-      isOverflowButton
-      handleClick={closeMenu}
-      key="CaptionsButton"
-      subscriberWrappers={subscriberWrappers}
-    />,
     isReportIssueEnabled() && (
       <ReportIssueButton
         isOpen={rightPanelActiveTab === 'issues'}

@@ -62,7 +62,7 @@ export type SessionContextType = {
   pinSubscriber: (subscriberId: string) => void;
   isMaxPinned: boolean;
   ownCaptions: string | null;
-  isCaptioningEnabled: boolean;
+  isSessionCaptioningEnabled: boolean;
   sendEmoji: (emoji: string) => void;
   emojiQueue: EmojiWrapper[];
   publish: (publisher: Publisher) => Promise<void>;
@@ -96,7 +96,7 @@ export const SessionContext = createContext<SessionContextType>({
   pinSubscriber: () => {},
   isMaxPinned: false,
   ownCaptions: null,
-  isCaptioningEnabled: false,
+  isSessionCaptioningEnabled: false,
   sendEmoji: () => {},
   emojiQueue: [],
   publish: async () => Promise.resolve(),
@@ -134,7 +134,7 @@ const SessionProvider = ({ children }: SessionProviderProps): ReactElement => {
   const [reconnecting, setReconnecting] = useState(false);
   const [subscriberWrappers, setSubscriberWrappers] = useState<SubscriberWrapper[]>([]);
   const [ownCaptions, setOwnCaptions] = useState<string | null>(null);
-  const [isCaptioningEnabled, setIsCaptioningEnabled] = useState<boolean>(false);
+  const [isSessionCaptioningEnabled, setIsSessionCaptioningEnabled] = useState<boolean>(false);
   const [layoutMode, setLayoutMode] = useState<LayoutMode>('active-speaker');
   const [archiveId, setArchiveId] = useState<string | null>(null);
   const activeSpeakerTracker = useRef<ActiveSpeakerTracker>(new ActiveSpeakerTracker());
@@ -254,7 +254,7 @@ const SessionProvider = ({ children }: SessionProviderProps): ReactElement => {
   const handleSessionDisconnected = async () => {
     vonageVideoClient.current = null;
     setConnected(false);
-    setIsCaptioningEnabled(false);
+    setIsSessionCaptioningEnabled(false);
   };
 
   // function to set reconnecting status and to increase the number of reconnections the user has had
@@ -332,7 +332,7 @@ const SessionProvider = ({ children }: SessionProviderProps): ReactElement => {
       vonageVideoClient.current.on('signal:captions', (event: SignalEvent) => {
         handleCaptionsSignal({
           event,
-          setIsCaptioningEnabled,
+          setIsSessionCaptioningEnabled,
         });
       });
       vonageVideoClient.current.on('signal:emoji', handleEmoji);
@@ -441,7 +441,7 @@ const SessionProvider = ({ children }: SessionProviderProps): ReactElement => {
       pinSubscriber,
       isMaxPinned,
       ownCaptions,
-      isCaptioningEnabled,
+      isSessionCaptioningEnabled,
       sendEmoji,
       emojiQueue,
       publish,
@@ -471,7 +471,7 @@ const SessionProvider = ({ children }: SessionProviderProps): ReactElement => {
       pinSubscriber,
       isMaxPinned,
       ownCaptions,
-      isCaptioningEnabled,
+      isSessionCaptioningEnabled,
       sendEmoji,
       emojiQueue,
       publish,

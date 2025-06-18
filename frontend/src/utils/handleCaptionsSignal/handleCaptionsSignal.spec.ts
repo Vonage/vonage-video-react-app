@@ -8,7 +8,7 @@ vi.mock('../../api/captions', () => ({
 const mockCaptionsId = '12345';
 
 describe('handleCaptionsSignal', () => {
-  const mockSetIsCaptioningEnabled = vi.fn();
+  const mockSetIsSessionCaptioningEnabled = vi.fn();
 
   beforeEach(() => {
     vi.clearAllMocks();
@@ -24,9 +24,9 @@ describe('handleCaptionsSignal', () => {
 
     handleCaptionsSignal({
       event,
-      setIsCaptioningEnabled: mockSetIsCaptioningEnabled,
+      setIsSessionCaptioningEnabled: mockSetIsSessionCaptioningEnabled,
     });
-    expect(mockSetIsCaptioningEnabled).toHaveBeenCalledWith(true);
+    expect(mockSetIsSessionCaptioningEnabled).toHaveBeenCalledWith(true);
   });
 
   it('should disable captions', () => {
@@ -38,9 +38,9 @@ describe('handleCaptionsSignal', () => {
 
     handleCaptionsSignal({
       event,
-      setIsCaptioningEnabled: mockSetIsCaptioningEnabled,
+      setIsSessionCaptioningEnabled: mockSetIsSessionCaptioningEnabled,
     });
-    expect(mockSetIsCaptioningEnabled).toHaveBeenCalledWith(false);
+    expect(mockSetIsSessionCaptioningEnabled).toHaveBeenCalledWith(false);
   });
 
   it('should warn for unknown actions', () => {
@@ -54,10 +54,10 @@ describe('handleCaptionsSignal', () => {
 
     handleCaptionsSignal({
       event,
-      setIsCaptioningEnabled: mockSetIsCaptioningEnabled,
+      setIsSessionCaptioningEnabled: mockSetIsSessionCaptioningEnabled,
     });
 
-    expect(mockSetIsCaptioningEnabled).not.toHaveBeenCalled();
+    expect(mockSetIsSessionCaptioningEnabled).not.toHaveBeenCalled();
     expect(consoleWarnSpy).toHaveBeenCalledWith('Unknown captions action: unknown-action');
   });
 });

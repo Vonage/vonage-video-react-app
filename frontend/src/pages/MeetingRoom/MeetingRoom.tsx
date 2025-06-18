@@ -35,7 +35,7 @@ const MeetingRoom = (): ReactElement => {
     subscriberWrappers,
     ownCaptions,
     connected,
-    isCaptioningEnabled,
+    isSessionCaptioningEnabled,
     disconnect,
     reconnecting,
     rightPanelActiveTab,
@@ -107,11 +107,11 @@ const MeetingRoom = (): ReactElement => {
       {/* Renders the CaptionsBox directly in the meeting room on small port devices to ensure that captions
        are always visible and accessible in the limited viewport. 
        This placement provides an optimal user experience for accessibility on smaller screens. */}
-      {isSmallViewport && isCaptioningEnabled && (
+      {isSmallViewport && isSessionCaptioningEnabled && (
         <CaptionsBox
           subscriberWrappers={subscriberWrappers}
           localPublisherCaptions={ownCaptions}
-          isCaptioningEnabled={isCaptioningEnabled}
+          isCaptioningEnabled={isSessionCaptioningEnabled}
           isSmallViewPort={isSmallViewport}
         />
       )}

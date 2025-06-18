@@ -120,7 +120,7 @@ export const RIGHT_PANEL_BUTTON_COUNT = 3 - (isReportIssueEnabled() ? 0 : 1);
  * @constant {number} CAPTION_TIMEOUT_MS - The duration in milliseconds for which captions are displayed.
  * This is used to control how long the captions remain visible before they disappear.
  */
-export const CAPTION_TIMEOUT_MS = 3000;
+export const CAPTION_TIMEOUT_MS = 4000;
 
 /*
  * @constant {number} SMALL_VIEWPORT - The pixel width threshold used to determine if the viewport is considered small.

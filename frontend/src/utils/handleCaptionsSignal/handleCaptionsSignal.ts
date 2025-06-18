@@ -3,7 +3,7 @@ import { SignalEvent } from '../../types/session';
 
 /**
  * @typedef {object} CaptionsSignalDataType
- * @property {string} action - The action to be performed on captions (e.g., 'enable', 'disable', 'join', 'leave').
+ * @property {string} action - The action to be performed on captions ('enable', 'disable').
  * @property {string} captionsId - The ID of the captions to be enabled or disabled.
  */
 export type CaptionsSignalDataType = {
@@ -14,11 +14,11 @@ export type CaptionsSignalDataType = {
 /**
  * @typedef {object} CaptionsHandleType
  * @property {SignalEvent} event - The signal event containing the data.
- * @property {Dispatch<SetStateAction<boolean>>} setIsCaptioningEnabled - Function to set the captions enabled state.
+ * @property {Dispatch<SetStateAction<boolean>>} setIsSessionCaptioningEnabled - Function to set the captions enabled state.
  */
 export type CaptionsHandleType = {
   event: SignalEvent;
-  setIsCaptioningEnabled: Dispatch<SetStateAction<boolean>>;
+  setIsSessionCaptioningEnabled: Dispatch<SetStateAction<boolean>>;
 };
 
 /**
@@ -27,9 +27,9 @@ export type CaptionsHandleType = {
  * It also handles the functionality of notifying other participants about the current captions ID and the participant count.
  * @param {CaptionsHandleType} props - Dependencies needed for the handler
  * @property {SignalEvent} event - The signal event containing the data.
- * @property {Dispatch<SetStateAction<boolean>>} setIsCaptioningEnabled - Function to set the captions enabled state.
+ * @property {Dispatch<SetStateAction<boolean>>} setIsSessionCaptioningEnabled - Function to set the captions enabled state.
  */
-const handleCaptionsSignal = ({ event, setIsCaptioningEnabled }: CaptionsHandleType) => {
+const handleCaptionsSignal = ({ event, setIsSessionCaptioningEnabled }: CaptionsHandleType) => {
   try {
     if (!event.data) {
       return;
@@ -41,12 +41,12 @@ const handleCaptionsSignal = ({ event, setIsCaptioningEnabled }: CaptionsHandleT
     switch (action) {
       case 'enable':
         if (captionsId) {
-          setIsCaptioningEnabled(true);
+          setIsSessionCaptioningEnabled(true);
         }
         break;
 
       case 'disable':
-        setIsCaptioningEnabled(false);
+        setIsSessionCaptioningEnabled(false);
         break;
 
       default:
@@ -55,7 +55,7 @@ const handleCaptionsSignal = ({ event, setIsCaptioningEnabled }: CaptionsHandleT
     }
   } catch (err: unknown) {
     if (err instanceof Error) {
-      console.error(err);
+      console.error(`Error handling captions signal: ${err.message}`);
     }
   }
 };
