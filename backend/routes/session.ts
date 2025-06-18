@@ -1,4 +1,5 @@
 import { Request, Response, Router } from 'express';
+import validator from 'validator';
 import createVideoService from '../videoService/videoServiceFactory';
 import getSessionStorageService from '../sessionStorageService';
 import createGetOrCreateSession from './getOrCreateSession';
@@ -129,6 +130,16 @@ sessionRouter.post(
   async (req: Request<{ room: string; captionId: string }>, res: Response) => {
     try {
       const { room: roomName, captionId } = req.params;
+
+      // Validate the captionId
+      // the expected format is a UUID v4
+      // for example: '123e4567-a12b-41a2-a123-123456789012'
+      const isValidCaptionId = validator.isUUID(captionId, 4);
+      if (!isValidCaptionId) {
+        res.status(400).json({ message: 'Invalid caption ID' });
+        return;
+      }
+
       const sessionId = await sessionService.getSession(roomName);
       const captionsUserCount = await sessionService.removeCaptionsUser(roomName);
 

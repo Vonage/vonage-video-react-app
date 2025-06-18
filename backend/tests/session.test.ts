@@ -108,7 +108,7 @@ describe.each([
       });
 
       it('returns a 200 when disabling captions in a room', async () => {
-        const captionId = 'someCaptionId';
+        const captionId = '123e4567-a12b-41a2-a123-123456789012';
         const res = await request(server)
           .post(`/session/${roomName}/${captionId}/disableCaptions`)
           .set('Content-Type', 'application/json');
@@ -131,7 +131,16 @@ describe.each([
           .set('Accept', 'application/json');
 
         const responseBody = JSON.parse(res.text);
-        expect(responseBody.captionId).toEqual('invalid caption');
+        expect(responseBody.message).toEqual('Invalid caption ID');
+      });
+
+      it('returns a 404 when stopping captions in a non-existent room', async () => {
+        const invalidRoomName = 'nonExistingRoomName';
+        const captionId = '123e4567-a12b-41a2-a123-123456789012';
+        const res = await request(server)
+          .post(`/session/${invalidRoomName}/${captionId}/disableCaptions`)
+          .set('Content-Type', 'application/json');
+        expect(res.statusCode).toEqual(404);
       });
     });
   });
