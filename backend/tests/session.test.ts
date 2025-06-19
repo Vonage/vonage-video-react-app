@@ -142,6 +142,15 @@ describe.each([
           .set('Content-Type', 'application/json');
         expect(res.statusCode).toEqual(404);
       });
+
+      it('returns a 400 when stopping captions with invalid type of captionsId', async () => {
+        const invalidRoomName = 'nonExistingRoomName';
+        const captionsId = 'not-a-valid-captions-id';
+        const res = await request(server)
+          .post(`/session/${invalidRoomName}/${captionsId}/disableCaptions`)
+          .set('Content-Type', 'application/json');
+        expect(res.statusCode).toEqual(400);
+      });
     });
   });
 });
