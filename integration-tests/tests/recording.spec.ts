@@ -1,12 +1,12 @@
 import { expect } from '@playwright/test';
 import * as crypto from 'crypto';
-import { test } from '../fixtures/testWithLogging';
-import { openMeetingRoomWithSettings, waitAndClickFirefox } from './utils';
 import path from 'path';
 import fs from 'fs';
+import { test } from '../fixtures/testWithLogging';
+import { openMeetingRoomWithSettings, waitAndClickFirefox } from './utils';
 
 test.describe('meeting room', () => {
-  test('force mute', async ({ page: pageOne, browserName, isMobile }) => {
+  test('force mute', async ({ page: pageOne, browserName }) => {
     const roomName = crypto.randomBytes(5).toString('hex');
 
     await openMeetingRoomWithSettings({
@@ -27,11 +27,7 @@ test.describe('meeting room', () => {
     await popupPrimaryButton.click();
     await expect
       .poll(
-        async () => {
-          return await archivingButton
-            .locator('svg')
-            .evaluate((el) => window.getComputedStyle(el).color);
-        },
+        () => archivingButton.locator('svg').evaluate((el) => window.getComputedStyle(el).color),
         {
           message: 'Waiting for color to become rgb(239, 68, 68)',
           timeout: 5000,
@@ -44,11 +40,7 @@ test.describe('meeting room', () => {
 
     await expect
       .poll(
-        async () => {
-          return await archivingButton
-            .locator('svg')
-            .evaluate((el) => window.getComputedStyle(el).color);
-        },
+        () => archivingButton.locator('svg').evaluate((el) => window.getComputedStyle(el).color),
         {
           message: 'Waiting for color to become rgb(239, 68, 68)',
           timeout: 5000,
