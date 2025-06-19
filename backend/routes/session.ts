@@ -99,7 +99,7 @@ sessionRouter.post(
 
       const newCaptionCount = await sessionService.addCaptionsUser(roomName);
 
-      if (newCaptionCount === 1 && sessionId) {
+      if (newCaptionCount === 1) {
         const captions = await videoService.enableCaptions(sessionId);
         const { captionsId } = captions;
         await sessionService.setCaptionId(roomName, captionsId);
