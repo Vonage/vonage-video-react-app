@@ -1,14 +1,14 @@
-import { MutableRefObject, useEffect, useRef, useState } from 'react';
+import { RefObject, useEffect, useRef, useState } from 'react';
 import { throttle } from 'lodash';
 import ResizeObserverPolyfill from 'resize-observer-polyfill';
 import { RIGHT_PANEL_BUTTON_COUNT } from '../utils/constants';
 
 export type UseToolbarButtonsProps = {
-  timeRoomNameRef: MutableRefObject<HTMLDivElement | null>;
-  toolbarRef: MutableRefObject<HTMLDivElement | null>;
-  mediaControlsRef: MutableRefObject<HTMLDivElement | null>;
-  overflowAndExitRef: MutableRefObject<HTMLDivElement | null>;
-  rightPanelControlsRef: MutableRefObject<HTMLDivElement | null>;
+  timeRoomNameRef: RefObject<HTMLDivElement | null>;
+  toolbarRef: RefObject<HTMLDivElement | null>;
+  mediaControlsRef: RefObject<HTMLDivElement | null>;
+  overflowAndExitRef: RefObject<HTMLDivElement | null>;
+  rightPanelControlsRef: RefObject<HTMLDivElement | null>;
   numberOfToolbarButtons: number;
 };
 
@@ -21,10 +21,10 @@ export type UseToolbarButtons = {
 /**
  * React hook to determine which buttons should be displayed on the toolbar.
  * @param {UseToolbarButtonsProps} props - The props for the hook
- *  @property {MutableRefObject<HTMLDivElement | null>} toolbarRef - The ref for the Toolbar
- *  @property {MutableRefObject<HTMLDivElement | null>} mediaControlsRef - The ref for the audio and video controls
- *  @property {MutableRefObject<HTMLDivElement | null>} overflowAndExitRef - The ref for the overflow and exit buttons
- *  @property {MutableRefObject<HTMLDivElement | null>} rightPanelControlsRef - The ref for the right panel buttons
+ *  @property {RefObject<HTMLDivElement | null>} toolbarRef - The ref for the Toolbar
+ *  @property {RefObject<HTMLDivElement | null>} mediaControlsRef - The ref for the audio and video controls
+ *  @property {RefObject<HTMLDivElement | null>} overflowAndExitRef - The ref for the overflow and exit buttons
+ *  @property {RefObject<HTMLDivElement | null>} rightPanelControlsRef - The ref for the right panel buttons
  * @returns {UseToolbarButtons} The center and right toolbar buttons' limits, and whether to display the TimeRoomNameMeetingRoom component
  */
 const useToolbarButtons = ({
@@ -35,7 +35,7 @@ const useToolbarButtons = ({
   rightPanelControlsRef,
   numberOfToolbarButtons,
 }: UseToolbarButtonsProps): UseToolbarButtons => {
-  const observer = useRef<ResizeObserver | undefined>();
+  const observer = useRef<ResizeObserver | undefined>(undefined);
   const [displayTimeRoomName, setDisplayTimeRoomName] = useState<boolean>(false);
 
   const [centerButtonLimit, setCenterButtonLimit] = useState<number>(0);

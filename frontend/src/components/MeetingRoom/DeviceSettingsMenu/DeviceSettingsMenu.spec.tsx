@@ -1,6 +1,6 @@
-import { act, queryByText, render, screen, waitFor } from '@testing-library/react';
+import { act, fireEvent, queryByText, render, screen, waitFor } from '@testing-library/react';
 import { describe, beforeEach, it, Mock, vi, expect, afterAll } from 'vitest';
-import { MutableRefObject } from 'react';
+import { RefObject } from 'react';
 import { EventEmitter } from 'stream';
 import { hasMediaProcessorSupport } from '@vonage/client-sdk-video';
 import * as util from '../../../utils/util';
@@ -53,7 +53,7 @@ describe('DeviceSettingsMenu Component', () => {
   const mockSetIsOpen = vi.fn();
   const mockAnchorRef = {
     current: document.createElement('input'),
-  } as MutableRefObject<HTMLInputElement>;
+  } as RefObject<HTMLInputElement>;
   const mockHandleClose = vi.fn();
   let deviceChangeListener: EventEmitter;
   const mockedHasMediaProcessorSupport = vi.fn();
@@ -111,16 +111,25 @@ describe('DeviceSettingsMenu Component', () => {
       const outputDevicesElement = screen.getByTestId('output-devices');
       await waitFor(() => expect(outputDevicesElement.children).to.have.length(3));
       expect(outputDevicesElement.firstChild).toHaveTextContent('System Default');
-      expect((outputDevicesElement.firstChild as HTMLOptionElement).selected).toBe(true);
+      expect(
+        (outputDevicesElement.firstChild as HTMLOptionElement).classList.contains('Mui-selected')
+      ).toBe(true);
+      expect(
+        (outputDevicesElement.children[1] as HTMLOptionElement).classList.contains('Mui-selected')
+      ).toBe(false);
       expect(outputDevicesElement.children[1]).toHaveTextContent(
         'Soundcore Life A2 NC (Bluetooth)'
       );
       expect(outputDevicesElement.children[2]).toHaveTextContent('MacBook Pro Speakers (Built-in)');
 
-      await act(() => (outputDevicesElement.children[2] as HTMLOptionElement).click?.());
+      await act(async () => {
+        fireEvent.click(outputDevicesElement.children[2]);
+      });
 
       expect(mockSetAudioOutputDevice).toHaveBeenCalledWith(audioOutputDevices[2].deviceId);
-      await expect((outputDevicesElement.children[2] as HTMLOptionElement).selected).toBe(true);
+      expect(
+        (outputDevicesElement.children[2] as HTMLOptionElement).classList.contains('Mui-selected')
+      ).toBe(true);
     });
 
     it('and renders the default output device if the browser does not support setting audioOutput device', async () => {
@@ -142,12 +151,18 @@ describe('DeviceSettingsMenu Component', () => {
       const outputDevicesElement = screen.getByTestId('output-devices');
       await waitFor(() => expect(outputDevicesElement.children).to.have.length(1));
       expect(outputDevicesElement.firstChild).toHaveTextContent('System Default');
-      expect((outputDevicesElement.firstChild as HTMLOptionElement).selected).toBe(true);
+      expect(
+        (outputDevicesElement.firstChild as HTMLOptionElement).classList.contains('Mui-selected')
+      ).toBe(true);
 
-      await act(() => (outputDevicesElement.firstChild as HTMLOptionElement).click?.());
+      await act(async () => {
+        fireEvent.click(outputDevicesElement.firstChild as HTMLOptionElement);
+      });
 
       expect(mockSetAudioOutputDevice).not.toHaveBeenCalled();
-      await expect((outputDevicesElement.firstChild as HTMLOptionElement).selected).toBe(true);
+      await expect(
+        (outputDevicesElement.firstChild as HTMLOptionElement).classList.contains('Mui-selected')
+      ).toBe(true);
     });
 
     it('and renders the speaker test if the browser supports audio output device selection', async () => {
@@ -216,16 +231,26 @@ describe('DeviceSettingsMenu Component', () => {
       // Check initial list is correct
       await waitFor(() => expect(outputDevicesElement.children).to.have.length(3));
       expect(outputDevicesElement.firstChild).toHaveTextContent('System Default');
-      expect((outputDevicesElement.firstChild as HTMLOptionElement).selected).toBe(true);
+      expect(
+        (outputDevicesElement.firstChild as HTMLOptionElement).classList.contains('Mui-selected')
+      ).toBe(true);
+      expect(
+        (outputDevicesElement.children[1] as HTMLOptionElement).classList.contains('Mui-selected')
+      ).toBe(false);
       expect(outputDevicesElement.children[1]).toHaveTextContent(
         'Soundcore Life A2 NC (Bluetooth)'
       );
       expect(outputDevicesElement.children[2]).toHaveTextContent('MacBook Pro Speakers (Built-in)');
 
       // select device 2
-      await act(() => (outputDevicesElement.children[1] as HTMLOptionElement).click?.());
+      await act(async () => {
+        fireEvent.click(outputDevicesElement.children[1] as HTMLOptionElement);
+      });
+
       expect(mockSetAudioOutputDevice).toHaveBeenCalledWith(audioOutputDevices[1].deviceId);
-      await expect((outputDevicesElement.children[1] as HTMLOptionElement).selected).toBe(true);
+      await expect(
+        (outputDevicesElement.children[1] as HTMLOptionElement).classList.contains('Mui-selected')
+      ).toBe(true);
 
       // Simulate device 2 removal
       mockGetActiveAudioOutputDevice.mockResolvedValue(audioOutputDevices[0]);
@@ -234,7 +259,12 @@ describe('DeviceSettingsMenu Component', () => {
       await act(() => deviceChangeListener.emit('devicechange'));
       await waitFor(() => expect(outputDevicesElement.children).to.have.length(2));
       expect(outputDevicesElement.firstChild).toHaveTextContent('System Default');
-      expect((outputDevicesElement.firstChild as HTMLOptionElement).selected).toBe(true);
+      expect((outputDevicesElement.firstChild as Element).classList.contains('Mui-selected')).toBe(
+        true
+      );
+      expect((outputDevicesElement.children[1] as Element).classList.contains('Mui-selected')).toBe(
+        false
+      );
       expect(outputDevicesElement.children[1]).toHaveTextContent('MacBook Pro Speakers (Built-in)');
       const removedDevice = queryByText(outputDevicesElement, 'Soundcore Life A2 NC (Bluetooth)');
       expect(removedDevice).not.toBeInTheDocument();
@@ -243,7 +273,7 @@ describe('DeviceSettingsMenu Component', () => {
 
   describe('renders the video settings menu', () => {
     const deviceType = 'video';
-    it('if prompted', () => {
+    it('if prompted', async () => {
       render(
         <DeviceSettingsMenu
           deviceType={deviceType}
@@ -254,7 +284,10 @@ describe('DeviceSettingsMenu Component', () => {
           setIsOpen={mockSetIsOpen}
         />
       );
-      expect(screen.queryByTestId('video-settings-devices-dropdown')).toBeInTheDocument();
+
+      await waitFor(() => {
+        expect(screen.queryByTestId('video-settings-devices-dropdown')).toBeInTheDocument();
+      });
     });
 
     it('but does not render it if closed', () => {
@@ -271,7 +304,7 @@ describe('DeviceSettingsMenu Component', () => {
       expect(screen.queryByTestId('video-settings-devices-dropdown')).not.toBeInTheDocument();
     });
 
-    it('and renders the dropdown separator and background blur option when media processor is supported', () => {
+    it('and renders the dropdown separator and background blur option when media processor is supported', async () => {
       mockedHasMediaProcessorSupport.mockReturnValue(true);
       render(
         <DeviceSettingsMenu
@@ -283,11 +316,14 @@ describe('DeviceSettingsMenu Component', () => {
           setIsOpen={mockSetIsOpen}
         />
       );
-      expect(screen.queryByTestId('dropdown-separator')).toBeVisible();
-      expect(screen.queryByText('Blur your background')).toBeVisible();
+
+      await waitFor(() => {
+        expect(screen.queryByTestId('dropdown-separator')).toBeVisible();
+        expect(screen.queryByText('Blur your background')).toBeVisible();
+      });
     });
 
-    it('and does not render the dropdown separator and background blur option when media processor is not supported', () => {
+    it('and does not render the dropdown separator and background blur option when media processor is not supported', async () => {
       render(
         <DeviceSettingsMenu
           deviceType={deviceType}
@@ -298,8 +334,11 @@ describe('DeviceSettingsMenu Component', () => {
           setIsOpen={mockSetIsOpen}
         />
       );
-      expect(screen.queryByTestId('dropdown-separator')).not.toBeInTheDocument();
-      expect(screen.queryByText('Blur your background')).not.toBeInTheDocument();
+
+      await waitFor(() => {
+        expect(screen.queryByTestId('dropdown-separator')).not.toBeInTheDocument();
+        expect(screen.queryByText('Blur your background')).not.toBeInTheDocument();
+      });
     });
   });
 });

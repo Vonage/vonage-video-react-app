@@ -42,6 +42,7 @@ const ParticipantListButton = ({
             backgroundColor: 'rgb(95, 99, 104)',
           },
           marginRight: '12px',
+          zIndex: 1,
         }}
         overlap="circular"
       >

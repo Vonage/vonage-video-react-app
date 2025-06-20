@@ -1,10 +1,10 @@
-import { Session } from '@vonage/client-sdk-video';
-import { MutableRefObject, useCallback, useState } from 'react';
+import { useCallback, useState } from 'react';
 import useUserContext from './useUserContext';
 import { ChatMessageType } from '../types/chat';
+import { SignalType } from '../types/session';
 
 export type UseChatProps = {
-  sessionRef: MutableRefObject<Session | null>;
+  signal: ((data: SignalType) => void) | undefined;
 };
 
 export type UseChat = {
@@ -15,13 +15,13 @@ export type UseChat = {
 /**
  * React hook to store ChatMessage array in state and provider functions for sending and receiving chat messages
  * @param {UseChatProps} props - props for the hook
- *   @property {MutableRefObject<Session | null>} sessionRef - reference to the Session object
+ *  @property {((data: SignalType) => void) | undefined} signal - function to send signal to all participants
  * @returns {UseChat} return object
  *   @property {ChatMessageType[]} messages - array of chat messages
  *   @property {(data: string) => void} onChatMessage - new message handler
  *   @property {(text: string) => void} sendChatMessage - function to send message
  */
-const useChat = ({ sessionRef }: UseChatProps): UseChat => {
+const useChat = ({ signal }: UseChatProps): UseChat => {
   const [messages, setMessages] = useState<ChatMessageType[]>([]);
   const {
     user: {
@@ -31,17 +31,19 @@ const useChat = ({ sessionRef }: UseChatProps): UseChat => {
 
   const sendChatMessage = useCallback(
     (text: string) => {
-      if (sessionRef.current) {
-        sessionRef.current.signal({
-          type: 'chat',
-          data: JSON.stringify({
-            participantName: localParticipantName,
-            text,
-          }),
-        });
+      if (!signal) {
+        return;
       }
+
+      signal({
+        type: 'chat',
+        data: JSON.stringify({
+          participantName: localParticipantName,
+          text,
+        }),
+      });
     },
-    [localParticipantName, sessionRef]
+    [signal, localParticipantName]
   );
 
   const onChatMessage = useCallback((data: string) => {

@@ -9,11 +9,9 @@ vi.mock('../useSessionContext', () => ({
 describe('useCollectBrowserInformation', () => {
   beforeEach(() => {
     (useSessionContext as Mock).mockReturnValue({
-      session: {
+      vonageVideoClient: {
         sessionId: 'someSessionId',
-        connection: {
-          connectionId: 'yourConnectionId',
-        },
+        connectionId: 'yourConnectionId',
       },
     });
 

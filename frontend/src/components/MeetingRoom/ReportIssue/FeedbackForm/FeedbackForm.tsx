@@ -102,6 +102,7 @@ const FeedbackForm = ({
           fullWidth
           variant="outlined"
           name="title"
+          data-testid="title-input"
           value={formData.title}
           onChange={handleChange}
           error={errors.title}
@@ -132,6 +133,7 @@ const FeedbackForm = ({
           fullWidth
           variant="outlined"
           name="name"
+          data-testid="name-input"
           value={formData.name}
           onChange={handleChange}
           error={errors.name}
@@ -167,6 +169,7 @@ const FeedbackForm = ({
           multiline
           rows={8}
           name="issue"
+          data-testid="issue-input"
           value={formData.issue}
           onChange={handleChange}
           error={errors.issue}

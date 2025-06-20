@@ -29,9 +29,9 @@ const PreviewAvatar = ({
   isVideoLoading,
 }: PreviewAvatarProps): ReactElement | null => {
   const smallDisplayDimensions = useWindowWidth() * 0.46;
-  const isSmallViewPort = useIsSmallViewport();
-  const height = isSmallViewPort ? smallDisplayDimensions : 328;
-  const width = isSmallViewPort ? smallDisplayDimensions : 584;
+  const isSmallViewport = useIsSmallViewport();
+  const height = isSmallViewport ? smallDisplayDimensions : 328;
+  const width = isSmallViewport ? smallDisplayDimensions : 584;
   if (isVideoEnabled || isVideoLoading) {
     return null;
   }

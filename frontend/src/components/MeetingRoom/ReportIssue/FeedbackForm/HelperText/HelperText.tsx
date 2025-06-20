@@ -40,7 +40,7 @@ const HelperText = ({
   };
 
   return (
-    <Box display="flex" justifyContent="space-between" width="100%">
+    <Box component="span" display="flex" justifyContent="space-between" width="100%">
       <span
         data-testid={testId}
         style={{

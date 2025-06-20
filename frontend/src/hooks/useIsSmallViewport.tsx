@@ -1,24 +1,12 @@
-import { useEffect, useState } from 'react';
+import { useMediaQuery } from '@mui/material';
+import { SMALL_VIEWPORT } from '../utils/constants';
 
 /**
- * Determines whether a viewport is small. If the window is resized, determines if the new size is small.
- * @param {number} [target] - (optional) The number of pixels determining if a window viewport is small.
- * @returns {boolean} Whether the browser has a small viewport.
+ * useIsSmallViewport Hook
+ *
+ * A custom hook that checks if the viewport width is less than or equal to a defined small viewport width.
+ * @returns {boolean} True if the viewport is small, false otherwise.
  */
-const useIsSmallViewport = (target?: number): boolean => {
-  const smallViewport = target ?? 768;
-  const [isSmallViewport, setIsSmallViewport] = useState(window.innerWidth <= smallViewport);
-
-  useEffect(() => {
-    const handleResize = () => {
-      setIsSmallViewport(window.innerWidth <= smallViewport);
-    };
-
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
-  }, [smallViewport]);
-
-  return isSmallViewport;
-};
-
-export default useIsSmallViewport;
+export default function useIsSmallViewport(): boolean {
+  return useMediaQuery(`(max-width:${SMALL_VIEWPORT}px)`);
+}

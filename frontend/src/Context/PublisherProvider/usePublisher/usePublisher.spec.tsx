@@ -1,6 +1,6 @@
-import { beforeEach, describe, it, expect, vi, Mock, afterAll, Mocked } from 'vitest';
-import { act, renderHook } from '@testing-library/react';
-import { initPublisher, Publisher, Session, Stream } from '@vonage/client-sdk-video';
+import { beforeEach, describe, it, expect, vi, Mock, afterAll } from 'vitest';
+import { act, renderHook, waitFor } from '@testing-library/react';
+import { initPublisher, Publisher, Stream } from '@vonage/client-sdk-video';
 import EventEmitter from 'events';
 import usePublisher from './usePublisher';
 import useUserContext from '../../../hooks/useUserContext';
@@ -38,8 +38,7 @@ describe('usePublisher', () => {
   const mockPublisher = Object.assign(new EventEmitter(), {
     destroy: destroySpy,
   }) as unknown as Publisher;
-  let sessionContext: SessionContextType;
-  let sessionMock: Mocked<Session>;
+  let mockSessionContext: SessionContextType;
   const mockedInitPublisher = vi.fn();
   const mockedSessionPublish = vi.fn();
   const mockedSessionUnpublish = vi.fn();
@@ -52,14 +51,12 @@ describe('usePublisher', () => {
 
     (initPublisher as Mock).mockImplementation(mockedInitPublisher);
 
-    sessionMock = {
+    mockSessionContext = {
       publish: mockedSessionPublish,
       unpublish: mockedSessionUnpublish,
-    } as unknown as Mocked<Session>;
-    sessionContext = {
-      session: sessionMock,
+      connected: true,
     } as unknown as SessionContextType;
-    mockUseSessionContext.mockReturnValue(sessionContext as unknown as SessionContextType);
+    mockUseSessionContext.mockReturnValue(mockSessionContext);
   });
 
   afterAll(() => {
@@ -67,16 +64,18 @@ describe('usePublisher', () => {
   });
 
   describe('initializeLocalPublisher', () => {
-    it('should call initPublisher', () => {
+    it('should call initPublisher', async () => {
       const { result } = renderHook(() => usePublisher());
       act(() => {
         result.current.initializeLocalPublisher({});
       });
 
-      expect(mockedInitPublisher).toHaveBeenCalled();
+      await waitFor(() => {
+        expect(mockedInitPublisher).toHaveBeenCalled();
+      });
     });
 
-    it('should log errors', () => {
+    it('should log errors', async () => {
       (initPublisher as Mock).mockImplementation(() => {
         throw new Error('The second mouse gets the cheese.');
       });
@@ -86,7 +85,9 @@ describe('usePublisher', () => {
         result.current.initializeLocalPublisher({});
       });
 
-      expect(consoleWarnSpy).toHaveBeenCalled();
+      await waitFor(() => {
+        expect(consoleWarnSpy).toHaveBeenCalled();
+      });
     });
   });
 
@@ -96,12 +97,20 @@ describe('usePublisher', () => {
 
       const { result, rerender } = renderHook(() => usePublisher());
 
-      result.current.initializeLocalPublisher({});
-      rerender();
-      await result.current.publish();
+      act(() => {
+        result.current.initializeLocalPublisher({});
+      });
 
-      await result.current.unpublish();
-      expect(mockedSessionUnpublish).toHaveBeenCalled();
+      rerender();
+
+      await act(async () => {
+        await result.current.publish();
+        result.current.unpublish();
+      });
+
+      await waitFor(() => {
+        expect(mockedSessionUnpublish).toHaveBeenCalled();
+      });
     });
   });
 
@@ -123,24 +132,24 @@ describe('usePublisher', () => {
     });
 
     it('should log errors', async () => {
-      sessionMock = {
-        publish: vi.fn(() => {
-          throw new Error('There is an error.');
-        }),
-      } as unknown as Mocked<Session>;
+      mockedSessionPublish.mockImplementation(() => {
+        throw new Error('There is an error.');
+      });
 
       const { result } = renderHook(() => usePublisher());
-      result.current.initializeLocalPublisher({});
-      await result.current.publish();
 
-      expect(consoleWarnSpy).toHaveBeenCalled();
+      await act(async () => {
+        result.current.initializeLocalPublisher({});
+        await result.current.publish();
+      });
+
+      await waitFor(() => {
+        expect(consoleWarnSpy).toHaveBeenCalled();
+      });
     });
 
     it('should only publish to session once', async () => {
       (initPublisher as Mock).mockImplementation(() => mockPublisher);
-      mockedSessionPublish.mockImplementation((_, callback) => {
-        callback();
-      });
 
       const { result } = renderHook(() => usePublisher());
 
@@ -188,7 +197,7 @@ describe('usePublisher', () => {
     });
   });
 
-  it('should set publishingError and destroy publisher when receiving an accessDenied event', () => {
+  it('should set publishingError and destroy publisher when receiving an accessDenied event', async () => {
     (initPublisher as Mock).mockImplementation(() => mockPublisher);
     const { result } = renderHook(() => usePublisher());
 
@@ -205,16 +214,18 @@ describe('usePublisher', () => {
       });
     });
 
-    expect(result.current.publishingError).toEqual({
-      header: 'Camera access is denied',
-      caption:
-        "It seems your browser is blocked from accessing your camera. Reset the permission state through your browser's UI.",
+    await waitFor(() => {
+      expect(result.current.publishingError).toEqual({
+        header: 'Camera access is denied',
+        caption:
+          "It seems your browser is blocked from accessing your camera. Reset the permission state through your browser's UI.",
+      });
+      expect(destroySpy).toHaveBeenCalled();
+      expect(result.current.publisher).toBeNull();
     });
-    expect(destroySpy).toHaveBeenCalled();
-    expect(result.current.publisher).toBeNull();
   });
 
-  it('should not set publishingError when receiving an accessAllowed event', () => {
+  it('should not set publishingError when receiving an accessAllowed event', async () => {
     (initPublisher as Mock).mockImplementation(() => mockPublisher);
     const { result } = renderHook(() => usePublisher());
 
@@ -225,7 +236,9 @@ describe('usePublisher', () => {
       mockPublisher.emit('accessAllowed');
     });
 
-    expect(result.current.publishingError).toBeNull();
-    expect(result.current.publisher).toBe(mockPublisher);
+    await waitFor(() => {
+      expect(result.current.publishingError).toBeNull();
+      expect(result.current.publisher).toBe(mockPublisher);
+    });
   });
 });

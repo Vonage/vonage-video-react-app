@@ -1,6 +1,6 @@
 import { ReactElement } from 'react';
-import useEmoji from '../../../hooks/useEmoji';
 import Emoji from '../Emoji/Emoji';
+import useSessionContext from '../../../hooks/useSessionContext';
 
 /**
  * EmojisOrigin Component
@@ -9,7 +9,7 @@ import Emoji from '../Emoji/Emoji';
  * @returns {ReactElement} - The EmojisOrigin Component.
  */
 const EmojisOrigin = (): ReactElement => {
-  const { emojiQueue } = useEmoji();
+  const { emojiQueue } = useSessionContext();
 
   return (
     <>

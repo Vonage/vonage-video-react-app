@@ -84,4 +84,42 @@ sessionRouter.get('/:room/archives', async (req: Request<{ room: string }>, res:
   }
 });
 
+sessionRouter.post(
+  '/:room/enableCaptions',
+  async (req: Request<{ room: string }>, res: Response) => {
+    try {
+      const { room: roomName } = req.params;
+      const sessionId = await sessionService.getSession(roomName);
+      if (sessionId) {
+        const captions = await videoService.enableCaptions(sessionId);
+        res.json({
+          captions,
+          status: 200,
+        });
+      } else {
+        res.status(404).json({ message: 'Room not found' });
+      }
+    } catch (error: unknown) {
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
+      res.status(500).json({ message: errorMessage });
+    }
+  }
+);
+
+sessionRouter.post(
+  '/:room/:captionId/disableCaptions',
+  async (req: Request<{ room: string; captionId: string }>, res: Response) => {
+    try {
+      const { captionId } = req.params;
+      const responseCaptionId = await videoService.disableCaptions(captionId);
+      res.json({
+        captionId: responseCaptionId,
+        status: 200,
+      });
+    } catch (error: unknown) {
+      res.status(500).send({ message: (error as Error).message ?? error });
+    }
+  }
+);
+
 export default sessionRouter;

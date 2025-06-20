@@ -96,7 +96,10 @@ describe('usePublisherOptions', () => {
     vi.spyOn(OT, 'hasMediaProcessorSupport').mockReturnValue(false);
     mockUseUserContext.mockImplementation(() => mockUserContextWithDefaultSettings);
     const { result } = renderHook(() => usePublisherOptions());
-    expect(result.current?.audioFilter).toBe(undefined);
+
+    await waitFor(() => {
+      expect(result.current?.audioFilter).toBe(undefined);
+    });
   });
 
   it('should use custom settings', async () => {

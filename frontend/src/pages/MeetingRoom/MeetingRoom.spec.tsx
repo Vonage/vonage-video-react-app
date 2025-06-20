@@ -1,8 +1,9 @@
-import '../../index.css';
+import '../../css/index.css';
 import { beforeEach, describe, expect, it, Mock, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import { Publisher, Subscriber } from '@vonage/client-sdk-video';
 import { EventEmitter } from 'stream';
+import * as mui from '@mui/material';
 import MeetingRoom from './MeetingRoom';
 import UserProvider, { UserContextType } from '../../Context/user';
 import SessionProvider, { SessionContextType } from '../../Context/SessionProvider/session';
@@ -19,7 +20,6 @@ import useSessionContext from '../../hooks/useSessionContext';
 import useActiveSpeaker from '../../hooks/useActiveSpeaker';
 import useScreenShare, { UseScreenShareType } from '../../hooks/useScreenShare';
 import { PUBLISHING_BLOCKED_CAPTION, RIGHT_PANEL_BUTTON_COUNT } from '../../utils/constants';
-import useIsSmallViewport from '../../hooks/useIsSmallViewport';
 import useToolbarButtons, {
   UseToolbarButtons,
   UseToolbarButtonsProps,
@@ -38,6 +38,13 @@ vi.mock('react-router-dom', async () => {
     useLocation: () => mockedLocation,
   };
 });
+vi.mock('@mui/material', async () => {
+  const actual = await vi.importActual<typeof mui>('@mui/material');
+  return {
+    ...actual,
+    useMediaQuery: vi.fn(),
+  };
+});
 
 vi.mock('../../hooks/useDevices.tsx');
 vi.mock('../../hooks/usePublisherContext.tsx');
@@ -47,7 +54,6 @@ vi.mock('../../hooks/useLayoutManager.tsx');
 vi.mock('../../hooks/useSessionContext.tsx');
 vi.mock('../../hooks/useActiveSpeaker.tsx');
 vi.mock('../../hooks/useScreenShare.tsx');
-vi.mock('../../hooks/useIsSmallViewport');
 vi.mock('../../hooks/useToolbarButtons');
 vi.mock('../../Context/PublisherProvider/usePublisherOptions');
 
@@ -71,7 +77,6 @@ const mockUseLayoutManager = useLayoutManager as Mock<[], GetLayout>;
 const mockUseSessionContext = useSessionContext as Mock<[], SessionContextType>;
 const mockUseActiveSpeaker = useActiveSpeaker as Mock<[], string | undefined>;
 const mockUseScreenShare = useScreenShare as Mock<[], UseScreenShareType>;
-const mockUseIsSmallViewport = useIsSmallViewport as Mock<[], boolean>;
 const mockUseToolbarButtons = useToolbarButtons as Mock<
   [UseToolbarButtonsProps],
   UseToolbarButtons
@@ -147,6 +152,7 @@ describe('MeetingRoom', () => {
       toggleChat: vi.fn(),
       toggleParticipantList: vi.fn(),
       closeRightPanel: vi.fn(),
+      emojiQueue: [],
     } as unknown as SessionContextType;
     mockUseSpeakingDetector.mockReturnValue(false);
     mockUseLayoutManager.mockImplementation(() => (_dimensions, elements) => {
@@ -165,7 +171,7 @@ describe('MeetingRoom', () => {
       screenshareVideoElement: undefined,
       screensharingPublisher: null,
     });
-    mockUseIsSmallViewport.mockImplementation(() => false);
+    (mui.useMediaQuery as Mock).mockReturnValue(false);
     mockUseToolbarButtons.mockImplementation(
       ({ numberOfToolbarButtons }: UseToolbarButtonsProps) => {
         const renderedToolbarButtons: UseToolbarButtons = {
@@ -185,7 +191,7 @@ describe('MeetingRoom', () => {
   });
 
   it('renders the small viewport header bar if it is on a small tab or device', () => {
-    mockUseIsSmallViewport.mockImplementation(() => true);
+    (mui.useMediaQuery as Mock).mockReturnValue(true);
     render(<MeetingRoomWithProviders />);
     expect(screen.getByTestId('smallViewportHeader')).not.toBeNull();
   });

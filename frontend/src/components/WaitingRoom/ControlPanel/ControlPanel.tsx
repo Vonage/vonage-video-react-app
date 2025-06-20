@@ -7,8 +7,8 @@ import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import MenuDevicesWaitingRoom from '../MenuDevices';
 import usePreviewPublisherContext from '../../../hooks/usePreviewPublisherContext';
 import useDevices from '../../../hooks/useDevices';
-import useIsSmallViewport from '../../../hooks/useIsSmallViewport';
 import useAudioOutputContext from '../../../hooks/useAudioOutputContext';
+import useIsSmallViewport from '../../../hooks/useIsSmallViewport';
 
 export type ControlPanelProps = {
   handleAudioInputOpen: (

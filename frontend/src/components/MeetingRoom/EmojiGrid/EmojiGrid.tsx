@@ -1,7 +1,7 @@
 import { Dispatch, ReactElement, RefObject, SetStateAction } from 'react';
-import useIsSmallViewport from '../../../hooks/useIsSmallViewport';
 import EmojiGridMobile from './EmojiGridMobile';
 import EmojiGridDesktop from './EmojiGridDesktop';
+import useIsSmallViewport from '../../../hooks/useIsSmallViewport';
 
 export type EmojiGridProps = {
   isEmojiGridOpen: boolean;

@@ -6,8 +6,8 @@ import UsernameInput from '../../components/WaitingRoom/UserNameInput';
 import { DEVICE_ACCESS_STATUS } from '../../utils/constants';
 import DeviceAccessAlert from '../../components/DeviceAccessAlert';
 import Banner from '../../components/Banner';
-import useIsSmallViewport from '../../hooks/useIsSmallViewport';
 import { getStorageItem, STORAGE_KEYS } from '../../utils/storage';
+import useIsSmallViewport from '../../hooks/useIsSmallViewport';
 
 /**
  * WaitingRoom Component

@@ -10,8 +10,8 @@ import usePreviewPublisherContext from '../../../hooks/usePreviewPublisherContex
 import getInitials from '../../../utils/getInitials';
 import PreviewAvatar from '../PreviewAvatar';
 import VoiceIndicatorIcon from '../../MeetingRoom/VoiceIndicator/VoiceIndicator';
-import useIsSmallViewport from '../../../hooks/useIsSmallViewport';
 import VignetteEffect from '../VignetteEffect';
+import useIsSmallViewport from '../../../hooks/useIsSmallViewport';
 
 export type VideoContainerProps = {
   username: string;

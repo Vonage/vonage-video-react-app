@@ -10,11 +10,7 @@
 - [Platforms Supported](#platforms-supported)
 - [Requirements](#requirements)
 - [Running Locally](#running-locally)
-  - [Config](#config)
-  - [Running the project](#running-the-project)
-    - [Installing dependencies](#installing-dependencies)
-    - [Dev mode](#dev-mode)
-    - [Production mode](#production-mode)
+- [Testing on Multiple Devices](#testing-on-multiple-devices)
 - [Deployment to Vonage Cloud Runtime](#deployment-to-vonage-cloud-runtime)
 - [Testing](#testing)
   - [Integration Tests](#integration-tests)
@@ -114,49 +110,102 @@ The Vonage Video API Reference App for React is currently supported on the lates
 
 ## Running Locally
 
-### Config
+- **Ensure You Have a Vonage Account**
 
- In project directory, create the environment variables for the project.
+  You can create one at the [Vonage API Dashboard](https://dashboard.vonage.com/applications).
 
-```console
-cp backend/.env.example backend/.env
-```
-[Click here](backend/.env.example) to learn more about config variables used in the backend.
+- **Create an Application in the Dashboard**
 
-Add your Vonage Video API credentials to the newly created .env file.
+  Once logged in, navigate to the [Applications page](https://dashboard.vonage.com/applications) via the main dashboard menu:
 
-```console
-cp frontend/.env.example frontend/.env
-```
-[Click here](frontend/.env.example) to learn more about config variables used in the frontend.
+  <details close>
+  <summary>Applications dashboard view</summary>
+  <img src="./docs/assets/readme/1-dashboard-applications.png" alt="Applications dashboard" style="max-width: 100%; height: auto;" />
+  </details>
 
-### Running the project
+  If you don’t already have an application, create a new one:
 
-#### Installing dependencies
+  <details close>
+  <summary>Create new app</summary>
+  <img src="./docs/assets/readme/2-create-app.png" alt="Create app button" style="max-width: 100%; height: auto;" />
+  </details>
 
-```console
-yarn
-```
-This command installs all appropriate dependencies for the project. If you would like more information on the packages we use, please refer to the [Dependencies](./docs/DEPENDENCIES.md) document.
+  During the setup process, make sure to:
 
-#### Dev mode
+  - Provide a name for your application.
+  - Generate and download the public and private keys.
+  - Enable **Video** capabilities.
 
-```console
-yarn dev
-```
+  Refer to the following image for visual guidance:
 
-This command builds and watches both the backend server (:3345) and frontend vite dev server (:5173)
-You should now see the app running at [http://localhost:5173/](http://localhost:5173/)
+  <details close>
+  <summary>Configuring a new app</summary>
+  <img src="./docs/assets/readme/3-create-app-form.png" alt="Create app form" style="max-width: 100%; height: auto;" />
+  </details>
+  </br>
 
-#### Production mode
+- **Environment Variables**
 
-This command builds a production bundle of the app frontend and `cp`s it to the backend to be served by the express server.
+  In the root project directory, create the environment files by running:
 
-```console
-yarn start
-```
+  ``` bash
+  cp backend/.env.example backend/.env && cp frontend/.env.example frontend/.env
+  ```
 
-The app and API are both served on  [http://localhost:3345/](http://localhost:3345/)
+  Then, open **backend/.env** and fill in the required configuration:
+
+  - **VONAGE_APP_ID** – This is the ID of your Vonage application. You can find it on the [Applications page](https://dashboard.vonage.com/applications).
+  - **VONAGE_PRIVATE_KEY** – If you've already generated a private key, use that. Otherwise, use the key you downloaded when creating the app.
+
+</br>
+
+-  **Start in Development Mode**
+
+    ``` bash
+    yarn dev
+    ```
+
+    This starts both the backend server (port **3345**) and the frontend Vite dev server (port **5173**). You can now access the app at [http://localhost:5173](http://localhost:5173).
+
+## Testing on Multiple Devices
+
+To test the video API across multiple devices on your local network, you can use **ngrok** to expose your frontend publicly.
+
+1. Create an account at [ngrok](https://dashboard.ngrok.com/signup) if you haven’t already.
+
+2. Follow the [Setup and Installation instructions](https://dashboard.ngrok.com/get-started/setup/) for your operating system to install and configure ngrok.
+
+3. Create a secure tunnel to your frontend using:
+
+    ``` bash
+    yarn forward:frontend
+    ```
+
+    This command creates a publicly accessible HTTPS URL for your frontend. It will appear in your terminal, similar to the image below:
+
+    <details close>
+    <summary>ngrok output example</summary>
+    <img src="./docs/assets/readme/4-forwarding front-end.png" alt="ngrok tunnel example" style="max-width: 100%; height: auto;" />
+    </details>
+
+    </br>
+
+4. Copy the domain from the output and update your **frontend/.env** file:
+
+    ``` ini
+    # example
+    VITE_TUNNEL_DOMAIN=GENERIC_DOMAIN
+    ```
+
+    **Note:** ngrok assigns a temporary domain. You’ll need to update your environment variable each time the domain changes.
+
+  </br>
+
+5. Open the provided **Forwarding** URL in your browser. This exposes your Vite app publicly. However, keep in mind that the backend server is still local, so the devices accessing the app must be on the same local network.
+
+</br>
+
+Enjoy testing!
 
 ## Deployment to Vonage Cloud Runtime
 
