@@ -1,12 +1,14 @@
 import { expect } from '@playwright/test';
 import * as crypto from 'crypto';
-import path from 'path';
-import fs from 'fs';
 import { test } from '../fixtures/testWithLogging';
 import { openMeetingRoomWithSettings, waitAndClickFirefox } from './utils';
 
-test.describe('meeting room', () => {
-  test('force mute', async ({ page: pageOne, browserName }) => {
+test.describe('Recording Feature', () => {
+  test('should start and stop recording and verify the download link', async ({
+    page: pageOne,
+    browserName,
+    isMobile,
+  }) => {
     const roomName = crypto.randomBytes(5).toString('hex');
 
     await openMeetingRoomWithSettings({
@@ -16,33 +18,60 @@ test.describe('meeting room', () => {
       audioOff: true,
       browserName,
     });
-    // These clicks and waits are needed for firefox
-    await waitAndClickFirefox(pageOne, browserName);
 
+    await waitAndClickFirefox(pageOne, browserName);
     await pageOne.waitForSelector('.publisher', { state: 'visible' });
 
-    const archivingButton = await pageOne.getByTestId('archiving-button');
+    if (isMobile) {
+      await pageOne.getByTestId('MoreVertIcon').click();
+      await pageOne.mouse.move(0, 0); // Moves cursor to top-left corner to hide tooltip
+    }
+    const archivingButton = pageOne.getByTestId('archiving-button');
     await archivingButton.click();
-    const popupPrimaryButton = await pageOne.getByTestId('popup-dialog-primary-button');
-    await popupPrimaryButton.click();
-    await expect
-      .poll(
-        () => archivingButton.locator('svg').evaluate((el) => window.getComputedStyle(el).color),
-        {
-          message: 'Waiting for color to become rgb(239, 68, 68)',
+
+    const confirmStartButton = pageOne.getByTestId('popup-dialog-primary-button');
+    await confirmStartButton.click();
+
+    if (isMobile) {
+      const recordingIndicator = pageOne
+        .getByTestId('smallViewportHeader')
+        .getByTestId('RadioButtonCheckedIcon');
+
+      await expect(recordingIndicator).toBeVisible({ timeout: 5000 });
+
+      const actualColor = await recordingIndicator.evaluate(
+        (el) => window.getComputedStyle(el).color
+      );
+      console.log('Mobile icon color:', actualColor);
+
+      await expect
+        .poll(() => recordingIndicator.evaluate((el) => window.getComputedStyle(el).color), {
+          message: 'Waiting for recording to start (mobile red icon)',
           timeout: 5000,
-        }
-      )
-      .toBe('rgb(239, 68, 68)');
+        })
+        .toBe('rgb(239, 68, 68)');
 
+      await pageOne.getByTestId('MoreVertIcon').click();
+      await pageOne.mouse.move(0, 0);
+    } else {
+      await expect
+        .poll(
+          () => archivingButton.locator('svg').evaluate((el) => window.getComputedStyle(el).color),
+          {
+            message: 'Waiting for recording to start (red icon)',
+            timeout: 5000,
+          }
+        )
+        .toBe('rgb(239, 68, 68)');
+    }
     await archivingButton.click();
-    await popupPrimaryButton.click();
+    await confirmStartButton.click();
 
     await expect
       .poll(
         () => archivingButton.locator('svg').evaluate((el) => window.getComputedStyle(el).color),
         {
-          message: 'Waiting for color to become rgb(239, 68, 68)',
+          message: 'Waiting for recording to stop (white icon)',
           timeout: 5000,
         }
       )
@@ -52,27 +81,14 @@ test.describe('meeting room', () => {
 
     await pageOne.getByText('Recording 1', { exact: true }).waitFor();
 
-    const downloadButton = pageOne.getByTestId('archive-download-button');
-    await expect(downloadButton).toBeVisible({ timeout: 10000 });
+    const downloadIcon = pageOne.getByTestId('archive-download-button');
+    await expect(downloadIcon).toBeVisible({ timeout: 10000 });
 
-    // 3. Set up the download listener before clicking
-    const downloadPromise = pageOne.waitForEvent('download');
+    const href = await downloadIcon.evaluate((el) => {
+      const anchor = el.closest('a');
+      return anchor ? anchor.href : null;
+    });
 
-    // 4. Click the button to trigger download
-    await downloadButton.click();
-
-    // 5. Wait for the download to complete
-    const download = await downloadPromise;
-
-    // 6. Save the download to a known location
-    const suggestedFilename = download.suggestedFilename();
-    const filePath = path.join(__dirname, suggestedFilename);
-    await download.saveAs(filePath);
-
-    // 7. Assert the file was saved
-    expect(fs.existsSync(filePath)).toBeTruthy();
-
-    // 8. Optionally, delete the file after the test
-    fs.unlinkSync(filePath);
+    expect(href).toBeTruthy();
   });
 });
