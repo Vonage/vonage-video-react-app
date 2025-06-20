@@ -75,6 +75,8 @@ class VonageVideoService implements VideoService {
 
     try {
       const captionOptions: CaptionOptions = {
+        // The following language codes are supported: en-US, en-AU, en-GB, fr-FR, fr-CA, de-DE, hi-IN, it-IT, pt-BR, ja-JP, ko-KR, zh-CN, zh-TW
+        languageCode: 'en-US',
         // The maximum duration of the captions in seconds. The default is 14,400 seconds (4 hours).
         maxDuration: 1800,
         // Enabling partial captions allows for more frequent updates to the captions.
