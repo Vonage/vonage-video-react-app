@@ -1,6 +1,6 @@
 import { ClosedCaption, ClosedCaptionDisabled } from '@mui/icons-material';
 import { Tooltip } from '@mui/material';
-import { ReactElement, useState } from 'react';
+import { Dispatch, ReactElement, useState, SetStateAction } from 'react';
 import useRoomName from '../../../hooks/useRoomName';
 import ToolbarButton from '../ToolbarButton';
 import { disableCaptions, enableCaptions } from '../../../api/captions';
@@ -12,6 +12,7 @@ export type CaptionsButtonProps = {
   isOverflowButton?: boolean;
   handleClick?: () => void;
   subscriberWrappers: SubscriberWrapper[];
+  setSmallViewPortCaptionsEnabled?: Dispatch<SetStateAction<boolean>>;
 };
 
 /**
@@ -22,12 +23,14 @@ export type CaptionsButtonProps = {
  *  @property {boolean} isOverflowButton - (optional) whether the button is in the ToolbarOverflowMenu
  *  @property {(event?: MouseEvent | TouchEvent) => void} handleClick - (optional) click handler that closes the overflow menu in small viewports.
  *  @property {SubscriberWrapper[]} subscriberWrappers - an array of subscribers to display captions for.
+ *  @property {Dispatch<SetStateAction<boolean>>} setSmallViewPortCaptionsEnabled - toggle captions on/off for small viewports
  * @returns {ReactElement} - The CaptionsButton component.
  */
 const CaptionsButton = ({
   isOverflowButton = false,
   handleClick,
   subscriberWrappers,
+  setSmallViewPortCaptionsEnabled,
 }: CaptionsButtonProps): ReactElement => {
   const { ownCaptions } = useSessionContext();
   const roomName = useRoomName();
@@ -47,6 +50,11 @@ const CaptionsButton = ({
         const response = await enableCaptions(roomName);
         setCaptionsId(response.data.captionsId);
         setIsCaptionsEnabled(true);
+
+        // for small viewports, we need to inform up to the MeetingRoom component that captions are enabled
+        if (setSmallViewPortCaptionsEnabled) {
+          setSmallViewPortCaptionsEnabled(true);
+        }
       } catch (error) {
         console.log(error);
       }
@@ -55,6 +63,11 @@ const CaptionsButton = ({
         setIsCaptionsEnabled(false);
         setCaptionsId('');
         await disableCaptions(roomName, captionsId);
+
+        // for small viewports, we need to inform up to the MeetingRoom component that captions are disabled
+        if (setSmallViewPortCaptionsEnabled) {
+          setSmallViewPortCaptionsEnabled(false);
+        }
       } catch (error) {
         console.log(error);
       }

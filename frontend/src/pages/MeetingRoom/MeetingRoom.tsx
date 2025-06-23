@@ -1,4 +1,4 @@
-import { useEffect, ReactElement } from 'react';
+import { useEffect, ReactElement, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import usePublisherContext from '../../hooks/usePublisherContext';
 import ConnectionAlert from '../../components/MeetingRoom/ConnectionAlert';
@@ -35,7 +35,6 @@ const MeetingRoom = (): ReactElement => {
     subscriberWrappers,
     ownCaptions,
     connected,
-    isSessionCaptioningEnabled,
     disconnect,
     reconnecting,
     rightPanelActiveTab,
@@ -49,6 +48,7 @@ const MeetingRoom = (): ReactElement => {
   const navigate = useNavigate();
   const publisherOptions = usePublisherOptions();
   const isSmallViewport = useIsSmallViewport();
+  const [smallViewPortCaptionsEnabled, setSmallViewPortCaptionsEnabled] = useState<boolean>(false);
 
   useEffect(() => {
     if (joinRoom && isValidRoomName(roomName)) {
@@ -105,14 +105,13 @@ const MeetingRoom = (): ReactElement => {
       <RightPanel activeTab={rightPanelActiveTab} handleClose={closeRightPanel} />
       <EmojisOrigin />
       {/* Renders the CaptionsBox directly in the meeting room on small port devices to ensure that captions
-       are always visible and accessible in the limited viewport. 
-       This placement provides an optimal user experience for accessibility on smaller screens. */}
-      {isSmallViewport && isSessionCaptioningEnabled && (
+       are always visible and accessible in the limited viewport. */}
+      {isSmallViewport && smallViewPortCaptionsEnabled && (
         <CaptionsBox
           subscriberWrappers={subscriberWrappers}
-          localPublisherCaptions={ownCaptions}
-          isCaptioningEnabled={isSessionCaptioningEnabled}
+          isCaptioningEnabled={smallViewPortCaptionsEnabled}
           isSmallViewPort={isSmallViewport}
+          localPublisherCaptions={ownCaptions}
         />
       )}
       <Toolbar
@@ -125,6 +124,7 @@ const MeetingRoom = (): ReactElement => {
         participantCount={
           subscriberWrappers.filter(({ isScreenshare }) => !isScreenshare).length + 1
         }
+        setSmallViewPortCaptionsEnabled={setSmallViewPortCaptionsEnabled}
       />
       {reconnecting && (
         <ConnectionAlert

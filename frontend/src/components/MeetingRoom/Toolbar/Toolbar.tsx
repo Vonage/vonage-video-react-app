@@ -1,4 +1,4 @@
-import { ReactElement, useCallback, useRef, useState } from 'react';
+import { Dispatch, ReactElement, SetStateAction, useCallback, useRef, useState } from 'react';
 import ScreenSharingButton from '../../ScreenSharingButton';
 import TimeRoomNameMeetingRoom from '../TimeRoomName';
 import ExitButton from '../ExitButton';
@@ -24,6 +24,7 @@ export type ToolbarProps = {
   toggleChat: () => void;
   toggleReportIssue: () => void;
   participantCount: number;
+  setSmallViewPortCaptionsEnabled: Dispatch<SetStateAction<boolean>>;
 };
 
 /**
@@ -46,6 +47,7 @@ export type ToolbarProps = {
  *  @property {boolean} isParticipantListOpen - the prop to check if the participant list is open
  *  @property {() => void} openParticipantList - the prop to open the participant list
  *  @property {number} participantCount - the prop that holds the current number of participants
+ *  @property {Dispatch<SetStateAction<boolean>>} setSmallViewPortCaptionsEnabled - toggle captions on/off for small viewports
  * @returns {ReactElement} - the toolbar component
  */
 const Toolbar = ({
@@ -56,6 +58,7 @@ const Toolbar = ({
   toggleChat,
   toggleReportIssue,
   participantCount,
+  setSmallViewPortCaptionsEnabled,
 }: ToolbarProps): ReactElement => {
   const { disconnect, subscriberWrappers } = useSessionContext();
   const isViewingScreenShare = subscriberWrappers.some((subWrapper) => subWrapper.isScreenshare);
@@ -163,6 +166,7 @@ const Toolbar = ({
               isSharingScreen={isSharingScreen}
               toggleShareScreen={toggleShareScreen}
               toolbarButtonsCount={toolbarButtonsDisplayed}
+              setSmallViewPortCaptionsEnabled={setSmallViewPortCaptionsEnabled}
             />
           )}
           <ExitButton handleLeave={handleLeave} />
