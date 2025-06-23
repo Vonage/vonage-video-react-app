@@ -18,7 +18,7 @@ export type DisableCaptionsType = {
 export const enableCaptions = async (
   roomName: string
 ): Promise<AxiosResponse<EnableCaptionsType>> => {
-  return axios.post(`${API_URL}/session/${roomName}/enableCaptions`);
+  return await axios.post(`${API_URL}/session/${roomName}/enableCaptions`);
 };
 
 /**
