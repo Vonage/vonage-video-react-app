@@ -47,16 +47,16 @@ const CaptionsButton = ({
         const response = await enableCaptions(roomName);
         setCaptionsId(response.data.captionsId);
         setIsCaptionsEnabled(true);
-      } catch (err) {
-        console.log(err);
+      } catch (error) {
+        console.log(error);
       }
     } else if (action === 'disable' && captionsId && roomName) {
       try {
         setIsCaptionsEnabled(false);
         setCaptionsId('');
         await disableCaptions(roomName, captionsId);
-      } catch (err) {
-        console.log(err);
+      } catch (error) {
+        console.log(error);
       }
     }
   };
