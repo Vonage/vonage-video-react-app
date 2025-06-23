@@ -17,10 +17,12 @@ sessionRouter.get('/:room', async (req: Request<{ room: string }>, res: Response
     const { room: roomName } = req.params;
     const sessionId = await getOrCreateSession(roomName);
     const data = videoService.generateToken(sessionId);
+    const captionsId = await sessionService.getCaptionsId(roomName);
     res.json({
       sessionId,
       token: data.token,
       apiKey: data.apiKey,
+      captionsId,
     });
   } catch (error: unknown) {
     const message = error instanceof Error ? error.message : error;

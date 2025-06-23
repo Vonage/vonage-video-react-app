@@ -357,14 +357,20 @@ const SessionProvider = ({ children }: SessionProviderProps): ReactElement => {
   }, []);
 
   /**
-   * Joins a room by fetching the necessary credentials and connecting to the session.
+   * Joins a room by fetching the necessary connection data and connecting to the session.
    * @param {string} roomName - The name of the room to join.
    */
   const joinRoom = useCallback(
     async (roomName: string) => {
       fetchCredentials(roomName)
-        .then((credentials) => {
-          connect(credentials.data);
+        .then((connectionData) => {
+          connect(connectionData.data);
+
+          // If there is a captionsId in the connection data, it means captions were enabled for the session before we joined.
+          const { captionsId } = connectionData.data;
+          if (captionsId) {
+            setIsSessionCaptioningEnabled(true);
+          }
         })
         .catch(console.warn);
     },
