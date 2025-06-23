@@ -131,7 +131,7 @@ describe.each([
           .set('Accept', 'application/json');
 
         const responseBody = JSON.parse(res.text);
-        expect(responseBody.message).toEqual('Invalid caption ID');
+        expect(responseBody.errorMessage).toEqual('Invalid caption ID');
       });
 
       it('returns a 500 when stopping captions in a non-existent room', async () => {

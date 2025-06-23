@@ -1,12 +1,26 @@
 import axios, { AxiosResponse } from 'axios';
 import { API_URL } from '../utils/constants';
 
+/**
+ * Type definitions for enabling captions.
+ * @typedef {object} EnableCaptionsType
+ * @property {string} captionsId - The ID for the currently-enabled captions.
+ * @property {string} message (optional) - An error message.
+ */
 export type EnableCaptionsType = {
   captionsId: string;
+  message?: string;
 };
 
+/**
+ * Type definitions for enabling captions.
+ * @typedef {object} EnableCaptionsType
+ * @property {string} disableResponse - The response message from disabling captions.
+ * @property {string} errorMessage (optional) - An error message.
+ */
 export type DisableCaptionsType = {
-  response: string;
+  messageResponse: string;
+  errorMessage?: string;
 };
 
 /**

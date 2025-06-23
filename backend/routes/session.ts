@@ -137,7 +137,7 @@ sessionRouter.post(
       // for example: '123e4567-a12b-41a2-a123-123456789012'
       const isValidCaptionId = validator.isUUID(captionsId, 4);
       if (!isValidCaptionId) {
-        res.status(400).json({ message: 'Invalid caption ID' });
+        res.status(400).json({ errorMessage: 'Invalid caption ID' });
         return;
       }
 
@@ -145,32 +145,32 @@ sessionRouter.post(
       const captionsUserCount = await sessionService.removeCaptionsUser(roomName);
 
       if (!sessionId) {
-        res.status(404).json({ message: 'Room not found' });
+        res.status(404).json({ errorMessage: 'Room not found' });
         return;
       }
 
       if (captionsUserCount === 0) {
-        const responseCaptionId = await videoService.disableCaptions(captionsId);
+        const disableResponse = await videoService.disableCaptions(captionsId);
         await videoService.sendSignalToSession(sessionId, {
           type: 'captions',
           data: JSON.stringify({
             action: 'disable',
-            captionsId: responseCaptionId,
+            captionsId,
           }),
         });
         await sessionService.setCaptionsId(roomName, '');
         res.json({
-          captionsId: responseCaptionId,
+          disableResponse,
           status: 200,
         });
       } else {
         res.json({
-          message: 'Captions are still active for other users',
+          disableResponse: 'Captions are still active for other users',
           status: 200,
         });
       }
     } catch (error: unknown) {
-      res.status(500).send({ message: (error as Error).message ?? error });
+      res.status(500).send({ errorMessage: (error as Error).message ?? error });
     }
   }
 );
