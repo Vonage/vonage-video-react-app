@@ -86,7 +86,6 @@ test.describe('participant pinning', () => {
     const participantItem = await pageThree.locator('[data-testid^="participant-list-item"]', {
       hasText: 'User Two',
     });
-    // Within that list item, find and click the MoreVert button
     await participantItem.getByTestId('MoreVertIcon').click();
 
     await pageThree
