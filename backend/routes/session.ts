@@ -102,7 +102,7 @@ sessionRouter.post(
       if (newCaptionCount === 1) {
         const captions = await videoService.enableCaptions(sessionId);
         const { captionsId } = captions;
-        await sessionService.setCaptionId(roomName, captionsId);
+        await sessionService.setCaptionsId(roomName, captionsId);
         await videoService.sendSignalToSession(sessionId, {
           type: 'captions',
           data: JSON.stringify({
@@ -158,7 +158,7 @@ sessionRouter.post(
             captionsId: responseCaptionId,
           }),
         });
-        await sessionService.setCaptionId(roomName, '');
+        await sessionService.setCaptionsId(roomName, '');
         res.json({
           captionsId: responseCaptionId,
           status: 200,

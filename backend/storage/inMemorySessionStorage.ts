@@ -25,7 +25,7 @@ class InMemorySessionStorage implements SessionStorage {
     }
   }
 
-  async setCaptionId(roomName: string, captionsId: string): Promise<void> {
+  async setCaptionsId(roomName: string, captionsId: string): Promise<void> {
     if (!this.sessions[roomName]) {
       this.sessions[roomName] = {
         sessionId: '',

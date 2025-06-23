@@ -23,7 +23,7 @@ class VcrSessionStorage implements SessionStorage {
     await this.dbState.expire(`sessions:${roomName}`, expirationTime);
   }
 
-  async setCaptionId(roomName: string, captionsId: string): Promise<void> {
+  async setCaptionsId(roomName: string, captionsId: string): Promise<void> {
     await this.dbState.set(`captionsIds:${roomName}`, captionsId);
     await this.dbState.expire(`captionsIds:${roomName}`, expirationTime);
   }
