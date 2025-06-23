@@ -1,5 +1,5 @@
 import { expect } from '@playwright/test';
-import * as crypto from 'crypto';
+import { randomBytes } from 'crypto';
 import { test } from '../fixtures/testWithLogging';
 import { openMeetingRoomWithSettings, waitAndClickFirefox } from './utils';
 
@@ -9,7 +9,7 @@ test.describe('Recording Feature', () => {
     browserName,
     isMobile,
   }) => {
-    const roomName = crypto.randomBytes(5).toString('hex');
+    const roomName = randomBytes(5).toString('hex');
 
     await openMeetingRoomWithSettings({
       page: pageOne,
@@ -42,7 +42,6 @@ test.describe('Recording Feature', () => {
       const actualColor = await recordingIndicator.evaluate(
         (el) => window.getComputedStyle(el).color
       );
-      console.log('Mobile icon color:', actualColor);
 
       await expect
         .poll(() => recordingIndicator.evaluate((el) => window.getComputedStyle(el).color), {

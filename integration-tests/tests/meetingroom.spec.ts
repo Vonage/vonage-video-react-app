@@ -1,11 +1,16 @@
 import { expect } from '@playwright/test';
-import * as crypto from 'crypto';
+import { randomBytes } from 'crypto';
 import { test } from '../fixtures/testWithLogging';
 import { openMeetingRoomWithSettings, waitAndClickFirefox } from './utils';
 
 test.describe('meeting room', () => {
-  test('force mute', async ({ page: pageOne, context, browserName, isMobile }) => {
-    const roomName = crypto.randomBytes(5).toString('hex');
+  test('should allow a user to mute another participant', async ({
+    page: pageOne,
+    context,
+    browserName,
+    isMobile,
+  }) => {
+    const roomName = randomBytes(5).toString('hex');
 
     const pageTwo = await context.newPage();
 
