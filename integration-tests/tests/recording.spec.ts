@@ -39,10 +39,6 @@ test.describe('Recording Feature', () => {
 
       await expect(recordingIndicator).toBeVisible({ timeout: 5000 });
 
-      const actualColor = await recordingIndicator.evaluate(
-        (el) => window.getComputedStyle(el).color
-      );
-
       await expect
         .poll(() => recordingIndicator.evaluate((el) => window.getComputedStyle(el).color), {
           message: 'Waiting for recording to start (mobile red icon)',
