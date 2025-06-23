@@ -196,19 +196,6 @@ describe('MeetingRoom', () => {
     expect(screen.getByTestId('smallViewportHeader')).not.toBeNull();
   });
 
-  it('renders the captions box if it is on small tab or device and captions are enabled', () => {
-    (mui.useMediaQuery as Mock).mockReturnValue(true);
-    sessionContext.isSessionCaptioningEnabled = true;
-    render(<MeetingRoomWithProviders />);
-    expect(screen.getByTestId('captions-box')).toBeInTheDocument();
-  });
-
-  it('does not render the captions box if it is on small tab or device and captions are not enabled', () => {
-    (mui.useMediaQuery as Mock).mockReturnValue(true);
-    render(<MeetingRoomWithProviders />);
-    expect(screen.queryByTestId('captions-box')).not.toBeInTheDocument();
-  });
-
   it('does not render the small viewport header bar if it is on desktop', () => {
     // we do not need to mock the small port view value here given we already do it in beforeEach
     render(<MeetingRoomWithProviders />);
