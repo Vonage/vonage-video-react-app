@@ -20,7 +20,7 @@ export type ToolbarOverflowMenuProps = {
   toggleShareScreen: () => void;
   isSharingScreen: boolean;
   toolbarButtonsCount: number;
-  setSmallViewPortCaptionsEnabled: Dispatch<SetStateAction<boolean>>;
+  setIsSmallViewPortCaptionsEnabled: Dispatch<SetStateAction<boolean>>;
 };
 
 /**
@@ -35,7 +35,7 @@ export type ToolbarOverflowMenuProps = {
  *  @property {Function} toggleShareScreen - toggles the user's screenshare
  *  @property {boolean} isSharingScreen - whether the user is sharing their screen
  *  @property {number} toolbarButtonsCount - number of buttons displayed on the toolbar
- *  @property {Dispatch<SetStateAction<boolean>>} setSmallViewPortCaptionsEnabled - toggle captions on/off for small viewports
+ *  @property {Dispatch<SetStateAction<boolean>>} setIsSmallViewPortCaptionsEnabled - toggle captions on/off for small viewports
  * @returns {ReactElement} - The ToolbarOverflowMenu component.
  */
 const ToolbarOverflowMenu = ({
@@ -46,7 +46,7 @@ const ToolbarOverflowMenu = ({
   toggleShareScreen,
   isSharingScreen,
   toolbarButtonsCount,
-  setSmallViewPortCaptionsEnabled,
+  setIsSmallViewPortCaptionsEnabled,
 }: ToolbarOverflowMenuProps): ReactElement => {
   const {
     subscriberWrappers,
@@ -88,7 +88,7 @@ const ToolbarOverflowMenu = ({
       handleClick={closeMenu}
       key="CaptionsButton"
       subscriberWrappers={subscriberWrappers}
-      setSmallViewPortCaptionsEnabled={setSmallViewPortCaptionsEnabled}
+      setIsSmallViewPortCaptionsEnabled={setIsSmallViewPortCaptionsEnabled}
     />,
     <EmojiGridButton
       isEmojiGridOpen={isEmojiGridOpen}

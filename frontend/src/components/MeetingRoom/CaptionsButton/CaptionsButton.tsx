@@ -12,7 +12,7 @@ export type CaptionsButtonProps = {
   isOverflowButton?: boolean;
   handleClick?: () => void;
   subscriberWrappers: SubscriberWrapper[];
-  setSmallViewPortCaptionsEnabled?: Dispatch<SetStateAction<boolean>>;
+  setIsSmallViewPortCaptionsEnabled?: Dispatch<SetStateAction<boolean>>;
 };
 
 /**
@@ -23,14 +23,14 @@ export type CaptionsButtonProps = {
  *  @property {boolean} isOverflowButton - (optional) whether the button is in the ToolbarOverflowMenu
  *  @property {(event?: MouseEvent | TouchEvent) => void} handleClick - (optional) click handler that closes the overflow menu in small viewports.
  *  @property {SubscriberWrapper[]} subscriberWrappers - an array of subscribers to display captions for.
- *  @property {Dispatch<SetStateAction<boolean>>} setSmallViewPortCaptionsEnabled - toggle captions on/off for small viewports
+ *  @property {Dispatch<SetStateAction<boolean>>} setIsSmallViewPortCaptionsEnabled - toggle captions on/off for small viewports
  * @returns {ReactElement} - The CaptionsButton component.
  */
 const CaptionsButton = ({
   isOverflowButton = false,
   handleClick,
   subscriberWrappers,
-  setSmallViewPortCaptionsEnabled,
+  setIsSmallViewPortCaptionsEnabled,
 }: CaptionsButtonProps): ReactElement => {
   const { ownCaptions } = useSessionContext();
   const roomName = useRoomName();
@@ -52,8 +52,8 @@ const CaptionsButton = ({
         setIsCaptionsEnabled(true);
 
         // for small viewports, we need to inform up to the MeetingRoom component that captions are enabled
-        if (setSmallViewPortCaptionsEnabled) {
-          setSmallViewPortCaptionsEnabled(true);
+        if (setIsSmallViewPortCaptionsEnabled) {
+          setIsSmallViewPortCaptionsEnabled(true);
         }
       } catch (error) {
         console.log(error);
@@ -65,8 +65,8 @@ const CaptionsButton = ({
         await disableCaptions(roomName, captionsId);
 
         // for small viewports, we need to inform up to the MeetingRoom component that captions are disabled
-        if (setSmallViewPortCaptionsEnabled) {
-          setSmallViewPortCaptionsEnabled(false);
+        if (setIsSmallViewPortCaptionsEnabled) {
+          setIsSmallViewPortCaptionsEnabled(false);
         }
       } catch (error) {
         console.log(error);

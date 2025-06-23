@@ -48,7 +48,8 @@ const MeetingRoom = (): ReactElement => {
   const navigate = useNavigate();
   const publisherOptions = usePublisherOptions();
   const isSmallViewport = useIsSmallViewport();
-  const [smallViewPortCaptionsEnabled, setSmallViewPortCaptionsEnabled] = useState<boolean>(false);
+  const [isSmallViewPortCaptionsEnabled, setIsSmallViewPortCaptionsEnabled] =
+    useState<boolean>(false);
 
   useEffect(() => {
     if (joinRoom && isValidRoomName(roomName)) {
@@ -106,10 +107,10 @@ const MeetingRoom = (): ReactElement => {
       <EmojisOrigin />
       {/* Renders the CaptionsBox directly in the meeting room on small port devices to ensure that captions
        are always visible and accessible in the limited viewport. */}
-      {isSmallViewport && smallViewPortCaptionsEnabled && (
+      {isSmallViewport && isSmallViewPortCaptionsEnabled && (
         <CaptionsBox
           subscriberWrappers={subscriberWrappers}
-          isCaptioningEnabled={smallViewPortCaptionsEnabled}
+          isCaptioningEnabled={isSmallViewPortCaptionsEnabled}
           isSmallViewPort={isSmallViewport}
           localPublisherCaptions={ownCaptions}
         />
@@ -124,7 +125,7 @@ const MeetingRoom = (): ReactElement => {
         participantCount={
           subscriberWrappers.filter(({ isScreenshare }) => !isScreenshare).length + 1
         }
-        setSmallViewPortCaptionsEnabled={setSmallViewPortCaptionsEnabled}
+        setIsSmallViewPortCaptionsEnabled={setIsSmallViewPortCaptionsEnabled}
       />
       {reconnecting && (
         <ConnectionAlert

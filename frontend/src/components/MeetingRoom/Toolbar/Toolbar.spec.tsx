@@ -61,7 +61,7 @@ describe('Toolbar', () => {
     toggleChat: vi.fn(),
     toggleReportIssue: vi.fn(),
     participantCount: 0,
-    setSmallViewPortCaptionsEnabled: vi.fn(),
+    setIsSmallViewPortCaptionsEnabled: vi.fn(),
   };
 
   it('does not render the Report Issue button if it is configured to be disabled', () => {
