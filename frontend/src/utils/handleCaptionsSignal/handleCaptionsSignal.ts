@@ -23,8 +23,7 @@ export type CaptionsHandleType = {
 
 /**
  * Handles the captions signal received from the session.
- * This function manages enabling, disabling, joining, and leaving captions.
- * It also handles the functionality of notifying other participants about the current captions ID and the participant count.
+ * This function manages enabling and disabling the captions.
  * @param {CaptionsHandleType} props - Dependencies needed for the handler
  * @property {SignalEvent} event - The signal event containing the data.
  * @property {Dispatch<SetStateAction<boolean>>} setIsSessionCaptioningEnabled - Function to set the captions enabled state.
