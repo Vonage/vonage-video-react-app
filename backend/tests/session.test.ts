@@ -134,13 +134,13 @@ describe.each([
         expect(responseBody.message).toEqual('Invalid caption ID');
       });
 
-      it('returns a 404 when stopping captions in a non-existent room', async () => {
+      it('returns a 500 when stopping captions in a non-existent room', async () => {
         const invalidRoomName = 'nonExistingRoomName';
         const captionsId = '123e4567-a12b-41a2-a123-123456789012';
         const res = await request(server)
           .post(`/session/${invalidRoomName}/${captionsId}/disableCaptions`)
           .set('Content-Type', 'application/json');
-        expect(res.statusCode).toEqual(404);
+        expect(res.statusCode).toEqual(500);
       });
 
       it('returns a 400 when stopping captions with invalid type of captionsId', async () => {
