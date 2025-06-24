@@ -73,5 +73,37 @@ test.describe('participant pinning', () => {
     const publisherRect = await publisher.boundingBox();
     expect(userTwoSubscriberRet.width).toBeGreaterThan(1.2 * publisherRect.width);
     expect(userTwoSubscriberRet.height).toBeGreaterThan(2 * publisherRect.height);
+
+    // unpinning user 2 from the participants list
+    if (isMobile) {
+      await pageThree.getByTestId('MoreVertIcon').click();
+      await pageThree.mouse.move(0, 0); // Moves cursor to top-left corner to hide tooltip
+    }
+
+    const participantsListButton = await pageThree.getByTestId('PeopleIcon');
+    await participantsListButton.click();
+
+    const participantItem = await pageThree.locator('[data-testid^="participant-list-item"]', {
+      hasText: 'User Two',
+    });
+    await participantItem.getByTestId('MoreVertIcon').click();
+
+    await pageThree
+      .locator('[data-testid^="pin-menu-item"]', {
+        hasText: 'Unpin User Two',
+      })
+      .click();
+
+    const closeIconButton = pageThree.locator(
+      '//span[contains(text(),"Participants")]/following-sibling::button'
+    );
+    await closeIconButton.click();
+
+    const newUserTwoSubscriberRet = await userTwoSubscriber.boundingBox();
+    const newPublisherRect = await publisher.boundingBox();
+
+    await pageThree.waitForTimeout(1000);
+    expect(newUserTwoSubscriberRet.width).toBeLessThan(1.2 * newPublisherRect.width);
+    expect(newUserTwoSubscriberRet.height).toBeLessThan(2 * newPublisherRect.height);
   });
 });
