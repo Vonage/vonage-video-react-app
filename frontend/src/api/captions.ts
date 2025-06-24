@@ -20,7 +20,7 @@ export type EnableCaptionsType = {
  */
 export type DisableCaptionsType = {
   messageResponse: string;
-  errorMessage?: string;
+  message?: string;
 };
 
 /**

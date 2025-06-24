@@ -1,6 +1,7 @@
 import { ClosedCaption, ClosedCaptionDisabled } from '@mui/icons-material';
-import { Tooltip } from '@mui/material';
+import { Tooltip, Snackbar, Alert } from '@mui/material';
 import { Dispatch, ReactElement, useState, SetStateAction } from 'react';
+import { AxiosError } from 'axios';
 import useRoomName from '../../../hooks/useRoomName';
 import ToolbarButton from '../ToolbarButton';
 import { disableCaptions, enableCaptions } from '../../../api/captions';
@@ -32,6 +33,7 @@ const CaptionsButton = ({
 }: CaptionsButtonProps): ReactElement => {
   const roomName = useRoomName();
   const [captionsId, setCaptionsId] = useState<string>('');
+  const [errorResponse, setErrorResponse] = useState<string | null>('');
   const title = isUserCaptionsEnabled ? 'Disable captions' : 'Enable captions';
 
   const handleClose = () => {
@@ -47,7 +49,9 @@ const CaptionsButton = ({
         setCaptionsId(response.data.captionsId);
         setIsUserCaptionsEnabled(true);
       } catch (error) {
-        console.log(error);
+        if (error instanceof AxiosError) {
+          setErrorResponse(error.response?.data.message || 'Unkown error occurred');
+        }
       }
     } else if (action === 'disable' && captionsId && roomName) {
       try {
@@ -55,7 +59,9 @@ const CaptionsButton = ({
         await disableCaptions(roomName, captionsId);
         setIsUserCaptionsEnabled(false);
       } catch (error) {
-        console.log(error);
+        if (error instanceof AxiosError) {
+          setErrorResponse(error.response?.data.message || 'Unkown error occurred');
+        }
       }
     }
   };
@@ -89,6 +95,19 @@ const CaptionsButton = ({
         />
       </Tooltip>
       {!isOverflowButton && <CaptionsBox isCaptioningEnabled={isUserCaptionsEnabled} />}
+      {errorResponse && (
+        <Snackbar
+          open={!!errorResponse}
+          autoHideDuration={4000}
+          onClose={() => setErrorResponse(null)}
+          anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+          sx={{ mb: 6 }}
+        >
+          <Alert onClose={() => setErrorResponse(null)} severity="error" sx={{ width: '100%' }}>
+            {errorResponse}
+          </Alert>
+        </Snackbar>
+      )}
     </>
   );
 };
