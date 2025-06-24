@@ -6,6 +6,7 @@ import useRoomName from '../../../hooks/useRoomName';
 import ToolbarButton from '../ToolbarButton';
 import { disableCaptions, enableCaptions } from '../../../api/captions';
 import CaptionsBox from './CaptionsBox';
+import { CAPTION_ERROR_POPUP_TIMEOUT_MS } from '../../../utils/constants';
 
 export type CaptionsButtonProps = {
   isOverflowButton?: boolean;
@@ -51,6 +52,8 @@ const CaptionsButton = ({
       } catch (error) {
         if (error instanceof AxiosError) {
           setErrorResponse(error.response?.data.message || 'Unkown error occurred');
+          setCaptionsId('');
+          setIsUserCaptionsEnabled(false);
         }
       }
     } else if (action === 'disable' && captionsId && roomName) {
@@ -61,6 +64,8 @@ const CaptionsButton = ({
       } catch (error) {
         if (error instanceof AxiosError) {
           setErrorResponse(error.response?.data.message || 'Unkown error occurred');
+          setCaptionsId('');
+          setIsUserCaptionsEnabled(false);
         }
       }
     }
@@ -98,7 +103,7 @@ const CaptionsButton = ({
       {errorResponse && (
         <Snackbar
           open={!!errorResponse}
-          autoHideDuration={4000}
+          autoHideDuration={CAPTION_ERROR_POPUP_TIMEOUT_MS}
           onClose={() => setErrorResponse(null)}
           anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
           sx={{ mb: 6 }}

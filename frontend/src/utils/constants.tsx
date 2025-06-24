@@ -122,6 +122,12 @@ export const RIGHT_PANEL_BUTTON_COUNT = 3 - (isReportIssueEnabled() ? 0 : 1);
  */
 export const CAPTION_TIMEOUT_MS = 4000;
 
+/**
+ * @constant {number} CAPTION_ERROR_POPUP_TIMEOUT_MS - The duration in milliseconds for which the caption error popup is displayed.
+ * This is used to control how long the error message remains visible before it disappears.
+ */
+export const CAPTION_ERROR_POPUP_TIMEOUT_MS = 4000;
+
 /*
  * @constant {number} SMALL_VIEWPORT - The pixel width threshold used to determine if the viewport is considered small.
  * Typically used as the max-width breakpoint for responsive layouts.
