@@ -29,6 +29,7 @@ const CaptionsError = ({
       onClose={() => setCaptionsErrorResponse(null)}
       anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
       sx={{ mb: isSmallViewport ? 10 : 6 }}
+      data-testid="captions-error"
     >
       <Alert
         onClose={() => setCaptionsErrorResponse(null)}

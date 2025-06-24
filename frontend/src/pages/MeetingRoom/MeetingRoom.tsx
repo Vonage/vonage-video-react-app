@@ -111,7 +111,7 @@ const MeetingRoom = (): ReactElement => {
       />
       <RightPanel activeTab={rightPanelActiveTab} handleClose={closeRightPanel} />
       <EmojisOrigin />
-      <CaptionsBox isCaptioningEnabled={isUserCaptionsEnabled} />
+      {isUserCaptionsEnabled && <CaptionsBox />}
       {captionsErrorResponse && (
         <CaptionsError
           captionsErrorResponse={captionsErrorResponse}

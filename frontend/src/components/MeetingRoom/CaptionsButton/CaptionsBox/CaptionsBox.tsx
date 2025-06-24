@@ -1,28 +1,18 @@
 import { ReactElement } from 'react';
 import { Box } from '@mui/material';
 import SingleCaption from './SingleCaption';
-// import { SubscriberWrapper } from '../../../../types/session';
 import useSessionContext from '../../../../hooks/useSessionContext';
 import useIsSmallViewport from '../../../../hooks/useIsSmallViewport';
-
-export type CaptionsBoxProps = {
-  isCaptioningEnabled: boolean;
-};
 
 /**
  * CaptionsBox Component
  *
  * This component shows a list of the captions that are currently in the meeting room.
- * @param {CaptionsBoxProps} props - the props for the component.
- *  @property {boolean} isCaptioningEnabled - whether captions are enabled
  * @returns {ReactElement} The captions box component.
  */
-const CaptionsBox = ({ isCaptioningEnabled }: CaptionsBoxProps): ReactElement | null => {
+const CaptionsBox = (): ReactElement => {
   const { subscriberWrappers, ownCaptions } = useSessionContext();
   const isSmallViewPort = useIsSmallViewport();
-  if (!isCaptioningEnabled) {
-    return null;
-  }
 
   const sxBox = {
     position: 'absolute',

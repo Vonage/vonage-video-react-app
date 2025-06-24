@@ -46,12 +46,7 @@ describe('CaptionsBox', () => {
 
   it('renders the captions box correctly', () => {
     sessionContext.connected = true;
-    const { getByTestId } = render(<CaptionsBox isCaptioningEnabled />);
+    const { getByTestId } = render(<CaptionsBox />);
     expect(getByTestId('captions-box')).toBeInTheDocument();
-  });
-
-  it('does not render the captions box when isCaptionsEnabled is false', () => {
-    const { queryByTestId } = render(<CaptionsBox isCaptioningEnabled={false} />);
-    expect(queryByTestId('captions-box')).not.toBeInTheDocument();
   });
 });
