@@ -13,10 +13,12 @@ describe('InMemorySessionStorage', () => {
     expect(session).toBeNull();
   });
 
-  it('should set and get a sessionId', async () => {
+  it('should set and get a sessionId with captionsId not set', async () => {
     await storage.setSession(room, 'session123');
     const session = await storage.getSession(room);
     expect(session).toBe('session123');
+    const captionId = await storage.getCaptionsId(room);
+    expect(captionId).toBeNull();
   });
 
   it('should return null for captionsId if not set', async () => {
