@@ -139,7 +139,7 @@ sessionRouter.post(
       // for example: '123e4567-a12b-41a2-a123-123456789012'
       const isValidCaptionId = validator.isUUID(captionsId, 4);
       if (!isValidCaptionId) {
-        res.status(400).json({ errorMessage: 'Invalid caption ID' });
+        res.status(400).json({ message: 'Invalid caption ID' });
         return;
       }
 
@@ -147,7 +147,7 @@ sessionRouter.post(
       const captionsUserCount = await sessionService.removeCaptionsUser(roomName);
 
       if (!sessionId) {
-        res.status(404).json({ errorMessage: 'Room not found' });
+        res.status(404).json({ message: 'Room not found' });
         return;
       }
 
@@ -172,7 +172,8 @@ sessionRouter.post(
         });
       }
     } catch (error: unknown) {
-      res.status(500).send({ errorMessage: (error as Error).message ?? error });
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
+      res.status(500).json({ message: errorMessage });
     }
   }
 );
