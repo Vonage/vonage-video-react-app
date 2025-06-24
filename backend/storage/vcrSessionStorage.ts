@@ -1,7 +1,7 @@
 import { vcr } from '@vonage/vcr-sdk';
 import { SessionStorage } from './sessionStorage';
 
-const expirationTime = 60 * 60 * 4; // 4 hours in seconds
+const ENTRY_EXPIRATION_TIME = 60 * 60 * 4; // 4 hours in seconds
 
 class VcrSessionStorage implements SessionStorage {
   dbState = vcr.getInstanceState();
@@ -12,7 +12,7 @@ class VcrSessionStorage implements SessionStorage {
     }
     // setting expiry of 4 hours for the key. After this time
     // if you try to access a room, you will land on a different session Id.
-    await this.dbState.expire(`sessions:${roomName}`, expirationTime);
+    await this.dbState.expire(`sessions:${roomName}`, ENTRY_EXPIRATION_TIME);
     return session;
   }
 
@@ -20,12 +20,12 @@ class VcrSessionStorage implements SessionStorage {
     await this.dbState.set(`sessions:${roomName}`, sessionId);
     // setting expiry on the set command in case the room is
     // created before hand but never accessed.
-    await this.dbState.expire(`sessions:${roomName}`, expirationTime);
+    await this.dbState.expire(`sessions:${roomName}`, ENTRY_EXPIRATION_TIME);
   }
 
   async setCaptionsId(roomName: string, captionsId: string): Promise<void> {
     await this.dbState.set(`captionsIds:${roomName}`, captionsId);
-    await this.dbState.expire(`captionsIds:${roomName}`, expirationTime);
+    await this.dbState.expire(`captionsIds:${roomName}`, ENTRY_EXPIRATION_TIME);
   }
 
   async getCaptionsId(roomName: string): Promise<string | null> {
@@ -33,7 +33,7 @@ class VcrSessionStorage implements SessionStorage {
     if (!captionsId) {
       return null;
     }
-    await this.dbState.expire(`captionsIds:${roomName}`, expirationTime);
+    await this.dbState.expire(`captionsIds:${roomName}`, ENTRY_EXPIRATION_TIME);
     return captionsId;
   }
 
@@ -44,7 +44,7 @@ class VcrSessionStorage implements SessionStorage {
       ? parseInt(String(currentCaptionsUsersCount), 10) + 1
       : 1;
     await this.dbState.set(key, newCaptionsUsersCount.toString());
-    await this.dbState.expire(key, expirationTime);
+    await this.dbState.expire(key, ENTRY_EXPIRATION_TIME);
     return newCaptionsUsersCount;
   }
 
