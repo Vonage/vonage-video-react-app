@@ -12,6 +12,12 @@ import ScreenSharingButton from '../../ScreenSharingButton';
 import getOverflowMenuButtons from '../../../utils/getOverflowMenuButtons';
 import isReportIssueEnabled from '../../../utils/isReportIssueEnabled';
 
+export type CaptionsState = {
+  isUserCaptionsEnabled: boolean;
+  setIsUserCaptionsEnabled: Dispatch<SetStateAction<boolean>>;
+  setCaptionsErrorResponse: Dispatch<SetStateAction<string | null>>;
+};
+
 export type ToolbarOverflowMenuProps = {
   isOpen: boolean;
   isEmojiGridOpen: boolean;
@@ -20,8 +26,7 @@ export type ToolbarOverflowMenuProps = {
   toggleShareScreen: () => void;
   isSharingScreen: boolean;
   toolbarButtonsCount: number;
-  isUserCaptionsEnabled: boolean;
-  setIsUserCaptionsEnabled: Dispatch<SetStateAction<boolean>>;
+  captionsState: CaptionsState;
 };
 
 /**
@@ -36,8 +41,7 @@ export type ToolbarOverflowMenuProps = {
  *  @property {Function} toggleShareScreen - toggles the user's screenshare
  *  @property {boolean} isSharingScreen - whether the user is sharing their screen
  *  @property {number} toolbarButtonsCount - number of buttons displayed on the toolbar
- *  @property {boolean} isUserCaptionsEnabled - whether captions are enabled
- *  @property {Dispatch<SetStateAction<boolean>>} setIsUserCaptionsEnabled - toggle captions on and off
+ *  @property {CaptionsState} captionsState - the state of the captions, including whether they are enabled and functions to set error messages
  * @returns {ReactElement} - The ToolbarOverflowMenu component.
  */
 const ToolbarOverflowMenu = ({
@@ -48,8 +52,7 @@ const ToolbarOverflowMenu = ({
   toggleShareScreen,
   isSharingScreen,
   toolbarButtonsCount,
-  isUserCaptionsEnabled,
-  setIsUserCaptionsEnabled,
+  captionsState,
 }: ToolbarOverflowMenuProps): ReactElement => {
   const {
     subscriberWrappers,
@@ -90,8 +93,7 @@ const ToolbarOverflowMenu = ({
       isOverflowButton
       handleClick={closeMenu}
       key="CaptionsButton"
-      isUserCaptionsEnabled={isUserCaptionsEnabled}
-      setIsUserCaptionsEnabled={setIsUserCaptionsEnabled}
+      captionsState={captionsState}
     />,
     <EmojiGridButton
       isEmojiGridOpen={isEmojiGridOpen}

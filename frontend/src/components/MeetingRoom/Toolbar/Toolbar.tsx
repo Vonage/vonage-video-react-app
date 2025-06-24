@@ -16,6 +16,12 @@ import isReportIssueEnabled from '../../../utils/isReportIssueEnabled';
 import useToolbarButtons from '../../../hooks/useToolbarButtons';
 import DeviceControlButton from '../DeviceControlButton';
 
+export type CaptionsState = {
+  isUserCaptionsEnabled: boolean;
+  setIsUserCaptionsEnabled: Dispatch<SetStateAction<boolean>>;
+  setCaptionsErrorResponse: Dispatch<SetStateAction<string | null>>;
+};
+
 export type ToolbarProps = {
   toggleShareScreen: () => void;
   isSharingScreen: boolean;
@@ -24,8 +30,7 @@ export type ToolbarProps = {
   toggleChat: () => void;
   toggleReportIssue: () => void;
   participantCount: number;
-  isUserCaptionsEnabled: boolean;
-  setIsUserCaptionsEnabled: Dispatch<SetStateAction<boolean>>;
+  captionsState: CaptionsState;
 };
 
 /**
@@ -39,6 +44,7 @@ export type ToolbarProps = {
  * - Screensharing button (only on desktop devices)
  * - Button to toggle current layout (grid or active speaker)
  * - Button to express yourself (emojis)
+ * - Button to toggle captions on and off
  * - Button to open a pop-up to start meeting recording (archiving)
  * - Button containing hidden toolbar items when the viewport is narrow
  * - Button to exit a meeting (redirects to the goodbye page)
@@ -47,9 +53,7 @@ export type ToolbarProps = {
  *  @property {boolean} isSharingScreen - the prop to check if the user is currently sharing a screen
  *  @property {boolean} isParticipantListOpen - the prop to check if the participant list is open
  *  @property {() => void} openParticipantList - the prop to open the participant list
- *  @property {number} participantCount - the prop that holds the current number of participants
- *  @property {boolean} isUserCaptionsEnabled - whether captions are enabled
- *  @property {Dispatch<SetStateAction<boolean>>} setIsUserCaptionsEnabled - toggle captions on and off
+ *  @property {CaptionsState} captionsState - the state of the captions, including whether they are enabled and a function to set an error message
  * @returns {ReactElement} - the toolbar component
  */
 const Toolbar = ({
@@ -60,8 +64,7 @@ const Toolbar = ({
   toggleChat,
   toggleReportIssue,
   participantCount,
-  isUserCaptionsEnabled,
-  setIsUserCaptionsEnabled,
+  captionsState,
 }: ToolbarProps): ReactElement => {
   const { disconnect, subscriberWrappers } = useSessionContext();
   const isViewingScreenShare = subscriberWrappers.some((subWrapper) => subWrapper.isScreenshare);
@@ -95,11 +98,7 @@ const Toolbar = ({
       isParentOpen
       key="EmojiGridButton"
     />,
-    <CaptionsButton
-      key="CaptionsButton"
-      isUserCaptionsEnabled={isUserCaptionsEnabled}
-      setIsUserCaptionsEnabled={setIsUserCaptionsEnabled}
-    />,
+    <CaptionsButton key="CaptionsButton" captionsState={captionsState} />,
     <ArchivingButton key="ArchivingButton" />,
     isReportIssueEnabled() && (
       <ReportIssueButton
@@ -173,8 +172,7 @@ const Toolbar = ({
               isSharingScreen={isSharingScreen}
               toggleShareScreen={toggleShareScreen}
               toolbarButtonsCount={toolbarButtonsDisplayed}
-              isUserCaptionsEnabled={isUserCaptionsEnabled}
-              setIsUserCaptionsEnabled={setIsUserCaptionsEnabled}
+              captionsState={captionsState}
             />
           )}
           <ExitButton handleLeave={handleLeave} />

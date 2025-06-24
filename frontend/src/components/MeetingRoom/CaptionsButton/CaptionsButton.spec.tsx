@@ -3,7 +3,7 @@ import { render, screen, act, waitFor } from '@testing-library/react';
 import type { AxiosResponse } from 'axios';
 import { Subscriber } from '@vonage/client-sdk-video';
 import { enableCaptions, disableCaptions } from '../../../api/captions';
-import CaptionsButton from './CaptionsButton';
+import CaptionsButton, { CaptionsState } from './CaptionsButton';
 import useRoomName from '../../../hooks/useRoomName';
 import { SessionContextType } from '../../../Context/SessionProvider/session';
 import useSessionContext from '../../../hooks/useSessionContext';
@@ -21,6 +21,13 @@ const mockUseSessionContext = useSessionContext as Mock<[], SessionContextType>;
 describe('CaptionsButton', () => {
   const mockHandleCloseMenu = vi.fn();
   const mockSetIsUserCaptionsEnabled = vi.fn();
+  const mockSetCaptionsErrorResponse = vi.fn();
+
+  const mockCaptionsState = {
+    isUserCaptionsEnabled: false,
+    setIsUserCaptionsEnabled: mockSetIsUserCaptionsEnabled,
+    setCaptionsErrorResponse: mockSetCaptionsErrorResponse,
+  } as CaptionsState;
   const mockedRoomName = 'test-room-name';
   let sessionContext: SessionContextType;
 
@@ -64,21 +71,14 @@ describe('CaptionsButton', () => {
     render(
       <CaptionsButton
         handleClick={mockHandleCloseMenu}
-        isUserCaptionsEnabled
-        setIsUserCaptionsEnabled={mockSetIsUserCaptionsEnabled}
+        captionsState={{ ...mockCaptionsState, isUserCaptionsEnabled: true }}
       />
     );
     expect(screen.getByTestId('captions-button')).toBeInTheDocument();
   });
 
   it('turns the captions on when button is pressed', async () => {
-    render(
-      <CaptionsButton
-        handleClick={mockHandleCloseMenu}
-        isUserCaptionsEnabled={false}
-        setIsUserCaptionsEnabled={mockSetIsUserCaptionsEnabled}
-      />
-    );
+    render(<CaptionsButton handleClick={mockHandleCloseMenu} captionsState={mockCaptionsState} />);
     act(() => screen.getByTestId('captions-button').click());
 
     await waitFor(() => {

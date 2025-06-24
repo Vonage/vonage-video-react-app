@@ -14,6 +14,7 @@ import isValidRoomName from '../../utils/isValidRoomName';
 import usePublisherOptions from '../../Context/PublisherProvider/usePublisherOptions';
 import CaptionsBox from '../../components/MeetingRoom/CaptionsButton/CaptionsBox';
 import useIsSmallViewport from '../../hooks/useIsSmallViewport';
+import CaptionsError from '../../components/MeetingRoom/CaptionsError';
 
 const height = '@apply h-[calc(100dvh_-_80px)]';
 
@@ -47,7 +48,14 @@ const MeetingRoom = (): ReactElement => {
   const navigate = useNavigate();
   const publisherOptions = usePublisherOptions();
   const isSmallViewport = useIsSmallViewport();
+
   const [isUserCaptionsEnabled, setIsUserCaptionsEnabled] = useState<boolean>(false);
+  const [captionsErrorResponse, setCaptionsErrorResponse] = useState<string | null>('');
+  const captionsState = {
+    isUserCaptionsEnabled,
+    setIsUserCaptionsEnabled,
+    setCaptionsErrorResponse,
+  };
 
   useEffect(() => {
     if (joinRoom && isValidRoomName(roomName)) {
@@ -103,9 +111,13 @@ const MeetingRoom = (): ReactElement => {
       />
       <RightPanel activeTab={rightPanelActiveTab} handleClose={closeRightPanel} />
       <EmojisOrigin />
-      {/* We render the CaptionsBox directly in the meeting room on small port devices to ensure that captions
-       are always visible and accessible in the limited viewport. */}
-      {isSmallViewport && <CaptionsBox isCaptioningEnabled={isUserCaptionsEnabled} />}
+      <CaptionsBox isCaptioningEnabled={isUserCaptionsEnabled} />
+      {captionsErrorResponse && (
+        <CaptionsError
+          captionsErrorResponse={captionsErrorResponse}
+          setCaptionsErrorResponse={setCaptionsErrorResponse}
+        />
+      )}
       <Toolbar
         isSharingScreen={isSharingScreen}
         toggleShareScreen={toggleShareScreen}
@@ -116,8 +128,7 @@ const MeetingRoom = (): ReactElement => {
         participantCount={
           subscriberWrappers.filter(({ isScreenshare }) => !isScreenshare).length + 1
         }
-        isUserCaptionsEnabled={isUserCaptionsEnabled}
-        setIsUserCaptionsEnabled={setIsUserCaptionsEnabled}
+        captionsState={captionsState}
       />
       {reconnecting && (
         <ConnectionAlert

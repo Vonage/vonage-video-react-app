@@ -5,12 +5,17 @@ import ToolbarButton from '../ToolbarButton';
 import ToolbarOverflowMenu from '../ToolbarOverflowMenu';
 import UnreadMessagesBadge from '../UnreadMessagesBadge';
 
+export type CaptionsState = {
+  isUserCaptionsEnabled: boolean;
+  setIsUserCaptionsEnabled: Dispatch<SetStateAction<boolean>>;
+  setCaptionsErrorResponse: Dispatch<SetStateAction<string | null>>;
+};
+
 export type ToolbarOverflowButtonProps = {
   toggleShareScreen: () => void;
   isSharingScreen: boolean;
   toolbarButtonsCount: number;
-  isUserCaptionsEnabled: boolean;
-  setIsUserCaptionsEnabled: Dispatch<SetStateAction<boolean>>;
+  captionsState: CaptionsState;
 };
 
 /**
@@ -22,16 +27,14 @@ export type ToolbarOverflowButtonProps = {
  *  @property {Function} toggleShareScreen - toggles the user's screenshare
  *  @property {boolean} isSharingScreen - whether the user is sharing their screen
  *  @property {number} toolbarButtonsCount - number of buttons displayed on the toolbar
- *  @property {boolean} isUserCaptionsEnabled - whether captions are enabled
- *  @property {Dispatch<SetStateAction<boolean>>} setIsUserCaptionsEnabled - toggle captions on and off
+ *  @property {CaptionsState} captionsState - the state of the captions, including whether they are enabled and functions to set error messages
  * @returns {ReactElement} - The ToolbarOverflowButton Component.
  */
 const ToolbarOverflowButton = ({
   toggleShareScreen,
   isSharingScreen,
   toolbarButtonsCount,
-  isUserCaptionsEnabled,
-  setIsUserCaptionsEnabled,
+  captionsState,
 }: ToolbarOverflowButtonProps): ReactElement => {
   const [isToolbarOverflowMenuOpen, setIsToolbarOverflowMenuOpen] = useState<boolean>(false);
   const [openEmojiGridMobile, setOpenEmojiGridMobile] = useState<boolean>(true);
@@ -81,8 +84,7 @@ const ToolbarOverflowButton = ({
         isSharingScreen={isSharingScreen}
         closeMenu={handleClickAway}
         toolbarButtonsCount={toolbarButtonsCount}
-        isUserCaptionsEnabled={isUserCaptionsEnabled}
-        setIsUserCaptionsEnabled={setIsUserCaptionsEnabled}
+        captionsState={captionsState}
       />
     </>
   );
