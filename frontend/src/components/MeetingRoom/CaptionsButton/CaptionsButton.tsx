@@ -20,7 +20,8 @@ export type CaptionsButtonProps = {
  * @param {CaptionsButtonProps} props - the props for the component
  *  @property {boolean} isOverflowButton - (optional) whether the button is in the ToolbarOverflowMenu
  *  @property {(event?: MouseEvent | TouchEvent) => void} handleClick - (optional) click handler that closes the overflow menu in small viewports.
- *  @property {Dispatch<SetStateAction<boolean>>} setIsUserCaptionsEnabled - toggle captions on/off for small viewports
+ *  @property {boolean} isUserCaptionsEnabled - whether captions are enabled
+ *  @property {Dispatch<SetStateAction<boolean>>} setIsUserCaptionsEnabled - toggle captions on and off
  * @returns {ReactElement} - The CaptionsButton component.
  */
 const CaptionsButton = ({

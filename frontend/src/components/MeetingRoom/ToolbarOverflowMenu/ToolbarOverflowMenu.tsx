@@ -36,7 +36,8 @@ export type ToolbarOverflowMenuProps = {
  *  @property {Function} toggleShareScreen - toggles the user's screenshare
  *  @property {boolean} isSharingScreen - whether the user is sharing their screen
  *  @property {number} toolbarButtonsCount - number of buttons displayed on the toolbar
- *  @property {Dispatch<SetStateAction<boolean>>} setIsUserCaptionsEnabled - toggle captions on/off for small viewports
+ *  @property {boolean} isUserCaptionsEnabled - whether captions are enabled
+ *  @property {Dispatch<SetStateAction<boolean>>} setIsUserCaptionsEnabled - toggle captions on and off
  * @returns {ReactElement} - The ToolbarOverflowMenu component.
  */
 const ToolbarOverflowMenu = ({

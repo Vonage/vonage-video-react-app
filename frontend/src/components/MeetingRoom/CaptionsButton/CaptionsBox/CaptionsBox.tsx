@@ -6,10 +6,7 @@ import useSessionContext from '../../../../hooks/useSessionContext';
 import useIsSmallViewport from '../../../../hooks/useIsSmallViewport';
 
 export type CaptionsBoxProps = {
-  // subscriberWrappers: SubscriberWrapper[];
   isCaptioningEnabled: boolean;
-  // isSmallViewPort: boolean;
-  // localPublisherCaptions?: string | null;
 };
 
 /**
@@ -17,8 +14,7 @@ export type CaptionsBoxProps = {
  *
  * This component shows a list of the captions that are currently in the meeting room.
  * @param {CaptionsBoxProps} props - the props for the component.
- *  @property {boolean} isSmallViewPort - whether it is a small viewport (mobile view or small tab).
- *  @property {string | null} localPublisherCaptions - the captions from the local publisher, if available.
+ *  @property {boolean} isCaptioningEnabled - whether captions are enabled
  * @returns {ReactElement} The captions box component.
  */
 const CaptionsBox = ({ isCaptioningEnabled }: CaptionsBoxProps): ReactElement | null => {

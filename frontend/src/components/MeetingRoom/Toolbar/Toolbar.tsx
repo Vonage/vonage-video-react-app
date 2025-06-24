@@ -48,7 +48,8 @@ export type ToolbarProps = {
  *  @property {boolean} isParticipantListOpen - the prop to check if the participant list is open
  *  @property {() => void} openParticipantList - the prop to open the participant list
  *  @property {number} participantCount - the prop that holds the current number of participants
- *  @property {Dispatch<SetStateAction<boolean>>} setIsUserCaptionsEnabled - toggle captions on/off for small viewports
+ *  @property {boolean} isUserCaptionsEnabled - whether captions are enabled
+ *  @property {Dispatch<SetStateAction<boolean>>} setIsUserCaptionsEnabled - toggle captions on and off
  * @returns {ReactElement} - the toolbar component
  */
 const Toolbar = ({
