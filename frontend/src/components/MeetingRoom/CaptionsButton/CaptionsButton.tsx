@@ -43,7 +43,6 @@ const CaptionsButton = ({
     if (action === 'enable') {
       try {
         const response = await enableCaptions(roomName);
-        console.warn('setting captions id to: ', response.data.captionsId);
         setCaptionsId(response.data.captionsId);
         setIsUserCaptionsEnabled(true);
       } catch (error) {
