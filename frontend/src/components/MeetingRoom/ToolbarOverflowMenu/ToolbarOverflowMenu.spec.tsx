@@ -33,7 +33,8 @@ const TestComponent = ({ defaultOpen = false }: { defaultOpen?: boolean }) => {
         toggleShareScreen={vi.fn()}
         isSharingScreen={false}
         toolbarButtonsCount={0}
-        setIsSmallViewPortCaptionsEnabled={vi.fn()}
+        isUserCaptionsEnabled
+        setIsUserCaptionsEnabled={vi.fn()}
       />
     </>
   );

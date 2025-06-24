@@ -20,6 +20,7 @@ const mockUseSessionContext = useSessionContext as Mock<[], SessionContextType>;
 
 describe('CaptionsButton', () => {
   const mockHandleCloseMenu = vi.fn();
+  const mockSetIsUserCaptionsEnabled = vi.fn();
   const mockedRoomName = 'test-room-name';
   let sessionContext: SessionContextType;
 
@@ -54,7 +55,7 @@ describe('CaptionsButton', () => {
       data: { status: 200 },
     } as AxiosResponse);
     sessionContext = {
-      subscriberWrappers: [],
+      subscriberWrappers: [createSubscriberWrapper('subscriber-1')],
     } as unknown as SessionContextType;
     mockUseSessionContext.mockReturnValue(sessionContext as unknown as SessionContextType);
   });
@@ -63,7 +64,8 @@ describe('CaptionsButton', () => {
     render(
       <CaptionsButton
         handleClick={mockHandleCloseMenu}
-        subscriberWrappers={[createSubscriberWrapper('subscriber-1')]}
+        isUserCaptionsEnabled
+        setIsUserCaptionsEnabled={mockSetIsUserCaptionsEnabled}
       />
     );
     expect(screen.getByTestId('captions-button')).toBeInTheDocument();
@@ -73,7 +75,8 @@ describe('CaptionsButton', () => {
     render(
       <CaptionsButton
         handleClick={mockHandleCloseMenu}
-        subscriberWrappers={[createSubscriberWrapper('subscriber-1')]}
+        isUserCaptionsEnabled={false}
+        setIsUserCaptionsEnabled={mockSetIsUserCaptionsEnabled}
       />
     );
     act(() => screen.getByTestId('captions-button').click());

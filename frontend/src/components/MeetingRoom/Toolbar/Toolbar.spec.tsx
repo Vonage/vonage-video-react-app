@@ -61,7 +61,8 @@ describe('Toolbar', () => {
     toggleChat: vi.fn(),
     toggleReportIssue: vi.fn(),
     participantCount: 0,
-    setIsSmallViewPortCaptionsEnabled: vi.fn(),
+    isUserCaptionsEnabled: false,
+    setIsUserCaptionsEnabled: vi.fn(),
   };
 
   it('does not render the Report Issue button if it is configured to be disabled', () => {
@@ -93,8 +94,7 @@ describe('Toolbar', () => {
   });
 
   it('on a normal viewport, displays all of the toolbar buttons', () => {
-    render(<Toolbar {...defaultProps} />);
-
+    render(<Toolbar {...defaultProps} isUserCaptionsEnabled />);
     expect(screen.queryByTestId('archiving-button')).toBeVisible();
     expect(screen.queryByTestId('screensharing-button')).toBeVisible();
     expect(screen.queryByTestId('archiving-button')).toBeVisible();

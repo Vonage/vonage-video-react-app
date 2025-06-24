@@ -33,7 +33,6 @@ import {
 import { MAX_PIN_COUNT_DESKTOP, MAX_PIN_COUNT_MOBILE } from '../../utils/constants';
 import VonageVideoClient from '../../utils/VonageVideoClient';
 import useEmoji, { EmojiWrapper } from '../../hooks/useEmoji';
-import handleCaptionsSignal from '../../utils/handleCaptionsSignal';
 
 export type { ChatMessageType } from '../../types/chat';
 
@@ -62,7 +61,6 @@ export type SessionContextType = {
   pinSubscriber: (subscriberId: string) => void;
   isMaxPinned: boolean;
   ownCaptions: string | null;
-  isSessionCaptioningEnabled: boolean;
   sendEmoji: (emoji: string) => void;
   emojiQueue: EmojiWrapper[];
   publish: (publisher: Publisher) => Promise<void>;
@@ -96,7 +94,6 @@ export const SessionContext = createContext<SessionContextType>({
   pinSubscriber: () => {},
   isMaxPinned: false,
   ownCaptions: null,
-  isSessionCaptioningEnabled: false,
   sendEmoji: () => {},
   emojiQueue: [],
   publish: async () => Promise.resolve(),
@@ -134,7 +131,6 @@ const SessionProvider = ({ children }: SessionProviderProps): ReactElement => {
   const [reconnecting, setReconnecting] = useState(false);
   const [subscriberWrappers, setSubscriberWrappers] = useState<SubscriberWrapper[]>([]);
   const [ownCaptions, setOwnCaptions] = useState<string | null>(null);
-  const [isSessionCaptioningEnabled, setIsSessionCaptioningEnabled] = useState<boolean>(false);
   const [layoutMode, setLayoutMode] = useState<LayoutMode>('active-speaker');
   const [archiveId, setArchiveId] = useState<string | null>(null);
   const activeSpeakerTracker = useRef<ActiveSpeakerTracker>(new ActiveSpeakerTracker());
@@ -250,11 +246,9 @@ const SessionProvider = ({ children }: SessionProviderProps): ReactElement => {
   };
 
   // handle the disconnect from session and clean up of the session object
-  // as well as disabling the captions
   const handleSessionDisconnected = async () => {
     vonageVideoClient.current = null;
     setConnected(false);
-    setIsSessionCaptioningEnabled(false);
   };
 
   // function to set reconnecting status and to increase the number of reconnections the user has had
@@ -329,12 +323,6 @@ const SessionProvider = ({ children }: SessionProviderProps): ReactElement => {
       vonageVideoClient.current.on('archiveStarted', handleArchiveStarted);
       vonageVideoClient.current.on('archiveStopped', handleArchiveStopped);
       vonageVideoClient.current.on('signal:chat', handleChatSignal);
-      vonageVideoClient.current.on('signal:captions', (event: SignalEvent) => {
-        handleCaptionsSignal({
-          event,
-          setIsSessionCaptioningEnabled,
-        });
-      });
       vonageVideoClient.current.on('signal:emoji', handleEmoji);
       vonageVideoClient.current.on(
         'subscriberAudioLevelUpdated',
@@ -357,20 +345,14 @@ const SessionProvider = ({ children }: SessionProviderProps): ReactElement => {
   }, []);
 
   /**
-   * Joins a room by fetching the necessary connection data and connecting to the session.
+   * Joins a room by fetching the necessary credentials and connecting to the session.
    * @param {string} roomName - The name of the room to join.
    */
   const joinRoom = useCallback(
     async (roomName: string) => {
       fetchCredentials(roomName)
-        .then((connectionData) => {
-          connect(connectionData.data);
-
-          // If there is a captionsId in the connection data, it means captions were enabled for the session before we joined.
-          const { captionsId } = connectionData.data;
-          if (captionsId) {
-            setIsSessionCaptioningEnabled(true);
-          }
+        .then((credentials) => {
+          connect(credentials.data);
         })
         .catch(console.warn);
     },
@@ -447,7 +429,6 @@ const SessionProvider = ({ children }: SessionProviderProps): ReactElement => {
       pinSubscriber,
       isMaxPinned,
       ownCaptions,
-      isSessionCaptioningEnabled,
       sendEmoji,
       emojiQueue,
       publish,
@@ -477,7 +458,6 @@ const SessionProvider = ({ children }: SessionProviderProps): ReactElement => {
       pinSubscriber,
       isMaxPinned,
       ownCaptions,
-      isSessionCaptioningEnabled,
       sendEmoji,
       emojiQueue,
       publish,

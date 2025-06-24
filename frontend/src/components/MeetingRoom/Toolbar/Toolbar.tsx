@@ -24,7 +24,8 @@ export type ToolbarProps = {
   toggleChat: () => void;
   toggleReportIssue: () => void;
   participantCount: number;
-  setIsSmallViewPortCaptionsEnabled: Dispatch<SetStateAction<boolean>>;
+  isUserCaptionsEnabled: boolean;
+  setIsUserCaptionsEnabled: Dispatch<SetStateAction<boolean>>;
 };
 
 /**
@@ -47,7 +48,7 @@ export type ToolbarProps = {
  *  @property {boolean} isParticipantListOpen - the prop to check if the participant list is open
  *  @property {() => void} openParticipantList - the prop to open the participant list
  *  @property {number} participantCount - the prop that holds the current number of participants
- *  @property {Dispatch<SetStateAction<boolean>>} setIsSmallViewPortCaptionsEnabled - toggle captions on/off for small viewports
+ *  @property {Dispatch<SetStateAction<boolean>>} setIsUserCaptionsEnabled - toggle captions on/off for small viewports
  * @returns {ReactElement} - the toolbar component
  */
 const Toolbar = ({
@@ -58,7 +59,8 @@ const Toolbar = ({
   toggleChat,
   toggleReportIssue,
   participantCount,
-  setIsSmallViewPortCaptionsEnabled,
+  isUserCaptionsEnabled,
+  setIsUserCaptionsEnabled,
 }: ToolbarProps): ReactElement => {
   const { disconnect, subscriberWrappers } = useSessionContext();
   const isViewingScreenShare = subscriberWrappers.some((subWrapper) => subWrapper.isScreenshare);
@@ -92,7 +94,11 @@ const Toolbar = ({
       isParentOpen
       key="EmojiGridButton"
     />,
-    <CaptionsButton key="CaptionsButton" subscriberWrappers={subscriberWrappers} />,
+    <CaptionsButton
+      key="CaptionsButton"
+      isUserCaptionsEnabled={isUserCaptionsEnabled}
+      setIsUserCaptionsEnabled={setIsUserCaptionsEnabled}
+    />,
     <ArchivingButton key="ArchivingButton" />,
     isReportIssueEnabled() && (
       <ReportIssueButton
@@ -166,7 +172,8 @@ const Toolbar = ({
               isSharingScreen={isSharingScreen}
               toggleShareScreen={toggleShareScreen}
               toolbarButtonsCount={toolbarButtonsDisplayed}
-              setIsSmallViewPortCaptionsEnabled={setIsSmallViewPortCaptionsEnabled}
+              isUserCaptionsEnabled={isUserCaptionsEnabled}
+              setIsUserCaptionsEnabled={setIsUserCaptionsEnabled}
             />
           )}
           <ExitButton handleLeave={handleLeave} />

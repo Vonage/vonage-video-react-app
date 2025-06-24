@@ -1,13 +1,15 @@
 import { ReactElement } from 'react';
 import { Box } from '@mui/material';
 import SingleCaption from './SingleCaption';
-import { SubscriberWrapper } from '../../../../types/session';
+// import { SubscriberWrapper } from '../../../../types/session';
+import useSessionContext from '../../../../hooks/useSessionContext';
+import useIsSmallViewport from '../../../../hooks/useIsSmallViewport';
 
 export type CaptionsBoxProps = {
-  subscriberWrappers: SubscriberWrapper[];
+  // subscriberWrappers: SubscriberWrapper[];
   isCaptioningEnabled: boolean;
-  isSmallViewPort: boolean;
-  localPublisherCaptions?: string | null;
+  // isSmallViewPort: boolean;
+  // localPublisherCaptions?: string | null;
 };
 
 /**
@@ -15,18 +17,13 @@ export type CaptionsBoxProps = {
  *
  * This component shows a list of the captions that are currently in the meeting room.
  * @param {CaptionsBoxProps} props - the props for the component.
- *  @property {SubscriberWrapper[]} subscriberWrappers - an array of subscriber wrappers.
- *  @property {boolean} isCaptioningEnabled - whether captioning is enabled.
  *  @property {boolean} isSmallViewPort - whether it is a small viewport (mobile view or small tab).
  *  @property {string | null} localPublisherCaptions - the captions from the local publisher, if available.
  * @returns {ReactElement} The captions box component.
  */
-const CaptionsBox = ({
-  subscriberWrappers,
-  isCaptioningEnabled,
-  isSmallViewPort = false,
-  localPublisherCaptions,
-}: CaptionsBoxProps): ReactElement | null => {
+const CaptionsBox = ({ isCaptioningEnabled }: CaptionsBoxProps): ReactElement | null => {
+  const { subscriberWrappers, ownCaptions } = useSessionContext();
+  const isSmallViewPort = useIsSmallViewport();
   if (!isCaptioningEnabled) {
     return null;
   }
@@ -52,12 +49,12 @@ const CaptionsBox = ({
 
   return (
     <Box data-testid="captions-box" sx={sxBox}>
-      {localPublisherCaptions && (
+      {ownCaptions && (
         <SingleCaption
           key="local-publisher"
           subscriber={null}
           isSmallViewPort={isSmallViewPort}
-          caption={localPublisherCaptions}
+          caption={ownCaptions}
         />
       )}
       {(subscriberWrappers ?? []).map((wrapper, idx) => (

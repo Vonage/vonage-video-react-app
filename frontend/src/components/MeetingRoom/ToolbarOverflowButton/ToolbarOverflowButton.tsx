@@ -9,7 +9,8 @@ export type ToolbarOverflowButtonProps = {
   toggleShareScreen: () => void;
   isSharingScreen: boolean;
   toolbarButtonsCount: number;
-  setIsSmallViewPortCaptionsEnabled: Dispatch<SetStateAction<boolean>>;
+  isUserCaptionsEnabled: boolean;
+  setIsUserCaptionsEnabled: Dispatch<SetStateAction<boolean>>;
 };
 
 /**
@@ -28,7 +29,8 @@ const ToolbarOverflowButton = ({
   toggleShareScreen,
   isSharingScreen,
   toolbarButtonsCount,
-  setIsSmallViewPortCaptionsEnabled,
+  isUserCaptionsEnabled,
+  setIsUserCaptionsEnabled,
 }: ToolbarOverflowButtonProps): ReactElement => {
   const [isToolbarOverflowMenuOpen, setIsToolbarOverflowMenuOpen] = useState<boolean>(false);
   const [openEmojiGridMobile, setOpenEmojiGridMobile] = useState<boolean>(true);
@@ -78,7 +80,8 @@ const ToolbarOverflowButton = ({
         isSharingScreen={isSharingScreen}
         closeMenu={handleClickAway}
         toolbarButtonsCount={toolbarButtonsCount}
-        setIsSmallViewPortCaptionsEnabled={setIsSmallViewPortCaptionsEnabled}
+        isUserCaptionsEnabled={isUserCaptionsEnabled}
+        setIsUserCaptionsEnabled={setIsUserCaptionsEnabled}
       />
     </>
   );

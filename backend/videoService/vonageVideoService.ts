@@ -8,7 +8,6 @@ import {
   Video,
   EnableCaptionResponse,
   CaptionOptions,
-  Signal,
 } from '@vonage/video';
 import { VideoService } from './videoServiceInterface';
 import { VonageConfig } from '../types/config';
@@ -100,10 +99,6 @@ class VonageVideoService implements VideoService {
       const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
       throw new Error(`Failed to disable captions: ${errorMessage}`);
     }
-  }
-
-  async sendSignalToSession(sessionId: string, signal: Signal): Promise<void> {
-    await this.vonageVideo.sendSignal(signal, sessionId);
   }
 }
 

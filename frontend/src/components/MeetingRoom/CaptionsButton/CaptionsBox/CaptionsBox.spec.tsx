@@ -36,31 +36,22 @@ describe('CaptionsBox', () => {
 
   beforeEach(() => {
     sessionContext = {
-      subscriberWrappers: [],
+      subscriberWrappers: [
+        createSubscriberWrapper('subscriber-1'),
+        createSubscriberWrapper('subscriber-2'),
+      ],
     } as unknown as SessionContextType;
     mockUseSessionContext.mockReturnValue(sessionContext as unknown as SessionContextType);
   });
 
   it('renders the captions box correctly', () => {
     sessionContext.connected = true;
-    const { getByTestId } = render(
-      <CaptionsBox
-        subscriberWrappers={[createSubscriberWrapper('subscriber-1')]}
-        isCaptioningEnabled
-        isSmallViewPort={false}
-      />
-    );
+    const { getByTestId } = render(<CaptionsBox isCaptioningEnabled />);
     expect(getByTestId('captions-box')).toBeInTheDocument();
   });
 
   it('does not render the captions box when isCaptionsEnabled is false', () => {
-    const { queryByTestId } = render(
-      <CaptionsBox
-        subscriberWrappers={[createSubscriberWrapper('subscriber-1')]}
-        isCaptioningEnabled={false}
-        isSmallViewPort={false}
-      />
-    );
+    const { queryByTestId } = render(<CaptionsBox isCaptioningEnabled={false} />);
     expect(queryByTestId('captions-box')).not.toBeInTheDocument();
   });
 });

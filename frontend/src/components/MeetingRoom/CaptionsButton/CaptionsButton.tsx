@@ -4,15 +4,13 @@ import { Dispatch, ReactElement, useState, SetStateAction } from 'react';
 import useRoomName from '../../../hooks/useRoomName';
 import ToolbarButton from '../ToolbarButton';
 import { disableCaptions, enableCaptions } from '../../../api/captions';
-import { SubscriberWrapper } from '../../../types/session';
 import CaptionsBox from './CaptionsBox';
-import useSessionContext from '../../../hooks/useSessionContext';
 
 export type CaptionsButtonProps = {
   isOverflowButton?: boolean;
   handleClick?: () => void;
-  subscriberWrappers: SubscriberWrapper[];
-  setIsSmallViewPortCaptionsEnabled?: Dispatch<SetStateAction<boolean>>;
+  isUserCaptionsEnabled: boolean;
+  setIsUserCaptionsEnabled: Dispatch<SetStateAction<boolean>>;
 };
 
 /**
@@ -22,21 +20,18 @@ export type CaptionsButtonProps = {
  * @param {CaptionsButtonProps} props - the props for the component
  *  @property {boolean} isOverflowButton - (optional) whether the button is in the ToolbarOverflowMenu
  *  @property {(event?: MouseEvent | TouchEvent) => void} handleClick - (optional) click handler that closes the overflow menu in small viewports.
- *  @property {SubscriberWrapper[]} subscriberWrappers - an array of subscribers to display captions for.
- *  @property {Dispatch<SetStateAction<boolean>>} setIsSmallViewPortCaptionsEnabled - toggle captions on/off for small viewports
+ *  @property {Dispatch<SetStateAction<boolean>>} setIsUserCaptionsEnabled - toggle captions on/off for small viewports
  * @returns {ReactElement} - The CaptionsButton component.
  */
 const CaptionsButton = ({
   isOverflowButton = false,
   handleClick,
-  subscriberWrappers,
-  setIsSmallViewPortCaptionsEnabled,
+  isUserCaptionsEnabled,
+  setIsUserCaptionsEnabled,
 }: CaptionsButtonProps): ReactElement => {
-  const { ownCaptions } = useSessionContext();
   const roomName = useRoomName();
   const [captionsId, setCaptionsId] = useState<string>('');
-  const [isCaptionsEnabled, setIsCaptionsEnabled] = useState<boolean>(false);
-  const title = isCaptionsEnabled ? 'Disable captions' : 'Enable captions';
+  const title = isUserCaptionsEnabled ? 'Disable captions' : 'Enable captions';
 
   const handleClose = () => {
     if (isOverflowButton && handleClick) {
@@ -48,26 +43,17 @@ const CaptionsButton = ({
     if (action === 'enable') {
       try {
         const response = await enableCaptions(roomName);
+        console.warn('setting captions id to: ', response.data.captionsId);
         setCaptionsId(response.data.captionsId);
-        setIsCaptionsEnabled(true);
-
-        // for small viewports, we need to inform up to the MeetingRoom component that captions are enabled
-        if (setIsSmallViewPortCaptionsEnabled) {
-          setIsSmallViewPortCaptionsEnabled(true);
-        }
+        setIsUserCaptionsEnabled(true);
       } catch (error) {
         console.log(error);
       }
     } else if (action === 'disable' && captionsId && roomName) {
       try {
-        setIsCaptionsEnabled(false);
         setCaptionsId('');
         await disableCaptions(roomName, captionsId);
-
-        // for small viewports, we need to inform up to the MeetingRoom component that captions are disabled
-        if (setIsSmallViewPortCaptionsEnabled) {
-          setIsSmallViewPortCaptionsEnabled(false);
-        }
+        setIsUserCaptionsEnabled(false);
       } catch (error) {
         console.log(error);
       }
@@ -75,7 +61,7 @@ const CaptionsButton = ({
   };
 
   const handleActionClick = () => {
-    handleCaptions(isCaptionsEnabled ? 'disable' : 'enable');
+    handleCaptions(isUserCaptionsEnabled ? 'disable' : 'enable');
     handleClose();
   };
 
@@ -86,7 +72,7 @@ const CaptionsButton = ({
           onClick={handleActionClick}
           data-testid="captions-button"
           icon={
-            !isCaptionsEnabled ? (
+            !isUserCaptionsEnabled ? (
               <ClosedCaption style={{ color: 'white' }} />
             ) : (
               <ClosedCaptionDisabled
@@ -102,14 +88,7 @@ const CaptionsButton = ({
           isOverflowButton={isOverflowButton}
         />
       </Tooltip>
-      {!isOverflowButton && (
-        <CaptionsBox
-          subscriberWrappers={subscriberWrappers}
-          localPublisherCaptions={ownCaptions}
-          isCaptioningEnabled={isCaptionsEnabled}
-          isSmallViewPort={isOverflowButton}
-        />
-      )}
+      {!isOverflowButton && <CaptionsBox isCaptioningEnabled={isUserCaptionsEnabled} />}
     </>
   );
 };

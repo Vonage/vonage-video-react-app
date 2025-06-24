@@ -40,7 +40,8 @@ describe('ToolbarOverflowButton', () => {
         toggleShareScreen={vi.fn()}
         isSharingScreen={false}
         toolbarButtonsCount={0}
-        setIsSmallViewPortCaptionsEnabled={vi.fn()}
+        isUserCaptionsEnabled={false}
+        setIsUserCaptionsEnabled={vi.fn()}
       />
     );
     expect(screen.queryByTestId('hidden-toolbar-items')).toBeInTheDocument();
@@ -52,7 +53,8 @@ describe('ToolbarOverflowButton', () => {
         toggleShareScreen={vi.fn()}
         isSharingScreen={false}
         toolbarButtonsCount={0}
-        setIsSmallViewPortCaptionsEnabled={vi.fn()}
+        isUserCaptionsEnabled={false}
+        setIsUserCaptionsEnabled={vi.fn()}
       />
     );
 
@@ -75,7 +77,8 @@ describe('ToolbarOverflowButton', () => {
         toggleShareScreen={vi.fn()}
         isSharingScreen={false}
         toolbarButtonsCount={0}
-        setIsSmallViewPortCaptionsEnabled={vi.fn()}
+        isUserCaptionsEnabled={false}
+        setIsUserCaptionsEnabled={vi.fn()}
       />
     );
 

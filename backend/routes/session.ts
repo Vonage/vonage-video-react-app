@@ -105,13 +105,6 @@ sessionRouter.post(
         const captions = await videoService.enableCaptions(sessionId);
         const { captionsId } = captions;
         await sessionService.setCaptionsId(roomName, captionsId);
-        await videoService.sendSignalToSession(sessionId, {
-          type: 'captions',
-          data: JSON.stringify({
-            action: 'enable',
-            captionsId,
-          }),
-        });
         res.json({ captionsId, status: 200 });
       } else {
         // the captions were already enabled for this room
@@ -153,13 +146,6 @@ sessionRouter.post(
 
       if (captionsUserCount === 0) {
         const disableResponse = await videoService.disableCaptions(captionsId);
-        await videoService.sendSignalToSession(sessionId, {
-          type: 'captions',
-          data: JSON.stringify({
-            action: 'disable',
-            captionsId,
-          }),
-        });
         await sessionService.setCaptionsId(roomName, '');
         res.json({
           disableResponse,

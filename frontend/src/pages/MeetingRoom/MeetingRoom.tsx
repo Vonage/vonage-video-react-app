@@ -33,7 +33,6 @@ const MeetingRoom = (): ReactElement => {
   const {
     joinRoom,
     subscriberWrappers,
-    ownCaptions,
     connected,
     disconnect,
     reconnecting,
@@ -48,8 +47,7 @@ const MeetingRoom = (): ReactElement => {
   const navigate = useNavigate();
   const publisherOptions = usePublisherOptions();
   const isSmallViewport = useIsSmallViewport();
-  const [isSmallViewPortCaptionsEnabled, setIsSmallViewPortCaptionsEnabled] =
-    useState<boolean>(false);
+  const [isUserCaptionsEnabled, setIsUserCaptionsEnabled] = useState<boolean>(false);
 
   useEffect(() => {
     if (joinRoom && isValidRoomName(roomName)) {
@@ -105,16 +103,9 @@ const MeetingRoom = (): ReactElement => {
       />
       <RightPanel activeTab={rightPanelActiveTab} handleClose={closeRightPanel} />
       <EmojisOrigin />
-      {/* Renders the CaptionsBox directly in the meeting room on small port devices to ensure that captions
+      {/* We render the CaptionsBox directly in the meeting room on small port devices to ensure that captions
        are always visible and accessible in the limited viewport. */}
-      {isSmallViewport && isSmallViewPortCaptionsEnabled && (
-        <CaptionsBox
-          subscriberWrappers={subscriberWrappers}
-          isCaptioningEnabled={isSmallViewPortCaptionsEnabled}
-          isSmallViewPort={isSmallViewport}
-          localPublisherCaptions={ownCaptions}
-        />
-      )}
+      {isSmallViewport && <CaptionsBox isCaptioningEnabled={isUserCaptionsEnabled} />}
       <Toolbar
         isSharingScreen={isSharingScreen}
         toggleShareScreen={toggleShareScreen}
@@ -125,7 +116,8 @@ const MeetingRoom = (): ReactElement => {
         participantCount={
           subscriberWrappers.filter(({ isScreenshare }) => !isScreenshare).length + 1
         }
-        setIsSmallViewPortCaptionsEnabled={setIsSmallViewPortCaptionsEnabled}
+        isUserCaptionsEnabled={isUserCaptionsEnabled}
+        setIsUserCaptionsEnabled={setIsUserCaptionsEnabled}
       />
       {reconnecting && (
         <ConnectionAlert
