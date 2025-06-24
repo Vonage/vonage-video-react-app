@@ -246,7 +246,7 @@ const SessionProvider = ({ children }: SessionProviderProps): ReactElement => {
   };
 
   // handle the disconnect from session and clean up of the session object
-  const handleSessionDisconnected = async () => {
+  const handleSessionDisconnected = () => {
     vonageVideoClient.current = null;
     setConnected(false);
   };

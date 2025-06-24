@@ -53,7 +53,7 @@ const CaptionsButton = ({
         setIsUserCaptionsEnabled(true);
       } catch (error) {
         if (error instanceof AxiosError) {
-          setCaptionsErrorResponse(error.response?.data.message || 'Unkown error occurred');
+          setCaptionsErrorResponse(error.response?.data.message || 'Unknown error occurred');
           setCaptionsId('');
           setIsUserCaptionsEnabled(false);
         }
@@ -65,7 +65,7 @@ const CaptionsButton = ({
         setIsUserCaptionsEnabled(false);
       } catch (error) {
         if (error instanceof AxiosError) {
-          setCaptionsErrorResponse(error.response?.data.message || 'Unkown error occurred');
+          setCaptionsErrorResponse(error.response?.data.message || 'Unknown error occurred');
           setCaptionsId('');
           setIsUserCaptionsEnabled(false);
         }
@@ -79,7 +79,7 @@ const CaptionsButton = ({
   };
 
   return (
-    <Tooltip title={title} aria-label="video layout">
+    <Tooltip title={title} aria-label="captions button">
       <ToolbarButton
         onClick={handleActionClick}
         data-testid="captions-button"
