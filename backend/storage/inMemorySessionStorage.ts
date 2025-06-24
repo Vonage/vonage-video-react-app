@@ -14,15 +14,11 @@ class InMemorySessionStorage implements SessionStorage {
   }
 
   async setSession(roomName: string, sessionId: string): Promise<void> {
-    if (!this.sessions[roomName]) {
-      this.sessions[roomName] = {
-        sessionId,
-        captionsId: null,
-        captionsUserCount: 0,
-      };
-    } else {
-      this.sessions[roomName].sessionId = sessionId;
-    }
+    this.sessions[roomName] = {
+      sessionId,
+      captionsId: null,
+      captionsUserCount: 0,
+    };
   }
 
   async setCaptionsId(roomName: string, captionsId: string): Promise<void> {
