@@ -47,10 +47,14 @@ class InMemorySessionStorage implements SessionStorage {
       throw new Error(`Session for room: ${roomName} does not exist. Cannot remove captions user.`);
     }
 
-    this.sessions[roomName].captionsUserCount -= 1;
-    if (this.sessions[roomName].captionsUserCount < 0) {
-      this.sessions[roomName].captionsUserCount = 0;
+    if (this.sessions[roomName].captionsUserCount > 0) {
+      this.sessions[roomName].captionsUserCount -= 1;
     }
+
+    // this.sessions[roomName].captionsUserCount -= 1;
+    // if (this.sessions[roomName].captionsUserCount < 0) {
+    //   this.sessions[roomName].captionsUserCount = 0;
+    // }
     return this.sessions[roomName].captionsUserCount;
   }
 }
