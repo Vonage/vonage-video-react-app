@@ -11,7 +11,7 @@ export type CaptionsErrorProps = {
 /**
  * CaptionsError Component
  *
- * Displays an error message when there is an issue with captions.
+ * Displays an error message when there is an issue with the captions service.
  * @param {CaptionsErrorProps} props - the props for the component
  *  @property {string | null} captionsErrorResponse - the error message to display
  *  @property {Dispatch<SetStateAction<string | null>>} setCaptionsErrorResponse - function to set the error message to null when the snackbar is closed

@@ -1,6 +1,8 @@
 import { Subscriber } from '@vonage/client-sdk-video';
 import { useState, useEffect, useMemo } from 'react';
 
+// caption property is the text of the caption
+// and the isReceivingCaptions property indicates whether the captions are currently being received.
 export type CaptionsType = {
   caption: string;
   isReceivingCaptions: boolean;
@@ -10,6 +12,10 @@ export type ReceivingCaptionsProps = {
   subscriber?: Subscriber | null;
 };
 
+// These properties come from the captionReceived event emitted by the Vonage Video API.
+// The streamId is the ID of the stream that the caption belongs to, caption is the text of the caption,
+// and isFinal indicates whether this is the final caption for the stream.
+// Link to the documentation: https://vonage.github.io/video-docs/video-js-reference/latest/CaptionReceivedEvent.html
 export type CaptionReceivedType = {
   streamId: string;
   caption: string;
