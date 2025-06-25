@@ -33,7 +33,7 @@ class InMemorySessionStorage implements SessionStorage {
     return this.sessions[roomName]?.captionsId || null;
   }
 
-  async addCaptionsUserCount(roomName: string): Promise<number> {
+  async incrementCaptionsUserCount(roomName: string): Promise<number> {
     if (!this.sessions[roomName]) {
       throw new Error(`Session for room: ${roomName} does not exist. Cannot add captions user.`);
     } else {
@@ -42,7 +42,7 @@ class InMemorySessionStorage implements SessionStorage {
     return this.sessions[roomName].captionsUserCount;
   }
 
-  async removeCaptionsUserCount(roomName: string): Promise<number> {
+  async decrementCaptionsUserCount(roomName: string): Promise<number> {
     if (!this.sessions[roomName]) {
       throw new Error(`Session for room: ${roomName} does not exist. Cannot remove captions user.`);
     }

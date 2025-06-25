@@ -61,13 +61,13 @@ describe('InMemorySessionStorage', () => {
   describe('addCaptionsUserCount', () => {
     it('should add captions users and return the correct count', async () => {
       await storage.setSession(room, 'session123');
-      let count = await storage.addCaptionsUserCount(room);
+      let count = await storage.incrementCaptionsUserCount(room);
       expect(count).toBe(1);
-      count = await storage.addCaptionsUserCount(room);
+      count = await storage.incrementCaptionsUserCount(room);
       expect(count).toBe(2);
     });
     it('should throw an error when adding captions user to non-existent session', async () => {
-      await expect(storage.addCaptionsUserCount(room)).rejects.toThrow(
+      await expect(storage.incrementCaptionsUserCount(room)).rejects.toThrow(
         `Session for room: ${room} does not exist. Cannot add captions user.`
       );
     });
@@ -76,26 +76,26 @@ describe('InMemorySessionStorage', () => {
   describe('removeCaptionsUserCount', () => {
     it('should remove captions users', async () => {
       await storage.setSession(room, 'session123');
-      storage.addCaptionsUserCount(room);
-      storage.addCaptionsUserCount(room);
-      let count = await storage.removeCaptionsUserCount(room);
+      storage.incrementCaptionsUserCount(room);
+      storage.incrementCaptionsUserCount(room);
+      let count = await storage.decrementCaptionsUserCount(room);
       expect(count).toBe(1);
-      count = await storage.removeCaptionsUserCount(room);
+      count = await storage.decrementCaptionsUserCount(room);
       expect(count).toBe(0);
     });
 
     it('should not allow removing captions user count below zero', async () => {
       await storage.setSession(room, 'session123');
-      await storage.addCaptionsUserCount(room);
+      await storage.incrementCaptionsUserCount(room);
       for (let i = 0; i < 5; i++) {
         // eslint-disable-next-line no-await-in-loop
-        const count = await storage.removeCaptionsUserCount(room);
+        const count = await storage.decrementCaptionsUserCount(room);
         expect(count).toBe(0);
       }
     });
 
     it('should throw an error when removing captions user from non-existent session', async () => {
-      await expect(storage.removeCaptionsUserCount(room)).rejects.toThrow(
+      await expect(storage.decrementCaptionsUserCount(room)).rejects.toThrow(
         `Session for room: ${room} does not exist. Cannot remove captions user.`
       );
     });

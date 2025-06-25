@@ -99,7 +99,7 @@ sessionRouter.post(
         return;
       }
 
-      const newCaptionCount = await sessionService.addCaptionsUserCount(roomName);
+      const newCaptionCount = await sessionService.incrementCaptionsUserCount(roomName);
 
       if (newCaptionCount === 1) {
         const captions = await videoService.enableCaptions(sessionId);
@@ -137,7 +137,7 @@ sessionRouter.post(
       }
 
       const sessionId = await sessionService.getSession(roomName);
-      const captionsUserCount = await sessionService.removeCaptionsUserCount(roomName);
+      const captionsUserCount = await sessionService.decrementCaptionsUserCount(roomName);
 
       if (!sessionId) {
         res.status(404).json({ message: 'Room not found' });
