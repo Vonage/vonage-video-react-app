@@ -2,28 +2,28 @@ import { Subscriber } from '@vonage/client-sdk-video';
 import { ReactElement, useState, useRef, useEffect } from 'react';
 import { Typography } from '@mui/material';
 import useReceivingCaptions from '../../../../../hooks/useReceivingCaptions';
-import { CAPTION_TIMEOUT_MS } from '../../../../../utils/constants';
+import { CAPTION_DISPLAY_DURATION_MS } from '../../../../../utils/constants';
 
-export type SingleCaptionProps = {
+export type UserCaptionProps = {
   subscriber: Subscriber | null;
   isSmallViewPort: boolean;
   caption?: string;
 };
 
 /**
- * SingleCaption component to display captions for a specific user.
- * @param {SingleCaptionProps} props - The props for the component.
+ * UserCaption component to display captions for a specific user.
+ * @param {UserCaptionProps} props - The props for the component.
  * @property {Subscriber} subscriber - The subscriber object for which to display captions.
  * @property {boolean} isSmallViewPort - whether it is a small viewport (mobile view or small tab).
  * @property {string} caption - (optional) the caption text to display.
  * @returns {ReactElement | null} - The rendered caption or null if not receiving captions.
  */
-const SingleCaption = ({
+const UserCaption = ({
   subscriber,
   isSmallViewPort,
   caption,
-}: SingleCaptionProps): ReactElement | null => {
-  const { captionText, isReceivingCaptions } = useReceivingCaptions({
+}: UserCaptionProps): ReactElement | null => {
+  const { caption: captionText, isReceivingCaptions } = useReceivingCaptions({
     subscriber,
   });
 
@@ -39,7 +39,7 @@ const SingleCaption = ({
       if (timeoutRef.current) {
         clearTimeout(timeoutRef.current);
       }
-      timeoutRef.current = window.setTimeout(() => setVisible(false), CAPTION_TIMEOUT_MS);
+      timeoutRef.current = window.setTimeout(() => setVisible(false), CAPTION_DISPLAY_DURATION_MS);
     } else {
       setVisible(false);
       if (timeoutRef.current) {
@@ -78,4 +78,4 @@ const SingleCaption = ({
   );
 };
 
-export default SingleCaption;
+export default UserCaption;

@@ -52,7 +52,7 @@ describe('useReceivingCaptions', () => {
     const { result } = renderHook(() => useReceivingCaptions({ subscriber: undefined }));
 
     expect(result.current).toEqual({
-      captionText: '',
+      caption: '',
       isReceivingCaptions: false,
     });
   });
@@ -75,12 +75,12 @@ describe('useReceivingCaptions', () => {
     expect(mockSubscriber.off).toHaveBeenCalledWith('captionReceived', expect.any(Function));
   });
 
-  it('should update captionText and isReceivingCaptions on captionReceived event', () => {
+  it('should update caption and isReceivingCaptions on captionReceived event', () => {
     const mockSubscriber = createSubscriberWrapper('subscriber-1').subscriber;
 
     const { result } = renderHook(() => useReceivingCaptions({ subscriber: mockSubscriber }));
 
-    expect(result.current.captionText).toBe('');
+    expect(result.current.caption).toBe('');
     expect(result.current.isReceivingCaptions).toBe(false);
 
     act(() => {
@@ -91,7 +91,7 @@ describe('useReceivingCaptions', () => {
       });
     });
 
-    expect(result.current.captionText).toBe('Test Caption');
+    expect(result.current.caption).toBe('Test Caption');
     expect(result.current.isReceivingCaptions).toBe(true);
   });
 });

@@ -1,6 +1,6 @@
 import { ReactElement } from 'react';
 import { Box } from '@mui/material';
-import SingleCaption from './SingleCaption';
+import UserCaption from './UserCaption';
 import useSessionContext from '../../../../hooks/useSessionContext';
 import useIsSmallViewport from '../../../../hooks/useIsSmallViewport';
 
@@ -36,7 +36,7 @@ const CaptionsBox = (): ReactElement => {
   return (
     <Box data-testid="captions-box" sx={sxBox}>
       {ownCaptions && (
-        <SingleCaption
+        <UserCaption
           key="local-publisher"
           subscriber={null}
           isSmallViewPort={isSmallViewPort}
@@ -44,7 +44,7 @@ const CaptionsBox = (): ReactElement => {
         />
       )}
       {(subscriberWrappers ?? []).map((wrapper, idx) => (
-        <SingleCaption
+        <UserCaption
           key={wrapper.subscriber?.id || idx}
           subscriber={wrapper.subscriber}
           isSmallViewPort={isSmallViewPort}

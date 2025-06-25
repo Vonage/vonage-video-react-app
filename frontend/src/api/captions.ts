@@ -13,8 +13,8 @@ export type EnableCaptionsType = {
 };
 
 /**
- * Type definitions for enabling captions.
- * @typedef {object} EnableCaptionsType
+ * Type definitions for disabling captions.
+ * @typedef {object} DisableCaptionsType
  * @property {string} disableResponse - The response message from disabling captions.
  * @property {string} errorMessage (optional) - An error message.
  */

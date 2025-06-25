@@ -3,6 +3,6 @@ export interface SessionStorage {
   setSession(roomName: string, sessionId: string): Promise<void>;
   setCaptionsId(roomName: string, captionsId: string): Promise<void>;
   getCaptionsId(roomName: string): Promise<string | null>;
-  addCaptionsUser(roomName: string): Promise<number>;
-  removeCaptionsUser(roomName: string): Promise<number>;
+  addCaptionsUserCount(roomName: string): Promise<number>;
+  removeCaptionsUserCount(roomName: string): Promise<number>;
 }

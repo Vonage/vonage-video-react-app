@@ -99,7 +99,7 @@ sessionRouter.post(
         return;
       }
 
-      const newCaptionCount = await sessionService.addCaptionsUser(roomName);
+      const newCaptionCount = await sessionService.addCaptionsUserCount(roomName);
 
       if (newCaptionCount === 1) {
         const captions = await videoService.enableCaptions(sessionId);
@@ -137,13 +137,14 @@ sessionRouter.post(
       }
 
       const sessionId = await sessionService.getSession(roomName);
-      const captionsUserCount = await sessionService.removeCaptionsUser(roomName);
+      const captionsUserCount = await sessionService.removeCaptionsUserCount(roomName);
 
       if (!sessionId) {
         res.status(404).json({ message: 'Room not found' });
         return;
       }
 
+      // Only the last user to disable captions will send a request to disable captions session-wide
       if (captionsUserCount === 0) {
         const disableResponse = await videoService.disableCaptions(captionsId);
         await sessionService.setCaptionsId(roomName, '');

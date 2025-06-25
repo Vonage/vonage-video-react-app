@@ -2,7 +2,7 @@ import { Subscriber } from '@vonage/client-sdk-video';
 import { useState, useEffect, useMemo } from 'react';
 
 export type CaptionsType = {
-  captionText: string;
+  caption: string;
   isReceivingCaptions: boolean;
 };
 
@@ -17,19 +17,19 @@ export type CaptionReceivedType = {
 };
 
 /**
- * Hook to manage receiving captions from a subscriber.
+ * Hook to manage receiving captions from a speaker.
  * @param {ReceivingCaptionsProps} props - The props for the hook.
  *  @property {Subscriber | null} subscriber - The subscriber object from which to receive captions.
  * @returns {CaptionsType} - The current caption text and whether captions are being received.
  */
 const useReceivingCaptions = ({ subscriber }: ReceivingCaptionsProps): CaptionsType => {
-  const [captionText, setCaptionText] = useState<string>('');
+  const [caption, setCaption] = useState<string>('');
   const [isReceivingCaptions, setIsReceivingCaptions] = useState<boolean>(false);
 
   const captionUpdateHandler = useMemo(
     () => (event: CaptionReceivedType) => {
       setIsReceivingCaptions(!!event.caption);
-      setCaptionText(event.caption);
+      setCaption(event.caption);
     },
     []
   );
@@ -42,7 +42,7 @@ const useReceivingCaptions = ({ subscriber }: ReceivingCaptionsProps): CaptionsT
     };
   }, [subscriber, captionUpdateHandler]);
 
-  return { captionText, isReceivingCaptions };
+  return { caption, isReceivingCaptions };
 };
 
 export default useReceivingCaptions;

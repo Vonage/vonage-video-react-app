@@ -25,6 +25,8 @@ class VcrSessionStorage implements SessionStorage {
 
   async setCaptionsId(roomName: string, captionsId: string): Promise<void> {
     await this.dbState.set(`captionsIds:${roomName}`, captionsId);
+    // setting expiry of 4 hours for the key. After this time
+    // if you try to access a room, you will land on a different session Id.
     await this.dbState.expire(`captionsIds:${roomName}`, ENTRY_EXPIRATION_TIME);
   }
 
@@ -33,32 +35,34 @@ class VcrSessionStorage implements SessionStorage {
     if (!captionsId) {
       return null;
     }
+    // setting expiry of 4 hours for the key. After this time
+    // if you try to access a room, you will land on a different session Id.
     await this.dbState.expire(`captionsIds:${roomName}`, ENTRY_EXPIRATION_TIME);
     return captionsId;
   }
 
-  async addCaptionsUser(roomName: string): Promise<number> {
+  async addCaptionsUserCount(roomName: string): Promise<number> {
     const key = `captionsUserCount:${roomName}`;
-    const currentCaptionsUsersCount = await this.dbState.get(key);
-    const newCaptionsUsersCount = currentCaptionsUsersCount
-      ? parseInt(String(currentCaptionsUsersCount), 10) + 1
-      : 1;
-    await this.dbState.set(key, newCaptionsUsersCount.toString());
+    const currentCaptionsUsersCount = (await this.dbState.get(key)) as number;
+    const newCaptionsUsersCount = currentCaptionsUsersCount ? currentCaptionsUsersCount + 1 : 1;
+    await this.dbState.set(key, newCaptionsUsersCount);
+    // setting expiry of 4 hours for the key. After this time
+    // if you try to access a room, you will land on a different session Id.
     await this.dbState.expire(key, ENTRY_EXPIRATION_TIME);
     return newCaptionsUsersCount;
   }
 
-  async removeCaptionsUser(roomName: string): Promise<number> {
+  async removeCaptionsUserCount(roomName: string): Promise<number> {
     const key = `captionsUserCount:${roomName}`;
-    const currentCaptionsUsersCount = await this.dbState.get(key);
-    const newCaptionsUsersCount = currentCaptionsUsersCount
-      ? parseInt(String(currentCaptionsUsersCount), 10) - 1
-      : 0;
+    const currentCaptionsUsersCount = (await this.dbState.get(key)) as number;
+    const newCaptionsUsersCount = currentCaptionsUsersCount ? currentCaptionsUsersCount - 1 : 0;
     if (newCaptionsUsersCount < 0) {
       await this.dbState.delete(key);
       return 0;
     }
-    await this.dbState.set(key, newCaptionsUsersCount.toString());
+    // setting expiry of 4 hours for the key. After this time
+    // if you try to access a room, you will land on a different session Id.
+    await this.dbState.set(key, newCaptionsUsersCount);
     return newCaptionsUsersCount;
   }
 }

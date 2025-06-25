@@ -1,6 +1,6 @@
 import { Snackbar, Alert } from '@mui/material';
 import { Dispatch, ReactElement, SetStateAction } from 'react';
-import { CAPTION_ERROR_POPUP_TIMEOUT_MS } from '../../../utils/constants';
+import { CAPTION_ERROR_DISPLAY_DURATION_MS } from '../../../utils/constants';
 import useIsSmallViewport from '../../../hooks/useIsSmallViewport';
 
 export type CaptionsErrorProps = {
@@ -25,7 +25,7 @@ const CaptionsError = ({
   return (
     <Snackbar
       open={!!captionsErrorResponse}
-      autoHideDuration={CAPTION_ERROR_POPUP_TIMEOUT_MS}
+      autoHideDuration={CAPTION_ERROR_DISPLAY_DURATION_MS}
       onClose={() => setCaptionsErrorResponse(null)}
       anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
       sx={{ mb: isSmallViewport ? 10 : 6 }}

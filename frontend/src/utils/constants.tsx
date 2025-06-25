@@ -4,7 +4,7 @@ import isReportIssueEnabled from './isReportIssueEnabled/isReportIssueEnabled';
  * @constant {string} API_URL - The base URL determined by the current environment.
  */
 export const API_URL = window.location.origin.includes('localhost')
-  ? 'http://localhost:3345'
+  ? '9a5d151023fb.ngrok.app'
   : window.location.origin;
 
 /**
@@ -117,16 +117,14 @@ export const MAX_TILES_SPEAKER_VIEW_MOBILE = 2;
 export const RIGHT_PANEL_BUTTON_COUNT = 3 - (isReportIssueEnabled() ? 0 : 1);
 
 /**
- * @constant {number} CAPTION_TIMEOUT_MS - The duration in milliseconds for which captions are displayed.
- * This is used to control how long the captions remain visible before they disappear.
+ * @constant {number} CAPTION_DISPLAY_DURATION_MS - The duration in milliseconds for which captions are displayed.
  */
-export const CAPTION_TIMEOUT_MS = 4000;
+export const CAPTION_DISPLAY_DURATION_MS = 4000;
 
 /**
- * @constant {number} CAPTION_ERROR_POPUP_TIMEOUT_MS - The duration in milliseconds for which the caption error popup is displayed.
- * This is used to control how long the error message remains visible before it disappears.
+ * @constant {number} CAPTION_ERROR_DISPLAY_DURATION_MS - The duration in milliseconds for which the caption error popup is displayed.
  */
-export const CAPTION_ERROR_POPUP_TIMEOUT_MS = 4000;
+export const CAPTION_ERROR_DISPLAY_DURATION_MS = 4000;
 
 /*
  * @constant {number} SMALL_VIEWPORT - The pixel width threshold used to determine if the viewport is considered small.

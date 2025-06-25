@@ -3,7 +3,7 @@ import { render } from '@testing-library/react';
 import { Subscriber } from '@vonage/client-sdk-video';
 import { SessionContextType } from '../../../../../Context/SessionProvider/session';
 import useSessionContext from '../../../../../hooks/useSessionContext';
-import SingleCaption from './SingleCaption';
+import UserCaption from './UserCaption';
 import { SubscriberWrapper } from '../../../../../types/session';
 
 vi.mock('../../../../../hooks/useSessionContext');
@@ -18,7 +18,7 @@ vi.useFakeTimers();
 
 const mockUseSessionContext = useSessionContext as Mock<[], SessionContextType>;
 
-describe('SingleCaption', () => {
+describe('UserCaption', () => {
   let sessionContext: SessionContextType;
 
   const createSubscriberWrapper = (id: string): SubscriberWrapper => {
@@ -54,7 +54,7 @@ describe('SingleCaption', () => {
 
   it('renders the caption when receiving captions', () => {
     const { getByText } = render(
-      <SingleCaption
+      <UserCaption
         subscriber={createSubscriberWrapper('subscriber-1').subscriber}
         isSmallViewPort={false}
         caption="Test Caption"
@@ -65,7 +65,7 @@ describe('SingleCaption', () => {
 
   it('does not render when no caption is provided', () => {
     const { queryByText } = render(
-      <SingleCaption
+      <UserCaption
         subscriber={createSubscriberWrapper('subscriber-1').subscriber}
         isSmallViewPort={false}
         caption=""
