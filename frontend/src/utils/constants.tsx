@@ -4,7 +4,7 @@ import isReportIssueEnabled from './isReportIssueEnabled/isReportIssueEnabled';
  * @constant {string} API_URL - The base URL determined by the current environment.
  */
 export const API_URL = window.location.origin.includes('localhost')
-  ? '9a5d151023fb.ngrok.app'
+  ? 'http://localhost:3345'
   : window.location.origin;
 
 /**

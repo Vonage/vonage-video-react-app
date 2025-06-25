@@ -45,31 +45,41 @@ const CaptionsButton = ({
     }
   };
 
+  const sessionCaptionsEnabled = !!roomName && !!captionsId;
+
+  const handleCaptionsEnable = async () => {
+    try {
+      const response = await enableCaptions(roomName);
+      setCaptionsId(response.data.captionsId);
+      setIsUserCaptionsEnabled(true);
+    } catch (error) {
+      if (error instanceof AxiosError) {
+        setCaptionsErrorResponse(error.response?.data.message || 'Unknown error occurred');
+        setCaptionsId('');
+        setIsUserCaptionsEnabled(false);
+      }
+    }
+  };
+
+  const handleCaptionsDisable = async () => {
+    try {
+      setCaptionsId('');
+      await disableCaptions(roomName, captionsId);
+      setIsUserCaptionsEnabled(false);
+    } catch (error) {
+      if (error instanceof AxiosError) {
+        setCaptionsErrorResponse(error.response?.data.message || 'Unknown error occurred');
+        setCaptionsId('');
+        setIsUserCaptionsEnabled(false);
+      }
+    }
+  };
+
   const handleCaptions = async (action: 'enable' | 'disable') => {
     if (action === 'enable') {
-      try {
-        const response = await enableCaptions(roomName);
-        setCaptionsId(response.data.captionsId);
-        setIsUserCaptionsEnabled(true);
-      } catch (error) {
-        if (error instanceof AxiosError) {
-          setCaptionsErrorResponse(error.response?.data.message || 'Unknown error occurred');
-          setCaptionsId('');
-          setIsUserCaptionsEnabled(false);
-        }
-      }
-    } else if (action === 'disable' && captionsId && roomName) {
-      try {
-        setCaptionsId('');
-        await disableCaptions(roomName, captionsId);
-        setIsUserCaptionsEnabled(false);
-      } catch (error) {
-        if (error instanceof AxiosError) {
-          setCaptionsErrorResponse(error.response?.data.message || 'Unknown error occurred');
-          setCaptionsId('');
-          setIsUserCaptionsEnabled(false);
-        }
-      }
+      await handleCaptionsEnable();
+    } else if (action === 'disable' && sessionCaptionsEnabled) {
+      await handleCaptionsDisable();
     }
   };
 
