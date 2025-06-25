@@ -142,7 +142,7 @@ describe.each([
         expect(res.statusCode).toEqual(500);
       });
 
-      it('returns a 400 when stopping captions with invalid type of captionsId', async () => {
+      it('returns a 400 when stopping captions with malformed captionsId', async () => {
         const invalidRoomName = 'nonExistingRoomName';
         const captionsId = 'not-a-valid-captions-id';
         const res = await request(server)

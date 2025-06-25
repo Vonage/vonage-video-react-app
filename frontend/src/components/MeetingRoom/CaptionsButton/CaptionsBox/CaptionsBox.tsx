@@ -7,7 +7,7 @@ import useIsSmallViewport from '../../../../hooks/useIsSmallViewport';
 /**
  * CaptionsBox Component
  *
- * This component shows a list of the captions that are currently in the meeting room.
+ * This component renders the captions of the speakers in the meeting room.
  * @returns {ReactElement} The captions box component.
  */
 const CaptionsBox = (): ReactElement => {
