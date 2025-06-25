@@ -47,6 +47,12 @@ const CaptionsButton = ({
 
   const sessionCaptionsEnabled = !!roomName && !!captionsId;
 
+  const handleCaptionsErrorResponse = (message: string | null) => {
+    setCaptionsErrorResponse(message || 'Unknown error occurred');
+    setCaptionsId('');
+    setIsUserCaptionsEnabled(false);
+  };
+
   const handleCaptionsEnable = async () => {
     try {
       const response = await enableCaptions(roomName);
@@ -54,9 +60,7 @@ const CaptionsButton = ({
       setIsUserCaptionsEnabled(true);
     } catch (error) {
       if (error instanceof AxiosError) {
-        setCaptionsErrorResponse(error.response?.data.message || 'Unknown error occurred');
-        setCaptionsId('');
-        setIsUserCaptionsEnabled(false);
+        handleCaptionsErrorResponse(error.response?.data.message);
       }
     }
   };
@@ -68,9 +72,7 @@ const CaptionsButton = ({
       setIsUserCaptionsEnabled(false);
     } catch (error) {
       if (error instanceof AxiosError) {
-        setCaptionsErrorResponse(error.response?.data.message || 'Unknown error occurred');
-        setCaptionsId('');
-        setIsUserCaptionsEnabled(false);
+        handleCaptionsErrorResponse(error.response?.data.message);
       }
     }
   };
