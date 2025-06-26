@@ -1,4 +1,4 @@
-# Vonage Video API Reference App for React!
+# Vonage Video API Reference App for React
 
 ## Table of Contents
 <!-- TOC -->
