@@ -1,6 +1,10 @@
 name: Deploy to VCR on Commit Push
 
 on:
+  push:
+    branches-ignore:
+      - main
+      - develop
   pull_request:
     branches-ignore:
       - main
