@@ -1,4 +1,4 @@
-name: Deploy to VCR
+name: Deploy to VCR on Commit Push
 
 on:
   push:
@@ -36,12 +36,12 @@ jobs:
           VCR_URL=$(grep -o 'https://[^ ]*vonage.cloud[^ ]*' deploy-vcr-logs.log | head -1)
           echo "vcr_url=$VCR_URL" >> $GITHUB_OUTPUT
 
-      - name: Comment VCR instance link on commit
-        uses: peter-evans/commit-comment@v3
-        with:
-          body: |
-            🚀 VCR instance deployed for commit `${{ github.sha }}`
-            [View VCR Instance](${{ steps.deploy.outputs.vcr_url }})
-          reactions: |
-            heart
-            hooray
+      # - name: Comment VCR instance link on commit
+      #   uses: peter-evans/commit-comment@v3
+      #   with:
+      #     body: |
+      #       🚀 VCR instance deployed for commit `${{ github.sha }}`
+      #       [View VCR Instance](${{ steps.deploy.outputs.vcr_url }})
+      #     reactions: |
+      #       heart
+      #       hooray
