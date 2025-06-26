@@ -50,11 +50,6 @@ class InMemorySessionStorage implements SessionStorage {
     if (this.sessions[roomName].captionsUserCount > 0) {
       this.sessions[roomName].captionsUserCount -= 1;
     }
-
-    // this.sessions[roomName].captionsUserCount -= 1;
-    // if (this.sessions[roomName].captionsUserCount < 0) {
-    //   this.sessions[roomName].captionsUserCount = 0;
-    // }
     return this.sessions[roomName].captionsUserCount;
   }
 }

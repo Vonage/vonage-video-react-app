@@ -39,7 +39,6 @@ class VcrSessionStorage implements SessionStorage {
     if (!captionsId) {
       return null;
     }
-    await VcrSessionStorage.setKeyExpiry(this.dbState, key);
     return captionsId;
   }
 
