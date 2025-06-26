@@ -5,10 +5,6 @@ on:
     branches-ignore:
       - main
       - develop
-  pull_request:
-    branches-ignore:
-      - main
-      - develop
 
 permissions:
   contents: write
@@ -47,10 +43,25 @@ jobs:
           VCR_URL=$(grep -oE 'https://[a-zA-Z0-9.-]+\.vonage\.cloud' deploy-vcr-logs.log | head -1)
           echo "vcr_url=$VCR_URL" >> $GITHUB_OUTPUT
 
+      - name: Find Pull Request number
+        id: find_pr
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const { data: pulls } = await github.rest.pulls.list({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              head: `${context.repo.owner}:${context.ref.replace('refs/heads/', '')}`,
+              state: 'open'
+            });
+            if (pulls.length > 0) {
+              core.setOutput('pr', pulls[0].number);
+            }
+
       - name: Comment the VCR instance link on PR
         uses: peter-evans/create-or-update-comment@v4
         with:
-          issue-number: ${{ github.event.pull_request.number }}
+          issue-number: ${{ steps.find_pr.outputs.pr }}
           body: |
             🚀 VCR instance deployed for commit `${{ github.sha }}`
             [View VCR Instance](${{ steps.deploy.outputs.vcr_url }})
