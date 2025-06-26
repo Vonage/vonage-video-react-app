@@ -35,7 +35,7 @@ The Vonage Video API Reference App for React is an open-source video conferencin
 The Reference App demonstrates the best practices for integrating the [Vonage Video API](https://developer.vonage.com/en/video/client-sdks/web/overview) with your application for various use cases, from one-to-one and multi-participant video calling to recording, screen sharing, reactions, and more.
 
 ## Why use it?
-The Vonage Video API Reference App for React provides developers an easy-to-setup way to get started with using our APIs with React... 
+The Vonage Video API Reference App for React provides developers an easy-to-setup way to get started with using our APIs with React.... 
 
 The application is open-source, so you can not only get started quickly, but easily extend it with features needed for your use case. Any features already implemented in the Reference App use best practices for scalability and security.
 
