@@ -29,11 +29,12 @@ jobs:
           sudo curl -L https://raw.githubusercontent.com/Vonage/cloud-runtime-cli/main/script/install.sh | sudo sh
           vcr -v
 
-      - name: Replace some values in the manifest so that it does not break other deployments
+      - name: Replace some values in the manifest so that it does not break other deployments and is unique
         run: |
           cp vcr-gha.yml vcr-gha.temp.yml
           BRANCH_NAME=$(echo "${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}" | tr '/' '-')
-          sed -i "s/name: vonage-video-react-app/name: vonage-video-react-app-$BRANCH_NAME/g" vcr-gha.temp.yml
+          SHORT_SHA=$(echo "${GITHUB_SHA}" | cut -c1-7)
+          sed -i "s/name: vonage-video-react-app/name: vonage-video-react-app-$BRANCH_NAME-$SHORT_SHA/g" vcr-gha.temp.yml
           sed -i 's/<DOMAIN>//g' vcr-gha.temp.yml
 
       - name: Deploy vcr
