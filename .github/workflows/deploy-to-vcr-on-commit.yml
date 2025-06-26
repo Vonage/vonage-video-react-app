@@ -33,7 +33,7 @@ jobs:
           sudo curl -L https://raw.githubusercontent.com/Vonage/cloud-runtime-cli/main/script/install.sh | sudo sh
           vcr -v
 
-      - name: Prepare manifest for unique deployment
+      - name: Replace some values in the manifest so that it does not break other deployments
         run: |
           cp vcr-gha.yml vcr-gha.temp.yml
           BRANCH_NAME=$(echo "${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}" | tr '/' '-')
@@ -43,7 +43,7 @@ jobs:
       - name: Deploy vcr
         id: deploy
         run: |
-          vcr deploy --filename vcr-gha.yml --app-id ${{ secrets.APP_ID }} --api-key ${{ secrets.VCR_API_KEY }} --api-secret ${{ secrets.VCR_API_SECRET }} --region aws.euw1 --graphql-endpoint https://graphql.euw1.runtime.vonage.cloud/v1/graphql --timeout=15m 2>&1 | tee deploy-vcr-logs.log
+          vcr deploy --filename vcr-gha.temp.yml --app-id ${{ secrets.APP_ID }} --api-key ${{ secrets.VCR_API_KEY }} --api-secret ${{ secrets.VCR_API_SECRET }} --region aws.euw1 --graphql-endpoint https://graphql.euw1.runtime.vonage.cloud/v1/graphql --timeout=15m 2>&1 | tee deploy-vcr-logs.log
           VCR_URL=$(grep -oE 'https://[a-zA-Z0-9.-]+\.vonage\.cloud' deploy-vcr-logs.log | head -1)
           echo "vcr_url=$VCR_URL" >> $GITHUB_OUTPUT
 
