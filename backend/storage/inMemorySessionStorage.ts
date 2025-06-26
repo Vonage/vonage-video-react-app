@@ -36,9 +36,9 @@ class InMemorySessionStorage implements SessionStorage {
   async incrementCaptionsUserCount(roomName: string): Promise<number> {
     if (!this.sessions[roomName]) {
       throw new Error(`Session for room: ${roomName} does not exist. Cannot add captions user.`);
-    } else {
-      this.sessions[roomName].captionsUserCount += 1;
     }
+    this.sessions[roomName].captionsUserCount += 1;
+
     return this.sessions[roomName].captionsUserCount;
   }
 

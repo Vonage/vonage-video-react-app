@@ -41,13 +41,6 @@ describe('InMemorySessionStorage', () => {
       const captionsId = await storage.getCaptionsId(room);
       expect(captionsId).toBe('captionsABC');
     });
-    it('should overwrite captionsId if set again', async () => {
-      await storage.setSession(room, 'session123');
-      await storage.setCaptionsId(room, 'captionsABC');
-      await storage.setCaptionsId(room, 'captionsXYZ');
-      const captionsId = await storage.getCaptionsId(room);
-      expect(captionsId).toBe('captionsXYZ');
-    });
   });
 
   describe('setCaptionsId', () => {
@@ -55,6 +48,14 @@ describe('InMemorySessionStorage', () => {
       await expect(storage.setCaptionsId(room, 'captionsABC')).rejects.toThrow(
         `Session for room: ${room} does not exist. Cannot set captionsId.`
       );
+    });
+
+    it('should overwrite captionsId if set again', async () => {
+      await storage.setSession(room, 'session123');
+      await storage.setCaptionsId(room, 'captionsABC');
+      await storage.setCaptionsId(room, 'captionsXYZ');
+      const captionsId = await storage.getCaptionsId(room);
+      expect(captionsId).toBe('captionsXYZ');
     });
   });
 
