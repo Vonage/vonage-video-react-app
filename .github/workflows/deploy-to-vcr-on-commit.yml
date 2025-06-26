@@ -32,6 +32,7 @@ jobs:
       - name: Deploy vcr
         id: deploy
         run: |
+          sed -i '' 's/<DOMAIN>//g' "${{ github.workspace }}/vcr-gha.yml"
           vcr deploy --filename vcr-gha.yml --app-id ${{ secrets.APP_ID }} --api-key ${{ secrets.VCR_API_KEY }} --api-secret ${{ secrets.VCR_API_SECRET }} --region aws.euw1 --graphql-endpoint https://graphql.euw1.runtime.vonage.cloud/v1/graphql --timeout=15m 2>&1 | tee deploy-vcr-logs.log
           VCR_URL=$(grep -o 'https://[^ ]*vonage.cloud[^ ]*' deploy-vcr-logs.log | head -1)
           echo "vcr_url=$VCR_URL" >> $GITHUB_OUTPUT
