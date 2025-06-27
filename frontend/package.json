@@ -30,7 +30,7 @@
     "@testing-library/react": "^16.3.0",
     "@testing-library/user-event": "^14.6.1",
     "@vitejs/plugin-react": "^4.4.1",
-    "@vonage/client-sdk-video": "^2.29.4",
+    "@vonage/client-sdk-video": "^2.30.2",
     "@vonage/vcr-sdk": "^1.3.0",
     "autolinker": "^4.0.0",
     "autoprefixer": "^10.4.19",
