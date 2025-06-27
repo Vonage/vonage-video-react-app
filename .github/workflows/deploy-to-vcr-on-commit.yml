@@ -1,25 +1,31 @@
-name: Deploy to VCR on Commit Push
+name: Deploy to VCR on PR
 
 on:
-  push:
-    branches-ignore:
-      - main
-      - develop
+  pull_request:
+    types: [opened, labeled]
 
 permissions:
   contents: write
   pull-requests: write
 
+# avoid running more than one workflow per PR in repo
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   build-and-test:
     runs-on: [vcp-runner]
+    if: github.event.action == 'opened' || github.event.label.name == 'vcr-deploy'
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3.0.2
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
 
       - name: Setup node
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version: 22.4
           cache: npm
@@ -43,25 +49,10 @@ jobs:
           VCR_URL=$(grep -oE 'https://[a-zA-Z0-9.-]+\.vonage\.cloud' deploy-vcr-logs.log | head -1)
           echo "vcr_url=$VCR_URL" >> $GITHUB_OUTPUT
 
-      - name: Find Pull Request number
-        id: find_pr
-        uses: actions/github-script@v7
-        with:
-          script: |
-            const { data: pulls } = await github.rest.pulls.list({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              head: `${context.repo.owner}:${context.ref.replace('refs/heads/', '')}`,
-              state: 'open'
-            });
-            if (pulls.length > 0) {
-              core.setOutput('pr', pulls[0].number);
-            }
-
       - name: Comment the VCR instance link on PR
-        uses: peter-evans/create-or-update-comment@v4
+        uses: peter-evans/create-or-update-comment@v3
         with:
-          issue-number: ${{ steps.find_pr.outputs.pr }}
+          issue-number: ${{ github.event.pull_request.number }}
           body: |
-            🚀 VCR instance deployed for commit `${{ github.sha }}`
+            🚀 VCR instance deployed for commit hash: `${{ github.sha }}`)
             [View VCR Instance](${{ steps.deploy.outputs.vcr_url }})
