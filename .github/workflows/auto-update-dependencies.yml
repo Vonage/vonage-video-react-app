@@ -2,14 +2,14 @@ name: auto-update-dependencies
 
 on:
   push:
-    # branches:
-    #   - develop
+    branches:
+      - develop
 
 permissions:
   contents: read
 
 env:
-  BRANCH_NAME: 'behei-vonage/fix-auto-dependencies-job'
+  BRANCH_NAME: ${{ github.ref_name }}
   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   GITHUB_REPOSITORY: ${{ github.repository }}
 
@@ -29,9 +29,6 @@ jobs:
         run: yarn install
       - name: Run dependency update script
         run: node scripts/generateDependenciesList.js
-      # - name: Do not commit yarn file
-      # run: |
-      # git checkout -- yarn.lock
       - name: Auto-commit updated dependencies file
         run: |
           echo "Committing docs/DEPENDENCIES.md changes..."
