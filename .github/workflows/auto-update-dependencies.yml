@@ -2,8 +2,8 @@ name: auto-update-dependencies
 
 on:
   push:
-    branches:
-      - develop
+    # branches:
+    #   - develop
 
 permissions:
   contents: read
@@ -26,7 +26,7 @@ jobs:
         with:
           node-version: 22
       - name: Install dependencies
-        run: npm install axios --no-save
+        run: yarn install axios --no-lockfile
       - name: Run dependency update script
         run: node scripts/generateDependenciesList.js
       - name: Do not commit yarn file
