@@ -26,12 +26,12 @@ jobs:
         with:
           node-version: 22
       - name: Install dependencies
-        run: yarn add axios --no-lockfile
-      - name: Run dependency update script
-        run: node scripts/generateDependenciesList.js
-      - name: Do not commit yarn file
-        run: |
-          git checkout -- yarn.lock
+        run: yarn install
+      # - name: Run dependency update script
+      # run: node scripts/generateDependenciesList.js
+      # - name: Do not commit yarn file
+      # run: |
+      # git checkout -- yarn.lock
       - name: Auto-commit updated dependencies file
         run: |
           echo "Committing docs/DEPENDENCIES.md changes..."
