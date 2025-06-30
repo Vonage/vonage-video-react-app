@@ -2,8 +2,8 @@ name: auto-update-dependencies
 
 on:
   push:
-    # branches:
-    #   - develop
+    branches:
+      - develop
 
 permissions:
   contents: read
