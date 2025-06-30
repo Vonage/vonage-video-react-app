@@ -7,6 +7,7 @@
 - [@mui/joy](https://www.npmjs.com/package/@mui/joy) Joy UI is an open-source React component library that implements MUI's own design principles. It's comprehensive and can be used in production out of the box.
 - [@mui/material](https://www.npmjs.com/package/@mui/material) Material UI is an open-source React component library that implements Google's Material Design. It's comprehensive and can be used in production out of the box.
 - [@rollup/plugin-replace](https://www.npmjs.com/package/@rollup/plugin-replace) Replace strings in files while bundling
+- [@testing-library/dom](https://www.npmjs.com/package/@testing-library/dom) Simple and complete DOM testing utilities that encourage good testing practices.
 - [@testing-library/jest-dom](https://www.npmjs.com/package/@testing-library/jest-dom) Custom jest matchers to test the state of the DOM
 - [@testing-library/react](https://www.npmjs.com/package/@testing-library/react) Simple and complete React DOM testing utilities that encourage good testing practices.
 - [@testing-library/user-event](https://www.npmjs.com/package/@testing-library/user-event) Fire events the same way the user does
@@ -16,7 +17,7 @@
 - [@types/react](https://www.npmjs.com/package/@types/react) TypeScript definitions for react
 - [@types/ua-parser-js](https://www.npmjs.com/package/@types/ua-parser-js) TypeScript definitions for ua-parser-js
 - [@types/uuid](https://www.npmjs.com/package/@types/uuid) TypeScript definitions for uuid
-- [@vitejs/plugin-react](https://www.npmjs.com/package/@vitejs/plugin-react) The default Vite plugin for React projects.
+- [@vitejs/plugin-react](https://www.npmjs.com/package/@vitejs/plugin-react) The default Vite plugin for React projects
 - [@vitest/coverage-v8](https://www.npmjs.com/package/@vitest/coverage-v8) V8 coverage provider for Vitest
 - [@vitest/ui](https://www.npmjs.com/package/@vitest/ui) UI for Vitest
 - [@vonage/client-sdk-video](https://www.npmjs.com/package/@vonage/client-sdk-video) The OpenTok.js library lets you use OpenTok-powered video sessions on the web
@@ -50,6 +51,7 @@
 - [@types/node](https://www.npmjs.com/package/@types/node) TypeScript definitions for node
 - [@types/opentok](https://www.npmjs.com/package/@types/opentok) TypeScript definitions for opentok
 - [@types/supertest](https://www.npmjs.com/package/@types/supertest) TypeScript definitions for supertest
+- [@types/validator](https://www.npmjs.com/package/@types/validator) TypeScript definitions for validator
 - [@vonage/auth](https://www.npmjs.com/package/@vonage/auth) Vonage Auth Package adds the correct authentication headers to requests to Vonage API's
 - [@vonage/server-sdk](https://www.npmjs.com/package/@vonage/server-sdk) Node.js Client for the Vonage API Platform
 - [@vonage/vcr-sdk](https://www.npmjs.com/package/@vonage/vcr-sdk) This is the Node.JS SDK for [Vonage Cloud Runtime](https://developer.vonage.com/cloud-runtime). To use it you will need a Vonage account. Sign up for free at [vonage.com](https://dashboard.nexmo.com/sign-up?utm_source=DEV_REL&utm_medium=github&utm_campaig
@@ -61,7 +63,9 @@
 - [express](https://www.npmjs.com/package/express) Fast, unopinionated, minimalist web framework
 - [form-data](https://www.npmjs.com/package/form-data) A library to create readable "multipart/form-data" streams. Can be used to submit forms and file uploads to other web applications.
 - [jest](https://www.npmjs.com/package/jest) Delightful JavaScript Testing.
+- [opentok-jwt](https://www.npmjs.com/package/opentok-jwt) A library for generating OpenTok JWT tokens
 - [opentok](https://www.npmjs.com/package/opentok) OpenTok server-side SDK
 - [supertest](https://www.npmjs.com/package/supertest) SuperAgent driven library for testing HTTP servers
 - [ts-jest](https://www.npmjs.com/package/ts-jest) A Jest transformer with source map support that lets you use Jest to test projects written in TypeScript
 - [tsx](https://www.npmjs.com/package/tsx) TypeScript Execute (tsx): Node.js enhanced with esbuild to run TypeScript & ESM files
+- [validator](https://www.npmjs.com/package/validator) String validation and sanitization
