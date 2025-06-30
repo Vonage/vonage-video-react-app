@@ -9,7 +9,7 @@ permissions:
   contents: read
 
 env:
-  BRANCH_NAME: ${{ github.head_ref }}
+  BRANCH_NAME: ${{ github.ref_name }}
   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   GITHUB_REPOSITORY: ${{ github.repository }}
 
