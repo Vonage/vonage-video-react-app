@@ -27,8 +27,8 @@ jobs:
           node-version: 22
       - name: Install dependencies
         run: yarn install
-      # - name: Run dependency update script
-      # run: node scripts/generateDependenciesList.js
+      - name: Run dependency update script
+        run: node scripts/generateDependenciesList.js
       # - name: Do not commit yarn file
       # run: |
       # git checkout -- yarn.lock
