@@ -1,4 +1,4 @@
-import { MenuItem, Typography } from '@mui/material';
+import { MenuItem, Typography, ClickAwayListener } from '@mui/material';
 import { ReactElement, useCallback, useEffect, useMemo, useState } from 'react';
 import useAudioOutputContext from '../../hooks/useAudioOutputContext';
 
@@ -19,6 +19,12 @@ const SoundTest = ({ children }: SoundTestProps): ReactElement => {
   const audioElement = useMemo(() => new Audio('/sound.mp3'), []);
   const { currentAudioOutputDevice } = useAudioOutputContext();
 
+  const stopAudio = useCallback(() => {
+    audioElement.pause();
+    audioElement.currentTime = 0;
+    setAudioIsPlaying(false);
+  }, [audioElement]);
+
   useEffect(() => {
     if (currentAudioOutputDevice) {
       audioElement.setSinkId?.(currentAudioOutputDevice);
@@ -31,17 +37,17 @@ const SoundTest = ({ children }: SoundTestProps): ReactElement => {
       setAudioIsPlaying(true);
     } else {
       // Stop playing the audio and reset the playback to the beginning of the track.
-      audioElement.pause();
-      audioElement.currentTime = 0;
-      setAudioIsPlaying(false);
+      stopAudio();
     }
-  }, [audioElement, audioIsPlaying]);
+  }, [audioElement, audioIsPlaying, stopAudio]);
 
   return (
-    <MenuItem onClick={handlePlayAudio} data-testid="soundTest">
-      {children}
-      <Typography noWrap>{!audioIsPlaying ? 'Test speakers' : 'Stop testing'}</Typography>
-    </MenuItem>
+    <ClickAwayListener onClickAway={() => stopAudio()}>
+      <MenuItem onClick={handlePlayAudio} data-testid="soundTest">
+        {children}
+        <Typography noWrap>{!audioIsPlaying ? 'Test speakers' : 'Stop testing'}</Typography>
+      </MenuItem>
+    </ClickAwayListener>
   );
 };
 
