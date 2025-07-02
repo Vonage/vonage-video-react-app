@@ -26,7 +26,13 @@ const RightPanel = ({ activeTab, handleClose }: RightPanelProps): ReactElement =
   const height = isSmallViewport
     ? '@apply h-[calc(100dvh_-_80px)]'
     : '@apply h-[calc(100dvh_-_96px)]';
-  const className = `${height} absolute top-0 ${margins} ${width} overflow-hidden rounded bg-white transition-[right] ${activeTab === 'closed' ? 'right-[-380px] hidden' : 'right-0'}`;
+
+  const isOpen = activeTab !== 'closed';
+  const className = `
+      ${height} absolute top-0 ${margins} ${width} overflow-hidden rounded bg-white
+      transition-all duration-300 ease-in-out
+      ${isOpen ? 'right-0 opacity-100 pointer-events-auto' : 'right-[-380px] opacity-0 pointer-events-none'}
+    `;
 
   return (
     <div data-testid="right-panel" className={className}>
