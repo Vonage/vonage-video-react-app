@@ -37,11 +37,13 @@ export type SignalEvent = {
 };
 
 export type SignalType = {
-  type: 'emoji' | 'chat';
+  type: 'emoji' | 'chat' | 'captions';
   data: string;
 };
 
 export type SubscriberAudioLevelUpdatedEvent = { movingAvg: number; subscriberId: string };
+
+export type LocalCaptionReceived = { streamId: string; caption: string; isFinal: boolean };
 
 export type StreamPropertyChangedEvent = {
   stream: Stream;

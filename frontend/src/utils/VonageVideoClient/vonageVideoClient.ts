@@ -15,6 +15,7 @@ import {
   SignalEvent,
   SignalType,
   SubscriberAudioLevelUpdatedEvent,
+  LocalCaptionReceived,
   StreamPropertyChangedEvent,
 } from '../../types/session';
 import logOnConnect from '../logOnConnect';
@@ -30,10 +31,12 @@ type VonageVideoClientEvents = {
   signal: [SignalEvent];
   'signal:chat': [SignalEvent];
   'signal:emoji': [SignalEvent];
+  'signal:captions': [SignalEvent];
   streamPropertyChanged: [StreamPropertyChangedEvent];
   subscriberVideoElementCreated: [SubscriberWrapper];
   subscriberDestroyed: [string];
   subscriberAudioLevelUpdated: [SubscriberAudioLevelUpdatedEvent];
+  localCaptionReceived: [LocalCaptionReceived];
 };
 
 /**
@@ -161,7 +164,7 @@ class VonageVideoClient extends EventEmitter<VonageVideoClientEvents> {
    */
   private handleSignal = (event: SignalEvent) => {
     const { type } = event;
-    if (type === 'signal:chat' || type === 'signal:emoji') {
+    if (type === 'signal:chat' || type === 'signal:emoji' || type === 'signal:captions') {
       this.emit(type, event);
     }
   };
@@ -258,6 +261,23 @@ class VonageVideoClient extends EventEmitter<VonageVideoClientEvents> {
         if (error) {
           reject(new Error(`${error.name}: ${error.message}`));
         }
+
+        // the following is needed for the local subscriber to be able to receive captions
+        // More information: https://developer.vonage.com/en/video/guides/live-caption#receiving-your-own-live-captions
+        if (publisher.stream) {
+          const hiddenSubscriber = this.clientSession?.subscribe(
+            publisher.stream,
+            document.createElement('div'),
+            {
+              audioVolume: 0,
+            }
+          );
+
+          hiddenSubscriber?.on('captionReceived', (captionEvent) => {
+            this.emit('localCaptionReceived', captionEvent);
+          });
+        }
+
         resolve();
       });
     });

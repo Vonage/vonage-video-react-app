@@ -17,6 +17,7 @@ import ActiveSpeakerTracker from '../../utils/ActiveSpeakerTracker';
 import useRightPanel, { RightPanelActiveTab } from '../../hooks/useRightPanel';
 import {
   Credential,
+  LocalCaptionReceived,
   SignalEvent,
   StreamPropertyChangedEvent,
   SubscriberAudioLevelUpdatedEvent,
@@ -59,6 +60,7 @@ export type SessionContextType = {
   toggleReportIssue: () => void;
   pinSubscriber: (subscriberId: string) => void;
   isMaxPinned: boolean;
+  ownCaptions: string | null;
   sendEmoji: (emoji: string) => void;
   emojiQueue: EmojiWrapper[];
   publish: (publisher: Publisher) => Promise<void>;
@@ -91,6 +93,7 @@ export const SessionContext = createContext<SessionContextType>({
   toggleReportIssue: () => {},
   pinSubscriber: () => {},
   isMaxPinned: false,
+  ownCaptions: null,
   sendEmoji: () => {},
   emojiQueue: [],
   publish: async () => Promise.resolve(),
@@ -127,6 +130,7 @@ const SessionProvider = ({ children }: SessionProviderProps): ReactElement => {
   const vonageVideoClient = useRef<null | VonageVideoClient>(null);
   const [reconnecting, setReconnecting] = useState(false);
   const [subscriberWrappers, setSubscriberWrappers] = useState<SubscriberWrapper[]>([]);
+  const [ownCaptions, setOwnCaptions] = useState<string | null>(null);
   const [layoutMode, setLayoutMode] = useState<LayoutMode>('active-speaker');
   const [archiveId, setArchiveId] = useState<string | null>(null);
   const activeSpeakerTracker = useRef<ActiveSpeakerTracker>(new ActiveSpeakerTracker());
@@ -276,6 +280,10 @@ const SessionProvider = ({ children }: SessionProviderProps): ReactElement => {
     );
   };
 
+  const handleLocalCaptionReceived = (event: LocalCaptionReceived) => {
+    setOwnCaptions(event.caption);
+  };
+
   const handleSubscriberDestroyed = (streamId: string) => {
     activeSpeakerTracker.current.onSubscriberDestroyed(streamId);
     const isNotDestroyedStreamId = ({ id }: { id: string }) => streamId !== id;
@@ -325,6 +333,7 @@ const SessionProvider = ({ children }: SessionProviderProps): ReactElement => {
         handleSubscriberVideoElementCreated
       );
       vonageVideoClient.current.on('subscriberDestroyed', handleSubscriberDestroyed);
+      vonageVideoClient.current.on('localCaptionReceived', handleLocalCaptionReceived);
       await vonageVideoClient.current.connect();
       setConnected(true);
     } catch (err: unknown) {
@@ -419,6 +428,7 @@ const SessionProvider = ({ children }: SessionProviderProps): ReactElement => {
       toggleReportIssue,
       pinSubscriber,
       isMaxPinned,
+      ownCaptions,
       sendEmoji,
       emojiQueue,
       publish,
@@ -447,6 +457,7 @@ const SessionProvider = ({ children }: SessionProviderProps): ReactElement => {
       toggleReportIssue,
       pinSubscriber,
       isMaxPinned,
+      ownCaptions,
       sendEmoji,
       emojiQueue,
       publish,

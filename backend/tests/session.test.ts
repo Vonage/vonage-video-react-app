@@ -2,7 +2,7 @@ import { afterAll, beforeAll, describe, expect, it, jest } from '@jest/globals';
 import request from 'supertest';
 import { Server } from 'http';
 import { Archive } from 'opentok';
-import InMemorySessionStorage from '../storage/inMemorySessionStorage'; // Import the session storage
+import InMemorySessionStorage from '../storage/inMemorySessionStorage';
 import mockOpentokConfig from '../helpers/__mocks__/config';
 
 await jest.unstable_mockModule('../helpers/config', mockOpentokConfig);
@@ -22,7 +22,7 @@ await jest.unstable_mockModule('../videoService/opentokVideoService.ts', () => {
       return {
         startArchive: jest.fn<() => Promise<string>>().mockResolvedValue('archiveId'),
         stopArchive: jest.fn<() => Promise<string>>().mockRejectedValue('invalid archive'),
-        enableCaptions: jest.fn<() => Promise<string>>().mockResolvedValue('captionId'),
+        enableCaptions: jest.fn<() => Promise<string>>().mockResolvedValue('captionsId'),
         disableCaptions: jest.fn<() => Promise<string>>().mockResolvedValue('invalid caption'),
         generateToken: jest
           .fn<() => Promise<{ token: string; apiKey: string }>>()
@@ -107,9 +107,9 @@ describe.each([
       });
 
       it('returns a 200 when disabling captions in a room', async () => {
-        const captionId = 'someCaptionId';
+        const captionsId = '123e4567-a12b-41a2-a123-123456789012';
         const res = await request(server)
-          .post(`/session/${roomName}/${captionId}/disableCaptions`)
+          .post(`/session/${roomName}/${captionsId}/disableCaptions`)
           .set('Content-Type', 'application/json');
         expect(res.statusCode).toEqual(200);
       });
@@ -130,7 +130,25 @@ describe.each([
           .set('Accept', 'application/json');
 
         const responseBody = JSON.parse(res.text);
-        expect(responseBody.captionId).toEqual('invalid caption');
+        expect(responseBody.message).toEqual('Invalid caption ID');
+      });
+
+      it('returns a 500 when stopping captions in a non-existent room', async () => {
+        const invalidRoomName = 'nonExistingRoomName';
+        const captionsId = '123e4567-a12b-41a2-a123-123456789012';
+        const res = await request(server)
+          .post(`/session/${invalidRoomName}/${captionsId}/disableCaptions`)
+          .set('Content-Type', 'application/json');
+        expect(res.statusCode).toEqual(500);
+      });
+
+      it('returns a 400 when stopping captions with malformed captionsId', async () => {
+        const invalidRoomName = 'nonExistingRoomName';
+        const captionsId = 'not-a-valid-captions-id';
+        const res = await request(server)
+          .post(`/session/${invalidRoomName}/${captionsId}/disableCaptions`)
+          .set('Content-Type', 'application/json');
+        expect(res.statusCode).toEqual(400);
       });
     });
   });

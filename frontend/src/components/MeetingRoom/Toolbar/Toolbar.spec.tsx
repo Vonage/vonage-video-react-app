@@ -2,7 +2,7 @@ import { describe, expect, it, vi, beforeEach, Mock, afterAll } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import { useLocation } from 'react-router-dom';
 import useSpeakingDetector from '../../../hooks/useSpeakingDetector';
-import Toolbar, { ToolbarProps } from './Toolbar';
+import Toolbar, { ToolbarProps, CaptionsState } from './Toolbar';
 import isReportIssueEnabled from '../../../utils/isReportIssueEnabled';
 import useToolbarButtons, {
   UseToolbarButtons,
@@ -61,6 +61,11 @@ describe('Toolbar', () => {
     toggleChat: vi.fn(),
     toggleReportIssue: vi.fn(),
     participantCount: 0,
+    captionsState: {
+      isUserCaptionsEnabled: false,
+      setIsUserCaptionsEnabled: vi.fn(),
+      setCaptionsErrorResponse: vi.fn(),
+    } as CaptionsState,
   };
 
   it('does not render the Report Issue button if it is configured to be disabled', () => {
@@ -92,11 +97,20 @@ describe('Toolbar', () => {
   });
 
   it('on a normal viewport, displays all of the toolbar buttons', () => {
-    render(<Toolbar {...defaultProps} />);
-
+    render(
+      <Toolbar
+        {...{
+          ...defaultProps,
+          captionsState: {
+            ...defaultProps.captionsState,
+            isUserCaptionsEnabled: true,
+          },
+        }}
+      />
+    );
     expect(screen.queryByTestId('archiving-button')).toBeVisible();
     expect(screen.queryByTestId('screensharing-button')).toBeVisible();
-    expect(screen.queryByTestId('archiving-button')).toBeVisible();
     expect(screen.queryByTestId('emoji-grid-button')).toBeVisible();
+    expect(screen.queryByTestId('captions-button')).toBeVisible();
   });
 });

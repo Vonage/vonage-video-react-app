@@ -74,6 +74,8 @@ class VonageVideoService implements VideoService {
 
     try {
       const captionOptions: CaptionOptions = {
+        // The full list of supported languages can be found here: https://developer.vonage.com/en/video/guides/live-caption#supported-languages
+        languageCode: 'en-US',
         // The maximum duration of the captions in seconds. The default is 14,400 seconds (4 hours).
         maxDuration: 1800,
         // Enabling partial captions allows for more frequent updates to the captions.
@@ -89,9 +91,9 @@ class VonageVideoService implements VideoService {
     }
   }
 
-  async disableCaptions(captionId: string): Promise<string> {
+  async disableCaptions(captionsId: string): Promise<string> {
     try {
-      await this.vonageVideo.disableCaptions(captionId);
+      await this.vonageVideo.disableCaptions(captionsId);
       return 'Captions stopped successfully';
     } catch (error: unknown) {
       const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';

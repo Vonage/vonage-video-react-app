@@ -8,5 +8,5 @@ export interface VideoService {
   stopArchive(archiveId: string): Promise<string>;
   listArchives(sessionId: string): Promise<Archive[] | SingleArchiveResponse[] | undefined>;
   enableCaptions(sessionId: string): Promise<EnableCaptionResponse>;
-  disableCaptions(captionId: string): Promise<string>;
+  disableCaptions(captionsId: string): Promise<string>;
 }

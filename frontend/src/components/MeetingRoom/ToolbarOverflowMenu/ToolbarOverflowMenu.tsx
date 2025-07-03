@@ -1,6 +1,7 @@
 import { ClickAwayListener, Portal, Box, Grow } from '@mui/material';
 import { Dispatch, ReactElement, SetStateAction } from 'react';
 import ArchivingButton from '../ArchivingButton';
+import CaptionsButton from '../CaptionsButton';
 import EmojiGridButton from '../EmojiGridButton';
 import ParticipantListButton from '../ParticipantListButton';
 import ChatButton from '../ChatButton';
@@ -11,6 +12,12 @@ import ScreenSharingButton from '../../ScreenSharingButton';
 import getOverflowMenuButtons from '../../../utils/getOverflowMenuButtons';
 import isReportIssueEnabled from '../../../utils/isReportIssueEnabled';
 
+export type CaptionsState = {
+  isUserCaptionsEnabled: boolean;
+  setIsUserCaptionsEnabled: Dispatch<SetStateAction<boolean>>;
+  setCaptionsErrorResponse: Dispatch<SetStateAction<string | null>>;
+};
+
 export type ToolbarOverflowMenuProps = {
   isOpen: boolean;
   isEmojiGridOpen: boolean;
@@ -19,6 +26,7 @@ export type ToolbarOverflowMenuProps = {
   toggleShareScreen: () => void;
   isSharingScreen: boolean;
   toolbarButtonsCount: number;
+  captionsState: CaptionsState;
 };
 
 /**
@@ -33,6 +41,7 @@ export type ToolbarOverflowMenuProps = {
  *  @property {Function} toggleShareScreen - toggles the user's screenshare
  *  @property {boolean} isSharingScreen - whether the user is sharing their screen
  *  @property {number} toolbarButtonsCount - number of buttons displayed on the toolbar
+ *  @property {CaptionsState} captionsState - the state of the captions, including whether they are enabled and functions to set error messages
  * @returns {ReactElement} - The ToolbarOverflowMenu component.
  */
 const ToolbarOverflowMenu = ({
@@ -43,6 +52,7 @@ const ToolbarOverflowMenu = ({
   toggleShareScreen,
   isSharingScreen,
   toolbarButtonsCount,
+  captionsState,
 }: ToolbarOverflowMenuProps): ReactElement => {
   const {
     subscriberWrappers,
@@ -78,6 +88,12 @@ const ToolbarOverflowMenu = ({
       isPinningPresent={isPinningPresent}
       isOverflowButton
       key="LayoutButton"
+    />,
+    <CaptionsButton
+      isOverflowButton
+      handleClick={closeMenu}
+      key="CaptionsButton"
+      captionsState={captionsState}
     />,
     <EmojiGridButton
       isEmojiGridOpen={isEmojiGridOpen}
