@@ -29,17 +29,23 @@ jobs:
           sudo curl -L https://raw.githubusercontent.com/Vonage/cloud-runtime-cli/main/script/install.sh | sudo sh
           vcr -v
 
-      - name: Download instance_id artifact
-        uses: actions/download-artifact@v4
+      - name: Get instance_id from PR comment
+        id: get_instance_id
+        uses: actions/github-script@v7
         with:
-          name: instance_id
-
-      - name: Read instance_id
-        id: read_instance_id
-        run: |
-          INSTANCE_ID=$(cat instance_id.txt)
-          echo "instance_id=$INSTANCE_ID" >> $GITHUB_OUTPUT
+          script: |
+            const pr = context.payload.pull_request;
+            const { data: comments } = await github.issues.listComments({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: pr.number,
+            });
+            const match = comments
+              .map(c => c.body.match(/<!-- instance_id:(.+) -->/))
+              .find(Boolean);
+            if (!match) throw new Error('No instance_id found in PR comments');
+            core.setOutput('instance_id', match[1]);
 
       - name: Delete VCR instance
         run: |
-          vcr instance remove --id ${{ steps.read_instance_id.outputs.instance_id }} --app-id ${{ secrets.APP_ID }} --api-key ${{ secrets.VCR_API_KEY }} --api-secret ${{ secrets.VCR_API_SECRET }}
+          vcr instance remove --id ${{ steps.get_instance_id.outputs.instance_id }} --app-id ${{ secrets.APP_ID }} --api-key ${{ secrets.VCR_API_KEY }} --api-secret ${{ secrets.VCR_API_SECRET }}

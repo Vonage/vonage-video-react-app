@@ -50,17 +50,11 @@ jobs:
           echo "vcr_url=$VCR_URL" >> $GITHUB_OUTPUT
           echo "$INSTANCE_ID" > instance_id.txt
 
-      # This is needed to be able to use the instance_id in the cleanup workflow
-      - name: Upload instance_id artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: instance_id
-          path: instance_id.txt
-
-      - name: Comment the VCR instance link on PR
+      - name: Comment VCR instance link
         uses: peter-evans/create-or-update-comment@v3
         with:
           issue-number: ${{ github.event.pull_request.number }}
           body: |
+            <!-- instance_id:${INSTANCE_ID} -->
             🚀 VCR instance deployed for the pull request: `${{ github.event.pull_request.number }}`
             [View VCR Instance](${{ steps.deploy.outputs.vcr_url }})
