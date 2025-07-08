@@ -16,8 +16,6 @@ concurrency:
 jobs:
   build-and-test:
     runs-on: [vcp-runner]
-    env:
-      PR_NUMBER: ${{ github.event.pull_request.number }}
     if: github.event.action == 'opened' || github.event.label.name == 'vcr-deploy'
 
     steps:
@@ -40,7 +38,7 @@ jobs:
       - name: Replace some values in the manifest so that it does not break other deployments and is unique
         run: |
           cp vcr-gha.yml vcr-gha.temp.yml
-          sed -i "s/name: vonage-video-react-app/name: vonage-video-react-app-$PR_NUMBER/g" vcr-gha.temp.yml
+          sed -i "s/name: vonage-video-react-app/name: vonage-video-react-app-${{ github.event.pull_request.number }}/g" vcr-gha.temp.yml
           sed -i 's/<DOMAIN>//g' vcr-gha.temp.yml
 
       - name: Deploy vcr
@@ -62,7 +60,7 @@ jobs:
       - name: Comment the VCR instance link on PR
         uses: peter-evans/create-or-update-comment@v3
         with:
-          issue-number: $PR_NUMBER
+          issue-number: ${{ github.event.pull_request.number }}
           body: |
-            🚀 VCR instance deployed for the pull request: `$PR_NUMBER`
+            🚀 VCR instance deployed for the pull request: `${{ github.event.pull_request.number }}`
             [View VCR Instance](${{ steps.deploy.outputs.vcr_url }})
