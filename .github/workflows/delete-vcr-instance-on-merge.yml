@@ -1,0 +1,45 @@
+name: Delete VCR Instance on Merge
+
+on:
+  pull_request:
+    types: [closed]
+
+# avoid running more than one workflow per PR in repo
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  delete-vcr-instance:
+    if: github.event.pull_request.merged == true
+    runs-on: [vcp-runner]
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22.4
+          cache: npm
+
+      - name: Install VCR CLI
+        run: |
+          sudo curl -L https://raw.githubusercontent.com/Vonage/cloud-runtime-cli/main/script/install.sh | sudo sh
+          vcr -v
+
+      - name: Download instance_id artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: instance_id
+
+      - name: Read instance_id
+        id: read_instance_id
+        run: |
+          INSTANCE_ID=$(cat instance_id.txt)
+          echo "instance_id=$INSTANCE_ID" >> $GITHUB_OUTPUT
+
+      - name: Delete VCR instance
+        run: |
+          vcr instance remove --id ${{ steps.read_instance_id.outputs.instance_id }} --app-id ${{ secrets.APP_ID }} --api-key ${{ secrets.VCR_API_KEY }} --api-secret ${{ secrets.VCR_API_SECRET }}
