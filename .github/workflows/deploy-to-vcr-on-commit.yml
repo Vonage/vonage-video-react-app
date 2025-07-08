@@ -49,8 +49,10 @@ jobs:
           VCR_URL=$(grep -oE 'https://[a-zA-Z0-9.-]+\.vonage\.cloud' deploy-vcr-logs.log | head -1)
           INSTANCE_ID=$(grep -oE 'Instance ID: [a-zA-Z0-9-]+' deploy-vcr-logs.log | head -1 | awk '{print $3}')
           echo "vcr_url=$VCR_URL" >> $GITHUB_OUTPUT
-          echo "$INSTANCE_ID"
           echo "$INSTANCE_ID" > instance_id.txt
+
+      - name: Show deploy-vcr-logs.log
+        run: cat deploy-vcr-logs.log
 
       # This is needed to be able to use the instance_id in the cleanup workflow
       - name: Upload instance_id artifact
@@ -64,5 +66,5 @@ jobs:
         with:
           issue-number: ${{ github.event.pull_request.number }}
           body: |
-            🚀 VCR instance deployed for commit hash: `${{ github.sha }}`)
+            🚀 VCR instance deployed for the commit hash: `${{ github.sha }}`
             [View VCR Instance](${{ steps.deploy.outputs.vcr_url }})
