@@ -20,4 +20,12 @@ describe('getSessionStorageService', () => {
     // Assert it returns VcrSessionStorage
     expect(sessionStorage).toBeInstanceOf(VcrSessionStorage);
   });
+
+  it('should return in-memory session storage when not using VCR', async () => {
+    const { default: getSessionStorageService } = await import('../sessionStorageService');
+    const { default: InMemorySessionStorage } = await import('../storage/inMemorySessionStorage');
+
+    const sessionStorage: SessionStorage = getSessionStorageService();
+    expect(sessionStorage).toBeInstanceOf(InMemorySessionStorage);
+  });
 });

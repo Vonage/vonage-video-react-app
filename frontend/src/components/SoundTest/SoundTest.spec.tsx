@@ -1,5 +1,6 @@
 import { describe, it, expect, beforeEach, vi, Mock, afterAll } from 'vitest';
 import { act, render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import SportsFootballIcon from '@mui/icons-material/SportsFootball';
 import SoundTest from './SoundTest';
 import useAudioOutputContext from '../../hooks/useAudioOutputContext';
@@ -151,5 +152,25 @@ describe('SoundTest', () => {
 
     const displayedText = screen.getByText('Stop testing');
     expect(displayedText).toBeInTheDocument();
+  });
+
+  it('stops playing the sound when user clicks away', async () => {
+    render(
+      <AudioOutputProvider>
+        <SoundTest>
+          <SportsFootballIcon />
+        </SoundTest>
+      </AudioOutputProvider>
+    );
+
+    const renderedSoundTest = screen.getByTestId('soundTest');
+    act(() => {
+      renderedSoundTest.click();
+    });
+
+    expect(playMock).toHaveBeenCalledOnce();
+
+    await userEvent.click(document.body);
+    expect(pauseMock).toHaveBeenCalledOnce();
   });
 });

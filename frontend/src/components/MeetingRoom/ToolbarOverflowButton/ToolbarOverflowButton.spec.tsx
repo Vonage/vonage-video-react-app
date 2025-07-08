@@ -5,6 +5,10 @@ import { SessionContextType } from '../../../Context/SessionProvider/session';
 import ToolbarOverflowButton from './ToolbarOverflowButton';
 import useUserContext from '../../../hooks/useUserContext';
 import { UserContextType } from '../../../Context/user';
+import {
+  ToolbarOverflowMenuProps,
+  CaptionsState,
+} from '../ToolbarOverflowMenu/ToolbarOverflowMenu';
 
 vi.mock('../../../hooks/useSessionContext');
 vi.mock('../../../hooks/useUserContext');
@@ -34,25 +38,28 @@ describe('ToolbarOverflowButton', () => {
     mockUseUserContext.mockReturnValue(defaultUserContext);
   });
 
+  const defaultProps: ToolbarOverflowMenuProps = {
+    toggleShareScreen: vi.fn(),
+    isSharingScreen: false,
+    toolbarButtonsCount: 0,
+    isEmojiGridOpen: false,
+    setIsEmojiGridOpen: vi.fn(),
+    closeMenu: vi.fn(),
+    isOpen: false,
+    captionsState: {
+      isUserCaptionsEnabled: false,
+      setIsUserCaptionsEnabled: vi.fn(),
+      setCaptionsErrorResponse: vi.fn(),
+    } as CaptionsState,
+  };
+
   it('renders', () => {
-    render(
-      <ToolbarOverflowButton
-        toggleShareScreen={vi.fn()}
-        isSharingScreen={false}
-        toolbarButtonsCount={0}
-      />
-    );
+    render(<ToolbarOverflowButton {...defaultProps} />);
     expect(screen.queryByTestId('hidden-toolbar-items')).toBeInTheDocument();
   });
 
   it('toggling shows and hides the toolbar buttons', () => {
-    render(
-      <ToolbarOverflowButton
-        toggleShareScreen={vi.fn()}
-        isSharingScreen={false}
-        toolbarButtonsCount={0}
-      />
-    );
+    render(<ToolbarOverflowButton {...defaultProps} />);
 
     expect(screen.queryByTestId('layout-button')).not.toBeVisible();
     expect(screen.queryByTestId('emoji-grid-button')).not.toBeVisible();
@@ -68,13 +75,7 @@ describe('ToolbarOverflowButton', () => {
   });
 
   it('should have the unread messages badge present', () => {
-    render(
-      <ToolbarOverflowButton
-        toggleShareScreen={vi.fn()}
-        isSharingScreen={false}
-        toolbarButtonsCount={0}
-      />
-    );
+    render(<ToolbarOverflowButton {...defaultProps} />);
 
     // We expect the ChatButton in the ToolbarOverflowMenu and the ToolbarOverflowButton to have an unread messages badge present
     expect(screen.queryAllByTestId('chat-button-unread-count').length).toBe(2);

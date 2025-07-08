@@ -7,7 +7,7 @@
 #### What are the relevant tickets?
 A maintainer will add this ticket number.
 
-Resolves [VIDCS-](https://jira.vonage.com/browse/VIDCS-)
+Resolves [VIDSOL-](https://jira.vonage.com/browse/VIDSOL-)
 
 #### Checklist
 [ ] Branch is based on `develop` (not `main`).

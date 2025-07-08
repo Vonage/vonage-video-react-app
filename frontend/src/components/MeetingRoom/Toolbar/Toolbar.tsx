@@ -1,4 +1,4 @@
-import { ReactElement, useCallback, useRef, useState } from 'react';
+import { Dispatch, ReactElement, SetStateAction, useCallback, useRef, useState } from 'react';
 import ScreenSharingButton from '../../ScreenSharingButton';
 import TimeRoomNameMeetingRoom from '../TimeRoomName';
 import ExitButton from '../ExitButton';
@@ -6,6 +6,7 @@ import useSessionContext from '../../../hooks/useSessionContext';
 import LayoutButton from '../LayoutButton';
 import ParticipantListButton from '../ParticipantListButton';
 import ArchivingButton from '../ArchivingButton';
+import CaptionsButton from '../CaptionsButton';
 import ChatButton from '../ChatButton';
 import { RightPanelActiveTab } from '../../../hooks/useRightPanel';
 import ReportIssueButton from '../ReportIssueButton';
@@ -15,6 +16,12 @@ import isReportIssueEnabled from '../../../utils/isReportIssueEnabled';
 import useToolbarButtons from '../../../hooks/useToolbarButtons';
 import DeviceControlButton from '../DeviceControlButton';
 
+export type CaptionsState = {
+  isUserCaptionsEnabled: boolean;
+  setIsUserCaptionsEnabled: Dispatch<SetStateAction<boolean>>;
+  setCaptionsErrorResponse: Dispatch<SetStateAction<string | null>>;
+};
+
 export type ToolbarProps = {
   toggleShareScreen: () => void;
   isSharingScreen: boolean;
@@ -23,6 +30,7 @@ export type ToolbarProps = {
   toggleChat: () => void;
   toggleReportIssue: () => void;
   participantCount: number;
+  captionsState: CaptionsState;
 };
 
 /**
@@ -36,6 +44,7 @@ export type ToolbarProps = {
  * - Screensharing button (only on desktop devices)
  * - Button to toggle current layout (grid or active speaker)
  * - Button to express yourself (emojis)
+ * - Button to toggle captions on and off
  * - Button to open a pop-up to start meeting recording (archiving)
  * - Button containing hidden toolbar items when the viewport is narrow
  * - Button to exit a meeting (redirects to the goodbye page)
@@ -44,7 +53,7 @@ export type ToolbarProps = {
  *  @property {boolean} isSharingScreen - the prop to check if the user is currently sharing a screen
  *  @property {boolean} isParticipantListOpen - the prop to check if the participant list is open
  *  @property {() => void} openParticipantList - the prop to open the participant list
- *  @property {number} participantCount - the prop that holds the current number of participants
+ *  @property {CaptionsState} captionsState - the state of the captions, including whether they are enabled and a function to set an error message
  * @returns {ReactElement} - the toolbar component
  */
 const Toolbar = ({
@@ -55,6 +64,7 @@ const Toolbar = ({
   toggleChat,
   toggleReportIssue,
   participantCount,
+  captionsState,
 }: ToolbarProps): ReactElement => {
   const { disconnect, subscriberWrappers } = useSessionContext();
   const isViewingScreenShare = subscriberWrappers.some((subWrapper) => subWrapper.isScreenshare);
@@ -88,6 +98,7 @@ const Toolbar = ({
       isParentOpen
       key="EmojiGridButton"
     />,
+    <CaptionsButton key="CaptionsButton" captionsState={captionsState} />,
     <ArchivingButton key="ArchivingButton" />,
     isReportIssueEnabled() && (
       <ReportIssueButton
@@ -161,6 +172,7 @@ const Toolbar = ({
               isSharingScreen={isSharingScreen}
               toggleShareScreen={toggleShareScreen}
               toolbarButtonsCount={toolbarButtonsDisplayed}
+              captionsState={captionsState}
             />
           )}
           <ExitButton handleLeave={handleLeave} />

@@ -1,14 +1,21 @@
-import { ReactElement, useState } from 'react';
+import { Dispatch, ReactElement, useState, SetStateAction } from 'react';
 import { Tooltip } from '@mui/material';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import ToolbarButton from '../ToolbarButton';
 import ToolbarOverflowMenu from '../ToolbarOverflowMenu';
 import UnreadMessagesBadge from '../UnreadMessagesBadge';
 
+export type CaptionsState = {
+  isUserCaptionsEnabled: boolean;
+  setIsUserCaptionsEnabled: Dispatch<SetStateAction<boolean>>;
+  setCaptionsErrorResponse: Dispatch<SetStateAction<string | null>>;
+};
+
 export type ToolbarOverflowButtonProps = {
   toggleShareScreen: () => void;
   isSharingScreen: boolean;
   toolbarButtonsCount: number;
+  captionsState: CaptionsState;
 };
 
 /**
@@ -20,12 +27,14 @@ export type ToolbarOverflowButtonProps = {
  *  @property {Function} toggleShareScreen - toggles the user's screenshare
  *  @property {boolean} isSharingScreen - whether the user is sharing their screen
  *  @property {number} toolbarButtonsCount - number of buttons displayed on the toolbar
+ *  @property {CaptionsState} captionsState - the state of the captions, including whether they are enabled and functions to set error messages
  * @returns {ReactElement} - The ToolbarOverflowButton Component.
  */
 const ToolbarOverflowButton = ({
   toggleShareScreen,
   isSharingScreen,
   toolbarButtonsCount,
+  captionsState,
 }: ToolbarOverflowButtonProps): ReactElement => {
   const [isToolbarOverflowMenuOpen, setIsToolbarOverflowMenuOpen] = useState<boolean>(false);
   const [openEmojiGridMobile, setOpenEmojiGridMobile] = useState<boolean>(true);
@@ -75,6 +84,7 @@ const ToolbarOverflowButton = ({
         isSharingScreen={isSharingScreen}
         closeMenu={handleClickAway}
         toolbarButtonsCount={toolbarButtonsCount}
+        captionsState={captionsState}
       />
     </>
   );

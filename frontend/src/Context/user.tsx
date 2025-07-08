@@ -23,6 +23,7 @@ export type UserType = {
     name: string; // The user's name
     blur: boolean; // Whether background blur is enabled
     noiseSuppression: boolean; // Whether noise suppression is enabled
+    publishCaptions: boolean; // Whether captions are published
     audioSource?: string; // The selected audio input source (optional)
     videoSource?: string; // The selected video input source (optional)
   };
@@ -60,6 +61,7 @@ const UserProvider = ({ children }: UserProviderProps): ReactElement => {
       noiseSuppression,
       audioSource: undefined,
       videoSource: undefined,
+      publishCaptions: true,
     },
     issues: {
       reconnections: 0, // Start with zero reconnections

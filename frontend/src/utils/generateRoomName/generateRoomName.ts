@@ -216,7 +216,6 @@ const animals = [
   'trout',
   'turkey',
   'turtle',
-  'vicuña',
   'viper',
   'vulture',
   'wallaby',

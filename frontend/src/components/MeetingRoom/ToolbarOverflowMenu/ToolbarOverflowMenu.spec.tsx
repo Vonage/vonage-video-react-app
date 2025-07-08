@@ -2,7 +2,7 @@ import { afterEach, beforeEach, describe, expect, it, Mock, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import { useRef } from 'react';
 import { Button } from '@mui/material';
-import ToolbarOverflowMenu from './ToolbarOverflowMenu';
+import ToolbarOverflowMenu, { CaptionsState } from './ToolbarOverflowMenu';
 import * as util from '../../../utils/util';
 import isReportIssueEnabled from '../../../utils/isReportIssueEnabled';
 
@@ -19,6 +19,12 @@ const mockOpenEmojiGrid = vi.fn();
 const mockHandleClickAway = vi.fn();
 const mockIsReportIssueEnabled = isReportIssueEnabled as Mock<[], boolean>;
 
+const mockCaptionsState = {
+  isUserCaptionsEnabled: false,
+  setIsUserCaptionsEnabled: vi.fn(),
+  setCaptionsErrorResponse: vi.fn(),
+} as CaptionsState;
+
 const TestComponent = ({ defaultOpen = false }: { defaultOpen?: boolean }) => {
   const anchorRef = useRef<HTMLButtonElement | null>(null);
 
@@ -33,6 +39,7 @@ const TestComponent = ({ defaultOpen = false }: { defaultOpen?: boolean }) => {
         toggleShareScreen={vi.fn()}
         isSharingScreen={false}
         toolbarButtonsCount={0}
+        captionsState={mockCaptionsState}
       />
     </>
   );
@@ -67,6 +74,7 @@ describe('ToolbarOverflowMenu', () => {
     expect(screen.getByTestId('screensharing-button')).toBeVisible();
     expect(screen.getByTestId('layout-button')).toBeVisible();
     expect(screen.getByTestId('archiving-button')).toBeVisible();
+    expect(screen.getByTestId('captions-button')).toBeVisible();
     expect(screen.getByTestId('emoji-grid-button')).toBeVisible();
     expect(screen.getByTestId('report-issue-button')).toBeVisible();
     expect(screen.getByTestId('participant-list-button')).toBeVisible();
@@ -79,6 +87,7 @@ describe('ToolbarOverflowMenu', () => {
     expect(screen.getByTestId('screensharing-button')).toBeVisible();
     expect(screen.getByTestId('layout-button')).toBeVisible();
     expect(screen.getByTestId('archiving-button')).toBeVisible();
+    expect(screen.getByTestId('captions-button')).toBeVisible();
     expect(screen.getByTestId('emoji-grid-button')).toBeVisible();
     expect(screen.queryByTestId('report-issue-button')).not.toBeInTheDocument();
     expect(screen.getByTestId('participant-list-button')).toBeVisible();
