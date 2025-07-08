@@ -56,5 +56,5 @@ jobs:
           issue-number: ${{ github.event.pull_request.number }}
           body: |
             <!-- instance_id:${INSTANCE_ID} -->
-            🚀 VCR instance deployed for the pull request: `${{ github.event.pull_request.number }}`
+            🚀 VCR instance deployed for the pull requests: `${{ github.event.pull_request.number }}`
             [View VCR Instance](${{ steps.deploy.outputs.vcr_url }})
