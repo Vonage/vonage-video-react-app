@@ -48,13 +48,13 @@ jobs:
           VCR_URL=$(grep -oE 'https://[a-zA-Z0-9.-]+\.vonage\.cloud' deploy-vcr-logs.log | head -1)
           INSTANCE_ID=$(grep -oE 'Instance id: [a-z0-9-]+' deploy-vcr-logs.log | head -1 | awk '{print $3}')
           echo "vcr_url=$VCR_URL" >> $GITHUB_OUTPUT
-          echo "$INSTANCE_ID" > instance_id.txt
+          echo "instance_id=$INSTANCE_ID" >> $GITHUB_OUTPUT
 
       - name: Comment VCR instance link
         uses: peter-evans/create-or-update-comment@v3
         with:
           issue-number: ${{ github.event.pull_request.number }}
           body: |
-            <!-- instance_id:${INSTANCE_ID} -->
+            <!-- instance_id:${{ steps.deploy.outputs.instance_id }} -->
             🚀 VCR instance deployed for the pull requests: `${{ github.event.pull_request.number }}`
             [View VCR Instance](${{ steps.deploy.outputs.vcr_url }})
