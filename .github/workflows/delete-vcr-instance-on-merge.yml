@@ -34,7 +34,7 @@ jobs:
         with:
           script: |
             const pr = context.payload.pull_request;
-            const { data: comments } = await github.issues.listComments({
+            const { data: comments } = await github.rest.issues.listComments({
               owner: context.repo.owner,
               repo: context.repo.repo,
               issue_number: pr.number,
