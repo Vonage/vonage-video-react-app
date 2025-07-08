@@ -11,7 +11,6 @@ concurrency:
 
 jobs:
   delete-vcr-instance:
-    if: github.event.pull_request.merged == true
     runs-on: [vcp-runner]
 
     steps:
