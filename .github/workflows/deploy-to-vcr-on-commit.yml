@@ -47,12 +47,9 @@ jobs:
         run: |
           vcr deploy --filename vcr-gha.temp.yml --app-id ${{ secrets.APP_ID }} --api-key ${{ secrets.VCR_API_KEY }} --api-secret ${{ secrets.VCR_API_SECRET }} --region aws.euw1 --graphql-endpoint https://graphql.euw1.runtime.vonage.cloud/v1/graphql --timeout=15m 2>&1 | tee deploy-vcr-logs.log
           VCR_URL=$(grep -oE 'https://[a-zA-Z0-9.-]+\.vonage\.cloud' deploy-vcr-logs.log | head -1)
-          INSTANCE_ID=$(grep -oE 'Instance ID: [a-zA-Z0-9-]+' deploy-vcr-logs.log | head -1 | awk '{print $3}')
+          INSTANCE_ID=$(grep -oE 'Instance id: [a-z0-9-]+' deploy-vcr-logs.log | head -1 | awk '{print $3}')
           echo "vcr_url=$VCR_URL" >> $GITHUB_OUTPUT
           echo "$INSTANCE_ID" > instance_id.txt
-
-      - name: Show deploy-vcr-logs.log
-        run: cat deploy-vcr-logs.log
 
       # This is needed to be able to use the instance_id in the cleanup workflow
       - name: Upload instance_id artifact
