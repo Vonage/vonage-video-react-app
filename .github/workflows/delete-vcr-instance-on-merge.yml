@@ -45,6 +45,10 @@ jobs:
             if (!match) throw new Error('No instance_id found in PR comments');
             core.setOutput('instance_id', match[1]);
 
-      - name: Delete VCR instance
+      - name: Echo instance_id
         run: |
-          vcr instance remove --id ${{ steps.get_instance_id.outputs.instance_id }} --app-id ${{ secrets.APP_ID }} --api-key ${{ secrets.VCR_API_KEY }} --api-secret ${{ secrets.VCR_API_SECRET }}
+          echo "Instance ID: ${{ steps.get_instance_id.outputs.instance_id }}"
+
+      # - name: Delete VCR instance
+      #   run: |
+      #     vcr instance remove --id ${{ steps.get_instance_id.outputs.instance_id }} --app-id ${{ secrets.APP_ID }} --api-key ${{ secrets.VCR_API_KEY }} --api-secret ${{ secrets.VCR_API_SECRET }}
