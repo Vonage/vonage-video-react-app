@@ -30,7 +30,7 @@ describe('RoomJoinContainer', () => {
     (useNavigate as Mock).mockReturnValue(mockNavigate);
   });
 
-  it('renders all main components', () => {
+  it('renders NewRoomButton, JoinContainerSeparator and JoinExistingRoom components', () => {
     render(
       <MemoryRouter>
         <RoomJoinContainer />

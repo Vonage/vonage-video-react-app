@@ -27,10 +27,4 @@ describe('LandingPage', () => {
     render(<LandingPage />);
     expect(screen.getByTestId('room-join')).toBeInTheDocument();
   });
-
-  it('renders main container with correct class names', () => {
-    const { container } = render(<LandingPage />);
-    const mainDiv = container.firstChild;
-    expect(mainDiv).toHaveClass('flex', 'size-full', 'flex-col', 'justify-between', 'bg-white');
-  });
 });

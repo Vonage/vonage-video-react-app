@@ -1,7 +1,7 @@
 import { describe, expect, it, vi, beforeEach } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import NewRoomButton from './index';
+import NewRoomButton from './NewRoomButton';
 
 describe('NewRoomButton', () => {
   const mockHandleNewRoom = vi.fn();

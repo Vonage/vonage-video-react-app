@@ -6,7 +6,6 @@ import usePreviewPublisherContext from '../../../hooks/usePreviewPublisherContex
 import BlurButton from './BlurButton';
 
 vi.mock('../../../hooks/usePreviewPublisherContext');
-vi.mock('../../hooks/usePreviewPublisherContext.tsx');
 
 vi.mock('@vonage/client-sdk-video', () => ({
   hasMediaProcessorSupport: vi.fn(),
@@ -19,47 +18,24 @@ const mockUsePreviewPublisherContext = usePreviewPublisherContext as unknown as 
 >;
 
 const mockToggleBlur = vi.fn();
-const fullMockPreviewPublisherContext: PreviewPublisherContextType = {
-  toggleBlur: mockToggleBlur,
-  hasBlur: false,
-  isAudioEnabled: true,
-  isPublishing: false,
-  isVideoEnabled: true,
-  publisher: null,
-  destroyPublisher: vi.fn(),
-  publisherVideoElement: undefined,
-  toggleAudio: vi.fn(),
-  toggleVideo: vi.fn(),
-  localAudioSource: undefined,
-  localVideoSource: undefined,
-  accessStatus: 'allowed',
-  changeAudioSource: vi.fn(),
-  changeVideoSource: vi.fn(),
-  initLocalPublisher: vi.fn(),
-  speechLevel: 0,
-};
 
 describe('BlurButton component', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    mockUsePreviewPublisherContext.mockReturnValue({
+      hasBlur: false,
+      toggleBlur: mockToggleBlur,
+    } as unknown as PreviewPublisherContextType);
   });
 
   it('does not render if media processor is not supported', () => {
     mockHasMediaProcessorSupport.mockReturnValue(false);
-    mockUsePreviewPublisherContext.mockReturnValue({
-      ...fullMockPreviewPublisherContext,
-      hasBlur: false,
-    });
     const { container } = render(<BlurButton />);
     expect(container).toBeEmptyDOMElement();
   });
 
   it('renders BlurIcon when blur is off', () => {
     mockHasMediaProcessorSupport.mockReturnValue(true);
-    mockUsePreviewPublisherContext.mockReturnValue({
-      ...fullMockPreviewPublisherContext,
-      hasBlur: false,
-    });
     render(<BlurButton />);
     expect(screen.getByLabelText(/toggle background blur/i)).toBeInTheDocument();
     expect(screen.getByTestId('blurIcon')).toBeInTheDocument();
@@ -68,9 +44,8 @@ describe('BlurButton component', () => {
   it('renders BlurOff icon when blur is on', () => {
     mockHasMediaProcessorSupport.mockReturnValue(true);
     mockUsePreviewPublisherContext.mockReturnValue({
-      ...fullMockPreviewPublisherContext,
       hasBlur: true,
-    });
+    } as unknown as PreviewPublisherContextType);
     render(<BlurButton />);
     expect(screen.getByLabelText(/toggle background blur/i)).toBeInTheDocument();
     expect(screen.getByTestId('BlurOffIcon')).toBeInTheDocument();
@@ -78,12 +53,8 @@ describe('BlurButton component', () => {
 
   it('calls toggleBlur when button is clicked', async () => {
     mockHasMediaProcessorSupport.mockReturnValue(true);
-    mockUsePreviewPublisherContext.mockReturnValue({
-      ...fullMockPreviewPublisherContext,
-      hasBlur: false,
-    });
     render(<BlurButton />);
-    const button = screen.getByRole('button');
+    const button = screen.getByTestId('video-container-button');
     expect(button).toBeInTheDocument();
     await button.click();
     expect(mockToggleBlur).toHaveBeenCalled();
