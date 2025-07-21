@@ -40,6 +40,7 @@ const MeetingRoom = (): ReactElement => {
     rightPanelActiveTab,
     toggleChat,
     toggleParticipantList,
+    toggleBackgroundEffects,
     closeRightPanel,
     toggleReportIssue,
   } = useSessionContext();
@@ -123,6 +124,7 @@ const MeetingRoom = (): ReactElement => {
         toggleShareScreen={toggleShareScreen}
         rightPanelActiveTab={rightPanelActiveTab}
         toggleParticipantList={toggleParticipantList}
+        toggleBackgroundEffects={toggleBackgroundEffects}
         toggleChat={toggleChat}
         toggleReportIssue={toggleReportIssue}
         participantCount={

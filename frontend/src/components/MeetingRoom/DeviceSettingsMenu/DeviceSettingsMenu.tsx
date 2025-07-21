@@ -17,6 +17,7 @@ import VideoDevicesOptions from '../VideoDevicesOptions';
 export type DeviceSettingsMenuProps = {
   deviceType: 'audio' | 'video';
   handleToggle: () => void;
+  toggleBackgroundEffects: () => void;
   isOpen: boolean;
   anchorRef: RefObject<HTMLInputElement | null>;
   handleClose: (event: MouseEvent | TouchEvent) => void;
@@ -42,6 +43,7 @@ export type DeviceSettingsMenuProps = {
 const DeviceSettingsMenu = ({
   deviceType,
   handleToggle,
+  toggleBackgroundEffects,
   isOpen,
   anchorRef,
   handleClose,
@@ -70,7 +72,7 @@ const DeviceSettingsMenu = ({
         {hasMediaProcessorSupport() && (
           <>
             <DropdownSeparator />
-            <VideoDevicesOptions customLightBlueColor={customLightBlueColor} />
+            <VideoDevicesOptions toggleBackgroundEffects={toggleBackgroundEffects} />
           </>
         )}
       </>

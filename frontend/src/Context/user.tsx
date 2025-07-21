@@ -49,7 +49,7 @@ export type UserProviderProps = {
 const UserProvider = ({ children }: UserProviderProps): ReactElement => {
   // Load initial settings from local storage
   const noiseSuppression = getStorageItem(STORAGE_KEYS.NOISE_SUPPRESSION) === 'true';
-  const blur = getStorageItem(STORAGE_KEYS.BACKGROUND_BLUR) === 'true';
+  const blur = getStorageItem(STORAGE_KEYS.BACKGROUND_REPLACEMENT) === 'true';
   const name = getStorageItem(STORAGE_KEYS.USERNAME) ?? '';
 
   const [user, setUser] = useState<UserType>({

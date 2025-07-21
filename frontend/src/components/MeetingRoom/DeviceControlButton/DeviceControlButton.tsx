@@ -12,6 +12,7 @@ import DeviceSettingsMenu from '../DeviceSettingsMenu';
 
 export type DeviceControlButtonProps = {
   deviceType: 'audio' | 'video';
+  toggleBackgroundEffects: () => void; // Only video devices
 };
 
 /**
@@ -23,7 +24,10 @@ export type DeviceControlButtonProps = {
  *  @property {boolean} deviceType - (optional) indicates the type of the device to control.
  * @returns {ReactElement} The DeviceControlButton component.
  */
-const DeviceControlButton = ({ deviceType }: DeviceControlButtonProps): ReactElement => {
+const DeviceControlButton = ({
+  deviceType,
+  toggleBackgroundEffects,
+}: DeviceControlButtonProps): ReactElement => {
   const { isVideoEnabled, toggleAudio, toggleVideo, isAudioEnabled } = usePublisherContext();
   const isAudio = deviceType === 'audio';
   const [open, setOpen] = useState<boolean>(false);
@@ -98,6 +102,7 @@ const DeviceControlButton = ({ deviceType }: DeviceControlButtonProps): ReactEle
       <DeviceSettingsMenu
         deviceType={deviceType}
         handleToggle={handleToggle}
+        toggleBackgroundEffects={toggleBackgroundEffects}
         anchorRef={anchorRef}
         isOpen={open}
         handleClose={handleClose}

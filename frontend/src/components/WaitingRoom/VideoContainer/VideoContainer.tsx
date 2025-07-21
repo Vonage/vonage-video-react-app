@@ -2,7 +2,6 @@ import { useRef, useState, useEffect, ReactElement } from 'react';
 import { Stack } from '@mui/material';
 import MicButton from '../MicButton';
 import CameraButton from '../CameraButton';
-import BlurButton from '../BlurButton';
 import VideoLoading from '../VideoLoading';
 import waitUntilPlaying from '../../../utils/waitUntilPlaying';
 import useUserContext from '../../../hooks/useUserContext';
@@ -12,6 +11,8 @@ import PreviewAvatar from '../PreviewAvatar';
 import VoiceIndicatorIcon from '../../MeetingRoom/VoiceIndicator/VoiceIndicator';
 import VignetteEffect from '../VignetteEffect';
 import useIsSmallViewport from '../../../hooks/useIsSmallViewport';
+import BackgroundEffectsButton from '../BackgroundEffectsButton';
+import BackgroundEffectsDialog from '../BackgroundEffectsDialog';
 
 export type VideoContainerProps = {
   username: string;
@@ -29,6 +30,7 @@ export type VideoContainerProps = {
 const VideoContainer = ({ username }: VideoContainerProps): ReactElement => {
   const containerRef = useRef<HTMLDivElement>(null);
   const [videoLoading, setVideoLoading] = useState<boolean>(true);
+  const [backgroundEffectsOpen, setBackgroundEffectsOpen] = useState<boolean>(false);
   const { user } = useUserContext();
   const { publisherVideoElement, isVideoEnabled, isAudioEnabled, speechLevel } =
     usePreviewPublisherContext();
@@ -86,7 +88,11 @@ const VideoContainer = ({ username }: VideoContainerProps): ReactElement => {
             <CameraButton />
           </Stack>
           <div className="absolute right-[20px]">
-            <BlurButton />
+            <BackgroundEffectsButton onClick={() => setBackgroundEffectsOpen(true)} />
+            <BackgroundEffectsDialog
+              backgroundEffectsOpen={backgroundEffectsOpen}
+              setBackgroundEffectsOpen={setBackgroundEffectsOpen}
+            />
           </div>
         </div>
       )}

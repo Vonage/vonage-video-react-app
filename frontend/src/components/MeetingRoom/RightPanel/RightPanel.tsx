@@ -4,6 +4,7 @@ import Chat from '../Chat';
 import ReportIssue from '../ReportIssue';
 import type { RightPanelActiveTab } from '../../../hooks/useRightPanel';
 import useIsSmallViewport from '../../../hooks/useIsSmallViewport';
+import BackgroundEffects from '../BackgroundEffects/BackgroundEffects';
 
 export type RightPanelProps = {
   handleClose: () => void;
@@ -31,6 +32,7 @@ const RightPanel = ({ activeTab, handleClose }: RightPanelProps): ReactElement =
   return (
     <div data-testid="right-panel" className={className}>
       <ParticipantList handleClose={handleClose} isOpen={activeTab === 'participant-list'} />
+      <BackgroundEffects handleClose={handleClose} isOpen={activeTab === 'background-effects'} />
       <Chat handleClose={handleClose} isOpen={activeTab === 'chat'} />
       <ReportIssue handleClose={handleClose} isOpen={activeTab === 'issues'} />
     </div>
