@@ -4,7 +4,7 @@ import Chat from '../Chat';
 import ReportIssue from '../ReportIssue';
 import type { RightPanelActiveTab } from '../../../hooks/useRightPanel';
 import useIsSmallViewport from '../../../hooks/useIsSmallViewport';
-import BackgroundEffects from '../BackgroundEffects/BackgroundEffects';
+import BackgroundEffects from '../BackgroundEffectsLayout/BackgroundEffectsLayout';
 
 export type RightPanelProps = {
   handleClose: () => void;
@@ -17,7 +17,7 @@ export type RightPanelProps = {
  * The panel displays participant list or chat tab.
  * @param {RightPanelProps} props - props for the component
  *   @property {RightPanelActiveTab} activeTab - string indicating which tab to display, or 'closed' if closed
- *   @property {() => void} handleClose - click handler to close the panel
+ *   @property {Function} handleClose - click handler to close the panel
  * @returns {ReactElement} RightPanel Component
  */
 const RightPanel = ({ activeTab, handleClose }: RightPanelProps): ReactElement => {

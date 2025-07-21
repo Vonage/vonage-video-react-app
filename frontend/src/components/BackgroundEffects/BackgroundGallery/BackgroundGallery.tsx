@@ -1,7 +1,7 @@
 import React, { ReactElement } from 'react';
 import { Box } from '@mui/material';
-import SelectableOption from '../SelectableOption/SelectableOption';
-import { BACKGROUNDS_PATH } from '../../../../utils/constants';
+import { BACKGROUNDS_PATH } from '../../../utils/constants';
+import SelectableOption from '../SelectableOption';
 
 const backgrounds = [
   { id: 'background', file: 'bookshelf-room.jpg' },

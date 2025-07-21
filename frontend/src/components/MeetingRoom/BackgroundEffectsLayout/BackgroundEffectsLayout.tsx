@@ -1,16 +1,11 @@
-import React, { ReactElement, useCallback, useEffect, useRef, useState } from 'react';
+import React, { ReactElement, useCallback, useEffect, useState } from 'react';
 import { Box, Button, Typography } from '@mui/material';
-import BackgroundGallery from './BackgroundGallery/BackgroundGallery';
-import EffectOptionButtons from './EffectOptionButtons/EffectOptionButtons';
 import usePublisherContext from '../../../hooks/usePublisherContext';
-import useLayoutManager from '../../../hooks/useLayoutManager';
-import getLayoutBoxes from '../../../utils/helpers/getLayoutBoxes';
 import RightPanelTitle from '../RightPanel/RightPanelTitle';
-import Publisher from '../../Publisher';
-import useElementDimensions from '../../../hooks/useElementDimensions';
-import useIsSmallViewport from '../../../hooks/useIsSmallViewport';
 import { setStorageItem, STORAGE_KEYS } from '../../../utils/storage';
 import { BACKGROUNDS_PATH } from '../../../utils/constants';
+import EffectOptionButtons from '../../BackgroundEffects/EffectOptionButtons/EffectOptionButtons';
+import BackgroundGallery from '../../BackgroundEffects/BackgroundGallery/BackgroundGallery';
 
 export type BackgroundEffectsProps = {
   handleClose: () => void;
@@ -24,7 +19,7 @@ export type BackgroundEffectsProps = {
  * This component manages the UI for background effects in the meeting room.
  * @param {BackgroundEffectsProps} props - The props for the component.
  *   @property {boolean} isOpen - Whether the background effects panel is open.
- *   @property {() => void} handleClose - Function to close the panel.
+ *   @property {Function} handleClose - Function to close the panel.
  *   @property {boolean} fromPreview - Optional flag to indicate if the component is used in preview mode.
  * @returns {ReactElement} The background effects panel component.
  */
@@ -34,10 +29,7 @@ const BackgroundEffects = ({
   fromPreview = false,
 }: BackgroundEffectsProps): ReactElement | false => {
   const [backgroundSelected, setBackgroundSelected] = useState('none');
-  const { isPublishing, publisher } = usePublisherContext();
-  const getLayout = useLayoutManager();
-  const wrapRef = useRef<HTMLDivElement | null>(null);
-  const wrapDimensions = useElementDimensions({ elementRef: wrapRef });
+  const { publisher } = usePublisherContext();
 
   const handleBackgroundSelect = async () => {
     setBackgroundSelected(backgroundSelected);
@@ -84,34 +76,6 @@ const BackgroundEffects = ({
     setInitialBackgroundReplacement();
   }, [publisher, setInitialBackgroundReplacement]);
 
-  // Get layout boxes for publisher
-  /* const layoutBoxes = getLayoutBoxes({
-    activeSpeakerId: undefined,
-    getLayout,
-    pinnedSubscriberCount: 0,
-    hiddenSubscribers: [],
-    isSharingScreen: false,
-    layoutMode: 'grid',
-    publisher,
-    screensharingPublisher: null,
-    sessionHasScreenshare: false,
-    subscribersInDisplayOrder: [],
-    wrapDimensions,
-    wrapRef,
-  });
-
-  const customPublisherBox = {
-    x: 50,
-    y: 50,
-    width: 320,
-    height: 180,
-    zIndex: 1,
-    left: 50,
-    top: 50,
-  };
-
-  layoutBoxes.publisherBox = customPublisherBox; */
-
   return (
     isOpen && (
       <>
@@ -122,13 +86,6 @@ const BackgroundEffects = ({
         ) : (
           <RightPanelTitle title="Background Effects" handleClose={handleClose} />
         )}
-        <div ref={wrapRef} id="wrapper">
-          <div id="video-container" className="relative size-full">
-            {/* isPublishing && layoutBoxes?.publisherBox && (
-              <Publisher box={layoutBoxes.publisherBox} />
-            ) */}
-          </div>
-        </div>
 
         <Box
           sx={{

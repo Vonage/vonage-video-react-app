@@ -87,13 +87,6 @@ const VideoContainer = ({ username }: VideoContainerProps): ReactElement => {
             <MicButton />
             <CameraButton />
           </Stack>
-          <div className="absolute right-[20px]">
-            <BackgroundEffectsButton onClick={() => setBackgroundEffectsOpen(true)} />
-            <BackgroundEffectsDialog
-              backgroundEffectsOpen={backgroundEffectsOpen}
-              setBackgroundEffectsOpen={setBackgroundEffectsOpen}
-            />
-          </div>
         </div>
       )}
     </div>

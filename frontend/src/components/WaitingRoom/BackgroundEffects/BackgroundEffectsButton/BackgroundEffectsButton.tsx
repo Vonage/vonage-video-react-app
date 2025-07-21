@@ -2,7 +2,7 @@ import { Box, Tooltip } from '@mui/material';
 import { hasMediaProcessorSupport } from '@vonage/client-sdk-video';
 import { ReactElement } from 'react';
 import PortraitIcon from '@mui/icons-material/Portrait';
-import VideoContainerButton from '../VideoContainerButton';
+import VideoContainerButton from '../../VideoContainerButton';
 
 /**
  * BackgroundEffectsButton Component

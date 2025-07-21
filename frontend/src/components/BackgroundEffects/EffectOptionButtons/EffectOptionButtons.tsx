@@ -3,7 +3,7 @@ import { Stack } from '@mui/material';
 import BlockIcon from '@mui/icons-material/Block';
 import BlurOnIcon from '@mui/icons-material/BlurOn';
 import AddPhotoAlternateIcon from '@mui/icons-material/AddPhotoAlternate';
-import SelectableOption from '../SelectableOption/SelectableOption';
+import SelectableOption from '../SelectableOption';
 
 const options = [
   { key: 'none', icon: <BlockIcon sx={{ fontSize: '30px' }} /> },
