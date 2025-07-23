@@ -135,4 +135,4 @@ export const SMALL_VIEWPORT = 768;
 /**
  * @constant {string} BACKGROUNDS_PATH - The path to the backgrounds assets directory.
  */
-export const BACKGROUNDS_PATH = '/background/';
+export const BACKGROUNDS_PATH = '/background';

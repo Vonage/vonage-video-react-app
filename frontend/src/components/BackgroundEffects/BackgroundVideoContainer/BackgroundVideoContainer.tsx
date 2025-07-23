@@ -1,41 +1,19 @@
 import { useRef, useState, useEffect, ReactElement } from 'react';
-import { Stack } from '@mui/material';
-import MicButton from '../MicButton';
-import CameraButton from '../CameraButton';
-import VideoLoading from '../VideoLoading';
+import { CircularProgress, useMediaQuery } from '@mui/material';
 import waitUntilPlaying from '../../../utils/waitUntilPlaying';
-import useUserContext from '../../../hooks/useUserContext';
-import usePreviewPublisherContext from '../../../hooks/usePreviewPublisherContext';
-import getInitials from '../../../utils/getInitials';
-import PreviewAvatar from '../PreviewAvatar';
-import VoiceIndicatorIcon from '../../MeetingRoom/VoiceIndicator/VoiceIndicator';
-import VignetteEffect from '../VignetteEffect';
-import useIsSmallViewport from '../../../hooks/useIsSmallViewport';
-import BackgroundEffectsDialog from '../BackgroundEffects/BackgroundEffectsDialog';
-import BackgroundEffectsButton from '../BackgroundEffects/BackgroundEffectsButton';
 
-export type VideoContainerProps = {
-  username: string;
+export type BackgroundVideoContainerProps = {
+  fixedWidth?: boolean;
+  publisherVideoElement?: HTMLObjectElement | HTMLVideoElement | undefined;
 };
 
-/**
- * VideoContainer Component
- *
- * Loads and displays the preview publisher, a representation of what participants would see in the meeting room.
- * Overlaid onto the preview publisher are the audio input toggle button, video input toggle button, and the background blur toggle button (if supported).
- * @param {VideoContainerProps} props - The props for the component.
- *  @property {string} username - The user's username.
- * @returns {ReactElement} - The VideoContainer component.
- */
-const VideoContainer = ({ username }: VideoContainerProps): ReactElement => {
+const BackgroundVideoContainer = ({
+  fixedWidth = false,
+  publisherVideoElement,
+}: BackgroundVideoContainerProps): ReactElement => {
   const containerRef = useRef<HTMLDivElement>(null);
   const [videoLoading, setVideoLoading] = useState<boolean>(true);
-  const [backgroundEffectsOpen, setBackgroundEffectsOpen] = useState<boolean>(false);
-  const { user } = useUserContext();
-  const { publisherVideoElement, isVideoEnabled, isAudioEnabled, speechLevel } =
-    usePreviewPublisherContext();
-  const initials = getInitials(username);
-  const isSmallViewport = useIsSmallViewport();
+  const isMDViewport = useMediaQuery(`(max-width:899px)`);
 
   useEffect(() => {
     if (publisherVideoElement && containerRef.current) {
@@ -43,9 +21,11 @@ const VideoContainer = ({ username }: VideoContainerProps): ReactElement => {
       const myVideoElement = publisherVideoElement as HTMLElement;
       myVideoElement.classList.add('video__element');
       myVideoElement.title = 'publisher-preview';
-      myVideoElement.style.borderRadius = isSmallViewport ? '0px' : '12px';
-      myVideoElement.style.height = isSmallViewport ? '' : '328px';
-      myVideoElement.style.width = isSmallViewport ? '100dvw' : '584px';
+      myVideoElement.style.borderRadius = '12px';
+      myVideoElement.style.maxHeight = isMDViewport ? '80%' : '450px';
+      if (fixedWidth) {
+        myVideoElement.style.width = isMDViewport ? '80%' : '100%';
+      }
       myVideoElement.style.marginLeft = 'auto';
       myVideoElement.style.marginRight = 'auto';
       myVideoElement.style.transform = 'scaleX(-1)';
@@ -58,39 +38,19 @@ const VideoContainer = ({ username }: VideoContainerProps): ReactElement => {
         setVideoLoading(false);
       });
     }
-  }, [isSmallViewport, publisherVideoElement]);
+  }, [isMDViewport, publisherVideoElement, fixedWidth]);
 
+  // TODO: Handle case when video is not enabled (check outside enabled!)
   return (
-    <div
-      className="relative flex aspect-video w-[584px] max-w-full flex-col items-center justify-center bg-black sm:h-[328px] md:rounded-xl"
-      // this was added because overflow: hidden causes issues with rendering
-      // see https://stackoverflow.com/questions/77748631/element-rounded-corners-leaking-out-to-front-when-using-overflow-hidden
-      style={{ WebkitMask: 'linear-gradient(#000 0 0)' }}
-    >
+    <div>
       <div ref={containerRef} />
-      <VignetteEffect />
-      {videoLoading && <VideoLoading />}
-      <PreviewAvatar
-        initials={initials}
-        username={user.defaultSettings.name}
-        isVideoEnabled={isVideoEnabled}
-        isVideoLoading={videoLoading}
-      />
-      {!videoLoading && (
-        <div className="absolute inset-x-0 bottom-[5%] flex h-fit items-center justify-center">
-          {isAudioEnabled && (
-            <div className="absolute left-6 top-8">
-              <VoiceIndicatorIcon publisherAudioLevel={speechLevel} size={24} />
-            </div>
-          )}
-          <Stack direction="row" spacing={2}>
-            <MicButton />
-            <CameraButton />
-          </Stack>
+      {videoLoading && (
+        <div style={{ display: 'flex', justifyContent: 'center', margin: 16 }}>
+          <CircularProgress />
         </div>
       )}
     </div>
   );
 };
 
-export default VideoContainer;
+export default BackgroundVideoContainer;

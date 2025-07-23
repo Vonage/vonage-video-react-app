@@ -29,8 +29,14 @@ const usePublisherOptions = (): PublisherProperties | null => {
       const videoSource = deviceStoreRef.current.getConnectedDeviceId('videoinput');
       const audioSource = deviceStoreRef.current.getConnectedDeviceId('audioinput');
 
-      const { name, noiseSuppression, blur, publishAudio, publishVideo, publishCaptions } =
-        user.defaultSettings;
+      const {
+        name,
+        noiseSuppression,
+        backgroundFilter,
+        publishAudio,
+        publishVideo,
+        publishCaptions,
+      } = user.defaultSettings;
       const initials = getInitials(name);
 
       const audioFilter: AudioFilter | undefined =
@@ -39,9 +45,7 @@ const usePublisherOptions = (): PublisherProperties | null => {
           : undefined;
 
       const videoFilter: VideoFilter | undefined =
-        blur && hasMediaProcessorSupport()
-          ? { type: 'backgroundBlur', blurStrength: 'high' }
-          : undefined;
+        backgroundFilter && hasMediaProcessorSupport() ? backgroundFilter : undefined;
 
       setPublisherOptions({
         audioFallback: { publisher: true },

@@ -35,7 +35,7 @@ const VideoDevicesOptions = ({
         }}
       >
         <PortraitIcon sx={{ fontSize: 24, mr: 2 }} />
-        <Typography data-testid="blur-text" sx={{ mr: 2 }}>
+        <Typography data-testid="background-effects-text" sx={{ mr: 2 }}>
           Background effects
         </Typography>
       </MenuItem>

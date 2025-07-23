@@ -6,14 +6,18 @@ import OT, {
   initPublisher,
   ExceptionEvent,
   PublisherProperties,
+  VideoFilter,
 } from '@vonage/client-sdk-video';
 import usePublisherQuality, { NetworkQuality } from '../usePublisherQuality/usePublisherQuality';
 import usePublisherOptions from '../usePublisherOptions';
 import useSessionContext from '../../../hooks/useSessionContext';
-import { PUBLISHING_BLOCKED_CAPTION } from '../../../utils/constants';
+import { BACKGROUNDS_PATH, PUBLISHING_BLOCKED_CAPTION } from '../../../utils/constants';
 import getAccessDeniedError, {
   PublishingErrorType,
 } from '../../../utils/getAccessDeniedError/getAccessDeniedError';
+import { setStorageItem, STORAGE_KEYS } from '../../../utils/storage';
+import { UserType } from '../../user';
+import useUserContext from '../../../hooks/useUserContext';
 
 type PublisherStreamCreatedEvent = Event<'streamCreated', Publisher> & {
   stream: Stream;
@@ -46,6 +50,7 @@ export type PublisherContextType = {
   stream: Stream | null | undefined;
   toggleAudio: () => void;
   toggleVideo: () => void;
+  changeBackground: (backgroundSelected: string) => Promise<void>;
   unpublish: () => void;
 };
 
@@ -69,6 +74,7 @@ export type PublisherContextType = {
  * @returns {PublisherContextType} the publisher context
  */
 const usePublisher = (): PublisherContextType => {
+  const { setUser } = useUserContext();
   const [publisherVideoElement, setPublisherVideoElement] = useState<
     HTMLVideoElement | HTMLObjectElement
   >();
@@ -117,6 +123,45 @@ const usePublisher = (): PublisherContextType => {
   const handleDestroyed = () => {
     publisherRef.current = null;
   };
+
+  const changeBackground = useCallback(
+    async (backgroundSelected: string) => {
+      if (!publisherRef.current) {
+        return;
+      }
+
+      let videoFilter: VideoFilter | undefined;
+      if (backgroundSelected === 'low-blur' || backgroundSelected === 'high-blur') {
+        videoFilter = {
+          type: 'backgroundBlur',
+          blurStrength: backgroundSelected === 'low-blur' ? 'low' : 'high',
+        };
+        await publisherRef.current.applyVideoFilter(videoFilter);
+      } else if (/\.(jpg|jpeg|png|gif|bmp)$/i.test(backgroundSelected)) {
+        // If the key is an image filename, apply background replacement
+        videoFilter = {
+          type: 'backgroundReplacement',
+          backgroundImgUrl: `${BACKGROUNDS_PATH}/${backgroundSelected}`,
+        };
+        await publisherRef.current.applyVideoFilter(videoFilter);
+      } else {
+        await publisherRef.current.clearVideoFilter();
+        videoFilter = undefined;
+      }
+
+      setStorageItem(STORAGE_KEYS.BACKGROUND_REPLACEMENT, JSON.stringify(videoFilter ?? ''));
+      if (setUser) {
+        setUser((prevUser: UserType) => ({
+          ...prevUser,
+          defaultSettings: {
+            ...prevUser.defaultSettings,
+            backgroundFilter: videoFilter,
+          },
+        }));
+      }
+    },
+    [setUser]
+  );
 
   const handleStreamCreated = (e: PublisherStreamCreatedEvent) => {
     setIsPublishing(true);
@@ -311,6 +356,7 @@ const usePublisher = (): PublisherContextType => {
     stream,
     toggleAudio,
     toggleVideo,
+    changeBackground,
     unpublish,
   };
 };

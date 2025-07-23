@@ -22,7 +22,7 @@ export type VideoContainerProps = {
  * VideoContainer Component
  *
  * Loads and displays the preview publisher, a representation of what participants would see in the meeting room.
- * Overlaid onto the preview publisher are the audio input toggle button, video input toggle button, and the background blur toggle button (if supported).
+ * Overlaid onto the preview publisher are the audio input toggle button, video input toggle button, and the background replacement button (if supported).
  * @param {VideoContainerProps} props - The props for the component.
  *  @property {string} username - The user's username.
  * @returns {ReactElement} - The VideoContainer component.
@@ -67,7 +67,11 @@ const VideoContainer = ({ username }: VideoContainerProps): ReactElement => {
       // see https://stackoverflow.com/questions/77748631/element-rounded-corners-leaking-out-to-front-when-using-overflow-hidden
       style={{ WebkitMask: 'linear-gradient(#000 0 0)' }}
     >
-      <div ref={containerRef} />
+      <div
+        ref={containerRef}
+        style={{ display: backgroundEffectsOpen ? 'none' : 'block' }}
+        data-video-container
+      />
       <VignetteEffect />
       {videoLoading && <VideoLoading />}
       <PreviewAvatar

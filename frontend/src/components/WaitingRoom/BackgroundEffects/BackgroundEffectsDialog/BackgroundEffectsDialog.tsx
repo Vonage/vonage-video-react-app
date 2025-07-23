@@ -1,6 +1,6 @@
-import { Dialog } from '@mui/material';
+import { Dialog, DialogContent } from '@mui/material';
 import { ReactElement } from 'react';
-import BackgroundEffectsLayout from '../../../MeetingRoom/BackgroundEffectsLayout/BackgroundEffectsLayout';
+import BackgroundEffectsLayout from '../BackgroundEffectsLayout/Index';
 
 interface BackgroundEffectsDialogProps {
   backgroundEffectsOpen: boolean;
@@ -15,17 +15,15 @@ const BackgroundEffectsDialog = ({
     <Dialog
       open={backgroundEffectsOpen}
       onClose={() => setBackgroundEffectsOpen(false)}
-      maxWidth="md"
+      maxWidth="lg"
       fullWidth
     >
-      {
-        // TODO: use preview! const { toggleBlur, hasBlur } = usePreviewPublisherContext();
-      }
-      <BackgroundEffectsLayout
-        handleClose={() => setBackgroundEffectsOpen(false)}
-        isOpen={backgroundEffectsOpen}
-        fromPreview
-      />
+      <DialogContent>
+        <BackgroundEffectsLayout
+          isOpen={backgroundEffectsOpen}
+          handleClose={() => setBackgroundEffectsOpen(false)}
+        />
+      </DialogContent>
     </Dialog>
   );
 };

@@ -21,7 +21,7 @@ type PublisherVideoElementCreatedEvent = Event<'videoElementCreated', Publisher>
   element: HTMLVideoElement | HTMLObjectElement;
 };
 
-export type PreviewPublisherContextType = {
+export type BackgroundPublisherContextType = {
   isAudioEnabled: boolean;
   isPublishing: boolean;
   isVideoEnabled: boolean;
@@ -53,10 +53,10 @@ export type PreviewPublisherContextType = {
  * @property {() => void} toggleAudio - Method to toggle microphone on/off. State updated internally, can be read via isAudioEnabled.
  * @property {() => void} toggleVideo - Method to toggle camera on/off. State updated internally, can be read via isVideoEnabled.
  * @property {() => void} unpublish - Method to unpublish from session and destroy publisher (for ending a call).
- * @returns {PreviewPublisherContextType} preview context
+ * @returns {BackgroundPublisherContextType} Background context
  */
-const usePreviewPublisher = (): PreviewPublisherContextType => {
-  const { setUser, user } = useUserContext();
+const useBackgroundPublisher = (): BackgroundPublisherContextType => {
+  const { user } = useUserContext();
   const { allMediaDevices, getAllMediaDevices } = useDevices();
   const [publisherVideoElement, setPublisherVideoElement] = useState<
     HTMLVideoElement | HTMLObjectElement
@@ -111,70 +111,35 @@ const usePreviewPublisher = (): PreviewPublisherContextType => {
         videoFilter = undefined;
       }
 
-      setStorageItem(STORAGE_KEYS.BACKGROUND_REPLACEMENT, JSON.stringify(videoFilter ?? ''));
       setBackgroundFilter(videoFilter);
-      if (setUser) {
-        setUser((prevUser: UserType) => ({
-          ...prevUser,
-          defaultSettings: {
-            ...prevUser.defaultSettings,
-            backgroundFilter: videoFilter,
-          },
-        }));
-      }
     },
-    [setUser, setBackgroundFilter]
+    [setBackgroundFilter]
   );
 
   /**
    * Change microphone
    * @returns {void}
    */
-  const changeAudioSource = useCallback(
-    (deviceId: string) => {
-      if (!deviceId || !publisherRef.current) {
-        return;
-      }
-      publisherRef.current.setAudioSource(deviceId);
-      setLocalAudioSource(deviceId);
-      setStorageItem(STORAGE_KEYS.AUDIO_SOURCE, deviceId);
-      if (setUser) {
-        setUser((prevUser: UserType) => ({
-          ...prevUser,
-          defaultSettings: {
-            ...prevUser.defaultSettings,
-            audioSource: deviceId,
-          },
-        }));
-      }
-    },
-    [setUser]
-  );
+  const changeAudioSource = useCallback((deviceId: string) => {
+    if (!deviceId || !publisherRef.current) {
+      return;
+    }
+    publisherRef.current.setAudioSource(deviceId);
+    setLocalAudioSource(deviceId);
+    setStorageItem(STORAGE_KEYS.AUDIO_SOURCE, deviceId);
+  }, []);
 
   /**
    * Change video camera in use
    * @returns {void}
    */
-  const changeVideoSource = useCallback(
-    (deviceId: string) => {
-      if (!deviceId || !publisherRef.current) {
-        return;
-      }
-      publisherRef.current.setVideoSource(deviceId);
-      setLocalVideoSource(deviceId);
-      setStorageItem(STORAGE_KEYS.VIDEO_SOURCE, deviceId);
-      if (setUser) {
-        setUser((prevUser: UserType) => ({
-          ...prevUser,
-          defaultSettings: {
-            ...prevUser.defaultSettings,
-            videoSource: deviceId,
-          },
-        }));
-      }
-    },
-    [setUser]
-  );
+  const changeVideoSource = useCallback((deviceId: string) => {
+    if (!deviceId || !publisherRef.current) {
+      return;
+    }
+    publisherRef.current.setVideoSource(deviceId);
+    setLocalVideoSource(deviceId);
+  }, []);
 
   /**
    * Handle device permissions denial
@@ -289,15 +254,6 @@ const usePreviewPublisher = (): PreviewPublisherContextType => {
     }
     publisherRef.current.publishVideo(!isVideoEnabled);
     setIsVideoEnabled(!isVideoEnabled);
-    if (setUser) {
-      setUser((prevUser: UserType) => ({
-        ...prevUser,
-        defaultSettings: {
-          ...prevUser.defaultSettings,
-          publishVideo: !isVideoEnabled,
-        },
-      }));
-    }
   };
 
   /**
@@ -312,15 +268,6 @@ const usePreviewPublisher = (): PreviewPublisherContextType => {
     }
     publisherRef.current.publishAudio(!isAudioEnabled);
     setIsAudioEnabled(!isAudioEnabled);
-    if (setUser) {
-      setUser((prevUser: UserType) => ({
-        ...prevUser,
-        defaultSettings: {
-          ...prevUser.defaultSettings,
-          publishAudio: !isAudioEnabled,
-        },
-      }));
-    }
   };
 
   return {
@@ -343,4 +290,4 @@ const usePreviewPublisher = (): PreviewPublisherContextType => {
     speechLevel,
   };
 };
-export default usePreviewPublisher;
+export default useBackgroundPublisher;
