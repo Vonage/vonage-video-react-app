@@ -33,7 +33,7 @@ const BackgroundGallery: React.FC<BackgroundGalleryProps> = ({
   setBackgroundSelected,
 }): ReactElement => {
   return (
-    <Box display="flex" flexWrap="wrap" gap={1} justifyContent="space-between">
+    <>
       {backgrounds.map((bg) => {
         const path = `${BACKGROUNDS_PATH}/${bg.file}`;
         return (
@@ -51,7 +51,7 @@ const BackgroundGallery: React.FC<BackgroundGalleryProps> = ({
           </Box>
         );
       })}
-    </Box>
+    </>
   );
 };
 

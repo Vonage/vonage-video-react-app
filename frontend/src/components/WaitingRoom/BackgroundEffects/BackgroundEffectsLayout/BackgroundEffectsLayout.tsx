@@ -1,10 +1,11 @@
 import React, { ReactElement, useCallback, useEffect, useState } from 'react';
-import { Box, Button, Typography } from '@mui/material';
+import { Box, Button, Typography, useMediaQuery } from '@mui/material';
 import EffectOptionButtons from '../../../BackgroundEffects/EffectOptionButtons/EffectOptionButtons';
 import BackgroundGallery from '../../../BackgroundEffects/BackgroundGallery/BackgroundGallery';
 import BackgroundVideoContainer from '../../../BackgroundEffects/BackgroundVideoContainer';
 import usePreviewPublisherContext from '../../../../hooks/usePreviewPublisherContext';
 import useBackgroundPublisherContext from '../../../../hooks/useBackgroundPublisherContext';
+import { DEFAULT_SELECTABLE_OPTION_WIDTH } from '../../../../utils/constants';
 
 export type BackgroundEffectsProps = {
   isOpen: boolean;
@@ -24,9 +25,10 @@ const BackgroundEffects = ({
   handleClose,
 }: BackgroundEffectsProps): ReactElement | false => {
   const [backgroundSelected, setBackgroundSelected] = useState('none');
-  const { publisher, changeBackground } = usePreviewPublisherContext();
+  const { publisher, changeBackground, isVideoEnabled } = usePreviewPublisherContext();
   const { publisherVideoElement, changeBackground: changeBackgroundPreview } =
     useBackgroundPublisherContext();
+  const isTabletViewport = useMediaQuery(`(max-width:899px)`);
 
   const handleBackgroundSelect = (selectedBackgroundOption: string) => {
     setBackgroundSelected(selectedBackgroundOption);
@@ -68,6 +70,34 @@ const BackgroundEffects = ({
     }
   }, [publisher, isOpen, changeBackgroundPreview, setInitialBackgroundReplacement]);
 
+  const buttonGroup = (
+    <Box display="flex" justifyContent="space-between" mt={1.5}>
+      <Button
+        variant="outlined"
+        color="primary"
+        sx={{ width: '100%', mr: 1 }}
+        onClick={() => {
+          const currentOption = setInitialBackgroundReplacement();
+          changeBackgroundPreview(currentOption);
+          handleClose();
+        }}
+      >
+        Cancel
+      </Button>
+      <Button
+        variant="contained"
+        color="primary"
+        sx={{ width: '100%' }}
+        onClick={() => {
+          handleApplyBackgroundSelect();
+          handleClose();
+        }}
+      >
+        Apply
+      </Button>
+    </Box>
+  );
+
   return (
     isOpen && (
       <>
@@ -77,47 +107,38 @@ const BackgroundEffects = ({
 
         <Box display="flex" flexDirection={{ xs: 'column', md: 'row' }} gap={3}>
           <Box flex={1} minWidth={0}>
-            <BackgroundVideoContainer publisherVideoElement={publisherVideoElement} fixedWidth />
-            <Box display="flex" justifyContent="space-between" mt={1.5}>
-              <Button
-                variant="outlined"
-                color="primary"
-                sx={{ width: '100%', mr: 1 }}
-                onClick={() => {
-                  const currentOption = setInitialBackgroundReplacement();
-                  changeBackgroundPreview(currentOption);
-                  handleClose();
-                }}
-              >
-                Cancel
-              </Button>
-              <Button
-                variant="contained"
-                color="primary"
-                sx={{ width: '100%' }}
-                onClick={() => {
-                  handleApplyBackgroundSelect();
-                  handleClose();
-                }}
-              >
-                Apply
-              </Button>
-            </Box>
+            <BackgroundVideoContainer
+              publisherVideoElement={publisherVideoElement}
+              isParentVideoEnabled={isVideoEnabled}
+              fixedWidth
+            />
+            {!isTabletViewport && buttonGroup}
           </Box>
 
           <Box flex={1} minWidth={0} className="choose-background-effect-box">
             <Typography variant="subtitle2" sx={{ textAlign: 'left', mb: 1 }}>
               Choose Background Effect
             </Typography>
-            <EffectOptionButtons
-              backgroundSelected={backgroundSelected}
-              setBackgroundSelected={handleBackgroundSelect}
-            />
-            <BackgroundGallery
-              backgroundSelected={backgroundSelected}
-              setBackgroundSelected={handleBackgroundSelect}
-            />
+            <Box
+              display="grid"
+              gridTemplateColumns={`repeat(auto-fill, minmax(${DEFAULT_SELECTABLE_OPTION_WIDTH}px, 1fr))`}
+              gap={1}
+              sx={{
+                overflowY: 'auto',
+                maxHeight: '375px',
+              }}
+            >
+              <EffectOptionButtons
+                backgroundSelected={backgroundSelected}
+                setBackgroundSelected={handleBackgroundSelect}
+              />
+              <BackgroundGallery
+                backgroundSelected={backgroundSelected}
+                setBackgroundSelected={handleBackgroundSelect}
+              />
+            </Box>
           </Box>
+          {isTabletViewport && buttonGroup}
         </Box>
       </>
     )

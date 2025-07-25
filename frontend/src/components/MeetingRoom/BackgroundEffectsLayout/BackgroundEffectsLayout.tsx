@@ -6,6 +6,7 @@ import EffectOptionButtons from '../../BackgroundEffects/EffectOptionButtons/Eff
 import BackgroundGallery from '../../BackgroundEffects/BackgroundGallery/BackgroundGallery';
 import BackgroundVideoContainer from '../../BackgroundEffects/BackgroundVideoContainer';
 import useBackgroundPublisherContext from '../../../hooks/useBackgroundPublisherContext';
+import { DEFAULT_SELECTABLE_OPTION_WIDTH } from '../../../utils/constants';
 
 export type BackgroundEffectsLayoutProps = {
   handleClose: () => void;
@@ -26,7 +27,7 @@ const BackgroundEffectsLayout = ({
   isOpen,
 }: BackgroundEffectsLayoutProps): ReactElement | false => {
   const [backgroundSelected, setBackgroundSelected] = useState('none');
-  const { publisher, changeBackground } = usePublisherContext();
+  const { publisher, changeBackground, isVideoEnabled } = usePublisherContext();
   const { publisherVideoElement, changeBackground: changeBackgroundPreview } =
     useBackgroundPublisherContext();
 
@@ -78,7 +79,10 @@ const BackgroundEffectsLayout = ({
         <RightPanelTitle title="Background Effects" handleClose={handleClose} />
 
         <Box sx={{ ml: 1.5, mr: 1.5 }}>
-          <BackgroundVideoContainer publisherVideoElement={publisherVideoElement} />
+          <BackgroundVideoContainer
+            publisherVideoElement={publisherVideoElement}
+            isParentVideoEnabled={isVideoEnabled}
+          />
         </Box>
 
         <Box className="choose-background-effect-box" sx={{ m: 1.5 }}>
@@ -86,15 +90,24 @@ const BackgroundEffectsLayout = ({
             Choose Background Effect
           </Typography>
 
-          <EffectOptionButtons
-            backgroundSelected={backgroundSelected}
-            setBackgroundSelected={handleBackgroundSelect}
-          />
-
-          <BackgroundGallery
-            backgroundSelected={backgroundSelected}
-            setBackgroundSelected={handleBackgroundSelect}
-          />
+          <Box
+            display="grid"
+            gridTemplateColumns={`repeat(auto-fill, minmax(${DEFAULT_SELECTABLE_OPTION_WIDTH}px, 1fr))`}
+            gap={1}
+            sx={{
+              overflowY: 'auto',
+              maxHeight: '400px',
+            }}
+          >
+            <EffectOptionButtons
+              backgroundSelected={backgroundSelected}
+              setBackgroundSelected={handleBackgroundSelect}
+            />
+            <BackgroundGallery
+              backgroundSelected={backgroundSelected}
+              setBackgroundSelected={handleBackgroundSelect}
+            />
+          </Box>
         </Box>
 
         <Box display="flex" justifyContent="space-between" m={1.5}>

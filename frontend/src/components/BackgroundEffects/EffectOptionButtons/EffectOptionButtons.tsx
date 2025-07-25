@@ -30,7 +30,7 @@ const EffectOptionButtons: React.FC<EffectOptionButtonsProps> = ({
   setBackgroundSelected,
 }): ReactElement => {
   return (
-    <Stack direction="row" spacing={1} mb={2} justifyContent="space-between">
+    <>
       {options.map(({ key, icon }) => (
         <SelectableOption
           key={key}
@@ -48,7 +48,7 @@ const EffectOptionButtons: React.FC<EffectOptionButtonsProps> = ({
         }
         icon={<AddPhotoAlternateIcon sx={{ fontSize: '30px' }} />}
       />
-    </Stack>
+    </>
   );
 };
 

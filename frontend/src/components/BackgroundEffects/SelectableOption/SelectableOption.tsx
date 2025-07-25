@@ -1,5 +1,6 @@
 import React from 'react';
 import { Paper } from '@mui/material';
+import { DEFAULT_SELECTABLE_OPTION_WIDTH } from '../../../utils/constants';
 
 interface SelectableOptionProps {
   selected: boolean;
@@ -14,7 +15,7 @@ const SelectableOption: React.FC<SelectableOptionProps> = ({
   onClick,
   icon,
   image,
-  size = 68,
+  size = DEFAULT_SELECTABLE_OPTION_WIDTH,
 }) => {
   return (
     <Paper
