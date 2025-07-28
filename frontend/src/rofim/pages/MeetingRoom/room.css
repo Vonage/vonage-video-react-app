@@ -1,0 +1,5 @@
+button[data-testid='captions-button'],
+button[data-testid='archiving-button'],
+button[data-testid='emoji-grid-button'] {
+  display: none;
+}
