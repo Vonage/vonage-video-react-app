@@ -1,17 +1,20 @@
-#### What is this PR doing?
+# Description
 
+Please include a summary of the changes and the related issue. Please also include relevant motivation and context. List
+any dependencies that are required for this change.
 
-#### How should this be manually tested?
+## JIRA link
 
+[Ticket](https://jira-rofim.atlassian.net/browse/)
 
-#### What are the relevant tickets?
-A maintainer will add this ticket number.
+## Type of change
 
-Resolves [VIDCS-](https://jira.vonage.com/browse/VIDCS-)
-
-#### Checklist
-[ ] Branch is based on `develop` (not `main`).
-[ ] Resolves a `Known Issue`.
-[ ] If yes, did you remove the item from the `docs/KNOWN_ISSUES.md`? 
-[ ] Resolves an item reported in `Issues`.
-If yes, which issue? [Issue Number](https://github.com/Vonage/vonage-video-react-app/issues/)?
+- [ ] Fix: commit that fixes a bug.
+- [ ] Feat: commit that adds new functionality.
+- [ ] Refactor: commit of changes related to modifying the codebase such as removing redundant code, simplifying the
+  code, renaming variables.
+- [ ] Docs: commit that adds or improves Uno's documentation.
+- [ ] Test: commit that adds unit tests.
+- [ ] Perf: commit that improves performance, without functional changes.
+- [ ] Chore: catch-all type for any other commits. For instance, if you're implementing a single feature and it makes
+  sense to divide the work into multiple commits, you should mark one commit as feat and the rest as chore.

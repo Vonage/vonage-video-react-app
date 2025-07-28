@@ -1,0 +1,58 @@
+name: PR Title Checker
+on:
+  pull_request:
+    types: [ opened, edited, synchronize, reopened ]
+
+jobs:
+  check-pr-title:
+    name: Validate PR Title conventions
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check PR Title
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const title = context.payload.pull_request.title;
+            
+            const NORMAL_PR_PATTERN = /^\[(feat|fix|chore|docs|refactor|perf|test|build|ci|revert)\]:\s+((?:rofano|scrum)-\d+)\s+-\s+.+$/;
+            const RELEASE_PR_PATTERN = /^(MEP|MEPP)\s+\d{2}-\d{2}-\d{4}\s+-\s+V\d+\.\d+\.\d+$/;
+            
+            const isNormalTitle = NORMAL_PR_PATTERN.test(title);
+            const isReleaseTitle = RELEASE_PR_PATTERN.test(title);
+            
+            if (isNormalTitle) {
+              if (title.length > 100) {
+                core.setFailed(`Le titre ne doit pas dépasser 100 caractères. Longueur actuelle : ${title.length}`);
+              }
+              if (title !== title.toLowerCase()) {
+                core.setFailed(`Le titre doit être entièrement en minuscules.`);
+              }
+            }
+            
+            if (!isNormalTitle && !isReleaseTitle) {
+              core.setFailed(`Format de titre invalide.
+            
+              1. Pour les PR classiques: 
+              - [type]: rofano-XXX - description
+              - [type]: scrum-XXX - description
+              Liste des types possibles : 
+              - feat
+              - fix
+              - chore
+              - docs
+              - refactor
+              - perf
+              - test
+              - build
+              - ci
+              - revert
+              2. Pour les PR de release:
+              - MEP DD-MM-YYYY - version_number
+              - MEPP DD-MM-YYYY - version_number
+            
+              Note: 
+              - Le titre doit être en minuscules
+              - Maximum 100 caractères`);
+              return;
+            }

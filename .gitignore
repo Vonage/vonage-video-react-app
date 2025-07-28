@@ -51,3 +51,17 @@ build
 /scripts/allLicenseResults.json
 
 vcr.yml
+
+# IDE - VSCode
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+.history
+
+# IDE - WebStorm
+.idea/*
+backend/.idea/*
+frontend/.idea/*
+.run/

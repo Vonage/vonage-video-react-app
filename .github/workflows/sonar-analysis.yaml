@@ -1,0 +1,43 @@
+name: SonarCloud Analysis
+
+on:
+  push:
+    branches:
+      - develop
+  pull_request:
+    types: [ opened, synchronize, reopened ]
+
+jobs:
+  frontend-analysis:
+    name: Frontend Analysis
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Install dependencies
+        run: yarn install --frozen-lockfile
+
+      - name: Run TypeScript check
+        run: yarn ts-check:frontend
+
+      - name: Run lint check
+        run: yarn lint
+
+      - name: Run frontend tests
+        run: yarn test:frontend
+
+      - name: Build frontend
+        run: yarn build
+
+      - name: SonarCloud Scan
+        uses: SonarSource/sonarqube-scan-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.WORKFLOW_TOKEN }}
+          SONAR_TOKEN: ${{ secrets.FRONTEND_SONAR_TOKEN }}

@@ -1,0 +1,22 @@
+version: 0.2
+
+phases:
+  install:
+    runtime-versions:
+      nodejs: 22
+    commands:
+      - npm install -g yarn
+      - yarn install --frozen-lockfile
+
+  build:
+    commands:
+      - echo Build started on `date`
+      - yarn build
+      - echo Build completed on `date`
+
+  post_build:
+    commands:
+      - echo Deployment started on `date`
+      - aws s3 sync frontend/dist/ s3://${S3_BUCKET}/ --delete
+      - aws cloudfront create-invalidation --distribution-id ${CLOUDFRONT_DISTRIB} --paths '/*'
+      - echo Deployment completed on `date`
