@@ -18,13 +18,13 @@ on:
 jobs:
   deploy:
     name: Start AWS pipeline
-    runs-on: [ rofim-tiny ]
+    runs-on: [rofim-tiny]
     # Deployment environment information in GitHub also used by JIRA to update the ticket status
     environment: ${{ github.ref_name == 'develop' && 'staging' || inputs.environment }}
     # Runtime environment variable used in deployment
     env:
       ENVIRONMENT: ${{ github.ref_name == 'develop' && 'staging' || inputs.environment }}
-      APP: "visio"
+      APP: 'visio'
     permissions:
       id-token: write
       contents: read
@@ -37,8 +37,7 @@ jobs:
 
       - name: Get branch/tag name
         id: branch_tag_name
-        run:
-          echo "branch_or_tag=${GITHUB_REF#refs/*/}" >> $GITHUB_OUTPUT
+        run: echo "branch_or_tag=${GITHUB_REF#refs/*/}" >> $GITHUB_OUTPUT
 
       - name: Map variables
         uses: kanga333/variable-mapper@master
