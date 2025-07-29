@@ -20,13 +20,15 @@ const defaultSettings = {
   publishAudio: false,
   publishVideo: false,
   name: '',
-  blur: false,
   noiseSuppression: true,
+  publishCaptions: false,
 };
 const mockUserContextWithDefaultSettings = {
   user: {
     defaultSettings,
+    issues: { reconnections: 0, audioFallbacks: 0 },
   },
+  setUser: vi.fn(),
 } as UserContextType;
 const mockStream = {
   streamId: 'stream-id',
@@ -37,6 +39,8 @@ describe('usePublisher', () => {
   const destroySpy = vi.fn();
   const mockPublisher = Object.assign(new EventEmitter(), {
     destroy: destroySpy,
+    applyVideoFilter: vi.fn(),
+    clearVideoFilter: vi.fn(),
   }) as unknown as Publisher;
   let mockSessionContext: SessionContextType;
   const mockedInitPublisher = vi.fn();
@@ -111,6 +115,46 @@ describe('usePublisher', () => {
       await waitFor(() => {
         expect(mockedSessionUnpublish).toHaveBeenCalled();
       });
+    });
+  });
+
+  describe('changeBackground', () => {
+    let result: ReturnType<typeof renderHook>['result'];
+    beforeEach(async () => {
+      (initPublisher as Mock).mockImplementation(() => mockPublisher);
+      result = renderHook(() => usePublisher()).result;
+      await act(async () => {
+        await (result.current as ReturnType<typeof usePublisher>).initializeLocalPublisher({});
+      });
+      (mockPublisher.applyVideoFilter as Mock).mockClear();
+      (mockPublisher.clearVideoFilter as Mock).mockClear();
+    });
+
+    it('applies low blur filter', async () => {
+      await act(async () => {
+        await (result.current as ReturnType<typeof usePublisher>).changeBackground('low-blur');
+      });
+      expect(mockPublisher.applyVideoFilter).toHaveBeenCalledWith({
+        type: 'backgroundBlur',
+        blurStrength: 'low',
+      });
+    });
+
+    it('applies background replacement with image', async () => {
+      await act(async () => {
+        await (result.current as ReturnType<typeof usePublisher>).changeBackground('bg1.jpg');
+      });
+      expect(mockPublisher.applyVideoFilter).toHaveBeenCalledWith({
+        type: 'backgroundReplacement',
+        backgroundImgUrl: expect.stringContaining('bg1.jpg'),
+      });
+    });
+
+    it('clears video filter for unknown option', async () => {
+      await act(async () => {
+        await (result.current as ReturnType<typeof usePublisher>).changeBackground('none');
+      });
+      expect(mockPublisher.clearVideoFilter).toHaveBeenCalled();
     });
   });
 

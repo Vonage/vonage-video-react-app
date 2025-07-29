@@ -3,7 +3,7 @@ import { Box } from '@mui/material';
 import { BACKGROUNDS_PATH } from '../../../utils/constants';
 import SelectableOption from '../SelectableOption';
 
-const backgrounds = [
+export const backgrounds = [
   { id: 'background', file: 'bookshelf-room.jpg' },
   { id: 'bg2', file: 'busy-room.jpg' },
   { id: 'bg3', file: 'dune-view.jpg' },

@@ -30,19 +30,23 @@ const defaultSettings = {
   publishAudio: false,
   publishVideo: false,
   name: '',
-  blur: true,
   noiseSuppression: true,
+  publishCaptions: false,
 };
 const mockUserContextWithDefaultSettings = {
   user: {
     defaultSettings,
+    issues: { reconnections: 0, audioFallbacks: 0 },
   },
+  setUser: vi.fn(),
 } as UserContextType;
 
 describe('usePreviewPublisher', () => {
   const mockPublisher = Object.assign(new EventEmitter(), {
     getAudioSource: () => defaultAudioDevice,
     getVideoSource: () => defaultVideoDevice,
+    applyVideoFilter: vi.fn(),
+    clearVideoFilter: vi.fn(),
   }) as unknown as Publisher;
   const mockedInitPublisher = vi.fn();
   const mockedHasMediaProcessorSupport = vi.fn();
@@ -92,24 +96,22 @@ describe('usePreviewPublisher', () => {
       expect(consoleErrorSpy).toHaveBeenCalledWith('initPublisher error: ', error);
     });
 
-    it('should apply background blur when initialized if set to true', async () => {
+    it('should apply background high blur when initialized and changed background', async () => {
       mockedHasMediaProcessorSupport.mockReturnValue(true);
       mockedInitPublisher.mockReturnValue(mockPublisher);
       const { result } = renderHook(() => usePreviewPublisher());
       await result.current.initLocalPublisher();
-      expect(mockedInitPublisher).toHaveBeenCalledWith(
-        undefined,
-        expect.objectContaining({
-          videoFilter: expect.objectContaining({
-            type: 'backgroundBlur',
-            blurStrength: 'high',
-          }),
-        }),
-        expect.any(Function)
-      );
+
+      await act(async () => {
+        await result.current.changeBackground('high-blur');
+      });
+      expect(mockPublisher.applyVideoFilter).toHaveBeenCalledWith({
+        type: 'backgroundBlur',
+        blurStrength: 'high',
+      });
     });
 
-    it('should not apply background blur when initialized if the device does not support it', async () => {
+    it('should not apply background when initialized if the device does not support it', async () => {
       mockedHasMediaProcessorSupport.mockReturnValue(false);
       mockedInitPublisher.mockReturnValue(mockPublisher);
       const { result } = renderHook(() => usePreviewPublisher());
@@ -121,6 +123,50 @@ describe('usePreviewPublisher', () => {
         }),
         expect.any(Function)
       );
+    });
+  });
+
+  describe('changeBackground', () => {
+    let result: ReturnType<typeof renderHook>['result'];
+    beforeEach(async () => {
+      mockedHasMediaProcessorSupport.mockReturnValue(true);
+      mockedInitPublisher.mockReturnValue(mockPublisher);
+      result = renderHook(() => usePreviewPublisher()).result;
+      await act(async () => {
+        await (result.current as ReturnType<typeof usePreviewPublisher>).initLocalPublisher();
+      });
+      (mockPublisher.applyVideoFilter as Mock).mockClear();
+      (mockPublisher.clearVideoFilter as Mock).mockClear();
+    });
+
+    it('applies low blur filter', async () => {
+      await act(async () => {
+        await (result.current as ReturnType<typeof usePreviewPublisher>).changeBackground(
+          'low-blur'
+        );
+      });
+      expect(mockPublisher.applyVideoFilter).toHaveBeenCalledWith({
+        type: 'backgroundBlur',
+        blurStrength: 'low',
+      });
+    });
+
+    it('applies background replacement with image', async () => {
+      await act(async () => {
+        await (result.current as ReturnType<typeof usePreviewPublisher>).changeBackground(
+          'bg1.jpg'
+        );
+      });
+      expect(mockPublisher.applyVideoFilter).toHaveBeenCalledWith({
+        type: 'backgroundReplacement',
+        backgroundImgUrl: expect.stringContaining('bg1.jpg'),
+      });
+    });
+
+    it('clears video filter for unknown option', async () => {
+      await act(async () => {
+        await (result.current as ReturnType<typeof usePreviewPublisher>).changeBackground('none');
+      });
     });
   });
 

@@ -37,6 +37,7 @@ const AddBackgroundEffect: React.FC<AddBackgroundEffectProps> = ({
         key="upload"
         selected={false}
         isDisabled={isDisabled}
+        data-testid="add-background-effect"
         onClick={
           () => {}
           // TODO: Implement upload functionality

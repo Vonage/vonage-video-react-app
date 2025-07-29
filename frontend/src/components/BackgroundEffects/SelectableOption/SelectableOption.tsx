@@ -24,6 +24,7 @@ const SelectableOption: React.FC<SelectableOptionProps> = ({
     <Paper
       onClick={onClick}
       elevation={selected ? 4 : 1}
+      aria-disabled={isDisabled}
       sx={{
         width: size,
         height: size,
