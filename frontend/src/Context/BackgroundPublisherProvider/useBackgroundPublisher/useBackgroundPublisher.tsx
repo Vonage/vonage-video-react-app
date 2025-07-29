@@ -12,7 +12,6 @@ import useDevices from '../../../hooks/useDevices';
 import usePermissions from '../../../hooks/usePermissions';
 import useUserContext from '../../../hooks/useUserContext';
 import { BACKGROUNDS_PATH, DEVICE_ACCESS_STATUS } from '../../../utils/constants';
-import { UserType } from '../../user';
 import { AccessDeniedEvent } from '../../PublisherProvider/usePublisher/usePublisher';
 import DeviceStore from '../../../utils/DeviceStore';
 import { setStorageItem, STORAGE_KEYS } from '../../../utils/storage';
