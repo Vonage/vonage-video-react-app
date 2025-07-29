@@ -18,7 +18,7 @@
     "dev": "yarn && concurrently 'yarn workspace frontend dev' 'yarn workspace backend dev'",
     "docs": "yarn workspace frontend docs",
     "docs:watch": "yarn workspace frontend docs:watch",
-    "lint": "ESLINT_USE_FLAT_CONFIG=false yarn eslint . --ext .ts,.tsx",
+    "lint": "ESLINT_USE_FLAT_CONFIG=false DUMMY_VARIABLE=false yarn eslint . --ext .ts,.tsx",
     "lint:filenames": "./scripts/lintFileNames.sh",
     "lint:fix": "yarn prettier --write . && yarn lint --fix",
     "postinstall": "husky",
