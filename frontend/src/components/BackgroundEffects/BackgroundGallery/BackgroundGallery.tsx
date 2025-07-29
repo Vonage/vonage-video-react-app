@@ -39,6 +39,7 @@ const BackgroundGallery: React.FC<BackgroundGalleryProps> = ({
         return (
           <Box
             key={bg.id}
+            data-testid={`background-${bg.id}`}
             sx={{
               mb: 1,
             }}
