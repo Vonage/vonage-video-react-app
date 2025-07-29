@@ -6,6 +6,7 @@ import BackgroundVideoContainer from '../../../BackgroundEffects/BackgroundVideo
 import usePreviewPublisherContext from '../../../../hooks/usePreviewPublisherContext';
 import useBackgroundPublisherContext from '../../../../hooks/useBackgroundPublisherContext';
 import { DEFAULT_SELECTABLE_OPTION_WIDTH } from '../../../../utils/constants';
+import AddBackgroundEffect from '../../../BackgroundEffects/AddBackgroundEffect/AddBackgroundEffect';
 
 export type BackgroundEffectsProps = {
   isOpen: boolean;
@@ -132,6 +133,11 @@ const BackgroundEffects = ({
                 backgroundSelected={backgroundSelected}
                 setBackgroundSelected={handleBackgroundSelect}
               />
+              <AddBackgroundEffect
+                backgroundSelected={backgroundSelected}
+                setBackgroundSelected={handleBackgroundSelect}
+              />
+              {/* TODO: load custom images */}
               <BackgroundGallery
                 backgroundSelected={backgroundSelected}
                 setBackgroundSelected={handleBackgroundSelect}

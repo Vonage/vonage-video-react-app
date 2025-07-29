@@ -1,8 +1,6 @@
 import React, { ReactElement } from 'react';
-import { Stack } from '@mui/material';
 import BlockIcon from '@mui/icons-material/Block';
 import BlurOnIcon from '@mui/icons-material/BlurOn';
-import AddPhotoAlternateIcon from '@mui/icons-material/AddPhotoAlternate';
 import SelectableOption from '../SelectableOption';
 
 const options = [
@@ -39,15 +37,6 @@ const EffectOptionButtons: React.FC<EffectOptionButtonsProps> = ({
           icon={icon}
         />
       ))}
-      <SelectableOption
-        key="upload"
-        selected={false}
-        onClick={
-          () => {}
-          // todo
-        }
-        icon={<AddPhotoAlternateIcon sx={{ fontSize: '30px' }} />}
-      />
     </>
   );
 };

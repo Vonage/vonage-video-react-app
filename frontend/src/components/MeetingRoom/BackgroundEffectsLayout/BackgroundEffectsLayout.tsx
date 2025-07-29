@@ -7,6 +7,7 @@ import BackgroundGallery from '../../BackgroundEffects/BackgroundGallery/Backgro
 import BackgroundVideoContainer from '../../BackgroundEffects/BackgroundVideoContainer';
 import useBackgroundPublisherContext from '../../../hooks/useBackgroundPublisherContext';
 import { DEFAULT_SELECTABLE_OPTION_WIDTH } from '../../../utils/constants';
+import AddBackgroundEffect from '../../BackgroundEffects/AddBackgroundEffect/AddBackgroundEffect';
 
 export type BackgroundEffectsLayoutProps = {
   handleClose: () => void;
@@ -103,6 +104,11 @@ const BackgroundEffectsLayout = ({
               backgroundSelected={backgroundSelected}
               setBackgroundSelected={handleBackgroundSelect}
             />
+            <AddBackgroundEffect
+              backgroundSelected={backgroundSelected}
+              setBackgroundSelected={handleBackgroundSelect}
+            />
+            {/* TODO: load custom images */}
             <BackgroundGallery
               backgroundSelected={backgroundSelected}
               setBackgroundSelected={handleBackgroundSelect}

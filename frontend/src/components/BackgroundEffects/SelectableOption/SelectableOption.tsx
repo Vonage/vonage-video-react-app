@@ -8,6 +8,7 @@ interface SelectableOptionProps {
   icon?: React.ReactNode;
   image?: string;
   size?: number;
+  isDisabled?: boolean;
 }
 
 const SelectableOption: React.FC<SelectableOptionProps> = ({
@@ -16,6 +17,8 @@ const SelectableOption: React.FC<SelectableOptionProps> = ({
   icon,
   image,
   size = DEFAULT_SELECTABLE_OPTION_WIDTH,
+  isDisabled = false,
+  ...otherProps // Used by MUI Tooltip
 }) => {
   return (
     <Paper
@@ -27,13 +30,15 @@ const SelectableOption: React.FC<SelectableOptionProps> = ({
         overflow: 'hidden',
         borderRadius: '16px',
         border: selected ? '2px solid #1976d2' : '',
-        cursor: 'pointer',
+        cursor: isDisabled ? 'not-allowed' : 'pointer',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
         transition: 'all 0.1s ease-in-out',
-        backgroundColor: '#fff',
+        backgroundColor: isDisabled ? '#f5f5f5' : '#fff',
+        opacity: isDisabled ? 0.5 : 1,
       }}
+      {...otherProps}
     >
       {image ? (
         <img
