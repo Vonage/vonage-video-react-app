@@ -1,6 +1,6 @@
 {
   "name": "vonage-video-react-app",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "description": "React reference application for the Vonage Video web client SDK.",
   "private": true,
   "workspaces": [
