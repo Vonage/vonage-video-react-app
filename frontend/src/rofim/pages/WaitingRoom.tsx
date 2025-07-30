@@ -109,11 +109,7 @@ const WaitingRoom = (): ReactElement => {
                   <Button
                     onClick={(e) => {
                       e.preventDefault();
-                      navigate(`/room/${room}`, {
-                        state: {
-                          hasAccess: true,
-                        },
-                      });
+                      navigate('/waiting-doctor');
                     }}
                     variant="contained"
                     color="primary"

@@ -3,6 +3,7 @@ import '../css/App.css';
 import '../css/index.css';
 import Room from './pages/MeetingRoom/index';
 import WaitingRoom from './pages/WaitingRoom';
+import WaitingDoctor from './pages/WaitingDoctor';
 import SessionProvider from '../Context/SessionProvider/session';
 import { PreviewPublisherProvider } from '../Context/PreviewPublisherProvider';
 import { PublisherProvider } from '../Context/PublisherProvider';
@@ -27,6 +28,7 @@ const App = () => {
                 </PreviewPublisherProvider>
               }
             />
+            <Route path="/waiting-doctor" element={<WaitingDoctor />} />
             <Route
               path="/room/:roomName"
               element={
