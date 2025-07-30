@@ -5,6 +5,7 @@ import { DEFAULT_SELECTABLE_OPTION_WIDTH } from '../../../utils/constants';
 interface SelectableOptionProps {
   selected: boolean;
   onClick: () => void;
+  id: string;
   icon?: React.ReactNode;
   image?: string;
   size?: number;
@@ -14,6 +15,7 @@ interface SelectableOptionProps {
 const SelectableOption: React.FC<SelectableOptionProps> = ({
   selected,
   onClick,
+  id,
   icon,
   image,
   size = DEFAULT_SELECTABLE_OPTION_WIDTH,
@@ -22,9 +24,11 @@ const SelectableOption: React.FC<SelectableOptionProps> = ({
 }) => {
   return (
     <Paper
+      data-testid={`background-${id}`}
       onClick={onClick}
       elevation={selected ? 4 : 1}
       aria-disabled={isDisabled}
+      aria-pressed={selected}
       sx={{
         width: size,
         height: size,

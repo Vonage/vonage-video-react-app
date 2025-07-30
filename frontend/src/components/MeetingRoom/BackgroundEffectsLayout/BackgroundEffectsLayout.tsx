@@ -104,10 +104,7 @@ const BackgroundEffectsLayout = ({
               backgroundSelected={backgroundSelected}
               setBackgroundSelected={handleBackgroundSelect}
             />
-            <AddBackgroundEffect
-              backgroundSelected={backgroundSelected}
-              setBackgroundSelected={handleBackgroundSelect}
-            />
+            <AddBackgroundEffect />
             {/* TODO: load custom images */}
             <BackgroundGallery
               backgroundSelected={backgroundSelected}
@@ -118,6 +115,7 @@ const BackgroundEffectsLayout = ({
 
         <Box display="flex" justifyContent="space-between" m={1.5}>
           <Button
+            data-testid="background-effect-cancel-button"
             variant="outlined"
             color="primary"
             sx={{ width: '100%', mr: 1 }}
@@ -126,6 +124,7 @@ const BackgroundEffectsLayout = ({
             Cancel
           </Button>
           <Button
+            data-testid="background-effect-apply-button"
             variant="contained"
             color="primary"
             sx={{ width: '100%' }}

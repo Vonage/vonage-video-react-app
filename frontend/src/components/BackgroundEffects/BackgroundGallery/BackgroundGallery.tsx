@@ -4,7 +4,7 @@ import { BACKGROUNDS_PATH } from '../../../utils/constants';
 import SelectableOption from '../SelectableOption';
 
 export const backgrounds = [
-  { id: 'background', file: 'bookshelf-room.jpg' },
+  { id: 'bg1', file: 'bookshelf-room.jpg' },
   { id: 'bg2', file: 'busy-room.jpg' },
   { id: 'bg3', file: 'dune-view.jpg' },
   { id: 'bg4', file: 'hogwarts.jpg' },
@@ -38,13 +38,14 @@ const BackgroundGallery: React.FC<BackgroundGalleryProps> = ({
         const path = `${BACKGROUNDS_PATH}/${bg.file}`;
         return (
           <Box
+            data-testid="background-gallery"
             key={bg.id}
-            data-testid={`background-${bg.id}`}
             sx={{
               mb: 1,
             }}
           >
             <SelectableOption
+              id={bg.id}
               selected={backgroundSelected === bg.file}
               onClick={() => setBackgroundSelected(bg.file)}
               image={path}

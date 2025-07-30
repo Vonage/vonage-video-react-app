@@ -14,14 +14,14 @@ export type BackgroundEffectsProps = {
 };
 
 /**
- * BackgroundEffects Component
+ * BackgroundEffectsLayout Component
  *
  * This component manages the UI for background effects in the waiting room.
  * @param {BackgroundEffectsProps} props - The props for the component.
  *   @property {boolean} isOpen - Whether the background effects panel is open.
  * @returns {ReactElement} The background effects panel component.
  */
-const BackgroundEffects = ({
+const BackgroundEffectsLayout = ({
   isOpen,
   handleClose,
 }: BackgroundEffectsProps): ReactElement | false => {
@@ -133,10 +133,7 @@ const BackgroundEffects = ({
                 backgroundSelected={backgroundSelected}
                 setBackgroundSelected={handleBackgroundSelect}
               />
-              <AddBackgroundEffect
-                backgroundSelected={backgroundSelected}
-                setBackgroundSelected={handleBackgroundSelect}
-              />
+              <AddBackgroundEffect />
               {/* TODO: load custom images */}
               <BackgroundGallery
                 backgroundSelected={backgroundSelected}
@@ -151,4 +148,4 @@ const BackgroundEffects = ({
   );
 };
 
-export default BackgroundEffects;
+export default BackgroundEffectsLayout;

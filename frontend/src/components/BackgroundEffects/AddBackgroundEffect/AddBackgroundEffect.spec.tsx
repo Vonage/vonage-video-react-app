@@ -12,19 +12,19 @@ describe('AddBackgroundEffect', () => {
 
   it('renders the tooltip with recommended text when enabled', async () => {
     render(<AddBackgroundEffect />);
-    const option = screen.getByTestId('add-background-effect');
+    const option = screen.getByTestId('background-upload');
     expect(option).toBeInTheDocument();
   });
 
   it('shows disabled tooltip when isDisabled is true', () => {
     render(<AddBackgroundEffect isDisabled />);
-    const option = screen.getByTestId('add-background-effect');
+    const option = screen.getByTestId('background-upload');
     expect(option).toHaveAttribute('aria-disabled', 'true');
   });
 
   it('shows the tooltip when hovered', async () => {
     render(<AddBackgroundEffect />);
-    const option = screen.getByTestId('add-background-effect');
+    const option = screen.getByTestId('background-upload');
     await userEvent.hover(option);
 
     const tooltip = await screen.findByRole('tooltip');

@@ -32,6 +32,7 @@ const EffectOptionButtons: React.FC<EffectOptionButtonsProps> = ({
       {options.map(({ key, icon }) => (
         <SelectableOption
           key={key}
+          id={key}
           selected={backgroundSelected === key}
           onClick={() => setBackgroundSelected(key)}
           icon={icon}

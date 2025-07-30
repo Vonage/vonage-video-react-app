@@ -12,7 +12,6 @@ describe('BackgroundGallery', () => {
     backgroundsFiles.forEach((file) => {
       expect(imgs.some((img) => (img as HTMLImageElement).src.includes(file))).toBe(true);
     });
-    // Check there are as many items as backgroundsFiles
     const options = backgrounds.map((bg) => screen.getByTestId(`background-${bg.id}`));
     expect(options).toHaveLength(backgroundsFiles.length);
   });
@@ -28,10 +27,8 @@ describe('BackgroundGallery', () => {
   });
 
   it('marks the selected background as selected', () => {
-    render(
-      <BackgroundGallery backgroundSelected="hogwarts.jpg" setBackgroundSelected={() => {}} />
-    );
-    const hogwartsOption = screen.getByTestId('background-bg4');
-    expect(hogwartsOption.getAttribute('aria-pressed')).toBe('true');
+    render(<BackgroundGallery backgroundSelected="plane.jpg" setBackgroundSelected={() => {}} />);
+    const planeOption = screen.getByTestId('background-bg7');
+    expect(planeOption?.getAttribute('aria-pressed')).toBe('true');
   });
 });
