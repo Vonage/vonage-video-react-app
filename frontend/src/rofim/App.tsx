@@ -18,35 +18,35 @@ const App = () => {
   return (
     <Router>
       <RofimInit>
-        <Routes>
-          <Route element={<RoomContext />}>
-            <Route
-              path="/"
-              element={
-                <PreviewPublisherProvider>
-                  <WaitingRoom />
-                </PreviewPublisherProvider>
-              }
-            />
-            <Route path="/waiting-doctor" element={<WaitingDoctor />} />
-            <Route
-              path="/room/:roomName"
-              element={
-                <SessionProvider>
+        <SessionProvider>
+          <Routes>
+            <Route element={<RoomContext />}>
+              <Route
+                path="/"
+                element={
+                  <PreviewPublisherProvider>
+                    <WaitingRoom />
+                  </PreviewPublisherProvider>
+                }
+              />
+              <Route path="/waiting-doctor" element={<WaitingDoctor />} />
+              <Route
+                path="/room/:roomName"
+                element={
                   <RedirectToWaitingRoom>
                     <PublisherProvider>
                       <Room />
                     </PublisherProvider>
                   </RedirectToWaitingRoom>
-                </SessionProvider>
-              }
-            />
-          </Route>
-          <Route path="*" element={<Navigate to="/" replace />} />
-          <Route path="/goodbye" element={<GoodBye />} />
-          <Route path="/unsupported-browser" element={<UnsupportedBrowserPage />} />
-          <Route path="/error" element={<ErrorPage />} />
-        </Routes>
+                }
+              />
+            </Route>
+            <Route path="*" element={<Navigate to="/" replace />} />
+            <Route path="/goodbye" element={<GoodBye />} />
+            <Route path="/unsupported-browser" element={<UnsupportedBrowserPage />} />
+            <Route path="/error" element={<ErrorPage />} />
+          </Routes>
+        </SessionProvider>
       </RofimInit>
     </Router>
   );

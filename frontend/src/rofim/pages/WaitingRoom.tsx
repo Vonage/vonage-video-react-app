@@ -9,6 +9,8 @@ import DeviceAccessAlert from '../../components/DeviceAccessAlert';
 import { getStorageItem, STORAGE_KEYS } from '../../utils/storage';
 import useIsSmallViewport from '../../hooks/useIsSmallViewport';
 import { getRofimSession } from '../utils/session';
+import useSessionContext from '../../hooks/useSessionContext';
+import rofimApiService, { WaitingRoomStatus } from '../utils/rofimApi.service';
 
 /**
  * WaitingRoom Component
@@ -35,7 +37,25 @@ const WaitingRoom = (): ReactElement => {
   const username = getStorageItem(STORAGE_KEYS.USERNAME) ?? '';
   const isSmallViewport = useIsSmallViewport();
 
-  const room = getRofimSession()?.room;
+  const { subscriberWrappers, joinRoom } = useSessionContext();
+  const rofimSession = getRofimSession();
+  const room = rofimSession?.room;
+  const slug = rofimSession?.slug;
+  const hasParticipants = subscriberWrappers.length > 0;
+
+  // Connecter automatiquement à la room et mettre à jour le statut
+  useEffect(() => {
+    if (joinRoom && room) {
+      joinRoom(room);
+    }
+
+    // Mettre à jour le statut vers 'check-equipment' quand le patient arrive sur WaitingRoom
+    if (slug) {
+      rofimApiService
+        .setPatientStatus(slug, WaitingRoomStatus.CheckingEquipment)
+        .catch((error) => console.error('❌ Erreur lors de la mise à jour du statut:', error));
+    }
+  }, [joinRoom, room, slug]);
 
   useEffect(() => {
     if (!publisher) {
@@ -109,7 +129,15 @@ const WaitingRoom = (): ReactElement => {
                   <Button
                     onClick={(e) => {
                       e.preventDefault();
-                      navigate('/waiting-doctor');
+                      if (slug && !hasParticipants) {
+                        navigate('/waiting-doctor');
+                      } else {
+                        navigate(`/room/${room}`, {
+                          state: {
+                            hasAccess: true,
+                          },
+                        });
+                      }
                     }}
                     variant="contained"
                     color="primary"
