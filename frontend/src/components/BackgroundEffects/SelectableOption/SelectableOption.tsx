@@ -12,6 +12,20 @@ interface SelectableOptionProps {
   isDisabled?: boolean;
 }
 
+/**
+ * Renders a selectable option with an icon or image.
+ *
+ * The option can be selected or disabled, and has a hover effect.
+ * @param {SelectableOptionProps} props - The properties for the component
+ *  @property {boolean} selected - Whether the option is selected
+ *  @property {Function} onClick - Function to call when the option is clicked
+ *  @property {string} id - Unique identifier for the option
+ *  @property {React.ReactNode} icon - Icon to display in the option
+ *  @property {string} image - Image URL to display in the option
+ *  @property {number} size - Size of the option (default is DEFAULT_SELECTABLE_OPTION_WIDTH)
+ *  @property {boolean} isDisabled - Whether the option is disabled
+ * @returns {React.ReactElement} A selectable option element
+ */
 const SelectableOption: React.FC<SelectableOptionProps> = ({
   selected,
   onClick,

@@ -8,6 +8,14 @@ export type BackgroundVideoContainerProps = {
   isParentVideoEnabled?: boolean;
 };
 
+/**
+ * Component to render the video element for the publisher.
+ * @param {BackgroundVideoContainerProps} props - The properties for the component
+ *  @property {boolean} fixedWidth - Whether to apply a fixed width to the video element
+ *  @property {HTMLObjectElement | HTMLVideoElement} publisherVideoElement - The video element to display
+ *  @property {boolean} isParentVideoEnabled - Whether the parent video is enabled
+ * @returns {ReactElement} The rendered video container element
+ */
 const BackgroundVideoContainer = ({
   fixedWidth = false,
   publisherVideoElement,

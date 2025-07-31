@@ -15,7 +15,7 @@ interface EffectOptionButtonsProps {
 }
 
 /**
- * Renders a group of selectable buttons for background effects in a meeting room.
+ * Renders a group of selectable buttons for background effects in a room.
  *
  * Each button represents a different background effect option.
  * @param {EffectOptionButtonsProps} props - the props for the component.

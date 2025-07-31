@@ -42,7 +42,7 @@ export type BackgroundPublisherContextType = {
 
 /**
  * Hook wrapper for creation, interaction with, and state for local video publisher.
- * Access from app via PublisherProvider, not directly.
+ * Access from app via BackgroundPublisherProvider, not directly.
  * @property {boolean} isAudioEnabled - React state boolean showing if audio is enabled
  * @property {boolean} isPublishing - React state boolean showing if we are publishing
  * @property {boolean} isVideoEnabled - React state boolean showing if camera is on

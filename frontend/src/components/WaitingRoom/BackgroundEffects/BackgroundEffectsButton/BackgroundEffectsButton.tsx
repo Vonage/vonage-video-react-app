@@ -4,16 +4,18 @@ import { ReactElement } from 'react';
 import PortraitIcon from '@mui/icons-material/Portrait';
 import VideoContainerButton from '../../VideoContainerButton';
 
-/**
- * BackgroundEffectsButton Component
- *
- * If the user's device supports the Vonage Media Processor, displays a button to modify background effects.
- * @returns {ReactElement | false} - The BackgroundEffectsButton component.
- */
 interface BackgroundEffectsButtonProps {
   onClick: () => void;
 }
 
+/**
+ * BackgroundEffectsButton Component
+ *
+ * If the user's device supports the Vonage Media Processor, displays a button to modify background effects.
+ * @param {BackgroundEffectsButtonProps} props - The props for the component.
+ *   @property {Function} onClick - Function to call when the button is clicked.
+ * @returns {ReactElement | false} - The BackgroundEffectsButton component.
+ */
 const BackgroundEffectsButton = ({
   onClick,
 }: BackgroundEffectsButtonProps): ReactElement | false => {

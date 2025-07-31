@@ -17,7 +17,7 @@ export type BackgroundEffectsLayoutProps = {
 /**
  * BackgroundEffectsLayout Component
  *
- * This component manages the UI for background effects in the meeting room.
+ * This component manages the UI for background effects (cancel background and blurs) in a room.
  * @param {BackgroundEffectsLayoutProps} props - The props for the component.
  *   @property {boolean} isOpen - Whether the background effects panel is open.
  *   @property {Function} handleClose - Function to close the panel.

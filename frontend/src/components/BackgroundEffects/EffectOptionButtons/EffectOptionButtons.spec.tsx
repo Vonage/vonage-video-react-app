@@ -12,7 +12,7 @@ describe('EffectOptionButtons', () => {
 
   it('marks the selected option as selected', () => {
     render(<EffectOptionButtons backgroundSelected="low-blur" setBackgroundSelected={() => {}} />);
-    const selectedOption = screen.getByRole('button', { selected: true });
+    const selectedOption = screen.getByTestId('background-low-blur');
     expect(selectedOption).toBeInTheDocument();
   });
 
@@ -24,8 +24,8 @@ describe('EffectOptionButtons', () => {
         setBackgroundSelected={setBackgroundSelected}
       />
     );
-    const blurButtons = screen.getAllByRole('button');
-    await userEvent.click(blurButtons[1]);
+    const lowBlur = screen.getByTestId('background-low-blur');
+    await userEvent.click(lowBlur);
     expect(setBackgroundSelected).toHaveBeenCalledWith('low-blur');
   });
 
@@ -37,8 +37,8 @@ describe('EffectOptionButtons', () => {
         setBackgroundSelected={setBackgroundSelected}
       />
     );
-    const blurButtons = screen.getAllByRole('button');
-    await userEvent.click(blurButtons[2]);
+    const highBlur = screen.getByTestId('background-high-blur');
+    await userEvent.click(highBlur);
     expect(setBackgroundSelected).toHaveBeenCalledWith('high-blur');
   });
 });

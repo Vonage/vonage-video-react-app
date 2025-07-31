@@ -50,6 +50,7 @@ const vonageDefaultEmptyOutputDevice = { deviceId: null, label: null };
 describe('DeviceSettingsMenu Component', () => {
   const nativeMediaDevices = global.navigator.mediaDevices;
   const mockHandleToggle = vi.fn();
+  const mockHandleToggleBackgroundEffects = vi.fn();
   const mockSetIsOpen = vi.fn();
   const mockAnchorRef = {
     current: document.createElement('input'),
@@ -100,6 +101,7 @@ describe('DeviceSettingsMenu Component', () => {
           <DeviceSettingsMenu
             deviceType={deviceType}
             handleToggle={mockHandleToggle}
+            toggleBackgroundEffects={mockHandleToggleBackgroundEffects}
             isOpen
             anchorRef={mockAnchorRef}
             handleClose={mockHandleClose}
@@ -140,6 +142,7 @@ describe('DeviceSettingsMenu Component', () => {
           <DeviceSettingsMenu
             deviceType={deviceType}
             handleToggle={mockHandleToggle}
+            toggleBackgroundEffects={mockHandleToggleBackgroundEffects}
             isOpen
             anchorRef={mockAnchorRef}
             handleClose={mockHandleClose}
@@ -174,6 +177,7 @@ describe('DeviceSettingsMenu Component', () => {
             <DeviceSettingsMenu
               deviceType={deviceType}
               handleToggle={mockHandleToggle}
+              toggleBackgroundEffects={mockHandleToggleBackgroundEffects}
               isOpen
               anchorRef={mockAnchorRef}
               handleClose={mockHandleClose}
@@ -197,6 +201,7 @@ describe('DeviceSettingsMenu Component', () => {
             <DeviceSettingsMenu
               deviceType={deviceType}
               handleToggle={mockHandleToggle}
+              toggleBackgroundEffects={mockHandleToggleBackgroundEffects}
               isOpen
               anchorRef={mockAnchorRef}
               handleClose={mockHandleClose}
@@ -218,6 +223,7 @@ describe('DeviceSettingsMenu Component', () => {
           <DeviceSettingsMenu
             deviceType={deviceType}
             handleToggle={mockHandleToggle}
+            toggleBackgroundEffects={mockHandleToggleBackgroundEffects}
             isOpen
             anchorRef={mockAnchorRef}
             handleClose={mockHandleClose}
@@ -279,6 +285,7 @@ describe('DeviceSettingsMenu Component', () => {
           deviceType={deviceType}
           handleToggle={mockHandleToggle}
           handleClose={mockHandleClose}
+          toggleBackgroundEffects={mockHandleToggleBackgroundEffects}
           isOpen
           anchorRef={mockAnchorRef}
           setIsOpen={mockSetIsOpen}
@@ -304,7 +311,7 @@ describe('DeviceSettingsMenu Component', () => {
       expect(screen.queryByTestId('video-settings-devices-dropdown')).not.toBeInTheDocument();
     });
 
-    it('and renders the dropdown separator and background blur option when media processor is supported', async () => {
+    it('and renders the dropdown separator and background effects option when media processor is supported', async () => {
       mockedHasMediaProcessorSupport.mockReturnValue(true);
       render(
         <DeviceSettingsMenu
@@ -319,16 +326,17 @@ describe('DeviceSettingsMenu Component', () => {
 
       await waitFor(() => {
         expect(screen.queryByTestId('dropdown-separator')).toBeVisible();
-        expect(screen.queryByText('Blur your background')).toBeVisible();
+        expect(screen.queryByText('Background effects')).toBeVisible();
       });
     });
 
-    it('and does not render the dropdown separator and background blur option when media processor is not supported', async () => {
+    it('and does not render the dropdown separator and background effects option when media processor is not supported', async () => {
       render(
         <DeviceSettingsMenu
           deviceType={deviceType}
           handleToggle={mockHandleToggle}
           handleClose={mockHandleClose}
+          toggleBackgroundEffects={mockHandleToggleBackgroundEffects}
           isOpen
           anchorRef={mockAnchorRef}
           setIsOpen={mockSetIsOpen}
@@ -337,7 +345,7 @@ describe('DeviceSettingsMenu Component', () => {
 
       await waitFor(() => {
         expect(screen.queryByTestId('dropdown-separator')).not.toBeInTheDocument();
-        expect(screen.queryByText('Blur your background')).not.toBeInTheDocument();
+        expect(screen.queryByText('Background effects')).not.toBeInTheDocument();
       });
     });
   });

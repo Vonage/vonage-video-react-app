@@ -29,6 +29,15 @@ import usePublisherOptions from '../../Context/PublisherProvider/usePublisherOpt
 const mockedNavigate = vi.fn();
 const mockedParams = { roomName: 'test-room-name' };
 const mockedLocation = vi.fn();
+vi.mock('../../hooks/useBackgroundPublisherContext', () => ({
+  __esModule: true,
+  default: () => ({
+    initLocalPublisher: vi.fn(),
+    destroyPublisher: vi.fn(),
+    backgroundPublisher: null,
+    accessStatus: undefined,
+  }),
+}));
 vi.mock('react-router-dom', async () => {
   const mod = await vi.importActual<typeof import('react-router-dom')>('react-router-dom');
   return {
@@ -100,6 +109,7 @@ const createSubscriberWrapper = (id: string): SubscriberWrapper => {
     videoWidth: () => 1280,
     videoHeight: () => 720,
     subscribeToVideo: () => {},
+    getVideoFilter: vi.fn(() => undefined),
     stream: {
       streamId: id,
     },
@@ -126,6 +136,7 @@ describe('MeetingRoom', () => {
       getAudioSource: () => defaultAudioDevice,
       videoWidth: () => 1280,
       videoHeight: () => 720,
+      getVideoFilter: vi.fn(() => undefined),
     }) as unknown as Publisher;
     publisherContext = {
       publisher: null,

@@ -13,7 +13,7 @@ export type BackgroundPublisherProviderProps = {
  * PublisherContext contains all state and methods for local video publisher
  * We use Context to make the publisher available in many components across the app without
  * prop drilling: https://react.dev/learn/passing-data-deeply-with-context#use-cases-for-context
- * See usePublisher.tsx for methods and state
+ * See useBackgroundPublisher.tsx for methods and state
  * @param {BackgroundPublisherProviderProps} props - The provider properties
  *  @property {ReactNode} children - The content to be rendered
  * @returns {BackgroundPublisherContext} a context provider for a publisher Background
