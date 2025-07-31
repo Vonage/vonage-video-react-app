@@ -25,6 +25,7 @@ const VideoContainerButton = forwardRef(function VideoContainerButton(
   return (
     <IconButton
       {...rest}
+      data-testid="video-container-button"
       ref={ref}
       sx={{
         height: '100%',
