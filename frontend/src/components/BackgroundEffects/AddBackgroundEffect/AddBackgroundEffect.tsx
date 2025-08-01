@@ -9,8 +9,8 @@ interface AddBackgroundEffectProps {
 
 /**
  * Renders a button that allows user to upload background effects.
- * This button is disabled if the user has reached the maximum limit of custom images.
  *
+ * This button is disabled if the user has reached the maximum limit of custom images.
  * @param {AddBackgroundEffectProps} props - the props for the component.
  *   @property {boolean} isDisabled - Whether the button is disabled.
  * @returns {ReactElement} A button for uploading background effects.

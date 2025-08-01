@@ -11,11 +11,12 @@ import setMediaDevices from '../../../utils/mediaDeviceUtils';
 import useDevices from '../../../hooks/useDevices';
 import usePermissions from '../../../hooks/usePermissions';
 import useUserContext from '../../../hooks/useUserContext';
-import { BACKGROUNDS_PATH, DEVICE_ACCESS_STATUS } from '../../../utils/constants';
+import { DEVICE_ACCESS_STATUS } from '../../../utils/constants';
 import { UserType } from '../../user';
 import { AccessDeniedEvent } from '../../PublisherProvider/usePublisher/usePublisher';
 import DeviceStore from '../../../utils/DeviceStore';
 import { setStorageItem, STORAGE_KEYS } from '../../../utils/storage';
+import applyBackgroundFilter from '../../../utils/usePublisher/usePublisherUtils';
 
 type PublisherVideoElementCreatedEvent = Event<'videoElementCreated', Publisher> & {
   element: HTMLVideoElement | HTMLObjectElement;
@@ -88,42 +89,14 @@ const usePreviewPublisher = (): PreviewPublisherContextType => {
 
   const changeBackground = useCallback(
     async (backgroundSelected: string) => {
-      if (!publisherRef.current) {
-        return;
-      }
-
-      let videoFilter: VideoFilter | undefined;
-      if (backgroundSelected === 'low-blur' || backgroundSelected === 'high-blur') {
-        videoFilter = {
-          type: 'backgroundBlur',
-          blurStrength: backgroundSelected === 'low-blur' ? 'low' : 'high',
-        };
-        await publisherRef.current.applyVideoFilter(videoFilter);
-      } else if (/\.(jpg|jpeg|png|gif|bmp)$/i.test(backgroundSelected)) {
-        // If the key is an image filename, apply background replacement
-        videoFilter = {
-          type: 'backgroundReplacement',
-          backgroundImgUrl: `${BACKGROUNDS_PATH}/${backgroundSelected}`,
-        };
-        await publisherRef.current.applyVideoFilter(videoFilter);
-      } else {
-        await publisherRef.current.clearVideoFilter();
-        videoFilter = undefined;
-      }
-
-      setStorageItem(STORAGE_KEYS.BACKGROUND_REPLACEMENT, JSON.stringify(videoFilter ?? ''));
-      setBackgroundFilter(videoFilter);
-      if (setUser) {
-        setUser((prevUser: UserType) => ({
-          ...prevUser,
-          defaultSettings: {
-            ...prevUser.defaultSettings,
-            backgroundFilter: videoFilter,
-          },
-        }));
-      }
+      await applyBackgroundFilter(
+        publisherRef.current,
+        backgroundSelected,
+        setUser,
+        setBackgroundFilter
+      );
     },
-    [setUser, setBackgroundFilter]
+    [setBackgroundFilter, setUser]
   );
 
   /**
