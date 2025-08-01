@@ -48,7 +48,7 @@ export type PublisherContextType = {
   stream: Stream | null | undefined;
   toggleAudio: () => void;
   toggleVideo: () => void;
-  changeBackground: (backgroundSelected: string) => Promise<void>;
+  changeBackground: (backgroundSelected: string) => void;
   unpublish: () => void;
 };
 
