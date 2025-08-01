@@ -43,7 +43,9 @@ const BackgroundEffectsButton = ({
                 backgroundColor: 'rgba(255, 255, 255, 0.6)',
               },
             }}
-            icon={<PortraitIcon sx={{ fontSize: '24px', color: 'white' }} />}
+            icon={
+              <PortraitIcon sx={{ fontSize: '24px', color: 'white' }} data-testid="portraitIcon" />
+            }
           />
         </Tooltip>
       </Box>
