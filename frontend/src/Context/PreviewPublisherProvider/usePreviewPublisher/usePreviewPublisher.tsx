@@ -22,7 +22,7 @@ type PublisherVideoElementCreatedEvent = Event<'videoElementCreated', Publisher>
   element: HTMLVideoElement | HTMLObjectElement;
 };
 
-export type PreviewPublisherContextType = {
+type PreviewPublisherContextType = {
   isAudioEnabled: boolean;
   isPublishing: boolean;
   isVideoEnabled: boolean;

@@ -77,7 +77,7 @@ describe('useBackgroundPublisher', () => {
       mockedInitPublisher.mockReturnValue(mockPublisher);
       const { result } = renderHook(() => useBackgroundPublisher());
 
-      await result.current.initLocalPublisher();
+      await result.current.initBackgroundLocalPublisher();
 
       expect(mockedInitPublisher).toHaveBeenCalled();
     });
@@ -92,7 +92,7 @@ describe('useBackgroundPublisher', () => {
       });
 
       const { result } = renderHook(() => useBackgroundPublisher());
-      await result.current.initLocalPublisher();
+      await result.current.initBackgroundLocalPublisher();
       expect(consoleErrorSpy).toHaveBeenCalledWith('initPublisher error: ', error);
     });
 
@@ -100,7 +100,7 @@ describe('useBackgroundPublisher', () => {
       mockedHasMediaProcessorSupport.mockReturnValue(true);
       mockedInitPublisher.mockReturnValue(mockPublisher);
       const { result } = renderHook(() => useBackgroundPublisher());
-      await result.current.initLocalPublisher();
+      await result.current.initBackgroundLocalPublisher();
 
       await act(async () => {
         await result.current.changeBackground('high-blur');
@@ -115,7 +115,7 @@ describe('useBackgroundPublisher', () => {
       mockedHasMediaProcessorSupport.mockReturnValue(false);
       mockedInitPublisher.mockReturnValue(mockPublisher);
       const { result } = renderHook(() => useBackgroundPublisher());
-      await result.current.initLocalPublisher();
+      await result.current.initBackgroundLocalPublisher();
       expect(mockedInitPublisher).toHaveBeenCalledWith(
         undefined,
         expect.objectContaining({
@@ -133,7 +133,9 @@ describe('useBackgroundPublisher', () => {
       mockedInitPublisher.mockReturnValue(mockPublisher);
       result = renderHook(() => useBackgroundPublisher()).result;
       await act(async () => {
-        await (result.current as ReturnType<typeof useBackgroundPublisher>).initLocalPublisher();
+        await (
+          result.current as ReturnType<typeof useBackgroundPublisher>
+        ).initBackgroundLocalPublisher();
       });
       (mockPublisher.applyVideoFilter as Mock).mockClear();
       (mockPublisher.clearVideoFilter as Mock).mockClear();
@@ -211,7 +213,7 @@ describe('useBackgroundPublisher', () => {
       const { result } = renderHook(() => useBackgroundPublisher());
 
       act(() => {
-        result.current.initLocalPublisher();
+        result.current.initBackgroundLocalPublisher();
       });
       expect(result.current.accessStatus).toBe(DEVICE_ACCESS_STATUS.PENDING);
 
@@ -229,7 +231,7 @@ describe('useBackgroundPublisher', () => {
       const { result } = renderHook(() => useBackgroundPublisher());
 
       act(() => {
-        result.current.initLocalPublisher();
+        result.current.initBackgroundLocalPublisher();
 
         expect(emitAccessDeniedError).not.toThrow();
       });

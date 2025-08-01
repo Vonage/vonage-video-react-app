@@ -29,9 +29,9 @@ const WaitingRoom = (): ReactElement => {
     usePreviewPublisherContext();
 
   const {
-    initLocalPublisher: initBackgroundPublisher,
+    initBackgroundLocalPublisher,
     publisher: backgroundPublisher,
-    destroyPublisher: destroyBackgroundPublisher,
+    destroyBackgroundPublisher,
   } = useBackgroundPublisherContext();
 
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
@@ -56,7 +56,7 @@ const WaitingRoom = (): ReactElement => {
 
   useEffect(() => {
     if (!backgroundPublisher) {
-      initBackgroundPublisher();
+      initBackgroundLocalPublisher();
     }
 
     return () => {
@@ -65,7 +65,7 @@ const WaitingRoom = (): ReactElement => {
         destroyBackgroundPublisher();
       }
     };
-  }, [initBackgroundPublisher, backgroundPublisher, destroyBackgroundPublisher]);
+  }, [initBackgroundLocalPublisher, backgroundPublisher, destroyBackgroundPublisher]);
 
   // After changing device permissions, reload the page to reflect the device's permission change.
   useEffect(() => {

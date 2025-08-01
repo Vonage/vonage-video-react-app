@@ -35,10 +35,10 @@ const MeetingRoom = (): ReactElement => {
     usePublisherContext();
 
   const {
-    initLocalPublisher,
+    initBackgroundLocalPublisher,
     publisher: backgroundPublisher,
     accessStatus,
-    destroyPublisher,
+    destroyBackgroundPublisher,
   } = useBackgroundPublisherContext();
 
   const {
@@ -97,16 +97,16 @@ const MeetingRoom = (): ReactElement => {
 
   useEffect(() => {
     if (!backgroundPublisher) {
-      initLocalPublisher();
+      initBackgroundLocalPublisher();
     }
 
     return () => {
       // Ensure we destroy the backgroundPublisher and release any media devices.
       if (backgroundPublisher) {
-        destroyPublisher();
+        destroyBackgroundPublisher();
       }
     };
-  }, [initLocalPublisher, backgroundPublisher, destroyPublisher]);
+  }, [initBackgroundLocalPublisher, backgroundPublisher, destroyBackgroundPublisher]);
 
   // After changing device permissions, reload the page to reflect the device's permission change.
   useEffect(() => {

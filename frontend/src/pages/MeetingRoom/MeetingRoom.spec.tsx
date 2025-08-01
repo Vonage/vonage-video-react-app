@@ -32,8 +32,8 @@ const mockedLocation = vi.fn();
 vi.mock('../../hooks/useBackgroundPublisherContext', () => ({
   __esModule: true,
   default: () => ({
-    initLocalPublisher: vi.fn(),
-    destroyPublisher: vi.fn(),
+    initBackgroundLocalPublisher: vi.fn(),
+    destroyBackgroundLocalPublisher: vi.fn(),
     backgroundPublisher: null,
     accessStatus: undefined,
   }),

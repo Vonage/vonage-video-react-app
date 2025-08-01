@@ -14,9 +14,23 @@ import useUserContext from '../../../hooks/useUserContext';
 import { DEVICE_ACCESS_STATUS } from '../../../utils/constants';
 import { AccessDeniedEvent } from '../../PublisherProvider/usePublisher/usePublisher';
 import DeviceStore from '../../../utils/DeviceStore';
-import { setStorageItem, STORAGE_KEYS } from '../../../utils/storage';
 import applyBackgroundFilter from '../../../utils/usePublisher/usePublisherUtils';
-import { PreviewPublisherContextType } from '../../PreviewPublisherProvider';
+
+export type BackgroundPublisherContextType = {
+  isPublishing: boolean;
+  isVideoEnabled: boolean;
+  publisher: Publisher | null;
+  publisherVideoElement: HTMLVideoElement | HTMLObjectElement | undefined;
+  destroyBackgroundPublisher: () => void;
+  toggleVideo: () => void;
+  changeBackground: (backgroundSelected: string) => void;
+  backgroundFilter: VideoFilter | undefined;
+  localVideoSource: string | undefined;
+  localAudioSource: string | undefined;
+  accessStatus: string | null;
+  changeVideoSource: (deviceId: string) => void;
+  initBackgroundLocalPublisher: () => Promise<void>;
+};
 
 type PublisherVideoElementCreatedEvent = Event<'videoElementCreated', Publisher> & {
   element: HTMLVideoElement | HTMLObjectElement;
@@ -25,24 +39,21 @@ type PublisherVideoElementCreatedEvent = Event<'videoElementCreated', Publisher>
 /**
  * Hook wrapper for creation, interaction with, and state for local video publisher.
  * Access from app via BackgroundPublisherProvider, not directly.
- * @property {boolean} isAudioEnabled - React state boolean showing if audio is enabled
  * @property {boolean} isPublishing - React state boolean showing if we are publishing
  * @property {boolean} isVideoEnabled - React state boolean showing if camera is on
  * @property {() => Promise<void>} publish - Method to initialize publisher and publish to session
  * @property {Publisher | null} publisher - Publisher object
  * @property {HTMLVideoElement | HTMLObjectElement} publisherVideoElement - video element for publisher
- * @property {() => void} toggleAudio - Method to toggle microphone on/off. State updated internally, can be read via isAudioEnabled.
  * @property {() => void} toggleVideo - Method to toggle camera on/off. State updated internally, can be read via isVideoEnabled.
  * @property {() => void} unpublish - Method to unpublish from session and destroy publisher (for ending a call).
- * @returns {PreviewPublisherContextType} Background context
+ * @returns {BackgroundPublisherContextType} Background context
  */
-const useBackgroundPublisher = (): PreviewPublisherContextType => {
+const useBackgroundPublisher = (): BackgroundPublisherContextType => {
   const { user } = useUserContext();
   const { allMediaDevices, getAllMediaDevices } = useDevices();
   const [publisherVideoElement, setPublisherVideoElement] = useState<
     HTMLVideoElement | HTMLObjectElement
   >();
-  const [speechLevel, setSpeechLevel] = useState(0);
   const { setAccessStatus, accessStatus } = usePermissions();
   const publisherRef = useRef<Publisher | null>(null);
   const [isPublishing, setIsPublishing] = useState(false);
@@ -53,7 +64,6 @@ const useBackgroundPublisher = (): PreviewPublisherContextType => {
     user.defaultSettings.backgroundFilter
   );
   const [isVideoEnabled, setIsVideoEnabled] = useState(true);
-  const [isAudioEnabled, setIsAudioEnabled] = useState(true);
   const [localVideoSource, setLocalVideoSource] = useState<string | undefined>(undefined);
   const [localAudioSource, setLocalAudioSource] = useState<string | undefined>(undefined);
   const deviceStoreRef = useRef<DeviceStore>(new DeviceStore());
@@ -81,19 +91,6 @@ const useBackgroundPublisher = (): PreviewPublisherContextType => {
   );
 
   /**
-   * Change microphone
-   * @returns {void}
-   */
-  const changeAudioSource = useCallback((deviceId: string) => {
-    if (!deviceId || !publisherRef.current) {
-      return;
-    }
-    publisherRef.current.setAudioSource(deviceId);
-    setLocalAudioSource(deviceId);
-    setStorageItem(STORAGE_KEYS.AUDIO_SOURCE, deviceId);
-  }, []);
-
-  /**
    * Change video camera in use
    * @returns {void}
    */
@@ -111,7 +108,7 @@ const useBackgroundPublisher = (): PreviewPublisherContextType => {
    * after a user grants permissions to the denied device, trigger a reload.
    * @returns {void}
    */
-  const handleAccessDenied = useCallback(
+  const handleBackgroundAccessDenied = useCallback(
     async (event: AccessDeniedEvent) => {
       const deviceDeniedAccess = event.message?.startsWith('Microphone') ? 'microphone' : 'camera';
 
@@ -138,32 +135,23 @@ const useBackgroundPublisher = (): PreviewPublisherContextType => {
     setIsPublishing(true);
   };
 
-  /* TODO: Replace with mvgAverage utils once merged */ // NOSONAR
-  const calculateAudioLevel = useCallback((audioLevel: number) => {
-    const currentLogLevel = Math.log(audioLevel) / Math.LN10 / 1.5 + 1;
-    setSpeechLevel(Math.min(Math.max(currentLogLevel, 0), 1) * 100);
-  }, []);
-
   const addPublisherListeners = useCallback(
     (publisher: Publisher | null) => {
       if (!publisher) {
         return;
       }
       publisher.on('destroyed', handleDestroyed);
-      publisher.on('accessDenied', handleAccessDenied);
+      publisher.on('accessDenied', handleBackgroundAccessDenied);
       publisher.on('videoElementCreated', handleVideoElementCreated);
-      publisher.on('audioLevelUpdated', ({ audioLevel }: { audioLevel: number }) => {
-        calculateAudioLevel(audioLevel);
-      });
       publisher.on('accessAllowed', () => {
         setAccessStatus(DEVICE_ACCESS_STATUS.ACCEPTED);
         getAllMediaDevices();
       });
     },
-    [calculateAudioLevel, getAllMediaDevices, handleAccessDenied, setAccessStatus]
+    [getAllMediaDevices, handleBackgroundAccessDenied, setAccessStatus]
   );
 
-  const initLocalPublisher = useCallback(async () => {
+  const initBackgroundLocalPublisher = useCallback(async () => {
     if (publisherRef.current) {
       return;
     }
@@ -197,7 +185,7 @@ const useBackgroundPublisher = (): PreviewPublisherContextType => {
     addPublisherListeners(publisherRef.current);
   }, [addPublisherListeners]);
 
-  const destroyPublisher = useCallback(() => {
+  const destroyBackgroundPublisher = useCallback(() => {
     if (publisherRef.current) {
       publisherRef.current.destroy();
       publisherRef.current = null;
@@ -220,38 +208,20 @@ const useBackgroundPublisher = (): PreviewPublisherContextType => {
     setIsVideoEnabled(!isVideoEnabled);
   };
 
-  /**
-   * Turns the microphone on and off
-   * A wrapper for Publisher.publishAudio()
-   * More details here: https://vonage.github.io/conversation-docs/video-js-reference/latest/Publisher.html#publishAudio
-   * @returns {void}
-   */
-  const toggleAudio = () => {
-    if (!publisherRef.current) {
-      return;
-    }
-    publisherRef.current.publishAudio(!isAudioEnabled);
-    setIsAudioEnabled(!isAudioEnabled);
-  };
-
   return {
-    isAudioEnabled,
-    initLocalPublisher,
+    initBackgroundLocalPublisher,
     isPublishing,
     isVideoEnabled,
-    destroyPublisher,
+    destroyBackgroundPublisher,
     publisher: publisherRef.current,
     publisherVideoElement,
-    toggleAudio,
     toggleVideo,
     changeBackground,
     backgroundFilter,
-    changeAudioSource,
     changeVideoSource,
     localAudioSource,
     localVideoSource,
     accessStatus,
-    speechLevel,
   };
 };
 export default useBackgroundPublisher;

@@ -19,6 +19,7 @@ import useBackgroundPublisherContext from '../../hooks/useBackgroundPublisherCon
 import usePermissions, { PermissionsHookType } from '../../hooks/usePermissions';
 import { DEVICE_ACCESS_STATUS } from '../../utils/constants';
 import waitUntilPlaying from '../../utils/waitUntilPlaying';
+import { BackgroundPublisherContextType } from '../../Context/BackgroundPublisherProvider';
 
 const mockedNavigate = vi.fn();
 const mockedParams = { roomName: 'test-room-name' };
@@ -69,7 +70,7 @@ const mockUsePreviewPublisherContext = usePreviewPublisherContext as Mock<
 >;
 const mockUseBackgroundPublisherContext = useBackgroundPublisherContext as Mock<
   [],
-  PreviewPublisherContextType
+  BackgroundPublisherContextType
 >;
 const mockUsePermissions = usePermissions as Mock<[], PermissionsHookType>;
 const mockWaitUntilPlaying = vi.mocked(waitUntilPlaying);
@@ -78,7 +79,7 @@ const reloadSpy = vi.fn();
 describe('WaitingRoom', () => {
   const nativeWindowLocation = window.location as string & Location;
   let previewPublisherContext: PreviewPublisherContextType;
-  let backgroundPublisherContext: PreviewPublisherContextType;
+  let backgroundPublisherContext: BackgroundPublisherContextType;
   let mockPublisher: Publisher;
   let mockPublisherVideoElement: HTMLVideoElement;
 
@@ -105,9 +106,9 @@ describe('WaitingRoom', () => {
     mockUsePreviewPublisherContext.mockImplementation(() => previewPublisherContext);
     backgroundPublisherContext = {
       publisher: null,
-      initLocalPublisher: vi.fn(),
-      destroyPublisher: mockedDestroyPublisher,
-    } as unknown as PreviewPublisherContextType;
+      initBackgroundLocalPublisher: vi.fn(),
+      destroyBackgroundPublisher: mockedDestroyPublisher,
+    } as unknown as BackgroundPublisherContextType;
     mockUseBackgroundPublisherContext.mockImplementation(() => backgroundPublisherContext);
     mockUsePermissions.mockReturnValue({
       accessStatus: DEVICE_ACCESS_STATUS.ACCEPTED,

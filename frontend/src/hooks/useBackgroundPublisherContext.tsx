@@ -1,13 +1,15 @@
 import { useContext } from 'react';
-import { BackgroundPublisherContext } from '../Context/BackgroundPublisherProvider';
-import { PreviewPublisherContextType } from '../Context/PreviewPublisherProvider';
+import {
+  BackgroundPublisherContext,
+  BackgroundPublisherContextType,
+} from '../Context/BackgroundPublisherProvider';
 
 /**
  * React hook to access the background replacement publisher context containing selected publisher options.
- * @returns {PreviewPublisherContextType} - The current context value for the Background replacement Publisher Context.
+ * @returns {BackgroundPublisherContextType} - The current context value for the Background replacement Publisher Context.
  */
-const useBackgroundPublisherContext = (): PreviewPublisherContextType => {
-  const context = useContext<PreviewPublisherContextType>(BackgroundPublisherContext);
+const useBackgroundPublisherContext = (): BackgroundPublisherContextType => {
+  const context = useContext<BackgroundPublisherContextType>(BackgroundPublisherContext);
   return context;
 };
 
