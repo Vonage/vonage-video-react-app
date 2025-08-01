@@ -69,7 +69,6 @@ describe('BackgroundEffectsLayout', () => {
 
   it('calls setBackgroundSelected when a background gallery option is clicked', async () => {
     renderLayout();
-    screen.debug();
     await userEvent.click(screen.getByTestId('background-bg8'));
   });
 });

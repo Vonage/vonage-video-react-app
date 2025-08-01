@@ -10,7 +10,7 @@ import { Publisher } from '@vonage/client-sdk-video';
  */
 export default function getInitialBackgroundReplacement(publisher?: Publisher | null): string {
   if (!publisher) {
-    throw new Error('Publisher is not provided');
+    return 'none';
   }
   const videoFilter = publisher.getVideoFilter();
   if (videoFilter && videoFilter.type === 'backgroundBlur' && videoFilter.blurStrength === 'low') {
