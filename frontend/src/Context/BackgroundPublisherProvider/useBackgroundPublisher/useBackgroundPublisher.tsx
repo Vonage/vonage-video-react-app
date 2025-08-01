@@ -78,14 +78,16 @@ const useBackgroundPublisher = (): BackgroundPublisherContextType => {
   };
 
   const changeBackground = useCallback(
-    async (backgroundSelected: string) => {
-      await applyBackgroundFilter(
+    (backgroundSelected: string) => {
+      applyBackgroundFilter(
         publisherRef.current,
         backgroundSelected,
         undefined,
         setBackgroundFilter,
         false
-      );
+      ).catch(() => {
+        console.error('Failed to apply background filter.');
+      });
     },
     [setBackgroundFilter]
   );
