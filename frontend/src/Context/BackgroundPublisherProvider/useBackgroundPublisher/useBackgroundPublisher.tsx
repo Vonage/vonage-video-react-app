@@ -16,29 +16,10 @@ import { AccessDeniedEvent } from '../../PublisherProvider/usePublisher/usePubli
 import DeviceStore from '../../../utils/DeviceStore';
 import { setStorageItem, STORAGE_KEYS } from '../../../utils/storage';
 import applyBackgroundFilter from '../../../utils/usePublisher/usePublisherUtils';
+import { PreviewPublisherContextType } from '../../PreviewPublisherProvider';
 
 type PublisherVideoElementCreatedEvent = Event<'videoElementCreated', Publisher> & {
   element: HTMLVideoElement | HTMLObjectElement;
-};
-
-export type BackgroundPublisherContextType = {
-  isAudioEnabled: boolean;
-  isPublishing: boolean;
-  isVideoEnabled: boolean;
-  publisher: Publisher | null;
-  publisherVideoElement: HTMLVideoElement | HTMLObjectElement | undefined;
-  destroyPublisher: () => void;
-  toggleAudio: () => void;
-  toggleVideo: () => void;
-  changeBackground: (backgroundSelected: string) => void;
-  backgroundFilter: VideoFilter | undefined;
-  localAudioSource: string | undefined;
-  localVideoSource: string | undefined;
-  accessStatus: string | null;
-  changeAudioSource: (deviceId: string) => void;
-  changeVideoSource: (deviceId: string) => void;
-  initLocalPublisher: () => Promise<void>;
-  speechLevel: number;
 };
 
 /**
@@ -53,9 +34,9 @@ export type BackgroundPublisherContextType = {
  * @property {() => void} toggleAudio - Method to toggle microphone on/off. State updated internally, can be read via isAudioEnabled.
  * @property {() => void} toggleVideo - Method to toggle camera on/off. State updated internally, can be read via isVideoEnabled.
  * @property {() => void} unpublish - Method to unpublish from session and destroy publisher (for ending a call).
- * @returns {BackgroundPublisherContextType} Background context
+ * @returns {PreviewPublisherContextType} Background context
  */
-const useBackgroundPublisher = (): BackgroundPublisherContextType => {
+const useBackgroundPublisher = (): PreviewPublisherContextType => {
   const { user } = useUserContext();
   const { allMediaDevices, getAllMediaDevices } = useDevices();
   const [publisherVideoElement, setPublisherVideoElement] = useState<

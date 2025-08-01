@@ -1,8 +1,8 @@
 import { ReactNode, createContext, useMemo } from 'react';
 import useBackgroundPublisher from './useBackgroundPublisher';
 
-export type BackgroundPublisherContextType = ReturnType<typeof useBackgroundPublisher>;
-export const BackgroundPublisherContext = createContext({} as BackgroundPublisherContextType);
+export type PreviewPublisherContextType = ReturnType<typeof useBackgroundPublisher>;
+export const BackgroundPublisherContext = createContext({} as PreviewPublisherContextType);
 
 export type BackgroundPublisherProviderProps = {
   children: ReactNode;
