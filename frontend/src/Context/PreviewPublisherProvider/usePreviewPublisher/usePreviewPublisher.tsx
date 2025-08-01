@@ -83,7 +83,7 @@ const usePreviewPublisher = (): PreviewPublisherContextType => {
     setMediaDevices(publisherRef, allMediaDevices, setLocalAudioSource, setLocalVideoSource);
   }, [allMediaDevices]);
 
-  const handleDestroyed = () => {
+  const handlePreviewDestroyed = () => {
     publisherRef.current = null;
   };
 
@@ -195,7 +195,7 @@ const usePreviewPublisher = (): PreviewPublisherContextType => {
       if (!publisher) {
         return;
       }
-      publisher.on('destroyed', handleDestroyed);
+      publisher.on('destroyed', handlePreviewDestroyed);
       publisher.on('accessDenied', handleAccessDenied);
       publisher.on('videoElementCreated', handleVideoElementCreated);
       publisher.on('audioLevelUpdated', ({ audioLevel }: { audioLevel: number }) => {

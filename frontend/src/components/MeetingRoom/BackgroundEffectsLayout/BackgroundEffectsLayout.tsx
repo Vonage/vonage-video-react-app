@@ -8,6 +8,7 @@ import BackgroundVideoContainer from '../../BackgroundEffects/BackgroundVideoCon
 import useBackgroundPublisherContext from '../../../hooks/useBackgroundPublisherContext';
 import { DEFAULT_SELECTABLE_OPTION_WIDTH } from '../../../utils/constants';
 import AddBackgroundEffect from '../../BackgroundEffects/AddBackgroundEffect/AddBackgroundEffect';
+import getInitialBackgroundReplacement from '../../../utils/videoFilterUtils';
 
 export type BackgroundEffectsLayoutProps = {
   handleClose: () => void;
@@ -42,24 +43,7 @@ const BackgroundEffectsLayout = ({
   };
 
   const setInitialBackgroundReplacement = useCallback(() => {
-    const videoFilter = publisher?.getVideoFilter();
-    let selectedBackgroundOption = 'none';
-    if (
-      videoFilter &&
-      videoFilter.type === 'backgroundBlur' &&
-      videoFilter.blurStrength === 'low'
-    ) {
-      selectedBackgroundOption = 'low-blur';
-    } else if (
-      videoFilter &&
-      videoFilter.type === 'backgroundBlur' &&
-      videoFilter.blurStrength === 'high'
-    ) {
-      selectedBackgroundOption = 'high-blur';
-    } else if (videoFilter && videoFilter.type === 'backgroundReplacement') {
-      selectedBackgroundOption = videoFilter.backgroundImgUrl?.split('/').pop() || 'none';
-    }
-
+    const selectedBackgroundOption = getInitialBackgroundReplacement(publisher);
     setBackgroundSelected(selectedBackgroundOption);
     return selectedBackgroundOption;
   }, [publisher, setBackgroundSelected]);

@@ -55,7 +55,7 @@ const useBackgroundPublisher = (): BackgroundPublisherContextType => {
     HTMLVideoElement | HTMLObjectElement
   >();
   const { setAccessStatus, accessStatus } = usePermissions();
-  const publisherRef = useRef<Publisher | null>(null);
+  const backgroundPublisherRef = useRef<Publisher | null>(null);
   const [isPublishing, setIsPublishing] = useState(false);
   const initialBackgroundRef = useRef<VideoFilter | undefined>(
     user.defaultSettings.backgroundFilter
@@ -70,17 +70,22 @@ const useBackgroundPublisher = (): BackgroundPublisherContextType => {
 
   /* This sets the default devices in use so that the user knows what devices they are using */
   useEffect(() => {
-    setMediaDevices(publisherRef, allMediaDevices, setLocalAudioSource, setLocalVideoSource);
+    setMediaDevices(
+      backgroundPublisherRef,
+      allMediaDevices,
+      setLocalAudioSource,
+      setLocalVideoSource
+    );
   }, [allMediaDevices]);
 
-  const handleDestroyed = () => {
-    publisherRef.current = null;
+  const handleBackgroundDestroyed = () => {
+    backgroundPublisherRef.current = null;
   };
 
   const changeBackground = useCallback(
     (backgroundSelected: string) => {
       applyBackgroundFilter(
-        publisherRef.current,
+        backgroundPublisherRef.current,
         backgroundSelected,
         undefined,
         setBackgroundFilter,
@@ -97,10 +102,10 @@ const useBackgroundPublisher = (): BackgroundPublisherContextType => {
    * @returns {void}
    */
   const changeVideoSource = useCallback((deviceId: string) => {
-    if (!deviceId || !publisherRef.current) {
+    if (!deviceId || !backgroundPublisherRef.current) {
       return;
     }
-    publisherRef.current.setVideoSource(deviceId);
+    backgroundPublisherRef.current.setVideoSource(deviceId);
     setLocalVideoSource(deviceId);
   }, []);
 
@@ -142,7 +147,7 @@ const useBackgroundPublisher = (): BackgroundPublisherContextType => {
       if (!publisher) {
         return;
       }
-      publisher.on('destroyed', handleDestroyed);
+      publisher.on('destroyed', handleBackgroundDestroyed);
       publisher.on('accessDenied', handleBackgroundAccessDenied);
       publisher.on('videoElementCreated', handleVideoElementCreated);
       publisher.on('accessAllowed', () => {
@@ -154,7 +159,7 @@ const useBackgroundPublisher = (): BackgroundPublisherContextType => {
   );
 
   const initBackgroundLocalPublisher = useCallback(async () => {
-    if (publisherRef.current) {
+    if (backgroundPublisherRef.current) {
       return;
     }
 
@@ -176,21 +181,21 @@ const useBackgroundPublisher = (): BackgroundPublisherContextType => {
       videoSource,
     };
 
-    publisherRef.current = initPublisher(undefined, publisherOptions, (err: unknown) => {
+    backgroundPublisherRef.current = initPublisher(undefined, publisherOptions, (err: unknown) => {
       if (err instanceof Error) {
-        publisherRef.current = null;
+        backgroundPublisherRef.current = null;
         if (err.name === 'OT_USER_MEDIA_ACCESS_DENIED') {
           console.error('initPublisher error: ', err);
         }
       }
     });
-    addPublisherListeners(publisherRef.current);
+    addPublisherListeners(backgroundPublisherRef.current);
   }, [addPublisherListeners]);
 
   const destroyBackgroundPublisher = useCallback(() => {
-    if (publisherRef.current) {
-      publisherRef.current.destroy();
-      publisherRef.current = null;
+    if (backgroundPublisherRef.current) {
+      backgroundPublisherRef.current.destroy();
+      backgroundPublisherRef.current = null;
     } else {
       console.warn('pub not destroyed');
     }
@@ -203,10 +208,10 @@ const useBackgroundPublisher = (): BackgroundPublisherContextType => {
    * @returns {void}
    */
   const toggleVideo = () => {
-    if (!publisherRef.current) {
+    if (!backgroundPublisherRef.current) {
       return;
     }
-    publisherRef.current.publishVideo(!isVideoEnabled);
+    backgroundPublisherRef.current.publishVideo(!isVideoEnabled);
     setIsVideoEnabled(!isVideoEnabled);
   };
 
@@ -215,7 +220,7 @@ const useBackgroundPublisher = (): BackgroundPublisherContextType => {
     isPublishing,
     isVideoEnabled,
     destroyBackgroundPublisher,
-    publisher: publisherRef.current,
+    publisher: backgroundPublisherRef.current,
     publisherVideoElement,
     toggleVideo,
     changeBackground,
