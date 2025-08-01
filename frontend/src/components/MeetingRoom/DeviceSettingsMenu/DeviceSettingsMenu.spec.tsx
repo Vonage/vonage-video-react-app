@@ -303,6 +303,7 @@ describe('DeviceSettingsMenu Component', () => {
           deviceType={deviceType}
           handleToggle={mockHandleToggle}
           handleClose={mockHandleClose}
+          toggleBackgroundEffects={mockHandleToggleBackgroundEffects}
           isOpen={false}
           anchorRef={mockAnchorRef}
           setIsOpen={mockSetIsOpen}
@@ -318,6 +319,7 @@ describe('DeviceSettingsMenu Component', () => {
           deviceType={deviceType}
           handleToggle={mockHandleToggle}
           handleClose={mockHandleClose}
+          toggleBackgroundEffects={mockHandleToggleBackgroundEffects}
           isOpen
           anchorRef={mockAnchorRef}
           setIsOpen={mockSetIsOpen}

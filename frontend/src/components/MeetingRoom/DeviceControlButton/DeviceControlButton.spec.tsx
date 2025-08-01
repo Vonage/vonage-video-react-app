@@ -13,6 +13,7 @@ vi.mock('../../../hooks/useSpeakingDetector.tsx');
 
 const mockUsePublisherContext = usePublisherContext as Mock<[], PublisherContextType>;
 const mockUseSpeakingDetector = useSpeakingDetector as Mock<[], boolean>;
+const mockHandleToggleBackgroundEffects = vi.fn();
 
 describe('DeviceControlButton', () => {
   const nativeMediaDevices = global.navigator.mediaDevices;
@@ -64,13 +65,23 @@ describe('DeviceControlButton', () => {
   });
 
   it('renders the video control button', () => {
-    render(<DeviceControlButton deviceType="video" />);
+    render(
+      <DeviceControlButton
+        deviceType="video"
+        toggleBackgroundEffects={mockHandleToggleBackgroundEffects}
+      />
+    );
     expect(screen.getByLabelText('camera')).toBeInTheDocument();
     expect(screen.getByTestId('ArrowDropUpIcon')).toBeInTheDocument();
   });
 
   it('renders the audio control button', () => {
-    render(<DeviceControlButton deviceType="audio" />);
+    render(
+      <DeviceControlButton
+        deviceType="audio"
+        toggleBackgroundEffects={mockHandleToggleBackgroundEffects}
+      />
+    );
     expect(screen.getByLabelText('microphone')).toBeInTheDocument();
     expect(screen.getByTestId('ArrowDropUpIcon')).toBeInTheDocument();
   });
