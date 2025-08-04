@@ -7,7 +7,7 @@ describe('SelectableOption', () => {
   it('renders with icon when image is not provided', () => {
     render(
       <SelectableOption
-        selected={false}
+        isSelected={false}
         onClick={() => {}}
         id="icon-option"
         icon={<span data-testid="test-icon">Icon</span>}
@@ -19,7 +19,7 @@ describe('SelectableOption', () => {
 
   it('renders with image when image is provided', () => {
     render(
-      <SelectableOption selected={false} onClick={() => {}} id="img-option" image="/test.jpg" />
+      <SelectableOption isSelected={false} onClick={() => {}} id="img-option" image="/test.jpg" />
     );
     expect(screen.getByTestId('background-img-option')).toBeInTheDocument();
     expect(screen.getByAltText('background')).toHaveAttribute('src', '/test.jpg');
@@ -29,7 +29,7 @@ describe('SelectableOption', () => {
     const handleClick = vi.fn();
     render(
       <SelectableOption
-        selected={false}
+        isSelected={false}
         onClick={handleClick}
         id="clickable"
         icon={<span>Click</span>}
@@ -41,7 +41,7 @@ describe('SelectableOption', () => {
 
   it('shows selected aria-pressed when selected', () => {
     render(
-      <SelectableOption selected onClick={() => {}} id="selected" icon={<span>Selected</span>} />
+      <SelectableOption isSelected onClick={() => {}} id="selected" icon={<span>Selected</span>} />
     );
     const option = screen.getByTestId('background-selected');
     expect(option).toHaveAttribute('aria-pressed', 'true');
@@ -50,7 +50,7 @@ describe('SelectableOption', () => {
   it('is disabled when isDisabled is true', () => {
     render(
       <SelectableOption
-        selected={false}
+        isSelected={false}
         onClick={() => {}}
         id="disabled"
         icon={<span>Disabled</span>}

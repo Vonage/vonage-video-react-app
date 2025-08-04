@@ -14,7 +14,7 @@ import useUserContext from '../../../hooks/useUserContext';
 import { DEVICE_ACCESS_STATUS } from '../../../utils/constants';
 import { AccessDeniedEvent } from '../../PublisherProvider/usePublisher/usePublisher';
 import DeviceStore from '../../../utils/DeviceStore';
-import applyBackgroundFilter from '../../../utils/usePublisher/usePublisherUtils';
+import applyBackgroundFilter from '../../../utils/backgroundFilter/applyBackgroundFilter/applyBackgroundFilter';
 
 export type BackgroundPublisherContextType = {
   isPublishing: boolean;
@@ -37,15 +37,21 @@ type PublisherVideoElementCreatedEvent = Event<'videoElementCreated', Publisher>
 };
 
 /**
- * Hook wrapper for creation, interaction with, and state for local video publisher.
+ * Hook wrapper for creation, interaction with, and state for local video publisher with background effects.
  * Access from app via BackgroundPublisherProvider, not directly.
  * @property {boolean} isPublishing - React state boolean showing if we are publishing
  * @property {boolean} isVideoEnabled - React state boolean showing if camera is on
- * @property {() => Promise<void>} publish - Method to initialize publisher and publish to session
  * @property {Publisher | null} publisher - Publisher object
  * @property {HTMLVideoElement | HTMLObjectElement} publisherVideoElement - video element for publisher
- * @property {() => void} toggleVideo - Method to toggle camera on/off. State updated internally, can be read via isVideoEnabled.
- * @property {() => void} unpublish - Method to unpublish from session and destroy publisher (for ending a call).
+ * @property {Function} destroyBackgroundPublisher - Method to destroy publisher
+ * @property {Function} toggleVideo - Method to toggle camera on/off. State updated internally, can be read via isVideoEnabled.
+ * @property {Function} changeBackground - Method to change background effect
+ * @property {VideoFilter | undefined} backgroundFilter - Current background filter applied to publisher
+ * @property {string | undefined} localVideoSource - Current video source device ID
+ * @property {string | undefined} localAudioSource - Current audio source device ID
+ * @property {string | null} accessStatus - Current device access status
+ * @property {Function} changeVideoSource - Method to change video source device ID
+ * @property {Function} initBackgroundLocalPublisher - Method to initialize the background publisher
  * @returns {BackgroundPublisherContextType} Background context
  */
 const useBackgroundPublisher = (): BackgroundPublisherContextType => {
@@ -171,13 +177,11 @@ const useBackgroundPublisher = (): BackgroundPublisherContextType => {
 
     await deviceStoreRef.current.init();
     const videoSource = deviceStoreRef.current.getConnectedDeviceId('videoinput');
-    const audioSource = deviceStoreRef.current.getConnectedDeviceId('audioinput');
 
     const publisherOptions: PublisherProperties = {
       insertDefaultUI: false,
       videoFilter,
       resolution: '1280x720',
-      audioSource,
       videoSource,
     };
 

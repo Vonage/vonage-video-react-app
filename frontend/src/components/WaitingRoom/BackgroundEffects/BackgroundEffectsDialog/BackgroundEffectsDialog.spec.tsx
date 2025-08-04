@@ -13,14 +13,19 @@ vi.mock('../../../../hooks/useBackgroundPublisherContext', () => ({
 
 describe('BackgroundEffectsDialog', () => {
   it('renders dialog when open', () => {
-    render(<BackgroundEffectsDialog backgroundEffectsOpen setBackgroundEffectsOpen={() => {}} />);
+    render(
+      <BackgroundEffectsDialog isBackgroundEffectsOpen setIsBackgroundEffectsOpen={() => {}} />
+    );
     expect(screen.getByRole('dialog')).toBeInTheDocument();
     expect(screen.getByText(/background effects/i)).toBeInTheDocument();
   });
 
   it('does not render dialog when closed', () => {
     const { queryByRole } = render(
-      <BackgroundEffectsDialog backgroundEffectsOpen={false} setBackgroundEffectsOpen={() => {}} />
+      <BackgroundEffectsDialog
+        isBackgroundEffectsOpen={false}
+        setIsBackgroundEffectsOpen={() => {}}
+      />
     );
     expect(queryByRole('dialog')).not.toBeInTheDocument();
   });
@@ -29,8 +34,8 @@ describe('BackgroundEffectsDialog', () => {
     const setBackgroundEffectsOpen = vi.fn();
     render(
       <BackgroundEffectsDialog
-        backgroundEffectsOpen
-        setBackgroundEffectsOpen={setBackgroundEffectsOpen}
+        isBackgroundEffectsOpen
+        setIsBackgroundEffectsOpen={setBackgroundEffectsOpen}
       />
     );
     const backdrop = document.querySelector('.MuiBackdrop-root');

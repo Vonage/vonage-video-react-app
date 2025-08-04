@@ -14,7 +14,7 @@ export type RightPanelProps = {
 /**
  * RightPanel Component
  * Renders a tab panel that enters from off screen on the right of the window.
- * The panel displays participant list or chat tab.
+ * The panel displays participant list, chat tab, report issue and background effects.
  * @param {RightPanelProps} props - props for the component
  *   @property {RightPanelActiveTab} activeTab - string indicating which tab to display, or 'closed' if closed
  *   @property {Function} handleClose - click handler to close the panel

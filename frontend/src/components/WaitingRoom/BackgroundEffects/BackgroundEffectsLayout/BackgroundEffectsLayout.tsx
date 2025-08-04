@@ -1,4 +1,4 @@
-import React, { ReactElement, useCallback, useEffect, useState } from 'react';
+import { ReactElement, useCallback, useEffect, useState } from 'react';
 import { Box, Button, Typography, useMediaQuery } from '@mui/material';
 import EffectOptionButtons from '../../../BackgroundEffects/EffectOptionButtons/EffectOptionButtons';
 import BackgroundGallery from '../../../BackgroundEffects/BackgroundGallery/BackgroundGallery';
@@ -7,7 +7,7 @@ import usePreviewPublisherContext from '../../../../hooks/usePreviewPublisherCon
 import useBackgroundPublisherContext from '../../../../hooks/useBackgroundPublisherContext';
 import { DEFAULT_SELECTABLE_OPTION_WIDTH } from '../../../../utils/constants';
 import AddBackgroundEffect from '../../../BackgroundEffects/AddBackgroundEffect/AddBackgroundEffect';
-import getInitialBackgroundReplacement from '../../../../utils/videoFilterUtils';
+import getInitialBackgroundFilter from '../../../../utils/backgroundFilter/getInitialBackgroundFilter/getInitialBackgroundFilter';
 
 export type BackgroundEffectsProps = {
   isOpen: boolean;
@@ -26,7 +26,7 @@ const BackgroundEffectsLayout = ({
   isOpen,
   handleClose,
 }: BackgroundEffectsProps): ReactElement | false => {
-  const [backgroundSelected, setBackgroundSelected] = useState('none');
+  const [backgroundSelected, setBackgroundSelected] = useState<string>('none');
   const { publisher, changeBackground, isVideoEnabled } = usePreviewPublisherContext();
   const { publisherVideoElement, changeBackground: changeBackgroundPreview } =
     useBackgroundPublisherContext();
@@ -42,7 +42,7 @@ const BackgroundEffectsLayout = ({
   };
 
   const setInitialBackgroundReplacement = useCallback(() => {
-    const selectedBackgroundOption = getInitialBackgroundReplacement(publisher);
+    const selectedBackgroundOption = getInitialBackgroundFilter(publisher);
     setBackgroundSelected(selectedBackgroundOption);
     return selectedBackgroundOption;
   }, [publisher, setBackgroundSelected]);
@@ -95,7 +95,7 @@ const BackgroundEffectsLayout = ({
             <BackgroundVideoContainer
               publisherVideoElement={publisherVideoElement}
               isParentVideoEnabled={isVideoEnabled}
-              fixedWidth
+              isFixedWidth
             />
             {!isTabletViewport && buttonGroup}
           </Box>

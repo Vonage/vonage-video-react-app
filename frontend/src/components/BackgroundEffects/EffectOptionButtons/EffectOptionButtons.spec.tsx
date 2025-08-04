@@ -16,7 +16,7 @@ describe('EffectOptionButtons', () => {
     expect(selectedOption).toBeInTheDocument();
   });
 
-  it('calls setBackgroundSelected when an option is clicked', async () => {
+  it('sets the selected background', async () => {
     const setBackgroundSelected = vi.fn();
     render(
       <EffectOptionButtons
@@ -29,7 +29,7 @@ describe('EffectOptionButtons', () => {
     expect(setBackgroundSelected).toHaveBeenCalledWith('low-blur');
   });
 
-  it('calls setBackgroundSelected with "high-blur" when high blur option is clicked', async () => {
+  it('sets the selected background with high blur', async () => {
     const setBackgroundSelected = vi.fn();
     render(
       <EffectOptionButtons

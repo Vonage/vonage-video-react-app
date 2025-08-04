@@ -73,7 +73,7 @@ describe('usePreviewPublisher', () => {
   });
 
   describe('initLocalPublisher', () => {
-    it('should call initPublisher', async () => {
+    it('should call initLocalPublisher', async () => {
       mockedInitPublisher.mockReturnValue(mockPublisher);
       const { result } = renderHook(() => usePreviewPublisher());
 
@@ -111,7 +111,7 @@ describe('usePreviewPublisher', () => {
       });
     });
 
-    it('should not apply background when initialized if the device does not support it', async () => {
+    it('should not replace background when initialized if the device does not support it', async () => {
       mockedHasMediaProcessorSupport.mockReturnValue(false);
       mockedInitPublisher.mockReturnValue(mockPublisher);
       const { result } = renderHook(() => usePreviewPublisher());

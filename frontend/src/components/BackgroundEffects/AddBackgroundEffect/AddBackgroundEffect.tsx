@@ -1,11 +1,11 @@
-import React, { ReactElement } from 'react';
+import { ReactElement } from 'react';
 import AddPhotoAlternateIcon from '@mui/icons-material/AddPhotoAlternate';
 import { Tooltip } from '@mui/material';
 import SelectableOption from '../SelectableOption';
 
-interface AddBackgroundEffectProps {
+export type AddBackgroundEffectProps = {
   isDisabled?: boolean;
-}
+};
 
 /**
  * Renders a button that allows user to upload background effects.
@@ -15,9 +15,7 @@ interface AddBackgroundEffectProps {
  *   @property {boolean} isDisabled - Whether the button is disabled.
  * @returns {ReactElement} A button for uploading background effects.
  */
-const AddBackgroundEffect: React.FC<AddBackgroundEffectProps> = ({
-  isDisabled = false,
-}): ReactElement => {
+const AddBackgroundEffect = ({ isDisabled = false }: AddBackgroundEffectProps): ReactElement => {
   return (
     <Tooltip
       title={
@@ -25,9 +23,9 @@ const AddBackgroundEffect: React.FC<AddBackgroundEffectProps> = ({
           'You have reached the maximum custom images limit'
         ) : (
           <>
-            Recommended: JPG/PNG images at 1280x720 res.
+            Recommended: JPG/PNG img. at 1280x720 resolution.
             <br />
-            Note: Custom images are stored locally in the browser.
+            Note: Images are stored only locally in the browser.
           </>
         )
       }
@@ -35,7 +33,7 @@ const AddBackgroundEffect: React.FC<AddBackgroundEffectProps> = ({
     >
       <SelectableOption
         id="upload"
-        selected={false}
+        isSelected={false}
         isDisabled={isDisabled}
         onClick={
           () => {}

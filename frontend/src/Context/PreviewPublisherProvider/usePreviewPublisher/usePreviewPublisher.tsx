@@ -16,7 +16,7 @@ import { UserType } from '../../user';
 import { AccessDeniedEvent } from '../../PublisherProvider/usePublisher/usePublisher';
 import DeviceStore from '../../../utils/DeviceStore';
 import { setStorageItem, STORAGE_KEYS } from '../../../utils/storage';
-import applyBackgroundFilter from '../../../utils/usePublisher/usePublisherUtils';
+import applyBackgroundFilter from '../../../utils/backgroundFilter/applyBackgroundFilter/applyBackgroundFilter';
 
 type PublisherVideoElementCreatedEvent = Event<'videoElementCreated', Publisher> & {
   element: HTMLVideoElement | HTMLObjectElement;
@@ -43,7 +43,7 @@ type PreviewPublisherContextType = {
 };
 
 /**
- * Hook wrapper for creation, interaction with, and state for local video publisher.
+ * Hook wrapper for creation, interaction with, and state for local video preview publisher.
  * Access from app via PreviewPublisherProvider, not directly.
  * @property {boolean} isAudioEnabled - React state boolean showing if audio is enabled
  * @property {boolean} isPublishing - React state boolean showing if we are publishing

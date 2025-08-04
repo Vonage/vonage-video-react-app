@@ -1,36 +1,36 @@
 import { Dialog, DialogContent } from '@mui/material';
 import { ReactElement } from 'react';
-import BackgroundEffectsLayout from '../BackgroundEffectsLayout/Index';
+import BackgroundEffectsLayout from '../BackgroundEffectsLayout/BackgroundEffectsLayout';
 
-interface BackgroundEffectsDialogProps {
-  backgroundEffectsOpen: boolean;
-  setBackgroundEffectsOpen: (open: boolean) => void;
-}
+export type BackgroundEffectsDialogProps = {
+  isBackgroundEffectsOpen: boolean;
+  setIsBackgroundEffectsOpen: (open: boolean) => void;
+};
 
 /**
  * BackgroundEffectsDialog Component
  *
  * This component renders a dialog for background effects in the waiting room.
  * @param {BackgroundEffectsDialogProps} props - The props for the component.
- *   @property {boolean} backgroundEffectsOpen - Whether the dialog is open.
- *   @property {Function} setBackgroundEffectsOpen - Function to set the open state of the dialog.
+ *   @property {boolean} isBackgroundEffectsOpen - Whether the dialog is open.
+ *   @property {Function} setIsBackgroundEffectsOpen - Function to set the open state of the dialog.
  * @returns {ReactElement} The background effects dialog component.
  */
 const BackgroundEffectsDialog = ({
-  backgroundEffectsOpen,
-  setBackgroundEffectsOpen,
+  isBackgroundEffectsOpen,
+  setIsBackgroundEffectsOpen,
 }: BackgroundEffectsDialogProps): ReactElement | false => {
   return (
     <Dialog
-      open={backgroundEffectsOpen}
-      onClose={() => setBackgroundEffectsOpen(false)}
+      open={isBackgroundEffectsOpen}
+      onClose={() => setIsBackgroundEffectsOpen(false)}
       maxWidth="lg"
       fullWidth
     >
       <DialogContent>
         <BackgroundEffectsLayout
-          isOpen={backgroundEffectsOpen}
-          handleClose={() => setBackgroundEffectsOpen(false)}
+          isOpen={isBackgroundEffectsOpen}
+          handleClose={() => setIsBackgroundEffectsOpen(false)}
         />
       </DialogContent>
     </Dialog>

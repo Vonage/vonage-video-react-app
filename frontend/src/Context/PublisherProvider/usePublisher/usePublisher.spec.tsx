@@ -1,6 +1,11 @@
 import { beforeEach, describe, it, expect, vi, Mock, afterAll } from 'vitest';
 import { act, renderHook, waitFor } from '@testing-library/react';
-import { initPublisher, Publisher, Stream } from '@vonage/client-sdk-video';
+import {
+  initPublisher,
+  Publisher,
+  Stream,
+  hasMediaProcessorSupport,
+} from '@vonage/client-sdk-video';
 import EventEmitter from 'events';
 import usePublisher from './usePublisher';
 import useUserContext from '../../../hooks/useUserContext';
@@ -54,6 +59,7 @@ describe('usePublisher', () => {
     mockUseUserContext.mockImplementation(() => mockUserContextWithDefaultSettings);
 
     (initPublisher as Mock).mockImplementation(mockedInitPublisher);
+    (hasMediaProcessorSupport as Mock).mockImplementation(vi.fn().mockReturnValue(true));
 
     mockSessionContext = {
       publish: mockedSessionPublish,

@@ -9,9 +9,9 @@ export type VideoDevicesOptionsProps = {
 /**
  * VideoDevicesOptions Component
  *
- * This component renders a drop-down menu for video device settings.
+ * This component renders a drop-down menu for video device settings (Background Effects).
  * @param {VideoDevicesOptionsProps} props - the props for the component.
- *  @property {string} customLightBlueColor - the custom color used for the toggled icon.
+ * @property {Function} toggleBackgroundEffects - Function to toggle background effects.
  * @returns {ReactElement} The video devices options component.
  */
 const VideoDevicesOptions = ({

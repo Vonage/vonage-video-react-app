@@ -16,7 +16,7 @@ describe('BackgroundGallery', () => {
     expect(options).toHaveLength(backgroundsFiles.length);
   });
 
-  it('calls setBackgroundSelected when an option is clicked', async () => {
+  it('sets the selected background', async () => {
     const setBackgroundSelected = vi.fn();
     render(
       <BackgroundGallery backgroundSelected="" setBackgroundSelected={setBackgroundSelected} />
@@ -26,7 +26,7 @@ describe('BackgroundGallery', () => {
     expect(setBackgroundSelected).toHaveBeenCalledWith('dune-view.jpg');
   });
 
-  it('marks the selected background as selected', () => {
+  it('marks the background as selected', () => {
     render(<BackgroundGallery backgroundSelected="plane.jpg" setBackgroundSelected={() => {}} />);
     const planeOption = screen.getByTestId('background-bg7');
     expect(planeOption?.getAttribute('aria-pressed')).toBe('true');

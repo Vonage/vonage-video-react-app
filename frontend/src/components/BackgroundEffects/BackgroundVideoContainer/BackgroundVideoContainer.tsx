@@ -3,26 +3,26 @@ import { CircularProgress, useMediaQuery } from '@mui/material';
 import waitUntilPlaying from '../../../utils/waitUntilPlaying';
 
 export type BackgroundVideoContainerProps = {
-  fixedWidth?: boolean;
+  isFixedWidth?: boolean;
   publisherVideoElement?: HTMLObjectElement | HTMLVideoElement | undefined;
   isParentVideoEnabled?: boolean;
 };
 
 /**
- * Component to render the video element for the publisher.
+ * Component to render the video element for the background replacement preview publisher.
  * @param {BackgroundVideoContainerProps} props - The properties for the component
- *  @property {boolean} fixedWidth - Whether to apply a fixed width to the video element
+ *  @property {boolean} isFixedWidth - Whether to apply a fixed width to the video element
  *  @property {HTMLObjectElement | HTMLVideoElement} publisherVideoElement - The video element to display
  *  @property {boolean} isParentVideoEnabled - Whether the parent video is enabled
  * @returns {ReactElement} The rendered video container element
  */
 const BackgroundVideoContainer = ({
-  fixedWidth = false,
+  isFixedWidth = false,
   publisherVideoElement,
   isParentVideoEnabled = false,
 }: BackgroundVideoContainerProps): ReactElement => {
   const containerRef = useRef<HTMLDivElement>(null);
-  const [videoLoading, setVideoLoading] = useState<boolean>(true);
+  const [isVideoLoading, setIsVideoLoading] = useState<boolean>(true);
   const isSMViewport = useMediaQuery(`(max-width:500px)`);
   const isMDViewport = useMediaQuery(`(max-width:768px)`);
   const isTabletViewport = useMediaQuery(`(max-width:899px)`);
@@ -35,14 +35,15 @@ const BackgroundVideoContainer = ({
       myVideoElement.title = 'publisher-preview';
       myVideoElement.style.borderRadius = '12px';
       myVideoElement.style.maxHeight = isTabletViewport ? '80%' : '450px';
-      if (fixedWidth) {
-        myVideoElement.style.width = isTabletViewport ? '80%' : '100%';
-      } else {
-        myVideoElement.style.width = isMDViewport ? '80%' : '100%';
+
+      let width = '100%';
+      if (isFixedWidth && isTabletViewport) {
+        width = '80%';
+      } else if (!isFixedWidth && isMDViewport) {
+        width = '80%';
       }
-      if (isSMViewport) {
-        myVideoElement.style.width = '100%';
-      }
+      myVideoElement.style.width = width;
+
       myVideoElement.style.marginLeft = 'auto';
       myVideoElement.style.marginRight = 'auto';
       myVideoElement.style.marginBottom = '1px';
@@ -53,7 +54,7 @@ const BackgroundVideoContainer = ({
         '0 1px 2px 0 rgba(60, 64, 67, .3), 0 1px 3px 1px rgba(60, 64, 67, .15)';
 
       waitUntilPlaying(publisherVideoElement).then(() => {
-        setVideoLoading(false);
+        setIsVideoLoading(false);
       });
     }
   }, [
@@ -61,18 +62,15 @@ const BackgroundVideoContainer = ({
     isMDViewport,
     isSMViewport,
     publisherVideoElement,
-    fixedWidth,
+    isFixedWidth,
     isParentVideoEnabled,
   ]);
 
   let containerWidth = '100%';
-  if (fixedWidth) {
+  if (isFixedWidth) {
     containerWidth = isTabletViewport ? '80%' : '90%';
-  } else {
-    containerWidth = isMDViewport ? '80%' : '100%';
-  }
-  if (isSMViewport) {
-    containerWidth = '100%';
+  } else if (isMDViewport) {
+    containerWidth = '80%';
   }
 
   return (
@@ -83,7 +81,7 @@ const BackgroundVideoContainer = ({
         </div>
       )}
       {isParentVideoEnabled && <div ref={containerRef} />}
-      {videoLoading && isParentVideoEnabled && (
+      {isVideoLoading && isParentVideoEnabled && (
         <div style={{ display: 'flex', justifyContent: 'center', margin: 16 }}>
           <CircularProgress />
         </div>

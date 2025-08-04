@@ -1,12 +1,13 @@
-import { describe, it, expect, beforeEach, vi } from 'vitest';
+import { describe, it, expect, beforeEach, vi, Mock } from 'vitest';
 import { EventEmitter } from 'stream';
-import { Publisher } from '@vonage/client-sdk-video';
-import { BACKGROUNDS_PATH } from '../constants';
-import { STORAGE_KEYS, setStorageItem } from '../storage';
-import applyBackgroundFilter from './usePublisherUtils';
-import { defaultAudioDevice, defaultVideoDevice } from '../mockData/device';
+import { Publisher, hasMediaProcessorSupport } from '@vonage/client-sdk-video';
+import { BACKGROUNDS_PATH } from '../../constants';
+import { STORAGE_KEYS, setStorageItem } from '../../storage';
+import applyBackgroundFilter from './applyBackgroundFilter';
+import { defaultAudioDevice, defaultVideoDevice } from '../../mockData/device';
 
-vi.mock('../storage', () => ({
+vi.mock('@vonage/client-sdk-video');
+vi.mock('../../storage', () => ({
   setStorageItem: vi.fn(),
   STORAGE_KEYS: { BACKGROUND_REPLACEMENT: 'background_replacement' },
 }));
@@ -19,7 +20,8 @@ describe('applyBackgroundFilter', () => {
     clearVideoFilter: vi.fn(),
   }) as unknown as Publisher;
   beforeEach(() => {
-    vi.clearAllMocks();
+    vi.resetAllMocks();
+    (hasMediaProcessorSupport as Mock).mockImplementation(vi.fn().mockReturnValue(true));
   });
 
   it('does nothing if publisher is not provided', async () => {
@@ -114,13 +116,5 @@ describe('applyBackgroundFilter', () => {
       type: 'backgroundBlur',
       blurStrength: 'low',
     });
-  });
-
-  it('does not store or call setUser when storeItem is false', async () => {
-    const setUser = vi.fn();
-    await applyBackgroundFilter(mockPublisher, 'low-blur', setUser, undefined, false);
-
-    expect(setStorageItem).not.toHaveBeenCalled();
-    expect(setUser).not.toHaveBeenCalled();
   });
 });

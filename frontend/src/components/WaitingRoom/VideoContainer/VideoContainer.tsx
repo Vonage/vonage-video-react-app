@@ -29,8 +29,8 @@ export type VideoContainerProps = {
  */
 const VideoContainer = ({ username }: VideoContainerProps): ReactElement => {
   const containerRef = useRef<HTMLDivElement>(null);
-  const [videoLoading, setVideoLoading] = useState<boolean>(true);
-  const [backgroundEffectsOpen, setBackgroundEffectsOpen] = useState<boolean>(false);
+  const [isVideoLoading, setIsVideoLoading] = useState<boolean>(true);
+  const [isBackgroundEffectsOpen, setIsBackgroundEffectsOpen] = useState<boolean>(false);
   const { user } = useUserContext();
   const { publisherVideoElement, isVideoEnabled, isAudioEnabled, speechLevel } =
     usePreviewPublisherContext();
@@ -55,7 +55,7 @@ const VideoContainer = ({ username }: VideoContainerProps): ReactElement => {
         '0 1px 2px 0 rgba(60, 64, 67, .3), 0 1px 3px 1px rgba(60, 64, 67, .15)';
 
       waitUntilPlaying(publisherVideoElement).then(() => {
-        setVideoLoading(false);
+        setIsVideoLoading(false);
       });
     }
   }, [isSmallViewport, publisherVideoElement]);
@@ -69,18 +69,18 @@ const VideoContainer = ({ username }: VideoContainerProps): ReactElement => {
     >
       <div
         ref={containerRef}
-        style={{ display: backgroundEffectsOpen ? 'none' : 'block' }}
+        style={{ display: isBackgroundEffectsOpen ? 'none' : 'block' }}
         data-video-container
       />
       <VignetteEffect />
-      {videoLoading && <VideoLoading />}
+      {isVideoLoading && <VideoLoading />}
       <PreviewAvatar
         initials={initials}
         username={user.defaultSettings.name}
         isVideoEnabled={isVideoEnabled}
-        isVideoLoading={videoLoading}
+        isVideoLoading={isVideoLoading}
       />
-      {!videoLoading && (
+      {!isVideoLoading && (
         <div className="absolute inset-x-0 bottom-[5%] flex h-fit items-center justify-center">
           {isAudioEnabled && (
             <div className="absolute left-6 top-8">
@@ -92,10 +92,10 @@ const VideoContainer = ({ username }: VideoContainerProps): ReactElement => {
             <CameraButton />
           </Stack>
           <div className="absolute right-[20px]">
-            <BackgroundEffectsButton onClick={() => setBackgroundEffectsOpen(true)} />
+            <BackgroundEffectsButton onClick={() => setIsBackgroundEffectsOpen(true)} />
             <BackgroundEffectsDialog
-              backgroundEffectsOpen={backgroundEffectsOpen}
-              setBackgroundEffectsOpen={setBackgroundEffectsOpen}
+              isBackgroundEffectsOpen={isBackgroundEffectsOpen}
+              setIsBackgroundEffectsOpen={setIsBackgroundEffectsOpen}
             />
           </div>
         </div>

@@ -12,7 +12,7 @@ import DeviceSettingsMenu from '../DeviceSettingsMenu';
 
 export type DeviceControlButtonProps = {
   deviceType: 'audio' | 'video';
-  toggleBackgroundEffects: () => void; // Only video devices
+  toggleBackgroundEffects: () => void; // Only used by video devices.
 };
 
 /**
@@ -21,7 +21,8 @@ export type DeviceControlButtonProps = {
  * This component displays a current status of audio/video device (camera/microphone enabled/disabled)
  * and shows a dropdown that displays available audio/video devices.
  * @param {DeviceControlButtonProps} props - the props for the component.
- *  @property {boolean} deviceType - (optional) indicates the type of the device to control.
+ *  @property {boolean} deviceType - indicates the type of the device to control.
+ *  @property {Function} toggleBackgroundEffects - function to toggle background effects for video devices.
  * @returns {ReactElement} The DeviceControlButton component.
  */
 const DeviceControlButton = ({

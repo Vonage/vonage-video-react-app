@@ -1,33 +1,33 @@
-import React from 'react';
+import { ReactElement, ReactNode } from 'react';
 import { Paper } from '@mui/material';
 import { DEFAULT_SELECTABLE_OPTION_WIDTH } from '../../../utils/constants';
 
-interface SelectableOptionProps {
-  selected: boolean;
+export type SelectableOptionProps = {
+  isSelected: boolean;
   onClick: () => void;
   id: string;
-  icon?: React.ReactNode;
+  icon?: ReactNode;
   image?: string;
   size?: number;
   isDisabled?: boolean;
-}
+};
 
 /**
  * Renders a selectable option with an icon or image.
  *
  * The option can be selected or disabled, and has a hover effect.
  * @param {SelectableOptionProps} props - The properties for the component
- *  @property {boolean} selected - Whether the option is selected
+ *  @property {boolean} isSelected - Whether the option is selected
  *  @property {Function} onClick - Function to call when the option is clicked
  *  @property {string} id - Unique identifier for the option
- *  @property {React.ReactNode} icon - Icon to display in the option
+ *  @property {ReactNode} icon - Icon to display in the option
  *  @property {string} image - Image URL to display in the option
  *  @property {number} size - Size of the option (default is DEFAULT_SELECTABLE_OPTION_WIDTH)
  *  @property {boolean} isDisabled - Whether the option is disabled
- * @returns {React.ReactElement} A selectable option element
+ * @returns {ReactElement} A selectable option element
  */
-const SelectableOption: React.FC<SelectableOptionProps> = ({
-  selected,
+const SelectableOption = ({
+  isSelected,
   onClick,
   id,
   icon,
@@ -35,20 +35,20 @@ const SelectableOption: React.FC<SelectableOptionProps> = ({
   size = DEFAULT_SELECTABLE_OPTION_WIDTH,
   isDisabled = false,
   ...otherProps // Used by MUI Tooltip
-}) => {
+}: SelectableOptionProps): ReactElement => {
   return (
     <Paper
       data-testid={`background-${id}`}
       onClick={onClick}
-      elevation={selected ? 4 : 1}
+      elevation={isSelected ? 4 : 1}
       aria-disabled={isDisabled}
-      aria-pressed={selected}
+      aria-pressed={isSelected}
       sx={{
         width: size,
         height: size,
         overflow: 'hidden',
         borderRadius: '16px',
-        border: selected ? '2px solid #1976d2' : '',
+        border: isSelected ? '2px solid #1976d2' : '',
         cursor: isDisabled ? 'not-allowed' : 'pointer',
         display: 'flex',
         alignItems: 'center',

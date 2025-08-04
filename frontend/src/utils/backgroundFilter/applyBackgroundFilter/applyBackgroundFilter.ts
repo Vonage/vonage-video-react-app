@@ -1,7 +1,7 @@
-import { Publisher, VideoFilter } from '@vonage/client-sdk-video';
-import { UserType } from '../../Context/user';
-import { BACKGROUNDS_PATH } from '../constants';
-import { setStorageItem, STORAGE_KEYS } from '../storage';
+import { hasMediaProcessorSupport, Publisher, VideoFilter } from '@vonage/client-sdk-video';
+import { UserType } from '../../../Context/user';
+import { BACKGROUNDS_PATH } from '../../constants';
+import { setStorageItem, STORAGE_KEYS } from '../../storage';
 
 /**
  * Applies a background filter to the publisher.
@@ -21,6 +21,10 @@ export default async function applyBackgroundFilter(
   storeItem: boolean = true
 ): Promise<void> {
   if (!publisher) {
+    return;
+  }
+  if (!hasMediaProcessorSupport()) {
+    console.error('Media Processor is not supported in this environment.');
     return;
   }
 
@@ -48,7 +52,7 @@ export default async function applyBackgroundFilter(
   if (setBackgroundFilter) {
     setBackgroundFilter(videoFilter);
   }
-  if (setUser && storeItem) {
+  if (setUser) {
     setUser((prevUser: UserType) => ({
       ...prevUser,
       defaultSettings: {

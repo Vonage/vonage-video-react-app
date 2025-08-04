@@ -4,9 +4,9 @@ import { ReactElement } from 'react';
 import PortraitIcon from '@mui/icons-material/Portrait';
 import VideoContainerButton from '../../VideoContainerButton';
 
-interface BackgroundEffectsButtonProps {
+export type BackgroundEffectsButtonProps = {
   onClick: () => void;
-}
+};
 
 /**
  * BackgroundEffectsButton Component

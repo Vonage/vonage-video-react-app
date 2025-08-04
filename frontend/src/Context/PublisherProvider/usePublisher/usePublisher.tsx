@@ -15,7 +15,7 @@ import getAccessDeniedError, {
   PublishingErrorType,
 } from '../../../utils/getAccessDeniedError/getAccessDeniedError';
 import useUserContext from '../../../hooks/useUserContext';
-import applyBackgroundFilter from '../../../utils/usePublisher/usePublisherUtils';
+import applyBackgroundFilter from '../../../utils/backgroundFilter/applyBackgroundFilter/applyBackgroundFilter';
 
 type PublisherStreamCreatedEvent = Event<'streamCreated', Publisher> & {
   stream: Stream;

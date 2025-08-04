@@ -33,7 +33,7 @@ const useRightPanel = (): UseRightPanel => {
   });
 
   /**
-   * toggleParticipantList - util to toggle participant list visibility,
+   * toggleParticipantList - util to toggle participant list visibility.
    */
   const toggleParticipantList = useCallback(() => {
     setRightPanelState((prev) => {
@@ -45,7 +45,7 @@ const useRightPanel = (): UseRightPanel => {
   }, []);
 
   /**
-   * toggleBackgroundEffects - util to toggle background effects visibility,
+   * toggleBackgroundEffects - util to toggle background effects visibility.
    */
   const toggleBackgroundEffects = useCallback(() => {
     setRightPanelState((prev) => {
@@ -68,7 +68,7 @@ const useRightPanel = (): UseRightPanel => {
 
   /**
    * toggleChat - util to toggle chat visibility,
-   * it also resets unread message counter,
+   * it also resets unread message counter.
    */
   const toggleChat = useCallback(() => {
     setRightPanelState((prev) => {

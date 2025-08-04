@@ -1,4 +1,4 @@
-import React, { ReactElement, useCallback, useEffect, useState } from 'react';
+import { ReactElement, useCallback, useEffect, useState } from 'react';
 import { Box, Button, Typography } from '@mui/material';
 import usePublisherContext from '../../../hooks/usePublisherContext';
 import RightPanelTitle from '../RightPanel/RightPanelTitle';
@@ -8,7 +8,7 @@ import BackgroundVideoContainer from '../../BackgroundEffects/BackgroundVideoCon
 import useBackgroundPublisherContext from '../../../hooks/useBackgroundPublisherContext';
 import { DEFAULT_SELECTABLE_OPTION_WIDTH } from '../../../utils/constants';
 import AddBackgroundEffect from '../../BackgroundEffects/AddBackgroundEffect/AddBackgroundEffect';
-import getInitialBackgroundReplacement from '../../../utils/videoFilterUtils';
+import getInitialBackgroundFilter from '../../../utils/backgroundFilter/getInitialBackgroundFilter/getInitialBackgroundFilter';
 
 export type BackgroundEffectsLayoutProps = {
   handleClose: () => void;
@@ -28,7 +28,7 @@ const BackgroundEffectsLayout = ({
   handleClose,
   isOpen,
 }: BackgroundEffectsLayoutProps): ReactElement | false => {
-  const [backgroundSelected, setBackgroundSelected] = useState('none');
+  const [backgroundSelected, setBackgroundSelected] = useState<string>('none');
   const { publisher, changeBackground, isVideoEnabled } = usePublisherContext();
   const { publisherVideoElement, changeBackground: changeBackgroundPreview } =
     useBackgroundPublisherContext();
@@ -43,7 +43,7 @@ const BackgroundEffectsLayout = ({
   };
 
   const setInitialBackgroundReplacement = useCallback(() => {
-    const selectedBackgroundOption = getInitialBackgroundReplacement(publisher);
+    const selectedBackgroundOption = getInitialBackgroundFilter(publisher);
     setBackgroundSelected(selectedBackgroundOption);
     return selectedBackgroundOption;
   }, [publisher, setBackgroundSelected]);

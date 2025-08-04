@@ -1,4 +1,4 @@
-import React, { ReactElement } from 'react';
+import { ReactElement } from 'react';
 import { Box } from '@mui/material';
 import { BACKGROUNDS_PATH } from '../../../utils/constants';
 import SelectableOption from '../SelectableOption';
@@ -14,10 +14,10 @@ export const backgrounds = [
   { id: 'bg8', file: 'white-room.jpg' },
 ];
 
-interface BackgroundGalleryProps {
+export type BackgroundGalleryProps = {
   backgroundSelected: string;
   setBackgroundSelected: (key: string) => void;
-}
+};
 
 /**
  * Renders a group of selectable images for background replacement in a meeting room.
@@ -28,10 +28,10 @@ interface BackgroundGalleryProps {
  *   @property {Function} setBackgroundSelected - Callback to update the selected background image key.
  * @returns {ReactElement} A horizontal stack of selectable option buttons.
  */
-const BackgroundGallery: React.FC<BackgroundGalleryProps> = ({
+const BackgroundGallery = ({
   backgroundSelected,
   setBackgroundSelected,
-}): ReactElement => {
+}: BackgroundGalleryProps): ReactElement => {
   return (
     <>
       {backgrounds.map((bg) => {
@@ -46,7 +46,7 @@ const BackgroundGallery: React.FC<BackgroundGalleryProps> = ({
           >
             <SelectableOption
               id={bg.id}
-              selected={backgroundSelected === bg.file}
+              isSelected={backgroundSelected === bg.file}
               onClick={() => setBackgroundSelected(bg.file)}
               image={path}
             />

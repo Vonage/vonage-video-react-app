@@ -1,4 +1,4 @@
-import React, { ReactElement } from 'react';
+import { ReactElement } from 'react';
 import BlockIcon from '@mui/icons-material/Block';
 import BlurOnIcon from '@mui/icons-material/BlurOn';
 import SelectableOption from '../SelectableOption';
@@ -9,10 +9,10 @@ const options = [
   { key: 'high-blur', icon: <BlurOnIcon sx={{ fontSize: '30px' }} /> },
 ];
 
-interface EffectOptionButtonsProps {
+export type EffectOptionButtonsProps = {
   backgroundSelected: string;
   setBackgroundSelected: (key: string) => void;
-}
+};
 
 /**
  * Renders a group of selectable buttons for background effects in a room.
@@ -23,17 +23,17 @@ interface EffectOptionButtonsProps {
  *   @property {Function} setBackgroundSelected - Callback to update the selected background effect key.
  * @returns {ReactElement} A horizontal stack of selectable option buttons.
  */
-const EffectOptionButtons: React.FC<EffectOptionButtonsProps> = ({
+const EffectOptionButtons = ({
   backgroundSelected,
   setBackgroundSelected,
-}): ReactElement => {
+}: EffectOptionButtonsProps): ReactElement => {
   return (
     <>
       {options.map(({ key, icon }) => (
         <SelectableOption
           key={key}
           id={key}
-          selected={backgroundSelected === key}
+          isSelected={backgroundSelected === key}
           onClick={() => setBackgroundSelected(key)}
           icon={icon}
         />
