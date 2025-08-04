@@ -1,6 +1,7 @@
 import { Subscriber } from '@vonage/client-sdk-video';
 import { ReactElement, useState, useRef, useEffect } from 'react';
 import { Typography } from '@mui/material';
+import { useTranslation } from 'react-i18next';
 import useReceivingCaptions from '../../../../../hooks/useReceivingCaptions';
 import { CAPTION_DISPLAY_DURATION_MS } from '../../../../../utils/constants';
 
@@ -23,6 +24,7 @@ const UserCaption = ({
   isSmallViewPort,
   caption,
 }: UserCaptionProps): ReactElement | null => {
+  const { t } = useTranslation();
   const { caption: captionText, isReceivingCaptions } = useReceivingCaptions({
     subscriber,
   });
@@ -72,7 +74,7 @@ const UserCaption = ({
           fontSize: isSmallViewPort ? '1rem' : '1.25rem',
         }}
       >
-        <strong>{subscriber?.stream?.name ?? 'You'}: </strong> {displayCaption}
+        <strong>{subscriber?.stream?.name ?? t('user.you')}: </strong> {displayCaption}
       </Typography>
     </div>
   );

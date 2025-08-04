@@ -6,6 +6,7 @@ import Tooltip from '@mui/material/Tooltip';
 import ButtonGroup from '@mui/material/ButtonGroup';
 import { MicOff, ArrowDropUp, ArrowDropDown } from '@mui/icons-material';
 import { useState, useRef, useCallback, ReactElement } from 'react';
+import { useTranslation } from 'react-i18next';
 import MutedAlert from '../../MutedAlert';
 import usePublisherContext from '../../../hooks/usePublisherContext';
 import DeviceSettingsMenu from '../DeviceSettingsMenu';
@@ -30,13 +31,14 @@ const DeviceControlButton = ({
   deviceType,
   toggleBackgroundEffects,
 }: DeviceControlButtonProps): ReactElement => {
+  const { t } = useTranslation();
   const { isVideoEnabled, toggleAudio, toggleVideo, isAudioEnabled } = usePublisherContext();
   const { toggleVideo: toggleBackgroundVideoPublisher } = useBackgroundPublisherContext();
   const isAudio = deviceType === 'audio';
   const [open, setOpen] = useState<boolean>(false);
   const anchorRef = useRef<HTMLInputElement | null>(null);
-  const audioTitle = isAudioEnabled ? 'Disable microphone' : 'Enable microphone';
-  const videoTitle = isVideoEnabled ? 'Disable video' : 'Enable video';
+  const audioTitle = isAudioEnabled ? t('devices.audio.disable') : t('devices.audio.enable');
+  const videoTitle = isVideoEnabled ? t('devices.video.disable') : t('devices.video.enable');
 
   const handleToggle = () => {
     setOpen((prevOpen) => !prevOpen);
@@ -81,13 +83,13 @@ const DeviceControlButton = ({
         sx={{ borderRadius: '30px' }}
         variant="contained"
         ref={anchorRef}
-        aria-label="split button"
+        aria-label={t('devices.buttons.ariaLabel')}
       >
         <IconButton
           size="small"
           aria-controls={open ? 'split-button-menu' : undefined}
           aria-expanded={open ? 'true' : undefined}
-          aria-label={isAudio ? 'audio devices dropdown' : 'video devices dropdown'}
+          aria-label={isAudio ? t('devices.audio.ariaLabel') : t('devices.video.ariaLabel')}
           aria-haspopup="menu"
           onClick={handleToggle}
           className="size-12"
@@ -99,7 +101,10 @@ const DeviceControlButton = ({
             <ArrowDropUp className="text-gray-400" />
           )}
         </IconButton>
-        <Tooltip title={isAudio ? audioTitle : videoTitle} aria-label="device settings">
+        <Tooltip
+          title={isAudio ? audioTitle : videoTitle}
+          aria-label={t('devices.settings.ariaLabel')}
+        >
           <IconButton
             onClick={handleDeviceStateChange}
             edge="start"

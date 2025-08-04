@@ -1,4 +1,5 @@
 import { useCallback, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import useUserContext from './useUserContext';
 import { ChatMessageType } from '../types/chat';
 import { SignalType } from '../types/session';
@@ -22,6 +23,7 @@ export type UseChat = {
  *   @property {(text: string) => void} sendChatMessage - function to send message
  */
 const useChat = ({ signal }: UseChatProps): UseChat => {
+  const { t } = useTranslation();
   const [messages, setMessages] = useState<ChatMessageType[]>([]);
   const {
     user: {
@@ -46,21 +48,24 @@ const useChat = ({ signal }: UseChatProps): UseChat => {
     [signal, localParticipantName]
   );
 
-  const onChatMessage = useCallback((data: string) => {
-    if (data) {
-      try {
-        const { text, participantName } = JSON.parse(data);
-        const message: ChatMessageType = {
-          timestamp: Date.now(),
-          participantName: `${participantName || 'unknown user'}`,
-          message: text,
-        };
-        setMessages((prev) => [...prev, message]);
-      } catch (err) {
-        console.log(err);
+  const onChatMessage = useCallback(
+    (data: string) => {
+      if (data) {
+        try {
+          const { text, participantName } = JSON.parse(data);
+          const message: ChatMessageType = {
+            timestamp: Date.now(),
+            participantName: participantName || t('user.unknown'),
+            message: text,
+          };
+          setMessages((prev) => [...prev, message]);
+        } catch (err) {
+          console.log(err);
+        }
       }
-    }
-  }, []);
+    },
+    [t]
+  );
 
   return {
     messages,

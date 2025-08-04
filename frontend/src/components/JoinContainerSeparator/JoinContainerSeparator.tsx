@@ -1,4 +1,5 @@
 import { ReactElement } from 'react';
+import { useTranslation } from 'react-i18next';
 import Separator from '../Separator';
 
 /**
@@ -8,10 +9,11 @@ import Separator from '../Separator';
  * @returns {ReactElement} The JoinContainerSeparator component.
  */
 const JoinContainerSeparator = (): ReactElement => {
+  const { t } = useTranslation();
   return (
     <div className="flex w-full items-center">
       <Separator orientation="left" />
-      or
+      {t('common.or')}
       <Separator orientation="right" />
     </div>
   );
