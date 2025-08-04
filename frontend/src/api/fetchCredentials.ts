@@ -12,9 +12,10 @@ import { API_URL } from '../utils/constants';
  * Returns the credentials needed to enter video call
  * See https://developer.vonage.com/en/video/guides/video-api-basics-overview#basic-vonage-video-api-functionality
  * @param {string} roomName - the name of the meeting room
+ * @param {string} tokenRole - the role of the user in the meeting room (e.g., moderator, participant)
  * @returns {CredentialsType} the credentials needed to enter the meeting room
  */
 
-export default async (roomName: string) => {
-  return axios.get(`${API_URL}/session/${roomName}`);
+export default async (roomName: string, tokenRole: string) => {
+  return axios.get(`${API_URL}/session/${roomName}/${tokenRole}`);
 };

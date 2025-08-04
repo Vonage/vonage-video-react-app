@@ -12,23 +12,26 @@ const getOrCreateSession = createGetOrCreateSession({
   sessionService,
 });
 
-sessionRouter.get('/:room', async (req: Request<{ room: string }>, res: Response) => {
-  try {
-    const { room: roomName } = req.params;
-    const sessionId = await getOrCreateSession(roomName);
-    const data = videoService.generateToken(sessionId);
-    const captionsId = await sessionService.getCaptionsId(roomName);
-    res.json({
-      sessionId,
-      token: data.token,
-      apiKey: data.apiKey,
-      captionsId,
-    });
-  } catch (error: unknown) {
-    const message = error instanceof Error ? error.message : error;
-    res.status(500).send({ message });
+sessionRouter.get(
+  '/:room/:tokenRole',
+  async (req: Request<{ room: string; tokenRole: string }>, res: Response) => {
+    try {
+      const { room: roomName, tokenRole } = req.params;
+      const sessionId = await getOrCreateSession(roomName);
+      const data = videoService.generateToken(sessionId, tokenRole);
+      const captionsId = await sessionService.getCaptionsId(roomName);
+      res.json({
+        sessionId,
+        token: data.token,
+        apiKey: data.apiKey,
+        captionsId,
+      });
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : error;
+      res.status(500).send({ message });
+    }
   }
-});
+);
 
 sessionRouter.post('/:room/startArchive', async (req: Request<{ room: string }>, res: Response) => {
   try {
@@ -88,10 +91,10 @@ sessionRouter.get('/:room/archives', async (req: Request<{ room: string }>, res:
 });
 
 sessionRouter.post(
-  '/:room/enableCaptions',
-  async (req: Request<{ room: string }>, res: Response) => {
+  '/:room/:tokenRole/enableCaptions',
+  async (req: Request<{ room: string; tokenRole: string }>, res: Response) => {
     try {
-      const { room: roomName } = req.params;
+      const { room: roomName, tokenRole } = req.params;
       const sessionId = await sessionService.getSession(roomName);
 
       if (!sessionId) {
@@ -102,7 +105,7 @@ sessionRouter.post(
       const newCaptionCount = await sessionService.incrementCaptionsUserCount(roomName);
 
       if (newCaptionCount === 1) {
-        const captions = await videoService.enableCaptions(sessionId);
+        const captions = await videoService.enableCaptions(sessionId, tokenRole);
         const { captionsId } = captions;
         await sessionService.setCaptionsId(roomName, captionsId);
         res.json({ captionsId, status: 200 });
@@ -122,10 +125,10 @@ sessionRouter.post(
 );
 
 sessionRouter.post(
-  '/:room/:captionsId/disableCaptions',
-  async (req: Request<{ room: string; captionsId: string }>, res: Response) => {
+  '/:room/:captionsId/:tokenRole/disableCaptions',
+  async (req: Request<{ room: string; captionsId: string; tokenRole: string }>, res: Response) => {
     try {
-      const { room: roomName, captionsId } = req.params;
+      const { room: roomName, captionsId, tokenRole } = req.params;
 
       // Validate the captionsId
       // the expected format is a UUID v4
@@ -145,7 +148,7 @@ sessionRouter.post(
       }
 
       // Only the last user to disable captions will send a request to disable captions session-wide
-      if (captionsUserCount === 0) {
+      if (captionsUserCount === 0 && tokenRole === 'moderator') {
         const disableResponse = await videoService.disableCaptions(captionsId);
         await sessionService.setCaptionsId(roomName, '');
         res.json({
@@ -153,6 +156,10 @@ sessionRouter.post(
           status: 200,
         });
       } else {
+        if (tokenRole !== 'admin') {
+          res.status(403).json({ message: 'Only admin can disable captions' });
+          return;
+        }
         res.json({
           disableResponse: 'Captions are still active for other users',
           status: 200,

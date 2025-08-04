@@ -51,6 +51,7 @@ const { default: VonageVideoService } = await import('../vonageVideoService');
 
 describe('VonageVideoService', () => {
   let vonageVideoService: typeof VonageVideoService.prototype;
+  const userRole = 'moderator';
 
   beforeEach(() => {
     vonageVideoService = new VonageVideoService({
@@ -66,7 +67,7 @@ describe('VonageVideoService', () => {
   });
 
   it('generates a token', () => {
-    const result = vonageVideoService.generateToken(mockSessionId);
+    const result = vonageVideoService.generateToken(mockSessionId, userRole);
     expect(result.token).toEqual({
       apiKey: mockApplicationId,
       token: mockToken,
@@ -84,7 +85,7 @@ describe('VonageVideoService', () => {
   });
 
   it('enables captions', async () => {
-    const captionResponse = await vonageVideoService.enableCaptions(mockSessionId);
+    const captionResponse = await vonageVideoService.enableCaptions(mockSessionId, userRole);
     expect(captionResponse.captionsId).toBe(mockCaptionId);
   });
 

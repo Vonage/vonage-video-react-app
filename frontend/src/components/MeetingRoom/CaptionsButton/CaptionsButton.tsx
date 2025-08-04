@@ -1,6 +1,7 @@
 import { ClosedCaption, ClosedCaptionDisabled } from '@mui/icons-material';
 import { Tooltip } from '@mui/material';
 import { Dispatch, ReactElement, useState, SetStateAction } from 'react';
+import { useLocation } from 'react-router-dom';
 import { AxiosError } from 'axios';
 import useRoomName from '../../../hooks/useRoomName';
 import ToolbarButton from '../ToolbarButton';
@@ -39,6 +40,10 @@ const CaptionsButton = ({
     captionsState;
   const title = isUserCaptionsEnabled ? 'Disable captions' : 'Enable captions';
 
+  const location = useLocation();
+  const searchParams = new URLSearchParams(location.search);
+  const tokenRole = searchParams.get('tokenRole') || 'admin';
+
   const handleClose = () => {
     if (isOverflowButton && handleClick) {
       handleClick();
@@ -55,7 +60,7 @@ const CaptionsButton = ({
 
   const handleCaptionsEnable = async () => {
     try {
-      const response = await enableCaptions(roomName);
+      const response = await enableCaptions(roomName, tokenRole);
       setCaptionsId(response.data.captionsId);
       setIsUserCaptionsEnabled(true);
     } catch (error) {
@@ -68,7 +73,7 @@ const CaptionsButton = ({
   const handleCaptionsDisable = async () => {
     try {
       setCaptionsId('');
-      await disableCaptions(roomName, captionsId);
+      await disableCaptions(roomName, captionsId, tokenRole);
       setIsUserCaptionsEnabled(false);
     } catch (error) {
       if (error instanceof AxiosError) {

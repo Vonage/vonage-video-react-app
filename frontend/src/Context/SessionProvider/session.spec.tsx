@@ -3,6 +3,7 @@ import { describe, expect, it, vi, beforeEach, Mock, afterAll, afterEach } from 
 import { act, render, waitFor } from '@testing-library/react';
 import EventEmitter from 'events';
 import { Publisher, Stream } from '@vonage/client-sdk-video';
+import { MemoryRouter } from 'react-router-dom';
 import useSessionContext from '../../hooks/useSessionContext';
 import SessionProvider from './session';
 import ActiveSpeakerTracker from '../../utils/ActiveSpeakerTracker';
@@ -155,9 +156,11 @@ describe('SessionProvider', () => {
 
     await act(async () => {
       const result = render(
-        <SessionProvider>
-          <TestComponent />
-        </SessionProvider>
+        <MemoryRouter>
+          <SessionProvider>
+            <TestComponent />
+          </SessionProvider>
+        </MemoryRouter>
       );
       getByTestId = result.getByTestId;
     });

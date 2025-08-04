@@ -80,7 +80,7 @@ describe('OpentokVideoService', () => {
   });
 
   it('generates a token', () => {
-    const result = opentokVideoService.generateToken(mockSessionId);
+    const result = opentokVideoService.generateToken(mockSessionId, 'admin');
     expect(result.token).toEqual({
       apiKey: mockApiKey,
       token: mockToken,
@@ -107,7 +107,7 @@ describe('OpentokVideoService', () => {
   });
 
   it('enables captions', async () => {
-    const captionResponse = await opentokVideoService.enableCaptions(mockSessionId);
+    const captionResponse = await opentokVideoService.enableCaptions(mockSessionId, 'admin');
     expect(captionResponse.captionsId).toBe(mockCaptionId);
   });
 

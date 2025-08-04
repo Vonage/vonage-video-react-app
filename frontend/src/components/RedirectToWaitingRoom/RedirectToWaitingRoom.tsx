@@ -24,7 +24,9 @@ const RedirectToWaitingRoom = ({ children }: RedirectToWaitingRoomProps): ReactE
 
   const searchParams = new URLSearchParams(location.search);
   const bypass =
-    searchParams.get('bypass') === 'true' || import.meta.env.VITE_BYPASS_WAITING_ROOM === 'true';
+    searchParams.get('bypass') === 'true' ||
+    import.meta.env.VITE_BYPASS_WAITING_ROOM === 'true' ||
+    searchParams.get('tokenRole');
   const mustEnterWaitingRoom = !hasAccess && !bypass;
   return mustEnterWaitingRoom ? (
     <Navigate

@@ -16,11 +16,17 @@ class OpenTokVideoService implements VideoService {
     this.opentok = new OpenTok(apiKey, apiSecret);
   }
 
-  private static getTokenRole(): Role {
-    // We set token role to Moderator in order to allow force muting of another participant
-    // In a real world application you may use roles based on the user type in your application
-    // See documentation for more information: https://tokbox.com/developer/guides/create-token/
-    return 'moderator';
+  private static getTokenRole(tokenRole: string): Role {
+    switch (tokenRole) {
+      case 'admin':
+        return 'moderator';
+      case 'participant':
+        return 'publisher';
+      case 'viewer':
+        return 'subscriber';
+      default:
+        return 'publisher';
+    }
   }
 
   createSession(): Promise<string> {
@@ -36,9 +42,9 @@ class OpenTokVideoService implements VideoService {
     });
   }
 
-  generateToken(sessionId: string): { token: string; apiKey: string } {
+  generateToken(sessionId: string, tokenRole: string): { token: string; apiKey: string } {
     const token = this.opentok.generateToken(sessionId, {
-      role: OpenTokVideoService.getTokenRole(),
+      role: OpenTokVideoService.getTokenRole(tokenRole),
     });
     return { token, apiKey: this.config.apiKey };
   }
@@ -99,14 +105,14 @@ class OpenTokVideoService implements VideoService {
   // This is not the case for Vonage Video Node SDK, which has a built-in method for enabling captions.
   readonly API_URL = 'https://api.opentok.com/v2/project';
 
-  async enableCaptions(sessionId: string): Promise<EnableCaptionResponse> {
+  async enableCaptions(sessionId: string, tokenRole: string): Promise<EnableCaptionResponse> {
     const expires = Math.floor(new Date().getTime() / 1000) + 24 * 60 * 60;
     // Note that the project token is different from the session token.
     // The project token is used to authenticate the request to the OpenTok API.
     const projectJWT = projectToken(this.config.apiKey, this.config.apiSecret, expires);
     const captionURL = `${this.API_URL}/${this.config.apiKey}/captions`;
 
-    const { token } = this.generateToken(sessionId);
+    const { token } = this.generateToken(sessionId, tokenRole);
     const captionOptions = {
       // The following language codes are supported: en-US, en-AU, en-GB, fr-FR, fr-CA, de-DE, hi-IN, it-IT, pt-BR, ja-JP, ko-KR, zh-CN, zh-TW
       languageCode: 'en-US',

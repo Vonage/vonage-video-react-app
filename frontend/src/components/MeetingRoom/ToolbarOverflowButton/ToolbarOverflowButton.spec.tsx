@@ -1,5 +1,6 @@
 import { beforeEach, describe, expect, it, Mock, vi } from 'vitest';
 import { act, render, screen } from '@testing-library/react';
+import { MemoryRouter } from 'react-router-dom';
 import useSessionContext from '../../../hooks/useSessionContext';
 import { SessionContextType } from '../../../Context/SessionProvider/session';
 import ToolbarOverflowButton from './ToolbarOverflowButton';
@@ -54,12 +55,20 @@ describe('ToolbarOverflowButton', () => {
   };
 
   it('renders', () => {
-    render(<ToolbarOverflowButton {...defaultProps} />);
+    render(
+      <MemoryRouter>
+        <ToolbarOverflowButton {...defaultProps} />
+      </MemoryRouter>
+    );
     expect(screen.queryByTestId('hidden-toolbar-items')).toBeInTheDocument();
   });
 
   it('toggling shows and hides the toolbar buttons', () => {
-    render(<ToolbarOverflowButton {...defaultProps} />);
+    render(
+      <MemoryRouter>
+        <ToolbarOverflowButton {...defaultProps} />
+      </MemoryRouter>
+    );
 
     expect(screen.queryByTestId('layout-button')).not.toBeVisible();
     expect(screen.queryByTestId('emoji-grid-button')).not.toBeVisible();
@@ -75,7 +84,11 @@ describe('ToolbarOverflowButton', () => {
   });
 
   it('should have the unread messages badge present', () => {
-    render(<ToolbarOverflowButton {...defaultProps} />);
+    render(
+      <MemoryRouter>
+        <ToolbarOverflowButton {...defaultProps} />
+      </MemoryRouter>
+    );
 
     // We expect the ChatButton in the ToolbarOverflowMenu and the ToolbarOverflowButton to have an unread messages badge present
     expect(screen.queryAllByTestId('chat-button-unread-count').length).toBe(2);

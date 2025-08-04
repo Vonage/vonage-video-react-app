@@ -2,6 +2,7 @@ import { describe, expect, it, vi, beforeEach, Mock } from 'vitest';
 import { render, screen, act, waitFor } from '@testing-library/react';
 import type { AxiosResponse } from 'axios';
 import { Subscriber } from '@vonage/client-sdk-video';
+import { MemoryRouter } from 'react-router-dom';
 import { enableCaptions, disableCaptions } from '../../../api/captions';
 import CaptionsButton, { CaptionsState } from './CaptionsButton';
 import useRoomName from '../../../hooks/useRoomName';
@@ -69,20 +70,26 @@ describe('CaptionsButton', () => {
 
   it('renders the button correctly', () => {
     render(
-      <CaptionsButton
-        handleClick={mockHandleCloseMenu}
-        captionsState={{ ...mockCaptionsState, isUserCaptionsEnabled: true }}
-      />
+      <MemoryRouter>
+        <CaptionsButton
+          handleClick={mockHandleCloseMenu}
+          captionsState={{ ...mockCaptionsState, isUserCaptionsEnabled: true }}
+        />
+      </MemoryRouter>
     );
     expect(screen.getByTestId('captions-button')).toBeInTheDocument();
   });
 
   it('turns the captions on when button is pressed', async () => {
-    render(<CaptionsButton handleClick={mockHandleCloseMenu} captionsState={mockCaptionsState} />);
+    render(
+      <MemoryRouter>
+        <CaptionsButton handleClick={mockHandleCloseMenu} captionsState={mockCaptionsState} />
+      </MemoryRouter>
+    );
     act(() => screen.getByTestId('captions-button').click());
 
     await waitFor(() => {
-      expect(enableCaptions).toHaveBeenCalledWith(mockedRoomName);
+      expect(enableCaptions).toHaveBeenCalledWith(mockedRoomName, 'admin');
     });
   });
 });

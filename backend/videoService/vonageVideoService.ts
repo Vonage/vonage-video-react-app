@@ -25,11 +25,17 @@ class VonageVideoService implements VideoService {
     this.vonageVideo = new Video(this.credentials);
   }
 
-  private static getTokenRole(): string {
-    // We set token role to Moderator in order to allow force muting of another participant
-    // In a real world application you may use roles based on the user type in your application
-    // See documentation for more information: https://developer.vonage.com/en/video/guides/create-token
-    return 'moderator';
+  private static getTokenRole(userRole: string): string {
+    switch (userRole) {
+      case 'admin':
+        return 'moderator';
+      case 'participant':
+        return 'publisher';
+      case 'viewer':
+        return 'subscriber';
+      default:
+        return 'publisher';
+    }
   }
 
   async createSession(): Promise<string> {
@@ -42,9 +48,9 @@ class VonageVideoService implements VideoService {
     return archives.items;
   }
 
-  generateToken(sessionId: string): { token: string; apiKey: string } {
+  generateToken(sessionId: string, userRole: string): { token: string; apiKey: string } {
     const token = this.vonageVideo.generateClientToken(sessionId, {
-      role: VonageVideoService.getTokenRole(),
+      role: VonageVideoService.getTokenRole(userRole),
     });
     return { token, apiKey: this.config.applicationId };
   }
@@ -68,8 +74,8 @@ class VonageVideoService implements VideoService {
     return 'Archive stopped successfully';
   }
 
-  async enableCaptions(sessionId: string): Promise<EnableCaptionResponse> {
-    const requestToken = this.generateToken(sessionId);
+  async enableCaptions(sessionId: string, userRole: string): Promise<EnableCaptionResponse> {
+    const requestToken = this.generateToken(sessionId, userRole);
     const { token } = requestToken;
 
     try {

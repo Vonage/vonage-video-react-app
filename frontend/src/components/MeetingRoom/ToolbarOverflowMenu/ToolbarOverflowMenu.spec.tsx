@@ -2,6 +2,7 @@ import { afterEach, beforeEach, describe, expect, it, Mock, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import { useRef } from 'react';
 import { Button } from '@mui/material';
+import { MemoryRouter } from 'react-router-dom';
 import ToolbarOverflowMenu, { CaptionsState } from './ToolbarOverflowMenu';
 import * as util from '../../../utils/util';
 import isReportIssueEnabled from '../../../utils/isReportIssueEnabled';
@@ -29,7 +30,7 @@ const TestComponent = ({ defaultOpen = false }: { defaultOpen?: boolean }) => {
   const anchorRef = useRef<HTMLButtonElement | null>(null);
 
   return (
-    <>
+    <MemoryRouter>
       <Button ref={anchorRef} />
       <ToolbarOverflowMenu
         isOpen={defaultOpen}
@@ -41,7 +42,7 @@ const TestComponent = ({ defaultOpen = false }: { defaultOpen?: boolean }) => {
         toolbarButtonsCount={0}
         captionsState={mockCaptionsState}
       />
-    </>
+    </MemoryRouter>
   );
 };
 

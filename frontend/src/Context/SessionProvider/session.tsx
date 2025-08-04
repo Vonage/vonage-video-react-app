@@ -10,6 +10,7 @@ import {
   useEffect,
   ReactElement,
 } from 'react';
+import { useLocation } from 'react-router-dom';
 import { Connection, Publisher, Stream } from '@vonage/client-sdk-video';
 import fetchCredentials from '../../api/fetchCredentials';
 import useUserContext from '../../hooks/useUserContext';
@@ -344,19 +345,23 @@ const SessionProvider = ({ children }: SessionProviderProps): ReactElement => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  const location = useLocation();
+  const searchParams = new URLSearchParams(location.search);
+  const tokenRole = searchParams.get('tokenRole') || 'admin';
+
   /**
    * Joins a room by fetching the necessary credentials and connecting to the session.
    * @param {string} roomName - The name of the room to join.
    */
   const joinRoom = useCallback(
     async (roomName: string) => {
-      fetchCredentials(roomName)
+      fetchCredentials(roomName, tokenRole)
         .then((credentials) => {
           connect(credentials.data);
         })
         .catch(console.warn);
     },
-    [connect]
+    [connect, tokenRole]
   );
 
   /**
