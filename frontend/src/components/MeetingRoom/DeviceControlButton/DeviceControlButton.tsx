@@ -12,7 +12,7 @@ import DeviceSettingsMenu from '../DeviceSettingsMenu';
 
 export type DeviceControlButtonProps = {
   deviceType: 'audio' | 'video';
-  toggleBackgroundEffects: () => void; // Only used by video devices.
+  toggleBackgroundEffects: () => void;
 };
 
 /**

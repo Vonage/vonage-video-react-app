@@ -37,9 +37,7 @@ const BackgroundVideoContainer = ({
       myVideoElement.style.maxHeight = isTabletViewport ? '80%' : '450px';
 
       let width = '100%';
-      if (isFixedWidth && isTabletViewport) {
-        width = '80%';
-      } else if (!isFixedWidth && isMDViewport) {
+      if ((isFixedWidth && isTabletViewport) || (!isFixedWidth && isMDViewport)) {
         width = '80%';
       }
       myVideoElement.style.width = width;

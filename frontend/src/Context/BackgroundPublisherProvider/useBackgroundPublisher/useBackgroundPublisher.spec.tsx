@@ -172,6 +172,20 @@ describe('useBackgroundPublisher', () => {
         );
       });
     });
+
+    it('logs an error if applyBackgroundFilter rejects', async () => {
+      mockPublisher.applyVideoFilter = vi.fn(() => {
+        throw new Error('Simulated internal failure');
+      });
+
+      const { result: res } = renderHook(() => useBackgroundPublisher());
+      await act(async () => {
+        await res.current.initBackgroundLocalPublisher();
+        await res.current.changeBackground('low-blur');
+      });
+
+      expect(consoleErrorSpy).toHaveBeenCalledWith('Failed to apply background filter.');
+    });
   });
 
   describe('on accessDenied', () => {

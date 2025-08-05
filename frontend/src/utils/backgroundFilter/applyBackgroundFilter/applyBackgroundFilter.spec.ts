@@ -25,12 +25,12 @@ describe('applyBackgroundFilter', () => {
   });
 
   it('does nothing if publisher is not provided', async () => {
-    await applyBackgroundFilter(null, 'low-blur');
+    await applyBackgroundFilter({ publisher: null, backgroundSelected: 'low-blur' });
     expect(setStorageItem).not.toHaveBeenCalled();
   });
 
   it('applies low blur filter', async () => {
-    await applyBackgroundFilter(mockPublisher, 'low-blur');
+    await applyBackgroundFilter({ publisher: mockPublisher, backgroundSelected: 'low-blur' });
 
     expect(mockPublisher.applyVideoFilter).toHaveBeenCalledWith({
       type: 'backgroundBlur',
@@ -47,7 +47,7 @@ describe('applyBackgroundFilter', () => {
   });
 
   it('applies high blur filter', async () => {
-    await applyBackgroundFilter(mockPublisher, 'high-blur');
+    await applyBackgroundFilter({ publisher: mockPublisher, backgroundSelected: 'high-blur' });
 
     expect(mockPublisher.applyVideoFilter).toHaveBeenCalledWith({
       type: 'backgroundBlur',
@@ -65,7 +65,7 @@ describe('applyBackgroundFilter', () => {
 
   it('applies background replacement filter with an image', async () => {
     const filename = 'background.jpg';
-    await applyBackgroundFilter(mockPublisher, filename);
+    await applyBackgroundFilter({ publisher: mockPublisher, backgroundSelected: filename });
 
     expect(mockPublisher.applyVideoFilter).toHaveBeenCalledWith({
       type: 'backgroundReplacement',
@@ -82,7 +82,7 @@ describe('applyBackgroundFilter', () => {
   });
 
   it('clears the filter if backgroundSelected does not match any filter', async () => {
-    await applyBackgroundFilter(mockPublisher, 'none');
+    await applyBackgroundFilter({ publisher: mockPublisher, backgroundSelected: 'none' });
 
     expect(mockPublisher.clearVideoFilter).toHaveBeenCalled();
 
@@ -95,7 +95,12 @@ describe('applyBackgroundFilter', () => {
   it('calls setBackgroundFilter with the applied filter', async () => {
     const setBackgroundFilter = vi.fn();
 
-    await applyBackgroundFilter(mockPublisher, 'low-blur', undefined, setBackgroundFilter);
+    await applyBackgroundFilter({
+      publisher: mockPublisher,
+      backgroundSelected: 'low-blur',
+      setUser: undefined,
+      setBackgroundFilter,
+    });
 
     expect(setBackgroundFilter).toHaveBeenCalledWith({
       type: 'backgroundBlur',
@@ -106,7 +111,11 @@ describe('applyBackgroundFilter', () => {
   it('calls setUser with the applied filter when storeItem is true', async () => {
     const setUser = vi.fn();
 
-    await applyBackgroundFilter(mockPublisher, 'low-blur', setUser);
+    await applyBackgroundFilter({
+      publisher: mockPublisher,
+      backgroundSelected: 'low-blur',
+      setUser,
+    });
 
     expect(setUser).toHaveBeenCalled();
     const updater = setUser.mock.calls[0][0];

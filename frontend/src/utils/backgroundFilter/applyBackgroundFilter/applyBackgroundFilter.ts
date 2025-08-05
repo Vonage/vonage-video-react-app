@@ -3,23 +3,32 @@ import { UserType } from '../../../Context/user';
 import { BACKGROUNDS_PATH } from '../../constants';
 import { setStorageItem, STORAGE_KEYS } from '../../storage';
 
+export type ApplyBackgroundFilterParams = {
+  publisher?: Publisher | null;
+  backgroundSelected: string;
+  setUser?: (fn: (prev: UserType) => UserType) => void;
+  setBackgroundFilter?: (filter: VideoFilter | undefined) => void;
+  storeItem?: boolean;
+};
+
 /**
  * Applies a background filter to the publisher.
- * @param {Publisher} publisher - The Vonage Publisher instance.
- * @param {string} backgroundSelected - The selected background option.
- * @param {Function} [setUser] - Optional function to update user state.
- * @param {Function} [setBackgroundFilter] - Optional function to set background filter state.
- * @param {boolean} [storeItem] - Optional flag to determine if the filter should be stored.
+ * @param {ApplyBackgroundFilterParams} props - The props for the component.
+ *    @property {Publisher} publisher - The Vonage Publisher instance.
+ *    @property {string} backgroundSelected - The selected background option.
+ *    @property {Function} setUser - Optional function to update user state.
+ *    @property {Function} setBackgroundFilter - Optional function to set background filter state.
+ *    @property {boolean} storeItem - Optional flag to determine if the filter should be stored.
  * @returns {Promise<void>} - A promise that resolves when the filter is applied or cleared.
  * @throws {Error} - Throws an error if the publisher is not provided or if the backgroundSelected is invalid.
  */
-export default async function applyBackgroundFilter(
-  publisher: Publisher | null | undefined,
-  backgroundSelected: string,
-  setUser?: (fn: (prev: UserType) => UserType) => void,
-  setBackgroundFilter?: (filter: VideoFilter | undefined) => void,
-  storeItem: boolean = true
-): Promise<void> {
+export default async function applyBackgroundFilter({
+  publisher,
+  backgroundSelected,
+  setUser,
+  setBackgroundFilter,
+  storeItem = true,
+}: ApplyBackgroundFilterParams): Promise<void> {
   if (!publisher) {
     return;
   }

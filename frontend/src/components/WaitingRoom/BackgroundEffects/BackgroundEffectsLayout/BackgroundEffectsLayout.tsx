@@ -39,6 +39,7 @@ const BackgroundEffectsLayout = ({
 
   const handleApplyBackgroundSelect = () => {
     changeBackground(backgroundSelected);
+    handleClose();
   };
 
   const setInitialBackgroundReplacement = useCallback(() => {
@@ -73,10 +74,7 @@ const BackgroundEffectsLayout = ({
         variant="contained"
         color="primary"
         sx={{ width: '100%' }}
-        onClick={() => {
-          handleApplyBackgroundSelect();
-          handleClose();
-        }}
+        onClick={handleApplyBackgroundSelect}
       >
         Apply
       </Button>

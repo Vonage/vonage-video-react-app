@@ -26,7 +26,6 @@ export type BackgroundPublisherContextType = {
   changeBackground: (backgroundSelected: string) => void;
   backgroundFilter: VideoFilter | undefined;
   localVideoSource: string | undefined;
-  localAudioSource: string | undefined;
   accessStatus: string | null;
   changeVideoSource: (deviceId: string) => void;
   initBackgroundLocalPublisher: () => Promise<void>;
@@ -48,7 +47,6 @@ type PublisherVideoElementCreatedEvent = Event<'videoElementCreated', Publisher>
  * @property {Function} changeBackground - Method to change background effect
  * @property {VideoFilter | undefined} backgroundFilter - Current background filter applied to publisher
  * @property {string | undefined} localVideoSource - Current video source device ID
- * @property {string | undefined} localAudioSource - Current audio source device ID
  * @property {string | null} accessStatus - Current device access status
  * @property {Function} changeVideoSource - Method to change video source device ID
  * @property {Function} initBackgroundLocalPublisher - Method to initialize the background publisher
@@ -71,38 +69,47 @@ const useBackgroundPublisher = (): BackgroundPublisherContextType => {
   );
   const [isVideoEnabled, setIsVideoEnabled] = useState(true);
   const [localVideoSource, setLocalVideoSource] = useState<string | undefined>(undefined);
-  const [localAudioSource, setLocalAudioSource] = useState<string | undefined>(undefined);
   const deviceStoreRef = useRef<DeviceStore>(new DeviceStore());
 
   /* This sets the default devices in use so that the user knows what devices they are using */
   useEffect(() => {
-    setMediaDevices(
-      backgroundPublisherRef,
-      allMediaDevices,
-      setLocalAudioSource,
-      setLocalVideoSource
-    );
+    setMediaDevices(backgroundPublisherRef, allMediaDevices, () => {}, setLocalVideoSource);
   }, [allMediaDevices]);
 
   const handleBackgroundDestroyed = () => {
     backgroundPublisherRef.current = null;
   };
 
+  /**
+   * Change background replacement or blur effect
+   * @param {string} backgroundSelected - The selected background option
+   * @returns {void}
+   */
   const changeBackground = useCallback(
     (backgroundSelected: string) => {
-      applyBackgroundFilter(
-        backgroundPublisherRef.current,
+      applyBackgroundFilter({
+        publisher: backgroundPublisherRef.current,
         backgroundSelected,
-        undefined,
+        setUser: undefined,
         setBackgroundFilter,
-        false
-      ).catch(() => {
+        storeItem: false,
+      }).catch(() => {
         console.error('Failed to apply background filter.');
       });
     },
     [setBackgroundFilter]
   );
 
+  /**
+   * Change video camera in use
+   * @returns {void}
+      ).catch(() => {
+        console.error('Failed to apply background filter.');
+      });
+    },
+    [setBackgroundFilter]
+  );
+   
   /**
    * Change video camera in use
    * @returns {void}
@@ -196,6 +203,10 @@ const useBackgroundPublisher = (): BackgroundPublisherContextType => {
     addPublisherListeners(backgroundPublisherRef.current);
   }, [addPublisherListeners]);
 
+  /**
+   * Destroys the background publisher
+   * @returns {void}
+   */
   const destroyBackgroundPublisher = useCallback(() => {
     if (backgroundPublisherRef.current) {
       backgroundPublisherRef.current.destroy();
@@ -230,7 +241,6 @@ const useBackgroundPublisher = (): BackgroundPublisherContextType => {
     changeBackground,
     backgroundFilter,
     changeVideoSource,
-    localAudioSource,
     localVideoSource,
     accessStatus,
   };

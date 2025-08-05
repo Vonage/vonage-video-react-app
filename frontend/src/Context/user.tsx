@@ -9,6 +9,7 @@ import {
 } from 'react';
 import { VideoFilter } from '@vonage/client-sdk-video';
 import { getStorageItem, STORAGE_KEYS } from '../utils/storage';
+import { parseVideoFilter } from '../utils/util';
 
 // Define the shape of the User context
 export type UserContextType = {
@@ -50,7 +51,7 @@ export type UserProviderProps = {
 const UserProvider = ({ children }: UserProviderProps): ReactElement => {
   // Load initial settings from local storage
   const noiseSuppression = getStorageItem(STORAGE_KEYS.NOISE_SUPPRESSION) === 'true';
-  const backgroundFilter = getStorageItem(STORAGE_KEYS.BACKGROUND_REPLACEMENT);
+  const backgroundFilter = parseVideoFilter(getStorageItem(STORAGE_KEYS.BACKGROUND_REPLACEMENT));
   const name = getStorageItem(STORAGE_KEYS.USERNAME) ?? '';
 
   const [user, setUser] = useState<UserType>({
@@ -58,9 +59,7 @@ const UserProvider = ({ children }: UserProviderProps): ReactElement => {
       publishAudio: true,
       publishVideo: true,
       name,
-      backgroundFilter: backgroundFilter
-        ? (JSON.parse(backgroundFilter) as VideoFilter)
-        : undefined,
+      backgroundFilter,
       noiseSuppression,
       audioSource: undefined,
       videoSource: undefined,

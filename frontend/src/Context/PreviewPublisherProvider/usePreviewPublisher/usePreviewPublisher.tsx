@@ -22,7 +22,7 @@ type PublisherVideoElementCreatedEvent = Event<'videoElementCreated', Publisher>
   element: HTMLVideoElement | HTMLObjectElement;
 };
 
-type PreviewPublisherContextType = {
+export type PreviewPublisherContextType = {
   isAudioEnabled: boolean;
   isPublishing: boolean;
   isVideoEnabled: boolean;
@@ -48,12 +48,20 @@ type PreviewPublisherContextType = {
  * @property {boolean} isAudioEnabled - React state boolean showing if audio is enabled
  * @property {boolean} isPublishing - React state boolean showing if we are publishing
  * @property {boolean} isVideoEnabled - React state boolean showing if camera is on
- * @property {() => Promise<void>} publish - Method to initialize publisher and publish to session
  * @property {Publisher | null} publisher - Publisher object
  * @property {HTMLVideoElement | HTMLObjectElement} publisherVideoElement - video element for publisher
+ * @property {Function} destroyPublisher - Method to destroy publisher
  * @property {() => void} toggleAudio - Method to toggle microphone on/off. State updated internally, can be read via isAudioEnabled.
  * @property {() => void} toggleVideo - Method to toggle camera on/off. State updated internally, can be read via isVideoEnabled.
- * @property {() => void} unpublish - Method to unpublish from session and destroy publisher (for ending a call).
+ * @property {Function} changeBackground - Method to change background effect
+ * @property {VideoFilter | undefined} backgroundFilter - Current background filter applied to publisher
+ * @property {string | undefined} localVideoSource - Current video source device ID
+ * @property {string | undefined} localAudioSource - Current audio source device ID
+ * @property {string | null} accessStatus - Current device access status
+ * @property {Function} changeAudioSource - Method to change audio source device ID
+ * @property {Function} changeVideoSource - Method to change video source device ID
+ * @property {Function} initLocalPublisher - Method to initialize the preview publisher
+ * @property {number} speechLevel - Current speech level for audio visualization
  * @returns {PreviewPublisherContextType} preview context
  */
 const usePreviewPublisher = (): PreviewPublisherContextType => {
@@ -87,14 +95,19 @@ const usePreviewPublisher = (): PreviewPublisherContextType => {
     publisherRef.current = null;
   };
 
+  /**
+   * Change background replacement or blur effect
+   * @param {string} backgroundSelected - The selected background option
+   * @returns {void}
+   */
   const changeBackground = useCallback(
     (backgroundSelected: string) => {
-      applyBackgroundFilter(
-        publisherRef.current,
+      applyBackgroundFilter({
+        publisher: publisherRef.current,
         backgroundSelected,
         setUser,
-        setBackgroundFilter
-      ).catch(() => {
+        setBackgroundFilter,
+      }).catch(() => {
         console.error('Failed to apply background filter.');
       });
     },
@@ -243,6 +256,10 @@ const usePreviewPublisher = (): PreviewPublisherContextType => {
     addPublisherListeners(publisherRef.current);
   }, [addPublisherListeners]);
 
+  /**
+   * Destroys the preview publisher
+   * @returns {void}
+   */
   const destroyPublisher = useCallback(() => {
     if (publisherRef.current) {
       publisherRef.current.destroy();

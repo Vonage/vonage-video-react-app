@@ -122,9 +122,18 @@ const usePublisher = (): PublisherContextType => {
     publisherRef.current = null;
   };
 
+  /**
+   * Change background replacement or blur effect
+   * @param {string} backgroundSelected - The selected background option
+   * @returns {void}
+   */
   const changeBackground = useCallback(
     (backgroundSelected: string) => {
-      applyBackgroundFilter(publisherRef.current, backgroundSelected, setUser).catch(() => {
+      applyBackgroundFilter({
+        publisher: publisherRef.current,
+        backgroundSelected,
+        setUser,
+      }).catch(() => {
         console.error('Failed to apply background filter.');
       });
     },

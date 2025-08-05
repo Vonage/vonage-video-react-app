@@ -168,6 +168,20 @@ describe('usePreviewPublisher', () => {
         await (result.current as ReturnType<typeof usePreviewPublisher>).changeBackground('none');
       });
     });
+
+    it('logs an error if applyBackgroundFilter rejects', async () => {
+      mockPublisher.applyVideoFilter = vi.fn(() => {
+        throw new Error('Simulated internal failure');
+      });
+
+      const { result: res } = renderHook(() => usePreviewPublisher());
+      await act(async () => {
+        await res.current.initLocalPublisher();
+        await res.current.changeBackground('low-blur');
+      });
+
+      expect(consoleErrorSpy).toHaveBeenCalledWith('Failed to apply background filter.');
+    });
   });
 
   describe('on accessDenied', () => {
