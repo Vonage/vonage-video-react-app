@@ -26,6 +26,7 @@ const BackgroundVideoContainer = ({
   const isSMViewport = useMediaQuery(`(max-width:500px)`);
   const isMDViewport = useMediaQuery(`(max-width:768px)`);
   const isTabletViewport = useMediaQuery(`(max-width:899px)`);
+  const isLGViewport = useMediaQuery(`(max-width:1199px)`);
 
   useEffect(() => {
     if (publisherVideoElement && containerRef.current) {
@@ -37,7 +38,11 @@ const BackgroundVideoContainer = ({
       myVideoElement.style.maxHeight = isTabletViewport ? '80%' : '450px';
 
       let width = '100%';
-      if ((isFixedWidth && isTabletViewport) || (!isFixedWidth && isMDViewport)) {
+      if (
+        (isFixedWidth && isTabletViewport) ||
+        (!isFixedWidth && isMDViewport) ||
+        (isLGViewport && isFixedWidth)
+      ) {
         width = '80%';
       }
       myVideoElement.style.width = width;
@@ -62,6 +67,7 @@ const BackgroundVideoContainer = ({
     publisherVideoElement,
     isFixedWidth,
     isParentVideoEnabled,
+    isLGViewport,
   ]);
 
   let containerWidth = '100%';
