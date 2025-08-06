@@ -1,13 +1,13 @@
 import { ReactElement, useCallback, useEffect, useState } from 'react';
-import { Box, Button, Typography, useMediaQuery } from '@mui/material';
+import { Box, Button, Tab, Tabs, Typography, useMediaQuery } from '@mui/material';
 import EffectOptionButtons from '../../../BackgroundEffects/EffectOptionButtons/EffectOptionButtons';
 import BackgroundGallery from '../../../BackgroundEffects/BackgroundGallery/BackgroundGallery';
 import BackgroundVideoContainer from '../../../BackgroundEffects/BackgroundVideoContainer';
 import usePreviewPublisherContext from '../../../../hooks/usePreviewPublisherContext';
 import useBackgroundPublisherContext from '../../../../hooks/useBackgroundPublisherContext';
 import { DEFAULT_SELECTABLE_OPTION_WIDTH } from '../../../../utils/constants';
-import AddBackgroundEffect from '../../../BackgroundEffects/AddBackgroundEffect/AddBackgroundEffect';
 import getInitialBackgroundFilter from '../../../../utils/backgroundFilter/getInitialBackgroundFilter/getInitialBackgroundFilter';
+import AddBackgroundEffectLayout from '../../../BackgroundEffects/AddBackgroundEffect/AddBackgroundEffectLayout/AddBackgroundEffectLayout';
 
 export type BackgroundEffectsProps = {
   isOpen: boolean;
@@ -26,6 +26,7 @@ const BackgroundEffectsLayout = ({
   isOpen,
   handleClose,
 }: BackgroundEffectsProps): ReactElement | false => {
+  const [tabSelected, setTabSelected] = useState<number>(1);
   const [backgroundSelected, setBackgroundSelected] = useState<string>('none');
   const { publisher, changeBackground, isVideoEnabled } = usePreviewPublisherContext();
   const { publisherVideoElement, changeBackground: changeBackgroundPreview } =
@@ -98,31 +99,43 @@ const BackgroundEffectsLayout = ({
             {!isTabletViewport && buttonGroup}
           </Box>
 
-          <Box flex={1} minWidth={0} className="choose-background-effect-box">
-            <Typography variant="subtitle2" sx={{ textAlign: 'left', mb: 1 }}>
-              Choose Background Effect
-            </Typography>
-            <Box
-              display="grid"
-              gridTemplateColumns={`repeat(auto-fill, minmax(${DEFAULT_SELECTABLE_OPTION_WIDTH}px, 1fr))`}
-              gap={1}
-              sx={{
-                overflowY: 'auto',
-                maxHeight: '375px',
-              }}
+          <Box flex={1} minWidth={0} flexDirection={{ xs: 'column' }} justifyContent="center">
+            <Tabs
+              variant="fullWidth"
+              style={{ padding: '0 12px 12px 12px' }}
+              value={tabSelected}
+              onChange={(_event, newValue) => setTabSelected(newValue)}
+              aria-label="backgrounds tabs"
             >
-              <EffectOptionButtons
-                backgroundSelected={backgroundSelected}
-                setBackgroundSelected={handleBackgroundSelect}
-              />
-              <AddBackgroundEffect />
-              {/* TODO: load custom images */}
-              <BackgroundGallery
-                backgroundSelected={backgroundSelected}
-                setBackgroundSelected={handleBackgroundSelect}
-              />
+              <Tab sx={{ textTransform: 'none' }} label="Backgrounds" />
+              <Tab sx={{ textTransform: 'none' }} label="Add Background" />
+            </Tabs>
+            <Box className="choose-background-effect-box" flex={1} minWidth={0}>
+              {tabSelected === 0 && (
+                <Box
+                  display="grid"
+                  gridTemplateColumns={`repeat(auto-fill, minmax(${DEFAULT_SELECTABLE_OPTION_WIDTH}px, 1fr))`}
+                  gap={1}
+                  sx={{
+                    overflowY: 'auto',
+                    maxHeight: '375px',
+                  }}
+                >
+                  <EffectOptionButtons
+                    backgroundSelected={backgroundSelected}
+                    setBackgroundSelected={handleBackgroundSelect}
+                  />
+                  {/* TODO: load custom images */}
+                  <BackgroundGallery
+                    backgroundSelected={backgroundSelected}
+                    setBackgroundSelected={handleBackgroundSelect}
+                  />
+                </Box>
+              )}
+              {tabSelected === 1 && <AddBackgroundEffectLayout />}
             </Box>
           </Box>
+
           {isTabletViewport && buttonGroup}
         </Box>
       </>

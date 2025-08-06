@@ -1,5 +1,5 @@
 import { ReactElement, useCallback, useEffect, useState } from 'react';
-import { Box, Button, Typography } from '@mui/material';
+import { Box, Button, Tab, Tabs } from '@mui/material';
 import usePublisherContext from '../../../hooks/usePublisherContext';
 import RightPanelTitle from '../RightPanel/RightPanelTitle';
 import EffectOptionButtons from '../../BackgroundEffects/EffectOptionButtons/EffectOptionButtons';
@@ -7,8 +7,8 @@ import BackgroundGallery from '../../BackgroundEffects/BackgroundGallery/Backgro
 import BackgroundVideoContainer from '../../BackgroundEffects/BackgroundVideoContainer';
 import useBackgroundPublisherContext from '../../../hooks/useBackgroundPublisherContext';
 import { DEFAULT_SELECTABLE_OPTION_WIDTH } from '../../../utils/constants';
-import AddBackgroundEffect from '../../BackgroundEffects/AddBackgroundEffect/AddBackgroundEffect';
 import getInitialBackgroundFilter from '../../../utils/backgroundFilter/getInitialBackgroundFilter/getInitialBackgroundFilter';
+import AddBackgroundEffectLayout from '../../BackgroundEffects/AddBackgroundEffect/AddBackgroundEffectLayout/AddBackgroundEffectLayout';
 
 export type BackgroundEffectsLayoutProps = {
   handleClose: () => void;
@@ -28,6 +28,7 @@ const BackgroundEffectsLayout = ({
   handleClose,
   isOpen,
 }: BackgroundEffectsLayoutProps): ReactElement | false => {
+  const [tabSelected, setTabSelected] = useState<number>(1);
   const [backgroundSelected, setBackgroundSelected] = useState<string>('none');
   const { publisher, changeBackground, isVideoEnabled } = usePublisherContext();
   const { publisherVideoElement, changeBackground: changeBackgroundPreview } =
@@ -71,31 +72,41 @@ const BackgroundEffectsLayout = ({
           />
         </Box>
 
-        <Box className="choose-background-effect-box" sx={{ m: 1.5 }}>
-          <Typography variant="subtitle2" sx={{ textAlign: 'left', mb: 1 }}>
-            Choose Background Effect
-          </Typography>
-
-          <Box
-            display="grid"
-            gridTemplateColumns={`repeat(auto-fill, minmax(${DEFAULT_SELECTABLE_OPTION_WIDTH}px, 1fr))`}
-            gap={1}
-            sx={{
-              overflowY: 'auto',
-              maxHeight: '400px',
-            }}
+        <Box display="flex" justifyContent="center">
+          <Tabs
+            variant="fullWidth"
+            style={{ padding: '4px 12px', width: '100%' }}
+            value={tabSelected}
+            onChange={(_event, newValue) => setTabSelected(newValue)}
+            aria-label="backgrounds tabs"
           >
-            <EffectOptionButtons
-              backgroundSelected={backgroundSelected}
-              setBackgroundSelected={handleBackgroundSelect}
-            />
-            <AddBackgroundEffect />
-            {/* TODO: load custom images */}
-            <BackgroundGallery
-              backgroundSelected={backgroundSelected}
-              setBackgroundSelected={handleBackgroundSelect}
-            />
-          </Box>
+            <Tab sx={{ textTransform: 'none' }} label="Backgrounds" />
+            <Tab sx={{ textTransform: 'none' }} label="Add Background" />
+          </Tabs>
+        </Box>
+        <Box className="choose-background-effect-box" sx={{ m: 1.5 }}>
+          {tabSelected === 0 && (
+            <Box
+              display="grid"
+              gridTemplateColumns={`repeat(auto-fill, minmax(${DEFAULT_SELECTABLE_OPTION_WIDTH}px, 1fr))`}
+              gap={1}
+              sx={{
+                overflowY: 'auto',
+                maxHeight: '400px',
+              }}
+            >
+              <EffectOptionButtons
+                backgroundSelected={backgroundSelected}
+                setBackgroundSelected={handleBackgroundSelect}
+              />
+              {/* TODO: load custom images */}
+              <BackgroundGallery
+                backgroundSelected={backgroundSelected}
+                setBackgroundSelected={handleBackgroundSelect}
+              />
+            </Box>
+          )}
+          {tabSelected === 1 && <AddBackgroundEffectLayout />}
         </Box>
 
         <Box display="flex" justifyContent="space-between" m={1.5}>

@@ -3,7 +3,7 @@ import AddPhotoAlternateIcon from '@mui/icons-material/AddPhotoAlternate';
 import { Tooltip } from '@mui/material';
 import SelectableOption from '../SelectableOption';
 
-export type AddBackgroundEffectProps = {
+export type AddBackgroundEffectLayoutProps = {
   isDisabled?: boolean;
 };
 
@@ -11,11 +11,13 @@ export type AddBackgroundEffectProps = {
  * Renders a button that allows user to upload background effects.
  *
  * This button is disabled if the user has reached the maximum limit of custom images.
- * @param {AddBackgroundEffectProps} props - the props for the component.
+ * @param {AddBackgroundEffectLayoutProps} props - the props for the component.
  *   @property {boolean} isDisabled - Whether the button is disabled.
  * @returns {ReactElement} A button for uploading background effects.
  */
-const AddBackgroundEffect = ({ isDisabled = false }: AddBackgroundEffectProps): ReactElement => {
+const AddBackgroundEffectLayout = ({
+  isDisabled = false,
+}: AddBackgroundEffectLayoutProps): ReactElement => {
   return (
     <Tooltip
       title={
@@ -31,18 +33,9 @@ const AddBackgroundEffect = ({ isDisabled = false }: AddBackgroundEffectProps): 
       }
       arrow
     >
-      <SelectableOption
-        id="upload"
-        isSelected={false}
-        isDisabled={isDisabled}
-        onClick={
-          () => {}
-          // TODO: Implement upload functionality
-        }
-        icon={<AddPhotoAlternateIcon sx={{ fontSize: '30px' }} />}
-      />
+      <div>{' TODO : Implement upload functionality'}</div>
     </Tooltip>
   );
 };
 
-export default AddBackgroundEffect;
+export default AddBackgroundEffectLayout;
