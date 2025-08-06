@@ -27,6 +27,10 @@ app.use((_req, res, next) => {
 
 app.use(express.static(path.join(dirName, './dist')));
 
+app.get('/.well-known/assetlinks.json', (_req: Request, res: Response) => {
+  res.sendFile(path.join(dirName, '.well-known', 'assetlinks.json'));
+});
+
 app.get('/*', (_req: Request, res: Response) => {
   res.sendFile(path.join(dirName, 'dist', 'index.html'));
 });
