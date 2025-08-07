@@ -1,15 +1,12 @@
 import { afterAll, beforeAll, describe, expect, it } from '@jest/globals';
 import request from 'supertest';
 import { Server } from 'http';
-import fs from 'fs';
-import path from 'path';
 import { fileURLToPath } from 'url';
 
 process.env.VIDEO_SERVICE_PROVIDER = 'opentok';
 
 const startServer = (await import('../server')).default;
 const fileName = fileURLToPath(import.meta.url);
-const dirName = path.dirname(fileName);
 
 describe('GET /.well-known/assetlinks.json', () => {
   let server: Server;
@@ -29,7 +26,7 @@ describe('GET /.well-known/assetlinks.json', () => {
 
   it('returns the correct Content-Type header', async () => {
     const res = await request(server).get('/.well-known/assetlinks.json');
-    expect(res.headers['content-type']).toMatch(/application\/json/);
+    expect(res.headers['content-type']).toEqual('application/json');
   });
 
   it('returns valid JSON content', async () => {
@@ -39,10 +36,7 @@ describe('GET /.well-known/assetlinks.json', () => {
 
   it('returns the same content as the static assetlinks.json file', async () => {
     const res = await request(server).get('/.well-known/assetlinks.json');
-    const expectedContent = fs.readFileSync(
-      path.join(dirName, '..', '.well-known', 'assetlinks.json'),
-      'utf8'
-    );
-    expect(JSON.parse(res.text)).toEqual(JSON.parse(expectedContent));
+    const expectedContent = (await import('../.well-known/assetlinks.json')).default;
+    expect(JSON.parse(res.text)).toEqual(expectedContent);
   });
 });
