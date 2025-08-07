@@ -43,7 +43,6 @@ describe('GET /.well-known/assetlinks.json', () => {
       path.join(dirName, '..', '.well-known', 'assetlinks.json'),
       'utf8'
     );
-
     expect(JSON.parse(res.text)).toEqual(JSON.parse(expectedContent));
   });
 });
