@@ -1,12 +1,10 @@
 import { afterAll, beforeAll, describe, expect, it } from '@jest/globals';
 import request from 'supertest';
 import { Server } from 'http';
-import { fileURLToPath } from 'url';
 
 process.env.VIDEO_SERVICE_PROVIDER = 'opentok';
 
 const startServer = (await import('../server')).default;
-const fileName = fileURLToPath(import.meta.url);
 
 describe('GET /.well-known/assetlinks.json', () => {
   let server: Server;
