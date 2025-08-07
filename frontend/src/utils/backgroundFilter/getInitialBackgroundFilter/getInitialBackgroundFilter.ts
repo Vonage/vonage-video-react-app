@@ -8,7 +8,7 @@ import { Publisher } from '@vonage/client-sdk-video';
  *   If no valid background is set, it returns 'none'.
  * @throws {Error} - Throws an error if the publisher is not provided.
  */
-export default function getInitialBackgroundFilter(publisher?: Publisher | null): string {
+const getInitialBackgroundFilter = (publisher?: Publisher | null): string => {
   const filter = publisher?.getVideoFilter?.();
   if (filter?.type === 'backgroundBlur') {
     if (filter.blurStrength === 'low') {
@@ -22,4 +22,6 @@ export default function getInitialBackgroundFilter(publisher?: Publisher | null)
     return filter.backgroundImgUrl?.split('/').pop() || 'none';
   }
   return 'none';
-}
+};
+
+export default getInitialBackgroundFilter;

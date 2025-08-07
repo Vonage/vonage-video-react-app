@@ -20,6 +20,7 @@ export type BackgroundEffectsProps = {
  * This component manages the UI for background effects in the waiting room.
  * @param {BackgroundEffectsProps} props - The props for the component.
  *   @property {boolean} isOpen - Whether the background effects panel is open.
+ *   @property {Function} handleClose - Function to close the panel.
  * @returns {ReactElement} The background effects panel component.
  */
 const BackgroundEffectsLayout = ({
