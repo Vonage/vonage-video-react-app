@@ -9,10 +9,11 @@ export type ArchiveResponse = {
 /**
  * Returns a list of archives and the status of the archives for a given meeting room.
  * @param {string} roomName - The roomName we check for archives
+ * @param {string} tokenRole - The role of the user (e.g., admin, participant)
  * @returns {Promise<ArchiveResponse>} The archives from the meeting room (if any) and whether any archives are pending.
  */
-const getArchives = async (roomName: string): Promise<ArchiveResponse> => {
-  const response = await listArchives(roomName);
+const getArchives = async (roomName: string, tokenRole: string): Promise<ArchiveResponse> => {
+  const response = await listArchives(roomName, tokenRole);
   const archivesFromServer = response?.data?.archives;
   if (archivesFromServer instanceof Array) {
     const archives = archivesFromServer.map((archiveFromServer) =>

@@ -1,6 +1,7 @@
 import RadioButtonCheckedIcon from '@mui/icons-material/RadioButtonChecked';
 import { Tooltip } from '@mui/material';
 import { ReactElement, useState } from 'react';
+import { useLocation } from 'react-router-dom';
 import useRoomName from '../../../hooks/useRoomName';
 import ToolbarButton from '../ToolbarButton';
 import PopupDialog, { DialogTexts } from '../PopupDialog';
@@ -36,6 +37,10 @@ const ArchivingButton = ({
     setIsModalOpen((prev) => !prev);
   };
 
+  const location = useLocation();
+  const searchParams = new URLSearchParams(location.search);
+  const tokenRole = searchParams.get('tokenRole') || 'admin';
+
   const startRecordingText: DialogTexts = {
     title: 'Start Recording?',
     contents:
@@ -67,14 +72,14 @@ const ArchivingButton = ({
       if (!archiveId && roomName) {
         try {
           setActionText(stopRecordingText);
-          await startArchiving(roomName);
+          await startArchiving(roomName, tokenRole);
         } catch (err) {
           console.log(err);
         }
       }
     } else if (archiveId && roomName) {
       setActionText(startRecordingText);
-      stopArchiving(roomName, archiveId);
+      stopArchiving(roomName, archiveId, tokenRole);
     }
   };
 

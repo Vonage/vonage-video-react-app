@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
+import { useLocation } from 'react-router-dom';
 import { ArchiveResponse, getArchives } from '../api/archiving';
 import { Archive } from '../api/archiving/model';
 
@@ -15,12 +16,16 @@ const useArchives = ({ roomName }: UseArchivesProps): Archive[] | 'error' => {
   const [archives, setArchives] = useState<Archive[] | 'error'>([]);
   const pollingIntervalRef = useRef<ReturnType<typeof setInterval> | undefined>(undefined);
 
+  const location = useLocation();
+  const searchParams = new URLSearchParams(location.search);
+  const tokenRole = searchParams.get('tokenRole') || 'admin';
+
   useEffect(() => {
     const fetchArchives = async () => {
       if (roomName) {
         let archiveData: ArchiveResponse;
         try {
-          archiveData = await getArchives(roomName);
+          archiveData = await getArchives(roomName, tokenRole);
         } catch (error: unknown) {
           const message = error instanceof Error ? error.message : error;
           console.error(`Error retrieving archive: ${message}`);
@@ -45,7 +50,7 @@ const useArchives = ({ roomName }: UseArchivesProps): Archive[] | 'error' => {
         clearInterval(pollingIntervalRef.current);
       }
     };
-  }, [roomName]);
+  }, [roomName, tokenRole]);
   return archives;
 };
 

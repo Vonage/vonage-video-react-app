@@ -51,7 +51,7 @@ const { default: VonageVideoService } = await import('../vonageVideoService');
 
 describe('VonageVideoService', () => {
   let vonageVideoService: typeof VonageVideoService.prototype;
-  const userRole = 'moderator';
+  const userRole = 'admin';
 
   beforeEach(() => {
     vonageVideoService = new VonageVideoService({
@@ -75,12 +75,12 @@ describe('VonageVideoService', () => {
   });
 
   it('starts an archive', async () => {
-    const archive = await vonageVideoService.startArchive(mockRoomName, mockSessionId);
+    const archive = await vonageVideoService.startArchive(mockRoomName, mockSessionId, userRole);
     expect(archive.id).toBe(mockArchiveId);
   });
 
   it('stops an archive', async () => {
-    const archiveResponse = await vonageVideoService.stopArchive(mockArchiveId);
+    const archiveResponse = await vonageVideoService.stopArchive(mockArchiveId, userRole);
     expect(archiveResponse).toBe('Archive stopped successfully');
   });
 

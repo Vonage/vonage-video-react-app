@@ -55,23 +55,33 @@ class VonageVideoService implements VideoService {
     return { token, apiKey: this.config.applicationId };
   }
 
-  async startArchive(roomName: string, sessionId: string): Promise<SingleArchiveResponse> {
-    return this.vonageVideo.startArchive(sessionId, {
-      name: roomName,
-      resolution: Resolution.FHD_LANDSCAPE,
-      layout: {
-        // In multiparty archives, we use the 'bestFit' layout to scale based on the number of streams. For screen-sharing archives,
-        // we select 'horizontalPresentation' so the screenshare stream is displayed prominently along with other streams.
-        // See: https://developer.vonage.com/en/video/guides/archive-broadcast-layout#layout-types-for-screen-sharing
-        type: LayoutType.BEST_FIT,
-        screenshareType: 'horizontalPresentation',
-      },
-    });
+  async startArchive(
+    roomName: string,
+    sessionId: string,
+    tokenRole: string
+  ): Promise<SingleArchiveResponse> {
+    if (tokenRole === 'admin') {
+      return this.vonageVideo.startArchive(sessionId, {
+        name: roomName,
+        resolution: Resolution.FHD_LANDSCAPE,
+        layout: {
+          // In multiparty archives, we use the 'bestFit' layout to scale based on the number of streams. For screen-sharing archives,
+          // we select 'horizontalPresentation' so the screenshare stream is displayed prominently along with other streams.
+          // See: https://developer.vonage.com/en/video/guides/archive-broadcast-layout#layout-types-for-screen-sharing
+          type: LayoutType.BEST_FIT,
+          screenshareType: 'horizontalPresentation',
+        },
+      });
+    }
+    throw new Error('Only admins can start an archive');
   }
 
-  async stopArchive(archiveId: string): Promise<string> {
-    await this.vonageVideo.stopArchive(archiveId);
-    return 'Archive stopped successfully';
+  async stopArchive(archiveId: string, tokenRole: string): Promise<string> {
+    if (tokenRole === 'admin') {
+      await this.vonageVideo.stopArchive(archiveId);
+      return 'Archive stopped successfully';
+    }
+    throw new Error('Only admins can stop an archive');
   }
 
   async enableCaptions(sessionId: string, userRole: string): Promise<EnableCaptionResponse> {

@@ -33,33 +33,36 @@ sessionRouter.get(
   }
 );
 
-sessionRouter.post('/:room/startArchive', async (req: Request<{ room: string }>, res: Response) => {
-  try {
-    const { room: roomName } = req.params;
-    const sessionId = await sessionService.getSession(roomName);
-    if (sessionId) {
-      const archive = await videoService.startArchive(roomName, sessionId);
-      res.json({
-        archiveId: archive.id,
-        status: 200,
-      });
-    } else {
-      res.status(404).json({ message: 'Room not found' });
+sessionRouter.post(
+  '/:room/:tokenRole/startArchive',
+  async (req: Request<{ room: string; tokenRole: string }>, res: Response) => {
+    try {
+      const { room: roomName, tokenRole } = req.params;
+      const sessionId = await sessionService.getSession(roomName);
+      if (sessionId) {
+        const archive = await videoService.startArchive(roomName, sessionId, tokenRole);
+        res.json({
+          archiveId: archive.id,
+          status: 200,
+        });
+      } else {
+        res.status(404).json({ message: 'Room not found' });
+      }
+    } catch (error: unknown) {
+      console.log(error);
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
+      res.status(500).json({ message: errorMessage });
     }
-  } catch (error: unknown) {
-    console.log(error);
-    const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
-    res.status(500).json({ message: errorMessage });
   }
-});
+);
 
 sessionRouter.post(
-  '/:room/:archiveId/stopArchive',
-  async (req: Request<{ room: string; archiveId: string }>, res: Response) => {
+  '/:room/:archiveId/:tokenRole/stopArchive',
+  async (req: Request<{ room: string; archiveId: string; tokenRole: string }>, res: Response) => {
     try {
-      const { archiveId } = req.params;
+      const { archiveId, tokenRole } = req.params;
       if (archiveId) {
-        const responseArchiveId = await videoService.stopArchive(archiveId);
+        const responseArchiveId = await videoService.stopArchive(archiveId, tokenRole);
         res.json({
           archiveId: responseArchiveId,
           status: 200,
@@ -71,24 +74,27 @@ sessionRouter.post(
   }
 );
 
-sessionRouter.get('/:room/archives', async (req: Request<{ room: string }>, res: Response) => {
-  try {
-    const { room: roomName } = req.params;
-    const sessionId = await sessionService.getSession(roomName);
-    if (sessionId) {
-      const archives = await videoService.listArchives(sessionId);
-      res.json({
-        archives,
-        status: 200,
-      });
-    } else {
-      res.status(404).json({ message: 'Room not found' });
+sessionRouter.get(
+  '/:room/:tokenRole/archives',
+  async (req: Request<{ room: string; tokenRole: string }>, res: Response) => {
+    try {
+      const { room: roomName, tokenRole } = req.params;
+      const sessionId = await sessionService.getSession(roomName);
+      if (sessionId) {
+        const archives = await videoService.listArchives(sessionId, tokenRole);
+        res.json({
+          archives,
+          status: 200,
+        });
+      } else {
+        res.status(404).json({ message: 'Room not found' });
+      }
+    } catch (error: unknown) {
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
+      res.status(500).json({ message: errorMessage });
     }
-  } catch (error: unknown) {
-    const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
-    res.status(500).json({ message: errorMessage });
   }
-});
+);
 
 sessionRouter.post(
   '/:room/:tokenRole/enableCaptions',
@@ -148,7 +154,7 @@ sessionRouter.post(
       }
 
       // Only the last user to disable captions will send a request to disable captions session-wide
-      if (captionsUserCount === 0 && tokenRole === 'moderator') {
+      if (captionsUserCount === 0 && tokenRole === 'admin') {
         const disableResponse = await videoService.disableCaptions(captionsId);
         await sessionService.setCaptionsId(roomName, '');
         res.json({
