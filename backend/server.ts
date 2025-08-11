@@ -27,14 +27,6 @@ app.use((_req, res, next) => {
 
 app.use(express.static(path.join(dirName, './dist')));
 
-/**
- * tl:dr: Serve the static file needed for mobile deep linking
- * more info: https://developer.android.com/training/app-links/verify-android-applinks#publish-json
- */
-app.get('/.well-known/assetlinks.json', (_req: Request, res: Response) => {
-  res.sendFile(path.join(dirName, '.well-known', 'assetlinks.json'));
-});
-
 app.get('/*', (_req: Request, res: Response) => {
   res.sendFile(path.join(dirName, 'dist', 'index.html'));
 });
