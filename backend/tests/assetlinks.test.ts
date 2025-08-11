@@ -3,7 +3,6 @@ import request from 'supertest';
 import { Server } from 'http';
 
 process.env.VIDEO_SERVICE_PROVIDER = 'opentok';
-
 const startServer = (await import('../server')).default;
 
 describe('GET /.well-known/assetlinks.json', () => {
@@ -24,7 +23,7 @@ describe('GET /.well-known/assetlinks.json', () => {
 
   it('returns the correct Content-Type header', async () => {
     const res = await request(server).get('/.well-known/assetlinks.json');
-    expect(res.headers['content-type']).toEqual('application/json');
+    expect(res.headers['content-type']).toEqual('application/json; charset=UTF-8');
   });
 
   it('returns valid JSON content', async () => {
