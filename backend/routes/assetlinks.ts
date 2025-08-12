@@ -3,7 +3,7 @@ import { Request, Response, Router } from 'express';
 const assetLinksRouter = Router();
 
 /**
- * tl:dr: Serve the static file needed for mobile deep linking
+ * Serve the static file needed for mobile deep linking
  * more info: https://developer.android.com/training/app-links/verify-android-applinks#publish-json
  */
 assetLinksRouter.get('/assetlinks.json', (_req: Request, res: Response) => {
