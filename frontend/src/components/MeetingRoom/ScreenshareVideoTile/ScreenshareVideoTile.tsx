@@ -74,7 +74,27 @@ const ScreenshareVideoTile = forwardRef(
       const deltaZoom = isWheelPositive ? -ZOOM_STEP : ZOOM_STEP;
       const newZoomLevel = Math.min(Math.max(zoomLevel + deltaZoom, MIN_ZOOM), MAX_ZOOM);
 
+      // Get the container bounds and mouse position relative to container
+      const rect = event.currentTarget.getBoundingClientRect();
+      const mouseX = event.clientX - rect.left;
+      const mouseY = event.clientY - rect.top;
+
+      // Calculate the center of the container
+      const centerX = rect.width / 2;
+      const centerY = rect.height / 2;
+
+      // Calculate the offset from center to mouse position
+      const offsetX = mouseX - centerX;
+      const offsetY = mouseY - centerY;
+
+      // Calculate the new pan offset to keep the mouse position fixed during zoom
+      // We need to account for the zoom change and current pan offset
+      const zoomRatio = newZoomLevel / zoomLevel;
+      const newPanX = panOffset.x * zoomRatio + offsetX * (1 - zoomRatio);
+      const newPanY = panOffset.y * zoomRatio + offsetY * (1 - zoomRatio);
+
       setZoomLevel(newZoomLevel);
+      setPanOffset({ x: newPanX, y: newPanY });
     };
 
     const handleMouseDown = (event: MouseEvent<HTMLDivElement>) => {
