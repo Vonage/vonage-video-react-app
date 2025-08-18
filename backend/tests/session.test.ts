@@ -105,22 +105,17 @@ describe.each([
       describe('enabling captions', () => {
         it('returns a 200 when enabling captions in a room', async () => {
           const res = await request(server)
-            .post(`/session/${roomName}/${moderatorTokenRole}/enableCaptions`)
-            .set('Content-Type', 'application/json');
+            .post(`/session/${roomName}/enableCaptions`)
+            .set('Content-Type', 'application/json')
+            .send({ tokenRole: moderatorTokenRole });
           expect(res.statusCode).toEqual(200);
         });
 
         it('returns a 404 when starting captions in a non-existent room', async () => {
           const res = await request(server)
-            .post(`/session/${invalidRoomName}/${moderatorTokenRole}/enableCaptions`)
-            .set('Content-Type', 'application/json');
-          expect(res.statusCode).toEqual(404);
-        });
-
-        it('return a 404 when starting captions but token role is not provided', async () => {
-          const res = await request(server)
-            .post(`/session/${roomName}/enableCaptions`)
-            .set('Content-Type', 'application/json');
+            .post(`/session/${invalidRoomName}/enableCaptions`)
+            .set('Content-Type', 'application/json')
+            .send({ tokenRole: moderatorTokenRole });
           expect(res.statusCode).toEqual(404);
         });
       });
@@ -128,17 +123,19 @@ describe.each([
       describe('disabling captions', () => {
         it('returns a 200 when disabling captions in a room', async () => {
           const res = await request(server)
-            .post(`/session/${roomName}/${captionsId}/${moderatorTokenRole}/disableCaptions`)
-            .set('Content-Type', 'application/json');
+            .post(`/session/${roomName}/${captionsId}/disableCaptions`)
+            .set('Content-Type', 'application/json')
+            .send({ tokenRole: moderatorTokenRole });
           expect(res.statusCode).toEqual(200);
         });
 
         it('returns an invalid caption message when stopping an invalid captions in a room', async () => {
           const invalidCaptionId = 'wrongCaptionId';
           const res = await request(server)
-            .post(`/session/${roomName}/${invalidCaptionId}/${moderatorTokenRole}/disableCaptions`)
+            .post(`/session/${roomName}/${invalidCaptionId}/disableCaptions`)
             .set('Content-Type', 'application/json')
-            .set('Accept', 'application/json');
+            .set('Accept', 'application/json')
+            .send({ tokenRole: moderatorTokenRole });
 
           const responseBody = JSON.parse(res.text);
           expect(responseBody.message).toEqual('Invalid caption ID');
@@ -146,24 +143,19 @@ describe.each([
 
         it('returns a 500 when stopping captions in a non-existent room', async () => {
           const res = await request(server)
-            .post(`/session/${invalidRoomName}/${captionsId}/${moderatorTokenRole}/disableCaptions`)
-            .set('Content-Type', 'application/json');
+            .post(`/session/${invalidRoomName}/${captionsId}/disableCaptions`)
+            .set('Content-Type', 'application/json')
+            .send({ tokenRole: moderatorTokenRole });
           expect(res.statusCode).toEqual(500);
         });
 
         it('returns a 400 when stopping captions with malformed captionsId', async () => {
           const invalidCaptionId = 'not-a-valid-captions-id';
           const res = await request(server)
-            .post(`/session/${roomName}/${invalidCaptionId}/${moderatorTokenRole}/disableCaptions`)
-            .set('Content-Type', 'application/json');
+            .post(`/session/${roomName}/${invalidCaptionId}/disableCaptions`)
+            .set('Content-Type', 'application/json')
+            .send({ tokenRole: moderatorTokenRole });
           expect(res.statusCode).toEqual(400);
-        });
-
-        it('return a 404 when stopping captions but token role is not provided', async () => {
-          const res = await request(server)
-            .post(`/session/${roomName}/${captionsId}/disableCaptions`)
-            .set('Content-Type', 'application/json');
-          expect(res.statusCode).toEqual(404);
         });
       });
     });

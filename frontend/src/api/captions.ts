@@ -34,7 +34,7 @@ export const enableCaptions = async (
   roomName: string,
   tokenRole: string
 ): Promise<AxiosResponse<EnableCaptionsType>> => {
-  return await axios.post(`${API_URL}/session/${roomName}/${tokenRole}/enableCaptions`);
+  return await axios.post(`${API_URL}/session/${roomName}/enableCaptions`, { tokenRole });
 };
 
 /**
@@ -49,7 +49,7 @@ export const disableCaptions = async (
   captionsId: string,
   tokenRole: string
 ): Promise<AxiosResponse<DisableCaptionsType>> => {
-  return await axios.post(
-    `${API_URL}/session/${roomName}/${captionsId}/${tokenRole}/disableCaptions`
-  );
+  return await axios.post(`${API_URL}/session/${roomName}/${captionsId}/disableCaptions`, {
+    tokenRole,
+  });
 };

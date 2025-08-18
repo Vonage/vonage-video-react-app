@@ -95,10 +95,11 @@ sessionRouter.post(
 );
 
 sessionRouter.post(
-  '/:room/:tokenRole/enableCaptions',
-  async (req: Request<{ room: string; tokenRole: string }>, res: Response) => {
+  '/:room/enableCaptions',
+  async (req: Request<{ room: string }>, res: Response) => {
     try {
-      const { room: roomName, tokenRole } = req.params;
+      const { room: roomName } = req.params;
+      const { tokenRole } = req.body;
       const sessionId = await sessionService.getSession(roomName);
 
       if (!sessionId) {
@@ -129,10 +130,11 @@ sessionRouter.post(
 );
 
 sessionRouter.post(
-  '/:room/:captionsId/:tokenRole/disableCaptions',
-  async (req: Request<{ room: string; captionsId: string; tokenRole: string }>, res: Response) => {
+  '/:room/:captionsId/disableCaptions',
+  async (req: Request<{ room: string; captionsId: string }>, res: Response) => {
     try {
-      const { room: roomName, captionsId, tokenRole } = req.params;
+      const { room: roomName, captionsId } = req.params;
+      const { tokenRole } = req.body;
 
       // Validate the captionsId
       // the expected format is a UUID v4
