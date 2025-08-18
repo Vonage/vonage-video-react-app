@@ -10,7 +10,6 @@ import {
   useEffect,
   ReactElement,
 } from 'react';
-import { useLocation } from 'react-router-dom';
 import { Connection, Publisher, Stream } from '@vonage/client-sdk-video';
 import fetchCredentials from '../../api/fetchCredentials';
 import useUserContext from '../../hooks/useUserContext';
@@ -34,6 +33,7 @@ import {
 import { MAX_PIN_COUNT_DESKTOP, MAX_PIN_COUNT_MOBILE } from '../../utils/constants';
 import VonageVideoClient from '../../utils/VonageVideoClient';
 import useEmoji, { EmojiWrapper } from '../../hooks/useEmoji';
+import useTokenRole from '../../hooks/useTokenRole';
 
 export type { ChatMessageType } from '../../types/chat';
 
@@ -345,9 +345,7 @@ const SessionProvider = ({ children }: SessionProviderProps): ReactElement => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const location = useLocation();
-  const searchParams = new URLSearchParams(location.search);
-  const tokenRole = searchParams.get('tokenRole') || 'admin';
+  const tokenRole = useTokenRole();
 
   /**
    * Joins a room by fetching the necessary credentials and connecting to the session.

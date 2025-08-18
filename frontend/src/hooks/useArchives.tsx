@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
-import { useLocation } from 'react-router-dom';
 import { ArchiveResponse, getArchives } from '../api/archiving';
 import { Archive } from '../api/archiving/model';
+import useTokenRole from './useTokenRole';
 
 export type UseArchivesProps = {
   roomName: string;
@@ -16,9 +16,7 @@ const useArchives = ({ roomName }: UseArchivesProps): Archive[] | 'error' => {
   const [archives, setArchives] = useState<Archive[] | 'error'>([]);
   const pollingIntervalRef = useRef<ReturnType<typeof setInterval> | undefined>(undefined);
 
-  const location = useLocation();
-  const searchParams = new URLSearchParams(location.search);
-  const tokenRole = searchParams.get('tokenRole') || 'admin';
+  const tokenRole = useTokenRole();
 
   useEffect(() => {
     const fetchArchives = async () => {

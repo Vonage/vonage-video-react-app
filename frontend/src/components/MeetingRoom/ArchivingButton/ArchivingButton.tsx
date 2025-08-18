@@ -1,12 +1,12 @@
 import RadioButtonCheckedIcon from '@mui/icons-material/RadioButtonChecked';
 import { Tooltip } from '@mui/material';
 import { ReactElement, useState } from 'react';
-import { useLocation } from 'react-router-dom';
 import useRoomName from '../../../hooks/useRoomName';
 import ToolbarButton from '../ToolbarButton';
 import PopupDialog, { DialogTexts } from '../PopupDialog';
 import { startArchiving, stopArchiving } from '../../../api/archiving';
 import useSessionContext from '../../../hooks/useSessionContext';
+import useTokenRole from '../../../hooks/useTokenRole';
 
 export type ArchivingButtonProps = {
   isOverflowButton?: boolean;
@@ -37,9 +37,7 @@ const ArchivingButton = ({
     setIsModalOpen((prev) => !prev);
   };
 
-  const location = useLocation();
-  const searchParams = new URLSearchParams(location.search);
-  const tokenRole = searchParams.get('tokenRole') || 'admin';
+  const tokenRole = useTokenRole();
 
   const startRecordingText: DialogTexts = {
     title: 'Start Recording?',
