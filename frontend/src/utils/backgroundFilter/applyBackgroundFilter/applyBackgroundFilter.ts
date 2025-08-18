@@ -22,13 +22,13 @@ export type ApplyBackgroundFilterParams = {
  * @returns {Promise<void>} - A promise that resolves when the filter is applied or cleared.
  * @throws {Error} - Throws an error if the publisher is not provided or if the backgroundSelected is invalid.
  */
-export default async function applyBackgroundFilter({
+const applyBackgroundFilter = async ({
   publisher,
   backgroundSelected,
   setUser,
   setBackgroundFilter,
   storeItem = true,
-}: ApplyBackgroundFilterParams): Promise<void> {
+}: ApplyBackgroundFilterParams): Promise<void> => {
   if (!publisher) {
     return;
   }
@@ -70,4 +70,6 @@ export default async function applyBackgroundFilter({
       },
     }));
   }
-}
+};
+
+export default applyBackgroundFilter;

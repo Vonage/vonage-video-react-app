@@ -68,6 +68,7 @@ export type PublisherContextType = {
  * @property {Stream | null | undefined} stream - OT Stream object for publisher
  * @property {() => void} toggleAudio - Method to toggle microphone on/off. State updated internally, can be read via isAudioEnabled.
  * @property {() => void} toggleVideo - Method to toggle camera on/off. State updated internally, can be read via isVideoEnabled.
+ * @property {(backgroundSelected: string) => void} changeBackground - Method to change background replacement or blur effect.
  * @property {() => void} unpublish - Method to unpublish from session and destroy publisher (for ending a call).
  * @returns {PublisherContextType} the publisher context
  */

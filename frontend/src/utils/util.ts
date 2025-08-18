@@ -68,7 +68,7 @@ export const isMobile = (): boolean => {
  * @param {string | null} raw - The raw JSON string representing a video filter.
  * @returns {VideoFilter | undefined} - The parsed VideoFilter object or undefined if invalid.
  */
-export function parseVideoFilter(raw: string | null): VideoFilter | undefined {
+export const parseVideoFilter = (raw: string | null): VideoFilter | undefined => {
   if (!raw) {
     return undefined;
   }
@@ -88,4 +88,4 @@ export function parseVideoFilter(raw: string | null): VideoFilter | undefined {
   } catch {
     return undefined;
   }
-}
+};
