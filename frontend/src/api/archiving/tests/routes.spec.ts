@@ -15,7 +15,7 @@ describe('archiving routes', () => {
     vi.clearAllMocks();
   });
 
-  it('startArchiving calls axios.post with correct URL', async () => {
+  it('startArchiving calls axios.post with correct URL and body', async () => {
     const mockResponse = { data: 'started' };
     (axios.post as Mock).mockResolvedValue(mockResponse);
 
@@ -23,13 +23,13 @@ describe('archiving routes', () => {
     const tokenRole = 'admin';
     const result = await startArchiving(roomName, tokenRole);
 
-    expect(axios.post).toHaveBeenCalledWith(
-      `${API_URL}/session/${roomName}/${tokenRole}/startArchive`
-    );
+    expect(axios.post).toHaveBeenCalledWith(`${API_URL}/session/${roomName}/startArchive`, {
+      tokenRole,
+    });
     expect(result).toBe(mockResponse);
   });
 
-  it('stopArchiving calls axios.post with correct URL', async () => {
+  it('stopArchiving calls axios.post with correct URL and body', async () => {
     const mockResponse = { data: 'stopped' };
     (axios.post as Mock).mockResolvedValue(mockResponse);
 
@@ -39,20 +39,25 @@ describe('archiving routes', () => {
     const result = await stopArchiving(roomName, archiveId, tokenRole);
 
     expect(axios.post).toHaveBeenCalledWith(
-      `${API_URL}/session/${roomName}/${archiveId}/${tokenRole}/stopArchive`
+      `${API_URL}/session/${roomName}/${archiveId}/stopArchive`,
+      {
+        tokenRole,
+      }
     );
     expect(result).toBe(mockResponse);
   });
 
-  it('listArchives calls axios.get with correct URL', async () => {
+  it('listArchives calls axios.post with correct URL', async () => {
     const mockResponse = { data: ['archive1', 'archive2'] };
-    (axios.get as Mock).mockResolvedValue(mockResponse);
+    (axios.post as Mock).mockResolvedValue(mockResponse);
 
     const roomName = 'room3';
     const tokenRole = 'admin';
     const result = await listArchives(roomName, tokenRole);
 
-    expect(axios.get).toHaveBeenCalledWith(`${API_URL}/session/${roomName}/${tokenRole}/archives`);
+    expect(axios.post).toHaveBeenCalledWith(`${API_URL}/session/${roomName}/archives`, {
+      tokenRole,
+    });
     expect(result).toBe(mockResponse);
   });
 });

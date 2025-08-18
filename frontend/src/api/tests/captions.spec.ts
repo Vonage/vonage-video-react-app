@@ -28,9 +28,9 @@ describe('captions', () => {
 
       const result = await enableCaptions(roomName, tokenRole);
 
-      expect(mockPost).toHaveBeenCalledWith(
-        `${API_URL}/session/${roomName}/${tokenRole}/enableCaptions`
-      );
+      expect(mockPost).toHaveBeenCalledWith(`${API_URL}/session/${roomName}/enableCaptions`, {
+        tokenRole,
+      });
       expect(result).toEqual(mockResponse);
     });
 
@@ -59,9 +59,9 @@ describe('captions', () => {
 
       const result = await enableCaptions(roomName, tokenRole);
 
-      expect(mockPost).toHaveBeenCalledWith(
-        `${API_URL}/session/${roomName}/${tokenRole}/enableCaptions`
-      );
+      expect(mockPost).toHaveBeenCalledWith(`${API_URL}/session/${roomName}/enableCaptions`, {
+        tokenRole,
+      });
       expect(result).toEqual(mockResponse);
     });
 
@@ -103,7 +103,8 @@ describe('captions', () => {
       const result = await disableCaptions(roomName, captionsId, tokenRole);
 
       expect(mockPost).toHaveBeenCalledWith(
-        `${API_URL}/session/${roomName}/${captionsId}/${tokenRole}/disableCaptions`
+        `${API_URL}/session/${roomName}/${captionsId}/disableCaptions`,
+        { tokenRole }
       );
       expect(result).toEqual(mockResponse);
     });
@@ -138,7 +139,8 @@ describe('captions', () => {
       const result = await disableCaptions(roomName, captionsId, tokenRole);
 
       expect(mockPost).toHaveBeenCalledWith(
-        `${API_URL}/session/${roomName}/${captionsId}/${tokenRole}/disableCaptions`
+        `${API_URL}/session/${roomName}/${captionsId}/disableCaptions`,
+        { tokenRole }
       );
       expect(result.data.messageResponse).toBe('Captions stopped');
     });
