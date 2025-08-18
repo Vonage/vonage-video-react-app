@@ -103,16 +103,6 @@ const useBackgroundPublisher = (): BackgroundPublisherContextType => {
   /**
    * Change video camera in use
    * @returns {void}
-      ).catch(() => {
-        console.error('Failed to apply background filter.');
-      });
-    },
-    [setBackgroundFilter]
-  );
-   
-  /**
-   * Change video camera in use
-   * @returns {void}
    */
   const changeVideoSource = useCallback((deviceId: string) => {
     if (!deviceId || !backgroundPublisherRef.current) {
