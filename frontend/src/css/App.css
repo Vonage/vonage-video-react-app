@@ -73,9 +73,13 @@
 .choose-background-effect-box {
   border: 1px solid #e0e0e0;
   border-radius: 12px;
-  padding: 1rem;
+  padding: 0.5rem;
   padding-bottom: 0.5rem;
   background-color: #f0f4f9;
+}
+
+.background-video-container{
+  margin-top: 16px;
 }
 
 .background-video-container-disabled {
@@ -92,4 +96,29 @@
   font-size: 1.25rem;
   margin: 0 auto 16px auto;
   aspect-ratio: 16 / 9;
+}
+
+.add-background-effect-input .MuiInputBase-root {
+  color: #5F6368;
+}
+
+.add-background-effect-input .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline {
+  border-color: #80868B;
+}
+
+.add-background-effect-input .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline {
+  border-color: #80868B;
+}
+
+.add-background-effect-input .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline {
+  border-color: #80868B;
+}
+
+.add-background-effect-input input::placeholder {
+  color: #5F6368;
+  opacity: 1;
+}
+
+.add-background-effect-input-icon {
+  color: #5F6368;
 }

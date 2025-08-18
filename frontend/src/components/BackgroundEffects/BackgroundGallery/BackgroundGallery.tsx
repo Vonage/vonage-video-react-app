@@ -1,7 +1,9 @@
-import { ReactElement } from 'react';
-import { Box } from '@mui/material';
+import { ReactElement, useEffect, useState } from 'react';
+import { Box, IconButton } from '@mui/material';
+import DeleteIcon from '@mui/icons-material/Delete';
 import { BACKGROUNDS_PATH } from '../../../utils/constants';
 import SelectableOption from '../SelectableOption';
+import { StoredImage, useImageStorage } from '../../../utils/useImageStorage/useImageStorage';
 
 export const backgrounds = [
   { id: 'bg1', file: 'bookshelf-room.jpg' },
@@ -19,21 +21,68 @@ export type BackgroundGalleryProps = {
   setBackgroundSelected: (key: string) => void;
 };
 
-/**
- * Renders a group of selectable images for background replacement in a meeting room.
- *
- * Each button represents a different background image option.
- * @param {BackgroundGalleryProps} props - The props for the component.
- *   @property {string} backgroundSelected - The currently selected background image key.
- *   @property {Function} setBackgroundSelected - Callback to update the selected background image key.
- * @returns {ReactElement} A horizontal stack of selectable option buttons.
- */
 const BackgroundGallery = ({
   backgroundSelected,
   setBackgroundSelected,
 }: BackgroundGalleryProps): ReactElement => {
+  const { getImagesFromStorage, deleteImageFromStorage } = useImageStorage();
+  const [customImages, setCustomImages] = useState<StoredImage[]>([]);
+
+  useEffect(() => {
+    setCustomImages(getImagesFromStorage());
+  }, [getImagesFromStorage]);
+
+  const handleDelete = (id: string) => {
+    if (backgroundSelected === id) {
+      return;
+    }
+    deleteImageFromStorage(id);
+    setCustomImages((imgs) => imgs.filter((img) => img.id !== id));
+  };
+
   return (
     <>
+      {customImages.map(({ id, dataUrl }) => (
+        <Box
+          key={id}
+          sx={{
+            position: 'relative',
+            display: 'inline-block',
+            mb: 1,
+            mr: 1,
+          }}
+        >
+          <SelectableOption
+            id={id}
+            isSelected={backgroundSelected === dataUrl}
+            onClick={() => setBackgroundSelected(dataUrl)}
+            image={dataUrl}
+          />
+          <IconButton
+            aria-label="Delete custom background"
+            onClick={() => handleDelete(id)}
+            size="small"
+            disabled={backgroundSelected === dataUrl}
+            sx={{
+              color: 'white',
+              position: 'absolute',
+              top: -8,
+              right: -8,
+              backgroundColor: 'rgba(0,0,0,0.8)',
+              '&:hover': {
+                backgroundColor: 'rgba(0,0,0,1)',
+              },
+              '&:disabled': {
+                backgroundColor: 'rgba(0,0,0,0.4)',
+                color: 'rgba(255,255,255,0.5)',
+              },
+            }}
+          >
+            <DeleteIcon fontSize="small" />
+          </IconButton>
+        </Box>
+      ))}
+
       {backgrounds.map((bg) => {
         const path = `${BACKGROUNDS_PATH}/${bg.file}`;
         return (

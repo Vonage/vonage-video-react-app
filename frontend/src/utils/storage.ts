@@ -4,6 +4,7 @@ export const STORAGE_KEYS = {
   NOISE_SUPPRESSION: 'noiseSuppression',
   BACKGROUND_REPLACEMENT: 'backgroundReplacement',
   USERNAME: 'username',
+  BACKGROUND_IMAGE: 'userBackgroundImage',
 };
 
 export const setStorageItem = (key: string, value: string) => {

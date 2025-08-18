@@ -78,7 +78,7 @@ const BackgroundVideoContainer = ({
   }
 
   return (
-    <div data-testid="background-video-container">
+    <div className="background-video-container" data-testid="background-video-container">
       {!isParentVideoEnabled && (
         <div className="background-video-container-disabled" style={{ width: containerWidth }}>
           You have not enabled video

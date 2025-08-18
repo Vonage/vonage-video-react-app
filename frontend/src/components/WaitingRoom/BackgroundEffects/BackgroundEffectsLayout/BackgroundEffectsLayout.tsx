@@ -27,12 +27,18 @@ const BackgroundEffectsLayout = ({
   isOpen,
   handleClose,
 }: BackgroundEffectsProps): ReactElement | false => {
-  const [tabSelected, setTabSelected] = useState<number>(1);
+  const [tabSelected, setTabSelected] = useState<number>(0);
   const [backgroundSelected, setBackgroundSelected] = useState<string>('none');
+
   const { publisher, changeBackground, isVideoEnabled } = usePreviewPublisherContext();
   const { publisherVideoElement, changeBackground: changeBackgroundPreview } =
     useBackgroundPublisherContext();
   const isTabletViewport = useMediaQuery(`(max-width:899px)`);
+
+  const customBackgroundImageChange = (dataUrl: string) => {
+    setTabSelected(0);
+    setBackgroundSelected(dataUrl);
+  };
 
   const handleBackgroundSelect = (selectedBackgroundOption: string) => {
     setBackgroundSelected(selectedBackgroundOption);
@@ -103,7 +109,12 @@ const BackgroundEffectsLayout = ({
           <Box flex={1} minWidth={0} flexDirection={{ xs: 'column' }} justifyContent="center">
             <Tabs
               variant="fullWidth"
-              style={{ padding: '0 12px 12px 12px' }}
+              sx={{
+                padding: '0 2px 12px 2px',
+                '& .MuiTabs-flexContainer': {
+                  borderBottom: '1px solid #ccc',
+                },
+              }}
               value={tabSelected}
               onChange={(_event, newValue) => setTabSelected(newValue)}
               aria-label="backgrounds tabs"
@@ -120,6 +131,7 @@ const BackgroundEffectsLayout = ({
                   sx={{
                     overflowY: 'auto',
                     maxHeight: '375px',
+                    padding: '8px',
                   }}
                 >
                   <EffectOptionButtons
@@ -133,7 +145,11 @@ const BackgroundEffectsLayout = ({
                   />
                 </Box>
               )}
-              {tabSelected === 1 && <AddBackgroundEffectLayout />}
+              {tabSelected === 1 && (
+                <AddBackgroundEffectLayout
+                  customBackgroundImageChange={customBackgroundImageChange}
+                />
+              )}
             </Box>
           </Box>
 
