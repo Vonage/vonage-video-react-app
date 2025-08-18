@@ -12,26 +12,24 @@ const getOrCreateSession = createGetOrCreateSession({
   sessionService,
 });
 
-sessionRouter.get(
-  '/:room/:tokenRole',
-  async (req: Request<{ room: string; tokenRole: string }>, res: Response) => {
-    try {
-      const { room: roomName, tokenRole } = req.params;
-      const sessionId = await getOrCreateSession(roomName);
-      const data = videoService.generateToken(sessionId, tokenRole);
-      const captionsId = await sessionService.getCaptionsId(roomName);
-      res.json({
-        sessionId,
-        token: data.token,
-        apiKey: data.apiKey,
-        captionsId,
-      });
-    } catch (error: unknown) {
-      const message = error instanceof Error ? error.message : error;
-      res.status(500).send({ message });
-    }
+sessionRouter.post('/:room', async (req: Request<{ room: string }>, res: Response) => {
+  try {
+    const { room: roomName } = req.params;
+    const { tokenRole } = req.body;
+    const sessionId = await getOrCreateSession(roomName);
+    const data = videoService.generateToken(sessionId, tokenRole);
+    const captionsId = await sessionService.getCaptionsId(roomName);
+    res.json({
+      sessionId,
+      token: data.token,
+      apiKey: data.apiKey,
+      captionsId,
+    });
+  } catch (error: unknown) {
+    const message = error instanceof Error ? error.message : error;
+    res.status(500).send({ message });
   }
-);
+});
 
 sessionRouter.post(
   '/:room/:tokenRole/startArchive',

@@ -61,14 +61,19 @@ describe.each([
   describe('GET requests', () => {
     const tokenRole = 'admin';
     it('returns a 200 when creating a room', async () => {
-      const res = await request(server).get(`/session/${roomName}/${tokenRole}`);
+      const res = await request(server)
+        .post(`/session/${roomName}`)
+        .set('Content-Type', 'application/json')
+        .send({ tokenRole });
       expect(res.statusCode).toEqual(200);
     });
 
-    it('returns a 200 and a list of archives when getting archives', async () => {
-      const res = await request(server).get(`/session/${roomName}/${tokenRole}/archives`);
+    it('returns a 200 when starting an archive in a room', async () => {
+      const res = await request(server)
+        .post(`/session/${roomName}/${tokenRole}/startArchive`)
+        .set('Content-Type', 'application/json')
+        .send({ tokenRole });
       expect(res.statusCode).toEqual(200);
-      expect(res.body.archives).toEqual([{ id: 'archive1' }, { id: 'archive2' }]);
     });
   });
 

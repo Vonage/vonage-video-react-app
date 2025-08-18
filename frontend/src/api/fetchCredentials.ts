@@ -17,5 +17,5 @@ import { API_URL } from '../utils/constants';
  */
 
 export default async (roomName: string, tokenRole: string) => {
-  return axios.get(`${API_URL}/session/${roomName}/${tokenRole}`);
+  return axios.post(`${API_URL}/session/${roomName}`, { tokenRole });
 };
