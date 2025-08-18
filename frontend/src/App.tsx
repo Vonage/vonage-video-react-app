@@ -11,38 +11,41 @@ import { PublisherProvider } from './Context/PublisherProvider';
 import RedirectToWaitingRoom from './components/RedirectToWaitingRoom';
 import UnsupportedBrowserPage from './pages/UnsupportedBrowserPage';
 import RoomContext from './Context/RoomContext';
+import { ConfigProvider } from './Context/ConfigProvider';
 
 const App = () => {
   return (
-    <Router>
-      <Routes>
-        <Route element={<RoomContext />}>
-          <Route
-            path="/waiting-room/:roomName"
-            element={
-              <PreviewPublisherProvider>
-                <WaitingRoom />
-              </PreviewPublisherProvider>
-            }
-          />
-          <Route
-            path="/room/:roomName"
-            element={
-              <SessionProvider>
-                <RedirectToWaitingRoom>
-                  <PublisherProvider>
-                    <Room />
-                  </PublisherProvider>
-                </RedirectToWaitingRoom>
-              </SessionProvider>
-            }
-          />
-        </Route>
-        <Route path="/goodbye" element={<GoodBye />} />
-        <Route path="*" element={<LandingPage />} />
-        <Route path="/unsupported-browser" element={<UnsupportedBrowserPage />} />
-      </Routes>
-    </Router>
+    <ConfigProvider>
+      <Router>
+        <Routes>
+          <Route element={<RoomContext />}>
+            <Route
+              path="/waiting-room/:roomName"
+              element={
+                <PreviewPublisherProvider>
+                  <WaitingRoom />
+                </PreviewPublisherProvider>
+              }
+            />
+            <Route
+              path="/room/:roomName"
+              element={
+                <SessionProvider>
+                  <RedirectToWaitingRoom>
+                    <PublisherProvider>
+                      <Room />
+                    </PublisherProvider>
+                  </RedirectToWaitingRoom>
+                </SessionProvider>
+              }
+            />
+          </Route>
+          <Route path="/goodbye" element={<GoodBye />} />
+          <Route path="*" element={<LandingPage />} />
+          <Route path="/unsupported-browser" element={<UnsupportedBrowserPage />} />
+        </Routes>
+      </Router>
+    </ConfigProvider>
   );
 };
 

@@ -1,0 +1,9 @@
+{
+  "videoSettings": {
+    "enableDisableCapableCamera": true,
+    "resolution": "1080p",
+    "videoOnJoin": true,
+    "backgroundEffects": true
+  },
+  "layoutMode": "active-speaker"
+}
