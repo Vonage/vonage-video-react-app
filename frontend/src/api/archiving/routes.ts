@@ -13,7 +13,7 @@ export const startArchiving = async (
   tokenRole: string
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
 ): Promise<AxiosResponse<any, any>> => {
-  return axios.post(`${API_URL}/session/${roomName}/${tokenRole}/startArchive`);
+  return axios.post(`${API_URL}/session/${roomName}/startArchive`, { tokenRole });
 };
 
 /**
@@ -30,7 +30,7 @@ export const stopArchiving = async (
   tokenRole: string
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
 ): Promise<AxiosResponse<any, any>> => {
-  return axios.post(`${API_URL}/session/${roomName}/${archiveId}/${tokenRole}/stopArchive`);
+  return axios.post(`${API_URL}/session/${roomName}/${archiveId}/stopArchive`, { tokenRole });
 };
 
 /**
@@ -45,4 +45,4 @@ export const listArchives = (
   tokenRole: string
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
 ): Promise<AxiosResponse<any, any>> =>
-  axios.get(`${API_URL}/session/${roomName}/${tokenRole}/archives`);
+  axios.post(`${API_URL}/session/${roomName}/archives`, { tokenRole });

@@ -31,34 +31,33 @@ sessionRouter.post('/:room', async (req: Request<{ room: string }>, res: Respons
   }
 });
 
-sessionRouter.post(
-  '/:room/:tokenRole/startArchive',
-  async (req: Request<{ room: string; tokenRole: string }>, res: Response) => {
-    try {
-      const { room: roomName, tokenRole } = req.params;
-      const sessionId = await sessionService.getSession(roomName);
-      if (sessionId) {
-        const archive = await videoService.startArchive(roomName, sessionId, tokenRole);
-        res.json({
-          archiveId: archive.id,
-          status: 200,
-        });
-      } else {
-        res.status(404).json({ message: 'Room not found' });
-      }
-    } catch (error: unknown) {
-      console.log(error);
-      const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
-      res.status(500).json({ message: errorMessage });
+sessionRouter.post('/:room/startArchive', async (req: Request<{ room: string }>, res: Response) => {
+  try {
+    const { room: roomName } = req.params;
+    const { tokenRole } = req.body;
+    const sessionId = await sessionService.getSession(roomName);
+    if (sessionId) {
+      const archive = await videoService.startArchive(roomName, sessionId, tokenRole);
+      res.json({
+        archiveId: archive.id,
+        status: 200,
+      });
+    } else {
+      res.status(404).json({ message: 'Room not found' });
     }
+  } catch (error: unknown) {
+    console.log(error);
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
+    res.status(500).json({ message: errorMessage });
   }
-);
+});
 
 sessionRouter.post(
-  '/:room/:archiveId/:tokenRole/stopArchive',
-  async (req: Request<{ room: string; archiveId: string; tokenRole: string }>, res: Response) => {
+  '/:room/:archiveId/stopArchive',
+  async (req: Request<{ room: string; archiveId: string }>, res: Response) => {
     try {
-      const { archiveId, tokenRole } = req.params;
+      const { archiveId } = req.params;
+      const { tokenRole } = req.body;
       if (archiveId) {
         const responseArchiveId = await videoService.stopArchive(archiveId, tokenRole);
         res.json({
@@ -72,11 +71,12 @@ sessionRouter.post(
   }
 );
 
-sessionRouter.get(
+sessionRouter.post(
   '/:room/:tokenRole/archives',
-  async (req: Request<{ room: string; tokenRole: string }>, res: Response) => {
+  async (req: Request<{ room: string }>, res: Response) => {
     try {
-      const { room: roomName, tokenRole } = req.params;
+      const { room: roomName } = req.params;
+      const { tokenRole } = req.body;
       const sessionId = await sessionService.getSession(roomName);
       if (sessionId) {
         const archives = await videoService.listArchives(sessionId, tokenRole);

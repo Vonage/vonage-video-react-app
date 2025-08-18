@@ -58,7 +58,7 @@ describe.each([
     server.close(done);
   });
 
-  describe('GET requests', () => {
+  describe('POST requests', () => {
     const tokenRole = 'admin';
     it('returns a 200 when creating a room', async () => {
       const res = await request(server)
@@ -68,39 +68,31 @@ describe.each([
       expect(res.statusCode).toEqual(200);
     });
 
-    it('returns a 200 when starting an archive in a room', async () => {
-      const res = await request(server)
-        .post(`/session/${roomName}/${tokenRole}/startArchive`)
-        .set('Content-Type', 'application/json')
-        .send({ tokenRole });
-      expect(res.statusCode).toEqual(200);
-    });
-  });
-
-  describe('POST requests', () => {
     describe('archiving', () => {
-      const tokenRole = 'admin';
       it('returns a 200 when starting an archive in a room', async () => {
         const res = await request(server)
-          .post(`/session/${roomName}/${tokenRole}/startArchive`)
-          .set('Content-Type', 'application/json');
+          .post(`/session/${roomName}/startArchive`)
+          .set('Content-Type', 'application/json')
+          .send({ tokenRole });
         expect(res.statusCode).toEqual(200);
       });
 
       it('returns a 404 when starting an archive in a non-existent room', async () => {
         const invalidRoomName = 'nonExistingRoomName';
         const res = await request(server)
-          .post(`/session/${invalidRoomName}/${tokenRole}/startArchive`)
-          .set('Content-Type', 'application/json');
+          .post(`/session/${invalidRoomName}/startArchive`)
+          .set('Content-Type', 'application/json')
+          .send({ tokenRole });
         expect(res.statusCode).toEqual(404);
       });
 
       it('returns a 500 when stopping an invalid archive in a room', async () => {
         const archiveId = 'b8-c9-d10';
         const res = await request(server)
-          .post(`/session/${roomName}/${archiveId}/${tokenRole}/stopArchive`)
+          .post(`/session/${roomName}/${archiveId}/stopArchive`)
           .set('Content-Type', 'application/json')
-          .set('Accept', 'application/json');
+          .set('Accept', 'application/json')
+          .send({ tokenRole });
         expect(res.statusCode).toEqual(500);
       });
     });
