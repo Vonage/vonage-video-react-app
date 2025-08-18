@@ -12,6 +12,8 @@ import {
 import { VideoService } from './videoServiceInterface';
 import { VonageConfig } from '../types/config';
 
+export type TokenRole = 'admin' | 'participant' | 'viewer';
+
 class VonageVideoService implements VideoService {
   private readonly credentials: Auth;
   private readonly vonageVideo: Video;
@@ -25,8 +27,8 @@ class VonageVideoService implements VideoService {
     this.vonageVideo = new Video(this.credentials);
   }
 
-  private static getTokenRole(userRole: string): string {
-    switch (userRole) {
+  private static getTokenRole(tokenRole: TokenRole): string {
+    switch (tokenRole) {
       case 'admin':
         return 'moderator';
       case 'participant':
@@ -48,9 +50,9 @@ class VonageVideoService implements VideoService {
     return archives.items;
   }
 
-  generateToken(sessionId: string, userRole: string): { token: string; apiKey: string } {
+  generateToken(sessionId: string, tokenRole: TokenRole): { token: string; apiKey: string } {
     const token = this.vonageVideo.generateClientToken(sessionId, {
-      role: VonageVideoService.getTokenRole(userRole),
+      role: VonageVideoService.getTokenRole(tokenRole),
     });
     return { token, apiKey: this.config.applicationId };
   }
@@ -84,8 +86,8 @@ class VonageVideoService implements VideoService {
     throw new Error('Only admins can stop an archive');
   }
 
-  async enableCaptions(sessionId: string, userRole: string): Promise<EnableCaptionResponse> {
-    const requestToken = this.generateToken(sessionId, userRole);
+  async enableCaptions(sessionId: string, tokenRole: TokenRole): Promise<EnableCaptionResponse> {
+    const requestToken = this.generateToken(sessionId, tokenRole);
     const { token } = requestToken;
 
     try {

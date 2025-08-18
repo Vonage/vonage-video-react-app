@@ -8,6 +8,8 @@ export type EnableCaptionResponse = {
   captionsId: string;
 };
 
+export type TokenRole = 'admin' | 'participant' | 'viewer';
+
 class OpenTokVideoService implements VideoService {
   private readonly opentok: OpenTok;
 
@@ -16,7 +18,7 @@ class OpenTokVideoService implements VideoService {
     this.opentok = new OpenTok(apiKey, apiSecret);
   }
 
-  private static getTokenRole(tokenRole: string): Role {
+  private static getTokenRole(tokenRole: TokenRole): Role {
     switch (tokenRole) {
       case 'admin':
         return 'moderator';
@@ -42,7 +44,7 @@ class OpenTokVideoService implements VideoService {
     });
   }
 
-  generateToken(sessionId: string, tokenRole: string): { token: string; apiKey: string } {
+  generateToken(sessionId: string, tokenRole: TokenRole): { token: string; apiKey: string } {
     const token = this.opentok.generateToken(sessionId, {
       role: OpenTokVideoService.getTokenRole(tokenRole),
     });
@@ -105,7 +107,7 @@ class OpenTokVideoService implements VideoService {
   // This is not the case for Vonage Video Node SDK, which has a built-in method for enabling captions.
   readonly API_URL = 'https://api.opentok.com/v2/project';
 
-  async enableCaptions(sessionId: string, tokenRole: string): Promise<EnableCaptionResponse> {
+  async enableCaptions(sessionId: string, tokenRole: TokenRole): Promise<EnableCaptionResponse> {
     const expires = Math.floor(new Date().getTime() / 1000) + 24 * 60 * 60;
     // Note that the project token is different from the session token.
     // The project token is used to authenticate the request to the OpenTok API.

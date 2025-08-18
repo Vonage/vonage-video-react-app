@@ -1,6 +1,6 @@
 import { describe, expect, it, vi, beforeEach } from 'vitest';
 import axios from 'axios';
-import { enableCaptions, disableCaptions } from '../captions';
+import { enableCaptions, disableCaptions, TokenRole } from '../captions';
 import { API_URL } from '../../utils/constants';
 
 vi.mock('axios');
@@ -55,7 +55,7 @@ describe('captions', () => {
       mockPost.mockResolvedValue(mockResponse);
 
       const roomName = 'meeting-room-123';
-      const tokenRole = 'moderator';
+      const tokenRole = 'admin' as TokenRole;
 
       const result = await enableCaptions(roomName, tokenRole);
 
@@ -134,7 +134,7 @@ describe('captions', () => {
 
       const roomName = 'another-room';
       const captionsId = 'different-captions-id';
-      const tokenRole = 'moderator';
+      const tokenRole = 'admin' as TokenRole;
 
       const result = await disableCaptions(roomName, captionsId, tokenRole);
 
