@@ -71,28 +71,25 @@ sessionRouter.post(
   }
 );
 
-sessionRouter.post(
-  '/:room/:tokenRole/archives',
-  async (req: Request<{ room: string }>, res: Response) => {
-    try {
-      const { room: roomName } = req.params;
-      const { tokenRole } = req.body;
-      const sessionId = await sessionService.getSession(roomName);
-      if (sessionId) {
-        const archives = await videoService.listArchives(sessionId, tokenRole);
-        res.json({
-          archives,
-          status: 200,
-        });
-      } else {
-        res.status(404).json({ message: 'Room not found' });
-      }
-    } catch (error: unknown) {
-      const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
-      res.status(500).json({ message: errorMessage });
+sessionRouter.post('/:room/archives', async (req: Request<{ room: string }>, res: Response) => {
+  try {
+    const { room: roomName } = req.params;
+    const { tokenRole } = req.body;
+    const sessionId = await sessionService.getSession(roomName);
+    if (sessionId) {
+      const archives = await videoService.listArchives(sessionId, tokenRole);
+      res.json({
+        archives,
+        status: 200,
+      });
+    } else {
+      res.status(404).json({ message: 'Room not found' });
     }
+  } catch (error: unknown) {
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
+    res.status(500).json({ message: errorMessage });
   }
-);
+});
 
 sessionRouter.post(
   '/:room/enableCaptions',
