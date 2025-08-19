@@ -17,7 +17,7 @@ test('The buttons in the meeting room should match those in the waiting room wit
   await expect(page.getByTestId('PersonIcon')).toHaveCount(0);
 
   if (browserName !== 'firefox') {
-    await expect(page.getByTestId('blurIcon')).toBeVisible();
+    await expect(page.getByTestId('portraitIcon')).toBeVisible();
   }
   await page.getByPlaceholder('Enter your name').fill('some-user');
   await page.getByRole('button', { name: 'Join' }).click({ force: true });
@@ -29,15 +29,12 @@ test('The buttons in the meeting room should match those in the waiting room wit
   await expect(page.getByTestId('VideocamIcon')).toBeVisible();
   await expect(page.locator('xpath=//div[contains(text(),"S")]')).toHaveCount(0);
 
-  // Skipping this step for FF as we don't support BG blur on FF
-  // Also, skipping this step for mobile viewport as, currently BG blur button is not displayed for mobile view ports.
+  // Skipping this step for FF as we don't support BG replacement on FF
+  // Also, skipping this step for mobile viewport as, currently BG replacement button is not displayed for mobile view ports.
   if (browserName !== 'firefox' && !isMobile) {
     await page.getByTestId('video-dropdown-button').click();
 
-    await expect(page.getByTestId('blur-text')).toBeVisible();
-
-    await expect(page.getByTestId('toggle-off-icon')).toBeVisible();
-    await expect(page.getByTestId('toggle-on-icon')).not.toBeVisible();
+    await expect(page.getByTestId('background-effects-text')).toBeVisible();
   }
 });
 
@@ -54,8 +51,7 @@ test('The buttons in the meeting room should match those in the waiting room wit
   await expect(page.getByTestId('PersonIcon')).toBeVisible();
 
   if (browserName !== 'firefox') {
-    await page.getByTestId('blurIcon').click();
-    await expect(page.getByTestId('BlurOffIcon')).toBeVisible();
+    await expect(page.getByTestId('portraitIcon')).toBeVisible();
   }
   await page.getByPlaceholder('Enter your name').fill('some user');
   await page.getByRole('button', { name: 'Join' }).click({ force: true });
@@ -66,14 +62,11 @@ test('The buttons in the meeting room should match those in the waiting room wit
   await expect(page.getByTestId('VideocamOffIcon')).toBeVisible();
   await expect(page.getByTestId('MicOffToolbar')).toBeVisible();
 
-  // Skipping this step for FF as we don't support BG blur on FF
-  // Also, skipping this step for mobile viewport as, currently BG blur button is not displayed for mobile view ports.
+  // Skipping this step for FF as we don't support BG replacement on FF
+  // Also, skipping this step for mobile viewport as, currently BG replacement button is not displayed for mobile view ports.
   if (browserName !== 'firefox' && !isMobile) {
     await page.getByTestId('video-dropdown-button').click();
 
-    await expect(page.getByTestId('blur-text')).toBeVisible();
-
-    await expect(page.getByTestId('toggle-off-icon')).not.toBeVisible();
-    await expect(page.getByTestId('toggle-on-icon')).toBeVisible();
+    await expect(page.getByTestId('background-effects-text')).toBeVisible();
   }
 });

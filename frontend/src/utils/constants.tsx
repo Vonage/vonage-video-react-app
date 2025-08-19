@@ -131,3 +131,14 @@ export const CAPTION_ERROR_DISPLAY_DURATION_MS = 4000;
  * Typically used as the max-width breakpoint for responsive layouts.
  */
 export const SMALL_VIEWPORT = 768;
+
+/**
+ * @constant {string} BACKGROUNDS_PATH - The path to the backgrounds assets directory.
+ */
+export const BACKGROUNDS_PATH = '/background';
+
+/**
+ * @constant {number} DEFAULT_SELECTABLE_OPTION_WIDTH - The default size (in pixels) for selectable option elements.
+ * Used to define the width of selectable options in UI components.
+ */
+export const DEFAULT_SELECTABLE_OPTION_WIDTH = 68;

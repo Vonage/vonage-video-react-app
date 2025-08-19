@@ -14,6 +14,8 @@ import { PUBLISHING_BLOCKED_CAPTION } from '../../../utils/constants';
 import getAccessDeniedError, {
   PublishingErrorType,
 } from '../../../utils/getAccessDeniedError/getAccessDeniedError';
+import useUserContext from '../../../hooks/useUserContext';
+import applyBackgroundFilter from '../../../utils/backgroundFilter/applyBackgroundFilter/applyBackgroundFilter';
 
 type PublisherStreamCreatedEvent = Event<'streamCreated', Publisher> & {
   stream: Stream;
@@ -46,6 +48,7 @@ export type PublisherContextType = {
   stream: Stream | null | undefined;
   toggleAudio: () => void;
   toggleVideo: () => void;
+  changeBackground: (backgroundSelected: string) => void;
   unpublish: () => void;
 };
 
@@ -65,10 +68,12 @@ export type PublisherContextType = {
  * @property {Stream | null | undefined} stream - OT Stream object for publisher
  * @property {() => void} toggleAudio - Method to toggle microphone on/off. State updated internally, can be read via isAudioEnabled.
  * @property {() => void} toggleVideo - Method to toggle camera on/off. State updated internally, can be read via isVideoEnabled.
+ * @property {(backgroundSelected: string) => void} changeBackground - Method to change background replacement or blur effect.
  * @property {() => void} unpublish - Method to unpublish from session and destroy publisher (for ending a call).
  * @returns {PublisherContextType} the publisher context
  */
 const usePublisher = (): PublisherContextType => {
+  const { setUser } = useUserContext();
   const [publisherVideoElement, setPublisherVideoElement] = useState<
     HTMLVideoElement | HTMLObjectElement
   >();
@@ -117,6 +122,24 @@ const usePublisher = (): PublisherContextType => {
   const handleDestroyed = () => {
     publisherRef.current = null;
   };
+
+  /**
+   * Change background replacement or blur effect
+   * @param {string} backgroundSelected - The selected background option
+   * @returns {void}
+   */
+  const changeBackground = useCallback(
+    (backgroundSelected: string) => {
+      applyBackgroundFilter({
+        publisher: publisherRef.current,
+        backgroundSelected,
+        setUser,
+      }).catch(() => {
+        console.error('Failed to apply background filter.');
+      });
+    },
+    [setUser]
+  );
 
   const handleStreamCreated = (e: PublisherStreamCreatedEvent) => {
     setIsPublishing(true);
@@ -311,6 +334,7 @@ const usePublisher = (): PublisherContextType => {
     stream,
     toggleAudio,
     toggleVideo,
+    changeBackground,
     unpublish,
   };
 };

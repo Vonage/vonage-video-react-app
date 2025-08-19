@@ -7,7 +7,9 @@ import {
   Dispatch,
   ReactElement,
 } from 'react';
+import { VideoFilter } from '@vonage/client-sdk-video';
 import { getStorageItem, STORAGE_KEYS } from '../utils/storage';
+import { parseVideoFilter } from '../utils/util';
 
 // Define the shape of the User context
 export type UserContextType = {
@@ -21,9 +23,9 @@ export type UserType = {
     publishAudio: boolean; // Whether the user is publishing audio
     publishVideo: boolean; // Whether the user is publishing video
     name: string; // The user's name
-    blur: boolean; // Whether background blur is enabled
     noiseSuppression: boolean; // Whether noise suppression is enabled
     publishCaptions: boolean; // Whether captions are published
+    backgroundFilter?: VideoFilter; // The background replacement filter applied to the video
     audioSource?: string; // The selected audio input source (optional)
     videoSource?: string; // The selected video input source (optional)
   };
@@ -49,7 +51,7 @@ export type UserProviderProps = {
 const UserProvider = ({ children }: UserProviderProps): ReactElement => {
   // Load initial settings from local storage
   const noiseSuppression = getStorageItem(STORAGE_KEYS.NOISE_SUPPRESSION) === 'true';
-  const blur = getStorageItem(STORAGE_KEYS.BACKGROUND_BLUR) === 'true';
+  const backgroundFilter = parseVideoFilter(getStorageItem(STORAGE_KEYS.BACKGROUND_REPLACEMENT));
   const name = getStorageItem(STORAGE_KEYS.USERNAME) ?? '';
 
   const [user, setUser] = useState<UserType>({
@@ -57,7 +59,7 @@ const UserProvider = ({ children }: UserProviderProps): ReactElement => {
       publishAudio: true,
       publishVideo: true,
       name,
-      blur,
+      backgroundFilter,
       noiseSuppression,
       audioSource: undefined,
       videoSource: undefined,

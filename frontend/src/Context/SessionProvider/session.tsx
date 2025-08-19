@@ -56,6 +56,7 @@ export type SessionContextType = {
   archiveId: string | null;
   rightPanelActiveTab: RightPanelActiveTab;
   toggleParticipantList: () => void;
+  toggleBackgroundEffects: () => void;
   toggleChat: () => void;
   closeRightPanel: () => void;
   toggleReportIssue: () => void;
@@ -89,6 +90,7 @@ export const SessionContext = createContext<SessionContextType>({
   archiveId: null,
   rightPanelActiveTab: 'closed',
   toggleParticipantList: () => {},
+  toggleBackgroundEffects: () => {},
   toggleChat: () => {},
   closeRightPanel: () => {},
   toggleReportIssue: () => {},
@@ -150,6 +152,7 @@ const SessionProvider = ({ children }: SessionProviderProps): ReactElement => {
   const {
     closeRightPanel,
     toggleParticipantList,
+    toggleBackgroundEffects,
     toggleChat,
     rightPanelState: { unreadCount, activeTab: rightPanelActiveTab },
     incrementUnreadCount,
@@ -426,6 +429,7 @@ const SessionProvider = ({ children }: SessionProviderProps): ReactElement => {
       setLayoutMode,
       rightPanelActiveTab,
       toggleParticipantList,
+      toggleBackgroundEffects,
       toggleChat,
       closeRightPanel,
       toggleReportIssue,
@@ -455,6 +459,7 @@ const SessionProvider = ({ children }: SessionProviderProps): ReactElement => {
       setLayoutMode,
       rightPanelActiveTab,
       toggleParticipantList,
+      toggleBackgroundEffects,
       toggleChat,
       closeRightPanel,
       toggleReportIssue,

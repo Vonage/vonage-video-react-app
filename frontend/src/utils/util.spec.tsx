@@ -153,3 +153,40 @@ describe('isMobile', () => {
     });
   });
 });
+
+describe('parseVideoFilter', () => {
+  it('returns undefined for null input', () => {
+    expect(util.parseVideoFilter(null)).toBeUndefined();
+  });
+
+  it('returns undefined for empty string', () => {
+    expect(util.parseVideoFilter('')).toBeUndefined();
+  });
+
+  it('returns undefined for invalid JSON', () => {
+    expect(util.parseVideoFilter('not a json')).toBeUndefined();
+  });
+
+  it('returns undefined for object with missing type', () => {
+    const raw = JSON.stringify({ blurStrength: 'low' });
+    expect(util.parseVideoFilter(raw)).toBeUndefined();
+  });
+
+  it('returns undefined for object with unknown type', () => {
+    const raw = JSON.stringify({ type: 'otherType', blurStrength: 'low' });
+    expect(util.parseVideoFilter(raw)).toBeUndefined();
+  });
+
+  it('returns VideoFilter for valid backgroundBlur', () => {
+    const raw = JSON.stringify({ type: 'backgroundBlur', blurStrength: 'low' });
+    expect(util.parseVideoFilter(raw)).toEqual({ type: 'backgroundBlur', blurStrength: 'low' });
+  });
+
+  it('returns VideoFilter for valid backgroundReplacement', () => {
+    const raw = JSON.stringify({ type: 'backgroundReplacement', backgroundImgUrl: '/img/bg.jpg' });
+    expect(util.parseVideoFilter(raw)).toEqual({
+      type: 'backgroundReplacement',
+      backgroundImgUrl: '/img/bg.jpg',
+    });
+  });
+});

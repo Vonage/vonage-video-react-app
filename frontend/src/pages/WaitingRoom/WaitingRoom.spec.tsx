@@ -15,9 +15,11 @@ import useDevices from '../../hooks/useDevices';
 import { AllMediaDevices } from '../../types';
 import { allMediaDevices, defaultAudioDevice } from '../../utils/mockData/device';
 import usePreviewPublisherContext from '../../hooks/usePreviewPublisherContext';
+import useBackgroundPublisherContext from '../../hooks/useBackgroundPublisherContext';
 import usePermissions, { PermissionsHookType } from '../../hooks/usePermissions';
 import { DEVICE_ACCESS_STATUS } from '../../utils/constants';
 import waitUntilPlaying from '../../utils/waitUntilPlaying';
+import { BackgroundPublisherContextType } from '../../Context/BackgroundPublisherProvider';
 
 const mockedNavigate = vi.fn();
 const mockedParams = { roomName: 'test-room-name' };
@@ -44,6 +46,7 @@ const WaitingRoomWithProviders = () => (
 vi.mock('../../hooks/useDevices.tsx');
 vi.mock('../../hooks/useUserContext.tsx');
 vi.mock('../../hooks/usePreviewPublisherContext.tsx');
+vi.mock('../../hooks/useBackgroundPublisherContext.tsx');
 vi.mock('../../hooks/usePermissions.tsx');
 vi.mock('../../utils/waitUntilPlaying/waitUntilPlaying.ts');
 
@@ -65,6 +68,10 @@ const mockUsePreviewPublisherContext = usePreviewPublisherContext as Mock<
   [],
   PreviewPublisherContextType
 >;
+const mockUseBackgroundPublisherContext = useBackgroundPublisherContext as Mock<
+  [],
+  BackgroundPublisherContextType
+>;
 const mockUsePermissions = usePermissions as Mock<[], PermissionsHookType>;
 const mockWaitUntilPlaying = vi.mocked(waitUntilPlaying);
 const reloadSpy = vi.fn();
@@ -72,6 +79,7 @@ const reloadSpy = vi.fn();
 describe('WaitingRoom', () => {
   const nativeWindowLocation = window.location as string & Location;
   let previewPublisherContext: PreviewPublisherContextType;
+  let backgroundPublisherContext: BackgroundPublisherContextType;
   let mockPublisher: Publisher;
   let mockPublisherVideoElement: HTMLVideoElement;
 
@@ -96,6 +104,12 @@ describe('WaitingRoom', () => {
       destroyPublisher: mockedDestroyPublisher,
     } as unknown as PreviewPublisherContextType;
     mockUsePreviewPublisherContext.mockImplementation(() => previewPublisherContext);
+    backgroundPublisherContext = {
+      publisher: null,
+      initBackgroundLocalPublisher: vi.fn(),
+      destroyBackgroundPublisher: mockedDestroyPublisher,
+    } as unknown as BackgroundPublisherContextType;
+    mockUseBackgroundPublisherContext.mockImplementation(() => backgroundPublisherContext);
     mockUsePermissions.mockReturnValue({
       accessStatus: DEVICE_ACCESS_STATUS.ACCEPTED,
       setAccessStatus: vi.fn(),
