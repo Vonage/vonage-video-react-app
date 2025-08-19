@@ -15,6 +15,8 @@ import usePublisherOptions from '../../Context/PublisherProvider/usePublisherOpt
 import CaptionsBox from '../../components/MeetingRoom/CaptionsButton/CaptionsBox';
 import useIsSmallViewport from '../../hooks/useIsSmallViewport';
 import CaptionsError from '../../components/MeetingRoom/CaptionsError';
+import useBackgroundPublisherContext from '../../hooks/useBackgroundPublisherContext';
+import { DEVICE_ACCESS_STATUS } from '../../utils/constants';
 
 const height = '@apply h-[calc(100dvh_-_80px)]';
 
@@ -31,6 +33,14 @@ const MeetingRoom = (): ReactElement => {
   const roomName = useRoomName();
   const { publisher, publish, quality, initializeLocalPublisher, publishingError, isVideoEnabled } =
     usePublisherContext();
+
+  const {
+    initBackgroundLocalPublisher,
+    publisher: backgroundPublisher,
+    accessStatus,
+    destroyBackgroundPublisher,
+  } = useBackgroundPublisherContext();
+
   const {
     joinRoom,
     subscriberWrappers,
@@ -40,6 +50,7 @@ const MeetingRoom = (): ReactElement => {
     rightPanelActiveTab,
     toggleChat,
     toggleParticipantList,
+    toggleBackgroundEffects,
     closeRightPanel,
     toggleReportIssue,
   } = useSessionContext();
@@ -84,6 +95,26 @@ const MeetingRoom = (): ReactElement => {
     }
   }, [publisher, publish, connected]);
 
+  useEffect(() => {
+    if (!backgroundPublisher) {
+      initBackgroundLocalPublisher();
+    }
+
+    return () => {
+      // Ensure we destroy the backgroundPublisher and release any media devices.
+      if (backgroundPublisher) {
+        destroyBackgroundPublisher();
+      }
+    };
+  }, [initBackgroundLocalPublisher, backgroundPublisher, destroyBackgroundPublisher]);
+
+  // After changing device permissions, reload the page to reflect the device's permission change.
+  useEffect(() => {
+    if (accessStatus === DEVICE_ACCESS_STATUS.ACCESS_CHANGED) {
+      window.location.reload();
+    }
+  }, [accessStatus]);
+
   // If the user is unable to publish, we redirect them to the goodbye page.
   // This prevents users from subscribing to other participants in the room, and being unable to communicate with them.
   useEffect(() => {
@@ -123,6 +154,7 @@ const MeetingRoom = (): ReactElement => {
         toggleShareScreen={toggleShareScreen}
         rightPanelActiveTab={rightPanelActiveTab}
         toggleParticipantList={toggleParticipantList}
+        toggleBackgroundEffects={toggleBackgroundEffects}
         toggleChat={toggleChat}
         toggleReportIssue={toggleReportIssue}
         participantCount={

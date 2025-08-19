@@ -2,7 +2,6 @@ import { useRef, useState, useEffect, ReactElement } from 'react';
 import { Stack } from '@mui/material';
 import MicButton from '../MicButton';
 import CameraButton from '../CameraButton';
-import BlurButton from '../BlurButton';
 import VideoLoading from '../VideoLoading';
 import waitUntilPlaying from '../../../utils/waitUntilPlaying';
 import useUserContext from '../../../hooks/useUserContext';
@@ -12,6 +11,8 @@ import PreviewAvatar from '../PreviewAvatar';
 import VoiceIndicatorIcon from '../../MeetingRoom/VoiceIndicator/VoiceIndicator';
 import VignetteEffect from '../VignetteEffect';
 import useIsSmallViewport from '../../../hooks/useIsSmallViewport';
+import BackgroundEffectsDialog from '../BackgroundEffects/BackgroundEffectsDialog';
+import BackgroundEffectsButton from '../BackgroundEffects/BackgroundEffectsButton';
 
 export type VideoContainerProps = {
   username: string;
@@ -21,14 +22,15 @@ export type VideoContainerProps = {
  * VideoContainer Component
  *
  * Loads and displays the preview publisher, a representation of what participants would see in the meeting room.
- * Overlaid onto the preview publisher are the audio input toggle button, video input toggle button, and the background blur toggle button (if supported).
+ * Overlaid onto the preview publisher are the audio input toggle button, video input toggle button, and the background replacement button (if supported).
  * @param {VideoContainerProps} props - The props for the component.
  *  @property {string} username - The user's username.
  * @returns {ReactElement} - The VideoContainer component.
  */
 const VideoContainer = ({ username }: VideoContainerProps): ReactElement => {
   const containerRef = useRef<HTMLDivElement>(null);
-  const [videoLoading, setVideoLoading] = useState<boolean>(true);
+  const [isVideoLoading, setIsVideoLoading] = useState<boolean>(true);
+  const [isBackgroundEffectsOpen, setIsBackgroundEffectsOpen] = useState<boolean>(false);
   const { user } = useUserContext();
   const { publisherVideoElement, isVideoEnabled, isAudioEnabled, speechLevel } =
     usePreviewPublisherContext();
@@ -53,7 +55,7 @@ const VideoContainer = ({ username }: VideoContainerProps): ReactElement => {
         '0 1px 2px 0 rgba(60, 64, 67, .3), 0 1px 3px 1px rgba(60, 64, 67, .15)';
 
       waitUntilPlaying(publisherVideoElement).then(() => {
-        setVideoLoading(false);
+        setIsVideoLoading(false);
       });
     }
   }, [isSmallViewport, publisherVideoElement]);
@@ -65,16 +67,20 @@ const VideoContainer = ({ username }: VideoContainerProps): ReactElement => {
       // see https://stackoverflow.com/questions/77748631/element-rounded-corners-leaking-out-to-front-when-using-overflow-hidden
       style={{ WebkitMask: 'linear-gradient(#000 0 0)' }}
     >
-      <div ref={containerRef} />
+      <div
+        ref={containerRef}
+        style={{ display: isBackgroundEffectsOpen ? 'none' : 'block' }}
+        data-video-container
+      />
       <VignetteEffect />
-      {videoLoading && <VideoLoading />}
+      {isVideoLoading && <VideoLoading />}
       <PreviewAvatar
         initials={initials}
         username={user.defaultSettings.name}
         isVideoEnabled={isVideoEnabled}
-        isVideoLoading={videoLoading}
+        isVideoLoading={isVideoLoading}
       />
-      {!videoLoading && (
+      {!isVideoLoading && (
         <div className="absolute inset-x-0 bottom-[5%] flex h-fit items-center justify-center">
           {isAudioEnabled && (
             <div className="absolute left-6 top-8">
@@ -86,7 +92,11 @@ const VideoContainer = ({ username }: VideoContainerProps): ReactElement => {
             <CameraButton />
           </Stack>
           <div className="absolute right-[20px]">
-            <BlurButton />
+            <BackgroundEffectsButton onClick={() => setIsBackgroundEffectsOpen(true)} />
+            <BackgroundEffectsDialog
+              isBackgroundEffectsOpen={isBackgroundEffectsOpen}
+              setIsBackgroundEffectsOpen={setIsBackgroundEffectsOpen}
+            />
           </div>
         </div>
       )}

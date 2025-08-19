@@ -69,3 +69,27 @@
 #hidden-participants:hover .MuiAvatarGroup-root .MuiAvatar-root {
   border-color: rgb(76, 80, 82);
 }
+
+.choose-background-effect-box {
+  border: 1px solid #e0e0e0;
+  border-radius: 12px;
+  padding: 1rem;
+  padding-bottom: 0.5rem;
+  background-color: #f0f4f9;
+}
+
+.background-video-container-disabled {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  max-height: 450px;
+  background: #f5f5f5;
+  border-radius: 12px;
+  box-shadow:
+    0 1px 2px 0 rgba(60, 64, 67, 0.3),
+    0 1px 3px 1px rgba(60, 64, 67, 0.15);
+  color: #888;
+  font-size: 1.25rem;
+  margin: 0 auto 16px auto;
+  aspect-ratio: 16 / 9;
+}

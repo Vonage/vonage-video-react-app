@@ -19,6 +19,7 @@ export type RightPanelTitleProps = {
 const RightPanelTitle = ({ handleClose, title }: RightPanelTitleProps): ReactElement => {
   return (
     <div
+      data-testid="right-panel-title"
       style={{ width: 'inherit' }}
       className="flex h-[64px] flex-row items-center justify-between pl-6"
     >
