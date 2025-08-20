@@ -1,4 +1,5 @@
 import { describe, expect, it, jest } from '@jest/globals';
+import { TokenRole } from '../../types/tokenRoles';
 
 const mockSessionId = 'mockSessionId';
 const mockToken = 'mockToken';
@@ -65,6 +66,8 @@ const { default: OpenTokVideoService } = await import('../opentokVideoService');
 
 describe('OpentokVideoService', () => {
   let opentokVideoService: typeof OpenTokVideoService.prototype;
+  const adminTokenRole: TokenRole = 'admin';
+  const participantTokenRole: TokenRole = 'participant';
 
   beforeEach(() => {
     opentokVideoService = new OpenTokVideoService({
@@ -80,7 +83,7 @@ describe('OpentokVideoService', () => {
   });
 
   it('generates a token', () => {
-    const result = opentokVideoService.generateToken(mockSessionId, 'admin');
+    const result = opentokVideoService.generateToken(mockSessionId, adminTokenRole);
     expect(result.token).toEqual({
       apiKey: mockApiKey,
       token: mockToken,
@@ -88,7 +91,11 @@ describe('OpentokVideoService', () => {
   });
 
   it('starts an archive', async () => {
-    const response = await opentokVideoService.startArchive(mockRoomName, mockSessionId, 'admin');
+    const response = await opentokVideoService.startArchive(
+      mockRoomName,
+      mockSessionId,
+      adminTokenRole
+    );
     expect(response).toMatchObject({
       archive: {
         id: mockArchiveId,
@@ -98,19 +105,19 @@ describe('OpentokVideoService', () => {
 
   it('errors if starting an archive as a non-admin', async () => {
     await expect(
-      opentokVideoService.startArchive(mockRoomName, mockSessionId, 'participant')
+      opentokVideoService.startArchive(mockRoomName, mockSessionId, participantTokenRole)
     ).rejects.toThrow('Only admins can start an archive');
   });
 
   it('stops an archive', async () => {
-    const archiveResponse = await opentokVideoService.stopArchive(mockArchiveId, 'admin');
+    const archiveResponse = await opentokVideoService.stopArchive(mockArchiveId, adminTokenRole);
     expect(archiveResponse).toBe(mockArchiveId);
   });
 
   it('errors if stopping an archive as a non-admin', async () => {
-    await expect(opentokVideoService.stopArchive(mockArchiveId, 'participant')).rejects.toThrow(
-      'Only admins can stop an archive'
-    );
+    await expect(
+      opentokVideoService.stopArchive(mockArchiveId, participantTokenRole)
+    ).rejects.toThrow('Only admins can stop an archive');
   });
 
   it('generates a list of archives', async () => {
@@ -119,18 +126,21 @@ describe('OpentokVideoService', () => {
   });
 
   it('enables captions', async () => {
-    const captionResponse = await opentokVideoService.enableCaptions(mockSessionId, 'admin');
+    const captionResponse = await opentokVideoService.enableCaptions(mockSessionId, adminTokenRole);
     expect(captionResponse.captionsId).toBe(mockCaptionId);
   });
 
   it('errors if enabling captions as a non-admin', async () => {
-    await expect(opentokVideoService.enableCaptions(mockSessionId, 'participant')).rejects.toThrow(
-      'Only admins can start captions'
-    );
+    await expect(
+      opentokVideoService.enableCaptions(mockSessionId, participantTokenRole)
+    ).rejects.toThrow('Only admins can start captions');
   });
 
   it('disables captions', async () => {
-    const captionResponse = await opentokVideoService.disableCaptions(mockCaptionId, 'admin');
+    const captionResponse = await opentokVideoService.disableCaptions(
+      mockCaptionId,
+      adminTokenRole
+    );
     expect(captionResponse).toBe('Captions stopped successfully');
   });
 

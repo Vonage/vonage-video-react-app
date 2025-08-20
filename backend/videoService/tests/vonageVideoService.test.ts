@@ -1,4 +1,5 @@
 import { describe, expect, it, jest } from '@jest/globals';
+import { TokenRole } from '../../types/tokenRoles';
 
 jest.mock('@vonage/auth');
 
@@ -51,7 +52,8 @@ const { default: VonageVideoService } = await import('../vonageVideoService');
 
 describe('VonageVideoService', () => {
   let vonageVideoService: typeof VonageVideoService.prototype;
-  const userRole = 'admin';
+  const adminTokenRole: TokenRole = 'admin';
+  const participantTokenRole: TokenRole = 'participant';
 
   beforeEach(() => {
     vonageVideoService = new VonageVideoService({
@@ -67,7 +69,7 @@ describe('VonageVideoService', () => {
   });
 
   it('generates a token', () => {
-    const result = vonageVideoService.generateToken(mockSessionId, userRole);
+    const result = vonageVideoService.generateToken(mockSessionId, adminTokenRole);
     expect(result.token).toEqual({
       apiKey: mockApplicationId,
       token: mockToken,
@@ -75,46 +77,50 @@ describe('VonageVideoService', () => {
   });
 
   it('starts an archive', async () => {
-    const archive = await vonageVideoService.startArchive(mockRoomName, mockSessionId, userRole);
+    const archive = await vonageVideoService.startArchive(
+      mockRoomName,
+      mockSessionId,
+      adminTokenRole
+    );
     expect(archive.id).toBe(mockArchiveId);
   });
 
   it('errors if starting an archive as a non-admin', async () => {
     await expect(
-      vonageVideoService.startArchive(mockRoomName, mockSessionId, 'participant')
+      vonageVideoService.startArchive(mockRoomName, mockSessionId, participantTokenRole)
     ).rejects.toThrow('Only admins can start an archive');
   });
 
   it('stops an archive', async () => {
-    const archiveResponse = await vonageVideoService.stopArchive(mockArchiveId, userRole);
+    const archiveResponse = await vonageVideoService.stopArchive(mockArchiveId, adminTokenRole);
     expect(archiveResponse).toBe('Archive stopped successfully');
   });
 
   it('errors if stopping an archive as a non-admin', async () => {
-    await expect(vonageVideoService.stopArchive(mockArchiveId, 'participant')).rejects.toThrow(
-      'Only admins can stop an archive'
-    );
+    await expect(
+      vonageVideoService.stopArchive(mockArchiveId, participantTokenRole)
+    ).rejects.toThrow('Only admins can stop an archive');
   });
 
   it('enables captions', async () => {
-    const captionResponse = await vonageVideoService.enableCaptions(mockSessionId, userRole);
+    const captionResponse = await vonageVideoService.enableCaptions(mockSessionId, adminTokenRole);
     expect(captionResponse.captionsId).toBe(mockCaptionId);
   });
 
   it('errors if starting captions as a non-admin', async () => {
-    await expect(vonageVideoService.enableCaptions(mockSessionId, 'participant')).rejects.toThrow(
-      'Only admins can start captions'
-    );
+    await expect(
+      vonageVideoService.enableCaptions(mockSessionId, participantTokenRole)
+    ).rejects.toThrow('Only admins can start captions');
   });
 
   it('disables captions', async () => {
-    const captionResponse = await vonageVideoService.disableCaptions(mockCaptionId, 'admin');
+    const captionResponse = await vonageVideoService.disableCaptions(mockCaptionId, adminTokenRole);
     expect(captionResponse).toBe('Captions stopped successfully');
   });
 
   it('errors if stopping captions as a non-admin', async () => {
-    await expect(vonageVideoService.disableCaptions(mockCaptionId, 'participant')).rejects.toThrow(
-      'Only admins can stop captions'
-    );
+    await expect(
+      vonageVideoService.disableCaptions(mockCaptionId, participantTokenRole)
+    ).rejects.toThrow('Only admins can stop captions');
   });
 });
