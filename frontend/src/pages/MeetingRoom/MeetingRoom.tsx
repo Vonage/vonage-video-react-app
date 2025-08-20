@@ -14,7 +14,7 @@ import isValidRoomName from '../../utils/isValidRoomName';
 import usePublisherOptions from '../../Context/PublisherProvider/usePublisherOptions';
 import CaptionsBox from '../../components/MeetingRoom/CaptionsButton/CaptionsBox';
 import useIsSmallViewport from '../../hooks/useIsSmallViewport';
-import CaptionsError from '../../components/MeetingRoom/CaptionsError';
+import ErrorResponse from '../../components/MeetingRoom/ErrorResponse';
 import useBackgroundPublisherContext from '../../hooks/useBackgroundPublisherContext';
 import { DEVICE_ACCESS_STATUS } from '../../utils/constants';
 
@@ -61,11 +61,11 @@ const MeetingRoom = (): ReactElement => {
   const isSmallViewport = useIsSmallViewport();
 
   const [isUserCaptionsEnabled, setIsUserCaptionsEnabled] = useState<boolean>(false);
-  const [captionsErrorResponse, setCaptionsErrorResponse] = useState<string | null>('');
+  const [enableActionErrorResponse, setEnableActionErrorResponse] = useState<string | null>('');
   const captionsState = {
     isUserCaptionsEnabled,
     setIsUserCaptionsEnabled,
-    setCaptionsErrorResponse,
+    setEnableActionErrorResponse,
   };
 
   useEffect(() => {
@@ -143,10 +143,10 @@ const MeetingRoom = (): ReactElement => {
       <RightPanel activeTab={rightPanelActiveTab} handleClose={closeRightPanel} />
       <EmojisOrigin />
       {isUserCaptionsEnabled && <CaptionsBox />}
-      {captionsErrorResponse && (
-        <CaptionsError
-          captionsErrorResponse={captionsErrorResponse}
-          setCaptionsErrorResponse={setCaptionsErrorResponse}
+      {enableActionErrorResponse && (
+        <ErrorResponse
+          errorResponse={enableActionErrorResponse}
+          setErrorResponse={setEnableActionErrorResponse}
         />
       )}
       <Toolbar
@@ -160,7 +160,7 @@ const MeetingRoom = (): ReactElement => {
         participantCount={
           subscriberWrappers.filter(({ isScreenshare }) => !isScreenshare).length + 1
         }
-        captionsState={captionsState}
+        backendFeatureState={captionsState}
       />
       {reconnecting && (
         <ConnectionAlert

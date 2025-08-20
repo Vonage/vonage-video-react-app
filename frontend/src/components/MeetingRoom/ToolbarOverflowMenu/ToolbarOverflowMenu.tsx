@@ -12,10 +12,10 @@ import ScreenSharingButton from '../../ScreenSharingButton';
 import getOverflowMenuButtons from '../../../utils/getOverflowMenuButtons';
 import isReportIssueEnabled from '../../../utils/isReportIssueEnabled';
 
-export type CaptionsState = {
+export type BackendFeatureState = {
   isUserCaptionsEnabled: boolean;
   setIsUserCaptionsEnabled: Dispatch<SetStateAction<boolean>>;
-  setCaptionsErrorResponse: Dispatch<SetStateAction<string | null>>;
+  setEnableActionErrorResponse: Dispatch<SetStateAction<string | null>>;
 };
 
 export type ToolbarOverflowMenuProps = {
@@ -26,7 +26,7 @@ export type ToolbarOverflowMenuProps = {
   toggleShareScreen: () => void;
   isSharingScreen: boolean;
   toolbarButtonsCount: number;
-  captionsState: CaptionsState;
+  backendFeatureState: BackendFeatureState;
 };
 
 /**
@@ -41,7 +41,7 @@ export type ToolbarOverflowMenuProps = {
  *  @property {Function} toggleShareScreen - toggles the user's screenshare
  *  @property {boolean} isSharingScreen - whether the user is sharing their screen
  *  @property {number} toolbarButtonsCount - number of buttons displayed on the toolbar
- *  @property {CaptionsState} captionsState - the state of the captions, including whether they are enabled and functions to set error messages
+ *  @property {BackendFeatureState} backendFeatureState - the state of the captions, including whether they are enabled and functions to set error messages
  * @returns {ReactElement} - The ToolbarOverflowMenu component.
  */
 const ToolbarOverflowMenu = ({
@@ -52,7 +52,7 @@ const ToolbarOverflowMenu = ({
   toggleShareScreen,
   isSharingScreen,
   toolbarButtonsCount,
-  captionsState,
+  backendFeatureState,
 }: ToolbarOverflowMenuProps): ReactElement => {
   const {
     subscriberWrappers,
@@ -65,6 +65,7 @@ const ToolbarOverflowMenu = ({
   const participantCount =
     subscriberWrappers.filter(({ isScreenshare }) => !isScreenshare).length + 1;
   const isPinningPresent = subscriberWrappers.some((subWrapper) => subWrapper.isPinned);
+  const { setEnableActionErrorResponse } = backendFeatureState;
 
   const closeMenuWrapper = (onClick?: () => void) => () => {
     if (onClick) {
@@ -93,7 +94,7 @@ const ToolbarOverflowMenu = ({
       isOverflowButton
       handleClick={closeMenu}
       key="CaptionsButton"
-      captionsState={captionsState}
+      backendFeatureState={backendFeatureState}
     />,
     <EmojiGridButton
       isEmojiGridOpen={isEmojiGridOpen}
@@ -102,7 +103,12 @@ const ToolbarOverflowMenu = ({
       isOverflowButton
       key="EmojiGridButton"
     />,
-    <ArchivingButton isOverflowButton handleClick={closeMenu} key="ArchivingButton" />,
+    <ArchivingButton
+      isOverflowButton
+      handleClick={closeMenu}
+      key="ArchivingButton"
+      setErrorState={setEnableActionErrorResponse}
+    />,
     isReportIssueEnabled() && (
       <ReportIssueButton
         isOpen={rightPanelActiveTab === 'issues'}

@@ -2,7 +2,7 @@ import { describe, expect, it, vi, beforeEach, Mock, afterAll } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import { useLocation } from 'react-router-dom';
 import useSpeakingDetector from '../../../hooks/useSpeakingDetector';
-import Toolbar, { ToolbarProps, CaptionsState } from './Toolbar';
+import Toolbar, { ToolbarProps, BackendFeatureState } from './Toolbar';
 import isReportIssueEnabled from '../../../utils/isReportIssueEnabled';
 import useToolbarButtons, {
   UseToolbarButtons,
@@ -62,11 +62,11 @@ describe('Toolbar', () => {
     toggleReportIssue: vi.fn(),
     toggleBackgroundEffects: vi.fn(),
     participantCount: 0,
-    captionsState: {
+    backendFeatureState: {
       isUserCaptionsEnabled: false,
       setIsUserCaptionsEnabled: vi.fn(),
-      setCaptionsErrorResponse: vi.fn(),
-    } as CaptionsState,
+      setEnableActionErrorResponse: vi.fn(),
+    } as BackendFeatureState,
   };
 
   it('does not render the Report Issue button if it is configured to be disabled', () => {
@@ -102,8 +102,8 @@ describe('Toolbar', () => {
       <Toolbar
         {...{
           ...defaultProps,
-          captionsState: {
-            ...defaultProps.captionsState,
+          backendFeatureState: {
+            ...defaultProps.backendFeatureState,
             isUserCaptionsEnabled: true,
           },
         }}

@@ -20,6 +20,7 @@ vi.mock('../../../api/archiving', () => ({
 
 describe('ArchivingButton', () => {
   const mockHandleCloseMenu = vi.fn();
+  const mockSetErrorState = vi.fn();
   const mockedRoomName = 'test-room-name';
 
   beforeEach(() => {
@@ -30,7 +31,7 @@ describe('ArchivingButton', () => {
   it('renders the button correctly', () => {
     render(
       <MemoryRouter>
-        <ArchivingButton handleClick={mockHandleCloseMenu} />
+        <ArchivingButton handleClick={mockHandleCloseMenu} setErrorState={mockSetErrorState} />
       </MemoryRouter>
     );
 
@@ -40,7 +41,7 @@ describe('ArchivingButton', () => {
   it('opens the modal when the button is clicked', () => {
     render(
       <MemoryRouter>
-        <ArchivingButton handleClick={mockHandleCloseMenu} />
+        <ArchivingButton handleClick={mockHandleCloseMenu} setErrorState={mockSetErrorState} />
       </MemoryRouter>
     );
     act(() => screen.getByTestId('archiving-button').click());
@@ -51,7 +52,7 @@ describe('ArchivingButton', () => {
     (startArchiving as Mock).mockResolvedValue({ data: { success: true } });
     render(
       <MemoryRouter>
-        <ArchivingButton handleClick={mockHandleCloseMenu} />
+        <ArchivingButton handleClick={mockHandleCloseMenu} setErrorState={mockSetErrorState} />
       </MemoryRouter>
     );
 

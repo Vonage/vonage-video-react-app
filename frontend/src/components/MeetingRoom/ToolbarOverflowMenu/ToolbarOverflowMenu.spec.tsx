@@ -3,7 +3,7 @@ import { render, screen } from '@testing-library/react';
 import { useRef } from 'react';
 import { Button } from '@mui/material';
 import { MemoryRouter } from 'react-router-dom';
-import ToolbarOverflowMenu, { CaptionsState } from './ToolbarOverflowMenu';
+import ToolbarOverflowMenu, { BackendFeatureState } from './ToolbarOverflowMenu';
 import * as util from '../../../utils/util';
 import isReportIssueEnabled from '../../../utils/isReportIssueEnabled';
 
@@ -23,8 +23,8 @@ const mockIsReportIssueEnabled = isReportIssueEnabled as Mock<[], boolean>;
 const mockCaptionsState = {
   isUserCaptionsEnabled: false,
   setIsUserCaptionsEnabled: vi.fn(),
-  setCaptionsErrorResponse: vi.fn(),
-} as CaptionsState;
+  setEnableActionErrorResponse: vi.fn(),
+} as BackendFeatureState;
 
 const TestComponent = ({ defaultOpen = false }: { defaultOpen?: boolean }) => {
   const anchorRef = useRef<HTMLButtonElement | null>(null);
@@ -40,7 +40,7 @@ const TestComponent = ({ defaultOpen = false }: { defaultOpen?: boolean }) => {
         toggleShareScreen={vi.fn()}
         isSharingScreen={false}
         toolbarButtonsCount={0}
-        captionsState={mockCaptionsState}
+        backendFeatureState={mockCaptionsState}
       />
     </MemoryRouter>
   );

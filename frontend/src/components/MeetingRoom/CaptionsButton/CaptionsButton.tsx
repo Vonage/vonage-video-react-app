@@ -7,16 +7,16 @@ import ToolbarButton from '../ToolbarButton';
 import { disableCaptions, enableCaptions } from '../../../api/captions';
 import useSessionContext from '../../../hooks/useSessionContext';
 
-export type CaptionsState = {
+export type BackendFeatureState = {
   isUserCaptionsEnabled: boolean;
   setIsUserCaptionsEnabled: Dispatch<SetStateAction<boolean>>;
-  setCaptionsErrorResponse: Dispatch<SetStateAction<string | null>>;
+  setEnableActionErrorResponse: Dispatch<SetStateAction<string | null>>;
 };
 
 export type CaptionsButtonProps = {
   isOverflowButton?: boolean;
   handleClick?: () => void;
-  captionsState: CaptionsState;
+  backendFeatureState: BackendFeatureState;
 };
 
 /**
@@ -26,19 +26,19 @@ export type CaptionsButtonProps = {
  * @param {CaptionsButtonProps} props - the props for the component
  *  @property {boolean} isOverflowButton - (optional) whether the button is in the ToolbarOverflowMenu
  *  @property {(event?: MouseEvent | TouchEvent) => void} handleClick - (optional) click handler that closes the overflow menu in small viewports.
- *  @property {CaptionsState} captionsState - the state of the captions, including whether they are enabled and functions to set error messages
+ *  @property {BackendFeatureState} backendFeatureState - the state of the captions, including whether they are enabled and functions to set error messages
  * @returns {ReactElement} - The CaptionsButton component.
  */
 const CaptionsButton = ({
   isOverflowButton = false,
   handleClick,
-  captionsState,
+  backendFeatureState,
 }: CaptionsButtonProps): ReactElement => {
   const roomName = useRoomName();
   const { tokenRole } = useSessionContext();
   const [captionsId, setCaptionsId] = useState<string>('');
-  const { isUserCaptionsEnabled, setIsUserCaptionsEnabled, setCaptionsErrorResponse } =
-    captionsState;
+  const { isUserCaptionsEnabled, setIsUserCaptionsEnabled, setEnableActionErrorResponse } =
+    backendFeatureState;
   const title = isUserCaptionsEnabled ? 'Disable captions' : 'Enable captions';
 
   const handleClose = () => {
@@ -50,7 +50,7 @@ const CaptionsButton = ({
   const sessionCaptionsEnabled = !!roomName && !!captionsId;
 
   const handleCaptionsErrorResponse = (message: string | null) => {
-    setCaptionsErrorResponse(message || 'Unknown error occurred');
+    setEnableActionErrorResponse(message || 'Unknown error occurred');
     setCaptionsId('');
     setIsUserCaptionsEnabled(false);
   };

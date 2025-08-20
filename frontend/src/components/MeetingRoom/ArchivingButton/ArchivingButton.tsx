@@ -1,6 +1,7 @@
 import RadioButtonCheckedIcon from '@mui/icons-material/RadioButtonChecked';
 import { Tooltip } from '@mui/material';
-import { ReactElement, useState } from 'react';
+import { ReactElement, useState, Dispatch, SetStateAction } from 'react';
+import { AxiosError } from 'axios';
 import useRoomName from '../../../hooks/useRoomName';
 import ToolbarButton from '../ToolbarButton';
 import PopupDialog, { DialogTexts } from '../PopupDialog';
@@ -10,6 +11,7 @@ import useSessionContext from '../../../hooks/useSessionContext';
 export type ArchivingButtonProps = {
   isOverflowButton?: boolean;
   handleClick?: () => void;
+  setErrorState: Dispatch<SetStateAction<string | null>>;
 };
 
 /**
@@ -26,6 +28,7 @@ export type ArchivingButtonProps = {
 const ArchivingButton = ({
   isOverflowButton = false,
   handleClick,
+  setErrorState,
 }: ArchivingButtonProps): ReactElement => {
   const roomName = useRoomName();
   const { archiveId, tokenRole } = useSessionContext();
@@ -66,10 +69,12 @@ const ArchivingButton = ({
     if (action === 'start') {
       if (!archiveId && roomName) {
         try {
-          setActionText(stopRecordingText);
           await startArchiving(roomName, tokenRole);
+          setActionText(stopRecordingText);
         } catch (err) {
-          console.log(err);
+          if (err instanceof AxiosError) {
+            setErrorState(err.response?.data.message);
+          }
         }
       }
     } else if (archiveId && roomName) {

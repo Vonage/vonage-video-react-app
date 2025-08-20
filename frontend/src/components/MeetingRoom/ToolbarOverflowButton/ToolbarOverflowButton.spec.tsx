@@ -8,7 +8,7 @@ import useUserContext from '../../../hooks/useUserContext';
 import { UserContextType } from '../../../Context/user';
 import {
   ToolbarOverflowMenuProps,
-  CaptionsState,
+  BackendFeatureState,
 } from '../ToolbarOverflowMenu/ToolbarOverflowMenu';
 
 vi.mock('../../../hooks/useSessionContext');
@@ -47,11 +47,11 @@ describe('ToolbarOverflowButton', () => {
     setIsEmojiGridOpen: vi.fn(),
     closeMenu: vi.fn(),
     isOpen: false,
-    captionsState: {
+    backendFeatureState: {
       isUserCaptionsEnabled: false,
       setIsUserCaptionsEnabled: vi.fn(),
-      setCaptionsErrorResponse: vi.fn(),
-    } as CaptionsState,
+      setEnableActionErrorResponse: vi.fn(),
+    } as BackendFeatureState,
   };
 
   it('renders', () => {

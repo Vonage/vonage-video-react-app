@@ -16,10 +16,10 @@ import isReportIssueEnabled from '../../../utils/isReportIssueEnabled';
 import useToolbarButtons from '../../../hooks/useToolbarButtons';
 import DeviceControlButton from '../DeviceControlButton';
 
-export type CaptionsState = {
+export type BackendFeatureState = {
   isUserCaptionsEnabled: boolean;
   setIsUserCaptionsEnabled: Dispatch<SetStateAction<boolean>>;
-  setCaptionsErrorResponse: Dispatch<SetStateAction<string | null>>;
+  setEnableActionErrorResponse: Dispatch<SetStateAction<string | null>>;
 };
 
 export type ToolbarProps = {
@@ -31,7 +31,7 @@ export type ToolbarProps = {
   toggleChat: () => void;
   toggleReportIssue: () => void;
   participantCount: number;
-  captionsState: CaptionsState;
+  backendFeatureState: BackendFeatureState;
 };
 
 /**
@@ -54,7 +54,7 @@ export type ToolbarProps = {
  *  @property {boolean} isSharingScreen - the prop to check if the user is currently sharing a screen
  *  @property {boolean} isParticipantListOpen - the prop to check if the participant list is open
  *  @property {() => void} openParticipantList - the prop to open the participant list
- *  @property {CaptionsState} captionsState - the state of the captions, including whether they are enabled and a function to set an error message
+ *  @property {BackendFeatureState} backendFeatureState - the state of the captions, including whether they are enabled and a function to set an error message
  * @returns {ReactElement} - the toolbar component
  */
 const Toolbar = ({
@@ -66,7 +66,7 @@ const Toolbar = ({
   toggleChat,
   toggleReportIssue,
   participantCount,
-  captionsState,
+  backendFeatureState,
 }: ToolbarProps): ReactElement => {
   const { disconnect, subscriberWrappers } = useSessionContext();
   const isViewingScreenShare = subscriberWrappers.some((subWrapper) => subWrapper.isScreenshare);
@@ -79,6 +79,7 @@ const Toolbar = ({
     disconnect();
   }, [disconnect]);
   const [openEmojiGridDesktop, setOpenEmojiGridDesktop] = useState<boolean>(false);
+  const { setEnableActionErrorResponse } = backendFeatureState;
 
   // An array of buttons available for the toolbar. As the toolbar resizes, buttons may be hidden and moved to the
   // ToolbarOverflowMenu to ensure a responsive layout without compromising usability.
@@ -100,8 +101,8 @@ const Toolbar = ({
       isParentOpen
       key="EmojiGridButton"
     />,
-    <CaptionsButton key="CaptionsButton" captionsState={captionsState} />,
-    <ArchivingButton key="ArchivingButton" />,
+    <CaptionsButton key="CaptionsButton" backendFeatureState={backendFeatureState} />,
+    <ArchivingButton key="ArchivingButton" setErrorState={setEnableActionErrorResponse} />,
     isReportIssueEnabled() && (
       <ReportIssueButton
         isOpen={rightPanelActiveTab === 'issues'}
@@ -180,7 +181,7 @@ const Toolbar = ({
               isSharingScreen={isSharingScreen}
               toggleShareScreen={toggleShareScreen}
               toolbarButtonsCount={toolbarButtonsDisplayed}
-              captionsState={captionsState}
+              backendFeatureState={backendFeatureState}
             />
           )}
           <ExitButton handleLeave={handleLeave} />

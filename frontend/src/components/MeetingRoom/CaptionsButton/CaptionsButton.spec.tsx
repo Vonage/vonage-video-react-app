@@ -4,7 +4,7 @@ import type { AxiosResponse } from 'axios';
 import { Subscriber } from '@vonage/client-sdk-video';
 import { MemoryRouter } from 'react-router-dom';
 import { enableCaptions, disableCaptions } from '../../../api/captions';
-import CaptionsButton, { CaptionsState } from './CaptionsButton';
+import CaptionsButton, { BackendFeatureState } from './CaptionsButton';
 import useRoomName from '../../../hooks/useRoomName';
 import { SessionContextType } from '../../../Context/SessionProvider/session';
 import useSessionContext from '../../../hooks/useSessionContext';
@@ -22,13 +22,13 @@ const mockUseSessionContext = useSessionContext as Mock<[], SessionContextType>;
 describe('CaptionsButton', () => {
   const mockHandleCloseMenu = vi.fn();
   const mockSetIsUserCaptionsEnabled = vi.fn();
-  const mockSetCaptionsErrorResponse = vi.fn();
+  const mockSetEnableActionErrorResponse = vi.fn();
 
   const mockCaptionsState = {
     isUserCaptionsEnabled: false,
     setIsUserCaptionsEnabled: mockSetIsUserCaptionsEnabled,
-    setCaptionsErrorResponse: mockSetCaptionsErrorResponse,
-  } as CaptionsState;
+    setEnableActionErrorResponse: mockSetEnableActionErrorResponse,
+  } as BackendFeatureState;
   const mockedRoomName = 'test-room-name';
   let sessionContext: SessionContextType;
 
@@ -74,7 +74,7 @@ describe('CaptionsButton', () => {
       <MemoryRouter>
         <CaptionsButton
           handleClick={mockHandleCloseMenu}
-          captionsState={{ ...mockCaptionsState, isUserCaptionsEnabled: true }}
+          backendFeatureState={{ ...mockCaptionsState, isUserCaptionsEnabled: true }}
         />
       </MemoryRouter>
     );
@@ -84,7 +84,7 @@ describe('CaptionsButton', () => {
   it('turns the captions on when button is pressed', async () => {
     render(
       <MemoryRouter>
-        <CaptionsButton handleClick={mockHandleCloseMenu} captionsState={mockCaptionsState} />
+        <CaptionsButton handleClick={mockHandleCloseMenu} backendFeatureState={mockCaptionsState} />
       </MemoryRouter>
     );
     act(() => screen.getByTestId('captions-button').click());

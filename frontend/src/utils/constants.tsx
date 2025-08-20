@@ -122,9 +122,9 @@ export const RIGHT_PANEL_BUTTON_COUNT = 3 - (isReportIssueEnabled() ? 0 : 1);
 export const CAPTION_DISPLAY_DURATION_MS = 4000;
 
 /**
- * @constant {number} CAPTION_ERROR_DISPLAY_DURATION_MS - The duration in milliseconds for which the caption error popup is displayed.
+ * @constant {number} BACKEND_ERROR_DISPLAY_DURATION_MS - The duration in milliseconds for which the backend error popup is displayed.
  */
-export const CAPTION_ERROR_DISPLAY_DURATION_MS = 4000;
+export const BACKEND_ERROR_DISPLAY_DURATION_MS = 4000;
 
 /*
  * @constant {number} SMALL_VIEWPORT - The pixel width threshold used to determine if the viewport is considered small.
