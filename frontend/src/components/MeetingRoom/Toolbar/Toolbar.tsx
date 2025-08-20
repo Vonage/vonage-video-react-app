@@ -15,6 +15,7 @@ import EmojiGridButton from '../EmojiGridButton';
 import isReportIssueEnabled from '../../../utils/isReportIssueEnabled';
 import useToolbarButtons from '../../../hooks/useToolbarButtons';
 import DeviceControlButton from '../DeviceControlButton';
+import useConfigContext from '../../../hooks/useConfigContext';
 
 export type CaptionsState = {
   isUserCaptionsEnabled: boolean;
@@ -67,6 +68,7 @@ const Toolbar = ({
   captionsState,
 }: ToolbarProps): ReactElement => {
   const { disconnect, subscriberWrappers } = useSessionContext();
+  const config = useConfigContext();
   const isViewingScreenShare = subscriberWrappers.some((subWrapper) => subWrapper.isScreenshare);
   const isScreenSharePresent = isViewingScreenShare || isSharingScreen;
   const isPinningPresent = subscriberWrappers.some((subWrapper) => subWrapper.isPinned);
@@ -163,7 +165,9 @@ const Toolbar = ({
       <div className="flex flex-1 justify-center">
         <div ref={mediaControlsRef} className="flex flex-row">
           <DeviceControlButton deviceType="audio" />
-          <DeviceControlButton deviceType="video" />
+          {config.videoSettings.enableDisableCapableCamera && (
+            <DeviceControlButton deviceType="video" />
+          )}
         </div>
         {toolbarButtons.map(displayCenterToolbarButtons)}
         <div ref={overflowAndExitRef} className="flex flex-row">
