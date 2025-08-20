@@ -96,9 +96,21 @@ describe('OpentokVideoService', () => {
     });
   });
 
+  it('errors if starting an archive as a non-admin', async () => {
+    await expect(
+      opentokVideoService.startArchive(mockRoomName, mockSessionId, 'participant')
+    ).rejects.toThrow('Only admins can start an archive');
+  });
+
   it('stops an archive', async () => {
     const archiveResponse = await opentokVideoService.stopArchive(mockArchiveId, 'admin');
     expect(archiveResponse).toBe(mockArchiveId);
+  });
+
+  it('errors if stopping an archive as a non-admin', async () => {
+    await expect(opentokVideoService.stopArchive(mockArchiveId, 'participant')).rejects.toThrow(
+      'Only admins can stop an archive'
+    );
   });
 
   it('generates a list of archives', async () => {
@@ -111,8 +123,20 @@ describe('OpentokVideoService', () => {
     expect(captionResponse.captionsId).toBe(mockCaptionId);
   });
 
+  it('errors if enabling captions as a non-admin', async () => {
+    await expect(opentokVideoService.enableCaptions(mockSessionId, 'participant')).rejects.toThrow(
+      'Only admins can start captions'
+    );
+  });
+
   it('disables captions', async () => {
-    const captionResponse = await opentokVideoService.disableCaptions(mockCaptionId);
+    const captionResponse = await opentokVideoService.disableCaptions(mockCaptionId, 'admin');
     expect(captionResponse).toBe('Captions stopped successfully');
+  });
+
+  it('errors if disabling captions as a non-admin', async () => {
+    await expect(opentokVideoService.disableCaptions(mockCaptionId, 'participant')).rejects.toThrow(
+      'Only admins can stop captions'
+    );
   });
 });

@@ -1,22 +1,23 @@
 import { SingleArchiveResponse, EnableCaptionResponse } from '@vonage/video';
 import { Archive } from 'opentok';
+import { TokenRole } from '../types/tokenRoles';
 
 export interface VideoService {
   createSession(): Promise<string>;
   generateToken(
     sessionId: string,
-    tokenRole: string
+    tokenRole: TokenRole
   ): { token: string; applicationId?: string; apiKey?: string };
   startArchive(
     roomName: string,
     sessionId: string,
-    tokenRole: string
+    tokenRole: TokenRole
   ): Promise<Archive | SingleArchiveResponse>;
-  stopArchive(archiveId: string, tokenRole: string): Promise<string>;
+  stopArchive(archiveId: string, tokenRole: TokenRole): Promise<string>;
   listArchives(
     sessionId: string,
-    tokenRole: string
+    tokenRole: TokenRole
   ): Promise<Archive[] | SingleArchiveResponse[] | undefined>;
-  enableCaptions(sessionId: string, tokenRole: string): Promise<EnableCaptionResponse>;
-  disableCaptions(captionsId: string, tokenRole?: string): Promise<string>;
+  enableCaptions(sessionId: string, tokenRole: TokenRole): Promise<EnableCaptionResponse>;
+  disableCaptions(captionsId: string, tokenRole: TokenRole): Promise<string>;
 }

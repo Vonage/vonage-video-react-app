@@ -112,14 +112,17 @@ class VonageVideoService implements VideoService {
     throw new Error('Only admins can start captions');
   }
 
-  async disableCaptions(captionsId: string): Promise<string> {
-    try {
-      await this.vonageVideo.disableCaptions(captionsId);
-      return 'Captions stopped successfully';
-    } catch (error: unknown) {
-      const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
-      throw new Error(`Failed to disable captions: ${errorMessage}`);
+  async disableCaptions(captionsId: string, tokenRole: TokenRole): Promise<string> {
+    if (tokenRole === 'admin') {
+      try {
+        await this.vonageVideo.disableCaptions(captionsId);
+        return 'Captions stopped successfully';
+      } catch (error: unknown) {
+        const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
+        throw new Error(`Failed to disable captions: ${errorMessage}`);
+      }
     }
+    throw new Error('Only admins can stop captions');
   }
 }
 

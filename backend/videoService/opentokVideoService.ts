@@ -50,7 +50,7 @@ class OpenTokVideoService implements VideoService {
     return { token, apiKey: this.config.apiKey };
   }
 
-  startArchive(roomName: string, sessionId: string, tokenRole: TokenRole): Promise<Archive> {
+  async startArchive(roomName: string, sessionId: string, tokenRole: TokenRole): Promise<Archive> {
     if (tokenRole === 'admin') {
       return new Promise((resolve, reject) => {
         this.opentok.startArchive(
@@ -79,7 +79,7 @@ class OpenTokVideoService implements VideoService {
     throw new Error('Only admins can start an archive');
   }
 
-  stopArchive(archiveId: string, tokenRole: TokenRole): Promise<string> {
+  async stopArchive(archiveId: string, tokenRole: TokenRole): Promise<string> {
     if (tokenRole === 'admin') {
       return new Promise((resolve, reject) => {
         this.opentok.stopArchive(archiveId, (error) => {
@@ -156,28 +156,32 @@ class OpenTokVideoService implements VideoService {
     throw new Error('Only admins can start captions');
   }
 
-  async disableCaptions(captionsId: string): Promise<string> {
-    const expires = Math.floor(new Date().getTime() / 1000) + 24 * 60 * 60;
-    // Note that the project token is different from the session token.
-    // The project token is used to authenticate the request to the OpenTok API.
-    const projectJWT = projectToken(this.config.apiKey, this.config.apiSecret, expires);
-    const captionURL = `${this.API_URL}/${this.config.apiKey}/captions/${captionsId}/stop`;
-    try {
-      await axios.post(
-        captionURL,
-        {},
-        {
-          headers: {
-            'X-OPENTOK-AUTH': projectJWT,
-            'Content-Type': 'application/json',
-          },
-        }
-      );
-      return 'Captions stopped successfully';
-    } catch (error: unknown) {
-      const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
-      throw new Error(`Failed to disable captions: ${errorMessage}`);
+  async disableCaptions(captionsId: string, tokenRole: TokenRole): Promise<string> {
+    if (tokenRole === 'admin') {
+      const expires = Math.floor(new Date().getTime() / 1000) + 24 * 60 * 60;
+      // Note that the project token is different from the session token.
+      // The project token is used to authenticate the request to the OpenTok API.
+      const projectJWT = projectToken(this.config.apiKey, this.config.apiSecret, expires);
+      const captionURL = `${this.API_URL}/${this.config.apiKey}/captions/${captionsId}/stop`;
+      try {
+        await axios.post(
+          captionURL,
+          {},
+          {
+            headers: {
+              'X-OPENTOK-AUTH': projectJWT,
+              'Content-Type': 'application/json',
+            },
+          }
+        );
+        return 'Captions stopped successfully';
+      } catch (error: unknown) {
+        const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
+        throw new Error(`Failed to disable captions: ${errorMessage}`);
+      }
     }
+
+    throw new Error('Only admins can stop captions');
   }
 }
 

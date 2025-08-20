@@ -79,9 +79,21 @@ describe('VonageVideoService', () => {
     expect(archive.id).toBe(mockArchiveId);
   });
 
+  it('errors if starting an archive as a non-admin', async () => {
+    await expect(
+      vonageVideoService.startArchive(mockRoomName, mockSessionId, 'participant')
+    ).rejects.toThrow('Only admins can start an archive');
+  });
+
   it('stops an archive', async () => {
     const archiveResponse = await vonageVideoService.stopArchive(mockArchiveId, userRole);
     expect(archiveResponse).toBe('Archive stopped successfully');
+  });
+
+  it('errors if stopping an archive as a non-admin', async () => {
+    await expect(vonageVideoService.stopArchive(mockArchiveId, 'participant')).rejects.toThrow(
+      'Only admins can stop an archive'
+    );
   });
 
   it('enables captions', async () => {
@@ -89,8 +101,20 @@ describe('VonageVideoService', () => {
     expect(captionResponse.captionsId).toBe(mockCaptionId);
   });
 
+  it('errors if starting captions as a non-admin', async () => {
+    await expect(vonageVideoService.enableCaptions(mockSessionId, 'participant')).rejects.toThrow(
+      'Only admins can start captions'
+    );
+  });
+
   it('disables captions', async () => {
-    const captionResponse = await vonageVideoService.disableCaptions(mockCaptionId);
+    const captionResponse = await vonageVideoService.disableCaptions(mockCaptionId, 'admin');
     expect(captionResponse).toBe('Captions stopped successfully');
+  });
+
+  it('errors if stopping captions as a non-admin', async () => {
+    await expect(vonageVideoService.disableCaptions(mockCaptionId, 'participant')).rejects.toThrow(
+      'Only admins can stop captions'
+    );
   });
 });

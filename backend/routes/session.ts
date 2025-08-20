@@ -151,18 +151,14 @@ sessionRouter.post(
       }
 
       // Only the last user to disable captions will send a request to disable captions session-wide
-      if (captionsUserCount === 0 && tokenRole === 'admin') {
-        const disableResponse = await videoService.disableCaptions(captionsId);
+      if (captionsUserCount === 0) {
+        const disableResponse = await videoService.disableCaptions(captionsId, tokenRole);
         await sessionService.setCaptionsId(roomName, '');
         res.json({
           disableResponse,
           status: 200,
         });
       } else {
-        if (tokenRole !== 'admin') {
-          res.status(403).json({ message: 'Only admin can disable captions' });
-          return;
-        }
         res.json({
           disableResponse: 'Captions are still active for other users',
           status: 200,
