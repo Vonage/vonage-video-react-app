@@ -4,7 +4,7 @@ import configFile from '../../../../../config.json';
 
 export type VideoSettings = {
   enableDisableCapableCamera: boolean;
-  resolution: '360p' | '480p' | '720p' | '1080p';
+  resolution: '1920x1080' | '1280x960' | '1280x720' | '640x480' | '640x360' | '320x240' | '320x180';
   videoOnJoin: boolean;
   backgroundEffects: boolean;
 };
@@ -17,7 +17,7 @@ export type AppConfig = {
 export const defaultConfig: AppConfig = {
   videoSettings: {
     enableDisableCapableCamera: true,
-    resolution: '1080p',
+    resolution: '1280x720',
     videoOnJoin: true,
     backgroundEffects: true,
   },

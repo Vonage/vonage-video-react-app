@@ -1,7 +1,7 @@
 {
   "videoSettings": {
     "enableDisableCapableCamera": true,
-    "resolution": "1080p",
+    "resolution": "1280x720",
     "videoOnJoin": true,
     "backgroundEffects": true
   },

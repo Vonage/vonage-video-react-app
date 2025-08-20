@@ -8,6 +8,7 @@ import {
 import useUserContext from '../../../hooks/useUserContext';
 import getInitials from '../../../utils/getInitials';
 import DeviceStore from '../../../utils/DeviceStore';
+import useConfigContext from '../../../hooks/useConfigContext';
 
 /**
  * React hook to get PublisherProperties combining default options and options set in UserContext
@@ -16,6 +17,7 @@ import DeviceStore from '../../../utils/DeviceStore';
 
 const usePublisherOptions = (): PublisherProperties | null => {
   const { user } = useUserContext();
+  const config = useConfigContext();
   const [publisherOptions, setPublisherOptions] = useState<PublisherProperties | null>(null);
   const deviceStoreRef = useRef<DeviceStore | null>(null);
 
@@ -55,7 +57,7 @@ const usePublisherOptions = (): PublisherProperties | null => {
         name,
         publishAudio: !!publishAudio,
         publishVideo: !!publishVideo,
-        resolution: '1280x720',
+        resolution: config.videoSettings.resolution ?? '1280x720',
         audioFilter,
         videoFilter,
         videoSource,
@@ -64,7 +66,7 @@ const usePublisherOptions = (): PublisherProperties | null => {
     };
 
     setOptions();
-  }, [user.defaultSettings]);
+  }, [config.videoSettings.resolution, user.defaultSettings]);
 
   return publisherOptions;
 };
