@@ -113,44 +113,47 @@ class OpenTokVideoService implements VideoService {
   readonly API_URL = 'https://api.opentok.com/v2/project';
 
   async enableCaptions(sessionId: string, tokenRole: TokenRole): Promise<EnableCaptionResponse> {
-    const expires = Math.floor(new Date().getTime() / 1000) + 24 * 60 * 60;
-    // Note that the project token is different from the session token.
-    // The project token is used to authenticate the request to the OpenTok API.
-    const projectJWT = projectToken(this.config.apiKey, this.config.apiSecret, expires);
-    const captionURL = `${this.API_URL}/${this.config.apiKey}/captions`;
+    if (tokenRole === 'admin') {
+      const expires = Math.floor(new Date().getTime() / 1000) + 24 * 60 * 60;
+      // Note that the project token is different from the session token.
+      // The project token is used to authenticate the request to the OpenTok API.
+      const projectJWT = projectToken(this.config.apiKey, this.config.apiSecret, expires);
+      const captionURL = `${this.API_URL}/${this.config.apiKey}/captions`;
 
-    const { token } = this.generateToken(sessionId, tokenRole);
-    const captionOptions = {
-      // The following language codes are supported: en-US, en-AU, en-GB, fr-FR, fr-CA, de-DE, hi-IN, it-IT, pt-BR, ja-JP, ko-KR, zh-CN, zh-TW
-      languageCode: 'en-US',
-      // The maximum duration of the captions in seconds. The default is 14,400 seconds (4 hours).
-      maxDuration: 1800,
-      // Enabling partial captions allows for more frequent updates to the captions.
-      // This is useful for real-time applications where the captions need to be updated frequently.
-      // However, it may also increase the number of inaccuracies in the captions.
-      partialCaptions: true,
-    };
+      const { token } = this.generateToken(sessionId, tokenRole);
+      const captionOptions = {
+        // The following language codes are supported: en-US, en-AU, en-GB, fr-FR, fr-CA, de-DE, hi-IN, it-IT, pt-BR, ja-JP, ko-KR, zh-CN, zh-TW
+        languageCode: 'en-US',
+        // The maximum duration of the captions in seconds. The default is 14,400 seconds (4 hours).
+        maxDuration: 1800,
+        // Enabling partial captions allows for more frequent updates to the captions.
+        // This is useful for real-time applications where the captions need to be updated frequently.
+        // However, it may also increase the number of inaccuracies in the captions.
+        partialCaptions: true,
+      };
 
-    const captionAxiosPostBody = {
-      sessionId,
-      token,
-      ...captionOptions,
-    };
+      const captionAxiosPostBody = {
+        sessionId,
+        token,
+        ...captionOptions,
+      };
 
-    try {
-      const {
-        data: { captionsId },
-      } = await axios.post(captionURL, captionAxiosPostBody, {
-        headers: {
-          'X-OPENTOK-AUTH': projectJWT,
-          'Content-Type': 'application/json',
-        },
-      });
-      return { captionsId };
-    } catch (error: unknown) {
-      const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
-      throw new Error(`Failed to enable captions: ${errorMessage}`);
+      try {
+        const {
+          data: { captionsId },
+        } = await axios.post(captionURL, captionAxiosPostBody, {
+          headers: {
+            'X-OPENTOK-AUTH': projectJWT,
+            'Content-Type': 'application/json',
+          },
+        });
+        return { captionsId };
+      } catch (error: unknown) {
+        const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
+        throw new Error(`Failed to enable captions: ${errorMessage}`);
+      }
     }
+    throw new Error('Only admins can start captions');
   }
 
   async disableCaptions(captionsId: string): Promise<string> {

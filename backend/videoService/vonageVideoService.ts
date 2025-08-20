@@ -86,26 +86,30 @@ class VonageVideoService implements VideoService {
   }
 
   async enableCaptions(sessionId: string, tokenRole: TokenRole): Promise<EnableCaptionResponse> {
-    const requestToken = this.generateToken(sessionId, tokenRole);
-    const { token } = requestToken;
+    if (tokenRole === 'admin') {
+      const requestToken = this.generateToken(sessionId, tokenRole);
+      const { token } = requestToken;
 
-    try {
-      const captionOptions: CaptionOptions = {
-        // The full list of supported languages can be found here: https://developer.vonage.com/en/video/guides/live-caption#supported-languages
-        languageCode: 'en-US',
-        // The maximum duration of the captions in seconds. The default is 14,400 seconds (4 hours).
-        maxDuration: 1800,
-        // Enabling partial captions allows for more frequent updates to the captions.
-        // This is useful for real-time applications where the captions need to be updated frequently.
-        // However, it may also increase the number of inaccuracies in the captions.
-        partialCaptions: 'true',
-      };
-      const captionsId = await this.vonageVideo.enableCaptions(sessionId, token, captionOptions);
-      return captionsId;
-    } catch (error: unknown) {
-      const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
-      throw new Error(`Failed to enable captions: ${errorMessage}`);
+      try {
+        const captionOptions: CaptionOptions = {
+          // The full list of supported languages can be found here: https://developer.vonage.com/en/video/guides/live-caption#supported-languages
+          languageCode: 'en-US',
+          // The maximum duration of the captions in seconds. The default is 14,400 seconds (4 hours).
+          maxDuration: 1800,
+          // Enabling partial captions allows for more frequent updates to the captions.
+          // This is useful for real-time applications where the captions need to be updated frequently.
+          // However, it may also increase the number of inaccuracies in the captions.
+          partialCaptions: 'true',
+        };
+        const captionsId = await this.vonageVideo.enableCaptions(sessionId, token, captionOptions);
+        return captionsId;
+      } catch (error: unknown) {
+        const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
+        throw new Error(`Failed to enable captions: ${errorMessage}`);
+      }
     }
+
+    throw new Error('Only admins can start captions');
   }
 
   async disableCaptions(captionsId: string): Promise<string> {
