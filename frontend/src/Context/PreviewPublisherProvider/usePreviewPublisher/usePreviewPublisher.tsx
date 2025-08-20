@@ -241,7 +241,7 @@ const usePreviewPublisher = (): PreviewPublisherContextType => {
     const publisherOptions: PublisherProperties = {
       insertDefaultUI: false,
       videoFilter,
-      resolution: '1280x720',
+      resolution: config.videoSettings.resolution ?? '1280x720',
       audioSource,
       videoSource,
     };
@@ -255,7 +255,7 @@ const usePreviewPublisher = (): PreviewPublisherContextType => {
       }
     });
     addPublisherListeners(publisherRef.current);
-  }, [addPublisherListeners]);
+  }, [addPublisherListeners, config.videoSettings.resolution]);
 
   const destroyPublisher = useCallback(() => {
     if (publisherRef.current) {
