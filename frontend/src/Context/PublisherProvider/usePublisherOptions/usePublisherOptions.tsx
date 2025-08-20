@@ -57,7 +57,7 @@ const usePublisherOptions = (): PublisherProperties | null => {
         name,
         publishAudio: !!publishAudio,
         publishVideo: !!publishVideo,
-        resolution: config.videoSettings.resolution ?? '1280x720',
+        resolution: config.videoSettings.resolution,
         audioFilter,
         videoFilter,
         videoSource,
