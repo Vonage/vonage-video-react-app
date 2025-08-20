@@ -8,6 +8,7 @@ import useRoomName from '../../../hooks/useRoomName';
 vi.mock('../../../hooks/useSessionContext', () => ({
   default: () => ({
     subscriberWrappers: [],
+    tokenRole: 'admin',
   }),
 }));
 vi.mock('../../../hooks/useRoomName');

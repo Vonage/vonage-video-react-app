@@ -5,7 +5,7 @@ import { AxiosError } from 'axios';
 import useRoomName from '../../../hooks/useRoomName';
 import ToolbarButton from '../ToolbarButton';
 import { disableCaptions, enableCaptions } from '../../../api/captions';
-import useTokenRole from '../../../hooks/useTokenRole';
+import useSessionContext from '../../../hooks/useSessionContext';
 
 export type CaptionsState = {
   isUserCaptionsEnabled: boolean;
@@ -35,12 +35,11 @@ const CaptionsButton = ({
   captionsState,
 }: CaptionsButtonProps): ReactElement => {
   const roomName = useRoomName();
+  const { tokenRole } = useSessionContext();
   const [captionsId, setCaptionsId] = useState<string>('');
   const { isUserCaptionsEnabled, setIsUserCaptionsEnabled, setCaptionsErrorResponse } =
     captionsState;
   const title = isUserCaptionsEnabled ? 'Disable captions' : 'Enable captions';
-
-  const tokenRole = useTokenRole();
 
   const handleClose = () => {
     if (isOverflowButton && handleClick) {

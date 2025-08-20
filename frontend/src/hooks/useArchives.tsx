@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { ArchiveResponse, getArchives } from '../api/archiving';
 import { Archive } from '../api/archiving/model';
-import useTokenRole from './useTokenRole';
+import useSessionContext from './useSessionContext';
 
 export type UseArchivesProps = {
   roomName: string;
@@ -14,9 +14,8 @@ export type UseArchivesProps = {
  */
 const useArchives = ({ roomName }: UseArchivesProps): Archive[] | 'error' => {
   const [archives, setArchives] = useState<Archive[] | 'error'>([]);
+  const { tokenRole } = useSessionContext();
   const pollingIntervalRef = useRef<ReturnType<typeof setInterval> | undefined>(undefined);
-
-  const tokenRole = useTokenRole();
 
   useEffect(() => {
     const fetchArchives = async () => {

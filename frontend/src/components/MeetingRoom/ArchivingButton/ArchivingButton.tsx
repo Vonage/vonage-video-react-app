@@ -6,7 +6,6 @@ import ToolbarButton from '../ToolbarButton';
 import PopupDialog, { DialogTexts } from '../PopupDialog';
 import { startArchiving, stopArchiving } from '../../../api/archiving';
 import useSessionContext from '../../../hooks/useSessionContext';
-import useTokenRole from '../../../hooks/useTokenRole';
 
 export type ArchivingButtonProps = {
   isOverflowButton?: boolean;
@@ -29,15 +28,13 @@ const ArchivingButton = ({
   handleClick,
 }: ArchivingButtonProps): ReactElement => {
   const roomName = useRoomName();
-  const { archiveId } = useSessionContext();
+  const { archiveId, tokenRole } = useSessionContext();
   const isRecording = !!archiveId;
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const title = isRecording ? 'Stop recording' : 'Start recording';
   const handleButtonClick = () => {
     setIsModalOpen((prev) => !prev);
   };
-
-  const tokenRole = useTokenRole();
 
   const startRecordingText: DialogTexts = {
     title: 'Start Recording?',

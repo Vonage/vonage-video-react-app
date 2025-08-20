@@ -11,6 +11,7 @@ import {
   ReactElement,
 } from 'react';
 import { Connection, Publisher, Stream } from '@vonage/client-sdk-video';
+import { useLocation } from 'react-router-dom';
 import fetchCredentials from '../../api/fetchCredentials';
 import useUserContext from '../../hooks/useUserContext';
 import ActiveSpeakerTracker from '../../utils/ActiveSpeakerTracker';
@@ -33,7 +34,7 @@ import {
 import { MAX_PIN_COUNT_DESKTOP, MAX_PIN_COUNT_MOBILE } from '../../utils/constants';
 import VonageVideoClient from '../../utils/VonageVideoClient';
 import useEmoji, { EmojiWrapper } from '../../hooks/useEmoji';
-import useTokenRole from '../../hooks/useTokenRole';
+import { TokenRole } from '../../types/tokenRoles';
 
 export type { ChatMessageType } from '../../types/chat';
 
@@ -68,6 +69,7 @@ export type SessionContextType = {
   publish: (publisher: Publisher) => Promise<void>;
   unpublish: (publisher: Publisher) => void;
   lastStreamUpdate: StreamPropertyChangedEvent | null;
+  tokenRole: TokenRole;
 };
 
 /**
@@ -102,6 +104,7 @@ export const SessionContext = createContext<SessionContextType>({
   publish: async () => Promise.resolve(),
   unpublish: () => {},
   lastStreamUpdate: null,
+  tokenRole: 'admin',
 });
 
 export type ConnectionEventType = {
@@ -348,7 +351,9 @@ const SessionProvider = ({ children }: SessionProviderProps): ReactElement => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const tokenRole = useTokenRole();
+  const location = useLocation();
+  const searchParams = new URLSearchParams(location.search);
+  const tokenRole = (searchParams.get('tokenRole') as TokenRole) || 'admin';
 
   /**
    * Joins a room by fetching the necessary credentials and connecting to the session.
@@ -441,6 +446,7 @@ const SessionProvider = ({ children }: SessionProviderProps): ReactElement => {
       publish,
       unpublish,
       lastStreamUpdate,
+      tokenRole,
     }),
     [
       activeSpeakerId,
@@ -471,6 +477,7 @@ const SessionProvider = ({ children }: SessionProviderProps): ReactElement => {
       publish,
       unpublish,
       lastStreamUpdate,
+      tokenRole,
     ]
   );
 

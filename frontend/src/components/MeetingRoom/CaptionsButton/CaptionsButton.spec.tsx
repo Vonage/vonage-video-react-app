@@ -64,6 +64,7 @@ describe('CaptionsButton', () => {
     } as AxiosResponse);
     sessionContext = {
       subscriberWrappers: [createSubscriberWrapper('subscriber-1')],
+      tokenRole: 'admin',
     } as unknown as SessionContextType;
     mockUseSessionContext.mockReturnValue(sessionContext as unknown as SessionContextType);
   });
