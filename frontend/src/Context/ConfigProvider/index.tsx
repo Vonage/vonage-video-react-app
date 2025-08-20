@@ -1,5 +1,5 @@
 import { createContext, ReactNode, useMemo } from 'react';
-import useConfig, { defaultConfig } from './useConfigProvider';
+import useConfig, { defaultConfig } from './useConfig';
 
 export type ConfigProviderProps = {
   children: ReactNode;
