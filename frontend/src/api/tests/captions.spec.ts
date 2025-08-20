@@ -1,6 +1,7 @@
 import { describe, expect, it, vi, beforeEach } from 'vitest';
 import axios from 'axios';
-import { enableCaptions, disableCaptions, TokenRole } from '../captions';
+import { enableCaptions, disableCaptions } from '../captions';
+import { TokenRole } from '../../types/tokenRoles';
 import { API_URL } from '../../utils/constants';
 
 vi.mock('axios');
