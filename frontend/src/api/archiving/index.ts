@@ -1,19 +1,11 @@
 import { Archive, createArchiveFromServer, hasPending } from './model';
 import { listArchives, startArchiving, stopArchiving } from './routes';
+import { TokenRole } from '../../types/tokenRoles';
 
 export type ArchiveResponse = {
   archives: Archive[];
   hasPending: boolean;
 };
-
-/**
- * Type definitions for user roles.
- * @typedef {string} TokenRole
- * @property {string} admin - The admin user role.
- * @property {string} participant - The participant user role.
- * @property {string} viewer - The viewer user role.
- */
-export type TokenRole = 'admin' | 'participant' | 'viewer';
 
 /**
  * Returns a list of archives and the status of the archives for a given meeting room.

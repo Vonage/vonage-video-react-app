@@ -3,12 +3,11 @@ import axios from 'axios';
 import { projectToken } from 'opentok-jwt';
 import { VideoService } from './videoServiceInterface';
 import { OpentokConfig } from '../types/config';
+import { TokenRole } from '../types/tokenRoles';
 
 export type EnableCaptionResponse = {
   captionsId: string;
 };
-
-export type TokenRole = 'admin' | 'participant' | 'viewer';
 
 class OpenTokVideoService implements VideoService {
   private readonly opentok: OpenTok;
@@ -51,42 +50,48 @@ class OpenTokVideoService implements VideoService {
     return { token, apiKey: this.config.apiKey };
   }
 
-  startArchive(roomName: string, sessionId: string): Promise<Archive> {
-    return new Promise((resolve, reject) => {
-      this.opentok.startArchive(
-        sessionId,
-        {
-          name: roomName,
-          resolution: '1920x1080',
-          layout: {
-            // In multiparty archives, we use the 'bestFit' layout to scale based on the number of streams. For screen-sharing archives,
-            // we select 'horizontalPresentation' so the screenshare stream is displayed prominently along with other streams.
-            // See: https://developer.vonage.com/en/video/guides/archive-broadcast-layout#layout-types-for-screen-sharing
-            type: 'bestFit',
-            screenshareType: 'horizontalPresentation',
+  startArchive(roomName: string, sessionId: string, tokenRole: TokenRole): Promise<Archive> {
+    if (tokenRole === 'admin') {
+      return new Promise((resolve, reject) => {
+        this.opentok.startArchive(
+          sessionId,
+          {
+            name: roomName,
+            resolution: '1920x1080',
+            layout: {
+              // In multiparty archives, we use the 'bestFit' layout to scale based on the number of streams. For screen-sharing archives,
+              // we select 'horizontalPresentation' so the screenshare stream is displayed prominently along with other streams.
+              // See: https://developer.vonage.com/en/video/guides/archive-broadcast-layout#layout-types-for-screen-sharing
+              type: 'bestFit',
+              screenshareType: 'horizontalPresentation',
+            },
           },
-        },
-        (error, archive) => {
-          if (archive) {
-            resolve(archive);
-          } else {
-            reject(error ?? new Error('Unknown error occurred when starting archive.'));
+          (error, archive) => {
+            if (archive) {
+              resolve(archive);
+            } else {
+              reject(error ?? new Error('Unknown error occurred when starting archive.'));
+            }
           }
-        }
-      );
-    });
+        );
+      });
+    }
+    throw new Error('Only admins can start an archive');
   }
 
-  stopArchive(archiveId: string): Promise<string> {
-    return new Promise((resolve, reject) => {
-      this.opentok.stopArchive(archiveId, (error) => {
-        if (error) {
-          reject(error);
-        } else {
-          resolve(archiveId);
-        }
+  stopArchive(archiveId: string, tokenRole: TokenRole): Promise<string> {
+    if (tokenRole === 'admin') {
+      return new Promise((resolve, reject) => {
+        this.opentok.stopArchive(archiveId, (error) => {
+          if (error) {
+            reject(error);
+          } else {
+            resolve(archiveId);
+          }
+        });
       });
-    });
+    }
+    throw new Error('Only admins can stop an archive');
   }
 
   listArchives(sessionId: string): Promise<OpenTok.Archive[] | undefined> {

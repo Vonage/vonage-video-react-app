@@ -1,15 +1,6 @@
 import axios from 'axios';
 import { API_URL } from '../utils/constants';
-
-/**
- * Type definitions for user roles.
- * @typedef {string} TokenRole
- * @property {string} admin - The admin user role.
- * @property {string} participant - The participant user role.
- * @property {string} viewer - The viewer user role.
- */
-export type TokenRole = 'admin' | 'participant' | 'viewer';
-
+import { TokenRole } from '../types/tokenRoles';
 /**
  * @typedef CredentialsType
  * @property {string} sessionId - the ID of the session (i.e., video call) to join

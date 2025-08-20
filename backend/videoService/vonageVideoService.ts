@@ -11,8 +11,7 @@ import {
 } from '@vonage/video';
 import { VideoService } from './videoServiceInterface';
 import { VonageConfig } from '../types/config';
-
-export type TokenRole = 'admin' | 'participant' | 'viewer';
+import { TokenRole } from '../types/tokenRoles';
 
 class VonageVideoService implements VideoService {
   private readonly credentials: Auth;

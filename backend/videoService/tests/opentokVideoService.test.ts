@@ -88,7 +88,7 @@ describe('OpentokVideoService', () => {
   });
 
   it('starts an archive', async () => {
-    const response = await opentokVideoService.startArchive(mockRoomName, mockSessionId);
+    const response = await opentokVideoService.startArchive(mockRoomName, mockSessionId, 'admin');
     expect(response).toMatchObject({
       archive: {
         id: mockArchiveId,
@@ -97,7 +97,7 @@ describe('OpentokVideoService', () => {
   });
 
   it('stops an archive', async () => {
-    const archiveResponse = await opentokVideoService.stopArchive(mockArchiveId);
+    const archiveResponse = await opentokVideoService.stopArchive(mockArchiveId, 'admin');
     expect(archiveResponse).toBe(mockArchiveId);
   });
 

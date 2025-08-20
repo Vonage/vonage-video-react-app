@@ -1,5 +1,6 @@
 import axios, { AxiosResponse } from 'axios';
 import { API_URL } from '../utils/constants';
+import { TokenRole } from '../types/tokenRoles';
 
 /**
  * Type definitions for enabling captions.
@@ -22,15 +23,6 @@ export type DisableCaptionsType = {
   messageResponse: string;
   message?: string;
 };
-
-/**
- * Type definitions for user roles.
- * @typedef {string} TokenRole
- * @property {string} admin - The admin user role.
- * @property {string} participant - The participant user role.
- * @property {string} viewer - The viewer user role.
- */
-export type TokenRole = 'admin' | 'participant' | 'viewer';
 
 /**
  * Send a request to start captions.
