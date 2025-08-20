@@ -12,11 +12,11 @@ import RedirectToWaitingRoom from './components/RedirectToWaitingRoom';
 import UnsupportedBrowserPage from './pages/UnsupportedBrowserPage';
 import RoomContext from './Context/RoomContext';
 import { BackgroundPublisherProvider } from './Context/BackgroundPublisherProvider';
-import { ConfigProvider } from './Context/ConfigProvider';
+import { ConfigContextProvider } from './Context/ConfigProvider';
 
 const App = () => {
   return (
-    <ConfigProvider>
+    <ConfigContextProvider>
       <Router>
         <Routes>
           <Route element={<RoomContext />}>
@@ -50,7 +50,7 @@ const App = () => {
           <Route path="/unsupported-browser" element={<UnsupportedBrowserPage />} />
         </Routes>
       </Router>
-    </ConfigProvider>
+    </ConfigContextProvider>
   );
 };
 

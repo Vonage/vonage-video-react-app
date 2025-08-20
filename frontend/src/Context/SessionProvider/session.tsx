@@ -129,7 +129,7 @@ const MAX_PIN_COUNT = isMobile() ? MAX_PIN_COUNT_MOBILE : MAX_PIN_COUNT_DESKTOP;
  * @returns {SessionContextType} a context provider for a publisher preview
  */
 const SessionProvider = ({ children }: SessionProviderProps): ReactElement => {
-  const { config } = useConfigContext();
+  const config = useConfigContext();
   const [lastStreamUpdate, setLastStreamUpdate] = useState<StreamPropertyChangedEvent | null>(null);
   const vonageVideoClient = useRef<null | VonageVideoClient>(null);
   const [reconnecting, setReconnecting] = useState(false);

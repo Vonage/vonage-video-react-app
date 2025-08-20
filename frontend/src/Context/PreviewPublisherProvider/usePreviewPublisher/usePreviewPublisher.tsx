@@ -17,6 +17,7 @@ import { AccessDeniedEvent } from '../../PublisherProvider/usePublisher/usePubli
 import DeviceStore from '../../../utils/DeviceStore';
 import { setStorageItem, STORAGE_KEYS } from '../../../utils/storage';
 import applyBackgroundFilter from '../../../utils/backgroundFilter/applyBackgroundFilter/applyBackgroundFilter';
+import useConfigContext from '../../../hooks/useConfigContext';
 
 type PublisherVideoElementCreatedEvent = Event<'videoElementCreated', Publisher> & {
   element: HTMLVideoElement | HTMLObjectElement;
@@ -66,6 +67,7 @@ export type PreviewPublisherContextType = {
  */
 const usePreviewPublisher = (): PreviewPublisherContextType => {
   const { setUser, user } = useUserContext();
+  const config = useConfigContext();
   const { allMediaDevices, getAllMediaDevices } = useDevices();
   const [publisherVideoElement, setPublisherVideoElement] = useState<
     HTMLVideoElement | HTMLObjectElement
