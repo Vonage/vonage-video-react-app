@@ -35,11 +35,6 @@ const BackgroundEffectsLayout = ({
     useBackgroundPublisherContext();
   const isTabletViewport = useMediaQuery(`(max-width:899px)`);
 
-  const customBackgroundImageChange = (dataUrl: string) => {
-    setTabSelected(0);
-    setBackgroundSelected(dataUrl);
-  };
-
   const handleBackgroundSelect = (selectedBackgroundOption: string) => {
     setBackgroundSelected(selectedBackgroundOption);
     changeBackgroundPreview(selectedBackgroundOption);
@@ -48,6 +43,19 @@ const BackgroundEffectsLayout = ({
   const handleApplyBackgroundSelect = () => {
     changeBackground(backgroundSelected);
     handleClose();
+  };
+
+  const customBackgroundImageChange = (dataUrl: string) => {
+    setTabSelected(0);
+    handleBackgroundSelect(dataUrl);
+  };
+
+  const cleanBackgroundReplacementIfSelectedAndDeleted = (dataUrl: string) => {
+    const selectedBackgroundOption = getInitialBackgroundFilter(publisher);
+
+    if (dataUrl === selectedBackgroundOption) {
+      changeBackground(backgroundSelected);
+    }
   };
 
   const setInitialBackgroundReplacement = useCallback(() => {
@@ -138,10 +146,12 @@ const BackgroundEffectsLayout = ({
                     backgroundSelected={backgroundSelected}
                     setBackgroundSelected={handleBackgroundSelect}
                   />
-                  {/* TODO: load custom images */}
                   <BackgroundGallery
                     backgroundSelected={backgroundSelected}
                     setBackgroundSelected={handleBackgroundSelect}
+                    cleanPublisherBackgroundReplacementIfSelectedAndDeleted={
+                      cleanBackgroundReplacementIfSelectedAndDeleted
+                    }
                   />
                 </Box>
               )}

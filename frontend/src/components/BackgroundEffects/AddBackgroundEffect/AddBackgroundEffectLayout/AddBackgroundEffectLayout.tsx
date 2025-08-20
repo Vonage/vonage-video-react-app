@@ -73,8 +73,8 @@ const AddBackgroundEffectLayout = ({
     try {
       const newImage = await handleImageFromLink(imageLink);
       if (newImage) {
-        customBackgroundImageChange(newImage.dataUrl);
         setFileError('');
+        customBackgroundImageChange(newImage.dataUrl);
       } else {
         setFileError('Failed to store image.');
       }

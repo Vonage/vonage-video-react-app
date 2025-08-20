@@ -7,6 +7,7 @@ export type SelectableOptionProps = {
   onClick: () => void;
   id: string;
   icon?: ReactNode;
+  title?: string;
   image?: string;
   size?: number;
   isDisabled?: boolean;
@@ -21,6 +22,7 @@ export type SelectableOptionProps = {
  *  @property {Function} onClick - Function to call when the option is clicked
  *  @property {string} id - Unique identifier for the option
  *  @property {ReactNode} icon - Icon to display in the option
+ *  @property {string} title - Title to display in the option
  *  @property {string} image - Image URL to display in the option
  *  @property {number} size - Size of the option (default is DEFAULT_SELECTABLE_OPTION_WIDTH)
  *  @property {boolean} isDisabled - Whether the option is disabled
@@ -31,6 +33,7 @@ const SelectableOption = ({
   onClick,
   id,
   icon,
+  title,
   image,
   size = DEFAULT_SELECTABLE_OPTION_WIDTH,
   isDisabled = false,
@@ -62,6 +65,7 @@ const SelectableOption = ({
       {image ? (
         <img
           src={image}
+          title={title}
           alt="background"
           style={{ width: '100%', height: '100%', objectFit: 'cover' }}
         />

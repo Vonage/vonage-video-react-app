@@ -78,7 +78,7 @@
   background-color: #f0f4f9;
 }
 
-.background-video-container{
+.background-video-container {
   margin-top: 16px;
 }
 
@@ -99,26 +99,26 @@
 }
 
 .add-background-effect-input .MuiInputBase-root {
-  color: #5F6368;
+  color: #5f6368;
 }
 
 .add-background-effect-input .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline {
-  border-color: #80868B;
+  border-color: #80868b;
 }
 
 .add-background-effect-input .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline {
-  border-color: #80868B;
+  border-color: #80868b;
 }
 
 .add-background-effect-input .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline {
-  border-color: #80868B;
+  border-color: #80868b;
 }
 
 .add-background-effect-input input::placeholder {
-  color: #5F6368;
+  color: #5f6368;
   opacity: 1;
 }
 
 .add-background-effect-input-icon {
-  color: #5F6368;
+  color: #5f6368;
 }

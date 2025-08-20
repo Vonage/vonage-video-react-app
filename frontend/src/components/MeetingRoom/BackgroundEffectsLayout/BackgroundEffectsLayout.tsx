@@ -35,11 +35,6 @@ const BackgroundEffectsLayout = ({
   const { publisherVideoElement, changeBackground: changeBackgroundPreview } =
     useBackgroundPublisherContext();
 
-  const customBackgroundImageChange = (dataUrl: string) => {
-    setTabSelected(0);
-    setBackgroundSelected(dataUrl);
-  };
-
   const handleBackgroundSelect = (selectedBackgroundOption: string) => {
     setBackgroundSelected(selectedBackgroundOption);
     changeBackgroundPreview(selectedBackgroundOption);
@@ -48,6 +43,19 @@ const BackgroundEffectsLayout = ({
   const handleApplyBackgroundSelect = async () => {
     changeBackground(backgroundSelected);
     handleClose();
+  };
+
+  const customBackgroundImageChange = (dataUrl: string) => {
+    setTabSelected(0);
+    handleBackgroundSelect(dataUrl);
+  };
+
+  const cleanBackgroundReplacementIfSelectedAndDeleted = (dataUrl: string) => {
+    const selectedBackgroundOption = getInitialBackgroundFilter(publisher);
+
+    if (dataUrl === selectedBackgroundOption) {
+      changeBackground(backgroundSelected);
+    }
   };
 
   const setInitialBackgroundReplacement = useCallback(() => {
@@ -122,6 +130,9 @@ const BackgroundEffectsLayout = ({
               <BackgroundGallery
                 backgroundSelected={backgroundSelected}
                 setBackgroundSelected={handleBackgroundSelect}
+                cleanPublisherBackgroundReplacementIfSelectedAndDeleted={
+                  cleanBackgroundReplacementIfSelectedAndDeleted
+                }
               />
             </Box>
           )}
