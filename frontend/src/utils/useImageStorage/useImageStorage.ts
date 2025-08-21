@@ -54,8 +54,18 @@ export const useImageStorage = () => {
       return null;
     }
 
+    const generateId = (): string => {
+      if (typeof crypto !== 'undefined' && crypto.randomUUID) {
+        return crypto.randomUUID();
+      }
+
+      const array = new Uint32Array(4);
+      window.crypto.getRandomValues(array);
+      return Array.from(array, (n) => n.toString(16)).join('');
+    };
+
     const newImage: StoredImage = {
-      id: crypto.randomUUID ? crypto.randomUUID() : Math.random().toString(36).substr(2, 9),
+      id: generateId(),
       dataUrl,
     };
     images.push(newImage);

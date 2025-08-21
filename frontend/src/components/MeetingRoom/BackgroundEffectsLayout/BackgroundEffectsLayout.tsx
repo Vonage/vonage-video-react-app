@@ -1,14 +1,11 @@
 import { ReactElement, useCallback, useEffect, useState } from 'react';
-import { Box, Button, Tab, Tabs, useMediaQuery } from '@mui/material';
+import { Box, Button, useMediaQuery } from '@mui/material';
 import usePublisherContext from '../../../hooks/usePublisherContext';
 import RightPanelTitle from '../RightPanel/RightPanelTitle';
-import EffectOptionButtons from '../../BackgroundEffects/EffectOptionButtons/EffectOptionButtons';
-import BackgroundGallery from '../../BackgroundEffects/BackgroundGallery/BackgroundGallery';
 import BackgroundVideoContainer from '../../BackgroundEffects/BackgroundVideoContainer';
 import useBackgroundPublisherContext from '../../../hooks/useBackgroundPublisherContext';
 import getInitialBackgroundFilter from '../../../utils/backgroundFilter/getInitialBackgroundFilter/getInitialBackgroundFilter';
-import AddBackgroundEffectLayout from '../../BackgroundEffects/AddBackgroundEffect/AddBackgroundEffectLayout/AddBackgroundEffectLayout';
-import { DEFAULT_SELECTABLE_OPTION_WIDTH } from '../../../utils/constants';
+import BackgroundEffectTabs from '../../BackgroundEffects/BackgroundEffectTabs/BackgroundEffectTabs';
 
 export type BackgroundEffectsLayoutProps = {
   handleClose: () => void;
@@ -95,48 +92,16 @@ const BackgroundEffectsLayout = ({
         />
       </Box>
 
-      <Box flex={1} minWidth={0} flexDirection={{ xs: 'column' }} justifyContent="center">
-        <Tabs
-          variant="fullWidth"
-          sx={{
-            padding: '0 6px 12px 6px',
-            '& .MuiTabs-flexContainer': {
-              borderBottom: '1px solid #ccc',
-            },
-          }}
-          value={tabSelected}
-          onChange={(_event, newValue) => setTabSelected(newValue)}
-          aria-label="backgrounds tabs"
-        >
-          <Tab sx={{ textTransform: 'none' }} label="Backgrounds" />
-          <Tab sx={{ textTransform: 'none' }} label="Add Background" />
-        </Tabs>
-        <Box className="choose-background-effect-box" flex={1} minWidth={0}>
-          {tabSelected === 0 && (
-            <Box
-              display="grid"
-              gridTemplateColumns={`repeat(auto-fill, minmax(${DEFAULT_SELECTABLE_OPTION_WIDTH}px, 1fr))`}
-              gap={0.5}
-              className="choose-background-effect-grid"
-            >
-              <EffectOptionButtons
-                backgroundSelected={backgroundSelected}
-                setBackgroundSelected={handleBackgroundSelect}
-              />
-              <BackgroundGallery
-                backgroundSelected={backgroundSelected}
-                setBackgroundSelected={handleBackgroundSelect}
-                cleanPublisherBackgroundReplacementIfSelectedAndDeleted={
-                  cleanBackgroundReplacementIfSelectedAndDeleted
-                }
-              />
-            </Box>
-          )}
-          {tabSelected === 1 && (
-            <AddBackgroundEffectLayout customBackgroundImageChange={customBackgroundImageChange} />
-          )}
-        </Box>
-      </Box>
+      <BackgroundEffectTabs
+        tabSelected={tabSelected}
+        setTabSelected={setTabSelected}
+        backgroundSelected={backgroundSelected}
+        setBackgroundSelected={setBackgroundSelected}
+        cleanBackgroundReplacementIfSelectedAndDeleted={
+          cleanBackgroundReplacementIfSelectedAndDeleted
+        }
+        customBackgroundImageChange={customBackgroundImageChange}
+      />
 
       <Box
         sx={{
