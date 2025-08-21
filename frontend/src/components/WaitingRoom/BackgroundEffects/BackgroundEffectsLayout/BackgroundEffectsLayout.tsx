@@ -4,7 +4,9 @@ import BackgroundVideoContainer from '../../../BackgroundEffects/BackgroundVideo
 import usePreviewPublisherContext from '../../../../hooks/usePreviewPublisherContext';
 import useBackgroundPublisherContext from '../../../../hooks/useBackgroundPublisherContext';
 import getInitialBackgroundFilter from '../../../../utils/backgroundFilter/getInitialBackgroundFilter/getInitialBackgroundFilter';
-import BackgroundEffectTabs from '../../../BackgroundEffects/BackgroundEffectTabs/BackgroundEffectTabs';
+import BackgroundEffectTabs, {
+  cleanBackgroundReplacementIfSelectedAndDeleted,
+} from '../../../BackgroundEffects/BackgroundEffectTabs/BackgroundEffectTabs';
 
 export type BackgroundEffectsProps = {
   isOpen: boolean;
@@ -45,14 +47,6 @@ const BackgroundEffectsLayout = ({
   const customBackgroundImageChange = (dataUrl: string) => {
     setTabSelected(0);
     handleBackgroundSelect(dataUrl);
-  };
-
-  const cleanBackgroundReplacementIfSelectedAndDeleted = (dataUrl: string) => {
-    const selectedBackgroundOption = getInitialBackgroundFilter(publisher);
-
-    if (dataUrl === selectedBackgroundOption) {
-      changeBackground(backgroundSelected);
-    }
   };
 
   const setInitialBackgroundReplacement = useCallback(() => {
@@ -125,8 +119,13 @@ const BackgroundEffectsLayout = ({
           setTabSelected={setTabSelected}
           backgroundSelected={backgroundSelected}
           setBackgroundSelected={setBackgroundSelected}
-          cleanBackgroundReplacementIfSelectedAndDeleted={
-            cleanBackgroundReplacementIfSelectedAndDeleted
+          cleanBackgroundReplacementIfSelectedAndDeletedFunction={(dataUrl: string) =>
+            cleanBackgroundReplacementIfSelectedAndDeleted(
+              publisher,
+              changeBackground,
+              backgroundSelected,
+              dataUrl
+            )
           }
           customBackgroundImageChange={customBackgroundImageChange}
         />

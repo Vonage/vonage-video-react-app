@@ -5,7 +5,9 @@ import RightPanelTitle from '../RightPanel/RightPanelTitle';
 import BackgroundVideoContainer from '../../BackgroundEffects/BackgroundVideoContainer';
 import useBackgroundPublisherContext from '../../../hooks/useBackgroundPublisherContext';
 import getInitialBackgroundFilter from '../../../utils/backgroundFilter/getInitialBackgroundFilter/getInitialBackgroundFilter';
-import BackgroundEffectTabs from '../../BackgroundEffects/BackgroundEffectTabs/BackgroundEffectTabs';
+import BackgroundEffectTabs, {
+  cleanBackgroundReplacementIfSelectedAndDeleted,
+} from '../../BackgroundEffects/BackgroundEffectTabs/BackgroundEffectTabs';
 
 export type BackgroundEffectsLayoutProps = {
   handleClose: () => void;
@@ -45,14 +47,6 @@ const BackgroundEffectsLayout = ({
   const customBackgroundImageChange = (dataUrl: string) => {
     setTabSelected(0);
     handleBackgroundSelect(dataUrl);
-  };
-
-  const cleanBackgroundReplacementIfSelectedAndDeleted = (dataUrl: string) => {
-    const selectedBackgroundOption = getInitialBackgroundFilter(publisher);
-
-    if (dataUrl === selectedBackgroundOption) {
-      changeBackground(backgroundSelected);
-    }
   };
 
   const setInitialBackgroundReplacement = useCallback(() => {
@@ -97,8 +91,13 @@ const BackgroundEffectsLayout = ({
         setTabSelected={setTabSelected}
         backgroundSelected={backgroundSelected}
         setBackgroundSelected={setBackgroundSelected}
-        cleanBackgroundReplacementIfSelectedAndDeleted={
-          cleanBackgroundReplacementIfSelectedAndDeleted
+        cleanBackgroundReplacementIfSelectedAndDeletedFunction={(dataUrl: string) =>
+          cleanBackgroundReplacementIfSelectedAndDeleted(
+            publisher,
+            changeBackground,
+            backgroundSelected,
+            dataUrl
+          )
         }
         customBackgroundImageChange={customBackgroundImageChange}
       />

@@ -1,16 +1,30 @@
 import { Box, Tabs, Tab } from '@mui/material';
+import { Publisher } from '@vonage/client-sdk-video';
 import EffectOptionButtons from '../EffectOptionButtons/EffectOptionButtons';
 import BackgroundGallery from '../BackgroundGallery/BackgroundGallery';
 import AddBackgroundEffectLayout from '../AddBackgroundEffect/AddBackgroundEffectLayout/AddBackgroundEffectLayout';
 import { DEFAULT_SELECTABLE_OPTION_WIDTH } from '../../../utils/constants';
+import getInitialBackgroundFilter from '../../../utils/backgroundFilter/getInitialBackgroundFilter/getInitialBackgroundFilter';
 
 type BackgroundEffectTabsProps = {
   tabSelected: number;
   setTabSelected: (value: number) => void;
   backgroundSelected: string;
   setBackgroundSelected: (value: string) => void;
-  cleanBackgroundReplacementIfSelectedAndDeleted: (dataUrl: string) => void;
+  cleanBackgroundReplacementIfSelectedAndDeletedFunction: (dataUrl: string) => void;
   customBackgroundImageChange: (dataUrl: string) => void;
+};
+
+export const cleanBackgroundReplacementIfSelectedAndDeleted = (
+  publisher: Publisher | null | undefined,
+  changeBackground: (bg: string) => void,
+  backgroundSelected: string,
+  dataUrl: string
+) => {
+  const selectedBackgroundOption = getInitialBackgroundFilter(publisher);
+  if (dataUrl === selectedBackgroundOption) {
+    changeBackground(backgroundSelected);
+  }
 };
 
 const BackgroundEffectTabs = ({
@@ -18,7 +32,7 @@ const BackgroundEffectTabs = ({
   setTabSelected,
   backgroundSelected,
   setBackgroundSelected,
-  cleanBackgroundReplacementIfSelectedAndDeleted,
+  cleanBackgroundReplacementIfSelectedAndDeletedFunction,
   customBackgroundImageChange,
 }: BackgroundEffectTabsProps) => {
   const handleBackgroundSelect = (value: string) => {
@@ -59,7 +73,7 @@ const BackgroundEffectTabs = ({
               backgroundSelected={backgroundSelected}
               setBackgroundSelected={handleBackgroundSelect}
               cleanPublisherBackgroundReplacementIfSelectedAndDeleted={
-                cleanBackgroundReplacementIfSelectedAndDeleted
+                cleanBackgroundReplacementIfSelectedAndDeletedFunction
               }
             />
           </Box>
