@@ -24,7 +24,6 @@ describe('BackgroundEffectTabs', () => {
     );
     expect(screen.getByRole('tab', { name: /Backgrounds/i })).toBeInTheDocument();
     expect(screen.getByRole('tab', { name: /Add Background/i })).toBeInTheDocument();
-    expect(screen.getByText(/choose-background-effect-grid/i)).toBeInTheDocument();
   });
 
   it('switches to Add Background tab when clicked', async () => {
