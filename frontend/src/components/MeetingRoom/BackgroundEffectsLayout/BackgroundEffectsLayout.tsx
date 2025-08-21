@@ -116,12 +116,8 @@ const BackgroundEffectsLayout = ({
             <Box
               display="grid"
               gridTemplateColumns={`repeat(auto-fill, minmax(${DEFAULT_SELECTABLE_OPTION_WIDTH}px, 1fr))`}
-              gap={1}
-              sx={{
-                overflowY: 'auto',
-                maxHeight: '375px',
-                padding: '8px',
-              }}
+              gap={0.5}
+              className="choose-background-effect-grid"
             >
               <EffectOptionButtons
                 backgroundSelected={backgroundSelected}

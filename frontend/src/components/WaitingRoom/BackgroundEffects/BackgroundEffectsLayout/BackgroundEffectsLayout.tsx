@@ -1,5 +1,5 @@
 import { ReactElement, useCallback, useEffect, useState } from 'react';
-import { Box, Button, Tab, Tabs, Typography, useMediaQuery } from '@mui/material';
+import { Box, Button, Tab, Tabs, useMediaQuery } from '@mui/material';
 import EffectOptionButtons from '../../../BackgroundEffects/EffectOptionButtons/EffectOptionButtons';
 import BackgroundGallery from '../../../BackgroundEffects/BackgroundGallery/BackgroundGallery';
 import BackgroundVideoContainer from '../../../BackgroundEffects/BackgroundVideoContainer';
@@ -99,87 +99,77 @@ const BackgroundEffectsLayout = ({
 
   return (
     isOpen && (
-      <>
-        <Typography variant="h6" sx={{ mb: 2 }}>
-          Background Effects
-        </Typography>
-
-        <Box display="flex" flexDirection={{ xs: 'column', md: 'row' }} gap={3}>
+      <Box display="flex" flexDirection={{ xs: 'column', md: 'row' }} gap={3}>
+        <Box
+          flex={1}
+          minWidth={0}
+          display="flex"
+          flexDirection="column"
+          justifyContent="space-between"
+        >
           <Box
-            flex={1}
-            minWidth={0}
+            flexGrow={1}
             display="flex"
-            flexDirection="column"
-            justifyContent="space-between"
+            alignItems="center"
+            justifyContent="center"
+            minHeight={0}
           >
-            <Box
-              flexGrow={1}
-              display="flex"
-              alignItems="center"
-              justifyContent="center"
-              minHeight={0}
-            >
-              <BackgroundVideoContainer
-                publisherVideoElement={publisherVideoElement}
-                isParentVideoEnabled={isVideoEnabled}
-                isFixedWidth
-              />
-            </Box>
-            {!isTabletViewport && buttonGroup}
+            <BackgroundVideoContainer
+              publisherVideoElement={publisherVideoElement}
+              isParentVideoEnabled={isVideoEnabled}
+              isFixedWidth
+            />
           </Box>
-
-          <Box flex={1} minWidth={0} flexDirection={{ xs: 'column' }} justifyContent="center">
-            <Tabs
-              variant="fullWidth"
-              sx={{
-                padding: '0 6px 12px 6px',
-                '& .MuiTabs-flexContainer': {
-                  borderBottom: '1px solid #ccc',
-                },
-              }}
-              value={tabSelected}
-              onChange={(_event, newValue) => setTabSelected(newValue)}
-              aria-label="backgrounds tabs"
-            >
-              <Tab sx={{ textTransform: 'none' }} label="Backgrounds" />
-              <Tab sx={{ textTransform: 'none' }} label="Add Background" />
-            </Tabs>
-            <Box className="choose-background-effect-box" flex={1} minWidth={0}>
-              {tabSelected === 0 && (
-                <Box
-                  display="grid"
-                  gridTemplateColumns={`repeat(auto-fill, minmax(${DEFAULT_SELECTABLE_OPTION_WIDTH}px, 1fr))`}
-                  gap={1}
-                  sx={{
-                    overflowY: 'auto',
-                    maxHeight: '375px',
-                    padding: '8px',
-                  }}
-                >
-                  <EffectOptionButtons
-                    backgroundSelected={backgroundSelected}
-                    setBackgroundSelected={handleBackgroundSelect}
-                  />
-                  <BackgroundGallery
-                    backgroundSelected={backgroundSelected}
-                    setBackgroundSelected={handleBackgroundSelect}
-                    cleanPublisherBackgroundReplacementIfSelectedAndDeleted={
-                      cleanBackgroundReplacementIfSelectedAndDeleted
-                    }
-                  />
-                </Box>
-              )}
-              {tabSelected === 1 && (
-                <AddBackgroundEffectLayout
-                  customBackgroundImageChange={customBackgroundImageChange}
-                />
-              )}
-            </Box>
-          </Box>
-
-          {isTabletViewport && buttonGroup}
+          {!isTabletViewport && buttonGroup}
         </Box>
-      </>
+
+        <Box flex={1} minWidth={0} flexDirection={{ xs: 'column' }} justifyContent="center">
+          <Tabs
+            variant="fullWidth"
+            sx={{
+              padding: '0 6px 12px 6px',
+              '& .MuiTabs-flexContainer': {
+                borderBottom: '1px solid #ccc',
+              },
+            }}
+            value={tabSelected}
+            onChange={(_event, newValue) => setTabSelected(newValue)}
+            aria-label="backgrounds tabs"
+          >
+            <Tab sx={{ textTransform: 'none' }} label="Backgrounds" />
+            <Tab sx={{ textTransform: 'none' }} label="Add Background" />
+          </Tabs>
+          <Box className="choose-background-effect-box" flex={1} minWidth={0}>
+            {tabSelected === 0 && (
+              <Box
+                display="grid"
+                gridTemplateColumns={`repeat(auto-fill, minmax(${DEFAULT_SELECTABLE_OPTION_WIDTH}px, 1fr))`}
+                gap={0.5}
+                className="choose-background-effect-grid"
+              >
+                <EffectOptionButtons
+                  backgroundSelected={backgroundSelected}
+                  setBackgroundSelected={handleBackgroundSelect}
+                />
+                <BackgroundGallery
+                  backgroundSelected={backgroundSelected}
+                  setBackgroundSelected={handleBackgroundSelect}
+                  cleanPublisherBackgroundReplacementIfSelectedAndDeleted={
+                    cleanBackgroundReplacementIfSelectedAndDeleted
+                  }
+                />
+              </Box>
+            )}
+            {tabSelected === 1 && (
+              <AddBackgroundEffectLayout
+                customBackgroundImageChange={customBackgroundImageChange}
+              />
+            )}
+          </Box>
+        </Box>
+
+        {isTabletViewport && buttonGroup}
+      </Box>
     )
   );
 };
