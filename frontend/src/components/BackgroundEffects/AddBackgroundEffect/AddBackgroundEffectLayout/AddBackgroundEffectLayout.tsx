@@ -7,10 +7,10 @@ import {
   Typography,
 } from '@mui/material';
 import { ChangeEvent, ReactElement, useState } from 'react';
-import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import LinkIcon from '@mui/icons-material/Link';
 import { useImageStorage } from '../../../../utils/useImageStorage/useImageStorage';
+import FileUploader from '../../FileUploader/FileUploader';
 
 export type AddBackgroundEffectLayoutProps = {
   customBackgroundImageChange: (param1: string) => void;
@@ -35,7 +35,9 @@ const AddBackgroundEffectLayout = ({
   const [linkLoading, setLinkLoading] = useState(false);
   const { storageError, handleImageFromFile, handleImageFromLink } = useImageStorage();
 
-  const handleFileChange = async (e: ChangeEvent<HTMLInputElement>) => {
+  type HandleFileChangeType = ChangeEvent<HTMLInputElement> | { target: { files: FileList } };
+
+  const handleFileChange = async (e: HandleFileChangeType) => {
     const { files } = e.target;
     if (!files || files.length === 0) {
       return;
@@ -87,34 +89,7 @@ const AddBackgroundEffectLayout = ({
 
   return (
     <Box>
-      <label htmlFor="file-upload">
-        <input
-          id="file-upload"
-          type="file"
-          accept=".jpg,.jpeg,.png,.webp"
-          hidden
-          onChange={handleFileChange}
-        />
-        <Box
-          sx={{
-            padding: '12px',
-            border: '1px dashed #C1C1C1',
-            backgroundColor: '#f9f9f9',
-            borderRadius: '16px',
-            textAlign: 'center',
-            cursor: 'pointer',
-          }}
-        >
-          <>
-            <CloudUploadIcon sx={{ fontSize: 50, color: '#989A9D' }} />
-            <Typography mt={1}>
-              Drag and Drop, or click here to upload Image,
-              <br />
-              Max 2MB
-            </Typography>
-          </>
-        </Box>
-      </label>
+      <FileUploader handleFileChange={handleFileChange} />
 
       {(fileError || storageError) && (
         <Typography color="error" mt={1} fontSize={14}>

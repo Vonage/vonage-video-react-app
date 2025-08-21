@@ -99,7 +99,7 @@ const BackgroundEffectsLayout = ({
         <Tabs
           variant="fullWidth"
           sx={{
-            padding: '0 2px 12px 2px',
+            padding: '0 6px 12px 6px',
             '& .MuiTabs-flexContainer': {
               borderBottom: '1px solid #ccc',
             },

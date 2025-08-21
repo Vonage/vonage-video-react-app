@@ -105,12 +105,26 @@ const BackgroundEffectsLayout = ({
         </Typography>
 
         <Box display="flex" flexDirection={{ xs: 'column', md: 'row' }} gap={3}>
-          <Box flex={1} minWidth={0}>
-            <BackgroundVideoContainer
-              publisherVideoElement={publisherVideoElement}
-              isParentVideoEnabled={isVideoEnabled}
-              isFixedWidth
-            />
+          <Box
+            flex={1}
+            minWidth={0}
+            display="flex"
+            flexDirection="column"
+            justifyContent="space-between"
+          >
+            <Box
+              flexGrow={1}
+              display="flex"
+              alignItems="center"
+              justifyContent="center"
+              minHeight={0}
+            >
+              <BackgroundVideoContainer
+                publisherVideoElement={publisherVideoElement}
+                isParentVideoEnabled={isVideoEnabled}
+                isFixedWidth
+              />
+            </Box>
             {!isTabletViewport && buttonGroup}
           </Box>
 
@@ -118,7 +132,7 @@ const BackgroundEffectsLayout = ({
             <Tabs
               variant="fullWidth"
               sx={{
-                padding: '0 2px 12px 2px',
+                padding: '0 6px 12px 6px',
                 '& .MuiTabs-flexContainer': {
                   borderBottom: '1px solid #ccc',
                 },
