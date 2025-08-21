@@ -22,6 +22,15 @@ export type BackgroundGalleryProps = {
   cleanPublisherBackgroundReplacementIfSelectedAndDeleted: (dataUrl: string) => void;
 };
 
+/**
+ * Renders a group of selectable images for background replacement in a meeting room.
+ *
+ * Each button represents a different background image option.
+ * @param {BackgroundGalleryProps} props - The props for the component.
+ *   @property {string} backgroundSelected - The currently selected background image key.
+ *   @property {Function} setBackgroundSelected - Callback to update the selected background image key.
+ * @returns {ReactElement} A horizontal stack of selectable option buttons.
+ */
 const BackgroundGallery = ({
   backgroundSelected,
   setBackgroundSelected,
