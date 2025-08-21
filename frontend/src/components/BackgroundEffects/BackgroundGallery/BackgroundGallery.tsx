@@ -29,6 +29,7 @@ export type BackgroundGalleryProps = {
  * @param {BackgroundGalleryProps} props - The props for the component.
  *   @property {string} backgroundSelected - The currently selected background image key.
  *   @property {Function} setBackgroundSelected - Callback to update the selected background image key.
+ *   @property {Function} cleanPublisherBackgroundReplacementIfSelectedAndDeleted - Callback to clean up background replacement if the selected background is deleted.
  * @returns {ReactElement} A horizontal stack of selectable option buttons.
  */
 const BackgroundGallery = ({
@@ -76,6 +77,7 @@ const BackgroundGallery = ({
                 arrow
               >
                 <IconButton
+                  data-testid={`background-delete-${id}`}
                   aria-label="Delete custom background"
                   onClick={() => !isSelected && handleDelete(id, dataUrl)}
                   size="small"

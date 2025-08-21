@@ -34,12 +34,11 @@ describe('BackgroundEffects (Waiting Room)', () => {
 
   it('renders when open', () => {
     renderLayout();
-    expect(screen.getByText('Background Effects')).toBeInTheDocument();
     expect(screen.getByTestId('background-video-container')).toBeInTheDocument();
     expect(screen.getByTestId('background-none')).toBeInTheDocument();
-    expect(screen.getByTestId('background-upload')).toBeInTheDocument();
     expect(screen.getByTestId('background-bg1')).toBeInTheDocument();
-    expect(screen.getAllByText(/Choose Background Effect/i)[0]).toBeInTheDocument();
+    expect(screen.getAllByText(/Backgrounds/i)[0]).toBeInTheDocument();
+    expect(screen.getAllByText(/Add background/i)[0]).toBeInTheDocument();
     expect(screen.getByRole('button', { name: /Cancel/i })).toBeInTheDocument();
     expect(screen.getByRole('button', { name: /Apply/i })).toBeInTheDocument();
   });

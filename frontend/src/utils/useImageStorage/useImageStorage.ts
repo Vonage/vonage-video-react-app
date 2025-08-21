@@ -139,5 +139,6 @@ export const useImageStorage = () => {
     handleImageFromLink,
     getImagesFromStorage,
     deleteImageFromStorage,
+    saveImagesToStorage,
   };
 };

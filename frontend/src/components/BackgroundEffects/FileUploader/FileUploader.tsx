@@ -47,6 +47,7 @@ const FileUploader = ({ handleFileChange }: FileUploaderProps): ReactElement => 
         accept=".jpg,.jpeg,.png,.webp"
         hidden
         onChange={handleFileChange}
+        data-testid="file-upload-input"
       />
       <Box
         onDragOver={onDragOver}
@@ -62,6 +63,7 @@ const FileUploader = ({ handleFileChange }: FileUploaderProps): ReactElement => 
           transition: 'all 0.2s ease',
           userSelect: 'none',
         }}
+        data-testid="file-upload-drop-area"
       >
         <>
           <CloudUploadIcon sx={{ fontSize: 50, color: '#989A9D' }} />

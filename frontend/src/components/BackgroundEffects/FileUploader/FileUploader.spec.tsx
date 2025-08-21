@@ -6,13 +6,14 @@ describe('FileUploader', () => {
   it('renders upload UI', () => {
     render(<FileUploader handleFileChange={vi.fn()} />);
     expect(screen.getByText(/Drag and Drop, or click here to upload Image/i)).toBeInTheDocument();
-    expect(screen.getByRole('textbox', { hidden: true })).toBeInTheDocument();
+    expect(screen.getByTestId('file-upload-input')).toBeInTheDocument();
+    expect(screen.getByTestId('file-upload-drop-area')).toBeInTheDocument();
   });
 
   it('calls handleFileChange on file input change', () => {
     const handleFileChange = vi.fn();
     render(<FileUploader handleFileChange={handleFileChange} />);
-    const input = screen.getByLabelText(/upload/i);
+    const input = screen.getByTestId('file-upload-input');
     const file = new File(['dummy'], 'test.png', { type: 'image/png' });
     fireEvent.change(input, { target: { files: [file] } });
     expect(handleFileChange).toHaveBeenCalled();
@@ -21,22 +22,22 @@ describe('FileUploader', () => {
   it('calls handleFileChange on drop', () => {
     const handleFileChange = vi.fn();
     render(<FileUploader handleFileChange={handleFileChange} />);
-    const box = screen.getByText(/Drag and Drop, or click here to upload Image/i).closest('div');
+    const box = screen.getByTestId('file-upload-drop-area');
     const file = new File(['dummy'], 'test.jpg', { type: 'image/jpeg' });
     const dataTransfer = {
       files: [file],
       clearData: vi.fn(),
     };
-    fireEvent.drop(box!, { dataTransfer });
+    fireEvent.drop(box, { dataTransfer });
     expect(handleFileChange).toHaveBeenCalledWith({ target: { files: [file] } });
   });
 
   it('shows drag over style when dragging', () => {
     render(<FileUploader handleFileChange={vi.fn()} />);
-    const box = screen.getByText(/Drag and Drop, or click here to upload Image/i).closest('div');
-    fireEvent.dragOver(box!);
+    const box = screen.getByTestId('file-upload-drop-area');
+    fireEvent.dragOver(box);
     expect(box).toHaveStyle('border: 2px dashed #1976d2');
-    fireEvent.dragLeave(box!);
+    fireEvent.dragLeave(box);
     expect(box).toHaveStyle('border: 1px dashed #C1C1C1');
   });
 });
