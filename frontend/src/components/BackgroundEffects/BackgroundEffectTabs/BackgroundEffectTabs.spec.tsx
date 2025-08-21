@@ -16,7 +16,7 @@ describe('BackgroundEffectTabs', () => {
         setTabSelected={setTabSelected}
         backgroundSelected=""
         setBackgroundSelected={setBackgroundSelected}
-        cleanBackgroundReplacementIfSelectedAndDeleted={
+        cleanBackgroundReplacementIfSelectedAndDeletedFunction={
           cleanBackgroundReplacementIfSelectedAndDeleted
         }
         customBackgroundImageChange={customBackgroundImageChange}
@@ -33,7 +33,7 @@ describe('BackgroundEffectTabs', () => {
         setTabSelected={setTabSelected}
         backgroundSelected=""
         setBackgroundSelected={setBackgroundSelected}
-        cleanBackgroundReplacementIfSelectedAndDeleted={
+        cleanBackgroundReplacementIfSelectedAndDeletedFunction={
           cleanBackgroundReplacementIfSelectedAndDeleted
         }
         customBackgroundImageChange={customBackgroundImageChange}
@@ -51,7 +51,7 @@ describe('BackgroundEffectTabs', () => {
         setTabSelected={setTabSelected}
         backgroundSelected=""
         setBackgroundSelected={setBackgroundSelected}
-        cleanBackgroundReplacementIfSelectedAndDeleted={
+        cleanBackgroundReplacementIfSelectedAndDeletedFunction={
           cleanBackgroundReplacementIfSelectedAndDeleted
         }
         customBackgroundImageChange={customBackgroundImageChange}
