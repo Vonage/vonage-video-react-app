@@ -24,7 +24,7 @@
     "cors": "^2.8.5",
     "dotenv": "^16.0.3",
     "express": "^4.21.2",
-    "form-data": "^4.0.1",
+    "form-data": "^4.0.4",
     "opentok": "^2.16.0",
     "opentok-jwt": "^0.1.5",
     "tsx": "^4.10.5",
