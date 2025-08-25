@@ -83,6 +83,10 @@
     "rollup": "^4.22.4",
     "vite": "^5.4.19",
     "nanoid": "^3.3.8",
-    "micromatch": "^4.0.8"
+    "micromatch": "^4.0.8",
+    "@babel/helpers": "^7.27.0",
+    "@babel/runtime": "^7.26.10",
+    "brace-expansion": "2.0.2",
+    "form-data": "^4.0.4"
   }
 }
