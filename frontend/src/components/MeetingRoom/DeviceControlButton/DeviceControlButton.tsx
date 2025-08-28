@@ -9,6 +9,7 @@ import { useState, useRef, useCallback, ReactElement } from 'react';
 import MutedAlert from '../../MutedAlert';
 import usePublisherContext from '../../../hooks/usePublisherContext';
 import DeviceSettingsMenu from '../DeviceSettingsMenu';
+import useBackgroundPublisherContext from '../../../hooks/useBackgroundPublisherContext';
 
 export type DeviceControlButtonProps = {
   deviceType: 'audio' | 'video';
@@ -30,6 +31,7 @@ const DeviceControlButton = ({
   toggleBackgroundEffects,
 }: DeviceControlButtonProps): ReactElement => {
   const { isVideoEnabled, toggleAudio, toggleVideo, isAudioEnabled } = usePublisherContext();
+  const { toggleVideo: toggleBackgroundVideoPublisher } = useBackgroundPublisherContext();
   const isAudio = deviceType === 'audio';
   const [open, setOpen] = useState<boolean>(false);
   const anchorRef = useRef<HTMLInputElement | null>(null);
@@ -61,6 +63,15 @@ const DeviceControlButton = ({
     return <VideocamOffIcon className="text-red-500" />;
   };
 
+  const handleDeviceStateChange = () => {
+    if (isAudio) {
+      toggleAudio();
+    } else {
+      toggleVideo();
+      toggleBackgroundVideoPublisher();
+    }
+  };
+
   return (
     <>
       {isAudio && <MutedAlert />}
@@ -90,7 +101,7 @@ const DeviceControlButton = ({
         </IconButton>
         <Tooltip title={isAudio ? audioTitle : videoTitle} aria-label="device settings">
           <IconButton
-            onClick={isAudio ? toggleAudio : toggleVideo}
+            onClick={handleDeviceStateChange}
             edge="start"
             aria-label={isAudio ? 'microphone' : 'camera'}
             size="small"
