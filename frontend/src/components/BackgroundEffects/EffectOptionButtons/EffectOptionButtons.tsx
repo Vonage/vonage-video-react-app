@@ -4,9 +4,13 @@ import BlurOnIcon from '@mui/icons-material/BlurOn';
 import SelectableOption from '../SelectableOption';
 
 const options = [
-  { key: 'none', icon: <BlockIcon sx={{ fontSize: '30px' }} /> },
-  { key: 'low-blur', icon: <BlurOnIcon /> },
-  { key: 'high-blur', icon: <BlurOnIcon sx={{ fontSize: '30px' }} /> },
+  { key: 'none', icon: <BlockIcon sx={{ fontSize: '30px' }} />, name: 'Remove background' },
+  { key: 'low-blur', icon: <BlurOnIcon />, name: 'Slightly background blur' },
+  {
+    key: 'high-blur',
+    icon: <BlurOnIcon sx={{ fontSize: '30px' }} />,
+    name: 'Strong background blur',
+  },
 ];
 
 export type EffectOptionButtonsProps = {
@@ -29,10 +33,11 @@ const EffectOptionButtons = ({
 }: EffectOptionButtonsProps): ReactElement => {
   return (
     <>
-      {options.map(({ key, icon }) => (
+      {options.map(({ key, icon, name }) => (
         <SelectableOption
           key={key}
           id={key}
+          title={name}
           isSelected={backgroundSelected === key}
           onClick={() => setBackgroundSelected(key)}
           icon={icon}

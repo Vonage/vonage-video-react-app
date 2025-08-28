@@ -37,9 +37,9 @@ describe('BackgroundEffectsLayout', () => {
     expect(screen.getByTestId('right-panel-title')).toHaveTextContent('Background Effects');
     expect(screen.getByTestId('background-video-container')).toBeInTheDocument();
     expect(screen.getByTestId('background-none')).toBeInTheDocument();
-    expect(screen.getByTestId('background-upload')).toBeInTheDocument();
     expect(screen.getByTestId('background-bg1')).toBeInTheDocument();
-    expect(screen.getAllByText(/Choose Background Effect/i)[0]).toBeInTheDocument();
+    expect(screen.getAllByText(/Backgrounds/i)[0]).toBeInTheDocument();
+    expect(screen.getAllByText(/Add background/i)[0]).toBeInTheDocument();
     expect(screen.getByTestId('background-effect-cancel-button')).toBeInTheDocument();
     expect(screen.getByTestId('background-effect-apply-button')).toBeInTheDocument();
   });

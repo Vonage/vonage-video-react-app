@@ -74,7 +74,12 @@ const DeviceSettingsMenu = ({
         {hasMediaProcessorSupport() && (
           <>
             <DropdownSeparator />
-            <VideoDevicesOptions toggleBackgroundEffects={toggleBackgroundEffects} />
+            <VideoDevicesOptions
+              toggleBackgroundEffects={() => {
+                toggleBackgroundEffects();
+                handleToggle();
+              }}
+            />
           </>
         )}
       </>

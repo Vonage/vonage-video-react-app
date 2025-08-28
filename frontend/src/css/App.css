@@ -73,9 +73,49 @@
 .choose-background-effect-box {
   border: 1px solid #e0e0e0;
   border-radius: 12px;
-  padding: 1rem;
+  padding: 0.5rem;
+  margin: 0.5rem;
   padding-bottom: 0.5rem;
   background-color: #f0f4f9;
+}
+.choose-background-effect-grid {
+  overflow-y: auto;
+  padding: 8px;
+  max-height: 35vh;
+}
+@media (min-width: 899px) and (min-height: 920px) {
+  .choose-background-effect-grid {
+    max-height: 55vh;
+  }
+}
+@media (max-height: 875px) {
+  .choose-background-effect-grid {
+    max-height: 30vh;
+  }
+}
+@media (max-height: 750px) {
+  .choose-background-effect-grid {
+    max-height: 25vh;
+  }
+}
+@media (max-height: 680px) {
+  .choose-background-effect-grid {
+    max-height: 20vh;
+  }
+}
+@media (max-width: 600px) {
+  .choose-background-effect-grid {
+    max-height: 25vh;
+  }
+}
+@media (max-width: 425px) {
+  .choose-background-effect-grid {
+    max-height: 32vh;
+  }
+}
+
+.background-video-container {
+  margin-top: 16px;
 }
 
 .background-video-container-disabled {
@@ -92,4 +132,29 @@
   font-size: 1.25rem;
   margin: 0 auto 16px auto;
   aspect-ratio: 16 / 9;
+}
+
+.add-background-effect-input .MuiInputBase-root {
+  color: #5f6368;
+}
+
+.add-background-effect-input .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline {
+  border-color: #80868b;
+}
+
+.add-background-effect-input .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline {
+  border-color: #80868b;
+}
+
+.add-background-effect-input .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline {
+  border-color: #80868b;
+}
+
+.add-background-effect-input input::placeholder {
+  color: #5f6368;
+  opacity: 1;
+}
+
+.add-background-effect-input-icon {
+  color: #5f6368;
 }

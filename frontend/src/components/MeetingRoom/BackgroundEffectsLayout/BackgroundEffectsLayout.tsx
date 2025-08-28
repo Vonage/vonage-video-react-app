@@ -1,14 +1,13 @@
 import { ReactElement, useCallback, useEffect, useState } from 'react';
-import { Box, Button, Typography } from '@mui/material';
+import { Box, Button, useMediaQuery } from '@mui/material';
 import usePublisherContext from '../../../hooks/usePublisherContext';
 import RightPanelTitle from '../RightPanel/RightPanelTitle';
-import EffectOptionButtons from '../../BackgroundEffects/EffectOptionButtons/EffectOptionButtons';
-import BackgroundGallery from '../../BackgroundEffects/BackgroundGallery/BackgroundGallery';
 import BackgroundVideoContainer from '../../BackgroundEffects/BackgroundVideoContainer';
 import useBackgroundPublisherContext from '../../../hooks/useBackgroundPublisherContext';
-import { DEFAULT_SELECTABLE_OPTION_WIDTH } from '../../../utils/constants';
-import AddBackgroundEffect from '../../BackgroundEffects/AddBackgroundEffect/AddBackgroundEffect';
 import getInitialBackgroundFilter from '../../../utils/backgroundFilter/getInitialBackgroundFilter/getInitialBackgroundFilter';
+import BackgroundEffectTabs, {
+  cleanBackgroundReplacementIfSelectedAndDeleted,
+} from '../../BackgroundEffects/BackgroundEffectTabs/BackgroundEffectTabs';
 
 export type BackgroundEffectsLayoutProps = {
   handleClose: () => void;
@@ -18,7 +17,7 @@ export type BackgroundEffectsLayoutProps = {
 /**
  * BackgroundEffectsLayout Component
  *
- * This component manages the UI for background effects (cancel background and blurs) in a room.
+ * This component manages the UI for background effects in the waiting room.
  * @param {BackgroundEffectsLayoutProps} props - The props for the component.
  *   @property {boolean} isOpen - Whether the background effects panel is open.
  *   @property {Function} handleClose - Function to close the panel.
@@ -28,7 +27,9 @@ const BackgroundEffectsLayout = ({
   handleClose,
   isOpen,
 }: BackgroundEffectsLayoutProps): ReactElement | false => {
+  const [tabSelected, setTabSelected] = useState<number>(0);
   const [backgroundSelected, setBackgroundSelected] = useState<string>('none');
+  const isShortScreen = useMediaQuery('(max-height:825px)');
   const { publisher, changeBackground, isVideoEnabled } = usePublisherContext();
   const { publisherVideoElement, changeBackground: changeBackgroundPreview } =
     useBackgroundPublisherContext();
@@ -43,6 +44,11 @@ const BackgroundEffectsLayout = ({
     handleClose();
   };
 
+  const customBackgroundImageChange = (dataUrl: string) => {
+    setTabSelected(0);
+    handleBackgroundSelect(dataUrl);
+  };
+
   const setInitialBackgroundReplacement = useCallback(() => {
     const selectedBackgroundOption = getInitialBackgroundFilter(publisher);
     setBackgroundSelected(selectedBackgroundOption);
@@ -51,7 +57,6 @@ const BackgroundEffectsLayout = ({
 
   const publisherVideoFilter = publisher?.getVideoFilter();
 
-  // Reset background when closing the panel
   useEffect(() => {
     if (isOpen) {
       const currentOption = setInitialBackgroundReplacement();
@@ -59,67 +64,72 @@ const BackgroundEffectsLayout = ({
     }
   }, [publisherVideoFilter, isOpen, changeBackgroundPreview, setInitialBackgroundReplacement]);
 
+  if (!isOpen) {
+    return false;
+  }
+
   return (
-    isOpen && (
-      <>
-        <RightPanelTitle title="Background Effects" handleClose={handleClose} />
+    <Box
+      sx={{
+        display: 'flex',
+        flexDirection: 'column',
+        height: '100%',
+        overflowY: isShortScreen ? 'auto' : 'hidden',
+      }}
+    >
+      <RightPanelTitle title="Background Effects" handleClose={handleClose} />
 
-        <Box sx={{ ml: 1.5, mr: 1.5 }}>
-          <BackgroundVideoContainer
-            publisherVideoElement={publisherVideoElement}
-            isParentVideoEnabled={isVideoEnabled}
-          />
-        </Box>
+      <Box sx={{ flexShrink: 0, p: 1.5 }}>
+        <BackgroundVideoContainer
+          publisherVideoElement={publisherVideoElement}
+          isParentVideoEnabled={isVideoEnabled}
+        />
+      </Box>
 
-        <Box className="choose-background-effect-box" sx={{ m: 1.5 }}>
-          <Typography variant="subtitle2" sx={{ textAlign: 'left', mb: 1 }}>
-            Choose Background Effect
-          </Typography>
+      <BackgroundEffectTabs
+        tabSelected={tabSelected}
+        setTabSelected={setTabSelected}
+        backgroundSelected={backgroundSelected}
+        setBackgroundSelected={setBackgroundSelected}
+        cleanBackgroundReplacementIfSelectedAndDeletedFunction={(dataUrl: string) =>
+          cleanBackgroundReplacementIfSelectedAndDeleted(
+            publisher,
+            changeBackground,
+            backgroundSelected,
+            dataUrl
+          )
+        }
+        customBackgroundImageChange={customBackgroundImageChange}
+      />
 
-          <Box
-            display="grid"
-            gridTemplateColumns={`repeat(auto-fill, minmax(${DEFAULT_SELECTABLE_OPTION_WIDTH}px, 1fr))`}
-            gap={1}
-            sx={{
-              overflowY: 'auto',
-              maxHeight: '400px',
-            }}
-          >
-            <EffectOptionButtons
-              backgroundSelected={backgroundSelected}
-              setBackgroundSelected={handleBackgroundSelect}
-            />
-            <AddBackgroundEffect />
-            {/* TODO: load custom images */}
-            <BackgroundGallery
-              backgroundSelected={backgroundSelected}
-              setBackgroundSelected={handleBackgroundSelect}
-            />
-          </Box>
-        </Box>
-
-        <Box display="flex" justifyContent="space-between" m={1.5}>
-          <Button
-            data-testid="background-effect-cancel-button"
-            variant="outlined"
-            color="primary"
-            sx={{ width: '100%', mr: 1 }}
-            onClick={handleClose}
-          >
-            Cancel
-          </Button>
-          <Button
-            data-testid="background-effect-apply-button"
-            variant="contained"
-            color="primary"
-            sx={{ width: '100%' }}
-            onClick={handleApplyBackgroundSelect}
-          >
-            Apply
-          </Button>
-        </Box>
-      </>
-    )
+      <Box
+        sx={{
+          flexShrink: 0,
+          display: 'flex',
+          justifyContent: 'space-between',
+          m: 1.5,
+        }}
+      >
+        <Button
+          data-testid="background-effect-cancel-button"
+          variant="outlined"
+          color="primary"
+          sx={{ width: '100%', mr: 1 }}
+          onClick={handleClose}
+        >
+          Cancel
+        </Button>
+        <Button
+          data-testid="background-effect-apply-button"
+          variant="contained"
+          color="primary"
+          sx={{ width: '100%' }}
+          onClick={handleApplyBackgroundSelect}
+        >
+          Apply
+        </Button>
+      </Box>
+    </Box>
   );
 };
 

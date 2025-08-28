@@ -1,13 +1,12 @@
 import { ReactElement, useCallback, useEffect, useState } from 'react';
-import { Box, Button, Typography, useMediaQuery } from '@mui/material';
-import EffectOptionButtons from '../../../BackgroundEffects/EffectOptionButtons/EffectOptionButtons';
-import BackgroundGallery from '../../../BackgroundEffects/BackgroundGallery/BackgroundGallery';
+import { Box, Button, useMediaQuery } from '@mui/material';
 import BackgroundVideoContainer from '../../../BackgroundEffects/BackgroundVideoContainer';
 import usePreviewPublisherContext from '../../../../hooks/usePreviewPublisherContext';
 import useBackgroundPublisherContext from '../../../../hooks/useBackgroundPublisherContext';
-import { DEFAULT_SELECTABLE_OPTION_WIDTH } from '../../../../utils/constants';
-import AddBackgroundEffect from '../../../BackgroundEffects/AddBackgroundEffect/AddBackgroundEffect';
 import getInitialBackgroundFilter from '../../../../utils/backgroundFilter/getInitialBackgroundFilter/getInitialBackgroundFilter';
+import BackgroundEffectTabs, {
+  cleanBackgroundReplacementIfSelectedAndDeleted,
+} from '../../../BackgroundEffects/BackgroundEffectTabs/BackgroundEffectTabs';
 
 export type BackgroundEffectsProps = {
   isOpen: boolean;
@@ -27,7 +26,9 @@ const BackgroundEffectsLayout = ({
   isOpen,
   handleClose,
 }: BackgroundEffectsProps): ReactElement | false => {
+  const [tabSelected, setTabSelected] = useState<number>(0);
   const [backgroundSelected, setBackgroundSelected] = useState<string>('none');
+
   const { publisher, changeBackground, isVideoEnabled } = usePreviewPublisherContext();
   const { publisherVideoElement, changeBackground: changeBackgroundPreview } =
     useBackgroundPublisherContext();
@@ -41,6 +42,11 @@ const BackgroundEffectsLayout = ({
   const handleApplyBackgroundSelect = () => {
     changeBackground(backgroundSelected);
     handleClose();
+  };
+
+  const customBackgroundImageChange = (dataUrl: string) => {
+    setTabSelected(0);
+    handleBackgroundSelect(dataUrl);
   };
 
   const setInitialBackgroundReplacement = useCallback(() => {
@@ -84,49 +90,48 @@ const BackgroundEffectsLayout = ({
 
   return (
     isOpen && (
-      <>
-        <Typography variant="h6" sx={{ mb: 2 }}>
-          Background Effects
-        </Typography>
-
-        <Box display="flex" flexDirection={{ xs: 'column', md: 'row' }} gap={3}>
-          <Box flex={1} minWidth={0}>
+      <Box display="flex" flexDirection={{ xs: 'column', md: 'row' }} gap={3}>
+        <Box
+          flex={1}
+          minWidth={0}
+          display="flex"
+          flexDirection="column"
+          justifyContent="space-between"
+        >
+          <Box
+            flexGrow={1}
+            display="flex"
+            alignItems="center"
+            justifyContent="center"
+            minHeight={0}
+          >
             <BackgroundVideoContainer
               publisherVideoElement={publisherVideoElement}
               isParentVideoEnabled={isVideoEnabled}
               isFixedWidth
             />
-            {!isTabletViewport && buttonGroup}
           </Box>
-
-          <Box flex={1} minWidth={0} className="choose-background-effect-box">
-            <Typography variant="subtitle2" sx={{ textAlign: 'left', mb: 1 }}>
-              Choose Background Effect
-            </Typography>
-            <Box
-              display="grid"
-              gridTemplateColumns={`repeat(auto-fill, minmax(${DEFAULT_SELECTABLE_OPTION_WIDTH}px, 1fr))`}
-              gap={1}
-              sx={{
-                overflowY: 'auto',
-                maxHeight: '375px',
-              }}
-            >
-              <EffectOptionButtons
-                backgroundSelected={backgroundSelected}
-                setBackgroundSelected={handleBackgroundSelect}
-              />
-              <AddBackgroundEffect />
-              {/* TODO: load custom images */}
-              <BackgroundGallery
-                backgroundSelected={backgroundSelected}
-                setBackgroundSelected={handleBackgroundSelect}
-              />
-            </Box>
-          </Box>
-          {isTabletViewport && buttonGroup}
+          {!isTabletViewport && buttonGroup}
         </Box>
-      </>
+
+        <BackgroundEffectTabs
+          tabSelected={tabSelected}
+          setTabSelected={setTabSelected}
+          backgroundSelected={backgroundSelected}
+          setBackgroundSelected={setBackgroundSelected}
+          cleanBackgroundReplacementIfSelectedAndDeletedFunction={(dataUrl: string) =>
+            cleanBackgroundReplacementIfSelectedAndDeleted(
+              publisher,
+              changeBackground,
+              backgroundSelected,
+              dataUrl
+            )
+          }
+          customBackgroundImageChange={customBackgroundImageChange}
+        />
+
+        {isTabletViewport && buttonGroup}
+      </Box>
     )
   );
 };
