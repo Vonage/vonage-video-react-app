@@ -4,6 +4,7 @@ import VideocamOffIcon from '@mui/icons-material/VideocamOff';
 import { ReactElement } from 'react';
 import usePreviewPublisherContext from '../../../hooks/usePreviewPublisherContext';
 import VideoContainerButton from '../VideoContainerButton';
+import useBackgroundPublisherContext from '../../../hooks/useBackgroundPublisherContext';
 
 /**
  * CameraButton Component
@@ -13,7 +14,13 @@ import VideoContainerButton from '../VideoContainerButton';
  */
 const CameraButton = (): ReactElement => {
   const { isVideoEnabled, toggleVideo } = usePreviewPublisherContext();
+  const { toggleVideo: toggleBackgroundVideoPublisher } = useBackgroundPublisherContext();
   const title = `Turn ${isVideoEnabled ? 'off' : 'on'} camera`;
+
+  const handleToggleVideo = () => {
+    toggleVideo();
+    toggleBackgroundVideoPublisher();
+  };
 
   return (
     <Box
@@ -31,7 +38,7 @@ const CameraButton = (): ReactElement => {
     >
       <Tooltip title={title} aria-label="toggle video">
         <VideoContainerButton
-          onClick={toggleVideo}
+          onClick={handleToggleVideo}
           sx={{
             backgroundColor: !isVideoEnabled ? 'rgb(234, 67, 53)' : '',
             '&:hover': {

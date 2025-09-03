@@ -10,6 +10,14 @@ import DeviceControlButton from './DeviceControlButton';
 
 vi.mock('../../../hooks/usePublisherContext.tsx');
 vi.mock('../../../hooks/useSpeakingDetector.tsx');
+const toggleBackgroundVideoPublisherMock = vi.fn();
+vi.mock('../../../hooks/useBackgroundPublisherContext', () => {
+  return {
+    default: () => ({
+      toggleVideo: toggleBackgroundVideoPublisherMock,
+    }),
+  };
+});
 
 const mockUsePublisherContext = usePublisherContext as Mock<[], PublisherContextType>;
 const mockUseSpeakingDetector = useSpeakingDetector as Mock<[], boolean>;
@@ -84,5 +92,26 @@ describe('DeviceControlButton', () => {
     );
     expect(screen.getByLabelText('microphone')).toBeInTheDocument();
     expect(screen.getByTestId('ArrowDropUpIcon')).toBeInTheDocument();
+  });
+
+  it('updates the main publisher and the background replacement publisher when clicked', () => {
+    const toggleVideoMock = vi.fn();
+    mockUsePublisherContext.mockImplementation(() => ({
+      ...publisherContext,
+      toggleAudio: vi.fn(),
+      toggleVideo: toggleVideoMock,
+      isAudioEnabled: true,
+      isVideoEnabled: true,
+    }));
+    render(
+      <DeviceControlButton
+        deviceType="video"
+        toggleBackgroundEffects={mockHandleToggleBackgroundEffects}
+      />
+    );
+    const cameraButton = screen.getByLabelText('camera');
+    cameraButton.click();
+    expect(toggleVideoMock).toHaveBeenCalled();
+    expect(toggleBackgroundVideoPublisherMock).toHaveBeenCalled();
   });
 });
