@@ -1,8 +1,7 @@
 import { Dimensions, Publisher } from '@vonage/client-sdk-video';
 import { beforeEach, describe, expect, it } from 'vitest';
 import getLayoutElementArray from './getLayoutElements';
-import { LayoutMode } from '../../../Context/SessionProvider/session';
-import { SubscriberWrapper } from '../../../types/session';
+import { LayoutMode, SubscriberWrapper } from '../../../types/session';
 
 // Define unique values for width and height so we can identify layout elements
 const publisherWidth = 101;
