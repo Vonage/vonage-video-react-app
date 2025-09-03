@@ -24,6 +24,16 @@ vi.mock('../../../hooks/useBackgroundPublisherContext', () => {
   };
 });
 
+vi.mock('../../../hooks/useConfigContext', () => {
+  return {
+    default: () => ({
+      videoSettings: {
+        enableDisableCapableCamera: true,
+      },
+    }),
+  };
+});
+
 describe('CameraButton', () => {
   beforeEach(() => {
     isVideoEnabled = true;

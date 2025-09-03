@@ -30,6 +30,11 @@ vi.mock('./components/RedirectToWaitingRoom', () => ({
 vi.mock('./Context/RoomContext', () => ({
   default: ({ children }: React.PropsWithChildren) => children,
 }));
+vi.mock('./Context/ConfigProvider', () => ({
+  __esModule: true,
+  ConfigContextProvider: ({ children }: React.PropsWithChildren) => children,
+  default: ({ children }: React.PropsWithChildren) => children,
+}));
 
 afterEach(() => {
   vi.clearAllMocks();
