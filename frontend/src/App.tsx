@@ -24,11 +24,11 @@ const App = () => {
               path="/waiting-room/:roomName"
               element={
                 <BackgroundPublisherProvider>
-                <PreviewPublisherProvider>
+                  <PreviewPublisherProvider>
                     <WaitingRoom />
                   </PreviewPublisherProvider>
                 </BackgroundPublisherProvider>
-            }
+              }
             />
             <Route
               path="/room/:roomName"
@@ -37,9 +37,9 @@ const App = () => {
                   <RedirectToWaitingRoom>
                     <PublisherProvider>
                       <BackgroundPublisherProvider>
-                      <Room />
+                        <Room />
                       </BackgroundPublisherProvider>
-                  </PublisherProvider>
+                    </PublisherProvider>
                   </RedirectToWaitingRoom>
                 </SessionProvider>
               }

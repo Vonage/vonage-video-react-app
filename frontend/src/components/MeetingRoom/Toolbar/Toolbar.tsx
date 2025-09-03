@@ -172,9 +172,9 @@ const Toolbar = ({
           />
           {config.videoSettings.enableDisableCapableCamera && (
             <DeviceControlButton
-            deviceType="video"
-            toggleBackgroundEffects={toggleBackgroundEffects}
-          />
+              deviceType="video"
+              toggleBackgroundEffects={toggleBackgroundEffects}
+            />
           )}
         </div>
         {toolbarButtons.map(displayCenterToolbarButtons)}
