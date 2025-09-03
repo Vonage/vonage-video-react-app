@@ -13,6 +13,7 @@ import useDropdownResizeObserver from '../../../hooks/useDropdownResizeObserver'
 import VideoDevices from '../VideoDevices';
 import DropdownSeparator from '../DropdownSeparator';
 import VideoDevicesOptions from '../VideoDevicesOptions';
+import useConfigContext from '../../../hooks/useConfigContext';
 
 export type DeviceSettingsMenuProps = {
   deviceType: 'audio' | 'video';
@@ -51,6 +52,7 @@ const DeviceSettingsMenu = ({
   handleClose,
   setIsOpen,
 }: DeviceSettingsMenuProps): ReactElement | false => {
+  const config = useConfigContext();
   const isAudio = deviceType === 'audio';
   const theme = useTheme();
   const customLightBlueColor = 'rgb(138, 180, 248)';
@@ -71,7 +73,7 @@ const DeviceSettingsMenu = ({
     return (
       <>
         <VideoDevices handleToggle={handleToggle} customLightBlueColor={customLightBlueColor} />
-        {hasMediaProcessorSupport() && (
+        {hasMediaProcessorSupport() && config.videoSettings.backgroundEffects && (
           <>
             <DropdownSeparator />
             <VideoDevicesOptions toggleBackgroundEffects={toggleBackgroundEffects} />
