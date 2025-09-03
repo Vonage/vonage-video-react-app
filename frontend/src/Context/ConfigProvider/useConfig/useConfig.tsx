@@ -1,6 +1,4 @@
 import { useMemo } from 'react';
-// eslint-disable-next-line import/no-relative-packages
-import configFile from '../../../../../config.json';
 
 export type VideoSettings = {
   enableDisableCapableCamera: boolean;
@@ -32,8 +30,17 @@ export const defaultConfig: AppConfig = {
  */
 const useConfig = (): AppConfig => {
   const mergedConfig: AppConfig = useMemo(() => {
-    const typedConfigFile = configFile as Partial<AppConfig>;
-
+    if (process.env.NODE_ENV === 'test') {
+      return defaultConfig;
+    }
+    let typedConfigFile: Partial<AppConfig> = {};
+    try {
+      // eslint-disable-next-line @typescript-eslint/no-require-imports, global-require
+      typedConfigFile = require('../../../../../config.json') as Partial<AppConfig>;
+    } catch (_e) {
+      // Fallback to defaultConfig if config.json is missing
+      typedConfigFile = {};
+    }
     return {
       ...defaultConfig,
       ...typedConfigFile,
