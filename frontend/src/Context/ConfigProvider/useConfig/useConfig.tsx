@@ -1,4 +1,5 @@
 import { useMemo } from 'react';
+import { LayoutMode } from '../../../types/session';
 
 export type VideoSettings = {
   enableDisableCapableCamera: boolean;
@@ -9,7 +10,7 @@ export type VideoSettings = {
 
 export type AppConfig = {
   videoSettings: VideoSettings;
-  layoutMode: 'grid' | 'active-speaker';
+  layoutMode: LayoutMode;
 };
 
 export const defaultConfig: AppConfig = {

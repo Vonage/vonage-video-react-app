@@ -1,0 +1,9 @@
+{
+  "videoSettings": {
+    "enableDisableCapableCamera": false,
+    "resolution": "1280x720",
+    "videoOnJoin": true,
+    "backgroundEffects": true
+  },
+  "layoutMode": "grid"
+}

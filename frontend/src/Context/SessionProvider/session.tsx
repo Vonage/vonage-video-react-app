@@ -23,6 +23,7 @@ import {
   StreamPropertyChangedEvent,
   SubscriberAudioLevelUpdatedEvent,
   SubscriberWrapper,
+  LayoutMode,
 } from '../../types/session';
 import useChat from '../../hooks/useChat';
 import { ChatMessageType } from '../../types/chat';
@@ -36,8 +37,6 @@ import VonageVideoClient from '../../utils/VonageVideoClient';
 import useEmoji, { EmojiWrapper } from '../../hooks/useEmoji';
 
 export type { ChatMessageType } from '../../types/chat';
-
-export type LayoutMode = 'grid' | 'active-speaker';
 
 export type SessionContextType = {
   vonageVideoClient: null | VonageVideoClient;
