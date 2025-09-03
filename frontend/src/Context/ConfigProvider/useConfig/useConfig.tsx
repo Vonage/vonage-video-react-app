@@ -1,6 +1,4 @@
-import { useMemo } from 'react';
-// eslint-disable-next-line import/no-relative-packages
-import configFile from '../../../../../config.json';
+import { useMemo, useEffect, useState } from 'react';
 import { LayoutMode } from '../../../types/session';
 
 export type VideoSettings = {
@@ -32,8 +30,25 @@ export const defaultConfig: AppConfig = {
  * @returns {AppConfig} The application configuration
  */
 const useConfig = (): AppConfig => {
+  const [config, setConfig] = useState<AppConfig>(defaultConfig);
+
+  useEffect(() => {
+    // Try to load config from JSON file located at src/public/config.json
+    const loadConfig = async () => {
+      try {
+        const response = await fetch('/config.json');
+        const json = await response.json();
+        setConfig(json);
+      } catch (error) {
+        console.info('Error loading config:', error);
+      }
+    };
+
+    loadConfig();
+  }, []);
+
   const mergedConfig: AppConfig = useMemo(() => {
-    const typedConfigFile = configFile as Partial<AppConfig>;
+    const typedConfigFile = config as Partial<AppConfig>;
 
     return {
       ...defaultConfig,
@@ -43,7 +58,7 @@ const useConfig = (): AppConfig => {
         ...(typedConfigFile.videoSettings || {}),
       },
     };
-  }, []);
+  }, [config]);
 
   return mergedConfig;
 };
