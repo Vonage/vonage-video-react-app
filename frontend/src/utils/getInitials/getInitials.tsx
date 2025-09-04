@@ -9,7 +9,7 @@ const getInitialFromName = (name: string): string => {
  */
 export default (username: string): string => {
   // Matches any names, including hyphenated names.
-  const names = username.match(/(\w+(-\w+)?)/gm);
+  const names = username.match(/[\p{L}\p{M}]+([-][\p{L}\p{M}]+)*/gu);
   let lastInitial = '';
 
   if (!names) {

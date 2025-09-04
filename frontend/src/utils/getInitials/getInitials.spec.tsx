@@ -74,7 +74,7 @@ describe('getInitials', () => {
     });
   });
 
-  it('returns initials for a simgle character first name', () => {
+  it('returns initials for a single character first name', () => {
     const username = 'l';
 
     const initials = getInitials(username);
@@ -82,7 +82,7 @@ describe('getInitials', () => {
     expect(initials).toBe('L');
   });
 
-  it('returns initials for a simgle character last name', () => {
+  it('returns initials for a single character last name', () => {
     const username = 'Daniel Michael B';
 
     const initials = getInitials(username);
@@ -90,11 +90,57 @@ describe('getInitials', () => {
     expect(initials).toBe('DB');
   });
 
-  it('returns initials for a simgle character first and last name', () => {
+  it('returns initials for a single character first and last name', () => {
     const username = 's d';
 
     const initials = getInitials(username);
 
     expect(initials).toBe('SD');
+  });
+
+  it('handles Unicode characters with accents', () => {
+    const username = 'Òscar';
+
+    const initials = getInitials(username);
+
+    expect(initials).toBe('Ò');
+  });
+
+  it('handles Unicode characters in multiple names', () => {
+    const username = 'José María';
+
+    const initials = getInitials(username);
+
+    expect(initials).toBe('JM');
+  });
+
+  it('handles various accented characters', () => {
+    const testCases = [
+      { username: 'François Müller', expected: 'FM' },
+      { username: 'Åse Björk', expected: 'ÅB' },
+      { username: 'Zürich', expected: 'Z' },
+      { username: 'Naïve Café', expected: 'NC' },
+      { username: 'Señor López', expected: 'SL' },
+    ];
+
+    testCases.forEach(({ username, expected }) => {
+      const initials = getInitials(username);
+      expect(initials).toBe(expected);
+    });
+  });
+
+  it('handles hyphenated names with accents', () => {
+    const username = 'José-María González';
+
+    const initials = getInitials(username);
+
+    expect(initials).toBe('JG');
+  });
+
+  it('handles combining diacritical marks', () => {
+    const username = 'André Müller';
+    const initials = getInitials(username);
+
+    expect(initials).toBe('AM');
   });
 });
