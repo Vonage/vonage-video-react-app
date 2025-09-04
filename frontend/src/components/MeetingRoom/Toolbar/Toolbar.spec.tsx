@@ -9,6 +9,8 @@ import useToolbarButtons, {
   UseToolbarButtonsProps,
 } from '../../../hooks/useToolbarButtons';
 import { RIGHT_PANEL_BUTTON_COUNT } from '../../../utils/constants';
+import useConfigContext from '../../../hooks/useConfigContext';
+import { ConfigContextType } from '../../../Context/ConfigProvider';
 
 const mockedRoomName = { roomName: 'test-room-name' };
 
@@ -21,6 +23,7 @@ vi.mock('react-router-dom', () => ({
 vi.mock('../../../hooks/useSpeakingDetector');
 vi.mock('../../../utils/isReportIssueEnabled');
 vi.mock('../../../hooks/useToolbarButtons');
+vi.mock('../../../hooks/useConfigContext');
 
 const mockUseSpeakingDetector = useSpeakingDetector as Mock<[], boolean>;
 const mockIsReportIssueEnabled = isReportIssueEnabled as Mock<[], boolean>;
@@ -28,8 +31,11 @@ const mockUseToolbarButtons = useToolbarButtons as Mock<
   [UseToolbarButtonsProps],
   UseToolbarButtons
 >;
+const mockUseConfigContext = useConfigContext as Mock<[], ConfigContextType>;
 
 describe('Toolbar', () => {
+  let configContext: ConfigContextType;
+
   beforeEach(() => {
     (useLocation as Mock).mockReturnValue({
       state: mockedRoomName,
@@ -46,6 +52,15 @@ describe('Toolbar', () => {
         return renderedToolbarButtons;
       }
     );
+    configContext = {
+      audioSettings: {
+        enableDisableCapableMicrophone: true,
+      },
+      videoSettings: {
+        enableDisableCapableCamera: true,
+      },
+    } as unknown as ConfigContextType;
+    mockUseConfigContext.mockReturnValue(configContext);
   });
 
   afterAll(() => {
@@ -113,5 +128,31 @@ describe('Toolbar', () => {
     expect(screen.queryByTestId('screensharing-button')).toBeVisible();
     expect(screen.queryByTestId('emoji-grid-button')).toBeVisible();
     expect(screen.queryByTestId('captions-button')).toBeVisible();
+  });
+
+  describe('audio DeviceControlButton', () => {
+    it('is rendered when it is configured to be enabled', () => {
+      render(<Toolbar {...defaultProps} />);
+      expect(screen.getByTestId('audio-dropdown-button')).toBeInTheDocument();
+    });
+
+    it('is not rendered when it is configured to be disabled', () => {
+      configContext.audioSettings.enableDisableCapableMicrophone = false;
+      render(<Toolbar {...defaultProps} />);
+      expect(screen.queryByTestId('audio-dropdown-button')).not.toBeInTheDocument();
+    });
+  });
+
+  describe('video DeviceControlButton', () => {
+    it('is rendered when it is configured to be enabled', () => {
+      render(<Toolbar {...defaultProps} />);
+      expect(screen.getByTestId('video-dropdown-button')).toBeInTheDocument();
+    });
+
+    it('is not rendered when it is configured to be disabled', () => {
+      configContext.videoSettings.enableDisableCapableCamera = false;
+      render(<Toolbar {...defaultProps} />);
+      expect(screen.queryByTestId('video-dropdown-button')).not.toBeInTheDocument();
+    });
   });
 });

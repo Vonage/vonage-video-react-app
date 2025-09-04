@@ -81,6 +81,8 @@ const Toolbar = ({
     disconnect();
   }, [disconnect]);
   const [openEmojiGridDesktop, setOpenEmojiGridDesktop] = useState<boolean>(false);
+  const { enableDisableCapableMicrophone } = config.audioSettings;
+  const { enableDisableCapableCamera } = config.videoSettings;
 
   // An array of buttons available for the toolbar. As the toolbar resizes, buttons may be hidden and moved to the
   // ToolbarOverflowMenu to ensure a responsive layout without compromising usability.
@@ -166,11 +168,13 @@ const Toolbar = ({
       </div>
       <div className="flex flex-1 justify-center">
         <div ref={mediaControlsRef} className="flex flex-row">
-          <DeviceControlButton
-            deviceType="audio"
-            toggleBackgroundEffects={toggleBackgroundEffects}
-          />
-          {config.videoSettings.enableDisableCapableCamera && (
+          {enableDisableCapableMicrophone && (
+            <DeviceControlButton
+              deviceType="audio"
+              toggleBackgroundEffects={toggleBackgroundEffects}
+            />
+          )}
+          {enableDisableCapableCamera && (
             <DeviceControlButton
               deviceType="video"
               toggleBackgroundEffects={toggleBackgroundEffects}

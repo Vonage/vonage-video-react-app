@@ -11,6 +11,7 @@ export type VideoSettings = {
 export type AudioSettings = {
   advancedNoiseSuppression: boolean;
   audioOnJoin: boolean;
+  enableDisableCapableMicrophone: boolean;
 };
 
 export type AppConfig = {
@@ -29,6 +30,7 @@ export const defaultConfig: AppConfig = {
   audioSettings: {
     advancedNoiseSuppression: true,
     audioOnJoin: true,
+    enableDisableCapableMicrophone: true,
   },
   layoutMode: 'active-speaker',
 };
