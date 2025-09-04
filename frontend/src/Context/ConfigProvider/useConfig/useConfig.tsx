@@ -8,8 +8,14 @@ export type VideoSettings = {
   backgroundEffects: boolean;
 };
 
+export type AudioSettings = {
+  advancedNoiseSuppression: boolean;
+  audioOnJoin: boolean;
+};
+
 export type AppConfig = {
   videoSettings: VideoSettings;
+  audioSettings: AudioSettings;
   layoutMode: LayoutMode;
 };
 
@@ -19,6 +25,10 @@ export const defaultConfig: AppConfig = {
     resolution: '1280x720',
     videoOnJoin: true,
     backgroundEffects: true,
+  },
+  audioSettings: {
+    advancedNoiseSuppression: true,
+    audioOnJoin: true,
   },
   layoutMode: 'active-speaker',
 };

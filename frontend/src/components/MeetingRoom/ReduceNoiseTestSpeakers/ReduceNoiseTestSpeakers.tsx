@@ -10,6 +10,7 @@ import usePublisherContext from '../../../hooks/usePublisherContext';
 import DropdownSeparator from '../DropdownSeparator';
 import SoundTest from '../../SoundTest';
 import { setStorageItem, STORAGE_KEYS } from '../../../utils/storage';
+import useConfigContext from '../../../hooks/useConfigContext';
 
 export type ReduceNoiseTestSpeakersProps = {
   customLightBlueColor: string;
@@ -28,7 +29,9 @@ const ReduceNoiseTestSpeakers = ({
   customLightBlueColor,
 }: ReduceNoiseTestSpeakersProps): ReactElement | false => {
   const { publisher, isPublishing } = usePublisherContext();
+  const config = useConfigContext();
   const [isToggled, setIsToggled] = useState(false);
+  const isANSEnabled = config.audioSettings.advancedNoiseSuppression;
 
   const handleToggle = async () => {
     const newState = !isToggled;
@@ -58,7 +61,7 @@ const ReduceNoiseTestSpeakers = ({
           mt: 1,
         }}
       >
-        {hasMediaProcessorSupport() && (
+        {hasMediaProcessorSupport() && isANSEnabled && (
           <MenuItem
             onClick={handleToggle}
             sx={{
