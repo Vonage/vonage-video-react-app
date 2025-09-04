@@ -10,6 +10,7 @@ export type ConfigContextType = ReturnType<typeof useConfig>;
 export const ConfigContext = createContext<ConfigContextType>({
   videoSettings: defaultConfig.videoSettings,
   layoutMode: defaultConfig.layoutMode,
+  audioSettings: defaultConfig.audioSettings,
 });
 
 export const ConfigContextProvider = ({ children }: ConfigProviderProps) => {
