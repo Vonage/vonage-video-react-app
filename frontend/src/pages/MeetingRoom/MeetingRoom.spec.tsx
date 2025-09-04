@@ -54,6 +54,18 @@ vi.mock('@mui/material', async () => {
     useMediaQuery: vi.fn(),
   };
 });
+vi.mock('../../hooks/useConfigContext', () => {
+  return {
+    default: () => ({
+      videoSettings: {
+        enableDisableCapableCamera: true,
+      },
+      audioSettings: {
+        enableDisableCapableMicrophone: true,
+      },
+    }),
+  };
+});
 
 vi.mock('../../hooks/useDevices.tsx');
 vi.mock('../../hooks/usePublisherContext.tsx');
