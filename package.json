@@ -28,6 +28,7 @@
     "debug:backend": "yarn workspace backend debug",
     "start:frontend": "yarn workspace frontend dev",
     "forward:frontend": "npx ngrok http 5173",
+    "forward:backend": "npx ngrok http 3345",
     "test": "yarn test:backend && yarn test:frontend",
     "test:backend": "yarn workspace backend test",
     "test:backend:watch": "yarn workspace backend test:watch",
