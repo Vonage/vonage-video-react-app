@@ -143,4 +143,12 @@ describe('getInitials', () => {
 
     expect(initials).toBe('AM');
   });
+
+  it('handles Cyrillic characters', () => {
+    const username = 'Андрій Шевченко';
+
+    const initials = getInitials(username);
+
+    expect(initials).toBe('АШ');
+  });
 });
