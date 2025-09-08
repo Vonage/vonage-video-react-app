@@ -217,7 +217,7 @@ To test the video API across multiple devices on your local network, you can use
 
   </br>
 
-6. Open the provided frontend **Forwarding** URL in your browser. This exposes your entire application publicly, allowing devices on any network to access both the frontend and backend.
+6. Open the provided frontend **Forwarding** URL in your browser. This exposes your entire application publicly, allowing devices on any network to access it.
 
 </br>
 
