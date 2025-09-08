@@ -15,13 +15,11 @@ const mockedRoomName = { roomName: 'test-room-name' };
 vi.mock('../../../hooks/useSessionContext.tsx');
 vi.mock('../../../hooks/useUserContext');
 vi.mock('../../../hooks/useRoomShareUrl');
-
 vi.mock('react-router-dom', () => ({
   useNavigate: vi.fn(),
   useLocation: vi.fn(),
   useParams: () => mockedRoomName,
 }));
-
 const mockUseSessionContext = useSessionContext as Mock<[], SessionContextType>;
 const mockNavigate = vi.fn();
 
@@ -33,7 +31,6 @@ const mockUserContextWithDefaultSettings = {
     },
   },
 } as UserContextType;
-
 mockUseUserContext.mockImplementation(() => mockUserContextWithDefaultSettings);
 
 const createSubscriberWrapper = (
@@ -80,8 +77,6 @@ describe('ParticipantList', () => {
   let originalClipboard: Clipboard;
 
   beforeEach(() => {
-    vi.clearAllMocks();
-
     originalClipboard = navigator.clipboard;
     Object.assign(navigator, {
       clipboard: {
@@ -93,7 +88,6 @@ describe('ParticipantList', () => {
     } as unknown as SessionContextType;
     mockUseSessionContext.mockReturnValue(sessionContext as unknown as SessionContextType);
   });
-
   afterEach(() => {
     Object.assign(navigator, { clipboard: originalClipboard });
     cleanup();
