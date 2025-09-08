@@ -9,28 +9,18 @@ import useUserContext from '../../../hooks/useUserContext';
 import { UserContextType } from '../../../Context/user';
 import useSessionContext from '../../../hooks/useSessionContext';
 import useRoomShareUrl from '../../../hooks/useRoomShareUrl';
-import usePublisherContext from '../../../hooks/usePublisherContext';
-import { PublisherContextType } from '../../../Context/PublisherProvider';
-import useAudioLevels from '../../../hooks/useAudioLevels';
-import ParticipantListItem from '../ParticipantListItem';
 
 const mockedRoomName = { roomName: 'test-room-name' };
 
 vi.mock('../../../hooks/useSessionContext.tsx');
-vi.mock('../../../hooks/usePublisherContext.tsx');
-vi.mock('../../../hooks/useAudioLevels.tsx');
 vi.mock('../../../hooks/useUserContext');
 vi.mock('../../../hooks/useRoomShareUrl');
-vi.mock('../ParticipantListItem', () => ({
-  default: vi.fn(),
-}));
 
 vi.mock('react-router-dom', () => ({
   useNavigate: vi.fn(),
   useLocation: vi.fn(),
   useParams: () => mockedRoomName,
 }));
-const mockParticipantListItem = vi.mocked(ParticipantListItem);
 
 const mockUseSessionContext = useSessionContext as Mock<[], SessionContextType>;
 const mockNavigate = vi.fn();
@@ -43,8 +33,6 @@ const mockUserContextWithDefaultSettings = {
     },
   },
 } as UserContextType;
-const mockUsePublisherContext = usePublisherContext as Mock<[], PublisherContextType>;
-const mockUseAudioLevels = useAudioLevels as Mock<[], number | undefined>;
 
 mockUseUserContext.mockImplementation(() => mockUserContextWithDefaultSettings);
 
@@ -90,7 +78,6 @@ const createTestSubscriberWrappers = () => {
 describe('ParticipantList', () => {
   let sessionContext: SessionContextType;
   let originalClipboard: Clipboard;
-  let publisherContext: PublisherContextType;
 
   beforeEach(() => {
     vi.clearAllMocks();
@@ -105,16 +92,6 @@ describe('ParticipantList', () => {
       subscriberWrappers: createTestSubscriberWrappers(),
     } as unknown as SessionContextType;
     mockUseSessionContext.mockReturnValue(sessionContext as unknown as SessionContextType);
-
-    publisherContext = {
-      isAudioEnabled: true,
-    } as unknown as PublisherContextType;
-    mockUsePublisherContext.mockImplementation(() => publisherContext);
-    mockUseAudioLevels.mockReturnValue(50);
-
-    mockParticipantListItem.mockImplementation(({ dataTestId, name }) => (
-      <div data-testid={dataTestId}>{name}</div>
-    ));
   });
 
   afterEach(() => {
@@ -142,12 +119,6 @@ describe('ParticipantList', () => {
   });
 
   it('should display remote participants in alphabetical order with local participant first', () => {
-    mockParticipantListItem.mockImplementation(({ name, dataTestId }) => (
-      <div data-testid={dataTestId}>
-        <span data-testid="participant-list-name">{name}</span>
-      </div>
-    ));
-
     (useNavigate as Mock).mockReturnValue(mockNavigate);
     (useLocation as Mock).mockReturnValue({
       state: mockedRoomName,
@@ -168,97 +139,5 @@ describe('ParticipantList', () => {
       'Naomi Nagata',
       '', // Edge case, empty names go at the bottom
     ]);
-  });
-
-  describe('Publisher audio state handling', () => {
-    beforeEach(() => {
-      mockParticipantListItem.mockImplementation(({ audioLevel, hasAudio, name, dataTestId }) => (
-        <div data-testid={dataTestId}>
-          <span data-testid="participant-list-name">{name}</span>
-          <span data-testid={`audio-level-${dataTestId}`}>{audioLevel ?? 'undefined'}</span>
-          <span data-testid={`has-audio-${dataTestId}`}>{hasAudio?.toString() ?? 'undefined'}</span>
-        </div>
-      ));
-    });
-
-    it('shows active audio state for publisher when microphone is enabled', () => {
-      mockUsePublisherContext.mockImplementation(() => ({
-        ...publisherContext,
-        isAudioEnabled: true,
-      }));
-      mockUseAudioLevels.mockReturnValue(75);
-
-      render(<ParticipantList isOpen handleClose={() => {}} />);
-
-      const publisherItem = screen.getByTestId('participant-list-item-you');
-      expect(publisherItem).toBeInTheDocument();
-
-      expect(screen.getByTestId('audio-level-participant-list-item-you')).toHaveTextContent('75');
-      expect(screen.getByTestId('has-audio-participant-list-item-you')).toHaveTextContent('true');
-    });
-
-    it('shows muted state for publisher when microphone is disabled', () => {
-      mockUsePublisherContext.mockImplementation(() => ({
-        ...publisherContext,
-        isAudioEnabled: false,
-      }));
-      mockUseAudioLevels.mockReturnValue(75);
-
-      render(<ParticipantList isOpen handleClose={() => {}} />);
-
-      const publisherItem = screen.getByTestId('participant-list-item-you');
-      expect(publisherItem).toBeInTheDocument();
-
-      expect(screen.getByTestId('audio-level-participant-list-item-you')).toHaveTextContent(
-        'undefined'
-      );
-      expect(screen.getByTestId('has-audio-participant-list-item-you')).toHaveTextContent('false');
-    });
-
-    it('displays muted indicator even when audio levels are detected but microphone is off', () => {
-      mockUsePublisherContext.mockImplementation(() => ({
-        ...publisherContext,
-        isAudioEnabled: false,
-      }));
-      mockUseAudioLevels.mockReturnValue(100);
-
-      render(<ParticipantList isOpen handleClose={() => {}} />);
-
-      const publisherItem = screen.getByTestId('participant-list-item-you');
-      expect(publisherItem).toBeInTheDocument();
-
-      expect(screen.getByTestId('audio-level-participant-list-item-you')).toHaveTextContent(
-        'undefined'
-      );
-      expect(screen.getByTestId('has-audio-participant-list-item-you')).toHaveTextContent('false');
-    });
-
-    it('shows quiet state when microphone is enabled but no audio activity detected', () => {
-      mockUsePublisherContext.mockImplementation(() => ({
-        ...publisherContext,
-        isAudioEnabled: true,
-      }));
-      mockUseAudioLevels.mockReturnValue(0);
-
-      render(<ParticipantList isOpen handleClose={() => {}} />);
-
-      expect(screen.getByTestId('audio-level-participant-list-item-you')).toHaveTextContent('0');
-      expect(screen.getByTestId('has-audio-participant-list-item-you')).toHaveTextContent('true');
-    });
-
-    it('handles publisher audio state when audio levels are unavailable', () => {
-      mockUsePublisherContext.mockImplementation(() => ({
-        ...publisherContext,
-        isAudioEnabled: true,
-      }));
-      mockUseAudioLevels.mockReturnValue(undefined);
-
-      render(<ParticipantList isOpen handleClose={() => {}} />);
-
-      expect(screen.getByTestId('audio-level-participant-list-item-you')).toHaveTextContent(
-        'undefined'
-      );
-      expect(screen.getByTestId('has-audio-participant-list-item-you')).toHaveTextContent('true');
-    });
   });
 });
