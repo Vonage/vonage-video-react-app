@@ -151,4 +151,84 @@ describe('getInitials', () => {
 
     expect(initials).toBe('АШ');
   });
+
+  it('handles names with emojis at the beginning', () => {
+    const username = '😊 John Doe';
+
+    const initials = getInitials(username);
+
+    expect(initials).toBe('JD');
+  });
+
+  it('handles names with emojis at the end', () => {
+    const username = 'Jane Smith 🎉';
+
+    const initials = getInitials(username);
+
+    expect(initials).toBe('JS');
+  });
+
+  it('handles names with emojis in between', () => {
+    const username = 'Bob 🚀 Wilson';
+
+    const initials = getInitials(username);
+
+    expect(initials).toBe('BW');
+  });
+
+  it('handles names with multiple emojis', () => {
+    const username = '🌟 Alice 💫 Cooper 🎭';
+
+    const initials = getInitials(username);
+
+    expect(initials).toBe('AC');
+  });
+
+  it('handles names that are only emojis', () => {
+    const username = '😊 🎉';
+
+    const initials = getInitials(username);
+
+    expect(initials).toBe('');
+  });
+
+  it('handles mixed emoji and unicode text', () => {
+    const username = '🇫🇷 François 🎨 García';
+
+    const initials = getInitials(username);
+
+    expect(initials).toBe('FG');
+  });
+
+  it('handles Arabic characters', () => {
+    const username = 'أحمد محمد';
+
+    const initials = getInitials(username);
+
+    expect(initials).toBe('أم');
+  });
+
+  it('handles Chinese characters', () => {
+    const username = '张三 李四';
+
+    const initials = getInitials(username);
+
+    expect(initials).toBe('张李');
+  });
+
+  it('handles Japanese characters', () => {
+    const username = 'たなか はなこ';
+
+    const initials = getInitials(username);
+
+    expect(initials).toBe('たは');
+  });
+
+  it('handles Korean characters', () => {
+    const username = '김민수 박영희';
+
+    const initials = getInitials(username);
+
+    expect(initials).toBe('김박');
+  });
 });
