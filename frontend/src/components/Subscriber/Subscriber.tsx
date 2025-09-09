@@ -18,6 +18,39 @@ export type SubscriberProps = {
   isActiveSpeaker: boolean;
 };
 
+type ConnectionStatusBadgeProps = {
+  hasQualityWarning: boolean;
+  isVideoDisrupted: boolean;
+};
+
+const ConnectionStatusBadge = ({
+  hasQualityWarning,
+  isVideoDisrupted,
+}: ConnectionStatusBadgeProps) => {
+  if (!hasQualityWarning && !isVideoDisrupted) {
+    return null;
+  }
+
+  const badgeClasses = isVideoDisrupted ? 'bg-red-600 text-white' : 'bg-amber-500 text-black';
+
+  const tooltipText = isVideoDisrupted
+    ? 'Video paused due to connection issues'
+    : 'Connection quality degraded';
+
+  return (
+    <div
+      className={`absolute left-3 top-3 ${badgeClasses} z-10 rounded-lg px-2 py-1 text-xs font-medium shadow-lg`}
+      title={tooltipText}
+    >
+      {isVideoDisrupted ? (
+        <span className="flex items-center gap-1">⏸ PAUSED</span>
+      ) : (
+        <span className="flex items-center gap-1">⚠ SLOW</span>
+      )}
+    </div>
+  );
+};
+
 /**
  * Subscriber Component
  *
@@ -36,12 +69,17 @@ const Subscriber = ({
   box,
   isActiveSpeaker,
 }: SubscriberProps): ReactElement => {
-  const { isMaxPinned, pinSubscriber } = useSessionContext();
+  const { isMaxPinned, pinSubscriber, videoQualityWarnings, videoDisabledStreams } =
+    useSessionContext();
   const { isPinned, subscriber } = subscriberWrapper;
   const isScreenShare = subscriber?.stream?.videoType === 'screen';
   const subRef = useRef<HTMLDivElement>(null);
   const isTalking = useSubscriberTalking({ subscriber, isActiveSpeaker });
   const [isTileHovered, setIsTileHovered] = useState<boolean>(false);
+
+  const streamId = subscriberWrapper.id;
+  const hasQualityWarning = videoQualityWarnings.has(streamId);
+  const isVideoDisrupted = videoDisabledStreams.has(streamId);
 
   useEffect(() => {
     // If hidden - Unsubscribe from video to save bandwidth and cpu
@@ -88,6 +126,7 @@ const Subscriber = ({
   const hasAudio = subscriberWrapper.subscriber.stream?.hasAudio;
   const audioIndicatorStyle =
     'rounded-xl absolute top-3 right-3 bg-darkGray-55 h-6 w-6 items-center justify-center flex m-auto';
+
   return (
     <VideoTile
       id={`${subscriberWrapper.id}`}
@@ -111,6 +150,12 @@ const Subscriber = ({
           participantName={username}
         />
       )}
+
+      <ConnectionStatusBadge
+        hasQualityWarning={hasQualityWarning}
+        isVideoDisrupted={isVideoDisrupted}
+      />
+
       {!isScreenShare && (
         <AudioIndicator
           hasAudio={hasAudio}

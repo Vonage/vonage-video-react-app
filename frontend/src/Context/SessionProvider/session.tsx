@@ -67,6 +67,8 @@ export type SessionContextType = {
   publish: (publisher: Publisher) => Promise<void>;
   unpublish: (publisher: Publisher) => void;
   lastStreamUpdate: StreamPropertyChangedEvent | null;
+  videoQualityWarnings: Set<string>;
+  videoDisabledStreams: Set<string>;
 };
 
 /**
@@ -101,6 +103,8 @@ export const SessionContext = createContext<SessionContextType>({
   publish: async () => Promise.resolve(),
   unpublish: () => {},
   lastStreamUpdate: null,
+  videoQualityWarnings: new Set<string>(),
+  videoDisabledStreams: new Set<string>(),
 });
 
 export type ConnectionEventType = {
@@ -137,6 +141,9 @@ const SessionProvider = ({ children }: SessionProviderProps): ReactElement => {
   const [archiveId, setArchiveId] = useState<string | null>(null);
   const activeSpeakerTracker = useRef<ActiveSpeakerTracker>(new ActiveSpeakerTracker());
   const [activeSpeakerId, setActiveSpeakerId] = useState<string | undefined>();
+  const [videoQualityWarnings, setVideoQualityWarnings] = useState<Set<string>>(new Set());
+  const [videoDisabledStreams, setVideoDisabledStreams] = useState<Set<string>>(new Set());
+
   const activeSpeakerIdRef = useRef<string | undefined>(undefined);
   const { messages, onChatMessage, sendChatMessage } = useChat({
     signal: vonageVideoClient.current?.signal,
@@ -295,6 +302,22 @@ const SessionProvider = ({ children }: SessionProviderProps): ReactElement => {
     );
   };
 
+  const handleSubscriberVideoDisabled = useCallback((streamId: string) => {
+    setVideoDisabledStreams((prev) => new Set(prev).add(streamId));
+  }, []);
+
+  const handleSubscriberVideoDisabledWarning = useCallback((streamId: string) => {
+    setVideoQualityWarnings((prev) => new Set(prev).add(streamId));
+  }, []);
+
+  const handleSubscriberVideoDisableWarningLifted = useCallback((streamId: string) => {
+    setVideoQualityWarnings((prev) => {
+      const newSet = new Set(prev);
+      newSet.delete(streamId);
+      return newSet;
+    });
+  }, []);
+
   const handleSubscriberAudioLevelUpdated = ({
     movingAvg,
     subscriberId,
@@ -337,6 +360,16 @@ const SessionProvider = ({ children }: SessionProviderProps): ReactElement => {
       );
       vonageVideoClient.current.on('subscriberDestroyed', handleSubscriberDestroyed);
       vonageVideoClient.current.on('localCaptionReceived', handleLocalCaptionReceived);
+      vonageVideoClient.current.on('subscriberVideoDisabled', handleSubscriberVideoDisabled);
+      vonageVideoClient.current.on(
+        'subscriberVideoDisabledWarning',
+        handleSubscriberVideoDisabledWarning
+      );
+      vonageVideoClient.current.on(
+        'subscriberVideoDisableWarningLifted',
+        handleSubscriberVideoDisableWarningLifted
+      );
+
       await vonageVideoClient.current.connect();
       setConnected(true);
     } catch (err: unknown) {
@@ -438,6 +471,8 @@ const SessionProvider = ({ children }: SessionProviderProps): ReactElement => {
       publish,
       unpublish,
       lastStreamUpdate,
+      videoQualityWarnings,
+      videoDisabledStreams,
     }),
     [
       activeSpeakerId,
@@ -468,6 +503,8 @@ const SessionProvider = ({ children }: SessionProviderProps): ReactElement => {
       publish,
       unpublish,
       lastStreamUpdate,
+      videoQualityWarnings,
+      videoDisabledStreams,
     ]
   );
 

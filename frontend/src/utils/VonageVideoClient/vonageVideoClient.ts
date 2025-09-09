@@ -37,6 +37,9 @@ type VonageVideoClientEvents = {
   subscriberDestroyed: [string];
   subscriberAudioLevelUpdated: [SubscriberAudioLevelUpdatedEvent];
   localCaptionReceived: [LocalCaptionReceived];
+  subscriberVideoDisabled: [string]; // streamId
+  subscriberVideoDisabledWarning: [string]; // streamId
+  subscriberVideoDisableWarningLifted: [string]; // streamId
 };
 
 /**
@@ -132,6 +135,18 @@ class VonageVideoClient extends EventEmitter<VonageVideoClientEvents> {
     });
     subscriber.on('destroyed', () => {
       this.emit('subscriberDestroyed', streamId);
+    });
+
+    subscriber.on('videoDisabled', () => {
+      this.emit('subscriberVideoDisabled', streamId);
+    });
+
+    subscriber.on('videoDisabledWarning', () => {
+      this.emit('subscriberVideoDisabledWarning', streamId);
+    });
+
+    subscriber.on('videoDisableWarningLifted', () => {
+      this.emit('subscriberVideoDisableWarningLifted', streamId);
     });
 
     // Create moving average tracker and add handler for subscriber audioLevelUpdated event emitted periodically with subscriber audio volume
