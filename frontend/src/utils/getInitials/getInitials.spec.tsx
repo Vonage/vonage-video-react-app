@@ -74,7 +74,7 @@ describe('getInitials', () => {
     });
   });
 
-  it('returns initials for a simgle character first name', () => {
+  it('returns initials for a single character first name', () => {
     const username = 'l';
 
     const initials = getInitials(username);
@@ -82,7 +82,7 @@ describe('getInitials', () => {
     expect(initials).toBe('L');
   });
 
-  it('returns initials for a simgle character last name', () => {
+  it('returns initials for a single character last name', () => {
     const username = 'Daniel Michael B';
 
     const initials = getInitials(username);
@@ -90,11 +90,145 @@ describe('getInitials', () => {
     expect(initials).toBe('DB');
   });
 
-  it('returns initials for a simgle character first and last name', () => {
+  it('returns initials for a single character first and last name', () => {
     const username = 's d';
 
     const initials = getInitials(username);
 
     expect(initials).toBe('SD');
+  });
+
+  it('handles Unicode characters with accents', () => {
+    const username = 'Òscar';
+
+    const initials = getInitials(username);
+
+    expect(initials).toBe('Ò');
+  });
+
+  it('handles Unicode characters in multiple names', () => {
+    const username = 'José María';
+
+    const initials = getInitials(username);
+
+    expect(initials).toBe('JM');
+  });
+
+  it('handles various accented characters', () => {
+    const testCases = [
+      { username: 'François Müller', expected: 'FM' },
+      { username: 'Åse Björk', expected: 'ÅB' },
+      { username: 'Zürich', expected: 'Z' },
+      { username: 'Naïve Café', expected: 'NC' },
+      { username: 'Señor López', expected: 'SL' },
+    ];
+
+    testCases.forEach(({ username, expected }) => {
+      const initials = getInitials(username);
+      expect(initials).toBe(expected);
+    });
+  });
+
+  it('handles hyphenated names with accents', () => {
+    const username = 'José-María González';
+
+    const initials = getInitials(username);
+
+    expect(initials).toBe('JG');
+  });
+
+  it('handles combining diacritical marks', () => {
+    const username = 'André Müller';
+    const initials = getInitials(username);
+
+    expect(initials).toBe('AM');
+  });
+
+  it('handles Cyrillic characters', () => {
+    const username = 'Андрій Шевченко';
+
+    const initials = getInitials(username);
+
+    expect(initials).toBe('АШ');
+  });
+
+  it('handles names with emojis at the beginning', () => {
+    const username = '😊 John Doe';
+
+    const initials = getInitials(username);
+
+    expect(initials).toBe('JD');
+  });
+
+  it('handles names with emojis at the end', () => {
+    const username = 'Jane Smith 🎉';
+
+    const initials = getInitials(username);
+
+    expect(initials).toBe('JS');
+  });
+
+  it('handles names with emojis in between', () => {
+    const username = 'Bob 🚀 Wilson';
+
+    const initials = getInitials(username);
+
+    expect(initials).toBe('BW');
+  });
+
+  it('handles names with multiple emojis', () => {
+    const username = '🌟 Alice 💫 Cooper 🎭';
+
+    const initials = getInitials(username);
+
+    expect(initials).toBe('AC');
+  });
+
+  it('handles names that are only emojis', () => {
+    const username = '😊 🎉';
+
+    const initials = getInitials(username);
+
+    expect(initials).toBe('');
+  });
+
+  it('handles mixed emoji and unicode text', () => {
+    const username = '🇫🇷 François 🎨 García';
+
+    const initials = getInitials(username);
+
+    expect(initials).toBe('FG');
+  });
+
+  it('handles Arabic characters', () => {
+    const username = 'أحمد محمد';
+
+    const initials = getInitials(username);
+
+    expect(initials).toBe('أم');
+  });
+
+  it('handles Chinese characters', () => {
+    const username = '张三 李四';
+
+    const initials = getInitials(username);
+
+    expect(initials).toBe('张李');
+  });
+
+  it('handles Japanese characters', () => {
+    const username = 'たなか はなこ';
+
+    const initials = getInitials(username);
+
+    expect(initials).toBe('たは');
+  });
+
+  it('handles Korean characters', () => {
+    const username = '김민수 박영희';
+
+    const initials = getInitials(username);
+
+    expect(initials).toBe('김박');
   });
 });
