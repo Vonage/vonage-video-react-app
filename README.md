@@ -185,21 +185,36 @@ To test the video API across multiple devices on your local network, you can use
 
 4. Create secure tunnels for both frontend and backend:
 
-    **Frontend tunnel:**
+    **Set up ngrok configuration:**
+    
+    First, find your ngrok config file location:
     ``` bash
-    yarn forward:frontend
+    ngrok config check
     ```
 
-    **Backend tunnel (in a separate terminal):**
-    ``` bash
-    yarn forward:backend
+    Create or edit the ngrok configuration file (typically located at `~/Library/Application Support/ngrok/ngrok.yml` on macOS; `~/.config/ngrok/ngrok.ym` on Linux and `%HOMEPATH%\AppData\Local\ngrok\ngrok.yml"` on Windows) with the following content:
+
+    ``` yaml
+    version: "2"
+    tunnels:
+      frontend:
+        addr: 5173
+        proto: http
+      backend:
+        addr: 3345
+        proto: http
     ```
 
-    Both commands will create publicly accessible HTTPS URLs. The output will appear in your terminals, similar to the image below:
+    **Start both tunnels:**
+    ``` bash
+    ngrok start --all
+    ```
+
+    This command will create publicly accessible HTTPS URLs for both your frontend and backend. The output will appear in your terminals, similar to the image below:
 
     <details close>
     <summary>ngrok output example</summary>
-    <img src="./docs/assets/readme/4-forwarding front-end.png" alt="ngrok tunnel example" style="max-width: 100%; height: auto;" />
+    <img src="./docs/assets/readme/4-forwarding.png" alt="ngrok tunnel example" style="max-width: 100%; height: auto;" />
     </details>
 
     </br>
