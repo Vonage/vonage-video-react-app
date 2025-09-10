@@ -10,6 +10,7 @@ import MutedAlert from '../../MutedAlert';
 import usePublisherContext from '../../../hooks/usePublisherContext';
 import DeviceSettingsMenu from '../DeviceSettingsMenu';
 import useBackgroundPublisherContext from '../../../hooks/useBackgroundPublisherContext';
+import useConfigContext from '../../../hooks/useConfigContext';
 
 export type DeviceControlButtonProps = {
   deviceType: 'audio' | 'video';
@@ -32,11 +33,27 @@ const DeviceControlButton = ({
 }: DeviceControlButtonProps): ReactElement => {
   const { isVideoEnabled, toggleAudio, toggleVideo, isAudioEnabled } = usePublisherContext();
   const { toggleVideo: toggleBackgroundVideoPublisher } = useBackgroundPublisherContext();
+  const config = useConfigContext();
   const isAudio = deviceType === 'audio';
   const [open, setOpen] = useState<boolean>(false);
   const anchorRef = useRef<HTMLInputElement | null>(null);
   const audioTitle = isAudioEnabled ? 'Disable microphone' : 'Enable microphone';
   const videoTitle = isVideoEnabled ? 'Disable video' : 'Enable video';
+  const { enableDisableCapableMicrophone } = config.audioSettings;
+  const { enableDisableCapableCamera } = config.videoSettings;
+  const isButtonDisabled = isAudio ? !enableDisableCapableMicrophone : !enableDisableCapableCamera;
+  let tooltipTitle: string;
+  if (isAudio) {
+    if (!enableDisableCapableMicrophone) {
+      tooltipTitle = 'Microphone control is disabled in this application';
+    } else {
+      tooltipTitle = audioTitle;
+    }
+  } else if (!enableDisableCapableCamera) {
+    tooltipTitle = 'Camera control is disabled in this application';
+  } else {
+    tooltipTitle = videoTitle;
+  }
 
   const handleToggle = () => {
     setOpen((prevOpen) => !prevOpen);
@@ -51,12 +68,18 @@ const DeviceControlButton = ({
 
   const renderControlIcon = () => {
     if (isAudio) {
+      if (!enableDisableCapableMicrophone) {
+        return <Mic className="text-gray-400" />;
+      }
       if (isAudioEnabled) {
         return <Mic className="text-white" />;
       }
       return <MicOff data-testid="MicOffToolbar" className="text-red-600" />;
     }
 
+    if (!enableDisableCapableCamera) {
+      return <VideocamIcon className="text-gray-400" />;
+    }
     if (isVideoEnabled) {
       return <VideocamIcon className="text-white" />;
     }
@@ -99,16 +122,19 @@ const DeviceControlButton = ({
             <ArrowDropUp className="text-gray-400" />
           )}
         </IconButton>
-        <Tooltip title={isAudio ? audioTitle : videoTitle} aria-label="device settings">
-          <IconButton
-            onClick={handleDeviceStateChange}
-            edge="start"
-            aria-label={isAudio ? 'microphone' : 'camera'}
-            size="small"
-            className="m-[3px] size-[50px] rounded-full shadow-md"
-          >
-            {renderControlIcon()}
-          </IconButton>
+        <Tooltip title={tooltipTitle} aria-label="device settings">
+          <div>
+            <IconButton
+              disabled={isButtonDisabled}
+              onClick={handleDeviceStateChange}
+              edge="start"
+              aria-label={isAudio ? 'microphone' : 'camera'}
+              size="small"
+              className="m-[3px] size-[50px] rounded-full shadow-md"
+            >
+              {renderControlIcon()}
+            </IconButton>
+          </div>
         </Tooltip>
       </ButtonGroup>
       <DeviceSettingsMenu
