@@ -207,7 +207,7 @@ To test the video API across multiple devices on your local network, you can use
 
     **Start both tunnels:**
     ``` bash
-    ngrok start --all
+    ngrok start backend frontend
     ```
 
     This command will create publicly accessible HTTPS URLs for both your frontend and backend. The output will appear in your terminals, similar to the image below:
