@@ -15,6 +15,7 @@ import { DEVICE_ACCESS_STATUS } from '../../../utils/constants';
 import { AccessDeniedEvent } from '../../PublisherProvider/usePublisher/usePublisher';
 import DeviceStore from '../../../utils/DeviceStore';
 import applyBackgroundFilter from '../../../utils/backgroundFilter/applyBackgroundFilter/applyBackgroundFilter';
+import usePublisherOptions from '../../PublisherProvider/usePublisherOptions';
 
 export type BackgroundPublisherContextType = {
   isPublishing: boolean;
@@ -54,6 +55,7 @@ type PublisherVideoElementCreatedEvent = Event<'videoElementCreated', Publisher>
  */
 const useBackgroundPublisher = (): BackgroundPublisherContextType => {
   const { user } = useUserContext();
+  const defaultPublisherOptions = usePublisherOptions();
   const { allMediaDevices, getAllMediaDevices } = useDevices();
   const [publisherVideoElement, setPublisherVideoElement] = useState<
     HTMLVideoElement | HTMLObjectElement
@@ -67,7 +69,9 @@ const useBackgroundPublisher = (): BackgroundPublisherContextType => {
   const [backgroundFilter, setBackgroundFilter] = useState<VideoFilter | undefined>(
     user.defaultSettings.backgroundFilter
   );
-  const [isVideoEnabled, setIsVideoEnabled] = useState(true);
+  const [isVideoEnabled, setIsVideoEnabled] = useState(
+    defaultPublisherOptions?.publishVideo ?? false
+  );
   const [localVideoSource, setLocalVideoSource] = useState<string | undefined>(undefined);
   const deviceStoreRef = useRef<DeviceStore>(new DeviceStore());
 
@@ -162,7 +166,7 @@ const useBackgroundPublisher = (): BackgroundPublisherContextType => {
   );
 
   const initBackgroundLocalPublisher = useCallback(async () => {
-    if (backgroundPublisherRef.current) {
+    if (backgroundPublisherRef.current || !defaultPublisherOptions) {
       return;
     }
 
@@ -180,6 +184,8 @@ const useBackgroundPublisher = (): BackgroundPublisherContextType => {
       videoFilter,
       resolution: '1280x720',
       videoSource,
+      publishAudio: false,
+      publishVideo: defaultPublisherOptions?.publishVideo,
     };
 
     backgroundPublisherRef.current = initPublisher(undefined, publisherOptions, (err: unknown) => {
@@ -191,7 +197,7 @@ const useBackgroundPublisher = (): BackgroundPublisherContextType => {
       }
     });
     addPublisherListeners(backgroundPublisherRef.current);
-  }, [addPublisherListeners]);
+  }, [addPublisherListeners, defaultPublisherOptions]);
 
   /**
    * Destroys the background publisher
