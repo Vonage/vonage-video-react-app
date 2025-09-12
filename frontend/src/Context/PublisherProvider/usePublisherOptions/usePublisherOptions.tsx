@@ -55,8 +55,8 @@ const usePublisherOptions = (): PublisherProperties | null => {
         initials,
         insertDefaultUI: false,
         name,
-        publishAudio: !!publishAudio,
-        publishVideo: !!publishVideo,
+        publishAudio: config.audioSettings.audioOnJoin && publishAudio,
+        publishVideo: config.videoSettings.videoOnJoin && publishVideo,
         resolution: config.videoSettings.resolution,
         audioFilter,
         videoFilter,
@@ -66,7 +66,12 @@ const usePublisherOptions = (): PublisherProperties | null => {
     };
 
     setOptions();
-  }, [config.videoSettings.resolution, user.defaultSettings]);
+  }, [
+    config.audioSettings.audioOnJoin,
+    config.videoSettings.resolution,
+    config.videoSettings.videoOnJoin,
+    user.defaultSettings,
+  ]);
 
   return publisherOptions;
 };

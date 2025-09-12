@@ -7,10 +7,14 @@ import usePublisherOptions from './usePublisherOptions';
 import localStorageMock from '../../../utils/mockData/localStorageMock';
 import DeviceStore from '../../../utils/DeviceStore';
 import { setStorageItem, STORAGE_KEYS } from '../../../utils/storage';
+import useConfigContext from '../../../hooks/useConfigContext';
+import { ConfigContextType } from '../../ConfigProvider';
 
 vi.mock('../../../hooks/useUserContext.tsx');
+vi.mock('../../../hooks/useConfigContext');
 
 const mockUseUserContext = useUserContext as Mock<[], UserContextType>;
+const mockUseConfigContext = useConfigContext as Mock<[], ConfigContextType>;
 
 const defaultSettings = {
   publishAudio: false,
@@ -51,6 +55,8 @@ const mockUserContextWithCustomSettings = {
 describe('usePublisherOptions', () => {
   let enumerateDevicesMock: ReturnType<typeof vi.fn>;
   let deviceStore: DeviceStore;
+  let configContext: ConfigContextType;
+
   beforeEach(async () => {
     enumerateDevicesMock = vi.fn();
     vi.stubGlobal('navigator', {
@@ -65,6 +71,16 @@ describe('usePublisherOptions', () => {
     deviceStore = new DeviceStore();
     enumerateDevicesMock.mockResolvedValue([]);
     await deviceStore.init();
+    configContext = {
+      audioSettings: {
+        audioOnJoin: true,
+      },
+      videoSettings: {
+        resolution: '1280x720',
+        videoOnJoin: true,
+      },
+    } as unknown as ConfigContextType;
+    mockUseConfigContext.mockReturnValue(configContext);
   });
 
   afterAll(() => {
@@ -137,6 +153,32 @@ describe('usePublisherOptions', () => {
         name: 'Foo Bar',
         initials: 'FB',
         publishCaptions: true,
+      });
+    });
+  });
+
+  describe('configurable features', () => {
+    it('should disable audio publishing', async () => {
+      configContext.audioSettings.audioOnJoin = false;
+      const { result } = renderHook(() => usePublisherOptions());
+      await waitFor(() => {
+        expect(result.current?.publishAudio).toBe(false);
+      });
+    });
+
+    it('should disable video publishing', async () => {
+      configContext.videoSettings.videoOnJoin = false;
+      const { result } = renderHook(() => usePublisherOptions());
+      await waitFor(() => {
+        expect(result.current?.publishVideo).toBe(false);
+      });
+    });
+
+    it('should configure resolution from config', async () => {
+      configContext.videoSettings.resolution = '640x480';
+      const { result } = renderHook(() => usePublisherOptions());
+      await waitFor(() => {
+        expect(result.current?.resolution).toBe('640x480');
       });
     });
   });
