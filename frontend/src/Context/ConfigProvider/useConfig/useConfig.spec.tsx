@@ -1,4 +1,4 @@
-import { afterAll, afterEach, beforeAll, describe, expect, it, vi } from 'vitest';
+import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
 import { renderHook, waitFor } from '@testing-library/react';
 import useConfig from './useConfig';
 
@@ -9,6 +9,12 @@ describe('useConfig', () => {
     nativeFetch = global.fetch;
   });
 
+  beforeEach(() => {
+    global.fetch = vi.fn().mockResolvedValue({
+      json: async () => ({}),
+    });
+  });
+
   afterEach(() => {
     vi.resetAllMocks();
   });
@@ -17,21 +23,28 @@ describe('useConfig', () => {
     global.fetch = nativeFetch;
   });
 
-  it('returns the default config when no config.json is loaded', () => {
+  it('returns the default config when no config.json is loaded', async () => {
     const { result } = renderHook(() => useConfig());
-    expect(result.current).toMatchObject({
-      videoSettings: {
-        enableDisableCapableCamera: true,
-        resolution: '1280x720',
-        videoOnJoin: true,
-        backgroundEffects: true,
-      },
-      audioSettings: {
-        advancedNoiseSuppression: true,
-        audioOnJoin: true,
-        enableDisableCapableMicrophone: true,
-      },
-      layoutMode: 'active-speaker',
+
+    await waitFor(() => {
+      expect(result.current).toEqual({
+        videoSettings: {
+          enableDisableCapableCamera: true,
+          resolution: '1280x720',
+          videoOnJoin: true,
+          backgroundEffects: true,
+        },
+        audioSettings: {
+          advancedNoiseSuppression: true,
+          audioOnJoin: true,
+          enableDisableCapableMicrophone: true,
+        },
+        waitingRoomSettings: {
+          allowDeviceSelection: true,
+          enableWaitingRoom: true,
+        },
+        layoutMode: 'active-speaker',
+      });
     });
   });
 
@@ -64,19 +77,21 @@ describe('useConfig', () => {
     global.fetch = vi.fn().mockRejectedValue(new Error('mocking a failure to fetch'));
     const { result } = renderHook(() => useConfig());
 
-    expect(result.current).toMatchObject({
-      videoSettings: {
-        enableDisableCapableCamera: true,
-        resolution: '1280x720',
-        videoOnJoin: true,
-        backgroundEffects: true,
-      },
-      audioSettings: {
-        advancedNoiseSuppression: true,
-        audioOnJoin: true,
-        enableDisableCapableMicrophone: true,
-      },
-      layoutMode: 'active-speaker',
+    await waitFor(() => {
+      expect(result.current).toMatchObject({
+        videoSettings: {
+          enableDisableCapableCamera: true,
+          resolution: '1280x720',
+          videoOnJoin: true,
+          backgroundEffects: true,
+        },
+        audioSettings: {
+          advancedNoiseSuppression: true,
+          audioOnJoin: true,
+          enableDisableCapableMicrophone: true,
+        },
+        layoutMode: 'active-speaker',
+      });
     });
   });
 });
