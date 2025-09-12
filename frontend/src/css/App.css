@@ -132,6 +132,7 @@
   font-size: 1.25rem;
   margin: 0 auto 16px auto;
   aspect-ratio: 16 / 9;
+  padding: 1rem;
 }
 
 .add-background-effect-input .MuiInputBase-root {
