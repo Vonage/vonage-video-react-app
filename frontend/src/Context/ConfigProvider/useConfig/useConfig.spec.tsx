@@ -41,7 +41,6 @@ describe('useConfig', () => {
         },
         waitingRoomSettings: {
           allowDeviceSelection: true,
-          enableWaitingRoom: true,
         },
         layoutMode: 'active-speaker',
       });

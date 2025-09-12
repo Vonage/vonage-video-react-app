@@ -16,7 +16,6 @@ export type AudioSettings = {
 
 export type WaitingRoomSettings = {
   allowDeviceSelection: boolean;
-  enableWaitingRoom: boolean;
 };
 
 export type AppConfig = {
@@ -40,7 +39,6 @@ export const defaultConfig: AppConfig = {
   },
   waitingRoomSettings: {
     allowDeviceSelection: true,
-    enableWaitingRoom: true,
   },
   layoutMode: 'active-speaker',
 };
