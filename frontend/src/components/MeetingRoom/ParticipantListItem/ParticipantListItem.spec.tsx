@@ -1,7 +1,16 @@
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, beforeEach, vi, Mock } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import { Stream } from '@vonage/client-sdk-video';
 import ParticipantListItem, { ParticipantListItemProps } from './ParticipantListItem';
+import useAudioLevels from '../../../hooks/useAudioLevels';
+import usePublisherContext from '../../../hooks/usePublisherContext';
+import { PublisherContextType } from '../../../Context/PublisherProvider';
+
+vi.mock('../../../hooks/useAudioLevels');
+vi.mock('../../../hooks/usePublisherContext');
+
+const mockUseAudioLevels = useAudioLevels as Mock<[], number | undefined>;
+const mockUsePublisherContext = usePublisherContext as Mock<[], PublisherContextType>;
 
 describe('ParticipantListItem', () => {
   const mockStream: Stream = {
@@ -70,6 +79,49 @@ describe('ParticipantListItem', () => {
       width: '32px',
       height: '32px',
       fontSize: '14px',
+    });
+  });
+
+  describe('Publisher audio state handling', () => {
+    let publisherContext: PublisherContextType;
+    beforeEach(() => {
+      publisherContext = {
+        isAudioEnabled: true,
+      } as unknown as PublisherContextType;
+      mockUsePublisherContext.mockImplementation(() => publisherContext);
+      mockUseAudioLevels.mockReturnValue(50);
+    });
+
+    it('shows active audio state for publisher when microphone is enabled', () => {
+      mockUsePublisherContext.mockImplementation(() => ({
+        ...publisherContext,
+        isAudioEnabled: true,
+      }));
+      mockUseAudioLevels.mockReturnValue(75);
+
+      render(<ParticipantListItem {...defaultProps} audioLevel={undefined} hasAudio />);
+
+      const participantItem = screen.getByTestId('participant-list-item');
+      expect(participantItem).toBeInTheDocument();
+
+      const audioIndicator = screen.getByTestId('audio-indicator');
+      expect(audioIndicator).toBeInTheDocument();
+
+      const micIcon = screen.getByTestId('MicIcon');
+      expect(micIcon).toBeInTheDocument();
+    });
+
+    it('shows muted state when hasAudio is false', () => {
+      render(<ParticipantListItem {...defaultProps} audioLevel={undefined} hasAudio={false} />);
+
+      const participantItem = screen.getByTestId('participant-list-item');
+      expect(participantItem).toBeInTheDocument();
+
+      const audioIndicator = screen.getByTestId('audio-indicator');
+      expect(audioIndicator).toBeInTheDocument();
+
+      const micOffIcon = screen.getByTestId('MicOffIcon');
+      expect(micOffIcon).toBeInTheDocument();
     });
   });
 });
