@@ -14,9 +14,14 @@ export type AudioSettings = {
   enableDisableCapableMicrophone: boolean;
 };
 
+export type WaitingRoomSettings = {
+  allowDeviceSelection: boolean;
+};
+
 export type AppConfig = {
   videoSettings: VideoSettings;
   audioSettings: AudioSettings;
+  waitingRoomSettings: WaitingRoomSettings;
   layoutMode: LayoutMode;
 };
 
@@ -31,6 +36,9 @@ export const defaultConfig: AppConfig = {
     advancedNoiseSuppression: true,
     audioOnJoin: true,
     enableDisableCapableMicrophone: true,
+  },
+  waitingRoomSettings: {
+    allowDeviceSelection: true,
   },
   layoutMode: 'active-speaker',
 };
