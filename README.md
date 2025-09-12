@@ -210,7 +210,7 @@ To test the video API across multiple devices on your local network, you can use
     ngrok start backend frontend
     ```
 
-    This command will create publicly accessible HTTPS URLs for both your frontend and backend. The output will appear in your terminals, similar to the image below:
+    This command will create publicly accessible HTTPS URLs for both your frontend and backend. The output will appear in your terminal, similar to the image below:
 
     <details close>
     <summary>ngrok output example</summary>
