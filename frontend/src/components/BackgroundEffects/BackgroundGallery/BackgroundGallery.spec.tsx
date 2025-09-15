@@ -12,7 +12,8 @@ const mockDeleteImageFromStorage = vi.fn();
 const mockGetImagesFromStorage = vi.fn(() => customImages);
 
 vi.mock('../../../utils/useImageStorage/useImageStorage', () => ({
-  useImageStorage: () => ({
+  __esModule: true,
+  default: () => ({
     getImagesFromStorage: mockGetImagesFromStorage,
     deleteImageFromStorage: mockDeleteImageFromStorage,
   }),

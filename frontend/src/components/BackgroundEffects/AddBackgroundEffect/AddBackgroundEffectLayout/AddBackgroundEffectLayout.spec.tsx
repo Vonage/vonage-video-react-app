@@ -3,7 +3,8 @@ import { vi, describe, it, expect } from 'vitest';
 import AddBackgroundEffectLayout from './AddBackgroundEffectLayout';
 
 vi.mock('../../../../utils/useImageStorage/useImageStorage', () => ({
-  useImageStorage: () => ({
+  __esModule: true,
+  default: () => ({
     storageError: '',
     handleImageFromFile: vi.fn(async () => ({
       dataUrl: 'data:image/png;base64,MOCKED',
