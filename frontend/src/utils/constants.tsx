@@ -138,6 +138,24 @@ export const SMALL_VIEWPORT = 768;
 export const BACKGROUNDS_PATH = '/background';
 
 /**
+ * @constant {number} MAX_SIZE_MB - The maximum file size (in megabytes) allowed for image uploads.
+ * Used to validate image uploads in components like AddBackgroundEffectLayout.
+ */
+export const MAX_SIZE_MB = 2;
+
+/**
+ * @constant {string[]} ALLOWED_TYPES - An array of allowed MIME types for image uploads.
+ * Used to validate image uploads in components like AddBackgroundEffectLayout.
+ */
+export const ALLOWED_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
+
+/**
+ * @constant {number} MAX_LOCAL_STORAGE_BYTES - The maximum size (in bytes) for storing images in localStorage.
+ * This is set to approximately 4MB, which is a common limit for localStorage across browsers.
+ */
+export const MAX_LOCAL_STORAGE_BYTES = 4 * 1024 * 1024;
+
+/**
  * @constant {number} DEFAULT_SELECTABLE_OPTION_WIDTH - The default size (in pixels) for selectable option elements.
  * Used to define the width of selectable options in UI components.
  */

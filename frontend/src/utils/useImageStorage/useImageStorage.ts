@@ -1,7 +1,6 @@
 import { useCallback, useState } from 'react';
 import { getStorageItem, setStorageItem, STORAGE_KEYS } from '../storage';
-
-const MAX_LOCAL_STORAGE_BYTES = 4 * 1024 * 1024;
+import { MAX_LOCAL_STORAGE_BYTES } from '../constants';
 
 export type StoredImage = {
   id: string;
@@ -12,7 +11,7 @@ export type StoredImage = {
  * Custom hook for managing image storage in localStorage.
  * @returns {object} - The image storage methods and error state.
  */
-export const useImageStorage = () => {
+const useImageStorage = () => {
   const [storageError, setStorageError] = useState<string>('');
 
   const estimateSizeInBytes = (str: string) => new Blob([str]).size;
@@ -152,3 +151,5 @@ export const useImageStorage = () => {
     saveImagesToStorage,
   };
 };
+
+export default useImageStorage;

@@ -11,9 +11,10 @@ import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import LinkIcon from '@mui/icons-material/Link';
 import { useImageStorage } from '../../../../utils/useImageStorage/useImageStorage';
 import FileUploader from '../../FileUploader/FileUploader';
+import { ALLOWED_TYPES, MAX_SIZE_MB } from '../../../../utils/constants';
 
 export type AddBackgroundEffectLayoutProps = {
-  customBackgroundImageChange: (param1: string) => void;
+  customBackgroundImageChange: (dataUrl: string) => void;
 };
 
 /**
@@ -27,12 +28,9 @@ export type AddBackgroundEffectLayoutProps = {
 const AddBackgroundEffectLayout = ({
   customBackgroundImageChange,
 }: AddBackgroundEffectLayoutProps): ReactElement => {
-  const MAX_SIZE_MB = 2;
-  const ALLOWED_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
-
-  const [fileError, setFileError] = useState('');
-  const [imageLink, setImageLink] = useState('');
-  const [linkLoading, setLinkLoading] = useState(false);
+  const [fileError, setFileError] = useState<string>('');
+  const [imageLink, setImageLink] = useState<string>('');
+  const [linkLoading, setLinkLoading] = useState<boolean>(false);
   const { storageError, handleImageFromFile, handleImageFromLink } = useImageStorage();
 
   type HandleFileChangeType = ChangeEvent<HTMLInputElement> | { target: { files: FileList } };

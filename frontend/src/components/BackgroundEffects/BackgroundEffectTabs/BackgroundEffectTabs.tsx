@@ -27,6 +27,20 @@ export const cleanBackgroundReplacementIfSelectedAndDeleted = (
   }
 };
 
+/**
+ * BackgroundEffectTabs Component
+ *
+ * This component manages the tabs for background effects, including selecting existing backgrounds
+ * and adding new ones.
+ * @param {BackgroundEffectTabsProps} props - The props for the component.
+ *   @property {number} tabSelected - The currently selected tab index.
+ *   @property {Function} setTabSelected - Function to set the selected tab index.
+ *   @property {string} backgroundSelected - The currently selected background option.
+ *   @property {Function} setBackgroundSelected - Function to set the selected background option.
+ *   @property {Function} cleanBackgroundReplacementIfSelectedAndDeletedFunction - Function to clean up background replacement if deleted.
+ *   @property {Function} customBackgroundImageChange - Callback function to handle background image change.
+ * @returns {ReactElement} The background effect tabs component.
+ */
 const BackgroundEffectTabs = ({
   tabSelected,
   setTabSelected,

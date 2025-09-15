@@ -15,7 +15,7 @@ vi.mock('../../../../utils/useImageStorage/useImageStorage', () => ({
 }));
 
 describe('AddBackgroundEffectLayout', () => {
-  it('should render without crashing', () => {
+  it('should render', () => {
     render(<AddBackgroundEffectLayout customBackgroundImageChange={vi.fn()} />);
     expect(screen.getByText(/Drag and Drop, or click here to upload Image/i)).toBeInTheDocument();
     expect(screen.getByPlaceholderText(/Link from the web/i)).toBeInTheDocument();
@@ -41,7 +41,7 @@ describe('AddBackgroundEffectLayout', () => {
     expect(await screen.findByText(/Image must be less than 2MB/i)).toBeInTheDocument();
   });
 
-  it('calls customBackgroundImageChange on valid file upload', async () => {
+  it('handles valid image file upload', async () => {
     const cb = vi.fn();
     render(<AddBackgroundEffectLayout customBackgroundImageChange={cb} />);
     const input = screen.getByLabelText(/upload/i);
@@ -50,7 +50,7 @@ describe('AddBackgroundEffectLayout', () => {
     await waitFor(() => expect(cb).toHaveBeenCalledWith('data:image/png;base64,MOCKED'));
   });
 
-  it('calls customBackgroundImageChange on valid link submit', async () => {
+  it('handles valid link submit', async () => {
     const cb = vi.fn();
     render(<AddBackgroundEffectLayout customBackgroundImageChange={cb} />);
     const input = screen.getByPlaceholderText(/Link from the web/i);

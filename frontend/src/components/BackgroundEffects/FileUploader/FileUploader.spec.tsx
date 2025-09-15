@@ -10,7 +10,7 @@ describe('FileUploader', () => {
     expect(screen.getByTestId('file-upload-drop-area')).toBeInTheDocument();
   });
 
-  it('calls handleFileChange on file input change', () => {
+  it('handles file input change', () => {
     const handleFileChange = vi.fn();
     render(<FileUploader handleFileChange={handleFileChange} />);
     const input = screen.getByTestId('file-upload-input');
@@ -19,7 +19,7 @@ describe('FileUploader', () => {
     expect(handleFileChange).toHaveBeenCalled();
   });
 
-  it('calls handleFileChange on drop', () => {
+  it('handles file drop event', () => {
     const handleFileChange = vi.fn();
     render(<FileUploader handleFileChange={handleFileChange} />);
     const box = screen.getByTestId('file-upload-drop-area');

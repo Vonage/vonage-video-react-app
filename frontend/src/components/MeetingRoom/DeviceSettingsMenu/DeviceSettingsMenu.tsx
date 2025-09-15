@@ -55,6 +55,11 @@ const DeviceSettingsMenu = ({
   const theme = useTheme();
   const customLightBlueColor = 'rgb(138, 180, 248)';
 
+  const handleToggleBackgroundEffects = () => {
+    toggleBackgroundEffects();
+    handleToggle();
+  };
+
   useDropdownResizeObserver({ setIsOpen, dropDownRefElement: anchorRef.current });
 
   const renderSettingsMenu = () => {
@@ -74,12 +79,7 @@ const DeviceSettingsMenu = ({
         {hasMediaProcessorSupport() && (
           <>
             <DropdownSeparator />
-            <VideoDevicesOptions
-              toggleBackgroundEffects={() => {
-                toggleBackgroundEffects();
-                handleToggle();
-              }}
-            />
+            <VideoDevicesOptions toggleBackgroundEffects={handleToggleBackgroundEffects} />
           </>
         )}
       </>
