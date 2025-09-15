@@ -1,6 +1,6 @@
 import { act, renderHook, waitFor } from '@testing-library/react';
 import { vi, describe, it, expect, beforeEach } from 'vitest';
-import { useImageStorage, StoredImage } from './useImageStorage';
+import useImageStorage, { StoredImage } from './useImageStorage';
 import { STORAGE_KEYS } from '../storage';
 
 const mockStorage: Record<string, string> = {};

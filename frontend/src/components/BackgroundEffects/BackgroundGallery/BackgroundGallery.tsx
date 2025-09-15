@@ -3,7 +3,7 @@ import { Box, IconButton, Tooltip } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { BACKGROUNDS_PATH } from '../../../utils/constants';
 import SelectableOption from '../SelectableOption';
-import { StoredImage, useImageStorage } from '../../../utils/useImageStorage/useImageStorage';
+import useImageStorage, { StoredImage } from '../../../utils/useImageStorage/useImageStorage';
 
 export const backgrounds = [
   { id: 'bg1', file: 'bookshelf-room.jpg', name: 'Bookshelf Room' },

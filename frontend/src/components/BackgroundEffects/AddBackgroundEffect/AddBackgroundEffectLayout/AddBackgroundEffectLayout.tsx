@@ -9,9 +9,9 @@ import {
 import { ChangeEvent, ReactElement, useState } from 'react';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import LinkIcon from '@mui/icons-material/Link';
-import { useImageStorage } from '../../../../utils/useImageStorage/useImageStorage';
 import FileUploader from '../../FileUploader/FileUploader';
 import { ALLOWED_TYPES, MAX_SIZE_MB } from '../../../../utils/constants';
+import useImageStorage from '../../../../utils/useImageStorage/useImageStorage';
 
 export type AddBackgroundEffectLayoutProps = {
   customBackgroundImageChange: (dataUrl: string) => void;
