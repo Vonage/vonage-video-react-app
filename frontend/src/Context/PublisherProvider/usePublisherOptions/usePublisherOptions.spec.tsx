@@ -191,6 +191,20 @@ describe('usePublisherOptions', () => {
       });
     });
   });
+
+  it('should disable audio and video from storage options', async () => {
+    vi.spyOn(OT, 'hasMediaProcessorSupport').mockReturnValue(true);
+    setStorageItem(STORAGE_KEYS.AUDIO_SOURCE_ENABLED, 'false');
+    setStorageItem(STORAGE_KEYS.VIDEO_SOURCE_ENABLED, 'true');
+
+    await deviceStore.init();
+    vi.mocked(useUserContext).mockImplementation(() => mockUserContextWithCustomSettings);
+    const { result } = renderHook(() => usePublisherOptions());
+    await waitFor(() => {
+      expect(result.current?.publishAudio).toBe(false);
+      expect(result.current?.publishVideo).toBe(true);
+    });
+  });
 });
 
 function renderHook<Result, Props>(
