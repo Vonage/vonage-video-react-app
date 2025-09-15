@@ -134,11 +134,15 @@ const usePublisher = (): PublisherContextType => {
         publisher: publisherRef.current,
         backgroundSelected,
         setUser,
+        setBackgroundFilter: undefined,
+        storeItem: true,
+        isVideoEnabled,
+        isAudioEnabled,
       }).catch(() => {
         console.error('Failed to apply background filter.');
       });
     },
-    [setUser]
+    [setUser, isVideoEnabled, isAudioEnabled]
   );
 
   const handleStreamCreated = (e: PublisherStreamCreatedEvent) => {
