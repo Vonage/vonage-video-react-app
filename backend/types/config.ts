@@ -4,7 +4,7 @@ export type FeedbackConfig = {
   token?: string;
   key?: string;
   componentId?: string;
-  iOScomponentId?: string;
+  iOSComponentId?: string;
   androidComponentId?: string;
   epicLink?: string;
   epicUrl?: string;

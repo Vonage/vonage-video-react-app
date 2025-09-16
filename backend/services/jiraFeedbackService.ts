@@ -23,7 +23,7 @@ class JiraFeedbackService implements FeedbackService {
     this.jiraToken = this.config.token as string;
     this.jiraKey = this.config.key as string;
     this.jiraComponentId = this.config.componentId as string;
-    this.jiraiOSComponentId = this.config.iOScomponentId as string;
+    this.jiraiOSComponentId = this.config.iOSComponentId as string;
     this.jiraAndroidComponentId = this.config.androidComponentId as string;
     this.jiraUrl = this.config.url as string;
     this.jiraEpicUrl = this.config.epicUrl as string;
