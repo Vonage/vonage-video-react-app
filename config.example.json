@@ -1,9 +1,20 @@
 {
   "videoSettings": {
+    "backgroundEffects": true,
     "enableDisableCapableCamera": true,
     "resolution": "1280x720",
-    "videoOnJoin": true,
-    "backgroundEffects": true
+    "videoOnJoin": true
   },
-  "layoutMode": "active-speaker"
+  "audioSettings": {
+    "advancedNoiseSuppression": true,
+    "audioOnJoin": true,
+    "enableDisableCapableMicrophone": true
+  },
+  "waitingRoomSettings": {
+    "allowDeviceSelection": true
+  },
+  "meetingRoomSettings": {
+    "layoutMode": "active-speaker",
+    "showParticipantList": true
+  }
 }
