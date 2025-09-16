@@ -14,7 +14,6 @@ import { PUBLISHING_BLOCKED_CAPTION } from '../../../utils/constants';
 import getAccessDeniedError, {
   PublishingErrorType,
 } from '../../../utils/getAccessDeniedError/getAccessDeniedError';
-import useUserContext from '../../../hooks/useUserContext';
 import applyBackgroundFilter from '../../../utils/backgroundFilter/applyBackgroundFilter/applyBackgroundFilter';
 
 type PublisherStreamCreatedEvent = Event<'streamCreated', Publisher> & {
@@ -73,7 +72,6 @@ export type PublisherContextType = {
  * @returns {PublisherContextType} the publisher context
  */
 const usePublisher = (): PublisherContextType => {
-  const { setUser } = useUserContext();
   const [publisherVideoElement, setPublisherVideoElement] = useState<
     HTMLVideoElement | HTMLObjectElement
   >();
@@ -128,18 +126,17 @@ const usePublisher = (): PublisherContextType => {
    * @param {string} backgroundSelected - The selected background option
    * @returns {void}
    */
-  const changeBackground = useCallback(
-    (backgroundSelected: string) => {
-      applyBackgroundFilter({
-        publisher: publisherRef.current,
-        backgroundSelected,
-        setUser,
-      }).catch(() => {
-        console.error('Failed to apply background filter.');
-      });
-    },
-    [setUser]
-  );
+  const changeBackground = useCallback((backgroundSelected: string) => {
+    applyBackgroundFilter({
+      publisher: publisherRef.current,
+      backgroundSelected,
+      setUser: undefined,
+      setBackgroundFilter: undefined,
+      storeItem: true,
+    }).catch(() => {
+      console.error('Failed to apply background filter.');
+    });
+  }, []);
 
   const handleStreamCreated = (e: PublisherStreamCreatedEvent) => {
     setIsPublishing(true);
