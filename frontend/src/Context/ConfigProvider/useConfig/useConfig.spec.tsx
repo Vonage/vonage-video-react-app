@@ -42,7 +42,10 @@ describe('useConfig', () => {
         waitingRoomSettings: {
           allowDeviceSelection: true,
         },
-        layoutMode: 'active-speaker',
+        meetingRoomSettings: {
+          layoutMode: 'active-speaker',
+          showParticipantList: true,
+        },
       });
     });
   });
@@ -60,7 +63,13 @@ describe('useConfig', () => {
         audioOnJoin: false,
         enableDisableCapableMicrophone: false,
       },
-      layoutMode: 'grid',
+      waitingRoomSettings: {
+        allowDeviceSelection: false,
+      },
+      meetingRoomSettings: {
+        layoutMode: 'grid',
+        showParticipantList: false,
+      },
     };
     global.fetch = vi.fn().mockResolvedValue({
       json: async () => mockConfig,
@@ -89,7 +98,6 @@ describe('useConfig', () => {
           audioOnJoin: true,
           enableDisableCapableMicrophone: true,
         },
-        layoutMode: 'active-speaker',
       });
     });
   });

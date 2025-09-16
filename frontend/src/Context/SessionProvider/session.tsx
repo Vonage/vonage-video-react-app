@@ -134,7 +134,7 @@ const SessionProvider = ({ children }: SessionProviderProps): ReactElement => {
   const [reconnecting, setReconnecting] = useState(false);
   const [subscriberWrappers, setSubscriberWrappers] = useState<SubscriberWrapper[]>([]);
   const [ownCaptions, setOwnCaptions] = useState<string | null>(null);
-  const [layoutMode, setLayoutMode] = useState<LayoutMode>(config.layoutMode);
+  const [layoutMode, setLayoutMode] = useState<LayoutMode>(config.meetingRoomSettings.layoutMode);
   const [archiveId, setArchiveId] = useState<string | null>(null);
   const activeSpeakerTracker = useRef<ActiveSpeakerTracker>(new ActiveSpeakerTracker());
   const [activeSpeakerId, setActiveSpeakerId] = useState<string | undefined>();

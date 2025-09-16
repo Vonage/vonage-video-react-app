@@ -18,11 +18,16 @@ export type WaitingRoomSettings = {
   allowDeviceSelection: boolean;
 };
 
+export type MeetingRoomSettings = {
+  layoutMode: LayoutMode;
+  showParticipantList: boolean;
+};
+
 export type AppConfig = {
   videoSettings: VideoSettings;
   audioSettings: AudioSettings;
   waitingRoomSettings: WaitingRoomSettings;
-  layoutMode: LayoutMode;
+  meetingRoomSettings: MeetingRoomSettings;
 };
 
 export const defaultConfig: AppConfig = {
@@ -40,7 +45,10 @@ export const defaultConfig: AppConfig = {
   waitingRoomSettings: {
     allowDeviceSelection: true,
   },
-  layoutMode: 'active-speaker',
+  meetingRoomSettings: {
+    layoutMode: 'active-speaker',
+    showParticipantList: true,
+  },
 };
 
 /**
@@ -76,6 +84,18 @@ const useConfig = (): AppConfig => {
       videoSettings: {
         ...defaultConfig.videoSettings,
         ...(typedConfigFile.videoSettings || {}),
+      },
+      audioSettings: {
+        ...defaultConfig.audioSettings,
+        ...(typedConfigFile.audioSettings || {}),
+      },
+      waitingRoomSettings: {
+        ...defaultConfig.waitingRoomSettings,
+        ...(typedConfigFile.waitingRoomSettings || {}),
+      },
+      meetingRoomSettings: {
+        ...defaultConfig.meetingRoomSettings,
+        ...(typedConfigFile.meetingRoomSettings || {}),
       },
     };
   }, [config]);
