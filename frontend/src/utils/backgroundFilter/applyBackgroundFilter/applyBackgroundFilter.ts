@@ -9,8 +9,6 @@ export type ApplyBackgroundFilterParams = {
   setUser?: (fn: (prev: UserType) => UserType) => void;
   setBackgroundFilter?: (filter: VideoFilter | undefined) => void;
   storeItem?: boolean;
-  isVideoEnabled?: boolean;
-  isAudioEnabled?: boolean;
 };
 
 /**
@@ -21,8 +19,6 @@ export type ApplyBackgroundFilterParams = {
  *    @property {Function} setUser - Optional function to update user state.
  *    @property {Function} setBackgroundFilter - Optional function to set background filter state.
  *    @property {boolean} storeItem - Optional flag to determine if the filter should be stored.
- *    @property {boolean} isVideoEnabled - Optional flag indicating if video is enabled.
- *    @property {boolean} isAudioEnabled - Optional flag indicating if audio is enabled.
  * @returns {Promise<void>} - A promise that resolves when the filter is applied or cleared.
  * @throws {Error} - Throws an error if the publisher is not provided or if the backgroundSelected is invalid.
  */
@@ -32,8 +28,6 @@ const applyBackgroundFilter = async ({
   setUser,
   setBackgroundFilter,
   storeItem = true,
-  isVideoEnabled,
-  isAudioEnabled,
 }: ApplyBackgroundFilterParams): Promise<void> => {
   if (!publisher) {
     return;
@@ -73,8 +67,6 @@ const applyBackgroundFilter = async ({
       defaultSettings: {
         ...prevUser.defaultSettings,
         backgroundFilter: videoFilter,
-        publishVideo: isVideoEnabled ?? prevUser.defaultSettings.publishVideo,
-        publishAudio: isAudioEnabled ?? prevUser.defaultSettings.publishAudio,
       },
     }));
   }

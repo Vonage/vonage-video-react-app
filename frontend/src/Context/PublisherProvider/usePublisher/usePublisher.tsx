@@ -126,22 +126,17 @@ const usePublisher = (): PublisherContextType => {
    * @param {string} backgroundSelected - The selected background option
    * @returns {void}
    */
-  const changeBackground = useCallback(
-    (backgroundSelected: string) => {
-      applyBackgroundFilter({
-        publisher: publisherRef.current,
-        backgroundSelected,
-        setUser: undefined,
-        setBackgroundFilter: undefined,
-        storeItem: true,
-        isVideoEnabled,
-        isAudioEnabled,
-      }).catch(() => {
-        console.error('Failed to apply background filter.');
-      });
-    },
-    [isVideoEnabled, isAudioEnabled]
-  );
+  const changeBackground = useCallback((backgroundSelected: string) => {
+    applyBackgroundFilter({
+      publisher: publisherRef.current,
+      backgroundSelected,
+      setUser: undefined,
+      setBackgroundFilter: undefined,
+      storeItem: true,
+    }).catch(() => {
+      console.error('Failed to apply background filter.');
+    });
+  }, []);
 
   const handleStreamCreated = (e: PublisherStreamCreatedEvent) => {
     setIsPublishing(true);
