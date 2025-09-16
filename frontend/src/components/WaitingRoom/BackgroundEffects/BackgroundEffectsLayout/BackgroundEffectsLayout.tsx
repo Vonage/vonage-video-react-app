@@ -118,7 +118,7 @@ const BackgroundEffectsLayout = ({
           tabSelected={tabSelected}
           setTabSelected={setTabSelected}
           backgroundSelected={backgroundSelected}
-          setBackgroundSelected={setBackgroundSelected}
+          setBackgroundSelected={handleBackgroundSelect}
           cleanBackgroundReplacementIfSelectedAndDeletedFunction={(dataUrl: string) =>
             cleanBackgroundReplacementIfSelectedAndDeleted(
               publisher,
