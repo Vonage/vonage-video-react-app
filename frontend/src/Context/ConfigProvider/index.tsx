@@ -8,9 +8,10 @@ export type ConfigProviderProps = {
 export type ConfigContextType = ReturnType<typeof useConfig>;
 
 export const ConfigContext = createContext<ConfigContextType>({
-  videoSettings: defaultConfig.videoSettings,
-  layoutMode: defaultConfig.layoutMode,
   audioSettings: defaultConfig.audioSettings,
+  meetingRoomSettings: defaultConfig.meetingRoomSettings,
+  waitingRoomSettings: defaultConfig.waitingRoomSettings,
+  videoSettings: defaultConfig.videoSettings,
 });
 
 export const ConfigContextProvider = ({ children }: ConfigProviderProps) => {
