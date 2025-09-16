@@ -166,7 +166,7 @@ const useBackgroundPublisher = (): BackgroundPublisherContextType => {
   );
 
   const initBackgroundLocalPublisher = useCallback(async () => {
-    if (backgroundPublisherRef.current || !defaultPublisherOptions) {
+    if (backgroundPublisherRef.current) {
       return;
     }
 
@@ -185,7 +185,7 @@ const useBackgroundPublisher = (): BackgroundPublisherContextType => {
       resolution: '1280x720',
       videoSource,
       publishAudio: false,
-      publishVideo: defaultPublisherOptions?.publishVideo,
+      publishVideo: isVideoEnabled,
     };
 
     backgroundPublisherRef.current = initPublisher(undefined, publisherOptions, (err: unknown) => {
@@ -197,7 +197,7 @@ const useBackgroundPublisher = (): BackgroundPublisherContextType => {
       }
     });
     addPublisherListeners(backgroundPublisherRef.current);
-  }, [addPublisherListeners, defaultPublisherOptions]);
+  }, [addPublisherListeners, isVideoEnabled]);
 
   /**
    * Destroys the background publisher
