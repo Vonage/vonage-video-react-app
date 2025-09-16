@@ -106,6 +106,7 @@ const BackgroundGallery = ({
         const path = `${BACKGROUNDS_PATH}/${bg.file}`;
         return (
           <SelectableOption
+            key={bg.id}
             title={bg.name}
             id={bg.id}
             isSelected={backgroundSelected === bg.file}
