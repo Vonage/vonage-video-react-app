@@ -24,6 +24,7 @@ describe('ParticipantListItem', () => {
     videoType: 'camera',
     frameRate: 1,
     initials: 'JD',
+    hasCaptions: false,
   };
   const defaultProps: ParticipantListItemProps = {
     audioLevel: 50,
