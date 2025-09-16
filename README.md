@@ -169,39 +169,70 @@ The Vonage Video API Reference App for React is currently supported on the lates
 
 ## Testing on Multiple Devices
 
-To test the video API across multiple devices on your local network, you can use **ngrok** to expose your frontend publicly.
+To test the video API across multiple devices on your local network, you can use **ngrok** to expose your frontend and backend publicly.
 
-1. Create an account at [ngrok](https://dashboard.ngrok.com/signup) if you haven’t already.
+1. Create an account at [ngrok](https://dashboard.ngrok.com/signup) if you haven't already.
 
 2. Follow the [Setup and Installation instructions](https://dashboard.ngrok.com/get-started/setup/) for your operating system to install and configure ngrok.
 
-3. Create a secure tunnel to your frontend using:
+3. **Start the application locally first:**
 
     ``` bash
-    yarn forward:frontend
+    yarn dev
     ```
 
-    This command creates a publicly accessible HTTPS URL for your frontend. It will appear in your terminal, similar to the image below:
+    Make sure both the backend server (port 3345) and frontend dev server (port 5173) are running before proceeding to the next step.
+
+4. Create secure tunnels for both frontend and backend:
+
+    **Set up ngrok configuration:**
+    
+    First, find your ngrok config file location:
+    ``` bash
+    ngrok config check
+    ```
+
+    Create or edit the ngrok configuration file (typically located at `~/Library/Application Support/ngrok/ngrok.yml` on macOS; `~/.config/ngrok/ngrok.yml` on Linux and `%HOMEPATH%\AppData\Local\ngrok\ngrok.yml` on Windows) with the following content:
+
+    ``` yaml
+    version: "2"
+    tunnels:
+      frontend:
+        addr: 5173
+        proto: http
+      backend:
+        addr: 3345
+        proto: http
+    ```
+
+    **Start both tunnels:**
+    ``` bash
+    ngrok start backend frontend
+    ```
+
+    This command will create publicly accessible HTTPS URLs for both your frontend and backend. The output will appear in your terminal, similar to the image below:
 
     <details close>
     <summary>ngrok output example</summary>
-    <img src="./docs/assets/readme/4-forwarding front-end.png" alt="ngrok tunnel example" style="max-width: 100%; height: auto;" />
+    <img src="./docs/assets/readme/4-forwarding.png" alt="ngrok tunnel example" style="max-width: 100%; height: auto;" />
     </details>
 
     </br>
 
-4. Copy the domain from the output and update your **frontend/.env** file:
+5. Copy the domains from both outputs and update your **frontend/.env** file:
 
     ``` ini
-    # example
-    VITE_TUNNEL_DOMAIN=GENERIC_DOMAIN
+    # Frontend tunnel domain
+    VITE_TUNNEL_DOMAIN=your-frontend-domain.ngrok.io
+    # Backend tunnel domain  
+    VITE_API_URL=https://your-backend-domain.ngrok.io
     ```
 
-    **Note:** ngrok assigns a temporary domain. You’ll need to update your environment variable each time the domain changes.
+    **Note:** ngrok assigns temporary domains. You'll need to update your environment variables each time the domains change.
 
   </br>
 
-5. Open the provided **Forwarding** URL in your browser. This exposes your Vite app publicly. However, keep in mind that the backend server is still local, so the devices accessing the app must be on the same local network.
+6. Open the provided frontend **Forwarding** URL in your browser. This exposes your entire application publicly, allowing devices on any network to access it.
 
 </br>
 
