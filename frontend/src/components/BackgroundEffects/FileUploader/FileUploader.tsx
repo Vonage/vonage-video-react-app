@@ -68,7 +68,7 @@ const FileUploader = ({ handleFileChange }: FileUploaderProps): ReactElement => 
         <>
           <CloudUploadIcon sx={{ fontSize: 50, color: '#989A9D' }} />
           <Typography mt={1}>
-            Drag and Drop, or click here to upload Image,
+            Drag and drop, or click here to upload image,
             <br />
             Max 2MB
           </Typography>

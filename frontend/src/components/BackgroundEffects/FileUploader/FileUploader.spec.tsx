@@ -5,7 +5,7 @@ import FileUploader from './FileUploader';
 describe('FileUploader', () => {
   it('renders upload UI', () => {
     render(<FileUploader handleFileChange={vi.fn()} />);
-    expect(screen.getByText(/Drag and Drop, or click here to upload Image/i)).toBeInTheDocument();
+    expect(screen.getByText(/Drag and drop, or click here to upload image/i)).toBeInTheDocument();
     expect(screen.getByTestId('file-upload-input')).toBeInTheDocument();
     expect(screen.getByTestId('file-upload-drop-area')).toBeInTheDocument();
   });

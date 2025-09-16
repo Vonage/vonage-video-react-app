@@ -37,10 +37,12 @@ describe('BackgroundEffects (Waiting Room)', () => {
     expect(screen.getByTestId('background-video-container')).toBeInTheDocument();
     expect(screen.getByTestId('background-none')).toBeInTheDocument();
     expect(screen.getByTestId('background-bg1')).toBeInTheDocument();
-    expect(screen.getAllByText(/Backgrounds/i)[0]).toBeInTheDocument();
-    expect(screen.getAllByText(/Add background/i)[0]).toBeInTheDocument();
     expect(screen.getByRole('button', { name: /Cancel/i })).toBeInTheDocument();
     expect(screen.getByRole('button', { name: /Apply/i })).toBeInTheDocument();
+
+    // Checking that BackgroundEffectTabs (Backgrounds and Add Background tabs) are rendered
+    expect(screen.getAllByText(/Backgrounds/i)[0]).toBeInTheDocument();
+    expect(screen.getAllByText(/Add background/i)[0]).toBeInTheDocument();
   });
 
   it('does not render when closed', () => {

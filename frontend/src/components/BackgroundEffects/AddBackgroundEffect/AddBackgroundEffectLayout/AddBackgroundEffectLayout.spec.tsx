@@ -18,7 +18,7 @@ vi.mock('../../../../utils/useImageStorage/useImageStorage', () => ({
 describe('AddBackgroundEffectLayout', () => {
   it('should render', () => {
     render(<AddBackgroundEffectLayout customBackgroundImageChange={vi.fn()} />);
-    expect(screen.getByText(/Drag and Drop, or click here to upload Image/i)).toBeInTheDocument();
+    expect(screen.getByText(/Drag and drop, or click here to upload image/i)).toBeInTheDocument();
     expect(screen.getByPlaceholderText(/Link from the web/i)).toBeInTheDocument();
     expect(screen.getByTestId('background-effect-link-submit-button')).toBeInTheDocument();
   });

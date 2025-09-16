@@ -1,5 +1,6 @@
 import { Box, Tabs, Tab } from '@mui/material';
 import { Publisher } from '@vonage/client-sdk-video';
+import { ReactElement } from 'react';
 import EffectOptionButtons from '../EffectOptionButtons/EffectOptionButtons';
 import BackgroundGallery from '../BackgroundGallery/BackgroundGallery';
 import AddBackgroundEffectLayout from '../AddBackgroundEffect/AddBackgroundEffectLayout/AddBackgroundEffectLayout';
@@ -48,7 +49,7 @@ const BackgroundEffectTabs = ({
   setBackgroundSelected,
   cleanBackgroundReplacementIfSelectedAndDeletedFunction,
   customBackgroundImageChange,
-}: BackgroundEffectTabsProps) => {
+}: BackgroundEffectTabsProps): ReactElement => {
   const handleBackgroundSelect = (value: string) => {
     setBackgroundSelected(value);
   };

@@ -147,7 +147,7 @@ export const MAX_SIZE_MB = 2;
  * @constant {string[]} ALLOWED_TYPES - An array of allowed MIME types for image uploads.
  * Used to validate image uploads in components like AddBackgroundEffectLayout.
  */
-export const ALLOWED_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
+export const ALLOWED_TYPES = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
 
 /**
  * @constant {number} MAX_LOCAL_STORAGE_BYTES - The maximum size (in bytes) for storing images in localStorage.

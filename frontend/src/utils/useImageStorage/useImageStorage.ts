@@ -14,8 +14,13 @@ export type StoredImage = {
 const useImageStorage = () => {
   const [storageError, setStorageError] = useState<string>('');
 
+  // Estimate size of a string in bytes
   const estimateSizeInBytes = (str: string) => new Blob([str]).size;
 
+  /**
+   * Retrieves stored images from localStorage.
+   * @returns {StoredImage[]} An array of stored images.
+   */
   const getImagesFromStorage = useCallback((): StoredImage[] => {
     const stored = getStorageItem(STORAGE_KEYS.BACKGROUND_IMAGE);
     if (!stored) {
@@ -28,6 +33,11 @@ const useImageStorage = () => {
     }
   }, []);
 
+  /**
+   * Saves an array of images to localStorage.
+   * @param {StoredImage[]} images - The array of images to save.
+   * @returns {boolean} True if save was successful, false otherwise.
+   */
   const saveImagesToStorage = (images: StoredImage[]): boolean => {
     try {
       const totalSize = images.reduce((acc, img) => acc + estimateSizeInBytes(img.dataUrl), 0);
@@ -44,6 +54,11 @@ const useImageStorage = () => {
     }
   };
 
+  /**
+   * Adds an image to storage.
+   * @param {string} dataUrl - The data URL of the image to add.
+   * @returns {StoredImage | null} The added image object, or null if duplicate or error.
+   */
   const addImageToStorage = (dataUrl: string): StoredImage | null => {
     const images = getImagesFromStorage();
 
@@ -77,6 +92,11 @@ const useImageStorage = () => {
     saveImagesToStorage(images);
   };
 
+  /**
+   * Reads an image file and adds it to storage as a data URL.
+   * @param {File} file - The image file to store.
+   * @returns {Promise<StoredImage | null>} Resolves with the stored image object, or null if duplicate or error.
+   */
   const handleImageFromFile = (file: File): Promise<StoredImage | null> => {
     return new Promise((resolve, reject) => {
       const reader = new FileReader();
@@ -97,6 +117,11 @@ const useImageStorage = () => {
     });
   };
 
+  /**
+   * Loads an image from a URL, converts it to a data URL, and adds it to storage.
+   * @param {string} url - The image URL to fetch and store.
+   * @returns {Promise<StoredImage | null>} Resolves with the stored image object, or rejects on error.
+   */
   const handleImageFromLink = (url: string): Promise<StoredImage | null> => {
     return new Promise((resolve, reject) => {
       try {

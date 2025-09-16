@@ -63,4 +63,25 @@ describe('getInitialBackgroundFilter', () => {
     } as unknown as Publisher;
     expect(getInitialBackgroundFilter(mockPublisher)).toBe('none');
   });
+
+  it('returns dataUrl if filter is backgroundReplacement with a dataUrl', () => {
+    const dataUrl = 'data:image/png;base64,somebase64data';
+    const mockPublisher = {
+      getVideoFilter: () => ({
+        type: 'backgroundReplacement',
+        backgroundImgUrl: dataUrl,
+      }),
+    } as unknown as Publisher;
+    expect(getInitialBackgroundFilter(mockPublisher)).toBe(dataUrl);
+  });
+
+  it('returns "none" if filter is backgroundReplacement and backgroundImgUrl is undefined', () => {
+    const mockPublisher = {
+      getVideoFilter: () => ({
+        type: 'backgroundReplacement',
+        backgroundImgUrl: undefined,
+      }),
+    } as unknown as Publisher;
+    expect(getInitialBackgroundFilter(mockPublisher)).toBe('none');
+  });
 });

@@ -5,7 +5,7 @@ import SelectableOption from '../SelectableOption';
 
 const options = [
   { key: 'none', icon: <BlockIcon sx={{ fontSize: '30px' }} />, name: 'Remove background' },
-  { key: 'low-blur', icon: <BlurOnIcon />, name: 'Slightly background blur' },
+  { key: 'low-blur', icon: <BlurOnIcon />, name: 'Slight background blur' },
   {
     key: 'high-blur',
     icon: <BlurOnIcon sx={{ fontSize: '30px' }} />,
