@@ -3,7 +3,7 @@ import FormData from 'form-data';
 import { FeedbackService } from './feedbackService';
 import loadConfig from '../helpers/config';
 import { Config } from '../types/config';
-import { FeedbackData, ReportIssueReturn } from '../types/feedback';
+import { FeedbackData, FeedbackOrigin, ReportIssueReturn } from '../types/feedback';
 
 class JiraFeedbackService implements FeedbackService {
   jiraApiUrl: string;
@@ -11,6 +11,8 @@ class JiraFeedbackService implements FeedbackService {
   jiraToken: string;
   jiraKey: string;
   jiraComponentId: string;
+  jiraiOSComponentId: string;
+  jiraAndroidComponentId: string;
   jiraEpicUrl: string;
   jiraEpicLink: string;
   config: Config;
@@ -21,6 +23,8 @@ class JiraFeedbackService implements FeedbackService {
     this.jiraToken = this.config.token as string;
     this.jiraKey = this.config.key as string;
     this.jiraComponentId = this.config.componentId as string;
+    this.jiraiOSComponentId = this.config.iOSComponentId as string;
+    this.jiraAndroidComponentId = this.config.androidComponentId as string;
     this.jiraUrl = this.config.url as string;
     this.jiraEpicUrl = this.config.epicUrl as string;
     this.jiraEpicLink = this.config.epicLink as string;
@@ -39,7 +43,7 @@ class JiraFeedbackService implements FeedbackService {
         },
         components: [
           {
-            id: this.jiraComponentId,
+            id: this.getComponentIdByOrigin(data.origin),
           },
         ],
         [this.jiraEpicLink]: this.jiraEpicUrl,
@@ -94,6 +98,18 @@ class JiraFeedbackService implements FeedbackService {
       ...ticketData,
       screenshotIncluded: true,
     };
+  }
+
+  private getComponentIdByOrigin(origin: FeedbackOrigin): string {
+    switch (origin) {
+      case FeedbackOrigin.iOS:
+        return this.jiraiOSComponentId;
+      case FeedbackOrigin.Android:
+        return this.jiraAndroidComponentId;
+      case FeedbackOrigin.Web:
+      default:
+        return this.jiraComponentId;
+    }
   }
 }
 export default JiraFeedbackService;
