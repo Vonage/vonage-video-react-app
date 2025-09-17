@@ -58,7 +58,7 @@ vi.mock('../../hooks/useConfigContext', () => {
   return {
     default: () => ({
       videoSettings: {
-        enableDisableCapableCamera: true,
+        allowCameraControl: true,
       },
       audioSettings: {
         enableDisableCapableMicrophone: true,

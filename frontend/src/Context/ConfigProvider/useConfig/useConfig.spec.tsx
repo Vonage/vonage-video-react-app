@@ -6,10 +6,10 @@ describe('useConfig', () => {
   let nativeFetch: typeof global.fetch;
   const defaultConfig: AppConfig = {
     videoSettings: {
-      enableDisableCapableCamera: true,
-      resolution: '1280x720',
-      videoOnJoin: true,
-      backgroundEffects: true,
+      allowCameraControl: true,
+      defaultResolution: '1280x720',
+      allowVideoOnJoin: true,
+      allowBackgroundEffects: true,
     },
     audioSettings: {
       advancedNoiseSuppression: true,
@@ -59,10 +59,10 @@ describe('useConfig', () => {
   it('merges config.json values if loaded (mocked fetch)', async () => {
     const mockConfig: AppConfig = {
       videoSettings: {
-        enableDisableCapableCamera: false,
-        resolution: '640x480',
-        videoOnJoin: false,
-        backgroundEffects: false,
+        allowCameraControl: false,
+        defaultResolution: '640x480',
+        allowVideoOnJoin: false,
+        allowBackgroundEffects: false,
       },
       audioSettings: {
         advancedNoiseSuppression: false,

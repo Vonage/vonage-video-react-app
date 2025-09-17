@@ -40,8 +40,8 @@ const DeviceControlButton = ({
   const audioTitle = isAudioEnabled ? 'Disable microphone' : 'Enable microphone';
   const videoTitle = isVideoEnabled ? 'Disable video' : 'Enable video';
   const { enableDisableCapableMicrophone } = config.audioSettings;
-  const { enableDisableCapableCamera } = config.videoSettings;
-  const isButtonDisabled = isAudio ? !enableDisableCapableMicrophone : !enableDisableCapableCamera;
+  const { allowCameraControl } = config.videoSettings;
+  const isButtonDisabled = isAudio ? !enableDisableCapableMicrophone : !allowCameraControl;
   let tooltipTitle: string;
   if (isAudio) {
     if (!enableDisableCapableMicrophone) {
@@ -49,7 +49,7 @@ const DeviceControlButton = ({
     } else {
       tooltipTitle = audioTitle;
     }
-  } else if (!enableDisableCapableCamera) {
+  } else if (!allowCameraControl) {
     tooltipTitle = 'Camera control is disabled in this application';
   } else {
     tooltipTitle = videoTitle;
@@ -77,7 +77,7 @@ const DeviceControlButton = ({
       return <MicOff data-testid="MicOffToolbar" className="text-red-600" />;
     }
 
-    if (!enableDisableCapableCamera) {
+    if (!allowCameraControl) {
       return <VideocamIcon className="text-gray-400" />;
     }
     if (isVideoEnabled) {

@@ -71,7 +71,7 @@ describe('DeviceControlButton', () => {
         enableDisableCapableMicrophone: true,
       },
       videoSettings: {
-        enableDisableCapableCamera: true,
+        allowCameraControl: true,
       },
     } as unknown as ConfigContextType;
     mockUseConfigContext.mockReturnValue(configContext);
@@ -161,7 +161,7 @@ describe('DeviceControlButton', () => {
     });
 
     it('is not rendered when it is configured to be disabled', async () => {
-      configContext.videoSettings.enableDisableCapableCamera = false;
+      configContext.videoSettings.allowCameraControl = false;
       render(
         <DeviceControlButton
           deviceType="video"

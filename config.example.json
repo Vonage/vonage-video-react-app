@@ -1,9 +1,9 @@
 {
   "videoSettings": {
-    "backgroundEffects": true,
-    "enableDisableCapableCamera": true,
-    "resolution": "1280x720",
-    "videoOnJoin": true
+    "allowBackgroundEffects": true,
+    "allowCameraControl": true,
+    "allowVideoOnJoin": true,
+    "defaultResolution": "1280x720"
   },
   "audioSettings": {
     "advancedNoiseSuppression": true,

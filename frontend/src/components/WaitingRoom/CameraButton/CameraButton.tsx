@@ -18,7 +18,7 @@ const CameraButton = (): ReactElement | false => {
   const { toggleVideo: toggleBackgroundVideoPublisher } = useBackgroundPublisherContext();
   const config = useConfigContext();
   const title = `Turn ${isVideoEnabled ? 'off' : 'on'} camera`;
-  const canEnableOrDisableCamera = config.videoSettings.enableDisableCapableCamera;
+  const { allowCameraControl } = config.videoSettings;
 
   const handleToggleVideo = () => {
     toggleVideo();
@@ -26,7 +26,7 @@ const CameraButton = (): ReactElement | false => {
   };
 
   return (
-    canEnableOrDisableCamera && (
+    allowCameraControl && (
       <Box
         sx={{
           display: 'flex',

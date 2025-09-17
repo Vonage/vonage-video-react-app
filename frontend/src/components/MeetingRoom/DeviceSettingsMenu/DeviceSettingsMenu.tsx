@@ -73,7 +73,7 @@ const DeviceSettingsMenu = ({
     return (
       <>
         <VideoDevices handleToggle={handleToggle} customLightBlueColor={customLightBlueColor} />
-        {hasMediaProcessorSupport() && config.videoSettings.backgroundEffects && (
+        {hasMediaProcessorSupport() && config.videoSettings.allowBackgroundEffects && (
           <>
             <DropdownSeparator />
             <VideoDevicesOptions toggleBackgroundEffects={toggleBackgroundEffects} />

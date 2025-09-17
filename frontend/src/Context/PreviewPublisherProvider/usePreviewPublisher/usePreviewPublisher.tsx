@@ -242,7 +242,7 @@ const usePreviewPublisher = (): PreviewPublisherContextType => {
     const publisherOptions: PublisherProperties = {
       insertDefaultUI: false,
       videoFilter,
-      resolution: config.videoSettings.resolution,
+      resolution: config.videoSettings.defaultResolution,
       audioSource,
       videoSource,
     };
@@ -256,7 +256,7 @@ const usePreviewPublisher = (): PreviewPublisherContextType => {
       }
     });
     addPublisherListeners(publisherRef.current);
-  }, [addPublisherListeners, config.videoSettings.resolution]);
+  }, [addPublisherListeners, config.videoSettings.defaultResolution]);
 
   /**
    * Destroys the preview publisher

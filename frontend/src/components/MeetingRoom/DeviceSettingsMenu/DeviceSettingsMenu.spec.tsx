@@ -90,10 +90,10 @@ describe('DeviceSettingsMenu Component', () => {
     mockedHasMediaProcessorSupport.mockReturnValue(false);
     configContext = {
       audioSettings: {
-        enableDisableCapableCamera: true,
+        allowCameraControl: true,
       },
       videoSettings: {
-        backgroundEffects: true,
+        allowBackgroundEffects: true,
       },
     } as unknown as ConfigContextType;
     mockUseConfigContext.mockReturnValue(configContext);
@@ -369,7 +369,7 @@ describe('DeviceSettingsMenu Component', () => {
     it('does not render the dropdown separator and background effects option when the config has disabled background effects', async () => {
       configContext = {
         videoSettings: {
-          backgroundEffects: false,
+          allowBackgroundEffects: false,
         },
       } as unknown as ConfigContextType;
       mockUseConfigContext.mockReturnValue(configContext);

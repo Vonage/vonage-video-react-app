@@ -76,8 +76,8 @@ describe('usePublisherOptions', () => {
         audioOnJoin: true,
       },
       videoSettings: {
-        resolution: '1280x720',
-        videoOnJoin: true,
+        defaultResolution: '1280x720',
+        allowVideoOnJoin: true,
       },
     } as unknown as ConfigContextType;
     mockUseConfigContext.mockReturnValue(configContext);
@@ -93,7 +93,7 @@ describe('usePublisherOptions', () => {
     const { result } = renderHook(() => usePublisherOptions());
     await waitFor(() => {
       expect(result.current).toEqual({
-        resolution: '1280x720',
+        defaultResolution: '1280x720',
         publishAudio: false,
         publishVideo: false,
         audioSource: undefined,
@@ -136,7 +136,7 @@ describe('usePublisherOptions', () => {
     const { result } = renderHook(() => usePublisherOptions());
     await waitFor(() => {
       expect(result.current).toEqual({
-        resolution: '1280x720',
+        defaultResolution: '1280x720',
         publishAudio: true,
         publishVideo: true,
         audioSource: '68f1d1e6f11c629b1febe51a95f8f740f8ac5cd3d4c91419bd2b52bb1a9a01cd',
@@ -167,7 +167,7 @@ describe('usePublisherOptions', () => {
     });
 
     it('should disable video publishing', async () => {
-      configContext.videoSettings.videoOnJoin = false;
+      configContext.videoSettings.allowVideoOnJoin = false;
       const { result } = renderHook(() => usePublisherOptions());
       await waitFor(() => {
         expect(result.current?.publishVideo).toBe(false);
@@ -175,10 +175,10 @@ describe('usePublisherOptions', () => {
     });
 
     it('should configure resolution from config', async () => {
-      configContext.videoSettings.resolution = '640x480';
+      configContext.videoSettings.defaultResolution = '640x480';
       const { result } = renderHook(() => usePublisherOptions());
       await waitFor(() => {
-        expect(result.current?.resolution).toBe('640x480');
+        expect(result.current?.defaultResolution).toBe('640x480');
       });
     });
   });
