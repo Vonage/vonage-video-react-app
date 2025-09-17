@@ -19,10 +19,11 @@ export type WaitingRoomSettings = {
 };
 
 export type MeetingRoomSettings = {
-  layoutMode: LayoutMode;
+  defaultLayoutMode: LayoutMode;
   showParticipantList: boolean;
   showChat: boolean;
   showScreenShareButton: boolean;
+  showArchiveButton: boolean;
 };
 
 export type AppConfig = {
@@ -48,10 +49,11 @@ export const defaultConfig: AppConfig = {
     allowDeviceSelection: true,
   },
   meetingRoomSettings: {
-    layoutMode: 'active-speaker',
+    defaultLayoutMode: 'active-speaker',
     showParticipantList: true,
     showChat: true,
     showScreenShareButton: true,
+    showArchiveButton: true,
   },
 };
 

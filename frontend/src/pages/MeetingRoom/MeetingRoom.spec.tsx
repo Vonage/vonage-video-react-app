@@ -64,9 +64,10 @@ vi.mock('../../hooks/useConfigContext', () => {
         enableDisableCapableMicrophone: true,
       },
       meetingRoomSettings: {
-        layoutMode: 'active-speaker',
+        defaultLayoutMode: 'active-speaker',
         showChat: true,
         showScreenShareButton: true,
+        showArchiveButton: true,
       },
     }),
   };

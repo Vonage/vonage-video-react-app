@@ -24,7 +24,7 @@ vi.mock('../../hooks/useConfigContext', () => {
   return {
     default: () => ({
       meetingRoomSettings: {
-        layoutMode: 'active-speaker',
+        defaultLayoutMode: 'active-speaker',
       },
     }),
   };

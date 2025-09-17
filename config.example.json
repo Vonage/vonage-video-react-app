@@ -17,6 +17,7 @@
     "layoutMode": "active-speaker",
     "showParticipantList": true,
     "showChat": true,
-    "showScreenShareButton": true
+    "showScreenShareButton": true,
+    "showArchiveButton": true
   }
 }

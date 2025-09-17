@@ -20,10 +20,11 @@ describe('useConfig', () => {
       allowDeviceSelection: true,
     },
     meetingRoomSettings: {
-      layoutMode: 'active-speaker',
+      defaultLayoutMode: 'active-speaker',
       showParticipantList: true,
       showChat: true,
       showScreenShareButton: true,
+      showArchiveButton: true,
     },
   };
 
@@ -70,10 +71,11 @@ describe('useConfig', () => {
         allowDeviceSelection: false,
       },
       meetingRoomSettings: {
-        layoutMode: 'grid',
+        defaultLayoutMode: 'grid',
         showParticipantList: false,
         showChat: false,
         showScreenShareButton: false,
+        showArchiveButton: false,
       },
     };
     global.fetch = vi.fn().mockResolvedValue({
