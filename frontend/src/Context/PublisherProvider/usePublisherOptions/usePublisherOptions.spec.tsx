@@ -93,7 +93,7 @@ describe('usePublisherOptions', () => {
     const { result } = renderHook(() => usePublisherOptions());
     await waitFor(() => {
       expect(result.current).toEqual({
-        defaultResolution: '1280x720',
+        resolution: '1280x720',
         publishAudio: false,
         publishVideo: false,
         audioSource: undefined,
@@ -136,7 +136,7 @@ describe('usePublisherOptions', () => {
     const { result } = renderHook(() => usePublisherOptions());
     await waitFor(() => {
       expect(result.current).toEqual({
-        defaultResolution: '1280x720',
+        resolution: '1280x720',
         publishAudio: true,
         publishVideo: true,
         audioSource: '68f1d1e6f11c629b1febe51a95f8f740f8ac5cd3d4c91419bd2b52bb1a9a01cd',
@@ -178,7 +178,7 @@ describe('usePublisherOptions', () => {
       configContext.videoSettings.defaultResolution = '640x480';
       const { result } = renderHook(() => usePublisherOptions());
       await waitFor(() => {
-        expect(result.current?.defaultResolution).toBe('640x480');
+        expect(result.current?.resolution).toBe('640x480');
       });
     });
   });

@@ -90,7 +90,7 @@ describe('DeviceSettingsMenu Component', () => {
     mockedHasMediaProcessorSupport.mockReturnValue(false);
     configContext = {
       audioSettings: {
-        allowCameraControl: true,
+        advancedNoiseSuppression: true,
       },
       videoSettings: {
         allowBackgroundEffects: true,
