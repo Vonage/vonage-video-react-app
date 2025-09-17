@@ -6,13 +6,13 @@ const feedbackRouter = Router();
 const feedbackService = getFeedbackService();
 
 feedbackRouter.post('/report', async (req: Request, res: Response) => {
-  const headers = req.headers;
+  const { headers } = req;
   const { title, name, issue, attachment } = req.body;
 
   try {
     let origin = FeedbackOrigin.Web;
     const useragent = headers['User-Agent'] || headers['user-agent'];
-    
+
     if (useragent != null) {
       if (useragent.includes('VeraNativeiOS')) {
         origin = FeedbackOrigin.iOS;
@@ -21,7 +21,13 @@ feedbackRouter.post('/report', async (req: Request, res: Response) => {
       }
     }
 
-    const feedbackData = await feedbackService.reportIssue({ title, name, issue, attachment, origin });
+    const feedbackData = await feedbackService.reportIssue({
+      title,
+      name,
+      issue,
+      attachment,
+      origin,
+    });
     if (feedbackData) {
       return res.status(200).json({ feedbackData });
     }

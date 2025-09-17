@@ -7,9 +7,9 @@ export type FeedbackData = {
 };
 
 export enum FeedbackOrigin {
-  Web = "web",
-  iOS = "iOS",
-  Android = "Android"
+  Web = 'web',
+  iOS = 'iOS',
+  Android = 'Android',
 }
 
 export type ReportIssueReturn = {
