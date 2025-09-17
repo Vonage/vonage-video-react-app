@@ -26,6 +26,7 @@ describe('useConfig', () => {
       showScreenShareButton: true,
       showArchiveButton: true,
       showCaptionsButton: true,
+      showEmojiButton: true,
     },
   };
 
@@ -78,6 +79,7 @@ describe('useConfig', () => {
         showScreenShareButton: false,
         showArchiveButton: false,
         showCaptionsButton: false,
+        showEmojiButton: false,
       },
     };
     global.fetch = vi.fn().mockResolvedValue({

@@ -19,6 +19,7 @@
     "showChat": true,
     "showScreenShareButton": true,
     "showArchiveButton": true,
-    "showCaptionsButton": true
+    "showCaptionsButton": true,
+    "showEmojiButton": true
   }
 }

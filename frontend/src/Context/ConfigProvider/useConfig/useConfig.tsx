@@ -25,6 +25,7 @@ export type MeetingRoomSettings = {
   showScreenShareButton: boolean;
   showArchiveButton: boolean;
   showCaptionsButton: boolean;
+  showEmojiButton: boolean;
 };
 
 export type AppConfig = {
@@ -56,6 +57,7 @@ export const defaultConfig: AppConfig = {
     showScreenShareButton: true,
     showArchiveButton: true,
     showCaptionsButton: true,
+    showEmojiButton: true,
   },
 };
 
