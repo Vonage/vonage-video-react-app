@@ -18,6 +18,7 @@
     "showParticipantList": true,
     "showChat": true,
     "showScreenShareButton": true,
-    "showArchiveButton": true
+    "showArchiveButton": true,
+    "showCaptionsButton": true
   }
 }

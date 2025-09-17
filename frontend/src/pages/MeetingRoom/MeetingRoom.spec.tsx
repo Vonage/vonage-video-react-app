@@ -68,6 +68,7 @@ vi.mock('../../hooks/useConfigContext', () => {
         showChat: true,
         showScreenShareButton: true,
         showArchiveButton: true,
+        showCaptionsButton: true,
       },
     }),
   };

@@ -5,6 +5,7 @@ import { AxiosError } from 'axios';
 import useRoomName from '../../../hooks/useRoomName';
 import ToolbarButton from '../ToolbarButton';
 import { disableCaptions, enableCaptions } from '../../../api/captions';
+import useConfigContext from '../../../hooks/useConfigContext';
 
 export type CaptionsState = {
   isUserCaptionsEnabled: boolean;
@@ -26,13 +27,14 @@ export type CaptionsButtonProps = {
  *  @property {boolean} isOverflowButton - (optional) whether the button is in the ToolbarOverflowMenu
  *  @property {(event?: MouseEvent | TouchEvent) => void} handleClick - (optional) click handler that closes the overflow menu in small viewports.
  *  @property {CaptionsState} captionsState - the state of the captions, including whether they are enabled and functions to set error messages
- * @returns {ReactElement} - The CaptionsButton component.
+ * @returns {ReactElement | false} - The CaptionsButton component.
  */
 const CaptionsButton = ({
   isOverflowButton = false,
   handleClick,
   captionsState,
-}: CaptionsButtonProps): ReactElement => {
+}: CaptionsButtonProps): ReactElement | false => {
+  const { meetingRoomSettings } = useConfigContext();
   const roomName = useRoomName();
   const [captionsId, setCaptionsId] = useState<string>('');
   const { isUserCaptionsEnabled, setIsUserCaptionsEnabled, setCaptionsErrorResponse } =
@@ -91,27 +93,29 @@ const CaptionsButton = ({
   };
 
   return (
-    <Tooltip title={title} aria-label="captions button">
-      <ToolbarButton
-        onClick={handleActionClick}
-        data-testid="captions-button"
-        icon={
-          !isUserCaptionsEnabled ? (
-            <ClosedCaption style={{ color: 'white' }} />
-          ) : (
-            <ClosedCaptionDisabled
-              style={{
-                color: 'rgb(239 68 68)',
-              }}
-            />
-          )
-        }
-        sx={{
-          marginTop: isOverflowButton ? '0px' : '4px',
-        }}
-        isOverflowButton={isOverflowButton}
-      />
-    </Tooltip>
+    meetingRoomSettings.showCaptionsButton && (
+      <Tooltip title={title} aria-label="captions button">
+        <ToolbarButton
+          onClick={handleActionClick}
+          data-testid="captions-button"
+          icon={
+            !isUserCaptionsEnabled ? (
+              <ClosedCaption style={{ color: 'white' }} />
+            ) : (
+              <ClosedCaptionDisabled
+                style={{
+                  color: 'rgb(239 68 68)',
+                }}
+              />
+            )
+          }
+          sx={{
+            marginTop: isOverflowButton ? '0px' : '4px',
+          }}
+          isOverflowButton={isOverflowButton}
+        />
+      </Tooltip>
+    )
   );
 };
 export default CaptionsButton;
