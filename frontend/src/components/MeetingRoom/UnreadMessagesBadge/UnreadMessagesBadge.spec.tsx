@@ -17,7 +17,7 @@ const sessionContext = {
 const LittleButton = () => <ToolbarButton onClick={() => {}} icon={<BiotechIcon />} />;
 const mockConfigContext = {
   meetingRoomSettings: {
-    showChat: true,
+    showChatButton: true,
   },
 } as unknown as ConfigContextType;
 const mockUseConfigContext = useConfigContext as Mock<[], ConfigContextType>;
@@ -179,7 +179,7 @@ describe('UnreadMessagesBadge', () => {
     mockUseSessionContext.mockReturnValue(sessionContextWithMessages);
     mockUseConfigContext.mockReturnValue({
       meetingRoomSettings: {
-        showChat: false,
+        showChatButton: false,
       },
     } as unknown as ConfigContextType);
 

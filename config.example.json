@@ -14,12 +14,12 @@
     "allowDeviceSelection": true
   },
   "meetingRoomSettings": {
-    "layoutMode": "active-speaker",
-    "showParticipantList": true,
-    "showChat": true,
-    "showScreenShareButton": true,
+    "defaultLayoutMode": "active-speaker",
     "showArchiveButton": true,
     "showCaptionsButton": true,
-    "showEmojiButton": true
+    "showChatButton": true,
+    "showEmojiButton": true,
+    "showParticipantListButton": true,
+    "showScreenShareButton": true
   }
 }

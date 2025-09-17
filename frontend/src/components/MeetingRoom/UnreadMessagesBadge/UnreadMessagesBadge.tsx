@@ -25,7 +25,7 @@ const UnreadMessagesBadge = forwardRef(function UnreadMessagesBadge(
   const { children, isToolbarOverflowMenuOpen, ...rest } = props;
   const { unreadCount } = useSessionContext();
   const isInvisible =
-    unreadCount === 0 || isToolbarOverflowMenuOpen || !meetingRoomSettings.showChat;
+    unreadCount === 0 || isToolbarOverflowMenuOpen || !meetingRoomSettings.showChatButton;
 
   return (
     <Badge

@@ -31,7 +31,7 @@ const ChatButton = ({
   const { meetingRoomSettings } = useConfigContext();
 
   return (
-    meetingRoomSettings.showChat && (
+    meetingRoomSettings.showChatButton && (
       <Tooltip title={isOpen ? 'Close chat' : 'Open chat'} aria-label="toggle chat">
         <UnreadMessagesBadge>
           <ToolbarButton

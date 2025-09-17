@@ -14,7 +14,7 @@ const sessionContext = {
 } as unknown as SessionContextType;
 const mockConfigContext = {
   meetingRoomSettings: {
-    showChat: true,
+    showChatButton: true,
   },
 } as unknown as ConfigContextType;
 const mockUseConfigContext = useConfigContext as Mock<[], ConfigContextType>;
@@ -65,7 +65,7 @@ describe('ChatButton', () => {
   it('should not be displayed when chat is disabled', () => {
     mockUseConfigContext.mockReturnValue({
       meetingRoomSettings: {
-        showChat: false,
+        showChatButton: false,
       },
     } as unknown as ConfigContextType);
     render(<ChatButton handleClick={() => {}} isOpen />);

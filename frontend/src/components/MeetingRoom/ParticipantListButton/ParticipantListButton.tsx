@@ -33,7 +33,7 @@ const ParticipantListButton = ({
   const { meetingRoomSettings } = useConfigContext();
 
   return (
-    meetingRoomSettings.showParticipantList && (
+    meetingRoomSettings.showParticipantListButton && (
       <Tooltip
         title={isOpen ? 'Close participant list' : 'Open participant list'}
         aria-label="toggle participant list"

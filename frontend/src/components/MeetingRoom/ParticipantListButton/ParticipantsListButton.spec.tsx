@@ -12,7 +12,7 @@ describe('ParticipantListButton', () => {
   beforeEach(() => {
     mockUseConfigContext.mockReturnValue({
       meetingRoomSettings: {
-        showParticipantList: true,
+        showParticipantListButton: true,
       },
     } as unknown as ConfigContextType);
   });
@@ -35,10 +35,10 @@ describe('ParticipantListButton', () => {
     screen.getByRole('button').click();
     expect(handleClick).toHaveBeenCalled();
   });
-  it('should not render if showParticipantList is false in config', () => {
+  it('should not render if showParticipantListButton is false in config', () => {
     mockUseConfigContext.mockReturnValue({
       meetingRoomSettings: {
-        showParticipantList: false,
+        showParticipantListButton: false,
       },
     } as unknown as ConfigContextType);
     render(<ParticipantListButton handleClick={() => {}} isOpen={false} participantCount={10} />);
