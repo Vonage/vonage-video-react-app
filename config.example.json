@@ -16,6 +16,7 @@
   "meetingRoomSettings": {
     "layoutMode": "active-speaker",
     "showParticipantList": true,
-    "showChat": true
+    "showChat": true,
+    "showScreenShareButton": true
   }
 }

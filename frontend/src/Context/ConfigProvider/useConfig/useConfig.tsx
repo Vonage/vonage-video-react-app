@@ -22,6 +22,7 @@ export type MeetingRoomSettings = {
   layoutMode: LayoutMode;
   showParticipantList: boolean;
   showChat: boolean;
+  showScreenShareButton: boolean;
 };
 
 export type AppConfig = {
@@ -50,6 +51,7 @@ export const defaultConfig: AppConfig = {
     layoutMode: 'active-speaker',
     showParticipantList: true,
     showChat: true,
+    showScreenShareButton: true,
   },
 };
 

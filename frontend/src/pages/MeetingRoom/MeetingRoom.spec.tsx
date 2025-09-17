@@ -66,6 +66,7 @@ vi.mock('../../hooks/useConfigContext', () => {
       meetingRoomSettings: {
         layoutMode: 'active-speaker',
         showChat: true,
+        showScreenShareButton: true,
       },
     }),
   };

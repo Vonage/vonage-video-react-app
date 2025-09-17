@@ -5,6 +5,7 @@ import { ReactElement, useState } from 'react';
 import ToolbarButton from '../MeetingRoom/ToolbarButton';
 import PopupDialog, { DialogTexts } from '../MeetingRoom/PopupDialog';
 import { isMobile } from '../../utils/util';
+import useConfigContext from '../../hooks/useConfigContext';
 
 export type ScreenShareButtonProps = {
   toggleScreenShare: () => void;
@@ -30,6 +31,7 @@ const ScreenSharingButton = ({
   isViewingScreenShare,
   isOverflowButton = false,
 }: ScreenShareButtonProps): ReactElement | false => {
+  const { meetingRoomSettings } = useConfigContext();
   const title = isSharingScreen ? 'Stop screen share' : 'Start screen share';
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
 
@@ -56,7 +58,8 @@ const ScreenSharingButton = ({
   return (
     // Screensharing relies on the getDisplayMedia browser API which is unsupported on mobile devices
     // See: https://developer.mozilla.org/en-US/docs/Web/API/MediaDevices/getDisplayMedia#browser_compatibility
-    !isMobile() && (
+    !isMobile() &&
+    meetingRoomSettings.showScreenShareButton && (
       <>
         <Tooltip title={title} aria-label="add">
           <ToolbarButton

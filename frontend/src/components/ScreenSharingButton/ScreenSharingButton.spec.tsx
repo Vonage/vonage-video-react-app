@@ -1,8 +1,23 @@
-import { describe, expect, it, vi } from 'vitest';
+import { beforeEach, describe, expect, it, Mock, vi } from 'vitest';
 import { fireEvent, render, screen } from '@testing-library/react';
 import ScreenSharingButton, { ScreenShareButtonProps } from './ScreenSharingButton';
+import useConfigContext from '../../hooks/useConfigContext';
+import { ConfigContextType } from '../../Context/ConfigProvider';
+
+vi.mock('../../hooks/useConfigContext');
+
+const mockUseConfigContext = useConfigContext as Mock<[], ConfigContextType>;
+const mockConfigContext = {
+  meetingRoomSettings: {
+    showScreenShareButton: true,
+  },
+} as unknown as ConfigContextType;
 
 describe('ScreenSharingButton', () => {
+  beforeEach(() => {
+    mockUseConfigContext.mockReturnValue(mockConfigContext);
+  });
+
   const mockToggleScreenShare = vi.fn();
 
   const defaultProps: ScreenShareButtonProps = {
@@ -40,5 +55,11 @@ describe('ScreenSharingButton', () => {
         'Looks like there is someone else sharing their screen. If you continue, their screen is no longer going to be shared.'
       )
     ).toBeInTheDocument();
+  });
+
+  it('does not show the button when the button is configured to be hidden', () => {
+    mockConfigContext.meetingRoomSettings.showScreenShareButton = false;
+    render(<ScreenSharingButton {...defaultProps} />);
+    expect(screen.queryByTestId('ScreenShareIcon')).not.toBeInTheDocument();
   });
 });

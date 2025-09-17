@@ -23,6 +23,7 @@ describe('useConfig', () => {
       layoutMode: 'active-speaker',
       showParticipantList: true,
       showChat: true,
+      showScreenShareButton: true,
     },
   };
 
@@ -72,6 +73,7 @@ describe('useConfig', () => {
         layoutMode: 'grid',
         showParticipantList: false,
         showChat: false,
+        showScreenShareButton: false,
       },
     };
     global.fetch = vi.fn().mockResolvedValue({
