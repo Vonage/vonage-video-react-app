@@ -3,16 +3,26 @@ import { beforeEach, describe, expect, it, Mock, vi } from 'vitest';
 import ChatButton from './ChatButton';
 import useSessionContext from '../../../hooks/useSessionContext';
 import { SessionContextType } from '../../../Context/SessionProvider/session';
+import useConfigContext from '../../../hooks/useConfigContext';
+import { ConfigContextType } from '../../../Context/ConfigProvider';
 
 vi.mock('../../../hooks/useSessionContext');
+vi.mock('../../../hooks/useConfigContext');
 const mockUseSessionContext = useSessionContext as Mock<[], SessionContextType>;
 const sessionContext = {
   unreadCount: 10,
 } as unknown as SessionContextType;
+const mockConfigContext = {
+  meetingRoomSettings: {
+    showChat: true,
+  },
+} as unknown as ConfigContextType;
+const mockUseConfigContext = useConfigContext as Mock<[], ConfigContextType>;
 
 describe('ChatButton', () => {
   beforeEach(() => {
     mockUseSessionContext.mockReturnValue(sessionContext);
+    mockUseConfigContext.mockReturnValue(mockConfigContext);
   });
 
   it('should show unread message number', () => {
@@ -50,5 +60,15 @@ describe('ChatButton', () => {
     render(<ChatButton handleClick={handleClick} isOpen />);
     screen.getByRole('button').click();
     expect(handleClick).toHaveBeenCalled();
+  });
+
+  it('should not be displayed when chat is disabled', () => {
+    mockUseConfigContext.mockReturnValue({
+      meetingRoomSettings: {
+        showChat: false,
+      },
+    } as unknown as ConfigContextType);
+    render(<ChatButton handleClick={() => {}} isOpen />);
+    expect(screen.queryByTestId('ChatIcon')).not.toBeInTheDocument();
   });
 });

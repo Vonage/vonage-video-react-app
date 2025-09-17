@@ -21,6 +21,7 @@ export type WaitingRoomSettings = {
 export type MeetingRoomSettings = {
   layoutMode: LayoutMode;
   showParticipantList: boolean;
+  showChat: boolean;
 };
 
 export type AppConfig = {
@@ -48,6 +49,7 @@ export const defaultConfig: AppConfig = {
   meetingRoomSettings: {
     layoutMode: 'active-speaker',
     showParticipantList: true,
+    showChat: true,
   },
 };
 

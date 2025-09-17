@@ -1,9 +1,30 @@
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
 import { renderHook, waitFor } from '@testing-library/react';
-import useConfig from './useConfig';
+import useConfig, { AppConfig } from './useConfig';
 
 describe('useConfig', () => {
   let nativeFetch: typeof global.fetch;
+  const defaultConfig: AppConfig = {
+    videoSettings: {
+      enableDisableCapableCamera: true,
+      resolution: '1280x720',
+      videoOnJoin: true,
+      backgroundEffects: true,
+    },
+    audioSettings: {
+      advancedNoiseSuppression: true,
+      audioOnJoin: true,
+      enableDisableCapableMicrophone: true,
+    },
+    waitingRoomSettings: {
+      allowDeviceSelection: true,
+    },
+    meetingRoomSettings: {
+      layoutMode: 'active-speaker',
+      showParticipantList: true,
+      showChat: true,
+    },
+  };
 
   beforeAll(() => {
     nativeFetch = global.fetch;
@@ -27,31 +48,12 @@ describe('useConfig', () => {
     const { result } = renderHook(() => useConfig());
 
     await waitFor(() => {
-      expect(result.current).toEqual({
-        videoSettings: {
-          enableDisableCapableCamera: true,
-          resolution: '1280x720',
-          videoOnJoin: true,
-          backgroundEffects: true,
-        },
-        audioSettings: {
-          advancedNoiseSuppression: true,
-          audioOnJoin: true,
-          enableDisableCapableMicrophone: true,
-        },
-        waitingRoomSettings: {
-          allowDeviceSelection: true,
-        },
-        meetingRoomSettings: {
-          layoutMode: 'active-speaker',
-          showParticipantList: true,
-        },
-      });
+      expect(result.current).toEqual(defaultConfig);
     });
   });
 
   it('merges config.json values if loaded (mocked fetch)', async () => {
-    const mockConfig = {
+    const mockConfig: AppConfig = {
       videoSettings: {
         enableDisableCapableCamera: false,
         resolution: '640x480',
@@ -69,6 +71,7 @@ describe('useConfig', () => {
       meetingRoomSettings: {
         layoutMode: 'grid',
         showParticipantList: false,
+        showChat: false,
       },
     };
     global.fetch = vi.fn().mockResolvedValue({
@@ -86,19 +89,7 @@ describe('useConfig', () => {
     const { result } = renderHook(() => useConfig());
 
     await waitFor(() => {
-      expect(result.current).toMatchObject({
-        videoSettings: {
-          enableDisableCapableCamera: true,
-          resolution: '1280x720',
-          videoOnJoin: true,
-          backgroundEffects: true,
-        },
-        audioSettings: {
-          advancedNoiseSuppression: true,
-          audioOnJoin: true,
-          enableDisableCapableMicrophone: true,
-        },
-      });
+      expect(result.current).toEqual(defaultConfig);
     });
   });
 });

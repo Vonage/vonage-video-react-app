@@ -5,17 +5,27 @@ import useSessionContext from '../../../hooks/useSessionContext';
 import { SessionContextType } from '../../../Context/SessionProvider/session';
 import UnreadMessagesBadge from './UnreadMessagesBadge';
 import ToolbarButton from '../ToolbarButton';
+import useConfigContext from '../../../hooks/useConfigContext';
+import { ConfigContextType } from '../../../Context/ConfigProvider';
 
 vi.mock('../../../hooks/useSessionContext');
+vi.mock('../../../hooks/useConfigContext');
 const mockUseSessionContext = useSessionContext as Mock<[], SessionContextType>;
 const sessionContext = {
   unreadCount: 0,
 } as unknown as SessionContextType;
 const LittleButton = () => <ToolbarButton onClick={() => {}} icon={<BiotechIcon />} />;
+const mockConfigContext = {
+  meetingRoomSettings: {
+    showChat: true,
+  },
+} as unknown as ConfigContextType;
+const mockUseConfigContext = useConfigContext as Mock<[], ConfigContextType>;
 
 describe('UnreadMessagesBadge', () => {
   beforeEach(() => {
     mockUseSessionContext.mockReturnValue(sessionContext);
+    mockUseConfigContext.mockReturnValue(mockConfigContext);
   });
 
   it('shows badge with correct unread message count', () => {
@@ -159,5 +169,29 @@ describe('UnreadMessagesBadge', () => {
     const updatedBadge = screen.getByTestId('chat-button-unread-count');
     expect(updatedBadge).toBeVisible();
     expect(updatedBadge.textContent).toBe('1');
+  });
+
+  it('should not show the message badge when it is configured to be hidden', () => {
+    const sessionContextWithMessages: SessionContextType = {
+      ...sessionContext,
+      unreadCount: 8,
+    } as unknown as SessionContextType;
+    mockUseSessionContext.mockReturnValue(sessionContextWithMessages);
+    mockUseConfigContext.mockReturnValue({
+      meetingRoomSettings: {
+        showChat: false,
+      },
+    } as unknown as ConfigContextType);
+
+    render(
+      <UnreadMessagesBadge>
+        <LittleButton />
+      </UnreadMessagesBadge>
+    );
+
+    const badge = screen.getByTestId('chat-button-unread-count');
+    // Check badge is hidden:  MUI hides badge by setting dimensions to 0x0
+    expect(badge.offsetHeight).toBe(0);
+    expect(badge.offsetWidth).toBe(0);
   });
 });

@@ -1,6 +1,7 @@
 import { Badge } from '@mui/material';
 import { ForwardedRef, forwardRef, ReactElement } from 'react';
 import useSessionContext from '../../../hooks/useSessionContext';
+import useConfigContext from '../../../hooks/useConfigContext';
 
 export type UnreadMessagesBadgeProps = {
   children: ReactElement;
@@ -20,9 +21,12 @@ const UnreadMessagesBadge = forwardRef(function UnreadMessagesBadge(
   props: UnreadMessagesBadgeProps,
   ref: ForwardedRef<HTMLSpanElement>
 ) {
+  const { meetingRoomSettings } = useConfigContext();
   const { children, isToolbarOverflowMenuOpen, ...rest } = props;
   const { unreadCount } = useSessionContext();
-  const isInvisible = unreadCount === 0 || isToolbarOverflowMenuOpen;
+  const isInvisible =
+    unreadCount === 0 || isToolbarOverflowMenuOpen || !meetingRoomSettings.showChat;
+
   return (
     <Badge
       {...rest}
