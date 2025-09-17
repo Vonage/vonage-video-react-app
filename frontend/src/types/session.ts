@@ -47,7 +47,7 @@ export type LocalCaptionReceived = { streamId: string; caption: string; isFinal:
 
 export type StreamPropertyChangedEvent = {
   stream: Stream;
-  changedProperty: 'hasAudio' | 'hasVideo' | 'videoDimensions';
+  changedProperty: 'hasAudio' | 'hasVideo' | 'hasCaptions' | 'videoDimensions';
   oldValue: boolean | { width: number; height: number };
   newValue: boolean | { width: number; height: number };
 };

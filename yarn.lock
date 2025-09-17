@@ -2618,10 +2618,10 @@
     "@vonage/jwt" "^1.11.0"
     debug "^4.3.4"
 
-"@vonage/client-sdk-video@^2.30.5":
-  version "2.30.5"
-  resolved "https://registry.yarnpkg.com/@vonage/client-sdk-video/-/client-sdk-video-2.30.5.tgz#ad200989d6a37fd03b2f69c93728f3c914699079"
-  integrity sha512-NuEVDOeDbAN9oeUD9cPl4eb09UsqoH0+pz0AicnrAK28rf97qQ0ODTm+hjmaD9iCUyrv9KjxQdkYdrRw7fUwwA==
+"@vonage/client-sdk-video@^2.31.0":
+  version "2.31.0"
+  resolved "https://registry.yarnpkg.com/@vonage/client-sdk-video/-/client-sdk-video-2.31.0.tgz#eb718485b2a7f7aec156c6dff9929dcc0550cd0e"
+  integrity sha512-tIpI2RfgC2sc5HtwIVipMlUPhDVAHt9LH5L7enpaSHFAwlQ7Mqucbr93z62dDrbtdJiNQDrTLssFhSdk0+mL/A==
 
 "@vonage/conversations@^1.4.0":
   version "1.4.0"
@@ -3134,13 +3134,13 @@ axe-core@=4.7.0:
   resolved "https://registry.npmjs.org/axe-core/-/axe-core-4.7.0.tgz"
   integrity sha512-M0JtH+hlOL5pLQwHOLNYZaXuhqmvS8oExsqB1SBYgA4Dk7u/xx+YdGHXaK5pyUfed5mYXdlYiphWq3G8cRi5JQ==
 
-axios@^1.2.1, axios@^1.6.3, axios@^1.9.0:
-  version "1.9.0"
-  resolved "https://registry.yarnpkg.com/axios/-/axios-1.9.0.tgz#25534e3b72b54540077d33046f77e3b8d7081901"
-  integrity sha512-re4CqKTJaURpzbLHtIi6XpDv20/CnpXOtjRY5/CU32L8gU8ek9UIivcfvSWvmKEngmVbrUtPpdDwWDWL7DNHvg==
+axios@^1.12.0, axios@^1.2.1, axios@^1.6.3:
+  version "1.12.2"
+  resolved "https://registry.yarnpkg.com/axios/-/axios-1.12.2.tgz#6c307390136cf7a2278d09cec63b136dfc6e6da7"
+  integrity sha512-vMJzPewAlRyOgxV2dU0Cuz2O8zzzx9VYtbJOaBgXFeLc4IV/Eg50n4LowmehOOR61S8ZMpc2K5Sa7g6A4jfkUw==
   dependencies:
     follow-redirects "^1.15.6"
-    form-data "^4.0.0"
+    form-data "^4.0.4"
     proxy-from-env "^1.1.0"
 
 axobject-query@^3.2.1:

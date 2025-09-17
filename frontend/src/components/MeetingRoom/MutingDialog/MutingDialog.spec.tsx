@@ -20,6 +20,7 @@ describe('ParticipantListAudioIndicator', () => {
     videoType: 'camera',
     frameRate: 1,
     initials: 'JD',
+    hasCaptions: false,
   };
 
   const defaultProps: MutingDialogProps = {
