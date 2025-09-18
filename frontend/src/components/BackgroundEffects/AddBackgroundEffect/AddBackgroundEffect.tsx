@@ -1,6 +1,7 @@
 import { ReactElement } from 'react';
 import AddPhotoAlternateIcon from '@mui/icons-material/AddPhotoAlternate';
 import { Tooltip } from '@mui/material';
+import { useTranslation } from 'react-i18next';
 import SelectableOption from '../SelectableOption';
 
 export type AddBackgroundEffectProps = {
@@ -16,16 +17,17 @@ export type AddBackgroundEffectProps = {
  * @returns {ReactElement} A button for uploading background effects.
  */
 const AddBackgroundEffect = ({ isDisabled = false }: AddBackgroundEffectProps): ReactElement => {
+  const { t } = useTranslation();
   return (
     <Tooltip
       title={
         isDisabled ? (
-          'You have reached the maximum custom images limit'
+          t('backgroundEffects.limit')
         ) : (
           <>
-            Recommended: JPG/PNG img. at 1280x720 resolution.
+            {t('backgroundEffects.recommended.specs')}
             <br />
-            Note: Images are stored only locally in the browser.
+            {t('backgroundEffects.recommended.note')}
           </>
         )
       }

@@ -2,6 +2,7 @@ import ChatIcon from '@mui/icons-material/Chat';
 import Tooltip from '@mui/material/Tooltip';
 import { blue } from '@mui/material/colors';
 import { ReactElement } from 'react';
+import { useTranslation } from 'react-i18next';
 import ToolbarButton from '../ToolbarButton';
 import UnreadMessagesBadge from '../UnreadMessagesBadge';
 import useConfigContext from '../../../hooks/useConfigContext';
@@ -30,9 +31,10 @@ const ChatButton = ({
 }: ChatButtonProps): ReactElement | false => {
   const { meetingRoomSettings } = useConfigContext();
 
+  const { t } = useTranslation();
   return (
     meetingRoomSettings.showChatButton && (
-      <Tooltip title={isOpen ? 'Close chat' : 'Open chat'} aria-label="toggle chat">
+      <Tooltip title={isOpen ? t('chat.close') : t('chat.open')} aria-label={t('chat.ariaLabel')}>
         <UnreadMessagesBadge>
           <ToolbarButton
             data-testid="chat-button"

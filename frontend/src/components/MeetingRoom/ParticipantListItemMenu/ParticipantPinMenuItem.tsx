@@ -1,6 +1,7 @@
 import { ReactElement } from 'react';
 import { ListItemIcon, ListItemText, MenuItem } from '@mui/material';
 import PushPinIcon from '@mui/icons-material/PushPin';
+import { useTranslation } from 'react-i18next';
 import { SubscriberWrapper } from '../../../types/session';
 import PushPinOffIcon from '../../Icons/PushPinOffIcon';
 import useSessionContext from '../../../hooks/useSessionContext';
@@ -25,18 +26,19 @@ const ParticipantPinMenuItem = ({
   participantName,
   subscriberWrapper,
 }: ParticipantPinMenuItemProps): ReactElement => {
+  const { t } = useTranslation();
   const { isPinned, id } = subscriberWrapper;
   const { isMaxPinned, pinSubscriber } = useSessionContext();
   const isDisabled = !isPinned && isMaxPinned;
 
   const getText = () => {
     if (isPinned) {
-      return `Unpin ${participantName}`;
+      return t('participants.unpin', { participantName });
     }
     if (isMaxPinned) {
-      return `You can't pin any more tiles`;
+      return t('participants.maxPin');
     }
-    return `Pin ${participantName}`;
+    return t('participants.pin', { participantName });
   };
   const handlePinClick = () => {
     if (!isDisabled) {

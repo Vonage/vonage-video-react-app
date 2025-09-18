@@ -27,8 +27,8 @@ export type Archive = {
   createdAtFormatted: string;
 };
 
-const getDateString = (timestamp: number) => {
-  return `${getFormattedDate(timestamp)} ${getFormattedTime(timestamp)}`;
+const getDateString = (locale: string, timestamp: number) => {
+  return `${getFormattedDate(locale, timestamp)} ${getFormattedTime(locale, timestamp)}`;
 };
 
 const getArchiveStatus = (status: ServerArchiveStatus): ArchiveStatus => {
@@ -47,16 +47,17 @@ const getArchiveStatus = (status: ServerArchiveStatus): ArchiveStatus => {
 
 /**
  * Modifies an archive retrieved from the server to be easily consumable.
+ * @param {string} locale - current locale
  * @param {ServerArchive} serverArchive - The archive to be modified.
  * @returns {Archive} The modified archive.
  */
-export const createArchiveFromServer = (serverArchive: ServerArchive): Archive => {
+export const createArchiveFromServer = (locale: string, serverArchive: ServerArchive): Archive => {
   return {
     id: serverArchive.id,
     url: serverArchive.url,
     status: getArchiveStatus(serverArchive.status),
     createdAt: serverArchive.createdAt,
-    createdAtFormatted: getDateString(serverArchive.createdAt),
+    createdAtFormatted: getDateString(locale, serverArchive.createdAt),
   };
 };
 

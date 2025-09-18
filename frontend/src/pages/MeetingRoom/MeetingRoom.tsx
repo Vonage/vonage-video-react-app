@@ -1,5 +1,6 @@
 import { useEffect, ReactElement, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import usePublisherContext from '../../hooks/usePublisherContext';
 import ConnectionAlert from '../../components/MeetingRoom/ConnectionAlert';
 import Toolbar from '../../components/MeetingRoom/Toolbar';
@@ -30,6 +31,7 @@ const height = '@apply h-[calc(100dvh_-_80px)]';
  * @returns {ReactElement} - The meeting room.
  */
 const MeetingRoom = (): ReactElement => {
+  const { t } = useTranslation();
   const roomName = useRoomName();
   const { publisher, publish, quality, initializeLocalPublisher, publishingError, isVideoEnabled } =
     usePublisherContext();
@@ -156,16 +158,16 @@ const MeetingRoom = (): ReactElement => {
       />
       {reconnecting && (
         <ConnectionAlert
-          title="Lost connection"
-          message="Please verify your network connection"
+          title={t('connectionAlert.reconnecting.title')}
+          message={t('connectionAlert.reconnecting.message')}
           severity="error"
         />
       )}
       {!reconnecting && quality !== 'good' && isVideoEnabled && (
         <ConnectionAlert
           closable
-          title="Video quality problem"
-          message="Please check your connectivity. Your video may be disabled to improve the user experience"
+          title={t('connectionAlert.quality.title')}
+          message={t('connectionAlert.quality.message')}
           severity="warning"
         />
       )}

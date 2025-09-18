@@ -5,6 +5,7 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import { Stream } from '@vonage/client-sdk-video';
 import { ReactElement } from 'react';
+import { useTranslation } from 'react-i18next';
 import useSessionContext from '../../../hooks/useSessionContext';
 
 type MutingDialogTexts = {
@@ -30,11 +31,12 @@ export type MutingDialogProps = {
  * @returns {ReactElement} - The MutingDialog component.
  */
 const MutingDialog = ({ isOpen, setIsOpen, stream }: MutingDialogProps): ReactElement => {
+  const { t } = useTranslation();
   const { forceMute } = useSessionContext();
   const muteParticipantText: MutingDialogTexts = {
-    contents: `Mute ${stream?.name} for everyone in the call? Only ${stream?.name} can unmute themselves.`,
-    primaryActionText: 'Mute',
-    secondaryActionText: 'Cancel',
+    contents: t('participants.mute.dialog.content', { participantName: stream?.name }),
+    primaryActionText: t('button.mute'),
+    secondaryActionText: t('button.cancel'),
   };
 
   const handleClose = () => {

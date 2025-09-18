@@ -1,6 +1,7 @@
 import { Button } from '@mui/material';
 import { VideoCall } from '@mui/icons-material';
 import { ReactElement } from 'react';
+import { useTranslation } from 'react-i18next';
 
 export type NewRoomButtonProps = {
   handleNewRoom: () => void;
@@ -15,6 +16,7 @@ export type NewRoomButtonProps = {
  * @returns {ReactElement} The new room button component.
  */
 const NewRoomButton = ({ handleNewRoom }: NewRoomButtonProps): ReactElement => {
+  const { t } = useTranslation();
   return (
     <Button
       data-testid="new-room-button"
@@ -31,7 +33,9 @@ const NewRoomButton = ({ handleNewRoom }: NewRoomButtonProps): ReactElement => {
         width: '18rem',
       }}
     >
-      <div className="flex w-full items-center justify-center text-center">Create room</div>
+      <div className="flex w-full items-center justify-center text-center">
+        {t('button.createRoom')}
+      </div>
     </Button>
   );
 };

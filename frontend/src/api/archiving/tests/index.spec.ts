@@ -10,7 +10,7 @@ const mockListArchives = listArchives as Mock<[], ReturnType<typeof listArchives
 describe('getArchives', () => {
   it('it returns an object with array of Archives and hasPending flag', async () => {
     mockListArchives.mockResolvedValue(mockResponse);
-    const archives = await getArchives('roomName');
+    const archives = await getArchives('en', 'roomName');
     expect(archives).toEqual({
       archives: [
         {
@@ -52,7 +52,7 @@ describe('getArchives', () => {
       },
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } as unknown as AxiosResponse<any, any>);
-    const archives = await getArchives('roomName');
+    const archives = await getArchives('en', 'roomName');
     expect(archives).toEqual({
       archives: [],
       hasPending: false,
@@ -61,6 +61,6 @@ describe('getArchives', () => {
 
   it('it throws with error when api call throws', async () => {
     mockListArchives.mockRejectedValue(new AxiosError('Network Error', 'ERR_NETWORK'));
-    expect(getArchives('roomName')).rejects.toThrowError();
+    expect(getArchives('en', 'roomName')).rejects.toThrowError();
   });
 });

@@ -3,6 +3,7 @@ import Tooltip from '@mui/material/Tooltip';
 import { blue } from '@mui/material/colors';
 import { Badge } from '@mui/material';
 import { ReactElement } from 'react';
+import { useTranslation } from 'react-i18next';
 import ToolbarButton from '../ToolbarButton';
 import useConfigContext from '../../../hooks/useConfigContext';
 
@@ -32,11 +33,12 @@ const ParticipantListButton = ({
 }: ParticipantListButtonProps): ReactElement | false => {
   const { meetingRoomSettings } = useConfigContext();
 
+  const { t } = useTranslation();
   return (
     meetingRoomSettings.showParticipantListButton && (
       <Tooltip
-        title={isOpen ? 'Close participant list' : 'Open participant list'}
-        aria-label="toggle participant list"
+        title={isOpen ? t('participants.list.close') : t('participants.list.open')}
+        aria-label={t('participants.list.ariaLabel')}
       >
         <Badge
           badgeContent={participantCount}

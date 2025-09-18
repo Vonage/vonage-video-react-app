@@ -1,5 +1,6 @@
 import { ReactElement } from 'react';
 import { List } from '@mui/material';
+import { useTranslation } from 'react-i18next';
 import { SUPPORTED_BROWSERS } from '../../../utils/constants';
 import SupportedBrowserListItem from '../SupportedBrowserListItem';
 
@@ -10,9 +11,10 @@ import SupportedBrowserListItem from '../SupportedBrowserListItem';
  * @returns {ReactElement} The SupportedBrowsers component.
  */
 const SupportedBrowsers = (): ReactElement => {
+  const { t } = useTranslation();
   return (
     <div className="h-auto w-[400px] shrink py-4 ps-12 text-left">
-      <h3 className="w-full pb-5 text-4xl text-black">Supported browsers:</h3>
+      <h3 className="w-full pb-5 text-4xl text-black">{t('unsupportedBrowser.supported.title')}</h3>
 
       <div className="md:max-h-[480px] md:overflow-y-auto ">
         <List sx={{ overflowX: 'auto' }}>

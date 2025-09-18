@@ -1,5 +1,6 @@
 import { ReactElement } from 'react';
 import { List } from '@mui/material';
+import { useTranslation } from 'react-i18next';
 import getInitials from '../../../utils/getInitials';
 import getParticipantColor from '../../../utils/getParticipantColor';
 import ChatMessage from '../ChatMessage';
@@ -21,13 +22,14 @@ export type ChatProps = {
  * @returns {ReactElement | false} - Chat component
  */
 const Chat = ({ handleClose, isOpen }: ChatProps): ReactElement | false => {
+  const { t } = useTranslation();
   const { messages } = useSessionContext();
   const heightClass = '@apply h-[calc(100dvh_-_240px)]';
 
   return (
     isOpen && (
       <>
-        <RightPanelTitle title="Chat" handleClose={handleClose} />
+        <RightPanelTitle title={t('chat.title')} handleClose={handleClose} />
         <div className={`flex flex-col-reverse overflow-y-auto ${heightClass}`}>
           <List>
             {messages.map((msg) => {

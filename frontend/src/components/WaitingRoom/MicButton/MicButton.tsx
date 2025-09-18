@@ -2,6 +2,7 @@ import { Box, Tooltip } from '@mui/material';
 import { MicOff } from '@mui/icons-material';
 import MicIcon from '@mui/icons-material/Mic';
 import { ReactElement } from 'react';
+import { useTranslation } from 'react-i18next';
 import usePreviewPublisherContext from '../../../hooks/usePreviewPublisherContext';
 import VideoContainerButton from '../VideoContainerButton';
 import useConfigContext from '../../../hooks/useConfigContext';
@@ -13,9 +14,12 @@ import useConfigContext from '../../../hooks/useConfigContext';
  * @returns {ReactElement | false} - The MicButton component.
  */
 const MicButton = (): ReactElement | false => {
+  const { t } = useTranslation();
   const { isAudioEnabled, toggleAudio } = usePreviewPublisherContext();
   const config = useConfigContext();
-  const title = `Turn ${isAudioEnabled ? 'off' : 'on'} microphone`;
+  const title = isAudioEnabled
+    ? t('devices.audio.microphone.state.off')
+    : t('devices.audio.microphone.state.on');
   const canEnableOrDisableMicrophone = config.audioSettings.enableDisableCapableMicrophone;
 
   return (
@@ -34,7 +38,7 @@ const MicButton = (): ReactElement | false => {
           transition: 'transform 0.2s ease-in-out',
         }}
       >
-        <Tooltip title={title} aria-label="toggle audio">
+        <Tooltip title={title} aria-label={t('devices.audio.microphone.ariaLabel')}>
           <VideoContainerButton
             onClick={toggleAudio}
             sx={{
