@@ -33,6 +33,10 @@ instance:
       secret: JIRA_PROJECT_KEY
     - name: JIRA_COMPONENT_ID
       secret: JIRA_COMPONENT_ID
+    - name: JIRA_iOS_COMPONENT_ID
+      secret: JIRA_iOS_COMPONENT_ID
+    - name: JIRA_ANDROID_COMPONENT_ID
+      secret: JIRA_ANDROID_COMPONENT_ID
     - name: JIRA_EPIC_LINK
       secret: JIRA_EPIC_LINK
     - name: JIRA_EPIC_URL

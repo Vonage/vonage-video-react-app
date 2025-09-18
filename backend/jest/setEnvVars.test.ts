@@ -21,6 +21,16 @@ describe('Environment Variables', () => {
     expect(process.env.JIRA_COMPONENT_ID).toBe(jiraComponentId);
   });
 
+  test('should have the correct JIRA_iOS_COMPONENT_ID', () => {
+    const jiraComponentId = 'iOSComponentId';
+    expect(process.env.JIRA_iOS_COMPONENT_ID).toBe(jiraComponentId);
+  });
+
+  test('should have the correct JIRA_ANDROID_COMPONENT_ID', () => {
+    const jiraComponentId = 'androidComponentId';
+    expect(process.env.JIRA_ANDROID_COMPONENT_ID).toBe(jiraComponentId);
+  });
+
   test('should have the correct JIRA_EPIC_LINK', () => {
     const jiraEpicLink = 'jiraEpicLink';
     expect(process.env.JIRA_EPIC_LINK).toBe(jiraEpicLink);
