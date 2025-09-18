@@ -125,16 +125,18 @@ const DeviceControlButton = ({
           )}
         </IconButton>
         <Tooltip title={tooltipTitle} aria-label={t('devices.settings.ariaLabel')}>
-          <IconButton
-            onClick={handleDeviceStateChange}
-            disabled={isButtonDisabled}
-            edge="start"
-            aria-label={isAudio ? 'microphone' : 'camera'}
-            size="small"
-            className="m-[3px] size-[50px] rounded-full shadow-md"
-          >
-            {renderControlIcon()}
-          </IconButton>
+          <div>
+            <IconButton
+              onClick={handleDeviceStateChange}
+              disabled={isButtonDisabled}
+              edge="start"
+              aria-label={isAudio ? 'microphone' : 'camera'}
+              size="small"
+              className="m-[3px] size-[50px] rounded-full shadow-md"
+            >
+              {renderControlIcon()}
+            </IconButton>
+          </div>
         </Tooltip>
       </ButtonGroup>
       <DeviceSettingsMenu
