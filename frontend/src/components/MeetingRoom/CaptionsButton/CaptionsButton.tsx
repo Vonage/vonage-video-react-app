@@ -35,13 +35,14 @@ const CaptionsButton = ({
   handleClick,
   captionsState,
 }: CaptionsButtonProps): ReactElement | false => {
-  const { meetingRoomSettings } = useConfigContext();
+  const config = useConfigContext();
   const { t } = useTranslation();
   const roomName = useRoomName();
   const [captionsId, setCaptionsId] = useState<string>('');
   const { isUserCaptionsEnabled, setIsUserCaptionsEnabled, setCaptionsErrorResponse } =
     captionsState;
   const title = isUserCaptionsEnabled ? t('captions.disable') : t('captions.enable');
+  const { showCaptionsButton } = config.meetingRoomSettings;
 
   const handleClose = () => {
     if (isOverflowButton && handleClick) {
@@ -95,7 +96,7 @@ const CaptionsButton = ({
   };
 
   return (
-    meetingRoomSettings.showCaptionsButton && (
+    showCaptionsButton && (
       <Tooltip title={title} aria-label={t('captions.ariaLabel')}>
         <ToolbarButton
           onClick={handleActionClick}

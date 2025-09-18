@@ -1,6 +1,7 @@
 import { render, screen } from '@testing-library/react';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import { afterEach, beforeEach, describe, expect, it, Mock, vi } from 'vitest';
+import { PropsWithChildren } from 'react';
 import RoomContext from '../RoomContext';
 import useUserContext from '../../hooks/useUserContext';
 import { UserContextType } from '../user';
@@ -10,6 +11,11 @@ import { nativeDevices } from '../../utils/mockData/device';
 
 vi.mock('../../hooks/useUserContext');
 vi.mock('../../hooks/useAudioOutputContext');
+vi.mock('../ConfigProvider', () => ({
+  __esModule: true,
+  ConfigProvider: ({ children }: PropsWithChildren) => children,
+  default: ({ children }: PropsWithChildren) => children,
+}));
 
 const mockUseUserContext = useUserContext as Mock<[], UserContextType>;
 const mockUseAudioOutputContext = useAudioOutputContext as Mock<[], AudioOutputContextType>;

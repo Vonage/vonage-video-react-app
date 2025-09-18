@@ -36,9 +36,10 @@ const EmojiGridButton = ({
   const handleToggle = () => {
     setIsEmojiGridOpen((prevOpen) => !prevOpen);
   };
+  const { showEmojiButton } = meetingRoomSettings;
 
   return (
-    meetingRoomSettings.showEmojiButton && (
+    showEmojiButton && (
       <>
         <Tooltip title={t('emoji.tooltip')} aria-label={t('emoji.ariaLabel')}>
           <ToolbarButton

@@ -24,9 +24,9 @@ const UnreadMessagesBadge = forwardRef(function UnreadMessagesBadge(
   const { meetingRoomSettings } = useConfigContext();
   const { children, isToolbarOverflowMenuOpen, ...rest } = props;
   const { unreadCount } = useSessionContext();
+  const { showChatButton } = meetingRoomSettings;
   // If the chat button is not shown, the unread messages badge should also be hidden
-  const isInvisible =
-    unreadCount === 0 || isToolbarOverflowMenuOpen || !meetingRoomSettings.showChatButton;
+  const isInvisible = unreadCount === 0 || isToolbarOverflowMenuOpen || !showChatButton;
 
   return (
     <Badge

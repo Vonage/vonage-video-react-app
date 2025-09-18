@@ -69,10 +69,12 @@ export const defaultConfig: AppConfig = {
 };
 
 /**
- * Hook wrapper for application configuration. Provides application configuration including video
- * settings, layout preferences, etc. To configure settings, edit the
- * `vonage-video-react-app/config.json` file.
- * @returns {AppConfig} The application configuration
+ * Hook wrapper for application configuration. Provides comprehensive application configuration
+ * including video settings (background effects, camera control, resolution), audio settings
+ * (noise suppression, microphone control), waiting room settings (device selection), and
+ * meeting room settings (layout mode, UI button visibility). To configure settings, edit the
+ * `vonage-video-react-app/public/config.json` file.
+ * @returns {AppConfig} The application configuration with video, audio, waiting room, and meeting room settings
  */
 const useConfig = (): AppConfig => {
   const [config, setConfig] = useState<AppConfig>(defaultConfig);

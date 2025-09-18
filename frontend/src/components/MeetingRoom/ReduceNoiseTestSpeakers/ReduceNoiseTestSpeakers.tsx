@@ -33,7 +33,7 @@ const ReduceNoiseTestSpeakers = ({
   const { publisher, isPublishing } = usePublisherContext();
   const config = useConfigContext();
   const [isToggled, setIsToggled] = useState(false);
-  const isANSEnabled = config.audioSettings.allowAdvancedNoiseSuppression;
+  const { allowAdvancedNoiseSuppression } = config.audioSettings;
 
   const handleToggle = async () => {
     const newState = !isToggled;
@@ -63,7 +63,7 @@ const ReduceNoiseTestSpeakers = ({
           mt: 1,
         }}
       >
-        {hasMediaProcessorSupport() && isANSEnabled && (
+        {hasMediaProcessorSupport() && allowAdvancedNoiseSuppression && (
           <MenuItem
             onClick={handleToggle}
             sx={{

@@ -12,45 +12,42 @@ import RedirectToWaitingRoom from './components/RedirectToWaitingRoom';
 import UnsupportedBrowserPage from './pages/UnsupportedBrowserPage';
 import RoomContext from './Context/RoomContext';
 import { BackgroundPublisherProvider } from './Context/BackgroundPublisherProvider';
-import { ConfigContextProvider } from './Context/ConfigProvider';
 
 const App = () => {
   return (
-    <ConfigContextProvider>
-      <Router>
-        <Routes>
-          <Route element={<RoomContext />}>
-            <Route
-              path="/waiting-room/:roomName"
-              element={
-                <BackgroundPublisherProvider>
-                  <PreviewPublisherProvider>
-                    <WaitingRoom />
-                  </PreviewPublisherProvider>
-                </BackgroundPublisherProvider>
-              }
-            />
-            <Route
-              path="/room/:roomName"
-              element={
-                <SessionProvider>
-                  <RedirectToWaitingRoom>
-                    <PublisherProvider>
-                      <BackgroundPublisherProvider>
-                        <Room />
-                      </BackgroundPublisherProvider>
-                    </PublisherProvider>
-                  </RedirectToWaitingRoom>
-                </SessionProvider>
-              }
-            />
-          </Route>
-          <Route path="/goodbye" element={<GoodBye />} />
-          <Route path="*" element={<LandingPage />} />
-          <Route path="/unsupported-browser" element={<UnsupportedBrowserPage />} />
-        </Routes>
-      </Router>
-    </ConfigContextProvider>
+    <Router>
+      <Routes>
+        <Route element={<RoomContext />}>
+          <Route
+            path="/waiting-room/:roomName"
+            element={
+              <BackgroundPublisherProvider>
+                <PreviewPublisherProvider>
+                  <WaitingRoom />
+                </PreviewPublisherProvider>
+              </BackgroundPublisherProvider>
+            }
+          />
+          <Route
+            path="/room/:roomName"
+            element={
+              <SessionProvider>
+                <RedirectToWaitingRoom>
+                  <PublisherProvider>
+                    <BackgroundPublisherProvider>
+                      <Room />
+                    </BackgroundPublisherProvider>
+                  </PublisherProvider>
+                </RedirectToWaitingRoom>
+              </SessionProvider>
+            }
+          />
+        </Route>
+        <Route path="/goodbye" element={<GoodBye />} />
+        <Route path="*" element={<LandingPage />} />
+        <Route path="/unsupported-browser" element={<UnsupportedBrowserPage />} />
+      </Routes>
+    </Router>
   );
 };
 

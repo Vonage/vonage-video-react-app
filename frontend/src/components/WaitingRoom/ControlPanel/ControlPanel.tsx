@@ -61,6 +61,7 @@ const ControlPanel = ({
     usePreviewPublisherContext();
   const { currentAudioOutputDevice, setAudioOutputDevice } = useAudioOutputContext();
   const { waitingRoomSettings } = useConfigContext();
+  const { allowDeviceSelection } = waitingRoomSettings;
 
   const buttonSx: SxProps = {
     borderRadius: '10px',
@@ -76,7 +77,7 @@ const ControlPanel = ({
   };
 
   return (
-    waitingRoomSettings.allowDeviceSelection && (
+    allowDeviceSelection && (
       <div className="m-auto my-4 max-w-[100dvw]" data-testid="ControlPanel">
         <div className="flex flex-row justify-evenly min-[400px]:w-[400px]">
           <Button

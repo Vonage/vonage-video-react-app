@@ -32,10 +32,11 @@ const ParticipantListButton = ({
   isOverflowButton = false,
 }: ParticipantListButtonProps): ReactElement | false => {
   const { meetingRoomSettings } = useConfigContext();
+  const { showParticipantList } = meetingRoomSettings;
 
   const { t } = useTranslation();
   return (
-    meetingRoomSettings.showParticipantList && (
+    showParticipantList && (
       <Tooltip
         title={isOpen ? t('participants.list.close') : t('participants.list.open')}
         aria-label={t('participants.list.ariaLabel')}

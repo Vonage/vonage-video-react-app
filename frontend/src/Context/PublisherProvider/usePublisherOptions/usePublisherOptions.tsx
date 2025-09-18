@@ -20,6 +20,8 @@ const usePublisherOptions = (): PublisherProperties | null => {
   const config = useConfigContext();
   const [publisherOptions, setPublisherOptions] = useState<PublisherProperties | null>(null);
   const deviceStoreRef = useRef<DeviceStore | null>(null);
+  const { defaultResolution, allowVideoOnJoin } = config.videoSettings;
+  const { allowAudioOnJoin } = config.audioSettings;
 
   useEffect(() => {
     const setOptions = async () => {
@@ -55,9 +57,9 @@ const usePublisherOptions = (): PublisherProperties | null => {
         initials,
         insertDefaultUI: false,
         name,
-        publishAudio: config.audioSettings.allowAudioOnJoin && publishAudio,
-        publishVideo: config.videoSettings.allowVideoOnJoin && publishVideo,
-        resolution: config.videoSettings.defaultResolution,
+        publishAudio: allowAudioOnJoin && publishAudio,
+        publishVideo: allowVideoOnJoin && publishVideo,
+        resolution: defaultResolution,
         audioFilter,
         videoFilter,
         videoSource,
@@ -66,12 +68,7 @@ const usePublisherOptions = (): PublisherProperties | null => {
     };
 
     setOptions();
-  }, [
-    config.audioSettings.allowAudioOnJoin,
-    config.videoSettings.defaultResolution,
-    config.videoSettings.allowVideoOnJoin,
-    user.defaultSettings,
-  ]);
+  }, [allowAudioOnJoin, defaultResolution, allowVideoOnJoin, user.defaultSettings]);
 
   return publisherOptions;
 };

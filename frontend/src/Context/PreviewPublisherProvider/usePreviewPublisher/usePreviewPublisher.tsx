@@ -87,6 +87,7 @@ const usePreviewPublisher = (): PreviewPublisherContextType => {
   const [localVideoSource, setLocalVideoSource] = useState<string | undefined>(undefined);
   const [localAudioSource, setLocalAudioSource] = useState<string | undefined>(undefined);
   const deviceStoreRef = useRef<DeviceStore>(new DeviceStore());
+  const { defaultResolution } = config.videoSettings;
 
   /* This sets the default devices in use so that the user knows what devices they are using */
   useEffect(() => {
@@ -242,7 +243,7 @@ const usePreviewPublisher = (): PreviewPublisherContextType => {
     const publisherOptions: PublisherProperties = {
       insertDefaultUI: false,
       videoFilter,
-      resolution: config.videoSettings.defaultResolution,
+      resolution: defaultResolution,
       audioSource,
       videoSource,
     };
@@ -256,7 +257,7 @@ const usePreviewPublisher = (): PreviewPublisherContextType => {
       }
     });
     addPublisherListeners(publisherRef.current);
-  }, [addPublisherListeners, config.videoSettings.defaultResolution]);
+  }, [addPublisherListeners, defaultResolution]);
 
   /**
    * Destroys the preview publisher

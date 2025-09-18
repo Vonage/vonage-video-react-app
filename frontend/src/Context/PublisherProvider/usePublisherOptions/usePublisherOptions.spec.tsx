@@ -158,7 +158,7 @@ describe('usePublisherOptions', () => {
   });
 
   describe('configurable features', () => {
-    it('should disable audio publishing', async () => {
+    it('should disable audio publishing when allowAudioOnJoin is false', async () => {
       configContext.audioSettings.allowAudioOnJoin = false;
       const { result } = renderHook(() => usePublisherOptions());
       await waitFor(() => {
@@ -166,7 +166,7 @@ describe('usePublisherOptions', () => {
       });
     });
 
-    it('should disable video publishing', async () => {
+    it('should disable video publishing when allowVideoOnJoin is false', async () => {
       configContext.videoSettings.allowVideoOnJoin = false;
       const { result } = renderHook(() => usePublisherOptions());
       await waitFor(() => {

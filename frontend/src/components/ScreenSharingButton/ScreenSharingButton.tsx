@@ -36,6 +36,7 @@ const ScreenSharingButton = ({
   const { t } = useTranslation();
   const title = isSharingScreen ? t('screenSharing.title.stop') : t('screenSharing.title.start');
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+  const { showScreenShareButton } = meetingRoomSettings;
 
   const handleButtonClick = () =>
     isViewingScreenShare ? setIsModalOpen((prev) => !prev) : toggleScreenShare();
@@ -60,7 +61,7 @@ const ScreenSharingButton = ({
     // Screensharing relies on the getDisplayMedia browser API which is unsupported on mobile devices
     // See: https://developer.mozilla.org/en-US/docs/Web/API/MediaDevices/getDisplayMedia#browser_compatibility
     !isMobile() &&
-    meetingRoomSettings.showScreenShareButton && (
+    showScreenShareButton && (
       <>
         <Tooltip title={title} aria-label={t('screenSharing.tooltip.ariaLabel')}>
           <ToolbarButton

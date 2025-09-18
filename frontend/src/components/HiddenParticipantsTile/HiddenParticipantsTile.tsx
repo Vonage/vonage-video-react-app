@@ -26,8 +26,8 @@ const HiddenParticipantsTile = ({
   hiddenSubscribers,
 }: HiddenParticipantsTileProps): ReactElement => {
   const { toggleParticipantList } = useSessionContext();
-  const { meetingRoomSettings } = useConfigContext();
-  const { showParticipantList } = meetingRoomSettings;
+  const config = useConfigContext();
+  const { showParticipantList } = config.meetingRoomSettings;
   const { height, width } = box;
   const diameter = Math.min(height, width) * 0.38;
   return (

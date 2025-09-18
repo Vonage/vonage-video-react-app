@@ -18,11 +18,11 @@ const CameraButton = (): ReactElement | false => {
   const { t } = useTranslation();
   const { isVideoEnabled, toggleVideo } = usePreviewPublisherContext();
   const { toggleVideo: toggleBackgroundVideoPublisher } = useBackgroundPublisherContext();
-  const config = useConfigContext();
+  const { videoSettings } = useConfigContext();
   const title = isVideoEnabled
     ? t('devices.video.camera.state.off')
     : t('devices.video.camera.state.on');
-  const { allowCameraControl } = config.videoSettings;
+  const { allowCameraControl } = videoSettings;
 
   const handleToggleVideo = () => {
     toggleVideo();

@@ -32,13 +32,14 @@ const ArchivingButton = ({
   const { t } = useTranslation();
   const roomName = useRoomName();
   const { archiveId } = useSessionContext();
-  const { meetingRoomSettings } = useConfigContext();
+  const config = useConfigContext();
   const isRecording = !!archiveId;
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const title = isRecording ? t('recording.stop.title') : t('recording.start.title');
   const handleButtonClick = () => {
     setIsModalOpen((prev) => !prev);
   };
+  const { showArchiveButton } = config.meetingRoomSettings;
 
   const startRecordingText: DialogTexts = {
     title: t('recording.start.dialog.title'),
@@ -85,7 +86,7 @@ const ArchivingButton = ({
   };
 
   return (
-    meetingRoomSettings.showArchiveButton && (
+    showArchiveButton && (
       <>
         <Tooltip title={title} aria-label={t('recording.tooltip.ariaLabel')}>
           <ToolbarButton
