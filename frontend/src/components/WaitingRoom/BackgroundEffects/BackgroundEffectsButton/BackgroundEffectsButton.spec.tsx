@@ -14,7 +14,7 @@ vi.mock('@vonage/client-sdk-video', () => ({
   hasMediaProcessorSupport: mockHasMediaProcessorSupport,
 }));
 
-vi.mock('../../../hooks/useConfigContext');
+vi.mock('../../../../hooks/useConfigContext');
 const mockUseConfigContext = useConfigContext as Mock<[], ConfigContextType>;
 
 describe('BackgroundEffectsButton', () => {
