@@ -111,7 +111,6 @@ const DeviceControlButton = ({
         <IconButton
           size="small"
           aria-controls={open ? 'split-button-menu' : undefined}
-          disabled={isButtonDisabled}
           aria-expanded={open ? 'true' : undefined}
           aria-label={isAudio ? t('devices.audio.ariaLabel') : t('devices.video.ariaLabel')}
           aria-haspopup="menu"
@@ -128,6 +127,7 @@ const DeviceControlButton = ({
         <Tooltip title={tooltipTitle} aria-label={t('devices.settings.ariaLabel')}>
           <IconButton
             onClick={handleDeviceStateChange}
+            disabled={isButtonDisabled}
             edge="start"
             aria-label={isAudio ? 'microphone' : 'camera'}
             size="small"
