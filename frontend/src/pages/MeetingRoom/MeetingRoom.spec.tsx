@@ -65,7 +65,7 @@ vi.mock('../../hooks/useConfigContext', () => {
       },
       meetingRoomSettings: {
         defaultLayoutMode: 'active-speaker',
-        showParticipantListButton: true,
+        showParticipantList: true,
         showChatButton: true,
         showScreenShareButton: true,
         showArchiveButton: true,

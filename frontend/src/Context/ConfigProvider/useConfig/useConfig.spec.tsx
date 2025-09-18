@@ -21,7 +21,7 @@ describe('useConfig', () => {
     },
     meetingRoomSettings: {
       defaultLayoutMode: 'active-speaker',
-      showParticipantListButton: true,
+      showParticipantList: true,
       showChatButton: true,
       showScreenShareButton: true,
       showArchiveButton: true,
@@ -74,7 +74,7 @@ describe('useConfig', () => {
       },
       meetingRoomSettings: {
         defaultLayoutMode: 'grid',
-        showParticipantListButton: false,
+        showParticipantList: false,
         showChatButton: false,
         showScreenShareButton: false,
         showArchiveButton: false,

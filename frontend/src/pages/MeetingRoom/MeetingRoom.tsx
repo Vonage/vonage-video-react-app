@@ -132,7 +132,6 @@ const MeetingRoom = (): ReactElement => {
         screensharingPublisher={screensharingPublisher}
         screenshareVideoElement={screenshareVideoElement}
         isRightPanelOpen={rightPanelActiveTab !== 'closed'}
-        toggleParticipantList={toggleParticipantList}
       />
       <RightPanel activeTab={rightPanelActiveTab} handleClose={closeRightPanel} />
       <EmojisOrigin />

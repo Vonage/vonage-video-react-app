@@ -35,7 +35,7 @@ const ParticipantListButton = ({
 
   const { t } = useTranslation();
   return (
-    meetingRoomSettings.showParticipantListButton && (
+    meetingRoomSettings.showParticipantList && (
       <Tooltip
         title={isOpen ? t('participants.list.close') : t('participants.list.open')}
         aria-label={t('participants.list.ariaLabel')}
