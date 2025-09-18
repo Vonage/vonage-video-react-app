@@ -140,7 +140,7 @@ describe('ControlPanel', () => {
     expect(screen.getByTestId('audioOutput-menu')).toBeVisible();
   });
 
-  it('should not be rendered if configured to be hidden', () => {
+  it('is not rendered when allowDeviceSelection is false', () => {
     mockUseConfigContext.mockReturnValue({
       waitingRoomSettings: {
         allowDeviceSelection: false,

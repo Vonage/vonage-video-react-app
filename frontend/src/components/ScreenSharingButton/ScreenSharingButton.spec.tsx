@@ -57,7 +57,7 @@ describe('ScreenSharingButton', () => {
     ).toBeInTheDocument();
   });
 
-  it('does not show the button when the button is configured to be hidden', () => {
+  it('is not rendered when showScreenShareButton is false', () => {
     mockConfigContext.meetingRoomSettings.showScreenShareButton = false;
     render(<ScreenSharingButton {...defaultProps} />);
     expect(screen.queryByTestId('ScreenShareIcon')).not.toBeInTheDocument();

@@ -35,7 +35,7 @@ describe('ParticipantListButton', () => {
     screen.getByRole('button').click();
     expect(handleClick).toHaveBeenCalled();
   });
-  it('should not render if showParticipantList is false in config', () => {
+  it('is not rendered when showParticipantList is false', () => {
     mockUseConfigContext.mockReturnValue({
       meetingRoomSettings: {
         showParticipantList: false,

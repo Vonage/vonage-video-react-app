@@ -98,7 +98,7 @@ describe('ArchivingButton', () => {
     });
   });
 
-  it('is not displayed when archiving is disabled', () => {
+  it('is not rendered when showArchiveButton is disabled', () => {
     mockUseConfigContext.mockReturnValue({
       meetingRoomSettings: {
         showArchiveButton: false,

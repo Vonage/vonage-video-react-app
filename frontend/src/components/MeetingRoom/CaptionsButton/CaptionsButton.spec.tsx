@@ -97,7 +97,7 @@ describe('CaptionsButton', () => {
     });
   });
 
-  it('is not displayed when configured to be disabled', () => {
+  it('is not rendered when showCaptionsButton is false', () => {
     mockUseConfigContext.mockReturnValue({
       meetingRoomSettings: {
         showCaptionsButton: false,

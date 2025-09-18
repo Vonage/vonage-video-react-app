@@ -124,7 +124,7 @@ describe('DeviceControlButton', () => {
       expect(screen.getByTestId('ArrowDropUpIcon')).toBeInTheDocument();
     });
 
-    it('renders the button as disabled with greyed out icon and correct tooltip when microphone control is disabled', async () => {
+    it('renders the button as disabled with greyed out icon and correct tooltip when allowMicrophoneControl is false', async () => {
       configContext.audioSettings.allowMicrophoneControl = false;
       render(
         <DeviceControlButton
@@ -160,7 +160,7 @@ describe('DeviceControlButton', () => {
       expect(screen.getByTestId('ArrowDropUpIcon')).toBeInTheDocument();
     });
 
-    it('is not rendered when it is configured to be disabled', async () => {
+    it('renders the button as disabled with greyed out icon and correct tooltip when allowCameraControl is false', async () => {
       configContext.videoSettings.allowCameraControl = false;
       render(
         <DeviceControlButton

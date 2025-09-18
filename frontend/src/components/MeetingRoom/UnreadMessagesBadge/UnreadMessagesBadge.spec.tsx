@@ -171,7 +171,7 @@ describe('UnreadMessagesBadge', () => {
     expect(updatedBadge.textContent).toBe('1');
   });
 
-  it('should not show the message badge when it is configured to be hidden', () => {
+  it('should not show the message badge when showChatButton is false', () => {
     const sessionContextWithMessages: SessionContextType = {
       ...sessionContext,
       unreadCount: 8,

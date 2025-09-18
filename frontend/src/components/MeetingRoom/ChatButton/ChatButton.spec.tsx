@@ -62,7 +62,7 @@ describe('ChatButton', () => {
     expect(handleClick).toHaveBeenCalled();
   });
 
-  it('should not be displayed when chat is disabled', () => {
+  it('is not rendered when showChatButton is false', () => {
     mockUseConfigContext.mockReturnValue({
       meetingRoomSettings: {
         showChatButton: false,

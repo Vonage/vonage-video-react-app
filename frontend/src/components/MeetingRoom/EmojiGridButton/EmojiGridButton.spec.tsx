@@ -66,7 +66,7 @@ describe('EmojiGridButton', () => {
     expect(screen.getByTestId('emoji-grid')).toBeVisible();
   });
 
-  it('is not displayed when configured to be hidden', () => {
+  it('is not rendered when showEmojiButton is false', () => {
     mockConfigContext.meetingRoomSettings.showEmojiButton = false;
     render(<TestComponent />);
     expect(screen.queryByTestId('emoji-grid-button')).not.toBeInTheDocument();

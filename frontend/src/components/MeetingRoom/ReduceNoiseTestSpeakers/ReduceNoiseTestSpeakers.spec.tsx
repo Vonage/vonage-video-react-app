@@ -140,7 +140,7 @@ describe('ReduceNoiseTestSpeakers', () => {
     });
   });
 
-  it('should not render the Advanced Noise Suppression option if it is configured to be disabled', () => {
+  it('does not render the Advanced Noise Suppression option if allowAdvancedNoiseSuppression is false', () => {
     configContext = {
       audioSettings: {
         allowAdvancedNoiseSuppression: false,
