@@ -3,6 +3,7 @@ import CheckIcon from '@mui/icons-material/Check';
 import { Device } from '@vonage/client-sdk-video';
 import MicNoneIcon from '@mui/icons-material/MicNone';
 import { MouseEvent as ReactMouseEvent, ReactElement } from 'react';
+import { useTranslation } from 'react-i18next';
 import useDevices from '../../../hooks/useDevices';
 import usePublisherContext from '../../../hooks/usePublisherContext';
 import { setStorageItem, STORAGE_KEYS } from '../../../utils/storage';
@@ -22,6 +23,7 @@ export type InputDevicesProps = {
  * @returns {ReactElement} - The InputDevices component.
  */
 const InputDevices = ({ handleToggle, customLightBlueColor }: InputDevicesProps): ReactElement => {
+  const { t } = useTranslation();
   const { publisher } = usePublisherContext();
   const {
     allMediaDevices: { audioInputDevices },
@@ -53,7 +55,7 @@ const InputDevices = ({ handleToggle, customLightBlueColor }: InputDevicesProps)
         }}
       >
         <MicNoneIcon sx={{ fontSize: 24, mr: 2 }} />
-        <Typography>Microphone</Typography>
+        <Typography>{t('devices.audio.microphone.full')}</Typography>
       </Box>
       <MenuList>
         {options.map((option: string) => {

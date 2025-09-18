@@ -1,7 +1,7 @@
 import Fade from '@mui/material/Fade';
 import { useState, useEffect, ReactElement } from 'react';
 import { Alert } from '@mui/material';
-import { MUTED_ALERT_MESSAGE, FORCE_MUTED_ALERT_MESSAGE } from '../../utils/constants';
+import { useTranslation } from 'react-i18next';
 import useSpeakingDetector from '../../hooks/useSpeakingDetector';
 import usePublisherContext from '../../hooks/usePublisherContext';
 import useIsSmallViewport from '../../hooks/useIsSmallViewport';
@@ -13,6 +13,7 @@ import useIsSmallViewport from '../../hooks/useIsSmallViewport';
  * @returns {ReactElement} - The MutedAlert component.
  */
 const MutedAlert = (): ReactElement => {
+  const { t } = useTranslation();
   const { publisher, isAudioEnabled, isForceMuted } = usePublisherContext();
   const [open, setOpen] = useState<boolean>(false);
   const isSpeakingWhileMuted = useSpeakingDetector({
@@ -20,7 +21,9 @@ const MutedAlert = (): ReactElement => {
     selectedMicrophoneId: publisher?.getAudioSource()?.id,
   });
   const isSmallViewport = useIsSmallViewport();
-  const messageToDisplay = isForceMuted ? FORCE_MUTED_ALERT_MESSAGE : MUTED_ALERT_MESSAGE;
+  const messageToDisplay = isForceMuted
+    ? t('mutedAlert.message.forceMuted')
+    : t('mutedAlert.message.muted');
 
   useEffect(() => {
     setOpen(isForceMuted || isSpeakingWhileMuted);

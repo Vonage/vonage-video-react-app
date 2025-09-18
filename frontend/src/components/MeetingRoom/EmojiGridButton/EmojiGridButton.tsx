@@ -1,6 +1,7 @@
 import { Tooltip } from '@mui/material';
 import { EmojiEmotions } from '@mui/icons-material';
 import { Dispatch, ReactElement, SetStateAction, useRef } from 'react';
+import { useTranslation } from 'react-i18next';
 import ToolbarButton from '../ToolbarButton';
 import EmojiGrid from '../EmojiGrid/EmojiGrid';
 
@@ -28,6 +29,7 @@ const EmojiGridButton = ({
   isParentOpen,
   isOverflowButton = false,
 }: EmojiGridProps): ReactElement => {
+  const { t } = useTranslation();
   const anchorRef = useRef<HTMLButtonElement>(null);
   const handleToggle = () => {
     setIsEmojiGridOpen((prevOpen) => !prevOpen);
@@ -35,7 +37,7 @@ const EmojiGridButton = ({
 
   return (
     <>
-      <Tooltip title="Express yourself" aria-label="open sendable emoji menu">
+      <Tooltip title={t('emoji.tooltip')} aria-label={t('emoji.ariaLabel')}>
         <ToolbarButton
           onClick={handleToggle}
           icon={

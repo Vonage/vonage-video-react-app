@@ -1,6 +1,7 @@
 import PushPinIcon from '@mui/icons-material/PushPin';
 import { IconButton, Tooltip } from '@mui/material';
 import { MouseEvent, ReactElement, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import PushPinOffIcon from '../../Icons/PushPinOffIcon';
 import isMouseEventInsideBox from '../../../utils/isMouseEventInsideBox';
 
@@ -31,6 +32,7 @@ const PinButton = ({
   participantName,
   handleClick,
 }: PinButtonProps): ReactElement | false => {
+  const { t } = useTranslation();
   const isDisabled = isMaxPinned && !isPinned;
   const anchorRef = useRef<HTMLDivElement | null>(null);
   const [isHoveringButton, setIsHoveringButton] = useState<boolean>(false);
@@ -42,12 +44,12 @@ const PinButton = ({
 
   const getTooltipText = () => {
     if (isDisabled) {
-      return `You can't pin any more tiles`;
+      return t('participants.maxPin');
     }
     if (isPinned) {
-      return `Unpin ${participantName}'s video`;
+      return t('participants.unpin.video', { participantName });
     }
-    return `Pin ${participantName}'s video`;
+    return t('participants.pin.video', { participantName });
   };
 
   const onClick = (clickEvent: MouseEvent<HTMLButtonElement>) => {

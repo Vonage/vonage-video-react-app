@@ -1,6 +1,7 @@
 import { ChangeEvent, useRef, useState, ReactElement } from 'react';
 import { Button, IconButton, Tooltip, Typography } from '@mui/material';
 import { Delete } from '@mui/icons-material';
+import { useTranslation } from 'react-i18next';
 import captureScreenshot from '../../../../../utils/captureScreenshot';
 import { isMobile } from '../../../../../utils/util';
 
@@ -20,6 +21,7 @@ const FilePicker = ({
 }: {
   onFileSelect: (fileData: string) => void;
 }): ReactElement => {
+  const { t } = useTranslation();
   const [imageSrc, setImageSrc] = useState<string>('');
   const imageRef = useRef<HTMLImageElement | null>(null);
   const [maximumSizeError, setMaximumSizeError] = useState<boolean>(false);
@@ -78,7 +80,7 @@ const FilePicker = ({
             textAlign: 'left',
           }}
         >
-          Attached screenshot
+          {t('filePicker.attachedScreenshot')}
         </Typography>
       )}
       <div className="my-2">
@@ -90,7 +92,7 @@ const FilePicker = ({
               textAlign: 'left',
             }}
           >
-            The maximum upload size is 20MB. Please upload another file.
+            {t('filePicker.sizeLimit')}
           </Typography>
         )}
         {!imageSrc ? (
@@ -108,7 +110,7 @@ const FilePicker = ({
                 component="label"
                 onClick={processScreenshot}
               >
-                Capture screenshot
+                {t('filePicker.capture')}
               </Button>
             )}
             <Button
@@ -116,7 +118,7 @@ const FilePicker = ({
               variant="outlined"
               component="label"
             >
-              Add screenshot
+              {t('filePicker.addScreenshot')}
               {/*
                */}
               <input
@@ -139,7 +141,7 @@ const FilePicker = ({
                 src={imageSrc}
                 className="size-full object-cover"
               />
-              <Tooltip title="Delete screenshot">
+              <Tooltip title={t('filePicker.delete')}>
                 <IconButton
                   data-testid="delete-screenshot"
                   onClick={handleDeleteFile}

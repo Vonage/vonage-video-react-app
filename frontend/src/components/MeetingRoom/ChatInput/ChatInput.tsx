@@ -3,6 +3,7 @@ import SendIcon from '@mui/icons-material/Send';
 import { IconButton, InputAdornment } from '@mui/material';
 import { KeyboardEvent, ReactElement, useState } from 'react';
 import { blue } from '@mui/material/colors';
+import { useTranslation } from 'react-i18next';
 import useSessionContext from '../../../hooks/useSessionContext';
 
 /**
@@ -13,6 +14,7 @@ import useSessionContext from '../../../hooks/useSessionContext';
  * @returns {ReactElement} - ChatInput component
  */
 const ChatInput = (): ReactElement => {
+  const { t } = useTranslation();
   const [text, setText] = useState('');
   const [isComposing, setIsComposing] = useState(false);
   const { sendChatMessage } = useSessionContext();
@@ -50,7 +52,7 @@ const ChatInput = (): ReactElement => {
       name="Solid"
       multiline
       variant="standard"
-      placeholder="Send a message"
+      placeholder={t('chat.input.placeholder')}
       onKeyDown={handleKeyDown}
       onChange={(e) => setText(e.target.value)}
       onCompositionStart={handleCompositionStart}

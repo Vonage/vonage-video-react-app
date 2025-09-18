@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { ArchiveResponse, getArchives } from '../api/archiving';
 import { Archive } from '../api/archiving/model';
 
@@ -12,6 +13,7 @@ export type UseArchivesProps = {
  * @returns {Archive[] | 'error'} An array of Archives, or the text, `error`.
  */
 const useArchives = ({ roomName }: UseArchivesProps): Archive[] | 'error' => {
+  const { i18n } = useTranslation();
   const [archives, setArchives] = useState<Archive[] | 'error'>([]);
   const pollingIntervalRef = useRef<ReturnType<typeof setInterval> | undefined>(undefined);
 
@@ -20,7 +22,7 @@ const useArchives = ({ roomName }: UseArchivesProps): Archive[] | 'error' => {
       if (roomName) {
         let archiveData: ArchiveResponse;
         try {
-          archiveData = await getArchives(roomName);
+          archiveData = await getArchives(i18n.language, roomName);
         } catch (error: unknown) {
           const message = error instanceof Error ? error.message : error;
           console.error(`Error retrieving archive: ${message}`);
@@ -45,7 +47,7 @@ const useArchives = ({ roomName }: UseArchivesProps): Archive[] | 'error' => {
         clearInterval(pollingIntervalRef.current);
       }
     };
-  }, [roomName]);
+  }, [roomName, i18n.language]);
   return archives;
 };
 
