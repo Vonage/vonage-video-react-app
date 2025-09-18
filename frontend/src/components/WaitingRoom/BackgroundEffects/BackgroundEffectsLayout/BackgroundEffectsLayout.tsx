@@ -1,5 +1,6 @@
 import { ReactElement, useCallback, useEffect, useState } from 'react';
 import { Box, Button, Typography, useMediaQuery } from '@mui/material';
+import { useTranslation } from 'react-i18next';
 import EffectOptionButtons from '../../../BackgroundEffects/EffectOptionButtons/EffectOptionButtons';
 import BackgroundGallery from '../../../BackgroundEffects/BackgroundGallery/BackgroundGallery';
 import BackgroundVideoContainer from '../../../BackgroundEffects/BackgroundVideoContainer';
@@ -27,6 +28,7 @@ const BackgroundEffectsLayout = ({
   isOpen,
   handleClose,
 }: BackgroundEffectsProps): ReactElement | false => {
+  const { t } = useTranslation();
   const [backgroundSelected, setBackgroundSelected] = useState<string>('none');
   const { publisher, changeBackground, isVideoEnabled } = usePreviewPublisherContext();
   const { publisherVideoElement, changeBackground: changeBackgroundPreview } =
@@ -69,7 +71,7 @@ const BackgroundEffectsLayout = ({
           handleClose();
         }}
       >
-        Cancel
+        {t('button.cancel')}
       </Button>
       <Button
         variant="contained"
@@ -77,7 +79,7 @@ const BackgroundEffectsLayout = ({
         sx={{ width: '100%' }}
         onClick={handleApplyBackgroundSelect}
       >
-        Apply
+        {t('button.apply')}
       </Button>
     </Box>
   );
@@ -86,7 +88,7 @@ const BackgroundEffectsLayout = ({
     isOpen && (
       <>
         <Typography variant="h6" sx={{ mb: 2 }}>
-          Background Effects
+          {t('backgroundEffects.title')}
         </Typography>
 
         <Box display="flex" flexDirection={{ xs: 'column', md: 'row' }} gap={3}>
@@ -101,7 +103,7 @@ const BackgroundEffectsLayout = ({
 
           <Box flex={1} minWidth={0} className="choose-background-effect-box">
             <Typography variant="subtitle2" sx={{ textAlign: 'left', mb: 1 }}>
-              Choose Background Effect
+              {t('backgroundEffects.choice')}
             </Typography>
             <Box
               display="grid"

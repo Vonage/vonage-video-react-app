@@ -1,12 +1,8 @@
 import { AlertTitle, Box, Dialog, Stack, Alert } from '@mui/material';
 import { ReactElement } from 'react';
+import { useTranslation } from 'react-i18next';
 import { DEVICE_ACCESS_STATUS } from '../../utils/constants';
 import { isWebKit } from '../../utils/util';
-
-const askDeviceMessage =
-  'To join the video room, your browser will request access to your camera and microphone.';
-const deniedDeviceMessage =
-  "It seems your browser is blocked from accessing your camera and/or microphone. Reset the permission state through your browser's UI.";
 
 export type DeviceAccessAlertProps = {
   accessStatus: string | null;
@@ -20,8 +16,11 @@ export type DeviceAccessAlertProps = {
  * @returns {ReactElement | false} - The rendered DeviceAccessAlert component if not Safari
  */
 const DeviceAccessAlert = ({ accessStatus }: DeviceAccessAlertProps): ReactElement | false => {
+  const { t } = useTranslation();
   const messageToDisplay =
-    accessStatus === DEVICE_ACCESS_STATUS.PENDING ? askDeviceMessage : deniedDeviceMessage;
+    accessStatus === DEVICE_ACCESS_STATUS.PENDING
+      ? t('deviceAccessAlert.askDeviceMessage')
+      : t('deviceAccessAlert.deniedDeviceMessage');
   const imgToDisplay =
     accessStatus === DEVICE_ACCESS_STATUS.PENDING
       ? '/images/access-dialog-pending.png'
@@ -59,7 +58,7 @@ const DeviceAccessAlert = ({ accessStatus }: DeviceAccessAlertProps): ReactEleme
                 <Box
                   component="img"
                   src={imgToDisplay}
-                  alt="Access Dialog"
+                  alt={t('deviceAccessAlert.imageAlt')}
                   sx={{ maxWidth: 300, borderRadius: 1 }}
                 />
               </Box>

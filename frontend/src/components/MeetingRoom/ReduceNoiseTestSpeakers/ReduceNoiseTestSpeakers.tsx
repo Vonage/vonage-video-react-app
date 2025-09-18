@@ -6,6 +6,7 @@ import { hasMediaProcessorSupport } from '@vonage/client-sdk-video';
 import HeadsetIcon from '@mui/icons-material/Headset';
 import ToggleOffIcon from '@mui/icons-material/ToggleOff';
 import ToggleOnIcon from '@mui/icons-material/ToggleOn';
+import { useTranslation } from 'react-i18next';
 import usePublisherContext from '../../../hooks/usePublisherContext';
 import DropdownSeparator from '../DropdownSeparator';
 import SoundTest from '../../SoundTest';
@@ -27,6 +28,7 @@ export type ReduceNoiseTestSpeakersProps = {
 const ReduceNoiseTestSpeakers = ({
   customLightBlueColor,
 }: ReduceNoiseTestSpeakersProps): ReactElement | false => {
+  const { t } = useTranslation();
   const { publisher, isPublishing } = usePublisherContext();
   const [isToggled, setIsToggled] = useState(false);
 
@@ -70,7 +72,7 @@ const ReduceNoiseTestSpeakers = ({
           >
             <HeadsetIcon sx={{ fontSize: 24, mr: 2 }} />
             <Typography noWrap sx={{ mr: 2 }}>
-              Advanced Noise Suppression
+              {t('devices.audio.noiseSuppression')}
             </Typography>
             <IconButton disableRipple>
               <Grow in={!isToggled} timeout={300}>

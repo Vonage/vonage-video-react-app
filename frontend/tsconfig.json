@@ -17,9 +17,17 @@
     "strict": true,
     "noUnusedLocals": false,
     "noUnusedParameters": false,
-    "noFallthroughCasesInSwitch": true,
+    "noFallthroughCasesInSwitch": true
   },
-  "include": ["./src", "./src/types", "src/pages", "src/helpers", "./.eslintrc.cjs", "**/*.spec.ts", "**/*.spec.tsx"],
+  "include": [
+    "./src",
+    "./src/types",
+    "src/pages",
+    "src/helpers",
+    "./.eslintrc.cjs",
+    "**/*.spec.ts",
+    "**/*.spec.tsx"
+  ],
   "exclude": ["./node_modules", "./vite.config.ts"],
   "references": [{ "path": "./tsconfig.node.json" }]
 }

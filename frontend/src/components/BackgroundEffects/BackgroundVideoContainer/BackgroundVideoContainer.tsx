@@ -1,5 +1,6 @@
 import { useRef, useState, useEffect, ReactElement } from 'react';
 import { CircularProgress, useMediaQuery } from '@mui/material';
+import { useTranslation } from 'react-i18next';
 import waitUntilPlaying from '../../../utils/waitUntilPlaying';
 
 export type BackgroundVideoContainerProps = {
@@ -21,6 +22,7 @@ const BackgroundVideoContainer = ({
   publisherVideoElement,
   isParentVideoEnabled = false,
 }: BackgroundVideoContainerProps): ReactElement => {
+  const { t } = useTranslation();
   const containerRef = useRef<HTMLDivElement>(null);
   const [isVideoLoading, setIsVideoLoading] = useState<boolean>(true);
   const isSMViewport = useMediaQuery(`(max-width:500px)`);
@@ -75,7 +77,7 @@ const BackgroundVideoContainer = ({
     <div data-testid="background-video-container">
       {!isParentVideoEnabled && (
         <div className="background-video-container-disabled" style={{ width: containerWidth }}>
-          You have not enabled video
+          {t('backgroundEffects.video.disabled')}
         </div>
       )}
       {isParentVideoEnabled && <div ref={containerRef} />}

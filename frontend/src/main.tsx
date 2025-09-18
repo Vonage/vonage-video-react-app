@@ -1,5 +1,6 @@
 import ReactDOM from 'react-dom/client';
 import App from './App.jsx';
+import './i18n.js';
 
 /**
  * The root HTML element where the React application is rendered.

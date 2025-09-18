@@ -3,6 +3,7 @@ import { ReactElement, useState } from 'react';
 import { Stream } from '@vonage/client-sdk-video';
 import Tooltip from '@mui/material/Tooltip';
 import { IconButton } from '@mui/material';
+import { useTranslation } from 'react-i18next';
 import PopupDialog, { DialogTexts } from '../PopupDialog';
 import VoiceIndicatorIcon from '../VoiceIndicator/VoiceIndicator';
 import useSessionContext from '../../../hooks/useSessionContext';
@@ -36,13 +37,14 @@ const AudioIndicator = ({
   audioLevel,
   participantName,
 }: AudioIndicatorProps): ReactElement => {
+  const { t } = useTranslation();
   const { forceMute } = useSessionContext();
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
 
   const muteParticipantText: DialogTexts = {
-    contents: `Mute ${participantName} for everyone in the call? Only ${participantName} can unmute themselves.`,
-    primaryActionText: 'Mute',
-    secondaryActionText: 'Cancel',
+    contents: t('participants.mute.dialog.content', { participantName }),
+    primaryActionText: t('button.mute'),
+    secondaryActionText: t('button.cancel'),
   };
   const handleClick = () => {
     setIsModalOpen(true);
@@ -71,7 +73,7 @@ const AudioIndicator = ({
 
   return (
     <div className={indicatorStyle} data-testid="audio-indicator">
-      <Tooltip title={hasAudio ? `Mute ${participantName}'s microphone` : ''}>
+      <Tooltip title={hasAudio ? t('participants.mute.tooltip', { participantName }) : ''}>
         <IconButton
           disableRipple={!hasAudio}
           disableFocusRipple={!hasAudio}

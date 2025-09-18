@@ -2,6 +2,7 @@ import { Tooltip } from '@mui/material';
 import { ReactElement, useRef } from 'react';
 import FeedbackIcon from '@mui/icons-material/Feedback';
 import { blue } from '@mui/material/colors';
+import { useTranslation } from 'react-i18next';
 import ToolbarButton from '../ToolbarButton';
 
 export type ReportIssueButtonProps = {
@@ -25,12 +26,13 @@ const ReportIssueButton = ({
   isOpen,
   isOverflowButton = false,
 }: ReportIssueButtonProps): ReactElement => {
+  const { t } = useTranslation();
   const anchorRef = useRef<HTMLButtonElement>(null);
 
   return (
     <Tooltip
-      title={isOpen ? 'Close report issue form' : 'Open report issue form'}
-      aria-label="toggle report issue form"
+      title={isOpen ? t('feedbackForm.close') : t('feedbackForm.open')}
+      aria-label={t('feedbackForm.ariaLabel')}
     >
       <ToolbarButton
         data-testid="report-issue-button"
