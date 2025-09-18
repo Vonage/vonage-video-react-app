@@ -47,12 +47,12 @@ const DeviceControlButton = ({
   let tooltipTitle: string;
   if (isAudio) {
     if (!enableDisableCapableMicrophone) {
-      tooltipTitle = 'Microphone control is disabled in this application';
+      tooltipTitle = t('devices.audio.disabled');
     } else {
       tooltipTitle = audioTitle;
     }
   } else if (!allowCameraControl) {
-    tooltipTitle = 'Camera control is disabled in this application';
+    tooltipTitle = t('devices.video.disabled');
   } else {
     tooltipTitle = videoTitle;
   }
@@ -111,6 +111,7 @@ const DeviceControlButton = ({
         <IconButton
           size="small"
           aria-controls={open ? 'split-button-menu' : undefined}
+          disabled={isButtonDisabled}
           aria-expanded={open ? 'true' : undefined}
           aria-label={isAudio ? t('devices.audio.ariaLabel') : t('devices.video.ariaLabel')}
           aria-haspopup="menu"
@@ -124,10 +125,7 @@ const DeviceControlButton = ({
             <ArrowDropUp className="text-gray-400" />
           )}
         </IconButton>
-        <Tooltip
-          title={isAudio ? audioTitle : videoTitle}
-          aria-label={t('devices.settings.ariaLabel')}
-        >
+        <Tooltip title={tooltipTitle} aria-label={t('devices.settings.ariaLabel')}>
           <IconButton
             onClick={handleDeviceStateChange}
             edge="start"
