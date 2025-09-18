@@ -3,6 +3,7 @@ import { hasMediaProcessorSupport } from '@vonage/client-sdk-video';
 import { ReactElement } from 'react';
 import PortraitIcon from '@mui/icons-material/Portrait';
 import VideoContainerButton from '../../VideoContainerButton';
+import useConfigContext from '../../../../hooks/useConfigContext';
 
 export type BackgroundEffectsButtonProps = {
   onClick: () => void;
@@ -19,8 +20,11 @@ export type BackgroundEffectsButtonProps = {
 const BackgroundEffectsButton = ({
   onClick,
 }: BackgroundEffectsButtonProps): ReactElement | false => {
+  const config = useConfigContext();
+  const { allowBackgroundEffects } = config.videoSettings;
   return (
-    hasMediaProcessorSupport() && (
+    hasMediaProcessorSupport() &&
+    allowBackgroundEffects && (
       <Box
         sx={{
           display: 'flex',
