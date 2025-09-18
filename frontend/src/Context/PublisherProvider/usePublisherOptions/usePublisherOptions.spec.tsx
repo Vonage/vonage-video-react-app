@@ -73,7 +73,7 @@ describe('usePublisherOptions', () => {
     await deviceStore.init();
     configContext = {
       audioSettings: {
-        audioOnJoin: true,
+        allowAudioOnJoin: true,
       },
       videoSettings: {
         defaultResolution: '1280x720',
@@ -159,7 +159,7 @@ describe('usePublisherOptions', () => {
 
   describe('configurable features', () => {
     it('should disable audio publishing', async () => {
-      configContext.audioSettings.audioOnJoin = false;
+      configContext.audioSettings.allowAudioOnJoin = false;
       const { result } = renderHook(() => usePublisherOptions());
       await waitFor(() => {
         expect(result.current?.publishAudio).toBe(false);

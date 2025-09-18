@@ -6,9 +6,9 @@
     "defaultResolution": "1280x720"
   },
   "audioSettings": {
-    "advancedNoiseSuppression": true,
-    "audioOnJoin": true,
-    "enableDisableCapableMicrophone": true
+    "allowAdvancedNoiseSuppression": true,
+    "allowAudioOnJoin": true,
+    "allowMicrophoneControl": true
   },
   "waitingRoomSettings": {
     "allowDeviceSelection": true

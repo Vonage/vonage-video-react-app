@@ -20,10 +20,10 @@ const MicButton = (): ReactElement | false => {
   const title = isAudioEnabled
     ? t('devices.audio.microphone.state.off')
     : t('devices.audio.microphone.state.on');
-  const canEnableOrDisableMicrophone = config.audioSettings.enableDisableCapableMicrophone;
+  const { allowMicrophoneControl } = config.audioSettings;
 
   return (
-    canEnableOrDisableMicrophone && (
+    allowMicrophoneControl && (
       <Box
         sx={{
           display: 'flex',

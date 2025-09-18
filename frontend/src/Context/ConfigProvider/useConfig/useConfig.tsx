@@ -16,9 +16,9 @@ export type VideoSettings = {
 };
 
 export type AudioSettings = {
-  advancedNoiseSuppression: boolean;
-  audioOnJoin: boolean;
-  enableDisableCapableMicrophone: boolean;
+  allowAdvancedNoiseSuppression: boolean;
+  allowAudioOnJoin: boolean;
+  allowMicrophoneControl: boolean;
 };
 
 export type WaitingRoomSettings = {
@@ -50,9 +50,9 @@ export const defaultConfig: AppConfig = {
     defaultResolution: '1280x720',
   },
   audioSettings: {
-    advancedNoiseSuppression: true,
-    audioOnJoin: true,
-    enableDisableCapableMicrophone: true,
+    allowAdvancedNoiseSuppression: true,
+    allowAudioOnJoin: true,
+    allowMicrophoneControl: true,
   },
   waitingRoomSettings: {
     allowDeviceSelection: true,

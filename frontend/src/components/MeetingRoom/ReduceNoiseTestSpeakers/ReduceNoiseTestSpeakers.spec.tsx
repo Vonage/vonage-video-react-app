@@ -50,7 +50,7 @@ describe('ReduceNoiseTestSpeakers', () => {
     } as unknown as PublisherContextType;
     configContext = {
       audioSettings: {
-        advancedNoiseSuppression: true,
+        allowAdvancedNoiseSuppression: true,
       },
     } as unknown as ConfigContextType;
     mockUsePublisherContext.mockImplementation(() => publisherContext);
@@ -143,7 +143,7 @@ describe('ReduceNoiseTestSpeakers', () => {
   it('should not render the Advanced Noise Suppression option if it is configured to be disabled', () => {
     configContext = {
       audioSettings: {
-        advancedNoiseSuppression: false,
+        allowAdvancedNoiseSuppression: false,
       },
     } as unknown as ConfigContextType;
     mockUseConfigContext.mockReturnValue(configContext);

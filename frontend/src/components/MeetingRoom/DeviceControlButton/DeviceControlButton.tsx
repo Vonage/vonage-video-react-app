@@ -41,12 +41,12 @@ const DeviceControlButton = ({
   const anchorRef = useRef<HTMLInputElement | null>(null);
   const audioTitle = isAudioEnabled ? t('devices.audio.disable') : t('devices.audio.enable');
   const videoTitle = isVideoEnabled ? t('devices.video.disable') : t('devices.video.enable');
-  const { enableDisableCapableMicrophone } = config.audioSettings;
+  const { allowMicrophoneControl } = config.audioSettings;
   const { allowCameraControl } = config.videoSettings;
-  const isButtonDisabled = isAudio ? !enableDisableCapableMicrophone : !allowCameraControl;
+  const isButtonDisabled = isAudio ? !allowMicrophoneControl : !allowCameraControl;
   let tooltipTitle: string;
   if (isAudio) {
-    if (!enableDisableCapableMicrophone) {
+    if (!allowMicrophoneControl) {
       tooltipTitle = t('devices.audio.disabled');
     } else {
       tooltipTitle = audioTitle;
@@ -70,7 +70,7 @@ const DeviceControlButton = ({
 
   const renderControlIcon = () => {
     if (isAudio) {
-      if (!enableDisableCapableMicrophone) {
+      if (!allowMicrophoneControl) {
         return <Mic className="text-gray-400" />;
       }
       if (isAudioEnabled) {

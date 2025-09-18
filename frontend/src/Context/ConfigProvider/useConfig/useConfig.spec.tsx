@@ -12,9 +12,9 @@ describe('useConfig', () => {
       allowBackgroundEffects: true,
     },
     audioSettings: {
-      advancedNoiseSuppression: true,
-      audioOnJoin: true,
-      enableDisableCapableMicrophone: true,
+      allowAdvancedNoiseSuppression: true,
+      allowAudioOnJoin: true,
+      allowMicrophoneControl: true,
     },
     waitingRoomSettings: {
       allowDeviceSelection: true,
@@ -65,9 +65,9 @@ describe('useConfig', () => {
         allowBackgroundEffects: false,
       },
       audioSettings: {
-        advancedNoiseSuppression: false,
-        audioOnJoin: false,
-        enableDisableCapableMicrophone: false,
+        allowAdvancedNoiseSuppression: false,
+        allowAudioOnJoin: false,
+        allowMicrophoneControl: false,
       },
       waitingRoomSettings: {
         allowDeviceSelection: false,

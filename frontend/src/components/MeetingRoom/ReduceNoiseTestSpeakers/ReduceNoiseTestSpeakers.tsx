@@ -33,7 +33,7 @@ const ReduceNoiseTestSpeakers = ({
   const { publisher, isPublishing } = usePublisherContext();
   const config = useConfigContext();
   const [isToggled, setIsToggled] = useState(false);
-  const isANSEnabled = config.audioSettings.advancedNoiseSuppression;
+  const isANSEnabled = config.audioSettings.allowAdvancedNoiseSuppression;
 
   const handleToggle = async () => {
     const newState = !isToggled;

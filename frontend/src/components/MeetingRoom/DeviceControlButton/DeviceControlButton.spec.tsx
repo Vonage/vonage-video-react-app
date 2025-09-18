@@ -68,7 +68,7 @@ describe('DeviceControlButton', () => {
 
     configContext = {
       audioSettings: {
-        enableDisableCapableMicrophone: true,
+        allowMicrophoneControl: true,
       },
       videoSettings: {
         allowCameraControl: true,
@@ -125,7 +125,7 @@ describe('DeviceControlButton', () => {
     });
 
     it('renders the button as disabled with greyed out icon and correct tooltip when microphone control is disabled', async () => {
-      configContext.audioSettings.enableDisableCapableMicrophone = false;
+      configContext.audioSettings.allowMicrophoneControl = false;
       render(
         <DeviceControlButton
           deviceType="audio"

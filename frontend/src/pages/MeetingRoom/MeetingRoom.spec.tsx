@@ -61,7 +61,7 @@ vi.mock('../../hooks/useConfigContext', () => {
         allowCameraControl: true,
       },
       audioSettings: {
-        enableDisableCapableMicrophone: true,
+        allowMicrophoneControl: true,
       },
       meetingRoomSettings: {
         defaultLayoutMode: 'active-speaker',
