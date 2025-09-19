@@ -1,5 +1,6 @@
 import { Avatar, ListItem, ListItemText, Typography } from '@mui/material';
 import { ReactElement } from 'react';
+import { useTranslation } from 'react-i18next';
 import { getFormattedTime } from '../../../utils/dateTime';
 import FormattedMessageBody from '../FormattedMessageBody';
 
@@ -30,6 +31,7 @@ const ChatMessage = ({
   name,
   timestamp,
 }: ChatMessageProps): ReactElement => {
+  const { i18n } = useTranslation();
   return (
     <ListItem alignItems="flex-start" data-testid="chat-message">
       <Avatar
@@ -61,7 +63,7 @@ const ChatMessage = ({
               sx={{ paddingLeft: '8px', color: 'text.secondary', display: 'inline' }}
               data-testid="chat-msg-timestamp"
             >
-              {getFormattedTime(timestamp)}
+              {getFormattedTime(i18n.language, timestamp)}
             </Typography>
           </>
         }

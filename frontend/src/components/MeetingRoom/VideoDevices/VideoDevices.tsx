@@ -3,6 +3,7 @@ import { Box, MenuItem, MenuList, Typography } from '@mui/material';
 import CheckIcon from '@mui/icons-material/Check';
 import VideocamIcon from '@mui/icons-material/Videocam';
 import { Device } from '@vonage/client-sdk-video';
+import { useTranslation } from 'react-i18next';
 import useDevices from '../../../hooks/useDevices';
 import usePublisherContext from '../../../hooks/usePublisherContext';
 import { setStorageItem, STORAGE_KEYS } from '../../../utils/storage';
@@ -22,6 +23,7 @@ export type VideoDevicesProps = {
  * @returns {ReactElement} - the video output devices component.
  */
 const VideoDevices = ({ handleToggle, customLightBlueColor }: VideoDevicesProps): ReactElement => {
+  const { t } = useTranslation();
   const { isPublishing, publisher } = usePublisherContext();
   const { allMediaDevices } = useDevices();
   const [devicesAvailable, setDevicesAvailable] = useState<Device[]>([]);
@@ -67,7 +69,7 @@ const VideoDevices = ({ handleToggle, customLightBlueColor }: VideoDevicesProps)
         }}
       >
         <VideocamIcon sx={{ fontSize: 24, mr: 2 }} />
-        <Typography>Camera</Typography>
+        <Typography>{t('devices.video.camera.full')}</Typography>
       </Box>
       <MenuList id="split-button-menu">
         {options.map((option) => {

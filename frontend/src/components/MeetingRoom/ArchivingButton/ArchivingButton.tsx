@@ -1,6 +1,7 @@
 import RadioButtonCheckedIcon from '@mui/icons-material/RadioButtonChecked';
 import { Tooltip } from '@mui/material';
 import { ReactElement, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import useRoomName from '../../../hooks/useRoomName';
 import ToolbarButton from '../ToolbarButton';
 import PopupDialog, { DialogTexts } from '../PopupDialog';
@@ -27,28 +28,28 @@ const ArchivingButton = ({
   isOverflowButton = false,
   handleClick,
 }: ArchivingButtonProps): ReactElement => {
+  const { t } = useTranslation();
   const roomName = useRoomName();
   const { archiveId } = useSessionContext();
   const isRecording = !!archiveId;
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
-  const title = isRecording ? 'Stop recording' : 'Start recording';
+  const title = isRecording ? t('recording.stop.title') : t('recording.start.title');
   const handleButtonClick = () => {
     setIsModalOpen((prev) => !prev);
   };
 
   const startRecordingText: DialogTexts = {
-    title: 'Start Recording?',
-    contents:
-      'Make sure everyone is ready! You can download the recording from the "Goodbye" page after you leave the room.',
-    primaryActionText: 'Start Recording',
-    secondaryActionText: 'Cancel',
+    title: t('recording.start.dialog.title'),
+    contents: t('recording.start.dialog.content'),
+    primaryActionText: t('recording.start.title'),
+    secondaryActionText: t('button.cancel'),
   };
 
   const stopRecordingText: DialogTexts = {
-    title: 'Stop Recording?',
-    contents: 'You can download the recording from the "Goodbye" page after you leave the room.',
-    primaryActionText: 'Stop Recording',
-    secondaryActionText: 'Cancel',
+    title: t('recording.stop.dialog.title'),
+    contents: t('recording.stop.dialog.content'),
+    primaryActionText: t('recording.stop.title'),
+    secondaryActionText: t('button.cancel'),
   };
 
   const actionText = isRecording ? stopRecordingText : startRecordingText;
@@ -83,7 +84,7 @@ const ArchivingButton = ({
 
   return (
     <>
-      <Tooltip title={title} aria-label="video layout">
+      <Tooltip title={title} aria-label={t('recording.tooltip.ariaLabel')}>
         <ToolbarButton
           onClick={handleButtonClick}
           data-testid="archiving-button"

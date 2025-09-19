@@ -4,6 +4,7 @@ import MicNone from '@mui/icons-material/MicNone';
 import VideoCall from '@mui/icons-material/VideoCall';
 import Speaker from '@mui/icons-material/Speaker';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
+import { useTranslation } from 'react-i18next';
 import MenuDevicesWaitingRoom from '../MenuDevices';
 import usePreviewPublisherContext from '../../../hooks/usePreviewPublisherContext';
 import useDevices from '../../../hooks/useDevices';
@@ -52,6 +53,7 @@ const ControlPanel = ({
   openAudioOutput,
   anchorEl,
 }: ControlPanelProps): ReactElement => {
+  const { t } = useTranslation();
   const isSmallViewport = useIsSmallViewport();
   const { allMediaDevices } = useDevices();
   const { localAudioSource, localVideoSource, changeAudioSource, changeVideoSource } =
@@ -64,6 +66,7 @@ const ControlPanel = ({
     textTransform: 'none', // ensures that the text is not upper case
     border: 'none',
     boxShadow: 'none',
+    whiteSpace: 'nowrap',
     '&:hover': {
       border: 'none',
       boxShadow: 'none',
@@ -83,7 +86,9 @@ const ControlPanel = ({
           aria-expanded={openVideoInput ? 'true' : undefined}
           onClick={handleAudioInputOpen}
         >
-          {isSmallViewport ? 'Mic' : 'Microphone'}
+          {isSmallViewport
+            ? t('devices.audio.microphone.short')
+            : t('devices.audio.microphone.full')}
         </Button>
         <MenuDevicesWaitingRoom
           devices={allMediaDevices.audioInputDevices}
@@ -100,9 +105,9 @@ const ControlPanel = ({
           sx={buttonSx}
           variant="outlined"
           startIcon={<VideoCall />}
-          aria-label="video"
+          aria-label={t('devices.video.camera.button.ariaLabel')}
         >
-          Camera
+          {t('button.camera')}
         </Button>
 
         <MenuDevicesWaitingRoom
@@ -121,7 +126,7 @@ const ControlPanel = ({
           variant="outlined"
           startIcon={<Speaker />}
         >
-          Speaker
+          {t('button.speaker')}
         </Button>
         <MenuDevicesWaitingRoom
           devices={allMediaDevices.audioOutputDevices}

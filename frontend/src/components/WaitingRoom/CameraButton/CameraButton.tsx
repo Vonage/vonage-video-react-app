@@ -2,6 +2,7 @@ import { Box, Tooltip } from '@mui/material';
 import VideocamIcon from '@mui/icons-material/Videocam';
 import VideocamOffIcon from '@mui/icons-material/VideocamOff';
 import { ReactElement } from 'react';
+import { useTranslation } from 'react-i18next';
 import usePreviewPublisherContext from '../../../hooks/usePreviewPublisherContext';
 import VideoContainerButton from '../VideoContainerButton';
 import useBackgroundPublisherContext from '../../../hooks/useBackgroundPublisherContext';
@@ -13,9 +14,12 @@ import useBackgroundPublisherContext from '../../../hooks/useBackgroundPublisher
  * @returns {ReactElement} - The CameraButton component.
  */
 const CameraButton = (): ReactElement => {
+  const { t } = useTranslation();
   const { isVideoEnabled, toggleVideo } = usePreviewPublisherContext();
   const { toggleVideo: toggleBackgroundVideoPublisher } = useBackgroundPublisherContext();
-  const title = `Turn ${isVideoEnabled ? 'off' : 'on'} camera`;
+  const title = isVideoEnabled
+    ? t('devices.video.camera.state.off')
+    : t('devices.video.camera.state.on');
 
   const handleToggleVideo = () => {
     toggleVideo();
@@ -36,7 +40,7 @@ const CameraButton = (): ReactElement => {
         overflow: 'hidden',
       }}
     >
-      <Tooltip title={title} aria-label="toggle video">
+      <Tooltip title={title} aria-label={t('devices.video.camera.ariaLabel')}>
         <VideoContainerButton
           onClick={handleToggleVideo}
           sx={{

@@ -1,5 +1,6 @@
 import { useState, useRef, useCallback } from 'react';
 import { Publisher, initPublisher } from '@vonage/client-sdk-video';
+import { useTranslation } from 'react-i18next';
 import useSessionContext from './useSessionContext';
 import useUserContext from './useUserContext';
 
@@ -20,6 +21,7 @@ export type UseScreenShareType = {
  * @returns {UseScreenShareType} useScreenShare
  */
 const useScreenShare = (): UseScreenShareType => {
+  const { t } = useTranslation();
   const { vonageVideoClient, unpublish, publish } = useSessionContext();
   const { user } = useUserContext();
 
@@ -60,7 +62,7 @@ const useScreenShare = (): UseScreenShareType => {
             videoSource: 'screen',
             insertDefaultUI: false,
             videoContentHint: 'detail',
-            name: `${user.defaultSettings.name}'s screen`,
+            name: t('participants.screen', { participantName: user.defaultSettings.name }),
           },
           (err) => {
             if (err) {
@@ -107,6 +109,7 @@ const useScreenShare = (): UseScreenShareType => {
     unpublishScreenshare,
     onScreenShareStopped,
     publish,
+    t,
   ]);
 
   return {

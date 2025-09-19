@@ -1,5 +1,6 @@
 import { ReactElement, useCallback, useEffect, useState } from 'react';
 import { Box, Button, useMediaQuery } from '@mui/material';
+import { t } from 'i18next';
 import usePublisherContext from '../../../hooks/usePublisherContext';
 import RightPanelTitle from '../RightPanel/RightPanelTitle';
 import BackgroundVideoContainer from '../../BackgroundEffects/BackgroundVideoContainer';
@@ -77,7 +78,7 @@ const BackgroundEffectsLayout = ({
         overflowY: isShortScreen ? 'auto' : 'hidden',
       }}
     >
-      <RightPanelTitle title="Background Effects" handleClose={handleClose} />
+      <RightPanelTitle title={t('backgroundEffects.title')} handleClose={handleClose} />
 
       <Box sx={{ flexShrink: 0, p: 1.5 }}>
         <BackgroundVideoContainer
@@ -117,7 +118,7 @@ const BackgroundEffectsLayout = ({
           sx={{ width: '100%', mr: 1 }}
           onClick={handleClose}
         >
-          Cancel
+          {t('button.cancel')}
         </Button>
         <Button
           data-testid="background-effect-apply-button"
@@ -126,7 +127,7 @@ const BackgroundEffectsLayout = ({
           sx={{ width: '100%' }}
           onClick={handleApplyBackgroundSelect}
         >
-          Apply
+          {t('button.apply')}
         </Button>
       </Box>
     </Box>

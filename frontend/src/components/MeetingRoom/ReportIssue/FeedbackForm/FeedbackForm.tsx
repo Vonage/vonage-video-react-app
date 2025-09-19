@@ -1,5 +1,6 @@
 import { TextField, Button, Typography, Box, CircularProgress } from '@mui/material';
 import { FormEvent, ChangeEvent, ReactElement } from 'react';
+import { useTranslation } from 'react-i18next';
 import FilePicker from './FilePicker';
 import {
   REPORT_TITLE_LIMIT,
@@ -59,6 +60,7 @@ const FeedbackForm = ({
   loading,
   onFileSelect,
 }: FeedbackFormType): ReactElement => {
+  const { t } = useTranslation();
   const isSmallViewport = useIsSmallViewport();
   // 224px = 64px panel header + 96px toolbar if normal viewport + (40px submit button + 24px submit button margin)
   // 208px = 64px panel header + 80px toolbar if small viewport + (40px submit button + 24px submit button margin)
@@ -96,7 +98,7 @@ const FeedbackForm = ({
           color="textPrimary"
           sx={getStyleTypography()}
         >
-          When you noticed this issue, what were you trying to do?
+          {t('feedbackForm.field.title.label')}
         </Typography>
         <TextField
           fullWidth
@@ -109,7 +111,7 @@ const FeedbackForm = ({
           helperText={
             <HelperText
               colorStyle={getColorStyle(formData.title, REPORT_TITLE_LIMIT)}
-              errorType="Title"
+              errorType={t('feedbackForm.field.title.type')}
               textLimit={REPORT_TITLE_LIMIT}
               isError={errors.title}
               formText={formData.title}
@@ -127,7 +129,7 @@ const FeedbackForm = ({
           color="textPrimary"
           sx={getStyleTypography()}
         >
-          Tell us your name
+          {t('feedbackForm.field.name.label')}
         </Typography>
         <TextField
           fullWidth
@@ -140,7 +142,7 @@ const FeedbackForm = ({
           helperText={
             <HelperText
               colorStyle={getColorStyle(formData.name, REPORT_NAME_LIMIT)}
-              errorType="Your name"
+              errorType={t('feedbackForm.field.name.type')}
               textLimit={REPORT_NAME_LIMIT}
               isError={errors.name}
               formText={formData.name}
@@ -160,7 +162,7 @@ const FeedbackForm = ({
           color="textPrimary"
           sx={getStyleTypography()}
         >
-          Describe your issue
+          {t('feedbackForm.field.issue.label')}
         </Typography>
 
         <TextField
@@ -176,7 +178,7 @@ const FeedbackForm = ({
           helperText={
             <HelperText
               colorStyle={getColorStyle(formData.issue, REPORT_DESCRIPTION_LIMIT)}
-              errorType="Description"
+              errorType={t('feedbackForm.field.issue.type')}
               textLimit={REPORT_DESCRIPTION_LIMIT}
               isError={errors.issue}
               formText={formData.issue}
@@ -199,7 +201,7 @@ const FeedbackForm = ({
             textAlign: 'left',
           }}
         >
-          Please do not include any sensitive information.
+          {t('feedbackForm.disclaiamer.label')}
         </Typography>
         <Typography
           variant="body2"
@@ -210,7 +212,7 @@ const FeedbackForm = ({
             textAlign: 'left',
           }}
         >
-          A screenshot will help us better understand the issue. (optional)
+          {t('feedbackForm.disclaiamer.screenshot')}
         </Typography>
         <FilePicker onFileSelect={onFileSelect} />
       </Box>
@@ -226,7 +228,7 @@ const FeedbackForm = ({
           width,
         }}
       >
-        Send
+        {t('button.send')}
       </Button>
     </form>
   );

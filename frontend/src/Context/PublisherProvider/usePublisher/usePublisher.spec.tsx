@@ -12,7 +12,6 @@ import useUserContext from '../../../hooks/useUserContext';
 import { UserContextType } from '../../user';
 import useSessionContext from '../../../hooks/useSessionContext';
 import { SessionContextType } from '../../SessionProvider/session';
-import { PUBLISHING_BLOCKED_CAPTION } from '../../../utils/constants';
 
 vi.mock('@vonage/client-sdk-video');
 vi.mock('../../../hooks/useUserContext.tsx');
@@ -240,7 +239,8 @@ describe('usePublisher', () => {
 
       const publishingBlockedError = {
         header: 'Difficulties joining room',
-        caption: PUBLISHING_BLOCKED_CAPTION,
+        caption:
+          "We're having trouble connecting you with others in the meeting room. Please check your network and try again.",
       };
       expect(result.current.publishingError).toEqual(publishingBlockedError);
       expect(mockedSessionPublish).toHaveBeenCalledTimes(2);

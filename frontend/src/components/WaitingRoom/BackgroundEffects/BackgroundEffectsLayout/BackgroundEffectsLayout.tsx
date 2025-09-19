@@ -1,5 +1,6 @@
 import { ReactElement, useCallback, useEffect, useState } from 'react';
 import { Box, Button, useMediaQuery } from '@mui/material';
+import { t } from 'i18next';
 import BackgroundVideoContainer from '../../../BackgroundEffects/BackgroundVideoContainer';
 import usePreviewPublisherContext from '../../../../hooks/usePreviewPublisherContext';
 import useBackgroundPublisherContext from '../../../../hooks/useBackgroundPublisherContext';
@@ -75,7 +76,7 @@ const BackgroundEffectsLayout = ({
           handleClose();
         }}
       >
-        Cancel
+        {t('button.cancel')}
       </Button>
       <Button
         variant="contained"
@@ -83,7 +84,7 @@ const BackgroundEffectsLayout = ({
         sx={{ width: '100%' }}
         onClick={handleApplyBackgroundSelect}
       >
-        Apply
+        {t('button.apply')}
       </Button>
     </Box>
   );

@@ -22,24 +22,6 @@ export const DEVICE_ACCESS_STATUS = {
 };
 
 /**
- * @constant {string} MUTED_ALERT_MESSAGE - A message to alert the user that their microphone is muted.
- */
-export const MUTED_ALERT_MESSAGE =
-  'Are you talking? Your mic is off. Click on the mic to turn it on.';
-
-/**
- * @constant {string} FORCE_MUTED_ALERT_MESSAGE - A message to alert the user that their microphone was muted by another participant.
- */
-export const FORCE_MUTED_ALERT_MESSAGE =
-  'You have been muted by another participant. Click on the mic to unmute yourself.';
-
-/**
- * @constant {string} PUBLISHING_BLOCKED_CAPTION - A user-friendly message alerting the user of publishing issues.
- */
-export const PUBLISHING_BLOCKED_CAPTION =
-  "We're having trouble connecting you with others in the meeting room. Please check your network and try again.";
-
-/**
  * @constant {string} TEXT_SHADOW - The text shadow style used for display purposes.
  */
 export const TEXT_SHADOW = '[text-shadow:_0_1px_2px_rgb(0_0_0_/_60%)]';
