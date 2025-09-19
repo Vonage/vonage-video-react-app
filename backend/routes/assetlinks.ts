@@ -3,7 +3,7 @@ import { Request, Response, Router } from 'express';
 const assetLinksRouter = Router();
 
 /**
- * Serve the static file needed for mobile deep linking
+ * Serve the static file needed for Android deep linking
  * more info: https://developer.android.com/training/app-links/verify-android-applinks#publish-json
  */
 assetLinksRouter.get('/assetlinks.json', (_req: Request, res: Response) => {
@@ -22,6 +22,31 @@ assetLinksRouter.get('/assetlinks.json', (_req: Request, res: Response) => {
       },
     },
   ]);
+});
+
+/**
+ * Serve the static file needed for iOS app site association
+ * more info: https://developer.apple.com/documentation/xcode/supporting-associated-domains
+ */
+assetLinksRouter.get('/apple-app-site-association', (_req: Request, res: Response) => {
+  res.json({
+    applinks: {
+      details: [
+        {
+          appIDs: ['PR6C39UQ38.com.vonage.VERA'],
+          components: [
+            {
+              '/': '/waiting-room/*',
+              comment: 'Matches any waiting room URL',
+            },
+          ],
+        },
+      ],
+    },
+    webcredentials: {
+      apps: ['PR6C39UQ38.com.vonage.VERA'],
+    },
+  });
 });
 
 export default assetLinksRouter;
