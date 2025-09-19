@@ -81,7 +81,7 @@
 .choose-background-effect-grid {
   overflow-y: auto;
   padding: 8px;
-  max-height: 35vh;
+  max-height: 37vh;
 }
 @media (min-width: 899px) and (min-height: 920px) {
   .choose-background-effect-grid {

@@ -1,7 +1,7 @@
 import { Dialog, DialogContent, DialogTitle, IconButton } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import { ReactElement } from 'react';
-import BackgroundEffectsLayout from '../BackgroundEffectsLayout/BackgroundEffectsLayout';
+import BackgroundEffectsLayout from '../../../BackgroundEffects/BackgroundEffectsLayout';
 
 export type BackgroundEffectsDialogProps = {
   isBackgroundEffectsOpen: boolean;
@@ -43,7 +43,11 @@ const BackgroundEffectsDialog = ({
         </IconButton>
       </DialogTitle>
       <DialogContent>
-        <BackgroundEffectsLayout isOpen={isBackgroundEffectsOpen} handleClose={handleClose} />
+        <BackgroundEffectsLayout
+          mode="waiting"
+          isOpen={isBackgroundEffectsOpen}
+          handleClose={handleClose}
+        />
       </DialogContent>
     </Dialog>
   );
