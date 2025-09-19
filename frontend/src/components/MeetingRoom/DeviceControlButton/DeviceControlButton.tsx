@@ -126,6 +126,7 @@ const DeviceControlButton = ({
         </IconButton>
         <Tooltip title={tooltipTitle} aria-label={t('devices.settings.ariaLabel')}>
           <div>
+            {/* We add the div here so that the tooltip is present if the button is disabled */}
             <IconButton
               onClick={handleDeviceStateChange}
               disabled={isButtonDisabled}
