@@ -45,6 +45,10 @@ describe('GET /.well-known/apple-app-site-association', () => {
                 expect.objectContaining({
                   '/': '/waiting-room/*',
                 }),
+                expect.objectContaining({
+                  '/': '/room/*',
+                  comment: 'Matches any room URL',
+                }),
               ]),
             }),
           ]),

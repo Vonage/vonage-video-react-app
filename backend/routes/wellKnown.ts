@@ -39,6 +39,10 @@ wellKnownRouter.get('/apple-app-site-association', (_req: Request, res: Response
               '/': '/waiting-room/*',
               comment: 'Matches any waiting room URL',
             },
+            {
+              '/': '/room/*',
+              comment: 'Matches any room URL',
+            },
           ],
         },
       ],
