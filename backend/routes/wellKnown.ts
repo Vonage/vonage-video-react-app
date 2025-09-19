@@ -1,12 +1,12 @@
 import { Request, Response, Router } from 'express';
 
-const assetLinksRouter = Router();
+const wellKnownRouter = Router();
 
 /**
  * Serve the static file needed for Android deep linking
  * more info: https://developer.android.com/training/app-links/verify-android-applinks#publish-json
  */
-assetLinksRouter.get('/assetlinks.json', (_req: Request, res: Response) => {
+wellKnownRouter.get('/assetlinks.json', (_req: Request, res: Response) => {
   res.json([
     {
       // Grants the target permission to handle all URLs that the source can handle
@@ -28,7 +28,7 @@ assetLinksRouter.get('/assetlinks.json', (_req: Request, res: Response) => {
  * Serve the static file needed for iOS app site association
  * more info: https://developer.apple.com/documentation/xcode/supporting-associated-domains
  */
-assetLinksRouter.get('/apple-app-site-association', (_req: Request, res: Response) => {
+wellKnownRouter.get('/apple-app-site-association', (_req: Request, res: Response) => {
   res.json({
     applinks: {
       details: [
@@ -49,4 +49,4 @@ assetLinksRouter.get('/apple-app-site-association', (_req: Request, res: Respons
   });
 });
 
-export default assetLinksRouter;
+export default wellKnownRouter;
