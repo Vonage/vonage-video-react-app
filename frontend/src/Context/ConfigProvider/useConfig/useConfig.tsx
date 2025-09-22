@@ -26,6 +26,7 @@ export type WaitingRoomSettings = {
 };
 
 export type MeetingRoomSettings = {
+  allowDeviceSelection: boolean;
   defaultLayoutMode: LayoutMode;
   showArchiveButton: boolean;
   showCaptionsButton: boolean;
@@ -58,6 +59,7 @@ export const defaultConfig: AppConfig = {
     allowDeviceSelection: true,
   },
   meetingRoomSettings: {
+    allowDeviceSelection: true,
     defaultLayoutMode: 'active-speaker',
     showParticipantList: true,
     showChatButton: true,

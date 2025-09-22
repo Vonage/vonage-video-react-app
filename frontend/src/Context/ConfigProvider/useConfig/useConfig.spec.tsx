@@ -20,6 +20,7 @@ describe('useConfig', () => {
       allowDeviceSelection: true,
     },
     meetingRoomSettings: {
+      allowDeviceSelection: true,
       defaultLayoutMode: 'active-speaker',
       showParticipantList: true,
       showChatButton: true,
@@ -57,6 +58,7 @@ describe('useConfig', () => {
   });
 
   it('merges config.json values if loaded (mocked fetch)', async () => {
+    // All values in this config should override the defaultConfig
     const mockConfig: AppConfig = {
       videoSettings: {
         allowCameraControl: false,
@@ -73,6 +75,7 @@ describe('useConfig', () => {
         allowDeviceSelection: false,
       },
       meetingRoomSettings: {
+        allowDeviceSelection: false,
         defaultLayoutMode: 'grid',
         showParticipantList: false,
         showChatButton: false,

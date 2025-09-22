@@ -14,6 +14,7 @@
     "allowDeviceSelection": true
   },
   "meetingRoomSettings": {
+    "allowDeviceSelection": true,
     "defaultLayoutMode": "active-speaker",
     "showArchiveButton": true,
     "showCaptionsButton": true,
