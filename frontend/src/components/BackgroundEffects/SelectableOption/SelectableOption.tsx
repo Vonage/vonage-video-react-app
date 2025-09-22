@@ -52,42 +52,52 @@ const SelectableOption = ({
         mr: 1,
       }}
     >
-      <Tooltip title={title} aria-label={title}>
-        <Paper
-          data-testid={`background-${id}`}
-          onClick={onClick}
-          elevation={isSelected ? 4 : 1}
-          aria-disabled={isDisabled}
-          aria-pressed={isSelected}
-          sx={{
-            width: size,
-            height: size,
-            overflow: 'hidden',
-            borderRadius: '16px',
-            border: isSelected ? '2px solid #1976d2' : '',
-            cursor: isDisabled ? 'not-allowed' : 'pointer',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            transition: 'all 0.1s ease-in-out',
-            backgroundColor: isDisabled ? '#f5f5f5' : '#fff',
-            opacity: isDisabled ? 0.5 : 1,
-          }}
-          {...otherProps}
-        >
-          {image ? (
-            <img
-              src={image}
-              title={title}
-              alt="background"
-              style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-            />
-          ) : (
-            icon
-          )}
-          {children}
-        </Paper>
-      </Tooltip>
+      <Paper
+        data-testid={`background-${id}`}
+        onClick={onClick}
+        elevation={isSelected ? 4 : 1}
+        aria-disabled={isDisabled}
+        aria-pressed={isSelected}
+        sx={{
+          width: size,
+          height: size,
+          overflow: 'hidden',
+          borderRadius: '16px',
+          border: isSelected ? '2px solid #1976d2' : '',
+          cursor: isDisabled ? 'not-allowed' : 'pointer',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          transition: 'all 0.1s ease-in-out',
+          backgroundColor: isDisabled ? '#f5f5f5' : '#fff',
+          opacity: isDisabled ? 0.5 : 1,
+        }}
+        {...otherProps}
+      >
+        <Tooltip arrow title={title} aria-label={title}>
+          <Box
+            sx={{
+              display: 'flex',
+              width: '100%',
+              height: '100%',
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}
+          >
+            {image ? (
+              <img
+                src={image}
+                title={title}
+                alt="background"
+                style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+              />
+            ) : (
+              icon
+            )}
+          </Box>
+        </Tooltip>
+        {children}
+      </Paper>
     </Box>
   );
 };

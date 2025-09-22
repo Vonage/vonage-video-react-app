@@ -101,8 +101,8 @@ describe('BackgroundEffectsLayout (Meeting room)', () => {
 
   it('displays correct English title, subtitle, cancel, and apply actions', () => {
     renderLayout();
-    expect(screen.getByText('Background Effects')).toBeInTheDocument();
-    expect(screen.getByText('Choose Background Effect')).toBeInTheDocument();
+    expect(screen.getByText('Backgrounds')).toBeInTheDocument();
+    expect(screen.getByText('Add Background')).toBeInTheDocument();
     expect(screen.getByText('Cancel')).toBeInTheDocument();
     expect(screen.getByText('Apply')).toBeInTheDocument();
   });
@@ -160,8 +160,8 @@ describe('BackgroundEffects (Waiting Room)', () => {
 
   it('displays correct English title, subtitle, cancel, and apply actions', () => {
     renderLayout();
-    expect(screen.getByText('Background Effects')).toBeInTheDocument();
-    expect(screen.getByText('Choose Background Effect')).toBeInTheDocument();
+    expect(screen.getByText('Backgrounds')).toBeInTheDocument();
+    expect(screen.getByText('Add Background')).toBeInTheDocument();
     expect(screen.getByText('Cancel')).toBeInTheDocument();
     expect(screen.getByText('Apply')).toBeInTheDocument();
   });

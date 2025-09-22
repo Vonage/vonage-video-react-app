@@ -45,7 +45,7 @@ const BackgroundGallery = ({
   }, [getImagesFromStorage]);
 
   const handleDelete = (id: string, dataUrl: string) => {
-    if (backgroundSelected === id) {
+    if (backgroundSelected === dataUrl) {
       return;
     }
     deleteImageFromStorage(id);
@@ -79,7 +79,12 @@ const BackgroundGallery = ({
                 <IconButton
                   data-testid={`background-delete-${id}`}
                   aria-label="Delete custom background"
-                  onClick={() => !isSelected && handleDelete(id, dataUrl)}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    if (!isSelected) {
+                      handleDelete(id, dataUrl);
+                    }
+                  }}
                   size="small"
                   sx={{
                     color: 'white',

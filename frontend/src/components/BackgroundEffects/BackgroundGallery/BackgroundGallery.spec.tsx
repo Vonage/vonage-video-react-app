@@ -120,7 +120,7 @@ describe('BackgroundGallery', () => {
   it("doesn't delete custom image if it's selected", async () => {
     render(
       <BackgroundGallery
-        backgroundSelected="custom1"
+        backgroundSelected="data:image/png;base64,custom1"
         setBackgroundSelected={() => {}}
         cleanPublisherBackgroundReplacementIfSelectedAndDeleted={() => {}}
       />
