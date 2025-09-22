@@ -14,7 +14,7 @@ const sessionContext = {
 } as unknown as SessionContextType;
 const mockConfigContext = {
   meetingRoomSettings: {
-    showChatButton: true,
+    allowChat: true,
   },
 } as Partial<ConfigContextType> as ConfigContextType;
 const mockUseConfigContext = useConfigContext as Mock<[], ConfigContextType>;
@@ -62,10 +62,10 @@ describe('ChatButton', () => {
     expect(handleClick).toHaveBeenCalled();
   });
 
-  it('is not rendered when showChatButton is false', () => {
+  it('is not rendered when allowChat is false', () => {
     mockUseConfigContext.mockReturnValue({
       meetingRoomSettings: {
-        showChatButton: false,
+        allowChat: false,
       },
     } as Partial<ConfigContextType> as ConfigContextType);
     render(<ChatButton handleClick={() => {}} isOpen />);

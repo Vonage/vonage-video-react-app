@@ -30,11 +30,11 @@ const ChatButton = ({
   isOverflowButton = false,
 }: ChatButtonProps): ReactElement | false => {
   const config = useConfigContext();
-  const { showChatButton } = config.meetingRoomSettings;
+  const { allowChat } = config.meetingRoomSettings;
 
   const { t } = useTranslation();
   return (
-    showChatButton && (
+    allowChat && (
       <Tooltip title={isOpen ? t('chat.close') : t('chat.open')} aria-label={t('chat.ariaLabel')}>
         <UnreadMessagesBadge>
           <ToolbarButton

@@ -42,7 +42,7 @@ const CaptionsButton = ({
   const { isUserCaptionsEnabled, setIsUserCaptionsEnabled, setCaptionsErrorResponse } =
     captionsState;
   const title = isUserCaptionsEnabled ? t('captions.disable') : t('captions.enable');
-  const { showCaptionsButton } = config.meetingRoomSettings;
+  const { allowCaptions } = config.meetingRoomSettings;
 
   const handleClose = () => {
     if (isOverflowButton && handleClick) {
@@ -96,7 +96,7 @@ const CaptionsButton = ({
   };
 
   return (
-    showCaptionsButton && (
+    allowCaptions && (
       <Tooltip title={title} aria-label={t('captions.ariaLabel')}>
         <ToolbarButton
           onClick={handleActionClick}

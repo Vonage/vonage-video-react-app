@@ -17,7 +17,7 @@ const sessionContext = {
 const LittleButton = () => <ToolbarButton onClick={() => {}} icon={<BiotechIcon />} />;
 const mockConfigContext = {
   meetingRoomSettings: {
-    showChatButton: true,
+    allowChat: true,
   },
 } as Partial<ConfigContextType> as ConfigContextType;
 const mockUseConfigContext = useConfigContext as Mock<[], ConfigContextType>;
@@ -171,7 +171,7 @@ describe('UnreadMessagesBadge', () => {
     expect(updatedBadge.textContent).toBe('1');
   });
 
-  it('should not show the message badge when showChatButton is false', () => {
+  it('should not show the message badge when allowChat is false', () => {
     const sessionContextWithMessages: SessionContextType = {
       ...sessionContext,
       unreadCount: 8,
@@ -179,7 +179,7 @@ describe('UnreadMessagesBadge', () => {
     mockUseSessionContext.mockReturnValue(sessionContextWithMessages);
     mockUseConfigContext.mockReturnValue({
       meetingRoomSettings: {
-        showChatButton: false,
+        allowChat: false,
       },
     } as Partial<ConfigContextType> as ConfigContextType);
 

@@ -36,7 +36,7 @@ describe('ArchivingButton', () => {
     } as unknown as SessionContextType;
     configContext = {
       meetingRoomSettings: {
-        showArchiveButton: true,
+        allowArchiving: true,
       },
     } as Partial<ConfigContextType> as ConfigContextType;
 
@@ -98,10 +98,10 @@ describe('ArchivingButton', () => {
     });
   });
 
-  it('is not rendered when showArchiveButton is disabled', () => {
+  it('is not rendered when allowArchiving is disabled', () => {
     mockUseConfigContext.mockReturnValue({
       meetingRoomSettings: {
-        showArchiveButton: false,
+        allowArchiving: false,
       },
     } as Partial<ConfigContextType> as ConfigContextType);
 

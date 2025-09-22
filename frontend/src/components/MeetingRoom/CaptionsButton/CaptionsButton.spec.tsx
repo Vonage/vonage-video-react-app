@@ -71,7 +71,7 @@ describe('CaptionsButton', () => {
     } as unknown as SessionContextType;
     configContext = {
       meetingRoomSettings: {
-        showCaptionsButton: true,
+        allowCaptions: true,
       },
     } as Partial<ConfigContextType> as ConfigContextType;
     mockUseSessionContext.mockReturnValue(sessionContext as unknown as SessionContextType);
@@ -97,10 +97,10 @@ describe('CaptionsButton', () => {
     });
   });
 
-  it('is not rendered when showCaptionsButton is false', () => {
+  it('is not rendered when allowCaptions is false', () => {
     mockUseConfigContext.mockReturnValue({
       meetingRoomSettings: {
-        showCaptionsButton: false,
+        allowCaptions: false,
       },
     } as Partial<ConfigContextType> as ConfigContextType);
     render(<CaptionsButton handleClick={mockHandleCloseMenu} captionsState={mockCaptionsState} />);

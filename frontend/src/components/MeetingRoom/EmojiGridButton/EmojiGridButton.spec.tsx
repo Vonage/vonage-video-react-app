@@ -38,7 +38,7 @@ describe('EmojiGridButton', () => {
     (mui.useMediaQuery as Mock).mockReturnValue(false);
     mockConfigContext = {
       meetingRoomSettings: {
-        showEmojiButton: true,
+        allowEmojis: true,
       },
     } as Partial<ConfigContextType> as ConfigContextType;
     mockUseConfigContext.mockReturnValue(mockConfigContext);
@@ -66,8 +66,8 @@ describe('EmojiGridButton', () => {
     expect(screen.getByTestId('emoji-grid')).toBeVisible();
   });
 
-  it('is not rendered when showEmojiButton is false', () => {
-    mockConfigContext.meetingRoomSettings.showEmojiButton = false;
+  it('is not rendered when allowEmojis is false', () => {
+    mockConfigContext.meetingRoomSettings.allowEmojis = false;
     render(<TestComponent />);
     expect(screen.queryByTestId('emoji-grid-button')).not.toBeInTheDocument();
   });

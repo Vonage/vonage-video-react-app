@@ -20,14 +20,14 @@ describe('useConfig', () => {
       allowDeviceSelection: true,
     },
     meetingRoomSettings: {
+      allowArchiving: true,
+      allowCaptions: true,
+      allowChat: true,
       allowDeviceSelection: true,
+      allowEmojis: true,
+      allowScreenShare: true,
       defaultLayoutMode: 'active-speaker',
       showParticipantList: true,
-      showChatButton: true,
-      showScreenShareButton: true,
-      showArchiveButton: true,
-      showCaptionsButton: true,
-      showEmojiButton: true,
     },
   };
 
@@ -75,14 +75,14 @@ describe('useConfig', () => {
         allowDeviceSelection: false,
       },
       meetingRoomSettings: {
+        allowArchiving: false,
+        allowCaptions: false,
+        allowChat: false,
         allowDeviceSelection: false,
+        allowEmojis: false,
+        allowScreenShare: false,
         defaultLayoutMode: 'grid',
         showParticipantList: false,
-        showChatButton: false,
-        showScreenShareButton: false,
-        showArchiveButton: false,
-        showCaptionsButton: false,
-        showEmojiButton: false,
       },
     };
     global.fetch = vi.fn().mockResolvedValue({

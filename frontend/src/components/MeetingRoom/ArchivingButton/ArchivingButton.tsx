@@ -39,7 +39,7 @@ const ArchivingButton = ({
   const handleButtonClick = () => {
     setIsModalOpen((prev) => !prev);
   };
-  const { showArchiveButton } = config.meetingRoomSettings;
+  const { allowArchiving } = config.meetingRoomSettings;
 
   const startRecordingText: DialogTexts = {
     title: t('recording.start.dialog.title'),
@@ -86,7 +86,7 @@ const ArchivingButton = ({
   };
 
   return (
-    showArchiveButton && (
+    allowArchiving && (
       <>
         <Tooltip title={title} aria-label={t('recording.tooltip.ariaLabel')}>
           <ToolbarButton

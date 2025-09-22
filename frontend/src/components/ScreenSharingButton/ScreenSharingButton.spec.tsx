@@ -9,7 +9,7 @@ vi.mock('../../hooks/useConfigContext');
 const mockUseConfigContext = useConfigContext as Mock<[], ConfigContextType>;
 const mockConfigContext = {
   meetingRoomSettings: {
-    showScreenShareButton: true,
+    allowScreenShare: true,
   },
 } as Partial<ConfigContextType> as ConfigContextType;
 
@@ -57,8 +57,8 @@ describe('ScreenSharingButton', () => {
     ).toBeInTheDocument();
   });
 
-  it('is not rendered when showScreenShareButton is false', () => {
-    mockConfigContext.meetingRoomSettings.showScreenShareButton = false;
+  it('is not rendered when allowScreenShare is false', () => {
+    mockConfigContext.meetingRoomSettings.allowScreenShare = false;
     render(<ScreenSharingButton {...defaultProps} />);
     expect(screen.queryByTestId('ScreenShareIcon')).not.toBeInTheDocument();
   });

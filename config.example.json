@@ -14,13 +14,13 @@
     "allowDeviceSelection": true
   },
   "meetingRoomSettings": {
+    "allowArchiving": true,
+    "allowCaptions": true,
+    "allowChat": true,
     "allowDeviceSelection": true,
+    "allowEmojis": true,
+    "allowScreenShare": true,
     "defaultLayoutMode": "active-speaker",
-    "showArchiveButton": true,
-    "showCaptionsButton": true,
-    "showChatButton": true,
-    "showEmojiButton": true,
-    "showParticipantList": true,
-    "showScreenShareButton": true
+    "showParticipantList": true
   }
 }

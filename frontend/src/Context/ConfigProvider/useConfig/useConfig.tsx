@@ -26,14 +26,14 @@ export type WaitingRoomSettings = {
 };
 
 export type MeetingRoomSettings = {
+  allowArchiving: boolean;
+  allowCaptions: boolean;
+  allowChat: boolean;
   allowDeviceSelection: boolean;
+  allowEmojis: boolean;
+  allowScreenShare: boolean;
   defaultLayoutMode: LayoutMode;
-  showArchiveButton: boolean;
-  showCaptionsButton: boolean;
-  showChatButton: boolean;
-  showEmojiButton: boolean;
   showParticipantList: boolean;
-  showScreenShareButton: boolean;
 };
 
 export type AppConfig = {
@@ -59,14 +59,14 @@ export const defaultConfig: AppConfig = {
     allowDeviceSelection: true,
   },
   meetingRoomSettings: {
+    allowArchiving: true,
+    allowCaptions: true,
+    allowChat: true,
     allowDeviceSelection: true,
+    allowEmojis: true,
+    allowScreenShare: true,
     defaultLayoutMode: 'active-speaker',
     showParticipantList: true,
-    showChatButton: true,
-    showScreenShareButton: true,
-    showArchiveButton: true,
-    showCaptionsButton: true,
-    showEmojiButton: true,
   },
 };
 
@@ -89,7 +89,7 @@ const useConfig = (): AppConfig => {
         const json = await response.json();
         setConfig(json);
       } catch (error) {
-        console.warn('Error loading config:', error);
+        console.error('Error loading config:', error);
       }
     };
 
