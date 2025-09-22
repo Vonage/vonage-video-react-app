@@ -89,7 +89,7 @@ const useConfig = (): AppConfig => {
         const json = await response.json();
         setConfig(json);
       } catch (error) {
-        console.info('Error loading config:', error);
+        console.warn('Error loading config:', error);
       }
     };
 

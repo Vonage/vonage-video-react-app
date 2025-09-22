@@ -22,9 +22,10 @@ const BackgroundEffectsButton = ({
 }: BackgroundEffectsButtonProps): ReactElement | false => {
   const config = useConfigContext();
   const { allowBackgroundEffects } = config.videoSettings;
+  const shouldDisplayBackgroundEffects = hasMediaProcessorSupport() && allowBackgroundEffects;
+
   return (
-    hasMediaProcessorSupport() &&
-    allowBackgroundEffects && (
+    shouldDisplayBackgroundEffects && (
       <Box
         sx={{
           display: 'flex',

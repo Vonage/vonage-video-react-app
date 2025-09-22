@@ -110,7 +110,7 @@ describe('DeviceControlButton', () => {
   });
 
   describe('audio DeviceControlButton', () => {
-    it('is not disabled when it is configured to be enabled', () => {
+    it('renders by default', () => {
       render(
         <DeviceControlButton
           deviceType="audio"

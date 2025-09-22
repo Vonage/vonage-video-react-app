@@ -57,6 +57,7 @@ const DeviceSettingsMenu = ({
   const theme = useTheme();
   const customLightBlueColor = 'rgb(138, 180, 248)';
   const { allowBackgroundEffects } = config.videoSettings;
+  const shouldDisplayBackgroundEffects = hasMediaProcessorSupport() && allowBackgroundEffects;
 
   useDropdownResizeObserver({ setIsOpen, dropDownRefElement: anchorRef.current });
 
@@ -74,7 +75,7 @@ const DeviceSettingsMenu = ({
     return (
       <>
         <VideoDevices handleToggle={handleToggle} customLightBlueColor={customLightBlueColor} />
-        {hasMediaProcessorSupport() && allowBackgroundEffects && (
+        {shouldDisplayBackgroundEffects && (
           <>
             <DropdownSeparator />
             <VideoDevicesOptions toggleBackgroundEffects={toggleBackgroundEffects} />

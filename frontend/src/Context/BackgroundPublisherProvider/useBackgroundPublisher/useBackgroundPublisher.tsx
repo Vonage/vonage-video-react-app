@@ -62,14 +62,14 @@ const useBackgroundPublisher = (): BackgroundPublisherContextType => {
   >();
   const { setAccessStatus, accessStatus } = usePermissions();
   const backgroundPublisherRef = useRef<Publisher | null>(null);
-  const [isPublishing, setIsPublishing] = useState(false);
+  const [isPublishing, setIsPublishing] = useState<boolean>(false);
   const initialBackgroundRef = useRef<VideoFilter | undefined>(
     user.defaultSettings.backgroundFilter
   );
   const [backgroundFilter, setBackgroundFilter] = useState<VideoFilter | undefined>(
     user.defaultSettings.backgroundFilter
   );
-  const [isVideoEnabled, setIsVideoEnabled] = useState(
+  const [isVideoEnabled, setIsVideoEnabled] = useState<boolean>(
     defaultPublisherOptions?.publishVideo ?? false
   );
   const [localVideoSource, setLocalVideoSource] = useState<string | undefined>(undefined);
