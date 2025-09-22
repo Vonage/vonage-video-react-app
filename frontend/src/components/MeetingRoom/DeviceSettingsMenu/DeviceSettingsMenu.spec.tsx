@@ -95,6 +95,9 @@ describe('DeviceSettingsMenu Component', () => {
       videoSettings: {
         allowBackgroundEffects: true,
       },
+      meetingRoomSettings: {
+        allowDeviceSelection: true,
+      },
     } as Partial<ConfigContextType> as ConfigContextType;
     mockUseConfigContext.mockReturnValue(configContext);
   });
@@ -370,6 +373,9 @@ describe('DeviceSettingsMenu Component', () => {
       configContext = {
         videoSettings: {
           allowBackgroundEffects: false,
+        },
+        meetingRoomSettings: {
+          allowDeviceSelection: true,
         },
       } as Partial<ConfigContextType> as ConfigContextType;
       mockUseConfigContext.mockReturnValue(configContext);

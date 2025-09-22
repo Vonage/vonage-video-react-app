@@ -12,6 +12,7 @@ import usePublisherContext from '../../../hooks/usePublisherContext';
 import DeviceSettingsMenu from '../DeviceSettingsMenu';
 import useBackgroundPublisherContext from '../../../hooks/useBackgroundPublisherContext';
 import useConfigContext from '../../../hooks/useConfigContext';
+import getControlButtonTooltip from '../../../utils/getControlButtonTooltip';
 
 export type DeviceControlButtonProps = {
   deviceType: 'audio' | 'video';
@@ -39,23 +40,18 @@ const DeviceControlButton = ({
   const isAudio = deviceType === 'audio';
   const [open, setOpen] = useState<boolean>(false);
   const anchorRef = useRef<HTMLInputElement | null>(null);
-  const audioTitle = isAudioEnabled ? t('devices.audio.disable') : t('devices.audio.enable');
-  const videoTitle = isVideoEnabled ? t('devices.video.disable') : t('devices.video.enable');
   const { allowMicrophoneControl } = config.audioSettings;
   const { allowCameraControl } = config.videoSettings;
   const isButtonDisabled = isAudio ? !allowMicrophoneControl : !allowCameraControl;
-  let tooltipTitle: string;
-  if (isAudio) {
-    if (!allowMicrophoneControl) {
-      tooltipTitle = t('devices.audio.disabled');
-    } else {
-      tooltipTitle = audioTitle;
-    }
-  } else if (!allowCameraControl) {
-    tooltipTitle = t('devices.video.disabled');
-  } else {
-    tooltipTitle = videoTitle;
-  }
+
+  const tooltipTitle = getControlButtonTooltip({
+    isAudio,
+    isAudioEnabled,
+    isVideoEnabled,
+    allowMicrophoneControl,
+    allowCameraControl,
+    t,
+  });
 
   const handleToggle = () => {
     setOpen((prevOpen) => !prevOpen);
