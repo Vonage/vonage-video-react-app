@@ -2,8 +2,23 @@ import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import BackgroundEffectsLayout from './BackgroundEffectsLayout';
+import enTranslations from '../../../locales/en.json';
 
 const mockChangeBackground = vi.fn();
+
+vi.mock('react-i18next', () => ({
+  useTranslation: () => ({
+    t: (key: string) => {
+      const translations: Record<string, string> = {
+        'backgroundEffects.title': enTranslations['backgroundEffects.title'],
+        'backgroundEffects.choice': enTranslations['backgroundEffects.choice'],
+        'button.cancel': enTranslations['button.cancel'],
+        'button.apply': enTranslations['button.apply'],
+      };
+      return translations[key] || key;
+    },
+  }),
+}));
 
 vi.mock('../../../hooks/usePublisherContext', () => ({
   __esModule: true,
@@ -83,6 +98,14 @@ describe('BackgroundEffectsLayout (Meeting room)', () => {
     renderLayout();
     await userEvent.click(screen.getByTestId('background-bg8'));
   });
+
+  it('displays correct English title, subtitle, cancel, and apply actions', () => {
+    renderLayout();
+    expect(screen.getByText('Background Effects')).toBeInTheDocument();
+    expect(screen.getByText('Choose Background Effect')).toBeInTheDocument();
+    expect(screen.getByText('Cancel')).toBeInTheDocument();
+    expect(screen.getByText('Apply')).toBeInTheDocument();
+  });
 });
 
 describe('BackgroundEffects (Waiting Room)', () => {
@@ -133,5 +156,13 @@ describe('BackgroundEffects (Waiting Room)', () => {
   it('calls setBackgroundSelected when a background gallery option is clicked', async () => {
     renderLayout();
     await userEvent.click(screen.getByTestId('background-bg8'));
+  });
+
+  it('displays correct English title, subtitle, cancel, and apply actions', () => {
+    renderLayout();
+    expect(screen.getByText('Background Effects')).toBeInTheDocument();
+    expect(screen.getByText('Choose Background Effect')).toBeInTheDocument();
+    expect(screen.getByText('Cancel')).toBeInTheDocument();
+    expect(screen.getByText('Apply')).toBeInTheDocument();
   });
 });

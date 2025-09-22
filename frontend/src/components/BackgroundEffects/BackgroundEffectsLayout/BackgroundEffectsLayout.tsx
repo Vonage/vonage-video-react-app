@@ -1,6 +1,6 @@
 import { ReactElement, useCallback, useEffect, useState } from 'react';
 import { Box, Button, useMediaQuery } from '@mui/material';
-import { t } from 'i18next';
+import { useTranslation } from 'react-i18next';
 import usePublisherContext from '../../../hooks/usePublisherContext';
 import BackgroundVideoContainer from '../BackgroundVideoContainer';
 import BackgroundEffectTabs, {
@@ -24,6 +24,7 @@ const BackgroundEffectsLayout = ({
 }: BackgroundEffectsLayoutProps): ReactElement | false => {
   const [tabSelected, setTabSelected] = useState<number>(0);
   const [backgroundSelected, setBackgroundSelected] = useState<string>('none');
+  const { t } = useTranslation();
 
   const isShortScreen = useMediaQuery('(max-height:825px)');
   const isTabletViewport = useMediaQuery('(max-width:899px)');
