@@ -46,7 +46,7 @@ describe('HiddenParticipantsTile', () => {
       meetingRoomSettings: {
         showParticipantList: true,
       },
-    } as unknown as ConfigContextType;
+    } as Partial<ConfigContextType> as ConfigContextType;
     mockUseConfigContext.mockReturnValue(configContext);
   });
 
@@ -113,7 +113,7 @@ describe('HiddenParticipantsTile', () => {
       meetingRoomSettings: {
         showParticipantList: false,
       },
-    } as unknown as ConfigContextType);
+    } as Partial<ConfigContextType> as ConfigContextType);
 
     render(<HiddenParticipantsTile box={box} hiddenSubscribers={currentHiddenSubscribers} />);
 

@@ -31,7 +31,7 @@ describe('MicButton', () => {
       audioSettings: {
         allowMicrophoneControl: true,
       },
-    } as unknown as ConfigContextType;
+    } as Partial<ConfigContextType> as ConfigContextType;
     mockUseConfigContext.mockReturnValue(mockConfigContext);
   });
 

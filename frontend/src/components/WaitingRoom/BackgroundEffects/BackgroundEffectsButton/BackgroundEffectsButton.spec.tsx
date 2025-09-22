@@ -27,7 +27,7 @@ describe('BackgroundEffectsButton', () => {
       videoSettings: {
         allowBackgroundEffects: true,
       },
-    } as unknown as ConfigContextType;
+    } as Partial<ConfigContextType> as ConfigContextType;
     mockUseConfigContext.mockReturnValue(mockConfigContext);
   });
 

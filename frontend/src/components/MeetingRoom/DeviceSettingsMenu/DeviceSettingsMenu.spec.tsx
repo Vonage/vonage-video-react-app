@@ -95,7 +95,7 @@ describe('DeviceSettingsMenu Component', () => {
       videoSettings: {
         allowBackgroundEffects: true,
       },
-    } as unknown as ConfigContextType;
+    } as Partial<ConfigContextType> as ConfigContextType;
     mockUseConfigContext.mockReturnValue(configContext);
   });
 
@@ -371,7 +371,7 @@ describe('DeviceSettingsMenu Component', () => {
         videoSettings: {
           allowBackgroundEffects: false,
         },
-      } as unknown as ConfigContextType;
+      } as Partial<ConfigContextType> as ConfigContextType;
       mockUseConfigContext.mockReturnValue(configContext);
 
       render(

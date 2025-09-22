@@ -73,7 +73,7 @@ describe('CaptionsButton', () => {
       meetingRoomSettings: {
         showCaptionsButton: true,
       },
-    } as unknown as ConfigContextType;
+    } as Partial<ConfigContextType> as ConfigContextType;
     mockUseSessionContext.mockReturnValue(sessionContext as unknown as SessionContextType);
     mockUseConfigContext.mockReturnValue(configContext);
   });
@@ -102,7 +102,7 @@ describe('CaptionsButton', () => {
       meetingRoomSettings: {
         showCaptionsButton: false,
       },
-    } as unknown as ConfigContextType);
+    } as Partial<ConfigContextType> as ConfigContextType);
     render(<CaptionsButton handleClick={mockHandleCloseMenu} captionsState={mockCaptionsState} />);
     expect(screen.queryByTestId('captions-button')).not.toBeInTheDocument();
   });

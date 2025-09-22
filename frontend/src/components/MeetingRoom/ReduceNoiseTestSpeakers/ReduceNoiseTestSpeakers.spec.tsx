@@ -52,7 +52,7 @@ describe('ReduceNoiseTestSpeakers', () => {
       audioSettings: {
         allowAdvancedNoiseSuppression: true,
       },
-    } as unknown as ConfigContextType;
+    } as Partial<ConfigContextType> as ConfigContextType;
     mockUsePublisherContext.mockImplementation(() => publisherContext);
     mockUseConfigContext.mockReturnValue(configContext);
   });
@@ -145,7 +145,7 @@ describe('ReduceNoiseTestSpeakers', () => {
       audioSettings: {
         allowAdvancedNoiseSuppression: false,
       },
-    } as unknown as ConfigContextType;
+    } as Partial<ConfigContextType> as ConfigContextType;
     mockUseConfigContext.mockReturnValue(configContext);
 
     render(<ReduceNoiseTestSpeakers {...defaultProps} />);

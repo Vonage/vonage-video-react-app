@@ -19,7 +19,7 @@ const mockConfigContext = {
   meetingRoomSettings: {
     showChatButton: true,
   },
-} as unknown as ConfigContextType;
+} as Partial<ConfigContextType> as ConfigContextType;
 const mockUseConfigContext = useConfigContext as Mock<[], ConfigContextType>;
 
 describe('UnreadMessagesBadge', () => {
@@ -181,7 +181,7 @@ describe('UnreadMessagesBadge', () => {
       meetingRoomSettings: {
         showChatButton: false,
       },
-    } as unknown as ConfigContextType);
+    } as Partial<ConfigContextType> as ConfigContextType);
 
     render(
       <UnreadMessagesBadge>

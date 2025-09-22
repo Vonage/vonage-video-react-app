@@ -46,7 +46,7 @@ describe('OutputDevices Component', () => {
       meetingRoomSettings: {
         allowDeviceSelection: true,
       },
-    } as unknown as ConfigContextType;
+    } as Partial<ConfigContextType> as ConfigContextType;
 
     mockUseAudioOutputContext.mockImplementation(() => audioOutputContext);
     mockUseConfigContext.mockReturnValue(mockConfigContext);

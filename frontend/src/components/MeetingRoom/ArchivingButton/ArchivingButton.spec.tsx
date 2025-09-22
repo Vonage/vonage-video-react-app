@@ -38,7 +38,7 @@ describe('ArchivingButton', () => {
       meetingRoomSettings: {
         showArchiveButton: true,
       },
-    } as unknown as ConfigContextType;
+    } as Partial<ConfigContextType> as ConfigContextType;
 
     mockUseSessionContext.mockReturnValue(sessionContext as unknown as SessionContextType);
     mockUseConfigContext.mockReturnValue(configContext);
@@ -103,7 +103,7 @@ describe('ArchivingButton', () => {
       meetingRoomSettings: {
         showArchiveButton: false,
       },
-    } as unknown as ConfigContextType);
+    } as Partial<ConfigContextType> as ConfigContextType);
 
     render(<ArchivingButton handleClick={mockHandleCloseMenu} />);
     expect(screen.queryByTestId('archiving-button')).not.toBeInTheDocument();

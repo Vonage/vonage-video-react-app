@@ -11,7 +11,7 @@ const mockConfigContext = {
   meetingRoomSettings: {
     showScreenShareButton: true,
   },
-} as unknown as ConfigContextType;
+} as Partial<ConfigContextType> as ConfigContextType;
 
 describe('ScreenSharingButton', () => {
   beforeEach(() => {

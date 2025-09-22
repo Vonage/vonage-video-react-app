@@ -67,7 +67,7 @@ describe('VideoDevices Component', () => {
       meetingRoomSettings: {
         allowDeviceSelection: true,
       },
-    } as unknown as ConfigContextType;
+    } as Partial<ConfigContextType> as ConfigContextType;
 
     mockUsePublisherContext.mockImplementation(() => publisherContext);
     mockGetVideoSource.mockReturnValue({

@@ -79,7 +79,7 @@ describe('usePublisherOptions', () => {
         defaultResolution: '1280x720',
         allowVideoOnJoin: true,
       },
-    } as unknown as ConfigContextType;
+    } as Partial<ConfigContextType> as ConfigContextType;
     mockUseConfigContext.mockReturnValue(configContext);
   });
 

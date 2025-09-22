@@ -14,7 +14,7 @@ describe('ParticipantListButton', () => {
       meetingRoomSettings: {
         showParticipantList: true,
       },
-    } as unknown as ConfigContextType);
+    } as Partial<ConfigContextType> as ConfigContextType);
   });
 
   it('should show participant number', () => {
@@ -40,7 +40,7 @@ describe('ParticipantListButton', () => {
       meetingRoomSettings: {
         showParticipantList: false,
       },
-    } as unknown as ConfigContextType);
+    } as Partial<ConfigContextType> as ConfigContextType);
     render(<ParticipantListButton handleClick={() => {}} isOpen={false} participantCount={10} />);
     expect(screen.queryByTestId('participant-list-button')).not.toBeInTheDocument();
   });

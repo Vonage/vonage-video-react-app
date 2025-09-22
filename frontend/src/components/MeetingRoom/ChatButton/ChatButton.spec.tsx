@@ -16,7 +16,7 @@ const mockConfigContext = {
   meetingRoomSettings: {
     showChatButton: true,
   },
-} as unknown as ConfigContextType;
+} as Partial<ConfigContextType> as ConfigContextType;
 const mockUseConfigContext = useConfigContext as Mock<[], ConfigContextType>;
 
 describe('ChatButton', () => {
@@ -67,7 +67,7 @@ describe('ChatButton', () => {
       meetingRoomSettings: {
         showChatButton: false,
       },
-    } as unknown as ConfigContextType);
+    } as Partial<ConfigContextType> as ConfigContextType);
     render(<ChatButton handleClick={() => {}} isOpen />);
     expect(screen.queryByTestId('ChatIcon')).not.toBeInTheDocument();
   });

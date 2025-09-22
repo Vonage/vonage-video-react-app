@@ -25,7 +25,7 @@ describe('ControlPanel', () => {
       waitingRoomSettings: {
         allowDeviceSelection: true,
       },
-    } as unknown as ConfigContextType);
+    } as Partial<ConfigContextType> as ConfigContextType);
   });
 
   afterEach(() => {
@@ -145,7 +145,7 @@ describe('ControlPanel', () => {
       waitingRoomSettings: {
         allowDeviceSelection: false,
       },
-    } as unknown as ConfigContextType);
+    } as Partial<ConfigContextType> as ConfigContextType);
 
     render(
       <ControlPanel
