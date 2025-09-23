@@ -19,7 +19,7 @@ export const backgrounds = [
 export type BackgroundGalleryProps = {
   backgroundSelected: string;
   setBackgroundSelected: (dataUrl: string) => void;
-  cleanPublisherBackgroundReplacementIfSelectedAndDeleted: (dataUrl: string) => void;
+  clearPublisherBgIfSelectedDeleted: (dataUrl: string) => void;
 };
 
 /**
@@ -29,13 +29,13 @@ export type BackgroundGalleryProps = {
  * @param {BackgroundGalleryProps} props - The props for the component.
  *   @property {string} backgroundSelected - The currently selected background image key.
  *   @property {Function} setBackgroundSelected - Callback to update the selected background image key.
- *   @property {Function} cleanPublisherBackgroundReplacementIfSelectedAndDeleted - Callback to clean up background replacement if the selected background is deleted.
+ *   @property {Function} clearPublisherBgIfSelectedDeleted - Callback to clean up background replacement if the selected background is deleted.
  * @returns {ReactElement} A horizontal stack of selectable option buttons.
  */
 const BackgroundGallery = ({
   backgroundSelected,
   setBackgroundSelected,
-  cleanPublisherBackgroundReplacementIfSelectedAndDeleted,
+  clearPublisherBgIfSelectedDeleted,
 }: BackgroundGalleryProps): ReactElement => {
   const { getImagesFromStorage, deleteImageFromStorage } = useImageStorage();
   const [customImages, setCustomImages] = useState<StoredImage[]>([]);
@@ -50,7 +50,7 @@ const BackgroundGallery = ({
     }
     deleteImageFromStorage(id);
     setCustomImages((imgs) => imgs.filter((img) => img.id !== id));
-    cleanPublisherBackgroundReplacementIfSelectedAndDeleted(dataUrl);
+    clearPublisherBgIfSelectedDeleted(dataUrl);
   };
 
   return (

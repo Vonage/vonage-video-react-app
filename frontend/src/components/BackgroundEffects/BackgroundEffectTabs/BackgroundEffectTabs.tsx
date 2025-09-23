@@ -10,13 +10,14 @@ import getInitialBackgroundFilter from '../../../utils/backgroundFilter/getIniti
 type BackgroundEffectTabsProps = {
   tabSelected: number;
   setTabSelected: (value: number) => void;
+  mode: 'meeting' | 'waiting';
   backgroundSelected: string;
   setBackgroundSelected: (value: string) => void;
-  cleanBackgroundReplacementIfSelectedAndDeletedFunction: (dataUrl: string) => void;
+  cleanupSelectedBackgroundReplacement: (dataUrl: string) => void;
   customBackgroundImageChange: (dataUrl: string) => void;
 };
 
-export const cleanBackgroundReplacementIfSelectedAndDeleted = (
+export const clearBgWhenSelectedDeleted = (
   publisher: Publisher | null | undefined,
   changeBackground: (bg: string) => void,
   backgroundSelected: string,
@@ -36,18 +37,20 @@ export const cleanBackgroundReplacementIfSelectedAndDeleted = (
  * @param {BackgroundEffectTabsProps} props - The props for the component.
  *   @property {number} tabSelected - The currently selected tab index.
  *   @property {Function} setTabSelected - Function to set the selected tab index.
+ *   @property {string} mode - The mode of the background effect ('meeting' or 'waiting').
  *   @property {string} backgroundSelected - The currently selected background option.
  *   @property {Function} setBackgroundSelected - Function to set the selected background option.
- *   @property {Function} cleanBackgroundReplacementIfSelectedAndDeletedFunction - Function to clean up background replacement if deleted.
+ *   @property {Function} cleanupSelectedBackgroundReplacement - Function to clean up background replacement if deleted.
  *   @property {Function} customBackgroundImageChange - Callback function to handle background image change.
  * @returns {ReactElement} The background effect tabs component.
  */
 const BackgroundEffectTabs = ({
   tabSelected,
   setTabSelected,
+  mode,
   backgroundSelected,
   setBackgroundSelected,
-  cleanBackgroundReplacementIfSelectedAndDeletedFunction,
+  cleanupSelectedBackgroundReplacement,
   customBackgroundImageChange,
 }: BackgroundEffectTabsProps): ReactElement => {
   const handleBackgroundSelect = (value: string) => {
@@ -78,7 +81,11 @@ const BackgroundEffectTabs = ({
             display="grid"
             gridTemplateColumns={`repeat(auto-fill, minmax(${DEFAULT_SELECTABLE_OPTION_WIDTH}px, 1fr))`}
             gap={0.5}
-            className="choose-background-effect-grid"
+            className={
+              mode === 'meeting'
+                ? 'choose-background-effect-grid'
+                : 'choose-background-effect-grid-waiting'
+            }
           >
             <EffectOptionButtons
               backgroundSelected={backgroundSelected}
@@ -87,9 +94,7 @@ const BackgroundEffectTabs = ({
             <BackgroundGallery
               backgroundSelected={backgroundSelected}
               setBackgroundSelected={handleBackgroundSelect}
-              cleanPublisherBackgroundReplacementIfSelectedAndDeleted={
-                cleanBackgroundReplacementIfSelectedAndDeletedFunction
-              }
+              clearPublisherBgIfSelectedDeleted={cleanupSelectedBackgroundReplacement}
             />
           </Box>
         )}

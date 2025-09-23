@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next';
 import usePublisherContext from '../../../hooks/usePublisherContext';
 import BackgroundVideoContainer from '../BackgroundVideoContainer';
 import BackgroundEffectTabs, {
-  cleanBackgroundReplacementIfSelectedAndDeleted,
+  clearBgWhenSelectedDeleted,
 } from '../BackgroundEffectTabs/BackgroundEffectTabs';
 import getInitialBackgroundFilter from '../../../utils/backgroundFilter/getInitialBackgroundFilter/getInitialBackgroundFilter';
 import useBackgroundPublisherContext from '../../../hooks/useBackgroundPublisherContext';
@@ -127,15 +127,11 @@ const BackgroundEffectsLayout = ({
         <BackgroundEffectTabs
           tabSelected={tabSelected}
           setTabSelected={setTabSelected}
+          mode={mode}
           backgroundSelected={backgroundSelected}
           setBackgroundSelected={handleBackgroundSelect}
-          cleanBackgroundReplacementIfSelectedAndDeletedFunction={(dataUrl: string) =>
-            cleanBackgroundReplacementIfSelectedAndDeleted(
-              publisher,
-              changeBackground,
-              backgroundSelected,
-              dataUrl
-            )
+          cleanupSelectedBackgroundReplacement={(dataUrl: string) =>
+            clearBgWhenSelectedDeleted(publisher, changeBackground, backgroundSelected, dataUrl)
           }
           customBackgroundImageChange={customBackgroundImageChange}
         />
@@ -168,15 +164,11 @@ const BackgroundEffectsLayout = ({
       <BackgroundEffectTabs
         tabSelected={tabSelected}
         setTabSelected={setTabSelected}
+        mode={mode}
         backgroundSelected={backgroundSelected}
         setBackgroundSelected={handleBackgroundSelect}
-        cleanBackgroundReplacementIfSelectedAndDeletedFunction={(dataUrl: string) =>
-          cleanBackgroundReplacementIfSelectedAndDeleted(
-            publisher,
-            changeBackground,
-            backgroundSelected,
-            dataUrl
-          )
+        cleanupSelectedBackgroundReplacement={(dataUrl: string) =>
+          clearBgWhenSelectedDeleted(publisher, changeBackground, backgroundSelected, dataUrl)
         }
         customBackgroundImageChange={customBackgroundImageChange}
       />

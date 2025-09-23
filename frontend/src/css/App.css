@@ -78,38 +78,48 @@
   padding-bottom: 0.5rem;
   background-color: #f0f4f9;
 }
-.choose-background-effect-grid {
+
+.choose-background-effect-grid,
+.choose-background-effect-grid-waiting {
   overflow-y: auto;
   padding: 8px;
   max-height: 37vh;
 }
 @media (min-width: 899px) and (min-height: 920px) {
-  .choose-background-effect-grid {
+  .choose-background-effect-grid,
+  .choose-background-effect-grid-waiting {
     max-height: 55vh;
   }
 }
 @media (max-height: 875px) {
-  .choose-background-effect-grid {
+  .choose-background-effect-grid,
+  .choose-background-effect-grid-waiting {
     max-height: 30vh;
   }
 }
 @media (max-height: 750px) {
-  .choose-background-effect-grid {
+  .choose-background-effect-grid,
+  .choose-background-effect-grid-waiting {
     max-height: 25vh;
   }
 }
 @media (max-height: 680px) {
   .choose-background-effect-grid {
-    max-height: 20vh;
+    max-height: 22vh;
+  }
+  .choose-background-effect-grid-waiting {
+    max-height: 35vh;
   }
 }
 @media (max-width: 600px) {
-  .choose-background-effect-grid {
+  .choose-background-effect-grid,
+  .choose-background-effect-grid-waiting {
     max-height: 25vh;
   }
 }
 @media (max-width: 425px) {
-  .choose-background-effect-grid {
+  .choose-background-effect-grid,
+  .choose-background-effect-grid-waiting {
     max-height: 32vh;
   }
 }

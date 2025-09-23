@@ -29,7 +29,7 @@ describe('BackgroundGallery', () => {
       <BackgroundGallery
         backgroundSelected=""
         setBackgroundSelected={() => {}}
-        cleanPublisherBackgroundReplacementIfSelectedAndDeleted={() => {}}
+        clearPublisherBgIfSelectedDeleted={() => {}}
       />
     );
     backgrounds.forEach((bg) => {
@@ -42,7 +42,7 @@ describe('BackgroundGallery', () => {
       <BackgroundGallery
         backgroundSelected=""
         setBackgroundSelected={() => {}}
-        cleanPublisherBackgroundReplacementIfSelectedAndDeleted={() => {}}
+        clearPublisherBgIfSelectedDeleted={() => {}}
       />
     );
     customImages.forEach((img) => {
@@ -56,7 +56,7 @@ describe('BackgroundGallery', () => {
       <BackgroundGallery
         backgroundSelected=""
         setBackgroundSelected={setBackgroundSelected}
-        cleanPublisherBackgroundReplacementIfSelectedAndDeleted={() => {}}
+        clearPublisherBgIfSelectedDeleted={() => {}}
       />
     );
     const duneViewOption = screen.getByTestId('background-bg3');
@@ -70,7 +70,7 @@ describe('BackgroundGallery', () => {
       <BackgroundGallery
         backgroundSelected=""
         setBackgroundSelected={setBackgroundSelected}
-        cleanPublisherBackgroundReplacementIfSelectedAndDeleted={() => {}}
+        clearPublisherBgIfSelectedDeleted={() => {}}
       />
     );
     const customOption = screen.getByTestId('background-custom1');
@@ -83,7 +83,7 @@ describe('BackgroundGallery', () => {
       <BackgroundGallery
         backgroundSelected="plane.jpg"
         setBackgroundSelected={() => {}}
-        cleanPublisherBackgroundReplacementIfSelectedAndDeleted={() => {}}
+        clearPublisherBgIfSelectedDeleted={() => {}}
       />
     );
     const planeOption = screen.getByTestId('background-bg7');
@@ -95,7 +95,7 @@ describe('BackgroundGallery', () => {
       <BackgroundGallery
         backgroundSelected="data:image/png;base64,custom2"
         setBackgroundSelected={() => {}}
-        cleanPublisherBackgroundReplacementIfSelectedAndDeleted={() => {}}
+        clearPublisherBgIfSelectedDeleted={() => {}}
       />
     );
     const customOption = screen.getByTestId('background-custom2');
@@ -108,7 +108,7 @@ describe('BackgroundGallery', () => {
       <BackgroundGallery
         backgroundSelected=""
         setBackgroundSelected={() => {}}
-        cleanPublisherBackgroundReplacementIfSelectedAndDeleted={cleanPublisher}
+        clearPublisherBgIfSelectedDeleted={cleanPublisher}
       />
     );
     const deleteButtons = screen.getAllByLabelText('Delete custom background');
@@ -122,7 +122,7 @@ describe('BackgroundGallery', () => {
       <BackgroundGallery
         backgroundSelected="data:image/png;base64,custom1"
         setBackgroundSelected={() => {}}
-        cleanPublisherBackgroundReplacementIfSelectedAndDeleted={() => {}}
+        clearPublisherBgIfSelectedDeleted={() => {}}
       />
     );
     const deleteButton = screen.getByTestId('background-delete-custom1');
