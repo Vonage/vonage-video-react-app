@@ -1,7 +1,7 @@
 import { afterAll, beforeAll, describe, expect, it, jest } from '@jest/globals';
 import request from 'supertest';
 import { Server } from 'http';
-import { ReportIssueReturn, FeedbackOrigin } from '../types/feedback';
+import { ReportIssueReturn } from '../types/feedback';
 import mockOpentokConfig from '../helpers/__mocks__/config';
 
 await jest.unstable_mockModule('../helpers/config', mockOpentokConfig);
@@ -61,7 +61,7 @@ describe('POST /feedback/report', () => {
       name: 'John Doe',
       issue: 'Cannot hear other participants',
       attachment: '',
-      origin: FeedbackOrigin.Web,
+      origin: 'web',
     });
   });
 
@@ -81,7 +81,7 @@ describe('POST /feedback/report', () => {
       name: 'John Doe',
       issue: 'Cannot hear other participants',
       attachment: '',
-      origin: FeedbackOrigin.iOS,
+      origin: 'iOS',
     });
   });
 
@@ -101,7 +101,7 @@ describe('POST /feedback/report', () => {
       name: 'John Doe',
       issue: 'Cannot hear other participants',
       attachment: '',
-      origin: FeedbackOrigin.Android,
+      origin: 'Android',
     });
   });
 });

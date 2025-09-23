@@ -6,11 +6,7 @@ export type FeedbackData = {
   origin: FeedbackOrigin;
 };
 
-export enum FeedbackOrigin {
-  Web = 'web',
-  iOS = 'iOS',
-  Android = 'Android',
-}
+export type FeedbackOrigin = 'web' | 'iOS' | 'Android';
 
 export type ReportIssueReturn = {
   message: string;

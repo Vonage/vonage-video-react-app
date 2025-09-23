@@ -10,14 +10,14 @@ feedbackRouter.post('/report', async (req: Request, res: Response) => {
   const { title, name, issue, attachment } = req.body;
 
   try {
-    let origin = FeedbackOrigin.Web;
+    let origin: FeedbackOrigin = 'web';
     const useragent = headers['User-Agent'] || headers['user-agent'];
 
     if (useragent != null) {
       if (useragent.includes('VeraNativeiOS')) {
-        origin = FeedbackOrigin.iOS;
+        origin = 'iOS';
       } else if (useragent.includes('VeraNativeAndroid')) {
-        origin = FeedbackOrigin.Android;
+        origin = 'Android';
       }
     }
 

@@ -12,7 +12,7 @@ describe('JiraFeedbackService', () => {
     title: 'Nothing works.',
     name: 'John Doe',
     issue: 'This does not even work',
-    origin: FeedbackOrigin.Web,
+    origin: 'web' as FeedbackOrigin,
   };
 
   const mockPost = jest.spyOn(axios, 'post');
@@ -98,7 +98,7 @@ describe('JiraFeedbackService', () => {
     const feedbackData: FeedbackData = {
       ...sharedData,
       attachment: '',
-      origin: FeedbackOrigin.iOS,
+      origin: 'iOS',
     };
 
     const mockTicketResponse: { data: { key: string } } = {
@@ -139,7 +139,7 @@ describe('JiraFeedbackService', () => {
     const feedbackData: FeedbackData = {
       ...sharedData,
       attachment: '',
-      origin: FeedbackOrigin.Android,
+      origin: 'Android',
     };
 
     const mockTicketResponse: { data: { key: string } } = {

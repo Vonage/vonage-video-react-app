@@ -102,11 +102,11 @@ class JiraFeedbackService implements FeedbackService {
 
   private getComponentIdByOrigin(origin: FeedbackOrigin): string {
     switch (origin) {
-      case FeedbackOrigin.iOS:
+      case 'iOS':
         return this.jiraiOSComponentId;
-      case FeedbackOrigin.Android:
+      case 'Android':
         return this.jiraAndroidComponentId;
-      case FeedbackOrigin.Web:
+      case 'web':
       default:
         return this.jiraComponentId;
     }
