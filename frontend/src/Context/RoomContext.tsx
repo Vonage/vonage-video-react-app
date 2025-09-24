@@ -4,6 +4,7 @@ import RedirectToUnsupportedBrowserPage from '../components/RedirectToUnsupporte
 import { AudioOutputProvider } from './AudioOutputProvider';
 import UserProvider from './user';
 import { ConfigProvider } from './ConfigProvider';
+import { BackgroundPublisherProvider } from './BackgroundPublisherProvider';
 
 /**
  * Wrapper for all of the contexts used by the waiting room and the meeting room.
@@ -12,11 +13,13 @@ import { ConfigProvider } from './ConfigProvider';
 const RoomContext = (): ReactElement => (
   <ConfigProvider>
     <UserProvider>
-      <RedirectToUnsupportedBrowserPage>
-        <AudioOutputProvider>
-          <Outlet />
-        </AudioOutputProvider>
-      </RedirectToUnsupportedBrowserPage>
+      <BackgroundPublisherProvider>
+        <RedirectToUnsupportedBrowserPage>
+          <AudioOutputProvider>
+            <Outlet />
+          </AudioOutputProvider>
+        </RedirectToUnsupportedBrowserPage>
+      </BackgroundPublisherProvider>
     </UserProvider>
   </ConfigProvider>
 );

@@ -15,7 +15,6 @@ import { DEVICE_ACCESS_STATUS } from '../../../utils/constants';
 import { AccessDeniedEvent } from '../../PublisherProvider/usePublisher/usePublisher';
 import DeviceStore from '../../../utils/DeviceStore';
 import applyBackgroundFilter from '../../../utils/backgroundFilter/applyBackgroundFilter/applyBackgroundFilter';
-import usePublisherOptions from '../../PublisherProvider/usePublisherOptions';
 
 export type BackgroundPublisherContextType = {
   isPublishing: boolean;
@@ -55,7 +54,6 @@ type PublisherVideoElementCreatedEvent = Event<'videoElementCreated', Publisher>
  */
 const useBackgroundPublisher = (): BackgroundPublisherContextType => {
   const { user } = useUserContext();
-  const defaultPublisherOptions = usePublisherOptions();
   const { allMediaDevices, getAllMediaDevices } = useDevices();
   const [publisherVideoElement, setPublisherVideoElement] = useState<
     HTMLVideoElement | HTMLObjectElement
@@ -69,9 +67,7 @@ const useBackgroundPublisher = (): BackgroundPublisherContextType => {
   const [backgroundFilter, setBackgroundFilter] = useState<VideoFilter | undefined>(
     user.defaultSettings.backgroundFilter
   );
-  const [isVideoEnabled, setIsVideoEnabled] = useState<boolean>(
-    defaultPublisherOptions?.publishVideo ?? false
-  );
+  const [isVideoEnabled, setIsVideoEnabled] = useState<boolean>(true);
   const [localVideoSource, setLocalVideoSource] = useState<string | undefined>(undefined);
   const deviceStoreRef = useRef<DeviceStore>(new DeviceStore());
 

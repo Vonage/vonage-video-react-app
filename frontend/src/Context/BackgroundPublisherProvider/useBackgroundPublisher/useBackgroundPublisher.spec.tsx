@@ -135,24 +135,6 @@ describe('useBackgroundPublisher', () => {
         expect.any(Function)
       );
     });
-
-    it('should initialize with video disabled if configured to be disabled', async () => {
-      mockedHasMediaProcessorSupport.mockReturnValue(true);
-      mockedInitPublisher.mockReturnValue(mockPublisher);
-      mockUsePublisherOptions.mockReturnValue({
-        publishVideo: false,
-      });
-      const { result } = renderHook(() => useBackgroundPublisher());
-      await result.current.initBackgroundLocalPublisher();
-
-      expect(mockedInitPublisher).toHaveBeenCalledWith(
-        undefined,
-        expect.objectContaining({
-          publishVideo: false,
-        }),
-        expect.any(Function)
-      );
-    });
   });
 
   describe('changeBackground', () => {

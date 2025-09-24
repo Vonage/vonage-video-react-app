@@ -16,6 +16,10 @@ vi.mock('../ConfigProvider', () => ({
   ConfigProvider: ({ children }: PropsWithChildren) => children,
   default: ({ children }: PropsWithChildren) => children,
 }));
+vi.mock('../BackgroundPublisherProvider', () => ({
+  __esModule: true,
+  BackgroundPublisherProvider: ({ children }: PropsWithChildren) => children,
+}));
 
 const mockUseUserContext = useUserContext as Mock<[], UserContextType>;
 const mockUseAudioOutputContext = useAudioOutputContext as Mock<[], AudioOutputContextType>;
