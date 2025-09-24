@@ -7,3 +7,5 @@ issuetype
 Autolinker
 NOSONAR
 supportedLngs
+applinks
+webcredentials
