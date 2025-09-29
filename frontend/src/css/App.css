@@ -70,8 +70,8 @@
   border-color: rgb(76, 80, 82);
 }
 
-.choose-background-effect-box { 
-  display: flex;  
+.choose-background-effect-box {
+  display: flex;
   max-height: 84%;
   margin: 0 0.5rem;
   overflow: hidden;
@@ -90,7 +90,7 @@
   min-height: 0;
 }
 
-.choose-background-effect-grid-waiting {  
+.choose-background-effect-grid-waiting {
   width: 100%;
   overflow-y: auto;
   padding: 8px;
