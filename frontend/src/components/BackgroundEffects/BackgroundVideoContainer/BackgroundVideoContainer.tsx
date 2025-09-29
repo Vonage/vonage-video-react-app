@@ -2,6 +2,7 @@ import { useRef, useState, useEffect, ReactElement } from 'react';
 import { CircularProgress, useMediaQuery } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import waitUntilPlaying from '../../../utils/waitUntilPlaying';
+import useIsTabletViewport from '../../../hooks/useIsTabletViewport';
 
 export type BackgroundVideoContainerProps = {
   isFixedWidth?: boolean;
@@ -27,7 +28,7 @@ const BackgroundVideoContainer = ({
   const [isVideoLoading, setIsVideoLoading] = useState<boolean>(true);
   const isSMViewport = useMediaQuery(`(max-width:500px)`);
   const isMDViewport = useMediaQuery(`(max-width:768px)`);
-  const isTabletViewport = useMediaQuery(`(max-width:899px)`);
+  const isTabletViewport = useIsTabletViewport();
   const isLGViewport = useMediaQuery(`(max-width:1199px)`);
 
   useEffect(() => {
@@ -45,7 +46,7 @@ const BackgroundVideoContainer = ({
         (!isFixedWidth && isMDViewport) ||
         (isLGViewport && isFixedWidth)
       ) {
-        width = '80%';
+        width = '90%';
       }
       myVideoElement.style.width = width;
 

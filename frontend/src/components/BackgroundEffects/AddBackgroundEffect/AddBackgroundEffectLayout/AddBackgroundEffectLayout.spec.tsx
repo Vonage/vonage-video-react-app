@@ -29,7 +29,7 @@ describe('AddBackgroundEffectLayout', () => {
     const file = new File(['dummy'], 'test.txt', { type: 'text/plain' });
     fireEvent.change(input, { target: { files: [file] } });
     expect(
-      await screen.findByText(/Only JPG, PNG, or WebP images are allowed/i)
+      await screen.findByText(/Only JPG, PNG, GIF, or BMP images are allowed/i)
     ).toBeInTheDocument();
   });
 

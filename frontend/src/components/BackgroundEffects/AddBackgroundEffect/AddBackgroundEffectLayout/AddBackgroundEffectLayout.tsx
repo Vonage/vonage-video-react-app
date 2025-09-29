@@ -47,7 +47,7 @@ const AddBackgroundEffectLayout = ({
     }
 
     if (!ALLOWED_TYPES.includes(file.type)) {
-      setFileError('Only JPG, PNG, or WebP images are allowed.');
+      setFileError('Only JPG, PNG, GIF, or BMP images are allowed.');
       return;
     }
 
@@ -86,7 +86,11 @@ const AddBackgroundEffectLayout = ({
   };
 
   return (
-    <Box>
+    <Box
+      sx={{
+        overflow: 'auto',
+      }}
+    >
       <FileUploader handleFileChange={handleFileChange} />
 
       {(fileError || storageError) && (

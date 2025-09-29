@@ -6,6 +6,7 @@ import BackgroundGallery from '../BackgroundGallery/BackgroundGallery';
 import AddBackgroundEffectLayout from '../AddBackgroundEffect/AddBackgroundEffectLayout/AddBackgroundEffectLayout';
 import { DEFAULT_SELECTABLE_OPTION_WIDTH } from '../../../utils/constants';
 import getInitialBackgroundFilter from '../../../utils/backgroundFilter/getInitialBackgroundFilter/getInitialBackgroundFilter';
+import useIsTabletViewport from '../../../hooks/useIsTabletViewport';
 
 type BackgroundEffectTabsProps = {
   tabSelected: number;
@@ -56,9 +57,20 @@ const BackgroundEffectTabs = ({
   const handleBackgroundSelect = (value: string) => {
     setBackgroundSelected(value);
   };
+  const isTabletViewport = useIsTabletViewport();
 
   return (
-    <Box flex={1} minWidth={0} flexDirection={{ xs: 'column' }} justifyContent="center">
+    <Box
+      sx={{
+        display: 'block',
+        flex: 1,
+        minWidth: 0,
+        flexDirection: 'column',
+        height: '100%',
+        overflow: 'hidden',
+        minHeight: isTabletViewport || mode === 'meeting' ? 'auto' : '400px',
+      }}
+    >
       <Tabs
         variant="fullWidth"
         sx={{

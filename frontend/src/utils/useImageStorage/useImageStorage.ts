@@ -126,7 +126,7 @@ const useImageStorage = () => {
     return new Promise((resolve, reject) => {
       try {
         const parsed = new URL(url);
-        const validExt = /\.(jpg|jpeg|png|webp)$/i.test(parsed.pathname);
+        const validExt = /\.(jpg|jpeg|png|gif|bmp)$/i.test(parsed.pathname);
         if (!validExt) {
           setStorageError('Invalid image extension.');
           reject();

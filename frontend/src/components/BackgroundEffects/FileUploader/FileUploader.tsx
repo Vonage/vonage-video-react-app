@@ -44,7 +44,7 @@ const FileUploader = ({ handleFileChange }: FileUploaderProps): ReactElement => 
       <input
         id="file-upload"
         type="file"
-        accept=".jpg,.jpeg,.png,.webp"
+        accept=".jpg,.jpeg,.png,.gif,.bmp"
         hidden
         onChange={handleFileChange}
         data-testid="file-upload-input"
@@ -67,7 +67,7 @@ const FileUploader = ({ handleFileChange }: FileUploaderProps): ReactElement => 
       >
         <>
           <CloudUploadIcon sx={{ fontSize: 50, color: '#989A9D' }} />
-          <Typography mt={1}>
+          <Typography className="file-upload-drop-area-text" mt={1}>
             Drag and drop, or click here to upload image,
             <br />
             Max 2MB

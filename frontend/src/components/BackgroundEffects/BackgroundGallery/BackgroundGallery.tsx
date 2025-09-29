@@ -73,7 +73,11 @@ const BackgroundGallery = ({
               image={dataUrl}
             >
               <Tooltip
-                title={isSelected ? "You can't remove this background while it's in use" : ''}
+                title={
+                  isSelected
+                    ? "You can't remove this background while it's in use"
+                    : 'Delete background'
+                }
                 arrow
               >
                 <IconButton

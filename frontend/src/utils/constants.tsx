@@ -114,6 +114,12 @@ export const CAPTION_ERROR_DISPLAY_DURATION_MS = 4000;
  */
 export const SMALL_VIEWPORT = 768;
 
+/*
+ * @constant {number} TABLET_VIEWPORT - The pixel width threshold used to determine if the viewport is considered tablet.
+ * Typically used as the max-width breakpoint for responsive layouts.
+ */
+export const TABLET_VIEWPORT = 899;
+
 /**
  * @constant {string} BACKGROUNDS_PATH - The path to the backgrounds assets directory.
  */
@@ -129,7 +135,7 @@ export const MAX_SIZE_MB = 2;
  * @constant {string[]} ALLOWED_TYPES - An array of allowed MIME types for image uploads.
  * Used to validate image uploads in components like AddBackgroundEffectLayout.
  */
-export const ALLOWED_TYPES = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
+export const ALLOWED_TYPES = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/bmp'];
 
 /**
  * @constant {number} MAX_LOCAL_STORAGE_BYTES - The maximum size (in bytes) for storing images in localStorage.

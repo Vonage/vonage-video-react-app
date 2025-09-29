@@ -10,6 +10,7 @@ import getInitialBackgroundFilter from '../../../utils/backgroundFilter/getIniti
 import useBackgroundPublisherContext from '../../../hooks/useBackgroundPublisherContext';
 import RightPanelTitle from '../../MeetingRoom/RightPanel/RightPanelTitle';
 import usePreviewPublisherContext from '../../../hooks/usePreviewPublisherContext';
+import useIsTabletViewport from '../../../hooks/useIsTabletViewport';
 
 export type BackgroundEffectsLayoutProps = {
   isOpen: boolean;
@@ -27,7 +28,7 @@ const BackgroundEffectsLayout = ({
   const { t } = useTranslation();
 
   const isShortScreen = useMediaQuery('(max-height:825px)');
-  const isTabletViewport = useMediaQuery('(max-width:899px)');
+  const isTabletViewport = useIsTabletViewport();
 
   const publisherContext = usePublisherContext();
   const previewPublisherContext = usePreviewPublisherContext();
@@ -72,7 +73,7 @@ const BackgroundEffectsLayout = ({
         flexShrink: 0,
         display: 'flex',
         justifyContent: 'space-between',
-        ...(mode === 'waiting' ? { mt: 1.5 } : { m: 1.5 }),
+        ...(mode === 'waiting' ? { mt: 1.5 } : { m: 1.5, mt: 1 }),
       }}
     >
       <Button
@@ -117,7 +118,7 @@ const BackgroundEffectsLayout = ({
       >
         <RightPanelTitle title={t('backgroundEffects.title')} handleClose={handleClose} />
 
-        <Box sx={{ flexShrink: 0, p: 1.5 }}>
+        <Box sx={{ flexShrink: 0, p: 1 }}>
           <BackgroundVideoContainer
             publisherVideoElement={publisherVideoElement}
             isParentVideoEnabled={isVideoEnabled}
@@ -143,7 +144,7 @@ const BackgroundEffectsLayout = ({
 
   // WaitingRoom layout
   return (
-    <Box display="flex" flexDirection={{ xs: 'column', md: 'row' }} gap={3}>
+    <Box display="flex" flexDirection={{ xs: 'column', md: 'row' }} gap={1.5}>
       <Box
         flex={1}
         minWidth={0}
