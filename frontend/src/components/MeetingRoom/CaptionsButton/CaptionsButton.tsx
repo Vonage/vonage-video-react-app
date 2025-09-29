@@ -2,6 +2,7 @@ import { ClosedCaption, ClosedCaptionDisabled } from '@mui/icons-material';
 import { Tooltip } from '@mui/material';
 import { Dispatch, ReactElement, useState, SetStateAction } from 'react';
 import { AxiosError } from 'axios';
+import { useTranslation } from 'react-i18next';
 import useRoomName from '../../../hooks/useRoomName';
 import ToolbarButton from '../ToolbarButton';
 import { disableCaptions, enableCaptions } from '../../../api/captions';
@@ -33,11 +34,12 @@ const CaptionsButton = ({
   handleClick,
   captionsState,
 }: CaptionsButtonProps): ReactElement => {
+  const { t } = useTranslation();
   const roomName = useRoomName();
   const [captionsId, setCaptionsId] = useState<string>('');
   const { isUserCaptionsEnabled, setIsUserCaptionsEnabled, setCaptionsErrorResponse } =
     captionsState;
-  const title = isUserCaptionsEnabled ? 'Disable captions' : 'Enable captions';
+  const title = isUserCaptionsEnabled ? t('captions.disable') : t('captions.enable');
 
   const handleClose = () => {
     if (isOverflowButton && handleClick) {
@@ -48,7 +50,7 @@ const CaptionsButton = ({
   const sessionCaptionsEnabled = !!roomName && !!captionsId;
 
   const handleCaptionsErrorResponse = (message: string | null) => {
-    setCaptionsErrorResponse(message || 'Unknown error occurred');
+    setCaptionsErrorResponse(message || t('errors.unknown'));
     setCaptionsId('');
     setIsUserCaptionsEnabled(false);
   };
@@ -91,7 +93,7 @@ const CaptionsButton = ({
   };
 
   return (
-    <Tooltip title={title} aria-label="captions button">
+    <Tooltip title={title} aria-label={t('captions.ariaLabel')}>
       <ToolbarButton
         onClick={handleActionClick}
         data-testid="captions-button"

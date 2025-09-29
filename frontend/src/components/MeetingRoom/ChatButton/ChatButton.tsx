@@ -2,6 +2,7 @@ import ChatIcon from '@mui/icons-material/Chat';
 import Tooltip from '@mui/material/Tooltip';
 import { blue } from '@mui/material/colors';
 import { ReactElement } from 'react';
+import { useTranslation } from 'react-i18next';
 import ToolbarButton from '../ToolbarButton';
 import UnreadMessagesBadge from '../UnreadMessagesBadge';
 
@@ -27,8 +28,9 @@ const ChatButton = ({
   isOpen,
   isOverflowButton = false,
 }: ChatButtonProps): ReactElement => {
+  const { t } = useTranslation();
   return (
-    <Tooltip title={isOpen ? 'Close chat' : 'Open chat'} aria-label="toggle chat">
+    <Tooltip title={isOpen ? t('chat.close') : t('chat.open')} aria-label={t('chat.ariaLabel')}>
       <UnreadMessagesBadge>
         <ToolbarButton
           data-testid="chat-button"

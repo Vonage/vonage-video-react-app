@@ -7,3 +7,6 @@ issuetype
 Autolinker
 NOSONAR
 jiraiOSComponentId
+supportedLngs
+applinks
+webcredentials

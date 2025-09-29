@@ -1,6 +1,7 @@
 import { SetStateAction, Dispatch, ReactElement, ChangeEvent } from 'react';
 import { InputAdornment, TextField } from '@mui/material';
 import { Keyboard } from '@mui/icons-material';
+import { useTranslation } from 'react-i18next';
 import isValidRoomName from '../../utils/isValidRoomName';
 
 export type RoomNameInputProps = {
@@ -27,6 +28,7 @@ const RoomNameInput = ({
   hasError,
   setHasError,
 }: RoomNameInputProps): ReactElement => {
+  const { t } = useTranslation();
   const handleChange = (textChangeEvent: ChangeEvent<HTMLInputElement>) => {
     const newValue = textChangeEvent.target.value.toLowerCase();
 
@@ -48,11 +50,11 @@ const RoomNameInput = ({
     <TextField
       id="room-name"
       className="h-12 w-52 pr-2"
-      placeholder="Enter room name"
+      placeholder={t('room.input.placeholder')}
       value={roomName}
       onChange={handleChange}
       error={hasError}
-      helperText={hasError ? 'No spaces or special characters allowed' : ''}
+      helperText={hasError ? t('room.input.helper') : ''}
       InputProps={{
         inputProps: { maxLength: 60 },
         startAdornment: (

@@ -1,5 +1,6 @@
 import { ChangeEvent, ReactElement, useState, FormEvent } from 'react';
 import { AxiosError } from 'axios';
+import { useTranslation } from 'react-i18next';
 import RightPanelTitle from '../RightPanel/RightPanelTitle';
 import useCollectBrowserInformation from '../../../hooks/useCollectBrowserInformation';
 import FormSubmitted from './FormSubmitted';
@@ -41,6 +42,7 @@ type ResponseType = {
  * @returns {ReactElement} The report issue component.
  */
 const ReportIssue = ({ handleClose, isOpen }: ReportIssueProps): ReactElement | false => {
+  const { t } = useTranslation();
   const [formData, setFormData] = useState<FormType>({
     title: '',
     name: '',
@@ -150,7 +152,7 @@ const ReportIssue = ({ handleClose, isOpen }: ReportIssueProps): ReactElement | 
   return (
     isOpen && (
       <>
-        <RightPanelTitle title="Report Issue" handleClose={handleCloseFormSubmitted} />
+        <RightPanelTitle title={t('feedbackForm.title')} handleClose={handleCloseFormSubmitted} />
         {isFormVisible ? (
           <FeedbackForm
             handleSubmit={handleSubmit}

@@ -1,5 +1,6 @@
 import { ReactElement, useCallback, useEffect, useState } from 'react';
 import { Box, Button, Typography } from '@mui/material';
+import { useTranslation } from 'react-i18next';
 import usePublisherContext from '../../../hooks/usePublisherContext';
 import RightPanelTitle from '../RightPanel/RightPanelTitle';
 import EffectOptionButtons from '../../BackgroundEffects/EffectOptionButtons/EffectOptionButtons';
@@ -50,6 +51,7 @@ const BackgroundEffectsLayout = ({
   }, [publisher, setBackgroundSelected]);
 
   const publisherVideoFilter = publisher?.getVideoFilter();
+  const { t } = useTranslation();
 
   // Reset background when closing the panel
   useEffect(() => {
@@ -62,7 +64,7 @@ const BackgroundEffectsLayout = ({
   return (
     isOpen && (
       <>
-        <RightPanelTitle title="Background Effects" handleClose={handleClose} />
+        <RightPanelTitle title={t('backgroundEffects.title')} handleClose={handleClose} />
 
         <Box sx={{ ml: 1.5, mr: 1.5 }}>
           <BackgroundVideoContainer
@@ -73,7 +75,7 @@ const BackgroundEffectsLayout = ({
 
         <Box className="choose-background-effect-box" sx={{ m: 1.5 }}>
           <Typography variant="subtitle2" sx={{ textAlign: 'left', mb: 1 }}>
-            Choose Background Effect
+            {t('backgroundEffects.choice')}
           </Typography>
 
           <Box
@@ -106,7 +108,7 @@ const BackgroundEffectsLayout = ({
             sx={{ width: '100%', mr: 1 }}
             onClick={handleClose}
           >
-            Cancel
+            {t('button.cancel')}
           </Button>
           <Button
             data-testid="background-effect-apply-button"
@@ -115,7 +117,7 @@ const BackgroundEffectsLayout = ({
             sx={{ width: '100%' }}
             onClick={handleApplyBackgroundSelect}
           >
-            Apply
+            {t('button.apply')}
           </Button>
         </Box>
       </>

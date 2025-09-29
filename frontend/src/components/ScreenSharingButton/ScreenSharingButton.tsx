@@ -2,6 +2,7 @@ import ScreenOff from '@mui/icons-material/StopScreenShare';
 import ScreenShare from '@mui/icons-material/ScreenShare';
 import Tooltip from '@mui/material/Tooltip';
 import { ReactElement, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import ToolbarButton from '../MeetingRoom/ToolbarButton';
 import PopupDialog, { DialogTexts } from '../MeetingRoom/PopupDialog';
 import { isMobile } from '../../utils/util';
@@ -30,7 +31,8 @@ const ScreenSharingButton = ({
   isViewingScreenShare,
   isOverflowButton = false,
 }: ScreenShareButtonProps): ReactElement | false => {
-  const title = isSharingScreen ? 'Stop screen share' : 'Start screen share';
+  const { t } = useTranslation();
+  const title = isSharingScreen ? t('screenSharing.title.stop') : t('screenSharing.title.start');
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
 
   const handleButtonClick = () =>
@@ -41,11 +43,10 @@ const ScreenSharingButton = ({
   };
 
   const actionText: DialogTexts = {
-    title: 'Do you want to share your screen?',
-    contents:
-      'Looks like there is someone else sharing their screen. If you continue, their screen is no longer going to be shared.',
-    primaryActionText: 'Start sharing your screen',
-    secondaryActionText: 'Cancel',
+    title: t('screenSharing.dialog.title'),
+    contents: t('screenSharing.dialog.content'),
+    primaryActionText: t('screenSharing.dialog.action'),
+    secondaryActionText: t('button.cancel'),
   };
 
   const handleActionClick = () => {
@@ -58,7 +59,7 @@ const ScreenSharingButton = ({
     // See: https://developer.mozilla.org/en-US/docs/Web/API/MediaDevices/getDisplayMedia#browser_compatibility
     !isMobile() && (
       <>
-        <Tooltip title={title} aria-label="add">
+        <Tooltip title={title} aria-label={t('screenSharing.tooltip.ariaLabel')}>
           <ToolbarButton
             onClick={handleButtonClick}
             data-testid="screensharing-button"
