@@ -52,7 +52,7 @@ const AddBackgroundEffectLayout = ({
     }
 
     if (file.size > MAX_SIZE_MB * 1024 * 1024) {
-      setFileError('Image must be less than 2MB.');
+      setFileError(`Image must be less than ${MAX_SIZE_MB}MB.`);
       return;
     }
 

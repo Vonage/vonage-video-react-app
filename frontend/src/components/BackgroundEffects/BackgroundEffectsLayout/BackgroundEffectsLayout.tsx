@@ -18,6 +18,17 @@ export type BackgroundEffectsLayoutProps = {
   mode: 'meeting' | 'waiting';
 };
 
+/**
+ * BackgroundEffectsLayout Component
+ *
+ * This component provides a layout for managing background effects, including video preview,
+ * effect selection tabs, and action buttons.
+ * @param {BackgroundEffectsLayoutProps} props - The properties for the component.
+ *   @property {boolean} isOpen - Whether the background effects layout is open.
+ *   @property {Function} handleClose - Function to close the background effects layout.
+ *   @property {string} mode - The mode of the background effects ('meeting' or 'waiting').
+ * @returns {ReactElement | false} The background effects layout component or false if not open.
+ */
 const BackgroundEffectsLayout = ({
   isOpen,
   handleClose,

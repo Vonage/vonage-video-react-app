@@ -60,7 +60,7 @@ This application provides features for common conferencing use cases, such as:
     <summary>Input and output device selectors.</summary>
     <img src="docs/assets/DeviceSelector.png" alt="Screenshot of audio devices selector">
   </details>
-- Background blur and noise suppression toggles.
+- Background replacement and noise suppression toggles.
 - <details>
     <summary>Composed archiving capabilities to record your meetings.</summary>
     <img src="docs/assets/Archiving.png" alt="Screenshot of archiving dialog box">

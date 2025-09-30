@@ -27,7 +27,7 @@ export type SelectableOptionProps = {
  *  @property {string} image - Image URL to display in the option
  *  @property {number} size - Size of the option (default is DEFAULT_SELECTABLE_OPTION_WIDTH)
  *  @property {boolean} isDisabled - Whether the option is disabled
- * @property {ReactNode} children - Additional content to render inside the option
+ *  @property {ReactNode} children - Additional content to render inside the option
  * @returns {ReactElement} A selectable option element
  */
 const SelectableOption = ({

@@ -1,5 +1,5 @@
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
-import { vi, describe, it, expect } from 'vitest';
+import { vi, describe, it, expect, beforeAll } from 'vitest';
 import AddBackgroundEffectLayout from './AddBackgroundEffectLayout';
 
 vi.mock('../../../../utils/useImageStorage/useImageStorage', () => ({
@@ -16,6 +16,12 @@ vi.mock('../../../../utils/useImageStorage/useImageStorage', () => ({
 }));
 
 describe('AddBackgroundEffectLayout', () => {
+  const cb = vi.fn();
+
+  beforeAll(() => {
+    vi.clearAllMocks();
+  });
+
   it('should render', () => {
     render(<AddBackgroundEffectLayout customBackgroundImageChange={vi.fn()} />);
     expect(screen.getByText(/Drag and drop, or click here to upload image/i)).toBeInTheDocument();
@@ -43,7 +49,6 @@ describe('AddBackgroundEffectLayout', () => {
   });
 
   it('handles valid image file upload', async () => {
-    const cb = vi.fn();
     render(<AddBackgroundEffectLayout customBackgroundImageChange={cb} />);
     const input = screen.getByLabelText(/upload/i);
     const file = new File(['dummy'], 'test.png', { type: 'image/png' });
@@ -52,7 +57,6 @@ describe('AddBackgroundEffectLayout', () => {
   });
 
   it('handles valid link submit', async () => {
-    const cb = vi.fn();
     render(<AddBackgroundEffectLayout customBackgroundImageChange={cb} />);
     const input = screen.getByPlaceholderText(/Link from the web/i);
     fireEvent.change(input, { target: { value: 'https://example.com/image.png' } });

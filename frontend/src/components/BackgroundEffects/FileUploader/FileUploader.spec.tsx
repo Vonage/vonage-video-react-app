@@ -1,8 +1,14 @@
 import { render, screen, fireEvent } from '@testing-library/react';
-import { it, vi, describe, expect } from 'vitest';
+import { it, vi, describe, expect, beforeAll } from 'vitest';
 import FileUploader from './FileUploader';
 
 describe('FileUploader', () => {
+  const handleFileChange = vi.fn();
+
+  beforeAll(() => {
+    vi.clearAllMocks();
+  });
+
   it('renders upload UI', () => {
     render(<FileUploader handleFileChange={vi.fn()} />);
     expect(screen.getByText(/Drag and drop, or click here to upload image/i)).toBeInTheDocument();
@@ -11,7 +17,6 @@ describe('FileUploader', () => {
   });
 
   it('handles file input change', () => {
-    const handleFileChange = vi.fn();
     render(<FileUploader handleFileChange={handleFileChange} />);
     const input = screen.getByTestId('file-upload-input');
     const file = new File(['dummy'], 'test.png', { type: 'image/png' });
@@ -20,7 +25,6 @@ describe('FileUploader', () => {
   });
 
   it('handles file drop event', () => {
-    const handleFileChange = vi.fn();
     render(<FileUploader handleFileChange={handleFileChange} />);
     const box = screen.getByTestId('file-upload-drop-area');
     const file = new File(['dummy'], 'test.jpg', { type: 'image/jpeg' });

@@ -1,6 +1,7 @@
 import { ChangeEvent, useState, DragEvent, ReactElement } from 'react';
 import { Box, Typography } from '@mui/material';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
+import { MAX_SIZE_MB } from '../../../utils/constants';
 
 export type FileUploaderProps = {
   handleFileChange: (
@@ -70,7 +71,7 @@ const FileUploader = ({ handleFileChange }: FileUploaderProps): ReactElement => 
           <Typography className="file-upload-drop-area-text" mt={1}>
             Drag and drop, or click here to upload image,
             <br />
-            Max 2MB
+            Max {MAX_SIZE_MB}MB
           </Typography>
         </>
       </Box>

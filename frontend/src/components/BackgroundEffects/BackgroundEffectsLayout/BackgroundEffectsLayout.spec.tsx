@@ -66,7 +66,6 @@ describe('BackgroundEffectsLayout (Meeting room)', () => {
     expect(screen.getByTestId('background-effect-cancel-button')).toBeInTheDocument();
     expect(screen.getByTestId('background-effect-apply-button')).toBeInTheDocument();
 
-    // Checking that BackgroundEffectTabs (Backgrounds and Add Background tabs) are rendered
     expect(screen.getAllByText(/Backgrounds/i)[0]).toBeInTheDocument();
     expect(screen.getAllByText(/Add background/i)[0]).toBeInTheDocument();
   });
