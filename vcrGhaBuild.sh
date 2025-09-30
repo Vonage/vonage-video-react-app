@@ -6,7 +6,7 @@
 # run install skipping post install script which requires husky
 export VITE_ENABLE_REPORT_ISSUE=true
 export VITE_I18N_FALLBACK_LANGUAGE='en'
-export VITE_I18N_SUPPORTED_LANGUAGES='de|en|es|fi|fr|hi|it|ja|ko|nb|pt-BR|pt-PT|sv'
+export VITE_I18N_SUPPORTED_LANGUAGES='de|en|es|es-MX|fi|fr|hi|it|ja|ko|nb|pt-BR|pt-PT|sv'
 
 yarn install --ignore-scripts
 
