@@ -1,6 +1,6 @@
 import { render, screen } from '@testing-library/react';
 import { describe, it, expect, vi, afterEach } from 'vitest';
-import React from 'react';
+import { PropsWithChildren } from 'react';
 import App from './App';
 
 // Mock the page components to make text assertions easy
@@ -13,22 +13,27 @@ vi.mock('./pages/UnsupportedBrowserPage', () => ({
 // Mock context providers and wrappers
 vi.mock('./Context/PreviewPublisherProvider', () => ({
   __esModule: true,
-  PreviewPublisherProvider: ({ children }: React.PropsWithChildren) => children,
-  default: ({ children }: React.PropsWithChildren) => children,
+  PreviewPublisherProvider: ({ children }: PropsWithChildren) => children,
+  default: ({ children }: PropsWithChildren) => children,
 }));
 vi.mock('./Context/PublisherProvider', () => ({
   __esModule: true,
-  PublisherProvider: ({ children }: React.PropsWithChildren) => children,
-  default: ({ children }: React.PropsWithChildren) => children,
+  PublisherProvider: ({ children }: PropsWithChildren) => children,
+  default: ({ children }: PropsWithChildren) => children,
 }));
 vi.mock('./Context/SessionProvider/session', () => ({
-  default: ({ children }: React.PropsWithChildren) => children,
+  default: ({ children }: PropsWithChildren) => children,
 }));
 vi.mock('./components/RedirectToWaitingRoom', () => ({
-  default: ({ children }: React.PropsWithChildren) => children,
+  default: ({ children }: PropsWithChildren) => children,
 }));
 vi.mock('./Context/RoomContext', () => ({
-  default: ({ children }: React.PropsWithChildren) => children,
+  default: ({ children }: PropsWithChildren) => children,
+}));
+vi.mock('./Context/ConfigProvider', () => ({
+  __esModule: true,
+  ConfigContextProvider: ({ children }: PropsWithChildren) => children,
+  default: ({ children }: PropsWithChildren) => children,
 }));
 
 afterEach(() => {

@@ -1,6 +1,11 @@
 import { act, cleanup, renderHook } from '@testing-library/react';
 import { afterAll, afterEach, beforeEach, describe, expect, it, Mock, vi } from 'vitest';
-import { hasMediaProcessorSupport, initPublisher, Publisher } from '@vonage/client-sdk-video';
+import {
+  hasMediaProcessorSupport,
+  initPublisher,
+  Publisher,
+  PublisherProperties,
+} from '@vonage/client-sdk-video';
 import EventEmitter from 'events';
 import useBackgroundPublisher from './useBackgroundPublisher';
 import { UserContextType } from '../../user';
@@ -14,17 +19,20 @@ import {
   defaultVideoDevice,
 } from '../../../utils/mockData/device';
 import { DEVICE_ACCESS_STATUS } from '../../../utils/constants';
+import usePublisherOptions from '../../PublisherProvider/usePublisherOptions';
 
 vi.mock('@vonage/client-sdk-video');
 vi.mock('../../../hooks/useUserContext.tsx');
 vi.mock('../../../hooks/usePermissions.tsx');
 vi.mock('../../../hooks/useDevices.tsx');
+vi.mock('../../PublisherProvider/usePublisherOptions');
 const mockUseUserContext = useUserContext as Mock<[], UserContextType>;
 const mockUsePermissions = usePermissions as Mock<[], PermissionsHookType>;
 const mockUseDevices = useDevices as Mock<
   [],
   { allMediaDevices: AllMediaDevices; getAllMediaDevices: () => void }
 >;
+const mockUsePublisherOptions = usePublisherOptions as Mock<[], PublisherProperties>;
 
 const defaultSettings = {
   publishAudio: false,
@@ -65,6 +73,9 @@ describe('useBackgroundPublisher', () => {
     mockUsePermissions.mockReturnValue({
       accessStatus: DEVICE_ACCESS_STATUS.PENDING,
       setAccessStatus: mockSetAccessStatus,
+    });
+    mockUsePublisherOptions.mockReturnValue({
+      publishVideo: true,
     });
   });
 

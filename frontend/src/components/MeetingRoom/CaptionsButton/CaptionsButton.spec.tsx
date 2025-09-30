@@ -8,6 +8,8 @@ import useRoomName from '../../../hooks/useRoomName';
 import { SessionContextType } from '../../../Context/SessionProvider/session';
 import useSessionContext from '../../../hooks/useSessionContext';
 import { SubscriberWrapper } from '../../../types/session';
+import useConfigContext from '../../../hooks/useConfigContext';
+import { ConfigContextType } from '../../../Context/ConfigProvider';
 
 vi.mock('../../../hooks/useSessionContext');
 vi.mock('../../../hooks/useRoomName');
@@ -15,8 +17,10 @@ vi.mock('../../../api/captions', () => ({
   enableCaptions: vi.fn(),
   disableCaptions: vi.fn(),
 }));
+vi.mock('../../../hooks/useConfigContext');
 
 const mockUseSessionContext = useSessionContext as Mock<[], SessionContextType>;
+const mockUseConfigContext = useConfigContext as Mock<[], ConfigContextType>;
 
 describe('CaptionsButton', () => {
   const mockHandleCloseMenu = vi.fn();
@@ -30,6 +34,7 @@ describe('CaptionsButton', () => {
   } as CaptionsState;
   const mockedRoomName = 'test-room-name';
   let sessionContext: SessionContextType;
+  let configContext: ConfigContextType;
 
   const createSubscriberWrapper = (id: string): SubscriberWrapper => {
     const mockSubscriber = {
@@ -64,7 +69,13 @@ describe('CaptionsButton', () => {
     sessionContext = {
       subscriberWrappers: [createSubscriberWrapper('subscriber-1')],
     } as unknown as SessionContextType;
+    configContext = {
+      meetingRoomSettings: {
+        allowCaptions: true,
+      },
+    } as Partial<ConfigContextType> as ConfigContextType;
     mockUseSessionContext.mockReturnValue(sessionContext as unknown as SessionContextType);
+    mockUseConfigContext.mockReturnValue(configContext);
   });
 
   it('renders the button correctly', () => {
@@ -84,5 +95,15 @@ describe('CaptionsButton', () => {
     await waitFor(() => {
       expect(enableCaptions).toHaveBeenCalledWith(mockedRoomName);
     });
+  });
+
+  it('is not rendered when allowCaptions is false', () => {
+    mockUseConfigContext.mockReturnValue({
+      meetingRoomSettings: {
+        allowCaptions: false,
+      },
+    } as Partial<ConfigContextType> as ConfigContextType);
+    render(<CaptionsButton handleClick={mockHandleCloseMenu} captionsState={mockCaptionsState} />);
+    expect(screen.queryByTestId('captions-button')).not.toBeInTheDocument();
   });
 });

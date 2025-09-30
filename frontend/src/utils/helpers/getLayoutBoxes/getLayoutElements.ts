@@ -1,8 +1,7 @@
 import { Publisher, Subscriber } from '@vonage/client-sdk-video';
 import { Box, Element } from 'opentok-layout-js';
 import { MaybeElement } from '../../layoutManager';
-import { LayoutMode } from '../../../Context/SessionProvider/session';
-import { SubscriberWrapper } from '../../../types/session';
+import { LayoutMode, SubscriberWrapper } from '../../../types/session';
 
 const isLayoutElement = (element: Element | MaybeElement): element is Element => {
   return element.width !== undefined && element.height !== undefined;

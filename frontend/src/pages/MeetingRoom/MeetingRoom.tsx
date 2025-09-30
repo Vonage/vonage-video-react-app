@@ -40,7 +40,6 @@ const MeetingRoom = (): ReactElement => {
     initBackgroundLocalPublisher,
     publisher: backgroundPublisher,
     accessStatus,
-    destroyBackgroundPublisher,
   } = useBackgroundPublisherContext();
 
   const {
@@ -101,14 +100,7 @@ const MeetingRoom = (): ReactElement => {
     if (!backgroundPublisher) {
       initBackgroundLocalPublisher();
     }
-
-    return () => {
-      // Ensure we destroy the backgroundPublisher and release any media devices.
-      if (backgroundPublisher) {
-        destroyBackgroundPublisher();
-      }
-    };
-  }, [initBackgroundLocalPublisher, backgroundPublisher, destroyBackgroundPublisher]);
+  }, [initBackgroundLocalPublisher, backgroundPublisher]);
 
   // After changing device permissions, reload the page to reflect the device's permission change.
   useEffect(() => {
@@ -140,7 +132,6 @@ const MeetingRoom = (): ReactElement => {
         screensharingPublisher={screensharingPublisher}
         screenshareVideoElement={screenshareVideoElement}
         isRightPanelOpen={rightPanelActiveTab !== 'closed'}
-        toggleParticipantList={toggleParticipantList}
       />
       <RightPanel activeTab={rightPanelActiveTab} handleClose={closeRightPanel} />
       <EmojisOrigin />
