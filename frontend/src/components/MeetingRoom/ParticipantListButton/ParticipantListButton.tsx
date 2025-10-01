@@ -5,6 +5,7 @@ import { Badge } from '@mui/material';
 import { ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
 import ToolbarButton from '../ToolbarButton';
+import useConfigContext from '../../../hooks/useConfigContext';
 
 export type ParticipantListButtonProps = {
   handleClick: () => void;
@@ -29,37 +30,42 @@ const ParticipantListButton = ({
   isOpen,
   participantCount,
   isOverflowButton = false,
-}: ParticipantListButtonProps): ReactElement => {
+}: ParticipantListButtonProps): ReactElement | false => {
+  const { meetingRoomSettings } = useConfigContext();
+  const { showParticipantList } = meetingRoomSettings;
+
   const { t } = useTranslation();
   return (
-    <Tooltip
-      title={isOpen ? t('participants.list.close') : t('participants.list.open')}
-      aria-label={t('participants.list.ariaLabel')}
-    >
-      <Badge
-        badgeContent={participantCount}
-        sx={{
-          '& .MuiBadge-badge': {
-            color: 'white',
-            backgroundColor: 'rgb(95, 99, 104)',
-          },
-          marginRight: '12px',
-          zIndex: 1,
-        }}
-        overlap="circular"
+    showParticipantList && (
+      <Tooltip
+        title={isOpen ? t('participants.list.close') : t('participants.list.open')}
+        aria-label={t('participants.list.ariaLabel')}
       >
-        <ToolbarButton
-          data-testid="participant-list-button"
+        <Badge
+          badgeContent={participantCount}
           sx={{
-            marginTop: '0px',
-            marginRight: '0px',
+            '& .MuiBadge-badge': {
+              color: 'white',
+              backgroundColor: 'rgb(95, 99, 104)',
+            },
+            marginRight: '12px',
+            zIndex: 1,
           }}
-          onClick={handleClick}
-          icon={<PeopleIcon sx={{ color: isOpen ? blue.A100 : 'white' }} />}
-          isOverflowButton={isOverflowButton}
-        />
-      </Badge>
-    </Tooltip>
+          overlap="circular"
+        >
+          <ToolbarButton
+            data-testid="participant-list-button"
+            sx={{
+              marginTop: '0px',
+              marginRight: '0px',
+            }}
+            onClick={handleClick}
+            icon={<PeopleIcon sx={{ color: isOpen ? blue.A100 : 'white' }} />}
+            isOverflowButton={isOverflowButton}
+          />
+        </Badge>
+      </Tooltip>
+    )
   );
 };
 

@@ -7,6 +7,7 @@ import { useTranslation } from 'react-i18next';
 import useDevices from '../../../hooks/useDevices';
 import usePublisherContext from '../../../hooks/usePublisherContext';
 import { setStorageItem, STORAGE_KEYS } from '../../../utils/storage';
+import useConfigContext from '../../../hooks/useConfigContext';
 
 export type VideoDevicesProps = {
   handleToggle: () => void;
@@ -20,14 +21,19 @@ export type VideoDevicesProps = {
  * @param {VideoDevicesProps} props - the props for this component.
  *  @property {() => void} handleToggle - the function that handles the toggle of video output device.
  *  @property {string} customLightBlueColor - the custom color used for the toggled icon.
- * @returns {ReactElement} - the video output devices component.
+ * @returns {ReactElement | false} - the video output devices component.
  */
-const VideoDevices = ({ handleToggle, customLightBlueColor }: VideoDevicesProps): ReactElement => {
+const VideoDevices = ({
+  handleToggle,
+  customLightBlueColor,
+}: VideoDevicesProps): ReactElement | false => {
   const { t } = useTranslation();
   const { isPublishing, publisher } = usePublisherContext();
+  const { meetingRoomSettings } = useConfigContext();
   const { allMediaDevices } = useDevices();
   const [devicesAvailable, setDevicesAvailable] = useState<Device[]>([]);
   const [options, setOptions] = useState<{ deviceId: string; label: string }[]>([]);
+  const { allowDeviceSelection } = meetingRoomSettings;
 
   const changeVideoSource = (videoDeviceId: string) => {
     publisher?.setVideoSource(videoDeviceId);
@@ -59,56 +65,58 @@ const VideoDevices = ({ handleToggle, customLightBlueColor }: VideoDevicesProps)
   };
 
   return (
-    <>
-      <Box
-        sx={{
-          display: 'flex',
-          ml: 2,
-          mt: 1,
-          mb: 0.5,
-        }}
-      >
-        <VideocamIcon sx={{ fontSize: 24, mr: 2 }} />
-        <Typography>{t('devices.video.camera.full')}</Typography>
-      </Box>
-      <MenuList id="split-button-menu">
-        {options.map((option) => {
-          const isSelected = option.deviceId === publisher?.getVideoSource().deviceId;
-          return (
-            <MenuItem
-              key={option.deviceId}
-              selected={isSelected}
-              onClick={(event) => handleChangeVideoSource(event)}
-              sx={{
-                backgroundColor: 'transparent',
-                '&.Mui-selected': {
-                  backgroundColor: 'transparent',
-                  color: customLightBlueColor,
-                },
-                '&:hover': {
-                  backgroundColor: 'rgba(25, 118, 210, 0.12)',
-                },
-              }}
-            >
-              <Box
+    allowDeviceSelection && (
+      <>
+        <Box
+          sx={{
+            display: 'flex',
+            ml: 2,
+            mt: 1,
+            mb: 0.5,
+          }}
+        >
+          <VideocamIcon sx={{ fontSize: 24, mr: 2 }} />
+          <Typography>{t('devices.video.camera.full')}</Typography>
+        </Box>
+        <MenuList id="split-button-menu">
+          {options.map((option) => {
+            const isSelected = option.deviceId === publisher?.getVideoSource().deviceId;
+            return (
+              <MenuItem
+                key={option.deviceId}
+                selected={isSelected}
+                onClick={(event) => handleChangeVideoSource(event)}
                 sx={{
-                  display: 'flex',
-                  mb: 0.5,
-                  overflow: 'hidden',
+                  backgroundColor: 'transparent',
+                  '&.Mui-selected': {
+                    backgroundColor: 'transparent',
+                    color: customLightBlueColor,
+                  },
+                  '&:hover': {
+                    backgroundColor: 'rgba(25, 118, 210, 0.12)',
+                  },
                 }}
               >
-                {isSelected ? (
-                  <CheckIcon sx={{ color: customLightBlueColor, fontSize: 24, mr: 2 }} />
-                ) : (
-                  <Box sx={{ width: 40 }} /> // Placeholder when CheckIcon is not displayed
-                )}
-                <Typography noWrap>{option.label}</Typography>
-              </Box>
-            </MenuItem>
-          );
-        })}
-      </MenuList>
-    </>
+                <Box
+                  sx={{
+                    display: 'flex',
+                    mb: 0.5,
+                    overflow: 'hidden',
+                  }}
+                >
+                  {isSelected ? (
+                    <CheckIcon sx={{ color: customLightBlueColor, fontSize: 24, mr: 2 }} />
+                  ) : (
+                    <Box sx={{ width: 40 }} /> // Placeholder when CheckIcon is not displayed
+                  )}
+                  <Typography noWrap>{option.label}</Typography>
+                </Box>
+              </MenuItem>
+            );
+          })}
+        </MenuList>
+      </>
+    )
   );
 };
 

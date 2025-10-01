@@ -20,6 +20,15 @@ vi.mock('../../utils/constants', () => ({
   MAX_PIN_COUNT_DESKTOP: 1,
 }));
 vi.mock('../../api/fetchCredentials');
+vi.mock('../../hooks/useConfigContext', () => {
+  return {
+    default: () => ({
+      meetingRoomSettings: {
+        defaultLayoutMode: 'active-speaker',
+      },
+    }),
+  };
+});
 
 const mockFetchCredentials = fetchCredentials as Mock;
 

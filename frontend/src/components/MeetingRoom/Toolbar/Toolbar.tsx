@@ -15,6 +15,7 @@ import EmojiGridButton from '../EmojiGridButton';
 import isReportIssueEnabled from '../../../utils/isReportIssueEnabled';
 import useToolbarButtons from '../../../hooks/useToolbarButtons';
 import DeviceControlButton from '../DeviceControlButton';
+import useBackgroundPublisherContext from '../../../hooks/useBackgroundPublisherContext';
 
 export type CaptionsState = {
   isUserCaptionsEnabled: boolean;
@@ -69,6 +70,7 @@ const Toolbar = ({
   captionsState,
 }: ToolbarProps): ReactElement => {
   const { disconnect, subscriberWrappers } = useSessionContext();
+  const { destroyBackgroundPublisher } = useBackgroundPublisherContext();
   const isViewingScreenShare = subscriberWrappers.some((subWrapper) => subWrapper.isScreenshare);
   const isScreenSharePresent = isViewingScreenShare || isSharingScreen;
   const isPinningPresent = subscriberWrappers.some((subWrapper) => subWrapper.isPinned);
@@ -77,7 +79,8 @@ const Toolbar = ({
       return;
     }
     disconnect();
-  }, [disconnect]);
+    destroyBackgroundPublisher();
+  }, [destroyBackgroundPublisher, disconnect]);
   const [openEmojiGridDesktop, setOpenEmojiGridDesktop] = useState<boolean>(false);
 
   // An array of buttons available for the toolbar. As the toolbar resizes, buttons may be hidden and moved to the

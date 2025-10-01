@@ -60,14 +60,14 @@ const useBackgroundPublisher = (): BackgroundPublisherContextType => {
   >();
   const { setAccessStatus, accessStatus } = usePermissions();
   const backgroundPublisherRef = useRef<Publisher | null>(null);
-  const [isPublishing, setIsPublishing] = useState(false);
+  const [isPublishing, setIsPublishing] = useState<boolean>(false);
   const initialBackgroundRef = useRef<VideoFilter | undefined>(
     user.defaultSettings.backgroundFilter
   );
   const [backgroundFilter, setBackgroundFilter] = useState<VideoFilter | undefined>(
     user.defaultSettings.backgroundFilter
   );
-  const [isVideoEnabled, setIsVideoEnabled] = useState(true);
+  const [isVideoEnabled, setIsVideoEnabled] = useState<boolean>(true);
   const [localVideoSource, setLocalVideoSource] = useState<string | undefined>(undefined);
   const deviceStoreRef = useRef<DeviceStore>(new DeviceStore());
 
@@ -180,6 +180,8 @@ const useBackgroundPublisher = (): BackgroundPublisherContextType => {
       videoFilter,
       resolution: '1280x720',
       videoSource,
+      publishAudio: false,
+      publishVideo: isVideoEnabled,
     };
 
     backgroundPublisherRef.current = initPublisher(undefined, publisherOptions, (err: unknown) => {
@@ -191,7 +193,7 @@ const useBackgroundPublisher = (): BackgroundPublisherContextType => {
       }
     });
     addPublisherListeners(backgroundPublisherRef.current);
-  }, [addPublisherListeners]);
+  }, [addPublisherListeners, isVideoEnabled]);
 
   /**
    * Destroys the background publisher

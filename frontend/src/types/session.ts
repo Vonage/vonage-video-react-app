@@ -51,3 +51,5 @@ export type StreamPropertyChangedEvent = {
   oldValue: boolean | { width: number; height: number };
   newValue: boolean | { width: number; height: number };
 };
+
+export type LayoutMode = 'grid' | 'active-speaker';

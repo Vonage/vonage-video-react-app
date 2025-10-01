@@ -1,6 +1,6 @@
 import { ReactElement, useCallback, useEffect, useState } from 'react';
 import { Box, Button, Typography } from '@mui/material';
-import { t } from 'i18next';
+import { useTranslation } from 'react-i18next';
 import usePublisherContext from '../../../hooks/usePublisherContext';
 import RightPanelTitle from '../RightPanel/RightPanelTitle';
 import EffectOptionButtons from '../../BackgroundEffects/EffectOptionButtons/EffectOptionButtons';
@@ -51,6 +51,7 @@ const BackgroundEffectsLayout = ({
   }, [publisher, setBackgroundSelected]);
 
   const publisherVideoFilter = publisher?.getVideoFilter();
+  const { t } = useTranslation();
 
   // Reset background when closing the panel
   useEffect(() => {

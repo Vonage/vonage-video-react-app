@@ -12,6 +12,8 @@ import {
   nativeDevices,
   videoInputDevices,
 } from '../../../utils/mockData/device';
+import useConfigContext from '../../../hooks/useConfigContext';
+import { ConfigContextType } from '../../../Context/ConfigProvider';
 
 const {
   mockHasMediaProcessorSupport,
@@ -44,6 +46,9 @@ vi.mock('../../../utils/util', async () => {
   };
 });
 
+vi.mock('../../../hooks/useConfigContext');
+const mockUseConfigContext = useConfigContext as Mock<[], ConfigContextType>;
+
 // This is returned by Vonage SDK if audioOutput is not supported
 const vonageDefaultEmptyOutputDevice = { deviceId: null, label: null };
 
@@ -58,6 +63,7 @@ describe('DeviceSettingsMenu Component', () => {
   const mockHandleClose = vi.fn();
   let deviceChangeListener: EventEmitter;
   const mockedHasMediaProcessorSupport = vi.fn();
+  let configContext: ConfigContextType;
 
   beforeEach(() => {
     vi.resetAllMocks();
@@ -82,6 +88,18 @@ describe('DeviceSettingsMenu Component', () => {
     });
     (hasMediaProcessorSupport as Mock).mockImplementation(mockedHasMediaProcessorSupport);
     mockedHasMediaProcessorSupport.mockReturnValue(false);
+    configContext = {
+      audioSettings: {
+        allowAdvancedNoiseSuppression: true,
+      },
+      videoSettings: {
+        allowBackgroundEffects: true,
+      },
+      meetingRoomSettings: {
+        allowDeviceSelection: true,
+      },
+    } as Partial<ConfigContextType> as ConfigContextType;
+    mockUseConfigContext.mockReturnValue(configContext);
   });
 
   afterAll(() => {
@@ -333,6 +351,35 @@ describe('DeviceSettingsMenu Component', () => {
     });
 
     it('and does not render the dropdown separator and background effects option when media processor is not supported', async () => {
+      render(
+        <DeviceSettingsMenu
+          deviceType={deviceType}
+          handleToggle={mockHandleToggle}
+          handleClose={mockHandleClose}
+          toggleBackgroundEffects={mockHandleToggleBackgroundEffects}
+          isOpen
+          anchorRef={mockAnchorRef}
+          setIsOpen={mockSetIsOpen}
+        />
+      );
+
+      await waitFor(() => {
+        expect(screen.queryByTestId('dropdown-separator')).not.toBeInTheDocument();
+        expect(screen.queryByText('Background effects')).not.toBeInTheDocument();
+      });
+    });
+
+    it('and does not render the dropdown separator and background effects option when allowBackgroundEffects is false', async () => {
+      configContext = {
+        videoSettings: {
+          allowBackgroundEffects: false,
+        },
+        meetingRoomSettings: {
+          allowDeviceSelection: true,
+        },
+      } as Partial<ConfigContextType> as ConfigContextType;
+      mockUseConfigContext.mockReturnValue(configContext);
+
       render(
         <DeviceSettingsMenu
           deviceType={deviceType}

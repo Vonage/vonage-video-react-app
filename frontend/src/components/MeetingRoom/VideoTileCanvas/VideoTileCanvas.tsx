@@ -20,7 +20,6 @@ export type VideoTileCanvasProps = {
   screensharingPublisher: OTPublisher | null;
   screenshareVideoElement: HTMLVideoElement | HTMLObjectElement | undefined;
   isRightPanelOpen: boolean;
-  toggleParticipantList: () => void;
 };
 
 /**
@@ -35,7 +34,6 @@ const VideoTileCanvas = ({
   screensharingPublisher,
   screenshareVideoElement,
   isRightPanelOpen,
-  toggleParticipantList,
 }: VideoTileCanvasProps): ReactElement => {
   // Use a ref on the container div in order to update canvas when resized
   const wrapRef = useRef<HTMLDivElement | null>(null);
@@ -131,7 +129,6 @@ const VideoTileCanvas = ({
               <HiddenParticipantsTile
                 hiddenSubscribers={hiddenSubscribers}
                 box={layoutBoxes.hiddenParticipantsBox}
-                handleClick={toggleParticipantList}
               />
             )}
           </>

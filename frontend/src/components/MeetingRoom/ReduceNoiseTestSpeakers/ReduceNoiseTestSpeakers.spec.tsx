@@ -6,10 +6,14 @@ import { defaultAudioDevice } from '../../../utils/mockData/device';
 import usePublisherContext from '../../../hooks/usePublisherContext';
 import ReduceNoiseTestSpeakers from './ReduceNoiseTestSpeakers';
 import { PublisherContextType } from '../../../Context/PublisherProvider';
+import useConfigContext from '../../../hooks/useConfigContext';
+import { ConfigContextType } from '../../../Context/ConfigProvider';
 
 vi.mock('../../../hooks/usePublisherContext');
+vi.mock('../../../hooks/useConfigContext');
 
 const mockUsePublisherContext = usePublisherContext as Mock<[], PublisherContextType>;
+const mockUseConfigContext = useConfigContext as Mock<[], ConfigContextType>;
 
 const { mockHasMediaProcessorSupport } = vi.hoisted(() => {
   return {
@@ -23,6 +27,7 @@ vi.mock('@vonage/client-sdk-video', () => ({
 describe('ReduceNoiseTestSpeakers', () => {
   let mockPublisher: Publisher;
   let publisherContext: PublisherContextType;
+  let configContext: ConfigContextType;
 
   beforeEach(() => {
     mockPublisher = Object.assign(new EventEmitter(), {
@@ -43,7 +48,13 @@ describe('ReduceNoiseTestSpeakers', () => {
         publisherContext.publisher = mockPublisher;
       }) as unknown as () => void,
     } as unknown as PublisherContextType;
+    configContext = {
+      audioSettings: {
+        allowAdvancedNoiseSuppression: true,
+      },
+    } as Partial<ConfigContextType> as ConfigContextType;
     mockUsePublisherContext.mockImplementation(() => publisherContext);
+    mockUseConfigContext.mockReturnValue(configContext);
   });
 
   afterEach(() => {
@@ -127,5 +138,18 @@ describe('ReduceNoiseTestSpeakers', () => {
       expect(toggleOnIcon).toBeInTheDocument();
       expect(computedStyle.visibility).toBe('hidden');
     });
+  });
+
+  it('does not render the Advanced Noise Suppression option if allowAdvancedNoiseSuppression is false', () => {
+    configContext = {
+      audioSettings: {
+        allowAdvancedNoiseSuppression: false,
+      },
+    } as Partial<ConfigContextType> as ConfigContextType;
+    mockUseConfigContext.mockReturnValue(configContext);
+
+    render(<ReduceNoiseTestSpeakers {...defaultProps} />);
+
+    expect(screen.queryByText('Advanced Noise Suppression')).not.toBeInTheDocument();
   });
 });

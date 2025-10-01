@@ -7,6 +7,7 @@ import { useTranslation } from 'react-i18next';
 import useDevices from '../../../hooks/useDevices';
 import usePublisherContext from '../../../hooks/usePublisherContext';
 import { setStorageItem, STORAGE_KEYS } from '../../../utils/storage';
+import useConfigContext from '../../../hooks/useConfigContext';
 
 export type InputDevicesProps = {
   handleToggle: () => void;
@@ -20,14 +21,19 @@ export type InputDevicesProps = {
  * @param {InputDevicesProps} props - The props for the component.
  *  @property {Function} handleToggle - The click handler to handle closing the menu.
  *  @property {string} customLightBlueColor - The custom color used for the toggled icon.
- * @returns {ReactElement} - The InputDevices component.
+ * @returns {ReactElement | false} - The InputDevices component.
  */
-const InputDevices = ({ handleToggle, customLightBlueColor }: InputDevicesProps): ReactElement => {
+const InputDevices = ({
+  handleToggle,
+  customLightBlueColor,
+}: InputDevicesProps): ReactElement | false => {
   const { t } = useTranslation();
   const { publisher } = usePublisherContext();
+  const { meetingRoomSettings } = useConfigContext();
   const {
     allMediaDevices: { audioInputDevices },
   } = useDevices();
+  const { allowDeviceSelection } = meetingRoomSettings;
 
   const options = audioInputDevices.map((availableDevice: Device) => {
     return availableDevice.label;
@@ -45,56 +51,58 @@ const InputDevices = ({ handleToggle, customLightBlueColor }: InputDevicesProps)
     }
   };
   return (
-    <>
-      <Box
-        sx={{
-          display: 'flex',
-          ml: 2,
-          mt: 1,
-          mb: 0.5,
-        }}
-      >
-        <MicNoneIcon sx={{ fontSize: 24, mr: 2 }} />
-        <Typography>{t('devices.audio.microphone.full')}</Typography>
-      </Box>
-      <MenuList>
-        {options.map((option: string) => {
-          const isSelected = option === publisher?.getAudioSource().label;
-          return (
-            <MenuItem
-              key={option}
-              selected={isSelected}
-              onClick={(event) => handleChangeAudioSource(event)}
-              sx={{
-                backgroundColor: 'transparent',
-                '&.Mui-selected': {
-                  backgroundColor: 'transparent',
-                  color: customLightBlueColor,
-                },
-                '&:hover': {
-                  backgroundColor: 'rgba(25, 118, 210, 0.12)',
-                },
-              }}
-            >
-              <Box
+    allowDeviceSelection && (
+      <>
+        <Box
+          sx={{
+            display: 'flex',
+            ml: 2,
+            mt: 1,
+            mb: 0.5,
+          }}
+        >
+          <MicNoneIcon sx={{ fontSize: 24, mr: 2 }} />
+          <Typography>{t('devices.audio.microphone.full')}</Typography>
+        </Box>
+        <MenuList>
+          {options.map((option: string) => {
+            const isSelected = option === publisher?.getAudioSource().label;
+            return (
+              <MenuItem
+                key={option}
+                selected={isSelected}
+                onClick={(event) => handleChangeAudioSource(event)}
                 sx={{
-                  display: 'flex',
-                  mb: 0.5,
-                  overflow: 'hidden',
+                  backgroundColor: 'transparent',
+                  '&.Mui-selected': {
+                    backgroundColor: 'transparent',
+                    color: customLightBlueColor,
+                  },
+                  '&:hover': {
+                    backgroundColor: 'rgba(25, 118, 210, 0.12)',
+                  },
                 }}
               >
-                {isSelected ? (
-                  <CheckIcon sx={{ color: customLightBlueColor, fontSize: 24, mr: 2 }} />
-                ) : (
-                  <Box sx={{ width: 40 }} /> // Placeholder when CheckIcon is not displayed
-                )}
-                <Typography noWrap>{option}</Typography>
-              </Box>
-            </MenuItem>
-          );
-        })}
-      </MenuList>
-    </>
+                <Box
+                  sx={{
+                    display: 'flex',
+                    mb: 0.5,
+                    overflow: 'hidden',
+                  }}
+                >
+                  {isSelected ? (
+                    <CheckIcon sx={{ color: customLightBlueColor, fontSize: 24, mr: 2 }} />
+                  ) : (
+                    <Box sx={{ width: 40 }} /> // Placeholder when CheckIcon is not displayed
+                  )}
+                  <Typography noWrap>{option}</Typography>
+                </Box>
+              </MenuItem>
+            );
+          })}
+        </MenuList>
+      </>
+    )
   );
 };
 

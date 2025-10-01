@@ -17,6 +17,7 @@ import { AccessDeniedEvent } from '../../PublisherProvider/usePublisher/usePubli
 import DeviceStore from '../../../utils/DeviceStore';
 import { setStorageItem, STORAGE_KEYS } from '../../../utils/storage';
 import applyBackgroundFilter from '../../../utils/backgroundFilter/applyBackgroundFilter/applyBackgroundFilter';
+import useConfigContext from '../../../hooks/useConfigContext';
 
 type PublisherVideoElementCreatedEvent = Event<'videoElementCreated', Publisher> & {
   element: HTMLVideoElement | HTMLObjectElement;
@@ -66,6 +67,7 @@ export type PreviewPublisherContextType = {
  */
 const usePreviewPublisher = (): PreviewPublisherContextType => {
   const { setUser, user } = useUserContext();
+  const config = useConfigContext();
   const { allMediaDevices, getAllMediaDevices } = useDevices();
   const [publisherVideoElement, setPublisherVideoElement] = useState<
     HTMLVideoElement | HTMLObjectElement
@@ -85,6 +87,7 @@ const usePreviewPublisher = (): PreviewPublisherContextType => {
   const [localVideoSource, setLocalVideoSource] = useState<string | undefined>(undefined);
   const [localAudioSource, setLocalAudioSource] = useState<string | undefined>(undefined);
   const deviceStoreRef = useRef<DeviceStore>(new DeviceStore());
+  const { defaultResolution } = config.videoSettings;
 
   /* This sets the default devices in use so that the user knows what devices they are using */
   useEffect(() => {
@@ -240,7 +243,7 @@ const usePreviewPublisher = (): PreviewPublisherContextType => {
     const publisherOptions: PublisherProperties = {
       insertDefaultUI: false,
       videoFilter,
-      resolution: '1280x720',
+      resolution: defaultResolution,
       audioSource,
       videoSource,
     };
@@ -254,7 +257,7 @@ const usePreviewPublisher = (): PreviewPublisherContextType => {
       }
     });
     addPublisherListeners(publisherRef.current);
-  }, [addPublisherListeners]);
+  }, [addPublisherListeners, defaultResolution]);
 
   /**
    * Destroys the preview publisher
