@@ -74,7 +74,10 @@ const ParticipantList = ({ handleClose, isOpen }: ParticipantListProps): ReactEl
               {t('chat.meetingUrl')}
             </span>{' '}
             <br />
-            <span className="text-darkGray block	max-w-64 truncate text-sm font-normal tracking-normal">
+            <span
+              title={window.location.href}
+              className="text-darkGray block	max-w-64 truncate text-sm font-normal tracking-normal"
+            >
               {window.location.href}
             </span>
           </div>
