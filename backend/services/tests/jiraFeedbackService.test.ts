@@ -2,7 +2,7 @@ import axios from 'axios';
 import { describe, expect, it, beforeAll, afterAll, jest } from '@jest/globals';
 import FormData from 'form-data';
 import JiraFeedbackService from '../jiraFeedbackService';
-import { FeedbackData } from '../../types/feedback';
+import { FeedbackData, FeedbackOrigin } from '../../types/feedback';
 
 jest.mock('axios');
 
@@ -12,6 +12,7 @@ describe('JiraFeedbackService', () => {
     title: 'Nothing works.',
     name: 'John Doe',
     issue: 'This does not even work',
+    origin: 'web' as FeedbackOrigin,
   };
 
   const mockPost = jest.spyOn(axios, 'post');
@@ -91,5 +92,87 @@ describe('JiraFeedbackService', () => {
 
     const feedbackService = await jiraFeedbackService.reportIssue(feedbackData);
     expect(feedbackService).toHaveProperty('screenshotIncluded', true);
+  });
+
+  it('should create a valid iOS issue and return the issue key', async () => {
+    const feedbackData: FeedbackData = {
+      ...sharedData,
+      attachment: '',
+      origin: 'iOS',
+    };
+
+    const mockTicketResponse: { data: { key: string } } = {
+      data: {
+        key: '2024',
+      },
+    };
+
+    mockPost.mockResolvedValue(mockTicketResponse);
+
+    await jiraFeedbackService.reportIssue(feedbackData);
+    expect(axios.post).toHaveBeenCalledWith(
+      jiraFeedbackService.jiraApiUrl,
+      {
+        fields: {
+          project: { key: jiraFeedbackService.jiraKey },
+          summary: 'Nothing works.',
+          description: 'Reported by: John Doe\n\n Issue description:\nThis does not even work',
+          issuetype: { name: 'Bug' },
+          components: [
+            {
+              id: jiraFeedbackService.jiraiOSComponentId,
+            },
+          ],
+          [jiraFeedbackService.jiraEpicLink]: jiraFeedbackService.jiraEpicUrl,
+        },
+      },
+      {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Basic ${jiraFeedbackService.jiraToken}`,
+        },
+      }
+    );
+  });
+
+  it('should create a valid Android issue and return the issue key', async () => {
+    const feedbackData: FeedbackData = {
+      ...sharedData,
+      attachment: '',
+      origin: 'Android',
+    };
+
+    const mockTicketResponse: { data: { key: string } } = {
+      data: {
+        key: '2024',
+      },
+    };
+
+    mockPost.mockResolvedValue(mockTicketResponse);
+
+    await jiraFeedbackService.reportIssue(feedbackData);
+    expect(axios.post).toHaveBeenCalledWith(
+      jiraFeedbackService.jiraApiUrl,
+      {
+        fields: {
+          project: { key: jiraFeedbackService.jiraKey },
+          summary: 'Nothing works.',
+          description: 'Reported by: John Doe\n\n Issue description:\nThis does not even work',
+          issuetype: { name: 'Bug' },
+          components: [
+            {
+              id: jiraFeedbackService.jiraAndroidComponentId,
+            },
+          ],
+          [jiraFeedbackService.jiraEpicLink]: jiraFeedbackService.jiraEpicUrl,
+        },
+      },
+      {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Basic ${jiraFeedbackService.jiraToken}`,
+        },
+      }
+    );
   });
 });

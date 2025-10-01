@@ -3,7 +3,10 @@ export type FeedbackData = {
   name: string;
   issue: string;
   attachment: string;
+  origin: FeedbackOrigin;
 };
+
+export type FeedbackOrigin = 'web' | 'iOS' | 'Android';
 
 export type ReportIssueReturn = {
   message: string;
