@@ -60,4 +60,32 @@ describe('SelectableOption', () => {
     const option = screen.getByTestId('background-disabled');
     expect(option).toHaveAttribute('aria-disabled', 'true');
   });
+
+  it('shows the title in the tooltip', async () => {
+    render(
+      <SelectableOption
+        isSelected={false}
+        onClick={() => {}}
+        id="with-title"
+        icon={<span>Icon</span>}
+        title="My Tooltip Title"
+      />
+    );
+    await userEvent.hover(screen.getByTestId('background-with-title'));
+    expect(screen.getByLabelText('My Tooltip Title')).toBeInTheDocument();
+  });
+
+  it('renders children inside the option', () => {
+    render(
+      <SelectableOption
+        isSelected={false}
+        onClick={() => {}}
+        id="with-children"
+        icon={<span>Icon</span>}
+      >
+        <span data-testid="child-content">Child Content</span>
+      </SelectableOption>
+    );
+    expect(screen.getByTestId('child-content')).toBeInTheDocument();
+  });
 });

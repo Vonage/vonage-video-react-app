@@ -59,6 +59,11 @@ const DeviceSettingsMenu = ({
   const { allowBackgroundEffects } = config.videoSettings;
   const shouldDisplayBackgroundEffects = hasMediaProcessorSupport() && allowBackgroundEffects;
 
+  const handleToggleBackgroundEffects = () => {
+    toggleBackgroundEffects();
+    handleToggle();
+  };
+
   useDropdownResizeObserver({ setIsOpen, dropDownRefElement: anchorRef.current });
 
   const renderSettingsMenu = () => {
@@ -78,7 +83,7 @@ const DeviceSettingsMenu = ({
         {shouldDisplayBackgroundEffects && (
           <>
             <DropdownSeparator />
-            <VideoDevicesOptions toggleBackgroundEffects={toggleBackgroundEffects} />
+            <VideoDevicesOptions toggleBackgroundEffects={handleToggleBackgroundEffects} />
           </>
         )}
       </>

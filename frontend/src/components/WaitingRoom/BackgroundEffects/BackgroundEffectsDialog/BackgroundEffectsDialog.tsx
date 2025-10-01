@@ -1,6 +1,7 @@
-import { Dialog, DialogContent } from '@mui/material';
+import { Dialog, DialogContent, DialogTitle, IconButton } from '@mui/material';
+import CloseIcon from '@mui/icons-material/Close';
 import { ReactElement } from 'react';
-import BackgroundEffectsLayout from '../BackgroundEffectsLayout/BackgroundEffectsLayout';
+import BackgroundEffectsLayout from '../../../BackgroundEffects/BackgroundEffectsLayout';
 
 export type BackgroundEffectsDialogProps = {
   isBackgroundEffectsOpen: boolean;
@@ -20,17 +21,32 @@ const BackgroundEffectsDialog = ({
   isBackgroundEffectsOpen,
   setIsBackgroundEffectsOpen,
 }: BackgroundEffectsDialogProps): ReactElement | false => {
+  const handleClose = () => {
+    setIsBackgroundEffectsOpen(false);
+  };
+
   return (
-    <Dialog
-      open={isBackgroundEffectsOpen}
-      onClose={() => setIsBackgroundEffectsOpen(false)}
-      maxWidth="lg"
-      fullWidth
-    >
+    <Dialog open={isBackgroundEffectsOpen} onClose={handleClose} maxWidth="lg" fullWidth>
+      <DialogTitle sx={{ m: 0, p: 2 }}>
+        Background Effects
+        <IconButton
+          aria-label="close"
+          onClick={handleClose}
+          sx={{
+            position: 'absolute',
+            right: 8,
+            top: 8,
+            color: (theme) => theme.palette.grey[500],
+          }}
+        >
+          <CloseIcon />
+        </IconButton>
+      </DialogTitle>
       <DialogContent>
         <BackgroundEffectsLayout
+          mode="waiting"
           isOpen={isBackgroundEffectsOpen}
-          handleClose={() => setIsBackgroundEffectsOpen(false)}
+          handleClose={handleClose}
         />
       </DialogContent>
     </Dialog>

@@ -2,6 +2,7 @@ import { useRef, useState, useEffect, ReactElement } from 'react';
 import { CircularProgress, useMediaQuery } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import waitUntilPlaying from '../../../utils/waitUntilPlaying';
+import useIsTabletViewport from '../../../hooks/useIsTabletViewport';
 
 export type BackgroundVideoContainerProps = {
   isFixedWidth?: boolean;
@@ -27,7 +28,8 @@ const BackgroundVideoContainer = ({
   const [isVideoLoading, setIsVideoLoading] = useState<boolean>(true);
   const isSMViewport = useMediaQuery(`(max-width:500px)`);
   const isMDViewport = useMediaQuery(`(max-width:768px)`);
-  const isTabletViewport = useMediaQuery(`(max-width:899px)`);
+  const isTabletViewport = useIsTabletViewport();
+  const isLGViewport = useMediaQuery(`(max-width:1199px)`);
 
   useEffect(() => {
     if (publisherVideoElement && containerRef.current) {
@@ -39,8 +41,12 @@ const BackgroundVideoContainer = ({
       myVideoElement.style.maxHeight = isTabletViewport ? '80%' : '450px';
 
       let width = '100%';
-      if ((isFixedWidth && isTabletViewport) || (!isFixedWidth && isMDViewport)) {
-        width = '80%';
+      if (
+        (isFixedWidth && isTabletViewport) ||
+        (!isFixedWidth && isMDViewport) ||
+        (isLGViewport && isFixedWidth)
+      ) {
+        width = '90%';
       }
       myVideoElement.style.width = width;
 
@@ -64,6 +70,7 @@ const BackgroundVideoContainer = ({
     publisherVideoElement,
     isFixedWidth,
     isParentVideoEnabled,
+    isLGViewport,
   ]);
 
   let containerWidth = '100%';
@@ -74,7 +81,7 @@ const BackgroundVideoContainer = ({
   }
 
   return (
-    <div data-testid="background-video-container">
+    <div className="background-video-container" data-testid="background-video-container">
       {!isParentVideoEnabled && (
         <div className="background-video-container-disabled" style={{ width: containerWidth }}>
           {t('backgroundEffects.video.disabled')}

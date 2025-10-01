@@ -126,4 +126,22 @@ describe('applyBackgroundFilter', () => {
       blurStrength: 'low',
     });
   });
+
+  it('applies background replacement filter with a dataUrl', async () => {
+    const dataUrl = 'data:image/png;base64,somebase64data';
+    await applyBackgroundFilter({ publisher: mockPublisher, backgroundSelected: dataUrl });
+
+    expect(mockPublisher.applyVideoFilter).toHaveBeenCalledWith({
+      type: 'backgroundReplacement',
+      backgroundImgUrl: dataUrl,
+    });
+
+    expect(setStorageItem).toHaveBeenCalledWith(
+      STORAGE_KEYS.BACKGROUND_REPLACEMENT,
+      JSON.stringify({
+        type: 'backgroundReplacement',
+        backgroundImgUrl: dataUrl,
+      })
+    );
+  });
 });

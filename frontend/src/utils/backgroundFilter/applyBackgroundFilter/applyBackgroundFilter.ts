@@ -38,16 +38,21 @@ const applyBackgroundFilter = async ({
   }
 
   let videoFilter: VideoFilter | undefined;
+  const isDataUrl = backgroundSelected.startsWith('data:image/');
+  const isImageUrl = /^https?:\/\/.+\.(jpg|jpeg|png|gif|bmp)$/i.test(backgroundSelected);
+  const isImageFileName = /\.(jpg|jpeg|png|gif|bmp)$/i.test(backgroundSelected);
+
   if (backgroundSelected === 'low-blur' || backgroundSelected === 'high-blur') {
     videoFilter = {
       type: 'backgroundBlur',
       blurStrength: backgroundSelected === 'low-blur' ? 'low' : 'high',
     };
     await publisher.applyVideoFilter(videoFilter);
-  } else if (/\.(jpg|jpeg|png|gif|bmp)$/i.test(backgroundSelected)) {
+  } else if (isDataUrl || isImageUrl || isImageFileName) {
     videoFilter = {
       type: 'backgroundReplacement',
-      backgroundImgUrl: `${BACKGROUNDS_PATH}/${backgroundSelected}`,
+      backgroundImgUrl:
+        isDataUrl || isImageUrl ? backgroundSelected : `${BACKGROUNDS_PATH}/${backgroundSelected}`,
     };
     await publisher.applyVideoFilter(videoFilter);
   } else {
