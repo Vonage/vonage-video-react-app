@@ -65,12 +65,8 @@ const RoomNameInput = ({
         ),
       }}
       sx={{
-        width: `${placeholder.length * 0.8 + 5}ch`,
-        minWidth: '200px',
+        width: `${placeholder.length * 0.9 + 5}ch`,
         maxWidth: '400px',
-        '& .MuiInputBase-root': {
-          minHeight: 'auto',
-        },
       }}
     />
   );
