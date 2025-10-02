@@ -163,7 +163,7 @@
     "room.exit.ariaLabel": "esci",
     "room.exit.tooltip": "Esci dalla riunione",
     "room.input.helper": "Non sono ammessi spazi o caratteri speciali",
-    "room.input.placeholder": "Inserisci il nome della riunione",
+    "room.input.placeholder": "Nome della stanza",
     "screenSharing.dialog.action": "Inizia condivisione schermo",
     "screenSharing.dialog.content": "Sembra che qualcun altro stia condividendo lo schermo. Se continui, il loro schermo non sarà più condiviso.",
     "screenSharing.dialog.title": "Vuoi condividere il tuo schermo?",
