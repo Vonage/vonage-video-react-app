@@ -29,6 +29,8 @@ const RoomNameInput = ({
   setHasError,
 }: RoomNameInputProps): ReactElement => {
   const { t } = useTranslation();
+  const placeholder = t('room.input.placeholder');
+
   const handleChange = (textChangeEvent: ChangeEvent<HTMLInputElement>) => {
     const newValue = textChangeEvent.target.value.toLowerCase();
 
@@ -49,19 +51,26 @@ const RoomNameInput = ({
   return (
     <TextField
       id="room-name"
-      className="h-12 w-52 pr-2"
-      placeholder={t('room.input.placeholder')}
+      className="h-12 pr-2"
+      placeholder={placeholder}
       value={roomName}
       onChange={handleChange}
       error={hasError}
       helperText={hasError ? t('room.input.helper') : ''}
       InputProps={{
-        inputProps: { maxLength: 60 },
         startAdornment: (
           <InputAdornment position="start">
             <Keyboard />
           </InputAdornment>
         ),
+      }}
+      sx={{
+        width: `${placeholder.length * 0.8 + 5}ch`,
+        minWidth: '200px',
+        maxWidth: '400px',
+        '& .MuiInputBase-root': {
+          minHeight: 'auto',
+        },
       }}
     />
   );

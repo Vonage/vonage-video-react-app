@@ -64,11 +64,6 @@ const DeviceSettingsMenu = ({
     handleToggle();
   };
 
-  const handleToggleBackgroundEffects = () => {
-    toggleBackgroundEffects();
-    handleToggle();
-  };
-
   useDropdownResizeObserver({ setIsOpen, dropDownRefElement: anchorRef.current });
 
   const renderSettingsMenu = () => {
