@@ -28,11 +28,8 @@ const WaitingRoom = (): ReactElement => {
   const { initLocalPublisher, publisher, accessStatus, destroyPublisher } =
     usePreviewPublisherContext();
 
-  const {
-    initBackgroundLocalPublisher,
-    publisher: backgroundPublisher,
-    destroyBackgroundPublisher,
-  } = useBackgroundPublisherContext();
+  const { initBackgroundLocalPublisher, publisher: backgroundPublisher } =
+    useBackgroundPublisherContext();
 
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [openAudioInput, setOpenAudioInput] = useState<boolean>(false);
@@ -58,14 +55,7 @@ const WaitingRoom = (): ReactElement => {
     if (!backgroundPublisher) {
       initBackgroundLocalPublisher();
     }
-
-    return () => {
-      // Ensure we destroy the backgroundPublisher and release any media devices.
-      if (backgroundPublisher) {
-        destroyBackgroundPublisher();
-      }
-    };
-  }, [initBackgroundLocalPublisher, backgroundPublisher, destroyBackgroundPublisher]);
+  }, [initBackgroundLocalPublisher, backgroundPublisher]);
 
   // After changing device permissions, reload the page to reflect the device's permission change.
   useEffect(() => {

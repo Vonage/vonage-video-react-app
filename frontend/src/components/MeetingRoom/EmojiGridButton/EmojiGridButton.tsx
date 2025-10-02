@@ -4,6 +4,7 @@ import { Dispatch, ReactElement, SetStateAction, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import ToolbarButton from '../ToolbarButton';
 import EmojiGrid from '../EmojiGrid/EmojiGrid';
+import useConfigContext from '../../../hooks/useConfigContext';
 
 export type EmojiGridProps = {
   isEmojiGridOpen: boolean;
@@ -21,46 +22,50 @@ export type EmojiGridProps = {
  *  @property {Dispatch<SetStateAction<boolean>>} setIsEmojiGridOpen - toggle whether the emoji grid is shown or hidden
  *  @property {boolean} isParentOpen - whether the ToolbarOverflowMenu is open
  *  @property {boolean} isOverflowButton - (optional) whether the button is in the ToolbarOverflowMenu
- * @returns {ReactElement} - The EmojiGridButton Component.
+ * @returns {ReactElement | false} - The EmojiGridButton Component.
  */
 const EmojiGridButton = ({
   isEmojiGridOpen,
   setIsEmojiGridOpen,
   isParentOpen,
   isOverflowButton = false,
-}: EmojiGridProps): ReactElement => {
+}: EmojiGridProps): ReactElement | false => {
+  const { meetingRoomSettings } = useConfigContext();
   const { t } = useTranslation();
   const anchorRef = useRef<HTMLButtonElement>(null);
   const handleToggle = () => {
     setIsEmojiGridOpen((prevOpen) => !prevOpen);
   };
+  const { allowEmojis } = meetingRoomSettings;
 
   return (
-    <>
-      <Tooltip title={t('emoji.tooltip')} aria-label={t('emoji.ariaLabel')}>
-        <ToolbarButton
-          onClick={handleToggle}
-          icon={
-            <EmojiEmotions
-              style={{ color: `${!isEmojiGridOpen ? 'white' : 'rgb(138, 180, 248)'}` }}
-            />
-          }
-          ref={anchorRef}
-          data-testid="emoji-grid-button"
-          sx={{
-            marginTop: isOverflowButton ? '0px' : '4px',
-          }}
-          isOverflowButton={isOverflowButton}
-        />
-      </Tooltip>
+    allowEmojis && (
+      <>
+        <Tooltip title={t('emoji.tooltip')} aria-label={t('emoji.ariaLabel')}>
+          <ToolbarButton
+            onClick={handleToggle}
+            icon={
+              <EmojiEmotions
+                style={{ color: `${!isEmojiGridOpen ? 'white' : 'rgb(138, 180, 248)'}` }}
+              />
+            }
+            ref={anchorRef}
+            data-testid="emoji-grid-button"
+            sx={{
+              marginTop: isOverflowButton ? '0px' : '4px',
+            }}
+            isOverflowButton={isOverflowButton}
+          />
+        </Tooltip>
 
-      <EmojiGrid
-        anchorRef={anchorRef}
-        isEmojiGridOpen={isEmojiGridOpen}
-        setIsEmojiGridOpen={setIsEmojiGridOpen}
-        isParentOpen={isParentOpen}
-      />
-    </>
+        <EmojiGrid
+          anchorRef={anchorRef}
+          isEmojiGridOpen={isEmojiGridOpen}
+          setIsEmojiGridOpen={setIsEmojiGridOpen}
+          isParentOpen={isParentOpen}
+        />
+      </>
+    )
   );
 };
 

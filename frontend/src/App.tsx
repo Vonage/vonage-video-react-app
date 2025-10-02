@@ -11,7 +11,6 @@ import { PublisherProvider } from './Context/PublisherProvider';
 import RedirectToWaitingRoom from './components/RedirectToWaitingRoom';
 import UnsupportedBrowserPage from './pages/UnsupportedBrowserPage';
 import RoomContext from './Context/RoomContext';
-import { BackgroundPublisherProvider } from './Context/BackgroundPublisherProvider';
 
 const App = () => {
   return (
@@ -21,11 +20,9 @@ const App = () => {
           <Route
             path="/waiting-room/:roomName"
             element={
-              <BackgroundPublisherProvider>
-                <PreviewPublisherProvider>
-                  <WaitingRoom />
-                </PreviewPublisherProvider>
-              </BackgroundPublisherProvider>
+              <PreviewPublisherProvider>
+                <WaitingRoom />
+              </PreviewPublisherProvider>
             }
           />
           <Route
@@ -34,9 +31,7 @@ const App = () => {
               <SessionProvider>
                 <RedirectToWaitingRoom>
                   <PublisherProvider>
-                    <BackgroundPublisherProvider>
-                      <Room />
-                    </BackgroundPublisherProvider>
+                    <Room />
                   </PublisherProvider>
                 </RedirectToWaitingRoom>
               </SessionProvider>

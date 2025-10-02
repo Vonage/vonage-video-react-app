@@ -13,6 +13,7 @@ import {
 import { Connection, Publisher, Stream } from '@vonage/client-sdk-video';
 import fetchCredentials from '../../api/fetchCredentials';
 import useUserContext from '../../hooks/useUserContext';
+import useConfigContext from '../../hooks/useConfigContext';
 import ActiveSpeakerTracker from '../../utils/ActiveSpeakerTracker';
 import useRightPanel, { RightPanelActiveTab } from '../../hooks/useRightPanel';
 import {
@@ -22,6 +23,7 @@ import {
   StreamPropertyChangedEvent,
   SubscriberAudioLevelUpdatedEvent,
   SubscriberWrapper,
+  LayoutMode,
 } from '../../types/session';
 import useChat from '../../hooks/useChat';
 import { ChatMessageType } from '../../types/chat';
@@ -35,8 +37,6 @@ import VonageVideoClient from '../../utils/VonageVideoClient';
 import useEmoji, { EmojiWrapper } from '../../hooks/useEmoji';
 
 export type { ChatMessageType } from '../../types/chat';
-
-export type LayoutMode = 'grid' | 'active-speaker';
 
 export type SessionContextType = {
   vonageVideoClient: null | VonageVideoClient;
@@ -128,12 +128,15 @@ const MAX_PIN_COUNT = isMobile() ? MAX_PIN_COUNT_MOBILE : MAX_PIN_COUNT_DESKTOP;
  * @returns {SessionContextType} a context provider for a publisher preview
  */
 const SessionProvider = ({ children }: SessionProviderProps): ReactElement => {
+  const config = useConfigContext();
   const [lastStreamUpdate, setLastStreamUpdate] = useState<StreamPropertyChangedEvent | null>(null);
   const vonageVideoClient = useRef<null | VonageVideoClient>(null);
   const [reconnecting, setReconnecting] = useState(false);
   const [subscriberWrappers, setSubscriberWrappers] = useState<SubscriberWrapper[]>([]);
   const [ownCaptions, setOwnCaptions] = useState<string | null>(null);
-  const [layoutMode, setLayoutMode] = useState<LayoutMode>('active-speaker');
+  const [layoutMode, setLayoutMode] = useState<LayoutMode>(
+    config.meetingRoomSettings.defaultLayoutMode
+  );
   const [archiveId, setArchiveId] = useState<string | null>(null);
   const activeSpeakerTracker = useRef<ActiveSpeakerTracker>(new ActiveSpeakerTracker());
   const [activeSpeakerId, setActiveSpeakerId] = useState<string | undefined>();

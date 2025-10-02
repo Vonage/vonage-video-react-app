@@ -54,6 +54,27 @@ vi.mock('@mui/material', async () => {
     useMediaQuery: vi.fn(),
   };
 });
+vi.mock('../../hooks/useConfigContext', () => {
+  return {
+    default: () => ({
+      videoSettings: {
+        allowCameraControl: true,
+      },
+      audioSettings: {
+        allowMicrophoneControl: true,
+      },
+      meetingRoomSettings: {
+        defaultLayoutMode: 'active-speaker',
+        showParticipantList: true,
+        allowChat: true,
+        allowScreenShare: true,
+        allowArchiving: true,
+        allowCaptions: true,
+        allowEmojis: true,
+      },
+    }),
+  };
+});
 
 vi.mock('../../hooks/useDevices.tsx');
 vi.mock('../../hooks/usePublisherContext.tsx');
