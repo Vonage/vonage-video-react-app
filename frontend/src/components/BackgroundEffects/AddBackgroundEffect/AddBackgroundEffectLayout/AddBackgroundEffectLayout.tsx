@@ -49,12 +49,12 @@ const AddBackgroundEffectLayout = ({
     }
 
     if (!ALLOWED_TYPES.includes(file.type)) {
-      setFileError(t('addBackground.invalidFileType'));
+      setFileError(t('backgroundEffects.invalidFileType'));
       return;
     }
 
     if (file.size > MAX_SIZE_MB * 1024 * 1024) {
-      setFileError(t('addBackground.fileTooLarge', { maxSize: MAX_SIZE_MB }));
+      setFileError(t('backgroundEffects.fileTooLarge', { maxSize: MAX_SIZE_MB }));
       return;
     }
 
@@ -65,7 +65,7 @@ const AddBackgroundEffectLayout = ({
         customBackgroundImageChange(newImage.dataUrl);
       }
     } catch {
-      setFileError(t('addBackground.processingError'));
+      setFileError(t('backgroundEffects.processingError'));
     }
   };
 
@@ -78,7 +78,7 @@ const AddBackgroundEffectLayout = ({
         setFileError('');
         customBackgroundImageChange(newImage.dataUrl);
       } else {
-        setFileError(t('addBackground.storageError'));
+        setFileError(t('backgroundEffects.storageError'));
       }
     } catch {
       // error handled in hook

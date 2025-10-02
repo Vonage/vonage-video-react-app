@@ -12,6 +12,9 @@ vi.mock('react-i18next', () => ({
       const translations: Record<string, string> = {
         'backgroundEffects.title': enTranslations['backgroundEffects.title'],
         'backgroundEffects.choice': enTranslations['backgroundEffects.choice'],
+        'backgroundEffects.tabs.backgrounds': enTranslations['backgroundEffects.tabs.backgrounds'],
+        'backgroundEffects.tabs.addBackground':
+          enTranslations['backgroundEffects.tabs.addBackground'],
         'button.cancel': enTranslations['button.cancel'],
         'button.apply': enTranslations['button.apply'],
       };
