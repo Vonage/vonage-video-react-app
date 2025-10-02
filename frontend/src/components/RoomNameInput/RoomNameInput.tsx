@@ -29,7 +29,6 @@ const RoomNameInput = ({
   setHasError,
 }: RoomNameInputProps): ReactElement => {
   const { t } = useTranslation();
-  const placeholder = t('room.input.placeholder');
 
   const handleChange = (textChangeEvent: ChangeEvent<HTMLInputElement>) => {
     const newValue = textChangeEvent.target.value.toLowerCase();
@@ -51,8 +50,8 @@ const RoomNameInput = ({
   return (
     <TextField
       id="room-name"
-      className="h-12 pr-2"
-      placeholder={placeholder}
+      className="h-12 w-52 pr-2"
+      placeholder={t('room.input.placeholder')}
       value={roomName}
       onChange={handleChange}
       error={hasError}
@@ -63,10 +62,6 @@ const RoomNameInput = ({
             <Keyboard />
           </InputAdornment>
         ),
-      }}
-      sx={{
-        width: `${placeholder.length * 0.9 + 5}ch`,
-        maxWidth: '400px',
       }}
     />
   );

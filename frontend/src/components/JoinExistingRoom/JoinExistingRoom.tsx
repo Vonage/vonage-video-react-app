@@ -13,7 +13,7 @@ const JoinExistingRoom = (): ReactElement => {
   const [hasError, setHasError] = useState(false);
 
   return (
-    <form className="mt-[35px] flex-row" data-testid="JoinExistingRoom">
+    <form className="mt-[35px] w-72 flex-row" data-testid="JoinExistingRoom">
       <RoomNameInput
         setRoomName={setRoomName}
         roomName={roomName}
