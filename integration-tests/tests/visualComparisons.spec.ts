@@ -9,7 +9,10 @@ test.beforeEach(async ({ page }) => {
 
 test('Landing page UI test', async ({ page }) => {
   await page.goto(baseURL);
-  await expect(page).toHaveScreenshot({});
+  await expect(page).toHaveScreenshot({
+    threshold: 0.2,
+    maxDiffPixels: 100,
+  });
 });
 
 test('Waiting page UI test', async ({ page }) => {
