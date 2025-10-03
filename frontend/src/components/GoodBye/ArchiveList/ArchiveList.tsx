@@ -10,12 +10,15 @@ import {
   Tooltip,
 } from '@mui/material';
 import { ReactElement } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Archive, ArchiveStatus } from '../../../api/archiving/model';
 
 const ArchiveDownloadButton = ({ url, id }: { id: string; url: string | undefined }) => {
+  const { t } = useTranslation();
+
   return (
     <Link href={url} target="_blank">
-      <Tooltip title={`Download recording ${id}`}>
+      <Tooltip title={t('archiveList.download.tooltip', { id })}>
         <IconButton>
           <FileDownloadOutlinedIcon data-testid="archive-download-button" />
         </IconButton>
@@ -24,33 +27,40 @@ const ArchiveDownloadButton = ({ url, id }: { id: string; url: string | undefine
   );
 };
 
-const ArchiveErrorIcon = () => (
-  <Tooltip title="This recording failed or is expired">
-    <WarningOutlinedIcon
-      color="warning"
-      sx={{
-        alignItems: 'center',
-        display: 'flex',
-        width: '40px',
-        height: '40px',
-        padding: '8px',
-        justifyContent: 'center',
-      }}
-      data-testid="archive-error-icon"
-    />
-  </Tooltip>
-);
+const ArchiveErrorIcon = () => {
+  const { t } = useTranslation();
 
-const ArchivingLoadingIcon = () => (
-  <Tooltip title="This recording is not ready for download yet">
-    <CircularProgress
-      data-testid="archive-loading-spinner"
-      sx={{
-        padding: '8px',
-      }}
-    />
-  </Tooltip>
-);
+  return (
+    <Tooltip title={t('archiveList.error.tooltip')}>
+      <WarningOutlinedIcon
+        color="warning"
+        sx={{
+          alignItems: 'center',
+          display: 'flex',
+          width: '40px',
+          height: '40px',
+          padding: '8px',
+          justifyContent: 'center',
+        }}
+        data-testid="archive-error-icon"
+      />
+    </Tooltip>
+  );
+};
+
+const ArchivingLoadingIcon = () => {
+  const { t } = useTranslation();
+  return (
+    <Tooltip title={t('archiveList.loading.tooltip')}>
+      <CircularProgress
+        data-testid="archive-loading-spinner"
+        sx={{
+          padding: '8px',
+        }}
+      />
+    </Tooltip>
+  );
+};
 
 const ArchiveStatusIcon = ({
   status,
@@ -83,18 +93,18 @@ export type ArchiveListProps = {
  * @returns {ReactElement} - The ArchiveList component.
  */
 const ArchiveList = ({ archives }: ArchiveListProps): ReactElement => {
+  const { t } = useTranslation();
+
   if (archives === 'error') {
     return (
       <>
         <WarningOutlinedIcon color="warning" />
-        <h3 className="text-lg text-slate-500">
-          There was an error loading recordings for this meeting
-        </h3>
+        <h3 className="text-lg text-slate-500">{t('archiveList.error.text')}</h3>
       </>
     );
   }
   if (!archives.length) {
-    return <h3 className="text-lg text-slate-500">There are no recordings for this meeting</h3>;
+    return <h3 className="text-lg text-slate-500">{t('archiveList.empty')}</h3>;
   }
   return (
     <div className="md:max-h-[480px] md:overflow-y-auto ">
@@ -109,8 +119,10 @@ const ArchiveList = ({ archives }: ArchiveListProps): ReactElement => {
               }
             >
               <ListItemText
-                primary={`Recording ${archives.length - index}`}
-                secondary={`Started at: ${archive.createdAtFormatted}`}
+                primary={t('archiveList.archive.index', { index: archives.length - index })}
+                secondary={t('archiveList.archive.createdAt', {
+                  createdAt: archive.createdAtFormatted,
+                })}
               />
             </ListItem>
           );

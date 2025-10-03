@@ -1,5 +1,6 @@
 import { Snackbar, Alert } from '@mui/material';
 import { Dispatch, ReactElement, SetStateAction } from 'react';
+import { useTranslation } from 'react-i18next';
 import { CAPTION_ERROR_DISPLAY_DURATION_MS } from '../../../utils/constants';
 import useIsSmallViewport from '../../../hooks/useIsSmallViewport';
 
@@ -21,6 +22,7 @@ const CaptionsError = ({
   captionsErrorResponse,
   setCaptionsErrorResponse,
 }: CaptionsErrorProps): ReactElement => {
+  const { t } = useTranslation();
   const isSmallViewport = useIsSmallViewport();
   return (
     <Snackbar
@@ -36,7 +38,7 @@ const CaptionsError = ({
         severity="error"
         sx={{ width: isSmallViewport ? '80%' : '100%' }}
       >
-        Captions error: {captionsErrorResponse}
+        {t('captions.errors', { captionsErrorResponse })}
       </Alert>
     </Snackbar>
   );

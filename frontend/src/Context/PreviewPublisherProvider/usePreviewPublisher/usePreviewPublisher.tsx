@@ -16,6 +16,8 @@ import { UserType } from '../../user';
 import { AccessDeniedEvent } from '../../PublisherProvider/usePublisher/usePublisher';
 import DeviceStore from '../../../utils/DeviceStore';
 import { setStorageItem, STORAGE_KEYS } from '../../../utils/storage';
+import applyBackgroundFilter from '../../../utils/backgroundFilter/applyBackgroundFilter/applyBackgroundFilter';
+import useConfigContext from '../../../hooks/useConfigContext';
 
 type PublisherVideoElementCreatedEvent = Event<'videoElementCreated', Publisher> & {
   element: HTMLVideoElement | HTMLObjectElement;
@@ -30,33 +32,42 @@ export type PreviewPublisherContextType = {
   destroyPublisher: () => void;
   toggleAudio: () => void;
   toggleVideo: () => void;
-  toggleBlur: () => void;
+  changeBackground: (backgroundSelected: string) => void;
+  backgroundFilter: VideoFilter | undefined;
   localAudioSource: string | undefined;
   localVideoSource: string | undefined;
   accessStatus: string | null;
   changeAudioSource: (deviceId: string) => void;
   changeVideoSource: (deviceId: string) => void;
-  hasBlur: boolean;
   initLocalPublisher: () => Promise<void>;
   speechLevel: number;
 };
 
 /**
- * Hook wrapper for creation, interaction with, and state for local video publisher.
- * Access from app via PublisherProvider, not directly.
+ * Hook wrapper for creation, interaction with, and state for local video preview publisher.
+ * Access from app via PreviewPublisherProvider, not directly.
  * @property {boolean} isAudioEnabled - React state boolean showing if audio is enabled
  * @property {boolean} isPublishing - React state boolean showing if we are publishing
  * @property {boolean} isVideoEnabled - React state boolean showing if camera is on
- * @property {() => Promise<void>} publish - Method to initialize publisher and publish to session
  * @property {Publisher | null} publisher - Publisher object
  * @property {HTMLVideoElement | HTMLObjectElement} publisherVideoElement - video element for publisher
+ * @property {Function} destroyPublisher - Method to destroy publisher
  * @property {() => void} toggleAudio - Method to toggle microphone on/off. State updated internally, can be read via isAudioEnabled.
  * @property {() => void} toggleVideo - Method to toggle camera on/off. State updated internally, can be read via isVideoEnabled.
- * @property {() => void} unpublish - Method to unpublish from session and destroy publisher (for ending a call).
+ * @property {Function} changeBackground - Method to change background effect
+ * @property {VideoFilter | undefined} backgroundFilter - Current background filter applied to publisher
+ * @property {string | undefined} localVideoSource - Current video source device ID
+ * @property {string | undefined} localAudioSource - Current audio source device ID
+ * @property {string | null} accessStatus - Current device access status
+ * @property {Function} changeAudioSource - Method to change audio source device ID
+ * @property {Function} changeVideoSource - Method to change video source device ID
+ * @property {Function} initLocalPublisher - Method to initialize the preview publisher
+ * @property {number} speechLevel - Current speech level for audio visualization
  * @returns {PreviewPublisherContextType} preview context
  */
 const usePreviewPublisher = (): PreviewPublisherContextType => {
   const { setUser, user } = useUserContext();
+  const config = useConfigContext();
   const { allMediaDevices, getAllMediaDevices } = useDevices();
   const [publisherVideoElement, setPublisherVideoElement] = useState<
     HTMLVideoElement | HTMLObjectElement
@@ -65,51 +76,46 @@ const usePreviewPublisher = (): PreviewPublisherContextType => {
   const { setAccessStatus, accessStatus } = usePermissions();
   const publisherRef = useRef<Publisher | null>(null);
   const [isPublishing, setIsPublishing] = useState(false);
-  const initialLocalBlurRef = useRef<boolean>(user.defaultSettings.blur);
-  const [localBlur, setLocalBlur] = useState(user.defaultSettings.blur);
+  const initialBackgroundRef = useRef<VideoFilter | undefined>(
+    user.defaultSettings.backgroundFilter
+  );
+  const [backgroundFilter, setBackgroundFilter] = useState<VideoFilter | undefined>(
+    user.defaultSettings.backgroundFilter
+  );
   const [isVideoEnabled, setIsVideoEnabled] = useState(true);
   const [isAudioEnabled, setIsAudioEnabled] = useState(true);
   const [localVideoSource, setLocalVideoSource] = useState<string | undefined>(undefined);
   const [localAudioSource, setLocalAudioSource] = useState<string | undefined>(undefined);
   const deviceStoreRef = useRef<DeviceStore>(new DeviceStore());
+  const { defaultResolution } = config.videoSettings;
 
   /* This sets the default devices in use so that the user knows what devices they are using */
   useEffect(() => {
     setMediaDevices(publisherRef, allMediaDevices, setLocalAudioSource, setLocalVideoSource);
   }, [allMediaDevices]);
 
-  const handleDestroyed = () => {
+  const handlePreviewDestroyed = () => {
     publisherRef.current = null;
   };
 
   /**
-   * Change background blur status
+   * Change background replacement or blur effect
+   * @param {string} backgroundSelected - The selected background option
    * @returns {void}
    */
-  const toggleBlur = useCallback(() => {
-    if (!publisherRef.current) {
-      return;
-    }
-    if (localBlur) {
-      publisherRef.current.clearVideoFilter();
-    } else {
-      publisherRef.current.applyVideoFilter({
-        type: 'backgroundBlur',
-        blurStrength: 'high',
+  const changeBackground = useCallback(
+    (backgroundSelected: string) => {
+      applyBackgroundFilter({
+        publisher: publisherRef.current,
+        backgroundSelected,
+        setUser,
+        setBackgroundFilter,
+      }).catch(() => {
+        console.error('Failed to apply background filter.');
       });
-    }
-    setLocalBlur(!localBlur);
-    setStorageItem(STORAGE_KEYS.BACKGROUND_BLUR, JSON.stringify(!localBlur));
-    if (setUser) {
-      setUser((prevUser: UserType) => ({
-        ...prevUser,
-        defaultSettings: {
-          ...prevUser.defaultSettings,
-          blur: !localBlur,
-        },
-      }));
-    }
-  }, [localBlur, setUser]);
+    },
+    [setBackgroundFilter, setUser]
+  );
 
   /**
    * Change microphone
@@ -205,7 +211,7 @@ const usePreviewPublisher = (): PreviewPublisherContextType => {
       if (!publisher) {
         return;
       }
-      publisher.on('destroyed', handleDestroyed);
+      publisher.on('destroyed', handlePreviewDestroyed);
       publisher.on('accessDenied', handleAccessDenied);
       publisher.on('videoElementCreated', handleVideoElementCreated);
       publisher.on('audioLevelUpdated', ({ audioLevel }: { audioLevel: number }) => {
@@ -224,13 +230,11 @@ const usePreviewPublisher = (): PreviewPublisherContextType => {
       return;
     }
 
-    const videoFilter: VideoFilter | undefined =
-      initialLocalBlurRef.current && hasMediaProcessorSupport()
-        ? {
-            type: 'backgroundBlur',
-            blurStrength: 'high',
-          }
-        : undefined;
+    // Set videoFilter based on user's selected background
+    let videoFilter: VideoFilter | undefined;
+    if (initialBackgroundRef.current && hasMediaProcessorSupport()) {
+      videoFilter = initialBackgroundRef.current;
+    }
 
     await deviceStoreRef.current.init();
     const videoSource = deviceStoreRef.current.getConnectedDeviceId('videoinput');
@@ -239,7 +243,7 @@ const usePreviewPublisher = (): PreviewPublisherContextType => {
     const publisherOptions: PublisherProperties = {
       insertDefaultUI: false,
       videoFilter,
-      resolution: '1280x720',
+      resolution: defaultResolution,
       audioSource,
       videoSource,
     };
@@ -253,8 +257,12 @@ const usePreviewPublisher = (): PreviewPublisherContextType => {
       }
     });
     addPublisherListeners(publisherRef.current);
-  }, [addPublisherListeners]);
+  }, [addPublisherListeners, defaultResolution]);
 
+  /**
+   * Destroys the preview publisher
+   * @returns {void}
+   */
   const destroyPublisher = useCallback(() => {
     if (publisherRef.current) {
       publisherRef.current.destroy();
@@ -320,8 +328,8 @@ const usePreviewPublisher = (): PreviewPublisherContextType => {
     publisherVideoElement,
     toggleAudio,
     toggleVideo,
-    toggleBlur,
-    hasBlur: localBlur,
+    changeBackground,
+    backgroundFilter,
     changeAudioSource,
     changeVideoSource,
     localAudioSource,

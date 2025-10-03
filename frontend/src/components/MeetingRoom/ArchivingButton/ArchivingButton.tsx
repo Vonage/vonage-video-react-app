@@ -1,11 +1,13 @@
 import RadioButtonCheckedIcon from '@mui/icons-material/RadioButtonChecked';
 import { Tooltip } from '@mui/material';
 import { ReactElement, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import useRoomName from '../../../hooks/useRoomName';
 import ToolbarButton from '../ToolbarButton';
 import PopupDialog, { DialogTexts } from '../PopupDialog';
 import { startArchiving, stopArchiving } from '../../../api/archiving';
 import useSessionContext from '../../../hooks/useSessionContext';
+import useConfigContext from '../../../hooks/useConfigContext';
 
 export type ArchivingButtonProps = {
   isOverflowButton?: boolean;
@@ -21,37 +23,39 @@ export type ArchivingButtonProps = {
  * @param {ArchivingButtonProps} props - the props for the component
  *  @property {boolean} isOverflowButton - (optional) whether the button is in the ToolbarOverflowMenu
  *  @property {(event?: MouseEvent | TouchEvent) => void} handleClick - (optional) click handler that closes the overflow menu in small viewports.
- * @returns {ReactElement} - The ArchivingButton component.
+ * @returns {ReactElement | false} - The ArchivingButton component.
  */
 const ArchivingButton = ({
   isOverflowButton = false,
   handleClick,
-}: ArchivingButtonProps): ReactElement => {
+}: ArchivingButtonProps): ReactElement | false => {
+  const { t } = useTranslation();
   const roomName = useRoomName();
   const { archiveId } = useSessionContext();
+  const config = useConfigContext();
   const isRecording = !!archiveId;
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
-  const title = isRecording ? 'Stop recording' : 'Start recording';
+  const title = isRecording ? t('recording.stop.title') : t('recording.start.title');
   const handleButtonClick = () => {
     setIsModalOpen((prev) => !prev);
   };
+  const { allowArchiving } = config.meetingRoomSettings;
 
   const startRecordingText: DialogTexts = {
-    title: 'Start Recording?',
-    contents:
-      'Make sure everyone is ready! You can download the recording from the "Goodbye" page after you leave the room.',
-    primaryActionText: 'Start Recording',
-    secondaryActionText: 'Cancel',
+    title: t('recording.start.dialog.title'),
+    contents: t('recording.start.dialog.content'),
+    primaryActionText: t('recording.start.title'),
+    secondaryActionText: t('button.cancel'),
   };
 
   const stopRecordingText: DialogTexts = {
-    title: 'Stop Recording?',
-    contents: 'You can download the recording from the "Goodbye" page after you leave the room.',
-    primaryActionText: 'Stop Recording',
-    secondaryActionText: 'Cancel',
+    title: t('recording.stop.dialog.title'),
+    contents: t('recording.stop.dialog.content'),
+    primaryActionText: t('recording.stop.title'),
+    secondaryActionText: t('button.cancel'),
   };
 
-  const [actionText, setActionText] = useState<DialogTexts>(startRecordingText);
+  const actionText = isRecording ? stopRecordingText : startRecordingText;
 
   const handleClose = () => {
     setIsModalOpen(false);
@@ -66,14 +70,12 @@ const ArchivingButton = ({
     if (action === 'start') {
       if (!archiveId && roomName) {
         try {
-          setActionText(stopRecordingText);
           await startArchiving(roomName);
         } catch (err) {
           console.log(err);
         }
       }
     } else if (archiveId && roomName) {
-      setActionText(startRecordingText);
       stopArchiving(roomName, archiveId);
     }
   };
@@ -84,29 +86,31 @@ const ArchivingButton = ({
   };
 
   return (
-    <>
-      <Tooltip title={title} aria-label="video layout">
-        <ToolbarButton
-          onClick={handleButtonClick}
-          data-testid="archiving-button"
-          icon={
-            <RadioButtonCheckedIcon
-              style={{ color: `${isRecording ? 'rgb(239 68 68)' : 'white'}` }}
-            />
-          }
-          sx={{
-            marginTop: isOverflowButton ? '0px' : '4px',
-          }}
-          isOverflowButton={isOverflowButton}
+    allowArchiving && (
+      <>
+        <Tooltip title={title} aria-label={t('recording.tooltip.ariaLabel')}>
+          <ToolbarButton
+            onClick={handleButtonClick}
+            data-testid="archiving-button"
+            icon={
+              <RadioButtonCheckedIcon
+                style={{ color: `${isRecording ? 'rgb(239 68 68)' : 'white'}` }}
+              />
+            }
+            sx={{
+              marginTop: isOverflowButton ? '0px' : '4px',
+            }}
+            isOverflowButton={isOverflowButton}
+          />
+        </Tooltip>
+        <PopupDialog
+          isOpen={isModalOpen}
+          handleClose={handleClose}
+          handleActionClick={handleActionClick}
+          actionText={actionText}
         />
-      </Tooltip>
-      <PopupDialog
-        isOpen={isModalOpen}
-        handleClose={handleClose}
-        handleActionClick={handleActionClick}
-        actionText={actionText}
-      />
-    </>
+      </>
+    )
   );
 };
 export default ArchivingButton;

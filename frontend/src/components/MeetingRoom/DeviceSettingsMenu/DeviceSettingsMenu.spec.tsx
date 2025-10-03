@@ -12,6 +12,8 @@ import {
   nativeDevices,
   videoInputDevices,
 } from '../../../utils/mockData/device';
+import useConfigContext from '../../../hooks/useConfigContext';
+import { ConfigContextType } from '../../../Context/ConfigProvider';
 
 const {
   mockHasMediaProcessorSupport,
@@ -44,12 +46,16 @@ vi.mock('../../../utils/util', async () => {
   };
 });
 
+vi.mock('../../../hooks/useConfigContext');
+const mockUseConfigContext = useConfigContext as Mock<[], ConfigContextType>;
+
 // This is returned by Vonage SDK if audioOutput is not supported
 const vonageDefaultEmptyOutputDevice = { deviceId: null, label: null };
 
 describe('DeviceSettingsMenu Component', () => {
   const nativeMediaDevices = global.navigator.mediaDevices;
   const mockHandleToggle = vi.fn();
+  const mockHandleToggleBackgroundEffects = vi.fn();
   const mockSetIsOpen = vi.fn();
   const mockAnchorRef = {
     current: document.createElement('input'),
@@ -57,6 +63,7 @@ describe('DeviceSettingsMenu Component', () => {
   const mockHandleClose = vi.fn();
   let deviceChangeListener: EventEmitter;
   const mockedHasMediaProcessorSupport = vi.fn();
+  let configContext: ConfigContextType;
 
   beforeEach(() => {
     vi.resetAllMocks();
@@ -81,6 +88,18 @@ describe('DeviceSettingsMenu Component', () => {
     });
     (hasMediaProcessorSupport as Mock).mockImplementation(mockedHasMediaProcessorSupport);
     mockedHasMediaProcessorSupport.mockReturnValue(false);
+    configContext = {
+      audioSettings: {
+        allowAdvancedNoiseSuppression: true,
+      },
+      videoSettings: {
+        allowBackgroundEffects: true,
+      },
+      meetingRoomSettings: {
+        allowDeviceSelection: true,
+      },
+    } as Partial<ConfigContextType> as ConfigContextType;
+    mockUseConfigContext.mockReturnValue(configContext);
   });
 
   afterAll(() => {
@@ -100,6 +119,7 @@ describe('DeviceSettingsMenu Component', () => {
           <DeviceSettingsMenu
             deviceType={deviceType}
             handleToggle={mockHandleToggle}
+            toggleBackgroundEffects={mockHandleToggleBackgroundEffects}
             isOpen
             anchorRef={mockAnchorRef}
             handleClose={mockHandleClose}
@@ -140,6 +160,7 @@ describe('DeviceSettingsMenu Component', () => {
           <DeviceSettingsMenu
             deviceType={deviceType}
             handleToggle={mockHandleToggle}
+            toggleBackgroundEffects={mockHandleToggleBackgroundEffects}
             isOpen
             anchorRef={mockAnchorRef}
             handleClose={mockHandleClose}
@@ -174,6 +195,7 @@ describe('DeviceSettingsMenu Component', () => {
             <DeviceSettingsMenu
               deviceType={deviceType}
               handleToggle={mockHandleToggle}
+              toggleBackgroundEffects={mockHandleToggleBackgroundEffects}
               isOpen
               anchorRef={mockAnchorRef}
               handleClose={mockHandleClose}
@@ -197,6 +219,7 @@ describe('DeviceSettingsMenu Component', () => {
             <DeviceSettingsMenu
               deviceType={deviceType}
               handleToggle={mockHandleToggle}
+              toggleBackgroundEffects={mockHandleToggleBackgroundEffects}
               isOpen
               anchorRef={mockAnchorRef}
               handleClose={mockHandleClose}
@@ -218,6 +241,7 @@ describe('DeviceSettingsMenu Component', () => {
           <DeviceSettingsMenu
             deviceType={deviceType}
             handleToggle={mockHandleToggle}
+            toggleBackgroundEffects={mockHandleToggleBackgroundEffects}
             isOpen
             anchorRef={mockAnchorRef}
             handleClose={mockHandleClose}
@@ -279,6 +303,7 @@ describe('DeviceSettingsMenu Component', () => {
           deviceType={deviceType}
           handleToggle={mockHandleToggle}
           handleClose={mockHandleClose}
+          toggleBackgroundEffects={mockHandleToggleBackgroundEffects}
           isOpen
           anchorRef={mockAnchorRef}
           setIsOpen={mockSetIsOpen}
@@ -296,6 +321,7 @@ describe('DeviceSettingsMenu Component', () => {
           deviceType={deviceType}
           handleToggle={mockHandleToggle}
           handleClose={mockHandleClose}
+          toggleBackgroundEffects={mockHandleToggleBackgroundEffects}
           isOpen={false}
           anchorRef={mockAnchorRef}
           setIsOpen={mockSetIsOpen}
@@ -304,13 +330,14 @@ describe('DeviceSettingsMenu Component', () => {
       expect(screen.queryByTestId('video-settings-devices-dropdown')).not.toBeInTheDocument();
     });
 
-    it('and renders the dropdown separator and background blur option when media processor is supported', async () => {
+    it('and renders the dropdown separator and background effects option when media processor is supported', async () => {
       mockedHasMediaProcessorSupport.mockReturnValue(true);
       render(
         <DeviceSettingsMenu
           deviceType={deviceType}
           handleToggle={mockHandleToggle}
           handleClose={mockHandleClose}
+          toggleBackgroundEffects={mockHandleToggleBackgroundEffects}
           isOpen
           anchorRef={mockAnchorRef}
           setIsOpen={mockSetIsOpen}
@@ -319,16 +346,17 @@ describe('DeviceSettingsMenu Component', () => {
 
       await waitFor(() => {
         expect(screen.queryByTestId('dropdown-separator')).toBeVisible();
-        expect(screen.queryByText('Blur your background')).toBeVisible();
+        expect(screen.queryByText('Background effects')).toBeVisible();
       });
     });
 
-    it('and does not render the dropdown separator and background blur option when media processor is not supported', async () => {
+    it('and does not render the dropdown separator and background effects option when media processor is not supported', async () => {
       render(
         <DeviceSettingsMenu
           deviceType={deviceType}
           handleToggle={mockHandleToggle}
           handleClose={mockHandleClose}
+          toggleBackgroundEffects={mockHandleToggleBackgroundEffects}
           isOpen
           anchorRef={mockAnchorRef}
           setIsOpen={mockSetIsOpen}
@@ -337,7 +365,36 @@ describe('DeviceSettingsMenu Component', () => {
 
       await waitFor(() => {
         expect(screen.queryByTestId('dropdown-separator')).not.toBeInTheDocument();
-        expect(screen.queryByText('Blur your background')).not.toBeInTheDocument();
+        expect(screen.queryByText('Background effects')).not.toBeInTheDocument();
+      });
+    });
+
+    it('and does not render the dropdown separator and background effects option when allowBackgroundEffects is false', async () => {
+      configContext = {
+        videoSettings: {
+          allowBackgroundEffects: false,
+        },
+        meetingRoomSettings: {
+          allowDeviceSelection: true,
+        },
+      } as Partial<ConfigContextType> as ConfigContextType;
+      mockUseConfigContext.mockReturnValue(configContext);
+
+      render(
+        <DeviceSettingsMenu
+          deviceType={deviceType}
+          handleToggle={mockHandleToggle}
+          handleClose={mockHandleClose}
+          toggleBackgroundEffects={mockHandleToggleBackgroundEffects}
+          isOpen
+          anchorRef={mockAnchorRef}
+          setIsOpen={mockSetIsOpen}
+        />
+      );
+
+      await waitFor(() => {
+        expect(screen.queryByTestId('dropdown-separator')).not.toBeInTheDocument();
+        expect(screen.queryByText('Background effects')).not.toBeInTheDocument();
       });
     });
   });

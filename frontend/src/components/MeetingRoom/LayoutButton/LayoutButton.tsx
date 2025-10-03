@@ -2,6 +2,7 @@ import ViewSidebarIcon from '@mui/icons-material/ViewSidebar';
 import Tooltip from '@mui/material/Tooltip';
 import WindowIcon from '@mui/icons-material/Window';
 import { ReactElement } from 'react';
+import { useTranslation } from 'react-i18next';
 import useSessionContext from '../../../hooks/useSessionContext';
 import ToolbarButton from '../ToolbarButton';
 
@@ -26,6 +27,7 @@ const LayoutButton = ({
   isPinningPresent,
   isOverflowButton = false,
 }: LayoutButtonProps): ReactElement => {
+  const { t } = useTranslation();
   const { layoutMode, setLayoutMode } = useSessionContext();
   const isGrid = layoutMode === 'grid';
   const isDisabled = isScreenSharePresent || isPinningPresent;
@@ -39,16 +41,16 @@ const LayoutButton = ({
 
   const getTooltipTitle = () => {
     if (isScreenSharePresent) {
-      return 'Cannot switch layout while screen share is active';
+      return t('layout.tooltip.isScreenSharePresent');
     }
     if (isPinningPresent) {
-      return 'Cannot switch layout while a participant is pinned';
+      return t('layout.tooltip.isPinningPresent');
     }
-    return isGrid ? 'Switch to Active Speaker layout' : 'Switch to Grid layout';
+    return isGrid ? t('layout.tooltip.switchToActiveSpeaker') : t('layout.tooltip.switchToGrid');
   };
 
   return (
-    <Tooltip title={getTooltipTitle()} aria-label="video layout">
+    <Tooltip title={getTooltipTitle()} aria-label={t('recording.tooltip.ariaLabel')}>
       <ToolbarButton
         onClick={handleClick}
         data-testid="layout-button"

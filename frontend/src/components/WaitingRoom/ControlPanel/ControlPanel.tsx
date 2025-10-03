@@ -4,11 +4,13 @@ import MicNone from '@mui/icons-material/MicNone';
 import VideoCall from '@mui/icons-material/VideoCall';
 import Speaker from '@mui/icons-material/Speaker';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
+import { useTranslation } from 'react-i18next';
 import MenuDevicesWaitingRoom from '../MenuDevices';
 import usePreviewPublisherContext from '../../../hooks/usePreviewPublisherContext';
 import useDevices from '../../../hooks/useDevices';
 import useAudioOutputContext from '../../../hooks/useAudioOutputContext';
 import useIsSmallViewport from '../../../hooks/useIsSmallViewport';
+import useConfigContext from '../../../hooks/useConfigContext';
 
 export type ControlPanelProps = {
   handleAudioInputOpen: (
@@ -51,12 +53,15 @@ const ControlPanel = ({
   openAudioInput,
   openAudioOutput,
   anchorEl,
-}: ControlPanelProps): ReactElement => {
+}: ControlPanelProps): ReactElement | false => {
+  const { t } = useTranslation();
   const isSmallViewport = useIsSmallViewport();
   const { allMediaDevices } = useDevices();
   const { localAudioSource, localVideoSource, changeAudioSource, changeVideoSource } =
     usePreviewPublisherContext();
   const { currentAudioOutputDevice, setAudioOutputDevice } = useAudioOutputContext();
+  const { waitingRoomSettings } = useConfigContext();
+  const { allowDeviceSelection } = waitingRoomSettings;
 
   const buttonSx: SxProps = {
     borderRadius: '10px',
@@ -64,6 +69,7 @@ const ControlPanel = ({
     textTransform: 'none', // ensures that the text is not upper case
     border: 'none',
     boxShadow: 'none',
+    whiteSpace: 'nowrap',
     '&:hover': {
       border: 'none',
       boxShadow: 'none',
@@ -71,69 +77,73 @@ const ControlPanel = ({
   };
 
   return (
-    <div className="m-auto my-4 max-w-[100dvw]" data-testid="ControlPanel">
-      <div className="flex flex-row justify-evenly min-[400px]:w-[400px]">
-        <Button
-          sx={buttonSx}
-          endIcon={<KeyboardArrowDownIcon />}
-          variant="outlined"
-          startIcon={<MicNone />}
-          aria-controls={openVideoInput ? 'basic-menu' : undefined}
-          aria-haspopup="true"
-          aria-expanded={openVideoInput ? 'true' : undefined}
-          onClick={handleAudioInputOpen}
-        >
-          {isSmallViewport ? 'Mic' : 'Microphone'}
-        </Button>
-        <MenuDevicesWaitingRoom
-          devices={allMediaDevices.audioInputDevices}
-          open={openAudioInput}
-          onClose={handleClose}
-          anchorEl={anchorEl}
-          localSource={localAudioSource}
-          deviceChangeHandler={changeAudioSource}
-          deviceType="audioInput"
-        />
-        <Button
-          onClick={handleVideoInputOpen}
-          endIcon={<KeyboardArrowDownIcon />}
-          sx={buttonSx}
-          variant="outlined"
-          startIcon={<VideoCall />}
-          aria-label="video"
-        >
-          Camera
-        </Button>
+    allowDeviceSelection && (
+      <div className="m-auto my-4 max-w-[100dvw]" data-testid="ControlPanel">
+        <div className="flex flex-row justify-evenly min-[400px]:w-[400px]">
+          <Button
+            sx={buttonSx}
+            endIcon={<KeyboardArrowDownIcon />}
+            variant="outlined"
+            startIcon={<MicNone />}
+            aria-controls={openVideoInput ? 'basic-menu' : undefined}
+            aria-haspopup="true"
+            aria-expanded={openVideoInput ? 'true' : undefined}
+            onClick={handleAudioInputOpen}
+          >
+            {isSmallViewport
+              ? t('devices.audio.microphone.short')
+              : t('devices.audio.microphone.full')}
+          </Button>
+          <MenuDevicesWaitingRoom
+            devices={allMediaDevices.audioInputDevices}
+            open={openAudioInput}
+            onClose={handleClose}
+            anchorEl={anchorEl}
+            localSource={localAudioSource}
+            deviceChangeHandler={changeAudioSource}
+            deviceType="audioInput"
+          />
+          <Button
+            onClick={handleVideoInputOpen}
+            endIcon={<KeyboardArrowDownIcon />}
+            sx={buttonSx}
+            variant="outlined"
+            startIcon={<VideoCall />}
+            aria-label={t('devices.video.camera.button.ariaLabel')}
+          >
+            {t('button.camera')}
+          </Button>
 
-        <MenuDevicesWaitingRoom
-          devices={allMediaDevices.videoInputDevices}
-          open={openVideoInput}
-          onClose={handleClose}
-          anchorEl={anchorEl}
-          localSource={localVideoSource}
-          deviceChangeHandler={changeVideoSource}
-          deviceType="videoInput"
-        />
-        <Button
-          onClick={handleAudioOutputOpen}
-          endIcon={<KeyboardArrowDownIcon />}
-          sx={buttonSx}
-          variant="outlined"
-          startIcon={<Speaker />}
-        >
-          Speaker
-        </Button>
-        <MenuDevicesWaitingRoom
-          devices={allMediaDevices.audioOutputDevices}
-          open={openAudioOutput}
-          onClose={handleClose}
-          anchorEl={anchorEl}
-          localSource={currentAudioOutputDevice}
-          deviceChangeHandler={setAudioOutputDevice}
-          deviceType="audioOutput"
-        />
+          <MenuDevicesWaitingRoom
+            devices={allMediaDevices.videoInputDevices}
+            open={openVideoInput}
+            onClose={handleClose}
+            anchorEl={anchorEl}
+            localSource={localVideoSource}
+            deviceChangeHandler={changeVideoSource}
+            deviceType="videoInput"
+          />
+          <Button
+            onClick={handleAudioOutputOpen}
+            endIcon={<KeyboardArrowDownIcon />}
+            sx={buttonSx}
+            variant="outlined"
+            startIcon={<Speaker />}
+          >
+            {t('button.speaker')}
+          </Button>
+          <MenuDevicesWaitingRoom
+            devices={allMediaDevices.audioOutputDevices}
+            open={openAudioOutput}
+            onClose={handleClose}
+            anchorEl={anchorEl}
+            localSource={currentAudioOutputDevice}
+            deviceChangeHandler={setAudioOutputDevice}
+            deviceType="audioOutput"
+          />
+        </div>
       </div>
-    </div>
+    )
   );
 };
 

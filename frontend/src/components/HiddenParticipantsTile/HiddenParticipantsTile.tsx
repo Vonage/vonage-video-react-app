@@ -4,11 +4,12 @@ import { Box } from 'opentok-layout-js';
 import { SubscriberWrapper } from '../../types/session';
 import AvatarInitials from '../AvatarInitials';
 import getBoxStyle from '../../utils/helpers/getBoxStyle';
+import useSessionContext from '../../hooks/useSessionContext';
+import useConfigContext from '../../hooks/useConfigContext';
 
 export type HiddenParticipantsTileProps = {
   box: Box;
   hiddenSubscribers: SubscriberWrapper[];
-  handleClick: () => void;
 };
 /**
  * HiddenParticipantsTile Component
@@ -23,17 +24,21 @@ export type HiddenParticipantsTileProps = {
 const HiddenParticipantsTile = ({
   box,
   hiddenSubscribers,
-  handleClick,
 }: HiddenParticipantsTileProps): ReactElement => {
+  const { toggleParticipantList } = useSessionContext();
+  const config = useConfigContext();
+  const { showParticipantList } = config.meetingRoomSettings;
   const { height, width } = box;
   const diameter = Math.min(height, width) * 0.38;
   return (
     <button
       id="hidden-participants"
       data-testid="hidden-participants"
-      className="absolute m-1 flex cursor-pointer items-center justify-center rounded-xl bg-notVeryGray-100 transition-colors hover:bg-[rgb(76,80,82)]"
+      className={`absolute m-1 flex items-center justify-center rounded-xl bg-notVeryGray-100 transition-colors ${
+        showParticipantList ? 'cursor-pointer hover:bg-[rgb(76,80,82)]' : 'cursor-default'
+      }`}
       style={getBoxStyle(box)}
-      onClick={handleClick}
+      onClick={showParticipantList ? toggleParticipantList : () => {}}
       type="button"
     >
       <AvatarGroup

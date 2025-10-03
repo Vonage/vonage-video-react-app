@@ -4,7 +4,7 @@ import { availableServerArchive, failedServerArchive, startedServerArchive } fro
 
 describe('createArchiveFromServer', () => {
   it('should convert fields to model fields', () => {
-    const archive = createArchiveFromServer(availableServerArchive);
+    const archive = createArchiveFromServer('en', availableServerArchive);
     expect(archive).toEqual({
       createdAt: 1725268141000,
       createdAtFormatted: 'Mon, Sep 2 5:09 AM',
@@ -15,27 +15,27 @@ describe('createArchiveFromServer', () => {
   });
 
   it('should return status as failed for failed and expired archives', () => {
-    expect(createArchiveFromServer(failedServerArchive).status).toBe('failed');
-    expect(createArchiveFromServer({ ...failedServerArchive, status: 'expired' }).status).toBe(
-      'failed'
-    );
+    expect(createArchiveFromServer('en', failedServerArchive).status).toBe('failed');
+    expect(
+      createArchiveFromServer('en', { ...failedServerArchive, status: 'expired' }).status
+    ).toBe('failed');
   });
 
   it('should return available as failed for status available archives', () => {
-    expect(createArchiveFromServer(availableServerArchive).status).toBe('available');
+    expect(createArchiveFromServer('en', availableServerArchive).status).toBe('available');
   });
 
   it('should return status as pending for started, stopped, uploaded, and paused archives', () => {
-    expect(createArchiveFromServer(startedServerArchive).status).toBe('pending');
-    expect(createArchiveFromServer({ ...startedServerArchive, status: 'stopped' }).status).toBe(
-      'pending'
-    );
-    expect(createArchiveFromServer({ ...startedServerArchive, status: 'uploaded' }).status).toBe(
-      'pending'
-    );
-    expect(createArchiveFromServer({ ...startedServerArchive, status: 'paused' }).status).toBe(
-      'pending'
-    );
+    expect(createArchiveFromServer('en', startedServerArchive).status).toBe('pending');
+    expect(
+      createArchiveFromServer('en', { ...startedServerArchive, status: 'stopped' }).status
+    ).toBe('pending');
+    expect(
+      createArchiveFromServer('en', { ...startedServerArchive, status: 'uploaded' }).status
+    ).toBe('pending');
+    expect(
+      createArchiveFromServer('en', { ...startedServerArchive, status: 'paused' }).status
+    ).toBe('pending');
   });
 });
 

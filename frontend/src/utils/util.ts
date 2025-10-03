@@ -1,4 +1,4 @@
-import { Device } from '@vonage/client-sdk-video';
+import { VideoFilter, Device } from '@vonage/client-sdk-video';
 import { UAParser } from 'ua-parser-js';
 
 /**
@@ -61,4 +61,31 @@ export const isMobile = (): boolean => {
   const device = parser.getDevice();
 
   return device.type === 'mobile';
+};
+
+/**
+ * Parses a raw JSON string into a VideoFilter object if valid.
+ * @param {string | null} raw - The raw JSON string representing a video filter.
+ * @returns {VideoFilter | undefined} - The parsed VideoFilter object or undefined if invalid.
+ */
+export const parseVideoFilter = (raw: string | null): VideoFilter | undefined => {
+  if (!raw) {
+    return undefined;
+  }
+
+  try {
+    const parsed = JSON.parse(raw);
+    if (
+      typeof parsed === 'object' &&
+      parsed !== null &&
+      typeof parsed.type === 'string' &&
+      (parsed.type === 'backgroundBlur' || parsed.type === 'backgroundReplacement')
+    ) {
+      return parsed as VideoFilter;
+    }
+
+    return undefined;
+  } catch {
+    return undefined;
+  }
 };

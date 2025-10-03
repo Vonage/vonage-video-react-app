@@ -1,5 +1,6 @@
 import { useEffect, ReactElement, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import usePublisherContext from '../../hooks/usePublisherContext';
 import ConnectionAlert from '../../components/MeetingRoom/ConnectionAlert';
 import Toolbar from '../../components/MeetingRoom/Toolbar';
@@ -15,6 +16,8 @@ import usePublisherOptions from '../../Context/PublisherProvider/usePublisherOpt
 import CaptionsBox from '../../components/MeetingRoom/CaptionsButton/CaptionsBox';
 import useIsSmallViewport from '../../hooks/useIsSmallViewport';
 import CaptionsError from '../../components/MeetingRoom/CaptionsError';
+import useBackgroundPublisherContext from '../../hooks/useBackgroundPublisherContext';
+import { DEVICE_ACCESS_STATUS } from '../../utils/constants';
 
 const height = '@apply h-[calc(100dvh_-_80px)]';
 
@@ -28,9 +31,17 @@ const height = '@apply h-[calc(100dvh_-_80px)]';
  * @returns {ReactElement} - The meeting room.
  */
 const MeetingRoom = (): ReactElement => {
+  const { t } = useTranslation();
   const roomName = useRoomName();
   const { publisher, publish, quality, initializeLocalPublisher, publishingError, isVideoEnabled } =
     usePublisherContext();
+
+  const {
+    initBackgroundLocalPublisher,
+    publisher: backgroundPublisher,
+    accessStatus,
+  } = useBackgroundPublisherContext();
+
   const {
     joinRoom,
     subscriberWrappers,
@@ -40,6 +51,7 @@ const MeetingRoom = (): ReactElement => {
     rightPanelActiveTab,
     toggleChat,
     toggleParticipantList,
+    toggleBackgroundEffects,
     closeRightPanel,
     toggleReportIssue,
   } = useSessionContext();
@@ -84,6 +96,19 @@ const MeetingRoom = (): ReactElement => {
     }
   }, [publisher, publish, connected]);
 
+  useEffect(() => {
+    if (!backgroundPublisher) {
+      initBackgroundLocalPublisher();
+    }
+  }, [initBackgroundLocalPublisher, backgroundPublisher]);
+
+  // After changing device permissions, reload the page to reflect the device's permission change.
+  useEffect(() => {
+    if (accessStatus === DEVICE_ACCESS_STATUS.ACCESS_CHANGED) {
+      window.location.reload();
+    }
+  }, [accessStatus]);
+
   // If the user is unable to publish, we redirect them to the goodbye page.
   // This prevents users from subscribing to other participants in the room, and being unable to communicate with them.
   useEffect(() => {
@@ -107,7 +132,6 @@ const MeetingRoom = (): ReactElement => {
         screensharingPublisher={screensharingPublisher}
         screenshareVideoElement={screenshareVideoElement}
         isRightPanelOpen={rightPanelActiveTab !== 'closed'}
-        toggleParticipantList={toggleParticipantList}
       />
       <RightPanel activeTab={rightPanelActiveTab} handleClose={closeRightPanel} />
       <EmojisOrigin />
@@ -123,6 +147,7 @@ const MeetingRoom = (): ReactElement => {
         toggleShareScreen={toggleShareScreen}
         rightPanelActiveTab={rightPanelActiveTab}
         toggleParticipantList={toggleParticipantList}
+        toggleBackgroundEffects={toggleBackgroundEffects}
         toggleChat={toggleChat}
         toggleReportIssue={toggleReportIssue}
         participantCount={
@@ -132,16 +157,16 @@ const MeetingRoom = (): ReactElement => {
       />
       {reconnecting && (
         <ConnectionAlert
-          title="Lost connection"
-          message="Please verify your network connection"
+          title={t('connectionAlert.reconnecting.title')}
+          message={t('connectionAlert.reconnecting.message')}
           severity="error"
         />
       )}
       {!reconnecting && quality !== 'good' && isVideoEnabled && (
         <ConnectionAlert
           closable
-          title="Video quality problem"
-          message="Please check your connectivity. Your video may be disabled to improve the user experience"
+          title={t('connectionAlert.quality.title')}
+          message={t('connectionAlert.quality.message')}
           severity="warning"
         />
       )}

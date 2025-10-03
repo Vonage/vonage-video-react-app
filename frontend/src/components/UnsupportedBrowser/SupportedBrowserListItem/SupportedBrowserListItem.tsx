@@ -1,6 +1,7 @@
 import { IconButton, Link, ListItem, ListItemIcon, ListItemText, Tooltip } from '@mui/material';
 import { ReactElement } from 'react';
 import OpenInNewOutlinedIcon from '@mui/icons-material/OpenInNewOutlined';
+import { useTranslation } from 'react-i18next';
 
 export type SupportedBrowserListItemProps = {
   url: string;
@@ -16,11 +17,12 @@ const SupportedBrowserListItem = ({
   url,
   browser,
 }: SupportedBrowserListItemProps): ReactElement => {
+  const { t } = useTranslation();
   return (
     <ListItem key={browser}>
       <ListItemIcon>
         <Link href={url} target="_blank">
-          <Tooltip title={`Download link for ${browser}`}>
+          <Tooltip title={t('unsupportedBrowser.supported.downloadLink', { browser })}>
             <IconButton>
               <OpenInNewOutlinedIcon />
             </IconButton>

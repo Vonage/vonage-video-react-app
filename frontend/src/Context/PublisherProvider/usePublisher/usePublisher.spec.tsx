@@ -1,13 +1,17 @@
 import { beforeEach, describe, it, expect, vi, Mock, afterAll } from 'vitest';
 import { act, renderHook, waitFor } from '@testing-library/react';
-import { initPublisher, Publisher, Stream } from '@vonage/client-sdk-video';
+import {
+  initPublisher,
+  Publisher,
+  Stream,
+  hasMediaProcessorSupport,
+} from '@vonage/client-sdk-video';
 import EventEmitter from 'events';
 import usePublisher from './usePublisher';
 import useUserContext from '../../../hooks/useUserContext';
 import { UserContextType } from '../../user';
 import useSessionContext from '../../../hooks/useSessionContext';
 import { SessionContextType } from '../../SessionProvider/session';
-import { PUBLISHING_BLOCKED_CAPTION } from '../../../utils/constants';
 
 vi.mock('@vonage/client-sdk-video');
 vi.mock('../../../hooks/useUserContext.tsx');
@@ -20,13 +24,15 @@ const defaultSettings = {
   publishAudio: false,
   publishVideo: false,
   name: '',
-  blur: false,
   noiseSuppression: true,
+  publishCaptions: false,
 };
 const mockUserContextWithDefaultSettings = {
   user: {
     defaultSettings,
+    issues: { reconnections: 0, audioFallbacks: 0 },
   },
+  setUser: vi.fn(),
 } as UserContextType;
 const mockStream = {
   streamId: 'stream-id',
@@ -37,6 +43,8 @@ describe('usePublisher', () => {
   const destroySpy = vi.fn();
   const mockPublisher = Object.assign(new EventEmitter(), {
     destroy: destroySpy,
+    applyVideoFilter: vi.fn(),
+    clearVideoFilter: vi.fn(),
   }) as unknown as Publisher;
   let mockSessionContext: SessionContextType;
   const mockedInitPublisher = vi.fn();
@@ -50,6 +58,7 @@ describe('usePublisher', () => {
     mockUseUserContext.mockImplementation(() => mockUserContextWithDefaultSettings);
 
     (initPublisher as Mock).mockImplementation(mockedInitPublisher);
+    (hasMediaProcessorSupport as Mock).mockImplementation(vi.fn().mockReturnValue(true));
 
     mockSessionContext = {
       publish: mockedSessionPublish,
@@ -111,6 +120,46 @@ describe('usePublisher', () => {
       await waitFor(() => {
         expect(mockedSessionUnpublish).toHaveBeenCalled();
       });
+    });
+  });
+
+  describe('changeBackground', () => {
+    let result: ReturnType<typeof renderHook>['result'];
+    beforeEach(async () => {
+      (initPublisher as Mock).mockImplementation(() => mockPublisher);
+      result = renderHook(() => usePublisher()).result;
+      await act(async () => {
+        await (result.current as ReturnType<typeof usePublisher>).initializeLocalPublisher({});
+      });
+      (mockPublisher.applyVideoFilter as Mock).mockClear();
+      (mockPublisher.clearVideoFilter as Mock).mockClear();
+    });
+
+    it('applies low blur filter', async () => {
+      await act(async () => {
+        await (result.current as ReturnType<typeof usePublisher>).changeBackground('low-blur');
+      });
+      expect(mockPublisher.applyVideoFilter).toHaveBeenCalledWith({
+        type: 'backgroundBlur',
+        blurStrength: 'low',
+      });
+    });
+
+    it('applies background replacement with image', async () => {
+      await act(async () => {
+        await (result.current as ReturnType<typeof usePublisher>).changeBackground('bg1.jpg');
+      });
+      expect(mockPublisher.applyVideoFilter).toHaveBeenCalledWith({
+        type: 'backgroundReplacement',
+        backgroundImgUrl: expect.stringContaining('bg1.jpg'),
+      });
+    });
+
+    it('clears video filter for unknown option', async () => {
+      await act(async () => {
+        await (result.current as ReturnType<typeof usePublisher>).changeBackground('none');
+      });
+      expect(mockPublisher.clearVideoFilter).toHaveBeenCalled();
     });
   });
 
@@ -190,7 +239,8 @@ describe('usePublisher', () => {
 
       const publishingBlockedError = {
         header: 'Difficulties joining room',
-        caption: PUBLISHING_BLOCKED_CAPTION,
+        caption:
+          "We're having trouble connecting you with others in the meeting room. Please check your network and try again.",
       };
       expect(result.current.publishingError).toEqual(publishingBlockedError);
       expect(mockedSessionPublish).toHaveBeenCalledTimes(2);

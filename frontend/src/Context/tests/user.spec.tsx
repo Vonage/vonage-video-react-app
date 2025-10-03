@@ -39,7 +39,7 @@ describe('UserContext', () => {
         publishAudio: true,
         publishVideo: true,
         name: '',
-        blur: false,
+        backgroundFilter: undefined,
         noiseSuppression: false,
         audioSource: undefined,
         videoSource: undefined,

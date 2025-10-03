@@ -13,10 +13,12 @@ import useDropdownResizeObserver from '../../../hooks/useDropdownResizeObserver'
 import VideoDevices from '../VideoDevices';
 import DropdownSeparator from '../DropdownSeparator';
 import VideoDevicesOptions from '../VideoDevicesOptions';
+import useConfigContext from '../../../hooks/useConfigContext';
 
 export type DeviceSettingsMenuProps = {
   deviceType: 'audio' | 'video';
   handleToggle: () => void;
+  toggleBackgroundEffects: () => void;
   isOpen: boolean;
   anchorRef: RefObject<HTMLInputElement | null>;
   handleClose: (event: MouseEvent | TouchEvent) => void;
@@ -33,23 +35,34 @@ export type DeviceSettingsMenuProps = {
  * - on supported devices, an option to blur the video background
  * @param {DeviceSettingsMenuProps} props - the props for this component.
  *  @property {boolean} deviceType - indicates the type of the device to control.
- *  @property {() => void} handleToggle - the function that handles the toggle of video input device.
+ *  @property {Function} handleToggle - the function that handles the toggle of video input device.
+ *  @property {Function} toggleBackgroundEffects - the function that toggles background effects for video devices.
  *  @property {boolean} isOpen - the prop that shows whether the pop up needs to be opened.
  *  @property {RefObject<HTMLInputElement>} anchorRef - the anchor element to attach the pop up to.
  *  @property {Function} handleClose - the function that handles the closing of the pop up.
+ *  @property {Function} setIsOpen - the function to set the open state of the pop up.
  * @returns {ReactElement} - the DeviceSettingsMenu component.
  */
 const DeviceSettingsMenu = ({
   deviceType,
   handleToggle,
+  toggleBackgroundEffects,
   isOpen,
   anchorRef,
   handleClose,
   setIsOpen,
 }: DeviceSettingsMenuProps): ReactElement | false => {
+  const config = useConfigContext();
   const isAudio = deviceType === 'audio';
   const theme = useTheme();
   const customLightBlueColor = 'rgb(138, 180, 248)';
+  const { allowBackgroundEffects } = config.videoSettings;
+  const shouldDisplayBackgroundEffects = hasMediaProcessorSupport() && allowBackgroundEffects;
+
+  const handleToggleBackgroundEffects = () => {
+    toggleBackgroundEffects();
+    handleToggle();
+  };
 
   useDropdownResizeObserver({ setIsOpen, dropDownRefElement: anchorRef.current });
 
@@ -67,10 +80,10 @@ const DeviceSettingsMenu = ({
     return (
       <>
         <VideoDevices handleToggle={handleToggle} customLightBlueColor={customLightBlueColor} />
-        {hasMediaProcessorSupport() && (
+        {shouldDisplayBackgroundEffects && (
           <>
             <DropdownSeparator />
-            <VideoDevicesOptions customLightBlueColor={customLightBlueColor} />
+            <VideoDevicesOptions toggleBackgroundEffects={handleToggleBackgroundEffects} />
           </>
         )}
       </>

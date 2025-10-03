@@ -2,6 +2,7 @@ import CallEndIcon from '@mui/icons-material/CallEnd';
 import Tooltip from '@mui/material/Tooltip';
 import { useNavigate } from 'react-router-dom';
 import { ReactElement } from 'react';
+import { useTranslation } from 'react-i18next';
 import ToolbarButton from '../ToolbarButton';
 import useRoomName from '../../../hooks/useRoomName';
 
@@ -18,6 +19,7 @@ export type ExitButtonProps = {
  * @returns {ReactElement} The exit button component
  */
 const ExitButton = ({ handleLeave }: ExitButtonProps): ReactElement => {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const roomName = useRoomName();
 
@@ -27,7 +29,7 @@ const ExitButton = ({ handleLeave }: ExitButtonProps): ReactElement => {
   };
 
   return (
-    <Tooltip title="Exit meeting" aria-label="exit">
+    <Tooltip title={t('room.exit.tooltip')} aria-label={t('room.exit.ariaLabel')}>
       <ToolbarButton
         onClick={handleExit}
         sx={{

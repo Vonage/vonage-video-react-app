@@ -1,5 +1,6 @@
 import { Button } from '@mui/material';
 import { MouseEvent, ReactElement, TouchEvent } from 'react';
+import { useTranslation } from 'react-i18next';
 
 export type GoToLandingPageButtonProps = {
   handleLanding: (event: MouseEvent<HTMLButtonElement> | TouchEvent<HTMLButtonElement>) => void;
@@ -14,6 +15,8 @@ export type GoToLandingPageButtonProps = {
  * @returns {ReactElement} - the button to go back to the landing page.
  */
 const GoToLandingPageButton = ({ handleLanding }: GoToLandingPageButtonProps): ReactElement => {
+  const { t } = useTranslation();
+
   return (
     <Button
       data-testid="go-to-landing-button"
@@ -22,7 +25,7 @@ const GoToLandingPageButton = ({ handleLanding }: GoToLandingPageButtonProps): R
       sx={{ textTransform: 'none', fontSize: '1rem', marginBottom: '16px' }}
       onClick={handleLanding}
     >
-      Return to landing page
+      {t('goodBye.back')}
     </Button>
   );
 };
