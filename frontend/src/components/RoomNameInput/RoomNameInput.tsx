@@ -62,6 +62,7 @@ const RoomNameInput = ({
             <Keyboard />
           </InputAdornment>
         ),
+        inputProps: { maxLength: 60 },
       }}
     />
   );
