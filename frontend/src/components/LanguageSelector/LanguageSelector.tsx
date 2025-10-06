@@ -1,4 +1,4 @@
-import React from 'react';
+import { ReactElement } from 'react';
 import { Select, MenuItem, FormControl, SelectChangeEvent, Box } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 
@@ -13,7 +13,16 @@ interface LanguageSelectorProps {
   className?: string;
 }
 
-const LanguageSelector: React.FC<LanguageSelectorProps> = ({ showFlag = true, className }) => {
+/**
+ * LanguageSelector Component
+ * A dropdown component that allows users to select their preferred language.
+ * The available languages are determined by the VITE_I18N_SUPPORTED_LANGUAGES environment variable.
+ * @param {LanguageSelectorProps} props - The props for the component.
+ * @property {boolean} showFlag - Whether to display the country flag alongside the language name.
+ * @property {string} className - Additional CSS classes to apply to the component.
+ * @returns {ReactElement} The rendered LanguageSelector component.
+ */
+const LanguageSelector = ({ showFlag, className }: LanguageSelectorProps): ReactElement => {
   const { i18n } = useTranslation();
 
   const envLangs = import.meta.env.VITE_I18N_SUPPORTED_LANGUAGES;
