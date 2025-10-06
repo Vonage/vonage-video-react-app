@@ -22,7 +22,7 @@ interface LanguageSelectorProps {
  * @property {string} className - Additional CSS classes to apply to the component.
  * @returns {ReactElement} The rendered LanguageSelector component.
  */
-const LanguageSelector = ({ showFlag, className }: LanguageSelectorProps): ReactElement => {
+const LanguageSelector = ({ showFlag = true, className }: LanguageSelectorProps): ReactElement => {
   const { i18n } = useTranslation();
 
   const envLangs = import.meta.env.VITE_I18N_SUPPORTED_LANGUAGES;
