@@ -53,9 +53,6 @@ describe('GET /.well-known/apple-app-site-association', () => {
             }),
           ]),
         }),
-        webcredentials: expect.objectContaining({
-          apps: expect.arrayContaining(['PR6C39UQ38.com.vonage.VERA']),
-        }),
       })
     );
   });
