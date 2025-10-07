@@ -9,6 +9,7 @@ import usePublisherContext from '../../../hooks/usePublisherContext';
 import DeviceControlButton from './DeviceControlButton';
 import useConfigContext from '../../../hooks/useConfigContext';
 import { ConfigContextType } from '../../../Context/ConfigProvider';
+import enTranslations from '../../../locales/en.json';
 
 vi.mock('../../../hooks/usePublisherContext.tsx');
 vi.mock('../../../hooks/useSpeakingDetector.tsx');
@@ -21,6 +22,22 @@ vi.mock('../../../hooks/useBackgroundPublisherContext', () => {
   };
 });
 vi.mock('../../../hooks/useConfigContext');
+
+vi.mock('react-i18next', () => ({
+  useTranslation: () => ({
+    t: (key: string) => {
+      const translations: Record<string, string> = {
+        'devices.audio.microphone.full': enTranslations['devices.audio.microphone.full'],
+        'devices.video.camera.full': enTranslations['devices.video.camera.full'],
+        'devices.settings.ariaLabel': enTranslations['devices.settings.ariaLabel'],
+        'devices.video.disabled': enTranslations['devices.video.disabled'],
+        'devices.audio.disabled': enTranslations['devices.audio.disabled'],
+        'mutedAlert.message.muted': enTranslations['mutedAlert.message.muted'],
+      };
+      return translations[key] || key;
+    },
+  }),
+}));
 
 const mockUsePublisherContext = usePublisherContext as Mock<[], PublisherContextType>;
 const mockUseSpeakingDetector = useSpeakingDetector as Mock<[], boolean>;
@@ -103,7 +120,7 @@ describe('DeviceControlButton', () => {
         toggleBackgroundEffects={mockHandleToggleBackgroundEffects}
       />
     );
-    const cameraButton = screen.getByLabelText('camera');
+    const cameraButton = screen.getByLabelText('Camera');
     cameraButton.click();
     expect(toggleVideoMock).toHaveBeenCalled();
     expect(toggleBackgroundVideoPublisherMock).toHaveBeenCalled();
@@ -117,7 +134,7 @@ describe('DeviceControlButton', () => {
           toggleBackgroundEffects={mockHandleToggleBackgroundEffects}
         />
       );
-      const micButton = screen.getByLabelText('microphone');
+      const micButton = screen.getByLabelText('Microphone');
       expect(micButton).toBeInTheDocument();
       expect(micButton).not.toBeDisabled();
 
@@ -132,7 +149,7 @@ describe('DeviceControlButton', () => {
           toggleBackgroundEffects={mockHandleToggleBackgroundEffects}
         />
       );
-      const micButton = screen.getByLabelText('microphone');
+      const micButton = screen.getByLabelText('Microphone');
       expect(micButton).toBeInTheDocument();
       expect(micButton).toBeDisabled();
 
@@ -153,7 +170,7 @@ describe('DeviceControlButton', () => {
         />
       );
 
-      const videoButton = screen.getByLabelText('camera');
+      const videoButton = screen.getByLabelText('Camera');
       expect(videoButton).toBeInTheDocument();
       expect(videoButton).not.toBeDisabled();
 
@@ -169,7 +186,7 @@ describe('DeviceControlButton', () => {
         />
       );
 
-      const videoButton = screen.getByLabelText('camera');
+      const videoButton = screen.getByLabelText('Camera');
       expect(videoButton).toBeInTheDocument();
       expect(videoButton).toBeDisabled();
 

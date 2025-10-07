@@ -1,17 +1,8 @@
 import { ReactElement } from 'react';
 import BlockIcon from '@mui/icons-material/Block';
 import BlurOnIcon from '@mui/icons-material/BlurOn';
+import { useTranslation } from 'react-i18next';
 import SelectableOption from '../SelectableOption';
-
-const options = [
-  { key: 'none', icon: <BlockIcon sx={{ fontSize: '30px' }} />, name: 'Remove background' },
-  { key: 'low-blur', icon: <BlurOnIcon />, name: 'Slight background blur' },
-  {
-    key: 'high-blur',
-    icon: <BlurOnIcon sx={{ fontSize: '30px' }} />,
-    name: 'Strong background blur',
-  },
-];
 
 export type EffectOptionButtonsProps = {
   backgroundSelected: string;
@@ -31,6 +22,20 @@ const EffectOptionButtons = ({
   backgroundSelected,
   setBackgroundSelected,
 }: EffectOptionButtonsProps): ReactElement => {
+  const { t } = useTranslation();
+  const options = [
+    {
+      key: 'none',
+      icon: <BlockIcon sx={{ fontSize: '30px' }} />,
+      name: t('backgroundEffects.removeBackground'),
+    },
+    { key: 'low-blur', icon: <BlurOnIcon />, name: t('backgroundEffects.slightBlur') },
+    {
+      key: 'high-blur',
+      icon: <BlurOnIcon sx={{ fontSize: '30px' }} />,
+      name: t('backgroundEffects.strongBlur'),
+    },
+  ];
   return (
     <>
       {options.map(({ key, icon, name }) => (

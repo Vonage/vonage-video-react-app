@@ -1,11 +1,18 @@
 import { describe, expect, it, vi, beforeEach } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import BackgroundGallery, { backgrounds } from './BackgroundGallery';
+import BackgroundGallery from './BackgroundGallery';
 
 const customImages = [
   { id: 'custom1', dataUrl: 'data:image/png;base64,custom1' },
   { id: 'custom2', dataUrl: 'data:image/png;base64,custom2' },
+];
+
+const backgrounds = [
+  { id: 'bg4', file: 'hogwarts.jpg', name: 'Hogwarts' },
+  { id: 'bg5', file: 'library.jpg', name: 'Library' },
+  { id: 'bg6', file: 'new-york.jpg', name: 'New York' },
+  { id: 'bg7', file: 'plane.jpg', name: 'Plane' },
 ];
 
 const mockDeleteImageFromStorage = vi.fn();

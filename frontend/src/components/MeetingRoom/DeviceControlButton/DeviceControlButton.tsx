@@ -127,7 +127,9 @@ const DeviceControlButton = ({
               onClick={handleDeviceStateChange}
               disabled={isButtonDisabled}
               edge="start"
-              aria-label={isAudio ? 'microphone' : 'camera'}
+              aria-label={
+                isAudio ? t('devices.audio.microphone.full') : t('devices.video.camera.full')
+              }
               size="small"
               className="m-[3px] size-[50px] rounded-full shadow-md"
             >
