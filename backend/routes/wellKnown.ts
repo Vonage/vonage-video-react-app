@@ -47,9 +47,6 @@ wellKnownRouter.get('/apple-app-site-association', (_req: Request, res: Response
         },
       ],
     },
-    webcredentials: {
-      apps: ['PR6C39UQ38.com.vonage.VERA'],
-    },
   });
 });
 

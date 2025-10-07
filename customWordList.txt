@@ -9,4 +9,3 @@ NOSONAR
 jiraiOSComponentId
 supportedLngs
 applinks
-webcredentials
