@@ -55,7 +55,7 @@ describe('LanguageSelector', () => {
 
       expect(screen.getByTestId('language-selector')).toBeInTheDocument();
       expect(screen.getByText('English')).toBeInTheDocument();
-      expect(screen.getByText('🇺🇸')).toBeInTheDocument();
+      expect(screen.getByText('🇬🇧')).toBeInTheDocument();
     });
 
     it('renders without flags when showFlag is false', () => {
@@ -64,7 +64,7 @@ describe('LanguageSelector', () => {
       render(<LanguageSelector showFlag={false} />);
 
       expect(screen.getByText('English')).toBeInTheDocument();
-      expect(screen.queryByText('🇺🇸')).not.toBeInTheDocument();
+      expect(screen.queryByText('🇬🇧')).not.toBeInTheDocument();
     });
 
     it('applies custom className', () => {
@@ -250,7 +250,7 @@ describe('LanguageSelector', () => {
       await waitFor(() => {
         const englishOption = screen.getByTestId('language-option-en');
         expect(englishOption).toHaveTextContent('English');
-        expect(englishOption).toHaveTextContent('🇺🇸');
+        expect(englishOption).toHaveTextContent('🇬🇧');
 
         const spanishOption = screen.getByTestId('language-option-es');
         expect(spanishOption).toHaveTextContent('Español');
@@ -269,7 +269,7 @@ describe('LanguageSelector', () => {
       await waitFor(() => {
         const englishOption = screen.getByTestId('language-option-en');
         expect(englishOption).toHaveTextContent('English');
-        expect(englishOption).not.toHaveTextContent('🇺🇸');
+        expect(englishOption).not.toHaveTextContent('🇬🇧');
       });
     });
   });

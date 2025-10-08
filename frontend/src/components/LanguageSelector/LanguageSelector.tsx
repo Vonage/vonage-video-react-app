@@ -29,10 +29,10 @@ const LanguageSelector = ({ showFlag = true, className }: LanguageSelectorProps)
   const supportedLanguages = envLangs && envLangs.trim() !== '' ? envLangs.split('|') : ['en'];
 
   const languageOptions: LanguageOption[] = [
-    { code: 'en', name: 'English', flag: '🇺🇸' },
+    { code: 'en', name: 'English', flag: '🇬🇧' },
+    { code: 'it', name: 'Italiano', flag: '🇮🇹' },
     { code: 'es', name: 'Español', flag: '🇪🇸' },
     { code: 'es-MX', name: 'Español (México)', flag: '🇲🇽' },
-    { code: 'it', name: 'Italiano', flag: '🇮🇹' },
   ].filter((option) => supportedLanguages.includes(option.code));
 
   const handleLanguageChange = (event: SelectChangeEvent<string>) => {
