@@ -14,22 +14,22 @@ const cleanDeviceLabel = (label: string): string => {
   return (
     label
       // Remove macOS/iOS device IDs: (0000:0001), (1a2b:3c4d)
-      .replace(/\s*\([0-9a-fA-F]{4}:[0-9a-fA-F]{4}\)$/g, '')
+      .replace(/\s{0,32}\([0-9A-Fa-f]{4}:[0-9A-Fa-f]{4}\)$/g, '')
 
       // Remove Windows USB device paths: (USB\VID_1234&PID_5678...)
-      .replace(/\s*\(USB\\VID_[0-9A-F]{4}&PID_[0-9A-F]{4}.*?\)$/gi, '')
+      .replace(/\s{0,32}\(USB\\VID_[0-9A-F]{4}&PID_[0-9A-F]{4}[^)]{0,128}\)$/gi, '')
 
       // Remove Linux USB bus info: (usb-0000:00:1d.0-1)
-      .replace(/\s*\(usb-[0-9a-f:.-]+\)$/gi, '')
+      .replace(/\s{0,32}\(usb-[0-9A-Fa-f:.-]{1,64}\)$/gi, '')
 
       // Remove generic bus info patterns: (pci-0000:00:1b.0)
-      .replace(/\s*\([a-z]+-[0-9a-f:.-]+\)$/gi, '')
+      .replace(/\s{0,32}\([a-z]{2,8}-[0-9A-Fa-f:.-]{1,64}\)$/gi, '')
 
       // Remove simple numeric IDs: (1), (2), (0)
-      .replace(/\s*\(\d+\)$/g, '')
+      .replace(/\s{0,32}\(\d{1,6}\)$/g, '')
 
       // Remove Chrome's camera numbering: " - 1", " - 2"
-      .replace(/\s*-\s*\d+$/g, '')
+      .replace(/\s{0,8}-\s*\d{1,3}$/g, '')
 
       // Clean up multiple spaces and normalize
       .replace(/\s+/g, ' ')
