@@ -1,5 +1,5 @@
 import { ReactElement } from 'react';
-import { Select, MenuItem, FormControl, SelectChangeEvent, Box } from '@mui/material';
+import { Select, MenuItem, FormControl, SelectChangeEvent, Box, Typography } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 
 interface LanguageOption {
@@ -49,11 +49,9 @@ const LanguageSelector = ({ showFlag = true, className }: LanguageSelectorProps)
         onChange={handleLanguageChange}
         displayEmpty
         sx={{
-          minWidth: 120,
-          '& .MuiSelect-select': {
-            display: 'flex',
-            alignItems: 'center',
-            gap: 1,
+          minWidth: 150,
+          '& .MuiOutlinedInput-notchedOutline': {
+            border: 'none',
           },
         }}
         renderValue={(value) => {
@@ -64,7 +62,7 @@ const LanguageSelector = ({ showFlag = true, className }: LanguageSelectorProps)
 
           return (
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-              {showFlag && <span>{selectedOption.flag}</span>}
+              {showFlag && <Typography fontSize={36}>{selectedOption.flag}</Typography>}
               <span>{selectedOption.name}</span>
             </Box>
           );
@@ -78,7 +76,7 @@ const LanguageSelector = ({ showFlag = true, className }: LanguageSelectorProps)
             data-testid={`language-option-${option.code}`}
           >
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-              {showFlag && <span>{option.flag}</span>}
+              {showFlag && <Typography fontSize={20}>{option.flag}</Typography>}
               <span>{option.name}</span>
             </Box>
           </MenuItem>
