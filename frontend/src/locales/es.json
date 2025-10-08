@@ -145,6 +145,7 @@
     "unsupportedBrowser.message": "Por favor usa uno de nuestros navegadores compatibles.",
     "unsupportedBrowser.supported.downloadLink": "Enlace de descarga para {{browser}}",
     "unsupportedBrowser.supported.title": "Navegadores compatibles:",
+    "unknown.device": "Dispositivo desconocido",
     "user.unknown": "usuario desconocido",
     "user.you": "Tú",
     "waitingRoom.title": "Prepararse para unirse:",
