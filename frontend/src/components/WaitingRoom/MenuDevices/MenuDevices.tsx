@@ -1,9 +1,10 @@
 import { Menu, MenuItem } from '@mui/material';
 import { Speaker } from '@mui/icons-material';
 import { AudioOutputDevice, Device } from '@vonage/client-sdk-video';
-import { ReactElement } from 'react';
+import { ReactElement, useMemo } from 'react';
 import { isGetActiveAudioOutputDeviceSupported } from '../../../utils/util';
 import SoundTest from '../../SoundTest';
+import cleanAndDedupeDeviceLabels from '../../../utils/cleanAndDedupeDeviceLabels/cleanAndDedupeDeviceLabels';
 
 export type MenuDevicesWaitingRoomProps = {
   onClose: () => void;
@@ -44,6 +45,8 @@ const MenuDevices = ({
     onClose();
   };
 
+  const processedDevices = useMemo(() => cleanAndDedupeDeviceLabels(devices), [devices]);
+
   return (
     <Menu
       id="basic-menu"
@@ -54,7 +57,7 @@ const MenuDevices = ({
       data-testid={`${deviceType}-menu`}
     >
       {(deviceType !== 'audioOutput' || isGetActiveAudioOutputDeviceSupported()) &&
-        devices.map((device) => (
+        processedDevices.map((device) => (
           <MenuItem
             onClick={() => {
               if (!device.deviceId) {
