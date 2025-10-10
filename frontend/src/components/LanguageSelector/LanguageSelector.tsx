@@ -1,6 +1,7 @@
 import { ReactElement } from 'react';
 import { Select, MenuItem, FormControl, SelectChangeEvent, Box, Typography } from '@mui/material';
 import { useTranslation } from 'react-i18next';
+import useIsSmallViewport from '../../hooks/useIsSmallViewport';
 
 interface LanguageOption {
   code: string;
@@ -24,6 +25,7 @@ interface LanguageSelectorProps {
  */
 const LanguageSelector = ({ showFlag = true, className }: LanguageSelectorProps): ReactElement => {
   const { i18n } = useTranslation();
+  const isSmallViewport = useIsSmallViewport();
 
   const envLangs = import.meta.env.VITE_I18N_SUPPORTED_LANGUAGES;
   const supportedLanguages = envLangs && envLangs.trim() !== '' ? envLangs.split('|') : ['en'];
@@ -49,7 +51,6 @@ const LanguageSelector = ({ showFlag = true, className }: LanguageSelectorProps)
         onChange={handleLanguageChange}
         displayEmpty
         sx={{
-          minWidth: 150,
           '& .MuiOutlinedInput-notchedOutline': {
             border: 'none',
           },
@@ -63,7 +64,7 @@ const LanguageSelector = ({ showFlag = true, className }: LanguageSelectorProps)
           return (
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
               {showFlag && <Typography fontSize={36}>{selectedOption.flag}</Typography>}
-              <span>{selectedOption.name}</span>
+              {!isSmallViewport && <span>{selectedOption.name}</span>}
             </Box>
           );
         }}
