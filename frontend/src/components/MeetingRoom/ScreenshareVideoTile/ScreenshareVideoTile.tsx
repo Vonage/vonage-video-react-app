@@ -9,8 +9,10 @@ import {
   MouseEvent,
   useEffect,
 } from 'react';
+import { hasMediaProcessorSupport } from '@vonage/client-sdk-video';
 import getBoxStyle from '../../../utils/helpers/getBoxStyle';
 import ZoomIndicator from '../ZoomIndicator';
+import { MAX_ZOOM, MIN_ZOOM, ZOOM_STEP } from '../../../utils/constants';
 
 export type ScreenshareVideoTileProps = {
   'data-testid': string;
@@ -53,11 +55,6 @@ const ScreenshareVideoTile = forwardRef(
       x: 0,
       y: 0,
     });
-
-    // Zoom constraints for screenshare content
-    const MIN_ZOOM = 0.5;
-    const MAX_ZOOM = 5; // Higher max zoom for screenshare content
-    const ZOOM_STEP = 0.25;
 
     // Auto re-center when zoom returns to 100%
     useEffect(() => {
@@ -143,6 +140,24 @@ const ScreenshareVideoTile = forwardRef(
       setIsDragging(false);
     };
 
+    const zoomIn = () => {
+      const newZoomLevel = Math.min(zoomLevel + ZOOM_STEP, MAX_ZOOM);
+      setZoomLevel(newZoomLevel);
+      // Reset pan offset when zooming in from 1x to maintain center position
+      if (zoomLevel === 1) {
+        setPanOffset({ x: 0, y: 0 });
+      }
+    };
+
+    const zoomOut = () => {
+      const newZoomLevel = Math.max(zoomLevel - ZOOM_STEP, MIN_ZOOM);
+      setZoomLevel(newZoomLevel);
+      // Reset pan offset when zooming back to 1x
+      if (newZoomLevel === 1) {
+        setPanOffset({ x: 0, y: 0 });
+      }
+    };
+
     return (
       <div
         id={id}
@@ -177,7 +192,14 @@ const ScreenshareVideoTile = forwardRef(
         />
         {children}
 
-        <ZoomIndicator resetZoom={resetZoom} zoomLevel={zoomLevel} />
+        {hasMediaProcessorSupport() && (
+          <ZoomIndicator
+            resetZoom={resetZoom}
+            zoomLevel={zoomLevel}
+            zoomIn={zoomIn}
+            zoomOut={zoomOut}
+          />
+        )}
       </div>
     );
   }

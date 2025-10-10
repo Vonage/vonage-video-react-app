@@ -149,5 +149,10 @@
     "user.you": "Tú",
     "waitingRoom.title": "Prepárate para unirte:",
     "waitingRoom.user.input.label": "¿Cuál es tu nombre?",
-    "waitingRoom.user.input.placeholder": "Escribe tu nombre"
+    "waitingRoom.user.input.placeholder": "Escribe tu nombre",
+    "zoom.reset": "Restablecer zoom",
+    "zoom.start": "Iniciar zoom",
+    "zoom.out": "Alejar zoom",
+    "zoom.in": "Acercar zoom",
+    "zoom.current": "Zoom actual"
 }
