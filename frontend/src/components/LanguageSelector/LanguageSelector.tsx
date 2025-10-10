@@ -32,6 +32,7 @@ const LanguageSelector = ({ showFlag = true, className }: LanguageSelectorProps)
 
   const languageOptions: LanguageOption[] = [
     { code: 'en', name: 'English', flag: '🇬🇧' },
+    { code: 'en-US', name: 'English (US)', flag: '🇺🇸' },
     { code: 'it', name: 'Italiano', flag: '🇮🇹' },
     { code: 'es', name: 'Español', flag: '🇪🇸' },
     { code: 'es-MX', name: 'Español (México)', flag: '🇲🇽' },
