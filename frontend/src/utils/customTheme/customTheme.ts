@@ -112,49 +112,6 @@ const customTheme = createTheme({
     divider: colors.outline,
   },
   components: {
-    // Button overrides
-    MuiButton: {
-      styleOverrides: {
-        containedPrimary: {
-          backgroundColor: colors.primary,
-          color: colors.onPrimary,
-          boxShadow: shadows.level1,
-          '&:hover': {
-            backgroundColor: colors.primaryContainer,
-            boxShadow: shadows.level2,
-          },
-          '&:active': {
-            backgroundColor: colors.primary,
-            boxShadow: shadows.level3,
-          },
-          '&:disabled': {
-            backgroundColor: colors.surfaceVariant,
-            color: rgba(colors.onSurface, 0.26),
-          },
-        },
-        containedSecondary: {
-          backgroundColor: colors.secondary,
-          color: colors.onSecondary,
-          '&:hover': {
-            backgroundColor: colors.secondaryContainer,
-          },
-        },
-        outlinedPrimary: {
-          color: colors.primary,
-          borderColor: colors.outline,
-          '&:hover': {
-            backgroundColor: rgba(colors.primary, 0.04),
-            borderColor: colors.primary,
-          },
-        },
-        textPrimary: {
-          color: colors.primary,
-          '&:hover': {
-            backgroundColor: rgba(colors.primary, 0.04),
-          },
-        },
-      },
-    },
     // AppBar overrides
     MuiAppBar: {
       styleOverrides: {
