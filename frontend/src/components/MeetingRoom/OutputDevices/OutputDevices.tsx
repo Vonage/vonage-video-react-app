@@ -1,7 +1,7 @@
 import { Box, MenuItem, MenuList, Typography } from '@mui/material';
 import CheckIcon from '@mui/icons-material/Check';
 import VolumeUpIcon from '@mui/icons-material/VolumeUp';
-import { MouseEvent, ReactElement } from 'react';
+import { MouseEvent, ReactElement, useMemo } from 'react';
 import type { AudioOutputDevice } from '@vonage/client-sdk-video';
 import { useTranslation } from 'react-i18next';
 import useDevices from '../../../hooks/useDevices';
@@ -9,6 +9,7 @@ import DropdownSeparator from '../DropdownSeparator';
 import useAudioOutputContext from '../../../hooks/useAudioOutputContext';
 import { isGetActiveAudioOutputDeviceSupported } from '../../../utils/util';
 import useConfigContext from '../../../hooks/useConfigContext';
+import cleanAndDedupeDeviceLabels from '../../../utils/cleanAndDedupeDeviceLabels';
 
 export type OutputDevicesProps = {
   handleToggle: () => void;
@@ -40,13 +41,17 @@ const OutputDevices = ({
   const isAudioOutputSupported = isGetActiveAudioOutputDeviceSupported();
 
   const availableDevices = isAudioOutputSupported ? audioOutputDevices : defaultOutputDevices;
+  const availableDevicesCleaned = useMemo(
+    () => cleanAndDedupeDeviceLabels(availableDevices),
+    [availableDevices]
+  );
 
   const handleChangeAudioOutput = async (event: MouseEvent<HTMLLIElement>) => {
     const menuItem = event.target as HTMLLIElement;
     handleToggle();
 
     if (isAudioOutputSupported) {
-      const deviceId = availableDevices?.find((device: AudioOutputDevice) => {
+      const deviceId = availableDevicesCleaned?.find((device: AudioOutputDevice) => {
         return device.label === menuItem.textContent;
       })?.deviceId;
 
@@ -74,10 +79,10 @@ const OutputDevices = ({
           </Typography>
         </Box>
         <MenuList data-testid="output-devices">
-          {availableDevices?.map((device: AudioOutputDevice) => {
+          {availableDevicesCleaned?.map((device: AudioOutputDevice) => {
             // If audio output device selection is not supported we show the default device as selected
             const isSelected =
-              device.deviceId === currentAudioOutputDevice || availableDevices.length === 1;
+              device.deviceId === currentAudioOutputDevice || availableDevicesCleaned.length === 1;
             return (
               <MenuItem
                 key={device.deviceId}

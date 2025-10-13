@@ -8,6 +8,7 @@ import useDevices from '../../../hooks/useDevices';
 import usePublisherContext from '../../../hooks/usePublisherContext';
 import { setStorageItem, STORAGE_KEYS } from '../../../utils/storage';
 import useConfigContext from '../../../hooks/useConfigContext';
+import cleanAndDedupeDeviceLabels from '../../../utils/cleanAndDedupeDeviceLabels';
 
 export type VideoDevicesProps = {
   handleToggle: () => void;
@@ -46,9 +47,11 @@ const VideoDevices = ({
 
   useEffect(() => {
     if (devicesAvailable) {
-      const videoDevicesAvailable = devicesAvailable.map((availableDevice: Device) => ({
-        deviceId: availableDevice.deviceId,
-        label: availableDevice.label,
+      const cleanDevicesAvailable = cleanAndDedupeDeviceLabels(devicesAvailable);
+
+      const videoDevicesAvailable = cleanDevicesAvailable.map((availableDevice) => ({
+        deviceId: availableDevice.deviceId as string,
+        label: availableDevice.label || t('unknown.device'),
       }));
       setOptions(videoDevicesAvailable);
     }

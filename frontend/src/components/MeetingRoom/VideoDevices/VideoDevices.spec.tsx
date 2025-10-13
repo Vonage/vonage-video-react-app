@@ -86,7 +86,7 @@ describe('VideoDevices Component', () => {
     render(<VideoDevices handleToggle={mockHandleToggle} customLightBlueColor="#00f" />);
 
     expect(screen.getByText('Camera')).toBeInTheDocument();
-    expect(screen.getByText('FaceTime HD Camera (2C0E:82E3)')).toBeInTheDocument();
+    expect(screen.getByText('FaceTime HD Camera')).toBeInTheDocument();
     expect(screen.getByText('External Web Camera')).toBeInTheDocument();
   });
 

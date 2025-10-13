@@ -2,12 +2,13 @@ import { Box, MenuItem, MenuList, Typography } from '@mui/material';
 import CheckIcon from '@mui/icons-material/Check';
 import { Device } from '@vonage/client-sdk-video';
 import MicNoneIcon from '@mui/icons-material/MicNone';
-import { MouseEvent as ReactMouseEvent, ReactElement } from 'react';
+import { MouseEvent as ReactMouseEvent, ReactElement, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import useDevices from '../../../hooks/useDevices';
 import usePublisherContext from '../../../hooks/usePublisherContext';
 import { setStorageItem, STORAGE_KEYS } from '../../../utils/storage';
 import useConfigContext from '../../../hooks/useConfigContext';
+import cleanAndDedupeDeviceLabels from '../../../utils/cleanAndDedupeDeviceLabels';
 
 export type InputDevicesProps = {
   handleToggle: () => void;
@@ -35,8 +36,13 @@ const InputDevices = ({
   } = useDevices();
   const { allowDeviceSelection } = meetingRoomSettings;
 
-  const options = audioInputDevices.map((availableDevice: Device) => {
-    return availableDevice.label;
+  const audioInputDevicesCleaned = useMemo(
+    () => cleanAndDedupeDeviceLabels(audioInputDevices),
+    [audioInputDevices]
+  );
+
+  const options = audioInputDevicesCleaned.map((availableDevice) => {
+    return availableDevice.label || t('unknown.device');
   });
 
   const handleChangeAudioSource = (event: ReactMouseEvent<HTMLLIElement>) => {
@@ -50,6 +56,7 @@ const InputDevices = ({
       setStorageItem(STORAGE_KEYS.AUDIO_SOURCE, audioDeviceId);
     }
   };
+
   return (
     allowDeviceSelection && (
       <>
