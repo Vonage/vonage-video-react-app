@@ -1,17 +1,8 @@
-:root {
-  --primary-font-family: 'Comic Sans MS', 'Marker Felt', 'Trebuchet MS', fantasy, cursive;
-}
-
 #root {
   margin: 0 auto;
   text-align: center;
   height: 100dvh;
   width: 100%;
-  font-family: var(--primary-font-family);
-}
-
-.MuiTooltip-tooltip, .MuiChip-root, .MuiButtonBase-root, .MuiInputBase-input, .MuiTypography-root {
-    font-family: var(--primary-font-family) !important;
 }
 
 /*
