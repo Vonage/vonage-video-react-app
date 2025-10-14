@@ -1,6 +1,19 @@
+/* eslint-disable import/first */
+import { describe, it, expect, vi, beforeEach } from 'vitest';
+
+vi.mock('../../env', async () => {
+  const actual = await vi.importActual<typeof import('../../env')>('../../env');
+  const { Env } = actual;
+
+  return {
+    ...actual,
+    default: new Env({}),
+  };
+});
+
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import LanguageSelector from './LanguageSelector';
+import env from '../../env';
 
 // Mock VividIcon component
 vi.mock('../VividIcon/VividIcon', () => ({
@@ -44,21 +57,15 @@ vi.mock('react-i18next', () => ({
   }),
 }));
 
-const originalEnv = import.meta.env;
-
 describe('LanguageSelector', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     mockI18n.language = 'en';
   });
 
-  afterEach(() => {
-    Object.assign(import.meta.env, originalEnv);
-  });
-
   describe('Rendering', () => {
     it('renders with default props', () => {
-      import.meta.env.VITE_I18N_SUPPORTED_LANGUAGES = 'en|es|it';
+      env.setSupportedLanguages('en|es|it');
 
       render(<LanguageSelector />);
 
@@ -68,7 +75,7 @@ describe('LanguageSelector', () => {
     });
 
     it('renders without flags when showFlag is false', () => {
-      import.meta.env.VITE_I18N_SUPPORTED_LANGUAGES = 'en|es';
+      env.setSupportedLanguages('en|es');
 
       render(<LanguageSelector showFlag={false} />);
 
@@ -77,7 +84,7 @@ describe('LanguageSelector', () => {
     });
 
     it('applies custom className', () => {
-      import.meta.env.VITE_I18N_SUPPORTED_LANGUAGES = 'en';
+      env.setSupportedLanguages('en');
 
       render(<LanguageSelector className="bg-red-500" />);
 
@@ -86,7 +93,7 @@ describe('LanguageSelector', () => {
     });
 
     it('renders VividIcon with correct size in main display', () => {
-      import.meta.env.VITE_I18N_SUPPORTED_LANGUAGES = 'en';
+      env.setSupportedLanguages('en');
 
       render(<LanguageSelector />);
 
@@ -97,7 +104,7 @@ describe('LanguageSelector', () => {
 
   describe('Supported Languages', () => {
     it('shows only supported languages from environment variable', async () => {
-      import.meta.env.VITE_I18N_SUPPORTED_LANGUAGES = 'en|es';
+      env.setSupportedLanguages('en|es');
 
       render(<LanguageSelector />);
 
@@ -113,7 +120,7 @@ describe('LanguageSelector', () => {
     });
 
     it('shows all languages when all are supported', async () => {
-      import.meta.env.VITE_I18N_SUPPORTED_LANGUAGES = 'en|es|es-MX|it|en-US';
+      env.setSupportedLanguages('en|es|es-MX|it|en-US');
 
       render(<LanguageSelector />);
 
@@ -130,7 +137,7 @@ describe('LanguageSelector', () => {
     });
 
     it('falls back to en when no supported languages env var', async () => {
-      import.meta.env.VITE_I18N_SUPPORTED_LANGUAGES = '';
+      env.setSupportedLanguages('');
 
       render(<LanguageSelector />);
 
@@ -146,7 +153,7 @@ describe('LanguageSelector', () => {
 
   describe('Language Selection', () => {
     it('changes language when option is selected', async () => {
-      import.meta.env.VITE_I18N_SUPPORTED_LANGUAGES = 'en|es|it';
+      env.setSupportedLanguages('en|es|it');
 
       render(<LanguageSelector />);
 
@@ -163,7 +170,7 @@ describe('LanguageSelector', () => {
     });
 
     it('changes language to es-MX when selected', async () => {
-      import.meta.env.VITE_I18N_SUPPORTED_LANGUAGES = 'en|es-MX';
+      env.setSupportedLanguages('en|es-MX');
 
       render(<LanguageSelector />);
 
@@ -180,7 +187,7 @@ describe('LanguageSelector', () => {
     });
 
     it('changes language to en-US when selected', async () => {
-      import.meta.env.VITE_I18N_SUPPORTED_LANGUAGES = 'en|en-US';
+      env.setSupportedLanguages('en|en-US');
 
       render(<LanguageSelector />);
 
@@ -199,7 +206,7 @@ describe('LanguageSelector', () => {
 
   describe('Current Language Display', () => {
     it('displays current language correctly with flag icon', () => {
-      import.meta.env.VITE_I18N_SUPPORTED_LANGUAGES = 'en|es|it';
+      env.setSupportedLanguages('en|es|it');
       mockI18n.language = 'es';
 
       render(<LanguageSelector />);
@@ -209,7 +216,7 @@ describe('LanguageSelector', () => {
     });
 
     it('displays Italian language correctly', () => {
-      import.meta.env.VITE_I18N_SUPPORTED_LANGUAGES = 'en|es|it';
+      env.setSupportedLanguages('en|es|it');
       mockI18n.language = 'it';
 
       render(<LanguageSelector />);
@@ -219,7 +226,7 @@ describe('LanguageSelector', () => {
     });
 
     it('displays Mexican Spanish correctly', () => {
-      import.meta.env.VITE_I18N_SUPPORTED_LANGUAGES = 'en|es-MX';
+      env.setSupportedLanguages('en|es-MX');
       mockI18n.language = 'es-MX';
 
       render(<LanguageSelector />);
@@ -229,7 +236,7 @@ describe('LanguageSelector', () => {
     });
 
     it('displays US English correctly', () => {
-      import.meta.env.VITE_I18N_SUPPORTED_LANGUAGES = 'en|en-US';
+      env.setSupportedLanguages('en|en-US');
       mockI18n.language = 'en-US';
 
       render(<LanguageSelector />);
@@ -239,7 +246,7 @@ describe('LanguageSelector', () => {
     });
 
     it('handles unsupported language gracefully', () => {
-      import.meta.env.VITE_I18N_SUPPORTED_LANGUAGES = 'en|es';
+      env.setSupportedLanguages('en|es');
       mockI18n.language = 'fr';
 
       render(<LanguageSelector />);
@@ -250,7 +257,7 @@ describe('LanguageSelector', () => {
 
   describe('Fallback Language Handling', () => {
     it('uses en as fallback when current language is empty', () => {
-      import.meta.env.VITE_I18N_SUPPORTED_LANGUAGES = 'en|es';
+      env.setSupportedLanguages('en|es');
       mockI18n.language = '';
 
       render(<LanguageSelector />);
@@ -260,7 +267,7 @@ describe('LanguageSelector', () => {
     });
 
     it('uses en as fallback when current language is undefined', () => {
-      import.meta.env.VITE_I18N_SUPPORTED_LANGUAGES = 'en|es';
+      env.setSupportedLanguages('en|es');
       mockI18n.language = undefined;
 
       render(<LanguageSelector />);
@@ -270,7 +277,7 @@ describe('LanguageSelector', () => {
     });
 
     it('uses en as fallback when current language is null', () => {
-      import.meta.env.VITE_I18N_SUPPORTED_LANGUAGES = 'en|es';
+      env.setSupportedLanguages('en|es');
       mockI18n.language = null;
 
       render(<LanguageSelector />);
@@ -282,7 +289,7 @@ describe('LanguageSelector', () => {
 
   describe('Dropdown Behavior', () => {
     it('shows language options when opened', async () => {
-      import.meta.env.VITE_I18N_SUPPORTED_LANGUAGES = 'en|es|it';
+      env.setSupportedLanguages('en|es|it');
 
       render(<LanguageSelector />);
 
@@ -299,7 +306,7 @@ describe('LanguageSelector', () => {
     });
 
     it('displays language names and flag icons in options', async () => {
-      import.meta.env.VITE_I18N_SUPPORTED_LANGUAGES = 'en|es';
+      env.setSupportedLanguages('en|es');
 
       render(<LanguageSelector />);
 
@@ -327,7 +334,7 @@ describe('LanguageSelector', () => {
     });
 
     it('hides flags in options when showFlag is false', async () => {
-      import.meta.env.VITE_I18N_SUPPORTED_LANGUAGES = 'en|es';
+      env.setSupportedLanguages('en|es');
 
       render(<LanguageSelector showFlag={false} />);
 
@@ -343,7 +350,7 @@ describe('LanguageSelector', () => {
     });
 
     it('renders VividIcon with correct size in dropdown options', async () => {
-      import.meta.env.VITE_I18N_SUPPORTED_LANGUAGES = 'en|es';
+      env.setSupportedLanguages('en|es');
 
       render(<LanguageSelector />);
 
@@ -362,7 +369,7 @@ describe('LanguageSelector', () => {
 
   describe('VividIcon Integration', () => {
     it('uses different sizes for display vs dropdown', async () => {
-      import.meta.env.VITE_I18N_SUPPORTED_LANGUAGES = 'en';
+      env.setSupportedLanguages('en');
 
       render(<LanguageSelector />);
 
@@ -384,7 +391,7 @@ describe('LanguageSelector', () => {
 
   describe('Accessibility', () => {
     it('has proper test ids for testing', async () => {
-      import.meta.env.VITE_I18N_SUPPORTED_LANGUAGES = 'en|es';
+      env.setSupportedLanguages('en|es');
 
       render(<LanguageSelector />);
 
@@ -400,7 +407,7 @@ describe('LanguageSelector', () => {
     });
 
     it('maintains MUI Select accessibility features', () => {
-      import.meta.env.VITE_I18N_SUPPORTED_LANGUAGES = 'en';
+      env.setSupportedLanguages('en');
 
       render(<LanguageSelector />);
 
@@ -410,7 +417,7 @@ describe('LanguageSelector', () => {
     });
 
     it('VividIcon components have proper test ids', () => {
-      import.meta.env.VITE_I18N_SUPPORTED_LANGUAGES = 'en';
+      env.setSupportedLanguages('en');
 
       render(<LanguageSelector />);
 

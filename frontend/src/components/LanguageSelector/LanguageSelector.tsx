@@ -3,9 +3,10 @@ import { Select, MenuItem, FormControl, SelectChangeEvent, Box } from '@mui/mate
 import { useTranslation } from 'react-i18next';
 import useIsSmallViewport from '../../hooks/useIsSmallViewport';
 import VividIcon from '../VividIcon/VividIcon';
+import env, { type Lang } from '../../env';
 
 type LanguageOption = {
-  code: string;
+  code: Lang;
   name: string;
   flag: string;
 };
@@ -14,6 +15,14 @@ type LanguageSelectorProps = {
   showFlag?: boolean;
   className?: string;
 };
+
+const languageOptions: LanguageOption[] = [
+  { code: 'en', name: 'English', flag: 'flag-united-kingdom' },
+  { code: 'en-US', name: 'English (US)', flag: 'flag-united-states' },
+  { code: 'it', name: 'Italiano', flag: 'flag-italy' },
+  { code: 'es', name: 'Español', flag: 'flag-spain' },
+  { code: 'es-MX', name: 'Español (México)', flag: 'flag-mexico' },
+];
 
 /**
  * LanguageSelector Component
@@ -28,16 +37,9 @@ const LanguageSelector = ({ showFlag = true, className }: LanguageSelectorProps)
   const { i18n } = useTranslation();
   const isSmallViewport = useIsSmallViewport();
 
-  const envLangs = import.meta.env.VITE_I18N_SUPPORTED_LANGUAGES;
-  const supportedLanguages = envLangs && envLangs.trim() !== '' ? envLangs.split('|') : ['en'];
-
-  const languageOptions: LanguageOption[] = [
-    { code: 'en', name: 'English', flag: 'flag-united-kingdom' },
-    { code: 'en-US', name: 'English (US)', flag: 'flag-united-states' },
-    { code: 'it', name: 'Italiano', flag: 'flag-italy' },
-    { code: 'es', name: 'Español', flag: 'flag-spain' },
-    { code: 'es-MX', name: 'Español (México)', flag: 'flag-mexico' },
-  ].filter((option) => supportedLanguages.includes(option.code));
+  const supportedLanguages = languageOptions.filter((option) =>
+    env.VITE_I18N_SUPPORTED_LANGUAGES.includes(option.code)
+  );
 
   const handleLanguageChange = (event: SelectChangeEvent<string>) => {
     const newLanguage = event.target.value;
@@ -58,7 +60,7 @@ const LanguageSelector = ({ showFlag = true, className }: LanguageSelectorProps)
           },
         }}
         renderValue={(value) => {
-          const selectedOption = languageOptions.find((option) => option.code === value);
+          const selectedOption = supportedLanguages.find((option) => option.code === value);
           if (!selectedOption) {
             return value;
           }
@@ -72,7 +74,7 @@ const LanguageSelector = ({ showFlag = true, className }: LanguageSelectorProps)
         }}
         data-testid="language-selector"
       >
-        {languageOptions.map((option) => (
+        {supportedLanguages.map((option) => (
           <MenuItem
             key={option.code}
             value={option.code}
