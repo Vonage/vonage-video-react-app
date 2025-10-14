@@ -22,6 +22,7 @@
   "include": [
     "./src",
     "./src/types",
+    "./index.d.ts",
     "src/pages",
     "src/helpers",
     "./.eslintrc.cjs",
