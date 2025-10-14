@@ -72,12 +72,6 @@ describe('customTheme', () => {
       expect(customTheme.palette.mode).toBe('light');
     });
 
-    it('should have button component overrides', () => {
-      const buttonOverrides = customTheme.components?.MuiButton?.styleOverrides;
-      expect(buttonOverrides).toBeDefined();
-      expect(buttonOverrides?.containedPrimary).toBeDefined();
-    });
-
     it('should have correct button primary styles', () => {
       const primaryButton = customTheme.components?.MuiButton?.styleOverrides?.containedPrimary;
 
@@ -104,7 +98,6 @@ describe('customTheme', () => {
 
     it('should have component overrides for major components', () => {
       const { components } = customTheme;
-      expect(components?.MuiButton).toBeDefined();
       expect(components?.MuiAppBar).toBeDefined();
       expect(components?.MuiPaper).toBeDefined();
       expect(components?.MuiTextField).toBeDefined();
