@@ -29,7 +29,7 @@ const getErrorMessage = (error: { name: string; message: string }, t: (key: stri
  * This component displays an error message for the network test.
  * @param {TestErrorProps} props - The props for the component.
  * @property {() => void} handleNewRoom - Method that handles the action when user click the 'create room' button.
- * @returns {ReactElement} The new room button component.
+ * @returns {ReactElement} The test error component.
  */
 const TestError = ({ error }: TestErrorProps): ReactElement => {
   const { t } = useTranslation();
