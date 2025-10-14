@@ -27,9 +27,8 @@ const ConnectivityResults = ({ results }: ConnectivityResultsProps): ReactElemen
       {results.failedTests && results.failedTests.length > 0 && (
         <div className="mt-2">
           <h4 className="font-semibold">{t('precallTest.issues')}:</h4>
-          {results.failedTests.map((test, index) => (
-            // eslint-disable-next-line react/no-array-index-key
-            <div key={`${test.type}-${index}`} className="ml-4 text-sm">
+          {results.failedTests.map((test) => (
+            <div key={test.type} className="ml-4 text-sm">
               <p>
                 {test.type}: {test.error.message}
               </p>
