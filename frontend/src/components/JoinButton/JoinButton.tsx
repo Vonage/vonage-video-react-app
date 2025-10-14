@@ -22,7 +22,8 @@ const JoinButton = ({ roomName, isDisabled }: JoinButtonProps): ReactElement => 
 
   const handleJoin = (event: MouseEvent) => {
     event.preventDefault();
-    navigate(`/waiting-room/${roomName}`);
+    // eslint-disable-next-line @cspell/spellchecker
+    navigate(`/precall/${roomName}`);
   };
 
   return (

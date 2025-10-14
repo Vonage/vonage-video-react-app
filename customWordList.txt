@@ -9,3 +9,4 @@ NOSONAR
 jiraiOSComponentId
 supportedLngs
 applinks
+precall

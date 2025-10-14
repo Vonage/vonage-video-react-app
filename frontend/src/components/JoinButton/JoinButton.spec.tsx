@@ -24,7 +24,7 @@ describe('JoinButtonComponent', () => {
 
     fireEvent.click(screen.getByRole('button'));
 
-    expect(mockNavigate).toHaveBeenCalledWith('/waiting-room/test-room');
+    expect(mockNavigate).toHaveBeenCalledWith('/precall/test-room');
   });
 
   it('should not navigate to the waiting room if the room name is empty', () => {

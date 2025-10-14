@@ -49,6 +49,6 @@ describe('RoomJoinContainer', () => {
     );
 
     screen.getByTestId('new-room-button').click();
-    expect(mockNavigate).toHaveBeenCalledWith('/waiting-room/mocked-room');
+    expect(mockNavigate).toHaveBeenCalledWith('/precall/mocked-room');
   });
 });
