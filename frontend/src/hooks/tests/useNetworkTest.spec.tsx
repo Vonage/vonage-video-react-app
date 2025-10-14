@@ -21,14 +21,6 @@ vi.mock('@vonage/video-client-network-test', () => {
   };
 });
 
-// Mock OT
-vi.mock('@vonage/client-sdk-video', () => ({
-  default: {
-    // Mock OT SDK
-  },
-}));
-
-// Mock fetchCredentials
 const mockCredentials = {
   data: {
     apiKey: 'test-api-key',
@@ -41,14 +33,10 @@ vi.mock('../../api/fetchCredentials', () => ({
   default: vi.fn(() => Promise.resolve(mockCredentials)),
 }));
 
-// Import mocked modules are already imported above
-
 describe('useNetworkTest', () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    // Reset fetchCredentials to default success mock
     (fetchCredentials as ReturnType<typeof vi.fn>).mockResolvedValue(mockCredentials);
-    // Reset NetworkTest constructor mock
     (NetworkTest as ReturnType<typeof vi.fn>).mockImplementation(() => mockNetworkTest);
   });
 
@@ -140,7 +128,6 @@ describe('useNetworkTest', () => {
         testPromise = result.current.testQuality('test-room');
       });
 
-      // Check loading state
       expect(result.current.state.isTestingQuality).toBe(true);
       expect(result.current.state.error).toBe(null);
       expect(result.current.state.qualityStats).toBe(null);
