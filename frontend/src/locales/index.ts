@@ -7,6 +7,9 @@ export default {
   en: {
     translation: EN,
   },
+  'en-US': {
+    translation: EN,
+  },
   es: {
     translation: ES,
   },
