@@ -1,18 +1,19 @@
 import { ReactElement } from 'react';
-import { Select, MenuItem, FormControl, SelectChangeEvent, Box, Typography } from '@mui/material';
+import { Select, MenuItem, FormControl, SelectChangeEvent, Box } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import useIsSmallViewport from '../../hooks/useIsSmallViewport';
+import VividIcon from '../VividIcon/VividIcon';
 
-interface LanguageOption {
+type LanguageOption = {
   code: string;
   name: string;
   flag: string;
-}
+};
 
-interface LanguageSelectorProps {
+type LanguageSelectorProps = {
   showFlag?: boolean;
   className?: string;
-}
+};
 
 /**
  * LanguageSelector Component
@@ -31,11 +32,11 @@ const LanguageSelector = ({ showFlag = true, className }: LanguageSelectorProps)
   const supportedLanguages = envLangs && envLangs.trim() !== '' ? envLangs.split('|') : ['en'];
 
   const languageOptions: LanguageOption[] = [
-    { code: 'en', name: 'English', flag: '🇬🇧' },
-    { code: 'en-US', name: 'English (US)', flag: '🇺🇸' },
-    { code: 'it', name: 'Italiano', flag: '🇮🇹' },
-    { code: 'es', name: 'Español', flag: '🇪🇸' },
-    { code: 'es-MX', name: 'Español (México)', flag: '🇲🇽' },
+    { code: 'en', name: 'English', flag: 'flag-united-kingdom' },
+    { code: 'en-US', name: 'English (US)', flag: 'flag-united-states' },
+    { code: 'it', name: 'Italiano', flag: 'flag-italy' },
+    { code: 'es', name: 'Español', flag: 'flag-spain' },
+    { code: 'es-MX', name: 'Español (México)', flag: 'flag-mexico' },
   ].filter((option) => supportedLanguages.includes(option.code));
 
   const handleLanguageChange = (event: SelectChangeEvent<string>) => {
@@ -64,7 +65,7 @@ const LanguageSelector = ({ showFlag = true, className }: LanguageSelectorProps)
 
           return (
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-              {showFlag && <Typography fontSize={36}>{selectedOption.flag}</Typography>}
+              {showFlag && <VividIcon name={selectedOption.flag} customSize={-3} />}
               {!isSmallViewport && <span>{selectedOption.name}</span>}
             </Box>
           );
@@ -78,7 +79,7 @@ const LanguageSelector = ({ showFlag = true, className }: LanguageSelectorProps)
             data-testid={`language-option-${option.code}`}
           >
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-              {showFlag && <Typography fontSize={20}>{option.flag}</Typography>}
+              {showFlag && <VividIcon name={option.flag} customSize={-5} />}
               <span>{option.name}</span>
             </Box>
           </MenuItem>
