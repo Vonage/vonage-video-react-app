@@ -1,6 +1,15 @@
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import LanguageSelector from './index';
+import LanguageSelector from './LanguageSelector';
+
+// Mock VividIcon component
+vi.mock('../VividIcon/VividIcon', () => ({
+  default: ({ name, customSize }: { name: string; customSize: number }) => (
+    <div data-testid={`vivid-icon-${name}`} data-size={customSize}>
+      {name}
+    </div>
+  ),
+}));
 
 // Mock react-i18next
 const mockChangeLanguage = vi.fn();
@@ -55,7 +64,7 @@ describe('LanguageSelector', () => {
 
       expect(screen.getByTestId('language-selector')).toBeInTheDocument();
       expect(screen.getByText('English')).toBeInTheDocument();
-      expect(screen.getByText('🇬🇧')).toBeInTheDocument();
+      expect(screen.getByTestId('vivid-icon-flag-united-kingdom')).toBeInTheDocument();
     });
 
     it('renders without flags when showFlag is false', () => {
@@ -64,7 +73,7 @@ describe('LanguageSelector', () => {
       render(<LanguageSelector showFlag={false} />);
 
       expect(screen.getByText('English')).toBeInTheDocument();
-      expect(screen.queryByText('🇬🇧')).not.toBeInTheDocument();
+      expect(screen.queryByTestId('vivid-icon-flag-united-kingdom')).not.toBeInTheDocument();
     });
 
     it('applies custom className', () => {
@@ -74,6 +83,15 @@ describe('LanguageSelector', () => {
 
       const formControl = screen.getByTestId('language-selector').closest('.MuiFormControl-root');
       expect(formControl).toHaveClass('bg-red-500');
+    });
+
+    it('renders VividIcon with correct size in main display', () => {
+      import.meta.env.VITE_I18N_SUPPORTED_LANGUAGES = 'en';
+
+      render(<LanguageSelector />);
+
+      const icon = screen.getByTestId('vivid-icon-flag-united-kingdom');
+      expect(icon).toHaveAttribute('data-size', '-3');
     });
   });
 
@@ -95,7 +113,7 @@ describe('LanguageSelector', () => {
     });
 
     it('shows all languages when all are supported', async () => {
-      import.meta.env.VITE_I18N_SUPPORTED_LANGUAGES = 'en|es|es-MX|it';
+      import.meta.env.VITE_I18N_SUPPORTED_LANGUAGES = 'en|es|es-MX|it|en-US';
 
       render(<LanguageSelector />);
 
@@ -107,6 +125,7 @@ describe('LanguageSelector', () => {
         expect(screen.getByTestId('language-option-es')).toBeInTheDocument();
         expect(screen.getByTestId('language-option-es-MX')).toBeInTheDocument();
         expect(screen.getByTestId('language-option-it')).toBeInTheDocument();
+        expect(screen.getByTestId('language-option-en-US')).toBeInTheDocument();
       });
     });
 
@@ -159,27 +178,64 @@ describe('LanguageSelector', () => {
 
       expect(mockChangeLanguage).toHaveBeenCalledWith('es-MX');
     });
+
+    it('changes language to en-US when selected', async () => {
+      import.meta.env.VITE_I18N_SUPPORTED_LANGUAGES = 'en|en-US';
+
+      render(<LanguageSelector />);
+
+      const selectButton = screen.getByRole('combobox');
+      fireEvent.mouseDown(selectButton);
+
+      await waitFor(() => {
+        expect(screen.getByTestId('language-option-en-US')).toBeInTheDocument();
+      });
+
+      fireEvent.click(screen.getByTestId('language-option-en-US'));
+
+      expect(mockChangeLanguage).toHaveBeenCalledWith('en-US');
+    });
   });
 
   describe('Current Language Display', () => {
-    it('displays current language correctly', () => {
+    it('displays current language correctly with flag icon', () => {
       import.meta.env.VITE_I18N_SUPPORTED_LANGUAGES = 'en|es|it';
       mockI18n.language = 'es';
-
-      // Mock Spanish translations
-      mockT.mockImplementation((key: string) => {
-        const spanishTranslations: Record<string, string> = {
-          'languages.english': 'Inglés',
-          'languages.spanish': 'Español',
-          'languages.italian': 'Italiano',
-        };
-        return spanishTranslations[key] || key;
-      });
 
       render(<LanguageSelector />);
 
       expect(screen.getByText('Español')).toBeInTheDocument();
-      expect(screen.getByText('🇪🇸')).toBeInTheDocument();
+      expect(screen.getByTestId('vivid-icon-flag-spain')).toBeInTheDocument();
+    });
+
+    it('displays Italian language correctly', () => {
+      import.meta.env.VITE_I18N_SUPPORTED_LANGUAGES = 'en|es|it';
+      mockI18n.language = 'it';
+
+      render(<LanguageSelector />);
+
+      expect(screen.getByText('Italiano')).toBeInTheDocument();
+      expect(screen.getByTestId('vivid-icon-flag-italy')).toBeInTheDocument();
+    });
+
+    it('displays Mexican Spanish correctly', () => {
+      import.meta.env.VITE_I18N_SUPPORTED_LANGUAGES = 'en|es-MX';
+      mockI18n.language = 'es-MX';
+
+      render(<LanguageSelector />);
+
+      expect(screen.getByText('Español (México)')).toBeInTheDocument();
+      expect(screen.getByTestId('vivid-icon-flag-mexico')).toBeInTheDocument();
+    });
+
+    it('displays US English correctly', () => {
+      import.meta.env.VITE_I18N_SUPPORTED_LANGUAGES = 'en|en-US';
+      mockI18n.language = 'en-US';
+
+      render(<LanguageSelector />);
+
+      expect(screen.getByText('English (US)')).toBeInTheDocument();
+      expect(screen.getByTestId('vivid-icon-flag-united-states')).toBeInTheDocument();
     });
 
     it('handles unsupported language gracefully', () => {
@@ -200,6 +256,7 @@ describe('LanguageSelector', () => {
       render(<LanguageSelector />);
 
       expect(screen.getByText('English')).toBeInTheDocument();
+      expect(screen.getByTestId('vivid-icon-flag-united-kingdom')).toBeInTheDocument();
     });
 
     it('uses en as fallback when current language is undefined', () => {
@@ -209,6 +266,7 @@ describe('LanguageSelector', () => {
       render(<LanguageSelector />);
 
       expect(screen.getByText('English')).toBeInTheDocument();
+      expect(screen.getByTestId('vivid-icon-flag-united-kingdom')).toBeInTheDocument();
     });
 
     it('uses en as fallback when current language is null', () => {
@@ -218,6 +276,7 @@ describe('LanguageSelector', () => {
       render(<LanguageSelector />);
 
       expect(screen.getByText('English')).toBeInTheDocument();
+      expect(screen.getByTestId('vivid-icon-flag-united-kingdom')).toBeInTheDocument();
     });
   });
 
@@ -239,7 +298,7 @@ describe('LanguageSelector', () => {
       });
     });
 
-    it('displays language names and flags in options', async () => {
+    it('displays language names and flag icons in options', async () => {
       import.meta.env.VITE_I18N_SUPPORTED_LANGUAGES = 'en|es';
 
       render(<LanguageSelector />);
@@ -250,11 +309,20 @@ describe('LanguageSelector', () => {
       await waitFor(() => {
         const englishOption = screen.getByTestId('language-option-en');
         expect(englishOption).toHaveTextContent('English');
-        expect(englishOption).toHaveTextContent('🇬🇧');
 
         const spanishOption = screen.getByTestId('language-option-es');
         expect(spanishOption).toHaveTextContent('Español');
-        expect(spanishOption).toHaveTextContent('🇪🇸');
+
+        // Check for flag icons in dropdown (they should have size -5)
+        const englishIcon = screen
+          .getAllByTestId('vivid-icon-flag-united-kingdom')
+          .find((icon) => icon.getAttribute('data-size') === '-5');
+        const spanishIcon = screen
+          .getAllByTestId('vivid-icon-flag-spain')
+          .find((icon) => icon.getAttribute('data-size') === '-5');
+
+        expect(englishIcon).toBeInTheDocument();
+        expect(spanishIcon).toBeInTheDocument();
       });
     });
 
@@ -269,7 +337,47 @@ describe('LanguageSelector', () => {
       await waitFor(() => {
         const englishOption = screen.getByTestId('language-option-en');
         expect(englishOption).toHaveTextContent('English');
-        expect(englishOption).not.toHaveTextContent('🇬🇧');
+        expect(screen.queryByTestId('vivid-icon-flag-united-kingdom')).not.toBeInTheDocument();
+        expect(screen.queryByTestId('vivid-icon-flag-spain')).not.toBeInTheDocument();
+      });
+    });
+
+    it('renders VividIcon with correct size in dropdown options', async () => {
+      import.meta.env.VITE_I18N_SUPPORTED_LANGUAGES = 'en|es';
+
+      render(<LanguageSelector />);
+
+      const selectButton = screen.getByRole('combobox');
+      fireEvent.mouseDown(selectButton);
+
+      await waitFor(() => {
+        // Check that dropdown icons have size -5
+        const dropdownIcon = screen
+          .getAllByTestId('vivid-icon-flag-united-kingdom')
+          .find((icon) => icon.getAttribute('data-size') === '-5');
+        expect(dropdownIcon).toBeInTheDocument();
+      });
+    });
+  });
+
+  describe('VividIcon Integration', () => {
+    it('uses different sizes for display vs dropdown', async () => {
+      import.meta.env.VITE_I18N_SUPPORTED_LANGUAGES = 'en';
+
+      render(<LanguageSelector />);
+
+      // Main display should have size -3
+      const displayIcon = screen.getByTestId('vivid-icon-flag-united-kingdom');
+      expect(displayIcon).toHaveAttribute('data-size', '-3');
+
+      const selectButton = screen.getByRole('combobox');
+      fireEvent.mouseDown(selectButton);
+
+      await waitFor(() => {
+        // Dropdown should have size -5 (smaller)
+        const dropdownIcons = screen.getAllByTestId('vivid-icon-flag-united-kingdom');
+        const dropdownIcon = dropdownIcons.find((icon) => icon.getAttribute('data-size') === '-5');
+        expect(dropdownIcon).toBeInTheDocument();
       });
     });
   });
@@ -299,6 +407,14 @@ describe('LanguageSelector', () => {
       const selectButton = screen.getByRole('combobox');
       expect(selectButton).toBeInTheDocument();
       expect(selectButton).toHaveAttribute('aria-haspopup', 'listbox');
+    });
+
+    it('VividIcon components have proper test ids', () => {
+      import.meta.env.VITE_I18N_SUPPORTED_LANGUAGES = 'en';
+
+      render(<LanguageSelector />);
+
+      expect(screen.getByTestId('vivid-icon-flag-united-kingdom')).toBeInTheDocument();
     });
   });
 });
