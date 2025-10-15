@@ -90,7 +90,7 @@ test('PreCall test page should display correctly and allow network testing', asy
   await expect(page).toHaveURL(`${baseURL}precall/test-room`);
 });
 
-test.only('User should be able to navigate to the next page using enter key', async ({ page }) => {
+test('User should be able to navigate to the next page using enter key', async ({ page }) => {
   await page.getByPlaceholder('Enter room name').fill('some-room');
 
   await page.keyboard.press('Enter');
