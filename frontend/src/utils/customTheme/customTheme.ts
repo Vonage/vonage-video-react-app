@@ -54,7 +54,7 @@ const colors = {
 
 // Typography
 const fonts = {
-  family: ['Comic Sans MS', 'Marker Felt', 'Trebuchet MS', 'fantasy', 'cursive'].join(','),
+  family: ['system-ui', 'ui-sans-serif', 'Inter', 'Marker Felt', 'Trebuchet MS'].join(','),
 } as const;
 
 // Box shadows (Material Design elevation)
