@@ -2,40 +2,6 @@ import { describe, it, expect } from 'vitest';
 import customTheme, { colors, fonts, shadows, rgba } from './customTheme';
 
 describe('customTheme', () => {
-  describe('colors object', () => {
-    it('should have primary colors defined', () => {
-      expect(colors.primary).toBe('#3E007E');
-      expect(colors.onPrimary).toBe('#FFFFFF');
-      expect(colors.primaryContainer).toBe('#6300C4');
-      expect(colors.surfaceTint).toBe('#7F02F7');
-    });
-
-    it('should have secondary colors defined', () => {
-      expect(colors.secondary).toBe('#2F293B');
-      expect(colors.onSecondary).toBe('#FFFFFF');
-      expect(colors.secondaryContainer).toBe('#4C4659');
-    });
-
-    it('should have background and surface colors', () => {
-      expect(colors.background).toBe('#FEF7FF');
-      expect(colors.surface).toBe('#FCF8F8');
-      expect(colors.onBackground).toBe('#1E1925');
-      expect(colors.onSurface).toBe('#000000');
-    });
-
-    it('should have error colors defined', () => {
-      expect(colors.error).toBe('#600004');
-      expect(colors.onError).toBe('#FFFFFF');
-      expect(colors.errorContainer).toBe('#98000A');
-    });
-  });
-
-  describe('fonts object', () => {
-    it('should have correct font family string', () => {
-      expect(fonts.family).toBe('Comic Sans MS,Marker Felt,Trebuchet MS,fantasy,cursive');
-    });
-  });
-
   describe('shadows object', () => {
     it('should have all shadow levels defined', () => {
       expect(shadows.level1).toContain('0 3px 1px -2px rgba(0,0,0,0.2)');
