@@ -121,8 +121,8 @@ vi.mock('../../components/PreCall/TestControls', () => ({
       <button type="button" onClick={onClearResults} data-testid="clear-results">
         Clear Results
       </button>
-      <button type="button" onClick={onContinueToCall} data-testid="continue-to-call">
-        Continue to Call
+      <button type="button" onClick={onContinueToCall} data-testid="continue-to-waiting-room">
+        Continue to Waiting Room
       </button>
       <div data-testid="control-props">
         {JSON.stringify({
@@ -265,10 +265,10 @@ describe('PreCallTest', () => {
     expect(mockClearResults).toHaveBeenCalled();
   });
 
-  it('handles continue to call correctly', () => {
+  it('handles continue to waiting room correctly', () => {
     renderPreCallTest();
 
-    const continueButton = screen.getByTestId('continue-to-call');
+    const continueButton = screen.getByTestId('continue-to-waiting-room');
     fireEvent.click(continueButton);
 
     expect(mockNavigate).toHaveBeenCalledWith(`/waiting-room/${mockRoomName}`);
