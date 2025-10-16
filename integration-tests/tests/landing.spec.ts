@@ -63,11 +63,6 @@ test('User should be able to navigate to the next page using enter key', async (
 
   await expect(page).toHaveURL(`${baseURL}waiting-room/some-room`);
 
-  // Click "Skip Test & Join Waiting Room" button to skip the network tests and go to waiting room
-  await page.getByRole('button', { name: 'Skip Test & Join Waiting Room' }).click();
-
-  await expect(page).toHaveURL(`${baseURL}waiting-room/some-room`);
-
   // This is needed for the DeviceAccessAlert to hide
   await page.waitForSelector('[role="dialog"]', { state: 'hidden' });
 
