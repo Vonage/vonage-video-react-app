@@ -61,7 +61,7 @@ test('User should be able to navigate to the next page using enter key', async (
 
   await page.keyboard.press('Enter');
 
-  await expect(page).toHaveURL(`${baseURL}precall/some-room`);
+  await expect(page).toHaveURL(`${baseURL}waiting-room/some-room`);
 
   // Click "Skip Test & Join Waiting Room" button to skip the network tests and go to waiting room
   await page.getByRole('button', { name: 'Skip Test & Join Waiting Room' }).click();
