@@ -1,5 +1,6 @@
 import { ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
+import { Alert, AlertTitle } from '@mui/material';
 import { ErrorNames } from '../../../hooks/useNetworkTest';
 
 export type TestErrorProps = {
@@ -35,10 +36,10 @@ const TestError = ({ error }: TestErrorProps): ReactElement => {
   const { t } = useTranslation();
 
   return (
-    <div className="mb-6 rounded-lg border border-red-200 bg-red-50 p-4">
-      <h3 className="font-medium text-red-800">{t('precallTest.testError')}</h3>
-      <p className="text-red-700">{getErrorMessage(error, t)}</p>
-    </div>
+    <Alert severity="error" className="mb-6">
+      <AlertTitle>{t('precallTest.testError')}</AlertTitle>
+      {getErrorMessage(error, t)}
+    </Alert>
   );
 };
 

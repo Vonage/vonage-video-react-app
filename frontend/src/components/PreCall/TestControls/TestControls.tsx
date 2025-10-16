@@ -1,5 +1,5 @@
 import { ReactElement } from 'react';
-import { Button } from '@mui/material';
+import { Button, Stack } from '@mui/material';
 import { Stop, Clear, ArrowForward } from '@mui/icons-material';
 import { useTranslation } from 'react-i18next';
 
@@ -41,7 +41,7 @@ const TestControls = ({
   const { t } = useTranslation();
 
   return (
-    <div className="flex flex-col items-center space-y-4">
+    <Stack spacing={2} alignItems="center">
       {isTestingQuality && !hasResults && (
         <Button
           variant="contained"
@@ -55,7 +55,12 @@ const TestControls = ({
       )}
 
       {hasResults && (
-        <div className="flex flex-col items-center space-y-4 sm:flex-row sm:justify-center sm:space-x-4 sm:space-y-0">
+        <Stack
+          spacing={2}
+          alignItems="center"
+          direction={{ xs: 'column', sm: 'row' }}
+          justifyContent="center"
+        >
           <Button
             variant="outlined"
             startIcon={<Clear />}
@@ -73,9 +78,9 @@ const TestControls = ({
           >
             {t('precallTest.continueToWaitingRoom')}
           </Button>
-        </div>
+        </Stack>
       )}
-    </div>
+    </Stack>
   );
 };
 
