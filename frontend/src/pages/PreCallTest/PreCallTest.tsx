@@ -1,5 +1,6 @@
 import { ReactElement, useState, useEffect, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
+import { Box, Container, Typography } from '@mui/material';
 import useNetworkTest from '../../hooks/useNetworkTest';
 import TestError from '../../components/PreCall/TestError';
 import QualityResults from '../../components/PreCall/QualityResults';
@@ -87,14 +88,39 @@ const PreCallTest = ({ onModalClose }: PreCallTestProps): ReactElement => {
   const isTestingInProgress = state.qualityStats && state.isTestingQuality;
 
   return (
-    <div className="flex size-full flex-col justify-between bg-white">
-      <div className="flex size-full flex-col items-center justify-center bg-white px-4 py-8">
-        <div className="w-full max-w-2xl text-center">
-          <h1 className="mb-4 text-3xl font-bold text-gray-900">{t('precallTest.title')}</h1>
-          <p className="mb-8 text-gray-600">
+    <Box
+      sx={{
+        display: 'flex',
+        height: '100%',
+        width: '100%',
+        flexDirection: 'column',
+        justifyContent: 'space-between',
+        backgroundColor: 'white',
+      }}
+    >
+      <Box
+        sx={{
+          display: 'flex',
+          height: '100%',
+          width: '100%',
+          flexDirection: 'column',
+          alignItems: 'center',
+          justifyContent: 'center',
+          backgroundColor: 'white',
+          px: 2,
+          py: 4,
+        }}
+      >
+        <Container maxWidth="md" sx={{ textAlign: 'center' }}>
+          <Typography variant="h3" component="h1" sx={{ mb: 2, fontWeight: 'bold' }}>
+            {t('precallTest.title')}
+          </Typography>
+          <Typography variant="body1" sx={{ mb: 4, color: 'text.secondary' }}>
             {t('precallTest.subtitle')}
-            <span className="ml-1 font-medium">{roomName || t('precallTest.loading')}</span>
-          </p>
+            <Typography component="span" sx={{ ml: 0.5, fontWeight: 'medium' }}>
+              {roomName || t('precallTest.loading')}
+            </Typography>
+          </Typography>
 
           {state.error && <TestError error={state.error} />}
 
@@ -111,13 +137,15 @@ const PreCallTest = ({ onModalClose }: PreCallTestProps): ReactElement => {
           />
 
           {!isTestingStarted && !state.error && (
-            <div className="mt-8">
-              <p className="text-sm text-gray-500">{t('precallTest.description')}</p>
-            </div>
+            <Box sx={{ mt: 4 }}>
+              <Typography variant="body2" color="text.secondary">
+                {t('precallTest.description')}
+              </Typography>
+            </Box>
           )}
-        </div>
-      </div>
-    </div>
+        </Container>
+      </Box>
+    </Box>
   );
 };
 
