@@ -4,7 +4,6 @@ import QualityResults from './QualityResults';
 import { QualityResults as QualityResultsType } from '../../../hooks/useNetworkTest';
 import enTranslations from '../../../locales/en.json';
 
-// Mock react-i18next
 vi.mock('react-i18next', () => ({
   useTranslation: () => ({
     t: (key: string) => {

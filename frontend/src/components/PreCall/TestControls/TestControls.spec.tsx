@@ -3,7 +3,6 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import TestControls, { TestControlsProps } from './TestControls';
 import enTranslations from '../../../locales/en.json';
 
-// Mock react-i18next
 vi.mock('react-i18next', () => ({
   useTranslation: () => ({
     t: (key: string) => {

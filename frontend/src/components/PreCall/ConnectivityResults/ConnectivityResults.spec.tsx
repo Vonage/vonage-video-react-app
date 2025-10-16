@@ -4,7 +4,6 @@ import ConnectivityResults from './ConnectivityResults';
 import { ConnectivityResults as ConnectivityResultsType } from '../../../hooks/useNetworkTest';
 import enTranslations from '../../../locales/en.json';
 
-// Mock react-i18next
 vi.mock('react-i18next', () => ({
   useTranslation: () => ({
     t: (key: string) => {
