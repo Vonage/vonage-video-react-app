@@ -1,4 +1,5 @@
 import { useState, useCallback, useRef } from 'react';
+import { useTranslation } from 'react-i18next';
 import NetworkTest, { ErrorNames } from '@vonage/video-client-network-test';
 import OT from '@vonage/client-sdk-video';
 import fetchCredentials from '../api/fetchCredentials';
@@ -93,6 +94,7 @@ export type NetworkTestHookType = {
  * @returns {NetworkTestHookType} Object containing test state and methods
  */
 const useNetworkTest = (): NetworkTestHookType => {
+  const { t } = useTranslation();
   const [state, setState] = useState<NetworkTestState>({
     isTestingQuality: false,
     connectivityResults: null,
@@ -178,8 +180,10 @@ const useNetworkTest = (): NetworkTestHookType => {
         return results;
       } catch (error) {
         const networkError: NetworkTestError = {
-          message: error instanceof Error ? error.message : 'Unknown quality test error',
-          name: (error as Error & { name?: string })?.name || 'QUALITY_TEST_ERROR',
+          message:
+            error instanceof Error ? error.message : t('precallTest.errors.unknownQualityTest'),
+          name:
+            (error as Error & { name?: string })?.name || t('precallTest.errors.qualityTestError'),
         };
 
         setState((prev) => ({
@@ -191,7 +195,7 @@ const useNetworkTest = (): NetworkTestHookType => {
         throw error;
       }
     },
-    []
+    [t]
   );
 
   return {

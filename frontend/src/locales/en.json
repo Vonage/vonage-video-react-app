@@ -128,6 +128,8 @@
   "precallTest.errors.noCamera": "No camera detected. Please connect a camera or continue with audio-only.",
   "precallTest.errors.noMicrophone": "No microphone detected. Please connect a microphone.",
   "precallTest.errors.unexpected": "An unexpected error occurred during testing.",
+  "precallTest.errors.unknownQualityTest": "Unknown quality test error",
+  "precallTest.errors.qualityTestError": "Quality test error",
   "precallTest.errors.unsupportedBrowser": "Your browser is not supported for video calling. Please use Chrome, Firefox, Safari, or Edge.",
   "precallTest.failed": "Failed",
   "precallTest.issues": "Issues",

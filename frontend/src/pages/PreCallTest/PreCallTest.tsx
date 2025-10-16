@@ -92,8 +92,8 @@ const PreCallTest = ({ onModalClose }: PreCallTestProps): ReactElement => {
         <div className="w-full max-w-2xl text-center">
           <h1 className="mb-4 text-3xl font-bold text-gray-900">{t('precallTest.title')}</h1>
           <p className="mb-8 text-gray-600">
-            {t('precallTest.subtitle')}{' '}
-            <span className="font-medium">{roomName || t('precallTest.loading')}</span>
+            {t('precallTest.subtitle')}
+            <span className="ml-1 font-medium">{roomName || t('precallTest.loading')}</span>
           </p>
 
           {state.error && <TestError error={state.error} />}
