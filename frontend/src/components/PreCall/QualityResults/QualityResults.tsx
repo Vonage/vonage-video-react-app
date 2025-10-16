@@ -1,5 +1,6 @@
 import { ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
+import { Typography, Box, Paper } from '@mui/material';
 import { QualityResults as QualityResultsType } from '../../../hooks/useNetworkTest';
 
 export type QualityResultsProps = {
@@ -18,42 +19,48 @@ const QualityResults = ({ results }: QualityResultsProps): ReactElement => {
   const { t } = useTranslation();
 
   return (
-    <div className="mb-6 rounded-lg border bg-white p-4 text-left">
-      <h3 className="mb-2 font-bold">{t('precallTest.qualityResults')}</h3>
+    <Paper className="mb-6 p-4 text-left">
+      <Typography variant="h6" className="mb-2 font-bold">
+        {t('precallTest.qualityResults')}
+      </Typography>
 
       {results.audio && (
-        <div className="mb-2">
-          <h4 className="font-semibold">{t('precallTest.audio')}:</h4>
-          <p>
+        <Box className="mb-2">
+          <Typography variant="subtitle1" className="font-semibold">
+            {t('precallTest.audio')}:
+          </Typography>
+          <Typography variant="body2">
             {t('precallTest.supported')}: {results.audio.supported ? '✅' : '❌'}
-          </p>
+          </Typography>
           {results.audio.mos && (
-            <p>
+            <Typography variant="body2">
               {t('precallTest.qualityScore')}: {results.audio.mos.toFixed(2)}
-            </p>
+            </Typography>
           )}
-        </div>
+        </Box>
       )}
 
       {results.video && (
-        <div>
-          <h4 className="font-semibold">{t('precallTest.video')}:</h4>
-          <p>
+        <Box>
+          <Typography variant="subtitle1" className="font-semibold">
+            {t('precallTest.video')}:
+          </Typography>
+          <Typography variant="body2">
             {t('precallTest.supported')}: {results.video.supported ? '✅' : '❌'}
-          </p>
+          </Typography>
           {results.video.mos && (
-            <p>
+            <Typography variant="body2">
               {t('precallTest.qualityScore')}: {results.video.mos.toFixed(2)}
-            </p>
+            </Typography>
           )}
           {results.video.recommendedResolution && (
-            <p>
+            <Typography variant="body2">
               {t('precallTest.recommended')}: {results.video.recommendedResolution}
-            </p>
+            </Typography>
           )}
-        </div>
+        </Box>
       )}
-    </div>
+    </Paper>
   );
 };
 
