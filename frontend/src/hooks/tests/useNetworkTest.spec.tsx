@@ -8,7 +8,6 @@ import useNetworkTest, {
 } from '../useNetworkTest';
 import fetchCredentials from '../../api/fetchCredentials';
 
-// Mock NetworkTest
 const mockNetworkTest = {
   testConnectivity: vi.fn(),
   testQuality: vi.fn(),

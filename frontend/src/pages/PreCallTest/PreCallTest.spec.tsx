@@ -4,7 +4,6 @@ import { MemoryRouter } from 'react-router-dom';
 import PreCallTest from './PreCallTest';
 import enTranslations from '../../locales/en.json';
 
-// Mock react-router-dom
 const mockNavigate = vi.fn();
 vi.mock('react-router-dom', async () => {
   const actual = await vi.importActual('react-router-dom');
@@ -29,7 +28,6 @@ vi.mock('react-i18next', () => ({
   }),
 }));
 
-// Mock useRoomName hook
 const mockRoomName = 'test-room';
 vi.mock('../../hooks/useRoomName', () => ({
   default: () => mockRoomName,
@@ -60,12 +58,10 @@ vi.mock('../../hooks/useNetworkTest', () => ({
   }),
 }));
 
-// Mock Banner component
 vi.mock('../../components/Banner', () => ({
   default: () => <div data-testid="banner">Banner</div>,
 }));
 
-// Mock PreCall components
 vi.mock('../../components/PreCall/TestError', () => ({
   default: ({ error }: { error: { name: string; message: string } }) => (
     <div data-testid="test-error">{error.message}</div>
