@@ -1,43 +1,41 @@
-import { ReactElement, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { ReactElement, useState, useEffect, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
-import Banner from '../../components/Banner';
 import useNetworkTest from '../../hooks/useNetworkTest';
-import useRoomName from '../../hooks/useRoomName';
 import TestError from '../../components/PreCall/TestError';
-import ConnectivityResults from '../../components/PreCall/ConnectivityResults';
 import QualityResults from '../../components/PreCall/QualityResults';
 import TestProgress from '../../components/PreCall/TestProgress';
 import TestControls from '../../components/PreCall/TestControls';
+import useRoomName from '../../hooks/useRoomName';
+
+export type PreCallTestProps = {
+  onModalClose: () => void;
+};
 
 /**
  * PreCallTest Component
  *
  * Provides network testing interface for Vonage Video API connectivity and quality testing.
- * @returns {ReactElement} - The pre-call test page.
+ * Always used in modal mode.
+ * @param {PreCallTestProps} props - The props for the component.
+ *  @property {() => void} onModalClose - Function to close the modal.
+ * @returns {ReactElement} - The pre-call test component.
  */
-const PreCallTest = (): ReactElement => {
-  const { t } = useTranslation();
+const PreCallTest = ({ onModalClose }: PreCallTestProps): ReactElement => {
   const roomName = useRoomName();
-  const navigate = useNavigate();
+  const { t } = useTranslation();
   const [isTestingStarted, setIsTestingStarted] = useState(false);
+  const [isStoppedByUser, setIsStoppedByUser] = useState(false);
 
-  const { state, testConnectivity, testQuality, stopTest, clearResults } = useNetworkTest();
+  const { state, testQuality, stopTest, clearResults } = useNetworkTest();
 
-  const handleStartConnectivityTest = async () => {
-    if (!roomName) {
-      return;
-    }
+  // Cleanup: stop test when component unmounts (modal closes)
+  useEffect(() => {
+    return () => {
+      stopTest();
+    };
+  }, [stopTest]);
 
-    try {
-      setIsTestingStarted(true);
-      await testConnectivity(roomName);
-    } catch (error) {
-      console.error('Connectivity test failed:', error);
-    }
-  };
-
-  const handleStartQualityTest = async () => {
+  const handleStartQualityTest = useCallback(async () => {
     if (!roomName) {
       return;
     }
@@ -47,30 +45,49 @@ const PreCallTest = (): ReactElement => {
     } catch (error) {
       console.error('Quality test failed:', error);
     }
-  };
+  }, [roomName, testQuality]);
 
   const handleStopTest = () => {
     stopTest();
     setIsTestingStarted(false);
+    setIsStoppedByUser(true);
+    onModalClose();
   };
 
   const handleClearResults = () => {
     clearResults();
     setIsTestingStarted(false);
+    setIsStoppedByUser(false);
   };
 
-  const handleContinueToWaitingRoom = () => {
-    navigate(`/waiting-room/${roomName}`);
-  };
+  const handleContinueToWaitingRoom = useCallback(() => {
+    onModalClose();
+  }, [onModalClose]);
 
-  const hasResults = Boolean(state.connectivityResults || state.qualityResults);
-  const isTestingInProgress =
-    state.qualityStats && (state.isTestingConnectivity || state.isTestingQuality);
+  useEffect(() => {
+    if (
+      roomName &&
+      !isTestingStarted &&
+      !state.isTestingQuality &&
+      !state.qualityResults &&
+      !isStoppedByUser
+    ) {
+      handleStartQualityTest();
+    }
+  }, [
+    roomName,
+    isTestingStarted,
+    state.isTestingQuality,
+    state.qualityResults,
+    isStoppedByUser,
+    handleStartQualityTest,
+  ]);
+
+  const hasResults = Boolean(state.qualityResults);
+  const isTestingInProgress = state.qualityStats && state.isTestingQuality;
 
   return (
     <div className="flex size-full flex-col justify-between bg-white">
-      <Banner />
-
       <div className="flex size-full flex-col items-center justify-center bg-white px-4 py-8">
         <div className="w-full max-w-2xl text-center">
           <h1 className="mb-4 text-3xl font-bold text-gray-900">{t('precallTest.title')}</h1>
@@ -81,20 +98,13 @@ const PreCallTest = (): ReactElement => {
 
           {state.error && <TestError error={state.error} />}
 
-          {state.connectivityResults && <ConnectivityResults results={state.connectivityResults} />}
-
           {state.qualityResults && <QualityResults results={state.qualityResults} />}
 
           {isTestingInProgress && <TestProgress />}
 
           <TestControls
-            roomName={roomName}
-            isTestingStarted={isTestingStarted}
-            isTestingConnectivity={state.isTestingConnectivity}
             isTestingQuality={state.isTestingQuality}
             hasResults={hasResults}
-            onStartConnectivityTest={handleStartConnectivityTest}
-            onStartQualityTest={handleStartQualityTest}
             onStopTest={handleStopTest}
             onClearResults={handleClearResults}
             onContinueToWaitingRoom={handleContinueToWaitingRoom}

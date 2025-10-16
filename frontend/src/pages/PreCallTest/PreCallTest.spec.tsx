@@ -1,19 +1,9 @@
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
-import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { MemoryRouter } from 'react-router-dom';
+import { render, screen, fireEvent } from '@testing-library/react';
+import { beforeEach, describe, expect, it, vi, Mock } from 'vitest';
 import PreCallTest from './PreCallTest';
 import enTranslations from '../../locales/en.json';
+import useRoomName from '../../hooks/useRoomName';
 
-const mockNavigate = vi.fn();
-vi.mock('react-router-dom', async () => {
-  const actual = await vi.importActual('react-router-dom');
-  return {
-    ...actual,
-    useNavigate: () => mockNavigate,
-  };
-});
-
-// Mock react-i18next
 vi.mock('react-i18next', () => ({
   useTranslation: () => ({
     t: (key: string) => {
@@ -29,17 +19,14 @@ vi.mock('react-i18next', () => ({
 }));
 
 const mockRoomName = 'test-room';
-vi.mock('../../hooks/useRoomName', () => ({
-  default: () => mockRoomName,
-}));
+vi.mock('../../hooks/useRoomName');
+const mockOnModalClose = vi.fn();
 
-// Mock useNetworkTest hook
 const mockNetworkTestState = {
   error: null,
   connectivityResults: null,
   qualityResults: null,
   qualityStats: null,
-  isTestingConnectivity: false,
   isTestingQuality: false,
 };
 
@@ -58,18 +45,10 @@ vi.mock('../../hooks/useNetworkTest', () => ({
   }),
 }));
 
-vi.mock('../../components/Banner', () => ({
-  default: () => <div data-testid="banner">Banner</div>,
-}));
-
 vi.mock('../../components/PreCall/TestError', () => ({
   default: ({ error }: { error: { name: string; message: string } }) => (
     <div data-testid="test-error">{error.message}</div>
   ),
-}));
-
-vi.mock('../../components/PreCall/ConnectivityResults', () => ({
-  default: () => <div data-testid="connectivity-results">Connectivity Results</div>,
 }));
 
 vi.mock('../../components/PreCall/QualityResults', () => ({
@@ -82,35 +61,19 @@ vi.mock('../../components/PreCall/TestProgress', () => ({
 
 vi.mock('../../components/PreCall/TestControls', () => ({
   default: ({
-    onStartConnectivityTest,
-    onStartQualityTest,
     onStopTest,
     onClearResults,
     onContinueToWaitingRoom,
-    roomName,
-    isTestingStarted,
-    isTestingConnectivity,
     isTestingQuality,
     hasResults,
   }: {
-    onStartConnectivityTest: () => void;
-    onStartQualityTest: () => void;
     onStopTest: () => void;
     onClearResults: () => void;
     onContinueToWaitingRoom: () => void;
-    roomName: string | null;
-    isTestingStarted: boolean;
-    isTestingConnectivity: boolean;
     isTestingQuality: boolean;
     hasResults: boolean;
   }) => (
     <div data-testid="test-controls">
-      <button type="button" onClick={onStartConnectivityTest} data-testid="start-connectivity">
-        Start Connectivity Test
-      </button>
-      <button type="button" onClick={onStartQualityTest} data-testid="start-quality">
-        Start Quality Test
-      </button>
       <button type="button" onClick={onStopTest} data-testid="stop-test">
         Stop Test
       </button>
@@ -126,9 +89,6 @@ vi.mock('../../components/PreCall/TestControls', () => ({
       </button>
       <div data-testid="control-props">
         {JSON.stringify({
-          roomName,
-          isTestingStarted,
-          isTestingConnectivity,
           isTestingQuality,
           hasResults,
         })}
@@ -138,23 +98,20 @@ vi.mock('../../components/PreCall/TestControls', () => ({
 }));
 
 const renderPreCallTest = () => {
-  return render(
-    <MemoryRouter>
-      <PreCallTest />
-    </MemoryRouter>
-  );
+  return render(<PreCallTest onModalClose={mockOnModalClose} />);
 };
 
 describe('PreCallTest', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    (useRoomName as Mock).mockReturnValue(mockRoomName);
+    mockOnModalClose.mockClear();
 
     Object.assign(mockNetworkTestState, {
       error: null,
       connectivityResults: null,
       qualityResults: null,
       qualityStats: null,
-      isTestingConnectivity: false,
       isTestingQuality: false,
     });
   });
@@ -162,7 +119,6 @@ describe('PreCallTest', () => {
   it('renders the page layout correctly', () => {
     renderPreCallTest();
 
-    expect(screen.getByTestId('banner')).toBeInTheDocument();
     expect(screen.getByText(enTranslations['precallTest.title'])).toBeInTheDocument();
     expect(screen.getByText(enTranslations['precallTest.subtitle'])).toBeInTheDocument();
     expect(screen.getByText(mockRoomName)).toBeInTheDocument();
@@ -192,15 +148,6 @@ describe('PreCallTest', () => {
     expect(screen.getByText('Test failed')).toBeInTheDocument();
   });
 
-  it('displays connectivity results when available', () => {
-    const mockConnectivityResults = { success: true };
-    Object.assign(mockNetworkTestState, { connectivityResults: mockConnectivityResults });
-
-    renderPreCallTest();
-
-    expect(screen.getByTestId('connectivity-results')).toBeInTheDocument();
-  });
-
   it('displays quality results when available', () => {
     const mockQualityResults = { video: { supported: true } };
     Object.assign(mockNetworkTestState, { qualityResults: mockQualityResults });
@@ -213,38 +160,12 @@ describe('PreCallTest', () => {
   it('displays test progress when testing is in progress', () => {
     Object.assign(mockNetworkTestState, {
       qualityStats: { video: { bitrate: 100 } },
-      isTestingConnectivity: true,
+      isTestingQuality: true,
     });
 
     renderPreCallTest();
 
     expect(screen.getByTestId('test-progress')).toBeInTheDocument();
-  });
-
-  it('handles connectivity test start correctly', async () => {
-    mockTestConnectivity.mockResolvedValue(undefined);
-
-    renderPreCallTest();
-
-    const startButton = screen.getByTestId('start-connectivity');
-    fireEvent.click(startButton);
-
-    await waitFor(() => {
-      expect(mockTestConnectivity).toHaveBeenCalledWith(mockRoomName);
-    });
-  });
-
-  it('handles quality test start correctly', async () => {
-    mockTestQuality.mockResolvedValue(undefined);
-
-    renderPreCallTest();
-
-    const startButton = screen.getByTestId('start-quality');
-    fireEvent.click(startButton);
-
-    await waitFor(() => {
-      expect(mockTestQuality).toHaveBeenCalledWith(mockRoomName, { timeout: 15000 });
-    });
   });
 
   it('handles stop test correctly', () => {
@@ -271,14 +192,14 @@ describe('PreCallTest', () => {
     const continueButton = screen.getByTestId('continue-to-waiting-room');
     fireEvent.click(continueButton);
 
-    expect(mockNavigate).toHaveBeenCalledWith(`/waiting-room/${mockRoomName}`);
+    expect(mockOnModalClose).toHaveBeenCalled();
   });
 
   it('passes correct props to TestControls component', () => {
-    const mockConnectivityResults = { success: true };
+    const mockQualityResults = { video: { supported: true } };
     Object.assign(mockNetworkTestState, {
-      connectivityResults: mockConnectivityResults,
-      isTestingConnectivity: true,
+      qualityResults: mockQualityResults,
+      isTestingQuality: true,
     });
 
     renderPreCallTest();
@@ -286,74 +207,24 @@ describe('PreCallTest', () => {
     const controlProps = screen.getByTestId('control-props');
     const props = JSON.parse(controlProps.textContent || '{}');
 
-    expect(props.roomName).toBe(mockRoomName);
-    expect(props.isTestingStarted).toBe(false);
-    expect(props.isTestingConnectivity).toBe(true);
-    expect(props.isTestingQuality).toBe(false);
+    expect(props.isTestingQuality).toBe(true);
     expect(props.hasResults).toBe(true);
   });
+});
 
-  it('handles connectivity test error gracefully', async () => {
-    const consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
-    const mockError = new Error('Network error');
-    mockTestConnectivity.mockRejectedValue(mockError);
+it('shows description when test has not started', () => {
+  Object.assign(mockNetworkTestState, { qualityResults: { video: { supported: true } } });
 
-    renderPreCallTest();
+  renderPreCallTest();
 
-    const startButton = screen.getByTestId('start-connectivity');
-    fireEvent.click(startButton);
+  expect(screen.getByText(enTranslations['precallTest.description'])).toBeInTheDocument();
+});
 
-    await waitFor(() => {
-      expect(consoleErrorSpy).toHaveBeenCalledWith('Connectivity test failed:', mockError);
-    });
+it('hides description when there is an error', () => {
+  const mockError = { name: 'TestError', message: 'Test failed' };
+  Object.assign(mockNetworkTestState, { error: mockError });
 
-    consoleErrorSpy.mockRestore();
-  });
+  renderPreCallTest();
 
-  it('handles quality test error gracefully', async () => {
-    const consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
-    const mockError = new Error('Quality test error');
-    mockTestQuality.mockRejectedValue(mockError);
-
-    renderPreCallTest();
-
-    const startButton = screen.getByTestId('start-quality');
-    fireEvent.click(startButton);
-
-    await waitFor(() => {
-      expect(consoleErrorSpy).toHaveBeenCalledWith('Quality test failed:', mockError);
-    });
-
-    consoleErrorSpy.mockRestore();
-  });
-
-  it('passes roomName correctly to TestControls', () => {
-    renderPreCallTest();
-
-    const controlProps = screen.getByTestId('control-props');
-    const props = JSON.parse(controlProps.textContent || '{}');
-
-    expect(props.roomName).toBe(mockRoomName);
-  });
-
-  it('hides description when test is started', async () => {
-    renderPreCallTest();
-    expect(screen.getByText(enTranslations['precallTest.description'])).toBeInTheDocument();
-
-    const startButton = screen.getByTestId('start-connectivity');
-    fireEvent.click(startButton);
-
-    await waitFor(() => {
-      expect(screen.queryByText(enTranslations['precallTest.description'])).not.toBeInTheDocument();
-    });
-  });
-
-  it('hides description when there is an error', () => {
-    const mockError = { name: 'TestError', message: 'Test failed' };
-    Object.assign(mockNetworkTestState, { error: mockError });
-
-    renderPreCallTest();
-
-    expect(screen.queryByText(enTranslations['precallTest.description'])).not.toBeInTheDocument();
-  });
+  expect(screen.queryByText(enTranslations['precallTest.description'])).not.toBeInTheDocument();
 });

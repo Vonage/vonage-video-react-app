@@ -22,7 +22,7 @@ const JoinButton = ({ roomName, isDisabled }: JoinButtonProps): ReactElement => 
 
   const handleJoin = (event: MouseEvent) => {
     event.preventDefault();
-    navigate(`/precall/${roomName}`);
+    navigate(`/waiting-room/${roomName}`);
   };
 
   return (

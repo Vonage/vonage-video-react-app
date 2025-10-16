@@ -68,7 +68,6 @@ export type NetworkTestError = {
 };
 
 export type NetworkTestState = {
-  isTestingConnectivity: boolean;
   isTestingQuality: boolean;
   connectivityResults: ConnectivityResults | null;
   qualityResults: QualityResults | null;
@@ -78,7 +77,6 @@ export type NetworkTestState = {
 
 export type NetworkTestHookType = {
   state: NetworkTestState;
-  testConnectivity: (roomName: string) => Promise<ConnectivityResults>;
   testQuality: (
     roomName: string,
     options?: NetworkTestOptions,
@@ -96,7 +94,6 @@ export type NetworkTestHookType = {
  */
 const useNetworkTest = (): NetworkTestHookType => {
   const [state, setState] = useState<NetworkTestState>({
-    isTestingConnectivity: false,
     isTestingQuality: false,
     connectivityResults: null,
     qualityResults: null,
@@ -108,7 +105,6 @@ const useNetworkTest = (): NetworkTestHookType => {
 
   const clearResults = useCallback(() => {
     setState({
-      isTestingConnectivity: false,
       isTestingQuality: false,
       connectivityResults: null,
       qualityResults: null,
@@ -127,57 +123,8 @@ const useNetworkTest = (): NetworkTestHookType => {
     }
     setState((prev) => ({
       ...prev,
-      isTestingConnectivity: false,
       isTestingQuality: false,
     }));
-  }, []);
-
-  const testConnectivity = useCallback(async (roomName: string): Promise<ConnectivityResults> => {
-    setState((prev) => ({
-      ...prev,
-      isTestingConnectivity: true,
-      error: null,
-    }));
-
-    try {
-      const credentials = await fetchCredentials(roomName);
-      const { apiKey, sessionId, token } = credentials.data;
-
-      const networkTest = new NetworkTest(
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        OT as any,
-        {
-          applicationId: apiKey,
-          sessionId,
-          token,
-        }
-      );
-
-      networkTestRef.current = networkTest;
-
-      const results = await networkTest.testConnectivity();
-
-      setState((prev) => ({
-        ...prev,
-        isTestingConnectivity: false,
-        connectivityResults: results,
-      }));
-
-      return results;
-    } catch (error) {
-      const networkError: NetworkTestError = {
-        message: error instanceof Error ? error.message : 'Unknown connectivity test error',
-        name: (error as Error & { name?: string })?.name || 'CONNECTIVITY_TEST_ERROR',
-      };
-
-      setState((prev) => ({
-        ...prev,
-        isTestingConnectivity: false,
-        error: networkError,
-      }));
-
-      throw error;
-    }
   }, []);
 
   const testQuality = useCallback(
@@ -249,7 +196,6 @@ const useNetworkTest = (): NetworkTestHookType => {
 
   return {
     state,
-    testConnectivity,
     testQuality,
     stopTest,
     clearResults,

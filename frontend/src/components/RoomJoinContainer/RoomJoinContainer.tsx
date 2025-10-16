@@ -18,7 +18,7 @@ const RoomJoinContainer = (): ReactElement => {
   // After a room is created, the user is redirected to a waiting room
   // where they have an option to pick their devices, add their name, and join the meeting room
   const handleNewRoom = () => {
-    navigate(`/precall/${randomRoom}`);
+    navigate(`/waiting-room/${randomRoom}`);
   };
 
   return (

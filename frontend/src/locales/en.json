@@ -141,7 +141,6 @@
   "precallTest.subtitle": "Test your connection for room:",
   "precallTest.success": "Success",
   "precallTest.supported": "Supported",
-  "precallTest.testConnectivity": "Test Device Connectivity",
   "precallTest.testError": "Test Error",
   "precallTest.testingInProgress": "Testing in Progress...",
   "precallTest.testQuality": "Test Video / Audio Quality",

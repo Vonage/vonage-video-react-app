@@ -7,9 +7,6 @@ vi.mock('react-i18next', () => ({
   useTranslation: () => ({
     t: (key: string) => {
       const translations: Record<string, string> = {
-        'precallTest.testConnectivity': enTranslations['precallTest.testConnectivity'],
-        'precallTest.testQuality': enTranslations['precallTest.testQuality'],
-        'precallTest.skipTest': enTranslations['precallTest.skipTest'],
         'precallTest.stopTest': enTranslations['precallTest.stopTest'],
         'precallTest.clearResults': enTranslations['precallTest.clearResults'],
         'precallTest.continueToWaitingRoom': enTranslations['precallTest.continueToWaitingRoom'],
@@ -21,17 +18,12 @@ vi.mock('react-i18next', () => ({
 
 describe('TestControls', () => {
   const mockCallbacks = {
-    onStartConnectivityTest: vi.fn(),
-    onStartQualityTest: vi.fn(),
     onStopTest: vi.fn(),
     onClearResults: vi.fn(),
     onContinueToWaitingRoom: vi.fn(),
   };
 
   const defaultProps: TestControlsProps = {
-    roomName: 'test-room',
-    isTestingStarted: false,
-    isTestingConnectivity: false,
     isTestingQuality: false,
     hasResults: false,
     ...mockCallbacks,
@@ -41,12 +33,8 @@ describe('TestControls', () => {
     vi.clearAllMocks();
   });
 
-  it('renders initial test buttons when no tests are running and no results', () => {
+  it('renders nothing when no tests are running and no results', () => {
     render(<TestControls {...defaultProps} />);
-
-    expect(screen.getByText(enTranslations['precallTest.testConnectivity'])).toBeInTheDocument();
-    expect(screen.getByText(enTranslations['precallTest.testQuality'])).toBeInTheDocument();
-    expect(screen.getByText(enTranslations['precallTest.skipTest'])).toBeInTheDocument();
 
     expect(screen.queryByText(enTranslations['precallTest.stopTest'])).not.toBeInTheDocument();
     expect(screen.queryByText(enTranslations['precallTest.clearResults'])).not.toBeInTheDocument();
@@ -55,22 +43,20 @@ describe('TestControls', () => {
     ).not.toBeInTheDocument();
   });
 
-  it('shows stop button when tests are running', () => {
+  it('shows stop button when quality test is running', () => {
     const props: TestControlsProps = {
       ...defaultProps,
-      isTestingConnectivity: true,
+      isTestingQuality: true,
     };
 
     render(<TestControls {...props} />);
 
     expect(screen.getByText(enTranslations['precallTest.stopTest'])).toBeInTheDocument();
 
-    // Should not show initial test buttons
+    expect(screen.queryByText(enTranslations['precallTest.clearResults'])).not.toBeInTheDocument();
     expect(
-      screen.queryByText(enTranslations['precallTest.testConnectivity'])
+      screen.queryByText(enTranslations['precallTest.continueToWaitingRoom'])
     ).not.toBeInTheDocument();
-    expect(screen.queryByText(enTranslations['precallTest.testQuality'])).not.toBeInTheDocument();
-    expect(screen.queryByText(enTranslations['precallTest.skipTest'])).not.toBeInTheDocument();
   });
 
   it('shows results buttons when tests have completed', () => {
@@ -86,24 +72,29 @@ describe('TestControls', () => {
       screen.getByText(enTranslations['precallTest.continueToWaitingRoom'])
     ).toBeInTheDocument();
 
-    // Should not show initial test buttons or stop button
-    expect(
-      screen.queryByText(enTranslations['precallTest.testConnectivity'])
-    ).not.toBeInTheDocument();
-    expect(screen.queryByText(enTranslations['precallTest.skipTest'])).not.toBeInTheDocument();
     expect(screen.queryByText(enTranslations['precallTest.stopTest'])).not.toBeInTheDocument();
   });
 
   it('calls appropriate callbacks when buttons are clicked', () => {
-    render(<TestControls {...defaultProps} />);
+    const runningProps: TestControlsProps = {
+      ...defaultProps,
+      isTestingQuality: true,
+    };
+    const { rerender } = render(<TestControls {...runningProps} />);
 
-    fireEvent.click(screen.getByText(enTranslations['precallTest.testConnectivity']));
-    expect(mockCallbacks.onStartConnectivityTest).toHaveBeenCalledTimes(1);
+    fireEvent.click(screen.getByText(enTranslations['precallTest.stopTest']));
+    expect(mockCallbacks.onStopTest).toHaveBeenCalledTimes(1);
 
-    fireEvent.click(screen.getByText(enTranslations['precallTest.testQuality']));
-    expect(mockCallbacks.onStartQualityTest).toHaveBeenCalledTimes(1);
+    const resultsProps: TestControlsProps = {
+      ...defaultProps,
+      hasResults: true,
+    };
+    rerender(<TestControls {...resultsProps} />);
 
-    fireEvent.click(screen.getByText(enTranslations['precallTest.skipTest']));
+    fireEvent.click(screen.getByText(enTranslations['precallTest.clearResults']));
+    expect(mockCallbacks.onClearResults).toHaveBeenCalledTimes(1);
+
+    fireEvent.click(screen.getByText(enTranslations['precallTest.continueToWaitingRoom']));
     expect(mockCallbacks.onContinueToWaitingRoom).toHaveBeenCalledTimes(1);
   });
 });

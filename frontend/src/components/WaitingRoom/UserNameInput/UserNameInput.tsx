@@ -1,6 +1,7 @@
-import { TextField, Button, InputAdornment } from '@mui/material';
+import { TextField, Button, InputAdornment, Chip } from '@mui/material';
 import React, { Dispatch, MouseEvent, ReactElement, SetStateAction, useState } from 'react';
-import { PersonOutline } from '@mui/icons-material';
+// import { PersonOutline, NetworkCheck } from '@mui/icons-material';
+import { PersonOutline, NetworkCheck } from '@mui/icons-material';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
@@ -13,6 +14,7 @@ import { setStorageItem, STORAGE_KEYS } from '../../../utils/storage';
 export type UserNameInputProps = {
   username: string;
   setUsername: Dispatch<SetStateAction<string>>;
+  onOpenPreCallTest?: () => void;
 };
 
 declare module '@mui/material/styles' {
@@ -42,7 +44,11 @@ const theme = createTheme({
  *  @property {Dispatch<SetStateAction<string>>} setUsername - Function to update the user's username.
  * @returns {ReactElement} The UsernameInput component.
  */
-const UsernameInput = ({ username, setUsername }: UserNameInputProps): ReactElement => {
+const UsernameInput = ({
+  username,
+  setUsername,
+  onOpenPreCallTest,
+}: UserNameInputProps): ReactElement => {
   const { t } = useTranslation();
   const { setUser } = useUserContext();
   const navigate = useNavigate();
@@ -134,23 +140,33 @@ const UsernameInput = ({ username, setUsername }: UserNameInputProps): ReactElem
               }}
             />
           </div>
-          <Button
-            onClick={handleJoinClick}
-            variant="contained"
-            color="primary"
-            sx={{
-              width: '117px',
-              borderRadius: '24px',
-              color: 'white',
-              textTransform: 'none',
-              fontSize: '14px',
-              height: '48px',
-            }}
-            disabled={!username}
-            type="submit"
-          >
-            {t('button.join')}
-          </Button>
+          <div className="mb-4 flex flex-col gap-2">
+            <Button
+              onClick={handleJoinClick}
+              variant="contained"
+              color="primary"
+              sx={{
+                width: '117px',
+                borderRadius: '24px',
+                color: 'white',
+                textTransform: 'none',
+                fontSize: '14px',
+                height: '48px',
+              }}
+              disabled={!username}
+              type="submit"
+            >
+              {t('button.join')}
+            </Button>
+            <Chip
+              icon={<NetworkCheck />}
+              label={t('waitingRoom.testNetwork', 'Test Network')}
+              onClick={onOpenPreCallTest}
+              variant="outlined"
+              size="small"
+              sx={{ mt: 1, cursor: 'pointer' }}
+            />
+          </div>
         </div>
       </form>
     </ThemeProvider>
