@@ -86,7 +86,7 @@ vi.mock('../../components/PreCall/TestControls', () => ({
     onStartQualityTest,
     onStopTest,
     onClearResults,
-    onContinueToCall,
+    onContinueToWaitingRoom,
     roomName,
     isTestingStarted,
     isTestingConnectivity,
@@ -97,7 +97,7 @@ vi.mock('../../components/PreCall/TestControls', () => ({
     onStartQualityTest: () => void;
     onStopTest: () => void;
     onClearResults: () => void;
-    onContinueToCall: () => void;
+    onContinueToWaitingRoom: () => void;
     roomName: string | null;
     isTestingStarted: boolean;
     isTestingConnectivity: boolean;
@@ -117,7 +117,11 @@ vi.mock('../../components/PreCall/TestControls', () => ({
       <button type="button" onClick={onClearResults} data-testid="clear-results">
         Clear Results
       </button>
-      <button type="button" onClick={onContinueToCall} data-testid="continue-to-waiting-room">
+      <button
+        type="button"
+        onClick={onContinueToWaitingRoom}
+        data-testid="continue-to-waiting-room"
+      >
         Continue to Waiting Room
       </button>
       <div data-testid="control-props">

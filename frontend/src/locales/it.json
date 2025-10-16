@@ -119,7 +119,7 @@
     "precallTest.audio": "Audio",
     "precallTest.clearResults": "Cancella Risultati",
     "precallTest.connectivityResults": "Risultati di Connettività",
-    "precallTest.continueToCall": "Continua alla Chiamata",
+    "precallTest.continueToWaitingRoom": "Continua alla Chiamata",
     "precallTest.description": "Testa l'accesso ai dispositivi, la connettività di rete e la qualità della chiamata prima di partecipare.",
     "precallTest.errors.mediaDevicesAccess": "Concedi l'accesso alla fotocamera e al microfono per continuare.",
     "precallTest.errors.networkConnection": "Connessione di rete fallita. Controlla la tua connessione internet.",

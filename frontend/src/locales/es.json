@@ -119,7 +119,7 @@
     "precallTest.audio": "Audio",
     "precallTest.clearResults": "Limpiar Resultados",
     "precallTest.connectivityResults": "Resultados de Conectividad",
-    "precallTest.continueToCall": "Continuar a la sala de espera",
+    "precallTest.continueToWaitingRoom": "Continuar a la sala de espera",
     "precallTest.description": "Prueba el acceso a tus dispositivos, conectividad de red y calidad de llamada antes de unirte.",
     "precallTest.errors.mediaDevicesAccess": "Por favor, autoriza el acceso a tu cámara y micrófono para continuar.",
     "precallTest.errors.networkConnection": "Falló la conexión de red. Por favor verifica tu conexión a internet.",

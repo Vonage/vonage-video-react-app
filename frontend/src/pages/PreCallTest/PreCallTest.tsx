@@ -59,7 +59,7 @@ const PreCallTest = (): ReactElement => {
     setIsTestingStarted(false);
   };
 
-  const handleContinueToCall = () => {
+  const handleContinueToWaitingRoom = () => {
     navigate(`/waiting-room/${roomName}`);
   };
 
@@ -97,7 +97,7 @@ const PreCallTest = (): ReactElement => {
             onStartQualityTest={handleStartQualityTest}
             onStopTest={handleStopTest}
             onClearResults={handleClearResults}
-            onContinueToCall={handleContinueToCall}
+            onContinueToWaitingRoom={handleContinueToWaitingRoom}
           />
 
           {!isTestingStarted && !state.error && (

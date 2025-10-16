@@ -121,7 +121,7 @@
   "precallTest.audio": "Audio",
   "precallTest.clearResults": "Clear Results",
   "precallTest.connectivityResults": "Connectivity Results",
-  "precallTest.continueToCall": "Continue to Waiting Room",
+  "precallTest.continueToWaitingRoom": "Continue to Waiting Room",
   "precallTest.description": "Test your device access, network connectivity, and call quality before joining.",
   "precallTest.errors.mediaDevicesAccess": "Please grant access to your camera and microphone to continue.",
   "precallTest.errors.networkConnection": "Network connection failed. Please check your internet connection.",

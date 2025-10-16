@@ -13,7 +13,7 @@ export type TestControlsProps = {
   onStartQualityTest: () => void;
   onStopTest: () => void;
   onClearResults: () => void;
-  onContinueToCall: () => void;
+  onContinueToWaitingRoom: () => void;
 };
 
 const buttonStyles = {
@@ -37,7 +37,7 @@ const buttonStyles = {
  *  @property {() => void} onStartQualityTest - Method to start the quality test.
  *  @property {() => void} onStopTest - Method to stop the current test.
  *  @property {() => void} onClearResults - Method to clear the test results.
- *  @property {() => void} onContinueToCall - Method to continue to the call after tests.
+ *  @property {() => void} onContinueToWaitingRoom - Method to continue to the waiting room after tests.
  * @returns {ReactElement} The test controls component.
  */
 const TestControls = ({
@@ -50,7 +50,7 @@ const TestControls = ({
   onStartQualityTest,
   onStopTest,
   onClearResults,
-  onContinueToCall,
+  onContinueToWaitingRoom,
 }: TestControlsProps): ReactElement => {
   const { t } = useTranslation();
 
@@ -85,7 +85,7 @@ const TestControls = ({
               variant="outlined"
               color="primary"
               startIcon={<ArrowForward />}
-              onClick={onContinueToCall}
+              onClick={onContinueToWaitingRoom}
               disabled={!roomName}
               sx={buttonStyles}
             >
@@ -121,10 +121,10 @@ const TestControls = ({
             variant="contained"
             color="success"
             startIcon={<ArrowForward />}
-            onClick={onContinueToCall}
+            onClick={onContinueToWaitingRoom}
             sx={buttonStyles}
           >
-            {t('precallTest.continueToCall')}
+            {t('precallTest.continueToWaitingRoom')}
           </Button>
         </div>
       )}

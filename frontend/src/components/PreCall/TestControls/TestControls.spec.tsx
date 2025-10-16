@@ -12,7 +12,7 @@ vi.mock('react-i18next', () => ({
         'precallTest.skipTest': enTranslations['precallTest.skipTest'],
         'precallTest.stopTest': enTranslations['precallTest.stopTest'],
         'precallTest.clearResults': enTranslations['precallTest.clearResults'],
-        'precallTest.continueToCall': enTranslations['precallTest.continueToCall'],
+        'precallTest.continueToWaitingRoom': enTranslations['precallTest.continueToWaitingRoom'],
       };
       return translations[key] || key;
     },
@@ -25,7 +25,7 @@ describe('TestControls', () => {
     onStartQualityTest: vi.fn(),
     onStopTest: vi.fn(),
     onClearResults: vi.fn(),
-    onContinueToCall: vi.fn(),
+    onContinueToWaitingRoom: vi.fn(),
   };
 
   const defaultProps: TestControlsProps = {
@@ -51,7 +51,7 @@ describe('TestControls', () => {
     expect(screen.queryByText(enTranslations['precallTest.stopTest'])).not.toBeInTheDocument();
     expect(screen.queryByText(enTranslations['precallTest.clearResults'])).not.toBeInTheDocument();
     expect(
-      screen.queryByText(enTranslations['precallTest.continueToCall'])
+      screen.queryByText(enTranslations['precallTest.continueToWaitingRoom'])
     ).not.toBeInTheDocument();
   });
 
@@ -82,7 +82,9 @@ describe('TestControls', () => {
     render(<TestControls {...props} />);
 
     expect(screen.getByText(enTranslations['precallTest.clearResults'])).toBeInTheDocument();
-    expect(screen.getByText(enTranslations['precallTest.continueToCall'])).toBeInTheDocument();
+    expect(
+      screen.getByText(enTranslations['precallTest.continueToWaitingRoom'])
+    ).toBeInTheDocument();
 
     // Should not show initial test buttons or stop button
     expect(
@@ -102,6 +104,6 @@ describe('TestControls', () => {
     expect(mockCallbacks.onStartQualityTest).toHaveBeenCalledTimes(1);
 
     fireEvent.click(screen.getByText(enTranslations['precallTest.skipTest']));
-    expect(mockCallbacks.onContinueToCall).toHaveBeenCalledTimes(1);
+    expect(mockCallbacks.onContinueToWaitingRoom).toHaveBeenCalledTimes(1);
   });
 });
