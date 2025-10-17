@@ -1,4 +1,4 @@
-import { TextField, Button, InputAdornment, Chip } from '@mui/material';
+import { TextField, Button, InputAdornment, Chip, Box, Stack, Typography } from '@mui/material';
 import React, { Dispatch, MouseEvent, ReactElement, SetStateAction, useState } from 'react';
 import { PersonOutline, NetworkCheck } from '@mui/icons-material';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
@@ -105,16 +105,62 @@ const WaitingRoomForm = ({
 
   return (
     <ThemeProvider theme={theme}>
-      <form className="flex w-full flex-col justify-center px-6 md:relative md:top-[-48px] md:max-w-[480px]">
-        <div className="mt-4 flex flex-col items-center justify-end">
-          <div className="mb-2 font-sans text-[28px] leading-8">{t('waitingRoom.title')}</div>
-          <div className="flex w-full flex-col content-end py-2 text-lg decoration-solid md:max-w-[480px]">
-            <p className="truncate">{roomName}</p>
-          </div>
-          <div className="mt-6 font-sans text-[24px] leading-8">
+      <Box
+        component="form"
+        sx={{
+          display: 'flex',
+          width: '100%',
+          flexDirection: 'column',
+          justifyContent: 'center',
+          px: 3,
+          position: { md: 'relative' },
+          top: { md: '-48px' },
+          maxWidth: { md: '480px' },
+        }}
+      >
+        <Stack spacing={2} alignItems="center" sx={{ mt: 2 }}>
+          <Typography
+            variant="h4"
+            component="h1"
+            sx={{ fontFamily: 'sans-serif', fontSize: '28px', lineHeight: '32px' }}
+          >
+            {t('waitingRoom.title')}
+          </Typography>
+
+          <Box
+            sx={{
+              display: 'flex',
+              width: '100%',
+              flexDirection: 'column',
+              alignItems: 'flex-end',
+              py: 1,
+              fontSize: '18px',
+              maxWidth: { md: '480px' },
+            }}
+          >
+            <Typography noWrap sx={{ width: '100%' }}>
+              {roomName}
+            </Typography>
+          </Box>
+
+          <Typography
+            variant="h5"
+            component="h2"
+            sx={{ mt: 3, fontFamily: 'sans-serif', fontSize: '24px', lineHeight: '32px' }}
+          >
             {t('waitingRoom.user.input.label')}
-          </div>
-          <div className="mb-5 flex w-full flex-wrap items-center justify-center">
+          </Typography>
+
+          <Box
+            sx={{
+              mb: 2.5,
+              display: 'flex',
+              width: '100%',
+              flexWrap: 'wrap',
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}
+          >
             <TextField
               size="small"
               margin="dense"
@@ -143,8 +189,9 @@ const WaitingRoomForm = ({
                 inputProps: { maxLength: 60 },
               }}
             />
-          </div>
-          <div className="mb-4 flex flex-col gap-2">
+          </Box>
+
+          <Stack spacing={1} alignItems="center" sx={{ mb: 2 }}>
             <Button
               onClick={handleJoinClick}
               variant="contained"
@@ -172,9 +219,9 @@ const WaitingRoomForm = ({
                 sx={{ mt: 1, cursor: 'pointer' }}
               />
             )}
-          </div>
-        </div>
-      </form>
+          </Stack>
+        </Stack>
+      </Box>
     </ThemeProvider>
   );
 };
