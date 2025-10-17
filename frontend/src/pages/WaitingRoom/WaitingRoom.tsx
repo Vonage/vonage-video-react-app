@@ -2,7 +2,7 @@ import { useState, useEffect, MouseEvent, ReactElement, TouchEvent } from 'react
 import usePreviewPublisherContext from '../../hooks/usePreviewPublisherContext';
 import ControlPanel from '../../components/WaitingRoom/ControlPanel';
 import VideoContainer from '../../components/WaitingRoom/VideoContainer';
-import UsernameInput from '../../components/WaitingRoom/UserNameInput';
+import WaitingRoomForm from '../../components/WaitingRoom/WaitingRoomForm';
 import PreCallTestDialog from '../../components/WaitingRoom/PreCallTestDialog';
 import { DEVICE_ACCESS_STATUS } from '../../utils/constants';
 import DeviceAccessAlert from '../../components/DeviceAccessAlert';
@@ -117,7 +117,7 @@ const WaitingRoom = (): ReactElement => {
                 />
               )}
             </div>
-            <UsernameInput
+            <WaitingRoomForm
               username={username}
               setUsername={setUsername}
               onOpenPreCallTest={() => setIsPreCallTestOpen(true)}

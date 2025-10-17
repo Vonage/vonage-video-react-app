@@ -11,7 +11,7 @@ import isValidRoomName from '../../../utils/isValidRoomName';
 import { setStorageItem, STORAGE_KEYS } from '../../../utils/storage';
 import useConfigContext from '../../../hooks/useConfigContext';
 
-export type UserNameInputProps = {
+export type WaitingRoomFormProps = {
   username: string;
   setUsername: Dispatch<SetStateAction<string>>;
   onOpenPreCallTest?: () => void;
@@ -36,19 +36,21 @@ const theme = createTheme({
 });
 
 /**
- * UsernameInput Component
+ * WaitingRoomForm Component
  *
- * Handles setting the username and navigating to the meeting room.
- * @param {UserNameInputProps} props - The props for the component.
+ * Displays a form that consists of a room name, input field for the user name, join button
+ * and a button to test the network (if configured)
+ * @param {WaitingRoomFormProps} props - The props for the component.
  *  @property {string} username - The user's name
  *  @property {Dispatch<SetStateAction<string>>} setUsername - Function to update the user's username.
- * @returns {ReactElement} The UsernameInput component.
+ *  @property {() => void} onOpenPreCallTest - function to open the precall test (if configured).
+ * @returns {ReactElement} The WaitingRoomForm component.
  */
-const UsernameInput = ({
+const WaitingRoomForm = ({
   username,
   setUsername,
   onOpenPreCallTest,
-}: UserNameInputProps): ReactElement => {
+}: WaitingRoomFormProps): ReactElement => {
   const { t } = useTranslation();
   const { setUser } = useUserContext();
   const navigate = useNavigate();
@@ -177,4 +179,4 @@ const UsernameInput = ({
   );
 };
 
-export default UsernameInput;
+export default WaitingRoomForm;
