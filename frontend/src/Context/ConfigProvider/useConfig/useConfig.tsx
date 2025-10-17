@@ -23,6 +23,7 @@ export type AudioSettings = {
 
 export type WaitingRoomSettings = {
   allowDeviceSelection: boolean;
+  allowTestNetwork: boolean;
 };
 
 export type MeetingRoomSettings = {
@@ -57,6 +58,7 @@ export const defaultConfig: AppConfig = {
   },
   waitingRoomSettings: {
     allowDeviceSelection: true,
+    allowTestNetwork: true,
   },
   meetingRoomSettings: {
     allowArchiving: true,

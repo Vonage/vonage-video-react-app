@@ -9,6 +9,7 @@ import { UserType } from '../../../Context/user';
 import useRoomName from '../../../hooks/useRoomName';
 import isValidRoomName from '../../../utils/isValidRoomName';
 import { setStorageItem, STORAGE_KEYS } from '../../../utils/storage';
+import useConfigContext from '../../../hooks/useConfigContext';
 
 export type UserNameInputProps = {
   username: string;
@@ -53,6 +54,8 @@ const UsernameInput = ({
   const navigate = useNavigate();
   const roomName = useRoomName();
   const [isUserNameInvalid, setIsUserNameInvalid] = useState(false);
+  const { waitingRoomSettings } = useConfigContext();
+  const { allowTestNetwork } = waitingRoomSettings;
 
   const onChangeParticipantName = (e: React.ChangeEvent<HTMLInputElement>) => {
     const inputUserName = e.target.value;
@@ -157,14 +160,16 @@ const UsernameInput = ({
             >
               {t('button.join')}
             </Button>
-            <Chip
-              icon={<NetworkCheck />}
-              label={t('waitingRoom.testNetwork', 'Test Network')}
-              onClick={onOpenPreCallTest}
-              variant="outlined"
-              size="small"
-              sx={{ mt: 1, cursor: 'pointer' }}
-            />
+            {allowTestNetwork && (
+              <Chip
+                icon={<NetworkCheck />}
+                label={t('waitingRoom.testNetwork', 'Test Network')}
+                onClick={onOpenPreCallTest}
+                variant="outlined"
+                size="small"
+                sx={{ mt: 1, cursor: 'pointer' }}
+              />
+            )}
           </div>
         </div>
       </form>

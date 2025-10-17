@@ -117,7 +117,7 @@
     "participants.unpin": "Sblocca {{participantName}}",
     "participants.unpin.video": "Sblocca video di {{participantName}}",
     "precallTest.audio": "Audio",
-    "precallTest.clearResults": "Cancella Risultati",
+    "precallTest.retryTest": "Reintenta Test",
     "precallTest.connectivityResults": "Risultati di Connettività",
     "precallTest.continueToWaitingRoom": "Continua alla Chiamata",
     "precallTest.description": "Testa l'accesso ai dispositivi, la connettività di rete e la qualità della chiamata prima di partecipare.",
@@ -178,5 +178,6 @@
     "user.you": "Tu",
     "waitingRoom.title": "Preparati per unirti:",
     "waitingRoom.user.input.label": "Qual è il tuo nome?",
-    "waitingRoom.user.input.placeholder": "Inserisci il tuo nome"
+    "waitingRoom.user.input.placeholder": "Inserisci il tuo nome",
+    "waitingRoom.testNetwork": "Rete di prova"
 }

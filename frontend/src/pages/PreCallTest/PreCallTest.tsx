@@ -21,15 +21,14 @@ export type PreCallTestProps = {
  *  @property {() => void} onModalClose - Function to close the modal.
  * @returns {ReactElement} - The pre-call test component.
  */
-const PreCallTest = ({ onModalClose }: PreCallTestProps): ReactElement => {
+const PreCallTest = ({ onModalClose }: PreCallTestProps): ReactElement | false => {
   const roomName = useRoomName();
   const { t } = useTranslation();
-  const [isTestingStarted, setIsTestingStarted] = useState(false);
-  const [isStoppedByUser, setIsStoppedByUser] = useState(false);
+  const [isTestingStarted, setIsTestingStarted] = useState<boolean>(false);
+  const [isStoppedByUser, setIsStoppedByUser] = useState<boolean>(false);
 
   const { state, testQuality, stopTest, clearResults } = useNetworkTest();
 
-  // Cleanup: stop test when component unmounts (modal closes)
   useEffect(() => {
     return () => {
       stopTest();
@@ -55,7 +54,7 @@ const PreCallTest = ({ onModalClose }: PreCallTestProps): ReactElement => {
     onModalClose();
   };
 
-  const handleClearResults = () => {
+  const handleRetryTest = () => {
     clearResults();
     setIsTestingStarted(false);
     setIsStoppedByUser(false);
@@ -132,7 +131,7 @@ const PreCallTest = ({ onModalClose }: PreCallTestProps): ReactElement => {
             isTestingQuality={state.isTestingQuality}
             hasResults={hasResults}
             onStopTest={handleStopTest}
-            onClearResults={handleClearResults}
+            onRetryTest={handleRetryTest}
             onContinueToWaitingRoom={handleContinueToWaitingRoom}
           />
 

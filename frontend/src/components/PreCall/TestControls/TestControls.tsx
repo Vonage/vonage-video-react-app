@@ -7,7 +7,7 @@ export type TestControlsProps = {
   isTestingQuality: boolean;
   hasResults: boolean;
   onStopTest: () => void;
-  onClearResults: () => void;
+  onRetryTest: () => void;
   onContinueToWaitingRoom: () => void;
 };
 
@@ -27,7 +27,7 @@ const buttonStyles = {
  *  @property {boolean} isTestingQuality - Indicates if the quality test is running.
  *  @property {boolean} hasResults - Indicates if there are results available from previous tests.
  *  @property {() => void} onStopTest - Function to stop the current test.
- *  @property {() => void} onClearResults - Function to clear all test results.
+ *  @property {() => void} onRetryTest - Function to clear all test results.
  *  @property {() => void} onContinueToWaitingRoom - Function to continue to the waiting room.
  * @returns {ReactElement} - The test controls component.
  */
@@ -35,7 +35,7 @@ const TestControls = ({
   isTestingQuality,
   hasResults,
   onStopTest,
-  onClearResults,
+  onRetryTest,
   onContinueToWaitingRoom,
 }: TestControlsProps): ReactElement => {
   const { t } = useTranslation();
@@ -61,13 +61,8 @@ const TestControls = ({
           direction={{ xs: 'column', sm: 'row' }}
           justifyContent="center"
         >
-          <Button
-            variant="outlined"
-            startIcon={<Clear />}
-            onClick={onClearResults}
-            sx={buttonStyles}
-          >
-            {t('precallTest.clearResults')}
+          <Button variant="outlined" startIcon={<Clear />} onClick={onRetryTest} sx={buttonStyles}>
+            {t('precallTest.retryTest')}
           </Button>
           <Button
             variant="contained"

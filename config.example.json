@@ -11,7 +11,8 @@
     "allowMicrophoneControl": true
   },
   "waitingRoomSettings": {
-    "allowDeviceSelection": true
+    "allowDeviceSelection": true,
+    "allowTestNetwork": true
   },
   "meetingRoomSettings": {
     "allowArchiving": true,

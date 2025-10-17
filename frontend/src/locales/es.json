@@ -117,7 +117,7 @@
     "participants.unpin": "Desfijar a {{participantName}}",
     "participants.unpin.video": "Desfijar el video de {{participantName}}",
     "precallTest.audio": "Audio",
-    "precallTest.clearResults": "Limpiar Resultados",
+    "precallTest.retryTest": "Reintentar Prueba",
     "precallTest.connectivityResults": "Resultados de Conectividad",
     "precallTest.continueToWaitingRoom": "Continuar a la sala de espera",
     "precallTest.description": "Prueba el acceso a tus dispositivos, conectividad de red y calidad de llamada antes de unirte.",
@@ -126,8 +126,8 @@
     "precallTest.errors.noCamera": "No se detectó ninguna cámara. Por favor conecta una cámara o continúa solo con audio.",
     "precallTest.errors.noMicrophone": "No se detectó ningún micrófono. Por favor conecta un micrófono.",
     "precallTest.errors.unexpected": "Ocurrió un error inesperado durante las pruebas.",
-    "precallTest.errors.unknownQualityTest": "Error desconocido en prueba de calidad",
-    "precallTest.errors.qualityTestError": "Error en prueba de calidad",
+    "precallTest.errors.unknownQualityTest": "Error desconocido en la prueba de calidad",
+    "precallTest.errors.qualityTestError": "Error en la prueba de calidad",
     "precallTest.errors.unsupportedBrowser": "Tu navegador no es compatible para videollamadas. Por favor usa Chrome, Firefox, Safari o Edge.",
     "precallTest.failed": "Falló",
     "precallTest.issues": "Problemas",
@@ -145,7 +145,7 @@
     "precallTest.testingInProgress": "Prueba en Progreso...",
     "precallTest.testQuality": "Probar Calidad de Video / Audio",
     "precallTest.title": "Prueba de Red Pre-Llamada",
-    "precallTest.video": "Video",
+    "precallTest.video": "Vídeo",
     "publishingErrors.accessDenied.message": "Parece que tu navegador tiene bloqueado el acceso a tu {{device}}. Restablece los permisos desde la interfaz del navegador.",
     "publishingErrors.accessDenied.title": "Acceso a {{device}} denegado",
     "publishingErrors.blocked.message": "Tenemos problemas para conectarte con otros en la sala. Por favor revisa tu red e intenta de nuevo.",
@@ -180,5 +180,6 @@
     "user.you": "Tú",
     "waitingRoom.title": "Prepararse para unirse:",
     "waitingRoom.user.input.label": "¿Cuál es tu nombre?",
-    "waitingRoom.user.input.placeholder": "Ingresa tu nombre"
+    "waitingRoom.user.input.placeholder": "Ingresa tu nombre",
+    "waitingRoom.testNetwork": "Red de prueba"
 }

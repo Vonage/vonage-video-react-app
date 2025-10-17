@@ -119,7 +119,7 @@
   "participants.unpin": "Unpin {{participantName}}",
   "participants.unpin.video": "Unpin {{participantName}}'s video",
   "precallTest.audio": "Audio",
-  "precallTest.clearResults": "Clear Results",
+  "precallTest.retryTest": "Retry Test",
   "precallTest.connectivityResults": "Connectivity Results",
   "precallTest.continueToWaitingRoom": "Continue to Waiting Room",
   "precallTest.description": "Test your device access, network connectivity, and call quality before joining.",
@@ -182,5 +182,6 @@
   "user.you": "You",
   "waitingRoom.title": "Prepare to join:",
   "waitingRoom.user.input.label": "What is your name?",
-  "waitingRoom.user.input.placeholder": "Enter your name"
+  "waitingRoom.user.input.placeholder": "Enter your name",
+  "waitingRoom.testNetwork": "Test Network"
 }

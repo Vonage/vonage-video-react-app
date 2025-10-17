@@ -62,13 +62,13 @@ vi.mock('../../components/PreCall/TestProgress', () => ({
 vi.mock('../../components/PreCall/TestControls', () => ({
   default: ({
     onStopTest,
-    onClearResults,
+    onRetryTest,
     onContinueToWaitingRoom,
     isTestingQuality,
     hasResults,
   }: {
     onStopTest: () => void;
-    onClearResults: () => void;
+    onRetryTest: () => void;
     onContinueToWaitingRoom: () => void;
     isTestingQuality: boolean;
     hasResults: boolean;
@@ -77,8 +77,8 @@ vi.mock('../../components/PreCall/TestControls', () => ({
       <button type="button" onClick={onStopTest} data-testid="stop-test">
         Stop Test
       </button>
-      <button type="button" onClick={onClearResults} data-testid="clear-results">
-        Clear Results
+      <button type="button" onClick={onRetryTest} data-testid="retry-test">
+        Retry Test
       </button>
       <button
         type="button"
@@ -180,7 +180,7 @@ describe('PreCallTest', () => {
   it('handles clear results correctly', () => {
     renderPreCallTest();
 
-    const clearButton = screen.getByTestId('clear-results');
+    const clearButton = screen.getByTestId('retry-test');
     fireEvent.click(clearButton);
 
     expect(mockClearResults).toHaveBeenCalled();

@@ -8,7 +8,7 @@ vi.mock('react-i18next', () => ({
     t: (key: string) => {
       const translations: Record<string, string> = {
         'precallTest.stopTest': enTranslations['precallTest.stopTest'],
-        'precallTest.clearResults': enTranslations['precallTest.clearResults'],
+        'precallTest.retryTest': enTranslations['precallTest.retryTest'],
         'precallTest.continueToWaitingRoom': enTranslations['precallTest.continueToWaitingRoom'],
       };
       return translations[key] || key;
@@ -19,7 +19,7 @@ vi.mock('react-i18next', () => ({
 describe('TestControls', () => {
   const mockCallbacks = {
     onStopTest: vi.fn(),
-    onClearResults: vi.fn(),
+    onRetryTest: vi.fn(),
     onContinueToWaitingRoom: vi.fn(),
   };
 
@@ -37,7 +37,7 @@ describe('TestControls', () => {
     render(<TestControls {...defaultProps} />);
 
     expect(screen.queryByText(enTranslations['precallTest.stopTest'])).not.toBeInTheDocument();
-    expect(screen.queryByText(enTranslations['precallTest.clearResults'])).not.toBeInTheDocument();
+    expect(screen.queryByText(enTranslations['precallTest.retryTest'])).not.toBeInTheDocument();
     expect(
       screen.queryByText(enTranslations['precallTest.continueToWaitingRoom'])
     ).not.toBeInTheDocument();
@@ -53,7 +53,7 @@ describe('TestControls', () => {
 
     expect(screen.getByText(enTranslations['precallTest.stopTest'])).toBeInTheDocument();
 
-    expect(screen.queryByText(enTranslations['precallTest.clearResults'])).not.toBeInTheDocument();
+    expect(screen.queryByText(enTranslations['precallTest.retryTest'])).not.toBeInTheDocument();
     expect(
       screen.queryByText(enTranslations['precallTest.continueToWaitingRoom'])
     ).not.toBeInTheDocument();
@@ -67,7 +67,7 @@ describe('TestControls', () => {
 
     render(<TestControls {...props} />);
 
-    expect(screen.getByText(enTranslations['precallTest.clearResults'])).toBeInTheDocument();
+    expect(screen.getByText(enTranslations['precallTest.retryTest'])).toBeInTheDocument();
     expect(
       screen.getByText(enTranslations['precallTest.continueToWaitingRoom'])
     ).toBeInTheDocument();
@@ -91,8 +91,8 @@ describe('TestControls', () => {
     };
     rerender(<TestControls {...resultsProps} />);
 
-    fireEvent.click(screen.getByText(enTranslations['precallTest.clearResults']));
-    expect(mockCallbacks.onClearResults).toHaveBeenCalledTimes(1);
+    fireEvent.click(screen.getByText(enTranslations['precallTest.retryTest']));
+    expect(mockCallbacks.onRetryTest).toHaveBeenCalledTimes(1);
 
     fireEvent.click(screen.getByText(enTranslations['precallTest.continueToWaitingRoom']));
     expect(mockCallbacks.onContinueToWaitingRoom).toHaveBeenCalledTimes(1);
