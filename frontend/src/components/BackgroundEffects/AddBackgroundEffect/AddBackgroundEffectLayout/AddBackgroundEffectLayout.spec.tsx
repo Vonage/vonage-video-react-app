@@ -1,6 +1,31 @@
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { vi, describe, it, expect, beforeAll } from 'vitest';
 import AddBackgroundEffectLayout from './AddBackgroundEffectLayout';
+import enTranslations from '../../../../locales/en.json';
+
+vi.mock('react-i18next', () => ({
+  useTranslation: () => ({
+    t: (key: string, options?: Record<string, string | number>) => {
+      const translations: Record<string, string> = {
+        'backgroundEffects.invalidFileType': enTranslations['backgroundEffects.invalidFileType'],
+        'backgroundEffects.fileTooLarge': enTranslations['backgroundEffects.fileTooLarge'],
+        'backgroundEffects.linkPlaceholder': enTranslations['backgroundEffects.linkPlaceholder'],
+        'backgroundEffects.dragDropText': enTranslations['backgroundEffects.dragDropText'],
+        'backgroundEffects.maxSize': enTranslations['backgroundEffects.maxSize'],
+      };
+
+      let translation = translations[key] || key;
+
+      if (options && typeof translation === 'string') {
+        Object.keys(options).forEach((param) => {
+          translation = translation.replace(`{{${param}}}`, String(options[param]));
+        });
+      }
+
+      return translation;
+    },
+  }),
+}));
 
 vi.mock('../../../../utils/useImageStorage/useImageStorage', () => ({
   __esModule: true,

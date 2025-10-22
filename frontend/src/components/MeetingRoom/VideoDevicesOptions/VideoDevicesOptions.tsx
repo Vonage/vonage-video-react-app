@@ -1,6 +1,7 @@
 import { Typography, MenuList, MenuItem } from '@mui/material';
 import { ReactElement } from 'react';
 import PortraitIcon from '@mui/icons-material/Portrait';
+import { useTranslation } from 'react-i18next';
 
 export type VideoDevicesOptionsProps = {
   toggleBackgroundEffects: () => void;
@@ -17,6 +18,8 @@ export type VideoDevicesOptionsProps = {
 const VideoDevicesOptions = ({
   toggleBackgroundEffects,
 }: VideoDevicesOptionsProps): ReactElement => {
+  const { t } = useTranslation();
+
   return (
     <MenuList
       sx={{
@@ -36,7 +39,7 @@ const VideoDevicesOptions = ({
       >
         <PortraitIcon sx={{ fontSize: 24, mr: 2 }} />
         <Typography data-testid="background-effects-text" sx={{ mr: 2 }}>
-          Background effects
+          {t('backgroundEffects.title')}
         </Typography>
       </MenuItem>
     </MenuList>

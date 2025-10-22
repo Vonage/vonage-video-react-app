@@ -65,7 +65,7 @@ This application provides features for common conferencing use cases, such as:
     <img src="docs/assets/NoiseSupression.png" alt="Screenshot of noise supression toggle">
   </details>
 - <details>
-    <summary>Background effects in meeting and waiting room. You can set predefined images, custom image or slight/strong background blur. Images can be uploaded from local device or URL in these formats: JPG, PNG, GIF or BMP. Browser must support hasMediaProcessorSupport.</summary>
+    <summary>Background effects in meeting and waiting room. You can set predefined images, custom image or slight/strong background blur. Images can be uploaded from local device or URL in these formats: JPG, PNG, GIF or BMP. Background effects are not supported in non-Chromium-based browsers or on iOS (hasMediaProcessorSupport). </summary>
     <img src="docs/assets/BGEffects.png" alt="Screenshot of background effects">
   </details>
 - <details>

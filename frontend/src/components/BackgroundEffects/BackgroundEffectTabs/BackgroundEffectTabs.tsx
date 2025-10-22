@@ -1,6 +1,7 @@
 import { Box, Tabs, Tab } from '@mui/material';
 import { Publisher } from '@vonage/client-sdk-video';
 import { ReactElement } from 'react';
+import { useTranslation } from 'react-i18next';
 import EffectOptionButtons from '../EffectOptionButtons/EffectOptionButtons';
 import BackgroundGallery from '../BackgroundGallery/BackgroundGallery';
 import AddBackgroundEffectLayout from '../AddBackgroundEffect/AddBackgroundEffectLayout/AddBackgroundEffectLayout';
@@ -58,6 +59,7 @@ const BackgroundEffectTabs = ({
     setBackgroundSelected(value);
   };
   const isTabletViewport = useIsTabletViewport();
+  const { t } = useTranslation();
 
   return (
     <Box
@@ -81,10 +83,10 @@ const BackgroundEffectTabs = ({
         }}
         value={tabSelected}
         onChange={(_event, newValue) => setTabSelected(newValue)}
-        aria-label="backgrounds tabs"
+        aria-label={t('backgroundEffects.title.tabs')}
       >
-        <Tab sx={{ textTransform: 'none' }} label="Backgrounds" />
-        <Tab sx={{ textTransform: 'none' }} label="Add Background" />
+        <Tab sx={{ textTransform: 'none' }} label={t('backgroundEffects.tabs.backgrounds')} />
+        <Tab sx={{ textTransform: 'none' }} label={t('backgroundEffects.tabs.addBackground')} />
       </Tabs>
 
       <Box className="choose-background-effect-box" flex={1} minWidth={0}>

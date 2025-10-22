@@ -149,3 +149,21 @@ export const MAX_LOCAL_STORAGE_BYTES = 4 * 1024 * 1024;
  * Used to define the width of selectable options in UI components.
  */
 export const DEFAULT_SELECTABLE_OPTION_WIDTH = 68;
+
+/**
+ * @constant {number} MIN_ZOOM - The minimum zoom level for screenshare content.
+ * A zoom level of 1 corresponds to 100% (no zoom).
+ */
+export const MIN_ZOOM = 0.5;
+
+/**
+ * @constant {number} MAX_ZOOM - The maximum zoom level for screenshare content.
+ * A zoom level of 1 corresponds to 100% (no zoom).
+ */
+export const MAX_ZOOM = 5;
+
+/**
+ * @constant {number} ZOOM_STEP - The incremental step for zooming in or out on screenshare content.
+ * This value determines how much the zoom level changes with each zoom action (e.g., mouse wheel event).
+ */
+export const ZOOM_STEP = 0.25;
