@@ -13,15 +13,18 @@
     "npm": "9.x"
   },
   "scripts": {
+    "quality-check": "yarn --silent ts-check && yarn --silent lint:fix",
     "build": "yarn workspace frontend build",
     "deploy-vcr": "vcr deploy",
-    "dev": "yarn && concurrently 'yarn workspace frontend dev' 'yarn workspace backend dev'",
+    "dev:frontend": "yarn workspace frontend dev",
+    "dev:backend": "yarn workspace backend dev",
+    "dev": "yarn && concurrently 'yarn dev:frontend' 'yarn dev:backend'",
     "docs": "yarn workspace frontend docs",
     "docs:watch": "yarn workspace frontend docs:watch",
     "lint": "ESLINT_USE_FLAT_CONFIG=false yarn eslint . --ext .ts,.tsx",
     "lint:filenames": "./scripts/lintFileNames.sh",
-    "lint:fix": "yarn prettier --write . && yarn lint --fix",
-    "postinstall": "husky",
+    "lint:fix": "prettier --log-level warn --write \"**/*.{ts,tsx,js,json,md,yml,yaml}\" && yarn lint --fix",
+    "prepare": "husky install",
     "run-server": "yarn workspace backend start",
     "start": "yarn workspace frontend build && yarn workspace backend start",
     "start:backend": "yarn workspace backend dev",
@@ -33,10 +36,10 @@
     "test:frontend": "yarn workspace frontend test",
     "test:frontend:watch": "yarn workspace frontend test:watch",
     "test:integration": "yarn workspace integration-tests test",
-    "ts-check": "yarn ts-check:backend && yarn ts-check:frontend",
+    "ts-check": "yarn --silent ts-check:backend && yarn --silent ts-check:frontend",
     "test:integrationUpdateScreenshots": "yarn workspace integration-tests updateScreenshots",
-    "ts-check:backend": "yarn workspace backend ts-check",
-    "ts-check:frontend": "yarn workspace frontend ts-check"
+    "ts-check:backend": "yarn --silent workspace backend ts-check",
+    "ts-check:frontend": "yarn --silent workspace frontend ts-check"
   },
   "repository": {
     "type": "git",
@@ -68,7 +71,6 @@
     "eslint-plugin-tailwindcss": "^3.18.0",
     "husky": "^9.0.11",
     "license-checker": "^25.0.1",
-    "lint-staged": "^15.2.2",
     "concurrently": "^9.1.2",
     "prettier": "^3.2.5",
     "typescript": "^5.8.3"
