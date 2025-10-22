@@ -216,7 +216,7 @@
   "waitingRoom.title": "Prepare to join:",
   "waitingRoom.user.input.label": "What is your name?",
   "waitingRoom.user.input.placeholder": "Enter your name",
-  "waitingRoom.testNetwork": "Test Network"
+  "waitingRoom.testNetwork": "Test Network",
   "zoom.reset": "Reset Zoom",
   "zoom.start": "Start Zooming",
   "zoom.out": "Zoom out",
