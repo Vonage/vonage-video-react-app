@@ -183,5 +183,10 @@
     "user.you": "Tu",
     "waitingRoom.title": "Preparati per unirti:",
     "waitingRoom.user.input.label": "Qual è il tuo nome?",
-    "waitingRoom.user.input.placeholder": "Inserisci il tuo nome"
+    "waitingRoom.user.input.placeholder": "Inserisci il tuo nome",
+    "zoom.reset": "Reimposta zoom",
+    "zoom.start": "Inizia zoom",
+    "zoom.out": "Zoom indietro",
+    "zoom.in": "Zoom avanti",
+    "zoom.current": "Zoom attuale"
 }

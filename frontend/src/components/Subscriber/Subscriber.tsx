@@ -10,6 +10,7 @@ import VideoTile from '../MeetingRoom/VideoTile';
 import PinButton from '../MeetingRoom/PinButton';
 import useSessionContext from '../../hooks/useSessionContext';
 import isMouseEventInsideBox from '../../utils/isMouseEventInsideBox';
+import ScreenshareVideoTile from '../MeetingRoom/ScreenshareVideoTile';
 
 export type SubscriberProps = {
   subscriberWrapper: SubscriberWrapper;
@@ -88,10 +89,23 @@ const Subscriber = ({
   const hasAudio = subscriberWrapper.subscriber.stream?.hasAudio;
   const audioIndicatorStyle =
     'rounded-xl absolute top-3 right-3 bg-darkGray-55 h-6 w-6 items-center justify-center flex m-auto';
-  return (
+
+  return isScreenShare ? (
+    <ScreenshareVideoTile
+      id={`${subscriberWrapper.id}`}
+      box={box}
+      className="screen-subscriber"
+      data-testid={`subscriber-container-${subscriberWrapper.id}`}
+      ref={subRef}
+      onMouseEnter={() => setIsTileHovered(true)}
+      onMouseLeave={() => setIsTileHovered(false)}
+    >
+      {box && <ScreenShareNameDisplay name={username} box={box} />}
+    </ScreenshareVideoTile>
+  ) : (
     <VideoTile
       id={`${subscriberWrapper.id}`}
-      className={isScreenShare ? 'screen-subscriber' : 'subscriber'}
+      className="subscriber"
       data-testid={`subscriber-container-${subscriberWrapper.id}`}
       isHidden={isHidden}
       box={box}
@@ -100,26 +114,21 @@ const Subscriber = ({
       isTalking={isTalking}
       onMouseEnter={() => setIsTileHovered(true)}
       onMouseLeave={() => setIsTileHovered(false)}
-      isScreenshare={isScreenShare}
     >
-      {!isScreenShare && (
-        <PinButton
-          isPinned={isPinned}
-          isTileHovered={isTileHovered}
-          isMaxPinned={isMaxPinned}
-          handleClick={handlePinClick}
-          participantName={username}
-        />
-      )}
-      {!isScreenShare && (
-        <AudioIndicator
-          hasAudio={hasAudio}
-          stream={subscriber.stream}
-          indicatorStyle={audioIndicatorStyle}
-          indicatorColor="white"
-          participantName={username}
-        />
-      )}
+      <PinButton
+        isPinned={isPinned}
+        isTileHovered={isTileHovered}
+        isMaxPinned={isMaxPinned}
+        handleClick={handlePinClick}
+        participantName={username}
+      />
+      <AudioIndicator
+        hasAudio={hasAudio}
+        stream={subscriber.stream}
+        indicatorStyle={audioIndicatorStyle}
+        indicatorColor="white"
+        participantName={username}
+      />
 
       {!hasVideo && (
         <AvatarInitials
@@ -129,12 +138,7 @@ const Subscriber = ({
           width={box?.width}
         />
       )}
-      {box &&
-        (isScreenShare ? (
-          <ScreenShareNameDisplay name={username} box={box} />
-        ) : (
-          <NameDisplay name={username} containerWidth={box.width} />
-        ))}
+      {box && <NameDisplay name={username} containerWidth={box.width} />}
     </VideoTile>
   );
 };
