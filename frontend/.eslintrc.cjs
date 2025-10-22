@@ -19,5 +19,19 @@ module.exports = {
     'jsx-a11y/no-static-element-interactions': 'off',
     'jsx-a11y/click-events-have-key-events': 'off',
     'react/require-default-props': 'off',
+    
+    'jsdoc/require-jsdoc': 'off', // to keep code base consistency since const functions are not required to have jsdoc,
+
+    /*
+    * Functions and classes are hoisted, so they can be used before their declaration.
+    */
+    '@typescript-eslint/no-use-before-define': ['error', { 
+      functions: false,
+      classes: false,
+      variables: true,
+    }],
+
+    'no-redeclare': 'off', // duplicate rule, typescript already checks for this
+    '@typescript-eslint/no-shadow': 'off', // duplicate rule, typescript already checks for this
   },
 };

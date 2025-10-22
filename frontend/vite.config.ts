@@ -44,5 +44,18 @@ export default defineConfig(({ mode }) => {
         preventAssignment: true,
       }),
     ],
+    resolve: {
+      alias: {
+        '@api': '/src/api',
+        '@components': '/src/components',
+        '@Context': '/src/Context',
+        '@hooks': '/src/hooks',
+        '@locales': '/src/locales',
+        '@pages': '/src/pages',
+        '@tests': '/src/tests',
+        '@app-types': '/src/types',
+        '@utils': '/src/utils',
+      },
+    },
   });
 });
