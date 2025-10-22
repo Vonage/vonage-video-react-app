@@ -9,6 +9,7 @@ import {
 import { ChangeEvent, ReactElement, useState } from 'react';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import LinkIcon from '@mui/icons-material/Link';
+import { useTranslation } from 'react-i18next';
 import FileUploader from '../../FileUploader/FileUploader';
 import { ALLOWED_TYPES, MAX_SIZE_MB } from '../../../../utils/constants';
 import useImageStorage from '../../../../utils/useImageStorage/useImageStorage';
@@ -32,6 +33,7 @@ const AddBackgroundEffectLayout = ({
   const [imageLink, setImageLink] = useState<string>('');
   const [linkLoading, setLinkLoading] = useState<boolean>(false);
   const { storageError, handleImageFromFile, handleImageFromLink } = useImageStorage();
+  const { t } = useTranslation();
 
   type HandleFileChangeType = ChangeEvent<HTMLInputElement> | { target: { files: FileList } };
 
@@ -47,12 +49,12 @@ const AddBackgroundEffectLayout = ({
     }
 
     if (!ALLOWED_TYPES.includes(file.type)) {
-      setFileError('Only JPG, PNG, GIF, or BMP images are allowed.');
+      setFileError(t('backgroundEffects.invalidFileType'));
       return;
     }
 
     if (file.size > MAX_SIZE_MB * 1024 * 1024) {
-      setFileError(`Image must be less than ${MAX_SIZE_MB}MB.`);
+      setFileError(t('backgroundEffects.fileTooLarge', { maxSize: MAX_SIZE_MB }));
       return;
     }
 
@@ -63,7 +65,7 @@ const AddBackgroundEffectLayout = ({
         customBackgroundImageChange(newImage.dataUrl);
       }
     } catch {
-      setFileError('Failed to process uploaded image.');
+      setFileError(t('backgroundEffects.processingError'));
     }
   };
 
@@ -76,7 +78,7 @@ const AddBackgroundEffectLayout = ({
         setFileError('');
         customBackgroundImageChange(newImage.dataUrl);
       } else {
-        setFileError('Failed to store image.');
+        setFileError(t('backgroundEffects.storageError'));
       }
     } catch {
       // error handled in hook
@@ -103,7 +105,7 @@ const AddBackgroundEffectLayout = ({
         <TextField
           fullWidth
           size="small"
-          placeholder="Link from the web"
+          placeholder={t('backgroundEffects.linkPlaceholder')}
           className="add-background-effect-input"
           value={imageLink}
           onChange={(e) => setImageLink(e.target.value)}

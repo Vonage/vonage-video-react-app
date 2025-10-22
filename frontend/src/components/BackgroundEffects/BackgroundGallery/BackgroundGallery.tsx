@@ -1,20 +1,10 @@
 import { ReactElement, useEffect, useState } from 'react';
 import { Box, IconButton, Tooltip } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
+import { useTranslation } from 'react-i18next';
 import { BACKGROUNDS_PATH } from '../../../utils/constants';
 import SelectableOption from '../SelectableOption';
 import useImageStorage, { StoredImage } from '../../../utils/useImageStorage/useImageStorage';
-
-export const backgrounds = [
-  { id: 'bg1', file: 'bookshelf-room.jpg', name: 'Bookshelf Room' },
-  { id: 'bg2', file: 'busy-room.jpg', name: 'Busy Room' },
-  { id: 'bg3', file: 'dune-view.jpg', name: 'Dune View' },
-  { id: 'bg4', file: 'hogwarts.jpg', name: 'Hogwarts' },
-  { id: 'bg5', file: 'library.jpg', name: 'Library' },
-  { id: 'bg6', file: 'new-york.jpg', name: 'New York' },
-  { id: 'bg7', file: 'plane.jpg', name: 'Plane' },
-  { id: 'bg8', file: 'white-room.jpg', name: 'White Room' },
-];
 
 export type BackgroundGalleryProps = {
   backgroundSelected: string;
@@ -39,6 +29,22 @@ const BackgroundGallery = ({
 }: BackgroundGalleryProps): ReactElement => {
   const { getImagesFromStorage, deleteImageFromStorage } = useImageStorage();
   const [customImages, setCustomImages] = useState<StoredImage[]>([]);
+  const { t } = useTranslation();
+
+  const backgrounds = [
+    {
+      id: 'bg1',
+      file: 'bookshelf-room.jpg',
+      name: t('backgroundEffects.backgrounds.bookshelfRoom'),
+    },
+    { id: 'bg2', file: 'busy-room.jpg', name: t('backgroundEffects.backgrounds.busyRoom') },
+    { id: 'bg3', file: 'dune-view.jpg', name: t('backgroundEffects.backgrounds.duneView') },
+    { id: 'bg4', file: 'hogwarts.jpg', name: t('backgroundEffects.backgrounds.hogwarts') },
+    { id: 'bg5', file: 'library.jpg', name: t('backgroundEffects.backgrounds.library') },
+    { id: 'bg6', file: 'new-york.jpg', name: t('backgroundEffects.backgrounds.newYork') },
+    { id: 'bg7', file: 'plane.jpg', name: t('backgroundEffects.backgrounds.plane') },
+    { id: 'bg8', file: 'white-room.jpg', name: t('backgroundEffects.backgrounds.whiteRoom') },
+  ];
 
   useEffect(() => {
     setCustomImages(getImagesFromStorage());
@@ -67,7 +73,7 @@ const BackgroundGallery = ({
           >
             <SelectableOption
               id={id}
-              title="Your Background"
+              title={t('backgroundEffects.yourBackground')}
               isSelected={isSelected}
               onClick={() => setBackgroundSelected(dataUrl)}
               image={dataUrl}
@@ -75,14 +81,14 @@ const BackgroundGallery = ({
               <Tooltip
                 title={
                   isSelected
-                    ? "You can't remove this background while it's in use"
-                    : 'Delete background'
+                    ? t('backgroundEffects.deleteTooltipInUse')
+                    : t('backgroundEffects.deleteTooltip')
                 }
                 arrow
               >
                 <IconButton
                   data-testid={`background-delete-${id}`}
-                  aria-label="Delete custom background"
+                  aria-label={t('backgroundEffects.deleteAriaLabel')}
                   onClick={(e) => {
                     e.stopPropagation();
                     if (!isSelected) {

@@ -346,7 +346,7 @@ describe('DeviceSettingsMenu Component', () => {
 
       await waitFor(() => {
         expect(screen.queryByTestId('dropdown-separator')).toBeVisible();
-        expect(screen.queryByText('Background effects')).toBeVisible();
+        expect(screen.queryByText('Background Effects')).toBeVisible();
       });
     });
 
@@ -365,7 +365,7 @@ describe('DeviceSettingsMenu Component', () => {
 
       await waitFor(() => {
         expect(screen.queryByTestId('dropdown-separator')).not.toBeInTheDocument();
-        expect(screen.queryByText('Background effects')).not.toBeInTheDocument();
+        expect(screen.queryByText('Background Effects')).not.toBeInTheDocument();
       });
     });
 
@@ -394,7 +394,7 @@ describe('DeviceSettingsMenu Component', () => {
 
       await waitFor(() => {
         expect(screen.queryByTestId('dropdown-separator')).not.toBeInTheDocument();
-        expect(screen.queryByText('Background effects')).not.toBeInTheDocument();
+        expect(screen.queryByText('Background Effects')).not.toBeInTheDocument();
       });
     });
   });

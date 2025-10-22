@@ -1,4 +1,5 @@
 import { useCallback, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { getStorageItem, setStorageItem, STORAGE_KEYS } from '../storage';
 import { MAX_LOCAL_STORAGE_BYTES } from '../constants';
 
@@ -13,6 +14,7 @@ export type StoredImage = {
  */
 const useImageStorage = () => {
   const [storageError, setStorageError] = useState<string>('');
+  const { t } = useTranslation();
 
   // Estimate size of a string in bytes
   const estimateSizeInBytes = (str: string) => new Blob([str]).size;
@@ -42,14 +44,14 @@ const useImageStorage = () => {
     try {
       const totalSize = images.reduce((acc, img) => acc + estimateSizeInBytes(img.dataUrl), 0);
       if (totalSize > MAX_LOCAL_STORAGE_BYTES) {
-        setStorageError('Images are too large to store (~4MB max).');
+        setStorageError(t('imageStorage.imagesExceedSize'));
         return false;
       }
       setStorageItem(STORAGE_KEYS.BACKGROUND_IMAGE, JSON.stringify(images));
       setStorageError('');
       return true;
     } catch {
-      setStorageError('Failed to store images in localStorage.');
+      setStorageError(t('imageStorage.storageFailure'));
       return false;
     }
   };
@@ -64,7 +66,7 @@ const useImageStorage = () => {
 
     const isDuplicate = images.some((img) => img.dataUrl === dataUrl);
     if (isDuplicate) {
-      setStorageError('This image is already added.');
+      setStorageError(t('imageStorage.duplicateImage'));
       return null;
     }
 
@@ -110,7 +112,7 @@ const useImageStorage = () => {
         }
       };
       reader.onerror = () => {
-        setStorageError('Failed to read image file.');
+        setStorageError(t('imageStorage.fileReadError'));
         reject();
       };
       reader.readAsDataURL(file);
@@ -128,12 +130,12 @@ const useImageStorage = () => {
         const parsed = new URL(url);
         const validExt = /\.(jpg|jpeg|png|gif|bmp)$/i.test(parsed.pathname);
         if (!validExt) {
-          setStorageError('Invalid image extension.');
+          setStorageError(t('imageStorage.invalidExtension'));
           reject();
           return;
         }
       } catch {
-        setStorageError('Invalid image URL.');
+        setStorageError(t('imageStorage.invalidUrl'));
         reject();
         return;
       }
@@ -155,12 +157,12 @@ const useImageStorage = () => {
             reject();
           }
         } catch {
-          setStorageError('Could not convert image.');
+          setStorageError(t('imageStorage.convertError'));
           reject();
         }
       };
       img.onerror = () => {
-        setStorageError('Could not load image.');
+        setStorageError(t('imageStorage.loadError'));
         reject();
       };
       img.src = url;

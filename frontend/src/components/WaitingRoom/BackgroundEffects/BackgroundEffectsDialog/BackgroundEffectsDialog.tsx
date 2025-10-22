@@ -1,6 +1,7 @@
 import { Dialog, DialogContent, DialogTitle, IconButton } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import { ReactElement } from 'react';
+import { useTranslation } from 'react-i18next';
 import BackgroundEffectsLayout from '../../../BackgroundEffects/BackgroundEffectsLayout';
 
 export type BackgroundEffectsDialogProps = {
@@ -24,13 +25,14 @@ const BackgroundEffectsDialog = ({
   const handleClose = () => {
     setIsBackgroundEffectsOpen(false);
   };
+  const { t } = useTranslation();
 
   return (
     <Dialog open={isBackgroundEffectsOpen} onClose={handleClose} maxWidth="lg" fullWidth>
       <DialogTitle sx={{ m: 0, p: 2 }}>
-        Background Effects
+        {t('backgroundEffects.title')}
         <IconButton
-          aria-label="close"
+          aria-label={t('button.close')}
           onClick={handleClose}
           sx={{
             position: 'absolute',
