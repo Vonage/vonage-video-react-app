@@ -106,6 +106,8 @@ The Vonage Video API Reference App for React is currently supported on the lates
 - ![Safari icon](/docs/assets/safari.svg) Safari
 - ![Electron icon](/docs/assets/electron.svg) Electron
 
+*Note:* Some browsers such as Firefox or Safari do not support media processors like video and audio filters (e.g background effects): Please, check https://tokbox.com/developer/sdks/js/reference/OT.html#hasMediaProcessorSupport.
+
 *Note:* Mobile web views have limited supported at the moment. The minimum supported device width is `360px`.
 
 ## Requirements
