@@ -17,7 +17,18 @@
     "strict": true,
     "noUnusedLocals": false,
     "noUnusedParameters": false,
-    "noFallthroughCasesInSwitch": true
+    "noFallthroughCasesInSwitch": true,
+    "paths": {
+      "@api/*": ["./src/api/*"],
+      "@components/*": ["./src/components/*"],
+      "@Context/*": ["./src/Context/*"],
+      "@hooks/*": ["./src/hooks/*"],
+      "@locales/*": ["./src/locales/*"],
+      "@pages/*": ["./src/pages/*"],
+      "@tests/*": ["./src/tests/*"],
+      "@app-types/*": ["./src/types/*"],
+      "@utils/*": ["./src/utils/*"]
+    }
   },
   "include": [
     "./src",
