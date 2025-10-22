@@ -65,7 +65,7 @@ This application provides features for common conferencing use cases, such as:
     <img src="docs/assets/NoiseSupression.png" alt="Screenshot of noise supression toggle">
   </details>
 - <details>
-    <summary>Background effects in meeting and waiting room. You can set predefined images, custom image or slight/strong background blur. Images can be uploaded from local device or URL in these formats: JPG, PNG, GIF or BMP.</summary>
+    <summary>Background effects in meeting and waiting room. You can set predefined images, custom image or slight/strong background blur. Images can be uploaded from local device or URL in these formats: JPG, PNG, GIF or BMP. Browser must support hasMediaProcessorSupport.</summary>
     <img src="docs/assets/BGEffects.png" alt="Screenshot of background effects">
   </details>
 - <details>
@@ -73,7 +73,7 @@ This application provides features for common conferencing use cases, such as:
     <img src="docs/assets/Archiving.png" alt="Screenshot of archiving dialog box">
   </details>
 - <details>
-    <summary>In-call tools such as screen sharing, group chat function, and emoji reactions.</summary>
+    <summary>In-call tools such as screen sharing (subscriber can zoom in/out if hasMediaProcessorSupport), group chat function, and emoji reactions.</summary>
     <img src="docs/assets/Emojis.png" alt="Screenshot of emojis">
   </details>
 - Active speaker detection.
