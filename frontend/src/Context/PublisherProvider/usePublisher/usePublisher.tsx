@@ -268,8 +268,8 @@ const usePublisher = (): PublisherContextType => {
         return;
       }
 
-      sessionPublish(publisherRef.current);
-      setIsPublishingToSession(true);
+      setIsPublishingToSession(true); // Avoid multiple simultaneous publish attempts
+      await sessionPublish(publisherRef.current);
     } catch (err: unknown) {
       if (err instanceof Error) {
         console.warn(err.stack);
