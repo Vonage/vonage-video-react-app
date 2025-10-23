@@ -34,12 +34,21 @@
     "test:backend": "yarn workspace backend test",
     "test:backend:watch": "yarn workspace backend test:watch",
     "test:frontend": "yarn workspace frontend test",
+    "test:frontend:": "yarn test:frontend -- --bail 1 --no-coverage",
+    "test:frontend:debug": "vitest --disableConsoleIntercept=true --silent=false --no-file-parallelism --inspect-brk --root frontend --config vite.config.ts --no-coverage",
     "test:frontend:watch": "yarn workspace frontend test:watch",
     "test:integration": "yarn workspace integration-tests test",
     "ts-check": "yarn --silent ts-check:backend && yarn --silent ts-check:frontend",
     "test:integrationUpdateScreenshots": "yarn workspace integration-tests updateScreenshots",
     "ts-check:backend": "yarn --silent workspace backend ts-check",
     "ts-check:frontend": "yarn --silent workspace frontend ts-check"
+  },
+  "scriptsInfo": {
+    "dev": "Run both frontend and backend in development mode which included compilation type checking and hot reloading",
+    "debug:backend": "Run backend in debug mode which allows you to attach a debugger or debug directly with chrome://inspect",
+    "test:frontend": "Run frontend tests",
+    "test:frontend:": "example: 'yarn test:frontend: <name/path>' to run specific test file or test suite without coverage",
+    "test:frontend:debug": "Debug mode which allows you to attach a debugger or debug directly with chrome://inspect"
   },
   "repository": {
     "type": "git",

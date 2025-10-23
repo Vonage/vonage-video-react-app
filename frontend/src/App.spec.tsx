@@ -1,5 +1,5 @@
 import { render, screen } from '@testing-library/react';
-import { describe, it, expect, vi, afterEach } from 'vitest';
+import { describe, it, expect, vi } from 'vitest';
 import { PropsWithChildren } from 'react';
 import App from './App';
 
@@ -35,10 +35,6 @@ vi.mock('./Context/ConfigProvider', () => ({
   ConfigContextProvider: ({ children }: PropsWithChildren) => children,
   default: ({ children }: PropsWithChildren) => children,
 }));
-
-afterEach(() => {
-  vi.clearAllMocks();
-});
 
 describe('App routing', () => {
   it('renders LandingPage on unknown route', () => {
