@@ -2,19 +2,19 @@ import { afterEach, beforeEach, describe, expect, it, Mock, vi } from 'vitest';
 import { cleanup, render, screen, within, fireEvent, waitFor } from '@testing-library/react';
 import { Subscriber as OTSubscriber } from '@vonage/client-sdk-video';
 import { useNavigate, useLocation } from 'react-router-dom';
+import { SessionContextType } from '@Context/SessionProvider/session';
+import { SubscriberWrapper } from '@app-types/session';
+import useUserContext from '@hooks/useUserContext';
+import { UserContextType } from '@Context/user';
+import useSessionContext from '@hooks/useSessionContext';
+import useRoomShareUrl from '@hooks/useRoomShareUrl';
 import ParticipantList from './ParticipantList';
-import { SessionContextType } from '../../../Context/SessionProvider/session';
-import { SubscriberWrapper } from '../../../types/session';
-import useUserContext from '../../../hooks/useUserContext';
-import { UserContextType } from '../../../Context/user';
-import useSessionContext from '../../../hooks/useSessionContext';
-import useRoomShareUrl from '../../../hooks/useRoomShareUrl';
 
 const mockedRoomName = { roomName: 'test-room-name' };
 
-vi.mock('../../../hooks/useSessionContext.tsx');
-vi.mock('../../../hooks/useUserContext');
-vi.mock('../../../hooks/useRoomShareUrl');
+vi.mock('@hooks/useSessionContext.tsx');
+vi.mock('@hooks/useUserContext');
+vi.mock('@hooks/useRoomShareUrl');
 vi.mock('react-router-dom', () => ({
   useNavigate: vi.fn(),
   useLocation: vi.fn(),
@@ -23,7 +23,6 @@ vi.mock('react-router-dom', () => ({
 const mockUseSessionContext = useSessionContext as Mock<[], SessionContextType>;
 const mockNavigate = vi.fn();
 
-const mockUseUserContext = useUserContext as Mock<[], UserContextType>;
 const mockUserContextWithDefaultSettings = {
   user: {
     defaultSettings: {
@@ -31,7 +30,6 @@ const mockUserContextWithDefaultSettings = {
     },
   },
 } as UserContextType;
-mockUseUserContext.mockImplementation(() => mockUserContextWithDefaultSettings);
 
 const createSubscriberWrapper = (
   name: string,
@@ -77,6 +75,8 @@ describe('ParticipantList', () => {
   let originalClipboard: Clipboard;
 
   beforeEach(() => {
+    vi.mocked(useUserContext).mockImplementation(() => mockUserContextWithDefaultSettings);
+
     originalClipboard = navigator.clipboard;
     Object.assign(navigator, {
       clipboard: {

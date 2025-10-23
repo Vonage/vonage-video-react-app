@@ -1,38 +1,21 @@
 import { act, cleanup, renderHook } from '@testing-library/react';
 import { afterAll, afterEach, beforeEach, describe, expect, it, Mock, vi } from 'vitest';
-import {
-  hasMediaProcessorSupport,
-  initPublisher,
-  Publisher,
-  PublisherProperties,
-} from '@vonage/client-sdk-video';
+import { hasMediaProcessorSupport, initPublisher, Publisher } from '@vonage/client-sdk-video';
 import EventEmitter from 'events';
-import useBackgroundPublisher from './useBackgroundPublisher';
+import useUserContext from '@hooks/useUserContext';
+import usePermissions from '@hooks/usePermissions';
+import useDevices from '@hooks/useDevices';
+import { allMediaDevices, defaultAudioDevice, defaultVideoDevice } from '@utils/mockData/device';
+import { DEVICE_ACCESS_STATUS } from '@utils/constants';
 import { UserContextType } from '../../user';
-import useUserContext from '../../../hooks/useUserContext';
-import usePermissions, { PermissionsHookType } from '../../../hooks/usePermissions';
-import useDevices from '../../../hooks/useDevices';
-import { AllMediaDevices } from '../../../types';
-import {
-  allMediaDevices,
-  defaultAudioDevice,
-  defaultVideoDevice,
-} from '../../../utils/mockData/device';
-import { DEVICE_ACCESS_STATUS } from '../../../utils/constants';
+import useBackgroundPublisher from './useBackgroundPublisher';
 import usePublisherOptions from '../../PublisherProvider/usePublisherOptions';
 
 vi.mock('@vonage/client-sdk-video');
-vi.mock('../../../hooks/useUserContext.tsx');
-vi.mock('../../../hooks/usePermissions.tsx');
-vi.mock('../../../hooks/useDevices.tsx');
+vi.mock('@hooks/useUserContext.tsx');
+vi.mock('@hooks/usePermissions.tsx');
+vi.mock('@hooks/useDevices.tsx');
 vi.mock('../../PublisherProvider/usePublisherOptions');
-const mockUseUserContext = useUserContext as Mock<[], UserContextType>;
-const mockUsePermissions = usePermissions as Mock<[], PermissionsHookType>;
-const mockUseDevices = useDevices as Mock<
-  [],
-  { allMediaDevices: AllMediaDevices; getAllMediaDevices: () => void }
->;
-const mockUsePublisherOptions = usePublisherOptions as Mock<[], PublisherProperties>;
 
 const defaultSettings = {
   publishAudio: false,
@@ -56,25 +39,25 @@ describe('useBackgroundPublisher', () => {
     applyVideoFilter: vi.fn(),
     clearVideoFilter: vi.fn(),
   }) as unknown as Publisher;
+
   const mockedInitPublisher = vi.fn();
   const mockedHasMediaProcessorSupport = vi.fn();
-  const consoleErrorSpy = vi.spyOn(console, 'error');
   const mockSetAccessStatus = vi.fn();
 
   beforeEach(() => {
-    vi.resetAllMocks();
-    mockUseUserContext.mockImplementation(() => mockUserContextWithDefaultSettings);
+    vi.spyOn(console, 'error');
+    vi.mocked(useUserContext).mockImplementation(() => mockUserContextWithDefaultSettings);
     (initPublisher as Mock).mockImplementation(mockedInitPublisher);
     (hasMediaProcessorSupport as Mock).mockImplementation(mockedHasMediaProcessorSupport);
-    mockUseDevices.mockReturnValue({
+    vi.mocked(useDevices).mockReturnValue({
       getAllMediaDevices: vi.fn(),
       allMediaDevices,
     });
-    mockUsePermissions.mockReturnValue({
+    vi.mocked(usePermissions).mockReturnValue({
       accessStatus: DEVICE_ACCESS_STATUS.PENDING,
       setAccessStatus: mockSetAccessStatus,
     });
-    mockUsePublisherOptions.mockReturnValue({
+    vi.mocked(usePublisherOptions).mockReturnValue({
       publishVideo: true,
     });
   });
@@ -104,7 +87,7 @@ describe('useBackgroundPublisher', () => {
 
       const { result } = renderHook(() => useBackgroundPublisher());
       await result.current.initBackgroundLocalPublisher();
-      expect(consoleErrorSpy).toHaveBeenCalledWith('initPublisher error: ', error);
+      expect(console.error).toHaveBeenCalledWith('initPublisher error: ', error);
     });
 
     it('should apply background high blur when initialized and changed background', async () => {
@@ -195,7 +178,7 @@ describe('useBackgroundPublisher', () => {
         await res.current.changeBackground('low-blur');
       });
 
-      expect(consoleErrorSpy).toHaveBeenCalledWith('Failed to apply background filter.');
+      expect(console.error).toHaveBeenCalledWith('Failed to apply background filter.');
     });
   });
 
@@ -261,7 +244,7 @@ describe('useBackgroundPublisher', () => {
         expect(emitAccessDeniedError).not.toThrow();
       });
 
-      expect(consoleErrorSpy).toHaveBeenCalledWith(
+      expect(console.error).toHaveBeenCalledWith(
         'Failed to query device permission for microphone: Error: Whoops'
       );
     });

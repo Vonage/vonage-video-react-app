@@ -1,9 +1,8 @@
-import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
+import { describe, expect, it, vi, beforeEach } from 'vitest';
 import { renderHook, waitFor } from '@testing-library/react';
 import useConfig, { AppConfig } from './useConfig';
 
 describe('useConfig', () => {
-  let nativeFetch: typeof global.fetch;
   const defaultConfig: AppConfig = {
     videoSettings: {
       allowCameraControl: true,
@@ -30,25 +29,11 @@ describe('useConfig', () => {
       showParticipantList: true,
     },
   };
-  const consoleErrorSpy = vi.spyOn(console, 'error');
-  const consoleInfoSpy = vi.spyOn(console, 'info');
-
-  beforeAll(() => {
-    nativeFetch = global.fetch;
-  });
 
   beforeEach(() => {
-    global.fetch = vi.fn().mockResolvedValue({
-      json: async () => ({}),
-    });
-  });
-
-  afterEach(() => {
-    vi.resetAllMocks();
-  });
-
-  afterAll(() => {
-    global.fetch = nativeFetch;
+    vi.spyOn(console, 'log').mockImplementation(vi.fn());
+    vi.spyOn(console, 'info').mockImplementation(vi.fn());
+    vi.spyOn(console, 'error').mockImplementation(vi.fn());
   });
 
   it('returns the default config when no config.json is loaded', async () => {
@@ -87,12 +72,14 @@ describe('useConfig', () => {
         showParticipantList: false,
       },
     };
-    global.fetch = vi.fn().mockResolvedValue({
+
+    vi.spyOn(global, 'fetch').mockResolvedValue({
       json: async () => mockConfig,
       headers: {
         get: () => 'application/json',
       },
-    });
+    } as unknown as Response);
+
     const { result } = renderHook(() => useConfig());
 
     await waitFor(() => {
@@ -102,30 +89,33 @@ describe('useConfig', () => {
 
   it('falls back to defaultConfig if fetch fails', async () => {
     const mockFetchError = new Error('mocking a failure to fetch');
-    global.fetch = vi.fn().mockRejectedValue(mockFetchError);
+
+    vi.spyOn(global, 'fetch').mockRejectedValue(mockFetchError as unknown as Response);
+
     const { result } = renderHook(() => useConfig());
 
     await waitFor(() => {
       expect(result.current).toEqual(defaultConfig);
     });
-    expect(consoleErrorSpy).toHaveBeenCalledWith('Error loading config:', expect.any(Error));
+    expect(console.error).toHaveBeenCalledWith('Error loading config:', expect.any(Error));
   });
 
   it('falls back to defaultConfig if no config.json is found', async () => {
-    global.fetch = vi.fn().mockResolvedValue({
+    vi.spyOn(global, 'fetch').mockResolvedValue({
       ok: false,
       status: 404,
       statusText: 'Not Found',
       headers: {
         get: () => 'text/html',
       },
-    });
+    } as unknown as Response);
+
     const { result } = renderHook(() => useConfig());
 
     await waitFor(() => {
       expect(result.current).toEqual(defaultConfig);
     });
-    expect(consoleInfoSpy).toHaveBeenCalledWith('No valid JSON found, using default config');
-    expect(consoleErrorSpy).not.toHaveBeenCalled();
+    expect(console.info).toHaveBeenCalledWith('No valid JSON found, using default config');
+    expect(console.error).not.toHaveBeenCalled();
   });
 });
