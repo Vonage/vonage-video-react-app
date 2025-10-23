@@ -1,10 +1,11 @@
+import env from '../env';
 import isReportIssueEnabled from './isReportIssueEnabled/isReportIssueEnabled';
 
 /**
  * @constant {string} API_URL - The base URL determined by the current environment.
  */
 export const API_URL =
-  import.meta.env.VITE_API_URL ||
+  env.VITE_API_URL ||
   (window.location.origin.includes('localhost') ? 'http://localhost:3345' : window.location.origin);
 
 /**

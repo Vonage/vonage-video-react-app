@@ -38,7 +38,7 @@ const VideoContainer = ({ username }: VideoContainerProps): ReactElement => {
   const isSmallViewport = useIsSmallViewport();
 
   useEffect(() => {
-    if (publisherVideoElement && containerRef.current) {
+    if (publisherVideoElement && containerRef.current && isVideoEnabled) {
       containerRef.current.appendChild(publisherVideoElement);
       const myVideoElement = publisherVideoElement as HTMLElement;
       myVideoElement.classList.add('video__element');
@@ -58,7 +58,7 @@ const VideoContainer = ({ username }: VideoContainerProps): ReactElement => {
         setIsVideoLoading(false);
       });
     }
-  }, [isSmallViewport, publisherVideoElement]);
+  }, [isSmallViewport, publisherVideoElement, isVideoEnabled]);
 
   return (
     <div

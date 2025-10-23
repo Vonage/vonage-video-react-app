@@ -65,7 +65,12 @@ This application provides features for common conferencing use cases, such as:
     <img src="docs/assets/NoiseSupression.png" alt="Screenshot of noise supression toggle">
   </details>
 - <details>
-    <summary>Background effects in meeting and waiting room. You can set predefined images, custom image or slight/strong background blur. Images can be uploaded from local device or URL in these formats: JPG, PNG, GIF or BMP. Background effects are not supported in non-Chromium-based browsers or on iOS. </summary>
+    <summary>
+      Background effects in meeting and waiting room. You can set predefined images, custom image or slight/strong background blur. Images can be uploaded from local device or URL in these formats: JPG, PNG, GIF or BMP. Background effects are not supported in non-Chromium-based browsers or on iOS.
+      
+    Please see [OT.hasMediaProcessorSupport](https://vonage.github.io/video-docs/video-js-reference/latest/OT.html#hasMediaProcessorSupport) for more information.
+    </summary>
+  
     <img src="docs/assets/BGEffects.png" alt="Screenshot of background effects">
   </details>
 - <details>
@@ -73,7 +78,7 @@ This application provides features for common conferencing use cases, such as:
     <img src="docs/assets/Archiving.png" alt="Screenshot of archiving dialog box">
   </details>
 - <details>
-    <summary>In-call tools such as screen sharing, group chat function, and emoji reactions.</summary>
+    <summary>In-call tools such as screen sharing (subscriber can zoom in/out if hasMediaProcessorSupport), group chat function, and emoji reactions.</summary>
     <img src="docs/assets/Emojis.png" alt="Screenshot of emojis">
   </details>
 - Active speaker detection.
@@ -105,6 +110,8 @@ The Vonage Video API Reference App for React is currently supported on the lates
 - ![Opera icon](/docs/assets/opera.svg) Opera
 - ![Safari icon](/docs/assets/safari.svg) Safari
 - ![Electron icon](/docs/assets/electron.svg) Electron
+
+*Note:* Some browsers such as Firefox or Safari do not support media processors like video and audio filters (e.g background effects): Please see [OT.hasMediaProcessorSupport](https://vonage.github.io/video-docs/video-js-reference/latest/OT.html#hasMediaProcessorSupport) for more information.
 
 *Note:* Mobile web views have limited supported at the moment. The minimum supported device width is `360px`.
 
