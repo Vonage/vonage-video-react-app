@@ -2,7 +2,7 @@
 /* eslint-disable jsdoc/require-param */
 import { ReactElement } from 'react';
 import { Navigate, useLocation } from 'react-router-dom';
-import useRoomName from '../../hooks/useRoomName';
+import useRoomName from '@hooks/useRoomName';
 import env from '../../env';
 
 export type RedirectToWaitingRoomProps = {
@@ -26,6 +26,7 @@ const RedirectToWaitingRoom = ({ children }: RedirectToWaitingRoomProps): ReactE
   const searchParams = new URLSearchParams(location.search);
   const bypass = searchParams.get('bypass') === 'true' || env.VITE_BYPASS_WAITING_ROOM;
   const mustEnterWaitingRoom = !hasAccess && !bypass;
+
   return mustEnterWaitingRoom ? (
     <Navigate
       to={{

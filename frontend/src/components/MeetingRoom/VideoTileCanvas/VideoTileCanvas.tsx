@@ -93,7 +93,7 @@ const VideoTileCanvas = ({
     ? '@apply w-[calc(100vw_-_392px)]'
     : '@apply w-[calc(100vw_-_24px)]';
   return (
-    <div ref={wrapRef} id="wrapper" className={`m-3 ${widthClass} ${heightClass}`}>
+    <div ref={wrapRef} id="wrapper" className={`p-3 ${widthClass} ${heightClass}`}>
       <div id="video-container" className="relative size-full">
         {!connected ? (
           <CircularProgress

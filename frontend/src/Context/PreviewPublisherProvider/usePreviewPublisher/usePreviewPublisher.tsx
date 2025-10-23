@@ -8,6 +8,9 @@ import {
   PublisherProperties,
 } from '@vonage/client-sdk-video';
 import useAppConfig from '@Context/AppConfig/hooks/useAppConfig';
+import useSuspenseUntilAppConfigReady from '@Context/AppConfig/hooks/useSuspenseUntilAppConfigReady';
+import useIsCameraControlAllowed from '@Context/AppConfig/hooks/useIsCameraControlAllowed';
+import useIsMicrophoneControlAllowed from '@Context/AppConfig/hooks/useIsMicrophoneControlAllowed';
 import setMediaDevices from '../../../utils/mediaDeviceUtils';
 import useDevices from '../../../hooks/useDevices';
 import usePermissions from '../../../hooks/usePermissions';
@@ -79,11 +82,17 @@ const usePreviewPublisher = (): PreviewPublisherContextType => {
   const initialBackgroundRef = useRef<VideoFilter | undefined>(
     user.defaultSettings.backgroundFilter
   );
+
   const [backgroundFilter, setBackgroundFilter] = useState<VideoFilter | undefined>(
     user.defaultSettings.backgroundFilter
   );
-  const [isVideoEnabled, setIsVideoEnabled] = useState(true);
-  const [isAudioEnabled, setIsAudioEnabled] = useState(true);
+
+  const isCameraAllowed = useIsCameraControlAllowed();
+  const isMicrophoneAllowed = useIsMicrophoneControlAllowed();
+
+  const [isCameraActivated, setIsCameraActivated] = useState(isCameraAllowed);
+  const [isAudioEnabled, setIsAudioEnabled] = useState(isMicrophoneAllowed);
+
   const [localVideoSource, setLocalVideoSource] = useState<string | undefined>(undefined);
   const [localAudioSource, setLocalAudioSource] = useState<string | undefined>(undefined);
   const deviceStoreRef = useRef<DeviceStore>(new DeviceStore());
@@ -216,6 +225,7 @@ const usePreviewPublisher = (): PreviewPublisherContextType => {
       publisher.on('audioLevelUpdated', ({ audioLevel }: { audioLevel: number }) => {
         calculateAudioLevel(audioLevel);
       });
+
       publisher.on('accessAllowed', () => {
         setAccessStatus(DEVICE_ACCESS_STATUS.ACCEPTED);
         getAllMediaDevices();
@@ -236,6 +246,7 @@ const usePreviewPublisher = (): PreviewPublisherContextType => {
     }
 
     await deviceStoreRef.current.init();
+
     const videoSource = deviceStoreRef.current.getConnectedDeviceId('videoinput');
     const audioSource = deviceStoreRef.current.getConnectedDeviceId('audioinput');
 
@@ -281,14 +292,14 @@ const usePreviewPublisher = (): PreviewPublisherContextType => {
     if (!publisherRef.current) {
       return;
     }
-    publisherRef.current.publishVideo(!isVideoEnabled);
-    setIsVideoEnabled(!isVideoEnabled);
+    publisherRef.current.publishVideo(!isCameraActivated);
+    setIsCameraActivated(!isCameraActivated);
     if (setUser) {
       setUser((prevUser: UserType) => ({
         ...prevUser,
         defaultSettings: {
           ...prevUser.defaultSettings,
-          publishVideo: !isVideoEnabled,
+          publishVideo: !isCameraActivated,
         },
       }));
     }
@@ -318,10 +329,12 @@ const usePreviewPublisher = (): PreviewPublisherContextType => {
   };
 
   return {
+    // TODO: active and enable are different concepts, we need to align naming,
+    // but for now keeping previous naming for backwards compatibility
     isAudioEnabled,
     initLocalPublisher,
     isPublishing,
-    isVideoEnabled,
+    isVideoEnabled: isCameraActivated,
     destroyPublisher,
     publisher: publisherRef.current,
     publisherVideoElement,

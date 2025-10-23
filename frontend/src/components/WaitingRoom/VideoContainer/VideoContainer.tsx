@@ -1,5 +1,8 @@
 import { useRef, useState, useEffect, ReactElement } from 'react';
 import { Stack } from '@mui/material';
+import useIsCameraControlAllowed from '@Context/AppConfig/hooks/useIsCameraControlAllowed';
+import useIsMicrophoneControlAllowed from '@Context/AppConfig/hooks/useIsMicrophoneControlAllowed';
+import useIsBackgroundEffectsAllowed from '@Context/AppConfig/hooks/useIsBackgroundEffectsAllowed';
 import MicButton from '../MicButton';
 import CameraButton from '../CameraButton';
 import VideoLoading from '../VideoLoading';
@@ -28,6 +31,10 @@ export type VideoContainerProps = {
  * @returns {ReactElement} - The VideoContainer component.
  */
 const VideoContainer = ({ username }: VideoContainerProps): ReactElement => {
+  const isCameraAllowed = useIsCameraControlAllowed();
+  const isMicrophoneAllowed = useIsMicrophoneControlAllowed();
+  const isBackgroundEffectsAllowed = useIsBackgroundEffectsAllowed();
+
   const containerRef = useRef<HTMLDivElement>(null);
   const [isVideoLoading, setIsVideoLoading] = useState<boolean>(true);
   const [isBackgroundEffectsOpen, setIsBackgroundEffectsOpen] = useState<boolean>(false);
@@ -38,65 +45,83 @@ const VideoContainer = ({ username }: VideoContainerProps): ReactElement => {
   const isSmallViewport = useIsSmallViewport();
 
   useEffect(() => {
-    if (publisherVideoElement && containerRef.current && isVideoEnabled) {
-      containerRef.current.appendChild(publisherVideoElement);
-      const myVideoElement = publisherVideoElement as HTMLElement;
-      myVideoElement.classList.add('video__element');
-      myVideoElement.title = 'publisher-preview';
-      myVideoElement.style.borderRadius = isSmallViewport ? '0px' : '12px';
-      myVideoElement.style.height = isSmallViewport ? '' : '328px';
-      myVideoElement.style.width = isSmallViewport ? '100dvw' : '584px';
-      myVideoElement.style.marginLeft = 'auto';
-      myVideoElement.style.marginRight = 'auto';
-      myVideoElement.style.transform = 'scaleX(-1)';
-      myVideoElement.style.objectFit = 'contain';
-      myVideoElement.style.aspectRatio = '16 / 9';
-      myVideoElement.style.boxShadow =
-        '0 1px 2px 0 rgba(60, 64, 67, .3), 0 1px 3px 1px rgba(60, 64, 67, .15)';
+    const shouldAttachVideo =
+      publisherVideoElement && containerRef.current && isVideoEnabled && isCameraAllowed;
 
-      waitUntilPlaying(publisherVideoElement).then(() => {
-        setIsVideoLoading(false);
-      });
+    if (!shouldAttachVideo) {
+      return;
     }
+
+    containerRef.current!.appendChild(publisherVideoElement);
+    const myVideoElement = publisherVideoElement as HTMLElement;
+    myVideoElement.classList.add('video__element');
+    myVideoElement.title = 'publisher-preview';
+    myVideoElement.style.borderRadius = isSmallViewport ? '0px' : '12px';
+    myVideoElement.style.height = isSmallViewport ? '' : '328px';
+    myVideoElement.style.width = isSmallViewport ? '100dvw' : '584px';
+    myVideoElement.style.marginLeft = 'auto';
+    myVideoElement.style.marginRight = 'auto';
+    myVideoElement.style.transform = 'scaleX(-1)';
+    myVideoElement.style.objectFit = 'contain';
+    myVideoElement.style.aspectRatio = '16 / 9';
+    myVideoElement.style.boxShadow =
+      '0 1px 2px 0 rgba(60, 64, 67, .3), 0 1px 3px 1px rgba(60, 64, 67, .15)';
+
+    waitUntilPlaying(publisherVideoElement).then(() => {
+      setIsVideoLoading(false);
+    });
   }, [isSmallViewport, publisherVideoElement, isVideoEnabled]);
 
   return (
     <div
-      className="relative flex aspect-video w-[584px] max-w-full flex-col items-center justify-center bg-black sm:h-[328px] md:rounded-xl"
+      className="relative flex aspect-video w-[584px] max-w-full flex-col items-center justify-center bg-black sm:h-[328px] md:rounded-xl animate-fade-in"
       // this was added because overflow: hidden causes issues with rendering
       // see https://stackoverflow.com/questions/77748631/element-rounded-corners-leaking-out-to-front-when-using-overflow-hidden
       style={{ WebkitMask: 'linear-gradient(#000 0 0)' }}
     >
       <div
         ref={containerRef}
-        style={{ display: isBackgroundEffectsOpen ? 'none' : 'block' }}
+        style={{
+          display: isBackgroundEffectsOpen && isBackgroundEffectsAllowed ? 'none' : 'block',
+        }}
         data-video-container
       />
+
       <VignetteEffect />
-      {isVideoLoading && <VideoLoading />}
+
+      {isVideoLoading && isCameraAllowed && <VideoLoading />}
+
       <PreviewAvatar
         initials={initials}
         username={user.defaultSettings.name}
-        isVideoEnabled={isVideoEnabled}
-        isVideoLoading={isVideoLoading}
+        isVideoEnabled={isVideoEnabled && isCameraAllowed}
+        isVideoLoading={isVideoLoading && isCameraAllowed}
       />
-      {!isVideoLoading && (
+
+      {!isVideoLoading && isCameraAllowed && (
         <div className="absolute inset-x-0 bottom-[5%] flex h-fit items-center justify-center">
-          {isAudioEnabled && (
+          {isAudioEnabled && isMicrophoneAllowed && (
             <div className="absolute left-6 top-8">
               <VoiceIndicatorIcon publisherAudioLevel={speechLevel} size={24} />
             </div>
           )}
+
           <Stack direction="row" spacing={2}>
-            <MicButton />
-            <CameraButton />
+            {isMicrophoneAllowed && <MicButton />}
+            {isCameraAllowed && <CameraButton />}
           </Stack>
+
           <div className="absolute right-[20px]">
-            <BackgroundEffectsButton onClick={() => setIsBackgroundEffectsOpen(true)} />
-            <BackgroundEffectsDialog
-              isBackgroundEffectsOpen={isBackgroundEffectsOpen}
-              setIsBackgroundEffectsOpen={setIsBackgroundEffectsOpen}
-            />
+            {isBackgroundEffectsAllowed && (
+              <>
+                <BackgroundEffectsButton onClick={() => setIsBackgroundEffectsOpen(true)} />
+
+                <BackgroundEffectsDialog
+                  isBackgroundEffectsOpen={isBackgroundEffectsOpen}
+                  setIsBackgroundEffectsOpen={setIsBackgroundEffectsOpen}
+                />
+              </>
+            )}
           </div>
         </div>
       )}

@@ -8,6 +8,8 @@ import OT, {
   PublisherProperties,
 } from '@vonage/client-sdk-video';
 import { useTranslation } from 'react-i18next';
+import useSuspenseUntilAppConfigReady from '@Context/AppConfig/hooks/useSuspenseUntilAppConfigReady';
+import useUserContext from '@hooks/useUserContext';
 import usePublisherQuality, { NetworkQuality } from '../usePublisherQuality/usePublisherQuality';
 import usePublisherOptions from '../usePublisherOptions';
 import useSessionContext from '../../../hooks/useSessionContext';
@@ -51,6 +53,7 @@ export type PublisherContextType = {
   toggleVideo: () => void;
   changeBackground: (backgroundSelected: string) => void;
   unpublish: () => void;
+  publisherOptions: PublisherProperties | null;
 };
 
 /**
@@ -74,54 +77,63 @@ export type PublisherContextType = {
  * @returns {PublisherContextType} the publisher context
  */
 const usePublisher = (): PublisherContextType => {
+  useSuspenseUntilAppConfigReady();
+
   const { t } = useTranslation();
   const [publisherVideoElement, setPublisherVideoElement] = useState<
     HTMLVideoElement | HTMLObjectElement
   >();
+
+  const { user } = useUserContext();
+
   const publisherRef = useRef<Publisher | null>(null);
   const quality = usePublisherQuality(publisherRef.current);
   const [isPublishing, setIsPublishing] = useState(false);
-  const publisherOptions = usePublisherOptions();
   const [isForceMuted, setIsForceMuted] = useState<boolean>(false);
-  const [isVideoEnabled, setIsVideoEnabled] = useState<boolean>(false);
-  const [isAudioEnabled, setIsAudioEnabled] = useState<boolean>(false);
+  const [isVideoEnabled, setIsVideoEnabled] = useState<boolean>(user.defaultSettings.publishVideo);
+  const [isAudioEnabled, setIsAudioEnabled] = useState<boolean>(user.defaultSettings.publishAudio);
+
+  const publisherOptions = usePublisherOptions({ isVideoEnabled, isAudioEnabled });
+
   const [stream, setStream] = useState<Stream | null>();
   const [isPublishingToSession, setIsPublishingToSession] = useState(false);
   const [publishingError, setPublishingError] = useState<PublishingErrorType>(null);
   const { publish: sessionPublish, unpublish: sessionUnpublish, connected } = useSessionContext();
-  const [deviceAccess, setDeviceAccess] = useState<DeviceAccessStatus>({
-    microphone: undefined,
-    camera: undefined,
-  });
+
+  // const [deviceAccess, setDeviceAccess] = useState<DeviceAccessStatus>({
+  //   microphone: undefined,
+  //   camera: undefined,
+  // });
+
   let publishAttempt: number = 0;
 
-  // If we do not have audio input or video input access, we cannot publish.
-  useEffect(() => {
-    if (deviceAccess?.microphone === false || deviceAccess?.camera === false) {
-      const device = deviceAccess.camera ? 'Microphone' : 'Camera';
-      const accessDeniedError = {
-        header: t('publishingErrors.accessDenied.title', { device }),
-        caption: t('publishingErrors.accessDenied.message', { device: device.toLowerCase() }),
-      };
-      setPublishingError(accessDeniedError);
-    }
-  }, [deviceAccess, t]);
+  // // If we do not have audio input or video input access, we cannot publish.
+  // useEffect(() => {
+  //   if (deviceAccess?.microphone === false || deviceAccess?.camera === false) {
+  //     const device = deviceAccess.camera ? 'Microphone' : 'Camera';
+  //     const accessDeniedError = {
+  //       header: t('publishingErrors.accessDenied.title', { device }),
+  //       caption: t('publishingErrors.accessDenied.message', { device: device.toLowerCase() }),
+  //     };
+  //     setPublishingError(accessDeniedError);
+  //   }
+  // }, [deviceAccess, t]);
 
-  useEffect(() => {
-    if (!publisherOptions) {
-      return;
-    }
+  // useEffect(() => {
+  //   if (!publisherOptions) {
+  //     return;
+  //   }
 
-    setIsVideoEnabled(!!publisherOptions.publishVideo);
-    setIsAudioEnabled(!!publisherOptions.publishAudio);
-  }, [publisherOptions]);
+  //   setIsVideoEnabled(!!publisherOptions.publishVideo);
+  //   setIsAudioEnabled(!!publisherOptions.publishAudio);
+  // }, [publisherOptions]);
 
-  const handleAccessAllowed = () => {
-    setDeviceAccess({
-      microphone: true,
-      camera: true,
-    });
-  };
+  // const handleAccessAllowed = () => {
+  //   setDeviceAccess({
+  //     microphone: true,
+  //     camera: true,
+  //   });
+  // };
 
   const handleDestroyed = () => {
     publisherRef.current = null;
@@ -158,19 +170,19 @@ const usePublisher = (): PublisherContextType => {
     publisherRef.current = null;
   };
 
-  const handleAccessDenied = (event: AccessDeniedEvent) => {
-    // We check the first word of the message to see if the microphone or camera was denied access.
-    const deviceDeniedAccess = event.message?.startsWith('Microphone') ? 'microphone' : 'camera';
-    setDeviceAccess((prev) => ({
-      ...prev,
-      [deviceDeniedAccess]: false,
-    }));
+  // const handleAccessDenied = (event: AccessDeniedEvent) => {
+  //   // We check the first word of the message to see if the microphone or camera was denied access.
+  //   const deviceDeniedAccess = event.message?.startsWith('Microphone') ? 'microphone' : 'camera';
+  //   setDeviceAccess((prev) => ({
+  //     ...prev,
+  //     [deviceDeniedAccess]: false,
+  //   }));
 
-    if (publisherRef.current) {
-      publisherRef.current.destroy();
-    }
-    publisherRef.current = null;
-  };
+  //   if (publisherRef.current) {
+  //     publisherRef.current.destroy();
+  //   }
+  //   publisherRef.current = null;
+  // };
 
   /**
    * Method to unpublish from session and destroy publisher
@@ -202,10 +214,10 @@ const usePublisher = (): PublisherContextType => {
     publisher.on('destroyed', handleDestroyed);
     publisher.on('streamCreated', handleStreamCreated);
     publisher.on('streamDestroyed', handleStreamDestroyed);
-    publisher.on('accessDenied', handleAccessDenied);
+    // publisher.on('accessDenied', handleAccessDenied);
     publisher.on('videoElementCreated', handleVideoElementCreated);
     publisher.on('muteForced', handleMuteForced);
-    publisher.on('accessAllowed', handleAccessAllowed);
+    // publisher.on('accessAllowed', handleAccessAllowed);
   }, []);
 
   /**
@@ -289,6 +301,7 @@ const usePublisher = (): PublisherContextType => {
     if (!publisherRef.current) {
       return;
     }
+
     publisherRef.current.publishVideo(!isVideoEnabled);
     setIsVideoEnabled(!isVideoEnabled);
   };
@@ -323,6 +336,11 @@ const usePublisher = (): PublisherContextType => {
     };
   });
 
+  console.log({
+    isAudioEnabled,
+    isVideoEnabled,
+  });
+
   return {
     initializeLocalPublisher,
     isAudioEnabled,
@@ -339,6 +357,7 @@ const usePublisher = (): PublisherContextType => {
     toggleVideo,
     changeBackground,
     unpublish,
+    publisherOptions,
   };
 };
 export default usePublisher;

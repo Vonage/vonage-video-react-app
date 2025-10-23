@@ -75,7 +75,9 @@ describe('usePublisherOptions', () => {
   it('should use default settings', async () => {
     vi.spyOn(OT, 'hasMediaProcessorSupport').mockReturnValue(true);
     vi.mocked(useUserContext).mockImplementation(() => mockUserContextWithDefaultSettings);
-    const { result } = renderHook(() => usePublisherOptions());
+    const { result } = renderHook(() =>
+      usePublisherOptions({ isVideoEnabled: true, isAudioEnabled: true })
+    );
     await waitFor(() => {
       expect(result.current).toEqual({
         resolution: '1280x720',
@@ -101,7 +103,9 @@ describe('usePublisherOptions', () => {
   it('should not have advanced noise suppression if not supported by browser', async () => {
     vi.spyOn(OT, 'hasMediaProcessorSupport').mockReturnValue(false);
     vi.mocked(useUserContext).mockImplementation(() => mockUserContextWithDefaultSettings);
-    const { result } = renderHook(() => usePublisherOptions());
+    const { result } = renderHook(() =>
+      usePublisherOptions({ isVideoEnabled: true, isAudioEnabled: true })
+    );
 
     await waitFor(() => {
       expect(result.current?.audioFilter).toBe(undefined);
@@ -118,7 +122,9 @@ describe('usePublisherOptions', () => {
     ]);
     await deviceStore.init();
     vi.mocked(useUserContext).mockImplementation(() => mockUserContextWithCustomSettings);
-    const { result } = renderHook(() => usePublisherOptions());
+    const { result } = renderHook(() =>
+      usePublisherOptions({ isVideoEnabled: true, isAudioEnabled: true })
+    );
     await waitFor(() => {
       expect(result.current).toEqual({
         resolution: '1280x720',
@@ -144,15 +150,18 @@ describe('usePublisherOptions', () => {
 
   describe('configurable features', () => {
     it('should disable audio publishing when allowAudioOnJoin is false', async () => {
-      const { result } = renderHook(() => usePublisherOptions(), {
-        appConfigOptions: {
-          value: {
-            audioSettings: {
-              allowAudioOnJoin: false,
+      const { result } = renderHook(
+        () => usePublisherOptions({ isVideoEnabled: true, isAudioEnabled: true }),
+        {
+          appConfigOptions: {
+            value: {
+              audioSettings: {
+                allowAudioOnJoin: false,
+              },
             },
           },
-        },
-      });
+        }
+      );
 
       await waitFor(() => {
         expect(result.current?.publishAudio).toBe(false);
@@ -160,15 +169,18 @@ describe('usePublisherOptions', () => {
     });
 
     it('should disable video publishing when allowVideoOnJoin is false', async () => {
-      const { result } = renderHook(() => usePublisherOptions(), {
-        appConfigOptions: {
-          value: {
-            audioSettings: {
-              allowAudioOnJoin: false,
+      const { result } = renderHook(
+        () => usePublisherOptions({ isVideoEnabled: true, isAudioEnabled: true }),
+        {
+          appConfigOptions: {
+            value: {
+              audioSettings: {
+                allowAudioOnJoin: false,
+              },
             },
           },
-        },
-      });
+        }
+      );
 
       await waitFor(() => {
         expect(result.current?.publishVideo).toBe(false);
@@ -176,15 +188,18 @@ describe('usePublisherOptions', () => {
     });
 
     it('should configure resolution from config', async () => {
-      const { result } = renderHook(() => usePublisherOptions(), {
-        appConfigOptions: {
-          value: {
-            videoSettings: {
-              defaultResolution: '640x480',
+      const { result } = renderHook(
+        () => usePublisherOptions({ isVideoEnabled: true, isAudioEnabled: true }),
+        {
+          appConfigOptions: {
+            value: {
+              videoSettings: {
+                defaultResolution: '640x480',
+              },
             },
           },
-        },
-      });
+        }
+      );
 
       await waitFor(() => {
         expect(result.current?.resolution).toBe('640x480');

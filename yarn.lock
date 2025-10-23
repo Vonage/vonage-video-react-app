@@ -6293,6 +6293,11 @@ json-stable-stringify-without-jsonify@^1.0.1:
   resolved "https://registry.npmjs.org/json-stable-stringify-without-jsonify/-/json-stable-stringify-without-jsonify-1.0.1.tgz"
   integrity sha512-Bdboy+l7tA3OGW6FjyFHWkP5LuByj1Tk33Ljyq0axyzdk9//JSi2u3fP1QSmd1KNwq6VOKYGlAu87CisVir6Pw==
 
+json-storage-formatter@^2.0.9:
+  version "2.0.9"
+  resolved "https://registry.yarnpkg.com/json-storage-formatter/-/json-storage-formatter-2.0.9.tgz#f86a7fd2375c370e40c30be630a097ae3a93f3d8"
+  integrity sha512-8UsiveogvIJp+Bf1h5yTKPsLbt5tgQKmuh7tFru9Z5js2BjrJMHsdqO+KOWJrvaaj0D1TexMLGg1/q0yDrwgQw==
+
 json-storage-formatter@^3.0.2:
   version "3.0.2"
   resolved "https://registry.yarnpkg.com/json-storage-formatter/-/json-storage-formatter-3.0.2.tgz#575d92d85b532c8ec91dbf6556f45df3f1e72fea"

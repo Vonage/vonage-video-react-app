@@ -50,7 +50,6 @@ const PreviewAvatar = ({
   ) : (
     <Avatar
       sx={{
-        bgcolor: '#4caf50',
         position: 'absolute',
         margin: 'auto',
         width: '174px',

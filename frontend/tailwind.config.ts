@@ -1,6 +1,8 @@
-/** @type {import('tailwindcss').Config} */
+import { Config } from 'tailwindcss';
 import defaultTheme from 'tailwindcss/defaultTheme';
-export default {
+import { colors } from './src/utils/customTheme/customTheme';
+
+const config: Config = {
   content: ['./index.html', './src/**/*.{js,ts,jsx,tsx}'],
   theme: {
     extend: {
@@ -18,7 +20,21 @@ export default {
         xs: '350px',
         ...defaultTheme.screens,
       },
+      backgroundColor: {
+        skeletonLike: colors.backgroundDisabled,
+      },
+      keyframes: {
+        'fade-in': {
+          '0%': { opacity: '20%' },
+          '100%': { opacity: '1' },
+        },
+      },
+      animation: {
+        'fade-in': 'fade-in 0.5s ease-in-out',
+      },
     },
   },
   plugins: [],
 };
+
+export default config;

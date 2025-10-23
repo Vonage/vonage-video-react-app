@@ -66,10 +66,14 @@
         "whitelist": [
           "bg-primary-dark",
           "text-darkGray",
+          "bg-darkGray-100",
           // the following are used in playwright testing
           "publisher",
           "subscriber",
-          "screen-subscriber"
+          "screen-subscriber",
+
+          // custom tailwind classes defined in our tailwind.config.ts
+          "animate-fade-in"
         ]
       }
     ],

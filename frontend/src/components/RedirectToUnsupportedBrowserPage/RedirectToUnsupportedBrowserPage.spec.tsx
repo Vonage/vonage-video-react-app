@@ -25,14 +25,9 @@ describe('RedirectToUnsupportedBrowserPage', () => {
       <MemoryRouter initialEntries={['/waiting-room/happy-hippo']}>
         <Routes>
           <Route path="/unsupported-browser" element={<div>{unsupportedText}</div>} />
-          <Route
-            path="/waiting-room/happy-hippo"
-            element={
-              <RedirectToUnsupportedBrowserPage>
-                <TestComponent />
-              </RedirectToUnsupportedBrowserPage>
-            }
-          />
+          <Route path="/waiting-room/happy-hippo" element={<RedirectToUnsupportedBrowserPage />}>
+            <TestComponent />
+          </Route>
         </Routes>
       </MemoryRouter>
     );
@@ -48,14 +43,9 @@ describe('RedirectToUnsupportedBrowserPage', () => {
       <MemoryRouter initialEntries={['/happy-path']}>
         <Routes>
           <Route path="/unsupported-browser" element={<div>{unsupportedText}</div>} />
-          <Route
-            path="/happy-path"
-            element={
-              <RedirectToUnsupportedBrowserPage>
-                <TestComponent />
-              </RedirectToUnsupportedBrowserPage>
-            }
-          />
+          <Route path="/happy-path" element={<RedirectToUnsupportedBrowserPage />}>
+            <TestComponent />
+          </Route>
         </Routes>
       </MemoryRouter>
     );

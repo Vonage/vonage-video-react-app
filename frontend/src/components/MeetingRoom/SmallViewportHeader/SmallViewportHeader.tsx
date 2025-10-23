@@ -1,20 +1,25 @@
-import { ReactElement, useState } from 'react';
+import React, { ComponentProps, useState } from 'react';
 import RadioButtonCheckedIcon from '@mui/icons-material/RadioButtonChecked';
 import { ContentCopy } from '@mui/icons-material';
 import { IconButton, Fade } from '@mui/material';
 import CheckIcon from '@mui/icons-material/Check';
-import useSessionContext from '../../../hooks/useSessionContext';
-import useRoomName from '../../../hooks/useRoomName';
-import useRoomShareUrl from '../../../hooks/useRoomShareUrl';
+import classNames from 'classnames';
+import useSessionContext from '@hooks/useSessionContext';
+import useRoomName from '@hooks/useRoomName';
+import useRoomShareUrl from '@hooks/useRoomShareUrl';
+
+type SmallViewportHeaderProps = ComponentProps<'div'>;
 
 /**
  * SmallViewportHeader Component
  *
  * This component shows a header bar in smaller viewport devices that consists of recording on/off indicator,
  * meeting room name, and copy-to-clipboard button.
+ * @param root0
+ * @param root0.className
  * @returns {ReactElement} The small viewport header component.
  */
-const SmallViewportHeader = (): ReactElement => {
+const SmallViewportHeader: React.FC<SmallViewportHeaderProps> = ({ className, ...props }) => {
   const { archiveId } = useSessionContext();
   const isRecording = !!archiveId;
   const roomName = useRoomName();
@@ -32,8 +37,12 @@ const SmallViewportHeader = (): ReactElement => {
   };
   return (
     <div
-      className="flex items-center justify-between bg-darkGray-100 px-4 pt-4 text-white"
+      className={classNames(
+        'flex items-center justify-between bg-darkGray-100 px-4 pt-4 text-white',
+        className
+      )}
       data-testid="smallViewportHeader"
+      {...props}
     >
       <div className="flex items-center space-x-2 px-1">
         {isRecording && <RadioButtonCheckedIcon className="text-red-500" />}

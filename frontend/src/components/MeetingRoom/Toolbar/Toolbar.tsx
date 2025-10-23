@@ -4,6 +4,7 @@ import { RightPanelActiveTab } from '@hooks/useRightPanel';
 import isReportIssueEnabled from '@utils/isReportIssueEnabled';
 import useToolbarButtons from '@hooks/useToolbarButtons';
 import useBackgroundPublisherContext from '@hooks/useBackgroundPublisherContext';
+import classNames from 'classnames';
 import ScreenSharingButton from '../../ScreenSharingButton';
 import TimeRoomNameMeetingRoom from '../TimeRoomName';
 import ExitButton from '../ExitButton';
@@ -162,10 +163,13 @@ const Toolbar = ({
       ref={toolbarRef}
       className="absolute bottom-0 left-0 flex h-[80px] w-full flex-row items-center justify-between bg-darkGray-100 p-4"
     >
-      <div ref={timeRoomNameRef} className={displayTimeRoomNameClass}>
+      <div
+        ref={timeRoomNameRef}
+        className={classNames(displayTimeRoomNameClass, 'animate-fade-in')}
+      >
         {displayTimeRoomName && <TimeRoomNameMeetingRoom />}
       </div>
-      <div className="flex flex-1 justify-center">
+      <div className="flex flex-1 justify-center animate-fade-in ">
         <div ref={mediaControlsRef} className="flex flex-row">
           <DeviceControlButton
             deviceType="audio"
@@ -190,7 +194,10 @@ const Toolbar = ({
         </div>
       </div>
 
-      <div className={rightPanelButtonsClass} ref={rightPanelControlsRef}>
+      <div
+        className={classNames(rightPanelButtonsClass, 'animate-fade-in')}
+        ref={rightPanelControlsRef}
+      >
         {rightPanelButtons}
       </div>
     </div>

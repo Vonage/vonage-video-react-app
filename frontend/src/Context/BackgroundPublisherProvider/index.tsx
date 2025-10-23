@@ -1,4 +1,4 @@
-import { ReactElement, ReactNode, createContext, useMemo } from 'react';
+import { ReactElement, ReactNode, createContext } from 'react';
 import useBackgroundPublisher from './useBackgroundPublisher';
 
 export type BackgroundPublisherContextType = ReturnType<typeof useBackgroundPublisher>;
@@ -22,9 +22,9 @@ export const BackgroundPublisherProvider = ({
   children: ReactNode;
 }): ReactElement => {
   const backgroundPublisherContext = useBackgroundPublisher();
-  const value = useMemo(() => backgroundPublisherContext, [backgroundPublisherContext]);
+
   return (
-    <BackgroundPublisherContext.Provider value={value}>
+    <BackgroundPublisherContext.Provider value={backgroundPublisherContext}>
       {children}
     </BackgroundPublisherContext.Provider>
   );

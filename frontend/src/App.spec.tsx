@@ -1,7 +1,8 @@
-import { render, screen } from '@testing-library/react';
+import { render as renderBase, screen } from '@testing-library/react';
 import { describe, it, expect, vi } from 'vitest';
-import { PropsWithChildren } from 'react';
-import App from './App';
+import React, { PropsWithChildren } from 'react';
+import { makeAppConfigProviderWrapper } from '@test/providers';
+import { App } from './App';
 
 // Mock the page components to make text assertions easy
 vi.mock('./pages/LandingPage', () => ({ default: () => <div>Landing Page</div> }));
@@ -33,3 +34,11 @@ describe('App routing', () => {
     expect(screen.getByText(/Unsupported Browser/i)).toBeInTheDocument();
   });
 });
+
+function render(ui: React.ReactElement) {
+  const { AppConfigWrapper } = makeAppConfigProviderWrapper();
+
+  return renderBase(ui, {
+    wrapper: AppConfigWrapper,
+  });
+}

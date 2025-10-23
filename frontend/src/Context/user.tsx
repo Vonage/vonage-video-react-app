@@ -74,16 +74,8 @@ const UserProvider = ({ children, value: initialUserState }: UserProviderProps):
     }
   );
 
-  const value = useMemo(
-    () => ({
-      user,
-      setUser,
-    }),
-    [user]
-  );
-
   // Provide the User context to child components
-  return <UserContext.Provider value={value}>{children}</UserContext.Provider>;
+  return <UserContext.Provider value={{ user, setUser }}>{children}</UserContext.Provider>;
 };
 
 export default UserProvider;

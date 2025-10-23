@@ -1,5 +1,7 @@
 import { ReactElement, useEffect, useRef } from 'react';
 import { Box } from 'opentok-layout-js';
+import useIsCameraControlAllowed from '@Context/AppConfig/hooks/useIsCameraControlAllowed';
+import useIsMicrophoneControlAllowed from '@Context/AppConfig/hooks/useIsMicrophoneControlAllowed';
 import usePublisherContext from '../../hooks/usePublisherContext';
 import VoiceIndicatorIcon from '../MeetingRoom/VoiceIndicator';
 import useAudioLevels from '../../hooks/useAudioLevels';
@@ -22,15 +24,21 @@ export type PublisherProps = {
  * @returns {ReactElement} The publisher component.
  */
 const Publisher = ({ box }: PublisherProps): ReactElement => {
+  const isCameraControlAllowed = useIsCameraControlAllowed();
+  const isMicrophoneControlAllowed = useIsMicrophoneControlAllowed();
+
   const {
     publisherVideoElement: element,
     isVideoEnabled,
     publisher,
     isAudioEnabled,
   } = usePublisherContext();
+
   const audioLevel = useAudioLevels();
+
   // We store this in a ref to get a reference to the div so that we can append a video to it
   const pubContainerRef = useRef<HTMLDivElement>(null);
+
   useEffect(() => {
     if (element && pubContainerRef.current) {
       element.classList.add(
@@ -52,16 +60,19 @@ const Publisher = ({ box }: PublisherProps): ReactElement => {
   const audioIndicatorStyle =
     'rounded-xl absolute top-3 right-3 bg-darkGray-55 h-6 w-6 items-center justify-center flex m-auto';
 
+  const shouldShowAvatarInitials = !(isCameraControlAllowed && isVideoEnabled);
+  const shouldShowVoiceIndicator = !(isMicrophoneControlAllowed && isAudioEnabled);
+
   return (
     <VideoTile
       id="publisher-container"
-      className="publisher"
+      className="publisher relative"
       data-testid="publisher-container"
       box={box}
       ref={pubContainerRef}
       hasVideo={isVideoEnabled}
     >
-      {!isVideoEnabled && (
+      {shouldShowAvatarInitials && (
         <AvatarInitials
           initials={initials}
           height={box.height}
@@ -69,19 +80,24 @@ const Publisher = ({ box }: PublisherProps): ReactElement => {
           username={username}
         />
       )}
-      {isAudioEnabled ? (
+
+      {shouldShowVoiceIndicator && (
         <VoiceIndicatorIcon
           publisherAudioLevel={audioLevel}
           sx={{ position: 'absolute', top: '10px', right: '10px' }}
           size={24}
         />
-      ) : (
+      )}
+
+      {!shouldShowVoiceIndicator && (
         <AudioIndicator
           hasAudio={isAudioEnabled}
           indicatorStyle={audioIndicatorStyle}
           indicatorColor="white"
+          stream={publisher?.stream}
         />
       )}
+
       <NameDisplay name={username} containerWidth={box.width} />
     </VideoTile>
   );

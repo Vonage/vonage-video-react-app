@@ -5,7 +5,6 @@ import { PropsWithChildren } from 'react';
 import useUserContext from '@hooks/useUserContext';
 import useAudioOutputContext from '@hooks/useAudioOutputContext';
 import { nativeDevices } from '@utils/mockData/device';
-import mergeAppConfigs from '@Context/AppConfig/helpers/mergeAppConfigs';
 import RoomContext from '../RoomContext';
 import { UserContextType } from '../user';
 import { AudioOutputContextType } from '../AudioOutputProvider';
@@ -30,13 +29,6 @@ const mockUserContextWithDefaultSettings = {
 const mockUseAudioOutputContextValues = {
   currentAudioOutputDevice: fakeAudioOutput,
 } as AudioOutputContextType;
-
-const defaultAppConfigValue = mergeAppConfigs({
-  /**
-   * This flag prevents the provider from attempting to load the config.json file
-   */
-  isAppConfigLoaded: true,
-});
 
 describe('RoomContext', () => {
   const nativeMediaDevices = global.navigator.mediaDevices;
@@ -72,7 +64,7 @@ describe('RoomContext', () => {
     render(
       <MemoryRouter initialEntries={['/test']}>
         <Routes>
-          <Route path="/test" element={<RoomContext appConfigValue={defaultAppConfigValue} />}>
+          <Route path="/test" element={<RoomContext />}>
             <Route index element={<TestComponent />} />
           </Route>
         </Routes>
@@ -98,7 +90,7 @@ describe('RoomContext', () => {
     render(
       <MemoryRouter initialEntries={['/test']}>
         <Routes>
-          <Route path="/test" element={<RoomContext appConfigValue={defaultAppConfigValue} />}>
+          <Route path="/test" element={<RoomContext />}>
             <Route index element={<TestComponent />} />
           </Route>
         </Routes>

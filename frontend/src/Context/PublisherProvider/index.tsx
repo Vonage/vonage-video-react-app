@@ -1,4 +1,5 @@
 import { ReactElement, ReactNode, createContext, useMemo } from 'react';
+import useSuspenseUntilAppConfigReady from '@Context/AppConfig/hooks/useSuspenseUntilAppConfigReady';
 import usePublisher from './usePublisher';
 
 export type PublisherContextType = ReturnType<typeof usePublisher>;
@@ -17,7 +18,8 @@ export type PublisherProviderProps = {
  * @returns {PublisherContextType} a context provider for a publisher
  */
 export const PublisherProvider = ({ children }: PublisherProviderProps): ReactElement => {
+  useSuspenseUntilAppConfigReady();
+
   const publisherContext = usePublisher();
-  const value = useMemo(() => publisherContext, [publisherContext]);
-  return <PublisherContext.Provider value={value}>{children}</PublisherContext.Provider>;
+  return <PublisherContext.Provider value={publisherContext}>{children}</PublisherContext.Provider>;
 };
