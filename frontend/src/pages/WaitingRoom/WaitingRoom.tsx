@@ -9,6 +9,7 @@ import Banner from '../../components/Banner';
 import { getStorageItem, STORAGE_KEYS } from '../../utils/storage';
 import useIsSmallViewport from '../../hooks/useIsSmallViewport';
 import useBackgroundPublisherContext from '../../hooks/useBackgroundPublisherContext';
+import useConfigContext from '../../hooks/useConfigContext';
 
 /**
  * WaitingRoom Component
@@ -38,8 +39,13 @@ const WaitingRoom = (): ReactElement => {
   const [username, setUsername] = useState(getStorageItem(STORAGE_KEYS.USERNAME) ?? '');
   const isSmallViewport = useIsSmallViewport();
 
+  const { videoSettings } = useConfigContext();
+  const { allowCameraControl } = videoSettings;
+
+  console.log({ allowCameraControl });
+
   useEffect(() => {
-    if (!publisher) {
+    if (!publisher || !allowCameraControl) {
       initLocalPublisher();
     }
 
@@ -49,7 +55,7 @@ const WaitingRoom = (): ReactElement => {
         destroyPublisher();
       }
     };
-  }, [initLocalPublisher, publisher, destroyPublisher]);
+  }, [allowCameraControl, initLocalPublisher, publisher, destroyPublisher]);
 
   useEffect(() => {
     if (!backgroundPublisher) {
@@ -118,9 +124,9 @@ const WaitingRoom = (): ReactElement => {
             <UsernameInput username={username} setUsername={setUsername} />
           </div>
         </div>
-        {accessStatus !== DEVICE_ACCESS_STATUS.ACCEPTED && (
+        {/* {accessStatus !== DEVICE_ACCESS_STATUS.ACCEPTED && (
           <DeviceAccessAlert accessStatus={accessStatus} />
-        )}
+        )} */}
       </div>
     </div>
   );

@@ -1,16 +1,17 @@
 import { useRef, useState, useEffect, ReactElement } from 'react';
 import { Stack } from '@mui/material';
+import useConfigContext from '@hooks/useConfigContext';
+import waitUntilPlaying from '@utils/waitUntilPlaying';
+import useUserContext from '@hooks/useUserContext';
+import usePreviewPublisherContext from '@hooks/usePreviewPublisherContext';
+import getInitials from '@utils/getInitials';
+import useIsSmallViewport from '@hooks/useIsSmallViewport';
 import MicButton from '../MicButton';
 import CameraButton from '../CameraButton';
 import VideoLoading from '../VideoLoading';
-import waitUntilPlaying from '../../../utils/waitUntilPlaying';
-import useUserContext from '../../../hooks/useUserContext';
-import usePreviewPublisherContext from '../../../hooks/usePreviewPublisherContext';
-import getInitials from '../../../utils/getInitials';
 import PreviewAvatar from '../PreviewAvatar';
 import VoiceIndicatorIcon from '../../MeetingRoom/VoiceIndicator/VoiceIndicator';
 import VignetteEffect from '../VignetteEffect';
-import useIsSmallViewport from '../../../hooks/useIsSmallViewport';
 import BackgroundEffectsDialog from '../BackgroundEffects/BackgroundEffectsDialog';
 import BackgroundEffectsButton from '../BackgroundEffects/BackgroundEffectsButton';
 
@@ -28,8 +29,11 @@ export type VideoContainerProps = {
  * @returns {ReactElement} - The VideoContainer component.
  */
 const VideoContainer = ({ username }: VideoContainerProps): ReactElement => {
+  const { videoSettings } = useConfigContext();
+  const { allowCameraControl } = videoSettings;
+
   const containerRef = useRef<HTMLDivElement>(null);
-  const [isVideoLoading, setIsVideoLoading] = useState<boolean>(true);
+  const [isVideoLoading, setIsVideoLoading] = useState<boolean>(allowCameraControl);
   const [isBackgroundEffectsOpen, setIsBackgroundEffectsOpen] = useState<boolean>(false);
   const { user } = useUserContext();
   const { publisherVideoElement, isVideoEnabled, isAudioEnabled, speechLevel } =
@@ -38,27 +42,31 @@ const VideoContainer = ({ username }: VideoContainerProps): ReactElement => {
   const isSmallViewport = useIsSmallViewport();
 
   useEffect(() => {
-    if (publisherVideoElement && containerRef.current) {
-      containerRef.current.appendChild(publisherVideoElement);
-      const myVideoElement = publisherVideoElement as HTMLElement;
-      myVideoElement.classList.add('video__element');
-      myVideoElement.title = 'publisher-preview';
-      myVideoElement.style.borderRadius = isSmallViewport ? '0px' : '12px';
-      myVideoElement.style.height = isSmallViewport ? '' : '328px';
-      myVideoElement.style.width = isSmallViewport ? '100dvw' : '584px';
-      myVideoElement.style.marginLeft = 'auto';
-      myVideoElement.style.marginRight = 'auto';
-      myVideoElement.style.transform = 'scaleX(-1)';
-      myVideoElement.style.objectFit = 'contain';
-      myVideoElement.style.aspectRatio = '16 / 9';
-      myVideoElement.style.boxShadow =
-        '0 1px 2px 0 rgba(60, 64, 67, .3), 0 1px 3px 1px rgba(60, 64, 67, .15)';
+    const shouldPublishVideo = publisherVideoElement && allowCameraControl;
 
-      waitUntilPlaying(publisherVideoElement).then(() => {
-        setIsVideoLoading(false);
-      });
+    if (!containerRef.current || !shouldPublishVideo) {
+      return;
     }
-  }, [isSmallViewport, publisherVideoElement]);
+
+    containerRef.current.appendChild(publisherVideoElement);
+    const myVideoElement = publisherVideoElement as HTMLElement;
+    myVideoElement.classList.add('video__element');
+    myVideoElement.title = 'publisher-preview';
+    myVideoElement.style.borderRadius = isSmallViewport ? '0px' : '12px';
+    myVideoElement.style.height = isSmallViewport ? '' : '328px';
+    myVideoElement.style.width = isSmallViewport ? '100dvw' : '584px';
+    myVideoElement.style.marginLeft = 'auto';
+    myVideoElement.style.marginRight = 'auto';
+    myVideoElement.style.transform = 'scaleX(-1)';
+    myVideoElement.style.objectFit = 'contain';
+    myVideoElement.style.aspectRatio = '16 / 9';
+    myVideoElement.style.boxShadow =
+      '0 1px 2px 0 rgba(60, 64, 67, .3), 0 1px 3px 1px rgba(60, 64, 67, .15)';
+
+    waitUntilPlaying(publisherVideoElement).then(() => {
+      setIsVideoLoading(false);
+    });
+  }, [allowCameraControl, isSmallViewport, publisherVideoElement]);
 
   return (
     <div
@@ -73,7 +81,9 @@ const VideoContainer = ({ username }: VideoContainerProps): ReactElement => {
         data-video-container
       />
       <VignetteEffect />
+
       {isVideoLoading && <VideoLoading />}
+
       <PreviewAvatar
         initials={initials}
         username={user.defaultSettings.name}

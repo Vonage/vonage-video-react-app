@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import SpeakingDetector from '../utils/SpeakingDetector';
+import useConfigContext from './useConfigContext';
 
 export type UseSpeakingDetectorOptions = {
   selectedMicrophoneId: string | undefined;
@@ -16,16 +17,21 @@ const useSpeakingDetector = ({
   selectedMicrophoneId,
   isAudioEnabled,
 }: UseSpeakingDetectorOptions): boolean => {
+  const { audioSettings } = useConfigContext();
+  const { allowMicrophoneControl } = audioSettings;
+
   const [isSpeakingWhileMuted, setIsSpeakingWhileMuted] = useState(false);
   const speakingDetectorRef = useRef<SpeakingDetector | null>(null);
 
   useEffect(() => {
-    if (isAudioEnabled) {
+    if (!allowMicrophoneControl || isAudioEnabled) {
       return undefined;
     }
+
     speakingDetectorRef.current = new SpeakingDetector({
       selectedMicrophoneId,
     });
+
     speakingDetectorRef.current.turnSpeakingDetectorOn();
 
     const handleSpeakingWhileMuted = () => {
@@ -52,7 +58,7 @@ const useSpeakingDetector = ({
         setIsSpeakingWhileMuted(false);
       }
     };
-  }, [selectedMicrophoneId, isAudioEnabled]);
+  }, [allowMicrophoneControl, selectedMicrophoneId, isAudioEnabled]);
 
   return isSpeakingWhileMuted;
 };
