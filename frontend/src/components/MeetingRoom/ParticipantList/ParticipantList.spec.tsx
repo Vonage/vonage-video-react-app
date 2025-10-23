@@ -23,7 +23,6 @@ vi.mock('react-router-dom', () => ({
 const mockUseSessionContext = useSessionContext as Mock<[], SessionContextType>;
 const mockNavigate = vi.fn();
 
-const mockUseUserContext = useUserContext as Mock<[], UserContextType>;
 const mockUserContextWithDefaultSettings = {
   user: {
     defaultSettings: {
@@ -31,7 +30,6 @@ const mockUserContextWithDefaultSettings = {
     },
   },
 } as UserContextType;
-mockUseUserContext.mockImplementation(() => mockUserContextWithDefaultSettings);
 
 const createSubscriberWrapper = (
   name: string,
@@ -77,6 +75,8 @@ describe('ParticipantList', () => {
   let originalClipboard: Clipboard;
 
   beforeEach(() => {
+    vi.mocked(useUserContext).mockImplementation(() => mockUserContextWithDefaultSettings);
+
     originalClipboard = navigator.clipboard;
     Object.assign(navigator, {
       clipboard: {

@@ -1,4 +1,4 @@
-import { describe, expect, it, vi, Mock, beforeEach, afterAll } from 'vitest';
+import { describe, expect, it, vi, beforeEach, afterAll } from 'vitest';
 import { renderHook, waitFor } from '@testing-library/react';
 import OT from '@vonage/client-sdk-video';
 import useUserContext from '../../../hooks/useUserContext';
@@ -12,9 +12,6 @@ import { ConfigContextType } from '../../ConfigProvider';
 
 vi.mock('../../../hooks/useUserContext.tsx');
 vi.mock('../../../hooks/useConfigContext');
-
-const mockUseUserContext = useUserContext as Mock<[], UserContextType>;
-const mockUseConfigContext = useConfigContext as Mock<[], ConfigContextType>;
 
 const defaultSettings = {
   publishAudio: false,
@@ -80,7 +77,9 @@ describe('usePublisherOptions', () => {
         allowVideoOnJoin: true,
       },
     } as Partial<ConfigContextType> as ConfigContextType;
-    mockUseConfigContext.mockReturnValue(configContext);
+
+    vi.mocked(useConfigContext).mockReturnValue(configContext);
+    vi.mocked(useUserContext).mockImplementation(() => mockUserContextWithDefaultSettings);
   });
 
   afterAll(() => {
@@ -89,7 +88,7 @@ describe('usePublisherOptions', () => {
 
   it('should use default settings', async () => {
     vi.spyOn(OT, 'hasMediaProcessorSupport').mockReturnValue(true);
-    mockUseUserContext.mockImplementation(() => mockUserContextWithDefaultSettings);
+    vi.mocked(useUserContext).mockImplementation(() => mockUserContextWithDefaultSettings);
     const { result } = renderHook(() => usePublisherOptions());
     await waitFor(() => {
       expect(result.current).toEqual({
@@ -115,7 +114,7 @@ describe('usePublisherOptions', () => {
 
   it('should not have advanced noise suppression if not supported by browser', async () => {
     vi.spyOn(OT, 'hasMediaProcessorSupport').mockReturnValue(false);
-    mockUseUserContext.mockImplementation(() => mockUserContextWithDefaultSettings);
+    vi.mocked(useUserContext).mockImplementation(() => mockUserContextWithDefaultSettings);
     const { result } = renderHook(() => usePublisherOptions());
 
     await waitFor(() => {
@@ -132,7 +131,7 @@ describe('usePublisherOptions', () => {
       { deviceId: customSettings.audioSource, kind: 'audioinput' } as MediaDeviceInfo,
     ]);
     await deviceStore.init();
-    mockUseUserContext.mockImplementation(() => mockUserContextWithCustomSettings);
+    vi.mocked(useUserContext).mockImplementation(() => mockUserContextWithCustomSettings);
     const { result } = renderHook(() => usePublisherOptions());
     await waitFor(() => {
       expect(result.current).toEqual({

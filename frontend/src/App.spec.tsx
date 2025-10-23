@@ -36,10 +36,6 @@ vi.mock('./Context/ConfigProvider', () => ({
   default: ({ children }: PropsWithChildren) => children,
 }));
 
-afterEach(() => {
-  vi.clearAllMocks();
-});
-
 describe('App routing', () => {
   it('renders LandingPage on unknown route', () => {
     window.history.pushState({}, '', '/unknown');

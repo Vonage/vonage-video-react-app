@@ -1,4 +1,4 @@
-import { describe, expect, it, vi, Mock } from 'vitest';
+import { describe, expect, it, vi, beforeEach } from 'vitest';
 import { act, renderHook, waitFor } from '@testing-library/react';
 import { Publisher } from '@vonage/client-sdk-video';
 import EventEmitter from 'events';
@@ -8,8 +8,6 @@ import usePublisherQuality from './usePublisherQuality';
 
 vi.mock('../../../hooks/useUserContext.tsx');
 
-const mockUseUserContext = useUserContext as Mock<[], UserContextType>;
-
 const mockUserContext = {
   user: {
     issues: {
@@ -17,9 +15,12 @@ const mockUserContext = {
     },
   },
 } as UserContextType;
-mockUseUserContext.mockImplementation(() => mockUserContext);
 
 describe('usePublisherQuality', () => {
+  beforeEach(() => {
+    vi.mocked(useUserContext).mockImplementation(() => mockUserContext);
+  });
+
   it('should set quality to good on videoEnabled event', async () => {
     const mockPublisher = new EventEmitter();
     const { result } = renderHook(() => usePublisherQuality(mockPublisher as unknown as Publisher));
@@ -39,7 +40,7 @@ describe('usePublisherQuality', () => {
     const { result } = renderHook(() => usePublisherQuality(mockPublisher as unknown as Publisher));
     act(() => mockPublisher.emit('videoDisabled'));
     await waitFor(() => expect(result.current).toBe('bad'));
-    expect(mockUseUserContext().user.issues.audioFallbacks).toBe(1);
+    expect(useUserContext().user.issues.audioFallbacks).toBe(1);
   });
 
   it('should set quality to good on videoDisableWarning event', async () => {

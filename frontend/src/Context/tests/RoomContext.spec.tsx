@@ -1,6 +1,6 @@
 import { render, screen } from '@testing-library/react';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
-import { afterEach, beforeEach, describe, expect, it, Mock, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { PropsWithChildren } from 'react';
 import RoomContext from '../RoomContext';
 import useUserContext from '../../hooks/useUserContext';
@@ -21,9 +21,6 @@ vi.mock('../BackgroundPublisherProvider', () => ({
   BackgroundPublisherProvider: ({ children }: PropsWithChildren) => children,
 }));
 
-const mockUseUserContext = useUserContext as Mock<[], UserContextType>;
-const mockUseAudioOutputContext = useAudioOutputContext as Mock<[], AudioOutputContextType>;
-
 const fakeName = 'Tommy Traddles';
 const fakeAudioOutput = 'their-device-id';
 
@@ -38,12 +35,12 @@ const mockUseAudioOutputContextValues = {
   currentAudioOutputDevice: fakeAudioOutput,
 } as AudioOutputContextType;
 
-mockUseUserContext.mockImplementation(() => mockUserContextWithDefaultSettings);
-mockUseAudioOutputContext.mockImplementation(() => mockUseAudioOutputContextValues);
-
 describe('RoomContext', () => {
   const nativeMediaDevices = global.navigator.mediaDevices;
   beforeEach(() => {
+    vi.mocked(useUserContext).mockImplementation(() => mockUserContextWithDefaultSettings);
+    vi.mocked(useAudioOutputContext).mockImplementation(() => mockUseAudioOutputContextValues);
+
     Object.defineProperty(global.navigator, 'mediaDevices', {
       writable: true,
       value: {
