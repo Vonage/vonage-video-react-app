@@ -8,7 +8,7 @@
     "dev": "nodemon --watch . --ext ts,tsx,json --ignore dist --exec \"sh -c 'yarn ts-check && node --import tsx index.ts'\"",
     "start": "node --import tsx index.ts",
     "debug": "nodemon --watch . --ext ts,tsx,json --ignore dist --exec \"sh -c 'yarn ts-check && node --inspect --import tsx index.ts'\"",
-    "test": "NODE_OPTIONS=\"--experimental-vm-modules\" jest --maxWorkers=1 --coverage",
+    "test": "NODE_OPTIONS=\"--experimental-vm-modules\" nx jest:test --maxWorkers=1 --coverage",
     "test:watch": "yarn test --watch",
     "ts-check": "tsc --noEmit -p tsconfig.json --pretty true"
   },
