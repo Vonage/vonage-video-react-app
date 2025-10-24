@@ -1,6 +1,7 @@
 import { ChangeEvent, useState, DragEvent, ReactElement } from 'react';
 import { Box, Typography } from '@mui/material';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
+import { useTranslation } from 'react-i18next';
 import { MAX_SIZE_MB } from '../../../utils/constants';
 
 export type FileUploaderProps = {
@@ -19,6 +20,7 @@ export type FileUploaderProps = {
  */
 const FileUploader = ({ handleFileChange }: FileUploaderProps): ReactElement => {
   const [dragOver, setDragOver] = useState(false);
+  const { t } = useTranslation();
 
   const onDragOver = (e: DragEvent<HTMLDivElement>) => {
     e.preventDefault();
@@ -69,9 +71,9 @@ const FileUploader = ({ handleFileChange }: FileUploaderProps): ReactElement => 
         <>
           <CloudUploadIcon sx={{ fontSize: 50, color: '#989A9D' }} />
           <Typography className="file-upload-drop-area-text" mt={1}>
-            Drag and drop, or click here to upload image,
+            {t('backgroundEffects.dragDropText')}
             <br />
-            Max {MAX_SIZE_MB}MB
+            {t('backgroundEffects.maxSize', { maxSize: MAX_SIZE_MB })}
           </Typography>
         </>
       </Box>

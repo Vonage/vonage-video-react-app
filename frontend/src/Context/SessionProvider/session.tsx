@@ -393,9 +393,10 @@ const SessionProvider = ({ children }: SessionProviderProps): ReactElement => {
    * @returns {Promise<void>} A promise that resolves when the stream is successfully published.
    */
   const publish = useCallback(async (publisher: Publisher): Promise<void> => {
-    if (vonageVideoClient.current) {
-      vonageVideoClient.current.publish(publisher);
+    if (!vonageVideoClient.current) {
+      return;
     }
+    await vonageVideoClient.current.publish(publisher);
   }, []);
 
   /**

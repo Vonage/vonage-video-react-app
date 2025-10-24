@@ -2,6 +2,7 @@ import { Box, Tooltip } from '@mui/material';
 import { hasMediaProcessorSupport } from '@vonage/client-sdk-video';
 import { ReactElement } from 'react';
 import PortraitIcon from '@mui/icons-material/Portrait';
+import { useTranslation } from 'react-i18next';
 import VideoContainerButton from '../../VideoContainerButton';
 import useConfigContext from '../../../../hooks/useConfigContext';
 
@@ -23,6 +24,7 @@ const BackgroundEffectsButton = ({
   const config = useConfigContext();
   const { allowBackgroundEffects } = config.videoSettings;
   const shouldDisplayBackgroundEffects = hasMediaProcessorSupport() && allowBackgroundEffects;
+  const { t } = useTranslation();
 
   return (
     shouldDisplayBackgroundEffects && (
@@ -40,7 +42,7 @@ const BackgroundEffectsButton = ({
           transition: 'transform 0.2s ease-in-out',
         }}
       >
-        <Tooltip title="Background Effects" aria-label="Background Effects">
+        <Tooltip title={t('backgroundEffects.title')} aria-label={t('backgroundEffects.title')}>
           <VideoContainerButton
             onClick={onClick}
             sx={{
