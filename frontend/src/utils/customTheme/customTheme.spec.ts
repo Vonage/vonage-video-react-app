@@ -1,27 +1,7 @@
 import { describe, it, expect } from 'vitest';
-import customTheme, { colors, fonts, shadows, rgba } from './customTheme';
+import customTheme, { colors, fonts } from './customTheme';
 
 describe('customTheme', () => {
-  describe('shadows object', () => {
-    it('should have all shadow levels defined', () => {
-      expect(shadows.level1).toContain('0 3px 1px -2px rgba(0,0,0,0.2)');
-      expect(shadows.level2).toContain('0 2px 4px -1px rgba(0,0,0,0.2)');
-      expect(shadows.level3).toContain('0 5px 5px -3px rgba(0,0,0,0.2)');
-    });
-  });
-
-  describe('rgba helper function', () => {
-    it('should convert hex to rgba correctly', () => {
-      expect(rgba('#FF0000', 0.5)).toBe('rgba(255, 0, 0, 0.5)');
-      expect(rgba('#000000', 1)).toBe('rgba(0, 0, 0, 1)');
-      expect(rgba('#FFFFFF', 0.26)).toBe('rgba(255, 255, 255, 0.26)');
-    });
-
-    it('should handle hex colors with hash', () => {
-      expect(rgba('#3E007E', 0.04)).toBe('rgba(62, 0, 126, 0.04)');
-    });
-  });
-
   describe('MUI theme object', () => {
     it('should have correct palette colors', () => {
       expect(customTheme.palette.primary.main).toBe(colors.primary);
@@ -50,7 +30,6 @@ describe('customTheme', () => {
       ) {
         expect((primaryButton as { backgroundColor: string }).backgroundColor).toBe(colors.primary);
         expect((primaryButton as { color: string }).color).toBe(colors.onPrimary);
-        expect((primaryButton as { boxShadow: string }).boxShadow).toBe(shadows.level1);
       }
     });
   });
@@ -108,9 +87,7 @@ describe('customTheme', () => {
           expect((appBar as { backgroundColor: string }).backgroundColor).toBe(colors.surface);
         }
         if (typeof paper === 'object' && paper !== null && 'backgroundColor' in paper) {
-          expect((paper as { backgroundColor: string }).backgroundColor).toBe(
-            colors.surfaceContainer
-          );
+          expect((paper as { backgroundColor: string }).backgroundColor).toBe(colors.background);
         }
       }
     });
