@@ -1,6 +1,7 @@
 import { describe, expect, it, vi, beforeEach } from 'vitest';
 import { renderHook, waitFor } from '@testing-library/react';
-import useConfig, { AppConfig } from './useConfig';
+import useConfig from './useConfig';
+import { AppConfig } from '../AppConfigStore';
 
 describe('useConfig', () => {
   const defaultConfig: AppConfig = {
@@ -40,7 +41,7 @@ describe('useConfig', () => {
     const { result } = renderHook(() => useConfig());
 
     await waitFor(() => {
-      expect(result.current).toEqual(defaultConfig);
+      expect(result.current.getSnapshot()).toEqual(expect.objectContaining(defaultConfig));
     });
   });
 
@@ -83,7 +84,7 @@ describe('useConfig', () => {
     const { result } = renderHook(() => useConfig());
 
     await waitFor(() => {
-      expect(result.current).toMatchObject(mockConfig);
+      expect(result.current.getSnapshot()).toEqual(expect.objectContaining(mockConfig));
     });
   });
 
@@ -95,8 +96,9 @@ describe('useConfig', () => {
     const { result } = renderHook(() => useConfig());
 
     await waitFor(() => {
-      expect(result.current).toEqual(defaultConfig);
+      expect(result.current.getSnapshot()).toEqual(expect.objectContaining(defaultConfig));
     });
+
     expect(console.error).toHaveBeenCalledWith('Error loading config:', expect.any(Error));
   });
 
@@ -113,8 +115,9 @@ describe('useConfig', () => {
     const { result } = renderHook(() => useConfig());
 
     await waitFor(() => {
-      expect(result.current).toEqual(defaultConfig);
+      expect(result.current.getSnapshot()).toEqual(expect.objectContaining(defaultConfig));
     });
+
     expect(console.info).toHaveBeenCalledWith('No valid JSON found, using default config');
     expect(console.error).not.toHaveBeenCalled();
   });
