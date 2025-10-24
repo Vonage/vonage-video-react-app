@@ -97,6 +97,7 @@ const VideoDevices = ({ handleToggle }: VideoDevicesProps): ReactElement | false
                 }}
               >
                 <Box
+                  key={`${option.deviceId}-video-device`}
                   sx={{
                     display: 'flex',
                     mb: 0.5,

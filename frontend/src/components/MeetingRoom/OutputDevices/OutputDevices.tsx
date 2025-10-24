@@ -96,6 +96,7 @@ const OutputDevices = ({ handleToggle }: OutputDevicesProps): ReactElement | fal
                 }}
               >
                 <Box
+                  key={`${device.deviceId}-input-device`}
                   sx={{
                     display: 'flex',
                     mb: 0.5,

@@ -87,6 +87,7 @@ const InputDevices = ({ handleToggle }: InputDevicesProps): ReactElement | false
                 }}
               >
                 <Box
+                  key={`${option}-input-device`}
                   sx={{
                     display: 'flex',
                     mb: 0.5,
