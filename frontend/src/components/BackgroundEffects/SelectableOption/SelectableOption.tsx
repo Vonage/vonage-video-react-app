@@ -1,6 +1,7 @@
 import { ReactElement, ReactNode } from 'react';
 import { Box, Paper, Tooltip } from '@mui/material';
 import { DEFAULT_SELECTABLE_OPTION_WIDTH } from '../../../utils/constants';
+import { colors } from '../../../utils/customTheme/customTheme';
 
 export type SelectableOptionProps = {
   isSelected: boolean;
@@ -63,13 +64,13 @@ const SelectableOption = ({
           height: size,
           overflow: 'hidden',
           borderRadius: '16px',
-          border: isSelected ? '2px solid #1976d2' : '',
+          border: isSelected ? `2px solid ${colors.primary}` : '',
           cursor: isDisabled ? 'not-allowed' : 'pointer',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
           transition: 'all 0.1s ease-in-out',
-          backgroundColor: isDisabled ? '#f5f5f5' : '#fff',
+          backgroundColor: isDisabled ? colors.backgroundDisabled : colors.background,
           opacity: isDisabled ? 0.5 : 1,
         }}
         {...otherProps}
@@ -88,7 +89,7 @@ const SelectableOption = ({
               <img
                 src={image}
                 title={title}
-                alt="background"
+                alt={title}
                 style={{ width: '100%', height: '100%', objectFit: 'cover' }}
               />
             ) : (

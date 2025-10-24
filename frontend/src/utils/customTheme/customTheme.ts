@@ -4,6 +4,8 @@ import { createTheme } from '@mui/material';
 const colors = {
   // Primary colors
   primary: '#3E007E',
+  primaryLight: '#9575CD',
+  primaryHover: '#3E007E2F',
   onPrimary: '#FFFFFF',
   primaryContainer: '#6300C4',
   onPrimaryContainer: '#FFFFFF',
@@ -28,7 +30,8 @@ const colors = {
   onErrorContainer: '#FFFFFF',
 
   // Surface colors
-  background: '#FEF7FF',
+  background: '#FFFFFF',
+  backgroundDisabled: '#f5f5f5',
   onBackground: '#1E1925',
   surface: '#FCF8F8',
   onSurface: '#000000',
@@ -50,32 +53,15 @@ const colors = {
   // Shadow and scrim
   shadow: '#000000',
   scrim: '#000000',
+
+  // Neutral colors
+  darkGrey: '#202124',
 } as const;
 
 // Typography
 const fonts = {
   family: ['system-ui', 'ui-sans-serif', 'Inter', 'Marker Felt', 'Trebuchet MS'].join(','),
 } as const;
-
-// Box shadows (Material Design elevation)
-const shadows = {
-  level1:
-    '0 3px 1px -2px rgba(0,0,0,0.2), 0 2px 2px 0 rgba(0,0,0,0.14), 0 1px 5px 0 rgba(0,0,0,0.12)',
-  level2:
-    '0 2px 4px -1px rgba(0,0,0,0.2), 0 4px 5px 0 rgba(0,0,0,0.14), 0 1px 10px 0 rgba(0,0,0,0.12)',
-  level3:
-    '0 5px 5px -3px rgba(0,0,0,0.2), 0 8px 10px 1px rgba(0,0,0,0.14), 0 3px 14px 2px rgba(0,0,0,0.12)',
-} as const;
-
-// Helper functions for colors with transparency
-const rgba = (color: string, alpha: number) => {
-  // Convert hex to rgba
-  const hex = color.replace('#', '');
-  const r = parseInt(hex.substring(0, 2), 16);
-  const g = parseInt(hex.substring(2, 4), 16);
-  const b = parseInt(hex.substring(4, 6), 16);
-  return `rgba(${r}, ${g}, ${b}, ${alpha})`;
-};
 
 const customTheme = createTheme({
   palette: {
@@ -125,7 +111,7 @@ const customTheme = createTheme({
     MuiPaper: {
       styleOverrides: {
         root: {
-          backgroundColor: colors.surfaceContainer,
+          backgroundColor: colors.background,
           color: colors.onSurface,
         },
       },
@@ -166,4 +152,4 @@ const customTheme = createTheme({
 export default customTheme;
 
 // Export colors and utilities for use in other files
-export { colors, fonts, shadows, rgba };
+export { colors, fonts };

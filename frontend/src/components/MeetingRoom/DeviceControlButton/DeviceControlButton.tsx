@@ -13,6 +13,7 @@ import DeviceSettingsMenu from '../DeviceSettingsMenu';
 import useBackgroundPublisherContext from '../../../hooks/useBackgroundPublisherContext';
 import useConfigContext from '../../../hooks/useConfigContext';
 import getControlButtonTooltip from '../../../utils/getControlButtonTooltip';
+import { colors } from '../../../utils/customTheme/customTheme';
 
 export type DeviceControlButtonProps = {
   deviceType: 'audio' | 'video';
@@ -115,7 +116,7 @@ const DeviceControlButton = ({
           data-testid={isAudio ? 'audio-dropdown-button' : 'video-dropdown-button'}
         >
           {open ? (
-            <ArrowDropDown sx={{ color: 'rgb(138, 180, 248)' }} />
+            <ArrowDropDown sx={{ color: colors.primaryLight }} />
           ) : (
             <ArrowDropUp className="text-gray-400" />
           )}
