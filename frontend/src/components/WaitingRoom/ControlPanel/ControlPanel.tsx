@@ -60,8 +60,9 @@ const ControlPanel = ({
   const { localAudioSource, localVideoSource, changeAudioSource, changeVideoSource } =
     usePreviewPublisherContext();
   const { currentAudioOutputDevice, setAudioOutputDevice } = useAudioOutputContext();
-  const { waitingRoomSettings } = useConfigContext();
-  const { allowDeviceSelection } = waitingRoomSettings;
+  const allowDeviceSelection = useConfigContext(
+    ({ waitingRoomSettings }) => waitingRoomSettings.allowDeviceSelection
+  );
 
   const buttonSx: SxProps = {
     borderRadius: '10px',

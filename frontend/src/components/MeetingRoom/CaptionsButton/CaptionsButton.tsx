@@ -35,14 +35,15 @@ const CaptionsButton = ({
   handleClick,
   captionsState,
 }: CaptionsButtonProps): ReactElement | false => {
-  const config = useConfigContext();
+  const allowCaptions = useConfigContext(
+    ({ meetingRoomSettings }) => meetingRoomSettings.allowCaptions
+  );
   const { t } = useTranslation();
   const roomName = useRoomName();
   const [captionsId, setCaptionsId] = useState<string>('');
   const { isUserCaptionsEnabled, setIsUserCaptionsEnabled, setCaptionsErrorResponse } =
     captionsState;
   const title = isUserCaptionsEnabled ? t('captions.disable') : t('captions.enable');
-  const { allowCaptions } = config.meetingRoomSettings;
 
   const handleClose = () => {
     if (isOverflowButton && handleClick) {

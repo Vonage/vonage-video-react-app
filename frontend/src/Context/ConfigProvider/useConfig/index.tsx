@@ -1,4 +1,3 @@
-import useConfig, { defaultConfig } from './useConfig';
+import useConfig from './useConfig';
 
-export { defaultConfig };
 export default useConfig;

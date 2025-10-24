@@ -1,6 +1,9 @@
 import { describe, expect, it, vi, beforeEach, Mock, afterAll } from 'vitest';
-import { render, screen } from '@testing-library/react';
+import { render as renderBase, RenderOptions, screen } from '@testing-library/react';
 import { useLocation } from 'react-router-dom';
+import AppConfigStore from '@Context/ConfigProvider/AppConfigStore';
+import { ConfigProviderBase } from '@Context/ConfigProvider/ConfigProvider';
+import { ReactElement, FC, PropsWithChildren } from 'react';
 import useSpeakingDetector from '../../../hooks/useSpeakingDetector';
 import Toolbar, { ToolbarProps, CaptionsState } from './Toolbar';
 import isReportIssueEnabled from '../../../utils/isReportIssueEnabled';
@@ -115,3 +118,18 @@ describe('Toolbar', () => {
     expect(screen.queryByTestId('captions-button')).toBeVisible();
   });
 });
+
+function render(ui: ReactElement, options?: RenderOptions) {
+  const Wrapper = options?.wrapper ?? makeProvidersWrapper();
+  return renderBase(ui, { ...options, wrapper: Wrapper });
+}
+
+function makeProvidersWrapper(providers?: { configStore?: AppConfigStore }) {
+  const configStore = providers?.configStore ?? new AppConfigStore({});
+
+  const Wrapper: FC<PropsWithChildren> = ({ children }) => (
+    <ConfigProviderBase value={configStore}>{children}</ConfigProviderBase>
+  );
+
+  return Wrapper;
+}

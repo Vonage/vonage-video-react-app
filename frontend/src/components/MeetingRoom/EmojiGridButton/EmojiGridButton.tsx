@@ -30,13 +30,14 @@ const EmojiGridButton = ({
   isParentOpen,
   isOverflowButton = false,
 }: EmojiGridProps): ReactElement | false => {
-  const { meetingRoomSettings } = useConfigContext();
+  const allowEmojis = useConfigContext(
+    ({ meetingRoomSettings }) => meetingRoomSettings.allowEmojis
+  );
   const { t } = useTranslation();
   const anchorRef = useRef<HTMLButtonElement>(null);
   const handleToggle = () => {
     setIsEmojiGridOpen((prevOpen) => !prevOpen);
   };
-  const { allowEmojis } = meetingRoomSettings;
 
   return (
     allowEmojis && (

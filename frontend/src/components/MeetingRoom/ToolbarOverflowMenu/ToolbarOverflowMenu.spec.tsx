@@ -1,7 +1,9 @@
 import { afterEach, beforeEach, describe, expect, it, Mock, vi } from 'vitest';
-import { render, screen } from '@testing-library/react';
-import { useRef } from 'react';
+import { render as renderBase, RenderOptions, screen } from '@testing-library/react';
+import { FC, PropsWithChildren, ReactElement, useRef } from 'react';
 import { Button } from '@mui/material';
+import AppConfigStore from '@Context/ConfigProvider/AppConfigStore';
+import { ConfigProviderBase } from '@Context/ConfigProvider/ConfigProvider';
 import ToolbarOverflowMenu, { CaptionsState } from './ToolbarOverflowMenu';
 import * as util from '../../../utils/util';
 import isReportIssueEnabled from '../../../utils/isReportIssueEnabled';
@@ -109,3 +111,18 @@ describe('ToolbarOverflowMenu', () => {
     });
   });
 });
+
+function render(ui: ReactElement, options?: RenderOptions) {
+  const Wrapper = options?.wrapper ?? makeProvidersWrapper();
+  return renderBase(ui, { ...options, wrapper: Wrapper });
+}
+
+function makeProvidersWrapper(providers?: { configStore?: AppConfigStore }) {
+  const configStore = providers?.configStore ?? new AppConfigStore({});
+
+  const Wrapper: FC<PropsWithChildren> = ({ children }) => (
+    <ConfigProviderBase value={configStore}>{children}</ConfigProviderBase>
+  );
+
+  return Wrapper;
+}

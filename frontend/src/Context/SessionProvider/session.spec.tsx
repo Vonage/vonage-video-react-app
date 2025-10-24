@@ -1,8 +1,10 @@
-import { useEffect } from 'react';
+import { FC, PropsWithChildren, ReactElement, useEffect } from 'react';
 import { describe, expect, it, vi, beforeEach, Mock, afterAll, afterEach } from 'vitest';
-import { act, render, waitFor } from '@testing-library/react';
+import { act, render as renderBase, RenderOptions, waitFor } from '@testing-library/react';
 import EventEmitter from 'events';
 import { Publisher, Stream } from '@vonage/client-sdk-video';
+import AppConfigStore from '@Context/ConfigProvider/AppConfigStore';
+import { ConfigProviderBase } from '@Context/ConfigProvider/ConfigProvider';
 import useSessionContext from '../../hooks/useSessionContext';
 import SessionProvider from './session';
 import ActiveSpeakerTracker from '../../utils/ActiveSpeakerTracker';
@@ -20,15 +22,6 @@ vi.mock('../../utils/constants', () => ({
   MAX_PIN_COUNT_DESKTOP: 1,
 }));
 vi.mock('../../api/fetchCredentials');
-vi.mock('../../hooks/useConfigContext', () => {
-  return {
-    default: () => ({
-      meetingRoomSettings: {
-        defaultLayoutMode: 'active-speaker',
-      },
-    }),
-  };
-});
 
 const mockFetchCredentials = fetchCredentials as Mock;
 
@@ -438,3 +431,24 @@ describe('SessionProvider', () => {
     expect(vonageVideoClient.connect).toHaveBeenCalledTimes(1);
   });
 });
+
+function render(ui: ReactElement, options?: RenderOptions) {
+  const Wrapper = options?.wrapper ?? makeProvidersWrapper();
+  return renderBase(ui, { ...options, wrapper: Wrapper });
+}
+
+function makeProvidersWrapper(providers?: { configStore?: AppConfigStore }) {
+  const configStore =
+    providers?.configStore ??
+    new AppConfigStore({
+      meetingRoomSettings: {
+        defaultLayoutMode: 'active-speaker',
+      },
+    });
+
+  const Wrapper: FC<PropsWithChildren> = ({ children }) => (
+    <ConfigProviderBase value={configStore}>{children}</ConfigProviderBase>
+  );
+
+  return Wrapper;
+}

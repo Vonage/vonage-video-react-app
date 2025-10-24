@@ -1,9 +1,11 @@
 import { beforeEach, describe, expect, it, vi, Mock, beforeAll, afterAll } from 'vitest';
-import { act, render, screen, waitFor } from '@testing-library/react';
-import { ReactNode } from 'react';
+import { act, render as renderBase, RenderOptions, screen, waitFor } from '@testing-library/react';
+import { FC, PropsWithChildren, ReactElement, ReactNode } from 'react';
 import { Publisher } from '@vonage/client-sdk-video';
 import EventEmitter from 'events';
 import userEvent from '@testing-library/user-event';
+import AppConfigStore from '@Context/ConfigProvider/AppConfigStore';
+import { ConfigProviderBase } from '@Context/ConfigProvider/ConfigProvider';
 import UserProvider, { UserContextType } from '../../Context/user';
 import useUserContext from '../../hooks/useUserContext';
 import {
@@ -144,7 +146,7 @@ describe('WaitingRoom', () => {
     await waitFor(() => expect(previewPublisher).toBeVisible());
   });
 
-  it.only('should call destroyPublisher when navigating away from waiting room', async () => {
+  it('should call destroyPublisher when navigating away from waiting room', async () => {
     const user = userEvent.setup();
 
     previewPublisherContext.publisher = mockPublisher;
@@ -196,4 +198,25 @@ function getLocationMock() {
   locationMock.reload = location.reload.bind(location);
 
   return { locationBackUp: location, locationMock };
+}
+
+function render(ui: ReactElement, options?: RenderOptions) {
+  const Wrapper = options?.wrapper ?? makeProvidersWrapper();
+  return renderBase(ui, { ...options, wrapper: Wrapper });
+}
+
+function makeProvidersWrapper(providers?: { configStore?: AppConfigStore }) {
+  const configStore =
+    providers?.configStore ??
+    new AppConfigStore({
+      audioSettings: {
+        allowMicrophoneControl: true,
+      },
+    });
+
+  const Wrapper: FC<PropsWithChildren> = ({ children }) => (
+    <ConfigProviderBase value={configStore}>{children}</ConfigProviderBase>
+  );
+
+  return Wrapper;
 }

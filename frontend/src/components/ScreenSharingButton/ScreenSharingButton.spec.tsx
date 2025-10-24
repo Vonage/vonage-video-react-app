@@ -1,23 +1,11 @@
-import { beforeEach, describe, expect, it, Mock, vi } from 'vitest';
-import { fireEvent, render, screen } from '@testing-library/react';
+import { describe, expect, it, vi } from 'vitest';
+import { fireEvent, render as renderBase, RenderOptions, screen } from '@testing-library/react';
+import AppConfigStore from '@Context/ConfigProvider/AppConfigStore';
+import { ConfigProviderBase } from '@Context/ConfigProvider/ConfigProvider';
+import { ReactElement, FC, PropsWithChildren } from 'react';
 import ScreenSharingButton, { ScreenShareButtonProps } from './ScreenSharingButton';
-import useConfigContext from '../../hooks/useConfigContext';
-import { ConfigContextType } from '../../Context/ConfigProvider';
-
-vi.mock('../../hooks/useConfigContext');
-
-const mockUseConfigContext = useConfigContext as Mock<[], ConfigContextType>;
-const mockConfigContext = {
-  meetingRoomSettings: {
-    allowScreenShare: true,
-  },
-} as Partial<ConfigContextType> as ConfigContextType;
 
 describe('ScreenSharingButton', () => {
-  beforeEach(() => {
-    mockUseConfigContext.mockReturnValue(mockConfigContext);
-  });
-
   const mockToggleScreenShare = vi.fn();
 
   const defaultProps: ScreenShareButtonProps = {
@@ -58,8 +46,35 @@ describe('ScreenSharingButton', () => {
   });
 
   it('is not rendered when allowScreenShare is false', () => {
-    mockConfigContext.meetingRoomSettings.allowScreenShare = false;
-    render(<ScreenSharingButton {...defaultProps} />);
+    const configStore = new AppConfigStore({
+      meetingRoomSettings: {
+        allowScreenShare: false,
+      },
+    });
+    render(<ScreenSharingButton {...defaultProps} />, {
+      wrapper: makeProvidersWrapper({ configStore }),
+    });
     expect(screen.queryByTestId('ScreenShareIcon')).not.toBeInTheDocument();
   });
 });
+
+function render(ui: ReactElement, options?: RenderOptions) {
+  const Wrapper = options?.wrapper ?? makeProvidersWrapper();
+  return renderBase(ui, { ...options, wrapper: Wrapper });
+}
+
+function makeProvidersWrapper(providers?: { configStore?: AppConfigStore }) {
+  const configStore =
+    providers?.configStore ??
+    new AppConfigStore({
+      meetingRoomSettings: {
+        allowScreenShare: true,
+      },
+    });
+
+  const Wrapper: FC<PropsWithChildren> = ({ children }) => (
+    <ConfigProviderBase value={configStore}>{children}</ConfigProviderBase>
+  );
+
+  return Wrapper;
+}

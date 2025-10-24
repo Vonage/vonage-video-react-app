@@ -1,19 +1,25 @@
 import { describe, it, beforeEach, afterEach, vi, expect, Mock } from 'vitest';
-import { render, screen, fireEvent, cleanup } from '@testing-library/react';
+import {
+  render as renderBase,
+  screen,
+  fireEvent,
+  cleanup,
+  RenderOptions,
+} from '@testing-library/react';
+import AppConfigStore from '@Context/ConfigProvider/AppConfigStore';
+import { ConfigProviderBase } from '@Context/ConfigProvider/ConfigProvider';
+import { ReactElement, FC, PropsWithChildren } from 'react';
 import OutputDevices from './OutputDevices';
 import useDevices from '../../../hooks/useDevices';
 import useAudioOutputContext from '../../../hooks/useAudioOutputContext';
-import useConfigContext from '../../../hooks/useConfigContext';
 import { AllMediaDevices } from '../../../types';
 import { AudioOutputContextType } from '../../../Context/AudioOutputProvider';
-import { ConfigContextType } from '../../../Context/ConfigProvider';
 import { allMediaDevices } from '../../../utils/mockData/device';
 import * as util from '../../../utils/util';
 
 // Mocks
 vi.mock('../../../hooks/useDevices');
 vi.mock('../../../hooks/useAudioOutputContext');
-vi.mock('../../../hooks/useConfigContext');
 vi.mock('../../../utils/util', () => ({
   isGetActiveAudioOutputDeviceSupported: vi.fn(),
 }));
@@ -23,13 +29,11 @@ const mockUseDevices = useDevices as Mock<
   { allMediaDevices: AllMediaDevices; getAllMediaDevices: () => void }
 >;
 const mockUseAudioOutputContext = useAudioOutputContext as Mock<[], AudioOutputContextType>;
-const mockUseConfigContext = useConfigContext as Mock<[], ConfigContextType>;
 
 describe('OutputDevices Component', () => {
   const mockHandleToggle = vi.fn();
   const mockSetAudioOutputDevice = vi.fn();
   let audioOutputContext: AudioOutputContextType;
-  let mockConfigContext: ConfigContextType;
 
   beforeEach(() => {
     mockUseDevices.mockReturnValue({
@@ -42,14 +46,7 @@ describe('OutputDevices Component', () => {
       setAudioOutputDevice: mockSetAudioOutputDevice,
     } as AudioOutputContextType;
 
-    mockConfigContext = {
-      meetingRoomSettings: {
-        allowDeviceSelection: true,
-      },
-    } as Partial<ConfigContextType> as ConfigContextType;
-
     mockUseAudioOutputContext.mockImplementation(() => audioOutputContext);
-    mockUseConfigContext.mockReturnValue(mockConfigContext);
     (util.isGetActiveAudioOutputDeviceSupported as Mock).mockReturnValue(true);
   });
 
@@ -125,12 +122,38 @@ describe('OutputDevices Component', () => {
   });
 
   it('is not rendered when allowDeviceSelection is false', () => {
-    mockConfigContext.meetingRoomSettings.allowDeviceSelection = false;
-    mockUseConfigContext.mockReturnValue(mockConfigContext);
+    const store = new AppConfigStore({
+      meetingRoomSettings: {
+        allowDeviceSelection: false,
+      },
+    });
 
-    render(<OutputDevices handleToggle={mockHandleToggle} customLightBlueColor="#00f" />);
+    render(<OutputDevices handleToggle={mockHandleToggle} customLightBlueColor="#00f" />, {
+      wrapper: makeProvidersWrapper({ configStore: store }),
+    });
 
     expect(screen.queryByTestId('output-device-title')).not.toBeInTheDocument();
     expect(screen.queryByTestId('output-devices')).not.toBeInTheDocument();
   });
 });
+
+function render(ui: ReactElement, options?: RenderOptions) {
+  const Wrapper = options?.wrapper ?? makeProvidersWrapper();
+  return renderBase(ui, { ...options, wrapper: Wrapper });
+}
+
+function makeProvidersWrapper(providers?: { configStore?: AppConfigStore }) {
+  const configStore =
+    providers?.configStore ??
+    new AppConfigStore({
+      meetingRoomSettings: {
+        allowDeviceSelection: true,
+      },
+    });
+
+  const Wrapper: FC<PropsWithChildren> = ({ children }) => (
+    <ConfigProviderBase value={configStore}>{children}</ConfigProviderBase>
+  );
+
+  return Wrapper;
+}

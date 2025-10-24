@@ -67,7 +67,9 @@ export type PreviewPublisherContextType = {
  */
 const usePreviewPublisher = (): PreviewPublisherContextType => {
   const { setUser, user } = useUserContext();
-  const config = useConfigContext();
+  const defaultResolution = useConfigContext(
+    ({ videoSettings }) => videoSettings.defaultResolution
+  );
   const { allMediaDevices, getAllMediaDevices } = useDevices();
   const [publisherVideoElement, setPublisherVideoElement] = useState<
     HTMLVideoElement | HTMLObjectElement
@@ -87,7 +89,6 @@ const usePreviewPublisher = (): PreviewPublisherContextType => {
   const [localVideoSource, setLocalVideoSource] = useState<string | undefined>(undefined);
   const [localAudioSource, setLocalAudioSource] = useState<string | undefined>(undefined);
   const deviceStoreRef = useRef<DeviceStore>(new DeviceStore());
-  const { defaultResolution } = config.videoSettings;
 
   /* This sets the default devices in use so that the user knows what devices they are using */
   useEffect(() => {

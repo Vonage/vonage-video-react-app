@@ -1,8 +1,9 @@
-import { render, screen, fireEvent } from '@testing-library/react';
-import { describe, it, expect, vi, beforeEach, Mock } from 'vitest';
+import { render as renderBase, screen, fireEvent, RenderOptions } from '@testing-library/react';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
+import AppConfigStore from '@Context/ConfigProvider/AppConfigStore';
+import { ConfigProviderBase } from '@Context/ConfigProvider/ConfigProvider';
+import React from 'react';
 import MicButton from './MicButton';
-import useConfigContext from '../../../hooks/useConfigContext';
-import { ConfigContextType } from '../../../Context/ConfigProvider';
 
 let isAudioEnabled = true;
 const toggleAudioMock = vi.fn();
@@ -18,21 +19,9 @@ vi.mock('../../../hooks/usePreviewPublisherContext', () => {
   };
 });
 
-vi.mock('../../../hooks/useConfigContext');
-const mockUseConfigContext = useConfigContext as Mock<[], ConfigContextType>;
-
 describe('MicButton', () => {
-  let mockConfigContext: ConfigContextType;
-
   beforeEach(() => {
-    vi.clearAllMocks();
     isAudioEnabled = true;
-    mockConfigContext = {
-      audioSettings: {
-        allowMicrophoneControl: true,
-      },
-    } as Partial<ConfigContextType> as ConfigContextType;
-    mockUseConfigContext.mockReturnValue(mockConfigContext);
   });
 
   it('renders the mic on icon when audio is enabled', () => {
@@ -53,8 +42,37 @@ describe('MicButton', () => {
   });
 
   it('is not rendered when allowMicrophoneControl is false', () => {
-    mockConfigContext.audioSettings.allowMicrophoneControl = false;
-    render(<MicButton />);
+    const configStore = new AppConfigStore({
+      audioSettings: {
+        allowMicrophoneControl: false,
+      },
+    });
+
+    render(<MicButton />, {
+      wrapper: makeProvidersWrapper({ configStore }),
+    });
+
     expect(screen.queryByTestId('MicIcon')).not.toBeInTheDocument();
   });
 });
+
+function render(ui: React.ReactElement, options?: RenderOptions) {
+  const Wrapper = options?.wrapper ?? makeProvidersWrapper();
+  return renderBase(ui, { ...options, wrapper: Wrapper });
+}
+
+function makeProvidersWrapper(providers?: { configStore?: AppConfigStore }) {
+  const configStore =
+    providers?.configStore ??
+    new AppConfigStore({
+      audioSettings: {
+        allowMicrophoneControl: true,
+      },
+    });
+
+  const Wrapper: React.FC<React.PropsWithChildren> = ({ children }) => (
+    <ConfigProviderBase value={configStore}>{children}</ConfigProviderBase>
+  );
+
+  return Wrapper;
+}

@@ -30,11 +30,12 @@ const VideoDevices = ({
 }: VideoDevicesProps): ReactElement | false => {
   const { t } = useTranslation();
   const { isPublishing, publisher } = usePublisherContext();
-  const { meetingRoomSettings } = useConfigContext();
+  const allowDeviceSelection = useConfigContext(
+    ({ meetingRoomSettings }) => meetingRoomSettings.allowDeviceSelection
+  );
   const { allMediaDevices } = useDevices();
   const [devicesAvailable, setDevicesAvailable] = useState<Device[]>([]);
   const [options, setOptions] = useState<{ deviceId: string; label: string }[]>([]);
-  const { allowDeviceSelection } = meetingRoomSettings;
 
   const changeVideoSource = (videoDeviceId: string) => {
     publisher?.setVideoSource(videoDeviceId);

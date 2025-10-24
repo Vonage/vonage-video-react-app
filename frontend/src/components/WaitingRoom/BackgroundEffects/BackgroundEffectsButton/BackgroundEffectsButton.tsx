@@ -21,8 +21,9 @@ export type BackgroundEffectsButtonProps = {
 const BackgroundEffectsButton = ({
   onClick,
 }: BackgroundEffectsButtonProps): ReactElement | false => {
-  const config = useConfigContext();
-  const { allowBackgroundEffects } = config.videoSettings;
+  const allowBackgroundEffects = useConfigContext(
+    ({ videoSettings }) => videoSettings.allowBackgroundEffects
+  );
   const shouldDisplayBackgroundEffects = hasMediaProcessorSupport() && allowBackgroundEffects;
   const { t } = useTranslation();
 

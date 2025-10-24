@@ -1,5 +1,8 @@
 import { beforeEach, describe, expect, it, Mock, vi } from 'vitest';
-import { act, render, screen } from '@testing-library/react';
+import { act, render as renderBase, RenderOptions, screen } from '@testing-library/react';
+import AppConfigStore from '@Context/ConfigProvider/AppConfigStore';
+import { ConfigProviderBase } from '@Context/ConfigProvider/ConfigProvider';
+import { ReactElement, FC, PropsWithChildren } from 'react';
 import useSessionContext from '../../../hooks/useSessionContext';
 import { SessionContextType } from '../../../Context/SessionProvider/session';
 import ToolbarOverflowButton from './ToolbarOverflowButton';
@@ -81,3 +84,18 @@ describe('ToolbarOverflowButton', () => {
     expect(screen.queryAllByTestId('chat-button-unread-count').length).toBe(2);
   });
 });
+
+function render(ui: ReactElement, options?: RenderOptions) {
+  const Wrapper = options?.wrapper ?? makeProvidersWrapper();
+  return renderBase(ui, { ...options, wrapper: Wrapper });
+}
+
+function makeProvidersWrapper(providers?: { configStore?: AppConfigStore }) {
+  const configStore = providers?.configStore ?? new AppConfigStore({});
+
+  const Wrapper: FC<PropsWithChildren> = ({ children }) => (
+    <ConfigProviderBase value={configStore}>{children}</ConfigProviderBase>
+  );
+
+  return Wrapper;
+}

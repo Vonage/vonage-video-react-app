@@ -1,11 +1,12 @@
-import { fireEvent, render, screen } from '@testing-library/react';
-import { describe, it, expect, vi, beforeEach, Mock, afterEach } from 'vitest';
+import React from 'react';
+import { fireEvent, render as renderBase, RenderOptions, screen } from '@testing-library/react';
+import { describe, it, expect, vi } from 'vitest';
 import userEvent from '@testing-library/user-event';
 import { Subscriber } from '@vonage/client-sdk-video';
+import { ConfigProviderBase } from '@Context/ConfigProvider/ConfigProvider';
+import AppConfigStore from '@Context/ConfigProvider/AppConfigStore';
 import { SubscriberWrapper } from '../../types/session';
 import HiddenParticipantsTile from './index';
-import useConfigContext from '../../hooks/useConfigContext';
-import { ConfigContextType } from '../../Context/ConfigProvider';
 
 const mockToggleParticipantList = vi.fn();
 vi.mock('../../hooks/useSessionContext', () => ({
@@ -14,11 +15,8 @@ vi.mock('../../hooks/useSessionContext', () => ({
     toggleParticipantList: mockToggleParticipantList,
   }),
 }));
-const mockUseConfigContext = useConfigContext as Mock<[], ConfigContextType>;
-vi.mock('../../hooks/useConfigContext');
 
 describe('HiddenParticipantsTile', () => {
-  let configContext: ConfigContextType;
   const box = { height: 100, width: 100, top: 0, left: 0 };
   const hiddenSubscribers = [
     {
@@ -40,19 +38,6 @@ describe('HiddenParticipantsTile', () => {
       isPinned: false,
     },
   ];
-
-  beforeEach(() => {
-    configContext = {
-      meetingRoomSettings: {
-        showParticipantList: true,
-      },
-    } as Partial<ConfigContextType> as ConfigContextType;
-    mockUseConfigContext.mockReturnValue(configContext);
-  });
-
-  afterEach(() => {
-    vi.resetAllMocks();
-  });
 
   it('should display two hidden participants', async () => {
     const currentHiddenSubscribers = [
@@ -109,13 +94,13 @@ describe('HiddenParticipantsTile', () => {
 
   it('does not toggle participant list when showParticipantList is disabled', async () => {
     const currentHiddenSubscribers = [...hiddenSubscribers, {}] as SubscriberWrapper[];
-    mockUseConfigContext.mockReturnValue({
-      meetingRoomSettings: {
-        showParticipantList: false,
-      },
-    } as Partial<ConfigContextType> as ConfigContextType);
+    const configStore = new AppConfigStore({
+      meetingRoomSettings: { showParticipantList: false },
+    });
 
-    render(<HiddenParticipantsTile box={box} hiddenSubscribers={currentHiddenSubscribers} />);
+    render(<HiddenParticipantsTile box={box} hiddenSubscribers={currentHiddenSubscribers} />, {
+      wrapper: makeProvidersWrapper({ configStore }),
+    });
 
     const button = screen.getByTestId('hidden-participants');
     expect(button).toBeInTheDocument();
@@ -124,3 +109,22 @@ describe('HiddenParticipantsTile', () => {
     expect(mockToggleParticipantList).not.toHaveBeenCalled();
   });
 });
+
+function render(ui: React.ReactElement, options?: RenderOptions) {
+  const Wrapper = options?.wrapper ?? makeProvidersWrapper();
+  return renderBase(ui, { ...options, wrapper: Wrapper });
+}
+
+function makeProvidersWrapper(providers?: { configStore?: AppConfigStore }) {
+  const configStore =
+    providers?.configStore ??
+    new AppConfigStore({
+      meetingRoomSettings: { showParticipantList: true },
+    });
+
+  const Wrapper: React.FC<React.PropsWithChildren> = ({ children }) => (
+    <ConfigProviderBase value={configStore}>{children}</ConfigProviderBase>
+  );
+
+  return Wrapper;
+}

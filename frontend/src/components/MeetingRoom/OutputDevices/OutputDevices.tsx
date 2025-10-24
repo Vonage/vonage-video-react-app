@@ -31,12 +31,13 @@ const OutputDevices = ({
 }: OutputDevicesProps): ReactElement | false => {
   const { t } = useTranslation();
   const { currentAudioOutputDevice, setAudioOutputDevice } = useAudioOutputContext();
-  const { meetingRoomSettings } = useConfigContext();
+  const allowDeviceSelection = useConfigContext(
+    ({ meetingRoomSettings }) => meetingRoomSettings.allowDeviceSelection
+  );
   const {
     allMediaDevices: { audioOutputDevices },
   } = useDevices();
   const defaultOutputDevices = [{ deviceId: 'default', label: t('devices.audio.defaultLabel') }];
-  const { allowDeviceSelection } = meetingRoomSettings;
 
   const isAudioOutputSupported = isGetActiveAudioOutputDeviceSupported();
 

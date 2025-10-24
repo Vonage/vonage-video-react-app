@@ -1,9 +1,12 @@
 import '../../css/index.css';
 import { beforeEach, describe, expect, it, Mock, vi } from 'vitest';
-import { render, screen } from '@testing-library/react';
+import { render as renderBase, RenderOptions, screen } from '@testing-library/react';
 import { Publisher, Subscriber } from '@vonage/client-sdk-video';
 import { EventEmitter } from 'stream';
 import * as mui from '@mui/material';
+import AppConfigStore from '@Context/ConfigProvider/AppConfigStore';
+import { ConfigProviderBase } from '@Context/ConfigProvider/ConfigProvider';
+import { ReactElement, FC, PropsWithChildren } from 'react';
 import MeetingRoom from './MeetingRoom';
 import UserProvider, { UserContextType } from '../../Context/user';
 import SessionProvider, { SessionContextType } from '../../Context/SessionProvider/session';
@@ -52,27 +55,6 @@ vi.mock('@mui/material', async () => {
   return {
     ...actual,
     useMediaQuery: vi.fn(),
-  };
-});
-vi.mock('../../hooks/useConfigContext', () => {
-  return {
-    default: () => ({
-      videoSettings: {
-        allowCameraControl: true,
-      },
-      audioSettings: {
-        allowMicrophoneControl: true,
-      },
-      meetingRoomSettings: {
-        defaultLayoutMode: 'active-speaker',
-        showParticipantList: true,
-        allowChat: true,
-        allowScreenShare: true,
-        allowArchiving: true,
-        allowCaptions: true,
-        allowEmojis: true,
-      },
-    }),
   };
 });
 
@@ -394,3 +376,36 @@ describe('MeetingRoom', () => {
     });
   });
 });
+
+function render(ui: ReactElement, options?: RenderOptions) {
+  const Wrapper = options?.wrapper ?? makeProvidersWrapper();
+  return renderBase(ui, { ...options, wrapper: Wrapper });
+}
+
+function makeProvidersWrapper(providers?: { configStore?: AppConfigStore }) {
+  const configStore =
+    providers?.configStore ??
+    new AppConfigStore({
+      videoSettings: {
+        allowCameraControl: true,
+      },
+      audioSettings: {
+        allowMicrophoneControl: true,
+      },
+      meetingRoomSettings: {
+        defaultLayoutMode: 'active-speaker',
+        showParticipantList: true,
+        allowChat: true,
+        allowScreenShare: true,
+        allowArchiving: true,
+        allowCaptions: true,
+        allowEmojis: true,
+      },
+    });
+
+  const Wrapper: FC<PropsWithChildren> = ({ children }) => (
+    <ConfigProviderBase value={configStore}>{children}</ConfigProviderBase>
+  );
+
+  return Wrapper;
+}

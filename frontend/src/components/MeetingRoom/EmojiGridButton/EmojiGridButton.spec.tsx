@@ -1,10 +1,10 @@
-import { act, render, screen } from '@testing-library/react';
-import { afterEach, beforeEach, describe, expect, it, vi, Mock } from 'vitest';
-import { useState } from 'react';
+import { act, render as renderBase, RenderOptions, screen } from '@testing-library/react';
+import { beforeEach, describe, expect, it, vi, Mock } from 'vitest';
+import { FC, PropsWithChildren, ReactElement, useState } from 'react';
 import * as mui from '@mui/material';
+import AppConfigStore from '@Context/ConfigProvider/AppConfigStore';
+import { ConfigProviderBase } from '@Context/ConfigProvider/ConfigProvider';
 import EmojiGridButton from './EmojiGridButton';
-import useConfigContext from '../../../hooks/useConfigContext';
-import { ConfigContextType } from '../../../Context/ConfigProvider';
 
 vi.mock('@mui/material', async () => {
   const actual = await vi.importActual<typeof mui>('@mui/material');
@@ -16,9 +16,6 @@ vi.mock('@mui/material', async () => {
 vi.mock('../../../utils/emojis', () => ({
   default: { FAVORITE: '🦧' },
 }));
-vi.mock('../../../hooks/useConfigContext');
-
-const mockUseConfigContext = useConfigContext as Mock<[], ConfigContextType>;
 
 const TestComponent = ({ defaultOpenEmojiGrid = false }: { defaultOpenEmojiGrid?: boolean }) => {
   const [isEmojiGridOpen, setIsEmojiGridOpen] = useState(defaultOpenEmojiGrid);
@@ -32,20 +29,8 @@ const TestComponent = ({ defaultOpenEmojiGrid = false }: { defaultOpenEmojiGrid?
 };
 
 describe('EmojiGridButton', () => {
-  let mockConfigContext: ConfigContextType;
-
   beforeEach(() => {
     (mui.useMediaQuery as Mock).mockReturnValue(false);
-    mockConfigContext = {
-      meetingRoomSettings: {
-        allowEmojis: true,
-      },
-    } as Partial<ConfigContextType> as ConfigContextType;
-    mockUseConfigContext.mockReturnValue(mockConfigContext);
-  });
-
-  afterEach(() => {
-    vi.resetAllMocks();
   });
 
   it('renders', () => {
@@ -67,8 +52,33 @@ describe('EmojiGridButton', () => {
   });
 
   it('is not rendered when allowEmojis is false', () => {
-    mockConfigContext.meetingRoomSettings.allowEmojis = false;
-    render(<TestComponent />);
+    const configStore = new AppConfigStore({
+      meetingRoomSettings: {
+        allowEmojis: false,
+      },
+    });
+    render(<TestComponent />, { wrapper: makeProvidersWrapper({ configStore }) });
     expect(screen.queryByTestId('emoji-grid-button')).not.toBeInTheDocument();
   });
 });
+
+function render(ui: ReactElement, options?: RenderOptions) {
+  const Wrapper = options?.wrapper ?? makeProvidersWrapper();
+  return renderBase(ui, { ...options, wrapper: Wrapper });
+}
+
+function makeProvidersWrapper(providers?: { configStore?: AppConfigStore }) {
+  const configStore =
+    providers?.configStore ??
+    new AppConfigStore({
+      meetingRoomSettings: {
+        allowEmojis: true,
+      },
+    });
+
+  const Wrapper: FC<PropsWithChildren> = ({ children }) => (
+    <ConfigProviderBase value={configStore}>{children}</ConfigProviderBase>
+  );
+
+  return Wrapper;
+}

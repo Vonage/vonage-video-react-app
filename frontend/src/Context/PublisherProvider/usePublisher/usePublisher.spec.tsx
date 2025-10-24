@@ -1,5 +1,12 @@
+import type * as ReactDOMClient from 'react-dom/client';
 import { beforeEach, describe, it, expect, vi } from 'vitest';
-import { act, renderHook, waitFor } from '@testing-library/react';
+import {
+  act,
+  Queries,
+  renderHook as renderHookBase,
+  RenderHookOptions,
+  waitFor,
+} from '@testing-library/react';
 import {
   initPublisher,
   Publisher,
@@ -7,6 +14,9 @@ import {
   hasMediaProcessorSupport,
 } from '@vonage/client-sdk-video';
 import EventEmitter from 'events';
+import AppConfigStore from '@Context/ConfigProvider/AppConfigStore';
+import { ConfigProviderBase } from '@Context/ConfigProvider/ConfigProvider';
+import { FC, PropsWithChildren } from 'react';
 import usePublisher from './usePublisher';
 import useUserContext from '../../../hooks/useUserContext';
 import { UserContextType } from '../../user';
@@ -284,3 +294,32 @@ describe('usePublisher', () => {
     });
   });
 });
+
+function renderHook<
+  Result,
+  Props,
+  Q extends Queries,
+  Container extends
+    | ReactDOMClient.Container
+    | Parameters<(typeof ReactDOMClient)['hydrateRoot']>[0] = HTMLElement,
+  BaseElement extends
+    | ReactDOMClient.Container
+    | Parameters<(typeof ReactDOMClient)['hydrateRoot']>[0] = Container,
+>(
+  render: (initialProps: Props) => Result,
+  options?: RenderHookOptions<Props, Q, Container, BaseElement> | undefined
+) {
+  const Wrapper = options?.wrapper ?? makeProvidersWrapper();
+
+  return renderHookBase(render, { ...options, wrapper: Wrapper });
+}
+
+function makeProvidersWrapper(providers?: { configStore?: AppConfigStore }) {
+  const configStore = providers?.configStore ?? new AppConfigStore({});
+
+  const Wrapper: FC<PropsWithChildren> = ({ children }) => (
+    <ConfigProviderBase value={configStore}>{children}</ConfigProviderBase>
+  );
+
+  return Wrapper;
+}

@@ -1,22 +1,11 @@
-import { render, screen } from '@testing-library/react';
-import { describe, expect, it, Mock, vi, beforeEach } from 'vitest';
+import { render as renderBase, RenderOptions, screen } from '@testing-library/react';
+import { describe, expect, it, vi } from 'vitest';
+import AppConfigStore from '@Context/ConfigProvider/AppConfigStore';
+import { ConfigProviderBase } from '@Context/ConfigProvider/ConfigProvider';
+import { FC, PropsWithChildren, ReactElement } from 'react';
 import ParticipantListButton from './ParticipantListButton';
-import useConfigContext from '../../../hooks/useConfigContext';
-import { ConfigContextType } from '../../../Context/ConfigProvider';
-
-vi.mock('../../../hooks/useConfigContext');
-
-const mockUseConfigContext = useConfigContext as Mock<[], ConfigContextType>;
 
 describe('ParticipantListButton', () => {
-  beforeEach(() => {
-    mockUseConfigContext.mockReturnValue({
-      meetingRoomSettings: {
-        showParticipantList: true,
-      },
-    } as Partial<ConfigContextType> as ConfigContextType);
-  });
-
   it('should show participant number', () => {
     render(<ParticipantListButton handleClick={() => {}} isOpen={false} participantCount={10} />);
     expect(screen.getByText('10')).toBeVisible();
@@ -36,12 +25,35 @@ describe('ParticipantListButton', () => {
     expect(handleClick).toHaveBeenCalled();
   });
   it('is not rendered when showParticipantList is false', () => {
-    mockUseConfigContext.mockReturnValue({
+    const configStore = new AppConfigStore({
       meetingRoomSettings: {
         showParticipantList: false,
       },
-    } as Partial<ConfigContextType> as ConfigContextType);
-    render(<ParticipantListButton handleClick={() => {}} isOpen={false} participantCount={10} />);
+    });
+    render(<ParticipantListButton handleClick={() => {}} isOpen={false} participantCount={10} />, {
+      wrapper: makeProvidersWrapper({ configStore }),
+    });
     expect(screen.queryByTestId('participant-list-button')).not.toBeInTheDocument();
   });
 });
+
+function render(ui: ReactElement, options?: RenderOptions) {
+  const Wrapper = options?.wrapper ?? makeProvidersWrapper();
+  return renderBase(ui, { ...options, wrapper: Wrapper });
+}
+
+function makeProvidersWrapper(providers?: { configStore?: AppConfigStore }) {
+  const configStore =
+    providers?.configStore ??
+    new AppConfigStore({
+      meetingRoomSettings: {
+        showParticipantList: true,
+      },
+    });
+
+  const Wrapper: FC<PropsWithChildren> = ({ children }) => (
+    <ConfigProviderBase value={configStore}>{children}</ConfigProviderBase>
+  );
+
+  return Wrapper;
+}

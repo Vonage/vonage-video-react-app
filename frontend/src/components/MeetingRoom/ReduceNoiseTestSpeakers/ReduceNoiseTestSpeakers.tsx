@@ -31,9 +31,10 @@ const ReduceNoiseTestSpeakers = ({
 }: ReduceNoiseTestSpeakersProps): ReactElement | false => {
   const { t } = useTranslation();
   const { publisher, isPublishing } = usePublisherContext();
-  const config = useConfigContext();
+  const allowAdvancedNoiseSuppression = useConfigContext(
+    ({ audioSettings }) => audioSettings.allowAdvancedNoiseSuppression
+  );
   const [isToggled, setIsToggled] = useState(false);
-  const { allowAdvancedNoiseSuppression } = config.audioSettings;
   const shouldDisplayANS = hasMediaProcessorSupport() && allowAdvancedNoiseSuppression;
 
   const handleToggle = async () => {

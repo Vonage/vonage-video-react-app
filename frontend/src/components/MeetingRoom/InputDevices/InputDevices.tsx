@@ -30,11 +30,12 @@ const InputDevices = ({
 }: InputDevicesProps): ReactElement | false => {
   const { t } = useTranslation();
   const { publisher } = usePublisherContext();
-  const { meetingRoomSettings } = useConfigContext();
+  const allowDeviceSelection = useConfigContext(
+    ({ meetingRoomSettings }) => meetingRoomSettings.allowDeviceSelection
+  );
   const {
     allMediaDevices: { audioInputDevices },
   } = useDevices();
-  const { allowDeviceSelection } = meetingRoomSettings;
 
   const audioInputDevicesCleaned = useMemo(
     () => cleanAndDedupeDeviceLabels(audioInputDevices),

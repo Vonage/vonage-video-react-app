@@ -1,17 +1,24 @@
+import type * as ReactDOMClient from 'react-dom/client';
 import { describe, expect, it, vi, beforeEach, afterAll } from 'vitest';
-import { renderHook, waitFor } from '@testing-library/react';
+import {
+  Queries,
+  renderHook as renderHookBase,
+  RenderHookOptions,
+  waitFor,
+} from '@testing-library/react';
 import OT from '@vonage/client-sdk-video';
+import AppConfigStore, { ConfigContextType } from '@Context/ConfigProvider/AppConfigStore';
+import { ConfigProviderBase } from '@Context/ConfigProvider/ConfigProvider';
+import { FC, PropsWithChildren } from 'react';
+import { DeepPartial } from '@app-types/index';
 import useUserContext from '../../../hooks/useUserContext';
 import { UserContextType } from '../../user';
 import usePublisherOptions from './usePublisherOptions';
 import localStorageMock from '../../../utils/mockData/localStorageMock';
 import DeviceStore from '../../../utils/DeviceStore';
 import { setStorageItem, STORAGE_KEYS } from '../../../utils/storage';
-import useConfigContext from '../../../hooks/useConfigContext';
-import { ConfigContextType } from '../../ConfigProvider';
 
 vi.mock('../../../hooks/useUserContext.tsx');
-vi.mock('../../../hooks/useConfigContext');
 
 const defaultSettings = {
   publishAudio: false,
@@ -37,6 +44,16 @@ const customSettings = {
   publishCaptions: true,
 };
 
+const defaultAppConfig: DeepPartial<ConfigContextType> = {
+  audioSettings: {
+    allowAudioOnJoin: true,
+  },
+  videoSettings: {
+    defaultResolution: '1280x720',
+    allowVideoOnJoin: true,
+  },
+};
+
 const mockUserContextWithDefaultSettings = {
   user: {
     defaultSettings,
@@ -52,7 +69,6 @@ const mockUserContextWithCustomSettings = {
 describe('usePublisherOptions', () => {
   let enumerateDevicesMock: ReturnType<typeof vi.fn>;
   let deviceStore: DeviceStore;
-  let configContext: ConfigContextType;
 
   beforeEach(async () => {
     enumerateDevicesMock = vi.fn();
@@ -68,17 +84,7 @@ describe('usePublisherOptions', () => {
     deviceStore = new DeviceStore();
     enumerateDevicesMock.mockResolvedValue([]);
     await deviceStore.init();
-    configContext = {
-      audioSettings: {
-        allowAudioOnJoin: true,
-      },
-      videoSettings: {
-        defaultResolution: '1280x720',
-        allowVideoOnJoin: true,
-      },
-    } as Partial<ConfigContextType> as ConfigContextType;
 
-    vi.mocked(useConfigContext).mockReturnValue(configContext);
     vi.mocked(useUserContext).mockImplementation(() => mockUserContextWithDefaultSettings);
   });
 
@@ -158,27 +164,86 @@ describe('usePublisherOptions', () => {
 
   describe('configurable features', () => {
     it('should disable audio publishing when allowAudioOnJoin is false', async () => {
-      configContext.audioSettings.allowAudioOnJoin = false;
-      const { result } = renderHook(() => usePublisherOptions());
+      const configStore = new AppConfigStore({
+        ...defaultAppConfig,
+        audioSettings: {
+          ...defaultAppConfig.audioSettings,
+          allowAudioOnJoin: false,
+        },
+      });
+
+      const { result } = renderHook(() => usePublisherOptions(), {
+        wrapper: makeProvidersWrapper({ configStore }),
+      });
+
       await waitFor(() => {
         expect(result.current?.publishAudio).toBe(false);
       });
     });
 
     it('should disable video publishing when allowVideoOnJoin is false', async () => {
-      configContext.videoSettings.allowVideoOnJoin = false;
-      const { result } = renderHook(() => usePublisherOptions());
+      const configStore = new AppConfigStore({
+        ...defaultAppConfig,
+        videoSettings: {
+          ...defaultAppConfig.videoSettings,
+          allowVideoOnJoin: false,
+        },
+      });
+
+      const { result } = renderHook(() => usePublisherOptions(), {
+        wrapper: makeProvidersWrapper({ configStore }),
+      });
+
       await waitFor(() => {
         expect(result.current?.publishVideo).toBe(false);
       });
     });
 
     it('should configure resolution from config', async () => {
-      configContext.videoSettings.defaultResolution = '640x480';
-      const { result } = renderHook(() => usePublisherOptions());
+      const configStore = new AppConfigStore({
+        ...defaultAppConfig,
+        videoSettings: {
+          ...defaultAppConfig.videoSettings,
+          defaultResolution: '640x480',
+        },
+      });
+
+      const { result } = renderHook(() => usePublisherOptions(), {
+        wrapper: makeProvidersWrapper({ configStore }),
+      });
+
       await waitFor(() => {
         expect(result.current?.resolution).toBe('640x480');
       });
     });
   });
 });
+
+function renderHook<
+  Result,
+  Props,
+  Q extends Queries,
+  Container extends
+    | ReactDOMClient.Container
+    | Parameters<(typeof ReactDOMClient)['hydrateRoot']>[0] = HTMLElement,
+  BaseElement extends
+    | ReactDOMClient.Container
+    | Parameters<(typeof ReactDOMClient)['hydrateRoot']>[0] = Container,
+>(
+  render: (initialProps: Props) => Result,
+  options?: RenderHookOptions<Props, Q, Container, BaseElement> | undefined
+) {
+  const Wrapper = options?.wrapper ?? makeProvidersWrapper();
+
+  return renderHookBase(render, { ...options, wrapper: Wrapper });
+}
+
+function makeProvidersWrapper(providers?: { configStore?: AppConfigStore }) {
+  const configStore = providers?.configStore ?? new AppConfigStore(defaultAppConfig);
+
+  const Wrapper: FC<PropsWithChildren> = ({ children }) => (
+    <ConfigProviderBase value={configStore}>{children}</ConfigProviderBase>
+  );
+
+  return Wrapper;
+}

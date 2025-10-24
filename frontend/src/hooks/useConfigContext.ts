@@ -1,9 +1,5 @@
 import makeUseStoreContext from '@Context/helpers/makeUseStoreContext';
-import { useContext } from 'react';
-import { defaultConfig } from '@Context/ConfigProvider/useConfig';
-import { ConfigContext, ConfigContextType } from '../Context/ConfigProvider';
-
-const useStoreContext = makeUseStoreContext(ConfigContext);
+import { ConfigContext, type ConfigContextType } from '@Context/ConfigProvider';
 
 /**
  * Custom hook to access the Config context containing comprehensive application configuration settings.
@@ -13,24 +9,6 @@ const useStoreContext = makeUseStoreContext(ConfigContext);
  * with default values via the useConfig hook.
  * @returns {ConfigContextType} The config context value with all application settings
  */
-const useConfigContext = (): ConfigContextType => {
-  const store = useContext(ConfigContext);
-  if (!store) {
-    return {
-      ...defaultConfig,
-      isLoaded: false,
-    };
-  }
-
-  // eslint-disable-next-line react-hooks/rules-of-hooks
-  return useStoreContext(
-    ({ videoSettings, audioSettings, waitingRoomSettings, meetingRoomSettings }) => ({
-      videoSettings,
-      audioSettings,
-      waitingRoomSettings,
-      meetingRoomSettings,
-    })
-  ) as ConfigContextType;
-};
+const useConfigContext = makeUseStoreContext(ConfigContext);
 
 export default useConfigContext;

@@ -17,11 +17,13 @@ import useConfigContext from '../../../hooks/useConfigContext';
 
 const usePublisherOptions = (): PublisherProperties | null => {
   const { user } = useUserContext();
-  const config = useConfigContext();
+  const defaultResolution = useConfigContext(
+    ({ videoSettings }) => videoSettings.defaultResolution
+  );
+  const allowVideoOnJoin = useConfigContext(({ videoSettings }) => videoSettings.allowVideoOnJoin);
   const [publisherOptions, setPublisherOptions] = useState<PublisherProperties | null>(null);
   const deviceStoreRef = useRef<DeviceStore | null>(null);
-  const { defaultResolution, allowVideoOnJoin } = config.videoSettings;
-  const { allowAudioOnJoin } = config.audioSettings;
+  const allowAudioOnJoin = useConfigContext(({ audioSettings }) => audioSettings.allowAudioOnJoin);
 
   useEffect(() => {
     const setOptions = async () => {

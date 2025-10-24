@@ -16,11 +16,12 @@ import useConfigContext from '../../../hooks/useConfigContext';
 const MicButton = (): ReactElement | false => {
   const { t } = useTranslation();
   const { isAudioEnabled, toggleAudio } = usePreviewPublisherContext();
-  const config = useConfigContext();
+  const allowMicrophoneControl = useConfigContext(
+    ({ audioSettings }) => audioSettings.allowMicrophoneControl
+  );
   const title = isAudioEnabled
     ? t('devices.audio.microphone.state.off')
     : t('devices.audio.microphone.state.on');
-  const { allowMicrophoneControl } = config.audioSettings;
 
   return (
     allowMicrophoneControl && (

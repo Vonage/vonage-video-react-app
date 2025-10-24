@@ -1,32 +1,5 @@
 import { useMemo, useEffect } from 'react';
-import AppConfigStore, { AppConfig } from '../AppConfigStore';
-
-export const defaultConfig: AppConfig = {
-  videoSettings: {
-    allowBackgroundEffects: true,
-    allowCameraControl: true,
-    allowVideoOnJoin: true,
-    defaultResolution: '1280x720',
-  },
-  audioSettings: {
-    allowAdvancedNoiseSuppression: true,
-    allowAudioOnJoin: true,
-    allowMicrophoneControl: true,
-  },
-  waitingRoomSettings: {
-    allowDeviceSelection: true,
-  },
-  meetingRoomSettings: {
-    allowArchiving: true,
-    allowCaptions: true,
-    allowChat: true,
-    allowDeviceSelection: true,
-    allowEmojis: true,
-    allowScreenShare: true,
-    defaultLayoutMode: 'active-speaker',
-    showParticipantList: true,
-  },
-};
+import AppConfigStore, { AppConfig, defaultConfig, mergeAppConfigs } from '../AppConfigStore';
 
 function useConfig(): AppConfigStore {
   const store = useMemo(() => new AppConfigStore(defaultConfig), []);
@@ -43,28 +16,12 @@ function useConfig(): AppConfigStore {
           return;
         }
 
-        const json = await response.json();
+        const json: Partial<AppConfig> = await response.json();
 
-        store.setState({
-          ...defaultConfig,
+        store.setState((state) => ({
+          ...mergeAppConfigs({ previous: state, updates: json }),
           isLoaded: true,
-          videoSettings: {
-            ...defaultConfig.videoSettings,
-            ...(json.videoSettings || {}),
-          },
-          audioSettings: {
-            ...defaultConfig.audioSettings,
-            ...(json.audioSettings || {}),
-          },
-          waitingRoomSettings: {
-            ...defaultConfig.waitingRoomSettings,
-            ...(json.waitingRoomSettings || {}),
-          },
-          meetingRoomSettings: {
-            ...defaultConfig.meetingRoomSettings,
-            ...(json.meetingRoomSettings || {}),
-          },
-        });
+        }));
       } catch (error) {
         console.error('Error loading config:', error);
       }

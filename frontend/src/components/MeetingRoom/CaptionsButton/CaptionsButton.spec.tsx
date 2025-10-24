@@ -1,15 +1,16 @@
 import { describe, expect, it, vi, beforeEach, Mock } from 'vitest';
-import { render, screen, act, waitFor } from '@testing-library/react';
+import { render as renderBase, screen, act, waitFor, RenderOptions } from '@testing-library/react';
 import type { AxiosResponse } from 'axios';
 import { Subscriber } from '@vonage/client-sdk-video';
+import AppConfigStore from '@Context/ConfigProvider/AppConfigStore';
+import { ConfigProviderBase } from '@Context/ConfigProvider/ConfigProvider';
+import { ReactElement, FC, PropsWithChildren } from 'react';
 import { enableCaptions, disableCaptions } from '../../../api/captions';
 import CaptionsButton, { CaptionsState } from './CaptionsButton';
 import useRoomName from '../../../hooks/useRoomName';
 import { SessionContextType } from '../../../Context/SessionProvider/session';
 import useSessionContext from '../../../hooks/useSessionContext';
 import { SubscriberWrapper } from '../../../types/session';
-import useConfigContext from '../../../hooks/useConfigContext';
-import { ConfigContextType } from '../../../Context/ConfigProvider';
 
 vi.mock('../../../hooks/useSessionContext');
 vi.mock('../../../hooks/useRoomName');
@@ -17,10 +18,8 @@ vi.mock('../../../api/captions', () => ({
   enableCaptions: vi.fn(),
   disableCaptions: vi.fn(),
 }));
-vi.mock('../../../hooks/useConfigContext');
 
 const mockUseSessionContext = useSessionContext as Mock<[], SessionContextType>;
-const mockUseConfigContext = useConfigContext as Mock<[], ConfigContextType>;
 
 describe('CaptionsButton', () => {
   const mockHandleCloseMenu = vi.fn();
@@ -34,7 +33,6 @@ describe('CaptionsButton', () => {
   } as CaptionsState;
   const mockedRoomName = 'test-room-name';
   let sessionContext: SessionContextType;
-  let configContext: ConfigContextType;
 
   const createSubscriberWrapper = (id: string): SubscriberWrapper => {
     const mockSubscriber = {
@@ -69,13 +67,7 @@ describe('CaptionsButton', () => {
     sessionContext = {
       subscriberWrappers: [createSubscriberWrapper('subscriber-1')],
     } as unknown as SessionContextType;
-    configContext = {
-      meetingRoomSettings: {
-        allowCaptions: true,
-      },
-    } as Partial<ConfigContextType> as ConfigContextType;
     mockUseSessionContext.mockReturnValue(sessionContext as unknown as SessionContextType);
-    mockUseConfigContext.mockReturnValue(configContext);
   });
 
   it('renders the button correctly', () => {
@@ -98,12 +90,36 @@ describe('CaptionsButton', () => {
   });
 
   it('is not rendered when allowCaptions is false', () => {
-    mockUseConfigContext.mockReturnValue({
+    const configStore = new AppConfigStore({
       meetingRoomSettings: {
         allowCaptions: false,
       },
-    } as Partial<ConfigContextType> as ConfigContextType);
-    render(<CaptionsButton handleClick={mockHandleCloseMenu} captionsState={mockCaptionsState} />);
+    });
+
+    render(<CaptionsButton handleClick={mockHandleCloseMenu} captionsState={mockCaptionsState} />, {
+      wrapper: makeProvidersWrapper({ configStore }),
+    });
     expect(screen.queryByTestId('captions-button')).not.toBeInTheDocument();
   });
 });
+
+function render(ui: ReactElement, options?: RenderOptions) {
+  const Wrapper = options?.wrapper ?? makeProvidersWrapper();
+  return renderBase(ui, { ...options, wrapper: Wrapper });
+}
+
+function makeProvidersWrapper(providers?: { configStore?: AppConfigStore }) {
+  const configStore =
+    providers?.configStore ??
+    new AppConfigStore({
+      meetingRoomSettings: {
+        allowCaptions: true,
+      },
+    });
+
+  const Wrapper: FC<PropsWithChildren> = ({ children }) => (
+    <ConfigProviderBase value={configStore}>{children}</ConfigProviderBase>
+  );
+
+  return Wrapper;
+}

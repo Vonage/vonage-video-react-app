@@ -52,11 +52,12 @@ const DeviceSettingsMenu = ({
   handleClose,
   setIsOpen,
 }: DeviceSettingsMenuProps): ReactElement | false => {
-  const config = useConfigContext();
+  const allowBackgroundEffects = useConfigContext(
+    ({ videoSettings }) => videoSettings.allowBackgroundEffects
+  );
   const isAudio = deviceType === 'audio';
   const theme = useTheme();
   const customLightBlueColor = 'rgb(138, 180, 248)';
-  const { allowBackgroundEffects } = config.videoSettings;
   const shouldDisplayBackgroundEffects = hasMediaProcessorSupport() && allowBackgroundEffects;
 
   const handleToggleBackgroundEffects = () => {

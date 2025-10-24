@@ -31,8 +31,9 @@ const ParticipantListButton = ({
   participantCount,
   isOverflowButton = false,
 }: ParticipantListButtonProps): ReactElement | false => {
-  const { meetingRoomSettings } = useConfigContext();
-  const { showParticipantList } = meetingRoomSettings;
+  const showParticipantList = useConfigContext(
+    ({ meetingRoomSettings }) => meetingRoomSettings.showParticipantList
+  );
 
   const { t } = useTranslation();
   return (

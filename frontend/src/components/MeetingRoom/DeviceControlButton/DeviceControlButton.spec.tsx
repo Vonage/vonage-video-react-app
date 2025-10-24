@@ -1,14 +1,15 @@
 import { describe, it, expect, vi, beforeEach, Mock, afterEach, afterAll } from 'vitest';
-import { fireEvent, render, screen } from '@testing-library/react';
+import { fireEvent, render as renderBase, RenderOptions, screen } from '@testing-library/react';
 import { Publisher } from '@vonage/client-sdk-video';
 import { EventEmitter } from 'stream';
+import AppConfigStore from '@Context/ConfigProvider/AppConfigStore';
+import { ConfigProviderBase } from '@Context/ConfigProvider/ConfigProvider';
+import { ReactElement, FC, PropsWithChildren } from 'react';
 import { PublisherContextType } from '../../../Context/PublisherProvider';
 import { defaultAudioDevice } from '../../../utils/mockData/device';
 import useSpeakingDetector from '../../../hooks/useSpeakingDetector';
 import usePublisherContext from '../../../hooks/usePublisherContext';
 import DeviceControlButton from './DeviceControlButton';
-import useConfigContext from '../../../hooks/useConfigContext';
-import { ConfigContextType } from '../../../Context/ConfigProvider';
 import enTranslations from '../../../locales/en.json';
 
 vi.mock('../../../hooks/usePublisherContext.tsx');
@@ -21,7 +22,6 @@ vi.mock('../../../hooks/useBackgroundPublisherContext', () => {
     }),
   };
 });
-vi.mock('../../../hooks/useConfigContext');
 
 vi.mock('react-i18next', () => ({
   useTranslation: () => ({
@@ -42,13 +42,11 @@ vi.mock('react-i18next', () => ({
 const mockUsePublisherContext = usePublisherContext as Mock<[], PublisherContextType>;
 const mockUseSpeakingDetector = useSpeakingDetector as Mock<[], boolean>;
 const mockHandleToggleBackgroundEffects = vi.fn();
-const mockUseConfigContext = useConfigContext as Mock<[], ConfigContextType>;
 
 describe('DeviceControlButton', () => {
   const nativeMediaDevices = global.navigator.mediaDevices;
   let mockPublisher: Publisher;
   let publisherContext: PublisherContextType;
-  let configContext: ConfigContextType;
 
   beforeEach(() => {
     mockPublisher = Object.assign(new EventEmitter(), {
@@ -82,16 +80,6 @@ describe('DeviceControlButton', () => {
         removeEventListener: vi.fn(() => []),
       },
     });
-
-    configContext = {
-      audioSettings: {
-        allowMicrophoneControl: true,
-      },
-      videoSettings: {
-        allowCameraControl: true,
-      },
-    } as Partial<ConfigContextType> as ConfigContextType;
-    mockUseConfigContext.mockReturnValue(configContext);
   });
 
   afterEach(() => {
@@ -142,12 +130,21 @@ describe('DeviceControlButton', () => {
     });
 
     it('renders the button as disabled with greyed out icon and correct tooltip when allowMicrophoneControl is false', async () => {
-      configContext.audioSettings.allowMicrophoneControl = false;
+      const configStore = new AppConfigStore({
+        audioSettings: {
+          allowMicrophoneControl: false,
+        },
+        videoSettings: {
+          allowCameraControl: true,
+        },
+      });
+
       render(
         <DeviceControlButton
           deviceType="audio"
           toggleBackgroundEffects={mockHandleToggleBackgroundEffects}
-        />
+        />,
+        { wrapper: makeProvidersWrapper({ configStore }) }
       );
       const micButton = screen.getByLabelText('Microphone');
       expect(micButton).toBeInTheDocument();
@@ -178,12 +175,21 @@ describe('DeviceControlButton', () => {
     });
 
     it('renders the button as disabled with greyed out icon and correct tooltip when allowCameraControl is false', async () => {
-      configContext.videoSettings.allowCameraControl = false;
+      const configStore = new AppConfigStore({
+        audioSettings: {
+          allowMicrophoneControl: true,
+        },
+        videoSettings: {
+          allowCameraControl: false,
+        },
+      });
+
       render(
         <DeviceControlButton
           deviceType="video"
           toggleBackgroundEffects={mockHandleToggleBackgroundEffects}
-        />
+        />,
+        { wrapper: makeProvidersWrapper({ configStore }) }
       );
 
       const videoButton = screen.getByLabelText('Camera');
@@ -198,3 +204,27 @@ describe('DeviceControlButton', () => {
     });
   });
 });
+
+function render(ui: ReactElement, options?: RenderOptions) {
+  const Wrapper = options?.wrapper ?? makeProvidersWrapper();
+  return renderBase(ui, { ...options, wrapper: Wrapper });
+}
+
+function makeProvidersWrapper(providers?: { configStore?: AppConfigStore }) {
+  const configStore =
+    providers?.configStore ??
+    new AppConfigStore({
+      audioSettings: {
+        allowMicrophoneControl: true,
+      },
+      videoSettings: {
+        allowCameraControl: true,
+      },
+    });
+
+  const Wrapper: FC<PropsWithChildren> = ({ children }) => (
+    <ConfigProviderBase value={configStore}>{children}</ConfigProviderBase>
+  );
+
+  return Wrapper;
+}

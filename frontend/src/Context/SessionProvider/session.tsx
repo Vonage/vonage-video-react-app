@@ -128,15 +128,16 @@ const MAX_PIN_COUNT = isMobile() ? MAX_PIN_COUNT_MOBILE : MAX_PIN_COUNT_DESKTOP;
  * @returns {SessionContextType} a context provider for a publisher preview
  */
 const SessionProvider = ({ children }: SessionProviderProps): ReactElement => {
-  const config = useConfigContext();
+  const { getSnapshot: getInitialConfig } = useConfigContext();
+
   const [lastStreamUpdate, setLastStreamUpdate] = useState<StreamPropertyChangedEvent | null>(null);
   const vonageVideoClient = useRef<null | VonageVideoClient>(null);
   const [reconnecting, setReconnecting] = useState(false);
   const [subscriberWrappers, setSubscriberWrappers] = useState<SubscriberWrapper[]>([]);
   const [ownCaptions, setOwnCaptions] = useState<string | null>(null);
-  const [layoutMode, setLayoutMode] = useState<LayoutMode>(
-    config.meetingRoomSettings.defaultLayoutMode
-  );
+  const [layoutMode, setLayoutMode] = useState<LayoutMode>(() => {
+    return getInitialConfig().meetingRoomSettings.defaultLayoutMode;
+  });
   const [archiveId, setArchiveId] = useState<string | null>(null);
   const activeSpeakerTracker = useRef<ActiveSpeakerTracker>(new ActiveSpeakerTracker());
   const [activeSpeakerId, setActiveSpeakerId] = useState<string | undefined>();

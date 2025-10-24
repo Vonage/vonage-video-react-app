@@ -1,15 +1,22 @@
 import { describe, it, beforeEach, afterEach, vi, expect, Mock } from 'vitest';
-import { render, screen, fireEvent, cleanup } from '@testing-library/react';
+import {
+  render as renderBase,
+  screen,
+  fireEvent,
+  cleanup,
+  RenderOptions,
+} from '@testing-library/react';
 import { Publisher } from '@vonage/client-sdk-video';
 import { EventEmitter } from 'stream';
+import AppConfigStore from '@Context/ConfigProvider/AppConfigStore';
+import { ConfigProviderBase } from '@Context/ConfigProvider/ConfigProvider';
+import { FC, PropsWithChildren, ReactElement } from 'react';
 import VideoDevices from './VideoDevices';
 import useDevices from '../../../hooks/useDevices';
 import usePublisherContext from '../../../hooks/usePublisherContext';
 import { AllMediaDevices } from '../../../types';
 import { PublisherContextType } from '../../../Context/PublisherProvider';
 import { allMediaDevices, defaultAudioDevice } from '../../../utils/mockData/device';
-import useConfigContext from '../../../hooks/useConfigContext';
-import { ConfigContextType } from '../../../Context/ConfigProvider';
 
 // Mocks
 vi.mock('../../../hooks/useDevices');
@@ -20,14 +27,12 @@ vi.mock('../../../utils/storage', () => ({
     VIDEO_SOURCE: 'videoSource',
   },
 }));
-vi.mock('../../../hooks/useConfigContext');
 
 const mockUseDevices = useDevices as Mock<
   [],
   { allMediaDevices: AllMediaDevices; getAllMediaDevices: () => void }
 >;
 const mockUsePublisherContext = usePublisherContext as Mock<[], PublisherContextType>;
-const mockUseConfigContext = useConfigContext as Mock<[], ConfigContextType>;
 
 describe('VideoDevices Component', () => {
   const mockHandleToggle = vi.fn();
@@ -38,7 +43,6 @@ describe('VideoDevices Component', () => {
   }));
   let mockPublisher: Publisher;
   let publisherContext: PublisherContextType;
-  let mockConfigContext: ConfigContextType;
 
   beforeEach(() => {
     mockUseDevices.mockReturnValue({
@@ -63,18 +67,12 @@ describe('VideoDevices Component', () => {
         publisherContext.publisher = mockPublisher;
       }) as unknown as () => void,
     } as unknown as PublisherContextType;
-    mockConfigContext = {
-      meetingRoomSettings: {
-        allowDeviceSelection: true,
-      },
-    } as Partial<ConfigContextType> as ConfigContextType;
 
     mockUsePublisherContext.mockImplementation(() => publisherContext);
     mockGetVideoSource.mockReturnValue({
       deviceId: 'a68ec4e4a6bc10dc572bd806414b0da27d0aefb0ad822f7ba4cf9b226bb9b7c2',
       label: 'FaceTime HD Camera (2C0E:82E3)',
     });
-    mockUseConfigContext.mockReturnValue(mockConfigContext);
   });
 
   afterEach(() => {
@@ -110,13 +108,40 @@ describe('VideoDevices Component', () => {
   });
 
   it('is not rendered when allowDeviceSelection is false', () => {
-    mockConfigContext.meetingRoomSettings.allowDeviceSelection = false;
-    mockUseConfigContext.mockReturnValue(mockConfigContext);
+    const configStore = new AppConfigStore({
+      meetingRoomSettings: {
+        allowDeviceSelection: false,
+      },
+    });
 
     const { container } = render(
-      <VideoDevices handleToggle={mockHandleToggle} customLightBlueColor="#00f" />
+      <VideoDevices handleToggle={mockHandleToggle} customLightBlueColor="#00f" />,
+      {
+        wrapper: makeProvidersWrapper({ configStore }),
+      }
     );
 
     expect(container.firstChild).toBeNull();
   });
 });
+
+function render(ui: ReactElement, options?: RenderOptions) {
+  const Wrapper = options?.wrapper ?? makeProvidersWrapper();
+  return renderBase(ui, { ...options, wrapper: Wrapper });
+}
+
+function makeProvidersWrapper(providers?: { configStore?: AppConfigStore }) {
+  const configStore =
+    providers?.configStore ??
+    new AppConfigStore({
+      meetingRoomSettings: {
+        allowDeviceSelection: true,
+      },
+    });
+
+  const Wrapper: FC<PropsWithChildren> = ({ children }) => (
+    <ConfigProviderBase value={configStore}>{children}</ConfigProviderBase>
+  );
+
+  return Wrapper;
+}

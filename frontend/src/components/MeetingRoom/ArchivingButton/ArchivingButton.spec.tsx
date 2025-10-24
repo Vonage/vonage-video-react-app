@@ -1,16 +1,16 @@
 import { describe, expect, it, vi, beforeEach, Mock } from 'vitest';
-import { render, screen, act, waitFor } from '@testing-library/react';
+import { render as renderBase, screen, act, waitFor, RenderOptions } from '@testing-library/react';
+import AppConfigStore from '@Context/ConfigProvider/AppConfigStore';
+import { ConfigProviderBase } from '@Context/ConfigProvider/ConfigProvider';
+import { ReactElement, FC, PropsWithChildren } from 'react';
 import { startArchiving, stopArchiving } from '../../../api/archiving';
 import ArchivingButton from './ArchivingButton';
 import useRoomName from '../../../hooks/useRoomName';
 import useSessionContext from '../../../hooks/useSessionContext';
 import { SessionContextType } from '../../../Context/SessionProvider/session';
-import useConfigContext from '../../../hooks/useConfigContext';
-import { ConfigContextType } from '../../../Context/ConfigProvider';
 
 vi.mock('../../../hooks/useSessionContext');
 vi.mock('../../../hooks/useRoomName');
-vi.mock('../../../hooks/useConfigContext');
 
 vi.mock('../../../api/archiving', () => ({
   startArchiving: vi.fn(),
@@ -21,10 +21,8 @@ describe('ArchivingButton', () => {
   const mockHandleCloseMenu = vi.fn();
   const mockedRoomName = 'test-room-name';
   let sessionContext: SessionContextType;
-  let configContext: ConfigContextType;
 
   const mockUseSessionContext = useSessionContext as Mock<[], SessionContextType>;
-  const mockUseConfigContext = useConfigContext as Mock<[], ConfigContextType>;
   const testArchiveId = 'test-archive-id';
 
   beforeEach(() => {
@@ -34,14 +32,8 @@ describe('ArchivingButton', () => {
       subscriberWrappers: [],
       archiveId: null,
     } as unknown as SessionContextType;
-    configContext = {
-      meetingRoomSettings: {
-        allowArchiving: true,
-      },
-    } as Partial<ConfigContextType> as ConfigContextType;
 
     mockUseSessionContext.mockReturnValue(sessionContext as unknown as SessionContextType);
-    mockUseConfigContext.mockReturnValue(configContext);
   });
 
   it('renders the button correctly', () => {
@@ -99,13 +91,36 @@ describe('ArchivingButton', () => {
   });
 
   it('is not rendered when allowArchiving is disabled', () => {
-    mockUseConfigContext.mockReturnValue({
+    const configStore = new AppConfigStore({
       meetingRoomSettings: {
         allowArchiving: false,
       },
-    } as Partial<ConfigContextType> as ConfigContextType);
+    });
 
-    render(<ArchivingButton handleClick={mockHandleCloseMenu} />);
+    render(<ArchivingButton handleClick={mockHandleCloseMenu} />, {
+      wrapper: makeProvidersWrapper({ configStore }),
+    });
     expect(screen.queryByTestId('archiving-button')).not.toBeInTheDocument();
   });
 });
+
+function render(ui: ReactElement, options?: RenderOptions) {
+  const Wrapper = options?.wrapper ?? makeProvidersWrapper();
+  return renderBase(ui, { ...options, wrapper: Wrapper });
+}
+
+function makeProvidersWrapper(providers?: { configStore?: AppConfigStore }) {
+  const configStore =
+    providers?.configStore ??
+    new AppConfigStore({
+      meetingRoomSettings: {
+        allowArchiving: true,
+      },
+    });
+
+  const Wrapper: FC<PropsWithChildren> = ({ children }) => (
+    <ConfigProviderBase value={configStore}>{children}</ConfigProviderBase>
+  );
+
+  return Wrapper;
+}

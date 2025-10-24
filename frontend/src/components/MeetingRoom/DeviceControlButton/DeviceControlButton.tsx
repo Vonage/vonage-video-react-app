@@ -36,12 +36,15 @@ const DeviceControlButton = ({
   const { t } = useTranslation();
   const { isVideoEnabled, toggleAudio, toggleVideo, isAudioEnabled } = usePublisherContext();
   const { toggleVideo: toggleBackgroundVideoPublisher } = useBackgroundPublisherContext();
-  const config = useConfigContext();
+  const allowMicrophoneControl = useConfigContext(
+    ({ audioSettings }) => audioSettings.allowMicrophoneControl
+  );
+  const allowCameraControl = useConfigContext(
+    ({ videoSettings }) => videoSettings.allowCameraControl
+  );
   const isAudio = deviceType === 'audio';
   const [open, setOpen] = useState<boolean>(false);
   const anchorRef = useRef<HTMLInputElement | null>(null);
-  const { allowMicrophoneControl } = config.audioSettings;
-  const { allowCameraControl } = config.videoSettings;
   const isButtonDisabled = isAudio ? !allowMicrophoneControl : !allowCameraControl;
 
   const tooltipTitle = getControlButtonTooltip({

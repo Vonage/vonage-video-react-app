@@ -32,11 +32,12 @@ const ScreenSharingButton = ({
   isViewingScreenShare,
   isOverflowButton = false,
 }: ScreenShareButtonProps): ReactElement | false => {
-  const { meetingRoomSettings } = useConfigContext();
+  const allowScreenShare = useConfigContext(
+    ({ meetingRoomSettings }) => meetingRoomSettings.allowScreenShare
+  );
   const { t } = useTranslation();
   const title = isSharingScreen ? t('screenSharing.title.stop') : t('screenSharing.title.start');
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
-  const { allowScreenShare } = meetingRoomSettings;
 
   // Screensharing relies on the getDisplayMedia browser API which is unsupported on mobile devices
   // See: https://developer.mozilla.org/en-US/docs/Web/API/MediaDevices/getDisplayMedia#browser_compatibility

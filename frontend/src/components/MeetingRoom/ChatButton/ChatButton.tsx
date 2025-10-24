@@ -29,8 +29,7 @@ const ChatButton = ({
   isOpen,
   isOverflowButton = false,
 }: ChatButtonProps): ReactElement | false => {
-  const config = useConfigContext();
-  const { allowChat } = config.meetingRoomSettings;
+  const allowChat = useConfigContext(({ meetingRoomSettings }) => meetingRoomSettings.allowChat);
 
   const { t } = useTranslation();
   return (
