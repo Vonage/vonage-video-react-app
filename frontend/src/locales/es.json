@@ -153,6 +153,8 @@
     "publishingErrors.accessDenied.title": "Acceso a {{device}} denegado",
     "publishingErrors.blocked.message": "Tenemos problemas para conectarte con otros en la sala. Por favor revisa tu red e intenta de nuevo.",
     "publishingErrors.blocked.title": "Dificultades para unirse a la sala",
+    "subscribingErrors.blocked.message": "Tenemos problemas para conectarte con otros en la sala. Por favor revisa tu red e intenta de nuevo.",
+    "subscribingErrors.blocked.title": "Dificultades para unirse a la sala",
     "recording.start.dialog.content": "¡Asegúrate de que todos estén listos! Puedes descargar la grabación desde la página de \"Despedida\" después de salir de la sala.",
     "recording.start.dialog.title": "¿Iniciar grabación?",
     "recording.start.title": "Iniciar grabación",

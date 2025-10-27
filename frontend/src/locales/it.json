@@ -153,6 +153,8 @@
     "publishingErrors.accessDenied.title": "L'accesso a {{device}} è stato negato",
     "publishingErrors.blocked.message": "Problemi di connessione con altri nella stanza. Controlla la rete e riprova.",
     "publishingErrors.blocked.title": "Difficoltà a unirsi alla stanza",
+    "subscribingErrors.blocked.message": "Problemi di connessione con altri nella stanza. Controlla la rete e riprova.",
+    "subscribingErrors.blocked.title": "Difficoltà a unirsi alla stanza",
     "recording.start.dialog.content": "Assicurati che tutti siano pronti! Puoi scaricare la registrazione dalla pagina \"Addio\" dopo aver lasciato la stanza.",
     "recording.start.dialog.title": "Avvia registrazione?",
     "recording.start.title": "Avvia registrazione",

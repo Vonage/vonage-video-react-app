@@ -155,6 +155,8 @@
   "publishingErrors.accessDenied.title": "{{device}} access is denied",
   "publishingErrors.blocked.message": "We're having trouble connecting you with others in the meeting room. Please check your network and try again.",
   "publishingErrors.blocked.title": "Difficulties joining room",
+  "subscribingErrors.blocked.message": "We're having trouble connecting you with others in the meeting room. Please check your network and try again.",
+  "subscribingErrors.blocked.title": "Difficulties joining room",
   "recording.start.dialog.content": "Make sure everyone is ready! You can download the recording from the \"Goodbye\" page after you leave the room.",
   "recording.start.dialog.title": "Start Recording?",
   "recording.start.title": "Start recording",

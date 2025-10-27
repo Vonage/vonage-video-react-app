@@ -18,6 +18,7 @@ import useIsSmallViewport from '../../hooks/useIsSmallViewport';
 import CaptionsError from '../../components/MeetingRoom/CaptionsError';
 import useBackgroundPublisherContext from '../../hooks/useBackgroundPublisherContext';
 import { DEVICE_ACCESS_STATUS } from '../../utils/constants';
+import { PublishingErrorType } from '../../Context/PublisherProvider/usePublisher/usePublisher';
 
 const height = '@apply h-[calc(100dvh_-_80px)]';
 
@@ -44,6 +45,7 @@ const MeetingRoom = (): ReactElement => {
 
   const {
     joinRoom,
+    subscriptionError,
     subscriberWrappers,
     connected,
     disconnect,
@@ -57,7 +59,6 @@ const MeetingRoom = (): ReactElement => {
   } = useSessionContext();
   const { isSharingScreen, screensharingPublisher, screenshareVideoElement, toggleShareScreen } =
     useScreenShare();
-  const navigate = useNavigate();
   const publisherOptions = usePublisherOptions();
   const isSmallViewport = useIsSmallViewport();
 
@@ -109,20 +110,11 @@ const MeetingRoom = (): ReactElement => {
     }
   }, [accessStatus]);
 
-  // If the user is unable to publish, we redirect them to the goodbye page.
-  // This prevents users from subscribing to other participants in the room, and being unable to communicate with them.
-  useEffect(() => {
-    if (publishingError) {
-      const { header, caption } = publishingError;
-      navigate('/goodbye', {
-        state: {
-          header,
-          caption,
-          roomName,
-        },
-      });
-    }
-  }, [publishingError, navigate, roomName]);
+  // eslint-disable-next-line @typescript-eslint/no-use-before-define
+  useRedirectOnPublisherError(publishingError);
+
+  // eslint-disable-next-line @typescript-eslint/no-use-before-define
+  useRedirectOnSubscriberError(subscriptionError);
 
   return (
     <div data-testid="meetingRoom" className={`${height} w-screen bg-darkGray-100`}>
@@ -173,5 +165,56 @@ const MeetingRoom = (): ReactElement => {
     </div>
   );
 };
+
+/**
+ *  If the user is unable to publish, we redirect them to the goodbye page.
+ * This prevents users from subscribing to other participants in the room, and being unable to communicate with them.
+ * @param {PublishingErrorType | null} publishingError - The publishing error object or null if no error.
+ */
+function useRedirectOnPublisherError(publishingError: PublishingErrorType | null) {
+  const navigate = useNavigate();
+  const roomName = useRoomName();
+  const { t } = useTranslation();
+
+  useEffect(() => {
+    if (!publishingError) {
+      return;
+    }
+
+    const { header, caption } = publishingError;
+    navigate('/goodbye', {
+      state: {
+        header,
+        caption,
+        roomName,
+      },
+    });
+  }, [publishingError, navigate, roomName, t]);
+}
+
+/**
+ *  If the user is unable to subscribe, we redirect them to the goodbye page.
+ * This prevents users from subscribing to other participants in the room, and being unable to communicate with them.
+ * @param {Error | null} subscriberError - The subscriber error object or null if no error.
+ */
+function useRedirectOnSubscriberError(subscriberError: Error | null) {
+  const navigate = useNavigate();
+  const roomName = useRoomName();
+  const { t } = useTranslation();
+
+  useEffect(() => {
+    if (!subscriberError) {
+      return;
+    }
+
+    navigate('/goodbye', {
+      state: {
+        header: t('subscribingErrors.blocked.title'),
+        caption: t('subscribingErrors.blocked.message'),
+        roomName,
+      },
+    });
+  }, [subscriberError, navigate, roomName, t]);
+}
 
 export default MeetingRoom;

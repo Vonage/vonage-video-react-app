@@ -26,7 +26,7 @@ type DeviceAccessStatus = {
   camera: boolean | undefined;
 };
 
-type PublishingErrorType = {
+export type PublishingErrorType = {
   header: string;
   caption: string;
 } | null;
@@ -272,7 +272,7 @@ const usePublisher = (): PublisherContextType => {
       await sessionPublish(publisherRef.current);
     } catch (err: unknown) {
       if (err instanceof Error) {
-        console.warn(err.stack);
+        console.warn(err);
         setIsPublishingToSession(false);
         publish();
       }
