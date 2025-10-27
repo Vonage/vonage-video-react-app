@@ -5,6 +5,11 @@ type RetryOptions = {
   onRetry?: (error: unknown, attempt: number) => void;
 };
 
+export const wait = (delay: number): Promise<void> =>
+  new Promise((resolve) => {
+    setTimeout(resolve, delay);
+  });
+
 /**
  * Executes an idempotent asynchronous callback with retry logic.
  * @param {() => Promise<any>} callback - The asynchronous callback to execute.
@@ -20,11 +25,6 @@ async function idempotentCallbackWithRetry<T>(
 
   let attempt = 0;
   let lastError: unknown;
-
-  const wait = (delay: number): Promise<void> =>
-    new Promise((resolve) => {
-      setTimeout(resolve, delay);
-    });
 
   while (attempt <= retries) {
     try {

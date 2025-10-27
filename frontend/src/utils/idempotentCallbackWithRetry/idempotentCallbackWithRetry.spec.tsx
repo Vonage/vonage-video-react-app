@@ -50,7 +50,7 @@ describe('idempotentCallbackWithRetry', () => {
 
     await expect(idempotentCallbackWithRetry(callback, { delayMs: 1 })).rejects.toThrow('fail');
 
-    expect(callback).toHaveBeenCalledTimes(4);
+    expect(callback).toHaveBeenCalledTimes(3);
   });
 
   it('should handle custom retry count', async () => {

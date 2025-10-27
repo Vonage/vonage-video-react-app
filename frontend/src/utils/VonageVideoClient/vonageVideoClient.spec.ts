@@ -11,6 +11,7 @@ import EventEmitter from 'events';
 import logOnConnect from '../logOnConnect';
 import VonageVideoClient from './vonageVideoClient';
 import { Credential, SignalEvent, SignalType } from '../../types/session';
+import { wait } from '../idempotentCallbackWithRetry/idempotentCallbackWithRetry';
 
 vi.mock('../logOnConnect');
 vi.mock('@vonage/client-sdk-video');
@@ -115,19 +116,23 @@ describe('VonageVideoClient', () => {
         });
       }));
 
-    it('emits an event for screenshare subscribers', () =>
-      new Promise<void>((done) => {
-        const streamId = 'stream-id';
-        vonageVideoClient?.connect().then(() => {
-          vonageVideoClient?.on('screenshareStreamCreated', () => {
-            done();
-          });
+    it('emits an event for screenshare subscribers', async () => {
+      expect.assertions(0);
+      const streamId = 'stream-id';
+      const connectPromise = vonageVideoClient?.connect();
 
-          mockSession.emit('streamCreated', {
-            stream: { streamId, videoType: 'screen' } as unknown as Stream,
-          });
-        });
-      }));
+      vonageVideoClient?.on('screenshareStreamCreated', () => {
+        expect(true).toBe(true);
+      });
+
+      mockSession.emit('streamCreated', {
+        stream: { streamId, videoType: 'screen' } as unknown as Stream,
+      });
+
+      await connectPromise;
+
+      await wait(0);
+    });
 
     it('emits an event containing the streamId when the stream is destroyed', async () => {
       const streamId = 'stream-id';

@@ -105,7 +105,6 @@ class VonageVideoClient extends EventEmitter<VonageVideoClientEvents> {
     const { stream } = event;
     const { streamId, videoType } = stream;
     const isScreenshare = videoType === 'screen';
-
     const subscriberOptions: SubscriberProperties = {
       insertMode: 'append',
       width: '100%',
@@ -117,11 +116,10 @@ class VonageVideoClient extends EventEmitter<VonageVideoClientEvents> {
       },
       insertDefaultUI: false,
     };
-
     try {
       const subscribe = () =>
         new Promise<Subscriber>((resolve, reject) => {
-          const result = this.clientSession?.subscribe(
+          const subscriber = this.clientSession?.subscribe(
             stream,
             undefined,
             subscriberOptions,
@@ -130,14 +128,21 @@ class VonageVideoClient extends EventEmitter<VonageVideoClientEvents> {
                 reject(error);
                 return;
               }
-
-              resolve(result!);
+              resolve(subscriber!);
             }
           );
+
+          this.setupSubscriberListeners({
+            subscriber: subscriber!,
+            streamId,
+            isScreenshare,
+          });
         });
 
-      const subscriber = await idempotentCallbackWithRetry(() => subscribe());
-      this.setupSubscriberListeners(subscriber, streamId, isScreenshare);
+      await idempotentCallbackWithRetry(() => subscribe());
+      if (isScreenshare) {
+        this.emit('screenshareStreamCreated');
+      }
     } catch (syncError) {
       this.disconnect();
       this.handleSubscriptionError(syncError);
@@ -146,16 +151,21 @@ class VonageVideoClient extends EventEmitter<VonageVideoClientEvents> {
 
   /**
    * Sets up event listeners for a subscriber
-   * @param {any} subscriber - The subscriber object
-   * @param {string} streamId - The stream ID
-   * @param {boolean} isScreenshare - Whether this is a screenshare stream
+   * @param {object} params - The parameters object
+   * @param {Subscriber} params.subscriber - The subscriber object
+   * @param {string} params.streamId - The ID of the stream
+   * @param {boolean} params.isScreenshare - Whether the stream is a screenshare
    * @private
    */
-  private setupSubscriberListeners = (
-    subscriber: Subscriber,
-    streamId: string,
-    isScreenshare: boolean
-  ) => {
+  private setupSubscriberListeners = ({
+    subscriber,
+    streamId,
+    isScreenshare,
+  }: {
+    subscriber: Subscriber;
+    streamId: string;
+    isScreenshare: boolean;
+  }) => {
     subscriber.on('videoElementCreated', (videoElementCreatedEvent: VideoElementCreatedEvent) => {
       const { element } = videoElementCreatedEvent;
       const subscriberWrapper: SubscriberWrapper = {
@@ -180,10 +190,6 @@ class VonageVideoClient extends EventEmitter<VonageVideoClientEvents> {
       const { logMovingAvg } = getMovingAverageAudioLevel(audioLevel);
       this.emit('subscriberAudioLevelUpdated', { movingAvg: logMovingAvg, subscriberId: streamId });
     });
-
-    if (isScreenshare) {
-      this.emit('screenshareStreamCreated');
-    }
   };
 
   /**
