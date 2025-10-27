@@ -1,5 +1,5 @@
-import { act, cleanup, renderHook } from '@testing-library/react';
-import { afterAll, afterEach, beforeEach, describe, expect, it, Mock, vi } from 'vitest';
+import { act, renderHook } from '@testing-library/react';
+import { afterAll, beforeEach, describe, expect, it, Mock, vi } from 'vitest';
 import { hasMediaProcessorSupport, initPublisher, Publisher } from '@vonage/client-sdk-video';
 import EventEmitter from 'events';
 import useBackgroundPublisher from './useBackgroundPublisher';
@@ -64,10 +64,6 @@ describe('useBackgroundPublisher', () => {
     vi.mocked(usePublisherOptions).mockReturnValue({
       publishVideo: true,
     });
-  });
-
-  afterEach(() => {
-    cleanup();
   });
 
   describe('initBackgroundLocalPublisher', () => {

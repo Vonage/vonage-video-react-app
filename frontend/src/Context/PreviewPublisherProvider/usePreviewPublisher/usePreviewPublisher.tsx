@@ -7,17 +7,20 @@ import {
   hasMediaProcessorSupport,
   PublisherProperties,
 } from '@vonage/client-sdk-video';
-import setMediaDevices from '../../../utils/mediaDeviceUtils';
-import useDevices from '../../../hooks/useDevices';
-import usePermissions from '../../../hooks/usePermissions';
-import useUserContext from '../../../hooks/useUserContext';
-import { DEVICE_ACCESS_STATUS } from '../../../utils/constants';
-import { UserType } from '../../user';
-import { AccessDeniedEvent } from '../../PublisherProvider/usePublisher/usePublisher';
-import DeviceStore from '../../../utils/DeviceStore';
-import { setStorageItem, STORAGE_KEYS } from '../../../utils/storage';
-import applyBackgroundFilter from '../../../utils/backgroundFilter/applyBackgroundFilter/applyBackgroundFilter';
-import useConfigContext from '../../../hooks/useConfigContext';
+import setMediaDevices from '@utils/mediaDeviceUtils';
+import useDevices from '@hooks/useDevices';
+import usePermissions from '@hooks/usePermissions';
+import useUserContext from '@hooks/useUserContext';
+import { DEVICE_ACCESS_STATUS } from '@utils/constants';
+import DeviceStore from '@utils/DeviceStore';
+import { setStorageItem, STORAGE_KEYS } from '@utils/storage';
+import applyBackgroundFilter from '@utils/backgroundFilter/applyBackgroundFilter/applyBackgroundFilter';
+import useConfigContext from '@hooks/useConfigContext';
+import useIsCameraControlAllowed from '@hooks/useIsCameraControlAllowed';
+import useIsMicrophoneControlAllowed from '@hooks/useIsMicrophoneControlAllowed';
+import type { UserType } from '@Context/user';
+import type { AccessDeniedEvent } from '@Context/PublisherProvider/usePublisher/usePublisher';
+import useSyncMediaPermissions from './useSyncMediaPermissions';
 
 type PublisherVideoElementCreatedEvent = Event<'videoElementCreated', Publisher> & {
   element: HTMLVideoElement | HTMLObjectElement;
@@ -66,6 +69,9 @@ export type PreviewPublisherContextType = {
  * @returns {PreviewPublisherContextType} preview context
  */
 const usePreviewPublisher = (): PreviewPublisherContextType => {
+  const isCameraControlAllowed = useIsCameraControlAllowed();
+  const isMicrophoneControlAllowed = useIsMicrophoneControlAllowed();
+
   const { setUser, user } = useUserContext();
   const defaultResolution = useConfigContext(
     ({ videoSettings }) => videoSettings.defaultResolution
@@ -84,11 +90,18 @@ const usePreviewPublisher = (): PreviewPublisherContextType => {
   const [backgroundFilter, setBackgroundFilter] = useState<VideoFilter | undefined>(
     user.defaultSettings.backgroundFilter
   );
-  const [isVideoEnabled, setIsVideoEnabled] = useState(true);
-  const [isAudioEnabled, setIsAudioEnabled] = useState(true);
+  const [isVideoEnabled, setIsVideoEnabled] = useState(false);
+  const [isAudioEnabled, setIsAudioEnabled] = useState(false);
   const [localVideoSource, setLocalVideoSource] = useState<string | undefined>(undefined);
   const [localAudioSource, setLocalAudioSource] = useState<string | undefined>(undefined);
   const deviceStoreRef = useRef<DeviceStore>(new DeviceStore());
+
+  useSyncMediaPermissions({
+    setIsVideoEnabled,
+    setIsAudioEnabled,
+    isCameraControlAllowed,
+    isMicrophoneControlAllowed,
+  });
 
   /* This sets the default devices in use so that the user knows what devices they are using */
   useEffect(() => {
@@ -227,6 +240,12 @@ const usePreviewPublisher = (): PreviewPublisherContextType => {
   );
 
   const initLocalPublisher = useCallback(async () => {
+    const tryingToPublishWithoutSources = !isCameraControlAllowed && !isMicrophoneControlAllowed;
+
+    if (tryingToPublishWithoutSources) {
+      throw new Error('Cannot initialize publisher without audio or video sources enabled.');
+    }
+
     if (publisherRef.current) {
       return;
     }
@@ -258,7 +277,12 @@ const usePreviewPublisher = (): PreviewPublisherContextType => {
       }
     });
     addPublisherListeners(publisherRef.current);
-  }, [addPublisherListeners, defaultResolution]);
+  }, [
+    addPublisherListeners,
+    defaultResolution,
+    isCameraControlAllowed,
+    isMicrophoneControlAllowed,
+  ]);
 
   /**
    * Destroys the preview publisher
@@ -339,4 +363,5 @@ const usePreviewPublisher = (): PreviewPublisherContextType => {
     speechLevel,
   };
 };
+
 export default usePreviewPublisher;

@@ -7,14 +7,15 @@ import {
   hasMediaProcessorSupport,
   PublisherProperties,
 } from '@vonage/client-sdk-video';
-import setMediaDevices from '../../../utils/mediaDeviceUtils';
-import useDevices from '../../../hooks/useDevices';
-import usePermissions from '../../../hooks/usePermissions';
-import useUserContext from '../../../hooks/useUserContext';
-import { DEVICE_ACCESS_STATUS } from '../../../utils/constants';
+import setMediaDevices from '@utils/mediaDeviceUtils';
+import useDevices from '@hooks/useDevices';
+import usePermissions from '@hooks/usePermissions';
+import useUserContext from '@hooks/useUserContext';
+import { DEVICE_ACCESS_STATUS } from '@utils/constants';
+import DeviceStore from '@utils/DeviceStore';
+import applyBackgroundFilter from '@utils/backgroundFilter/applyBackgroundFilter/applyBackgroundFilter';
+import useConfigContext from '@hooks/useConfigContext';
 import { AccessDeniedEvent } from '../../PublisherProvider/usePublisher/usePublisher';
-import DeviceStore from '../../../utils/DeviceStore';
-import applyBackgroundFilter from '../../../utils/backgroundFilter/applyBackgroundFilter/applyBackgroundFilter';
 
 export type BackgroundPublisherContextType = {
   isPublishing: boolean;
@@ -53,6 +54,10 @@ type PublisherVideoElementCreatedEvent = Event<'videoElementCreated', Publisher>
  * @returns {BackgroundPublisherContextType} Background context
  */
 const useBackgroundPublisher = (): BackgroundPublisherContextType => {
+  const allowCameraControl = useConfigContext(
+    ({ videoSettings }) => videoSettings.allowCameraControl
+  );
+
   const { user } = useUserContext();
   const { allMediaDevices, getAllMediaDevices } = useDevices();
   const [publisherVideoElement, setPublisherVideoElement] = useState<
@@ -173,7 +178,10 @@ const useBackgroundPublisher = (): BackgroundPublisherContextType => {
     }
 
     await deviceStoreRef.current.init();
-    const videoSource = deviceStoreRef.current.getConnectedDeviceId('videoinput');
+
+    const videoSource = allowCameraControl
+      ? deviceStoreRef.current.getConnectedDeviceId('videoinput')
+      : null;
 
     const publisherOptions: PublisherProperties = {
       insertDefaultUI: false,
@@ -193,7 +201,7 @@ const useBackgroundPublisher = (): BackgroundPublisherContextType => {
       }
     });
     addPublisherListeners(backgroundPublisherRef.current);
-  }, [addPublisherListeners, isVideoEnabled]);
+  }, [allowCameraControl, addPublisherListeners, isVideoEnabled]);
 
   /**
    * Destroys the background publisher

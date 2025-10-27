@@ -8,6 +8,8 @@ import OT, {
   PublisherProperties,
 } from '@vonage/client-sdk-video';
 import { useTranslation } from 'react-i18next';
+import useIsCameraControlAllowed from '@hooks/useIsCameraControlAllowed';
+import useIsMicrophoneControlAllowed from '@hooks/useIsMicrophoneControlAllowed';
 import usePublisherQuality, { NetworkQuality } from '../usePublisherQuality/usePublisherQuality';
 import usePublisherOptions from '../usePublisherOptions';
 import useSessionContext from '../../../hooks/useSessionContext';
@@ -78,6 +80,9 @@ const usePublisher = (): PublisherContextType => {
   const [publisherVideoElement, setPublisherVideoElement] = useState<
     HTMLVideoElement | HTMLObjectElement
   >();
+  const isCameraControlAllowed = useIsCameraControlAllowed();
+  const isMicrophoneControlAllowed = useIsMicrophoneControlAllowed();
+
   const publisherRef = useRef<Publisher | null>(null);
   const quality = usePublisherQuality(publisherRef.current);
   const [isPublishing, setIsPublishing] = useState(false);
@@ -90,8 +95,8 @@ const usePublisher = (): PublisherContextType => {
   const [publishingError, setPublishingError] = useState<PublishingErrorType>(null);
   const { publish: sessionPublish, unpublish: sessionUnpublish, connected } = useSessionContext();
   const [deviceAccess, setDeviceAccess] = useState<DeviceAccessStatus>({
-    microphone: undefined,
-    camera: undefined,
+    microphone: isMicrophoneControlAllowed,
+    camera: isCameraControlAllowed,
   });
   let publishAttempt: number = 0;
 
@@ -112,8 +117,8 @@ const usePublisher = (): PublisherContextType => {
       return;
     }
 
-    setIsVideoEnabled(!!publisherOptions.publishVideo);
-    setIsAudioEnabled(!!publisherOptions.publishAudio);
+    setIsVideoEnabled(Boolean(publisherOptions.publishVideo));
+    setIsAudioEnabled(Boolean(publisherOptions.publishAudio));
   }, [publisherOptions]);
 
   const handleAccessAllowed = () => {
@@ -215,7 +220,15 @@ const usePublisher = (): PublisherContextType => {
   const initializeLocalPublisher = useCallback(
     (options: PublisherProperties) => {
       try {
+        const tryingToPublishWithoutSources =
+          !isCameraControlAllowed && !isMicrophoneControlAllowed;
+
+        if (tryingToPublishWithoutSources) {
+          throw new Error('Cannot initialize publisher without audio or video sources enabled.');
+        }
+
         const publisher = initPublisher(undefined, options);
+
         // Add listeners synchronously as some events could be fired before callback is invoked
         addPublisherListeners(publisher);
         publisherRef.current = publisher;
@@ -225,7 +238,7 @@ const usePublisher = (): PublisherContextType => {
         }
       }
     },
-    [addPublisherListeners]
+    [addPublisherListeners, isCameraControlAllowed, isMicrophoneControlAllowed]
   );
 
   /**
@@ -254,6 +267,12 @@ const usePublisher = (): PublisherContextType => {
    */
   const publish = async (): Promise<void> => {
     try {
+      const tryingToPublishWithoutSources = !isCameraControlAllowed && !isMicrophoneControlAllowed;
+
+      if (tryingToPublishWithoutSources) {
+        throw new Error('Cannot initialize publisher without audio or video sources enabled.');
+      }
+
       if (!connected) {
         throw new Error('You are not connected to session');
       }

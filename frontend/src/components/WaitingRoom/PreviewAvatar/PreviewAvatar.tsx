@@ -1,14 +1,12 @@
-import { Avatar } from '@mui/material';
+import { Avatar, AvatarProps } from '@mui/material';
 import { ReactElement } from 'react';
 import useWindowWidth from '../../../hooks/useWindowWidth';
 import AvatarInitials from '../../AvatarInitials';
 import useIsSmallViewport from '../../../hooks/useIsSmallViewport';
 
-export type PreviewAvatarProps = {
+export type PreviewAvatarProps = AvatarProps & {
   username: string;
   initials: string;
-  isVideoEnabled: boolean;
-  isVideoLoading: boolean;
 };
 
 /**
@@ -25,27 +23,23 @@ export type PreviewAvatarProps = {
 const PreviewAvatar = ({
   initials,
   username,
-  isVideoEnabled,
-  isVideoLoading,
+  ...props
 }: PreviewAvatarProps): ReactElement | null => {
   const smallDisplayDimensions = useWindowWidth() * 0.46;
   const isSmallViewport = useIsSmallViewport();
   const height = isSmallViewport ? smallDisplayDimensions : 328;
   const width = isSmallViewport ? smallDisplayDimensions : 584;
-  if (isVideoEnabled || isVideoLoading) {
-    return null;
-  }
 
   return initials ? (
     <AvatarInitials
       initials={initials}
       sx={{
         position: 'absolute',
-        zIndex: isVideoEnabled ? 0 : 1,
       }}
       username={username}
       height={height}
       width={width}
+      {...props}
     />
   ) : (
     <Avatar
@@ -57,6 +51,7 @@ const PreviewAvatar = ({
         height: '174px',
         fontSize: '58pt',
       }}
+      {...props}
     />
   );
 };

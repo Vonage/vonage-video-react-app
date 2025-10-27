@@ -1,7 +1,7 @@
-import { Box, SxProps } from '@mui/material';
+import { Box, BoxProps, SxProps } from '@mui/material';
 import { ReactElement } from 'react';
 
-export type VoiceIndicatorProps = {
+export type VoiceIndicatorProps = BoxProps & {
   publisherAudioLevel: number;
   sx?: SxProps;
   size: number;
@@ -33,11 +33,20 @@ const VoiceIndicatorIcon = ({
   publisherAudioLevel,
   sx,
   size,
+  ...props
 }: VoiceIndicatorProps): ReactElement => {
   const barHeights = calculateBarHeights(publisherAudioLevel);
 
   return (
-    <Box sx={{ ...sx }} key={20} display="flex" flexDirection="column" gap={2} alignItems="center">
+    <Box
+      sx={{ ...sx }}
+      key={20}
+      display="flex"
+      flexDirection="column"
+      gap={2}
+      alignItems="center"
+      {...props}
+    >
       <div
         className="flex items-center justify-center gap-[8%]"
         style={{

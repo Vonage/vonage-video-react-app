@@ -8,7 +8,9 @@ function useConfig(): AppConfigStore {
     // Try to load config from JSON file located at frontend/public/config.json
     const loadConfig = async () => {
       try {
-        const response = await fetch('/config.json');
+        const response = await fetch('/config.json', {
+          cache: 'no-cache',
+        });
 
         const contentType = response.headers.get('content-type');
         if (!contentType || !contentType.includes('application/json')) {

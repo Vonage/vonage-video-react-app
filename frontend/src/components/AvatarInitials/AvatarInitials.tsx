@@ -1,8 +1,8 @@
-import { Avatar, SxProps } from '@mui/material';
+import { Avatar, SxProps, AvatarProps } from '@mui/material';
 import { ReactElement } from 'react';
 import getParticipantColor from '../../utils/getParticipantColor';
 
-export type InitialsProps = {
+export type InitialsProps = AvatarProps & {
   initials?: string;
   username?: string;
   sx?: SxProps;
@@ -28,6 +28,7 @@ const AvatarInitials = ({
   sx = {},
   height = 80,
   width = 80,
+  ...props
 }: InitialsProps): ReactElement => {
   const diameter = Math.min(height, width) * 0.53;
 
@@ -42,6 +43,7 @@ const AvatarInitials = ({
         margin: 'auto',
         ...sx,
       }}
+      {...props}
     >
       {initials}
     </Avatar>

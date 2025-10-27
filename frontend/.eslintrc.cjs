@@ -33,5 +33,7 @@ module.exports = {
 
     'no-redeclare': 'off', // duplicate rule, typescript already checks for this
     '@typescript-eslint/no-shadow': 'off', // duplicate rule, typescript already checks for this
+    'consistent-return': 'off', // this rule goes against standard useEffect patterns,
+    'tailwindcss/classnames-order': 'off', // this rule forces the changes to be more disruptive than beneficial and prevent grouping classes logically
   },
 };

@@ -9,18 +9,13 @@ import { ReactElement } from 'react';
  */
 const VideoLoading = (): ReactElement => {
   return (
-    <div
+    <CircularProgress
       data-testid="VideoLoading"
-      className="absolute flex h-[328px] w-dvw items-center justify-center rounded-2xl bg-black"
-    >
-      <CircularProgress
-        sx={{
-          position: 'relative',
-          zIndex: 10,
-        }}
-        data-testid="CircularProgress"
-      />
-    </div>
+      sx={{
+        position: 'relative',
+        zIndex: 10,
+      }}
+    />
   );
 };
 

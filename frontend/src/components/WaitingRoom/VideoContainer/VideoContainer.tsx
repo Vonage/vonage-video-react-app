@@ -1,16 +1,19 @@
 import { useRef, useState, useEffect, ReactElement } from 'react';
-import { Stack } from '@mui/material';
+import { Box, Stack } from '@mui/material';
+import waitUntilPlaying from '@utils/waitUntilPlaying';
+import useUserContext from '@hooks/useUserContext';
+import usePreviewPublisherContext from '@hooks/usePreviewPublisherContext';
+import getInitials from '@utils/getInitials';
+import useIsSmallViewport from '@hooks/useIsSmallViewport';
+import useIsCameraControlAllowed from '@hooks/useIsCameraControlAllowed';
+import useConfigContext from '@hooks/useConfigContext';
+import classNames from 'classnames';
 import MicButton from '../MicButton';
 import CameraButton from '../CameraButton';
 import VideoLoading from '../VideoLoading';
-import waitUntilPlaying from '../../../utils/waitUntilPlaying';
-import useUserContext from '../../../hooks/useUserContext';
-import usePreviewPublisherContext from '../../../hooks/usePreviewPublisherContext';
-import getInitials from '../../../utils/getInitials';
 import PreviewAvatar from '../PreviewAvatar';
 import VoiceIndicatorIcon from '../../MeetingRoom/VoiceIndicator/VoiceIndicator';
 import VignetteEffect from '../VignetteEffect';
-import useIsSmallViewport from '../../../hooks/useIsSmallViewport';
 import BackgroundEffectsDialog from '../BackgroundEffects/BackgroundEffectsDialog';
 import BackgroundEffectsButton from '../BackgroundEffects/BackgroundEffectsButton';
 
@@ -28,79 +31,123 @@ export type VideoContainerProps = {
  * @returns {ReactElement} - The VideoContainer component.
  */
 const VideoContainer = ({ username }: VideoContainerProps): ReactElement => {
+  const isAppConfigLoaded = useConfigContext(({ isLoaded }) => isLoaded);
+  const isCameraControlAllowed = useIsCameraControlAllowed();
+
   const containerRef = useRef<HTMLDivElement>(null);
-  const [isVideoLoading, setIsVideoLoading] = useState<boolean>(true);
+
+  const [isWaitingPlayVideo, setIsWaitingPlayVideo] = useState<boolean>(false);
   const [isBackgroundEffectsOpen, setIsBackgroundEffectsOpen] = useState<boolean>(false);
   const { user } = useUserContext();
+
   const { publisherVideoElement, isVideoEnabled, isAudioEnabled, speechLevel } =
     usePreviewPublisherContext();
+
   const initials = getInitials(username);
   const isSmallViewport = useIsSmallViewport();
 
   useEffect(() => {
-    if (publisherVideoElement && containerRef.current && isVideoEnabled) {
-      containerRef.current.appendChild(publisherVideoElement);
-      const myVideoElement = publisherVideoElement as HTMLElement;
-      myVideoElement.classList.add('video__element');
-      myVideoElement.title = 'publisher-preview';
-      myVideoElement.style.borderRadius = isSmallViewport ? '0px' : '12px';
-      myVideoElement.style.height = isSmallViewport ? '' : '328px';
-      myVideoElement.style.width = isSmallViewport ? '100dvw' : '584px';
-      myVideoElement.style.marginLeft = 'auto';
-      myVideoElement.style.marginRight = 'auto';
-      myVideoElement.style.transform = 'scaleX(-1)';
-      myVideoElement.style.objectFit = 'contain';
-      myVideoElement.style.aspectRatio = '16 / 9';
-      myVideoElement.style.boxShadow =
-        '0 1px 2px 0 rgba(60, 64, 67, .3), 0 1px 3px 1px rgba(60, 64, 67, .15)';
+    const shouldPublishVideo = publisherVideoElement && isCameraControlAllowed;
 
-      waitUntilPlaying(publisherVideoElement).then(() => {
-        setIsVideoLoading(false);
-      });
+    if (!containerRef.current || !shouldPublishVideo) {
+      return;
     }
-  }, [isSmallViewport, publisherVideoElement, isVideoEnabled]);
+
+    setIsWaitingPlayVideo(true);
+
+    containerRef.current.appendChild(publisherVideoElement);
+    const myVideoElement = publisherVideoElement as HTMLElement;
+    myVideoElement.classList.add('video__element');
+    myVideoElement.title = 'publisher-preview';
+    myVideoElement.style.borderRadius = isSmallViewport ? '0px' : '12px';
+    myVideoElement.style.height = isSmallViewport ? '' : '100%';
+    myVideoElement.style.width = isSmallViewport ? '100dvw' : '584px';
+    myVideoElement.style.marginLeft = 'auto';
+    myVideoElement.style.marginRight = 'auto';
+    myVideoElement.style.transform = 'scaleX(-1)';
+    myVideoElement.style.objectFit = 'contain';
+    myVideoElement.style.aspectRatio = '16 / 9';
+    myVideoElement.style.boxShadow =
+      '0 1px 2px 0 rgba(60, 64, 67, .3), 0 1px 3px 1px rgba(60, 64, 67, .15)';
+
+    waitUntilPlaying(publisherVideoElement).then(() => {
+      setIsWaitingPlayVideo(false);
+    });
+  }, [isSmallViewport, publisherVideoElement, isVideoEnabled, isCameraControlAllowed]);
+
+  const shouldShowLoading = !isAppConfigLoaded || isWaitingPlayVideo;
 
   return (
-    <div
-      className="relative flex aspect-video w-[584px] max-w-full flex-col items-center justify-center bg-black sm:h-[328px] md:rounded-xl"
-      // this was added because overflow: hidden causes issues with rendering
-      // see https://stackoverflow.com/questions/77748631/element-rounded-corners-leaking-out-to-front-when-using-overflow-hidden
-      style={{ WebkitMask: 'linear-gradient(#000 0 0)' }}
-    >
-      <div
-        ref={containerRef}
-        style={{ display: isBackgroundEffectsOpen ? 'none' : 'block' }}
-        data-video-container
-      />
-      <VignetteEffect />
-      {isVideoLoading && <VideoLoading />}
-      <PreviewAvatar
-        initials={initials}
-        username={user.defaultSettings.name}
-        isVideoEnabled={isVideoEnabled}
-        isVideoLoading={isVideoLoading}
-      />
-      {!isVideoLoading && (
-        <div className="absolute inset-x-0 bottom-[5%] flex h-fit items-center justify-center">
-          {isAudioEnabled && (
-            <div className="absolute left-6 top-8">
-              <VoiceIndicatorIcon publisherAudioLevel={speechLevel} size={24} />
-            </div>
-          )}
-          <Stack direction="row" spacing={2}>
-            <MicButton />
-            <CameraButton />
-          </Stack>
-          <div className="absolute right-[20px]">
-            <BackgroundEffectsButton onClick={() => setIsBackgroundEffectsOpen(true)} />
-            <BackgroundEffectsDialog
-              isBackgroundEffectsOpen={isBackgroundEffectsOpen}
-              setIsBackgroundEffectsOpen={setIsBackgroundEffectsOpen}
-            />
-          </div>
-        </div>
+    <Box
+      className={classNames(
+        'relative flex justify-center items-center',
+
+        'sm:rounded-xl overflow-hidden bg-black',
+
+        'aspect-video h-full min-h-[328px]'
       )}
-    </div>
+    >
+      <pre className="absolute left-3 top-3 z-50 w-96 text-white">
+        {JSON.stringify({ isVideoEnabled, isAudioEnabled }, null, 2)}
+      </pre>
+
+      {shouldShowLoading && <VideoLoading />}
+
+      {!shouldShowLoading && (
+        <>
+          <VignetteEffect />
+
+          {!isVideoEnabled && (
+            <Box className="relative h-2/5 aspect-square">
+              <PreviewAvatar
+                id="preview-avatar"
+                initials={initials}
+                username={user.defaultSettings.name}
+                className="!h-full !w-full"
+              />
+            </Box>
+          )}
+
+          {isVideoEnabled && (
+            <Box
+              ref={containerRef}
+              className={classNames('flex-1 w-full ', {
+                hidden: isBackgroundEffectsOpen,
+              })}
+              data-video-container
+            />
+          )}
+
+          <Stack
+            direction="row"
+            className={classNames(
+              'absolute bottom-0 w-full items-center justify-between p-4 gap-4'
+            )}
+          >
+            <div className="flex-1 flex items-start">
+              {isAudioEnabled && <VoiceIndicatorIcon publisherAudioLevel={speechLevel} size={24} />}
+            </div>
+
+            <Stack direction="row" className="gap-4">
+              <MicButton />
+              <CameraButton />
+            </Stack>
+
+            <div className="flex-1 flex justify-end">
+              {isVideoEnabled && (
+                <>
+                  <BackgroundEffectsButton onClick={() => setIsBackgroundEffectsOpen(true)} />
+                  <BackgroundEffectsDialog
+                    isBackgroundEffectsOpen={isBackgroundEffectsOpen}
+                    setIsBackgroundEffectsOpen={setIsBackgroundEffectsOpen}
+                  />
+                </>
+              )}
+            </div>
+          </Stack>
+        </>
+      )}
+    </Box>
   );
 };
 
