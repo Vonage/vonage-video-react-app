@@ -53,7 +53,7 @@ type VonageVideoClientEvents = {
  * @augments {EventEmitter}
  */
 class VonageVideoClient extends EventEmitter<VonageVideoClientEvents> {
-  private clientSession: Session | null;
+  public clientSession: Session | null;
   private readonly credential: Credential;
 
   /**

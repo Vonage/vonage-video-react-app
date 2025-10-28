@@ -117,21 +117,30 @@ describe('VonageVideoClient', () => {
       }));
 
     it('emits an event for screenshare subscribers', async () => {
-      expect.assertions(0);
+      expect.assertions(1);
       const streamId = 'stream-id';
-      const connectPromise = vonageVideoClient?.connect();
 
       vonageVideoClient?.on('screenshareStreamCreated', () => {
         expect(true).toBe(true);
       });
 
+      await vonageVideoClient?.connect();
+
+      vi.spyOn(vonageVideoClient!.clientSession!, 'subscribe').mockImplementation(
+        (_a, _b, _c, callback) => {
+          queueMicrotask(() => {
+            callback!();
+          });
+
+          return mockSubscriber;
+        }
+      );
+
       mockSession.emit('streamCreated', {
         stream: { streamId, videoType: 'screen' } as unknown as Stream,
       });
 
-      await connectPromise;
-
-      await wait(0);
+      await wait(10);
     });
 
     it('emits an event containing the streamId when the stream is destroyed', async () => {
