@@ -4,6 +4,7 @@ import {
   Publisher,
   Session,
   Stream,
+  Subscriber,
   SubscriberProperties,
 } from '@vonage/client-sdk-video';
 import { EventEmitter } from 'events';
@@ -20,6 +21,7 @@ import {
 } from '../../types/session';
 import logOnConnect from '../logOnConnect';
 import createMovingAvgAudioLevelTracker from '../movingAverageAudioLevelTracker';
+import idempotentCallbackWithRetry from '../idempotentCallbackWithRetry/idempotentCallbackWithRetry';
 
 type VonageVideoClientEvents = {
   archiveStarted: [string];
@@ -37,6 +39,7 @@ type VonageVideoClientEvents = {
   subscriberDestroyed: [string];
   subscriberAudioLevelUpdated: [SubscriberAudioLevelUpdatedEvent];
   localCaptionReceived: [LocalCaptionReceived];
+  subscriptionError: [unknown];
 };
 
 /**
@@ -50,7 +53,7 @@ type VonageVideoClientEvents = {
  * @augments {EventEmitter}
  */
 class VonageVideoClient extends EventEmitter<VonageVideoClientEvents> {
-  private clientSession: Session | null;
+  public clientSession: Session | null;
   private readonly credential: Credential;
 
   /**
@@ -95,14 +98,13 @@ class VonageVideoClient extends EventEmitter<VonageVideoClientEvents> {
    * @param {StreamCreatedEvent} event - The event emitted when a stream is created
    * @private
    */
-  private handleStreamCreated = (event: StreamCreatedEvent) => {
+  private async handleStreamCreated(event: StreamCreatedEvent) {
     if (this.clientSession === null) {
       return;
     }
     const { stream } = event;
     const { streamId, videoType } = stream;
     const isScreenshare = videoType === 'screen';
-
     const subscriberOptions: SubscriberProperties = {
       insertMode: 'append',
       width: '100%',
@@ -114,13 +116,59 @@ class VonageVideoClient extends EventEmitter<VonageVideoClientEvents> {
       },
       insertDefaultUI: false,
     };
+    try {
+      const subscribe = () =>
+        new Promise<Subscriber>((resolve, reject) => {
+          const subscriber = this.clientSession?.subscribe(
+            stream,
+            undefined,
+            subscriberOptions,
+            (error) => {
+              if (error) {
+                reject(error);
+                return;
+              }
+              resolve(subscriber!);
+            }
+          );
 
-    const subscriber = this.clientSession.subscribe(stream, undefined, subscriberOptions);
+          this.setupSubscriberListeners({
+            subscriber: subscriber!,
+            streamId,
+            isScreenshare,
+          });
+        });
 
+      await idempotentCallbackWithRetry(() => subscribe());
+      if (isScreenshare) {
+        this.emit('screenshareStreamCreated');
+      }
+    } catch (syncError) {
+      this.disconnect();
+      this.handleSubscriptionError(syncError);
+    }
+  }
+
+  /**
+   * Sets up event listeners for a subscriber
+   * @param {object} params - The parameters object
+   * @param {Subscriber} params.subscriber - The subscriber object
+   * @param {string} params.streamId - The ID of the stream
+   * @param {boolean} params.isScreenshare - Whether the stream is a screenshare
+   * @private
+   */
+  private setupSubscriberListeners = ({
+    subscriber,
+    streamId,
+    isScreenshare,
+  }: {
+    subscriber: Subscriber;
+    streamId: string;
+    isScreenshare: boolean;
+  }) => {
     subscriber.on('videoElementCreated', (videoElementCreatedEvent: VideoElementCreatedEvent) => {
       const { element } = videoElementCreatedEvent;
       const subscriberWrapper: SubscriberWrapper = {
-        // subscriber.id is refers to the targetElement id and will be undefined when insertDefaultUI is false so we use streamId to track our subscriber
         id: streamId,
         element,
         isPinned: false,
@@ -130,6 +178,7 @@ class VonageVideoClient extends EventEmitter<VonageVideoClientEvents> {
 
       this.emit('subscriberVideoElementCreated', subscriberWrapper);
     });
+
     subscriber.on('destroyed', () => {
       this.emit('subscriberDestroyed', streamId);
     });
@@ -141,10 +190,17 @@ class VonageVideoClient extends EventEmitter<VonageVideoClientEvents> {
       const { logMovingAvg } = getMovingAverageAudioLevel(audioLevel);
       this.emit('subscriberAudioLevelUpdated', { movingAvg: logMovingAvg, subscriberId: streamId });
     });
+  };
 
-    if (isScreenshare) {
-      this.emit('screenshareStreamCreated');
-    }
+  /**
+   * Handles subscription errors in a generic way
+   * @param {unknown} error - The subscription error
+   * @private
+   */
+  private handleSubscriptionError = (error: unknown) => {
+    console.error(`Subscription failed`, error);
+
+    this.emit('subscriptionError', error ?? new Error('Unknown subscription error'));
   };
 
   /**
@@ -214,10 +270,10 @@ class VonageVideoClient extends EventEmitter<VonageVideoClientEvents> {
    * Connects to the Vonage Video session using the provided credentials.
    * @returns {Promise<void>} Resolves when the connection is successful, rejects on error.
    */
-  connect = async (): Promise<void> => {
+  connect = (): Promise<void> => {
     const { apiKey, sessionId, token } = this.credential;
 
-    await new Promise((resolve, reject) => {
+    return new Promise((resolve, reject) => {
       if (!this.clientSession) {
         reject(new Error('Session has not been initialized.'));
       }
@@ -228,7 +284,7 @@ class VonageVideoClient extends EventEmitter<VonageVideoClientEvents> {
           reject(err); // NOSONAR
         } else {
           logOnConnect(apiKey, sessionId, this.clientSession?.connection?.connectionId);
-          resolve(this.clientSession?.sessionId);
+          resolve();
         }
       });
     });
