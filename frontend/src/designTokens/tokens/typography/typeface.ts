@@ -15,7 +15,7 @@ const typeface = {
 export type Typeface = keyof typeof typeface;
 
 export type TypefaceProps = {
-  value: string | number;
+  value: string;
   type: 'fontFamily';
   description: string;
 };

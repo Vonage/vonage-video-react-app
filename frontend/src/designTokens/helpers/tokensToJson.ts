@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-use-before-define */
 import * as fs from 'node:fs';
 import * as path from 'node:path';
-import designTokens from '../designTokens';
+import designTokens from '../designTokens.ts';
 import type { Typeface } from '../tokens/typography/typeface';
 import type { TypeScale } from '../tokens/typography/typescale';
 
@@ -103,9 +103,10 @@ function isUndefined(value: unknown): value is undefined {
 }
 
 /**
- * Type guard to check if a value is a Record<string, unknown>.
- * @param {unknown} fontSizes - The value to check.
- * @returns {boolean} True if the value is a Record<string, unknown>, false otherwise.
+ * Transforms font size objects into Tailwind CSS fontSize format.
+ * Converts each font size entry into a tuple with fontSize and associated properties.
+ * @param {Record<TypeScale, { fontSize: string; lineHeight: string; fontWeight: string }>} fontSizes - The font size objects to transform.
+ * @returns {Record<string, FontSize>} The transformed font sizes in Tailwind format.
  */
 function parseFontSize(
   fontSizes: Record<TypeScale, { fontSize: string; lineHeight: string; fontWeight: string }>
