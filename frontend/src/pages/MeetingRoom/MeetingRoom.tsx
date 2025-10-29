@@ -18,7 +18,7 @@ import useIsSmallViewport from '../../hooks/useIsSmallViewport';
 import CaptionsError from '../../components/MeetingRoom/CaptionsError';
 import useBackgroundPublisherContext from '../../hooks/useBackgroundPublisherContext';
 import { DEVICE_ACCESS_STATUS } from '../../utils/constants';
-import { PublishingErrorType } from '../../Context/PublisherProvider/usePublisher/usePublisher';
+import type { PublishingErrorType } from '../../Context/PublisherProvider/usePublisher/usePublisher';
 
 const height = '@apply h-[calc(100dvh_-_80px)]';
 

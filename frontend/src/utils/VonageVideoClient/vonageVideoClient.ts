@@ -195,8 +195,6 @@ class VonageVideoClient extends EventEmitter<VonageVideoClientEvents> {
   /**
    * Handles subscription errors in a generic way
    * @param {unknown} error - The subscription error
-   * @param {string} streamId - The ID of the stream that failed to subscribe
-   * @param {boolean} isScreenshare - Whether this was a screenshare stream
    * @private
    */
   private handleSubscriptionError = (error: unknown) => {
