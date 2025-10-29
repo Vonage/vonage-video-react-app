@@ -5,7 +5,7 @@ import designTokens from '../designTokens';
 import type { Typeface } from '../tokens/typography/typeface';
 import type { TypeScale } from '../tokens/typography/typescale';
 
-const outputFile = path.resolve('libs/shared/dist/designTokens.json');
+const outputFile = path.resolve('frontend/src/designTokens/designTokens.json');
 
 type FontSize = [string, { lineHeight: string; fontWeight: string }];
 
