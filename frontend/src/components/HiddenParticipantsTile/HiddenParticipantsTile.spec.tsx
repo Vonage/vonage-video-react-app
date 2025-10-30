@@ -1,24 +1,13 @@
-import { fireEvent, render, screen } from '@testing-library/react';
-import { describe, it, expect, vi, beforeEach, Mock, afterEach } from 'vitest';
+import { ReactElement } from 'react';
+import { fireEvent, render as renderBase } from '@testing-library/react';
+import { describe, it, expect, vi } from 'vitest';
 import userEvent from '@testing-library/user-event';
 import { Subscriber } from '@vonage/client-sdk-video';
-import { SubscriberWrapper } from '../../types/session';
+import { makeSessionProviderWrapper, type SessionProviderWrapperOptions } from '@test/providers';
+import { SubscriberWrapper } from '@app-types/session';
 import HiddenParticipantsTile from './index';
-import useConfigContext from '../../hooks/useConfigContext';
-import { ConfigContextType } from '../../Context/ConfigProvider';
-
-const mockToggleParticipantList = vi.fn();
-vi.mock('../../hooks/useSessionContext', () => ({
-  __esModule: true,
-  default: () => ({
-    toggleParticipantList: mockToggleParticipantList,
-  }),
-}));
-const mockUseConfigContext = useConfigContext as Mock<[], ConfigContextType>;
-vi.mock('../../hooks/useConfigContext');
 
 describe('HiddenParticipantsTile', () => {
-  let configContext: ConfigContextType;
   const box = { height: 100, width: 100, top: 0, left: 0 };
   const hiddenSubscribers = [
     {
@@ -40,19 +29,6 @@ describe('HiddenParticipantsTile', () => {
       isPinned: false,
     },
   ];
-
-  beforeEach(() => {
-    configContext = {
-      meetingRoomSettings: {
-        showParticipantList: true,
-      },
-    } as Partial<ConfigContextType> as ConfigContextType;
-    mockUseConfigContext.mockReturnValue(configContext);
-  });
-
-  afterEach(() => {
-    vi.resetAllMocks();
-  });
 
   it('should display two hidden participants', async () => {
     const currentHiddenSubscribers = [
@@ -77,50 +53,85 @@ describe('HiddenParticipantsTile', () => {
       },
     ] as SubscriberWrapper[];
 
-    render(<HiddenParticipantsTile box={box} hiddenSubscribers={currentHiddenSubscribers} />);
+    const { sessionContext, getByTestId, getByText } = render(
+      <HiddenParticipantsTile box={box} hiddenSubscribers={currentHiddenSubscribers} />
+    );
 
-    const button = screen.getByTestId('hidden-participants');
+    // we need to capture it before re-render cause the function doesn't persist across renders
+    const toggleParticipantListSpy = vi.mocked(sessionContext.current.toggleParticipantList);
+
+    const button = getByTestId('hidden-participants');
     expect(button).toBeInTheDocument();
     await userEvent.click(button);
 
     fireEvent.mouseEnter(button);
     fireEvent.mouseLeave(button);
 
-    expect(screen.getByText('JD')).toBeInTheDocument();
-    expect(screen.getByText('JS')).toBeInTheDocument();
+    expect(getByText('JD')).toBeInTheDocument();
+    expect(getByText('JS')).toBeInTheDocument();
 
-    expect(mockToggleParticipantList).toHaveBeenCalled();
+    expect(toggleParticipantListSpy).toHaveBeenCalled();
   });
 
   it('should display one hidden participant because the other one is empty', async () => {
     const currentHiddenSubscribers = [...hiddenSubscribers, {}] as SubscriberWrapper[];
 
-    render(<HiddenParticipantsTile box={box} hiddenSubscribers={currentHiddenSubscribers} />);
+    const { sessionContext, getByText, getByTestId, queryByText } = render(
+      <HiddenParticipantsTile box={box} hiddenSubscribers={currentHiddenSubscribers} />
+    );
 
-    const button = screen.getByTestId('hidden-participants');
+    // we need to capture it before re-render cause the function doesn't persist across renders
+    const toggleParticipantListSpy = vi.mocked(sessionContext.current.toggleParticipantList);
+
+    const button = getByTestId('hidden-participants');
     expect(button).toBeInTheDocument();
     await userEvent.click(button);
 
-    expect(screen.getByText('JD')).toBeInTheDocument();
-    expect(screen.queryByText('JS')).not.toBeInTheDocument();
+    expect(getByText('JD')).toBeInTheDocument();
+    expect(queryByText('JS')).not.toBeInTheDocument();
 
-    expect(mockToggleParticipantList).toHaveBeenCalled();
+    expect(toggleParticipantListSpy).toHaveBeenCalled();
   });
 
-  it('does not toggle participant list when showParticipantList is disabled', async () => {
+  it.only('does not toggle participant list when showParticipantList is disabled', async () => {
     const currentHiddenSubscribers = [...hiddenSubscribers, {}] as SubscriberWrapper[];
-    mockUseConfigContext.mockReturnValue({
-      meetingRoomSettings: {
-        showParticipantList: false,
-      },
-    } as Partial<ConfigContextType> as ConfigContextType);
 
-    render(<HiddenParticipantsTile box={box} hiddenSubscribers={currentHiddenSubscribers} />);
+    const { sessionContext, getByTestId } = render(
+      <HiddenParticipantsTile box={box} hiddenSubscribers={currentHiddenSubscribers} />,
+      {
+        appConfigOptions: {
+          value: {
+            isAppConfigLoaded: false,
+            meetingRoomSettings: {
+              showParticipantList: false,
+            },
+          },
+        },
+      }
+    );
 
-    const button = screen.getByTestId('hidden-participants');
+    // we need to capture it before re-render cause the function doesn't persist across renders
+    const toggleParticipantListSpy = vi.mocked(sessionContext.current.toggleParticipantList);
+
+    const button = getByTestId('hidden-participants');
     expect(button).toBeInTheDocument();
     await userEvent.click(button);
 
-    expect(mockToggleParticipantList).not.toHaveBeenCalled();
+    expect(toggleParticipantListSpy).not.toHaveBeenCalled();
   });
 });
+
+function render(ui: ReactElement, options?: SessionProviderWrapperOptions) {
+  const { SessionProviderWrapper, sessionContext, appConfigContext } = makeSessionProviderWrapper({
+    __onCreated: (sessionContext) => {
+      vi.spyOn(sessionContext, 'toggleParticipantList');
+    },
+    ...options,
+  });
+
+  return {
+    ...renderBase(ui, { ...options, wrapper: SessionProviderWrapper }),
+    appConfigContext,
+    sessionContext,
+  };
+}

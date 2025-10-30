@@ -4,12 +4,12 @@ import VolumeUpIcon from '@mui/icons-material/VolumeUp';
 import { MouseEvent, ReactElement, useMemo } from 'react';
 import type { AudioOutputDevice } from '@vonage/client-sdk-video';
 import { useTranslation } from 'react-i18next';
-import useDevices from '../../../hooks/useDevices';
+import useAppConfig from '@Context/AppConfig/hooks/useAppConfig';
+import useDevices from '@hooks/useDevices';
+import useAudioOutputContext from '@hooks/useAudioOutputContext';
+import { isGetActiveAudioOutputDeviceSupported } from '@utils/util';
+import cleanAndDedupeDeviceLabels from '@utils/cleanAndDedupeDeviceLabels';
 import DropdownSeparator from '../DropdownSeparator';
-import useAudioOutputContext from '../../../hooks/useAudioOutputContext';
-import { isGetActiveAudioOutputDeviceSupported } from '../../../utils/util';
-import useConfigContext from '../../../hooks/useConfigContext';
-import cleanAndDedupeDeviceLabels from '../../../utils/cleanAndDedupeDeviceLabels';
 
 export type OutputDevicesProps = {
   handleToggle: () => void;
@@ -31,12 +31,15 @@ const OutputDevices = ({
 }: OutputDevicesProps): ReactElement | false => {
   const { t } = useTranslation();
   const { currentAudioOutputDevice, setAudioOutputDevice } = useAudioOutputContext();
-  const { meetingRoomSettings } = useConfigContext();
+
+  const allowDeviceSelection = useAppConfig(
+    ({ meetingRoomSettings }) => meetingRoomSettings.allowDeviceSelection
+  );
+
   const {
     allMediaDevices: { audioOutputDevices },
   } = useDevices();
   const defaultOutputDevices = [{ deviceId: 'default', label: t('devices.audio.defaultLabel') }];
-  const { allowDeviceSelection } = meetingRoomSettings;
 
   const isAudioOutputSupported = isGetActiveAudioOutputDeviceSupported();
 

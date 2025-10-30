@@ -6,6 +6,7 @@ import { useTheme } from '@mui/material/styles';
 import { ReactElement, RefObject, Dispatch, SetStateAction } from 'react';
 import { PopperChildrenProps } from '@mui/base';
 import { hasMediaProcessorSupport } from '@vonage/client-sdk-video';
+import useAppConfig from '@Context/AppConfig/hooks/useAppConfig';
 import InputDevices from '../InputDevices';
 import OutputDevices from '../OutputDevices';
 import ReduceNoiseTestSpeakers from '../ReduceNoiseTestSpeakers';
@@ -13,7 +14,6 @@ import useDropdownResizeObserver from '../../../hooks/useDropdownResizeObserver'
 import VideoDevices from '../VideoDevices';
 import DropdownSeparator from '../DropdownSeparator';
 import VideoDevicesOptions from '../VideoDevicesOptions';
-import useConfigContext from '../../../hooks/useConfigContext';
 
 export type DeviceSettingsMenuProps = {
   deviceType: 'audio' | 'video';
@@ -52,11 +52,13 @@ const DeviceSettingsMenu = ({
   handleClose,
   setIsOpen,
 }: DeviceSettingsMenuProps): ReactElement | false => {
-  const config = useConfigContext();
+  const allowBackgroundEffects = useAppConfig(
+    ({ videoSettings }) => videoSettings.allowBackgroundEffects
+  );
+
   const isAudio = deviceType === 'audio';
   const theme = useTheme();
   const customLightBlueColor = 'rgb(138, 180, 248)';
-  const { allowBackgroundEffects } = config.videoSettings;
   const shouldDisplayBackgroundEffects = hasMediaProcessorSupport() && allowBackgroundEffects;
 
   const handleToggleBackgroundEffects = () => {

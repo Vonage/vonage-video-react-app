@@ -1,21 +1,20 @@
 import { describe, it, beforeEach, afterEach, vi, expect, Mock } from 'vitest';
-import { render, screen, fireEvent, cleanup } from '@testing-library/react';
+import { render as renderBase, screen, fireEvent, cleanup } from '@testing-library/react';
 import { Publisher } from '@vonage/client-sdk-video';
 import { EventEmitter } from 'stream';
+import { ReactElement } from 'react';
+import { AppConfigProviderWrapperOptions, makeAppConfigProviderWrapper } from '@test/providers';
+import useDevices from '@hooks/useDevices';
+import usePublisherContext from '@hooks/usePublisherContext';
+import { AllMediaDevices } from '@app-types/room';
+import { PublisherContextType } from '@Context/PublisherProvider';
+import { allMediaDevices, defaultAudioDevice } from '@utils/mockData/device';
 import InputDevices from './InputDevices';
-import useDevices from '../../../hooks/useDevices';
-import usePublisherContext from '../../../hooks/usePublisherContext';
-import useConfigContext from '../../../hooks/useConfigContext';
-import { AllMediaDevices } from '../../../types';
-import { PublisherContextType } from '../../../Context/PublisherProvider';
-import { ConfigContextType } from '../../../Context/ConfigProvider';
-import { allMediaDevices, defaultAudioDevice } from '../../../utils/mockData/device';
 
 // Mocks
-vi.mock('../../../hooks/useDevices');
-vi.mock('../../../hooks/usePublisherContext');
-vi.mock('../../../hooks/useConfigContext');
-vi.mock('../../../utils/storage', () => ({
+vi.mock('@hooks/useDevices');
+vi.mock('@hooks/usePublisherContext');
+vi.mock('@utils/storage', () => ({
   setStorageItem: vi.fn(),
   STORAGE_KEYS: {
     AUDIO_SOURCE: 'audioSource',
@@ -27,7 +26,6 @@ const mockUseDevices = useDevices as Mock<
   { allMediaDevices: AllMediaDevices; getAllMediaDevices: () => void }
 >;
 const mockUsePublisherContext = usePublisherContext as Mock<[], PublisherContextType>;
-const mockUseConfigContext = useConfigContext as Mock<[], ConfigContextType>;
 
 describe('InputDevices Component', () => {
   const mockHandleToggle = vi.fn();
@@ -35,7 +33,6 @@ describe('InputDevices Component', () => {
   const mockGetAudioSource = vi.fn();
   let mockPublisher: Publisher;
   let publisherContext: PublisherContextType;
-  let mockConfigContext: ConfigContextType;
 
   beforeEach(() => {
     mockGetAudioSource.mockReturnValue(defaultAudioDevice);
@@ -58,14 +55,7 @@ describe('InputDevices Component', () => {
       initializeLocalPublisher: vi.fn(),
     } as unknown as PublisherContextType;
 
-    mockConfigContext = {
-      meetingRoomSettings: {
-        allowDeviceSelection: true,
-      },
-    } as Partial<ConfigContextType> as ConfigContextType;
-
     mockUsePublisherContext.mockImplementation(() => publisherContext);
-    mockUseConfigContext.mockReturnValue(mockConfigContext);
   });
 
   afterEach(() => {
@@ -128,10 +118,15 @@ describe('InputDevices Component', () => {
   });
 
   it('is not rendered when allowDeviceSelection is false', () => {
-    mockConfigContext.meetingRoomSettings.allowDeviceSelection = false;
-    mockUseConfigContext.mockReturnValue(mockConfigContext);
-
-    render(<InputDevices handleToggle={mockHandleToggle} customLightBlueColor="#00f" />);
+    render(<InputDevices handleToggle={mockHandleToggle} customLightBlueColor="#00f" />, {
+      appConfigOptions: {
+        value: {
+          meetingRoomSettings: {
+            allowDeviceSelection: false,
+          },
+        },
+      },
+    });
 
     expect(screen.queryByText('Microphone')).not.toBeInTheDocument();
   });
@@ -148,3 +143,14 @@ describe('InputDevices Component', () => {
     );
   });
 });
+
+function render(
+  ui: ReactElement,
+  options?: {
+    appConfigOptions?: AppConfigProviderWrapperOptions;
+  }
+) {
+  const { AppConfigWrapper } = makeAppConfigProviderWrapper(options?.appConfigOptions);
+
+  return renderBase(ui, { ...options, wrapper: AppConfigWrapper });
+}

@@ -7,12 +7,13 @@ import ButtonGroup from '@mui/material/ButtonGroup';
 import { MicOff, ArrowDropUp, ArrowDropDown } from '@mui/icons-material';
 import { useState, useRef, useCallback, ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
-import MutedAlert from '../../MutedAlert';
-import usePublisherContext from '../../../hooks/usePublisherContext';
+import useIsMicrophoneControlAllowed from '@Context/AppConfig/hooks/useIsMicrophoneControlAllowed';
+import useIsCameraControlAllowed from '@Context/AppConfig/hooks/useIsCameraControlAllowed';
+import usePublisherContext from '@hooks/usePublisherContext';
+import useBackgroundPublisherContext from '@hooks/useBackgroundPublisherContext';
+import getControlButtonTooltip from '@utils/getControlButtonTooltip';
 import DeviceSettingsMenu from '../DeviceSettingsMenu';
-import useBackgroundPublisherContext from '../../../hooks/useBackgroundPublisherContext';
-import useConfigContext from '../../../hooks/useConfigContext';
-import getControlButtonTooltip from '../../../utils/getControlButtonTooltip';
+import MutedAlert from '../../MutedAlert';
 
 export type DeviceControlButtonProps = {
   deviceType: 'audio' | 'video';
@@ -36,20 +37,21 @@ const DeviceControlButton = ({
   const { t } = useTranslation();
   const { isVideoEnabled, toggleAudio, toggleVideo, isAudioEnabled } = usePublisherContext();
   const { toggleVideo: toggleBackgroundVideoPublisher } = useBackgroundPublisherContext();
-  const config = useConfigContext();
+
+  const isMicrophoneControlAllowed = useIsMicrophoneControlAllowed();
+  const isCameraControlAllowed = useIsCameraControlAllowed();
+
   const isAudio = deviceType === 'audio';
   const [open, setOpen] = useState<boolean>(false);
   const anchorRef = useRef<HTMLInputElement | null>(null);
-  const { allowMicrophoneControl } = config.audioSettings;
-  const { allowCameraControl } = config.videoSettings;
-  const isButtonDisabled = isAudio ? !allowMicrophoneControl : !allowCameraControl;
+  const isButtonDisabled = isAudio ? !isMicrophoneControlAllowed : !isCameraControlAllowed;
 
   const tooltipTitle = getControlButtonTooltip({
     isAudio,
     isAudioEnabled,
     isVideoEnabled,
-    allowMicrophoneControl,
-    allowCameraControl,
+    allowMicrophoneControl: isMicrophoneControlAllowed,
+    allowCameraControl: isCameraControlAllowed,
     t,
   });
 
@@ -66,7 +68,7 @@ const DeviceControlButton = ({
 
   const renderControlIcon = () => {
     if (isAudio) {
-      if (!allowMicrophoneControl) {
+      if (!isMicrophoneControlAllowed) {
         return <Mic className="text-gray-400" />;
       }
       if (isAudioEnabled) {
@@ -75,7 +77,7 @@ const DeviceControlButton = ({
       return <MicOff data-testid="MicOffToolbar" className="text-red-600" />;
     }
 
-    if (!allowCameraControl) {
+    if (!isCameraControlAllowed) {
       return <VideocamIcon className="text-gray-400" />;
     }
     if (isVideoEnabled) {

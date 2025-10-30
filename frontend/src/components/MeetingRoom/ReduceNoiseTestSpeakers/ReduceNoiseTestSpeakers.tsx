@@ -7,11 +7,11 @@ import HeadsetIcon from '@mui/icons-material/Headset';
 import ToggleOffIcon from '@mui/icons-material/ToggleOff';
 import ToggleOnIcon from '@mui/icons-material/ToggleOn';
 import { useTranslation } from 'react-i18next';
-import usePublisherContext from '../../../hooks/usePublisherContext';
+import useAppConfig from '@Context/AppConfig/hooks/useAppConfig';
+import usePublisherContext from '@hooks/usePublisherContext';
+import { setStorageItem, STORAGE_KEYS } from '@utils/storage';
 import DropdownSeparator from '../DropdownSeparator';
 import SoundTest from '../../SoundTest';
-import { setStorageItem, STORAGE_KEYS } from '../../../utils/storage';
-import useConfigContext from '../../../hooks/useConfigContext';
 
 export type ReduceNoiseTestSpeakersProps = {
   customLightBlueColor: string;
@@ -31,9 +31,12 @@ const ReduceNoiseTestSpeakers = ({
 }: ReduceNoiseTestSpeakersProps): ReactElement | false => {
   const { t } = useTranslation();
   const { publisher, isPublishing } = usePublisherContext();
-  const config = useConfigContext();
+
+  const allowAdvancedNoiseSuppression = useAppConfig(
+    ({ audioSettings }) => audioSettings.allowAdvancedNoiseSuppression
+  );
+
   const [isToggled, setIsToggled] = useState(false);
-  const { allowAdvancedNoiseSuppression } = config.audioSettings;
   const shouldDisplayANS = hasMediaProcessorSupport() && allowAdvancedNoiseSuppression;
 
   const handleToggle = async () => {

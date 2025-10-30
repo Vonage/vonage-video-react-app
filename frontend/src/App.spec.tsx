@@ -30,11 +30,6 @@ vi.mock('./components/RedirectToWaitingRoom', () => ({
 vi.mock('./Context/RoomContext', () => ({
   default: ({ children }: PropsWithChildren) => children,
 }));
-vi.mock('./Context/ConfigProvider', () => ({
-  __esModule: true,
-  ConfigContextProvider: ({ children }: PropsWithChildren) => children,
-  default: ({ children }: PropsWithChildren) => children,
-}));
 
 describe('App routing', () => {
   it('renders LandingPage on unknown route', () => {

@@ -1,5 +1,5 @@
-import { act, cleanup, renderHook } from '@testing-library/react';
-import { afterAll, afterEach, beforeEach, describe, expect, it, Mock, vi } from 'vitest';
+import { act, renderHook as renderHookBase } from '@testing-library/react';
+import { afterAll, beforeEach, describe, expect, it, Mock, vi } from 'vitest';
 import { hasMediaProcessorSupport, initPublisher, Publisher } from '@vonage/client-sdk-video';
 import EventEmitter from 'events';
 import useUserContext from '@hooks/useUserContext';
@@ -7,6 +7,7 @@ import usePermissions from '@hooks/usePermissions';
 import useDevices from '@hooks/useDevices';
 import { allMediaDevices, defaultAudioDevice, defaultVideoDevice } from '@utils/mockData/device';
 import { DEVICE_ACCESS_STATUS } from '@utils/constants';
+import { AppConfigProvider } from '@Context/AppConfig';
 import { UserContextType } from '../../user';
 import useBackgroundPublisher from './useBackgroundPublisher';
 import usePublisherOptions from '../../PublisherProvider/usePublisherOptions';
@@ -60,10 +61,6 @@ describe('useBackgroundPublisher', () => {
     vi.mocked(usePublisherOptions).mockReturnValue({
       publishVideo: true,
     });
-  });
-
-  afterEach(() => {
-    cleanup();
   });
 
   describe('initBackgroundLocalPublisher', () => {
@@ -250,3 +247,7 @@ describe('useBackgroundPublisher', () => {
     });
   });
 });
+
+function renderHook<Result, Props>(render: (initialProps: Props) => Result) {
+  return renderHookBase(render, { wrapper: AppConfigProvider });
+}

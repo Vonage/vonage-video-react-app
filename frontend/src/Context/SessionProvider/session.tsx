@@ -11,11 +11,13 @@ import {
   ReactElement,
 } from 'react';
 import { Connection, Publisher, Stream } from '@vonage/client-sdk-video';
-import fetchCredentials from '../../api/fetchCredentials';
-import useUserContext from '../../hooks/useUserContext';
-import useConfigContext from '../../hooks/useConfigContext';
-import ActiveSpeakerTracker from '../../utils/ActiveSpeakerTracker';
-import useRightPanel, { RightPanelActiveTab } from '../../hooks/useRightPanel';
+import useRightPanel, { RightPanelActiveTab } from '@hooks/useRightPanel';
+import useUserContext from '@hooks/useUserContext';
+import useChat from '@hooks/useChat';
+import useEmoji, { EmojiWrapper } from '@hooks/useEmoji';
+import useAppConfigActions from '@Context/AppConfig/hooks/useAppConfigHandlers';
+import fetchCredentials from '@api/fetchCredentials';
+import ActiveSpeakerTracker from '@utils/ActiveSpeakerTracker';
 import {
   Credential,
   LocalCaptionReceived,
@@ -24,19 +26,17 @@ import {
   SubscriberAudioLevelUpdatedEvent,
   SubscriberWrapper,
   LayoutMode,
-} from '../../types/session';
-import useChat from '../../hooks/useChat';
-import { ChatMessageType } from '../../types/chat';
-import { isMobile } from '../../utils/util';
+} from '@app-types/session';
+import { ChatMessageType } from '@app-types/chat';
+import { isMobile } from '@utils/util';
 import {
   sortByDisplayPriority,
   togglePinAndSortByDisplayOrder,
-} from '../../utils/sessionStateOperations';
-import { MAX_PIN_COUNT_DESKTOP, MAX_PIN_COUNT_MOBILE } from '../../utils/constants';
-import VonageVideoClient from '../../utils/VonageVideoClient';
-import useEmoji, { EmojiWrapper } from '../../hooks/useEmoji';
+} from '@utils/sessionStateOperations';
+import { MAX_PIN_COUNT_DESKTOP, MAX_PIN_COUNT_MOBILE } from '@utils/constants';
+import VonageVideoClient from '@utils/VonageVideoClient';
 
-export type { ChatMessageType } from '../../types/chat';
+export type { ChatMessageType } from '@app-types/chat';
 
 export type SessionContextType = {
   vonageVideoClient: null | VonageVideoClient;
@@ -130,16 +130,19 @@ const MAX_PIN_COUNT = isMobile() ? MAX_PIN_COUNT_MOBILE : MAX_PIN_COUNT_DESKTOP;
  * @returns {SessionContextType} a context provider for a publisher preview
  */
 const SessionProvider = ({ children }: SessionProviderProps): ReactElement => {
-  const config = useConfigContext();
+  const appConfig = useAppConfigActions();
+
   const [lastStreamUpdate, setLastStreamUpdate] = useState<StreamPropertyChangedEvent | null>(null);
   const vonageVideoClient = useRef<null | VonageVideoClient>(null);
   const [reconnecting, setReconnecting] = useState(false);
   const [subscriberWrappers, setSubscriberWrappers] = useState<SubscriberWrapper[]>([]);
   const [subscriptionError, setSubscriptionError] = useState<Error | null>(null);
   const [ownCaptions, setOwnCaptions] = useState<string | null>(null);
-  const [layoutMode, setLayoutMode] = useState<LayoutMode>(
-    config.meetingRoomSettings.defaultLayoutMode
-  );
+
+  const [layoutMode, setLayoutMode] = useState<LayoutMode>(() => {
+    return appConfig.state().meetingRoomSettings.defaultLayoutMode;
+  });
+
   const [archiveId, setArchiveId] = useState<string | null>(null);
   const activeSpeakerTracker = useRef<ActiveSpeakerTracker>(new ActiveSpeakerTracker());
   const [activeSpeakerId, setActiveSpeakerId] = useState<string | undefined>();
