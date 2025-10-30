@@ -1,0 +1,35 @@
+import { AppConfig } from '../AppConfigContext.types';
+
+const defaultAppConfig: AppConfig = {
+  isAppConfigLoaded: false,
+
+  videoSettings: {
+    allowBackgroundEffects: true,
+    allowCameraControl: true,
+    allowVideoOnJoin: true,
+    defaultResolution: '1280x720',
+  },
+
+  audioSettings: {
+    allowAdvancedNoiseSuppression: true,
+    allowAudioOnJoin: true,
+    allowMicrophoneControl: true,
+  },
+
+  waitingRoomSettings: {
+    allowDeviceSelection: true,
+  },
+
+  meetingRoomSettings: {
+    allowArchiving: true,
+    allowCaptions: true,
+    allowChat: true,
+    allowDeviceSelection: true,
+    allowEmojis: true,
+    allowScreenShare: true,
+    defaultLayoutMode: 'active-speaker',
+    showParticipantList: true,
+  },
+};
+
+export default defaultAppConfig;

@@ -1,5 +1,5 @@
 import { beforeEach, describe, it, expect, vi } from 'vitest';
-import { act, renderHook, waitFor } from '@testing-library/react';
+import { act, renderHook as renderHookBase, waitFor } from '@testing-library/react';
 import {
   initPublisher,
   Publisher,
@@ -9,6 +9,7 @@ import {
 import EventEmitter from 'events';
 import useUserContext from '@hooks/useUserContext';
 import useSessionContext from '@hooks/useSessionContext';
+import appConfig from '@Context/AppConfig';
 import usePublisher from './usePublisher';
 import { UserContextType } from '../../user';
 import { SessionContextType } from '../../SessionProvider/session';
@@ -284,3 +285,7 @@ describe('usePublisher', () => {
     });
   });
 });
+
+function renderHook<Result, Props>(render: (initialProps: Props) => Result) {
+  return renderHookBase(render, { wrapper: appConfig.Provider });
+}

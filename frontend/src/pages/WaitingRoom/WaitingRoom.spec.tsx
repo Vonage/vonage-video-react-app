@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, it, vi, Mock, beforeAll, afterAll } from 'vitest';
-import { act, render, screen, waitFor } from '@testing-library/react';
-import { ReactNode } from 'react';
+import { act, render as renderBase, screen } from '@testing-library/react';
+import { ReactElement, ReactNode } from 'react';
 import { Publisher } from '@vonage/client-sdk-video';
 import EventEmitter from 'events';
 import userEvent from '@testing-library/user-event';
@@ -18,6 +18,7 @@ import usePermissions from '@hooks/usePermissions';
 import { DEVICE_ACCESS_STATUS } from '@utils/constants';
 import waitUntilPlaying from '@utils/waitUntilPlaying';
 import { BackgroundPublisherContextType } from '@Context/BackgroundPublisherProvider';
+import { AppConfigProviderWrapperOptions, makeAppConfigProviderWrapper } from '@test/providers';
 import WaitingRoom from './WaitingRoom';
 
 const mockedNavigate = vi.fn();
@@ -125,23 +126,35 @@ describe('WaitingRoom', () => {
   });
 
   it('should display a video loading element on entering', () => {
-    render(<WaitingRoomWithProviders />);
+    render(<WaitingRoomWithProviders />, {
+      appConfigOptions: {
+        value: {
+          isAppConfigLoaded: false,
+          videoSettings: {
+            allowCameraControl: true,
+          },
+        },
+      },
+    });
+
     const videoLoadingElement = screen.getByTestId('VideoLoading');
     expect(videoLoadingElement).toBeVisible();
   });
 
   it('should eventually display a preview publisher', async () => {
-    const { rerender } = render(<WaitingRoomWithProviders />);
-    act(() => {
-      // After the preview publisher initializes.
-      previewPublisherContext.publisher = mockPublisher;
-      previewPublisherContext.publisherVideoElement = mockPublisherVideoElement;
-      previewPublisherContext.isVideoEnabled = true;
-    });
-    rerender(<WaitingRoomWithProviders />);
+    // After the preview publisher initializes.
+    previewPublisherContext.publisher = mockPublisher;
+    previewPublisherContext.publisherVideoElement = mockPublisherVideoElement;
+    previewPublisherContext.isVideoEnabled = true;
 
-    const previewPublisher = screen.getByTitle('publisher-preview');
-    await waitFor(() => expect(previewPublisher).toBeVisible());
+    const { rerender, container } = render(<WaitingRoomWithProviders />);
+
+    await act(() => {
+      rerender(<WaitingRoomWithProviders />);
+    });
+
+    expect(container.querySelector('[data-video-container]')).toBeVisible();
+    expect(screen.getByTitle('publisher-preview')).toBeVisible();
   });
 
   it('should call destroyPublisher when navigating away from waiting room', async () => {
@@ -196,4 +209,15 @@ function getLocationMock() {
   locationMock.reload = location.reload.bind(location);
 
   return { locationBackUp: location, locationMock };
+}
+
+function render(
+  ui: ReactElement,
+  options?: {
+    appConfigOptions?: AppConfigProviderWrapperOptions;
+  }
+) {
+  const { AppConfigWrapper } = makeAppConfigProviderWrapper(options?.appConfigOptions);
+
+  return renderBase(ui, { wrapper: AppConfigWrapper });
 }
