@@ -1,3 +1,3 @@
-import designTokens from './designTokens';
+import designTokens from './designTokens.ts';
 
 export default designTokens;
