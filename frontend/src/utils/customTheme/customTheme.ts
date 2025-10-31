@@ -1,6 +1,5 @@
 import { createTheme } from '@mui/material';
 
-// Material Design Color Palette
 const colors = {
   // Primary colors
   primary: '#3E007E',
@@ -58,7 +57,6 @@ const colors = {
   darkGrey: '#202124',
 } as const;
 
-// Typography
 const fonts = {
   family: ['system-ui', 'ui-sans-serif', 'Inter', 'Marker Felt', 'Trebuchet MS'].join(','),
 } as const;
@@ -98,7 +96,6 @@ const customTheme = createTheme({
     divider: colors.outline,
   },
   components: {
-    // AppBar overrides
     MuiAppBar: {
       styleOverrides: {
         root: {
@@ -107,7 +104,6 @@ const customTheme = createTheme({
         },
       },
     },
-    // Paper overrides
     MuiPaper: {
       styleOverrides: {
         root: {
@@ -116,7 +112,6 @@ const customTheme = createTheme({
         },
       },
     },
-    // TextField overrides
     MuiTextField: {
       styleOverrides: {
         root: {
@@ -134,7 +129,6 @@ const customTheme = createTheme({
         },
       },
     },
-    // Tooltip overrides
     MuiTooltip: {
       styleOverrides: {
         tooltip: {
@@ -151,5 +145,4 @@ const customTheme = createTheme({
 
 export default customTheme;
 
-// Export colors and utilities for use in other files
 export { colors, fonts };
