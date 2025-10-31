@@ -12,23 +12,16 @@ import DropdownSeparator from '../DropdownSeparator';
 import SoundTest from '../../SoundTest';
 import { setStorageItem, STORAGE_KEYS } from '../../../utils/storage';
 import useConfigContext from '../../../hooks/useConfigContext';
-
-export type ReduceNoiseTestSpeakersProps = {
-  customLightBlueColor: string;
-};
+import { colors } from '../../../utils/customTheme/customTheme';
 
 /**
  * ReduceNoiseTestSpeakers Component
  *
  * This component displays options to enable advanced noise suppression
  * and to test the speakers.
- * @param {ReduceNoiseTestSpeakersProps} props - the props for the component.
- *  @property {string} customLightBlueColor - the custom color used for the toggled icon.
  * @returns {ReactElement | false} Returns ReduceNoiseTestSpeakers component or false if the Vonage Media Processor is not supported.
  */
-const ReduceNoiseTestSpeakers = ({
-  customLightBlueColor,
-}: ReduceNoiseTestSpeakersProps): ReactElement | false => {
+const ReduceNoiseTestSpeakers = (): ReactElement | false => {
   const { t } = useTranslation();
   const { publisher, isPublishing } = usePublisherContext();
   const config = useConfigContext();
@@ -70,7 +63,7 @@ const ReduceNoiseTestSpeakers = ({
             sx={{
               backgroundColor: 'transparent',
               '&:hover': {
-                backgroundColor: 'rgba(25, 118, 210, 0.12)',
+                backgroundColor: colors.primaryHover,
               },
             }}
           >
@@ -90,7 +83,7 @@ const ReduceNoiseTestSpeakers = ({
                 <ToggleOnIcon
                   data-testid="toggle-on-icon"
                   fontSize="large"
-                  sx={{ position: 'absolute', color: customLightBlueColor }}
+                  sx={{ position: 'absolute', color: colors.primaryLight }}
                 />
               </Grow>
             </IconButton>

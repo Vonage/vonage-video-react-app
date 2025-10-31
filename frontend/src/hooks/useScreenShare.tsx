@@ -93,7 +93,7 @@ const useScreenShare = (): UseScreenShareType => {
         });
 
         // Publishing the screen sharing stream
-        publish(screenSharingPub.current);
+        await publish(screenSharingPub.current);
 
         vonageVideoClient?.on('screenshareStreamCreated', handleStreamCreated);
       } else if (screenSharingPub.current) {

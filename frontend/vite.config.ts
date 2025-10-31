@@ -4,6 +4,7 @@ import type { UserConfig as VitestUserConfigInterface } from 'vitest/config';
 import { defineConfig as defineVitestConfig } from 'vitest/config';
 import react from '@vitejs/plugin-react';
 import replace from '@rollup/plugin-replace';
+import checker from 'vite-plugin-checker';
 
 const vitestConfig: VitestUserConfigInterface = defineVitestConfig({
   test: {
@@ -43,6 +44,24 @@ export default defineConfig(({ mode }) => {
         'process.env.CI': process.env.CI,
         preventAssignment: true,
       }),
+      checker({
+        typescript: true,
+        terminal: true,
+      }),
     ],
+    resolve: {
+      alias: {
+        '@api': '/src/api',
+        '@components': '/src/components',
+        '@Context': '/src/Context',
+        '@hooks': '/src/hooks',
+        '@locales': '/src/locales',
+        '@pages': '/src/pages',
+        '@tests': '/src/tests',
+        '@app-types': '/src/types',
+        '@utils': '/src/utils',
+        '@test': '/src/test',
+      },
+    },
   });
 });

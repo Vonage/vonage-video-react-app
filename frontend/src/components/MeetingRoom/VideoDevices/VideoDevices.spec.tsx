@@ -83,7 +83,7 @@ describe('VideoDevices Component', () => {
   });
 
   it('renders all available video devices', () => {
-    render(<VideoDevices handleToggle={mockHandleToggle} customLightBlueColor="#00f" />);
+    render(<VideoDevices handleToggle={mockHandleToggle} />);
 
     expect(screen.getByText('Camera')).toBeInTheDocument();
     expect(screen.getByText('FaceTime HD Camera')).toBeInTheDocument();
@@ -91,7 +91,7 @@ describe('VideoDevices Component', () => {
   });
 
   it('changes video source on menu item click', () => {
-    render(<VideoDevices handleToggle={mockHandleToggle} customLightBlueColor="#00f" />);
+    render(<VideoDevices handleToggle={mockHandleToggle} />);
 
     const camera2Item = screen.getByText('External Web Camera');
     fireEvent.click(camera2Item);
@@ -100,7 +100,7 @@ describe('VideoDevices Component', () => {
   });
 
   it('does not call setVideoSource if selected device is not found', () => {
-    render(<VideoDevices handleToggle={mockHandleToggle} customLightBlueColor="#00f" />);
+    render(<VideoDevices handleToggle={mockHandleToggle} />);
 
     const bogusItem = document.createElement('li');
     bogusItem.textContent = 'Nonexistent Camera';
@@ -113,9 +113,7 @@ describe('VideoDevices Component', () => {
     mockConfigContext.meetingRoomSettings.allowDeviceSelection = false;
     mockUseConfigContext.mockReturnValue(mockConfigContext);
 
-    const { container } = render(
-      <VideoDevices handleToggle={mockHandleToggle} customLightBlueColor="#00f" />
-    );
+    const { container } = render(<VideoDevices handleToggle={mockHandleToggle} />);
 
     expect(container.firstChild).toBeNull();
   });

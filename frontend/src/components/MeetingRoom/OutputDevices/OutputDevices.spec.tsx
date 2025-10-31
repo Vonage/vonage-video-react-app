@@ -59,7 +59,7 @@ describe('OutputDevices Component', () => {
   });
 
   it('renders all available audio output devices when supported', () => {
-    render(<OutputDevices handleToggle={mockHandleToggle} customLightBlueColor="#00f" />);
+    render(<OutputDevices handleToggle={mockHandleToggle} />);
 
     expect(screen.getByText('Speakers')).toBeInTheDocument();
     expect(screen.getByTestId('output-devices')).toBeInTheDocument();
@@ -73,7 +73,7 @@ describe('OutputDevices Component', () => {
   it('renders only default device when audio output is not supported', () => {
     (util.isGetActiveAudioOutputDeviceSupported as Mock).mockReturnValue(false);
 
-    render(<OutputDevices handleToggle={mockHandleToggle} customLightBlueColor="#00f" />);
+    render(<OutputDevices handleToggle={mockHandleToggle} />);
 
     expect(screen.getByText('Speakers')).toBeInTheDocument();
     expect(screen.getByText('System Default')).toBeInTheDocument();
@@ -83,7 +83,7 @@ describe('OutputDevices Component', () => {
   });
 
   it('changes audio output device on menu item click when supported', async () => {
-    render(<OutputDevices handleToggle={mockHandleToggle} customLightBlueColor="#00f" />);
+    render(<OutputDevices handleToggle={mockHandleToggle} />);
 
     const speakerItem = screen.getByText('Soundcore Life A2 NC (Bluetooth)');
     fireEvent.click(speakerItem);
@@ -97,7 +97,7 @@ describe('OutputDevices Component', () => {
   it('does not call setAudioOutputDevice when audio output is not supported', () => {
     (util.isGetActiveAudioOutputDeviceSupported as Mock).mockReturnValue(false);
 
-    render(<OutputDevices handleToggle={mockHandleToggle} customLightBlueColor="#00f" />);
+    render(<OutputDevices handleToggle={mockHandleToggle} />);
 
     const defaultItem = screen.getByText('System Default');
     fireEvent.click(defaultItem);
@@ -107,7 +107,7 @@ describe('OutputDevices Component', () => {
   });
 
   it('shows check icon for selected device', () => {
-    render(<OutputDevices handleToggle={mockHandleToggle} customLightBlueColor="#00f" />);
+    render(<OutputDevices handleToggle={mockHandleToggle} />);
 
     // The device with deviceId 'default' should be selected
     const checkIcon = screen.getByTestId('CheckIcon');
@@ -117,7 +117,7 @@ describe('OutputDevices Component', () => {
   it('shows check icon for default device when only one device available', () => {
     (util.isGetActiveAudioOutputDeviceSupported as Mock).mockReturnValue(false);
 
-    render(<OutputDevices handleToggle={mockHandleToggle} customLightBlueColor="#00f" />);
+    render(<OutputDevices handleToggle={mockHandleToggle} />);
 
     // When only default device is available, it should be selected
     const checkIcon = screen.getByTestId('CheckIcon');
@@ -128,7 +128,7 @@ describe('OutputDevices Component', () => {
     mockConfigContext.meetingRoomSettings.allowDeviceSelection = false;
     mockUseConfigContext.mockReturnValue(mockConfigContext);
 
-    render(<OutputDevices handleToggle={mockHandleToggle} customLightBlueColor="#00f" />);
+    render(<OutputDevices handleToggle={mockHandleToggle} />);
 
     expect(screen.queryByTestId('output-device-title')).not.toBeInTheDocument();
     expect(screen.queryByTestId('output-devices')).not.toBeInTheDocument();

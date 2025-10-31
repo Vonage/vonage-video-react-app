@@ -150,6 +150,7 @@ describe('WaitingRoom', () => {
       // After the preview publisher initializes.
       previewPublisherContext.publisher = mockPublisher;
       previewPublisherContext.publisherVideoElement = mockPublisherVideoElement;
+      previewPublisherContext.isVideoEnabled = true;
     });
     rerender(<WaitingRoomWithProviders />);
 

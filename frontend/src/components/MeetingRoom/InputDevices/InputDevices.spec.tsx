@@ -74,7 +74,7 @@ describe('InputDevices Component', () => {
   });
 
   it('renders all available audio input devices', () => {
-    render(<InputDevices handleToggle={mockHandleToggle} customLightBlueColor="#00f" />);
+    render(<InputDevices handleToggle={mockHandleToggle} />);
 
     expect(screen.getByText('Microphone')).toBeInTheDocument();
 
@@ -85,7 +85,7 @@ describe('InputDevices Component', () => {
   });
 
   it('changes audio input device on menu item click', () => {
-    render(<InputDevices handleToggle={mockHandleToggle} customLightBlueColor="#00f" />);
+    render(<InputDevices handleToggle={mockHandleToggle} />);
 
     const micItem = screen.getByText('MacBook Pro Microphone (Built-in)');
     fireEvent.click(micItem);
@@ -97,7 +97,7 @@ describe('InputDevices Component', () => {
   });
 
   it('does not call setAudioSource if selected device is not found', () => {
-    render(<InputDevices handleToggle={mockHandleToggle} customLightBlueColor="#00f" />);
+    render(<InputDevices handleToggle={mockHandleToggle} />);
 
     const bogusItem = document.createElement('li');
     bogusItem.textContent = 'Nonexistent Microphone';
@@ -110,7 +110,7 @@ describe('InputDevices Component', () => {
     publisherContext.publisher = null;
     mockUsePublisherContext.mockReturnValue(publisherContext);
 
-    render(<InputDevices handleToggle={mockHandleToggle} customLightBlueColor="#00f" />);
+    render(<InputDevices handleToggle={mockHandleToggle} />);
 
     const micItem = screen.getByText('MacBook Pro Microphone (Built-in)');
     fireEvent.click(micItem);
@@ -120,7 +120,7 @@ describe('InputDevices Component', () => {
   });
 
   it('shows check icon for selected device', () => {
-    render(<InputDevices handleToggle={mockHandleToggle} customLightBlueColor="#00f" />);
+    render(<InputDevices handleToggle={mockHandleToggle} />);
 
     // The default audio device should be selected
     const checkIcon = screen.getByTestId('CheckIcon');
@@ -131,13 +131,13 @@ describe('InputDevices Component', () => {
     mockConfigContext.meetingRoomSettings.allowDeviceSelection = false;
     mockUseConfigContext.mockReturnValue(mockConfigContext);
 
-    render(<InputDevices handleToggle={mockHandleToggle} customLightBlueColor="#00f" />);
+    render(<InputDevices handleToggle={mockHandleToggle} />);
 
     expect(screen.queryByText('Microphone')).not.toBeInTheDocument();
   });
 
   it('handles click event when audioDeviceId is found', () => {
-    render(<InputDevices handleToggle={mockHandleToggle} customLightBlueColor="#00f" />);
+    render(<InputDevices handleToggle={mockHandleToggle} />);
 
     const micItem = screen.getByText('Soundcore Life A2 NC (Bluetooth)');
     fireEvent.click(micItem);
