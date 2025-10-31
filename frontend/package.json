@@ -2,7 +2,7 @@
   "name": "frontend",
   "private": true,
   "description": "React reference application for the Vonage Video web client SDK.",
-  "version": "1.2.3",
+  "version": "1.3.0",
   "type": "module",
   "scripts": {
     "build": "yarn  --silent ts-check && vite build && yarn cp-build",
