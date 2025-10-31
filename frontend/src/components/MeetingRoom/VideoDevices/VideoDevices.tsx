@@ -9,10 +9,10 @@ import usePublisherContext from '../../../hooks/usePublisherContext';
 import { setStorageItem, STORAGE_KEYS } from '../../../utils/storage';
 import useConfigContext from '../../../hooks/useConfigContext';
 import cleanAndDedupeDeviceLabels from '../../../utils/cleanAndDedupeDeviceLabels';
+import { colors } from '../../../utils/customTheme/customTheme';
 
 export type VideoDevicesProps = {
   handleToggle: () => void;
-  customLightBlueColor: string;
 };
 
 /**
@@ -21,13 +21,9 @@ export type VideoDevicesProps = {
  * This component is responsible for rendering the list of video output devices (i.e. web cameras).
  * @param {VideoDevicesProps} props - the props for this component.
  *  @property {() => void} handleToggle - the function that handles the toggle of video output device.
- *  @property {string} customLightBlueColor - the custom color used for the toggled icon.
  * @returns {ReactElement | false} - the video output devices component.
  */
-const VideoDevices = ({
-  handleToggle,
-  customLightBlueColor,
-}: VideoDevicesProps): ReactElement | false => {
+const VideoDevices = ({ handleToggle }: VideoDevicesProps): ReactElement | false => {
   const { t } = useTranslation();
   const { isPublishing, publisher } = usePublisherContext();
   const { meetingRoomSettings } = useConfigContext();
@@ -93,14 +89,15 @@ const VideoDevices = ({
                   backgroundColor: 'transparent',
                   '&.Mui-selected': {
                     backgroundColor: 'transparent',
-                    color: customLightBlueColor,
+                    color: colors.primaryLight,
                   },
                   '&:hover': {
-                    backgroundColor: 'rgba(25, 118, 210, 0.12)',
+                    backgroundColor: colors.primaryHover,
                   },
                 }}
               >
                 <Box
+                  key={`${option.deviceId}-video-device`}
                   sx={{
                     display: 'flex',
                     mb: 0.5,
@@ -108,7 +105,7 @@ const VideoDevices = ({
                   }}
                 >
                   {isSelected ? (
-                    <CheckIcon sx={{ color: customLightBlueColor, fontSize: 24, mr: 2 }} />
+                    <CheckIcon sx={{ color: colors.primaryLight, fontSize: 24, mr: 2 }} />
                   ) : (
                     <Box sx={{ width: 40 }} /> // Placeholder when CheckIcon is not displayed
                   )}

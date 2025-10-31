@@ -61,14 +61,10 @@ describe('ReduceNoiseTestSpeakers', () => {
     vi.resetAllMocks();
   });
 
-  const defaultProps = {
-    customLightBlueColor: '#A338E6',
-  };
-
   it('renders the component with the correct elements', () => {
     mockHasMediaProcessorSupport.mockReturnValue(true);
 
-    render(<ReduceNoiseTestSpeakers {...defaultProps} />);
+    render(<ReduceNoiseTestSpeakers />);
 
     expect(screen.getByText('Advanced Noise Suppression')).toBeInTheDocument();
     expect(screen.getByTestId('toggle-off-icon')).toBeInTheDocument();
@@ -78,7 +74,7 @@ describe('ReduceNoiseTestSpeakers', () => {
   it('does not render the component if media processor is not supported', () => {
     mockHasMediaProcessorSupport.mockReturnValue(false);
 
-    render(<ReduceNoiseTestSpeakers {...defaultProps} />);
+    render(<ReduceNoiseTestSpeakers />);
 
     expect(screen.queryByText('Advanced Noise Suppression')).not.toBeInTheDocument();
   });
@@ -86,7 +82,7 @@ describe('ReduceNoiseTestSpeakers', () => {
   it('toggles the noise suppression state when clicked', async () => {
     mockHasMediaProcessorSupport.mockReturnValue(true);
 
-    render(<ReduceNoiseTestSpeakers {...defaultProps} />);
+    render(<ReduceNoiseTestSpeakers />);
 
     // Click the Advanced Noise Suppression button
     const toggleButton = screen.getByTestId('toggle-on-icon');
@@ -107,7 +103,7 @@ describe('ReduceNoiseTestSpeakers', () => {
   it('should update the UI when toggling the button', async () => {
     mockHasMediaProcessorSupport.mockReturnValue(true);
 
-    render(<ReduceNoiseTestSpeakers {...defaultProps} />);
+    render(<ReduceNoiseTestSpeakers />);
 
     const toggleButton = screen.getByText('Advanced Noise Suppression');
 
@@ -148,7 +144,7 @@ describe('ReduceNoiseTestSpeakers', () => {
     } as Partial<ConfigContextType> as ConfigContextType;
     mockUseConfigContext.mockReturnValue(configContext);
 
-    render(<ReduceNoiseTestSpeakers {...defaultProps} />);
+    render(<ReduceNoiseTestSpeakers />);
 
     expect(screen.queryByText('Advanced Noise Suppression')).not.toBeInTheDocument();
   });

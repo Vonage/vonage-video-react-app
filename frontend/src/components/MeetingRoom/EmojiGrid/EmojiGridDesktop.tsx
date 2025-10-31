@@ -3,6 +3,7 @@ import { ReactElement, RefObject, useEffect, useState } from 'react';
 import { PopperChildrenProps } from '@mui/base';
 import SendEmojiButton from '../SendEmojiButton';
 import emojiMap from '../../../utils/emojis';
+import { colors } from '../../../utils/customTheme/customTheme';
 
 export type EmojiGridDesktopProps = {
   handleClickAway: (event: MouseEvent | TouchEvent) => void;
@@ -57,8 +58,8 @@ const EmojiGridDesktop = ({
                   className="flex items-center justify-center"
                   data-testid="emoji-grid"
                   sx={{
-                    backgroundColor: 'rgb(32, 33, 36)',
-                    color: '#fff',
+                    backgroundColor: colors.darkGrey,
+                    color: colors.onPrimary,
                     padding: { xs: 1 },
                     borderRadius: 2,
                     zIndex: 1,

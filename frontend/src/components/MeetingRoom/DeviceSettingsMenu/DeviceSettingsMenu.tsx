@@ -14,6 +14,7 @@ import VideoDevices from '../VideoDevices';
 import DropdownSeparator from '../DropdownSeparator';
 import VideoDevicesOptions from '../VideoDevicesOptions';
 import useConfigContext from '../../../hooks/useConfigContext';
+import { colors } from '../../../utils/customTheme/customTheme';
 
 export type DeviceSettingsMenuProps = {
   deviceType: 'audio' | 'video';
@@ -55,7 +56,6 @@ const DeviceSettingsMenu = ({
   const config = useConfigContext();
   const isAudio = deviceType === 'audio';
   const theme = useTheme();
-  const customLightBlueColor = 'rgb(138, 180, 248)';
   const { allowBackgroundEffects } = config.videoSettings;
   const shouldDisplayBackgroundEffects = hasMediaProcessorSupport() && allowBackgroundEffects;
 
@@ -70,16 +70,16 @@ const DeviceSettingsMenu = ({
     if (isAudio) {
       return (
         <>
-          <InputDevices handleToggle={handleToggle} customLightBlueColor={customLightBlueColor} />
-          <OutputDevices handleToggle={handleToggle} customLightBlueColor={customLightBlueColor} />
-          <ReduceNoiseTestSpeakers customLightBlueColor={customLightBlueColor} />
+          <InputDevices handleToggle={handleToggle} />
+          <OutputDevices handleToggle={handleToggle} />
+          <ReduceNoiseTestSpeakers />
         </>
       );
     }
 
     return (
       <>
-        <VideoDevices handleToggle={handleToggle} customLightBlueColor={customLightBlueColor} />
+        <VideoDevices handleToggle={handleToggle} />
         {shouldDisplayBackgroundEffects && (
           <>
             <DropdownSeparator />
@@ -110,14 +110,14 @@ const DeviceSettingsMenu = ({
             <ClickAwayListener onClickAway={handleClose}>
               <Paper
                 sx={{
-                  backgroundColor: 'rgb(32, 33, 36)',
-                  color: '#fff',
-                  padding: { xs: 1, sm: 2 }, // responsive padding
+                  backgroundColor: colors.darkGrey,
+                  color: colors.onPrimary,
+                  padding: { xs: 1, sm: 2 },
                   borderRadius: 2,
                   zIndex: 1,
                   transform: isAudio
                     ? 'translateY(-2%) translateX(5%)'
-                    : 'translateY(-5%) translateX(-15%)', // default transform
+                    : 'translateY(-5%) translateX(-15%)',
                   [theme.breakpoints.down(741)]: {
                     transform: isAudio
                       ? 'translateY(-2%) translateX(-10%)'
@@ -128,9 +128,9 @@ const DeviceSettingsMenu = ({
                       ? 'translateY(-2%) translateX(-5%)'
                       : 'translateY(-5%) translateX(-5%)',
                   },
-                  width: { xs: '90vw', sm: '100%' }, // responsive width
-                  maxWidth: 400, // max width for larger screens
-                  position: 'relative', // ensures the transform is applied correctly
+                  width: { xs: '90vw', sm: '100%' },
+                  maxWidth: 400,
+                  position: 'relative',
                 }}
               >
                 {renderSettingsMenu()}

@@ -9,10 +9,10 @@ import usePublisherContext from '../../../hooks/usePublisherContext';
 import { setStorageItem, STORAGE_KEYS } from '../../../utils/storage';
 import useConfigContext from '../../../hooks/useConfigContext';
 import cleanAndDedupeDeviceLabels from '../../../utils/cleanAndDedupeDeviceLabels';
+import { colors } from '../../../utils/customTheme/customTheme';
 
 export type InputDevicesProps = {
   handleToggle: () => void;
-  customLightBlueColor: string;
 };
 
 /**
@@ -21,13 +21,9 @@ export type InputDevicesProps = {
  * Displays the audio input devices for a user. Handles switching audio input devices.
  * @param {InputDevicesProps} props - The props for the component.
  *  @property {Function} handleToggle - The click handler to handle closing the menu.
- *  @property {string} customLightBlueColor - The custom color used for the toggled icon.
  * @returns {ReactElement | false} - The InputDevices component.
  */
-const InputDevices = ({
-  handleToggle,
-  customLightBlueColor,
-}: InputDevicesProps): ReactElement | false => {
+const InputDevices = ({ handleToggle }: InputDevicesProps): ReactElement | false => {
   const { t } = useTranslation();
   const { publisher } = usePublisherContext();
   const { meetingRoomSettings } = useConfigContext();
@@ -83,14 +79,15 @@ const InputDevices = ({
                   backgroundColor: 'transparent',
                   '&.Mui-selected': {
                     backgroundColor: 'transparent',
-                    color: customLightBlueColor,
+                    color: colors.primaryLight,
                   },
                   '&:hover': {
-                    backgroundColor: 'rgba(25, 118, 210, 0.12)',
+                    backgroundColor: colors.primaryHover,
                   },
                 }}
               >
                 <Box
+                  key={`${option}-input-device`}
                   sx={{
                     display: 'flex',
                     mb: 0.5,
@@ -98,7 +95,7 @@ const InputDevices = ({
                   }}
                 >
                   {isSelected ? (
-                    <CheckIcon sx={{ color: customLightBlueColor, fontSize: 24, mr: 2 }} />
+                    <CheckIcon sx={{ color: colors.primaryLight, fontSize: 24, mr: 2 }} />
                   ) : (
                     <Box sx={{ width: 40 }} /> // Placeholder when CheckIcon is not displayed
                   )}
