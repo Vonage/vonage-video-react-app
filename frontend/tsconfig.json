@@ -18,8 +18,28 @@
     "noUnusedLocals": false,
     "noUnusedParameters": false,
     "noFallthroughCasesInSwitch": true,
+    "paths": {
+      "@api/*": ["./src/api/*"],
+      "@components/*": ["./src/components/*"],
+      "@Context/*": ["./src/Context/*"],
+      "@hooks/*": ["./src/hooks/*"],
+      "@locales/*": ["./src/locales/*"],
+      "@pages/*": ["./src/pages/*"],
+      "@tests/*": ["./src/tests/*"],
+      "@app-types/*": ["./src/types/*"],
+      "@utils/*": ["./src/utils/*"],
+      "@test/*": ["./src/test/*"]
+    }
   },
-  "include": ["./src", "./src/types", "src/pages", "src/helpers", "./.eslintrc.cjs", "**/*.spec.ts", "**/*.spec.tsx"],
+  "include": [
+    "./src",
+    "./src/types",
+    "src/pages",
+    "src/helpers",
+    "./.eslintrc.cjs",
+    "**/*.spec.ts",
+    "**/*.spec.tsx"
+  ],
   "exclude": ["./node_modules", "./vite.config.ts"],
   "references": [{ "path": "./tsconfig.node.json" }]
 }

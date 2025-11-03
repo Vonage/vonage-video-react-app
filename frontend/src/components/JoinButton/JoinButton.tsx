@@ -1,5 +1,6 @@
 import { Button } from '@mui/material';
 import { MouseEvent, ReactElement } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 
 export type JoinButtonProps = {
@@ -16,6 +17,7 @@ export type JoinButtonProps = {
  * @returns {ReactElement} - the join room button.
  */
 const JoinButton = ({ roomName, isDisabled }: JoinButtonProps): ReactElement => {
+  const { t } = useTranslation();
   const navigate = useNavigate();
 
   const handleJoin = (event: MouseEvent) => {
@@ -31,7 +33,7 @@ const JoinButton = ({ roomName, isDisabled }: JoinButtonProps): ReactElement => 
       onClick={handleJoin}
       type="submit"
     >
-      Join
+      {t('button.join')}
     </Button>
   );
 };

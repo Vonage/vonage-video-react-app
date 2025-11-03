@@ -20,6 +20,15 @@ vi.mock('../../utils/constants', () => ({
   MAX_PIN_COUNT_DESKTOP: 1,
 }));
 vi.mock('../../api/fetchCredentials');
+vi.mock('../../hooks/useConfigContext', () => {
+  return {
+    default: () => ({
+      meetingRoomSettings: {
+        defaultLayoutMode: 'active-speaker',
+      },
+    }),
+  };
+});
 
 const mockFetchCredentials = fetchCredentials as Mock;
 
@@ -39,6 +48,7 @@ describe('SessionProvider', () => {
   const TestComponent = () => {
     const {
       activeSpeakerId,
+      publish,
       unpublish,
       joinRoom,
       disconnect,
@@ -60,6 +70,17 @@ describe('SessionProvider', () => {
 
     return (
       <div>
+        <button
+          data-testid="publish"
+          onClick={() => {
+            if (publish) {
+              publish({} as unknown as Publisher);
+            }
+          }}
+          type="button"
+        >
+          Publish
+        </button>
         <button
           data-testid="unpublish"
           onClick={() => {
@@ -134,6 +155,7 @@ describe('SessionProvider', () => {
     };
     vonageVideoClient = Object.assign(new EventEmitter(), {
       unpublish: vi.fn(),
+      publish: vi.fn().mockResolvedValue(undefined),
       connect: vi.fn().mockReturnValue(Promise.resolve()),
       disconnect: vi.fn(),
       forceMuteStream: vi.fn(),
@@ -186,6 +208,30 @@ describe('SessionProvider', () => {
       })
     );
     await waitFor(() => expect(getByTestId('activeSpeaker')).toHaveTextContent('sub2'));
+  });
+
+  describe('publish', () => {
+    it('should call publish on VonageVideoClient when connected', async () => {
+      await act(async () => {
+        getByTestId('publish').click();
+      });
+
+      expect(vonageVideoClient.publish).toHaveBeenCalledTimes(1);
+    });
+
+    it('should not call publish on VonageVideoClient if not connected', async () => {
+      act(() => {
+        getByTestId('disconnect').click();
+      });
+
+      await waitFor(() => expect(getByTestId('connected')).toHaveTextContent('false'));
+
+      await act(async () => {
+        getByTestId('publish').click();
+      });
+
+      expect(vonageVideoClient.publish).toHaveBeenCalledTimes(0);
+    });
   });
 
   describe('unpublish', () => {

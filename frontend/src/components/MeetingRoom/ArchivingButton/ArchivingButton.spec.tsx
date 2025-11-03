@@ -5,9 +5,12 @@ import ArchivingButton from './ArchivingButton';
 import useRoomName from '../../../hooks/useRoomName';
 import useSessionContext from '../../../hooks/useSessionContext';
 import { SessionContextType } from '../../../Context/SessionProvider/session';
+import useConfigContext from '../../../hooks/useConfigContext';
+import { ConfigContextType } from '../../../Context/ConfigProvider';
 
 vi.mock('../../../hooks/useSessionContext');
 vi.mock('../../../hooks/useRoomName');
+vi.mock('../../../hooks/useConfigContext');
 
 vi.mock('../../../api/archiving', () => ({
   startArchiving: vi.fn(),
@@ -18,8 +21,10 @@ describe('ArchivingButton', () => {
   const mockHandleCloseMenu = vi.fn();
   const mockedRoomName = 'test-room-name';
   let sessionContext: SessionContextType;
+  let configContext: ConfigContextType;
 
   const mockUseSessionContext = useSessionContext as Mock<[], SessionContextType>;
+  const mockUseConfigContext = useConfigContext as Mock<[], ConfigContextType>;
   const testArchiveId = 'test-archive-id';
 
   beforeEach(() => {
@@ -29,8 +34,14 @@ describe('ArchivingButton', () => {
       subscriberWrappers: [],
       archiveId: null,
     } as unknown as SessionContextType;
+    configContext = {
+      meetingRoomSettings: {
+        allowArchiving: true,
+      },
+    } as Partial<ConfigContextType> as ConfigContextType;
 
     mockUseSessionContext.mockReturnValue(sessionContext as unknown as SessionContextType);
+    mockUseConfigContext.mockReturnValue(configContext);
   });
 
   it('renders the button correctly', () => {
@@ -85,5 +96,16 @@ describe('ArchivingButton', () => {
     await waitFor(() => {
       expect(stopArchiving).toHaveBeenCalledWith(mockedRoomName, testArchiveId);
     });
+  });
+
+  it('is not rendered when allowArchiving is disabled', () => {
+    mockUseConfigContext.mockReturnValue({
+      meetingRoomSettings: {
+        allowArchiving: false,
+      },
+    } as Partial<ConfigContextType> as ConfigContextType);
+
+    render(<ArchivingButton handleClick={mockHandleCloseMenu} />);
+    expect(screen.queryByTestId('archiving-button')).not.toBeInTheDocument();
   });
 });

@@ -6,3 +6,6 @@ Videocam
 issuetype
 Autolinker
 NOSONAR
+jiraiOSComponentId
+supportedLngs
+applinks

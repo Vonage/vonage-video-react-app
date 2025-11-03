@@ -7,16 +7,19 @@ import usePublisherOptions from './usePublisherOptions';
 import localStorageMock from '../../../utils/mockData/localStorageMock';
 import DeviceStore from '../../../utils/DeviceStore';
 import { setStorageItem, STORAGE_KEYS } from '../../../utils/storage';
+import useConfigContext from '../../../hooks/useConfigContext';
+import { ConfigContextType } from '../../ConfigProvider';
 
 vi.mock('../../../hooks/useUserContext.tsx');
+vi.mock('../../../hooks/useConfigContext');
 
 const mockUseUserContext = useUserContext as Mock<[], UserContextType>;
+const mockUseConfigContext = useConfigContext as Mock<[], ConfigContextType>;
 
 const defaultSettings = {
   publishAudio: false,
   publishVideo: false,
   name: '',
-  blur: false,
   noiseSuppression: true,
   audioSource: undefined,
   videoSource: undefined,
@@ -27,7 +30,10 @@ const customSettings = {
   publishAudio: true,
   publishVideo: true,
   name: 'Foo Bar',
-  blur: true,
+  backgroundFilter: {
+    type: 'backgroundBlur',
+    blurStrength: 'high',
+  },
   noiseSuppression: false,
   audioSource: '68f1d1e6f11c629b1febe51a95f8f740f8ac5cd3d4c91419bd2b52bb1a9a01cd',
   videoSource: 'a68ec4e4a6bc10dc572bd806414b0da27d0aefb0ad822f7ba4cf9b226bb9b7c2',
@@ -49,6 +55,8 @@ const mockUserContextWithCustomSettings = {
 describe('usePublisherOptions', () => {
   let enumerateDevicesMock: ReturnType<typeof vi.fn>;
   let deviceStore: DeviceStore;
+  let configContext: ConfigContextType;
+
   beforeEach(async () => {
     enumerateDevicesMock = vi.fn();
     vi.stubGlobal('navigator', {
@@ -63,6 +71,16 @@ describe('usePublisherOptions', () => {
     deviceStore = new DeviceStore();
     enumerateDevicesMock.mockResolvedValue([]);
     await deviceStore.init();
+    configContext = {
+      audioSettings: {
+        allowAudioOnJoin: true,
+      },
+      videoSettings: {
+        defaultResolution: '1280x720',
+        allowVideoOnJoin: true,
+      },
+    } as Partial<ConfigContextType> as ConfigContextType;
+    mockUseConfigContext.mockReturnValue(configContext);
   });
 
   afterAll(() => {
@@ -135,6 +153,32 @@ describe('usePublisherOptions', () => {
         name: 'Foo Bar',
         initials: 'FB',
         publishCaptions: true,
+      });
+    });
+  });
+
+  describe('configurable features', () => {
+    it('should disable audio publishing when allowAudioOnJoin is false', async () => {
+      configContext.audioSettings.allowAudioOnJoin = false;
+      const { result } = renderHook(() => usePublisherOptions());
+      await waitFor(() => {
+        expect(result.current?.publishAudio).toBe(false);
+      });
+    });
+
+    it('should disable video publishing when allowVideoOnJoin is false', async () => {
+      configContext.videoSettings.allowVideoOnJoin = false;
+      const { result } = renderHook(() => usePublisherOptions());
+      await waitFor(() => {
+        expect(result.current?.publishVideo).toBe(false);
+      });
+    });
+
+    it('should configure resolution from config', async () => {
+      configContext.videoSettings.defaultResolution = '640x480';
+      const { result } = renderHook(() => usePublisherOptions());
+      await waitFor(() => {
+        expect(result.current?.resolution).toBe('640x480');
       });
     });
   });

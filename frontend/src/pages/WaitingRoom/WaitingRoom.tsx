@@ -8,6 +8,7 @@ import DeviceAccessAlert from '../../components/DeviceAccessAlert';
 import Banner from '../../components/Banner';
 import { getStorageItem, STORAGE_KEYS } from '../../utils/storage';
 import useIsSmallViewport from '../../hooks/useIsSmallViewport';
+import useBackgroundPublisherContext from '../../hooks/useBackgroundPublisherContext';
 
 /**
  * WaitingRoom Component
@@ -17,7 +18,7 @@ import useIsSmallViewport from '../../hooks/useIsSmallViewport';
  * - A video element showing the user how they'll appear upon joining a room containing controls to:
  *   - Mute their audio input device.
  *   - Disable their video input device.
- *   - Toggle on/off background blur (if supported).
+ *   - Button to configure background replacement (if supported).
  * - Audio input, audio output, and video input device selectors.
  * - A username input field.
  * - The meeting room name and a button to join the room.
@@ -26,6 +27,10 @@ import useIsSmallViewport from '../../hooks/useIsSmallViewport';
 const WaitingRoom = (): ReactElement => {
   const { initLocalPublisher, publisher, accessStatus, destroyPublisher } =
     usePreviewPublisherContext();
+
+  const { initBackgroundLocalPublisher, publisher: backgroundPublisher } =
+    useBackgroundPublisherContext();
+
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [openAudioInput, setOpenAudioInput] = useState<boolean>(false);
   const [openVideoInput, setOpenVideoInput] = useState<boolean>(false);
@@ -45,6 +50,12 @@ const WaitingRoom = (): ReactElement => {
       }
     };
   }, [initLocalPublisher, publisher, destroyPublisher]);
+
+  useEffect(() => {
+    if (!backgroundPublisher) {
+      initBackgroundLocalPublisher();
+    }
+  }, [initBackgroundLocalPublisher, backgroundPublisher]);
 
   // After changing device permissions, reload the page to reflect the device's permission change.
   useEffect(() => {

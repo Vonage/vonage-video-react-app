@@ -1,5 +1,6 @@
 import { Typography, Button } from '@mui/material';
 import { ReactElement } from 'react';
+import { useTranslation } from 'react-i18next';
 
 export type TicketResponseType = {
   message: string;
@@ -25,6 +26,7 @@ const FormSubmitted = ({
   handleCloseFormSubmitted,
   ticketResponse,
 }: FormSubmittedProps): ReactElement => {
+  const { t } = useTranslation();
   return (
     <>
       <div className="flex min-h-[80vh] items-center justify-between overflow-y-auto overflow-x-hidden">
@@ -42,10 +44,9 @@ const FormSubmitted = ({
         >
           {ticketResponse.ticketUrl ? (
             <>
-              <b data-testid="thank-you-text">Thank you for your feedback!</b>
+              <b data-testid="thank-you-text">{t('feedbackForm.submitted.thanks')}</b>
               <br />
-              We greatly appreciate your input, as it helps us improve the app and address any
-              issues.
+              {t('feedbackForm.submitted.content')}
               <br />
               {ticketResponse.message} <br />
               <a
@@ -58,12 +59,12 @@ const FormSubmitted = ({
                 }}
                 rel="noreferrer"
               >
-                Track your progress here.
+                {t('feedbackForm.submitted.track')}
               </a>
             </>
           ) : (
             <span data-testid="error-text">
-              Something went wrong. Please try again.
+              {t('feedbackForm.submitted.error')}
               <br />
             </span>
           )}
@@ -84,7 +85,7 @@ const FormSubmitted = ({
             mb: 3,
           }}
         >
-          Close
+          {t('button.close')}
         </Button>
       </div>
     </>

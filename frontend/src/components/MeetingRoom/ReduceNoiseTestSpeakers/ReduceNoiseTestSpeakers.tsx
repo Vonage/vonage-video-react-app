@@ -6,10 +6,12 @@ import { hasMediaProcessorSupport } from '@vonage/client-sdk-video';
 import HeadsetIcon from '@mui/icons-material/Headset';
 import ToggleOffIcon from '@mui/icons-material/ToggleOff';
 import ToggleOnIcon from '@mui/icons-material/ToggleOn';
+import { useTranslation } from 'react-i18next';
 import usePublisherContext from '../../../hooks/usePublisherContext';
 import DropdownSeparator from '../DropdownSeparator';
 import SoundTest from '../../SoundTest';
 import { setStorageItem, STORAGE_KEYS } from '../../../utils/storage';
+import useConfigContext from '../../../hooks/useConfigContext';
 
 export type ReduceNoiseTestSpeakersProps = {
   customLightBlueColor: string;
@@ -27,8 +29,12 @@ export type ReduceNoiseTestSpeakersProps = {
 const ReduceNoiseTestSpeakers = ({
   customLightBlueColor,
 }: ReduceNoiseTestSpeakersProps): ReactElement | false => {
+  const { t } = useTranslation();
   const { publisher, isPublishing } = usePublisherContext();
+  const config = useConfigContext();
   const [isToggled, setIsToggled] = useState(false);
+  const { allowAdvancedNoiseSuppression } = config.audioSettings;
+  const shouldDisplayANS = hasMediaProcessorSupport() && allowAdvancedNoiseSuppression;
 
   const handleToggle = async () => {
     const newState = !isToggled;
@@ -58,7 +64,7 @@ const ReduceNoiseTestSpeakers = ({
           mt: 1,
         }}
       >
-        {hasMediaProcessorSupport() && (
+        {shouldDisplayANS && (
           <MenuItem
             onClick={handleToggle}
             sx={{
@@ -70,7 +76,7 @@ const ReduceNoiseTestSpeakers = ({
           >
             <HeadsetIcon sx={{ fontSize: 24, mr: 2 }} />
             <Typography noWrap sx={{ mr: 2 }}>
-              Advanced Noise Suppression
+              {t('devices.audio.noiseSuppression')}
             </Typography>
             <IconButton disableRipple>
               <Grow in={!isToggled} timeout={300}>

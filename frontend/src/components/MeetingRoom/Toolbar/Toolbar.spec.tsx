@@ -60,6 +60,7 @@ describe('Toolbar', () => {
     toggleParticipantList: vi.fn(),
     toggleChat: vi.fn(),
     toggleReportIssue: vi.fn(),
+    toggleBackgroundEffects: vi.fn(),
     participantCount: 0,
     captionsState: {
       isUserCaptionsEnabled: false,

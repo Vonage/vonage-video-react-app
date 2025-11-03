@@ -6,6 +6,7 @@ import {
   OTError,
   AudioOutputDevice,
 } from '@vonage/client-sdk-video';
+import { useTranslation } from 'react-i18next';
 import { AllMediaDevices } from '../types';
 import isAudioInputDevice from '../utils/isAudioInputDevice';
 import isVideoInputDevice from '../utils/isVideoInputDevice';
@@ -19,6 +20,7 @@ import renameDefaultAudioOutputDevice from '../utils/renameDefaultAudioOutputDev
  * - @property {() => void} getAllMediaDevices - function to trigger update of device in allMediaDevices. It is to be called when user has given device permissions.
  */
 const useDevices = () => {
+  const { t } = useTranslation();
   const { mediaDevices } = window.navigator;
 
   const [allMediaDevices, setAllMediaDevices] = useState<AllMediaDevices>({
@@ -48,7 +50,9 @@ const useDevices = () => {
         // Vonage Video API's getAudioOutputDevices retrieves all audio output devices (speakers)
         let audioOutputDevices: AudioOutputDevice[] = await getAudioOutputDevices();
         // Rename the label of the default audio output to "System Default"
-        audioOutputDevices = audioOutputDevices.map(renameDefaultAudioOutputDevice);
+        audioOutputDevices = audioOutputDevices.map((device) =>
+          renameDefaultAudioOutputDevice(device, t('devices.audio.defaultLabel'))
+        );
 
         // Filter audio input devices from the list retrieved by Vonage Video API's getDevices
         const audioInputDevices = devices?.filter(isAudioInputDevice) || [];
@@ -64,7 +68,7 @@ const useDevices = () => {
         });
       });
     });
-  }, [mediaDevices.enumerateDevices]);
+  }, [mediaDevices.enumerateDevices, t]);
 
   /*
    * It is important to add a device change listener that is available by the browsers.

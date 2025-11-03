@@ -1,5 +1,10 @@
 import ReactDOM from 'react-dom/client';
+import { registerIcon } from '@vonage/vivid';
 import App from './App.jsx';
+import './i18n.js';
+
+// Register Vivid icons for use throughout the application
+registerIcon();
 
 /**
  * The root HTML element where the React application is rendered.

@@ -1,6 +1,7 @@
 import { Dispatch, ReactElement, useState, SetStateAction } from 'react';
 import { Tooltip } from '@mui/material';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
+import { useTranslation } from 'react-i18next';
 import ToolbarButton from '../ToolbarButton';
 import ToolbarOverflowMenu from '../ToolbarOverflowMenu';
 import UnreadMessagesBadge from '../UnreadMessagesBadge';
@@ -36,6 +37,7 @@ const ToolbarOverflowButton = ({
   toolbarButtonsCount,
   captionsState,
 }: ToolbarOverflowButtonProps): ReactElement => {
+  const { t } = useTranslation();
   const [isToolbarOverflowMenuOpen, setIsToolbarOverflowMenuOpen] = useState<boolean>(false);
   const [openEmojiGridMobile, setOpenEmojiGridMobile] = useState<boolean>(true);
 
@@ -55,10 +57,7 @@ const ToolbarOverflowButton = ({
 
   return (
     <>
-      <Tooltip
-        title="Access additional toolbar items"
-        aria-label="open additional toolbar items menu"
-      >
+      <Tooltip title={t('toolbar.tooltip.title')} aria-label={t('toolbar.tooltip.ariaLabel')}>
         <UnreadMessagesBadge isToolbarOverflowMenuOpen={isToolbarOverflowMenuOpen}>
           <ToolbarButton
             data-testid="hidden-toolbar-items"

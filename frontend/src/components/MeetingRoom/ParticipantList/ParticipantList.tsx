@@ -2,6 +2,7 @@ import { Fade, IconButton, List, Tooltip } from '@mui/material';
 import { ContentCopy } from '@mui/icons-material';
 import CheckIcon from '@mui/icons-material/Check';
 import { ReactElement, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import useSessionContext from '../../../hooks/useSessionContext';
 import useUserContext from '../../../hooks/useUserContext';
 import useAudioLevels from '../../../hooks/useAudioLevels';
@@ -41,6 +42,7 @@ export type ParticipantListProps = {
  * @returns {ReactElement} The participant list component.
  */
 const ParticipantList = ({ handleClose, isOpen }: ParticipantListProps): ReactElement | false => {
+  const { t } = useTranslation();
   const { subscriberWrappers } = useSessionContext();
   const publisherAudio = useAudioLevels();
   const [isCopied, setIsCopied] = useState<boolean>(false);
@@ -65,12 +67,17 @@ const ParticipantList = ({ handleClose, isOpen }: ParticipantListProps): ReactEl
   return (
     isOpen && (
       <>
-        <RightPanelTitle title="Participants" handleClose={handleClose} />
+        <RightPanelTitle title={t('participants.title')} handleClose={handleClose} />
         <div className="flex h-[64px] flex-row items-center justify-between pl-6">
           <div className="text-left">
-            <span className="text-darkGray text-sm font-bold tracking-normal">Meeting URL:</span>{' '}
+            <span className="text-darkGray text-sm font-bold tracking-normal">
+              {t('chat.meetingUrl')}
+            </span>{' '}
             <br />
-            <span className="text-darkGray block	max-w-64 truncate text-sm font-normal tracking-normal">
+            <span
+              title={window.location.href}
+              className="text-darkGray block	max-w-64 truncate text-sm font-normal tracking-normal"
+            >
               {window.location.href}
             </span>
           </div>
@@ -81,7 +88,7 @@ const ParticipantList = ({ handleClose, isOpen }: ParticipantListProps): ReactEl
             disabled={isCopied}
           >
             <Tooltip
-              title={isCopied ? 'Copied' : 'Copy to clipboard'}
+              title={isCopied ? t('chat.copied') : t('chat.copy')}
               TransitionComponent={Fade}
               TransitionProps={{ timeout: 500 }}
             >
@@ -95,7 +102,7 @@ const ParticipantList = ({ handleClose, isOpen }: ParticipantListProps): ReactEl
             dataTestId="participant-list-item-you"
             hasAudio={isAudioEnabled}
             audioLevel={isAudioEnabled ? publisherAudio : undefined}
-            name={`${name} (You)`}
+            name={`${name} (${t('user.you')})`}
             initials={getInitials(name)}
             avatarColor={getParticipantColor(name)}
           />

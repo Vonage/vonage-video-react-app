@@ -8,6 +8,8 @@ import usePublisherContext from '../../../hooks/usePublisherContext';
 import { AllMediaDevices } from '../../../types';
 import { PublisherContextType } from '../../../Context/PublisherProvider';
 import { allMediaDevices, defaultAudioDevice } from '../../../utils/mockData/device';
+import useConfigContext from '../../../hooks/useConfigContext';
+import { ConfigContextType } from '../../../Context/ConfigProvider';
 
 // Mocks
 vi.mock('../../../hooks/useDevices');
@@ -18,11 +20,14 @@ vi.mock('../../../utils/storage', () => ({
     VIDEO_SOURCE: 'videoSource',
   },
 }));
+vi.mock('../../../hooks/useConfigContext');
+
 const mockUseDevices = useDevices as Mock<
   [],
   { allMediaDevices: AllMediaDevices; getAllMediaDevices: () => void }
 >;
 const mockUsePublisherContext = usePublisherContext as Mock<[], PublisherContextType>;
+const mockUseConfigContext = useConfigContext as Mock<[], ConfigContextType>;
 
 describe('VideoDevices Component', () => {
   const mockHandleToggle = vi.fn();
@@ -33,6 +38,7 @@ describe('VideoDevices Component', () => {
   }));
   let mockPublisher: Publisher;
   let publisherContext: PublisherContextType;
+  let mockConfigContext: ConfigContextType;
 
   beforeEach(() => {
     mockUseDevices.mockReturnValue({
@@ -57,12 +63,18 @@ describe('VideoDevices Component', () => {
         publisherContext.publisher = mockPublisher;
       }) as unknown as () => void,
     } as unknown as PublisherContextType;
-    mockUsePublisherContext.mockImplementation(() => publisherContext);
+    mockConfigContext = {
+      meetingRoomSettings: {
+        allowDeviceSelection: true,
+      },
+    } as Partial<ConfigContextType> as ConfigContextType;
 
+    mockUsePublisherContext.mockImplementation(() => publisherContext);
     mockGetVideoSource.mockReturnValue({
       deviceId: 'a68ec4e4a6bc10dc572bd806414b0da27d0aefb0ad822f7ba4cf9b226bb9b7c2',
       label: 'FaceTime HD Camera (2C0E:82E3)',
     });
+    mockUseConfigContext.mockReturnValue(mockConfigContext);
   });
 
   afterEach(() => {
@@ -74,7 +86,7 @@ describe('VideoDevices Component', () => {
     render(<VideoDevices handleToggle={mockHandleToggle} customLightBlueColor="#00f" />);
 
     expect(screen.getByText('Camera')).toBeInTheDocument();
-    expect(screen.getByText('FaceTime HD Camera (2C0E:82E3)')).toBeInTheDocument();
+    expect(screen.getByText('FaceTime HD Camera')).toBeInTheDocument();
     expect(screen.getByText('External Web Camera')).toBeInTheDocument();
   });
 
@@ -95,5 +107,16 @@ describe('VideoDevices Component', () => {
     fireEvent.click(bogusItem); // simulate bogus click
 
     expect(mockSetVideoSource).not.toHaveBeenCalled();
+  });
+
+  it('is not rendered when allowDeviceSelection is false', () => {
+    mockConfigContext.meetingRoomSettings.allowDeviceSelection = false;
+    mockUseConfigContext.mockReturnValue(mockConfigContext);
+
+    const { container } = render(
+      <VideoDevices handleToggle={mockHandleToggle} customLightBlueColor="#00f" />
+    );
+
+    expect(container.firstChild).toBeNull();
   });
 });

@@ -1,5 +1,6 @@
 import { Button } from '@mui/material';
 import { MouseEvent, ReactElement, TouchEvent } from 'react';
+import { useTranslation } from 'react-i18next';
 
 export type ReenterRoomButtonProps = {
   handleReenter: (event: MouseEvent<HTMLButtonElement> | TouchEvent<HTMLButtonElement>) => void;
@@ -19,6 +20,8 @@ const ReenterRoomButton = ({
   handleReenter,
   roomName,
 }: ReenterRoomButtonProps): ReactElement | string => {
+  const { t } = useTranslation();
+
   return (
     roomName && (
       <Button
@@ -33,7 +36,7 @@ const ReenterRoomButton = ({
         }}
         onClick={handleReenter}
       >
-        Re-enter
+        {t('goodBye.reEnter')}
       </Button>
     )
   );

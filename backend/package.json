@@ -1,16 +1,16 @@
 {
   "name": "backend",
-  "version": "1.2.3",
+  "version": "1.3.0",
   "description": "Express-based backend with authenticated routes.",
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "dev": "tsx watch index.ts",
-    "start": "node --import tsx index.ts",
-    "debug": "node --inspect --watch --import tsx index.ts",
+    "dev": "nodemon --watch . --ext ts,tsx,json --ignore dist --exec \"sh -c 'yarn ts-check && node --import tsx index.ts'\"",
+    "start": "yarn ts-check && node --import tsx index.ts",
+    "debug": "nodemon --watch . --ext ts,tsx,json --ignore dist --exec \"sh -c 'yarn ts-check && node --inspect --import tsx index.ts'\"",
     "test": "NODE_OPTIONS=\"--experimental-vm-modules\" jest --maxWorkers=1 --coverage",
     "test:watch": "yarn test --watch",
-    "ts-check": "tsc -p tsconfig.json"
+    "ts-check": "tsc --noEmit -p tsconfig.json --pretty true"
   },
   "author": "",
   "license": "MIT",
@@ -41,6 +41,7 @@
     "@types/supertest": "^6.0.2",
     "@types/validator": "^13.15.2",
     "jest": "^29.7.0",
+    "nodemon": "^3.1.10",
     "supertest": "^7.0.0",
     "ts-jest": "^29.1.2"
   }

@@ -1,6 +1,11 @@
 import { useCallback, useState } from 'react';
 
-export type RightPanelActiveTab = 'chat' | 'participant-list' | 'closed' | 'issues';
+export type RightPanelActiveTab =
+  | 'chat'
+  | 'participant-list'
+  | 'background-effects'
+  | 'closed'
+  | 'issues';
 
 export type RightPanelState = {
   activeTab: RightPanelActiveTab;
@@ -13,6 +18,7 @@ export type UseRightPanel = {
   rightPanelState: RightPanelState;
   toggleChat: () => void;
   toggleParticipantList: () => void;
+  toggleBackgroundEffects: () => void;
   toggleReportIssue: () => void;
 };
 
@@ -27,7 +33,7 @@ const useRightPanel = (): UseRightPanel => {
   });
 
   /**
-   * toggleChat - util to toggle participant list visibility,
+   * toggleParticipantList - util to toggle participant list visibility.
    */
   const toggleParticipantList = useCallback(() => {
     setRightPanelState((prev) => {
@@ -35,6 +41,18 @@ const useRightPanel = (): UseRightPanel => {
         return { ...prev, activeTab: 'closed' };
       }
       return { ...prev, activeTab: 'participant-list' };
+    });
+  }, []);
+
+  /**
+   * toggleBackgroundEffects - util to toggle background effects visibility.
+   */
+  const toggleBackgroundEffects = useCallback(() => {
+    setRightPanelState((prev) => {
+      if (prev.activeTab === 'background-effects') {
+        return { ...prev, activeTab: 'closed' };
+      }
+      return { ...prev, activeTab: 'background-effects' };
     });
   }, []);
 
@@ -50,7 +68,7 @@ const useRightPanel = (): UseRightPanel => {
 
   /**
    * toggleChat - util to toggle chat visibility,
-   * it also resets unread message counter,
+   * it also resets unread message counter.
    */
   const toggleChat = useCallback(() => {
     setRightPanelState((prev) => {
@@ -97,6 +115,7 @@ const useRightPanel = (): UseRightPanel => {
     rightPanelState,
     toggleChat,
     toggleParticipantList,
+    toggleBackgroundEffects,
     incrementUnreadCount,
     toggleReportIssue,
   };

@@ -13,6 +13,8 @@ const loadConfig = (): Config => {
     token: process.env.JIRA_TOKEN,
     key: process.env.JIRA_PROJECT_KEY,
     componentId: process.env.JIRA_COMPONENT_ID,
+    iOSComponentId: process.env.JIRA_iOS_COMPONENT_ID,
+    androidComponentId: process.env.JIRA_ANDROID_COMPONENT_ID,
     epicLink: process.env.JIRA_EPIC_LINK,
     epicUrl: process.env.JIRA_EPIC_URL,
   };

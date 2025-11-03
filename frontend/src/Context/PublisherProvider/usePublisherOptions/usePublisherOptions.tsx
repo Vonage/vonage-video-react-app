@@ -8,6 +8,7 @@ import {
 import useUserContext from '../../../hooks/useUserContext';
 import getInitials from '../../../utils/getInitials';
 import DeviceStore from '../../../utils/DeviceStore';
+import useConfigContext from '../../../hooks/useConfigContext';
 
 /**
  * React hook to get PublisherProperties combining default options and options set in UserContext
@@ -16,8 +17,11 @@ import DeviceStore from '../../../utils/DeviceStore';
 
 const usePublisherOptions = (): PublisherProperties | null => {
   const { user } = useUserContext();
+  const config = useConfigContext();
   const [publisherOptions, setPublisherOptions] = useState<PublisherProperties | null>(null);
   const deviceStoreRef = useRef<DeviceStore | null>(null);
+  const { defaultResolution, allowVideoOnJoin } = config.videoSettings;
+  const { allowAudioOnJoin } = config.audioSettings;
 
   useEffect(() => {
     const setOptions = async () => {
@@ -29,8 +33,14 @@ const usePublisherOptions = (): PublisherProperties | null => {
       const videoSource = deviceStoreRef.current.getConnectedDeviceId('videoinput');
       const audioSource = deviceStoreRef.current.getConnectedDeviceId('audioinput');
 
-      const { name, noiseSuppression, blur, publishAudio, publishVideo, publishCaptions } =
-        user.defaultSettings;
+      const {
+        name,
+        noiseSuppression,
+        backgroundFilter,
+        publishAudio,
+        publishVideo,
+        publishCaptions,
+      } = user.defaultSettings;
       const initials = getInitials(name);
 
       const audioFilter: AudioFilter | undefined =
@@ -39,9 +49,7 @@ const usePublisherOptions = (): PublisherProperties | null => {
           : undefined;
 
       const videoFilter: VideoFilter | undefined =
-        blur && hasMediaProcessorSupport()
-          ? { type: 'backgroundBlur', blurStrength: 'high' }
-          : undefined;
+        backgroundFilter && hasMediaProcessorSupport() ? backgroundFilter : undefined;
 
       setPublisherOptions({
         audioFallback: { publisher: true },
@@ -49,9 +57,9 @@ const usePublisherOptions = (): PublisherProperties | null => {
         initials,
         insertDefaultUI: false,
         name,
-        publishAudio: !!publishAudio,
-        publishVideo: !!publishVideo,
-        resolution: '1280x720',
+        publishAudio: allowAudioOnJoin && publishAudio,
+        publishVideo: allowVideoOnJoin && publishVideo,
+        resolution: defaultResolution,
         audioFilter,
         videoFilter,
         videoSource,
@@ -60,7 +68,7 @@ const usePublisherOptions = (): PublisherProperties | null => {
     };
 
     setOptions();
-  }, [user.defaultSettings]);
+  }, [allowAudioOnJoin, defaultResolution, allowVideoOnJoin, user.defaultSettings]);
 
   return publisherOptions;
 };
