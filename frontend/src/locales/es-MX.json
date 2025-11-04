@@ -130,7 +130,7 @@
     "goodbye.default.header": "Saliste de la sala",
     "goodbye.default.message": "Esperamos que la hayas pasado bien",
     "landing.welcome.subtitle": "Crea una sala nueva o únete a una ya existente.",
-    "landing.welcome.title": "Bienvenido a la app Vonage Video React",
+    "landing.welcome.title": "Mejora la comunicación por video",
     "layout.tooltip.isPinningPresent": "No se puede cambiar el diseño mientras alguien esté fijado",
     "layout.tooltip.isScreenSharePresent": "No se puede cambiar el diseño mientras se comparte pantalla",
     "layout.tooltip.switchToActiveSpeaker": "Cambiar a vista de orador activo",

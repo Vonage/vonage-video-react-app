@@ -130,7 +130,7 @@
     "goodbye.default.header": "Hai lasciato la stanza",
     "goodbye.default.message": "Speriamo che ti sia divertito",
     "landing.welcome.subtitle": "Crea una nuova riunione o unisciti ad una esistente.",
-    "landing.welcome.title": "Benvenuto in Vonage Video React App",
+    "landing.welcome.title": "Migliora la comunicazione video",
     "layout.tooltip.isPinningPresent": "Impossibile cambiare layout mentre un partecipante è fissato",
     "layout.tooltip.isScreenSharePresent": "Impossibile cambiare il layout mentre è attiva la condivisione dello schermo",
     "layout.tooltip.switchToActiveSpeaker": "Passa al layout Oratore in evidenza",

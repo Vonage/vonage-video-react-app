@@ -132,7 +132,7 @@
   "goodbye.default.header": "You left the room",
   "goodbye.default.message": "We hope you had fun",
   "landing.welcome.subtitle": "Create a new room or join an existing one.",
-  "landing.welcome.title": "Welcome to the Vonage Video React App",
+  "landing.welcome.title": "Upgrade video communication",
   "layout.tooltip.isPinningPresent": "Cannot switch layout while a participant is pinned",
   "layout.tooltip.isScreenSharePresent": "Cannot switch layout while screen share is active",
   "layout.tooltip.switchToActiveSpeaker": "Switch to Active Speaker layout",

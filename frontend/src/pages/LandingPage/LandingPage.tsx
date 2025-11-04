@@ -1,4 +1,5 @@
 import { ReactElement } from 'react';
+import { Box, Stack } from '@mui/material';
 import Banner from '../../components/Banner';
 import LandingPageWelcome from '../../components/LandingPageWelcome';
 import RoomJoinContainer from '../../components/RoomJoinContainer';
@@ -16,15 +17,49 @@ import RoomJoinContainer from '../../components/RoomJoinContainer';
  */
 const LandingPage = (): ReactElement => {
   return (
-    <div className="flex size-full flex-col justify-between bg-white">
+    <Box
+      sx={{
+        display: 'flex',
+        flexDirection: 'column',
+        minHeight: '100vh',
+      }}
+    >
       <Banner />
 
-      <div className="flex size-full flex-col items-center bg-white md:flex-row md:justify-center">
-        <LandingPageWelcome />
+      <Stack
+        direction={{ xs: 'column', md: 'row' }}
+        sx={{
+          flex: 1,
+          width: '100%',
+        }}
+      >
+        <Box
+          sx={{
+            flex: 1,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            p: 3,
+            bgcolor: { xs: 'background.paper', md: 'primary.light' },
+          }}
+        >
+          <LandingPageWelcome />
+        </Box>
 
-        <RoomJoinContainer />
-      </div>
-    </div>
+        <Box
+          sx={{
+            flex: 1,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            p: 3,
+            bgcolor: 'background.paper',
+          }}
+        >
+          <RoomJoinContainer />
+        </Box>
+      </Stack>
+    </Box>
   );
 };
 

@@ -3,7 +3,7 @@ import { createTheme } from '@mui/material';
 const colors = {
   // Primary colors
   primary: '#3E007E',
-  primaryLight: '#9575CD',
+  primaryLight: '#f3e9ff',
   primaryHover: '#3E007E2F',
   onPrimary: '#FFFFFF',
   primaryContainer: '#6300C4',
@@ -68,7 +68,7 @@ const customTheme = createTheme({
       main: colors.primary,
       contrastText: colors.onPrimary,
       dark: colors.primaryContainer,
-      light: colors.surfaceTint,
+      light: colors.primaryLight,
     },
     secondary: {
       main: colors.secondary,
@@ -96,6 +96,14 @@ const customTheme = createTheme({
     divider: colors.outline,
   },
   components: {
+    MuiToolbar: {
+      styleOverrides: {
+        root: {
+          paddingLeft: '0 !important',
+          paddingRight: '0 !important',
+        },
+      },
+    },
     MuiAppBar: {
       styleOverrides: {
         root: {
