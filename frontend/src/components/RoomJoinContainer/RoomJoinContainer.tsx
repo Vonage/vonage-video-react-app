@@ -1,6 +1,6 @@
 import { useNavigate } from 'react-router-dom';
 import { ReactElement } from 'react';
-import { Box } from '@mui/material';
+import Box from '@ui/Box';
 import generateRoomName from '../../utils/generateRoomName';
 import NewRoomButton from '../NewRoomButton';
 import JoinContainerSeparator from '../JoinContainerSeparator';

@@ -28,17 +28,19 @@
       "@tests/*": ["./src/tests/*"],
       "@app-types/*": ["./src/types/*"],
       "@utils/*": ["./src/utils/*"],
-      "@test/*": ["./src/test/*"]
+      "@test/*": ["./src/test/*"],
+      "@ui/*": ["./ui/*"]
     }
   },
   "include": [
+    "./ui",
     "./src",
     "./src/types",
     "src/pages",
     "src/helpers",
     "./.eslintrc.cjs",
     "**/*.spec.ts",
-    "**/*.spec.tsx"
+    "**/*.spec.tsx",
   ],
   "exclude": ["./node_modules", "./vite.config.ts"],
   "references": [{ "path": "./tsconfig.node.json" }]

@@ -1,6 +1,8 @@
 import { ReactElement, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Box, Typography, useTheme, useMediaQuery } from '@mui/material';
+import { useTheme, useMediaQuery } from '@mui/material';
+import Box from '@ui/Box';
+import Typography from '@ui/Typography';
 
 /**
  * LandingPageWelcome Component

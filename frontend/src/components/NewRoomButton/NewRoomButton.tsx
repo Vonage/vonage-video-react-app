@@ -1,4 +1,4 @@
-import { Button } from '@mui/material';
+import Button from '@ui/Button';
 import { VideoCall } from '@mui/icons-material';
 import { ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
