@@ -1,5 +1,21 @@
 import { createTheme } from '@mui/material';
 
+declare module '@mui/material/styles' {
+  interface TypeBackground {
+    darkGrey: string;
+  }
+}
+
+const borderRadiusStandard = '8px';
+const borderRadiusStandardNumber = 2.85;
+const inputHeight = 48;
+
+const buttonSx = {
+  height: inputHeight,
+  textTransform: 'none',
+  borderRadius: borderRadiusStandard,
+} as const;
+
 const colors = {
   // Primary colors
   primary: '#871EFF',
@@ -23,9 +39,9 @@ const colors = {
   onTertiaryContainer: '#F7EDFF',
 
   // Error colors
-  error: '#600004',
+  error: '#E61D1D',
   onError: '#FFFFFF',
-  errorContainer: '#98000A',
+  errorContainer: '#FFEEF2',
   onErrorContainer: '#FFFFFF',
 
   // Surface colors
@@ -34,14 +50,9 @@ const colors = {
   onBackground: '#1E1925',
   surface: '#FCF8F8',
   onSurface: '#000000',
-  surfaceVariant: '#E0E3E3',
-  onSurfaceVariant: '#000000',
-  surfaceContainer: '#E5E2E1',
-  surfaceContainerHigh: '#D7D4D3',
-  surfaceContainerHighest: '#C9C6C5',
 
   // Outline colors
-  outline: '#292D2D',
+  outline: '#E6E6E6',
   outlineVariant: '#464A4A',
 
   // Inverse colors
@@ -58,7 +69,9 @@ const colors = {
 } as const;
 
 const fonts = {
-  family: ['system-ui', 'ui-sans-serif', 'Inter', 'Marker Felt', 'Trebuchet MS'].join(','),
+  family: ['spezia', 'system-ui', 'ui-sans-serif', 'Inter', 'Marker Felt', 'Trebuchet MS'].join(
+    ','
+  ),
 } as const;
 
 const customTheme = createTheme({
@@ -88,6 +101,7 @@ const customTheme = createTheme({
     background: {
       default: colors.background,
       paper: colors.surface,
+      darkGrey: colors.darkGrey,
     },
     text: {
       primary: colors.onBackground,
@@ -95,7 +109,18 @@ const customTheme = createTheme({
     },
     divider: colors.outline,
   },
+  shape: {
+    borderRadius: borderRadiusStandardNumber,
+  },
   components: {
+    MuiButton: {
+      styleOverrides: {
+        root: buttonSx,
+        outlined: {
+          borderColor: colors.primary,
+        },
+      },
+    },
     MuiToolbar: {
       styleOverrides: {
         root: {
@@ -120,9 +145,16 @@ const customTheme = createTheme({
         },
       },
     },
-    MuiTextField: {
+    MuiOutlinedInput: {
       styleOverrides: {
         root: {
+          height: inputHeight,
+          backgroundColor: colors.background,
+          borderRadius: borderRadiusStandard,
+          backgroundClip: 'padding-box',
+          '&.Mui-error': {
+            backgroundColor: `${colors.errorContainer} !important`,
+          },
           '& .MuiOutlinedInput-root': {
             '& fieldset': {
               borderColor: colors.outline,
@@ -133,6 +165,16 @@ const customTheme = createTheme({
             '&.Mui-focused fieldset': {
               borderColor: colors.primary,
             },
+          },
+        },
+      },
+    },
+    MuiFormHelperText: {
+      styleOverrides: {
+        root: {
+          color: colors.onSurface,
+          '&.Mui-error': {
+            color: colors.onSurface,
           },
         },
       },

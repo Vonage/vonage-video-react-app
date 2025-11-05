@@ -16,7 +16,7 @@ import BannerLanguage from '../BannerLanguage';
 const Banner = (): ReactElement => {
   return (
     <AppBar position="static">
-      <Toolbar>
+      <Toolbar sx={{ alignItems: 'start' }}>
         <Box sx={{ flex: 1, bgcolor: { xs: 'background.paper', md: 'primary.light' } }}>
           <BannerLogo />
         </Box>

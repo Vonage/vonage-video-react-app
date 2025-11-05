@@ -1,6 +1,5 @@
 import { ReactElement, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useTheme, useMediaQuery } from '@mui/material';
 import Box from '@ui/Box';
 import Typography from '@ui/Typography';
 
@@ -11,8 +10,6 @@ import Typography from '@ui/Typography';
  */
 const LandingPageWelcome = (): ReactElement => {
   const { t } = useTranslation();
-  const theme = useTheme();
-  const isSmUp = useMediaQuery(theme.breakpoints.up('sm'));
   const title = t('landing.welcome.title');
   const words = useMemo(() => title.split(' '), [title]);
 
@@ -20,7 +17,7 @@ const LandingPageWelcome = (): ReactElement => {
     <Box
       sx={{
         maxWidth: '48rem',
-        pl: { xs: 2, xl: 4 },
+        pl: { xs: 0, lg: 4 },
         textAlign: 'left',
       }}
     >
@@ -38,7 +35,7 @@ const LandingPageWelcome = (): ReactElement => {
           <Typography
             key={word}
             variant="h2"
-            sx={{
+            sx={(theme) => ({
               color: index === 1 ? 'primary.main' : 'text.primary',
               lineHeight: 1.2,
               mr: { xs: 1, md: 0 },
@@ -49,24 +46,26 @@ const LandingPageWelcome = (): ReactElement => {
               [theme.breakpoints.down('sm')]: {
                 fontSize: theme.typography.h4.fontSize,
               },
-            }}
+            })}
           >
             {word}
           </Typography>
         ))}
       </Box>
 
-      {isSmUp && (
-        <Typography
-          variant="h5"
-          sx={{
-            color: 'text.secondary',
-            mt: 1,
-          }}
-        >
-          {t('landing.welcome.subtitle')}
-        </Typography>
-      )}
+      <Typography
+        variant="h5"
+        sx={{
+          color: 'text.secondary',
+          mt: 1,
+          display: {
+            xs: 'none',
+            sm: 'block',
+          },
+        }}
+      >
+        {t('landing.welcome.subtitle')}
+      </Typography>
     </Box>
   );
 };

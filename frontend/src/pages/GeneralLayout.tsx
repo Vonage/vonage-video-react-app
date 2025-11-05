@@ -17,6 +17,7 @@ const GeneralLayout = ({ leftSide, rightSide }: { leftSide: ReactNode; rightSide
       <Stack
         direction={{ xs: 'column', md: 'row' }}
         sx={{
+          display: { xs: 'block', md: 'flex' },
           flex: 1,
           width: '100%',
         }}
@@ -38,7 +39,7 @@ const GeneralLayout = ({ leftSide, rightSide }: { leftSide: ReactNode; rightSide
           sx={{
             flex: 1,
             display: 'flex',
-            alignItems: 'center',
+            alignItems: { xs: 'start', md: 'center' },
             justifyContent: 'center',
             p: 3,
             bgcolor: 'background.paper',

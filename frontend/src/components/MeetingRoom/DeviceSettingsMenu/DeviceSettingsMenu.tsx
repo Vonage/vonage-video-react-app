@@ -2,7 +2,6 @@ import { ClickAwayListener } from '@mui/material';
 import Grow from '@mui/material/Grow';
 import Paper from '@mui/material/Paper';
 import Popper from '@mui/material/Popper';
-import { useTheme } from '@mui/material/styles';
 import { ReactElement, RefObject, Dispatch, SetStateAction } from 'react';
 import { PopperChildrenProps } from '@mui/base';
 import { hasMediaProcessorSupport } from '@vonage/client-sdk-video';
@@ -14,7 +13,6 @@ import VideoDevices from '../VideoDevices';
 import DropdownSeparator from '../DropdownSeparator';
 import VideoDevicesOptions from '../VideoDevicesOptions';
 import useConfigContext from '../../../hooks/useConfigContext';
-import { colors } from '../../../utils/customTheme/customTheme';
 
 export type DeviceSettingsMenuProps = {
   deviceType: 'audio' | 'video';
@@ -55,7 +53,6 @@ const DeviceSettingsMenu = ({
 }: DeviceSettingsMenuProps): ReactElement | false => {
   const config = useConfigContext();
   const isAudio = deviceType === 'audio';
-  const theme = useTheme();
   const { allowBackgroundEffects } = config.videoSettings;
   const shouldDisplayBackgroundEffects = hasMediaProcessorSupport() && allowBackgroundEffects;
 
@@ -109,9 +106,9 @@ const DeviceSettingsMenu = ({
           <div className="text-left font-normal">
             <ClickAwayListener onClickAway={handleClose}>
               <Paper
-                sx={{
-                  backgroundColor: colors.darkGrey,
-                  color: colors.onPrimary,
+                sx={(theme) => ({
+                  backgroundColor: theme.palette.background.darkGrey,
+                  color: theme.palette.primary.contrastText,
                   padding: { xs: 1, sm: 2 },
                   borderRadius: 2,
                   zIndex: 1,
@@ -131,7 +128,7 @@ const DeviceSettingsMenu = ({
                   width: { xs: '90vw', sm: '100%' },
                   maxWidth: 400,
                   position: 'relative',
-                }}
+                })}
               >
                 {renderSettingsMenu()}
               </Paper>

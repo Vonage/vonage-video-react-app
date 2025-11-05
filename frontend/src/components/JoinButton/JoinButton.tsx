@@ -27,9 +27,9 @@ const JoinButton = ({ roomName, isDisabled }: JoinButtonProps): ReactElement => 
 
   return (
     <Button
+      variant="outlined"
       disabled={roomName === '' || isDisabled}
-      className="h-14"
-      sx={{ textTransform: 'none', marginLeft: '8px' }}
+      sx={{ marginLeft: '8px' }}
       onClick={handleJoin}
       type="submit"
     >

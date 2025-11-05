@@ -1,7 +1,8 @@
 import { SetStateAction, Dispatch, ReactElement, ChangeEvent } from 'react';
-import { InputAdornment, TextField } from '@mui/material';
-import { Keyboard } from '@mui/icons-material';
 import { useTranslation } from 'react-i18next';
+import VividIcon from '@components/VividIcon';
+import TextField from '@ui/TextField';
+import InputAdornment from '@ui/InputAdornment';
 import isValidRoomName from '../../utils/isValidRoomName';
 
 export type RoomNameInputProps = {
@@ -49,7 +50,7 @@ const RoomNameInput = ({
   return (
     <TextField
       id="room-name"
-      className="h-12 w-52 pr-2"
+      fullWidth
       placeholder={t('room.input.placeholder')}
       value={roomName}
       onChange={handleChange}
@@ -59,7 +60,7 @@ const RoomNameInput = ({
         inputProps: { maxLength: 60 },
         startAdornment: (
           <InputAdornment position="start">
-            <Keyboard />
+            <VividIcon name="abc-keyboard-line" customSize={-5} />
           </InputAdornment>
         ),
       }}
