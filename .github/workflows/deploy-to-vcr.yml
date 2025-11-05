@@ -28,8 +28,10 @@ jobs:
           cache: npm
 
       - name: Install VCR CLI
+        shell: bash
         run: |
-          sudo curl -L https://raw.githubusercontent.com/Vonage/cloud-runtime-cli/main/script/install.sh | sudo sh
+          set -euo pipefail
+          curl -fsSL https://raw.githubusercontent.com/Vonage/cloud-runtime-cli/main/script/install.sh | sudo bash
           vcr -v
 
       - name: Deploy vcr
