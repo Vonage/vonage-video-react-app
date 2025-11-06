@@ -29,6 +29,7 @@ const vitestConfig: VitestUserConfigInterface = defineVitestConfig({
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd());
+  const isDevelopment = mode === 'development';
 
   return mergeConfig(vitestConfig, {
     server: {
@@ -44,10 +45,14 @@ export default defineConfig(({ mode }) => {
         'process.env.CI': process.env.CI,
         preventAssignment: true,
       }),
-      checker({
-        typescript: true,
-        terminal: true,
-      }),
+      ...(isDevelopment
+        ? [
+            checker({
+              typescript: true,
+              terminal: true,
+            }),
+          ]
+        : []),
     ],
     resolve: {
       alias: {

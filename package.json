@@ -56,6 +56,7 @@
     "@types/node": "^20.12.7",
     "@typescript-eslint/eslint-plugin": "^8.30.1",
     "@typescript-eslint/parser": "^8.30.1",
+    "concurrently": "^9.1.2",
     "eslint": "^8",
     "eslint-config-airbnb": "^19.0.4",
     "eslint-config-airbnb-typescript": "^18.0.0",
@@ -71,9 +72,9 @@
     "eslint-plugin-tailwindcss": "^3.18.0",
     "husky": "^9.0.11",
     "license-checker": "^25.0.1",
-    "concurrently": "^9.1.2",
     "prettier": "^3.2.5",
-    "typescript": "^5.8.3"
+    "typescript": "^5.8.3",
+    "vite-plugin-checker": "^0.11.0"
   },
   "resolutions": {
     "wrap-ansi": "7.0.0",
