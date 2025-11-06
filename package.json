@@ -39,7 +39,8 @@
     "ts-check": "yarn --silent ts-check:backend && yarn --silent ts-check:frontend",
     "test:integrationUpdateScreenshots": "yarn workspace integration-tests updateScreenshots",
     "ts-check:backend": "yarn --silent workspace backend ts-check",
-    "ts-check:frontend": "yarn --silent workspace frontend ts-check"
+    "ts-check:frontend": "yarn --silent workspace frontend ts-check",
+    "vite-plugin-checker": "^0.11.0"
   },
   "repository": {
     "type": "git",
@@ -73,8 +74,7 @@
     "husky": "^9.0.11",
     "license-checker": "^25.0.1",
     "prettier": "^3.2.5",
-    "typescript": "^5.8.3",
-    "vite-plugin-checker": "^0.11.0"
+    "typescript": "^5.8.3"
   },
   "resolutions": {
     "wrap-ansi": "7.0.0",
