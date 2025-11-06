@@ -4,6 +4,9 @@ declare module '@mui/material/styles' {
   interface TypeBackground {
     darkGrey: string;
   }
+  interface TypeText {
+    light: string;
+  }
 }
 
 const borderRadiusStandard = '8px';
@@ -28,6 +31,8 @@ const colors = {
   primaryContainer: '#6300C4',
   onPrimaryContainer: '#FFFFFF',
   surfaceTint: '#7F02F7',
+
+  textLight: '#64748B',
 
   // Secondary colors
   secondary: '#2F293B',
@@ -107,6 +112,7 @@ const customTheme = createTheme({
     text: {
       primary: colors.onBackground,
       secondary: colors.onSurface,
+      light: colors.textLight,
     },
     divider: colors.outline,
   },

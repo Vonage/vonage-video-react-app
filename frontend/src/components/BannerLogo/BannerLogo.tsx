@@ -1,31 +1,45 @@
 import { ReactElement } from 'react';
-import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
+import { useMediaQuery, useTheme } from '@mui/material';
+import Box from '@ui/Box';
 
 /**
  * BannerLogo Component
  *
- * This component returns the logo that redirects to the landing page when clicked.
- * @returns {ReactElement} - the banner logo component
+ * This component returns a logo for the banner that navigates to the parent route when clicked.
+ * @returns {ReactElement} - the banner logo component.
  */
-const BannerLogo = (): ReactElement => (
-  <Link to="..">
-    <div className="box-border" data-testid="banner-logo">
-      <img
-        style={{
-          marginLeft: '24px',
-          marginTop: '40px',
+const BannerLogo = (): ReactElement => {
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('md'));
+  const navigate = useNavigate();
+  const handleClick = () => {
+    navigate('..');
+  };
+
+  return (
+    <Box
+      data-testid="banner-logo"
+      sx={{
+        boxSizing: 'border-box',
+        ml: { xs: 1, md: 6 },
+        mt: { xs: 2, md: 5 },
+        px: { xs: 2, md: 0 },
+      }}
+    >
+      <Box
+        component="img"
+        src={isMobile ? '/images/vonage-logo-mobile.svg' : '/images/vonage-logo-desktop.svg'}
+        alt={isMobile ? 'Vonage-mobile-logo' : 'Vonage-desktop-logo'}
+        onClick={handleClick}
+        sx={{
+          height: { xs: 40, md: 72 },
+          display: 'block',
+          cursor: 'pointer',
         }}
-        className="hidden h-[72px] pl-4 pr-8 md:flex"
-        src="/images/vonage-logo-desktop.svg"
-        alt="Vonage-desktop-logo"
       />
-      <img
-        className="my-4 h-10 px-8 md:hidden"
-        src="/images/vonage-logo-mobile.svg"
-        alt="Vonage-mobile-logo"
-      />
-    </div>
-  </Link>
-);
+    </Box>
+  );
+};
 
 export default BannerLogo;
