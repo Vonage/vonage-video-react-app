@@ -1,12 +1,12 @@
 import { useLocation } from 'react-router-dom';
 import { ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
-import GeneralLayout from '@pages/GeneralLayout';
+import GridLayout from '@ui/FlexLayout';
+import Banner from '@components/Banner';
 import useArchives from '../../hooks/useArchives';
 import ArchiveList from '../../components/GoodBye/ArchiveList';
 import GoodByeMessage from '../../components/GoodBye/GoodbyeMessage';
 import useRoomName from '../../hooks/useRoomName';
-
 /**
  * GoodBye Component
  *
@@ -28,15 +28,20 @@ const GoodBye = (): ReactElement => {
   const caption: string = location.state?.caption || t('goodbye.default.message');
 
   return (
-    <GeneralLayout
-      leftSide={<GoodByeMessage header={header} message={caption} roomName={roomName} />}
-      rightSide={
+    <GridLayout>
+      <GridLayout.Banner>
+        <Banner />
+      </GridLayout.Banner>
+      <GridLayout.Left>
+        <GoodByeMessage header={header} message={caption} roomName={roomName} />
+      </GridLayout.Left>
+      <GridLayout.Right>
         <div className="h-auto w-full shrink py-4 ps-12 text-left">
           <h3 className="w-9/12 pb-5 text-4xl text-black">{t('archiveList.label')}</h3>
           <ArchiveList archives={archives} />
         </div>
-      }
-    />
+      </GridLayout.Right>
+    </GridLayout>
   );
 };
 

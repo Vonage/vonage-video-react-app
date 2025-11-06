@@ -18,6 +18,7 @@ const LandingPageWelcome = (): ReactElement => {
       sx={{
         maxWidth: '48rem',
         pl: { xs: 0, lg: 4 },
+        mb: { xs: 0, md: 6 },
         textAlign: 'left',
       }}
     >
@@ -40,7 +41,7 @@ const LandingPageWelcome = (): ReactElement => {
               lineHeight: 1.2,
               mr: { xs: 1, md: 0 },
               fontSize: theme.typography.h2.fontSize,
-              [theme.breakpoints.between('sm', 'md')]: {
+              [theme.breakpoints.between('sm', 'lg')]: {
                 fontSize: theme.typography.h3.fontSize,
               },
               [theme.breakpoints.down('sm')]: {

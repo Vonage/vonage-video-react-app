@@ -1,6 +1,7 @@
 import { useState, useEffect, MouseEvent, ReactElement, TouchEvent } from 'react';
 import Box from '@ui/Box';
-import GeneralLayout from '@pages/GeneralLayout';
+import GridLayout from '@ui/FlexLayout';
+import Banner from '@components/Banner';
 import usePreviewPublisherContext from '../../hooks/usePreviewPublisherContext';
 import ControlPanel from '../../components/WaitingRoom/ControlPanel';
 import VideoContainer from '../../components/WaitingRoom/VideoContainer';
@@ -95,8 +96,11 @@ const WaitingRoom = (): ReactElement => {
 
   return (
     <Box>
-      <GeneralLayout
-        leftSide={
+      <GridLayout>
+        <GridLayout.Banner>
+          <Banner />
+        </GridLayout.Banner>
+        <GridLayout.Left>
           <div
             className={`max-w-full flex-col ${isSmallViewport ? '' : 'h-[394px]'} sm: inline-flex`}
           >
@@ -114,10 +118,11 @@ const WaitingRoom = (): ReactElement => {
               />
             )}
           </div>
-        }
-        rightSide={<UsernameInput username={username} setUsername={setUsername} />}
-      />
-
+        </GridLayout.Left>
+        <GridLayout.Right>
+          <UsernameInput username={username} setUsername={setUsername} />
+        </GridLayout.Right>
+      </GridLayout>
       {accessStatus !== DEVICE_ACCESS_STATUS.ACCEPTED && (
         <DeviceAccessAlert accessStatus={accessStatus} />
       )}

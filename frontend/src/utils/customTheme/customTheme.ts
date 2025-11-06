@@ -9,6 +9,9 @@ declare module '@mui/material/styles' {
 const borderRadiusStandard = '8px';
 const borderRadiusStandardNumber = 2.85;
 const inputHeight = 48;
+const buttonFontSize = 16;
+const h2FontWeight = 500;
+const h5FontWeight = 500;
 
 const buttonSx = {
   height: inputHeight,
@@ -69,9 +72,7 @@ const colors = {
 } as const;
 
 const fonts = {
-  family: ['spezia', 'system-ui', 'ui-sans-serif', 'Inter', 'Marker Felt', 'Trebuchet MS'].join(
-    ','
-  ),
+  family: ['"Inter"', 'system-ui', 'ui-sans-serif', '"Marker Felt"', '"Trebuchet MS"'].join(','),
 } as const;
 
 const customTheme = createTheme({
@@ -115,7 +116,10 @@ const customTheme = createTheme({
   components: {
     MuiButton: {
       styleOverrides: {
-        root: buttonSx,
+        root: {
+          ...buttonSx,
+          fontSize: buttonFontSize,
+        },
         outlined: {
           borderColor: colors.primary,
         },
@@ -190,6 +194,8 @@ const customTheme = createTheme({
   },
   typography: {
     fontFamily: fonts.family,
+    h2: { fontWeight: h2FontWeight },
+    h5: { fontWeight: h5FontWeight },
   },
 });
 

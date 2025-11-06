@@ -1,5 +1,6 @@
 import { ReactElement } from 'react';
-import GeneralLayout from '@pages/GeneralLayout';
+import GridLayout from '@ui/FlexLayout';
+import Banner from '@components/Banner';
 import LandingPageWelcome from '../../components/LandingPageWelcome';
 import RoomJoinContainer from '../../components/RoomJoinContainer';
 
@@ -15,7 +16,19 @@ import RoomJoinContainer from '../../components/RoomJoinContainer';
  * @returns {ReactElement} - The landing page.
  */
 const LandingPage = (): ReactElement => {
-  return <GeneralLayout leftSide={<LandingPageWelcome />} rightSide={<RoomJoinContainer />} />;
+  return (
+    <GridLayout>
+      <GridLayout.Banner>
+        <Banner />
+      </GridLayout.Banner>
+      <GridLayout.Left>
+        <LandingPageWelcome />
+      </GridLayout.Left>
+      <GridLayout.Right>
+        <RoomJoinContainer />
+      </GridLayout.Right>
+    </GridLayout>
+  );
 };
 
 export default LandingPage;
