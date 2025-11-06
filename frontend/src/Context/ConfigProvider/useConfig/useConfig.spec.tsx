@@ -17,6 +17,7 @@ describe('useConfig', () => {
     },
     waitingRoomSettings: {
       allowDeviceSelection: true,
+      allowTestNetwork: true,
     },
     meetingRoomSettings: {
       allowArchiving: true,
@@ -60,6 +61,7 @@ describe('useConfig', () => {
       },
       waitingRoomSettings: {
         allowDeviceSelection: false,
+        allowTestNetwork: false,
       },
       meetingRoomSettings: {
         allowArchiving: false,

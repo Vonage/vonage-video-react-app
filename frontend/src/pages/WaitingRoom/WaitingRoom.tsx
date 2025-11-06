@@ -2,7 +2,8 @@ import { useState, useEffect, MouseEvent, ReactElement, TouchEvent } from 'react
 import usePreviewPublisherContext from '../../hooks/usePreviewPublisherContext';
 import ControlPanel from '../../components/WaitingRoom/ControlPanel';
 import VideoContainer from '../../components/WaitingRoom/VideoContainer';
-import UsernameInput from '../../components/WaitingRoom/UserNameInput';
+import WaitingRoomForm from '../../components/WaitingRoom/WaitingRoomForm';
+import PreCallTestDialog from '../../components/WaitingRoom/PreCallTestDialog';
 import { DEVICE_ACCESS_STATUS } from '../../utils/constants';
 import DeviceAccessAlert from '../../components/DeviceAccessAlert';
 import Banner from '../../components/Banner';
@@ -35,6 +36,7 @@ const WaitingRoom = (): ReactElement => {
   const [openAudioInput, setOpenAudioInput] = useState<boolean>(false);
   const [openVideoInput, setOpenVideoInput] = useState<boolean>(false);
   const [openAudioOutput, setOpenAudioOutput] = useState<boolean>(false);
+  const [isPreCallTestOpen, setIsPreCallTestOpen] = useState<boolean>(false);
   const [username, setUsername] = useState(getStorageItem(STORAGE_KEYS.USERNAME) ?? '');
   const isSmallViewport = useIsSmallViewport();
 
@@ -115,13 +117,21 @@ const WaitingRoom = (): ReactElement => {
                 />
               )}
             </div>
-            <UsernameInput username={username} setUsername={setUsername} />
+            <WaitingRoomForm
+              username={username}
+              setUsername={setUsername}
+              onOpenPreCallTest={() => setIsPreCallTestOpen(true)}
+            />
           </div>
         </div>
         {accessStatus !== DEVICE_ACCESS_STATUS.ACCEPTED && (
           <DeviceAccessAlert accessStatus={accessStatus} />
         )}
       </div>
+      <PreCallTestDialog
+        isPreCallTestOpen={isPreCallTestOpen}
+        setIsPreCallTestOpen={setIsPreCallTestOpen}
+      />
     </div>
   );
 };

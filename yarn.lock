@@ -2846,6 +2846,15 @@
     "@types/node-fetch" "2.6.11"
     node-fetch "^2.7"
 
+"@vonage/video-client-network-test@^3.1.6":
+  version "3.1.6"
+  resolved "https://registry.yarnpkg.com/@vonage/video-client-network-test/-/video-client-network-test-3.1.6.tgz#d0aae277d72922da355541b2c8abfb79a42683d6"
+  integrity sha512-KM7tOW5+AWjO3sy7+mIMS3u3ajjk9r+cUBbh3+4UMl3C+8MO2Ztzm5h44IvQ6m/a2Z93jmLtRG5eFgIfgf6LNw==
+  dependencies:
+    axios "^1.8.3"
+    opentok-solutions-logging "^1.1.1"
+    promise "^8.0.1"
+
 "@vonage/video@^1.17.0":
   version "1.17.0"
   resolved "https://registry.npmjs.org/@vonage/video/-/video-1.17.0.tgz"
@@ -3146,7 +3155,7 @@ arraybuffer.prototype.slice@^1.0.3:
     is-array-buffer "^3.0.4"
     is-shared-array-buffer "^1.0.2"
 
-asap@^2.0.0:
+asap@^2.0.0, asap@~2.0.6:
   version "2.0.6"
   resolved "https://registry.npmjs.org/asap/-/asap-2.0.6.tgz"
   integrity sha512-BSHWgDSAiKs50o2Re8ppvp3seVHXSRM44cdSsT9FfNEUUZLOGWVCsiWaRPWM1Znn+mqZ1OfVZ3z3DWEzSp7hRA==
@@ -3197,7 +3206,7 @@ axe-core@=4.7.0:
   resolved "https://registry.npmjs.org/axe-core/-/axe-core-4.7.0.tgz"
   integrity sha512-M0JtH+hlOL5pLQwHOLNYZaXuhqmvS8oExsqB1SBYgA4Dk7u/xx+YdGHXaK5pyUfed5mYXdlYiphWq3G8cRi5JQ==
 
-axios@^1.12.0, axios@^1.2.1, axios@^1.6.3:
+axios@^1.12.0, axios@^1.2.1, axios@^1.6.3, axios@^1.8.3:
   version "1.12.2"
   resolved "https://registry.yarnpkg.com/axios/-/axios-1.12.2.tgz#6c307390136cf7a2278d09cec63b136dfc6e6da7"
   integrity sha512-vMJzPewAlRyOgxV2dU0Cuz2O8zzzx9VYtbJOaBgXFeLc4IV/Eg50n4LowmehOOR61S8ZMpc2K5Sa7g6A4jfkUw==
@@ -7089,7 +7098,7 @@ opentok-layout-js@^5.4.0:
   resolved "https://registry.npmjs.org/opentok-layout-js/-/opentok-layout-js-5.4.0.tgz"
   integrity sha512-jfwBE8C+wdsJJluCemU6hr5Z7UBH9z3WvB3alKfFrGBpiE37OIA+WGi13jUr5Z7mnLQ1/gNse2FhDJqaRR29Jw==
 
-opentok-solutions-logging@^1.1.5:
+opentok-solutions-logging@^1.1.1, opentok-solutions-logging@^1.1.5:
   version "1.1.5"
   resolved "https://registry.npmjs.org/opentok-solutions-logging/-/opentok-solutions-logging-1.1.5.tgz"
   integrity sha512-xnLz0iWmJCWYDMKD80ow5+TcQYOzr2B4l2QA/EQQXjQGIEaXRqEFMhbQr3WXq0ET0Yn5zdJ3unBe8ESGXxUqxw==
@@ -7486,6 +7495,13 @@ progress@^2.0.3:
   version "2.0.3"
   resolved "https://registry.yarnpkg.com/progress/-/progress-2.0.3.tgz#7e8cf8d8f5b8f239c1bc68beb4eb78567d572ef8"
   integrity sha512-7PiHtLll5LdnKIMw100I+8xJXR5gW2QwWYkT6iJva0bXitZKa/XMrSbdmg3r2Xnaidz9Qumd0VPaMrZlF9V9sA==
+
+promise@^8.0.1:
+  version "8.3.0"
+  resolved "https://registry.yarnpkg.com/promise/-/promise-8.3.0.tgz#8cb333d1edeb61ef23869fbb8a4ea0279ab60e0a"
+  integrity sha512-rZPNPKTOYVNEEKFaq1HqTgOwZD+4/YHS5ukLzQCypkj+OkYx7iv0mA91lJlpPPZ8vMau3IIGj5Qlwrx+8iiSmg==
+  dependencies:
+    asap "~2.0.6"
 
 prompts@^2.0.1:
   version "2.4.2"

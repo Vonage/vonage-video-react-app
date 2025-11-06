@@ -48,7 +48,6 @@ const cleanAndDedupeDeviceLabels = (
   devices: (Device | AudioOutputDevice)[]
 ): Array<Device | AudioOutputDevice> => {
   const labelCounts = new Map<string, number>();
-
   return devices.map((device) => {
     if (!device.label) {
       return device;
