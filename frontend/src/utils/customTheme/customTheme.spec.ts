@@ -45,7 +45,6 @@ describe('customTheme', () => {
       const { components } = customTheme;
       expect(components?.MuiAppBar).toBeDefined();
       expect(components?.MuiPaper).toBeDefined();
-      expect(components?.MuiTextField).toBeDefined();
       expect(components?.MuiTooltip).toBeDefined();
     });
   });

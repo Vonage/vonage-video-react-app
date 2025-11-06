@@ -15,7 +15,7 @@ describe('JoinExistingRoom', () => {
     render(<JoinExistingRoom />);
 
     expect(screen.getByTestId('JoinExistingRoom')).toBeInTheDocument();
-    expect(screen.getByTestId('KeyboardIcon')).toBeInTheDocument();
+    expect(screen.getByTestId('vivid-icon-abc-keyboard-line')).toBeInTheDocument();
     expect(screen.getByText('Join')).toBeInTheDocument();
     expect(screen.getByPlaceholderText(/Enter room name/i)).toBeInTheDocument();
   });

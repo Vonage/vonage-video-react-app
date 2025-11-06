@@ -6,7 +6,9 @@ describe('LandingPageWelcome', () => {
   it('renders the welcome heading and applies correct styling', () => {
     render(<LandingPageWelcome />);
 
-    const textHeading = screen.getByText('Welcome to the Vonage Video React App');
+    const textHeading = screen.getByText(
+      'Power your business with video that transforms customer satisfaction.'
+    );
     expect(textHeading).toBeInTheDocument();
   });
 });

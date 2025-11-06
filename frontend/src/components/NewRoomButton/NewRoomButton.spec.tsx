@@ -13,11 +13,11 @@ describe('NewRoomButton', () => {
   it('renders New room button correctly', async () => {
     render(<NewRoomButton handleNewRoom={mockHandleNewRoom} />);
 
-    const icon = screen.getByTestId('VideoCallIcon');
+    const icon = screen.getByTestId('vivid-icon-plus-line');
     const button = screen.getByTestId('new-room-button');
     expect(icon).toBeInTheDocument();
     expect(button).toBeInTheDocument();
-    expect(button).toHaveTextContent(/Create room/i);
+    expect(button).toHaveTextContent(/Create a new room/i);
     expect(button).toBeEnabled();
 
     await userEvent.click(button);

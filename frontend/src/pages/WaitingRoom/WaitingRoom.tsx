@@ -95,7 +95,7 @@ const WaitingRoom = (): ReactElement => {
   };
 
   return (
-    <Box>
+    <Box data-testid="waitingRoom">
       <GridLayout>
         <GridLayout.Banner>
           <Banner />
