@@ -15,7 +15,7 @@ const BannerDateTime = (): ReactElement | null => {
 
   if (isTablet) {
     return null;
-  } // hide on tablet or less
+  }
 
   return (
     <Box
