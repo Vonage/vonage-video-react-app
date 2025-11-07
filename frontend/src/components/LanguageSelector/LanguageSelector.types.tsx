@@ -8,5 +8,4 @@ export type LanguageOption = {
 
 export type LanguageSelectorProps = {
   showFlag?: boolean;
-  className?: string;
 };
