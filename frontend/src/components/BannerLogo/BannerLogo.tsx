@@ -32,6 +32,8 @@ const BannerLogo = (): ReactElement => {
         src={isTablet ? '/images/vonage-logo-mobile.svg' : '/images/vonage-logo-desktop.svg'}
         alt={isTablet ? 'Vonage-mobile-logo' : 'Vonage-desktop-logo'}
         onClick={handleClick}
+        role="button"
+        tabIndex={0}
         sx={{
           height: { xs: 40, md: 72 },
           display: 'block',
