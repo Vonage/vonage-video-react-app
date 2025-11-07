@@ -75,7 +75,7 @@ const LanguageSelector = ({ showFlag = true }: LanguageSelectorProps): ReactElem
           >
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
               {showFlag && <VividIcon name={option.flag} customSize={-5} />}
-              <Box component="span">{option.name}</Box>
+              {option.name}
             </Box>
           </MenuItem>
         ))}
