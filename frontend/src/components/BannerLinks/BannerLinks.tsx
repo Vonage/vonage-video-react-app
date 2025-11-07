@@ -1,4 +1,5 @@
 import { ReactElement } from 'react';
+import Box from '@ui/Box';
 import GHRepoButton from '../GHRepoButton';
 
 /**
@@ -9,9 +10,9 @@ import GHRepoButton from '../GHRepoButton';
  */
 const BannerLinks = (): ReactElement => {
   return (
-    <div className="flex items-center" data-testid="banner-links">
+    <Box display="flex" alignItems="center" data-testid="banner-links">
       <GHRepoButton />
-    </div>
+    </Box>
   );
 };
 

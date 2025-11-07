@@ -1,7 +1,7 @@
 import { ReactElement } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useMediaQuery, useTheme } from '@mui/material';
 import Box from '@ui/Box';
+import useIsTabletViewport from '@hooks/useIsTabletViewport';
 
 /**
  * BannerLogo Component
@@ -10,8 +10,7 @@ import Box from '@ui/Box';
  * @returns {ReactElement} - the banner logo component.
  */
 const BannerLogo = (): ReactElement => {
-  const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down('md'));
+  const isTablet = useIsTabletViewport();
   const navigate = useNavigate();
   const handleClick = () => {
     navigate('..');
@@ -28,9 +27,10 @@ const BannerLogo = (): ReactElement => {
       }}
     >
       <Box
+        data-testid="banner-logo-image"
         component="img"
-        src={isMobile ? '/images/vonage-logo-mobile.svg' : '/images/vonage-logo-desktop.svg'}
-        alt={isMobile ? 'Vonage-mobile-logo' : 'Vonage-desktop-logo'}
+        src={isTablet ? '/images/vonage-logo-mobile.svg' : '/images/vonage-logo-desktop.svg'}
+        alt={isTablet ? 'Vonage-mobile-logo' : 'Vonage-desktop-logo'}
         onClick={handleClick}
         sx={{
           height: { xs: 40, md: 72 },

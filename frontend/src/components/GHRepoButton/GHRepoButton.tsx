@@ -1,7 +1,9 @@
-import { IconButton, Link, Tooltip } from '@mui/material';
-import { GitHub as GitHubIcon } from '@mui/icons-material';
 import { ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
+import Tooltip from '@ui/Tooltip';
+import Link from '@ui/Link';
+import IconButton from '@ui/IconButton';
+import VividIcon from '@components/VividIcon';
 
 /**
  * GHRepoButton Component
@@ -15,8 +17,8 @@ const GHRepoButton = (): ReactElement => {
   return (
     <Link href="https://github.com/Vonage/vonage-video-react-app/" target="_blank">
       <Tooltip title={t('githubTooltip')}>
-        <IconButton color="default">
-          <GitHubIcon />
+        <IconButton aria-label="GitHub Repository">
+          <VividIcon name="github-mono" customSize={-4} />
         </IconButton>
       </Tooltip>
     </Link>

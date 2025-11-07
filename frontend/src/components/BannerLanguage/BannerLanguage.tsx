@@ -1,4 +1,5 @@
 import { ReactElement } from 'react';
+import Box from '@ui/Box';
 import LanguageSelector from '../LanguageSelector';
 
 /**
@@ -9,9 +10,9 @@ import LanguageSelector from '../LanguageSelector';
  */
 const BannerLanguage = (): ReactElement => {
   return (
-    <div className="flex items-center" data-testid="banner-language">
+    <Box display="flex" alignItems="center" data-testid="banner-language">
       <LanguageSelector />
-    </div>
+    </Box>
   );
 };
 

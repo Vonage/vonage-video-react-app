@@ -1,28 +1,40 @@
 import { ReactElement } from 'react';
+import useIsTabletViewport from '@hooks/useIsTabletViewport';
+import Box from '@ui/Box';
+import Typography from '@ui/Typography';
 import useDateTime from '../../hooks/useDateTime';
 
 /**
- * BannerDateTime Component
- *
  * This component returns a UI that includes current time and date.
  * @returns {ReactElement} - the banner with a date and time component
  */
-const BannerDateTime = (): ReactElement => {
+const BannerDateTime = (): ReactElement | null => {
   const { date, time } = useDateTime();
+  const isTablet = useIsTabletViewport();
+
+  if (isTablet) {
+    return null;
+  } // hide on tablet or less
 
   return (
-    <div
-      className="hidden items-center text-lg font-normal text-slate-500 md:flex"
+    <Box
+      display="flex"
+      alignItems="center"
       data-testid="dateAndTime"
+      sx={(theme) => ({ color: theme.palette.text.light })}
     >
-      <span className="mr-1" data-testid="current-time">
+      <Typography variant="body1" component="span" sx={{ mr: 1 }} data-testid="current-time">
         {time}
-      </span>
-      <span className="mr-1"> • </span>
-      <span className="mr-1" data-testid="current-date">
+      </Typography>
+
+      <Typography variant="body1" component="span" sx={{ mr: 1 }}>
+        •
+      </Typography>
+
+      <Typography variant="body1" component="span" sx={{ mr: 1 }} data-testid="current-date">
         {date}
-      </span>
-    </div>
+      </Typography>
+    </Box>
   );
 };
 

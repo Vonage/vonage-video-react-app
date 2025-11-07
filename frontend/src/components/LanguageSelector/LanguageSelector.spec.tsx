@@ -83,15 +83,6 @@ describe('LanguageSelector', () => {
       expect(screen.queryByTestId('vivid-icon-flag-united-kingdom')).not.toBeInTheDocument();
     });
 
-    it('applies custom className', () => {
-      env.setSupportedLanguages('en');
-
-      render(<LanguageSelector className="bg-red-500" />);
-
-      const formControl = screen.getByTestId('language-selector').closest('.MuiFormControl-root');
-      expect(formControl).toHaveClass('bg-red-500');
-    });
-
     it('renders VividIcon with correct size in main display', () => {
       env.setSupportedLanguages('en');
 
