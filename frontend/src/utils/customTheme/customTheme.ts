@@ -128,8 +128,12 @@ const customTheme = createTheme({
     MuiToolbar: {
       styleOverrides: {
         root: {
-          paddingLeft: '0 !important',
-          paddingRight: '0 !important',
+          paddingLeft: '0',
+          paddingRight: '0',
+          '@media (min-width: 600px)': {
+            paddingLeft: 0,
+            paddingRight: 0,
+          },
         },
       },
     },
@@ -157,7 +161,7 @@ const customTheme = createTheme({
           borderRadius: borderRadiusStandard,
           backgroundClip: 'padding-box',
           '&.Mui-error': {
-            backgroundColor: `${colors.errorContainer} !important`,
+            backgroundColor: colors.errorContainer,
           },
           '& .MuiOutlinedInput-root': {
             '& fieldset': {
