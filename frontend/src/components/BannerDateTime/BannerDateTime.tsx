@@ -6,7 +6,8 @@ import useDateTime from '../../hooks/useDateTime';
 
 /**
  * This component returns a UI that includes current time and date.
- * @returns {ReactElement} - the banner with a date and time component
+ * Returns a banner with a date and time component, or null on tablet viewports.
+ * @returns {ReactElement | null} - the banner with a date and time component, or null on tablet viewports
  */
 const BannerDateTime = (): ReactElement | null => {
   const { date, time } = useDateTime();
