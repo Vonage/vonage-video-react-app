@@ -5,7 +5,7 @@ import {
 
 type FormControlProps = MUIFormControlProps;
 
-const FormControl = ({ ...formControlProps }: FormControlProps) => {
+const FormControl = (formControlProps: FormControlProps) => {
   return <MUIFormControl {...formControlProps} />;
 };
 

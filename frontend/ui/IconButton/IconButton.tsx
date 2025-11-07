@@ -2,7 +2,7 @@ import { IconButton as MUIIconButton, IconButtonProps as MUIIconButtonProps } fr
 
 type IconButtonProps = MUIIconButtonProps;
 
-const IconButton = ({ ...iconButtonProps }: IconButtonProps) => {
+const IconButton = (iconButtonProps: IconButtonProps) => {
   return <MUIIconButton {...iconButtonProps} />;
 };
 

@@ -2,7 +2,7 @@ import { MenuItem as MUIMenuItem, MenuItemProps as MUIMenuItemProps } from '@mui
 
 type MenuItemProps = MUIMenuItemProps;
 
-const MenuItem = ({ ...menuItemProps }: MenuItemProps) => {
+const MenuItem = (menuItemProps: MenuItemProps) => {
   return <MUIMenuItem {...menuItemProps} />;
 };
 

@@ -2,7 +2,7 @@ import { Typography as MUITypography, TypographyProps as MUITypographyProps } fr
 
 type TypographyProps = MUITypographyProps;
 
-const Typography = ({ ...typographyProps }: TypographyProps) => {
+const Typography = (typographyProps: TypographyProps) => {
   return <MUITypography {...typographyProps} />;
 };
 

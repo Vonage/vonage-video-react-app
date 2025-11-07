@@ -2,7 +2,7 @@ import { TextField as MUITextField, TextFieldProps as MUITextFieldProps } from '
 
 type TextFieldProps = MUITextFieldProps;
 
-const TextField = ({ ...textFieldProps }: TextFieldProps) => {
+const TextField = (textFieldProps: TextFieldProps) => {
   return <MUITextField {...textFieldProps} />;
 };
 

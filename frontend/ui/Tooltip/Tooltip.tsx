@@ -2,7 +2,7 @@ import { Tooltip as MUITooltip, TooltipProps as MUITooltipProps } from '@mui/mat
 
 type TooltipProps = MUITooltipProps;
 
-const Tooltip = ({ ...tooltipProps }: TooltipProps) => {
+const Tooltip = (tooltipProps: TooltipProps) => {
   return <MUITooltip {...tooltipProps} />;
 };
 

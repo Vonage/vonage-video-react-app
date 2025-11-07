@@ -5,7 +5,7 @@ import {
 
 type InputAdornmentProps = MUIInputAdornmentProps;
 
-const InputAdornment = ({ ...inputAdornmentProps }: InputAdornmentProps) => {
+const InputAdornment = (inputAdornmentProps: InputAdornmentProps) => {
   return <MUIInputAdornment {...inputAdornmentProps} />;
 };
 
