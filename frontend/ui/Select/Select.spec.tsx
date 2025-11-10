@@ -1,6 +1,6 @@
 import { render, screen, fireEvent } from '@testing-library/react';
 import { describe, it, expect, vi } from 'vitest';
-import { MenuItem } from '@mui/material';
+import MenuItem from '@ui/MenuItem';
 import Select from './index';
 
 describe('Select', () => {

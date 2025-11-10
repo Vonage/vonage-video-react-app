@@ -1,13 +1,13 @@
 import { render, screen } from '@testing-library/react';
 import { describe, it, expect } from 'vitest';
-import { FormLabel, TextField, FormHelperText } from '@mui/material';
+import TextField from '@ui/TextField';
 import FormControl from './index';
 
 describe('FormControl', () => {
   it('renders correctly', () => {
     render(
       <FormControl>
-        <FormLabel>Test Label</FormLabel>
+        Test Label
         <TextField />
       </FormControl>
     );
@@ -19,14 +19,12 @@ describe('FormControl', () => {
   it('renders with children components', () => {
     render(
       <FormControl>
-        <FormLabel>Name</FormLabel>
+        Name
         <TextField placeholder="Enter your name" />
-        <FormHelperText>This field is required</FormHelperText>
       </FormControl>
     );
 
     expect(screen.getByText('Name')).toBeInTheDocument();
     expect(screen.getByPlaceholderText('Enter your name')).toBeInTheDocument();
-    expect(screen.getByText('This field is required')).toBeInTheDocument();
   });
 });

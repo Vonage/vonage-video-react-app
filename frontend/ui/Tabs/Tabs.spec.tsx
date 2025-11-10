@@ -1,6 +1,6 @@
 import { render, screen, fireEvent } from '@testing-library/react';
 import { describe, it, expect, vi } from 'vitest';
-import { Tab } from '@mui/material';
+import Tab from '@ui/Tab';
 import Tabs from './index';
 
 describe('Tabs', () => {
