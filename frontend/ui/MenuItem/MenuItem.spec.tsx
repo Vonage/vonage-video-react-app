@@ -1,6 +1,6 @@
 import { render, screen, fireEvent } from '@testing-library/react';
 import { describe, it, expect, vi } from 'vitest';
-import MenuItem from './MenuItem';
+import MenuItem from './index';
 
 describe('MenuItem', () => {
   it('renders correctly', () => {

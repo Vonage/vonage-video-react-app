@@ -1,6 +1,6 @@
 import { render, screen } from '@testing-library/react';
 import { describe, it, expect } from 'vitest';
-import InputAdornment from './InputAdornment';
+import InputAdornment from './index';
 
 describe('InputAdornment', () => {
   it('renders correctly', () => {

@@ -1,6 +1,6 @@
 import { render, screen, fireEvent } from '@testing-library/react';
 import { describe, it, expect, vi } from 'vitest';
-import Link from './Link';
+import Link from './index';
 
 describe('Link', () => {
   it('renders correctly', () => {

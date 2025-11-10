@@ -1,6 +1,6 @@
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { describe, it, expect } from 'vitest';
-import Tooltip from './Tooltip';
+import Tooltip from './index';
 
 describe('Tooltip', () => {
   it('renders correctly', () => {

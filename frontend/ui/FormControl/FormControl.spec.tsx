@@ -1,7 +1,7 @@
 import { render, screen } from '@testing-library/react';
 import { describe, it, expect } from 'vitest';
 import { FormLabel, TextField, FormHelperText } from '@mui/material';
-import FormControl from './FormControl';
+import FormControl from './index';
 
 describe('FormControl', () => {
   it('renders correctly', () => {
