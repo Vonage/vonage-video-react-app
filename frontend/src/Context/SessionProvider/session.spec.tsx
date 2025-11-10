@@ -1,47 +1,32 @@
-import { useEffect } from 'react';
-import { describe, expect, it, vi, beforeEach, Mock, afterAll, afterEach } from 'vitest';
-import { act, render, waitFor } from '@testing-library/react';
+import { ReactElement, useEffect } from 'react';
+import { describe, expect, it, vi, beforeEach, Mock } from 'vitest';
+import { act, render as renderBase, waitFor } from '@testing-library/react';
 import EventEmitter from 'events';
 import { Publisher, Stream } from '@vonage/client-sdk-video';
-import useSessionContext from '../../hooks/useSessionContext';
-import SessionProvider from './session';
-import ActiveSpeakerTracker from '../../utils/ActiveSpeakerTracker';
-import useUserContext from '../../hooks/useUserContext';
-import VonageVideoClient from '../../utils/VonageVideoClient';
-import { Credential, StreamPropertyChangedEvent, SubscriberWrapper } from '../../types/session';
-import fetchCredentials from '../../api/fetchCredentials';
+import { makeSessionProviderWrapper } from '@test/providers';
+import useSessionContext from '@hooks/useSessionContext';
+import ActiveSpeakerTracker from '@utils/ActiveSpeakerTracker';
+import VonageVideoClient from '@utils/VonageVideoClient';
+import { Credential, StreamPropertyChangedEvent, SubscriberWrapper } from '@app-types/session';
+import fetchCredentials from '@api/fetchCredentials';
+import { UserType } from '@Context/user';
 
-vi.mock('../../utils/ActiveSpeakerTracker');
-vi.mock('../../hooks/useUserContext');
-vi.mock('../../utils/VonageVideoClient');
+vi.mock('@utils/ActiveSpeakerTracker');
+vi.mock('@utils/VonageVideoClient');
+
 // Override the constants for max pinning test
-vi.mock('../../utils/constants', () => ({
+vi.mock('@utils/constants', () => ({
   MAX_PIN_COUNT_MOBILE: 1,
   MAX_PIN_COUNT_DESKTOP: 1,
 }));
-vi.mock('../../api/fetchCredentials');
-vi.mock('../../hooks/useConfigContext', () => {
-  return {
-    default: () => ({
-      meetingRoomSettings: {
-        defaultLayoutMode: 'active-speaker',
-      },
-    }),
-  };
-});
+
+vi.mock('@api/fetchCredentials');
 
 const mockFetchCredentials = fetchCredentials as Mock;
 
 describe('SessionProvider', () => {
   let activeSpeakerTracker: ActiveSpeakerTracker;
-  let mockUserContext: {
-    user: {
-      defaultSettings: { name: string };
-      issues: {
-        reconnections: number;
-      };
-    };
-  };
+
   let vonageVideoClient: VonageVideoClient;
   let getByTestId: (id: string) => HTMLElement;
 
@@ -145,14 +130,7 @@ describe('SessionProvider', () => {
       onSubscriberDestroyed: vi.fn(),
       onSubscriberAudioLevelUpdated: vi.fn(),
     }) as unknown as ActiveSpeakerTracker;
-    mockUserContext = {
-      user: {
-        defaultSettings: { name: 'TestUser' },
-        issues: {
-          reconnections: 0,
-        },
-      },
-    };
+
     vonageVideoClient = Object.assign(new EventEmitter(), {
       unpublish: vi.fn(),
       publish: vi.fn().mockResolvedValue(undefined),
@@ -160,7 +138,7 @@ describe('SessionProvider', () => {
       disconnect: vi.fn(),
       forceMuteStream: vi.fn(),
     }) as unknown as VonageVideoClient;
-    (useUserContext as Mock).mockReturnValue(mockUserContext);
+
     const mockedActiveSpeakerTracker = vi.mocked(ActiveSpeakerTracker);
     mockedActiveSpeakerTracker.mockImplementation(() => {
       return activeSpeakerTracker;
@@ -176,21 +154,9 @@ describe('SessionProvider', () => {
     } as Credential);
 
     await act(async () => {
-      const result = render(
-        <SessionProvider>
-          <TestComponent />
-        </SessionProvider>
-      );
+      const result = render(<TestComponent />);
       getByTestId = result.getByTestId;
     });
-  });
-
-  afterEach(() => {
-    vi.resetAllMocks();
-  });
-
-  afterAll(() => {
-    vi.restoreAllMocks();
   });
 
   it('should update activeSpeaker state when activeSpeakerTracker emits event', async () => {
@@ -438,3 +404,18 @@ describe('SessionProvider', () => {
     expect(vonageVideoClient.connect).toHaveBeenCalledTimes(1);
   });
 });
+
+function render(ui: ReactElement) {
+  const { SessionProviderWrapper } = makeSessionProviderWrapper({
+    userOptions: {
+      value: {
+        defaultSettings: { name: 'TestUser' },
+        issues: {
+          reconnections: 0,
+        },
+      } as UserType,
+    },
+  });
+
+  return renderBase(ui, { wrapper: SessionProviderWrapper });
+}

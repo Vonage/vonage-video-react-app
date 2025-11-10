@@ -4,10 +4,10 @@ import { Device } from '@vonage/client-sdk-video';
 import MicNoneIcon from '@mui/icons-material/MicNone';
 import { MouseEvent as ReactMouseEvent, ReactElement, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
+import useAppConfig from '@Context/AppConfig/hooks/useAppConfig';
 import useDevices from '../../../hooks/useDevices';
 import usePublisherContext from '../../../hooks/usePublisherContext';
 import { setStorageItem, STORAGE_KEYS } from '../../../utils/storage';
-import useConfigContext from '../../../hooks/useConfigContext';
 import cleanAndDedupeDeviceLabels from '../../../utils/cleanAndDedupeDeviceLabels';
 import { colors } from '../../../utils/customTheme/customTheme';
 
@@ -26,11 +26,14 @@ export type InputDevicesProps = {
 const InputDevices = ({ handleToggle }: InputDevicesProps): ReactElement | false => {
   const { t } = useTranslation();
   const { publisher } = usePublisherContext();
-  const { meetingRoomSettings } = useConfigContext();
+
+  const allowDeviceSelection = useAppConfig(
+    ({ meetingRoomSettings }) => meetingRoomSettings.allowDeviceSelection
+  );
+
   const {
     allMediaDevices: { audioInputDevices },
   } = useDevices();
-  const { allowDeviceSelection } = meetingRoomSettings;
 
   const audioInputDevicesCleaned = useMemo(
     () => cleanAndDedupeDeviceLabels(audioInputDevices),

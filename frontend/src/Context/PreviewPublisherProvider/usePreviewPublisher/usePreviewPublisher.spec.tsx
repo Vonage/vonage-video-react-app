@@ -1,4 +1,4 @@
-import { act, renderHook } from '@testing-library/react';
+import { act, renderHook as renderHookBase } from '@testing-library/react';
 import { afterAll, beforeEach, describe, expect, it, Mock, vi } from 'vitest';
 import { hasMediaProcessorSupport, initPublisher, Publisher } from '@vonage/client-sdk-video';
 import EventEmitter from 'events';
@@ -7,6 +7,7 @@ import usePermissions from '@hooks/usePermissions';
 import useDevices from '@hooks/useDevices';
 import { allMediaDevices, defaultAudioDevice, defaultVideoDevice } from '@utils/mockData/device';
 import { DEVICE_ACCESS_STATUS } from '@utils/constants';
+import appConfig from '@Context/AppConfig';
 import { UserContextType } from '../../user';
 import usePreviewPublisher from './usePreviewPublisher';
 
@@ -237,3 +238,7 @@ describe('usePreviewPublisher', () => {
     });
   });
 });
+
+function renderHook<Result, Props>(render: (initialProps: Props) => Result) {
+  return renderHookBase(render, { wrapper: appConfig.Provider });
+}

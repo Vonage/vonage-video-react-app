@@ -3,10 +3,10 @@ import VideocamIcon from '@mui/icons-material/Videocam';
 import VideocamOffIcon from '@mui/icons-material/VideocamOff';
 import { ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
-import usePreviewPublisherContext from '../../../hooks/usePreviewPublisherContext';
+import usePreviewPublisherContext from '@hooks/usePreviewPublisherContext';
+import useBackgroundPublisherContext from '@hooks/useBackgroundPublisherContext';
+import useIsCameraControlAllowed from '@Context/AppConfig/hooks/useIsCameraControlAllowed';
 import VideoContainerButton from '../VideoContainerButton';
-import useBackgroundPublisherContext from '../../../hooks/useBackgroundPublisherContext';
-import useConfigContext from '../../../hooks/useConfigContext';
 
 /**
  * CameraButton Component
@@ -18,11 +18,11 @@ const CameraButton = (): ReactElement | false => {
   const { t } = useTranslation();
   const { isVideoEnabled, toggleVideo } = usePreviewPublisherContext();
   const { toggleVideo: toggleBackgroundVideoPublisher } = useBackgroundPublisherContext();
-  const { videoSettings } = useConfigContext();
+  const allowCameraControl = useIsCameraControlAllowed();
+
   const title = isVideoEnabled
     ? t('devices.video.camera.state.off')
     : t('devices.video.camera.state.on');
-  const { allowCameraControl } = videoSettings;
 
   const handleToggleVideo = () => {
     toggleVideo();
