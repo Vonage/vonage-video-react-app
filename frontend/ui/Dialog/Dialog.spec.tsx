@@ -1,6 +1,9 @@
 import { render, screen, fireEvent } from '@testing-library/react';
 import { describe, it, expect, vi } from 'vitest';
-import { DialogTitle, DialogContent, DialogActions, Button } from '@mui/material';
+import DialogTitle from '@ui/DialogTitle';
+import DialogContent from '@ui/DialogContent';
+import DialogActions from '@ui/DialogActions';
+import Button from '@ui/Button';
 import Dialog from './index';
 
 describe('Dialog', () => {
