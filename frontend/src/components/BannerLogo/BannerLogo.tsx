@@ -32,6 +32,11 @@ const BannerLogo = (): ReactElement => {
         src={isTablet ? '/images/vonage-logo-mobile.svg' : '/images/vonage-logo-desktop.svg'}
         alt={isTablet ? 'Vonage-mobile-logo' : 'Vonage-desktop-logo'}
         onClick={handleClick}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            handleClick();
+          }
+        }}
         role="button"
         tabIndex={0}
         sx={{
