@@ -7,22 +7,40 @@
  * for various text elements.
  */
 const weight = {
-  'weight-regular': {
+  'headline-1': {
     value: 400,
     type: 'fontWeight',
-    description: 'Regular weight used for body text and general content.',
+    description: '',
   },
 
-  'weight-medium': {
+  'headline-2': {
+    value: 400,
+    type: 'fontWeight',
+    description: '',
+  },
+
+  heading: {
     value: 500,
     type: 'fontWeight',
-    description: 'Medium weight used for labels, subheadings, and emphasis.',
+    description: '',
   },
 
-  'weight-bold': {
-    value: 700,
+  'body-1': {
+    value: 400,
     type: 'fontWeight',
-    description: 'Bold weight used for headings and important text elements.',
+    description: '',
+  },
+
+  'body-1-semibold': {
+    value: 600,
+    type: 'fontWeight',
+    description: '',
+  },
+
+  'body-2': {
+    value: 400,
+    type: 'fontWeight',
+    description: '',
   },
 };
 

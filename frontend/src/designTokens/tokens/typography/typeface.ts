@@ -6,7 +6,7 @@
  */
 const typeface = {
   plain: {
-    value: "'Inter', sans-serif",
+    value: 'Inter, sans-serif, system-ui, ui-sans-serif, Marker Felt, Trebuchet MS',
     type: 'fontFamily',
     description: 'Primary typeface for all text elements in the user interface.',
   },
