@@ -1,0 +1,55 @@
+{
+  "$schema": "../node_modules/nx/schemas/project-schema.json",
+  "name": "backend",
+  "projectType": "application",
+  "root": "backend",
+  "sourceRoot": "backend",
+  "targets": {
+    "serve": {
+      "executor": "nx:run-commands",
+      "options": {
+        "cwd": "backend",
+        "command": "nodemon --watch . --ext ts,tsx,json --ignore dist --exec \"sh -c 'tsc --noEmit -p tsconfig.json --pretty true && node --import tsx index.ts'\""
+      }
+    },
+    "start": {
+      "executor": "nx:run-commands",
+      "options": {
+        "cwd": "backend",
+        "command": "node --import tsx index.ts"
+      }
+    },
+    "debug": {
+      "executor": "nx:run-commands",
+      "options": {
+        "cwd": "backend",
+        "command": "nodemon --watch . --ext ts,tsx,json --ignore dist --exec \"sh -c 'tsc --noEmit -p tsconfig.json --pretty true && node --inspect --import tsx index.ts'\""
+      }
+    },
+    "test": {
+      "executor": "@nx/jest:jest",
+      "options": {
+        "jestConfig": "backend/jest.config.js",
+        "coverage": true,
+        "runInBand": true,
+        "maxWorkers": 1
+      },
+      "configurations": {
+        "watch": { "watch": true }
+      },
+      "inputs": [
+        "default",
+        "^default",
+        { "externalDependencies": ["jest", "ts-jest"] }
+      ]
+    },
+    "ts-check": {
+      "executor": "nx:run-commands",
+      "options": {
+        "cwd": "backend",
+        "command": "tsc --noEmit -p tsconfig.json --pretty true"
+      }
+    }
+  },
+  "tags": []
+}

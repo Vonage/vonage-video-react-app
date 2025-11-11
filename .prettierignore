@@ -1,10 +1,17 @@
-# some individual files
-.eslintrc.cjs
-*.json
-*.md
+# Generated or irrelevant files
 *.d.ts
+*.log
 
-# some directories
-*/dist/
-*/node_modules/
+# Documentation [todo]: We should be able to use prettier for this to ensure consistent formatting
+*.md
+
+# Build and dependency folders
+dist/
+node_modules/
+coverage/
+.nx/
+.turbo/
+
+# Public compiled assets
 public/js/
+

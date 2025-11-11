@@ -21,13 +21,11 @@ export default defineConfig(() => ({
     outDir: './dist',
     emptyOutDir: true,
     reportCompressedSize: true,
-    commonjsOptions: {
-      transformMixedEsModules: true,
-    },
+    commonjsOptions: { transformMixedEsModules: true },
     lib: {
       // Could also be a dictionary or array of multiple entry points.
       entry: 'src/index.ts',
-      name: '@your-scope/ui',
+      name: 'ui',
       fileName: 'index',
       // Change this to the formats you want to support.
       // Don't forget to update your package.json as well.
@@ -39,15 +37,12 @@ export default defineConfig(() => ({
     },
   },
   test: {
-    name: '@your-scope/ui',
+    name: 'ui',
     watch: false,
     globals: true,
     environment: 'jsdom',
     include: ['{src,tests}/**/*.{test,spec}.{js,mjs,cjs,ts,mts,cts,jsx,tsx}'],
     reporters: ['default'],
-    coverage: {
-      reportsDirectory: './test-output/vitest/coverage',
-      provider: 'v8' as const,
-    },
+    coverage: { reportsDirectory: './test-output/vitest/coverage', provider: 'v8' as const },
   },
 }));

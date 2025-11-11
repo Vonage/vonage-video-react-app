@@ -1,0 +1,82 @@
+{
+  "$schema": "../node_modules/nx/schemas/project-schema.json",
+  "name": "frontend",
+  "projectType": "application",
+  "root": "frontend",
+  "sourceRoot": "frontend/src",
+  "targets": {
+    "build": {
+      "executor": "@nx/vite:build",
+      "options": {
+        "outputPath": "dist/frontend"
+      }
+    },
+    "serve": {
+      "executor": "@nx/vite:dev-server",
+      "options": {
+        "port": 5173,
+        "host": true
+      }
+    },
+    "preview": {
+      "executor": "@nx/vite:preview-server",
+      "options": {
+        "port": 4173
+      }
+    },
+    "lint": {
+      "executor": "@nx/eslint:lint",
+      "options": {
+        "lintFilePatterns": ["frontend/**/*.ts", "frontend/**/*.tsx"]
+      }
+    },
+    "test": {
+      "executor": "@nx/vite:test",
+      "options": {
+        "passWithNoTests": true,
+        "coverage": true
+      },
+      "configurations": {
+        "watch": {
+          "watch": true
+        }
+      }
+    },
+    "docs": {
+      "executor": "nx:run-commands",
+      "options": {
+        "cwd": "frontend",
+        "command": "typedoc"
+      }
+    },
+    "docs:watch": {
+      "executor": "nx:run-commands",
+      "options": {
+        "cwd": "frontend",
+        "command": "typedoc --watch"
+      }
+    },
+    "ts-check": {
+      "executor": "nx:run-commands",
+      "options": {
+        "cwd": "frontend",
+        "command": "tsc --noEmit -p tsconfig.json --pretty true"
+      }
+    },
+    "ts-check:watch": {
+      "executor": "nx:run-commands",
+      "options": {
+        "cwd": "frontend",
+        "command": "tsc --noEmit -p tsconfig.json --watch --preserveWatchOutput"
+      }
+    },
+    "cp-build": {
+      "executor": "nx:run-commands",
+      "options": {
+        "cwd": "frontend",
+        "command": "mkdir -p ../backend/dist && cp -r dist ../backend"
+      }
+    }
+  },
+  "tags": []
+}

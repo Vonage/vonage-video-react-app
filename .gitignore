@@ -59,3 +59,4 @@ vcr.yml
 .github/instructions/nx.instructions.md
 vite.config.*.timestamp*
 vitest.config.*.timestamp*
+*.tsbuildinfo

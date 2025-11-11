@@ -1,0 +1,17 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "module": "ESNext",
+    "moduleResolution": "Node",
+    "types": ["node", "jest"]
+  },
+  "include": [
+    "tests/**/*",
+    "helpers/**/*",
+    "src/**/*",
+    "**/*.test.ts",
+    "**/*.spec.ts",
+    "**/*.test.tsx",
+    "**/*.spec.tsx"
+  ]
+}

@@ -2,43 +2,65 @@
   "$schema": "./node_modules/nx/schemas/nx-schema.json",
   "targetDefaults": {
     "test": {
-      "outputs": ["{projectRoot}/frontend/coverage"],
+      "outputs": ["{projectRoot}/coverage"],
       "cache": true,
       "dependsOn": ["^build"]
+    },
+    "build": {
+      "dependsOn": ["^build"]
+    },
+    "lint": {
+      "cache": true
+    },
+    "ts-check": {
+      "cache": false
+    },
+    "serve": {
+      "cache": false
     }
   },
   "plugins": [
     {
-      "plugin": "@nx/eslint/plugin",
+      "plugin": "@nx/eslint",
       "options": {
-        "targetName": "eslint:lint"
+        "targetName": "lint"
       }
     },
     {
-      "plugin": "@nx/jest/plugin",
+      "plugin": "@nx/jest",
       "options": {
-        "targetName": "jest:test"
+        "targetName": "test"
       }
     },
     {
-      "plugin": "@nx/vite/plugin",
+      "plugin": "@nx/vite",
       "options": {
-        "buildTargetName": "vite:build",
-        "testTargetName": "vite:test",
+        "buildTargetName": "build",
+        "testTargetName": "test",
         "serveTargetName": "serve",
-        "devTargetName": "vite:dev",
-        "previewTargetName": "vite:preview",
+        "devTargetName": "serve",
+        "previewTargetName": "preview",
         "serveStaticTargetName": "serve-static",
-        "typecheckTargetName": "typecheck",
+        "typecheckTargetName": "ts-check",
         "buildDepsTargetName": "build-deps",
         "watchDepsTargetName": "watch-deps"
+      }
+    },
+    {
+      "plugin": "@nx/node",
+      "options": {
+        "serveTargetName": "serve",
+        "buildTargetName": "build",
+        "testTargetName": "test",
+        "lintTargetName": "lint",
+        "typecheckTargetName": "ts-check"
       }
     },
     {
       "plugin": "@nx/js/typescript",
       "options": {
         "typecheck": {
-          "targetName": "tsc:typecheck"
+          "targetName": "ts-check"
         },
         "build": {
           "targetName": "build",
@@ -56,8 +78,18 @@
   },
   "generators": {
     "@nx/react": {
+      "application": {
+        "bundler": "vite",
+        "unitTestRunner": "vitest"
+      },
       "library": {
         "unitTestRunner": "vitest"
+      }
+    },
+    "@nx/node": {
+      "application": {
+        "framework": "express",
+        "unitTestRunner": "jest"
       }
     }
   }
