@@ -11,6 +11,7 @@ import EventEmitter from 'events';
 import logOnConnect from '../logOnConnect';
 import VonageVideoClient from './vonageVideoClient';
 import { Credential, SignalEvent, SignalType } from '../../types/session';
+import { wait } from '../idempotentCallbackWithRetry/idempotentCallbackWithRetry';
 
 vi.mock('../logOnConnect');
 vi.mock('@vonage/client-sdk-video');
@@ -20,8 +21,6 @@ const mockSubscriber = Object.assign(new EventEmitter(), {
   id: 'test-id',
 }) as unknown as TestSubscriber;
 
-const mockLogOnConnect = logOnConnect as Mock<[], void>;
-const consoleErrorSpy = vi.spyOn(console, 'error');
 const mockInitSession = vi.fn();
 const mockConnect = vi.fn();
 const mockSubscribe = vi.fn();
@@ -40,6 +39,8 @@ describe('VonageVideoClient', () => {
   let mockSession: TestSession;
 
   beforeEach(() => {
+    vi.spyOn(console, 'error');
+
     mockSession = Object.assign(new EventEmitter(), {
       connect: mockConnect,
       subscribe: mockSubscribe,
@@ -77,8 +78,8 @@ describe('VonageVideoClient', () => {
     it('logs on successful connection', async () => {
       await vonageVideoClient?.connect();
 
-      expect(mockLogOnConnect).toHaveBeenCalled();
-      expect(consoleErrorSpy).not.toHaveBeenCalled();
+      expect(logOnConnect).toHaveBeenCalled();
+      expect(console.error).not.toHaveBeenCalled();
       expect(vonageVideoClient).not.toBeUndefined();
     });
 
@@ -89,8 +90,8 @@ describe('VonageVideoClient', () => {
       });
       await expect(() => vonageVideoClient?.connect()).rejects.toThrowError(fakeError);
 
-      expect(mockLogOnConnect).not.toHaveBeenCalled();
-      expect(consoleErrorSpy).toHaveBeenCalledWith('Error connecting to session:', fakeError);
+      expect(logOnConnect).not.toHaveBeenCalled();
+      expect(console.error).toHaveBeenCalledWith('Error connecting to session:', fakeError);
       expect(vonageVideoClient).not.toBeUndefined();
     });
   });
@@ -115,19 +116,32 @@ describe('VonageVideoClient', () => {
         });
       }));
 
-    it('emits an event for screenshare subscribers', () =>
-      new Promise<void>((done) => {
-        const streamId = 'stream-id';
-        vonageVideoClient?.connect().then(() => {
-          vonageVideoClient?.on('screenshareStreamCreated', () => {
-            done();
+    it('emits an event for screenshare subscribers', async () => {
+      expect.assertions(1);
+      const streamId = 'stream-id';
+
+      vonageVideoClient?.on('screenshareStreamCreated', () => {
+        expect(true).toBe(true);
+      });
+
+      await vonageVideoClient?.connect();
+
+      vi.spyOn(vonageVideoClient!.clientSession!, 'subscribe').mockImplementation(
+        (_a, _b, _c, callback) => {
+          queueMicrotask(() => {
+            callback!();
           });
 
-          mockSession.emit('streamCreated', {
-            stream: { streamId, videoType: 'screen' } as unknown as Stream,
-          });
-        });
-      }));
+          return mockSubscriber;
+        }
+      );
+
+      mockSession.emit('streamCreated', {
+        stream: { streamId, videoType: 'screen' } as unknown as Stream,
+      });
+
+      await wait(10);
+    });
 
     it('emits an event containing the streamId when the stream is destroyed', async () => {
       const streamId = 'stream-id';

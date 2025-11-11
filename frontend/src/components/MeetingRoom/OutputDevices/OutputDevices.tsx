@@ -4,16 +4,16 @@ import VolumeUpIcon from '@mui/icons-material/VolumeUp';
 import { MouseEvent, ReactElement, useMemo } from 'react';
 import type { AudioOutputDevice } from '@vonage/client-sdk-video';
 import { useTranslation } from 'react-i18next';
-import useDevices from '../../../hooks/useDevices';
+import useAppConfig from '@Context/AppConfig/hooks/useAppConfig';
+import useDevices from '@hooks/useDevices';
+import useAudioOutputContext from '@hooks/useAudioOutputContext';
+import { isGetActiveAudioOutputDeviceSupported } from '@utils/util';
+import cleanAndDedupeDeviceLabels from '@utils/cleanAndDedupeDeviceLabels';
 import DropdownSeparator from '../DropdownSeparator';
-import useAudioOutputContext from '../../../hooks/useAudioOutputContext';
-import { isGetActiveAudioOutputDeviceSupported } from '../../../utils/util';
-import useConfigContext from '../../../hooks/useConfigContext';
-import cleanAndDedupeDeviceLabels from '../../../utils/cleanAndDedupeDeviceLabels';
+import { colors } from '../../../utils/customTheme/customTheme';
 
 export type OutputDevicesProps = {
   handleToggle: () => void;
-  customLightBlueColor: string;
 };
 
 /**
@@ -22,21 +22,20 @@ export type OutputDevicesProps = {
  * Displays and switches audio output devices.
  * @param {OutputDevicesProps} props - The props for the component.
  *  @property {() => void} handleToggle - Function to close the menu.
- *  @property {string} customLightBlueColor - The custom color used for the selected device.
  * @returns {ReactElement | false} - The OutputDevices component.
  */
-const OutputDevices = ({
-  handleToggle,
-  customLightBlueColor,
-}: OutputDevicesProps): ReactElement | false => {
+const OutputDevices = ({ handleToggle }: OutputDevicesProps): ReactElement | false => {
   const { t } = useTranslation();
   const { currentAudioOutputDevice, setAudioOutputDevice } = useAudioOutputContext();
-  const { meetingRoomSettings } = useConfigContext();
+
+  const allowDeviceSelection = useAppConfig(
+    ({ meetingRoomSettings }) => meetingRoomSettings.allowDeviceSelection
+  );
+
   const {
     allMediaDevices: { audioOutputDevices },
   } = useDevices();
   const defaultOutputDevices = [{ deviceId: 'default', label: t('devices.audio.defaultLabel') }];
-  const { allowDeviceSelection } = meetingRoomSettings;
 
   const isAudioOutputSupported = isGetActiveAudioOutputDeviceSupported();
 
@@ -92,14 +91,15 @@ const OutputDevices = ({
                   backgroundColor: 'transparent',
                   '&.Mui-selected': {
                     backgroundColor: 'transparent',
-                    color: customLightBlueColor,
+                    color: colors.primaryLight,
                   },
                   '&:hover': {
-                    backgroundColor: 'rgba(25, 118, 210, 0.12)',
+                    backgroundColor: colors.primaryHover,
                   },
                 }}
               >
                 <Box
+                  key={`${device.deviceId}-input-device`}
                   sx={{
                     display: 'flex',
                     mb: 0.5,
@@ -107,7 +107,7 @@ const OutputDevices = ({
                   }}
                 >
                   {isSelected ? (
-                    <CheckIcon sx={{ color: 'rgb(138, 180, 248)', fontSize: 24, mr: 2 }} />
+                    <CheckIcon sx={{ color: colors.primaryLight, fontSize: 24, mr: 2 }} />
                   ) : (
                     <Box sx={{ width: 40 }} /> // Placeholder when CheckIcon is not displayed
                   )}

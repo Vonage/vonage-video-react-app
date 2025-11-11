@@ -3,9 +3,9 @@ import Tooltip from '@mui/material/Tooltip';
 import { blue } from '@mui/material/colors';
 import { ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
+import useIsMeetingChatAllowed from '@Context/AppConfig/hooks/useIsMeetingChatAllowed';
 import ToolbarButton from '../ToolbarButton';
 import UnreadMessagesBadge from '../UnreadMessagesBadge';
-import useConfigContext from '../../../hooks/useConfigContext';
 
 export type ChatButtonProps = {
   handleClick: () => void;
@@ -29,12 +29,11 @@ const ChatButton = ({
   isOpen,
   isOverflowButton = false,
 }: ChatButtonProps): ReactElement | false => {
-  const config = useConfigContext();
-  const { allowChat } = config.meetingRoomSettings;
+  const isMeetingChatAllowed = useIsMeetingChatAllowed();
 
   const { t } = useTranslation();
   return (
-    allowChat && (
+    isMeetingChatAllowed && (
       <Tooltip title={isOpen ? t('chat.close') : t('chat.open')} aria-label={t('chat.ariaLabel')}>
         <UnreadMessagesBadge>
           <ToolbarButton

@@ -7,6 +7,7 @@ import {
   hasMediaProcessorSupport,
   PublisherProperties,
 } from '@vonage/client-sdk-video';
+import useAppConfig from '@Context/AppConfig/hooks/useAppConfig';
 import setMediaDevices from '../../../utils/mediaDeviceUtils';
 import useDevices from '../../../hooks/useDevices';
 import usePermissions from '../../../hooks/usePermissions';
@@ -17,7 +18,6 @@ import { AccessDeniedEvent } from '../../PublisherProvider/usePublisher/usePubli
 import DeviceStore from '../../../utils/DeviceStore';
 import { setStorageItem, STORAGE_KEYS } from '../../../utils/storage';
 import applyBackgroundFilter from '../../../utils/backgroundFilter/applyBackgroundFilter/applyBackgroundFilter';
-import useConfigContext from '../../../hooks/useConfigContext';
 
 type PublisherVideoElementCreatedEvent = Event<'videoElementCreated', Publisher> & {
   element: HTMLVideoElement | HTMLObjectElement;
@@ -67,7 +67,7 @@ export type PreviewPublisherContextType = {
  */
 const usePreviewPublisher = (): PreviewPublisherContextType => {
   const { setUser, user } = useUserContext();
-  const config = useConfigContext();
+  const defaultResolution = useAppConfig(({ videoSettings }) => videoSettings.defaultResolution);
   const { allMediaDevices, getAllMediaDevices } = useDevices();
   const [publisherVideoElement, setPublisherVideoElement] = useState<
     HTMLVideoElement | HTMLObjectElement
@@ -87,7 +87,6 @@ const usePreviewPublisher = (): PreviewPublisherContextType => {
   const [localVideoSource, setLocalVideoSource] = useState<string | undefined>(undefined);
   const [localAudioSource, setLocalAudioSource] = useState<string | undefined>(undefined);
   const deviceStoreRef = useRef<DeviceStore>(new DeviceStore());
-  const { defaultResolution } = config.videoSettings;
 
   /* This sets the default devices in use so that the user knows what devices they are using */
   useEffect(() => {

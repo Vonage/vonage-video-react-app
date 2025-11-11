@@ -1,35 +1,29 @@
 import { describe, it, beforeEach, afterEach, vi, expect, Mock } from 'vitest';
-import { render, screen, fireEvent, cleanup } from '@testing-library/react';
+import { render as renderBase, screen, fireEvent, cleanup } from '@testing-library/react';
+import { ReactElement } from 'react';
+import useDevices from '@hooks/useDevices';
+import useAudioOutputContext from '@hooks/useAudioOutputContext';
+import { AudioOutputContextType } from '@Context/AudioOutputProvider';
+import { allMediaDevices } from '@utils/mockData/device';
+import * as util from '@utils/util';
+import { AllMediaDevices } from '@app-types/room';
+import { AppConfigProviderWrapperOptions, makeAppConfigProviderWrapper } from '@test/providers';
 import OutputDevices from './OutputDevices';
-import useDevices from '../../../hooks/useDevices';
-import useAudioOutputContext from '../../../hooks/useAudioOutputContext';
-import useConfigContext from '../../../hooks/useConfigContext';
-import { AllMediaDevices } from '../../../types';
-import { AudioOutputContextType } from '../../../Context/AudioOutputProvider';
-import { ConfigContextType } from '../../../Context/ConfigProvider';
-import { allMediaDevices } from '../../../utils/mockData/device';
-import * as util from '../../../utils/util';
 
 // Mocks
-vi.mock('../../../hooks/useDevices');
-vi.mock('../../../hooks/useAudioOutputContext');
-vi.mock('../../../hooks/useConfigContext');
-vi.mock('../../../utils/util', () => ({
-  isGetActiveAudioOutputDeviceSupported: vi.fn(),
-}));
+vi.mock('@hooks/useDevices');
+vi.mock('@hooks/useAudioOutputContext');
 
 const mockUseDevices = useDevices as Mock<
   [],
   { allMediaDevices: AllMediaDevices; getAllMediaDevices: () => void }
 >;
 const mockUseAudioOutputContext = useAudioOutputContext as Mock<[], AudioOutputContextType>;
-const mockUseConfigContext = useConfigContext as Mock<[], ConfigContextType>;
 
 describe('OutputDevices Component', () => {
   const mockHandleToggle = vi.fn();
   const mockSetAudioOutputDevice = vi.fn();
   let audioOutputContext: AudioOutputContextType;
-  let mockConfigContext: ConfigContextType;
 
   beforeEach(() => {
     mockUseDevices.mockReturnValue({
@@ -42,15 +36,9 @@ describe('OutputDevices Component', () => {
       setAudioOutputDevice: mockSetAudioOutputDevice,
     } as AudioOutputContextType;
 
-    mockConfigContext = {
-      meetingRoomSettings: {
-        allowDeviceSelection: true,
-      },
-    } as Partial<ConfigContextType> as ConfigContextType;
-
     mockUseAudioOutputContext.mockImplementation(() => audioOutputContext);
-    mockUseConfigContext.mockReturnValue(mockConfigContext);
-    (util.isGetActiveAudioOutputDeviceSupported as Mock).mockReturnValue(true);
+
+    vi.spyOn(util, 'isGetActiveAudioOutputDeviceSupported').mockReturnValue(true);
   });
 
   afterEach(() => {
@@ -59,7 +47,7 @@ describe('OutputDevices Component', () => {
   });
 
   it('renders all available audio output devices when supported', () => {
-    render(<OutputDevices handleToggle={mockHandleToggle} customLightBlueColor="#00f" />);
+    render(<OutputDevices handleToggle={mockHandleToggle} />);
 
     expect(screen.getByText('Speakers')).toBeInTheDocument();
     expect(screen.getByTestId('output-devices')).toBeInTheDocument();
@@ -73,7 +61,7 @@ describe('OutputDevices Component', () => {
   it('renders only default device when audio output is not supported', () => {
     (util.isGetActiveAudioOutputDeviceSupported as Mock).mockReturnValue(false);
 
-    render(<OutputDevices handleToggle={mockHandleToggle} customLightBlueColor="#00f" />);
+    render(<OutputDevices handleToggle={mockHandleToggle} />);
 
     expect(screen.getByText('Speakers')).toBeInTheDocument();
     expect(screen.getByText('System Default')).toBeInTheDocument();
@@ -83,7 +71,7 @@ describe('OutputDevices Component', () => {
   });
 
   it('changes audio output device on menu item click when supported', async () => {
-    render(<OutputDevices handleToggle={mockHandleToggle} customLightBlueColor="#00f" />);
+    render(<OutputDevices handleToggle={mockHandleToggle} />);
 
     const speakerItem = screen.getByText('Soundcore Life A2 NC (Bluetooth)');
     fireEvent.click(speakerItem);
@@ -97,7 +85,7 @@ describe('OutputDevices Component', () => {
   it('does not call setAudioOutputDevice when audio output is not supported', () => {
     (util.isGetActiveAudioOutputDeviceSupported as Mock).mockReturnValue(false);
 
-    render(<OutputDevices handleToggle={mockHandleToggle} customLightBlueColor="#00f" />);
+    render(<OutputDevices handleToggle={mockHandleToggle} />);
 
     const defaultItem = screen.getByText('System Default');
     fireEvent.click(defaultItem);
@@ -107,7 +95,7 @@ describe('OutputDevices Component', () => {
   });
 
   it('shows check icon for selected device', () => {
-    render(<OutputDevices handleToggle={mockHandleToggle} customLightBlueColor="#00f" />);
+    render(<OutputDevices handleToggle={mockHandleToggle} />);
 
     // The device with deviceId 'default' should be selected
     const checkIcon = screen.getByTestId('CheckIcon');
@@ -117,7 +105,7 @@ describe('OutputDevices Component', () => {
   it('shows check icon for default device when only one device available', () => {
     (util.isGetActiveAudioOutputDeviceSupported as Mock).mockReturnValue(false);
 
-    render(<OutputDevices handleToggle={mockHandleToggle} customLightBlueColor="#00f" />);
+    render(<OutputDevices handleToggle={mockHandleToggle} />);
 
     // When only default device is available, it should be selected
     const checkIcon = screen.getByTestId('CheckIcon');
@@ -125,12 +113,28 @@ describe('OutputDevices Component', () => {
   });
 
   it('is not rendered when allowDeviceSelection is false', () => {
-    mockConfigContext.meetingRoomSettings.allowDeviceSelection = false;
-    mockUseConfigContext.mockReturnValue(mockConfigContext);
-
-    render(<OutputDevices handleToggle={mockHandleToggle} customLightBlueColor="#00f" />);
+    render(<OutputDevices handleToggle={mockHandleToggle} />, {
+      appConfigOptions: {
+        value: {
+          meetingRoomSettings: {
+            allowDeviceSelection: false,
+          },
+        },
+      },
+    });
 
     expect(screen.queryByTestId('output-device-title')).not.toBeInTheDocument();
     expect(screen.queryByTestId('output-devices')).not.toBeInTheDocument();
   });
 });
+
+function render(
+  ui: ReactElement,
+  options?: {
+    appConfigOptions?: AppConfigProviderWrapperOptions;
+  }
+) {
+  const { AppConfigWrapper } = makeAppConfigProviderWrapper(options?.appConfigOptions);
+
+  return renderBase(ui, { ...options, wrapper: AppConfigWrapper });
+}

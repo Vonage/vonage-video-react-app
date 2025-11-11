@@ -11,11 +11,13 @@ import {
   ReactElement,
 } from 'react';
 import { Connection, Publisher, Stream } from '@vonage/client-sdk-video';
-import fetchCredentials from '../../api/fetchCredentials';
-import useUserContext from '../../hooks/useUserContext';
-import useConfigContext from '../../hooks/useConfigContext';
-import ActiveSpeakerTracker from '../../utils/ActiveSpeakerTracker';
-import useRightPanel, { RightPanelActiveTab } from '../../hooks/useRightPanel';
+import useRightPanel, { RightPanelActiveTab } from '@hooks/useRightPanel';
+import useUserContext from '@hooks/useUserContext';
+import useChat from '@hooks/useChat';
+import useEmoji, { EmojiWrapper } from '@hooks/useEmoji';
+import appConfigContext from '@Context/AppConfig';
+import fetchCredentials from '@api/fetchCredentials';
+import ActiveSpeakerTracker from '@utils/ActiveSpeakerTracker';
 import {
   Credential,
   LocalCaptionReceived,
@@ -24,19 +26,17 @@ import {
   SubscriberAudioLevelUpdatedEvent,
   SubscriberWrapper,
   LayoutMode,
-} from '../../types/session';
-import useChat from '../../hooks/useChat';
-import { ChatMessageType } from '../../types/chat';
-import { isMobile } from '../../utils/util';
+} from '@app-types/session';
+import { ChatMessageType } from '@app-types/chat';
+import { isMobile } from '@utils/util';
 import {
   sortByDisplayPriority,
   togglePinAndSortByDisplayOrder,
-} from '../../utils/sessionStateOperations';
-import { MAX_PIN_COUNT_DESKTOP, MAX_PIN_COUNT_MOBILE } from '../../utils/constants';
-import VonageVideoClient from '../../utils/VonageVideoClient';
-import useEmoji, { EmojiWrapper } from '../../hooks/useEmoji';
+} from '@utils/sessionStateOperations';
+import { MAX_PIN_COUNT_DESKTOP, MAX_PIN_COUNT_MOBILE } from '@utils/constants';
+import VonageVideoClient from '@utils/VonageVideoClient';
 
-export type { ChatMessageType } from '../../types/chat';
+export type { ChatMessageType } from '@app-types/chat';
 
 export type SessionContextType = {
   vonageVideoClient: null | VonageVideoClient;
@@ -67,6 +67,7 @@ export type SessionContextType = {
   publish: (publisher: Publisher) => Promise<void>;
   unpublish: (publisher: Publisher) => void;
   lastStreamUpdate: StreamPropertyChangedEvent | null;
+  subscriptionError: Error | null;
 };
 
 /**
@@ -101,6 +102,7 @@ export const SessionContext = createContext<SessionContextType>({
   publish: async () => Promise.resolve(),
   unpublish: () => {},
   lastStreamUpdate: null,
+  subscriptionError: null,
 });
 
 export type ConnectionEventType = {
@@ -128,15 +130,19 @@ const MAX_PIN_COUNT = isMobile() ? MAX_PIN_COUNT_MOBILE : MAX_PIN_COUNT_DESKTOP;
  * @returns {SessionContextType} a context provider for a publisher preview
  */
 const SessionProvider = ({ children }: SessionProviderProps): ReactElement => {
-  const config = useConfigContext();
+  const appConfig = appConfigContext.use.api();
+
   const [lastStreamUpdate, setLastStreamUpdate] = useState<StreamPropertyChangedEvent | null>(null);
   const vonageVideoClient = useRef<null | VonageVideoClient>(null);
   const [reconnecting, setReconnecting] = useState(false);
   const [subscriberWrappers, setSubscriberWrappers] = useState<SubscriberWrapper[]>([]);
+  const [subscriptionError, setSubscriptionError] = useState<Error | null>(null);
   const [ownCaptions, setOwnCaptions] = useState<string | null>(null);
-  const [layoutMode, setLayoutMode] = useState<LayoutMode>(
-    config.meetingRoomSettings.defaultLayoutMode
-  );
+
+  const [layoutMode, setLayoutMode] = useState<LayoutMode>(() => {
+    return appConfig.getState().meetingRoomSettings.defaultLayoutMode;
+  });
+
   const [archiveId, setArchiveId] = useState<string | null>(null);
   const activeSpeakerTracker = useRef<ActiveSpeakerTracker>(new ActiveSpeakerTracker());
   const [activeSpeakerId, setActiveSpeakerId] = useState<string | undefined>();
@@ -308,6 +314,10 @@ const SessionProvider = ({ children }: SessionProviderProps): ReactElement => {
     });
   };
 
+  const handleSubscriptionError = useCallback((error: unknown) => {
+    setSubscriptionError(error instanceof Error ? error : new Error('Unknown subscription error'));
+  }, []);
+
   /**
    * Connects to the session using the provided credentials.
    * @param {Credential} credential - The credentials for the session.
@@ -340,6 +350,8 @@ const SessionProvider = ({ children }: SessionProviderProps): ReactElement => {
       );
       vonageVideoClient.current.on('subscriberDestroyed', handleSubscriberDestroyed);
       vonageVideoClient.current.on('localCaptionReceived', handleLocalCaptionReceived);
+      vonageVideoClient.current.on('subscriptionError', handleSubscriptionError);
+
       await vonageVideoClient.current.connect();
       setConnected(true);
     } catch (err: unknown) {
@@ -358,7 +370,7 @@ const SessionProvider = ({ children }: SessionProviderProps): ReactElement => {
     async (roomName: string) => {
       fetchCredentials(roomName)
         .then((credentials) => {
-          connect(credentials.data);
+          return connect(credentials.data);
         })
         .catch(console.warn);
     },
@@ -442,6 +454,7 @@ const SessionProvider = ({ children }: SessionProviderProps): ReactElement => {
       publish,
       unpublish,
       lastStreamUpdate,
+      subscriptionError,
     }),
     [
       activeSpeakerId,
@@ -472,6 +485,7 @@ const SessionProvider = ({ children }: SessionProviderProps): ReactElement => {
       publish,
       unpublish,
       lastStreamUpdate,
+      subscriptionError,
     ]
   );
 

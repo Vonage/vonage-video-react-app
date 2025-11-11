@@ -1,20 +1,15 @@
-import { describe, expect, it, vi, Mock, beforeEach, afterAll } from 'vitest';
-import { renderHook, waitFor } from '@testing-library/react';
+import { describe, expect, it, vi, beforeEach, afterAll } from 'vitest';
+import { renderHook as renderHookBase, waitFor } from '@testing-library/react';
 import OT from '@vonage/client-sdk-video';
-import useUserContext from '../../../hooks/useUserContext';
-import { UserContextType } from '../../user';
+import useUserContext from '@hooks/useUserContext';
+import localStorageMock from '@utils/mockData/localStorageMock';
+import DeviceStore from '@utils/DeviceStore';
+import { setStorageItem, STORAGE_KEYS } from '@utils/storage';
+import { AppConfigProviderWrapperOptions, makeAppConfigProviderWrapper } from '@test/providers';
 import usePublisherOptions from './usePublisherOptions';
-import localStorageMock from '../../../utils/mockData/localStorageMock';
-import DeviceStore from '../../../utils/DeviceStore';
-import { setStorageItem, STORAGE_KEYS } from '../../../utils/storage';
-import useConfigContext from '../../../hooks/useConfigContext';
-import { ConfigContextType } from '../../ConfigProvider';
+import { UserContextType } from '../../user';
 
-vi.mock('../../../hooks/useUserContext.tsx');
-vi.mock('../../../hooks/useConfigContext');
-
-const mockUseUserContext = useUserContext as Mock<[], UserContextType>;
-const mockUseConfigContext = useConfigContext as Mock<[], ConfigContextType>;
+vi.mock('@hooks/useUserContext.tsx');
 
 const defaultSettings = {
   publishAudio: false,
@@ -55,7 +50,6 @@ const mockUserContextWithCustomSettings = {
 describe('usePublisherOptions', () => {
   let enumerateDevicesMock: ReturnType<typeof vi.fn>;
   let deviceStore: DeviceStore;
-  let configContext: ConfigContextType;
 
   beforeEach(async () => {
     enumerateDevicesMock = vi.fn();
@@ -71,16 +65,7 @@ describe('usePublisherOptions', () => {
     deviceStore = new DeviceStore();
     enumerateDevicesMock.mockResolvedValue([]);
     await deviceStore.init();
-    configContext = {
-      audioSettings: {
-        allowAudioOnJoin: true,
-      },
-      videoSettings: {
-        defaultResolution: '1280x720',
-        allowVideoOnJoin: true,
-      },
-    } as Partial<ConfigContextType> as ConfigContextType;
-    mockUseConfigContext.mockReturnValue(configContext);
+    vi.mocked(useUserContext).mockImplementation(() => mockUserContextWithDefaultSettings);
   });
 
   afterAll(() => {
@@ -89,7 +74,7 @@ describe('usePublisherOptions', () => {
 
   it('should use default settings', async () => {
     vi.spyOn(OT, 'hasMediaProcessorSupport').mockReturnValue(true);
-    mockUseUserContext.mockImplementation(() => mockUserContextWithDefaultSettings);
+    vi.mocked(useUserContext).mockImplementation(() => mockUserContextWithDefaultSettings);
     const { result } = renderHook(() => usePublisherOptions());
     await waitFor(() => {
       expect(result.current).toEqual({
@@ -115,7 +100,7 @@ describe('usePublisherOptions', () => {
 
   it('should not have advanced noise suppression if not supported by browser', async () => {
     vi.spyOn(OT, 'hasMediaProcessorSupport').mockReturnValue(false);
-    mockUseUserContext.mockImplementation(() => mockUserContextWithDefaultSettings);
+    vi.mocked(useUserContext).mockImplementation(() => mockUserContextWithDefaultSettings);
     const { result } = renderHook(() => usePublisherOptions());
 
     await waitFor(() => {
@@ -132,7 +117,7 @@ describe('usePublisherOptions', () => {
       { deviceId: customSettings.audioSource, kind: 'audioinput' } as MediaDeviceInfo,
     ]);
     await deviceStore.init();
-    mockUseUserContext.mockImplementation(() => mockUserContextWithCustomSettings);
+    vi.mocked(useUserContext).mockImplementation(() => mockUserContextWithCustomSettings);
     const { result } = renderHook(() => usePublisherOptions());
     await waitFor(() => {
       expect(result.current).toEqual({
@@ -159,27 +144,62 @@ describe('usePublisherOptions', () => {
 
   describe('configurable features', () => {
     it('should disable audio publishing when allowAudioOnJoin is false', async () => {
-      configContext.audioSettings.allowAudioOnJoin = false;
-      const { result } = renderHook(() => usePublisherOptions());
+      const { result } = renderHook(() => usePublisherOptions(), {
+        appConfigOptions: {
+          value: {
+            audioSettings: {
+              allowAudioOnJoin: false,
+            },
+          },
+        },
+      });
+
       await waitFor(() => {
         expect(result.current?.publishAudio).toBe(false);
       });
     });
 
     it('should disable video publishing when allowVideoOnJoin is false', async () => {
-      configContext.videoSettings.allowVideoOnJoin = false;
-      const { result } = renderHook(() => usePublisherOptions());
+      const { result } = renderHook(() => usePublisherOptions(), {
+        appConfigOptions: {
+          value: {
+            audioSettings: {
+              allowAudioOnJoin: false,
+            },
+          },
+        },
+      });
+
       await waitFor(() => {
         expect(result.current?.publishVideo).toBe(false);
       });
     });
 
     it('should configure resolution from config', async () => {
-      configContext.videoSettings.defaultResolution = '640x480';
-      const { result } = renderHook(() => usePublisherOptions());
+      const { result } = renderHook(() => usePublisherOptions(), {
+        appConfigOptions: {
+          value: {
+            videoSettings: {
+              defaultResolution: '640x480',
+            },
+          },
+        },
+      });
+
       await waitFor(() => {
         expect(result.current?.resolution).toBe('640x480');
       });
     });
   });
 });
+
+function renderHook<Result, Props>(
+  render: (initialProps: Props) => Result,
+  options?: {
+    appConfigOptions?: AppConfigProviderWrapperOptions;
+  }
+) {
+  const { AppConfigWrapper } = makeAppConfigProviderWrapper(options?.appConfigOptions);
+
+  return renderHookBase(render, { ...options, wrapper: AppConfigWrapper });
+}
