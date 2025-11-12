@@ -1,5 +1,10 @@
-import js from '@eslint/js';
+import globals from 'globals';
 
 export default [
-  { files: ['**/*.{ts,tsx,js,jsx}'], languageOptions: { globals: js.environments.node.globals } },
+  {
+    files: ['**/*.{ts,tsx,js,jsx}'],
+    languageOptions: {
+      globals: globals.node,
+    },
+  },
 ];

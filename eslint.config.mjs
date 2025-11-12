@@ -9,6 +9,7 @@ import tailwind from 'eslint-plugin-tailwindcss';
 import prettier from 'eslint-config-prettier';
 import prettierPlugin from 'eslint-plugin-prettier';
 import cspell from '@cspell/eslint-plugin';
+import customWordList from './customWordList.mjs';
 
 const tsProjects = [
   './backend/tsconfig.json',
@@ -28,7 +29,18 @@ export default [
   prettier,
 
   // Ignored paths
-  { ignores: ['node_modules', 'dist', 'coverage', '.nx', 'tmp'] },
+  {
+    ignores: [
+      'node_modules',
+      'dist',
+      'coverage',
+      '.nx',
+      'tmp',
+      // added to avoid typed rules breaking on config files
+      '**/eslint.config.mjs',
+      'customWordList.mjs',
+    ],
+  },
 
   {
     files: ['**/*.{ts,tsx,js,jsx}'],
@@ -122,8 +134,7 @@ export default [
         {
           checkStrings: false,
           checkComments: true,
-          cspell: { language: 'en-US' },
-          customWordListFile: './customWordList.txt',
+          cspell: { language: 'en-US', words: customWordList },
         },
       ],
     },

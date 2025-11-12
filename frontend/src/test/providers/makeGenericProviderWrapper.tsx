@@ -1,5 +1,4 @@
 /* eslint-disable no-underscore-dangle */
-/* eslint-disable jsdoc/no-undefined-types */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { PropsWithChildren, useContext } from 'react';
 
