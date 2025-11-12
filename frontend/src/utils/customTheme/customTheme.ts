@@ -8,7 +8,7 @@ declare module '@mui/material/styles' {
 
 const borderRadiusStandard = '8px';
 const borderRadiusStandardNumber = 2.85;
-const inputHeight = 48;
+const inputHeight = 56;
 const buttonFontSize = 16;
 const h2FontWeight = 500;
 const h5FontWeight = 500;

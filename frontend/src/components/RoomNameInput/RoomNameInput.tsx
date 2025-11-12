@@ -1,8 +1,6 @@
 import { SetStateAction, Dispatch, ReactElement, ChangeEvent } from 'react';
 import { useTranslation } from 'react-i18next';
-import VividIcon from '@components/VividIcon';
 import TextField from '@ui/TextField';
-import InputAdornment from '@ui/InputAdornment';
 import isValidRoomName from '../../utils/isValidRoomName';
 
 export type RoomNameInputProps = {
@@ -51,18 +49,13 @@ const RoomNameInput = ({
     <TextField
       id="room-name"
       fullWidth
-      placeholder={t('room.input.placeholder')}
+      label={t('room.input.label')}
       value={roomName}
       onChange={handleChange}
       error={hasError}
       helperText={hasError ? t('room.input.helper') : ''}
       InputProps={{
         inputProps: { maxLength: 60 },
-        startAdornment: (
-          <InputAdornment position="start">
-            <VividIcon name="abc-keyboard-line" customSize={-5} />
-          </InputAdornment>
-        ),
       }}
     />
   );
