@@ -6,40 +6,53 @@
   "sourceRoot": "frontend/src",
   "targets": {
     "build": {
-      "executor": "@nx/vite:build",
+      "executor": "nx:run-commands",
+      "outputs": ["{projectRoot}/dist"],
       "options": {
-        "outputPath": "dist/frontend"
+        "cwd": "frontend",
+        "command": "vite build && nx run frontend:cp-build"
+      }
+    },
+    "dev": {
+      "executor": "nx:run-commands",
+      "options": {
+        "cwd": "frontend",
+        "command": "concurrently \"yarn --silent ts-check:watch\" \"vite --host\""
       }
     },
     "serve": {
-      "executor": "@nx/vite:dev-server",
+      "executor": "nx:run-commands",
       "options": {
-        "port": 5173,
-        "host": true
+        "cwd": "frontend",
+        "command": "vite --host"
       }
     },
     "preview": {
-      "executor": "@nx/vite:preview-server",
+      "executor": "nx:run-commands",
       "options": {
-        "port": 4173
+        "cwd": "frontend",
+        "command": "vite preview"
       }
     },
     "lint": {
-      "executor": "@nx/eslint:lint",
+      "executor": "nx:run-commands",
       "options": {
-        "lintFilePatterns": ["frontend/**/*.ts", "frontend/**/*.tsx"]
+        "cwd": "frontend",
+        "command": "eslint src --ext ts,tsx --report-unused-disable-directives --max-warnings 0"
       }
     },
     "test": {
-      "executor": "@nx/vite:test",
+      "executor": "nx:run-commands",
       "options": {
-        "passWithNoTests": true,
-        "coverage": true
-      },
-      "configurations": {
-        "watch": {
-          "watch": true
-        }
+        "cwd": "frontend",
+        "command": "vitest run --coverage"
+      }
+    },
+    "test:watch": {
+      "executor": "nx:run-commands",
+      "options": {
+        "cwd": "frontend",
+        "command": "vitest"
       }
     },
     "docs": {
@@ -60,14 +73,14 @@
       "executor": "nx:run-commands",
       "options": {
         "cwd": "frontend",
-        "command": "tsc --noEmit -p tsconfig.json --pretty true"
+        "command": "tsc -p tsconfig.json --pretty true --noEmit"
       }
     },
     "ts-check:watch": {
       "executor": "nx:run-commands",
       "options": {
         "cwd": "frontend",
-        "command": "tsc --noEmit -p tsconfig.json --watch --preserveWatchOutput"
+        "command": "tsc -p tsconfig.json --noEmit --watch --preserveWatchOutput"
       }
     },
     "cp-build": {
