@@ -27,15 +27,27 @@
       }
     },
     "test": {
-      "executor": "@nx/jest:jest",
+      "executor": "nx:run-commands",
       "options": {
-        "jestConfig": "backend/jest.config.js",
-        "coverage": true,
-        "runInBand": true,
-        "maxWorkers": 1
+        "cwd": "backend",
+        "command": "NODE_OPTIONS=\"--experimental-vm-modules\" jest --maxWorkers=1 --coverage"
       },
       "configurations": {
-        "watch": { "watch": true }
+        "watch": {
+          "command": "NODE_OPTIONS=\"--experimental-vm-modules\" jest --maxWorkers=1 --coverage --watch"
+        }
+      },
+      "inputs": [
+        "default",
+        "^default",
+        { "externalDependencies": ["jest", "ts-jest"] }
+      ]
+    },
+    "test:debug": {
+      "executor": "nx:run-commands",
+      "options": {
+        "cwd": "backend",
+        "command": "NODE_OPTIONS=\"--experimental-vm-modules --inspect-brk\" jest --runInBand --detectOpenHandles --verbose"
       },
       "inputs": [
         "default",

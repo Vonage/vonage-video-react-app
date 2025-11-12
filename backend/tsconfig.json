@@ -1,9 +1,7 @@
 {
   "extends": "../tsconfig.base.json",
-  "files": [],
-  "include": [],
-  "references": [{ "path": "./tsconfig.app.json" }, { "path": "./tsconfig.spec.json" }],
   "compilerOptions": {
+    "composite": false,
     "target": "ESNext" /* Set the JavaScript language version for emitted JavaScript and include compatible library declarations. */,
     "lib": [
       "ESNext"
@@ -11,16 +9,7 @@
     "module": "ESNext" /* Specify what module code is generated. */,
     "rootDir": "./" /* Specify the root folder within your source files. */,
     "moduleResolution": "Node" /* Specify how TypeScript looks up a file from a given module specifier. */,
-    "resolveJsonModule": true /* Enable importing .json files. */,
     "outDir": "./dist" /* Specify an output folder for all emitted files. */,
-    "isolatedModules": true /* Ensure that each file can be safely transpiled without relying on other imports. */,
-    "esModuleInterop": true /* Emit additional JavaScript to ease support for importing CommonJS modules. This enables 'allowSyntheticDefaultImports' for type compatibility. */,
-    "forceConsistentCasingInFileNames": true /* Ensure that casing is correct in imports. */,
-    "strict": true /* Enable all strict type-checking options. */,
-    "noUncheckedIndexedAccess": false /* Add 'undefined' to a type when accessed using an index. */,
-    "skipLibCheck": true /* Skip type checking all .d.ts files. */,
-    "composite": false,
-    "baseUrl": "./",
-    "paths": { "@src/*": ["backend/src/*"] }
+    "types": ["node", "jest"] /* Specify type declaration files to be included in compilation. */
   }
 }
