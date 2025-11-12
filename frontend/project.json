@@ -38,7 +38,7 @@
       "executor": "nx:run-commands",
       "options": {
         "cwd": "frontend",
-        "command": "eslint src --ext ts,tsx --report-unused-disable-directives --max-warnings 0"
+        "command": "eslint 'src/**/*.{ts,tsx}' --report-unused-disable-directives --max-warnings 0"
       }
     },
     "test": {

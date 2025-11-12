@@ -7,6 +7,7 @@ import reactHooks from 'eslint-plugin-react-hooks';
 import a11y from 'eslint-plugin-jsx-a11y';
 import tailwind from 'eslint-plugin-tailwindcss';
 import prettier from 'eslint-config-prettier';
+import prettierPlugin from 'eslint-plugin-prettier';
 import cspell from '@cspell/eslint-plugin';
 
 const tsProjects = [
@@ -35,7 +36,7 @@ export default [
       ecmaVersion: 'latest',
       sourceType: 'module',
       parser: tseslint.parser,
-      parserOptions: { project: tsProjects, tsconfigRootDir: new URL('.', import.meta.url) },
+      parserOptions: { projectService: true, tsconfigRootDir: import.meta.dirname },
     },
     plugins: {
       '@typescript-eslint': tseslint.plugin,
@@ -46,6 +47,7 @@ export default [
       tailwindcss: tailwind,
       '@nx': nx,
       '@cspell': cspell,
+      prettier: prettierPlugin,
     },
     settings: {
       react: { version: 'detect' },
