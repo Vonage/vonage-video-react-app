@@ -48,7 +48,18 @@ export default [
       ecmaVersion: 'latest',
       sourceType: 'module',
       parser: tseslint.parser,
-      parserOptions: { projectService: true, tsconfigRootDir: import.meta.dirname },
+      parserOptions: {
+        projectService: {
+          // files that are *not* in any tsconfig but should still be linted
+          allowDefaultProject: [
+            'eslint.config.mjs',
+            'frontend/vite.config.ts',
+            // add more config files here if needed, e.g.
+            // 'frontend/tailwind.config.*',
+          ],
+        },
+        tsconfigRootDir: import.meta.dirname,
+      },
     },
     plugins: {
       '@typescript-eslint': tseslint.plugin,
