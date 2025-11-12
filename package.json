@@ -35,7 +35,8 @@
     "ts-check": "nx run backend:ts-check && nx run frontend:ts-check",
     "test:integrationUpdateScreenshots": "nx run integration-tests:updateScreenshots",
     "ts-check:backend": "nx run backend:ts-check",
-    "ts-check:frontend": "nx run frontend:ts-check"
+    "ts-check:frontend": "nx run frontend:ts-check",
+    "ts-check:integration-tests": "nx run integration-tests:ts-check"
   },
   "scriptsInfo": {
     "dev": "Run both frontend and backend in development mode with hot reload",
@@ -55,6 +56,8 @@
   },
   "homepage": "https://github.com/Vonage/vonage-video-react-app#readme",
   "devDependencies": {
+    "@playwright/test": "^1.46.0",
+    "electron": "latest",
     "@cspell/eslint-plugin": "^9.3.0",
     "@eslint/js": "^9.39.1",
     "@jest/globals": "^29.7.0",
