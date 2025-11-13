@@ -2,8 +2,6 @@ import { ReactElement } from 'react';
 import Box from '@ui/Box';
 import Stack from '@ui/Stack';
 import Header from '@ui/Header';
-import BannerDateTime from '../BannerDateTime';
-import BannerLinks from '../BannerLinks';
 import BannerLogo from '../BannerLogo';
 import BannerLanguage from '../BannerLanguage';
 
@@ -15,7 +13,7 @@ import BannerLanguage from '../BannerLanguage';
  */
 const Banner = (): ReactElement => {
   return (
-    <Header appBarProps={{ position: 'static' }} toolbarProps={{ sx: { alignItems: 'start' } }}>
+    <Header appBarProps={{ position: 'static' }} toolbarProps={{ sx: { alignItems: 'stretch' } }}>
       <Box sx={{ flex: 1, bgcolor: 'background.paper' }}>
         <BannerLogo />
       </Box>
@@ -29,11 +27,10 @@ const Banner = (): ReactElement => {
           sx={{
             height: '100%',
             bgcolor: { xs: 'background.paper', md: 'primary.light' },
+            mr: 4,
           }}
         >
-          <BannerDateTime />
           <BannerLanguage />
-          <BannerLinks />
         </Stack>
       </Box>
     </Header>

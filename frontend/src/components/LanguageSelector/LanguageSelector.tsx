@@ -47,11 +47,17 @@ const LanguageSelector = ({ showFlag = true }: LanguageSelectorProps): ReactElem
         value={currentLanguage}
         onChange={handleLanguageChange}
         displayEmpty
-        sx={{
+        sx={(theme) => ({
           '& .MuiOutlinedInput-notchedOutline': {
             border: 'none',
           },
-        }}
+          '& .MuiSelect-select': {
+            backgroundColor: {
+              xs: theme.palette.background.paper,
+              md: theme.palette.primary.light,
+            },
+          },
+        })}
         renderValue={(value) => {
           const selectedOption = supportedLanguages.find((option) => option.code === value);
           if (!selectedOption) {

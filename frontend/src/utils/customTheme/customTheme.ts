@@ -211,13 +211,6 @@ const customTheme = createTheme({
         },
       },
     },
-    MuiSelect: {
-      styleOverrides: {
-        root: {
-          backgroundColor: colors.surface,
-        },
-      },
-    },
     MuiTooltip: {
       styleOverrides: {
         tooltip: {

@@ -21,8 +21,8 @@ const BannerLogo = (): ReactElement => {
       data-testid="banner-logo"
       sx={{
         boxSizing: 'border-box',
-        ml: { xs: 1, md: 6 },
-        mt: { xs: 2, md: 5 },
+        ml: { xs: 1, md: 3 },
+        mt: { xs: 2, md: 2 },
         px: { xs: 2, md: 0 },
       }}
     >

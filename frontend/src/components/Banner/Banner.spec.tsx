@@ -15,17 +15,6 @@ describe('Banner', () => {
     expect(bannerLogo).toBeInTheDocument();
   });
 
-  it('renders the banner date and time', () => {
-    render(
-      <MemoryRouter>
-        <Banner />
-      </MemoryRouter>
-    );
-
-    const bannerDataTime = screen.getByTestId('dateAndTime');
-    expect(bannerDataTime).toBeInTheDocument();
-  });
-
   it('renders the banner links', () => {
     render(
       <MemoryRouter>
@@ -33,7 +22,7 @@ describe('Banner', () => {
       </MemoryRouter>
     );
 
-    const bannerLinks = screen.getByTestId('banner-links');
-    expect(bannerLinks).toBeInTheDocument();
+    const FooterLinks = screen.getByTestId('banner-links');
+    expect(FooterLinks).toBeInTheDocument();
   });
 });

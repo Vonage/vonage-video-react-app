@@ -118,6 +118,7 @@
     "filePicker.capture": "Capturar pantalla",
     "filePicker.delete": "Eliminar captura",
     "filePicker.sizeLimit": "El tamaño máximo de carga es 20MB. Por favor sube otro archivo.",
+    "footer.github.title": "Aplicación de referencia de video de Vonage",
     "imageStorage.imagesExceedSize": "Las imágenes son demasiado grandes para almacenar (~4MB máx).",
     "imageStorage.storageFailure": "Error al guardar las imágenes en el almacenamiento local.",
     "imageStorage.duplicateImage": "Esta imagen ya ha sido agregada.",

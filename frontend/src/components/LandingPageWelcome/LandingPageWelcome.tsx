@@ -18,7 +18,7 @@ const LandingPageWelcome = (): ReactElement => {
       sx={{
         maxWidth: '48rem',
         pl: { xs: 0, lg: 4 },
-        mb: { xs: 0, md: 6 },
+        mb: { xs: 0, md: 16 },
         ml: { xs: 0, md: 2 },
         textAlign: 'left',
       }}

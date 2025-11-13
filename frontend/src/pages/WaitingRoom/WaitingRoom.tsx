@@ -1,7 +1,8 @@
 import { useState, useEffect, MouseEvent, ReactElement, TouchEvent } from 'react';
 import Box from '@ui/Box';
-import GridLayout from '@ui/FlexLayout';
+import FlexLayout from '@ui/FlexLayout';
 import Banner from '@components/Banner';
+import Footer from '@components/Footer/Footer';
 import usePreviewPublisherContext from '../../hooks/usePreviewPublisherContext';
 import ControlPanel from '../../components/WaitingRoom/ControlPanel';
 import VideoContainer from '../../components/WaitingRoom/VideoContainer';
@@ -96,11 +97,11 @@ const WaitingRoom = (): ReactElement => {
 
   return (
     <Box data-testid="waitingRoom">
-      <GridLayout>
-        <GridLayout.Banner>
+      <FlexLayout>
+        <FlexLayout.Banner>
           <Banner />
-        </GridLayout.Banner>
-        <GridLayout.Left>
+        </FlexLayout.Banner>
+        <FlexLayout.Left>
           <div
             className={`max-w-full flex-col ${isSmallViewport ? '' : 'h-[394px]'} sm: inline-flex`}
           >
@@ -118,11 +119,14 @@ const WaitingRoom = (): ReactElement => {
               />
             )}
           </div>
-        </GridLayout.Left>
-        <GridLayout.Right>
+        </FlexLayout.Left>
+        <FlexLayout.Right>
           <UsernameInput username={username} setUsername={setUsername} />
-        </GridLayout.Right>
-      </GridLayout>
+        </FlexLayout.Right>
+        <FlexLayout.Footer>
+          <Footer />
+        </FlexLayout.Footer>
+      </FlexLayout>
       {accessStatus !== DEVICE_ACCESS_STATUS.ACCEPTED && (
         <DeviceAccessAlert accessStatus={accessStatus} />
       )}
