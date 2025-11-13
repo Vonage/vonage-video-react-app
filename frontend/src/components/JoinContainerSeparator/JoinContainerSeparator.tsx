@@ -15,7 +15,13 @@ const JoinContainerSeparator = (): ReactElement => {
   return (
     <Stack direction="row" alignItems="center" width="100%" sx={{ my: 4 }}>
       <Separator orientation="left" />
-      <Typography variant="body2" sx={(theme) => ({ color: theme.palette.tertiary.main })}>
+      <Typography
+        variant="body2"
+        sx={(theme) => ({
+          color: theme.palette.tertiary?.main ?? theme.palette.text.secondary,
+          mx: 2,
+        })}
+      >
         {t('common.or')}
       </Typography>
       <Separator orientation="right" />

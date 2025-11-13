@@ -1,6 +1,6 @@
 import { ReactElement, useState } from 'react';
 import Stack from '@ui/Stack';
-import JoinButton from '../JoinButton';
+import JoinWaitRoomButton from '../JoinWaitRoomButton';
 import RoomNameInput from '../RoomNameInput';
 
 /**
@@ -28,7 +28,7 @@ const JoinExistingRoom = (): ReactElement => {
         setHasError={setHasError}
       />
 
-      <JoinButton roomName={roomName} isDisabled={hasError} />
+      <JoinWaitRoomButton roomName={roomName} isDisabled={false} setHasError={setHasError} />
     </Stack>
   );
 };
