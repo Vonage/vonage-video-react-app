@@ -64,7 +64,7 @@ const colors = {
 
   // Surface colors
   background: '#FFFFFF',
-  backgroundDisabled: '#f5f5f5',
+  backgroundDisabled: '#f5f5f5', // colors/disabled
   onBackground: '#1E1925',
   surface: '#FFFFFF',
   onSurface: '#000000',
@@ -81,9 +81,6 @@ const colors = {
   // Shadow and scrim
   shadow: '#000000',
   scrim: '#000000',
-
-  // Neutral colors
-  darkGrey: '#202124',
 } as const;
 
 const fonts = {
@@ -122,7 +119,7 @@ const customTheme = createTheme({
     background: {
       default: colors.background,
       paper: colors.surface,
-      darkGrey: colors.darkGrey,
+      darkGrey: colors.secondary,
     },
     text: {
       primary: colors.textSecondary, // This is the default text color
