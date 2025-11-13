@@ -8,6 +8,7 @@ import OT, {
   PublisherProperties,
 } from '@vonage/client-sdk-video';
 import { useTranslation } from 'react-i18next';
+import { setStorageItem, STORAGE_KEYS } from '@utils/storage';
 import usePublisherQuality, { NetworkQuality } from '../usePublisherQuality/usePublisherQuality';
 import usePublisherOptions from '../usePublisherOptions';
 import useSessionContext from '../../../hooks/useSessionContext';
@@ -291,6 +292,7 @@ const usePublisher = (): PublisherContextType => {
     }
     publisherRef.current.publishVideo(!isVideoEnabled);
     setIsVideoEnabled(!isVideoEnabled);
+    setStorageItem(STORAGE_KEYS.VIDEO_SOURCE_ENABLED, (!isVideoEnabled).toString());
   };
 
   /**
@@ -305,6 +307,7 @@ const usePublisher = (): PublisherContextType => {
     }
     publisherRef.current.publishAudio(!isAudioEnabled);
     setIsAudioEnabled(!isAudioEnabled);
+    setStorageItem(STORAGE_KEYS.AUDIO_SOURCE_ENABLED, (!isAudioEnabled).toString());
     setIsForceMuted(false);
   };
 
