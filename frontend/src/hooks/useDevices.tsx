@@ -38,7 +38,7 @@ const useDevices = () => {
       console.warn('enumerateDevices() not supported.');
       return;
     }
-    // eslint-disable-next-line consistent-return
+
     return new Promise<void>((_resolve, reject) => {
       // Vonage Video API's getDevices retrieves all audio and video input devices
       getDevices(async (err?: OTError, devices?: Device[]) => {

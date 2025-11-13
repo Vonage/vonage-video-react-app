@@ -1,0 +1,96 @@
+{
+  "$schema": "./node_modules/nx/schemas/nx-schema.json",
+  "targetDefaults": {
+    "test": {
+      "outputs": ["{projectRoot}/coverage"],
+      "cache": true,
+      "dependsOn": ["^build"]
+    },
+    "build": {
+      "dependsOn": ["^build"]
+    },
+    "lint": {
+      "cache": true
+    },
+    "ts-check": {
+      "cache": false
+    },
+    "serve": {
+      "cache": false
+    }
+  },
+  "plugins": [
+    {
+      "plugin": "@nx/eslint",
+      "options": {
+        "targetName": "lint"
+      }
+    },
+    {
+      "plugin": "@nx/jest",
+      "options": {
+        "targetName": "test"
+      }
+    },
+    {
+      "plugin": "@nx/vite",
+      "options": {
+        "buildTargetName": "build",
+        "testTargetName": "test",
+        "serveTargetName": "serve",
+        "devTargetName": "serve",
+        "previewTargetName": "preview",
+        "serveStaticTargetName": "serve-static",
+        "typecheckTargetName": "ts-check",
+        "buildDepsTargetName": "build-deps",
+        "watchDepsTargetName": "watch-deps"
+      }
+    },
+    {
+      "plugin": "@nx/node",
+      "options": {
+        "serveTargetName": "serve",
+        "buildTargetName": "build",
+        "testTargetName": "test",
+        "lintTargetName": "lint",
+        "typecheckTargetName": "ts-check"
+      }
+    },
+    {
+      "plugin": "@nx/js/typescript",
+      "options": {
+        "typecheck": {
+          "targetName": "ts-check"
+        },
+        "build": {
+          "targetName": "build",
+          "configName": "tsconfig.lib.json",
+          "buildDepsName": "build-deps",
+          "watchDepsName": "watch-deps"
+        }
+      }
+    }
+  ],
+  "release": {
+    "version": {
+      "preVersionCommand": "npx nx run-many -t build"
+    }
+  },
+  "generators": {
+    "@nx/react": {
+      "application": {
+        "bundler": "vite",
+        "unitTestRunner": "vitest"
+      },
+      "library": {
+        "unitTestRunner": "vitest"
+      }
+    },
+    "@nx/node": {
+      "application": {
+        "framework": "express",
+        "unitTestRunner": "jest"
+      }
+    }
+  }
+}

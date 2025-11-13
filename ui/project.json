@@ -1,0 +1,41 @@
+{
+  "$schema": "../node_modules/nx/schemas/project-schema.json",
+  "name": "ui",
+  "projectType": "library",
+  "root": "ui",
+  "sourceRoot": "ui/src",
+  "targets": {
+    "lint": {
+      "executor": "@nx/eslint:lint",
+      "options": {
+        "lintFilePatterns": ["ui/**/*.ts", "ui/**/*.tsx"]
+      }
+    },
+    "test": {
+      "executor": "@nx/vite:test",
+      "options": {
+        "passWithNoTests": true,
+        "coverage": true
+      },
+      "configurations": {
+        "watch": {
+          "watch": true
+        }
+      }
+    },
+    "build": {
+      "executor": "@nx/vite:build",
+      "options": {
+        "outputPath": "dist/ui"
+      }
+    },
+    "ts-check": {
+      "executor": "nx:run-commands",
+      "options": {
+        "cwd": "ui",
+        "command": "tsc --noEmit -p tsconfig.json --pretty true"
+      }
+    }
+  },
+  "tags": ["scope:ui", "type:lib"]
+}

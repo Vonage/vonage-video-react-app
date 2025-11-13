@@ -1,0 +1,21 @@
+{
+  "compilerOptions": {
+    "composite": true, // required by Nx for project references
+    "importHelpers": true,
+    "isolatedModules": true,
+    "lib": ["ES2022"],
+    "noEmitOnError": true,
+    "noFallthroughCasesInSwitch": true,
+    "noImplicitOverride": true,
+    "noImplicitReturns": true,
+    "noUnusedLocals": true,
+    "skipLibCheck": true,
+    "strict": true,
+    "target": "ES2022",
+    "resolveJsonModule": true,
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "forceConsistentCasingInFileNames": true,
+    "baseUrl": "."
+  }
+}

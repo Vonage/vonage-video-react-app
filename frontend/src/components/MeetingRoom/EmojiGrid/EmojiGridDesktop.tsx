@@ -1,9 +1,9 @@
 import { Grid, Grow, Paper, Popper, ClickAwayListener } from '@mui/material';
 import { ReactElement, RefObject, useEffect, useState } from 'react';
-import { PopperChildrenProps } from '@mui/base';
 import SendEmojiButton from '../SendEmojiButton';
-import emojiMap from '../../../utils/emojis';
-import { colors } from '../../../utils/customTheme/customTheme';
+import emojiMap from '@utils/emojis';
+import { colors } from '@utils/customTheme/customTheme';
+import { PopperChildrenProps } from '@mui/material/Popper/BasePopper.types';
 
 export type EmojiGridDesktopProps = {
   handleClickAway: (event: MouseEvent | TouchEvent) => void;
@@ -48,9 +48,7 @@ const EmojiGridDesktop = ({
         {({ TransitionProps, placement }: PopperChildrenProps) => (
           <Grow
             {...TransitionProps}
-            style={{
-              transformOrigin: placement === 'bottom' ? 'center top' : 'center bottom',
-            }}
+            style={{ transformOrigin: placement === 'bottom' ? 'center top' : 'center bottom' }}
           >
             <div className="flex text-left font-normal">
               <ClickAwayListener onClickAway={handleClickAway}>
@@ -73,9 +71,7 @@ const EmojiGridDesktop = ({
                     container
                     spacing={0}
                     display={isEmojiGridOpen ? 'flex' : 'none'}
-                    sx={{
-                      width: '100%',
-                    }}
+                    sx={{ width: '100%' }}
                   >
                     {Object.values(emojiMap).map((emoji) => (
                       <SendEmojiButton key={emoji} emoji={emoji} />

@@ -47,7 +47,7 @@ const useScreenShare = (): UseScreenShareType => {
     }
   }, [unpublish]);
 
-  const handleStreamCreated = useCallback(async () => {
+  const handleStreamCreated = useCallback(() => {
     unpublishScreenshare();
   }, [unpublishScreenshare]);
 
@@ -116,6 +116,10 @@ const useScreenShare = (): UseScreenShareType => {
     toggleShareScreen,
     isSharingScreen,
     screenshareVideoElement,
+    /**
+     * On the first render this will return null
+     */
+    // eslint-disable-next-line react-hooks/refs
     screensharingPublisher: screenSharingPub.current,
   };
 };

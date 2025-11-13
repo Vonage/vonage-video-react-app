@@ -28,6 +28,7 @@ import usePublisherOptions from '@Context/PublisherProvider/usePublisherOptions'
 import { makeAppConfigProviderWrapper } from '@test/providers';
 import composeProviders from '@utils/composeProviders';
 import MeetingRoom from './MeetingRoom';
+import { Box } from 'opentok-layout-js';
 
 const mockedNavigate = vi.fn();
 const mockedParams = { roomName: 'test-room-name' };
@@ -165,7 +166,7 @@ describe('MeetingRoom', () => {
         left: 0,
         top: 0,
         width: 1280,
-      });
+      }) as Box[];
     });
     mockUseSessionContext.mockReturnValue(sessionContext as unknown as SessionContextType);
     mockUseActiveSpeaker.mockReturnValue(undefined);

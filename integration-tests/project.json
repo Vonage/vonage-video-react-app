@@ -1,0 +1,46 @@
+{
+  "$schema": "../node_modules/nx/schemas/project-schema.json",
+  "name": "integration-tests",
+  "projectType": "application",
+  "root": "integration-tests",
+  "sourceRoot": "integration-tests",
+  "targets": {
+    "test": {
+      "executor": "nx:run-commands",
+      "options": {
+        "cwd": "integration-tests",
+        "command": "playwright test --project='Google Chrome Fake Devices' --project=firefox --project='Opera' --project='Microsoft Edge' --project='Mobile Chrome' --project='Electron'"
+      }
+    },
+    "updateScreenshots": {
+      "executor": "nx:run-commands",
+      "cache": false,
+      "options": {
+        "cwd": "integration-tests",
+        "command": "playwright test --project='Google Chrome Fake Devices' --project=firefox --project='Opera' --project='Microsoft Edge' --project='Mobile Chrome' --project='Electron' --update-snapshots"
+      }
+    },
+    "postinstall": {
+      "executor": "nx:run-commands",
+      "options": {
+        "cwd": "integration-tests",
+        "command": "playwright install"
+      }
+    },
+    "ts-check": {
+      "executor": "nx:run-commands",
+      "options": {
+        "cwd": "integration-tests",
+        "command": "tsc -p tsconfig.json --pretty true --noEmit"
+      }
+    },
+    "ts-check:watch": {
+      "executor": "nx:run-commands",
+      "options": {
+        "cwd": "integration-tests",
+        "command": "tsc -p tsconfig.json --noEmit --watch --preserveWatchOutput"
+      }
+    }
+  },
+  "tags": ["e2e", "playwright"]
+}

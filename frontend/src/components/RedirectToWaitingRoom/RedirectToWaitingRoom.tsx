@@ -1,5 +1,3 @@
-/* eslint-disable jsdoc/check-param-names */
-/* eslint-disable jsdoc/require-param */
 import { ReactElement } from 'react';
 import { Navigate, useLocation } from 'react-router-dom';
 import useRoomName from '../../hooks/useRoomName';

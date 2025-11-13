@@ -58,7 +58,7 @@ class SpeakingDetector extends EventEmitter {
       this.stream.getTracks().forEach((track: MediaStreamTrack) => track.stop());
     }
     if (this.audioContext) {
-      this.audioContext.close();
+      void this.audioContext.close();
     }
     if (this.detectSpeakingTimer !== undefined) {
       clearTimeout(this.detectSpeakingTimer); // Clear the detectSpeakingTimer

@@ -26,12 +26,7 @@ const loadConfig = (): Config => {
       throw new Error('Missing config values for Vonage');
     }
 
-    return {
-      ...feedbackConfig,
-      applicationId,
-      privateKey,
-      provider: 'vonage',
-    };
+    return { ...feedbackConfig, applicationId, privateKey, provider: 'vonage' };
   }
   if (provider === 'opentok') {
     const apiKey = process.env.OT_API_KEY ?? '';
@@ -41,12 +36,7 @@ const loadConfig = (): Config => {
       throw new Error('Missing config values for OpenTok');
     }
 
-    return {
-      ...feedbackConfig,
-      apiKey,
-      apiSecret,
-      provider: 'opentok',
-    };
+    return { ...feedbackConfig, apiKey, apiSecret, provider: 'opentok' };
   }
   throw new Error('Unknown video service provider');
 };

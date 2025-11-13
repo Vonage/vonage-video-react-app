@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unsafe-declaration-merging */
-/* eslint-disable no-underscore-dangle */
 import { EventEmitter } from 'events';
 import throttle from 'lodash/throttle';
 
