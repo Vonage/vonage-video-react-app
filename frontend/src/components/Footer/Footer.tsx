@@ -11,7 +11,7 @@ import Stack from '@ui/Stack';
  */
 const Footer = (): ReactElement => {
   return (
-    <Stack direction="row" alignItems="center">
+    <Stack direction="row" alignItems="center" data-testid="footer-content">
       <Box sx={{ flex: 1, bgcolor: 'background.paper', display: { xs: 'none', md: 'block' } }} />
 
       <Box

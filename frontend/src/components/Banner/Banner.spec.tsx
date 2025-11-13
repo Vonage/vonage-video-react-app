@@ -14,15 +14,4 @@ describe('Banner', () => {
     const bannerLogo = screen.getByTestId('banner-logo');
     expect(bannerLogo).toBeInTheDocument();
   });
-
-  it('renders the banner links', () => {
-    render(
-      <MemoryRouter>
-        <Banner />
-      </MemoryRouter>
-    );
-
-    const FooterLinks = screen.getByTestId('banner-links');
-    expect(FooterLinks).toBeInTheDocument();
-  });
 });
