@@ -19,6 +19,7 @@ const LandingPageWelcome = (): ReactElement => {
         maxWidth: '48rem',
         pl: { xs: 0, lg: 4 },
         mb: { xs: 0, md: 6 },
+        ml: { xs: 0, md: 2 },
         textAlign: 'left',
       }}
     >
@@ -57,7 +58,7 @@ const LandingPageWelcome = (): ReactElement => {
       <Typography
         variant="h5"
         sx={{
-          color: 'text.secondary',
+          color: 'text.tertiary',
           mt: 1,
           display: {
             xs: 'none',

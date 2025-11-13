@@ -47,6 +47,7 @@ const RoomNameInput = ({
   };
   return (
     <TextField
+      size="small"
       id="room-name"
       fullWidth
       label={t('room.input.label')}

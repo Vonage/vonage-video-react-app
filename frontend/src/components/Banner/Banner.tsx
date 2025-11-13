@@ -16,22 +16,27 @@ import BannerLanguage from '../BannerLanguage';
 const Banner = (): ReactElement => {
   return (
     <AppBar position="static">
-      <Toolbar sx={{ alignItems: 'start' }}>
-        <Box sx={{ flex: 1, bgcolor: { xs: 'background.paper', md: 'primary.light' } }}>
+      <Toolbar sx={{ alignItems: 'stretch' }}>
+        <Box sx={{ flex: 1, bgcolor: 'background.paper' }}>
           <BannerLogo />
         </Box>
 
-        <Stack
-          direction="row"
-          spacing={2}
-          alignItems="center"
-          justifyContent="flex-end"
-          sx={{ flex: 1 }}
-        >
-          <BannerDateTime />
-          <BannerLanguage />
-          <BannerLinks />
-        </Stack>
+        <Box sx={{ flex: 1, bgcolor: { xs: 'background.paper', md: 'primary.light' } }}>
+          <Stack
+            direction="row"
+            spacing={2}
+            alignItems="center"
+            justifyContent="flex-end"
+            sx={{
+              height: '100%',
+              bgcolor: { xs: 'background.paper', md: 'primary.light' },
+            }}
+          >
+            <BannerDateTime />
+            <BannerLanguage />
+            <BannerLinks />
+          </Stack>
+        </Box>
       </Toolbar>
     </AppBar>
   );

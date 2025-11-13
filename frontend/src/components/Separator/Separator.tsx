@@ -19,7 +19,7 @@ const Separator = ({ orientation = 'left' }: SeparatorProps): ReactElement => {
       data-testid="separator"
       sx={(theme) => ({
         width: '50%',
-        borderBottom: '2px solid',
+        borderBottom: '1px solid',
         borderColor: theme.palette.divider,
         ...(orientation === 'left' ? { marginRight: 1 } : { marginLeft: 1 }),
       })}

@@ -32,19 +32,15 @@ const RoomJoinContainer = (): ReactElement => {
         flexDirection: 'column',
         alignItems: 'start',
         bgcolor: { xs: 'background.paper', md: 'background.default' },
-        padding: { xs: '0px', md: '80px 40px' },
+        padding: { xs: '0px 0px 0px 0px', md: '40px 40px 0px 40px' },
         borderRadius: theme.shape.borderRadius,
       })}
     >
-      <Typography sx={{ mb: 2, typography: { xs: 'body2', md: 'h6' } }}>
-        {t('button.joinExistingMeeting')}
-      </Typography>
-      <JoinExistingRoom />
-      <JoinContainerSeparator />
-      <Typography sx={{ mt: 5, mb: 2, typography: { xs: 'body2', md: 'h6' } }}>
-        {t('button.startNewRoom')}
-      </Typography>
+      <Typography sx={{ mb: 2, typography: 'h6' }}>{t('button.startNewRoom')}</Typography>
       <NewRoomButton handleNewRoom={handleNewRoom} />
+      <JoinContainerSeparator />
+      <Typography sx={{ mb: 2, typography: 'h6' }}>{t('button.joinExistingMeeting')}</Typography>
+      <JoinExistingRoom />
     </Box>
   );
 };
