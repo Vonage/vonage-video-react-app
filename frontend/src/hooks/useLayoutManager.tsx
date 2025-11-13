@@ -11,6 +11,7 @@ export type GetLayout = InstanceType<typeof LayoutManager>['getLayout'];
  */
 const useLayoutManager = (): GetLayout => {
   const layoutManager = useRef(new LayoutManager());
+  // eslint-disable-next-line react-hooks/refs
   return layoutManager.current.getLayout.bind(layoutManager.current);
 };
 

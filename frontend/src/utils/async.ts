@@ -47,8 +47,7 @@ export const waitForEvent = async (
   eventSpy?: (...args: any[]) => void
 ): Promise<void> => {
   const { promise, resolve } = getExternalPromiseResolver();
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const handler = (...args: any[]) => {
+  const handler = (...args: unknown[]) => {
     if (eventSpy) {
       eventSpy(...args);
     }

@@ -1,4 +1,3 @@
-/* eslint-disable no-underscore-dangle */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { PropsWithChildren, useContext } from 'react';
 
@@ -50,11 +49,18 @@ function makeGenericProviderWrapper<
   let onCreated = options?.__onCreated ?? null;
 
   const Interceptor = () => {
-    const contextValue = useContext(context);
+    const contextValue = useContext<ContextValue>(context);
 
+    /**
+     * The point of this interceptor is to capture context,
+     * This scenario is the exception to the rule and mostly for testing purposes.
+     */
+    // eslint-disable-next-line react-hooks/immutability
     contextResult.current = contextValue;
 
     onCreated?.(contextValue);
+
+    // eslint-disable-next-line react-hooks/globals
     onCreated = null;
 
     options?.__interceptor?.(contextValue);
