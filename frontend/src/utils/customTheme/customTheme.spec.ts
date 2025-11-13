@@ -7,7 +7,7 @@ describe('customTheme', () => {
       expect(customTheme.palette.primary.main).toBe(colors.primary);
       expect(customTheme.palette.primary.contrastText).toBe(colors.onPrimary);
       expect(customTheme.palette.background.default).toBe(colors.background);
-      expect(customTheme.palette.text.primary).toBe(colors.onBackground);
+      expect(customTheme.palette.text.primary).toBe(colors.textSecondary);
     });
 
     it('should have typography configured', () => {

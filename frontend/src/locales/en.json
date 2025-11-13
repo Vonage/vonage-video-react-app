@@ -46,6 +46,7 @@
   "button.createRoom": "Create a new room",
   "button.startNewRoom": "Start a new video meeting",
   "button.joinExistingMeeting": "Join existing meeting",
+  "button.joinWaitingRoom": "Join waiting room",
   "button.join": "Join",
   "button.mute": "Mute",
   "button.send": "Send",

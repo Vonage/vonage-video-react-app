@@ -45,6 +45,7 @@ const RoomNameInput = ({
       setHasError(true);
     }
   };
+
   return (
     <TextField
       size="small"

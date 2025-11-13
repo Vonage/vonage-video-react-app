@@ -46,6 +46,7 @@
     "button.createRoom": "Crea una nuova stanza",
     "button.startNewRoom": "Inizia una nuova videoconferenza",
     "button.joinExistingMeeting": "Unisciti a una riunione esistente",
+    "button.joinWaitingRoom": "Unisciti alla sala d'attesa",
     "button.join": "Partecipa",
     "button.mute": "Disattiva audio",
     "button.send": "Invia",
