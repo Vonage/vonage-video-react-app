@@ -1,9 +1,22 @@
-import { createTheme } from '@mui/material';
+import { createTheme, PaletteColor, PaletteColorOptions } from '@mui/material';
 
 declare module '@mui/material/styles' {
   interface TypeBackground {
     darkGrey: string;
   }
+
+  interface TypeText {
+    tertiary: string;
+  }
+
+  interface Palette {
+    tertiary: PaletteColor;
+  }
+
+  interface PaletteOptions {
+    tertiary?: PaletteColorOptions;
+  }
+
   interface TypeText {
     light: string;
   }
@@ -11,13 +24,13 @@ declare module '@mui/material/styles' {
 
 const borderRadiusStandard = '8px';
 const borderRadiusStandardNumber = 2.85;
-const inputHeight = 48;
+const buttonHeight = 40;
 const buttonFontSize = 16;
 const h2FontWeight = 500;
 const h5FontWeight = 500;
 
 const buttonSx = {
-  height: inputHeight,
+  height: buttonHeight,
   textTransform: 'none',
   borderRadius: borderRadiusStandard,
 } as const;
@@ -25,6 +38,7 @@ const buttonSx = {
 const colors = {
   // Primary colors
   primary: '#871EFF',
+  textPrimary: '#9941ff',
   primaryLight: '#f3e9ff',
   primaryHover: '#3E007E2F',
   onPrimary: '#FFFFFF',
@@ -36,12 +50,14 @@ const colors = {
 
   // Secondary colors
   secondary: '#2F293B',
+  textSecondary: '#000000',
   onSecondary: '#FFFFFF',
   secondaryContainer: '#4C4659',
   onSecondaryContainer: '#FFFFFF',
 
   // Tertiary colors (mapped to warning)
   tertiary: '#2A005E',
+  textTertiary: '#757575',
   onTertiary: '#FFFFFF',
   tertiaryContainer: '#440291',
   onTertiaryContainer: '#F7EDFF',
@@ -54,9 +70,9 @@ const colors = {
 
   // Surface colors
   background: '#FFFFFF',
-  backgroundDisabled: '#f5f5f5',
+  backgroundDisabled: '#f5f5f5', // colors/disabled
   onBackground: '#1E1925',
-  surface: '#FCF8F8',
+  surface: '#FFFFFF',
   onSurface: '#000000',
 
   // Outline colors
@@ -71,9 +87,6 @@ const colors = {
   // Shadow and scrim
   shadow: '#000000',
   scrim: '#000000',
-
-  // Neutral colors
-  darkGrey: '#202124',
 } as const;
 
 const fonts = {
@@ -94,6 +107,11 @@ const customTheme = createTheme({
       contrastText: colors.onSecondary,
       dark: colors.secondaryContainer,
     },
+    tertiary: {
+      main: colors.tertiary,
+      contrastText: colors.onTertiary,
+      dark: colors.tertiaryContainer,
+    },
     warning: {
       main: colors.tertiary,
       contrastText: colors.onTertiary,
@@ -107,11 +125,12 @@ const customTheme = createTheme({
     background: {
       default: colors.background,
       paper: colors.surface,
-      darkGrey: colors.darkGrey,
+      darkGrey: colors.secondary,
     },
     text: {
-      primary: colors.onBackground,
-      secondary: colors.onSurface,
+      primary: colors.textSecondary, // This is the default text color
+      secondary: colors.textSecondary,
+      tertiary: colors.textTertiary,
       light: colors.textLight,
     },
     divider: colors.outline,
@@ -134,8 +153,12 @@ const customTheme = createTheme({
     MuiToolbar: {
       styleOverrides: {
         root: {
-          paddingLeft: '0 !important',
-          paddingRight: '0 !important',
+          paddingLeft: '0',
+          paddingRight: '0',
+          '@media (min-width: 600px)': {
+            paddingLeft: 0,
+            paddingRight: 0,
+          },
         },
       },
     },
@@ -158,12 +181,11 @@ const customTheme = createTheme({
     MuiOutlinedInput: {
       styleOverrides: {
         root: {
-          height: inputHeight,
           backgroundColor: colors.background,
           borderRadius: borderRadiusStandard,
           backgroundClip: 'padding-box',
           '&.Mui-error': {
-            backgroundColor: `${colors.errorContainer} !important`,
+            backgroundColor: colors.errorContainer,
           },
           '& .MuiOutlinedInput-root': {
             '& fieldset': {

@@ -15,7 +15,7 @@ const JoinExistingRoom = (): ReactElement => {
 
   return (
     <Stack
-      direction={{ xs: 'column', md: 'row' }}
+      direction="column"
       component="form"
       data-testid="JoinExistingRoom"
       spacing={3}
