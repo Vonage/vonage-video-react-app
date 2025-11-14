@@ -70,260 +70,128 @@
   },
   "fontSize": {
     "desktop": {
-      "headline-desktop": [
-        "4.125rem",
-        {
-          "lineHeight": "5.5rem",
-          "fontWeight": "500"
-        }
-      ],
-      "headline": [
-        "4.125rem",
-        {
-          "lineHeight": "5.5rem",
-          "fontWeight": "500"
-        }
-      ],
-      "subtitle-desktop": [
-        "3.25rem",
-        {
-          "lineHeight": "4.25rem",
-          "fontWeight": "500"
-        }
-      ],
-      "subtitle": [
-        "3.25rem",
-        {
-          "lineHeight": "4.25rem",
-          "fontWeight": "500"
-        }
-      ],
-      "heading-1-desktop": [
-        "2.5rem",
-        {
-          "lineHeight": "3.25rem",
-          "fontWeight": "500"
-        }
-      ],
-      "heading-1": [
-        "2.5rem",
-        {
-          "lineHeight": "3.25rem",
-          "fontWeight": "500"
-        }
-      ],
-      "heading-2-desktop": [
-        "2rem",
-        {
-          "lineHeight": "2.75rem",
-          "fontWeight": "500"
-        }
-      ],
-      "heading-2": [
-        "2rem",
-        {
-          "lineHeight": "2.75rem",
-          "fontWeight": "500"
-        }
-      ],
-      "heading-3-desktop": [
-        "1.625rem",
-        {
-          "lineHeight": "2.25rem",
-          "fontWeight": "500"
-        }
-      ],
-      "heading-3": [
-        "1.625rem",
-        {
-          "lineHeight": "2.25rem",
-          "fontWeight": "500"
-        }
-      ],
-      "heading-4-desktop": [
-        "1.25rem",
-        {
-          "lineHeight": "1.75rem",
-          "fontWeight": "500"
-        }
-      ],
-      "heading-4": [
-        "1.25rem",
-        {
-          "lineHeight": "1.75rem",
-          "fontWeight": "500"
-        }
-      ],
-      "body-extended-desktop": [
-        "1rem",
-        {
-          "lineHeight": "1.5rem",
-          "fontWeight": "400"
-        }
-      ],
-      "body-extended": [
-        "1rem",
-        {
-          "lineHeight": "1.5rem",
-          "fontWeight": "400"
-        }
-      ],
-      "body-extended-semibold-desktop": [
-        "1rem",
-        {
-          "lineHeight": "1.5rem",
-          "fontWeight": "600"
-        }
-      ],
-      "body-extended-semibold": [
-        "1rem",
-        {
-          "lineHeight": "1.5rem",
-          "fontWeight": "600"
-        }
-      ],
-      "body-base-desktop": [
-        "0.875rem",
-        {
-          "lineHeight": "1.25rem",
-          "fontWeight": "400"
-        }
-      ],
-      "body-base": [
-        "0.875rem",
-        {
-          "lineHeight": "1.25rem",
-          "fontWeight": "400"
-        }
-      ],
-      "body-base-semibold-desktop": [
-        "0.875rem",
-        {
-          "lineHeight": "1.25rem",
-          "fontWeight": "600"
-        }
-      ],
-      "body-base-semibold": [
-        "0.875rem",
-        {
-          "lineHeight": "1.25rem",
-          "fontWeight": "600"
-        }
-      ],
-      "caption-desktop": [
-        "0.75rem",
-        {
-          "lineHeight": "1rem",
-          "fontWeight": "400"
-        }
-      ],
-      "caption": [
-        "0.75rem",
-        {
-          "lineHeight": "1rem",
-          "fontWeight": "400"
-        }
-      ],
-      "caption-semibold-desktop": [
-        "0.75rem",
-        {
-          "lineHeight": "1rem",
-          "fontWeight": "600"
-        }
-      ],
-      "caption-semibold": [
-        "0.75rem",
-        {
-          "lineHeight": "1rem",
-          "fontWeight": "600"
-        }
-      ]
+      "headline": {
+        "fontSize": "4.125rem",
+        "lineHeight": "5.5rem",
+        "fontWeight": "500"
+      },
+      "subtitle": {
+        "fontSize": "3.25rem",
+        "lineHeight": "4.25rem",
+        "fontWeight": "500"
+      },
+      "heading-1": {
+        "fontSize": "2.5rem",
+        "lineHeight": "3.25rem",
+        "fontWeight": "500"
+      },
+      "heading-2": {
+        "fontSize": "2rem",
+        "lineHeight": "2.75rem",
+        "fontWeight": "500"
+      },
+      "heading-3": {
+        "fontSize": "1.625rem",
+        "lineHeight": "2.25rem",
+        "fontWeight": "500"
+      },
+      "heading-4": {
+        "fontSize": "1.25rem",
+        "lineHeight": "1.75rem",
+        "fontWeight": "500"
+      },
+      "body-extended": {
+        "fontSize": "1rem",
+        "lineHeight": "1.5rem",
+        "fontWeight": "400"
+      },
+      "body-extended-semibold": {
+        "fontSize": "1rem",
+        "lineHeight": "1.5rem",
+        "fontWeight": "600"
+      },
+      "body-base": {
+        "fontSize": "0.875rem",
+        "lineHeight": "1.25rem",
+        "fontWeight": "400"
+      },
+      "body-base-semibold": {
+        "fontSize": "0.875rem",
+        "lineHeight": "1.25rem",
+        "fontWeight": "600"
+      },
+      "caption": {
+        "fontSize": "0.75rem",
+        "lineHeight": "1rem",
+        "fontWeight": "400"
+      },
+      "caption-semibold": {
+        "fontSize": "0.75rem",
+        "lineHeight": "1rem",
+        "fontWeight": "600"
+      }
     },
     "mobile": {
-      "headline-mobile": [
-        "2rem",
-        {
-          "lineHeight": "2.5rem",
-          "fontWeight": "500"
-        }
-      ],
-      "subtitle-mobile": [
-        "1.125rem",
-        {
-          "lineHeight": "1.5rem",
-          "fontWeight": "500"
-        }
-      ],
-      "heading-1-mobile": [
-        "1.75rem",
-        {
-          "lineHeight": "2.25rem",
-          "fontWeight": "500"
-        }
-      ],
-      "heading-2-mobile": [
-        "1.5rem",
-        {
-          "lineHeight": "2rem",
-          "fontWeight": "500"
-        }
-      ],
-      "heading-3-mobile": [
-        "1.25rem",
-        {
-          "lineHeight": "1.75rem",
-          "fontWeight": "500"
-        }
-      ],
-      "heading-4-mobile": [
-        "1.125rem",
-        {
-          "lineHeight": "1.5rem",
-          "fontWeight": "500"
-        }
-      ],
-      "body-extended-mobile": [
-        "1rem",
-        {
-          "lineHeight": "1.5rem",
-          "fontWeight": "400"
-        }
-      ],
-      "body-extended-semibold-mobile": [
-        "1rem",
-        {
-          "lineHeight": "1.5rem",
-          "fontWeight": "600"
-        }
-      ],
-      "body-base-mobile": [
-        "0.875rem",
-        {
-          "lineHeight": "1.25rem",
-          "fontWeight": "400"
-        }
-      ],
-      "body-base-semibold-mobile": [
-        "0.875rem",
-        {
-          "lineHeight": "1.25rem",
-          "fontWeight": "600"
-        }
-      ],
-      "caption-mobile": [
-        "0.75rem",
-        {
-          "lineHeight": "1rem",
-          "fontWeight": "400"
-        }
-      ],
-      "caption-semibold-mobile": [
-        "0.75rem",
-        {
-          "lineHeight": "1rem",
-          "fontWeight": "600"
-        }
-      ]
+      "headline": {
+        "fontSize": "2rem",
+        "lineHeight": "2.5rem",
+        "fontWeight": "500"
+      },
+      "subtitle": {
+        "fontSize": "1.125rem",
+        "lineHeight": "1.5rem",
+        "fontWeight": "500"
+      },
+      "heading-1": {
+        "fontSize": "1.75rem",
+        "lineHeight": "2.25rem",
+        "fontWeight": "500"
+      },
+      "heading-2": {
+        "fontSize": "1.5rem",
+        "lineHeight": "2rem",
+        "fontWeight": "500"
+      },
+      "heading-3": {
+        "fontSize": "1.25rem",
+        "lineHeight": "1.75rem",
+        "fontWeight": "500"
+      },
+      "heading-4": {
+        "fontSize": "1.125rem",
+        "lineHeight": "1.5rem",
+        "fontWeight": "500"
+      },
+      "body-extended": {
+        "fontSize": "1rem",
+        "lineHeight": "1.5rem",
+        "fontWeight": "400"
+      },
+      "body-extended-semibold": {
+        "fontSize": "1rem",
+        "lineHeight": "1.5rem",
+        "fontWeight": "600"
+      },
+      "body-base": {
+        "fontSize": "0.875rem",
+        "lineHeight": "1.25rem",
+        "fontWeight": "400"
+      },
+      "body-base-semibold": {
+        "fontSize": "0.875rem",
+        "lineHeight": "1.25rem",
+        "fontWeight": "600"
+      },
+      "caption": {
+        "fontSize": "0.75rem",
+        "lineHeight": "1rem",
+        "fontWeight": "400"
+      },
+      "caption-semibold": {
+        "fontSize": "0.75rem",
+        "lineHeight": "1rem",
+        "fontWeight": "600"
+      }
     }
   },
   "fontWeight": {

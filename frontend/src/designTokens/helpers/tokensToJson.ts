@@ -7,7 +7,11 @@ import type { TypeScale, Device } from '../tokens/typography/typescale';
 
 const outputFile = path.resolve('frontend/src/designTokens/designTokens.json');
 
-type FontSize = [string, { lineHeight: string; fontWeight: string }];
+type FontSize = {
+  fontSize: string;
+  lineHeight: string;
+  fontWeight: string;
+};
 
 type UnwrappedTokens = {
   lightColor: Record<string, string>;
@@ -49,8 +53,8 @@ function designTokensToJson() {
     darkColor: designTokens.color.dark,
   }) as UnwrappedTokens;
 
-  const desktopFontSize = parseResponsiveFontSize(tokens.typography.typeScale.desktop, 'desktop');
-  const mobileFontSize = parseResponsiveFontSize(tokens.typography.typeScale.mobile, 'mobile');
+  const desktopFontSize = parseResponsiveFontSize(tokens.typography.typeScale.desktop);
+  const mobileFontSize = parseResponsiveFontSize(tokens.typography.typeScale.mobile);
 
   const tailwindExtend = {
     colors: {
@@ -117,11 +121,9 @@ function isUndefined(value: unknown): value is undefined {
 }
 
 /**
- * Transforms responsive font size objects into Tailwind CSS fontSize format.
- * Converts each font size entry into a tuple with fontSize and associated properties.
+ * Transforms responsive font size objects into the desired format.
  * @param {Record<TypeScale, any>} fontSizes - The font size objects to transform.
- * @param {Device} device - The device type (desktop or mobile).
- * @returns {Record<string, FontSize>} The transformed font sizes in Tailwind format.
+ * @returns {Record<string, FontSize>} The transformed font sizes.
  */
 function parseResponsiveFontSize(
   fontSizes: Record<
@@ -131,23 +133,15 @@ function parseResponsiveFontSize(
       lineHeight: string;
       fontWeight: number;
     }
-  >,
-  device: Device
+  >
 ): Record<string, FontSize> {
   return Object.entries(fontSizes).reduce(
     (acc, [key, val]) => {
-      // After unwrapValue, the structure is already flattened
-      const { fontSize } = val;
-      const { lineHeight } = val;
-      const fontWeight = val.fontWeight.toString();
-
-      const deviceKey = `${key}-${device}`;
-      acc[deviceKey] = [fontSize, { lineHeight, fontWeight }];
-
-      if (device === 'desktop') {
-        acc[key] = [fontSize, { lineHeight, fontWeight }];
-      }
-
+      acc[key] = {
+        fontSize: val.fontSize,
+        lineHeight: val.lineHeight,
+        fontWeight: val.fontWeight.toString(),
+      };
       return acc;
     },
     {} as Record<string, FontSize>
