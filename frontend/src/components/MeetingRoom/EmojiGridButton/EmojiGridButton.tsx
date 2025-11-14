@@ -47,7 +47,7 @@ const EmojiGridButton = ({
             onClick={handleToggle}
             icon={
               <EmojiEmotions
-                style={{ color: `${!isEmojiGridOpen ? 'white' : colors.primaryLight}` }}
+                style={{ color: `${!isEmojiGridOpen ? 'white' : colors.background}` }}
               />
             }
             ref={anchorRef}

@@ -118,7 +118,7 @@ const DeviceControlButton = ({
           data-testid={isAudio ? 'audio-dropdown-button' : 'video-dropdown-button'}
         >
           {open ? (
-            <ArrowDropDown sx={{ color: colors.primaryLight }} />
+            <ArrowDropDown sx={{ color: colors.background }} />
           ) : (
             <ArrowDropUp className="text-gray-400" />
           )}

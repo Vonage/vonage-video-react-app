@@ -1,10 +1,6 @@
 import { createTheme, PaletteColor, PaletteColorOptions } from '@mui/material';
 
 declare module '@mui/material/styles' {
-  interface TypeBackground {
-    darkGrey: string;
-  }
-
   interface TypeText {
     tertiary: string;
   }
@@ -35,7 +31,6 @@ const colors = {
   // Primary colors
   primary: '#871EFF',
   textPrimary: '#9941ff',
-  primaryLight: '#f3e9ff',
   primaryHover: '#3E007E2F',
   onPrimary: '#FFFFFF',
   primaryContainer: '#6300C4',
@@ -63,7 +58,7 @@ const colors = {
   onErrorContainer: '#FFFFFF',
 
   // Surface colors
-  background: '#FFFFFF',
+  background: '#F5F0FD',
   backgroundDisabled: '#f5f5f5', // colors/disabled
   onBackground: '#1E1925',
   surface: '#FFFFFF',
@@ -94,7 +89,7 @@ const customTheme = createTheme({
       main: colors.primary,
       contrastText: colors.onPrimary,
       dark: colors.primaryContainer,
-      light: colors.primaryLight,
+      light: colors.background,
     },
     secondary: {
       main: colors.secondary,
@@ -119,7 +114,6 @@ const customTheme = createTheme({
     background: {
       default: colors.background,
       paper: colors.surface,
-      darkGrey: colors.secondary,
     },
     text: {
       primary: colors.textSecondary, // This is the default text color

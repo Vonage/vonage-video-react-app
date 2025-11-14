@@ -57,7 +57,7 @@ const EmojiGridDesktop = ({
                   className="flex items-center justify-center"
                   data-testid="emoji-grid"
                   sx={(theme) => ({
-                    backgroundColor: theme.palette.background.darkGrey,
+                    backgroundColor: theme.palette.secondary.main,
                     color: theme.palette.primary.contrastText,
                     padding: { xs: 1 },
                     borderRadius: 2,

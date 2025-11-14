@@ -66,7 +66,7 @@ const ToolbarOverflowButton = ({
             onClick={handleButtonToggle}
             icon={
               <MoreVertIcon
-                style={{ color: `${!isToolbarOverflowMenuOpen ? 'white' : colors.primaryLight}` }}
+                style={{ color: `${!isToolbarOverflowMenuOpen ? 'white' : colors.background}` }}
               />
             }
             sx={{

@@ -86,7 +86,7 @@ const ReduceNoiseTestSpeakers = (): ReactElement | false => {
                 <ToggleOnIcon
                   data-testid="toggle-on-icon"
                   fontSize="large"
-                  sx={{ position: 'absolute', color: colors.primaryLight }}
+                  sx={{ position: 'absolute', color: colors.background }}
                 />
               </Grow>
             </IconButton>

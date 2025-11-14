@@ -82,7 +82,7 @@ const InputDevices = ({ handleToggle }: InputDevicesProps): ReactElement | false
                   backgroundColor: 'transparent',
                   '&.Mui-selected': {
                     backgroundColor: 'transparent',
-                    color: colors.primaryLight,
+                    color: colors.background,
                   },
                   '&:hover': {
                     backgroundColor: colors.primaryHover,
@@ -98,7 +98,7 @@ const InputDevices = ({ handleToggle }: InputDevicesProps): ReactElement | false
                   }}
                 >
                   {isSelected ? (
-                    <CheckIcon sx={{ color: colors.primaryLight, fontSize: 24, mr: 2 }} />
+                    <CheckIcon sx={{ color: colors.background, fontSize: 24, mr: 2 }} />
                   ) : (
                     <Box sx={{ width: 40 }} /> // Placeholder when CheckIcon is not displayed
                   )}
