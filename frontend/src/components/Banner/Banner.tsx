@@ -1,4 +1,7 @@
 import { ReactElement } from 'react';
+import { AppBar, Toolbar } from '@mui/material';
+import Box from '@ui/Box';
+import Stack from '@ui/Stack';
 import BannerDateTime from '../BannerDateTime';
 import BannerLinks from '../BannerLinks';
 import BannerLogo from '../BannerLogo';
@@ -12,15 +15,30 @@ import BannerLanguage from '../BannerLanguage';
  */
 const Banner = (): ReactElement => {
   return (
-    <div className="flex w-full flex-row justify-between">
-      <BannerLogo />
+    <AppBar position="static">
+      <Toolbar sx={{ alignItems: 'stretch' }}>
+        <Box sx={{ flex: 1, bgcolor: 'background.paper' }}>
+          <BannerLogo />
+        </Box>
 
-      <div className="flex px-4">
-        <BannerDateTime />
-        <BannerLanguage />
-        <BannerLinks />
-      </div>
-    </div>
+        <Box sx={{ flex: 1, bgcolor: { xs: 'background.paper', md: 'primary.light' } }}>
+          <Stack
+            direction="row"
+            spacing={2}
+            alignItems="center"
+            justifyContent="flex-end"
+            sx={{
+              height: '100%',
+              bgcolor: { xs: 'background.paper', md: 'primary.light' },
+            }}
+          >
+            <BannerDateTime />
+            <BannerLanguage />
+            <BannerLinks />
+          </Stack>
+        </Box>
+      </Toolbar>
+    </AppBar>
   );
 };
 

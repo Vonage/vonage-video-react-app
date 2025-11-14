@@ -1,7 +1,7 @@
 import { render, screen, fireEvent } from '@testing-library/react';
 import { MemoryRouter, useNavigate } from 'react-router-dom';
-import { describe, expect, it, Mock, vi } from 'vitest';
-import JoinButton from './JoinButton';
+import { describe, expect, it, Mock, vi, beforeEach } from 'vitest';
+import JoinWaitRoomButton from './JoinWaitRoomButton';
 
 vi.mock('react-router-dom', async () => {
   const mod = await vi.importActual<typeof import('react-router-dom')>('react-router-dom');
@@ -12,13 +12,20 @@ vi.mock('react-router-dom', async () => {
 });
 
 const mockNavigate = vi.fn();
+const mockSetHasError = vi.fn();
 
-describe('JoinButtonComponent', () => {
+describe('JoinWaitRoomButtonComponent', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    mockNavigate.mockClear();
+    mockSetHasError.mockClear();
+  });
+
   it('should navigate to the waiting room if the room name is valid', () => {
     (useNavigate as Mock).mockReturnValue(mockNavigate);
     render(
       <MemoryRouter>
-        <JoinButton roomName="test-room" isDisabled={false} />
+        <JoinWaitRoomButton roomName="test-room" isDisabled={false} setHasError={mockSetHasError} />
       </MemoryRouter>
     );
 
@@ -27,27 +34,17 @@ describe('JoinButtonComponent', () => {
     expect(mockNavigate).toHaveBeenCalledWith('/waiting-room/test-room');
   });
 
-  it('should not navigate to the waiting room if the room name is empty', () => {
+  it('should not navigate and set error if the room name is empty', () => {
     (useNavigate as Mock).mockReturnValue(mockNavigate);
     render(
       <MemoryRouter>
-        <JoinButton roomName="" isDisabled={false} />
+        <JoinWaitRoomButton roomName="" isDisabled={false} setHasError={mockSetHasError} />
       </MemoryRouter>
     );
 
-    const button = screen.getByRole('button');
-    expect(button).toBeDisabled();
-  });
+    fireEvent.click(screen.getByRole('button'));
 
-  it('should not navigate to the waiting room if the button is disabled', () => {
-    (useNavigate as Mock).mockReturnValue(mockNavigate);
-    render(
-      <MemoryRouter>
-        <JoinButton roomName="test-room" isDisabled />
-      </MemoryRouter>
-    );
-
-    const button = screen.getByRole('button');
-    expect(button).toBeDisabled();
+    expect(mockNavigate).not.toHaveBeenCalled();
+    expect(mockSetHasError).toHaveBeenCalledWith(true);
   });
 });

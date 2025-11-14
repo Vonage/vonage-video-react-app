@@ -66,6 +66,7 @@ export default defineConfig(({ mode }) => {
         '@app-types': '/src/types',
         '@utils': '/src/utils',
         '@test': '/src/test',
+        '@ui': '/ui',
       },
     },
   });

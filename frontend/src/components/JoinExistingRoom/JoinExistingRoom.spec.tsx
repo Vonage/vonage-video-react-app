@@ -15,8 +15,7 @@ describe('JoinExistingRoom', () => {
     render(<JoinExistingRoom />);
 
     expect(screen.getByTestId('JoinExistingRoom')).toBeInTheDocument();
-    expect(screen.getByTestId('KeyboardIcon')).toBeInTheDocument();
-    expect(screen.getByText('Join')).toBeInTheDocument();
-    expect(screen.getByPlaceholderText(/Enter room name/i)).toBeInTheDocument();
+    expect(screen.getByText('Join waiting room')).toBeInTheDocument();
+    expect(screen.getAllByText(/Room name/i)[0]).toBeInTheDocument();
   });
 });

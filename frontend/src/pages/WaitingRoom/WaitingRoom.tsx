@@ -1,11 +1,13 @@
 import { useState, useEffect, MouseEvent, ReactElement, TouchEvent } from 'react';
+import Box from '@ui/Box';
+import GridLayout from '@ui/FlexLayout';
+import Banner from '@components/Banner';
 import usePreviewPublisherContext from '../../hooks/usePreviewPublisherContext';
 import ControlPanel from '../../components/WaitingRoom/ControlPanel';
 import VideoContainer from '../../components/WaitingRoom/VideoContainer';
 import UsernameInput from '../../components/WaitingRoom/UserNameInput';
 import { DEVICE_ACCESS_STATUS } from '../../utils/constants';
 import DeviceAccessAlert from '../../components/DeviceAccessAlert';
-import Banner from '../../components/Banner';
 import { getStorageItem, STORAGE_KEYS } from '../../utils/storage';
 import useIsSmallViewport from '../../hooks/useIsSmallViewport';
 import useBackgroundPublisherContext from '../../hooks/useBackgroundPublisherContext';
@@ -93,36 +95,38 @@ const WaitingRoom = (): ReactElement => {
   };
 
   return (
-    <div className="flex size-full flex-col bg-white" data-testid="waitingRoom">
-      <Banner />
-      <div className="flex w-full">
-        <div className="flex w-full justify-center">
-          <div className="flex w-full flex-col items-center justify-center sm:min-h-[90vh] md:flex-row">
-            <div
-              className={`max-w-full flex-col ${isSmallViewport ? '' : 'h-[394px]'} sm: inline-flex`}
-            >
-              <VideoContainer username={username} />
-              {accessStatus === DEVICE_ACCESS_STATUS.ACCEPTED && (
-                <ControlPanel
-                  handleAudioInputOpen={handleAudioInputOpen}
-                  handleVideoInputOpen={handleVideoInputOpen}
-                  handleAudioOutputOpen={handleAudioOutputOpen}
-                  handleClose={handleClose}
-                  openAudioInput={openAudioInput}
-                  openVideoInput={openVideoInput}
-                  openAudioOutput={openAudioOutput}
-                  anchorEl={anchorEl}
-                />
-              )}
-            </div>
-            <UsernameInput username={username} setUsername={setUsername} />
+    <Box data-testid="waitingRoom">
+      <GridLayout>
+        <GridLayout.Banner>
+          <Banner />
+        </GridLayout.Banner>
+        <GridLayout.Left>
+          <div
+            className={`max-w-full flex-col ${isSmallViewport ? '' : 'h-[394px]'} sm: inline-flex`}
+          >
+            <VideoContainer username={username} />
+            {accessStatus === DEVICE_ACCESS_STATUS.ACCEPTED && (
+              <ControlPanel
+                handleAudioInputOpen={handleAudioInputOpen}
+                handleVideoInputOpen={handleVideoInputOpen}
+                handleAudioOutputOpen={handleAudioOutputOpen}
+                handleClose={handleClose}
+                openAudioInput={openAudioInput}
+                openVideoInput={openVideoInput}
+                openAudioOutput={openAudioOutput}
+                anchorEl={anchorEl}
+              />
+            )}
           </div>
-        </div>
-        {accessStatus !== DEVICE_ACCESS_STATUS.ACCEPTED && (
-          <DeviceAccessAlert accessStatus={accessStatus} />
-        )}
-      </div>
-    </div>
+        </GridLayout.Left>
+        <GridLayout.Right>
+          <UsernameInput username={username} setUsername={setUsername} />
+        </GridLayout.Right>
+      </GridLayout>
+      {accessStatus !== DEVICE_ACCESS_STATUS.ACCEPTED && (
+        <DeviceAccessAlert accessStatus={accessStatus} />
+      )}
+    </Box>
   );
 };
 

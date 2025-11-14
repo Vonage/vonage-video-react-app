@@ -5,7 +5,6 @@ import { useTranslation } from 'react-i18next';
 import useAppConfig from '@Context/AppConfig/hooks/useAppConfig';
 import ToolbarButton from '../ToolbarButton';
 import EmojiGrid from '../EmojiGrid/EmojiGrid';
-import { colors } from '../../../utils/customTheme/customTheme';
 
 export type EmojiGridProps = {
   isEmojiGridOpen: boolean;
@@ -47,7 +46,9 @@ const EmojiGridButton = ({
             onClick={handleToggle}
             icon={
               <EmojiEmotions
-                style={{ color: `${!isEmojiGridOpen ? 'white' : colors.primaryLight}` }}
+                sx={(theme) => ({
+                  color: `${!isEmojiGridOpen ? 'white' : theme.palette.background.default}`,
+                })}
               />
             }
             ref={anchorRef}

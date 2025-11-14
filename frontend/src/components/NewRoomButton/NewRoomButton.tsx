@@ -1,7 +1,8 @@
-import { Button } from '@mui/material';
-import { VideoCall } from '@mui/icons-material';
+import Button from '@ui/Button';
 import { ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
+import Box from '@ui/Box';
+import VividIcon from '@components/VividIcon';
 
 export type NewRoomButtonProps = {
   handleNewRoom: () => void;
@@ -21,21 +22,11 @@ const NewRoomButton = ({ handleNewRoom }: NewRoomButtonProps): ReactElement => {
     <Button
       data-testid="new-room-button"
       variant="contained"
-      className="mt-2 h-14"
-      startIcon={<VideoCall />}
+      startIcon={<VividIcon name="plus-line" customSize={-5} />}
       onClick={handleNewRoom}
       fullWidth
-      sx={{
-        textTransform: 'none',
-        marginBottom: '35px',
-        fontSize: '1rem',
-        justifyContent: 'space-between',
-        width: '18rem',
-      }}
     >
-      <div className="flex w-full items-center justify-center text-center">
-        {t('button.createRoom')}
-      </div>
+      <Box>{t('button.createRoom')}</Box>
     </Button>
   );
 };

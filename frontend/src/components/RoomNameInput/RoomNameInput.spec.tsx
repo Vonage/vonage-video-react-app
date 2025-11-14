@@ -101,7 +101,9 @@ describe('RoomNameInputComponent', () => {
 
     expect(setHasError).toHaveBeenCalledWith(true);
     expect(setRoomName).not.toHaveBeenCalled();
-    expect(screen.getByText('No spaces or special characters allowed')).toBeInTheDocument();
+    expect(
+      screen.getByText('Cannot be empty, contain spaces or special characters')
+    ).toBeInTheDocument();
   });
 
   it('should not show an error if the user erased the input', () => {

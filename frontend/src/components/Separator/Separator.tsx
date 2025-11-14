@@ -1,3 +1,4 @@
+import Box from '@ui/Box';
 import { ReactElement } from 'react';
 
 export type SeparatorProps = {
@@ -14,9 +15,14 @@ export type SeparatorProps = {
  */
 const Separator = ({ orientation = 'left' }: SeparatorProps): ReactElement => {
   return (
-    <div
+    <Box
       data-testid="separator"
-      className={`w-6/12 border-b-2 border-solid border-slate-200 ${orientation === 'left' ? 'mr-4' : 'ml-4'}`}
+      sx={(theme) => ({
+        width: '50%',
+        borderBottom: '1px solid',
+        borderColor: theme.palette.divider,
+        ...(orientation === 'left' ? { marginRight: 1 } : { marginLeft: 1 }),
+      })}
     />
   );
 };

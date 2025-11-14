@@ -1,5 +1,6 @@
 import { ReactElement } from 'react';
-import Banner from '../../components/Banner';
+import GridLayout from '@ui/FlexLayout';
+import Banner from '@components/Banner';
 import LandingPageWelcome from '../../components/LandingPageWelcome';
 import RoomJoinContainer from '../../components/RoomJoinContainer';
 
@@ -16,15 +17,17 @@ import RoomJoinContainer from '../../components/RoomJoinContainer';
  */
 const LandingPage = (): ReactElement => {
   return (
-    <div className="flex size-full flex-col justify-between bg-white">
-      <Banner />
-
-      <div className="flex size-full flex-col items-center bg-white md:flex-row md:justify-center">
+    <GridLayout>
+      <GridLayout.Banner>
+        <Banner />
+      </GridLayout.Banner>
+      <GridLayout.Left>
         <LandingPageWelcome />
-
+      </GridLayout.Left>
+      <GridLayout.Right>
         <RoomJoinContainer />
-      </div>
-    </div>
+      </GridLayout.Right>
+    </GridLayout>
   );
 };
 

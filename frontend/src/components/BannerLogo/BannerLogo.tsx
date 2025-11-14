@@ -11,6 +11,10 @@ const BannerLogo = (): ReactElement => (
   <Link to="..">
     <div className="box-border" data-testid="banner-logo">
       <img
+        style={{
+          marginLeft: '16px',
+          marginTop: '12px',
+        }}
         className="hidden h-[72px] pl-4 pr-8 md:flex"
         src="/images/vonage-logo-desktop.svg"
         alt="Vonage-desktop-logo"

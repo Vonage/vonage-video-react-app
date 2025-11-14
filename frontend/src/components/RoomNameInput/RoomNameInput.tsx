@@ -1,7 +1,6 @@
 import { SetStateAction, Dispatch, ReactElement, ChangeEvent } from 'react';
-import { InputAdornment, TextField } from '@mui/material';
-import { Keyboard } from '@mui/icons-material';
 import { useTranslation } from 'react-i18next';
+import TextField from '@ui/TextField';
 import isValidRoomName from '../../utils/isValidRoomName';
 
 export type RoomNameInputProps = {
@@ -46,22 +45,19 @@ const RoomNameInput = ({
       setHasError(true);
     }
   };
+
   return (
     <TextField
+      size="small"
       id="room-name"
-      className="h-12 w-52 pr-2"
-      placeholder={t('room.input.placeholder')}
+      fullWidth
+      label={t('room.input.label')}
       value={roomName}
       onChange={handleChange}
       error={hasError}
       helperText={hasError ? t('room.input.helper') : ''}
       InputProps={{
         inputProps: { maxLength: 60 },
-        startAdornment: (
-          <InputAdornment position="start">
-            <Keyboard />
-          </InputAdornment>
-        ),
       }}
     />
   );
