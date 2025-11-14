@@ -1,9 +1,11 @@
 import { Box as MUIBox, BoxProps as MUIBoxProps } from '@mui/material';
+import React from 'react';
 
-type BoxProps = MUIBoxProps;
+// Support "component" with intrinsic attributes
+type BoxProps<C extends React.ElementType = 'div'> = MUIBoxProps<C, { component?: C }>;
 
-const Box = ({ ...boxProps }: BoxProps) => {
-  return <MUIBox {...boxProps} />;
+const Box = <C extends React.ElementType = 'div'>(props: BoxProps<C>) => {
+  return <MUIBox {...props} />;
 };
 
 export default Box;

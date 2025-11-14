@@ -1,6 +1,7 @@
 import { ReactElement } from 'react';
-import GridLayout from '@ui/FlexLayout';
+import FlexLayout from '@ui/FlexLayout';
 import Banner from '@components/Banner';
+import Footer from '@components/Footer/Footer';
 import SupportedBrowsers from '../../components/UnsupportedBrowser/SupportedBrowsers';
 import UnsupportedBrowserMessage from '../../components/UnsupportedBrowser/UnsupportedBrowserMessage';
 
@@ -15,17 +16,20 @@ import UnsupportedBrowserMessage from '../../components/UnsupportedBrowser/Unsup
  */
 const UnsupportedBrowserPage = (): ReactElement => {
   return (
-    <GridLayout>
-      <GridLayout.Banner>
+    <FlexLayout>
+      <FlexLayout.Banner>
         <Banner />
-      </GridLayout.Banner>
-      <GridLayout.Left>
+      </FlexLayout.Banner>
+      <FlexLayout.Left>
         <UnsupportedBrowserMessage />
-      </GridLayout.Left>
-      <GridLayout.Right>
+      </FlexLayout.Left>
+      <FlexLayout.Right>
         <SupportedBrowsers />
-      </GridLayout.Right>
-    </GridLayout>
+      </FlexLayout.Right>
+      <FlexLayout.Footer>
+        <Footer />
+      </FlexLayout.Footer>
+    </FlexLayout>
   );
 };
 

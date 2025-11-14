@@ -121,6 +121,7 @@
   "filePicker.capture": "Capture screenshot",
   "filePicker.delete": "Delete screenshot",
   "filePicker.sizeLimit": "The maximum upload size is 20MB. Please upload another file.",
+  "footer.github.title": "Vonage Video Reference Application",
   "imageStorage.imagesExceedSize": "Images are too large to store (~4MB max).",
   "imageStorage.storageFailure": "Failed to store images in localStorage.",
   "imageStorage.duplicateImage": "This image is already added.",

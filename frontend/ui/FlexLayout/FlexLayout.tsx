@@ -29,6 +29,11 @@ export const FlexLayoutRight: React.FC<WithChildren> = ({ children }) => {
 };
 FlexLayoutRight.displayName = 'FlexLayoutRight';
 
+export const FlexLayoutFooter: React.FC<WithChildren> = ({ children }) => {
+  return children;
+};
+FlexLayoutFooter.displayName = 'FlexLayoutFooter';
+
 function pickChild(children: React.ReactNode, displayName: string): React.ReactNode | null {
   const arr = React.Children.toArray(children);
 
@@ -47,6 +52,7 @@ type FlexLayoutComponent = React.FC<FlexLayoutProps> & {
   Banner: typeof FlexLayoutBanner;
   Left: typeof FlexLayoutLeft;
   Right: typeof FlexLayoutRight;
+  Footer: typeof FlexLayoutFooter;
 };
 
 const FlexLayout: FlexLayoutComponent = ({
@@ -62,6 +68,7 @@ const FlexLayout: FlexLayoutComponent = ({
   const banner = pickChild(children, 'FlexLayoutBanner');
   const left = pickChild(children, 'FlexLayoutLeft');
   const right = pickChild(children, 'FlexLayoutRight');
+  const footer = pickChild(children, 'FlexLayoutFooter');
 
   return (
     <Box component="section" sx={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
@@ -83,6 +90,7 @@ const FlexLayout: FlexLayoutComponent = ({
               justifyContent: leftAlign.justifyContent,
               p: padding,
               bgcolor: leftBackgroundColor,
+              overflow: 'hidden',
             }}
           >
             {left}
@@ -104,11 +112,13 @@ const FlexLayout: FlexLayoutComponent = ({
           </Box>
         )}
       </Stack>
+      {footer && <Box>{footer}</Box>}
     </Box>
   );
 };
 
 FlexLayout.Banner = FlexLayoutBanner;
+FlexLayout.Footer = FlexLayoutFooter;
 FlexLayout.Left = FlexLayoutLeft;
 FlexLayout.Right = FlexLayoutRight;
 

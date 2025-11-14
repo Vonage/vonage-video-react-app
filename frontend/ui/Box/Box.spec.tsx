@@ -1,6 +1,6 @@
 import { render, screen } from '@testing-library/react';
 import { describe, it, expect } from 'vitest';
-import Box from './Box';
+import Box from './index';
 
 describe('Box', () => {
   it('renders correctly', () => {

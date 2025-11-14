@@ -1,6 +1,7 @@
 import { ReactElement } from 'react';
-import GridLayout from '@ui/FlexLayout';
+import FlexLayout from '@ui/FlexLayout';
 import Banner from '@components/Banner';
+import Footer from '@components/Footer/Footer';
 import LandingPageWelcome from '../../components/LandingPageWelcome';
 import RoomJoinContainer from '../../components/RoomJoinContainer';
 
@@ -17,17 +18,20 @@ import RoomJoinContainer from '../../components/RoomJoinContainer';
  */
 const LandingPage = (): ReactElement => {
   return (
-    <GridLayout>
-      <GridLayout.Banner>
+    <FlexLayout>
+      <FlexLayout.Banner>
         <Banner />
-      </GridLayout.Banner>
-      <GridLayout.Left>
+      </FlexLayout.Banner>
+      <FlexLayout.Left>
         <LandingPageWelcome />
-      </GridLayout.Left>
-      <GridLayout.Right>
+      </FlexLayout.Left>
+      <FlexLayout.Right>
         <RoomJoinContainer />
-      </GridLayout.Right>
-    </GridLayout>
+      </FlexLayout.Right>
+      <FlexLayout.Footer>
+        <Footer />
+      </FlexLayout.Footer>
+    </FlexLayout>
   );
 };
 

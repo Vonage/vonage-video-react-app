@@ -26,7 +26,7 @@ describe('GHRepoButton', () => {
 
   it('renders the GitHub icon', () => {
     render(<GHRepoButton />);
-    const icon = screen.getByTestId('GitHubIcon');
+    const icon = screen.getByTestId('vivid-icon-github-mono');
     expect(icon).toBeInTheDocument();
   });
 });

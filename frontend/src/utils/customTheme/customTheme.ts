@@ -12,6 +12,10 @@ declare module '@mui/material/styles' {
   interface PaletteOptions {
     tertiary?: PaletteColorOptions;
   }
+
+  interface TypeText {
+    light: string;
+  }
 }
 
 const borderRadiusStandard = '8px';
@@ -36,6 +40,8 @@ const colors = {
   primaryContainer: '#6300C4',
   onPrimaryContainer: '#FFFFFF',
   surfaceTint: '#7F02F7',
+
+  textLight: '#64748B',
 
   // Secondary colors
   secondary: '#2F293B',
@@ -119,6 +125,7 @@ const customTheme = createTheme({
       primary: colors.textSecondary, // This is the default text color
       secondary: colors.textSecondary,
       tertiary: colors.textTertiary,
+      light: colors.textLight,
     },
     divider: colors.outline,
   },

@@ -1,9 +1,7 @@
 import { ReactElement } from 'react';
-import { AppBar, Toolbar } from '@mui/material';
 import Box from '@ui/Box';
 import Stack from '@ui/Stack';
-import BannerDateTime from '../BannerDateTime';
-import BannerLinks from '../BannerLinks';
+import Header from '@ui/Header';
 import BannerLogo from '../BannerLogo';
 import BannerLanguage from '../BannerLanguage';
 
@@ -15,30 +13,27 @@ import BannerLanguage from '../BannerLanguage';
  */
 const Banner = (): ReactElement => {
   return (
-    <AppBar position="static">
-      <Toolbar sx={{ alignItems: 'stretch' }}>
-        <Box sx={{ flex: 1, bgcolor: 'background.paper' }}>
-          <BannerLogo />
-        </Box>
+    <Header appBarProps={{ position: 'static' }} toolbarProps={{ sx: { alignItems: 'stretch' } }}>
+      <Box sx={{ flex: 1, bgcolor: 'background.paper' }}>
+        <BannerLogo />
+      </Box>
 
-        <Box sx={{ flex: 1, bgcolor: { xs: 'background.paper', md: 'primary.light' } }}>
-          <Stack
-            direction="row"
-            spacing={2}
-            alignItems="center"
-            justifyContent="flex-end"
-            sx={{
-              height: '100%',
-              bgcolor: { xs: 'background.paper', md: 'primary.light' },
-            }}
-          >
-            <BannerDateTime />
-            <BannerLanguage />
-            <BannerLinks />
-          </Stack>
-        </Box>
-      </Toolbar>
-    </AppBar>
+      <Box sx={{ flex: 1, bgcolor: { xs: 'background.paper', md: 'primary.light' } }}>
+        <Stack
+          direction="row"
+          spacing={2}
+          alignItems="center"
+          justifyContent="flex-end"
+          sx={{
+            height: '100%',
+            bgcolor: { xs: 'background.paper', md: 'primary.light' },
+            mr: 4,
+          }}
+        >
+          <BannerLanguage />
+        </Stack>
+      </Box>
+    </Header>
   );
 };
 

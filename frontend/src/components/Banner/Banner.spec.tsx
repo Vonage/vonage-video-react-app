@@ -14,26 +14,4 @@ describe('Banner', () => {
     const bannerLogo = screen.getByTestId('banner-logo');
     expect(bannerLogo).toBeInTheDocument();
   });
-
-  it('renders the banner date and time', () => {
-    render(
-      <MemoryRouter>
-        <Banner />
-      </MemoryRouter>
-    );
-
-    const bannerDataTime = screen.getByTestId('dateAndTime');
-    expect(bannerDataTime).toBeInTheDocument();
-  });
-
-  it('renders the banner links', () => {
-    render(
-      <MemoryRouter>
-        <Banner />
-      </MemoryRouter>
-    );
-
-    const bannerLinks = screen.getByTestId('banner-links');
-    expect(bannerLinks).toBeInTheDocument();
-  });
 });
