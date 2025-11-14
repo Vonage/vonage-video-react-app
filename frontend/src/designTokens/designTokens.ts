@@ -1,10 +1,10 @@
 import typography from './tokens/typography';
-import color from './tokens/color';
+import { colors } from './tokens/color';
 import shape from './tokens/shape';
 
 const designTokens = {
   typography,
-  color,
+  color: colors,
   shape,
 };
 

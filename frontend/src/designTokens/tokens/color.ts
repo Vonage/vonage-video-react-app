@@ -5,145 +5,333 @@
  * Each token represents a semantic purpose — rather than a specific hex value —
  * allowing color changes to propagate consistently across the design system.
  */
-const colors = {
+
+const colorVariables = {
+  cta: {
+    50: '#F5F0FD',
+    500: '#9941FF',
+    600: '#871EFF',
+  },
+  information: {
+    50: '#E8F4FB',
+    400: '#2997F0',
+    500: '#0276D5',
+  },
+  canvas: '#FFFFFF',
+  'canvas-text': '#000000',
+  accent: {
+    300: '#B3B3B3',
+    400: '#929292',
+    500: '#757575',
+    600: '#666666',
+  },
+  neutral: {
+    100: '#E6E6E6',
+    300: '#B3B3B3',
+    400: '#929292',
+    500: '#757575',
+  },
+  alert: {
+    500: '#E61D1D',
+    600: '#CD0000',
+  },
+  warning: {
+    500: '#BE5702',
+    600: '#A64C03',
+  },
+  success: {
+    500: '#1C8731',
+    600: '#1F7629',
+  },
+};
+
+const lightColors = {
   primary: {
-    value: '#9941FF',
+    value: colorVariables.cta[500],
     type: 'color',
     description: 'Main brand color used for primary actions and highlights.',
   },
   'text-primary': {
-    value: '#9941FF',
+    value: colorVariables.cta[500],
     type: 'color',
     description: 'Primary text color used for main content and headings.',
   },
   'on-primary': {
-    value: '#FFFFFF',
+    value: colorVariables.canvas,
     type: 'color',
     description: 'Foreground color used on primary surfaces.',
   },
   'primary-hover': {
-    value: '#871EFF',
+    value: colorVariables.cta[600],
     type: 'color',
     description: 'Main brand color for hovering.',
   },
 
   secondary: {
-    value: '#000000',
+    value: colorVariables['canvas-text'],
     type: 'color',
     description: 'Secondary brand color and accent.',
   },
   'text-secondary': {
-    value: '#000000',
+    value: colorVariables['canvas-text'],
     type: 'color',
     description: 'Secondary text color used for subheadings and less prominent content.',
   },
   'on-secondary': {
-    value: '#FFFFFF',
+    value: colorVariables.canvas,
     type: 'color',
     description: 'Foreground color used on secondary surfaces.',
   },
 
   tertiary: {
-    value: '#929292',
+    value: colorVariables.accent[500],
     type: 'color',
     description: 'Tertiary brand color and accent.',
   },
   'text-tertiary': {
-    value: '#929292',
+    value: colorVariables.accent[500],
     type: 'color',
     description: 'Tertiary text color used for less prominent content.',
   },
   'on-tertiary': {
-    value: '#FFFFFF',
+    value: colorVariables.canvas,
     type: 'color',
     description: 'Foreground color used on tertiary surfaces.',
   },
 
   background: {
-    value: '#F5F0FD',
+    value: colorVariables.cta[50],
     type: 'color',
     description: 'Default background color for the interface.',
   },
   'on-background': {
-    value: '#757575',
+    value: colorVariables.accent[500],
     type: 'color',
     description: 'Text or icon color used on background surfaces.',
   },
 
   surface: {
-    value: '#FFFFFF',
+    value: colorVariables.canvas,
     type: 'color',
     description: 'Default surface color for cards and containers.',
   },
   'on-surface': {
-    value: '#929292',
+    value: colorVariables.accent[400],
     type: 'color',
     description: 'Text or icon color used on surface elements.',
   },
 
   error: {
-    value: '#E61D1D',
+    value: colorVariables.alert[500],
     type: 'color',
     description: 'Color representing error states and critical messages.',
   },
   'on-error': {
-    value: '#FFFFFF',
+    value: colorVariables.canvas,
     type: 'color',
     description: 'Foreground color for text/icons on error surfaces.',
   },
   'error-hover': {
-    value: '#CD0000',
+    value: colorVariables.alert[600],
     type: 'color',
-    description: 'Foreground color for text/icons on error surfaces.',
+    description: 'Error color for hover states.',
   },
 
   warning: {
-    value: '#BE5702',
+    value: colorVariables.warning[500],
     type: 'color',
     description: 'Color representing warning states and cautionary messages.',
   },
   'on-warning': {
-    value: '#FFFFFF',
+    value: colorVariables.canvas,
     type: 'color',
     description: 'Foreground color for text/icons on warning surfaces.',
   },
   'warning-hover': {
-    value: '#A64C03',
+    value: colorVariables.warning[600],
     type: 'color',
-    description: 'Foreground color for text/icons on warning surfaces.',
+    description: 'Warning color for hover states.',
   },
 
   success: {
-    value: '#1C8731',
+    value: colorVariables.success[500],
     type: 'color',
     description: 'Color representing success states and positive messages.',
   },
   'on-success': {
-    value: '#FFFFFF',
+    value: colorVariables.canvas,
     type: 'color',
     description: 'Foreground color for text/icons on success surfaces.',
   },
   'success-hover': {
-    value: '#1F7629',
+    value: colorVariables.success[600],
     type: 'color',
-    description: 'Foreground color for text/icons on success surfaces.',
+    description: 'Success color for hover states.',
   },
 
-  divider: {
-    value: '#E6E6E6',
+  border: {
+    value: colorVariables.neutral[100],
     type: 'color',
     description: 'Color used for borders and dividers between elements.',
   },
   disabled: {
-    value: '#E6E6E6',
+    value: colorVariables.neutral[100],
     type: 'color',
-    description: 'Color used for disabled text and icons.',
+    description: 'Color used for disabled backgrounds.',
   },
   'text-disabled': {
-    value: '#B3B3B3',
+    value: colorVariables.neutral[300],
     type: 'color',
     description: 'Text color used for disabled elements.',
   },
 };
 
-export default colors;
+const darkColors = {
+  primary: {
+    value: colorVariables.cta[500],
+    type: 'color',
+    description: 'Main brand color used for primary actions and highlights.',
+  },
+  'text-primary': {
+    value: colorVariables.cta[500],
+    type: 'color',
+    description: 'Primary text color used for main content and headings.',
+  },
+  'on-primary': {
+    value: colorVariables.canvas,
+    type: 'color',
+    description: 'Foreground color used on primary surfaces.',
+  },
+  'primary-hover': {
+    value: colorVariables.cta[600],
+    type: 'color',
+    description: 'Main brand color for hovering.',
+  },
+
+  secondary: {
+    value: colorVariables.canvas,
+    type: 'color',
+    description: 'Secondary brand color and accent.',
+  },
+  'text-secondary': {
+    value: colorVariables.canvas,
+    type: 'color',
+    description: 'Secondary text color used for subheadings and less prominent content.',
+  },
+  'on-secondary': {
+    value: colorVariables['canvas-text'],
+    type: 'color',
+    description: 'Foreground color used on secondary surfaces.',
+  },
+
+  tertiary: {
+    value: colorVariables.accent[400],
+    type: 'color',
+    description: 'Tertiary brand color and accent.',
+  },
+  'text-tertiary': {
+    value: colorVariables.accent[400],
+    type: 'color',
+    description: 'Tertiary text color used for less prominent content.',
+  },
+  'on-tertiary': {
+    value: colorVariables['canvas-text'],
+    type: 'color',
+    description: 'Foreground color used on tertiary surfaces.',
+  },
+
+  background: {
+    value: colorVariables['canvas-text'],
+    type: 'color',
+    description: 'Default background color for the interface.',
+  },
+  'on-background': {
+    value: colorVariables.canvas,
+    type: 'color',
+    description: 'Text or icon color used on background surfaces.',
+  },
+
+  surface: {
+    value: colorVariables.accent[600],
+    type: 'color',
+    description: 'Default surface color for cards and containers.',
+  },
+  'on-surface': {
+    value: colorVariables.canvas,
+    type: 'color',
+    description: 'Text or icon color used on surface elements.',
+  },
+
+  error: {
+    value: colorVariables.alert[500],
+    type: 'color',
+    description: 'Color representing error states and critical messages.',
+  },
+  'on-error': {
+    value: colorVariables.canvas,
+    type: 'color',
+    description: 'Foreground color for text/icons on error surfaces.',
+  },
+  'error-hover': {
+    value: colorVariables.alert[600],
+    type: 'color',
+    description: 'Error color for hover states.',
+  },
+
+  warning: {
+    value: colorVariables.warning[500],
+    type: 'color',
+    description: 'Color representing warning states and cautionary messages.',
+  },
+  'on-warning': {
+    value: colorVariables.canvas,
+    type: 'color',
+    description: 'Foreground color for text/icons on warning surfaces.',
+  },
+  'warning-hover': {
+    value: colorVariables.warning[600],
+    type: 'color',
+    description: 'Warning color for hover states.',
+  },
+
+  success: {
+    value: colorVariables.success[500],
+    type: 'color',
+    description: 'Color representing success states and positive messages.',
+  },
+  'on-success': {
+    value: colorVariables.canvas,
+    type: 'color',
+    description: 'Foreground color for text/icons on success surfaces.',
+  },
+  'success-hover': {
+    value: colorVariables.success[600],
+    type: 'color',
+    description: 'Success color for hover states.',
+  },
+
+  border: {
+    value: colorVariables.accent[500],
+    type: 'color',
+    description: 'Color used for borders and dividers between elements.',
+  },
+  disabled: {
+    value: colorVariables.accent[600],
+    type: 'color',
+    description: 'Color used for disabled backgrounds.',
+  },
+  'text-disabled': {
+    value: colorVariables.accent[400],
+    type: 'color',
+    description: 'Text color used for disabled elements.',
+  },
+};
+
+const colors = {
+  light: lightColors,
+  dark: darkColors,
+};
+
+// Maintain backward compatibility
+export default lightColors;
+export { colors, lightColors, darkColors };
