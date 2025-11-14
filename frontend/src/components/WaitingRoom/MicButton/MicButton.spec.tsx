@@ -1,8 +1,8 @@
-import { render, screen, fireEvent } from '@testing-library/react';
-import { describe, it, expect, vi, beforeEach, Mock } from 'vitest';
+import { render as renderBase, screen, fireEvent } from '@testing-library/react';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { ReactElement } from 'react';
+import { AppConfigProviderWrapperOptions, makeAppConfigProviderWrapper } from '@test/providers';
 import MicButton from './MicButton';
-import useConfigContext from '../../../hooks/useConfigContext';
-import { ConfigContextType } from '../../../Context/ConfigProvider';
 
 let isAudioEnabled = true;
 const toggleAudioMock = vi.fn();
@@ -18,21 +18,9 @@ vi.mock('../../../hooks/usePreviewPublisherContext', () => {
   };
 });
 
-vi.mock('../../../hooks/useConfigContext');
-const mockUseConfigContext = useConfigContext as Mock<[], ConfigContextType>;
-
 describe('MicButton', () => {
-  let mockConfigContext: ConfigContextType;
-
   beforeEach(() => {
-    vi.clearAllMocks();
     isAudioEnabled = true;
-    mockConfigContext = {
-      audioSettings: {
-        allowMicrophoneControl: true,
-      },
-    } as Partial<ConfigContextType> as ConfigContextType;
-    mockUseConfigContext.mockReturnValue(mockConfigContext);
   });
 
   it('renders the mic on icon when audio is enabled', () => {
@@ -53,8 +41,27 @@ describe('MicButton', () => {
   });
 
   it('is not rendered when allowMicrophoneControl is false', () => {
-    mockConfigContext.audioSettings.allowMicrophoneControl = false;
-    render(<MicButton />);
+    render(<MicButton />, {
+      appConfigOptions: {
+        value: {
+          audioSettings: {
+            allowMicrophoneControl: false,
+          },
+        },
+      },
+    });
+
     expect(screen.queryByTestId('MicIcon')).not.toBeInTheDocument();
   });
 });
+
+function render(
+  ui: ReactElement,
+  options?: {
+    appConfigOptions?: AppConfigProviderWrapperOptions;
+  }
+) {
+  const { AppConfigWrapper } = makeAppConfigProviderWrapper(options?.appConfigOptions);
+
+  return renderBase(ui, { ...options, wrapper: AppConfigWrapper });
+}

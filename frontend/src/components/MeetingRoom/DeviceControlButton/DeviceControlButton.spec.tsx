@@ -1,27 +1,26 @@
 import { describe, it, expect, vi, beforeEach, Mock, afterEach, afterAll } from 'vitest';
-import { fireEvent, render, screen } from '@testing-library/react';
+import { fireEvent, render as renderBase, screen } from '@testing-library/react';
 import { Publisher } from '@vonage/client-sdk-video';
 import { EventEmitter } from 'stream';
-import { PublisherContextType } from '../../../Context/PublisherProvider';
-import { defaultAudioDevice } from '../../../utils/mockData/device';
-import useSpeakingDetector from '../../../hooks/useSpeakingDetector';
-import usePublisherContext from '../../../hooks/usePublisherContext';
+import { ReactElement } from 'react';
+import { PublisherContextType } from '@Context/PublisherProvider';
+import useSpeakingDetector from '@hooks/useSpeakingDetector';
+import usePublisherContext from '@hooks/usePublisherContext';
+import { defaultAudioDevice } from '@utils/mockData/device';
+import { AppConfigProviderWrapperOptions, makeAppConfigProviderWrapper } from '@test/providers';
 import DeviceControlButton from './DeviceControlButton';
-import useConfigContext from '../../../hooks/useConfigContext';
-import { ConfigContextType } from '../../../Context/ConfigProvider';
 import enTranslations from '../../../locales/en.json';
 
-vi.mock('../../../hooks/usePublisherContext.tsx');
-vi.mock('../../../hooks/useSpeakingDetector.tsx');
+vi.mock('@hooks/usePublisherContext.tsx');
+vi.mock('@hooks/useSpeakingDetector.tsx');
 const toggleBackgroundVideoPublisherMock = vi.fn();
-vi.mock('../../../hooks/useBackgroundPublisherContext', () => {
+vi.mock('@hooks/useBackgroundPublisherContext', () => {
   return {
     default: () => ({
       toggleVideo: toggleBackgroundVideoPublisherMock,
     }),
   };
 });
-vi.mock('../../../hooks/useConfigContext');
 
 vi.mock('react-i18next', () => ({
   useTranslation: () => ({
@@ -42,13 +41,11 @@ vi.mock('react-i18next', () => ({
 const mockUsePublisherContext = usePublisherContext as Mock<[], PublisherContextType>;
 const mockUseSpeakingDetector = useSpeakingDetector as Mock<[], boolean>;
 const mockHandleToggleBackgroundEffects = vi.fn();
-const mockUseConfigContext = useConfigContext as Mock<[], ConfigContextType>;
 
 describe('DeviceControlButton', () => {
   const nativeMediaDevices = global.navigator.mediaDevices;
   let mockPublisher: Publisher;
   let publisherContext: PublisherContextType;
-  let configContext: ConfigContextType;
 
   beforeEach(() => {
     mockPublisher = Object.assign(new EventEmitter(), {
@@ -82,16 +79,6 @@ describe('DeviceControlButton', () => {
         removeEventListener: vi.fn(() => []),
       },
     });
-
-    configContext = {
-      audioSettings: {
-        allowMicrophoneControl: true,
-      },
-      videoSettings: {
-        allowCameraControl: true,
-      },
-    } as Partial<ConfigContextType> as ConfigContextType;
-    mockUseConfigContext.mockReturnValue(configContext);
   });
 
   afterEach(() => {
@@ -142,12 +129,23 @@ describe('DeviceControlButton', () => {
     });
 
     it('renders the button as disabled with greyed out icon and correct tooltip when allowMicrophoneControl is false', async () => {
-      configContext.audioSettings.allowMicrophoneControl = false;
       render(
         <DeviceControlButton
           deviceType="audio"
           toggleBackgroundEffects={mockHandleToggleBackgroundEffects}
-        />
+        />,
+        {
+          appConfigOptions: {
+            value: {
+              audioSettings: {
+                allowMicrophoneControl: false,
+              },
+              videoSettings: {
+                allowCameraControl: true,
+              },
+            },
+          },
+        }
       );
       const micButton = screen.getByLabelText('Microphone');
       expect(micButton).toBeInTheDocument();
@@ -178,12 +176,23 @@ describe('DeviceControlButton', () => {
     });
 
     it('renders the button as disabled with greyed out icon and correct tooltip when allowCameraControl is false', async () => {
-      configContext.videoSettings.allowCameraControl = false;
       render(
         <DeviceControlButton
           deviceType="video"
           toggleBackgroundEffects={mockHandleToggleBackgroundEffects}
-        />
+        />,
+        {
+          appConfigOptions: {
+            value: {
+              audioSettings: {
+                allowMicrophoneControl: true,
+              },
+              videoSettings: {
+                allowCameraControl: false,
+              },
+            },
+          },
+        }
       );
 
       const videoButton = screen.getByLabelText('Camera');
@@ -198,3 +207,14 @@ describe('DeviceControlButton', () => {
     });
   });
 });
+
+function render(
+  ui: ReactElement,
+  options?: {
+    appConfigOptions?: AppConfigProviderWrapperOptions;
+  }
+) {
+  const { AppConfigWrapper } = makeAppConfigProviderWrapper(options?.appConfigOptions);
+
+  return renderBase(ui, { ...options, wrapper: AppConfigWrapper });
+}

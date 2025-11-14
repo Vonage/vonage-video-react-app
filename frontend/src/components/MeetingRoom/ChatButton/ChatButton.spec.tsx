@@ -1,28 +1,20 @@
-import { render, screen } from '@testing-library/react';
+import { render as renderBase, screen } from '@testing-library/react';
 import { beforeEach, describe, expect, it, Mock, vi } from 'vitest';
+import { ReactElement } from 'react';
+import useSessionContext from '@hooks/useSessionContext';
+import { SessionContextType } from '@Context/SessionProvider/session';
+import { AppConfigProviderWrapperOptions, makeAppConfigProviderWrapper } from '@test/providers';
 import ChatButton from './ChatButton';
-import useSessionContext from '../../../hooks/useSessionContext';
-import { SessionContextType } from '../../../Context/SessionProvider/session';
-import useConfigContext from '../../../hooks/useConfigContext';
-import { ConfigContextType } from '../../../Context/ConfigProvider';
 
-vi.mock('../../../hooks/useSessionContext');
-vi.mock('../../../hooks/useConfigContext');
+vi.mock('@hooks/useSessionContext');
 const mockUseSessionContext = useSessionContext as Mock<[], SessionContextType>;
 const sessionContext = {
   unreadCount: 10,
 } as unknown as SessionContextType;
-const mockConfigContext = {
-  meetingRoomSettings: {
-    allowChat: true,
-  },
-} as Partial<ConfigContextType> as ConfigContextType;
-const mockUseConfigContext = useConfigContext as Mock<[], ConfigContextType>;
 
 describe('ChatButton', () => {
   beforeEach(() => {
     mockUseSessionContext.mockReturnValue(sessionContext);
-    mockUseConfigContext.mockReturnValue(mockConfigContext);
   });
 
   it('should show unread message number', () => {
@@ -63,12 +55,27 @@ describe('ChatButton', () => {
   });
 
   it('is not rendered when allowChat is false', () => {
-    mockUseConfigContext.mockReturnValue({
-      meetingRoomSettings: {
-        allowChat: false,
+    render(<ChatButton handleClick={() => {}} isOpen />, {
+      appConfigOptions: {
+        value: {
+          meetingRoomSettings: {
+            allowChat: false,
+          },
+        },
       },
-    } as Partial<ConfigContextType> as ConfigContextType);
-    render(<ChatButton handleClick={() => {}} isOpen />);
+    });
+
     expect(screen.queryByTestId('ChatIcon')).not.toBeInTheDocument();
   });
 });
+
+function render(
+  ui: ReactElement,
+  options?: {
+    appConfigOptions?: AppConfigProviderWrapperOptions;
+  }
+) {
+  const { AppConfigWrapper } = makeAppConfigProviderWrapper(options?.appConfigOptions);
+
+  return renderBase(ui, { ...options, wrapper: AppConfigWrapper });
+}

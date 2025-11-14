@@ -1,10 +1,9 @@
-import { act, render, screen } from '@testing-library/react';
-import { afterEach, beforeEach, describe, expect, it, vi, Mock } from 'vitest';
-import { useState } from 'react';
+import { act, render as renderBase, screen } from '@testing-library/react';
+import { beforeEach, describe, expect, it, vi, Mock } from 'vitest';
+import { ReactElement, useState } from 'react';
 import * as mui from '@mui/material';
+import { AppConfigProviderWrapperOptions, makeAppConfigProviderWrapper } from '@test/providers';
 import EmojiGridButton from './EmojiGridButton';
-import useConfigContext from '../../../hooks/useConfigContext';
-import { ConfigContextType } from '../../../Context/ConfigProvider';
 
 vi.mock('@mui/material', async () => {
   const actual = await vi.importActual<typeof mui>('@mui/material');
@@ -13,12 +12,9 @@ vi.mock('@mui/material', async () => {
     useMediaQuery: vi.fn(),
   };
 });
-vi.mock('../../../utils/emojis', () => ({
+vi.mock('@utils/emojis', () => ({
   default: { FAVORITE: '🦧' },
 }));
-vi.mock('../../../hooks/useConfigContext');
-
-const mockUseConfigContext = useConfigContext as Mock<[], ConfigContextType>;
 
 const TestComponent = ({ defaultOpenEmojiGrid = false }: { defaultOpenEmojiGrid?: boolean }) => {
   const [isEmojiGridOpen, setIsEmojiGridOpen] = useState(defaultOpenEmojiGrid);
@@ -32,20 +28,8 @@ const TestComponent = ({ defaultOpenEmojiGrid = false }: { defaultOpenEmojiGrid?
 };
 
 describe('EmojiGridButton', () => {
-  let mockConfigContext: ConfigContextType;
-
   beforeEach(() => {
     (mui.useMediaQuery as Mock).mockReturnValue(false);
-    mockConfigContext = {
-      meetingRoomSettings: {
-        allowEmojis: true,
-      },
-    } as Partial<ConfigContextType> as ConfigContextType;
-    mockUseConfigContext.mockReturnValue(mockConfigContext);
-  });
-
-  afterEach(() => {
-    vi.resetAllMocks();
   });
 
   it('renders', () => {
@@ -67,8 +51,25 @@ describe('EmojiGridButton', () => {
   });
 
   it('is not rendered when allowEmojis is false', () => {
-    mockConfigContext.meetingRoomSettings.allowEmojis = false;
-    render(<TestComponent />);
+    render(<TestComponent />, {
+      appConfigOptions: {
+        value: {
+          meetingRoomSettings: { allowEmojis: false },
+        },
+      },
+    });
+
     expect(screen.queryByTestId('emoji-grid-button')).not.toBeInTheDocument();
   });
 });
+
+function render(
+  ui: ReactElement,
+  options?: {
+    appConfigOptions?: AppConfigProviderWrapperOptions;
+  }
+) {
+  const { AppConfigWrapper } = makeAppConfigProviderWrapper(options?.appConfigOptions);
+
+  return renderBase(ui, { ...options, wrapper: AppConfigWrapper });
+}

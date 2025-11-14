@@ -1,11 +1,11 @@
 import { ReactElement } from 'react';
 import { AvatarGroup } from '@mui/material';
 import { Box } from 'opentok-layout-js';
-import { SubscriberWrapper } from '../../types/session';
+import { SubscriberWrapper } from '@app-types/session';
+import getBoxStyle from '@utils/helpers/getBoxStyle';
+import useSessionContext from '@hooks/useSessionContext';
+import useShouldShowParticipantList from '@Context/AppConfig/hooks/useShouldShowParticipantList';
 import AvatarInitials from '../AvatarInitials';
-import getBoxStyle from '../../utils/helpers/getBoxStyle';
-import useSessionContext from '../../hooks/useSessionContext';
-import useConfigContext from '../../hooks/useConfigContext';
 
 export type HiddenParticipantsTileProps = {
   box: Box;
@@ -26,8 +26,9 @@ const HiddenParticipantsTile = ({
   hiddenSubscribers,
 }: HiddenParticipantsTileProps): ReactElement => {
   const { toggleParticipantList } = useSessionContext();
-  const config = useConfigContext();
-  const { showParticipantList } = config.meetingRoomSettings;
+
+  const showParticipantList = useShouldShowParticipantList();
+
   const { height, width } = box;
   const diameter = Math.min(height, width) * 0.38;
   return (

@@ -21,7 +21,7 @@
     "dev": "yarn && concurrently 'yarn dev:frontend' 'yarn dev:backend'",
     "docs": "yarn workspace frontend docs",
     "docs:watch": "yarn workspace frontend docs:watch",
-    "lint": "ESLINT_USE_FLAT_CONFIG=false yarn eslint . --ext .ts,.tsx",
+    "lint": "ESLINT_USE_FLAT_CONFIG=false yarn eslint . --ext .ts,.tsx --max-warnings 0",
     "lint:filenames": "./scripts/lintFileNames.sh",
     "lint:fix": "prettier --log-level warn --write \"**/*.{ts,tsx,js,json,md,yml,yaml}\" && yarn lint --fix",
     "prepare": "husky install",
@@ -34,12 +34,22 @@
     "test:backend": "yarn workspace backend test",
     "test:backend:watch": "yarn workspace backend test:watch",
     "test:frontend": "yarn workspace frontend test",
+    "test:frontend:": "yarn test:frontend -- --bail 1 --no-coverage",
+    "test:frontend:debug": "vitest --disableConsoleIntercept=true --silent=false --no-file-parallelism --inspect-brk --root frontend --config vite.config.ts --no-coverage",
     "test:frontend:watch": "yarn workspace frontend test:watch",
     "test:integration": "yarn workspace integration-tests test",
     "ts-check": "yarn --silent ts-check:backend && yarn --silent ts-check:frontend",
     "test:integrationUpdateScreenshots": "yarn workspace integration-tests updateScreenshots",
     "ts-check:backend": "yarn --silent workspace backend ts-check",
-    "ts-check:frontend": "yarn --silent workspace frontend ts-check"
+    "ts-check:frontend": "yarn --silent workspace frontend ts-check",
+    "vite-plugin-checker": "^0.11.0"
+  },
+  "scriptsInfo": {
+    "dev": "Run both frontend and backend in development mode which included compilation type checking and hot reloading",
+    "debug:backend": "Run backend in debug mode which allows you to attach a debugger or debug directly with chrome://inspect",
+    "test:frontend": "Run frontend tests",
+    "test:frontend:": "example: 'yarn test:frontend: <name/path>' to run specific test file or test suite without coverage",
+    "test:frontend:debug": "Debug mode which allows you to attach a debugger or debug directly with chrome://inspect"
   },
   "repository": {
     "type": "git",
@@ -56,6 +66,7 @@
     "@types/node": "^20.12.7",
     "@typescript-eslint/eslint-plugin": "^8.30.1",
     "@typescript-eslint/parser": "^8.30.1",
+    "concurrently": "^9.1.2",
     "eslint": "^8",
     "eslint-config-airbnb": "^19.0.4",
     "eslint-config-airbnb-typescript": "^18.0.0",
@@ -71,7 +82,6 @@
     "eslint-plugin-tailwindcss": "^3.18.0",
     "husky": "^9.0.11",
     "license-checker": "^25.0.1",
-    "concurrently": "^9.1.2",
     "prettier": "^3.2.5",
     "typescript": "^5.8.3"
   },

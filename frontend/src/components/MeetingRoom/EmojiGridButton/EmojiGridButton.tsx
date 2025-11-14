@@ -2,9 +2,9 @@ import { Tooltip } from '@mui/material';
 import { EmojiEmotions } from '@mui/icons-material';
 import { Dispatch, ReactElement, SetStateAction, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
+import useAppConfig from '@Context/AppConfig/hooks/useAppConfig';
 import ToolbarButton from '../ToolbarButton';
 import EmojiGrid from '../EmojiGrid/EmojiGrid';
-import useConfigContext from '../../../hooks/useConfigContext';
 import { colors } from '../../../utils/customTheme/customTheme';
 
 export type EmojiGridProps = {
@@ -31,13 +31,13 @@ const EmojiGridButton = ({
   isParentOpen,
   isOverflowButton = false,
 }: EmojiGridProps): ReactElement | false => {
-  const { meetingRoomSettings } = useConfigContext();
+  const allowEmojis = useAppConfig(({ meetingRoomSettings }) => meetingRoomSettings.allowEmojis);
+
   const { t } = useTranslation();
   const anchorRef = useRef<HTMLButtonElement>(null);
   const handleToggle = () => {
     setIsEmojiGridOpen((prevOpen) => !prevOpen);
   };
-  const { allowEmojis } = meetingRoomSettings;
 
   return (
     allowEmojis && (
