@@ -36,19 +36,12 @@ const LandingPageWelcome = (): ReactElement => {
         {words.map((word, index) => (
           <Typography
             key={word}
-            variant="h2"
-            sx={(theme) => ({
-              color: index === 1 ? 'primary.main' : 'text.primary',
+            variant="h1"
+            sx={{
+              color: index === 1 ? 'text.main' : 'text.primary',
               lineHeight: 1.2,
               mr: { xs: 1, md: 0 },
-              fontSize: theme.typography.h2.fontSize,
-              [theme.breakpoints.between('sm', 'lg')]: {
-                fontSize: theme.typography.h3.fontSize,
-              },
-              [theme.breakpoints.down('sm')]: {
-                fontSize: theme.typography.h4.fontSize,
-              },
-            })}
+            }}
           >
             {word}
           </Typography>

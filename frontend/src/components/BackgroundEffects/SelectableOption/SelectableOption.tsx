@@ -1,7 +1,6 @@
 import { ReactElement, ReactNode } from 'react';
 import { Box, Paper, Tooltip } from '@mui/material';
 import { DEFAULT_SELECTABLE_OPTION_WIDTH } from '../../../utils/constants';
-import { colors } from '../../../utils/customTheme/customTheme';
 
 export type SelectableOptionProps = {
   isSelected: boolean;
@@ -59,20 +58,22 @@ const SelectableOption = ({
         elevation={isSelected ? 4 : 1}
         aria-disabled={isDisabled}
         aria-pressed={isSelected}
-        sx={{
+        sx={(theme) => ({
           width: size,
           height: size,
           overflow: 'hidden',
           borderRadius: '16px',
-          border: isSelected ? `2px solid ${colors.primary}` : '',
+          border: isSelected ? `2px solid ${theme.palette.primary.main}` : '',
           cursor: isDisabled ? 'not-allowed' : 'pointer',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
           transition: 'all 0.1s ease-in-out',
-          backgroundColor: isDisabled ? colors.backgroundDisabled : colors.background,
+          backgroundColor: isDisabled
+            ? theme.palette.disabled.main
+            : theme.palette.background.default,
           opacity: isDisabled ? 0.5 : 1,
-        }}
+        })}
         {...otherProps}
       >
         <Tooltip arrow title={title} aria-label={title}>

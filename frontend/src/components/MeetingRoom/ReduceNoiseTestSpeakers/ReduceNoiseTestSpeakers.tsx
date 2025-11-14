@@ -12,7 +12,6 @@ import usePublisherContext from '@hooks/usePublisherContext';
 import { setStorageItem, STORAGE_KEYS } from '@utils/storage';
 import DropdownSeparator from '../DropdownSeparator';
 import SoundTest from '../../SoundTest';
-import { colors } from '../../../utils/customTheme/customTheme';
 
 /**
  * ReduceNoiseTestSpeakers Component
@@ -63,12 +62,12 @@ const ReduceNoiseTestSpeakers = (): ReactElement | false => {
         {shouldDisplayANS && (
           <MenuItem
             onClick={handleToggle}
-            sx={{
+            sx={(theme) => ({
               backgroundColor: 'transparent',
               '&:hover': {
-                backgroundColor: colors.primaryHover,
+                backgroundColor: theme.palette.hover.main,
               },
-            }}
+            })}
           >
             <HeadsetIcon sx={{ fontSize: 24, mr: 2 }} />
             <Typography noWrap sx={{ mr: 2 }}>
@@ -86,7 +85,10 @@ const ReduceNoiseTestSpeakers = (): ReactElement | false => {
                 <ToggleOnIcon
                   data-testid="toggle-on-icon"
                   fontSize="large"
-                  sx={{ position: 'absolute', color: colors.background }}
+                  sx={(theme) => ({
+                    position: 'absolute',
+                    color: theme.palette.background.default,
+                  })}
                 />
               </Grow>
             </IconButton>

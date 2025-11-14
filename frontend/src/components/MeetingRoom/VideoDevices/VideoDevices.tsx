@@ -9,7 +9,6 @@ import useDevices from '../../../hooks/useDevices';
 import usePublisherContext from '../../../hooks/usePublisherContext';
 import { setStorageItem, STORAGE_KEYS } from '../../../utils/storage';
 import cleanAndDedupeDeviceLabels from '../../../utils/cleanAndDedupeDeviceLabels';
-import { colors } from '../../../utils/customTheme/customTheme';
 
 export type VideoDevicesProps = {
   handleToggle: () => void;
@@ -88,16 +87,16 @@ const VideoDevices = ({ handleToggle }: VideoDevicesProps): ReactElement | false
                 key={option.deviceId}
                 selected={isSelected}
                 onClick={(event) => handleChangeVideoSource(event)}
-                sx={{
+                sx={(theme) => ({
                   backgroundColor: 'transparent',
                   '&.Mui-selected': {
                     backgroundColor: 'transparent',
-                    color: colors.background,
+                    color: theme.palette.background.default,
                   },
                   '&:hover': {
-                    backgroundColor: colors.primaryHover,
+                    backgroundColor: theme.palette.hover.main,
                   },
-                }}
+                })}
               >
                 <Box
                   key={`${option.deviceId}-video-device`}
@@ -108,7 +107,13 @@ const VideoDevices = ({ handleToggle }: VideoDevicesProps): ReactElement | false
                   }}
                 >
                   {isSelected ? (
-                    <CheckIcon sx={{ color: colors.background, fontSize: 24, mr: 2 }} />
+                    <CheckIcon
+                      sx={(theme) => ({
+                        color: theme.palette.background.default,
+                        fontSize: 24,
+                        mr: 2,
+                      })}
+                    />
                   ) : (
                     <Box sx={{ width: 40 }} /> // Placeholder when CheckIcon is not displayed
                   )}

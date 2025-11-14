@@ -1,139 +1,138 @@
 import { createTheme, PaletteColor, PaletteColorOptions } from '@mui/material';
+import designTokens from '../../designTokens';
 
 declare module '@mui/material/styles' {
   interface TypeText {
     tertiary: string;
+    main: string;
   }
 
   interface Palette {
     tertiary: PaletteColor;
+    hover: PaletteColor;
+    disabled: PaletteColor;
   }
 
   interface PaletteOptions {
     tertiary?: PaletteColorOptions;
+    hover?: PaletteColorOptions;
+    disabled?: PaletteColorOptions;
+  }
+
+  interface Shape {
+    borderRadius: number;
+    borderRadiusNone: number;
+    borderRadiusExtraSmall: number;
+    borderRadiusSmall: number;
+    borderRadiusMedium: number;
+    borderRadiusLarge: number;
+    borderRadiusExtraLarge: number;
+  }
+
+  interface ThemeOptions {
+    shape?: Partial<Shape>;
   }
 }
 
-const borderRadiusStandard = '8px';
-const borderRadiusStandardNumber = 2.85;
-const buttonHeight = 40;
-const buttonFontSize = 16;
-const h2FontWeight = 500;
-const h5FontWeight = 500;
+function borderRadiusToNumber(value: string): number {
+  const numericValue = parseFloat(value);
+
+  if (value.includes('rem')) {
+    // 1rem = 16px, MUI base spacing = 8px, so 1rem = 2 units
+    return (numericValue * 16) / 8;
+  }
+
+  if (value.includes('px')) {
+    // Convert px to MUI units (8px = 1 unit)
+    return numericValue / 8;
+  }
+
+  return numericValue;
+}
+
+const buttonHeight = 40; // 40px
 
 const buttonSx = {
   height: buttonHeight,
   textTransform: 'none',
-  borderRadius: borderRadiusStandard,
-} as const;
-
-const colors = {
-  // Primary colors
-  primary: '#871EFF',
-  textPrimary: '#9941ff',
-  primaryHover: '#3E007E2F',
-  onPrimary: '#FFFFFF',
-  primaryContainer: '#6300C4',
-  onPrimaryContainer: '#FFFFFF',
-  surfaceTint: '#7F02F7',
-
-  // Secondary colors
-  secondary: '#2F293B',
-  textSecondary: '#000000',
-  onSecondary: '#FFFFFF',
-  secondaryContainer: '#4C4659',
-  onSecondaryContainer: '#FFFFFF',
-
-  // Tertiary colors (mapped to warning)
-  tertiary: '#2A005E',
-  textTertiary: '#757575',
-  onTertiary: '#FFFFFF',
-  tertiaryContainer: '#440291',
-  onTertiaryContainer: '#F7EDFF',
-
-  // Error colors
-  error: '#E61D1D',
-  onError: '#FFFFFF',
-  errorContainer: '#FFEEF2',
-  onErrorContainer: '#FFFFFF',
-
-  // Surface colors
-  background: '#F5F0FD',
-  backgroundDisabled: '#f5f5f5', // colors/disabled
-  onBackground: '#1E1925',
-  surface: '#FFFFFF',
-  onSurface: '#000000',
-
-  // Outline colors
-  outline: '#E6E6E6',
-  outlineVariant: '#464A4A',
-
-  // Inverse colors
-  inverseSurface: '#313030',
-  inverseOnSurface: '#FFFFFF',
-  inversePrimary: '#D6BAFF',
-
-  // Shadow and scrim
-  shadow: '#000000',
-  scrim: '#000000',
-} as const;
-
-const fonts = {
-  family: ['"Inter"', 'system-ui', 'ui-sans-serif', '"Marker Felt"', '"Trebuchet MS"'].join(','),
+  borderRadius: designTokens.shape.medium.value,
 } as const;
 
 const customTheme = createTheme({
   palette: {
     mode: 'light',
     primary: {
-      main: colors.primary,
-      contrastText: colors.onPrimary,
-      dark: colors.primaryContainer,
-      light: colors.background,
+      main: designTokens.color.light.primary.value,
+      contrastText: designTokens.color.light['on-primary'].value,
+      dark: designTokens.color.light.primary.value,
+      light: designTokens.color.light.background.value,
     },
     secondary: {
-      main: colors.secondary,
-      contrastText: colors.onSecondary,
-      dark: colors.secondaryContainer,
+      main: designTokens.color.light.secondary.value,
+      contrastText: designTokens.color.light['on-secondary'].value,
+      dark: designTokens.color.light.secondary.value,
+      light: designTokens.color.light.background.value,
     },
     tertiary: {
-      main: colors.tertiary,
-      contrastText: colors.onTertiary,
-      dark: colors.tertiaryContainer,
+      main: designTokens.color.light.tertiary.value,
+      contrastText: designTokens.color.light['on-tertiary'].value,
+      dark: designTokens.color.light.tertiary.value,
+      light: designTokens.color.light.background.value,
+    },
+    success: {
+      main: designTokens.color.light.success.value,
+      contrastText: designTokens.color.light['on-success'].value,
+      dark: designTokens.color.light['success-hover'].value,
+      light: designTokens.color.light.background.value,
     },
     warning: {
-      main: colors.tertiary,
-      contrastText: colors.onTertiary,
-      dark: colors.tertiaryContainer,
+      main: designTokens.color.light.warning.value,
+      contrastText: designTokens.color.light['on-warning'].value,
+      dark: designTokens.color.light['warning-hover'].value,
+      light: designTokens.color.light.background.value,
     },
     error: {
-      main: colors.error,
-      contrastText: colors.onError,
-      dark: colors.errorContainer,
+      main: designTokens.color.light.error.value,
+      contrastText: designTokens.color.light['on-error'].value,
+      dark: designTokens.color.light['error-hover'].value,
+      light: designTokens.color.light.background.value,
     },
     background: {
-      default: colors.background,
-      paper: colors.surface,
+      default: designTokens.color.light.background.value,
+      paper: designTokens.color.light.surface.value,
     },
     text: {
-      primary: colors.textSecondary, // This is the default text color
-      secondary: colors.textSecondary,
-      tertiary: colors.textTertiary,
+      primary: designTokens.color.light['text-secondary'].value, // This is the default text color
+      main: designTokens.color.light['text-primary'].value, // This is primary color for specific uses
+      secondary: designTokens.color.light['text-secondary'].value,
+      tertiary: designTokens.color.light['text-tertiary'].value,
     },
-    divider: colors.outline,
+    divider: designTokens.color.light.border.value,
+    hover: {
+      main: designTokens.color.light['primary-hover'].value,
+    },
+    disabled: {
+      main: designTokens.color.light.disabled.value,
+    },
   },
   shape: {
-    borderRadius: borderRadiusStandardNumber,
+    borderRadius: borderRadiusToNumber(designTokens.shape.medium.value),
+    borderRadiusNone: borderRadiusToNumber(designTokens.shape.none.value),
+    borderRadiusExtraSmall: borderRadiusToNumber(designTokens.shape['extra-small'].value),
+    borderRadiusSmall: borderRadiusToNumber(designTokens.shape.small.value),
+    borderRadiusMedium: borderRadiusToNumber(designTokens.shape.medium.value),
+    borderRadiusLarge: borderRadiusToNumber(designTokens.shape.large.value),
+    borderRadiusExtraLarge: borderRadiusToNumber(designTokens.shape['extra-large'].value),
   },
   components: {
     MuiButton: {
       styleOverrides: {
         root: {
           ...buttonSx,
-          fontSize: buttonFontSize,
+          fontSize: designTokens.typography.typeScale.desktop['body-extended'].fontSize.value,
         },
         outlined: {
-          borderColor: colors.primary,
+          borderColor: designTokens.color.light.primary.value,
         },
       },
     },
@@ -152,38 +151,27 @@ const customTheme = createTheme({
     MuiAppBar: {
       styleOverrides: {
         root: {
-          backgroundColor: colors.surface,
-          color: colors.onSurface,
+          backgroundColor: designTokens.color.light.surface.value,
+          color: designTokens.color.light['on-surface'].value,
         },
       },
     },
     MuiPaper: {
       styleOverrides: {
         root: {
-          backgroundColor: colors.background,
-          color: colors.onSurface,
+          backgroundColor: designTokens.color.light.background.value,
+          color: designTokens.color.light['on-background'].value,
         },
       },
     },
     MuiOutlinedInput: {
       styleOverrides: {
         root: {
-          backgroundColor: colors.background,
-          borderRadius: borderRadiusStandard,
+          backgroundColor: designTokens.color.light.background.value,
+          borderRadius: designTokens.shape.medium.value,
           backgroundClip: 'padding-box',
           '&.Mui-error': {
-            backgroundColor: colors.errorContainer,
-          },
-          '& .MuiOutlinedInput-root': {
-            '& fieldset': {
-              borderColor: colors.outline,
-            },
-            '&:hover fieldset': {
-              borderColor: colors.primary,
-            },
-            '&.Mui-focused fieldset': {
-              borderColor: colors.primary,
-            },
+            backgroundColor: designTokens.color.light['error-hover'].value,
           },
         },
       },
@@ -191,29 +179,217 @@ const customTheme = createTheme({
     MuiFormHelperText: {
       styleOverrides: {
         root: {
-          color: colors.onSurface,
+          color: designTokens.color.light['on-surface'].value,
           '&.Mui-error': {
-            color: colors.onSurface,
+            color: designTokens.color.light['on-surface'].value,
           },
         },
       },
     },
-    MuiTooltip: {
+    MuiTypography: {
       styleOverrides: {
-        tooltip: {
-          backgroundColor: colors.inverseSurface,
-          color: colors.inverseOnSurface,
+        h1: {
+          '@media (max-width:1199px)': {
+            fontSize: `calc(${designTokens.typography.typeScale.mobile.headline.fontSize.value} * 1.5)`,
+            lineHeight: `calc(${designTokens.typography.typeScale.mobile.headline.lineHeight.value} * 1.5)`,
+            fontWeight: designTokens.typography.typeScale.mobile.headline.fontWeight.value,
+          },
+          '@media (max-width:899px)': {
+            fontSize: designTokens.typography.typeScale.mobile.headline.fontSize.value,
+            lineHeight: designTokens.typography.typeScale.mobile.headline.lineHeight.value,
+            fontWeight: designTokens.typography.typeScale.mobile.headline.fontWeight.value,
+          },
+        },
+        h2: {
+          '@media (max-width:1199px)': {
+            fontSize: `calc(${designTokens.typography.typeScale.mobile.subtitle.fontSize.value} * 1.15)`,
+            lineHeight: `calc(${designTokens.typography.typeScale.mobile.subtitle.lineHeight.value} * 1.15)`,
+            fontWeight: designTokens.typography.typeScale.mobile.subtitle.fontWeight.value,
+          },
+          '@media (max-width:899px)': {
+            fontSize: designTokens.typography.typeScale.mobile.subtitle.fontSize.value,
+            lineHeight: designTokens.typography.typeScale.mobile.subtitle.lineHeight.value,
+            fontWeight: designTokens.typography.typeScale.mobile.subtitle.fontWeight.value,
+          },
+        },
+        h3: {
+          '@media (max-width:1199px)': {
+            fontSize: `calc(${designTokens.typography.typeScale.mobile['heading-1'].fontSize.value} * 1.15)`,
+            lineHeight: `calc(${designTokens.typography.typeScale.mobile['heading-1'].lineHeight.value} * 1.15)`,
+            fontWeight: designTokens.typography.typeScale.mobile['heading-1'].fontWeight.value,
+          },
+          '@media (max-width:899px)': {
+            fontSize: designTokens.typography.typeScale.mobile['heading-1'].fontSize.value,
+            lineHeight: designTokens.typography.typeScale.mobile['heading-1'].lineHeight.value,
+            fontWeight: designTokens.typography.typeScale.mobile['heading-1'].fontWeight.value,
+          },
+        },
+        h4: {
+          '@media (max-width:1199px)': {
+            fontSize: `calc(${designTokens.typography.typeScale.mobile['heading-2'].fontSize.value} * 1.15)`,
+            lineHeight: `calc(${designTokens.typography.typeScale.mobile['heading-2'].lineHeight.value} * 1.15)`,
+            fontWeight: designTokens.typography.typeScale.mobile['heading-2'].fontWeight.value,
+          },
+          '@media (max-width:899px)': {
+            fontSize: designTokens.typography.typeScale.mobile['heading-2'].fontSize.value,
+            lineHeight: designTokens.typography.typeScale.mobile['heading-2'].lineHeight.value,
+            fontWeight: designTokens.typography.typeScale.mobile['heading-2'].fontWeight.value,
+          },
+        },
+        h5: {
+          '@media (max-width:1199px)': {
+            fontSize: `calc(${designTokens.typography.typeScale.mobile['heading-3'].fontSize.value} * 1.15)`,
+            lineHeight: `calc(${designTokens.typography.typeScale.mobile['heading-3'].lineHeight.value} * 1.15)`,
+            fontWeight: designTokens.typography.typeScale.mobile['heading-3'].fontWeight.value,
+          },
+          '@media (max-width:899px)': {
+            fontSize: designTokens.typography.typeScale.mobile['heading-3'].fontSize.value,
+            lineHeight: designTokens.typography.typeScale.mobile['heading-3'].lineHeight.value,
+            fontWeight: designTokens.typography.typeScale.mobile['heading-3'].fontWeight.value,
+          },
+        },
+        h6: {
+          '@media (max-width:1199px)': {
+            fontSize: `calc(${designTokens.typography.typeScale.mobile['heading-4'].fontSize.value} * 1.15)`,
+            lineHeight: `calc(${designTokens.typography.typeScale.mobile['heading-4'].lineHeight.value} * 1.15)`,
+            fontWeight: designTokens.typography.typeScale.mobile['heading-4'].fontWeight.value,
+          },
+          '@media (max-width:899px)': {
+            fontSize: designTokens.typography.typeScale.mobile['heading-4'].fontSize.value,
+            lineHeight: designTokens.typography.typeScale.mobile['heading-4'].lineHeight.value,
+            fontWeight: designTokens.typography.typeScale.mobile['heading-4'].fontWeight.value,
+          },
+        },
+        subtitle1: {
+          '@media (max-width:1199px)': {
+            fontSize: `calc(${designTokens.typography.typeScale.mobile['body-extended-semibold'].fontSize.value} * 1.15)`,
+            lineHeight: `calc(${designTokens.typography.typeScale.mobile['body-extended-semibold'].lineHeight.value} * 1.15)`,
+            fontWeight:
+              designTokens.typography.typeScale.mobile['body-extended-semibold'].fontWeight.value,
+          },
+          '@media (max-width:899px)': {
+            fontSize:
+              designTokens.typography.typeScale.mobile['body-extended-semibold'].fontSize.value,
+            lineHeight:
+              designTokens.typography.typeScale.mobile['body-extended-semibold'].lineHeight.value,
+            fontWeight:
+              designTokens.typography.typeScale.mobile['body-extended-semibold'].fontWeight.value,
+          },
+        },
+        subtitle2: {
+          '@media (max-width:1199px)': {
+            fontSize: `calc(${designTokens.typography.typeScale.mobile['body-base-semibold'].fontSize.value} * 1.15)`,
+            lineHeight: `calc(${designTokens.typography.typeScale.mobile['body-base-semibold'].lineHeight.value} * 1.15)`,
+            fontWeight:
+              designTokens.typography.typeScale.mobile['body-base-semibold'].fontWeight.value,
+          },
+          '@media (max-width:899px)': {
+            fontSize: designTokens.typography.typeScale.mobile['body-base-semibold'].fontSize.value,
+            lineHeight:
+              designTokens.typography.typeScale.mobile['body-base-semibold'].lineHeight.value,
+            fontWeight:
+              designTokens.typography.typeScale.mobile['body-base-semibold'].fontWeight.value,
+          },
+        },
+        body1: {
+          '@media (max-width:1199px)': {
+            fontSize: `calc(${designTokens.typography.typeScale.mobile['body-extended'].fontSize.value} * 1.15)`,
+            lineHeight: `calc(${designTokens.typography.typeScale.mobile['body-extended'].lineHeight.value} * 1.15)`,
+            fontWeight: designTokens.typography.typeScale.mobile['body-extended'].fontWeight.value,
+          },
+          '@media (max-width:899px)': {
+            fontSize: designTokens.typography.typeScale.mobile['body-extended'].fontSize.value,
+            lineHeight: designTokens.typography.typeScale.mobile['body-extended'].lineHeight.value,
+            fontWeight: designTokens.typography.typeScale.mobile['body-extended'].fontWeight.value,
+          },
+        },
+        body2: {
+          '@media (max-width:1199px)': {
+            fontSize: `calc(${designTokens.typography.typeScale.mobile['body-base'].fontSize.value} * 1.15)`,
+            lineHeight: `calc(${designTokens.typography.typeScale.mobile['body-base'].lineHeight.value} * 1.15)`,
+            fontWeight: designTokens.typography.typeScale.mobile['body-base'].fontWeight.value,
+          },
+          '@media (max-width:899px)': {
+            fontSize: designTokens.typography.typeScale.mobile['body-base'].fontSize.value,
+            lineHeight: designTokens.typography.typeScale.mobile['body-base'].lineHeight.value,
+            fontWeight: designTokens.typography.typeScale.mobile['body-base'].fontWeight.value,
+          },
+        },
+        caption: {
+          '@media (max-width:1199px)': {
+            fontSize: `calc(${designTokens.typography.typeScale.mobile.caption.fontSize.value} * 1.15)`,
+            lineHeight: `calc(${designTokens.typography.typeScale.mobile.caption.lineHeight.value} * 1.15)`,
+            fontWeight: designTokens.typography.typeScale.mobile.caption.fontWeight.value,
+          },
+          '@media (max-width:899px)': {
+            fontSize: designTokens.typography.typeScale.mobile.caption.fontSize.value,
+            lineHeight: designTokens.typography.typeScale.mobile.caption.lineHeight.value,
+            fontWeight: designTokens.typography.typeScale.mobile.caption.fontWeight.value,
+          },
         },
       },
     },
   },
   typography: {
-    fontFamily: fonts.family,
-    h2: { fontWeight: h2FontWeight },
-    h5: { fontWeight: h5FontWeight },
+    fontFamily: designTokens.typography.typeface.plain.value,
+    h1: {
+      fontSize: designTokens.typography.typeScale.desktop.headline.fontSize.value,
+      lineHeight: designTokens.typography.typeScale.desktop.headline.lineHeight.value,
+      fontWeight: designTokens.typography.typeScale.desktop.headline.fontWeight.value,
+    },
+    h2: {
+      fontSize: designTokens.typography.typeScale.desktop.subtitle.fontSize.value,
+      lineHeight: designTokens.typography.typeScale.desktop.subtitle.lineHeight.value,
+      fontWeight: designTokens.typography.typeScale.desktop.subtitle.fontWeight.value,
+    },
+    h3: {
+      fontSize: designTokens.typography.typeScale.desktop['heading-1'].fontSize.value,
+      lineHeight: designTokens.typography.typeScale.desktop['heading-1'].lineHeight.value,
+      fontWeight: designTokens.typography.typeScale.desktop['heading-1'].fontWeight.value,
+    },
+    h4: {
+      fontSize: designTokens.typography.typeScale.desktop['heading-2'].fontSize.value,
+      lineHeight: designTokens.typography.typeScale.desktop['heading-2'].lineHeight.value,
+      fontWeight: designTokens.typography.typeScale.desktop['heading-2'].fontWeight.value,
+    },
+    h5: {
+      fontSize: designTokens.typography.typeScale.desktop['heading-3'].fontSize.value,
+      lineHeight: designTokens.typography.typeScale.desktop['heading-3'].lineHeight.value,
+      fontWeight: designTokens.typography.typeScale.desktop['heading-3'].fontWeight.value,
+    },
+    h6: {
+      fontSize: designTokens.typography.typeScale.desktop['heading-4'].fontSize.value,
+      lineHeight: designTokens.typography.typeScale.desktop['heading-4'].lineHeight.value,
+      fontWeight: designTokens.typography.typeScale.desktop['heading-4'].fontWeight.value,
+    },
+    subtitle1: {
+      fontSize: designTokens.typography.typeScale.desktop['body-extended-semibold'].fontSize.value,
+      lineHeight:
+        designTokens.typography.typeScale.desktop['body-extended-semibold'].lineHeight.value,
+      fontWeight:
+        designTokens.typography.typeScale.desktop['body-extended-semibold'].fontWeight.value,
+    },
+    subtitle2: {
+      fontSize: designTokens.typography.typeScale.desktop['body-base-semibold'].fontSize.value,
+      lineHeight: designTokens.typography.typeScale.desktop['body-base-semibold'].lineHeight.value,
+      fontWeight: designTokens.typography.typeScale.desktop['body-base-semibold'].fontWeight.value,
+    },
+    body1: {
+      fontSize: designTokens.typography.typeScale.desktop['body-extended'].fontSize.value,
+      lineHeight: designTokens.typography.typeScale.desktop['body-extended'].lineHeight.value,
+      fontWeight: designTokens.typography.typeScale.desktop['body-extended'].fontWeight.value,
+    },
+    body2: {
+      fontSize: designTokens.typography.typeScale.desktop['body-base'].fontSize.value,
+      lineHeight: designTokens.typography.typeScale.desktop['body-base'].lineHeight.value,
+      fontWeight: designTokens.typography.typeScale.desktop['body-base'].fontWeight.value,
+    },
+    caption: {
+      fontSize: designTokens.typography.typeScale.desktop.caption.fontSize.value,
+      lineHeight: designTokens.typography.typeScale.desktop.caption.lineHeight.value,
+      fontWeight: designTokens.typography.typeScale.desktop.caption.fontWeight.value,
+    },
   },
 });
 
 export default customTheme;
-
-export { colors, fonts };

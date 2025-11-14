@@ -10,7 +10,6 @@ import useAudioOutputContext from '@hooks/useAudioOutputContext';
 import { isGetActiveAudioOutputDeviceSupported } from '@utils/util';
 import cleanAndDedupeDeviceLabels from '@utils/cleanAndDedupeDeviceLabels';
 import DropdownSeparator from '../DropdownSeparator';
-import { colors } from '../../../utils/customTheme/customTheme';
 
 export type OutputDevicesProps = {
   handleToggle: () => void;
@@ -87,16 +86,16 @@ const OutputDevices = ({ handleToggle }: OutputDevicesProps): ReactElement | fal
                 key={device.deviceId}
                 selected={isSelected}
                 onClick={handleChangeAudioOutput}
-                sx={{
+                sx={(theme) => ({
                   backgroundColor: 'transparent',
                   '&.Mui-selected': {
                     backgroundColor: 'transparent',
-                    color: colors.background,
+                    color: theme.palette.background.default,
                   },
                   '&:hover': {
-                    backgroundColor: colors.primaryHover,
+                    backgroundColor: theme.palette.hover.main,
                   },
-                }}
+                })}
               >
                 <Box
                   key={`${device.deviceId}-input-device`}
@@ -107,7 +106,13 @@ const OutputDevices = ({ handleToggle }: OutputDevicesProps): ReactElement | fal
                   }}
                 >
                   {isSelected ? (
-                    <CheckIcon sx={{ color: colors.background, fontSize: 24, mr: 2 }} />
+                    <CheckIcon
+                      sx={(theme) => ({
+                        color: theme.palette.background.default,
+                        fontSize: 24,
+                        mr: 2,
+                      })}
+                    />
                   ) : (
                     <Box sx={{ width: 40 }} /> // Placeholder when CheckIcon is not displayed
                   )}

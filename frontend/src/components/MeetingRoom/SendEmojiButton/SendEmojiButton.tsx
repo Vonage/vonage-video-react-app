@@ -2,7 +2,6 @@ import { Button, Grid, GridSize } from '@mui/material';
 import { ReactElement } from 'react';
 import useSessionContext from '../../../hooks/useSessionContext';
 import useIsSmallViewport from '../../../hooks/useIsSmallViewport';
-import { colors } from '../../../utils/customTheme/customTheme';
 
 export type SendEmojiButtonProps = {
   emoji: string;
@@ -26,13 +25,13 @@ const SendEmojiButton = ({ emoji }: SendEmojiButtonProps): ReactElement => {
       <Button
         size={size}
         onClick={() => sendEmoji(emoji)}
-        sx={{
+        sx={(theme) => ({
           '&:hover': {
-            backgroundColor: colors.primaryHover,
+            backgroundColor: theme.palette.hover.main,
           },
           padding: '0.25rem',
           fontSize: '1.5rem',
-        }}
+        })}
       >
         {emoji}
       </Button>

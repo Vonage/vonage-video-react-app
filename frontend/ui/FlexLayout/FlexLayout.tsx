@@ -83,6 +83,7 @@ const FlexLayout: FlexLayoutComponent = ({
               justifyContent: leftAlign.justifyContent,
               p: padding,
               bgcolor: leftBackgroundColor,
+              overflow: 'hidden',
             }}
           >
             {left}
