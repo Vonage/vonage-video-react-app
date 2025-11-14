@@ -1,14 +1,16 @@
 import { describe, expect, it, vi, beforeEach, Mock, afterAll } from 'vitest';
-import { render, screen } from '@testing-library/react';
+import { render as renderBase, screen } from '@testing-library/react';
 import { useLocation } from 'react-router-dom';
-import useSpeakingDetector from '../../../hooks/useSpeakingDetector';
-import Toolbar, { ToolbarProps, CaptionsState } from './Toolbar';
-import isReportIssueEnabled from '../../../utils/isReportIssueEnabled';
+import { ReactElement } from 'react';
+import useSpeakingDetector from '@hooks/useSpeakingDetector';
+import isReportIssueEnabled from '@utils/isReportIssueEnabled';
 import useToolbarButtons, {
   UseToolbarButtons,
   UseToolbarButtonsProps,
-} from '../../../hooks/useToolbarButtons';
-import { RIGHT_PANEL_BUTTON_COUNT } from '../../../utils/constants';
+} from '@hooks/useToolbarButtons';
+import { RIGHT_PANEL_BUTTON_COUNT } from '@utils/constants';
+import { makeAppConfigProviderWrapper } from '@test/providers';
+import Toolbar, { ToolbarProps, CaptionsState } from './Toolbar';
 
 const mockedRoomName = { roomName: 'test-room-name' };
 
@@ -18,9 +20,9 @@ vi.mock('react-router-dom', () => ({
   useParams: () => mockedRoomName,
 }));
 
-vi.mock('../../../hooks/useSpeakingDetector');
-vi.mock('../../../utils/isReportIssueEnabled');
-vi.mock('../../../hooks/useToolbarButtons');
+vi.mock('@hooks/useSpeakingDetector');
+vi.mock('@utils/isReportIssueEnabled');
+vi.mock('@hooks/useToolbarButtons');
 
 const mockUseSpeakingDetector = useSpeakingDetector as Mock<[], boolean>;
 const mockIsReportIssueEnabled = isReportIssueEnabled as Mock<[], boolean>;
@@ -115,3 +117,9 @@ describe('Toolbar', () => {
     expect(screen.queryByTestId('captions-button')).toBeVisible();
   });
 });
+
+function render(ui: ReactElement) {
+  const { AppConfigWrapper } = makeAppConfigProviderWrapper();
+
+  return renderBase(ui, { wrapper: AppConfigWrapper });
+}

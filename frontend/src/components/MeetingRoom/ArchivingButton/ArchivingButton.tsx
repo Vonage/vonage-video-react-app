@@ -2,12 +2,12 @@ import RadioButtonCheckedIcon from '@mui/icons-material/RadioButtonChecked';
 import { Tooltip } from '@mui/material';
 import { ReactElement, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import useRoomName from '../../../hooks/useRoomName';
+import useRoomName from '@hooks/useRoomName';
+import { startArchiving, stopArchiving } from '@api/archiving';
+import useSessionContext from '@hooks/useSessionContext';
+import useAppConfig from '@Context/AppConfig/hooks/useAppConfig';
 import ToolbarButton from '../ToolbarButton';
 import PopupDialog, { DialogTexts } from '../PopupDialog';
-import { startArchiving, stopArchiving } from '../../../api/archiving';
-import useSessionContext from '../../../hooks/useSessionContext';
-import useConfigContext from '../../../hooks/useConfigContext';
 
 export type ArchivingButtonProps = {
   isOverflowButton?: boolean;
@@ -32,14 +32,15 @@ const ArchivingButton = ({
   const { t } = useTranslation();
   const roomName = useRoomName();
   const { archiveId } = useSessionContext();
-  const config = useConfigContext();
+  const allowArchiving = useAppConfig(
+    ({ meetingRoomSettings }) => meetingRoomSettings.allowArchiving
+  );
   const isRecording = !!archiveId;
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const title = isRecording ? t('recording.stop.title') : t('recording.start.title');
   const handleButtonClick = () => {
     setIsModalOpen((prev) => !prev);
   };
-  const { allowArchiving } = config.meetingRoomSettings;
 
   const startRecordingText: DialogTexts = {
     title: t('recording.start.dialog.title'),

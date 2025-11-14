@@ -4,10 +4,10 @@ import CheckIcon from '@mui/icons-material/Check';
 import VideocamIcon from '@mui/icons-material/Videocam';
 import { Device } from '@vonage/client-sdk-video';
 import { useTranslation } from 'react-i18next';
+import useAppConfig from '@Context/AppConfig/hooks/useAppConfig';
 import useDevices from '../../../hooks/useDevices';
 import usePublisherContext from '../../../hooks/usePublisherContext';
 import { setStorageItem, STORAGE_KEYS } from '../../../utils/storage';
-import useConfigContext from '../../../hooks/useConfigContext';
 import cleanAndDedupeDeviceLabels from '../../../utils/cleanAndDedupeDeviceLabels';
 import { colors } from '../../../utils/customTheme/customTheme';
 
@@ -26,11 +26,14 @@ export type VideoDevicesProps = {
 const VideoDevices = ({ handleToggle }: VideoDevicesProps): ReactElement | false => {
   const { t } = useTranslation();
   const { isPublishing, publisher } = usePublisherContext();
-  const { meetingRoomSettings } = useConfigContext();
+
+  const allowDeviceSelection = useAppConfig(
+    ({ meetingRoomSettings }) => meetingRoomSettings.allowDeviceSelection
+  );
+
   const { allMediaDevices } = useDevices();
   const [devicesAvailable, setDevicesAvailable] = useState<Device[]>([]);
   const [options, setOptions] = useState<{ deviceId: string; label: string }[]>([]);
-  const { allowDeviceSelection } = meetingRoomSettings;
 
   const changeVideoSource = (videoDeviceId: string) => {
     publisher?.setVideoSource(videoDeviceId);

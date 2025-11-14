@@ -1,19 +1,20 @@
 import { afterEach, beforeEach, describe, expect, it, Mock, vi } from 'vitest';
-import { render, screen } from '@testing-library/react';
-import { useRef } from 'react';
+import { render as renderBase, screen } from '@testing-library/react';
+import { ReactElement, useRef } from 'react';
 import { Button } from '@mui/material';
+import * as util from '@utils/util';
+import isReportIssueEnabled from '@utils/isReportIssueEnabled';
+import { makeAppConfigProviderWrapper } from '@test/providers';
 import ToolbarOverflowMenu, { CaptionsState } from './ToolbarOverflowMenu';
-import * as util from '../../../utils/util';
-import isReportIssueEnabled from '../../../utils/isReportIssueEnabled';
 
-vi.mock('../../../hooks/useSessionContext', () => ({
+vi.mock('@hooks/useSessionContext', () => ({
   default: () => ({
     subscriberWrappers: [],
   }),
 }));
-vi.mock('../../../hooks/useRoomName');
-vi.mock('../../../utils/util', () => ({ isMobile: vi.fn() }));
-vi.mock('../../../utils/isReportIssueEnabled');
+vi.mock('@hooks/useRoomName');
+vi.mock('@utils/util', () => ({ isMobile: vi.fn() }));
+vi.mock('@utils/isReportIssueEnabled');
 
 const mockOpenEmojiGrid = vi.fn();
 const mockHandleClickAway = vi.fn();
@@ -109,3 +110,9 @@ describe('ToolbarOverflowMenu', () => {
     });
   });
 });
+
+function render(ui: ReactElement) {
+  const { AppConfigWrapper } = makeAppConfigProviderWrapper();
+
+  return renderBase(ui, { wrapper: AppConfigWrapper });
+}

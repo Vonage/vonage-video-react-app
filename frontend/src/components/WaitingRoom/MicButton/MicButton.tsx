@@ -3,9 +3,9 @@ import { MicOff } from '@mui/icons-material';
 import MicIcon from '@mui/icons-material/Mic';
 import { ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
-import usePreviewPublisherContext from '../../../hooks/usePreviewPublisherContext';
+import useIsMicrophoneControlAllowed from '@Context/AppConfig/hooks/useIsMicrophoneControlAllowed';
+import usePreviewPublisherContext from '@hooks/usePreviewPublisherContext';
 import VideoContainerButton from '../VideoContainerButton';
-import useConfigContext from '../../../hooks/useConfigContext';
 
 /**
  * MicButton Component
@@ -16,11 +16,12 @@ import useConfigContext from '../../../hooks/useConfigContext';
 const MicButton = (): ReactElement | false => {
   const { t } = useTranslation();
   const { isAudioEnabled, toggleAudio } = usePreviewPublisherContext();
-  const config = useConfigContext();
+
+  const allowMicrophoneControl = useIsMicrophoneControlAllowed();
+
   const title = isAudioEnabled
     ? t('devices.audio.microphone.state.off')
     : t('devices.audio.microphone.state.on');
-  const { allowMicrophoneControl } = config.audioSettings;
 
   return (
     allowMicrophoneControl && (

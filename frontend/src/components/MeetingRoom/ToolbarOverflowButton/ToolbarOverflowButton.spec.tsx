@@ -1,18 +1,20 @@
 import { beforeEach, describe, expect, it, Mock, vi } from 'vitest';
-import { act, render, screen } from '@testing-library/react';
-import useSessionContext from '../../../hooks/useSessionContext';
-import { SessionContextType } from '../../../Context/SessionProvider/session';
+import { act, render as renderBase, screen } from '@testing-library/react';
+import { ReactElement } from 'react';
+import useSessionContext from '@hooks/useSessionContext';
+import { SessionContextType } from '@Context/SessionProvider/session';
+import useUserContext from '@hooks/useUserContext';
+import { UserContextType } from '@Context/user';
+import { makeAppConfigProviderWrapper } from '@test/providers';
 import ToolbarOverflowButton from './ToolbarOverflowButton';
-import useUserContext from '../../../hooks/useUserContext';
-import { UserContextType } from '../../../Context/user';
 import {
   ToolbarOverflowMenuProps,
   CaptionsState,
 } from '../ToolbarOverflowMenu/ToolbarOverflowMenu';
 
-vi.mock('../../../hooks/useSessionContext');
-vi.mock('../../../hooks/useUserContext');
-vi.mock('../../../hooks/useRoomName');
+vi.mock('@hooks/useSessionContext');
+vi.mock('@hooks/useUserContext');
+vi.mock('@hooks/useRoomName');
 const mockUseSessionContext = useSessionContext as Mock<[], SessionContextType>;
 const mockUseUserContext = useUserContext as Mock<[], UserContextType>;
 const mockSetUser = vi.fn();
@@ -81,3 +83,9 @@ describe('ToolbarOverflowButton', () => {
     expect(screen.queryAllByTestId('chat-button-unread-count').length).toBe(2);
   });
 });
+
+function render(ui: ReactElement) {
+  const { AppConfigWrapper } = makeAppConfigProviderWrapper();
+
+  return renderBase(ui, { wrapper: AppConfigWrapper });
+}
