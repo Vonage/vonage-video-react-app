@@ -1,3 +1,3 @@
-import Banner from './Footer';
+import Footer from './Footer';
 
-export default Banner;
+export default Footer;
