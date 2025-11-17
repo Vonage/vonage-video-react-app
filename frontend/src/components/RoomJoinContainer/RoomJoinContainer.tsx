@@ -3,6 +3,7 @@ import { ReactElement } from 'react';
 import Box from '@ui/Box';
 import Typography from '@ui/Typography';
 import { useTranslation } from 'react-i18next';
+import useCustomTheme from '@Context/Theme/CustomTheme';
 import generateRoomName from '../../utils/generateRoomName';
 import NewRoomButton from '../NewRoomButton';
 import JoinContainerSeparator from '../JoinContainerSeparator';
@@ -18,6 +19,7 @@ const RoomJoinContainer = (): ReactElement => {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const randomRoom = generateRoomName();
+  const theme = useCustomTheme();
 
   const handleNewRoom = () => {
     navigate(`/waiting-room/${randomRoom}`);
@@ -25,16 +27,16 @@ const RoomJoinContainer = (): ReactElement => {
 
   return (
     <Box
-      sx={(theme) => ({
+      sx={{
         maxWidth: { xs: '100%', md: '500px' },
         flex: 1,
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'start',
-        bgcolor: { xs: 'background.paper', md: 'background.default' },
+        bgcolor: 'background.paper',
         padding: { xs: '0px 0px 0px 0px', md: '40px 40px 0px 40px' },
-        borderRadius: theme.shape.borderRadius,
-      })}
+        borderRadius: theme.shapes.borderRadiusMedium,
+      }}
     >
       <Typography sx={{ mb: 2, typography: 'h6' }}>{t('button.startNewRoom')}</Typography>
       <NewRoomButton handleNewRoom={handleNewRoom} />

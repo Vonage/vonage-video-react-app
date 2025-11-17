@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it, Mock, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import { BrowserRouter } from 'react-router-dom';
-import GoodBye from './GoodBye';
+import GoodBye from './index';
 import useArchives from '../../hooks/useArchives';
 import { availableArchive, failedArchive, pendingArchive } from '../../api/archiving/tests/data';
 

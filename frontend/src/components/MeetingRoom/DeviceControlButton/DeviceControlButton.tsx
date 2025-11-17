@@ -12,9 +12,9 @@ import useIsCameraControlAllowed from '@Context/AppConfig/hooks/useIsCameraContr
 import usePublisherContext from '@hooks/usePublisherContext';
 import useBackgroundPublisherContext from '@hooks/useBackgroundPublisherContext';
 import getControlButtonTooltip from '@utils/getControlButtonTooltip';
+import useCustomTheme from '@Context/Theme/CustomTheme';
 import DeviceSettingsMenu from '../DeviceSettingsMenu';
 import MutedAlert from '../../MutedAlert';
-import { colors } from '../../../utils/customTheme/customTheme';
 
 export type DeviceControlButtonProps = {
   deviceType: 'audio' | 'video';
@@ -38,6 +38,7 @@ const DeviceControlButton = ({
   const { t } = useTranslation();
   const { isVideoEnabled, toggleAudio, toggleVideo, isAudioEnabled } = usePublisherContext();
   const { toggleVideo: toggleBackgroundVideoPublisher } = useBackgroundPublisherContext();
+  const theme = useCustomTheme();
 
   const isMicrophoneControlAllowed = useIsMicrophoneControlAllowed();
   const isCameraControlAllowed = useIsCameraControlAllowed();
@@ -118,7 +119,7 @@ const DeviceControlButton = ({
           data-testid={isAudio ? 'audio-dropdown-button' : 'video-dropdown-button'}
         >
           {open ? (
-            <ArrowDropDown sx={{ color: colors.primaryLight }} />
+            <ArrowDropDown sx={{ color: theme.colors.background }} />
           ) : (
             <ArrowDropUp className="text-gray-400" />
           )}

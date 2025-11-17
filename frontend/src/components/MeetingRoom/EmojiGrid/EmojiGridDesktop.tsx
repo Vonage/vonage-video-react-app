@@ -1,6 +1,7 @@
 import { Grid, Grow, Paper, Popper, ClickAwayListener } from '@mui/material';
 import { ReactElement, RefObject, useEffect, useState } from 'react';
 import { PopperChildrenProps } from '@mui/base';
+import useCustomTheme from '@Context/Theme/CustomTheme';
 import SendEmojiButton from '../SendEmojiButton';
 import emojiMap from '../../../utils/emojis';
 
@@ -26,6 +27,7 @@ const EmojiGridDesktop = ({
   isEmojiGridOpen,
   anchorRef,
 }: EmojiGridDesktopProps): ReactElement | false => {
+  const theme = useCustomTheme();
   const [isRendered, setIsRendered] = useState<boolean>(false);
   useEffect(() => {
     // useRef is not immediately assigned on first render
@@ -56,9 +58,9 @@ const EmojiGridDesktop = ({
                 <Paper
                   className="flex items-center justify-center"
                   data-testid="emoji-grid"
-                  sx={(theme) => ({
-                    backgroundColor: theme.palette.background.darkGrey,
-                    color: theme.palette.primary.contrastText,
+                  sx={{
+                    backgroundColor: theme.colors.secondary,
+                    color: theme.colors.onPrimary,
                     padding: { xs: 1 },
                     borderRadius: 2,
                     zIndex: 1,
@@ -66,7 +68,7 @@ const EmojiGridDesktop = ({
                     // Each button is 66px, 8px left and right padding = 280px
                     maxWidth: '280px',
                     position: 'relative',
-                  })}
+                  }}
                 >
                   <Grid
                     container

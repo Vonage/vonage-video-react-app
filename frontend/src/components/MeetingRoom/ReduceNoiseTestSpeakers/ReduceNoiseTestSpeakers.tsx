@@ -8,11 +8,11 @@ import ToggleOffIcon from '@mui/icons-material/ToggleOff';
 import ToggleOnIcon from '@mui/icons-material/ToggleOn';
 import { useTranslation } from 'react-i18next';
 import useAppConfig from '@Context/AppConfig/hooks/useAppConfig';
+import useCustomTheme from '@Context/Theme/CustomTheme';
 import usePublisherContext from '@hooks/usePublisherContext';
 import { setStorageItem, STORAGE_KEYS } from '@utils/storage';
 import DropdownSeparator from '../DropdownSeparator';
 import SoundTest from '../../SoundTest';
-import { colors } from '../../../utils/customTheme/customTheme';
 
 /**
  * ReduceNoiseTestSpeakers Component
@@ -23,6 +23,7 @@ import { colors } from '../../../utils/customTheme/customTheme';
  */
 const ReduceNoiseTestSpeakers = (): ReactElement | false => {
   const { t } = useTranslation();
+  const theme = useCustomTheme();
   const { publisher, isPublishing } = usePublisherContext();
 
   const allowAdvancedNoiseSuppression = useAppConfig(
@@ -66,7 +67,7 @@ const ReduceNoiseTestSpeakers = (): ReactElement | false => {
             sx={{
               backgroundColor: 'transparent',
               '&:hover': {
-                backgroundColor: colors.primaryHover,
+                backgroundColor: theme.colors.primaryHover,
               },
             }}
           >
@@ -86,7 +87,10 @@ const ReduceNoiseTestSpeakers = (): ReactElement | false => {
                 <ToggleOnIcon
                   data-testid="toggle-on-icon"
                   fontSize="large"
-                  sx={{ position: 'absolute', color: colors.primaryLight }}
+                  sx={{
+                    position: 'absolute',
+                    color: theme.colors.background,
+                  }}
                 />
               </Grow>
             </IconButton>

@@ -2,7 +2,7 @@ import { Typography, MenuList, MenuItem } from '@mui/material';
 import { ReactElement } from 'react';
 import PortraitIcon from '@mui/icons-material/Portrait';
 import { useTranslation } from 'react-i18next';
-import { colors } from '../../../utils/customTheme/customTheme';
+import useCustomTheme from '@Context/Theme/CustomTheme';
 
 export type VideoDevicesOptionsProps = {
   toggleBackgroundEffects: () => void;
@@ -20,6 +20,7 @@ const VideoDevicesOptions = ({
   toggleBackgroundEffects,
 }: VideoDevicesOptionsProps): ReactElement => {
   const { t } = useTranslation();
+  const theme = useCustomTheme();
 
   return (
     <MenuList
@@ -34,7 +35,7 @@ const VideoDevicesOptions = ({
         sx={{
           backgroundColor: 'transparent',
           '&:hover': {
-            backgroundColor: colors.primaryHover,
+            backgroundColor: theme.colors.primaryHover,
           },
         }}
       >

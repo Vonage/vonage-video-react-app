@@ -2,10 +2,10 @@ import { Dispatch, ReactElement, useState, SetStateAction } from 'react';
 import { Tooltip } from '@mui/material';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import { useTranslation } from 'react-i18next';
+import useCustomTheme from '@Context/Theme/CustomTheme';
 import ToolbarButton from '../ToolbarButton';
 import ToolbarOverflowMenu from '../ToolbarOverflowMenu';
 import UnreadMessagesBadge from '../UnreadMessagesBadge';
-import { colors } from '../../../utils/customTheme/customTheme';
 
 export type CaptionsState = {
   isUserCaptionsEnabled: boolean;
@@ -39,6 +39,7 @@ const ToolbarOverflowButton = ({
   captionsState,
 }: ToolbarOverflowButtonProps): ReactElement => {
   const { t } = useTranslation();
+  const theme = useCustomTheme();
   const [isToolbarOverflowMenuOpen, setIsToolbarOverflowMenuOpen] = useState<boolean>(false);
   const [openEmojiGridMobile, setOpenEmojiGridMobile] = useState<boolean>(true);
 
@@ -66,7 +67,9 @@ const ToolbarOverflowButton = ({
             onClick={handleButtonToggle}
             icon={
               <MoreVertIcon
-                style={{ color: `${!isToolbarOverflowMenuOpen ? 'white' : colors.primaryLight}` }}
+                sx={{
+                  color: isToolbarOverflowMenuOpen ? theme.colors.background : 'white',
+                }}
               />
             }
             sx={{

@@ -2,6 +2,7 @@ import { ReactElement, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import Box from '@ui/Box';
 import Typography from '@ui/Typography';
+import useCustomTheme from '@Context/Theme/CustomTheme';
 
 /**
  * LandingPageWelcome Component
@@ -12,6 +13,7 @@ const LandingPageWelcome = (): ReactElement => {
   const { t } = useTranslation();
   const title = t('landing.welcome.title');
   const words = useMemo(() => title.split(' '), [title]);
+  const theme = useCustomTheme();
 
   return (
     <Box
@@ -26,7 +28,7 @@ const LandingPageWelcome = (): ReactElement => {
       <Box
         sx={{
           pb: { xs: 0, md: 5 },
-          color: 'text.primary',
+          color: theme.colors.textSecondary,
           display: 'flex',
           flexWrap: 'wrap',
           flexDirection: { xs: 'row', md: 'column' },
@@ -36,19 +38,11 @@ const LandingPageWelcome = (): ReactElement => {
         {words.map((word, index) => (
           <Typography
             key={word}
-            variant="h2"
-            sx={(theme) => ({
-              color: index === 1 ? 'primary.main' : 'text.primary',
-              lineHeight: 1.2,
+            variant="h1"
+            sx={{
+              color: index === 1 ? theme.colors.textPrimary : theme.colors.textSecondary,
               mr: { xs: 1, md: 0 },
-              fontSize: theme.typography.h2.fontSize,
-              [theme.breakpoints.between('sm', 'lg')]: {
-                fontSize: theme.typography.h3.fontSize,
-              },
-              [theme.breakpoints.down('sm')]: {
-                fontSize: theme.typography.h4.fontSize,
-              },
-            })}
+            }}
           >
             {word}
           </Typography>
@@ -56,9 +50,9 @@ const LandingPageWelcome = (): ReactElement => {
       </Box>
 
       <Typography
-        variant="h5"
+        variant="h4"
         sx={{
-          color: 'text.tertiary',
+          color: theme.colors.textTertiary,
           mt: 1,
           display: {
             xs: 'none',

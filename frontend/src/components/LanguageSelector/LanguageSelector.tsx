@@ -5,6 +5,7 @@ import MenuItem from '@ui/MenuItem';
 import FormControl from '@ui/FormControl';
 import Select from '@ui/Select';
 import { SelectChangeEvent } from '@ui/SelectChangeEvent';
+import useCustomTheme from '@Context/Theme/CustomTheme';
 import { LanguageOption, LanguageSelectorProps } from './LanguageSelector.types';
 import useIsSmallViewport from '../../hooks/useIsSmallViewport';
 import VividIcon from '../VividIcon/VividIcon';
@@ -28,6 +29,7 @@ const languageOptions: LanguageOption[] = [
  */
 const LanguageSelector = ({ showFlag = true }: LanguageSelectorProps): ReactElement => {
   const { i18n } = useTranslation();
+  const theme = useCustomTheme();
   const isSmallViewport = useIsSmallViewport();
 
   const supportedLanguages = languageOptions.filter((option) =>
@@ -47,17 +49,17 @@ const LanguageSelector = ({ showFlag = true }: LanguageSelectorProps): ReactElem
         value={currentLanguage}
         onChange={handleLanguageChange}
         displayEmpty
-        sx={(theme) => ({
+        sx={{
           '& .MuiOutlinedInput-notchedOutline': {
             border: 'none',
           },
           '& .MuiSelect-select': {
             backgroundColor: {
-              xs: theme.palette.background.paper,
-              md: theme.palette.primary.light,
+              xs: theme.colors.surface,
+              md: theme.colors.background,
             },
           },
-        })}
+        }}
         renderValue={(value) => {
           const selectedOption = supportedLanguages.find((option) => option.code === value);
           if (!selectedOption) {

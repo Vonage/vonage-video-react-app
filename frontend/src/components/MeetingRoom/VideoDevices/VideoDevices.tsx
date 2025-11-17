@@ -5,11 +5,11 @@ import VideocamIcon from '@mui/icons-material/Videocam';
 import { Device } from '@vonage/client-sdk-video';
 import { useTranslation } from 'react-i18next';
 import useAppConfig from '@Context/AppConfig/hooks/useAppConfig';
+import useCustomTheme from '@Context/Theme/CustomTheme';
 import useDevices from '../../../hooks/useDevices';
 import usePublisherContext from '../../../hooks/usePublisherContext';
 import { setStorageItem, STORAGE_KEYS } from '../../../utils/storage';
 import cleanAndDedupeDeviceLabels from '../../../utils/cleanAndDedupeDeviceLabels';
-import { colors } from '../../../utils/customTheme/customTheme';
 
 export type VideoDevicesProps = {
   handleToggle: () => void;
@@ -25,6 +25,7 @@ export type VideoDevicesProps = {
  */
 const VideoDevices = ({ handleToggle }: VideoDevicesProps): ReactElement | false => {
   const { t } = useTranslation();
+  const theme = useCustomTheme();
   const { isPublishing, publisher } = usePublisherContext();
 
   const allowDeviceSelection = useAppConfig(
@@ -92,10 +93,10 @@ const VideoDevices = ({ handleToggle }: VideoDevicesProps): ReactElement | false
                   backgroundColor: 'transparent',
                   '&.Mui-selected': {
                     backgroundColor: 'transparent',
-                    color: colors.primaryLight,
+                    color: theme.colors.background,
                   },
                   '&:hover': {
-                    backgroundColor: colors.primaryHover,
+                    backgroundColor: theme.colors.primaryHover,
                   },
                 }}
               >
@@ -108,7 +109,13 @@ const VideoDevices = ({ handleToggle }: VideoDevicesProps): ReactElement | false
                   }}
                 >
                   {isSelected ? (
-                    <CheckIcon sx={{ color: colors.primaryLight, fontSize: 24, mr: 2 }} />
+                    <CheckIcon
+                      sx={{
+                        color: theme.colors.background,
+                        fontSize: 24,
+                        mr: 2,
+                      }}
+                    />
                   ) : (
                     <Box sx={{ width: 40 }} /> // Placeholder when CheckIcon is not displayed
                   )}
