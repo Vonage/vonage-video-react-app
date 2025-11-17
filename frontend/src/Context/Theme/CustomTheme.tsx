@@ -43,12 +43,12 @@ const useCustomTheme = () => {
       textDisabled: designTokens.color.light['text-disabled'].value,
     };
     const shapes = {
-      borderRadiusNone: parseFloat(designTokens.shape.none.value) / 2.828,
-      borderRadiusExtraSmall: parseFloat(designTokens.shape['extra-small'].value) / 2.828,
-      borderRadiusSmall: parseFloat(designTokens.shape.small.value) / 2.828,
-      borderRadiusMedium: parseFloat(designTokens.shape.medium.value) / 2.828,
-      borderRadiusLarge: parseFloat(designTokens.shape.large.value) / 2.828,
-      borderRadiusExtraLarge: parseFloat(designTokens.shape['extra-large'].value) / 2.828,
+      borderRadiusNone: designTokens.shape.none.value,
+      borderRadiusExtraSmall: designTokens.shape['extra-small'].value,
+      borderRadiusSmall: designTokens.shape.small.value,
+      borderRadiusMedium: designTokens.shape.medium.value,
+      borderRadiusLarge: designTokens.shape.large.value,
+      borderRadiusExtraLarge: designTokens.shape['extra-large'].value,
     };
 
     return {

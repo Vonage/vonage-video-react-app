@@ -20,6 +20,24 @@ declare module '@mui/material/styles' {
     disabled?: PaletteColorOptions;
   }
 }
+
+// Helper function to generate responsive typography
+const createResponsiveTypography = (
+  desktopVariant: keyof typeof designTokens.typography.typeScale.desktop,
+  mobileVariant: keyof typeof designTokens.typography.typeScale.mobile
+) => ({
+  '@media (max-width:1199px)': {
+    fontSize: `calc(${designTokens.typography.typeScale.mobile[mobileVariant].fontSize.value} * ${desktopVariant === 'headline' ? 1.5 : 1.15})`,
+    lineHeight: `calc(${designTokens.typography.typeScale.mobile[mobileVariant].lineHeight.value} * ${desktopVariant === 'headline' ? 1.5 : 1.15})`,
+    fontWeight: designTokens.typography.typeScale.mobile[mobileVariant].fontWeight.value,
+  },
+  '@media (max-width:899px)': {
+    fontSize: designTokens.typography.typeScale.mobile[mobileVariant].fontSize.value,
+    lineHeight: designTokens.typography.typeScale.mobile[mobileVariant].lineHeight.value,
+    fontWeight: designTokens.typography.typeScale.mobile[mobileVariant].fontWeight.value,
+  },
+});
+
 const buttonHeight = 40; // 40px
 
 const buttonSx = {
@@ -159,145 +177,17 @@ const customTheme = createTheme({
     },
     MuiTypography: {
       styleOverrides: {
-        h1: {
-          '@media (max-width:1199px)': {
-            fontSize: `calc(${designTokens.typography.typeScale.mobile.headline.fontSize.value} * 1.5)`,
-            lineHeight: `calc(${designTokens.typography.typeScale.mobile.headline.lineHeight.value} * 1.5)`,
-            fontWeight: designTokens.typography.typeScale.mobile.headline.fontWeight.value,
-          },
-          '@media (max-width:899px)': {
-            fontSize: designTokens.typography.typeScale.mobile.headline.fontSize.value,
-            lineHeight: designTokens.typography.typeScale.mobile.headline.lineHeight.value,
-            fontWeight: designTokens.typography.typeScale.mobile.headline.fontWeight.value,
-          },
-        },
-        h2: {
-          '@media (max-width:1199px)': {
-            fontSize: `calc(${designTokens.typography.typeScale.mobile.subtitle.fontSize.value} * 1.15)`,
-            lineHeight: `calc(${designTokens.typography.typeScale.mobile.subtitle.lineHeight.value} * 1.15)`,
-            fontWeight: designTokens.typography.typeScale.mobile.subtitle.fontWeight.value,
-          },
-          '@media (max-width:899px)': {
-            fontSize: designTokens.typography.typeScale.mobile.subtitle.fontSize.value,
-            lineHeight: designTokens.typography.typeScale.mobile.subtitle.lineHeight.value,
-            fontWeight: designTokens.typography.typeScale.mobile.subtitle.fontWeight.value,
-          },
-        },
-        h3: {
-          '@media (max-width:1199px)': {
-            fontSize: `calc(${designTokens.typography.typeScale.mobile['heading-1'].fontSize.value} * 1.15)`,
-            lineHeight: `calc(${designTokens.typography.typeScale.mobile['heading-1'].lineHeight.value} * 1.15)`,
-            fontWeight: designTokens.typography.typeScale.mobile['heading-1'].fontWeight.value,
-          },
-          '@media (max-width:899px)': {
-            fontSize: designTokens.typography.typeScale.mobile['heading-1'].fontSize.value,
-            lineHeight: designTokens.typography.typeScale.mobile['heading-1'].lineHeight.value,
-            fontWeight: designTokens.typography.typeScale.mobile['heading-1'].fontWeight.value,
-          },
-        },
-        h4: {
-          '@media (max-width:1199px)': {
-            fontSize: `calc(${designTokens.typography.typeScale.mobile['heading-2'].fontSize.value} * 1.15)`,
-            lineHeight: `calc(${designTokens.typography.typeScale.mobile['heading-2'].lineHeight.value} * 1.15)`,
-            fontWeight: designTokens.typography.typeScale.mobile['heading-2'].fontWeight.value,
-          },
-          '@media (max-width:899px)': {
-            fontSize: designTokens.typography.typeScale.mobile['heading-2'].fontSize.value,
-            lineHeight: designTokens.typography.typeScale.mobile['heading-2'].lineHeight.value,
-            fontWeight: designTokens.typography.typeScale.mobile['heading-2'].fontWeight.value,
-          },
-        },
-        h5: {
-          '@media (max-width:1199px)': {
-            fontSize: `calc(${designTokens.typography.typeScale.mobile['heading-3'].fontSize.value} * 1.15)`,
-            lineHeight: `calc(${designTokens.typography.typeScale.mobile['heading-3'].lineHeight.value} * 1.15)`,
-            fontWeight: designTokens.typography.typeScale.mobile['heading-3'].fontWeight.value,
-          },
-          '@media (max-width:899px)': {
-            fontSize: designTokens.typography.typeScale.mobile['heading-3'].fontSize.value,
-            lineHeight: designTokens.typography.typeScale.mobile['heading-3'].lineHeight.value,
-            fontWeight: designTokens.typography.typeScale.mobile['heading-3'].fontWeight.value,
-          },
-        },
-        h6: {
-          '@media (max-width:1199px)': {
-            fontSize: `calc(${designTokens.typography.typeScale.mobile['heading-4'].fontSize.value} * 1.15)`,
-            lineHeight: `calc(${designTokens.typography.typeScale.mobile['heading-4'].lineHeight.value} * 1.15)`,
-            fontWeight: designTokens.typography.typeScale.mobile['heading-4'].fontWeight.value,
-          },
-          '@media (max-width:899px)': {
-            fontSize: designTokens.typography.typeScale.mobile['heading-4'].fontSize.value,
-            lineHeight: designTokens.typography.typeScale.mobile['heading-4'].lineHeight.value,
-            fontWeight: designTokens.typography.typeScale.mobile['heading-4'].fontWeight.value,
-          },
-        },
-        subtitle1: {
-          '@media (max-width:1199px)': {
-            fontSize: `calc(${designTokens.typography.typeScale.mobile['body-extended-semibold'].fontSize.value} * 1.15)`,
-            lineHeight: `calc(${designTokens.typography.typeScale.mobile['body-extended-semibold'].lineHeight.value} * 1.15)`,
-            fontWeight:
-              designTokens.typography.typeScale.mobile['body-extended-semibold'].fontWeight.value,
-          },
-          '@media (max-width:899px)': {
-            fontSize:
-              designTokens.typography.typeScale.mobile['body-extended-semibold'].fontSize.value,
-            lineHeight:
-              designTokens.typography.typeScale.mobile['body-extended-semibold'].lineHeight.value,
-            fontWeight:
-              designTokens.typography.typeScale.mobile['body-extended-semibold'].fontWeight.value,
-          },
-        },
-        subtitle2: {
-          '@media (max-width:1199px)': {
-            fontSize: `calc(${designTokens.typography.typeScale.mobile['body-base-semibold'].fontSize.value} * 1.15)`,
-            lineHeight: `calc(${designTokens.typography.typeScale.mobile['body-base-semibold'].lineHeight.value} * 1.15)`,
-            fontWeight:
-              designTokens.typography.typeScale.mobile['body-base-semibold'].fontWeight.value,
-          },
-          '@media (max-width:899px)': {
-            fontSize: designTokens.typography.typeScale.mobile['body-base-semibold'].fontSize.value,
-            lineHeight:
-              designTokens.typography.typeScale.mobile['body-base-semibold'].lineHeight.value,
-            fontWeight:
-              designTokens.typography.typeScale.mobile['body-base-semibold'].fontWeight.value,
-          },
-        },
-        body1: {
-          '@media (max-width:1199px)': {
-            fontSize: `calc(${designTokens.typography.typeScale.mobile['body-extended'].fontSize.value} * 1.15)`,
-            lineHeight: `calc(${designTokens.typography.typeScale.mobile['body-extended'].lineHeight.value} * 1.15)`,
-            fontWeight: designTokens.typography.typeScale.mobile['body-extended'].fontWeight.value,
-          },
-          '@media (max-width:899px)': {
-            fontSize: designTokens.typography.typeScale.mobile['body-extended'].fontSize.value,
-            lineHeight: designTokens.typography.typeScale.mobile['body-extended'].lineHeight.value,
-            fontWeight: designTokens.typography.typeScale.mobile['body-extended'].fontWeight.value,
-          },
-        },
-        body2: {
-          '@media (max-width:1199px)': {
-            fontSize: `calc(${designTokens.typography.typeScale.mobile['body-base'].fontSize.value} * 1.15)`,
-            lineHeight: `calc(${designTokens.typography.typeScale.mobile['body-base'].lineHeight.value} * 1.15)`,
-            fontWeight: designTokens.typography.typeScale.mobile['body-base'].fontWeight.value,
-          },
-          '@media (max-width:899px)': {
-            fontSize: designTokens.typography.typeScale.mobile['body-base'].fontSize.value,
-            lineHeight: designTokens.typography.typeScale.mobile['body-base'].lineHeight.value,
-            fontWeight: designTokens.typography.typeScale.mobile['body-base'].fontWeight.value,
-          },
-        },
-        caption: {
-          '@media (max-width:1199px)': {
-            fontSize: `calc(${designTokens.typography.typeScale.mobile.caption.fontSize.value} * 1.15)`,
-            lineHeight: `calc(${designTokens.typography.typeScale.mobile.caption.lineHeight.value} * 1.15)`,
-            fontWeight: designTokens.typography.typeScale.mobile.caption.fontWeight.value,
-          },
-          '@media (max-width:899px)': {
-            fontSize: designTokens.typography.typeScale.mobile.caption.fontSize.value,
-            lineHeight: designTokens.typography.typeScale.mobile.caption.lineHeight.value,
-            fontWeight: designTokens.typography.typeScale.mobile.caption.fontWeight.value,
-          },
-        },
+        h1: createResponsiveTypography('headline', 'headline'),
+        h2: createResponsiveTypography('subtitle', 'subtitle'),
+        h3: createResponsiveTypography('heading-1', 'heading-1'),
+        h4: createResponsiveTypography('heading-2', 'heading-2'),
+        h5: createResponsiveTypography('heading-3', 'heading-3'),
+        h6: createResponsiveTypography('heading-4', 'heading-4'),
+        subtitle1: createResponsiveTypography('body-extended-semibold', 'body-extended-semibold'),
+        subtitle2: createResponsiveTypography('body-base-semibold', 'body-base-semibold'),
+        body1: createResponsiveTypography('body-extended', 'body-extended'),
+        body2: createResponsiveTypography('body-base', 'body-base'),
+        caption: createResponsiveTypography('caption', 'caption'),
       },
     },
   },

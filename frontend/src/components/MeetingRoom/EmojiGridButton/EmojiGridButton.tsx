@@ -48,7 +48,7 @@ const EmojiGridButton = ({
             icon={
               <EmojiEmotions
                 sx={{
-                  color: !isEmojiGridOpen ? 'white' : theme.colors.background,
+                  color: isEmojiGridOpen ? theme.colors.background : 'white',
                 }}
               />
             }

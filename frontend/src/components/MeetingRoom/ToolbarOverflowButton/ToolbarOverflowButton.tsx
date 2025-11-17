@@ -68,7 +68,7 @@ const ToolbarOverflowButton = ({
             icon={
               <MoreVertIcon
                 sx={{
-                  color: !isToolbarOverflowMenuOpen ? 'white' : theme.colors.background,
+                  color: isToolbarOverflowMenuOpen ? theme.colors.background : 'white',
                 }}
               />
             }
