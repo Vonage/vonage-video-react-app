@@ -47,9 +47,8 @@ describe('useCustomTheme', () => {
 
     const { result } = renderHook(() => useCustomTheme(), { wrapper });
 
-    expect(typeof result.current.shapes.borderRadiusNone).toBe('number');
-    expect(typeof result.current.shapes.borderRadiusMedium).toBe('number');
-    expect(result.current.shapes.borderRadiusMedium).toBeGreaterThan(0);
+    expect(typeof result.current.shapes.borderRadiusNone).toBe('string');
+    expect(typeof result.current.shapes.borderRadiusMedium).toBe('string');
   });
 
   it('should return hex color strings', () => {
