@@ -2,6 +2,7 @@ import { Typography, MenuList, MenuItem } from '@mui/material';
 import { ReactElement } from 'react';
 import PortraitIcon from '@mui/icons-material/Portrait';
 import { useTranslation } from 'react-i18next';
+import { colors } from '../../../utils/customTheme/customTheme';
 
 export type VideoDevicesOptionsProps = {
   toggleBackgroundEffects: () => void;
@@ -33,7 +34,7 @@ const VideoDevicesOptions = ({
         sx={{
           backgroundColor: 'transparent',
           '&:hover': {
-            backgroundColor: 'rgba(25, 118, 210, 0.12)',
+            backgroundColor: colors.primaryHover,
           },
         }}
       >

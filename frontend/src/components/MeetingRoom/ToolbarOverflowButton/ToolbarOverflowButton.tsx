@@ -5,6 +5,7 @@ import { useTranslation } from 'react-i18next';
 import ToolbarButton from '../ToolbarButton';
 import ToolbarOverflowMenu from '../ToolbarOverflowMenu';
 import UnreadMessagesBadge from '../UnreadMessagesBadge';
+import { colors } from '../../../utils/customTheme/customTheme';
 
 export type CaptionsState = {
   isUserCaptionsEnabled: boolean;
@@ -65,7 +66,7 @@ const ToolbarOverflowButton = ({
             onClick={handleButtonToggle}
             icon={
               <MoreVertIcon
-                style={{ color: `${!isToolbarOverflowMenuOpen ? 'white' : 'rgb(138, 180, 248)'}` }}
+                style={{ color: `${!isToolbarOverflowMenuOpen ? 'white' : colors.primaryLight}` }}
               />
             }
             sx={{

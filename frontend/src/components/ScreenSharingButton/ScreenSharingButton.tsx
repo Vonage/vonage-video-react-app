@@ -3,10 +3,10 @@ import ScreenShare from '@mui/icons-material/ScreenShare';
 import Tooltip from '@mui/material/Tooltip';
 import { ReactElement, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import useAppConfig from '@Context/AppConfig/hooks/useAppConfig';
+import { isMobile } from '@utils/util';
 import ToolbarButton from '../MeetingRoom/ToolbarButton';
 import PopupDialog, { DialogTexts } from '../MeetingRoom/PopupDialog';
-import { isMobile } from '../../utils/util';
-import useConfigContext from '../../hooks/useConfigContext';
 
 export type ScreenShareButtonProps = {
   toggleScreenShare: () => void;
@@ -32,11 +32,12 @@ const ScreenSharingButton = ({
   isViewingScreenShare,
   isOverflowButton = false,
 }: ScreenShareButtonProps): ReactElement | false => {
-  const { meetingRoomSettings } = useConfigContext();
+  const allowScreenShare = useAppConfig(
+    ({ meetingRoomSettings }) => meetingRoomSettings.allowScreenShare
+  );
   const { t } = useTranslation();
   const title = isSharingScreen ? t('screenSharing.title.stop') : t('screenSharing.title.start');
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
-  const { allowScreenShare } = meetingRoomSettings;
 
   // Screensharing relies on the getDisplayMedia browser API which is unsupported on mobile devices
   // See: https://developer.mozilla.org/en-US/docs/Web/API/MediaDevices/getDisplayMedia#browser_compatibility

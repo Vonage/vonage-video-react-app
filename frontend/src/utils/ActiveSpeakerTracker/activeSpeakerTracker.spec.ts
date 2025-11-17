@@ -1,19 +1,14 @@
 import throttle from 'lodash/throttle';
 import { DebouncedFunc } from 'lodash';
-import { afterAll, beforeAll, describe, expect, test, vi } from 'vitest';
+import { beforeEach, describe, expect, test, vi } from 'vitest';
 import ActiveSpeakerTracker from './activeSpeakerTracker';
 import { waitForEvent } from '../async';
 
 vi.mock('lodash/throttle');
-const mockedThrottle = vi.mocked(throttle);
 
 describe('ActiveSpeakerTracker', () => {
-  beforeAll(() => {
-    mockedThrottle.mockImplementation((fn) => fn as DebouncedFunc<typeof fn>);
-  });
-
-  afterAll(() => {
-    vi.doUnmock('lodash/throttle');
+  beforeEach(() => {
+    vi.mocked(throttle).mockImplementation((fn) => fn as DebouncedFunc<typeof fn>);
   });
 
   test('activeSpeakerChanged fired when participant audio level updated', async () => {

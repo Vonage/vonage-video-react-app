@@ -51,3 +51,4 @@ build
 /scripts/allLicenseResults.json
 
 vcr.yml
+.scannerwork/

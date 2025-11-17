@@ -7,33 +7,29 @@ import HeadsetIcon from '@mui/icons-material/Headset';
 import ToggleOffIcon from '@mui/icons-material/ToggleOff';
 import ToggleOnIcon from '@mui/icons-material/ToggleOn';
 import { useTranslation } from 'react-i18next';
-import usePublisherContext from '../../../hooks/usePublisherContext';
+import useAppConfig from '@Context/AppConfig/hooks/useAppConfig';
+import usePublisherContext from '@hooks/usePublisherContext';
+import { setStorageItem, STORAGE_KEYS } from '@utils/storage';
 import DropdownSeparator from '../DropdownSeparator';
 import SoundTest from '../../SoundTest';
-import { setStorageItem, STORAGE_KEYS } from '../../../utils/storage';
-import useConfigContext from '../../../hooks/useConfigContext';
-
-export type ReduceNoiseTestSpeakersProps = {
-  customLightBlueColor: string;
-};
+import { colors } from '../../../utils/customTheme/customTheme';
 
 /**
  * ReduceNoiseTestSpeakers Component
  *
  * This component displays options to enable advanced noise suppression
  * and to test the speakers.
- * @param {ReduceNoiseTestSpeakersProps} props - the props for the component.
- *  @property {string} customLightBlueColor - the custom color used for the toggled icon.
  * @returns {ReactElement | false} Returns ReduceNoiseTestSpeakers component or false if the Vonage Media Processor is not supported.
  */
-const ReduceNoiseTestSpeakers = ({
-  customLightBlueColor,
-}: ReduceNoiseTestSpeakersProps): ReactElement | false => {
+const ReduceNoiseTestSpeakers = (): ReactElement | false => {
   const { t } = useTranslation();
   const { publisher, isPublishing } = usePublisherContext();
-  const config = useConfigContext();
+
+  const allowAdvancedNoiseSuppression = useAppConfig(
+    ({ audioSettings }) => audioSettings.allowAdvancedNoiseSuppression
+  );
+
   const [isToggled, setIsToggled] = useState(false);
-  const { allowAdvancedNoiseSuppression } = config.audioSettings;
   const shouldDisplayANS = hasMediaProcessorSupport() && allowAdvancedNoiseSuppression;
 
   const handleToggle = async () => {
@@ -70,7 +66,7 @@ const ReduceNoiseTestSpeakers = ({
             sx={{
               backgroundColor: 'transparent',
               '&:hover': {
-                backgroundColor: 'rgba(25, 118, 210, 0.12)',
+                backgroundColor: colors.primaryHover,
               },
             }}
           >
@@ -90,7 +86,7 @@ const ReduceNoiseTestSpeakers = ({
                 <ToggleOnIcon
                   data-testid="toggle-on-icon"
                   fontSize="large"
-                  sx={{ position: 'absolute', color: customLightBlueColor }}
+                  sx={{ position: 'absolute', color: colors.primaryLight }}
                 />
               </Grow>
             </IconButton>

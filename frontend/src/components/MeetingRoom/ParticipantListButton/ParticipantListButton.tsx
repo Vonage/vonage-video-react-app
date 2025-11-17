@@ -4,8 +4,8 @@ import { blue } from '@mui/material/colors';
 import { Badge } from '@mui/material';
 import { ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
+import useShouldShowParticipantList from '@Context/AppConfig/hooks/useShouldShowParticipantList';
 import ToolbarButton from '../ToolbarButton';
-import useConfigContext from '../../../hooks/useConfigContext';
 
 export type ParticipantListButtonProps = {
   handleClick: () => void;
@@ -31,8 +31,7 @@ const ParticipantListButton = ({
   participantCount,
   isOverflowButton = false,
 }: ParticipantListButtonProps): ReactElement | false => {
-  const { meetingRoomSettings } = useConfigContext();
-  const { showParticipantList } = meetingRoomSettings;
+  const showParticipantList = useShouldShowParticipantList();
 
   const { t } = useTranslation();
   return (

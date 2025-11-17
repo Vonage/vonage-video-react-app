@@ -3,10 +3,10 @@ import { Tooltip } from '@mui/material';
 import { Dispatch, ReactElement, useState, SetStateAction } from 'react';
 import { AxiosError } from 'axios';
 import { useTranslation } from 'react-i18next';
-import useRoomName from '../../../hooks/useRoomName';
+import useIsMeetingCaptionsAllowed from '@Context/AppConfig/hooks/useIsMeetingCaptionsAllowed';
+import { disableCaptions, enableCaptions } from '@api/captions';
+import useRoomName from '@hooks/useRoomName';
 import ToolbarButton from '../ToolbarButton';
-import { disableCaptions, enableCaptions } from '../../../api/captions';
-import useConfigContext from '../../../hooks/useConfigContext';
 
 export type CaptionsState = {
   isUserCaptionsEnabled: boolean;
@@ -35,14 +35,14 @@ const CaptionsButton = ({
   handleClick,
   captionsState,
 }: CaptionsButtonProps): ReactElement | false => {
-  const config = useConfigContext();
+  const isMeetingCaptionsAllowed = useIsMeetingCaptionsAllowed();
+
   const { t } = useTranslation();
   const roomName = useRoomName();
   const [captionsId, setCaptionsId] = useState<string>('');
   const { isUserCaptionsEnabled, setIsUserCaptionsEnabled, setCaptionsErrorResponse } =
     captionsState;
   const title = isUserCaptionsEnabled ? t('captions.disable') : t('captions.enable');
-  const { allowCaptions } = config.meetingRoomSettings;
 
   const handleClose = () => {
     if (isOverflowButton && handleClick) {
@@ -96,7 +96,7 @@ const CaptionsButton = ({
   };
 
   return (
-    allowCaptions && (
+    isMeetingCaptionsAllowed && (
       <Tooltip title={title} aria-label={t('captions.ariaLabel')}>
         <ToolbarButton
           onClick={handleActionClick}

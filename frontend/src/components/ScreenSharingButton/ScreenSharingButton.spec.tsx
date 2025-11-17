@@ -1,23 +1,10 @@
-import { beforeEach, describe, expect, it, Mock, vi } from 'vitest';
-import { fireEvent, render, screen } from '@testing-library/react';
+import { describe, expect, it, vi } from 'vitest';
+import { fireEvent, render as renderBase, screen } from '@testing-library/react';
+import { ReactElement } from 'react';
+import { AppConfigProviderWrapperOptions, makeAppConfigProviderWrapper } from '@test/providers';
 import ScreenSharingButton, { ScreenShareButtonProps } from './ScreenSharingButton';
-import useConfigContext from '../../hooks/useConfigContext';
-import { ConfigContextType } from '../../Context/ConfigProvider';
-
-vi.mock('../../hooks/useConfigContext');
-
-const mockUseConfigContext = useConfigContext as Mock<[], ConfigContextType>;
-const mockConfigContext = {
-  meetingRoomSettings: {
-    allowScreenShare: true,
-  },
-} as Partial<ConfigContextType> as ConfigContextType;
 
 describe('ScreenSharingButton', () => {
-  beforeEach(() => {
-    mockUseConfigContext.mockReturnValue(mockConfigContext);
-  });
-
   const mockToggleScreenShare = vi.fn();
 
   const defaultProps: ScreenShareButtonProps = {
@@ -58,8 +45,27 @@ describe('ScreenSharingButton', () => {
   });
 
   it('is not rendered when allowScreenShare is false', () => {
-    mockConfigContext.meetingRoomSettings.allowScreenShare = false;
-    render(<ScreenSharingButton {...defaultProps} />);
+    render(<ScreenSharingButton {...defaultProps} />, {
+      appConfigOptions: {
+        value: {
+          meetingRoomSettings: {
+            allowScreenShare: false,
+          },
+        },
+      },
+    });
+
     expect(screen.queryByTestId('ScreenShareIcon')).not.toBeInTheDocument();
   });
 });
+
+function render(
+  ui: ReactElement,
+  options?: {
+    appConfigOptions?: AppConfigProviderWrapperOptions;
+  }
+) {
+  const { AppConfigWrapper } = makeAppConfigProviderWrapper(options?.appConfigOptions);
+
+  return renderBase(ui, { ...options, wrapper: AppConfigWrapper });
+}

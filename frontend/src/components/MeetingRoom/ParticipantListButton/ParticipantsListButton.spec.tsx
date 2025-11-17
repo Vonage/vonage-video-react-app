@@ -1,22 +1,10 @@
-import { render, screen } from '@testing-library/react';
-import { describe, expect, it, Mock, vi, beforeEach } from 'vitest';
+import { render as renderBase, screen } from '@testing-library/react';
+import { describe, expect, it, vi } from 'vitest';
+import { ReactElement } from 'react';
+import { AppConfigProviderWrapperOptions, makeAppConfigProviderWrapper } from '@test/providers';
 import ParticipantListButton from './ParticipantListButton';
-import useConfigContext from '../../../hooks/useConfigContext';
-import { ConfigContextType } from '../../../Context/ConfigProvider';
-
-vi.mock('../../../hooks/useConfigContext');
-
-const mockUseConfigContext = useConfigContext as Mock<[], ConfigContextType>;
 
 describe('ParticipantListButton', () => {
-  beforeEach(() => {
-    mockUseConfigContext.mockReturnValue({
-      meetingRoomSettings: {
-        showParticipantList: true,
-      },
-    } as Partial<ConfigContextType> as ConfigContextType);
-  });
-
   it('should show participant number', () => {
     render(<ParticipantListButton handleClick={() => {}} isOpen={false} participantCount={10} />);
     expect(screen.getByText('10')).toBeVisible();
@@ -36,12 +24,27 @@ describe('ParticipantListButton', () => {
     expect(handleClick).toHaveBeenCalled();
   });
   it('is not rendered when showParticipantList is false', () => {
-    mockUseConfigContext.mockReturnValue({
-      meetingRoomSettings: {
-        showParticipantList: false,
+    render(<ParticipantListButton handleClick={() => {}} isOpen={false} participantCount={10} />, {
+      appConfigOptions: {
+        value: {
+          meetingRoomSettings: {
+            showParticipantList: false,
+          },
+        },
       },
-    } as Partial<ConfigContextType> as ConfigContextType);
-    render(<ParticipantListButton handleClick={() => {}} isOpen={false} participantCount={10} />);
+    });
+
     expect(screen.queryByTestId('participant-list-button')).not.toBeInTheDocument();
   });
 });
+
+function render(
+  ui: ReactElement,
+  options?: {
+    appConfigOptions?: AppConfigProviderWrapperOptions;
+  }
+) {
+  const { AppConfigWrapper } = makeAppConfigProviderWrapper(options?.appConfigOptions);
+
+  return renderBase(ui, { ...options, wrapper: AppConfigWrapper });
+}

@@ -1,35 +1,38 @@
 import '../../css/index.css';
 import { beforeEach, describe, expect, it, Mock, vi } from 'vitest';
-import { render, screen } from '@testing-library/react';
+import { render as renderBase, screen } from '@testing-library/react';
 import { Publisher, Subscriber } from '@vonage/client-sdk-video';
 import { EventEmitter } from 'stream';
 import * as mui from '@mui/material';
-import MeetingRoom from './MeetingRoom';
-import UserProvider, { UserContextType } from '../../Context/user';
-import SessionProvider, { SessionContextType } from '../../Context/SessionProvider/session';
-import { SubscriberWrapper } from '../../types/session';
-import { PublisherContextType, PublisherProvider } from '../../Context/PublisherProvider';
-import usePublisherContext from '../../hooks/usePublisherContext';
-import useUserContext from '../../hooks/useUserContext';
-import useDevices from '../../hooks/useDevices';
-import { AllMediaDevices } from '../../types';
-import { allMediaDevices, defaultAudioDevice } from '../../utils/mockData/device';
-import useSpeakingDetector from '../../hooks/useSpeakingDetector';
-import useLayoutManager, { GetLayout } from '../../hooks/useLayoutManager';
-import useSessionContext from '../../hooks/useSessionContext';
-import useActiveSpeaker from '../../hooks/useActiveSpeaker';
-import useScreenShare, { UseScreenShareType } from '../../hooks/useScreenShare';
-import { RIGHT_PANEL_BUTTON_COUNT } from '../../utils/constants';
+import { ReactElement } from 'react';
+import UserProvider, { UserContextType } from '@Context/user';
+import SessionProvider, { SessionContextType } from '@Context/SessionProvider/session';
+import { SubscriberWrapper } from '@app-types/session';
+import { PublisherContextType, PublisherProvider } from '@Context/PublisherProvider';
+import usePublisherContext from '@hooks/usePublisherContext';
+import useUserContext from '@hooks/useUserContext';
+import useDevices from '@hooks/useDevices';
+import { AllMediaDevices } from '@app-types/room';
+import { allMediaDevices, defaultAudioDevice } from '@utils/mockData/device';
+import useSpeakingDetector from '@hooks/useSpeakingDetector';
+import useLayoutManager, { GetLayout } from '@hooks/useLayoutManager';
+import useSessionContext from '@hooks/useSessionContext';
+import useActiveSpeaker from '@hooks/useActiveSpeaker';
+import useScreenShare, { UseScreenShareType } from '@hooks/useScreenShare';
+import { RIGHT_PANEL_BUTTON_COUNT } from '@utils/constants';
 import useToolbarButtons, {
   UseToolbarButtons,
   UseToolbarButtonsProps,
-} from '../../hooks/useToolbarButtons';
-import usePublisherOptions from '../../Context/PublisherProvider/usePublisherOptions';
+} from '@hooks/useToolbarButtons';
+import usePublisherOptions from '@Context/PublisherProvider/usePublisherOptions';
+import { makeAppConfigProviderWrapper } from '@test/providers';
+import composeProviders from '@utils/composeProviders';
+import MeetingRoom from './MeetingRoom';
 
 const mockedNavigate = vi.fn();
 const mockedParams = { roomName: 'test-room-name' };
 const mockedLocation = vi.fn();
-vi.mock('../../hooks/useBackgroundPublisherContext', () => ({
+vi.mock('@hooks/useBackgroundPublisherContext', () => ({
   __esModule: true,
   default: () => ({
     initBackgroundLocalPublisher: vi.fn(),
@@ -54,38 +57,17 @@ vi.mock('@mui/material', async () => {
     useMediaQuery: vi.fn(),
   };
 });
-vi.mock('../../hooks/useConfigContext', () => {
-  return {
-    default: () => ({
-      videoSettings: {
-        allowCameraControl: true,
-      },
-      audioSettings: {
-        allowMicrophoneControl: true,
-      },
-      meetingRoomSettings: {
-        defaultLayoutMode: 'active-speaker',
-        showParticipantList: true,
-        allowChat: true,
-        allowScreenShare: true,
-        allowArchiving: true,
-        allowCaptions: true,
-        allowEmojis: true,
-      },
-    }),
-  };
-});
 
-vi.mock('../../hooks/useDevices.tsx');
-vi.mock('../../hooks/usePublisherContext.tsx');
-vi.mock('../../hooks/useUserContext.tsx');
-vi.mock('../../hooks/useSpeakingDetector.tsx');
-vi.mock('../../hooks/useLayoutManager.tsx');
-vi.mock('../../hooks/useSessionContext.tsx');
-vi.mock('../../hooks/useActiveSpeaker.tsx');
-vi.mock('../../hooks/useScreenShare.tsx');
-vi.mock('../../hooks/useToolbarButtons');
-vi.mock('../../Context/PublisherProvider/usePublisherOptions');
+vi.mock('@hooks/useDevices.tsx');
+vi.mock('@hooks/usePublisherContext.tsx');
+vi.mock('@hooks/useUserContext.tsx');
+vi.mock('@hooks/useSpeakingDetector.tsx');
+vi.mock('@hooks/useLayoutManager.tsx');
+vi.mock('@hooks/useSessionContext.tsx');
+vi.mock('@hooks/useActiveSpeaker.tsx');
+vi.mock('@hooks/useScreenShare.tsx');
+vi.mock('@hooks/useToolbarButtons');
+vi.mock('@Context/PublisherProvider/usePublisherOptions');
 
 const mockUseDevices = useDevices as Mock<
   [],
@@ -111,16 +93,6 @@ const mockUseToolbarButtons = useToolbarButtons as Mock<
   [UseToolbarButtonsProps],
   UseToolbarButtons
 >;
-
-const MeetingRoomWithProviders = () => (
-  <UserProvider>
-    <SessionProvider>
-      <PublisherProvider>
-        <MeetingRoom />
-      </PublisherProvider>
-    </SessionProvider>
-  </UserProvider>
-);
 
 const createSubscriberWrapper = (id: string): SubscriberWrapper => {
   const mockSubscriber = {
@@ -217,39 +189,39 @@ describe('MeetingRoom', () => {
   });
 
   it('should render', () => {
-    render(<MeetingRoomWithProviders />);
+    render(<MeetingRoom />);
     const meetingRoom = screen.getByTestId('meetingRoom');
     expect(meetingRoom).not.toBeNull();
   });
 
   it('renders the small viewport header bar if it is on a small tab or device', () => {
     (mui.useMediaQuery as Mock).mockReturnValue(true);
-    render(<MeetingRoomWithProviders />);
+    render(<MeetingRoom />);
     expect(screen.getByTestId('smallViewportHeader')).not.toBeNull();
   });
 
   it('does not render the small viewport header bar if it is on desktop', () => {
     // we do not need to mock the small port view value here given we already do it in beforeEach
-    render(<MeetingRoomWithProviders />);
+    render(<MeetingRoom />);
     expect(screen.queryByTestId('smallViewportHeader')).toBeNull();
   });
 
   it('should call joinRoom on render only once', () => {
-    const { rerender } = render(<MeetingRoomWithProviders />);
+    const { rerender } = render(<MeetingRoom />);
     expect(sessionContext.joinRoom).toHaveBeenCalledWith('test-room-name');
     expect(sessionContext.joinRoom).toHaveBeenCalledTimes(1);
-    rerender(<MeetingRoomWithProviders />);
-    rerender(<MeetingRoomWithProviders />);
-    rerender(<MeetingRoomWithProviders />);
-    rerender(<MeetingRoomWithProviders />);
+    rerender(<MeetingRoom />);
+    rerender(<MeetingRoom />);
+    rerender(<MeetingRoom />);
+    rerender(<MeetingRoom />);
     expect(sessionContext.joinRoom).toHaveBeenCalledTimes(1);
   });
 
   it('should call publish after connected', () => {
-    const { rerender } = render(<MeetingRoomWithProviders />);
+    const { rerender } = render(<MeetingRoom />);
     expect(sessionContext.joinRoom).toHaveBeenCalledWith('test-room-name');
     sessionContext.connected = true;
-    rerender(<MeetingRoomWithProviders />);
+    rerender(<MeetingRoom />);
     expect(publisherContext.initializeLocalPublisher).toHaveBeenCalledTimes(1);
     expect(publisherContext.publish).toHaveBeenCalledTimes(1);
   });
@@ -257,19 +229,19 @@ describe('MeetingRoom', () => {
   it('should display publisher', () => {
     sessionContext.connected = true;
     publisherContext.publisher = mockPublisher;
-    const { rerender } = render(<MeetingRoomWithProviders />);
-    rerender(<MeetingRoomWithProviders />);
+    const { rerender } = render(<MeetingRoom />);
+    rerender(<MeetingRoom />);
     expect(screen.getByTestId('publisher-container')).toBeInTheDocument();
   });
 
   it('should display spinner until session is connected', () => {
     sessionContext.connected = false;
     publisherContext.publisher = mockPublisher;
-    const { rerender } = render(<MeetingRoomWithProviders />);
-    rerender(<MeetingRoomWithProviders />);
+    const { rerender } = render(<MeetingRoom />);
+    rerender(<MeetingRoom />);
     expect(screen.getByTestId('progress-spinner')).toBeInTheDocument();
     sessionContext.connected = true;
-    rerender(<MeetingRoomWithProviders />);
+    rerender(<MeetingRoom />);
     expect(screen.queryByTestId('progress-spinner')).not.toBeInTheDocument();
   });
 
@@ -286,8 +258,8 @@ describe('MeetingRoom', () => {
       createSubscriberWrapper('sub7'),
     ];
     publisherContext.publisher = mockPublisher;
-    const { rerender } = render(<MeetingRoomWithProviders />);
-    rerender(<MeetingRoomWithProviders />);
+    const { rerender } = render(<MeetingRoom />);
+    rerender(<MeetingRoom />);
     expect(screen.getByTestId('subscriber-container-sub1')).toBeVisible();
     expect(screen.getByTestId('subscriber-container-sub2')).toBeVisible();
     expect(screen.getByTestId('subscriber-container-sub3')).toBeVisible();
@@ -306,10 +278,10 @@ describe('MeetingRoom', () => {
       .map((_s, index) => createSubscriberWrapper(`sub${index + 1}`));
     sessionContext.subscriberWrappers = [sub1];
     publisherContext.publisher = mockPublisher;
-    const { rerender } = render(<MeetingRoomWithProviders />);
+    const { rerender } = render(<MeetingRoom />);
 
     sessionContext.subscriberWrappers = [sub2, sub1];
-    rerender(<MeetingRoomWithProviders />);
+    rerender(<MeetingRoom />);
 
     const getSubIdsInRenderOrder = () =>
       screen.getAllByTestId('subscriber-container', { exact: false }).map((element) => element?.id);
@@ -318,7 +290,7 @@ describe('MeetingRoom', () => {
     expect(getSubIdsInRenderOrder()).toEqual(['sub1', 'sub2']);
 
     sessionContext.subscriberWrappers = [sub3, sub2, sub1];
-    rerender(<MeetingRoomWithProviders />);
+    rerender(<MeetingRoom />);
 
     // sub1 and sub2 joined first so should stay in position ahead of sub3
     expect(getSubIdsInRenderOrder()).toEqual(['sub1', 'sub2', 'sub3']);
@@ -327,10 +299,10 @@ describe('MeetingRoom', () => {
   it('should display chat unread number', () => {
     sessionContext.connected = true;
     publisherContext.publisher = mockPublisher;
-    const { rerender } = render(<MeetingRoomWithProviders />);
-    rerender(<MeetingRoomWithProviders />);
+    const { rerender } = render(<MeetingRoom />);
+    rerender(<MeetingRoom />);
     sessionContext.unreadCount = 4;
-    rerender(<MeetingRoomWithProviders />);
+    rerender(<MeetingRoom />);
     expect(screen.queryAllByTestId('chat-button-unread-count')[0]).toHaveTextContent('4');
   });
 
@@ -339,7 +311,7 @@ describe('MeetingRoom', () => {
       publisherContext.isVideoEnabled = false;
       publisherContext.quality = 'poor';
 
-      render(<MeetingRoomWithProviders />);
+      render(<MeetingRoom />);
 
       const connectionAlert = screen.queryByText(
         'Please check your connectivity. Your video may be disabled to improve the user experience'
@@ -350,7 +322,7 @@ describe('MeetingRoom', () => {
     it('should be displayed when publishing video', () => {
       publisherContext.isVideoEnabled = true;
       publisherContext.quality = 'poor';
-      render(<MeetingRoomWithProviders />);
+      render(<MeetingRoom />);
 
       const connectionAlert = screen.getByText(
         'Please check your connectivity. Your video may be disabled to improve the user experience'
@@ -361,7 +333,7 @@ describe('MeetingRoom', () => {
     it('should be hidden when user stops publishing video', () => {
       publisherContext.isVideoEnabled = true;
       publisherContext.quality = 'poor';
-      const { rerender } = render(<MeetingRoomWithProviders />);
+      const { rerender } = render(<MeetingRoom />);
 
       const connectionAlert = screen.queryByText(
         'Please check your connectivity. Your video may be disabled to improve the user experience'
@@ -369,7 +341,7 @@ describe('MeetingRoom', () => {
       expect(connectionAlert).toBeInTheDocument();
 
       publisherContext.isVideoEnabled = false;
-      rerender(<MeetingRoomWithProviders />);
+      rerender(<MeetingRoom />);
       expect(connectionAlert).not.toBeInTheDocument();
     });
   });
@@ -381,7 +353,7 @@ describe('MeetingRoom', () => {
         "We're having trouble connecting you with others in the meeting room. Please check your network and try again.",
     };
     publisherContext.publishingError = publishingBlockedError;
-    render(<MeetingRoomWithProviders />);
+    render(<MeetingRoom />);
 
     expect(mockedNavigate).toHaveBeenCalledOnce();
     expect(mockedNavigate).toHaveBeenCalledWith('/goodbye', {
@@ -394,3 +366,16 @@ describe('MeetingRoom', () => {
     });
   });
 });
+
+function render(ui: ReactElement) {
+  const { AppConfigWrapper } = makeAppConfigProviderWrapper();
+
+  const composeWrapper = composeProviders(
+    AppConfigWrapper,
+    UserProvider,
+    SessionProvider,
+    PublisherProvider
+  );
+
+  return renderBase(ui, { wrapper: composeWrapper });
+}

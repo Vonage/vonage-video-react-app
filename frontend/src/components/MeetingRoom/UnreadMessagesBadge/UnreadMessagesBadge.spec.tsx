@@ -1,31 +1,24 @@
 import { describe, it, vi, expect, Mock, beforeEach } from 'vitest';
-import { render, screen } from '@testing-library/react';
+import { render as renderBase, screen } from '@testing-library/react';
 import BiotechIcon from '@mui/icons-material/Biotech';
-import useSessionContext from '../../../hooks/useSessionContext';
-import { SessionContextType } from '../../../Context/SessionProvider/session';
+import { ReactElement } from 'react';
+import useSessionContext from '@hooks/useSessionContext';
+import { SessionContextType } from '@Context/SessionProvider/session';
+import { AppConfigProviderWrapperOptions, makeAppConfigProviderWrapper } from '@test/providers';
 import UnreadMessagesBadge from './UnreadMessagesBadge';
 import ToolbarButton from '../ToolbarButton';
-import useConfigContext from '../../../hooks/useConfigContext';
-import { ConfigContextType } from '../../../Context/ConfigProvider';
 
-vi.mock('../../../hooks/useSessionContext');
-vi.mock('../../../hooks/useConfigContext');
+vi.mock('@hooks/useSessionContext');
+
 const mockUseSessionContext = useSessionContext as Mock<[], SessionContextType>;
 const sessionContext = {
   unreadCount: 0,
 } as unknown as SessionContextType;
 const LittleButton = () => <ToolbarButton onClick={() => {}} icon={<BiotechIcon />} />;
-const mockConfigContext = {
-  meetingRoomSettings: {
-    allowChat: true,
-  },
-} as Partial<ConfigContextType> as ConfigContextType;
-const mockUseConfigContext = useConfigContext as Mock<[], ConfigContextType>;
 
 describe('UnreadMessagesBadge', () => {
   beforeEach(() => {
     mockUseSessionContext.mockReturnValue(sessionContext);
-    mockUseConfigContext.mockReturnValue(mockConfigContext);
   });
 
   it('shows badge with correct unread message count', () => {
@@ -177,16 +170,20 @@ describe('UnreadMessagesBadge', () => {
       unreadCount: 8,
     } as unknown as SessionContextType;
     mockUseSessionContext.mockReturnValue(sessionContextWithMessages);
-    mockUseConfigContext.mockReturnValue({
-      meetingRoomSettings: {
-        allowChat: false,
-      },
-    } as Partial<ConfigContextType> as ConfigContextType);
 
     render(
       <UnreadMessagesBadge>
         <LittleButton />
-      </UnreadMessagesBadge>
+      </UnreadMessagesBadge>,
+      {
+        appConfigOptions: {
+          value: {
+            meetingRoomSettings: {
+              allowChat: false,
+            },
+          },
+        },
+      }
     );
 
     const badge = screen.getByTestId('chat-button-unread-count');
@@ -195,3 +192,14 @@ describe('UnreadMessagesBadge', () => {
     expect(badge.offsetWidth).toBe(0);
   });
 });
+
+function render(
+  ui: ReactElement,
+  options?: {
+    appConfigOptions?: AppConfigProviderWrapperOptions;
+  }
+) {
+  const { AppConfigWrapper } = makeAppConfigProviderWrapper(options?.appConfigOptions);
+
+  return renderBase(ui, { ...options, wrapper: AppConfigWrapper });
+}

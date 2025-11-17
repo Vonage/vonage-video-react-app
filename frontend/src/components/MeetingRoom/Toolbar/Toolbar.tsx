@@ -1,21 +1,21 @@
 import { Dispatch, ReactElement, SetStateAction, useCallback, useRef, useState } from 'react';
+import useSessionContext from '@hooks/useSessionContext';
+import { RightPanelActiveTab } from '@hooks/useRightPanel';
+import isReportIssueEnabled from '@utils/isReportIssueEnabled';
+import useToolbarButtons from '@hooks/useToolbarButtons';
+import useBackgroundPublisherContext from '@hooks/useBackgroundPublisherContext';
 import ScreenSharingButton from '../../ScreenSharingButton';
 import TimeRoomNameMeetingRoom from '../TimeRoomName';
 import ExitButton from '../ExitButton';
-import useSessionContext from '../../../hooks/useSessionContext';
 import LayoutButton from '../LayoutButton';
 import ParticipantListButton from '../ParticipantListButton';
 import ArchivingButton from '../ArchivingButton';
 import CaptionsButton from '../CaptionsButton';
 import ChatButton from '../ChatButton';
-import { RightPanelActiveTab } from '../../../hooks/useRightPanel';
 import ReportIssueButton from '../ReportIssueButton';
 import ToolbarOverflowButton from '../ToolbarOverflowButton';
 import EmojiGridButton from '../EmojiGridButton';
-import isReportIssueEnabled from '../../../utils/isReportIssueEnabled';
-import useToolbarButtons from '../../../hooks/useToolbarButtons';
 import DeviceControlButton from '../DeviceControlButton';
-import useBackgroundPublisherContext from '../../../hooks/useBackgroundPublisherContext';
 
 export type CaptionsState = {
   isUserCaptionsEnabled: boolean;

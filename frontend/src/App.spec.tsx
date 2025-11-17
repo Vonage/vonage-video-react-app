@@ -1,5 +1,5 @@
 import { render, screen } from '@testing-library/react';
-import { describe, it, expect, vi, afterEach } from 'vitest';
+import { describe, it, expect, vi } from 'vitest';
 import { PropsWithChildren } from 'react';
 import App from './App';
 
@@ -10,35 +10,9 @@ vi.mock('./pages/UnsupportedBrowserPage', () => ({
   default: () => <div>Unsupported Browser</div>,
 }));
 
-// Mock context providers and wrappers
-vi.mock('./Context/PreviewPublisherProvider', () => ({
-  __esModule: true,
-  PreviewPublisherProvider: ({ children }: PropsWithChildren) => children,
-  default: ({ children }: PropsWithChildren) => children,
-}));
-vi.mock('./Context/PublisherProvider', () => ({
-  __esModule: true,
-  PublisherProvider: ({ children }: PropsWithChildren) => children,
-  default: ({ children }: PropsWithChildren) => children,
-}));
-vi.mock('./Context/SessionProvider/session', () => ({
-  default: ({ children }: PropsWithChildren) => children,
-}));
 vi.mock('./components/RedirectToWaitingRoom', () => ({
   default: ({ children }: PropsWithChildren) => children,
 }));
-vi.mock('./Context/RoomContext', () => ({
-  default: ({ children }: PropsWithChildren) => children,
-}));
-vi.mock('./Context/ConfigProvider', () => ({
-  __esModule: true,
-  ConfigContextProvider: ({ children }: PropsWithChildren) => children,
-  default: ({ children }: PropsWithChildren) => children,
-}));
-
-afterEach(() => {
-  vi.clearAllMocks();
-});
 
 describe('App routing', () => {
   it('renders LandingPage on unknown route', () => {

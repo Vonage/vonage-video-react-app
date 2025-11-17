@@ -1,21 +1,20 @@
 import { describe, it, beforeEach, afterEach, vi, expect, Mock } from 'vitest';
-import { render, screen, fireEvent, cleanup } from '@testing-library/react';
+import { render as renderBase, screen, fireEvent, cleanup } from '@testing-library/react';
 import { Publisher } from '@vonage/client-sdk-video';
 import { EventEmitter } from 'stream';
+import { ReactElement } from 'react';
+import { AppConfigProviderWrapperOptions, makeAppConfigProviderWrapper } from '@test/providers';
+import useDevices from '@hooks/useDevices';
+import usePublisherContext from '@hooks/usePublisherContext';
+import { AllMediaDevices } from '@app-types/room';
+import { PublisherContextType } from '@Context/PublisherProvider';
+import { allMediaDevices, defaultAudioDevice } from '@utils/mockData/device';
 import InputDevices from './InputDevices';
-import useDevices from '../../../hooks/useDevices';
-import usePublisherContext from '../../../hooks/usePublisherContext';
-import useConfigContext from '../../../hooks/useConfigContext';
-import { AllMediaDevices } from '../../../types';
-import { PublisherContextType } from '../../../Context/PublisherProvider';
-import { ConfigContextType } from '../../../Context/ConfigProvider';
-import { allMediaDevices, defaultAudioDevice } from '../../../utils/mockData/device';
 
 // Mocks
-vi.mock('../../../hooks/useDevices');
-vi.mock('../../../hooks/usePublisherContext');
-vi.mock('../../../hooks/useConfigContext');
-vi.mock('../../../utils/storage', () => ({
+vi.mock('@hooks/useDevices');
+vi.mock('@hooks/usePublisherContext');
+vi.mock('@utils/storage', () => ({
   setStorageItem: vi.fn(),
   STORAGE_KEYS: {
     AUDIO_SOURCE: 'audioSource',
@@ -27,7 +26,6 @@ const mockUseDevices = useDevices as Mock<
   { allMediaDevices: AllMediaDevices; getAllMediaDevices: () => void }
 >;
 const mockUsePublisherContext = usePublisherContext as Mock<[], PublisherContextType>;
-const mockUseConfigContext = useConfigContext as Mock<[], ConfigContextType>;
 
 describe('InputDevices Component', () => {
   const mockHandleToggle = vi.fn();
@@ -35,7 +33,6 @@ describe('InputDevices Component', () => {
   const mockGetAudioSource = vi.fn();
   let mockPublisher: Publisher;
   let publisherContext: PublisherContextType;
-  let mockConfigContext: ConfigContextType;
 
   beforeEach(() => {
     mockGetAudioSource.mockReturnValue(defaultAudioDevice);
@@ -58,14 +55,7 @@ describe('InputDevices Component', () => {
       initializeLocalPublisher: vi.fn(),
     } as unknown as PublisherContextType;
 
-    mockConfigContext = {
-      meetingRoomSettings: {
-        allowDeviceSelection: true,
-      },
-    } as Partial<ConfigContextType> as ConfigContextType;
-
     mockUsePublisherContext.mockImplementation(() => publisherContext);
-    mockUseConfigContext.mockReturnValue(mockConfigContext);
   });
 
   afterEach(() => {
@@ -74,7 +64,7 @@ describe('InputDevices Component', () => {
   });
 
   it('renders all available audio input devices', () => {
-    render(<InputDevices handleToggle={mockHandleToggle} customLightBlueColor="#00f" />);
+    render(<InputDevices handleToggle={mockHandleToggle} />);
 
     expect(screen.getByText('Microphone')).toBeInTheDocument();
 
@@ -85,7 +75,7 @@ describe('InputDevices Component', () => {
   });
 
   it('changes audio input device on menu item click', () => {
-    render(<InputDevices handleToggle={mockHandleToggle} customLightBlueColor="#00f" />);
+    render(<InputDevices handleToggle={mockHandleToggle} />);
 
     const micItem = screen.getByText('MacBook Pro Microphone (Built-in)');
     fireEvent.click(micItem);
@@ -97,7 +87,7 @@ describe('InputDevices Component', () => {
   });
 
   it('does not call setAudioSource if selected device is not found', () => {
-    render(<InputDevices handleToggle={mockHandleToggle} customLightBlueColor="#00f" />);
+    render(<InputDevices handleToggle={mockHandleToggle} />);
 
     const bogusItem = document.createElement('li');
     bogusItem.textContent = 'Nonexistent Microphone';
@@ -110,7 +100,7 @@ describe('InputDevices Component', () => {
     publisherContext.publisher = null;
     mockUsePublisherContext.mockReturnValue(publisherContext);
 
-    render(<InputDevices handleToggle={mockHandleToggle} customLightBlueColor="#00f" />);
+    render(<InputDevices handleToggle={mockHandleToggle} />);
 
     const micItem = screen.getByText('MacBook Pro Microphone (Built-in)');
     fireEvent.click(micItem);
@@ -120,7 +110,7 @@ describe('InputDevices Component', () => {
   });
 
   it('shows check icon for selected device', () => {
-    render(<InputDevices handleToggle={mockHandleToggle} customLightBlueColor="#00f" />);
+    render(<InputDevices handleToggle={mockHandleToggle} />);
 
     // The default audio device should be selected
     const checkIcon = screen.getByTestId('CheckIcon');
@@ -128,16 +118,21 @@ describe('InputDevices Component', () => {
   });
 
   it('is not rendered when allowDeviceSelection is false', () => {
-    mockConfigContext.meetingRoomSettings.allowDeviceSelection = false;
-    mockUseConfigContext.mockReturnValue(mockConfigContext);
-
-    render(<InputDevices handleToggle={mockHandleToggle} customLightBlueColor="#00f" />);
+    render(<InputDevices handleToggle={mockHandleToggle} />, {
+      appConfigOptions: {
+        value: {
+          meetingRoomSettings: {
+            allowDeviceSelection: false,
+          },
+        },
+      },
+    });
 
     expect(screen.queryByText('Microphone')).not.toBeInTheDocument();
   });
 
   it('handles click event when audioDeviceId is found', () => {
-    render(<InputDevices handleToggle={mockHandleToggle} customLightBlueColor="#00f" />);
+    render(<InputDevices handleToggle={mockHandleToggle} />);
 
     const micItem = screen.getByText('Soundcore Life A2 NC (Bluetooth)');
     fireEvent.click(micItem);
@@ -148,3 +143,14 @@ describe('InputDevices Component', () => {
     );
   });
 });
+
+function render(
+  ui: ReactElement,
+  options?: {
+    appConfigOptions?: AppConfigProviderWrapperOptions;
+  }
+) {
+  const { AppConfigWrapper } = makeAppConfigProviderWrapper(options?.appConfigOptions);
+
+  return renderBase(ui, { ...options, wrapper: AppConfigWrapper });
+}

@@ -5,12 +5,12 @@ import VideoCall from '@mui/icons-material/VideoCall';
 import Speaker from '@mui/icons-material/Speaker';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import { useTranslation } from 'react-i18next';
+import usePreviewPublisherContext from '@hooks/usePreviewPublisherContext';
+import useDevices from '@hooks/useDevices';
+import useAudioOutputContext from '@hooks/useAudioOutputContext';
+import useIsSmallViewport from '@hooks/useIsSmallViewport';
+import useAppConfig from '@Context/AppConfig/hooks/useAppConfig';
 import MenuDevicesWaitingRoom from '../MenuDevices';
-import usePreviewPublisherContext from '../../../hooks/usePreviewPublisherContext';
-import useDevices from '../../../hooks/useDevices';
-import useAudioOutputContext from '../../../hooks/useAudioOutputContext';
-import useIsSmallViewport from '../../../hooks/useIsSmallViewport';
-import useConfigContext from '../../../hooks/useConfigContext';
 
 export type ControlPanelProps = {
   handleAudioInputOpen: (
@@ -60,8 +60,10 @@ const ControlPanel = ({
   const { localAudioSource, localVideoSource, changeAudioSource, changeVideoSource } =
     usePreviewPublisherContext();
   const { currentAudioOutputDevice, setAudioOutputDevice } = useAudioOutputContext();
-  const { waitingRoomSettings } = useConfigContext();
-  const { allowDeviceSelection } = waitingRoomSettings;
+
+  const allowDeviceSelection = useAppConfig(
+    ({ waitingRoomSettings }) => waitingRoomSettings.allowDeviceSelection
+  );
 
   const buttonSx: SxProps = {
     borderRadius: '10px',

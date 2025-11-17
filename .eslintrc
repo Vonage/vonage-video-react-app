@@ -73,7 +73,26 @@
         ]
       }
     ],
-    "tailwindcss/classnames-order": ["error"]
+    "tailwindcss/classnames-order": ["error"],
+    "no-restricted-exports": "off", // This rule goes against sonar cloud recommendations
+    "no-restricted-properties": [
+      "warn",
+      {
+        "object": "it",
+        "property": "only",
+        "message": "Remove .only from tests before committing!"
+      },
+      {
+        "object": "describe",
+        "property": "only",
+        "message": "Remove .only from tests before committing!"
+      },
+      {
+        "object": "test",
+        "property": "only",
+        "message": "Remove .only from tests before committing!"
+      }
+    ]
   },
   "settings": {
     "tailwindcss": {

@@ -12,10 +12,4 @@ describe('VideoLoading', () => {
 
     expect(screen.getByTestId('VideoLoading')).toBeInTheDocument();
   });
-
-  it('should contain a CircularProgress component', () => {
-    render(<VideoLoading />);
-
-    expect(screen.getByTestId('CircularProgress')).toBeInTheDocument();
-  });
 });

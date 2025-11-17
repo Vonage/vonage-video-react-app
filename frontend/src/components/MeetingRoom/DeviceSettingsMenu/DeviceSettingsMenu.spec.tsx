@@ -1,19 +1,25 @@
-import { act, fireEvent, queryByText, render, screen, waitFor } from '@testing-library/react';
+import {
+  act,
+  fireEvent,
+  queryByText,
+  render as renderBase,
+  screen,
+  waitFor,
+} from '@testing-library/react';
 import { describe, beforeEach, it, Mock, vi, expect, afterAll } from 'vitest';
-import { RefObject } from 'react';
+import { ReactElement, RefObject } from 'react';
 import { EventEmitter } from 'stream';
 import { hasMediaProcessorSupport } from '@vonage/client-sdk-video';
-import * as util from '../../../utils/util';
-import DeviceSettingsMenu from './DeviceSettingsMenu';
-import { AudioOutputProvider } from '../../../Context/AudioOutputProvider';
+import * as util from '@utils/util';
+import { AudioOutputProvider } from '@Context/AudioOutputProvider';
 import {
   audioInputDevices,
   audioOutputDevices,
   nativeDevices,
   videoInputDevices,
-} from '../../../utils/mockData/device';
-import useConfigContext from '../../../hooks/useConfigContext';
-import { ConfigContextType } from '../../../Context/ConfigProvider';
+} from '@utils/mockData/device';
+import { AppConfigProviderWrapperOptions, makeAppConfigProviderWrapper } from '@test/providers';
+import DeviceSettingsMenu from './DeviceSettingsMenu';
 
 const {
   mockHasMediaProcessorSupport,
@@ -38,16 +44,13 @@ vi.mock('@vonage/client-sdk-video', () => ({
   setAudioOutputDevice: mockSetAudioOutputDevice,
 }));
 
-vi.mock('../../../utils/util', async () => {
-  const actual = await vi.importActual<typeof import('../../../utils/util')>('../../../utils/util');
+vi.mock('@utils/util', async () => {
+  const actual = await vi.importActual<typeof import('@utils/util')>('@utils/util');
   return {
     ...actual,
     isGetActiveAudioOutputDeviceSupported: vi.fn(),
   };
 });
-
-vi.mock('../../../hooks/useConfigContext');
-const mockUseConfigContext = useConfigContext as Mock<[], ConfigContextType>;
 
 // This is returned by Vonage SDK if audioOutput is not supported
 const vonageDefaultEmptyOutputDevice = { deviceId: null, label: null };
@@ -63,7 +66,6 @@ describe('DeviceSettingsMenu Component', () => {
   const mockHandleClose = vi.fn();
   let deviceChangeListener: EventEmitter;
   const mockedHasMediaProcessorSupport = vi.fn();
-  let configContext: ConfigContextType;
 
   beforeEach(() => {
     vi.resetAllMocks();
@@ -88,18 +90,6 @@ describe('DeviceSettingsMenu Component', () => {
     });
     (hasMediaProcessorSupport as Mock).mockImplementation(mockedHasMediaProcessorSupport);
     mockedHasMediaProcessorSupport.mockReturnValue(false);
-    configContext = {
-      audioSettings: {
-        allowAdvancedNoiseSuppression: true,
-      },
-      videoSettings: {
-        allowBackgroundEffects: true,
-      },
-      meetingRoomSettings: {
-        allowDeviceSelection: true,
-      },
-    } as Partial<ConfigContextType> as ConfigContextType;
-    mockUseConfigContext.mockReturnValue(configContext);
   });
 
   afterAll(() => {
@@ -370,16 +360,6 @@ describe('DeviceSettingsMenu Component', () => {
     });
 
     it('and does not render the dropdown separator and background effects option when allowBackgroundEffects is false', async () => {
-      configContext = {
-        videoSettings: {
-          allowBackgroundEffects: false,
-        },
-        meetingRoomSettings: {
-          allowDeviceSelection: true,
-        },
-      } as Partial<ConfigContextType> as ConfigContextType;
-      mockUseConfigContext.mockReturnValue(configContext);
-
       render(
         <DeviceSettingsMenu
           deviceType={deviceType}
@@ -389,7 +369,19 @@ describe('DeviceSettingsMenu Component', () => {
           isOpen
           anchorRef={mockAnchorRef}
           setIsOpen={mockSetIsOpen}
-        />
+        />,
+        {
+          appConfigOptions: {
+            value: {
+              videoSettings: {
+                allowBackgroundEffects: false,
+              },
+              meetingRoomSettings: {
+                allowDeviceSelection: true,
+              },
+            },
+          },
+        }
       );
 
       await waitFor(() => {
@@ -399,3 +391,14 @@ describe('DeviceSettingsMenu Component', () => {
     });
   });
 });
+
+function render(
+  ui: ReactElement,
+  options?: {
+    appConfigOptions?: AppConfigProviderWrapperOptions;
+  }
+) {
+  const { AppConfigWrapper } = makeAppConfigProviderWrapper(options?.appConfigOptions);
+
+  return renderBase(ui, { wrapper: AppConfigWrapper });
+}

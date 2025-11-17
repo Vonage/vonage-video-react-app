@@ -41,6 +41,7 @@ export const UserContext = createContext<UserContextType | null>(null);
 
 export type UserProviderProps = {
   children: ReactNode;
+  value?: UserType;
 };
 
 /**
@@ -48,28 +49,30 @@ export type UserProviderProps = {
  * @param {UserProviderProps} props - The props for the context.
  * @returns {ReactElement} a context provider for the User.
  */
-const UserProvider = ({ children }: UserProviderProps): ReactElement => {
+const UserProvider = ({ children, value: initialUserState }: UserProviderProps): ReactElement => {
   // Load initial settings from local storage
   const noiseSuppression = getStorageItem(STORAGE_KEYS.NOISE_SUPPRESSION) === 'true';
   const backgroundFilter = parseVideoFilter(getStorageItem(STORAGE_KEYS.BACKGROUND_REPLACEMENT));
   const name = getStorageItem(STORAGE_KEYS.USERNAME) ?? '';
 
-  const [user, setUser] = useState<UserType>({
-    defaultSettings: {
-      publishAudio: true,
-      publishVideo: true,
-      name,
-      backgroundFilter,
-      noiseSuppression,
-      audioSource: undefined,
-      videoSource: undefined,
-      publishCaptions: true,
-    },
-    issues: {
-      reconnections: 0, // Start with zero reconnections
-      audioFallbacks: 0, // Start with zero audio fallbacks
-    },
-  });
+  const [user, setUser] = useState<UserType>(
+    initialUserState ?? {
+      defaultSettings: {
+        publishAudio: true,
+        publishVideo: true,
+        name,
+        backgroundFilter,
+        noiseSuppression,
+        audioSource: undefined,
+        videoSource: undefined,
+        publishCaptions: true,
+      },
+      issues: {
+        reconnections: 0, // Start with zero reconnections
+        audioFallbacks: 0, // Start with zero audio fallbacks
+      },
+    }
+  );
 
   const value = useMemo(
     () => ({

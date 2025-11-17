@@ -1,19 +1,17 @@
 import { describe, expect, it, vi, afterEach, Mock, beforeEach } from 'vitest';
-import { fireEvent, render, screen, waitFor } from '@testing-library/react';
+import { fireEvent, render as renderBase, screen, waitFor } from '@testing-library/react';
 import { EventEmitter } from 'stream';
 import { Publisher } from '@vonage/client-sdk-video';
-import { defaultAudioDevice } from '../../../utils/mockData/device';
-import usePublisherContext from '../../../hooks/usePublisherContext';
+import { ReactElement } from 'react';
+import { defaultAudioDevice } from '@utils/mockData/device';
+import usePublisherContext from '@hooks/usePublisherContext';
+import { PublisherContextType } from '@Context/PublisherProvider';
+import { AppConfigProviderWrapperOptions, makeAppConfigProviderWrapper } from '@test/providers';
 import ReduceNoiseTestSpeakers from './ReduceNoiseTestSpeakers';
-import { PublisherContextType } from '../../../Context/PublisherProvider';
-import useConfigContext from '../../../hooks/useConfigContext';
-import { ConfigContextType } from '../../../Context/ConfigProvider';
 
-vi.mock('../../../hooks/usePublisherContext');
-vi.mock('../../../hooks/useConfigContext');
+vi.mock('@hooks/usePublisherContext');
 
 const mockUsePublisherContext = usePublisherContext as Mock<[], PublisherContextType>;
-const mockUseConfigContext = useConfigContext as Mock<[], ConfigContextType>;
 
 const { mockHasMediaProcessorSupport } = vi.hoisted(() => {
   return {
@@ -27,7 +25,6 @@ vi.mock('@vonage/client-sdk-video', () => ({
 describe('ReduceNoiseTestSpeakers', () => {
   let mockPublisher: Publisher;
   let publisherContext: PublisherContextType;
-  let configContext: ConfigContextType;
 
   beforeEach(() => {
     mockPublisher = Object.assign(new EventEmitter(), {
@@ -48,27 +45,18 @@ describe('ReduceNoiseTestSpeakers', () => {
         publisherContext.publisher = mockPublisher;
       }) as unknown as () => void,
     } as unknown as PublisherContextType;
-    configContext = {
-      audioSettings: {
-        allowAdvancedNoiseSuppression: true,
-      },
-    } as Partial<ConfigContextType> as ConfigContextType;
+
     mockUsePublisherContext.mockImplementation(() => publisherContext);
-    mockUseConfigContext.mockReturnValue(configContext);
   });
 
   afterEach(() => {
     vi.resetAllMocks();
   });
 
-  const defaultProps = {
-    customLightBlueColor: '#A338E6',
-  };
-
   it('renders the component with the correct elements', () => {
     mockHasMediaProcessorSupport.mockReturnValue(true);
 
-    render(<ReduceNoiseTestSpeakers {...defaultProps} />);
+    render(<ReduceNoiseTestSpeakers />);
 
     expect(screen.getByText('Advanced Noise Suppression')).toBeInTheDocument();
     expect(screen.getByTestId('toggle-off-icon')).toBeInTheDocument();
@@ -78,7 +66,7 @@ describe('ReduceNoiseTestSpeakers', () => {
   it('does not render the component if media processor is not supported', () => {
     mockHasMediaProcessorSupport.mockReturnValue(false);
 
-    render(<ReduceNoiseTestSpeakers {...defaultProps} />);
+    render(<ReduceNoiseTestSpeakers />);
 
     expect(screen.queryByText('Advanced Noise Suppression')).not.toBeInTheDocument();
   });
@@ -86,7 +74,7 @@ describe('ReduceNoiseTestSpeakers', () => {
   it('toggles the noise suppression state when clicked', async () => {
     mockHasMediaProcessorSupport.mockReturnValue(true);
 
-    render(<ReduceNoiseTestSpeakers {...defaultProps} />);
+    render(<ReduceNoiseTestSpeakers />);
 
     // Click the Advanced Noise Suppression button
     const toggleButton = screen.getByTestId('toggle-on-icon');
@@ -107,7 +95,7 @@ describe('ReduceNoiseTestSpeakers', () => {
   it('should update the UI when toggling the button', async () => {
     mockHasMediaProcessorSupport.mockReturnValue(true);
 
-    render(<ReduceNoiseTestSpeakers {...defaultProps} />);
+    render(<ReduceNoiseTestSpeakers />);
 
     const toggleButton = screen.getByText('Advanced Noise Suppression');
 
@@ -141,15 +129,27 @@ describe('ReduceNoiseTestSpeakers', () => {
   });
 
   it('does not render the Advanced Noise Suppression option if allowAdvancedNoiseSuppression is false', () => {
-    configContext = {
-      audioSettings: {
-        allowAdvancedNoiseSuppression: false,
+    render(<ReduceNoiseTestSpeakers />, {
+      appConfigOptions: {
+        value: {
+          audioSettings: {
+            allowAdvancedNoiseSuppression: false,
+          },
+        },
       },
-    } as Partial<ConfigContextType> as ConfigContextType;
-    mockUseConfigContext.mockReturnValue(configContext);
-
-    render(<ReduceNoiseTestSpeakers {...defaultProps} />);
+    });
 
     expect(screen.queryByText('Advanced Noise Suppression')).not.toBeInTheDocument();
   });
 });
+
+function render(
+  ui: ReactElement,
+  options?: {
+    appConfigOptions?: AppConfigProviderWrapperOptions;
+  }
+) {
+  const { AppConfigWrapper } = makeAppConfigProviderWrapper(options?.appConfigOptions);
+
+  return renderBase(ui, { ...options, wrapper: AppConfigWrapper });
+}

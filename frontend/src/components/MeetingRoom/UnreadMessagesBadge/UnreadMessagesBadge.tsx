@@ -1,7 +1,7 @@
 import { Badge } from '@mui/material';
 import { ForwardedRef, forwardRef, ReactElement } from 'react';
-import useSessionContext from '../../../hooks/useSessionContext';
-import useConfigContext from '../../../hooks/useConfigContext';
+import useSessionContext from '@hooks/useSessionContext';
+import useIsMeetingChatAllowed from '@Context/AppConfig/hooks/useIsMeetingChatAllowed';
 
 export type UnreadMessagesBadgeProps = {
   children: ReactElement;
@@ -21,12 +21,12 @@ const UnreadMessagesBadge = forwardRef(function UnreadMessagesBadge(
   props: UnreadMessagesBadgeProps,
   ref: ForwardedRef<HTMLSpanElement>
 ) {
-  const { meetingRoomSettings } = useConfigContext();
+  const isMeetingChatAllowed = useIsMeetingChatAllowed();
+
   const { children, isToolbarOverflowMenuOpen, ...rest } = props;
   const { unreadCount } = useSessionContext();
-  const { allowChat } = meetingRoomSettings;
   // If the chat button is not shown, the unread messages badge should also be hidden
-  const isInvisible = unreadCount === 0 || isToolbarOverflowMenuOpen || !allowChat;
+  const isInvisible = unreadCount === 0 || isToolbarOverflowMenuOpen || !isMeetingChatAllowed;
 
   return (
     <Badge

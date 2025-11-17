@@ -5,10 +5,10 @@ import {
   AudioFilter,
   hasMediaProcessorSupport,
 } from '@vonage/client-sdk-video';
-import useUserContext from '../../../hooks/useUserContext';
-import getInitials from '../../../utils/getInitials';
-import DeviceStore from '../../../utils/DeviceStore';
-import useConfigContext from '../../../hooks/useConfigContext';
+import useAppConfig from '@Context/AppConfig/hooks/useAppConfig';
+import useUserContext from '@hooks/useUserContext';
+import getInitials from '@utils/getInitials';
+import DeviceStore from '@utils/DeviceStore';
 
 /**
  * React hook to get PublisherProperties combining default options and options set in UserContext
@@ -17,11 +17,13 @@ import useConfigContext from '../../../hooks/useConfigContext';
 
 const usePublisherOptions = (): PublisherProperties | null => {
   const { user } = useUserContext();
-  const config = useConfigContext();
+
+  const defaultResolution = useAppConfig(({ videoSettings }) => videoSettings.defaultResolution);
+  const allowVideoOnJoin = useAppConfig(({ videoSettings }) => videoSettings.allowVideoOnJoin);
+  const allowAudioOnJoin = useAppConfig(({ audioSettings }) => audioSettings.allowAudioOnJoin);
+
   const [publisherOptions, setPublisherOptions] = useState<PublisherProperties | null>(null);
   const deviceStoreRef = useRef<DeviceStore | null>(null);
-  const { defaultResolution, allowVideoOnJoin } = config.videoSettings;
-  const { allowAudioOnJoin } = config.audioSettings;
 
   useEffect(() => {
     const setOptions = async () => {

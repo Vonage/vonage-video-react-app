@@ -19,7 +19,13 @@ describe('SelectableOption', () => {
 
   it('renders with image when image is provided', () => {
     render(
-      <SelectableOption isSelected={false} onClick={() => {}} id="img-option" image="/test.jpg" />
+      <SelectableOption
+        isSelected={false}
+        onClick={() => {}}
+        title="background"
+        id="img-option"
+        image="/test.jpg"
+      />
     );
     expect(screen.getByTestId('background-img-option')).toBeInTheDocument();
     expect(screen.getByAltText('background')).toHaveAttribute('src', '/test.jpg');
