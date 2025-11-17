@@ -81,8 +81,8 @@ const typeScale = {
       fontWeight: { value: 500, description: 'Medium weight for headline mobile' },
     },
     subtitle: {
-      fontSize: { value: pxToRem(18), description: 'Equivalent to 18px' },
-      lineHeight: { value: pxToRem(24), description: 'Equivalent to 24px' },
+      fontSize: { value: pxToRem(30), description: 'Equivalent to 30px' },
+      lineHeight: { value: pxToRem(38), description: 'Equivalent to 38px' },
       fontWeight: { value: 500, description: 'Medium weight for subtitle mobile' },
     },
     'heading-1': {
