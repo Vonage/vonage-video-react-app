@@ -3,6 +3,7 @@ import { registerIcon } from '@vonage/vivid';
 import Box from '@ui/Box';
 import App from './App.jsx';
 import './i18n.js';
+import designTokens from './designTokens/designTokens.js';
 
 // Register Vivid icons for use throughout the application
 registerIcon();
@@ -14,7 +15,14 @@ registerIcon();
 const rootElement = document.getElementById('root')!;
 
 ReactDOM.createRoot(rootElement).render(
-  <Box sx={(theme) => ({ backgroundColor: theme.palette.background.paper, position: 'relative' })}>
+  <Box
+    sx={{
+      backgroundColor: designTokens.color.light.background.value,
+      position: 'relative',
+      overflow: 'hidden',
+      height: '100dvh',
+    }}
+  >
     <App />
   </Box>
 );

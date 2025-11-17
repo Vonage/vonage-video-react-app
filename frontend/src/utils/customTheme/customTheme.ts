@@ -1,6 +1,7 @@
 import { createTheme, PaletteColor, PaletteColorOptions } from '@mui/material';
 import designTokens from '../../designTokens';
 
+// Extend theme options
 declare module '@mui/material/styles' {
   interface TypeText {
     tertiary: string;
@@ -18,38 +19,7 @@ declare module '@mui/material/styles' {
     hover?: PaletteColorOptions;
     disabled?: PaletteColorOptions;
   }
-
-  interface Shape {
-    borderRadius: number;
-    borderRadiusNone: number;
-    borderRadiusExtraSmall: number;
-    borderRadiusSmall: number;
-    borderRadiusMedium: number;
-    borderRadiusLarge: number;
-    borderRadiusExtraLarge: number;
-  }
-
-  interface ThemeOptions {
-    shape?: Partial<Shape>;
-  }
 }
-
-function borderRadiusToNumber(value: string): number {
-  const numericValue = parseFloat(value);
-
-  if (value.includes('rem')) {
-    // 1rem = 16px, MUI base spacing = 8px, so 1rem = 2 units
-    return (numericValue * 16) / 8;
-  }
-
-  if (value.includes('px')) {
-    // Convert px to MUI units (8px = 1 unit)
-    return numericValue / 8;
-  }
-
-  return numericValue;
-}
-
 const buttonHeight = 40; // 40px
 
 const buttonSx = {
@@ -115,21 +85,14 @@ const customTheme = createTheme({
       main: designTokens.color.light.disabled.value,
     },
   },
-  shape: {
-    borderRadius: borderRadiusToNumber(designTokens.shape.medium.value),
-    borderRadiusNone: borderRadiusToNumber(designTokens.shape.none.value),
-    borderRadiusExtraSmall: borderRadiusToNumber(designTokens.shape['extra-small'].value),
-    borderRadiusSmall: borderRadiusToNumber(designTokens.shape.small.value),
-    borderRadiusMedium: borderRadiusToNumber(designTokens.shape.medium.value),
-    borderRadiusLarge: borderRadiusToNumber(designTokens.shape.large.value),
-    borderRadiusExtraLarge: borderRadiusToNumber(designTokens.shape['extra-large'].value),
-  },
   components: {
     MuiButton: {
       styleOverrides: {
         root: {
           ...buttonSx,
-          fontSize: designTokens.typography.typeScale.desktop['body-extended'].fontSize.value,
+          fontSize: designTokens.typography.typeScale.desktop['body-base'].fontSize.value,
+          lineHeight: designTokens.typography.typeScale.desktop['body-base'].lineHeight.value,
+          fontWeight: designTokens.typography.weight['caption-semibold'].value,
         },
         outlined: {
           borderColor: designTokens.color.light.primary.value,
@@ -167,12 +130,20 @@ const customTheme = createTheme({
     MuiOutlinedInput: {
       styleOverrides: {
         root: {
-          backgroundColor: designTokens.color.light.background.value,
+          backgroundColor: designTokens.color.light.surface.value,
           borderRadius: designTokens.shape.medium.value,
           backgroundClip: 'padding-box',
           '&.Mui-error': {
             backgroundColor: designTokens.color.light['error-hover'].value,
           },
+        },
+      },
+    },
+    MuiInputLabel: {
+      styleOverrides: {
+        sizeSmall: {
+          fontSize: designTokens.typography.typeScale.desktop['body-base'].fontSize.value,
+          lineHeight: designTokens.typography.typeScale.desktop['body-base'].lineHeight.value,
         },
       },
     },

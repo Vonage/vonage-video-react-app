@@ -5,6 +5,7 @@ import MicNoneIcon from '@mui/icons-material/MicNone';
 import { MouseEvent as ReactMouseEvent, ReactElement, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import useAppConfig from '@Context/AppConfig/hooks/useAppConfig';
+import useCustomTheme from '@Context/Theme/CustomTheme';
 import useDevices from '../../../hooks/useDevices';
 import usePublisherContext from '../../../hooks/usePublisherContext';
 import { setStorageItem, STORAGE_KEYS } from '../../../utils/storage';
@@ -24,6 +25,7 @@ export type InputDevicesProps = {
  */
 const InputDevices = ({ handleToggle }: InputDevicesProps): ReactElement | false => {
   const { t } = useTranslation();
+  const theme = useCustomTheme();
   const { publisher } = usePublisherContext();
 
   const allowDeviceSelection = useAppConfig(
@@ -77,16 +79,16 @@ const InputDevices = ({ handleToggle }: InputDevicesProps): ReactElement | false
                 key={option}
                 selected={isSelected}
                 onClick={(event) => handleChangeAudioSource(event)}
-                sx={(theme) => ({
+                sx={{
                   backgroundColor: 'transparent',
                   '&.Mui-selected': {
                     backgroundColor: 'transparent',
-                    color: theme.palette.background.default,
+                    color: theme.colors.background,
                   },
                   '&:hover': {
-                    backgroundColor: theme.palette.hover?.main,
+                    backgroundColor: theme.colors.primaryHover,
                   },
-                })}
+                }}
               >
                 <Box
                   key={`${option}-input-device`}
@@ -98,11 +100,11 @@ const InputDevices = ({ handleToggle }: InputDevicesProps): ReactElement | false
                 >
                   {isSelected ? (
                     <CheckIcon
-                      sx={(theme) => ({
-                        color: theme.palette.background.default,
+                      sx={{
+                        color: theme.colors.background,
                         fontSize: 24,
                         mr: 2,
-                      })}
+                      }}
                     />
                   ) : (
                     <Box sx={{ width: 40 }} /> // Placeholder when CheckIcon is not displayed

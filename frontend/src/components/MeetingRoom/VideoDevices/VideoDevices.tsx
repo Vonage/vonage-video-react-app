@@ -5,6 +5,7 @@ import VideocamIcon from '@mui/icons-material/Videocam';
 import { Device } from '@vonage/client-sdk-video';
 import { useTranslation } from 'react-i18next';
 import useAppConfig from '@Context/AppConfig/hooks/useAppConfig';
+import useCustomTheme from '@Context/Theme/CustomTheme';
 import useDevices from '../../../hooks/useDevices';
 import usePublisherContext from '../../../hooks/usePublisherContext';
 import { setStorageItem, STORAGE_KEYS } from '../../../utils/storage';
@@ -24,6 +25,7 @@ export type VideoDevicesProps = {
  */
 const VideoDevices = ({ handleToggle }: VideoDevicesProps): ReactElement | false => {
   const { t } = useTranslation();
+  const theme = useCustomTheme();
   const { isPublishing, publisher } = usePublisherContext();
 
   const allowDeviceSelection = useAppConfig(
@@ -87,16 +89,16 @@ const VideoDevices = ({ handleToggle }: VideoDevicesProps): ReactElement | false
                 key={option.deviceId}
                 selected={isSelected}
                 onClick={(event) => handleChangeVideoSource(event)}
-                sx={(theme) => ({
+                sx={{
                   backgroundColor: 'transparent',
                   '&.Mui-selected': {
                     backgroundColor: 'transparent',
-                    color: theme.palette.background.default,
+                    color: theme.colors.background,
                   },
                   '&:hover': {
-                    backgroundColor: theme.palette.hover.main,
+                    backgroundColor: theme.colors.primaryHover,
                   },
-                })}
+                }}
               >
                 <Box
                   key={`${option.deviceId}-video-device`}
@@ -108,11 +110,11 @@ const VideoDevices = ({ handleToggle }: VideoDevicesProps): ReactElement | false
                 >
                   {isSelected ? (
                     <CheckIcon
-                      sx={(theme) => ({
-                        color: theme.palette.background.default,
+                      sx={{
+                        color: theme.colors.background,
                         fontSize: 24,
                         mr: 2,
-                      })}
+                      }}
                     />
                   ) : (
                     <Box sx={{ width: 40 }} /> // Placeholder when CheckIcon is not displayed

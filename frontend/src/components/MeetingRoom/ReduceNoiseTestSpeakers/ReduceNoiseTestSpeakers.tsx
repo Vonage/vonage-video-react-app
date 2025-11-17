@@ -8,6 +8,7 @@ import ToggleOffIcon from '@mui/icons-material/ToggleOff';
 import ToggleOnIcon from '@mui/icons-material/ToggleOn';
 import { useTranslation } from 'react-i18next';
 import useAppConfig from '@Context/AppConfig/hooks/useAppConfig';
+import useCustomTheme from '@Context/Theme/CustomTheme';
 import usePublisherContext from '@hooks/usePublisherContext';
 import { setStorageItem, STORAGE_KEYS } from '@utils/storage';
 import DropdownSeparator from '../DropdownSeparator';
@@ -22,6 +23,7 @@ import SoundTest from '../../SoundTest';
  */
 const ReduceNoiseTestSpeakers = (): ReactElement | false => {
   const { t } = useTranslation();
+  const theme = useCustomTheme();
   const { publisher, isPublishing } = usePublisherContext();
 
   const allowAdvancedNoiseSuppression = useAppConfig(
@@ -62,12 +64,12 @@ const ReduceNoiseTestSpeakers = (): ReactElement | false => {
         {shouldDisplayANS && (
           <MenuItem
             onClick={handleToggle}
-            sx={(theme) => ({
+            sx={{
               backgroundColor: 'transparent',
               '&:hover': {
-                backgroundColor: theme.palette.hover.main,
+                backgroundColor: theme.colors.primaryHover,
               },
-            })}
+            }}
           >
             <HeadsetIcon sx={{ fontSize: 24, mr: 2 }} />
             <Typography noWrap sx={{ mr: 2 }}>
@@ -85,10 +87,10 @@ const ReduceNoiseTestSpeakers = (): ReactElement | false => {
                 <ToggleOnIcon
                   data-testid="toggle-on-icon"
                   fontSize="large"
-                  sx={(theme) => ({
+                  sx={{
                     position: 'absolute',
-                    color: theme.palette.background.default,
-                  })}
+                    color: theme.colors.background,
+                  }}
                 />
               </Grow>
             </IconButton>

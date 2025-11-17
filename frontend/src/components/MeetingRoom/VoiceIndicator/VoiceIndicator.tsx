@@ -1,5 +1,6 @@
 import { Box, SxProps } from '@mui/material';
 import { ReactElement } from 'react';
+import useCustomTheme from '@Context/Theme/CustomTheme';
 
 export type VoiceIndicatorProps = {
   publisherAudioLevel: number;
@@ -34,13 +35,14 @@ const VoiceIndicatorIcon = ({
   sx,
   size,
 }: VoiceIndicatorProps): ReactElement => {
+  const theme = useCustomTheme();
   const barHeights = calculateBarHeights(publisherAudioLevel);
   const isAnimating = publisherAudioLevel >= 5;
 
   return (
     <Box sx={{ ...sx }} key={20} display="flex" flexDirection="column" gap={2} alignItems="center">
       <Box
-        sx={(theme) => ({
+        sx={{
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
@@ -48,22 +50,22 @@ const VoiceIndicatorIcon = ({
           height: size,
           width: size,
           borderRadius: '50%',
-          backgroundColor: theme.palette.primary.main,
-        })}
+          backgroundColor: theme.colors.primary,
+        }}
       >
         {barHeights.map((height, i) => (
           <Box
             // https://stackoverflow.com/questions/46735483/error-do-not-use-array-index-in-keys
             // eslint-disable-next-line react/no-array-index-key
             key={i} // NOSONAR
-            sx={(theme) => ({
+            sx={{
               display: 'flex',
               alignItems: 'center',
               height: height / 4,
               minHeight: '10%',
               width: '10%',
-              backgroundColor: theme.palette.background.default,
-            })}
+              backgroundColor: theme.colors.background,
+            }}
           >
             <Box
               sx={{

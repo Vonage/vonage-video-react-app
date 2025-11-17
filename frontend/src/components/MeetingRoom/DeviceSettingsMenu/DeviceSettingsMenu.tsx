@@ -6,6 +6,7 @@ import { ReactElement, RefObject, Dispatch, SetStateAction } from 'react';
 import { PopperChildrenProps } from '@mui/base';
 import { hasMediaProcessorSupport } from '@vonage/client-sdk-video';
 import useAppConfig from '@Context/AppConfig/hooks/useAppConfig';
+import useCustomTheme from '@Context/Theme/CustomTheme';
 import InputDevices from '../InputDevices';
 import OutputDevices from '../OutputDevices';
 import ReduceNoiseTestSpeakers from '../ReduceNoiseTestSpeakers';
@@ -54,6 +55,7 @@ const DeviceSettingsMenu = ({
   const allowBackgroundEffects = useAppConfig(
     ({ videoSettings }) => videoSettings.allowBackgroundEffects
   );
+  const theme = useCustomTheme();
 
   const isAudio = deviceType === 'audio';
   const shouldDisplayBackgroundEffects = hasMediaProcessorSupport() && allowBackgroundEffects;
@@ -108,21 +110,21 @@ const DeviceSettingsMenu = ({
           <div className="text-left font-normal">
             <ClickAwayListener onClickAway={handleClose}>
               <Paper
-                sx={(theme) => ({
-                  backgroundColor: theme.palette.secondary.main,
-                  color: theme.palette.primary.contrastText,
+                sx={(t) => ({
+                  backgroundColor: theme.colors.secondary,
+                  color: theme.colors.onPrimary,
                   padding: { xs: 1, sm: 2 },
                   borderRadius: 2,
                   zIndex: 1,
                   transform: isAudio
                     ? 'translateY(-2%) translateX(5%)'
                     : 'translateY(-5%) translateX(-15%)',
-                  [theme.breakpoints.down(741)]: {
+                  [t.breakpoints.down(741)]: {
                     transform: isAudio
                       ? 'translateY(-2%) translateX(-10%)'
                       : 'translateY(-5%) translateX(-40%)',
                   },
-                  [theme.breakpoints.down(450)]: {
+                  [t.breakpoints.down(450)]: {
                     transform: isAudio
                       ? 'translateY(-2%) translateX(-5%)'
                       : 'translateY(-5%) translateX(-5%)',

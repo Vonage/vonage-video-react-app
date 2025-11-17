@@ -1,6 +1,7 @@
 import { ReactElement } from 'react';
 import { Select, MenuItem, FormControl, SelectChangeEvent, Box } from '@mui/material';
 import { useTranslation } from 'react-i18next';
+import useCustomTheme from '@Context/Theme/CustomTheme';
 import useIsSmallViewport from '../../hooks/useIsSmallViewport';
 import VividIcon from '../VividIcon/VividIcon';
 import env, { type Lang } from '../../env';
@@ -35,6 +36,7 @@ const languageOptions: LanguageOption[] = [
  */
 const LanguageSelector = ({ showFlag = true, className }: LanguageSelectorProps): ReactElement => {
   const { i18n } = useTranslation();
+  const theme = useCustomTheme();
   const isSmallViewport = useIsSmallViewport();
 
   const supportedLanguages = languageOptions.filter((option) =>
@@ -57,6 +59,12 @@ const LanguageSelector = ({ showFlag = true, className }: LanguageSelectorProps)
         sx={{
           '& .MuiOutlinedInput-notchedOutline': {
             border: 'none',
+          },
+          '& .MuiSelect-select': {
+            backgroundColor: {
+              xs: theme.colors.surface,
+              md: theme.colors.background,
+            },
           },
         }}
         renderValue={(value) => {

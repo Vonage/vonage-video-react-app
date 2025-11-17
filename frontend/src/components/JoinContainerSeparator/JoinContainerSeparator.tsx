@@ -2,6 +2,7 @@ import { ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
 import Stack from '@ui/Stack';
 import Typography from '@ui/Typography';
+import useCustomTheme from '@Context/Theme/CustomTheme';
 import Separator from '../Separator';
 
 /**
@@ -12,15 +13,17 @@ import Separator from '../Separator';
  */
 const JoinContainerSeparator = (): ReactElement => {
   const { t } = useTranslation();
+  const theme = useCustomTheme();
+
   return (
     <Stack direction="row" alignItems="center" width="100%" sx={{ my: 4 }}>
       <Separator orientation="left" />
       <Typography
         variant="body2"
-        sx={(theme) => ({
-          color: theme.palette.tertiary?.main ?? theme.palette.text.secondary,
+        sx={{
+          color: theme.colors.textTertiary,
           mx: 2,
-        })}
+        }}
       >
         {t('common.or')}
       </Typography>

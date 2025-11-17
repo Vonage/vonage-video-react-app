@@ -3,6 +3,7 @@ import { EmojiEmotions } from '@mui/icons-material';
 import { Dispatch, ReactElement, SetStateAction, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import useAppConfig from '@Context/AppConfig/hooks/useAppConfig';
+import useCustomTheme from '@Context/Theme/CustomTheme';
 import ToolbarButton from '../ToolbarButton';
 import EmojiGrid from '../EmojiGrid/EmojiGrid';
 
@@ -31,8 +32,8 @@ const EmojiGridButton = ({
   isOverflowButton = false,
 }: EmojiGridProps): ReactElement | false => {
   const allowEmojis = useAppConfig(({ meetingRoomSettings }) => meetingRoomSettings.allowEmojis);
-
   const { t } = useTranslation();
+  const theme = useCustomTheme();
   const anchorRef = useRef<HTMLButtonElement>(null);
   const handleToggle = () => {
     setIsEmojiGridOpen((prevOpen) => !prevOpen);
@@ -46,9 +47,9 @@ const EmojiGridButton = ({
             onClick={handleToggle}
             icon={
               <EmojiEmotions
-                sx={(theme) => ({
-                  color: `${!isEmojiGridOpen ? 'white' : theme.palette.background.default}`,
-                })}
+                sx={{
+                  color: !isEmojiGridOpen ? 'white' : theme.colors.background,
+                }}
               />
             }
             ref={anchorRef}
