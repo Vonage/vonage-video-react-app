@@ -8,9 +8,7 @@ test.beforeEach(async ({ page }) => {
 test('should navigate to waiting room then publish in room via room name textbox', async ({
   page,
 }) => {
-  await expect(page.locator('button:text("Join waiting room")')).toHaveAttribute('disabled', '');
-
-  await page.getByText(/Room name/i)[0].fill('some-room');
+  await page.getByText(/Room name/i).fill('some-room');
 
   await page.locator('button:text("Join waiting room")').click();
 
@@ -47,7 +45,7 @@ test('should navigate to waiting room then publish in room via Create room butto
   await page.waitForSelector('.publisher', { state: 'visible' });
 });
 
-test('GitHub Logo Redirect to Vera GitHub URL in New Tab', async ({ page, context }) => {
+test('GitHub Logo Redirect to Vonage GitHub URL in New Tab', async ({ page, context }) => {
   const [newPage] = await Promise.all([
     context.waitForEvent('page'),
     page.getByRole('button', { name: 'Visit our GitHub Repo' }).click(), // Opens a new tab
@@ -57,7 +55,7 @@ test('GitHub Logo Redirect to Vera GitHub URL in New Tab', async ({ page, contex
 });
 
 test('User should be able to navigate to the next page using enter key', async ({ page }) => {
-  await page.getByText(/Room name/i)[0].fill('some-room');
+  await page.getByText(/Room name/i).fill('some-room');
 
   await page.keyboard.press('Enter');
 

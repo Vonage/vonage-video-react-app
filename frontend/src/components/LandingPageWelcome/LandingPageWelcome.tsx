@@ -1,4 +1,4 @@
-import { ReactElement, useMemo } from 'react';
+import { ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
 import Box from '@ui/Box';
 import Typography from '@ui/Typography';
@@ -11,9 +11,26 @@ import useCustomTheme from '@Context/Theme/CustomTheme';
  */
 const LandingPageWelcome = (): ReactElement => {
   const { t } = useTranslation();
-  const title = t('landing.welcome.title');
-  const words = useMemo(() => title.split(' '), [title]);
   const theme = useCustomTheme();
+  const primaryWord = t('landing.primary.word');
+
+  const renderTitle = (titleKey: string) => {
+    const text = t(titleKey);
+    const isPrimaryWord = text.toLowerCase().includes(primaryWord.toLowerCase());
+
+    return (
+      <Typography
+        key={titleKey}
+        variant="h1"
+        sx={{
+          color: isPrimaryWord ? theme.colors.textPrimary : theme.colors.textSecondary,
+          mr: { xs: 1, md: 0 },
+        }}
+      >
+        {text}
+      </Typography>
+    );
+  };
 
   return (
     <Box
@@ -35,18 +52,11 @@ const LandingPageWelcome = (): ReactElement => {
           width: 'fit-content',
         }}
       >
-        {words.map((word, index) => (
-          <Typography
-            key={word}
-            variant="h1"
-            sx={{
-              color: index === 1 ? theme.colors.textPrimary : theme.colors.textSecondary,
-              mr: { xs: 1, md: 0 },
-            }}
-          >
-            {word}
-          </Typography>
-        ))}
+        <>
+          {renderTitle('landing.welcome.title.1')}
+          {renderTitle('landing.welcome.title.2')}
+          {renderTitle('landing.welcome.title.3')}
+        </>
       </Box>
 
       <Typography

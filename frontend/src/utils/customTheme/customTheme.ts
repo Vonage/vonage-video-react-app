@@ -151,9 +151,6 @@ const customTheme = createTheme({
           backgroundColor: designTokens.color.light.surface.value,
           borderRadius: designTokens.shape.medium.value,
           backgroundClip: 'padding-box',
-          '&.Mui-error': {
-            backgroundColor: designTokens.color.light['error-hover'].value,
-          },
         },
       },
     },
@@ -169,9 +166,6 @@ const customTheme = createTheme({
       styleOverrides: {
         root: {
           color: designTokens.color.light['on-surface'].value,
-          '&.Mui-error': {
-            color: designTokens.color.light['on-surface'].value,
-          },
         },
       },
     },
