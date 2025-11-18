@@ -30,7 +30,6 @@ const CALCULATE_ACTIVE_SPEAKER_THROTTLE_TIME = 1500;
  * @class ActiveSpeakerTracker
  * @augments {EventEmitter}
  */
-// eslint-disable-next-line no-redeclare
 class ActiveSpeakerTracker extends EventEmitter {
   _subscriberAudioLevelsBySubscriberId: SubscriberAudioLevels = {};
   activeSpeaker: ActiveSpeakerInfo;

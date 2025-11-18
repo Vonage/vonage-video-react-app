@@ -2,11 +2,11 @@ import nx from '@nx/eslint-plugin';
 import baseConfig from '../eslint.config.mjs';
 
 export default [
-  // inherit everything from root
-  ...baseConfig,
-
   // add Nx React presets for this app
   ...nx.configs['flat/react'],
+
+  // inherit everything from root
+  ...baseConfig,
 
   {
     files: ['**/*.{ts,tsx,js,jsx}'],

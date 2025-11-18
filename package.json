@@ -28,7 +28,7 @@
     "test:backend": "nx test backend",
     "test:backend:watch": "nx test backend --watch",
     "test:frontend": " nx test frontend",
-    "test:frontend:": "nx test frontend -- --reporter=verbose --coverage=false --bail=1 --run --include",
+    "test:frontend:": "nx test frontend -- --reporter=verbose --no-coverage --bail=1 --run",
     "test:frontend:debug": "vitest --disableConsoleIntercept=true --silent=false --no-file-parallelism --inspect-brk --root frontend --config vite.config.ts --no-coverage",
     "test:frontend:watch": "nx test frontend --watch",
     "test:integration": "nx run integration-tests:test",

@@ -66,6 +66,7 @@ const DeviceSettingsMenu = ({
     handleToggle();
   };
 
+  // eslint-disable-next-line react-hooks/refs
   useDropdownResizeObserver({ setIsOpen, dropDownRefElement: anchorRef.current });
 
   const renderSettingsMenu = () => {
@@ -96,6 +97,7 @@ const DeviceSettingsMenu = ({
     <Popper
       data-testid={isAudio ? 'audio-settings-devices-dropdown' : 'video-settings-devices-dropdown'}
       open={isOpen}
+      // eslint-disable-next-line react-hooks/refs
       anchorEl={anchorRef.current}
       transition
       disablePortal

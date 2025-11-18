@@ -15,7 +15,7 @@ describe('useIsTabletViewport', () => {
   const originalMatchMedia = window.matchMedia;
 
   beforeEach(() => {
-    window.matchMedia = vi.fn().mockImplementation((query) => ({
+    window.matchMedia = vi.fn().mockImplementation((query: string) => ({
       matches: new RegExp(`\\(max-width:\\s*${TABLET_VIEWPORT + 1}px\\)`).test(query),
       media: query,
       ...matchMediaCommon,
@@ -33,7 +33,7 @@ describe('useIsTabletViewport', () => {
   });
 
   it('should return true when window width is less than or equal to 899px', () => {
-    window.matchMedia = vi.fn().mockImplementation((query) => ({
+    window.matchMedia = vi.fn().mockImplementation((query: string) => ({
       matches: new RegExp(`\\(max-width:\\s*${TABLET_VIEWPORT}px\\)`).test(query),
       media: query,
       ...matchMediaCommon,

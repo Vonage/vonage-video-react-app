@@ -65,6 +65,7 @@ const VideoTileCanvas = ({
   const subscribersInDisplayOrder = useSubscribersInDisplayOrder(subscribersOnScreen);
 
   // Get the layout Boxes which specify exact position, height, and width for all video tiles
+  // eslint-disable-next-line react-hooks/refs
   const layoutBoxes = getLayoutBoxes({
     activeSpeakerId,
     getLayout,

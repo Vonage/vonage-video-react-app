@@ -1,4 +1,3 @@
-/* eslint-disable react/button-has-type */
 import { describe, it, expect } from 'vitest';
 import { act, render, renderHook } from '@testing-library/react';
 import { ReactNode } from 'react';

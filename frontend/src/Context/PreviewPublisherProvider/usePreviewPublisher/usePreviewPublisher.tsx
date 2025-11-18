@@ -32,7 +32,7 @@ export type PreviewPublisherContextType = {
   destroyPublisher: () => void;
   toggleAudio: () => void;
   toggleVideo: () => void;
-  changeBackground: (backgroundSelected: string) => void;
+  changeBackground: (backgroundSelected: string) => Promise<void>;
   backgroundFilter: VideoFilter | undefined;
   localAudioSource: string | undefined;
   localVideoSource: string | undefined;
@@ -104,7 +104,7 @@ const usePreviewPublisher = (): PreviewPublisherContextType => {
    */
   const changeBackground = useCallback(
     (backgroundSelected: string) => {
-      applyBackgroundFilter({
+      return applyBackgroundFilter({
         publisher: publisherRef.current,
         backgroundSelected,
         setUser,
@@ -317,12 +317,14 @@ const usePreviewPublisher = (): PreviewPublisherContextType => {
     }
   };
 
+  // eslint-disable-next-line react-hooks/refs
   return {
     isAudioEnabled,
     initLocalPublisher,
     isPublishing,
     isVideoEnabled,
     destroyPublisher,
+    // eslint-disable-next-line react-hooks/refs
     publisher: publisherRef.current,
     publisherVideoElement,
     toggleAudio,

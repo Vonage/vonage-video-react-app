@@ -65,6 +65,7 @@ const CaptionsButton = ({
       setIsUserCaptionsEnabled(true);
     } catch (error) {
       if (error instanceof AxiosError) {
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
         handleCaptionsErrorResponse(error.response?.data.message);
       }
     }
@@ -77,6 +78,7 @@ const CaptionsButton = ({
       setIsUserCaptionsEnabled(false);
     } catch (error) {
       if (error instanceof AxiosError) {
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
         handleCaptionsErrorResponse(error.response?.data.message);
       }
     }

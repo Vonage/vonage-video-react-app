@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unsafe-argument */
 import {
   act,
   fireEvent,
@@ -70,6 +71,7 @@ describe('DeviceSettingsMenu Component', () => {
   beforeEach(() => {
     vi.resetAllMocks();
     mockGetDevices.mockImplementation((cb) =>
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-return
       cb(null, [...audioInputDevices, ...videoInputDevices])
     );
     mockGetActiveAudioOutputDevice.mockResolvedValue(audioOutputDevices[0]);
@@ -132,6 +134,8 @@ describe('DeviceSettingsMenu Component', () => {
       );
       expect(outputDevicesElement.children[2]).toHaveTextContent('MacBook Pro Speakers (Built-in)');
 
+      // test will fail without the await act
+      // eslint-disable-next-line @typescript-eslint/require-await
       await act(async () => {
         fireEvent.click(outputDevicesElement.children[2]);
       });
@@ -166,12 +170,12 @@ describe('DeviceSettingsMenu Component', () => {
         (outputDevicesElement.firstChild as HTMLOptionElement).classList.contains('Mui-selected')
       ).toBe(true);
 
-      await act(async () => {
+      act(() => {
         fireEvent.click(outputDevicesElement.firstChild as HTMLOptionElement);
       });
 
       expect(mockSetAudioOutputDevice).not.toHaveBeenCalled();
-      await expect(
+      expect(
         (outputDevicesElement.firstChild as HTMLOptionElement).classList.contains('Mui-selected')
       ).toBe(true);
     });
@@ -257,12 +261,14 @@ describe('DeviceSettingsMenu Component', () => {
       expect(outputDevicesElement.children[2]).toHaveTextContent('MacBook Pro Speakers (Built-in)');
 
       // select device 2
+      // test will fail without the await act
+      // eslint-disable-next-line @typescript-eslint/require-await
       await act(async () => {
         fireEvent.click(outputDevicesElement.children[1] as HTMLOptionElement);
       });
 
       expect(mockSetAudioOutputDevice).toHaveBeenCalledWith(audioOutputDevices[1].deviceId);
-      await expect(
+      expect(
         (outputDevicesElement.children[1] as HTMLOptionElement).classList.contains('Mui-selected')
       ).toBe(true);
 
@@ -276,9 +282,7 @@ describe('DeviceSettingsMenu Component', () => {
       expect((outputDevicesElement.firstChild as Element).classList.contains('Mui-selected')).toBe(
         true
       );
-      expect((outputDevicesElement.children[1] as Element).classList.contains('Mui-selected')).toBe(
-        false
-      );
+      expect(outputDevicesElement.children[1].classList.contains('Mui-selected')).toBe(false);
       expect(outputDevicesElement.children[1]).toHaveTextContent('MacBook Pro Speakers (Built-in)');
       const removedDevice = queryByText(outputDevicesElement, 'Soundcore Life A2 NC (Bluetooth)');
       expect(removedDevice).not.toBeInTheDocument();

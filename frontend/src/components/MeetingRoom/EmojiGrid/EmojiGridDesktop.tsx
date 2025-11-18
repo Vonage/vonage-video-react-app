@@ -40,6 +40,7 @@ const EmojiGridDesktop = ({
     isRendered && (
       <Popper
         open={isEmojiGridOpen}
+        // eslint-disable-next-line react-hooks/refs
         anchorEl={anchorRef.current}
         transition
         disablePortal

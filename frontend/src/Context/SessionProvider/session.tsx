@@ -367,8 +367,8 @@ const SessionProvider = ({ children }: SessionProviderProps): ReactElement => {
    * @param {string} roomName - The name of the room to join.
    */
   const joinRoom = useCallback(
-    async (roomName: string) => {
-      fetchCredentials(roomName)
+    (roomName: string) => {
+      return fetchCredentials(roomName)
         .then((credentials) => {
           return connect(credentials.data);
         })
@@ -395,7 +395,7 @@ const SessionProvider = ({ children }: SessionProviderProps): ReactElement => {
    */
   const forceMute = useCallback(async (stream: Stream) => {
     if (vonageVideoClient.current) {
-      vonageVideoClient.current.forceMuteStream(stream);
+      await vonageVideoClient.current.forceMuteStream(stream);
     }
   }, []);
 

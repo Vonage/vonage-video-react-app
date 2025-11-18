@@ -23,7 +23,7 @@ export type BackgroundPublisherContextType = {
   publisherVideoElement: HTMLVideoElement | HTMLObjectElement | undefined;
   destroyBackgroundPublisher: () => void;
   toggleVideo: () => void;
-  changeBackground: (backgroundSelected: string) => void;
+  changeBackground: (backgroundSelected: string) => Promise<void>;
   backgroundFilter: VideoFilter | undefined;
   localVideoSource: string | undefined;
   accessStatus: string | null;
@@ -87,7 +87,7 @@ const useBackgroundPublisher = (): BackgroundPublisherContextType => {
    */
   const changeBackground = useCallback(
     (backgroundSelected: string) => {
-      applyBackgroundFilter({
+      return applyBackgroundFilter({
         publisher: backgroundPublisherRef.current,
         backgroundSelected,
         setUser: undefined,
@@ -222,11 +222,13 @@ const useBackgroundPublisher = (): BackgroundPublisherContextType => {
     setIsVideoEnabled(!isVideoEnabled);
   };
 
+  // eslint-disable-next-line react-hooks/refs
   return {
     initBackgroundLocalPublisher,
     isPublishing,
     isVideoEnabled,
     destroyBackgroundPublisher,
+    // eslint-disable-next-line react-hooks/refs
     publisher: backgroundPublisherRef.current,
     publisherVideoElement,
     toggleVideo,
