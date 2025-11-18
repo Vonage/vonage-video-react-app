@@ -8,7 +8,7 @@ test.beforeEach(async ({ page }) => {
 test('should navigate to waiting room then publish in room via room name textbox', async ({
   page,
 }) => {
-  await page.getByText(/Room name/i).fill('some-room');
+  await page.getByRole('textbox', { name: /Room name/i }).fill('some-room');
 
   await page.locator('button:text("Join waiting room")').click();
 
@@ -55,7 +55,7 @@ test('GitHub Logo Redirect to Vonage GitHub URL in New Tab', async ({ page, cont
 });
 
 test('User should be able to navigate to the next page using enter key', async ({ page }) => {
-  await page.getByText(/Room name/i).fill('some-room');
+  await page.getByRole('textbox', { name: /Room name/i }).fill('some-room');
 
   await page.keyboard.press('Enter');
 
