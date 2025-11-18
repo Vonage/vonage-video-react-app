@@ -69,7 +69,7 @@ const LanguageSelector = ({ showFlag = true }: LanguageSelectorProps): ReactElem
           return (
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
               {showFlag && <VividIcon name={selectedOption.flag} customSize={-2} />}
-              {!isSmallViewport && selectedOption.name}
+              {!isSmallViewport && <span>{selectedOption.name}</span>}
             </Box>
           );
         }}
