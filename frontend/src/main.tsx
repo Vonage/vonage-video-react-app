@@ -17,7 +17,10 @@ const rootElement = document.getElementById('root')!;
 ReactDOM.createRoot(rootElement).render(
   <Box
     sx={{
-      backgroundColor: designTokens.color.light.background.value,
+      backgroundColor: {
+        xs: designTokens.color.light.surface.value,
+        md: designTokens.color.light.background.value,
+      },
       position: 'relative',
       overflow: 'hidden',
       height: '100dvh',

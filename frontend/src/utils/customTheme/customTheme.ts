@@ -175,6 +175,16 @@ const customTheme = createTheme({
         },
       },
     },
+    MuiList: {
+      styleOverrides: {
+        root: {
+          backgroundColor: designTokens.color.light['on-secondary'].value,
+          color: designTokens.color.light['text-secondary'].value,
+          fontSize: designTokens.typography.typeScale.desktop['body-base'].fontSize.value,
+          lineHeight: designTokens.typography.typeScale.desktop['body-base'].lineHeight.value,
+        },
+      },
+    },
     MuiTypography: {
       styleOverrides: {
         h1: createResponsiveTypography('headline', 'headline'),

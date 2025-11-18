@@ -68,7 +68,7 @@ const LanguageSelector = ({ showFlag = true }: LanguageSelectorProps): ReactElem
 
           return (
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-              {showFlag && <VividIcon name={selectedOption.flag} customSize={-3} />}
+              {showFlag && <VividIcon name={selectedOption.flag} customSize={-2} />}
               {!isSmallViewport && selectedOption.name}
             </Box>
           );
@@ -82,7 +82,7 @@ const LanguageSelector = ({ showFlag = true }: LanguageSelectorProps): ReactElem
             data-testid={`language-option-${option.code}`}
           >
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-              {showFlag && <VividIcon name={option.flag} customSize={-5} />}
+              {showFlag && <VividIcon name={option.flag} customSize={-2} />}
               {option.name}
             </Box>
           </MenuItem>

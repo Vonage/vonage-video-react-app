@@ -2,6 +2,7 @@ import { ReactElement } from 'react';
 import Stack from '@ui/Stack';
 import Typography from '@ui/Typography';
 import { useTranslation } from 'react-i18next';
+import useCustomTheme from '@Context/Theme/CustomTheme';
 import GHRepoButton from '../GHRepoButton';
 
 /**
@@ -12,16 +13,17 @@ import GHRepoButton from '../GHRepoButton';
  */
 const FooterLinks = (): ReactElement => {
   const { t } = useTranslation();
+  const theme = useCustomTheme();
 
   return (
     <Stack direction="row" alignItems="center" data-testid="footer-links" sx={{ py: 1 }}>
       <GHRepoButton />
       <Typography
         variant="body2"
-        sx={(theme) => ({
-          color: theme.palette.text.tertiary,
+        sx={{
+          color: theme.colors.textTertiary,
           display: { xs: 'none', md: 'block' },
-        })}
+        }}
         ml={1}
       >
         {t('footer.github.title')}
