@@ -23,8 +23,8 @@ const FooterLinks = (): ReactElement => {
         sx={{
           color: theme.colors.textTertiary,
           display: { xs: 'none', md: 'block' },
+          ml: 1,
         }}
-        ml={1}
       >
         {t('footer.github.title')}
       </Typography>
