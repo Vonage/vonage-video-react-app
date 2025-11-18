@@ -48,7 +48,7 @@ test('should navigate to waiting room then publish in room via Create room butto
 test('GitHub Logo Redirect to Vonage GitHub URL in New Tab', async ({ page, context }) => {
   const [newPage] = await Promise.all([
     context.waitForEvent('page'),
-    page.getByRole('button', { name: 'Visit our GitHub Repo' }).click(), // Opens a new tab
+    page.getByRole('link', { name: 'Visit our GitHub Repo' }).click(), // Opens a new tab
   ]);
   await newPage.waitForLoadState();
   await expect(newPage).toHaveURL('https://github.com/Vonage/vonage-video-react-app/');
