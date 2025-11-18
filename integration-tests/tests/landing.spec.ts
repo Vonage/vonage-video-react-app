@@ -5,14 +5,14 @@ test.beforeEach(async ({ page }) => {
   await page.goto(baseURL);
 });
 
-test('should navigate to waiting room then publish in room via Enter room name textbox', async ({
+test('should navigate to waiting room then publish in room via room name textbox', async ({
   page,
 }) => {
-  await expect(page.locator('button:text("Join")')).toHaveAttribute('disabled', '');
+  await expect(page.locator('button:text("Join waiting room")')).toHaveAttribute('disabled', '');
 
-  await page.getByPlaceholder('Enter room name').fill('some-room');
+  await page.getByText(/Room name/i)[0].fill('some-room');
 
-  await page.locator('button:text("Join")').click();
+  await page.locator('button:text("Join waiting room")').click();
 
   await expect(page).toHaveURL(`${baseURL}waiting-room/some-room`);
 
@@ -30,7 +30,7 @@ test('should navigate to waiting room then publish in room via Enter room name t
 test('should navigate to waiting room then publish in room via Create room button', async ({
   page,
 }) => {
-  await page.getByRole('button', { name: 'Create room' }).click();
+  await page.getByRole('button', { name: 'Create a new room' }).click();
 
   await expect(page.url()).toContain('waiting-room/');
 
@@ -57,7 +57,7 @@ test('GitHub Logo Redirect to Vera GitHub URL in New Tab', async ({ page, contex
 });
 
 test('User should be able to navigate to the next page using enter key', async ({ page }) => {
-  await page.getByPlaceholder('Enter room name').fill('some-room');
+  await page.getByText(/Room name/i)[0].fill('some-room');
 
   await page.keyboard.press('Enter');
 
