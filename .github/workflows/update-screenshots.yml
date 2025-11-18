@@ -125,22 +125,17 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
 
-          # Get changed files (you can filter to screenshots if you want)
-          FILES_CHANGED=$(git status --porcelain | awk '$2 ~ /^screenshots\// {print $2}')
+          # Get changed snapshot PNGs under integration-tests/...-snapshots/
+          FILES_CHANGED=$(git status --porcelain | awk '$2 ~ /^integration-tests\/tests\/visualComparisons\.spec\.ts-snapshots\/.*\.png$/ {print $2}')
 
           if [ -z "$FILES_CHANGED" ]; then
-            echo "No files changed, nothing to commit."
+            echo "No snapshot files changed, nothing to commit."
             exit 0
           fi
 
           echo "Files to commit:"
           echo "$FILES_CHANGED"
 
-          # Stage them all
           git add $FILES_CHANGED
-
-          # Create a single commit
-          git commit -m "Update screenshots"
-
-          # Push back to the branch
+          git commit -m "Update visual comparison screenshots"
           git push origin HEAD:$BRANCH_NAME
