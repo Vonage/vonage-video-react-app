@@ -40,7 +40,6 @@ test('should render `Return to landing page` and it should navigate to the landi
   await expect(landingPageButton).toBeVisible();
 
   await landingPageButton.click();
-  await expect(
-    page.getByText('Power your business with video that transforms customer satisfaction.')
-  ).toBeVisible();
+  await expect(page).toHaveURL(baseURL);
+  await expect(page.getByRole('button', { name: 'Create a new room' })).toBeVisible();
 });

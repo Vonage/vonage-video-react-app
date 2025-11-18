@@ -119,15 +119,23 @@ jobs:
       - name: Auto-commit updated screenshots
         if: always() && steps.check-update-screenshots.outputs.result == 'true'
         run: |
-          echo "Committing screenshots to "$BRANCH_NAME""
-          FILES_CHANGED=$(git status --porcelain | awk '{print $2}')
-          for file in $FILES_CHANGED; do
-            CONTENT=$(base64 -w 0 "$file")
-            SHA=$(curl -s -H "Authorization: token $GITHUB_TOKEN" "https://api.github.com/repos/$REPO_NAME/contents/$file?ref=$BRANCH_NAME" | jq -r .sha)
-            if [ "$SHA" == "null" ]; then
-              SHA=""
-            fi
-            curl -s -X PUT -H "Authorization: token $GITHUB_TOKEN" \
-              -d "{\"message\":\"Commit screenshot file: $file\", \"content\":\"$CONTENT\", \"branch\":\"$BRANCH_NAME\", \"sha\":\"$SHA\"}" \
-              "https://api.github.com/repos/$REPO_NAME/contents/$file"
-          done
+          echo "Committing screenshots to $BRANCH_NAME"
+
+          # Configure git user for the commit
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          # Get changed snapshot PNGs under integration-tests/...-snapshots/
+          FILES_CHANGED=$(git status --porcelain | awk '$2 ~ /^integration-tests\/tests\/visualComparisons\.spec\.ts-snapshots\/.*\.png$/ {print $2}')
+
+          if [ -z "$FILES_CHANGED" ]; then
+            echo "No snapshot files changed, nothing to commit."
+            exit 0
+          fi
+
+          echo "Files to commit:"
+          echo "$FILES_CHANGED"
+
+          git add $FILES_CHANGED
+          git commit -m "Update visual comparison screenshots"
+          git push origin HEAD:$BRANCH_NAME
