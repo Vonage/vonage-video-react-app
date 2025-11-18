@@ -15,7 +15,7 @@ const GHRepoButton = (): ReactElement => {
   return (
     <Link href="https://github.com/Vonage/vonage-video-react-app/" target="_blank">
       <Tooltip title={t('githubTooltip')}>
-        <IconButton color="default">
+        <IconButton color="default" aria-label={t('githubTooltip')}>
           <GitHubIcon />
         </IconButton>
       </Tooltip>
