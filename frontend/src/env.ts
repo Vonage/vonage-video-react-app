@@ -24,7 +24,7 @@ export class Env {
 
   constructor(env: Partial<EnvArg>) {
     this.VITE_ENABLE_REPORT_ISSUE = Boolean(env.VITE_ENABLE_REPORT_ISSUE ?? false);
-    this.VITE_I18N_FALLBACK_LANGUAGE = env.VITE_I18N_FALLBACK_LANGUAGE ?? 'en';
+    this.VITE_I18N_FALLBACK_LANGUAGE = env.VITE_I18N_FALLBACK_LANGUAGE || 'en';
 
     this.setSupportedLanguages(env.VITE_I18N_SUPPORTED_LANGUAGES);
 
