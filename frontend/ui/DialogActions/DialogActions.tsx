@@ -5,7 +5,7 @@ import {
 
 type DialogActionsProps = MUIDialogActionsProps;
 
-const DialogActions = ({ ...dialogActionsProps }: DialogActionsProps) => {
+const DialogActions = (dialogActionsProps: DialogActionsProps) => {
   return <MUIDialogActions {...dialogActionsProps} />;
 };
 

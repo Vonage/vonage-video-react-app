@@ -5,7 +5,7 @@ import {
 
 type DialogTitleProps = MUIDialogTitleProps;
 
-const DialogTitle = ({ ...dialogTitleProps }: DialogTitleProps) => {
+const DialogTitle = (dialogTitleProps: DialogTitleProps) => {
   return <MUIDialogTitle {...dialogTitleProps} />;
 };
 

@@ -5,7 +5,7 @@ import {
 
 type DialogContentProps = MUIDialogContentProps;
 
-const DialogContent = ({ ...dialogContentProps }: DialogContentProps) => {
+const DialogContent = (dialogContentProps: DialogContentProps) => {
   return <MUIDialogContent {...dialogContentProps} />;
 };
 
