@@ -116,33 +116,31 @@ jobs:
           Xvfb :99 & export DISPLAY=:99
           yarn test:integrationUpdateScreenshots
 
-
-
       - name: Auto-commit updated screenshots
         if: always() && steps.check-update-screenshots.outputs.result == 'true'
         run: |
           echo "Committing screenshots to $BRANCH_NAME"
-      
+
           # Configure git user for the commit
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-      
+
           # Get changed files (you can filter to screenshots if you want)
           FILES_CHANGED=$(git status --porcelain | awk '$2 ~ /^screenshots\// {print $2}')
-      
+
           if [ -z "$FILES_CHANGED" ]; then
             echo "No files changed, nothing to commit."
             exit 0
           fi
-      
+
           echo "Files to commit:"
           echo "$FILES_CHANGED"
-      
+
           # Stage them all
           git add $FILES_CHANGED
-      
+
           # Create a single commit
           git commit -m "Update screenshots"
-      
+
           # Push back to the branch
           git push origin HEAD:$BRANCH_NAME
