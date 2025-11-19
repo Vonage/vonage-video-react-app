@@ -2,7 +2,7 @@ import { Typography, MenuList, MenuItem } from '@mui/material';
 import { ReactElement } from 'react';
 import PortraitIcon from '@mui/icons-material/Portrait';
 import { useTranslation } from 'react-i18next';
-import useCustomTheme from '@Context/Theme/CustomTheme';
+import useCustomTheme from '@Context/Theme';
 
 export type VideoDevicesOptionsProps = {
   toggleBackgroundEffects: () => void;

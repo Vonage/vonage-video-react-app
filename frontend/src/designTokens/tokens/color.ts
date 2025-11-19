@@ -30,6 +30,7 @@ const colorVariables = {
     300: '#B3B3B3',
     400: '#929292',
     500: '#757575',
+    900: '#272626ff',
   },
   alert: {
     500: '#E61D1D',
@@ -193,7 +194,7 @@ const darkColors = {
     description: 'Main brand color used for primary actions and highlights.',
   },
   'text-primary': {
-    value: colorVariables.cta[500],
+    value: colorVariables.canvas,
     type: 'color',
     description: 'Primary text color used for main content and headings.',
   },
@@ -209,17 +210,17 @@ const darkColors = {
   },
 
   secondary: {
-    value: colorVariables.canvas,
+    value: colorVariables.accent[500],
     type: 'color',
     description: 'Secondary brand color and accent.',
   },
   'text-secondary': {
-    value: colorVariables.canvas,
+    value: colorVariables.accent[300],
     type: 'color',
-    description: 'Secondary text color used for subheadings and less prominent content.',
+    description: 'Secondary text for subheadings, improved readability.',
   },
   'on-secondary': {
-    value: colorVariables['canvas-text'],
+    value: colorVariables.canvas,
     type: 'color',
     description: 'Foreground color used on secondary surfaces.',
   },
@@ -235,24 +236,24 @@ const darkColors = {
     description: 'Tertiary text color used for less prominent content.',
   },
   'on-tertiary': {
-    value: colorVariables['canvas-text'],
+    value: colorVariables.canvas,
     type: 'color',
     description: 'Foreground color used on tertiary surfaces.',
   },
 
   background: {
-    value: colorVariables['canvas-text'],
+    value: colorVariables.accent[600],
     type: 'color',
     description: 'Default background color for the interface.',
   },
   'on-background': {
-    value: colorVariables.canvas,
+    value: colorVariables.accent[300],
     type: 'color',
     description: 'Text or icon color used on background surfaces.',
   },
 
   surface: {
-    value: colorVariables.accent[600],
+    value: colorVariables.neutral[900],
     type: 'color',
     description: 'Default surface color for cards and containers.',
   },
@@ -321,7 +322,7 @@ const darkColors = {
     description: 'Color used for disabled backgrounds.',
   },
   'text-disabled': {
-    value: colorVariables.accent[400],
+    value: colorVariables.accent[500],
     type: 'color',
     description: 'Text color used for disabled elements.',
   },

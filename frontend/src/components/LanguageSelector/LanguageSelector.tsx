@@ -5,7 +5,7 @@ import MenuItem from '@ui/MenuItem';
 import FormControl from '@ui/FormControl';
 import Select from '@ui/Select';
 import { SelectChangeEvent } from '@ui/SelectChangeEvent';
-import useCustomTheme from '@Context/Theme/CustomTheme';
+import useCustomTheme from '@Context/Theme';
 import { LanguageOption, LanguageSelectorProps } from './LanguageSelector.types';
 import useIsSmallViewport from '../../hooks/useIsSmallViewport';
 import VividIcon from '../VividIcon/VividIcon';

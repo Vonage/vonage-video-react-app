@@ -12,7 +12,7 @@ import useIsCameraControlAllowed from '@Context/AppConfig/hooks/useIsCameraContr
 import usePublisherContext from '@hooks/usePublisherContext';
 import useBackgroundPublisherContext from '@hooks/useBackgroundPublisherContext';
 import getControlButtonTooltip from '@utils/getControlButtonTooltip';
-import useCustomTheme from '@Context/Theme/CustomTheme';
+import useCustomTheme from '@Context/Theme';
 import DeviceSettingsMenu from '../DeviceSettingsMenu';
 import MutedAlert from '../../MutedAlert';
 
