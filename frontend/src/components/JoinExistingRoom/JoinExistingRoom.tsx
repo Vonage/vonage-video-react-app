@@ -14,13 +14,7 @@ const JoinExistingRoom = (): ReactElement => {
   const [hasError, setHasError] = useState(false);
 
   return (
-    <Stack
-      direction="column"
-      component="form"
-      data-testid="JoinExistingRoom"
-      spacing={3}
-      sx={{ mb: 6, width: '100%' }}
-    >
+    <Stack direction="column" data-testid="JoinExistingRoom" spacing={3} sx={{ width: '100%' }}>
       <RoomNameInput
         setRoomName={setRoomName}
         roomName={roomName}

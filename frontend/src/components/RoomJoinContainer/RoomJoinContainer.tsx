@@ -27,6 +27,7 @@ const RoomJoinContainer = (): ReactElement => {
 
   return (
     <Box
+      component="form"
       sx={{
         maxWidth: { xs: '100%', md: '500px' },
         flex: 1,
@@ -34,7 +35,7 @@ const RoomJoinContainer = (): ReactElement => {
         flexDirection: 'column',
         alignItems: 'start',
         bgcolor: 'background.paper',
-        padding: { xs: '0px 0px 0px 0px', md: '40px 40px 0px 40px' },
+        padding: { xs: '0px 0px 0px 0px', md: '40px' },
         borderRadius: theme.shapes.borderRadiusMedium,
       }}
     >
