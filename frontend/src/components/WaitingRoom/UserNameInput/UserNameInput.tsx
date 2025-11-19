@@ -5,7 +5,8 @@ import TextField from '@ui/TextField';
 import Button from '@ui/Button';
 import Box from '@ui/Box';
 import Typography from '@ui/Typography';
-import useCustomTheme from '@Context/Theme/CustomTheme';
+import Card from '@ui/Card';
+import useCustomTheme from '@Context/Theme';
 import useUserContext from '../../../hooks/useUserContext';
 import { UserType } from '../../../Context/user';
 import useRoomName from '../../../hooks/useRoomName';
@@ -79,20 +80,8 @@ const UsernameInput = ({ username, setUsername }: UserNameInputProps): ReactElem
   };
 
   return (
-    <Box
-      component="form"
-      sx={{
-        maxWidth: { xs: '100%', md: '500px' },
-        flex: 1,
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'start',
-        bgcolor: 'background.paper',
-        padding: { xs: '0px 0px 0px 0px', md: '40px' },
-        borderRadius: theme.shapes.borderRadiusMedium,
-      }}
-    >
-      <Typography>{t('waitingRoom.user.input.title')}</Typography>
+    <Card component="form">
+      <Typography sx={{ mb: 2, typography: 'h6' }}>{t('waitingRoom.user.input.title')}</Typography>
       <Box
         sx={{
           width: '100%',
@@ -101,6 +90,7 @@ const UsernameInput = ({ username, setUsername }: UserNameInputProps): ReactElem
         }}
       >
         <TextField
+          fullWidth
           size="small"
           label={t('waitingRoom.user.input.label')}
           onChange={onChangeParticipantName}
@@ -108,6 +98,7 @@ const UsernameInput = ({ username, setUsername }: UserNameInputProps): ReactElem
           id="user-name"
           name="Name"
           error={isUserNameInvalid}
+          helperText={isUserNameInvalid ? t('waitingRoom.user.input.error') : ''}
           autoComplete="Name"
           autoFocus
           value={username}
@@ -115,24 +106,17 @@ const UsernameInput = ({ username, setUsername }: UserNameInputProps): ReactElem
         />
       </Box>
 
-      <Typography sx={{ mb: 2 }}>{t('waitingRoom.title')}</Typography>
+      <Typography sx={{ mb: 2, typography: 'h6' }}>{t('waitingRoom.title')}</Typography>
 
       <Box>
-        <Typography sx={{ mb: 2 }} noWrap>
+        <Typography sx={{ mb: 2, typography: 'h6', color: theme.colors.textTertiary }} noWrap>
           {roomName}
         </Typography>
       </Box>
-      <Button
-        onClick={handleJoinClick}
-        variant="contained"
-        color="primary"
-        disabled={!username}
-        type="submit"
-        fullWidth
-      >
+      <Button onClick={handleJoinClick} variant="contained" color="primary" type="submit" fullWidth>
         {t('button.join')}
       </Button>
-    </Box>
+    </Card>
   );
 };
 
