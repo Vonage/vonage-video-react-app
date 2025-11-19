@@ -1,7 +1,8 @@
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import './css/App.css';
 import './css/index.css';
-import { CssBaseline, ThemeProvider } from '@mui/material';
+import { CssBaseline } from '@mui/material';
+import { CustomThemeProvider } from '@Context/Theme/themeContext';
 import Room from './pages/MeetingRoom/index';
 import GoodBye from './pages/GoodBye/index';
 import WaitingRoom from './pages/WaitingRoom';
@@ -12,11 +13,10 @@ import { PublisherProvider } from './Context/PublisherProvider';
 import RedirectToWaitingRoom from './components/RedirectToWaitingRoom';
 import UnsupportedBrowserPage from './pages/UnsupportedBrowserPage';
 import RoomContext from './Context/RoomContext';
-import customTheme from './utils/customTheme/customTheme';
 
 const App = () => {
   return (
-    <ThemeProvider theme={customTheme}>
+    <CustomThemeProvider>
       <CssBaseline />
       <Router>
         <Routes>
@@ -47,7 +47,7 @@ const App = () => {
           <Route path="/unsupported-browser" element={<UnsupportedBrowserPage />} />
         </Routes>
       </Router>
-    </ThemeProvider>
+    </CustomThemeProvider>
   );
 };
 
