@@ -3,7 +3,7 @@ import { ReactElement } from 'react';
 import Box from '@ui/Box';
 import Typography from '@ui/Typography';
 import { useTranslation } from 'react-i18next';
-import useCustomTheme from '@Context/Theme/CustomTheme';
+import useCustomTheme from '@Context/Theme';
 import generateRoomName from '../../utils/generateRoomName';
 import NewRoomButton from '../NewRoomButton';
 import JoinContainerSeparator from '../JoinContainerSeparator';

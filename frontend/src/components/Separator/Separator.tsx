@@ -1,6 +1,6 @@
 import Box from '@ui/Box';
 import { ReactElement } from 'react';
-import useCustomTheme from '@Context/Theme/CustomTheme';
+import useCustomTheme from '@Context/Theme';
 
 export type SeparatorProps = {
   orientation?: 'left' | 'right';

@@ -2,7 +2,7 @@ import { Dispatch, ReactElement, useState, SetStateAction } from 'react';
 import { Tooltip } from '@mui/material';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import { useTranslation } from 'react-i18next';
-import useCustomTheme from '@Context/Theme/CustomTheme';
+import useCustomTheme from '@Context/Theme';
 import ToolbarButton from '../ToolbarButton';
 import ToolbarOverflowMenu from '../ToolbarOverflowMenu';
 import UnreadMessagesBadge from '../UnreadMessagesBadge';

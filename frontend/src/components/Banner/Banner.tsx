@@ -1,7 +1,7 @@
 import { ReactElement } from 'react';
 import Box from '@ui/Box';
 import Stack from '@ui/Stack';
-import useCustomTheme from '@Context/Theme/CustomTheme';
+import useCustomTheme from '@Context/Theme';
 import Header from '@ui/Header';
 import BannerLogo from '../BannerLogo';
 import BannerLanguage from '../BannerLanguage';
