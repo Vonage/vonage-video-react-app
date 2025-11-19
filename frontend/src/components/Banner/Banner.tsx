@@ -2,7 +2,7 @@ import { ReactElement } from 'react';
 import { AppBar, Toolbar } from '@mui/material';
 import Box from '@ui/Box';
 import Stack from '@ui/Stack';
-import useCustomTheme from '@Context/Theme/CustomTheme';
+import useCustomTheme from '@Context/Theme';
 import BannerDateTime from '../BannerDateTime';
 import BannerLinks from '../BannerLinks';
 import BannerLogo from '../BannerLogo';

@@ -1,7 +1,7 @@
 import { ReactElement } from 'react';
 import { Select, MenuItem, FormControl, SelectChangeEvent, Box } from '@mui/material';
 import { useTranslation } from 'react-i18next';
-import useCustomTheme from '@Context/Theme/CustomTheme';
+import useCustomTheme from '@Context/Theme';
 import useIsSmallViewport from '../../hooks/useIsSmallViewport';
 import VividIcon from '../VividIcon/VividIcon';
 import env, { type Lang } from '../../env';
