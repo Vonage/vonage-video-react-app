@@ -1,5 +1,10 @@
 import { describe, it, expect } from 'vitest';
-import customTheme from './customTheme';
+import getMuiCustomTheme from './getMuiCustomTheme';
+import getTokensByMode from './getTokensByMode';
+
+const customTheme = getMuiCustomTheme({
+  tokens: getTokensByMode('light'),
+});
 
 describe('customTheme', () => {
   it('should have palette defined', () => {
