@@ -1,5 +1,6 @@
 import { createTheme, type PaletteColor, type PaletteColorOptions } from '@mui/material';
 import type { ThemeTokens } from './getTokensByMode';
+import isDarkMode from './isDarkMode';
 
 // Extend theme options
 declare module '@mui/material/styles' {
@@ -32,7 +33,7 @@ const getMuiCustomTheme = ({ tokens }: { tokens: ThemeTokens }) => {
 
   return createTheme({
     palette: {
-      mode: 'light',
+      mode: isDarkMode() ? 'dark' : 'light',
       primary: {
         main: colors.primary,
         contrastText: colors.onPrimary,

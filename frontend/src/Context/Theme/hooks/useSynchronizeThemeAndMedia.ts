@@ -18,7 +18,7 @@ const useSynchronizeThemeAndMedia = ({
     }
 
     const toggleTheme = () => {
-      const newMode = isDarkMode() ? 'light' : 'dark';
+      const newMode = isDarkMode() ? 'dark' : 'light';
       const didChange = modeRef.current !== newMode;
 
       if (!didChange) {
