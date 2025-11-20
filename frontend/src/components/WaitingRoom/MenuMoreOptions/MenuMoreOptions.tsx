@@ -4,6 +4,7 @@ import Menu from '@ui/Menu';
 import { useTranslation } from 'react-i18next';
 import VividIcon from '@components/VividIcon';
 import Box from '@ui/Box';
+import { useBackgroundEffectsDialog } from '../../../Context/BackgroundEffectsDialog';
 
 export type MenuMoreOptionsWaitingRoomProps = {
   onClose: () => void;
@@ -26,10 +27,13 @@ const MenuMoreOptions = ({
   open,
   anchorEl,
 }: MenuMoreOptionsWaitingRoomProps): ReactElement => {
+  const { t } = useTranslation();
+  const { open: openBackgroundEffects } = useBackgroundEffectsDialog();
+
   const handleClick = () => {
+    openBackgroundEffects();
     onClose();
   };
-  const { t } = useTranslation();
 
   return (
     <Menu

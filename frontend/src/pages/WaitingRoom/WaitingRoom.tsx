@@ -12,6 +12,7 @@ import DeviceAccessAlert from '../../components/DeviceAccessAlert';
 import { getStorageItem, STORAGE_KEYS } from '../../utils/storage';
 import useIsSmallViewport from '../../hooks/useIsSmallViewport';
 import useBackgroundPublisherContext from '../../hooks/useBackgroundPublisherContext';
+import { BackgroundEffectsDialogProvider } from '../../Context/BackgroundEffectsDialog';
 
 /**
  * WaitingRoom Component
@@ -96,41 +97,43 @@ const WaitingRoom = (): ReactElement => {
   };
 
   return (
-    <Box data-testid="waitingRoom">
-      <FlexLayout leftPadding={{ xs: '16px 0', sm: 3 }}>
-        <FlexLayout.Banner>
-          <Banner />
-        </FlexLayout.Banner>
-        <FlexLayout.Left>
-          <div
-            className={`max-w-full flex-col ${isSmallViewport ? '' : 'h-[394px]'} sm: inline-flex`}
-          >
-            <VideoContainer username={username} />
-            {accessStatus === DEVICE_ACCESS_STATUS.ACCEPTED && (
-              <ControlPanel
-                handleAudioInputOpen={handleAudioInputOpen}
-                handleVideoInputOpen={handleVideoInputOpen}
-                handleAudioOutputOpen={handleAudioOutputOpen}
-                handleClose={handleClose}
-                openAudioInput={openAudioInput}
-                openVideoInput={openVideoInput}
-                openAudioOutput={openAudioOutput}
-                anchorEl={anchorEl}
-              />
-            )}
-          </div>
-        </FlexLayout.Left>
-        <FlexLayout.Right>
-          <UsernameInput username={username} setUsername={setUsername} />
-        </FlexLayout.Right>
-        <FlexLayout.Footer>
-          <Footer />
-        </FlexLayout.Footer>
-      </FlexLayout>
-      {accessStatus !== DEVICE_ACCESS_STATUS.ACCEPTED && (
-        <DeviceAccessAlert accessStatus={accessStatus} />
-      )}
-    </Box>
+    <BackgroundEffectsDialogProvider>
+      <Box data-testid="waitingRoom">
+        <FlexLayout leftPadding={{ xs: '16px 0', sm: 3 }}>
+          <FlexLayout.Banner>
+            <Banner />
+          </FlexLayout.Banner>
+          <FlexLayout.Left>
+            <div
+              className={`max-w-full flex-col ${isSmallViewport ? '' : 'h-[394px]'} sm: inline-flex`}
+            >
+              <VideoContainer username={username} />
+              {accessStatus === DEVICE_ACCESS_STATUS.ACCEPTED && (
+                <ControlPanel
+                  handleAudioInputOpen={handleAudioInputOpen}
+                  handleVideoInputOpen={handleVideoInputOpen}
+                  handleAudioOutputOpen={handleAudioOutputOpen}
+                  handleClose={handleClose}
+                  openAudioInput={openAudioInput}
+                  openVideoInput={openVideoInput}
+                  openAudioOutput={openAudioOutput}
+                  anchorEl={anchorEl}
+                />
+              )}
+            </div>
+          </FlexLayout.Left>
+          <FlexLayout.Right>
+            <UsernameInput username={username} setUsername={setUsername} />
+          </FlexLayout.Right>
+          <FlexLayout.Footer>
+            <Footer />
+          </FlexLayout.Footer>
+        </FlexLayout>
+        {accessStatus !== DEVICE_ACCESS_STATUS.ACCEPTED && (
+          <DeviceAccessAlert accessStatus={accessStatus} />
+        )}
+      </Box>
+    </BackgroundEffectsDialogProvider>
   );
 };
 
