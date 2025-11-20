@@ -97,7 +97,7 @@ const WaitingRoom = (): ReactElement => {
 
   return (
     <Box data-testid="waitingRoom">
-      <FlexLayout>
+      <FlexLayout leftPadding={{ xs: '16px 0', sm: 3 }}>
         <FlexLayout.Banner>
           <Banner />
         </FlexLayout.Banner>

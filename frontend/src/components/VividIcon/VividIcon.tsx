@@ -1,6 +1,6 @@
 import React from 'react';
 
-interface VividIconProps {
+interface VividIconProps extends Record<string, unknown> {
   name: string;
   customSize: -6 | -5 | -4 | -3 | -2 | -1 | 0 | 1 | 2 | 3 | 4 | 5;
 }
@@ -13,9 +13,9 @@ interface VividIconProps {
  * @property {number} customSize - The size of the icon, ranging from -6 to 5. -6 is the smallest and 5 is the largest.
  * @returns {React.ReactElement} The rendered VividIcon component.
  */
-const VividIcon: React.FC<VividIconProps> = ({ name, customSize }) => {
+const VividIcon: React.FC<VividIconProps> = ({ name, customSize, ...props }) => {
   // @ts-expect-error custom element
-  return <vwc-icon size={customSize} name={name} data-testid={`vivid-icon-${name}`} />;
+  return <vwc-icon size={customSize} name={name} data-testid={`vivid-icon-${name}`} {...props} />;
 };
 
 export default VividIcon;

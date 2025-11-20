@@ -5,7 +5,24 @@ import Box from '@ui/Box';
 type WithChildren<T = object> = T & { children?: React.ReactNode };
 
 export type FlexLayoutProps = WithChildren<{
-  padding?: number;
+  leftPadding?:
+    | number
+    | {
+        xs?: string | number;
+        sm?: string | number;
+        md?: string | number;
+        lg?: string | number;
+        xl?: string | number;
+      };
+  rightPadding?:
+    | number
+    | {
+        xs?: string | number;
+        sm?: string | number;
+        md?: string | number;
+        lg?: string | number;
+        xl?: string | number;
+      };
   leftFlex?: number;
   rightFlex?: number;
   leftAlign?: { alignItems: string; justifyContent: string };
@@ -57,7 +74,8 @@ type FlexLayoutComponent = React.FC<FlexLayoutProps> & {
 
 const FlexLayout: FlexLayoutComponent = ({
   children,
-  padding = 3,
+  leftPadding = 3,
+  rightPadding = 3,
   leftFlex = 1,
   rightFlex = 1,
   leftAlign = { alignItems: 'center', justifyContent: 'center' },
@@ -88,7 +106,7 @@ const FlexLayout: FlexLayoutComponent = ({
               display: 'flex',
               alignItems: leftAlign.alignItems,
               justifyContent: leftAlign.justifyContent,
-              p: padding,
+              p: leftPadding,
               bgcolor: leftBackgroundColor,
               overflow: 'hidden',
             }}
@@ -104,7 +122,7 @@ const FlexLayout: FlexLayoutComponent = ({
               display: 'flex',
               alignItems: rightAlign.alignItems,
               justifyContent: rightAlign.justifyContent,
-              p: padding,
+              p: rightPadding,
               bgcolor: rightBackgroundColor,
             }}
           >

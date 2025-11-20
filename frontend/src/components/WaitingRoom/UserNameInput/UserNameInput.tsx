@@ -11,6 +11,7 @@ import useUserContext from '../../../hooks/useUserContext';
 import { UserType } from '../../../Context/user';
 import useRoomName from '../../../hooks/useRoomName';
 import isValidRoomName from '../../../utils/isValidRoomName';
+import isValidUserName from '../../../utils/isValidUserName';
 import { setStorageItem, STORAGE_KEYS } from '../../../utils/storage';
 
 export type UserNameInputProps = {
@@ -37,17 +38,12 @@ const UsernameInput = ({ username, setUsername }: UserNameInputProps): ReactElem
 
   const onChangeParticipantName = (e: React.ChangeEvent<HTMLInputElement>) => {
     const inputUserName = e.target.value;
-    if (inputUserName === '' || inputUserName.trim() === '') {
-      // Space detected
-      setUsername('');
-      return;
-    }
     setIsUserNameInvalid(false);
     setUsername(inputUserName);
   };
 
   const validateForm = () => {
-    if (username === '') {
+    if (!isValidUserName(username)) {
       setIsUserNameInvalid(true);
       return false;
     }
@@ -96,10 +92,10 @@ const UsernameInput = ({ username, setUsername }: UserNameInputProps): ReactElem
           onChange={onChangeParticipantName}
           required
           id="user-name"
-          name="Name"
+          name="username"
           error={isUserNameInvalid}
           helperText={isUserNameInvalid ? t('waitingRoom.user.input.error') : ''}
-          autoComplete="Name"
+          autoComplete="nickname"
           autoFocus
           value={username}
           inputProps={{ maxLength: 60 }}

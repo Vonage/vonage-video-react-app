@@ -159,6 +159,13 @@ const getMuiCustomTheme = ({ tokens }: { tokens: ThemeTokens }) => {
           root: {
             backgroundColor: colors.onSecondary,
             color: colors.textSecondary,
+          },
+        },
+      },
+      MuiMenuItem: {
+        styleOverrides: {
+          root: {
+            color: colors.textSecondary,
             fontSize: tokens.typography.typeScale.desktop['body-base'].fontSize.value,
             lineHeight: tokens.typography.typeScale.desktop['body-base'].lineHeight.value,
           },

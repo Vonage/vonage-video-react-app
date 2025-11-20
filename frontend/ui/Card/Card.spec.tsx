@@ -20,15 +20,15 @@ describe('Card', () => {
   it('renders as form when component prop is passed', () => {
     const handleSubmit = vi.fn((e: React.FormEvent) => e.preventDefault());
 
-    render(
+    const { container } = render(
       <Card component="form" onSubmit={handleSubmit}>
         <button type="submit">Submit</button>
       </Card>
     );
 
-    const form = screen.getByRole('form');
+    const form = container.querySelector('form');
     expect(form).toBeInTheDocument();
-    expect(form.tagName).toBe('FORM');
+    expect(form?.tagName).toBe('FORM');
   });
 
   it('forwards additional props to the underlying Box component', () => {

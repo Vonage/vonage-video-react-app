@@ -169,7 +169,7 @@ describe('WaitingRoom', () => {
     expect(screen.getByText('test-room-name')).toBeInTheDocument();
 
     // Submit a name to navigate away from the waiting room
-    const input = screen.getByPlaceholderText('Enter your name');
+    const input = screen.getByRole('textbox', { name: /name/i });
     await user.type(input, 'Betsey Trotwood');
     expect(input).toHaveValue('Betsey Trotwood');
 
