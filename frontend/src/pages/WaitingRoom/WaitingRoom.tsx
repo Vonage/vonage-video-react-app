@@ -10,7 +10,6 @@ import UsernameInput from '../../components/WaitingRoom/UserNameInput';
 import { DEVICE_ACCESS_STATUS } from '../../utils/constants';
 import DeviceAccessAlert from '../../components/DeviceAccessAlert';
 import { getStorageItem, STORAGE_KEYS } from '../../utils/storage';
-import useIsSmallViewport from '../../hooks/useIsSmallViewport';
 import useBackgroundPublisherContext from '../../hooks/useBackgroundPublisherContext';
 import { BackgroundEffectsDialogProvider } from '../../Context/BackgroundEffectsDialog';
 
@@ -40,7 +39,6 @@ const WaitingRoom = (): ReactElement => {
   const [openVideoInput, setOpenVideoInput] = useState<boolean>(false);
   const [openAudioOutput, setOpenAudioOutput] = useState<boolean>(false);
   const [username, setUsername] = useState(getStorageItem(STORAGE_KEYS.USERNAME) ?? '');
-  const isSmallViewport = useIsSmallViewport();
 
   useEffect(() => {
     if (!publisher) {
@@ -104,8 +102,13 @@ const WaitingRoom = (): ReactElement => {
             <Banner />
           </FlexLayout.Banner>
           <FlexLayout.Left>
-            <div
-              className={`max-w-full flex-col ${isSmallViewport ? '' : 'h-[394px]'} sm: inline-flex`}
+            <Box
+              sx={{
+                maxWidth: '100%',
+                display: 'inline-flex',
+                flexDirection: 'column',
+                height: { xs: 'auto', sm: '400px' },
+              }}
             >
               <VideoContainer username={username} />
               {accessStatus === DEVICE_ACCESS_STATUS.ACCEPTED && (
@@ -120,7 +123,7 @@ const WaitingRoom = (): ReactElement => {
                   anchorEl={anchorEl}
                 />
               )}
-            </div>
+            </Box>
           </FlexLayout.Left>
           <FlexLayout.Right>
             <UsernameInput username={username} setUsername={setUsername} />
