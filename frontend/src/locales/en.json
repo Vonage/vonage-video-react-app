@@ -89,7 +89,6 @@
   "devices.video.blur.ariaLabel": "Toggle background blur",
   "devices.video.blur.label": "Blur your background",
   "devices.video.camera.ariaLabel": "toggle video",
-  "devices.video.camera.button.ariaLabel": "video",
   "devices.video.camera.state.on": "Enable camera",
   "devices.video.camera.state.off": "Disable camera",
   "devices.video.camera.full": "Camera",

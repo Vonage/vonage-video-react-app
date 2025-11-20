@@ -1,6 +1,8 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { render, screen } from '@testing-library/react';
+import { render as renderBase, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import React, { ReactElement } from 'react';
+import { BackgroundEffectsDialogProvider } from '../../../Context/BackgroundEffectsDialog';
 import MenuMoreOptions from './MenuMoreOptions';
 
 describe('MenuMoreOptions', () => {
@@ -45,3 +47,7 @@ describe('MenuMoreOptions', () => {
     expect(screen.getByTestId('vivid-icon-gallery-line')).toBeInTheDocument();
   });
 });
+
+function render(ui: ReactElement) {
+  return renderBase(<BackgroundEffectsDialogProvider>{ui}</BackgroundEffectsDialogProvider>);
+}

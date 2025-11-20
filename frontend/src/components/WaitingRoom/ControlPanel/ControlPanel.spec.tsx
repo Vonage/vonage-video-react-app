@@ -1,10 +1,11 @@
 import { afterEach, beforeEach, describe, expect, it, Mock, vi } from 'vitest';
 import { cleanup, screen, render as renderBase } from '@testing-library/react';
-import { ReactElement } from 'react';
+import React, { ReactElement } from 'react';
 import useDevices from '@hooks/useDevices';
 import { AllMediaDevices } from '@app-types/room';
 import { allMediaDevices } from '@utils/mockData/device';
 import { AppConfigProviderWrapperOptions, makeAppConfigProviderWrapper } from '@test/providers';
+import { BackgroundEffectsDialogProvider } from '@Context/BackgroundEffectsDialog/BackgroundEffectsDialogContext';
 import ControlPanel from '.';
 
 vi.mock('@hooks/useDevices.tsx');
@@ -169,5 +170,11 @@ function render(
 ) {
   const { AppConfigWrapper } = makeAppConfigProviderWrapper(options?.appConfigOptions);
 
-  return renderBase(ui, { ...options, wrapper: AppConfigWrapper });
+  const AllProviders = ({ children }: { children: React.ReactNode }) => (
+    <AppConfigWrapper>
+      <BackgroundEffectsDialogProvider>{children}</BackgroundEffectsDialogProvider>
+    </AppConfigWrapper>
+  );
+
+  return renderBase(ui, { ...options, wrapper: AllProviders });
 }

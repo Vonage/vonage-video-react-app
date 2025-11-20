@@ -124,9 +124,10 @@ const ControlPanel = ({
         >
           <ButtonBase
             sx={buttonSx}
-            aria-controls={openVideoInput ? 'basic-menu' : undefined}
+            aria-controls={openAudioInput ? 'basic-menu' : undefined}
             aria-haspopup="true"
-            aria-expanded={openVideoInput ? 'true' : undefined}
+            aria-expanded={openAudioInput ? 'true' : undefined}
+            aria-label={t('devices.audio.microphone.ariaLabel')}
             onClick={handleAudioInputOpen}
           >
             <VividIcon name="microphone-line" customSize={-6} />
@@ -150,7 +151,10 @@ const ControlPanel = ({
           <ButtonBase
             onClick={handleVideoInputOpen}
             sx={buttonSx}
-            aria-label={t('devices.video.camera.button.ariaLabel')}
+            aria-controls={openVideoInput ? 'basic-menu' : undefined}
+            aria-haspopup="true"
+            aria-expanded={openVideoInput ? 'true' : undefined}
+            aria-label={t('devices.video.camera.ariaLabel')}
           >
             <VividIcon name="audio-off-2-line" customSize={-6} />
             <Box component="span" sx={textSx}>
@@ -168,7 +172,14 @@ const ControlPanel = ({
             deviceType="videoInput"
           />
 
-          <ButtonBase onClick={handleAudioOutputOpen} sx={buttonSx}>
+          <ButtonBase
+            onClick={handleAudioOutputOpen}
+            sx={buttonSx}
+            aria-controls={openAudioOutput ? 'basic-menu' : undefined}
+            aria-haspopup="true"
+            aria-expanded={openAudioOutput ? 'true' : undefined}
+            aria-label={t('devices.audio.speakers.full')}
+          >
             <VividIcon name="video-line" customSize={-6} />
             <Box component="span" sx={textSx}>
               {t('button.speaker')}

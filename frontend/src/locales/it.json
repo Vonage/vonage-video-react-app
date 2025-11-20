@@ -88,7 +88,6 @@
     "devices.video.blur.ariaLabel": "Attiva la sfocatura dello sfondo",
     "devices.video.blur.label": "Sfoca lo sfondo",
     "devices.video.camera.ariaLabel": "attiva/disattiva video",
-    "devices.video.camera.button.ariaLabel": "video",
     "devices.video.camera.state.on": "Attiva camera",
     "devices.video.camera.state.off": "Disattiva camera",
     "devices.video.camera.full": "Camera",
