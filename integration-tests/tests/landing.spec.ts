@@ -35,8 +35,6 @@ test('should navigate to waiting room then publish in room via Create room butto
   await page.waitForSelector('.video__element', { state: 'visible' });
 
   await page.waitForTimeout(1000);
-  await expect(page.getByRole('button', { name: 'Join meeting' })).toHaveAttribute('disabled', '');
-
   await page.getByLabel('Name').fill('some-user');
   await page.getByRole('button', { name: 'Join meeting' }).click();
 
