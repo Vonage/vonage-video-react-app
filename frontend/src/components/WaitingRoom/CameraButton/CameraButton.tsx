@@ -1,11 +1,13 @@
-import { Box, Tooltip } from '@mui/material';
-import VideocamIcon from '@mui/icons-material/Videocam';
-import VideocamOffIcon from '@mui/icons-material/VideocamOff';
 import { ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
 import usePreviewPublisherContext from '@hooks/usePreviewPublisherContext';
 import useBackgroundPublisherContext from '@hooks/useBackgroundPublisherContext';
 import useIsCameraControlAllowed from '@Context/AppConfig/hooks/useIsCameraControlAllowed';
+import { VIDEO_CONTAINER_BUTTON_SIZE_WR } from '@utils/constants';
+import useCustomTheme from '@Context/Theme';
+import Tooltip from '@ui/Tooltip';
+import Box from '@ui/Box';
+import VividIcon from '@components/VividIcon';
 import VideoContainerButton from '../VideoContainerButton';
 
 /**
@@ -19,6 +21,7 @@ const CameraButton = (): ReactElement | false => {
   const { isVideoEnabled, toggleVideo } = usePreviewPublisherContext();
   const { toggleVideo: toggleBackgroundVideoPublisher } = useBackgroundPublisherContext();
   const allowCameraControl = useIsCameraControlAllowed();
+  const theme = useCustomTheme();
 
   const title = isVideoEnabled
     ? t('devices.video.camera.state.off')
@@ -37,18 +40,18 @@ const CameraButton = (): ReactElement | false => {
           position: 'relative',
           justifyContent: 'center',
           alignItems: 'center',
-          width: '56px',
-          height: '56px',
+          width: `${VIDEO_CONTAINER_BUTTON_SIZE_WR}px`,
+          height: `${VIDEO_CONTAINER_BUTTON_SIZE_WR}px`,
           borderRadius: '50%',
           border: isVideoEnabled ? '1px solid white' : '1px solid rgb(234, 67, 53)',
           overflow: 'hidden',
         }}
       >
-        <Tooltip title={title} aria-label={t('devices.video.camera.ariaLabel')}>
+        <Tooltip arrow title={title} aria-label={t('devices.video.camera.ariaLabel')}>
           <VideoContainerButton
             onClick={handleToggleVideo}
             sx={{
-              backgroundColor: !isVideoEnabled ? 'rgb(234, 67, 53)' : '',
+              backgroundColor: !isVideoEnabled ? theme.colors.errorHover : '',
               '&:hover': {
                 backgroundColor: isVideoEnabled
                   ? 'rgba(255, 255, 255, 0.6)'
@@ -57,9 +60,17 @@ const CameraButton = (): ReactElement | false => {
             }}
             icon={
               isVideoEnabled ? (
-                <VideocamIcon sx={{ fontSize: '24px', color: 'white' }} />
+                <VividIcon
+                  name="video-line"
+                  customSize={-5}
+                  sx={{ color: theme.colors.onSecondary }}
+                />
               ) : (
-                <VideocamOffIcon sx={{ fontSize: '24px', color: 'white' }} />
+                <VividIcon
+                  name="video-off-line"
+                  customSize={-5}
+                  sx={{ color: theme.colors.onSecondary }}
+                />
               )
             }
           />

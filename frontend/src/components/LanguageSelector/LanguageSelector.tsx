@@ -1,4 +1,4 @@
-import { ReactElement } from 'react';
+import { ReactElement, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import Box from '@ui/Box';
 import MenuItem from '@ui/MenuItem';
@@ -6,7 +6,6 @@ import FormControl from '@ui/FormControl';
 import Select from '@ui/Select';
 import { SelectChangeEvent } from '@ui/SelectChangeEvent';
 import useCustomTheme from '@Context/Theme';
-import { SvgIconProps } from '@mui/material';
 import { LanguageOption, LanguageSelectorProps } from './LanguageSelector.types';
 import useIsSmallViewport from '../../hooks/useIsSmallViewport';
 import VividIcon from '../VividIcon/VividIcon';
@@ -19,10 +18,6 @@ const languageOptions: LanguageOption[] = [
   { code: 'es', name: 'Español', flag: 'flag-spain' },
   { code: 'es-MX', name: 'Español (México)', flag: 'flag-mexico' },
 ];
-
-const ChevronDownIcon = (props: SvgIconProps) => (
-  <VividIcon name="chevron-down-line" customSize={-5} {...props} sx={{ color: 'black' }} />
-);
 
 /**
  * LanguageSelector Component
@@ -46,6 +41,18 @@ const LanguageSelector = ({ showFlag = true }: LanguageSelectorProps): ReactElem
     i18n.changeLanguage(newLanguage);
   };
 
+  const ChevronIcon = useCallback(
+    (props: Record<string, unknown>) => (
+      <VividIcon
+        name="chevron-down-line"
+        customSize={-5}
+        sx={{ color: theme.colors.textSecondary }}
+        {...props}
+      />
+    ),
+    [theme.colors.textSecondary]
+  );
+
   const currentLanguage = i18n.language || 'en';
 
   return (
@@ -53,7 +60,7 @@ const LanguageSelector = ({ showFlag = true }: LanguageSelectorProps): ReactElem
       <Select
         value={currentLanguage}
         onChange={handleLanguageChange}
-        IconComponent={ChevronDownIcon}
+        IconComponent={ChevronIcon}
         displayEmpty
         sx={{
           '& .MuiOutlinedInput-notchedOutline': {

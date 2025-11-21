@@ -107,7 +107,7 @@ const VideoContainer = ({ username }: VideoContainerProps): ReactElement => {
           }}
         >
           {isAudioEnabled && (
-            <Box sx={{ position: 'absolute', left: '24px', top: '32px' }}>
+            <Box sx={{ position: 'absolute', left: '16px', top: '12px' }}>
               <VoiceIndicatorIcon publisherAudioLevel={speechLevel} size={24} />
             </Box>
           )}

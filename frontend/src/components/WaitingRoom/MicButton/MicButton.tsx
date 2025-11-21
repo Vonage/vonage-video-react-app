@@ -1,10 +1,12 @@
-import { Box, Tooltip } from '@mui/material';
-import { MicOff } from '@mui/icons-material';
-import MicIcon from '@mui/icons-material/Mic';
 import { ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
 import useIsMicrophoneControlAllowed from '@Context/AppConfig/hooks/useIsMicrophoneControlAllowed';
 import usePreviewPublisherContext from '@hooks/usePreviewPublisherContext';
+import useCustomTheme from '@Context/Theme';
+import Box from '@ui/Box';
+import Tooltip from '@ui/Tooltip';
+import VividIcon from '@components/VividIcon';
+import { VIDEO_CONTAINER_BUTTON_SIZE_WR } from '@utils/constants';
 import VideoContainerButton from '../VideoContainerButton';
 
 /**
@@ -16,6 +18,7 @@ import VideoContainerButton from '../VideoContainerButton';
 const MicButton = (): ReactElement | false => {
   const { t } = useTranslation();
   const { isAudioEnabled, toggleAudio } = usePreviewPublisherContext();
+  const theme = useCustomTheme();
 
   const allowMicrophoneControl = useIsMicrophoneControlAllowed();
 
@@ -31,19 +34,19 @@ const MicButton = (): ReactElement | false => {
           position: 'relative',
           justifyContent: 'center',
           alignItems: 'center',
-          width: '56px',
-          height: '56px',
+          width: `${VIDEO_CONTAINER_BUTTON_SIZE_WR}px`,
+          height: `${VIDEO_CONTAINER_BUTTON_SIZE_WR}px`,
           borderRadius: '50%',
           border: isAudioEnabled ? '1px solid white' : '1px solid rgb(234, 67, 53)',
           overflow: 'hidden',
           transition: 'transform 0.2s ease-in-out',
         }}
       >
-        <Tooltip title={title} aria-label={t('devices.audio.microphone.ariaLabel')}>
+        <Tooltip arrow title={title} aria-label={t('devices.audio.microphone.ariaLabel')}>
           <VideoContainerButton
             onClick={toggleAudio}
             sx={{
-              backgroundColor: !isAudioEnabled ? 'rgb(234, 67, 53)' : '',
+              backgroundColor: !isAudioEnabled ? theme.colors.errorHover : '',
               '&:hover': {
                 backgroundColor: isAudioEnabled
                   ? 'rgba(255, 255, 255, 0.6)'
@@ -52,9 +55,17 @@ const MicButton = (): ReactElement | false => {
             }}
             icon={
               isAudioEnabled ? (
-                <MicIcon sx={{ fontSize: '24px', color: 'white' }} />
+                <VividIcon
+                  name="microphone-line"
+                  customSize={-5}
+                  sx={{ color: theme.colors.onSecondary }}
+                />
               ) : (
-                <MicOff sx={{ fontSize: '24px', color: 'white' }} />
+                <VividIcon
+                  name="mic-mute-line"
+                  customSize={-5}
+                  sx={{ color: theme.colors.onSecondary }}
+                />
               )
             }
           />
