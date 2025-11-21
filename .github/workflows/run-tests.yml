@@ -108,7 +108,7 @@ jobs:
       - name: Run unit tests
         if: steps.check-skip-ci.outputs.result == 'false'
         run: |
-          yarn test
+          NX_DAEMON=false yarn test
 
       - name: SonarCloud Scan On PR
         if: steps.check-skip-ci.outputs.result == 'false' && github.event.pull_request.head.repo.fork == false

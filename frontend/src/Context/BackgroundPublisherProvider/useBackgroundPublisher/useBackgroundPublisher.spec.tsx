@@ -212,7 +212,7 @@ describe('useBackgroundPublisher', () => {
       });
     });
 
-    it('handles permission denial', async () => {
+    it('handles permission denial', () => {
       mockedInitPublisher.mockReturnValue(mockPublisher);
 
       const { result } = renderHook(() => useBackgroundPublisher());
@@ -227,7 +227,7 @@ describe('useBackgroundPublisher', () => {
       expect(mockSetAccessStatus).toBeCalledWith(DEVICE_ACCESS_STATUS.REJECTED);
     });
 
-    it('does not throw on older, unsupported browsers', async () => {
+    it('does not throw on older, unsupported browsers', () => {
       mockQuery.mockImplementation(() => {
         throw new Error('Whoops');
       });

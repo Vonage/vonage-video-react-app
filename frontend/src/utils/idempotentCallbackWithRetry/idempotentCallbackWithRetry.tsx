@@ -1,4 +1,3 @@
-/* eslint-disable no-await-in-loop */
 type RetryOptions = {
   retries?: number;
   delayMs?: number;

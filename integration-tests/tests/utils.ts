@@ -23,7 +23,7 @@ export const openMeetingRoomWithSettings = async ({
   username: string;
   videoOff?: boolean;
   audioOff?: boolean;
-  browserName: string;
+  browserName?: string;
 }) => {
   await page.goto(`${baseURL}waiting-room/${roomName}`);
   await page.getByPlaceholder('Enter your name').fill(username);

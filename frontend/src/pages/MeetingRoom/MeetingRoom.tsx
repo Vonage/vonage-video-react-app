@@ -110,10 +110,8 @@ const MeetingRoom = (): ReactElement => {
     }
   }, [accessStatus]);
 
-  // eslint-disable-next-line @typescript-eslint/no-use-before-define
   useRedirectOnPublisherError(publishingError);
 
-  // eslint-disable-next-line @typescript-eslint/no-use-before-define
   useRedirectOnSubscriberError(subscriptionError);
 
   return (

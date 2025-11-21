@@ -36,7 +36,9 @@ const BackgroundVideoContainer = ({
       containerRef.current.appendChild(publisherVideoElement);
       const myVideoElement = publisherVideoElement as HTMLElement;
       myVideoElement.classList.add('video__element');
+      // eslint-disable-next-line react-hooks/immutability
       myVideoElement.title = 'publisher-preview';
+      // eslint-disable-next-line react-hooks/immutability
       myVideoElement.style.borderRadius = '12px';
       myVideoElement.style.maxHeight = isTabletViewport ? '80%' : '450px';
 

@@ -55,8 +55,6 @@ const VoiceIndicatorIcon = ({
       >
         {barHeights.map((height, i) => (
           <Box
-            // https://stackoverflow.com/questions/46735483/error-do-not-use-array-index-in-keys
-            // eslint-disable-next-line react/no-array-index-key
             key={i} // NOSONAR
             sx={{
               display: 'flex',

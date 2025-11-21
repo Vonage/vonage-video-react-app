@@ -26,7 +26,7 @@ const useScreenShare = (): UseScreenShareType => {
   const { user } = useUserContext();
 
   // Using useRef to store the screen sharing publisher instance
-  const screenSharingPub = useRef<Publisher | null>(null);
+  const screenSharingPubRef = useRef<Publisher | null>(null);
 
   // State to track sharing status
   const [isSharingScreen, setIsSharingScreen] = useState<boolean>(false);
@@ -37,17 +37,17 @@ const useScreenShare = (): UseScreenShareType => {
   const onScreenShareStopped = useCallback(() => {
     setIsSharingScreen(false);
     setScreenshareVideoElement(undefined);
-    screenSharingPub.current = null;
+    screenSharingPubRef.current = null;
   }, []);
 
   const unpublishScreenshare = useCallback(() => {
-    if (screenSharingPub.current) {
-      unpublish(screenSharingPub.current);
+    if (screenSharingPubRef.current) {
+      unpublish(screenSharingPubRef.current);
       setIsSharingScreen(false);
     }
   }, [unpublish]);
 
-  const handleStreamCreated = useCallback(async () => {
+  const handleStreamCreated = useCallback(() => {
     unpublishScreenshare();
   }, [unpublishScreenshare]);
 
@@ -56,7 +56,7 @@ const useScreenShare = (): UseScreenShareType => {
     if (vonageVideoClient) {
       if (!isSharingScreen) {
         // Initializing the publisher for screen sharing
-        screenSharingPub.current = initPublisher(
+        screenSharingPubRef.current = initPublisher(
           undefined,
           {
             videoSource: 'screen',
@@ -72,31 +72,31 @@ const useScreenShare = (): UseScreenShareType => {
         );
 
         // Adding class for screen sharing styling
-        screenSharingPub.current?.element?.classList.add('OT_big');
+        screenSharingPubRef.current?.element?.classList.add('OT_big');
 
         // Handling stream creation event
-        screenSharingPub.current?.on('streamCreated', () => {
+        screenSharingPubRef.current?.on('streamCreated', () => {
           setIsSharingScreen(true);
         });
 
-        screenSharingPub.current?.on('videoElementCreated', (e) => {
+        screenSharingPubRef.current?.on('videoElementCreated', (e) => {
           setScreenshareVideoElement(e.element);
         });
 
-        screenSharingPub.current?.on('streamDestroyed', () => {
+        screenSharingPubRef.current?.on('streamDestroyed', () => {
           onScreenShareStopped();
         });
 
         // Handling media stopped event
-        screenSharingPub.current?.on('mediaStopped', () => {
+        screenSharingPubRef.current?.on('mediaStopped', () => {
           onScreenShareStopped();
         });
 
         // Publishing the screen sharing stream
-        await publish(screenSharingPub.current);
+        await publish(screenSharingPubRef.current);
 
         vonageVideoClient?.on('screenshareStreamCreated', handleStreamCreated);
-      } else if (screenSharingPub.current) {
+      } else if (screenSharingPubRef.current) {
         unpublishScreenshare();
         vonageVideoClient?.off('screenshareStreamCreated', handleStreamCreated);
       }
@@ -116,7 +116,11 @@ const useScreenShare = (): UseScreenShareType => {
     toggleShareScreen,
     isSharingScreen,
     screenshareVideoElement,
-    screensharingPublisher: screenSharingPub.current,
+    /**
+     * On the first render this will return null
+     */
+
+    screensharingPublisher: screenSharingPubRef.current,
   };
 };
 

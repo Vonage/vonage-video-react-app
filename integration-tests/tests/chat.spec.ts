@@ -35,18 +35,10 @@ test.describe('chat', () => {
     const roomName = crypto.randomBytes(5).toString('hex');
     const pageTwo = await context.newPage();
 
-    await openMeetingRoomWithSettings({
-      page: pageOne,
-      username: 'User One',
-      roomName,
-    });
+    await openMeetingRoomWithSettings({ page: pageOne, username: 'User One', roomName });
     await waitAndClickFirefox(pageOne, browserName);
 
-    await openMeetingRoomWithSettings({
-      page: pageTwo,
-      username: 'User Two',
-      roomName,
-    });
+    await openMeetingRoomWithSettings({ page: pageTwo, username: 'User Two', roomName });
     await waitAndClickFirefox(pageTwo, browserName);
 
     await pageTwo.waitForSelector('.publisher', { state: 'visible' });
@@ -78,10 +70,9 @@ test.describe('chat', () => {
     }
 
     // Check badge is hidden:  MUI hides badge by setting dimensions to 0x0
+    // eslint-disable-next-line @typescript-eslint/require-await
     await pageTwo.waitForFunction(async () => {
-      const badge = document.querySelector(
-        '[data-testid="chat-button-unread-count"]'
-      ) as HTMLElement;
+      const badge = document.querySelector<HTMLElement>('[data-testid="chat-button-unread-count"]');
       return badge.offsetHeight === 0 && badge.offsetWidth === 0;
     });
 

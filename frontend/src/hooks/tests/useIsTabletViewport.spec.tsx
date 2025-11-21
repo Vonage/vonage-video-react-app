@@ -9,13 +9,14 @@ const matchMediaCommon = {
   removeListener: vi.fn(),
   addEventListener: vi.fn(),
   removeEventListener: vi.fn(),
+  dispatchEvent: vi.fn(),
 };
 
 describe('useIsTabletViewport', () => {
   const originalMatchMedia = globalThis.matchMedia;
 
   beforeEach(() => {
-    globalThis.matchMedia = vi.fn().mockImplementation((query) => ({
+    globalThis.matchMedia = vi.fn((query) => ({
       matches: new RegExp(`\\(max-width:\\s*${TABLET_VIEWPORT + 1}px\\)`).test(query),
       media: query,
       ...matchMediaCommon,
@@ -33,7 +34,7 @@ describe('useIsTabletViewport', () => {
   });
 
   it('should return true when globalThis width is less than or equal to 899px', () => {
-    globalThis.matchMedia = vi.fn().mockImplementation((query) => ({
+    globalThis.matchMedia = vi.fn((query: string) => ({
       matches: new RegExp(`\\(max-width:\\s*${TABLET_VIEWPORT}px\\)`).test(query),
       media: query,
       ...matchMediaCommon,
