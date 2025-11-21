@@ -1,5 +1,8 @@
 import { useRef, useState, useEffect, ReactElement } from 'react';
-import { Stack } from '@mui/material';
+import Box from '@ui/Box';
+import Stack from '@ui/Stack';
+import useCustomTheme from '@Context/Theme';
+import { VIDEO_CONTAINER_HEIGHT_WR } from '@utils/constants';
 import MicButton from '../MicButton';
 import CameraButton from '../CameraButton';
 import VideoLoading from '../VideoLoading';
@@ -37,6 +40,7 @@ const VideoContainer = ({ username }: VideoContainerProps): ReactElement => {
     usePreviewPublisherContext();
   const initials = getInitials(username);
   const isSmallViewport = useIsSmallViewport();
+  const theme = useCustomTheme();
 
   useEffect(() => {
     if (publisherVideoElement && containerRef.current && isVideoEnabled) {
@@ -45,15 +49,13 @@ const VideoContainer = ({ username }: VideoContainerProps): ReactElement => {
       myVideoElement.classList.add('video__element');
       myVideoElement.title = 'publisher-preview';
       myVideoElement.style.borderRadius = isSmallViewport ? '0px' : '12px';
-      myVideoElement.style.height = isSmallViewport ? '' : '328px';
+      myVideoElement.style.height = isSmallViewport ? '' : `${VIDEO_CONTAINER_HEIGHT_WR}px`;
       myVideoElement.style.width = isSmallViewport ? '100dvw' : '584px';
       myVideoElement.style.marginLeft = 'auto';
       myVideoElement.style.marginRight = 'auto';
       myVideoElement.style.transform = 'scaleX(-1)';
       myVideoElement.style.objectFit = 'contain';
       myVideoElement.style.aspectRatio = '16 / 9';
-      myVideoElement.style.boxShadow =
-        '0 1px 2px 0 rgba(60, 64, 67, .3), 0 1px 3px 1px rgba(60, 64, 67, .15)';
 
       waitUntilPlaying(publisherVideoElement).then(() => {
         setIsVideoLoading(false);
@@ -62,15 +64,25 @@ const VideoContainer = ({ username }: VideoContainerProps): ReactElement => {
   }, [isSmallViewport, publisherVideoElement, isVideoEnabled]);
 
   return (
-    <div
-      className="relative flex aspect-video w-[584px] max-w-full flex-col items-center justify-center bg-black sm:h-[328px] md:rounded-xl"
-      // this was added because overflow: hidden causes issues with rendering
-      // see https://stackoverflow.com/questions/77748631/element-rounded-corners-leaking-out-to-front-when-using-overflow-hidden
-      style={{ WebkitMask: 'linear-gradient(#000 0 0)' }}
+    <Box
+      sx={{
+        position: 'relative',
+        display: 'flex',
+        aspectRatio: '16 / 9',
+        width: { xs: '100dvw', sm: '583px' },
+        maxWidth: '100%',
+        height: { sm: `${VIDEO_CONTAINER_HEIGHT_WR}px` },
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
+        backgroundColor: theme.colors.secondary,
+        borderRadius: { xs: 0, sm: '12px' },
+        WebkitMask: `linear-gradient(${theme.colors.secondary} 0 0)`,
+      }}
     >
-      <div
+      <Box
         ref={containerRef}
-        style={{ display: isBackgroundEffectsOpen ? 'none' : 'block' }}
+        sx={{ display: isBackgroundEffectsOpen ? 'none' : 'block' }}
         data-video-container
       />
       <VignetteEffect />
@@ -82,26 +94,37 @@ const VideoContainer = ({ username }: VideoContainerProps): ReactElement => {
         isVideoLoading={isVideoLoading}
       />
       {!isVideoLoading && (
-        <div className="absolute inset-x-0 bottom-[5%] flex h-fit items-center justify-center">
+        <Box
+          sx={{
+            position: 'absolute',
+            left: 0,
+            right: 0,
+            bottom: '5%',
+            display: 'flex',
+            height: 'fit-content',
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}
+        >
           {isAudioEnabled && (
-            <div className="absolute left-6 top-8">
+            <Box sx={{ position: 'absolute', left: '24px', top: '32px' }}>
               <VoiceIndicatorIcon publisherAudioLevel={speechLevel} size={24} />
-            </div>
+            </Box>
           )}
           <Stack direction="row" spacing={2}>
             <MicButton />
             <CameraButton />
           </Stack>
-          <div className="absolute right-[20px]">
+          <Box sx={{ position: 'absolute', right: '20px' }}>
             <BackgroundEffectsButton onClick={open} />
             <BackgroundEffectsDialog
               isBackgroundEffectsOpen={isBackgroundEffectsOpen}
               setIsBackgroundEffectsOpen={close}
             />
-          </div>
-        </div>
+          </Box>
+        </Box>
       )}
-    </div>
+    </Box>
   );
 };
 
