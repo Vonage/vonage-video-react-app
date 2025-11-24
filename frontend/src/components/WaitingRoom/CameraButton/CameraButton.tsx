@@ -43,7 +43,7 @@ const CameraButton = (): ReactElement | false => {
           width: `${VIDEO_CONTAINER_BUTTON_SIZE_WR}px`,
           height: `${VIDEO_CONTAINER_BUTTON_SIZE_WR}px`,
           borderRadius: '50%',
-          border: isVideoEnabled ? '1px solid white' : '1px solid rgb(234, 67, 53)',
+          border: isVideoEnabled ? `1px solid ${theme.colors.onSecondary}` : 'none',
           overflow: 'hidden',
         }}
       >
@@ -51,11 +51,11 @@ const CameraButton = (): ReactElement | false => {
           <VideoContainerButton
             onClick={handleToggleVideo}
             sx={{
-              backgroundColor: isVideoEnabled ? '' : theme.colors.errorHover,
+              backgroundColor: isVideoEnabled ? '' : theme.colors.alertBackground,
               '&:hover': {
                 backgroundColor: isVideoEnabled
-                  ? 'rgba(255, 255, 255, 0.6)'
-                  : 'rgb(234, 67, 53, 0.8)',
+                  ? `${theme.colors.onSecondary}99`
+                  : `${theme.colors.alertBackground}DC`,
               },
             }}
             icon={
@@ -69,7 +69,7 @@ const CameraButton = (): ReactElement | false => {
                 <VividIcon
                   name="video-off-line"
                   customSize={-5}
-                  sx={{ color: theme.colors.onSecondary }}
+                  sx={{ color: theme.colors.alertText }}
                 />
               )
             }

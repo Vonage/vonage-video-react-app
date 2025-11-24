@@ -13,13 +13,27 @@ interface VividIconProps extends Record<string, unknown> {
  * @param {VividIconProps} props - The props for the component.
  * @property {string} name - The name of the icon to display.
  * @property {number} customSize - The size of the icon, ranging from -6 to 5. -6 is the smallest and 5 is the largest.
- * @property {object} sx - Optional sx prop for styling.
+ * @property {object} sx - Optional sx prop for styling. Note: Only basic CSS properties are supported (color, fontSize, margin, padding, etc.). Media queries and complex MUI-specific syntax are not supported.
  * @returns {React.ReactElement} The rendered VividIcon component.
  */
 const VividIcon: React.FC<VividIconProps> = ({ name, customSize, sx, ...props }) => {
+  // Convert sx prop to inline styles
+  // Note: This is a simplified implementation that doesn't support media queries or complex MUI syntax
   const style =
-    sx && typeof sx === 'object' && !Array.isArray(sx) && 'color' in sx
-      ? { color: sx.color as string }
+    sx && typeof sx === 'object' && !Array.isArray(sx)
+      ? Object.entries(sx).reduce(
+          (acc, [key, value]) => {
+            // Skip undefined values and non-string/number values
+            if (value === undefined || (typeof value !== 'string' && typeof value !== 'number')) {
+              return acc;
+            }
+            // Convert camelCase to kebab-case for CSS properties
+            const cssKey = key.replace(/([A-Z])/g, '-$1').toLowerCase();
+            acc[cssKey] = value;
+            return acc;
+          },
+          {} as Record<string, string | number>
+        )
       : undefined;
 
   return (

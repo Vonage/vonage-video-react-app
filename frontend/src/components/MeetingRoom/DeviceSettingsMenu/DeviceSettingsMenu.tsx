@@ -111,8 +111,8 @@ const DeviceSettingsMenu = ({
             <ClickAwayListener onClickAway={handleClose}>
               <Paper
                 sx={(t) => ({
-                  backgroundColor: theme.colors.secondary,
-                  color: theme.colors.onPrimary,
+                  backgroundColor: theme.colors.surface,
+                  color: theme.colors.onSurface,
                   padding: { xs: 1, sm: 2 },
                   borderRadius: 2,
                   zIndex: 1,

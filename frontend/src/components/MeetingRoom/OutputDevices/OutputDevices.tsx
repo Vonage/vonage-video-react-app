@@ -92,7 +92,7 @@ const OutputDevices = ({ handleToggle }: OutputDevicesProps): ReactElement | fal
                   backgroundColor: 'transparent',
                   '&.Mui-selected': {
                     backgroundColor: 'transparent',
-                    color: theme.colors.background,
+                    color: theme.colors.onBackground,
                   },
                   '&:hover': {
                     backgroundColor: theme.colors.primaryHover,

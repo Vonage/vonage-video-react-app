@@ -33,6 +33,7 @@ const colorVariables = {
     900: '#272626ff',
   },
   alert: {
+    50: '#FFEEF2',
     500: '#E61D1D',
     600: '#CD0000',
   },
@@ -120,6 +121,17 @@ const lightColors = {
     value: colorVariables.accent[400],
     type: 'color',
     description: 'Text or icon color used on surface elements.',
+  },
+
+  'alert-background': {
+    value: colorVariables.alert[50],
+    type: 'color',
+    description: 'Background color for alert messages and notifications.',
+  },
+  'alert-text': {
+    value: colorVariables.alert[600],
+    type: 'color',
+    description: 'Text color for alert messages and notifications.',
   },
 
   error: {

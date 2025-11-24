@@ -93,7 +93,7 @@ const VideoDevices = ({ handleToggle }: VideoDevicesProps): ReactElement | false
                   backgroundColor: 'transparent',
                   '&.Mui-selected': {
                     backgroundColor: 'transparent',
-                    color: theme.colors.background,
+                    color: theme.colors.onBackground,
                   },
                   '&:hover': {
                     backgroundColor: theme.colors.primaryHover,

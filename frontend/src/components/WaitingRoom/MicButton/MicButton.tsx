@@ -37,7 +37,7 @@ const MicButton = (): ReactElement | false => {
           width: `${VIDEO_CONTAINER_BUTTON_SIZE_WR}px`,
           height: `${VIDEO_CONTAINER_BUTTON_SIZE_WR}px`,
           borderRadius: '50%',
-          border: isAudioEnabled ? '1px solid white' : '1px solid rgb(234, 67, 53)',
+          border: isAudioEnabled ? `1px solid ${theme.colors.onSecondary}` : 'none',
           overflow: 'hidden',
           transition: 'transform 0.2s ease-in-out',
         }}
@@ -46,11 +46,11 @@ const MicButton = (): ReactElement | false => {
           <VideoContainerButton
             onClick={toggleAudio}
             sx={{
-              backgroundColor: isAudioEnabled ? '' : theme.colors.errorHover,
+              backgroundColor: isAudioEnabled ? '' : theme.colors.alertBackground,
               '&:hover': {
                 backgroundColor: isAudioEnabled
-                  ? 'rgba(255, 255, 255, 0.6)'
-                  : 'rgb(234, 67, 53, 0.8)',
+                  ? `${theme.colors.onSecondary}99`
+                  : `${theme.colors.alertBackground}DC`,
               },
             }}
             icon={
@@ -64,7 +64,7 @@ const MicButton = (): ReactElement | false => {
                 <VividIcon
                   name="mic-mute-line"
                   customSize={-5}
-                  sx={{ color: theme.colors.onSecondary }}
+                  sx={{ color: theme.colors.alertText }}
                 />
               )
             }
