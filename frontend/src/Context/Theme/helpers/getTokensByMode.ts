@@ -17,7 +17,7 @@ const getTokensByMode = (mode: 'light' | 'dark') => {
         let key = originalKey;
 
         if (key.includes('-')) {
-          key = key.replace(/-([a-z])/g, (_, char) => char.toUpperCase());
+          key = key.replaceAll(/-([a-z])/g, (_, char) => char.toUpperCase());
         }
 
         acc[key as ColorKey] = colors[originalKey as keyof typeof colors].value;

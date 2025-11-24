@@ -11,7 +11,7 @@ const useSynchronizeThemeAndMedia = ({
   const modeRef = useStableRef(() => (isDarkMode() ? 'dark' : 'light'), [{}]);
 
   useEffect(() => {
-    const isMatchMediaSupported = !!window.matchMedia;
+    const isMatchMediaSupported = !!globalThis.matchMedia;
 
     if (!isMatchMediaSupported) {
       return;
@@ -30,7 +30,7 @@ const useSynchronizeThemeAndMedia = ({
 
     const subscribeToMediaChanges = () => {
       const abort = new AbortController();
-      const media = window.matchMedia('(prefers-color-scheme: dark)');
+      const media = globalThis.matchMedia('(prefers-color-scheme: dark)');
 
       media.addEventListener('change', toggleTheme);
 
