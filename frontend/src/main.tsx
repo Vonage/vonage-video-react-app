@@ -22,7 +22,7 @@ ReactDOM.createRoot(rootElement).render(
         md: designTokens.color.light.background.value,
       },
       position: 'relative',
-      overflow: 'hidden',
+      overflow: 'auto',
       height: '100dvh',
     }}
   >

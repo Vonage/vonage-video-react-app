@@ -1,17 +1,13 @@
 import { act, render as renderBase, screen } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi, Mock } from 'vitest';
 import { ReactElement, useState } from 'react';
-import * as mui from '@mui/material';
 import { AppConfigProviderWrapperOptions, makeAppConfigProviderWrapper } from '@test/providers';
+import useMediaQuery from '@ui/useMediaQuery';
 import EmojiGridButton from './EmojiGridButton';
 
-vi.mock('@mui/material', async () => {
-  const actual = await vi.importActual<typeof mui>('@mui/material');
-  return {
-    ...actual,
-    useMediaQuery: vi.fn(),
-  };
-});
+vi.mock('@ui/useMediaQuery', () => ({
+  default: vi.fn(),
+}));
 vi.mock('@utils/emojis', () => ({
   default: { FAVORITE: '🦧' },
 }));
@@ -29,7 +25,7 @@ const TestComponent = ({ defaultOpenEmojiGrid = false }: { defaultOpenEmojiGrid?
 
 describe('EmojiGridButton', () => {
   beforeEach(() => {
-    (mui.useMediaQuery as Mock).mockReturnValue(false);
+    (useMediaQuery as Mock).mockReturnValue(false);
   });
 
   it('renders', () => {

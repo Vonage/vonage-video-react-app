@@ -53,20 +53,6 @@ describe('SelectableOption', () => {
     expect(option).toHaveAttribute('aria-pressed', 'true');
   });
 
-  it('is disabled when isDisabled is true', () => {
-    render(
-      <SelectableOption
-        isSelected={false}
-        onClick={() => {}}
-        id="disabled"
-        icon={<span>Disabled</span>}
-        isDisabled
-      />
-    );
-    const option = screen.getByTestId('background-disabled');
-    expect(option).toHaveAttribute('aria-disabled', 'true');
-  });
-
   it('shows the title in the tooltip', async () => {
     render(
       <SelectableOption

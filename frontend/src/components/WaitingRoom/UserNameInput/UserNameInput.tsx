@@ -1,4 +1,4 @@
-import React, { Dispatch, MouseEvent, ReactElement, SetStateAction, useState } from 'react';
+import React, { Dispatch, MouseEvent, ReactElement, SetStateAction, useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import TextField from '@ui/TextField';
@@ -35,11 +35,16 @@ const UsernameInput = ({ username, setUsername }: UserNameInputProps): ReactElem
   const roomName = useRoomName();
   const [isUserNameInvalid, setIsUserNameInvalid] = useState(false);
   const theme = useCustomTheme();
+  const inputRef = useRef<HTMLInputElement>(null);
 
   const onChangeParticipantName = (e: React.ChangeEvent<HTMLInputElement>) => {
     const inputUserName = e.target.value;
     setIsUserNameInvalid(false);
     setUsername(inputUserName);
+  };
+
+  const handleInputFocus = () => {
+    inputRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
   };
 
   const validateForm = () => {
@@ -90,6 +95,7 @@ const UsernameInput = ({ username, setUsername }: UserNameInputProps): ReactElem
           size="small"
           label={t('waitingRoom.user.input.label')}
           onChange={onChangeParticipantName}
+          onClick={handleInputFocus}
           required
           id="user-name"
           name="username"
@@ -99,6 +105,7 @@ const UsernameInput = ({ username, setUsername }: UserNameInputProps): ReactElem
           autoFocus
           value={username}
           inputProps={{ maxLength: 60 }}
+          inputRef={inputRef}
         />
       </Box>
 

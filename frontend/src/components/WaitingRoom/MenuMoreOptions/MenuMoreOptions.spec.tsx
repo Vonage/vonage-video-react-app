@@ -22,20 +22,20 @@ describe('MenuMoreOptions', () => {
   it('should not render menu items when open is false', () => {
     render(<MenuMoreOptions onClose={mockOnClose} open={false} anchorEl={mockAnchorEl} />);
 
-    expect(screen.queryByText(/background effects/i)).not.toBeInTheDocument();
+    expect(screen.queryByText(/background settings/i)).not.toBeInTheDocument();
   });
 
   it('should display background effects option', () => {
     render(<MenuMoreOptions onClose={mockOnClose} open anchorEl={mockAnchorEl} />);
 
-    expect(screen.getByText(/background effects/i)).toBeInTheDocument();
+    expect(screen.getByText(/background settings/i)).toBeInTheDocument();
   });
 
   it('should call onClose when clicking on background effects option', async () => {
     const user = userEvent.setup();
     render(<MenuMoreOptions onClose={mockOnClose} open anchorEl={mockAnchorEl} />);
 
-    const menuItem = screen.getByText(/background effects/i);
+    const menuItem = screen.getByText(/background settings/i);
     await user.click(menuItem);
 
     expect(mockOnClose).toHaveBeenCalledTimes(1);

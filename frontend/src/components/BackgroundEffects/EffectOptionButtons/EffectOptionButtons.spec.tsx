@@ -5,13 +5,25 @@ import EffectOptionButtons from './EffectOptionButtons';
 
 describe('EffectOptionButtons', () => {
   it('renders all effect options', () => {
-    render(<EffectOptionButtons backgroundSelected="none" setBackgroundSelected={() => {}} />);
+    render(
+      <EffectOptionButtons
+        backgroundSelected="none"
+        setBackgroundSelected={() => {}}
+        customBackgroundImageChange={() => {}}
+      />
+    );
     expect(screen.getByTestId('BlockIcon')).toBeInTheDocument();
     expect(screen.getAllByTestId('BlurOnIcon')).toHaveLength(2);
   });
 
   it('marks the selected option as selected', () => {
-    render(<EffectOptionButtons backgroundSelected="low-blur" setBackgroundSelected={() => {}} />);
+    render(
+      <EffectOptionButtons
+        backgroundSelected="low-blur"
+        setBackgroundSelected={() => {}}
+        customBackgroundImageChange={() => {}}
+      />
+    );
     const selectedOption = screen.getByTestId('background-low-blur');
     expect(selectedOption).toBeInTheDocument();
   });
@@ -22,6 +34,7 @@ describe('EffectOptionButtons', () => {
       <EffectOptionButtons
         backgroundSelected="none"
         setBackgroundSelected={setBackgroundSelected}
+        customBackgroundImageChange={() => {}}
       />
     );
     const lowBlur = screen.getByTestId('background-low-blur');
@@ -35,6 +48,7 @@ describe('EffectOptionButtons', () => {
       <EffectOptionButtons
         backgroundSelected="none"
         setBackgroundSelected={setBackgroundSelected}
+        customBackgroundImageChange={() => {}}
       />
     );
     const highBlur = screen.getByTestId('background-high-blur');

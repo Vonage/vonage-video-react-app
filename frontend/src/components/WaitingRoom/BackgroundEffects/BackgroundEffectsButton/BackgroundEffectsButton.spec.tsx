@@ -20,7 +20,7 @@ describe('BackgroundEffectsButton', () => {
   it('renders the button if media processor is supported', () => {
     mockHasMediaProcessorSupport.mockReturnValue(true);
     render(<BackgroundEffectsButton onClick={mockOnClick} />);
-    expect(screen.getByLabelText(/background effects/i)).toBeInTheDocument();
+    expect(screen.getByLabelText(/background settings/i)).toBeInTheDocument();
     expect(screen.getByRole('button')).toBeInTheDocument();
   });
 
@@ -47,7 +47,7 @@ describe('BackgroundEffectsButton', () => {
         },
       },
     });
-    expect(screen.queryByLabelText(/background effects/i)).not.toBeInTheDocument();
+    expect(screen.queryByLabelText(/background settings/i)).not.toBeInTheDocument();
   });
 });
 

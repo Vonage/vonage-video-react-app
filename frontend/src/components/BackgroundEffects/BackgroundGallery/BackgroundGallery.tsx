@@ -1,7 +1,10 @@
 import { ReactElement, useEffect, useState } from 'react';
-import { Box, IconButton, Tooltip } from '@mui/material';
-import DeleteIcon from '@mui/icons-material/Delete';
 import { useTranslation } from 'react-i18next';
+import Box from '@ui/Box';
+import Tooltip from '@ui/Tooltip';
+import IconButton from '@ui/IconButton';
+import VividIcon from '@components/VividIcon';
+import useCustomTheme from '@Context/Theme';
 import { BACKGROUNDS_PATH } from '../../../utils/constants';
 import SelectableOption from '../SelectableOption';
 import useImageStorage, { StoredImage } from '../../../utils/useImageStorage/useImageStorage';
@@ -10,6 +13,7 @@ export type BackgroundGalleryProps = {
   backgroundSelected: string;
   setBackgroundSelected: (dataUrl: string) => void;
   clearPublisherBgIfSelectedDeleted: (dataUrl: string) => void;
+  refreshTrigger?: number;
 };
 
 /**
@@ -20,16 +24,19 @@ export type BackgroundGalleryProps = {
  *   @property {string} backgroundSelected - The currently selected background image key.
  *   @property {Function} setBackgroundSelected - Callback to update the selected background image key.
  *   @property {Function} clearPublisherBgIfSelectedDeleted - Callback to clean up background replacement if the selected background is deleted.
+ *   @property {number} [refreshTrigger] - Optional timestamp to trigger refresh of custom images.
  * @returns {ReactElement} A horizontal stack of selectable option buttons.
  */
 const BackgroundGallery = ({
   backgroundSelected,
   setBackgroundSelected,
   clearPublisherBgIfSelectedDeleted,
+  refreshTrigger,
 }: BackgroundGalleryProps): ReactElement => {
   const { getImagesFromStorage, deleteImageFromStorage } = useImageStorage();
   const [customImages, setCustomImages] = useState<StoredImage[]>([]);
   const { t } = useTranslation();
+  const theme = useCustomTheme();
 
   const backgrounds = [
     {
@@ -48,7 +55,7 @@ const BackgroundGallery = ({
 
   useEffect(() => {
     setCustomImages(getImagesFromStorage());
-  }, [getImagesFromStorage]);
+  }, [getImagesFromStorage, refreshTrigger]);
 
   const handleDelete = (id: string, dataUrl: string) => {
     if (backgroundSelected === dataUrl) {
@@ -97,19 +104,21 @@ const BackgroundGallery = ({
                   }}
                   size="small"
                   sx={{
-                    color: 'white',
+                    color: isSelected ? theme.colors.textDisabled : theme.colors.background,
                     position: 'absolute',
                     top: -8,
                     right: -8,
                     zIndex: 10,
                     cursor: isSelected ? 'default' : 'pointer',
-                    backgroundColor: isSelected ? 'rgba(0,0,0,0.4)' : 'rgba(0,0,0,0.8)',
+                    backgroundColor: isSelected ? theme.colors.disabled : theme.colors.onBackground,
                     '&:hover': {
-                      backgroundColor: isSelected ? 'rgba(0,0,0,0.4)' : 'rgba(0,0,0,0.8)',
+                      backgroundColor: isSelected
+                        ? theme.colors.disabled
+                        : theme.colors.primaryHover,
                     },
                   }}
                 >
-                  <DeleteIcon fontSize="small" />
+                  <VividIcon name="delete-solid" customSize={-6} />
                 </IconButton>
               </Tooltip>
             </SelectableOption>

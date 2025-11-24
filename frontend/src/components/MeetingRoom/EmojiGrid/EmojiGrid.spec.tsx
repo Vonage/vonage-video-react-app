@@ -1,17 +1,14 @@
 import { afterEach, beforeEach, describe, expect, it, Mock, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import { ReactElement, useRef, useState } from 'react';
-import * as mui from '@mui/material';
+import Button from '@ui/Button';
+import useMediaQuery from '@ui/useMediaQuery';
 import EmojiGrid from './EmojiGrid';
 import SendEmojiButton from '../SendEmojiButton';
 
-vi.mock('@mui/material', async () => {
-  const actual = await vi.importActual<typeof mui>('@mui/material');
-  return {
-    ...actual,
-    useMediaQuery: vi.fn(),
-  };
-});
+vi.mock('@ui/useMediaQuery', () => ({
+  default: vi.fn(),
+}));
 vi.mock('../SendEmojiButton');
 vi.mock('../../../utils/emojis', () => ({
   default: { FAVORITE: '🦧' },
@@ -19,7 +16,7 @@ vi.mock('../../../utils/emojis', () => ({
 
 const mockSendEmojiButton = SendEmojiButton as Mock<[], ReactElement>;
 
-const FakeSendEmojiButton = <mui.Button data-testid="send-emoji-button" />;
+const FakeSendEmojiButton = <Button data-testid="send-emoji-button" />;
 const TestComponent = ({
   defaultOpenEmojiGrid = false,
 }: {
@@ -30,7 +27,7 @@ const TestComponent = ({
 
   return (
     <>
-      <mui.Button type="button" ref={anchorRef} />
+      <Button type="button" ref={anchorRef} />
       <EmojiGrid
         anchorRef={anchorRef}
         isEmojiGridOpen={isEmojiGridOpen}
@@ -52,7 +49,7 @@ describe('EmojiGrid', () => {
 
   describe('on desktop', () => {
     beforeEach(() => {
-      (mui.useMediaQuery as Mock).mockReturnValue(false);
+      (useMediaQuery as Mock).mockReturnValue(false);
     });
 
     it('displays emoji grid when open', () => {
@@ -70,7 +67,7 @@ describe('EmojiGrid', () => {
 
   describe('on mobile', () => {
     beforeEach(() => {
-      (mui.useMediaQuery as Mock).mockReturnValue(true);
+      (useMediaQuery as Mock).mockReturnValue(true);
     });
 
     it('displays emoji grid when open', () => {

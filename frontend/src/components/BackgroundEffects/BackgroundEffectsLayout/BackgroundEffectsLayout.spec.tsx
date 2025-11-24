@@ -12,9 +12,6 @@ vi.mock('react-i18next', () => ({
       const translations: Record<string, string> = {
         'backgroundEffects.title': enTranslations['backgroundEffects.title'],
         'backgroundEffects.choice': enTranslations['backgroundEffects.choice'],
-        'backgroundEffects.tabs.backgrounds': enTranslations['backgroundEffects.tabs.backgrounds'],
-        'backgroundEffects.tabs.addBackground':
-          enTranslations['backgroundEffects.tabs.addBackground'],
         'button.cancel': enTranslations['button.cancel'],
         'button.apply': enTranslations['button.apply'],
       };
@@ -62,7 +59,7 @@ describe('BackgroundEffectsLayout (Meeting room)', () => {
 
   it('renders when open', () => {
     renderLayout();
-    expect(screen.getByTestId('right-panel-title')).toHaveTextContent('Background Effects');
+    expect(screen.getByTestId('right-panel-title')).toHaveTextContent('Background settings');
     expect(screen.getByTestId('background-video-container')).toBeInTheDocument();
     expect(screen.getByTestId('background-none')).toBeInTheDocument();
     expect(screen.getByTestId('background-bg1')).toBeInTheDocument();
@@ -127,7 +124,7 @@ describe('BackgroundEffects (Waiting Room)', () => {
     expect(screen.getByRole('button', { name: /Cancel/i })).toBeInTheDocument();
     expect(screen.getByRole('button', { name: /Apply/i })).toBeInTheDocument();
 
-    // Checking that BackgroundEffectTabs (Backgrounds and Add Background tabs) are rendered
+    // Checking that BackgroundEffectOptions (Backgrounds and Add Background tabs) are rendered
     expect(screen.getAllByText(/Backgrounds/i)[0]).toBeInTheDocument();
     expect(screen.getAllByText(/Add background/i)[0]).toBeInTheDocument();
   });

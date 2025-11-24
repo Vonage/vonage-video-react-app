@@ -1,12 +1,13 @@
 import { ReactElement } from 'react';
-import BlockIcon from '@mui/icons-material/Block';
-import BlurOnIcon from '@mui/icons-material/BlurOn';
 import { useTranslation } from 'react-i18next';
+import VividIcon from '@components/VividIcon';
 import SelectableOption from '../SelectableOption';
+import AddBackgroundEffectLayout from '../AddBackgroundEffect/AddBackgroundEffectLayout/AddBackgroundEffectLayout';
 
 export type EffectOptionButtonsProps = {
   backgroundSelected: string;
   setBackgroundSelected: (key: string) => void;
+  customBackgroundImageChange: (dataUrl: string) => void;
 };
 
 /**
@@ -21,18 +22,23 @@ export type EffectOptionButtonsProps = {
 const EffectOptionButtons = ({
   backgroundSelected,
   setBackgroundSelected,
+  customBackgroundImageChange,
 }: EffectOptionButtonsProps): ReactElement => {
   const { t } = useTranslation();
   const options = [
     {
       key: 'none',
-      icon: <BlockIcon sx={{ fontSize: '30px' }} />,
+      icon: <VividIcon name="remove-line" customSize={-2} />,
       name: t('backgroundEffects.removeBackground'),
     },
-    { key: 'low-blur', icon: <BlurOnIcon />, name: t('backgroundEffects.slightBlur') },
+    {
+      key: 'low-blur',
+      icon: <VividIcon name="blur-line" customSize={-2} />,
+      name: t('backgroundEffects.slightBlur'),
+    },
     {
       key: 'high-blur',
-      icon: <BlurOnIcon sx={{ fontSize: '30px' }} />,
+      icon: <VividIcon name="blur-solid" customSize={-5} />,
       name: t('backgroundEffects.strongBlur'),
     },
   ];
@@ -48,6 +54,10 @@ const EffectOptionButtons = ({
           icon={icon}
         />
       ))}
+      <AddBackgroundEffectLayout
+        customBackgroundImageChange={customBackgroundImageChange}
+        backgroundSelected={backgroundSelected}
+      />
     </>
   );
 };

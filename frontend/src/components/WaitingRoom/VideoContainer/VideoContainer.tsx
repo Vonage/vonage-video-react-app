@@ -48,7 +48,7 @@ const VideoContainer = ({ username }: VideoContainerProps): ReactElement => {
       const myVideoElement = publisherVideoElement as HTMLElement;
       myVideoElement.classList.add('video__element');
       myVideoElement.title = 'publisher-preview';
-      myVideoElement.style.borderRadius = isSmallViewport ? '0px' : '12px';
+      myVideoElement.style.borderRadius = isSmallViewport ? '0px' : theme.shapes.borderRadiusLarge;
       myVideoElement.style.height = isSmallViewport ? '' : `${VIDEO_CONTAINER_HEIGHT_WR}px`;
       myVideoElement.style.width = isSmallViewport ? '100dvw' : '584px';
       myVideoElement.style.marginLeft = 'auto';
@@ -61,7 +61,7 @@ const VideoContainer = ({ username }: VideoContainerProps): ReactElement => {
         setIsVideoLoading(false);
       });
     }
-  }, [isSmallViewport, publisherVideoElement, isVideoEnabled]);
+  }, [isSmallViewport, publisherVideoElement, isVideoEnabled, theme.shapes.borderRadiusLarge]);
 
   return (
     <Box
