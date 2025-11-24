@@ -26,14 +26,14 @@ const matchMediaCommon = {
 };
 
 describe('GoodbyeMessage', () => {
-  const originalMatchMedia = window.matchMedia;
+  const originalMatchMedia = globalThis.matchMedia;
 
   beforeEach(() => {
     (useNavigate as Mock).mockReturnValue(mockNavigate);
   });
 
   afterAll(() => {
-    window.matchMedia = originalMatchMedia;
+    globalThis.matchMedia = originalMatchMedia;
   });
 
   it('renders the header', () => {
@@ -70,7 +70,7 @@ describe('GoodbyeMessage', () => {
   });
 
   it('renders correctly on screen less than SMALL_VIEWPORT', () => {
-    window.matchMedia = vi.fn().mockImplementation((query) => ({
+    globalThis.matchMedia = vi.fn().mockImplementation((query) => ({
       matches: new RegExp(`\\(max-width:\\s*${SMALL_VIEWPORT}px\\)`).test(query),
       media: query,
       ...matchMediaCommon,
@@ -88,7 +88,7 @@ describe('GoodbyeMessage', () => {
   });
 
   it('renders correctly on screen greater than SMALL_VIEWPORT', () => {
-    window.matchMedia = vi.fn().mockImplementation((query) => ({
+    globalThis.matchMedia = vi.fn().mockImplementation((query) => ({
       matches: new RegExp(`\\(min-width:\\s*${SMALL_VIEWPORT + 1}px\\)`).test(query),
       media: query,
       ...matchMediaCommon,

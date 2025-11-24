@@ -12,10 +12,10 @@ const matchMediaCommon = {
 };
 
 describe('useIsSmallViewport', () => {
-  const originalMatchMedia = window.matchMedia;
+  const originalMatchMedia = globalThis.matchMedia;
 
   beforeEach(() => {
-    window.matchMedia = vi.fn().mockImplementation((query) => ({
+    globalThis.matchMedia = vi.fn().mockImplementation((query) => ({
       matches: new RegExp(`\\(max-width:\\s*${SMALL_VIEWPORT + 1}px\\)`).test(query),
       media: query,
       ...matchMediaCommon,
@@ -23,7 +23,7 @@ describe('useIsSmallViewport', () => {
   });
 
   afterAll(() => {
-    window.matchMedia = originalMatchMedia;
+    globalThis.matchMedia = originalMatchMedia;
   });
 
   it('should return false when window width is greater than 768px', () => {
@@ -33,7 +33,7 @@ describe('useIsSmallViewport', () => {
   });
 
   it('should return true when window width is less than or equal to 768px', () => {
-    window.matchMedia = vi.fn().mockImplementation((query) => ({
+    globalThis.matchMedia = vi.fn().mockImplementation((query) => ({
       matches: new RegExp(`\\(max-width:\\s*${SMALL_VIEWPORT}px\\)`).test(query),
       media: query,
       ...matchMediaCommon,

@@ -228,6 +228,9 @@ const usePreviewPublisher = (): PreviewPublisherContextType => {
     if (publisherRef.current) {
       return;
     }
+    // We reset user preferences as we want to start with both devices enabled
+    setStorageItem(STORAGE_KEYS.AUDIO_SOURCE_ENABLED, 'true');
+    setStorageItem(STORAGE_KEYS.VIDEO_SOURCE_ENABLED, 'true');
 
     // Set videoFilter based on user's selected background
     let videoFilter: VideoFilter | undefined;
@@ -282,6 +285,7 @@ const usePreviewPublisher = (): PreviewPublisherContextType => {
       return;
     }
     publisherRef.current.publishVideo(!isVideoEnabled);
+    setStorageItem(STORAGE_KEYS.VIDEO_SOURCE_ENABLED, (!isVideoEnabled).toString());
     setIsVideoEnabled(!isVideoEnabled);
     if (setUser) {
       setUser((prevUser: UserType) => ({
@@ -306,6 +310,7 @@ const usePreviewPublisher = (): PreviewPublisherContextType => {
     }
     publisherRef.current.publishAudio(!isAudioEnabled);
     setIsAudioEnabled(!isAudioEnabled);
+    setStorageItem(STORAGE_KEYS.AUDIO_SOURCE_ENABLED, (!isAudioEnabled).toString());
     if (setUser) {
       setUser((prevUser: UserType) => ({
         ...prevUser,
