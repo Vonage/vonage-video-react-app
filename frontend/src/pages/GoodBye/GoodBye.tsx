@@ -8,7 +8,6 @@ import useArchives from '../../hooks/useArchives';
 import ArchiveList from '../../components/GoodBye/ArchiveList';
 import GoodByeMessage from '../../components/GoodBye/GoodbyeMessage';
 import useRoomName from '../../hooks/useRoomName';
-
 /**
  * GoodBye Component
  *
