@@ -9,6 +9,7 @@ import useAppConfig from '@Context/AppConfig/hooks/useAppConfig';
 import useUserContext from '@hooks/useUserContext';
 import getInitials from '@utils/getInitials';
 import DeviceStore from '@utils/DeviceStore';
+import { getStorageItem, STORAGE_KEYS } from '@utils/storage';
 
 /**
  * React hook to get PublisherProperties combining default options and options set in UserContext
@@ -53,14 +54,17 @@ const usePublisherOptions = (): PublisherProperties | null => {
       const videoFilter: VideoFilter | undefined =
         backgroundFilter && hasMediaProcessorSupport() ? backgroundFilter : undefined;
 
+      const isAudioDisabled = getStorageItem(STORAGE_KEYS.AUDIO_SOURCE_ENABLED) === 'false';
+      const isVideoDisabled = getStorageItem(STORAGE_KEYS.VIDEO_SOURCE_ENABLED) === 'false';
+
       setPublisherOptions({
         audioFallback: { publisher: true },
         audioSource,
         initials,
         insertDefaultUI: false,
         name,
-        publishAudio: allowAudioOnJoin && publishAudio,
-        publishVideo: allowVideoOnJoin && publishVideo,
+        publishAudio: allowAudioOnJoin && publishAudio && !isAudioDisabled,
+        publishVideo: allowVideoOnJoin && publishVideo && !isVideoDisabled,
         resolution: defaultResolution,
         audioFilter,
         videoFilter,

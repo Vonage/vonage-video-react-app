@@ -1,6 +1,8 @@
 export const STORAGE_KEYS = {
   AUDIO_SOURCE: 'audioSource',
+  AUDIO_SOURCE_ENABLED: 'audioSourceEnabled',
   VIDEO_SOURCE: 'videoSource',
+  VIDEO_SOURCE_ENABLED: 'videoSourceEnabled',
   NOISE_SUPPRESSION: 'noiseSuppression',
   BACKGROUND_REPLACEMENT: 'backgroundReplacement',
   USERNAME: 'username',
