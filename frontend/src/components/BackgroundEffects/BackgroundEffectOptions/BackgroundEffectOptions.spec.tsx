@@ -7,7 +7,7 @@ describe('BackgroundEffectOptions', () => {
   const clearBgWhenSelectedDeleted = vi.fn();
   const customBackgroundImageChange = vi.fn();
 
-  it('renders tabs and defaults to Backgrounds tab', () => {
+  it('renders background options grid with effects and gallery', () => {
     render(
       <BackgroundEffectOptions
         mode="meeting"
@@ -17,11 +17,11 @@ describe('BackgroundEffectOptions', () => {
         customBackgroundImageChange={customBackgroundImageChange}
       />
     );
-    expect(screen.getByRole('tab', { name: /Backgrounds/i })).toBeInTheDocument();
-    expect(screen.getByRole('tab', { name: /Add Background/i })).toBeInTheDocument();
-    expect(screen.getByRole('tab', { name: /Backgrounds/i })).toHaveAttribute(
-      'aria-selected',
-      'true'
-    );
+
+    expect(screen.getByTestId('vivid-icon-remove-line')).toBeInTheDocument();
+    expect(screen.getByTestId('vivid-icon-blur-line')).toBeInTheDocument();
+
+    expect(screen.getByAltText('Bookshelf Room')).toBeInTheDocument();
+    expect(screen.getByAltText('Busy Room')).toBeInTheDocument();
   });
 });

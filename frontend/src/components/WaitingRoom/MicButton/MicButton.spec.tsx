@@ -25,13 +25,13 @@ describe('MicButton', () => {
 
   it('renders the mic on icon when audio is enabled', () => {
     render(<MicButton />);
-    expect(screen.getByTestId('MicIcon')).toBeInTheDocument();
+    expect(screen.getByTestId('vivid-icon-microphone-line')).toBeInTheDocument();
   });
 
   it('renders the mic off icon when audio is disabled', () => {
     isAudioEnabled = false;
     render(<MicButton />);
-    expect(screen.getByTestId('MicOffIcon')).toBeInTheDocument();
+    expect(screen.getByTestId('vivid-icon-mic-mute-line')).toBeInTheDocument();
   });
 
   it('calls toggleAudio when clicked', () => {

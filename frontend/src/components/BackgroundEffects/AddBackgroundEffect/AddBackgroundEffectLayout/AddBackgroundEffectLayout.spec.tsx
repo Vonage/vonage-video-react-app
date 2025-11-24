@@ -50,16 +50,15 @@ describe('AddBackgroundEffectLayout', () => {
     render(
       <AddBackgroundEffectLayout backgroundSelected="0" customBackgroundImageChange={vi.fn()} />
     );
-    expect(screen.getByText(/Drag and drop, or click here to upload image/i)).toBeInTheDocument();
-    expect(screen.getByPlaceholderText(/Link from the web/i)).toBeInTheDocument();
-    expect(screen.getByTestId('background-effect-link-submit-button')).toBeInTheDocument();
+    expect(screen.getByTestId('background-add-background')).toBeInTheDocument();
+    expect(screen.getByTestId('vivid-icon-gallery-line')).toBeInTheDocument();
   });
 
   it('shows error for invalid file type', async () => {
     render(
       <AddBackgroundEffectLayout backgroundSelected="0" customBackgroundImageChange={vi.fn()} />
     );
-    const input = screen.getByLabelText(/upload/i);
+    const input = document.querySelector('input[type="file"]') as HTMLInputElement;
     const file = new File(['dummy'], 'test.txt', { type: 'text/plain' });
     fireEvent.change(input, { target: { files: [file] } });
     expect(
@@ -71,7 +70,7 @@ describe('AddBackgroundEffectLayout', () => {
     render(
       <AddBackgroundEffectLayout backgroundSelected="0" customBackgroundImageChange={vi.fn()} />
     );
-    const input = screen.getByLabelText(/upload/i);
+    const input = document.querySelector('input[type="file"]') as HTMLInputElement;
     const file = new File(['x'.repeat(3 * 1024 * 1024)], 'big.png', { type: 'image/png' });
     Object.defineProperty(file, 'size', { value: 3 * 1024 * 1024 });
     fireEvent.change(input, { target: { files: [file] } });
@@ -80,18 +79,9 @@ describe('AddBackgroundEffectLayout', () => {
 
   it('handles valid image file upload', async () => {
     render(<AddBackgroundEffectLayout backgroundSelected="0" customBackgroundImageChange={cb} />);
-    const input = screen.getByLabelText(/upload/i);
+    const input = document.querySelector('input[type="file"]') as HTMLInputElement;
     const file = new File(['dummy'], 'test.png', { type: 'image/png' });
     fireEvent.change(input, { target: { files: [file] } });
     await waitFor(() => expect(cb).toHaveBeenCalledWith('data:image/png;base64,MOCKED'));
-  });
-
-  it('handles valid link submit', async () => {
-    render(<AddBackgroundEffectLayout backgroundSelected="0" customBackgroundImageChange={cb} />);
-    const input = screen.getByPlaceholderText(/Link from the web/i);
-    fireEvent.change(input, { target: { value: 'https://example.com/image.png' } });
-    const button = screen.getByTestId('background-effect-link-submit-button');
-    fireEvent.click(button);
-    await waitFor(() => expect(cb).toHaveBeenCalledWith('data:image/png;base64,MOCKED_LINK'));
   });
 });

@@ -12,8 +12,9 @@ describe('EffectOptionButtons', () => {
         customBackgroundImageChange={() => {}}
       />
     );
-    expect(screen.getByTestId('BlockIcon')).toBeInTheDocument();
-    expect(screen.getAllByTestId('BlurOnIcon')).toHaveLength(2);
+    expect(screen.getByTestId('vivid-icon-remove-line')).toBeInTheDocument();
+    expect(screen.getByTestId('vivid-icon-blur-line')).toBeInTheDocument();
+    expect(screen.getByTestId('vivid-icon-blur-solid')).toBeInTheDocument();
   });
 
   it('marks the selected option as selected', () => {
