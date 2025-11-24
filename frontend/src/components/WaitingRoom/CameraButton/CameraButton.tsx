@@ -51,7 +51,7 @@ const CameraButton = (): ReactElement | false => {
           <VideoContainerButton
             onClick={handleToggleVideo}
             sx={{
-              backgroundColor: !isVideoEnabled ? theme.colors.errorHover : '',
+              backgroundColor: isVideoEnabled ? '' : theme.colors.errorHover,
               '&:hover': {
                 backgroundColor: isVideoEnabled
                   ? 'rgba(255, 255, 255, 0.6)'

@@ -46,7 +46,7 @@ const MicButton = (): ReactElement | false => {
           <VideoContainerButton
             onClick={toggleAudio}
             sx={{
-              backgroundColor: !isAudioEnabled ? theme.colors.errorHover : '',
+              backgroundColor: isAudioEnabled ? '' : theme.colors.errorHover,
               '&:hover': {
                 backgroundColor: isAudioEnabled
                   ? 'rgba(255, 255, 255, 0.6)'
