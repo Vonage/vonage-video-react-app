@@ -1,4 +1,4 @@
-import { ReactElement, useMemo } from 'react';
+import { ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
 import Box from '@ui/Box';
 import MenuItem from '@ui/MenuItem';
@@ -19,16 +19,13 @@ const languageOptions: LanguageOption[] = [
   { code: 'es-MX', name: 'Español (México)', flag: 'flag-mexico' },
 ];
 
-/**
- * ChevronIcon Component
- * Icon component for the language selector dropdown.
- * @param {object} props - Component props.
- * @param {string} props.color - The color of the icon.
- * @returns {ReactElement} The rendered ChevronIcon component.
- */
 const ChevronIcon = ({ color, ...props }: { color: string } & Record<string, unknown>) => (
   <VividIcon name="chevron-down-line" customSize={-5} sx={{ color }} {...props} />
 );
+
+const SelectIconComponent =
+  (themeColor: string) =>
+  (props: Record<string, unknown>): ReactElement => <ChevronIcon color={themeColor} {...props} />;
 
 /**
  * LanguageSelector Component
@@ -52,14 +49,6 @@ const LanguageSelector = ({ showFlag = true }: LanguageSelectorProps): ReactElem
     i18n.changeLanguage(newLanguage);
   };
 
-  const IconComponentMemoized = useMemo(
-    // eslint-disable-next-line react/no-unstable-nested-components
-    () => (props: Record<string, unknown>) => (
-      <ChevronIcon color={theme.colors.textSecondary} {...props} />
-    ),
-    [theme.colors.textSecondary]
-  );
-
   const currentLanguage = i18n.language || 'en';
 
   return (
@@ -67,7 +56,7 @@ const LanguageSelector = ({ showFlag = true }: LanguageSelectorProps): ReactElem
       <Select
         value={currentLanguage}
         onChange={handleLanguageChange}
-        IconComponent={IconComponentMemoized}
+        IconComponent={SelectIconComponent(theme.colors.textSecondary)}
         displayEmpty
         sx={{
           '& .MuiOutlinedInput-notchedOutline': {
