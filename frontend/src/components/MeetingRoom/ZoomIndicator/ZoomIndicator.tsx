@@ -84,9 +84,7 @@ const ZoomIndicator = ({
                   sx={{
                     padding: '4px',
                     color: 'white',
-                    '&:disabled': {
-                      color: 'rgba(255, 255, 255, 0.3)',
-                    },
+                    '&:disabled': { color: 'rgba(255, 255, 255, 0.3)' },
                   }}
                 >
                   <Remove sx={{ fontSize: '16px', color: 'inherit' }} />
@@ -102,9 +100,7 @@ const ZoomIndicator = ({
                   sx={{
                     padding: '4px',
                     color: 'white',
-                    '&:disabled': {
-                      color: 'rgba(255, 255, 255, 0.3)',
-                    },
+                    '&:disabled': { color: 'rgba(255, 255, 255, 0.3)' },
                   }}
                 >
                   <Add sx={{ fontSize: '16px', color: 'inherit' }} />

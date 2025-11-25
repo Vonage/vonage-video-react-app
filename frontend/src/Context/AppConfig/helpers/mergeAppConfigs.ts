@@ -7,7 +7,7 @@ import defaultAppConfig from './defaultAppConfig';
  * @param {DeepPartial<AppConfig>} updates - Partial updates to apply to the app config.
  * @returns {AppConfig} The merged app config.
  */
-function mergeAppConfigs(updates: DeepPartial<AppConfig>): AppConfig;
+function mergeAppConfigs(updates?: DeepPartial<AppConfig>): AppConfig;
 
 /**
  * Merge two app configs.
@@ -19,12 +19,7 @@ function mergeAppConfigs(updates: DeepPartial<AppConfig>): AppConfig;
 function mergeAppConfigs(args: { previous: AppConfig; updates: DeepPartial<AppConfig> }): AppConfig;
 
 function mergeAppConfigs(
-  args:
-    | {
-        previous: AppConfig;
-        updates: DeepPartial<AppConfig>;
-      }
-    | DeepPartial<AppConfig>
+  args: { previous: AppConfig; updates: DeepPartial<AppConfig> } | DeepPartial<AppConfig> = {}
 ): AppConfig {
   const shouldUseDefault = !('previous' in args && 'updates' in args);
   const previous = shouldUseDefault ? defaultAppConfig : args.previous;
@@ -33,22 +28,10 @@ function mergeAppConfigs(
   return {
     ...previous,
     ...updates,
-    videoSettings: {
-      ...previous.videoSettings,
-      ...updates.videoSettings,
-    },
-    audioSettings: {
-      ...previous.audioSettings,
-      ...updates.audioSettings,
-    },
-    waitingRoomSettings: {
-      ...previous.waitingRoomSettings,
-      ...updates.waitingRoomSettings,
-    },
-    meetingRoomSettings: {
-      ...previous.meetingRoomSettings,
-      ...updates.meetingRoomSettings,
-    },
+    videoSettings: { ...previous.videoSettings, ...updates.videoSettings },
+    audioSettings: { ...previous.audioSettings, ...updates.audioSettings },
+    waitingRoomSettings: { ...previous.waitingRoomSettings, ...updates.waitingRoomSettings },
+    meetingRoomSettings: { ...previous.meetingRoomSettings, ...updates.meetingRoomSettings },
   };
 }
 

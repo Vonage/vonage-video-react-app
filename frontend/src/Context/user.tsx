@@ -39,10 +39,7 @@ export type UserType = {
 // Create the User context with an initial value of null
 export const UserContext = createContext<UserContextType | null>(null);
 
-export type UserProviderProps = {
-  children: ReactNode;
-  value?: UserType;
-};
+export type UserProviderProps = { children: ReactNode; value?: UserType };
 
 /**
  * UserProvider component to wrap the application and provide the User preferences to be used by the publisher.
@@ -74,13 +71,7 @@ const UserProvider = ({ children, value: initialUserState }: UserProviderProps):
     }
   );
 
-  const value = useMemo(
-    () => ({
-      user,
-      setUser,
-    }),
-    [user]
-  );
+  const value = useMemo(() => ({ user, setUser }), [user]);
 
   // Provide the User context to child components
   return <UserContext.Provider value={value}>{children}</UserContext.Provider>;

@@ -11,9 +11,7 @@ export type AppConfigApi = import('../AppConfigContext').AppConfigApi;
 function loadAppConfig(this: AppConfigApi['actions']) {
   return async (_: AppConfigApi) => {
     try {
-      const response = await fetch('/config.json', {
-        cache: 'no-cache',
-      });
+      const response = await fetch('/config.json', { cache: 'no-cache' });
 
       const contentType = response.headers.get('content-type');
       if (!contentType?.includes('application/json')) {
@@ -24,9 +22,7 @@ function loadAppConfig(this: AppConfigApi['actions']) {
 
       this.updateAppConfig(json);
     } finally {
-      this.updateAppConfig({
-        isAppConfigLoaded: true,
-      });
+      this.updateAppConfig({ isAppConfigLoaded: true });
     }
   };
 }

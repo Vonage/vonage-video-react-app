@@ -55,7 +55,7 @@ function makeGenericProviderWrapper<
      * The point of this interceptor is to capture context,
      * This scenario is the exception to the rule and mostly for testing purposes.
      */
-    // eslint-disable-next-line react-hooks/immutability
+
     contextResult.current = contextValue;
 
     onCreated?.(contextValue);

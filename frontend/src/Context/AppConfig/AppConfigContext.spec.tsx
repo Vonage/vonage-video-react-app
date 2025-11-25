@@ -30,9 +30,7 @@ describe('AppConfigContext', () => {
         allowAudioOnJoin: false,
         allowMicrophoneControl: false,
       },
-      waitingRoomSettings: {
-        allowDeviceSelection: false,
-      },
+      waitingRoomSettings: { allowDeviceSelection: false },
       meetingRoomSettings: {
         allowArchiving: false,
         allowCaptions: false,
@@ -47,9 +45,7 @@ describe('AppConfigContext', () => {
 
     vi.spyOn(global, 'fetch').mockResolvedValue({
       json: () => mockConfig,
-      headers: {
-        get: () => 'application/json',
-      },
+      headers: { get: () => 'application/json' },
     } as unknown as Response);
 
     const { result } = renderHook(() => appConfigStore.use());
@@ -61,10 +57,7 @@ describe('AppConfigContext', () => {
 
     [appConfig, { loadAppConfig }] = result.current;
 
-    expect(appConfig).toEqual({
-      ...mockConfig,
-      isAppConfigLoaded: true,
-    });
+    expect(appConfig).toEqual({ ...mockConfig, isAppConfigLoaded: true });
   });
 
   it('falls back to defaultConfig if fetch fails', async () => {
@@ -90,10 +83,7 @@ describe('AppConfigContext', () => {
 
     expect(appConfig.isAppConfigLoaded).toBe(true);
 
-    expect(appConfig).toEqual({
-      ...defaultAppConfig,
-      isAppConfigLoaded: true,
-    });
+    expect(appConfig).toEqual({ ...defaultAppConfig, isAppConfigLoaded: true });
   });
 
   it('falls back to defaultConfig if no config.json is found', async () => {
@@ -103,9 +93,7 @@ describe('AppConfigContext', () => {
       ok: false,
       status: 404,
       statusText: 'Not Found',
-      headers: {
-        get: () => 'text/html',
-      },
+      headers: { get: () => 'text/html' },
     } as unknown as Response);
 
     const { result, rerender } = renderHook(() => appConfigStore.use());
@@ -125,10 +113,7 @@ describe('AppConfigContext', () => {
 
     expect(appConfig.isAppConfigLoaded).toBe(true);
 
-    expect(appConfig).toEqual({
-      ...defaultAppConfig,
-      isAppConfigLoaded: true,
-    });
+    expect(appConfig).toEqual({ ...defaultAppConfig, isAppConfigLoaded: true });
   });
 });
 

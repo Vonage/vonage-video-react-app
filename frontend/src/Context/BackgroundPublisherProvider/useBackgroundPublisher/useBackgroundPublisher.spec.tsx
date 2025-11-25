@@ -7,16 +7,16 @@ import usePermissions from '@hooks/usePermissions';
 import useDevices from '@hooks/useDevices';
 import { allMediaDevices, defaultAudioDevice, defaultVideoDevice } from '@utils/mockData/device';
 import { DEVICE_ACCESS_STATUS } from '@utils/constants';
-import appConfig from '@Context/AppConfig';
-import { UserContextType } from '../../user';
+import composeProviders from '@utils/composeProviders';
+import Suspense$ from '@Context/Suspense$';
+import { makeAppConfigProviderWrapper } from '@test/providers';
 import useBackgroundPublisher from './useBackgroundPublisher';
-import usePublisherOptions from '../../PublisherProvider/usePublisherOptions';
+import { UserContextType } from '../../user';
 
 vi.mock('@vonage/client-sdk-video');
 vi.mock('@hooks/useUserContext.tsx');
 vi.mock('@hooks/usePermissions.tsx');
 vi.mock('@hooks/useDevices.tsx');
-vi.mock('../../PublisherProvider/usePublisherOptions');
 
 const defaultSettings = {
   publishAudio: false,
@@ -26,10 +26,7 @@ const defaultSettings = {
   publishCaptions: false,
 };
 const mockUserContextWithDefaultSettings = {
-  user: {
-    defaultSettings,
-    issues: { reconnections: 0, audioFallbacks: 0 },
-  },
+  user: { defaultSettings, issues: { reconnections: 0, audioFallbacks: 0 } },
   setUser: vi.fn(),
 } as UserContextType;
 
@@ -50,26 +47,18 @@ describe('useBackgroundPublisher', () => {
     vi.mocked(useUserContext).mockImplementation(() => mockUserContextWithDefaultSettings);
     (initPublisher as Mock).mockImplementation(mockedInitPublisher);
     (hasMediaProcessorSupport as Mock).mockImplementation(mockedHasMediaProcessorSupport);
-    vi.mocked(useDevices).mockReturnValue({
-      getAllMediaDevices: vi.fn(),
-      allMediaDevices,
-    });
+    vi.mocked(useDevices).mockReturnValue({ getAllMediaDevices: vi.fn(), allMediaDevices });
     vi.mocked(usePermissions).mockReturnValue({
       accessStatus: DEVICE_ACCESS_STATUS.PENDING,
       setAccessStatus: mockSetAccessStatus,
-    });
-    vi.mocked(usePublisherOptions).mockReturnValue({
-      publishVideo: true,
     });
   });
 
   describe('initBackgroundLocalPublisher', () => {
     it('should call initBackgroundLocalPublisher', async () => {
       mockedInitPublisher.mockReturnValue(mockPublisher);
-      const { result } = renderHook(() => useBackgroundPublisher());
-
+      const { result } = await renderHook(() => useBackgroundPublisher());
       await result.current.initBackgroundLocalPublisher();
-
       expect(mockedInitPublisher).toHaveBeenCalled();
     });
 
@@ -82,7 +71,7 @@ describe('useBackgroundPublisher', () => {
         callback(error);
       });
 
-      const { result } = renderHook(() => useBackgroundPublisher());
+      const { result } = await renderHook(() => useBackgroundPublisher());
       await result.current.initBackgroundLocalPublisher();
       expect(console.error).toHaveBeenCalledWith('initPublisher error: ', error);
     });
@@ -90,7 +79,7 @@ describe('useBackgroundPublisher', () => {
     it('should apply background high blur when initialized and changed background', async () => {
       mockedHasMediaProcessorSupport.mockReturnValue(true);
       mockedInitPublisher.mockReturnValue(mockPublisher);
-      const { result } = renderHook(() => useBackgroundPublisher());
+      const { result } = await renderHook(() => useBackgroundPublisher());
       await result.current.initBackgroundLocalPublisher();
 
       await act(async () => {
@@ -105,24 +94,22 @@ describe('useBackgroundPublisher', () => {
     it('should not replace background when initialized if the device does not support it', async () => {
       mockedHasMediaProcessorSupport.mockReturnValue(false);
       mockedInitPublisher.mockReturnValue(mockPublisher);
-      const { result } = renderHook(() => useBackgroundPublisher());
+      const { result } = await renderHook(() => useBackgroundPublisher());
       await result.current.initBackgroundLocalPublisher();
       expect(mockedInitPublisher).toHaveBeenCalledWith(
         undefined,
-        expect.objectContaining({
-          videoFilter: undefined,
-        }),
+        expect.objectContaining({ videoFilter: undefined }),
         expect.any(Function)
       );
     });
   });
 
   describe('changeBackground', () => {
-    let result: ReturnType<typeof renderHook>['result'];
+    let result: Awaited<ReturnType<typeof renderHook>>['result'];
     beforeEach(async () => {
       mockedHasMediaProcessorSupport.mockReturnValue(true);
       mockedInitPublisher.mockReturnValue(mockPublisher);
-      result = renderHook(() => useBackgroundPublisher()).result;
+      result = (await renderHook(() => useBackgroundPublisher())).result;
       await act(async () => {
         await (
           result.current as ReturnType<typeof useBackgroundPublisher>
@@ -169,7 +156,7 @@ describe('useBackgroundPublisher', () => {
         throw new Error('Simulated internal failure');
       });
 
-      const { result: res } = renderHook(() => useBackgroundPublisher());
+      const { result: res } = await renderHook(() => useBackgroundPublisher());
       await act(async () => {
         await res.current.initBackgroundLocalPublisher();
         await res.current.changeBackground('low-blur');
@@ -191,17 +178,12 @@ describe('useBackgroundPublisher', () => {
     };
 
     beforeEach(() => {
-      mockedPermissionStatus = {
-        onchange: null,
-        status: 'prompt',
-      };
+      mockedPermissionStatus = { onchange: null, status: 'prompt' };
       mockQuery.mockResolvedValue(mockedPermissionStatus);
 
       Object.defineProperty(global.navigator, 'permissions', {
         writable: true,
-        value: {
-          query: mockQuery,
-        },
+        value: { query: mockQuery },
       });
     });
 
@@ -212,10 +194,10 @@ describe('useBackgroundPublisher', () => {
       });
     });
 
-    it('handles permission denial', () => {
+    it('handles permission denial', async () => {
       mockedInitPublisher.mockReturnValue(mockPublisher);
 
-      const { result } = renderHook(() => useBackgroundPublisher());
+      const { result } = await renderHook(() => useBackgroundPublisher());
 
       act(() => {
         result.current.initBackgroundLocalPublisher();
@@ -227,13 +209,13 @@ describe('useBackgroundPublisher', () => {
       expect(mockSetAccessStatus).toBeCalledWith(DEVICE_ACCESS_STATUS.REJECTED);
     });
 
-    it('does not throw on older, unsupported browsers', () => {
+    it('does not throw on older, unsupported browsers', async () => {
       mockQuery.mockImplementation(() => {
         throw new Error('Whoops');
       });
       mockedInitPublisher.mockReturnValue(mockPublisher);
 
-      const { result } = renderHook(() => useBackgroundPublisher());
+      const { result } = await renderHook(() => useBackgroundPublisher());
 
       act(() => {
         result.current.initBackgroundLocalPublisher();
@@ -249,5 +231,9 @@ describe('useBackgroundPublisher', () => {
 });
 
 function renderHook<Result, Props>(render: (initialProps: Props) => Result) {
-  return renderHookBase(render, { wrapper: appConfig.Provider });
+  const { AppConfigWrapper } = makeAppConfigProviderWrapper();
+
+  const composedWrapper = composeProviders(Suspense$, AppConfigWrapper);
+
+  return act(() => renderHookBase(render, { wrapper: composedWrapper }));
 }

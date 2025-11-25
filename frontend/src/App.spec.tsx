@@ -14,22 +14,24 @@ vi.mock('./components/RedirectToWaitingRoom', () => ({
   default: ({ children }: PropsWithChildren) => children,
 }));
 
+const appConfig = { isAppConfigLoaded: true };
+
 describe('App routing', () => {
   it('renders LandingPage on unknown route', () => {
     window.history.pushState({}, '', '/unknown');
-    render(<App />);
+    render(<App appConfigValue={appConfig} />);
     expect(screen.getByText(/Landing Page/i)).toBeInTheDocument();
   });
 
   it('renders GoodBye page on /goodbye', () => {
     window.history.pushState({}, '', '/goodbye');
-    render(<App />);
+    render(<App appConfigValue={appConfig} />);
     expect(screen.getByText(/GoodBye Page/i)).toBeInTheDocument();
   });
 
   it('renders UnsupportedBrowserPage on /unsupported-browser', () => {
     window.history.pushState({}, '', '/unsupported-browser');
-    render(<App />);
+    render(<App appConfigValue={appConfig} />);
     expect(screen.getByText(/Unsupported Browser/i)).toBeInTheDocument();
   });
 });

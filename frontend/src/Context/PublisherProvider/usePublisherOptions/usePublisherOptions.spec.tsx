@@ -1,11 +1,13 @@
 import { describe, expect, it, vi, beforeEach, afterAll } from 'vitest';
-import { renderHook as renderHookBase, waitFor } from '@testing-library/react';
+import { act, renderHook as renderHookBase, waitFor } from '@testing-library/react';
 import OT from '@vonage/client-sdk-video';
 import useUserContext from '@hooks/useUserContext';
 import localStorageMock from '@utils/mockData/localStorageMock';
 import DeviceStore from '@utils/DeviceStore';
 import { setStorageItem, STORAGE_KEYS } from '@utils/storage';
 import { AppConfigProviderWrapperOptions, makeAppConfigProviderWrapper } from '@test/providers';
+import Suspense$ from '@Context/Suspense$/SuspenseContext';
+import composeProviders from '@utils/composeProviders';
 import usePublisherOptions from './usePublisherOptions';
 import { UserContextType } from '../../user';
 
@@ -25,26 +27,17 @@ const customSettings = {
   publishAudio: true,
   publishVideo: true,
   name: 'Foo Bar',
-  backgroundFilter: {
-    type: 'backgroundBlur',
-    blurStrength: 'high',
-  },
+  backgroundFilter: { type: 'backgroundBlur', blurStrength: 'high' },
   noiseSuppression: false,
   audioSource: '68f1d1e6f11c629b1febe51a95f8f740f8ac5cd3d4c91419bd2b52bb1a9a01cd',
   videoSource: 'a68ec4e4a6bc10dc572bd806414b0da27d0aefb0ad822f7ba4cf9b226bb9b7c2',
   publishCaptions: true,
 };
 
-const mockUserContextWithDefaultSettings = {
-  user: {
-    defaultSettings,
-  },
-} as UserContextType;
+const mockUserContextWithDefaultSettings = { user: { defaultSettings } } as UserContextType;
 
 const mockUserContextWithCustomSettings = {
-  user: {
-    defaultSettings: customSettings,
-  },
+  user: { defaultSettings: customSettings },
 } as UserContextType;
 
 describe('usePublisherOptions', () => {
@@ -53,15 +46,8 @@ describe('usePublisherOptions', () => {
 
   beforeEach(async () => {
     enumerateDevicesMock = vi.fn();
-    vi.stubGlobal('navigator', {
-      mediaDevices: {
-        enumerateDevices: enumerateDevicesMock,
-      },
-    });
-    Object.defineProperty(window, 'localStorage', {
-      value: localStorageMock,
-      writable: true,
-    });
+    vi.stubGlobal('navigator', { mediaDevices: { enumerateDevices: enumerateDevicesMock } });
+    Object.defineProperty(window, 'localStorage', { value: localStorageMock, writable: true });
     deviceStore = new DeviceStore();
     enumerateDevicesMock.mockResolvedValue([]);
     await deviceStore.init();
@@ -75,21 +61,19 @@ describe('usePublisherOptions', () => {
   it('should use default settings', async () => {
     vi.spyOn(OT, 'hasMediaProcessorSupport').mockReturnValue(true);
     vi.mocked(useUserContext).mockImplementation(() => mockUserContextWithDefaultSettings);
-    const { result } = renderHook(() => usePublisherOptions());
+    const { result } = await renderHook(() =>
+      usePublisherOptions({ isVideoEnabled: false, isAudioEnabled: false })
+    );
     await waitFor(() => {
       expect(result.current).toEqual({
         resolution: '1280x720',
         publishAudio: false,
         publishVideo: false,
         audioSource: undefined,
-        videoSource: undefined,
+        videoSource: null,
         insertDefaultUI: false,
-        audioFallback: {
-          publisher: true,
-        },
-        audioFilter: {
-          type: 'advancedNoiseSuppression',
-        },
+        audioFallback: { publisher: true },
+        audioFilter: undefined, // no audio source, so no noise suppression
         videoFilter: undefined,
         name: '',
         initials: '',
@@ -101,7 +85,9 @@ describe('usePublisherOptions', () => {
   it('should not have advanced noise suppression if not supported by browser', async () => {
     vi.spyOn(OT, 'hasMediaProcessorSupport').mockReturnValue(false);
     vi.mocked(useUserContext).mockImplementation(() => mockUserContextWithDefaultSettings);
-    const { result } = renderHook(() => usePublisherOptions());
+    const { result } = await renderHook(() =>
+      usePublisherOptions({ isVideoEnabled: true, isAudioEnabled: true })
+    );
 
     await waitFor(() => {
       expect(result.current?.audioFilter).toBe(undefined);
@@ -118,7 +104,9 @@ describe('usePublisherOptions', () => {
     ]);
     await deviceStore.init();
     vi.mocked(useUserContext).mockImplementation(() => mockUserContextWithCustomSettings);
-    const { result } = renderHook(() => usePublisherOptions());
+    const { result } = await renderHook(() =>
+      usePublisherOptions({ isVideoEnabled: true, isAudioEnabled: true })
+    );
     await waitFor(() => {
       expect(result.current).toEqual({
         resolution: '1280x720',
@@ -127,14 +115,9 @@ describe('usePublisherOptions', () => {
         audioSource: '68f1d1e6f11c629b1febe51a95f8f740f8ac5cd3d4c91419bd2b52bb1a9a01cd',
         videoSource: 'a68ec4e4a6bc10dc572bd806414b0da27d0aefb0ad822f7ba4cf9b226bb9b7c2',
         insertDefaultUI: false,
-        audioFallback: {
-          publisher: true,
-        },
+        audioFallback: { publisher: true },
         audioFilter: undefined,
-        videoFilter: {
-          type: 'backgroundBlur',
-          blurStrength: 'high',
-        },
+        videoFilter: { type: 'backgroundBlur', blurStrength: 'high' },
         name: 'Foo Bar',
         initials: 'FB',
         publishCaptions: true,
@@ -144,15 +127,10 @@ describe('usePublisherOptions', () => {
 
   describe('configurable features', () => {
     it('should disable audio publishing when allowAudioOnJoin is false', async () => {
-      const { result } = renderHook(() => usePublisherOptions(), {
-        appConfigOptions: {
-          value: {
-            audioSettings: {
-              allowAudioOnJoin: false,
-            },
-          },
-        },
-      });
+      const { result } = await renderHook(
+        () => usePublisherOptions({ isVideoEnabled: true, isAudioEnabled: true }),
+        { appConfigOptions: { value: { audioSettings: { allowAudioOnJoin: false } } } }
+      );
 
       await waitFor(() => {
         expect(result.current?.publishAudio).toBe(false);
@@ -160,60 +138,44 @@ describe('usePublisherOptions', () => {
     });
 
     it('should disable video publishing when allowVideoOnJoin is false', async () => {
-      const { result } = renderHook(() => usePublisherOptions(), {
-        appConfigOptions: {
-          value: {
-            audioSettings: {
-              allowAudioOnJoin: false,
+      const { result } = await renderHook(
+        () => usePublisherOptions({ isVideoEnabled: true, isAudioEnabled: true }),
+        {
+          appConfigOptions: {
+            value: {
+              videoSettings: { allowVideoOnJoin: false },
+              audioSettings: { allowAudioOnJoin: false },
             },
           },
-        },
-      });
+        }
+      );
 
       await waitFor(() => {
         expect(result.current?.publishVideo).toBe(false);
+        expect(result.current?.publishAudio).toBe(false);
       });
     });
 
     it('should configure resolution from config', async () => {
-      const { result } = renderHook(() => usePublisherOptions(), {
-        appConfigOptions: {
-          value: {
-            videoSettings: {
-              defaultResolution: '640x480',
-            },
-          },
-        },
-      });
+      const { result } = await renderHook(
+        () => usePublisherOptions({ isVideoEnabled: true, isAudioEnabled: true }),
+        { appConfigOptions: { value: { videoSettings: { defaultResolution: '640x480' } } } }
+      );
 
       await waitFor(() => {
         expect(result.current?.resolution).toBe('640x480');
       });
     });
   });
-
-  it('should disable audio and video from storage options', async () => {
-    vi.spyOn(OT, 'hasMediaProcessorSupport').mockReturnValue(true);
-    setStorageItem(STORAGE_KEYS.AUDIO_SOURCE_ENABLED, 'false');
-    setStorageItem(STORAGE_KEYS.VIDEO_SOURCE_ENABLED, 'true');
-
-    await deviceStore.init();
-    vi.mocked(useUserContext).mockImplementation(() => mockUserContextWithCustomSettings);
-    const { result } = renderHook(() => usePublisherOptions());
-    await waitFor(() => {
-      expect(result.current?.publishAudio).toBe(false);
-      expect(result.current?.publishVideo).toBe(true);
-    });
-  });
 });
 
 function renderHook<Result, Props>(
   render: (initialProps: Props) => Result,
-  options?: {
-    appConfigOptions?: AppConfigProviderWrapperOptions;
-  }
+  options?: { appConfigOptions?: AppConfigProviderWrapperOptions }
 ) {
   const { AppConfigWrapper } = makeAppConfigProviderWrapper(options?.appConfigOptions);
 
-  return renderHookBase(render, { ...options, wrapper: AppConfigWrapper });
+  const wrapper = composeProviders(Suspense$, AppConfigWrapper);
+
+  return act(() => renderHookBase(render, { ...options, wrapper }));
 }

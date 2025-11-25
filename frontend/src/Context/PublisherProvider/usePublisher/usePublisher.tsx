@@ -8,33 +8,26 @@ import OT, {
   PublisherProperties,
 } from '@vonage/client-sdk-video';
 import { useTranslation } from 'react-i18next';
-import { setStorageItem, STORAGE_KEYS } from '@utils/storage';
+import { getStorageItem, setStorageItem, STORAGE_KEYS } from '@utils/storage';
+import useSuspenseUntilAppConfigReady from '@Context/AppConfig/hooks/useSuspenseUntilAppConfigReady';
+import useUserContext from '@hooks/useUserContext';
+import isNil from 'lodash/isNil';
 import usePublisherQuality, { NetworkQuality } from '../usePublisherQuality/usePublisherQuality';
 import usePublisherOptions from '../usePublisherOptions';
 import useSessionContext from '../../../hooks/useSessionContext';
 import applyBackgroundFilter from '../../../utils/backgroundFilter/applyBackgroundFilter/applyBackgroundFilter';
 
-type PublisherStreamCreatedEvent = Event<'streamCreated', Publisher> & {
-  stream: Stream;
-};
+type PublisherStreamCreatedEvent = Event<'streamCreated', Publisher> & { stream: Stream };
 
 type PublisherVideoElementCreatedEvent = Event<'videoElementCreated', Publisher> & {
   element: HTMLVideoElement | HTMLObjectElement;
 };
 
-type DeviceAccessStatus = {
-  microphone: boolean | undefined;
-  camera: boolean | undefined;
-};
+type DeviceAccessStatus = { microphone: boolean | undefined; camera: boolean | undefined };
 
-export type PublishingErrorType = {
-  header: string;
-  caption: string;
-} | null;
+export type PublishingErrorType = { header: string; caption: string } | null;
 
-export type AccessDeniedEvent = Event<'accessDenied', Publisher> & {
-  message?: string;
-};
+export type AccessDeniedEvent = Event<'accessDenied', Publisher> & { message?: string };
 
 export type PublisherContextType = {
   initializeLocalPublisher: (options: PublisherProperties) => void;
@@ -52,6 +45,7 @@ export type PublisherContextType = {
   toggleVideo: () => void;
   changeBackground: (backgroundSelected: string) => void;
   unpublish: () => void;
+  publisherOptions: PublisherProperties | null;
 };
 
 /**
@@ -75,25 +69,52 @@ export type PublisherContextType = {
  * @returns {PublisherContextType} the publisher context
  */
 const usePublisher = (): PublisherContextType => {
+  useSuspenseUntilAppConfigReady();
+
   const { t } = useTranslation();
   const [publisherVideoElement, setPublisherVideoElement] = useState<
     HTMLVideoElement | HTMLObjectElement
   >();
+
+  const { user } = useUserContext();
+
   const publisherRef = useRef<Publisher | null>(null);
   const quality = usePublisherQuality(publisherRef.current);
   const [isPublishing, setIsPublishing] = useState(false);
-  const publisherOptions = usePublisherOptions();
   const [isForceMuted, setIsForceMuted] = useState<boolean>(false);
-  const [isVideoEnabled, setIsVideoEnabled] = useState<boolean>(false);
-  const [isAudioEnabled, setIsAudioEnabled] = useState<boolean>(false);
+
+  const [isVideoEnabled, setIsVideoEnabled] = useState<boolean>(() => {
+    const localIsVideoEnabled = getStorageItem(STORAGE_KEYS.VIDEO_SOURCE_ENABLED);
+
+    if (isNil(localIsVideoEnabled)) {
+      return user.defaultSettings.publishVideo;
+    }
+
+    return localIsVideoEnabled === 'true';
+  });
+
+  const [isAudioEnabled, setIsAudioEnabled] = useState<boolean>(() => {
+    const localIsAudioEnabled = getStorageItem(STORAGE_KEYS.AUDIO_SOURCE_ENABLED);
+
+    if (isNil(localIsAudioEnabled)) {
+      return user.defaultSettings.publishAudio;
+    }
+
+    return localIsAudioEnabled === 'true';
+  });
+
+  const publisherOptions = usePublisherOptions({ isVideoEnabled, isAudioEnabled });
+
   const [stream, setStream] = useState<Stream | null>();
   const [isPublishingToSession, setIsPublishingToSession] = useState(false);
   const [publishingError, setPublishingError] = useState<PublishingErrorType>(null);
   const { publish: sessionPublish, unpublish: sessionUnpublish, connected } = useSessionContext();
+
   const [deviceAccess, setDeviceAccess] = useState<DeviceAccessStatus>({
     microphone: undefined,
     camera: undefined,
   });
+
   let publishAttempt: number = 0;
 
   // If we do not have audio input or video input access, we cannot publish.
@@ -108,20 +129,8 @@ const usePublisher = (): PublisherContextType => {
     }
   }, [deviceAccess, t]);
 
-  useEffect(() => {
-    if (!publisherOptions) {
-      return;
-    }
-
-    setIsVideoEnabled(!!publisherOptions.publishVideo);
-    setIsAudioEnabled(!!publisherOptions.publishAudio);
-  }, [publisherOptions]);
-
   const handleAccessAllowed = () => {
-    setDeviceAccess({
-      microphone: true,
-      camera: true,
-    });
+    setDeviceAccess({ microphone: true, camera: true });
   };
 
   const handleDestroyed = () => {
@@ -162,10 +171,7 @@ const usePublisher = (): PublisherContextType => {
   const handleAccessDenied = (event: AccessDeniedEvent) => {
     // We check the first word of the message to see if the microphone or camera was denied access.
     const deviceDeniedAccess = event.message?.startsWith('Microphone') ? 'microphone' : 'camera';
-    setDeviceAccess((prev) => ({
-      ...prev,
-      [deviceDeniedAccess]: false,
-    }));
+    setDeviceAccess((prev) => ({ ...prev, [deviceDeniedAccess]: false }));
 
     if (publisherRef.current) {
       publisherRef.current.destroy();
@@ -217,6 +223,7 @@ const usePublisher = (): PublisherContextType => {
     (options: PublisherProperties) => {
       try {
         const publisher = initPublisher(undefined, options);
+
         // Add listeners synchronously as some events could be fired before callback is invoked
         addPublisherListeners(publisher);
         publisherRef.current = publisher;
@@ -290,9 +297,12 @@ const usePublisher = (): PublisherContextType => {
     if (!publisherRef.current) {
       return;
     }
-    publisherRef.current.publishVideo(!isVideoEnabled);
-    setIsVideoEnabled(!isVideoEnabled);
-    setStorageItem(STORAGE_KEYS.VIDEO_SOURCE_ENABLED, (!isVideoEnabled).toString());
+
+    const newIsVideoEnabled = !isVideoEnabled;
+
+    publisherRef.current.publishVideo(newIsVideoEnabled);
+    setIsVideoEnabled(newIsVideoEnabled);
+    setStorageItem(STORAGE_KEYS.VIDEO_SOURCE_ENABLED, newIsVideoEnabled.toString());
   };
 
   /**
@@ -305,9 +315,11 @@ const usePublisher = (): PublisherContextType => {
     if (!publisherRef.current) {
       return;
     }
-    publisherRef.current.publishAudio(!isAudioEnabled);
-    setIsAudioEnabled(!isAudioEnabled);
-    setStorageItem(STORAGE_KEYS.AUDIO_SOURCE_ENABLED, (!isAudioEnabled).toString());
+    const newIsAudioEnabled = !isAudioEnabled;
+
+    publisherRef.current.publishAudio(newIsAudioEnabled);
+    setIsAudioEnabled(newIsAudioEnabled);
+    setStorageItem(STORAGE_KEYS.AUDIO_SOURCE_ENABLED, newIsAudioEnabled.toString());
     setIsForceMuted(false);
   };
 
@@ -342,6 +354,7 @@ const usePublisher = (): PublisherContextType => {
     toggleVideo,
     changeBackground,
     unpublish,
+    publisherOptions,
   };
 };
 export default usePublisher;

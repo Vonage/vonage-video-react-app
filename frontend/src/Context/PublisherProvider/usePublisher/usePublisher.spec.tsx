@@ -9,10 +9,13 @@ import {
 import EventEmitter from 'events';
 import useUserContext from '@hooks/useUserContext';
 import useSessionContext from '@hooks/useSessionContext';
-import appConfig from '@Context/AppConfig';
-import usePublisher from './usePublisher';
-import { UserContextType } from '../../user';
+import makeAppConfigProviderWrapper from '@test/providers/makeAppConfigProviderWrapper';
+import composeProviders from '@utils/composeProviders';
+import Suspense$ from '@Context/Suspense$/SuspenseContext';
+import { setStorageItem, STORAGE_KEYS } from '@utils/storage';
 import { SessionContextType } from '../../SessionProvider/session';
+import { UserContextType } from '../../user';
+import usePublisher from './usePublisher';
 
 vi.mock('@vonage/client-sdk-video');
 vi.mock('@hooks/useUserContext.tsx');
@@ -26,16 +29,10 @@ const defaultSettings = {
   publishCaptions: false,
 };
 const mockUserContextWithDefaultSettings = {
-  user: {
-    defaultSettings,
-    issues: { reconnections: 0, audioFallbacks: 0 },
-  },
+  user: { defaultSettings, issues: { reconnections: 0, audioFallbacks: 0 } },
   setUser: vi.fn(),
 } as UserContextType;
-const mockStream = {
-  streamId: 'stream-id',
-  name: 'Jane Doe',
-} as unknown as Stream;
+const mockStream = { streamId: 'stream-id', name: 'Jane Doe' } as unknown as Stream;
 
 describe('usePublisher', () => {
   const destroySpy = vi.fn();
@@ -69,7 +66,7 @@ describe('usePublisher', () => {
 
   describe('initializeLocalPublisher', () => {
     it('should call initPublisher', async () => {
-      const { result } = renderHook(() => usePublisher());
+      const { result } = await renderHook(() => usePublisher());
       act(() => {
         result.current.initializeLocalPublisher({});
       });
@@ -84,7 +81,7 @@ describe('usePublisher', () => {
         throw new Error('The second mouse gets the cheese.');
       });
 
-      const { result } = renderHook(() => usePublisher());
+      const { result } = await renderHook(() => usePublisher());
       act(() => {
         result.current.initializeLocalPublisher({});
       });
@@ -99,7 +96,7 @@ describe('usePublisher', () => {
     it('should unpublish when requested', async () => {
       vi.mocked(initPublisher).mockImplementation(() => mockPublisher);
 
-      const { result, rerender } = renderHook(() => usePublisher());
+      const { result, rerender } = await renderHook(() => usePublisher());
 
       act(() => {
         result.current.initializeLocalPublisher({});
@@ -119,12 +116,13 @@ describe('usePublisher', () => {
   });
 
   describe('changeBackground', () => {
-    let result: ReturnType<typeof renderHook>['result'];
-    beforeEach(() => {
+    let result: Awaited<ReturnType<typeof renderHook>>['result'];
+    beforeEach(async () => {
       vi.mocked(initPublisher).mockImplementation(() => mockPublisher);
-      result = renderHook(() => usePublisher()).result;
-      act(() => {
+      result = (await renderHook(() => usePublisher())).result;
+      await act(() => {
         (result.current as ReturnType<typeof usePublisher>).initializeLocalPublisher({});
+        return Promise.resolve();
       });
     });
 
@@ -160,7 +158,7 @@ describe('usePublisher', () => {
     it('should publish to the session', async () => {
       vi.mocked(initPublisher).mockImplementation(() => mockPublisher);
 
-      const { result } = renderHook(() => usePublisher());
+      const { result } = await renderHook(() => usePublisher());
 
       act(() => {
         result.current.initializeLocalPublisher({});
@@ -178,7 +176,7 @@ describe('usePublisher', () => {
         throw new Error('There is an error.');
       });
 
-      const { result } = renderHook(() => usePublisher());
+      const { result } = await renderHook(() => usePublisher());
 
       await act(async () => {
         result.current.initializeLocalPublisher({});
@@ -193,7 +191,7 @@ describe('usePublisher', () => {
     it('should only publish to session once', async () => {
       vi.mocked(initPublisher).mockImplementation(() => mockPublisher);
 
-      const { result } = renderHook(() => usePublisher());
+      const { result } = await renderHook(() => usePublisher());
 
       act(() => {
         result.current.initializeLocalPublisher({});
@@ -220,7 +218,7 @@ describe('usePublisher', () => {
       mockedSessionPublish.mockImplementation((_, callback) => {
         callback(new Error('Mocked error'));
       });
-      const { result } = renderHook(() => usePublisher());
+      const { result } = await renderHook(() => usePublisher());
 
       act(() => {
         result.current.initializeLocalPublisher({});
@@ -242,7 +240,7 @@ describe('usePublisher', () => {
 
   it('should set publishingError and destroy publisher when receiving an accessDenied event', async () => {
     vi.mocked(initPublisher).mockImplementation(() => mockPublisher);
-    const { result } = renderHook(() => usePublisher());
+    const { result } = await renderHook(() => usePublisher());
 
     act(() => {
       result.current.initializeLocalPublisher({});
@@ -270,7 +268,7 @@ describe('usePublisher', () => {
 
   it('should not set publishingError when receiving an accessAllowed event', async () => {
     vi.mocked(initPublisher).mockImplementation(() => mockPublisher);
-    const { result } = renderHook(() => usePublisher());
+    const { result } = await renderHook(() => usePublisher());
 
     act(() => {
       result.current.initializeLocalPublisher({});
@@ -284,8 +282,36 @@ describe('usePublisher', () => {
       expect(result.current.publisher).toBe(mockPublisher);
     });
   });
+
+  it.only('should disable audio and video from storage options', async () => {
+    vi.spyOn(OT, 'hasMediaProcessorSupport').mockReturnValue(true);
+
+    setStorageItem(STORAGE_KEYS.AUDIO_SOURCE_ENABLED, 'false');
+    setStorageItem(STORAGE_KEYS.VIDEO_SOURCE_ENABLED, 'true');
+
+    let { result } = await renderHook(() => usePublisher());
+
+    await waitFor(() => {
+      expect(result.current?.isAudioEnabled).toBe(false);
+      expect(result.current?.isVideoEnabled).toBe(true);
+    });
+
+    setStorageItem(STORAGE_KEYS.AUDIO_SOURCE_ENABLED, 'true');
+    setStorageItem(STORAGE_KEYS.VIDEO_SOURCE_ENABLED, 'false');
+
+    ({ result } = await renderHook(() => usePublisher()));
+
+    await waitFor(() => {
+      expect(result.current?.isAudioEnabled).toBe(true);
+      expect(result.current?.isVideoEnabled).toBe(false);
+    });
+  });
 });
 
 function renderHook<Result, Props>(render: (initialProps: Props) => Result) {
-  return renderHookBase(render, { wrapper: appConfig.Provider });
+  const { AppConfigWrapper } = makeAppConfigProviderWrapper();
+
+  const composedWrapper = composeProviders(Suspense$, AppConfigWrapper);
+
+  return act(() => renderHookBase(render, { wrapper: composedWrapper }));
 }
