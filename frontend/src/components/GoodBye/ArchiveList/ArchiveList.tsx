@@ -1,16 +1,14 @@
 import WarningOutlinedIcon from '@mui/icons-material/WarningOutlined';
 import FileDownloadOutlinedIcon from '@mui/icons-material/FileDownloadOutlined';
-import {
-  CircularProgress,
-  IconButton,
-  Link,
-  List,
-  ListItem,
-  ListItemText,
-  Tooltip,
-} from '@mui/material';
 import { ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
+import Link from '@ui/Link';
+import Tooltip from '@ui/Tooltip';
+import IconButton from '@ui/IconButton';
+import List from '@ui/List';
+import ListItem from '@ui/ListItem';
+import CircularProgress from '@ui/CircularProgress';
+import ListItemText from '@ui/ListItemText';
 import { Archive, ArchiveStatus } from '../../../api/archiving/model';
 
 const ArchiveDownloadButton = ({ url, id }: { id: string; url: string | undefined }) => {

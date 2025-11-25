@@ -1,6 +1,6 @@
 import { ReactElement } from 'react';
-import { List } from '@mui/material';
 import { useTranslation } from 'react-i18next';
+import List from '@ui/List';
 import { SUPPORTED_BROWSERS } from '../../../utils/constants';
 import SupportedBrowserListItem from '../SupportedBrowserListItem';
 
