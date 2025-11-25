@@ -83,8 +83,7 @@ describe('GoodbyeMessage', () => {
     );
 
     expect(screen.getByTestId('goodbye-message')).toBeInTheDocument();
-    expect(screen.getByTestId('goodbye-message')).toHaveClass('w-full');
-    expect(screen.getByTestId('goodbye-message')).not.toHaveClass('w-[400px]');
+    expect(screen.getByTestId('goodbye-message')).toHaveStyle({ width: '100%' });
   });
 
   it('renders correctly on screen greater than SMALL_VIEWPORT', () => {
@@ -101,7 +100,6 @@ describe('GoodbyeMessage', () => {
     );
 
     expect(screen.getByTestId('goodbye-message')).toBeInTheDocument();
-    expect(screen.getByTestId('goodbye-message')).toHaveClass('w-[400px]');
-    expect(screen.getByTestId('goodbye-message')).not.toHaveClass('w-full');
+    expect(screen.getByTestId('goodbye-message')).toHaveStyle({ width: '400px' });
   });
 });

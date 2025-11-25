@@ -24,18 +24,7 @@ const ReenterRoomButton = ({
 
   return (
     roomName && (
-      <Button
-        variant="outlined"
-        className="h-12"
-        data-testid="reenterButton"
-        sx={{
-          textTransform: 'none',
-          fontSize: '1rem',
-          marginRight: '8px',
-          marginBottom: '16px',
-        }}
-        onClick={handleReenter}
-      >
+      <Button variant="outlined" data-testid="reenterButton" onClick={handleReenter} sx={{ mr: 2 }}>
         {t('goodBye.reEnter')}
       </Button>
     )

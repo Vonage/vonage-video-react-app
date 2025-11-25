@@ -1,5 +1,8 @@
 import { useNavigate } from 'react-router-dom';
 import { ReactElement } from 'react';
+import Box from '@ui/Box';
+import Typography from '@ui/Typography';
+import useCustomTheme from '@Context/Theme';
 import GoToLandingPageButton from '../GoToLandingPageButton';
 import ReenterRoomButton from '../ReenterRoomButton';
 import useIsSmallViewport from '../../../hooks/useIsSmallViewport';
@@ -19,6 +22,7 @@ export type GoodByeMessageProps = {
 const GoodByeMessage = ({ header, message, roomName }: GoodByeMessageProps): ReactElement => {
   const isSmallViewport = useIsSmallViewport();
   const navigate = useNavigate();
+  const theme = useCustomTheme();
   const handleLanding = () => {
     navigate('/');
   };
@@ -27,22 +31,53 @@ const GoodByeMessage = ({ header, message, roomName }: GoodByeMessageProps): Rea
     navigate(`/waiting-room/${roomName}`);
   };
   return (
-    <div className="h-auto w-full shrink py-4 ps-12 text-left">
-      <h2 className="w-9/12 pb-5 text-5xl text-black" data-testid="header-message">
+    <Box
+      sx={{
+        height: 'auto',
+        width: '100%',
+        flexShrink: 1,
+        paddingTop: 2,
+        paddingBottom: 2,
+        paddingLeft: 6,
+        textAlign: 'left',
+      }}
+    >
+      <Typography
+        variant="h2"
+        sx={{
+          width: '75%',
+          paddingBottom: 2.5,
+          color: theme.colors.textSecondary,
+        }}
+        data-testid="header-message"
+      >
         {header}
-      </h2>
-      <h3
-        className={`pr-12 text-lg text-slate-500 ${isSmallViewport ? 'w-full' : 'w-[400px]'}`}
+      </Typography>
+      <Typography
+        variant="h6"
+        sx={{
+          paddingRight: 6,
+          color: theme.colors.textTertiary,
+          width: isSmallViewport ? '100%' : '400px',
+        }}
         data-testid="goodbye-message"
       >
         {message}
-      </h3>
-      <div className="mt-6 flex flex-row items-center pr-0">
+      </Typography>
+      <Box
+        sx={{
+          marginTop: 3,
+          display: 'flex',
+          flexDirection: 'row',
+          alignItems: 'center',
+          paddingRight: 0,
+        }}
+      >
         <ReenterRoomButton handleReenter={handleReenter} roomName={roomName} />
 
         <GoToLandingPageButton handleLanding={handleLanding} />
-      </div>
-    </div>
+      </Box>
+    </Box>
   );
 };
 

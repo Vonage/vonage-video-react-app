@@ -18,13 +18,7 @@ const GoToLandingPageButton = ({ handleLanding }: GoToLandingPageButtonProps): R
   const { t } = useTranslation();
 
   return (
-    <Button
-      data-testid="go-to-landing-button"
-      variant="contained"
-      className="h-12"
-      sx={{ textTransform: 'none', fontSize: '1rem', marginBottom: '16px' }}
-      onClick={handleLanding}
-    >
+    <Button data-testid="go-to-landing-button" variant="contained" onClick={handleLanding}>
       {t('goodBye.back')}
     </Button>
   );

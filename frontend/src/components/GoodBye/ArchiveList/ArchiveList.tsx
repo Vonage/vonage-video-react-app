@@ -9,6 +9,10 @@ import List from '@ui/List';
 import ListItem from '@ui/ListItem';
 import CircularProgress from '@ui/CircularProgress';
 import ListItemText from '@ui/ListItemText';
+import Box from '@ui/Box';
+import Typography from '@ui/Typography';
+import useMediaQuery from '@ui/useMediaQuery';
+import useCustomTheme from '@Context/Theme';
 import { Archive, ArchiveStatus } from '../../../api/archiving/model';
 
 const ArchiveDownloadButton = ({ url, id }: { id: string; url: string | undefined }) => {
@@ -37,7 +41,7 @@ const ArchiveErrorIcon = () => {
           display: 'flex',
           width: '40px',
           height: '40px',
-          padding: '8px',
+          padding: 1,
           justifyContent: 'center',
         }}
         data-testid="archive-error-icon"
@@ -53,7 +57,7 @@ const ArchivingLoadingIcon = () => {
       <CircularProgress
         data-testid="archive-loading-spinner"
         sx={{
-          padding: '8px',
+          p: 1,
         }}
       />
     </Tooltip>
@@ -92,20 +96,33 @@ export type ArchiveListProps = {
  */
 const ArchiveList = ({ archives }: ArchiveListProps): ReactElement => {
   const { t } = useTranslation();
+  const isMdUp = useMediaQuery('(min-width:768px)');
+  const theme = useCustomTheme();
 
   if (archives === 'error') {
     return (
-      <>
+      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
         <WarningOutlinedIcon color="warning" />
-        <h3 className="text-lg text-slate-500">{t('archiveList.error.text')}</h3>
-      </>
+        <Typography variant="h6" sx={{ color: theme.colors.textTertiary }}>
+          {t('archiveList.error.text')}
+        </Typography>
+      </Box>
     );
   }
   if (!archives.length) {
-    return <h3 className="text-lg text-slate-500">{t('archiveList.empty')}</h3>;
+    return (
+      <Typography variant="h6" sx={{ color: theme.colors.textTertiary }}>
+        {t('archiveList.empty')}
+      </Typography>
+    );
   }
   return (
-    <div className="md:max-h-[480px] md:overflow-y-auto ">
+    <Box
+      sx={{
+        maxHeight: isMdUp ? '480px' : 'none',
+        overflowY: isMdUp ? 'auto' : 'visible',
+      }}
+    >
       <List sx={{ overflowX: 'auto' }}>
         {archives.map((archive, index) => {
           return (
@@ -126,7 +143,7 @@ const ArchiveList = ({ archives }: ArchiveListProps): ReactElement => {
           );
         })}
       </List>
-    </div>
+    </Box>
   );
 };
 
