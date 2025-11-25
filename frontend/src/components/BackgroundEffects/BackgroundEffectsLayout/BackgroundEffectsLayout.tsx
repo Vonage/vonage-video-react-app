@@ -87,6 +87,7 @@ const BackgroundEffectsLayout = ({
     >
       <Button
         data-testid="background-effect-cancel-button"
+        variant="text"
         sx={{ mr: 1, color: theme.colors.textSecondary }}
         onClick={() => {
           const currentOption = setInitialBackgroundReplacement();
