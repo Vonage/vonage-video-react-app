@@ -12778,18 +12778,18 @@ react-dom@^19.1.0:
   dependencies:
     scheduler "^0.27.0"
 
-react-global-state-hooks@^15.0.3:
-  version "15.0.3"
-  resolved "https://registry.yarnpkg.com/react-global-state-hooks/-/react-global-state-hooks-15.0.3.tgz#1c7ebde891e39693015ca622424bc2ab0b640834"
-  integrity sha512-4z5sOkZjiX3PLYMR+I/tJJH2sfim9WODUbGcOgKKcklyXFtIzVn0aLiaveDHGHTX5A9zNyVxYijyANlsp07kuA==
+react-global-state-hooks@^15.0.4:
+  version "15.0.4"
+  resolved "https://registry.yarnpkg.com/react-global-state-hooks/-/react-global-state-hooks-15.0.4.tgz#e92ec5e396502dc940f1722f57a9eee5d39f4e06"
+  integrity sha512-221UuDdelmFC3fZ5/6whqJi2BkLVLHGASWe2IZwpzTnasilN3DhMQuKgVjGVvK+XdiWlnfobpbA5i4GT8kQe0g==
   dependencies:
     json-storage-formatter "^3.0.2"
-    react-hooks-global-states "^15.0.2"
+    react-hooks-global-states "^15.0.3"
 
-react-hooks-global-states@^15.0.2:
-  version "15.0.2"
-  resolved "https://registry.yarnpkg.com/react-hooks-global-states/-/react-hooks-global-states-15.0.2.tgz#50b78d5d53435366887cab7e98703410567d19d7"
-  integrity sha512-aun9mGeebPu8uCajGWidevRVYQ0GsQKNICDxDa3++1ZeLaP7QCNTIvW4Goc2KGmTIXLh6ffCuFGAWP0JC1TzeA==
+react-hooks-global-states@^15.0.3:
+  version "15.0.3"
+  resolved "https://registry.yarnpkg.com/react-hooks-global-states/-/react-hooks-global-states-15.0.3.tgz#2fc064d4719b86df7bd3909b81028ad0f27dc6e4"
+  integrity sha512-hOQZRL/kVyQS16Y+rZNff3VjD8O3g2RND4Vo2A06hM8iXXVMhyTF11dVjaihfwm3BmUX8rC5YDmfX6g8/wxJ9g==
   dependencies:
     json-storage-formatter "^3.0.2"
 

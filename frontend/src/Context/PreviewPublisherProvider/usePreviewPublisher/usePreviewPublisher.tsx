@@ -8,6 +8,9 @@ import {
   PublisherProperties,
 } from '@vonage/client-sdk-video';
 import useAppConfig from '@Context/AppConfig/hooks/useAppConfig';
+import useSuspenseUntilAppConfigReady from '@Context/AppConfig/hooks/useSuspenseUntilAppConfigReady';
+import useIsCameraControlAllowed from '@Context/AppConfig/hooks/useIsCameraControlAllowed';
+import useIsMicrophoneControlAllowed from '@Context/AppConfig/hooks/useIsMicrophoneControlAllowed';
 import setMediaDevices from '../../../utils/mediaDeviceUtils';
 import useDevices from '../../../hooks/useDevices';
 import usePermissions from '../../../hooks/usePermissions';
@@ -66,6 +69,8 @@ export type PreviewPublisherContextType = {
  * @returns {PreviewPublisherContextType} preview context
  */
 const usePreviewPublisher = (): PreviewPublisherContextType => {
+  useSuspenseUntilAppConfigReady();
+
   const { setUser, user } = useUserContext();
   const defaultResolution = useAppConfig(({ videoSettings }) => videoSettings.defaultResolution);
   const { allMediaDevices, getAllMediaDevices } = useDevices();
@@ -79,11 +84,17 @@ const usePreviewPublisher = (): PreviewPublisherContextType => {
   const initialBackgroundRef = useRef<VideoFilter | undefined>(
     user.defaultSettings.backgroundFilter
   );
+
   const [backgroundFilter, setBackgroundFilter] = useState<VideoFilter | undefined>(
     user.defaultSettings.backgroundFilter
   );
-  const [isVideoEnabled, setIsVideoEnabled] = useState(true);
-  const [isAudioEnabled, setIsAudioEnabled] = useState(true);
+
+  const isCameraAllowed = useIsCameraControlAllowed();
+  const isMicrophoneAllowed = useIsMicrophoneControlAllowed();
+
+  const [isVideoEnabled, setIsVideoEnabled] = useState(isCameraAllowed);
+  const [isAudioEnabled, setIsAudioEnabled] = useState(isMicrophoneAllowed);
+
   const [localVideoSource, setLocalVideoSource] = useState<string | undefined>(undefined);
   const [localAudioSource, setLocalAudioSource] = useState<string | undefined>(undefined);
   const deviceStoreRef = useRef<DeviceStore>(new DeviceStore());
@@ -210,6 +221,7 @@ const usePreviewPublisher = (): PreviewPublisherContextType => {
       publisher.on('audioLevelUpdated', ({ audioLevel }: { audioLevel: number }) => {
         calculateAudioLevel(audioLevel);
       });
+
       publisher.on('accessAllowed', () => {
         setAccessStatus(DEVICE_ACCESS_STATUS.ACCEPTED);
         getAllMediaDevices();
@@ -233,6 +245,7 @@ const usePreviewPublisher = (): PreviewPublisherContextType => {
     }
 
     await deviceStoreRef.current.init();
+
     const videoSource = deviceStoreRef.current.getConnectedDeviceId('videoinput');
     const audioSource = deviceStoreRef.current.getConnectedDeviceId('audioinput');
 
@@ -278,13 +291,15 @@ const usePreviewPublisher = (): PreviewPublisherContextType => {
     if (!publisherRef.current) {
       return;
     }
-    publisherRef.current.publishVideo(!isVideoEnabled);
-    setStorageItem(STORAGE_KEYS.VIDEO_SOURCE_ENABLED, (!isVideoEnabled).toString());
-    setIsVideoEnabled(!isVideoEnabled);
+    const newIsVideoEnabled = !isVideoEnabled;
+
+    publisherRef.current.publishVideo(newIsVideoEnabled);
+    setStorageItem(STORAGE_KEYS.VIDEO_SOURCE_ENABLED, newIsVideoEnabled.toString());
+    setIsVideoEnabled(newIsVideoEnabled);
     if (setUser) {
       setUser((prevUser: UserType) => ({
         ...prevUser,
-        defaultSettings: { ...prevUser.defaultSettings, publishVideo: !isVideoEnabled },
+        defaultSettings: { ...prevUser.defaultSettings, publishVideo: newIsVideoEnabled },
       }));
     }
   };
@@ -299,13 +314,15 @@ const usePreviewPublisher = (): PreviewPublisherContextType => {
     if (!publisherRef.current) {
       return;
     }
-    publisherRef.current.publishAudio(!isAudioEnabled);
-    setIsAudioEnabled(!isAudioEnabled);
-    setStorageItem(STORAGE_KEYS.AUDIO_SOURCE_ENABLED, (!isAudioEnabled).toString());
+
+    const newIsAudioEnabled = !isAudioEnabled;
+    publisherRef.current.publishAudio(newIsAudioEnabled);
+    setIsAudioEnabled(newIsAudioEnabled);
+    setStorageItem(STORAGE_KEYS.AUDIO_SOURCE_ENABLED, newIsAudioEnabled.toString());
     if (setUser) {
       setUser((prevUser: UserType) => ({
         ...prevUser,
-        defaultSettings: { ...prevUser.defaultSettings, publishAudio: !isAudioEnabled },
+        defaultSettings: { ...prevUser.defaultSettings, publishAudio: newIsAudioEnabled },
       }));
     }
   };

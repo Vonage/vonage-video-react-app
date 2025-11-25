@@ -12,38 +12,31 @@ const mockPrivateKey = 'mockPrivateKey';
 
 await jest.unstable_mockModule('@vonage/video', () => {
   return {
-    Video: jest.fn().mockImplementation(() => ({
-      createSession: jest.fn<() => Promise<{ sessionId: string }>>().mockResolvedValue({
-        sessionId: mockSessionId,
-      }),
-      generateClientToken: jest.fn<() => { token: string; apiKey: string }>().mockReturnValue({
-        token: mockToken,
-        apiKey: mockApplicationId,
-      }),
-      startArchive: jest.fn<() => Promise<{ id: string }>>().mockResolvedValue({
-        id: mockArchiveId,
-      }),
-      stopArchive: jest.fn<() => Promise<{ status: number }>>().mockResolvedValue({
-        status: 200,
-      }),
-      enableCaptions: jest.fn<() => Promise<{ captionsId: string }>>().mockResolvedValue({
-        captionsId: mockCaptionId,
-      }),
-      disableCaptions: jest.fn<() => Promise<{ status: number }>>().mockResolvedValue({
-        status: 200,
-      }),
+    Video: jest.fn(() => ({
+      createSession: jest
+        .fn<() => Promise<{ sessionId: string }>>()
+        .mockResolvedValue({ sessionId: mockSessionId }),
+      generateClientToken: jest
+        .fn<() => { token: string; apiKey: string }>()
+        .mockReturnValue({ token: mockToken, apiKey: mockApplicationId }),
+      startArchive: jest
+        .fn<() => Promise<{ id: string }>>()
+        .mockResolvedValue({ id: mockArchiveId }),
+      stopArchive: jest.fn<() => Promise<{ status: number }>>().mockResolvedValue({ status: 200 }),
+      enableCaptions: jest
+        .fn<() => Promise<{ captionsId: string }>>()
+        .mockResolvedValue({ captionsId: mockCaptionId }),
+      disableCaptions: jest
+        .fn<() => Promise<{ status: number }>>()
+        .mockResolvedValue({ status: 200 }),
     })),
     LayoutType: {
       BEST_FIT: 'bestFit',
       HORIZONTAL_PRESENTATION: 'horizontalPresentation',
       CUSTOM: 'custom',
     },
-    MediaMode: {
-      ROUTED: 'routed',
-    },
-    Resolution: {
-      FHD_LANDSCAPE: '1920x1080',
-    },
+    MediaMode: { ROUTED: 'routed' },
+    Resolution: { FHD_LANDSCAPE: '1920x1080' },
   };
 });
 
@@ -67,10 +60,7 @@ describe('VonageVideoService', () => {
 
   it('generates a token', () => {
     const result = vonageVideoService.generateToken(mockSessionId);
-    expect(result.token).toEqual({
-      apiKey: mockApplicationId,
-      token: mockToken,
-    });
+    expect(result.token).toEqual({ apiKey: mockApplicationId, token: mockToken });
   });
 
   it('starts an archive', async () => {

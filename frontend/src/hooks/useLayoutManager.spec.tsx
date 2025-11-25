@@ -1,6 +1,10 @@
 import { describe, it, vi } from 'vitest';
 import type * as OpentokLayout from 'opentok-layout-js';
 
+import useLayoutManager from './useLayoutManager';
+import { renderHook } from '@testing-library/react';
+import OpenTokLayoutManager from 'opentok-layout-js';
+
 const layoutContainer: OpentokLayout.LayoutContainer = {
   getLayout: vi.fn(),
   layout: vi.fn(),
@@ -12,10 +16,6 @@ vi.mock('opentok-layout-js', () => {
 
   return { __esModule: true, default: OpenTokLayoutManager, Box: vi.fn(), Element: vi.fn() };
 });
-
-import useLayoutManager from './useLayoutManager';
-import { renderHook } from '@testing-library/react';
-import OpenTokLayoutManager from 'opentok-layout-js';
 
 describe('useLayoutManager', () => {
   it('returns a memoized getLayout function that delegates to OpenTokLayoutManager', () => {

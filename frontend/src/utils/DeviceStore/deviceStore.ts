@@ -15,8 +15,11 @@ export default class DeviceStore {
 
   getConnectedDeviceId(kind: 'audioinput' | 'videoinput'): string | undefined {
     const key = kind === 'videoinput' ? STORAGE_KEYS.VIDEO_SOURCE : STORAGE_KEYS.AUDIO_SOURCE;
+
     const storedId = getStorageItem(key);
-    return this.devices.find((device) => device.kind === kind && device.deviceId === storedId)
-      ?.deviceId;
+
+    return this.devices.find(
+      (device) => device.kind === kind && (!storedId || device.deviceId === storedId)
+    )?.deviceId;
   }
 }

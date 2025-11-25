@@ -1,6 +1,9 @@
 import { defineConfig, devices } from '@playwright/test';
 import path = require('path');
 
+const isHeadedMode = process.env.headedMode === 'true';
+const isDebugMode = process.env.debugMode === 'true';
+
 const chromiumFlags = [
   '--use-fake-ui-for-media-stream',
   '--autoplay-policy=no-user-gesture-required',
@@ -17,13 +20,10 @@ const chromiumFlags = [
 const width = 1512;
 const height = 824;
 
-const isMac = process.platform === 'darwin';
-
-const executablePath = isMac ? '/Applications/Opera.app/Contents/MacOS/Opera' : '/usr/bin/opera';
-
 const fakeDeviceChromiumFlags = [
   ...chromiumFlags,
-  '--headless=new',
+  // headless only on CI
+  ...(isHeadedMode ? [] : ['--headless=new']),
   '--use-fake-device-for-media-stream=device-count=5',
 ];
 
@@ -57,9 +57,7 @@ export default defineConfig({
         ...devices['Desktop Chrome'],
         viewport: { width, height },
         channel: 'chrome',
-        launchOptions: {
-          args: chromiumFlags,
-        },
+        launchOptions: { args: chromiumFlags },
       },
     },
     {
@@ -68,9 +66,7 @@ export default defineConfig({
         ...devices['Desktop Chrome'],
         viewport: { width, height },
         channel: 'chrome',
-        launchOptions: {
-          args: fakeDeviceChromiumFlags,
-        },
+        launchOptions: { args: fakeDeviceChromiumFlags },
       },
     },
     {
@@ -106,29 +102,12 @@ export default defineConfig({
         ...devices['Desktop Edge'],
         viewport: { width, height },
         channel: 'msedge',
-        launchOptions: {
-          args: fakeDeviceChromiumFlags,
-        },
+        launchOptions: { args: fakeDeviceChromiumFlags },
       },
     },
     {
       name: 'Mobile Chrome',
-      use: {
-        ...devices['Pixel 5'],
-        launchOptions: {
-          args: fakeDeviceChromiumFlags,
-        },
-      },
-    },
-    {
-      name: 'Opera',
-      use: {
-        viewport: { width, height },
-        launchOptions: {
-          args: fakeDeviceChromiumFlags,
-          executablePath,
-        },
-      },
+      use: { ...devices['Pixel 5'], launchOptions: { args: fakeDeviceChromiumFlags } },
     },
     {
       name: 'Electron',
@@ -136,17 +115,22 @@ export default defineConfig({
         launchOptions: {
           args: ['--use-fake-device-for-media-stream', '--use-fake-ui-for-media-stream'],
         },
-        contextOptions: {
-          viewport: { width, height },
-        },
+        contextOptions: { viewport: { width, height } },
       },
     },
   ],
 
   /* Run your local dev server before starting the tests */
   webServer: {
-    command: 'cd .. && yarn start',
-    url: 'http://127.0.0.1:3345',
     reuseExistingServer: true,
+    env: {
+      VITE_AVOID_FETCHING_APP_CONFIG: 'true',
+    },
+    ...(isDebugMode
+      ? {
+          command: 'cd .. && yarn dev',
+          url: 'http://localhost:5173/',
+        }
+      : { command: 'cd .. && yarn start', url: 'http://127.0.0.1:3345' }),
   },
 });

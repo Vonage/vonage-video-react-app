@@ -4,10 +4,7 @@ vi.mock('../../env', async () => {
   const actual = await vi.importActual<typeof import('../../env')>('../../env');
   const { Env } = actual;
 
-  return {
-    ...actual,
-    default: new Env({}),
-  };
+  return { ...actual, default: new Env({}) };
 });
 
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
@@ -38,23 +35,10 @@ const mockT = vi.fn((key: string) => {
 const mockI18n: {
   language: string | undefined | null;
   changeLanguage: typeof mockChangeLanguage;
-  options: {
-    fallbackLng: string;
-  };
-} = {
-  language: 'en',
-  changeLanguage: mockChangeLanguage,
-  options: {
-    fallbackLng: 'en',
-  },
-};
+  options: { fallbackLng: string };
+} = { language: 'en', changeLanguage: mockChangeLanguage, options: { fallbackLng: 'en' } };
 
-vi.mock('react-i18next', () => ({
-  useTranslation: () => ({
-    t: mockT,
-    i18n: mockI18n,
-  }),
-}));
+vi.mock('react-i18next', () => ({ useTranslation: () => ({ t: mockT, i18n: mockI18n }) }));
 
 describe('LanguageSelector', () => {
   beforeEach(() => {

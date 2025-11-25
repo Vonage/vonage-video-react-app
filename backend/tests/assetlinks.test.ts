@@ -28,7 +28,9 @@ describe('GET /.well-known/assetlinks.json', () => {
 
   it('returns valid JSON content', async () => {
     const res = await request(server).get('/.well-known/assetlinks.json');
-    expect(() => JSON.parse(res.text)).not.toThrow();
+    expect(() => {
+      JSON.parse(res.text);
+    }).not.toThrow();
   });
 
   it('returns the correct structure for asset links', async () => {

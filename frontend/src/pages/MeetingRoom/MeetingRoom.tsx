@@ -1,26 +1,28 @@
 import { useEffect, ReactElement, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import usePublisherContext from '../../hooks/usePublisherContext';
-import ConnectionAlert from '../../components/MeetingRoom/ConnectionAlert';
-import Toolbar from '../../components/MeetingRoom/Toolbar';
-import useSessionContext from '../../hooks/useSessionContext';
-import useScreenShare from '../../hooks/useScreenShare';
-import VideoTileCanvas from '../../components/MeetingRoom/VideoTileCanvas';
-import SmallViewportHeader from '../../components/MeetingRoom/SmallViewportHeader';
-import EmojisOrigin from '../../components/MeetingRoom/EmojisOrigin';
-import RightPanel from '../../components/MeetingRoom/RightPanel';
-import useRoomName from '../../hooks/useRoomName';
-import isValidRoomName from '../../utils/isValidRoomName';
-import usePublisherOptions from '../../Context/PublisherProvider/usePublisherOptions';
-import CaptionsBox from '../../components/MeetingRoom/CaptionsButton/CaptionsBox';
-import useIsSmallViewport from '../../hooks/useIsSmallViewport';
-import CaptionsError from '../../components/MeetingRoom/CaptionsError';
-import useBackgroundPublisherContext from '../../hooks/useBackgroundPublisherContext';
-import { DEVICE_ACCESS_STATUS } from '../../utils/constants';
-import type { PublishingErrorType } from '../../Context/PublisherProvider/usePublisher/usePublisher';
+import useSuspenseUntilAppConfigReady from '@Context/AppConfig/hooks/useSuspenseUntilAppConfigReady';
+import usePublisherContext from '@hooks/usePublisherContext';
+import ConnectionAlert from '@components/MeetingRoom/ConnectionAlert';
+import Toolbar from '@components/MeetingRoom/Toolbar';
+import useSessionContext from '@hooks/useSessionContext';
+import useScreenShare from '@hooks/useScreenShare';
+import VideoTileCanvas from '@components/MeetingRoom/VideoTileCanvas';
+import SmallViewportHeader from '@components/MeetingRoom/SmallViewportHeader';
+import EmojisOrigin from '@components/MeetingRoom/EmojisOrigin';
+import RightPanel from '@components/MeetingRoom/RightPanel';
+import useRoomName from '@hooks/useRoomName';
+import isValidRoomName from '@utils/isValidRoomName';
+import CaptionsBox from '@components/MeetingRoom/CaptionsButton/CaptionsBox';
+import useIsSmallViewport from '@hooks/useIsSmallViewport';
+import CaptionsError from '@components/MeetingRoom/CaptionsError';
+import useBackgroundPublisherContext from '@hooks/useBackgroundPublisherContext';
+import { DEVICE_ACCESS_STATUS } from '@utils/constants';
+import type { PublishingErrorType } from '@Context/PublisherProvider/usePublisher/usePublisher';
+import useIsCameraControlAllowed from '@Context/AppConfig/hooks/useIsCameraControlAllowed';
+import useIsBackgroundEffectsAllowed from '@Context/AppConfig/hooks/useIsBackgroundEffectsAllowed';
 
-const height = '@apply h-[calc(100dvh_-_80px)]';
+export const height = '@apply h-[calc(100dvh_-_80px)]';
 
 /**
  * MeetingRoom Component
@@ -32,10 +34,23 @@ const height = '@apply h-[calc(100dvh_-_80px)]';
  * @returns {ReactElement} - The meeting room.
  */
 const MeetingRoom = (): ReactElement => {
+  useSuspenseUntilAppConfigReady();
+
   const { t } = useTranslation();
   const roomName = useRoomName();
-  const { publisher, publish, quality, initializeLocalPublisher, publishingError, isVideoEnabled } =
-    usePublisherContext();
+
+  const {
+    publisher,
+    publish,
+    quality,
+    initializeLocalPublisher,
+    publishingError,
+    isVideoEnabled,
+    publisherOptions,
+  } = usePublisherContext();
+
+  const isCameraAllowed = useIsCameraControlAllowed();
+  const isBackgroundEffectsAllowed = useIsBackgroundEffectsAllowed();
 
   const {
     initBackgroundLocalPublisher,
@@ -57,13 +72,15 @@ const MeetingRoom = (): ReactElement => {
     closeRightPanel,
     toggleReportIssue,
   } = useSessionContext();
+
   const { isSharingScreen, screensharingPublisher, screenshareVideoElement, toggleShareScreen } =
     useScreenShare();
-  const publisherOptions = usePublisherOptions();
+
   const isSmallViewport = useIsSmallViewport();
 
   const [isUserCaptionsEnabled, setIsUserCaptionsEnabled] = useState<boolean>(false);
   const [captionsErrorResponse, setCaptionsErrorResponse] = useState<string | null>('');
+
   const captionsState = {
     isUserCaptionsEnabled,
     setIsUserCaptionsEnabled,
@@ -98,10 +115,19 @@ const MeetingRoom = (): ReactElement => {
   }, [publisher, publish, connected]);
 
   useEffect(() => {
-    if (!backgroundPublisher) {
+    const shouldInitializeVideoSource =
+      isBackgroundEffectsAllowed && isCameraAllowed && isVideoEnabled;
+
+    if (!backgroundPublisher && shouldInitializeVideoSource) {
       initBackgroundLocalPublisher();
     }
-  }, [initBackgroundLocalPublisher, backgroundPublisher]);
+  }, [
+    initBackgroundLocalPublisher,
+    backgroundPublisher,
+    isCameraAllowed,
+    isVideoEnabled,
+    isBackgroundEffectsAllowed,
+  ]);
 
   // After changing device permissions, reload the page to reflect the device's permission change.
   useEffect(() => {
@@ -145,6 +171,7 @@ const MeetingRoom = (): ReactElement => {
         }
         captionsState={captionsState}
       />
+
       {reconnecting && (
         <ConnectionAlert
           title={t('connectionAlert.reconnecting.title')}
@@ -152,6 +179,7 @@ const MeetingRoom = (): ReactElement => {
           severity="error"
         />
       )}
+
       {!reconnecting && quality !== 'good' && isVideoEnabled && (
         <ConnectionAlert
           closable
@@ -180,13 +208,7 @@ function useRedirectOnPublisherError(publishingError: PublishingErrorType | null
     }
 
     const { header, caption } = publishingError;
-    navigate('/goodbye', {
-      state: {
-        header,
-        caption,
-        roomName,
-      },
-    });
+    navigate('/goodbye', { state: { header, caption, roomName } });
   }, [publishingError, navigate, roomName, t]);
 }
 

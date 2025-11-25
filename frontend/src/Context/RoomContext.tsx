@@ -1,44 +1,20 @@
-import { Outlet } from 'react-router-dom';
-import { ReactElement } from 'react';
-import RedirectToUnsupportedBrowserPage from '../components/RedirectToUnsupportedBrowserPage';
+import React, { PropsWithChildren } from 'react';
 import { AudioOutputProvider } from './AudioOutputProvider';
-import UserProvider from './user';
-import appConfig from './AppConfig';
 import { BackgroundPublisherProvider } from './BackgroundPublisherProvider';
-import type { AppConfig, AppConfigApi } from './AppConfig';
+import SessionProvider from './SessionProvider/session';
 
 /**
- * Wrapper for all of the contexts used by the waiting room and the meeting room.
- * @param {object} props - The component props.
- * @param {AppConfig} [props.appConfigValue] - Optional AppConfig value to initialize the context with... For testing purposes.
- * @returns {ReactElement} The context.
+ * @description RoomContext - Wrapper for all of the contexts used by the waiting room and the meeting room.
+ * @param {PropsWithChildren} props - The props for the RoomContext component.
+ * @property {ReactNode} props.children - The content to be rendered within the RoomContext.
+ * @returns {React.FC} A React functional component that provides the RoomContext.
  */
-const RoomContext = ({ appConfigValue }: { appConfigValue?: AppConfig }): ReactElement => (
-  <appConfig.Provider value={appConfigValue} onCreated={fetchAppConfiguration}>
-    <UserProvider>
-      <BackgroundPublisherProvider>
-        <RedirectToUnsupportedBrowserPage>
-          <AudioOutputProvider>
-            <Outlet />
-          </AudioOutputProvider>
-        </RedirectToUnsupportedBrowserPage>
-      </BackgroundPublisherProvider>
-    </UserProvider>
-  </appConfig.Provider>
+const RoomContext: React.FC<PropsWithChildren> = ({ children }) => (
+  <BackgroundPublisherProvider>
+    <AudioOutputProvider>
+      <SessionProvider>{children}</SessionProvider>
+    </AudioOutputProvider>
+  </BackgroundPublisherProvider>
 );
-
-/**
- * Fetches the app static configuration if it has not been loaded yet.
- * @param {AppConfigApi} context - The AppConfig context.
- */
-function fetchAppConfiguration(context: AppConfigApi): void {
-  const { isAppConfigLoaded } = context.getState();
-
-  if (isAppConfigLoaded) {
-    return;
-  }
-
-  context.actions.loadAppConfig();
-}
 
 export default RoomContext;

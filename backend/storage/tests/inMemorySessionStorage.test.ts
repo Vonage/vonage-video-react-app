@@ -89,7 +89,6 @@ describe('InMemorySessionStorage', () => {
       await storage.setSession(room, 'session123');
       await storage.incrementCaptionsUserCount(room);
       for (let i = 0; i < 5; i++) {
-        // eslint-disable-next-line no-await-in-loop
         const count = await storage.decrementCaptionsUserCount(room);
         expect(count).toBe(0);
       }

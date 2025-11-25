@@ -31,6 +31,7 @@ describe('idempotentCallbackWithRetry', () => {
       'persistent error'
     );
 
+    // one call + 2 retries = 3 attempts
     expect(callback).toHaveBeenCalledTimes(3);
   });
 
@@ -41,11 +42,11 @@ describe('idempotentCallbackWithRetry', () => {
 
     await idempotentCallbackWithRetry(callback, { onRetry, delayMs: 1 });
 
-    expect(onRetry).toHaveBeenCalledWith(error, 0);
+    expect(onRetry).toHaveBeenCalledWith(error, 1);
     expect(onRetry).toHaveBeenCalledTimes(1);
   });
 
-  it('should use default retry count of 3', async () => {
+  it('should use default retry count of 2', async () => {
     const callback = vi.fn().mockRejectedValue(new Error('fail'));
 
     await expect(idempotentCallbackWithRetry(callback, { delayMs: 1 })).rejects.toThrow('fail');
@@ -60,6 +61,7 @@ describe('idempotentCallbackWithRetry', () => {
       'fail'
     );
 
+    // one call + 1 retry = 2 attempts
     expect(callback).toHaveBeenCalledTimes(2);
   });
 

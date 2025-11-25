@@ -14,10 +14,7 @@
     },
     "start": {
       "executor": "nx:run-commands",
-      "options": {
-        "cwd": "backend",
-        "command": "node --import tsx index.ts"
-      }
+      "options": { "cwd": "backend", "command": "node --import tsx index.ts" }
     },
     "debug": {
       "executor": "nx:run-commands",
@@ -49,9 +46,13 @@
     },
     "ts-check": {
       "executor": "nx:run-commands",
+      "options": { "cwd": "backend", "command": "tsc -p tsconfig.json --pretty true --noEmit" }
+    },
+    "lint": {
+      "executor": "nx:run-commands",
       "options": {
         "cwd": "backend",
-        "command": "tsc --noEmit -p tsconfig.json --pretty true"
+        "command": "eslint \"**/*.{ts,tsx,js,jsx}\" --report-unused-disable-directives --max-warnings 0"
       }
     }
   },

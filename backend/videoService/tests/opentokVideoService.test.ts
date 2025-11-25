@@ -15,28 +15,16 @@ await jest.unstable_mockModule('opentok', () => ({
         callback(null, { sessionId: mockSessionId });
       }
     ),
-    generateToken: jest.fn<() => { token: string; apiKey: string }>().mockReturnValue({
-      token: mockToken,
-      apiKey: mockApiKey,
-    }),
+    generateToken: jest
+      .fn<() => { token: string; apiKey: string }>()
+      .mockReturnValue({ token: mockToken, apiKey: mockApiKey }),
     startArchive: jest.fn(
       (
         _sessionId: string,
         _options: unknown,
-        callback: (
-          err: unknown,
-          session: {
-            archive: {
-              id: string;
-            };
-          }
-        ) => void
+        callback: (err: unknown, session: { archive: { id: string } }) => void
       ) => {
-        callback(null, {
-          archive: {
-            id: mockArchiveId,
-          },
-        });
+        callback(null, { archive: { id: mockArchiveId } });
       }
     ),
     stopArchive: jest.fn(
@@ -55,9 +43,9 @@ await jest.unstable_mockModule('opentok', () => ({
 
 await jest.unstable_mockModule('axios', () => ({
   default: {
-    post: jest.fn<() => Promise<{ data: { captionsId: string } }>>().mockResolvedValue({
-      data: { captionsId: mockCaptionId },
-    }),
+    post: jest
+      .fn<() => Promise<{ data: { captionsId: string } }>>()
+      .mockResolvedValue({ data: { captionsId: mockCaptionId } }),
   },
 }));
 
@@ -81,19 +69,12 @@ describe('OpentokVideoService', () => {
 
   it('generates a token', () => {
     const result = opentokVideoService.generateToken(mockSessionId);
-    expect(result.token).toEqual({
-      apiKey: mockApiKey,
-      token: mockToken,
-    });
+    expect(result.token).toEqual({ apiKey: mockApiKey, token: mockToken });
   });
 
   it('starts an archive', async () => {
     const response = await opentokVideoService.startArchive(mockRoomName, mockSessionId);
-    expect(response).toMatchObject({
-      archive: {
-        id: mockArchiveId,
-      },
-    });
+    expect(response).toMatchObject({ archive: { id: mockArchiveId } });
   });
 
   it('stops an archive', async () => {

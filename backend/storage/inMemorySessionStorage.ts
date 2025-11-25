@@ -1,3 +1,5 @@
+// [TODO]: Fix require-await linting issue
+/* eslint-disable @typescript-eslint/require-await */
 import { SessionStorage } from './sessionStorage';
 
 interface SessionData {
@@ -14,11 +16,7 @@ class InMemorySessionStorage implements SessionStorage {
   }
 
   async setSession(roomName: string, sessionId: string): Promise<void> {
-    this.sessions[roomName] = {
-      sessionId,
-      captionsId: null,
-      captionsUserCount: 0,
-    };
+    this.sessions[roomName] = { sessionId, captionsId: null, captionsUserCount: 0 };
   }
 
   async setCaptionsId(roomName: string, captionsId: string): Promise<void> {

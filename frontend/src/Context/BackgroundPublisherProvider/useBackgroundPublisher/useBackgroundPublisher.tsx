@@ -7,14 +7,15 @@ import {
   hasMediaProcessorSupport,
   PublisherProperties,
 } from '@vonage/client-sdk-video';
-import setMediaDevices from '../../../utils/mediaDeviceUtils';
-import useDevices from '../../../hooks/useDevices';
-import usePermissions from '../../../hooks/usePermissions';
-import useUserContext from '../../../hooks/useUserContext';
-import { DEVICE_ACCESS_STATUS } from '../../../utils/constants';
+import useSuspenseUntilAppConfigReady from '@Context/AppConfig/hooks/useSuspenseUntilAppConfigReady';
+import setMediaDevices from '@utils/mediaDeviceUtils';
+import useDevices from '@hooks/useDevices';
+import usePermissions from '@hooks/usePermissions';
+import useUserContext from '@hooks/useUserContext';
+import { DEVICE_ACCESS_STATUS } from '@utils/constants';
+import DeviceStore from '@utils/DeviceStore';
+import applyBackgroundFilter from '@utils/backgroundFilter/applyBackgroundFilter/applyBackgroundFilter';
 import { AccessDeniedEvent } from '../../PublisherProvider/usePublisher/usePublisher';
-import DeviceStore from '../../../utils/DeviceStore';
-import applyBackgroundFilter from '../../../utils/backgroundFilter/applyBackgroundFilter/applyBackgroundFilter';
 
 export type BackgroundPublisherContextType = {
   isPublishing: boolean;
@@ -53,6 +54,8 @@ type PublisherVideoElementCreatedEvent = Event<'videoElementCreated', Publisher>
  * @returns {BackgroundPublisherContextType} Background context
  */
 const useBackgroundPublisher = (): BackgroundPublisherContextType => {
+  useSuspenseUntilAppConfigReady();
+
   const { user } = useUserContext();
   const { allMediaDevices, getAllMediaDevices } = useDevices();
   const [publisherVideoElement, setPublisherVideoElement] = useState<

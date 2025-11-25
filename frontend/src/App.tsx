@@ -2,52 +2,65 @@ import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import './css/App.css';
 import './css/index.css';
 import { CssBaseline } from '@mui/material';
-import { CustomThemeProvider } from '@Context/Theme/themeContext';
-import Room from './pages/MeetingRoom/index';
 import GoodBye from './pages/GoodBye/index';
 import WaitingRoom from './pages/WaitingRoom';
-import SessionProvider from './Context/SessionProvider/session';
 import { PreviewPublisherProvider } from './Context/PreviewPublisherProvider';
 import LandingPage from './pages/LandingPage';
 import { PublisherProvider } from './Context/PublisherProvider';
 import RedirectToWaitingRoom from './components/RedirectToWaitingRoom';
 import UnsupportedBrowserPage from './pages/UnsupportedBrowserPage';
 import RoomContext from './Context/RoomContext';
+import AppContextProvider from './AppContextProvider';
+import { DeepPartial } from './types';
+import { AppConfig } from '@Context/AppConfig';
+import RedirectToUnsupportedBrowserPage from '@components/RedirectToUnsupportedBrowserPage';
+import Suspense$ from '@Context/Suspense$';
+import WaitingRoomSkeleton from '@pages/WaitingRoom/WaitingRoom.skeleton';
+import MeetingRoomSkeleton from '@pages/MeetingRoom/MeetingRoom.skeleton';
+import MeetingRoom from '@pages/MeetingRoom';
 
-const App = () => {
+const App = ({ appConfigValue }: { appConfigValue?: DeepPartial<AppConfig> }) => {
   return (
-    <CustomThemeProvider>
+    <AppContextProvider appConfigValue={appConfigValue}>
       <CssBaseline />
       <Router>
         <Routes>
-          <Route element={<RoomContext />}>
+          <Route element={<RedirectToUnsupportedBrowserPage />}>
             <Route
               path="/waiting-room/:roomName"
               element={
-                <PreviewPublisherProvider>
-                  <WaitingRoom />
-                </PreviewPublisherProvider>
+                <Suspense$ fallback={<WaitingRoomSkeleton />}>
+                  <RoomContext>
+                    <PreviewPublisherProvider>
+                      <WaitingRoom />
+                    </PreviewPublisherProvider>
+                  </RoomContext>
+                </Suspense$>
               }
             />
+
             <Route
               path="/room/:roomName"
               element={
-                <SessionProvider>
-                  <RedirectToWaitingRoom>
-                    <PublisherProvider>
-                      <Room />
-                    </PublisherProvider>
-                  </RedirectToWaitingRoom>
-                </SessionProvider>
+                <RedirectToWaitingRoom>
+                  <Suspense$ fallback={<MeetingRoomSkeleton />}>
+                    <RoomContext>
+                      <PublisherProvider>
+                        <MeetingRoom />
+                      </PublisherProvider>
+                    </RoomContext>
+                  </Suspense$>
+                </RedirectToWaitingRoom>
               }
             />
           </Route>
+
           <Route path="/goodbye" element={<GoodBye />} />
           <Route path="*" element={<LandingPage />} />
           <Route path="/unsupported-browser" element={<UnsupportedBrowserPage />} />
         </Routes>
       </Router>
-    </CustomThemeProvider>
+    </AppContextProvider>
   );
 };
 

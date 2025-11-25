@@ -34,7 +34,7 @@ app.get('/*', (_req: Request, res: Response) => {
 const startServer: () => Promise<Server> = () => {
   return new Promise((res) => {
     const server: Server = app.listen(port, () => {
-      console.log('Server listening on port', port);
+      console.info('Server listening on port', port);
       res(server);
     });
   });

@@ -1,11 +1,13 @@
-import { render, screen } from '@testing-library/react';
+import { render as renderBase, screen } from '@testing-library/react';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { PropsWithChildren } from 'react';
+import { act, PropsWithChildren, ReactElement } from 'react';
 import useUserContext from '@hooks/useUserContext';
 import useAudioOutputContext from '@hooks/useAudioOutputContext';
 import { nativeDevices } from '@utils/mockData/device';
-import mergeAppConfigs from '@Context/AppConfig/helpers/mergeAppConfigs';
+import Suspense$ from '@Context/Suspense$';
+import { makeAppConfigProviderWrapper } from '@test/providers';
+import composeProviders from '@utils/composeProviders';
 import RoomContext from '../RoomContext';
 import { UserContextType } from '../user';
 import { AudioOutputContextType } from '../AudioOutputProvider';
@@ -21,22 +23,11 @@ const fakeName = 'Tommy Traddles';
 const fakeAudioOutput = 'their-device-id';
 
 const mockUserContextWithDefaultSettings = {
-  user: {
-    defaultSettings: {
-      name: fakeName,
-    },
-  },
+  user: { defaultSettings: { name: fakeName } },
 } as UserContextType;
 const mockUseAudioOutputContextValues = {
   currentAudioOutputDevice: fakeAudioOutput,
 } as AudioOutputContextType;
-
-const defaultAppConfigValue = mergeAppConfigs({
-  /**
-   * This flag prevents the provider from attempting to load the config.json file
-   */
-  isAppConfigLoaded: true,
-});
 
 describe('RoomContext', () => {
   const nativeMediaDevices = global.navigator.mediaDevices;
@@ -66,14 +57,21 @@ describe('RoomContext', () => {
     });
   });
 
-  it('renders content', () => {
+  it('renders content', async () => {
     const TestComponent = () => <div data-testid="test-component">Test Component</div>;
 
-    render(
+    await render(
       <MemoryRouter initialEntries={['/test']}>
         <Routes>
-          <Route path="/test" element={<RoomContext appConfigValue={defaultAppConfigValue} />}>
-            <Route index element={<TestComponent />} />
+          <Route path="/test">
+            <Route
+              index
+              element={
+                <RoomContext>
+                  <TestComponent />
+                </RoomContext>
+              }
+            />
           </Route>
         </Routes>
       </MemoryRouter>
@@ -82,7 +80,7 @@ describe('RoomContext', () => {
     expect(screen.getByTestId('test-component')).toBeInTheDocument();
   });
 
-  it('provides context values to child components', () => {
+  it('provides context values to child components', async () => {
     const TestComponent = () => {
       const { user } = useUserContext();
       const { currentAudioOutputDevice } = useAudioOutputContext();
@@ -95,11 +93,18 @@ describe('RoomContext', () => {
       );
     };
 
-    render(
+    await render(
       <MemoryRouter initialEntries={['/test']}>
         <Routes>
-          <Route path="/test" element={<RoomContext appConfigValue={defaultAppConfigValue} />}>
-            <Route index element={<TestComponent />} />
+          <Route path="/test">
+            <Route
+              index
+              element={
+                <RoomContext>
+                  <TestComponent />
+                </RoomContext>
+              }
+            />
           </Route>
         </Routes>
       </MemoryRouter>
@@ -109,3 +114,18 @@ describe('RoomContext', () => {
     expect(screen.getByTestId('audio-output').textContent).toBe(fakeAudioOutput);
   });
 });
+
+async function render(ui: ReactElement) {
+  const { AppConfigWrapper } = makeAppConfigProviderWrapper();
+
+  const composeWrapper = composeProviders(Suspense$, AppConfigWrapper);
+
+  let result: ReturnType<typeof renderBase>;
+
+  await act(() => {
+    result = renderBase(ui, { wrapper: composeWrapper });
+    return Promise.resolve();
+  });
+
+  return result!;
+}

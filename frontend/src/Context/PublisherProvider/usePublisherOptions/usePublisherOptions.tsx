@@ -9,14 +9,23 @@ import useAppConfig from '@Context/AppConfig/hooks/useAppConfig';
 import useUserContext from '@hooks/useUserContext';
 import getInitials from '@utils/getInitials';
 import DeviceStore from '@utils/DeviceStore';
-import { getStorageItem, STORAGE_KEYS } from '@utils/storage';
+import useIsCameraControlAllowed from '@Context/AppConfig/hooks/useIsCameraControlAllowed';
+import useIsMicrophoneControlAllowed from '@Context/AppConfig/hooks/useIsMicrophoneControlAllowed';
+import useSuspenseUntilAppConfigReady from '@Context/AppConfig/hooks/useSuspenseUntilAppConfigReady';
+
+type UsePublisherOptionsProps = { isVideoEnabled: boolean; isAudioEnabled: boolean };
 
 /**
  * React hook to get PublisherProperties combining default options and options set in UserContext
  * @returns {PublisherProperties | null} publisher properties object
  */
 
-const usePublisherOptions = (): PublisherProperties | null => {
+const usePublisherOptions = ({
+  isVideoEnabled,
+  isAudioEnabled,
+}: UsePublisherOptionsProps): PublisherProperties | null => {
+  useSuspenseUntilAppConfigReady();
+
   const { user } = useUserContext();
 
   const defaultResolution = useAppConfig(({ videoSettings }) => videoSettings.defaultResolution);
@@ -24,7 +33,14 @@ const usePublisherOptions = (): PublisherProperties | null => {
   const allowAudioOnJoin = useAppConfig(({ audioSettings }) => audioSettings.allowAudioOnJoin);
 
   const [publisherOptions, setPublisherOptions] = useState<PublisherProperties | null>(null);
+
   const deviceStoreRef = useRef<DeviceStore | null>(null);
+
+  const isCameraAllowed = useIsCameraControlAllowed();
+  const isMicrophoneAllowed = useIsMicrophoneControlAllowed();
+
+  const shouldInitializeAudioSource = isMicrophoneAllowed && isAudioEnabled;
+  const shouldInitializeVideoSource = isCameraAllowed && isVideoEnabled;
 
   useEffect(() => {
     const setOptions = async () => {
@@ -33,29 +49,35 @@ const usePublisherOptions = (): PublisherProperties | null => {
         await deviceStoreRef.current.init();
       }
 
-      const videoSource = deviceStoreRef.current.getConnectedDeviceId('videoinput');
-      const audioSource = deviceStoreRef.current.getConnectedDeviceId('audioinput');
+      const videoSource = shouldInitializeVideoSource
+        ? deviceStoreRef.current.getConnectedDeviceId('videoinput')
+        : null;
 
-      const {
-        name,
-        noiseSuppression,
-        backgroundFilter,
-        publishAudio,
-        publishVideo,
-        publishCaptions,
-      } = user.defaultSettings;
+      const audioSource = shouldInitializeAudioSource
+        ? deviceStoreRef.current.getConnectedDeviceId('audioinput')
+        : undefined;
+
+      const { name, noiseSuppression, backgroundFilter, publishCaptions } = user.defaultSettings;
+
       const initials = getInitials(name);
 
-      const audioFilter: AudioFilter | undefined =
-        noiseSuppression && hasMediaProcessorSupport()
+      const audioFilter: AudioFilter | undefined = (() => {
+        if (!shouldInitializeAudioSource) {
+          return undefined;
+        }
+
+        return noiseSuppression && hasMediaProcessorSupport()
           ? { type: 'advancedNoiseSuppression' }
           : undefined;
+      })();
 
-      const videoFilter: VideoFilter | undefined =
-        backgroundFilter && hasMediaProcessorSupport() ? backgroundFilter : undefined;
+      const videoFilter: VideoFilter | undefined = (() => {
+        if (!shouldInitializeVideoSource) {
+          return undefined;
+        }
 
-      const isAudioDisabled = getStorageItem(STORAGE_KEYS.AUDIO_SOURCE_ENABLED) === 'false';
-      const isVideoDisabled = getStorageItem(STORAGE_KEYS.VIDEO_SOURCE_ENABLED) === 'false';
+        return backgroundFilter && hasMediaProcessorSupport() ? backgroundFilter : undefined;
+      })();
 
       setPublisherOptions({
         audioFallback: { publisher: true },
@@ -63,8 +85,8 @@ const usePublisherOptions = (): PublisherProperties | null => {
         initials,
         insertDefaultUI: false,
         name,
-        publishAudio: allowAudioOnJoin && publishAudio && !isAudioDisabled,
-        publishVideo: allowVideoOnJoin && publishVideo && !isVideoDisabled,
+        publishAudio: shouldInitializeAudioSource && allowAudioOnJoin,
+        publishVideo: shouldInitializeVideoSource && allowVideoOnJoin,
         resolution: defaultResolution,
         audioFilter,
         videoFilter,
@@ -74,7 +96,14 @@ const usePublisherOptions = (): PublisherProperties | null => {
     };
 
     setOptions();
-  }, [allowAudioOnJoin, defaultResolution, allowVideoOnJoin, user.defaultSettings]);
+  }, [
+    allowAudioOnJoin,
+    allowVideoOnJoin,
+    defaultResolution,
+    shouldInitializeAudioSource,
+    shouldInitializeVideoSource,
+    user.defaultSettings,
+  ]);
 
   return publisherOptions;
 };

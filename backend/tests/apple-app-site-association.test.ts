@@ -28,7 +28,9 @@ describe('GET /.well-known/apple-app-site-association', () => {
 
   it('returns valid JSON content', async () => {
     const res = await request(server).get('/.well-known/apple-app-site-association');
-    expect(() => JSON.parse(res.text)).not.toThrow();
+    expect(() => {
+      JSON.parse(res.text);
+    }).not.toThrow();
   });
 
   it('returns the correct structure for asset links', async () => {
@@ -42,13 +44,8 @@ describe('GET /.well-known/apple-app-site-association', () => {
             expect.objectContaining({
               appIDs: expect.arrayContaining(['PR6C39UQ38.com.vonage.VERA']),
               components: expect.arrayContaining([
-                expect.objectContaining({
-                  '/': '/waiting-room/*',
-                }),
-                expect.objectContaining({
-                  '/': '/room/*',
-                  comment: 'Matches any room URL',
-                }),
+                expect.objectContaining({ '/': '/waiting-room/*' }),
+                expect.objectContaining({ '/': '/room/*', comment: 'Matches any room URL' }),
               ]),
             }),
           ]),
