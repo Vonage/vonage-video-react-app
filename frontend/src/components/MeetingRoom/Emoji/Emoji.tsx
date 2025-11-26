@@ -1,7 +1,7 @@
 import { CSSProperties, ReactElement } from 'react';
-import { Chip } from '@mui/material';
 import { EmojiWrapper } from '../../../hooks/useEmoji';
 import { EMOJI_DISPLAY_DURATION } from '../../../utils/constants';
+import Chip from '@ui/Chip';
 
 export type EmojiProps = {
   emojiWrapper: EmojiWrapper;

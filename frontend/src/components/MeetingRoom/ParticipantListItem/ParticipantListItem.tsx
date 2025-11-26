@@ -1,10 +1,13 @@
 import { ReactElement } from 'react';
-import { Avatar, Badge, ListItem, Typography } from '@mui/material';
 import PushPinIcon from '@mui/icons-material/PushPin';
 import { Stream } from '@vonage/client-sdk-video';
 import AudioIndicator from '../AudioIndicator';
 import ParticipantListItemMenu from '../ParticipantListItemMenu';
 import { SubscriberWrapper } from '../../../types/session';
+import ListItem from '@ui/ListItem';
+import Avatar from '@ui/Avatar';
+import Typography from '@ui/Typography';
+import Badge from '@ui/Badge';
 
 export type ParticipantListItemProps = {
   stream?: Stream;

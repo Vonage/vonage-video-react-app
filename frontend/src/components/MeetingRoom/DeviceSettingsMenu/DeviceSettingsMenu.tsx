@@ -1,7 +1,3 @@
-import { ClickAwayListener } from '@mui/material';
-import Grow from '@mui/material/Grow';
-import Paper from '@mui/material/Paper';
-import Popper from '@mui/material/Popper';
 import { ReactElement, RefObject, Dispatch, SetStateAction } from 'react';
 import { hasMediaProcessorSupport } from '@vonage/client-sdk-video';
 import useAppConfig from '@Context/AppConfig/hooks/useAppConfig';
@@ -13,7 +9,10 @@ import useDropdownResizeObserver from '../../../hooks/useDropdownResizeObserver'
 import VideoDevices from '../VideoDevices';
 import DropdownSeparator from '../DropdownSeparator';
 import VideoDevicesOptions from '../VideoDevicesOptions';
-import type { PopperChildrenProps } from '@mui/material/Popper/BasePopper.types';
+import Popper from '@ui/Popper';
+import Grow from '@ui/Grow';
+import ClickAwayListener from '@ui/ClickAwayListener';
+import Paper from '@ui/Paper';
 
 export type DeviceSettingsMenuProps = {
   deviceType: 'audio' | 'video';
@@ -100,7 +99,7 @@ const DeviceSettingsMenu = ({
       disablePortal
       placement="bottom-start"
     >
-      {({ TransitionProps, placement }: PopperChildrenProps) => (
+      {({ TransitionProps, placement }) => (
         <Grow
           {...TransitionProps}
           style={{ transformOrigin: placement === 'bottom' ? 'center top' : 'center bottom' }}

@@ -1,5 +1,4 @@
 import { ReactElement } from 'react';
-import { List } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import getInitials from '../../../utils/getInitials';
 import getParticipantColor from '../../../utils/getParticipantColor';
@@ -7,6 +6,7 @@ import ChatMessage from '../ChatMessage';
 import ChatInput from '../ChatInput';
 import useSessionContext from '../../../hooks/useSessionContext';
 import RightPanelTitle from '../RightPanel/RightPanelTitle';
+import List from '@ui/List';
 
 export type ChatProps = {
   handleClose: () => void;

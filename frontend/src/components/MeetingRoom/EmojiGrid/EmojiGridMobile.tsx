@@ -1,4 +1,8 @@
-import { Box, Grid, Grow, Portal, ClickAwayListener } from '@mui/material';
+import Box from '@ui/Box';
+import Grid from '@ui/Grid';
+import Grow from '@ui/Grow';
+import Portal from '@ui/Portal';
+import ClickAwayListener from '@ui/ClickAwayListener';
 import { ReactElement } from 'react';
 import SendEmojiButton from '../SendEmojiButton';
 import emojiMap from '../../../utils/emojis';

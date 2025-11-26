@@ -1,4 +1,3 @@
-import { Box, MenuItem, MenuList, Typography } from '@mui/material';
 import CheckIcon from '@mui/icons-material/Check';
 import VolumeUpIcon from '@mui/icons-material/VolumeUp';
 import { MouseEvent, ReactElement, useMemo } from 'react';
@@ -11,6 +10,10 @@ import useAudioOutputContext from '@hooks/useAudioOutputContext';
 import { isGetActiveAudioOutputDeviceSupported } from '@utils/util';
 import cleanAndDedupeDeviceLabels from '@utils/cleanAndDedupeDeviceLabels';
 import DropdownSeparator from '../DropdownSeparator';
+import Box from '@ui/Box';
+import Typography from '@ui/Typography';
+import MenuList from '@ui/MenuList';
+import MenuItem from '@ui/MenuItem';
 
 export type OutputDevicesProps = {
   handleToggle: () => void;

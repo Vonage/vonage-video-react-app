@@ -1,10 +1,10 @@
-import TextField from '@mui/material/TextField';
 import SendIcon from '@mui/icons-material/Send';
-import { IconButton, InputAdornment } from '@mui/material';
 import { KeyboardEvent, ReactElement, useState } from 'react';
-import { blue } from '@mui/material/colors';
 import { useTranslation } from 'react-i18next';
 import useSessionContext from '../../../hooks/useSessionContext';
+import IconButton from '@ui/IconButton';
+import InputAdornment from '@ui/InputAdornment';
+import TextField from '@ui/TextField';
 
 /**
  * ChatInput component
@@ -73,8 +73,8 @@ const ChatInput = (): ReactElement => {
       InputProps={{
         endAdornment: (
           <InputAdornment position="end">
-            <IconButton sx={{ height: '40x' }} onClick={handleSendMessage}>
-              <SendIcon sx={{ color: text !== '' ? blue.A100 : '#B2B4B6' }} />
+            <IconButton sx={{ height: '40px' }} onClick={handleSendMessage}>
+              <SendIcon sx={{ color: text !== '' ? 'blue' : '#B2B4B6' }} />
             </IconButton>
           </InputAdornment>
         ),

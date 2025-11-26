@@ -1,5 +1,4 @@
 import RadioButtonCheckedIcon from '@mui/icons-material/RadioButtonChecked';
-import { Tooltip } from '@mui/material';
 import { ReactElement, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import useRoomName from '@hooks/useRoomName';
@@ -8,6 +7,7 @@ import useSessionContext from '@hooks/useSessionContext';
 import useAppConfig from '@Context/AppConfig/hooks/useAppConfig';
 import ToolbarButton from '../ToolbarButton';
 import PopupDialog, { DialogTexts } from '../PopupDialog';
+import Tooltip from '@ui/Tooltip';
 
 export type ArchivingButtonProps = {
   isOverflowButton?: boolean;

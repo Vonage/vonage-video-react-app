@@ -1,11 +1,11 @@
 import { afterEach, beforeEach, describe, expect, it, Mock, vi } from 'vitest';
 import { render as renderBase, screen } from '@testing-library/react';
 import { ReactElement, useRef } from 'react';
-import { Button } from '@mui/material';
 import * as util from '@utils/util';
 import isReportIssueEnabled from '@utils/isReportIssueEnabled';
 import { makeAppConfigProviderWrapper } from '@test/providers';
 import ToolbarOverflowMenu, { CaptionsState } from './ToolbarOverflowMenu';
+import Button from '@ui/Button';
 
 vi.mock('@hooks/useSessionContext', () => ({
   default: () => ({

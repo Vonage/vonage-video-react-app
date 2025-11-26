@@ -1,11 +1,12 @@
 import { ReactElement, useState } from 'react';
 import RadioButtonCheckedIcon from '@mui/icons-material/RadioButtonChecked';
 import { ContentCopy } from '@mui/icons-material';
-import { IconButton, Fade } from '@mui/material';
 import CheckIcon from '@mui/icons-material/Check';
 import useSessionContext from '../../../hooks/useSessionContext';
 import useRoomName from '../../../hooks/useRoomName';
 import useRoomShareUrl from '../../../hooks/useRoomShareUrl';
+import IconButton from '@ui/IconButton';
+import Fade from '@ui/Fade';
 
 /**
  * SmallViewportHeader Component

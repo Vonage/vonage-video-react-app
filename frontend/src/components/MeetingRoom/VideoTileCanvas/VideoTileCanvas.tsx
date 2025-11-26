@@ -1,6 +1,5 @@
 import { ReactElement, useRef } from 'react';
 import { Publisher as OTPublisher } from '@vonage/client-sdk-video';
-import { CircularProgress } from '@mui/material';
 import useLayoutManager from '../../../hooks/useLayoutManager';
 import usePublisherContext from '../../../hooks/usePublisherContext';
 import useSessionContext from '../../../hooks/useSessionContext';
@@ -14,6 +13,7 @@ import useSubscribersInDisplayOrder from '../../../hooks/useSubscribersInDisplay
 import getLayoutBoxes from '../../../utils/helpers/getLayoutBoxes';
 import useActiveSpeaker from '../../../hooks/useActiveSpeaker';
 import useIsSmallViewport from '../../../hooks/useIsSmallViewport';
+import CircularProgress from '@ui/CircularProgress';
 
 export type VideoTileCanvasProps = {
   isSharingScreen: boolean;

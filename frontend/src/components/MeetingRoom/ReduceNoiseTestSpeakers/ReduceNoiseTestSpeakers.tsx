@@ -1,6 +1,4 @@
-import { Typography, MenuItem, IconButton, MenuList } from '@mui/material';
 import { useState, useEffect, ReactElement } from 'react';
-import Grow from '@mui/material/Grow';
 import VolumeUpIcon from '@mui/icons-material/VolumeUp';
 import { hasMediaProcessorSupport } from '@vonage/client-sdk-video';
 import HeadsetIcon from '@mui/icons-material/Headset';
@@ -13,6 +11,11 @@ import usePublisherContext from '@hooks/usePublisherContext';
 import { setStorageItem, STORAGE_KEYS } from '@utils/storage';
 import DropdownSeparator from '../DropdownSeparator';
 import SoundTest from '../../SoundTest';
+import MenuList from '@ui/MenuList';
+import MenuItem from '@ui/MenuItem';
+import IconButton from '@ui/IconButton';
+import Typography from '@ui/Typography';
+import Grow from '@mui/material/Grow';
 
 /**
  * ReduceNoiseTestSpeakers Component

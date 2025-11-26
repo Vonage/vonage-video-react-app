@@ -1,10 +1,10 @@
 import ViewSidebarIcon from '@mui/icons-material/ViewSidebar';
-import Tooltip from '@mui/material/Tooltip';
 import WindowIcon from '@mui/icons-material/Window';
 import { ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
 import useSessionContext from '../../../hooks/useSessionContext';
 import ToolbarButton from '../ToolbarButton';
+import Tooltip from '@ui/Tooltip';
 
 export type LayoutButtonProps = {
   isScreenSharePresent: boolean;

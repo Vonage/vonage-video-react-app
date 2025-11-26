@@ -1,9 +1,6 @@
 import Mic from '@mui/icons-material/MicNone';
-import { IconButton } from '@mui/material';
 import VideocamIcon from '@mui/icons-material/Videocam';
 import VideocamOffIcon from '@mui/icons-material/VideocamOff';
-import Tooltip from '@mui/material/Tooltip';
-import ButtonGroup from '@mui/material/ButtonGroup';
 import { MicOff, ArrowDropUp, ArrowDropDown } from '@mui/icons-material';
 import { useState, useRef, useCallback, ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -15,6 +12,9 @@ import getControlButtonTooltip from '@utils/getControlButtonTooltip';
 import useCustomTheme from '@Context/Theme';
 import DeviceSettingsMenu from '../DeviceSettingsMenu';
 import MutedAlert from '../../MutedAlert';
+import ButtonGroup from '@ui/ButtonGroup';
+import IconButton from '@ui/IconButton';
+import Tooltip from '@ui/Tooltip';
 
 export type DeviceControlButtonProps = {
   deviceType: 'audio' | 'video';

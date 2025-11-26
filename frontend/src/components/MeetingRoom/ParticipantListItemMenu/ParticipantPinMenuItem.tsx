@@ -1,10 +1,12 @@
 import { ReactElement } from 'react';
-import { ListItemIcon, ListItemText, MenuItem } from '@mui/material';
 import PushPinIcon from '@mui/icons-material/PushPin';
 import { useTranslation } from 'react-i18next';
 import { SubscriberWrapper } from '../../../types/session';
 import PushPinOffIcon from '../../Icons/PushPinOffIcon';
 import useSessionContext from '../../../hooks/useSessionContext';
+import MenuItem from '@ui/MenuItem';
+import ListItemIcon from '@ui/ListItemIcon';
+import ListItemText from '@ui/ListItemText';
 
 export type ParticipantPinMenuItemProps = {
   handleClick: () => void;

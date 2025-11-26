@@ -1,11 +1,11 @@
 import { ReactElement } from 'react';
-import { AvatarGroup } from '@mui/material';
 import { Box } from 'opentok-layout-js';
 import { SubscriberWrapper } from '@app-types/session';
 import getBoxStyle from '@utils/helpers/getBoxStyle';
 import useSessionContext from '@hooks/useSessionContext';
 import useShouldShowParticipantList from '@Context/AppConfig/hooks/useShouldShowParticipantList';
 import AvatarInitials from '../AvatarInitials';
+import AvatarGroup from '@ui/AvatarGroup';
 
 export type HiddenParticipantsTileProps = {
   box: Box;

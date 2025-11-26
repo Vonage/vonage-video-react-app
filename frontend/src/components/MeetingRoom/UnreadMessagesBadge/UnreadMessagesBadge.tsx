@@ -1,4 +1,4 @@
-import { Badge } from '@mui/material';
+import Badge from '@ui/Badge'
 import { ForwardedRef, forwardRef, ReactElement } from 'react';
 import useSessionContext from '@hooks/useSessionContext';
 import useIsMeetingChatAllowed from '@Context/AppConfig/hooks/useIsMeetingChatAllowed';

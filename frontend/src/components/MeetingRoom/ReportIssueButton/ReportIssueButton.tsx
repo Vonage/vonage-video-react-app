@@ -1,7 +1,6 @@
-import { Tooltip } from '@mui/material';
+import Tooltip from '@ui/Tooltip';
 import { ReactElement, useRef } from 'react';
 import FeedbackIcon from '@mui/icons-material/Feedback';
-import { blue } from '@mui/material/colors';
 import { useTranslation } from 'react-i18next';
 import ToolbarButton from '../ToolbarButton';
 
@@ -41,7 +40,7 @@ const ReportIssueButton = ({
           marginRight: '12px',
         }}
         onClick={handleClick}
-        icon={<FeedbackIcon sx={{ color: isOpen ? blue.A100 : 'white' }} />}
+        icon={<FeedbackIcon sx={{ color: isOpen ? 'blue' : 'white' }} />}
         ref={anchorRef}
         isOverflowButton={isOverflowButton}
       />

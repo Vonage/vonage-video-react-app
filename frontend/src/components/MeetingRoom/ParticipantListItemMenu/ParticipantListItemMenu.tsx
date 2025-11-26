@@ -1,8 +1,11 @@
 import { useState, MouseEvent, ReactElement } from 'react';
-import { ClickAwayListener, IconButton, Paper, Popper } from '@mui/material';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import { SubscriberWrapper } from '../../../types/session';
 import ParticipantPinMenuItem from './ParticipantPinMenuItem';
+import IconButton from '@ui/IconButton';
+import Popper from '@ui/Popper';
+import ClickAwayListener from '@ui/ClickAwayListener';
+import Paper from '@ui/Paper';
 
 export type ParticipantListItemMenuProps = {
   participantName: string;

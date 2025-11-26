@@ -1,4 +1,3 @@
-import { Fade, IconButton, List, Tooltip } from '@mui/material';
 import { ContentCopy } from '@mui/icons-material';
 import CheckIcon from '@mui/icons-material/Check';
 import { ReactElement, useState } from 'react';
@@ -13,6 +12,10 @@ import getParticipantColor from '../../../utils/getParticipantColor';
 import useRoomShareUrl from '../../../hooks/useRoomShareUrl';
 import RightPanelTitle from '../RightPanel/RightPanelTitle';
 import usePublisherContext from '../../../hooks/usePublisherContext';
+import IconButton from '@ui/IconButton';
+import Tooltip from '@ui/Tooltip';
+import Fade from '@ui/Fade';
+import List from '@ui/List';
 
 const compareNameAlphabetically = (a: SubscriberWrapper, b: SubscriberWrapper) => {
   const nameA = a.subscriber?.stream?.name;

@@ -1,5 +1,5 @@
 import { Dispatch, ReactElement, useState, SetStateAction } from 'react';
-import { Tooltip } from '@mui/material';
+import Tooltip from '@ui/Tooltip';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import { useTranslation } from 'react-i18next';
 import useCustomTheme from '@Context/Theme';

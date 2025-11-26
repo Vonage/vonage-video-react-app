@@ -1,4 +1,7 @@
-import { Box, MenuItem, MenuList, Typography } from '@mui/material';
+import Box from '@ui/Box';
+import Typography from '@ui/Typography';
+import MenuItem from '@ui/MenuItem';
+import MenuList from '@ui/MenuList';
 import CheckIcon from '@mui/icons-material/Check';
 import { Device } from '@vonage/client-sdk-video';
 import MicNoneIcon from '@mui/icons-material/MicNone';

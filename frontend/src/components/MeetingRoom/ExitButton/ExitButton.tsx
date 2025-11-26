@@ -1,5 +1,5 @@
 import CallEndIcon from '@mui/icons-material/CallEnd';
-import Tooltip from '@mui/material/Tooltip';
+import Tooltip from '@ui/Tooltip';
 import { useNavigate } from 'react-router-dom';
 import { ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';

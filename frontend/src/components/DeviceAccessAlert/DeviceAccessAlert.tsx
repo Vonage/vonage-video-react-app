@@ -1,8 +1,12 @@
-import { AlertTitle, Box, Dialog, Stack, Alert } from '@mui/material';
 import { ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
 import { DEVICE_ACCESS_STATUS } from '../../utils/constants';
 import { isWebKit } from '../../utils/util';
+import Alert from '@ui/Alert';
+import Dialog from '@ui/Dialog';
+import Box from '@ui/Box';
+import Stack from '@ui/Stack';
+import AlertTitle from '@ui/AlertTitle';
 
 export type DeviceAccessAlertProps = {
   accessStatus: string | null;

@@ -1,9 +1,12 @@
 import { ChangeEvent, useRef, useState, ReactElement } from 'react';
-import { Button, IconButton, Tooltip, Typography } from '@mui/material';
 import { Delete } from '@mui/icons-material';
 import { useTranslation } from 'react-i18next';
 import captureScreenshot from '../../../../../utils/captureScreenshot';
 import { isMobile } from '../../../../../utils/util';
+import Button from '@ui/Button';
+import IconButton from '@ui/IconButton';
+import Tooltip from '@ui/Tooltip';
+import Typography from '@ui/Typography';
 
 // Setting the maximum file size to 20MB
 const maxFileSize = 2e7;

@@ -1,9 +1,12 @@
-import { Grid, Grow, Paper, Popper, ClickAwayListener } from '@mui/material';
+import Grid from '@ui/Grid';
+import Grow from '@ui/Grow';
+import Paper from '@ui/Paper';
+import Popper from '@ui/Popper';
+import ClickAwayListener from '@ui/ClickAwayListener';
 import { ReactElement, RefObject, useEffect, useState } from 'react';
 import useCustomTheme from '@Context/Theme';
 import SendEmojiButton from '../SendEmojiButton';
 import emojiMap from '../../../utils/emojis';
-import { PopperChildrenProps } from '@mui/material/Popper/BasePopper.types';
 
 export type EmojiGridDesktopProps = {
   handleClickAway: (event: MouseEvent | TouchEvent) => void;
@@ -46,7 +49,7 @@ const EmojiGridDesktop = ({
         disablePortal
         placement="bottom"
       >
-        {({ TransitionProps, placement }: PopperChildrenProps) => (
+        {({ TransitionProps, placement }) => (
           <Grow
             {...TransitionProps}
             style={{ transformOrigin: placement === 'bottom' ? 'center top' : 'center bottom' }}

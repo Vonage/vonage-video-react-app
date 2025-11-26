@@ -1,9 +1,9 @@
-import Button from '@mui/material/Button';
-import Dialog from '@mui/material/Dialog';
-import DialogActions from '@mui/material/DialogActions';
-import DialogContent from '@mui/material/DialogContent';
-import DialogContentText from '@mui/material/DialogContentText';
-import DialogTitle from '@mui/material/DialogTitle';
+import Dialog from '@ui/Dialog';
+import DialogActions from '@ui/DialogActions';
+import DialogContent from '@ui/DialogContent';
+import DialogContentText from '@ui/DialogContentText';
+import DialogTitle from '@ui/DialogTitle';
+import Button from '@ui/Button';
 import { ReactElement } from 'react';
 
 export type DialogTexts = {

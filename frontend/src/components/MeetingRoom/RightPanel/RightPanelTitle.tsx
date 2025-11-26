@@ -1,5 +1,5 @@
 import { Close } from '@mui/icons-material';
-import { IconButton } from '@mui/material';
+import IconButton from '@ui/IconButton';
 import { ReactElement } from 'react';
 
 export type RightPanelTitleProps = {

@@ -1,4 +1,4 @@
-import { Chip } from '@mui/material';
+import Chip from '@ui/Chip';
 import { Box } from 'opentok-layout-js';
 import { ReactElement } from 'react';
 

@@ -1,4 +1,3 @@
-import { TextField, Button, Typography, Box, CircularProgress } from '@mui/material';
 import { FormEvent, ChangeEvent, ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
 import FilePicker from './FilePicker';
@@ -9,6 +8,11 @@ import {
 } from '../../../../utils/constants';
 import HelperText from './HelperText';
 import useIsSmallViewport from '../../../../hooks/useIsSmallViewport';
+import Box from '@ui/Box';
+import TextField from '@ui/TextField';
+import Typography from '@ui/Typography';
+import Button from '@ui/Button';
+import CircularProgress from '@ui/CircularProgress';
 
 export type FormType = {
   title: string;

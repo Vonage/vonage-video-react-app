@@ -1,6 +1,6 @@
-import { Box } from '@mui/material';
 import { ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
+import Box from '@ui/Box';
 
 export type ColorStyle = 'inherit' | 'red';
 

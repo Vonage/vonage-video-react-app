@@ -1,9 +1,10 @@
 import PushPinIcon from '@mui/icons-material/PushPin';
-import { IconButton, Tooltip } from '@mui/material';
 import { MouseEvent, ReactElement, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import PushPinOffIcon from '../../Icons/PushPinOffIcon';
 import isMouseEventInsideBox from '../../../utils/isMouseEventInsideBox';
+import Tooltip from '@ui/Tooltip';
+import IconButton from '@ui/IconButton';
 
 export type PinButtonProps = {
   isMaxPinned: boolean;

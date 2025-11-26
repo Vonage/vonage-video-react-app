@@ -1,11 +1,10 @@
 import PeopleIcon from '@mui/icons-material/People';
-import Tooltip from '@mui/material/Tooltip';
-import { blue } from '@mui/material/colors';
-import { Badge } from '@mui/material';
 import { ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
 import useShouldShowParticipantList from '@Context/AppConfig/hooks/useShouldShowParticipantList';
 import ToolbarButton from '../ToolbarButton';
+import Badge from '@ui/Badge';
+import Tooltip from '@ui/Tooltip';
 
 export type ParticipantListButtonProps = {
   handleClick: () => void;
@@ -59,7 +58,7 @@ const ParticipantListButton = ({
               marginRight: '0px',
             }}
             onClick={handleClick}
-            icon={<PeopleIcon sx={{ color: isOpen ? blue.A100 : 'white' }} />}
+            icon={<PeopleIcon sx={{ color: isOpen ? 'blue' : 'white' }} />}
             isOverflowButton={isOverflowButton}
           />
         </Badge>

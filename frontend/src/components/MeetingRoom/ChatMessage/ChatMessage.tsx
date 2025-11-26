@@ -1,8 +1,11 @@
-import { Avatar, ListItem, ListItemText, Typography } from '@mui/material';
 import { ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
 import { getFormattedTime } from '../../../utils/dateTime';
 import FormattedMessageBody from '../FormattedMessageBody';
+import ListItem from '@ui/ListItem';
+import ListItemText from '@ui/ListItemText';
+import Avatar from '@ui/Avatar';
+import Typography from '@ui/Typography';
 
 export type ChatMessageProps = {
   avatarColor: string;

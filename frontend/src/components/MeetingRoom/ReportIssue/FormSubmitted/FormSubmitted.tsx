@@ -1,6 +1,7 @@
-import { Typography, Button } from '@mui/material';
 import { ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
+import Button from '@ui/Button';
+import Typography from '@ui/Typography';
 
 export type TicketResponseType = {
   message: string;

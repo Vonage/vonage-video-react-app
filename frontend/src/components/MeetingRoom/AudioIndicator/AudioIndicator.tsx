@@ -1,12 +1,12 @@
 import { MicOff, Mic } from '@mui/icons-material';
 import { ReactElement, useState } from 'react';
 import { Stream } from '@vonage/client-sdk-video';
-import Tooltip from '@mui/material/Tooltip';
-import { IconButton } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import PopupDialog, { DialogTexts } from '../PopupDialog';
 import VoiceIndicatorIcon from '../VoiceIndicator/VoiceIndicator';
 import useSessionContext from '../../../hooks/useSessionContext';
+import IconButton from '@ui/IconButton';
+import Tooltip from '@ui/Tooltip';
 
 export type AudioIndicatorProps = {
   hasAudio: boolean | undefined;

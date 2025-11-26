@@ -1,8 +1,9 @@
 import { ZoomInOutlined, ZoomOutOutlined, Add, Remove } from '@mui/icons-material';
-import { IconButton, Tooltip } from '@mui/material';
 import { ReactElement, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { MAX_ZOOM, MIN_ZOOM } from '../../../utils/constants';
+import Tooltip from '@ui/Tooltip';
+import IconButton from '@ui/IconButton';
 
 export type ZoomIndicatorProps = {
   zoomLevel: number;

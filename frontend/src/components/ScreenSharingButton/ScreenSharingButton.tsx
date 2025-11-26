@@ -1,6 +1,6 @@
 import ScreenOff from '@mui/icons-material/StopScreenShare';
 import ScreenShare from '@mui/icons-material/ScreenShare';
-import Tooltip from '@mui/material/Tooltip';
+import Tooltip from '@ui/Tooltip';
 import { ReactElement, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import useAppConfig from '@Context/AppConfig/hooks/useAppConfig';

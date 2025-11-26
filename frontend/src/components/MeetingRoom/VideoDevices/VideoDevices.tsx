@@ -1,5 +1,4 @@
 import { useState, useEffect, MouseEvent, ReactElement } from 'react';
-import { Box, MenuItem, MenuList, Typography } from '@mui/material';
 import CheckIcon from '@mui/icons-material/Check';
 import VideocamIcon from '@mui/icons-material/Videocam';
 import { Device } from '@vonage/client-sdk-video';
@@ -10,6 +9,10 @@ import useDevices from '../../../hooks/useDevices';
 import usePublisherContext from '../../../hooks/usePublisherContext';
 import { setStorageItem, STORAGE_KEYS } from '../../../utils/storage';
 import cleanAndDedupeDeviceLabels from '../../../utils/cleanAndDedupeDeviceLabels';
+import Box from '@ui/Box';
+import Typography from '@ui/Typography';
+import MenuList from '@ui/MenuList';
+import MenuItem from '@ui/MenuItem';
 
 export type VideoDevicesProps = {
   handleToggle: () => void;

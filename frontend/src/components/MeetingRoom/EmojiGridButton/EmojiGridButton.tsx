@@ -1,4 +1,4 @@
-import { Tooltip } from '@mui/material';
+import Tooltip from '@ui/Tooltip';
 import { EmojiEmotions } from '@mui/icons-material';
 import { Dispatch, ReactElement, SetStateAction, useRef } from 'react';
 import { useTranslation } from 'react-i18next';

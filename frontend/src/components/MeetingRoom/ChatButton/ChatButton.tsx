@@ -1,11 +1,10 @@
 import ChatIcon from '@mui/icons-material/Chat';
-import Tooltip from '@mui/material/Tooltip';
-import { blue } from '@mui/material/colors';
 import { ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
 import useIsMeetingChatAllowed from '@Context/AppConfig/hooks/useIsMeetingChatAllowed';
 import ToolbarButton from '../ToolbarButton';
 import UnreadMessagesBadge from '../UnreadMessagesBadge';
+import Tooltip from '@ui/Tooltip';
 
 export type ChatButtonProps = {
   handleClick: () => void;
@@ -43,7 +42,7 @@ const ChatButton = ({
               marginRight: '0px',
             }}
             onClick={handleClick}
-            icon={<ChatIcon sx={{ color: isOpen ? blue.A100 : 'white' }} />}
+            icon={<ChatIcon sx={{ color: isOpen ? 'blue' : 'white' }} />}
             isOverflowButton={isOverflowButton}
           />
         </UnreadMessagesBadge>

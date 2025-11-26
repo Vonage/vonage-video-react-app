@@ -1,4 +1,3 @@
-import { ClickAwayListener, Portal, Box, Grow } from '@mui/material';
 import { Dispatch, ReactElement, SetStateAction } from 'react';
 import ArchivingButton from '../ArchivingButton';
 import CaptionsButton from '../CaptionsButton';
@@ -11,6 +10,10 @@ import useSessionContext from '../../../hooks/useSessionContext';
 import ScreenSharingButton from '../../ScreenSharingButton';
 import getOverflowMenuButtons from '../../../utils/getOverflowMenuButtons';
 import isReportIssueEnabled from '../../../utils/isReportIssueEnabled';
+import Box from '@ui/Box';
+import ClickAwayListener from '@ui/ClickAwayListener';
+import Grow from '@ui/Grow';
+import Portal from '@ui/Portal';
 
 export type CaptionsState = {
   isUserCaptionsEnabled: boolean;
