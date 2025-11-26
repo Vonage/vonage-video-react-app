@@ -258,6 +258,16 @@ export default [
     rules: {
       // unit test usually need to mock before importing to make the mocking work
       'import/first': 'off',
+      'no-restricted-properties': [
+        'warn',
+        { object: 'it', property: 'only', message: 'Remove .only from tests before committing!' },
+        {
+          object: 'describe',
+          property: 'only',
+          message: 'Remove .only from tests before committing!',
+        },
+        { object: 'test', property: 'only', message: 'Remove .only from tests before committing!' },
+      ],
     },
   },
 ];

@@ -46,7 +46,6 @@ body:
         - Chrome
         - Firefox
         - Microsoft Edge
-        - Opera
         - Safari
         - Electron
 

@@ -25,7 +25,7 @@
     "start:backend": "nx serve backend",
     "debug:backend": "nx run backend:debug",
     "start:frontend": "nx serve frontend --host",
-    "test": "nx run-many -t test --projects=backend,frontend --parallel --maxParallel=3",
+    "test": "nx run-many -t test --projects=backend,frontend,ui --parallel --maxParallel=3",
     "test:backend": "nx test backend",
     "test:backend:watch": "nx test backend --watch",
     "test:frontend": " nx test frontend",
@@ -34,12 +34,13 @@
     "test:frontend:watch": "nx test frontend --watch",
     "test:integration": "nx run integration-tests:test",
     "test:integration:": "nx run integration-tests:test:",
-    "ts-check": "nx run backend:ts-check && nx run frontend:ts-check",
+    "ts-check": "nx run backend:ts-check && nx run frontend:ts-check && nx run ui:ts-check",
     "test:integrationUpdateScreenshots": "nx run integration-tests:updateScreenshots",
     "test:integrationUpdateScreenshots:": "nx run integration-tests:updateScreenshots:",
     "ts-check:backend": "nx run backend:ts-check",
     "ts-check:frontend": "nx run frontend:ts-check",
-    "ts-check:integration-tests": "nx run integration-tests:ts-check"
+    "ts-check:integration-tests": "nx run integration-tests:ts-check",
+    "ts-check:ui": "nx run ui:ts-check"
   },
   "scriptsInfo": {
     "dev": "Run both frontend and backend in development mode with hot reload",
