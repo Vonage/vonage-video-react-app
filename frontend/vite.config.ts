@@ -5,6 +5,7 @@ import { defineConfig as defineVitestConfig } from 'vitest/config';
 import react from '@vitejs/plugin-react';
 import replace from '@rollup/plugin-replace';
 import checker from 'vite-plugin-checker';
+import * as path from 'node:path';
 
 const vitestConfig: VitestUserConfigInterface = defineVitestConfig({
   test: {
@@ -66,7 +67,7 @@ export default defineConfig(({ mode }) => {
         '@app-types': '/src/types',
         '@utils': '/src/utils',
         '@test': '/src/test',
-        '@ui': '/ui',
+        '@ui': path.resolve(__dirname, '../libs/ui/src'),
       },
     },
   });

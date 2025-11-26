@@ -5,7 +5,8 @@
     "jsx": "react-jsx",
     "module": "ESNext",
     "moduleResolution": "Bundler",
-    "types": ["vitest/globals", "vitest/importMeta", "vite/client", "node", "vitest"]
+    "lib": ["DOM", "DOM.Iterable", "ESNext"],
+    "types": ["vitest/globals", "vitest/importMeta", "vite/client", "node", "vitest", "@testing-library/jest-dom"]
   },
   "include": [
     "vite.config.ts",

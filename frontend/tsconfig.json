@@ -25,7 +25,7 @@
       "@app-types/*": ["./src/types/*"],
       "@utils/*": ["./src/utils/*"],
       "@test/*": ["./src/test/*"],
-      "@ui/*": ["./ui/*"]
+      "@ui/*": ["../libs/ui/src/*"]
     },
     "types": ["vite/client", "node", "vitest", "vitest/globals"]
   },

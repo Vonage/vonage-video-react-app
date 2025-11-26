@@ -6,6 +6,7 @@
     "jsx": "react-jsx",
     "module": "ESNext",
     "moduleResolution": "Bundler",
+    "lib": ["DOM", "DOM.Iterable", "ESNext"],
     "types": [
       "node",
       "@nx/react/typings/cssmodule.d.ts",
