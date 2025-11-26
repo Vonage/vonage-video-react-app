@@ -1,4 +1,3 @@
-type Camelize<S extends string> =
-  S extends `${infer Head}-${infer Tail}`
-    ? `${Head}${Capitalize<Camelize<Tail>>}`
-    : S;
+type Camelize<S extends string> = S extends `${infer Head}-${infer Tail}`
+  ? `${Head}${Capitalize<Camelize<Tail>>}`
+  : S;

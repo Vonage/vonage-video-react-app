@@ -120,17 +120,17 @@ describe('usePublisher', () => {
 
   describe('changeBackground', () => {
     let result: ReturnType<typeof renderHook>['result'];
-    beforeEach(async () => {
+    beforeEach(() => {
       vi.mocked(initPublisher).mockImplementation(() => mockPublisher);
       result = renderHook(() => usePublisher()).result;
-      await act(async () => {
-        await (result.current as ReturnType<typeof usePublisher>).initializeLocalPublisher({});
+      act(() => {
+        (result.current as ReturnType<typeof usePublisher>).initializeLocalPublisher({});
       });
     });
 
-    it('applies low blur filter', async () => {
-      await act(async () => {
-        await (result.current as ReturnType<typeof usePublisher>).changeBackground('low-blur');
+    it('applies low blur filter', () => {
+      act(() => {
+        (result.current as ReturnType<typeof usePublisher>).changeBackground('low-blur');
       });
       expect(mockPublisher.applyVideoFilter).toHaveBeenCalledWith({
         type: 'backgroundBlur',
@@ -138,9 +138,9 @@ describe('usePublisher', () => {
       });
     });
 
-    it('applies background replacement with image', async () => {
-      await act(async () => {
-        await (result.current as ReturnType<typeof usePublisher>).changeBackground('bg1.jpg');
+    it('applies background replacement with image', () => {
+      act(() => {
+        (result.current as ReturnType<typeof usePublisher>).changeBackground('bg1.jpg');
       });
       expect(mockPublisher.applyVideoFilter).toHaveBeenCalledWith({
         type: 'backgroundReplacement',
@@ -148,9 +148,9 @@ describe('usePublisher', () => {
       });
     });
 
-    it('clears video filter for unknown option', async () => {
-      await act(async () => {
-        await (result.current as ReturnType<typeof usePublisher>).changeBackground('none');
+    it('clears video filter for unknown option', () => {
+      act(() => {
+        (result.current as ReturnType<typeof usePublisher>).changeBackground('none');
       });
       expect(mockPublisher.clearVideoFilter).toHaveBeenCalled();
     });

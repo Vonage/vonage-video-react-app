@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-use-before-define */
 import * as fs from 'node:fs';
 import * as path from 'node:path';
 import designTokens from '../designTokens.ts';

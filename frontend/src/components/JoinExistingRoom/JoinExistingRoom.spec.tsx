@@ -11,7 +11,7 @@ vi.mock('react-router-dom', async () => {
 });
 
 describe('JoinExistingRoom', () => {
-  it('should display the correct JoinExistingRoom', async () => {
+  it('should display the correct JoinExistingRoom', () => {
     render(<JoinExistingRoom />);
 
     expect(screen.getByTestId('JoinExistingRoom')).toBeInTheDocument();

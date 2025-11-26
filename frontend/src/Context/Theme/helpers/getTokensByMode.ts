@@ -2,7 +2,6 @@ import designTokens from '../../../designTokens';
 
 export type ThemeTokens = ReturnType<typeof getTokensByMode>;
 
-// eslint-disable-next-line no-undef
 type ColorKey = Camelize<keyof typeof designTokens.color.light>;
 
 const getTokensByMode = (mode: 'light' | 'dark') => {
@@ -17,7 +16,7 @@ const getTokensByMode = (mode: 'light' | 'dark') => {
         let key = originalKey;
 
         if (key.includes('-')) {
-          key = key.replaceAll(/-([a-z])/g, (_, char) => char.toUpperCase());
+          key = key.replaceAll(/-([a-z])/g, (_, char: string) => char.toUpperCase());
         }
 
         acc[key as ColorKey] = colors[originalKey as keyof typeof colors].value;

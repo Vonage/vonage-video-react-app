@@ -23,7 +23,7 @@ const useRoomName = ({ useLocationState = false }: UseRoomNameProps = {}): strin
     // this is the default behavior of this hook
     roomName = params.roomName;
   }
-  const lowerCaseRoomName = roomName?.toLowerCase() || '';
+  const lowerCaseRoomName: string = roomName?.toLowerCase() || '';
 
   return lowerCaseRoomName;
 };

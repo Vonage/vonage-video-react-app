@@ -23,6 +23,7 @@ const SoundTest = ({ children }: SoundTestProps): ReactElement => {
 
   const stopAudio = useCallback(() => {
     audioElement.pause();
+    // eslint-disable-next-line react-hooks/immutability
     audioElement.currentTime = 0;
     setAudioIsPlaying(false);
   }, [audioElement]);

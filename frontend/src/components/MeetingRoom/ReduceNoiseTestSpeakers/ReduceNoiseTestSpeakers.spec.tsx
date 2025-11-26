@@ -14,9 +14,7 @@ vi.mock('@hooks/usePublisherContext');
 const mockUsePublisherContext = usePublisherContext as Mock<[], PublisherContextType>;
 
 const { mockHasMediaProcessorSupport } = vi.hoisted(() => {
-  return {
-    mockHasMediaProcessorSupport: vi.fn().mockReturnValue(true),
-  };
+  return { mockHasMediaProcessorSupport: vi.fn().mockReturnValue(true) };
 });
 vi.mock('@vonage/client-sdk-video', () => ({
   hasMediaProcessorSupport: mockHasMediaProcessorSupport,
@@ -130,13 +128,7 @@ describe('ReduceNoiseTestSpeakers', () => {
 
   it('does not render the Advanced Noise Suppression option if allowAdvancedNoiseSuppression is false', () => {
     render(<ReduceNoiseTestSpeakers />, {
-      appConfigOptions: {
-        value: {
-          audioSettings: {
-            allowAdvancedNoiseSuppression: false,
-          },
-        },
-      },
+      appConfigOptions: { value: { audioSettings: { allowAdvancedNoiseSuppression: false } } },
     });
 
     expect(screen.queryByText('Advanced Noise Suppression')).not.toBeInTheDocument();
@@ -145,9 +137,7 @@ describe('ReduceNoiseTestSpeakers', () => {
 
 function render(
   ui: ReactElement,
-  options?: {
-    appConfigOptions?: AppConfigProviderWrapperOptions;
-  }
+  options?: { appConfigOptions?: AppConfigProviderWrapperOptions }
 ) {
   const { AppConfigWrapper } = makeAppConfigProviderWrapper(options?.appConfigOptions);
 
