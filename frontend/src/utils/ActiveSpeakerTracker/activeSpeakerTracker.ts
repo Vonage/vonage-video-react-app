@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unsafe-declaration-merging */
-/* eslint-disable no-underscore-dangle */
 import { EventEmitter } from 'events';
 import throttle from 'lodash/throttle';
 
@@ -32,7 +30,6 @@ const CALCULATE_ACTIVE_SPEAKER_THROTTLE_TIME = 1500;
  * @class ActiveSpeakerTracker
  * @augments {EventEmitter}
  */
-// eslint-disable-next-line no-redeclare
 class ActiveSpeakerTracker extends EventEmitter {
   _subscriberAudioLevelsBySubscriberId: SubscriberAudioLevels = {};
   activeSpeaker: ActiveSpeakerInfo;

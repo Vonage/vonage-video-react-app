@@ -86,7 +86,7 @@ describe('useToolbarButtons', () => {
     vi.unstubAllGlobals();
   });
 
-  it('returns nothing when there is no space in the toolbar', async () => {
+  it('returns nothing when there is no space in the toolbar', () => {
     Object.defineProperty(toolbarRef.current, 'clientWidth', {
       configurable: true,
       writable: true,

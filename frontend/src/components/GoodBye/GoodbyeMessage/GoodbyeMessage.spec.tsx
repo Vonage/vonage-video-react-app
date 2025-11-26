@@ -7,10 +7,7 @@ import { SMALL_VIEWPORT } from '../../../utils/constants';
 
 vi.mock('react-router-dom', async () => {
   const mod = await vi.importActual<typeof import('react-router-dom')>('react-router-dom');
-  return {
-    ...mod,
-    useNavigate: vi.fn(),
-  };
+  return { ...mod, useNavigate: vi.fn() };
 });
 
 const mockNavigate = vi.fn();
@@ -23,6 +20,7 @@ const matchMediaCommon = {
   removeListener: vi.fn(),
   addEventListener: vi.fn(),
   removeEventListener: vi.fn(),
+  dispatchEvent: vi.fn(),
 };
 
 describe('GoodbyeMessage', () => {
@@ -70,7 +68,7 @@ describe('GoodbyeMessage', () => {
   });
 
   it('renders correctly on screen less than SMALL_VIEWPORT', () => {
-    globalThis.matchMedia = vi.fn().mockImplementation((query) => ({
+    globalThis.matchMedia = vi.fn((query: string) => ({
       matches: new RegExp(`\\(max-width:\\s*${SMALL_VIEWPORT}px\\)`).test(query),
       media: query,
       ...matchMediaCommon,
@@ -88,7 +86,7 @@ describe('GoodbyeMessage', () => {
   });
 
   it('renders correctly on screen greater than SMALL_VIEWPORT', () => {
-    globalThis.matchMedia = vi.fn().mockImplementation((query) => ({
+    globalThis.matchMedia = vi.fn((query: string) => ({
       matches: new RegExp(`\\(min-width:\\s*${SMALL_VIEWPORT + 1}px\\)`).test(query),
       media: query,
       ...matchMediaCommon,

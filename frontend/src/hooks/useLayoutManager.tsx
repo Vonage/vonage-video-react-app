@@ -1,4 +1,4 @@
-import { useRef } from 'react';
+import { useMemo } from 'react';
 import LayoutManager from '../utils/layoutManager';
 
 export type GetLayout = InstanceType<typeof LayoutManager>['getLayout'];
@@ -10,8 +10,11 @@ export type GetLayout = InstanceType<typeof LayoutManager>['getLayout'];
  * @returns {GetLayout} getLayout
  */
 const useLayoutManager = (): GetLayout => {
-  const layoutManager = useRef(new LayoutManager());
-  return layoutManager.current.getLayout.bind(layoutManager.current);
+  return useMemo(() => {
+    const layoutManager = new LayoutManager();
+
+    return layoutManager.getLayout.bind(layoutManager);
+  }, []);
 };
 
 export default useLayoutManager;

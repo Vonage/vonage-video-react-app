@@ -1,5 +1,6 @@
 import axios from 'axios';
 import { API_URL } from '../utils/constants';
+import type { Credential } from '@app-types/session';
 
 /**
  * @typedef CredentialsType
@@ -12,9 +13,9 @@ import { API_URL } from '../utils/constants';
  * Returns the credentials needed to enter video call
  * See https://developer.vonage.com/en/video/guides/video-api-basics-overview#basic-vonage-video-api-functionality
  * @param {string} roomName - the name of the meeting room
- * @returns {CredentialsType} the credentials needed to enter the meeting room
+ * @returns {Credential} the credentials needed to enter the meeting room
  */
 
 export default async (roomName: string) => {
-  return axios.get(`${API_URL}/session/${roomName}`);
+  return axios.get<Credential>(`${API_URL}/session/${roomName}`);
 };

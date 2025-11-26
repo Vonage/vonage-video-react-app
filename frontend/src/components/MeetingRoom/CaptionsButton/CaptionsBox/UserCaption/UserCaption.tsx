@@ -37,6 +37,7 @@ const UserCaption = ({
 
   useEffect(() => {
     if (isActive && displayCaption) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setVisible(true);
       if (timeoutRef.current) {
         clearTimeout(timeoutRef.current);

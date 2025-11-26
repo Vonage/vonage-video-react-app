@@ -125,7 +125,7 @@ describe('SessionProvider', () => {
     );
   };
 
-  beforeEach(async () => {
+  beforeEach(() => {
     activeSpeakerTracker = Object.assign(new EventEmitter(), {
       onSubscriberDestroyed: vi.fn(),
       onSubscriberAudioLevelUpdated: vi.fn(),
@@ -153,7 +153,7 @@ describe('SessionProvider', () => {
       token: 'token',
     } as Credential);
 
-    await act(async () => {
+    act(() => {
       const result = render(<TestComponent />);
       getByTestId = result.getByTestId;
     });
@@ -177,8 +177,8 @@ describe('SessionProvider', () => {
   });
 
   describe('publish', () => {
-    it('should call publish on VonageVideoClient when connected', async () => {
-      await act(async () => {
+    it('should call publish on VonageVideoClient when connected', () => {
+      act(() => {
         getByTestId('publish').click();
       });
 
@@ -192,7 +192,7 @@ describe('SessionProvider', () => {
 
       await waitFor(() => expect(getByTestId('connected')).toHaveTextContent('false'));
 
-      await act(async () => {
+      act(() => {
         getByTestId('publish').click();
       });
 
