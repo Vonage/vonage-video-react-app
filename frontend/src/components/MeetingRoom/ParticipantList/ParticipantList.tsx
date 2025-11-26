@@ -1,6 +1,6 @@
 import { ContentCopy } from '@mui/icons-material';
 import CheckIcon from '@mui/icons-material/Check';
-import { ReactElement, useState } from 'react';
+import { ReactElement, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import useSessionContext from '../../../hooks/useSessionContext';
 import useUserContext from '../../../hooks/useUserContext';
@@ -57,6 +57,11 @@ const ParticipantList = ({ handleClose, isOpen }: ParticipantListProps): ReactEl
   const roomShareUrl = useRoomShareUrl();
   const { isAudioEnabled } = usePublisherContext();
 
+  const participantCount = useMemo(
+    () => 1 + subscriberWrappers.filter(({ isScreenshare }) => !isScreenshare).length,
+    [subscriberWrappers]
+  );
+
   const copyUrl = () => {
     navigator.clipboard.writeText(roomShareUrl);
 
@@ -70,7 +75,7 @@ const ParticipantList = ({ handleClose, isOpen }: ParticipantListProps): ReactEl
   return (
     isOpen && (
       <>
-        <RightPanelTitle title={t('participants.title')} handleClose={handleClose} />
+        <RightPanelTitle title={`${t('participants.title')} (${participantCount})`} handleClose={handleClose} />
         <div className="flex h-[64px] flex-row items-center justify-between pl-6">
           <div className="text-left">
             <span className="text-darkGray text-sm font-bold tracking-normal">
