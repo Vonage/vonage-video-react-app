@@ -70,7 +70,7 @@ describe('OutputDevices Component', () => {
     expect(screen.queryByText('Soundcore Life A2 NC (Bluetooth)')).not.toBeInTheDocument();
   });
 
-  it('changes audio output device on menu item click when supported', async () => {
+  it('changes audio output device on menu item click when supported', () => {
     render(<OutputDevices handleToggle={mockHandleToggle} />);
 
     const speakerItem = screen.getByText('Soundcore Life A2 NC (Bluetooth)');

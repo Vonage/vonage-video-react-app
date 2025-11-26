@@ -1,3 +1,6 @@
+/* eslint-disable @typescript-eslint/no-require-imports */
+/* eslint-disable @typescript-eslint/no-unsafe-return */
+/* eslint-disable @typescript-eslint/no-unsafe-argument */
 const fs = require('fs');
 
 const allowlistData = JSON.parse(fs.readFileSync('scripts/licenseAllowList.json', 'utf8'));

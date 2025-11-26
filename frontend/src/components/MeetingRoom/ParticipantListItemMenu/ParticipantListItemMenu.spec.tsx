@@ -32,39 +32,39 @@ describe('ParticipantListItem', () => {
     mockUseSessionContext.mockImplementation(() => mockSessionContext);
   });
 
-  it('closes menu after clicking menu item', async () => {
+  it('closes menu after clicking menu item', () => {
     render(<ParticipantListItemMenu {...defaultProps} />);
     const menuButton = screen.getByRole('button');
-    await act(() => menuButton.click());
+    act(() => menuButton.click());
     expect(screen.getByTestId('pin-menu-item')).toBeVisible();
-    const pinButton = await screen.getByText('Pin John Doe');
-    await act(() => pinButton.click());
+    const pinButton = screen.getByText('Pin John Doe');
+    act(() => pinButton.click());
     expect(screen.queryByTestId('pin-menu-item')).not.toBeInTheDocument();
   });
 
-  it('can pin participant', async () => {
+  it('can pin participant', () => {
     render(<ParticipantListItemMenu {...defaultProps} />);
     const menuButton = screen.getByRole('button');
-    await act(() => menuButton.click());
-    const pinButton = await screen.getByText('Pin John Doe');
-    await act(() => pinButton.click());
+    act(() => menuButton.click());
+    const pinButton = screen.getByText('Pin John Doe');
+    act(() => pinButton.click());
     expect(mockSessionContext.pinSubscriber).toHaveBeenCalledWith('subId');
   });
 
-  it('can unpin participant', async () => {
+  it('can unpin participant', () => {
     render(
       <ParticipantListItemMenu
         {...{ ...defaultProps, subscriberWrapper: { ...mockSubscriberWrapper, isPinned: true } }}
       />
     );
     const menuButton = screen.getByRole('button');
-    await act(() => menuButton.click());
-    const pinButton = await screen.getByText('Unpin John Doe');
-    await act(() => pinButton.click());
+    act(() => menuButton.click());
+    const pinButton = screen.getByText('Unpin John Doe');
+    act(() => pinButton.click());
     expect(mockSessionContext.pinSubscriber).toHaveBeenCalledWith('subId');
   });
 
-  it('cannot pin participant if maximum number of tiles are pinned', async () => {
+  it('cannot pin participant if maximum number of tiles are pinned', () => {
     mockSessionContext = {
       isMaxPinned: true,
       pinSubscriber: vi.fn(),
@@ -72,13 +72,13 @@ describe('ParticipantListItem', () => {
     mockUseSessionContext.mockImplementation(() => mockSessionContext);
     render(<ParticipantListItemMenu {...defaultProps} />);
     const menuButton = screen.getByRole('button');
-    await act(() => menuButton.click());
-    const pinButton = await screen.getByText(/You can't pin any more tiles/);
-    await act(() => pinButton.click());
+    act(() => menuButton.click());
+    const pinButton = screen.getByText(/You can't pin any more tiles/);
+    act(() => pinButton.click());
     expect(mockSessionContext.pinSubscriber).not.toHaveBeenCalled();
   });
 
-  it('can still unpin participant if maximum number of tiles are pinned', async () => {
+  it('can still unpin participant if maximum number of tiles are pinned', () => {
     mockSessionContext = {
       isMaxPinned: true,
       pinSubscriber: vi.fn(),
@@ -90,9 +90,9 @@ describe('ParticipantListItem', () => {
       />
     );
     const menuButton = screen.getByRole('button');
-    await act(() => menuButton.click());
-    const pinButton = await screen.getByText('Unpin John Doe');
-    await act(() => pinButton.click());
+    act(() => menuButton.click());
+    const pinButton = screen.getByText('Unpin John Doe');
+    act(() => pinButton.click());
     expect(mockSessionContext.pinSubscriber).toHaveBeenCalledWith('subId');
   });
 });

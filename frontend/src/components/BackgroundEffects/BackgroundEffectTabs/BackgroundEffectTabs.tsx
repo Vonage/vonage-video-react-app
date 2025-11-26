@@ -82,7 +82,7 @@ const BackgroundEffectTabs = ({
           },
         }}
         value={tabSelected}
-        onChange={(_event, newValue) => setTabSelected(newValue)}
+        onChange={(_event, newValue: number) => setTabSelected(newValue)}
         aria-label={t('backgroundEffects.title.tabs')}
       >
         <Tab sx={{ textTransform: 'none' }} label={t('backgroundEffects.tabs.backgrounds')} />

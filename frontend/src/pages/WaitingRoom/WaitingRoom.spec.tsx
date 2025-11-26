@@ -149,6 +149,8 @@ describe('WaitingRoom', () => {
 
     const { rerender, container } = render(<WaitingRoomWithProviders />);
 
+    // TODO: investigate why this needs to be awaited or the test fails
+    // eslint-disable-next-line @typescript-eslint/await-thenable
     await act(() => {
       rerender(<WaitingRoomWithProviders />);
     });
@@ -182,7 +184,7 @@ describe('WaitingRoom', () => {
     expect(mockedDestroyPublisher).toHaveBeenCalled();
   });
 
-  it('should reload window when device permissions change', async () => {
+  it('should reload window when device permissions change', () => {
     const { rerender } = render(<WaitingRoomWithProviders />);
     expect(globalThis.location.reload).not.toBeCalled();
 
@@ -201,7 +203,7 @@ describe('WaitingRoom', () => {
  */
 function getLocationMock() {
   const { location } = globalThis;
-  const locationMock = Object.create(Object.getPrototypeOf(location));
+  const locationMock = Object.create(Object.getPrototypeOf(location) as Location);
 
   Object.assign(locationMock, location);
 

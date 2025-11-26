@@ -26,6 +26,7 @@ const MutedAlert = (): ReactElement => {
     : t('mutedAlert.message.muted');
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setOpen(isForceMuted || isSpeakingWhileMuted);
   }, [isForceMuted, isSpeakingWhileMuted]);
 

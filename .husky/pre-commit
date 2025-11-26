@@ -1,7 +1,8 @@
 #!/usr/bin/env sh
-. "$(dirname "$0")/_/husky.sh"
-
-# Exit on error and unset variables
 set -eu
 
+# skip on CI or if deps aren't installed yet
+[ -n "${CI:-}" ] && exit 0
+
+# Run your quality checks
 yarn --silent quality-check

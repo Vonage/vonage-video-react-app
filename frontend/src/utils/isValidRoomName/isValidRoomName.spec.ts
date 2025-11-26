@@ -10,10 +10,16 @@ describe('isValidRoomName', () => {
     { input: 'room@name', expected: false },
     { input: 'room#name', expected: false },
     { input: 'room$name', expected: false },
+    { input: '', expected: false },
+    { input: 'a'.repeat(100), expected: true },
+    { input: 'a'.repeat(101), expected: false },
+    { input: 'room-name_123+test', expected: true },
   ];
 
   testCases.forEach(({ input, expected }) => {
-    it(`should return ${expected} for "${input}"`, () => {
+    const displayInput =
+      input.length > 50 ? `${input.substring(0, 50)}...` : input || '(empty string)';
+    it(`should return ${expected} for "${displayInput}"`, () => {
       const result = isValidRoomName(input);
       expect(result).toBe(expected);
     });

@@ -1,4 +1,3 @@
-/* eslint-disable react/no-array-index-key */
 import { ReactElement } from 'react';
 import { Link } from '@mui/material';
 import linkGroupsParser from '../../../utils/linkGroupsParser';

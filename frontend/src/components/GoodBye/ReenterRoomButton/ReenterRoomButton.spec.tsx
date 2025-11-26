@@ -16,7 +16,7 @@ describe('ReenterRoomButton', () => {
     expect(mockFn).toHaveBeenCalled();
   });
 
-  it('should not display the reenter room button', async () => {
+  it('should not display the reenter room button', () => {
     const mockFn = vi.fn();
 
     render(<ReenterRoomButton roomName="" handleReenter={mockFn} />);

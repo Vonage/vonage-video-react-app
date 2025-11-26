@@ -31,10 +31,10 @@ vi.mock('../../../../utils/useImageStorage/useImageStorage', () => ({
   __esModule: true,
   default: () => ({
     storageError: '',
-    handleImageFromFile: vi.fn(async () => ({
+    handleImageFromFile: vi.fn(() => ({
       dataUrl: 'data:image/png;base64,MOCKED',
     })),
-    handleImageFromLink: vi.fn(async () => ({
+    handleImageFromLink: vi.fn(() => ({
       dataUrl: 'data:image/png;base64,MOCKED_LINK',
     })),
   }),

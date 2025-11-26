@@ -1,0 +1,66 @@
+{
+  "$schema": "../node_modules/nx/schemas/project-schema.json",
+  "name": "integration-tests",
+  "projectType": "application",
+  "root": "integration-tests",
+  "sourceRoot": "integration-tests",
+  "targets": {
+    "test": {
+      "executor": "nx:run-commands",
+      "options": {
+        "cwd": "integration-tests",
+        "command": "playwright test --project='Google Chrome Fake Devices' --project=firefox --project='Opera' --project='Microsoft Edge' --project='Mobile Chrome' --project='Electron'"
+      }
+    },
+    "updateScreenshots": {
+      "executor": "nx:run-commands",
+      "cache": false,
+      "options": {
+        "cwd": "integration-tests",
+        "command": "playwright test --project='Google Chrome Fake Devices' --project=firefox --project='Opera' --project='Microsoft Edge' --project='Mobile Chrome' --project='Electron' --update-snapshots"
+      }
+    },
+    "updateScreenshots:": {
+      "executor": "nx:run-commands",
+      "description": "Update snapshots only for one Playwright test file",
+      "cache": false,
+      "outputs": [],
+      "options": {
+        "cwd": "integration-tests",
+        "description": "Update snapshots only for one Playwright test file",
+        "command": "playwright test {args._} --project='Google Chrome Fake Devices' --project=firefox --project='Opera' --project='Microsoft Edge' --project='Mobile Chrome' --project='Electron' --update-snapshots"
+      }
+    },
+    "postinstall": {
+      "executor": "nx:run-commands",
+      "options": {
+        "cwd": "integration-tests",
+        "command": "playwright install"
+      }
+    },
+    "ts-check": {
+      "executor": "nx:run-commands",
+      "options": {
+        "cwd": "integration-tests",
+        "command": "tsc -p tsconfig.json --pretty true --noEmit"
+      }
+    },
+    "ts-check:watch": {
+      "executor": "nx:run-commands",
+      "options": {
+        "cwd": "integration-tests",
+        "command": "tsc -p tsconfig.json --noEmit --watch --preserveWatchOutput"
+      }
+    },
+    "test:": {
+      "executor": "nx:run-commands",
+      "description": "Run playwright tests in a specific file",
+      "options": {
+        "cwd": "integration-tests",
+        "description": "Run playwright tests in a specific file",
+        "command": "playwright test {args._} --project='Google Chrome Fake Devices' --project=firefox --project='Opera' --project='Microsoft Edge' --project='Mobile Chrome' --project='Electron'"
+      }
+    }
+  },
+  "tags": ["e2e", "playwright"]
+}

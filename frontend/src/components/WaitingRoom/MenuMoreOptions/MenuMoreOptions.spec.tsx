@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render as renderBase, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import React, { ReactElement } from 'react';
+import { ReactElement } from 'react';
 import { BackgroundEffectsDialogProvider } from '../../../Context/BackgroundEffectsDialog';
 import MenuMoreOptions from './MenuMoreOptions';
 

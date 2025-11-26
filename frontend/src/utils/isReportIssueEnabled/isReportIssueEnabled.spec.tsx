@@ -1,4 +1,3 @@
-/* eslint-disable import/first */
 import { describe, expect, it, vi } from 'vitest';
 
 vi.mock('../../env', async () => {
