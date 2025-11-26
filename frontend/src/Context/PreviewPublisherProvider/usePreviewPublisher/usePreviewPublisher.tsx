@@ -32,7 +32,7 @@ export type PreviewPublisherContextType = {
   destroyPublisher: () => void;
   toggleAudio: () => void;
   toggleVideo: () => void;
-  changeBackground: (backgroundSelected: string) => void;
+  changeBackground: (backgroundSelected: string) => Promise<void>;
   backgroundFilter: VideoFilter | undefined;
   localAudioSource: string | undefined;
   localVideoSource: string | undefined;
@@ -104,7 +104,7 @@ const usePreviewPublisher = (): PreviewPublisherContextType => {
    */
   const changeBackground = useCallback(
     (backgroundSelected: string) => {
-      applyBackgroundFilter({
+      return applyBackgroundFilter({
         publisher: publisherRef.current,
         backgroundSelected,
         setUser,
@@ -131,10 +131,7 @@ const usePreviewPublisher = (): PreviewPublisherContextType => {
       if (setUser) {
         setUser((prevUser: UserType) => ({
           ...prevUser,
-          defaultSettings: {
-            ...prevUser.defaultSettings,
-            audioSource: deviceId,
-          },
+          defaultSettings: { ...prevUser.defaultSettings, audioSource: deviceId },
         }));
       }
     },
@@ -156,10 +153,7 @@ const usePreviewPublisher = (): PreviewPublisherContextType => {
       if (setUser) {
         setUser((prevUser: UserType) => ({
           ...prevUser,
-          defaultSettings: {
-            ...prevUser.defaultSettings,
-            videoSource: deviceId,
-          },
+          defaultSettings: { ...prevUser.defaultSettings, videoSource: deviceId },
         }));
       }
     },
@@ -290,10 +284,7 @@ const usePreviewPublisher = (): PreviewPublisherContextType => {
     if (setUser) {
       setUser((prevUser: UserType) => ({
         ...prevUser,
-        defaultSettings: {
-          ...prevUser.defaultSettings,
-          publishVideo: !isVideoEnabled,
-        },
+        defaultSettings: { ...prevUser.defaultSettings, publishVideo: !isVideoEnabled },
       }));
     }
   };
@@ -314,10 +305,7 @@ const usePreviewPublisher = (): PreviewPublisherContextType => {
     if (setUser) {
       setUser((prevUser: UserType) => ({
         ...prevUser,
-        defaultSettings: {
-          ...prevUser.defaultSettings,
-          publishAudio: !isAudioEnabled,
-        },
+        defaultSettings: { ...prevUser.defaultSettings, publishAudio: !isAudioEnabled },
       }));
     }
   };
@@ -328,6 +316,7 @@ const usePreviewPublisher = (): PreviewPublisherContextType => {
     isPublishing,
     isVideoEnabled,
     destroyPublisher,
+
     publisher: publisherRef.current,
     publisherVideoElement,
     toggleAudio,

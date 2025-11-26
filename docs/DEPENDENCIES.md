@@ -2,7 +2,7 @@
 - [@emotion/css](https://www.npmjs.com/package/@emotion/css) The Next Generation of CSS-in-JS.
 - [@emotion/react](https://www.npmjs.com/package/@emotion/react) > Simple styling in React.
 - [@emotion/styled](https://www.npmjs.com/package/@emotion/styled) styled API for emotion
-- [@mui/base](https://www.npmjs.com/package/@mui/base) MUI Base is a library of headless ('unstyled') React components and low-level hooks. You gain complete control over your app's CSS and accessibility features.
+- [@base-ui-components/react](https://www.npmjs.com/package/@base-ui-components/react) MUI Base is a library of headless ('unstyled') React components and low-level hooks. You gain complete control over your app's CSS and accessibility features.
 - [@mui/icons-material](https://www.npmjs.com/package/@mui/icons-material) Material Design icons distributed as SVG React components.
 - [@mui/joy](https://www.npmjs.com/package/@mui/joy) Joy UI is an open-source React component library that implements MUI's own design principles. It's comprehensive and can be used in production out of the box.
 - [@mui/material](https://www.npmjs.com/package/@mui/material) Material UI is an open-source React component library that implements Google's Material Design. It's comprehensive and can be used in production out of the box.

@@ -19,7 +19,7 @@ describe('useEmoji', () => {
   });
 
   describe('sendEmoji', () => {
-    it('calls Session.signal with the emoji and current time', async () => {
+    it('calls Session.signal with the emoji and current time', () => {
       vi.setSystemTime(12_000_000);
       const { result } = renderHook(() =>
         useEmoji({ signal: mockSignal, getConnectionId: mockGetConnectionId })
@@ -36,7 +36,7 @@ describe('useEmoji', () => {
       });
     });
 
-    it('when called multiple times, sendEmoji throttles calls to once every 500ms', async () => {
+    it('when called multiple times, sendEmoji throttles calls to once every 500ms', () => {
       vi.useFakeTimers();
       const { result } = renderHook(() =>
         useEmoji({ signal: mockSignal, getConnectionId: mockGetConnectionId })

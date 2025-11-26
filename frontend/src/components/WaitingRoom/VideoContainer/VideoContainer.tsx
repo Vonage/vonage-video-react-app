@@ -47,7 +47,9 @@ const VideoContainer = ({ username }: VideoContainerProps): ReactElement => {
       containerRef.current.appendChild(publisherVideoElement);
       const myVideoElement = publisherVideoElement as HTMLElement;
       myVideoElement.classList.add('video__element');
+      // eslint-disable-next-line react-hooks/immutability
       myVideoElement.title = 'publisher-preview';
+      // eslint-disable-next-line react-hooks/immutability
       myVideoElement.style.borderRadius = isSmallViewport ? '0px' : theme.shapes.borderRadiusLarge;
       myVideoElement.style.height = isSmallViewport ? '' : `${VIDEO_CONTAINER_HEIGHT_WR}px`;
       myVideoElement.style.width = isSmallViewport ? '100dvw' : '584px';

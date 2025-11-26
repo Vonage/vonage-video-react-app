@@ -106,6 +106,8 @@ This application provides features for common conferencing use cases, such as:
 
 ## Project Architecture
 
+The project uses an Nx workspace to manage the frontend and backend applications.
+
 ![Vonage Video API Reference App Architecture Diagram](./docs/assets/project-architecture.svg)
 
 ## Platforms Supported

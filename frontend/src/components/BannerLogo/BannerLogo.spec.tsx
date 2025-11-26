@@ -11,7 +11,7 @@ describe('BannerLogo', () => {
       </MemoryRouter>
     );
 
-    const vonageLogo = screen.getByAltText('Vonage-desktop-logo') as HTMLImageElement;
+    const vonageLogo = screen.getByAltText<HTMLImageElement>('Vonage-desktop-logo');
     expect(vonageLogo).toBeInTheDocument();
     expect(vonageLogo.src).toContain('/images/vonage-logo-desktop.svg');
   });

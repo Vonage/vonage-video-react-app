@@ -1,9 +1,16 @@
 {
+  "extends": "../tsconfig.base.json",
   "compilerOptions": {
-      "target": "ESNext",
-      "module": "commonjs",
-      "moduleResolution": "Node",
-      "sourceMap": true,
-      "outDir": "../tests-out",
+    "target": "ESNext",
+    "module": "commonjs",
+    "moduleResolution": "Node",
+    "sourceMap": true,
+    "outDir": "../tests-out",
+    "types": ["node", "playwright"],
+    "lib": ["DOM"],
+
+    // [TODO]: enable strict mode once all issues are fixed
+    "strictNullChecks": false,
+    "noImplicitAny": false
   }
 }

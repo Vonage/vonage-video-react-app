@@ -27,6 +27,7 @@ describe('useScreenSharing', () => {
     } as unknown as VonageVideoClient;
 
     mockPublisher = {
+      // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
       on: vi.fn() as Mock, // NOSONAR
       destroy: vi.fn(),
     };

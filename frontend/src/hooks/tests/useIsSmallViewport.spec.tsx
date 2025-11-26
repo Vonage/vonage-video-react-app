@@ -9,13 +9,14 @@ const matchMediaCommon = {
   removeListener: vi.fn(),
   addEventListener: vi.fn(),
   removeEventListener: vi.fn(),
+  dispatchEvent: vi.fn(),
 };
 
 describe('useIsSmallViewport', () => {
   const originalMatchMedia = globalThis.matchMedia;
 
   beforeEach(() => {
-    globalThis.matchMedia = vi.fn().mockImplementation((query) => ({
+    globalThis.matchMedia = vi.fn((query) => ({
       matches: new RegExp(`\\(max-width:\\s*${SMALL_VIEWPORT + 1}px\\)`).test(query),
       media: query,
       ...matchMediaCommon,
@@ -33,11 +34,12 @@ describe('useIsSmallViewport', () => {
   });
 
   it('should return true when window width is less than or equal to 768px', () => {
-    globalThis.matchMedia = vi.fn().mockImplementation((query) => ({
+    globalThis.matchMedia = vi.fn((query: string) => ({
       matches: new RegExp(`\\(max-width:\\s*${SMALL_VIEWPORT}px\\)`).test(query),
       media: query,
       ...matchMediaCommon,
     }));
+
     const { result } = renderHook(() => useIsSmallViewport());
 
     expect(result.current).toBe(true);

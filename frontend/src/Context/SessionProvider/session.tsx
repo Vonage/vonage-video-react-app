@@ -105,19 +105,13 @@ export const SessionContext = createContext<SessionContextType>({
   subscriptionError: null,
 });
 
-export type ConnectionEventType = {
-  connection: Connection;
-  reason?: string;
-  id?: string;
-};
+export type ConnectionEventType = { connection: Connection; reason?: string; id?: string };
 
 /**
  * @typedef {object} SessionProviderProps
  * @property {ReactNode} children - The content to be rendered as children.
  */
-export type SessionProviderProps = {
-  children: ReactNode;
-};
+export type SessionProviderProps = { children: ReactNode };
 
 const MAX_PIN_COUNT = isMobile() ? MAX_PIN_COUNT_MOBILE : MAX_PIN_COUNT_DESKTOP;
 
@@ -308,10 +302,7 @@ const SessionProvider = ({ children }: SessionProviderProps): ReactElement => {
     movingAvg,
     subscriberId,
   }: SubscriberAudioLevelUpdatedEvent) => {
-    activeSpeakerTracker.current.onSubscriberAudioLevelUpdated({
-      subscriberId,
-      movingAvg,
-    });
+    activeSpeakerTracker.current.onSubscriberAudioLevelUpdated({ subscriberId, movingAvg });
   };
 
   const handleSubscriptionError = useCallback((error: unknown) => {
@@ -367,8 +358,8 @@ const SessionProvider = ({ children }: SessionProviderProps): ReactElement => {
    * @param {string} roomName - The name of the room to join.
    */
   const joinRoom = useCallback(
-    async (roomName: string) => {
-      fetchCredentials(roomName)
+    (roomName: string) => {
+      return fetchCredentials(roomName)
         .then((credentials) => {
           return connect(credentials.data);
         })
@@ -395,7 +386,7 @@ const SessionProvider = ({ children }: SessionProviderProps): ReactElement => {
    */
   const forceMute = useCallback(async (stream: Stream) => {
     if (vonageVideoClient.current) {
-      vonageVideoClient.current.forceMuteStream(stream);
+      await vonageVideoClient.current.forceMuteStream(stream);
     }
   }, []);
 

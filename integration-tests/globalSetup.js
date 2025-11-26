@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-require-imports */
 const { chromium } = require('@playwright/test');
 const path = require('path');
 const { exec } = require('child_process');
