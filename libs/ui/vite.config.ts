@@ -11,11 +11,7 @@ export default defineConfig(() => ({
     react(),
     dts({ entryRoot: 'src', tsconfigPath: path.join(__dirname, 'tsconfig.lib.json') }),
   ],
-  resolve: {
-    alias: {
-      '@ui': path.resolve(__dirname, './src'),
-    },
-  },
+  resolve: { alias: { '@ui': path.resolve(__dirname, './src') } },
   // Uncomment this if you are using workers.
   // worker: {
   //  plugins: [ nxViteTsPaths() ],
@@ -42,13 +38,11 @@ export default defineConfig(() => ({
     },
   },
   test: {
-    name: 'ui',
-    watch: false,
     globals: true,
     environment: 'jsdom',
     setupFiles: './test/setup.ts',
-    include: ['{src,tests}/**/*.{test,spec}.{js,mjs,cjs,ts,mts,cts,jsx,tsx}'],
-    reporters: ['default'],
-    coverage: { reportsDirectory: './test-output/vitest/coverage', provider: 'v8' as const },
+    css: true,
+    server: { deps: { fallbackCJS: true, inline: ['cliui', 'yargs', 'wrap-ansi'] } },
+    coverage: { provider: 'v8' as const, reporter: ['text', 'lcov'] },
   },
 }));
