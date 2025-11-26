@@ -104,9 +104,9 @@ export default defineConfig({
     {
       name: 'Mobile Chrome',
       use: {
-         ...devices['Pixel 5'],
-         launchOptions: { args: fakeDeviceChromiumFlags },
-         viewport: { width: 393, height: 851 },
+        ...devices['Pixel 5'],
+        launchOptions: { args: fakeDeviceChromiumFlags },
+        viewport: { width: 393, height: 851 },
       },
     },
     {
