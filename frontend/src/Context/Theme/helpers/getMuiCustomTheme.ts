@@ -130,6 +130,14 @@ const getMuiCustomTheme = ({ tokens }: { tokens: ThemeTokens }) => {
           },
         },
       },
+      MuiDialog: {
+        styleOverrides: {
+          paper: {
+            backgroundColor: colors.surface,
+            color: colors.onSurface,
+          },
+        },
+      },
       MuiOutlinedInput: {
         styleOverrides: {
           root: {

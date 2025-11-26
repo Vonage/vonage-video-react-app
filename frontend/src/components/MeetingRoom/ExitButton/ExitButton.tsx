@@ -1,10 +1,11 @@
-import CallEndIcon from '@mui/icons-material/CallEnd';
 import Tooltip from '@ui/Tooltip';
 import { useNavigate } from 'react-router-dom';
 import { ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
 import ToolbarButton from '../ToolbarButton';
 import useRoomName from '../../../hooks/useRoomName';
+import useCustomTheme from '@Context/Theme';
+import VividIcon from '@components/VividIcon';
 
 export type ExitButtonProps = {
   handleLeave: () => void;
@@ -22,6 +23,7 @@ const ExitButton = ({ handleLeave }: ExitButtonProps): ReactElement => {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const roomName = useRoomName();
+  const theme = useCustomTheme();
 
   const handleExit = () => {
     handleLeave();
@@ -33,13 +35,12 @@ const ExitButton = ({ handleLeave }: ExitButtonProps): ReactElement => {
       <ToolbarButton
         onClick={handleExit}
         sx={{
-          backgroundColor: 'rgb(239 68 68)',
+          backgroundColor: theme.colors.error,
           '&:hover': {
-            backgroundColor: 'rgba(234, 67, 53, 0.8)',
-          },
-          marginRight: '0px',
+            backgroundColor: theme.colors.errorHover,
+          }
         }}
-        icon={<CallEndIcon className="text-white" />}
+        icon={<VividIcon name="end-call-solid" customSize={-4} sx={{ color: theme.colors.onError }} />}
       />
     </Tooltip>
   );

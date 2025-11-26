@@ -1,4 +1,3 @@
-import RadioButtonCheckedIcon from '@mui/icons-material/RadioButtonChecked';
 import { ReactElement, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import useRoomName from '@hooks/useRoomName';
@@ -8,6 +7,8 @@ import useAppConfig from '@Context/AppConfig/hooks/useAppConfig';
 import ToolbarButton from '../ToolbarButton';
 import PopupDialog, { DialogTexts } from '../PopupDialog';
 import Tooltip from '@ui/Tooltip';
+import useCustomTheme from '@Context/Theme';
+import VividIcon from '@components/VividIcon';
 
 export type ArchivingButtonProps = {
   isOverflowButton?: boolean;
@@ -31,6 +32,7 @@ const ArchivingButton = ({
 }: ArchivingButtonProps): ReactElement | false => {
   const { t } = useTranslation();
   const roomName = useRoomName();
+  const theme = useCustomTheme();
   const { archiveId } = useSessionContext();
   const allowArchiving = useAppConfig(
     ({ meetingRoomSettings }) => meetingRoomSettings.allowArchiving
@@ -94,8 +96,10 @@ const ArchivingButton = ({
             onClick={handleButtonClick}
             data-testid="archiving-button"
             icon={
-              <RadioButtonCheckedIcon
-                style={{ color: `${isRecording ? 'rgb(239 68 68)' : 'white'}` }}
+              <VividIcon
+                name='radio-checked-2-solid'
+                customSize={-5}
+                style={{ color: `${isRecording ? theme.colors.error : theme.colors.onError}` }}
               />
             }
             sx={{

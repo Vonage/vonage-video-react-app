@@ -3,6 +3,7 @@ import Box from '@ui/Box';
 import UserCaption from './UserCaption';
 import useSessionContext from '../../../../hooks/useSessionContext';
 import useIsSmallViewport from '../../../../hooks/useIsSmallViewport';
+import useCustomTheme from '@Context/Theme';
 
 /**
  * CaptionsBox Component
@@ -13,14 +14,15 @@ import useIsSmallViewport from '../../../../hooks/useIsSmallViewport';
 const CaptionsBox = (): ReactElement => {
   const { subscriberWrappers, ownCaptions } = useSessionContext();
   const isSmallViewPort = useIsSmallViewport();
+  const theme = useCustomTheme();
 
   const sxBox = {
     position: 'absolute',
     bottom: isSmallViewPort ? 100 : 80,
     left: '50%',
     transform: 'translateX(-50%)',
-    backgroundColor: 'rgba(0, 0, 0, 0.7)',
-    color: 'white',
+    backgroundColor: theme.colors.darkGreyOpacity70,
+    color: theme.colors.onDarkGrey,
     px: 2,
     py: isSmallViewPort ? 1 : 1.5,
     borderRadius: 2,
