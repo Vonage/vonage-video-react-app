@@ -2,8 +2,15 @@
 import { use, useContext } from 'react';
 import { suspenseContext } from '../SuspenseContext';
 import suspenseToken from '../helpers/suspenseToken';
+import isPromise from '@utils/isPromise';
 
-const use$ = <T>(...args: Parameters<typeof use<T>>) => {
+/**
+ * Context-aware wrapper for React's use function.
+ * Ensures that the hook is used within a Suspense$ Provider.
+ * @param usable - A promise, context
+ * @returns The usable resolved value.
+ */
+const use$ = <T>(...[usable]: Parameters<typeof use<T>>): T => {
   const token = useContext(suspenseContext);
   const isSafelyWrapped = token === suspenseToken;
 
@@ -11,7 +18,19 @@ const use$ = <T>(...args: Parameters<typeof use<T>>) => {
     throw new Error('use$ must be used within a Suspense$ Provider');
   }
 
-  return use<T>(...args);
+  /**
+   * Some of our implementations could call use with nonPromise/nonContext values.
+   * This validation allow us to avoid suspending in those cases.
+   */
+  if (isPromise(usable) || isContext<T>(usable)) {
+    return use<T>(usable);
+  }
+
+  return usable as T;
 };
+
+function isContext<T>(value: unknown): value is React.Context<T> {
+  return Boolean(value && typeof value === 'object' && 'Provider' in value);
+}
 
 export default use$;

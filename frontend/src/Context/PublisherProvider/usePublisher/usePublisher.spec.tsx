@@ -283,7 +283,7 @@ describe('usePublisher', () => {
     });
   });
 
-  it.only('should disable audio and video from storage options', async () => {
+  it('should disable audio and video from storage options', async () => {
     vi.spyOn(OT, 'hasMediaProcessorSupport').mockReturnValue(true);
 
     setStorageItem(STORAGE_KEYS.AUDIO_SOURCE_ENABLED, 'false');
