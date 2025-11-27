@@ -1,3 +1,4 @@
+import tryCatch from '@utils/tryCatch';
 import type { AppConfig } from '../AppConfigContext.types';
 
 export type AppConfigApi = import('../AppConfigContext').AppConfigApi;
@@ -10,19 +11,26 @@ export type AppConfigApi = import('../AppConfigContext').AppConfigApi;
  */
 function loadAppConfig(this: AppConfigApi['actions']) {
   return async (_: AppConfigApi) => {
-    try {
+    const { result: config, error } = await tryCatch(async () => {
       const response = await fetch('/config.json', { cache: 'no-cache' });
 
       const contentType = response.headers.get('content-type');
+
+      // avoid throwing on CI environments where no config.json is present
       if (!contentType?.includes('application/json')) {
         throw new Error('No valid JSON found, using default config');
       }
 
+      // [TODO]: Validate schema of json
       const json: Partial<AppConfig> = await response.json();
 
-      this.updateAppConfig(json);
-    } finally {
-      this.updateAppConfig({ isAppConfigLoaded: true });
+      return json;
+    }, {});
+
+    this.updateAppConfig({ ...config, isAppConfigLoaded: true });
+
+    if (error && !process.env.CI) {
+      throw error;
     }
   };
 }

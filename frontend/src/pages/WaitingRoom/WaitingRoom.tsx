@@ -127,7 +127,6 @@ const WaitingRoom: React.FC<WaitingRoomProps> = ({ className, ...props }) => {
     setOpenVideoInput(false);
   };
 
-  // [TODO]: check-styles 'flex size-full flex-col bg-white'
   return (
     <Box data-testid="waitingRoom" className={classNames(className)} {...props}>
       <GridLayout>

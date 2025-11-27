@@ -234,7 +234,7 @@ describe('usePublisher', () => {
           "We're having trouble connecting you with others in the meeting room. Please check your network and try again.",
       };
       expect(result.current.publishingError).toEqual(publishingBlockedError);
-      expect(mockedSessionPublish).toHaveBeenCalledTimes(2);
+      expect(mockedSessionPublish).toHaveBeenCalledTimes(3);
     });
   });
 

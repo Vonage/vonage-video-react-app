@@ -16,6 +16,7 @@ import usePublisherQuality, { NetworkQuality } from '../usePublisherQuality/useP
 import usePublisherOptions from '../usePublisherOptions';
 import useSessionContext from '../../../hooks/useSessionContext';
 import applyBackgroundFilter from '../../../utils/backgroundFilter/applyBackgroundFilter/applyBackgroundFilter';
+import idempotentCallbackWithRetry from '@utils/idempotentCallbackWithRetry/idempotentCallbackWithRetry';
 
 type PublisherStreamCreatedEvent = Event<'streamCreated', Publisher> & { stream: Stream };
 
@@ -115,8 +116,6 @@ const usePublisher = (): PublisherContextType => {
     camera: undefined,
   });
 
-  let publishAttempt: number = 0;
-
   // If we do not have audio input or video input access, we cannot publish.
   useEffect(() => {
     if (deviceAccess?.microphone === false || deviceAccess?.camera === false) {
@@ -186,7 +185,6 @@ const usePublisher = (): PublisherContextType => {
     if (publisherRef?.current) {
       sessionUnpublish(publisherRef.current);
       setIsPublishingToSession(false);
-      publishAttempt = 0;
     }
   };
 
@@ -237,53 +235,38 @@ const usePublisher = (): PublisherContextType => {
   );
 
   /**
-   * Helper function to handle retrying. We allow two attempts when publishing to the session and encountering an
-   * error before stopping.
-   * @returns {boolean} Returns `true` if we've already retried twice, else `false`
-   */
-  const shouldNotRetryPublish = (): boolean => {
-    publishAttempt += 1;
-
-    if (publishAttempt === 3) {
-      const publishingBlocked: PublishingErrorType = {
-        header: t('publishingErrors.blocked.title'),
-        caption: t('publishingErrors.blocked.message'),
-      };
-      setPublishingError(publishingBlocked);
-      setIsPublishingToSession(false);
-      return true;
-    }
-    return false;
-  };
-
-  /**
    * Method to publish to session.
    * @returns {Promise<void>}
    */
   const publish = async (): Promise<void> => {
     try {
-      if (!connected) {
-        throw new Error('You are not connected to session');
-      }
-      if (!publisherRef.current) {
-        throw new Error('Publisher is not initialized');
-      }
       if (isPublishingToSession) {
         return;
       }
 
-      if (shouldNotRetryPublish()) {
-        return;
+      if (!connected) {
+        throw new Error('You are not connected to session');
       }
 
-      setIsPublishingToSession(true); // Avoid multiple simultaneous publish attempts
-      await sessionPublish(publisherRef.current);
-    } catch (err: unknown) {
-      if (err instanceof Error) {
-        console.warn(err);
-        setIsPublishingToSession(false);
-        publish();
+      const publisher = publisherRef.current;
+
+      if (!publisher) {
+        throw new Error('Publisher is not initialized');
       }
+
+      setIsPublishingToSession(true);
+      await idempotentCallbackWithRetry(() => sessionPublish(publisher), {
+        retries: 2,
+        delayMs: 200,
+      });
+    } catch (err: unknown) {
+      const publishingBlocked: PublishingErrorType = {
+        header: t('publishingErrors.blocked.title'),
+        caption: t('publishingErrors.blocked.message'),
+      };
+
+      console.error('Error publishing to session:', err);
+      setPublishingError(publishingBlocked);
     }
   };
 

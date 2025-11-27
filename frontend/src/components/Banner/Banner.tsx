@@ -22,7 +22,6 @@ type BannerProps = AppBarProps;
 const Banner: React.FC<BannerProps> = ({ className, ...props }): ReactElement => {
   const theme = useCustomTheme();
 
-  // [TODO]: check-styles 'flex w-full flex-row justify-between'
   return (
     <AppBar position="static" className={classNames(className)} {...props}>
       <Toolbar sx={{ alignItems: 'stretch' }}>
