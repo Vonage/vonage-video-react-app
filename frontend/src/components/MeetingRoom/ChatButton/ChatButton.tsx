@@ -5,6 +5,7 @@ import useIsMeetingChatAllowed from '@Context/AppConfig/hooks/useIsMeetingChatAl
 import ToolbarButton from '../ToolbarButton';
 import UnreadMessagesBadge from '../UnreadMessagesBadge';
 import Tooltip from '@ui/Tooltip';
+import useCustomTheme from '@Context/Theme';
 
 export type ChatButtonProps = {
   handleClick: () => void;
@@ -29,8 +30,9 @@ const ChatButton = ({
   isOverflowButton = false,
 }: ChatButtonProps): ReactElement | false => {
   const isMeetingChatAllowed = useIsMeetingChatAllowed();
-
+  const theme = useCustomTheme();
   const { t } = useTranslation();
+
   return (
     isMeetingChatAllowed && (
       <Tooltip title={isOpen ? t('chat.close') : t('chat.open')} aria-label={t('chat.ariaLabel')}>
@@ -42,7 +44,11 @@ const ChatButton = ({
               marginRight: '0px',
             }}
             onClick={handleClick}
-            icon={<ChatIcon sx={{ color: isOpen ? 'blue' : 'white' }} />}
+            icon={
+              <ChatIcon
+                sx={{ color: isOpen ? theme.colors.secondary : theme.colors.onSecondary }}
+              />
+            }
             isOverflowButton={isOverflowButton}
           />
         </UnreadMessagesBadge>

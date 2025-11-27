@@ -3,6 +3,7 @@ import { ReactElement, useRef } from 'react';
 import FeedbackIcon from '@mui/icons-material/Feedback';
 import { useTranslation } from 'react-i18next';
 import ToolbarButton from '../ToolbarButton';
+import useCustomTheme from '@Context/Theme';
 
 export type ReportIssueButtonProps = {
   handleClick: () => void;
@@ -26,6 +27,7 @@ const ReportIssueButton = ({
   isOverflowButton = false,
 }: ReportIssueButtonProps): ReactElement => {
   const { t } = useTranslation();
+  const theme = useCustomTheme();
   const anchorRef = useRef<HTMLButtonElement>(null);
 
   return (
@@ -40,7 +42,11 @@ const ReportIssueButton = ({
           marginRight: '12px',
         }}
         onClick={handleClick}
-        icon={<FeedbackIcon sx={{ color: isOpen ? 'blue' : 'white' }} />}
+        icon={
+          <FeedbackIcon
+            sx={{ color: isOpen ? theme.colors.secondary : theme.colors.onSecondary }}
+          />
+        }
         ref={anchorRef}
         isOverflowButton={isOverflowButton}
       />

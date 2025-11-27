@@ -67,6 +67,6 @@ const EmojiGridMobile = ({
       </ClickAwayListener>
     </Portal>
   );
-}
+};
 
 export default EmojiGridMobile;

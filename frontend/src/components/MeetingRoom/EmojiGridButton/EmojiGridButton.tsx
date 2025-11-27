@@ -50,7 +50,7 @@ const EmojiGridButton = ({
                 name="emoji-solid"
                 customSize={-5}
                 sx={{
-                  color: isEmojiGridOpen ? theme.colors.onSurface : theme.colors.surface,
+                  color: isEmojiGridOpen ? theme.colors.secondary : theme.colors.onSecondary,
                 }}
               />
             }

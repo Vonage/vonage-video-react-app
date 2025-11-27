@@ -1,10 +1,11 @@
-import PeopleIcon from '@mui/icons-material/People';
 import { ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
 import useShouldShowParticipantList from '@Context/AppConfig/hooks/useShouldShowParticipantList';
 import ToolbarButton from '../ToolbarButton';
 import Badge from '@ui/Badge';
 import Tooltip from '@ui/Tooltip';
+import useCustomTheme from '@Context/Theme';
+import VividIcon from '@components/VividIcon';
 
 export type ParticipantListButtonProps = {
   handleClick: () => void;
@@ -31,8 +32,9 @@ const ParticipantListButton = ({
   isOverflowButton = false,
 }: ParticipantListButtonProps): ReactElement | false => {
   const showParticipantList = useShouldShowParticipantList();
-
+  const theme = useCustomTheme();
   const { t } = useTranslation();
+
   return (
     showParticipantList && (
       <Tooltip
@@ -43,8 +45,8 @@ const ParticipantListButton = ({
           badgeContent={participantCount}
           sx={{
             '& .MuiBadge-badge': {
-              color: 'white',
-              backgroundColor: 'rgb(95, 99, 104)',
+              color: theme.colors.onTertiary,
+              backgroundColor: theme.colors.tertiary,
             },
             marginRight: '12px',
             zIndex: 1,
@@ -58,7 +60,13 @@ const ParticipantListButton = ({
               marginRight: '0px',
             }}
             onClick={handleClick}
-            icon={<PeopleIcon sx={{ color: isOpen ? 'blue' : 'white' }} />}
+            icon={
+              <VividIcon
+                name="group-solid"
+                customSize={-5}
+                sx={{ color: isOpen ? theme.colors.secondary : theme.colors.onSecondary }}
+              />
+            }
             isOverflowButton={isOverflowButton}
           />
         </Badge>

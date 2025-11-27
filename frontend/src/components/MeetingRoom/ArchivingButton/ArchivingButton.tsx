@@ -99,7 +99,7 @@ const ArchivingButton = ({
               <VividIcon
                 name="radio-checked-2-solid"
                 customSize={-5}
-                style={{ color: `${isRecording ? theme.colors.error : theme.colors.onError}` }}
+                style={{ color: `${isRecording ? theme.colors.error : theme.colors.onSecondary}` }}
               />
             }
             sx={{

@@ -13,6 +13,7 @@ import TextField from '@ui/TextField';
 import Typography from '@ui/Typography';
 import Button from '@ui/Button';
 import CircularProgress from '@ui/CircularProgress';
+import useCustomTheme from '@Context/Theme';
 
 export type FormType = {
   title: string;
@@ -37,7 +38,7 @@ export type FeedbackFormType = {
 
 const getStyleTypography = () => {
   return {
-    marginBottom: '5px',
+    marginBottom: '4px',
     textAlign: 'left',
   };
 };
@@ -65,6 +66,7 @@ const FeedbackForm = ({
   onFileSelect,
 }: FeedbackFormType): ReactElement => {
   const { t } = useTranslation();
+  const theme = useCustomTheme();
   const isSmallViewport = useIsSmallViewport();
   // 224px = 64px panel header + 96px toolbar if normal viewport + (40px submit button + 24px submit button margin)
   // 208px = 64px panel header + 80px toolbar if small viewport + (40px submit button + 24px submit button margin)
@@ -74,7 +76,7 @@ const FeedbackForm = ({
   const width = isSmallViewport ? 'calc(100dvw - 50px)' : '310px';
 
   const getColorStyle = (value: string, maxLength: number) => {
-    return value.length >= maxLength || value.length === 0 ? 'red' : 'inherit';
+    return value.length >= maxLength || value.length === 0 ? theme.colors.error : 'inherit';
   };
 
   return loading ? (
@@ -86,22 +88,18 @@ const FeedbackForm = ({
   ) : (
     <form onSubmit={handleSubmit}>
       <Box
-        ml="25px"
-        mr="25px"
         sx={{
           overflowX: 'hidden',
           overflowY: 'auto',
           display: 'flex',
           flexDirection: 'column',
           height,
+          ml: 4,
+          mr: 4,
+          p: 1,
         }}
       >
-        <Typography
-          variant="body2"
-          data-testid="title-report-issue"
-          color="textPrimary"
-          sx={getStyleTypography()}
-        >
+        <Typography variant="body1" data-testid="title-report-issue" sx={getStyleTypography()}>
           {t('feedbackForm.field.title.label')}
         </Typography>
         <TextField
@@ -127,12 +125,7 @@ const FeedbackForm = ({
           }}
           inputProps={{ maxLength: REPORT_TITLE_LIMIT }}
         />
-        <Typography
-          variant="body2"
-          data-testid="name-report-issue"
-          color="textPrimary"
-          sx={getStyleTypography()}
-        >
+        <Typography variant="body1" data-testid="name-report-issue" sx={getStyleTypography()}>
           {t('feedbackForm.field.name.label')}
         </Typography>
         <TextField
@@ -162,8 +155,7 @@ const FeedbackForm = ({
 
         <Typography
           data-testid="description-report-issue"
-          variant="body2"
-          color="textPrimary"
+          variant="body1"
           sx={getStyleTypography()}
         >
           {t('feedbackForm.field.issue.label')}
@@ -198,11 +190,8 @@ const FeedbackForm = ({
 
         <Typography
           variant="body2"
-          color="textSecondary"
           sx={{
             ...getStyleTypography(),
-            fontSize: '0.8rem',
-            textAlign: 'left',
           }}
         >
           {t('feedbackForm.disclaiamer.label')}
@@ -212,8 +201,6 @@ const FeedbackForm = ({
           color="textPrimary"
           sx={{
             ...getStyleTypography(),
-            fontSize: '0.8rem',
-            textAlign: 'left',
           }}
         >
           {t('feedbackForm.disclaiamer.screenshot')}
@@ -227,7 +214,6 @@ const FeedbackForm = ({
         fullWidth
         sx={{
           textTransform: 'none',
-          fontSize: '1rem',
           margin: '12px 24px',
           width,
         }}

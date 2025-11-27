@@ -70,7 +70,9 @@ const ToolbarOverflowButton = ({
                 name="more-vertical-solid"
                 customSize={-5}
                 sx={{
-                  color: isToolbarOverflowMenuOpen ? theme.colors.onBackground : theme.colors.background,
+                  color: isToolbarOverflowMenuOpen
+                    ? theme.colors.onBackground
+                    : theme.colors.background,
                 }}
               />
             }

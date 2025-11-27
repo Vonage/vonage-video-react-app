@@ -41,7 +41,11 @@ const ExitButton = ({ handleLeave }: ExitButtonProps): ReactElement => {
           },
         }}
         icon={
-          <VividIcon name="end-call-solid" customSize={-4} sx={{ color: theme.colors.onError }} />
+          <VividIcon
+            name="end-call-solid"
+            customSize={-4}
+            sx={{ color: theme.colors.onSecondary }}
+          />
         }
       />
     </Tooltip>

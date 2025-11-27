@@ -38,7 +38,7 @@ const UnreadMessagesBadge = forwardRef(function UnreadMessagesBadge(
       invisible={isInvisible}
       sx={{
         '& .MuiBadge-badge': {
-          color:  theme.colors.onWarning,
+          color: theme.colors.onWarning,
           backgroundColor: theme.colors.warning,
         },
         marginRight: '12px',

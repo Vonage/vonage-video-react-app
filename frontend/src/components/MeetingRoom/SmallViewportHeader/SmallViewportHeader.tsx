@@ -48,9 +48,7 @@ const SmallViewportHeader = (): ReactElement => {
       }}
     >
       <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, paddingX: 0.5 }}>
-        {isRecording && (
-          <RadioButtonCheckedIcon sx={{ color: theme.colors.error }} />
-        )}
+        {isRecording && <RadioButtonCheckedIcon sx={{ color: theme.colors.error }} />}
         <Box
           sx={{
             overflow: 'hidden',
@@ -65,11 +63,7 @@ const SmallViewportHeader = (): ReactElement => {
       </Box>
       <Box sx={{ marginX: -1 }}>
         <Fade in timeout={500}>
-          <IconButton
-            sx={{ color: theme.colors.onDarkGrey }}
-            onClick={copyUrl}
-            disabled={isCopied}
-          >
+          <IconButton sx={{ color: theme.colors.onDarkGrey }} onClick={copyUrl} disabled={isCopied}>
             {isCopied ? (
               <CheckIcon sx={{ color: theme.colors.success }} />
             ) : (
