@@ -21,7 +21,7 @@ const CaptionsBox = (): ReactElement => {
     bottom: isSmallViewPort ? 100 : 80,
     left: '50%',
     transform: 'translateX(-50%)',
-    backgroundColor: theme.colors.darkGreyOpacity70,
+    backgroundColor: theme.colors.darkGreyOpacity,
     color: theme.colors.onDarkGrey,
     px: 2,
     py: isSmallViewPort ? 1 : 1.5,

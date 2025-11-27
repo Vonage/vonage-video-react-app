@@ -1,7 +1,4 @@
-import {
-  MenuList as MUIMenuList,
-  MenuListProps as MUIMenuListProps,
-} from '@mui/material';
+import { MenuList as MUIMenuList, MenuListProps as MUIMenuListProps } from '@mui/material';
 
 type MenuListProps = MUIMenuListProps;
 

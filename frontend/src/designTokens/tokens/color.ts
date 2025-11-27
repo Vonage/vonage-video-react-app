@@ -33,8 +33,9 @@ const colorVariables = {
     900: '#272626ff',
   },
   'dark-grey': {
-    10: '#33333398',
+    10: '#333333CD',
     100: '#333333',
+    500: '#202124',
   },
   alert: {
     50: '#FFEEF2',
@@ -191,6 +192,12 @@ const lightColors = {
     type: 'color',
     description: 'Color used for borders and dividers between elements.',
   },
+
+  'dark-background': {
+    value: colorVariables['dark-grey'][500],
+    type: 'color',
+    description: 'Darker grey background color.',
+  },
   'dark-grey': {
     value: colorVariables['dark-grey'][100],
     type: 'color',
@@ -201,10 +208,10 @@ const lightColors = {
     type: 'color',
     description: 'Foreground color for text/icons on dark grey surfaces.',
   },
-  'dark-grey-opacity-70': {
+  'dark-grey-opacity': {
     value: colorVariables['dark-grey']['10'],
     type: 'color',
-    description: 'Dark grey background color with 70% opacity.',
+    description: 'Dark grey background color with opacity.',
   },
   disabled: {
     value: colorVariables.neutral[100],
@@ -347,6 +354,12 @@ const darkColors = {
     type: 'color',
     description: 'Color used for borders and dividers between elements.',
   },
+
+  'dark-background': {
+    value: colorVariables['dark-grey'][500],
+    type: 'color',
+    description: 'Darker grey background color.',
+  },
   'dark-grey': {
     value: colorVariables['dark-grey'][100],
     type: 'color',
@@ -357,10 +370,10 @@ const darkColors = {
     type: 'color',
     description: 'Foreground color for text/icons on dark grey surfaces.',
   },
-  'dark-grey-opacity-70': {
+  'dark-grey-opacity': {
     value: colorVariables['dark-grey']['10'],
     type: 'color',
-    description: 'Dark grey background color with 70% opacity.',
+    description: 'Dark grey background color with opacity.',
   },
   disabled: {
     value: colorVariables.accent[600],

@@ -1,6 +1,7 @@
 import { ForwardedRef, forwardRef, ReactElement, MouseEvent, TouchEvent } from 'react';
 import IconButton from '@ui/IconButton';
 import { SxProps } from '@ui/SxProps';
+import useCustomTheme from '@Context/Theme';
 
 export type ToolbarButtonProps = {
   onClick:
@@ -28,6 +29,7 @@ const ToolbarButton = forwardRef(function ToolbarButton(
   ref: ForwardedRef<HTMLButtonElement>
 ) {
   const { icon: Icon, sx = {}, isOverflowButton, ...rest } = props;
+  const theme = useCustomTheme();
 
   return (
     <IconButton
@@ -41,9 +43,9 @@ const ToolbarButton = forwardRef(function ToolbarButton(
         marginRight: '12px',
         width: isOverflowButton ? '35px' : '48px',
         height: isOverflowButton ? '35px' : '48px',
-        backgroundColor: 'rgba(60, 64, 67, 0.55)',
+        backgroundColor: theme.colors.darkGrey,
         '&:hover': {
-          backgroundColor: 'rgba(60, 64, 67, 0.42)',
+          backgroundColor: theme.colors.darkGreyOpacity,
         },
         ...sx,
       }}

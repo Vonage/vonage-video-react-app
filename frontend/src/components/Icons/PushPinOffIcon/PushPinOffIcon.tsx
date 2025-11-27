@@ -1,4 +1,4 @@
-import {SvgIconProps} from '@ui/SvgIconProps';
+import { SvgIconProps } from '@ui/SvgIconProps';
 import SvgIcon from '@ui/SvgIcon';
 import { ReactElement } from 'react';
 

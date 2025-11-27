@@ -97,7 +97,7 @@ const ArchivingButton = ({
             data-testid="archiving-button"
             icon={
               <VividIcon
-                name='radio-checked-2-solid'
+                name="radio-checked-2-solid"
                 customSize={-5}
                 style={{ color: `${isRecording ? theme.colors.error : theme.colors.onError}` }}
               />

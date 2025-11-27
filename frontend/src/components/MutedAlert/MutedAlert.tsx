@@ -1,4 +1,4 @@
-import Fade from '@ui/Fade'
+import Fade from '@ui/Fade';
 import Alert from '@ui/Alert';
 import { useState, useEffect, ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';

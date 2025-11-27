@@ -2,6 +2,8 @@ import { ReactElement, useState } from 'react';
 import RadioButtonCheckedIcon from '@mui/icons-material/RadioButtonChecked';
 import { ContentCopy } from '@mui/icons-material';
 import CheckIcon from '@mui/icons-material/Check';
+import Box from '@ui/Box';
+import useCustomTheme from '@Context/Theme';
 import useSessionContext from '../../../hooks/useSessionContext';
 import useRoomName from '../../../hooks/useRoomName';
 import useRoomShareUrl from '../../../hooks/useRoomShareUrl';
@@ -16,6 +18,7 @@ import Fade from '@ui/Fade';
  * @returns {ReactElement} The small viewport header component.
  */
 const SmallViewportHeader = (): ReactElement => {
+  const theme = useCustomTheme();
   const { archiveId } = useSessionContext();
   const isRecording = !!archiveId;
   const roomName = useRoomName();
@@ -32,31 +35,50 @@ const SmallViewportHeader = (): ReactElement => {
     }, 3000);
   };
   return (
-    <div
-      className="flex items-center justify-between bg-darkGray-100 px-4 pt-4 text-white"
+    <Box
       data-testid="smallViewportHeader"
+      sx={{
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        backgroundColor: theme.colors.darkBackground,
+        paddingX: 2,
+        paddingTop: 2,
+        color: theme.colors.onDarkGrey,
+      }}
     >
-      <div className="flex items-center space-x-2 px-1">
-        {isRecording && <RadioButtonCheckedIcon className="text-red-500" />}
-        <div className="line-clamp-1">{roomName}</div>
-      </div>
-      <div className="-mx-2">
+      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, paddingX: 0.5 }}>
+        {isRecording && (
+          <RadioButtonCheckedIcon sx={{ color: theme.colors.error }} />
+        )}
+        <Box
+          sx={{
+            overflow: 'hidden',
+            textOverflow: 'ellipsis',
+            display: '-webkit-box',
+            WebkitLineClamp: 1,
+            WebkitBoxOrient: 'vertical',
+          }}
+        >
+          {roomName}
+        </Box>
+      </Box>
+      <Box sx={{ marginX: -1 }}>
         <Fade in timeout={500}>
           <IconButton
-            size="large"
-            sx={{ color: 'rgb(95, 99, 104)' }}
+            sx={{ color: theme.colors.onDarkGrey }}
             onClick={copyUrl}
             disabled={isCopied}
           >
             {isCopied ? (
-              <CheckIcon sx={{ color: 'rgba(26,115,232,.9)' }} />
+              <CheckIcon sx={{ color: theme.colors.success }} />
             ) : (
-              <ContentCopy className="text-white" />
+              <ContentCopy sx={{ color: theme.colors.onDarkGrey }} />
             )}
           </IconButton>
         </Fade>
-      </div>
-    </div>
+      </Box>
+    </Box>
   );
 };
 

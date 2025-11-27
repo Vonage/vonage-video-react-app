@@ -38,9 +38,11 @@ const ExitButton = ({ handleLeave }: ExitButtonProps): ReactElement => {
           backgroundColor: theme.colors.error,
           '&:hover': {
             backgroundColor: theme.colors.errorHover,
-          }
+          },
         }}
-        icon={<VividIcon name="end-call-solid" customSize={-4} sx={{ color: theme.colors.onError }} />}
+        icon={
+          <VividIcon name="end-call-solid" customSize={-4} sx={{ color: theme.colors.onError }} />
+        }
       />
     </Tooltip>
   );

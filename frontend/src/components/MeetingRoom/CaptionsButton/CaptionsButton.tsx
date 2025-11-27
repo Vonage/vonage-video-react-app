@@ -107,9 +107,17 @@ const CaptionsButton = ({
           data-testid="captions-button"
           icon={
             !isUserCaptionsEnabled ? (
-              <VividIcon name="closed-captioning-solid" customSize={-5} sx={{ color: theme.colors.onError}} />
+              <VividIcon
+                name="closed-captioning-solid"
+                customSize={-5}
+                sx={{ color: theme.colors.onError }}
+              />
             ) : (
-              <VividIcon name="closed-captioning-off-solid" customSize={-5} sx={{ color: theme.colors.error}} />
+              <VividIcon
+                name="closed-captioning-off-solid"
+                customSize={-5}
+                sx={{ color: theme.colors.error }}
+              />
             )
           }
           sx={{

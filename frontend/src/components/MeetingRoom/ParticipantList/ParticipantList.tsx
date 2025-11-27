@@ -75,7 +75,10 @@ const ParticipantList = ({ handleClose, isOpen }: ParticipantListProps): ReactEl
   return (
     isOpen && (
       <>
-        <RightPanelTitle title={`${t('participants.title')} (${participantCount})`} handleClose={handleClose} />
+        <RightPanelTitle
+          title={`${t('participants.title')} (${participantCount})`}
+          handleClose={handleClose}
+        />
         <div className="flex h-[64px] flex-row items-center justify-between pl-6">
           <div className="text-left">
             <span className="text-darkGray text-sm font-bold tracking-normal">

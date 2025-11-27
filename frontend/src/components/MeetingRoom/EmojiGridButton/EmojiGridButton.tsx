@@ -1,11 +1,11 @@
 import Tooltip from '@ui/Tooltip';
-import { EmojiEmotions } from '@mui/icons-material';
 import { Dispatch, ReactElement, SetStateAction, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import useAppConfig from '@Context/AppConfig/hooks/useAppConfig';
 import useCustomTheme from '@Context/Theme';
 import ToolbarButton from '../ToolbarButton';
 import EmojiGrid from '../EmojiGrid/EmojiGrid';
+import VividIcon from '@components/VividIcon';
 
 export type EmojiGridProps = {
   isEmojiGridOpen: boolean;
@@ -46,9 +46,11 @@ const EmojiGridButton = ({
           <ToolbarButton
             onClick={handleToggle}
             icon={
-              <EmojiEmotions
+              <VividIcon
+                name="emoji-solid"
+                customSize={-5}
                 sx={{
-                  color: isEmojiGridOpen ? theme.colors.background : 'white',
+                  color: isEmojiGridOpen ? theme.colors.onSurface : theme.colors.surface,
                 }}
               />
             }
