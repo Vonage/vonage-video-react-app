@@ -14,7 +14,14 @@ const Footer = (): ReactElement => {
   const theme = useCustomTheme();
 
   return (
-    <Stack direction="row" alignItems="center" data-testid="footer-content">
+    <Stack 
+      direction="row" 
+      alignItems="center" 
+      data-testid="footer-content"
+      sx={{
+          bgcolor: theme.colors.background
+      }}
+    >
       <Box
         sx={{
           flex: 1,
