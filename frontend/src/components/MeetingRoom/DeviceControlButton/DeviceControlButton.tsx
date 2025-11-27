@@ -71,7 +71,7 @@ const DeviceControlButton = ({
   const renderControlIcon = () => {
     if (isAudio) {
       if (!isMicrophoneControlAllowed) {
-        return <MicOff className="text-gray-400" />;
+        return <Mic className="text-gray-400" />;
       }
       if (isAudioEnabled) {
         return <Mic className="text-white" />;
@@ -80,7 +80,7 @@ const DeviceControlButton = ({
     }
 
     if (!isCameraControlAllowed) {
-      return <VideocamOffIcon className="text-gray-400" />;
+      return <VideocamIcon className="text-gray-400" />;
     }
     if (isVideoEnabled) {
       return <VideocamIcon className="text-white" />;
