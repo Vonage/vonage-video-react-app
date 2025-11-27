@@ -34,6 +34,8 @@
     "test:frontend:watch": "nx test frontend --watch",
     "test:integration": "nx run integration-tests:test",
     "test:integration:": "nx run integration-tests:test:",
+    "test:integration:dev": "nx run integration-tests:test:dev",
+    "test:integration:debug": "nx run integration-tests:test:debug",
     "ts-check": "nx run backend:ts-check && nx run frontend:ts-check",
     "test:integrationUpdateScreenshots": "nx run integration-tests:updateScreenshots",
     "test:integrationUpdateScreenshots:": "nx run integration-tests:updateScreenshots:",

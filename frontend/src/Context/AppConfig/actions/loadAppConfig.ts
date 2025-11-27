@@ -1,5 +1,6 @@
 import tryCatch from '@utils/tryCatch';
 import type { AppConfig } from '../AppConfigContext.types';
+import env from '../../../env';
 
 export type AppConfigApi = import('../AppConfigContext').AppConfigApi;
 
@@ -11,7 +12,12 @@ export type AppConfigApi = import('../AppConfigContext').AppConfigApi;
  */
 function loadAppConfig(this: AppConfigApi['actions']) {
   return async (_: AppConfigApi) => {
+    const fallbackConfig: Partial<AppConfig> = {};
+
     const { result: config, error } = await tryCatch(async () => {
+      // Skip fetching config in CI environments
+      if (env.VITE_AVOID_FETCHING_APP_CONFIG) return {};
+
       const response = await fetch('/config.json', { cache: 'no-cache' });
 
       const contentType = response.headers.get('content-type');
@@ -25,13 +31,19 @@ function loadAppConfig(this: AppConfigApi['actions']) {
       const json: Partial<AppConfig> = await response.json();
 
       return json;
-    }, {});
+    }, fallbackConfig);
+
+    if (error && env.MODE === 'development') {
+      console.error(
+        [
+          'There was an error loading config.json',
+          'Please make sure to provide a valid config.json file in the public folder.',
+        ].join('\n'),
+        error
+      );
+    }
 
     this.updateAppConfig({ ...config, isAppConfigLoaded: true });
-
-    if (error && !process.env.CI) {
-      console.warn(error);
-    }
   };
 }
 

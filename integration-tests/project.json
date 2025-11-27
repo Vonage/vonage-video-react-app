@@ -5,13 +5,6 @@
   "root": "integration-tests",
   "sourceRoot": "integration-tests",
   "targets": {
-    "test": {
-      "executor": "nx:run-commands",
-      "options": {
-        "cwd": "integration-tests",
-        "command": "playwright test --project='Google Chrome Fake Devices' --project=firefox --project='Microsoft Edge' --project='Mobile Chrome' --project='Electron'"
-      }
-    },
     "updateScreenshots": {
       "executor": "nx:run-commands",
       "cache": false,
@@ -49,13 +42,42 @@
         "command": "tsc -p tsconfig.json --noEmit --watch --preserveWatchOutput"
       }
     },
+    "test": {
+      "executor": "nx:run-commands",
+      "description": "Run playwright tests in all browsers",
+      "options": {
+        "cwd": "integration-tests",
+        "command": "playwright test --project='Google Chrome Fake Devices' --project=firefox --project='Microsoft Edge' --project='Mobile Chrome' --project='Electron'"
+      }
+    },
     "test:": {
       "executor": "nx:run-commands",
-      "description": "Run playwright tests in a specific file",
+      "description": "Run playwright tests in a specific file using the compiled version of the app without interruptions",
       "options": {
         "cwd": "integration-tests",
         "description": "Run playwright tests in a specific file",
-        "command": "playwright test {args._} --project='Google Chrome Fake Devices' --project=firefox --project='Microsoft Edge' --project='Mobile Chrome' --project='Electron'"
+        "command": "playwright test {args._} --project='Google Chrome Fake Devices' --workers=1 --headed",
+        "env": { "headedMode": "true" }
+      }
+    },
+    "test:dev": {
+      "executor": "nx:run-commands",
+      "description": "Run playwright tests in a specific file using the dev version of the app without interruptions",
+      "options": {
+        "cwd": "integration-tests",
+        "description": "Run playwright tests in a specific file",
+        "command": "playwright test {args._} --project='Google Chrome Fake Devices' --workers=1 --headed",
+        "env": { "headedMode": "true", "debugMode": "true" }
+      }
+    },
+    "test:debug": {
+      "executor": "nx:run-commands",
+      "description": "Run playwright tests in a specific file in debug mode with the dev version of the app",
+      "options": {
+        "cwd": "integration-tests",
+        "description": "Run playwright tests in a specific file",
+        "command": "playwright test {args._} --project='Google Chrome Fake Devices' --workers=1 --timeout=0",
+        "env": { "headedMode": "true", "debugMode": "true", "PWDEBUG": "1" }
       }
     },
     "lint": {
