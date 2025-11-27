@@ -55,6 +55,8 @@ export default [
             'eslint.config.mjs',
             'scripts/licenseCheck.js',
             'frontend/tailwind.config.js',
+            'backend/jest.config.js',
+            'backend/jest/setEnvVars.js',
             'integration-tests/globalSetup.js',
             // add more config files here if needed, e.g.
             // 'frontend/tailwind.config.*',
@@ -106,6 +108,7 @@ export default [
 
       // General style
       'prettier/prettier': 'error',
+      'no-console': ['error', { allow: ['warn', 'error', 'info'] }],
 
       // TypeScript
       // Removed duplicates already enforced by TypeScript:

@@ -4,10 +4,14 @@ vi.mock('../../env', async () => {
   const actual = await vi.importActual<typeof import('../../env')>('../../env');
   const { Env } = actual;
 
-  return {
-    ...actual,
-    default: new Env({}),
-  };
+  return { ...actual, default: new Env({}) };
+});
+
+const mockedRoomName = { roomName: 'test-room-name' };
+
+vi.mock('react-router-dom', async () => {
+  const mod = await vi.importActual<typeof import('react-router-dom')>('react-router-dom');
+  return { ...mod, useParams: () => mockedRoomName };
 });
 
 import { render } from '@testing-library/react';
@@ -15,16 +19,6 @@ import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import { ReactElement } from 'react';
 import env from '../../env';
 import RedirectToWaitingRoom from './RedirectToWaitingRoom';
-
-const mockedRoomName = { roomName: 'test-room-name' };
-
-vi.mock('react-router-dom', async () => {
-  const mod = await vi.importActual<typeof import('react-router-dom')>('react-router-dom');
-  return {
-    ...mod,
-    useParams: () => mockedRoomName,
-  };
-});
 
 describe('RedirectToWaitingRoom Component', () => {
   const TestComponent = (): ReactElement => <div>TestComponent</div>;

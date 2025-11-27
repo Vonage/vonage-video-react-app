@@ -46,7 +46,7 @@ class VcrSessionStorage implements SessionStorage {
 
   async incrementCaptionsUserCount(roomName: string): Promise<number> {
     const key = `captionsUserCount:${roomName}`;
-    const currentCaptionsUsersCount = (await this.dbState.get(key)) as number;
+    const currentCaptionsUsersCount = await this.dbState.get<number>(key);
     const newCaptionsUsersCount = currentCaptionsUsersCount ? currentCaptionsUsersCount + 1 : 1;
     await this.dbState.set(key, newCaptionsUsersCount);
     await this.setKeyExpiry(key);
@@ -56,7 +56,7 @@ class VcrSessionStorage implements SessionStorage {
 
   async decrementCaptionsUserCount(roomName: string): Promise<number> {
     const key = `captionsUserCount:${roomName}`;
-    const currentCaptionsUsersCount = (await this.dbState.get(key)) as number;
+    const currentCaptionsUsersCount = await this.dbState.get<number>(key);
     const newCaptionsUsersCount = currentCaptionsUsersCount ? currentCaptionsUsersCount - 1 : 0;
     if (newCaptionsUsersCount < 0) {
       await this.dbState.delete(key);

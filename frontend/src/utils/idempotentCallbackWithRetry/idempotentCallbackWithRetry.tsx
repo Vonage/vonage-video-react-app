@@ -28,8 +28,6 @@ async function idempotentCallbackWithRetry<T>(
 
   while (attempt <= maxAttempts) {
     try {
-      console.log(`Attempt ${attempt} of ${maxAttempts}`);
-
       return await callback();
     } catch (error) {
       lastError = error;

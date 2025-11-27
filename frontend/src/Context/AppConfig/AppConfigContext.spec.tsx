@@ -61,7 +61,7 @@ describe('AppConfigContext', () => {
   });
 
   it('falls back to defaultConfig if fetch fails', async () => {
-    expect.assertions(4);
+    expect.assertions(3);
 
     const mockFetchError = new Error('mocking a failure to fetch');
 
@@ -71,7 +71,8 @@ describe('AppConfigContext', () => {
     let [appConfig, { loadAppConfig }] = result.current;
 
     expect(appConfig.isAppConfigLoaded).toBe(false);
-    expect(loadAppConfig()).rejects.toThrow('mocking a failure to fetch');
+
+    await loadAppConfig();
 
     // test will fail without the await act
     // eslint-disable-next-line @typescript-eslint/await-thenable
@@ -87,7 +88,7 @@ describe('AppConfigContext', () => {
   });
 
   it('falls back to defaultConfig if no config.json is found', async () => {
-    expect.assertions(4);
+    expect.assertions(3);
 
     vi.spyOn(global, 'fetch').mockResolvedValue({
       ok: false,
@@ -101,7 +102,7 @@ describe('AppConfigContext', () => {
 
     expect(appConfig).toEqual(defaultAppConfig);
 
-    expect(loadAppConfig()).rejects.toThrow('No valid JSON found, using default config');
+    await loadAppConfig();
 
     // test will fail without the await act
     // eslint-disable-next-line @typescript-eslint/await-thenable

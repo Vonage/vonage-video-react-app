@@ -42,9 +42,7 @@ function makeGenericProviderWrapper<
    * Get the last context value captured by the Interceptor.
    * @returns {ContextValue | null} The last context value or null if not yet captured.
    */
-  const contextResult = {
-    current: undefined as ContextValue,
-  };
+  const contextResult = { current: undefined as ContextValue };
 
   let onCreated = options?.__onCreated ?? null;
 

@@ -9,7 +9,7 @@
   },
   "scripts": {
     "postinstall": "nx postinstall integration-tests",
-    "quality-check": "nx run-many -t ts-check,lint:fix --parallel --maxParallel=4",
+    "quality-check": "nx run-many -t ts-check --parallel --maxParallel=4 && npm run lint:fix",
     "build": "nx run frontend:build",
     "deploy-vcr": "vcr deploy",
     "dev:frontend": "nx serve frontend --host",
@@ -25,7 +25,7 @@
     "start:backend": "nx serve backend",
     "debug:backend": "nx run backend:debug",
     "start:frontend": "nx serve frontend --host",
-    "test": "nx run-many -t test --projects=backend,frontend --parallel --maxParallel=3",
+    "test": "nx run-many -t test --projects=backend,frontend,ui --parallel --maxParallel=3",
     "test:backend": "nx test backend",
     "test:backend:watch": "nx test backend --watch",
     "test:frontend": " nx test frontend",

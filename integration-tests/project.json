@@ -57,6 +57,13 @@
         "description": "Run playwright tests in a specific file",
         "command": "playwright test {args._} --project='Google Chrome Fake Devices' --project=firefox --project='Microsoft Edge' --project='Mobile Chrome' --project='Electron'"
       }
+    },
+    "lint": {
+      "executor": "nx:run-commands",
+      "options": {
+        "cwd": "integration-tests",
+        "command": "eslint 'tests/**/*.{ts,tsx}' --report-unused-disable-directives --max-warnings 0"
+      }
     }
   },
   "tags": ["e2e", "playwright"]

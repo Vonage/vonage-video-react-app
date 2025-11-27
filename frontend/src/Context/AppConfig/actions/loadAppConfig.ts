@@ -30,7 +30,7 @@ function loadAppConfig(this: AppConfigApi['actions']) {
     this.updateAppConfig({ ...config, isAppConfigLoaded: true });
 
     if (error && !process.env.CI) {
-      throw error;
+      console.warn(error);
     }
   };
 }

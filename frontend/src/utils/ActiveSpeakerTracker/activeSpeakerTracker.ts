@@ -1,12 +1,11 @@
+// [TODO]: Fix re-declare linting issue
+
 import { EventEmitter } from 'events';
 import throttle from 'lodash/throttle';
 
 export type SubscriberAudioLevels = Record<string, number>;
 
-export type ActiveSpeakerInfo = {
-  subscriberId: string | undefined;
-  movingAvg: number;
-};
+export type ActiveSpeakerInfo = { subscriberId: string | undefined; movingAvg: number };
 
 export type ActiveSpeakerChangedPayload = {
   previousActiveSpeaker: ActiveSpeakerInfo;
@@ -37,10 +36,7 @@ class ActiveSpeakerTracker extends EventEmitter {
 
   constructor() {
     super();
-    this.activeSpeaker = {
-      movingAvg: 0,
-      subscriberId: undefined,
-    };
+    this.activeSpeaker = { movingAvg: 0, subscriberId: undefined };
 
     this.calculateActiveSpeaker = throttle(
       this._calculateActiveSpeaker,
@@ -55,10 +51,7 @@ class ActiveSpeakerTracker extends EventEmitter {
   onSubscriberDestroyed = (subscriberId: string) => {
     delete this._subscriberAudioLevelsBySubscriberId[subscriberId];
     if (this.activeSpeaker.subscriberId === subscriberId) {
-      this.activeSpeaker = {
-        subscriberId: undefined,
-        movingAvg: 0,
-      };
+      this.activeSpeaker = { subscriberId: undefined, movingAvg: 0 };
     }
     this.calculateActiveSpeaker();
   };
@@ -81,17 +74,11 @@ class ActiveSpeakerTracker extends EventEmitter {
     const activeSpeaker = subscriberIdAudioLevelKeyValuePair.reduce<ActiveSpeakerInfo>(
       (acc, [subscriberId, movingAvg]) => {
         if (movingAvg > acc.movingAvg) {
-          return {
-            subscriberId,
-            movingAvg,
-          };
+          return { subscriberId, movingAvg };
         }
         return acc;
       },
-      {
-        subscriberId: undefined,
-        movingAvg: 0,
-      }
+      { subscriberId: undefined, movingAvg: 0 }
     );
 
     if (
@@ -100,10 +87,7 @@ class ActiveSpeakerTracker extends EventEmitter {
     ) {
       const previousActiveSpeaker = { ...this.activeSpeaker };
       this.activeSpeaker = activeSpeaker;
-      this.emit('activeSpeakerChanged', {
-        newActiveSpeaker: activeSpeaker,
-        previousActiveSpeaker,
-      });
+      this.emit('activeSpeakerChanged', { newActiveSpeaker: activeSpeaker, previousActiveSpeaker });
     }
   };
 }

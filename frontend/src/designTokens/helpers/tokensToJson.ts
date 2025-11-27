@@ -6,11 +6,7 @@ import type { TypeScale, Device } from '../tokens/typography/typescale';
 
 const outputFile = path.resolve('frontend/src/designTokens/designTokens.json');
 
-type FontSize = {
-  fontSize: string;
-  lineHeight: string;
-  fontWeight: string;
-};
+type FontSize = { fontSize: string; lineHeight: string; fontWeight: string };
 
 type UnwrappedTokens = {
   lightColor: Record<string, string>;
@@ -18,22 +14,12 @@ type UnwrappedTokens = {
   shape: Record<string, string>;
   elevation: Record<string, string>;
   state: Record<string, string>;
-  motion: {
-    duration: Record<string, string>;
-    easing: Record<string, string>;
-  };
+  motion: { duration: Record<string, string>; easing: Record<string, string> };
   typography: {
     typeface: Record<Typeface, string>;
     typeScale: Record<
       Device,
-      Record<
-        TypeScale,
-        {
-          fontSize: string;
-          lineHeight: string;
-          fontWeight: number;
-        }
-      >
+      Record<TypeScale, { fontSize: string; lineHeight: string; fontWeight: number }>
     >;
     weight: Record<string, number>;
   };
@@ -56,29 +42,21 @@ function designTokensToJson() {
   const mobileFontSize = parseResponsiveFontSize(tokens.typography.typeScale.mobile);
 
   const tailwindExtend = {
-    colors: {
-      light: tokens.lightColor,
-      dark: tokens.darkColor,
-    },
+    colors: { light: tokens.lightColor, dark: tokens.darkColor },
     borderRadius: tokens.shape,
     boxShadow: tokens.elevation,
     opacity: tokens.state,
     transitionDuration: tokens.motion?.duration,
     transitionTimingFunction: tokens.motion?.easing,
     fontFamily: tokens.typography?.typeface,
-    fontSize: {
-      desktop: desktopFontSize,
-      mobile: mobileFontSize,
-    },
+    fontSize: { desktop: desktopFontSize, mobile: mobileFontSize },
     fontWeight: tokens.typography?.weight,
   };
 
   // Write or overwrite the file
-  fs.writeFileSync(outputFile, JSON.stringify(tailwindExtend, null, 2), {
-    flag: 'w',
-  });
+  fs.writeFileSync(outputFile, JSON.stringify(tailwindExtend, null, 2), { flag: 'w' });
 
-  console.log(`\x1b[32m✔ Design tokens JSON written to ${outputFile}\x1b[0m`);
+  console.info(`\x1b[32m✔ Design tokens JSON written to ${outputFile}\x1b[0m`);
 }
 
 /**
@@ -125,14 +103,7 @@ function isUndefined(value: unknown): value is undefined {
  * @returns {Record<string, FontSize>} The transformed font sizes.
  */
 function parseResponsiveFontSize(
-  fontSizes: Record<
-    TypeScale,
-    {
-      fontSize: string;
-      lineHeight: string;
-      fontWeight: number;
-    }
-  >
+  fontSizes: Record<TypeScale, { fontSize: string; lineHeight: string; fontWeight: number }>
 ): Record<string, FontSize> {
   return Object.entries(fontSizes).reduce(
     (acc, [key, val]) => {

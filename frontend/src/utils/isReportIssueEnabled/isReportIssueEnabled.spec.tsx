@@ -4,10 +4,7 @@ vi.mock('../../env', async () => {
   const actual = await vi.importActual<typeof import('../../env')>('../../env');
   const { Env } = actual;
 
-  return {
-    ...actual,
-    default: new Env({}),
-  };
+  return { ...actual, default: new Env({}) };
 });
 
 import env from '../../env';
