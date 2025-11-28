@@ -37,7 +37,7 @@ const VideoDevicesOptions = ({
         sx={{
           backgroundColor: 'transparent',
           '&:hover': {
-            backgroundColor: theme.colors.primaryHover,
+            backgroundColor: theme.colors.background,
           },
         }}
       >

@@ -13,6 +13,7 @@ import Popper from '@ui/Popper';
 import Grow from '@ui/Grow';
 import ClickAwayListener from '@ui/ClickAwayListener';
 import Paper from '@ui/Paper';
+import Box from '@ui/Box';
 
 export type DeviceSettingsMenuProps = {
   deviceType: 'audio' | 'video';
@@ -104,7 +105,7 @@ const DeviceSettingsMenu = ({
           {...TransitionProps}
           style={{ transformOrigin: placement === 'bottom' ? 'center top' : 'center bottom' }}
         >
-          <div className="text-left font-normal">
+          <Box sx={{ textAlign: 'left', fontWeight: 'normal' }}>
             <ClickAwayListener onClickAway={handleClose}>
               <Paper
                 sx={(t) => ({
@@ -134,7 +135,7 @@ const DeviceSettingsMenu = ({
                 {renderSettingsMenu()}
               </Paper>
             </ClickAwayListener>
-          </div>
+          </Box>
         </Grow>
       )}
     </Popper>

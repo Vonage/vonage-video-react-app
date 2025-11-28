@@ -114,7 +114,7 @@ const BackgroundGallery = ({
                     '&:hover': {
                       backgroundColor: isSelected
                         ? theme.colors.disabled
-                        : theme.colors.primaryHover,
+                        : theme.colors.background,
                     },
                   }}
                 >

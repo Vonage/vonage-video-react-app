@@ -3,6 +3,8 @@ import { useTranslation } from 'react-i18next';
 import ClickAwayListener from '@ui/ClickAwayListener';
 import MenuItem from '@ui/MenuItem';
 import useAudioOutputContext from '../../hooks/useAudioOutputContext';
+import Typography from '@ui/Typography';
+import useCustomTheme from '@Context/Theme';
 
 export type SoundTestProps = {
   children: ReactElement;
@@ -18,6 +20,7 @@ export type SoundTestProps = {
  */
 const SoundTest = ({ children }: SoundTestProps): ReactElement => {
   const { t } = useTranslation();
+  const theme = useCustomTheme();
   const [audioIsPlaying, setAudioIsPlaying] = useState(false);
   const audioElement = useMemo(() => new Audio('/sound.mp3'), []);
   const { currentAudioOutputDevice } = useAudioOutputContext();
@@ -47,9 +50,16 @@ const SoundTest = ({ children }: SoundTestProps): ReactElement => {
 
   return (
     <ClickAwayListener onClickAway={() => stopAudio()}>
-      <MenuItem onClick={handlePlayAudio} data-testid="soundTest">
+      <MenuItem onClick={handlePlayAudio} data-testid="soundTest" 
+      sx={{
+              '&:hover': {
+                backgroundColor: theme.colors.background,
+              },
+            }}>
         {children}
-        {!audioIsPlaying ? t('soundTest.start') : t('soundTest.stop')}
+        <Typography variant="body1">
+          {!audioIsPlaying ? t('soundTest.start') : t('soundTest.stop')}
+        </Typography>
       </MenuItem>
     </ClickAwayListener>
   );

@@ -185,7 +185,7 @@ const Toolbar = ({
       >
         {displayTimeRoomName && <TimeRoomNameMeetingRoom />}
       </Box>
-      <Box sx={{ display: 'flex', flex: 1, justifyContent: 'center' }}>
+      <Box sx={{ display: 'flex', flex: 1, justifyContent: 'center', alignItems: 'center' }}>
         <Box ref={mediaControlsRef} sx={{ display: 'flex', flexDirection: 'row' }}>
           <DeviceControlButton
             deviceType="audio"

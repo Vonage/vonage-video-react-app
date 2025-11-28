@@ -98,7 +98,7 @@ const OutputDevices = ({ handleToggle }: OutputDevicesProps): ReactElement | fal
                     color: theme.colors.onBackground,
                   },
                   '&:hover': {
-                    backgroundColor: theme.colors.primaryHover,
+                    backgroundColor: theme.colors.background,
                   },
                 }}
               >

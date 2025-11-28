@@ -89,7 +89,7 @@ const InputDevices = ({ handleToggle }: InputDevicesProps): ReactElement | false
                     color: theme.colors.onBackground,
                   },
                   '&:hover': {
-                    backgroundColor: theme.colors.primaryHover,
+                    backgroundColor: theme.colors.background,
                   },
                 }}
               >

@@ -30,7 +30,7 @@ const SendEmojiButton = ({ emoji }: SendEmojiButtonProps): ReactElement => {
         onClick={() => sendEmoji(emoji)}
         sx={{
           '&:hover': {
-            backgroundColor: theme.colors.primaryHover,
+            backgroundColor: theme.colors.background,
           },
           padding: '0.25rem',
           fontSize: '1.5rem',
