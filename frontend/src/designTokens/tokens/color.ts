@@ -89,6 +89,11 @@ const lightColors = {
     type: 'color',
     description: 'Foreground color used on secondary surfaces.',
   },
+  'secondary-hover': {
+    value: colorVariables.accent[600],
+    type: 'color',
+    description: 'Secondary color for hover states.',
+  },
 
   tertiary: {
     value: colorVariables.accent[500],
@@ -104,6 +109,11 @@ const lightColors = {
     value: colorVariables.canvas,
     type: 'color',
     description: 'Foreground color used on tertiary surfaces.',
+  },
+  'tertiary-hover': {
+    value: colorVariables.accent[400],
+    type: 'color',
+    description: 'Tertiary color for hover states.',
   },
 
   background: {
@@ -187,6 +197,27 @@ const lightColors = {
     description: 'Success color for hover states.',
   },
 
+  information: {
+    value: colorVariables.information[500],
+    type: 'color',
+    description: 'Color representing informational states and messages.',
+  },
+  'on-information': {
+    value: colorVariables.canvas,
+    type: 'color',
+    description: 'Foreground color for text/icons on information surfaces.',
+  },
+  'information-hover': {
+    value: colorVariables.information[400],
+    type: 'color',
+    description: 'Information color for hover states.',
+  },
+  'information-background': {
+    value: colorVariables.information[50],
+    type: 'color',
+    description: 'Background color for informational messages.',
+  },
+
   border: {
     value: colorVariables.neutral[100],
     type: 'color',
@@ -262,6 +293,11 @@ const darkColors = {
     type: 'color',
     description: 'Foreground color used on secondary surfaces.',
   },
+  'secondary-hover': {
+    value: colorVariables.accent[400],
+    type: 'color',
+    description: 'Secondary color for hover states.',
+  },
 
   tertiary: {
     value: colorVariables.accent[400],
@@ -277,6 +313,11 @@ const darkColors = {
     value: colorVariables.canvas,
     type: 'color',
     description: 'Foreground color used on tertiary surfaces.',
+  },
+  'tertiary-hover': {
+    value: colorVariables.accent[300],
+    type: 'color',
+    description: 'Tertiary color for hover states.',
   },
 
   background: {
@@ -347,6 +388,27 @@ const darkColors = {
     value: colorVariables.success[600],
     type: 'color',
     description: 'Success color for hover states.',
+  },
+
+  information: {
+    value: colorVariables.information[400],
+    type: 'color',
+    description: 'Color representing informational states and messages.',
+  },
+  'on-information': {
+    value: colorVariables.canvas,
+    type: 'color',
+    description: 'Foreground color for text/icons on information surfaces.',
+  },
+  'information-hover': {
+    value: colorVariables.information[500],
+    type: 'color',
+    description: 'Information color for hover states.',
+  },
+  'information-background': {
+    value: colorVariables.information[50],
+    type: 'color',
+    description: 'Background color for informational messages.',
   },
 
   border: {

@@ -1,7 +1,5 @@
 import { ReactElement, useState } from 'react';
 import RadioButtonCheckedIcon from '@mui/icons-material/RadioButtonChecked';
-import { ContentCopy } from '@mui/icons-material';
-import CheckIcon from '@mui/icons-material/Check';
 import Box from '@ui/Box';
 import useCustomTheme from '@Context/Theme';
 import useSessionContext from '../../../hooks/useSessionContext';
@@ -9,6 +7,7 @@ import useRoomName from '../../../hooks/useRoomName';
 import useRoomShareUrl from '../../../hooks/useRoomShareUrl';
 import IconButton from '@ui/IconButton';
 import Fade from '@ui/Fade';
+import VividIcon from '@components/VividIcon';
 
 /**
  * SmallViewportHeader Component
@@ -65,9 +64,13 @@ const SmallViewportHeader = (): ReactElement => {
         <Fade in timeout={500}>
           <IconButton sx={{ color: theme.colors.onDarkGrey }} onClick={copyUrl} disabled={isCopied}>
             {isCopied ? (
-              <CheckIcon sx={{ color: theme.colors.success }} />
+              <VividIcon
+                customSize={-4}
+                name="check-sent-line"
+                sx={{ color: theme.colors.success }}
+              />
             ) : (
-              <ContentCopy sx={{ color: theme.colors.onDarkGrey }} />
+              <VividIcon customSize={-4} name="copy-line" sx={{ color: theme.colors.onDarkGrey }} />
             )}
           </IconButton>
         </Fade>

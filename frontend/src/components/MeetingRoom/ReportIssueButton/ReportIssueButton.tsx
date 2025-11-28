@@ -1,9 +1,9 @@
 import Tooltip from '@ui/Tooltip';
 import { ReactElement, useRef } from 'react';
-import FeedbackIcon from '@mui/icons-material/Feedback';
 import { useTranslation } from 'react-i18next';
 import ToolbarButton from '../ToolbarButton';
 import useCustomTheme from '@Context/Theme';
+import VividIcon from '@components/VividIcon';
 
 export type ReportIssueButtonProps = {
   handleClick: () => void;
@@ -43,7 +43,9 @@ const ReportIssueButton = ({
         }}
         onClick={handleClick}
         icon={
-          <FeedbackIcon
+          <VividIcon
+            customSize={-5}
+            name="feedback-solid"
             sx={{ color: isOpen ? theme.colors.secondary : theme.colors.onSecondary }}
           />
         }

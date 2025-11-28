@@ -88,8 +88,19 @@ const Subscriber = ({
   const initials = subscriberWrapper.subscriber?.stream?.initials;
   const username = subscriberWrapper.subscriber?.stream?.name ?? '';
   const hasAudio = subscriberWrapper.subscriber.stream?.hasAudio;
-  const audioIndicatorStyle =
-    'rounded-xl absolute top-3 right-3 bg-darkGray-55 h-6 w-6 items-center justify-center flex m-auto';
+  const audioIndicatorStyle: React.CSSProperties = {
+    borderRadius: '0.75rem',
+    position: 'absolute',
+    top: '0.75rem',
+    right: '0.75rem',
+    backgroundColor: '#23272F', // Replace with your darkGray-55 color code
+    height: '1.5rem',
+    width: '1.5rem',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    margin: 'auto',
+  };
 
   return isScreenShare ? (
     <ScreenshareVideoTile

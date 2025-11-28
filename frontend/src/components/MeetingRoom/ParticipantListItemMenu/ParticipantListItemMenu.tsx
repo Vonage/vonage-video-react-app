@@ -1,11 +1,12 @@
 import { useState, MouseEvent, ReactElement } from 'react';
-import MoreVertIcon from '@mui/icons-material/MoreVert';
 import { SubscriberWrapper } from '../../../types/session';
 import ParticipantPinMenuItem from './ParticipantPinMenuItem';
 import IconButton from '@ui/IconButton';
 import Popper from '@ui/Popper';
 import ClickAwayListener from '@ui/ClickAwayListener';
 import Paper from '@ui/Paper';
+import VividIcon from '@components/VividIcon';
+import useCustomTheme from '@Context/Theme';
 
 export type ParticipantListItemMenuProps = {
   participantName: string;
@@ -24,6 +25,7 @@ const ParticipantListItemMenu = ({
   participantName,
   subscriberWrapper,
 }: ParticipantListItemMenuProps): ReactElement => {
+  const theme = useCustomTheme();
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const isOpen = !!anchorEl;
   const handleClick = (event: MouseEvent<HTMLButtonElement>) => {
@@ -36,7 +38,7 @@ const ParticipantListItemMenu = ({
   return (
     <>
       <IconButton onClick={handleClick} sx={{ marginRight: '-8px' }}>
-        <MoreVertIcon sx={{ fontSize: '18px' }} />
+        <VividIcon name="more-vertical-solid" customSize={-6} color={theme.colors.tertiary} />
       </IconButton>
       <Popper open={isOpen} anchorEl={anchorEl} placement="bottom-start" sx={{ zIndex: 10 }}>
         <ClickAwayListener onClickAway={handleClose}>

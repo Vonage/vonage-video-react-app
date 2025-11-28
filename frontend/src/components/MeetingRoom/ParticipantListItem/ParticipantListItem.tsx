@@ -1,5 +1,4 @@
 import { ReactElement } from 'react';
-import PushPinIcon from '@mui/icons-material/PushPin';
 import { Stream } from '@vonage/client-sdk-video';
 import AudioIndicator from '../AudioIndicator';
 import ParticipantListItemMenu from '../ParticipantListItemMenu';
@@ -8,6 +7,8 @@ import ListItem from '@ui/ListItem';
 import Avatar from '@ui/Avatar';
 import Typography from '@ui/Typography';
 import Badge from '@ui/Badge';
+import useCustomTheme from '@Context/Theme';
+import VividIcon from '@components/VividIcon';
 
 export type ParticipantListItemProps = {
   stream?: Stream;
@@ -43,6 +44,8 @@ const ParticipantListItem = ({
   stream,
   subscriberWrapper,
 }: ParticipantListItemProps): ReactElement => {
+  const theme = useCustomTheme();
+
   return (
     <ListItem
       sx={{ height: '56px', paddingRight: '68px' }}
@@ -54,8 +57,8 @@ const ParticipantListItem = ({
             hasAudio={hasAudio}
             stream={stream}
             participantName={name}
-            indicatorColor="black"
-            indicatorStyle="flex items-center justify-center"
+            indicatorColor={theme.colors.secondary}
+            indicatorStyle={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}
           />
           {subscriberWrapper && (
             <ParticipantListItemMenu participantName={name} subscriberWrapper={subscriberWrapper} />
@@ -68,14 +71,15 @@ const ParticipantListItem = ({
         anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
         sx={{
           '.MuiBadge-badge': {
-            backgroundColor: 'white',
+            backgroundColor: theme.colors.background,
           },
         }}
         invisible={!subscriberWrapper?.isPinned}
         badgeContent={
-          <PushPinIcon
+          <VividIcon
+            customSize={-6}
+            name="pin-2-solid"
             sx={{
-              fontSize: '14px',
               position: 'fixed',
             }}
           />
@@ -94,7 +98,7 @@ const ParticipantListItem = ({
       </Badge>
       <Typography
         data-testid="participant-list-name"
-        variant="inherit"
+        variant="body1"
         noWrap
         sx={{ marginLeft: '12px' }}
       >

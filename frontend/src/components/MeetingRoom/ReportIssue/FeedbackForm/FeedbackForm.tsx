@@ -96,7 +96,7 @@ const FeedbackForm = ({
           height,
           ml: 4,
           mr: 4,
-          p: 1,
+          pr: 1.5,
         }}
       >
         <Typography variant="body1" data-testid="title-report-issue" sx={getStyleTypography()}>
