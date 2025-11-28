@@ -1,4 +1,4 @@
-import { useState, useRef, useCallback, useEffect } from 'react';
+import { useState, useRef, useCallback } from 'react';
 import {
   Publisher,
   Event,
@@ -7,14 +7,13 @@ import {
   hasMediaProcessorSupport,
   PublisherProperties,
 } from '@vonage/client-sdk-video';
-import setMediaDevices from '../../../utils/mediaDeviceUtils';
-import useDevices from '../../../hooks/useDevices';
-import usePermissions from '../../../hooks/usePermissions';
-import useUserContext from '../../../hooks/useUserContext';
-import { DEVICE_ACCESS_STATUS } from '../../../utils/constants';
+import useSuspenseUntilAppConfigReady from '@Context/AppConfig/hooks/useSuspenseUntilAppConfigReady';
+import usePermissions from '@hooks/usePermissions';
+import useUserContext from '@hooks/useUserContext';
+import { DEVICE_ACCESS_STATUS } from '@utils/constants';
+import applyBackgroundFilter from '@utils/backgroundFilter/applyBackgroundFilter/applyBackgroundFilter';
 import { AccessDeniedEvent } from '../../PublisherProvider/usePublisher/usePublisher';
-import DeviceStore from '../../../utils/DeviceStore';
-import applyBackgroundFilter from '../../../utils/backgroundFilter/applyBackgroundFilter/applyBackgroundFilter';
+import devices$ from '@Context/Device/DevicesContext';
 
 export type BackgroundPublisherContextType = {
   isPublishing: boolean;
@@ -53,8 +52,9 @@ type PublisherVideoElementCreatedEvent = Event<'videoElementCreated', Publisher>
  * @returns {BackgroundPublisherContextType} Background context
  */
 const useBackgroundPublisher = (): BackgroundPublisherContextType => {
+  useSuspenseUntilAppConfigReady();
+
   const { user } = useUserContext();
-  const { allMediaDevices, getAllMediaDevices } = useDevices();
   const [publisherVideoElement, setPublisherVideoElement] = useState<
     HTMLVideoElement | HTMLObjectElement
   >();
@@ -69,12 +69,6 @@ const useBackgroundPublisher = (): BackgroundPublisherContextType => {
   );
   const [isVideoEnabled, setIsVideoEnabled] = useState<boolean>(true);
   const [localVideoSource, setLocalVideoSource] = useState<string | undefined>(undefined);
-  const deviceStoreRef = useRef<DeviceStore>(new DeviceStore());
-
-  /* This sets the default devices in use so that the user knows what devices they are using */
-  useEffect(() => {
-    setMediaDevices(backgroundPublisherRef, allMediaDevices, () => {}, setLocalVideoSource);
-  }, [allMediaDevices]);
 
   const handleBackgroundDestroyed = () => {
     backgroundPublisherRef.current = null;
@@ -155,10 +149,10 @@ const useBackgroundPublisher = (): BackgroundPublisherContextType => {
       publisher.on('videoElementCreated', handleVideoElementCreated);
       publisher.on('accessAllowed', () => {
         setAccessStatus(DEVICE_ACCESS_STATUS.ACCEPTED);
-        getAllMediaDevices();
+        void devices$.actions.updateMediaDevices();
       });
     },
-    [getAllMediaDevices, handleBackgroundAccessDenied, setAccessStatus]
+    [handleBackgroundAccessDenied, setAccessStatus]
   );
 
   const initBackgroundLocalPublisher = useCallback(async () => {
@@ -172,8 +166,7 @@ const useBackgroundPublisher = (): BackgroundPublisherContextType => {
       videoFilter = initialBackgroundRef.current;
     }
 
-    await deviceStoreRef.current.init();
-    const videoSource = deviceStoreRef.current.getConnectedDeviceId('videoinput');
+    const videoSource = await devices$.actions.getConnectedDeviceId('videoinput');
 
     const publisherOptions: PublisherProperties = {
       insertDefaultUI: false,

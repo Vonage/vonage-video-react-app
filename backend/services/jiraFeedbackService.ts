@@ -33,29 +33,18 @@ class JiraFeedbackService implements FeedbackService {
   async reportIssue(data: FeedbackData): Promise<ReportIssueReturn | null> {
     const feedbackIssueData = {
       fields: {
-        project: {
-          key: this.jiraKey,
-        },
+        project: { key: this.jiraKey },
         summary: data.title,
         description: `Reported by: ${data.name}\n\n Issue description:\n${data.issue}`,
-        issuetype: {
-          name: 'Bug',
-        },
-        components: [
-          {
-            id: this.getComponentIdByOrigin(data.origin),
-          },
-        ],
+        issuetype: { name: 'Bug' },
+        components: [{ id: this.getComponentIdByOrigin(data.origin) }],
         [this.jiraEpicLink]: this.jiraEpicUrl,
       },
     };
 
     try {
-      const response = await axios.post(this.jiraApiUrl, feedbackIssueData, {
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Basic ${this.jiraToken}`,
-        },
+      const response = await axios.post<{ key: string }>(this.jiraApiUrl, feedbackIssueData, {
+        headers: { 'Content-Type': 'application/json', Authorization: `Basic ${this.jiraToken}` },
       });
 
       const ticketData: ReportIssueReturn = {
@@ -68,7 +57,7 @@ class JiraFeedbackService implements FeedbackService {
       }
       return await this.addAttachment(data.attachment, ticketData, response.data.key);
     } catch (error) {
-      console.log('Response Error:', error);
+      console.error('Response Error:', error);
       return null;
     }
   }
@@ -80,10 +69,7 @@ class JiraFeedbackService implements FeedbackService {
   ): Promise<ReportIssueReturn> {
     const fileBuffer = Buffer.from(attachment, 'base64');
     const formData = new FormData();
-    formData.append('file', fileBuffer, {
-      filename: 'screenshot.png',
-      contentType: 'image/png',
-    });
+    formData.append('file', fileBuffer, { filename: 'screenshot.png', contentType: 'image/png' });
 
     await axios.post(`${this.jiraApiUrl}${key}/attachments`, formData, {
       headers: {
@@ -94,10 +80,7 @@ class JiraFeedbackService implements FeedbackService {
       },
     });
 
-    return {
-      ...ticketData,
-      screenshotIncluded: true,
-    };
+    return { ...ticketData, screenshotIncluded: true };
   }
 
   private getComponentIdByOrigin(origin: FeedbackOrigin): string {

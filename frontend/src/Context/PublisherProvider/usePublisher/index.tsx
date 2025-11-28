@@ -1,3 +1,2 @@
-import usePublisher from './usePublisher';
-
-export default usePublisher;
+export * from './usePublisher';
+export { default } from './usePublisher';

@@ -23,10 +23,17 @@ export default [
           whitelist: [
             'bg-primary-dark',
             'text-darkGray',
+            'bg-darkGray-100',
+            'bg-darkGray-55',
+            'bg-notVeryGray-100',
+            'bg-notVeryGray-55',
+            // the following are used in playwright testing
             'publisher',
             'subscriber',
             'screen-subscriber',
-            'bg-notVeryGray-100',
+
+            // custom tailwind classes defined in our tailwind.config.ts
+            'animate-fade-in',
           ],
         },
       ],

@@ -1,10 +1,9 @@
 import React, { useRef } from 'react';
+import isNil from 'lodash/isNil';
 import isFunction from 'lodash/isFunction';
 import shallowCompare from 'react-global-state-hooks/shallowCompare';
 
 type RefCreator<T> = () => T;
-
-type RefObject<T> = { current: T };
 
 const symbol = Symbol('internal stable ref');
 
@@ -13,7 +12,7 @@ const symbol = Symbol('internal stable ref');
  * @param value The value that that the ref will hold
  * @returns <T> stable React ref object containing the value.
  */
-function useStableRef<T>(value: T): RefObject<T>;
+function useStableRef<T>(value: T): React.RefObject<T>;
 
 /**
  * @description Hook to create a stable ref value.
@@ -21,22 +20,27 @@ function useStableRef<T>(value: T): RefObject<T>;
  * @param deps Dependency list to determine when to recreate the value
  * @returns A stable React ref object containing the value.
  */
-function useStableRef<T>(callback: RefCreator<T>, deps: React.DependencyList): RefObject<T>;
+function useStableRef<T>(callback: RefCreator<T>, deps: React.DependencyList): React.RefObject<T>;
 
-function useStableRef<T>(param1: T | RefCreator<T>, deps: React.DependencyList = []): RefObject<T> {
+function useStableRef<T>(
+  param1: T | RefCreator<T>,
+  deps?: React.DependencyList
+): React.RefObject<T> {
   const ref = useRef<T | typeof symbol>(symbol);
   const dependenciesRef = useRef<React.DependencyList>(deps);
 
   (() => {
-    if (!isFunction(param1)) {
-      ref.current = param1;
+    if (isNil(deps)) {
+      ref.current = param1 as T;
 
       return;
     }
 
-    const shouldRecreate = ref.current === symbol || !shallowCompare(dependenciesRef.current, deps);
+    const shouldRecreate =
+      isFunction(param1) &&
+      (ref.current === symbol || !shallowCompare(dependenciesRef.current, deps));
 
-    if (!shouldRecreate || typeof param1 !== 'function') {
+    if (!shouldRecreate) {
       return;
     }
 
@@ -45,7 +49,7 @@ function useStableRef<T>(param1: T | RefCreator<T>, deps: React.DependencyList =
 
   dependenciesRef.current = deps;
 
-  return ref as RefObject<T>;
+  return ref as React.RefObject<T>;
 }
 
 export default useStableRef;

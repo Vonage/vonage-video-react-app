@@ -1,6 +1,8 @@
-/** @type {import('tailwindcss').Config} */
+import { Config } from 'tailwindcss';
 import defaultTheme from 'tailwindcss/defaultTheme';
-export default {
+import colors from './src/designTokens/tokens/color';
+
+const config: Config = {
   content: ['./index.html', './src/**/*.{js,ts,jsx,tsx}'],
   theme: {
     extend: {
@@ -9,7 +11,12 @@ export default {
         notVeryGray: { 55: 'rgba(60, 64, 67, .55)', 100: 'rgb(60, 64, 67)' },
       },
       screens: { xs: '350px', ...defaultTheme.screens },
+      backgroundColor: { skeletonLike: colors.disabled.value },
+      keyframes: { 'fade-in': { '0%': { opacity: '20%' }, '100%': { opacity: '1' } } },
+      animation: { 'fade-in': 'fade-in 0.5s ease-in-out' },
     },
   },
   plugins: [],
 };
+
+export default config;

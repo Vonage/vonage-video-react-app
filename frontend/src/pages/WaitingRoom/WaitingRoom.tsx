@@ -1,16 +1,27 @@
-import { useState, useEffect, MouseEvent, ReactElement, TouchEvent } from 'react';
+import React, {
+  useState,
+  useEffect,
+  MouseEvent,
+  TouchEvent,
+  ComponentProps,
+  useEffectEvent,
+} from 'react';
 import Box from '@ui/Box';
 import GridLayout from '@ui/FlexLayout';
+import classNames from 'classnames';
+import usePreviewPublisherContext from '@hooks/usePreviewPublisherContext';
+import ControlPanel from '@components/WaitingRoom/ControlPanel';
+import VideoContainer from '@components/WaitingRoom/VideoContainer';
+import UsernameInput from '@components/WaitingRoom/UserNameInput';
 import Banner from '@components/Banner';
-import usePreviewPublisherContext from '../../hooks/usePreviewPublisherContext';
-import ControlPanel from '../../components/WaitingRoom/ControlPanel';
-import VideoContainer from '../../components/WaitingRoom/VideoContainer';
-import UsernameInput from '../../components/WaitingRoom/UserNameInput';
-import { DEVICE_ACCESS_STATUS } from '../../utils/constants';
-import DeviceAccessAlert from '../../components/DeviceAccessAlert';
-import { getStorageItem, STORAGE_KEYS } from '../../utils/storage';
-import useIsSmallViewport from '../../hooks/useIsSmallViewport';
-import useBackgroundPublisherContext from '../../hooks/useBackgroundPublisherContext';
+import { getStorageItem, STORAGE_KEYS } from '@utils/storage';
+import useIsSmallViewport from '@hooks/useIsSmallViewport';
+import useBackgroundPublisherContext from '@hooks/useBackgroundPublisherContext';
+import useSuspenseUntilAppConfigReady from '@Context/AppConfig/hooks/useSuspenseUntilAppConfigReady';
+import useIsCameraControlAllowed from '@Context/AppConfig/hooks/useIsCameraControlAllowed';
+import useIsMicrophoneControlAllowed from '@Context/AppConfig/hooks/useIsMicrophoneControlAllowed';
+
+type WaitingRoomProps = ComponentProps<'div'>;
 
 /**
  * WaitingRoom Component
@@ -24,11 +35,17 @@ import useBackgroundPublisherContext from '../../hooks/useBackgroundPublisherCon
  * - Audio input, audio output, and video input device selectors.
  * - A username input field.
  * - The meeting room name and a button to join the room.
+ * @param root0
+ * @param root0.className
  * @returns {ReactElement} - The waiting room.
  */
-const WaitingRoom = (): ReactElement => {
-  const { initLocalPublisher, publisher, accessStatus, destroyPublisher } =
-    usePreviewPublisherContext();
+const WaitingRoom: React.FC<WaitingRoomProps> = ({ className, ...props }) => {
+  useSuspenseUntilAppConfigReady();
+
+  const isCameraAllowed = useIsCameraControlAllowed();
+  const isMicrophoneAllowed = useIsMicrophoneControlAllowed();
+
+  const { initializeLocalPublisher, isAudioEnabled, isVideoEnabled } = usePreviewPublisherContext();
 
   const { initBackgroundLocalPublisher, publisher: backgroundPublisher } =
     useBackgroundPublisherContext();
@@ -40,31 +57,32 @@ const WaitingRoom = (): ReactElement => {
   const [username, setUsername] = useState(getStorageItem(STORAGE_KEYS.USERNAME) ?? '');
   const isSmallViewport = useIsSmallViewport();
 
-  useEffect(() => {
-    if (!publisher) {
-      initLocalPublisher();
-    }
+  const shouldInitializeAudioSource = isMicrophoneAllowed && isAudioEnabled;
+  const shouldInitializeVideoSource = isCameraAllowed && isVideoEnabled;
 
-    return () => {
-      // Ensure we destroy the publisher and release any media devices.
-      if (publisher) {
-        destroyPublisher();
-      }
-    };
-  }, [initLocalPublisher, publisher, destroyPublisher]);
+  const tryInitializeLocalPublisher = useEffectEvent(() => {
+    const shouldInitializeAudioSource = isMicrophoneAllowed && isAudioEnabled;
+    const shouldInitializeVideoSource = isCameraAllowed && isVideoEnabled;
+    const shouldInitializePublisher = shouldInitializeAudioSource || shouldInitializeVideoSource;
+
+    if (!shouldInitializePublisher) return;
+
+    void initializeLocalPublisher();
+  });
+
+  const tryInitBackgroundLocalPublisher = useEffectEvent(() => {
+    const shouldInitialize =
+      !backgroundPublisher && (shouldInitializeAudioSource || shouldInitializeVideoSource);
+
+    if (!shouldInitialize) return;
+
+    void initBackgroundLocalPublisher();
+  });
 
   useEffect(() => {
-    if (!backgroundPublisher) {
-      initBackgroundLocalPublisher();
-    }
-  }, [initBackgroundLocalPublisher, backgroundPublisher]);
-
-  // After changing device permissions, reload the page to reflect the device's permission change.
-  useEffect(() => {
-    if (accessStatus === DEVICE_ACCESS_STATUS.ACCESS_CHANGED) {
-      window.location.reload();
-    }
-  }, [accessStatus]);
+    void tryInitBackgroundLocalPublisher();
+    tryInitializeLocalPublisher();
+  }, []);
 
   const handleAudioInputOpen = (
     event: MouseEvent<HTMLButtonElement> | TouchEvent<HTMLButtonElement>
@@ -95,7 +113,7 @@ const WaitingRoom = (): ReactElement => {
   };
 
   return (
-    <Box data-testid="waitingRoom">
+    <Box data-testid="waitingRoom" className={classNames(className)} {...props}>
       <GridLayout>
         <GridLayout.Banner>
           <Banner />
@@ -105,7 +123,7 @@ const WaitingRoom = (): ReactElement => {
             className={`max-w-full flex-col ${isSmallViewport ? '' : 'h-[394px]'} sm: inline-flex`}
           >
             <VideoContainer username={username} />
-            {accessStatus === DEVICE_ACCESS_STATUS.ACCEPTED && (
+            {
               <ControlPanel
                 handleAudioInputOpen={handleAudioInputOpen}
                 handleVideoInputOpen={handleVideoInputOpen}
@@ -116,16 +134,13 @@ const WaitingRoom = (): ReactElement => {
                 openAudioOutput={openAudioOutput}
                 anchorEl={anchorEl}
               />
-            )}
+            }
           </div>
         </GridLayout.Left>
         <GridLayout.Right>
           <UsernameInput username={username} setUsername={setUsername} />
         </GridLayout.Right>
       </GridLayout>
-      {accessStatus !== DEVICE_ACCESS_STATUS.ACCEPTED && (
-        <DeviceAccessAlert accessStatus={accessStatus} />
-      )}
     </Box>
   );
 };

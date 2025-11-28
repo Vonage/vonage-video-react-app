@@ -10,7 +10,6 @@ import {
   PreviewPublisherContextType,
   PreviewPublisherProvider,
 } from '@Context/PreviewPublisherProvider';
-import useDevices from '@hooks/useDevices';
 import { allMediaDevices, defaultAudioDevice } from '@utils/mockData/device';
 import usePreviewPublisherContext from '@hooks/usePreviewPublisherContext';
 import useBackgroundPublisherContext from '@hooks/useBackgroundPublisherContext';
@@ -19,6 +18,8 @@ import { DEVICE_ACCESS_STATUS } from '@utils/constants';
 import waitUntilPlaying from '@utils/waitUntilPlaying';
 import { BackgroundPublisherContextType } from '@Context/BackgroundPublisherProvider';
 import { AppConfigProviderWrapperOptions, makeAppConfigProviderWrapper } from '@test/providers';
+import composeProviders from '@utils/composeProviders';
+import Suspense$ from '@Context/Suspense$';
 import WaitingRoom from './WaitingRoom';
 
 const mockedNavigate = vi.fn();
@@ -51,12 +52,7 @@ vi.mock('@hooks/usePermissions.tsx');
 vi.mock('@utils/waitUntilPlaying/waitUntilPlaying.ts');
 
 const mockUserContext = {
-  user: {
-    defaultSettings: {
-      videoFilter: undefined,
-      name: 'John Doe',
-    },
-  },
+  user: { defaultSettings: { videoFilter: undefined, name: 'John Doe' } },
   setUser: vi.fn(),
 } as unknown as UserContextType;
 
@@ -79,10 +75,7 @@ describe('WaitingRoom', () => {
 
   beforeEach(() => {
     vi.mocked(useUserContext).mockImplementation(() => mockUserContext);
-    vi.mocked(useDevices).mockReturnValue({
-      getAllMediaDevices: vi.fn(),
-      allMediaDevices,
-    });
+    vi.mocked(useDevices).mockReturnValue({ getAllMediaDevices: vi.fn(), allMediaDevices });
     mockPublisher = Object.assign(new EventEmitter(), {
       applyVideoFilter: vi.fn(),
       clearVideoFilter: vi.fn(),
@@ -119,25 +112,21 @@ describe('WaitingRoom', () => {
     vi.spyOn(globalThis.location, 'reload');
   });
 
-  it('should render', () => {
-    render(<WaitingRoomWithProviders />);
+  it('should render', async () => {
+    await render(<WaitingRoomWithProviders />);
     const waitingRoom = screen.getByTestId('waitingRoom');
     expect(waitingRoom).not.toBeNull();
   });
 
-  it('should display a video loading element on entering', () => {
-    render(<WaitingRoomWithProviders />, {
+  it('should display a video loading element on entering', async () => {
+    await render(<WaitingRoomWithProviders />, {
       appConfigOptions: {
-        value: {
-          isAppConfigLoaded: false,
-          videoSettings: {
-            allowCameraControl: true,
-          },
-        },
+        value: { isAppConfigLoaded: true, videoSettings: { allowCameraControl: true } },
       },
     });
 
     const videoLoadingElement = screen.getByTestId('VideoLoading');
+
     expect(videoLoadingElement).toBeVisible();
   });
 
@@ -147,7 +136,7 @@ describe('WaitingRoom', () => {
     previewPublisherContext.publisherVideoElement = mockPublisherVideoElement;
     previewPublisherContext.isVideoEnabled = true;
 
-    const { rerender, container } = render(<WaitingRoomWithProviders />);
+    const { rerender, container } = await render(<WaitingRoomWithProviders />);
 
     // TODO: investigate why this needs to be awaited or the test fails
     // eslint-disable-next-line @typescript-eslint/await-thenable
@@ -163,9 +152,9 @@ describe('WaitingRoom', () => {
     const user = userEvent.setup();
 
     previewPublisherContext.publisher = mockPublisher;
-    previewPublisherContext.destroyPublisher = mockedDestroyPublisher;
+    previewPublisherContext.unpublish = mockedDestroyPublisher;
 
-    const { unmount } = render(<WaitingRoomWithProviders />);
+    const { unmount } = await render(<WaitingRoomWithProviders />);
 
     // Verify we're in the waiting room for test-room-name
     expect(screen.getByText('test-room-name')).toBeInTheDocument();
@@ -184,14 +173,17 @@ describe('WaitingRoom', () => {
     expect(mockedDestroyPublisher).toHaveBeenCalled();
   });
 
-  it('should reload window when device permissions change', () => {
-    const { rerender } = render(<WaitingRoomWithProviders />);
+  it('should reload window when device permissions change', async () => {
+    const { rerender } = await render(<WaitingRoomWithProviders />);
+
     expect(globalThis.location.reload).not.toBeCalled();
 
     act(() => {
       previewPublisherContext.accessStatus = DEVICE_ACCESS_STATUS.ACCESS_CHANGED;
     });
+
     rerender(<WaitingRoomWithProviders />);
+
     expect(globalThis.location.reload).toBeCalled();
   });
 });
@@ -213,13 +205,20 @@ function getLocationMock() {
   return { locationBackUp: location, locationMock };
 }
 
-function render(
+async function render(
   ui: ReactElement,
-  options?: {
-    appConfigOptions?: AppConfigProviderWrapperOptions;
-  }
+  options?: { appConfigOptions?: AppConfigProviderWrapperOptions }
 ) {
   const { AppConfigWrapper } = makeAppConfigProviderWrapper(options?.appConfigOptions);
 
-  return renderBase(ui, { wrapper: AppConfigWrapper });
+  const composeWrapper = composeProviders(Suspense$, AppConfigWrapper);
+
+  let result: ReturnType<typeof renderBase>;
+
+  await act(() => {
+    result = renderBase(ui, { wrapper: composeWrapper });
+    return Promise.resolve();
+  });
+
+  return result!;
 }

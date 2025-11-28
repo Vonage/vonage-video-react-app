@@ -4,9 +4,7 @@ import useUserContext from './useUserContext';
 import { ChatMessageType } from '../types/chat';
 import { SignalType } from '../types/session';
 
-export type UseChatProps = {
-  signal: ((data: SignalType) => void) | undefined;
-};
+export type UseChatProps = { signal: ((data: SignalType) => void) | undefined };
 
 export type UseChat = {
   messages: ChatMessageType[];
@@ -39,10 +37,7 @@ const useChat = ({ signal }: UseChatProps): UseChat => {
 
       signal({
         type: 'chat',
-        data: JSON.stringify({
-          participantName: localParticipantName,
-          text,
-        }),
+        data: JSON.stringify({ participantName: localParticipantName, text }),
       });
     },
     [signal, localParticipantName]
@@ -60,18 +55,14 @@ const useChat = ({ signal }: UseChatProps): UseChat => {
           };
           setMessages((prev) => [...prev, message]);
         } catch (err) {
-          console.log(err);
+          console.error(err);
         }
       }
     },
     [t]
   );
 
-  return {
-    messages,
-    onChatMessage,
-    sendChatMessage,
-  };
+  return { messages, onChatMessage, sendChatMessage };
 };
 
 export default useChat;

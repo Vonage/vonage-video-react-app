@@ -6,11 +6,11 @@ import type { AudioOutputDevice } from '@vonage/client-sdk-video';
 import { useTranslation } from 'react-i18next';
 import useAppConfig from '@Context/AppConfig/hooks/useAppConfig';
 import useCustomTheme from '@Context/Theme';
-import useDevices from '@hooks/useDevices';
 import useAudioOutputContext from '@hooks/useAudioOutputContext';
 import { isGetActiveAudioOutputDeviceSupported } from '@utils/util';
 import cleanAndDedupeDeviceLabels from '@utils/cleanAndDedupeDeviceLabels';
 import DropdownSeparator from '../DropdownSeparator';
+import useAudioOutputDevices from '@Context/Device/hooks/useAudioOutputDevices';
 
 export type OutputDevicesProps = {
   handleToggle: () => void;
@@ -33,12 +33,11 @@ const OutputDevices = ({ handleToggle }: OutputDevicesProps): ReactElement | fal
     ({ meetingRoomSettings }) => meetingRoomSettings.allowDeviceSelection
   );
 
-  const {
-    allMediaDevices: { audioOutputDevices },
-  } = useDevices();
   const defaultOutputDevices = [{ deviceId: 'default', label: t('devices.audio.defaultLabel') }];
 
   const isAudioOutputSupported = isGetActiveAudioOutputDeviceSupported();
+
+  const audioOutputDevices = useAudioOutputDevices();
 
   const availableDevices = isAudioOutputSupported ? audioOutputDevices : defaultOutputDevices;
   const availableDevicesCleaned = useMemo(

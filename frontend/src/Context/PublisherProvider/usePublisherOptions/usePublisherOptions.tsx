@@ -1,82 +1,172 @@
-import { useRef, useEffect, useState } from 'react';
+import { useState, useMemo } from 'react';
 import {
   PublisherProperties,
   VideoFilter,
   AudioFilter,
   hasMediaProcessorSupport,
+  type GetUserMediaProperties,
 } from '@vonage/client-sdk-video';
 import useAppConfig from '@Context/AppConfig/hooks/useAppConfig';
 import useUserContext from '@hooks/useUserContext';
 import getInitials from '@utils/getInitials';
-import DeviceStore from '@utils/DeviceStore';
+import useIsCameraControlAllowed from '@Context/AppConfig/hooks/useIsCameraControlAllowed';
+import useIsMicrophoneControlAllowed from '@Context/AppConfig/hooks/useIsMicrophoneControlAllowed';
+import useSuspenseUntilAppConfigReady from '@Context/AppConfig/hooks/useSuspenseUntilAppConfigReady';
 import { getStorageItem, STORAGE_KEYS } from '@utils/storage';
+import isNil from 'lodash/isNil';
+import useStableCallback from '@hooks/useStableCallback';
+import useConnectedDeviceId from '@Context/Device/hooks/useConnectedDeviceId';
+import { UserType } from '@Context/user';
+
+type PublisherOptions = {
+  publisherOptions: PublisherProperties;
+  isVideoEnabled: boolean;
+  isAudioEnabled: boolean;
+  toggleVideo: (enabled: boolean) => void;
+  toggleAudio: (enabled: boolean) => void;
+};
 
 /**
  * React hook to get PublisherProperties combining default options and options set in UserContext
- * @returns {PublisherProperties | null} publisher properties object
+ * @returns {PublisherOptions} publisher properties object
  */
 
-const usePublisherOptions = (): PublisherProperties | null => {
+const usePublisherOptions = (options: { videoFilter?: VideoFilter } = {}): PublisherOptions => {
+  useSuspenseUntilAppConfigReady();
+
   const { user } = useUserContext();
 
+  const isCameraAllowed = useIsCameraControlAllowed();
+  const isMicrophoneAllowed = useIsMicrophoneControlAllowed();
   const defaultResolution = useAppConfig(({ videoSettings }) => videoSettings.defaultResolution);
   const allowVideoOnJoin = useAppConfig(({ videoSettings }) => videoSettings.allowVideoOnJoin);
   const allowAudioOnJoin = useAppConfig(({ audioSettings }) => audioSettings.allowAudioOnJoin);
 
-  const [publisherOptions, setPublisherOptions] = useState<PublisherProperties | null>(null);
-  const deviceStoreRef = useRef<DeviceStore | null>(null);
+  const [isVideoEnabled, _setIsVideoEnabled] = useState<boolean>(() => {
+    const localIsVideoEnabled = getStorageItem(STORAGE_KEYS.VIDEO_SOURCE_ENABLED);
 
-  useEffect(() => {
-    const setOptions = async () => {
-      if (!deviceStoreRef.current) {
-        deviceStoreRef.current = new DeviceStore();
-        await deviceStoreRef.current.init();
-      }
+    if (isNil(localIsVideoEnabled)) {
+      return user.defaultSettings.publishVideo;
+    }
 
-      const videoSource = deviceStoreRef.current.getConnectedDeviceId('videoinput');
-      const audioSource = deviceStoreRef.current.getConnectedDeviceId('audioinput');
+    return localIsVideoEnabled === 'true';
+  });
 
-      const {
-        name,
-        noiseSuppression,
-        backgroundFilter,
-        publishAudio,
-        publishVideo,
-        publishCaptions,
-      } = user.defaultSettings;
-      const initials = getInitials(name);
+  const [isAudioEnabled, _setIsAudioEnabled] = useState<boolean>(() => {
+    const localIsAudioEnabled = getStorageItem(STORAGE_KEYS.AUDIO_SOURCE_ENABLED);
 
-      const audioFilter: AudioFilter | undefined =
-        noiseSuppression && hasMediaProcessorSupport()
-          ? { type: 'advancedNoiseSuppression' }
-          : undefined;
+    if (isNil(localIsAudioEnabled)) {
+      return user.defaultSettings.publishAudio;
+    }
 
-      const videoFilter: VideoFilter | undefined =
-        backgroundFilter && hasMediaProcessorSupport() ? backgroundFilter : undefined;
+    return localIsAudioEnabled === 'true';
+  });
 
-      const isAudioDisabled = getStorageItem(STORAGE_KEYS.AUDIO_SOURCE_ENABLED) === 'false';
-      const isVideoDisabled = getStorageItem(STORAGE_KEYS.VIDEO_SOURCE_ENABLED) === 'false';
+  const [videoSource, audioSource] = useConnectedDeviceId('videoinput', 'audioinput');
 
-      setPublisherOptions({
-        audioFallback: { publisher: true },
-        audioSource,
-        initials,
-        insertDefaultUI: false,
-        name,
-        publishAudio: allowAudioOnJoin && publishAudio && !isAudioDisabled,
-        publishVideo: allowVideoOnJoin && publishVideo && !isVideoDisabled,
-        resolution: defaultResolution,
-        audioFilter,
-        videoFilter,
-        videoSource,
-        publishCaptions,
-      });
-    };
+  const [publisherOptions, setPublisherOptions] = useState<PublisherProperties>(() =>
+    getInitialPublisherOptions({
+      isCameraAllowed,
+      isMicrophoneAllowed,
+      isVideoEnabled,
+      isAudioEnabled,
+      user,
+      defaultResolution,
+      videoSource,
+      audioSource,
+      allowVideoOnJoin,
+      allowAudioOnJoin,
+      ...options,
+    } as GetInitialPublisherOptionsParams)
+  );
 
-    setOptions();
-  }, [allowAudioOnJoin, defaultResolution, allowVideoOnJoin, user.defaultSettings]);
+  const toggleVideo = useStableCallback((enabled?: boolean) => {
+    const _enabled = enabled ?? !isVideoEnabled;
 
-  return publisherOptions;
+    localStorage.setItem(STORAGE_KEYS.VIDEO_SOURCE_ENABLED, String(_enabled));
+
+    _setIsVideoEnabled(_enabled);
+    setPublisherOptions((prevOptions) => ({
+      ...prevOptions,
+      publishVideo: _enabled,
+    }));
+  });
+
+  const toggleAudio = useStableCallback((enabled?: boolean) => {
+    const _enabled = enabled ?? !isAudioEnabled;
+
+    localStorage.setItem(STORAGE_KEYS.AUDIO_SOURCE_ENABLED, String(_enabled));
+
+    _setIsAudioEnabled(_enabled);
+    setPublisherOptions((prevOptions) => ({
+      ...prevOptions,
+      publishAudio: _enabled,
+    }));
+  });
+
+  return useMemo(
+    () => ({
+      publisherOptions,
+      isVideoEnabled,
+      isAudioEnabled,
+      toggleVideo,
+      toggleAudio,
+    }),
+    [publisherOptions, isVideoEnabled, isAudioEnabled, toggleVideo, toggleAudio]
+  );
 };
+
+type GetInitialPublisherOptionsParams = Parameters<typeof getInitialPublisherOptions>[0];
+
+function getInitialPublisherOptions(options: {
+  isCameraAllowed: boolean;
+  isMicrophoneAllowed: boolean;
+  isVideoEnabled: boolean;
+  isAudioEnabled: boolean;
+  user: UserType;
+  defaultResolution: GetUserMediaProperties['resolution'];
+  videoSource: string | null;
+  audioSource: string | null;
+  allowVideoOnJoin: boolean;
+  allowAudioOnJoin: boolean;
+  videoFilter: VideoFilter | undefined;
+}): PublisherProperties {
+  const shouldInitializeAudioSource = options.isMicrophoneAllowed && options.isAudioEnabled;
+  const shouldInitializeVideoSource = options.isCameraAllowed && options.isVideoEnabled;
+
+  const { name, noiseSuppression, backgroundFilter, publishCaptions } =
+    options.user.defaultSettings;
+
+  const initials = getInitials(name);
+
+  const audioFilter: AudioFilter | undefined = (() => {
+    if (!shouldInitializeAudioSource) return undefined;
+
+    return noiseSuppression && hasMediaProcessorSupport()
+      ? { type: 'advancedNoiseSuppression' }
+      : undefined;
+  })();
+
+  const videoFilter: VideoFilter | undefined = (() => {
+    if (options.videoFilter) return options.videoFilter;
+    if (!shouldInitializeVideoSource) return undefined;
+    return backgroundFilter && hasMediaProcessorSupport() ? backgroundFilter : undefined;
+  })();
+
+  return {
+    audioFallback: { publisher: true },
+    audioSource: options.audioSource,
+    initials,
+    insertDefaultUI: false,
+    name,
+    publishAudio: shouldInitializeAudioSource && options.allowAudioOnJoin,
+    publishVideo: shouldInitializeVideoSource && options.allowVideoOnJoin,
+    resolution: options.defaultResolution,
+    audioFilter,
+    videoFilter,
+    videoSource: options.videoSource,
+    publishCaptions,
+  };
+}
 
 export default usePublisherOptions;

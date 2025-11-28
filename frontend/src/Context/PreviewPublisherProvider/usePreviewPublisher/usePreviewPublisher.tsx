@@ -1,27 +1,17 @@
-import { useState, useRef, useCallback, useEffect } from 'react';
+import { useState, useRef, useCallback } from 'react';
 import {
   Publisher,
-  Event,
-  initPublisher,
   VideoFilter,
   hasMediaProcessorSupport,
   PublisherProperties,
 } from '@vonage/client-sdk-video';
-import useAppConfig from '@Context/AppConfig/hooks/useAppConfig';
-import setMediaDevices from '../../../utils/mediaDeviceUtils';
-import useDevices from '../../../hooks/useDevices';
-import usePermissions from '../../../hooks/usePermissions';
-import useUserContext from '../../../hooks/useUserContext';
-import { DEVICE_ACCESS_STATUS } from '../../../utils/constants';
+import useSuspenseUntilAppConfigReady from '@Context/AppConfig/hooks/useSuspenseUntilAppConfigReady';
+import useUserContext from '@hooks/useUserContext';
 import { UserType } from '../../user';
-import { AccessDeniedEvent } from '../../PublisherProvider/usePublisher/usePublisher';
-import DeviceStore from '../../../utils/DeviceStore';
-import { setStorageItem, STORAGE_KEYS } from '../../../utils/storage';
-import applyBackgroundFilter from '../../../utils/backgroundFilter/applyBackgroundFilter/applyBackgroundFilter';
-
-type PublisherVideoElementCreatedEvent = Event<'videoElementCreated', Publisher> & {
-  element: HTMLVideoElement | HTMLObjectElement;
-};
+import usePublisher, { ApplyBackgroundFilterParams } from '@Context/PublisherProvider/usePublisher';
+import { setStorageItem, STORAGE_KEYS } from '@utils/storage';
+import usePublisherMediaDeviceId from '@hooks/usePublisherMediaDevices';
+import useStableCallback from '@hooks/useStableCallback';
 
 export type PreviewPublisherContextType = {
   isAudioEnabled: boolean;
@@ -29,17 +19,16 @@ export type PreviewPublisherContextType = {
   isVideoEnabled: boolean;
   publisher: Publisher | null;
   publisherVideoElement: HTMLVideoElement | HTMLObjectElement | undefined;
-  destroyPublisher: () => void;
+  unpublish: () => void;
   toggleAudio: () => void;
   toggleVideo: () => void;
-  changeBackground: (backgroundSelected: string) => Promise<void>;
+  changeBackground: (arg: ApplyBackgroundFilterParams) => Promise<void>;
   backgroundFilter: VideoFilter | undefined;
-  localAudioSource: string | undefined;
-  localVideoSource: string | undefined;
-  accessStatus: string | null;
+  localAudioSource: string | null;
+  localVideoSource: string | null;
   changeAudioSource: (deviceId: string) => void;
   changeVideoSource: (deviceId: string) => void;
-  initLocalPublisher: () => Promise<void>;
+  initializeLocalPublisher: (options?: Partial<PublisherProperties>) => Publisher;
   speechLevel: number;
 };
 
@@ -66,54 +55,48 @@ export type PreviewPublisherContextType = {
  * @returns {PreviewPublisherContextType} preview context
  */
 const usePreviewPublisher = (): PreviewPublisherContextType => {
+  useSuspenseUntilAppConfigReady();
+
   const { setUser, user } = useUserContext();
-  const defaultResolution = useAppConfig(({ videoSettings }) => videoSettings.defaultResolution);
-  const { allMediaDevices, getAllMediaDevices } = useDevices();
-  const [publisherVideoElement, setPublisherVideoElement] = useState<
-    HTMLVideoElement | HTMLObjectElement
-  >();
-  const [speechLevel, setSpeechLevel] = useState(0);
-  const { setAccessStatus, accessStatus } = usePermissions();
-  const publisherRef = useRef<Publisher | null>(null);
-  const [isPublishing, setIsPublishing] = useState(false);
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const {
+    initializeLocalPublisher: _initializeLocalPublisher,
+    isAudioEnabled,
+    // isForceMuted,
+    isPublishing,
+    // publishingError,
+    isVideoEnabled,
+    // publish,
+    publisher,
+    publisherVideoElement,
+    // quality,
+    // stream,
+    toggleAudio: _toggleAudio,
+    toggleVideo: _toggleVideo,
+    changeBackground: _changeBackground,
+    unpublish,
+    // publisherOptions,
+  } = usePublisher();
+
   const initialBackgroundRef = useRef<VideoFilter | undefined>(
     user.defaultSettings.backgroundFilter
   );
+
+  const [speechLevel, setSpeechLevel] = useState(0);
+
   const [backgroundFilter, setBackgroundFilter] = useState<VideoFilter | undefined>(
     user.defaultSettings.backgroundFilter
   );
-  const [isVideoEnabled, setIsVideoEnabled] = useState(true);
-  const [isAudioEnabled, setIsAudioEnabled] = useState(true);
-  const [localVideoSource, setLocalVideoSource] = useState<string | undefined>(undefined);
-  const [localAudioSource, setLocalAudioSource] = useState<string | undefined>(undefined);
-  const deviceStoreRef = useRef<DeviceStore>(new DeviceStore());
 
-  /* This sets the default devices in use so that the user knows what devices they are using */
-  useEffect(() => {
-    setMediaDevices(publisherRef, allMediaDevices, setLocalAudioSource, setLocalVideoSource);
-  }, [allMediaDevices]);
+  const [localAudioSource, setLocalAudioSource] = usePublisherMediaDeviceId(
+    publisher,
+    'audioinput'
+  );
 
-  const handlePreviewDestroyed = () => {
-    publisherRef.current = null;
-  };
-
-  /**
-   * Change background replacement or blur effect
-   * @param {string} backgroundSelected - The selected background option
-   * @returns {void}
-   */
-  const changeBackground = useCallback(
-    (backgroundSelected: string) => {
-      return applyBackgroundFilter({
-        publisher: publisherRef.current,
-        backgroundSelected,
-        setUser,
-        setBackgroundFilter,
-      }).catch(() => {
-        console.error('Failed to apply background filter.');
-      });
-    },
-    [setBackgroundFilter, setUser]
+  const [localVideoSource, setLocalVideoSource] = usePublisherMediaDeviceId(
+    publisher,
+    'videoinput'
   );
 
   /**
@@ -122,10 +105,10 @@ const usePreviewPublisher = (): PreviewPublisherContextType => {
    */
   const changeAudioSource = useCallback(
     (deviceId: string) => {
-      if (!deviceId || !publisherRef.current) {
+      if (!deviceId || !publisher) {
         return;
       }
-      publisherRef.current.setAudioSource(deviceId);
+      publisher.setAudioSource(deviceId);
       setLocalAudioSource(deviceId);
       setStorageItem(STORAGE_KEYS.AUDIO_SOURCE, deviceId);
       if (setUser) {
@@ -135,7 +118,7 @@ const usePreviewPublisher = (): PreviewPublisherContextType => {
         }));
       }
     },
-    [setUser]
+    [publisher, setLocalAudioSource, setUser]
   );
 
   /**
@@ -144,10 +127,10 @@ const usePreviewPublisher = (): PreviewPublisherContextType => {
    */
   const changeVideoSource = useCallback(
     (deviceId: string) => {
-      if (!deviceId || !publisherRef.current) {
+      if (!deviceId || !publisher) {
         return;
       }
-      publisherRef.current.setVideoSource(deviceId);
+      publisher.setVideoSource(deviceId);
       setLocalVideoSource(deviceId);
       setStorageItem(STORAGE_KEYS.VIDEO_SOURCE, deviceId);
       if (setUser) {
@@ -157,116 +140,8 @@ const usePreviewPublisher = (): PreviewPublisherContextType => {
         }));
       }
     },
-    [setUser]
+    [publisher, setLocalVideoSource, setUser]
   );
-
-  /**
-   * Handle device permissions denial
-   * used to inform the user they need to give permissions to devices to access the call
-   * after a user grants permissions to the denied device, trigger a reload.
-   * @returns {void}
-   */
-  const handleAccessDenied = useCallback(
-    async (event: AccessDeniedEvent) => {
-      const deviceDeniedAccess = event.message?.startsWith('Microphone') ? 'microphone' : 'camera';
-
-      setAccessStatus(DEVICE_ACCESS_STATUS.REJECTED);
-
-      try {
-        const permissionStatus = await window.navigator.permissions.query({
-          name: deviceDeniedAccess,
-        });
-        permissionStatus.onchange = () => {
-          if (permissionStatus.state === 'granted') {
-            setAccessStatus(DEVICE_ACCESS_STATUS.ACCESS_CHANGED);
-          }
-        };
-      } catch (error) {
-        console.error(`Failed to query device permission for ${deviceDeniedAccess}: ${error}`);
-      }
-    },
-    [setAccessStatus]
-  );
-
-  const handleVideoElementCreated = (event: PublisherVideoElementCreatedEvent) => {
-    setPublisherVideoElement(event.element);
-    setIsPublishing(true);
-  };
-
-  /* TODO: Replace with mvgAverage utils once merged */ // NOSONAR
-  const calculateAudioLevel = useCallback((audioLevel: number) => {
-    const currentLogLevel = Math.log(audioLevel) / Math.LN10 / 1.5 + 1;
-    setSpeechLevel(Math.min(Math.max(currentLogLevel, 0), 1) * 100);
-  }, []);
-
-  const addPublisherListeners = useCallback(
-    (publisher: Publisher | null) => {
-      if (!publisher) {
-        return;
-      }
-      publisher.on('destroyed', handlePreviewDestroyed);
-      publisher.on('accessDenied', handleAccessDenied);
-      publisher.on('videoElementCreated', handleVideoElementCreated);
-      publisher.on('audioLevelUpdated', ({ audioLevel }: { audioLevel: number }) => {
-        calculateAudioLevel(audioLevel);
-      });
-      publisher.on('accessAllowed', () => {
-        setAccessStatus(DEVICE_ACCESS_STATUS.ACCEPTED);
-        getAllMediaDevices();
-      });
-    },
-    [calculateAudioLevel, getAllMediaDevices, handleAccessDenied, setAccessStatus]
-  );
-
-  const initLocalPublisher = useCallback(async () => {
-    if (publisherRef.current) {
-      return;
-    }
-    // We reset user preferences as we want to start with both devices enabled
-    setStorageItem(STORAGE_KEYS.AUDIO_SOURCE_ENABLED, 'true');
-    setStorageItem(STORAGE_KEYS.VIDEO_SOURCE_ENABLED, 'true');
-
-    // Set videoFilter based on user's selected background
-    let videoFilter: VideoFilter | undefined;
-    if (initialBackgroundRef.current && hasMediaProcessorSupport()) {
-      videoFilter = initialBackgroundRef.current;
-    }
-
-    await deviceStoreRef.current.init();
-    const videoSource = deviceStoreRef.current.getConnectedDeviceId('videoinput');
-    const audioSource = deviceStoreRef.current.getConnectedDeviceId('audioinput');
-
-    const publisherOptions: PublisherProperties = {
-      insertDefaultUI: false,
-      videoFilter,
-      resolution: defaultResolution,
-      audioSource,
-      videoSource,
-    };
-
-    publisherRef.current = initPublisher(undefined, publisherOptions, (err: unknown) => {
-      if (err instanceof Error) {
-        publisherRef.current = null;
-        if (err.name === 'OT_USER_MEDIA_ACCESS_DENIED') {
-          console.error('initPublisher error: ', err);
-        }
-      }
-    });
-    addPublisherListeners(publisherRef.current);
-  }, [addPublisherListeners, defaultResolution]);
-
-  /**
-   * Destroys the preview publisher
-   * @returns {void}
-   */
-  const destroyPublisher = useCallback(() => {
-    if (publisherRef.current) {
-      publisherRef.current.destroy();
-      publisherRef.current = null;
-    } else {
-      console.warn('pub not destroyed');
-    }
-  }, []);
 
   /**
    * Turns the camera on and off
@@ -275,16 +150,12 @@ const usePreviewPublisher = (): PreviewPublisherContextType => {
    * @returns {void}
    */
   const toggleVideo = () => {
-    if (!publisherRef.current) {
-      return;
-    }
-    publisherRef.current.publishVideo(!isVideoEnabled);
-    setStorageItem(STORAGE_KEYS.VIDEO_SOURCE_ENABLED, (!isVideoEnabled).toString());
-    setIsVideoEnabled(!isVideoEnabled);
+    const newIsVideoEnabled = _toggleVideo();
+
     if (setUser) {
       setUser((prevUser: UserType) => ({
         ...prevUser,
-        defaultSettings: { ...prevUser.defaultSettings, publishVideo: !isVideoEnabled },
+        defaultSettings: { ...prevUser.defaultSettings, publishVideo: newIsVideoEnabled },
       }));
     }
   };
@@ -296,28 +167,64 @@ const usePreviewPublisher = (): PreviewPublisherContextType => {
    * @returns {void}
    */
   const toggleAudio = () => {
-    if (!publisherRef.current) {
-      return;
-    }
-    publisherRef.current.publishAudio(!isAudioEnabled);
-    setIsAudioEnabled(!isAudioEnabled);
-    setStorageItem(STORAGE_KEYS.AUDIO_SOURCE_ENABLED, (!isAudioEnabled).toString());
+    const newIsAudioEnabled = _toggleAudio();
+
     if (setUser) {
       setUser((prevUser: UserType) => ({
         ...prevUser,
-        defaultSettings: { ...prevUser.defaultSettings, publishAudio: !isAudioEnabled },
+        defaultSettings: { ...prevUser.defaultSettings, publishAudio: newIsAudioEnabled },
       }));
     }
   };
 
+  // Set videoFilter based on user's selected background
+  const videoFilter =
+    initialBackgroundRef.current && hasMediaProcessorSupport()
+      ? initialBackgroundRef.current
+      : undefined;
+
+  const initializeLocalPublisher = useStableCallback((options?: Partial<PublisherProperties>) => {
+    const publisher = _initializeLocalPublisher({ videoFilter, ...options });
+
+    /* TODO: Replace with mvgAverage utils once merged */ // NOSONAR
+    const calculateAudioLevel = (audioLevel: number) => {
+      const currentLogLevel = Math.log(audioLevel) / Math.LN10 / 1.5 + 1;
+      setSpeechLevel(Math.min(Math.max(currentLogLevel, 0), 1) * 100);
+    };
+
+    publisher.on('audioLevelUpdated', ({ audioLevel }: { audioLevel: number }) => {
+      calculateAudioLevel(audioLevel);
+    });
+
+    return publisher;
+  });
+
+  /**
+   * Change background replacement or blur effect
+   * @param {string} backgroundSelected - The selected background option
+   * @returns {void}
+   */
+  const changeBackground = useCallback(
+    (args: ApplyBackgroundFilterParams) => {
+      return _changeBackground({
+        storeItem: undefined,
+        setUser,
+        setBackgroundFilter,
+        ...args,
+      }).catch(() => {
+        console.error('Failed to apply background filter.');
+      });
+    },
+    [_changeBackground, setUser]
+  );
+
   return {
     isAudioEnabled,
-    initLocalPublisher,
+    initializeLocalPublisher,
     isPublishing,
     isVideoEnabled,
-    destroyPublisher,
-
-    publisher: publisherRef.current,
+    unpublish,
+    publisher,
     publisherVideoElement,
     toggleAudio,
     toggleVideo,
@@ -327,7 +234,6 @@ const usePreviewPublisher = (): PreviewPublisherContextType => {
     changeVideoSource,
     localAudioSource,
     localVideoSource,
-    accessStatus,
     speechLevel,
   };
 };

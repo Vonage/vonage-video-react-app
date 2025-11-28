@@ -6,11 +6,13 @@ import Speaker from '@mui/icons-material/Speaker';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import { useTranslation } from 'react-i18next';
 import usePreviewPublisherContext from '@hooks/usePreviewPublisherContext';
-import useDevices from '@hooks/useDevices';
 import useAudioOutputContext from '@hooks/useAudioOutputContext';
 import useIsSmallViewport from '@hooks/useIsSmallViewport';
 import useAppConfig from '@Context/AppConfig/hooks/useAppConfig';
 import MenuDevicesWaitingRoom from '../MenuDevices';
+import useAudioInputDevices from '@Context/Device/hooks/useAudioInputDevices';
+import useVideoInputDevices from '@Context/Device/hooks/useVideoInputDevices';
+import useAudioOutputDevices from '@Context/Device/hooks/useAudioOutputDevices';
 
 export type ControlPanelProps = {
   handleAudioInputOpen: (
@@ -56,14 +58,19 @@ const ControlPanel = ({
 }: ControlPanelProps): ReactElement | false => {
   const { t } = useTranslation();
   const isSmallViewport = useIsSmallViewport();
-  const { allMediaDevices } = useDevices();
+
   const { localAudioSource, localVideoSource, changeAudioSource, changeVideoSource } =
     usePreviewPublisherContext();
+
   const { currentAudioOutputDevice, setAudioOutputDevice } = useAudioOutputContext();
 
   const allowDeviceSelection = useAppConfig(
     ({ waitingRoomSettings }) => waitingRoomSettings.allowDeviceSelection
   );
+
+  const audioInputDevices = useAudioInputDevices();
+  const videoInputDevices = useVideoInputDevices();
+  const audioOutputDevices = useAudioOutputDevices();
 
   const buttonSx: SxProps = {
     borderRadius: '10px',
@@ -97,7 +104,7 @@ const ControlPanel = ({
               : t('devices.audio.microphone.full')}
           </Button>
           <MenuDevicesWaitingRoom
-            devices={allMediaDevices.audioInputDevices}
+            devices={audioInputDevices}
             open={openAudioInput}
             onClose={handleClose}
             anchorEl={anchorEl}
@@ -117,7 +124,7 @@ const ControlPanel = ({
           </Button>
 
           <MenuDevicesWaitingRoom
-            devices={allMediaDevices.videoInputDevices}
+            devices={videoInputDevices}
             open={openVideoInput}
             onClose={handleClose}
             anchorEl={anchorEl}
@@ -135,7 +142,7 @@ const ControlPanel = ({
             {t('button.speaker')}
           </Button>
           <MenuDevicesWaitingRoom
-            devices={allMediaDevices.audioOutputDevices}
+            devices={audioOutputDevices}
             open={openAudioOutput}
             onClose={handleClose}
             anchorEl={anchorEl}

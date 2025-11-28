@@ -21,16 +21,17 @@ async function idempotentCallbackWithRetry<T>(
   options: RetryOptions = {}
 ): Promise<T> {
   const { retries = 2, delayMs = 200, onRetry } = options;
+  const maxAttempts = retries + 1;
 
-  let attempt = 0;
+  let attempt = 1;
   let lastError: unknown;
 
-  while (attempt <= retries) {
+  while (attempt <= maxAttempts) {
     try {
       return await callback();
     } catch (error) {
       lastError = error;
-      if (attempt === retries) {
+      if (attempt === maxAttempts) {
         break;
       }
       onRetry?.(error, attempt);

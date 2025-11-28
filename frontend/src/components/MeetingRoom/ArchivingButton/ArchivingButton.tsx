@@ -9,10 +9,7 @@ import useAppConfig from '@Context/AppConfig/hooks/useAppConfig';
 import ToolbarButton from '../ToolbarButton';
 import PopupDialog, { DialogTexts } from '../PopupDialog';
 
-export type ArchivingButtonProps = {
-  isOverflowButton?: boolean;
-  handleClick?: () => void;
-};
+export type ArchivingButtonProps = { isOverflowButton?: boolean; handleClick?: () => void };
 
 /**
  * ArchivingButton Component
@@ -73,7 +70,7 @@ const ArchivingButton = ({
         try {
           await startArchiving(roomName);
         } catch (err) {
-          console.log(err);
+          console.error(err);
         }
       }
     } else if (archiveId && roomName) {
@@ -98,9 +95,7 @@ const ArchivingButton = ({
                 style={{ color: `${isRecording ? 'rgb(239 68 68)' : 'white'}` }}
               />
             }
-            sx={{
-              marginTop: isOverflowButton ? '0px' : '4px',
-            }}
+            sx={{ marginTop: isOverflowButton ? '0px' : '4px' }}
             isOverflowButton={isOverflowButton}
           />
         </Tooltip>

@@ -55,6 +55,8 @@ export default [
             'eslint.config.mjs',
             'scripts/licenseCheck.js',
             'frontend/tailwind.config.js',
+            'backend/jest.config.js',
+            'backend/jest/setEnvVars.js',
             'integration-tests/globalSetup.js',
             // add more config files here if needed, e.g.
             // 'frontend/tailwind.config.*',
@@ -106,6 +108,7 @@ export default [
 
       // General style
       'prettier/prettier': 'error',
+      'no-console': ['error', { allow: ['warn', 'error', 'info'] }],
 
       // TypeScript
       // Removed duplicates already enforced by TypeScript:
@@ -234,6 +237,25 @@ export default [
        */
       'react-hooks/refs': 'off',
 
+      /**
+       * This rule is too restrictive in practice,
+       *
+       * When working with stable values mutability is common and safe
+       * ```ts
+       * const renderCountRef = useRef(0);
+       * renderCountRef.current += 1;
+       * ```
+       */
+      'react-hooks/immutability': 'off',
+
+      /**
+       * React `use` is not context-aware, which means that you can use it outside Suspense boundaries.
+       * This could make the application crash silently at runtime. To prevent this, we will use Suspense$ and use$ instead.
+       *
+       * Suspense$ provides context, and use$ will throw if used outside Suspense$ boundaries.
+       */
+      'react/jsx-pascal-case': ['error', { ignore: ['Suspense$', 'use$'] }],
+
       // Accessibility [todo]: review if we can enable them, otherwise why using jsx-a11y?
       'jsx-a11y/media-has-caption': 'off',
       'jsx-a11y/no-static-element-interactions': 'off',
@@ -258,6 +280,16 @@ export default [
     rules: {
       // unit test usually need to mock before importing to make the mocking work
       'import/first': 'off',
+      'no-restricted-properties': [
+        'warn',
+        { object: 'it', property: 'only', message: 'Remove .only from tests before committing!' },
+        {
+          object: 'describe',
+          property: 'only',
+          message: 'Remove .only from tests before committing!',
+        },
+        { object: 'test', property: 'only', message: 'Remove .only from tests before committing!' },
+      ],
     },
   },
 ];

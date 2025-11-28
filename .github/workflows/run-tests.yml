@@ -74,17 +74,6 @@ jobs:
           /opt/firefox/firefox --version
           echo "Firefox latest downloaded and installed"
 
-      - name: Install opera latest
-        run: |
-          sudo mkdir -p /etc/apt/keyrings
-          curl -fsSL https://deb.opera.com/archive.key | gpg --dearmor | sudo tee /etc/apt/keyrings/opera.gpg > /dev/null
-          echo "deb [signed-by=/etc/apt/keyrings/opera.gpg] https://deb.opera.com/opera-stable/ stable non-free" | \
-            sudo tee /etc/apt/sources.list.d/opera-stable.list > /dev/null
-          sudo apt-get update
-          sudo apt-get install opera-stable -y
-          echo "Check opera version"
-          /usr/bin/opera --version
-
       - name: Setup node
         if: steps.check-skip-ci.outputs.result == 'false'
         uses: actions/setup-node@v4

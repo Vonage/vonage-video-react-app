@@ -56,7 +56,7 @@ const BackgroundEffectsLayout = ({
   };
 
   const handleApplyBackgroundSelect = () => {
-    changeBackground(backgroundSelected);
+    changeBackground({ backgroundSelected });
     handleClose();
   };
 
@@ -144,7 +144,12 @@ const BackgroundEffectsLayout = ({
           backgroundSelected={backgroundSelected}
           setBackgroundSelected={handleBackgroundSelect}
           cleanupSelectedBackgroundReplacement={(dataUrl: string) =>
-            clearBgWhenSelectedDeleted(publisher, changeBackground, backgroundSelected, dataUrl)
+            clearBgWhenSelectedDeleted(
+              publisher,
+              () => changeBackground({ backgroundSelected }),
+              backgroundSelected,
+              dataUrl
+            )
           }
           customBackgroundImageChange={customBackgroundImageChange}
         />
@@ -181,7 +186,12 @@ const BackgroundEffectsLayout = ({
         backgroundSelected={backgroundSelected}
         setBackgroundSelected={handleBackgroundSelect}
         cleanupSelectedBackgroundReplacement={(dataUrl: string) =>
-          clearBgWhenSelectedDeleted(publisher, changeBackground, backgroundSelected, dataUrl)
+          clearBgWhenSelectedDeleted(
+            publisher,
+            () => changeBackground({ backgroundSelected }),
+            backgroundSelected,
+            dataUrl
+          )
         }
         customBackgroundImageChange={customBackgroundImageChange}
       />

@@ -8,10 +8,7 @@
     "build": {
       "executor": "nx:run-commands",
       "outputs": ["{projectRoot}/dist"],
-      "options": {
-        "cwd": "frontend",
-        "command": "vite build && nx run frontend:cp-build"
-      }
+      "options": { "cwd": "frontend", "command": "vite build && nx run frontend:cp-build" }
     },
     "dev": {
       "executor": "nx:run-commands",
@@ -22,17 +19,11 @@
     },
     "serve": {
       "executor": "nx:run-commands",
-      "options": {
-        "cwd": "frontend",
-        "command": "vite --host"
-      }
+      "options": { "cwd": "frontend", "command": "vite --host" }
     },
     "preview": {
       "executor": "nx:run-commands",
-      "options": {
-        "cwd": "frontend",
-        "command": "vite preview"
-      }
+      "options": { "cwd": "frontend", "command": "vite preview" }
     },
     "lint": {
       "executor": "nx:run-commands",
@@ -43,38 +34,23 @@
     },
     "test": {
       "executor": "nx:run-commands",
-      "options": {
-        "cwd": "frontend",
-        "command": "vitest run --coverage"
-      }
+      "options": { "cwd": "frontend", "command": "vitest run --coverage" }
     },
     "test:watch": {
       "executor": "nx:run-commands",
-      "options": {
-        "cwd": "frontend",
-        "command": "vitest"
-      }
+      "options": { "cwd": "frontend", "command": "vitest" }
     },
     "docs": {
       "executor": "nx:run-commands",
-      "options": {
-        "cwd": "frontend",
-        "command": "typedoc"
-      }
+      "options": { "cwd": "frontend", "command": "typedoc" }
     },
     "docs:watch": {
       "executor": "nx:run-commands",
-      "options": {
-        "cwd": "frontend",
-        "command": "typedoc --watch"
-      }
+      "options": { "cwd": "frontend", "command": "typedoc --watch" }
     },
     "ts-check": {
       "executor": "nx:run-commands",
-      "options": {
-        "cwd": "frontend",
-        "command": "tsc -p tsconfig.json --pretty true --noEmit"
-      }
+      "options": { "cwd": "frontend", "command": "tsc -p tsconfig.json --pretty true --noEmit" }
     },
     "ts-check:watch": {
       "executor": "nx:run-commands",

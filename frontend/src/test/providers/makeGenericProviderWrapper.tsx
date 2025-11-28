@@ -42,9 +42,7 @@ function makeGenericProviderWrapper<
    * Get the last context value captured by the Interceptor.
    * @returns {ContextValue | null} The last context value or null if not yet captured.
    */
-  const contextResult = {
-    current: undefined as ContextValue,
-  };
+  const contextResult = { current: undefined as ContextValue };
 
   let onCreated = options?.__onCreated ?? null;
 
@@ -55,7 +53,7 @@ function makeGenericProviderWrapper<
      * The point of this interceptor is to capture context,
      * This scenario is the exception to the rule and mostly for testing purposes.
      */
-    // eslint-disable-next-line react-hooks/immutability
+
     contextResult.current = contextValue;
 
     onCreated?.(contextValue);

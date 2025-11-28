@@ -23,14 +23,18 @@ const setMediaDevices = (
 
   const currentVideoDevice = publisherRef.current.getVideoSource();
   const currentAudioDevice = publisherRef.current.getAudioSource();
+
   const audioSourceId = getAudioSourceDeviceId(
     allMediaDevices.audioInputDevices,
     currentAudioDevice
   );
+
   if (!audioSourceId || !currentVideoDevice.deviceId) {
     return;
   }
+
   setLocalAudioSource(audioSourceId);
+
   if (typeof currentVideoDevice?.deviceId === 'string') {
     setLocalVideoSource(currentVideoDevice.deviceId);
   }

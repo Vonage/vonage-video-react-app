@@ -6,10 +6,10 @@ import { MouseEvent as ReactMouseEvent, ReactElement, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import useAppConfig from '@Context/AppConfig/hooks/useAppConfig';
 import useCustomTheme from '@Context/Theme';
-import useDevices from '../../../hooks/useDevices';
 import usePublisherContext from '../../../hooks/usePublisherContext';
 import { setStorageItem, STORAGE_KEYS } from '../../../utils/storage';
 import cleanAndDedupeDeviceLabels from '../../../utils/cleanAndDedupeDeviceLabels';
+import useAudioInputDevices from '@Context/Device/hooks/useAudioInputDevices';
 
 export type InputDevicesProps = {
   handleToggle: () => void;
@@ -32,18 +32,13 @@ const InputDevices = ({ handleToggle }: InputDevicesProps): ReactElement | false
     ({ meetingRoomSettings }) => meetingRoomSettings.allowDeviceSelection
   );
 
-  const {
-    allMediaDevices: { audioInputDevices },
-  } = useDevices();
+  const audioInputDevices = useAudioInputDevices();
 
-  const audioInputDevicesCleaned = useMemo(
-    () => cleanAndDedupeDeviceLabels(audioInputDevices),
-    [audioInputDevices]
-  );
-
-  const options = audioInputDevicesCleaned.map((availableDevice) => {
-    return availableDevice.label || t('unknown.device');
-  });
+  const options = useMemo(() => {
+    return cleanAndDedupeDeviceLabels(audioInputDevices).map((availableDevice) => {
+      return availableDevice.label || t('unknown.device');
+    });
+  }, [audioInputDevices, t]);
 
   const handleChangeAudioSource = (event: ReactMouseEvent<HTMLLIElement>) => {
     const menuItem = event.target as HTMLLIElement;

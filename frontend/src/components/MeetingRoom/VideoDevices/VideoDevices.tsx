@@ -1,15 +1,14 @@
-import { useState, useEffect, MouseEvent, ReactElement } from 'react';
+import { MouseEvent, ReactElement } from 'react';
 import { Box, MenuItem, MenuList, Typography } from '@mui/material';
 import CheckIcon from '@mui/icons-material/Check';
 import VideocamIcon from '@mui/icons-material/Videocam';
-import { Device } from '@vonage/client-sdk-video';
 import { useTranslation } from 'react-i18next';
 import useAppConfig from '@Context/AppConfig/hooks/useAppConfig';
 import useCustomTheme from '@Context/Theme';
-import useDevices from '../../../hooks/useDevices';
 import usePublisherContext from '../../../hooks/usePublisherContext';
 import { setStorageItem, STORAGE_KEYS } from '../../../utils/storage';
-import cleanAndDedupeDeviceLabels from '../../../utils/cleanAndDedupeDeviceLabels';
+import useVideoInputDevices from '@Context/Device/hooks/useVideoInputDevices';
+import cleanAndDedupeDeviceLabels from '@utils/cleanAndDedupeDeviceLabels';
 
 export type VideoDevicesProps = {
   handleToggle: () => void;
@@ -26,42 +25,30 @@ export type VideoDevicesProps = {
 const VideoDevices = ({ handleToggle }: VideoDevicesProps): ReactElement | false => {
   const { t } = useTranslation();
   const theme = useCustomTheme();
-  const { isPublishing, publisher } = usePublisherContext();
+  const { publisher } = usePublisherContext();
 
   const allowDeviceSelection = useAppConfig(
     ({ meetingRoomSettings }) => meetingRoomSettings.allowDeviceSelection
   );
-
-  const { allMediaDevices } = useDevices();
-  const [devicesAvailable, setDevicesAvailable] = useState<Device[]>([]);
-  const [options, setOptions] = useState<{ deviceId: string; label: string }[]>([]);
 
   const changeVideoSource = (videoDeviceId: string) => {
     publisher?.setVideoSource(videoDeviceId);
     setStorageItem(STORAGE_KEYS.VIDEO_SOURCE, videoDeviceId);
   };
 
-  useEffect(() => {
-    setDevicesAvailable(allMediaDevices.videoInputDevices);
-  }, [publisher, allMediaDevices, devicesAvailable, isPublishing]);
-
-  useEffect(() => {
-    if (devicesAvailable) {
-      const cleanDevicesAvailable = cleanAndDedupeDeviceLabels(devicesAvailable);
-
-      const videoDevicesAvailable = cleanDevicesAvailable.map((availableDevice) => ({
-        deviceId: availableDevice.deviceId as string,
-        label: availableDevice.label || t('unknown.device'),
-      }));
-      setOptions(videoDevicesAvailable);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [devicesAvailable]);
+  const videoInputDevices = useVideoInputDevices((videoInputDevices) =>
+    cleanAndDedupeDeviceLabels(videoInputDevices).map((device) => ({
+      deviceId: device.deviceId as string,
+      label: device.label || t('unknown.device'),
+    }))
+  );
 
   const handleChangeVideoSource = (event: MouseEvent<HTMLLIElement>) => {
     const menuItem = event.target as HTMLLIElement;
     handleToggle();
-    const selectedDevice = options.find((device) => device.label === menuItem.textContent);
+    const selectedDevice = videoInputDevices.find(
+      (device) => device.label === menuItem.textContent
+    );
     if (selectedDevice) {
       changeVideoSource(selectedDevice.deviceId);
     }
@@ -82,7 +69,7 @@ const VideoDevices = ({ handleToggle }: VideoDevicesProps): ReactElement | false
           <Typography>{t('devices.video.camera.full')}</Typography>
         </Box>
         <MenuList id="split-button-menu">
-          {options.map((option) => {
+          {videoInputDevices.map((option) => {
             const isSelected = option.deviceId === publisher?.getVideoSource().deviceId;
             return (
               <MenuItem

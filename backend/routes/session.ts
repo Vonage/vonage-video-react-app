@@ -7,10 +7,7 @@ import createGetOrCreateSession from './getOrCreateSession';
 const sessionRouter = Router();
 const videoService = createVideoService();
 const sessionService = getSessionStorageService();
-const getOrCreateSession = createGetOrCreateSession({
-  videoService,
-  sessionService,
-});
+const getOrCreateSession = createGetOrCreateSession({ videoService, sessionService });
 
 sessionRouter.get('/:room', async (req: Request<{ room: string }>, res: Response) => {
   try {
@@ -18,12 +15,7 @@ sessionRouter.get('/:room', async (req: Request<{ room: string }>, res: Response
     const sessionId = await getOrCreateSession(roomName);
     const data = videoService.generateToken(sessionId);
     const captionsId = await sessionService.getCaptionsId(roomName);
-    res.json({
-      sessionId,
-      token: data.token,
-      apiKey: data.apiKey,
-      captionsId,
-    });
+    res.json({ sessionId, token: data.token, apiKey: data.apiKey, captionsId });
   } catch (error: unknown) {
     const message = error instanceof Error ? error.message : error;
     res.status(500).send({ message });
@@ -36,15 +28,12 @@ sessionRouter.post('/:room/startArchive', async (req: Request<{ room: string }>,
     const sessionId = await sessionService.getSession(roomName);
     if (sessionId) {
       const archive = await videoService.startArchive(roomName, sessionId);
-      res.json({
-        archiveId: archive.id,
-        status: 200,
-      });
+      res.json({ archiveId: archive.id, status: 200 });
     } else {
       res.status(404).json({ message: 'Room not found' });
     }
   } catch (error: unknown) {
-    console.log(error);
+    console.error(error);
     const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
     res.status(500).json({ message: errorMessage });
   }
@@ -57,10 +46,7 @@ sessionRouter.post(
       const { archiveId } = req.params;
       if (archiveId) {
         const responseArchiveId = await videoService.stopArchive(archiveId);
-        res.json({
-          archiveId: responseArchiveId,
-          status: 200,
-        });
+        res.json({ archiveId: responseArchiveId, status: 200 });
       }
     } catch (error: unknown) {
       res.status(500).send({ message: (error as Error).message ?? error });
@@ -74,10 +60,7 @@ sessionRouter.get('/:room/archives', async (req: Request<{ room: string }>, res:
     const sessionId = await sessionService.getSession(roomName);
     if (sessionId) {
       const archives = await videoService.listArchives(sessionId);
-      res.json({
-        archives,
-        status: 200,
-      });
+      res.json({ archives, status: 200 });
     } else {
       res.status(404).json({ message: 'Room not found' });
     }
@@ -109,10 +92,7 @@ sessionRouter.post(
       } else {
         // the captions were already enabled for this room
         const captionsId = await sessionService.getCaptionsId(roomName);
-        res.json({
-          captionsId,
-          status: 200,
-        });
+        res.json({ captionsId, status: 200 });
       }
     } catch (error: unknown) {
       const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
@@ -148,15 +128,9 @@ sessionRouter.post(
       if (captionsUserCount === 0) {
         const disableResponse = await videoService.disableCaptions(captionsId);
         await sessionService.setCaptionsId(roomName, '');
-        res.json({
-          disableResponse,
-          status: 200,
-        });
+        res.json({ disableResponse, status: 200 });
       } else {
-        res.json({
-          disableResponse: 'Captions are still active for other users',
-          status: 200,
-        });
+        res.json({ disableResponse: 'Captions are still active for other users', status: 200 });
       }
     } catch (error: unknown) {
       const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
