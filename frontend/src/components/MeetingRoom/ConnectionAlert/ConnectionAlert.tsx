@@ -46,7 +46,7 @@ const ConnectionAlert = ({
       <Alert
         severity={severity}
         variant="standard"
-        color="error"
+        color={severity}
         {...(closable
           ? {
               onClose: () => {

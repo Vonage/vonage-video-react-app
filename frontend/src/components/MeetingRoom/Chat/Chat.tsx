@@ -7,6 +7,7 @@ import ChatInput from '../ChatInput';
 import useSessionContext from '../../../hooks/useSessionContext';
 import RightPanelTitle from '../RightPanel/RightPanelTitle';
 import List from '@ui/List';
+import Box from '@ui/Box';
 
 export type ChatProps = {
   handleClose: () => void;
@@ -24,13 +25,19 @@ export type ChatProps = {
 const Chat = ({ handleClose, isOpen }: ChatProps): ReactElement | false => {
   const { t } = useTranslation();
   const { messages } = useSessionContext();
-  const heightClass = '@apply h-[calc(100dvh_-_240px)]';
 
   return (
     isOpen && (
       <>
         <RightPanelTitle title={t('chat.title')} handleClose={handleClose} />
-        <div className={`flex flex-col-reverse overflow-y-auto ${heightClass}`}>
+        <Box
+          sx={{
+            display: 'flex',
+            flexDirection: 'column-reverse',
+            overflowY: 'auto',
+            height: 'calc(100dvh - 240px)',
+          }}
+        >
           <List>
             {messages.map((msg) => {
               return (
@@ -45,10 +52,18 @@ const Chat = ({ handleClose, isOpen }: ChatProps): ReactElement | false => {
               );
             })}
           </List>
-        </div>
-        <div className="absolute inset-x-0 bottom-0 flex">
+        </Box>
+        <Box
+          sx={{
+            position: 'absolute',
+            left: 0,
+            right: 0,
+            bottom: 0,
+            display: 'flex',
+          }}
+        >
           <ChatInput />
-        </div>
+        </Box>
       </>
     )
   );

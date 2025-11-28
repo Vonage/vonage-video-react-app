@@ -3,6 +3,7 @@ import { Box } from 'opentok-layout-js';
 import { Publisher } from '@vonage/client-sdk-video';
 import VideoTile from '../VideoTile';
 import ScreenShareNameDisplay from '../../ScreenShareNameDisplay';
+import useCustomTheme from '@Context/Theme';
 
 export type ScreenSharePublisherProps = {
   box: Box | undefined;
@@ -24,10 +25,16 @@ const ScreenSharePublisher = ({
   element,
   publisher,
 }: ScreenSharePublisherProps): ReactElement | undefined => {
+  const theme = useCustomTheme();
   const containerRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
     if (element && containerRef.current) {
-      element.classList.add('w-full', 'absolute', 'rounded-xl', 'object-contain');
+      Object.assign(element.style, {
+        width: '100%',
+        position: 'absolute',
+        borderRadius: theme.shapes.borderRadiusLarge,
+        objectFit: 'contain',
+      });
       containerRef.current.appendChild(element);
     }
   }, [element]);

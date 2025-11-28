@@ -5,6 +5,7 @@ import useSessionContext from '../../../hooks/useSessionContext';
 import IconButton from '@ui/IconButton';
 import InputAdornment from '@ui/InputAdornment';
 import TextField from '@ui/TextField';
+import useCustomTheme from '@Context/Theme';
 
 /**
  * ChatInput component
@@ -15,6 +16,7 @@ import TextField from '@ui/TextField';
  */
 const ChatInput = (): ReactElement => {
   const { t } = useTranslation();
+  const theme = useCustomTheme();
   const [text, setText] = useState('');
   const [isComposing, setIsComposing] = useState(false);
   const { sendChatMessage } = useSessionContext();
@@ -63,8 +65,8 @@ const ChatInput = (): ReactElement => {
       sx={{
         margin: '16px',
         minHeight: '48px',
-        borderRadius: '25px',
-        backgroundColor: '#F1F3F4',
+        borderRadius: theme.shapes.borderRadiusExtraLarge,
+        backgroundColor: theme.colors.background,
         flexDirection: 'row',
         '&.MuiTextField-root': {
           paddingLeft: '24px',
@@ -74,7 +76,9 @@ const ChatInput = (): ReactElement => {
         endAdornment: (
           <InputAdornment position="end">
             <IconButton sx={{ height: '40px' }} onClick={handleSendMessage}>
-              <SendIcon sx={{ color: text !== '' ? 'blue' : '#B2B4B6' }} />
+              <SendIcon
+                sx={{ color: text !== '' ? theme.colors.primary : theme.colors.disabled }}
+              />
             </IconButton>
           </InputAdornment>
         ),

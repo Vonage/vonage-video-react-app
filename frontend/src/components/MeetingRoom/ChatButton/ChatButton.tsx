@@ -1,4 +1,3 @@
-import ChatIcon from '@mui/icons-material/Chat';
 import { ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
 import useIsMeetingChatAllowed from '@Context/AppConfig/hooks/useIsMeetingChatAllowed';
@@ -6,6 +5,7 @@ import ToolbarButton from '../ToolbarButton';
 import UnreadMessagesBadge from '../UnreadMessagesBadge';
 import Tooltip from '@ui/Tooltip';
 import useCustomTheme from '@Context/Theme';
+import VividIcon from '@components/VividIcon';
 
 export type ChatButtonProps = {
   handleClick: () => void;
@@ -45,7 +45,9 @@ const ChatButton = ({
             }}
             onClick={handleClick}
             icon={
-              <ChatIcon
+              <VividIcon
+                customSize={-5}
+                name="chat-solid"
                 sx={{ color: isOpen ? theme.colors.secondary : theme.colors.onSecondary }}
               />
             }
