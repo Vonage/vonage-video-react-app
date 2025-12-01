@@ -32,6 +32,8 @@
     "test:frontend:": "nx test frontend -- --reporter=verbose --no-coverage --bail=1 --run",
     "test:frontend:debug": "vitest --disableConsoleIntercept=true --silent=false --no-file-parallelism --inspect-brk --root frontend --config vite.config.ts --no-coverage",
     "test:frontend:watch": "nx test frontend --watch",
+    "test:ui": " nx test ui",
+    "test:ui:": "nx test ui -- --reporter=verbose --no-coverage --bail=1 --run",
     "test:integration": "nx run integration-tests:test",
     "test:integration:": "nx run integration-tests:test:",
     "ts-check": "nx run backend:ts-check && nx run frontend:ts-check && nx run ui:ts-check",
