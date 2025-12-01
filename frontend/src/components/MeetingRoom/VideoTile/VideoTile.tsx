@@ -82,7 +82,7 @@ const VideoTile = forwardRef(
             overflow: 'hidden',
             borderRadius: 3,
             backgroundColor: theme.colors.darkGrey,
-            display: !hasVideo ? 'none' : 'block',
+            display: hasVideo ? 'block' : 'none',
             ...(isTalking && {
               outline: `2px solid ${theme.colors.information}`,
             }),

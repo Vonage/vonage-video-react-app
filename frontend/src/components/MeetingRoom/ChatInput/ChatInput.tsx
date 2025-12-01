@@ -79,7 +79,7 @@ const ChatInput = (): ReactElement => {
               <VividIcon
                 name="message-sent-solid"
                 customSize={-5}
-                sx={{ color: text !== '' ? theme.colors.primary : theme.colors.disabled }}
+                sx={{ color: text === '' ? theme.colors.disabled : theme.colors.primary }}
               />
             </IconButton>
           </InputAdornment>

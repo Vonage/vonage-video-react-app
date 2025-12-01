@@ -180,7 +180,7 @@ const Toolbar = ({
           flex: 1,
           justifyContent: 'start',
           overflow: 'hidden',
-          marginRight: !displayRightPanel ? 1.5 : 0,
+          marginRight: displayRightPanel ? 0 : 1.5,
         }}
       >
         {displayTimeRoomName && <TimeRoomNameMeetingRoom />}
