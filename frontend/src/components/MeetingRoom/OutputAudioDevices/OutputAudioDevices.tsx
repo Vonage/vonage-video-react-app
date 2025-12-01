@@ -113,7 +113,7 @@ const OutputAudioDevices = ({ handleToggle }: OutputAudioDevicesProps): ReactEle
                   }}
                 >
                   {isSelected ? (
-                    <Box sx={{ mr: 2 }}>
+                    <Box key={'output-audio-devices-check'} sx={{ mr: 2 }}>
                       <VividIcon
                         name="check-line"
                         customSize={-6}

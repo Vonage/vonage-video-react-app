@@ -138,7 +138,7 @@ const DeviceControlButton = ({
           aria-label={isAudio ? t('devices.audio.ariaLabel') : t('devices.video.ariaLabel')}
           aria-haspopup="menu"
           onClick={handleToggle}
-          sx={{ width: '48px', height: '48px' }}
+          sx={{ width: 48, height: 48 }}
           data-testid={isAudio ? 'audio-dropdown-button' : 'video-dropdown-button'}
         >
           {open ? (
@@ -168,8 +168,8 @@ const DeviceControlButton = ({
               size="small"
               sx={{
                 m: '3px',
-                width: '40px',
-                height: '40px',
+                width: 40,
+                height: 40,
                 borderRadius: '50%',
               }}
             >

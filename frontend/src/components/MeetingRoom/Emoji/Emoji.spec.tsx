@@ -22,7 +22,7 @@ describe('Emoji component', () => {
 
     const container = screen.getByTestId('emoji-string-container');
     const expectedDuration = EMOJI_DISPLAY_DURATION + 100;
-    
+
     expect(container).toHaveStyle({
       position: 'absolute',
       animationName: 'moveEmoji',

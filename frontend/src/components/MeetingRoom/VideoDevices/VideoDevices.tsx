@@ -106,14 +106,14 @@ const VideoDevices = ({ handleToggle }: VideoDevicesProps): ReactElement | false
                 <Box
                   key={`${option.deviceId}-video-device`}
                   sx={{
+                    color: isSelected ? theme.colors.textPrimary : theme.colors.textSecondary,
                     display: 'flex',
                     mb: 0.5,
                     overflow: 'hidden',
-                    color: isSelected ? theme.colors.textPrimary : theme.colors.textSecondary,
                   }}
                 >
                   {isSelected ? (
-                    <Box sx={{ mr: 2 }}>
+                    <Box key={'video-devices-check'} sx={{ mr: 2 }}>
                       <VividIcon
                         name="check-line"
                         customSize={-6}

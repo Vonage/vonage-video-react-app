@@ -104,7 +104,7 @@ const InputAudioDevices = ({ handleToggle }: InputAudioDevicesProps): ReactEleme
                   }}
                 >
                   {isSelected ? (
-                    <Box sx={{ mr: 2 }}>
+                    <Box key={'input-audio-devices-check'} sx={{ mr: 2 }}>
                       <VividIcon
                         name="check-line"
                         customSize={-6}
