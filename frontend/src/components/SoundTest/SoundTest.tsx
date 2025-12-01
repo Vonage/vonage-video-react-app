@@ -50,12 +50,15 @@ const SoundTest = ({ children }: SoundTestProps): ReactElement => {
 
   return (
     <ClickAwayListener onClickAway={() => stopAudio()}>
-      <MenuItem onClick={handlePlayAudio} data-testid="soundTest" 
-      sx={{
-              '&:hover': {
-                backgroundColor: theme.colors.background,
-              },
-            }}>
+      <MenuItem
+        onClick={handlePlayAudio}
+        data-testid="soundTest"
+        sx={{
+          '&:hover': {
+            backgroundColor: theme.colors.background,
+          },
+        }}
+      >
         {children}
         <Typography variant="body1">
           {!audioIsPlaying ? t('soundTest.start') : t('soundTest.stop')}

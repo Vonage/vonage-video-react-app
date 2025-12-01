@@ -1,5 +1,4 @@
 import { ReactElement, useState } from 'react';
-import RadioButtonCheckedIcon from '@mui/icons-material/RadioButtonChecked';
 import Box from '@ui/Box';
 import useCustomTheme from '@Context/Theme';
 import useSessionContext from '../../../hooks/useSessionContext';
@@ -47,7 +46,13 @@ const SmallViewportHeader = (): ReactElement => {
       }}
     >
       <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, paddingX: 0.5 }}>
-        {isRecording && <RadioButtonCheckedIcon sx={{ color: theme.colors.error }} />}
+        {isRecording && (
+          <VividIcon
+            name="radio-checked-2-solid"
+            customSize={-6}
+            sx={{ color: theme.colors.error }}
+          />
+        )}
         <Box
           sx={{
             overflow: 'hidden',

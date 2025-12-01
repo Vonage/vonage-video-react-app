@@ -1,4 +1,3 @@
-import SendIcon from '@mui/icons-material/Send';
 import { KeyboardEvent, ReactElement, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import useSessionContext from '../../../hooks/useSessionContext';
@@ -6,6 +5,7 @@ import IconButton from '@ui/IconButton';
 import InputAdornment from '@ui/InputAdornment';
 import TextField from '@ui/TextField';
 import useCustomTheme from '@Context/Theme';
+import VividIcon from '@components/VividIcon';
 
 /**
  * ChatInput component
@@ -76,7 +76,9 @@ const ChatInput = (): ReactElement => {
         endAdornment: (
           <InputAdornment position="end">
             <IconButton sx={{ height: '40px' }} onClick={handleSendMessage}>
-              <SendIcon
+              <VividIcon
+                name="message-sent-solid"
+                customSize={-5}
                 sx={{ color: text !== '' ? theme.colors.primary : theme.colors.disabled }}
               />
             </IconButton>

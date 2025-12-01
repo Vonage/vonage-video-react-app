@@ -24,7 +24,7 @@ const SendEmojiButton = ({ emoji }: SendEmojiButtonProps): ReactElement => {
   const size = isSmallViewport ? 'small' : 'large';
 
   return (
-    <Grid item xs={xs} className="flex justify-center">
+    <Grid item xs={xs} sx={{ display: 'flex', justifyContent: 'center' }}>
       <Button
         size={size}
         onClick={() => sendEmoji(emoji)}

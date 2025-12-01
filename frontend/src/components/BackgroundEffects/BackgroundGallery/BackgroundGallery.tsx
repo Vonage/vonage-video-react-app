@@ -112,9 +112,7 @@ const BackgroundGallery = ({
                     cursor: isSelected ? 'default' : 'pointer',
                     backgroundColor: isSelected ? theme.colors.disabled : theme.colors.onBackground,
                     '&:hover': {
-                      backgroundColor: isSelected
-                        ? theme.colors.disabled
-                        : theme.colors.background,
+                      backgroundColor: isSelected ? theme.colors.disabled : theme.colors.background,
                     },
                   }}
                 >

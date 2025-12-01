@@ -9,6 +9,7 @@ import Typography from '@ui/Typography';
 import Badge from '@ui/Badge';
 import useCustomTheme from '@Context/Theme';
 import VividIcon from '@components/VividIcon';
+import Box from '@ui/Box';
 
 export type ParticipantListItemProps = {
   stream?: Stream;
@@ -51,7 +52,7 @@ const ParticipantListItem = ({
       sx={{ height: '56px', paddingRight: '68px' }}
       data-testid={dataTestId}
       secondaryAction={
-        <div className="flex items-center justify-center">
+        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
           <AudioIndicator
             audioLevel={audioLevel}
             hasAudio={hasAudio}
@@ -63,7 +64,7 @@ const ParticipantListItem = ({
           {subscriberWrapper && (
             <ParticipantListItemMenu participantName={name} subscriberWrapper={subscriberWrapper} />
           )}
-        </div>
+        </Box>
       }
     >
       <Badge

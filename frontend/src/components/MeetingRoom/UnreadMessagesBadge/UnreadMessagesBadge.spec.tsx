@@ -1,6 +1,6 @@
 import { describe, it, vi, expect, Mock, beforeEach } from 'vitest';
 import { render as renderBase, screen } from '@testing-library/react';
-import BiotechIcon from '@mui/icons-material/Biotech';
+import VividIcon from '@components/VividIcon';
 import { ReactElement } from 'react';
 import useSessionContext from '@hooks/useSessionContext';
 import { SessionContextType } from '@Context/SessionProvider/session';
@@ -14,7 +14,9 @@ const mockUseSessionContext = useSessionContext as Mock<[], SessionContextType>;
 const sessionContext = {
   unreadCount: 0,
 } as unknown as SessionContextType;
-const LittleButton = () => <ToolbarButton onClick={() => {}} icon={<BiotechIcon />} />;
+const LittleButton = () => (
+  <ToolbarButton onClick={() => {}} icon={<VividIcon name="chat-solid" customSize={-6} />} />
+);
 
 describe('UnreadMessagesBadge', () => {
   beforeEach(() => {

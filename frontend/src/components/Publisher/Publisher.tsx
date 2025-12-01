@@ -7,6 +7,7 @@ import AvatarInitials from '../AvatarInitials';
 import NameDisplay from '../MeetingRoom/NameDisplay';
 import AudioIndicator from '../MeetingRoom/AudioIndicator';
 import VideoTile from '../MeetingRoom/VideoTile';
+import useCustomTheme from '@Context/Theme';
 
 export type PublisherProps = {
   box: Box;
@@ -29,20 +30,22 @@ const Publisher = ({ box }: PublisherProps): ReactElement => {
     isAudioEnabled,
   } = usePublisherContext();
   const audioLevel = useAudioLevels();
+  const theme = useCustomTheme();
   // We store this in a ref to get a reference to the div so that we can append a video to it
   const pubContainerRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
     if (element && pubContainerRef.current) {
-      element.classList.add(
-        'video__element',
-        'w-full',
-        'h-full',
-        'absolute',
-        'rounded-xl',
-        'object-contain',
-        'origin-[50%_50%]', // since we have disabled default UI, we need to mirror the publisher
-        '-scale-x-100'
-      );
+      element.classList.add('video__element');
+      
+      // Apply MUI-style inline styles instead of Tailwind classes
+      element.style.width = '100%';
+      element.style.height = '100%';
+      element.style.position = 'absolute';
+      element.style.borderRadius = theme.shapes.borderRadiusLarge;
+      element.style.objectFit = 'contain';
+      element.style.transformOrigin = '50% 50%'; // origin-[50%_50%]
+      element.style.transform = 'scaleX(-1)'; // -scale-x-100 (mirror the publisher)
+      
       pubContainerRef.current.appendChild(element);
     }
   }, [element]);
@@ -50,11 +53,11 @@ const Publisher = ({ box }: PublisherProps): ReactElement => {
   const initials = publisher?.stream?.initials;
   const username = publisher?.stream?.name ?? '';
   const audioIndicatorStyle: React.CSSProperties = {
-    borderRadius: '0.75rem',
+    borderRadius: theme.shapes.borderRadiusLarge,
     position: 'absolute',
     top: '0.75rem',
     right: '0.75rem',
-    backgroundColor: '#23272A', // replace with your darkGray-55 color code
+    backgroundColor: theme.colors.darkBackground,
     height: '1.5rem',
     width: '1.5rem',
     display: 'flex',
@@ -90,7 +93,7 @@ const Publisher = ({ box }: PublisherProps): ReactElement => {
         <AudioIndicator
           hasAudio={isAudioEnabled}
           indicatorStyle={audioIndicatorStyle}
-          indicatorColor="white"
+          indicatorColor={theme.colors.surface}
         />
       )}
       <NameDisplay name={username} containerWidth={box.width} />

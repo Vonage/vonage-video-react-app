@@ -35,6 +35,7 @@ const colorVariables = {
   'dark-grey': {
     10: '#333333CD',
     100: '#333333',
+    400: '#292828ff',
     500: '#202124',
   },
   alert: {
@@ -234,6 +235,11 @@ const lightColors = {
     type: 'color',
     description: 'Dark grey background color.',
   },
+  'dark-grey-hover': {
+    value: colorVariables['dark-grey'][400],
+    type: 'color',
+    description: 'Dark grey hover background color.',
+  },
   'on-dark-grey': {
     value: colorVariables.canvas,
     type: 'color',
@@ -426,6 +432,11 @@ const darkColors = {
     value: colorVariables['dark-grey'][100],
     type: 'color',
     description: 'Dark grey background color.',
+  },
+  'dark-grey-hover': {
+    value: colorVariables['dark-grey'][400],
+    type: 'color',
+    description: 'Dark grey hover background color.',
   },
   'on-dark-grey': {
     value: colorVariables.canvas,

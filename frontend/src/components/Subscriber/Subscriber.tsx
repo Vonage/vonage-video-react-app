@@ -11,6 +11,7 @@ import PinButton from '../MeetingRoom/PinButton';
 import useSessionContext from '../../hooks/useSessionContext';
 import isMouseEventInsideBox from '../../utils/isMouseEventInsideBox';
 import ScreenshareVideoTile from '../MeetingRoom/ScreenshareVideoTile';
+import useCustomTheme from '@Context/Theme';
 
 export type SubscriberProps = {
   subscriberWrapper: SubscriberWrapper;
@@ -38,6 +39,7 @@ const Subscriber = ({
   isActiveSpeaker,
 }: SubscriberProps): ReactElement => {
   const { isMaxPinned, pinSubscriber } = useSessionContext();
+  const theme = useCustomTheme();
   const { isPinned, subscriber } = subscriberWrapper;
   const isScreenShare = subscriber?.stream?.videoType === 'screen';
   const subRef = useRef<HTMLDivElement>(null);
@@ -55,14 +57,15 @@ const Subscriber = ({
       const { element } = subscriberWrapper;
       // eslint-disable-next-line react-hooks/immutability
       element.id = subscriberWrapper.id;
-      element.classList.add(
-        'video__element',
-        'w-full',
-        'h-full',
-        'absolute',
-        'rounded-xl',
-        'object-contain'
-      );
+      element.classList.add('video__element');
+      
+      // Apply MUI-style inline styles instead of Tailwind classes
+      element.style.width = '100%';
+      element.style.height = '100%';
+      element.style.position = 'absolute';
+      element.style.borderRadius = theme.shapes.borderRadiusLarge;
+      element.style.objectFit = 'contain';
+      
       subRef.current.appendChild(element);
     }
   }, [subscriberWrapper, isScreenShare]);
@@ -89,11 +92,11 @@ const Subscriber = ({
   const username = subscriberWrapper.subscriber?.stream?.name ?? '';
   const hasAudio = subscriberWrapper.subscriber.stream?.hasAudio;
   const audioIndicatorStyle: React.CSSProperties = {
-    borderRadius: '0.75rem',
+    borderRadius: theme.shapes.borderRadiusLarge,
     position: 'absolute',
     top: '0.75rem',
     right: '0.75rem',
-    backgroundColor: '#23272F', // Replace with your darkGray-55 color code
+    backgroundColor: theme.colors.darkBackground,
     height: '1.5rem',
     width: '1.5rem',
     display: 'flex',
@@ -138,7 +141,7 @@ const Subscriber = ({
         hasAudio={hasAudio}
         stream={subscriber.stream}
         indicatorStyle={audioIndicatorStyle}
-        indicatorColor="white"
+        indicatorColor={theme.colors.surface}
         participantName={username}
       />
 
