@@ -11,11 +11,11 @@ describe('ParticipantListButton', () => {
   });
   it('should have a white icon when the list is closed', () => {
     render(<ParticipantListButton handleClick={() => {}} isOpen={false} participantCount={10} />);
-    expect(screen.getByTestId('PeopleIcon')).toHaveStyle('color: rgb(255, 255, 255)');
+    expect(screen.getByTestId('vivid-icon-group-solid')).toHaveStyle('color: rgb(255, 255, 255)');
   });
   it('should have a blue icon when the list is open', () => {
     render(<ParticipantListButton handleClick={() => {}} isOpen participantCount={10} />);
-    expect(screen.getByTestId('PeopleIcon')).toHaveStyle('color: rgb(130, 177, 255)');
+    expect(screen.getByTestId('vivid-icon-group-solid')).toHaveStyle('color: rgb(0, 0, 0)');
   });
   it('should invoke callback on click', () => {
     const handleClick = vi.fn();

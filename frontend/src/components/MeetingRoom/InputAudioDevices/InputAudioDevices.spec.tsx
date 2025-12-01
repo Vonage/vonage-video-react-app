@@ -113,7 +113,7 @@ describe('InputAudioDevices Component', () => {
     render(<InputAudioDevices handleToggle={mockHandleToggle} />);
 
     // The default audio device should be selected
-    const checkIcon = screen.getByTestId('CheckIcon');
+    const checkIcon = screen.getByTestId('vivid-icon-check-line');
     expect(checkIcon).toBeInTheDocument();
   });
 

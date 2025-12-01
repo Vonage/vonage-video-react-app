@@ -40,8 +40,13 @@ const colorVariables = {
   },
   alert: {
     50: '#FFEEF2',
+    100: '#FEDFDF',
+    300: '#FE9696',
+    400: '#F75959',
     500: '#E61D1D',
     600: '#CD0000',
+    800: '#6E0000',
+    900: '#3E0004',
   },
   warning: {
     500: '#BE5702',
@@ -143,6 +148,11 @@ const lightColors = {
     value: colorVariables.alert[50],
     type: 'color',
     description: 'Background color for alert messages and notifications.',
+  },
+  'alert-background-hover': {
+    value: colorVariables.alert[100],
+    type: 'color',
+    description: 'Hover background color for alert messages and notifications.',
   },
   'alert-text': {
     value: colorVariables.alert[600],
@@ -346,6 +356,22 @@ const darkColors = {
     value: colorVariables.canvas,
     type: 'color',
     description: 'Text or icon color used on surface elements.',
+  },
+
+  'alert-background': {
+    value: colorVariables.alert[900],
+    type: 'color',
+    description: 'Background color for alert messages and notifications.',
+  },
+  'alert-background-hover': {
+    value: colorVariables.alert[800],
+    type: 'color',
+    description: 'Hover background color for alert messages and notifications.',
+  },
+  'alert-text': {
+    value: colorVariables.alert[100],
+    type: 'color',
+    description: 'Text color for alert messages and notifications.',
   },
 
   error: {

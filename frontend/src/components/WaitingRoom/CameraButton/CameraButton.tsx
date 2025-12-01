@@ -55,7 +55,7 @@ const CameraButton = (): ReactElement | false => {
               '&:hover': {
                 backgroundColor: isVideoEnabled
                   ? `${theme.colors.onSecondary}99`
-                  : `${theme.colors.alertBackground}DC`,
+                  : `${theme.colors.alertBackgroundHover}`,
               },
             }}
             icon={

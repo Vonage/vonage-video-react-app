@@ -34,9 +34,9 @@ describe('ScreenSharePublisher component', () => {
     render(<ScreenSharePublisher box={box} element={element} publisher={mockPublisher} />);
 
     expect(screen.getByText('Test Stream')).toBeInTheDocument();
-    expect(element.classList).toContain('w-full');
-    expect(element.classList).toContain('absolute');
-    expect(element.classList).toContain('rounded-xl');
-    expect(element.classList).toContain('object-contain');
+    expect(element.style.width).toBe('100%');
+    expect(element.style.position).toBe('absolute');
+    expect(element.style.borderRadius).toBe('12px');
+    expect(element.style.objectFit).toBe('contain');
   });
 });

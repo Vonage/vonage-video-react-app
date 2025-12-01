@@ -22,7 +22,7 @@ describe('LayoutButton', () => {
       <LayoutButton isScreenSharePresent={false} isPinningPresent={false} />
     );
     rerender(<LayoutButton isScreenSharePresent={false} isPinningPresent={false} />);
-    expect(screen.getByTestId('ViewSidebarIcon')).toBeInTheDocument();
+    expect(screen.getByTestId('vivid-icon-layout-2-solid')).toBeInTheDocument();
   });
 
   it('should call the set layout mode function when triggered', async () => {
@@ -47,7 +47,7 @@ describe('LayoutButton', () => {
       <LayoutButton isScreenSharePresent={false} isPinningPresent={false} />
     );
     rerender(<LayoutButton isScreenSharePresent={false} isPinningPresent={false} />);
-    expect(screen.getByTestId('WindowIcon')).toBeInTheDocument();
+    expect(screen.getByTestId('vivid-icon-apps-solid')).toBeInTheDocument();
   });
 
   it('should render the tooltip title that mentions switching to grid layout', async () => {

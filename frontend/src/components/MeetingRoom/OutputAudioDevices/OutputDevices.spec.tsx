@@ -98,7 +98,7 @@ describe('OutputAudioDevices Component', () => {
     render(<OutputAudioDevices handleToggle={mockHandleToggle} />);
 
     // The device with deviceId 'default' should be selected
-    const checkIcon = screen.getByTestId('CheckIcon');
+    const checkIcon = screen.getByTestId('vivid-icon-check-line');
     expect(checkIcon).toBeInTheDocument();
   });
 
@@ -108,7 +108,7 @@ describe('OutputAudioDevices Component', () => {
     render(<OutputAudioDevices handleToggle={mockHandleToggle} />);
 
     // When only default device is available, it should be selected
-    const checkIcon = screen.getByTestId('CheckIcon');
+    const checkIcon = screen.getByTestId('vivid-icon-check-line');
     expect(checkIcon).toBeInTheDocument();
   });
 

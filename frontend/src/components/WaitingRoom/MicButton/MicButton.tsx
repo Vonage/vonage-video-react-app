@@ -50,7 +50,7 @@ const MicButton = (): ReactElement | false => {
               '&:hover': {
                 backgroundColor: isAudioEnabled
                   ? `${theme.colors.onSecondary}99`
-                  : `${theme.colors.alertBackground}DC`,
+                  : `${theme.colors.alertBackgroundHover}`,
               },
             }}
             icon={

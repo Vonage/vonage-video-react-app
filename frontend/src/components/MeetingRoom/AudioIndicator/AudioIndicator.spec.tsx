@@ -35,13 +35,13 @@ describe('AudioIndicator', () => {
 
   it('renders Mic icon when participant is unmuted but not speaking', () => {
     render(<AudioIndicator {...defaultProps} />);
-    const micIcon = screen.getByTestId('MicIcon');
+    const micIcon = screen.getByTestId('vivid-icon-microphone-2-solid');
     expect(micIcon).toBeInTheDocument();
   });
 
   it('renders Mic off icon when participant is muted', () => {
     render(<AudioIndicator {...defaultProps} hasAudio={false} />);
-    const micOffIcon = screen.getByTestId('MicOffIcon');
+    const micOffIcon = screen.getByTestId('vivid-icon-mic-mute-solid');
     expect(micOffIcon).toBeInTheDocument();
   });
 });

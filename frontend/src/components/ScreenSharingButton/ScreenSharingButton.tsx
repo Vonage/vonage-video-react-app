@@ -81,13 +81,14 @@ const ScreenSharingButton = ({
                 <VividIcon
                   name="screen-share-off-solid"
                   customSize={-5}
-                  sx={{ color: theme.colors.error }}
+                  sx={{ color: theme.colors.onSecondary }}
                 />
               )
             }
             sx={{
               marginTop: isOverflowButton ? '0px' : '4px',
               marginLeft: isOverflowButton ? '12px' : '0px',
+              backgroundColor: isSharingScreen ? `${theme.colors.onSecondary}55` : '',
             }}
             isOverflowButton={isOverflowButton}
           />

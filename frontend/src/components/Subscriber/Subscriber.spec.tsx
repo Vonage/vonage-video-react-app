@@ -134,9 +134,9 @@ describe('Subscriber', () => {
     );
 
     const subscriberContainer = screen.getByTestId(`subscriber-container-${mockedSubscriberId}`);
-    expect(screen.queryByTestId('PushPinIcon')).toBeVisible();
+    expect(screen.getByTestId('vivid-icon-pin-2-solid')).toBeVisible();
     await act(() => userEvent.hover(subscriberContainer));
-    expect(screen.getByTestId('PushPinOffIcon')).toBeVisible();
+    expect(screen.getByTestId('vivid-icon-pin-2-off-solid')).toBeVisible();
   });
 
   it('should not render pin icon when screenshare subscriber is hovered', () => {

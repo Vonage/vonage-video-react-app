@@ -108,7 +108,7 @@ describe('ParticipantListItem', () => {
       const audioIndicator = screen.getByTestId('audio-indicator');
       expect(audioIndicator).toBeInTheDocument();
 
-      const micIcon = screen.getByTestId('MicIcon');
+      const micIcon = screen.getByTestId('vivid-icon-microphone-2-solid');
       expect(micIcon).toBeInTheDocument();
     });
 
@@ -121,7 +121,7 @@ describe('ParticipantListItem', () => {
       const audioIndicator = screen.getByTestId('audio-indicator');
       expect(audioIndicator).toBeInTheDocument();
 
-      const micOffIcon = screen.getByTestId('MicOffIcon');
+      const micOffIcon = screen.getByTestId('vivid-icon-mic-mute-solid');
       expect(micOffIcon).toBeInTheDocument();
     });
   });
