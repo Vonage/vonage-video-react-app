@@ -1,5 +1,3 @@
-import CheckIcon from '@mui/icons-material/Check';
-import VolumeUpIcon from '@mui/icons-material/VolumeUp';
 import { MouseEvent, ReactElement, useMemo } from 'react';
 import type { AudioOutputDevice } from '@vonage/client-sdk-video';
 import { useTranslation } from 'react-i18next';
@@ -14,20 +12,21 @@ import Box from '@ui/Box';
 import Typography from '@ui/Typography';
 import MenuList from '@ui/MenuList';
 import MenuItem from '@ui/MenuItem';
+import VividIcon from '@components/VividIcon';
 
-export type OutputDevicesProps = {
+export type OutputAudioDevicesProps = {
   handleToggle: () => void;
 };
 
 /**
- * OutputDevices Component
+ * OutputAudioDevices Component
  *
  * Displays and switches audio output devices.
- * @param {OutputDevicesProps} props - The props for the component.
+ * @param {OutputAudioDevicesProps} props - The props for the component.
  *  @property {() => void} handleToggle - Function to close the menu.
- * @returns {ReactElement | false} - The OutputDevices component.
+ * @returns {ReactElement | false} - The OutputAudioDevices component.
  */
-const OutputDevices = ({ handleToggle }: OutputDevicesProps): ReactElement | false => {
+const OutputAudioDevices = ({ handleToggle }: OutputAudioDevicesProps): ReactElement | false => {
   const { t } = useTranslation();
   const theme = useCustomTheme();
   const { currentAudioOutputDevice, setAudioOutputDevice } = useAudioOutputContext();
@@ -71,13 +70,15 @@ const OutputDevices = ({ handleToggle }: OutputDevicesProps): ReactElement | fal
         <Box
           sx={{
             display: 'flex',
+            alignItems: 'center',
             ml: 2,
             mt: 2,
             mb: 0.5,
+            color: theme.colors.tertiary,
           }}
         >
-          <VolumeUpIcon sx={{ fontSize: 24, mr: 2 }} />
-          <Typography data-testid="output-device-title">
+          <VividIcon name="audio-mid-line" customSize={-5} />
+          <Typography sx={{ ml: 2 }} data-testid="output-device-title">
             {t('devices.audio.speakers.full')}
           </Typography>
         </Box>
@@ -108,16 +109,19 @@ const OutputDevices = ({ handleToggle }: OutputDevicesProps): ReactElement | fal
                     display: 'flex',
                     mb: 0.5,
                     overflow: 'hidden',
+                    color: isSelected ? theme.colors.textPrimary : theme.colors.textSecondary,
                   }}
                 >
                   {isSelected ? (
-                    <CheckIcon
-                      sx={{
-                        color: theme.colors.background,
-                        fontSize: 24,
-                        mr: 2,
-                      }}
-                    />
+                    <Box sx={{ mr: 2 }}>
+                      <VividIcon
+                        name="check-line"
+                        customSize={-6}
+                        sx={{
+                          color: isSelected ? theme.colors.textPrimary : theme.colors.textSecondary,
+                        }}
+                      />
+                    </Box>
                   ) : (
                     <Box sx={{ width: 40 }} /> // Placeholder when CheckIcon is not displayed
                   )}
@@ -132,4 +136,4 @@ const OutputDevices = ({ handleToggle }: OutputDevicesProps): ReactElement | fal
   );
 };
 
-export default OutputDevices;
+export default OutputAudioDevices;

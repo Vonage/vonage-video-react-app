@@ -9,7 +9,7 @@ import usePublisherContext from '@hooks/usePublisherContext';
 import { AllMediaDevices } from '@app-types/room';
 import { PublisherContextType } from '@Context/PublisherProvider';
 import { allMediaDevices, defaultAudioDevice } from '@utils/mockData/device';
-import InputDevices from './InputDevices';
+import InputAudioDevices from './InputAudioDevices';
 
 // Mocks
 vi.mock('@hooks/useDevices');
@@ -27,7 +27,7 @@ const mockUseDevices = useDevices as Mock<
 >;
 const mockUsePublisherContext = usePublisherContext as Mock<[], PublisherContextType>;
 
-describe('InputDevices Component', () => {
+describe('InputAudioDevices Component', () => {
   const mockHandleToggle = vi.fn();
   const mockSetAudioSource = vi.fn();
   const mockGetAudioSource = vi.fn();
@@ -64,7 +64,7 @@ describe('InputDevices Component', () => {
   });
 
   it('renders all available audio input devices', () => {
-    render(<InputDevices handleToggle={mockHandleToggle} />);
+    render(<InputAudioDevices handleToggle={mockHandleToggle} />);
 
     expect(screen.getByText('Microphone')).toBeInTheDocument();
 
@@ -75,7 +75,7 @@ describe('InputDevices Component', () => {
   });
 
   it('changes audio input device on menu item click', () => {
-    render(<InputDevices handleToggle={mockHandleToggle} />);
+    render(<InputAudioDevices handleToggle={mockHandleToggle} />);
 
     const micItem = screen.getByText('MacBook Pro Microphone (Built-in)');
     fireEvent.click(micItem);
@@ -87,7 +87,7 @@ describe('InputDevices Component', () => {
   });
 
   it('does not call setAudioSource if selected device is not found', () => {
-    render(<InputDevices handleToggle={mockHandleToggle} />);
+    render(<InputAudioDevices handleToggle={mockHandleToggle} />);
 
     const bogusItem = document.createElement('li');
     bogusItem.textContent = 'Nonexistent Microphone';
@@ -100,7 +100,7 @@ describe('InputDevices Component', () => {
     publisherContext.publisher = null;
     mockUsePublisherContext.mockReturnValue(publisherContext);
 
-    render(<InputDevices handleToggle={mockHandleToggle} />);
+    render(<InputAudioDevices handleToggle={mockHandleToggle} />);
 
     const micItem = screen.getByText('MacBook Pro Microphone (Built-in)');
     fireEvent.click(micItem);
@@ -110,7 +110,7 @@ describe('InputDevices Component', () => {
   });
 
   it('shows check icon for selected device', () => {
-    render(<InputDevices handleToggle={mockHandleToggle} />);
+    render(<InputAudioDevices handleToggle={mockHandleToggle} />);
 
     // The default audio device should be selected
     const checkIcon = screen.getByTestId('CheckIcon');
@@ -118,7 +118,7 @@ describe('InputDevices Component', () => {
   });
 
   it('is not rendered when allowDeviceSelection is false', () => {
-    render(<InputDevices handleToggle={mockHandleToggle} />, {
+    render(<InputAudioDevices handleToggle={mockHandleToggle} />, {
       appConfigOptions: {
         value: {
           meetingRoomSettings: {
@@ -132,7 +132,7 @@ describe('InputDevices Component', () => {
   });
 
   it('handles click event when audioDeviceId is found', () => {
-    render(<InputDevices handleToggle={mockHandleToggle} />);
+    render(<InputAudioDevices handleToggle={mockHandleToggle} />);
 
     const micItem = screen.getByText('Soundcore Life A2 NC (Bluetooth)');
     fireEvent.click(micItem);

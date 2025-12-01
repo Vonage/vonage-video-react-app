@@ -58,14 +58,14 @@ const Subscriber = ({
       // eslint-disable-next-line react-hooks/immutability
       element.id = subscriberWrapper.id;
       element.classList.add('video__element');
-      
+
       // Apply MUI-style inline styles instead of Tailwind classes
       element.style.width = '100%';
       element.style.height = '100%';
       element.style.position = 'absolute';
       element.style.borderRadius = theme.shapes.borderRadiusLarge;
       element.style.objectFit = 'contain';
-      
+
       subRef.current.appendChild(element);
     }
   }, [subscriberWrapper, isScreenShare]);

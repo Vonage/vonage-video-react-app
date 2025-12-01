@@ -8,7 +8,7 @@ import { allMediaDevices } from '@utils/mockData/device';
 import * as util from '@utils/util';
 import { AllMediaDevices } from '@app-types/room';
 import { AppConfigProviderWrapperOptions, makeAppConfigProviderWrapper } from '@test/providers';
-import OutputDevices from './OutputDevices';
+import OutputAudioDevices from './OutputAudioDevices';
 
 // Mocks
 vi.mock('@hooks/useDevices');
@@ -20,7 +20,7 @@ const mockUseDevices = useDevices as Mock<
 >;
 const mockUseAudioOutputContext = useAudioOutputContext as Mock<[], AudioOutputContextType>;
 
-describe('OutputDevices Component', () => {
+describe('OutputAudioDevices Component', () => {
   const mockHandleToggle = vi.fn();
   const mockSetAudioOutputDevice = vi.fn();
   let audioOutputContext: AudioOutputContextType;
@@ -47,7 +47,7 @@ describe('OutputDevices Component', () => {
   });
 
   it('renders all available audio output devices when supported', () => {
-    render(<OutputDevices handleToggle={mockHandleToggle} />);
+    render(<OutputAudioDevices handleToggle={mockHandleToggle} />);
 
     expect(screen.getByText('Speakers')).toBeInTheDocument();
     expect(screen.getByTestId('output-devices')).toBeInTheDocument();
@@ -61,7 +61,7 @@ describe('OutputDevices Component', () => {
   it('renders only default device when audio output is not supported', () => {
     (util.isGetActiveAudioOutputDeviceSupported as Mock).mockReturnValue(false);
 
-    render(<OutputDevices handleToggle={mockHandleToggle} />);
+    render(<OutputAudioDevices handleToggle={mockHandleToggle} />);
 
     expect(screen.getByText('Speakers')).toBeInTheDocument();
     expect(screen.getByText('System Default')).toBeInTheDocument();
@@ -71,7 +71,7 @@ describe('OutputDevices Component', () => {
   });
 
   it('changes audio output device on menu item click when supported', () => {
-    render(<OutputDevices handleToggle={mockHandleToggle} />);
+    render(<OutputAudioDevices handleToggle={mockHandleToggle} />);
 
     const speakerItem = screen.getByText('Soundcore Life A2 NC (Bluetooth)');
     fireEvent.click(speakerItem);
@@ -85,7 +85,7 @@ describe('OutputDevices Component', () => {
   it('does not call setAudioOutputDevice when audio output is not supported', () => {
     (util.isGetActiveAudioOutputDeviceSupported as Mock).mockReturnValue(false);
 
-    render(<OutputDevices handleToggle={mockHandleToggle} />);
+    render(<OutputAudioDevices handleToggle={mockHandleToggle} />);
 
     const defaultItem = screen.getByText('System Default');
     fireEvent.click(defaultItem);
@@ -95,7 +95,7 @@ describe('OutputDevices Component', () => {
   });
 
   it('shows check icon for selected device', () => {
-    render(<OutputDevices handleToggle={mockHandleToggle} />);
+    render(<OutputAudioDevices handleToggle={mockHandleToggle} />);
 
     // The device with deviceId 'default' should be selected
     const checkIcon = screen.getByTestId('CheckIcon');
@@ -105,7 +105,7 @@ describe('OutputDevices Component', () => {
   it('shows check icon for default device when only one device available', () => {
     (util.isGetActiveAudioOutputDeviceSupported as Mock).mockReturnValue(false);
 
-    render(<OutputDevices handleToggle={mockHandleToggle} />);
+    render(<OutputAudioDevices handleToggle={mockHandleToggle} />);
 
     // When only default device is available, it should be selected
     const checkIcon = screen.getByTestId('CheckIcon');
@@ -113,7 +113,7 @@ describe('OutputDevices Component', () => {
   });
 
   it('is not rendered when allowDeviceSelection is false', () => {
-    render(<OutputDevices handleToggle={mockHandleToggle} />, {
+    render(<OutputAudioDevices handleToggle={mockHandleToggle} />, {
       appConfigOptions: {
         value: {
           meetingRoomSettings: {

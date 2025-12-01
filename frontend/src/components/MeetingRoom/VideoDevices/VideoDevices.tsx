@@ -1,6 +1,4 @@
 import { useState, useEffect, MouseEvent, ReactElement } from 'react';
-import CheckIcon from '@mui/icons-material/Check';
-import VideocamIcon from '@mui/icons-material/Videocam';
 import { Device } from '@vonage/client-sdk-video';
 import { useTranslation } from 'react-i18next';
 import useAppConfig from '@Context/AppConfig/hooks/useAppConfig';
@@ -13,6 +11,7 @@ import Box from '@ui/Box';
 import Typography from '@ui/Typography';
 import MenuList from '@ui/MenuList';
 import MenuItem from '@ui/MenuItem';
+import VividIcon from '@components/VividIcon';
 
 export type VideoDevicesProps = {
   handleToggle: () => void;
@@ -79,10 +78,11 @@ const VideoDevices = ({ handleToggle }: VideoDevicesProps): ReactElement | false
             ml: 2,
             mt: 1,
             mb: 0.5,
+            color: theme.colors.tertiary,
           }}
         >
-          <VideocamIcon sx={{ fontSize: 24, mr: 2 }} />
-          <Typography>{t('devices.video.camera.full')}</Typography>
+          <VividIcon name="video-line" customSize={-5} />
+          <Typography sx={{ ml: 2 }}>{t('devices.video.camera.full')}</Typography>
         </Box>
         <MenuList id="split-button-menu">
           {options.map((option) => {
@@ -109,16 +109,19 @@ const VideoDevices = ({ handleToggle }: VideoDevicesProps): ReactElement | false
                     display: 'flex',
                     mb: 0.5,
                     overflow: 'hidden',
+                    color: isSelected ? theme.colors.textPrimary : theme.colors.textSecondary,
                   }}
                 >
                   {isSelected ? (
-                    <CheckIcon
-                      sx={{
-                        color: theme.colors.background,
-                        fontSize: 24,
-                        mr: 2,
-                      }}
-                    />
+                    <Box sx={{ mr: 2 }}>
+                      <VividIcon
+                        name="check-line"
+                        customSize={-6}
+                        sx={{
+                          color: isSelected ? theme.colors.textPrimary : theme.colors.textSecondary,
+                        }}
+                      />
+                    </Box>
                   ) : (
                     <Box sx={{ width: 40 }} /> // Placeholder when CheckIcon is not displayed
                   )}

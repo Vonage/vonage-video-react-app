@@ -36,7 +36,7 @@ const Publisher = ({ box }: PublisherProps): ReactElement => {
   useEffect(() => {
     if (element && pubContainerRef.current) {
       element.classList.add('video__element');
-      
+
       // Apply MUI-style inline styles instead of Tailwind classes
       element.style.width = '100%';
       element.style.height = '100%';
@@ -45,7 +45,7 @@ const Publisher = ({ box }: PublisherProps): ReactElement => {
       element.style.objectFit = 'contain';
       element.style.transformOrigin = '50% 50%'; // origin-[50%_50%]
       element.style.transform = 'scaleX(-1)'; // -scale-x-100 (mirror the publisher)
-      
+
       pubContainerRef.current.appendChild(element);
     }
   }, [element]);

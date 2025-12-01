@@ -86,14 +86,10 @@ const VideoTileCanvas = ({
 
   // Height is 100dvh - toolbar height (80px) and header height (80px) - 24px wrapper margin on small viewport device
   // Height is 100dvh - toolbar height (80px) - 24px wrapper margin on desktop
-  const wrapperHeight = isSmallViewport
-    ? 'calc(100dvh - 184px)'
-    : 'calc(100dvh - 104px)';
+  const wrapperHeight = isSmallViewport ? 'calc(100dvh - 184px)' : 'calc(100dvh - 104px)';
 
   // Width is 100vw - 360px panel width - 24px panel right margin - 24px wrapper margin
-  const wrapperWidth = isRightPanelOpen
-    ? 'calc(100vw - 392px)'
-    : 'calc(100vw - 24px)';
+  const wrapperWidth = isRightPanelOpen ? 'calc(100vw - 392px)' : 'calc(100vw - 24px)';
 
   return (
     <Box
