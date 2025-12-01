@@ -17,6 +17,10 @@ const chromiumFlags = [
 const width = 1512;
 const height = 824;
 
+const isMac = process.platform === 'darwin';
+
+const executablePath = isMac ? '/Applications/Opera.app/Contents/MacOS/Opera' : '/usr/bin/opera';
+
 const fakeDeviceChromiumFlags = [
   ...chromiumFlags,
   '--headless=new',
@@ -53,7 +57,9 @@ export default defineConfig({
         ...devices['Desktop Chrome'],
         viewport: { width, height },
         channel: 'chrome',
-        launchOptions: { args: chromiumFlags },
+        launchOptions: {
+          args: chromiumFlags,
+        },
       },
     },
     {
@@ -62,7 +68,9 @@ export default defineConfig({
         ...devices['Desktop Chrome'],
         viewport: { width, height },
         channel: 'chrome',
-        launchOptions: { args: fakeDeviceChromiumFlags },
+        launchOptions: {
+          args: fakeDeviceChromiumFlags,
+        },
       },
     },
     {
@@ -98,15 +106,28 @@ export default defineConfig({
         ...devices['Desktop Edge'],
         viewport: { width, height },
         channel: 'msedge',
-        launchOptions: { args: fakeDeviceChromiumFlags },
+        launchOptions: {
+          args: fakeDeviceChromiumFlags,
+        },
       },
     },
     {
       name: 'Mobile Chrome',
       use: {
         ...devices['Pixel 5'],
-        launchOptions: { args: fakeDeviceChromiumFlags },
-        viewport: { width: 393, height: 851 },
+        launchOptions: {
+          args: fakeDeviceChromiumFlags,
+        },
+      },
+    },
+    {
+      name: 'Opera',
+      use: {
+        viewport: { width, height },
+        launchOptions: {
+          args: fakeDeviceChromiumFlags,
+          executablePath,
+        },
       },
     },
     {
@@ -115,7 +136,9 @@ export default defineConfig({
         launchOptions: {
           args: ['--use-fake-device-for-media-stream', '--use-fake-ui-for-media-stream'],
         },
-        contextOptions: { viewport: { width, height } },
+        contextOptions: {
+          viewport: { width, height },
+        },
       },
     },
   ],
