@@ -5,7 +5,7 @@ import useDevices from '@hooks/useDevices';
 import { AllMediaDevices } from '@app-types/room';
 import { allMediaDevices } from '@utils/mockData/device';
 import { AppConfigProviderWrapperOptions, makeAppConfigProviderWrapper } from '@test/providers';
-import { BackgroundEffectsDialogProvider } from '@Context/BackgroundEffectsDialog/BackgroundEffectsDialogContext';
+import backgroundEffectsDialog$ from '@Context/BackgroundEffectsDialog';
 import ControlPanel from '.';
 
 vi.mock('@hooks/useDevices.tsx');
@@ -172,7 +172,7 @@ function render(
 
   const AllProviders = ({ children }: { children: React.ReactNode }) => (
     <AppConfigWrapper>
-      <BackgroundEffectsDialogProvider>{children}</BackgroundEffectsDialogProvider>
+      <backgroundEffectsDialog$.Provider>{children}</backgroundEffectsDialog$.Provider>
     </AppConfigWrapper>
   );
 

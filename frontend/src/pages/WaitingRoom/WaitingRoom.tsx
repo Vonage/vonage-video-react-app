@@ -12,7 +12,7 @@ import DeviceAccessAlert from '../../components/DeviceAccessAlert';
 import { getStorageItem, STORAGE_KEYS } from '../../utils/storage';
 import useIsSmallViewport from '../../hooks/useIsSmallViewport';
 import useBackgroundPublisherContext from '../../hooks/useBackgroundPublisherContext';
-import { BackgroundEffectsDialogProvider } from '../../Context/BackgroundEffectsDialog';
+import backgroundEffectsDialog$ from '../../Context/BackgroundEffectsDialog';
 
 /**
  * WaitingRoom Component
@@ -97,7 +97,7 @@ const WaitingRoom = (): ReactElement => {
   };
 
   return (
-    <BackgroundEffectsDialogProvider>
+    <backgroundEffectsDialog$.Provider>
       <Box data-testid="waitingRoom">
         <FlexLayout leftPadding={{ xs: '16px 0', sm: 3 }}>
           <FlexLayout.Banner>
@@ -133,7 +133,7 @@ const WaitingRoom = (): ReactElement => {
           <DeviceAccessAlert accessStatus={accessStatus} />
         )}
       </Box>
-    </BackgroundEffectsDialogProvider>
+    </backgroundEffectsDialog$.Provider>
   );
 };
 

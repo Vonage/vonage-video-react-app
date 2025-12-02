@@ -1,4 +1,1 @@
-export {
-  BackgroundEffectsDialogProvider,
-  useBackgroundEffectsDialog,
-} from './BackgroundEffectsDialogContext';
+export { default } from './BackgroundEffectsDialogContext';

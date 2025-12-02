@@ -2,7 +2,7 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render as renderBase, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { ReactElement } from 'react';
-import { BackgroundEffectsDialogProvider } from '../../../Context/BackgroundEffectsDialog';
+import backgroundEffectsDialog$ from '@Context/BackgroundEffectsDialog';
 import MenuMoreOptions from './MenuMoreOptions';
 
 describe('MenuMoreOptions', () => {
@@ -49,5 +49,5 @@ describe('MenuMoreOptions', () => {
 });
 
 function render(ui: ReactElement) {
-  return renderBase(<BackgroundEffectsDialogProvider>{ui}</BackgroundEffectsDialogProvider>);
+  return renderBase(<backgroundEffectsDialog$.Provider>{ui}</backgroundEffectsDialog$.Provider>);
 }

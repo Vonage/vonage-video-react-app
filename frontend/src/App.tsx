@@ -2,7 +2,7 @@ import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import './css/App.css';
 import './css/index.css';
 import { ThemeProvider } from '@ui/ContextTheme/themeContext';
-import Room from './pages/MeetingRoom/index';
+import MeetingRoom from './pages/MeetingRoom';
 import GoodBye from './pages/GoodBye/index';
 import WaitingRoom from './pages/WaitingRoom';
 import SessionProvider from './Context/SessionProvider/session';
@@ -47,7 +47,7 @@ const App = () => {
                 <SessionProvider>
                   <RedirectToWaitingRoom>
                     <PublisherProvider>
-                      <Room />
+                      <MeetingRoom />
                     </PublisherProvider>
                   </RedirectToWaitingRoom>
                 </SessionProvider>

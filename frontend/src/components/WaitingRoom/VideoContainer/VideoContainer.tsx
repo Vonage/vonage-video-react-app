@@ -13,7 +13,7 @@ import VignetteEffect from '../VignetteEffect';
 import useIsSmallViewport from '../../../hooks/useIsSmallViewport';
 import BackgroundEffectsDialog from '../BackgroundEffects/BackgroundEffectsDialog';
 import BackgroundEffectsButton from '../BackgroundEffects/BackgroundEffectsButton';
-import { useBackgroundEffectsDialog } from '../../../Context/BackgroundEffectsDialog';
+import backgroundEffectsDialog$ from '@Context/BackgroundEffectsDialog';
 
 export type VideoContainerProps = {
   username: string;
@@ -31,7 +31,7 @@ export type VideoContainerProps = {
 const VideoContainer = ({ username }: VideoContainerProps): ReactElement => {
   const containerRef = useRef<HTMLDivElement>(null);
   const [isVideoLoading, setIsVideoLoading] = useState<boolean>(true);
-  const { isOpen: isBackgroundEffectsOpen, open, close } = useBackgroundEffectsDialog();
+  const [{ isOpen: isBackgroundEffectsOpen }, { open, close }] = backgroundEffectsDialog$.use();
   const { user } = useUserContext();
   const { publisherVideoElement, isVideoEnabled, isAudioEnabled, speechLevel } =
     usePreviewPublisherContext();
