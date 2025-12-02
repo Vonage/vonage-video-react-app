@@ -1,5 +1,3 @@
-import WarningOutlinedIcon from '@mui/icons-material/WarningOutlined';
-import FileDownloadOutlinedIcon from '@mui/icons-material/FileDownloadOutlined';
 import { ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
 import Link from '@ui/Link';
@@ -13,16 +11,23 @@ import Box from '@ui/Box';
 import Typography from '@ui/Typography';
 import useMediaQuery from '@ui/useMediaQuery';
 import useCustomTheme from '@Context/Theme';
+import VividIcon from '@components/VividIcon';
 import { Archive, ArchiveStatus } from '../../../api/archiving/model';
 
 const ArchiveDownloadButton = ({ url, id }: { id: string; url: string | undefined }) => {
   const { t } = useTranslation();
+  const theme = useCustomTheme();
 
   return (
     <Link href={url} target="_blank">
       <Tooltip title={t('archiveList.download.tooltip', { id })}>
         <IconButton>
-          <FileDownloadOutlinedIcon data-testid="archive-download-button" />
+          <VividIcon
+            name="download-line"
+            customSize={-4}
+            data-testid="archive-download-button"
+            sx={{ color: theme.colors.secondary }}
+          />
         </IconButton>
       </Tooltip>
     </Link>
@@ -31,12 +36,16 @@ const ArchiveDownloadButton = ({ url, id }: { id: string; url: string | undefine
 
 const ArchiveErrorIcon = () => {
   const { t } = useTranslation();
+  const theme = useCustomTheme();
 
   return (
     <Tooltip title={t('archiveList.error.tooltip')}>
-      <WarningOutlinedIcon
-        color="warning"
+      <VividIcon
+        name="warning-line"
+        customSize={-3}
+        data-testid="archive-error-icon"
         sx={{
+          color: theme.colors.warning,
           alignItems: 'center',
           display: 'flex',
           width: '40px',
@@ -44,7 +53,6 @@ const ArchiveErrorIcon = () => {
           padding: 1,
           justifyContent: 'center',
         }}
-        data-testid="archive-error-icon"
       />
     </Tooltip>
   );
@@ -102,7 +110,7 @@ const ArchiveList = ({ archives }: ArchiveListProps): ReactElement => {
   if (archives === 'error') {
     return (
       <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-        <WarningOutlinedIcon color="warning" />
+        <VividIcon name="warning-line" customSize={-4} sx={{ color: theme.colors.warning }} />
         <Typography variant="h6" sx={{ color: theme.colors.textTertiary }}>
           {t('archiveList.error.text')}
         </Typography>
