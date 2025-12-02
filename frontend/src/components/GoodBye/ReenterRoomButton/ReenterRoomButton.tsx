@@ -1,3 +1,4 @@
+import VividIcon from '@components/VividIcon';
 import Button from '@ui/Button';
 import { MouseEvent, ReactElement, TouchEvent } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -24,7 +25,14 @@ const ReenterRoomButton = ({
 
   return (
     roomName && (
-      <Button variant="outlined" data-testid="reenterButton" onClick={handleReenter} sx={{ mr: 2 }}>
+      <Button
+        sx={{ mb: 3 }}
+        startIcon={<VividIcon name="enter-line" customSize={-5} />}
+        variant="contained"
+        data-testid="reenterButton"
+        onClick={handleReenter}
+        fullWidth
+      >
         {t('goodBye.reEnter')}
       </Button>
     )

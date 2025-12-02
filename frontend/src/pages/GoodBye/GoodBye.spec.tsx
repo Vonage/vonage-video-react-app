@@ -28,8 +28,8 @@ describe('GoodBye', () => {
       </BrowserRouter>
     );
 
-    expect(screen.getByText('You left the room')).toBeVisible();
-    expect(screen.getByText('We hope you had fun')).toBeVisible();
+    expect(screen.getByText('You have left the meeting')).toBeVisible();
+    expect(screen.getByText('Thank you for joining!')).toBeVisible();
   });
 
   it('should fetch and display archives', () => {

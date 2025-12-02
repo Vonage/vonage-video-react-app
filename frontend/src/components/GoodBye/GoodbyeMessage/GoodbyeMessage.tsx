@@ -1,16 +1,11 @@
-import { useNavigate } from 'react-router-dom';
 import { ReactElement } from 'react';
 import Box from '@ui/Box';
 import Typography from '@ui/Typography';
 import useCustomTheme from '@Context/Theme';
-import GoToLandingPageButton from '../GoToLandingPageButton';
-import ReenterRoomButton from '../ReenterRoomButton';
-import useIsSmallViewport from '../../../hooks/useIsSmallViewport';
 
 export type GoodByeMessageProps = {
   header: string;
   message: string;
-  roomName: string;
 };
 
 /**
@@ -19,17 +14,9 @@ export type GoodByeMessageProps = {
  * @param {GoodByeMessageProps} props - The props for the component.
  * @returns {ReactElement} The GoodByeMessage component.
  */
-const GoodByeMessage = ({ header, message, roomName }: GoodByeMessageProps): ReactElement => {
-  const isSmallViewport = useIsSmallViewport();
-  const navigate = useNavigate();
+const GoodByeMessage = ({ header, message }: GoodByeMessageProps): ReactElement => {
   const theme = useCustomTheme();
-  const handleLanding = () => {
-    navigate('/');
-  };
 
-  const handleReenter = () => {
-    navigate(`/waiting-room/${roomName}`);
-  };
   return (
     <Box
       sx={{
@@ -38,15 +25,15 @@ const GoodByeMessage = ({ header, message, roomName }: GoodByeMessageProps): Rea
         flexShrink: 1,
         paddingTop: 2,
         paddingBottom: 2,
-        paddingLeft: 6,
+        paddingLeft: { xs: 2, md: 6 },
         textAlign: 'left',
       }}
     >
       <Typography
         variant="h2"
         sx={{
-          width: '75%',
-          paddingBottom: 2.5,
+          width: { xs: '100%', md: '80%' },
+          paddingBottom: 2,
           color: theme.colors.textSecondary,
         }}
         data-testid="header-message"
@@ -54,29 +41,15 @@ const GoodByeMessage = ({ header, message, roomName }: GoodByeMessageProps): Rea
         {header}
       </Typography>
       <Typography
-        variant="h6"
+        variant="h4"
         sx={{
-          paddingRight: 6,
           color: theme.colors.textTertiary,
-          width: isSmallViewport ? '100%' : '400px',
+          display: { xs: 'none', sm: 'block' },
         }}
         data-testid="goodbye-message"
       >
         {message}
       </Typography>
-      <Box
-        sx={{
-          marginTop: 3,
-          display: 'flex',
-          flexDirection: 'row',
-          alignItems: 'center',
-          paddingRight: 0,
-        }}
-      >
-        <ReenterRoomButton handleReenter={handleReenter} roomName={roomName} />
-
-        <GoToLandingPageButton handleLanding={handleLanding} />
-      </Box>
     </Box>
   );
 };

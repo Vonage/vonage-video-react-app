@@ -1,16 +1,19 @@
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
 import FlexLayout from '@ui/FlexLayout';
 import Banner from '@components/Banner';
 import Footer from '@components/Footer/Footer';
-import Box from '@ui/Box';
 import Typography from '@ui/Typography';
 import useCustomTheme from '@Context/Theme';
 import useArchives from '../../hooks/useArchives';
 import ArchiveList from '../../components/GoodBye/ArchiveList';
 import GoodByeMessage from '../../components/GoodBye/GoodbyeMessage';
 import useRoomName from '../../hooks/useRoomName';
+import ReenterRoomButton from '@components/GoodBye/ReenterRoomButton';
+import GoToLandingPageButton from '@components/GoodBye/GoToLandingPageButton';
+import Card from '@ui/Card';
+import Stack from '@ui/Stack';
 /**
  * GoodBye Component
  *
@@ -24,6 +27,7 @@ import useRoomName from '../../hooks/useRoomName';
 const GoodBye = (): ReactElement => {
   const { t } = useTranslation();
   const theme = useCustomTheme();
+  const navigate = useNavigate();
   const location = useLocation();
   const roomName = useRoomName({
     useLocationState: true,
@@ -32,37 +36,55 @@ const GoodBye = (): ReactElement => {
   const header: string = location.state?.header || t('goodbye.default.header');
   const caption: string = location.state?.caption || t('goodbye.default.message');
 
+  const handleLanding = () => {
+    navigate('/');
+  };
+
+  const handleReenter = () => {
+    navigate(`/waiting-room/${roomName}`);
+  };
+
   return (
     <FlexLayout>
       <FlexLayout.Banner>
         <Banner />
       </FlexLayout.Banner>
       <FlexLayout.Left>
-        <GoodByeMessage header={header} message={caption} roomName={roomName} />
+        <GoodByeMessage header={header} message={caption} />
       </FlexLayout.Left>
       <FlexLayout.Right>
-        <Box
-          sx={{
-            height: 'auto',
-            width: '100%',
-            flexShrink: 1,
-            py: 4,
-            pl: 12,
-            textAlign: 'left',
-          }}
-        >
-          <Typography
-            variant="h3"
+        <Stack direction="column" gap={4}>
+          <Card
             sx={{
-              width: '75%',
-              pb: 5,
-              color: theme.colors.secondary,
+              alignItems: 'center',
             }}
           >
-            {t('archiveList.label')}
-          </Typography>
-          <ArchiveList archives={archives} />
-        </Box>
+            <Typography
+              variant="h6"
+              sx={{
+                color: theme.colors.textSecondary,
+                mb: 3,
+                textAlign: 'left',
+              }}
+            >
+              {t('goodBye.title')}
+            </Typography>
+            <ReenterRoomButton handleReenter={handleReenter} roomName={roomName} />
+            <GoToLandingPageButton handleLanding={handleLanding} />
+          </Card>
+
+          <Card>
+            <Typography
+              variant="h6"
+              sx={{
+                color: theme.colors.textSecondary,
+              }}
+            >
+              {t('archiveList.label')}
+            </Typography>
+            <ArchiveList archives={archives} />
+          </Card>
+        </Stack>
       </FlexLayout.Right>
       <FlexLayout.Footer>
         <Footer />

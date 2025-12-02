@@ -12,7 +12,7 @@ describe('ReenterRoomButton', () => {
     const button = screen.getByTestId('reenterButton');
     await userEvent.click(button);
 
-    expect(screen.getByText('Re-enter')).toBeInTheDocument();
+    expect(screen.getByText('Go back to meeting')).toBeInTheDocument();
     expect(mockFn).toHaveBeenCalled();
   });
 
@@ -22,7 +22,7 @@ describe('ReenterRoomButton', () => {
     render(<ReenterRoomButton roomName="" handleReenter={mockFn} />);
 
     expect(screen.queryByTestId('reenterButton')).not.toBeInTheDocument();
-    expect(screen.queryByText('Re-enter')).not.toBeInTheDocument();
+    expect(screen.queryByText('Go back to meeting')).not.toBeInTheDocument();
     expect(mockFn).not.toHaveBeenCalled();
   });
 });

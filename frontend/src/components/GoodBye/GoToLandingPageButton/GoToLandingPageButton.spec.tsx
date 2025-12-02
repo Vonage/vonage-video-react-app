@@ -12,7 +12,7 @@ describe('GoToLandingPageButton', () => {
     const button = screen.getByTestId('go-to-landing-button');
     await userEvent.click(button);
 
-    expect(screen.getByText('Return to landing page')).toBeInTheDocument();
+    expect(screen.getByText('View Landing Page')).toBeInTheDocument();
     expect(mockFn).toHaveBeenCalled();
   });
 });
