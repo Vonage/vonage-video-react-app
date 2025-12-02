@@ -1,5 +1,4 @@
-import useStableRef from '@hooks/useStableRef';
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef } from 'react';
 import isDarkMode from '../helpers/isDarkMode';
 import getTokensByMode, { type ThemeTokens } from '../helpers/getTokensByMode';
 
@@ -8,7 +7,8 @@ const useSynchronizeThemeAndMedia = ({
 }: {
   setTokens: React.Dispatch<React.SetStateAction<ThemeTokens>>;
 }) => {
-  const modeRef = useStableRef(() => (isDarkMode() ? 'dark' : 'light'), [{}]);
+  const modeRef = useRef<'light' | 'dark'>('light');
+  modeRef.current = isDarkMode() ? 'dark' : 'light';
 
   useEffect(() => {
     const isMatchMediaSupported = !!globalThis.matchMedia;

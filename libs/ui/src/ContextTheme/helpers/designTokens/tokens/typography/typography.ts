@@ -1,3 +1,5 @@
+import type { ThemeTokens } from '../../../getTokensByMode';
+
 /**
  * Typography Tokens
  *
@@ -9,7 +11,7 @@ import typeface from './typeface';
 import typeScale from './typescale';
 import weight from './weight';
 
-const typography = {
+const typography: ThemeTokens['typography'] = {
   typeface,
   typeScale,
   weight,

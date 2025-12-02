@@ -1,7 +1,6 @@
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import './css/App.css';
 import './css/index.css';
-import { CssBaseline } from '@mui/material';
 import { ThemeProvider } from '@ui/ContextTheme/themeContext';
 import Room from './pages/MeetingRoom/index';
 import GoodBye from './pages/GoodBye/index';
@@ -13,11 +12,24 @@ import { PublisherProvider } from './Context/PublisherProvider';
 import RedirectToWaitingRoom from './components/RedirectToWaitingRoom';
 import UnsupportedBrowserPage from './pages/UnsupportedBrowserPage';
 import RoomContext from './Context/RoomContext';
+import Box from '@ui/Box';
+import useTheme from '@ui/ContextTheme';
 
 const App = () => {
+  const theme = useTheme();
+
   return (
-    <ThemeProvider>
-      <CssBaseline />
+    <Box
+      sx={{
+        backgroundColor: {
+          xs: theme.colors.surface,
+          md: theme.colors.background,
+        },
+        position: 'relative',
+        overflow: 'hidden',
+        height: '100dvh',
+      }}
+    >
       <Router>
         <Routes>
           <Route element={<RoomContext />}>
@@ -47,8 +59,16 @@ const App = () => {
           <Route path="/unsupported-browser" element={<UnsupportedBrowserPage />} />
         </Routes>
       </Router>
+    </Box>
+  );
+};
+
+const AppWrapper = () => {
+  return (
+    <ThemeProvider>
+      <App />
     </ThemeProvider>
   );
 };
 
-export default App;
+export default AppWrapper;

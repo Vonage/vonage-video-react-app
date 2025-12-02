@@ -1,7 +1,7 @@
 import { useContext } from 'react';
 import themeContext from '../themeContext';
 
-const useCustomTheme = () => {
+const useTheme = () => {
   const customTheme = useContext(themeContext);
 
   if (!customTheme) {
@@ -11,4 +11,4 @@ const useCustomTheme = () => {
   return customTheme;
 };
 
-export default useCustomTheme;
+export default useTheme;

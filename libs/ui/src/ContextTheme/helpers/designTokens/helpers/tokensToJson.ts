@@ -1,8 +1,8 @@
 import * as fs from 'node:fs';
 import * as path from 'node:path';
-import designTokens from '../designTokens.ts';
-import type { Typeface } from '../tokens/typography/typeface';
-import type { TypeScale, Device } from '../tokens/typography/typescale';
+import designTokens from '../designTokens.js';
+import type { Typeface } from '../tokens/typography/typeface.js';
+import type { TypeScale, Device } from '../tokens/typography/typescale.js';
 
 const outputFile = path.resolve('frontend/src/designTokens/designTokens.json');
 
