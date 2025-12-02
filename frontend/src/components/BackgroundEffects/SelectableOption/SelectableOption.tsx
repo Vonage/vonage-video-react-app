@@ -1,6 +1,6 @@
 import { ReactElement, ReactNode } from 'react';
 import { Box, Paper, Tooltip } from '@mui/material';
-import useCustomTheme from '@Context/Theme';
+import useCustomTheme from '@ui/ContextTheme';
 import { DEFAULT_SELECTABLE_OPTION_WIDTH } from '../../../utils/constants';
 
 export type SelectableOptionProps = {

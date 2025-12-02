@@ -1,13 +1,13 @@
 import { renderHook } from '@testing-library/react';
 import { ReactNode } from 'react';
 import { describe, it, expect } from 'vitest';
-import { CustomThemeProvider } from '../themeContext';
+import { ThemeProvider } from '../themeContext';
 import useCustomTheme from './useCustomTheme';
 
 describe('useCustomTheme', () => {
   it('should return colors object with all color tokens', () => {
     const wrapper = ({ children }: { children: ReactNode }) => (
-      <CustomThemeProvider>{children}</CustomThemeProvider>
+      <ThemeProvider>{children}</ThemeProvider>
     );
 
     const { result } = renderHook(() => useCustomTheme(), { wrapper });
@@ -25,7 +25,7 @@ describe('useCustomTheme', () => {
 
   it('should return shapes object with all border radius tokens', () => {
     const wrapper = ({ children }: { children: ReactNode }) => (
-      <CustomThemeProvider>{children}</CustomThemeProvider>
+      <ThemeProvider>{children}</ThemeProvider>
     );
 
     const { result } = renderHook(() => useCustomTheme(), { wrapper });
@@ -41,7 +41,7 @@ describe('useCustomTheme', () => {
 
   it('should return numeric values for border radius', () => {
     const wrapper = ({ children }: { children: ReactNode }) => (
-      <CustomThemeProvider>{children}</CustomThemeProvider>
+      <ThemeProvider>{children}</ThemeProvider>
     );
 
     const { result } = renderHook(() => useCustomTheme(), { wrapper });
@@ -52,7 +52,7 @@ describe('useCustomTheme', () => {
 
   it('should return hex color strings', () => {
     const wrapper = ({ children }: { children: ReactNode }) => (
-      <CustomThemeProvider>{children}</CustomThemeProvider>
+      <ThemeProvider>{children}</ThemeProvider>
     );
 
     const { result } = renderHook(() => useCustomTheme(), { wrapper });

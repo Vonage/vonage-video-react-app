@@ -5,7 +5,7 @@ const useCustomTheme = () => {
   const customTheme = useContext(themeContext);
 
   if (!customTheme) {
-    throw new Error('useCustomTheme must be used within a CustomThemeProvider');
+    throw new Error('useCustomTheme must be used within a ThemeProvider');
   }
 
   return customTheme;

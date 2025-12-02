@@ -6,7 +6,7 @@ import Button from '@ui/Button';
 import Box from '@ui/Box';
 import Typography from '@ui/Typography';
 import Card from '@ui/Card';
-import useCustomTheme from '@Context/Theme';
+import useCustomTheme from '@ui/ContextTheme';
 import useUserContext from '../../../hooks/useUserContext';
 import { UserType } from '../../../Context/user';
 import useRoomName from '../../../hooks/useRoomName';

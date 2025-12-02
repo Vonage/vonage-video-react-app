@@ -1,6 +1,6 @@
 import { Button, Grid, GridSize } from '@mui/material';
 import { ReactElement } from 'react';
-import useCustomTheme from '@Context/Theme';
+import useCustomTheme from '@ui/ContextTheme';
 import useSessionContext from '../../../hooks/useSessionContext';
 import useIsSmallViewport from '../../../hooks/useIsSmallViewport';
 

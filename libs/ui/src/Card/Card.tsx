@@ -1,6 +1,6 @@
-import useCustomTheme from '@Context/Theme';
-import Box, { BoxProps } from '@ui/Box/Box';
 import React from 'react';
+import Box, { BoxProps } from '../Box/Box';
+import useCustomTheme from '../ContextTheme';
 
 type CardProps<C extends React.ElementType = 'div'> = BoxProps<C>;
 

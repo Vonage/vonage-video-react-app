@@ -2,7 +2,7 @@ import { ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
 import Box from '@ui/Box';
 import Typography from '@ui/Typography';
-import useCustomTheme from '@Context/Theme';
+import useCustomTheme from '@ui/ContextTheme';
 
 /**
  * LandingPageWelcome Component
