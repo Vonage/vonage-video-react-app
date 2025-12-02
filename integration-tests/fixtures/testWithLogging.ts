@@ -52,6 +52,17 @@ const test = (() => {
     });
   }
 
+  if (projectType === 'Opera') {
+    return baseTest.extend({
+      page: async ({ context }, use) => {
+        const page = await context.newPage();
+        const loggedPage = addLogger(page, context);
+        await use(loggedPage);
+        await page.close();
+      },
+    });
+  }
+
   return baseTest.extend({
     page: async ({ page, context }, use) => {
       const loggedPage = addLogger(page, context);

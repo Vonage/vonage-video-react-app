@@ -72,6 +72,16 @@ jobs:
           echo "Check firefox version"
           /opt/firefox/firefox --version
           echo "Firefox latest downloaded and installed"
+      - name: install opera latest
+        if: steps.check-update-screenshots.outputs.result == 'true'
+        run: |
+          sudo add-apt-repository 'deb https://deb.opera.com/opera-stable/ stable non-free'
+          wget -qO- https://deb.opera.com/archive.key | sudo apt-key add -
+          sudo apt-get update
+          sudo apt-get install opera-stable -y
+          echo "Check opera version"
+          /usr/bin/opera --version
+          echo "Opera latest downloaded and installed"
 
       - name: Checkout
         if: steps.check-update-screenshots.outputs.result == 'true'
