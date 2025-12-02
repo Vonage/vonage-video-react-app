@@ -33,7 +33,16 @@ const UnsupportedBrowserMessage = (): ReactElement => {
       >
         {t('unsupportedBrowser.header')}
       </Typography>
-      <Typography variant="h4" sx={{ color: theme.colors.textTertiary }}>
+      <Typography
+        variant="h4"
+        sx={{
+          color: theme.colors.textTertiary,
+          display: {
+            xs: 'none',
+            sm: 'block',
+          },
+        }}
+      >
         {t('unsupportedBrowser.message')}
       </Typography>
     </Box>

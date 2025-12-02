@@ -180,7 +180,7 @@
   "toolbar.tooltip.title": "Access additional toolbar items",
   "unsupportedBrowser.header": "Your browser is not compatible.",
   "unsupportedBrowser.message": "Check the list and choose a supported browser.",
-  "unsupportedBrowser.supported.downloadLink": "Download link for {{browser}}",
+  "unsupportedBrowser.supported.visitPage": "Visit page",
   "unsupportedBrowser.supported.title": "Supported browsers:",
   "unknown.device": "Unknown Device",
   "user.unknown": "unknown user",

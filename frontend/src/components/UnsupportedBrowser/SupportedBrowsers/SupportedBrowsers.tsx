@@ -3,7 +3,6 @@ import { useTranslation } from 'react-i18next';
 import List from '@ui/List';
 import Box from '@ui/Box';
 import Typography from '@ui/Typography';
-import useMediaQuery from '@ui/useMediaQuery';
 import useCustomTheme from '@Context/Theme';
 import { SUPPORTED_BROWSERS } from '../../../utils/constants';
 import SupportedBrowserListItem from '../SupportedBrowserListItem';
@@ -16,44 +15,35 @@ import SupportedBrowserListItem from '../SupportedBrowserListItem';
  */
 const SupportedBrowsers = (): ReactElement => {
   const { t } = useTranslation();
-  const isMdUp = useMediaQuery('(min-width:768px)');
   const theme = useCustomTheme();
 
   return (
     <Box
       sx={{
-        height: 'auto',
-        width: '400px',
         flexShrink: 1,
-        paddingTop: 2,
-        paddingBottom: 2,
-        paddingLeft: 6,
+        width: { xs: '100%', md: '90%' },
+        px: 5,
+        pt: 3,
+        pb: 1,
         textAlign: 'left',
+        backgroundColor: theme.colors.surface,
+        borderRadius: theme.shapes.borderRadiusMedium,
       }}
     >
       <Typography
-        variant="h3"
+        variant="h6"
         sx={{
-          width: '100%',
-          paddingBottom: 2.5,
+          paddingBottom: 2,
           color: theme.colors.textSecondary,
         }}
       >
         {t('unsupportedBrowser.supported.title')}
       </Typography>
-
-      <Box
-        sx={{
-          maxHeight: isMdUp ? '480px' : 'none',
-          overflowY: isMdUp ? 'auto' : 'visible',
-        }}
-      >
-        <List sx={{ overflowX: 'auto' }}>
-          {SUPPORTED_BROWSERS.map(({ browser, link }) => {
-            return <SupportedBrowserListItem key={browser} url={link} browser={browser} />;
-          })}
-        </List>
-      </Box>
+      <List sx={{ overflowX: 'auto' }}>
+        {SUPPORTED_BROWSERS.map(({ browser, link }) => {
+          return <SupportedBrowserListItem key={browser} url={link} browser={browser} />;
+        })}
+      </List>
     </Box>
   );
 };
