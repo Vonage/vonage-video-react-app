@@ -10,7 +10,7 @@
       "cache": false,
       "options": {
         "cwd": "integration-tests",
-        "command": "playwright test --project='Google Chrome Fake Devices' --project=firefox --project='Microsoft Edge' --project='Mobile Chrome' --project='Electron' --update-snapshots"
+        "command": "playwright test --project='Google Chrome Fake Devices' --project=firefox --project='Opera' --project='Microsoft Edge' --project='Mobile Chrome' --project='Electron' --update-snapshots"
       }
     },
     "updateScreenshots:": {
@@ -26,7 +26,10 @@
     },
     "postinstall": {
       "executor": "nx:run-commands",
-      "options": { "cwd": "integration-tests", "command": "playwright install" }
+      "options": {
+        "cwd": "integration-tests",
+        "command": "playwright install"
+      }
     },
     "ts-check": {
       "executor": "nx:run-commands",
@@ -47,7 +50,7 @@
       "description": "Run playwright tests in all browsers",
       "options": {
         "cwd": "integration-tests",
-        "command": "playwright test --project='Google Chrome Fake Devices' --project=firefox --project='Microsoft Edge' --project='Mobile Chrome' --project='Electron'"
+        "command": "playwright test --project='Google Chrome Fake Devices' --project=firefox --project='Opera' --project='Microsoft Edge' --project='Mobile Chrome' --project='Electron'"
       }
     },
     "test:": {
