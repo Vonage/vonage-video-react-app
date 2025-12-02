@@ -177,7 +177,7 @@
     "toolbar.tooltip.ariaLabel": "apri menu strumenti aggiuntivi",
     "toolbar.tooltip.title": "Accedi agli strumenti aggiuntivi",
     "unsupportedBrowser.header": "Browser non supportato",
-    "unsupportedBrowser.message": "Usa uno dei nostri browser supportati.",
+    "unsupportedBrowser.message": "Controlla l'elenco e scegli un browser supportato.",
     "unsupportedBrowser.supported.downloadLink": "Collegamento per scaricare {{browser}}",
     "unsupportedBrowser.supported.title": "Browser supportati:",
     "unknown.device": "Dispositivo sconosciuto",

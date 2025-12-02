@@ -177,7 +177,7 @@
     "toolbar.tooltip.ariaLabel": "abrir menú de barra de herramientas adicional",
     "toolbar.tooltip.title": "Acceder a elementos adicionales de la barra",
     "unsupportedBrowser.header": "Tu navegador no es compatible",
-    "unsupportedBrowser.message": "Por favor usa uno de nuestros navegadores compatibles.",
+    "unsupportedBrowser.message": "Revisa la lista y elige un navegador compatible.",
     "unsupportedBrowser.supported.downloadLink": "Enlace de descarga para {{browser}}",
     "unsupportedBrowser.supported.title": "Navegadores compatibles:",
     "unknown.device": "Dispositivo desconocido",

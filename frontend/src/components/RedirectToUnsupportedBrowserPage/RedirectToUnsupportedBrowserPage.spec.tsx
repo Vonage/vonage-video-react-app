@@ -10,7 +10,7 @@ vi.mock('@vonage/client-sdk-video', () => ({
 
 describe('RedirectToUnsupportedBrowserPage', () => {
   const supportedText = 'You have arrived';
-  const unsupportedText = 'Your browser is unsupported';
+  const unsupportedText = 'Your browser is not compatible.';
   const TestComponent = () => <div>{supportedText}</div>;
 
   afterEach(() => {

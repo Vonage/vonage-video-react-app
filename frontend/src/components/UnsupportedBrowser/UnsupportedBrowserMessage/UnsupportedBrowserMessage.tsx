@@ -17,26 +17,23 @@ const UnsupportedBrowserMessage = (): ReactElement => {
   return (
     <Box
       sx={{
-        height: 'auto',
-        width: '400px',
-        flexShrink: 1,
-        paddingTop: 2,
-        paddingBottom: 2,
-        paddingLeft: 6,
+        maxWidth: '80%',
+        pl: { xs: 0, lg: 4 },
+        mb: { xs: 0, md: 16 },
+        ml: { xs: 0, md: 2 },
         textAlign: 'left',
       }}
     >
       <Typography
         variant="h2"
         sx={{
-          width: '75%',
-          paddingBottom: 2.5,
+          pb: { xs: 0, md: 5 },
           color: theme.colors.textSecondary,
         }}
       >
         {t('unsupportedBrowser.header')}
       </Typography>
-      <Typography variant="h6" sx={{ color: theme.colors.textTertiary }}>
+      <Typography variant="h4" sx={{ color: theme.colors.textTertiary }}>
         {t('unsupportedBrowser.message')}
       </Typography>
     </Box>
