@@ -7,7 +7,7 @@ import useIsSmallViewport from '@hooks/useIsSmallViewport';
 import useAppConfig from '@Context/AppConfig/hooks/useAppConfig';
 import Box from '@ui/Box';
 import { SxProps } from '@ui/SxProps';
-import useCustomTheme from '@ui/ContextTheme';
+import useCustomTheme from '@ui/theme';
 import VividIcon from '@components/VividIcon';
 import ButtonBase from '@ui/ButtonBase';
 import MenuDevicesWaitingRoom from '../MenuDevices';

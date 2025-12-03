@@ -2,7 +2,7 @@ import { ReactElement } from 'react';
 import Stack from '@ui/Stack';
 import Typography from '@ui/Typography';
 import { useTranslation } from 'react-i18next';
-import useCustomTheme from '@ui/ContextTheme';
+import useCustomTheme from '@ui/theme';
 import GHRepoButton from '../GHRepoButton';
 
 /**

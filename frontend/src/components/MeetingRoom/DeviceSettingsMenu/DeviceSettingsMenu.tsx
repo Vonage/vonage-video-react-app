@@ -5,7 +5,7 @@ import Popper from '@mui/material/Popper';
 import { ReactElement, RefObject, Dispatch, SetStateAction } from 'react';
 import { hasMediaProcessorSupport } from '@vonage/client-sdk-video';
 import useAppConfig from '@Context/AppConfig/hooks/useAppConfig';
-import useCustomTheme from '@ui/ContextTheme';
+import useCustomTheme from '@ui/theme';
 import InputDevices from '../InputDevices';
 import OutputDevices from '../OutputDevices';
 import ReduceNoiseTestSpeakers from '../ReduceNoiseTestSpeakers';

@@ -1,6 +1,6 @@
 import { Grid, Grow, Paper, Popper, ClickAwayListener } from '@mui/material';
 import { ReactElement, RefObject, useEffect, useState } from 'react';
-import useCustomTheme from '@ui/ContextTheme';
+import useCustomTheme from '@ui/theme';
 import SendEmojiButton from '../SendEmojiButton';
 import emojiMap from '../../../utils/emojis';
 import { PopperChildrenProps } from '@mui/material/Popper/BasePopper.types';

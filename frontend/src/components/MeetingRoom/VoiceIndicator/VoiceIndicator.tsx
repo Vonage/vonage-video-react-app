@@ -1,6 +1,6 @@
 import { Box, SxProps } from '@mui/material';
 import { ReactElement } from 'react';
-import useCustomTheme from '@ui/ContextTheme';
+import useCustomTheme from '@ui/theme';
 
 export type VoiceIndicatorProps = {
   publisherAudioLevel: number;

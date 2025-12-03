@@ -4,7 +4,7 @@ import Stack from '@ui/Stack';
 import Header from '@ui/Header';
 import BannerLogo from '../BannerLogo';
 import BannerLanguage from '../BannerLanguage';
-import useCustomTheme from '@ui/ContextTheme';
+import useCustomTheme from '@ui/theme';
 
 /**
  * Banner Component

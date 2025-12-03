@@ -2,7 +2,7 @@ import { ReactElement } from 'react';
 import Box from '@ui/Box';
 import FooterLinks from '@components/FooterLinks';
 import Stack from '@ui/Stack';
-import useCustomTheme from '@ui/ContextTheme';
+import useCustomTheme from '@ui/theme';
 
 /**
  * Footer Component
