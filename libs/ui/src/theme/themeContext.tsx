@@ -6,10 +6,10 @@ import useSynchronizeThemeAndMedia from './hooks/useSynchronizeThemeAndMedia';
 import getMuiCustomTheme from './helpers/getMuiCustomTheme';
 import Theme, { PartialTheme } from './themeContext.types';
 
-const defaultLightValue = getTokensByMode('light');
-const defaultDarkValue = getTokensByMode('dark');
+const defaultLightValue: Theme = getTokensByMode('light');
+const defaultDarkValue: Theme = getTokensByMode('dark');
 
-const themeContext = React.createContext<Theme>(defaultLightValue);
+const themeContext = React.createContext(defaultLightValue);
 
 export type ThemeProviderProps = PropsWithChildren & {
   theme?: {

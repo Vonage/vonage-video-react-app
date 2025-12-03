@@ -1,5 +1,3 @@
-import type { ThemeTokens } from '../../../getTokensByMode';
-
 /**
  * Typography Tokens
  *
@@ -7,6 +5,7 @@ import type { ThemeTokens } from '../../../getTokensByMode';
  * typefaces, type scales, and font weights. These tokens ensure
  * consistent typographic styles across the user interface.
  */
+import { ThemeTokens } from '@ui/theme';
 import typeface from './typeface';
 import typeScale from './typescale';
 import weight from './weight';

@@ -1,8 +1,5 @@
-import type Theme from '../themeContext.types';
-import type { ThemeColors } from '../themeContext.types';
+import type { Theme, ThemeColors } from '@ui/theme';
 import designTokens from './designTokens';
-
-export type ThemeTokens = ReturnType<typeof getTokensByMode>;
 
 const getTokensByMode = (mode: 'light' | 'dark'): Theme => {
   const colors = mode === 'light' ? designTokens.color.light : designTokens.color.dark;
@@ -11,7 +8,7 @@ const getTokensByMode = (mode: 'light' | 'dark'): Theme => {
     /**
      * { primary: string; onPrimary: string; secondary: string; onSecondary: string; ...  }
      */
-    colors: Object.keys(colors).reduce((acc, originalKey) => {
+    colors: Object.keys(colors).reduce((acc, originalKey): ThemeColors => {
       let key = originalKey;
 
       if (key.includes('-')) {
@@ -19,6 +16,7 @@ const getTokensByMode = (mode: 'light' | 'dark'): Theme => {
       }
 
       acc[key as keyof ThemeColors] = colors[originalKey as keyof typeof colors].value;
+
       return acc;
     }, {} as ThemeColors),
 

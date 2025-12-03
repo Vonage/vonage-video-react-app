@@ -6,7 +6,7 @@ import Button from '@ui/Button';
 import Box from '@ui/Box';
 import Typography from '@ui/Typography';
 import Card from '@ui/Card';
-import useCustomTheme from '@ui/theme';
+import useTheme from '@ui/theme';
 import useUserContext from '../../../hooks/useUserContext';
 import { UserType } from '../../../Context/user';
 import useRoomName from '../../../hooks/useRoomName';
@@ -34,7 +34,7 @@ const UsernameInput = ({ username, setUsername }: UserNameInputProps): ReactElem
   const navigate = useNavigate();
   const roomName = useRoomName();
   const [isUserNameInvalid, setIsUserNameInvalid] = useState(false);
-  const theme = useCustomTheme();
+  const theme = useTheme();
 
   const onChangeParticipantName = (e: React.ChangeEvent<HTMLInputElement>) => {
     const inputUserName = e.target.value;

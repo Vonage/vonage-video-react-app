@@ -2,7 +2,7 @@ import { ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
 import Box from '@ui/Box';
 import Typography from '@ui/Typography';
-import useCustomTheme from '@ui/theme';
+import useTheme from '@ui/theme';
 
 /**
  * LandingPageWelcome Component
@@ -11,7 +11,7 @@ import useCustomTheme from '@ui/theme';
  */
 const LandingPageWelcome = (): ReactElement => {
   const { t } = useTranslation();
-  const theme = useCustomTheme();
+  const theme = useTheme();
   const primaryWord = t('landing.primary.word');
 
   const renderTitle = (titleKey: string) => {

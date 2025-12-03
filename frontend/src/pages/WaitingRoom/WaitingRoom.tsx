@@ -13,6 +13,7 @@ import { getStorageItem, STORAGE_KEYS } from '../../utils/storage';
 import useIsSmallViewport from '../../hooks/useIsSmallViewport';
 import useBackgroundPublisherContext from '../../hooks/useBackgroundPublisherContext';
 import backgroundEffectsDialog$ from '../../Context/BackgroundEffectsDialog';
+import classNames from 'classnames';
 
 /**
  * WaitingRoom Component
@@ -99,13 +100,21 @@ const WaitingRoom = (): ReactElement => {
   return (
     <backgroundEffectsDialog$.Provider>
       <Box data-testid="waitingRoom">
-        <FlexLayout leftPadding={{ xs: '16px 0', sm: 3 }}>
+        <FlexLayout>
           <FlexLayout.Banner>
             <Banner />
           </FlexLayout.Banner>
+
           <FlexLayout.Left>
             <div
-              className={`max-w-full flex-col ${isSmallViewport ? '' : 'h-[394px]'} sm: inline-flex`}
+              className={classNames(
+                `max-w-full flex-col sm: inline-flex xs:p`,
+                {
+                  'h-[394px]': isSmallViewport ? false : true,
+                },
+                'pt-4 pb-4 px-0', // // xs: '16px 0', sm: 3
+                'sm:p-6' // sm+: padding 24px *
+              )}
             >
               <VideoContainer username={username} />
               {accessStatus === DEVICE_ACCESS_STATUS.ACCEPTED && (

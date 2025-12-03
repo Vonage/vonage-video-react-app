@@ -96,10 +96,12 @@ const VideoContainer = ({ username }: VideoContainerProps): ReactElement => {
           </Stack>
           <div className="absolute right-[20px]">
             <BackgroundEffectsButton onClick={open} />
-            <BackgroundEffectsDialog
-              isBackgroundEffectsOpen={isBackgroundEffectsOpen}
-              setIsBackgroundEffectsOpen={close}
-            />
+            {isBackgroundEffectsOpen && (
+              <BackgroundEffectsDialog
+                isBackgroundEffectsOpen={true}
+                setIsBackgroundEffectsOpen={close}
+              />
+            )}
           </div>
         </div>
       )}

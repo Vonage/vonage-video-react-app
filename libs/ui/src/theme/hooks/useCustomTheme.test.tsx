@@ -4,7 +4,7 @@ import { describe, it, expect } from 'vitest';
 import { ThemeProvider } from '../themeContext';
 import useTheme from './useTheme';
 
-describe('useCustomTheme', () => {
+describe('useTheme', () => {
   it('should return colors object with all color tokens', () => {
     const wrapper = ({ children }: { children: ReactNode }) => (
       <ThemeProvider>{children}</ThemeProvider>

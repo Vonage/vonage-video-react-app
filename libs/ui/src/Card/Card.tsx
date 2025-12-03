@@ -1,11 +1,11 @@
 import React from 'react';
 import Box, { BoxProps } from '../Box/Box';
-import useCustomTheme from '../ContextTheme';
+import useTheme from '../theme';
 
 type CardProps<C extends React.ElementType = 'div'> = BoxProps<C>;
 
 const Card = <C extends React.ElementType = 'div'>({ sx, ...cardProps }: CardProps<C>) => {
-  const theme = useCustomTheme();
+  const theme = useTheme();
 
   return (
     <Box<C>

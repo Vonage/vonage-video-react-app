@@ -4,7 +4,7 @@ import Stack from '@ui/Stack';
 import Header from '@ui/Header';
 import BannerLogo from '../BannerLogo';
 import BannerLanguage from '../BannerLanguage';
-import useCustomTheme from '@ui/theme';
+import useTheme from '@ui/theme';
 
 /**
  * Banner Component
@@ -13,7 +13,7 @@ import useCustomTheme from '@ui/theme';
  * @returns {ReactElement} - the banner component.
  */
 const Banner = (): ReactElement => {
-  const theme = useCustomTheme();
+  const theme = useTheme();
 
   return (
     <Header appBarProps={{ position: 'static' }} toolbarProps={{ sx: { alignItems: 'stretch' } }}>

@@ -34,9 +34,24 @@ export type TypeScaleTokens = {
 };
 
 export type TypographyTokens = {
-  typeface: Record<string, TypefaceTokenItem>;
+  typeface: {
+    plain: TypefaceTokenItem;
+  };
   typeScale: Record<Device, TypeScaleTokens>;
-  weight: Record<string, WeightTokenItem>;
+  weight: {
+    headline: WeightTokenItem;
+    subtitle: WeightTokenItem;
+    'heading-1': WeightTokenItem;
+    'heading-2': WeightTokenItem;
+    'heading-3': WeightTokenItem;
+    'heading-4': WeightTokenItem;
+    'body-extended': WeightTokenItem;
+    'body-extended-semibold': WeightTokenItem;
+    'body-base': WeightTokenItem;
+    'body-base-semibold': WeightTokenItem;
+    caption: WeightTokenItem;
+    'caption-semibold': WeightTokenItem;
+  };
 };
 
 export type ColorTokenItem = {
@@ -137,6 +152,12 @@ export type ThemeShapes = {
 };
 
 export type ThemeTypography = TypographyTokens;
+
+export type ThemeTypeScale = keyof ThemeTypography['typeScale'];
+
+export type ThemeTypeface = keyof ThemeTypography['typeface'];
+
+export type ThemeWeight = keyof ThemeTypography['weight'];
 
 export type Theme = {
   colors: ThemeColors;

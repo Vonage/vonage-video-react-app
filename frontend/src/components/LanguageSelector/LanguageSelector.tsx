@@ -5,7 +5,7 @@ import MenuItem from '@ui/MenuItem';
 import FormControl from '@ui/FormControl';
 import Select from '@ui/Select';
 import { SelectChangeEvent } from '@ui/SelectChangeEvent';
-import useCustomTheme from '@ui/theme';
+import useTheme from '@ui/theme';
 import { SvgIconProps } from '@mui/material';
 import { LanguageOption, LanguageSelectorProps } from './LanguageSelector.types';
 import useIsSmallViewport from '../../hooks/useIsSmallViewport';
@@ -34,7 +34,7 @@ const ChevronDownIcon = (props: SvgIconProps) => (
  */
 const LanguageSelector = ({ showFlag = true }: LanguageSelectorProps): ReactElement => {
   const { i18n } = useTranslation();
-  const theme = useCustomTheme();
+  const theme = useTheme();
   const isSmallViewport = useIsSmallViewport();
 
   const supportedLanguages = languageOptions.filter((option) =>
