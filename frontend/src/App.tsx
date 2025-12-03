@@ -1,7 +1,7 @@
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import './css/App.css';
 import './css/index.css';
-import { ThemeProvider } from '@ui/theme';
+import useTheme, { ThemeProvider } from '@ui/theme';
 import MeetingRoom from './pages/MeetingRoom';
 import GoodBye from './pages/GoodBye/index';
 import WaitingRoom from './pages/WaitingRoom';
@@ -13,7 +13,6 @@ import RedirectToWaitingRoom from './components/RedirectToWaitingRoom';
 import UnsupportedBrowserPage from './pages/UnsupportedBrowserPage';
 import RoomContext from './Context/RoomContext';
 import Box from '@ui/Box';
-import useTheme from '@ui/theme';
 
 const App = () => {
   const theme = useTheme();
