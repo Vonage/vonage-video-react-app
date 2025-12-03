@@ -1,6 +1,6 @@
 import { useState, useEffect, MouseEvent, ReactElement, TouchEvent } from 'react';
 import Box from '@ui/Box';
-import FlexLayout from '@ui/FlexLayout';
+import PageLayout from '@ui/PageLayout';
 import Banner from '@components/Banner';
 import Footer from '@components/Footer/Footer';
 import usePreviewPublisherContext from '../../hooks/usePreviewPublisherContext';
@@ -100,21 +100,16 @@ const WaitingRoom = (): ReactElement => {
   return (
     <backgroundEffectsDialog$.Provider>
       <Box data-testid="waitingRoom">
-        <FlexLayout>
-          <FlexLayout.Banner>
+        <PageLayout>
+          <PageLayout.Banner>
             <Banner />
-          </FlexLayout.Banner>
+          </PageLayout.Banner>
 
-          <FlexLayout.Left>
+          <PageLayout.Left>
             <div
-              className={classNames(
-                `max-w-full flex-col sm: inline-flex xs:p`,
-                {
-                  'h-[394px]': isSmallViewport ? false : true,
-                },
-                'pt-4 pb-4 px-0', // // xs: '16px 0', sm: 3
-                'sm:p-6' // sm+: padding 24px *
-              )}
+              className={classNames(`max-w-full flex-col sm: inline-flex xs:p`, {
+                'h-[394px]': isSmallViewport ? false : true,
+              })}
             >
               <VideoContainer username={username} />
               {accessStatus === DEVICE_ACCESS_STATUS.ACCEPTED && (
@@ -130,14 +125,14 @@ const WaitingRoom = (): ReactElement => {
                 />
               )}
             </div>
-          </FlexLayout.Left>
-          <FlexLayout.Right>
+          </PageLayout.Left>
+          <PageLayout.Right>
             <UsernameInput username={username} setUsername={setUsername} />
-          </FlexLayout.Right>
-          <FlexLayout.Footer>
+          </PageLayout.Right>
+          <PageLayout.Footer>
             <Footer />
-          </FlexLayout.Footer>
-        </FlexLayout>
+          </PageLayout.Footer>
+        </PageLayout>
         {accessStatus !== DEVICE_ACCESS_STATUS.ACCEPTED && (
           <DeviceAccessAlert accessStatus={accessStatus} />
         )}

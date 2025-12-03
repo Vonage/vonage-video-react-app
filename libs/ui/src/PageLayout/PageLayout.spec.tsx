@@ -1,14 +1,14 @@
 import { render, screen } from '@testing-library/react';
 import { describe, it, expect } from 'vitest';
-import FlexLayout from './index';
+import PageLayout from './index';
 
-describe('FlexLayout', () => {
+describe('PageLayout', () => {
   it('renders with compound components', () => {
     render(
-      <FlexLayout>
-        <FlexLayout.Left>Left content</FlexLayout.Left>
-        <FlexLayout.Right>Right content</FlexLayout.Right>
-      </FlexLayout>
+      <PageLayout>
+        <PageLayout.Left>Left content</PageLayout.Left>
+        <PageLayout.Right>Right content</PageLayout.Right>
+      </PageLayout>
     );
 
     expect(screen.getByText('Left content')).toBeInTheDocument();
@@ -17,9 +17,9 @@ describe('FlexLayout', () => {
 
   it('renders left content only', () => {
     render(
-      <FlexLayout>
-        <FlexLayout.Left>Only left content</FlexLayout.Left>
-      </FlexLayout>
+      <PageLayout>
+        <PageLayout.Left>Only left content</PageLayout.Left>
+      </PageLayout>
     );
 
     expect(screen.getByText('Only left content')).toBeInTheDocument();
@@ -28,9 +28,9 @@ describe('FlexLayout', () => {
 
   it('renders right content only', () => {
     render(
-      <FlexLayout>
-        <FlexLayout.Right>Only right content</FlexLayout.Right>
-      </FlexLayout>
+      <PageLayout>
+        <PageLayout.Right>Only right content</PageLayout.Right>
+      </PageLayout>
     );
 
     expect(screen.getByText('Only right content')).toBeInTheDocument();

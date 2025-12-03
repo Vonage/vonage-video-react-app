@@ -7,24 +7,24 @@ import useTheme from '../theme';
 
 type WithChildren = { children: React.ReactNode };
 
-type FlexLayoutProps = BoxProps;
+type PageLayoutProps = BoxProps;
 
-export enum FlexLayoutRegions {
+export enum PageLayoutRegions {
   Banner = 'Banner',
   Left = 'Left',
   Right = 'Right',
   Footer = 'Footer',
 }
 
-const FlexLayout = ({ children, sx, ...props }: FlexLayoutProps): React.ReactNode => {
+const PageLayout = ({ children, sx, ...props }: PageLayoutProps): React.ReactNode => {
   const theme = useTheme();
 
   const childrenArray = React.Children.toArray(children);
 
-  const banner = pickChild(childrenArray, FlexLayoutRegions.Banner);
-  const left = pickChild(childrenArray, FlexLayoutRegions.Left);
-  const right = pickChild(childrenArray, FlexLayoutRegions.Right);
-  const footer = pickChild(childrenArray, FlexLayoutRegions.Footer);
+  const banner = pickChild(childrenArray, PageLayoutRegions.Banner);
+  const left = pickChild(childrenArray, PageLayoutRegions.Left);
+  const right = pickChild(childrenArray, PageLayoutRegions.Right);
+  const footer = pickChild(childrenArray, PageLayoutRegions.Footer);
 
   return (
     <Box
@@ -79,48 +79,48 @@ const FlexLayout = ({ children, sx, ...props }: FlexLayoutProps): React.ReactNod
   );
 };
 
-const FlexLayoutBanner: React.FC<WithChildren> = ({ children }) => {
+const PageLayoutBanner: React.FC<WithChildren> = ({ children }) => {
   return children;
 };
 
-const FlexLayoutLeft: React.FC<WithChildren> = ({ children }) => {
+const PageLayoutLeft: React.FC<WithChildren> = ({ children }) => {
   return children;
 };
 
-const FlexLayoutRight: React.FC<WithChildren> = ({ children }) => {
+const PageLayoutRight: React.FC<WithChildren> = ({ children }) => {
   return children;
 };
 
-const FlexLayoutFooter: React.FC<WithChildren> = ({ children }) => {
+const PageLayoutFooter: React.FC<WithChildren> = ({ children }) => {
   return children;
 };
 
-FlexLayoutBanner.displayName = FlexLayoutRegions.Banner;
-FlexLayoutLeft.displayName = FlexLayoutRegions.Left;
-FlexLayoutRight.displayName = FlexLayoutRegions.Right;
-FlexLayoutFooter.displayName = FlexLayoutRegions.Footer;
+PageLayoutBanner.displayName = PageLayoutRegions.Banner;
+PageLayoutLeft.displayName = PageLayoutRegions.Left;
+PageLayoutRight.displayName = PageLayoutRegions.Right;
+PageLayoutFooter.displayName = PageLayoutRegions.Footer;
 
 /**
  * Banner that will be displayed at the top of the layout
  */
-FlexLayout.Banner = FlexLayoutBanner;
+PageLayout.Banner = PageLayoutBanner;
 
 /**
  * Content for the left column
  */
-FlexLayout.Left = FlexLayoutLeft;
+PageLayout.Left = PageLayoutLeft;
 
 /**
  * Content for the right column
  */
-FlexLayout.Right = FlexLayoutRight;
+PageLayout.Right = PageLayoutRight;
 
 /**
  * Content for the lef column
  */
-FlexLayout.Footer = FlexLayoutFooter;
+PageLayout.Footer = PageLayoutFooter;
 
-function pickChild(children: React.ReactNode[], identifier: FlexLayoutRegions): React.ReactNode {
+function pickChild(children: React.ReactNode[], identifier: PageLayoutRegions): React.ReactNode {
   return (
     children.find((child: unknown) => {
       const isValidElement = React.isValidElement(child) && isFunction(child.type);
@@ -131,4 +131,4 @@ function pickChild(children: React.ReactNode[], identifier: FlexLayoutRegions): 
   );
 }
 
-export default FlexLayout;
+export default PageLayout;
