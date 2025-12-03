@@ -21,7 +21,12 @@ const Banner = (): ReactElement => {
         <BannerLogo />
       </Box>
 
-      <Box sx={{ flex: 1, bgcolor: { xs: theme.colors.surface, md: theme.colors.background } }}>
+      <Box
+        sx={{
+          flex: 1,
+          bgcolor: { xs: theme.colors.surface, md: theme.colors.background },
+        }}
+      >
         <Stack
           direction="row"
           spacing={2}
@@ -30,7 +35,7 @@ const Banner = (): ReactElement => {
           sx={{
             height: '100%',
             bgcolor: { xs: theme.colors.surface, md: theme.colors.background },
-            mr: 4,
+            pr: { xs: 1, sm: 3 },
           }}
         >
           <BannerLanguage />

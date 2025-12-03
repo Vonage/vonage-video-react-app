@@ -107,8 +107,8 @@ const WaitingRoom = (): ReactElement => {
 
           <PageLayout.Left>
             <div
-              className={classNames(`max-w-full flex-col sm: inline-flex xs:p`, {
-                'h-[394px]': isSmallViewport ? false : true,
+              className={classNames(`max-w-full`, {
+                'h-[394px]': !isSmallViewport,
               })}
             >
               <VideoContainer username={username} />

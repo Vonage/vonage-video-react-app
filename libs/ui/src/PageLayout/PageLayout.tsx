@@ -49,9 +49,9 @@ const PageLayout = ({ children, sx, ...props }: PageLayoutProps): React.ReactNod
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              p: 3,
               bgcolor: { xs: theme.colors.surface, md: theme.colors.surface },
               overflow: 'hidden',
+              padding: { xs: '16px', sm: 3 },
             }}
           >
             {left}
@@ -65,8 +65,8 @@ const PageLayout = ({ children, sx, ...props }: PageLayoutProps): React.ReactNod
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              p: 3,
               bgcolor: { xs: theme.colors.surface, md: theme.colors.background },
+              padding: { xs: '16px', sm: 3 },
             }}
           >
             {right}

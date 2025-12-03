@@ -16,7 +16,7 @@ const Card = <C extends React.ElementType = 'div'>({ sx, ...cardProps }: CardPro
         flexDirection: 'column',
         alignItems: 'start',
         bgcolor: theme.colors.surface,
-        padding: { xs: '0px 0px 0px 0px', md: '40px' },
+        padding: { xs: '0px', md: '40px' },
         borderRadius: theme.shapes.borderRadiusMedium,
         ...sx,
       }}

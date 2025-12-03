@@ -13,7 +13,7 @@ import SupportedBrowserListItem from '../SupportedBrowserListItem';
 const SupportedBrowsers = (): ReactElement => {
   const { t } = useTranslation();
   return (
-    <div className="h-auto w-[400px] shrink py-4 ps-12 text-left">
+    <div className="h-auto w-[400px] shrink text-left">
       <h3 className="w-full pb-5 text-4xl text-black">{t('unsupportedBrowser.supported.title')}</h3>
 
       <div className="md:max-h-[480px] md:overflow-y-auto ">

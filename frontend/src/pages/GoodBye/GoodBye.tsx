@@ -37,7 +37,7 @@ const GoodBye = (): ReactElement => {
         <GoodByeMessage header={header} message={caption} roomName={roomName} />
       </PageLayout.Left>
       <PageLayout.Right>
-        <div className="h-auto w-full shrink py-4 ps-12 text-left">
+        <div className="h-auto w-full shrink text-left">
           <h3 className="w-9/12 pb-5 text-4xl text-black">{t('archiveList.label')}</h3>
           <ArchiveList archives={archives} />
         </div>
