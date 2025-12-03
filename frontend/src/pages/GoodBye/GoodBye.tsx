@@ -1,7 +1,7 @@
 import { useLocation } from 'react-router-dom';
 import { ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
-import FlexLayout from '@ui/FlexLayout';
+import PageLayout from '@ui/PageLayout';
 import Banner from '@components/Banner';
 import Footer from '@components/Footer/Footer';
 import useArchives from '../../hooks/useArchives';
@@ -29,23 +29,23 @@ const GoodBye = (): ReactElement => {
   const caption: string = location.state?.caption || t('goodbye.default.message');
 
   return (
-    <FlexLayout>
-      <FlexLayout.Banner>
+    <PageLayout>
+      <PageLayout.Banner>
         <Banner />
-      </FlexLayout.Banner>
-      <FlexLayout.Left>
+      </PageLayout.Banner>
+      <PageLayout.Left>
         <GoodByeMessage header={header} message={caption} roomName={roomName} />
-      </FlexLayout.Left>
-      <FlexLayout.Right>
-        <div className="h-auto w-full shrink py-4 ps-12 text-left">
+      </PageLayout.Left>
+      <PageLayout.Right>
+        <div className="h-auto w-full shrink text-left">
           <h3 className="w-9/12 pb-5 text-4xl text-black">{t('archiveList.label')}</h3>
           <ArchiveList archives={archives} />
         </div>
-      </FlexLayout.Right>
-      <FlexLayout.Footer>
+      </PageLayout.Right>
+      <PageLayout.Footer>
         <Footer />
-      </FlexLayout.Footer>
-    </FlexLayout>
+      </PageLayout.Footer>
+    </PageLayout>
   );
 };
 

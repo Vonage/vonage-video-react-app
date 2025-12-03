@@ -1,4 +1,4 @@
-import type { ThemeTokens } from '../../../getTokensByMode';
+import { ThemeTokens } from '@ui/theme';
 
 /**
  * Typography Type Scale Design Tokens

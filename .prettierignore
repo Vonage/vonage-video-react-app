@@ -11,6 +11,9 @@ node_modules/
 coverage/
 .nx/
 .turbo/
+integration-tests/node_modules/
+integration-tests/playwright-report/
+integration-tests/test-results/
 
 # Public compiled assets
 public/js/

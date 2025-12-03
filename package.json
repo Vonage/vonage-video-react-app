@@ -9,7 +9,7 @@
   },
   "scripts": {
     "postinstall": "nx postinstall integration-tests",
-    "quality-check": "nx run-many -t ts-check,lint:fix --parallel --maxParallel=4",
+    "quality-check": "nx run-many -t ts-check,lint:fix --parallel --maxParallel=4 && prettier . --check --log-level warn",
     "build": "nx run frontend:build",
     "deploy-vcr": "vcr deploy",
     "dev:frontend": "nx serve frontend --host",

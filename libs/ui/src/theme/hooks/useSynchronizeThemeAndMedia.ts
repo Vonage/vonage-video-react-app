@@ -1,11 +1,12 @@
 import React, { useEffect, useRef } from 'react';
 import isDarkMode from '../helpers/isDarkMode';
-import getTokensByMode, { type ThemeTokens } from '../helpers/getTokensByMode';
+import getTokensByMode from '../helpers/getTokensByMode';
+import type { Theme } from '@ui/theme';
 
 const useSynchronizeThemeAndMedia = ({
   setTokens,
 }: {
-  setTokens: React.Dispatch<React.SetStateAction<ThemeTokens>>;
+  setTokens: React.Dispatch<React.SetStateAction<Theme>>;
 }) => {
   const modeRef = useRef<'light' | 'dark'>('light');
   modeRef.current = isDarkMode() ? 'dark' : 'light';

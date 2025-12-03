@@ -2,7 +2,7 @@ import { ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
 import Box from '@ui/Box';
 import Typography from '@ui/Typography';
-import useCustomTheme from '@ui/theme';
+import useTheme from '@ui/theme';
 
 /**
  * LandingPageWelcome Component
@@ -11,7 +11,7 @@ import useCustomTheme from '@ui/theme';
  */
 const LandingPageWelcome = (): ReactElement => {
   const { t } = useTranslation();
-  const theme = useCustomTheme();
+  const theme = useTheme();
   const primaryWord = t('landing.primary.word');
 
   const renderTitle = (titleKey: string) => {
@@ -24,7 +24,6 @@ const LandingPageWelcome = (): ReactElement => {
         variant="h1"
         sx={{
           color: isPrimaryWord ? theme.colors.textPrimary : theme.colors.textSecondary,
-          mr: { xs: 1, md: 0 },
         }}
       >
         {text}
@@ -36,9 +35,6 @@ const LandingPageWelcome = (): ReactElement => {
     <Box
       sx={{
         maxWidth: '48rem',
-        pl: { xs: 0, lg: 4 },
-        mb: { xs: 0, md: 16 },
-        ml: { xs: 0, md: 2 },
         textAlign: 'left',
       }}
     >

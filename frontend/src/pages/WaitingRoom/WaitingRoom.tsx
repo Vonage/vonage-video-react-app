@@ -1,6 +1,6 @@
 import { useState, useEffect, MouseEvent, ReactElement, TouchEvent } from 'react';
 import Box from '@ui/Box';
-import FlexLayout from '@ui/FlexLayout';
+import PageLayout from '@ui/PageLayout';
 import Banner from '@components/Banner';
 import Footer from '@components/Footer/Footer';
 import usePreviewPublisherContext from '../../hooks/usePreviewPublisherContext';
@@ -13,6 +13,7 @@ import { getStorageItem, STORAGE_KEYS } from '../../utils/storage';
 import useIsSmallViewport from '../../hooks/useIsSmallViewport';
 import useBackgroundPublisherContext from '../../hooks/useBackgroundPublisherContext';
 import backgroundEffectsDialog$ from '../../Context/BackgroundEffectsDialog';
+import classNames from 'classnames';
 
 /**
  * WaitingRoom Component
@@ -99,13 +100,16 @@ const WaitingRoom = (): ReactElement => {
   return (
     <backgroundEffectsDialog$.Provider>
       <Box data-testid="waitingRoom">
-        <FlexLayout leftPadding={{ xs: '16px 0', sm: 3 }}>
-          <FlexLayout.Banner>
+        <PageLayout>
+          <PageLayout.Banner>
             <Banner />
-          </FlexLayout.Banner>
-          <FlexLayout.Left>
+          </PageLayout.Banner>
+
+          <PageLayout.Left>
             <div
-              className={`max-w-full flex-col ${isSmallViewport ? '' : 'h-[394px]'} sm: inline-flex`}
+              className={classNames(`max-w-full`, {
+                'h-[394px]': !isSmallViewport,
+              })}
             >
               <VideoContainer username={username} />
               {accessStatus === DEVICE_ACCESS_STATUS.ACCEPTED && (
@@ -121,14 +125,14 @@ const WaitingRoom = (): ReactElement => {
                 />
               )}
             </div>
-          </FlexLayout.Left>
-          <FlexLayout.Right>
+          </PageLayout.Left>
+          <PageLayout.Right>
             <UsernameInput username={username} setUsername={setUsername} />
-          </FlexLayout.Right>
-          <FlexLayout.Footer>
+          </PageLayout.Right>
+          <PageLayout.Footer>
             <Footer />
-          </FlexLayout.Footer>
-        </FlexLayout>
+          </PageLayout.Footer>
+        </PageLayout>
         {accessStatus !== DEVICE_ACCESS_STATUS.ACCEPTED && (
           <DeviceAccessAlert accessStatus={accessStatus} />
         )}

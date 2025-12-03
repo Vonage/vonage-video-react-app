@@ -7,7 +7,7 @@ import useIsSmallViewport from '@hooks/useIsSmallViewport';
 import useAppConfig from '@Context/AppConfig/hooks/useAppConfig';
 import Box from '@ui/Box';
 import { SxProps } from '@ui/SxProps';
-import useCustomTheme from '@ui/theme';
+import useTheme from '@ui/theme';
 import VividIcon from '@components/VividIcon';
 import ButtonBase from '@ui/ButtonBase';
 import MenuDevicesWaitingRoom from '../MenuDevices';
@@ -72,7 +72,7 @@ const ControlPanel = ({
   const { localAudioSource, localVideoSource, changeAudioSource, changeVideoSource } =
     usePreviewPublisherContext();
   const { currentAudioOutputDevice, setAudioOutputDevice } = useAudioOutputContext();
-  const theme = useCustomTheme();
+  const theme = useTheme();
 
   const allowDeviceSelection = useAppConfig(
     ({ waitingRoomSettings }) => waitingRoomSettings.allowDeviceSelection
