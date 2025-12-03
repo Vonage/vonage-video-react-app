@@ -64,6 +64,7 @@ const GoodBye = (): ReactElement => {
               sx={{
                 color: theme.colors.textSecondary,
                 mb: 3,
+                width: '100%',
                 textAlign: 'left',
               }}
             >
@@ -73,11 +74,16 @@ const GoodBye = (): ReactElement => {
             <GoToLandingPageButton handleLanding={handleLanding} />
           </Card>
 
-          <Card>
+          <Card
+            sx={{
+              minWidth: { xs: '100%', md: '500px' },
+            }}
+          >
             <Typography
               variant="h6"
               sx={{
                 color: theme.colors.textSecondary,
+                mb: 3,
               }}
             >
               {t('archiveList.label')}
