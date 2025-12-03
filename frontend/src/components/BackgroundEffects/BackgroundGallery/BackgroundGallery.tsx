@@ -4,7 +4,7 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import { useTranslation } from 'react-i18next';
 import { BACKGROUNDS_PATH } from '../../../utils/constants';
 import SelectableOption from '../SelectableOption';
-import useImageStorage, { StoredImage } from '../../../utils/useImageStorage/useImageStorage';
+import useImageStorage, { StoredImage } from '@utils/useImageStorage/useImageStorage';
 
 export type BackgroundGalleryProps = {
   backgroundSelected: string;

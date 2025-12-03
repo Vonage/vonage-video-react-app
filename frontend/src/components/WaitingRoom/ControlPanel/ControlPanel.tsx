@@ -4,7 +4,6 @@ import usePreviewPublisherContext from '@hooks/usePreviewPublisherContext';
 import useDevices from '@hooks/useDevices';
 import useAudioOutputContext from '@hooks/useAudioOutputContext';
 import useIsSmallViewport from '@hooks/useIsSmallViewport';
-import useAppConfig from '@Context/AppConfig/hooks/useAppConfig';
 import Box from '@ui/Box';
 import { SxProps } from '@ui/SxProps';
 import useTheme from '@ui/theme';
@@ -12,6 +11,14 @@ import VividIcon from '@components/VividIcon';
 import ButtonBase from '@ui/ButtonBase';
 import MenuDevicesWaitingRoom from '../MenuDevices';
 import MenuMoreOptions from '../MenuMoreOptions/MenuMoreOptions';
+
+const textSx: SxProps = {
+  flex: '1 1 0',
+  minWidth: 0,
+  whiteSpace: 'nowrap',
+  overflow: 'hidden',
+  textOverflow: 'ellipsis',
+} as const;
 
 export type ControlPanelProps = {
   handleAudioInputOpen: (
@@ -74,139 +81,117 @@ const ControlPanel = ({
   const { currentAudioOutputDevice, setAudioOutputDevice } = useAudioOutputContext();
   const theme = useTheme();
 
-  const allowDeviceSelection = useAppConfig(
-    ({ waitingRoomSettings }) => waitingRoomSettings.allowDeviceSelection
-  );
-
   const buttonSx: SxProps = {
     display: 'flex',
     alignItems: 'center',
     gap: 1.5,
-    borderRadius: theme.shapes.borderRadiusMedium,
-    padding: '8px',
-    color: theme.colors.textSecondary,
-    fontWeight: theme.typography.weight.caption.value,
-    fontSize: theme.typography.typeScale.desktop['body-base'].fontSize.value,
-
-    minWidth: 0,
-
     '&:hover': {
       backgroundColor: theme.colors.background,
     },
   };
 
-  const textSx: SxProps = {
-    flex: '1 1 0',
-    minWidth: 0,
-    whiteSpace: 'nowrap',
-    overflow: 'hidden',
-    textOverflow: 'ellipsis',
-  };
-
   return (
-    allowDeviceSelection && (
+    <Box
+      sx={{
+        my: 4,
+        maxWidth: '100vw',
+      }}
+      data-testid="ControlPanel"
+    >
       <Box
         sx={{
-          my: 4,
-          maxWidth: '100vw',
+          display: 'flex',
+          flexDirection: 'row',
+          gap: 1,
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          padding: '0 4px',
         }}
-        data-testid="ControlPanel"
       >
-        <Box
-          sx={{
-            display: 'flex',
-            flexDirection: 'row',
-            gap: 1,
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            padding: '0 4px',
-          }}
+        <ButtonBase
+          sx={buttonSx}
+          aria-controls={openAudioInput ? 'basic-menu' : undefined}
+          aria-haspopup="true"
+          aria-expanded={openAudioInput ? 'true' : undefined}
+          aria-label={t('devices.audio.microphone.ariaLabel')}
+          onClick={handleAudioInputOpen}
         >
-          <ButtonBase
-            sx={buttonSx}
-            aria-controls={openAudioInput ? 'basic-menu' : undefined}
-            aria-haspopup="true"
-            aria-expanded={openAudioInput ? 'true' : undefined}
-            aria-label={t('devices.audio.microphone.ariaLabel')}
-            onClick={handleAudioInputOpen}
-          >
-            <VividIcon name="microphone-line" customSize={-6} />
-            <Box component="span" sx={textSx}>
-              {isSmallViewport
-                ? t('devices.audio.microphone.short')
-                : t('devices.audio.microphone.full')}
-            </Box>
-            <VividIcon name="chevron-down-line" customSize={-6} />
-          </ButtonBase>
-          <MenuDevicesWaitingRoom
-            devices={allMediaDevices.audioInputDevices}
-            open={openAudioInput}
-            onClose={handleClose}
-            anchorEl={anchorEl}
-            localSource={localAudioSource}
-            deviceChangeHandler={changeAudioSource}
-            deviceType="audioInput"
-          />
+          <VividIcon name="microphone-line" customSize={-6} />
+          <Box component="span" sx={textSx}>
+            {isSmallViewport
+              ? t('devices.audio.microphone.short')
+              : t('devices.audio.microphone.full')}
+          </Box>
+          <VividIcon name="chevron-down-line" customSize={-6} />
+        </ButtonBase>
+        <MenuDevicesWaitingRoom
+          devices={allMediaDevices.audioInputDevices}
+          open={openAudioInput}
+          onClose={handleClose}
+          anchorEl={anchorEl}
+          localSource={localAudioSource}
+          deviceChangeHandler={changeAudioSource}
+          deviceType="audioInput"
+        />
 
-          <ButtonBase
-            onClick={handleVideoInputOpen}
-            sx={buttonSx}
-            aria-controls={openVideoInput ? 'basic-menu' : undefined}
-            aria-haspopup="true"
-            aria-expanded={openVideoInput ? 'true' : undefined}
-            aria-label={t('devices.video.camera.ariaLabel')}
-          >
-            <VividIcon name="audio-off-2-line" customSize={-6} />
-            <Box component="span" sx={textSx}>
-              {t('button.camera')}
-            </Box>
-            <VividIcon name="chevron-down-line" customSize={-6} />
-          </ButtonBase>
-          <MenuDevicesWaitingRoom
-            devices={allMediaDevices.videoInputDevices}
-            open={openVideoInput}
-            onClose={handleClose}
-            anchorEl={anchorEl}
-            localSource={localVideoSource}
-            deviceChangeHandler={changeVideoSource}
-            deviceType="videoInput"
-          />
+        <ButtonBase
+          onClick={handleVideoInputOpen}
+          sx={buttonSx}
+          aria-controls={openVideoInput ? 'basic-menu' : undefined}
+          aria-haspopup="true"
+          aria-expanded={openVideoInput ? 'true' : undefined}
+          aria-label={t('devices.video.camera.ariaLabel')}
+        >
+          <VividIcon name="audio-off-2-line" customSize={-6} />
+          <Box component="span" sx={textSx}>
+            {t('button.camera')}
+          </Box>
+          <VividIcon name="chevron-down-line" customSize={-6} />
+        </ButtonBase>
+        <MenuDevicesWaitingRoom
+          devices={allMediaDevices.videoInputDevices}
+          open={openVideoInput}
+          onClose={handleClose}
+          anchorEl={anchorEl}
+          localSource={localVideoSource}
+          deviceChangeHandler={changeVideoSource}
+          deviceType="videoInput"
+        />
 
-          <ButtonBase
-            onClick={handleAudioOutputOpen}
-            sx={buttonSx}
-            aria-controls={openAudioOutput ? 'basic-menu' : undefined}
-            aria-haspopup="true"
-            aria-expanded={openAudioOutput ? 'true' : undefined}
-            aria-label={t('devices.audio.speakers.full')}
-          >
-            <VividIcon name="video-line" customSize={-6} />
-            <Box component="span" sx={textSx}>
-              {t('button.speaker')}
-            </Box>
-            <VividIcon name="chevron-down-line" customSize={-6} />
-          </ButtonBase>
-          <MenuDevicesWaitingRoom
-            devices={allMediaDevices.audioOutputDevices}
-            open={openAudioOutput}
-            onClose={handleClose}
-            anchorEl={anchorEl}
-            localSource={currentAudioOutputDevice}
-            deviceChangeHandler={setAudioOutputDevice}
-            deviceType="audioOutput"
-          />
+        <ButtonBase
+          onClick={handleAudioOutputOpen}
+          sx={buttonSx}
+          aria-controls={openAudioOutput ? 'basic-menu' : undefined}
+          aria-haspopup="true"
+          aria-expanded={openAudioOutput ? 'true' : undefined}
+          aria-label={t('devices.audio.speakers.full')}
+        >
+          <VividIcon name="video-line" customSize={-6} />
+          <Box component="span" sx={textSx}>
+            {t('button.speaker')}
+          </Box>
+          <VividIcon name="chevron-down-line" customSize={-6} />
+        </ButtonBase>
+        <MenuDevicesWaitingRoom
+          devices={allMediaDevices.audioOutputDevices}
+          open={openAudioOutput}
+          onClose={handleClose}
+          anchorEl={anchorEl}
+          localSource={currentAudioOutputDevice}
+          deviceChangeHandler={setAudioOutputDevice}
+          deviceType="audioOutput"
+        />
 
-          <ButtonBase onClick={handleOpenMoreOptions} sx={buttonSx}>
-            <VividIcon name="more-vertical-solid" customSize={-5} />
-          </ButtonBase>
-          <MenuMoreOptions
-            onClose={handleCloseMoreOptions}
-            open={openMoreOptions}
-            anchorEl={moreOptionsAnchorEl}
-          />
-        </Box>
+        <ButtonBase onClick={handleOpenMoreOptions} sx={buttonSx}>
+          <VividIcon name="more-vertical-solid" customSize={-5} />
+        </ButtonBase>
+        <MenuMoreOptions
+          onClose={handleCloseMoreOptions}
+          open={openMoreOptions}
+          anchorEl={moreOptionsAnchorEl}
+        />
       </Box>
-    )
+    </Box>
   );
 };
 

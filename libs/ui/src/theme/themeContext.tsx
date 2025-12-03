@@ -5,6 +5,7 @@ import isDarkMode from './helpers/isDarkMode';
 import useSynchronizeThemeAndMedia from './hooks/useSynchronizeThemeAndMedia';
 import getMuiCustomTheme from './helpers/getMuiCustomTheme';
 import Theme, { PartialTheme } from './themeContext.types';
+import { mergeThemeConfigurations } from './helpers/mergeThemeConfigurations';
 
 const defaultLightValue: Theme = getTokensByMode('light');
 const defaultDarkValue: Theme = getTokensByMode('dark');
@@ -42,7 +43,7 @@ export const ThemeProvider: React.FC<PropsWithChildren<ThemeProviderProps>> = ({
     return isDarkMode() ? themeSource.dark : themeSource.light;
   });
 
-  const muiTheme = getMuiCustomTheme({ tokens });
+  const muiTheme = useMemo(() => getMuiCustomTheme({ tokens }), [tokens]);
 
   useSynchronizeThemeAndMedia({ setTokens });
 
@@ -53,44 +54,5 @@ export const ThemeProvider: React.FC<PropsWithChildren<ThemeProviderProps>> = ({
     </themeContext.Provider>
   );
 };
-
-function mergeThemeConfigurations({
-  defaultValue,
-  overrides = {},
-}: {
-  defaultValue: Theme;
-  overrides: PartialTheme;
-}): Theme {
-  const typeface = {
-    ...defaultValue.typography.typeface,
-    ...overrides.typography?.typeface,
-  } as Theme['typography']['typeface'];
-
-  const typeScale = {
-    ...defaultValue.typography.typeScale,
-    ...overrides.typography?.typeScale,
-  } as Theme['typography']['typeScale'];
-
-  const weight = {
-    ...defaultValue.typography.weight,
-    ...overrides.typography?.weight,
-  } as Theme['typography']['weight'];
-
-  return {
-    colors: {
-      ...defaultValue.colors,
-      ...overrides.colors,
-    },
-    shapes: {
-      ...defaultValue.shapes,
-      ...overrides.shapes,
-    },
-    typography: {
-      typeface,
-      typeScale,
-      weight,
-    },
-  };
-}
 
 export default themeContext;

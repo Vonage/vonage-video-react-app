@@ -7,7 +7,7 @@ import useTheme from '@ui/theme';
 /**
  * Footer Component
  *
- * This component returns a footer that includes a logo, current date/time, language selector, and some links.
+ * This component returns a footer with links to various resources.
  * @returns {ReactElement} - the footer component.
  */
 const Footer = (): ReactElement => {

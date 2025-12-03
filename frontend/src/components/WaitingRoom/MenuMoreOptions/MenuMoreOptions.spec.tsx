@@ -49,5 +49,5 @@ describe('MenuMoreOptions', () => {
 });
 
 function render(ui: ReactElement) {
-  return renderBase(<backgroundEffectsDialog$.Provider>{ui}</backgroundEffectsDialog$.Provider>);
+  return renderBase(ui, { wrapper: backgroundEffectsDialog$.Provider });
 }

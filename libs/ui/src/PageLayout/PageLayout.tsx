@@ -33,7 +33,7 @@ const PageLayout = ({ children, sx, ...props }: PageLayoutProps): React.ReactNod
         display: 'flex',
         flexDirection: 'column',
         minHeight: '100vh',
-        gap: { xs: 2, sm: 'unset' },
+        gap: { xs: 4, sm: 'unset' },
         ...sx,
       }}
       {...props}
@@ -43,15 +43,17 @@ const PageLayout = ({ children, sx, ...props }: PageLayoutProps): React.ReactNod
       <Stack
         direction={{ xs: 'column', md: 'row' }}
         sx={{
-          display: { xs: 'block', md: 'flex' },
+          gap: { xs: 2, md: 0 },
+          display: 'flex',
           flex: 2,
           width: '100%',
+          mt: 2,
         }}
       >
         {left && (
           <Box
             sx={{
-              flex: 1,
+              flex: { xs: 0, md: 1 },
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
@@ -67,7 +69,7 @@ const PageLayout = ({ children, sx, ...props }: PageLayoutProps): React.ReactNod
         {right && (
           <Box
             sx={{
-              flex: 1,
+              flex: { xs: 0, md: 1 },
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',

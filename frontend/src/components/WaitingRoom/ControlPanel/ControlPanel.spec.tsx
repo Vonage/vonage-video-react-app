@@ -135,32 +135,6 @@ describe('ControlPanel', () => {
     );
     expect(screen.getByTestId('audioOutput-menu')).toBeVisible();
   });
-
-  it('is not rendered when allowDeviceSelection is false', () => {
-    render(
-      <ControlPanel
-        handleAudioInputOpen={() => {}}
-        handleVideoInputOpen={() => {}}
-        handleAudioOutputOpen={() => {}}
-        handleClose={() => {}}
-        openAudioInput={false}
-        openVideoInput={false}
-        openAudioOutput={false}
-        anchorEl={null}
-      />,
-      {
-        appConfigOptions: {
-          value: {
-            waitingRoomSettings: {
-              allowDeviceSelection: false,
-            },
-          },
-        },
-      }
-    );
-
-    expect(screen.queryByTestId('ControlPanel')).not.toBeInTheDocument();
-  });
 });
 
 function render(

@@ -14,6 +14,7 @@ import useIsSmallViewport from '../../hooks/useIsSmallViewport';
 import useBackgroundPublisherContext from '../../hooks/useBackgroundPublisherContext';
 import backgroundEffectsDialog$ from '../../Context/BackgroundEffectsDialog';
 import classNames from 'classnames';
+import useAppConfig from '@Context/AppConfig/hooks/useAppConfig';
 
 /**
  * WaitingRoom Component
@@ -42,6 +43,10 @@ const WaitingRoom = (): ReactElement => {
   const [openAudioOutput, setOpenAudioOutput] = useState<boolean>(false);
   const [username, setUsername] = useState(getStorageItem(STORAGE_KEYS.USERNAME) ?? '');
   const isSmallViewport = useIsSmallViewport();
+
+  const allowDeviceSelection = useAppConfig(
+    ({ waitingRoomSettings }) => waitingRoomSettings.allowDeviceSelection
+  );
 
   useEffect(() => {
     if (!publisher) {
@@ -112,7 +117,7 @@ const WaitingRoom = (): ReactElement => {
               })}
             >
               <VideoContainer username={username} />
-              {accessStatus === DEVICE_ACCESS_STATUS.ACCEPTED && (
+              {allowDeviceSelection && accessStatus === DEVICE_ACCESS_STATUS.ACCEPTED && (
                 <ControlPanel
                   handleAudioInputOpen={handleAudioInputOpen}
                   handleVideoInputOpen={handleVideoInputOpen}

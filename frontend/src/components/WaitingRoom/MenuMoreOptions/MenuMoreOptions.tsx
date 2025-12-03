@@ -1,4 +1,4 @@
-import { ReactElement } from 'react';
+import { ReactElement, useCallback } from 'react';
 import MenuItem from '@ui/MenuItem';
 import Menu from '@ui/Menu';
 import { useTranslation } from 'react-i18next';
@@ -30,10 +30,10 @@ const MenuMoreOptions = ({
   const { t } = useTranslation();
   const { open: openBackgroundEffects } = backgroundEffectsDialog$.use.actions();
 
-  const handleClick = () => {
+  const handleClick = useCallback(() => {
     openBackgroundEffects();
     onClose();
-  };
+  }, [openBackgroundEffects, onClose]);
 
   return (
     <Menu

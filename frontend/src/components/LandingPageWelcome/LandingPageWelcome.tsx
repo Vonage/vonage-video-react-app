@@ -36,6 +36,9 @@ const LandingPageWelcome = (): ReactElement => {
       sx={{
         maxWidth: '48rem',
         textAlign: 'left',
+        display: 'flex',
+        flexDirection: 'column',
+        gap: 1,
       }}
     >
       <Box
@@ -46,6 +49,7 @@ const LandingPageWelcome = (): ReactElement => {
           flexWrap: 'wrap',
           flexDirection: { xs: 'row', md: 'column' },
           width: 'fit-content',
+          gap: 1,
         }}
       >
         <>
@@ -59,7 +63,6 @@ const LandingPageWelcome = (): ReactElement => {
         variant="h4"
         sx={{
           color: theme.colors.textTertiary,
-          mt: 1,
           display: {
             xs: 'none',
             sm: 'block',
