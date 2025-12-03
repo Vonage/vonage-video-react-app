@@ -17,15 +17,7 @@ const BannerLogo = (): ReactElement => {
   };
 
   return (
-    <Box
-      data-testid="banner-logo"
-      sx={{
-        boxSizing: 'border-box',
-        ml: { xs: 1, md: 3 },
-        mt: { xs: 2, md: 2 },
-        px: { xs: 2, md: 0 },
-      }}
-    >
+    <Box data-testid="banner-logo">
       <Box
         data-testid="banner-logo-image"
         component="img"

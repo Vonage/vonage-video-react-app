@@ -29,7 +29,13 @@ const PageLayout = ({ children, sx, ...props }: PageLayoutProps): React.ReactNod
   return (
     <Box
       component="section"
-      sx={{ display: 'flex', flexDirection: 'column', minHeight: '100vh', ...sx }}
+      sx={{
+        display: 'flex',
+        flexDirection: 'column',
+        minHeight: '100vh',
+        gap: { xs: 2, sm: 'unset' },
+        ...sx,
+      }}
       {...props}
     >
       {banner}
@@ -38,7 +44,7 @@ const PageLayout = ({ children, sx, ...props }: PageLayoutProps): React.ReactNod
         direction={{ xs: 'column', md: 'row' }}
         sx={{
           display: { xs: 'block', md: 'flex' },
-          flex: 1,
+          flex: 2,
           width: '100%',
         }}
       >
@@ -51,7 +57,7 @@ const PageLayout = ({ children, sx, ...props }: PageLayoutProps): React.ReactNod
               justifyContent: 'center',
               bgcolor: { xs: theme.colors.surface, md: theme.colors.surface },
               overflow: 'hidden',
-              padding: { xs: '16px', sm: 3 },
+              px: { xs: 3, sm: 5 },
             }}
           >
             {left}
@@ -66,7 +72,7 @@ const PageLayout = ({ children, sx, ...props }: PageLayoutProps): React.ReactNod
               alignItems: 'center',
               justifyContent: 'center',
               bgcolor: { xs: theme.colors.surface, md: theme.colors.background },
-              padding: { xs: '16px', sm: 3 },
+              px: { xs: 3, sm: 5 },
             }}
           >
             {right}
