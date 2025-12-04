@@ -1,10 +1,10 @@
 import { render, screen, fireEvent } from '@testing-library/react';
 import { describe, expect, it, vi, Mock, beforeEach } from 'vitest';
 import FilePicker from './FilePicker';
-import * as util from '../../../../../utils/util';
+import * as util from '@utils/util';
 import '@testing-library/jest-dom';
 
-vi.mock('../../../../../utils/util', () => ({ isMobile: vi.fn() }));
+vi.mock('@utils/util', () => ({ isMobile: vi.fn() }));
 
 describe('FilePicker component', () => {
   const mockFileSelect = vi.fn();

@@ -4,10 +4,10 @@ import Box from '@ui/Box';
 import Tooltip from '@ui/Tooltip';
 import IconButton from '@ui/IconButton';
 import VividIcon from '@components/VividIcon';
-import useCustomTheme from '@Context/Theme';
+import useTheme from '@ui/theme';
 import { BACKGROUNDS_PATH } from '../../../utils/constants';
 import SelectableOption from '../SelectableOption';
-import useImageStorage, { StoredImage } from '../../../utils/useImageStorage/useImageStorage';
+import useImageStorage, { StoredImage } from '@utils/useImageStorage/useImageStorage';
 
 export type BackgroundGalleryProps = {
   backgroundSelected: string;
@@ -36,7 +36,7 @@ const BackgroundGallery = ({
   const { getImagesFromStorage, deleteImageFromStorage } = useImageStorage();
   const [customImages, setCustomImages] = useState<StoredImage[]>([]);
   const { t } = useTranslation();
-  const theme = useCustomTheme();
+  const theme = useTheme();
 
   const backgrounds = [
     {

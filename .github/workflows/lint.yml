@@ -31,7 +31,7 @@ jobs:
 
       - name: Check for lint issues
         run: |
-          yarn lint && yarn prettier . --check
+          yarn lint && yarn prettier . --check --log-level warn
 
       - name: Check for TS errors
         run: |

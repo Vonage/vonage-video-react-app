@@ -1,7 +1,7 @@
 import { Publisher } from '@vonage/client-sdk-video';
 import { ReactElement, useState } from 'react';
 import Box from '@ui/Box';
-import useCustomTheme from '@Context/Theme';
+import useTheme from '@ui/theme';
 import EffectOptionButtons from '../EffectOptionButtons/EffectOptionButtons';
 import BackgroundGallery from '../BackgroundGallery/BackgroundGallery';
 import { DEFAULT_SELECTABLE_OPTION_WIDTH } from '../../../utils/constants';
@@ -58,7 +58,7 @@ const BackgroundEffectOptions = ({
     setRefreshTrigger(Date.now());
   };
 
-  const theme = useCustomTheme();
+  const theme = useTheme();
 
   return (
     <Box

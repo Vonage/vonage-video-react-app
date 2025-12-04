@@ -1,3 +1,5 @@
+import { ThemeTokens } from '@ui/theme';
+
 /**
  * Typography Weight Design Tokens
  *
@@ -6,7 +8,7 @@
  * hierarchy by specifying regular, medium, and bold weights
  * for various text elements.
  */
-const weight = {
+const weight: ThemeTokens['typography']['weight'] = {
   headline: {
     value: 500,
     type: 'fontWeight',
@@ -80,12 +82,4 @@ const weight = {
   },
 };
 
-export type Weight = keyof typeof weight;
-
-export type WeightProps = {
-  value: string | number;
-  type: 'fontWeight';
-  description: string;
-};
-
-export default weight as Record<Weight, WeightProps>;
+export default weight;

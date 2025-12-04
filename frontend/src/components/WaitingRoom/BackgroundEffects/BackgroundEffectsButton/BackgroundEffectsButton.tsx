@@ -5,7 +5,7 @@ import { useTranslation } from 'react-i18next';
 import useAppConfig from '@Context/AppConfig/hooks/useAppConfig';
 import Box from '@ui/Box';
 import Tooltip from '@ui/Tooltip';
-import useCustomTheme from '@Context/Theme';
+import useTheme from '@ui/theme';
 import { VIDEO_CONTAINER_BUTTON_SIZE_WR } from '@utils/constants';
 import VideoContainerButton from '../../VideoContainerButton';
 
@@ -30,7 +30,7 @@ const BackgroundEffectsButton = ({
 
   const shouldDisplayBackgroundEffects = hasMediaProcessorSupport() && allowBackgroundEffects;
   const { t } = useTranslation();
-  const theme = useCustomTheme();
+  const theme = useTheme();
 
   return (
     shouldDisplayBackgroundEffects && (

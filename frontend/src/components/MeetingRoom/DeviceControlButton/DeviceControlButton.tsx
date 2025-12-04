@@ -12,7 +12,7 @@ import useIsCameraControlAllowed from '@Context/AppConfig/hooks/useIsCameraContr
 import usePublisherContext from '@hooks/usePublisherContext';
 import useBackgroundPublisherContext from '@hooks/useBackgroundPublisherContext';
 import getControlButtonTooltip from '@utils/getControlButtonTooltip';
-import useCustomTheme from '@Context/Theme';
+import useTheme from '@ui/theme';
 import DeviceSettingsMenu from '../DeviceSettingsMenu';
 import MutedAlert from '../../MutedAlert';
 
@@ -38,7 +38,7 @@ const DeviceControlButton = ({
   const { t } = useTranslation();
   const { isVideoEnabled, toggleAudio, toggleVideo, isAudioEnabled } = usePublisherContext();
   const { toggleVideo: toggleBackgroundVideoPublisher } = useBackgroundPublisherContext();
-  const theme = useCustomTheme();
+  const theme = useTheme();
 
   const isMicrophoneControlAllowed = useIsMicrophoneControlAllowed();
   const isCameraControlAllowed = useIsCameraControlAllowed();

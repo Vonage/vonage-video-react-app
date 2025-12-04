@@ -27,7 +27,7 @@ const backgrounds = [
 const mockDeleteImageFromStorage = vi.fn();
 const mockGetImagesFromStorage = vi.fn(() => customImages);
 
-vi.mock('../../../utils/useImageStorage/useImageStorage', () => ({
+vi.mock('@utils/useImageStorage/useImageStorage', () => ({
   __esModule: true,
   default: () => ({
     getImagesFromStorage: mockGetImagesFromStorage,

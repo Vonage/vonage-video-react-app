@@ -1,16 +1,16 @@
 import { renderHook } from '@testing-library/react';
 import { ReactNode } from 'react';
 import { describe, it, expect } from 'vitest';
-import { CustomThemeProvider } from '../themeContext';
-import useCustomTheme from './useCustomTheme';
+import { ThemeProvider } from '../themeContext';
+import useTheme from './useTheme';
 
-describe('useCustomTheme', () => {
+describe('useTheme', () => {
   it('should return colors object with all color tokens', () => {
     const wrapper = ({ children }: { children: ReactNode }) => (
-      <CustomThemeProvider>{children}</CustomThemeProvider>
+      <ThemeProvider>{children}</ThemeProvider>
     );
 
-    const { result } = renderHook(() => useCustomTheme(), { wrapper });
+    const { result } = renderHook(() => useTheme(), { wrapper });
 
     expect(result.current.colors).toBeDefined();
     expect(result.current.colors.primary).toBeDefined();
@@ -25,10 +25,10 @@ describe('useCustomTheme', () => {
 
   it('should return shapes object with all border radius tokens', () => {
     const wrapper = ({ children }: { children: ReactNode }) => (
-      <CustomThemeProvider>{children}</CustomThemeProvider>
+      <ThemeProvider>{children}</ThemeProvider>
     );
 
-    const { result } = renderHook(() => useCustomTheme(), { wrapper });
+    const { result } = renderHook(() => useTheme(), { wrapper });
 
     expect(result.current.shapes).toBeDefined();
     expect(result.current.shapes.borderRadiusNone).toBeDefined();
@@ -41,10 +41,10 @@ describe('useCustomTheme', () => {
 
   it('should return numeric values for border radius', () => {
     const wrapper = ({ children }: { children: ReactNode }) => (
-      <CustomThemeProvider>{children}</CustomThemeProvider>
+      <ThemeProvider>{children}</ThemeProvider>
     );
 
-    const { result } = renderHook(() => useCustomTheme(), { wrapper });
+    const { result } = renderHook(() => useTheme(), { wrapper });
 
     expect(typeof result.current.shapes.borderRadiusNone).toBe('string');
     expect(typeof result.current.shapes.borderRadiusMedium).toBe('string');
@@ -52,10 +52,10 @@ describe('useCustomTheme', () => {
 
   it('should return hex color strings', () => {
     const wrapper = ({ children }: { children: ReactNode }) => (
-      <CustomThemeProvider>{children}</CustomThemeProvider>
+      <ThemeProvider>{children}</ThemeProvider>
     );
 
-    const { result } = renderHook(() => useCustomTheme(), { wrapper });
+    const { result } = renderHook(() => useTheme(), { wrapper });
 
     expect(typeof result.current.colors.primary).toBe('string');
     expect(result.current.colors.primary).toMatch(/^#[0-9A-F]{6}$/i);

@@ -1,6 +1,6 @@
 import { Grid, Grow, Paper, Popper, ClickAwayListener } from '@mui/material';
 import { ReactElement, RefObject, useEffect, useState } from 'react';
-import useCustomTheme from '@Context/Theme';
+import useTheme from '@ui/theme';
 import SendEmojiButton from '../SendEmojiButton';
 import emojiMap from '../../../utils/emojis';
 import { PopperChildrenProps } from '@mui/material/Popper/BasePopper.types';
@@ -27,7 +27,7 @@ const EmojiGridDesktop = ({
   isEmojiGridOpen,
   anchorRef,
 }: EmojiGridDesktopProps): ReactElement | false => {
-  const theme = useCustomTheme();
+  const theme = useTheme();
   const [isRendered, setIsRendered] = useState<boolean>(false);
   useEffect(() => {
     // useRef is not immediately assigned on first render

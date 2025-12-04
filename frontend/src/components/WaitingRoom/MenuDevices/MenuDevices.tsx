@@ -6,7 +6,7 @@ import VividIcon from '@components/VividIcon';
 import Box from '@ui/Box';
 import cleanAndDedupeDeviceLabels from '../../../utils/cleanAndDedupeDeviceLabels/cleanAndDedupeDeviceLabels';
 import SoundTest from '../../SoundTest';
-import { isGetActiveAudioOutputDeviceSupported } from '../../../utils/util';
+import { isGetActiveAudioOutputDeviceSupported } from '@utils/util';
 
 export type MenuDevicesWaitingRoomProps = {
   onClose: () => void;
