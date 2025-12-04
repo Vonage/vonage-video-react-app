@@ -2,7 +2,7 @@ import { Dispatch, ReactElement, useState, SetStateAction } from 'react';
 import { Tooltip } from '@mui/material';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import { useTranslation } from 'react-i18next';
-import useCustomTheme from '@Context/Theme';
+import useTheme from '@ui/theme';
 import ToolbarButton from '../ToolbarButton';
 import ToolbarOverflowMenu from '../ToolbarOverflowMenu';
 import UnreadMessagesBadge from '../UnreadMessagesBadge';
@@ -39,7 +39,7 @@ const ToolbarOverflowButton = ({
   captionsState,
 }: ToolbarOverflowButtonProps): ReactElement => {
   const { t } = useTranslation();
-  const theme = useCustomTheme();
+  const theme = useTheme();
   const [isToolbarOverflowMenuOpen, setIsToolbarOverflowMenuOpen] = useState<boolean>(false);
   const [openEmojiGridMobile, setOpenEmojiGridMobile] = useState<boolean>(true);
 

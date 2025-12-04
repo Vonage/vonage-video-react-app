@@ -8,7 +8,6 @@ import CircularProgress from '@ui/CircularProgress';
 import ListItemText from '@ui/ListItemText';
 import Box from '@ui/Box';
 import Typography from '@ui/Typography';
-import useCustomTheme from '@Context/Theme';
 import VividIcon from '@components/VividIcon';
 import { Archive, ArchiveStatus } from '../../../api/archiving/model';
 import IconButton from '@ui/IconButton';
@@ -17,10 +16,11 @@ import { formatDuration } from '@utils/formatDuration';
 import { formatFileSize } from '@utils/formatFileSize';
 import Stack from '@ui/Stack';
 import Separator from '@components/Separator';
+import useTheme from '@ui/theme';
 
 const ArchiveErrorIcon = () => {
   const { t } = useTranslation();
-  const theme = useCustomTheme();
+  const theme = useTheme();
 
   return (
     <Tooltip title={t('archiveList.error.tooltip')}>
@@ -37,7 +37,7 @@ const ArchiveErrorIcon = () => {
 };
 
 const ArchivingLoadingIcon = () => {
-  const theme = useCustomTheme();
+  const theme = useTheme();
 
   return (
     <CircularProgress
@@ -59,7 +59,7 @@ const ArchiveStatusContent = ({
   url: string | null;
 }) => {
   const { t } = useTranslation();
-  const theme = useCustomTheme();
+  const theme = useTheme();
 
   if (status === 'available') {
     return (
@@ -100,7 +100,7 @@ export type ArchiveListProps = {
  */
 const ArchiveList = ({ archives }: ArchiveListProps): ReactElement => {
   const { t } = useTranslation();
-  const theme = useCustomTheme();
+  const theme = useTheme();
 
   if (archives === 'error') {
     return (

@@ -1,10 +1,10 @@
-import { ReactElement } from 'react';
+import { ReactElement, useCallback } from 'react';
 import MenuItem from '@ui/MenuItem';
 import Menu from '@ui/Menu';
 import { useTranslation } from 'react-i18next';
 import VividIcon from '@components/VividIcon';
 import Box from '@ui/Box';
-import { useBackgroundEffectsDialog } from '../../../Context/BackgroundEffectsDialog';
+import backgroundEffectsDialog$ from '@Context/BackgroundEffectsDialog';
 
 export type MenuMoreOptionsWaitingRoomProps = {
   onClose: () => void;
@@ -28,12 +28,12 @@ const MenuMoreOptions = ({
   anchorEl,
 }: MenuMoreOptionsWaitingRoomProps): ReactElement => {
   const { t } = useTranslation();
-  const { open: openBackgroundEffects } = useBackgroundEffectsDialog();
+  const { open: openBackgroundEffects } = backgroundEffectsDialog$.use.actions();
 
-  const handleClick = () => {
+  const handleClick = useCallback(() => {
     openBackgroundEffects();
     onClose();
-  };
+  }, [openBackgroundEffects, onClose]);
 
   return (
     <Menu

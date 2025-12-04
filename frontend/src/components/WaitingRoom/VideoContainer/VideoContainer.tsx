@@ -1,7 +1,7 @@
 import { useRef, useState, useEffect, ReactElement } from 'react';
 import Box from '@ui/Box';
 import Stack from '@ui/Stack';
-import useCustomTheme from '@Context/Theme';
+import useTheme from '@ui/theme';
 import { VIDEO_CONTAINER_HEIGHT_WR } from '@utils/constants';
 import MicButton from '../MicButton';
 import CameraButton from '../CameraButton';
@@ -16,7 +16,7 @@ import VignetteEffect from '../VignetteEffect';
 import useIsSmallViewport from '../../../hooks/useIsSmallViewport';
 import BackgroundEffectsDialog from '../BackgroundEffects/BackgroundEffectsDialog';
 import BackgroundEffectsButton from '../BackgroundEffects/BackgroundEffectsButton';
-import { useBackgroundEffectsDialog } from '../../../Context/BackgroundEffectsDialog';
+import backgroundEffectsDialog$ from '@Context/BackgroundEffectsDialog';
 
 export type VideoContainerProps = {
   username: string;
@@ -34,13 +34,13 @@ export type VideoContainerProps = {
 const VideoContainer = ({ username }: VideoContainerProps): ReactElement => {
   const containerRef = useRef<HTMLDivElement>(null);
   const [isVideoLoading, setIsVideoLoading] = useState<boolean>(true);
-  const { isOpen: isBackgroundEffectsOpen, open, close } = useBackgroundEffectsDialog();
+  const [{ isOpen: isBackgroundEffectsOpen }, { open, close }] = backgroundEffectsDialog$.use();
   const { user } = useUserContext();
   const { publisherVideoElement, isVideoEnabled, isAudioEnabled, speechLevel } =
     usePreviewPublisherContext();
   const initials = getInitials(username);
   const isSmallViewport = useIsSmallViewport();
-  const theme = useCustomTheme();
+  const theme = useTheme();
 
   useEffect(() => {
     if (publisherVideoElement && containerRef.current && isVideoEnabled) {
@@ -119,10 +119,12 @@ const VideoContainer = ({ username }: VideoContainerProps): ReactElement => {
           </Stack>
           <Box sx={{ position: 'absolute', right: '20px' }}>
             <BackgroundEffectsButton onClick={open} />
-            <BackgroundEffectsDialog
-              isBackgroundEffectsOpen={isBackgroundEffectsOpen}
-              setIsBackgroundEffectsOpen={close}
-            />
+            {isBackgroundEffectsOpen && (
+              <BackgroundEffectsDialog
+                isBackgroundEffectsOpen={true}
+                setIsBackgroundEffectsOpen={close}
+              />
+            )}
           </Box>
         </Box>
       )}

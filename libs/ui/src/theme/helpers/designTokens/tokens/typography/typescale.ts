@@ -1,3 +1,5 @@
+import { ThemeTokens } from '@ui/theme';
+
 /**
  * Typography Type Scale Design Tokens
  *
@@ -10,7 +12,7 @@
 // Helper function to convert px to rem (16px = 1rem)
 const pxToRem = (px: number) => `${px / 16}rem`;
 
-const typeScale = {
+const typeScale: ThemeTokens['typography']['typeScale'] = {
   desktop: {
     headline: {
       fontSize: { value: pxToRem(66), description: 'Equivalent to 66px' },
@@ -138,16 +140,4 @@ const typeScale = {
   },
 };
 
-// Updated types to match the new structure
-export type Device = keyof typeof typeScale;
-export type TypeScale = keyof typeof typeScale.desktop; // Both desktop and mobile have same keys
-
-export type TypeScaleProps = {
-  fontSize: { value: string; description: string };
-  lineHeight: { value: string; description: string };
-  fontWeight: { value: number; description: string };
-};
-
-export type TypeScaleStructure = Record<Device, Record<TypeScale, TypeScaleProps>>;
-
-export default typeScale as TypeScaleStructure;
+export default typeScale;

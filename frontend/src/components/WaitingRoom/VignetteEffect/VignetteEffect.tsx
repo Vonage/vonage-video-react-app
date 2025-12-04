@@ -1,6 +1,6 @@
 import { ReactElement } from 'react';
 import Box from '@ui/Box';
-import useCustomTheme from '@Context/Theme';
+import useTheme from '@ui/theme';
 import { VIDEO_CONTAINER_HEIGHT_WR } from '@utils/constants';
 
 /**
@@ -11,7 +11,7 @@ import { VIDEO_CONTAINER_HEIGHT_WR } from '@utils/constants';
  * @returns {ReactElement} - The VignetteEffect component.
  */
 const VignetteEffect = (): ReactElement => {
-  const theme = useCustomTheme();
+  const theme = useTheme();
 
   return (
     <Box

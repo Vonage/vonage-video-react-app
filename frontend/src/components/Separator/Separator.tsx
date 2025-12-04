@@ -1,6 +1,6 @@
 import Box from '@ui/Box';
 import { ReactElement } from 'react';
-import useCustomTheme from '@Context/Theme';
+import useTheme from '@ui/theme';
 
 export type SeparatorProps = {
   orientation?: 'left' | 'right';
@@ -17,7 +17,7 @@ export type SeparatorProps = {
  * @returns {ReactElement} The separator component.
  */
 const Separator = ({ orientation = 'left', width = '50%' }: SeparatorProps): ReactElement => {
-  const theme = useCustomTheme();
+  const theme = useTheme();
   return (
     <Box
       data-testid="separator"

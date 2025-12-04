@@ -1,8 +1,7 @@
 import * as fs from 'node:fs';
 import * as path from 'node:path';
-import designTokens from '../designTokens.ts';
-import type { Typeface } from '../tokens/typography/typeface';
-import type { TypeScale, Device } from '../tokens/typography/typescale';
+import designTokens from '../designTokens.js';
+import type { Device, ThemeTypeface, ThemeTypeScale, ThemeWeight } from '@ui/theme';
 
 const outputFile = path.resolve('frontend/src/designTokens/designTokens.json');
 
@@ -23,11 +22,12 @@ type UnwrappedTokens = {
     easing: Record<string, string>;
   };
   typography: {
-    typeface: Record<Typeface, string>;
+    typeface: Record<ThemeTypeface, string>;
+    weight: Record<ThemeWeight, string>;
     typeScale: Record<
       Device,
       Record<
-        TypeScale,
+        ThemeTypeScale,
         {
           fontSize: string;
           lineHeight: string;
@@ -35,7 +35,6 @@ type UnwrappedTokens = {
         }
       >
     >;
-    weight: Record<string, number>;
   };
 };
 
@@ -46,31 +45,31 @@ function designTokensToJson() {
   // Ensure parent directory exists
   fs.mkdirSync(path.dirname(outputFile), { recursive: true });
 
-  const tokens = unwrapValue({
+  const unwrappedTokens = unwrapValue({
     ...designTokens,
     lightColor: designTokens.color.light,
     darkColor: designTokens.color.dark,
   }) as UnwrappedTokens;
 
-  const desktopFontSize = parseResponsiveFontSize(tokens.typography.typeScale.desktop);
-  const mobileFontSize = parseResponsiveFontSize(tokens.typography.typeScale.mobile);
+  const desktopFontSize = parseResponsiveFontSize(unwrappedTokens.typography.typeScale.desktop);
+  const mobileFontSize = parseResponsiveFontSize(unwrappedTokens.typography.typeScale.mobile);
 
   const tailwindExtend = {
     colors: {
-      light: tokens.lightColor,
-      dark: tokens.darkColor,
+      light: unwrappedTokens.lightColor,
+      dark: unwrappedTokens.darkColor,
     },
-    borderRadius: tokens.shape,
-    boxShadow: tokens.elevation,
-    opacity: tokens.state,
-    transitionDuration: tokens.motion?.duration,
-    transitionTimingFunction: tokens.motion?.easing,
-    fontFamily: tokens.typography?.typeface,
+    borderRadius: unwrappedTokens.shape,
+    boxShadow: unwrappedTokens.elevation,
+    opacity: unwrappedTokens.state,
+    transitionDuration: unwrappedTokens.motion?.duration,
+    transitionTimingFunction: unwrappedTokens.motion?.easing,
+    fontFamily: unwrappedTokens.typography?.typeface,
     fontSize: {
       desktop: desktopFontSize,
       mobile: mobileFontSize,
     },
-    fontWeight: tokens.typography?.weight,
+    fontWeight: unwrappedTokens.typography?.weight,
   };
 
   // Write or overwrite the file
@@ -126,7 +125,7 @@ function isUndefined(value: unknown): value is undefined {
  */
 function parseResponsiveFontSize(
   fontSizes: Record<
-    TypeScale,
+    ThemeTypeScale,
     {
       fontSize: string;
       lineHeight: string;

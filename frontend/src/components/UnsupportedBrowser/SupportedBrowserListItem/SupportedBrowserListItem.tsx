@@ -6,9 +6,9 @@ import IconButton from '@ui/IconButton';
 import ListItemText from '@ui/ListItemText';
 import VividIcon from '@components/VividIcon';
 import { Typography } from '@mui/material';
-import useCustomTheme from '@Context/Theme';
 import Separator from '@components/Separator';
 import Box from '@ui/Box';
+import useTheme from '@ui/theme';
 
 export type SupportedBrowserListItemProps = {
   url: string;
@@ -25,7 +25,7 @@ const SupportedBrowserListItem = ({
   browser,
 }: SupportedBrowserListItemProps): ReactElement => {
   const { t } = useTranslation();
-  const theme = useCustomTheme();
+  const theme = useTheme();
 
   return (
     <Box sx={{ mb: 2 }}>

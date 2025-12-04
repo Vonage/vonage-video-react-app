@@ -1,3 +1,3 @@
-import MenuDevices from './MenuMoreOptions';
+import MenuMoreOptions from './MenuMoreOptions';
 
-export default MenuDevices;
+export default MenuMoreOptions;

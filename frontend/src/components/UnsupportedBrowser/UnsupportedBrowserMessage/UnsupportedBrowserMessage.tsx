@@ -2,7 +2,7 @@ import { ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
 import Box from '@ui/Box';
 import Typography from '@ui/Typography';
-import useCustomTheme from '@Context/Theme';
+import useTheme from '@ui/theme';
 
 /**
  * UnsupportedBrowserMessage Component
@@ -12,7 +12,7 @@ import useCustomTheme from '@Context/Theme';
  */
 const UnsupportedBrowserMessage = (): ReactElement => {
   const { t } = useTranslation();
-  const theme = useCustomTheme();
+  const theme = useTheme();
 
   return (
     <Box

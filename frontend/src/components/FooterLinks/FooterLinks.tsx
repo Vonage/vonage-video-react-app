@@ -2,7 +2,7 @@ import { ReactElement } from 'react';
 import Stack from '@ui/Stack';
 import Typography from '@ui/Typography';
 import { useTranslation } from 'react-i18next';
-import useCustomTheme from '@Context/Theme';
+import useTheme from '@ui/theme';
 import GHRepoButton from '../GHRepoButton';
 
 /**
@@ -13,7 +13,7 @@ import GHRepoButton from '../GHRepoButton';
  */
 const FooterLinks = (): ReactElement => {
   const { t } = useTranslation();
-  const theme = useCustomTheme();
+  const theme = useTheme();
 
   return (
     <Stack direction="row" alignItems="center" data-testid="footer-links" sx={{ py: 1 }}>

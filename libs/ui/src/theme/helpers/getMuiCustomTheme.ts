@@ -1,5 +1,5 @@
 import { createTheme, type PaletteColor, type PaletteColorOptions } from '@mui/material';
-import type { ThemeTokens } from './getTokensByMode';
+import type { Theme } from '@ui/theme';
 import isDarkMode from './isDarkMode';
 
 // Extend theme options
@@ -22,7 +22,7 @@ declare module '@mui/material/styles' {
   }
 }
 
-const getMuiCustomTheme = ({ tokens }: { tokens: ThemeTokens }) => {
+const getMuiCustomTheme = ({ tokens }: { tokens: Theme }) => {
   const buttonSx = {
     height: 40, // 40px
     textTransform: 'none',
@@ -254,7 +254,7 @@ const getMuiCustomTheme = ({ tokens }: { tokens: ThemeTokens }) => {
 
 // Helper function to generate responsive typography
 function createResponsiveTypography(
-  tokens: ThemeTokens,
+  tokens: Theme,
   desktopVariant: keyof typeof tokens.typography.typeScale.desktop,
   mobileVariant: keyof typeof tokens.typography.typeScale.mobile
 ) {

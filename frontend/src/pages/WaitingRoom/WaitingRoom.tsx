@@ -1,6 +1,6 @@
 import { useState, useEffect, MouseEvent, ReactElement, TouchEvent } from 'react';
 import Box from '@ui/Box';
-import FlexLayout from '@ui/FlexLayout';
+import PageLayout from '@ui/PageLayout';
 import Banner from '@components/Banner';
 import Footer from '@components/Footer/Footer';
 import usePreviewPublisherContext from '../../hooks/usePreviewPublisherContext';
@@ -11,7 +11,8 @@ import { DEVICE_ACCESS_STATUS } from '../../utils/constants';
 import DeviceAccessAlert from '../../components/DeviceAccessAlert';
 import { getStorageItem, STORAGE_KEYS } from '../../utils/storage';
 import useBackgroundPublisherContext from '../../hooks/useBackgroundPublisherContext';
-import { BackgroundEffectsDialogProvider } from '../../Context/BackgroundEffectsDialog';
+import backgroundEffectsDialog$ from '../../Context/BackgroundEffectsDialog';
+import useAppConfig from '@Context/AppConfig/hooks/useAppConfig';
 
 /**
  * WaitingRoom Component
@@ -39,6 +40,10 @@ const WaitingRoom = (): ReactElement => {
   const [openVideoInput, setOpenVideoInput] = useState<boolean>(false);
   const [openAudioOutput, setOpenAudioOutput] = useState<boolean>(false);
   const [username, setUsername] = useState(getStorageItem(STORAGE_KEYS.USERNAME) ?? '');
+
+  const allowDeviceSelection = useAppConfig(
+    ({ waitingRoomSettings }) => waitingRoomSettings.allowDeviceSelection
+  );
 
   useEffect(() => {
     if (!publisher) {
@@ -95,13 +100,13 @@ const WaitingRoom = (): ReactElement => {
   };
 
   return (
-    <BackgroundEffectsDialogProvider>
+    <backgroundEffectsDialog$.Provider>
       <Box data-testid="waitingRoom">
-        <FlexLayout leftPadding={{ xs: '16px 0', sm: 3 }}>
-          <FlexLayout.Banner>
+        <PageLayout>
+          <PageLayout.Banner>
             <Banner />
-          </FlexLayout.Banner>
-          <FlexLayout.Left>
+          </PageLayout.Banner>
+          <PageLayout.Left>
             <Box
               sx={{
                 maxWidth: '100%',
@@ -111,7 +116,7 @@ const WaitingRoom = (): ReactElement => {
               }}
             >
               <VideoContainer username={username} />
-              {accessStatus === DEVICE_ACCESS_STATUS.ACCEPTED && (
+              {allowDeviceSelection && accessStatus === DEVICE_ACCESS_STATUS.ACCEPTED && (
                 <ControlPanel
                   handleAudioInputOpen={handleAudioInputOpen}
                   handleVideoInputOpen={handleVideoInputOpen}
@@ -124,19 +129,19 @@ const WaitingRoom = (): ReactElement => {
                 />
               )}
             </Box>
-          </FlexLayout.Left>
-          <FlexLayout.Right>
+          </PageLayout.Left>
+          <PageLayout.Right>
             <UsernameInput username={username} setUsername={setUsername} />
-          </FlexLayout.Right>
-          <FlexLayout.Footer>
+          </PageLayout.Right>
+          <PageLayout.Footer>
             <Footer />
-          </FlexLayout.Footer>
-        </FlexLayout>
+          </PageLayout.Footer>
+        </PageLayout>
         {accessStatus !== DEVICE_ACCESS_STATUS.ACCEPTED && (
           <DeviceAccessAlert accessStatus={accessStatus} />
         )}
       </Box>
-    </BackgroundEffectsDialogProvider>
+    </backgroundEffectsDialog$.Provider>
   );
 };
 

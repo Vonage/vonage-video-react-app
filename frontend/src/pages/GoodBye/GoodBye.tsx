@@ -1,11 +1,10 @@
 import { useLocation, useNavigate } from 'react-router-dom';
 import { ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
-import FlexLayout from '@ui/FlexLayout';
+import PageLayout from '@ui/PageLayout';
 import Banner from '@components/Banner';
 import Footer from '@components/Footer/Footer';
 import Typography from '@ui/Typography';
-import useCustomTheme from '@Context/Theme';
 import useArchives from '../../hooks/useArchives';
 import ArchiveList from '../../components/GoodBye/ArchiveList';
 import GoodByeMessage from '../../components/GoodBye/GoodbyeMessage';
@@ -14,6 +13,8 @@ import ReenterRoomButton from '@components/GoodBye/ReenterRoomButton';
 import GoToLandingPageButton from '@components/GoodBye/GoToLandingPageButton';
 import Card from '@ui/Card';
 import Stack from '@ui/Stack';
+import useTheme from '@ui/theme';
+
 /**
  * GoodBye Component
  *
@@ -26,7 +27,7 @@ import Stack from '@ui/Stack';
  */
 const GoodBye = (): ReactElement => {
   const { t } = useTranslation();
-  const theme = useCustomTheme();
+  const theme = useTheme();
   const navigate = useNavigate();
   const location = useLocation();
   const roomName = useRoomName({
@@ -45,14 +46,14 @@ const GoodBye = (): ReactElement => {
   };
 
   return (
-    <FlexLayout>
-      <FlexLayout.Banner>
+    <PageLayout>
+      <PageLayout.Banner>
         <Banner />
-      </FlexLayout.Banner>
-      <FlexLayout.Left>
+      </PageLayout.Banner>
+      <PageLayout.Left>
         <GoodByeMessage header={header} message={caption} />
-      </FlexLayout.Left>
-      <FlexLayout.Right>
+      </PageLayout.Left>
+      <PageLayout.Right>
         <Stack direction="column" gap={4}>
           <Card
             sx={{
@@ -91,11 +92,11 @@ const GoodBye = (): ReactElement => {
             <ArchiveList archives={archives} />
           </Card>
         </Stack>
-      </FlexLayout.Right>
-      <FlexLayout.Footer>
+      </PageLayout.Right>
+      <PageLayout.Footer>
         <Footer />
-      </FlexLayout.Footer>
-    </FlexLayout>
+      </PageLayout.Footer>
+    </PageLayout>
   );
 };
 

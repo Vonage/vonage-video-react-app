@@ -1,7 +1,7 @@
 import { ReactElement } from 'react';
 import Box from '@ui/Box';
 import Typography from '@ui/Typography';
-import useCustomTheme from '@Context/Theme';
+import useTheme from '@ui/theme';
 
 export type GoodByeMessageProps = {
   header: string;
@@ -15,7 +15,7 @@ export type GoodByeMessageProps = {
  * @returns {ReactElement} The GoodByeMessage component.
  */
 const GoodByeMessage = ({ header, message }: GoodByeMessageProps): ReactElement => {
-  const theme = useCustomTheme();
+  const theme = useTheme();
 
   return (
     <Box

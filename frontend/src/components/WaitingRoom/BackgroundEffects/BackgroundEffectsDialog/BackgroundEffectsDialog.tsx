@@ -4,7 +4,7 @@ import Dialog from '@ui/Dialog';
 import DialogTitle from '@ui/DialogTitle';
 import IconButton from '@ui/IconButton';
 import DialogContent from '@ui/DialogContent';
-import useCustomTheme from '@Context/Theme';
+import useTheme from '@ui/theme';
 import VividIcon from '@components/VividIcon';
 import Typography from '@ui/Typography';
 import BackgroundEffectsLayout from '../../../BackgroundEffects/BackgroundEffectsLayout';
@@ -31,7 +31,7 @@ const BackgroundEffectsDialog = ({
     setIsBackgroundEffectsOpen(false);
   };
   const { t } = useTranslation();
-  const theme = useCustomTheme();
+  const theme = useTheme();
 
   return (
     <Dialog open={isBackgroundEffectsOpen} onClose={handleClose} maxWidth="md" fullWidth>

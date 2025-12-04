@@ -2,7 +2,7 @@ import { useRef, useState, useEffect, ReactElement } from 'react';
 import useMediaQuery from '@ui/useMediaQuery';
 import { useTranslation } from 'react-i18next';
 import CircularProgress from '@ui/CircularProgress';
-import useCustomTheme from '@Context/Theme';
+import useTheme from '@ui/theme';
 import Box from '@ui/Box';
 import Typography from '@ui/Typography';
 import waitUntilPlaying from '../../../utils/waitUntilPlaying';
@@ -34,7 +34,7 @@ const BackgroundVideoContainer = ({
   const isMDViewport = useMediaQuery(`(max-width:768px)`);
   const isTabletViewport = useIsTabletViewport();
   const isLGViewport = useMediaQuery(`(max-width:1199px)`);
-  const theme = useCustomTheme();
+  const theme = useTheme();
 
   useEffect(() => {
     if (publisherVideoElement && containerRef.current) {

@@ -1,5 +1,5 @@
 import { SxProps } from '@ui/SxProps';
-import React from 'react';
+import { ReactElement } from 'react';
 import sxToStyle from './sxToStyle';
 
 interface VividIconProps extends Record<string, unknown> {
@@ -15,9 +15,9 @@ interface VividIconProps extends Record<string, unknown> {
  * @property {string} name - The name of the icon to display.
  * @property {number} customSize - The size of the icon, ranging from -6 to 5. -6 is the smallest and 5 is the largest.
  * @property {object} sx - Optional sx prop for styling. Check sxToStyle.ts.
- * @returns {React.ReactElement} The rendered VividIcon component.
+ * @returns {ReactElement} The rendered VividIcon component.
  */
-const VividIcon: React.FC<VividIconProps> = ({ name, customSize, sx, ...props }) => {
+const VividIcon = ({ name, customSize, sx, ...props }: VividIconProps): ReactElement => {
   const style = sxToStyle(sx);
 
   return (

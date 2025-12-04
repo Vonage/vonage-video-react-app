@@ -12,10 +12,28 @@ type HeaderProps = {
   toolbarProps?: MUIToolbarProps;
 };
 
-const Header = ({ children, appBarProps, toolbarProps }: HeaderProps) => {
+const Header = ({
+  children,
+  appBarProps: { sx: appBarPropsSx, ...appBarProps } = {},
+  toolbarProps: { sx: toolbarPropsSx, ...toolbarProps } = {},
+}: HeaderProps) => {
   return (
-    <AppBar {...appBarProps}>
-      <Toolbar {...toolbarProps}>{children}</Toolbar>
+    <AppBar
+      sx={{
+        boxShadow: 'none',
+        height: '88px',
+        ...appBarPropsSx,
+      }}
+      {...appBarProps}
+    >
+      <Toolbar
+        sx={{
+          ...toolbarPropsSx,
+        }}
+        {...toolbarProps}
+      >
+        {children}
+      </Toolbar>
     </AppBar>
   );
 };

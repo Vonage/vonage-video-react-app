@@ -2,10 +2,10 @@ import { ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
 import List from '@ui/List';
 import Typography from '@ui/Typography';
-import useCustomTheme from '@Context/Theme';
 import { SUPPORTED_BROWSERS } from '../../../utils/constants';
 import SupportedBrowserListItem from '../SupportedBrowserListItem';
 import Card from '@ui/Card';
+import useTheme from '@ui/theme';
 
 /**
  * SupportedBrowsers Component
@@ -15,7 +15,7 @@ import Card from '@ui/Card';
  */
 const SupportedBrowsers = (): ReactElement => {
   const { t } = useTranslation();
-  const theme = useCustomTheme();
+  const theme = useTheme();
 
   return (
     <Card

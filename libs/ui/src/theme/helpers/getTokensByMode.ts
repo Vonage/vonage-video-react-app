@@ -1,29 +1,24 @@
-import designTokens from '../../../designTokens';
+import type { Theme, ThemeColors } from '@ui/theme';
+import designTokens from './designTokens';
 
-export type ThemeTokens = ReturnType<typeof getTokensByMode>;
-
-type ColorKey = Camelize<keyof typeof designTokens.color.light>;
-
-const getTokensByMode = (mode: 'light' | 'dark') => {
+const getTokensByMode = (mode: 'light' | 'dark'): Theme => {
   const colors = mode === 'light' ? designTokens.color.light : designTokens.color.dark;
 
   return {
     /**
      * { primary: string; onPrimary: string; secondary: string; onSecondary: string; ...  }
      */
-    colors: Object.keys(colors).reduce(
-      (acc, originalKey) => {
-        let key = originalKey;
+    colors: Object.keys(colors).reduce((acc, originalKey): ThemeColors => {
+      let key = originalKey;
 
-        if (key.includes('-')) {
-          key = key.replaceAll(/-([a-z])/g, (_, char: string) => char.toUpperCase());
-        }
+      if (key.includes('-')) {
+        key = key.replaceAll(/-([a-z])/g, (_, char: string) => char.toUpperCase());
+      }
 
-        acc[key as ColorKey] = colors[originalKey as keyof typeof colors].value;
-        return acc;
-      },
-      {} as Record<ColorKey, string>
-    ),
+      acc[key as keyof ThemeColors] = colors[originalKey as keyof typeof colors].value;
+
+      return acc;
+    }, {} as ThemeColors),
 
     shapes: {
       borderRadiusNone: designTokens.shape.none.value,

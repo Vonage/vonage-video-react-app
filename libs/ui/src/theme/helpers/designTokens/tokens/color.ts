@@ -1,3 +1,5 @@
+import type { ThemeTokens } from '../../../themeContext.types';
+
 /**
  * Color Tokens
  *
@@ -32,10 +34,21 @@ const colorVariables = {
     500: '#757575',
     900: '#272626ff',
   },
+  'dark-grey': {
+    10: '#333333CD',
+    100: '#333333',
+    400: '#292828ff',
+    500: '#202124',
+  },
   alert: {
     50: '#FFEEF2',
+    100: '#FEDFDF',
+    300: '#FE9696',
+    400: '#F75959',
     500: '#E61D1D',
     600: '#CD0000',
+    800: '#6E0000',
+    900: '#3E0004',
   },
   warning: {
     500: '#BE5702',
@@ -46,8 +59,7 @@ const colorVariables = {
     600: '#1F7629',
   },
 };
-
-const lightColors = {
+const lightColors: ThemeTokens['colors'] = {
   primary: {
     value: colorVariables.cta[500],
     type: 'color',
@@ -68,7 +80,6 @@ const lightColors = {
     type: 'color',
     description: 'Main brand color for hovering.',
   },
-
   secondary: {
     value: colorVariables['canvas-text'],
     type: 'color',
@@ -84,7 +95,11 @@ const lightColors = {
     type: 'color',
     description: 'Foreground color used on secondary surfaces.',
   },
-
+  'secondary-hover': {
+    value: colorVariables.accent[600],
+    type: 'color',
+    description: 'Secondary color for hover states.',
+  },
   tertiary: {
     value: colorVariables.accent[500],
     type: 'color',
@@ -100,7 +115,11 @@ const lightColors = {
     type: 'color',
     description: 'Foreground color used on tertiary surfaces.',
   },
-
+  'tertiary-hover': {
+    value: colorVariables.accent[400],
+    type: 'color',
+    description: 'Tertiary color for hover states.',
+  },
   background: {
     value: colorVariables.cta[50],
     type: 'color',
@@ -111,7 +130,6 @@ const lightColors = {
     type: 'color',
     description: 'Text or icon color used on background surfaces.',
   },
-
   surface: {
     value: colorVariables.canvas,
     type: 'color',
@@ -133,7 +151,11 @@ const lightColors = {
     type: 'color',
     description: 'Text color for alert messages and notifications.',
   },
-
+  'alert-background-hover': {
+    value: colorVariables.alert[100],
+    type: 'color',
+    description: 'Hover background color for alert messages and notifications.',
+  },
   error: {
     value: colorVariables.alert[500],
     type: 'color',
@@ -149,7 +171,6 @@ const lightColors = {
     type: 'color',
     description: 'Error color for hover states.',
   },
-
   warning: {
     value: colorVariables.warning[500],
     type: 'color',
@@ -165,7 +186,6 @@ const lightColors = {
     type: 'color',
     description: 'Warning color for hover states.',
   },
-
   success: {
     value: colorVariables.success[500],
     type: 'color',
@@ -181,11 +201,55 @@ const lightColors = {
     type: 'color',
     description: 'Success color for hover states.',
   },
-
+  information: {
+    value: colorVariables.information[500],
+    type: 'color',
+    description: 'Color representing informational states and messages.',
+  },
+  'on-information': {
+    value: colorVariables.canvas,
+    type: 'color',
+    description: 'Foreground color for text/icons on information surfaces.',
+  },
+  'information-hover': {
+    value: colorVariables.information[400],
+    type: 'color',
+    description: 'Information color for hover states.',
+  },
+  'information-background': {
+    value: colorVariables.information[50],
+    type: 'color',
+    description: 'Background color for informational messages.',
+  },
   border: {
     value: colorVariables.neutral[100],
     type: 'color',
     description: 'Color used for borders and dividers between elements.',
+  },
+  'dark-background': {
+    value: colorVariables['dark-grey'][500],
+    type: 'color',
+    description: 'Darker grey background color.',
+  },
+  'dark-grey': {
+    value: colorVariables['dark-grey'][100],
+    type: 'color',
+    description: 'Dark grey background color.',
+  },
+  'dark-grey-hover': {
+    value: colorVariables['dark-grey'][400],
+    type: 'color',
+    description: 'Dark grey hover background color.',
+  },
+  'on-dark-grey': {
+    value: colorVariables.canvas,
+    type: 'color',
+    description: 'Foreground color for text/icons on dark grey surfaces.',
+  },
+  'dark-grey-opacity': {
+    value: colorVariables['dark-grey']['10'],
+    type: 'color',
+    description: 'Dark grey background color with opacity.',
   },
   disabled: {
     value: colorVariables.neutral[100],
@@ -199,7 +263,7 @@ const lightColors = {
   },
 };
 
-const darkColors = {
+const darkColors: ThemeTokens['colors'] = {
   primary: {
     value: colorVariables.cta[500],
     type: 'color',
@@ -220,7 +284,6 @@ const darkColors = {
     type: 'color',
     description: 'Main brand color for hovering.',
   },
-
   secondary: {
     value: colorVariables.accent[500],
     type: 'color',
@@ -236,7 +299,11 @@ const darkColors = {
     type: 'color',
     description: 'Foreground color used on secondary surfaces.',
   },
-
+  'secondary-hover': {
+    value: colorVariables.accent[400],
+    type: 'color',
+    description: 'Secondary color for hover states.',
+  },
   tertiary: {
     value: colorVariables.accent[400],
     type: 'color',
@@ -252,7 +319,11 @@ const darkColors = {
     type: 'color',
     description: 'Foreground color used on tertiary surfaces.',
   },
-
+  'tertiary-hover': {
+    value: colorVariables.accent[300],
+    type: 'color',
+    description: 'Tertiary color for hover states.',
+  },
   background: {
     value: colorVariables.accent[600],
     type: 'color',
@@ -263,7 +334,6 @@ const darkColors = {
     type: 'color',
     description: 'Text or icon color used on background surfaces.',
   },
-
   surface: {
     value: colorVariables.neutral[900],
     type: 'color',
@@ -274,7 +344,21 @@ const darkColors = {
     type: 'color',
     description: 'Text or icon color used on surface elements.',
   },
-
+  'alert-background': {
+    value: colorVariables.alert[900],
+    type: 'color',
+    description: 'Background color for alert messages and notifications.',
+  },
+  'alert-background-hover': {
+    value: colorVariables.alert[800],
+    type: 'color',
+    description: 'Hover background color for alert messages and notifications.',
+  },
+  'alert-text': {
+    value: colorVariables.alert[100],
+    type: 'color',
+    description: 'Text color for alert messages and notifications.',
+  },
   error: {
     value: colorVariables.alert[500],
     type: 'color',
@@ -290,7 +374,6 @@ const darkColors = {
     type: 'color',
     description: 'Error color for hover states.',
   },
-
   warning: {
     value: colorVariables.warning[500],
     type: 'color',
@@ -306,7 +389,6 @@ const darkColors = {
     type: 'color',
     description: 'Warning color for hover states.',
   },
-
   success: {
     value: colorVariables.success[500],
     type: 'color',
@@ -322,11 +404,55 @@ const darkColors = {
     type: 'color',
     description: 'Success color for hover states.',
   },
-
+  information: {
+    value: colorVariables.information[400],
+    type: 'color',
+    description: 'Color representing informational states and messages.',
+  },
+  'on-information': {
+    value: colorVariables.canvas,
+    type: 'color',
+    description: 'Foreground color for text/icons on information surfaces.',
+  },
+  'information-hover': {
+    value: colorVariables.information[500],
+    type: 'color',
+    description: 'Information color for hover states.',
+  },
+  'information-background': {
+    value: colorVariables.information[50],
+    type: 'color',
+    description: 'Background color for informational messages.',
+  },
   border: {
     value: colorVariables.accent[500],
     type: 'color',
     description: 'Color used for borders and dividers between elements.',
+  },
+  'dark-background': {
+    value: colorVariables['dark-grey'][500],
+    type: 'color',
+    description: 'Darker grey background color.',
+  },
+  'dark-grey': {
+    value: colorVariables['dark-grey'][100],
+    type: 'color',
+    description: 'Dark grey background color.',
+  },
+  'dark-grey-hover': {
+    value: colorVariables['dark-grey'][400],
+    type: 'color',
+    description: 'Dark grey hover background color.',
+  },
+  'on-dark-grey': {
+    value: colorVariables.canvas,
+    type: 'color',
+    description: 'Foreground color for text/icons on dark grey surfaces.',
+  },
+  'dark-grey-opacity': {
+    value: colorVariables['dark-grey']['10'],
+    type: 'color',
+    description: 'Dark grey background color with opacity.',
   },
   disabled: {
     value: colorVariables.accent[600],
@@ -340,11 +466,9 @@ const darkColors = {
   },
 };
 
-const colors = {
+const colors: Record<'light' | 'dark', ThemeTokens['colors']> = {
   light: lightColors,
   dark: darkColors,
 };
 
-// Maintain backward compatibility
-export default lightColors;
-export { colors, lightColors, darkColors };
+export default colors;
