@@ -13,7 +13,7 @@ import { hasMediaProcessorSupport } from '@vonage/client-sdk-video';
 import getBoxStyle from '../../../utils/helpers/getBoxStyle';
 import ZoomIndicator from '../ZoomIndicator';
 import { MAX_ZOOM, MIN_ZOOM, ZOOM_STEP } from '../../../utils/constants';
-import useCustomTheme from '@Context/Theme';
+import useTheme from '@ui/theme';
 import CustomBox from '@ui/Box';
 
 export type ScreenshareVideoTileProps = {
@@ -46,7 +46,7 @@ const ScreenshareVideoTile = forwardRef(
     }: ScreenshareVideoTileProps,
     ref: ForwardedRef<HTMLDivElement>
   ): ReactElement => {
-    const theme = useCustomTheme();
+    const theme = useTheme();
     // Zoom state management
     const [zoomLevel, setZoomLevel] = useState<number>(1);
     const [panOffset, setPanOffset] = useState<{ x: number; y: number }>({

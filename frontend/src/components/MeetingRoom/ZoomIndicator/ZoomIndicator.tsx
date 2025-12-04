@@ -5,7 +5,7 @@ import Tooltip from '@ui/Tooltip';
 import IconButton from '@ui/IconButton';
 import Box from '@ui/Box';
 import Typography from '@ui/Typography';
-import useCustomTheme from '@Context/Theme';
+import useTheme from '@ui/theme';
 import VividIcon from '@components/VividIcon';
 
 export type ZoomIndicatorProps = {
@@ -37,7 +37,7 @@ const ZoomIndicator = ({
   const isZoomed = zoomLevel !== 1;
   const [tooltipOpen, setTooltipOpen] = useState(false);
   const { t } = useTranslation();
-  const theme = useCustomTheme();
+  const theme = useTheme();
 
   // Check if we can zoom in/out more
   const canZoomIn = zoomLevel < MAX_ZOOM;

@@ -27,7 +27,7 @@ const backgrounds = [
 const mockDeleteImageFromStorage = vi.fn();
 const mockGetImagesFromStorage = vi.fn(() => customImages);
 
-vi.mock('../../../utils/useImageStorage/useImageStorage', () => ({
+vi.mock('@utils/useImageStorage/useImageStorage', () => ({
   __esModule: true,
   default: () => ({
     getImagesFromStorage: mockGetImagesFromStorage,
@@ -46,6 +46,9 @@ describe('BackgroundGallery', () => {
         backgroundSelected=""
         setBackgroundSelected={() => {}}
         clearPublisherBgIfSelectedDeleted={() => {}}
+        customImages={customImages}
+        setCustomImages={() => {}}
+        deleteImageFromStorage={mockDeleteImageFromStorage}
       />
     );
     backgrounds.forEach((bg) => {
@@ -59,6 +62,9 @@ describe('BackgroundGallery', () => {
         backgroundSelected=""
         setBackgroundSelected={() => {}}
         clearPublisherBgIfSelectedDeleted={() => {}}
+        customImages={customImages}
+        setCustomImages={() => {}}
+        deleteImageFromStorage={mockDeleteImageFromStorage}
       />
     );
     customImages.forEach((img) => {
@@ -73,6 +79,9 @@ describe('BackgroundGallery', () => {
         backgroundSelected=""
         setBackgroundSelected={setBackgroundSelected}
         clearPublisherBgIfSelectedDeleted={() => {}}
+        customImages={customImages}
+        setCustomImages={() => {}}
+        deleteImageFromStorage={mockDeleteImageFromStorage}
       />
     );
     const duneViewOption = screen.getByTestId('background-bg3');
@@ -87,6 +96,9 @@ describe('BackgroundGallery', () => {
         backgroundSelected=""
         setBackgroundSelected={setBackgroundSelected}
         clearPublisherBgIfSelectedDeleted={() => {}}
+        customImages={customImages}
+        setCustomImages={() => {}}
+        deleteImageFromStorage={mockDeleteImageFromStorage}
       />
     );
     const customOption = screen.getByTestId('background-custom1');
@@ -100,6 +112,9 @@ describe('BackgroundGallery', () => {
         backgroundSelected="plane.jpg"
         setBackgroundSelected={() => {}}
         clearPublisherBgIfSelectedDeleted={() => {}}
+        customImages={customImages}
+        setCustomImages={() => {}}
+        deleteImageFromStorage={mockDeleteImageFromStorage}
       />
     );
     const planeOption = screen.getByTestId('background-bg7');
@@ -112,6 +127,9 @@ describe('BackgroundGallery', () => {
         backgroundSelected="data:image/png;base64,custom2"
         setBackgroundSelected={() => {}}
         clearPublisherBgIfSelectedDeleted={() => {}}
+        customImages={customImages}
+        setCustomImages={() => {}}
+        deleteImageFromStorage={mockDeleteImageFromStorage}
       />
     );
     const customOption = screen.getByTestId('background-custom2');
@@ -125,6 +143,9 @@ describe('BackgroundGallery', () => {
         backgroundSelected=""
         setBackgroundSelected={() => {}}
         clearPublisherBgIfSelectedDeleted={cleanPublisher}
+        customImages={customImages}
+        setCustomImages={() => {}}
+        deleteImageFromStorage={mockDeleteImageFromStorage}
       />
     );
     const deleteButtons = screen.getAllByLabelText('Delete custom background');
@@ -139,6 +160,9 @@ describe('BackgroundGallery', () => {
         backgroundSelected="data:image/png;base64,custom1"
         setBackgroundSelected={() => {}}
         clearPublisherBgIfSelectedDeleted={() => {}}
+        customImages={customImages}
+        setCustomImages={() => {}}
+        deleteImageFromStorage={mockDeleteImageFromStorage}
       />
     );
     const deleteButton = screen.getByTestId('background-delete-custom1');

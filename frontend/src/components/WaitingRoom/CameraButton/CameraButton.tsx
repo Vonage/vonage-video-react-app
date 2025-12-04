@@ -4,7 +4,7 @@ import usePreviewPublisherContext from '@hooks/usePreviewPublisherContext';
 import useBackgroundPublisherContext from '@hooks/useBackgroundPublisherContext';
 import useIsCameraControlAllowed from '@Context/AppConfig/hooks/useIsCameraControlAllowed';
 import { VIDEO_CONTAINER_BUTTON_SIZE_WR } from '@utils/constants';
-import useCustomTheme from '@Context/Theme';
+import useTheme from '@ui/theme';
 import Tooltip from '@ui/Tooltip';
 import Box from '@ui/Box';
 import VividIcon from '@components/VividIcon';
@@ -21,7 +21,7 @@ const CameraButton = (): ReactElement | false => {
   const { isVideoEnabled, toggleVideo } = usePreviewPublisherContext();
   const { toggleVideo: toggleBackgroundVideoPublisher } = useBackgroundPublisherContext();
   const allowCameraControl = useIsCameraControlAllowed();
-  const theme = useCustomTheme();
+  const theme = useTheme();
 
   const title = isVideoEnabled
     ? t('devices.video.camera.state.off')

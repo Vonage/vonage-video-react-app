@@ -16,7 +16,7 @@ import Fade from '@ui/Fade';
 import List from '@ui/List';
 import Box from '@ui/Box';
 import Typography from '@ui/Typography';
-import useCustomTheme from '@Context/Theme';
+import useTheme from '@ui/theme';
 import Stack from '@ui/Stack';
 import VividIcon from '@components/VividIcon';
 
@@ -49,7 +49,7 @@ export type ParticipantListProps = {
  */
 const ParticipantList = ({ handleClose, isOpen }: ParticipantListProps): ReactElement | false => {
   const { t } = useTranslation();
-  const theme = useCustomTheme();
+  const theme = useTheme();
   const { subscriberWrappers } = useSessionContext();
   const publisherAudio = useAudioLevels();
   const [isCopied, setIsCopied] = useState<boolean>(false);

@@ -2,7 +2,7 @@ import { ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
 import useIsMicrophoneControlAllowed from '@Context/AppConfig/hooks/useIsMicrophoneControlAllowed';
 import usePreviewPublisherContext from '@hooks/usePreviewPublisherContext';
-import useCustomTheme from '@Context/Theme';
+import useTheme from '@ui/theme';
 import Box from '@ui/Box';
 import Tooltip from '@ui/Tooltip';
 import VividIcon from '@components/VividIcon';
@@ -18,7 +18,7 @@ import VideoContainerButton from '../VideoContainerButton';
 const MicButton = (): ReactElement | false => {
   const { t } = useTranslation();
   const { isAudioEnabled, toggleAudio } = usePreviewPublisherContext();
-  const theme = useCustomTheme();
+  const theme = useTheme();
 
   const allowMicrophoneControl = useIsMicrophoneControlAllowed();
 

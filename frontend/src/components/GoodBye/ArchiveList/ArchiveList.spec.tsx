@@ -11,7 +11,7 @@ import {
 describe('ArchiveList', () => {
   it('should display message if there are no archives', () => {
     render(<ArchiveList archives={[]} />);
-    expect(screen.getByText('There are no recordings for this meeting')).toBeVisible();
+    expect(screen.getByText("The meeting hasn't been recorded")).toBeVisible();
   });
 
   it('should display message if there is an error fetching archives', () => {

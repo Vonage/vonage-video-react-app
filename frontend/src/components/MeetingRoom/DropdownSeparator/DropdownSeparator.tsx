@@ -1,6 +1,6 @@
 import { ReactElement } from 'react';
 import Box from '@ui/Box';
-import useCustomTheme from '@Context/Theme';
+import useTheme from '@ui/theme';
 
 /**
  * DropdownSeparator Component
@@ -9,7 +9,7 @@ import useCustomTheme from '@Context/Theme';
  * @returns {ReactElement} The DropdownSeparator component.
  */
 const DropdownSeparator = (): ReactElement => {
-  const theme = useCustomTheme();
+  const theme = useTheme();
 
   return (
     <Box

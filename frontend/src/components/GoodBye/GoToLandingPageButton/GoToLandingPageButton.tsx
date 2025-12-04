@@ -18,7 +18,7 @@ const GoToLandingPageButton = ({ handleLanding }: GoToLandingPageButtonProps): R
   const { t } = useTranslation();
 
   return (
-    <Button data-testid="go-to-landing-button" variant="contained" onClick={handleLanding}>
+    <Button data-testid="go-to-landing-button" variant="outlined" onClick={handleLanding} fullWidth>
       {t('goodBye.back')}
     </Button>
   );

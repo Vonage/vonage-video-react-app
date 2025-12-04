@@ -2,12 +2,12 @@ import { ChangeEvent, useRef, useState, ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
 import Box from '@ui/Box';
 import captureScreenshot from '../../../../../utils/captureScreenshot';
-import { isMobile } from '../../../../../utils/util';
+import { isMobile } from '@utils/util';
 import Button from '@ui/Button';
 import IconButton from '@ui/IconButton';
 import Tooltip from '@ui/Tooltip';
 import Typography from '@ui/Typography';
-import useCustomTheme from '@Context/Theme';
+import useTheme from '@ui/theme';
 import VividIcon from '@components/VividIcon';
 
 // Setting the maximum file size to 20MB
@@ -30,7 +30,7 @@ const FilePicker = ({
   const [imageSrc, setImageSrc] = useState<string>('');
   const imageRef = useRef<HTMLImageElement | null>(null);
   const [maximumSizeError, setMaximumSizeError] = useState<boolean>(false);
-  const theme = useCustomTheme();
+  const theme = useTheme();
 
   const checkIfSizeAllowed = (file: File) => {
     if (file.size > maxFileSize) {

@@ -4,7 +4,7 @@ import { ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
 import ToolbarButton from '../ToolbarButton';
 import useRoomName from '../../../hooks/useRoomName';
-import useCustomTheme from '@Context/Theme';
+import useTheme from '@ui/theme';
 import VividIcon from '@components/VividIcon';
 
 export type ExitButtonProps = {
@@ -23,7 +23,7 @@ const ExitButton = ({ handleLeave }: ExitButtonProps): ReactElement => {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const roomName = useRoomName();
-  const theme = useCustomTheme();
+  const theme = useTheme();
 
   const handleExit = () => {
     handleLeave();

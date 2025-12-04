@@ -6,7 +6,7 @@ import { Device } from '@vonage/client-sdk-video';
 import { MouseEvent as ReactMouseEvent, ReactElement, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import useAppConfig from '@Context/AppConfig/hooks/useAppConfig';
-import useCustomTheme from '@Context/Theme';
+import useTheme from '@ui/theme';
 import VividIcon from '@components/VividIcon';
 import useDevices from '../../../hooks/useDevices';
 import usePublisherContext from '../../../hooks/usePublisherContext';
@@ -27,7 +27,7 @@ export type InputAudioDevicesProps = {
  */
 const InputAudioDevices = ({ handleToggle }: InputAudioDevicesProps): ReactElement | false => {
   const { t } = useTranslation();
-  const theme = useCustomTheme();
+  const theme = useTheme();
   const { publisher } = usePublisherContext();
 
   const allowDeviceSelection = useAppConfig(

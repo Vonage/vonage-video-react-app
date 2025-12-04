@@ -3,7 +3,7 @@ import { ReactElement } from 'react';
 import VividIcon from '@components/VividIcon';
 import Box from '@ui/Box';
 import Typography from '@ui/Typography';
-import useCustomTheme from '@Context/Theme';
+import useTheme from '@ui/theme';
 
 export type RightPanelTitleProps = {
   handleClose: () => void;
@@ -20,7 +20,7 @@ export type RightPanelTitleProps = {
  * @returns {ReactElement} - RightPanelTitle component
  */
 const RightPanelTitle = ({ handleClose, title }: RightPanelTitleProps): ReactElement => {
-  const theme = useCustomTheme();
+  const theme = useTheme();
   return (
     <Box
       data-testid="right-panel-title"

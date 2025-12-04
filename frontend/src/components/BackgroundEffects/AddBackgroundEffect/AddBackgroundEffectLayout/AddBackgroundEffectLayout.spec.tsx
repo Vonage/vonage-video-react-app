@@ -26,7 +26,7 @@ vi.mock('react-i18next', () => ({
   }),
 }));
 
-vi.mock('../../../../utils/useImageStorage/useImageStorage', () => ({
+vi.mock('@utils/useImageStorage/useImageStorage', () => ({
   __esModule: true,
   default: () => ({
     storageError: '',

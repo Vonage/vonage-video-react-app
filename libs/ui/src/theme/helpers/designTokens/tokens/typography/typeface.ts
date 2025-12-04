@@ -1,10 +1,12 @@
+import { ThemeTokens } from '@ui/theme';
+
 /**
  * Typeface Design Tokens
  *
  * This module defines the primary typeface used across the user interface.
  * It specifies the font family along with a description of its intended use.
  */
-const typeface = {
+const typeface: ThemeTokens['typography']['typeface'] = {
   plain: {
     value: 'Inter, sans-serif, system-ui, ui-sans-serif, Marker Felt, Trebuchet MS',
     type: 'fontFamily',
@@ -12,12 +14,4 @@ const typeface = {
   },
 };
 
-export type Typeface = keyof typeof typeface;
-
-export type TypefaceProps = {
-  value: string;
-  type: 'fontFamily';
-  description: string;
-};
-
-export default typeface as Record<Typeface, TypefaceProps>;
+export default typeface;

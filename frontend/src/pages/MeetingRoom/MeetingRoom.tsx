@@ -2,7 +2,7 @@ import { useEffect, ReactElement, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import Box from '@ui/Box';
-import useCustomTheme from '@Context/Theme';
+import useTheme from '@ui/theme';
 import usePublisherContext from '../../hooks/usePublisherContext';
 import ConnectionAlert from '../../components/MeetingRoom/ConnectionAlert';
 import Toolbar from '../../components/MeetingRoom/Toolbar';
@@ -33,7 +33,7 @@ import type { PublishingErrorType } from '../../Context/PublisherProvider/usePub
  */
 const MeetingRoom = (): ReactElement => {
   const { t } = useTranslation();
-  const theme = useCustomTheme();
+  const theme = useTheme();
   const roomName = useRoomName();
   const { publisher, publish, quality, initializeLocalPublisher, publishingError, isVideoEnabled } =
     usePublisherContext();

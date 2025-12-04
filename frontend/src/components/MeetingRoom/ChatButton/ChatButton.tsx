@@ -4,7 +4,7 @@ import useIsMeetingChatAllowed from '@Context/AppConfig/hooks/useIsMeetingChatAl
 import ToolbarButton from '../ToolbarButton';
 import UnreadMessagesBadge from '../UnreadMessagesBadge';
 import Tooltip from '@ui/Tooltip';
-import useCustomTheme from '@Context/Theme';
+import useTheme from '@ui/theme';
 import VividIcon from '@components/VividIcon';
 
 export type ChatButtonProps = {
@@ -30,7 +30,7 @@ const ChatButton = ({
   isOverflowButton = false,
 }: ChatButtonProps): ReactElement | false => {
   const isMeetingChatAllowed = useIsMeetingChatAllowed();
-  const theme = useCustomTheme();
+  const theme = useTheme();
   const { t } = useTranslation();
 
   return (

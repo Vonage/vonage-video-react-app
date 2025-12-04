@@ -1,3 +1,5 @@
+import type { ThemeTokens } from '../../../themeContext.types';
+
 /**
  * Color Tokens
  *
@@ -38,6 +40,7 @@ const colorVariables = {
     400: '#292828ff',
     500: '#202124',
   },
+
   alert: {
     50: '#FFEEF2',
     100: '#FEDFDF',
@@ -57,8 +60,7 @@ const colorVariables = {
     600: '#1F7629',
   },
 };
-
-const lightColors = {
+const lightColors: ThemeTokens['colors'] = {
   primary: {
     value: colorVariables.cta[500],
     type: 'color',
@@ -79,7 +81,6 @@ const lightColors = {
     type: 'color',
     description: 'Main brand color for hovering.',
   },
-
   secondary: {
     value: colorVariables['canvas-text'],
     type: 'color',
@@ -100,7 +101,6 @@ const lightColors = {
     type: 'color',
     description: 'Secondary color for hover states.',
   },
-
   tertiary: {
     value: colorVariables.accent[500],
     type: 'color',
@@ -132,7 +132,6 @@ const lightColors = {
     type: 'color',
     description: 'Text or icon color used on background surfaces.',
   },
-
   surface: {
     value: colorVariables.canvas,
     type: 'color',
@@ -175,7 +174,6 @@ const lightColors = {
     type: 'color',
     description: 'Error color for hover states.',
   },
-
   warning: {
     value: colorVariables.warning[500],
     type: 'color',
@@ -191,7 +189,6 @@ const lightColors = {
     type: 'color',
     description: 'Warning color for hover states.',
   },
-
   success: {
     value: colorVariables.success[500],
     type: 'color',
@@ -207,7 +204,6 @@ const lightColors = {
     type: 'color',
     description: 'Success color for hover states.',
   },
-
   information: {
     value: colorVariables.information[500],
     type: 'color',
@@ -228,7 +224,6 @@ const lightColors = {
     type: 'color',
     description: 'Background color for informational messages.',
   },
-
   border: {
     value: colorVariables.neutral[100],
     type: 'color',
@@ -272,7 +267,7 @@ const lightColors = {
   },
 };
 
-const darkColors = {
+const darkColors: ThemeTokens['colors'] = {
   primary: {
     value: colorVariables.cta[500],
     type: 'color',
@@ -293,7 +288,6 @@ const darkColors = {
     type: 'color',
     description: 'Main brand color for hovering.',
   },
-
   secondary: {
     value: colorVariables.accent[500],
     type: 'color',
@@ -346,7 +340,6 @@ const darkColors = {
     type: 'color',
     description: 'Text or icon color used on background surfaces.',
   },
-
   surface: {
     value: colorVariables.neutral[900],
     type: 'color',
@@ -389,7 +382,6 @@ const darkColors = {
     type: 'color',
     description: 'Error color for hover states.',
   },
-
   warning: {
     value: colorVariables.warning[500],
     type: 'color',
@@ -405,7 +397,6 @@ const darkColors = {
     type: 'color',
     description: 'Warning color for hover states.',
   },
-
   success: {
     value: colorVariables.success[500],
     type: 'color',
@@ -486,11 +477,9 @@ const darkColors = {
   },
 };
 
-const colors = {
+const colors: Record<'light' | 'dark', ThemeTokens['colors']> = {
   light: lightColors,
   dark: darkColors,
 };
 
-// Maintain backward compatibility
-export default lightColors;
-export { colors, lightColors, darkColors };
+export default colors;

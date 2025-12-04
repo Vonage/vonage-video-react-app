@@ -7,7 +7,7 @@ import ListItem from '@ui/ListItem';
 import Avatar from '@ui/Avatar';
 import Typography from '@ui/Typography';
 import Badge from '@ui/Badge';
-import useCustomTheme from '@Context/Theme';
+import useTheme from '@ui/theme';
 import VividIcon from '@components/VividIcon';
 import Box from '@ui/Box';
 
@@ -45,7 +45,7 @@ const ParticipantListItem = ({
   stream,
   subscriberWrapper,
 }: ParticipantListItemProps): ReactElement => {
-  const theme = useCustomTheme();
+  const theme = useTheme();
 
   return (
     <ListItem

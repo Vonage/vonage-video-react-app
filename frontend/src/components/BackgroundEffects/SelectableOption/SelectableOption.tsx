@@ -1,5 +1,5 @@
 import { ReactElement, ReactNode } from 'react';
-import useCustomTheme from '@Context/Theme';
+import useTheme from '@ui/theme';
 import Box from '@ui/Box';
 import Tooltip from '@ui/Tooltip';
 import { DEFAULT_SELECTABLE_OPTION_WIDTH } from '../../../utils/constants';
@@ -41,9 +41,9 @@ const SelectableOption = ({
   image,
   size = DEFAULT_SELECTABLE_OPTION_WIDTH,
   children,
-  ...otherProps // Used by MUI Tooltip
+  ...otherProps
 }: SelectableOptionProps): ReactElement => {
-  const theme = useCustomTheme();
+  const theme = useTheme();
 
   return (
     <Box

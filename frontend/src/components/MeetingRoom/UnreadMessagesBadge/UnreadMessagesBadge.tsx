@@ -2,7 +2,7 @@ import Badge from '@ui/Badge';
 import { ForwardedRef, forwardRef, ReactElement } from 'react';
 import useSessionContext from '@hooks/useSessionContext';
 import useIsMeetingChatAllowed from '@Context/AppConfig/hooks/useIsMeetingChatAllowed';
-import useCustomTheme from '@Context/Theme';
+import useTheme from '@ui/theme';
 
 export type UnreadMessagesBadgeProps = {
   children: ReactElement;
@@ -23,7 +23,7 @@ const UnreadMessagesBadge = forwardRef(function UnreadMessagesBadge(
   ref: ForwardedRef<HTMLSpanElement>
 ) {
   const isMeetingChatAllowed = useIsMeetingChatAllowed();
-  const theme = useCustomTheme();
+  const theme = useTheme();
 
   const { children, isToolbarOverflowMenuOpen, ...rest } = props;
   const { unreadCount } = useSessionContext();

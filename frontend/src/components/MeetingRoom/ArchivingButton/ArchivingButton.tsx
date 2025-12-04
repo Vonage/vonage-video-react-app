@@ -7,7 +7,7 @@ import useAppConfig from '@Context/AppConfig/hooks/useAppConfig';
 import ToolbarButton from '../ToolbarButton';
 import PopupDialog, { DialogTexts } from '../PopupDialog';
 import Tooltip from '@ui/Tooltip';
-import useCustomTheme from '@Context/Theme';
+import useTheme from '@ui/theme';
 import VividIcon from '@components/VividIcon';
 
 export type ArchivingButtonProps = {
@@ -32,7 +32,7 @@ const ArchivingButton = ({
 }: ArchivingButtonProps): ReactElement | false => {
   const { t } = useTranslation();
   const roomName = useRoomName();
-  const theme = useCustomTheme();
+  const theme = useTheme();
   const { archiveId } = useSessionContext();
   const allowArchiving = useAppConfig(
     ({ meetingRoomSettings }) => meetingRoomSettings.allowArchiving

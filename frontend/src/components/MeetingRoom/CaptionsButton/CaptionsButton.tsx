@@ -7,7 +7,7 @@ import useRoomName from '@hooks/useRoomName';
 import ToolbarButton from '../ToolbarButton';
 import Tooltip from '@ui/Tooltip';
 import VividIcon from '@components/VividIcon';
-import useCustomTheme from '@Context/Theme';
+import useTheme from '@ui/theme';
 
 export type CaptionsState = {
   isUserCaptionsEnabled: boolean;
@@ -44,7 +44,7 @@ const CaptionsButton = ({
   const { isUserCaptionsEnabled, setIsUserCaptionsEnabled, setCaptionsErrorResponse } =
     captionsState;
   const title = isUserCaptionsEnabled ? t('captions.disable') : t('captions.enable');
-  const theme = useCustomTheme();
+  const theme = useTheme();
 
   const handleClose = () => {
     if (isOverflowButton && handleClick) {

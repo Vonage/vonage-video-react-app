@@ -6,7 +6,7 @@ import ListItem from '@ui/ListItem';
 import ListItemText from '@ui/ListItemText';
 import Avatar from '@ui/Avatar';
 import Typography from '@ui/Typography';
-import useCustomTheme from '@Context/Theme';
+import useTheme from '@ui/theme';
 
 export type ChatMessageProps = {
   avatarColor: string;
@@ -36,7 +36,7 @@ const ChatMessage = ({
   timestamp,
 }: ChatMessageProps): ReactElement => {
   const { i18n } = useTranslation();
-  const theme = useCustomTheme();
+  const theme = useTheme();
 
   return (
     <ListItem alignItems="flex-start" data-testid="chat-message">

@@ -6,7 +6,7 @@ import ClickAwayListener from '@ui/ClickAwayListener';
 import { ReactElement } from 'react';
 import SendEmojiButton from '../SendEmojiButton';
 import emojiMap from '../../../utils/emojis';
-import useCustomTheme from '@Context/Theme';
+import useTheme from '@ui/theme';
 
 export type EmojiGridMobileProps = {
   handleClickAway: (event: MouseEvent | TouchEvent) => void;
@@ -29,7 +29,7 @@ const EmojiGridMobile = ({
   isToolbarOpen,
   isEmojiGridOpen,
 }: EmojiGridMobileProps): ReactElement => {
-  const theme = useCustomTheme();
+  const theme = useTheme();
 
   return (
     <Portal>

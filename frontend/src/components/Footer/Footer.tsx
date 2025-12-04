@@ -2,19 +2,26 @@ import { ReactElement } from 'react';
 import Box from '@ui/Box';
 import FooterLinks from '@components/FooterLinks';
 import Stack from '@ui/Stack';
-import useCustomTheme from '@Context/Theme';
+import useTheme from '@ui/theme';
 
 /**
  * Footer Component
  *
- * This component returns a footer that includes a logo, current date/time, language selector, and some links.
+ * This component returns a footer with links to various resources.
  * @returns {ReactElement} - the footer component.
  */
 const Footer = (): ReactElement => {
-  const theme = useCustomTheme();
+  const theme = useTheme();
 
   return (
-    <Stack direction="row" alignItems="center" data-testid="footer-content">
+    <Stack
+      direction="row"
+      alignItems="center"
+      data-testid="footer-content"
+      sx={{
+        bgcolor: theme.colors.background,
+      }}
+    >
       <Box
         sx={{
           flex: 1,

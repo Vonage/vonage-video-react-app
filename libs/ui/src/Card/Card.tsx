@@ -1,11 +1,11 @@
-import useCustomTheme from '@Context/Theme';
-import Box, { BoxProps } from '@ui/Box/Box';
 import React from 'react';
+import Box, { BoxProps } from '../Box/Box';
+import useTheme from '../theme';
 
 type CardProps<C extends React.ElementType = 'div'> = BoxProps<C>;
 
 const Card = <C extends React.ElementType = 'div'>({ sx, ...cardProps }: CardProps<C>) => {
-  const theme = useCustomTheme();
+  const theme = useTheme();
 
   return (
     <Box<C>
@@ -16,7 +16,7 @@ const Card = <C extends React.ElementType = 'div'>({ sx, ...cardProps }: CardPro
         flexDirection: 'column',
         alignItems: 'start',
         bgcolor: theme.colors.surface,
-        padding: { xs: '0px 0px 0px 0px', md: '40px' },
+        padding: { xs: '0px', md: '40px' },
         borderRadius: theme.shapes.borderRadiusMedium,
         ...sx,
       }}

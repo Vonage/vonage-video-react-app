@@ -11,7 +11,7 @@ describe('UnsupportedBrowserPage', () => {
       </BrowserRouter>
     );
 
-    expect(screen.getByText('Your browser is unsupported')).toBeInTheDocument();
+    expect(screen.getByText('Your browser is not compatible.')).toBeInTheDocument();
     expect(screen.getByText('Firefox')).toBeInTheDocument();
   });
 });

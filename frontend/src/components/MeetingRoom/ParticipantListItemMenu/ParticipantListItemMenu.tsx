@@ -6,7 +6,7 @@ import Popper from '@ui/Popper';
 import ClickAwayListener from '@ui/ClickAwayListener';
 import Paper from '@ui/Paper';
 import VividIcon from '@components/VividIcon';
-import useCustomTheme from '@Context/Theme';
+import useTheme from '@ui/theme';
 
 export type ParticipantListItemMenuProps = {
   participantName: string;
@@ -25,7 +25,7 @@ const ParticipantListItemMenu = ({
   participantName,
   subscriberWrapper,
 }: ParticipantListItemMenuProps): ReactElement => {
-  const theme = useCustomTheme();
+  const theme = useTheme();
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const isOpen = !!anchorEl;
   const handleClick = (event: MouseEvent<HTMLButtonElement>) => {

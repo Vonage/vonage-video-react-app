@@ -4,7 +4,7 @@ import Box from '@ui/Box';
 import Button from '@ui/Button';
 import Typography from '@ui/Typography';
 import Link from '@ui/Link';
-import useCustomTheme from '@Context/Theme';
+import useTheme from '@ui/theme';
 
 export type TicketResponseType = {
   message: string;
@@ -31,7 +31,7 @@ const FormSubmitted = ({
   ticketResponse,
 }: FormSubmittedProps): ReactElement => {
   const { t } = useTranslation();
-  const theme = useCustomTheme();
+  const theme = useTheme();
 
   return (
     <>

@@ -4,7 +4,7 @@ import useSessionContext from '../../../hooks/useSessionContext';
 import IconButton from '@ui/IconButton';
 import InputAdornment from '@ui/InputAdornment';
 import TextField from '@ui/TextField';
-import useCustomTheme from '@Context/Theme';
+import useTheme from '@ui/theme';
 import VividIcon from '@components/VividIcon';
 
 /**
@@ -16,7 +16,7 @@ import VividIcon from '@components/VividIcon';
  */
 const ChatInput = (): ReactElement => {
   const { t } = useTranslation();
-  const theme = useCustomTheme();
+  const theme = useTheme();
   const [text, setText] = useState('');
   const [isComposing, setIsComposing] = useState(false);
   const { sendChatMessage } = useSessionContext();

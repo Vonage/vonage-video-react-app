@@ -1,7 +1,7 @@
 import { ReactElement } from 'react';
 import Box from '@ui/Box';
 import Typography from '@ui/Typography';
-import useCustomTheme from '@Context/Theme';
+import useTheme from '@ui/theme';
 
 export type NameDisplayProps = {
   containerWidth: number;
@@ -18,7 +18,7 @@ export type NameDisplayProps = {
  * @returns {ReactElement} The NameDisplay component.
  */
 const NameDisplay = ({ name, containerWidth }: NameDisplayProps): ReactElement => {
-  const theme = useCustomTheme();
+  const theme = useTheme();
   const safeMaxWidth =
     typeof containerWidth === 'number' && Number.isFinite(containerWidth) ? containerWidth : 0;
   return (

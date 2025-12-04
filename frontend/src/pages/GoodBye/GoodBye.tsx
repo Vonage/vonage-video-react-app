@@ -1,13 +1,20 @@
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
-import FlexLayout from '@ui/FlexLayout';
+import PageLayout from '@ui/PageLayout';
 import Banner from '@components/Banner';
 import Footer from '@components/Footer/Footer';
+import Typography from '@ui/Typography';
 import useArchives from '../../hooks/useArchives';
 import ArchiveList from '../../components/GoodBye/ArchiveList';
 import GoodByeMessage from '../../components/GoodBye/GoodbyeMessage';
 import useRoomName from '../../hooks/useRoomName';
+import ReenterRoomButton from '@components/GoodBye/ReenterRoomButton';
+import GoToLandingPageButton from '@components/GoodBye/GoToLandingPageButton';
+import Card from '@ui/Card';
+import Stack from '@ui/Stack';
+import useTheme from '@ui/theme';
+
 /**
  * GoodBye Component
  *
@@ -20,6 +27,8 @@ import useRoomName from '../../hooks/useRoomName';
  */
 const GoodBye = (): ReactElement => {
   const { t } = useTranslation();
+  const theme = useTheme();
+  const navigate = useNavigate();
   const location = useLocation();
   const roomName = useRoomName({
     useLocationState: true,
@@ -28,24 +37,66 @@ const GoodBye = (): ReactElement => {
   const header: string = location.state?.header || t('goodbye.default.header');
   const caption: string = location.state?.caption || t('goodbye.default.message');
 
+  const handleLanding = () => {
+    navigate('/');
+  };
+
+  const handleReenter = () => {
+    navigate(`/waiting-room/${roomName}`);
+  };
+
   return (
-    <FlexLayout>
-      <FlexLayout.Banner>
+    <PageLayout>
+      <PageLayout.Banner>
         <Banner />
-      </FlexLayout.Banner>
-      <FlexLayout.Left>
-        <GoodByeMessage header={header} message={caption} roomName={roomName} />
-      </FlexLayout.Left>
-      <FlexLayout.Right>
-        <div className="h-auto w-full shrink py-4 ps-12 text-left">
-          <h3 className="w-9/12 pb-5 text-4xl text-black">{t('archiveList.label')}</h3>
-          <ArchiveList archives={archives} />
-        </div>
-      </FlexLayout.Right>
-      <FlexLayout.Footer>
+      </PageLayout.Banner>
+      <PageLayout.Left>
+        <GoodByeMessage header={header} message={caption} />
+      </PageLayout.Left>
+      <PageLayout.Right>
+        <Stack direction="column" gap={4}>
+          <Card
+            sx={{
+              alignItems: 'center',
+            }}
+          >
+            <Typography
+              variant="h6"
+              sx={{
+                color: theme.colors.textSecondary,
+                mb: 3,
+                width: '100%',
+                textAlign: 'left',
+              }}
+            >
+              {t('goodBye.title')}
+            </Typography>
+            <ReenterRoomButton handleReenter={handleReenter} roomName={roomName} />
+            <GoToLandingPageButton handleLanding={handleLanding} />
+          </Card>
+
+          <Card
+            sx={{
+              minWidth: { xs: '100%', md: '500px' },
+            }}
+          >
+            <Typography
+              variant="h6"
+              sx={{
+                color: theme.colors.textSecondary,
+                mb: 3,
+              }}
+            >
+              {t('archiveList.label')}
+            </Typography>
+            <ArchiveList archives={archives} />
+          </Card>
+        </Stack>
+      </PageLayout.Right>
+      <PageLayout.Footer>
         <Footer />
-      </FlexLayout.Footer>
-    </FlexLayout>
+      </PageLayout.Footer>
+    </PageLayout>
   );
 };
 

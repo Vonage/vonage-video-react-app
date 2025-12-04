@@ -4,7 +4,7 @@ import useShouldShowParticipantList from '@Context/AppConfig/hooks/useShouldShow
 import ToolbarButton from '../ToolbarButton';
 import Badge from '@ui/Badge';
 import Tooltip from '@ui/Tooltip';
-import useCustomTheme from '@Context/Theme';
+import useTheme from '@ui/theme';
 import VividIcon from '@components/VividIcon';
 
 export type ParticipantListButtonProps = {
@@ -32,7 +32,7 @@ const ParticipantListButton = ({
   isOverflowButton = false,
 }: ParticipantListButtonProps): ReactElement | false => {
   const showParticipantList = useShouldShowParticipantList();
-  const theme = useCustomTheme();
+  const theme = useTheme();
   const { t } = useTranslation();
 
   return (

@@ -14,7 +14,7 @@ import Box from '@ui/Box';
 import ClickAwayListener from '@ui/ClickAwayListener';
 import Grow from '@ui/Grow';
 import Portal from '@ui/Portal';
-import useCustomTheme from '@Context/Theme';
+import useTheme from '@ui/theme';
 
 export type CaptionsState = {
   isUserCaptionsEnabled: boolean;
@@ -69,7 +69,7 @@ const ToolbarOverflowMenu = ({
   const participantCount =
     subscriberWrappers.filter(({ isScreenshare }) => !isScreenshare).length + 1;
   const isPinningPresent = subscriberWrappers.some((subWrapper) => subWrapper.isPinned);
-  const theme = useCustomTheme();
+  const theme = useTheme();
 
   const closeMenuWrapper = (onClick?: () => void) => () => {
     if (onClick) {

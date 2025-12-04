@@ -1,6 +1,6 @@
 import { ReactElement, useState } from 'react';
 import Box from '@ui/Box';
-import useCustomTheme from '@Context/Theme';
+import useTheme from '@ui/theme';
 import useSessionContext from '../../../hooks/useSessionContext';
 import useRoomName from '../../../hooks/useRoomName';
 import useRoomShareUrl from '../../../hooks/useRoomShareUrl';
@@ -16,7 +16,7 @@ import VividIcon from '@components/VividIcon';
  * @returns {ReactElement} The small viewport header component.
  */
 const SmallViewportHeader = (): ReactElement => {
-  const theme = useCustomTheme();
+  const theme = useTheme();
   const { archiveId } = useSessionContext();
   const isRecording = !!archiveId;
   const roomName = useRoomName();

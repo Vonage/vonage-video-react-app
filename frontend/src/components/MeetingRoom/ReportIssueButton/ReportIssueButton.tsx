@@ -2,7 +2,7 @@ import Tooltip from '@ui/Tooltip';
 import { ReactElement, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import ToolbarButton from '../ToolbarButton';
-import useCustomTheme from '@Context/Theme';
+import useTheme from '@ui/theme';
 import VividIcon from '@components/VividIcon';
 
 export type ReportIssueButtonProps = {
@@ -27,7 +27,7 @@ const ReportIssueButton = ({
   isOverflowButton = false,
 }: ReportIssueButtonProps): ReactElement => {
   const { t } = useTranslation();
-  const theme = useCustomTheme();
+  const theme = useTheme();
   const anchorRef = useRef<HTMLButtonElement>(null);
 
   return (

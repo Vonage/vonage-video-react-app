@@ -8,7 +8,9 @@ describe('createArchiveFromServer', () => {
     expect(archive).toEqual({
       createdAt: 1725268141000,
       createdAtFormatted: 'Mon, Sep 2 5:09 AM',
+      duration: 56,
       id: 'c32509e3-24a9-4d1f-98a0-66a0f0fdbca6',
+      size: 278545,
       status: 'available',
       url: 'https://example.com.com/tokbox.com.archive2.eu/46969164/c32509e3-24a9-4d1f-98a0-66a0f0fdbca6/archive.mp4',
     });

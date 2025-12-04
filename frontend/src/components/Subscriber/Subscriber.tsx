@@ -11,7 +11,7 @@ import PinButton from '../MeetingRoom/PinButton';
 import useSessionContext from '../../hooks/useSessionContext';
 import isMouseEventInsideBox from '../../utils/isMouseEventInsideBox';
 import ScreenshareVideoTile from '../MeetingRoom/ScreenshareVideoTile';
-import useCustomTheme from '@Context/Theme';
+import useTheme from '@ui/theme';
 
 export type SubscriberProps = {
   subscriberWrapper: SubscriberWrapper;
@@ -39,7 +39,7 @@ const Subscriber = ({
   isActiveSpeaker,
 }: SubscriberProps): ReactElement => {
   const { isMaxPinned, pinSubscriber } = useSessionContext();
-  const theme = useCustomTheme();
+  const theme = useTheme();
   const { isPinned, subscriber } = subscriberWrapper;
   const isScreenShare = subscriber?.stream?.videoType === 'screen';
   const subRef = useRef<HTMLDivElement>(null);

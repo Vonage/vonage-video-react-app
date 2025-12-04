@@ -4,7 +4,7 @@ import Typography from '@ui/Typography';
 import { useTranslation } from 'react-i18next';
 import useReceivingCaptions from '../../../../../hooks/useReceivingCaptions';
 import { CAPTION_DISPLAY_DURATION_MS } from '../../../../../utils/constants';
-import useCustomTheme from '@Context/Theme';
+import useTheme from '@ui/theme';
 
 export type UserCaptionProps = {
   subscriber: Subscriber | null;
@@ -29,7 +29,7 @@ const UserCaption = ({
   const { caption: captionText, isReceivingCaptions } = useReceivingCaptions({
     subscriber,
   });
-  const theme = useCustomTheme();
+  const theme = useTheme();
 
   const displayCaption = caption ?? captionText;
   const isActive = Boolean(caption ?? isReceivingCaptions);

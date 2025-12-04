@@ -3,7 +3,7 @@ import { EmojiWrapper } from '../../../hooks/useEmoji';
 import { EMOJI_DISPLAY_DURATION } from '../../../utils/constants';
 import Chip from '@ui/Chip';
 import Box from '@ui/Box';
-import useCustomTheme from '@Context/Theme';
+import useTheme from '@ui/theme';
 import useIsSmallViewport from '@hooks/useIsSmallViewport';
 
 export type EmojiProps = {
@@ -18,7 +18,7 @@ export type EmojiProps = {
  * @returns {ReactElement} - The Emoji Component.
  */
 const Emoji = ({ emojiWrapper }: EmojiProps): ReactElement => {
-  const theme = useCustomTheme();
+  const theme = useTheme();
   const isSmallViewport = useIsSmallViewport();
   const { emoji, name } = emojiWrapper;
   const style: CSSProperties = {

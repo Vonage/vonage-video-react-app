@@ -2,7 +2,7 @@ import { useState, useEffect, MouseEvent, ReactElement } from 'react';
 import { Device } from '@vonage/client-sdk-video';
 import { useTranslation } from 'react-i18next';
 import useAppConfig from '@Context/AppConfig/hooks/useAppConfig';
-import useCustomTheme from '@Context/Theme';
+import useTheme from '@ui/theme';
 import useDevices from '../../../hooks/useDevices';
 import usePublisherContext from '../../../hooks/usePublisherContext';
 import { setStorageItem, STORAGE_KEYS } from '../../../utils/storage';
@@ -27,7 +27,7 @@ export type VideoDevicesProps = {
  */
 const VideoDevices = ({ handleToggle }: VideoDevicesProps): ReactElement | false => {
   const { t } = useTranslation();
-  const theme = useCustomTheme();
+  const theme = useTheme();
   const { isPublishing, publisher } = usePublisherContext();
 
   const allowDeviceSelection = useAppConfig(

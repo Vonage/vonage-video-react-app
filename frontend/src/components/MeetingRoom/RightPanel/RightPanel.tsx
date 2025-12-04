@@ -6,7 +6,7 @@ import type { RightPanelActiveTab } from '../../../hooks/useRightPanel';
 import useIsSmallViewport from '../../../hooks/useIsSmallViewport';
 import BackgroundEffectsLayout from '../../BackgroundEffects/BackgroundEffectsLayout';
 import Box from '@ui/Box';
-import useCustomTheme from '@Context/Theme';
+import useTheme from '@ui/theme';
 
 export type RightPanelProps = {
   handleClose: () => void;
@@ -24,7 +24,7 @@ export type RightPanelProps = {
  */
 const RightPanel = ({ activeTab, handleClose }: RightPanelProps): ReactElement => {
   const isSmallViewport = useIsSmallViewport();
-  const theme = useCustomTheme();
+  const theme = useTheme();
 
   return (
     <Box

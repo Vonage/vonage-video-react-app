@@ -5,7 +5,7 @@ import Tooltip from '@ui/Tooltip';
 import IconButton from '@ui/IconButton';
 import VividIcon from '@components/VividIcon';
 import Box from '@ui/Box';
-import useCustomTheme from '@Context/Theme';
+import useTheme from '@ui/theme';
 
 export type PinButtonProps = {
   isMaxPinned: boolean;
@@ -35,7 +35,7 @@ const PinButton = ({
   handleClick,
 }: PinButtonProps): ReactElement | false => {
   const { t } = useTranslation();
-  const theme = useCustomTheme();
+  const theme = useTheme();
   const isDisabled = isMaxPinned && !isPinned;
   const anchorRef = useRef<HTMLDivElement | null>(null);
   const [isHoveringButton, setIsHoveringButton] = useState<boolean>(false);

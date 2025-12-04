@@ -1,4 +1,4 @@
-import useCustomTheme from '@Context/Theme';
+import useTheme from '@ui/theme';
 import Chip from '@ui/Chip';
 import { Box } from 'opentok-layout-js';
 import { ReactElement } from 'react';
@@ -16,7 +16,7 @@ export type ScreenShareNameDisplayProps = {
  * @returns {ReactElement} The ScreenShareNameDisplay component.
  */
 const ScreenShareNameDisplay = ({ name, box }: ScreenShareNameDisplayProps): ReactElement => {
-  const theme = useCustomTheme();
+  const theme = useTheme();
   const safeMaxWidth = typeof box.width === 'number' && Number.isFinite(box.width) ? box.width : 0;
 
   return (

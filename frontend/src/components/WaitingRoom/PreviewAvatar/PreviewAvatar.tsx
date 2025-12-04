@@ -1,6 +1,6 @@
 import { ReactElement } from 'react';
 import Avatar from '@ui/Avatar';
-import useCustomTheme from '@Context/Theme';
+import useTheme from '@ui/theme';
 import useWindowWidth from '../../../hooks/useWindowWidth';
 import AvatarInitials from '../../AvatarInitials';
 import useIsSmallViewport from '../../../hooks/useIsSmallViewport';
@@ -29,7 +29,7 @@ const PreviewAvatar = ({
   isVideoEnabled,
   isVideoLoading,
 }: PreviewAvatarProps): ReactElement | null => {
-  const theme = useCustomTheme();
+  const theme = useTheme();
   const smallDisplayDimensions = useWindowWidth() * 0.46;
   const isSmallViewport = useIsSmallViewport();
   const height = isSmallViewport ? smallDisplayDimensions : 328;

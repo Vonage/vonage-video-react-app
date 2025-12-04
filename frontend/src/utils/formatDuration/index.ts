@@ -1,0 +1,1 @@
+export { formatDuration } from './formatDuration';

@@ -13,7 +13,7 @@ import TextField from '@ui/TextField';
 import Typography from '@ui/Typography';
 import Button from '@ui/Button';
 import CircularProgress from '@ui/CircularProgress';
-import useCustomTheme from '@Context/Theme';
+import useTheme from '@ui/theme';
 
 export type FormType = {
   title: string;
@@ -66,7 +66,7 @@ const FeedbackForm = ({
   onFileSelect,
 }: FeedbackFormType): ReactElement => {
   const { t } = useTranslation();
-  const theme = useCustomTheme();
+  const theme = useTheme();
   const isSmallViewport = useIsSmallViewport();
   // 224px = 64px panel header + 96px toolbar if normal viewport + (40px submit button + 24px submit button margin)
   // 208px = 64px panel header + 80px toolbar if small viewport + (40px submit button + 24px submit button margin)

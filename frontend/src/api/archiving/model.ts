@@ -15,6 +15,8 @@ export interface ServerArchive {
   url: string | null;
   status: ServerArchiveStatus;
   createdAt: number;
+  duration?: number;
+  size?: number;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   [others: string]: any;
 }
@@ -25,6 +27,8 @@ export type Archive = {
   status: ArchiveStatus;
   createdAt: number;
   createdAtFormatted: string;
+  duration?: number;
+  size?: number;
 };
 
 const getDateString = (locale: string, timestamp: number) => {
@@ -58,6 +62,8 @@ export const createArchiveFromServer = (locale: string, serverArchive: ServerArc
     status: getArchiveStatus(serverArchive.status),
     createdAt: serverArchive.createdAt,
     createdAtFormatted: getDateString(locale, serverArchive.createdAt),
+    duration: serverArchive.duration,
+    size: serverArchive.size,
   };
 };
 

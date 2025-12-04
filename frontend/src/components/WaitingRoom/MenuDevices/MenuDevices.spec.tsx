@@ -1,10 +1,10 @@
 import { render, screen } from '@testing-library/react';
 import { describe, beforeEach, it, Mock, vi, expect } from 'vitest';
 import MenuDevices from './MenuDevices';
-import * as util from '../../../utils/util';
+import * as util from '@utils/util';
 
-vi.mock('../../../utils/util', async () => {
-  const actual = await vi.importActual<typeof import('../../../utils/util')>('../../../utils/util');
+vi.mock('@utils/util', async () => {
+  const actual = await vi.importActual<typeof import('@utils/util')>('@utils/util');
   return {
     ...actual,
     isGetActiveAudioOutputDeviceSupported: vi.fn(),

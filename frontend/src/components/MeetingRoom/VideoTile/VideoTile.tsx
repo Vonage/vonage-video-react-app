@@ -2,7 +2,7 @@ import { Box as LayoutBox } from 'opentok-layout-js';
 import { ForwardedRef, forwardRef, ReactElement, ReactNode } from 'react';
 import getBoxStyle from '../../../utils/helpers/getBoxStyle';
 import Box from '@ui/Box';
-import useCustomTheme from '@Context/Theme';
+import useTheme from '@ui/theme';
 
 export type VideoTileProps = {
   'data-testid': string;
@@ -53,7 +53,7 @@ const VideoTile = forwardRef(
     }: VideoTileProps,
     ref: ForwardedRef<HTMLDivElement>
   ): ReactElement => {
-    const theme = useCustomTheme();
+    const theme = useTheme();
 
     return (
       <Box

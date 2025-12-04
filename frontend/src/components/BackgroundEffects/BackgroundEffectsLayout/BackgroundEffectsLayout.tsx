@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import useMediaQuery from '@ui/useMediaQuery';
 import Box from '@ui/Box';
 import Button from '@ui/Button';
-import useCustomTheme from '@Context/Theme';
+import useTheme from '@ui/theme';
 import usePublisherContext from '../../../hooks/usePublisherContext';
 import BackgroundVideoContainer from '../BackgroundVideoContainer';
 import BackgroundEffectOptions, {
@@ -38,7 +38,7 @@ const BackgroundEffectsLayout = ({
 }: BackgroundEffectsLayoutProps): ReactElement | false => {
   const [backgroundSelected, setBackgroundSelected] = useState<string>('none');
   const { t } = useTranslation();
-  const theme = useCustomTheme();
+  const theme = useTheme();
 
   const isShortScreen = useMediaQuery('(max-height:825px)');
   const publisherContext = usePublisherContext();

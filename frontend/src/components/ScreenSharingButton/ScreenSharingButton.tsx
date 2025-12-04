@@ -6,7 +6,7 @@ import { isMobile } from '@utils/util';
 import ToolbarButton from '../MeetingRoom/ToolbarButton';
 import PopupDialog, { DialogTexts } from '../MeetingRoom/PopupDialog';
 import VividIcon from '@components/VividIcon';
-import useCustomTheme from '@Context/Theme';
+import useTheme from '@ui/theme';
 
 export type ScreenShareButtonProps = {
   toggleScreenShare: () => void;
@@ -36,7 +36,7 @@ const ScreenSharingButton = ({
     ({ meetingRoomSettings }) => meetingRoomSettings.allowScreenShare
   );
   const { t } = useTranslation();
-  const theme = useCustomTheme();
+  const theme = useTheme();
   const title = isSharingScreen ? t('screenSharing.title.stop') : t('screenSharing.title.start');
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
 

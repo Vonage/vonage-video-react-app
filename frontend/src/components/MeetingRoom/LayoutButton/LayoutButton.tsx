@@ -4,7 +4,7 @@ import useSessionContext from '../../../hooks/useSessionContext';
 import ToolbarButton from '../ToolbarButton';
 import Tooltip from '@ui/Tooltip';
 import VividIcon from '@components/VividIcon';
-import useCustomTheme from '@Context/Theme';
+import useTheme from '@ui/theme';
 
 export type LayoutButtonProps = {
   isScreenSharePresent: boolean;
@@ -31,7 +31,7 @@ const LayoutButton = ({
   const { layoutMode, setLayoutMode } = useSessionContext();
   const isGrid = layoutMode === 'grid';
   const isDisabled = isScreenSharePresent || isPinningPresent;
-  const theme = useCustomTheme();
+  const theme = useTheme();
   const handleClick = () => {
     if (isDisabled) {
       return;

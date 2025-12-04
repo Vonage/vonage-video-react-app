@@ -1,7 +1,7 @@
 import { ReactElement } from 'react';
 import PortraitIcon from '@mui/icons-material/Portrait';
 import { useTranslation } from 'react-i18next';
-import useCustomTheme from '@Context/Theme';
+import useTheme from '@ui/theme';
 import MenuList from '@ui/MenuList';
 import MenuItem from '@ui/MenuItem';
 import Typography from '@ui/Typography';
@@ -22,7 +22,7 @@ const VideoDevicesOptions = ({
   toggleBackgroundEffects,
 }: VideoDevicesOptionsProps): ReactElement => {
   const { t } = useTranslation();
-  const theme = useCustomTheme();
+  const theme = useTheme();
 
   return (
     <MenuList

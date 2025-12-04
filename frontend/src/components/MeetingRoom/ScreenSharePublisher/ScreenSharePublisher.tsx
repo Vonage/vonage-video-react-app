@@ -3,7 +3,7 @@ import { Box } from 'opentok-layout-js';
 import { Publisher } from '@vonage/client-sdk-video';
 import VideoTile from '../VideoTile';
 import ScreenShareNameDisplay from '../../ScreenShareNameDisplay';
-import useCustomTheme from '@Context/Theme';
+import useTheme from '@ui/theme';
 
 export type ScreenSharePublisherProps = {
   box: Box | undefined;
@@ -25,7 +25,7 @@ const ScreenSharePublisher = ({
   element,
   publisher,
 }: ScreenSharePublisherProps): ReactElement | undefined => {
-  const theme = useCustomTheme();
+  const theme = useTheme();
   const containerRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
     if (element && containerRef.current) {

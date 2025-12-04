@@ -4,7 +4,7 @@ import ClickAwayListener from '@ui/ClickAwayListener';
 import MenuItem from '@ui/MenuItem';
 import useAudioOutputContext from '../../hooks/useAudioOutputContext';
 import Typography from '@ui/Typography';
-import useCustomTheme from '@Context/Theme';
+import useTheme from '@ui/theme';
 
 export type SoundTestProps = {
   children: ReactElement;
@@ -20,7 +20,7 @@ export type SoundTestProps = {
  */
 const SoundTest = ({ children }: SoundTestProps): ReactElement => {
   const { t } = useTranslation();
-  const theme = useCustomTheme();
+  const theme = useTheme();
   const [audioIsPlaying, setAudioIsPlaying] = useState(false);
   const audioElement = useMemo(() => new Audio('/sound.mp3'), []);
   const { currentAudioOutputDevice } = useAudioOutputContext();

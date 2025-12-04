@@ -2,7 +2,7 @@ import { ReactElement } from 'react';
 import useDateTime from '../../../hooks/useDateTime';
 import useRoomName from '../../../hooks/useRoomName';
 import Box from '@ui/Box';
-import useCustomTheme from '@Context/Theme';
+import useTheme from '@ui/theme';
 
 /**
  *  TimeRoomName Component
@@ -12,7 +12,7 @@ import useCustomTheme from '@Context/Theme';
  */
 const TimeRoomName = (): ReactElement => {
   const { time } = useDateTime();
-  const theme = useCustomTheme();
+  const theme = useTheme();
   const roomName = useRoomName();
 
   return (

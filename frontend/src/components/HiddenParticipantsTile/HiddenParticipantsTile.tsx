@@ -7,7 +7,7 @@ import useShouldShowParticipantList from '@Context/AppConfig/hooks/useShouldShow
 import AvatarInitials from '../AvatarInitials';
 import AvatarGroup from '@ui/AvatarGroup';
 import ButtonBase from '@ui/ButtonBase';
-import useCustomTheme from '@Context/Theme';
+import useTheme from '@ui/theme';
 
 export type HiddenParticipantsTileProps = {
   box: Box;
@@ -30,7 +30,7 @@ const HiddenParticipantsTile = ({
   const { toggleParticipantList } = useSessionContext();
 
   const showParticipantList = useShouldShowParticipantList();
-  const theme = useCustomTheme();
+  const theme = useTheme();
 
   const { height, width } = box;
   const diameter = Math.min(height, width) * 0.38;

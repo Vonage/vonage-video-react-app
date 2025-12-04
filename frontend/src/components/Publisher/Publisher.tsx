@@ -7,7 +7,7 @@ import AvatarInitials from '../AvatarInitials';
 import NameDisplay from '../MeetingRoom/NameDisplay';
 import AudioIndicator from '../MeetingRoom/AudioIndicator';
 import VideoTile from '../MeetingRoom/VideoTile';
-import useCustomTheme from '@Context/Theme';
+import useTheme from '@ui/theme';
 
 export type PublisherProps = {
   box: Box;
@@ -30,7 +30,7 @@ const Publisher = ({ box }: PublisherProps): ReactElement => {
     isAudioEnabled,
   } = usePublisherContext();
   const audioLevel = useAudioLevels();
-  const theme = useCustomTheme();
+  const theme = useTheme();
   // We store this in a ref to get a reference to the div so that we can append a video to it
   const pubContainerRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
