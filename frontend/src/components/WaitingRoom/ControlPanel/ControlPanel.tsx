@@ -18,7 +18,7 @@ const textSx: SxProps = {
   whiteSpace: 'nowrap',
   overflow: 'hidden',
   textOverflow: 'ellipsis',
-} as const;
+};
 
 export type ControlPanelProps = {
   handleAudioInputOpen: (
