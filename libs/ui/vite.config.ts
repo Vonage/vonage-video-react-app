@@ -6,7 +6,7 @@ import * as path from 'node:path';
 
 export default defineConfig(() => ({
   root: __dirname,
-  cacheDir: '../node_modules/.vite/ui',
+  cacheDir: '../../node_modules/.vite/ui',
   plugins: [
     react(),
     dts({ entryRoot: 'src', tsconfigPath: path.join(__dirname, 'tsconfig.lib.json') }),

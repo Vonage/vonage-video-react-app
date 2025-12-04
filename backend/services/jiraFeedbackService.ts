@@ -51,7 +51,9 @@ class JiraFeedbackService implements FeedbackService {
     };
 
     try {
-      const response = await axios.post(this.jiraApiUrl, feedbackIssueData, {
+      const response = await axios.post<{
+        key: string;
+      }>(this.jiraApiUrl, feedbackIssueData, {
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Basic ${this.jiraToken}`,

@@ -8,8 +8,15 @@
     "lint": {
       "executor": "nx:run-commands",
       "options": {
-        "cwd": "frontend",
+        "cwd": "libs/ui",
         "command": "eslint 'src/**/*.{ts,tsx}' --report-unused-disable-directives --max-warnings 0"
+      }
+    },
+    "lint:fix": {
+      "executor": "nx:run-commands",
+      "options": {
+        "cwd": "libs/ui",
+        "command": "eslint 'src/**/*.{ts,tsx}' --fix --report-unused-disable-directives --max-warnings 0"
       }
     },
     "test": {
