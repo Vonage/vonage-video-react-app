@@ -1,19 +1,21 @@
-import { ReactElement, useEffect, useState } from 'react';
+import { ReactElement, Dispatch, SetStateAction } from 'react';
 import { useTranslation } from 'react-i18next';
 import Box from '@ui/Box';
 import Tooltip from '@ui/Tooltip';
 import IconButton from '@ui/IconButton';
 import VividIcon from '@components/VividIcon';
 import useTheme from '@ui/theme';
-import { BACKGROUNDS_PATH } from '../../../utils/constants';
+import { BACKGROUNDS_PATH } from '@utils/constants';
 import SelectableOption from '../SelectableOption';
-import useImageStorage, { StoredImage } from '@utils/useImageStorage/useImageStorage';
+import { StoredImage } from '@utils/useImageStorage/useImageStorage';
 
 export type BackgroundGalleryProps = {
   backgroundSelected: string;
   setBackgroundSelected: (dataUrl: string) => void;
   clearPublisherBgIfSelectedDeleted: (dataUrl: string) => void;
-  refreshTrigger?: number;
+  customImages: StoredImage[];
+  setCustomImages: Dispatch<SetStateAction<StoredImage[]>>;
+  deleteImageFromStorage: (id: string) => void;
 };
 
 /**
@@ -31,10 +33,10 @@ const BackgroundGallery = ({
   backgroundSelected,
   setBackgroundSelected,
   clearPublisherBgIfSelectedDeleted,
-  refreshTrigger,
+  customImages,
+  setCustomImages,
+  deleteImageFromStorage,
 }: BackgroundGalleryProps): ReactElement => {
-  const { getImagesFromStorage, deleteImageFromStorage } = useImageStorage();
-  const [customImages, setCustomImages] = useState<StoredImage[]>([]);
   const { t } = useTranslation();
   const theme = useTheme();
 
@@ -53,16 +55,12 @@ const BackgroundGallery = ({
     { id: 'bg8', file: 'white-room.jpg', name: t('backgroundEffects.backgrounds.whiteRoom') },
   ];
 
-  useEffect(() => {
-    setCustomImages(getImagesFromStorage());
-  }, [getImagesFromStorage, refreshTrigger]);
-
   const handleDelete = (id: string, dataUrl: string) => {
     if (backgroundSelected === dataUrl) {
       return;
     }
     deleteImageFromStorage(id);
-    setCustomImages((imgs) => imgs.filter((img) => img.id !== id));
+    setCustomImages(customImages.filter((img) => img.id !== id));
     clearPublisherBgIfSelectedDeleted(dataUrl);
   };
 

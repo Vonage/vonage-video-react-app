@@ -6,7 +6,7 @@ import Alert from '@ui/Alert';
 import VividIcon from '@components/VividIcon';
 import { ALLOWED_TYPES, MAX_SIZE_MB } from '../../../../utils/constants';
 import useImageStorage from '@utils/useImageStorage/useImageStorage';
-import SelectableOption from '../../SelectableOption';
+import SelectableOption from '@components/BackgroundEffects/SelectableOption';
 
 export type AddBackgroundEffectLayoutProps = {
   customBackgroundImageChange: (dataUrl: string) => void;

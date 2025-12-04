@@ -4,8 +4,9 @@ import Box from '@ui/Box';
 import useTheme from '@ui/theme';
 import EffectOptionButtons from '../EffectOptionButtons/EffectOptionButtons';
 import BackgroundGallery from '../BackgroundGallery/BackgroundGallery';
-import { DEFAULT_SELECTABLE_OPTION_WIDTH } from '../../../utils/constants';
-import getInitialBackgroundFilter from '../../../utils/backgroundFilter/getInitialBackgroundFilter/getInitialBackgroundFilter';
+import { DEFAULT_SELECTABLE_OPTION_WIDTH } from '@utils/constants';
+import getInitialBackgroundFilter from '@utils/backgroundFilter/getInitialBackgroundFilter/getInitialBackgroundFilter';
+import useImageStorage, { StoredImage } from '@utils/useImageStorage/useImageStorage';
 
 type BackgroundEffectOptionsProps = {
   mode: 'meeting' | 'waiting';
@@ -47,7 +48,8 @@ const BackgroundEffectOptions = ({
   cleanupSelectedBackgroundReplacement,
   customBackgroundImageChange,
 }: BackgroundEffectOptionsProps): ReactElement => {
-  const [refreshTrigger, setRefreshTrigger] = useState(0);
+  const { getImagesFromStorage, deleteImageFromStorage } = useImageStorage();
+  const [customImages, setCustomImages] = useState<StoredImage[]>(getImagesFromStorage());
 
   const handleBackgroundSelect = (value: string) => {
     setBackgroundSelected(value);
@@ -55,7 +57,7 @@ const BackgroundEffectOptions = ({
 
   const handleCustomBackgroundImageChange = (dataUrl: string) => {
     customBackgroundImageChange(dataUrl);
-    setRefreshTrigger(Date.now());
+    setCustomImages(getImagesFromStorage());
   };
 
   const theme = useTheme();
@@ -103,7 +105,9 @@ const BackgroundEffectOptions = ({
             backgroundSelected={backgroundSelected}
             setBackgroundSelected={handleBackgroundSelect}
             clearPublisherBgIfSelectedDeleted={cleanupSelectedBackgroundReplacement}
-            refreshTrigger={refreshTrigger}
+            customImages={customImages}
+            setCustomImages={setCustomImages}
+            deleteImageFromStorage={deleteImageFromStorage}
           />
         </Box>
       </Box>
