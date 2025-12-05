@@ -4,5 +4,25 @@ set -eu
 # Skip on CI
 [ -n "${CI:-}" ] && exit 0
 
+branch=$(git rev-parse --abbrev-ref HEAD)
+
+if [ "$branch" != "main" ] && [ "$branch" != "develop" ]; then
+  if ! echo "$branch" | grep -qE '^(feat|fix|chore|refactor|docs|test|ci|perf|build|revert)\([A-Z]+-[0-9]+\)/'; then
+    echo ""
+    echo "❌ Invalid branch name: $branch"
+    echo ""
+    echo "✅ Branch names must follow the format: type(TICKET-ID)/description"
+    echo ""
+    echo "   Examples:"
+    echo "   - feat(VIDSOL-301)/new-feature"
+    echo "   - fix(VIDSOL-211)/camera-permissions"
+    echo "   - chore(VIDSOL-296)/nx-migration"
+    echo ""
+    echo "   Valid types: feat, fix, chore, refactor, docs, test, ci, perf, build, revert"
+    echo ""
+    exit 1
+  fi
+fi
+
 echo "🔍 Running tests before push..."
 yarn --silent test

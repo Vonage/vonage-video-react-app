@@ -1,22 +1,22 @@
-import nx from '@nx/eslint-plugin';
-import js from '@eslint/js';
-import tseslint from 'typescript-eslint';
-import importPlugin from 'eslint-plugin-import';
-import react from 'eslint-plugin-react';
-import reactHooks from 'eslint-plugin-react-hooks';
-import a11y from 'eslint-plugin-jsx-a11y';
-import tailwind from 'eslint-plugin-tailwindcss';
-import prettier from 'eslint-config-prettier';
-import prettierPlugin from 'eslint-plugin-prettier';
-import cspell from '@cspell/eslint-plugin';
-import customWordList from './customWordList.mjs';
+import cspell from '@cspell/eslint-plugin'
+import js from '@eslint/js'
+import nx from '@nx/eslint-plugin'
+import prettier from 'eslint-config-prettier'
+import importPlugin from 'eslint-plugin-import'
+import a11y from 'eslint-plugin-jsx-a11y'
+import prettierPlugin from 'eslint-plugin-prettier'
+import react from 'eslint-plugin-react'
+import reactHooks from 'eslint-plugin-react-hooks'
+import tailwind from 'eslint-plugin-tailwindcss'
+import tseslint from 'typescript-eslint'
+import customWordList from './customWordList.mjs'
 
 const tsProjects = [
   './backend/tsconfig.json',
   './frontend/tsconfig.json',
   './libs/ui/tsconfig.json',
   './integration-tests/tsconfig.json',
-];
+]
 
 export default [
   // Nx base and TypeScript presets
@@ -264,4 +264,4 @@ export default [
       'import/first': 'off',
     },
   },
-];
+]
