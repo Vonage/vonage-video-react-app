@@ -67,7 +67,7 @@ jobs:
         if: steps.check-update-screenshots.outputs.result == 'true'
         run: |
           sudo apt update
-          wget --max-redirect=0 -O firefoxsetup.tar.bz2 "https://download.mozilla.org/?product=firefox-latest&os=linux64&lang=en-US"
+          wget --https-only -O firefoxsetup.tar.bz2 "https://download.mozilla.org/?product=firefox-latest&os=linux64&lang=en-US"
           sudo tar -xf firefoxsetup.tar.bz2 --directory /opt
           echo "Check firefox version"
           /opt/firefox/firefox --version
