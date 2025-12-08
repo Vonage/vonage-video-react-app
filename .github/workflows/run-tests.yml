@@ -69,7 +69,7 @@ jobs:
         if: steps.check-skip-ci.outputs.result == 'false'
         run: |
           sudo apt update
-          wget --https-only -O firefoxsetup.tar.bz2 "https://download.mozilla.org/?product=firefox-latest&os=linux64&lang=en-US"
+          wget --https-only --max-redirect=2 -O firefoxsetup.tar.bz2 "https://download.mozilla.org/?product=firefox-latest&os=linux64&lang=en-US"
           sudo tar -xf firefoxsetup.tar.bz2 --directory /opt
           echo "Check firefox version"
           /opt/firefox/firefox --version
@@ -78,7 +78,7 @@ jobs:
       - name: Install opera latest
         run: |
           sudo mkdir -p /etc/apt/keyrings
-          curl --max-redirs 0 -fsSL https://deb.opera.com/archive.key | gpg --dearmor | sudo tee /etc/apt/keyrings/opera.gpg > /dev/null
+          curl --https-only --max-redirs 0 -fsSL https://deb.opera.com/archive.key | gpg --dearmor | sudo tee /etc/apt/keyrings/opera.gpg > /dev/null
           echo "deb [signed-by=/etc/apt/keyrings/opera.gpg] https://deb.opera.com/opera-stable/ stable non-free" | \
             sudo tee /etc/apt/sources.list.d/opera-stable.list > /dev/null
           sudo apt-get update
