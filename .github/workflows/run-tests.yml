@@ -46,8 +46,8 @@ jobs:
       - name: Install chrome latest
         if: steps.check-skip-ci.outputs.result == 'false'
         run: |
-          wget -q -O - https://dl.google.com/linux/linux_signing_key.pub | sudo apt-key add -
-          sudo sh -c 'echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google.list'
+          wget --max-redirect=0 -q -O - https://dl.google.com/linux/linux_signing_key.pub | sudo apt-key add -
+          sudo sh -c 'echo "deb [arch=amd64] https://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google.list'
           sudo apt update && sudo apt install -y google-chrome-stable 
           echo "Check chrome version"
           /usr/bin/google-chrome-stable --version
@@ -69,7 +69,7 @@ jobs:
         if: steps.check-skip-ci.outputs.result == 'false'
         run: |
           sudo apt update
-          wget -O firefoxsetup.tar.bz2 "https://download.mozilla.org/?product=firefox-latest&os=linux64&lang=en-US"
+          wget --max-redirect=0 -O firefoxsetup.tar.bz2 "https://download.mozilla.org/?product=firefox-latest&os=linux64&lang=en-US"
           sudo tar -xf firefoxsetup.tar.bz2 --directory /opt
           echo "Check firefox version"
           /opt/firefox/firefox --version
@@ -78,7 +78,7 @@ jobs:
       - name: Install opera latest
         run: |
           sudo mkdir -p /etc/apt/keyrings
-          curl -fsSL https://deb.opera.com/archive.key | gpg --dearmor | sudo tee /etc/apt/keyrings/opera.gpg > /dev/null
+          curl --max-redirs 0 -fsSL https://deb.opera.com/archive.key | gpg --dearmor | sudo tee /etc/apt/keyrings/opera.gpg > /dev/null
           echo "deb [signed-by=/etc/apt/keyrings/opera.gpg] https://deb.opera.com/opera-stable/ stable non-free" | \
             sudo tee /etc/apt/sources.list.d/opera-stable.list > /dev/null
           sudo apt-get update
@@ -98,8 +98,8 @@ jobs:
         run: |
           node -v
           npm -v
-          npm install --global yarn
-          yarn
+          npm install --global --ignore-scripts yarn
+          yarn --ignore-scripts --focus
 
       - name: Install electron dependencies
         run: |
