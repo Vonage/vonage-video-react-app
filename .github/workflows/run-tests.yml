@@ -78,7 +78,8 @@ jobs:
       - name: Install opera latest
         run: |
           sudo mkdir -p /etc/apt/keyrings
-          curl --https-only --max-redirs 0 -fsSL https://deb.opera.com/archive.key | gpg --dearmor | sudo tee /etc/apt/keyrings/opera.gpg > /dev/null
+          curl --fail --silent --show-error --location --proto =https --max-redirs 2 https://deb.opera.com/archive.key \
+            | gpg --dearmor | sudo tee /etc/apt/keyrings/opera.gpg > /dev/null
           echo "deb [signed-by=/etc/apt/keyrings/opera.gpg] https://deb.opera.com/opera-stable/ stable non-free" | \
             sudo tee /etc/apt/sources.list.d/opera-stable.list > /dev/null
           sudo apt-get update
