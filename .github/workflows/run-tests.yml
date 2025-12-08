@@ -137,6 +137,11 @@ jobs:
           args: >
             -Dsonar.branch.name="$BASE_BRANCH"
 
+      - name: Repair electron install
+        if: steps.check-skip-ci.outputs.result == 'false'
+        run: |
+          npm rebuild electron --force
+
       - name: Run integration tests
         if: steps.check-skip-ci.outputs.result == 'false' && github.event.pull_request.head.repo.fork == false
         run: |
