@@ -1,13 +1,26 @@
+---
+apiVersion: backstage.io/v1alpha1
+kind: System
+metadata:
+  name: video-react-ref-app # SERVICE NAME field
+  title: Video React Ref App # Title (human-friendly library name) field
+  description: Vonage Video API JS React reference application
+  annotations:
+    vonage.com/jira-id: VPF # video general projects
+spec:
+  type: library
+  owner: group:orgdata/vdk # helm "owner" orgdata squad id or general orgdata/vid
+  domain: video-api # Product this library belongs to
+---
 apiVersion: backstage.io/v1alpha1
 kind: Component
 metadata:
-  name: vonage-video-react-app
-  description: Vonage Video API JS React reference application
+  name: video-react-ref-app
+  description: Video React Ref App Component
   annotations:
-    github.com/project-slug: vonage/vonage-video-react-app
-    backstage.io/techdocs-ref: dir:../docs/
+    github.com/project-slug: Vonage/vonage-video-react-app # GH repo
 spec:
-  type: service
+  type: library
+  owner: group:orgdata/vdk
+  system: video-react-ref-app
   lifecycle: production
-  owner: vonage-technology/video-client-team
-  domain: video

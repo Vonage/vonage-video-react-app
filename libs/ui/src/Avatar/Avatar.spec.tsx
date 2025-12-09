@@ -39,6 +39,7 @@ describe('Avatar', () => {
   });
 
   it('renders with icon content', () => {
+    // eslint-disable-next-line jsx-a11y/accessible-emoji
     const TestIcon = () => <span>👤</span>;
 
     render(

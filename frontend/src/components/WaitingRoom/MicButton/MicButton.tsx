@@ -29,6 +29,7 @@ const MicButton = (): ReactElement | false => {
   return (
     allowMicrophoneControl && (
       <Box
+        data-testid="mic-button-wrapper"
         sx={{
           display: 'flex',
           position: 'relative',

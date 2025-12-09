@@ -1,4 +1,3 @@
-// eslint-disable-next-line import/no-extraneous-dependencies
 import { Page, expect } from '@playwright/test';
 import { baseURL } from '../fixtures/testWithLogging';
 
