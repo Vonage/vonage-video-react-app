@@ -192,7 +192,7 @@
   "waitingRoom.title": "Preparati per unirti",
   "waitingRoom.user.input.title": "Inserisci il tuo nome",
   "waitingRoom.user.input.label": "Nome",
-  "waitingRoom.user.input.error": "Il nome non può essere vuoto né contenere caratteri speciali",
+  "waitingRoom.user.input.error": "Il nome non può essere vuoto né contenere caratteri speciali.",
   "zoom.reset": "Reimposta zoom",
   "zoom.start": "Inizia zoom",
   "zoom.out": "Zoom indietro",

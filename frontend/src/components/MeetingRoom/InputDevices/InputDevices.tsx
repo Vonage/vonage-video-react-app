@@ -6,10 +6,10 @@ import { MouseEvent as ReactMouseEvent, ReactElement, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import useAppConfig from '@Context/AppConfig/hooks/useAppConfig';
 import useTheme from '@ui/theme';
-import useDevices from '../../../hooks/useDevices';
-import usePublisherContext from '../../../hooks/usePublisherContext';
-import { setStorageItem, STORAGE_KEYS } from '../../../utils/storage';
-import cleanAndDedupeDeviceLabels from '../../../utils/cleanAndDedupeDeviceLabels';
+import useDevices from '@hooks/useDevices';
+import usePublisherContext from '@hooks/usePublisherContext';
+import { setStorageItem, STORAGE_KEYS } from '@utils/storage';
+import cleanAndDedupeDeviceLabels from '@utils/cleanAndDedupeDeviceLabels';
 
 export type InputDevicesProps = {
   handleToggle: () => void;

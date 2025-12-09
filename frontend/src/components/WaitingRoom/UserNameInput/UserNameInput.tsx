@@ -7,12 +7,12 @@ import Box from '@ui/Box';
 import Typography from '@ui/Typography';
 import Card from '@ui/Card';
 import useTheme from '@ui/theme';
-import useUserContext from '../../../hooks/useUserContext';
-import { UserType } from '../../../Context/user';
-import useRoomName from '../../../hooks/useRoomName';
-import isValidRoomName from '../../../utils/isValidRoomName';
-import isValidUserName from '../../../utils/isValidUserName';
-import { setStorageItem, STORAGE_KEYS } from '../../../utils/storage';
+import useUserContext from '@hooks/useUserContext';
+import { UserType } from '@Context/user';
+import useRoomName from '@hooks/useRoomName';
+import isValidRoomName from '@utils/isValidRoomName';
+import isValidUserName from '@utils/isValidUserName';
+import { setStorageItem, STORAGE_KEYS } from '@utils/storage';
 
 export type UserNameInputProps = {
   username: string;

@@ -194,7 +194,7 @@
   "waitingRoom.title": "Prepare to join",
   "waitingRoom.user.input.title": "Enter your name",
   "waitingRoom.user.input.label": "Name",
-  "waitingRoom.user.input.error": "Name cannot be empty or contain special characters",
+  "waitingRoom.user.input.error": "Name cannot be empty or contain special characters.",
   "zoom.reset": "Reset Zoom",
   "zoom.start": "Start Zooming",
   "zoom.out": "Zoom out",
