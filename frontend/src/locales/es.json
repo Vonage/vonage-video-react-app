@@ -186,7 +186,7 @@
   "waitingRoom.title": "Prepararse para unirse",
   "waitingRoom.user.input.title": "Ingresa tu nombre",
   "waitingRoom.user.input.label": "Nombre",
-  "waitingRoom.user.input.error": "El nombre no puede estar vacío ni contener caracteres especiales",
+  "waitingRoom.user.input.error": "El nombre no puede estar vacío ni contener caracteres especiales.",
   "zoom.reset": "Restablecer zoom",
   "zoom.start": "Iniciar zoom",
   "zoom.out": "Alejar zoom",
