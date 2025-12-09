@@ -52,6 +52,20 @@
         "command": "tsc -p tsconfig.json --noEmit --watch --preserveWatchOutput"
       }
     },
+    "lint": {
+      "executor": "nx:run-commands",
+      "options": {
+        "cwd": "integration-tests",
+        "command": "eslint . --report-unused-disable-directives --max-warnings 0"
+      }
+    },
+    "lint:fix": {
+      "executor": "nx:run-commands",
+      "options": {
+        "cwd": "integration-tests",
+        "command": "eslint . --fix --report-unused-disable-directives --max-warnings 0"
+      }
+    },
     "test:": {
       "executor": "nx:run-commands",
       "description": "Run playwright tests in a specific file",

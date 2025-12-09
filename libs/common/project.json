@@ -1,0 +1,44 @@
+{
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "name": "common",
+  "projectType": "library",
+  "root": "libs/common",
+  "sourceRoot": "libs/common/src",
+  "targets": {
+    "lint": {
+      "executor": "nx:run-commands",
+      "options": {
+        "cwd": "libs/common",
+        "command": "eslint 'src/**/*.{ts,tsx}' --report-unused-disable-directives --max-warnings 0"
+      }
+    },
+    "lint:fix": {
+      "executor": "nx:run-commands",
+      "options": {
+        "cwd": "libs/common",
+        "command": "eslint 'src/**/*.{ts,tsx}' --fix --report-unused-disable-directives --max-warnings 0"
+      }
+    },
+    "test": {
+      "executor": "nx:run-commands",
+      "options": {
+        "cwd": "libs/common",
+        "command": "vitest run --coverage"
+      }
+    },
+    "build": {
+      "executor": "@nx/vite:build",
+      "options": {
+        "outputPath": "dist/common"
+      }
+    },
+    "ts-check": {
+      "executor": "nx:run-commands",
+      "options": {
+        "cwd": "libs/common",
+        "command": "tsc -p tsconfig.lib.json --pretty true --noEmit"
+      }
+    }
+  },
+  "tags": ["scope:common", "type:lib"]
+}

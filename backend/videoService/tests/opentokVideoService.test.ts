@@ -8,6 +8,7 @@ const mockRoomName = 'awesomeRoomName';
 const mockCaptionId = 'mockCaptionId';
 const mockApiSecret = 'mockApiSecret';
 
+// eslint-disable-next-line @typescript-eslint/await-thenable
 await jest.unstable_mockModule('opentok', () => ({
   default: jest.fn().mockImplementation(() => ({
     createSession: jest.fn(
@@ -53,6 +54,7 @@ await jest.unstable_mockModule('opentok', () => ({
   mediaMode: 'routed',
 }));
 
+// eslint-disable-next-line @typescript-eslint/await-thenable
 await jest.unstable_mockModule('axios', () => ({
   default: {
     post: jest.fn<() => Promise<{ data: { captionsId: string } }>>().mockResolvedValue({

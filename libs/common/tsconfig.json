@@ -1,0 +1,14 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "files": [],
+  "include": ["eslint.config.mjs"],
+  "references": [{ "path": "./tsconfig.lib.json" }, { "path": "./tsconfig.spec.json" }],
+  "compilerOptions": {
+    "baseUrl": "./",
+    "moduleResolution": "node",
+    "paths": {
+      "@common": ["./src"],
+      "@common/*": ["./src/*"]
+    }
+  }
+}

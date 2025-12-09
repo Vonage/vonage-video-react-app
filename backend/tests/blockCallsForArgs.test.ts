@@ -92,6 +92,7 @@ describe('blockCallsForArgs', () => {
 
     expect(result2).toBe('someOtherKey');
     expect(util.inspect(asyncResult1).includes('pending'));
+    // eslint-disable-next-line @typescript-eslint/await-thenable
     await fn1Promise.resolve(null);
     expect(await asyncResult1).toBe('someKey');
   });

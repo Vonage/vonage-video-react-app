@@ -56,6 +56,10 @@ export default [
             'scripts/licenseCheck.js',
             'frontend/tailwind.config.js',
             'integration-tests/globalSetup.js',
+            'integration-tests/electronHelper.js',
+            'integration-tests/main.js',
+            'backend/jest.config.js',
+            'backend/jest/setEnvVars.js',
             // add more config files here if needed, e.g.
             // 'frontend/tailwind.config.*',
           ],

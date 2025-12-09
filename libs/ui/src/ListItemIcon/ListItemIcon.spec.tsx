@@ -1,3 +1,4 @@
+/* eslint-disable jsx-a11y/accessible-emoji */
 import { render, screen } from '@testing-library/react';
 import { describe, it, expect } from 'vitest';
 import ListItemIcon from './index';
