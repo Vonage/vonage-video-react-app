@@ -142,7 +142,7 @@ const ControlPanel = ({
           aria-expanded={openVideoInput ? 'true' : undefined}
           aria-label={t('devices.video.camera.ariaLabel')}
         >
-          <VividIcon name="audio-off-2-line" customSize={-6} />
+          <VividIcon name="video-line" customSize={-6} />
           <Box component="span" sx={textSx}>
             {t('button.camera')}
           </Box>
@@ -166,7 +166,7 @@ const ControlPanel = ({
           aria-expanded={openAudioOutput ? 'true' : undefined}
           aria-label={t('devices.audio.speakers.full')}
         >
-          <VividIcon name="video-line" customSize={-6} />
+          <VividIcon name="audio-off-2-line" customSize={-6} />
           <Box component="span" sx={textSx}>
             {t('button.speaker')}
           </Box>
