@@ -1,4 +1,4 @@
-import { SxProps } from '@ui/SxProps';
+import type { SxProps } from '@ui/SxProps';
 
 /**
  * Converts a simplified sx prop object to inline CSS styles.

@@ -12,7 +12,7 @@
   "backgroundEffects.limit": "Hai raggiunto il limite massimo di immagini personalizzate",
   "backgroundEffects.title": "Impostazioni sfondo",
   "backgroundEffects.addBackground": "Aggiungi sfondo",
-  "backgroundEffects.video.disabled": "La tua camera è spenta",
+  "backgroundEffects.video.disabled": "La tua camera è spenta.",
   "backgroundEffects.invalidFileType": "Sono consentite solo immagini JPG, PNG, GIF o BMP.",
   "backgroundEffects.fileTooLarge": "L'immagine deve essere inferiore a {{maxSize}}MB.",
   "backgroundEffects.processingError": "Errore nell'elaborazione dell'immagine caricata.",

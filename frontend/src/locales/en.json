@@ -12,7 +12,7 @@
   "backgroundEffects.limit": "You have reached the maximum custom images limit",
   "backgroundEffects.title": "Background settings",
   "backgroundEffects.addBackground": "Add Background",
-  "backgroundEffects.video.disabled": "Your camera is turned off",
+  "backgroundEffects.video.disabled": "Your camera is turned off.",
   "backgroundEffects.invalidFileType": "Only JPG, PNG, GIF, or BMP images are allowed.",
   "backgroundEffects.fileTooLarge": "Image must be less than {{maxSize}}MB.",
   "backgroundEffects.processingError": "Failed to process uploaded image.",

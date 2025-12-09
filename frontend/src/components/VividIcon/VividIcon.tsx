@@ -1,4 +1,4 @@
-import { SxProps } from '@ui/SxProps';
+import type { SxProps } from '@ui/SxProps';
 import { ReactElement } from 'react';
 import sxToStyle from './sxToStyle';
 

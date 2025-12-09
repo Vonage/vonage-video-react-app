@@ -5,7 +5,7 @@ import useDevices from '@hooks/useDevices';
 import useAudioOutputContext from '@hooks/useAudioOutputContext';
 import useIsSmallViewport from '@hooks/useIsSmallViewport';
 import Box from '@ui/Box';
-import { SxProps } from '@ui/SxProps';
+import type { SxProps } from '@ui/SxProps';
 import useTheme from '@ui/theme';
 import VividIcon from '@components/VividIcon';
 import ButtonBase from '@ui/ButtonBase';
