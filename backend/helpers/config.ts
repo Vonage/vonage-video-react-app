@@ -9,7 +9,6 @@ const loadConfig = (): Config => {
 
   const feedbackConfig: FeedbackConfig = {
     url: process.env.JIRA_URL,
-    url_test: process.env.JIRA_URL,
     apiUrl: process.env.JIRA_API_URL,
     token: process.env.JIRA_TOKEN,
     key: process.env.JIRA_PROJECT_KEY,

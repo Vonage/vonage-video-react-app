@@ -1,6 +1,5 @@
 export type FeedbackConfig = {
   url?: string;
-  url_test?: string;
   apiUrl?: string;
   token?: string;
   key?: string;
