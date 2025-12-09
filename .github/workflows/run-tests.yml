@@ -70,7 +70,7 @@ jobs:
           sudo apt update
 
           # Resolve the final download URL without keeping redirects enabled in wget
-          FINAL_URL=$(curl --fail --silent --show-error --location \
+          FINAL_URL=$(curl --fail --silent --show-error --location --proto =https \
             "https://download.mozilla.org/?product=firefox-latest&os=linux64&lang=en-US" \
             -o /dev/null -w '%{url_effective}')
 
