@@ -1,3 +1,1 @@
-import isValidRoomName from './isValidUserName';
-
-export default isValidRoomName;
+export { default } from './isValidUserName';
