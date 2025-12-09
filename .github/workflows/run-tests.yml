@@ -15,7 +15,6 @@ env:
   OT_API_SECRET: ${{secrets.API_SECRET}}
   VONAGE_APP_ID: ${{secrets.VONAGE_APP_ID}}
   VONAGE_PRIVATE_KEY: ${{secrets.VONAGE_PRIVATE_KEY}}
-  OT_API_KEY_TEST: ${{secrets.API_KEY}}
 
 jobs:
   run:
@@ -69,7 +68,7 @@ jobs:
         if: steps.check-skip-ci.outputs.result == 'false'
         run: |
           sudo apt update
-          wget --https-only --max-redirect=2 -O firefoxsetup.tar.bz2 "https://download.mozilla.org/?product=firefox-latest&os=linux64&lang=en-US"
+          wget -O firefoxsetup.tar.bz2 "https://download.mozilla.org/?product=firefox-latest&os=linux64&lang=en-US"
           sudo tar -xf firefoxsetup.tar.bz2 --directory /opt
           echo "Check firefox version"
           /opt/firefox/firefox --version
