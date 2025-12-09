@@ -1,4 +1,3 @@
-/* eslint-disable no-underscore-dangle */
 import { Auth } from '@vonage/auth';
 import {
   LayoutType,

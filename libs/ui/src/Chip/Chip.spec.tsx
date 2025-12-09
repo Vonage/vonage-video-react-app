@@ -51,6 +51,7 @@ describe('Chip', () => {
   });
 
   it('renders with icon', () => {
+    // eslint-disable-next-line jsx-a11y/accessible-emoji
     const TestIcon = () => <span>🏷️</span>;
 
     render(<Chip label="Chip with icon" icon={<TestIcon />} />);
