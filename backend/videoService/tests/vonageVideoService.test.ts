@@ -10,6 +10,7 @@ const mockRoomName = 'awesomeRoomName';
 const mockCaptionId = 'mockCaptionId';
 const mockPrivateKey = 'mockPrivateKey';
 
+// eslint-disable-next-line @typescript-eslint/await-thenable
 await jest.unstable_mockModule('@vonage/video', () => {
   return {
     Video: jest.fn().mockImplementation(() => ({

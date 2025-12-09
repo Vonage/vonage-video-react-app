@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/require-await */
 import { SessionStorage } from './sessionStorage';
 
 interface SessionData {

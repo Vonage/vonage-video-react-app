@@ -46,17 +46,23 @@ class VcrSessionStorage implements SessionStorage {
 
   async incrementCaptionsUserCount(roomName: string): Promise<number> {
     const key = `captionsUserCount:${roomName}`;
-    const currentCaptionsUsersCount = (await this.dbState.get(key)) as number;
+    const currentCaptionsUsersCount = await this.dbState.get(key);
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    // eslint-disable-next-line @typescript-eslint/restrict-plus-operands
     const newCaptionsUsersCount = currentCaptionsUsersCount ? currentCaptionsUsersCount + 1 : 1;
     await this.dbState.set(key, newCaptionsUsersCount);
     await this.setKeyExpiry(key);
 
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-return
     return newCaptionsUsersCount;
   }
 
   async decrementCaptionsUserCount(roomName: string): Promise<number> {
     const key = `captionsUserCount:${roomName}`;
-    const currentCaptionsUsersCount = (await this.dbState.get(key)) as number;
+    const currentCaptionsUsersCount = await this.dbState.get(key);
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
     const newCaptionsUsersCount = currentCaptionsUsersCount ? currentCaptionsUsersCount - 1 : 0;
     if (newCaptionsUsersCount < 0) {
       await this.dbState.delete(key);

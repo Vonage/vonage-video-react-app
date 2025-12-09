@@ -1,3 +1,4 @@
+// eslint-disable-next-line @typescript-eslint/no-require-imports
 const { app, BrowserWindow } = require('electron');
 
 const baseUrl = 'http://127.0.0.1:3345';

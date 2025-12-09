@@ -1,4 +1,5 @@
 import { defineConfig, devices } from '@playwright/test';
+// eslint-disable-next-line @typescript-eslint/no-require-imports
 import path = require('path');
 
 const chromiumFlags = [
@@ -79,6 +80,7 @@ export default defineConfig({
         ...devices['Desktop Firefox'],
         viewport: { width, height },
         launchOptions: {
+          // eslint-disable-next-line @cspell/spellchecker
           firefoxUserPrefs: {
             'media.navigator.permission.disabled': true,
             'media.navigator.streams.fake': true,
