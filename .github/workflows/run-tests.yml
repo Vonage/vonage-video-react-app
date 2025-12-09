@@ -68,7 +68,7 @@ jobs:
         if: steps.check-skip-ci.outputs.result == 'false'
         run: |
           sudo apt update
-          wget -O firefoxsetup.tar.bz2 "https://download.mozilla.org/?product=firefox-latest&os=linux64&lang=en-US"
+          wget --https-only --max-redirect=2 -O firefoxsetup.tar.bz2 "https://download.mozilla.org/?product=firefox-latest&os=linux64&lang=en-US"
           sudo tar -xf firefoxsetup.tar.bz2 --directory /opt
           echo "Check firefox version"
           /opt/firefox/firefox --version
@@ -137,9 +137,10 @@ jobs:
           args: >
             -Dsonar.branch.name="$BASE_BRANCH"
 
-      - name: Repair electron install
+      - name: Restore all Playwright + Electron browsers
         if: steps.check-skip-ci.outputs.result == 'false'
         run: |
+          npx playwright install --with-deps
           npm rebuild electron --force
 
       - name: Run integration tests
