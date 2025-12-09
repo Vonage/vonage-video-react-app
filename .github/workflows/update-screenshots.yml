@@ -67,7 +67,17 @@ jobs:
         if: steps.check-update-screenshots.outputs.result == 'true'
         run: |
           sudo apt update
-          wget --https-only --max-redirect=0 -O firefoxsetup.tar.bz2 "https://download-installer.cdn.mozilla.net/pub/firefox/releases/latest/linux-x86_64/en-US/firefox-latest.tar.bz2"
+
+          # Resolve the final download URL without keeping redirects enabled in wget
+          FINAL_URL=$(curl --fail --silent --show-error --location \
+            "https://download.mozilla.org/?product=firefox-latest&os=linux64&lang=en-US" \
+            -o /dev/null -w '%{url_effective}')
+
+          echo "Resolved Firefox URL: $FINAL_URL"
+
+          # Download directly with redirects disabled (Sonar requirement)
+          wget --https-only --max-redirect=0 -O firefoxsetup.tar.bz2 "$FINAL_URL"
+
           sudo tar -xf firefoxsetup.tar.bz2 --directory /opt
           echo "Check firefox version"
           /opt/firefox/firefox --version
