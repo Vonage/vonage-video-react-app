@@ -64,7 +64,6 @@ const BackgroundEffectsLayout = ({
 
   useEffect(() => {
     if (isOpen) {
-      // eslint-disable-next-line react-hooks/set-state-in-effect
       const currentOption = setInitialBackgroundReplacement();
       changeBackgroundPreview(currentOption);
     }
