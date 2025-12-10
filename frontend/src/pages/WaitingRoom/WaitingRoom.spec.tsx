@@ -103,6 +103,8 @@ describe('WaitingRoom', () => {
       publisher: null,
       initBackgroundLocalPublisher: vi.fn(),
       destroyBackgroundPublisher: mockedDestroyPublisher,
+      handleBackgroundChange: vi.fn(),
+      handleAddCustomImage: vi.fn(),
     } as unknown as BackgroundPublisherContextType;
     vi.mocked(useBackgroundPublisherContext).mockImplementation(() => backgroundPublisherContext);
     vi.mocked(usePermissions).mockReturnValue({

@@ -1,4 +1,4 @@
-import { ReactElement, useCallback, useEffect, useState } from 'react';
+import { ReactElement, useCallback, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import useMediaQuery from '@ui/useMediaQuery';
 import Box from '@ui/Box';
@@ -6,9 +6,7 @@ import Button from '@ui/Button';
 import useTheme from '@ui/theme';
 import usePublisherContext from '../../../hooks/usePublisherContext';
 import BackgroundVideoContainer from '../BackgroundVideoContainer';
-import BackgroundEffectOptions, {
-  clearBgWhenSelectedDeleted,
-} from '../BackgroundEffectOptions/BackgroundEffectOptions';
+import BackgroundEffectOptions from '../BackgroundEffectOptions/BackgroundEffectOptions';
 import getInitialBackgroundFilter from '../../../utils/backgroundFilter/getInitialBackgroundFilter/getInitialBackgroundFilter';
 import useBackgroundPublisherContext from '../../../hooks/useBackgroundPublisherContext';
 import RightPanelTitle from '../../MeetingRoom/RightPanel/RightPanelTitle';
@@ -36,7 +34,6 @@ const BackgroundEffectsLayout = ({
   handleClose,
   mode,
 }: BackgroundEffectsLayoutProps): ReactElement | false => {
-  const [backgroundSelected, setBackgroundSelected] = useState<string>('none');
   const { t } = useTranslation();
   const theme = useTheme();
 
@@ -47,28 +44,23 @@ const BackgroundEffectsLayout = ({
   const { publisher, changeBackground, isVideoEnabled } =
     mode === 'meeting' ? publisherContext : previewPublisherContext;
 
-  const { publisherVideoElement, changeBackground: changeBackgroundPreview } =
-    useBackgroundPublisherContext();
-
-  const handleBackgroundSelect = (selectedBackgroundOption: string) => {
-    setBackgroundSelected(selectedBackgroundOption);
-    changeBackgroundPreview(selectedBackgroundOption);
-  };
+  const {
+    publisherVideoElement,
+    changeBackground: changeBackgroundPreview,
+    backgroundSelected,
+    setBackgroundSelected,
+  } = useBackgroundPublisherContext();
 
   const handleApplyBackgroundSelect = () => {
     changeBackground(backgroundSelected);
     handleClose();
   };
 
-  const customBackgroundImageChange = (dataUrl: string) => {
-    handleBackgroundSelect(dataUrl);
-  };
-
   const setInitialBackgroundReplacement = useCallback(() => {
     const selectedBackgroundOption = getInitialBackgroundFilter(publisher);
     setBackgroundSelected(selectedBackgroundOption);
     return selectedBackgroundOption;
-  }, [publisher]);
+  }, [publisher, setBackgroundSelected]);
 
   useEffect(() => {
     if (isOpen) {
@@ -133,15 +125,7 @@ const BackgroundEffectsLayout = ({
           />
         </Box>
 
-        <BackgroundEffectOptions
-          mode={mode}
-          backgroundSelected={backgroundSelected}
-          setBackgroundSelected={handleBackgroundSelect}
-          cleanupSelectedBackgroundReplacement={(dataUrl: string) =>
-            clearBgWhenSelectedDeleted(publisher, changeBackground, backgroundSelected, dataUrl)
-          }
-          customBackgroundImageChange={customBackgroundImageChange}
-        />
+        <BackgroundEffectOptions mode={mode} />
 
         {buttonGroup}
       </Box>
@@ -174,15 +158,7 @@ const BackgroundEffectsLayout = ({
           </Box>
         </Box>
 
-        <BackgroundEffectOptions
-          mode={mode}
-          backgroundSelected={backgroundSelected}
-          setBackgroundSelected={handleBackgroundSelect}
-          cleanupSelectedBackgroundReplacement={(dataUrl: string) =>
-            clearBgWhenSelectedDeleted(publisher, changeBackground, backgroundSelected, dataUrl)
-          }
-          customBackgroundImageChange={customBackgroundImageChange}
-        />
+        <BackgroundEffectOptions mode={mode} />
       </Box>
       {buttonGroup}
     </>

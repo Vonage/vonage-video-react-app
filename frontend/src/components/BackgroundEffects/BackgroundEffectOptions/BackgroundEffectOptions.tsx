@@ -1,31 +1,13 @@
-import { Publisher } from '@vonage/client-sdk-video';
-import { ReactElement, useState } from 'react';
+import { ReactElement } from 'react';
 import Box from '@ui/Box';
 import useTheme from '@ui/theme';
 import EffectOptionButtons from '../EffectOptionButtons/EffectOptionButtons';
 import BackgroundGallery from '../BackgroundGallery/BackgroundGallery';
 import { DEFAULT_SELECTABLE_OPTION_WIDTH } from '@utils/constants';
-import getInitialBackgroundFilter from '@utils/backgroundFilter/getInitialBackgroundFilter/getInitialBackgroundFilter';
-import useImageStorage, { StoredImage } from '@utils/useImageStorage/useImageStorage';
+import useBackgroundPublisherContext from '@hooks/useBackgroundPublisherContext';
 
 type BackgroundEffectOptionsProps = {
   mode: 'meeting' | 'waiting';
-  backgroundSelected: string;
-  setBackgroundSelected: (value: string) => void;
-  cleanupSelectedBackgroundReplacement: (dataUrl: string) => void;
-  customBackgroundImageChange: (dataUrl: string) => void;
-};
-
-export const clearBgWhenSelectedDeleted = (
-  publisher: Publisher | null | undefined,
-  changeBackground: (bg: string) => void,
-  backgroundSelected: string,
-  dataUrl: string
-) => {
-  const selectedBackgroundOption = getInitialBackgroundFilter(publisher);
-  if (dataUrl === selectedBackgroundOption) {
-    changeBackground(backgroundSelected);
-  }
 };
 
 /**
@@ -35,30 +17,16 @@ export const clearBgWhenSelectedDeleted = (
  * and adding new ones.
  * @param {BackgroundEffectOptionsProps} props - The props for the component.
  *   @property {string} mode - The mode of the background effect ('meeting' or 'waiting').
- *   @property {string} backgroundSelected - The currently selected background option.
- *   @property {Function} setBackgroundSelected - Function to set the selected background option.
- *   @property {Function} cleanupSelectedBackgroundReplacement - Function to clean up background replacement if deleted.
- *   @property {Function} customBackgroundImageChange - Callback function to handle background image change.
  * @returns {ReactElement} The background effect tabs component.
  */
-const BackgroundEffectOptions = ({
-  mode,
-  backgroundSelected,
-  setBackgroundSelected,
-  cleanupSelectedBackgroundReplacement,
-  customBackgroundImageChange,
-}: BackgroundEffectOptionsProps): ReactElement => {
-  const { getImagesFromStorage, deleteImageFromStorage } = useImageStorage();
-  const [customImages, setCustomImages] = useState<StoredImage[]>(() => getImagesFromStorage());
-
-  const handleBackgroundSelect = (value: string) => {
-    setBackgroundSelected(value);
-  };
-
-  const handleCustomBackgroundImageChange = (dataUrl: string) => {
-    customBackgroundImageChange(dataUrl);
-    setCustomImages(getImagesFromStorage());
-  };
+const BackgroundEffectOptions = ({ mode }: BackgroundEffectOptionsProps): ReactElement => {
+  const {
+    backgroundSelected,
+    customImages,
+    deleteCustomImage,
+    handleBackgroundChange,
+    handleAddCustomImage,
+  } = useBackgroundPublisherContext();
 
   const theme = useTheme();
 
@@ -98,16 +66,14 @@ const BackgroundEffectOptions = ({
         >
           <EffectOptionButtons
             backgroundSelected={backgroundSelected}
-            setBackgroundSelected={handleBackgroundSelect}
-            customBackgroundImageChange={handleCustomBackgroundImageChange}
+            setBackgroundSelected={handleBackgroundChange}
+            customBackgroundImageChange={handleAddCustomImage}
           />
           <BackgroundGallery
             backgroundSelected={backgroundSelected}
-            setBackgroundSelected={handleBackgroundSelect}
-            clearPublisherBgIfSelectedDeleted={cleanupSelectedBackgroundReplacement}
+            setBackgroundSelected={handleBackgroundChange}
             customImages={customImages}
-            setCustomImages={setCustomImages}
-            deleteImageFromStorage={deleteImageFromStorage}
+            onDelete={deleteCustomImage}
           />
         </Box>
       </Box>

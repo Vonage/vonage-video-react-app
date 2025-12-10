@@ -36,6 +36,9 @@ vi.mock('@utils/useImageStorage/useImageStorage', () => ({
 }));
 
 describe('BackgroundGallery', () => {
+  const mockOnDelete = vi.fn();
+  const mockSetBackgroundSelected = vi.fn();
+
   beforeEach(() => {
     vi.clearAllMocks();
   });
@@ -44,11 +47,9 @@ describe('BackgroundGallery', () => {
     render(
       <BackgroundGallery
         backgroundSelected=""
-        setBackgroundSelected={() => {}}
-        clearPublisherBgIfSelectedDeleted={() => {}}
+        setBackgroundSelected={mockSetBackgroundSelected}
         customImages={customImages}
-        setCustomImages={() => {}}
-        deleteImageFromStorage={mockDeleteImageFromStorage}
+        onDelete={mockOnDelete}
       />
     );
     backgrounds.forEach((bg) => {
@@ -60,11 +61,9 @@ describe('BackgroundGallery', () => {
     render(
       <BackgroundGallery
         backgroundSelected=""
-        setBackgroundSelected={() => {}}
-        clearPublisherBgIfSelectedDeleted={() => {}}
+        setBackgroundSelected={mockSetBackgroundSelected}
         customImages={customImages}
-        setCustomImages={() => {}}
-        deleteImageFromStorage={mockDeleteImageFromStorage}
+        onDelete={mockOnDelete}
       />
     );
     customImages.forEach((img) => {
@@ -73,48 +72,40 @@ describe('BackgroundGallery', () => {
   });
 
   it('sets the selected built-in background', async () => {
-    const setBackgroundSelected = vi.fn();
     render(
       <BackgroundGallery
         backgroundSelected=""
-        setBackgroundSelected={setBackgroundSelected}
-        clearPublisherBgIfSelectedDeleted={() => {}}
+        setBackgroundSelected={mockSetBackgroundSelected}
         customImages={customImages}
-        setCustomImages={() => {}}
-        deleteImageFromStorage={mockDeleteImageFromStorage}
+        onDelete={mockOnDelete}
       />
     );
     const duneViewOption = screen.getByTestId('background-bg3');
     await userEvent.click(duneViewOption);
-    expect(setBackgroundSelected).toHaveBeenCalledWith('dune-view.jpg');
+    expect(mockSetBackgroundSelected).toHaveBeenCalledWith('dune-view.jpg');
   });
 
   it('sets the selected custom image', async () => {
-    const setBackgroundSelected = vi.fn();
     render(
       <BackgroundGallery
         backgroundSelected=""
-        setBackgroundSelected={setBackgroundSelected}
-        clearPublisherBgIfSelectedDeleted={() => {}}
+        setBackgroundSelected={mockSetBackgroundSelected}
         customImages={customImages}
-        setCustomImages={() => {}}
-        deleteImageFromStorage={mockDeleteImageFromStorage}
+        onDelete={mockOnDelete}
       />
     );
     const customOption = screen.getByTestId('background-custom1');
     await userEvent.click(customOption);
-    expect(setBackgroundSelected).toHaveBeenCalledWith('data:image/png;base64,custom1');
+    expect(mockSetBackgroundSelected).toHaveBeenCalledWith('data:image/png;base64,custom1');
   });
 
   it('marks the built-in background as selected', () => {
     render(
       <BackgroundGallery
         backgroundSelected="plane.jpg"
-        setBackgroundSelected={() => {}}
-        clearPublisherBgIfSelectedDeleted={() => {}}
+        setBackgroundSelected={mockSetBackgroundSelected}
         customImages={customImages}
-        setCustomImages={() => {}}
-        deleteImageFromStorage={mockDeleteImageFromStorage}
+        onDelete={mockOnDelete}
       />
     );
     const planeOption = screen.getByTestId('background-bg7');
@@ -125,48 +116,40 @@ describe('BackgroundGallery', () => {
     render(
       <BackgroundGallery
         backgroundSelected="data:image/png;base64,custom2"
-        setBackgroundSelected={() => {}}
-        clearPublisherBgIfSelectedDeleted={() => {}}
+        setBackgroundSelected={mockSetBackgroundSelected}
         customImages={customImages}
-        setCustomImages={() => {}}
-        deleteImageFromStorage={mockDeleteImageFromStorage}
+        onDelete={mockOnDelete}
       />
     );
     const customOption = screen.getByTestId('background-custom2');
     expect(customOption.getAttribute('aria-pressed')).toBe('true');
   });
 
-  it('calls deleteImageFromStorage and cleans publisher when deleting a custom image', async () => {
-    const cleanPublisher = vi.fn();
+  it('calls onDelete when deleting a custom image', async () => {
     render(
       <BackgroundGallery
         backgroundSelected=""
-        setBackgroundSelected={() => {}}
-        clearPublisherBgIfSelectedDeleted={cleanPublisher}
+        setBackgroundSelected={mockSetBackgroundSelected}
         customImages={customImages}
-        setCustomImages={() => {}}
-        deleteImageFromStorage={mockDeleteImageFromStorage}
+        onDelete={mockOnDelete}
       />
     );
     const deleteButtons = screen.getAllByLabelText('Delete custom background');
     await userEvent.click(deleteButtons[0]);
-    expect(mockDeleteImageFromStorage).toHaveBeenCalledWith('custom1');
-    expect(cleanPublisher).toHaveBeenCalledWith('data:image/png;base64,custom1');
+    expect(mockOnDelete).toHaveBeenCalledWith('custom1');
   });
 
   it("doesn't delete custom image if it's selected", async () => {
     render(
       <BackgroundGallery
         backgroundSelected="data:image/png;base64,custom1"
-        setBackgroundSelected={() => {}}
-        clearPublisherBgIfSelectedDeleted={() => {}}
+        setBackgroundSelected={mockSetBackgroundSelected}
         customImages={customImages}
-        setCustomImages={() => {}}
-        deleteImageFromStorage={mockDeleteImageFromStorage}
+        onDelete={mockOnDelete}
       />
     );
     const deleteButton = screen.getByTestId('background-delete-custom1');
     await userEvent.click(deleteButton);
-    expect(mockDeleteImageFromStorage).not.toHaveBeenCalled();
+    expect(mockOnDelete).not.toHaveBeenCalled();
   });
 });

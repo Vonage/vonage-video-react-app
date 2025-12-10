@@ -1,4 +1,4 @@
-import { ReactElement, Dispatch, SetStateAction } from 'react';
+import { ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
 import Box from '@ui/Box';
 import Tooltip from '@ui/Tooltip';
@@ -12,10 +12,8 @@ import { StoredImage } from '@utils/useImageStorage/useImageStorage';
 export type BackgroundGalleryProps = {
   backgroundSelected: string;
   setBackgroundSelected: (dataUrl: string) => void;
-  clearPublisherBgIfSelectedDeleted: (dataUrl: string) => void;
   customImages: StoredImage[];
-  setCustomImages: Dispatch<SetStateAction<StoredImage[]>>;
-  deleteImageFromStorage: (id: string) => void;
+  onDelete: (id: string) => void;
 };
 
 /**
@@ -25,17 +23,15 @@ export type BackgroundGalleryProps = {
  * @param {BackgroundGalleryProps} props - The props for the component.
  *   @property {string} backgroundSelected - The currently selected background image key.
  *   @property {Function} setBackgroundSelected - Callback to update the selected background image key.
- *   @property {Function} clearPublisherBgIfSelectedDeleted - Callback to clean up background replacement if the selected background is deleted.
- *   @property {number} [refreshTrigger] - Optional timestamp to trigger refresh of custom images.
+ *   @property {StoredImage[]} customImages - Array of custom background images.
+ *   @property {Function} onDelete - Callback to delete a custom background image by ID.
  * @returns {ReactElement} A horizontal stack of selectable option buttons.
  */
 const BackgroundGallery = ({
   backgroundSelected,
   setBackgroundSelected,
-  clearPublisherBgIfSelectedDeleted,
   customImages,
-  setCustomImages,
-  deleteImageFromStorage,
+  onDelete,
 }: BackgroundGalleryProps): ReactElement => {
   const { t } = useTranslation();
   const theme = useTheme();
@@ -54,15 +50,6 @@ const BackgroundGallery = ({
     { id: 'bg7', file: 'plane.jpg', name: t('backgroundEffects.backgrounds.plane') },
     { id: 'bg8', file: 'white-room.jpg', name: t('backgroundEffects.backgrounds.whiteRoom') },
   ];
-
-  const handleDelete = (id: string, dataUrl: string) => {
-    if (backgroundSelected === dataUrl) {
-      return;
-    }
-    deleteImageFromStorage(id);
-    setCustomImages((imgs) => imgs.filter((img) => img.id !== id));
-    clearPublisherBgIfSelectedDeleted(dataUrl);
-  };
 
   return (
     <>
@@ -97,7 +84,7 @@ const BackgroundGallery = ({
                   onClick={(e) => {
                     e.stopPropagation();
                     if (!isSelected) {
-                      handleDelete(id, dataUrl);
+                      onDelete(id);
                     }
                   }}
                   size="small"
