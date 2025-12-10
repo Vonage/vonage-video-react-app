@@ -46,8 +46,8 @@ jobs:
       - name: Install chrome latest
         if: steps.check-update-screenshots.outputs.result == 'true'
         run: |
-          wget -q -O - https://dl.google.com/linux/linux_signing_key.pub | sudo apt-key add -
-          sudo sh -c 'echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google.list'
+          wget --max-redirect=0 -q -O - https://dl.google.com/linux/linux_signing_key.pub | sudo apt-key add -
+          sudo sh -c 'echo "deb [arch=amd64] https://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google.list'
           sudo apt update && sudo apt install -y google-chrome-stable 
           echo "Check chrome version"
           /usr/bin/google-chrome-stable --version
@@ -67,7 +67,17 @@ jobs:
         if: steps.check-update-screenshots.outputs.result == 'true'
         run: |
           sudo apt update
-          wget -O firefoxsetup.tar.bz2 "https://download.mozilla.org/?product=firefox-latest&os=linux64&lang=en-US"
+
+          # Resolve the final download URL without keeping redirects enabled in wget
+          FINAL_URL=$(curl --fail --silent --show-error --location --proto =https \
+            "https://download.mozilla.org/?product=firefox-latest&os=linux64&lang=en-US" \
+            -o /dev/null -w '%{url_effective}')
+
+          echo "Resolved Firefox URL: $FINAL_URL"
+
+          # Download directly with redirects disabled (Sonar requirement)
+          wget --https-only --max-redirect=0 -O firefoxsetup.tar.bz2 "$FINAL_URL"
+
           sudo tar -xf firefoxsetup.tar.bz2 --directory /opt
           echo "Check firefox version"
           /opt/firefox/firefox --version
@@ -76,7 +86,7 @@ jobs:
         if: steps.check-update-screenshots.outputs.result == 'true'
         run: |
           sudo add-apt-repository 'deb https://deb.opera.com/opera-stable/ stable non-free'
-          wget -qO- https://deb.opera.com/archive.key | sudo apt-key add -
+          wget --max-redirect=0 -qO- https://deb.opera.com/archive.key | sudo apt-key add -
           sudo apt-get update
           sudo apt-get install opera-stable -y
           echo "Check opera version"
@@ -101,8 +111,8 @@ jobs:
         run: |
           node -v
           npm -v
-          npm install --global yarn
-          yarn
+          npm install --global --ignore-scripts yarn
+          yarn --ignore-scripts --focus
 
       - name: Install electron dependencies
         if: steps.check-update-screenshots.outputs.result == 'true'

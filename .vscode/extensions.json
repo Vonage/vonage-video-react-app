@@ -1,0 +1,13 @@
+{
+    "recommendations": [
+        "dbaeumer.vscode-eslint",
+        "streetsidesoftware.code-spell-checker",
+        "naumovs.color-highlight",
+        "nrwl.angular-console",
+        "ms-playwright.playwright",
+        "esbenp.prettier-vscode",
+        "bradlc.vscode-tailwindcss",
+        "github.copilot-chat",
+        "github.copilot"
+    ]
+}

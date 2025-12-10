@@ -45,8 +45,8 @@ jobs:
       - name: Install chrome latest
         if: steps.check-skip-ci.outputs.result == 'false'
         run: |
-          wget -q -O - https://dl.google.com/linux/linux_signing_key.pub | sudo apt-key add -
-          sudo sh -c 'echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google.list'
+          wget --max-redirect=0 -q -O - https://dl.google.com/linux/linux_signing_key.pub | sudo apt-key add -
+          sudo sh -c 'echo "deb [arch=amd64] https://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google.list'
           sudo apt update && sudo apt install -y google-chrome-stable 
           echo "Check chrome version"
           /usr/bin/google-chrome-stable --version
@@ -68,7 +68,17 @@ jobs:
         if: steps.check-skip-ci.outputs.result == 'false'
         run: |
           sudo apt update
-          wget -O firefoxsetup.tar.bz2 "https://download.mozilla.org/?product=firefox-latest&os=linux64&lang=en-US"
+
+          # Resolve the final download URL without keeping redirects enabled in wget
+          FINAL_URL=$(curl --fail --silent --show-error --location --proto =https \
+            "https://download.mozilla.org/?product=firefox-latest&os=linux64&lang=en-US" \
+            -o /dev/null -w '%{url_effective}')
+
+          echo "Resolved Firefox URL: $FINAL_URL"
+
+          # Download directly with redirects disabled (Sonar requirement)
+          wget --https-only --max-redirect=0 -O firefoxsetup.tar.bz2 "$FINAL_URL"
+
           sudo tar -xf firefoxsetup.tar.bz2 --directory /opt
           echo "Check firefox version"
           /opt/firefox/firefox --version
@@ -77,7 +87,8 @@ jobs:
       - name: Install opera latest
         run: |
           sudo mkdir -p /etc/apt/keyrings
-          curl -fsSL https://deb.opera.com/archive.key | gpg --dearmor | sudo tee /etc/apt/keyrings/opera.gpg > /dev/null
+          curl --fail --silent --show-error --location --proto =https --max-redirs 2 https://deb.opera.com/archive.key \
+            | gpg --dearmor | sudo tee /etc/apt/keyrings/opera.gpg > /dev/null
           echo "deb [signed-by=/etc/apt/keyrings/opera.gpg] https://deb.opera.com/opera-stable/ stable non-free" | \
             sudo tee /etc/apt/sources.list.d/opera-stable.list > /dev/null
           sudo apt-get update
@@ -97,13 +108,13 @@ jobs:
         run: |
           node -v
           npm -v
-          npm install --global yarn
-          yarn
+          npm install --global --ignore-scripts yarn
+          yarn --ignore-scripts
 
       - name: Install electron dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y libgtk-3-0 libx11-xcb1 libxcomposite1 libxrandr2 libxdamage1 libxi6 libxtst6 libnss3 libasound2
+          sudo apt-get install -y --no-install-recommends libgtk-3-0 libx11-xcb1 libxcomposite1 libxrandr2 libxdamage1 libxi6 libxtst6 libnss3 libasound2
 
       - name: Run unit tests
         if: steps.check-skip-ci.outputs.result == 'false'
@@ -135,6 +146,12 @@ jobs:
         with:
           args: >
             -Dsonar.branch.name="$BASE_BRANCH"
+
+      - name: Restore all Playwright + Electron browsers
+        if: steps.check-skip-ci.outputs.result == 'false'
+        run: |
+          npx playwright install --with-deps
+          npm rebuild electron --force
 
       - name: Run integration tests
         if: steps.check-skip-ci.outputs.result == 'false' && github.event.pull_request.head.repo.fork == false
