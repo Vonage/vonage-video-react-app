@@ -19,8 +19,8 @@ test('The buttons in the meeting room should match those in the waiting room wit
   if (browserName !== 'firefox') {
     await expect(page.getByTestId('portraitIcon')).toBeVisible();
   }
-  await page.getByPlaceholder('Enter your name').fill('some-user');
-  await page.getByRole('button', { name: 'Join' }).click({ force: true });
+  await page.getByLabel('Name').fill('some-user');
+  await page.getByRole('button', { name: 'Join meeting' }).click({ force: true });
 
   expect(page.url()).toContain('room/test-room');
   await page.waitForSelector('.publisher', { state: 'visible' });
@@ -53,8 +53,8 @@ test('The buttons in the meeting room should match those in the waiting room wit
   if (browserName !== 'firefox') {
     await expect(page.getByTestId('portraitIcon')).toBeVisible();
   }
-  await page.getByPlaceholder('Enter your name').fill('some user');
-  await page.getByRole('button', { name: 'Join' }).click({ force: true });
+  await page.getByLabel('Name').fill('some user');
+  await page.getByRole('button', { name: 'Join meeting' }).click({ force: true });
 
   expect(page.url()).toContain('room/test-room');
   await page.waitForSelector('.publisher', { state: 'visible' });

@@ -12,7 +12,7 @@ import LinkIcon from '@mui/icons-material/Link';
 import { useTranslation } from 'react-i18next';
 import FileUploader from '../../FileUploader/FileUploader';
 import { ALLOWED_TYPES, MAX_SIZE_MB } from '../../../../utils/constants';
-import useImageStorage from '../../../../utils/useImageStorage/useImageStorage';
+import useImageStorage from '@utils/useImageStorage/useImageStorage';
 
 export type AddBackgroundEffectLayoutProps = {
   customBackgroundImageChange: (dataUrl: string) => void;

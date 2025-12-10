@@ -1,10 +1,9 @@
 import { ReactElement } from 'react';
 import Box from '@ui/Box';
-import Stack from '@ui/Stack';
-import useCustomTheme from '@Context/Theme';
 import Header from '@ui/Header';
 import BannerLogo from '../BannerLogo';
 import BannerLanguage from '../BannerLanguage';
+import useTheme from '@ui/theme';
 
 /**
  * Banner Component
@@ -13,28 +12,48 @@ import BannerLanguage from '../BannerLanguage';
  * @returns {ReactElement} - the banner component.
  */
 const Banner = (): ReactElement => {
-  const theme = useCustomTheme();
+  const theme = useTheme();
 
   return (
-    <Header appBarProps={{ position: 'static' }} toolbarProps={{ sx: { alignItems: 'stretch' } }}>
-      <Box sx={{ flex: 1, bgcolor: theme.colors.surface }}>
+    <Header
+      appBarProps={{
+        position: 'static',
+        className: 'banner-header',
+      }}
+    >
+      <Box
+        flex={1}
+        sx={{
+          bgcolor: theme.colors.surface,
+          p: { xs: 3, sm: 5 },
+        }}
+      >
         <BannerLogo />
       </Box>
 
-      <Box sx={{ flex: 1, bgcolor: { xs: theme.colors.surface, md: theme.colors.background } }}>
-        <Stack
-          direction="row"
-          spacing={2}
-          alignItems="center"
-          justifyContent="flex-end"
+      <Box
+        flex={1}
+        sx={{
+          bgcolor: {
+            xs: theme.colors.surface,
+            md: theme.colors.background,
+          },
+          p: { xs: 3, sm: 5 },
+          display: 'flex',
+          justifyContent: 'flex-end',
+          alignItems: 'center',
+          height: '100%',
+        }}
+      >
+        <BannerLanguage
           sx={{
-            height: '100%',
-            bgcolor: { xs: theme.colors.surface, md: theme.colors.background },
-            mr: 4,
+            mr: {
+              // necessary to align the down arrow of the selector with the layout padding
+              xs: '-8px',
+              sm: 'unset',
+            },
           }}
-        >
-          <BannerLanguage />
-        </Stack>
+        />
       </Box>
     </Header>
   );

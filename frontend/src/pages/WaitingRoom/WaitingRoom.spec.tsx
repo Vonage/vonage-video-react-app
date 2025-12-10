@@ -171,7 +171,7 @@ describe('WaitingRoom', () => {
     expect(screen.getByText('test-room-name')).toBeInTheDocument();
 
     // Submit a name to navigate away from the waiting room
-    const input = screen.getByPlaceholderText('Enter your name');
+    const input = screen.getByRole('textbox', { name: /name/i });
     await user.type(input, 'Betsey Trotwood');
     expect(input).toHaveValue('Betsey Trotwood');
 
@@ -193,6 +193,38 @@ describe('WaitingRoom', () => {
     });
     rerender(<WaitingRoomWithProviders />);
     expect(globalThis.location.reload).toBeCalled();
+  });
+
+  it('should not render ControlPanel when allowDeviceSelection is false', () => {
+    previewPublisherContext.accessStatus = DEVICE_ACCESS_STATUS.ACCEPTED;
+
+    const { queryByTestId } = render(<WaitingRoomWithProviders />, {
+      appConfigOptions: {
+        value: {
+          waitingRoomSettings: {
+            allowDeviceSelection: false,
+          },
+        },
+      },
+    });
+
+    expect(queryByTestId('ControlPanel')).not.toBeInTheDocument();
+  });
+
+  it('should render ControlPanel when allowDeviceSelection is true', () => {
+    previewPublisherContext.accessStatus = DEVICE_ACCESS_STATUS.ACCEPTED;
+
+    const { queryByTestId } = render(<WaitingRoomWithProviders />, {
+      appConfigOptions: {
+        value: {
+          waitingRoomSettings: {
+            allowDeviceSelection: true,
+          },
+        },
+      },
+    });
+
+    expect(queryByTestId('ControlPanel')).toBeInTheDocument();
   });
 });
 

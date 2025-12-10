@@ -1,13 +1,18 @@
-import { TextField, Button, InputAdornment } from '@mui/material';
 import React, { Dispatch, MouseEvent, ReactElement, SetStateAction, useState } from 'react';
-import { PersonOutline } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import useUserContext from '../../../hooks/useUserContext';
-import { UserType } from '../../../Context/user';
-import useRoomName from '../../../hooks/useRoomName';
-import isValidRoomName from '../../../utils/isValidRoomName';
-import { setStorageItem, STORAGE_KEYS } from '../../../utils/storage';
+import TextField from '@ui/TextField';
+import Button from '@ui/Button';
+import Box from '@ui/Box';
+import Typography from '@ui/Typography';
+import Card from '@ui/Card';
+import useTheme from '@ui/theme';
+import useUserContext from '@hooks/useUserContext';
+import { UserType } from '@Context/user';
+import useRoomName from '@hooks/useRoomName';
+import isValidRoomName from '@utils/isValidRoomName';
+import isValidUserName from '@utils/isValidUserName';
+import { setStorageItem, STORAGE_KEYS } from '@utils/storage';
 
 export type UserNameInputProps = {
   username: string;
@@ -29,20 +34,16 @@ const UsernameInput = ({ username, setUsername }: UserNameInputProps): ReactElem
   const navigate = useNavigate();
   const roomName = useRoomName();
   const [isUserNameInvalid, setIsUserNameInvalid] = useState(false);
+  const theme = useTheme();
 
   const onChangeParticipantName = (e: React.ChangeEvent<HTMLInputElement>) => {
     const inputUserName = e.target.value;
-    if (inputUserName === '' || inputUserName.trim() === '') {
-      // Space detected
-      setUsername('');
-      return;
-    }
     setIsUserNameInvalid(false);
     setUsername(inputUserName);
   };
 
   const validateForm = () => {
-    if (username === '') {
+    if (!isValidUserName(username)) {
       setIsUserNameInvalid(true);
       return false;
     }
@@ -75,62 +76,43 @@ const UsernameInput = ({ username, setUsername }: UserNameInputProps): ReactElem
   };
 
   return (
-    <form className="flex w-full flex-col justify-center px-6 md:relative md:top-[-48px] md:max-w-[480px]">
-      <div className="mt-4 flex flex-col items-center justify-end">
-        <div className="mb-2 text-[28px] leading-8">{t('waitingRoom.title')}</div>
-        <div className="flex w-full flex-col content-end py-2 text-lg decoration-solid md:max-w-[480px]">
-          <p className="truncate">{roomName}</p>
-        </div>
-        <div className="mt-6 text-[24px] leading-8">{t('waitingRoom.user.input.label')}</div>
-        <div className="mb-5 flex w-full flex-wrap items-center justify-center">
-          <TextField
-            size="small"
-            margin="dense"
-            placeholder={t('waitingRoom.user.input.placeholder')}
-            onChange={onChangeParticipantName}
-            sx={{
-              display: 'flex',
-              width: '100%',
-              maxWidth: '212px',
-              marginTop: '20px',
-              paddingLeft: '0px',
-            }}
-            required
-            id="user-name"
-            name="Name"
-            error={isUserNameInvalid}
-            autoComplete="Name"
-            autoFocus
-            value={username}
-            InputProps={{
-              startAdornment: (
-                <InputAdornment position="start">
-                  <PersonOutline />
-                </InputAdornment>
-              ),
-              inputProps: { maxLength: 60 },
-            }}
-          />
-        </div>
-        <Button
-          onClick={handleJoinClick}
-          variant="contained"
-          color="primary"
-          sx={{
-            width: '117px',
-            borderRadius: '24px',
-            color: 'white',
-            textTransform: 'none',
-            fontSize: '14px',
-            height: '48px',
-          }}
-          disabled={!username}
-          type="submit"
-        >
-          {t('button.join')}
-        </Button>
-      </div>
-    </form>
+    <Card component="form">
+      <Typography sx={{ mb: 2, typography: 'h6' }}>{t('waitingRoom.user.input.title')}</Typography>
+      <Box
+        sx={{
+          width: '100%',
+          mt: 2,
+          mb: 5,
+        }}
+      >
+        <TextField
+          fullWidth
+          size="small"
+          label={t('waitingRoom.user.input.label')}
+          onChange={onChangeParticipantName}
+          required
+          id="user-name"
+          name="username"
+          error={isUserNameInvalid}
+          helperText={isUserNameInvalid ? t('waitingRoom.user.input.error') : ''}
+          autoComplete="nickname"
+          autoFocus
+          value={username}
+          inputProps={{ maxLength: 60 }}
+        />
+      </Box>
+
+      <Typography sx={{ mb: 2, typography: 'h6' }}>{t('waitingRoom.title')}</Typography>
+
+      <Box>
+        <Typography sx={{ mb: 2, typography: 'h6', color: theme.colors.textTertiary }} noWrap>
+          {roomName}
+        </Typography>
+      </Box>
+      <Button onClick={handleJoinClick} variant="contained" color="primary" type="submit" fullWidth>
+        {t('button.join')}
+      </Button>
+    </Card>
   );
 };
 

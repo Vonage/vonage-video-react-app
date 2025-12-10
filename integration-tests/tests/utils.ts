@@ -25,7 +25,7 @@ export const openMeetingRoomWithSettings = async ({
   browserName?: string;
 }) => {
   await page.goto(`${baseURL}waiting-room/${roomName}`);
-  await page.getByPlaceholder('Enter your name').fill(username);
+  await page.getByLabel('Name').fill(username);
   await waitAndClickFirefox(page, browserName);
   if (videoOff) {
     await page.getByTestId('VideocamIcon').click();
@@ -35,5 +35,5 @@ export const openMeetingRoomWithSettings = async ({
     await page.getByTestId('MicIcon').click();
     await expect(page.getByTestId('MicOffIcon')).toBeVisible();
   }
-  await page.getByRole('button', { name: 'Join' }).click();
+  await page.getByRole('button', { name: 'Join meeting' }).click();
 };

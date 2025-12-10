@@ -13,6 +13,7 @@ import VignetteEffect from '../VignetteEffect';
 import useIsSmallViewport from '../../../hooks/useIsSmallViewport';
 import BackgroundEffectsDialog from '../BackgroundEffects/BackgroundEffectsDialog';
 import BackgroundEffectsButton from '../BackgroundEffects/BackgroundEffectsButton';
+import backgroundEffectsDialog$ from '@Context/BackgroundEffectsDialog';
 
 export type VideoContainerProps = {
   username: string;
@@ -30,7 +31,7 @@ export type VideoContainerProps = {
 const VideoContainer = ({ username }: VideoContainerProps): ReactElement => {
   const containerRef = useRef<HTMLDivElement>(null);
   const [isVideoLoading, setIsVideoLoading] = useState<boolean>(true);
-  const [isBackgroundEffectsOpen, setIsBackgroundEffectsOpen] = useState<boolean>(false);
+  const [{ isOpen: isBackgroundEffectsOpen }, { open, close }] = backgroundEffectsDialog$.use();
   const { user } = useUserContext();
   const { publisherVideoElement, isVideoEnabled, isAudioEnabled, speechLevel } =
     usePreviewPublisherContext();
@@ -94,11 +95,13 @@ const VideoContainer = ({ username }: VideoContainerProps): ReactElement => {
             <CameraButton />
           </Stack>
           <div className="absolute right-[20px]">
-            <BackgroundEffectsButton onClick={() => setIsBackgroundEffectsOpen(true)} />
-            <BackgroundEffectsDialog
-              isBackgroundEffectsOpen={isBackgroundEffectsOpen}
-              setIsBackgroundEffectsOpen={setIsBackgroundEffectsOpen}
-            />
+            <BackgroundEffectsButton onClick={open} />
+            {isBackgroundEffectsOpen && (
+              <BackgroundEffectsDialog
+                isBackgroundEffectsOpen={true}
+                setIsBackgroundEffectsOpen={close}
+              />
+            )}
           </div>
         </div>
       )}

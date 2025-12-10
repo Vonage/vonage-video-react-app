@@ -5,7 +5,9 @@ import useDevices from '@hooks/useDevices';
 import { AllMediaDevices } from '@app-types/room';
 import { allMediaDevices } from '@utils/mockData/device';
 import { AppConfigProviderWrapperOptions, makeAppConfigProviderWrapper } from '@test/providers';
+import backgroundEffectsDialog$ from '@Context/BackgroundEffectsDialog';
 import ControlPanel from '.';
+import composeProviders from '@utils/composeProviders';
 
 vi.mock('@hooks/useDevices.tsx');
 
@@ -133,32 +135,6 @@ describe('ControlPanel', () => {
     );
     expect(screen.getByTestId('audioOutput-menu')).toBeVisible();
   });
-
-  it('is not rendered when allowDeviceSelection is false', () => {
-    render(
-      <ControlPanel
-        handleAudioInputOpen={() => {}}
-        handleVideoInputOpen={() => {}}
-        handleAudioOutputOpen={() => {}}
-        handleClose={() => {}}
-        openAudioInput={false}
-        openVideoInput={false}
-        openAudioOutput={false}
-        anchorEl={null}
-      />,
-      {
-        appConfigOptions: {
-          value: {
-            waitingRoomSettings: {
-              allowDeviceSelection: false,
-            },
-          },
-        },
-      }
-    );
-
-    expect(screen.queryByTestId('ControlPanel')).not.toBeInTheDocument();
-  });
 });
 
 function render(
@@ -169,5 +145,7 @@ function render(
 ) {
   const { AppConfigWrapper } = makeAppConfigProviderWrapper(options?.appConfigOptions);
 
-  return renderBase(ui, { ...options, wrapper: AppConfigWrapper });
+  const wrapper = composeProviders(AppConfigWrapper, backgroundEffectsDialog$.Provider);
+
+  return renderBase(ui, { ...options, wrapper });
 }

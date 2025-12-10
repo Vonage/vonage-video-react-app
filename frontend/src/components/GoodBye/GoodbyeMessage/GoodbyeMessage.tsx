@@ -27,7 +27,7 @@ const GoodByeMessage = ({ header, message, roomName }: GoodByeMessageProps): Rea
     navigate(`/waiting-room/${roomName}`);
   };
   return (
-    <div className="h-auto w-full shrink py-4 ps-12 text-left">
+    <div className="h-auto w-full shrink text-left">
       <h2 className="w-9/12 pb-5 text-5xl text-black" data-testid="header-message">
         {header}
       </h2>

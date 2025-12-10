@@ -5,11 +5,11 @@ import MicNoneIcon from '@mui/icons-material/MicNone';
 import { MouseEvent as ReactMouseEvent, ReactElement, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import useAppConfig from '@Context/AppConfig/hooks/useAppConfig';
-import useCustomTheme from '@Context/Theme';
-import useDevices from '../../../hooks/useDevices';
-import usePublisherContext from '../../../hooks/usePublisherContext';
-import { setStorageItem, STORAGE_KEYS } from '../../../utils/storage';
-import cleanAndDedupeDeviceLabels from '../../../utils/cleanAndDedupeDeviceLabels';
+import useTheme from '@ui/theme';
+import useDevices from '@hooks/useDevices';
+import usePublisherContext from '@hooks/usePublisherContext';
+import { setStorageItem, STORAGE_KEYS } from '@utils/storage';
+import cleanAndDedupeDeviceLabels from '@utils/cleanAndDedupeDeviceLabels';
 
 export type InputDevicesProps = {
   handleToggle: () => void;
@@ -25,7 +25,7 @@ export type InputDevicesProps = {
  */
 const InputDevices = ({ handleToggle }: InputDevicesProps): ReactElement | false => {
   const { t } = useTranslation();
-  const theme = useCustomTheme();
+  const theme = useTheme();
   const { publisher } = usePublisherContext();
 
   const allowDeviceSelection = useAppConfig(

@@ -5,7 +5,7 @@ import { MouseEvent, ReactElement, useMemo } from 'react';
 import type { AudioOutputDevice } from '@vonage/client-sdk-video';
 import { useTranslation } from 'react-i18next';
 import useAppConfig from '@Context/AppConfig/hooks/useAppConfig';
-import useCustomTheme from '@Context/Theme';
+import useTheme from '@ui/theme';
 import useDevices from '@hooks/useDevices';
 import useAudioOutputContext from '@hooks/useAudioOutputContext';
 import { isGetActiveAudioOutputDeviceSupported } from '@utils/util';
@@ -26,7 +26,7 @@ export type OutputDevicesProps = {
  */
 const OutputDevices = ({ handleToggle }: OutputDevicesProps): ReactElement | false => {
   const { t } = useTranslation();
-  const theme = useCustomTheme();
+  const theme = useTheme();
   const { currentAudioOutputDevice, setAudioOutputDevice } = useAudioOutputContext();
 
   const allowDeviceSelection = useAppConfig(

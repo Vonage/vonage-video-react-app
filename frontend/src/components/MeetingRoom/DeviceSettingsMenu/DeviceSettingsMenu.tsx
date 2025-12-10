@@ -5,7 +5,7 @@ import Popper from '@mui/material/Popper';
 import { ReactElement, RefObject, Dispatch, SetStateAction } from 'react';
 import { hasMediaProcessorSupport } from '@vonage/client-sdk-video';
 import useAppConfig from '@Context/AppConfig/hooks/useAppConfig';
-import useCustomTheme from '@Context/Theme';
+import useTheme from '@ui/theme';
 import InputDevices from '../InputDevices';
 import OutputDevices from '../OutputDevices';
 import ReduceNoiseTestSpeakers from '../ReduceNoiseTestSpeakers';
@@ -55,7 +55,7 @@ const DeviceSettingsMenu = ({
   const allowBackgroundEffects = useAppConfig(
     ({ videoSettings }) => videoSettings.allowBackgroundEffects
   );
-  const theme = useCustomTheme();
+  const theme = useTheme();
 
   const isAudio = deviceType === 'audio';
   const shouldDisplayBackgroundEffects = hasMediaProcessorSupport() && allowBackgroundEffects;

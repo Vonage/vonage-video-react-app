@@ -1,6 +1,7 @@
-import { MenuItem, Typography, ClickAwayListener } from '@mui/material';
 import { ReactElement, useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import ClickAwayListener from '@ui/ClickAwayListener';
+import MenuItem from '@ui/MenuItem';
 import useAudioOutputContext from '../../hooks/useAudioOutputContext';
 
 export type SoundTestProps = {
@@ -48,9 +49,7 @@ const SoundTest = ({ children }: SoundTestProps): ReactElement => {
     <ClickAwayListener onClickAway={() => stopAudio()}>
       <MenuItem onClick={handlePlayAudio} data-testid="soundTest">
         {children}
-        <Typography noWrap>
-          {!audioIsPlaying ? t('soundTest.start') : t('soundTest.stop')}
-        </Typography>
+        {!audioIsPlaying ? t('soundTest.start') : t('soundTest.stop')}
       </MenuItem>
     </ClickAwayListener>
   );

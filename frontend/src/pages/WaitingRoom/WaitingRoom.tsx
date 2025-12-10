@@ -1,6 +1,6 @@
 import { useState, useEffect, MouseEvent, ReactElement, TouchEvent } from 'react';
 import Box from '@ui/Box';
-import FlexLayout from '@ui/FlexLayout';
+import PageLayout from '@ui/PageLayout';
 import Banner from '@components/Banner';
 import Footer from '@components/Footer/Footer';
 import usePreviewPublisherContext from '../../hooks/usePreviewPublisherContext';
@@ -12,6 +12,9 @@ import DeviceAccessAlert from '../../components/DeviceAccessAlert';
 import { getStorageItem, STORAGE_KEYS } from '../../utils/storage';
 import useIsSmallViewport from '../../hooks/useIsSmallViewport';
 import useBackgroundPublisherContext from '../../hooks/useBackgroundPublisherContext';
+import backgroundEffectsDialog$ from '../../Context/BackgroundEffectsDialog';
+import classNames from 'classnames';
+import useAppConfig from '@Context/AppConfig/hooks/useAppConfig';
 
 /**
  * WaitingRoom Component
@@ -40,6 +43,10 @@ const WaitingRoom = (): ReactElement => {
   const [openAudioOutput, setOpenAudioOutput] = useState<boolean>(false);
   const [username, setUsername] = useState(getStorageItem(STORAGE_KEYS.USERNAME) ?? '');
   const isSmallViewport = useIsSmallViewport();
+
+  const allowDeviceSelection = useAppConfig(
+    ({ waitingRoomSettings }) => waitingRoomSettings.allowDeviceSelection
+  );
 
   useEffect(() => {
     if (!publisher) {
@@ -96,41 +103,46 @@ const WaitingRoom = (): ReactElement => {
   };
 
   return (
-    <Box data-testid="waitingRoom">
-      <FlexLayout>
-        <FlexLayout.Banner>
-          <Banner />
-        </FlexLayout.Banner>
-        <FlexLayout.Left>
-          <div
-            className={`max-w-full flex-col ${isSmallViewport ? '' : 'h-[394px]'} sm: inline-flex`}
-          >
-            <VideoContainer username={username} />
-            {accessStatus === DEVICE_ACCESS_STATUS.ACCEPTED && (
-              <ControlPanel
-                handleAudioInputOpen={handleAudioInputOpen}
-                handleVideoInputOpen={handleVideoInputOpen}
-                handleAudioOutputOpen={handleAudioOutputOpen}
-                handleClose={handleClose}
-                openAudioInput={openAudioInput}
-                openVideoInput={openVideoInput}
-                openAudioOutput={openAudioOutput}
-                anchorEl={anchorEl}
-              />
-            )}
-          </div>
-        </FlexLayout.Left>
-        <FlexLayout.Right>
-          <UsernameInput username={username} setUsername={setUsername} />
-        </FlexLayout.Right>
-        <FlexLayout.Footer>
-          <Footer />
-        </FlexLayout.Footer>
-      </FlexLayout>
-      {accessStatus !== DEVICE_ACCESS_STATUS.ACCEPTED && (
-        <DeviceAccessAlert accessStatus={accessStatus} />
-      )}
-    </Box>
+    <backgroundEffectsDialog$.Provider>
+      <Box data-testid="waitingRoom">
+        <PageLayout>
+          <PageLayout.Banner>
+            <Banner />
+          </PageLayout.Banner>
+
+          <PageLayout.Left>
+            <div
+              className={classNames(`max-w-full`, {
+                'h-[394px]': !isSmallViewport,
+              })}
+            >
+              <VideoContainer username={username} />
+              {allowDeviceSelection && accessStatus === DEVICE_ACCESS_STATUS.ACCEPTED && (
+                <ControlPanel
+                  handleAudioInputOpen={handleAudioInputOpen}
+                  handleVideoInputOpen={handleVideoInputOpen}
+                  handleAudioOutputOpen={handleAudioOutputOpen}
+                  handleClose={handleClose}
+                  openAudioInput={openAudioInput}
+                  openVideoInput={openVideoInput}
+                  openAudioOutput={openAudioOutput}
+                  anchorEl={anchorEl}
+                />
+              )}
+            </div>
+          </PageLayout.Left>
+          <PageLayout.Right>
+            <UsernameInput username={username} setUsername={setUsername} />
+          </PageLayout.Right>
+          <PageLayout.Footer>
+            <Footer />
+          </PageLayout.Footer>
+        </PageLayout>
+        {accessStatus !== DEVICE_ACCESS_STATUS.ACCEPTED && (
+          <DeviceAccessAlert accessStatus={accessStatus} />
+        )}
+      </Box>
+    </backgroundEffectsDialog$.Provider>
   );
 };
 
