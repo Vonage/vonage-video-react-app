@@ -4,7 +4,6 @@ import useTheme from '@ui/theme';
 import EffectOptionButtons from '../EffectOptionButtons/EffectOptionButtons';
 import BackgroundGallery from '../BackgroundGallery/BackgroundGallery';
 import { DEFAULT_SELECTABLE_OPTION_WIDTH } from '@utils/constants';
-import useBackgroundPublisherContext from '@hooks/useBackgroundPublisherContext';
 
 type BackgroundEffectOptionsProps = {
   mode: 'meeting' | 'waiting';
@@ -20,14 +19,6 @@ type BackgroundEffectOptionsProps = {
  * @returns {ReactElement} The background effect tabs component.
  */
 const BackgroundEffectOptions = ({ mode }: BackgroundEffectOptionsProps): ReactElement => {
-  const {
-    backgroundSelected,
-    customImages,
-    deleteCustomImage,
-    handleBackgroundChange,
-    handleAddCustomImage,
-  } = useBackgroundPublisherContext();
-
   const theme = useTheme();
 
   return (
@@ -64,17 +55,8 @@ const BackgroundEffectOptions = ({ mode }: BackgroundEffectOptionsProps): ReactE
               : 'choose-background-effect-grid-waiting'
           }
         >
-          <EffectOptionButtons
-            backgroundSelected={backgroundSelected}
-            setBackgroundSelected={handleBackgroundChange}
-            customBackgroundImageChange={handleAddCustomImage}
-          />
-          <BackgroundGallery
-            backgroundSelected={backgroundSelected}
-            setBackgroundSelected={handleBackgroundChange}
-            customImages={customImages}
-            onDelete={deleteCustomImage}
-          />
+          <EffectOptionButtons />
+          <BackgroundGallery />
         </Box>
       </Box>
     </Box>

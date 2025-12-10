@@ -257,12 +257,13 @@ const useBackgroundPublisher = (): BackgroundPublisherContextType => {
     (id: string) => {
       const imageToDelete = customImages.find((img) => img.id === id);
       if (!imageToDelete) {
-        return;
+        throw new Error('Image to delete not found');
       }
 
       // Don't allow deletion if this image is currently selected
-      if (backgroundSelected === imageToDelete.dataUrl) {
-        return;
+      const isSelectedBackground = backgroundSelected === imageToDelete.dataUrl;
+      if (isSelectedBackground) {
+        throw new Error('Cannot delete currently selected background image');
       }
 
       deleteImageFromStorage(id);
@@ -272,7 +273,7 @@ const useBackgroundPublisher = (): BackgroundPublisherContextType => {
       const currentBackgroundFilter = getInitialBackgroundFilter(backgroundPublisherRef.current);
       if (imageToDelete.dataUrl === currentBackgroundFilter) {
         changeBackground(backgroundSelected).catch(() => {
-          console.error('Failed to apply fallback background after deletion.');
+          throw new Error('Failed to reset background filter after deleting custom image');
         });
       }
     },

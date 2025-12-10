@@ -1,3 +1,1 @@
-import BackgroundEffectOptions from './BackgroundEffectOptions';
-
-export default BackgroundEffectOptions;
+export { default } from './BackgroundEffectOptions';

@@ -3,6 +3,9 @@ import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import BackgroundGallery from './BackgroundGallery';
 import enTranslations from '../../../locales/en.json';
+import useBackgroundPublisherContext from '@hooks/useBackgroundPublisherContext';
+
+vi.mock('@hooks/useBackgroundPublisherContext');
 
 const customImages = [
   { id: 'custom1', dataUrl: 'data:image/png;base64,custom1' },
@@ -36,120 +39,148 @@ vi.mock('@utils/useImageStorage/useImageStorage', () => ({
 }));
 
 describe('BackgroundGallery', () => {
-  const mockOnDelete = vi.fn();
-  const mockSetBackgroundSelected = vi.fn();
+  const mockDeleteCustomImage = vi.fn();
+  const mockHandleBackgroundChange = vi.fn();
 
   beforeEach(() => {
     vi.clearAllMocks();
+    vi.mocked(useBackgroundPublisherContext).mockReturnValue({
+      backgroundSelected: '',
+      handleBackgroundChange: mockHandleBackgroundChange,
+      handleAddCustomImage: vi.fn(),
+      customImages,
+      deleteCustomImage: mockDeleteCustomImage,
+      isPublishing: false,
+      isVideoEnabled: true,
+      publisher: null,
+      publisherVideoElement: undefined,
+      destroyBackgroundPublisher: vi.fn(),
+      toggleVideo: vi.fn(),
+      changeBackground: vi.fn(),
+      backgroundFilter: undefined,
+      localVideoSource: undefined,
+      accessStatus: null,
+      changeVideoSource: vi.fn(),
+      initBackgroundLocalPublisher: vi.fn(),
+      addCustomImage: vi.fn(),
+      setBackgroundSelected: vi.fn(),
+    });
   });
 
   it('renders all built-in backgrounds as selectable options', () => {
-    render(
-      <BackgroundGallery
-        backgroundSelected=""
-        setBackgroundSelected={mockSetBackgroundSelected}
-        customImages={customImages}
-        onDelete={mockOnDelete}
-      />
-    );
+    render(<BackgroundGallery />);
     backgrounds.forEach((bg) => {
       expect(screen.getByTestId(`background-${bg.id}`)).toBeInTheDocument();
     });
   });
 
   it('renders custom images as selectable options', () => {
-    render(
-      <BackgroundGallery
-        backgroundSelected=""
-        setBackgroundSelected={mockSetBackgroundSelected}
-        customImages={customImages}
-        onDelete={mockOnDelete}
-      />
-    );
+    render(<BackgroundGallery />);
     customImages.forEach((img) => {
       expect(screen.getByTestId(`background-${img.id}`)).toBeInTheDocument();
     });
   });
 
   it('sets the selected built-in background', async () => {
-    render(
-      <BackgroundGallery
-        backgroundSelected=""
-        setBackgroundSelected={mockSetBackgroundSelected}
-        customImages={customImages}
-        onDelete={mockOnDelete}
-      />
-    );
+    render(<BackgroundGallery />);
     const duneViewOption = screen.getByTestId('background-bg3');
     await userEvent.click(duneViewOption);
-    expect(mockSetBackgroundSelected).toHaveBeenCalledWith('dune-view.jpg');
+    expect(mockHandleBackgroundChange).toHaveBeenCalledWith('dune-view.jpg');
   });
 
   it('sets the selected custom image', async () => {
-    render(
-      <BackgroundGallery
-        backgroundSelected=""
-        setBackgroundSelected={mockSetBackgroundSelected}
-        customImages={customImages}
-        onDelete={mockOnDelete}
-      />
-    );
+    render(<BackgroundGallery />);
     const customOption = screen.getByTestId('background-custom1');
     await userEvent.click(customOption);
-    expect(mockSetBackgroundSelected).toHaveBeenCalledWith('data:image/png;base64,custom1');
+    expect(mockHandleBackgroundChange).toHaveBeenCalledWith('data:image/png;base64,custom1');
   });
 
   it('marks the built-in background as selected', () => {
-    render(
-      <BackgroundGallery
-        backgroundSelected="plane.jpg"
-        setBackgroundSelected={mockSetBackgroundSelected}
-        customImages={customImages}
-        onDelete={mockOnDelete}
-      />
-    );
+    vi.mocked(useBackgroundPublisherContext).mockReturnValue({
+      backgroundSelected: 'plane.jpg',
+      handleBackgroundChange: mockHandleBackgroundChange,
+      handleAddCustomImage: vi.fn(),
+      customImages,
+      deleteCustomImage: mockDeleteCustomImage,
+      isPublishing: false,
+      isVideoEnabled: true,
+      publisher: null,
+      publisherVideoElement: undefined,
+      destroyBackgroundPublisher: vi.fn(),
+      toggleVideo: vi.fn(),
+      changeBackground: vi.fn(),
+      backgroundFilter: undefined,
+      localVideoSource: undefined,
+      accessStatus: null,
+      changeVideoSource: vi.fn(),
+      initBackgroundLocalPublisher: vi.fn(),
+      addCustomImage: vi.fn(),
+      setBackgroundSelected: vi.fn(),
+    });
+    render(<BackgroundGallery />);
     const planeOption = screen.getByTestId('background-bg7');
     expect(planeOption.getAttribute('aria-pressed')).toBe('true');
   });
 
   it('marks the custom image as selected', () => {
-    render(
-      <BackgroundGallery
-        backgroundSelected="data:image/png;base64,custom2"
-        setBackgroundSelected={mockSetBackgroundSelected}
-        customImages={customImages}
-        onDelete={mockOnDelete}
-      />
-    );
+    vi.mocked(useBackgroundPublisherContext).mockReturnValue({
+      backgroundSelected: 'data:image/png;base64,custom2',
+      handleBackgroundChange: mockHandleBackgroundChange,
+      handleAddCustomImage: vi.fn(),
+      customImages,
+      deleteCustomImage: mockDeleteCustomImage,
+      isPublishing: false,
+      isVideoEnabled: true,
+      publisher: null,
+      publisherVideoElement: undefined,
+      destroyBackgroundPublisher: vi.fn(),
+      toggleVideo: vi.fn(),
+      changeBackground: vi.fn(),
+      backgroundFilter: undefined,
+      localVideoSource: undefined,
+      accessStatus: null,
+      changeVideoSource: vi.fn(),
+      initBackgroundLocalPublisher: vi.fn(),
+      addCustomImage: vi.fn(),
+      setBackgroundSelected: vi.fn(),
+    });
+    render(<BackgroundGallery />);
     const customOption = screen.getByTestId('background-custom2');
     expect(customOption.getAttribute('aria-pressed')).toBe('true');
   });
 
   it('calls onDelete when deleting a custom image', async () => {
-    render(
-      <BackgroundGallery
-        backgroundSelected=""
-        setBackgroundSelected={mockSetBackgroundSelected}
-        customImages={customImages}
-        onDelete={mockOnDelete}
-      />
-    );
+    render(<BackgroundGallery />);
     const deleteButtons = screen.getAllByLabelText('Delete custom background');
     await userEvent.click(deleteButtons[0]);
-    expect(mockOnDelete).toHaveBeenCalledWith('custom1');
+    expect(mockDeleteCustomImage).toHaveBeenCalledWith('custom1');
   });
 
   it("doesn't delete custom image if it's selected", async () => {
-    render(
-      <BackgroundGallery
-        backgroundSelected="data:image/png;base64,custom1"
-        setBackgroundSelected={mockSetBackgroundSelected}
-        customImages={customImages}
-        onDelete={mockOnDelete}
-      />
-    );
+    vi.mocked(useBackgroundPublisherContext).mockReturnValue({
+      backgroundSelected: 'data:image/png;base64,custom1',
+      handleBackgroundChange: mockHandleBackgroundChange,
+      handleAddCustomImage: vi.fn(),
+      customImages,
+      deleteCustomImage: mockDeleteCustomImage,
+      isPublishing: false,
+      isVideoEnabled: true,
+      publisher: null,
+      publisherVideoElement: undefined,
+      destroyBackgroundPublisher: vi.fn(),
+      toggleVideo: vi.fn(),
+      changeBackground: vi.fn(),
+      backgroundFilter: undefined,
+      localVideoSource: undefined,
+      accessStatus: null,
+      changeVideoSource: vi.fn(),
+      initBackgroundLocalPublisher: vi.fn(),
+      addCustomImage: vi.fn(),
+      setBackgroundSelected: vi.fn(),
+    });
+    render(<BackgroundGallery />);
     const deleteButton = screen.getByTestId('background-delete-custom1');
     await userEvent.click(deleteButton);
-    expect(mockOnDelete).not.toHaveBeenCalled();
+    expect(mockDeleteCustomImage).not.toHaveBeenCalled();
   });
 });

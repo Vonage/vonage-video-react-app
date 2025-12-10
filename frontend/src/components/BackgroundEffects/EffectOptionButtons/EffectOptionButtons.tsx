@@ -3,27 +3,17 @@ import { useTranslation } from 'react-i18next';
 import VividIcon from '@components/VividIcon';
 import SelectableOption from '../SelectableOption';
 import AddBackgroundEffectLayout from '../AddBackgroundEffect/AddBackgroundEffectLayout/AddBackgroundEffectLayout';
-
-export type EffectOptionButtonsProps = {
-  backgroundSelected: string;
-  setBackgroundSelected: (key: string) => void;
-  customBackgroundImageChange: (dataUrl: string) => void;
-};
+import useBackgroundPublisherContext from '@hooks/useBackgroundPublisherContext';
 
 /**
  * Renders a group of selectable buttons for background effects in a room.
  *
  * Each button represents a different background effect option.
- * @param {EffectOptionButtonsProps} props - the props for the component.
- *   @property {boolean} backgroundSelected - The currently selected background effect key.
- *   @property {Function} setBackgroundSelected - Callback to update the selected background effect key.
  * @returns {ReactElement} A horizontal stack of selectable option buttons.
  */
-const EffectOptionButtons = ({
-  backgroundSelected,
-  setBackgroundSelected,
-  customBackgroundImageChange,
-}: EffectOptionButtonsProps): ReactElement => {
+const EffectOptionButtons = (): ReactElement => {
+  const { backgroundSelected, handleBackgroundChange, handleAddCustomImage } =
+    useBackgroundPublisherContext();
   const { t } = useTranslation();
   const options = [
     {
@@ -50,12 +40,12 @@ const EffectOptionButtons = ({
           id={key}
           title={name}
           isSelected={backgroundSelected === key}
-          onClick={() => setBackgroundSelected(key)}
+          onClick={() => handleBackgroundChange(key)}
           icon={icon}
         />
       ))}
       <AddBackgroundEffectLayout
-        customBackgroundImageChange={customBackgroundImageChange}
+        customBackgroundImageChange={handleAddCustomImage}
         backgroundSelected={backgroundSelected}
       />
     </>

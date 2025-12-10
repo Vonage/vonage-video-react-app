@@ -7,32 +7,17 @@ import VividIcon from '@components/VividIcon';
 import useTheme from '@ui/theme';
 import { BACKGROUNDS_PATH } from '@utils/constants';
 import SelectableOption from '../SelectableOption';
-import { StoredImage } from '@utils/useImageStorage/useImageStorage';
-
-export type BackgroundGalleryProps = {
-  backgroundSelected: string;
-  setBackgroundSelected: (dataUrl: string) => void;
-  customImages: StoredImage[];
-  onDelete: (id: string) => void;
-};
+import useBackgroundPublisherContext from '@hooks/useBackgroundPublisherContext';
 
 /**
  * Renders a group of selectable images for background replacement in a meeting room.
  *
  * Each button represents a different background image option.
- * @param {BackgroundGalleryProps} props - The props for the component.
- *   @property {string} backgroundSelected - The currently selected background image key.
- *   @property {Function} setBackgroundSelected - Callback to update the selected background image key.
- *   @property {StoredImage[]} customImages - Array of custom background images.
- *   @property {Function} onDelete - Callback to delete a custom background image by ID.
  * @returns {ReactElement} A horizontal stack of selectable option buttons.
  */
-const BackgroundGallery = ({
-  backgroundSelected,
-  setBackgroundSelected,
-  customImages,
-  onDelete,
-}: BackgroundGalleryProps): ReactElement => {
+const BackgroundGallery = (): ReactElement => {
+  const { backgroundSelected, handleBackgroundChange, customImages, deleteCustomImage } =
+    useBackgroundPublisherContext();
   const { t } = useTranslation();
   const theme = useTheme();
 
@@ -67,7 +52,7 @@ const BackgroundGallery = ({
               id={id}
               title={t('backgroundEffects.yourBackground')}
               isSelected={isSelected}
-              onClick={() => setBackgroundSelected(dataUrl)}
+              onClick={() => handleBackgroundChange(dataUrl)}
               image={dataUrl}
             >
               <Tooltip
@@ -84,7 +69,7 @@ const BackgroundGallery = ({
                   onClick={(e) => {
                     e.stopPropagation();
                     if (!isSelected) {
-                      onDelete(id);
+                      deleteCustomImage(id);
                     }
                   }}
                   size="small"
@@ -119,7 +104,7 @@ const BackgroundGallery = ({
             title={bg.name}
             id={bg.id}
             isSelected={backgroundSelected === bg.file}
-            onClick={() => setBackgroundSelected(bg.file)}
+            onClick={() => handleBackgroundChange(bg.file)}
             image={path}
           />
         );
