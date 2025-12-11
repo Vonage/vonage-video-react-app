@@ -112,7 +112,7 @@ jobs:
           node -v
           npm -v
           npm install --global --ignore-scripts yarn
-          yarn --ignore-scripts --focus
+          yarn --ignore-scripts
 
       - name: Run integration tests
         if: steps.check-update-screenshots.outputs.result == 'true'
