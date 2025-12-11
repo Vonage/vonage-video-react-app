@@ -18,10 +18,6 @@ const chromiumFlags = [
 const width = 1512;
 const height = 824;
 
-const isMac = process.platform === 'darwin';
-
-const executablePath = isMac ? '/Applications/Opera.app/Contents/MacOS/Opera' : '/usr/bin/opera';
-
 const fakeDeviceChromiumFlags = [
   ...chromiumFlags,
   '--headless=new',
@@ -121,28 +117,7 @@ export default defineConfig({
           args: fakeDeviceChromiumFlags,
         },
       },
-    },
-    {
-      name: 'Opera',
-      use: {
-        viewport: { width, height },
-        launchOptions: {
-          args: fakeDeviceChromiumFlags,
-          executablePath,
-        },
-      },
-    },
-    {
-      name: 'Electron',
-      use: {
-        launchOptions: {
-          args: ['--use-fake-device-for-media-stream', '--use-fake-ui-for-media-stream'],
-        },
-        contextOptions: {
-          viewport: { width, height },
-        },
-      },
-    },
+    },    
   ],
 
   /* Run your local dev server before starting the tests */
