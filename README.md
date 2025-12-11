@@ -117,7 +117,6 @@ The Vonage Video API Reference App for React is currently supported on the lates
 - ![Edge icon](/docs/assets/edge.svg) Microsoft Edge
 - ![Opera icon](/docs/assets/opera.svg) Opera
 - ![Safari icon](/docs/assets/safari.svg) Safari
-- ![Electron icon](/docs/assets/electron.svg) Electron
 
 *Note:* Some browsers such as Firefox or Safari do not support media processors like video and audio filters (e.g background effects): Please see [OT.hasMediaProcessorSupport](https://vonage.github.io/video-docs/video-js-reference/latest/OT.html#hasMediaProcessorSupport) for more information.
 
