@@ -20,8 +20,13 @@ const languageOptions: LanguageOption[] = [
   { code: 'es-MX', name: 'Español (México)', flag: 'flag-mexico' },
 ];
 
-const ChevronDownIcon = (props: SvgIconProps) => (
-  <VividIcon name="chevron-down-line" customSize={-5} {...props} sx={{ color: 'black' }} />
+const ChevronDownIcon = (props: SvgIconProps, theme: ReturnType<typeof useTheme>) => (
+  <VividIcon
+    name="chevron-down-line"
+    customSize={-5}
+    {...props}
+    sx={{ color: theme.colors.secondary }}
+  />
 );
 
 /**
@@ -53,7 +58,7 @@ const LanguageSelector = ({ showFlag = true }: LanguageSelectorProps): ReactElem
       <Select
         value={currentLanguage}
         onChange={handleLanguageChange}
-        IconComponent={ChevronDownIcon}
+        IconComponent={(props: SvgIconProps) => ChevronDownIcon(props, theme)}
         displayEmpty
         sx={{
           '& .MuiOutlinedInput-notchedOutline': {

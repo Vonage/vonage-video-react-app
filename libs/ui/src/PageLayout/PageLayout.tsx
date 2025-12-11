@@ -124,7 +124,7 @@ PageLayout.Left = PageLayoutLeft;
 PageLayout.Right = PageLayoutRight;
 
 /**
- * Content for the left column
+ * Footer displayed at the bottom of the layout
  */
 PageLayout.Footer = PageLayoutFooter;
 
