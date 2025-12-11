@@ -132,17 +132,6 @@ export default defineConfig({
         },
       },
     },
-    {
-      name: 'Electron',
-      use: {
-        launchOptions: {
-          args: ['--use-fake-device-for-media-stream', '--use-fake-ui-for-media-stream'],
-        },
-        contextOptions: {
-          viewport: { width, height },
-        },
-      },
-    },
   ],
 
   /* Run your local dev server before starting the tests */
