@@ -5,6 +5,8 @@ import { useTranslation } from 'react-i18next';
 import VividIcon from '@components/VividIcon';
 import Box from '@ui/Box';
 import backgroundEffectsDialog$ from '@Context/BackgroundEffectsDialog';
+import useAppConfig from '@Context/AppConfig/hooks/useAppConfig';
+import { hasMediaProcessorSupport } from '@vonage/client-sdk-video';
 
 export type MenuMoreOptionsWaitingRoomProps = {
   onClose: () => void;
@@ -29,6 +31,10 @@ const MenuMoreOptions = ({
 }: MenuMoreOptionsWaitingRoomProps): ReactElement => {
   const { t } = useTranslation();
   const { open: openBackgroundEffects } = backgroundEffectsDialog$.use.actions();
+  const allowBackgroundEffects = useAppConfig(
+    ({ videoSettings }) => videoSettings.allowBackgroundEffects
+  );
+  const shouldDisplayBackgroundEffects = hasMediaProcessorSupport() && allowBackgroundEffects;
 
   const handleClick = useCallback(() => {
     openBackgroundEffects();
@@ -44,15 +50,17 @@ const MenuMoreOptions = ({
       MenuListProps={{ 'aria-labelledby': 'basic-button' }}
       data-testid="menu-more-options"
     >
-      <MenuItem
-        onClick={() => {
-          handleClick();
-        }}
-        key="backgroundEffects-option"
-      >
-        <VividIcon name="gallery-line" customSize={-6} />
-        <Box sx={{ ml: 1 }}>{t('backgroundEffects.title')}</Box>
-      </MenuItem>
+      {shouldDisplayBackgroundEffects && (
+        <MenuItem
+          onClick={() => {
+            handleClick();
+          }}
+          key="backgroundEffects-option"
+        >
+          <VividIcon name="gallery-line" customSize={-6} />
+          <Box sx={{ ml: 1 }}>{t('backgroundEffects.title')}</Box>
+        </MenuItem>
+      )}
     </Menu>
   );
 };

@@ -11,6 +11,8 @@ import VividIcon from '@components/VividIcon';
 import ButtonBase from '@ui/ButtonBase';
 import MenuDevicesWaitingRoom from '../MenuDevices';
 import MenuMoreOptions from '../MenuMoreOptions/MenuMoreOptions';
+import useAppConfig from '@Context/AppConfig/hooks/useAppConfig';
+import { hasMediaProcessorSupport } from '@vonage/client-sdk-video';
 
 const textSx: SxProps = {
   flex: '1 1 0',
@@ -62,6 +64,11 @@ const ControlPanel = ({
   openAudioOutput,
   anchorEl,
 }: ControlPanelProps): ReactElement | false => {
+  const allowBackgroundEffects = useAppConfig(
+    ({ videoSettings }) => videoSettings.allowBackgroundEffects
+  );
+  const shouldDisplayMenuMoreOptions = hasMediaProcessorSupport() && allowBackgroundEffects;
+
   const [openMoreOptions, setOpenMoreOptions] = useState(false);
   const [moreOptionsAnchorEl, setMoreOptionsAnchorEl] = useState<HTMLElement | null>(null);
   const handleCloseMoreOptions = () => {
@@ -181,15 +188,18 @@ const ControlPanel = ({
           deviceChangeHandler={setAudioOutputDevice}
           deviceType="audioOutput"
         />
-
-        <ButtonBase onClick={handleOpenMoreOptions} sx={buttonSx}>
-          <VividIcon name="more-vertical-solid" customSize={-5} />
-        </ButtonBase>
-        <MenuMoreOptions
-          onClose={handleCloseMoreOptions}
-          open={openMoreOptions}
-          anchorEl={moreOptionsAnchorEl}
-        />
+        {shouldDisplayMenuMoreOptions && (
+          <>
+            <ButtonBase onClick={handleOpenMoreOptions} sx={buttonSx}>
+              <VividIcon name="more-vertical-solid" customSize={-5} />
+            </ButtonBase>
+            <MenuMoreOptions
+              onClose={handleCloseMoreOptions}
+              open={openMoreOptions}
+              anchorEl={moreOptionsAnchorEl}
+            />
+          </>
+        )}
       </Box>
     </Box>
   );
