@@ -1,4 +1,3 @@
-/* eslint-disable no-empty-pattern */
 /**
  * This file exports a custom playwright fixture which extends Page to log all browser console messages
  * as well as any uncaught errors.
