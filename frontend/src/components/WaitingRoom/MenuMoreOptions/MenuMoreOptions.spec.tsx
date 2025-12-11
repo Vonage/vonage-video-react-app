@@ -3,6 +3,7 @@ import { render as renderBase, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { ReactElement } from 'react';
 import backgroundEffectsDialog$ from '@Context/BackgroundEffectsDialog';
+import { AppConfigProviderWrapperOptions, makeAppConfigProviderWrapper } from '@test/providers';
 import MenuMoreOptions from './MenuMoreOptions';
 
 describe('MenuMoreOptions', () => {
@@ -48,6 +49,19 @@ describe('MenuMoreOptions', () => {
   });
 });
 
-function render(ui: ReactElement) {
-  return renderBase(ui, { wrapper: backgroundEffectsDialog$.Provider });
+function render(
+  ui: ReactElement,
+  options?: {
+    appConfigOptions?: AppConfigProviderWrapperOptions;
+  }
+) {
+  const { AppConfigWrapper } = makeAppConfigProviderWrapper(options?.appConfigOptions);
+
+  const Wrapper = ({ children }: { children: React.ReactNode }) => (
+    <AppConfigWrapper>
+      <backgroundEffectsDialog$.Provider>{children}</backgroundEffectsDialog$.Provider>
+    </AppConfigWrapper>
+  );
+
+  return renderBase(ui, { ...options, wrapper: Wrapper });
 }
