@@ -112,7 +112,12 @@ jobs:
           node -v
           npm -v
           npm install --global --ignore-scripts yarn
-          yarn --ignore-scripts --focus
+          yarn --ignore-scripts
+
+      - name: Rebuild Electron (postinstall)
+        if: steps.check-update-screenshots.outputs.result == 'true'
+        run: |
+          npm rebuild electron --force
 
       - name: Install electron dependencies
         if: steps.check-update-screenshots.outputs.result == 'true'
