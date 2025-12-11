@@ -114,12 +114,6 @@ jobs:
           npm install --global --ignore-scripts yarn
           yarn --ignore-scripts
 
-      - name: Install electron dependencies
-        if: steps.check-update-screenshots.outputs.result == 'true'
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y libgtk-3-0 libx11-xcb1 libxcomposite1 libxrandr2 libxdamage1 libxi6 libxtst6 libnss3 libasound2
-
       - name: Run integration tests
         if: steps.check-update-screenshots.outputs.result == 'true'
         run: |

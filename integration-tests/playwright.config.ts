@@ -117,7 +117,7 @@ export default defineConfig({
           args: fakeDeviceChromiumFlags,
         },
       },
-    },    
+    },
   ],
 
   /* Run your local dev server before starting the tests */
