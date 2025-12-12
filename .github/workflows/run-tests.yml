@@ -21,6 +21,9 @@ jobs:
     runs-on: ubuntu-22.04
 
     steps:
+      # ----------------------------------------------------
+      # Skip CI if label is present
+      # ----------------------------------------------------
       - name: Check for "skip-ci" label
         id: check-skip-ci
         uses: actions/github-script@v6
@@ -33,69 +36,46 @@ jobs:
 
       - name: Skip CI
         if: steps.check-skip-ci.outputs.result == 'true'
-        run: |
-          echo "Skipping CI :^)"
+        run: echo "Skipping CI :^)"
 
+      # ----------------------------------------------------
+      # Checkout
+      # ----------------------------------------------------
       - name: Checkout
         if: steps.check-skip-ci.outputs.result == 'false'
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
+      # ----------------------------------------------------
+      # Install Chrome
+      # ----------------------------------------------------
       - name: Install chrome latest
         if: steps.check-skip-ci.outputs.result == 'false'
         run: |
           wget --max-redirect=0 -q -O - https://dl.google.com/linux/linux_signing_key.pub | sudo apt-key add -
           sudo sh -c 'echo "deb [arch=amd64] https://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google.list'
           sudo apt update && sudo apt install -y google-chrome-stable 
-          echo "Check chrome version"
+          echo "Installed Chrome:"
           /usr/bin/google-chrome-stable --version
-          echo "Chrome latest downloaded and installed"
 
+      # ----------------------------------------------------
+      # Install Edge
+      # ----------------------------------------------------
       - name: Install edge latest
         if: steps.check-skip-ci.outputs.result == 'false'
         run: |
           curl https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor > microsoft.gpg
           sudo install -o root -g root -m 644 microsoft.gpg /etc/apt/trusted.gpg.d/
-          sudo sh -c 'echo "deb [arch=amd64] https://packages.microsoft.com/repos/edge stable main" > /etc/apt/sources.list.d/microsoft-edge-dev.list'
+          sudo sh -c 'echo "deb [arch=amd64] https://packages.microsoft.com/repos/edge stable main" > /etc/apt/sources.list.d/microsoft-edge-stable.list'
           sudo rm microsoft.gpg
           sudo apt update && sudo apt install -y microsoft-edge-stable
-          echo "Check edge version"
+          echo "Installed Edge:"
           /usr/bin/microsoft-edge-stable --version
-          echo "Edge latest downloaded and installed"
 
-      - name: install firefox latest
-        if: steps.check-skip-ci.outputs.result == 'false'
-        run: |
-          sudo apt update
-
-          # Resolve the final download URL without keeping redirects enabled in wget
-          FINAL_URL=$(curl --fail --silent --show-error --location --proto =https \
-            "https://download.mozilla.org/?product=firefox-latest&os=linux64&lang=en-US" \
-            -o /dev/null -w '%{url_effective}')
-
-          echo "Resolved Firefox URL: $FINAL_URL"
-
-          # Download directly with redirects disabled (Sonar requirement)
-          wget --https-only --max-redirect=0 -O firefoxsetup.tar.bz2 "$FINAL_URL"
-
-          sudo tar -xf firefoxsetup.tar.bz2 --directory /opt
-          echo "Check firefox version"
-          /opt/firefox/firefox --version
-          echo "Firefox latest downloaded and installed"
-
-      - name: Install opera latest
-        run: |
-          sudo mkdir -p /etc/apt/keyrings
-          curl --fail --silent --show-error --location --proto =https --max-redirs 2 https://deb.opera.com/archive.key \
-            | gpg --dearmor | sudo tee /etc/apt/keyrings/opera.gpg > /dev/null
-          echo "deb [signed-by=/etc/apt/keyrings/opera.gpg] https://deb.opera.com/opera-stable/ stable non-free" | \
-            sudo tee /etc/apt/sources.list.d/opera-stable.list > /dev/null
-          sudo apt-get update
-          sudo apt-get install opera-stable -y
-          echo "Check opera version"
-          /usr/bin/opera --version
-
+      # ----------------------------------------------------
+      # Setup Node
+      # ----------------------------------------------------
       - name: Setup node
         if: steps.check-skip-ci.outputs.result == 'false'
         uses: actions/setup-node@v4
@@ -103,6 +83,9 @@ jobs:
           node-version: 22
           cache: npm
 
+      # ----------------------------------------------------
+      # Install repository dependencies
+      # ----------------------------------------------------
       - name: Install Dependencies
         if: steps.check-skip-ci.outputs.result == 'false'
         run: |
@@ -111,16 +94,24 @@ jobs:
           npm install --global --ignore-scripts yarn
           yarn --ignore-scripts
 
-      - name: Install electron dependencies
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y --no-install-recommends libgtk-3-0 libx11-xcb1 libxcomposite1 libxrandr2 libxdamage1 libxi6 libxtst6 libnss3 libasound2
+      # ----------------------------------------------------
+      # Install Playwright browsers (Chromium, WebKit, Firefox)
+      # ----------------------------------------------------
+      - name: Install Playwright Browsers
+        if: steps.check-skip-ci.outputs.result == 'false'
+        run: npx playwright install --with-deps
 
+      # ----------------------------------------------------
+      # Run Unit Tests
+      # ----------------------------------------------------
       - name: Run unit tests
         if: steps.check-skip-ci.outputs.result == 'false'
         run: |
           NX_DAEMON=false yarn test
 
+      # ----------------------------------------------------
+      # SonarCloud Scan PR
+      # ----------------------------------------------------
       - name: SonarCloud Scan On PR
         if: steps.check-skip-ci.outputs.result == 'false' && github.event.pull_request.head.repo.fork == false
         uses: SonarSource/sonarqube-scan-action@v4
@@ -136,6 +127,9 @@ jobs:
             -Dsonar.pullrequest.branch="$PR_BRANCH"
             -Dsonar.pullrequest.base="$BASE_BRANCH"
 
+      # ----------------------------------------------------
+      # SonarCloud Branch Analysis
+      # ----------------------------------------------------
       - name: SonarCloud Branch Analysis On base branch
         if: steps.check-skip-ci.outputs.result == 'false' && github.event.pull_request.head.repo.fork == false
         uses: SonarSource/sonarqube-scan-action@v4
@@ -147,12 +141,9 @@ jobs:
           args: >
             -Dsonar.branch.name="$BASE_BRANCH"
 
-      - name: Restore all Playwright + Electron browsers
-        if: steps.check-skip-ci.outputs.result == 'false'
-        run: |
-          npx playwright install --with-deps
-          npm rebuild electron --force
-
+      # ----------------------------------------------------
+      # Run Integration Tests (Playwright)
+      # ----------------------------------------------------
       - name: Run integration tests
         if: steps.check-skip-ci.outputs.result == 'false' && github.event.pull_request.head.repo.fork == false
         run: |
