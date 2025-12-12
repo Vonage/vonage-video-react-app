@@ -77,7 +77,7 @@ jobs:
 
       # -----------------------
       # 3. Checkout repository
-      # ----------------------- 
+      # -----------------------
       - name: Checkout
         if: steps.check-update-screenshots.outputs.result == 'true'
         uses: actions/checkout@v4

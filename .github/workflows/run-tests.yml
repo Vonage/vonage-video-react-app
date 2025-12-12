@@ -71,7 +71,7 @@ jobs:
           sudo rm microsoft.gpg
           sudo apt update && sudo apt install -y microsoft-edge-stable
           echo "Installed Edge:"
-          /usr/bin/microsoft-edge-stable --version      
+          /usr/bin/microsoft-edge-stable --version
 
       # ----------------------------------------------------
       # Setup Node
