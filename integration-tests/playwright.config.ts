@@ -1,7 +1,10 @@
 import { defineConfig, devices } from '@playwright/test';
-// eslint-disable-next-line @typescript-eslint/no-require-imports
 import path = require('path');
 
+/**
+ * Chromium media testing flags
+ * (Fake audio, mock UI, screen capture, autoplay, etc.)
+ */
 const chromiumFlags = [
   '--use-fake-ui-for-media-stream',
   '--autoplay-policy=no-user-gesture-required',
@@ -15,14 +18,14 @@ const chromiumFlags = [
   )}`,
 ];
 
-const width = 1512;
-const height = 824;
-
 const fakeDeviceChromiumFlags = [
   ...chromiumFlags,
   '--headless=new',
   '--use-fake-device-for-media-stream=device-count=5',
 ];
+
+const width = 1512;
+const height = 824;
 
 /**
  * See https://playwright.dev/docs/test-configuration.
@@ -49,6 +52,9 @@ export default defineConfig({
   /* Configure projects for major browsers */
   projects: [
     {
+    // -----------------------------------------------------
+    // CHROME (real Chrome)
+    // -----------------------------------------------------
       name: 'Google Chrome',
       use: {
         ...devices['Desktop Chrome'],
@@ -59,6 +65,10 @@ export default defineConfig({
         },
       },
     },
+
+    // -----------------------------------------------------
+    // CHROME WITH FAKE DEVICES (simulates multiple cameras/mics)
+    // -----------------------------------------------------
     {
       name: 'Google Chrome Fake Devices',
       use: {
@@ -70,6 +80,10 @@ export default defineConfig({
         },
       },
     },
+
+    // -----------------------------------------------------
+    // FIREFOX
+    // -----------------------------------------------------
     {
       name: 'firefox',
       use: {
@@ -88,16 +102,25 @@ export default defineConfig({
         },
       },
     },
+
+    // -----------------------------------------------------
+    // SAFARI / WEBKIT
+    // -----------------------------------------------------
     {
       name: 'webkit',
       use: {
         ...devices['Desktop Safari'],
         viewport: { width, height },
+        permissions: ['camera', 'microphone'],
         launchOptions: {
           args: [], // no media flags allowed for WebKit
         },
       },
     },
+
+    // -----------------------------------------------------
+    // EDGE
+    // -----------------------------------------------------
     {
       name: 'Microsoft Edge',
       use: {
@@ -109,6 +132,10 @@ export default defineConfig({
         },
       },
     },
+
+    // -----------------------------------------------------
+    // MOBILE CHROME (Pixel 5)
+    // -----------------------------------------------------
     {
       name: 'Mobile Chrome',
       use: {
