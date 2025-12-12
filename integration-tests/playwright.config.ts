@@ -94,7 +94,7 @@ export default defineConfig({
         ...devices['Desktop Safari'],
         viewport: { width, height },
         launchOptions: {
-          args: ['--enable-mock-capture-devices=true', '--enable-media-stream=true'],
+          args: [], // no media flags allowed for WebKit
         },
       },
     },
