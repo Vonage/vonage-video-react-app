@@ -1,4 +1,5 @@
 import { defineConfig, devices } from '@playwright/test';
+// eslint-disable-next-line @typescript-eslint/no-require-imports
 import path = require('path');
 
 /**
@@ -52,9 +53,9 @@ export default defineConfig({
   /* Configure projects for major browsers */
   projects: [
     {
-    // -----------------------------------------------------
-    // CHROME (real Chrome)
-    // -----------------------------------------------------
+      // -----------------------------------------------------
+      // CHROME (real Chrome)
+      // -----------------------------------------------------
       name: 'Google Chrome',
       use: {
         ...devices['Desktop Chrome'],
