@@ -142,30 +142,6 @@ const ControlPanel = ({
         />
 
         <ButtonBase
-          onClick={handleVideoInputOpen}
-          sx={buttonSx}
-          aria-controls={openVideoInput ? 'basic-menu' : undefined}
-          aria-haspopup="true"
-          aria-expanded={openVideoInput ? 'true' : undefined}
-          aria-label={t('devices.video.camera.ariaLabel')}
-        >
-          <VividIcon name="video-line" customSize={-6} />
-          <Box component="span" sx={textSx}>
-            {t('button.camera')}
-          </Box>
-          <VividIcon name="chevron-down-line" customSize={-6} />
-        </ButtonBase>
-        <MenuDevicesWaitingRoom
-          devices={allMediaDevices.videoInputDevices}
-          open={openVideoInput}
-          onClose={handleClose}
-          anchorEl={anchorEl}
-          localSource={localVideoSource}
-          deviceChangeHandler={changeVideoSource}
-          deviceType="videoInput"
-        />
-
-        <ButtonBase
           onClick={handleAudioOutputOpen}
           sx={buttonSx}
           aria-controls={openAudioOutput ? 'basic-menu' : undefined}
@@ -187,6 +163,30 @@ const ControlPanel = ({
           localSource={currentAudioOutputDevice}
           deviceChangeHandler={setAudioOutputDevice}
           deviceType="audioOutput"
+        />
+
+        <ButtonBase
+          onClick={handleVideoInputOpen}
+          sx={buttonSx}
+          aria-controls={openVideoInput ? 'basic-menu' : undefined}
+          aria-haspopup="true"
+          aria-expanded={openVideoInput ? 'true' : undefined}
+          aria-label={t('devices.video.camera.ariaLabel')}
+        >
+          <VividIcon name="video-line" customSize={-6} />
+          <Box component="span" sx={textSx}>
+            {t('button.camera')}
+          </Box>
+          <VividIcon name="chevron-down-line" customSize={-6} />
+        </ButtonBase>
+        <MenuDevicesWaitingRoom
+          devices={allMediaDevices.videoInputDevices}
+          open={openVideoInput}
+          onClose={handleClose}
+          anchorEl={anchorEl}
+          localSource={localVideoSource}
+          deviceChangeHandler={changeVideoSource}
+          deviceType="videoInput"
         />
         {shouldDisplayMenuMoreOptions && (
           <>
