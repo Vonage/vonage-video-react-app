@@ -5,10 +5,10 @@ import { Publisher, Subscriber } from '@vonage/client-sdk-video';
 import { EventEmitter } from 'stream';
 import * as mui from '@mui/material';
 import { ReactElement } from 'react';
-import UserProvider, { UserContextType } from '@Context/user';
-import SessionProvider, { SessionContextType } from '@Context/SessionProvider/session';
+import { UserContextType } from '@Context/user';
+import { SessionContextType } from '@Context/SessionProvider/session';
 import { SubscriberWrapper } from '@app-types/session';
-import { PublisherContextType, PublisherProvider } from '@Context/PublisherProvider';
+import { PublisherContextType } from '@Context/PublisherProvider';
 import usePublisherContext from '@hooks/usePublisherContext';
 import useUserContext from '@hooks/useUserContext';
 import useDevices from '@hooks/useDevices';
@@ -25,10 +25,16 @@ import useToolbarButtons, {
   UseToolbarButtonsProps,
 } from '@hooks/useToolbarButtons';
 import usePublisherOptions from '@Context/PublisherProvider/usePublisherOptions';
-import { makeAppConfigProviderWrapper } from '@test/providers';
+import {
+  makeAppConfigProviderWrapper,
+  makeUserProviderWrapper,
+  makeSessionProviderWrapper,
+  makePublisherProviderWrapper,
+} from '@test/providers';
 import composeProviders from '@utils/composeProviders';
 import MeetingRoom from './MeetingRoom';
 import type { Box } from 'opentok-layout-js';
+import { createUserFixture } from '@test/fixtures/userFixtures';
 
 const mockedNavigate = vi.fn();
 const mockedParams = { roomName: 'test-room-name' };
@@ -354,7 +360,29 @@ describe('MeetingRoom', () => {
         "We're having trouble connecting you with others in the meeting room. Please check your network and try again.",
     };
     publisherContext.publishingError = publishingBlockedError;
-    render(<MeetingRoom />);
+
+    const baseUser = createUserFixture();
+    const userWithName = {
+      ...baseUser,
+      defaultSettings: {
+        ...baseUser.defaultSettings,
+        name: 'Another Name',
+        // or override other default settings values here as needed
+      },
+    };
+
+    render(<MeetingRoom />, {
+      user: { value: userWithName },
+      appConfig: {
+        /* we can add app config overrides here */
+      },
+      session: {
+        /* we can add session overrides here */
+      },
+      publisher: {
+        /* we can add publisher overrides here */
+      },
+    });
 
     expect(mockedNavigate).toHaveBeenCalledOnce();
     expect(mockedNavigate).toHaveBeenCalledWith('/goodbye', {
@@ -368,14 +396,27 @@ describe('MeetingRoom', () => {
   });
 });
 
-function render(ui: ReactElement) {
-  const { AppConfigWrapper } = makeAppConfigProviderWrapper();
+type RenderOverrides = {
+  appConfig?: Parameters<typeof makeAppConfigProviderWrapper>[0];
+  user?: Parameters<typeof makeUserProviderWrapper>[0];
+  session?: Parameters<typeof makeSessionProviderWrapper>[0];
+  publisher?: Parameters<typeof makePublisherProviderWrapper>[0];
+};
+
+function render(ui: ReactElement, overrides: RenderOverrides = {}) {
+  const { appConfig, user, session, publisher } = overrides;
+
+  // Providers can be passed inline per test to tailor context
+  const { AppConfigWrapper } = makeAppConfigProviderWrapper(appConfig);
+  const { UserProviderWrapper } = makeUserProviderWrapper(user);
+  const { SessionProviderWrapper } = makeSessionProviderWrapper(session);
+  const { PublisherProviderWrapper } = makePublisherProviderWrapper(publisher);
 
   const composeWrapper = composeProviders(
     AppConfigWrapper,
-    UserProvider,
-    SessionProvider,
-    PublisherProvider
+    UserProviderWrapper,
+    SessionProviderWrapper,
+    PublisherProviderWrapper
   );
 
   return renderBase(ui, { wrapper: composeWrapper });

@@ -4,12 +4,12 @@ import { act, render as renderBase, waitFor } from '@testing-library/react';
 import EventEmitter from 'events';
 import { Publisher, Stream } from '@vonage/client-sdk-video';
 import { makeSessionProviderWrapper } from '@test/providers';
+import composeProviders from '@utils/composeProviders';
 import useSessionContext from '@hooks/useSessionContext';
 import ActiveSpeakerTracker from '@utils/ActiveSpeakerTracker';
 import VonageVideoClient from '@utils/VonageVideoClient';
 import { Credential, StreamPropertyChangedEvent, SubscriberWrapper } from '@app-types/session';
 import fetchCredentials from '@api/fetchCredentials';
-import { UserType } from '@Context/user';
 
 vi.mock('@utils/ActiveSpeakerTracker');
 vi.mock('@utils/VonageVideoClient');
@@ -405,17 +405,16 @@ describe('SessionProvider', () => {
   });
 });
 
-function render(ui: ReactElement) {
-  const { SessionProviderWrapper } = makeSessionProviderWrapper({
-    userOptions: {
-      value: {
-        defaultSettings: { name: 'TestUser' },
-        issues: {
-          reconnections: 0,
-        },
-      } as UserType,
-    },
-  });
+type RenderOverrides = {
+  session?: Parameters<typeof makeSessionProviderWrapper>[0];
+};
 
-  return renderBase(ui, { wrapper: SessionProviderWrapper });
+function render(ui: ReactElement, overrides: RenderOverrides = {}) {
+  const { session } = overrides;
+
+  const { SessionProviderWrapper } = makeSessionProviderWrapper(session);
+
+  const wrapper = composeProviders(SessionProviderWrapper);
+
+  return renderBase(ui, { wrapper });
 }

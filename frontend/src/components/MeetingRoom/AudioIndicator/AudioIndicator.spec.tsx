@@ -1,13 +1,10 @@
-import { describe, expect, it, vi, beforeEach, Mock } from 'vitest';
+import { describe, expect, it } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import { Stream } from '@vonage/client-sdk-video';
 import AudioIndicator, { AudioIndicatorProps } from './AudioIndicator';
-import useSessionContext from '../../../hooks/useSessionContext';
-
-vi.mock('../../../hooks/useSessionContext');
+import createTestProviderStack from '@test/providers/createTestProviderStack';
 
 describe('AudioIndicator', () => {
-  const mockForceMute = vi.fn();
   const mockStream: Stream = {
     connection: { connectionId: 'mock-connection-id', creationTime: Date.now(), data: 'mockData' },
     streamId: 'mock-stream-id',
@@ -28,19 +25,31 @@ describe('AudioIndicator', () => {
     audioLevel: undefined,
   };
 
-  beforeEach(() => {
-    (useSessionContext as Mock).mockReturnValue({ forceMute: mockForceMute });
-    vi.clearAllMocks();
+  // Only include SessionContext - explicitly exclude other providers
+  // to avoid unnecessary dependencies (mediaDevices, Vonage SDK initialization, etc.)
+  const TestWrapper = createTestProviderStack({
+    includeSession: true,
+    includePreviewPublisher: false,
+    includeBackgroundPublisher: false,
+    includeAudioOutput: false,
   });
 
   it('renders Mic icon when participant is unmuted but not speaking', () => {
-    render(<AudioIndicator {...defaultProps} />);
+    render(<AudioIndicator {...defaultProps} />, { wrapper: TestWrapper });
     const micIcon = screen.getByTestId('MicIcon');
     expect(micIcon).toBeInTheDocument();
   });
 
+  // We can pass providers inline to avoid initializing unused contexts.
   it('renders Mic off icon when participant is muted', () => {
-    render(<AudioIndicator {...defaultProps} hasAudio={false} />);
+    render(<AudioIndicator {...defaultProps} hasAudio={false} />, {
+      wrapper: createTestProviderStack({
+        includeSession: true,
+        includePreviewPublisher: false,
+        includeBackgroundPublisher: false,
+        includeAudioOutput: false,
+      }),
+    });
     const micOffIcon = screen.getByTestId('MicOffIcon');
     expect(micOffIcon).toBeInTheDocument();
   });
