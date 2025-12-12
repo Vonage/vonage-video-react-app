@@ -111,7 +111,6 @@ export default defineConfig({
       use: {
         ...devices['Desktop Safari'],
         viewport: { width, height },
-        permissions: ['camera', 'microphone'],
         launchOptions: {
           args: [], // no media flags allowed for WebKit
         },
