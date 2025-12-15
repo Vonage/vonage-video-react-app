@@ -1,6 +1,6 @@
 import { ReactElement } from 'react';
 import useTheme from '@ui/theme';
-import { SxProps } from '@ui/SxProps';
+import type { SxProps } from '@ui/SxProps';
 import Box from '@ui/Box';
 
 export type VoiceIndicatorProps = {

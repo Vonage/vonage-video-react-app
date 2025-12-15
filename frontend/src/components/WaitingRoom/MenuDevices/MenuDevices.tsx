@@ -4,7 +4,7 @@ import MenuItem from '@ui/MenuItem';
 import Menu from '@ui/Menu';
 import VividIcon from '@components/VividIcon';
 import Box from '@ui/Box';
-import cleanAndDedupeDeviceLabels from '../../../utils/cleanAndDedupeDeviceLabels/cleanAndDedupeDeviceLabels';
+import cleanAndDedupeDeviceLabels from '@utils/cleanAndDedupeDeviceLabels/cleanAndDedupeDeviceLabels';
 import SoundTest from '../../SoundTest';
 import { isGetActiveAudioOutputDeviceSupported } from '@utils/util';
 

@@ -48,7 +48,6 @@ body:
         - Microsoft Edge
         - Opera
         - Safari
-        - Electron
 
   - type: textarea
     id: logs

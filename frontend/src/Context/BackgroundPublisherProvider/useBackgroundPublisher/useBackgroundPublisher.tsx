@@ -15,6 +15,8 @@ import { DEVICE_ACCESS_STATUS } from '../../../utils/constants';
 import { AccessDeniedEvent } from '../../PublisherProvider/usePublisher/usePublisher';
 import DeviceStore from '../../../utils/DeviceStore';
 import applyBackgroundFilter from '../../../utils/backgroundFilter/applyBackgroundFilter/applyBackgroundFilter';
+import useImageStorage, { StoredImage } from '../../../utils/useImageStorage/useImageStorage';
+import getInitialBackgroundFilter from '../../../utils/backgroundFilter/getInitialBackgroundFilter/getInitialBackgroundFilter';
 
 export type BackgroundPublisherContextType = {
   isPublishing: boolean;
@@ -29,6 +31,13 @@ export type BackgroundPublisherContextType = {
   accessStatus: string | null;
   changeVideoSource: (deviceId: string) => void;
   initBackgroundLocalPublisher: () => Promise<void>;
+  customImages: StoredImage[];
+  addCustomImage: (dataUrl: string) => void;
+  deleteCustomImage: (id: string) => void;
+  backgroundSelected: string;
+  setBackgroundSelected: (value: string) => void;
+  handleBackgroundChange: (background: string) => void;
+  handleAddCustomImage: (dataUrl: string) => void;
 };
 
 type PublisherVideoElementCreatedEvent = Event<'videoElementCreated', Publisher> & {
@@ -55,6 +64,7 @@ type PublisherVideoElementCreatedEvent = Event<'videoElementCreated', Publisher>
 const useBackgroundPublisher = (): BackgroundPublisherContextType => {
   const { user } = useUserContext();
   const { allMediaDevices, getAllMediaDevices } = useDevices();
+  const { getImagesFromStorage, addImageToStorage, deleteImageFromStorage } = useImageStorage();
   const [publisherVideoElement, setPublisherVideoElement] = useState<
     HTMLVideoElement | HTMLObjectElement
   >();
@@ -70,6 +80,8 @@ const useBackgroundPublisher = (): BackgroundPublisherContextType => {
   const [isVideoEnabled, setIsVideoEnabled] = useState<boolean>(true);
   const [localVideoSource, setLocalVideoSource] = useState<string | undefined>(undefined);
   const deviceStoreRef = useRef<DeviceStore>(new DeviceStore());
+  const [customImages, setCustomImages] = useState<StoredImage[]>(() => getImagesFromStorage());
+  const [backgroundSelected, setBackgroundSelected] = useState<string>('');
 
   /* This sets the default devices in use so that the user knows what devices they are using */
   useEffect(() => {
@@ -222,6 +234,80 @@ const useBackgroundPublisher = (): BackgroundPublisherContextType => {
     setIsVideoEnabled(!isVideoEnabled);
   };
 
+  /**
+   * Add a custom background image
+   * @param {string} dataUrl - The data URL of the image to add
+   * @returns {void}
+   */
+  const addCustomImage = useCallback(
+    (dataUrl: string) => {
+      addImageToStorage(dataUrl);
+      setCustomImages(getImagesFromStorage());
+    },
+    [getImagesFromStorage, addImageToStorage]
+  );
+
+  /**
+   * Delete a custom background image
+   * If the deleted image is currently selected, clear the background filter
+   * @param {string} id - The ID of the image to delete
+   * @returns {void}
+   */
+  const deleteCustomImage = useCallback(
+    (id: string) => {
+      const imageToDelete = customImages.find((img) => img.id === id);
+      if (!imageToDelete) {
+        throw new Error('Image to delete not found');
+      }
+
+      // Don't allow deletion if this image is currently selected
+      const isSelectedBackground = backgroundSelected === imageToDelete.dataUrl;
+      if (isSelectedBackground) {
+        throw new Error('Cannot delete currently selected background image');
+      }
+
+      deleteImageFromStorage(id);
+      setCustomImages((imgs) => imgs.filter((img) => img.id !== id));
+
+      // If the deleted image was the currently applied background filter, clear it
+      const currentBackgroundFilter = getInitialBackgroundFilter(backgroundPublisherRef.current);
+      if (imageToDelete.dataUrl === currentBackgroundFilter) {
+        changeBackground(backgroundSelected).catch(() => {
+          throw new Error('Failed to reset background filter after deleting custom image');
+        });
+      }
+    },
+    [backgroundSelected, customImages, deleteImageFromStorage, changeBackground]
+  );
+
+  /**
+   * Handle background change by updating state and applying the filter
+   * @param {string} background - The background option to apply
+   * @returns {void}
+   */
+  const handleBackgroundChange = useCallback(
+    (background: string) => {
+      setBackgroundSelected(background);
+      changeBackground(background).catch((error) => {
+        console.error('Failed to change background:', error);
+      });
+    },
+    [changeBackground]
+  );
+
+  /**
+   * Handle adding a custom image and immediately apply it as background
+   * @param {string} dataUrl - The data URL of the image to add
+   * @returns {void}
+   */
+  const handleAddCustomImage = useCallback(
+    (dataUrl: string) => {
+      addCustomImage(dataUrl);
+      handleBackgroundChange(dataUrl);
+    },
+    [addCustomImage, handleBackgroundChange]
+  );
+
   return {
     initBackgroundLocalPublisher,
     isPublishing,
@@ -236,6 +322,14 @@ const useBackgroundPublisher = (): BackgroundPublisherContextType => {
     changeVideoSource,
     localVideoSource,
     accessStatus,
+
+    customImages,
+    addCustomImage,
+    deleteCustomImage,
+    backgroundSelected,
+    setBackgroundSelected,
+    handleBackgroundChange,
+    handleAddCustomImage,
   };
 };
 export default useBackgroundPublisher;

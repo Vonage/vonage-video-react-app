@@ -57,7 +57,12 @@ const ArchiveStatusContent = ({ status, url }: { status: ArchiveStatus; url: str
   if (status === 'available') {
     return (
       <Link href={url ?? undefined} target="_blank" sx={{ textDecoration: 'none' }}>
-        <Stack direction="row" alignItems="center" spacing={0.5} sx={{ mb: 2 }}>
+        <Stack
+          direction="row"
+          alignItems="center"
+          spacing={0.5}
+          sx={{ mb: { xs: 2, sm: 2, md: 5, lg: 2 } }}
+        >
           <IconButton>
             <VividIcon
               name="download-line"
@@ -127,10 +132,9 @@ const ArchiveList = ({ archives }: ArchiveListProps): ReactElement => {
       sx={{
         width: '100%',
         maxHeight: '190px',
-        overflowY: 'auto',
       }}
     >
-      <List sx={{ overflowX: 'auto', pt: 0 }}>
+      <List sx={{ pt: 0 }}>
         {archives.map((archive, index) => {
           return (
             <Fragment key={archive.id}>
@@ -138,9 +142,6 @@ const ArchiveList = ({ archives }: ArchiveListProps): ReactElement => {
                 data-testid={`archive-list-item-${archive.id}`}
                 sx={{
                   px: 0,
-                  '& .MuiListItemSecondaryAction-root': {
-                    right: 8,
-                  },
                 }}
                 secondaryAction={<ArchiveStatusContent url={archive.url} status={archive.status} />}
               >

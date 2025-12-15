@@ -45,6 +45,13 @@ vi.mock('../../../hooks/useBackgroundPublisherContext', () => ({
   default: () => ({
     publisherVideoElement: null,
     changeBackground: vi.fn(),
+    backgroundSelected: 'none',
+    setBackgroundSelected: vi.fn(),
+    customImages: [],
+    addCustomImage: vi.fn(),
+    deleteCustomImage: vi.fn(),
+    handleBackgroundChange: vi.fn(),
+    handleAddCustomImage: vi.fn(),
   }),
 }));
 
