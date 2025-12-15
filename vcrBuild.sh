@@ -4,6 +4,6 @@
 # https://developer.vonage.com/en/vonage-cloud-runtime/guides/manifest#build-script
 
 # run install skipping post install script which requires husky
-yarn install --ignore-scripts
+yarn install --production=false --ignore-scripts
 
 yarn build
