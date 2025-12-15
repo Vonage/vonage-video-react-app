@@ -23,12 +23,12 @@ const EffectOptionButtons = (): ReactElement => {
     },
     {
       key: 'low-blur',
-      icon: <VividIcon name="blur-line" customSize={-2} />,
+      icon: <VividIcon name="blur-solid" customSize={-5} />,
       name: t('backgroundEffects.slightBlur'),
     },
     {
       key: 'high-blur',
-      icon: <VividIcon name="blur-solid" customSize={-5} />,
+      icon: <VividIcon name="blur-line" customSize={-2} />,
       name: t('backgroundEffects.strongBlur'),
     },
   ];
@@ -40,7 +40,9 @@ const EffectOptionButtons = (): ReactElement => {
           id={key}
           title={name}
           isSelected={backgroundSelected === key}
-          onClick={() => handleBackgroundChange(key)}
+          onClick={() => {
+            handleBackgroundChange(key);
+          }}
           icon={icon}
         />
       ))}
