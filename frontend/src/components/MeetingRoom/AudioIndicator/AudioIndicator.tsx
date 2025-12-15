@@ -8,6 +8,7 @@ import IconButton from '@ui/IconButton';
 import Tooltip from '@ui/Tooltip';
 import VividIcon from '@components/VividIcon';
 import Box from '@ui/Box';
+import useTheme from '@ui/theme';
 
 export type AudioIndicatorProps = {
   hasAudio: boolean | undefined;
@@ -39,6 +40,7 @@ const AudioIndicator = ({
   participantName,
 }: AudioIndicatorProps): ReactElement => {
   const { t } = useTranslation();
+  const theme = useTheme();
   const { forceMute } = useSessionContext();
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
 
@@ -88,7 +90,11 @@ const AudioIndicator = ({
           {hasAudio ? (
             <VividIcon customSize={-6} name="microphone-2-solid" sx={sxProperties} />
           ) : (
-            <VividIcon customSize={-6} name="mic-mute-solid" sx={sxProperties} />
+            <VividIcon
+              customSize={-6}
+              name="mic-mute-solid"
+              sx={{ ...sxProperties, color: theme.colors.error }}
+            />
           )}
         </IconButton>
       </Tooltip>

@@ -141,7 +141,7 @@ const Subscriber = ({
         hasAudio={hasAudio}
         stream={subscriber.stream}
         indicatorStyle={audioIndicatorStyle}
-        indicatorColor={theme.colors.surface}
+        indicatorColor={theme.colors.accent}
         participantName={username}
       />
 

@@ -40,7 +40,7 @@ const PinButton = ({
   const anchorRef = useRef<HTMLDivElement | null>(null);
   const [isHoveringButton, setIsHoveringButton] = useState<boolean>(false);
   const iconSx = {
-    color: isDisabled ? theme.colors.disabled : theme.colors.surface,
+    color: isDisabled ? theme.colors.disabled : theme.colors.accent,
     cursor: 'pointer',
   };
 

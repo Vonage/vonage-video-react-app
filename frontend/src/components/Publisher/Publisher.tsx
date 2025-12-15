@@ -94,7 +94,7 @@ const Publisher = ({ box }: PublisherProps): ReactElement => {
         <AudioIndicator
           hasAudio={isAudioEnabled}
           indicatorStyle={audioIndicatorStyle}
-          indicatorColor={theme.colors.surface}
+          indicatorColor={theme.colors.accent}
         />
       )}
       <NameDisplay name={username} containerWidth={box.width} />

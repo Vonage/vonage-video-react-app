@@ -36,10 +36,11 @@ export type FeedbackFormType = {
   onFileSelect: (fileData: string) => void;
 };
 
-const getStyleTypography = () => {
+const getStyleTypography = ({ theme }: { theme: ReturnType<typeof useTheme> }) => {
   return {
     marginBottom: '4px',
     textAlign: 'left',
+    color: theme.colors.textSecondary,
   };
 };
 
@@ -99,7 +100,11 @@ const FeedbackForm = ({
           pr: 1.5,
         }}
       >
-        <Typography variant="body1" data-testid="title-report-issue" sx={getStyleTypography()}>
+        <Typography
+          variant="body1"
+          data-testid="title-report-issue"
+          sx={getStyleTypography({ theme: theme })}
+        >
           {t('feedbackForm.field.title.label')}
         </Typography>
         <TextField
@@ -125,7 +130,11 @@ const FeedbackForm = ({
           }}
           inputProps={{ maxLength: REPORT_TITLE_LIMIT }}
         />
-        <Typography variant="body1" data-testid="name-report-issue" sx={getStyleTypography()}>
+        <Typography
+          variant="body1"
+          data-testid="name-report-issue"
+          sx={getStyleTypography({ theme: theme })}
+        >
           {t('feedbackForm.field.name.label')}
         </Typography>
         <TextField
@@ -156,7 +165,7 @@ const FeedbackForm = ({
         <Typography
           data-testid="description-report-issue"
           variant="body1"
-          sx={getStyleTypography()}
+          sx={getStyleTypography({ theme: theme })}
         >
           {t('feedbackForm.field.issue.label')}
         </Typography>
@@ -191,7 +200,7 @@ const FeedbackForm = ({
         <Typography
           variant="body2"
           sx={{
-            ...getStyleTypography(),
+            ...getStyleTypography({ theme: theme }),
           }}
         >
           {t('feedbackForm.disclaiamer.label')}
@@ -200,7 +209,7 @@ const FeedbackForm = ({
           variant="body2"
           color="textPrimary"
           sx={{
-            ...getStyleTypography(),
+            ...getStyleTypography({ theme: theme }),
           }}
         >
           {t('feedbackForm.disclaiamer.screenshot')}

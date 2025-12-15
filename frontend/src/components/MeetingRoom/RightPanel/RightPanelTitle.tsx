@@ -38,7 +38,7 @@ const RightPanelTitle = ({ handleClose, title }: RightPanelTitleProps): ReactEle
       <Typography
         variant="body1"
         sx={{
-          color: theme.colors.darkGrey,
+          color: theme.colors.textTertiary,
         }}
       >
         {title}

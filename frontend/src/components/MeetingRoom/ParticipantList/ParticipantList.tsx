@@ -93,7 +93,7 @@ const ParticipantList = ({ handleClose, isOpen }: ParticipantListProps): ReactEl
             pl: 3,
           }}
         >
-          <Stack sx={{ textAlign: 'left' }}>
+          <Stack sx={{ textAlign: 'left', color: theme.colors.textSecondary }}>
             <Typography variant="subtitle2">{t('chat.meetingUrl')}</Typography>
             <Typography
               variant="body2"

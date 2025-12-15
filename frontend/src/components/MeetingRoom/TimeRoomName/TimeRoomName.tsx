@@ -23,7 +23,7 @@ const TimeRoomName = (): ReactElement => {
         overflow: 'hidden',
         textOverflow: 'ellipsis',
         whiteSpace: 'nowrap',
-        color: theme.colors.onPrimary,
+        color: theme.colors.accent,
       }}
     >
       {time} | {roomName}

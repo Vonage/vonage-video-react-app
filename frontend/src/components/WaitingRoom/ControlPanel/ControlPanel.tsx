@@ -88,6 +88,7 @@ const ControlPanel = ({
     '&:hover': {
       backgroundColor: theme.colors.background,
     },
+    color: theme.colors.textSecondary,
   };
 
   return (

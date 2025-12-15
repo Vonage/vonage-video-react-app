@@ -106,7 +106,9 @@ const ArchivingButton = ({
             }
             sx={{
               marginTop: isOverflowButton ? '0px' : '4px',
-              backgroundColor: `${isRecording ? `${theme.colors.onSecondary}55` : theme.colors.darkGrey}`,
+              backgroundColor: isRecording
+                ? `${theme.colors.onSecondary}55`
+                : theme.colors.darkGrey,
             }}
             isOverflowButton={isOverflowButton}
           />

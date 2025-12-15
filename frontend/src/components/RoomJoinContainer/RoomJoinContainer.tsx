@@ -7,6 +7,7 @@ import generateRoomName from '../../utils/generateRoomName';
 import NewRoomButton from '../NewRoomButton';
 import JoinContainerSeparator from '../JoinContainerSeparator';
 import JoinExistingRoom from '../JoinExistingRoom';
+import useTheme from '@ui/theme';
 
 /**
  * RoomJoinContainer Component
@@ -16,6 +17,7 @@ import JoinExistingRoom from '../JoinExistingRoom';
  */
 const RoomJoinContainer = (): ReactElement => {
   const { t } = useTranslation();
+  const theme = useTheme();
   const navigate = useNavigate();
   const randomRoom = generateRoomName();
 
@@ -25,10 +27,14 @@ const RoomJoinContainer = (): ReactElement => {
 
   return (
     <Card component="form">
-      <Typography sx={{ mb: 2, typography: 'h6' }}>{t('button.startNewRoom')}</Typography>
+      <Typography sx={{ mb: 2, typography: 'h6', color: theme.colors.textSecondary }}>
+        {t('button.startNewRoom')}
+      </Typography>
       <NewRoomButton handleNewRoom={handleNewRoom} />
       <JoinContainerSeparator />
-      <Typography sx={{ mb: 2, typography: 'h6' }}>{t('button.joinExistingMeeting')}</Typography>
+      <Typography sx={{ mb: 2, typography: 'h6', color: theme.colors.textSecondary }}>
+        {t('button.joinExistingMeeting')}
+      </Typography>
       <JoinExistingRoom />
     </Card>
   );

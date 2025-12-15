@@ -30,7 +30,7 @@ const NameDisplay = ({ name, containerWidth }: NameDisplayProps): ReactElement =
         overflow: 'hidden',
         textOverflow: 'ellipsis',
         whiteSpace: 'nowrap',
-        color: theme.colors.onTertiary,
+        color: theme.colors.accent,
         maxWidth: Math.max(0, safeMaxWidth - 32),
       }}
     >
