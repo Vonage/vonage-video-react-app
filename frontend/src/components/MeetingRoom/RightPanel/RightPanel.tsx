@@ -40,8 +40,8 @@ const RightPanel = ({ activeTab, handleClose }: RightPanelProps): ReactElement =
         borderRadius: 2,
         width: isSmallViewport ? '100dvw' : '360px',
         height: isSmallViewport ? 'calc(100dvh - 80px)' : 'calc(100dvh - 96px)',
-        marginRight: isSmallViewport ? 0 : 2,
-        marginTop: isSmallViewport ? 0 : 2,
+        mr: isSmallViewport ? 0 : 2,
+        mt: isSmallViewport ? 0 : 2,
       }}
     >
       <ParticipantList handleClose={handleClose} isOpen={activeTab === 'participant-list'} />

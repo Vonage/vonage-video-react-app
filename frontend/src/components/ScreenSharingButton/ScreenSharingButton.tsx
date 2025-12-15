@@ -88,7 +88,9 @@ const ScreenSharingButton = ({
             sx={{
               marginTop: isOverflowButton ? '0px' : '4px',
               marginLeft: isOverflowButton ? '12px' : '0px',
-              backgroundColor: isSharingScreen ? `${theme.colors.onSecondary}55` : '',
+              backgroundColor: isSharingScreen
+                ? `${theme.colors.onSecondary}55`
+                : theme.colors.darkGrey,
             }}
             isOverflowButton={isOverflowButton}
           />

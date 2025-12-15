@@ -62,7 +62,6 @@ const VideoTile = forwardRef(
         className={className}
         sx={{
           position: 'absolute',
-          margin: 1,
           display: isHidden ? 'none' : 'flex',
           alignItems: 'center',
           justifyContent: 'center',
@@ -84,7 +83,7 @@ const VideoTile = forwardRef(
             backgroundColor: theme.colors.darkGrey,
             display: hasVideo ? 'block' : 'none',
             ...(isTalking && {
-              outline: `2px solid ${theme.colors.information}`,
+              outline: `2px solid ${theme.colors.primary}`,
             }),
           }}
         />
@@ -100,7 +99,7 @@ const VideoTile = forwardRef(
             backgroundColor: theme.colors.darkGrey,
             display: hasVideo ? 'none' : 'block',
             ...(isTalking && {
-              outline: `2px solid ${theme.colors.information}`,
+              outline: `2px solid ${theme.colors.primary}`,
             }),
           }}
         />
