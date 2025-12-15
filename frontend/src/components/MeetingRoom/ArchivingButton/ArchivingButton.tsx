@@ -99,11 +99,14 @@ const ArchivingButton = ({
               <VividIcon
                 name="radio-checked-2-solid"
                 customSize={-5}
-                style={{ color: `${isRecording ? theme.colors.error : theme.colors.onSecondary}` }}
+                style={{
+                  color: theme.colors.onSecondary,
+                }}
               />
             }
             sx={{
               marginTop: isOverflowButton ? '0px' : '4px',
+              backgroundColor: `${isRecording ? `${theme.colors.onSecondary}55` : theme.colors.darkGrey}`,
             }}
             isOverflowButton={isOverflowButton}
           />

@@ -58,7 +58,7 @@ const ParticipantListItem = ({
             hasAudio={hasAudio}
             stream={stream}
             participantName={name}
-            indicatorColor={theme.colors.secondary}
+            indicatorColor={theme.colors.surface}
             indicatorStyle={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}
           />
           {subscriberWrapper && (
