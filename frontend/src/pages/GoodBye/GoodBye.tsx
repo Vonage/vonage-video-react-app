@@ -77,7 +77,7 @@ const GoodBye = (): ReactElement => {
 
           <Card
             sx={{
-              minWidth: { xs: '100%', md: '500px' },
+              minWidth: { xs: '100%', lg: '500px' },
             }}
           >
             <Typography
