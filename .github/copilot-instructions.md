@@ -1,7 +1,7 @@
 
 # Instruction
 
-Copilot must treat all rules in this document as strict coding and architectural requirements for this repository.  
+All rules in this document should be treated as strict coding and architectural requirements for this repository.  
 When generating or editing code, always choose the option that is consistent with these rules.  
 When reviewing code, Copilot must also evaluate changes according to these rules and suggest corrections whenever the submitted code violates any of them.
 
@@ -231,6 +231,199 @@ const myFunction = async () => {
 };
 ```
 
+## Type modeling & correctness
+
+- **Rule:** Prefer `named parameters` for functions with 2+ parameters or parameters of the same type. 
+
+**Violation:**
+
+```tsx  
+// Bad
+function createUser(name: string, age: number, isAdmin: boolean) {
+    // ...
+}
+
+// Call site is hard to read, what does true mean?
+createUser('Alice', 30, true);
+``` 
+
+**Correct:**
+
+```tsx
+// Good
+function createUser(args: { name: string; age: number; isAdmin: boolean }) {
+    // ...
+}
+
+// Call site is clear and readable
+createUser({ name: 'Alice', age: 30, isAdmin: true });
+```
+- **Rule:** Prefer type conjunctions (unions/intersections) over optional properties.
+
+**Violation:**
+
+```tsx
+// Bad
+type PaymentMethod = {
+  methodType: 'card' | 'bankTransfer' | 'cash';
+
+  // card-specific
+  cardNumber?: string;
+  cardExpiryMonth?: number;
+  cardExpiryYear?: number;
+
+  // bank-transfer-specific
+  IBAN?: string;
+
+  // cash-specific
+  cashReceivedByEmployeeId?: string;
+};
+
+const charge = (paymentMethod: PaymentMethod): Promise<void>;
+
+// everything is optional, there is not type safety
+charge({
+  methodType: 'card',
+});
+```
+
+**Correct:**
+
+```tsx
+type MethodType = 'card' | 'paypal' | 'bank_transfer';
+
+type BasePaymentMethod<M extends MethodType> = {
+  methodType: M;
+};
+
+type CardPaymentMethod = BasePaymentMethod<'card'> & {
+  methodType: 'card';
+  cardNumber: string;
+  cardExpiryMonth: number;
+  cardExpiryYear: number;
+};
+
+type PayPalPaymentMethod = BasePaymentMethod<'paypal'> & {
+  methodType: 'paypal';
+  email: string;
+};
+
+type BankTransferPaymentMethod = BasePaymentMethod<'bank_transfer'> & {
+  methodType: 'bank_transfer';
+  accountNumber: string;
+  routingNumber: string;
+};
+
+type PaymentMethod = CardPaymentMethod | PayPalPaymentMethod | BankTransferPaymentMethod;
+
+const charge = (paymentMethod: PaymentMethod): Promise<void>;
+
+charge({
+  methodType: 'card',
+}); // Error: missing cardNumber, cardExpiryMonth, cardExpiryYear
+
+charge({
+  methodType: 'card',
+  cardNumber: '1234567890123456',
+  cardExpiryMonth: 12,
+  cardExpiryYear: 2025,
+}); // OK
+
+charge({
+  methodType: 'paypal',
+  email: 'john@some.com',
+  routingNumber: '123456',
+}); // Error: routingNumber is not valid for PayPal
+```
+
+- **Rule:** Always use `type` for type-only imports.
+
+**Violation:**
+
+```tsx  
+// Bad
+import { User } from './types';
+```
+
+**Correct:**
+
+```tsx
+// Good
+import type { User } from './types'; // this will not be included in the compiled JS
+```
+
+- **Rule:** Prefer `type` over `interface` for type definitions.
+
+**Violation:**
+
+```tsx
+// Bad
+interface User {
+    id: string;
+    name: string;
+}
+```
+
+**Correct:**
+
+```tsx
+// Good
+type User = {
+    id: string;
+    name: string;
+};
+
+// Good: This is okay since function overloads are not supported in the same way with `type`.
+// Using a union of function types is not equivalent and is usually less readable with worse IntelliSense/error messages.
+interface Select<State> {
+    <Selected>(callback: (state: State) => Selected): Selected;
+
+    <Selected, Result>(callback: (state: State) => Selected, transformer: (selected: Selected) => Result): Result;
+}
+
+// Good: This is an actual interface intend to be implemented by classes.
+interface ILogger {
+    log(message: string): void;
+    error(message: string): void;
+}
+```
+
+- **Rule:** Ban string IDs... Always prefer to use branded types for identifiers.
+
+**Violation:**
+
+```tsx
+// Bad
+type User = {
+    id: string; // string ID is not type-safe
+    name: string;
+};
+```
+
+**Correct:**
+
+```tsx
+declare const _brand: unique symbol;
+
+// Good
+type UserId = string & { [__brand]: 'UserId' };
+
+type User = {
+    id: UserId; // branded type ID is type-safe
+    name: string;
+};
+
+// Even Better
+// This allows us to run-time validate ids
+type UserId = `user:${string}` & { [__brand]: 'UserId' };
+
+// Good
+// If the brand is duplicated across different entities use symbols
+declare const UserIdBrand: unique symbol;
+
+// Try to avoid duplicating prefixes and brands but if necessary use symbols
+type UserId = `user:${string}` & { [__brand]: typeof UserIdBrand };
+```
 ---
 
 # Folder and File Structure
