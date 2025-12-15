@@ -67,11 +67,8 @@ const AudioIndicator = ({
   const sxProperties = {
     color: indicatorColor,
     cursor: hasAudio ? 'pointer' : 'default',
+    transform: 'scale(0.8)',
   };
-
-  if (audioLevel !== undefined) {
-    return <VoiceIndicatorIcon publisherAudioLevel={audioLevel} size={20} />;
-  }
 
   return (
     <Box style={indicatorStyle} data-testid="audio-indicator">
@@ -87,7 +84,9 @@ const AudioIndicator = ({
           }}
           onClick={hasAudio ? handleClick : undefined}
         >
-          {hasAudio ? (
+          {audioLevel !== undefined ? (
+            <VoiceIndicatorIcon publisherAudioLevel={audioLevel} size={24} />
+          ) : hasAudio ? (
             <VividIcon customSize={-6} name="microphone-2-solid" sx={sxProperties} />
           ) : (
             <VividIcon
