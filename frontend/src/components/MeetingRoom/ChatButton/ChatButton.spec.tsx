@@ -39,12 +39,12 @@ describe('ChatButton', () => {
 
   it('should have a white icon when the list is closed', () => {
     render(<ChatButton handleClick={() => {}} isOpen={false} />);
-    expect(screen.getByTestId('vivid-icon-chat-solid')).toHaveStyle('color: rgb(255, 255, 255)');
+    expect(screen.getByTestId('vivid-icon-chat-solid')).toHaveStyle('color: rgba(0, 0, 0, 0.54)');
   });
 
   it('should have a blue icon when the chat is open', () => {
     render(<ChatButton handleClick={() => {}} isOpen />);
-    expect(screen.getByTestId('vivid-icon-chat-solid')).toHaveStyle('color: rgb(0, 0, 0)');
+    expect(screen.getByTestId('vivid-icon-chat-solid')).toHaveStyle('color: rgba(0, 0, 0, 0.54)');
   });
 
   it('should invoke callback on click', () => {
