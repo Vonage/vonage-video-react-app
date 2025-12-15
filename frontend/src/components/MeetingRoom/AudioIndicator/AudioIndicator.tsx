@@ -70,6 +70,10 @@ const AudioIndicator = ({
     transform: 'scale(0.8)',
   };
 
+  if (audioLevel !== undefined) {
+    return <VoiceIndicatorIcon publisherAudioLevel={audioLevel} size={24} />;
+  }
+
   return (
     <Box style={indicatorStyle} data-testid="audio-indicator">
       <Tooltip title={hasAudio ? t('participants.mute.tooltip', { participantName }) : ''}>
@@ -84,9 +88,7 @@ const AudioIndicator = ({
           }}
           onClick={hasAudio ? handleClick : undefined}
         >
-          {audioLevel !== undefined ? (
-            <VoiceIndicatorIcon publisherAudioLevel={audioLevel} size={24} />
-          ) : hasAudio ? (
+          {hasAudio ? (
             <VividIcon customSize={-6} name="microphone-2-solid" sx={sxProperties} />
           ) : (
             <VividIcon
