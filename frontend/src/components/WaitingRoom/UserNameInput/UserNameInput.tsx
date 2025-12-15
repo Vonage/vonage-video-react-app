@@ -7,12 +7,13 @@ import Box from '@ui/Box';
 import Typography from '@ui/Typography';
 import Card from '@ui/Card';
 import useTheme from '@ui/theme';
-import useUserContext from '../../../hooks/useUserContext';
-import { UserType } from '../../../Context/user';
-import useRoomName from '../../../hooks/useRoomName';
-import isValidRoomName from '../../../utils/isValidRoomName';
-import isValidUserName from '../../../utils/isValidUserName';
-import { setStorageItem, STORAGE_KEYS } from '../../../utils/storage';
+import useUserContext from '@hooks/useUserContext';
+import { UserType } from '@Context/user';
+import useRoomName from '@hooks/useRoomName';
+import isValidRoomName from '@utils/isValidRoomName';
+import isValidUserName from '@utils/isValidUserName';
+import { setStorageItem, STORAGE_KEYS } from '@utils/storage';
+import Separator from '@components/Separator';
 
 export type UserNameInputProps = {
   username: string;
@@ -87,7 +88,7 @@ const UsernameInput = ({ username, setUsername }: UserNameInputProps): ReactElem
         sx={{
           width: '100%',
           mt: 2,
-          mb: 5,
+          mb: 2,
         }}
       >
         <TextField
@@ -106,10 +107,13 @@ const UsernameInput = ({ username, setUsername }: UserNameInputProps): ReactElem
           value={username}
           inputProps={{ maxLength: 60 }}
           inputRef={inputRef}
+          InputLabelProps={{ required: false }}
         />
       </Box>
 
-      <Typography sx={{ mb: 2, typography: 'h6' }}>{t('waitingRoom.title')}</Typography>
+      <Separator width="100%" />
+
+      <Typography sx={{ mt: 3, mb: 2, typography: 'h6' }}>{t('waitingRoom.title')}</Typography>
 
       <Box>
         <Typography sx={{ mb: 2, typography: 'h6', color: theme.colors.textTertiary }} noWrap>

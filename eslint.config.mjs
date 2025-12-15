@@ -56,7 +56,6 @@ export default [
             'scripts/licenseCheck.js',
             'frontend/tailwind.config.js',
             'integration-tests/globalSetup.js',
-            'integration-tests/electronHelper.js',
             'integration-tests/main.js',
             'backend/jest.config.js',
             'backend/jest/setEnvVars.js',
@@ -262,6 +261,19 @@ export default [
     rules: {
       // unit test usually need to mock before importing to make the mocking work
       'import/first': 'off',
+
+      // 🚫 forbid describe.only, it.only, test.only, etc.
+      'no-restricted-syntax': [
+        'warn',
+        {
+          selector:
+            'CallExpression[callee.object.name="describe"][callee.property.name="only"], ' +
+            'CallExpression[callee.object.name="it"][callee.property.name="only"], ' +
+            'CallExpression[callee.object.name="$it"][callee.property.name="only"], ' +
+            'CallExpression[callee.object.name="test"][callee.property.name="only"]',
+          message: 'Remove .only from tests before committing.',
+        },
+      ],
     },
   },
 ];

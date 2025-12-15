@@ -179,6 +179,7 @@ const lightColors: ThemeTokens['colors'] = {
     type: 'color',
     description: 'Hover background color for alert messages and notifications.',
   },
+
   error: {
     value: colorVariables.alert[500],
     type: 'color',

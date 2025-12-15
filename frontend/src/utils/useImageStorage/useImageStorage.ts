@@ -176,6 +176,7 @@ const useImageStorage = () => {
     getImagesFromStorage,
     deleteImageFromStorage,
     saveImagesToStorage,
+    addImageToStorage,
   };
 };
 

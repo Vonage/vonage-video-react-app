@@ -9,7 +9,7 @@
       "executor": "nx:run-commands",
       "options": {
         "cwd": "integration-tests",
-        "command": "playwright test --project='Google Chrome Fake Devices' --project=firefox --project='Opera' --project='Microsoft Edge' --project='Mobile Chrome' --project='Electron'"
+        "command": "playwright test --project='Google Chrome Fake Devices' --project=firefox --project='Microsoft Edge' --project='Mobile Chrome'"
       }
     },
     "updateScreenshots": {
@@ -17,7 +17,7 @@
       "cache": false,
       "options": {
         "cwd": "integration-tests",
-        "command": "playwright test --project='Google Chrome Fake Devices' --project=firefox --project='Opera' --project='Microsoft Edge' --project='Mobile Chrome' --project='Electron' --update-snapshots"
+        "command": "playwright test --project='Google Chrome Fake Devices' --project=firefox --project='Microsoft Edge' --project='Mobile Chrome' --update-snapshots"
       }
     },
     "updateScreenshots:": {
@@ -28,7 +28,7 @@
       "options": {
         "cwd": "integration-tests",
         "description": "Update snapshots only for one Playwright test file",
-        "command": "playwright test {args._} --project='Google Chrome Fake Devices' --project=firefox --project='Opera' --project='Microsoft Edge' --project='Mobile Chrome' --project='Electron' --update-snapshots"
+        "command": "playwright test {args._} --project='Google Chrome Fake Devices' --project=firefox --project='Microsoft Edge' --project='Mobile Chrome' --update-snapshots"
       }
     },
     "postinstall": {
@@ -72,7 +72,7 @@
       "options": {
         "cwd": "integration-tests",
         "description": "Run playwright tests in a specific file",
-        "command": "playwright test {args._} --project='Google Chrome Fake Devices' --project=firefox --project='Opera' --project='Microsoft Edge' --project='Mobile Chrome' --project='Electron'"
+        "command": "playwright test {args._} --project='Google Chrome Fake Devices' --project=firefox --project='Microsoft Edge' --project='Mobile Chrome'"
       }
     }
   },

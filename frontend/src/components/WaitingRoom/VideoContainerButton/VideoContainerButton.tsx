@@ -1,5 +1,5 @@
 import IconButton from '@ui/IconButton';
-import { SxProps } from '@ui/SxProps';
+import type { SxProps } from '@ui/SxProps';
 import { ForwardedRef, forwardRef, ReactElement } from 'react';
 
 export type VideoContainerButtonProps = {
