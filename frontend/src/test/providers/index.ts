@@ -16,10 +16,6 @@ export {
 /**
  * TODO: We still need to create provider wrappers for the following contexts:
  *
- * AudioOutputProvider, Done
- * BackgroundPublisherProvider, Done
- * PreviewPublisherProvider, Done
- * PublisherProvider, Done
  * RoomProvider
  *
  * Right now we are mocking all those context which downgrades the quality of our tests.
@@ -44,8 +40,3 @@ export {
   default as makeBackgroundPublisherProviderWrapper,
   type BackgroundPublisherProviderWrapperOptions,
 } from './makeBackgroundPublisherProviderWrapper';
-
-export {
-  default as createTestProviderStack,
-  type TestProviderStackOptions,
-} from './createTestProviderStack';

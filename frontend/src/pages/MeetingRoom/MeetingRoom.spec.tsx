@@ -5,7 +5,7 @@ import { Publisher, Subscriber } from '@vonage/client-sdk-video';
 import { EventEmitter } from 'stream';
 import * as mui from '@mui/material';
 import { ReactElement } from 'react';
-import { UserContextType } from '@Context/user';
+import { UserContextType, UserType } from '@Context/user';
 import { SessionContextType } from '@Context/SessionProvider/session';
 import { SubscriberWrapper } from '@app-types/session';
 import { PublisherContextType } from '@Context/PublisherProvider';
@@ -34,7 +34,6 @@ import {
 import composeProviders from '@utils/composeProviders';
 import MeetingRoom from './MeetingRoom';
 import type { Box } from 'opentok-layout-js';
-import { createUserFixture } from '@test/fixtures/userFixtures';
 
 const mockedNavigate = vi.fn();
 const mockedParams = { roomName: 'test-room-name' };
@@ -272,9 +271,9 @@ describe('MeetingRoom', () => {
     expect(screen.getByTestId('subscriber-container-sub3')).toBeVisible();
     expect(screen.getByTestId('subscriber-container-sub4')).toBeVisible();
     expect(screen.getByTestId('hidden-participants')).toBeInTheDocument();
-    expect(screen.getByTestId('subscriber-container-sub5')).not.toBeVisible();
-    expect(screen.getByTestId('subscriber-container-sub6')).not.toBeVisible();
-    expect(screen.getByTestId('subscriber-container-sub7')).not.toBeVisible();
+    expect(screen.getByTestId('subscriber-container-sub5')).toHaveClass('hidden');
+    expect(screen.getByTestId('subscriber-container-sub6')).toHaveClass('hidden');
+    expect(screen.getByTestId('subscriber-container-sub7')).toHaveClass('hidden');
   });
 
   it('should render subscribers in correct order', () => {
@@ -361,27 +360,22 @@ describe('MeetingRoom', () => {
     };
     publisherContext.publishingError = publishingBlockedError;
 
-    const baseUser = createUserFixture();
-    const userWithName = {
-      ...baseUser,
+    const userWithName: UserType = {
       defaultSettings: {
-        ...baseUser.defaultSettings,
         name: 'Another Name',
-        // or override other default settings values here as needed
+        publishAudio: true,
+        publishVideo: true,
+        noiseSuppression: false,
+        publishCaptions: false,
+      },
+      issues: {
+        reconnections: 0,
+        audioFallbacks: 0,
       },
     };
 
     render(<MeetingRoom />, {
-      user: { value: userWithName },
-      appConfig: {
-        /* we can add app config overrides here */
-      },
-      session: {
-        /* we can add session overrides here */
-      },
-      publisher: {
-        /* we can add publisher overrides here */
-      },
+      user: { userOptions: { value: userWithName } },
     });
 
     expect(mockedNavigate).toHaveBeenCalledOnce();
@@ -406,11 +400,10 @@ type RenderOverrides = {
 function render(ui: ReactElement, overrides: RenderOverrides = {}) {
   const { appConfig, user, session, publisher } = overrides;
 
-  // Providers can be passed inline per test to tailor context
-  const { AppConfigWrapper } = makeAppConfigProviderWrapper(appConfig);
-  const { UserProviderWrapper } = makeUserProviderWrapper(user);
-  const { SessionProviderWrapper } = makeSessionProviderWrapper(session);
-  const { PublisherProviderWrapper } = makePublisherProviderWrapper(publisher);
+  const { AppConfigWrapper, ...appConfigProps } = makeAppConfigProviderWrapper(appConfig);
+  const { UserProviderWrapper, ...userProps } = makeUserProviderWrapper(user);
+  const { SessionProviderWrapper, ...sessionProps } = makeSessionProviderWrapper(session);
+  const { PublisherProviderWrapper, ...publisherProps } = makePublisherProviderWrapper(publisher);
 
   const composeWrapper = composeProviders(
     AppConfigWrapper,
@@ -419,5 +412,11 @@ function render(ui: ReactElement, overrides: RenderOverrides = {}) {
     PublisherProviderWrapper
   );
 
-  return renderBase(ui, { wrapper: composeWrapper });
+  return {
+    ...appConfigProps,
+    ...userProps,
+    ...sessionProps,
+    ...publisherProps,
+    ...renderBase(ui, { wrapper: composeWrapper }),
+  };
 }

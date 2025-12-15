@@ -10,6 +10,7 @@ import ActiveSpeakerTracker from '@utils/ActiveSpeakerTracker';
 import VonageVideoClient from '@utils/VonageVideoClient';
 import { Credential, StreamPropertyChangedEvent, SubscriberWrapper } from '@app-types/session';
 import fetchCredentials from '@api/fetchCredentials';
+import { UserType } from '@Context/user';
 
 vi.mock('@utils/ActiveSpeakerTracker');
 vi.mock('@utils/VonageVideoClient');
@@ -291,6 +292,38 @@ describe('SessionProvider', () => {
       await waitFor(() => expect(getByTestId('reconnecting')).toHaveTextContent('false'));
     });
 
+    // TODO: user.issues.reconnections is mutated directly without triggering re-render (session.tsx:264)
+    it.skip('should correctly increase reconnection counter when sessionReconnecting event fires', async () => {
+      const { userContext, sessionContext } = render(<TestComponent />, {
+        session: {
+          userOptions: {
+            userOptions: {
+              value: {
+                defaultSettings: {
+                  name: 'Test User',
+                  publishAudio: true,
+                  publishVideo: true,
+                  noiseSuppression: false,
+                  publishCaptions: false,
+                },
+                issues: { reconnections: 0, audioFallbacks: 0 },
+              } as UserType,
+            },
+          },
+        },
+      });
+
+      expect(userContext.current?.user.issues.reconnections).toBe(0);
+
+      act(() => {
+        sessionContext.current?.vonageVideoClient?.emit('sessionReconnecting');
+      });
+
+      await waitFor(() => {
+        expect(userContext.current?.user.issues.reconnections).toBe(1);
+      });
+    });
+
     it('when disconnected, sets connected to false', async () => {
       act(() => {
         vonageVideoClient.emit('sessionDisconnected');
@@ -412,9 +445,12 @@ type RenderOverrides = {
 function render(ui: ReactElement, overrides: RenderOverrides = {}) {
   const { session } = overrides;
 
-  const { SessionProviderWrapper } = makeSessionProviderWrapper(session);
+  const { SessionProviderWrapper, ...props } = makeSessionProviderWrapper(session);
 
   const wrapper = composeProviders(SessionProviderWrapper);
 
-  return renderBase(ui, { wrapper });
+  return {
+    ...props,
+    ...renderBase(ui, { wrapper }),
+  };
 }

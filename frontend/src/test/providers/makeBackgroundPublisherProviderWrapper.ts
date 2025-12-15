@@ -4,22 +4,29 @@ import {
 } from '@Context/BackgroundPublisherProvider';
 import makeGenericProviderWrapper, { GenericWrapperOptions } from './makeGenericProviderWrapper';
 
-export type BackgroundPublisherProviderWrapperOptions = GenericWrapperOptions<
-  typeof BackgroundPublisherProvider,
-  typeof BackgroundPublisherContext
->;
+export type BackgroundPublisherProviderWrapperOptions = {
+  backgroundPublisherOptions?: GenericWrapperOptions<
+    typeof BackgroundPublisherProvider,
+    typeof BackgroundPublisherContext
+  >;
+};
 
 /**
  * Creates wrapper for the BackgroundPublisherProvider context.
  * Allows accessing the context value for testing.
- * @param options - The wrapper options.
+ * @param {object} options - The wrapper options.
+ * @param {GenericWrapperOptions} [options.backgroundPublisherOptions] - Options for the BackgroundPublisherProvider wrapper.
  * @returns The BackgroundPublisherProvider wrapper and context getter.
  */
-function makeBackgroundPublisherProviderWrapper(
-  options?: BackgroundPublisherProviderWrapperOptions
-) {
+function makeBackgroundPublisherProviderWrapper({
+  backgroundPublisherOptions,
+}: BackgroundPublisherProviderWrapperOptions = {}) {
   const [BackgroundPublisherProviderWrapper, backgroundPublisherContext] =
-    makeGenericProviderWrapper(BackgroundPublisherProvider, BackgroundPublisherContext, options);
+    makeGenericProviderWrapper(
+      BackgroundPublisherProvider,
+      BackgroundPublisherContext,
+      backgroundPublisherOptions
+    );
 
   return { BackgroundPublisherProviderWrapper, backgroundPublisherContext };
 }

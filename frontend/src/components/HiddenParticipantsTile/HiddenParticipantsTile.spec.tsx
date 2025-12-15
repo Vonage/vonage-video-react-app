@@ -123,8 +123,10 @@ describe('HiddenParticipantsTile', () => {
 
 function render(ui: ReactElement, options?: SessionProviderWrapperOptions) {
   const { SessionProviderWrapper, sessionContext, appConfigContext } = makeSessionProviderWrapper({
-    __onCreated: (sessionContext) => {
-      vi.spyOn(sessionContext, 'toggleParticipantList');
+    sessionOptions: {
+      __onCreated: (sessionContext) => {
+        vi.spyOn(sessionContext, 'toggleParticipantList');
+      },
     },
     ...options,
   });

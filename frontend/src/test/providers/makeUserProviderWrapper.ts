@@ -1,22 +1,22 @@
 import UserProvider, { UserContext } from '@Context/user';
 import makeGenericProviderWrapper, { GenericWrapperOptions } from './makeGenericProviderWrapper';
 
-export type UserProviderWrapperOptions = GenericWrapperOptions<
-  typeof UserProvider,
-  typeof UserContext
->;
+export type UserProviderWrapperOptions = {
+  userOptions?: GenericWrapperOptions<typeof UserProvider, typeof UserContext>;
+};
 
 /**
  * Creates wrapper for the UserProvider context.
  * Allows overriding context values via options and accessing the context value.
  * @param {object} options - The wrapper options.
+ * @param {GenericWrapperOptions} [options.userOptions] - Options for the UserProvider wrapper.
  * @returns {object} The UserProvider wrapper and context getter.
  */
-function makeUserProviderWrapper(options?: UserProviderWrapperOptions) {
+function makeUserProviderWrapper({ userOptions }: UserProviderWrapperOptions = {}) {
   const [UserProviderWrapper, userContext] = makeGenericProviderWrapper(
     UserProvider,
     UserContext,
-    options
+    userOptions
   );
 
   return { UserProviderWrapper, userContext };

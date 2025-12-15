@@ -4,22 +4,27 @@ import {
 } from '@Context/PreviewPublisherProvider';
 import makeGenericProviderWrapper, { GenericWrapperOptions } from './makeGenericProviderWrapper';
 
-export type PreviewPublisherProviderWrapperOptions = GenericWrapperOptions<
-  typeof PreviewPublisherProvider,
-  typeof PreviewPublisherContext
->;
+export type PreviewPublisherProviderWrapperOptions = {
+  previewPublisherOptions?: GenericWrapperOptions<
+    typeof PreviewPublisherProvider,
+    typeof PreviewPublisherContext
+  >;
+};
 
 /**
  * Creates wrapper for the PreviewPublisherProvider context.
  * Allows accessing the context value for testing.
- * @param options - The wrapper options.
+ * @param {object} options - The wrapper options.
+ * @param {GenericWrapperOptions} [options.previewPublisherOptions] - Options for the PreviewPublisherProvider wrapper.
  * @returns The PreviewPublisherProvider wrapper and context getter.
  */
-function makePreviewPublisherProviderWrapper(options?: PreviewPublisherProviderWrapperOptions) {
+function makePreviewPublisherProviderWrapper({
+  previewPublisherOptions,
+}: PreviewPublisherProviderWrapperOptions = {}) {
   const [PreviewPublisherProviderWrapper, previewPublisherContext] = makeGenericProviderWrapper(
     PreviewPublisherProvider,
     PreviewPublisherContext,
-    options
+    previewPublisherOptions
   );
 
   return { PreviewPublisherProviderWrapper, previewPublisherContext };
