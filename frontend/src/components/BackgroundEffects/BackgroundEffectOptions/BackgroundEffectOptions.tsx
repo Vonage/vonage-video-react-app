@@ -49,7 +49,7 @@ const BackgroundEffectOptions = ({
   customBackgroundImageChange,
 }: BackgroundEffectOptionsProps): ReactElement => {
   const { getImagesFromStorage, deleteImageFromStorage } = useImageStorage();
-  const [customImages, setCustomImages] = useState<StoredImage[]>(getImagesFromStorage());
+  const [customImages, setCustomImages] = useState<StoredImage[]>(() => getImagesFromStorage());
 
   const handleBackgroundSelect = (value: string) => {
     setBackgroundSelected(value);

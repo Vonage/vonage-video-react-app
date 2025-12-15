@@ -47,6 +47,20 @@
       },
       "inputs": ["default", "^default", { "externalDependencies": ["jest", "ts-jest"] }]
     },
+    "lint": {
+      "executor": "nx:run-commands",
+      "options": {
+        "cwd": "backend",
+        "command": "eslint . --report-unused-disable-directives --max-warnings 0"
+      }
+    },
+    "lint:fix": {
+      "executor": "nx:run-commands",
+      "options": {
+        "cwd": "backend",
+        "command": "eslint . --fix --report-unused-disable-directives --max-warnings 0"
+      }
+    },
     "ts-check": {
       "executor": "nx:run-commands",
       "options": {

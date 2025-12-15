@@ -50,14 +50,7 @@ const ArchivingLoadingIcon = () => {
   );
 };
 
-const ArchiveStatusContent = ({
-  status,
-  url,
-}: {
-  id: string;
-  status: ArchiveStatus;
-  url: string | null;
-}) => {
+const ArchiveStatusContent = ({ status, url }: { status: ArchiveStatus; url: string | null }) => {
   const { t } = useTranslation();
   const theme = useTheme();
 
@@ -149,9 +142,7 @@ const ArchiveList = ({ archives }: ArchiveListProps): ReactElement => {
                     right: 8,
                   },
                 }}
-                secondaryAction={
-                  <ArchiveStatusContent id={archive.id} url={archive.url} status={archive.status} />
-                }
+                secondaryAction={<ArchiveStatusContent url={archive.url} status={archive.status} />}
               >
                 <ListItemIcon sx={{ minWidth: '45px' }}>
                   <VividIcon

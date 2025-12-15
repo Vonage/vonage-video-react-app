@@ -7,7 +7,7 @@ import useTheme from '@ui/theme';
 /**
  * Footer Component
  *
- * This component returns a footer with links to various resources.
+ * This component returns a footer displaying footer links.
  * @returns {ReactElement} - the footer component.
  */
 const Footer = (): ReactElement => {

@@ -38,6 +38,7 @@ const Publisher = ({ box }: PublisherProps): ReactElement => {
       element.classList.add('video__element');
 
       // Apply MUI-style inline styles instead of Tailwind classes
+      // eslint-disable-next-line react-hooks/immutability
       element.style.width = '100%';
       element.style.height = '100%';
       element.style.position = 'absolute';
@@ -48,7 +49,7 @@ const Publisher = ({ box }: PublisherProps): ReactElement => {
 
       pubContainerRef.current.appendChild(element);
     }
-  }, [element]);
+  }, [element, theme.shapes.borderRadiusLarge]);
 
   const initials = publisher?.stream?.initials;
   const username = publisher?.stream?.name ?? '';

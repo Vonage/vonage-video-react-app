@@ -66,10 +66,10 @@ describe('ScreenshareVideoTile', () => {
   });
 
   it('renders with custom className', () => {
-    render(<ScreenshareVideoTile {...defaultProps} className="test" />);
+    render(<ScreenshareVideoTile {...defaultProps} className="ml-2" />);
 
     const tile = screen.getByTestId('screenshare-tile');
-    expect(tile).toHaveClass('test');
+    expect(tile).toHaveClass('ml-2');
   });
 
   it('calls onMouseEnter and onMouseLeave handlers', () => {

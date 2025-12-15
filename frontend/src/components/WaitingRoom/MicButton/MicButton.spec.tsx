@@ -51,7 +51,7 @@ describe('MicButton', () => {
       },
     });
 
-    expect(screen.queryByTestId('MicIcon')).not.toBeInTheDocument();
+    expect(screen.queryByTestId('vivid-icon-microphone-line')).not.toBeInTheDocument();
   });
 });
 

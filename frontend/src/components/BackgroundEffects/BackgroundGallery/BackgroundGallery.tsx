@@ -60,7 +60,7 @@ const BackgroundGallery = ({
       return;
     }
     deleteImageFromStorage(id);
-    setCustomImages(customImages.filter((img) => img.id !== id));
+    setCustomImages((imgs) => imgs.filter((img) => img.id !== id));
     clearPublisherBgIfSelectedDeleted(dataUrl);
   };
 

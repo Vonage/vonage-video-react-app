@@ -1,0 +1,8 @@
+#!/usr/bin/env sh
+set -eu
+
+# Skip on CI
+[ -n "${CI:-}" ] && exit 0
+
+echo "🔍 Running tests before push..."
+yarn --silent test

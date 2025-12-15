@@ -28,6 +28,7 @@ describe('GET /.well-known/apple-app-site-association', () => {
 
   it('returns valid JSON content', async () => {
     const res = await request(server).get('/.well-known/apple-app-site-association');
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-return
     expect(() => JSON.parse(res.text)).not.toThrow();
   });
 

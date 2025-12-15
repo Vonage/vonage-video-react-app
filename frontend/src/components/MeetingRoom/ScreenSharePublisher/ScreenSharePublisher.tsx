@@ -37,7 +37,7 @@ const ScreenSharePublisher = ({
       });
       containerRef.current.appendChild(element);
     }
-  }, [element]);
+  }, [element, theme.shapes.borderRadiusLarge]);
   const streamName = publisher?.stream?.name ?? '';
   return (
     box && (

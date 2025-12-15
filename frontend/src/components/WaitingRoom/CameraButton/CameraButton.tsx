@@ -35,6 +35,7 @@ const CameraButton = (): ReactElement | false => {
   return (
     allowCameraControl && (
       <Box
+        data-testid="camera-button-wrapper"
         sx={{
           display: 'flex',
           position: 'relative',

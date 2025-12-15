@@ -68,7 +68,7 @@ const Subscriber = ({
 
       subRef.current.appendChild(element);
     }
-  }, [subscriberWrapper, isScreenShare]);
+  }, [subscriberWrapper, isScreenShare, theme.shapes.borderRadiusLarge]);
 
   const handlePinClick = (clickEvent: MouseEvent<HTMLButtonElement>) => {
     pinSubscriber(subscriberWrapper.id);

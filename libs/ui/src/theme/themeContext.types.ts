@@ -76,6 +76,9 @@ export type ColorsTokens = {
   'on-tertiary': ColorTokenItem;
   'tertiary-hover': ColorTokenItem;
 
+  accent: ColorTokenItem;
+  'on-accent': ColorTokenItem;
+
   background: ColorTokenItem;
   'on-background': ColorTokenItem;
 

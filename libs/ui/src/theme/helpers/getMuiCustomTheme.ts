@@ -162,17 +162,19 @@ const getMuiCustomTheme = ({ tokens }: { tokens: Theme }) => {
           },
         },
       },
+      MuiMenuItem: {
+        styleOverrides: {
+          root: {
+            color: colors.textSecondary,
+            fontSize: tokens.typography.typeScale.desktop['body-base'].fontSize.value,
+            lineHeight: tokens.typography.typeScale.desktop['body-base'].lineHeight.value,
+          },
+        },
+      },
       MuiList: {
         styleOverrides: {
           root: {
             backgroundColor: colors.onSecondary,
-            color: colors.textSecondary,
-          },
-        },
-      },
-      MuiMenuItem: {
-        styleOverrides: {
-          root: {
             color: colors.textSecondary,
             fontSize: tokens.typography.typeScale.desktop['body-base'].fontSize.value,
             lineHeight: tokens.typography.typeScale.desktop['body-base'].lineHeight.value,
