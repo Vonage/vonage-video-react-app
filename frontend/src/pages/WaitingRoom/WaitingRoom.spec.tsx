@@ -196,6 +196,38 @@ describe('WaitingRoom', () => {
     rerender(<WaitingRoomWithProviders />);
     expect(globalThis.location.reload).toBeCalled();
   });
+
+  it('should not render ControlPanel when allowDeviceSelection is false', () => {
+    previewPublisherContext.accessStatus = DEVICE_ACCESS_STATUS.ACCEPTED;
+
+    const { queryByTestId } = render(<WaitingRoomWithProviders />, {
+      appConfigOptions: {
+        value: {
+          waitingRoomSettings: {
+            allowDeviceSelection: false,
+          },
+        },
+      },
+    });
+
+    expect(queryByTestId('ControlPanel')).not.toBeInTheDocument();
+  });
+
+  it('should render ControlPanel when allowDeviceSelection is true', () => {
+    previewPublisherContext.accessStatus = DEVICE_ACCESS_STATUS.ACCEPTED;
+
+    const { queryByTestId } = render(<WaitingRoomWithProviders />, {
+      appConfigOptions: {
+        value: {
+          waitingRoomSettings: {
+            allowDeviceSelection: true,
+          },
+        },
+      },
+    });
+
+    expect(queryByTestId('ControlPanel')).toBeInTheDocument();
+  });
 });
 
 /**

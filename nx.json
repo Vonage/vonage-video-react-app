@@ -1,4 +1,5 @@
 {
+  "neverConnectToCloud": true,
   "$schema": "./node_modules/nx/schemas/nx-schema.json",
   "targetDefaults": {
     "test": {
