@@ -15,7 +15,7 @@ describe('ScreenSharingButton', () => {
 
   it('renders the share screen button', () => {
     render(<ScreenSharingButton {...defaultProps} />);
-    expect(screen.getByTestId('vivid-icon-screen-share-solid')).toBeInTheDocument();
+    expect(screen.getByTestId('ScreenShareIcon')).toBeInTheDocument();
 
     const button = screen.getByRole('button');
     button.click();
@@ -24,7 +24,7 @@ describe('ScreenSharingButton', () => {
 
   it('renders the share screen off button', () => {
     render(<ScreenSharingButton {...defaultProps} isSharingScreen />);
-    expect(screen.getByTestId('vivid-icon-screen-share-off-solid')).toBeInTheDocument();
+    expect(screen.getByTestId('ScreenShareIcon')).toBeInTheDocument();
 
     const button = screen.getByRole('button');
     button.click();

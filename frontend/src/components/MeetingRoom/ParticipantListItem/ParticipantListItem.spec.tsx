@@ -108,7 +108,7 @@ describe('ParticipantListItem', () => {
       const audioIndicator = screen.getByTestId('audio-indicator');
       expect(audioIndicator).toBeInTheDocument();
 
-      const micIcon = screen.getByTestId('vivid-icon-microphone-2-solid');
+      const micIcon = screen.getByTestId('MicIcon');
       expect(micIcon).toBeInTheDocument();
     });
 
