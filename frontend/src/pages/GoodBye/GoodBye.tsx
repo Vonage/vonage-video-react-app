@@ -1,4 +1,4 @@
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 import { ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
 import PageLayout from '@ui/PageLayout';
@@ -28,7 +28,6 @@ import useTheme from '@ui/theme';
 const GoodBye = (): ReactElement => {
   const { t } = useTranslation();
   const theme = useTheme();
-  const navigate = useNavigate();
   const location = useLocation();
   const roomName = useRoomName({
     useLocationState: true,
@@ -36,14 +35,6 @@ const GoodBye = (): ReactElement => {
   const archives = useArchives({ roomName });
   const header: string = location.state?.header || t('goodbye.default.header');
   const caption: string = location.state?.caption || t('goodbye.default.message');
-
-  const handleLanding = () => {
-    navigate('/');
-  };
-
-  const handleReenter = () => {
-    navigate(`/waiting-room/${roomName}`);
-  };
 
   return (
     <PageLayout>
@@ -71,8 +62,8 @@ const GoodBye = (): ReactElement => {
             >
               {t('goodBye.title')}
             </Typography>
-            <ReenterRoomButton handleReenter={handleReenter} roomName={roomName} />
-            <GoToLandingPageButton handleLanding={handleLanding} />
+            <ReenterRoomButton roomName={roomName} />
+            <GoToLandingPageButton />
           </Card>
 
           <Card

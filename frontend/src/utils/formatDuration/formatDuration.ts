@@ -7,7 +7,7 @@
  * formatDuration(3665) // returns "1:01:05"
  * formatDuration(undefined) // returns "--:--"
  */
-export const formatDuration = (seconds: number | undefined): string => {
+function formatDuration(seconds: number | undefined): string {
   if (!seconds || seconds < 0) return '--:--';
 
   const hours = Math.floor(seconds / 3600);
@@ -18,4 +18,6 @@ export const formatDuration = (seconds: number | undefined): string => {
     return `${hours}:${minutes.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
   }
   return `${minutes}:${secs.toString().padStart(2, '0')}`;
-};
+}
+
+export default formatDuration;

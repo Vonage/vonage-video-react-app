@@ -1,4 +1,4 @@
-import { Activity, Fragment, ReactElement } from 'react';
+import { Fragment, ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
 import Link from '@ui/Link';
 import Tooltip from '@ui/Tooltip';
@@ -12,8 +12,8 @@ import VividIcon from '@components/VividIcon';
 import { Archive, ArchiveStatus } from '../../../api/archiving/model';
 import IconButton from '@ui/IconButton';
 import List from '@ui/List';
-import { formatDuration } from '@utils/formatDuration';
-import { formatFileSize } from '@utils/formatFileSize';
+import formatDuration from '@utils/formatDuration';
+import formatFileSize from '@utils/formatFileSize';
 import Stack from '@ui/Stack';
 import Separator from '@components/Separator';
 import useTheme from '@ui/theme';
@@ -161,13 +161,7 @@ const ArchiveList = ({ archives }: ArchiveListProps): ReactElement => {
                     </Typography>
                   }
                   secondary={
-                    <Activity
-                      mode={
-                        archive.status === 'available' || archive.status === 'pending'
-                          ? 'visible'
-                          : 'hidden'
-                      }
-                    >
+                    (archive.status === 'available' || archive.status === 'pending') && (
                       <Typography variant="caption" sx={{ color: theme.colors.textTertiary }}>
                         {archive.status === 'pending' ? (
                           t('archiveList.loading.subtitle')
@@ -181,7 +175,7 @@ const ArchiveList = ({ archives }: ArchiveListProps): ReactElement => {
                           </>
                         )}
                       </Typography>
-                    </Activity>
+                    )
                   }
                 />
               </ListItem>
