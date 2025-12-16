@@ -113,7 +113,7 @@ const VideoContainer = ({ username }: VideoContainerProps): ReactElement => {
               <VoiceIndicatorIcon publisherAudioLevel={speechLevel} size={24} />
             </Box>
           )}
-          <Stack direction="row" spacing={2}>
+          <Stack direction="row" spacing={1.5}>
             <MicButton />
             <CameraButton />
           </Stack>
