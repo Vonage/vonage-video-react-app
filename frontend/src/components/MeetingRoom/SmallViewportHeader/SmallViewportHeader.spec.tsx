@@ -47,7 +47,7 @@ describe('SmallViewportHeader component', () => {
 
     render(<SmallViewportHeader />);
 
-    expect(screen.getByTestId('vivid-icon-radio-checked-2-solid')).toBeInTheDocument();
+    expect(screen.getByTestId('RadioButtonCheckedIcon')).toBeInTheDocument();
   });
 
   it('does not show the recording icon if it there is not one happening', () => {
