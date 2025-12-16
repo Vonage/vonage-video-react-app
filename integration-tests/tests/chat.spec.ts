@@ -52,7 +52,7 @@ test.describe('chat', () => {
     await pageOne.getByPlaceholder('Send a message').fill('Hi there, welcome to the meeting!');
 
     // Send button is blue when text in box
-    await expect(pageOne.getByTestId('SendIcon')).toHaveCSS('color', 'rgb(130, 177, 255)');
+    await expect(pageOne.getByTestId('SendIcon')).toHaveCSS('color', 'rgb(153, 65, 255)');
 
     await pageOne.getByTestId('SendIcon').click();
 

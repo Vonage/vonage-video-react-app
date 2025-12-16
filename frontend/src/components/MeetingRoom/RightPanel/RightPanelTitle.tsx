@@ -44,7 +44,7 @@ const RightPanelTitle = ({ handleClose, title }: RightPanelTitleProps): ReactEle
         {title}
       </Typography>
       <IconButton onClick={handleClose} size="large" sx={{ color: theme.colors.secondary }}>
-        <VividIcon name="close-line" customSize={-5} />
+        <VividIcon name="close-line" customSize={-5} data-testid="CloseIcon" />
       </IconButton>
     </Box>
   );
