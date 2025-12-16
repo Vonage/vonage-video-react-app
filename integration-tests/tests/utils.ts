@@ -28,11 +28,11 @@ export const openMeetingRoomWithSettings = async ({
   await page.getByLabel('Name').fill(username);
   await waitAndClickFirefox(page, browserName);
   if (videoOff) {
-    await page.getByTestId('vivid-icon-video-line').click();
+    await page.getByTestId('video-container-button').nth(1).click();
     await expect(page.getByTestId('vivid-icon-video-off-line')).toBeVisible();
   }
   if (audioOff) {
-    await page.getByTestId('vivid-icon-microphone-line').click();
+    await page.getByTestId('video-container-button').first().click();
     await expect(page.getByTestId('vivid-icon-mic-mute-line')).toBeVisible();
   }
   await page.getByRole('button', { name: 'Join meeting' }).click();
