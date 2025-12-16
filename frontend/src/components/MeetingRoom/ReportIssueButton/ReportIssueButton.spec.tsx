@@ -7,14 +7,12 @@ describe('ReportIssueButton', () => {
   it('should have a white icon when the form is closed', () => {
     render(<ReportIssueButton handleClick={() => {}} isOpen={false} />);
     expect(screen.getByTestId('vivid-icon-feedback-solid')).toHaveStyle(
-      'color: rgba(0, 0, 0, 0.54)'
+      'color: rgb(255, 255, 255)'
     );
   });
   it('should have a blue icon when the form is open', () => {
     render(<ReportIssueButton handleClick={() => {}} isOpen />);
-    expect(screen.getByTestId('vivid-icon-feedback-solid')).toHaveStyle(
-      'color: rgba(0, 0, 0, 0.54)'
-    );
+    expect(screen.getByTestId('vivid-icon-feedback-solid')).toHaveStyle('color: rgb(0, 0, 0)');
   });
   it('should invoke callback on click', () => {
     const handleClick = vi.fn();
