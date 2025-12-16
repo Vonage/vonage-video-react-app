@@ -80,6 +80,7 @@ const ChatInput = (): ReactElement => {
                 name="message-sent-solid"
                 customSize={-5}
                 sx={{ color: text === '' ? theme.colors.disabled : theme.colors.primary }}
+                data-testid="SendIcon"
               />
             </IconButton>
           </InputAdornment>

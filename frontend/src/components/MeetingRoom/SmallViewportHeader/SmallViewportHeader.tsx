@@ -51,6 +51,7 @@ const SmallViewportHeader = (): ReactElement => {
             name="radio-checked-2-solid"
             customSize={-6}
             sx={{ color: theme.colors.error }}
+            data-testid="RadioButtonCheckedIcon"
           />
         )}
         <Box
