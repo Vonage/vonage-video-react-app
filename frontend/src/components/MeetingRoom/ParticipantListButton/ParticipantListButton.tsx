@@ -64,6 +64,7 @@ const ParticipantListButton = ({
               <VividIcon
                 name="group-solid"
                 customSize={-4}
+                data-testid="PeopleIcon"
                 sx={{ color: isOpen ? theme.colors.secondary : theme.colors.onSecondary }}
               />
             }

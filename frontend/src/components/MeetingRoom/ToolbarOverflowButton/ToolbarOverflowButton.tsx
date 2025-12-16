@@ -69,6 +69,7 @@ const ToolbarOverflowButton = ({
               <VividIcon
                 name="more-vertical-solid"
                 customSize={-5}
+                data-testid="MoreVertIcon"
                 sx={{
                   color: isToolbarOverflowMenuOpen
                     ? theme.colors.onBackground

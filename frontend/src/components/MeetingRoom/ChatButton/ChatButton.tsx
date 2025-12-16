@@ -49,6 +49,7 @@ const ChatButton = ({
                 customSize={-5}
                 name="chat-solid"
                 sx={{ color: isOpen ? theme.colors.secondary : theme.colors.onSecondary }}
+                data-testid="ChatIcon"
               />
             }
             isOverflowButton={isOverflowButton}

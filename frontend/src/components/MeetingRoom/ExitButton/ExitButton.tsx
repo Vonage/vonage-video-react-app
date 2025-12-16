@@ -44,6 +44,7 @@ const ExitButton = ({ handleLeave }: ExitButtonProps): ReactElement => {
           <VividIcon
             name="end-call-solid"
             customSize={-4}
+            data-testid="CallEndIcon"
             sx={{ color: theme.colors.onSecondary }}
           />
         }

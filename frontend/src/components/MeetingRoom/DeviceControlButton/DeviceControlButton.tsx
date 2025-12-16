@@ -82,6 +82,7 @@ const DeviceControlButton = ({
           <VividIcon
             name="microphone-2-solid"
             customSize={-6}
+            data-testid="MicNoneIcon"
             sx={{ color: theme.colors.onDarkGrey }}
           />
         );
@@ -101,10 +102,22 @@ const DeviceControlButton = ({
     }
     if (isVideoEnabled) {
       return (
-        <VividIcon name="video-solid" customSize={-6} sx={{ color: theme.colors.onDarkGrey }} />
+        <VividIcon
+          name="video-solid"
+          customSize={-6}
+          data-testid="VideocamIcon"
+          sx={{ color: theme.colors.onDarkGrey }}
+        />
       );
     }
-    return <VividIcon name="video-off-solid" customSize={-6} sx={{ color: theme.colors.error }} />;
+    return (
+      <VividIcon
+        name="video-off-solid"
+        customSize={-6}
+        data-testid="VideocamOffIcon"
+        sx={{ color: theme.colors.error }}
+      />
+    );
   };
 
   const handleDeviceStateChange = () => {

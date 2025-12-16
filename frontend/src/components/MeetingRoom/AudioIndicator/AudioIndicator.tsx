@@ -89,7 +89,12 @@ const AudioIndicator = ({
           onClick={hasAudio ? handleClick : undefined}
         >
           {hasAudio ? (
-            <VividIcon customSize={-6} name="microphone-2-solid" sx={sxProperties} />
+            <VividIcon
+              customSize={-6}
+              name="microphone-2-solid"
+              data-testid="MicIcon"
+              sx={sxProperties}
+            />
           ) : (
             <VividIcon
               customSize={-6}
