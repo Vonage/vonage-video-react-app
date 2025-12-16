@@ -59,6 +59,7 @@ const LayoutButton = ({
             <VividIcon
               name="layout-2-solid"
               customSize={-5}
+              data-testid="ViewSidebarIcon"
               sx={{ color: isDisabled ? theme.colors.disabled : theme.colors.onSecondary }}
             />
           ) : (
