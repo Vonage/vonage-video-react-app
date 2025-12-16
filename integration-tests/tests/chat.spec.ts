@@ -47,7 +47,7 @@ test.describe('chat', () => {
     await chatToggleButton(pageOne, isMobile);
 
     // Send button is greyed out when text box empty
-    await expect(pageOne.getByTestId('SendIcon')).toHaveCSS('color', 'rgb(178, 180, 182)');
+    await expect(pageOne.getByTestId('SendIcon')).toHaveCSS('color', 'rgb(230, 230, 230)');
 
     await pageOne.getByPlaceholder('Send a message').fill('Hi there, welcome to the meeting!');
 

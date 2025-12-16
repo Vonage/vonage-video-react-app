@@ -38,7 +38,12 @@ const ParticipantListItemMenu = ({
   return (
     <>
       <IconButton onClick={handleClick} sx={{ marginRight: '-8px' }}>
-        <VividIcon name="more-vertical-solid" customSize={-6} color={theme.colors.tertiary} />
+        <VividIcon
+          name="more-vertical-solid"
+          customSize={-6}
+          color={theme.colors.tertiary}
+          data-testid="MoreVertIcon"
+        />
       </IconButton>
       <Popper open={isOpen} anchorEl={anchorEl} placement="bottom-start" sx={{ zIndex: 10 }}>
         <ClickAwayListener onClickAway={handleClose}>
