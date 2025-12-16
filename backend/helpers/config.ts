@@ -30,6 +30,7 @@ const loadConfig = (): Config => {
     epicLink: process.env.JIRA_EPIC_LINK,
     epicUrl: process.env.JIRA_EPIC_URL,
   };
+
   if (provider === 'vonage') {
     const applicationId = process.env.VONAGE_APP_ID ?? '';
     const privateKey = process.env.VONAGE_PRIVATE_KEY ?? '';
@@ -40,6 +41,7 @@ const loadConfig = (): Config => {
 
     return { ...feedbackConfig, applicationId, privateKey, provider: 'vonage' };
   }
+
   if (provider === 'opentok') {
     const apiKey = process.env.OT_API_KEY ?? '';
     const apiSecret = process.env.OT_API_SECRET ?? '';
