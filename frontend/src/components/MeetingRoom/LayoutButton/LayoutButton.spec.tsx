@@ -22,7 +22,7 @@ describe('LayoutButton', () => {
       <LayoutButton isScreenSharePresent={false} isPinningPresent={false} />
     );
     rerender(<LayoutButton isScreenSharePresent={false} isPinningPresent={false} />);
-    expect(screen.getByTestId('vivid-icon-layout-2-solid')).toBeInTheDocument();
+    expect(screen.getByTestId('ViewSidebarIcon')).toBeInTheDocument();
   });
 
   it('should call the set layout mode function when triggered', async () => {
