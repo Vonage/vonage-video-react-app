@@ -1,1 +1,3 @@
-export { formatDuration } from './formatDuration';
+import formatDuration from './formatDuration';
+
+export default formatDuration;

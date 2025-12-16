@@ -7,7 +7,7 @@
  * formatFileSize(1048576) // returns "1.0 MB"
  * formatFileSize(undefined) // returns "--"
  */
-export const formatFileSize = (bytes: number | undefined): string => {
+function formatFileSize(bytes: number | undefined): string {
   if (!bytes || bytes < 0) return '--';
 
   const units = ['B', 'KB', 'MB', 'GB', 'TB'];
@@ -22,4 +22,6 @@ export const formatFileSize = (bytes: number | undefined): string => {
   // For bytes, don't show decimals
   const decimals = unitIndex === 0 ? 0 : 1;
   return `${size.toFixed(decimals)} ${units[unitIndex]}`;
-};
+}
+
+export default formatFileSize;

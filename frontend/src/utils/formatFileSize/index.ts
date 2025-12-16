@@ -1,1 +1,3 @@
-export { formatFileSize } from './formatFileSize';
+import formatFileSize from './formatFileSize';
+
+export default formatFileSize;
