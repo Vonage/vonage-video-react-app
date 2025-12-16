@@ -37,6 +37,7 @@ const BackgroundEffectsDialog = ({
     <Dialog open={isBackgroundEffectsOpen} onClose={handleClose} maxWidth="md" fullWidth>
       <DialogTitle sx={{ m: 0, p: 2, pl: 3, pt: 3, backgroundColor: theme.colors.surface }}>
         <Typography
+          component="div"
           variant="h5"
           sx={{
             fontWeight: theme.typography.weight['body-base'].value,
