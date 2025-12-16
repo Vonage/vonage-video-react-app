@@ -94,7 +94,11 @@ const AudioIndicator = ({
             <VividIcon
               customSize={-6}
               name="mic-mute-solid"
-              sx={{ ...sxProperties, color: theme.colors.error }}
+              sx={{
+                ...sxProperties,
+                color: theme.colors.error,
+                transform: 'scaleX(-1) scale(0.8)',
+              }}
             />
           )}
         </IconButton>

@@ -91,7 +91,7 @@ const DeviceControlButton = ({
           name="mic-mute-solid"
           customSize={-6}
           data-testid="MicOffToolbar"
-          sx={{ color: theme.colors.error }}
+          sx={{ color: theme.colors.error, transform: 'scaleX(-1)' }}
         />
       );
     }
