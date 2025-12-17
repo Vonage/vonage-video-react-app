@@ -94,7 +94,7 @@ const usePublisher = (): PublisherContextType => {
     microphone: undefined,
     camera: undefined,
   });
-  let publishAttempt: number = 0;
+  const publishAttemptRef = useRef<number>(0);
 
   // If we do not have audio input or video input access, we cannot publish.
   useEffect(() => {
@@ -180,7 +180,7 @@ const usePublisher = (): PublisherContextType => {
     if (publisherRef?.current) {
       sessionUnpublish(publisherRef.current);
       setIsPublishingToSession(false);
-      publishAttempt = 0;
+      publishAttemptRef.current = 0;
     }
   };
 
@@ -235,9 +235,9 @@ const usePublisher = (): PublisherContextType => {
    * @returns {boolean} Returns `true` if we've already retried twice, else `false`
    */
   const shouldNotRetryPublish = (): boolean => {
-    publishAttempt += 1;
+    publishAttemptRef.current += 1;
 
-    if (publishAttempt === 3) {
+    if (publishAttemptRef.current === 3) {
       const publishingBlocked: PublishingErrorType = {
         header: t('publishingErrors.blocked.title'),
         caption: t('publishingErrors.blocked.message'),
@@ -273,7 +273,7 @@ const usePublisher = (): PublisherContextType => {
       await sessionPublish(publisherRef.current);
     } catch (err: unknown) {
       if (err instanceof Error) {
-        console.warn(err);
+        console.warn(err.message);
         setIsPublishingToSession(false);
         publish();
       }
