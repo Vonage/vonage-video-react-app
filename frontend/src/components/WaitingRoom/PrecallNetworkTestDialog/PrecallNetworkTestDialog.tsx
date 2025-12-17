@@ -95,30 +95,6 @@ const PrecallNetworkTestDialog = ({
     ? Math.round(state.qualityResults.video.mos * 100) / 100
     : null;
 
-  const audioScoreEmoji = useMemo(() => {
-    if (audioScore === null) return '—';
-    return audioScore >= 3 ? '✅' : '❌';
-  }, [audioScore]);
-
-  const videoScoreEmoji = useMemo(() => {
-    if (videoScore === null) return '—';
-    return videoScore >= 3 ? '✅' : '❌';
-  }, [videoScore]);
-
-  const audioEmojiLabel = useMemo(() => {
-    if (audioScore === null) return t('waitingRoom.precallNetworkTest.audio');
-    return audioScore >= 3
-      ? t('waitingRoom.precallNetworkTest.audioSupported')
-      : t('waitingRoom.precallNetworkTest.audioNotSupported');
-  }, [audioScore, t]);
-
-  const videoEmojiLabel = useMemo(() => {
-    if (videoScore === null) return t('waitingRoom.precallNetworkTest.video');
-    return videoScore >= 3
-      ? t('waitingRoom.precallNetworkTest.videoSupported')
-      : t('waitingRoom.precallNetworkTest.videoNotSupported');
-  }, [videoScore, t]);
-
   const audioSupportTitle = useMemo(() => {
     if (audioScore === null) return undefined;
     return t(
@@ -262,9 +238,23 @@ const PrecallNetworkTestDialog = ({
                       {t('waitingRoom.precallNetworkTest.audio')}
                     </Typography>
                     <Typography variant="h5" sx={{ lineHeight: 1 }}>
-                      <span role="img" aria-label={audioEmojiLabel}>
-                        {audioScoreEmoji}
-                      </span>
+                      {audioScore && audioScore >= 3 ? (
+                        <VividIcon
+                          name="check-circle-line"
+                          customSize={0}
+                          sx={{
+                            color: theme.colors.success,
+                          }}
+                        />
+                      ) : (
+                        <VividIcon
+                          name="close-circle-line"
+                          customSize={0}
+                          sx={{
+                            color: theme.colors.error,
+                          }}
+                        />
+                      )}
                     </Typography>
                     <Typography variant="body1" sx={{ color: theme.colors.textSecondary, ml: 2 }}>
                       {t('waitingRoom.precallNetworkTest.qualityLabel')}
@@ -302,9 +292,23 @@ const PrecallNetworkTestDialog = ({
                       {t('waitingRoom.precallNetworkTest.video')}
                     </Typography>
                     <Typography variant="h5" sx={{ lineHeight: 1 }}>
-                      <span role="img" aria-label={videoEmojiLabel}>
-                        {videoScoreEmoji}
-                      </span>
+                      {videoScore && videoScore >= 3 ? (
+                        <VividIcon
+                          name="check-circle-line"
+                          customSize={0}
+                          sx={{
+                            color: theme.colors.success,
+                          }}
+                        />
+                      ) : (
+                        <VividIcon
+                          name="close-circle-line"
+                          customSize={0}
+                          sx={{
+                            color: theme.colors.error,
+                          }}
+                        />
+                      )}
                     </Typography>
                     <Typography variant="body1" sx={{ color: theme.colors.textSecondary, ml: 2 }}>
                       {t('waitingRoom.precallNetworkTest.qualityLabel')}
