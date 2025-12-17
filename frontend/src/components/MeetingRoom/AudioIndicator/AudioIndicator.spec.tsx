@@ -1,10 +1,13 @@
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi, beforeEach, Mock } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import { Stream } from '@vonage/client-sdk-video';
 import AudioIndicator, { AudioIndicatorProps } from './AudioIndicator';
-import makeSessionProviderWrapper from '@test/providers/makeSessionProviderWrapper';
+import useSessionContext from '../../../hooks/useSessionContext';
+
+vi.mock('../../../hooks/useSessionContext');
 
 describe('AudioIndicator', () => {
+  const mockForceMute = vi.fn();
   const mockStream: Stream = {
     connection: { connectionId: 'mock-connection-id', creationTime: Date.now(), data: 'mockData' },
     streamId: 'mock-stream-id',
@@ -25,21 +28,20 @@ describe('AudioIndicator', () => {
     audioLevel: undefined,
   };
 
-  it('renders Mic icon when participant is unmuted but not speaking', () => {
-    const { SessionProviderWrapper } = makeSessionProviderWrapper();
+  beforeEach(() => {
+    (useSessionContext as Mock).mockReturnValue({ forceMute: mockForceMute });
+    vi.clearAllMocks();
+  });
 
-    render(<AudioIndicator {...defaultProps} />, { wrapper: SessionProviderWrapper });
+  it('renders Mic icon when participant is unmuted but not speaking', () => {
+    render(<AudioIndicator {...defaultProps} />);
     const micIcon = screen.getByTestId('MicIcon');
     expect(micIcon).toBeInTheDocument();
   });
 
   it('renders Mic off icon when participant is muted', () => {
-    const { SessionProviderWrapper } = makeSessionProviderWrapper();
-
-    render(<AudioIndicator {...defaultProps} hasAudio={false} />, {
-      wrapper: SessionProviderWrapper,
-    });
-    const micOffIcon = screen.getByTestId('MicOffIcon');
+    render(<AudioIndicator {...defaultProps} hasAudio={false} />);
+    const micOffIcon = screen.getByTestId('vivid-icon-mic-mute-solid');
     expect(micOffIcon).toBeInTheDocument();
   });
 });
