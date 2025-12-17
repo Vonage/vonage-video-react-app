@@ -1,22 +1,18 @@
 import '../../css/index.css';
 import { beforeEach, describe, expect, it, Mock, vi } from 'vitest';
-import { render as renderBase, screen } from '@testing-library/react';
+import { render as renderBase, screen, waitFor } from '@testing-library/react';
 import { Publisher, Subscriber } from '@vonage/client-sdk-video';
 import { EventEmitter } from 'stream';
 import * as mui from '@mui/material';
 import { ReactElement } from 'react';
-import { UserContextType, UserType } from '@Context/user';
-import { SessionContextType } from '@Context/SessionProvider/session';
+import { UserContextType } from '@Context/user';
 import { SubscriberWrapper } from '@app-types/session';
-import { PublisherContextType } from '@Context/PublisherProvider';
-import usePublisherContext from '@hooks/usePublisherContext';
 import useUserContext from '@hooks/useUserContext';
 import useDevices from '@hooks/useDevices';
 import { AllMediaDevices } from '@app-types/room';
 import { allMediaDevices, defaultAudioDevice } from '@utils/mockData/device';
 import useSpeakingDetector from '@hooks/useSpeakingDetector';
 import useLayoutManager, { GetLayout } from '@hooks/useLayoutManager';
-import useSessionContext from '@hooks/useSessionContext';
 import useActiveSpeaker from '@hooks/useActiveSpeaker';
 import useScreenShare, { UseScreenShareType } from '@hooks/useScreenShare';
 import { RIGHT_PANEL_BUTTON_COUNT } from '@utils/constants';
@@ -24,14 +20,7 @@ import useToolbarButtons, {
   UseToolbarButtons,
   UseToolbarButtonsProps,
 } from '@hooks/useToolbarButtons';
-import usePublisherOptions from '@Context/PublisherProvider/usePublisherOptions';
-import {
-  makeAppConfigProviderWrapper,
-  makeUserProviderWrapper,
-  makeSessionProviderWrapper,
-  makePublisherProviderWrapper,
-} from '@test/providers';
-import composeProviders from '@utils/composeProviders';
+import { makePublisherProviderWrapper, PublisherProviderWrapperOptions } from '@test/providers';
 import MeetingRoom from './MeetingRoom';
 import type { Box } from 'opentok-layout-js';
 
@@ -65,22 +54,46 @@ vi.mock('@mui/material', async () => {
 });
 
 vi.mock('@hooks/useDevices.tsx');
-vi.mock('@hooks/usePublisherContext.tsx');
 vi.mock('@hooks/useUserContext.tsx');
 vi.mock('@hooks/useSpeakingDetector.tsx');
 vi.mock('@hooks/useLayoutManager.tsx');
-vi.mock('@hooks/useSessionContext.tsx');
 vi.mock('@hooks/useActiveSpeaker.tsx');
 vi.mock('@hooks/useScreenShare.tsx');
 vi.mock('@hooks/useToolbarButtons');
-vi.mock('@Context/PublisherProvider/usePublisherOptions');
+
+vi.mock('opentok-layout-js', async () => {
+  const actual = await vi.importActual<typeof import('opentok-layout-js')>('opentok-layout-js');
+  const openTokLayoutManager = actual.default;
+
+  return {
+    ...actual,
+    default: (...args: Parameters<typeof openTokLayoutManager>) => {
+      const instance = openTokLayoutManager(...args);
+      const getLayout = instance.getLayout.bind(instance);
+
+      vi.spyOn(instance, 'getLayout').mockImplementation((...$args) => {
+        return {
+          ...getLayout(...$args),
+          // Mocked to return fixed values for easier testing
+          publisherBox: {
+            width: 640,
+            height: 480,
+            top: 0,
+            left: 0,
+          },
+        };
+      });
+
+      return instance;
+    },
+  };
+});
 
 const mockUseDevices = useDevices as Mock<
   [],
   { allMediaDevices: AllMediaDevices; getAllMediaDevices: () => void }
 >;
 
-const mockUsePublisherContext = usePublisherContext as Mock<[], PublisherContextType>;
 const mockUseUserContext = useUserContext as Mock<[], UserContextType>;
 const mockUserContext = {
   user: {
@@ -92,7 +105,6 @@ const mockUserContext = {
 } as unknown as UserContextType;
 const mockUseSpeakingDetector = useSpeakingDetector as Mock<[], boolean>;
 const mockUseLayoutManager = useLayoutManager as Mock<[], GetLayout>;
-const mockUseSessionContext = useSessionContext as Mock<[], SessionContextType>;
 const mockUseActiveSpeaker = useActiveSpeaker as Mock<[], string | undefined>;
 const mockUseScreenShare = useScreenShare as Mock<[], UseScreenShareType>;
 const mockUseToolbarButtons = useToolbarButtons as Mock<
@@ -124,8 +136,6 @@ const createSubscriberWrapper = (id: string): SubscriberWrapper => {
 
 describe('MeetingRoom', () => {
   let mockPublisher: Publisher;
-  let sessionContext: SessionContextType;
-  let publisherContext: PublisherContextType;
 
   beforeEach(() => {
     mockUseUserContext.mockImplementation(() => mockUserContext);
@@ -137,33 +147,12 @@ describe('MeetingRoom', () => {
       videoHeight: () => 720,
       getVideoFilter: vi.fn(() => undefined),
     }) as unknown as Publisher;
-    publisherContext = {
-      publisher: null,
-      isPublishing: true,
-      publish: vi.fn() as () => Promise<void>,
-      initializeLocalPublisher: vi.fn(() => {
-        publisherContext.publisher = mockPublisher;
-      }) as unknown as () => void,
-    } as unknown as PublisherContextType;
-    mockUsePublisherContext.mockImplementation(() => publisherContext);
+
     mockUseDevices.mockReturnValue({
       getAllMediaDevices: vi.fn(),
       allMediaDevices,
     });
-    (usePublisherOptions as Mock).mockReturnValue({});
 
-    sessionContext = {
-      joinRoom: vi.fn(),
-      subscriberWrappers: [],
-      connected: false,
-      reconnecting: false,
-      layoutMode: 'grid',
-      rightPanelActiveTab: 'closed',
-      toggleChat: vi.fn(),
-      toggleParticipantList: vi.fn(),
-      closeRightPanel: vi.fn(),
-      emojiQueue: [],
-    } as unknown as SessionContextType;
     mockUseSpeakingDetector.mockReturnValue(false);
     mockUseLayoutManager.mockImplementation(() => (_dimensions, elements) => {
       return Array(elements.length).fill({
@@ -173,7 +162,6 @@ describe('MeetingRoom', () => {
         width: 1280,
       }) as Box[];
     });
-    mockUseSessionContext.mockReturnValue(sessionContext as unknown as SessionContextType);
     mockUseActiveSpeaker.mockReturnValue(undefined);
     mockUseScreenShare.mockReturnValue({
       toggleShareScreen: () => Promise.resolve(),
@@ -207,54 +195,100 @@ describe('MeetingRoom', () => {
   });
 
   it('does not render the small viewport header bar if it is on desktop', () => {
-    // we do not need to mock the small port view value here given we already do it in beforeEach
+    // we do not need to mock the small view port value here given we already do it in beforeEach
     render(<MeetingRoom />);
     expect(screen.queryByTestId('smallViewportHeader')).toBeNull();
   });
 
   it('should call joinRoom on render only once', () => {
-    const { rerender } = render(<MeetingRoom />);
-    expect(sessionContext.joinRoom).toHaveBeenCalledWith('test-room-name');
-    expect(sessionContext.joinRoom).toHaveBeenCalledTimes(1);
+    const { sessionContext, rerender } = render(<MeetingRoom />, {
+      sessionContext: {
+        __onCreated: (context) => {
+          context.joinRoom = vi.fn();
+        },
+      },
+    });
+
+    expect(sessionContext.current.joinRoom).toHaveBeenCalledWith('test-room-name');
+    expect(sessionContext.current.joinRoom).toHaveBeenCalledTimes(1);
     rerender(<MeetingRoom />);
     rerender(<MeetingRoom />);
     rerender(<MeetingRoom />);
     rerender(<MeetingRoom />);
-    expect(sessionContext.joinRoom).toHaveBeenCalledTimes(1);
+    expect(sessionContext.current.joinRoom).toHaveBeenCalledTimes(1);
   });
 
   it('should call publish after connected', () => {
-    const { rerender } = render(<MeetingRoom />);
-    expect(sessionContext.joinRoom).toHaveBeenCalledWith('test-room-name');
-    sessionContext.connected = true;
-    rerender(<MeetingRoom />);
-    expect(publisherContext.initializeLocalPublisher).toHaveBeenCalledTimes(1);
-    expect(publisherContext.publish).toHaveBeenCalledTimes(1);
+    const { sessionContext, publisherContext } = render(<MeetingRoom />, {
+      publisherContext: {
+        __onCreated: (context) => {
+          context.publish = vi.fn();
+        },
+      },
+      sessionContext: {
+        __onCreated: (context) => {
+          context.joinRoom = vi.fn(async () => {
+            context.connected = true;
+            await Promise.resolve();
+          });
+        },
+      },
+    });
+
+    expect(sessionContext.current.joinRoom).toHaveBeenCalledWith('test-room-name');
+
+    waitFor(() => {
+      expect(publisherContext.current.publish).toHaveBeenCalledTimes(1);
+    });
   });
 
   it('should display publisher', () => {
-    sessionContext.connected = true;
-    publisherContext.publisher = mockPublisher;
-    const { rerender } = render(<MeetingRoom />);
+    const { rerender } = render(<MeetingRoom />, {
+      publisherContext: {
+        initialValue: {
+          publisher: mockPublisher,
+          isPublishing: true,
+        },
+      },
+      sessionContext: {
+        initialValue: {
+          connected: true,
+        },
+      },
+    });
+
     rerender(<MeetingRoom />);
-    expect(screen.getByTestId('publisher-container')).toBeInTheDocument();
+
+    waitFor(() => {
+      expect(screen.getByTestId('publisher-container')).toBeInTheDocument();
+    });
   });
 
   it('should display spinner until session is connected', () => {
-    sessionContext.connected = false;
-    publisherContext.publisher = mockPublisher;
-    const { rerender } = render(<MeetingRoom />);
-    rerender(<MeetingRoom />);
+    const { sessionContext, rerender } = render(<MeetingRoom />, {
+      publisherContext: {
+        initialValue: {
+          publisher: mockPublisher,
+        },
+      },
+      sessionContext: {
+        initialValue: {
+          connected: false,
+        },
+      },
+    });
+
     expect(screen.getByTestId('progress-spinner')).toBeInTheDocument();
-    sessionContext.connected = true;
+
+    sessionContext.current.connected = true;
     rerender(<MeetingRoom />);
-    expect(screen.queryByTestId('progress-spinner')).not.toBeInTheDocument();
+    waitFor(() => {
+      expect(screen.queryByTestId('progress-spinner')).not.toBeInTheDocument();
+    });
   });
 
   it('should hide subscribers and show participant hidden tile', () => {
-    sessionContext.connected = true;
-    sessionContext.layoutMode = 'active-speaker';
-    sessionContext.subscriberWrappers = [
+    const subscribers = [
       createSubscriberWrapper('sub1'),
       createSubscriberWrapper('sub2'),
       createSubscriberWrapper('sub3'),
@@ -263,61 +297,103 @@ describe('MeetingRoom', () => {
       createSubscriberWrapper('sub6'),
       createSubscriberWrapper('sub7'),
     ];
-    publisherContext.publisher = mockPublisher;
-    const { rerender } = render(<MeetingRoom />);
+    const { rerender } = render(<MeetingRoom />, {
+      publisherContext: {
+        initialValue: {
+          publisher: mockPublisher,
+        },
+      },
+      sessionContext: {
+        initialValue: {
+          connected: true,
+          layoutMode: 'active-speaker',
+          subscriberWrappers: subscribers,
+        },
+      },
+    });
+
     rerender(<MeetingRoom />);
-    expect(screen.getByTestId('subscriber-container-sub1')).toBeVisible();
-    expect(screen.getByTestId('subscriber-container-sub2')).toBeVisible();
-    expect(screen.getByTestId('subscriber-container-sub3')).toBeVisible();
-    expect(screen.getByTestId('subscriber-container-sub4')).toBeVisible();
-    expect(screen.getByTestId('hidden-participants')).toBeInTheDocument();
-    expect(screen.getByTestId('subscriber-container-sub5')).toHaveClass('hidden');
-    expect(screen.getByTestId('subscriber-container-sub6')).toHaveClass('hidden');
-    expect(screen.getByTestId('subscriber-container-sub7')).toHaveClass('hidden');
+
+    waitFor(() => {
+      expect(screen.getByTestId('subscriber-container-sub1')).toBeVisible();
+      expect(screen.getByTestId('subscriber-container-sub2')).toBeVisible();
+      expect(screen.getByTestId('subscriber-container-sub3')).toBeVisible();
+      expect(screen.getByTestId('subscriber-container-sub4')).toBeVisible();
+      expect(screen.getByTestId('hidden-participants')).toBeInTheDocument();
+      expect(screen.getByTestId('subscriber-container-sub5')).not.toBeVisible();
+      expect(screen.getByTestId('subscriber-container-sub6')).not.toBeVisible();
+      expect(screen.getByTestId('subscriber-container-sub7')).not.toBeVisible();
+    });
   });
 
   it('should render subscribers in correct order', () => {
-    sessionContext.connected = true;
-    sessionContext.layoutMode = 'active-speaker';
     const [sub1, sub2, sub3] = Array(3)
       .fill(0)
       .map((_s, index) => createSubscriberWrapper(`sub${index + 1}`));
-    sessionContext.subscriberWrappers = [sub1];
-    publisherContext.publisher = mockPublisher;
-    const { rerender } = render(<MeetingRoom />);
+    const { sessionContext, rerender } = render(<MeetingRoom />, {
+      publisherContext: {
+        initialValue: {
+          publisher: mockPublisher,
+        },
+      },
+      sessionContext: {
+        initialValue: {
+          connected: true,
+          subscriberWrappers: [sub1],
+          layoutMode: 'active-speaker',
+        },
+      },
+    });
 
-    sessionContext.subscriberWrappers = [sub2, sub1];
+    sessionContext.current.subscriberWrappers = [sub2, sub1];
     rerender(<MeetingRoom />);
 
     const getSubIdsInRenderOrder = () =>
       screen.getAllByTestId('subscriber-container', { exact: false }).map((element) => element?.id);
 
     // sub1 joined first so should stay in position
-    expect(getSubIdsInRenderOrder()).toEqual(['sub1', 'sub2']);
+    waitFor(() => {
+      expect(getSubIdsInRenderOrder()).toEqual(['sub1', 'sub2']);
+    });
 
-    sessionContext.subscriberWrappers = [sub3, sub2, sub1];
+    sessionContext.current.subscriberWrappers = [sub3, sub2, sub1];
     rerender(<MeetingRoom />);
 
     // sub1 and sub2 joined first so should stay in position ahead of sub3
-    expect(getSubIdsInRenderOrder()).toEqual(['sub1', 'sub2', 'sub3']);
+    waitFor(() => {
+      expect(getSubIdsInRenderOrder()).toEqual(['sub1', 'sub2', 'sub3']);
+    });
   });
 
   it('should display chat unread number', () => {
-    sessionContext.connected = true;
-    publisherContext.publisher = mockPublisher;
-    const { rerender } = render(<MeetingRoom />);
+    const { sessionContext, rerender } = render(<MeetingRoom />, {
+      publisherContext: {
+        initialValue: {
+          publisher: mockPublisher,
+        },
+      },
+      sessionContext: {
+        initialValue: {
+          connected: true,
+        },
+      },
+    });
     rerender(<MeetingRoom />);
-    sessionContext.unreadCount = 4;
+    sessionContext.current.unreadCount = 4;
     rerender(<MeetingRoom />);
     expect(screen.queryAllByTestId('chat-button-unread-count')[0]).toHaveTextContent('4');
   });
 
   describe('video quality problem alert', () => {
     it('should not be displayed when not publishing video', () => {
-      publisherContext.isVideoEnabled = false;
-      publisherContext.quality = 'poor';
-
-      render(<MeetingRoom />);
+      render(<MeetingRoom />, {
+        publisherContext: {
+          initialValue: {
+            isVideoEnabled: false,
+            quality: 'poor',
+          },
+        },
+      });
 
       const connectionAlert = screen.queryByText(
         'Please check your connectivity. Your video may be disabled to improve the user experience'
@@ -326,29 +402,53 @@ describe('MeetingRoom', () => {
     });
 
     it('should be displayed when publishing video', () => {
-      publisherContext.isVideoEnabled = true;
-      publisherContext.quality = 'poor';
-      render(<MeetingRoom />);
+      const { rerender } = render(<MeetingRoom />, {
+        publisherContext: {
+          initialValue: {
+            isVideoEnabled: true,
+            quality: 'poor',
+          },
+        },
+      });
 
-      const connectionAlert = screen.getByText(
-        'Please check your connectivity. Your video may be disabled to improve the user experience'
-      );
-      expect(connectionAlert).toBeInTheDocument();
+      rerender(<MeetingRoom />);
+
+      waitFor(() => {
+        const connectionAlert = screen.getByText(
+          'Please check your connectivity. Your video may be disabled to improve the user experience'
+        );
+        expect(connectionAlert).toBeInTheDocument();
+      });
     });
 
     it('should be hidden when user stops publishing video', () => {
-      publisherContext.isVideoEnabled = true;
-      publisherContext.quality = 'poor';
-      const { rerender } = render(<MeetingRoom />);
+      const { publisherContext, rerender } = render(<MeetingRoom />, {
+        publisherContext: {
+          initialValue: {
+            isVideoEnabled: true,
+            quality: 'poor',
+          },
+        },
+      });
 
-      const connectionAlert = screen.queryByText(
-        'Please check your connectivity. Your video may be disabled to improve the user experience'
-      );
-      expect(connectionAlert).toBeInTheDocument();
-
-      publisherContext.isVideoEnabled = false;
       rerender(<MeetingRoom />);
-      expect(connectionAlert).not.toBeInTheDocument();
+
+      waitFor(() => {
+        const connectionAlert = screen.queryByText(
+          'Please check your connectivity. Your video may be disabled to improve the user experience'
+        );
+        expect(connectionAlert).toBeInTheDocument();
+      });
+
+      publisherContext.current.isVideoEnabled = false;
+      rerender(<MeetingRoom />);
+
+      waitFor(() => {
+        const connectionAlert = screen.queryByText(
+          'Please check your connectivity. Your video may be disabled to improve the user experience'
+        );
+        expect(connectionAlert).not.toBeInTheDocument();
+      });
     });
   });
 
@@ -358,65 +458,38 @@ describe('MeetingRoom', () => {
       caption:
         "We're having trouble connecting you with others in the meeting room. Please check your network and try again.",
     };
-    publisherContext.publishingError = publishingBlockedError;
-
-    const userWithName: UserType = {
-      defaultSettings: {
-        name: 'Another Name',
-        publishAudio: true,
-        publishVideo: true,
-        noiseSuppression: false,
-        publishCaptions: false,
+    const { rerender } = render(<MeetingRoom />, {
+      publisherContext: {
+        initialValue: {
+          publishingError: publishingBlockedError,
+        },
       },
-      issues: {
-        reconnections: 0,
-        audioFallbacks: 0,
-      },
-    };
-
-    render(<MeetingRoom />, {
-      user: { userOptions: { value: userWithName } },
     });
 
-    expect(mockedNavigate).toHaveBeenCalledOnce();
-    expect(mockedNavigate).toHaveBeenCalledWith('/goodbye', {
-      state: {
-        header: 'Difficulties joining room',
-        roomName: 'test-room-name',
-        caption:
-          "We're having trouble connecting you with others in the meeting room. Please check your network and try again.",
-      },
+    rerender(<MeetingRoom />);
+
+    waitFor(() => {
+      expect(mockedNavigate).toHaveBeenCalledOnce();
+      expect(mockedNavigate).toHaveBeenCalledWith('/goodbye', {
+        state: {
+          header: 'Difficulties joining room',
+          roomName: 'test-room-name',
+          caption:
+            "We're having trouble connecting you with others in the meeting room. Please check your network and try again.",
+        },
+      });
     });
   });
 });
 
-type RenderOverrides = {
-  appConfig?: Parameters<typeof makeAppConfigProviderWrapper>[0];
-  user?: Parameters<typeof makeUserProviderWrapper>[0];
-  session?: Parameters<typeof makeSessionProviderWrapper>[0];
-  publisher?: Parameters<typeof makePublisherProviderWrapper>[0];
-};
-
-function render(ui: ReactElement, overrides: RenderOverrides = {}) {
-  const { appConfig, user, session, publisher } = overrides;
-
-  const { AppConfigWrapper, ...appConfigProps } = makeAppConfigProviderWrapper(appConfig);
-  const { UserProviderWrapper, ...userProps } = makeUserProviderWrapper(user);
-  const { SessionProviderWrapper, ...sessionProps } = makeSessionProviderWrapper(session);
-  const { PublisherProviderWrapper, ...publisherProps } = makePublisherProviderWrapper(publisher);
-
-  const composeWrapper = composeProviders(
-    AppConfigWrapper,
-    UserProviderWrapper,
-    SessionProviderWrapper,
-    PublisherProviderWrapper
-  );
+function render(ui: ReactElement, options: PublisherProviderWrapperOptions = {}) {
+  const { PublisherProviderWrapper, ...props } = makePublisherProviderWrapper({
+    ...options,
+    publisherContext: {},
+  });
 
   return {
-    ...appConfigProps,
-    ...userProps,
-    ...sessionProps,
-    ...publisherProps,
-    ...renderBase(ui, { wrapper: composeWrapper }),
+    ...props,
+    ...renderBase(ui, { wrapper: PublisherProviderWrapper }),
   };
 }

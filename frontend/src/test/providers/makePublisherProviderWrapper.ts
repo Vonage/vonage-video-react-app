@@ -6,8 +6,8 @@ import makeSessionProviderWrapper, {
 } from './makeSessionProviderWrapper';
 
 export type PublisherProviderWrapperOptions = {
-  publisherOptions?: GenericWrapperOptions<typeof PublisherProvider, typeof PublisherContext>;
-  sessionOptions?: SessionProviderWrapperOptions['sessionOptions'];
+  publisherContext?: GenericWrapperOptions<typeof PublisherProvider, typeof PublisherContext>;
+  sessionContext?: SessionProviderWrapperOptions['sessionOptions'];
   userOptions?: SessionProviderWrapperOptions['userOptions'];
   appConfigOptions?: SessionProviderWrapperOptions['appConfigOptions'];
 };
@@ -27,17 +27,16 @@ export type PublisherProviderWrapperOptions = {
  * @returns {object} The PublisherProvider wrapper and context getters.
  */
 function makePublisherProviderWrapper({
-  publisherOptions,
-  sessionOptions,
+  publisherContext: publisherOptions,
+  sessionContext: sessionOptions,
   userOptions,
   appConfigOptions,
 }: PublisherProviderWrapperOptions = {}) {
-  const { SessionProviderWrapper, sessionContext, userContext, appConfigContext } =
-    makeSessionProviderWrapper({
-      sessionOptions,
-      userOptions,
-      appConfigOptions,
-    });
+  const { SessionProviderWrapper, ...session } = makeSessionProviderWrapper({
+    sessionOptions,
+    userOptions,
+    appConfigOptions,
+  });
 
   const [PublisherProviderWrapper, publisherContext] = makeGenericProviderWrapper(
     PublisherProvider,
@@ -48,11 +47,9 @@ function makePublisherProviderWrapper({
   const composeWrapper = composeProviders(SessionProviderWrapper, PublisherProviderWrapper);
 
   return {
-    PublisherProviderWrapper: composeWrapper,
+    ...session,
     publisherContext,
-    sessionContext,
-    userContext,
-    appConfigContext,
+    PublisherProviderWrapper: composeWrapper,
   };
 }
 
