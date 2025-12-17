@@ -94,7 +94,7 @@ test.describe('participant pinning', () => {
       })
       .click();
 
-    await pageThree.getByTestId('CloseIcon').click();
+    await pageThree.getByTestId('right-panel-title').getByTestId('CloseIcon').click();
 
     const newUserTwoSubscriberRet = await userTwoSubscriber.boundingBox();
     const newPublisherRect = await publisher.boundingBox();

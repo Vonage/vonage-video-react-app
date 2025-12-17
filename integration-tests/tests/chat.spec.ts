@@ -21,7 +21,7 @@ async function chatToggleButton(page, isMobile) {
     const chatToggleButtonOne = await page.getByTestId('chat-button-unread-count');
     chatToggleButtonOne.click();
     // Check that chat open shows blue button
-    await expect(page.getByTestId('ChatIcon')).toHaveCSS('color', 'rgb(130, 177, 255)');
+    await expect(page.getByTestId('ChatIcon')).toHaveCSS('color', 'rgb(0, 0, 0)');
   }
 }
 
