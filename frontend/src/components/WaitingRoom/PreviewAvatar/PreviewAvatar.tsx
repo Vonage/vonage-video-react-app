@@ -1,5 +1,6 @@
-import { Avatar } from '@mui/material';
 import { ReactElement } from 'react';
+import Avatar from '@ui/Avatar';
+import useTheme from '@ui/theme';
 import useWindowWidth from '../../../hooks/useWindowWidth';
 import AvatarInitials from '../../AvatarInitials';
 import useIsSmallViewport from '../../../hooks/useIsSmallViewport';
@@ -28,6 +29,7 @@ const PreviewAvatar = ({
   isVideoEnabled,
   isVideoLoading,
 }: PreviewAvatarProps): ReactElement | null => {
+  const theme = useTheme();
   const smallDisplayDimensions = useWindowWidth() * 0.46;
   const isSmallViewport = useIsSmallViewport();
   const height = isSmallViewport ? smallDisplayDimensions : 328;
@@ -50,7 +52,7 @@ const PreviewAvatar = ({
   ) : (
     <Avatar
       sx={{
-        bgcolor: '#4caf50',
+        bgcolor: theme.colors.success,
         position: 'absolute',
         margin: 'auto',
         width: '174px',

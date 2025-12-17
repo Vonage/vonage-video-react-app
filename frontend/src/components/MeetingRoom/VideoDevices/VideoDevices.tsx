@@ -1,15 +1,17 @@
 import { useState, useEffect, MouseEvent, ReactElement } from 'react';
-import { Box, MenuItem, MenuList, Typography } from '@mui/material';
-import CheckIcon from '@mui/icons-material/Check';
-import VideocamIcon from '@mui/icons-material/Videocam';
 import { Device } from '@vonage/client-sdk-video';
 import { useTranslation } from 'react-i18next';
 import useAppConfig from '@Context/AppConfig/hooks/useAppConfig';
-import useCustomTheme from '@Context/Theme';
-import useDevices from '../../../hooks/useDevices';
-import usePublisherContext from '../../../hooks/usePublisherContext';
-import { setStorageItem, STORAGE_KEYS } from '../../../utils/storage';
-import cleanAndDedupeDeviceLabels from '../../../utils/cleanAndDedupeDeviceLabels';
+import useTheme from '@ui/theme';
+import useDevices from '@hooks/useDevices';
+import usePublisherContext from '@hooks/usePublisherContext';
+import { setStorageItem, STORAGE_KEYS } from '@utils/storage';
+import cleanAndDedupeDeviceLabels from '@utils/cleanAndDedupeDeviceLabels';
+import Box from '@ui/Box';
+import Typography from '@ui/Typography';
+import MenuList from '@ui/MenuList';
+import MenuItem from '@ui/MenuItem';
+import VividIcon from '@components/VividIcon';
 
 export type VideoDevicesProps = {
   handleToggle: () => void;
@@ -25,7 +27,7 @@ export type VideoDevicesProps = {
  */
 const VideoDevices = ({ handleToggle }: VideoDevicesProps): ReactElement | false => {
   const { t } = useTranslation();
-  const theme = useCustomTheme();
+  const theme = useTheme();
   const { isPublishing, publisher } = usePublisherContext();
 
   const allowDeviceSelection = useAppConfig(
@@ -76,10 +78,11 @@ const VideoDevices = ({ handleToggle }: VideoDevicesProps): ReactElement | false
             ml: 2,
             mt: 1,
             mb: 0.5,
+            color: theme.colors.tertiary,
           }}
         >
-          <VideocamIcon sx={{ fontSize: 24, mr: 2 }} />
-          <Typography>{t('devices.video.camera.full')}</Typography>
+          <VividIcon name="video-line" customSize={-5} />
+          <Typography sx={{ ml: 2 }}>{t('devices.video.camera.full')}</Typography>
         </Box>
         <MenuList id="split-button-menu">
           {options.map((option) => {
@@ -93,29 +96,32 @@ const VideoDevices = ({ handleToggle }: VideoDevicesProps): ReactElement | false
                   backgroundColor: 'transparent',
                   '&.Mui-selected': {
                     backgroundColor: 'transparent',
-                    color: theme.colors.background,
+                    color: theme.colors.onBackground,
                   },
                   '&:hover': {
-                    backgroundColor: theme.colors.primaryHover,
+                    backgroundColor: theme.colors.background,
                   },
                 }}
               >
                 <Box
                   key={`${option.deviceId}-video-device`}
                   sx={{
+                    color: isSelected ? theme.colors.textPrimary : theme.colors.textSecondary,
                     display: 'flex',
                     mb: 0.5,
                     overflow: 'hidden',
                   }}
                 >
                   {isSelected ? (
-                    <CheckIcon
-                      sx={{
-                        color: theme.colors.background,
-                        fontSize: 24,
-                        mr: 2,
-                      }}
-                    />
+                    <Box key={'video-devices-check'} sx={{ mr: 2 }}>
+                      <VividIcon
+                        name="check-line"
+                        customSize={-6}
+                        sx={{
+                          color: isSelected ? theme.colors.textPrimary : theme.colors.textSecondary,
+                        }}
+                      />
+                    </Box>
                   ) : (
                     <Box sx={{ width: 40 }} /> // Placeholder when CheckIcon is not displayed
                   )}

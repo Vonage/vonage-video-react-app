@@ -1,9 +1,10 @@
-import { Button } from '@mui/material';
-import { MouseEvent, ReactElement, TouchEvent } from 'react';
+import VividIcon from '@components/VividIcon';
+import Button from '@ui/Button';
+import { ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom';
 
 export type ReenterRoomButtonProps = {
-  handleReenter: (event: MouseEvent<HTMLButtonElement> | TouchEvent<HTMLButtonElement>) => void;
   roomName: string;
 };
 
@@ -12,29 +13,25 @@ export type ReenterRoomButtonProps = {
  *
  * This component returns a button that takes a user back to the meeting.
  * @param {ReenterRoomButtonProps} props - the props for this component.
- *  @property {Function} handleReenter - the function that handles the action of re-entering.
  *  @property {string} roomName - the name of the room to rejoin.
  * @returns {ReactElement} - the re-enter room button or an empty string if the room does not exist.
  */
-const ReenterRoomButton = ({
-  handleReenter,
-  roomName,
-}: ReenterRoomButtonProps): ReactElement | string => {
+const ReenterRoomButton = ({ roomName }: ReenterRoomButtonProps): ReactElement | string => {
   const { t } = useTranslation();
+  const navigate = useNavigate();
 
+  const handleReenter = () => {
+    navigate(`/waiting-room/${roomName}`);
+  };
   return (
     roomName && (
       <Button
-        variant="outlined"
-        className="h-12"
+        sx={{ mb: 3 }}
+        startIcon={<VividIcon name="enter-line" customSize={-5} />}
+        variant="contained"
         data-testid="reenterButton"
-        sx={{
-          textTransform: 'none',
-          fontSize: '1rem',
-          marginRight: '8px',
-          marginBottom: '16px',
-        }}
         onClick={handleReenter}
+        fullWidth
       >
         {t('goodBye.reEnter')}
       </Button>

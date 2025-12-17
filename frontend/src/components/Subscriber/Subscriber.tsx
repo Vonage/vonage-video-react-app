@@ -11,6 +11,7 @@ import PinButton from '../MeetingRoom/PinButton';
 import useSessionContext from '../../hooks/useSessionContext';
 import isMouseEventInsideBox from '../../utils/isMouseEventInsideBox';
 import ScreenshareVideoTile from '../MeetingRoom/ScreenshareVideoTile';
+import useTheme from '@ui/theme';
 
 export type SubscriberProps = {
   subscriberWrapper: SubscriberWrapper;
@@ -38,6 +39,7 @@ const Subscriber = ({
   isActiveSpeaker,
 }: SubscriberProps): ReactElement => {
   const { isMaxPinned, pinSubscriber } = useSessionContext();
+  const theme = useTheme();
   const { isPinned, subscriber } = subscriberWrapper;
   const isScreenShare = subscriber?.stream?.videoType === 'screen';
   const subRef = useRef<HTMLDivElement>(null);
@@ -55,17 +57,18 @@ const Subscriber = ({
       const { element } = subscriberWrapper;
       // eslint-disable-next-line react-hooks/immutability
       element.id = subscriberWrapper.id;
-      element.classList.add(
-        'video__element',
-        'w-full',
-        'h-full',
-        'absolute',
-        'rounded-xl',
-        'object-contain'
-      );
+      element.classList.add('video__element');
+
+      // Apply MUI-style inline styles instead of Tailwind classes
+      element.style.width = '100%';
+      element.style.height = '100%';
+      element.style.position = 'absolute';
+      element.style.borderRadius = theme.shapes.borderRadiusLarge;
+      element.style.objectFit = 'contain';
+
       subRef.current.appendChild(element);
     }
-  }, [subscriberWrapper, isScreenShare]);
+  }, [subscriberWrapper, isScreenShare, theme.shapes.borderRadiusLarge]);
 
   const handlePinClick = (clickEvent: MouseEvent<HTMLButtonElement>) => {
     pinSubscriber(subscriberWrapper.id);
@@ -88,8 +91,19 @@ const Subscriber = ({
   const initials = subscriberWrapper.subscriber?.stream?.initials;
   const username = subscriberWrapper.subscriber?.stream?.name ?? '';
   const hasAudio = subscriberWrapper.subscriber.stream?.hasAudio;
-  const audioIndicatorStyle =
-    'rounded-xl absolute top-3 right-3 bg-darkGray-55 h-6 w-6 items-center justify-center flex m-auto';
+  const audioIndicatorStyle: React.CSSProperties = {
+    borderRadius: theme.shapes.borderRadiusLarge,
+    position: 'absolute',
+    top: '0.75rem',
+    right: '0.75rem',
+    backgroundColor: theme.colors.darkBackground,
+    height: '1.5rem',
+    width: '1.5rem',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    margin: 'auto',
+  };
 
   return isScreenShare ? (
     <ScreenshareVideoTile
@@ -127,7 +141,7 @@ const Subscriber = ({
         hasAudio={hasAudio}
         stream={subscriber.stream}
         indicatorStyle={audioIndicatorStyle}
-        indicatorColor="white"
+        indicatorColor={theme.colors.accent}
         participantName={username}
       />
 

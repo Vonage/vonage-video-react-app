@@ -5,7 +5,7 @@ import MenuItem from '@ui/MenuItem';
 import FormControl from '@ui/FormControl';
 import Select from '@ui/Select';
 import { SelectChangeEvent } from '@ui/SelectChangeEvent';
-import useCustomTheme from '@Context/Theme';
+import useTheme from '@ui/theme';
 import { LanguageOption, LanguageSelectorProps } from './LanguageSelector.types';
 import useIsSmallViewport from '../../hooks/useIsSmallViewport';
 import VividIcon from '../VividIcon/VividIcon';
@@ -19,6 +19,14 @@ const languageOptions: LanguageOption[] = [
   { code: 'es-MX', name: 'Español (México)', flag: 'flag-mexico' },
 ];
 
+const ChevronIcon = ({ color, ...props }: { color: string } & Record<string, unknown>) => (
+  <VividIcon name="chevron-down-line" customSize={-5} sx={{ color }} {...props} />
+);
+
+const SelectIconComponent =
+  (themeColor: string) =>
+  (props: Record<string, unknown>): ReactElement => <ChevronIcon color={themeColor} {...props} />;
+
 /**
  * LanguageSelector Component
  * A dropdown component that allows users to select their preferred language.
@@ -29,7 +37,7 @@ const languageOptions: LanguageOption[] = [
  */
 const LanguageSelector = ({ showFlag = true }: LanguageSelectorProps): ReactElement => {
   const { i18n } = useTranslation();
-  const theme = useCustomTheme();
+  const theme = useTheme();
   const isSmallViewport = useIsSmallViewport();
 
   const supportedLanguages = languageOptions.filter((option) =>
@@ -48,6 +56,7 @@ const LanguageSelector = ({ showFlag = true }: LanguageSelectorProps): ReactElem
       <Select
         value={currentLanguage}
         onChange={handleLanguageChange}
+        IconComponent={SelectIconComponent(theme.colors.textSecondary)}
         displayEmpty
         sx={{
           '& .MuiOutlinedInput-notchedOutline': {

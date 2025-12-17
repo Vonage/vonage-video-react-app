@@ -1,5 +1,8 @@
 import { useRef, useState, useEffect, ReactElement } from 'react';
-import { Stack } from '@mui/material';
+import Box from '@ui/Box';
+import Stack from '@ui/Stack';
+import useTheme from '@ui/theme';
+import { VIDEO_CONTAINER_HEIGHT_WR } from '@utils/constants';
 import MicButton from '../MicButton';
 import CameraButton from '../CameraButton';
 import VideoLoading from '../VideoLoading';
@@ -13,6 +16,7 @@ import VignetteEffect from '../VignetteEffect';
 import useIsSmallViewport from '../../../hooks/useIsSmallViewport';
 import BackgroundEffectsDialog from '../BackgroundEffects/BackgroundEffectsDialog';
 import BackgroundEffectsButton from '../BackgroundEffects/BackgroundEffectsButton';
+import backgroundEffectsDialog$ from '@Context/BackgroundEffectsDialog';
 
 export type VideoContainerProps = {
   username: string;
@@ -30,12 +34,13 @@ export type VideoContainerProps = {
 const VideoContainer = ({ username }: VideoContainerProps): ReactElement => {
   const containerRef = useRef<HTMLDivElement>(null);
   const [isVideoLoading, setIsVideoLoading] = useState<boolean>(true);
-  const [isBackgroundEffectsOpen, setIsBackgroundEffectsOpen] = useState<boolean>(false);
+  const [{ isOpen: isBackgroundEffectsOpen }, { open, close }] = backgroundEffectsDialog$.use();
   const { user } = useUserContext();
   const { publisherVideoElement, isVideoEnabled, isAudioEnabled, speechLevel } =
     usePreviewPublisherContext();
   const initials = getInitials(username);
   const isSmallViewport = useIsSmallViewport();
+  const theme = useTheme();
 
   useEffect(() => {
     if (publisherVideoElement && containerRef.current && isVideoEnabled) {
@@ -45,33 +50,41 @@ const VideoContainer = ({ username }: VideoContainerProps): ReactElement => {
       // eslint-disable-next-line react-hooks/immutability
       myVideoElement.title = 'publisher-preview';
       // eslint-disable-next-line react-hooks/immutability
-      myVideoElement.style.borderRadius = isSmallViewport ? '0px' : '12px';
-      myVideoElement.style.height = isSmallViewport ? '' : '328px';
+      myVideoElement.style.borderRadius = isSmallViewport ? '0px' : theme.shapes.borderRadiusLarge;
+      myVideoElement.style.height = isSmallViewport ? '' : `${VIDEO_CONTAINER_HEIGHT_WR}px`;
       myVideoElement.style.width = isSmallViewport ? '100dvw' : '584px';
       myVideoElement.style.marginLeft = 'auto';
       myVideoElement.style.marginRight = 'auto';
       myVideoElement.style.transform = 'scaleX(-1)';
       myVideoElement.style.objectFit = 'contain';
       myVideoElement.style.aspectRatio = '16 / 9';
-      myVideoElement.style.boxShadow =
-        '0 1px 2px 0 rgba(60, 64, 67, .3), 0 1px 3px 1px rgba(60, 64, 67, .15)';
 
       waitUntilPlaying(publisherVideoElement).then(() => {
         setIsVideoLoading(false);
       });
     }
-  }, [isSmallViewport, publisherVideoElement, isVideoEnabled]);
+  }, [isSmallViewport, publisherVideoElement, isVideoEnabled, theme.shapes.borderRadiusLarge]);
 
   return (
-    <div
-      className="relative flex aspect-video w-[584px] max-w-full flex-col items-center justify-center bg-black sm:h-[328px] md:rounded-xl"
-      // this was added because overflow: hidden causes issues with rendering
-      // see https://stackoverflow.com/questions/77748631/element-rounded-corners-leaking-out-to-front-when-using-overflow-hidden
-      style={{ WebkitMask: 'linear-gradient(#000 0 0)' }}
+    <Box
+      sx={{
+        position: 'relative',
+        display: 'flex',
+        aspectRatio: '16 / 9',
+        width: { xs: '100dvw', sm: '583px' },
+        maxWidth: '100%',
+        height: { sm: `${VIDEO_CONTAINER_HEIGHT_WR}px` },
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
+        backgroundColor: theme.colors.secondary,
+        borderRadius: { xs: 0, sm: '12px' },
+        WebkitMask: `linear-gradient(${theme.colors.secondary} 0 0)`,
+      }}
     >
-      <div
+      <Box
         ref={containerRef}
-        style={{ display: isBackgroundEffectsOpen ? 'none' : 'block' }}
+        sx={{ display: isBackgroundEffectsOpen ? 'none' : 'block' }}
         data-video-container
       />
       <VignetteEffect />
@@ -83,26 +96,39 @@ const VideoContainer = ({ username }: VideoContainerProps): ReactElement => {
         isVideoLoading={isVideoLoading}
       />
       {!isVideoLoading && (
-        <div className="absolute inset-x-0 bottom-[5%] flex h-fit items-center justify-center">
+        <Box
+          sx={{
+            position: 'absolute',
+            left: 0,
+            right: 0,
+            bottom: '5%',
+            display: 'flex',
+            height: 'fit-content',
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}
+        >
           {isAudioEnabled && (
-            <div className="absolute left-6 top-8">
+            <Box sx={{ position: 'absolute', left: '16px', top: '12px' }}>
               <VoiceIndicatorIcon publisherAudioLevel={speechLevel} size={24} />
-            </div>
+            </Box>
           )}
-          <Stack direction="row" spacing={2}>
+          <Stack direction="row" spacing={1.5}>
             <MicButton />
             <CameraButton />
           </Stack>
-          <div className="absolute right-[20px]">
-            <BackgroundEffectsButton onClick={() => setIsBackgroundEffectsOpen(true)} />
-            <BackgroundEffectsDialog
-              isBackgroundEffectsOpen={isBackgroundEffectsOpen}
-              setIsBackgroundEffectsOpen={setIsBackgroundEffectsOpen}
-            />
-          </div>
-        </div>
+          <Box sx={{ position: 'absolute', right: '20px' }}>
+            <BackgroundEffectsButton onClick={open} />
+            {isBackgroundEffectsOpen && (
+              <BackgroundEffectsDialog
+                isBackgroundEffectsOpen={true}
+                setIsBackgroundEffectsOpen={close}
+              />
+            )}
+          </Box>
+        </Box>
       )}
-    </div>
+    </Box>
   );
 };
 

@@ -1,7 +1,8 @@
-import { Badge } from '@mui/material';
+import Badge from '@ui/Badge';
 import { ForwardedRef, forwardRef, ReactElement } from 'react';
 import useSessionContext from '@hooks/useSessionContext';
 import useIsMeetingChatAllowed from '@Context/AppConfig/hooks/useIsMeetingChatAllowed';
+import useTheme from '@ui/theme';
 
 export type UnreadMessagesBadgeProps = {
   children: ReactElement;
@@ -22,6 +23,7 @@ const UnreadMessagesBadge = forwardRef(function UnreadMessagesBadge(
   ref: ForwardedRef<HTMLSpanElement>
 ) {
   const isMeetingChatAllowed = useIsMeetingChatAllowed();
+  const theme = useTheme();
 
   const { children, isToolbarOverflowMenuOpen, ...rest } = props;
   const { unreadCount } = useSessionContext();
@@ -36,8 +38,8 @@ const UnreadMessagesBadge = forwardRef(function UnreadMessagesBadge(
       invisible={isInvisible}
       sx={{
         '& .MuiBadge-badge': {
-          color: 'white',
-          backgroundColor: '#FA7B17',
+          color: theme.colors.onWarning,
+          backgroundColor: theme.colors.warning,
         },
         marginRight: '12px',
       }}

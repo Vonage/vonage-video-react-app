@@ -1,4 +1,5 @@
-import { Chip } from '@mui/material';
+import useTheme from '@ui/theme';
+import Chip from '@ui/Chip';
 import { Box } from 'opentok-layout-js';
 import { ReactElement } from 'react';
 
@@ -15,17 +16,24 @@ export type ScreenShareNameDisplayProps = {
  * @returns {ReactElement} The ScreenShareNameDisplay component.
  */
 const ScreenShareNameDisplay = ({ name, box }: ScreenShareNameDisplayProps): ReactElement => {
+  const theme = useTheme();
   const safeMaxWidth = typeof box.width === 'number' && Number.isFinite(box.width) ? box.width : 0;
+
   return (
     <Chip
       label={name}
       size="small"
       sx={{
-        color: 'white',
-        backgroundColor: 'rgba(60, 64, 67, 0.55)',
+        position: 'absolute',
+        bottom: '10px',
+        left: '10px',
+        overflow: 'hidden',
+        textOverflow: 'ellipsis',
+        whiteSpace: 'nowrap',
+        color: theme.colors.onDarkGrey,
+        backgroundColor: theme.colors.darkGreyOpacity,
         maxWidth: Math.max(0, safeMaxWidth - 32),
       }}
-      className="absolute bottom-[10px] left-[10px] truncate text-sm md:text-lg"
     />
   );
 };

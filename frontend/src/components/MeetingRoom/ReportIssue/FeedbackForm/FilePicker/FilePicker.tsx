@@ -1,9 +1,14 @@
 import { ChangeEvent, useRef, useState, ReactElement } from 'react';
-import { Button, IconButton, Tooltip, Typography } from '@mui/material';
-import { Delete } from '@mui/icons-material';
 import { useTranslation } from 'react-i18next';
+import Box from '@ui/Box';
 import captureScreenshot from '../../../../../utils/captureScreenshot';
-import { isMobile } from '../../../../../utils/util';
+import { isMobile } from '@utils/util';
+import Button from '@ui/Button';
+import IconButton from '@ui/IconButton';
+import Tooltip from '@ui/Tooltip';
+import Typography from '@ui/Typography';
+import useTheme from '@ui/theme';
+import VividIcon from '@components/VividIcon';
 
 // Setting the maximum file size to 20MB
 const maxFileSize = 2e7;
@@ -25,6 +30,7 @@ const FilePicker = ({
   const [imageSrc, setImageSrc] = useState<string>('');
   const imageRef = useRef<HTMLImageElement | null>(null);
   const [maximumSizeError, setMaximumSizeError] = useState<boolean>(false);
+  const theme = useTheme();
 
   const checkIfSizeAllowed = (file: File) => {
     if (file.size > maxFileSize) {
@@ -75,22 +81,25 @@ const FilePicker = ({
     <>
       {imageSrc && (
         <Typography
+          variant="subtitle1"
           sx={{
-            marginBottom: '24px',
+            mt: 2,
+            mb: maximumSizeError ? 0 : 2,
             textAlign: 'left',
           }}
         >
           {t('filePicker.attachedScreenshot')}
         </Typography>
       )}
-      <div className="my-2">
+      <Box sx={{ my: 1 }}>
         {maximumSizeError && (
           <Typography
-            color="error"
+            color={theme.colors.error}
             sx={{
-              marginBottom: '6px',
+              mb: 0.75,
               textAlign: 'left',
             }}
+            variant="body2"
           >
             {t('filePicker.sizeLimit')}
           </Typography>
@@ -119,8 +128,6 @@ const FilePicker = ({
               component="label"
             >
               {t('filePicker.addScreenshot')}
-              {/*
-               */}
               <input
                 accept=".jpg, .jpeg, .png, .gif"
                 name="upload"
@@ -131,39 +138,48 @@ const FilePicker = ({
             </Button>
           </>
         ) : (
-          <div className="relative flex">
-            <div className="relative">
-              <img
+          <Box sx={{ position: 'relative', display: 'flex' }}>
+            <Box sx={{ position: 'relative' }}>
+              <Box
+                component="img"
                 alt="screenshot"
                 width={100}
                 height={80}
                 ref={imageRef}
                 src={imageSrc}
-                className="size-full object-cover"
+                sx={{
+                  width: '100%',
+                  height: '100%',
+                  objectFit: 'cover',
+                }}
               />
-              <Tooltip title={t('filePicker.delete')}>
+              <Tooltip arrow title={t('filePicker.delete')}>
                 <IconButton
                   data-testid="delete-screenshot"
                   onClick={handleDeleteFile}
                   sx={{
                     position: 'absolute',
                     top: 0,
-                    right: 0,
+                    right: 10,
                     transform: 'translate(50%, -50%)',
                     borderRadius: '50%',
-                    backgroundColor: 'rgb(69,71,70)',
+                    backgroundColor: theme.colors.tertiary,
                     '&:hover': {
-                      backgroundColor: 'rgb(99,99,99)',
+                      backgroundColor: theme.colors.tertiaryHover,
                     },
                   }}
                 >
-                  <Delete sx={{ color: 'rgb(233,186,183)' }} />
+                  <VividIcon
+                    customSize={-6}
+                    name="delete-solid"
+                    sx={{ color: theme.colors.onTertiary }}
+                  />
                 </IconButton>
               </Tooltip>
-            </div>
-          </div>
+            </Box>
+          </Box>
         )}
-      </div>
+      </Box>
     </>
   );
 };

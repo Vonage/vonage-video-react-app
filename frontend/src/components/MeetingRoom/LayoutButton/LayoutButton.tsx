@@ -1,10 +1,10 @@
-import ViewSidebarIcon from '@mui/icons-material/ViewSidebar';
-import Tooltip from '@mui/material/Tooltip';
-import WindowIcon from '@mui/icons-material/Window';
 import { ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
 import useSessionContext from '../../../hooks/useSessionContext';
 import ToolbarButton from '../ToolbarButton';
+import Tooltip from '@ui/Tooltip';
+import VividIcon from '@components/VividIcon';
+import useTheme from '@ui/theme';
 
 export type LayoutButtonProps = {
   isScreenSharePresent: boolean;
@@ -31,7 +31,7 @@ const LayoutButton = ({
   const { layoutMode, setLayoutMode } = useSessionContext();
   const isGrid = layoutMode === 'grid';
   const isDisabled = isScreenSharePresent || isPinningPresent;
-
+  const theme = useTheme();
   const handleClick = () => {
     if (isDisabled) {
       return;
@@ -56,14 +56,23 @@ const LayoutButton = ({
         data-testid="layout-button"
         icon={
           !isGrid ? (
-            <ViewSidebarIcon className={isDisabled ? 'text-gray-500' : 'text-white'} />
+            <VividIcon
+              name="layout-2-solid"
+              customSize={-5}
+              data-testid="ViewSidebarIcon"
+              sx={{ color: isDisabled ? theme.colors.disabled : theme.colors.onSecondary }}
+            />
           ) : (
-            <WindowIcon className={isDisabled ? 'text-gray-500' : 'text-white'} />
+            <VividIcon
+              name="apps-solid"
+              customSize={-5}
+              data-testid="ViewSidebarIcon"
+              sx={{ color: isDisabled ? theme.colors.disabled : theme.colors.onSecondary }}
+            />
           )
         }
         sx={{
           cursor: isDisabled ? 'not-allowed' : 'pointer',
-          // on the small view port devices we need to align the button
           marginTop: isOverflowButton ? '0px' : '4px',
         }}
         isOverflowButton={isOverflowButton}

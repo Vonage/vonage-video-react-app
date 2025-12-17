@@ -1,7 +1,12 @@
-import { Dialog, DialogContent, DialogTitle, IconButton } from '@mui/material';
-import CloseIcon from '@mui/icons-material/Close';
 import { ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
+import Dialog from '@ui/Dialog';
+import DialogTitle from '@ui/DialogTitle';
+import IconButton from '@ui/IconButton';
+import DialogContent from '@ui/DialogContent';
+import useTheme from '@ui/theme';
+import VividIcon from '@components/VividIcon';
+import Typography from '@ui/Typography';
 import BackgroundEffectsLayout from '../../../BackgroundEffects/BackgroundEffectsLayout';
 
 export type BackgroundEffectsDialogProps = {
@@ -26,25 +31,35 @@ const BackgroundEffectsDialog = ({
     setIsBackgroundEffectsOpen(false);
   };
   const { t } = useTranslation();
+  const theme = useTheme();
 
   return (
-    <Dialog open={isBackgroundEffectsOpen} onClose={handleClose} maxWidth="lg" fullWidth>
-      <DialogTitle sx={{ m: 0, p: 2 }}>
-        {t('backgroundEffects.title')}
+    <Dialog open={isBackgroundEffectsOpen} onClose={handleClose} maxWidth="md" fullWidth>
+      <DialogTitle sx={{ m: 0, p: 2, pl: 3, pt: 3, backgroundColor: theme.colors.surface }}>
+        <Typography
+          component="div"
+          variant="h5"
+          sx={{
+            fontWeight: theme.typography.weight['body-base'].value,
+            color: theme.colors.textSecondary,
+          }}
+        >
+          {t('backgroundEffects.title')}
+        </Typography>
         <IconButton
           aria-label={t('button.close')}
           onClick={handleClose}
           sx={{
             position: 'absolute',
-            right: 8,
-            top: 8,
-            color: (theme) => theme.palette.grey[500],
+            right: 16,
+            top: 16,
+            color: theme.colors.secondary,
           }}
         >
-          <CloseIcon />
+          <VividIcon name="close-line" customSize={-5} />
         </IconButton>
       </DialogTitle>
-      <DialogContent>
+      <DialogContent sx={{ backgroundColor: theme.colors.surface }}>
         <BackgroundEffectsLayout
           mode="waiting"
           isOpen={isBackgroundEffectsOpen}

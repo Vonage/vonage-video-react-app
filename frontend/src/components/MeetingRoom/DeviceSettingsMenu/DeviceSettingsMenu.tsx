@@ -1,19 +1,19 @@
-import { ClickAwayListener } from '@mui/material';
-import Grow from '@mui/material/Grow';
-import Paper from '@mui/material/Paper';
-import Popper from '@mui/material/Popper';
 import { ReactElement, RefObject, Dispatch, SetStateAction } from 'react';
 import { hasMediaProcessorSupport } from '@vonage/client-sdk-video';
 import useAppConfig from '@Context/AppConfig/hooks/useAppConfig';
-import useCustomTheme from '@Context/Theme';
-import InputDevices from '../InputDevices';
-import OutputDevices from '../OutputDevices';
+import useTheme from '@ui/theme';
+import InputDevices from '../InputAudioDevices';
+import OutputDevices from '../OutputAudioDevices';
 import ReduceNoiseTestSpeakers from '../ReduceNoiseTestSpeakers';
 import useDropdownResizeObserver from '../../../hooks/useDropdownResizeObserver';
 import VideoDevices from '../VideoDevices';
 import DropdownSeparator from '../DropdownSeparator';
 import VideoDevicesOptions from '../VideoDevicesOptions';
-import type { PopperChildrenProps } from '@mui/material/Popper/BasePopper.types';
+import Popper from '@ui/Popper';
+import Grow from '@ui/Grow';
+import ClickAwayListener from '@ui/ClickAwayListener';
+import Paper from '@ui/Paper';
+import Box from '@ui/Box';
 
 export type DeviceSettingsMenuProps = {
   deviceType: 'audio' | 'video';
@@ -55,7 +55,7 @@ const DeviceSettingsMenu = ({
   const allowBackgroundEffects = useAppConfig(
     ({ videoSettings }) => videoSettings.allowBackgroundEffects
   );
-  const theme = useCustomTheme();
+  const theme = useTheme();
 
   const isAudio = deviceType === 'audio';
   const shouldDisplayBackgroundEffects = hasMediaProcessorSupport() && allowBackgroundEffects;
@@ -100,17 +100,17 @@ const DeviceSettingsMenu = ({
       disablePortal
       placement="bottom-start"
     >
-      {({ TransitionProps, placement }: PopperChildrenProps) => (
+      {({ TransitionProps, placement }) => (
         <Grow
           {...TransitionProps}
           style={{ transformOrigin: placement === 'bottom' ? 'center top' : 'center bottom' }}
         >
-          <div className="text-left font-normal">
+          <Box sx={{ textAlign: 'left', fontWeight: 'normal' }}>
             <ClickAwayListener onClickAway={handleClose}>
               <Paper
                 sx={(t) => ({
-                  backgroundColor: theme.colors.secondary,
-                  color: theme.colors.onPrimary,
+                  backgroundColor: theme.colors.surface,
+                  color: theme.colors.onSurface,
                   padding: { xs: 1, sm: 2 },
                   borderRadius: 2,
                   zIndex: 1,
@@ -135,7 +135,7 @@ const DeviceSettingsMenu = ({
                 {renderSettingsMenu()}
               </Paper>
             </ClickAwayListener>
-          </div>
+          </Box>
         </Grow>
       )}
     </Popper>

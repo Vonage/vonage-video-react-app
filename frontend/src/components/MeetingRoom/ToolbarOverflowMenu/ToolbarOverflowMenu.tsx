@@ -1,4 +1,3 @@
-import { ClickAwayListener, Portal, Box, Grow } from '@mui/material';
 import { Dispatch, ReactElement, SetStateAction } from 'react';
 import ArchivingButton from '../ArchivingButton';
 import CaptionsButton from '../CaptionsButton';
@@ -11,6 +10,11 @@ import useSessionContext from '../../../hooks/useSessionContext';
 import ScreenSharingButton from '../../ScreenSharingButton';
 import getOverflowMenuButtons from '../../../utils/getOverflowMenuButtons';
 import isReportIssueEnabled from '../../../utils/isReportIssueEnabled';
+import Box from '@ui/Box';
+import ClickAwayListener from '@ui/ClickAwayListener';
+import Grow from '@ui/Grow';
+import Portal from '@ui/Portal';
+import useTheme from '@ui/theme';
 
 export type CaptionsState = {
   isUserCaptionsEnabled: boolean;
@@ -65,6 +69,7 @@ const ToolbarOverflowMenu = ({
   const participantCount =
     subscriberWrappers.filter(({ isScreenshare }) => !isScreenshare).length + 1;
   const isPinningPresent = subscriberWrappers.some((subWrapper) => subWrapper.isPinned);
+  const theme = useTheme();
 
   const closeMenuWrapper = (onClick?: () => void) => () => {
     if (onClick) {
@@ -133,8 +138,8 @@ const ToolbarOverflowMenu = ({
           <Box
             data-testid="toolbar-overflow-menu"
             sx={{
-              backgroundColor: '#272c2f',
-              color: '#fff',
+              backgroundColor: theme.colors.darkGreyOpacity,
+              color: theme.colors.onDarkGrey,
               padding: { xs: 1 },
               borderRadius: 2,
               zIndex: 1,

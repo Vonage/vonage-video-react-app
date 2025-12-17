@@ -1,43 +1,38 @@
-import {
-  Box,
-  Button,
-  CircularProgress,
-  InputAdornment,
-  TextField,
-  Typography,
-} from '@mui/material';
-import { ChangeEvent, ReactElement, useState } from 'react';
-import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
-import LinkIcon from '@mui/icons-material/Link';
+import { ChangeEvent, ReactElement, useState, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
-import FileUploader from '../../FileUploader/FileUploader';
+import Box from '@ui/Box';
+import Snackbar from '@ui/Snackbar';
+import Alert from '@ui/Alert';
+import VividIcon from '@components/VividIcon';
 import { ALLOWED_TYPES, MAX_SIZE_MB } from '../../../../utils/constants';
-import useImageStorage from '../../../../utils/useImageStorage/useImageStorage';
+import useImageStorage from '@utils/useImageStorage/useImageStorage';
+import SelectableOption from '@components/BackgroundEffects/SelectableOption';
 
 export type AddBackgroundEffectLayoutProps = {
   customBackgroundImageChange: (dataUrl: string) => void;
+  backgroundSelected: string;
 };
 
 /**
  * AddBackgroundEffectLayout Component
  *
- * This component manages the UI for adding background effects.
+ * This component manages the UI for adding background effects via file upload.
  * @param {AddBackgroundEffectLayoutProps} props - The props for the component.
  *   @property {Function} customBackgroundImageChange - Callback function to handle background image change.
+ *   @property {string} backgroundSelected - The currently selected background effect key.
  * @returns {ReactElement} The add background effect layout component.
  */
 const AddBackgroundEffectLayout = ({
   customBackgroundImageChange,
+  backgroundSelected,
 }: AddBackgroundEffectLayoutProps): ReactElement => {
   const [fileError, setFileError] = useState<string>('');
-  const [imageLink, setImageLink] = useState<string>('');
-  const [linkLoading, setLinkLoading] = useState<boolean>(false);
-  const { storageError, handleImageFromFile, handleImageFromLink } = useImageStorage();
+  const [showError, setShowError] = useState<boolean>(false);
+  const { storageError, handleImageFromFile } = useImageStorage();
   const { t } = useTranslation();
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
-  type HandleFileChangeType = ChangeEvent<HTMLInputElement> | { target: { files: FileList } };
-
-  const handleFileChange = async (e: HandleFileChangeType) => {
+  const handleFileChange = async (e: ChangeEvent<HTMLInputElement>) => {
     const { files } = e.target;
     if (!files || files.length === 0) {
       return;
@@ -50,11 +45,13 @@ const AddBackgroundEffectLayout = ({
 
     if (!ALLOWED_TYPES.includes(file.type)) {
       setFileError(t('backgroundEffects.invalidFileType'));
+      setShowError(true);
       return;
     }
 
     if (file.size > MAX_SIZE_MB * 1024 * 1024) {
       setFileError(t('backgroundEffects.fileTooLarge', { maxSize: MAX_SIZE_MB }));
+      setShowError(true);
       return;
     }
 
@@ -62,77 +59,54 @@ const AddBackgroundEffectLayout = ({
       const newImage = await handleImageFromFile(file);
       if (newImage) {
         setFileError('');
+        setShowError(false);
         customBackgroundImageChange(newImage.dataUrl);
       }
     } catch {
       setFileError(t('backgroundEffects.processingError'));
+      setShowError(true);
     }
   };
 
-  const handleLinkSubmit = async () => {
-    setFileError('');
-    setLinkLoading(true);
-    try {
-      const newImage = await handleImageFromLink(imageLink);
-      if (newImage) {
-        setFileError('');
-        customBackgroundImageChange(newImage.dataUrl);
-      } else {
-        setFileError(t('backgroundEffects.storageError'));
-      }
-    } catch {
-      // error handled in hook
-    } finally {
-      setLinkLoading(false);
-    }
+  const handleClick = () => {
+    fileInputRef.current?.click();
   };
+
+  const handleCloseError = () => {
+    setFileError('');
+    setShowError(false);
+  };
+
+  const errorMessage = fileError || storageError;
 
   return (
-    <Box
-      sx={{
-        overflow: 'auto',
-      }}
-    >
-      <FileUploader handleFileChange={handleFileChange} />
+    <Box>
+      <input
+        ref={fileInputRef}
+        type="file"
+        accept={ALLOWED_TYPES.join(',')}
+        onChange={handleFileChange}
+        style={{ display: 'none' }}
+      />
 
-      {(fileError || storageError) && (
-        <Typography color="error" mt={1} fontSize={14}>
-          {fileError || storageError}
-        </Typography>
-      )}
+      <SelectableOption
+        id="add-background"
+        title={t('backgroundEffects.addBackground')}
+        isSelected={backgroundSelected === 'add-background'}
+        onClick={handleClick}
+        icon={<VividIcon name="gallery-line" customSize={-2} />}
+      />
 
-      <Box mt={2} display="flex" alignItems="center" gap={1}>
-        <TextField
-          fullWidth
-          size="small"
-          placeholder={t('backgroundEffects.linkPlaceholder')}
-          className="add-background-effect-input"
-          value={imageLink}
-          onChange={(e) => setImageLink(e.target.value)}
-          InputProps={{
-            startAdornment: (
-              <InputAdornment position="start">
-                {linkLoading ? <CircularProgress size={24} /> : <LinkIcon sx={{ fontSize: 24 }} />}
-              </InputAdornment>
-            ),
-          }}
-        />
-
-        <Button
-          data-testid="background-effect-link-submit-button"
-          variant="contained"
-          color="primary"
-          onClick={handleLinkSubmit}
-          disabled={linkLoading}
-          style={{ minWidth: 0, padding: '8px 12px' }}
-        >
-          {linkLoading ? (
-            <CircularProgress size={24} color="inherit" />
-          ) : (
-            <ArrowForwardIcon sx={{ fontSize: 24 }} />
-          )}
-        </Button>
-      </Box>
+      <Snackbar
+        open={showError && !!errorMessage}
+        autoHideDuration={6000}
+        onClose={handleCloseError}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+      >
+        <Alert onClose={handleCloseError} severity="error" sx={{ width: '100%' }}>
+          {errorMessage}
+        </Alert>
+      </Snackbar>
     </Box>
   );
 };

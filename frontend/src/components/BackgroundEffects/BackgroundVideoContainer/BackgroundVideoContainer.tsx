@@ -1,6 +1,10 @@
 import { useRef, useState, useEffect, ReactElement } from 'react';
-import { CircularProgress, useMediaQuery } from '@mui/material';
+import useMediaQuery from '@ui/useMediaQuery';
 import { useTranslation } from 'react-i18next';
+import CircularProgress from '@ui/CircularProgress';
+import useTheme from '@ui/theme';
+import Box from '@ui/Box';
+import Typography from '@ui/Typography';
 import waitUntilPlaying from '../../../utils/waitUntilPlaying';
 import useIsTabletViewport from '../../../hooks/useIsTabletViewport';
 
@@ -30,6 +34,7 @@ const BackgroundVideoContainer = ({
   const isMDViewport = useMediaQuery(`(max-width:768px)`);
   const isTabletViewport = useIsTabletViewport();
   const isLGViewport = useMediaQuery(`(max-width:1199px)`);
+  const theme = useTheme();
 
   useEffect(() => {
     if (publisherVideoElement && containerRef.current) {
@@ -39,7 +44,7 @@ const BackgroundVideoContainer = ({
       // eslint-disable-next-line react-hooks/immutability
       myVideoElement.title = 'publisher-preview';
       // eslint-disable-next-line react-hooks/immutability
-      myVideoElement.style.borderRadius = '12px';
+      myVideoElement.style.borderRadius = theme.shapes.borderRadiusLarge;
       myVideoElement.style.maxHeight = isTabletViewport ? '80%' : '450px';
 
       let width = '100%';
@@ -48,7 +53,7 @@ const BackgroundVideoContainer = ({
         (!isFixedWidth && isMDViewport) ||
         (isLGViewport && isFixedWidth)
       ) {
-        width = '90%';
+        width = '95%';
       }
       myVideoElement.style.width = width;
 
@@ -58,8 +63,6 @@ const BackgroundVideoContainer = ({
       myVideoElement.style.transform = 'scaleX(-1)';
       myVideoElement.style.objectFit = 'contain';
       myVideoElement.style.aspectRatio = '16 / 9';
-      myVideoElement.style.boxShadow =
-        '0 1px 2px 0 rgba(60, 64, 67, .3), 0 1px 3px 1px rgba(60, 64, 67, .15)';
 
       waitUntilPlaying(publisherVideoElement).then(() => {
         setIsVideoLoading(false);
@@ -73,29 +76,49 @@ const BackgroundVideoContainer = ({
     isFixedWidth,
     isParentVideoEnabled,
     isLGViewport,
+    theme.shapes.borderRadiusLarge,
   ]);
 
   let containerWidth = '100%';
   if (isFixedWidth) {
-    containerWidth = isTabletViewport ? '80%' : '90%';
+    containerWidth = isTabletViewport ? '80%' : '95%';
   } else if (isMDViewport) {
     containerWidth = '80%';
   }
 
   return (
-    <div className="background-video-container" data-testid="background-video-container">
+    <Box sx={{ mt: 1, width: containerWidth }} data-testid="background-video-container">
       {!isParentVideoEnabled && (
-        <div className="background-video-container-disabled" style={{ width: containerWidth }}>
-          {t('backgroundEffects.video.disabled')}
-        </div>
+        <Box
+          sx={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            maxHeight: isTabletViewport ? '80%' : '450px',
+            background: theme.colors.secondary,
+            borderRadius: theme.shapes.borderRadiusMedium,
+            aspectRatio: '16 / 9',
+            padding: '1rem',
+          }}
+        >
+          <Typography
+            variant="h6"
+            sx={{
+              fontWeight: theme.typography.weight['body-base'].value,
+              color: theme.colors.onSecondary,
+            }}
+          >
+            {t('backgroundEffects.video.disabled')}
+          </Typography>
+        </Box>
       )}
       {isParentVideoEnabled && <div ref={containerRef} />}
       {isVideoLoading && isParentVideoEnabled && (
-        <div style={{ display: 'flex', justifyContent: 'center', margin: 16 }}>
+        <Box sx={{ display: 'flex', justifyContent: 'center', margin: 2 }}>
           <CircularProgress />
-        </div>
+        </Box>
       )}
-    </div>
+    </Box>
   );
 };
 

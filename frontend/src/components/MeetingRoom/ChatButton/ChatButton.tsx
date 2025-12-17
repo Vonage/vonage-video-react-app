@@ -1,11 +1,11 @@
-import ChatIcon from '@mui/icons-material/Chat';
-import Tooltip from '@mui/material/Tooltip';
-import { blue } from '@mui/material/colors';
 import { ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
 import useIsMeetingChatAllowed from '@Context/AppConfig/hooks/useIsMeetingChatAllowed';
 import ToolbarButton from '../ToolbarButton';
 import UnreadMessagesBadge from '../UnreadMessagesBadge';
+import Tooltip from '@ui/Tooltip';
+import useTheme from '@ui/theme';
+import VividIcon from '@components/VividIcon';
 
 export type ChatButtonProps = {
   handleClick: () => void;
@@ -30,8 +30,9 @@ const ChatButton = ({
   isOverflowButton = false,
 }: ChatButtonProps): ReactElement | false => {
   const isMeetingChatAllowed = useIsMeetingChatAllowed();
-
+  const theme = useTheme();
   const { t } = useTranslation();
+
   return (
     isMeetingChatAllowed && (
       <Tooltip title={isOpen ? t('chat.close') : t('chat.open')} aria-label={t('chat.ariaLabel')}>
@@ -43,7 +44,14 @@ const ChatButton = ({
               marginRight: '0px',
             }}
             onClick={handleClick}
-            icon={<ChatIcon sx={{ color: isOpen ? blue.A100 : 'white' }} />}
+            icon={
+              <VividIcon
+                customSize={-5}
+                name="chat-solid"
+                sx={{ color: isOpen ? theme.colors.secondary : theme.colors.onSecondary }}
+                data-testid="ChatIcon"
+              />
+            }
             isOverflowButton={isOverflowButton}
           />
         </UnreadMessagesBadge>

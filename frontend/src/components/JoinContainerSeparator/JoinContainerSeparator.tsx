@@ -2,7 +2,7 @@ import { ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
 import Stack from '@ui/Stack';
 import Typography from '@ui/Typography';
-import useCustomTheme from '@Context/Theme';
+import useTheme from '@ui/theme';
 import Separator from '../Separator';
 
 /**
@@ -13,7 +13,7 @@ import Separator from '../Separator';
  */
 const JoinContainerSeparator = (): ReactElement => {
   const { t } = useTranslation();
-  const theme = useCustomTheme();
+  const theme = useTheme();
 
   return (
     <Stack direction="row" alignItems="center" width="100%" sx={{ my: 4 }}>

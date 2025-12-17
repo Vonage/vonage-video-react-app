@@ -1,9 +1,9 @@
-import { Tooltip } from '@mui/material';
+import Tooltip from '@ui/Tooltip';
 import { ReactElement, useRef } from 'react';
-import FeedbackIcon from '@mui/icons-material/Feedback';
-import { blue } from '@mui/material/colors';
 import { useTranslation } from 'react-i18next';
 import ToolbarButton from '../ToolbarButton';
+import useTheme from '@ui/theme';
+import VividIcon from '@components/VividIcon';
 
 export type ReportIssueButtonProps = {
   handleClick: () => void;
@@ -27,6 +27,7 @@ const ReportIssueButton = ({
   isOverflowButton = false,
 }: ReportIssueButtonProps): ReactElement => {
   const { t } = useTranslation();
+  const theme = useTheme();
   const anchorRef = useRef<HTMLButtonElement>(null);
 
   return (
@@ -41,7 +42,13 @@ const ReportIssueButton = ({
           marginRight: '12px',
         }}
         onClick={handleClick}
-        icon={<FeedbackIcon sx={{ color: isOpen ? blue.A100 : 'white' }} />}
+        icon={
+          <VividIcon
+            customSize={-5}
+            name="feedback-solid"
+            sx={{ color: isOpen ? theme.colors.secondary : theme.colors.onSecondary }}
+          />
+        }
         ref={anchorRef}
         isOverflowButton={isOverflowButton}
       />

@@ -1,8 +1,11 @@
 import { ReactElement } from 'react';
-import { List } from '@mui/material';
 import { useTranslation } from 'react-i18next';
+import List from '@ui/List';
+import Typography from '@ui/Typography';
 import { SUPPORTED_BROWSERS } from '../../../utils/constants';
 import SupportedBrowserListItem from '../SupportedBrowserListItem';
+import Card from '@ui/Card';
+import useTheme from '@ui/theme';
 
 /**
  * SupportedBrowsers Component
@@ -12,18 +15,29 @@ import SupportedBrowserListItem from '../SupportedBrowserListItem';
  */
 const SupportedBrowsers = (): ReactElement => {
   const { t } = useTranslation();
-  return (
-    <div className="h-auto w-[400px] shrink py-4 ps-12 text-left">
-      <h3 className="w-full pb-5 text-4xl text-black">{t('unsupportedBrowser.supported.title')}</h3>
+  const theme = useTheme();
 
-      <div className="md:max-h-[480px] md:overflow-y-auto ">
-        <List sx={{ overflowX: 'auto' }}>
-          {SUPPORTED_BROWSERS.map(({ browser, link }) => {
-            return <SupportedBrowserListItem key={browser} url={link} browser={browser} />;
-          })}
-        </List>
-      </div>
-    </div>
+  return (
+    <Card
+      sx={{
+        display: 'block',
+      }}
+    >
+      <Typography
+        variant="h6"
+        sx={{
+          paddingBottom: 2,
+          color: theme.colors.textSecondary,
+        }}
+      >
+        {t('unsupportedBrowser.supported.title')}
+      </Typography>
+      <List sx={{ overflowX: 'auto' }}>
+        {SUPPORTED_BROWSERS.map(({ browser, link }) => {
+          return <SupportedBrowserListItem key={browser} url={link} browser={browser} />;
+        })}
+      </List>
+    </Card>
   );
 };
 

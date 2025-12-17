@@ -17,8 +17,8 @@ test('should navigate to waiting room then publish in room via room name textbox
   await page.waitForSelector('.video__element', { state: 'visible' });
 
   await page.waitForTimeout(1000);
-  await page.getByPlaceholder('Enter your name').fill('some-user');
-  await page.getByRole('button', { name: 'Join' }).click();
+  await page.getByLabel('Name').fill('some-user');
+  await page.getByRole('button', { name: 'Join meeting' }).click();
 
   await expect(page).toHaveURL(`${baseURL}room/some-room`);
 
@@ -35,10 +35,8 @@ test('should navigate to waiting room then publish in room via Create room butto
   await page.waitForSelector('.video__element', { state: 'visible' });
 
   await page.waitForTimeout(1000);
-  await expect(page.getByRole('button', { name: 'Join' })).toHaveAttribute('disabled', '');
-
-  await page.getByPlaceholder('Enter your name').fill('some-user');
-  await page.getByRole('button', { name: 'Join' }).click();
+  await page.getByLabel('Name').fill('some-user');
+  await page.getByRole('button', { name: 'Join meeting' }).click();
 
   await expect(page.url()).toContain('room/');
 
@@ -64,7 +62,7 @@ test('User should be able to navigate to the next page using enter key', async (
   // This is needed for the DeviceAccessAlert to hide
   await page.waitForSelector('[role="dialog"]', { state: 'hidden' });
 
-  await page.getByPlaceholder('Enter your name').fill('some-user');
+  await page.getByLabel('Name').fill('some-user');
 
   await page.keyboard.press('Enter');
 

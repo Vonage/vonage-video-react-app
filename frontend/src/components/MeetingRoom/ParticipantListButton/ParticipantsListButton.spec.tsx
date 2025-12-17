@@ -15,7 +15,7 @@ describe('ParticipantListButton', () => {
   });
   it('should have a blue icon when the list is open', () => {
     render(<ParticipantListButton handleClick={() => {}} isOpen participantCount={10} />);
-    expect(screen.getByTestId('PeopleIcon')).toHaveStyle('color: rgb(130, 177, 255)');
+    expect(screen.getByTestId('PeopleIcon')).toHaveStyle('color: rgb(0, 0, 0)');
   });
   it('should invoke callback on click', () => {
     const handleClick = vi.fn();

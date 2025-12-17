@@ -10,7 +10,7 @@ vi.mock('../../../utils/waitUntilPlaying', () => ({
 describe('BackgroundVideoContainer', () => {
   it('shows message when video is not enabled', () => {
     render(<BackgroundVideoContainer isParentVideoEnabled={false} />);
-    expect(screen.getByText(/You have not enabled video/i)).toBeInTheDocument();
+    expect(screen.getByText(/Your camera is turned off/i)).toBeInTheDocument();
   });
 
   it('renders video element when video is enabled', () => {

@@ -1,7 +1,7 @@
 import { describe, it, expect, beforeEach, vi, Mock, afterAll } from 'vitest';
 import { act, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import SportsFootballIcon from '@mui/icons-material/SportsFootball';
+import VividIcon from '@components/VividIcon';
 import SoundTest from './SoundTest';
 import useAudioOutputContext from '../../hooks/useAudioOutputContext';
 import { AudioOutputContextType, AudioOutputProvider } from '../../Context/AudioOutputProvider';
@@ -60,7 +60,7 @@ describe('SoundTest', () => {
     render(
       <AudioOutputProvider>
         <SoundTest>
-          <SportsFootballIcon />
+          <VividIcon name="hearing-line" customSize={-5} />
         </SoundTest>
       </AudioOutputProvider>
     );
@@ -74,7 +74,7 @@ describe('SoundTest', () => {
     render(
       <AudioOutputProvider>
         <SoundTest>
-          <SportsFootballIcon />
+          <VividIcon name="hearing-line" customSize={-5} />
         </SoundTest>
       </AudioOutputProvider>
     );
@@ -103,7 +103,7 @@ describe('SoundTest', () => {
     render(
       <AudioOutputProvider>
         <SoundTest>
-          <SportsFootballIcon />
+          <VividIcon name="hearing-line" customSize={-5} />
         </SoundTest>
       </AudioOutputProvider>
     );
@@ -116,7 +116,7 @@ describe('SoundTest', () => {
     render(
       <AudioOutputProvider>
         <SoundTest>
-          <SportsFootballIcon />
+          <VividIcon name="hearing-line" customSize={-5} />
         </SoundTest>
       </AudioOutputProvider>
     );
@@ -140,7 +140,7 @@ describe('SoundTest', () => {
     render(
       <AudioOutputProvider>
         <SoundTest>
-          <SportsFootballIcon />
+          <VividIcon name="hearing-line" customSize={-5} />
         </SoundTest>
       </AudioOutputProvider>
     );
@@ -158,7 +158,7 @@ describe('SoundTest', () => {
     render(
       <AudioOutputProvider>
         <SoundTest>
-          <SportsFootballIcon />
+          <VividIcon name="hearing-line" customSize={-5} />
         </SoundTest>
       </AudioOutputProvider>
     );

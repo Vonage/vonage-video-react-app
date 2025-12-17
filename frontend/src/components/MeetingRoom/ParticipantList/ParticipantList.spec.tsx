@@ -103,12 +103,12 @@ describe('ParticipantList', () => {
 
     render(<ParticipantList isOpen handleClose={() => {}} />);
 
-    const copyButton = screen.getByTestId('ContentCopyIcon');
+    const copyButton = screen.getByTestId('vivid-icon-copy-line');
     fireEvent.click(copyButton);
 
     await waitFor(() => {
       expect(navigator.clipboard.writeText).toHaveBeenCalledWith('https://example.com/room123');
-      expect(screen.getByTestId('CheckIcon')).toBeInTheDocument();
+      expect(screen.getByTestId('vivid-icon-check-sent-line')).toBeInTheDocument();
     });
   });
 

@@ -1,18 +1,20 @@
 import { render, screen } from '@testing-library/react';
-import { describe, it, expect, vi } from 'vitest';
+import { describe, it, expect } from 'vitest';
 import userEvent from '@testing-library/user-event';
+import { MemoryRouter } from 'react-router-dom';
 import GoToLandingPageButton from './index';
 
 describe('GoToLandingPageButton', () => {
   it('should display the correct go to landing page button', async () => {
-    const mockFn = vi.fn();
-
-    render(<GoToLandingPageButton handleLanding={mockFn} />);
+    render(
+      <MemoryRouter>
+        <GoToLandingPageButton />
+      </MemoryRouter>
+    );
 
     const button = screen.getByTestId('go-to-landing-button');
     await userEvent.click(button);
 
-    expect(screen.getByText('Return to landing page')).toBeInTheDocument();
-    expect(mockFn).toHaveBeenCalled();
+    expect(screen.getByText('View Landing Page')).toBeInTheDocument();
   });
 });

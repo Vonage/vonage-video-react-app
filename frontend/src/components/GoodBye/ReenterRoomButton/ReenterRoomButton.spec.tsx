@@ -1,28 +1,31 @@
 import { render, screen } from '@testing-library/react';
-import { describe, it, expect, vi } from 'vitest';
+import { describe, it, expect } from 'vitest';
 import userEvent from '@testing-library/user-event';
+import { MemoryRouter } from 'react-router-dom';
 import ReenterRoomButton from './index';
 
 describe('ReenterRoomButton', () => {
   it('should display the correct reenter room button', async () => {
-    const mockFn = vi.fn();
-
-    render(<ReenterRoomButton roomName="room1" handleReenter={mockFn} />);
+    render(
+      <MemoryRouter>
+        <ReenterRoomButton roomName="room1" />
+      </MemoryRouter>
+    );
 
     const button = screen.getByTestId('reenterButton');
     await userEvent.click(button);
 
-    expect(screen.getByText('Re-enter')).toBeInTheDocument();
-    expect(mockFn).toHaveBeenCalled();
+    expect(screen.getByText('Go back to meeting')).toBeInTheDocument();
   });
 
   it('should not display the reenter room button', () => {
-    const mockFn = vi.fn();
-
-    render(<ReenterRoomButton roomName="" handleReenter={mockFn} />);
+    render(
+      <MemoryRouter>
+        <ReenterRoomButton roomName="" />
+      </MemoryRouter>
+    );
 
     expect(screen.queryByTestId('reenterButton')).not.toBeInTheDocument();
-    expect(screen.queryByText('Re-enter')).not.toBeInTheDocument();
-    expect(mockFn).not.toHaveBeenCalled();
+    expect(screen.queryByText('Go back to meeting')).not.toBeInTheDocument();
   });
 });

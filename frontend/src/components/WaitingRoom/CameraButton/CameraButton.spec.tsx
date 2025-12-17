@@ -34,13 +34,13 @@ describe('CameraButton', () => {
 
   it('renders the video on icon when video is enabled', () => {
     render(<CameraButton />);
-    expect(screen.getByTestId('VideocamIcon')).toBeInTheDocument();
+    expect(screen.getByTestId('vivid-icon-video-line')).toBeInTheDocument();
   });
 
   it('renders the video off icon when video is disabled', () => {
     isVideoEnabled = false;
     render(<CameraButton />);
-    expect(screen.getByTestId('VideocamOffIcon')).toBeInTheDocument();
+    expect(screen.getByTestId('vivid-icon-video-off-line')).toBeInTheDocument();
   });
 
   it('updates the main publisher and the background replacement publisher when clicked', () => {

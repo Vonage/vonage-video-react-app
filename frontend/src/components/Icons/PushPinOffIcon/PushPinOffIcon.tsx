@@ -1,4 +1,5 @@
-import { SvgIcon, SvgIconProps } from '@mui/material';
+import { SvgIconProps } from '@ui/SvgIconProps';
+import SvgIcon from '@ui/SvgIcon';
 import { ReactElement } from 'react';
 
 /**

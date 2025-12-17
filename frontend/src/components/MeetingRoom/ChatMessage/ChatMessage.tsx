@@ -1,8 +1,12 @@
-import { Avatar, ListItem, ListItemText, Typography } from '@mui/material';
 import { ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
 import { getFormattedTime } from '../../../utils/dateTime';
 import FormattedMessageBody from '../FormattedMessageBody';
+import ListItem from '@ui/ListItem';
+import ListItemText from '@ui/ListItemText';
+import Avatar from '@ui/Avatar';
+import Typography from '@ui/Typography';
+import useTheme from '@ui/theme';
 
 export type ChatMessageProps = {
   avatarColor: string;
@@ -32,6 +36,8 @@ const ChatMessage = ({
   timestamp,
 }: ChatMessageProps): ReactElement => {
   const { i18n } = useTranslation();
+  const theme = useTheme();
+
   return (
     <ListItem alignItems="flex-start" data-testid="chat-message">
       <Avatar
@@ -52,7 +58,7 @@ const ChatMessage = ({
             <Typography
               component="span"
               variant="body2"
-              sx={{ color: 'text.primary', display: 'inline' }}
+              sx={{ color: theme.colors.textSecondary, display: 'inline' }}
               data-testid="chat-msg-participant-name"
             >
               {name}
@@ -60,7 +66,7 @@ const ChatMessage = ({
             <Typography
               component="span"
               variant="body2"
-              sx={{ paddingLeft: '8px', color: 'text.secondary', display: 'inline' }}
+              sx={{ paddingLeft: '8px', color: theme.colors.textSecondary, display: 'inline' }}
               data-testid="chat-msg-timestamp"
             >
               {getFormattedTime(i18n.language, timestamp)}
@@ -68,7 +74,11 @@ const ChatMessage = ({
           </>
         }
         secondary={
-          <Typography variant="body2" sx={{ color: 'text.secondary', overflowWrap: 'break-word' }}>
+          <Typography
+            variant="body2"
+            sx={{ color: theme.colors.textSecondary, overflowWrap: 'break-word' }}
+            data-testid="chat-msg-content"
+          >
             <FormattedMessageBody message={message} />
           </Typography>
         }

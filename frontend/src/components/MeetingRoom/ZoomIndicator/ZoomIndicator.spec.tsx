@@ -23,7 +23,7 @@ describe('ZoomIndicator', () => {
       />
     );
 
-    const icon = screen.getByTestId('ZoomInOutlinedIcon');
+    const icon = screen.getByTestId('vivid-icon-zoom-in-solid');
     const mainButton = screen.getByTestId('zoom-indicator-button');
 
     expect(icon).toBeInTheDocument();
@@ -77,7 +77,7 @@ describe('ZoomIndicator', () => {
       />
     );
 
-    const zoomOutIcon = screen.getByTestId('ZoomOutOutlinedIcon');
+    const zoomOutIcon = screen.getByTestId('vivid-icon-zoom-out-solid');
     const zoomLevelText = screen.getByTestId('zoom-level');
     const zoomOutButton = screen.getByTestId('zoom-out-button');
     const zoomInButton = screen.getByTestId('zoom-in-button');
@@ -96,12 +96,12 @@ describe('ZoomIndicator', () => {
       />
     );
 
-    expect(screen.queryByTestId('ZoomOutOutlinedIcon')).not.toBeInTheDocument();
+    expect(screen.queryByTestId('vivid-icon-zoom-out-solid')).not.toBeInTheDocument();
     expect(screen.queryByTestId('zoom-level')).not.toBeInTheDocument();
     expect(screen.queryByTestId('zoom-out-button')).not.toBeInTheDocument();
     expect(screen.queryByTestId('zoom-in-button')).not.toBeInTheDocument();
 
-    const zoomInIcon = screen.getByTestId('ZoomInOutlinedIcon');
+    const zoomInIcon = screen.getByTestId('vivid-icon-zoom-in-solid');
     expect(zoomInIcon).toBeInTheDocument();
   });
 

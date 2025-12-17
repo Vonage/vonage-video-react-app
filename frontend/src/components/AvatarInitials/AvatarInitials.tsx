@@ -1,5 +1,6 @@
-import { Avatar, SxProps } from '@mui/material';
 import { ReactElement } from 'react';
+import Avatar from '@ui/Avatar';
+import type { SxProps } from '@ui/SxProps';
 import getParticipantColor from '../../utils/getParticipantColor';
 
 export type InitialsProps = {

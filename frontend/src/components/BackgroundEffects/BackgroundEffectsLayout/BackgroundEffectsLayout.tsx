@@ -1,16 +1,16 @@
-import { ReactElement, useCallback, useEffect, useState } from 'react';
-import { Box, Button, useMediaQuery } from '@mui/material';
+import { ReactElement, useCallback, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
+import useMediaQuery from '@ui/useMediaQuery';
+import Box from '@ui/Box';
+import Button from '@ui/Button';
+import useTheme from '@ui/theme';
 import usePublisherContext from '../../../hooks/usePublisherContext';
 import BackgroundVideoContainer from '../BackgroundVideoContainer';
-import BackgroundEffectTabs, {
-  clearBgWhenSelectedDeleted,
-} from '../BackgroundEffectTabs/BackgroundEffectTabs';
+import BackgroundEffectOptions from '../BackgroundEffectOptions/BackgroundEffectOptions';
 import getInitialBackgroundFilter from '../../../utils/backgroundFilter/getInitialBackgroundFilter/getInitialBackgroundFilter';
 import useBackgroundPublisherContext from '../../../hooks/useBackgroundPublisherContext';
 import RightPanelTitle from '../../MeetingRoom/RightPanel/RightPanelTitle';
 import usePreviewPublisherContext from '../../../hooks/usePreviewPublisherContext';
-import useIsTabletViewport from '../../../hooks/useIsTabletViewport';
 
 export type BackgroundEffectsLayoutProps = {
   isOpen: boolean;
@@ -34,46 +34,36 @@ const BackgroundEffectsLayout = ({
   handleClose,
   mode,
 }: BackgroundEffectsLayoutProps): ReactElement | false => {
-  const [tabSelected, setTabSelected] = useState<number>(0);
-  const [backgroundSelected, setBackgroundSelected] = useState<string>('none');
   const { t } = useTranslation();
+  const theme = useTheme();
 
   const isShortScreen = useMediaQuery('(max-height:825px)');
-  const isTabletViewport = useIsTabletViewport();
-
   const publisherContext = usePublisherContext();
   const previewPublisherContext = usePreviewPublisherContext();
 
   const { publisher, changeBackground, isVideoEnabled } =
     mode === 'meeting' ? publisherContext : previewPublisherContext;
 
-  const { publisherVideoElement, changeBackground: changeBackgroundPreview } =
-    useBackgroundPublisherContext();
-
-  const handleBackgroundSelect = (selectedBackgroundOption: string) => {
-    setBackgroundSelected(selectedBackgroundOption);
-    changeBackgroundPreview(selectedBackgroundOption);
-  };
+  const {
+    publisherVideoElement,
+    changeBackground: changeBackgroundPreview,
+    backgroundSelected,
+    setBackgroundSelected,
+  } = useBackgroundPublisherContext();
 
   const handleApplyBackgroundSelect = () => {
     changeBackground(backgroundSelected);
     handleClose();
   };
 
-  const customBackgroundImageChange = (dataUrl: string) => {
-    setTabSelected(0);
-    handleBackgroundSelect(dataUrl);
-  };
-
   const setInitialBackgroundReplacement = useCallback(() => {
     const selectedBackgroundOption = getInitialBackgroundFilter(publisher);
     setBackgroundSelected(selectedBackgroundOption);
     return selectedBackgroundOption;
-  }, [publisher]);
+  }, [publisher, setBackgroundSelected]);
 
   useEffect(() => {
     if (isOpen) {
-      // eslint-disable-next-line react-hooks/set-state-in-effect
       const currentOption = setInitialBackgroundReplacement();
       changeBackgroundPreview(currentOption);
     }
@@ -82,17 +72,15 @@ const BackgroundEffectsLayout = ({
   const buttonGroup = (
     <Box
       sx={{
-        flexShrink: 0,
+        p: 2,
         display: 'flex',
-        justifyContent: 'space-between',
-        ...(mode === 'waiting' ? { mt: 1.5 } : { m: 1.5, mt: 1 }),
+        justifyContent: 'end',
       }}
     >
       <Button
         data-testid="background-effect-cancel-button"
-        variant="outlined"
-        color="primary"
-        sx={{ width: '100%', mr: 1 }}
+        variant="text"
+        sx={{ mr: 1, color: theme.colors.textSecondary }}
         onClick={() => {
           const currentOption = setInitialBackgroundReplacement();
           changeBackgroundPreview(currentOption);
@@ -104,8 +92,7 @@ const BackgroundEffectsLayout = ({
       <Button
         data-testid="background-effect-apply-button"
         variant="contained"
-        color="primary"
-        sx={{ width: '100%' }}
+        sx={{ color: theme.colors.onPrimary, ml: 2 }}
         onClick={handleApplyBackgroundSelect}
       >
         {t('button.apply')}
@@ -130,24 +117,14 @@ const BackgroundEffectsLayout = ({
       >
         <RightPanelTitle title={t('backgroundEffects.title')} handleClose={handleClose} />
 
-        <Box sx={{ flexShrink: 0, p: 1 }}>
+        <Box sx={{ flexShrink: 0, p: 2 }}>
           <BackgroundVideoContainer
             publisherVideoElement={publisherVideoElement}
             isParentVideoEnabled={isVideoEnabled}
           />
         </Box>
 
-        <BackgroundEffectTabs
-          tabSelected={tabSelected}
-          setTabSelected={setTabSelected}
-          mode={mode}
-          backgroundSelected={backgroundSelected}
-          setBackgroundSelected={handleBackgroundSelect}
-          cleanupSelectedBackgroundReplacement={(dataUrl: string) =>
-            clearBgWhenSelectedDeleted(publisher, changeBackground, backgroundSelected, dataUrl)
-          }
-          customBackgroundImageChange={customBackgroundImageChange}
-        />
+        <BackgroundEffectOptions mode={mode} />
 
         {buttonGroup}
       </Box>
@@ -156,38 +133,34 @@ const BackgroundEffectsLayout = ({
 
   // WaitingRoom layout
   return (
-    <Box display="flex" flexDirection={{ xs: 'column', md: 'row' }} gap={1.5}>
-      <Box
-        flex={1}
-        minWidth={0}
-        display="flex"
-        flexDirection="column"
-        justifyContent="space-between"
-      >
-        <Box flexGrow={1} display="flex" alignItems="center" justifyContent="center" minHeight={0}>
-          <BackgroundVideoContainer
-            publisherVideoElement={publisherVideoElement}
-            isParentVideoEnabled={isVideoEnabled}
-            isFixedWidth
-          />
+    <>
+      <Box display="flex" flexDirection={{ xs: 'column', md: 'row' }} gap={2}>
+        <Box
+          flex={1}
+          minWidth={0}
+          display="flex"
+          flexDirection="column"
+          justifyContent="space-between"
+        >
+          <Box
+            flexGrow={1}
+            display="flex"
+            alignItems="center"
+            justifyContent="center"
+            minHeight={0}
+          >
+            <BackgroundVideoContainer
+              publisherVideoElement={publisherVideoElement}
+              isParentVideoEnabled={isVideoEnabled}
+              isFixedWidth
+            />
+          </Box>
         </Box>
-        {!isTabletViewport && buttonGroup}
+
+        <BackgroundEffectOptions mode={mode} />
       </Box>
-
-      <BackgroundEffectTabs
-        tabSelected={tabSelected}
-        setTabSelected={setTabSelected}
-        mode={mode}
-        backgroundSelected={backgroundSelected}
-        setBackgroundSelected={handleBackgroundSelect}
-        cleanupSelectedBackgroundReplacement={(dataUrl: string) =>
-          clearBgWhenSelectedDeleted(publisher, changeBackground, backgroundSelected, dataUrl)
-        }
-        customBackgroundImageChange={customBackgroundImageChange}
-      />
-
-      {isTabletViewport && buttonGroup}
-    </Box>
+      {buttonGroup}
+    </>
   );
 };
 

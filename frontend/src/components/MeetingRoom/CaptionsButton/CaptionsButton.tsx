@@ -1,5 +1,3 @@
-import { ClosedCaption, ClosedCaptionDisabled } from '@mui/icons-material';
-import { Tooltip } from '@mui/material';
 import { Dispatch, ReactElement, useState, SetStateAction } from 'react';
 import { AxiosError } from 'axios';
 import { useTranslation } from 'react-i18next';
@@ -7,6 +5,9 @@ import useIsMeetingCaptionsAllowed from '@Context/AppConfig/hooks/useIsMeetingCa
 import { disableCaptions, enableCaptions } from '@api/captions';
 import useRoomName from '@hooks/useRoomName';
 import ToolbarButton from '../ToolbarButton';
+import Tooltip from '@ui/Tooltip';
+import VividIcon from '@components/VividIcon';
+import useTheme from '@ui/theme';
 
 export type CaptionsState = {
   isUserCaptionsEnabled: boolean;
@@ -43,6 +44,7 @@ const CaptionsButton = ({
   const { isUserCaptionsEnabled, setIsUserCaptionsEnabled, setCaptionsErrorResponse } =
     captionsState;
   const title = isUserCaptionsEnabled ? t('captions.disable') : t('captions.enable');
+  const theme = useTheme();
 
   const handleClose = () => {
     if (isOverflowButton && handleClick) {
@@ -105,12 +107,16 @@ const CaptionsButton = ({
           data-testid="captions-button"
           icon={
             !isUserCaptionsEnabled ? (
-              <ClosedCaption style={{ color: 'white' }} />
+              <VividIcon
+                name="closed-captioning-solid"
+                customSize={-5}
+                sx={{ color: theme.colors.onSecondary }}
+              />
             ) : (
-              <ClosedCaptionDisabled
-                style={{
-                  color: 'rgb(239 68 68)',
-                }}
+              <VividIcon
+                name="closed-captioning-off-solid"
+                customSize={-5}
+                sx={{ color: theme.colors.error }}
               />
             )
           }

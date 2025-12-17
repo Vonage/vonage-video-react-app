@@ -17,12 +17,14 @@
   },
   "include": [
     "vite.config.ts",
-    "vite.config.mts",
-    "vitest.config.ts",
-    "vitest.config.mts",
-    "src/**/*.test.*",
-    "src/**/*.spec.*",
-    "src/**/*.d.ts"
+    "src/**/*.test.ts",
+    "src/**/*.spec.ts",
+    "src/**/*.test.tsx",
+    "src/**/*.spec.tsx",
+    "src/**/*.test.js",
+    "src/**/*.spec.js",
+    "src/**/*.tsx",
+    "src/**/*.ts"
   ],
   "references": [{ "path": "./tsconfig.lib.json" }]
 }

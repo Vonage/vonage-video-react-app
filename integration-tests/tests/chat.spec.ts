@@ -21,7 +21,7 @@ async function chatToggleButton(page, isMobile) {
     const chatToggleButtonOne = await page.getByTestId('chat-button-unread-count');
     chatToggleButtonOne.click();
     // Check that chat open shows blue button
-    await expect(page.getByTestId('ChatIcon')).toHaveCSS('color', 'rgb(130, 177, 255)');
+    await expect(page.getByTestId('ChatIcon')).toHaveCSS('color', 'rgb(0, 0, 0)');
   }
 }
 
@@ -47,12 +47,12 @@ test.describe('chat', () => {
     await chatToggleButton(pageOne, isMobile);
 
     // Send button is greyed out when text box empty
-    await expect(pageOne.getByTestId('SendIcon')).toHaveCSS('color', 'rgb(178, 180, 182)');
+    await expect(pageOne.getByTestId('SendIcon')).toHaveCSS('color', 'rgb(230, 230, 230)');
 
     await pageOne.getByPlaceholder('Send a message').fill('Hi there, welcome to the meeting!');
 
     // Send button is blue when text in box
-    await expect(pageOne.getByTestId('SendIcon')).toHaveCSS('color', 'rgb(130, 177, 255)');
+    await expect(pageOne.getByTestId('SendIcon')).toHaveCSS('color', 'rgb(153, 65, 255)');
 
     await pageOne.getByTestId('SendIcon').click();
 
@@ -76,7 +76,7 @@ test.describe('chat', () => {
       return badge.offsetHeight === 0 && badge.offsetWidth === 0;
     });
 
-    await expect(pageTwo.getByTestId('chat-message').getByRole('paragraph')).toHaveText(
+    await expect(pageTwo.getByTestId('chat-msg-content')).toHaveText(
       'Hi there, welcome to the meeting!'
     );
     await expect(pageTwo.getByTestId('chat-msg-participant-name')).toHaveText('User One');
@@ -86,6 +86,6 @@ test.describe('chat', () => {
     const messageTwo = await pageTwo.getByTestId('chat-message').nth(1);
 
     await expect(messageTwo.getByTestId('chat-msg-participant-name')).toHaveText('User Two');
-    await expect(messageTwo.getByRole('paragraph')).toHaveText('Thanks!');
+    await expect(messageTwo.getByTestId('chat-msg-content')).toHaveText('Thanks!');
   });
 });

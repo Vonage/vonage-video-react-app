@@ -47,7 +47,7 @@ describe('LayoutButton', () => {
       <LayoutButton isScreenSharePresent={false} isPinningPresent={false} />
     );
     rerender(<LayoutButton isScreenSharePresent={false} isPinningPresent={false} />);
-    expect(screen.getByTestId('WindowIcon')).toBeInTheDocument();
+    expect(screen.getByTestId('ViewSidebarIcon')).toBeInTheDocument();
   });
 
   it('should render the tooltip title that mentions switching to grid layout', async () => {

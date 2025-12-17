@@ -1,12 +1,12 @@
-import Button from '@mui/material/Button';
-import Dialog from '@mui/material/Dialog';
-import DialogActions from '@mui/material/DialogActions';
-import DialogContent from '@mui/material/DialogContent';
-import DialogContentText from '@mui/material/DialogContentText';
 import { Stream } from '@vonage/client-sdk-video';
 import { ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
 import useSessionContext from '../../../hooks/useSessionContext';
+import Dialog from '@ui/Dialog';
+import DialogActions from '@ui/DialogActions';
+import DialogContent from '@ui/DialogContent';
+import DialogContentText from '@ui/DialogContentText';
+import Button from '@ui/Button';
 
 type MutingDialogTexts = {
   contents: string;

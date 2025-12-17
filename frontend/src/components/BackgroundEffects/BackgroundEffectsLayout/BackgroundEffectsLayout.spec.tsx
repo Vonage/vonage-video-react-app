@@ -12,9 +12,6 @@ vi.mock('react-i18next', () => ({
       const translations: Record<string, string> = {
         'backgroundEffects.title': enTranslations['backgroundEffects.title'],
         'backgroundEffects.choice': enTranslations['backgroundEffects.choice'],
-        'backgroundEffects.tabs.backgrounds': enTranslations['backgroundEffects.tabs.backgrounds'],
-        'backgroundEffects.tabs.addBackground':
-          enTranslations['backgroundEffects.tabs.addBackground'],
         'button.cancel': enTranslations['button.cancel'],
         'button.apply': enTranslations['button.apply'],
       };
@@ -48,6 +45,13 @@ vi.mock('../../../hooks/useBackgroundPublisherContext', () => ({
   default: () => ({
     publisherVideoElement: null,
     changeBackground: vi.fn(),
+    backgroundSelected: 'none',
+    setBackgroundSelected: vi.fn(),
+    customImages: [],
+    addCustomImage: vi.fn(),
+    deleteCustomImage: vi.fn(),
+    handleBackgroundChange: vi.fn(),
+    handleAddCustomImage: vi.fn(),
   }),
 }));
 
@@ -62,15 +66,12 @@ describe('BackgroundEffectsLayout (Meeting room)', () => {
 
   it('renders when open', () => {
     renderLayout();
-    expect(screen.getByTestId('right-panel-title')).toHaveTextContent('Background Effects');
+    expect(screen.getByTestId('right-panel-title')).toHaveTextContent('Background settings');
     expect(screen.getByTestId('background-video-container')).toBeInTheDocument();
     expect(screen.getByTestId('background-none')).toBeInTheDocument();
     expect(screen.getByTestId('background-bg1')).toBeInTheDocument();
     expect(screen.getByTestId('background-effect-cancel-button')).toBeInTheDocument();
     expect(screen.getByTestId('background-effect-apply-button')).toBeInTheDocument();
-
-    expect(screen.getAllByText(/Backgrounds/i)[0]).toBeInTheDocument();
-    expect(screen.getAllByText(/Add background/i)[0]).toBeInTheDocument();
   });
 
   it('does not render when closed', () => {
@@ -103,8 +104,6 @@ describe('BackgroundEffectsLayout (Meeting room)', () => {
 
   it('displays correct English title, subtitle, cancel, and apply actions', () => {
     renderLayout();
-    expect(screen.getByText('Backgrounds')).toBeInTheDocument();
-    expect(screen.getByText('Add Background')).toBeInTheDocument();
     expect(screen.getByText('Cancel')).toBeInTheDocument();
     expect(screen.getByText('Apply')).toBeInTheDocument();
   });
@@ -126,10 +125,6 @@ describe('BackgroundEffects (Waiting Room)', () => {
     expect(screen.getByTestId('background-bg1')).toBeInTheDocument();
     expect(screen.getByRole('button', { name: /Cancel/i })).toBeInTheDocument();
     expect(screen.getByRole('button', { name: /Apply/i })).toBeInTheDocument();
-
-    // Checking that BackgroundEffectTabs (Backgrounds and Add Background tabs) are rendered
-    expect(screen.getAllByText(/Backgrounds/i)[0]).toBeInTheDocument();
-    expect(screen.getAllByText(/Add background/i)[0]).toBeInTheDocument();
   });
 
   it('does not render when closed', () => {
@@ -162,8 +157,6 @@ describe('BackgroundEffects (Waiting Room)', () => {
 
   it('displays correct English title, subtitle, cancel, and apply actions', () => {
     renderLayout();
-    expect(screen.getByText('Backgrounds')).toBeInTheDocument();
-    expect(screen.getByText('Add Background')).toBeInTheDocument();
     expect(screen.getByText('Cancel')).toBeInTheDocument();
     expect(screen.getByText('Apply')).toBeInTheDocument();
   });

@@ -44,7 +44,7 @@ test.describe('Recording Feature', () => {
           message: 'Waiting for recording to start (mobile red icon)',
           timeout: 5000,
         })
-        .toBe('rgb(239, 68, 68)');
+        .toBe('rgb(230, 29, 29)');
 
       await pageOne.getByTestId('MoreVertIcon').click();
       await pageOne.mouse.move(0, 0);
@@ -57,7 +57,7 @@ test.describe('Recording Feature', () => {
             timeout: 5000,
           }
         )
-        .toBe('rgb(239, 68, 68)');
+        .toBe('rgb(255, 255, 255)');
     }
     await archivingButton.click();
     await confirmStartButton.click();

@@ -1,18 +1,21 @@
-import { Typography, MenuItem, IconButton, MenuList } from '@mui/material';
 import { useState, useEffect, ReactElement } from 'react';
-import Grow from '@mui/material/Grow';
-import VolumeUpIcon from '@mui/icons-material/VolumeUp';
 import { hasMediaProcessorSupport } from '@vonage/client-sdk-video';
-import HeadsetIcon from '@mui/icons-material/Headset';
 import ToggleOffIcon from '@mui/icons-material/ToggleOff';
 import ToggleOnIcon from '@mui/icons-material/ToggleOn';
 import { useTranslation } from 'react-i18next';
 import useAppConfig from '@Context/AppConfig/hooks/useAppConfig';
-import useCustomTheme from '@Context/Theme';
+import useTheme from '@ui/theme';
 import usePublisherContext from '@hooks/usePublisherContext';
 import { setStorageItem, STORAGE_KEYS } from '@utils/storage';
 import DropdownSeparator from '../DropdownSeparator';
 import SoundTest from '../../SoundTest';
+import MenuList from '@ui/MenuList';
+import MenuItem from '@ui/MenuItem';
+import IconButton from '@ui/IconButton';
+import Typography from '@ui/Typography';
+import Grow from '@ui/Grow';
+import VividIcon from '@components/VividIcon';
+import Box from '@ui/Box';
 
 /**
  * ReduceNoiseTestSpeakers Component
@@ -23,7 +26,7 @@ import SoundTest from '../../SoundTest';
  */
 const ReduceNoiseTestSpeakers = (): ReactElement | false => {
   const { t } = useTranslation();
-  const theme = useCustomTheme();
+  const theme = useTheme();
   const { publisher, isPublishing } = usePublisherContext();
 
   const allowAdvancedNoiseSuppression = useAppConfig(
@@ -66,14 +69,19 @@ const ReduceNoiseTestSpeakers = (): ReactElement | false => {
           <MenuItem
             onClick={handleToggle}
             sx={{
-              backgroundColor: 'transparent',
               '&:hover': {
-                backgroundColor: theme.colors.primaryHover,
+                backgroundColor: theme.colors.background,
               },
             }}
           >
-            <HeadsetIcon sx={{ fontSize: 24, mr: 2 }} />
-            <Typography noWrap sx={{ mr: 2 }}>
+            <Box sx={{ mr: 1 }}>
+              <VividIcon
+                customSize={-5}
+                name="headset-solid"
+                sx={{ color: theme.colors.secondary }}
+              />
+            </Box>
+            <Typography variant="body1" noWrap sx={{ mr: 2 }}>
               {t('devices.audio.noiseSuppression')}
             </Typography>
             <IconButton disableRipple>
@@ -81,7 +89,7 @@ const ReduceNoiseTestSpeakers = (): ReactElement | false => {
                 <ToggleOffIcon
                   data-testid="toggle-off-icon"
                   fontSize="large"
-                  sx={{ position: 'absolute', color: 'white' }}
+                  sx={{ position: 'absolute', color: theme.colors.secondary }}
                 />
               </Grow>
               <Grow in={isToggled} timeout={300}>
@@ -90,7 +98,7 @@ const ReduceNoiseTestSpeakers = (): ReactElement | false => {
                   fontSize="large"
                   sx={{
                     position: 'absolute',
-                    color: theme.colors.background,
+                    color: theme.colors.secondary,
                   }}
                 />
               </Grow>
@@ -98,7 +106,13 @@ const ReduceNoiseTestSpeakers = (): ReactElement | false => {
           </MenuItem>
         )}
         <SoundTest>
-          <VolumeUpIcon sx={{ fontSize: 24, mr: 2 }} />
+          <Box sx={{ mr: 0.5 }}>
+            <VividIcon
+              customSize={-4}
+              name="audio-mid-solid"
+              sx={{ color: theme.colors.secondary }}
+            />
+          </Box>
         </SoundTest>
       </MenuList>
     </>

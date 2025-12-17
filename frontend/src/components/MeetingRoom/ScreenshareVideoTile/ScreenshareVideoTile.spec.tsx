@@ -66,10 +66,10 @@ describe('ScreenshareVideoTile', () => {
   });
 
   it('renders with custom className', () => {
-    render(<ScreenshareVideoTile {...defaultProps} className="bg-red-500" />);
+    render(<ScreenshareVideoTile {...defaultProps} className="ml-2" />);
 
     const tile = screen.getByTestId('screenshare-tile');
-    expect(tile).toHaveClass('bg-red-500');
+    expect(tile).toHaveClass('ml-2');
   });
 
   it('calls onMouseEnter and onMouseLeave handlers', () => {
@@ -303,11 +303,17 @@ describe('ScreenshareVideoTile', () => {
   });
 
   describe('Component structure', () => {
-    it('has correct CSS classes', () => {
+    it('has correct CSS styles', () => {
       render(<ScreenshareVideoTile {...defaultProps} />);
 
       const tile = screen.getByTestId('screenshare-tile');
-      expect(tile).toHaveClass('absolute', 'm-1', 'flex', 'items-center', 'justify-center');
+      expect(tile).toHaveStyle({
+        position: 'absolute',
+        margin: '8px',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+      });
     });
 
     it('has correct id attribute', () => {

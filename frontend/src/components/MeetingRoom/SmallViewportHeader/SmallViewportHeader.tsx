@@ -1,11 +1,12 @@
 import { ReactElement, useState } from 'react';
-import RadioButtonCheckedIcon from '@mui/icons-material/RadioButtonChecked';
-import { ContentCopy } from '@mui/icons-material';
-import { IconButton, Fade } from '@mui/material';
-import CheckIcon from '@mui/icons-material/Check';
+import Box from '@ui/Box';
+import useTheme from '@ui/theme';
 import useSessionContext from '../../../hooks/useSessionContext';
 import useRoomName from '../../../hooks/useRoomName';
 import useRoomShareUrl from '../../../hooks/useRoomShareUrl';
+import IconButton from '@ui/IconButton';
+import Fade from '@ui/Fade';
+import VividIcon from '@components/VividIcon';
 
 /**
  * SmallViewportHeader Component
@@ -15,6 +16,7 @@ import useRoomShareUrl from '../../../hooks/useRoomShareUrl';
  * @returns {ReactElement} The small viewport header component.
  */
 const SmallViewportHeader = (): ReactElement => {
+  const theme = useTheme();
   const { archiveId } = useSessionContext();
   const isRecording = !!archiveId;
   const roomName = useRoomName();
@@ -31,31 +33,55 @@ const SmallViewportHeader = (): ReactElement => {
     }, 3000);
   };
   return (
-    <div
-      className="flex items-center justify-between bg-darkGray-100 px-4 pt-4 text-white"
+    <Box
       data-testid="smallViewportHeader"
+      sx={{
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        backgroundColor: theme.colors.darkBackground,
+        paddingX: 2,
+        paddingTop: 2,
+        color: theme.colors.onDarkGrey,
+      }}
     >
-      <div className="flex items-center space-x-2 px-1">
-        {isRecording && <RadioButtonCheckedIcon className="text-red-500" />}
-        <div className="line-clamp-1">{roomName}</div>
-      </div>
-      <div className="-mx-2">
+      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, paddingX: 0.5 }}>
+        {isRecording && (
+          <VividIcon
+            name="radio-checked-2-solid"
+            customSize={-6}
+            sx={{ color: theme.colors.error }}
+            data-testid="RadioButtonCheckedIcon"
+          />
+        )}
+        <Box
+          sx={{
+            overflow: 'hidden',
+            textOverflow: 'ellipsis',
+            display: '-webkit-box',
+            WebkitLineClamp: 1,
+            WebkitBoxOrient: 'vertical',
+          }}
+        >
+          {roomName}
+        </Box>
+      </Box>
+      <Box sx={{ marginX: -1 }}>
         <Fade in timeout={500}>
-          <IconButton
-            size="large"
-            sx={{ color: 'rgb(95, 99, 104)' }}
-            onClick={copyUrl}
-            disabled={isCopied}
-          >
+          <IconButton sx={{ color: theme.colors.onDarkGrey }} onClick={copyUrl} disabled={isCopied}>
             {isCopied ? (
-              <CheckIcon sx={{ color: 'rgba(26,115,232,.9)' }} />
+              <VividIcon
+                customSize={-4}
+                name="check-sent-line"
+                sx={{ color: theme.colors.success }}
+              />
             ) : (
-              <ContentCopy className="text-white" />
+              <VividIcon customSize={-4} name="copy-line" sx={{ color: theme.colors.onDarkGrey }} />
             )}
           </IconButton>
         </Fade>
-      </div>
-    </div>
+      </Box>
+    </Box>
   );
 };
 

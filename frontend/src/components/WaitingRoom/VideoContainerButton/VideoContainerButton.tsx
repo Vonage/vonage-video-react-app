@@ -1,4 +1,5 @@
-import { IconButton, SxProps } from '@mui/material';
+import IconButton from '@ui/IconButton';
+import type { SxProps } from '@ui/SxProps';
 import { ForwardedRef, forwardRef, ReactElement } from 'react';
 
 export type VideoContainerButtonProps = {

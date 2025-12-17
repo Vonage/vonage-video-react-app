@@ -1,78 +1,82 @@
-import WarningOutlinedIcon from '@mui/icons-material/WarningOutlined';
-import FileDownloadOutlinedIcon from '@mui/icons-material/FileDownloadOutlined';
-import {
-  CircularProgress,
-  IconButton,
-  Link,
-  List,
-  ListItem,
-  ListItemText,
-  Tooltip,
-} from '@mui/material';
-import { ReactElement } from 'react';
+import { Fragment, ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
+import Link from '@ui/Link';
+import Tooltip from '@ui/Tooltip';
+import ListItem from '@ui/ListItem';
+import ListItemIcon from '@ui/ListItemIcon';
+import CircularProgress from '@ui/CircularProgress';
+import ListItemText from '@ui/ListItemText';
+import Box from '@ui/Box';
+import Typography from '@ui/Typography';
+import VividIcon from '@components/VividIcon';
 import { Archive, ArchiveStatus } from '../../../api/archiving/model';
-
-const ArchiveDownloadButton = ({ url, id }: { id: string; url: string | undefined }) => {
-  const { t } = useTranslation();
-
-  return (
-    <Link href={url} target="_blank">
-      <Tooltip title={t('archiveList.download.tooltip', { id })}>
-        <IconButton>
-          <FileDownloadOutlinedIcon data-testid="archive-download-button" />
-        </IconButton>
-      </Tooltip>
-    </Link>
-  );
-};
+import IconButton from '@ui/IconButton';
+import List from '@ui/List';
+import formatDuration from '@utils/formatDuration';
+import formatFileSize from '@utils/formatFileSize';
+import Stack from '@ui/Stack';
+import Separator from '@components/Separator';
+import useTheme from '@ui/theme';
 
 const ArchiveErrorIcon = () => {
   const { t } = useTranslation();
+  const theme = useTheme();
 
   return (
     <Tooltip title={t('archiveList.error.tooltip')}>
-      <WarningOutlinedIcon
-        color="warning"
-        sx={{
-          alignItems: 'center',
-          display: 'flex',
-          width: '40px',
-          height: '40px',
-          padding: '8px',
-          justifyContent: 'center',
-        }}
+      <VividIcon
+        name="warning-line"
+        customSize={-6}
         data-testid="archive-error-icon"
+        sx={{
+          color: theme.colors.warning,
+        }}
       />
     </Tooltip>
   );
 };
 
 const ArchivingLoadingIcon = () => {
-  const { t } = useTranslation();
+  const theme = useTheme();
+
   return (
-    <Tooltip title={t('archiveList.loading.tooltip')}>
-      <CircularProgress
-        data-testid="archive-loading-spinner"
-        sx={{
-          padding: '8px',
-        }}
-      />
-    </Tooltip>
+    <CircularProgress
+      data-testid="archive-loading-spinner"
+      sx={{
+        p: 1,
+        color: theme.colors.primary,
+      }}
+    />
   );
 };
 
-const ArchiveStatusIcon = ({
-  status,
-  url,
-  id,
-}: {
-  id: string;
-  status: ArchiveStatus;
-  url: string | null;
-}) => {
+const ArchiveStatusContent = ({ status, url }: { status: ArchiveStatus; url: string | null }) => {
+  const { t } = useTranslation();
+  const theme = useTheme();
+
   if (status === 'available') {
-    return <ArchiveDownloadButton id={id} url={url ?? undefined} />;
+    return (
+      <Link href={url ?? undefined} target="_blank" sx={{ textDecoration: 'none' }}>
+        <Stack
+          direction="row"
+          alignItems="center"
+          spacing={0.5}
+          sx={{ mb: { xs: 2, sm: 2, md: 5, lg: 2 } }}
+        >
+          <IconButton>
+            <VividIcon
+              name="download-line"
+              customSize={-6}
+              data-testid="archive-download-button"
+              sx={{ color: theme.colors.textPrimary }}
+            />
+          </IconButton>
+          <Typography variant="caption" sx={{ color: theme.colors.textPrimary }}>
+            {t('archiveList.download')}
+          </Typography>
+        </Stack>
+      </Link>
+    );
   }
   if (status === 'pending') {
     return <ArchivingLoadingIcon />;
@@ -94,41 +98,94 @@ export type ArchiveListProps = {
  */
 const ArchiveList = ({ archives }: ArchiveListProps): ReactElement => {
   const { t } = useTranslation();
+  const theme = useTheme();
 
   if (archives === 'error') {
     return (
-      <>
-        <WarningOutlinedIcon color="warning" />
-        <h3 className="text-lg text-slate-500">{t('archiveList.error.text')}</h3>
-      </>
+      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+        <VividIcon name="warning-line" customSize={-4} sx={{ color: theme.colors.warning }} />
+        <Typography variant="h6" sx={{ color: theme.colors.textTertiary }}>
+          {t('archiveList.error.text')}
+        </Typography>
+      </Box>
     );
   }
   if (!archives.length) {
-    return <h3 className="text-lg text-slate-500">{t('archiveList.empty')}</h3>;
+    return (
+      <>
+        <Stack direction="row" alignItems="center" spacing={1.5} sx={{ mb: 2 }}>
+          <VividIcon
+            name="video-active-line"
+            customSize={-4}
+            sx={{ color: theme.colors.secondary }}
+          />
+          <Typography variant="body1" sx={{ color: theme.colors.textSecondary }}>
+            {t('archiveList.empty')}
+          </Typography>
+        </Stack>
+        <Separator width="100%" />
+      </>
+    );
   }
   return (
-    <div className="md:max-h-[480px] md:overflow-y-auto ">
-      <List sx={{ overflowX: 'auto' }}>
+    <Box
+      sx={{
+        width: '100%',
+        maxHeight: '190px',
+      }}
+    >
+      <List sx={{ pt: 0 }}>
         {archives.map((archive, index) => {
           return (
-            <ListItem
-              data-testid={`archive-list-item-${archive.id}`}
-              key={archive.id}
-              secondaryAction={
-                <ArchiveStatusIcon id={archive.id} url={archive.url} status={archive.status} />
-              }
-            >
-              <ListItemText
-                primary={t('archiveList.archive.index', { index: archives.length - index })}
-                secondary={t('archiveList.archive.createdAt', {
-                  createdAt: archive.createdAtFormatted,
-                })}
-              />
-            </ListItem>
+            <Fragment key={archive.id}>
+              <ListItem
+                data-testid={`archive-list-item-${archive.id}`}
+                sx={{
+                  px: 0,
+                }}
+                secondaryAction={<ArchiveStatusContent url={archive.url} status={archive.status} />}
+              >
+                <ListItemIcon sx={{ minWidth: '45px' }}>
+                  <VividIcon
+                    name="video-active-line"
+                    customSize={-4}
+                    sx={{ color: theme.colors.secondary }}
+                  />
+                </ListItemIcon>
+                <ListItemText
+                  primary={
+                    <Typography variant="body1">
+                      {archive.status === 'pending'
+                        ? t('archiveList.loading')
+                        : t('archiveList.archive.index', { index: archives.length - index })}
+                    </Typography>
+                  }
+                  secondary={
+                    (archive.status === 'available' || archive.status === 'pending') && (
+                      <Typography variant="caption" sx={{ color: theme.colors.textTertiary }}>
+                        {archive.status === 'pending' ? (
+                          t('archiveList.loading.subtitle')
+                        ) : (
+                          <>
+                            {archive.duration && `${formatDuration(archive.duration)}`}
+                            {archive.size && ` • ${formatFileSize(archive.size)}`}
+                            {` • ${t('archiveList.archive.createdAt', {
+                              createdAt: archive.createdAtFormatted,
+                            })}`}
+                          </>
+                        )}
+                      </Typography>
+                    )
+                  }
+                />
+              </ListItem>
+
+              <Separator width="100%" />
+            </Fragment>
           );
         })}
       </List>
-    </div>
+    </Box>
   );
 };
 

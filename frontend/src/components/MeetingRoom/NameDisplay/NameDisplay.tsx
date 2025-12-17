@@ -1,5 +1,7 @@
 import { ReactElement } from 'react';
-import { TEXT_SHADOW } from '../../../utils/constants';
+import Box from '@ui/Box';
+import Typography from '@ui/Typography';
+import useTheme from '@ui/theme';
 
 export type NameDisplayProps = {
   containerWidth: number;
@@ -16,17 +18,26 @@ export type NameDisplayProps = {
  * @returns {ReactElement} The NameDisplay component.
  */
 const NameDisplay = ({ name, containerWidth }: NameDisplayProps): ReactElement => {
+  const theme = useTheme();
   const safeMaxWidth =
     typeof containerWidth === 'number' && Number.isFinite(containerWidth) ? containerWidth : 0;
   return (
-    <div
-      className={`absolute bottom-[10px] left-[10px] truncate text-sm text-white ${TEXT_SHADOW}`}
-      style={{
+    <Box
+      sx={{
+        position: 'absolute',
+        bottom: '10px',
+        left: '10px',
+        overflow: 'hidden',
+        textOverflow: 'ellipsis',
+        whiteSpace: 'nowrap',
+        color: theme.colors.accent,
         maxWidth: Math.max(0, safeMaxWidth - 32),
       }}
     >
-      <span>{name}</span>
-    </div>
+      <Typography variant="body1" component="span">
+        {name}
+      </Typography>
+    </Box>
   );
 };
 

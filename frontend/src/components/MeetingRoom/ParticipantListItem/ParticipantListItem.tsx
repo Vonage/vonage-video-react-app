@@ -1,10 +1,15 @@
 import { ReactElement } from 'react';
-import { Avatar, Badge, ListItem, Typography } from '@mui/material';
-import PushPinIcon from '@mui/icons-material/PushPin';
 import { Stream } from '@vonage/client-sdk-video';
 import AudioIndicator from '../AudioIndicator';
 import ParticipantListItemMenu from '../ParticipantListItemMenu';
 import { SubscriberWrapper } from '../../../types/session';
+import ListItem from '@ui/ListItem';
+import Avatar from '@ui/Avatar';
+import Typography from '@ui/Typography';
+import Badge from '@ui/Badge';
+import useTheme from '@ui/theme';
+import VividIcon from '@components/VividIcon';
+import Box from '@ui/Box';
 
 export type ParticipantListItemProps = {
   stream?: Stream;
@@ -40,24 +45,26 @@ const ParticipantListItem = ({
   stream,
   subscriberWrapper,
 }: ParticipantListItemProps): ReactElement => {
+  const theme = useTheme();
+
   return (
     <ListItem
       sx={{ height: '56px', paddingRight: '68px' }}
       data-testid={dataTestId}
       secondaryAction={
-        <div className="flex items-center justify-center">
+        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
           <AudioIndicator
             audioLevel={audioLevel}
             hasAudio={hasAudio}
             stream={stream}
             participantName={name}
-            indicatorColor="black"
-            indicatorStyle="flex items-center justify-center"
+            indicatorColor={theme.colors.secondary}
+            indicatorStyle={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}
           />
           {subscriberWrapper && (
             <ParticipantListItemMenu participantName={name} subscriberWrapper={subscriberWrapper} />
           )}
-        </div>
+        </Box>
       }
     >
       <Badge
@@ -65,14 +72,15 @@ const ParticipantListItem = ({
         anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
         sx={{
           '.MuiBadge-badge': {
-            backgroundColor: 'white',
+            backgroundColor: theme.colors.background,
           },
         }}
         invisible={!subscriberWrapper?.isPinned}
         badgeContent={
-          <PushPinIcon
+          <VividIcon
+            customSize={-6}
+            name="pin-2-solid"
             sx={{
-              fontSize: '14px',
               position: 'fixed',
             }}
           />
@@ -91,7 +99,7 @@ const ParticipantListItem = ({
       </Badge>
       <Typography
         data-testid="participant-list-name"
-        variant="inherit"
+        variant="body1"
         noWrap
         sx={{ marginLeft: '12px' }}
       >

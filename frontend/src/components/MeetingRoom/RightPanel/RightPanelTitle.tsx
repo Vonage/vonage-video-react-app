@@ -1,6 +1,9 @@
-import { Close } from '@mui/icons-material';
-import { IconButton } from '@mui/material';
+import IconButton from '@ui/IconButton';
 import { ReactElement } from 'react';
+import VividIcon from '@components/VividIcon';
+import Box from '@ui/Box';
+import Typography from '@ui/Typography';
+import useTheme from '@ui/theme';
 
 export type RightPanelTitleProps = {
   handleClose: () => void;
@@ -17,17 +20,38 @@ export type RightPanelTitleProps = {
  * @returns {ReactElement} - RightPanelTitle component
  */
 const RightPanelTitle = ({ handleClose, title }: RightPanelTitleProps): ReactElement => {
+  const theme = useTheme();
   return (
-    <div
+    <Box
       data-testid="right-panel-title"
-      style={{ width: 'inherit' }}
-      className="flex h-[64px] flex-row items-center justify-between pl-6"
+      sx={{
+        width: 'inherit',
+        display: 'flex',
+        height: '64px',
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        pl: 3,
+        pr: 0.5,
+      }}
     >
-      <span className="text-darkGray text-lg font-normal tracking-normal">{title}</span>
-      <IconButton onClick={handleClose} size="large" sx={{ color: 'rgb(95, 99, 104)' }}>
-        <Close />
+      <Typography
+        variant="body1"
+        sx={{
+          color: theme.colors.textTertiary,
+        }}
+      >
+        {title}
+      </Typography>
+      <IconButton
+        onClick={handleClose}
+        size="large"
+        sx={{ color: theme.colors.secondary }}
+        data-testid="CloseIcon"
+      >
+        <VividIcon name="close-line" customSize={-5} />
       </IconButton>
-    </div>
+    </Box>
   );
 };
 

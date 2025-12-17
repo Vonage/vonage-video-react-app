@@ -14,7 +14,7 @@ test('should render `Reenter` button when exiting a room and it should return us
 
   // Checking we navigated to the goodbye page
   await expect(page.url()).toContain('goodbye');
-  const reenterButton = page.getByRole('button', { name: 'Re-enter' });
+  const reenterButton = page.getByRole('button', { name: 'Go back to meeting' });
   await expect(reenterButton).toBeVisible();
 
   // Checking that you can reenter the exited room
@@ -26,17 +26,17 @@ test('should not render `Reenter` button when navigating directly to goodbye', a
   await page.goto(baseURL);
   await page.goto(`${baseURL}goodbye`);
 
-  const reenterButton = page.getByRole('button', { name: 'Re-enter' });
+  const reenterButton = page.getByRole('button', { name: 'Go back to meeting' });
   await expect(reenterButton).not.toBeVisible();
 });
 
-test('should render `Return to landing page` and it should navigate to the landing page', async ({
+test('should render `View Landing Page` and it should navigate to the landing page', async ({
   page,
 }) => {
   await page.goto(baseURL);
   await page.goto(`${baseURL}goodbye`);
 
-  const landingPageButton = page.getByRole('button', { name: 'Return to landing page' });
+  const landingPageButton = page.getByRole('button', { name: 'View Landing Page' });
   await expect(landingPageButton).toBeVisible();
 
   await landingPageButton.click();

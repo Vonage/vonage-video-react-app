@@ -1,5 +1,8 @@
-import CircularProgress from '@mui/material/CircularProgress';
+import CircularProgress from '@ui/CircularProgress';
 import { ReactElement } from 'react';
+import Box from '@ui/Box';
+import useTheme from '@ui/theme';
+import { VIDEO_CONTAINER_HEIGHT_WR } from '@utils/constants';
 
 /**
  * VideoLoading Component
@@ -8,10 +11,21 @@ import { ReactElement } from 'react';
  * @returns {ReactElement} - The VideoLoading component
  */
 const VideoLoading = (): ReactElement => {
+  const theme = useTheme();
+
   return (
-    <div
+    <Box
       data-testid="VideoLoading"
-      className="absolute flex h-[328px] w-dvw items-center justify-center rounded-2xl bg-black"
+      sx={{
+        position: 'absolute',
+        display: 'flex',
+        height: `${VIDEO_CONTAINER_HEIGHT_WR}px`,
+        width: '100dvw',
+        alignItems: 'center',
+        justifyContent: 'center',
+        borderRadius: '16px',
+        backgroundColor: theme.colors.secondary,
+      }}
     >
       <CircularProgress
         sx={{
@@ -20,7 +34,7 @@ const VideoLoading = (): ReactElement => {
         }}
         data-testid="CircularProgress"
       />
-    </div>
+    </Box>
   );
 };
 

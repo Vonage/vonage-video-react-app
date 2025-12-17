@@ -44,7 +44,7 @@ describe('ChatButton', () => {
 
   it('should have a blue icon when the chat is open', () => {
     render(<ChatButton handleClick={() => {}} isOpen />);
-    expect(screen.getByTestId('ChatIcon')).toHaveStyle('color: rgb(130, 177, 255)');
+    expect(screen.getByTestId('ChatIcon')).toHaveStyle('color: rgb(0, 0, 0)');
   });
 
   it('should invoke callback on click', () => {

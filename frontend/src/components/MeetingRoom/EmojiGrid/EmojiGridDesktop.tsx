@@ -1,9 +1,13 @@
-import { Grid, Grow, Paper, Popper, ClickAwayListener } from '@mui/material';
+import Grid from '@ui/Grid';
+import Grow from '@ui/Grow';
+import Paper from '@ui/Paper';
+import Popper from '@ui/Popper';
+import ClickAwayListener from '@ui/ClickAwayListener';
+import Box from '@ui/Box';
 import { ReactElement, RefObject, useEffect, useState } from 'react';
-import useCustomTheme from '@Context/Theme';
+import useTheme from '@ui/theme';
 import SendEmojiButton from '../SendEmojiButton';
 import emojiMap from '../../../utils/emojis';
-import { PopperChildrenProps } from '@mui/material/Popper/BasePopper.types';
 
 export type EmojiGridDesktopProps = {
   handleClickAway: (event: MouseEvent | TouchEvent) => void;
@@ -27,7 +31,7 @@ const EmojiGridDesktop = ({
   isEmojiGridOpen,
   anchorRef,
 }: EmojiGridDesktopProps): ReactElement | false => {
-  const theme = useCustomTheme();
+  const theme = useTheme();
   const [isRendered, setIsRendered] = useState<boolean>(false);
   useEffect(() => {
     // useRef is not immediately assigned on first render
@@ -46,19 +50,27 @@ const EmojiGridDesktop = ({
         disablePortal
         placement="bottom"
       >
-        {({ TransitionProps, placement }: PopperChildrenProps) => (
+        {({ TransitionProps, placement }) => (
           <Grow
             {...TransitionProps}
             style={{ transformOrigin: placement === 'bottom' ? 'center top' : 'center bottom' }}
           >
-            <div className="flex text-left font-normal">
+            <Box
+              sx={{
+                display: 'flex',
+                textAlign: 'left',
+                fontWeight: 'normal',
+              }}
+            >
               <ClickAwayListener onClickAway={handleClickAway}>
                 <Paper
-                  className="flex items-center justify-center"
                   data-testid="emoji-grid"
                   sx={{
-                    backgroundColor: theme.colors.secondary,
-                    color: theme.colors.onPrimary,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    backgroundColor: theme.colors.darkGreyOpacity,
+                    color: theme.colors.onDarkGrey,
                     padding: { xs: 1 },
                     borderRadius: 2,
                     zIndex: 1,
@@ -80,7 +92,7 @@ const EmojiGridDesktop = ({
                   </Grid>
                 </Paper>
               </ClickAwayListener>
-            </div>
+            </Box>
           </Grow>
         )}
       </Popper>

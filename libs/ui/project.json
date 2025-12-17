@@ -36,7 +36,7 @@
       "executor": "nx:run-commands",
       "options": {
         "cwd": "libs/ui",
-        "command": "tsc -p tsconfig.json --pretty true --noEmit"
+        "command": "tsc -p tsconfig.lib.json --pretty true --noEmit"
       }
     }
   },

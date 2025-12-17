@@ -1,6 +1,10 @@
-import { Typography, Button } from '@mui/material';
 import { ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
+import Box from '@ui/Box';
+import Button from '@ui/Button';
+import Typography from '@ui/Typography';
+import Link from '@ui/Link';
+import useTheme from '@ui/theme';
 
 export type TicketResponseType = {
   message: string;
@@ -27,12 +31,21 @@ const FormSubmitted = ({
   ticketResponse,
 }: FormSubmittedProps): ReactElement => {
   const { t } = useTranslation();
+  const theme = useTheme();
+
   return (
     <>
-      <div className="flex min-h-[80vh] items-center justify-between overflow-y-auto overflow-x-hidden">
-        <Typography
-          variant="body2"
-          color="textPrimary"
+      <Box
+        sx={{
+          display: 'flex',
+          minHeight: '80vh',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          overflowY: 'auto',
+          overflowX: 'hidden',
+        }}
+      >
+        <Box
           sx={{
             ml: 2,
             mr: 2,
@@ -43,34 +56,48 @@ const FormSubmitted = ({
           }}
         >
           {ticketResponse.ticketUrl ? (
-            <>
-              <b data-testid="thank-you-text">{t('feedbackForm.submitted.thanks')}</b>
-              <br />
-              {t('feedbackForm.submitted.content')}
-              <br />
-              {ticketResponse.message} <br />
-              <a
+            <Box component="span">
+              <Typography data-testid="thank-you-text" variant="h6" sx={{ mb: 1 }}>
+                {t('feedbackForm.submitted.thanks')}
+              </Typography>
+              <Typography variant="body2" data-testid="submitted-content-text">
+                {t('feedbackForm.submitted.content')}
+              </Typography>
+              <Typography variant="body2" data-testid="message-text" sx={{ mb: 1.5 }}>
+                {ticketResponse.message}
+              </Typography>
+              <Link
                 data-testid="track-progress-text"
                 href={ticketResponse.ticketUrl}
                 target="_blank"
-                style={{
-                  color: '#0B57D0',
-                  fontWeight: 'bold',
-                }}
                 rel="noreferrer"
+                sx={{
+                  color: theme.colors.information,
+                  textDecoration: 'none',
+                  '&:hover': {
+                    textDecoration: 'underline',
+                  },
+                }}
               >
                 {t('feedbackForm.submitted.track')}
-              </a>
-            </>
+              </Link>
+            </Box>
           ) : (
-            <span data-testid="error-text">
+            <Typography variant="body1" data-testid="error-text">
               {t('feedbackForm.submitted.error')}
-              <br />
-            </span>
+            </Typography>
           )}
-        </Typography>
-      </div>
-      <div className="absolute inset-x-0 bottom-0 flex">
+        </Box>
+      </Box>
+      <Box
+        sx={{
+          position: 'absolute',
+          left: 0,
+          right: 0,
+          bottom: 0,
+          display: 'flex',
+        }}
+      >
         <Button
           type="submit"
           variant="contained"
@@ -87,7 +114,7 @@ const FormSubmitted = ({
         >
           {t('button.close')}
         </Button>
-      </div>
+      </Box>
     </>
   );
 };

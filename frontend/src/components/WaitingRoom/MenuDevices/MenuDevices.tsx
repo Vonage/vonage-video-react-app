@@ -1,10 +1,12 @@
-import { Menu, MenuItem } from '@mui/material';
-import { Speaker } from '@mui/icons-material';
 import { AudioOutputDevice, Device } from '@vonage/client-sdk-video';
 import { ReactElement, useMemo } from 'react';
-import { isGetActiveAudioOutputDeviceSupported } from '../../../utils/util';
+import MenuItem from '@ui/MenuItem';
+import Menu from '@ui/Menu';
+import VividIcon from '@components/VividIcon';
+import Box from '@ui/Box';
+import cleanAndDedupeDeviceLabels from '@utils/cleanAndDedupeDeviceLabels/cleanAndDedupeDeviceLabels';
 import SoundTest from '../../SoundTest';
-import cleanAndDedupeDeviceLabels from '../../../utils/cleanAndDedupeDeviceLabels/cleanAndDedupeDeviceLabels';
+import { isGetActiveAudioOutputDeviceSupported } from '@utils/util';
 
 export type MenuDevicesWaitingRoomProps = {
   onClose: () => void;
@@ -67,24 +69,15 @@ const MenuDevices = ({
             }}
             key={device.deviceId}
             selected={device.deviceId === localSource}
-            sx={{
-              pl: 4,
-              backgroundColor: device.deviceId === localSource ? 'rgba(26,115,232,.9)' : '',
-            }}
           >
             {device.label}
           </MenuItem>
         ))}
       {deviceType === 'audioOutput' && (
         <SoundTest>
-          <Speaker
-            sx={{
-              fontSize: 24,
-              mr: 1,
-              ml: 1.5,
-              color: 'rgb(95, 99, 104)',
-            }}
-          />
+          <Box sx={{ mr: 1 }}>
+            <VividIcon name="hearing-line" customSize={-5} />
+          </Box>
         </SoundTest>
       )}
     </Menu>

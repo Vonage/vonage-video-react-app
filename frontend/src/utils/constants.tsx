@@ -121,6 +121,16 @@ export const SMALL_VIEWPORT = 768;
  */
 export const TABLET_VIEWPORT = 899;
 
+/*
+ * @constant {number} VIDEO_CONTAINER_HEIGHT_WR - The fixed height for the video container in the waiting room.
+ */
+export const VIDEO_CONTAINER_HEIGHT_WR = 335;
+
+/*
+ * @constant {number} VIDEO_CONTAINER_BUTTON_SIZE_WR - The fixed height for the video container buttons in the waiting room.
+ */
+export const VIDEO_CONTAINER_BUTTON_SIZE_WR = 40;
+
 /**
  * @constant {string} BACKGROUNDS_PATH - The path to the backgrounds assets directory.
  */

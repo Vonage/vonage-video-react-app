@@ -13,6 +13,8 @@ import { hasMediaProcessorSupport } from '@vonage/client-sdk-video';
 import getBoxStyle from '../../../utils/helpers/getBoxStyle';
 import ZoomIndicator from '../ZoomIndicator';
 import { MAX_ZOOM, MIN_ZOOM, ZOOM_STEP } from '../../../utils/constants';
+import useTheme from '@ui/theme';
+import CustomBox from '@ui/Box';
 
 export type ScreenshareVideoTileProps = {
   'data-testid': string;
@@ -44,6 +46,7 @@ const ScreenshareVideoTile = forwardRef(
     }: ScreenshareVideoTileProps,
     ref: ForwardedRef<HTMLDivElement>
   ): ReactElement => {
+    const theme = useTheme();
     // Zoom state management
     const [zoomLevel, setZoomLevel] = useState<number>(1);
     const [panOffset, setPanOffset] = useState<{ x: number; y: number }>({
@@ -160,15 +163,19 @@ const ScreenshareVideoTile = forwardRef(
     };
 
     return (
-      <div
+      <CustomBox
         id={id}
         data-testid={dataTestId}
-        className={`${className ?? ''} absolute m-1 flex items-center justify-center`}
-        style={{
-          ...getBoxStyle(box, true), // Always true for screenshare
+        sx={{
+          position: 'absolute',
+          m: 1,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
           overflow: 'hidden',
-          position: 'relative', // Ensure positioning context for ZoomIndicator
+          ...getBoxStyle(box, true), // Always true for screenshare
         }}
+        className={className}
         onMouseEnter={() => onMouseEnter?.()}
         onMouseLeave={() => {
           setIsDragging(false);
@@ -179,17 +186,33 @@ const ScreenshareVideoTile = forwardRef(
         onMouseMove={handleMouseMove}
         onMouseUp={handleMouseUp}
       >
-        <div
-          className="relative left-0 top-0 size-full overflow-hidden rounded-xl"
+        <CustomBox
           ref={ref}
-          style={{
-            backgroundColor: 'rgba(60, 64, 67, 0.55)',
+          sx={{
+            position: 'relative',
+            left: 0,
+            top: 0,
+            width: '100%',
+            height: '100%',
+            overflow: 'hidden',
+            borderRadius: theme.shapes.borderRadiusLarge,
+            backgroundColor: theme.colors.darkGreyOpacity,
             ...getTransformStyle(),
           }}
         />
-        <div
-          className="relative left-0 top-0 hidden size-full overflow-hidden rounded-xl bg-notVeryGray-100"
-          style={getTransformStyle()}
+        <CustomBox
+          sx={{
+            position: 'relative',
+            left: 0,
+            top: 0,
+            display: 'none',
+            width: '100%',
+            height: '100%',
+            overflow: 'hidden',
+            borderRadius: theme.shapes.borderRadiusLarge,
+            backgroundColor: theme.colors.darkGreyOpacity,
+            ...getTransformStyle(),
+          }}
         />
         {children}
 
@@ -201,7 +224,7 @@ const ScreenshareVideoTile = forwardRef(
             zoomOut={zoomOut}
           />
         )}
-      </div>
+      </CustomBox>
     );
   }
 );

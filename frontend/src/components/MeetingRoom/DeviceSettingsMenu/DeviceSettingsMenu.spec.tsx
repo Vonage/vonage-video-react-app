@@ -340,11 +340,11 @@ describe('DeviceSettingsMenu Component', () => {
 
       await waitFor(() => {
         expect(screen.queryByTestId('dropdown-separator')).toBeVisible();
-        expect(screen.queryByText('Background Effects')).toBeVisible();
+        expect(screen.queryByText('Background settings')).toBeVisible();
       });
     });
 
-    it('and does not render the dropdown separator and background effects option when media processor is not supported', async () => {
+    it('and does not render the dropdown separator and background settings option when media processor is not supported', async () => {
       render(
         <DeviceSettingsMenu
           deviceType={deviceType}
@@ -359,11 +359,11 @@ describe('DeviceSettingsMenu Component', () => {
 
       await waitFor(() => {
         expect(screen.queryByTestId('dropdown-separator')).not.toBeInTheDocument();
-        expect(screen.queryByText('Background Effects')).not.toBeInTheDocument();
+        expect(screen.queryByText('Background settings')).not.toBeInTheDocument();
       });
     });
 
-    it('and does not render the dropdown separator and background effects option when allowBackgroundEffects is false', async () => {
+    it('and does not render the dropdown separator and background settings option when allowBackgroundEffects is false', async () => {
       render(
         <DeviceSettingsMenu
           deviceType={deviceType}
@@ -390,7 +390,7 @@ describe('DeviceSettingsMenu Component', () => {
 
       await waitFor(() => {
         expect(screen.queryByTestId('dropdown-separator')).not.toBeInTheDocument();
-        expect(screen.queryByText('Background Effects')).not.toBeInTheDocument();
+        expect(screen.queryByText('Background settings')).not.toBeInTheDocument();
       });
     });
   });

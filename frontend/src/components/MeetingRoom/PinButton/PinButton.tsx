@@ -1,9 +1,11 @@
-import PushPinIcon from '@mui/icons-material/PushPin';
-import { IconButton, Tooltip } from '@mui/material';
 import { MouseEvent, ReactElement, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import PushPinOffIcon from '../../Icons/PushPinOffIcon';
 import isMouseEventInsideBox from '../../../utils/isMouseEventInsideBox';
+import Tooltip from '@ui/Tooltip';
+import IconButton from '@ui/IconButton';
+import VividIcon from '@components/VividIcon';
+import Box from '@ui/Box';
+import useTheme from '@ui/theme';
 
 export type PinButtonProps = {
   isMaxPinned: boolean;
@@ -33,12 +35,12 @@ const PinButton = ({
   handleClick,
 }: PinButtonProps): ReactElement | false => {
   const { t } = useTranslation();
+  const theme = useTheme();
   const isDisabled = isMaxPinned && !isPinned;
   const anchorRef = useRef<HTMLDivElement | null>(null);
   const [isHoveringButton, setIsHoveringButton] = useState<boolean>(false);
   const iconSx = {
-    fontSize: '18px',
-    color: isDisabled ? 'rgba(255,255,255,.54)' : 'white',
+    color: isDisabled ? theme.colors.disabled : theme.colors.accent,
     cursor: 'pointer',
   };
 
@@ -72,9 +74,20 @@ const PinButton = ({
   const shouldShowIcon = isTileHovered || isPinned;
   return (
     shouldShowIcon && (
-      <div
+      <Box
         ref={anchorRef}
-        className="absolute left-3 top-3 m-auto flex size-6 items-center justify-center rounded-xl"
+        sx={{
+          position: 'absolute',
+          left: 3,
+          top: 3,
+          margin: 'auto',
+          display: 'flex',
+          width: '24px',
+          height: '24px',
+          alignItems: 'center',
+          justifyContent: 'center',
+          borderRadius: theme.shapes.borderRadiusLarge,
+        }}
         data-testid="pin-button"
         onPointerEnter={() => setIsHoveringButton(true)}
         onPointerLeave={() => setIsHoveringButton(false)}
@@ -89,18 +102,18 @@ const PinButton = ({
               width: 24,
               borderRadius: '50%',
               cursor: 'pointer',
-              backgroundColor: isTileHovered ? 'rgb(32, 33, 36, .55)' : 'none',
-              '&:hover, &.Mui-focusVisible': { backgroundColor: 'rgb(32, 33, 36, .75)' },
+              backgroundColor: isTileHovered ? theme.colors.darkGrey : 'none',
+              '&:hover, &.Mui-focusVisible': { backgroundColor: theme.colors.darkGreyHover },
             }}
           >
             {isTileHovered && isPinned ? (
-              <PushPinOffIcon sx={iconSx} />
+              <VividIcon name="pin-2-off-solid" customSize={-6} sx={iconSx} />
             ) : (
-              <PushPinIcon sx={iconSx} />
+              <VividIcon name="pin-2-solid" customSize={-6} sx={iconSx} />
             )}
           </IconButton>
         </Tooltip>
-      </div>
+      </Box>
     )
   );
 };

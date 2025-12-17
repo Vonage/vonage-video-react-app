@@ -1,6 +1,8 @@
 import { ReactElement } from 'react';
 import useDateTime from '../../../hooks/useDateTime';
 import useRoomName from '../../../hooks/useRoomName';
+import Box from '@ui/Box';
+import useTheme from '@ui/theme';
 
 /**
  *  TimeRoomName Component
@@ -10,12 +12,22 @@ import useRoomName from '../../../hooks/useRoomName';
  */
 const TimeRoomName = (): ReactElement => {
   const { time } = useDateTime();
+  const theme = useTheme();
   const roomName = useRoomName();
 
   return (
-    <div className="ml-3 mt-1 truncate font-normal text-white">
+    <Box
+      sx={{
+        ml: 1,
+        mt: 1,
+        overflow: 'hidden',
+        textOverflow: 'ellipsis',
+        whiteSpace: 'nowrap',
+        color: theme.colors.accent,
+      }}
+    >
       {time} | {roomName}
-    </div>
+    </Box>
   );
 };
 

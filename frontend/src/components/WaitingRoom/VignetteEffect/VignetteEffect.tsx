@@ -1,4 +1,7 @@
 import { ReactElement } from 'react';
+import Box from '@ui/Box';
+import useTheme from '@ui/theme';
+import { VIDEO_CONTAINER_HEIGHT_WR } from '@utils/constants';
 
 /**
  * VignetteEffect Component
@@ -7,8 +10,19 @@ import { ReactElement } from 'react';
  * toward the center of the image.
  * @returns {ReactElement} - The VignetteEffect component.
  */
-const VignetteEffect = (): ReactElement => (
-  <div className="absolute h-[328px] w-full shadow-[inset_0px_64px_30px_-20px_rgba(0,0,0,0.4),inset_0px_-64px_30px_-20px_rgba(0,0,0,0.4)]" />
-);
+const VignetteEffect = (): ReactElement => {
+  const theme = useTheme();
+
+  return (
+    <Box
+      sx={{
+        position: 'absolute',
+        height: `${VIDEO_CONTAINER_HEIGHT_WR + 1}px`,
+        width: '100%',
+        boxShadow: `inset 0px 64px 30px -20px ${theme.colors.secondary}66, inset 0px -64px 30px -20px ${theme.colors.secondary}66`,
+      }}
+    />
+  );
+};
 
 export default VignetteEffect;

@@ -1,7 +1,10 @@
 import { CSSProperties, ReactElement } from 'react';
-import { Chip } from '@mui/material';
 import { EmojiWrapper } from '../../../hooks/useEmoji';
 import { EMOJI_DISPLAY_DURATION } from '../../../utils/constants';
+import Chip from '@ui/Chip';
+import Box from '@ui/Box';
+import useTheme from '@ui/theme';
+import useIsSmallViewport from '@hooks/useIsSmallViewport';
 
 export type EmojiProps = {
   emojiWrapper: EmojiWrapper;
@@ -15,6 +18,8 @@ export type EmojiProps = {
  * @returns {ReactElement} - The Emoji Component.
  */
 const Emoji = ({ emojiWrapper }: EmojiProps): ReactElement => {
+  const theme = useTheme();
+  const isSmallViewport = useIsSmallViewport();
   const { emoji, name } = emojiWrapper;
   const style: CSSProperties = {
     position: 'absolute',
@@ -28,22 +33,35 @@ const Emoji = ({ emojiWrapper }: EmojiProps): ReactElement => {
   };
 
   return (
-    <div
+    <Box
       data-testid="emoji-string-container"
-      style={style}
-      className="ml-5 flex flex-col text-5xl md:ml-[15%] md:text-6xl"
+      sx={{
+        ...style,
+        ml: isSmallViewport ? 5 : '15%',
+        display: 'flex',
+        flexDirection: 'column',
+        fontSize: isSmallViewport
+          ? theme.typography.typeScale.mobile['subtitle'].fontSize.value
+          : theme.typography.typeScale.desktop['subtitle'].fontSize.value,
+      }}
     >
       {emoji}
       <Chip
         label={name}
         size="small"
         sx={{
-          color: 'white',
-          backgroundColor: 'rgba(60, 64, 67, 0.55)',
+          mt: isSmallViewport ? 0.5 : 2,
+          color: theme.colors.onDarkGrey,
+          backgroundColor: theme.colors.darkGrey,
+          overflow: 'hidden',
+          textOverflow: 'ellipsis',
+          whiteSpace: 'nowrap',
+          fontSize: isSmallViewport
+            ? theme.typography.typeScale.mobile['body-base'].fontSize.value
+            : theme.typography.typeScale.desktop['body-base'].fontSize.value,
         }}
-        className="truncate text-sm md:text-lg"
       />
-    </div>
+    </Box>
   );
 };
 

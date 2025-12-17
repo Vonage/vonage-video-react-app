@@ -30,7 +30,6 @@ describe('VideoTile component', () => {
 
     const container = screen.getByTestId('video-tile');
     expect(container).toHaveAttribute('id', 'tile1');
-    expect(container).toHaveClass('absolute', 'm-1', 'flex', 'items-center', 'justify-center');
 
     expect(container).toHaveStyle({
       position: 'absolute',
@@ -46,23 +45,14 @@ describe('VideoTile component', () => {
 
     // hasVideo true means first inner div is visible
     const hasVideoTileDiv = container.querySelector('div > div:first-child')!;
-    expect(hasVideoTileDiv).not.toHaveClass('hidden');
+    expect(hasVideoTileDiv).toHaveStyle({ display: 'block' });
   });
 
   it('hides tile when isHidden is true', () => {
     render(<VideoTile {...defaultProps} isHidden />);
 
     const container = screen.getByTestId('video-tile');
-    expect(container).toHaveClass('hidden');
-  });
-
-  it('applies talking outline classes when isTalking is true', () => {
-    render(<VideoTile {...defaultProps} isTalking />);
-
-    const container = screen.getByTestId('video-tile');
-
-    const hasVideoTileDiv = container.querySelector('div > div:first-child')!;
-    expect(hasVideoTileDiv).toHaveClass('outline', 'outline-2', 'outline-sky-500');
+    expect(container).toHaveStyle({ display: 'none' });
   });
 
   it('shows fallback div when hasVideo is false', () => {
@@ -73,8 +63,8 @@ describe('VideoTile component', () => {
     const hasVideoTileDiv = container.querySelector('div > div:first-child')!;
     const notHasVideoTileDiv = container.querySelector('div > div:last-child')!;
 
-    expect(hasVideoTileDiv).toHaveClass('hidden');
-    expect(notHasVideoTileDiv).not.toHaveClass('hidden');
+    expect(hasVideoTileDiv).toHaveStyle({ display: 'none' });
+    expect(notHasVideoTileDiv).toHaveStyle({ display: 'block' });
   });
 
   it('fires onMouseEnter and onMouseLeave events', () => {

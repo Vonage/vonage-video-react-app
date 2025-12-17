@@ -1,9 +1,12 @@
-import { Box, Tooltip } from '@mui/material';
 import { hasMediaProcessorSupport } from '@vonage/client-sdk-video';
 import { ReactElement } from 'react';
 import PortraitIcon from '@mui/icons-material/Portrait';
 import { useTranslation } from 'react-i18next';
 import useAppConfig from '@Context/AppConfig/hooks/useAppConfig';
+import Box from '@ui/Box';
+import Tooltip from '@ui/Tooltip';
+import useTheme from '@ui/theme';
+import { VIDEO_CONTAINER_BUTTON_SIZE_WR } from '@utils/constants';
 import VideoContainerButton from '../../VideoContainerButton';
 
 export type BackgroundEffectsButtonProps = {
@@ -27,33 +30,37 @@ const BackgroundEffectsButton = ({
 
   const shouldDisplayBackgroundEffects = hasMediaProcessorSupport() && allowBackgroundEffects;
   const { t } = useTranslation();
+  const theme = useTheme();
 
   return (
     shouldDisplayBackgroundEffects && (
       <Box
         sx={{
           display: 'flex',
-          position: 'relative',
-          justifyContent: 'center',
-          alignItems: 'center',
-          width: '56px',
-          height: '56px',
+          width: `${VIDEO_CONTAINER_BUTTON_SIZE_WR}px`,
+          height: `${VIDEO_CONTAINER_BUTTON_SIZE_WR}px`,
           borderRadius: '50%',
-          border: '1px solid white',
+          border: `1px solid ${theme.colors.onSecondary}`,
           overflow: 'hidden',
-          transition: 'transform 0.2s ease-in-out',
         }}
       >
-        <Tooltip title={t('backgroundEffects.title')} aria-label={t('backgroundEffects.title')}>
+        <Tooltip
+          arrow
+          title={t('backgroundEffects.title')}
+          aria-label={t('backgroundEffects.title')}
+        >
           <VideoContainerButton
             onClick={onClick}
             sx={{
               '&:hover': {
-                backgroundColor: 'rgba(255, 255, 255, 0.6)',
+                backgroundColor: `${theme.colors.onSecondary}99`,
               },
             }}
             icon={
-              <PortraitIcon sx={{ fontSize: '24px', color: 'white' }} data-testid="portraitIcon" />
+              <PortraitIcon
+                sx={{ fontSize: '24px', color: theme.colors.onSecondary }}
+                data-testid="portraitIcon"
+              />
             }
           />
         </Tooltip>

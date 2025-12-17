@@ -55,21 +55,21 @@ describe('SmallViewportHeader component', () => {
 
     render(<SmallViewportHeader />);
 
-    expect(screen.queryByTestId('RadioButtonCheckedIcon')).not.toBeInTheDocument();
+    expect(screen.queryByTestId('vivid-icon-radio-checked-2-solid')).not.toBeInTheDocument();
   });
 
   it('copies room share URL to clipboard', async () => {
     (useSessionContext as Mock).mockReturnValue({ archiveId: null });
     render(<SmallViewportHeader />);
 
-    const copyButton = screen.getByTestId('ContentCopyIcon');
+    const copyButton = screen.getByTestId('vivid-icon-copy-line');
     fireEvent.click(copyButton);
 
     await waitFor(() => {
       expect(navigator.clipboard.writeText).toHaveBeenCalledWith(
         'https://example.com/room/test-room-name'
       );
-      expect(screen.getByTestId('CheckIcon')).toBeInTheDocument();
+      expect(screen.getByTestId('vivid-icon-check-sent-line')).toBeInTheDocument();
     });
   });
 });

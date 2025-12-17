@@ -1,6 +1,8 @@
 import { useEffect, ReactElement, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import Box from '@ui/Box';
+import useTheme from '@ui/theme';
 import usePublisherContext from '../../hooks/usePublisherContext';
 import ConnectionAlert from '../../components/MeetingRoom/ConnectionAlert';
 import Toolbar from '../../components/MeetingRoom/Toolbar';
@@ -20,8 +22,6 @@ import useBackgroundPublisherContext from '../../hooks/useBackgroundPublisherCon
 import { DEVICE_ACCESS_STATUS } from '../../utils/constants';
 import type { PublishingErrorType } from '../../Context/PublisherProvider/usePublisher/usePublisher';
 
-const height = '@apply h-[calc(100dvh_-_80px)]';
-
 /**
  * MeetingRoom Component
  *
@@ -33,6 +33,7 @@ const height = '@apply h-[calc(100dvh_-_80px)]';
  */
 const MeetingRoom = (): ReactElement => {
   const { t } = useTranslation();
+  const theme = useTheme();
   const roomName = useRoomName();
   const { publisher, publish, quality, initializeLocalPublisher, publishingError, isVideoEnabled } =
     usePublisherContext();
@@ -115,7 +116,14 @@ const MeetingRoom = (): ReactElement => {
   useRedirectOnSubscriberError(subscriptionError);
 
   return (
-    <div data-testid="meetingRoom" className={`${height} w-screen bg-darkGray-100`}>
+    <Box
+      data-testid="meetingRoom"
+      sx={{
+        height: 'calc(100dvh - 80px)',
+        width: '100vw',
+        backgroundColor: theme.colors.darkBackground,
+      }}
+    >
       {isSmallViewport && <SmallViewportHeader />}
       <VideoTileCanvas
         isSharingScreen={isSharingScreen}
@@ -160,7 +168,7 @@ const MeetingRoom = (): ReactElement => {
           severity="warning"
         />
       )}
-    </div>
+    </Box>
   );
 };
 

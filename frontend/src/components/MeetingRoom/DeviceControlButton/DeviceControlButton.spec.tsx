@@ -125,7 +125,7 @@ describe('DeviceControlButton', () => {
       expect(micButton).toBeInTheDocument();
       expect(micButton).not.toBeDisabled();
 
-      expect(screen.getByTestId('ArrowDropUpIcon')).toBeInTheDocument();
+      expect(screen.getByTestId('vivid-icon-chevron-up-line')).toBeInTheDocument();
     });
 
     it('renders the button as disabled with greyed out icon and correct tooltip when allowMicrophoneControl is false', async () => {
@@ -172,7 +172,7 @@ describe('DeviceControlButton', () => {
       expect(videoButton).toBeInTheDocument();
       expect(videoButton).not.toBeDisabled();
 
-      expect(screen.getByTestId('ArrowDropUpIcon')).toBeInTheDocument();
+      expect(screen.getByTestId('vivid-icon-chevron-up-line')).toBeInTheDocument();
     });
 
     it('renders the button as disabled with greyed out icon and correct tooltip when allowCameraControl is false', async () => {

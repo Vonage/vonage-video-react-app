@@ -1,10 +1,12 @@
 import { ReactElement } from 'react';
-import { ListItemIcon, ListItemText, MenuItem } from '@mui/material';
-import PushPinIcon from '@mui/icons-material/PushPin';
 import { useTranslation } from 'react-i18next';
 import { SubscriberWrapper } from '../../../types/session';
-import PushPinOffIcon from '../../Icons/PushPinOffIcon';
 import useSessionContext from '../../../hooks/useSessionContext';
+import MenuItem from '@ui/MenuItem';
+import ListItemIcon from '@ui/ListItemIcon';
+import ListItemText from '@ui/ListItemText';
+import VividIcon from '@components/VividIcon';
+import useTheme from '@ui/theme';
 
 export type ParticipantPinMenuItemProps = {
   handleClick: () => void;
@@ -27,6 +29,7 @@ const ParticipantPinMenuItem = ({
   subscriberWrapper,
 }: ParticipantPinMenuItemProps): ReactElement => {
   const { t } = useTranslation();
+  const theme = useTheme();
   const { isPinned, id } = subscriberWrapper;
   const { isMaxPinned, pinSubscriber } = useSessionContext();
   const isDisabled = !isPinned && isMaxPinned;
@@ -55,9 +58,21 @@ const ParticipantPinMenuItem = ({
     >
       <ListItemIcon>
         {isPinned ? (
-          <PushPinOffIcon fontSize="small" sx={{ color: 'black' }} />
+          <VividIcon
+            customSize={-6}
+            name="pin-2-off-solid"
+            sx={{
+              color: theme.colors.secondary,
+            }}
+          />
         ) : (
-          <PushPinIcon fontSize="small" sx={{ color: 'black' }} />
+          <VividIcon
+            customSize={-6}
+            name="pin-2-solid"
+            sx={{
+              color: theme.colors.secondary,
+            }}
+          />
         )}
       </ListItemIcon>
       <ListItemText

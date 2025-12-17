@@ -1,6 +1,7 @@
-import { Box, SxProps } from '@mui/material';
 import { ReactElement } from 'react';
-import useCustomTheme from '@Context/Theme';
+import useTheme from '@ui/theme';
+import type { SxProps } from '@ui/SxProps';
+import Box from '@ui/Box';
 
 export type VoiceIndicatorProps = {
   publisherAudioLevel: number;
@@ -35,7 +36,7 @@ const VoiceIndicatorIcon = ({
   sx,
   size,
 }: VoiceIndicatorProps): ReactElement => {
-  const theme = useCustomTheme();
+  const theme = useTheme();
   const barHeights = calculateBarHeights(publisherAudioLevel);
   const isAnimating = publisherAudioLevel >= 5;
 

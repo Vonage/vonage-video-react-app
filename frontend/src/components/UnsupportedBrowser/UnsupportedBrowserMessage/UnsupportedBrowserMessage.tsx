@@ -1,5 +1,8 @@
 import { ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
+import Box from '@ui/Box';
+import Typography from '@ui/Typography';
+import useTheme from '@ui/theme';
 
 /**
  * UnsupportedBrowserMessage Component
@@ -9,11 +12,40 @@ import { useTranslation } from 'react-i18next';
  */
 const UnsupportedBrowserMessage = (): ReactElement => {
   const { t } = useTranslation();
+  const theme = useTheme();
+
   return (
-    <div className="h-auto w-[400px] shrink py-4 ps-12 text-left">
-      <h2 className="w-9/12 pb-5 text-5xl text-black">{t('unsupportedBrowser.header')}</h2>
-      <h3 className="text-lg text-slate-500">{t('unsupportedBrowser.message')}</h3>
-    </div>
+    <Box
+      sx={{
+        maxWidth: '80%',
+        pl: { xs: 0, lg: 4 },
+        mb: { xs: 0, md: 16 },
+        ml: { xs: 0, md: 2 },
+        textAlign: 'left',
+      }}
+    >
+      <Typography
+        variant="h2"
+        sx={{
+          pb: { xs: 0, md: 5 },
+          color: theme.colors.textSecondary,
+        }}
+      >
+        {t('unsupportedBrowser.header')}
+      </Typography>
+      <Typography
+        variant="h4"
+        sx={{
+          color: theme.colors.textTertiary,
+          display: {
+            xs: 'none',
+            sm: 'block',
+          },
+        }}
+      >
+        {t('unsupportedBrowser.message')}
+      </Typography>
+    </Box>
   );
 };
 

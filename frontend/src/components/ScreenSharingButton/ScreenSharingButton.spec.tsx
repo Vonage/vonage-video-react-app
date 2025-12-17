@@ -24,7 +24,7 @@ describe('ScreenSharingButton', () => {
 
   it('renders the share screen off button', () => {
     render(<ScreenSharingButton {...defaultProps} isSharingScreen />);
-    expect(screen.getByTestId('StopScreenShareIcon')).toBeInTheDocument();
+    expect(screen.getByTestId('ScreenShareIcon')).toBeInTheDocument();
 
     const button = screen.getByRole('button');
     button.click();

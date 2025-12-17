@@ -94,10 +94,7 @@ test.describe('participant pinning', () => {
       })
       .click();
 
-    const closeIconButton = pageThree.locator(
-      '//span[contains(text(),"Participants")]/following-sibling::button'
-    );
-    await closeIconButton.click();
+    await pageThree.getByTestId('right-panel-title').getByTestId('CloseIcon').click();
 
     const newUserTwoSubscriberRet = await userTwoSubscriber.boundingBox();
     const newPublisherRect = await publisher.boundingBox();

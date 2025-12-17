@@ -1,6 +1,5 @@
 import { ReactElement, useRef } from 'react';
 import { Publisher as OTPublisher } from '@vonage/client-sdk-video';
-import { CircularProgress } from '@mui/material';
 import useLayoutManager from '../../../hooks/useLayoutManager';
 import usePublisherContext from '../../../hooks/usePublisherContext';
 import useSessionContext from '../../../hooks/useSessionContext';
@@ -14,6 +13,8 @@ import useSubscribersInDisplayOrder from '../../../hooks/useSubscribersInDisplay
 import getLayoutBoxes from '../../../utils/helpers/getLayoutBoxes';
 import useActiveSpeaker from '../../../hooks/useActiveSpeaker';
 import useIsSmallViewport from '../../../hooks/useIsSmallViewport';
+import CircularProgress from '@ui/CircularProgress';
+import Box from '@ui/Box';
 
 export type VideoTileCanvasProps = {
   isSharingScreen: boolean;
@@ -85,17 +86,22 @@ const VideoTileCanvas = ({
 
   // Height is 100dvh - toolbar height (80px) and header height (80px) - 24px wrapper margin on small viewport device
   // Height is 100dvh - toolbar height (80px) - 24px wrapper margin on desktop
-  const heightClass = isSmallViewport
-    ? '@apply h-[calc(100dvh_-_184px)]'
-    : '@apply h-[calc(100dvh_-_104px)]';
+  const wrapperHeight = isSmallViewport ? 'calc(100dvh - 184px)' : 'calc(100dvh - 104px)';
 
   // Width is 100vw - 360px panel width - 24px panel right margin - 24px wrapper margin
-  const widthClass = isRightPanelOpen
-    ? '@apply w-[calc(100vw_-_392px)]'
-    : '@apply w-[calc(100vw_-_24px)]';
+  const wrapperWidth = isRightPanelOpen ? 'calc(100vw - 392px)' : 'calc(100vw - 24px)';
+
   return (
-    <div ref={wrapRef} id="wrapper" className={`p-3 ${widthClass} ${heightClass}`}>
-      <div id="video-container" className="relative size-full">
+    <Box
+      ref={wrapRef}
+      id="wrapper"
+      sx={{
+        padding: 3,
+        width: wrapperWidth,
+        height: wrapperHeight,
+      }}
+    >
+      <Box id="video-container" sx={{ position: 'relative', width: '100%', height: '100%' }}>
         {!connected ? (
           <CircularProgress
             data-testid="progress-spinner"
@@ -134,8 +140,8 @@ const VideoTileCanvas = ({
             )}
           </>
         )}
-      </div>
-    </div>
+      </Box>
+    </Box>
   );
 };
 

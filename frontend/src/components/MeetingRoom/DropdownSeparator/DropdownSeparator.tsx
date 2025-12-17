@@ -1,4 +1,6 @@
 import { ReactElement } from 'react';
+import Box from '@ui/Box';
+import useTheme from '@ui/theme';
 
 /**
  * DropdownSeparator Component
@@ -7,11 +9,16 @@ import { ReactElement } from 'react';
  * @returns {ReactElement} The DropdownSeparator component.
  */
 const DropdownSeparator = (): ReactElement => {
+  const theme = useTheme();
+
   return (
-    <div
+    <Box
       data-testid="dropdown-separator"
-      className="w-full border-b border-solid"
-      style={{ borderColor: 'rgba(232, 234, 237, 0.25)' }}
+      sx={{
+        width: '100%',
+        borderBottom: '1px solid',
+        borderColor: theme.colors.border,
+      }}
     />
   );
 };

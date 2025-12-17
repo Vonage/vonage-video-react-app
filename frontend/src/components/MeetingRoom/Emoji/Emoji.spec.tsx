@@ -21,34 +21,32 @@ describe('Emoji component', () => {
     render(<Emoji emojiWrapper={{ ...emojiWrapper }} />);
 
     const container = screen.getByTestId('emoji-string-container');
+    const expectedDuration = EMOJI_DISPLAY_DURATION + 100;
+
     expect(container).toHaveStyle({
       position: 'absolute',
       animationName: 'moveEmoji',
+      animationDuration: `${expectedDuration}ms`,
       animationTimingFunction: 'linear',
       animationIterationCount: '1',
       maxWidth: '35%',
       zIndex: '1',
     });
-
-    const duration = container.style.animationDuration;
-    const expectedDuration = EMOJI_DISPLAY_DURATION + 100;
-    expect(parseInt(duration, 10)).toBe(expectedDuration);
   });
 
-  it('applies expected Tailwind classes to container and Chip', () => {
+  it('applies expected MUI styles to container and Chip', () => {
     render(<Emoji emojiWrapper={{ ...emojiWrapper }} />);
 
     const container = screen.getByTestId('emoji-string-container');
-    expect(container).toHaveClass(
-      'ml-5',
-      'flex',
-      'flex-col',
-      'text-5xl',
-      'md:ml-[15%]',
-      'md:text-6xl'
-    );
+    expect(container).toHaveStyle({
+      display: 'flex',
+    });
 
     const chip = screen.getByText(emojiWrapper.name).parentElement!;
-    expect(chip).toHaveClass('truncate', 'text-sm', 'md:text-lg');
+    expect(chip).toHaveStyle({
+      overflow: 'hidden',
+      textOverflow: 'ellipsis',
+      whiteSpace: 'nowrap',
+    });
   });
 });

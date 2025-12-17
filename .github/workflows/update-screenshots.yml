@@ -27,7 +27,11 @@ jobs:
     runs-on: ubuntu-22.04
     permissions:
       contents: write
+
     steps:
+      # -----------------------
+      # 0. Check PR label
+      # -----------------------
       - name: Check for "update-screenshots" label
         id: check-update-screenshots
         uses: actions/github-script@v6
@@ -43,6 +47,9 @@ jobs:
         run: |
           echo "Update shreenshots is false"
 
+      # -----------------------
+      # 1. Install Chrome Latest
+      # -----------------------
       - name: Install chrome latest
         if: steps.check-update-screenshots.outputs.result == 'true'
         run: |
@@ -52,6 +59,10 @@ jobs:
           echo "Check chrome version"
           /usr/bin/google-chrome-stable --version
           echo "Chrome latest downloaded and installed"
+
+      # -----------------------
+      # 2. Install Edge Latest
+      # -----------------------
       - name: Install edge latest
         if: steps.check-update-screenshots.outputs.result == 'true'
         run: |
@@ -63,42 +74,20 @@ jobs:
           echo "Check edge version"
           /usr/bin/microsoft-edge-stable --version
           echo "Edge latest downloaded and installed"
-      - name: install firefox latest
-        if: steps.check-update-screenshots.outputs.result == 'true'
-        run: |
-          sudo apt update
 
-          # Resolve the final download URL without keeping redirects enabled in wget
-          FINAL_URL=$(curl --fail --silent --show-error --location --proto =https \
-            "https://download.mozilla.org/?product=firefox-latest&os=linux64&lang=en-US" \
-            -o /dev/null -w '%{url_effective}')
-
-          echo "Resolved Firefox URL: $FINAL_URL"
-
-          # Download directly with redirects disabled (Sonar requirement)
-          wget --https-only --max-redirect=0 -O firefoxsetup.tar.bz2 "$FINAL_URL"
-
-          sudo tar -xf firefoxsetup.tar.bz2 --directory /opt
-          echo "Check firefox version"
-          /opt/firefox/firefox --version
-          echo "Firefox latest downloaded and installed"
-      - name: install opera latest
-        if: steps.check-update-screenshots.outputs.result == 'true'
-        run: |
-          sudo add-apt-repository 'deb https://deb.opera.com/opera-stable/ stable non-free'
-          wget --max-redirect=0 -qO- https://deb.opera.com/archive.key | sudo apt-key add -
-          sudo apt-get update
-          sudo apt-get install opera-stable -y
-          echo "Check opera version"
-          /usr/bin/opera --version
-          echo "Opera latest downloaded and installed"
-
+      # -----------------------
+      # 3. Checkout repository
+      # -----------------------
       - name: Checkout
         if: steps.check-update-screenshots.outputs.result == 'true'
         uses: actions/checkout@v4
         with:
           ref: ${{ github.head_ref }}
           fetch-depth: 0
+
+      # -----------------------
+      # 4. Setup Node
+      # -----------------------
       - name: Setup node
         if: steps.check-update-screenshots.outputs.result == 'true'
         uses: actions/setup-node@v4
@@ -106,26 +95,35 @@ jobs:
           node-version: 22
           cache: npm
 
+      # -----------------------
+      # 5. Install dependencies
+      # -----------------------
       - name: Install Dependencies
         if: steps.check-update-screenshots.outputs.result == 'true'
         run: |
           node -v
           npm -v
           npm install --global --ignore-scripts yarn
-          yarn --ignore-scripts --focus
+          yarn --ignore-scripts
 
-      - name: Install electron dependencies
-        if: steps.check-update-screenshots.outputs.result == 'true'
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y libgtk-3-0 libx11-xcb1 libxcomposite1 libxrandr2 libxdamage1 libxi6 libxtst6 libnss3 libasound2
+      # -----------------------
+      # 6. Install Playwright browsers (Firefox, WebKit, Chromium)
+      # -----------------------
+      - name: Install Playwright browsers
+        run: npx playwright install --with-deps
 
+      # -----------------------
+      # 7. Run Integration Tests (update screenshots)
+      # -----------------------
       - name: Run integration tests
         if: steps.check-update-screenshots.outputs.result == 'true'
         run: |
           Xvfb :99 & export DISPLAY=:99
           yarn test:integrationUpdateScreenshots
 
+      # -----------------------
+      # 8. Auto-commit updated screenshots
+      # -----------------------
       - name: Auto-commit updated screenshots
         if: always() && steps.check-update-screenshots.outputs.result == 'true'
         run: |

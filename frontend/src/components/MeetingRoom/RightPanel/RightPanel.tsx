@@ -5,6 +5,8 @@ import ReportIssue from '../ReportIssue';
 import type { RightPanelActiveTab } from '../../../hooks/useRightPanel';
 import useIsSmallViewport from '../../../hooks/useIsSmallViewport';
 import BackgroundEffectsLayout from '../../BackgroundEffects/BackgroundEffectsLayout';
+import Box from '@ui/Box';
+import useTheme from '@ui/theme';
 
 export type RightPanelProps = {
   handleClose: () => void;
@@ -22,15 +24,26 @@ export type RightPanelProps = {
  */
 const RightPanel = ({ activeTab, handleClose }: RightPanelProps): ReactElement => {
   const isSmallViewport = useIsSmallViewport();
-  const width = isSmallViewport ? 'w-dvw' : 'w-[360px]';
-  const margins = isSmallViewport ? 'm-0' : 'mr-4 mt-4';
-  const height = isSmallViewport
-    ? '@apply h-[calc(100dvh_-_80px)]'
-    : '@apply h-[calc(100dvh_-_96px)]';
-  const className = `${height} absolute top-0 ${margins} ${width} overflow-hidden rounded bg-white transition-[right] ${activeTab === 'closed' ? 'right-[-380px] hidden' : 'right-0'}`;
+  const theme = useTheme();
 
   return (
-    <div data-testid="right-panel" className={className}>
+    <Box
+      data-testid="right-panel"
+      sx={{
+        position: 'absolute',
+        top: 0,
+        right: activeTab === 'closed' ? '-380px' : 0,
+        display: activeTab === 'closed' ? 'none' : 'block',
+        overflow: 'hidden',
+        bgcolor: theme.colors.surface,
+        transition: 'right 0.3s',
+        borderRadius: 2,
+        width: isSmallViewport ? '100dvw' : '360px',
+        height: isSmallViewport ? 'calc(100dvh - 80px)' : 'calc(100dvh - 96px)',
+        mr: isSmallViewport ? 0 : 2,
+        mt: isSmallViewport ? 0 : 2,
+      }}
+    >
       <ParticipantList handleClose={handleClose} isOpen={activeTab === 'participant-list'} />
       <BackgroundEffectsLayout
         mode="meeting"
@@ -39,7 +52,7 @@ const RightPanel = ({ activeTab, handleClose }: RightPanelProps): ReactElement =
       />
       <Chat handleClose={handleClose} isOpen={activeTab === 'chat'} />
       <ReportIssue handleClose={handleClose} isOpen={activeTab === 'issues'} />
-    </div>
+    </Box>
   );
 };
 

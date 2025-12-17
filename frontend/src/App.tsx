@@ -1,9 +1,7 @@
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import './css/App.css';
 import './css/index.css';
-import { CssBaseline } from '@mui/material';
-import { CustomThemeProvider } from '@Context/Theme/themeContext';
-import Room from './pages/MeetingRoom/index';
+import MeetingRoom from './pages/MeetingRoom';
 import GoodBye from './pages/GoodBye/index';
 import WaitingRoom from './pages/WaitingRoom';
 import SessionProvider from './Context/SessionProvider/session';
@@ -13,11 +11,24 @@ import { PublisherProvider } from './Context/PublisherProvider';
 import RedirectToWaitingRoom from './components/RedirectToWaitingRoom';
 import UnsupportedBrowserPage from './pages/UnsupportedBrowserPage';
 import RoomContext from './Context/RoomContext';
+import Box from '@ui/Box';
+import useTheme, { ThemeProvider } from '@ui/theme';
 
 const App = () => {
+  const theme = useTheme();
+
   return (
-    <CustomThemeProvider>
-      <CssBaseline />
+    <Box
+      sx={{
+        backgroundColor: {
+          xs: theme.colors.surface,
+          md: theme.colors.background,
+        },
+        position: 'relative',
+        overflow: 'hidden',
+        height: '100dvh',
+      }}
+    >
       <Router>
         <Routes>
           <Route element={<RoomContext />}>
@@ -35,7 +46,7 @@ const App = () => {
                 <SessionProvider>
                   <RedirectToWaitingRoom>
                     <PublisherProvider>
-                      <Room />
+                      <MeetingRoom />
                     </PublisherProvider>
                   </RedirectToWaitingRoom>
                 </SessionProvider>
@@ -47,8 +58,16 @@ const App = () => {
           <Route path="/unsupported-browser" element={<UnsupportedBrowserPage />} />
         </Routes>
       </Router>
-    </CustomThemeProvider>
+    </Box>
   );
 };
 
-export default App;
+const AppWrapper = () => {
+  return (
+    <ThemeProvider>
+      <App />
+    </ThemeProvider>
+  );
+};
+
+export default AppWrapper;
