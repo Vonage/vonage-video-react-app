@@ -77,6 +77,7 @@ const ChatMessage = ({
           <Typography
             variant="body2"
             sx={{ color: theme.colors.textSecondary, overflowWrap: 'break-word' }}
+            data-testid="chat-msg-content"
           >
             <FormattedMessageBody message={message} />
           </Typography>

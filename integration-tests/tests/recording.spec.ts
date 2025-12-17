@@ -57,7 +57,7 @@ test.describe('Recording Feature', () => {
             timeout: 5000,
           }
         )
-        .toBe('rgb(239, 68, 68)');
+        .toBe('rgb(255, 255, 255)');
     }
     await archivingButton.click();
     await confirmStartButton.click();

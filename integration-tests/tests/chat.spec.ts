@@ -76,7 +76,7 @@ test.describe('chat', () => {
       return badge.offsetHeight === 0 && badge.offsetWidth === 0;
     });
 
-    await expect(pageTwo.getByTestId('chat-message').getByRole('paragraph')).toHaveText(
+    await expect(pageTwo.getByTestId('chat-msg-content')).toHaveText(
       'Hi there, welcome to the meeting!'
     );
     await expect(pageTwo.getByTestId('chat-msg-participant-name')).toHaveText('User One');
@@ -86,6 +86,6 @@ test.describe('chat', () => {
     const messageTwo = await pageTwo.getByTestId('chat-message').nth(1);
 
     await expect(messageTwo.getByTestId('chat-msg-participant-name')).toHaveText('User Two');
-    await expect(messageTwo.getByRole('paragraph')).toHaveText('Thanks!');
+    await expect(messageTwo.getByTestId('chat-msg-content')).toHaveText('Thanks!');
   });
 });
