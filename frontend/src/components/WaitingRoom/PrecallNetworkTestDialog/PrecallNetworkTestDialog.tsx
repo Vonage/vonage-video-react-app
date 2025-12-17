@@ -137,6 +137,11 @@ const PrecallNetworkTestDialog = ({
     );
   }, [videoScore, t]);
 
+  const formatScore = (score: number | null): string => {
+    if (score === null) return '—';
+    return `${score.toFixed(2)}/5`;
+  };
+
   return (
     <Dialog open={isPrecallNetworkTestOpen} onClose={handleClose} maxWidth="md" fullWidth>
       <DialogTitle sx={{ m: 0, p: 0, pl: 3, pt: 3, backgroundColor: theme.colors.surface }}>
@@ -271,7 +276,7 @@ const PrecallNetworkTestDialog = ({
                         fontWeight: 'bold',
                       }}
                     >
-                      {audioScore !== null ? `${audioScore.toFixed(2)}/5` : '—'}
+                      {formatScore(audioScore)}
                     </Typography>
                   </Box>
 
@@ -311,7 +316,7 @@ const PrecallNetworkTestDialog = ({
                         fontWeight: 'bold',
                       }}
                     >
-                      {videoScore !== null ? `${videoScore.toFixed(2)}/5` : '—'}
+                      {formatScore(videoScore)}
                     </Typography>
                   </Box>
                 </Box>
