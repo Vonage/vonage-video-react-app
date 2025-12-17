@@ -1,8 +1,9 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render as renderBase, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { ReactElement } from 'react';
+import { ReactNode, ReactElement } from 'react';
 import backgroundEffectsDialog$ from '@Context/BackgroundEffectsDialog';
+import precallNetworkTestDialog$ from '@Context/PrecallNetworkTestDialog';
 import MenuMoreOptions from './MenuMoreOptions';
 
 describe('MenuMoreOptions', () => {
@@ -49,5 +50,11 @@ describe('MenuMoreOptions', () => {
 });
 
 function render(ui: ReactElement) {
-  return renderBase(ui, { wrapper: backgroundEffectsDialog$.Provider });
+  const Wrapper = ({ children }: { children: ReactNode }) => (
+    <backgroundEffectsDialog$.Provider>
+      <precallNetworkTestDialog$.Provider>{children}</precallNetworkTestDialog$.Provider>
+    </backgroundEffectsDialog$.Provider>
+  );
+
+  return renderBase(ui, { wrapper: Wrapper });
 }
