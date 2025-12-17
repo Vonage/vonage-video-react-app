@@ -181,8 +181,7 @@ const useNetworkTest = (): NetworkTestHookType => {
         const networkError: NetworkTestError = {
           message:
             error instanceof Error ? error.message : t('waitingRoom.precallNetworkTest.error'),
-          name:
-            (error as Error & { name?: string })?.name || 'NetworkTestError',
+          name: (error as Error & { name?: string })?.name || 'NetworkTestError',
         };
 
         setState((prev) => ({
