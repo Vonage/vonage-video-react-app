@@ -180,9 +180,9 @@ const useNetworkTest = (): NetworkTestHookType => {
       } catch (error) {
         const networkError: NetworkTestError = {
           message:
-            error instanceof Error ? error.message : t('precallTest.errors.unknownQualityTest'),
+            error instanceof Error ? error.message : t('waitingRoom.precallNetworkTest.error'),
           name:
-            (error as Error & { name?: string })?.name || t('precallTest.errors.qualityTestError'),
+            (error as Error & { name?: string })?.name || t('waitingRoom.precallNetworkTest.error'),
         };
 
         setState((prev) => ({
