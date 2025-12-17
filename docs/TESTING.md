@@ -9,10 +9,12 @@ This guide explains how to write effective **frontend unit tests** in the Vonage
 
 1. [Test Utilities Directory Structure](#test-utilities-directory-structure)
 2. [Testing Philosophy](#testing-philosophy)
-3. [What to Mock vs. What NOT to Mock](#what-to-mock-vs-what-not-to-mock)
-4. [Provider Wrappers](#provider-wrappers)
-5. [Quick Start Examples](#quick-start-examples)
+3. [What to Mock](#what-to-mock)
+4. [Available Wrappers](#available-wrappers)
+5. [Setup](#setup)
 6. [Best Practices](#best-practices)
+7. [Examples](#examples)
+8. [Additional Resources](#additional-resources)
 
 ---
 
@@ -44,180 +46,163 @@ frontend/src/test/
 **Use real providers with test data** - Test components with actual context providers to validate real behavior.
 
 ```tsx
-// ✅ GOOD: Real provider with test data
-const { SessionProviderWrapper } = makeSessionProviderWrapper({
-  userOptions: {
-    userOptions: {
-      value: {
-        defaultSettings: { publishAudio: false },
-        issues: { reconnections: 0, audioFallbacks: 0 },
-      } as UserType,
+// ✅ GOOD: Real provider with initialValue
+render(<MyComponent />, {
+  publisherContext: {
+    initialValue: {
+      isPublishing: true,
+      isVideoEnabled: true,
+    },
+  },
+  sessionContext: {
+    initialValue: {
+      connected: true,
     },
   },
 });
-
-render(<MyComponent />, { wrapper: SessionProviderWrapper });
 ```
 
 ```tsx
 // ❌ BAD: Mocking application context
 vi.mock('@hooks/useUserContext');
-vi.mocked(useUserContext).mockReturnValue(fakeData);
 ```
+
+## What to Mock
+
+| Mock | Don't Mock |
+|------|------------|
+| External SDKs (`@vonage/client-sdk-video`) | Application contexts |
+| Browser APIs (`navigator.mediaDevices`) | Custom hooks |
+| | Components |
+
+
+## Available Wrappers
+
+- `makePublisherProviderWrapper()` - Publisher + Session + User + AppConfig
+- `makeSessionProviderWrapper()` - Session + User + AppConfig  
+- `makeUserProviderWrapper()` - User only
+- `makeAppConfigProviderWrapper()` - AppConfig only
+- `makeAudioOutputProviderWrapper()` - AudioOutput only
+- `makePreviewPublisherProviderWrapper()` - PreviewPublisher only
+- `makeBackgroundPublisherProviderWrapper()` - BackgroundPublisher only
 
 ---
 
-## What to Mock vs. What NOT to Mock
+## Setup
 
-### ✅ Mock External Dependencies
-
-| Type | Examples | Why? |
-|------|----------|------|
-| **External SDKs** | `@vonage/client-sdk-video` | Requires network/API keys |
-| **Browser APIs** | `navigator.mediaDevices` | Not available in Node test environment |
+Create a custom `render` helper function that wraps components with providers:
 
 ```typescript
-// Mock external SDK (partial mock with fail-by-default)
-vi.mock('@vonage/client-sdk-video', () => mockVonageVideoSDK());
+import { render as renderBase } from '@testing-library/react';
+import { makePublisherProviderWrapper, PublisherProviderWrapperOptions } from '@test/providers';
 
-// Mock browser API per test
-it('should enumerate devices', () => {
-  vi.mocked(navigator.mediaDevices).enumerateDevices.mockResolvedValue([
-    { deviceId: 'audio1', kind: 'audioinput', label: 'Mic' } as MediaDeviceInfo,
-  ]);
+function render(ui: ReactElement, options: PublisherProviderWrapperOptions = {}) {
+  const { PublisherProviderWrapper, ...props } = makePublisherProviderWrapper(options);
+
+  return {
+    ...props,
+    ...renderBase(ui, { wrapper: PublisherProviderWrapper }),
+  };
+}
+
+// Use in tests
+const { sessionContext, publisherContext } = render(<MyComponent />, {
+  publisherContext: {
+    initialValue: {
+      publisher: mockPublisher,
+      isPublishing: true,
+    },
+  },
+  sessionContext: {
+    initialValue: {
+      connected: true,
+    },
+  },
 });
+
+// Access context values
+expect(sessionContext.current.connected).toBe(true);
 ```
 
-### ❌ DON'T Mock Application Code
+### Initial State with `initialValue`
 
-| Type | Examples | Why NOT? |
-|------|----------|----------|
-| **Contexts** | `useUserContext()`, `usePublisherContext()` | Test real data flow |
-| **Custom Hooks** | `usePublisherOptions()` | Verify actual behavior |
-| **Components** | `<MicButton />` | Test real interactions |
+Use `initialValue` to set the initial state of a context provider declaratively:
 
 ```typescript
-// ❌ WRONG
-vi.mock('@hooks/useUserContext');
-
-// ✅ CORRECT - Use real provider
-const { UserProviderWrapper } = makeUserProviderWrapper({
-  userOptions: {
-    value: { defaultSettings: { publishAudio: true }, issues: { reconnections: 0 } } as UserType,
+render(<MyComponent />, {
+  publisherContext: {
+    initialValue: {
+      publisher: mockPublisher,
+      isPublishing: true,
+      isVideoEnabled: true,
+    },
+  },
+  sessionContext: {
+    initialValue: {
+      connected: true,
+      layoutMode: 'active-speaker',
+    },
   },
 });
 ```
 
----
+### Mocking Methods with `__onCreated`
 
-## Provider Wrappers
-
-### Basic Usage
+Use `__onCreated` callback to mock methods on context. Create the mock outside for assertions:
 
 ```typescript
-import { makeSessionProviderWrapper } from '@test/providers';
-import { UserType } from '@Context/user';
+const publishMock = vi.fn();
+const joinRoomMock = vi.fn();
 
-const { SessionProviderWrapper, sessionContext, userContext, appConfigContext } = 
-  makeSessionProviderWrapper({
-    userOptions: {
-      userOptions: {  // Double nesting for nested providers
-        value: {
-          defaultSettings: { publishAudio: false },
-          issues: { reconnections: 0, audioFallbacks: 0 },
-        } as UserType,
-      },
+const { sessionContext, publisherContext } = render(<MyComponent />, {
+  publisherContext: {
+    __onCreated: (context) => {
+      context.publish = publishMock;  // Assign external mock
     },
-  });
+  },
+  sessionContext: {
+    __onCreated: (context) => {
+      context.joinRoom = joinRoomMock;
+    },
+  },
+});
 
-render(<MyComponent />, { wrapper: SessionProviderWrapper });
-
-// Access context values
-expect(userContext.current?.defaultSettings.publishAudio).toBe(false);
+// Assert on external mock
+expect(joinRoomMock).toHaveBeenCalledWith('room-name');
+expect(publishMock).toHaveBeenCalledTimes(1);
 ```
 
-### Available Wrappers
+### Combining `initialValue` and `__onCreated`
 
-- `makeAppConfigProviderWrapper()` - AppConfig context only
-- `makeUserProviderWrapper()` - User context only
-- `makeSessionProviderWrapper()` - Session + User + AppConfig contexts
-- `makePublisherProviderWrapper()` - Publisher + Session + User + AppConfig contexts
-- `makeAudioOutputProviderWrapper()` - AudioOutput context only
-- `makePreviewPublisherProviderWrapper()` - PreviewPublisher context only
-- `makeBackgroundPublisherProviderWrapper()` - BackgroundPublisher context only
-
-### Nesting Pattern
-
-- **Single-level nesting** for direct wrappers:
-  ```typescript
-  makeUserProviderWrapper({ userOptions: { value: {...} } })
-  ```
-
-- **Double-level nesting** when wrapper composes other providers:
-  ```typescript
-  makeSessionProviderWrapper({
-    userOptions: {
-      userOptions: { value: {...} }  // Extra level for nested UserProvider
-    }
-  })
-  ```
-
----
-
-## Quick Start Examples
-
-### Testing a Component
+You can use both together - `initialValue` for state, `__onCreated` for methods:
 
 ```typescript
-import { render, screen } from '@testing-library/react';
-import { makeSessionProviderWrapper } from '@test/providers';
-import { UserType } from '@Context/user';
+const publishMock = vi.fn();
 
-describe('MicButton', () => {
-  it('displays muted state', () => {
-    const { SessionProviderWrapper } = makeSessionProviderWrapper({
-      userOptions: {
-        userOptions: {
-          value: {
-            defaultSettings: { publishAudio: false },
-            issues: { reconnections: 0, audioFallbacks: 0 },
-          } as UserType,
-        },
-      },
-    });
+const { rerender, sessionContext } = render(<MeetingRoom />, {
+  publisherContext: {
+    initialValue: {
+      isVideoEnabled: true,
+      quality: 'poor',
+    },
+    __onCreated: (context) => {
+      context.publish = publishMock;
+    },
+  },
+  sessionContext: {
+    initialValue: {
+      connected: false,
+    },
+  },
+});
 
-    render(<MicButton />, { wrapper: SessionProviderWrapper });
-    expect(screen.getByRole('button')).toHaveAttribute('aria-pressed', 'false');
-  });
+sessionContext.current.connected = true;
+rerender(<MyComponent />);
+
+await waitFor(() => {
+  expect(screen.queryByTestId('spinner')).not.toBeInTheDocument();
 });
 ```
-
-### Testing a Hook
-
-```typescript
-import { renderHook } from '@testing-library/react';
-import { makeSessionProviderWrapper } from '@test/providers';
-
-describe('usePublisherOptions', () => {
-  it('returns options based on user settings', () => {
-    const { SessionProviderWrapper } = makeSessionProviderWrapper({
-      userOptions: {
-        userOptions: {
-          value: {
-            defaultSettings: { publishAudio: false, noiseSuppression: true },
-            issues: { reconnections: 0, audioFallbacks: 0 },
-          } as UserType,
-        },
-      },
-    });
-
-    const { result } = renderHook(() => usePublisherOptions(), { wrapper: SessionProviderWrapper });
-    expect(result.current.publishAudio).toBe(false);
-  });
-});
-```
-
----
 
 ## Best Practices
 
@@ -228,31 +213,23 @@ Create wrappers individually for each test to ensure isolation.
 ```typescript
 describe('MicButton', () => {
   it('shows unmuted state', () => {
-    const { SessionProviderWrapper } = makeSessionProviderWrapper({
-      userOptions: {
-        userOptions: {
-          value: {
-            defaultSettings: { publishAudio: true },
-            issues: { reconnections: 0, audioFallbacks: 0 },
-          } as UserType,
+    render(<MicButton />, {
+      publisherContext: {
+        initialValue: {
+          isAudioEnabled: true,
         },
       },
     });
-    render(<MicButton />, { wrapper: SessionProviderWrapper });
   });
 
   it('shows muted state', () => {
-    const { SessionProviderWrapper } = makeSessionProviderWrapper({
-      userOptions: {
-        userOptions: {
-          value: {
-            defaultSettings: { publishAudio: false },
-            issues: { reconnections: 0, audioFallbacks: 0 },
-          } as UserType,
+    render(<MicButton />, {
+      publisherContext: {
+        initialValue: {
+          isAudioEnabled: false,
         },
       },
     });
-    render(<MicButton />, { wrapper: SessionProviderWrapper });
   });
 });
 ```
@@ -271,30 +248,89 @@ const { SessionProviderWrapper } = makeSessionProviderWrapper({...});
 
 ### 3. Mock External Dependencies Per Test
 
+Mock SDK behavior per test for specific scenarios.
+
 ```typescript
 // Mock SDK per test with specific behavior
 it('should handle camera error', () => {
   vi.mocked(OT.initPublisher).mockImplementation(() => {
     throw new Error('Camera not available');
   });
-  
   // Test error handling...
 });
 ```
 
-### 4. Access Context Values
+### 4. Access Context Values via `.current`
 
-Use context refs to verify internal state.
+Use context refs to verify or mutate internal state.
 
 ```typescript
-const { SessionProviderWrapper, userContext } = makeSessionProviderWrapper({...});
-
-render(<MyComponent />, { wrapper: SessionProviderWrapper });
+const { sessionContext, rerender } = render(<MyComponent />, {
+  sessionContext: {
+    initialValue: {
+      connected: true,
+    },
+  },
+});
 
 // Verify context state
-expect(userContext.current?.defaultSettings.publishAudio).toBe(false);
+expect(sessionContext.current.connected).toBe(true);
+
+// Mutate context state
+sessionContext.current.connected = false;
+rerender(<MyComponent />);
 ```
 
+### 5. Use `rerender()` After State Mutations
+
+```typescript
+sessionContext.current.connected = true;
+rerender(<MyComponent />);
+
+await waitFor(() => {
+  expect(screen.queryByTestId('spinner')).not.toBeInTheDocument();
+});
+```
+
+### 6. Query Elements Inside `waitFor()`
+
+Avoid stale references by querying inside `waitFor()`:
+
+```typescript
+// ✅ GOOD: Query inside waitFor
+await waitFor(() => {
+  expect(screen.queryByText('Alert')).toBeInTheDocument();
+});
+
+// ❌ BAD: Stale reference
+const alert = screen.queryByText('Alert');
+await waitFor(() => expect(alert).toBeInTheDocument());
+```
+
+## Examples
+
+### Component Test
+
+```typescript
+describe('MicButton', () => {
+  it('displays muted state', () => {
+    render(<MicButton />, {
+      publisherContext: { initialValue: { isAudioEnabled: false } },
+    });
+    expect(screen.getByRole('button')).toHaveAttribute('aria-pressed', 'false');
+  });
+});
+```
+
+### Hook Test
+
+```typescript
+const { PublisherProviderWrapper } = makePublisherProviderWrapper({
+  publisherContext: { initialValue: { isAudioEnabled: false } },
+});
+const { result } = renderHook(() => usePublisherOptions(), { wrapper: PublisherProviderWrapper });
+expect(result.current.publishAudio).toBe(false);
+```
 
 ## Additional Resources
 
