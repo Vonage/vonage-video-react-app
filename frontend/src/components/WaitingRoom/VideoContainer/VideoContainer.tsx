@@ -131,7 +131,7 @@ const VideoContainer = ({ username }: VideoContainerProps): ReactElement => {
             )}
             {isPrecallNetworkTestOpen && (
               <PrecallNetworkTestDialog
-                isPrecallNetworkTestOpen={true}
+                isPrecallNetworkTestOpen={isPrecallNetworkTestOpen}
                 setIsPrecallNetworkTestOpen={closePrecallTest}
               />
             )}
