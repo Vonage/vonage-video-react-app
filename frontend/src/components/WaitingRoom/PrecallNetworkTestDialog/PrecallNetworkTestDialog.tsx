@@ -202,9 +202,13 @@ const PrecallNetworkTestDialog = ({
                   }}
                 >
                   <Typography variant="h6" sx={{ color: theme.colors.error, textAlign: 'center' }}>
-                    <span role="img" aria-label={t('waitingRoom.precallNetworkTest.error')}>
-                      ❌
-                    </span>{' '}
+                    <VividIcon
+                      name="close-circle-line"
+                      customSize={0}
+                      sx={{
+                        color: theme.colors.error,
+                      }}
+                    />
                     {t('waitingRoom.precallNetworkTest.error')}
                   </Typography>
                   <Typography
