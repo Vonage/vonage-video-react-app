@@ -120,7 +120,7 @@ const PrecallNetworkTestDialog = ({
 
   return (
     <Dialog open={isPrecallNetworkTestOpen} onClose={handleClose} maxWidth="md" fullWidth>
-      <DialogTitle sx={{ m: 0, p: 0, pl: 3, pt: 3, backgroundColor: theme.colors.surface }}>
+      <DialogTitle sx={{ m: 0, p: 0, pl: 3, pt: 3, py: 3, backgroundColor: theme.colors.surface }}>
         <Typography
           component="div"
           variant="h5"
@@ -144,8 +144,8 @@ const PrecallNetworkTestDialog = ({
           <VividIcon name="close-line" customSize={-5} />
         </IconButton>
       </DialogTitle>
-      <DialogContent sx={{ backgroundColor: theme.colors.surface, pt: 2 }}>
-        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3, py: 2 }}>
+      <DialogContent sx={{ backgroundColor: theme.colors.surface  }}>
+        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
           <Typography
             variant="body1"
             sx={{
@@ -158,34 +158,45 @@ const PrecallNetworkTestDialog = ({
           </Typography>
 
           {state.isTestingQuality && (
-            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
               <Box
                 sx={{
                   display: 'flex',
                   flexDirection: 'column',
                   alignItems: 'center',
-                  gap: 3,
                   py: 4,
-                  backgroundColor: theme.colors.background,
                 }}
               >
                 <CircularProgress size={60} />
               </Box>
-              <Button
-                variant="outlined"
-                onClick={handleStopTest}
+              <Box
                 sx={{
-                  mt: 2,
-                  backgroundColor: theme.colors.primary,
-                  color: theme.colors.onPrimary,
-                  minWidth: '400px',
                   display: 'flex',
-                  gap: 2,
+                  p: 2,
+                  justifyContent: 'end',
                 }}
               >
-                <VividIcon name="stop-line" customSize={-6} />
-                {t('waitingRoom.precallNetworkTest.stopTest')}
-              </Button>
+                <Button
+                  variant="text"
+                  onClick={handleClose}
+                  sx={{
+                    mr: 1,
+                    color: theme.colors.textSecondary,
+                  }}
+                >
+                  {t('button.close')}
+                </Button>
+                <Button
+                  variant="contained"
+                  onClick={handleStopTest}
+                  sx={{
+                    color: theme.colors.onPrimary,
+                    ml: 2,
+                  }}
+                >
+                  {t('waitingRoom.precallNetworkTest.stopTest')}
+                </Button>
+              </Box>
             </Box>
           )}
 
@@ -245,7 +256,7 @@ const PrecallNetworkTestDialog = ({
                       {audioScore && audioScore >= 3 ? (
                         <VividIcon
                           name="check-circle-line"
-                          customSize={0}
+                          customSize={-3}
                           sx={{
                             color: theme.colors.success,
                           }}
@@ -253,7 +264,7 @@ const PrecallNetworkTestDialog = ({
                       ) : (
                         <VividIcon
                           name="close-circle-line"
-                          customSize={0}
+                          customSize={-3}
                           sx={{
                             color: theme.colors.error,
                           }}
@@ -299,7 +310,7 @@ const PrecallNetworkTestDialog = ({
                       {videoScore && videoScore >= 3 ? (
                         <VividIcon
                           name="check-circle-line"
-                          customSize={0}
+                          customSize={-3}
                           sx={{
                             color: theme.colors.success,
                           }}
@@ -307,7 +318,7 @@ const PrecallNetworkTestDialog = ({
                       ) : (
                         <VividIcon
                           name="close-circle-line"
-                          customSize={0}
+                          customSize={-3}
                           sx={{
                             color: theme.colors.error,
                           }}
@@ -333,32 +344,29 @@ const PrecallNetworkTestDialog = ({
               <Box
                 sx={{
                   display: 'flex',
-                  gap: 2,
-                  justifyContent: 'center',
-                  mt: 2,
+                  p: 2,
+                  justifyContent: 'end',
                 }}
               >
                 <Button
-                  variant="outlined"
-                  onClick={handleRetry}
-                  sx={{
-                    color: theme.colors.textPrimary,
-                    borderColor: theme.colors.border,
-                    minWidth: '180px',
-                  }}
-                >
-                  {t('waitingRoom.precallNetworkTest.retryTest')}
-                </Button>
-                <Button
-                  variant="contained"
+                  variant="text"
                   onClick={handleClose}
                   sx={{
-                    backgroundColor: theme.colors.primary,
-                    color: theme.colors.onPrimary,
-                    minWidth: '180px',
+                    mr: 1,
+                    color: theme.colors.textSecondary,
                   }}
                 >
                   {t('button.close')}
+                </Button>
+                <Button
+                  variant="contained"
+                  onClick={handleRetry}
+                  sx={{
+                    color: theme.colors.onPrimary,
+                    ml: 2,
+                  }}
+                >
+                  {t('waitingRoom.precallNetworkTest.retryTest')}
                 </Button>
               </Box>
             </Box>
