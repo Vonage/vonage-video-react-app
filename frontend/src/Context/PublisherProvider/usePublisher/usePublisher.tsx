@@ -13,6 +13,7 @@ import usePublisherQuality, { NetworkQuality } from '../usePublisherQuality/useP
 import usePublisherOptions from '../usePublisherOptions';
 import useSessionContext from '../../../hooks/useSessionContext';
 import applyBackgroundFilter from '../../../utils/backgroundFilter/applyBackgroundFilter/applyBackgroundFilter';
+import idempotentCallbackWithRetry from '@utils/idempotentCallbackWithRetry/idempotentCallbackWithRetry';
 
 type PublisherStreamCreatedEvent = Event<'streamCreated', Publisher> & {
   stream: Stream;
@@ -87,14 +88,13 @@ const usePublisher = (): PublisherContextType => {
   const [isVideoEnabled, setIsVideoEnabled] = useState<boolean>(false);
   const [isAudioEnabled, setIsAudioEnabled] = useState<boolean>(false);
   const [stream, setStream] = useState<Stream | null>();
-  const [isPublishingToSession, setIsPublishingToSession] = useState(false);
+  const isPublishingToSessionRef = useRef<boolean>(false);
   const [publishingError, setPublishingError] = useState<PublishingErrorType>(null);
   const { publish: sessionPublish, unpublish: sessionUnpublish, connected } = useSessionContext();
   const [deviceAccess, setDeviceAccess] = useState<DeviceAccessStatus>({
     microphone: undefined,
     camera: undefined,
   });
-  const publishAttemptRef = useRef<number>(0);
 
   // If we do not have audio input or video input access, we cannot publish.
   useEffect(() => {
@@ -179,8 +179,7 @@ const usePublisher = (): PublisherContextType => {
   const unpublish = () => {
     if (publisherRef?.current) {
       sessionUnpublish(publisherRef.current);
-      setIsPublishingToSession(false);
-      publishAttemptRef.current = 0;
+      isPublishingToSessionRef.current = false;
     }
   };
 
@@ -232,21 +231,13 @@ const usePublisher = (): PublisherContextType => {
   /**
    * Helper function to handle retrying. We allow two attempts when publishing to the session and encountering an
    * error before stopping.
-   * @returns {boolean} Returns `true` if we've already retried twice, else `false`
    */
-  const shouldNotRetryPublish = (): boolean => {
-    publishAttemptRef.current += 1;
-
-    if (publishAttemptRef.current === 3) {
-      const publishingBlocked: PublishingErrorType = {
-        header: t('publishingErrors.blocked.title'),
-        caption: t('publishingErrors.blocked.message'),
-      };
-      setPublishingError(publishingBlocked);
-      setIsPublishingToSession(false);
-      return true;
-    }
-    return false;
+  const handlePublishingError = (): void => {
+    const publishingBlocked: PublishingErrorType = {
+      header: t('publishingErrors.blocked.title'),
+      caption: t('publishingErrors.blocked.message'),
+    };
+    setPublishingError(publishingBlocked);
   };
 
   /**
@@ -255,28 +246,27 @@ const usePublisher = (): PublisherContextType => {
    */
   const publish = async (): Promise<void> => {
     try {
+      if (isPublishingToSessionRef.current) {
+        return; // Avoid multiple simultaneous publish attempts
+      }
       if (!connected) {
         throw new Error('You are not connected to session');
       }
       if (!publisherRef.current) {
         throw new Error('Publisher is not initialized');
       }
-      if (isPublishingToSession) {
-        return;
-      }
 
-      if (shouldNotRetryPublish()) {
-        return;
-      }
-
-      setIsPublishingToSession(true); // Avoid multiple simultaneous publish attempts
-      await sessionPublish(publisherRef.current);
+      isPublishingToSessionRef.current = true;
+      await idempotentCallbackWithRetry(() => sessionPublish(publisherRef.current!), {
+        retries: 2,
+      });
     } catch (err: unknown) {
+      handlePublishingError();
       if (err instanceof Error) {
         console.warn(err.message);
-        setIsPublishingToSession(false);
-        publish();
       }
+    } finally {
+      isPublishingToSessionRef.current = false;
     }
   };
 
