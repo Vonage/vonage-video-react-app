@@ -303,18 +303,19 @@ const usePublisher = (): PublisherContextType => {
 
   useEffect(() => {
     const exceptionHandler = (exceptionEvent: ExceptionEvent) => {
-      if (exceptionEvent.code === 1500 && !isPublishingToSessionRef.current) {
-        publish();
+      if (exceptionEvent.code === 1500) {
+        console.warn('Unable to publish to session. Error code:', exceptionEvent.code);
+        handlePublishingError();
       }
     };
-    // If a user is `Unable to Publish` to a session and an error is thrown, we attempt to re-publish.
-    // This error would not be captured in the Session.publish callback, we have to listen for it separately.
+    // If a user is `Unable to Publish` to a session and an error is thrown, we log it.
+    // The retry logic is already handled by idempotentCallbackWithRetry in the publish function.
     OT.on('exception', exceptionHandler);
 
     return () => {
       OT.off('exception', exceptionHandler);
     };
-  }, [publish]);
+  }, [handlePublishingError]);
 
   return {
     initializeLocalPublisher,
