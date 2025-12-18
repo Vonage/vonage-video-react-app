@@ -7,6 +7,8 @@ import AvatarInitials from '../AvatarInitials';
 import NameDisplay from '../MeetingRoom/NameDisplay';
 import AudioIndicator from '../MeetingRoom/AudioIndicator';
 import VideoTile from '../MeetingRoom/VideoTile';
+import VividIcon from '@components/VividIcon';
+import useIsSmallViewport from '@hooks/useIsSmallViewport';
 import useTheme from '@ui/theme';
 
 export type PublisherProps = {
@@ -33,6 +35,8 @@ const Publisher = ({ box }: PublisherProps): ReactElement => {
   const theme = useTheme();
   // We store this in a ref to get a reference to the div so that we can append a video to it
   const pubContainerRef = useRef<HTMLDivElement>(null);
+
+  const isSmallViewport = useIsSmallViewport();
   useEffect(() => {
     if (element && pubContainerRef.current) {
       element.classList.add('video__element');
@@ -67,6 +71,10 @@ const Publisher = ({ box }: PublisherProps): ReactElement => {
     margin: 'auto',
   };
 
+  const handleCameraSwitch = () => {
+    publisher?.cycleVideo();
+  };
+
   return (
     <VideoTile
       id="publisher-container"
@@ -82,6 +90,22 @@ const Publisher = ({ box }: PublisherProps): ReactElement => {
           height={box.height}
           width={box.width}
           username={username}
+        />
+      )}
+      {isSmallViewport && isVideoEnabled && (
+        <VividIcon
+          name="camera-switch-line"
+          customSize={-4}
+          sx={{
+            position: 'absolute',
+            top: '10px',
+            left: '10px',
+            overflow: 'hidden',
+            textOverflow: 'ellipsis',
+            whiteSpace: 'nowrap',
+            color: theme.colors.accent,
+          }}
+          onClick={handleCameraSwitch}
         />
       )}
       {isAudioEnabled ? (
