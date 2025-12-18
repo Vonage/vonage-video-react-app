@@ -151,7 +151,7 @@ const PrecallNetworkTestDialog = ({
                   display: 'flex',
                   flexDirection: 'column',
                   alignItems: 'center',
-                  py: 4,
+                  mt: 4,
                 }}
               >
                 <CircularProgress size={60} />
@@ -226,7 +226,7 @@ const PrecallNetworkTestDialog = ({
                   </Typography>
                 </Box>
               ) : (
-                <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
+                <Box sx={{ display: 'flex', flexDirection: 'column', mt: 2 }}>
                   <Box
                     sx={{
                       display: 'flex',
