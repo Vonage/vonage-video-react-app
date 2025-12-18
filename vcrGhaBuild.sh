@@ -23,7 +23,7 @@ export VITE_I18N_SUPPORTED_LANGUAGES='en|en-US|es|es-MX|it'
 
 echo "=== Installing all dependencies (needed for build) ==="
 # Install all dependencies including devDependencies (required for vite build)
-yarn install --ignore-scripts --frozen-lockfile
+yarn install --production=false --ignore-scripts
 
 echo "=== Building frontend ==="
 yarn build
@@ -63,7 +63,7 @@ safe_remove .editorconfig
 echo "=== Installing production dependencies only ==="
 # Reinstall only production dependencies for backend
 cd backend
-yarn install --production --ignore-scripts --frozen-lockfile
+yarn install --production=false --ignore-scripts
 cd ..
 
 echo "=== Build complete ==="
