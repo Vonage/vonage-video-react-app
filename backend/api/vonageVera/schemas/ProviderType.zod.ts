@@ -1,9 +1,9 @@
 import z from 'zod';
 
-export const ProviderTypeSchema = z.enum(['vonage', 'opentok']);
+export const providerTypeSchema = z.enum(['vonage', 'opentok']);
 
-export type ProviderType = z.infer<typeof ProviderTypeSchema>;
+export type ProviderType = z.infer<typeof providerTypeSchema>;
 
 export function assertProviderType(providerType: unknown): asserts providerType is ProviderType {
-  ProviderTypeSchema.parse(providerType);
+  providerTypeSchema.parse(providerType);
 }

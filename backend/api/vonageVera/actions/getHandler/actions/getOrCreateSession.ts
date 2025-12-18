@@ -1,4 +1,5 @@
-type Handler = import('../ActionExecutor').default;
+type ActionExecutor = import('../ActionExecutor').default;
+
 import type { ActionInput } from '../../../types';
 import { ActionResult } from '../schemas/ActionResult';
 
@@ -7,23 +8,36 @@ type Result = ActionResult<{
 }>;
 
 async function getOrCreateSession(
-  this: Handler,
+  this: ActionExecutor,
   payload: ActionInput<'getOrCreateSession'>
 ): Promise<Result> {
-  const { room: roomName } = payload;
+  //   const { room: roomName } = payload;
+  //   const sessionIdKey = `sessions:${roomName}`;
 
-  const sessionId = await (async (): string => {
-    await sessionService.getSession(roomName);
+  // TODO: Validate integrity of sessionId if provided
+  // const { sessionId } = payload;
 
-    if (!sessionId) {
-      sessionId = await videoService.createSession();
-      await sessionService.setSession(roomName, sessionId);
-    }
+  // TODO: Refinements
+  //   const sessionId = await (async () => {
+  //     let sessionId = await this.storageProvider.getItem(sessionIdKey);
+  //     if (sessionId) return sessionId;
+
+  //     sessionId = await this.videoProvider.createSession();
+  //     await this.storageProvider.setItem(sessionIdKey, sessionId);
+
+  //     return sessionId;
+  //   })();
+
+  const sessionId = await (async () => {
+    // TODO: Validate sessionId format and integrity
+    if (payload.sessionId) return payload.sessionId;
+
+    return this.videoProvider.createSession();
   })();
 
   return {
     success: true,
-    message: null,
+    message: 'Session retrieved or created successfully',
     data: {
       sessionId,
     },

@@ -4,7 +4,7 @@ import { IVideoProvider } from '../types/IVideoProvider';
 
 export type VideoProviderAction = keyof Omit<IVideoProvider, 'generateToken'>;
 
-export const VideoProviderActionSchema = z.enum<VideoProviderAction[]>([
+export const videoProviderActionSchema = z.enum<VideoProviderAction[]>([
   'createSession',
   'startArchive',
   'stopArchive',

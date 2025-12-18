@@ -3,42 +3,45 @@ import httpHandler from '@common/routing/httpHandler';
 import assertVeraRequest from './helpers/assertVeraRequest';
 import ActionExecutor from './ActionExecutor';
 import { ActionResult } from './schemas/ActionResult';
-import { ActionInput } from '../../types';
-import { VeraAction } from './schemas/VeraAction';
 
 type VonageVera = import('../../VonageVera').default;
 
-function getHandler(this: VonageVera): Handler;
+type HandlerExtensions = {
+  provider: VonageVera;
+  executor: ActionExecutor;
+};
 
-function getHandler(this: VonageVera): Handler;
+type VeraHandler = Handler & HandlerExtensions;
 
-function getHandler(this: VonageVera): Handler {
-  type HandlerExtensions = {
-    provider: VonageVera;
-  };
+function getHandler(this: VonageVera): VeraHandler;
 
-  const actionExecutor = new ActionExecutor();
+function getHandler(this: VonageVera): VeraHandler;
 
-  const expressHandler: Handler = httpHandler<unknown, ActionResult<unknown>, unknown>(
-    async (req, res) => {
-      assertVeraRequest(req);
+function getHandler(this: VonageVera): VeraHandler {
+  const { videoProvider } = this;
+  const { storageProvider } = this.providerConfig;
 
-      const { action, payload } = req.body;
+  const executor = new ActionExecutor({
+    storageProvider,
+    videoProvider,
+  });
 
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-      const result = await actionExecutor[action](
-        payload as unknown as Parameters<(typeof actionExecutor)[action]>[0]
-      );
+  const expressHandler = httpHandler<unknown, ActionResult<unknown>, unknown>(async (req, res) => {
+    assertVeraRequest(req);
 
-      return res.json({ message: 'VonageVera is up and running!' });
-    }
-  );
+    const { action, payload } = req.body;
 
-  const extensions = { provider: this };
+    const result = await (executor[action] as ActionHandler).call(executor, payload);
 
-  Object.assign(expressHandler, extensions as HandlerExtensions);
+    return res.json(result);
+  });
 
-  return expressHandler;
+  const extensions: HandlerExtensions = { provider: this, executor };
+
+  return Object.assign(expressHandler, extensions);
 }
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type ActionHandler = (...args: any[]) => ActionResult<unknown> | Promise<ActionResult<unknown>>;
 
 export default getHandler;
