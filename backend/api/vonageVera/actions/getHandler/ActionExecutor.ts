@@ -1,7 +1,13 @@
 import { VeraAction } from './schemas/VeraAction';
 import { ActionResult } from './schemas/ActionResult';
 import getOrCreateSession from './actions/getOrCreateSession';
-import type { ActionInput } from '../../types';
+import type { ActionInput, IVideoProvider } from '../../types';
+import type { IStorageProvider } from '../../schemas/StorageProvider.zod';
+import startArchive from './actions/startArchive';
+import disableCaptions from './actions/disableCaptions';
+import enableCaptions from './actions/enableCaptions';
+import listArchives from './actions/listArchives';
+import stopArchive from './actions/stopArchive';
 
 /**
  * Forces ActionExecutor to have a method for each VeraAction
@@ -15,17 +21,44 @@ type HandlerMap = {
 };
 
 class ActionExecutor implements HandlerMap {
+  public storageProvider: IStorageProvider;
+  public videoProvider: IVideoProvider;
+
+  constructor(args: { storageProvider: IStorageProvider; videoProvider: IVideoProvider }) {
+    this.storageProvider = args.storageProvider;
+    this.videoProvider = args.videoProvider;
+  }
+
+  /**
+   * Creates or retrieves a session ID for a given room
+   * [TODO]: We should receive the sessionId not the room name, room name must be informational only
+   */
   getOrCreateSession = getOrCreateSession;
 
-  startArchive: (payload: ActionInput<'startArchive'>) => ActionResult<unknown> = null as any;
+  /**
+   * Starts an archive for a given session
+   */
+  startArchive = startArchive;
 
-  stopArchive: (payload: ActionInput<'stopArchive'>) => ActionResult<unknown> = null as any;
+  /**
+   * Stops an archive for a given session
+   */
+  stopArchive = stopArchive;
 
-  listArchives: (payload: ActionInput<'listArchives'>) => ActionResult<unknown> = null as any;
+  /**
+   * Lists archives for a given session
+   */
+  listArchives = listArchives;
 
-  enableCaptions: (payload: ActionInput<'enableCaptions'>) => ActionResult<unknown> = null as any;
+  /**
+   *  Enables captions for a given session
+   */
+  enableCaptions = enableCaptions;
 
-  disableCaptions: (payload: ActionInput<'disableCaptions'>) => ActionResult<unknown> = null as any;
+  /**
+   * Disables captions for a given session
+   */
+  disableCaptions = disableCaptions;
 }
 
 export default ActionExecutor;

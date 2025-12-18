@@ -3,21 +3,61 @@ import validator from 'validator';
 import createVideoService from '../videoService/videoServiceFactory';
 import getSessionStorageService from '../sessionStorageService';
 import createGetOrCreateSession from './getOrCreateSession';
+import createVonageHandler from '@api/vonageVera/createVonageHandler';
 
 const sessionRouter = Router();
 const videoService = createVideoService();
 const sessionService = getSessionStorageService();
+
 const getOrCreateSession = createGetOrCreateSession({
   videoService,
   sessionService,
+});
+
+const data = new Map<string, string>();
+
+const storageProvider = {
+  getItem: async (key: string): Promise<string | null> => {
+    return Promise.resolve(data.get(key) || null);
+  },
+  setItem: async (key: string, value: string): Promise<void> => {
+    data.set(key, value);
+    return Promise.resolve();
+  },
+};
+
+const providerConfig = (() => {
+  const provider = (process.env.VIDEO_SERVICE_PROVIDER || 'vonage') as 'vonage' | 'opentok';
+
+  if (provider === 'vonage') {
+    return {
+      provider: 'vonage' as const,
+      applicationId: '',
+      privateKey: '',
+    };
+  }
+
+  return {
+    provider: 'opentok' as const,
+    apiKey: '',
+    apiSecret: '',
+  };
+})();
+
+const vonageHandler = createVonageHandler({
+  storageProvider,
+  ...providerConfig,
 });
 
 sessionRouter.get('/:room', async (req: Request<{ room: string }>, res: Response) => {
   try {
     const { room: roomName } = req.params;
     const sessionId = await getOrCreateSession(roomName);
+
     const data = videoService.generateToken(sessionId);
+
     const captionsId = await sessionService.getCaptionsId(roomName);
+
     res.json({
       sessionId,
       token: data.token,
@@ -28,6 +68,22 @@ sessionRouter.get('/:room', async (req: Request<{ room: string }>, res: Response
     const message = error instanceof Error ? error.message : error;
     res.status(500).send({ message });
   }
+
+  // try {
+  //   const { room: roomName } = req.params;
+  //   const sessionId = await getOrCreateSession(roomName);
+  //   const data = videoService.generateToken(sessionId);
+  //   const captionsId = await sessionService.getCaptionsId(roomName);
+  //   res.json({
+  //     sessionId,
+  //     token: data.token,
+  //     apiKey: data.apiKey,
+  //     captionsId,
+  //   });
+  // } catch (error: unknown) {
+  //   const message = error instanceof Error ? error.message : error;
+  //   res.status(500).send({ message });
+  // }
 });
 
 sessionRouter.post('/:room/startArchive', async (req: Request<{ room: string }>, res: Response) => {

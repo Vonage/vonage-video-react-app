@@ -1,0 +1,73 @@
+# Get your Vonage Application ID and Private Key here: https://dashboard.nexmo.com/
+# If using OpenTok SDK and credentials make sure to remove this block and uncomment the block below with OT_ variables.
+
+VIDEO_SERVICE_PROVIDER='opentok'
+OT_API_KEY=100 #everyone uses that one
+OT_API_SECRET=19f149fdf697474f915f13de40e0ad53
+JIRA_URL='https://jira.vonage.com/'
+JIRA_API_URL='https://jira.vonage.com/rest/api/2/issue/'
+JIRA_TOKEN='dmVyYV9mZWVkYmFjay5zYTpPb012WHBlRnVyOEdRbDJkQzducFFYVU4wd2ZTN2NQVzRpd0d0Rw=='
+JIRA_PROJECT_KEY='VIDCS'
+JIRA_COMPONENT_ID='35808'
+
+VONAGE_APP_ID='d125b1f0-dcb2-4747-b9da-d8297b8da497'
+# e.g. (this is an example application Id): 
+# VONAGE_APP_ID='12d0d0-aaaa-bbb-ccc-26b780fb'
+VONAGE_PRIVATE_KEY='-----BEGIN PRIVATE KEY-----
+MIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQC6Sb+M4zc2ZkXG
+ss+pcr6+4ArGLlwU3JzFaKt1I44EhkrVezOOohLgkY6DDay2zmvsyAbRWI5R+VcI
+dWIWDfapoIe+VztTR5yasn/QtxLZ3uyMbedr0KUV1mNWiVb7mKQ03aqX8gvpS/FY
+4uu50R52nDSdTo0uxIQ8OkyBxpr9IBS3TQkMzcjCBl5LCqLDwUpzvcVz+Dc1DPES
+VQtp5QTl1UE9qXDkiOuna69GfbhbA7aIXiHOPPK8KeBWvBEAicamxiK4fHyq8TC/
+qjSH5Pou/jbcBU5TRZ0UCL9Ozg54aTcs9z2w1ZN1VzqvNGPm5mPU0dnSZYxhZCbq
+DK3LeYf/AgMBAAECggEANm0wkU2bRoIH9d8tS+ER+LuFelR2I8Q263hCy+UY65p+
+x7OIoy4YHNN6EzEOGpThtFrWnxhj8HBMbNS61R28SN/1ePeMhi7ggtQPAuBSGiSG
+8Rp1KCtb6C7sdA6JQtXcd/OhkWYu87jz6RfXbkE6SMYnmyQlnJne1qfjzXDEvJpA
+vln49u0W5i3q6wnPRD0/X7yoqWQl+Jtbaq5eWa3kBFT6S/7aAgtCT2gj+tZ71A67
+XCri1keNFvFHymWKqNZW12qy1AIgQr9ymx5seIpBtqpwmklZ1QXw4qk4rpGbsdBj
+6KxuWz94MmRrY0S7TXXnVzKtvUi9hqWEXjnmb1VABQKBgQDfsdHI9nX1pJ4OSwkD
+L2+g6jBx+yKHdjxF0oujRXMnRflvS4FpTWNeh1NXt1BdoMOtX5gSz70sTRAfYXDf
+AGr5lphiNMrCBCJzcalzflCgX+3QrMBDYyOyZmjJ3ugq/xI7TFox6Un2iv6fg8Lp
+L6mszH8MGRRrM98PE5tDdI1xzQKBgQDVMPo9crVPLVw2IT9ePXRh4a+Z4/vK47fj
+NVWYrKdt+DGQ8R5DTT9q0pxMNWKtkRw0oEpfpwjnuaBJAErvENN1lKCEEP6b7C5g
+Uql1+P9u/pXVciPMAfNuSkIk8XESgqMtCaJp40NzH3uyx0ZCnqyF+h4gh+OBdmzj
+ANeQ3lLE+wKBgAPMiEyKavxt/EUv3wpPzuyDrajx4+c7CdEBv19ZeZgsJw1N0ffQ
+2aQsVi0CLvo4FbqnCfUf1A2hjWmLBRi0cBynAxV/4gWjflZJkuAkQAhJOMe3d1ht
+oZiRBqyO/ZBlXpDlPg7k8F2ghKx+11uQdKg7nNi+wEsFyX7/DT77Br/tAoGBAKyf
+jeB3o0vLROEnprHePQCMx61qJxWvsdQt+XM4ShIHZ8sfEgwY3oLWqmwixhYYa6hJ
+Ki+ths5rRdgWfpZ5H2ATyq1lPWRvp1WjWUgHKH1tc1FzrHyiD8R8KHbVcWM1mH79
+UB9BP/pVwcmPBdsntDZ/wilBHvxTMfPVWLca7hZFAoGBANZ/Nwf1wXc2WAXDAFGn
+BGl3t1K71o879I3HUfmZID87UwjgXkGscUL8m1U/8ax+lrxTdhvTXuzW1iTyAbeD
+HlUoLoSbk8XF+bgGCvcs/jgkSk3yt8Ra3qfK1aS0zniJcYTZ3+ZlYKa8d6WlokmS
+JTbORd/gk8E3+bVHd176OvHC
+-----END PRIVATE KEY-----'
+# e.g.: (this is an example private key)
+# VONAGE_PRIVATE_KEY='----BEGIN RSA PRIVATE KEY-----
+# MIIBOAIBAAJARsF2wfXtjllRR8nnz8+CLULn0bqgZtYktJB2BdcB5bw6OYmmDVCc
+# TeTC3VXZATdSqNA6WDWCkSVinC05uYEOEwIDAQABAkArUAaYmSkAeKCO54Pl7Ert
+# 1gT+l9XU3cW+Wqhdfnsjkdjaksdjas9phpdiQXNosI60a8YyeyBUjCtQGFwbJ1Kl
+# AiEAioOWu1s5nbB6ioOXdhbW4Ovfdkjnldfjlkndfjk/njsCIQCCxRfwRVfDcC0h
+# hvuOpFzvZ870deo1/OD8j4U8jG+aCQIgXeU55qO+eODLEN6Ha+urmikc1kyQC/KP
+# aKMjV5PzfUUCIdfgdfgdERJ1K9EVwfE/5bH1E+TERb3j21UZZphjGv15AiBBs0w5
+# WRuPspPXIAHPKrjEHkUsgDZHW/V0fJWbIjJarw==6ISP6wuV0E6SRl1xKVyoYT0D
+# 8iIsCNO9GfFOx3HWN7Q1++fAAhV37
+# -----END PRIVATE KEY-----
+# '
+
+# If using OpenTok SDK (https://tokbox.com/developer/sdks/js/) remove the variables above and use these instead.
+# VIDEO_SERVICE_PROVIDER='opentok'
+# OT_API_KEY=api-key
+# OT_API_SECRET=api-secret
+
+# If deploying to Vonage Cloud Runtime (https://developer.vonage.com/en/vonage-cloud-runtime/overview)
+# enter your port here; the default is 3345.
+# DO NOT SET THIS VARIABLE IN LOCAL ENV:
+# If this variable is set the app will try to use VCR Storage.
+# VCR_PORT=3345
+
+# If implementing the jira service for customer feedback, enter your credentials here.
+# JIRA_URL=jira-url
+# JIRA_API_URL=jira-api-url
+# JIRA_TOKEN=jira-token
+# JIRA_PROJECT_KEY=jira-project-key
+# JIRA_COMPONENT_ID=jira-component-id

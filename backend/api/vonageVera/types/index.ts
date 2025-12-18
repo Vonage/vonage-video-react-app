@@ -1,3 +1,2 @@
-export type * from './ActionPayload';
+export type * from './ActionInput';
 export type * from './IVideoProvider';
-export type * from './VideoProviderAction';

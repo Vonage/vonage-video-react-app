@@ -1,16 +1,16 @@
 import z from 'zod';
-import { ProviderTypeSchema } from './ProviderType.zod';
+import { providerTypeSchema } from './ProviderType.zod';
 
-export const VonageProviderConfigSchema = z.object({
-  provider: ProviderTypeSchema.extract(['vonage']),
+export const vonageProviderConfigSchema = z.object({
+  provider: providerTypeSchema.extract(['vonage']),
   applicationId: z.string(),
   privateKey: z.string(),
 });
 
-export type VonageProviderConfig = z.infer<typeof VonageProviderConfigSchema>;
+export type VonageProviderConfig = z.infer<typeof vonageProviderConfigSchema>;
 
 export function assertVonageProviderConfig(
   config: unknown
 ): asserts config is VonageProviderConfig {
-  VonageProviderConfigSchema.parse(config);
+  vonageProviderConfigSchema.parse(config);
 }

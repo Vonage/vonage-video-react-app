@@ -13,7 +13,7 @@
     "rootDir": "../" /* Specify the root folder within your source files. */,
     "baseUrl": ".",
     "paths": {
-      "@api/*": ["./src/api/*"],
+      "@api/*": ["./api/*"],
       "@common/*": ["../libs/common/src/*"]
     }
   }
