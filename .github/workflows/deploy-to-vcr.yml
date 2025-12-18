@@ -4,7 +4,6 @@ on:
   pull_request:
     branches:
       - develop
-      - vidsol-388/fix-error-handling-publisher
     types: [closed]
 
 permissions:
