@@ -7,6 +7,7 @@ import useRoomShareUrl from '../../../hooks/useRoomShareUrl';
 import IconButton from '@ui/IconButton';
 import Fade from '@ui/Fade';
 import VividIcon from '@components/VividIcon';
+import usePublisherContext from '@hooks/usePublisherContext';
 
 /**
  * SmallViewportHeader Component
@@ -32,6 +33,13 @@ const SmallViewportHeader = (): ReactElement => {
       setIsCopied(false);
     }, 3000);
   };
+
+  const { publisher, isVideoEnabled } = usePublisherContext();
+
+  const handleCameraSwitch = () => {
+    publisher?.cycleVideo();
+  };
+
   return (
     <Box
       data-testid="smallViewportHeader"
@@ -66,7 +74,12 @@ const SmallViewportHeader = (): ReactElement => {
           {roomName}
         </Box>
       </Box>
-      <Box sx={{ marginX: -1 }}>
+      <Box sx={{ marginX: -1, display: 'flex', alignItems: 'center', gap: 1 }}>
+        {isVideoEnabled && (
+          <IconButton sx={{ color: theme.colors.onDarkGrey }} onClick={handleCameraSwitch}>
+            <VividIcon name="camera-switch-line" customSize={-4} />
+          </IconButton>
+        )}
         <Fade in timeout={500}>
           <IconButton sx={{ color: theme.colors.onDarkGrey }} onClick={copyUrl} disabled={isCopied}>
             {isCopied ? (

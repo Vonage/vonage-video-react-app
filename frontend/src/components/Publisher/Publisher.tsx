@@ -1,6 +1,5 @@
 import { ReactElement, useEffect, useRef } from 'react';
 import type { Box as LayoutBox } from 'opentok-layout-js';
-import Box from '@ui/Box';
 import usePublisherContext from '../../hooks/usePublisherContext';
 import VoiceIndicatorIcon from '../MeetingRoom/VoiceIndicator';
 import useAudioLevels from '../../hooks/useAudioLevels';
@@ -8,8 +7,6 @@ import AvatarInitials from '../AvatarInitials';
 import NameDisplay from '../MeetingRoom/NameDisplay';
 import AudioIndicator from '../MeetingRoom/AudioIndicator';
 import VideoTile from '../MeetingRoom/VideoTile';
-import VividIcon from '@components/VividIcon';
-import useIsSmallViewport from '@hooks/useIsSmallViewport';
 import useTheme from '@ui/theme';
 
 export type PublisherProps = {
@@ -37,7 +34,6 @@ const Publisher = ({ box }: PublisherProps): ReactElement => {
   // We store this in a ref to get a reference to the div so that we can append a video to it
   const pubContainerRef = useRef<HTMLDivElement>(null);
 
-  const isSmallViewport = useIsSmallViewport();
   useEffect(() => {
     if (element && pubContainerRef.current) {
       element.classList.add('video__element');
@@ -72,10 +68,6 @@ const Publisher = ({ box }: PublisherProps): ReactElement => {
     margin: 'auto',
   };
 
-  const handleCameraSwitch = () => {
-    publisher?.cycleVideo();
-  };
-
   return (
     <VideoTile
       id="publisher-container"
@@ -92,30 +84,6 @@ const Publisher = ({ box }: PublisherProps): ReactElement => {
           width={box.width}
           username={username}
         />
-      )}
-      {isSmallViewport && isVideoEnabled && (
-        <Box
-          sx={{
-            position: 'absolute',
-            inset: 0,
-            display: 'flex',
-            alignItems: 'flex-start',
-            justifyContent: 'flex-start',
-            p: 1.25,
-          }}
-        >
-          <VividIcon
-            name="camera-switch-line"
-            customSize={-4}
-            sx={{
-              overflow: 'hidden',
-              textOverflow: 'ellipsis',
-              whiteSpace: 'nowrap',
-              color: theme.colors.accent,
-            }}
-            onClick={handleCameraSwitch}
-          />
-        </Box>
       )}
       {isAudioEnabled ? (
         <VoiceIndicatorIcon

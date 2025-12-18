@@ -1,17 +1,23 @@
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { vi, describe, it, Mock, expect, beforeEach, afterEach, beforeAll, afterAll } from 'vitest';
 import SmallViewportHeader from './SmallViewportHeader';
-import useSessionContext from '../../../hooks/useSessionContext';
-import useRoomName from '../../../hooks/useRoomName';
-import useRoomShareUrl from '../../../hooks/useRoomShareUrl';
+import useSessionContext from '@hooks/useSessionContext';
+import useRoomName from '@hooks/useRoomName';
+import useRoomShareUrl from '@hooks/useRoomShareUrl';
+import usePublisherContext from '@hooks/usePublisherContext';
+import { PublisherContextType } from '@Context/PublisherProvider';
 
-vi.mock('../../../hooks/useSessionContext');
-vi.mock('../../../hooks/useRoomName');
-vi.mock('../../../hooks/useRoomShareUrl');
+vi.mock('@hooks/useSessionContext');
+vi.mock('@hooks/useRoomName');
+vi.mock('@hooks/useRoomShareUrl');
+vi.mock('@hooks/usePublisherContext');
+
+const mockUsePublisherContext = usePublisherContext as Mock<[], PublisherContextType>;
 
 describe('SmallViewportHeader component', () => {
   const mockedRoomName = 'test-room-name';
   const originalClipboard: Clipboard = navigator.clipboard;
+  let publisherContext: PublisherContextType;
 
   beforeAll(() => {
     Object.assign(navigator, {
@@ -28,6 +34,13 @@ describe('SmallViewportHeader component', () => {
   beforeEach(() => {
     (useRoomName as Mock).mockReturnValue(mockedRoomName);
     (useRoomShareUrl as Mock).mockReturnValue('https://example.com/room/test-room-name');
+
+    publisherContext = {
+      publisher: { cycleVideo: vi.fn() } as unknown as PublisherContextType['publisher'],
+      isVideoEnabled: true,
+    } as unknown as PublisherContextType;
+
+    mockUsePublisherContext.mockReturnValue(publisherContext);
   });
 
   afterEach(() => {
@@ -71,5 +84,44 @@ describe('SmallViewportHeader component', () => {
       );
       expect(screen.getByTestId('vivid-icon-check-sent-line')).toBeInTheDocument();
     });
+  });
+
+  it('shows the camera switch button when video is enabled', () => {
+    (useSessionContext as Mock).mockReturnValue({ archiveId: null });
+    mockUsePublisherContext.mockReturnValue({
+      publisher: { cycleVideo: vi.fn() } as unknown as PublisherContextType['publisher'],
+      isVideoEnabled: true,
+    } as unknown as PublisherContextType);
+
+    render(<SmallViewportHeader />);
+
+    expect(screen.getByTestId('vivid-icon-camera-switch-line')).toBeInTheDocument();
+  });
+
+  it('does not show the camera switch button when video is disabled', () => {
+    (useSessionContext as Mock).mockReturnValue({ archiveId: null });
+    mockUsePublisherContext.mockReturnValue({
+      publisher: { cycleVideo: vi.fn() } as unknown as PublisherContextType['publisher'],
+      isVideoEnabled: false,
+    } as unknown as PublisherContextType);
+
+    render(<SmallViewportHeader />);
+
+    expect(screen.queryByTestId('vivid-icon-camera-switch-line')).not.toBeInTheDocument();
+  });
+
+  it('calls publisher.cycleVideo when camera switch button is clicked', () => {
+    (useSessionContext as Mock).mockReturnValue({ archiveId: null });
+    const cycleVideo = vi.fn();
+    mockUsePublisherContext.mockReturnValue({
+      publisher: { cycleVideo } as unknown as PublisherContextType['publisher'],
+      isVideoEnabled: true,
+    } as unknown as PublisherContextType);
+
+    render(<SmallViewportHeader />);
+    const cameraIcon = screen.getByTestId('vivid-icon-camera-switch-line');
+    fireEvent.click(cameraIcon);
+
+    expect(cycleVideo).toHaveBeenCalledTimes(1);
   });
 });
