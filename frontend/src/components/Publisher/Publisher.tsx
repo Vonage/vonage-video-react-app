@@ -1,5 +1,6 @@
 import { ReactElement, useEffect, useRef } from 'react';
-import { Box } from 'opentok-layout-js';
+import type { Box as LayoutBox } from 'opentok-layout-js';
+import Box from '@ui/Box';
 import usePublisherContext from '../../hooks/usePublisherContext';
 import VoiceIndicatorIcon from '../MeetingRoom/VoiceIndicator';
 import useAudioLevels from '../../hooks/useAudioLevels';
@@ -12,7 +13,7 @@ import useIsSmallViewport from '@hooks/useIsSmallViewport';
 import useTheme from '@ui/theme';
 
 export type PublisherProps = {
-  box: Box;
+  box: LayoutBox;
 };
 
 /**
@@ -93,20 +94,28 @@ const Publisher = ({ box }: PublisherProps): ReactElement => {
         />
       )}
       {isSmallViewport && isVideoEnabled && (
-        <VividIcon
-          name="camera-switch-line"
-          customSize={-4}
+        <Box
           sx={{
             position: 'absolute',
-            top: '10px',
-            left: '10px',
-            overflow: 'hidden',
-            textOverflow: 'ellipsis',
-            whiteSpace: 'nowrap',
-            color: theme.colors.accent,
+            inset: 0,
+            display: 'flex',
+            alignItems: 'flex-start',
+            justifyContent: 'flex-start',
+            p: 1.25,
           }}
-          onClick={handleCameraSwitch}
-        />
+        >
+          <VividIcon
+            name="camera-switch-line"
+            customSize={-4}
+            sx={{
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
+              whiteSpace: 'nowrap',
+              color: theme.colors.accent,
+            }}
+            onClick={handleCameraSwitch}
+          />
+        </Box>
       )}
       {isAudioEnabled ? (
         <VoiceIndicatorIcon
