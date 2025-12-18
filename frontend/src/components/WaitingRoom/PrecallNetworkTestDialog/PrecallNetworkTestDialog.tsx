@@ -1,4 +1,4 @@
-import { ReactElement, useEffect, useState, useMemo } from 'react';
+import { ReactElement, useEffect, useMemo, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import Dialog from '@ui/Dialog';
 import DialogTitle from '@ui/DialogTitle';
@@ -35,58 +35,38 @@ const PrecallNetworkTestDialog = ({
   const theme = useTheme();
   const roomName = useRoomName();
   const { state, testQuality, stopTest, clearResults } = useNetworkTest();
-  const [hasRunTest, setHasRunTest] = useState(false);
 
-  const handleClose = () => {
+  const handleClose = useCallback(() => {
     stopTest();
     clearResults();
-    setHasRunTest(false);
     setIsPrecallNetworkTestOpen(false);
-  };
+  }, [stopTest, clearResults, setIsPrecallNetworkTestOpen]);
 
-  const handleRetry = async () => {
-    clearResults();
-    setHasRunTest(false);
+  const handleStartTest = useCallback(async () => {
     try {
       await testQuality(roomName);
-      setHasRunTest(true);
     } catch (error) {
       console.error('Network test failed:', error);
-      setHasRunTest(true);
     }
-  };
+  }, [testQuality, roomName]);
 
-  const handleStopTest = () => {
+  const handleRetry = useCallback(() => {
+    clearResults();
+    handleStartTest();
+  }, [clearResults, handleStartTest]);
+
+  const handleStopTest = useCallback(() => {
     stopTest();
     clearResults();
-    setHasRunTest(false);
     setIsPrecallNetworkTestOpen(false);
-  };
+  }, [stopTest, clearResults, setIsPrecallNetworkTestOpen]);
 
   useEffect(() => {
-    if (
-      isPrecallNetworkTestOpen &&
-      !state.isTestingQuality &&
-      !state.qualityResults &&
-      !hasRunTest
-    ) {
-      testQuality(roomName)
-        .then(() => {
-          setHasRunTest(true);
-        })
-        .catch((error) => {
-          console.error('Network test failed:', error);
-          setHasRunTest(true);
-        });
+    if (isPrecallNetworkTestOpen) {
+      handleStartTest();
     }
-  }, [
-    isPrecallNetworkTestOpen,
-    state.isTestingQuality,
-    state.qualityResults,
-    hasRunTest,
-    testQuality,
-    roomName,
-  ]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const audioScore = state.qualityResults?.audio?.mos
     ? Math.round(state.qualityResults.audio.mos * 100) / 100
@@ -120,9 +100,19 @@ const PrecallNetworkTestDialog = ({
 
   return (
     <Dialog open={isPrecallNetworkTestOpen} onClose={handleClose} maxWidth="md" fullWidth>
-      <DialogTitle sx={{ m: 0, p: 0, pl: 3, pt: 3, py: 3, backgroundColor: theme.colors.surface }}>
+      <DialogTitle
+        sx={{
+          m: 0,
+          p: 3,
+          pb: 1,
+          backgroundColor: theme.colors.surface,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+        }}
+      >
         <Typography
-          component="div"
+          component="span"
           variant="h5"
           sx={{
             fontWeight: theme.typography.weight['body-base'].value,
@@ -135,16 +125,13 @@ const PrecallNetworkTestDialog = ({
           aria-label={t('button.close')}
           onClick={handleClose}
           sx={{
-            position: 'absolute',
-            right: 16,
-            top: 16,
             color: theme.colors.secondary,
           }}
         >
           <VividIcon name="close-line" customSize={-5} />
         </IconButton>
       </DialogTitle>
-      <DialogContent sx={{ backgroundColor: theme.colors.surface  }}>
+      <DialogContent sx={{ backgroundColor: theme.colors.surface }}>
         <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
           <Typography
             variant="body1"
@@ -212,7 +199,16 @@ const PrecallNetworkTestDialog = ({
                     py: 2,
                   }}
                 >
-                  <Typography variant="h6" sx={{ color: theme.colors.error, textAlign: 'center' }}>
+                  <Typography
+                    variant="h6"
+                    sx={{
+                      color: theme.colors.error,
+                      textAlign: 'center',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: 2,
+                    }}
+                  >
                     <VividIcon
                       name="close-circle-line"
                       customSize={0}
