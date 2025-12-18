@@ -40,13 +40,6 @@ const mockVonageVideoSDK = async () => {
       );
     }),
 
-    getSupportedCodecs: vi.fn(() => {
-      throw new Error(
-        'OT.getSupportedCodecs() requires browser APIs. Mock this method in your test:\n' +
-          'vi.mocked(OT.getSupportedCodecs).mockResolvedValue({ videoCodecs: [...] });'
-      );
-    }),
-
     setAudioOutputDevice: vi.fn(() => {
       throw new Error(
         'OT.setAudioOutputDevice() requires hardware access. Mock this method in your test:\n' +

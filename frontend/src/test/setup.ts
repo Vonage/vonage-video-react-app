@@ -7,6 +7,31 @@ import '../i18n';
 // Mock scrollIntoView for jsdom environment
 Element.prototype.scrollIntoView = vi.fn();
 
+Object.defineProperty(HTMLMediaElement.prototype, 'play', {
+  configurable: true,
+  value: vi.fn().mockResolvedValue(undefined),
+});
+
+Object.defineProperty(HTMLMediaElement.prototype, 'pause', {
+  configurable: true,
+  value: vi.fn(),
+});
+
+Object.defineProperty(HTMLMediaElement.prototype, 'load', {
+  configurable: true,
+  value: vi.fn(),
+});
+
+type BlobCallback = (blob: Blob | null) => void;
+
+HTMLCanvasElement.prototype.getContext = vi.fn().mockReturnValue({
+  drawImage: vi.fn(),
+}) as unknown as typeof HTMLCanvasElement.prototype.getContext;
+
+HTMLCanvasElement.prototype.toBlob = vi.fn(function (callback: BlobCallback) {
+  callback(new Blob(['fake'], { type: 'image/png' }));
+}) as unknown as typeof HTMLCanvasElement.prototype.toBlob;
+
 afterEach(() => {
   cleanup();
 

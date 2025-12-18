@@ -37,12 +37,12 @@ const FormattedMessageBody = ({ message }: FormattedMessageBodyProps): ReactElem
     }
     // if length of 3, it's text, and a link
     return (
-      <>
+      <span key={`${messageGroup[0]}-${messageGroup[1]}`}>
         <span>{messageGroup[0]}</span>
         <Link href={messageGroup[1]} target="_blank">
           {messageGroup[2]}
         </Link>
-      </>
+      </span>
     );
   });
 
