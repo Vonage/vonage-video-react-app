@@ -232,19 +232,19 @@ const usePublisher = (): PublisherContextType => {
    * Helper function to handle retrying. We allow two attempts when publishing to the session and encountering an
    * error before stopping.
    */
-  const handlePublishingError = (): void => {
+  const handlePublishingError = useCallback((): void => {
     const publishingBlocked: PublishingErrorType = {
       header: t('publishingErrors.blocked.title'),
       caption: t('publishingErrors.blocked.message'),
     };
     setPublishingError(publishingBlocked);
-  };
+  }, [t]);
 
   /**
    * Method to publish to session.
    * @returns {Promise<void>}
    */
-  const publish = async (): Promise<void> => {
+  const publish = useCallback(async (): Promise<void> => {
     try {
       if (isPublishingToSessionRef.current) {
         return; // Avoid multiple simultaneous publish attempts
@@ -268,7 +268,7 @@ const usePublisher = (): PublisherContextType => {
     } finally {
       isPublishingToSessionRef.current = false;
     }
-  };
+  }, [connected, sessionPublish, handlePublishingError]);
 
   /**
    * Turns the camera on and off
@@ -303,7 +303,7 @@ const usePublisher = (): PublisherContextType => {
 
   useEffect(() => {
     const exceptionHandler = (exceptionEvent: ExceptionEvent) => {
-      if (exceptionEvent.code === 1500) {
+      if (exceptionEvent.code === 1500 && !isPublishingToSessionRef.current) {
         publish();
       }
     };
@@ -314,7 +314,7 @@ const usePublisher = (): PublisherContextType => {
     return () => {
       OT.off('exception', exceptionHandler);
     };
-  });
+  }, [publish]);
 
   return {
     initializeLocalPublisher,
