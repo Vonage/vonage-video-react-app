@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, beforeEach, Mock, afterEach } from 'vitest';
+import { describe, it, expect, vi, beforeEach, Mock } from 'vitest';
 import { renderHook, waitFor, act } from '@testing-library/react';
 import fetchCredentials from '@api/fetchCredentials';
 
@@ -66,15 +66,10 @@ describe('useNetworkTest', () => {
   };
 
   beforeEach(() => {
-    vi.clearAllMocks();
     mockNetworkTest.testQuality.mockReset();
     mockNetworkTest.stop.mockReset();
     mockFetchCredentials.mockResolvedValue(mockCredentials);
     mockNetworkTest.testQuality.mockResolvedValue(mockQualityResults);
-  });
-
-  afterEach(() => {
-    vi.clearAllMocks();
   });
 
   it('returns initial state correctly', () => {

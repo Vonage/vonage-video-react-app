@@ -4,17 +4,6 @@ import NetworkTest, { ErrorNames } from '@vonage/video-client-network-test';
 import OT from '@vonage/client-sdk-video';
 import fetchCredentials from '../api/fetchCredentials';
 
-export type ConnectivityResults = {
-  success: boolean;
-  failedTests?: Array<{
-    type: string;
-    error: {
-      message: string;
-      name: string;
-    };
-  }>;
-};
-
 export type QualityResults = {
   video?: {
     supported?: boolean;
@@ -56,19 +45,30 @@ export type QualityUpdateStats = {
   phase?: string;
 };
 
-export type NetworkTestOptions = {
+type ConnectivityResults = {
+  success: boolean;
+  failedTests?: Array<{
+    type: string;
+    error: {
+      message: string;
+      name: string;
+    };
+  }>;
+};
+
+type NetworkTestOptions = {
   audioOnly?: boolean;
   timeout?: number;
   audioSource?: string;
   videoSource?: string;
 };
 
-export type NetworkTestError = {
+type NetworkTestError = {
   message: string;
   name: string;
 };
 
-export type NetworkTestState = {
+type NetworkTestState = {
   isTestingQuality: boolean;
   connectivityResults: ConnectivityResults | null;
   qualityResults: QualityResults | null;
@@ -76,7 +76,7 @@ export type NetworkTestState = {
   error: NetworkTestError | null;
 };
 
-export type NetworkTestHookType = {
+type NetworkTestHookType = {
   state: NetworkTestState;
   testQuality: (
     roomName: string,

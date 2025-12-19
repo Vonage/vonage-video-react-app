@@ -12,6 +12,7 @@ import Button from '@ui/Button';
 import CircularProgress from '@ui/CircularProgress';
 import useNetworkTest from '@hooks/useNetworkTest';
 import useRoomName from '@hooks/useRoomName';
+import PrecallNetworkTestQualityRow from './PrecallNetworkTestQualityRow';
 
 export type PrecallNetworkTestDialogProps = {
   isPrecallNetworkTestOpen: boolean;
@@ -92,11 +93,6 @@ const PrecallNetworkTestDialog = ({
         : 'waitingRoom.precallNetworkTest.videoNotSupported'
     );
   }, [videoScore, t]);
-
-  const formatScore = (score: number | null): string => {
-    if (score === null) return '—';
-    return `${score.toFixed(2)}/5`;
-  };
 
   return (
     <Dialog open={isPrecallNetworkTestOpen} onClose={handleClose} maxWidth="md" fullWidth>
@@ -227,113 +223,16 @@ const PrecallNetworkTestDialog = ({
                 </Box>
               ) : (
                 <Box sx={{ display: 'flex', flexDirection: 'column', mt: 2 }}>
-                  <Box
-                    sx={{
-                      display: 'flex',
-                      flexDirection: 'row',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      gap: 1,
-                      p: 1,
-                      textAlign: 'center',
-                    }}
-                    title={audioSupportTitle}
-                  >
-                    <Typography
-                      variant="h6"
-                      sx={{
-                        color: theme.colors.textSecondary,
-                        fontWeight: theme.typography.weight['body-base'].value,
-                      }}
-                    >
-                      {t('waitingRoom.precallNetworkTest.audio')}
-                    </Typography>
-                    <Typography variant="h5" sx={{ lineHeight: 1 }}>
-                      {audioScore && audioScore >= 3 ? (
-                        <VividIcon
-                          name="check-circle-line"
-                          customSize={-3}
-                          sx={{
-                            color: theme.colors.success,
-                          }}
-                        />
-                      ) : (
-                        <VividIcon
-                          name="close-circle-line"
-                          customSize={-3}
-                          sx={{
-                            color: theme.colors.error,
-                          }}
-                        />
-                      )}
-                    </Typography>
-                    <Typography variant="body1" sx={{ color: theme.colors.textSecondary, ml: 2 }}>
-                      {t('waitingRoom.precallNetworkTest.qualityLabel')}
-                    </Typography>
-                    <Typography
-                      variant="h6"
-                      sx={{
-                        color: theme.colors.textSecondary,
-                        fontWeight: 'bold',
-                      }}
-                    >
-                      {formatScore(audioScore)}
-                    </Typography>
-                  </Box>
-
-                  <Box
-                    sx={{
-                      display: 'flex',
-                      flexDirection: 'row',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      gap: 1,
-                      p: 1,
-                      textAlign: 'center',
-                    }}
-                    title={videoSupportTitle}
-                  >
-                    <Typography
-                      variant="h6"
-                      sx={{
-                        color: theme.colors.textSecondary,
-                        fontWeight: theme.typography.weight['body-base'].value,
-                      }}
-                    >
-                      {t('waitingRoom.precallNetworkTest.video')}
-                    </Typography>
-                    <Typography variant="h5" sx={{ lineHeight: 1 }}>
-                      {videoScore && videoScore >= 3 ? (
-                        <VividIcon
-                          name="check-circle-line"
-                          customSize={-3}
-                          sx={{
-                            color: theme.colors.success,
-                          }}
-                        />
-                      ) : (
-                        <VividIcon
-                          name="close-circle-line"
-                          customSize={-3}
-                          sx={{
-                            color: theme.colors.error,
-                          }}
-                        />
-                      )}
-                    </Typography>
-                    <Typography variant="body1" sx={{ color: theme.colors.textSecondary, ml: 2 }}>
-                      {t('waitingRoom.precallNetworkTest.qualityLabel')}
-                    </Typography>
-                    <Typography
-                      variant="h6"
-                      sx={{
-                        color: theme.colors.textSecondary,
-                        fontWeight: 'bold',
-                      }}
-                    >
-                      {formatScore(videoScore)}
-                    </Typography>
-                  </Box>
+                  <PrecallNetworkTestQualityRow
+                    label={t('waitingRoom.precallNetworkTest.audio')}
+                    score={audioScore}
+                    supportTitle={audioSupportTitle}
+                  />
+                  <PrecallNetworkTestQualityRow
+                    label={t('waitingRoom.precallNetworkTest.video')}
+                    score={videoScore}
+                    supportTitle={videoSupportTitle}
+                  />
                 </Box>
               )}
 
