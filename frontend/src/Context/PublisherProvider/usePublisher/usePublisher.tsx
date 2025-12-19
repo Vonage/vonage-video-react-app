@@ -89,6 +89,7 @@ const usePublisher = (): PublisherContextType => {
   const [isAudioEnabled, setIsAudioEnabled] = useState<boolean>(false);
   const [stream, setStream] = useState<Stream | null>();
   const isPublishingToSessionRef = useRef<boolean>(false);
+  const isInitializingPublisherRef = useRef<boolean>(false);
   const [publishingError, setPublishingError] = useState<PublishingErrorType>(null);
   const { publish: sessionPublish, unpublish: sessionUnpublish, connected } = useSessionContext();
   const [deviceAccess, setDeviceAccess] = useState<DeviceAccessStatus>({
@@ -118,6 +119,7 @@ const usePublisher = (): PublisherContextType => {
   }, [publisherOptions]);
 
   const handleAccessAllowed = () => {
+    isInitializingPublisherRef.current = false;
     setDeviceAccess({
       microphone: true,
       camera: true,
@@ -148,18 +150,23 @@ const usePublisher = (): PublisherContextType => {
   const handleStreamCreated = (e: PublisherStreamCreatedEvent) => {
     setIsPublishing(true);
     setStream(e.stream);
+    // Reset the flag now that the stream is actually established
+    isPublishingToSessionRef.current = false;
   };
 
   const handleStreamDestroyed = () => {
     setStream(null);
     setIsPublishing(false);
-    if (publisherRef?.current) {
+    // Don't destroy publisher if we're currently trying to publish
+    // The publishing attempt will handle cleanup if needed
+    if (publisherRef?.current && !isPublishingToSessionRef.current) {
       publisherRef.current.destroy();
+      publisherRef.current = null;
     }
-    publisherRef.current = null;
   };
 
   const handleAccessDenied = (event: AccessDeniedEvent) => {
+    isInitializingPublisherRef.current = false;
     // We check the first word of the message to see if the microphone or camera was denied access.
     const deviceDeniedAccess = event.message?.startsWith('Microphone') ? 'microphone' : 'camera';
     setDeviceAccess((prev) => ({
@@ -215,11 +222,29 @@ const usePublisher = (): PublisherContextType => {
   const initializeLocalPublisher = useCallback(
     (options: PublisherProperties) => {
       try {
+        // Don't re-initialize if we're currently publishing
+        if (isPublishingToSessionRef.current) {
+          return;
+        }
+        // Don't re-initialize if we're already initializing
+        if (isInitializingPublisherRef.current) {
+          return;
+        }
+        // Don't re-initialize if we already have a publisher
+        if (publisherRef.current) {
+          return;
+        }
+        isInitializingPublisherRef.current = true;
+
         const publisher = initPublisher(undefined, options);
         // Add listeners synchronously as some events could be fired before callback is invoked
         addPublisherListeners(publisher);
         publisherRef.current = publisher;
+
+        // NOTE: isInitializingPublisherRef.current will be reset in handleAccessAllowed or handleAccessDenied
+        // NOT here, because getUserMedia is async and we need to keep the lock until media access is granted/denied
       } catch (error) {
+        isInitializingPublisherRef.current = false;
         if (error instanceof Error) {
           console.warn(error.stack);
         }
@@ -260,13 +285,14 @@ const usePublisher = (): PublisherContextType => {
       await idempotentCallbackWithRetry(() => sessionPublish(publisherRef.current!), {
         retries: 2,
       });
+      // Don't reset isPublishingToSessionRef here - wait for streamCreated event
     } catch (err: unknown) {
+      // Reset the flag on error since we won't get streamCreated
+      isPublishingToSessionRef.current = false;
       handlePublishingError();
       if (err instanceof Error) {
         console.warn(err.message);
       }
-    } finally {
-      isPublishingToSessionRef.current = false;
     }
   }, [connected, sessionPublish, handlePublishingError]);
 
@@ -305,6 +331,17 @@ const usePublisher = (): PublisherContextType => {
     const exceptionHandler = (exceptionEvent: ExceptionEvent) => {
       if (exceptionEvent.code === 1500) {
         console.warn('Unable to publish to session. Error code:', exceptionEvent.code);
+
+        // Clean up the publisher if getUserMedia failed
+        // This allows the publisher to be reinitialized on retry
+        if (publisherRef.current) {
+          publisherRef.current.destroy();
+          publisherRef.current = null;
+        }
+
+        // Reset initialization lock to allow retry
+        isInitializingPublisherRef.current = false;
+
         handlePublishingError();
       }
     };

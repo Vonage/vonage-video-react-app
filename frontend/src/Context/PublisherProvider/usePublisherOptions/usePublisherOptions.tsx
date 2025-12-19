@@ -23,6 +23,10 @@ const usePublisherOptions = (): PublisherProperties | null => {
   const allowVideoOnJoin = useAppConfig(({ videoSettings }) => videoSettings.allowVideoOnJoin);
   const allowAudioOnJoin = useAppConfig(({ audioSettings }) => audioSettings.allowAudioOnJoin);
 
+  // Extract individual properties to avoid object reference changes
+  const { name, noiseSuppression, backgroundFilter, publishAudio, publishVideo, publishCaptions } =
+    user.defaultSettings;
+
   const [publisherOptions, setPublisherOptions] = useState<PublisherProperties | null>(null);
   const deviceStoreRef = useRef<DeviceStore | null>(null);
 
@@ -36,14 +40,6 @@ const usePublisherOptions = (): PublisherProperties | null => {
       const videoSource = deviceStoreRef.current.getConnectedDeviceId('videoinput');
       const audioSource = deviceStoreRef.current.getConnectedDeviceId('audioinput');
 
-      const {
-        name,
-        noiseSuppression,
-        backgroundFilter,
-        publishAudio,
-        publishVideo,
-        publishCaptions,
-      } = user.defaultSettings;
       const initials = getInitials(name);
 
       const audioFilter: AudioFilter | undefined =
@@ -57,7 +53,7 @@ const usePublisherOptions = (): PublisherProperties | null => {
       const isAudioDisabled = getStorageItem(STORAGE_KEYS.AUDIO_SOURCE_ENABLED) === 'false';
       const isVideoDisabled = getStorageItem(STORAGE_KEYS.VIDEO_SOURCE_ENABLED) === 'false';
 
-      setPublisherOptions({
+      const options = {
         audioFallback: { publisher: true },
         audioSource,
         initials,
@@ -70,11 +66,22 @@ const usePublisherOptions = (): PublisherProperties | null => {
         videoFilter,
         videoSource,
         publishCaptions,
-      });
+      };
+      setPublisherOptions(options);
     };
 
     setOptions();
-  }, [allowAudioOnJoin, defaultResolution, allowVideoOnJoin, user.defaultSettings]);
+  }, [
+    allowAudioOnJoin,
+    defaultResolution,
+    allowVideoOnJoin,
+    name,
+    noiseSuppression,
+    backgroundFilter,
+    publishAudio,
+    publishVideo,
+    publishCaptions,
+  ]);
 
   return publisherOptions;
 };
