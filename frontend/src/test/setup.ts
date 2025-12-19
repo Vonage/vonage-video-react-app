@@ -9,7 +9,7 @@ Element.prototype.scrollIntoView = vi.fn();
 
 Object.defineProperty(HTMLMediaElement.prototype, 'play', {
   configurable: true,
-  value: vi.fn().mockResolvedValue(undefined),
+  value: vi.fn(),
 });
 
 Object.defineProperty(HTMLMediaElement.prototype, 'pause', {
@@ -24,11 +24,11 @@ Object.defineProperty(HTMLMediaElement.prototype, 'load', {
 
 type BlobCallback = (blob: Blob | null) => void;
 
-HTMLCanvasElement.prototype.getContext = vi.fn().mockReturnValue({
+HTMLCanvasElement.prototype.getContext = vi.fn(() => ({
   drawImage: vi.fn(),
-}) as unknown as typeof HTMLCanvasElement.prototype.getContext;
+})) as unknown as typeof HTMLCanvasElement.prototype.getContext;
 
-HTMLCanvasElement.prototype.toBlob = vi.fn(function (callback: BlobCallback) {
+HTMLCanvasElement.prototype.toBlob = vi.fn((callback: BlobCallback) => {
   callback(new Blob(['fake'], { type: 'image/png' }));
 }) as unknown as typeof HTMLCanvasElement.prototype.toBlob;
 
