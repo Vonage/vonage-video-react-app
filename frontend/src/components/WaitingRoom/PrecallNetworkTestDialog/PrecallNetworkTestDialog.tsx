@@ -76,10 +76,14 @@ const PrecallNetworkTestDialog = ({
     ? Math.round(state.qualityResults.video.mos * 100) / 100
     : null;
 
+  const isGoodScoreQuality = (score: number | null) => {
+    return score !== null && score >= 3;
+  };
+
   const audioSupportTitle = useMemo(() => {
     if (audioScore === null) return undefined;
     return t(
-      audioScore >= 3
+      isGoodScoreQuality(audioScore)
         ? 'waitingRoom.precallNetworkTest.audioSupported'
         : 'waitingRoom.precallNetworkTest.audioNotSupported'
     );
@@ -88,7 +92,7 @@ const PrecallNetworkTestDialog = ({
   const videoSupportTitle = useMemo(() => {
     if (videoScore === null) return undefined;
     return t(
-      videoScore >= 3
+      isGoodScoreQuality(videoScore)
         ? 'waitingRoom.precallNetworkTest.videoSupported'
         : 'waitingRoom.precallNetworkTest.videoNotSupported'
     );
