@@ -120,11 +120,14 @@ describe('usePublisher', () => {
 
   describe('changeBackground', () => {
     let result: ReturnType<typeof renderHook>['result'];
-    beforeEach(() => {
+    beforeEach(async () => {
       vi.mocked(initPublisher).mockImplementation(() => mockPublisher);
       result = renderHook(() => usePublisher()).result;
       act(() => {
         (result.current as ReturnType<typeof usePublisher>).initializeLocalPublisher({});
+      });
+      await waitFor(() => {
+        expect((result.current as ReturnType<typeof usePublisher>).publisher).toBe(mockPublisher);
       });
     });
 

@@ -125,7 +125,7 @@ describe('SessionProvider', () => {
     );
   };
 
-  beforeEach(() => {
+  beforeEach(async () => {
     activeSpeakerTracker = Object.assign(new EventEmitter(), {
       onSubscriberDestroyed: vi.fn(),
       onSubscriberAudioLevelUpdated: vi.fn(),
@@ -153,10 +153,10 @@ describe('SessionProvider', () => {
       token: 'token',
     } as Credential);
 
-    act(() => {
-      const result = render(<TestComponent />);
-      getByTestId = result.getByTestId;
-    });
+    const result = render(<TestComponent />);
+    getByTestId = result.getByTestId;
+
+    await waitFor(() => expect(getByTestId('connected')).toHaveTextContent('true'));
   });
 
   it('should update activeSpeaker state when activeSpeakerTracker emits event', async () => {
@@ -177,12 +177,14 @@ describe('SessionProvider', () => {
   });
 
   describe('publish', () => {
-    it('should call publish on VonageVideoClient when connected', () => {
+    it('should call publish on VonageVideoClient when connected', async () => {
       act(() => {
         getByTestId('publish').click();
       });
 
-      expect(vonageVideoClient.publish).toHaveBeenCalledTimes(1);
+      await waitFor(() => {
+        expect(vonageVideoClient.publish).toHaveBeenCalledTimes(1);
+      });
     });
 
     it('should not call publish on VonageVideoClient if not connected', async () => {
@@ -201,54 +203,75 @@ describe('SessionProvider', () => {
   });
 
   describe('unpublish', () => {
-    it('should call unpublish on VonageVideoClient', () => {
+    it('should call unpublish on VonageVideoClient', async () => {
       act(() => {
         getByTestId('unpublish').click();
       });
 
-      expect(vonageVideoClient.unpublish).toHaveBeenCalledTimes(1);
+      await waitFor(() => {
+        expect(vonageVideoClient.unpublish).toHaveBeenCalledTimes(1);
+      });
     });
 
-    it('should not call unpublish on VonageVideoClient if not connected', () => {
+    it('should not call unpublish on VonageVideoClient if not connected', async () => {
       act(() => {
         getByTestId('disconnect').click();
+      });
+
+      await waitFor(() => expect(getByTestId('connected')).toHaveTextContent('false'));
+
+      act(() => {
         getByTestId('unpublish').click();
       });
 
-      expect(vonageVideoClient.unpublish).toHaveBeenCalledTimes(0);
+      await waitFor(() => {
+        expect(vonageVideoClient.unpublish).toHaveBeenCalledTimes(0);
+      });
     });
   });
 
   describe('subscriberWrappers', () => {
-    it('adding a new subscriber should add it to the subscriberWrappers', () => {
+    it('adding a new subscriber should add it to the subscriberWrappers', async () => {
       act(() => {
         vonageVideoClient.emit('subscriberVideoElementCreated', {
           id: 'sub1',
         } as unknown as SubscriberWrapper);
       });
 
-      expect(getByTestId('subscriberWrappers')).toHaveTextContent('sub1');
+      await waitFor(() => {
+        expect(getByTestId('subscriberWrappers')).toHaveTextContent('sub1');
+      });
+
       act(() => {
         vonageVideoClient.emit('subscriberVideoElementCreated', {
           id: 'sub2',
         } as unknown as SubscriberWrapper);
       });
-      expect(getByTestId('subscriberWrappers')).toHaveTextContent('sub2');
-      expect(getByTestId('subscriberWrappers').children.length).toBe(2);
+
+      await waitFor(() => {
+        expect(getByTestId('subscriberWrappers')).toHaveTextContent('sub2');
+        expect(getByTestId('subscriberWrappers').children.length).toBe(2);
+      });
     });
 
-    it('removing a subscriber should remove it from the subscriberWrappers', () => {
+    it('removing a subscriber should remove it from the subscriberWrappers', async () => {
       act(() => {
         vonageVideoClient.emit('subscriberVideoElementCreated', {
           id: 'sub1',
         } as unknown as SubscriberWrapper);
       });
 
-      expect(getByTestId('subscriberWrappers')).toHaveTextContent('sub1');
+      await waitFor(() => {
+        expect(getByTestId('subscriberWrappers')).toHaveTextContent('sub1');
+      });
+
       act(() => {
         vonageVideoClient.emit('subscriberDestroyed', 'sub1');
       });
-      expect(getByTestId('subscriberWrappers')).not.toHaveTextContent('sub1');
+
+      await waitFor(() => {
+        expect(getByTestId('subscriberWrappers')).not.toHaveTextContent('sub1');
+      });
     });
   });
 
@@ -399,9 +422,11 @@ describe('SessionProvider', () => {
     await waitFor(() => expect(vonageVideoClient.forceMuteStream).toHaveBeenCalledTimes(1));
   });
 
-  it('joinRoom should call fetchCredentials and connect', () => {
-    expect(mockFetchCredentials).toHaveBeenCalledTimes(1);
-    expect(vonageVideoClient.connect).toHaveBeenCalledTimes(1);
+  it('joinRoom should call fetchCredentials and connect', async () => {
+    await waitFor(() => {
+      expect(mockFetchCredentials).toHaveBeenCalledTimes(1);
+      expect(vonageVideoClient.connect).toHaveBeenCalledTimes(1);
+    });
   });
 });
 

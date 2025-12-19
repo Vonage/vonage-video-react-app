@@ -52,10 +52,13 @@ describe('useAudioOutput', () => {
     });
   });
 
-  it('should provide initial state', () => {
+  it('should provide initial state', async () => {
     const { result } = renderHook(() => useAudioOutput());
 
-    expect(result.current.currentAudioOutputDevice).toBeUndefined();
+    await waitFor(() => {
+      expect(result.current.currentAudioOutputDevice).toBeDefined();
+    });
+
     expect(result.current.setAudioOutputDevice).toBeDefined();
   });
 

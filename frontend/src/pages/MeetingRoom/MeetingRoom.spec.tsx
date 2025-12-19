@@ -1,9 +1,9 @@
 import '../../css/index.css';
 import { beforeEach, describe, expect, it, Mock, vi } from 'vitest';
-import { render as renderBase, screen, waitFor } from '@testing-library/react';
+import { act, render as renderBase, screen, waitFor } from '@testing-library/react';
 import { Publisher, Subscriber } from '@vonage/client-sdk-video';
 import { EventEmitter } from 'stream';
-import { act, ReactElement } from 'react';
+import { ReactElement } from 'react';
 import { UserContextType } from '@Context/user';
 import { SubscriberWrapper } from '@app-types/session';
 import useUserContext from '@hooks/useUserContext';
