@@ -36,7 +36,7 @@ app.use((_req, res, next) => {
   next();
 });
 
-const veraPath = path.join(runtimeDir, process.env.__IS_CJS__ ? './vera' : './dist/vera');
+const veraPath = path.join(runtimeDir, './dist');
 
 app.use(express.static(veraPath));
 

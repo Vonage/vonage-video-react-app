@@ -4,7 +4,7 @@ instance:
   name: dev
   runtime: nodejs22
   region: aws.euw1
-  entrypoint: [node, backend/dist/backend.cjs]
+  entrypoint: [node, backend/bundle.cjs]
   build-script: './vcrGhaBuild.sh'
   # The placeholder <DOMAIN> will be replaced by sed in .github/workflows/deploy-to-vcr.yml
   domains: <DOMAIN>
@@ -42,4 +42,4 @@ instance:
     - name: JIRA_EPIC_URL
       secret: JIRA_EPIC_URL
 debug:
-  entrypoint: [node, backend/dist/backend.cjs]
+  entrypoint: [node, backend/bundle.cjs]

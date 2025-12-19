@@ -1,8 +1,9 @@
+.nx/
+.vscode/
 node_modules/
 backend/node_modules/*
 frontend/node_modules/*
 integration-tests
-backend/dist/*
 
 lib-cov
 *.seed
@@ -30,3 +31,4 @@ coverage/
 build
 
 /scripts/allLicenseResults.json
+vrc-dev.yml
