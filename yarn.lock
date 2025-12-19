@@ -4765,10 +4765,10 @@
     "@types/node-fetch" "2.6.11"
     node-fetch "2.7.0"
 
-"@vonage/video-client-network-test@^4.0.2":
-  version "4.0.2"
-  resolved "https://registry.yarnpkg.com/@vonage/video-client-network-test/-/video-client-network-test-4.0.2.tgz#12d64b386add3b87a41d8365826a79ffcbf3f7cc"
-  integrity sha512-aQP2Jc4AGd/M1y1CG5zvVBzETU5VmV9Lm/6FOBfRqgCrLRHBldgwZdd9BiKnze7MkebAQJur7ImFBJ3QNTUdtA==
+"@vonage/video-client-network-test@^5.0.0":
+  version "5.0.0"
+  resolved "https://registry.yarnpkg.com/@vonage/video-client-network-test/-/video-client-network-test-5.0.0.tgz#c5d0a19f227c056bfed0fc747ea5d646c868ab5a"
+  integrity sha512-c+/thVawDDqJoih2kbc5y5oY8WgPbtrlkxvzgWSzoUroePPgB81htZHaN7ytk59YfrJ1WZC7BcAxCjdFm+2zWA==
   dependencies:
     axios "^1.8.3"
     opentok-solutions-logging "^1.1.1"
