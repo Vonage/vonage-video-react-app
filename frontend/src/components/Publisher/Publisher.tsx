@@ -1,5 +1,5 @@
 import { ReactElement, useEffect, useRef } from 'react';
-import type { Box as LayoutBox } from 'opentok-layout-js';
+import { Box } from 'opentok-layout-js';
 import usePublisherContext from '../../hooks/usePublisherContext';
 import VoiceIndicatorIcon from '../MeetingRoom/VoiceIndicator';
 import useAudioLevels from '../../hooks/useAudioLevels';
@@ -10,7 +10,7 @@ import VideoTile from '../MeetingRoom/VideoTile';
 import useTheme from '@ui/theme';
 
 export type PublisherProps = {
-  box: LayoutBox;
+  box: Box;
 };
 
 /**
