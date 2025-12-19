@@ -33,7 +33,6 @@ const Publisher = ({ box }: PublisherProps): ReactElement => {
   const theme = useTheme();
   // We store this in a ref to get a reference to the div so that we can append a video to it
   const pubContainerRef = useRef<HTMLDivElement>(null);
-
   useEffect(() => {
     if (element && pubContainerRef.current) {
       element.classList.add('video__element');
