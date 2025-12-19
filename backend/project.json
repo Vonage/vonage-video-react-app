@@ -16,8 +16,34 @@
       "executor": "nx:run-commands",
       "options": {
         "cwd": "backend",
-        "command": "node --import tsx index.ts"
-      }
+        "command": "node dist/backend.cjs"
+      },
+      "dependsOn": ["build"]
+    },
+
+    "start:development": {
+      "executor": "nx:run-commands",
+      "options": {
+        "cwd": "backend",
+        "command": "node dist/backend.cjs"
+      },
+      "dependsOn": ["build:development"]
+    },
+    "build": {
+      "executor": "nx:run-commands",
+      "options": {
+        "cwd": ".",
+        "command": "webpack --config backend/webpack.config.cjs --target node --mode production"
+      },
+      "outputs": ["{workspaceRoot}/backend/dist"]
+    },
+    "build:development": {
+      "executor": "nx:run-commands",
+      "options": {
+        "cwd": ".",
+        "command": "webpack --config backend/webpack.config.cjs --target node --mode development"
+      },
+      "outputs": ["{workspaceRoot}/backend/dist"]
     },
     "debug": {
       "executor": "nx:run-commands",
