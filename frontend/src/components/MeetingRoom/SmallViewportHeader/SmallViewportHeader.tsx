@@ -8,6 +8,7 @@ import IconButton from '@ui/IconButton';
 import Fade from '@ui/Fade';
 import VividIcon from '@components/VividIcon';
 import usePublisherContext from '@hooks/usePublisherContext';
+import useDevices from '@hooks/useDevices';
 
 /**
  * SmallViewportHeader Component
@@ -21,6 +22,9 @@ const SmallViewportHeader = (): ReactElement => {
   const { archiveId } = useSessionContext();
   const isRecording = !!archiveId;
   const roomName = useRoomName();
+  const {
+    allMediaDevices: { videoInputDevices },
+  } = useDevices();
   const roomShareUrl = useRoomShareUrl();
   const [isCopied, setIsCopied] = useState<boolean>(false);
   const copyUrl = () => {
@@ -75,7 +79,7 @@ const SmallViewportHeader = (): ReactElement => {
         </Box>
       </Box>
       <Box sx={{ marginX: -1, display: 'flex', alignItems: 'center', gap: 1 }}>
-        {isVideoEnabled && (
+        {isVideoEnabled && videoInputDevices.length > 1 && (
           <IconButton sx={{ color: theme.colors.onDarkGrey }} onClick={handleCameraSwitch}>
             <VividIcon name="camera-switch-line" customSize={-4} />
           </IconButton>
