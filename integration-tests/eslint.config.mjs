@@ -27,7 +27,6 @@ export default [
       '@typescript-eslint/await-thenable': 'off',
       '@typescript-eslint/no-misused-promises': 'off',
       '@typescript-eslint/no-unsafe-return': 'off',
-      'import/no-extraneous-dependencies': 'off',
       'react-hooks/rules-of-hooks': 'off',
       '@typescript-eslint/no-unsafe-argument': 'off',
     },
