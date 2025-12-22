@@ -371,7 +371,6 @@ describe('MeetingRoom', () => {
     const getSubIdsInRenderOrder = () =>
       screen.getAllByTestId('subscriber-container', { exact: false }).map((element) => element?.id);
 
-    // sub1 joined first so should stay in position
     await waitFor(() => {
       expect(getSubIdsInRenderOrder()).toEqual(['sub1', 'sub2']);
     });
@@ -381,7 +380,6 @@ describe('MeetingRoom', () => {
       rerender(<MeetingRoom />);
     });
 
-    // sub1 and sub2 joined first so should stay in position ahead of sub3
     await waitFor(() => {
       expect(getSubIdsInRenderOrder()).toEqual(['sub1', 'sub2', 'sub3']);
     });

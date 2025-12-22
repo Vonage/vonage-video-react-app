@@ -4,6 +4,20 @@
 # https://developer.vonage.com/en/vonage-cloud-runtime/guides/manifest#build-script
 
 # run install skipping post install script which requires husky
-yarn install --production=false --ignore-scripts
-
+yarn install --production=false --ignore-scripts --frozen-lockfile
 yarn build
+
+
+# remove everything but backend/dist and .git files
+find . -mindepth 1 \
+  ! -path "./backend/dist*" \
+  ! -path "./.git*" \
+  ! -path "./.github*" \
+  ! -name ".gitignore" \
+  ! -name ".gitattributes" \
+  ! -name ".gitmodules" \
+  -exec rm -rf {} +
+
+# log on the console the remaining files for verification
+echo "Remaining files after cleanup:"
+find . -mindepth 1 -maxdepth 2

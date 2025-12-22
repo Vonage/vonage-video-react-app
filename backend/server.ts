@@ -1,13 +1,24 @@
+// loads environment variables from .env file
+import './helpers/config';
+
 import express, { Express, Request, Response } from 'express';
 import path from 'path';
 import bodyParser from 'body-parser';
-import { fileURLToPath } from 'url';
 import cors from 'cors';
 import { Server } from 'http';
 import router from './routes/index';
+import { fileURLToPath } from 'url';
 
-const fileName = fileURLToPath(import.meta.url);
-const dirName = path.dirname(fileName);
+/**
+ * The runtimeDirectory works different on CJS and ESM
+ * We are embedding __IS_CJS__ variable during build time enforce the correct behavior
+ */
+let runtimeDir: string = '';
+if (process.env.__IS_CJS__) {
+  runtimeDir = __dirname;
+} else {
+  runtimeDir = path.dirname(fileURLToPath(import.meta.url));
+}
 
 const port = process.env.VCR_PORT ?? 3345;
 
@@ -25,10 +36,12 @@ app.use((_req, res, next) => {
   next();
 });
 
-app.use(express.static(path.join(dirName, './dist')));
+const veraPath = path.join(runtimeDir, process.env.__IS_CJS__ ? './vera' : './dist/vera');
+
+app.use(express.static(veraPath));
 
 app.get('/*', (_req: Request, res: Response) => {
-  res.sendFile(path.join(dirName, 'dist', 'index.html'));
+  res.sendFile(path.join(veraPath, 'index.html'));
 });
 
 const startServer: () => Promise<Server> = () => {
