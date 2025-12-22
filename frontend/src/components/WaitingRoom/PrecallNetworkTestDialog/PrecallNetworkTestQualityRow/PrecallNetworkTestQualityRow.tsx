@@ -74,7 +74,7 @@ const PrecallNetworkTestQualityRow = ({
         variant="h6"
         sx={{
           color: theme.colors.textSecondary,
-          fontWeight: 'bold',
+          fontWeight: theme.typography.weight['body-base'].value,
         }}
       >
         {formattedScore}
