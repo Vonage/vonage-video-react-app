@@ -330,10 +330,10 @@ For quick development deployments directly from your local machine, you can use 
    Copy the development configuration example file:
 
    ```bash
-   cp vrc-dev.example.yml vrc-dev.yml
+   cp vcr-dev.example.yml vcr-dev.yml
    ```
 
-   Open `vrc-dev.yml` and add your application ID.
+   Open `vcr-dev.yml` and add your application ID.
 
 5. **Deploy to development**:
 

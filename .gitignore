@@ -62,5 +62,5 @@ vcr.yml
 vite.config.*.timestamp*
 vitest.config.*.timestamp*
 *.tsbuildinfo
-vrc-dev.yml
+vcr-dev.yml
 

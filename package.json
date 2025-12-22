@@ -40,8 +40,8 @@
     "ts-check:backend": "nx run backend:ts-check",
     "ts-check:frontend": "nx run frontend:ts-check",
     "ts-check:integration-tests": "nx run integration-tests:ts-check",
-    "deploy:dev": "sh vcrBuild.dev.sh && vcr deploy -f vrc-dev.yml",
-    "vrc:dev:remove": "vrc instance rm --project-name vonage-video-react-app --instance-name vera-dev"
+    "deploy:dev": "sh vcrBuild.dev.sh && vcr deploy -f vcr-dev.yml",
+    "vcr:dev:remove": "vcr instance rm --project-name vonage-video-react-app --instance-name vera-dev"
   },
   "scriptsInfo": {
     "dev": "Run both frontend and backend in development mode with hot reload",
@@ -49,8 +49,8 @@
     "test:frontend": "Run frontend tests via Nx",
     "test:frontend:": "Example: 'yarn test:frontend: <name/path>' to run specific tests without coverage",
     "test:frontend:debug": "Debug frontend tests with Vitest/Node inspector",
-    "deploy:dev": "copy the vrc-dev.example.yml file as vrc-dev.yml, add your application id and deploy to VCR instance with 'yarn deploy:dev'",
-    "vrc:dev:remove": "Remove the VCR development instance"
+    "deploy:dev": "copy the vcr-dev.example.yml file as vcr-dev.yml, add your application id and deploy to VCR instance with 'yarn deploy:dev'",
+    "vcr:dev:remove": "Remove the VCR development instance"
   },
   "repository": {
     "type": "git",

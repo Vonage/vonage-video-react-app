@@ -31,4 +31,4 @@ coverage/
 build
 
 /scripts/allLicenseResults.json
-vrc-dev.yml
+vcr-dev.yml
