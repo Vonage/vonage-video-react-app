@@ -84,6 +84,7 @@
   "devices.video.blur.ariaLabel": "Activar/desactivar desenfoque de fondo",
   "devices.video.blur.label": "Desenfocar fondo",
   "devices.video.camera.ariaLabel": "activar/desactivar video",
+  "devices.video.camera.switch": "Cambiar cámara",
   "devices.video.camera.state.on": "Encender cámara",
   "devices.video.camera.state.off": "Apagar cámara",
   "devices.video.camera.full": "Cámara",

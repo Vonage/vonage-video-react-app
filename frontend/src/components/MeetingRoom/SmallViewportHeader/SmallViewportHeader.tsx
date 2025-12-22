@@ -1,10 +1,12 @@
 import { ReactElement, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import Box from '@ui/Box';
 import useTheme from '@ui/theme';
 import useSessionContext from '../../../hooks/useSessionContext';
 import useRoomName from '../../../hooks/useRoomName';
 import useRoomShareUrl from '../../../hooks/useRoomShareUrl';
 import IconButton from '@ui/IconButton';
+import Tooltip from '@ui/Tooltip';
 import Fade from '@ui/Fade';
 import VividIcon from '@components/VividIcon';
 import usePublisherContext from '@hooks/usePublisherContext';
@@ -18,6 +20,7 @@ import useDevices from '@hooks/useDevices';
  * @returns {ReactElement} The small viewport header component.
  */
 const SmallViewportHeader = (): ReactElement => {
+  const { t } = useTranslation();
   const theme = useTheme();
   const { archiveId } = useSessionContext();
   const isRecording = !!archiveId;
@@ -80,22 +83,36 @@ const SmallViewportHeader = (): ReactElement => {
       </Box>
       <Box sx={{ marginX: -1, display: 'flex', alignItems: 'center', gap: 1 }}>
         {isVideoEnabled && videoInputDevices.length > 1 && (
-          <IconButton sx={{ color: theme.colors.onDarkGrey }} onClick={handleCameraSwitch}>
-            <VividIcon name="camera-switch-line" customSize={-4} />
-          </IconButton>
+          <Tooltip title={t('devices.video.camera.switch')} placement="bottom">
+            <IconButton sx={{ color: theme.colors.onDarkGrey }} onClick={handleCameraSwitch}>
+              <VividIcon name="camera-switch-line" customSize={-4} />
+            </IconButton>
+          </Tooltip>
         )}
         <Fade in timeout={500}>
-          <IconButton sx={{ color: theme.colors.onDarkGrey }} onClick={copyUrl} disabled={isCopied}>
-            {isCopied ? (
-              <VividIcon
-                customSize={-4}
-                name="check-sent-line"
-                sx={{ color: theme.colors.success }}
-              />
-            ) : (
-              <VividIcon customSize={-4} name="copy-line" sx={{ color: theme.colors.onDarkGrey }} />
-            )}
-          </IconButton>
+          <Tooltip title={isCopied ? t('chat.copied') : t('chat.copy')} placement="bottom">
+            <Box>
+              <IconButton
+                sx={{ color: theme.colors.onDarkGrey }}
+                onClick={copyUrl}
+                disabled={isCopied}
+              >
+                {isCopied ? (
+                  <VividIcon
+                    customSize={-4}
+                    name="check-sent-line"
+                    sx={{ color: theme.colors.success }}
+                  />
+                ) : (
+                  <VividIcon
+                    customSize={-4}
+                    name="copy-line"
+                    sx={{ color: theme.colors.onDarkGrey }}
+                  />
+                )}
+              </IconButton>
+            </Box>
+          </Tooltip>
         </Fade>
       </Box>
     </Box>
