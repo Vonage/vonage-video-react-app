@@ -5,14 +5,22 @@ import useSessionContext from '@hooks/useSessionContext';
 import useRoomName from '@hooks/useRoomName';
 import useRoomShareUrl from '@hooks/useRoomShareUrl';
 import usePublisherContext from '@hooks/usePublisherContext';
+import useDevices from '@hooks/useDevices';
+import { allMediaDevices } from '@utils/mockData/device';
 import { PublisherContextType } from '@Context/PublisherProvider';
+import { AllMediaDevices } from '@app-types/room';
 
 vi.mock('@hooks/useSessionContext');
+vi.mock('@hooks/useDevices');
 vi.mock('@hooks/useRoomName');
 vi.mock('@hooks/useRoomShareUrl');
 vi.mock('@hooks/usePublisherContext');
 
 const mockUsePublisherContext = usePublisherContext as Mock<[], PublisherContextType>;
+const mockUseDevices = useDevices as Mock<
+  [],
+  { allMediaDevices: AllMediaDevices; getAllMediaDevices: () => void }
+>;
 
 describe('SmallViewportHeader component', () => {
   const mockedRoomName = 'test-room-name';
@@ -41,6 +49,10 @@ describe('SmallViewportHeader component', () => {
     } as unknown as PublisherContextType;
 
     mockUsePublisherContext.mockReturnValue(publisherContext);
+    mockUseDevices.mockReturnValue({
+      getAllMediaDevices: vi.fn(),
+      allMediaDevices,
+    });
   });
 
   afterEach(() => {
