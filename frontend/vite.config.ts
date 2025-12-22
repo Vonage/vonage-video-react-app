@@ -29,7 +29,8 @@ const vitestConfig: VitestUserConfigInterface = defineVitestConfig({
 
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => {
-  const env = loadEnv(mode, process.cwd());
+  const env = loadEnv(mode, __dirname, '');
+
   const isDevelopment = mode === 'development';
 
   return mergeConfig(vitestConfig, {
@@ -69,6 +70,11 @@ export default defineConfig(({ mode }) => {
         '@test': '/src/test',
         '@ui': path.resolve(__dirname, '../libs/ui/src'),
       },
+    },
+
+    build: {
+      outDir: path.resolve(__dirname, 'dist'),
+      emptyOutDir: true,
     },
   });
 });

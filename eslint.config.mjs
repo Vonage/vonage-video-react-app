@@ -39,6 +39,7 @@ export default [
       // added to avoid typed rules breaking on config files
       '**/eslint.config.mjs',
       'customWordList.mjs',
+      '**/webpack.config.cjs',
     ],
   },
 

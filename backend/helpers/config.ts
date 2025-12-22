@@ -1,8 +1,20 @@
 import dotenv from 'dotenv';
-import path from 'path';
+import path from 'node:path';
 import { Config, FeedbackConfig } from '../types/config';
+import { fileURLToPath } from 'node:url';
 
-dotenv.config({ path: path.resolve(process.cwd(), '.env') });
+/**
+ * The runtimeDirectory works different on CJS and ESM
+ * We are embedding __IS_CJS__ variable during build time enforce the correct behavior
+ */
+let runtimeDir: string = '';
+if (process.env.__IS_CJS__) {
+  runtimeDir = __dirname;
+} else {
+  runtimeDir = path.dirname(fileURLToPath(import.meta.url));
+}
+
+dotenv.config({ path: path.join(runtimeDir, '.env') });
 
 const loadConfig = (): Config => {
   const provider = process.env.VIDEO_SERVICE_PROVIDER ?? '';
@@ -38,7 +50,7 @@ const loadConfig = (): Config => {
 
     return { ...feedbackConfig, apiKey, apiSecret, provider: 'opentok' };
   }
-  throw new Error('Unknown video service provider');
+  throw new Error(`Unknown video service provider: ${provider || 'undefined'}`);
 };
 
 export default loadConfig;
