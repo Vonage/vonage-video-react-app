@@ -51,7 +51,7 @@ jobs:
       - name: Slack notification on success
         uses: slackapi/slack-github-action@v1.26.0
         with:
-          channel-id: '#tb-web-ci'
+          channel-id: '#video-solutions-ci-notifications'
           payload: |
             {
               "text": "Vera Deployment GHA Job",
@@ -70,7 +70,7 @@ jobs:
       - name: Slack notification on failure
         uses: slackapi/slack-github-action@v1.26.0
         with:
-          channel-id: '#tb-web-ci'
+          channel-id: '#video-solutions-ci-notifications'
           payload: |
             {
               "text": "Vera Deployment GHA Job",
