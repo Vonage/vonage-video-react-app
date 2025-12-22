@@ -7,17 +7,31 @@
 yarn install --production=false --ignore-scripts --frozen-lockfile
 yarn build
 
-
-# remove everything but backend/dist and .git files
+# keep only necessary files for VCR deployment and git files to avoid messing up the repo state locally
 find . -mindepth 1 \
-  ! -path "./backend/dist*" \
+  ! -path "./backend" \
+  ! -path "./backend/dist" \
+  ! -path "./backend/dist/*" \
+  ! -path "./backend/bundle.cjs" \
   ! -path "./.git*" \
   ! -path "./.github*" \
   ! -name ".gitignore" \
   ! -name ".gitattributes" \
   ! -name ".gitmodules" \
-  -exec rm -rf {} +
+  ! -name "*.sh" \
+  ! -name "*.yml" \
+  ! -name ".env" \
+  ! -name ".env.*" \
+  ! -path "*/config.json" \
+  ! -path "*/config.*.json" \
+  ! -path "./.vscode*" \
+  -exec rm -rf {} + 2>/dev/null
 
-# log on the console the remaining files for verification
-echo "Remaining files after cleanup:"
-find . -mindepth 1 -maxdepth 2
+echo ""
+echo "=== backend  root contents ==="
+find backend -maxdepth 1 -print  
+
+echo ""
+echo "=== backend/dist contents ==="
+find backend/dist -print
+

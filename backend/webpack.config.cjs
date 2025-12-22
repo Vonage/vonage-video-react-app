@@ -1,7 +1,6 @@
 const path = require('path');
 const TerserPlugin = require('terser-webpack-plugin');
 const DefinePlugin = require('webpack').DefinePlugin;
-const CopyWebpackPlugin = require('copy-webpack-plugin');
 
 module.exports = (env, options) => {
   const isDevelopment = options.mode === 'development';
@@ -14,11 +13,12 @@ module.exports = (env, options) => {
     devtool: isDevelopment ? 'inline-source-map' : false,
 
     entry: {
-      backend: path.resolve(__dirname, 'index.ts'),
+      bundle: path.resolve(__dirname, 'index.ts'),
     },
 
     output: {
-      path: path.resolve(__dirname, 'dist'),
+      // output on the root of the backend folder
+      path: path.resolve(__dirname, '.'),
       filename: '[name].cjs',
       libraryTarget: 'commonjs2',
       globalObject: 'this',
@@ -48,16 +48,6 @@ module.exports = (env, options) => {
       ],
     },
     plugins: [
-      new CopyWebpackPlugin({
-        patterns: [
-          {
-            force: isDevelopment,
-            from: path.resolve(__dirname, '.env'),
-            to: '.',
-          },
-        ],
-      }),
-
       new DefinePlugin({
         'process.env.__IS_CJS__': JSON.stringify(true),
         'process.env.NODE_ENV': JSON.stringify(options.mode),

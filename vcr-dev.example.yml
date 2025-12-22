@@ -1,0 +1,12 @@
+project:
+  name: vonage-video-react-app
+instance:
+  name: vera-dev
+  runtime: nodejs22
+  region: aws.euw1
+  # We run this locally so the vcr only needs to pick up the artefact backend/dist/**
+  #  build-script: './vcrBuild.sh'
+  entrypoint: [node, backend/bundle.cjs]
+  application-id: ${DEV_VCR_APP_ID}
+debug:
+  entrypoint: [node, backend/bundle.cjs]
