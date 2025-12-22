@@ -43,6 +43,21 @@ export type PreviewPublisherContextType = {
   speechLevel: number;
 };
 
+export type PreviewPublisherInitialValue = Partial<
+  Pick<
+    PreviewPublisherContextType,
+    | 'publisherVideoElement'
+    | 'isAudioEnabled'
+    | 'isPublishing'
+    | 'isVideoEnabled'
+    | 'speechLevel'
+    | 'backgroundFilter'
+    | 'localAudioSource'
+    | 'localVideoSource'
+    | 'accessStatus'
+  >
+>;
+
 /**
  * Hook wrapper for creation, interaction with, and state for local video preview publisher.
  * Access from app via PreviewPublisherProvider, not directly.
@@ -65,27 +80,37 @@ export type PreviewPublisherContextType = {
  * @property {number} speechLevel - Current speech level for audio visualization
  * @returns {PreviewPublisherContextType} preview context
  */
-const usePreviewPublisher = (): PreviewPublisherContextType => {
+const usePreviewPublisher = (
+  initialValue?: PreviewPublisherInitialValue
+): PreviewPublisherContextType => {
   const { setUser, user } = useUserContext();
   const defaultResolution = useAppConfig(({ videoSettings }) => videoSettings.defaultResolution);
   const { allMediaDevices, getAllMediaDevices } = useDevices();
   const [publisherVideoElement, setPublisherVideoElement] = useState<
-    HTMLVideoElement | HTMLObjectElement
-  >();
-  const [speechLevel, setSpeechLevel] = useState(0);
+    HTMLVideoElement | HTMLObjectElement | undefined
+  >(initialValue?.publisherVideoElement ?? undefined);
+  const [speechLevel, setSpeechLevel] = useState(initialValue?.speechLevel ?? 0);
   const { setAccessStatus, accessStatus } = usePermissions();
   const publisherRef = useRef<Publisher | null>(null);
-  const [isPublishing, setIsPublishing] = useState(false);
+  const [isPublishing, setIsPublishing] = useState<boolean>(initialValue?.isPublishing ?? false);
   const initialBackgroundRef = useRef<VideoFilter | undefined>(
     user.defaultSettings.backgroundFilter
   );
   const [backgroundFilter, setBackgroundFilter] = useState<VideoFilter | undefined>(
-    user.defaultSettings.backgroundFilter
+    () => initialValue?.backgroundFilter ?? user.defaultSettings.backgroundFilter
   );
-  const [isVideoEnabled, setIsVideoEnabled] = useState(true);
-  const [isAudioEnabled, setIsAudioEnabled] = useState(true);
-  const [localVideoSource, setLocalVideoSource] = useState<string | undefined>(undefined);
-  const [localAudioSource, setLocalAudioSource] = useState<string | undefined>(undefined);
+  const [isVideoEnabled, setIsVideoEnabled] = useState<boolean>(
+    initialValue?.isVideoEnabled ?? true
+  );
+  const [isAudioEnabled, setIsAudioEnabled] = useState<boolean>(
+    initialValue?.isAudioEnabled ?? true
+  );
+  const [localVideoSource, setLocalVideoSource] = useState<string | undefined>(
+    initialValue?.localVideoSource ?? undefined
+  );
+  const [localAudioSource, setLocalAudioSource] = useState<string | undefined>(
+    initialValue?.localAudioSource ?? undefined
+  );
   const deviceStoreRef = useRef<DeviceStore>(new DeviceStore());
 
   /* This sets the default devices in use so that the user knows what devices they are using */

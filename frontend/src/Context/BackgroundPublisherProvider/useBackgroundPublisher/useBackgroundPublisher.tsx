@@ -44,6 +44,19 @@ type PublisherVideoElementCreatedEvent = Event<'videoElementCreated', Publisher>
   element: HTMLVideoElement | HTMLObjectElement;
 };
 
+export type BackgroundPublisherContextInitialValue = Partial<
+  Pick<
+    BackgroundPublisherContextType,
+    | 'localVideoSource'
+    | 'publisherVideoElement'
+    | 'isPublishing'
+    | 'isVideoEnabled'
+    | 'customImages'
+    | 'backgroundSelected'
+    | 'backgroundFilter'
+  >
+>;
+
 /**
  * Hook wrapper for creation, interaction with, and state for local video publisher with background effects.
  * Access from app via BackgroundPublisherProvider, not directly.
@@ -61,27 +74,37 @@ type PublisherVideoElementCreatedEvent = Event<'videoElementCreated', Publisher>
  * @property {Function} initBackgroundLocalPublisher - Method to initialize the background publisher
  * @returns {BackgroundPublisherContextType} Background context
  */
-const useBackgroundPublisher = (): BackgroundPublisherContextType => {
+const useBackgroundPublisher = (
+  initialValue?: BackgroundPublisherContextInitialValue
+): BackgroundPublisherContextType => {
   const { user } = useUserContext();
   const { allMediaDevices, getAllMediaDevices } = useDevices();
   const { getImagesFromStorage, addImageToStorage, deleteImageFromStorage } = useImageStorage();
   const [publisherVideoElement, setPublisherVideoElement] = useState<
-    HTMLVideoElement | HTMLObjectElement
-  >();
+    HTMLVideoElement | HTMLObjectElement | undefined
+  >(initialValue?.publisherVideoElement ?? undefined);
   const { setAccessStatus, accessStatus } = usePermissions();
   const backgroundPublisherRef = useRef<Publisher | null>(null);
-  const [isPublishing, setIsPublishing] = useState<boolean>(false);
+  const [isPublishing, setIsPublishing] = useState<boolean>(initialValue?.isPublishing ?? false);
   const initialBackgroundRef = useRef<VideoFilter | undefined>(
     user.defaultSettings.backgroundFilter
   );
   const [backgroundFilter, setBackgroundFilter] = useState<VideoFilter | undefined>(
-    user.defaultSettings.backgroundFilter
+    () => initialValue?.backgroundFilter ?? user.defaultSettings.backgroundFilter
   );
-  const [isVideoEnabled, setIsVideoEnabled] = useState<boolean>(true);
-  const [localVideoSource, setLocalVideoSource] = useState<string | undefined>(undefined);
+  const [isVideoEnabled, setIsVideoEnabled] = useState<boolean>(
+    initialValue?.isVideoEnabled ?? true
+  );
+  const [localVideoSource, setLocalVideoSource] = useState<string | undefined>(
+    initialValue?.localVideoSource ?? undefined
+  );
   const deviceStoreRef = useRef<DeviceStore>(new DeviceStore());
-  const [customImages, setCustomImages] = useState<StoredImage[]>(() => getImagesFromStorage());
-  const [backgroundSelected, setBackgroundSelected] = useState<string>('');
+  const [customImages, setCustomImages] = useState<StoredImage[]>(
+    () => initialValue?.customImages ?? getImagesFromStorage()
+  );
+  const [backgroundSelected, setBackgroundSelected] = useState<string>(
+    initialValue?.backgroundSelected ?? ''
+  );
 
   /* This sets the default devices in use so that the user knows what devices they are using */
   useEffect(() => {

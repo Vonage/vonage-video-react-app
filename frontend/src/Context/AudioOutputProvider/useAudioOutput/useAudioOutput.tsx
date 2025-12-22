@@ -21,8 +21,10 @@ export type AudioOutputContextInitialValue = Partial<
  * @property {() => void} setAudioOutput - React state method to set the audioOutput device
  * @returns {AudioOutputContextType} audioOutput context
  */
-const useAudioOutput = (): AudioOutputContextType => {
-  const [currentAudioOutputDevice, setCurrentAudioOutputDevice] = useState<AudioDeviceId>();
+const useAudioOutput = (initialValue?: AudioOutputContextInitialValue): AudioOutputContextType => {
+  const [currentAudioOutputDevice, setCurrentAudioOutputDevice] = useState<AudioDeviceId>(
+    initialValue?.currentAudioOutputDevice ?? null
+  );
   const { mediaDevices } = window.navigator;
 
   const updateCurrentAudioOutputDevice = useCallback(() => {
