@@ -104,7 +104,7 @@ const InputAudioDevices = ({ handleToggle }: InputAudioDevicesProps): ReactEleme
                   }}
                 >
                   {isSelected ? (
-                    <Box key={'input-audio-devices-check'} sx={{ mr: 2 }}>
+                    <Box key={'input-audio-devices-check'} sx={{ mr: 2.5 }}>
                       <VividIcon
                         name="check-line"
                         customSize={-6}
@@ -114,7 +114,7 @@ const InputAudioDevices = ({ handleToggle }: InputAudioDevicesProps): ReactEleme
                       />
                     </Box>
                   ) : (
-                    <Box sx={{ width: 40 }} /> // Placeholder when CheckIcon is not displayed
+                    <Box sx={{ minWidth: 36 }} /> // Placeholder when CheckIcon is not displayed
                   )}
                   <Typography noWrap>{option}</Typography>
                 </Box>
