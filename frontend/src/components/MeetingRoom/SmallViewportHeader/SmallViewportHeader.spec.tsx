@@ -122,6 +122,28 @@ describe('SmallViewportHeader component', () => {
     expect(screen.queryByTestId('vivid-icon-camera-switch-line')).not.toBeInTheDocument();
   });
 
+  it('does not show the camera switch button when only one video input device is available', () => {
+    (useSessionContext as Mock).mockReturnValue({ archiveId: null });
+    mockUsePublisherContext.mockReturnValue({
+      publisher: { cycleVideo: vi.fn() } as unknown as PublisherContextType['publisher'],
+      isVideoEnabled: true,
+    } as unknown as PublisherContextType);
+
+    const singleVideoDevice: AllMediaDevices = {
+      ...allMediaDevices,
+      videoInputDevices: [allMediaDevices.videoInputDevices[0]],
+    };
+
+    mockUseDevices.mockReturnValue({
+      getAllMediaDevices: vi.fn(),
+      allMediaDevices: singleVideoDevice,
+    });
+
+    render(<SmallViewportHeader />);
+
+    expect(screen.queryByTestId('vivid-icon-camera-switch-line')).not.toBeInTheDocument();
+  });
+
   it('calls publisher.cycleVideo when camera switch button is clicked', () => {
     (useSessionContext as Mock).mockReturnValue({ archiveId: null });
     const cycleVideo = vi.fn();
