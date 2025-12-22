@@ -301,6 +301,48 @@ You can also check your instances at https://dashboard.nexmo.com/serverless/inst
 Note: This will deploy the project using your local code and .env files, which is useful for debugging.
 For a more centralized deployment to VCR see our GHA workflow `.github/workflows/deploy-to-vcr.yml`.
 
+### Development Deployment from Local
+
+For quick development deployments directly from your local machine, you can use the `deploy:dev` script:
+
+1. **Install the VCR CLI** (if not already installed):
+   
+   Follow the installation instructions at https://developer.vonage.com/en/vonage-cloud-runtime/getting-started/working-locally#cli-installation
+
+2. **Configure VCR with your credentials**:
+
+   ```bash
+   vcr configure
+   ```
+
+   Enter your Vonage API Key and Secret, and select a region.
+
+3. **Generate application keys**:
+
+   ```bash
+   vcr app generate-keys --app-id <app-id> docs
+   ```
+
+   Replace `<app-id>` with your Vonage application ID.
+
+4. **Set up your development configuration**:
+
+   Copy the development configuration example file:
+
+   ```bash
+   cp vrc-dev.example.yml vrc-dev.yml
+   ```
+
+   Open `vrc-dev.yml` and add your application ID.
+
+5. **Deploy to development**:
+
+   ```bash
+   yarn deploy:dev
+   ```
+
+This will deploy using your local development configuration and code, making it quick to test changes in a cloud environment.
+
 ## Testing
 
 ### Integration Tests
