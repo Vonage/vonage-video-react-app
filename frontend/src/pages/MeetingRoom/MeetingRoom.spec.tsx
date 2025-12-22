@@ -179,14 +179,12 @@ describe('MeetingRoom', () => {
   });
 
   it('should render', async () => {
-    // expect.assertions(1);
     render(<MeetingRoom />);
     const meetingRoom = await screen.findByTestId('meetingRoom');
     expect(meetingRoom).not.toBeNull();
   });
 
   it('renders the small viewport header bar if it is on a small tab or device', async () => {
-    // expect.assertions(1);
     (useMediaQuery as Mock).mockReturnValue(true);
     render(<MeetingRoom />);
     expect(await screen.findByTestId('smallViewportHeader')).not.toBeNull();
@@ -201,7 +199,6 @@ describe('MeetingRoom', () => {
   });
 
   it('should call joinRoom on render only once', async () => {
-    // expect.assertions(3);
     const { sessionContext, rerender } = render(<MeetingRoom />, {
       sessionContext: {
         __onCreated: (context) => {
