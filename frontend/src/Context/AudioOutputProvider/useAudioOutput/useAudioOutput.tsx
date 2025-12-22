@@ -11,6 +11,10 @@ export type AudioOutputContextType = {
   setAudioOutputDevice: (deviceId: AudioDeviceId) => Promise<void>;
 };
 
+export type AudioOutputContextInitialValue = Partial<
+  Pick<AudioOutputContextType, 'currentAudioOutputDevice'>
+>;
+
 /**
  * Hook wrapper for managing the user's audio output device.
  * @property {string | undefined | null} audioOutput - React state showing the audio output device ID, if set

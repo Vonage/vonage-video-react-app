@@ -12,14 +12,19 @@ import { ReactElement, RefObject } from 'react';
 import { EventEmitter } from 'stream';
 import { hasMediaProcessorSupport } from '@vonage/client-sdk-video';
 import * as util from '@utils/util';
-import { AudioOutputProvider } from '@Context/AudioOutputProvider';
 import {
   audioInputDevices,
   audioOutputDevices,
   nativeDevices,
   videoInputDevices,
 } from '@utils/mockData/device';
-import { AppConfigProviderWrapperOptions, makeAppConfigProviderWrapper } from '@test/providers';
+import {
+  AppConfigProviderWrapperOptions,
+  makeAppConfigProviderWrapper,
+  AudioOutputProviderWrapperOptions,
+  makeAudioOutputProviderWrapper,
+} from '@test/providers';
+import composeProviders from '@utils/composeProviders';
 import DeviceSettingsMenu from './DeviceSettingsMenu';
 
 const {
@@ -107,17 +112,15 @@ describe('DeviceSettingsMenu Component', () => {
       (util.isGetActiveAudioOutputDeviceSupported as Mock).mockReturnValue(true);
 
       render(
-        <AudioOutputProvider>
-          <DeviceSettingsMenu
-            deviceType={deviceType}
-            handleToggle={mockHandleToggle}
-            toggleBackgroundEffects={mockHandleToggleBackgroundEffects}
-            isOpen
-            anchorRef={mockAnchorRef}
-            handleClose={mockHandleClose}
-            setIsOpen={mockSetIsOpen}
-          />
-        </AudioOutputProvider>
+        <DeviceSettingsMenu
+          deviceType={deviceType}
+          handleToggle={mockHandleToggle}
+          toggleBackgroundEffects={mockHandleToggleBackgroundEffects}
+          isOpen
+          anchorRef={mockAnchorRef}
+          handleClose={mockHandleClose}
+          setIsOpen={mockSetIsOpen}
+        />
       );
 
       const outputDevicesElement = screen.getByTestId('output-devices');
@@ -149,18 +152,17 @@ describe('DeviceSettingsMenu Component', () => {
     it('and renders the default output device if the browser does not support setting audioOutput device', async () => {
       (util.isGetActiveAudioOutputDeviceSupported as Mock).mockReturnValue(false);
       mockGetAudioOutputDevices.mockResolvedValue([vonageDefaultEmptyOutputDevice]);
+
       render(
-        <AudioOutputProvider>
-          <DeviceSettingsMenu
-            deviceType={deviceType}
-            handleToggle={mockHandleToggle}
-            toggleBackgroundEffects={mockHandleToggleBackgroundEffects}
-            isOpen
-            anchorRef={mockAnchorRef}
-            handleClose={mockHandleClose}
-            setIsOpen={mockSetIsOpen}
-          />
-        </AudioOutputProvider>
+        <DeviceSettingsMenu
+          deviceType={deviceType}
+          handleToggle={mockHandleToggle}
+          toggleBackgroundEffects={mockHandleToggleBackgroundEffects}
+          isOpen
+          anchorRef={mockAnchorRef}
+          handleClose={mockHandleClose}
+          setIsOpen={mockSetIsOpen}
+        />
       );
 
       const outputDevicesElement = screen.getByTestId('output-devices');
@@ -185,17 +187,15 @@ describe('DeviceSettingsMenu Component', () => {
 
       await act(() =>
         render(
-          <AudioOutputProvider>
-            <DeviceSettingsMenu
-              deviceType={deviceType}
-              handleToggle={mockHandleToggle}
-              toggleBackgroundEffects={mockHandleToggleBackgroundEffects}
-              isOpen
-              anchorRef={mockAnchorRef}
-              handleClose={mockHandleClose}
-              setIsOpen={mockSetIsOpen}
-            />
-          </AudioOutputProvider>
+          <DeviceSettingsMenu
+            deviceType={deviceType}
+            handleToggle={mockHandleToggle}
+            toggleBackgroundEffects={mockHandleToggleBackgroundEffects}
+            isOpen
+            anchorRef={mockAnchorRef}
+            handleClose={mockHandleClose}
+            setIsOpen={mockSetIsOpen}
+          />
         )
       );
 
@@ -209,17 +209,15 @@ describe('DeviceSettingsMenu Component', () => {
 
       await act(() =>
         render(
-          <AudioOutputProvider>
-            <DeviceSettingsMenu
-              deviceType={deviceType}
-              handleToggle={mockHandleToggle}
-              toggleBackgroundEffects={mockHandleToggleBackgroundEffects}
-              isOpen
-              anchorRef={mockAnchorRef}
-              handleClose={mockHandleClose}
-              setIsOpen={mockSetIsOpen}
-            />
-          </AudioOutputProvider>
+          <DeviceSettingsMenu
+            deviceType={deviceType}
+            handleToggle={mockHandleToggle}
+            toggleBackgroundEffects={mockHandleToggleBackgroundEffects}
+            isOpen
+            anchorRef={mockAnchorRef}
+            handleClose={mockHandleClose}
+            setIsOpen={mockSetIsOpen}
+          />
         )
       );
 
@@ -231,17 +229,15 @@ describe('DeviceSettingsMenu Component', () => {
       (util.isGetActiveAudioOutputDeviceSupported as Mock).mockReturnValue(true);
 
       render(
-        <AudioOutputProvider>
-          <DeviceSettingsMenu
-            deviceType={deviceType}
-            handleToggle={mockHandleToggle}
-            toggleBackgroundEffects={mockHandleToggleBackgroundEffects}
-            isOpen
-            anchorRef={mockAnchorRef}
-            handleClose={mockHandleClose}
-            setIsOpen={mockSetIsOpen}
-          />
-        </AudioOutputProvider>
+        <DeviceSettingsMenu
+          deviceType={deviceType}
+          handleToggle={mockHandleToggle}
+          toggleBackgroundEffects={mockHandleToggleBackgroundEffects}
+          isOpen
+          anchorRef={mockAnchorRef}
+          handleClose={mockHandleClose}
+          setIsOpen={mockSetIsOpen}
+        />
       );
 
       const outputDevicesElement = screen.getByTestId('output-devices');
@@ -309,7 +305,7 @@ describe('DeviceSettingsMenu Component', () => {
       });
     });
 
-    it('but does not render it if closed', () => {
+    it('but does not render it if closed', async () => {
       render(
         <DeviceSettingsMenu
           deviceType={deviceType}
@@ -321,7 +317,9 @@ describe('DeviceSettingsMenu Component', () => {
           setIsOpen={mockSetIsOpen}
         />
       );
-      expect(screen.queryByTestId('video-settings-devices-dropdown')).not.toBeInTheDocument();
+      await waitFor(() => {
+        expect(screen.queryByTestId('video-settings-devices-dropdown')).not.toBeInTheDocument();
+      });
     });
 
     it('and renders the dropdown separator and background effects option when media processor is supported', async () => {
@@ -400,9 +398,15 @@ function render(
   ui: ReactElement,
   options?: {
     appConfigOptions?: AppConfigProviderWrapperOptions;
+    audioOutputOptions?: AudioOutputProviderWrapperOptions['audioOutputOptions'];
   }
 ) {
   const { AppConfigWrapper } = makeAppConfigProviderWrapper(options?.appConfigOptions);
+  const { AudioOutputProviderWrapper, audioOutputContext } = makeAudioOutputProviderWrapper({
+    audioOutputOptions: options?.audioOutputOptions,
+  });
 
-  return renderBase(ui, { wrapper: AppConfigWrapper });
+  const ComposedWrapper = composeProviders(AudioOutputProviderWrapper, AppConfigWrapper);
+
+  return { ...renderBase(ui, { wrapper: ComposedWrapper }), audioOutputContext };
 }
