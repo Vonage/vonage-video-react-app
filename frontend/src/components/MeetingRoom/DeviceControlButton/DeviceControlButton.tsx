@@ -13,6 +13,7 @@ import IconButton from '@ui/IconButton';
 import Tooltip from '@ui/Tooltip';
 import VividIcon from '@components/VividIcon';
 import Box from '@ui/Box';
+import usePushToTalk from '@hooks/usePushToTalk';
 
 export type DeviceControlButtonProps = {
   deviceType: 'audio' | 'video';
@@ -128,6 +129,12 @@ const DeviceControlButton = ({
       toggleBackgroundVideoPublisher();
     }
   };
+
+  usePushToTalk({
+    enabled: isAudio && isMicrophoneControlAllowed,
+    isAudioEnabled,
+    toggleAudio,
+  });
 
   return (
     <>

@@ -70,7 +70,7 @@
   "devices.audio.ariaLabel": "dispositivi audio",
   "devices.audio.defaultLabel": "Predefinito sistema",
   "devices.audio.disable": "Disattiva microfono",
-  "devices.audio.enable": "Attiva microfono",
+  "devices.audio.enable": "Attiva il microfono o tieni premuta la barra spaziatrice per attivarlo temporaneamente",
   "devices.audio.microphone.ariaLabel": "attiva/disattiva audio",
   "devices.audio.microphone.full": "Microfono",
   "devices.audio.microphone.short": "Mic",

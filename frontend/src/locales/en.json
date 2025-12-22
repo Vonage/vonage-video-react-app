@@ -71,7 +71,7 @@
   "devices.audio.defaultLabel": "System Default",
   "devices.audio.disable": "Disable microphone",
   "devices.audio.disabled": "Microphone control is disabled in this application",
-  "devices.audio.enable": "Enable microphone",
+  "devices.audio.enable": "Enable microphone or hold Space to temporarily unmute",
   "devices.audio.microphone.ariaLabel": "toggle audio",
   "devices.audio.microphone.full": "Microphone",
   "devices.audio.microphone.short": "Mic",
