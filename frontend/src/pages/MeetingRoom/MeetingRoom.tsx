@@ -21,6 +21,7 @@ import CaptionsError from '../../components/MeetingRoom/CaptionsError';
 import useBackgroundPublisherContext from '../../hooks/useBackgroundPublisherContext';
 import { DEVICE_ACCESS_STATUS } from '../../utils/constants';
 import type { PublishingErrorType } from '../../Context/PublisherProvider/usePublisher/usePublisher';
+import useUserContext from '../../hooks/useUserContext';
 
 /**
  * MeetingRoom Component
@@ -34,7 +35,13 @@ import type { PublishingErrorType } from '../../Context/PublisherProvider/usePub
 const MeetingRoom = (): ReactElement => {
   const { t } = useTranslation();
   const theme = useTheme();
+  const navigate = useNavigate();
   const roomName = useRoomName();
+  const {
+    user: {
+      defaultSettings: { name },
+    },
+  } = useUserContext();
   const { publisher, publish, quality, initializeLocalPublisher, publishingError, isVideoEnabled } =
     usePublisherContext();
 
@@ -72,6 +79,11 @@ const MeetingRoom = (): ReactElement => {
   };
 
   useEffect(() => {
+    if (!name || name.trim() === '') {
+      navigate(`/waiting-room/${roomName}`);
+      return;
+    }
+
     if (joinRoom && isValidRoomName(roomName)) {
       joinRoom(roomName);
     }
@@ -80,7 +92,7 @@ const MeetingRoom = (): ReactElement => {
       disconnect?.();
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [roomName]);
+  }, [roomName, name, navigate]);
 
   useEffect(() => {
     if (!publisherOptions) {
