@@ -9,7 +9,7 @@ import {
 } from '@testing-library/react';
 import { describe, beforeEach, it, Mock, vi, expect, afterAll } from 'vitest';
 import { ReactElement, RefObject } from 'react';
-import { EventEmitter } from 'stream';
+import { EventEmitter } from 'node:stream';
 import { hasMediaProcessorSupport } from '@vonage/client-sdk-video';
 import * as util from '@utils/util';
 import {
@@ -62,7 +62,7 @@ vi.mock('@utils/util', async () => {
 const vonageDefaultEmptyOutputDevice = { deviceId: null, label: null };
 
 describe('DeviceSettingsMenu Component', () => {
-  const nativeMediaDevices = global.navigator.mediaDevices;
+  const nativeMediaDevices = globalThis.navigator.mediaDevices;
   const mockHandleToggle = vi.fn();
   const mockHandleToggleBackgroundEffects = vi.fn();
   const mockSetIsOpen = vi.fn();
@@ -82,15 +82,10 @@ describe('DeviceSettingsMenu Component', () => {
     mockGetActiveAudioOutputDevice.mockResolvedValue(audioOutputDevices[0]);
     mockGetAudioOutputDevices.mockResolvedValue(audioOutputDevices);
     deviceChangeListener = new EventEmitter();
-    Object.defineProperty(global.navigator, 'mediaDevices', {
+    Object.defineProperty(globalThis.navigator, 'mediaDevices', {
       writable: true,
       value: {
-        enumerateDevices: vi.fn(
-          () =>
-            new Promise<MediaDeviceInfo[]>((res) => {
-              res(nativeDevices as MediaDeviceInfo[]);
-            })
-        ),
+        enumerateDevices: vi.fn(() => Promise.resolve(nativeDevices as MediaDeviceInfo[])),
         addEventListener: vi.fn((event, listener) => deviceChangeListener.on(event, listener)),
         removeEventListener: vi.fn((event, listener) => deviceChangeListener.off(event, listener)),
       },
@@ -100,7 +95,7 @@ describe('DeviceSettingsMenu Component', () => {
   });
 
   afterAll(() => {
-    Object.defineProperty(global.navigator, 'mediaDevices', {
+    Object.defineProperty(globalThis.navigator, 'mediaDevices', {
       writable: true,
       value: nativeMediaDevices,
     });

@@ -1,7 +1,7 @@
 import { act, renderHook as renderHookBase, waitFor } from '@testing-library/react';
 import { afterAll, beforeEach, describe, expect, it, Mock, vi } from 'vitest';
 import { hasMediaProcessorSupport, initPublisher, Publisher } from '@vonage/client-sdk-video';
-import EventEmitter from 'events';
+import EventEmitter from 'node:events';
 import { defaultAudioDevice, defaultVideoDevice } from '@utils/mockData/device';
 import { DEVICE_ACCESS_STATUS } from '@utils/constants';
 import {
@@ -26,7 +26,7 @@ describe('usePreviewPublisher', () => {
     vi.spyOn(console, 'error').mockImplementation(vi.fn());
 
     // Mock navigator.mediaDevices for useDevices hook
-    Object.defineProperty(global.navigator, 'mediaDevices', {
+    Object.defineProperty(globalThis.navigator, 'mediaDevices', {
       writable: true,
       value: {
         enumerateDevices: vi.fn(() => Promise.resolve([])),
@@ -36,7 +36,7 @@ describe('usePreviewPublisher', () => {
     });
 
     // Mock navigator.permissions for usePermissions hook
-    Object.defineProperty(global.navigator, 'permissions', {
+    Object.defineProperty(globalThis.navigator, 'permissions', {
       writable: true,
       value: {
         query: vi.fn(() => Promise.resolve({ state: 'granted', onchange: null })),
@@ -156,7 +156,7 @@ describe('usePreviewPublisher', () => {
   });
 
   describe('on accessDenied', () => {
-    const nativePermissions = global.navigator.permissions;
+    const nativePermissions = globalThis.navigator.permissions;
     const mockQuery = vi.fn();
     let mockedPermissionStatus: { onchange: null | (() => void); status: string };
     const emitAccessDeniedError = () => {
@@ -173,7 +173,7 @@ describe('usePreviewPublisher', () => {
       };
       mockQuery.mockResolvedValue(mockedPermissionStatus);
 
-      Object.defineProperty(global.navigator, 'permissions', {
+      Object.defineProperty(globalThis.navigator, 'permissions', {
         writable: true,
         value: {
           query: mockQuery,
@@ -182,7 +182,7 @@ describe('usePreviewPublisher', () => {
     });
 
     afterAll(() => {
-      Object.defineProperty(global.navigator, 'permissions', {
+      Object.defineProperty(globalThis.navigator, 'permissions', {
         writable: true,
         value: nativePermissions,
       });

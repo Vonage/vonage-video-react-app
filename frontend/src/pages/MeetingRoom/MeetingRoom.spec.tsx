@@ -2,7 +2,7 @@ import '../../css/index.css';
 import { beforeEach, describe, expect, it, Mock, vi } from 'vitest';
 import { act, render as renderBase, screen, waitFor } from '@testing-library/react';
 import { Publisher, Subscriber } from '@vonage/client-sdk-video';
-import { EventEmitter } from 'stream';
+import { EventEmitter } from 'node:stream';
 import { ReactElement } from 'react';
 import { UserContextType } from '@Context/user';
 import { SubscriberWrapper } from '@app-types/session';
@@ -151,7 +151,7 @@ describe('MeetingRoom', () => {
 
     mockUseSpeakingDetector.mockReturnValue(false);
     mockUseLayoutManager.mockImplementation(() => (_dimensions, elements) => {
-      return Array(elements.length).fill({
+      return new Array(elements.length).fill({
         height: 720,
         left: 0,
         top: 0,
@@ -332,7 +332,7 @@ describe('MeetingRoom', () => {
   });
 
   it('should render subscribers in correct order', async () => {
-    const [sub1, sub2, sub3] = Array(3)
+    const [sub1, sub2, sub3] = new Array(3)
       .fill(0)
       .map((_s, index) => createSubscriberWrapper(`sub${index + 1}`));
     const { sessionContext, rerender } = render(<MeetingRoom />, {
