@@ -17,11 +17,11 @@ export type PublisherProviderWrapperOptions = {
  * The wrapper includes:
  * - AppConfigProvider: you can override its options via appConfigOptions
  * - UserProvider: you can override its options via userOptions
- * - SessionProvider: you can override its options via sessionOptions
- * - PublisherProvider: you can override its options via publisherOptions
+ * - SessionProvider: you can override its options via sessionContext
+ * - PublisherProvider: you can override its options via publisherContext
  * @param {object} options - The wrapper options.
- * @param {GenericWrapperOptions} [options.publisherOptions] - Options for the PublisherProvider wrapper.
- * @param {GenericWrapperOptions} [options.sessionOptions] - Options for the SessionProvider wrapper.
+ * @param {GenericWrapperOptions} [options.publisherContext] - Options for the PublisherProvider wrapper.
+ * @param {GenericWrapperOptions} [options.sessionContext] - Options for the SessionProvider wrapper.
  * @param {UserProviderWrapperOptions} [options.userOptions] - Options for the UserProvider wrapper.
  * @param {AppConfigProviderWrapperOptions} [options.appConfigOptions] - Options for the AppConfigProvider wrapper.
  * @returns {object} The PublisherProvider wrapper and context getters.
