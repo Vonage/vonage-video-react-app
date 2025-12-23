@@ -17,6 +17,7 @@ import DeviceStore from '../../../utils/DeviceStore';
 import applyBackgroundFilter from '../../../utils/backgroundFilter/applyBackgroundFilter/applyBackgroundFilter';
 import useImageStorage, { StoredImage } from '../../../utils/useImageStorage/useImageStorage';
 import getInitialBackgroundFilter from '../../../utils/backgroundFilter/getInitialBackgroundFilter/getInitialBackgroundFilter';
+import handlePublisherAccessDenied from '../../../utils/publisher/handlePublisherAccessDenied';
 
 export type BackgroundPublisherContextType = {
   isPublishing: boolean;
@@ -54,6 +55,7 @@ export type BackgroundPublisherContextInitialValue = Partial<
     | 'customImages'
     | 'backgroundSelected'
     | 'backgroundFilter'
+    | 'publisher'
   >
 >;
 
@@ -147,31 +149,8 @@ const useBackgroundPublisher = (
     setLocalVideoSource(deviceId);
   }, []);
 
-  /**
-   * Handle device permissions denial
-   * used to inform the user they need to give permissions to devices to access the call
-   * after a user grants permissions to the denied device, trigger a reload.
-   * @returns {void}
-   */
   const handleBackgroundAccessDenied = useCallback(
-    async (event: AccessDeniedEvent) => {
-      const deviceDeniedAccess = event.message?.startsWith('Microphone') ? 'microphone' : 'camera';
-
-      setAccessStatus(DEVICE_ACCESS_STATUS.REJECTED);
-
-      try {
-        const permissionStatus = await window.navigator.permissions.query({
-          name: deviceDeniedAccess,
-        });
-        permissionStatus.onchange = () => {
-          if (permissionStatus.state === 'granted') {
-            setAccessStatus(DEVICE_ACCESS_STATUS.ACCESS_CHANGED);
-          }
-        };
-      } catch (error) {
-        console.error(`Failed to query device permission for ${deviceDeniedAccess}: ${error}`);
-      }
-    },
+    (event: AccessDeniedEvent) => handlePublisherAccessDenied(event, setAccessStatus),
     [setAccessStatus]
   );
 

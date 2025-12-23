@@ -18,6 +18,7 @@ import { AccessDeniedEvent } from '../../PublisherProvider/usePublisher/usePubli
 import DeviceStore from '../../../utils/DeviceStore';
 import { setStorageItem, STORAGE_KEYS } from '../../../utils/storage';
 import applyBackgroundFilter from '../../../utils/backgroundFilter/applyBackgroundFilter/applyBackgroundFilter';
+import handlePublisherAccessDenied from '../../../utils/publisher/handlePublisherAccessDenied';
 
 type PublisherVideoElementCreatedEvent = Event<'videoElementCreated', Publisher> & {
   element: HTMLVideoElement | HTMLObjectElement;
@@ -55,6 +56,7 @@ export type PreviewPublisherInitialValue = Partial<
     | 'localAudioSource'
     | 'localVideoSource'
     | 'accessStatus'
+    | 'publisher'
   >
 >;
 
@@ -185,31 +187,8 @@ const usePreviewPublisher = (
     [setUser]
   );
 
-  /**
-   * Handle device permissions denial
-   * used to inform the user they need to give permissions to devices to access the call
-   * after a user grants permissions to the denied device, trigger a reload.
-   * @returns {void}
-   */
   const handleAccessDenied = useCallback(
-    async (event: AccessDeniedEvent) => {
-      const deviceDeniedAccess = event.message?.startsWith('Microphone') ? 'microphone' : 'camera';
-
-      setAccessStatus(DEVICE_ACCESS_STATUS.REJECTED);
-
-      try {
-        const permissionStatus = await window.navigator.permissions.query({
-          name: deviceDeniedAccess,
-        });
-        permissionStatus.onchange = () => {
-          if (permissionStatus.state === 'granted') {
-            setAccessStatus(DEVICE_ACCESS_STATUS.ACCESS_CHANGED);
-          }
-        };
-      } catch (error) {
-        console.error(`Failed to query device permission for ${deviceDeniedAccess}: ${error}`);
-      }
-    },
+    (event: AccessDeniedEvent) => handlePublisherAccessDenied(event, setAccessStatus),
     [setAccessStatus]
   );
 
