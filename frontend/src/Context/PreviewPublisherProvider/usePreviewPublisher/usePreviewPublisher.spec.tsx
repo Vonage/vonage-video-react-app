@@ -1,13 +1,10 @@
-import { act, renderHook as renderHookBase, waitFor } from '@testing-library/react';
+import { act, waitFor } from '@testing-library/react';
 import { afterAll, beforeEach, describe, expect, it, Mock, vi } from 'vitest';
 import { hasMediaProcessorSupport, initPublisher, Publisher } from '@vonage/client-sdk-video';
 import EventEmitter from 'node:events';
 import { defaultAudioDevice, defaultVideoDevice } from '@utils/mockData/device';
 import { DEVICE_ACCESS_STATUS } from '@utils/constants';
-import {
-  makePreviewPublisherProviderWrapper,
-  PreviewPublisherProviderWrapperOptions,
-} from '@test/providers';
+import { renderHookWithPreviewPublisher as render } from '@test/helpers/renderWithProviders';
 import usePreviewPublisher from './usePreviewPublisher';
 import { setupNavigatorMocks } from '@test/setup/setupNavigatorMocks';
 
@@ -35,7 +32,7 @@ describe('usePreviewPublisher', () => {
   describe('initLocalPublisher', () => {
     it('should call initLocalPublisher', async () => {
       mockedInitPublisher.mockReturnValue(mockPublisher);
-      const { result } = render();
+      const { result } = render(usePreviewPublisher);
 
       await result.current.initLocalPublisher();
 
@@ -51,7 +48,7 @@ describe('usePreviewPublisher', () => {
         callback(error);
       });
 
-      const { result } = render();
+      const { result } = render(usePreviewPublisher);
       await result.current.initLocalPublisher();
       expect(console.error).toHaveBeenCalledWith('initPublisher error: ', error);
     });
@@ -59,7 +56,7 @@ describe('usePreviewPublisher', () => {
     it('should apply background high blur when initialized and changed background', async () => {
       mockedHasMediaProcessorSupport.mockReturnValue(true);
       mockedInitPublisher.mockReturnValue(mockPublisher);
-      const { result } = render();
+      const { result } = render(usePreviewPublisher);
       await result.current.initLocalPublisher();
 
       await act(async () => {
@@ -74,7 +71,7 @@ describe('usePreviewPublisher', () => {
     it('should not replace background when initialized if the device does not support it', async () => {
       mockedHasMediaProcessorSupport.mockReturnValue(false);
       mockedInitPublisher.mockReturnValue(mockPublisher);
-      const { result } = render();
+      const { result } = render(usePreviewPublisher);
       await result.current.initLocalPublisher();
       expect(mockedInitPublisher).toHaveBeenCalledWith(
         undefined,
@@ -87,13 +84,15 @@ describe('usePreviewPublisher', () => {
   });
 
   describe('changeBackground', () => {
-    let result: ReturnType<typeof render>['result'];
+    let result: ReturnType<typeof usePreviewPublisher>;
     beforeEach(async () => {
       mockedHasMediaProcessorSupport.mockReturnValue(true);
       mockedInitPublisher.mockReturnValue(mockPublisher);
-      result = render().result;
+      const renderResult = render(usePreviewPublisher);
+
+      result = renderResult.result.current;
       await act(async () => {
-        await result.current.initLocalPublisher();
+        await result.initLocalPublisher();
       });
       (mockPublisher.applyVideoFilter as Mock).mockClear();
       (mockPublisher.clearVideoFilter as Mock).mockClear();
@@ -101,7 +100,7 @@ describe('usePreviewPublisher', () => {
 
     it('applies low blur filter', async () => {
       await act(async () => {
-        await result.current.changeBackground('low-blur');
+        await result.changeBackground('low-blur');
       });
       expect(mockPublisher.applyVideoFilter).toHaveBeenCalledWith({
         type: 'backgroundBlur',
@@ -111,7 +110,7 @@ describe('usePreviewPublisher', () => {
 
     it('applies background replacement with image', async () => {
       await act(async () => {
-        await result.current.changeBackground('bg1.jpg');
+        await result.changeBackground('bg1.jpg');
       });
       expect(mockPublisher.applyVideoFilter).toHaveBeenCalledWith({
         type: 'backgroundReplacement',
@@ -121,7 +120,7 @@ describe('usePreviewPublisher', () => {
 
     it('clears video filter for unknown option', async () => {
       await act(async () => {
-        await result.current.changeBackground('none');
+        await result.changeBackground('none');
       });
     });
 
@@ -130,7 +129,7 @@ describe('usePreviewPublisher', () => {
         throw new Error('Simulated internal failure');
       });
 
-      const { result: res } = render();
+      const { result: res } = render(usePreviewPublisher);
       await act(async () => {
         await res.current.initLocalPublisher();
         await res.current.changeBackground('low-blur');
@@ -175,7 +174,7 @@ describe('usePreviewPublisher', () => {
     it('handles permission denial', async () => {
       mockedInitPublisher.mockReturnValue(mockPublisher);
 
-      const { result } = render();
+      const { result } = render(usePreviewPublisher);
 
       await act(async () => {
         await result.current.initLocalPublisher();
@@ -198,7 +197,7 @@ describe('usePreviewPublisher', () => {
       });
       mockedInitPublisher.mockReturnValue(mockPublisher);
 
-      const { result } = render();
+      const { result } = render(usePreviewPublisher);
 
       await act(async () => {
         await result.current.initLocalPublisher();
@@ -212,15 +211,3 @@ describe('usePreviewPublisher', () => {
     });
   });
 });
-
-function render(options?: PreviewPublisherProviderWrapperOptions) {
-  const { PreviewPublisherProviderWrapper, previewPublisherContext } =
-    makePreviewPublisherProviderWrapper(options);
-
-  return {
-    ...renderHookBase(() => usePreviewPublisher(), {
-      wrapper: PreviewPublisherProviderWrapper,
-    }),
-    previewPublisherContext,
-  };
-}

@@ -1,11 +1,4 @@
-import {
-  act,
-  fireEvent,
-  queryByText,
-  render as renderBase,
-  screen,
-  waitFor,
-} from '@testing-library/react';
+import { act, fireEvent, queryByText, screen, waitFor } from '@testing-library/react';
 import { describe, beforeEach, it, Mock, vi, expect } from 'vitest';
 import { ReactElement, RefObject } from 'react';
 import { EventEmitter } from 'node:stream';
@@ -19,12 +12,10 @@ import {
 } from '@utils/mockData/device';
 import {
   AppConfigProviderWrapperOptions,
-  makeAppConfigProviderWrapper,
   AudioOutputProviderWrapperOptions,
-  makeAudioOutputProviderWrapper,
 } from '@test/providers';
+import { renderWithAppConfigAndAudioOutput } from '@test/helpers/renderWithProviders';
 import { setupNavigatorMocks } from '@test/setup/setupNavigatorMocks';
-import composeProviders from '@utils/composeProviders';
 import DeviceSettingsMenu from './DeviceSettingsMenu';
 
 const {
@@ -387,12 +378,5 @@ function render(
     audioOutputOptions?: AudioOutputProviderWrapperOptions['audioOutputOptions'];
   }
 ) {
-  const { AppConfigWrapper } = makeAppConfigProviderWrapper(options?.appConfigOptions);
-  const { AudioOutputProviderWrapper, audioOutputContext } = makeAudioOutputProviderWrapper({
-    audioOutputOptions: options?.audioOutputOptions,
-  });
-
-  const ComposedWrapper = composeProviders(AudioOutputProviderWrapper, AppConfigWrapper);
-
-  return { ...renderBase(ui, { wrapper: ComposedWrapper }), audioOutputContext };
+  return renderWithAppConfigAndAudioOutput(ui, options);
 }

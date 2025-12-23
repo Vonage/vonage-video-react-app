@@ -1,14 +1,13 @@
 import { describe, it, expect, vi, beforeEach, Mock, afterEach, afterAll } from 'vitest';
-import { fireEvent, render as renderBase, screen } from '@testing-library/react';
+import { fireEvent, screen } from '@testing-library/react';
 import { Publisher } from '@vonage/client-sdk-video';
 import { EventEmitter } from 'stream';
-import { ReactElement } from 'react';
 import { PublisherContextType } from '@Context/PublisherProvider';
 import useSpeakingDetector from '@hooks/useSpeakingDetector';
 import usePublisherContext from '@hooks/usePublisherContext';
 import { defaultAudioDevice } from '@utils/mockData/device';
-import { AppConfigProviderWrapperOptions, makeAppConfigProviderWrapper } from '@test/providers';
 import { setupNavigatorMocks } from '@test/setup/setupNavigatorMocks';
+import { renderWithAppConfig as render } from '@test/helpers/renderWithProviders';
 import DeviceControlButton from './DeviceControlButton';
 import enTranslations from '../../../locales/en.json';
 
@@ -124,14 +123,12 @@ describe('DeviceControlButton', () => {
           toggleBackgroundEffects={mockHandleToggleBackgroundEffects}
         />,
         {
-          appConfigOptions: {
-            value: {
-              audioSettings: {
-                allowMicrophoneControl: false,
-              },
-              videoSettings: {
-                allowCameraControl: true,
-              },
+          value: {
+            audioSettings: {
+              allowMicrophoneControl: false,
+            },
+            videoSettings: {
+              allowCameraControl: true,
             },
           },
         }
@@ -171,14 +168,12 @@ describe('DeviceControlButton', () => {
           toggleBackgroundEffects={mockHandleToggleBackgroundEffects}
         />,
         {
-          appConfigOptions: {
-            value: {
-              audioSettings: {
-                allowMicrophoneControl: true,
-              },
-              videoSettings: {
-                allowCameraControl: false,
-              },
+          value: {
+            audioSettings: {
+              allowMicrophoneControl: true,
+            },
+            videoSettings: {
+              allowCameraControl: false,
             },
           },
         }
@@ -196,14 +191,3 @@ describe('DeviceControlButton', () => {
     });
   });
 });
-
-function render(
-  ui: ReactElement,
-  options?: {
-    appConfigOptions?: AppConfigProviderWrapperOptions;
-  }
-) {
-  const { AppConfigWrapper } = makeAppConfigProviderWrapper(options?.appConfigOptions);
-
-  return renderBase(ui, { ...options, wrapper: AppConfigWrapper });
-}

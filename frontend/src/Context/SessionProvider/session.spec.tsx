@@ -1,15 +1,15 @@
 import { ReactElement, useEffect } from 'react';
 import { describe, expect, it, vi, beforeEach, Mock } from 'vitest';
-import { act, render as renderBase, waitFor } from '@testing-library/react';
+import { act, waitFor } from '@testing-library/react';
 import EventEmitter from 'events';
 import { Publisher, Stream } from '@vonage/client-sdk-video';
-import { makeSessionProviderWrapper } from '@test/providers';
-import composeProviders from '@utils/composeProviders';
 import useSessionContext from '@hooks/useSessionContext';
 import ActiveSpeakerTracker from '@utils/ActiveSpeakerTracker';
 import VonageVideoClient from '@utils/VonageVideoClient';
 import { Credential, StreamPropertyChangedEvent, SubscriberWrapper } from '@app-types/session';
 import fetchCredentials from '@api/fetchCredentials';
+import { renderWithSession } from '@test/helpers/renderWithProviders';
+import type { makeSessionProviderWrapper } from '@test/providers';
 
 vi.mock('@utils/ActiveSpeakerTracker');
 vi.mock('@utils/VonageVideoClient');
@@ -436,13 +436,5 @@ type RenderOverrides = {
 
 function render(ui: ReactElement, overrides: RenderOverrides = {}) {
   const { session } = overrides;
-
-  const { SessionProviderWrapper, ...props } = makeSessionProviderWrapper(session);
-
-  const wrapper = composeProviders(SessionProviderWrapper);
-
-  return {
-    ...props,
-    ...renderBase(ui, { wrapper }),
-  };
+  return renderWithSession(ui, session);
 }

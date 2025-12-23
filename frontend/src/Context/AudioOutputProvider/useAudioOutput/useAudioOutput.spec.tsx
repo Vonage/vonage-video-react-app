@@ -1,9 +1,9 @@
 import { beforeEach, describe, it, expect, vi, MockInstance } from 'vitest';
-import { act, renderHook as renderHookBase, waitFor } from '@testing-library/react';
+import { act, waitFor } from '@testing-library/react';
 import { AudioOutputDevice } from '@vonage/client-sdk-video';
 import * as OT from '@vonage/client-sdk-video';
-import { makeAudioOutputProviderWrapper, AudioOutputProviderWrapperOptions } from '@test/providers';
 import { setupNavigatorMocks } from '@test/setup/setupNavigatorMocks';
+import { renderHookWithAudioOutput as render } from '@test/helpers/renderWithProviders';
 import useAudioOutput from './useAudioOutput';
 import { nativeDevices } from '../../../utils/mockData/device';
 
@@ -34,7 +34,7 @@ describe('useAudioOutput', () => {
   });
 
   it('should provide initial state', async () => {
-    const { result } = render();
+    const { result } = render(useAudioOutput);
 
     await waitFor(() => {
       expect(result.current.currentAudioOutputDevice).toBeDefined();
@@ -44,7 +44,7 @@ describe('useAudioOutput', () => {
   });
 
   it('should call getActiveAudioOutputDevice when initialized', async () => {
-    const { result } = render();
+    const { result } = render(useAudioOutput);
 
     await waitFor(() => expect(result.current.currentAudioOutputDevice).toBe('some-device-id'));
 
@@ -53,7 +53,7 @@ describe('useAudioOutput', () => {
 
   it('should update currentAudioOutputDevice when setAudioOutputDevice is called', async () => {
     const newAudioOutput = 'new-audio-output-device';
-    const { result, rerender } = render();
+    const { result, rerender } = render(useAudioOutput);
 
     await act(async () => {
       await result.current.setAudioOutputDevice(newAudioOutput);
@@ -66,7 +66,7 @@ describe('useAudioOutput', () => {
 
   it('should call setAudioOutputDevice when currentAudioOutputDevice is called', async () => {
     const newAudioOutput = 'new-audio-output-device';
-    const { result } = render();
+    const { result } = render(useAudioOutput);
 
     await act(async () => {
       await result.current.setAudioOutputDevice(newAudioOutput);
@@ -75,13 +75,3 @@ describe('useAudioOutput', () => {
     expect(mockSetAudioOutputDevice).toHaveBeenCalledOnce();
   });
 });
-
-function render(options?: AudioOutputProviderWrapperOptions) {
-  const { AudioOutputProviderWrapper, audioOutputContext } =
-    makeAudioOutputProviderWrapper(options);
-
-  return {
-    ...renderHookBase(() => useAudioOutput(), { wrapper: AudioOutputProviderWrapper }),
-    audioOutputContext,
-  };
-}

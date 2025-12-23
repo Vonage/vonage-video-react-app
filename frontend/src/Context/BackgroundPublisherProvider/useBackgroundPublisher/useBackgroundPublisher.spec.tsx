@@ -108,13 +108,13 @@ describe('useBackgroundPublisher', () => {
       (mockPublisher.clearVideoFilter as Mock).mockClear();
     });
 
-    it('applies high blur filter', async () => {
+    it('applies low blur filter', async () => {
       await act(async () => {
-        await result.current.changeBackground('high-blur');
+        await result.current.changeBackground('low-blur');
       });
       expect(mockPublisher.applyVideoFilter).toHaveBeenCalledWith({
         type: 'backgroundBlur',
-        blurStrength: 'high',
+        blurStrength: 'low',
       });
     });
 

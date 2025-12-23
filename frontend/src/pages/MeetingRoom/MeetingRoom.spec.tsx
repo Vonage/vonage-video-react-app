@@ -1,6 +1,6 @@
 import '../../css/index.css';
 import { beforeEach, describe, expect, it, Mock, vi } from 'vitest';
-import { act, render as renderBase, screen, waitFor } from '@testing-library/react';
+import { act, screen, waitFor } from '@testing-library/react';
 import { Publisher, Subscriber } from '@vonage/client-sdk-video';
 import { EventEmitter } from 'node:stream';
 import { ReactElement } from 'react';
@@ -19,7 +19,8 @@ import useToolbarButtons, {
   UseToolbarButtons,
   UseToolbarButtonsProps,
 } from '@hooks/useToolbarButtons';
-import { makePublisherProviderWrapper, PublisherProviderWrapperOptions } from '@test/providers';
+import { PublisherProviderWrapperOptions } from '@test/providers';
+import { renderWithPublisher } from '@test/helpers/renderWithProviders';
 import useMediaQuery from '@ui/useMediaQuery';
 import MeetingRoom from './MeetingRoom';
 import type { Box } from 'opentok-layout-js';
@@ -518,13 +519,8 @@ describe('MeetingRoom', () => {
 });
 
 function render(ui: ReactElement, options: PublisherProviderWrapperOptions = {}) {
-  const { PublisherProviderWrapper, ...props } = makePublisherProviderWrapper({
+  return renderWithPublisher(ui, {
     ...options,
     publisherContext: {},
   });
-
-  return {
-    ...props,
-    ...renderBase(ui, { wrapper: PublisherProviderWrapper }),
-  };
 }
