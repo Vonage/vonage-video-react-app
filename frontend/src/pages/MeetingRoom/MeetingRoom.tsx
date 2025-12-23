@@ -78,9 +78,16 @@ const MeetingRoom = (): ReactElement => {
     setCaptionsErrorResponse,
   };
 
+  const hasValidUsername = name && name.trim() !== '';
+
   useEffect(() => {
-    if (!name || name.trim() === '') {
+    if (!hasValidUsername) {
       navigate(`/waiting-room/${roomName}`);
+    }
+  }, [hasValidUsername, navigate, roomName]);
+
+  useEffect(() => {
+    if (!hasValidUsername) {
       return;
     }
 
@@ -92,7 +99,7 @@ const MeetingRoom = (): ReactElement => {
       disconnect?.();
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [roomName, name, navigate]);
+  }, [roomName, hasValidUsername]);
 
   useEffect(() => {
     if (!publisherOptions) {
