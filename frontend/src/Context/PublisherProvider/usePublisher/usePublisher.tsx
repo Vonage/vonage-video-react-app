@@ -19,7 +19,7 @@ type PublisherStreamCreatedEvent = Event<'streamCreated', Publisher> & {
 };
 
 type PublisherVideoElementCreatedEvent = Event<'videoElementCreated', Publisher> & {
-  element: HTMLVideoElement | HTMLObjectElement | null;
+  element: HTMLVideoElement | HTMLObjectElement;
 };
 
 type DeviceAccessStatus = {
@@ -115,9 +115,7 @@ const usePublisher = (initialValue: PublisherContextInitialValue = {}): Publishe
 
   const [stream, setStream] = useState<Stream | null>(initialValue?.stream ?? null);
 
-  const [isPublishingToSession, setIsPublishingToSession] = useState(
-    initialValue?.isPublishing ?? false
-  );
+  const [isPublishingToSession, setIsPublishingToSession] = useState(false);
 
   const [publishingError, setPublishingError] = useState<PublishingErrorType>(
     initialValue?.publishingError ?? null
