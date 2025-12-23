@@ -9,6 +9,7 @@ import {
   PreviewPublisherProviderWrapperOptions,
 } from '@test/providers';
 import usePreviewPublisher from './usePreviewPublisher';
+import { setupNavigatorMocks } from '@test/setup/setupNavigatorMocks';
 
 vi.mock('@vonage/client-sdk-video');
 
@@ -25,23 +26,7 @@ describe('usePreviewPublisher', () => {
   beforeEach(() => {
     vi.spyOn(console, 'error').mockImplementation(vi.fn());
 
-    // Mock navigator.mediaDevices for useDevices hook
-    Object.defineProperty(globalThis.navigator, 'mediaDevices', {
-      writable: true,
-      value: {
-        enumerateDevices: vi.fn(() => Promise.resolve([])),
-        addEventListener: vi.fn(),
-        removeEventListener: vi.fn(),
-      },
-    });
-
-    // Mock navigator.permissions for usePermissions hook
-    Object.defineProperty(globalThis.navigator, 'permissions', {
-      writable: true,
-      value: {
-        query: vi.fn(() => Promise.resolve({ state: 'granted', onchange: null })),
-      },
-    });
+    setupNavigatorMocks();
 
     (initPublisher as Mock).mockImplementation(mockedInitPublisher);
     (hasMediaProcessorSupport as Mock).mockImplementation(mockedHasMediaProcessorSupport);
@@ -173,9 +158,8 @@ describe('usePreviewPublisher', () => {
       };
       mockQuery.mockResolvedValue(mockedPermissionStatus);
 
-      Object.defineProperty(globalThis.navigator, 'permissions', {
-        writable: true,
-        value: {
+      setupNavigatorMocks({
+        permissions: {
           query: mockQuery,
         },
       });

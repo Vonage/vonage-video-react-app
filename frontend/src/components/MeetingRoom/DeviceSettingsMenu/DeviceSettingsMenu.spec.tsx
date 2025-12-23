@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unsafe-argument */
 import {
   act,
   fireEvent,
@@ -7,7 +6,7 @@ import {
   screen,
   waitFor,
 } from '@testing-library/react';
-import { describe, beforeEach, it, Mock, vi, expect, afterAll } from 'vitest';
+import { describe, beforeEach, it, Mock, vi, expect } from 'vitest';
 import { ReactElement, RefObject } from 'react';
 import { EventEmitter } from 'node:stream';
 import { hasMediaProcessorSupport } from '@vonage/client-sdk-video';
@@ -24,6 +23,7 @@ import {
   AudioOutputProviderWrapperOptions,
   makeAudioOutputProviderWrapper,
 } from '@test/providers';
+import { setupNavigatorMocks } from '@test/setup/setupNavigatorMocks';
 import composeProviders from '@utils/composeProviders';
 import DeviceSettingsMenu from './DeviceSettingsMenu';
 
@@ -62,7 +62,6 @@ vi.mock('@utils/util', async () => {
 const vonageDefaultEmptyOutputDevice = { deviceId: null, label: null };
 
 describe('DeviceSettingsMenu Component', () => {
-  const nativeMediaDevices = globalThis.navigator.mediaDevices;
   const mockHandleToggle = vi.fn();
   const mockHandleToggleBackgroundEffects = vi.fn();
   const mockSetIsOpen = vi.fn();
@@ -82,9 +81,8 @@ describe('DeviceSettingsMenu Component', () => {
     mockGetActiveAudioOutputDevice.mockResolvedValue(audioOutputDevices[0]);
     mockGetAudioOutputDevices.mockResolvedValue(audioOutputDevices);
     deviceChangeListener = new EventEmitter();
-    Object.defineProperty(globalThis.navigator, 'mediaDevices', {
-      writable: true,
-      value: {
+    setupNavigatorMocks({
+      mediaDevices: {
         enumerateDevices: vi.fn(() => Promise.resolve(nativeDevices as MediaDeviceInfo[])),
         addEventListener: vi.fn((event, listener) => deviceChangeListener.on(event, listener)),
         removeEventListener: vi.fn((event, listener) => deviceChangeListener.off(event, listener)),
@@ -92,13 +90,6 @@ describe('DeviceSettingsMenu Component', () => {
     });
     (hasMediaProcessorSupport as Mock).mockImplementation(mockedHasMediaProcessorSupport);
     mockedHasMediaProcessorSupport.mockReturnValue(false);
-  });
-
-  afterAll(() => {
-    Object.defineProperty(globalThis.navigator, 'mediaDevices', {
-      writable: true,
-      value: nativeMediaDevices,
-    });
   });
 
   describe('renders the audio settings menu', () => {

@@ -6,6 +6,7 @@ import SoundTest from './SoundTest';
 import useAudioOutputContext from '../../hooks/useAudioOutputContext';
 import { AudioOutputContextType, AudioOutputProvider } from '../../Context/AudioOutputProvider';
 import { nativeDevices } from '../../utils/mockData/device';
+import { setupNavigatorMocks } from '@test/setup/setupNavigatorMocks';
 
 vi.mock('../../hooks/useAudioOutputContext');
 const mockUseAudioOutputContext = useAudioOutputContext as Mock<[], AudioOutputContextType>;
@@ -19,17 +20,14 @@ describe('SoundTest', () => {
 
   beforeEach(() => {
     vi.resetAllMocks();
-    Object.defineProperty(global.navigator, 'mediaDevices', {
-      writable: true,
-      value: {
+    setupNavigatorMocks({
+      mediaDevices: {
         enumerateDevices: vi.fn(
           () =>
             new Promise<MediaDeviceInfo[]>((res) => {
               res(nativeDevices as MediaDeviceInfo[]);
             })
         ),
-        addEventListener: vi.fn(() => []),
-        removeEventListener: vi.fn(() => []),
       },
     });
     global.Audio = vi.fn().mockImplementation(() => ({

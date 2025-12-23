@@ -9,6 +9,7 @@ import {
 } from '@test/providers';
 import useBackgroundPublisher from './useBackgroundPublisher';
 import { DEVICE_ACCESS_STATUS } from '@utils/constants';
+import { setupNavigatorMocks } from '@test/setup/setupNavigatorMocks';
 
 vi.mock('@vonage/client-sdk-video');
 
@@ -26,23 +27,7 @@ describe('useBackgroundPublisher', () => {
   beforeEach(() => {
     vi.spyOn(console, 'error');
 
-    // Mock navigator.mediaDevices for useDevices hook
-    Object.defineProperty(globalThis.navigator, 'mediaDevices', {
-      writable: true,
-      value: {
-        enumerateDevices: vi.fn(() => Promise.resolve([])),
-        addEventListener: vi.fn(),
-        removeEventListener: vi.fn(),
-      },
-    });
-
-    // Mock navigator.permissions for usePermissions hook
-    Object.defineProperty(globalThis.navigator, 'permissions', {
-      writable: true,
-      value: {
-        query: vi.fn(() => Promise.resolve({ state: 'granted', onchange: null })),
-      },
-    });
+    setupNavigatorMocks();
 
     (initPublisher as Mock).mockImplementation(mockedInitPublisher);
     (hasMediaProcessorSupport as Mock).mockImplementation(mockedHasMediaProcessorSupport);
@@ -123,13 +108,13 @@ describe('useBackgroundPublisher', () => {
       (mockPublisher.clearVideoFilter as Mock).mockClear();
     });
 
-    it('applies low blur filter', async () => {
+    it('applies high blur filter', async () => {
       await act(async () => {
-        await result.current.changeBackground('low-blur');
+        await result.current.changeBackground('high-blur');
       });
       expect(mockPublisher.applyVideoFilter).toHaveBeenCalledWith({
         type: 'backgroundBlur',
-        blurStrength: 'low',
+        blurStrength: 'high',
       });
     });
 
@@ -182,9 +167,8 @@ describe('useBackgroundPublisher', () => {
       };
       mockQuery.mockResolvedValue(mockedPermissionStatus);
 
-      Object.defineProperty(globalThis.navigator, 'permissions', {
-        writable: true,
-        value: {
+      setupNavigatorMocks({
+        permissions: {
           query: mockQuery,
         },
       });

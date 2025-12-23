@@ -8,6 +8,7 @@ import useSpeakingDetector from '@hooks/useSpeakingDetector';
 import usePublisherContext from '@hooks/usePublisherContext';
 import { defaultAudioDevice } from '@utils/mockData/device';
 import { AppConfigProviderWrapperOptions, makeAppConfigProviderWrapper } from '@test/providers';
+import { setupNavigatorMocks } from '@test/setup/setupNavigatorMocks';
 import DeviceControlButton from './DeviceControlButton';
 import enTranslations from '../../../locales/en.json';
 
@@ -66,19 +67,7 @@ describe('DeviceControlButton', () => {
     mockUsePublisherContext.mockImplementation(() => publisherContext);
     mockUseSpeakingDetector.mockReturnValue(false);
 
-    Object.defineProperty(global.navigator, 'mediaDevices', {
-      writable: true,
-      value: {
-        enumerateDevices: vi.fn(
-          () =>
-            new Promise<MediaDeviceInfo[]>((res) => {
-              res([]);
-            })
-        ),
-        addEventListener: vi.fn(() => []),
-        removeEventListener: vi.fn(() => []),
-      },
-    });
+    setupNavigatorMocks();
   });
 
   afterEach(() => {

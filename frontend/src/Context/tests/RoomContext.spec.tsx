@@ -1,11 +1,12 @@
 import { render, screen } from '@testing-library/react';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { PropsWithChildren } from 'react';
 import useUserContext from '@hooks/useUserContext';
 import useAudioOutputContext from '@hooks/useAudioOutputContext';
 import { nativeDevices } from '@utils/mockData/device';
 import mergeAppConfigs from '@Context/AppConfig/helpers/mergeAppConfigs';
+import { setupNavigatorMocks } from '@test/setup/setupNavigatorMocks';
 import RoomContext from '../RoomContext';
 import { UserContextType } from '../user';
 import { AudioOutputContextType } from '../AudioOutputProvider';
@@ -39,30 +40,19 @@ const defaultAppConfigValue = mergeAppConfigs({
 });
 
 describe('RoomContext', () => {
-  const nativeMediaDevices = global.navigator.mediaDevices;
   beforeEach(() => {
     vi.mocked(useUserContext).mockImplementation(() => mockUserContextWithDefaultSettings);
     vi.mocked(useAudioOutputContext).mockImplementation(() => mockUseAudioOutputContextValues);
 
-    Object.defineProperty(global.navigator, 'mediaDevices', {
-      writable: true,
-      value: {
+    setupNavigatorMocks({
+      mediaDevices: {
         enumerateDevices: vi.fn(
           () =>
             new Promise<MediaDeviceInfo[]>((res) => {
               res(nativeDevices as MediaDeviceInfo[]);
             })
         ),
-        addEventListener: vi.fn(() => []),
-        removeEventListener: vi.fn(() => []),
       },
-    });
-  });
-
-  afterEach(() => {
-    Object.defineProperty(global.navigator, 'mediaDevices', {
-      writable: true,
-      value: nativeMediaDevices,
     });
   });
 

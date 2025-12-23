@@ -7,6 +7,7 @@ import {
   getAudioOutputDevices,
   OTError,
 } from '@vonage/client-sdk-video';
+import { setupNavigatorMocks } from '@test/setup/setupNavigatorMocks';
 import useDevices from '../useDevices';
 
 type GetDevicesCallback = (err?: OTError, devices?: Device[]) => void;
@@ -26,14 +27,7 @@ describe('useDevices', () => {
     vi.resetAllMocks();
     reMockTheMocks();
 
-    Object.defineProperty(global.navigator, 'mediaDevices', {
-      writable: true,
-      value: {
-        enumerateDevices: vi.fn(() => Promise.resolve([])),
-        addEventListener: vi.fn(() => []),
-        removeEventListener: vi.fn(() => []),
-      },
-    });
+    setupNavigatorMocks();
   });
 
   afterAll(() => {

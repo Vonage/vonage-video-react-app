@@ -1,26 +1,23 @@
-import { beforeEach, describe, it, expect, vi, afterAll, MockInstance } from 'vitest';
+import { beforeEach, describe, it, expect, vi, MockInstance } from 'vitest';
 import { act, renderHook as renderHookBase, waitFor } from '@testing-library/react';
 import { AudioOutputDevice } from '@vonage/client-sdk-video';
 import * as OT from '@vonage/client-sdk-video';
 import { makeAudioOutputProviderWrapper, AudioOutputProviderWrapperOptions } from '@test/providers';
+import { setupNavigatorMocks } from '@test/setup/setupNavigatorMocks';
 import useAudioOutput from './useAudioOutput';
 import { nativeDevices } from '../../../utils/mockData/device';
 
 vi.mock('@vonage/client-sdk-video');
 
 describe('useAudioOutput', () => {
-  const nativeMediaDevices = globalThis.navigator.mediaDevices;
   let mockGetActiveAudioOutputDevice: MockInstance<[], Promise<AudioOutputDevice>>;
   let mockSetAudioOutputDevice: MockInstance<[deviceId: string], Promise<void>>;
 
   beforeEach(() => {
     vi.resetAllMocks();
-    Object.defineProperty(globalThis.navigator, 'mediaDevices', {
-      writable: true,
-      value: {
+    setupNavigatorMocks({
+      mediaDevices: {
         enumerateDevices: vi.fn(() => Promise.resolve(nativeDevices as MediaDeviceInfo[])),
-        addEventListener: vi.fn(() => []),
-        removeEventListener: vi.fn(() => []),
       },
     });
     mockGetActiveAudioOutputDevice = vi
@@ -34,14 +31,6 @@ describe('useAudioOutput', () => {
     mockSetAudioOutputDevice = vi
       .spyOn(OT, 'setAudioOutputDevice')
       .mockImplementation(() => Promise.resolve());
-  });
-
-  afterAll(() => {
-    vi.restoreAllMocks();
-    Object.defineProperty(globalThis.navigator, 'mediaDevices', {
-      writable: true,
-      value: nativeMediaDevices,
-    });
   });
 
   it('should provide initial state', async () => {
