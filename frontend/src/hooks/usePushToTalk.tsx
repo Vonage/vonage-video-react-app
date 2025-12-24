@@ -54,7 +54,6 @@ const usePushToTalk = ({ enabled, isAudioEnabled, toggleAudio }: UsePushToTalkAr
       if (!isSpace) return;
       if (isTextEntryTarget(event.target)) return;
 
-      event.preventDefault();
       // Only re-mute on keyup if we unmuted on keydown.
       if (didUnmuteOnSpaceRef.current) {
         didUnmuteOnSpaceRef.current = false;
