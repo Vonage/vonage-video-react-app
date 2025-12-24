@@ -23,10 +23,12 @@ describe('usePushToTalk', () => {
     render(<PushToTalkFixture enabled={false} onToggle={onToggle} />);
 
     act(() => {
-      window.dispatchEvent(
+      globalThis.dispatchEvent(
         new KeyboardEvent('keydown', { key: ' ', code: 'Space', bubbles: true })
       );
-      window.dispatchEvent(new KeyboardEvent('keyup', { key: ' ', code: 'Space', bubbles: true }));
+      globalThis.dispatchEvent(
+        new KeyboardEvent('keyup', { key: ' ', code: 'Space', bubbles: true })
+      );
     });
 
     expect(onToggle).not.toHaveBeenCalled();
@@ -37,14 +39,16 @@ describe('usePushToTalk', () => {
     render(<PushToTalkFixture enabled={true} onToggle={onToggle} />);
 
     act(() => {
-      window.dispatchEvent(
+      globalThis.dispatchEvent(
         new KeyboardEvent('keydown', { key: ' ', code: 'Space', bubbles: true })
       );
     });
     expect(onToggle).toHaveBeenCalledTimes(1);
 
     act(() => {
-      window.dispatchEvent(new KeyboardEvent('keyup', { key: ' ', code: 'Space', bubbles: true }));
+      globalThis.dispatchEvent(
+        new KeyboardEvent('keyup', { key: ' ', code: 'Space', bubbles: true })
+      );
     });
     expect(onToggle).toHaveBeenCalledTimes(2);
   });
@@ -54,21 +58,23 @@ describe('usePushToTalk', () => {
     render(<PushToTalkFixture enabled={true} onToggle={onToggle} />);
 
     act(() => {
-      window.dispatchEvent(
+      globalThis.dispatchEvent(
         new KeyboardEvent('keydown', { key: ' ', code: 'Space', bubbles: true })
       );
     });
     expect(onToggle).toHaveBeenCalledTimes(1);
 
     act(() => {
-      window.dispatchEvent(
+      globalThis.dispatchEvent(
         new KeyboardEvent('keydown', { key: ' ', code: 'Space', bubbles: true, repeat: true })
       );
     });
     expect(onToggle).toHaveBeenCalledTimes(1);
 
     act(() => {
-      window.dispatchEvent(new KeyboardEvent('keyup', { key: ' ', code: 'Space', bubbles: true }));
+      globalThis.dispatchEvent(
+        new KeyboardEvent('keyup', { key: ' ', code: 'Space', bubbles: true })
+      );
     });
     expect(onToggle).toHaveBeenCalledTimes(2);
   });
@@ -99,14 +105,16 @@ describe('usePushToTalk', () => {
     render(<PushToTalkFixture enabled={true} onToggle={onToggle} initialAudioEnabled={true} />);
 
     act(() => {
-      window.dispatchEvent(
+      globalThis.dispatchEvent(
         new KeyboardEvent('keydown', { key: ' ', code: 'Space', bubbles: true })
       );
     });
     expect(onToggle).toHaveBeenCalledTimes(0);
 
     act(() => {
-      window.dispatchEvent(new KeyboardEvent('keyup', { key: ' ', code: 'Space', bubbles: true }));
+      globalThis.dispatchEvent(
+        new KeyboardEvent('keyup', { key: ' ', code: 'Space', bubbles: true })
+      );
     });
     expect(onToggle).toHaveBeenCalledTimes(0);
   });
@@ -116,7 +124,7 @@ describe('usePushToTalk', () => {
     const { rerender } = render(<PushToTalkFixture enabled={true} onToggle={onToggle} />);
 
     act(() => {
-      window.dispatchEvent(
+      globalThis.dispatchEvent(
         new KeyboardEvent('keydown', { key: ' ', code: 'Space', bubbles: true })
       );
     });
@@ -126,12 +134,14 @@ describe('usePushToTalk', () => {
     rerender(<PushToTalkFixture enabled={true} onToggle={onToggle} />);
 
     act(() => {
-      window.dispatchEvent(new KeyboardEvent('keyup', { key: ' ', code: 'Space', bubbles: true }));
+      globalThis.dispatchEvent(
+        new KeyboardEvent('keyup', { key: ' ', code: 'Space', bubbles: true })
+      );
     });
     expect(onToggle).toHaveBeenCalledTimes(1);
 
     act(() => {
-      window.dispatchEvent(
+      globalThis.dispatchEvent(
         new KeyboardEvent('keydown', { key: ' ', code: 'Space', bubbles: true })
       );
     });

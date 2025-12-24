@@ -61,13 +61,13 @@ const usePushToTalk = ({ enabled, isAudioEnabled, toggleAudio }: UsePushToTalkAr
       }
     };
 
-    window.addEventListener('keydown', onKeyDown);
-    window.addEventListener('keyup', onKeyUp);
+    globalThis.addEventListener('keydown', onKeyDown);
+    globalThis.addEventListener('keyup', onKeyUp);
 
     return () => {
       didUnmuteOnSpaceRef.current = false;
-      window.removeEventListener('keydown', onKeyDown);
-      window.removeEventListener('keyup', onKeyUp);
+      globalThis.removeEventListener('keydown', onKeyDown);
+      globalThis.removeEventListener('keyup', onKeyUp);
     };
   }, [enabled]);
 };
