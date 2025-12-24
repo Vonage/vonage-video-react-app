@@ -13,8 +13,14 @@ export type UsePushToTalkArgs = {
  * and releasing the Space key will mute audio again.
  */
 const usePushToTalk = ({ enabled, isAudioEnabled, toggleAudio }: UsePushToTalkArgs): void => {
-  const spaceKeyIsPressedRef = useRef<boolean>(false);
   const didUnmuteOnSpaceRef = useRef<boolean>(false);
+  const audioStateRef = useRef<{ isAudioEnabled: boolean; toggleAudio: () => void }>({
+    isAudioEnabled,
+    toggleAudio,
+  });
+
+  audioStateRef.current.isAudioEnabled = isAudioEnabled;
+  audioStateRef.current.toggleAudio = toggleAudio;
 
   useEffect(() => {
     if (!enabled) return;
@@ -33,15 +39,13 @@ const usePushToTalk = ({ enabled, isAudioEnabled, toggleAudio }: UsePushToTalkAr
       if (isTextEntryTarget(event.target)) return;
 
       event.preventDefault();
-
-      if (spaceKeyIsPressedRef.current) return;
-      spaceKeyIsPressedRef.current = true;
+      if (event.repeat) return;
       didUnmuteOnSpaceRef.current = false;
 
       // Only unmute on keydown if audio was muted.
-      if (!isAudioEnabled) {
+      if (!audioStateRef.current.isAudioEnabled) {
         didUnmuteOnSpaceRef.current = true;
-        toggleAudio();
+        audioStateRef.current.toggleAudio();
       }
     };
 
@@ -51,21 +55,22 @@ const usePushToTalk = ({ enabled, isAudioEnabled, toggleAudio }: UsePushToTalkAr
       if (isTextEntryTarget(event.target)) return;
 
       event.preventDefault();
-      spaceKeyIsPressedRef.current = false;
       // Only re-mute on keyup if we unmuted on keydown.
       if (didUnmuteOnSpaceRef.current) {
         didUnmuteOnSpaceRef.current = false;
-        toggleAudio();
+        audioStateRef.current.toggleAudio();
       }
     };
 
     window.addEventListener('keydown', onKeyDown);
     window.addEventListener('keyup', onKeyUp);
+
     return () => {
+      didUnmuteOnSpaceRef.current = false;
       window.removeEventListener('keydown', onKeyDown);
       window.removeEventListener('keyup', onKeyUp);
     };
-  }, [enabled, isAudioEnabled, toggleAudio]);
+  }, [enabled]);
 };
 
 export default usePushToTalk;

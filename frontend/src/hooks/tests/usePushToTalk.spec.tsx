@@ -80,14 +80,18 @@ describe('usePushToTalk', () => {
     const input = document.createElement('input');
     document.body.appendChild(input);
 
-    act(() => {
-      input.dispatchEvent(new KeyboardEvent('keydown', { key: ' ', code: 'Space', bubbles: true }));
-      input.dispatchEvent(new KeyboardEvent('keyup', { key: ' ', code: 'Space', bubbles: true }));
-    });
+    try {
+      act(() => {
+        input.dispatchEvent(
+          new KeyboardEvent('keydown', { key: ' ', code: 'Space', bubbles: true })
+        );
+        input.dispatchEvent(new KeyboardEvent('keyup', { key: ' ', code: 'Space', bubbles: true }));
+      });
 
-    expect(onToggle).not.toHaveBeenCalled();
-
-    document.body.removeChild(input);
+      expect(onToggle).not.toHaveBeenCalled();
+    } finally {
+      input.remove();
+    }
   });
 
   it('does not mute on keyup if mic was already unmuted before Space press', () => {
@@ -105,5 +109,32 @@ describe('usePushToTalk', () => {
       window.dispatchEvent(new KeyboardEvent('keyup', { key: ' ', code: 'Space', bubbles: true }));
     });
     expect(onToggle).toHaveBeenCalledTimes(0);
+  });
+
+  it('resets state when disabled while holding Space', () => {
+    const onToggle = vi.fn();
+    const { rerender } = render(<PushToTalkFixture enabled={true} onToggle={onToggle} />);
+
+    act(() => {
+      window.dispatchEvent(
+        new KeyboardEvent('keydown', { key: ' ', code: 'Space', bubbles: true })
+      );
+    });
+    expect(onToggle).toHaveBeenCalledTimes(1);
+
+    rerender(<PushToTalkFixture enabled={false} onToggle={onToggle} />);
+    rerender(<PushToTalkFixture enabled={true} onToggle={onToggle} />);
+
+    act(() => {
+      window.dispatchEvent(new KeyboardEvent('keyup', { key: ' ', code: 'Space', bubbles: true }));
+    });
+    expect(onToggle).toHaveBeenCalledTimes(1);
+
+    act(() => {
+      window.dispatchEvent(
+        new KeyboardEvent('keydown', { key: ' ', code: 'Space', bubbles: true })
+      );
+    });
+    expect(onToggle).toHaveBeenCalledTimes(1);
   });
 });
