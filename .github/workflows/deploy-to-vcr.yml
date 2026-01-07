@@ -27,6 +27,10 @@ jobs:
           node-version: 22.4
           cache: npm
 
+      - name: Building artefact
+        run: |
+          ./vcrBuild.sh
+
       - name: Install VCR CLI
         shell: bash
         run: |

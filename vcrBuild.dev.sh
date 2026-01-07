@@ -1,13 +1,8 @@
-# run install skipping post install script which requires husky
-yarn install --production=false --ignore-scripts --frozen-lockfile
-yarn build
+#!/bin/bash
+set -e
 
-# copy config file to the build output
-if [ -f ./config.json ]; then
-  cp ./config.json ./backend/dist/config.json
-else
-  cp ./config.example.json ./backend/dist/config.json
-fi
+# build artifact
+./vcrBuild.sh
 
 # copy env file to the build output (FAIL if missing)
 if [ -f ./backend/.env ]; then
@@ -17,15 +12,7 @@ else
   exit 1
 fi
 
-# copy VCR manifest to the build output (FAIL if missing)
-if [ -f ./vcr-dev.yml ]; then
-  cp ./vcr-dev.yml ./backend/dist/vcr-dev.yml
-else
-  echo "❌ ERROR: ./vcr-dev.yml not found"
-  exit 1
-fi
-
-# copy vcr-dev.yml manifest to the build output (FAIL if missing)
+# copy the VCR Development manifest to the build output (FAIL if missing)
 if [ -f ./vcr-dev.yml ]; then
   cp ./vcr-dev.yml ./backend/dist/vcr-dev.yml
 else
@@ -34,5 +21,4 @@ else
 fi
 
 echo ""
-echo "Successfully prepared backend/dist:"
-find backend/dist -print
+echo "Successfully added development files to backend/dist:"
