@@ -24,8 +24,13 @@ jobs:
       - name: Setup node
         uses: actions/setup-node@v4
         with:
-          node-version: 22
+          node-version-file: .nvmrc
           cache: yarn
+
+      - name: Verify Node & Yarn versions
+        run: |
+          node -v
+          yarn -v
 
       - name: Building artefact
         run: |
