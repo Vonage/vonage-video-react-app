@@ -3,6 +3,8 @@ import { render as renderBase, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { ReactElement } from 'react';
 import backgroundEffectsDialog$ from '@Context/BackgroundEffectsDialog';
+import precallNetworkTestDialog$ from '@Context/PrecallNetworkTestDialog';
+import composeProviders from '@utils/composeProviders';
 import MenuMoreOptions from './MenuMoreOptions';
 
 describe('MenuMoreOptions', () => {
@@ -49,5 +51,9 @@ describe('MenuMoreOptions', () => {
 });
 
 function render(ui: ReactElement) {
-  return renderBase(ui, { wrapper: backgroundEffectsDialog$.Provider });
+  const wrapper = composeProviders(
+    backgroundEffectsDialog$.Provider,
+    precallNetworkTestDialog$.Provider
+  );
+  return renderBase(ui, { wrapper });
 }

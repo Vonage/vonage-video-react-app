@@ -74,7 +74,7 @@ const ReduceNoiseTestSpeakers = (): ReactElement | false => {
               },
             }}
           >
-            <Box sx={{ mr: 1 }}>
+            <Box sx={{ mr: 2 }}>
               <VividIcon
                 customSize={-5}
                 name="headset-solid"
@@ -106,7 +106,7 @@ const ReduceNoiseTestSpeakers = (): ReactElement | false => {
           </MenuItem>
         )}
         <SoundTest>
-          <Box sx={{ mr: 0.5 }}>
+          <Box sx={{ mr: 1.5 }}>
             <VividIcon
               customSize={-4}
               name="audio-mid-solid"
