@@ -32,7 +32,7 @@ import type { Box } from 'opentok-layout-js';
 
 const mockedNavigate = vi.fn();
 const mockedParams = { roomName: 'test-room-name' };
-const mockedLocation = vi.fn();
+const mockedLocation = vi.fn<[], ReturnType<typeof import('react-router-dom').useLocation>>();
 vi.mock('@hooks/useBackgroundPublisherContext', () => ({
   __esModule: true,
   default: () => ({
@@ -48,11 +48,17 @@ vi.mock('react-router-dom', async () => {
     ...mod,
     useNavigate: () => mockedNavigate,
     useParams: () => mockedParams,
-    useLocation: () => mockedLocation,
+    useLocation: () => mockedLocation(),
   };
 });
 vi.mock('@ui/useMediaQuery', () => ({
   default: vi.fn(),
+}));
+
+vi.mock('../../env', () => ({
+  default: {
+    VITE_BYPASS_WAITING_ROOM: false,
+  },
 }));
 
 vi.mock('@hooks/useDevices.tsx');
@@ -120,6 +126,13 @@ describe('MeetingRoom', () => {
 
   beforeEach(() => {
     mockedNavigate.mockClear();
+    mockedLocation.mockReturnValue({
+      pathname: '/room/test-room-name',
+      search: '',
+      hash: '',
+      state: null,
+      key: 'default',
+    });
     mockUseUserContext.mockImplementation(() => mockUserContext);
     mockPublisher = Object.assign(new EventEmitter(), {
       applyVideoFilter: vi.fn(),
@@ -365,14 +378,17 @@ describe('MeetingRoom', () => {
   });
 
   it('should redirect to waiting room when username is missing', () => {
-    mockUseUserContext.mockReturnValue({
-      user: {
-        defaultSettings: {
-          videoFilter: undefined,
-          name: '',
-        },
-      },
-    } as unknown as UserContextType);
+    mockUseUserContext.mockImplementation(
+      () =>
+        ({
+          user: {
+            defaultSettings: {
+              videoFilter: undefined,
+              name: '',
+            },
+          },
+        }) as unknown as UserContextType
+    );
 
     render(<MeetingRoom />);
 
@@ -380,14 +396,17 @@ describe('MeetingRoom', () => {
   });
 
   it('should redirect to waiting room when username is only whitespace', () => {
-    mockUseUserContext.mockReturnValue({
-      user: {
-        defaultSettings: {
-          videoFilter: undefined,
-          name: '   ',
-        },
-      },
-    } as unknown as UserContextType);
+    mockUseUserContext.mockImplementation(
+      () =>
+        ({
+          user: {
+            defaultSettings: {
+              videoFilter: undefined,
+              name: '   ',
+            },
+          },
+        }) as unknown as UserContextType
+    );
 
     render(<MeetingRoom />);
 
@@ -395,15 +414,19 @@ describe('MeetingRoom', () => {
   });
 
   it('should not redirect to waiting room when username is missing but bypass is true', () => {
-    mockUseUserContext.mockReturnValue({
-      user: {
-        defaultSettings: {
-          videoFilter: undefined,
-          name: '',
-        },
-      },
-    } as unknown as UserContextType);
+    mockUseUserContext.mockImplementation(
+      () =>
+        ({
+          user: {
+            defaultSettings: {
+              videoFilter: undefined,
+              name: '',
+            },
+          },
+        }) as unknown as UserContextType
+    );
 
+    mockedLocation.mockClear();
     mockedLocation.mockReturnValue({
       pathname: '/room/test-room-name',
       search: '?bypass=true',
