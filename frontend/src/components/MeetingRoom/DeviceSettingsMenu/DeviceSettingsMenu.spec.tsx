@@ -340,7 +340,7 @@ describe('DeviceSettingsMenu Component', () => {
 
       await waitFor(() => {
         expect(screen.queryByTestId('dropdown-separator')).toBeVisible();
-        expect(screen.queryByText('Background settings')).toBeVisible();
+        expect(screen.queryByText('Video settings')).toBeVisible();
       });
     });
 

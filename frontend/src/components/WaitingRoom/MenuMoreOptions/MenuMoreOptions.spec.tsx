@@ -30,14 +30,14 @@ describe('MenuMoreOptions', () => {
   it('should display background effects option', () => {
     render(<MenuMoreOptions onClose={mockOnClose} open anchorEl={mockAnchorEl} />);
 
-    expect(screen.getByText(/background settings/i)).toBeInTheDocument();
+    expect(screen.getByText(/video settings/i)).toBeInTheDocument();
   });
 
   it('should call onClose when clicking on background effects option', async () => {
     const user = userEvent.setup();
     render(<MenuMoreOptions onClose={mockOnClose} open anchorEl={mockAnchorEl} />);
 
-    const menuItem = screen.getByText(/background settings/i);
+    const menuItem = screen.getByText(/video settings/i);
     await user.click(menuItem);
 
     expect(mockOnClose).toHaveBeenCalledTimes(1);
