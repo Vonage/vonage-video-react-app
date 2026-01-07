@@ -362,6 +362,42 @@ describe('MeetingRoom', () => {
       },
     });
   });
+
+  it('should redirect to waiting room when username is missing', () => {
+    mockUseUserContext.mockImplementationOnce(
+      () =>
+        ({
+          user: {
+            defaultSettings: {
+              videoFilter: undefined,
+              name: '',
+            },
+          },
+        }) as unknown as UserContextType
+    );
+
+    render(<MeetingRoom />);
+
+    expect(mockedNavigate).toHaveBeenCalledWith('/waiting-room/test-room-name');
+  });
+
+  it('should redirect to waiting room when username is only whitespace', () => {
+    mockUseUserContext.mockImplementationOnce(
+      () =>
+        ({
+          user: {
+            defaultSettings: {
+              videoFilter: undefined,
+              name: '   ',
+            },
+          },
+        }) as unknown as UserContextType
+    );
+
+    render(<MeetingRoom />);
+
+    expect(mockedNavigate).toHaveBeenCalledWith('/waiting-room/test-room-name');
+  });
 });
 
 function render(ui: ReactElement) {
