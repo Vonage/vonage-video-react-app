@@ -1,5 +1,5 @@
 import { useEffect, ReactElement, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import Box from '@ui/Box';
 import useTheme from '@ui/theme';
@@ -22,6 +22,7 @@ import useBackgroundPublisherContext from '../../hooks/useBackgroundPublisherCon
 import { DEVICE_ACCESS_STATUS } from '../../utils/constants';
 import type { PublishingErrorType } from '../../Context/PublisherProvider/usePublisher/usePublisher';
 import useUserContext from '../../hooks/useUserContext';
+import env from '../../env';
 
 /**
  * MeetingRoom Component
@@ -36,6 +37,7 @@ const MeetingRoom = (): ReactElement => {
   const { t } = useTranslation();
   const theme = useTheme();
   const navigate = useNavigate();
+  const location = useLocation();
   const roomName = useRoomName();
   const {
     user: {
@@ -79,12 +81,14 @@ const MeetingRoom = (): ReactElement => {
   };
 
   const hasValidUsername = name && name.trim() !== '';
+  const searchParams = new URLSearchParams(location.search);
+  const bypass = searchParams.get('bypass') === 'true' || env.VITE_BYPASS_WAITING_ROOM; // Testing purpose
 
   useEffect(() => {
-    if (!hasValidUsername) {
+    if (!hasValidUsername && !bypass) {
       navigate(`/waiting-room/${roomName}`);
     }
-  }, [hasValidUsername, navigate, roomName]);
+  }, [hasValidUsername, bypass, navigate, roomName]);
 
   useEffect(() => {
     if (!hasValidUsername) {

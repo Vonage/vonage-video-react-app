@@ -119,6 +119,7 @@ describe('MeetingRoom', () => {
   let publisherContext: PublisherContextType;
 
   beforeEach(() => {
+    mockedNavigate.mockClear();
     mockUseUserContext.mockImplementation(() => mockUserContext);
     mockPublisher = Object.assign(new EventEmitter(), {
       applyVideoFilter: vi.fn(),
@@ -364,17 +365,14 @@ describe('MeetingRoom', () => {
   });
 
   it('should redirect to waiting room when username is missing', () => {
-    mockUseUserContext.mockImplementationOnce(
-      () =>
-        ({
-          user: {
-            defaultSettings: {
-              videoFilter: undefined,
-              name: '',
-            },
-          },
-        }) as unknown as UserContextType
-    );
+    mockUseUserContext.mockReturnValue({
+      user: {
+        defaultSettings: {
+          videoFilter: undefined,
+          name: '',
+        },
+      },
+    } as unknown as UserContextType);
 
     render(<MeetingRoom />);
 
@@ -382,21 +380,41 @@ describe('MeetingRoom', () => {
   });
 
   it('should redirect to waiting room when username is only whitespace', () => {
-    mockUseUserContext.mockImplementationOnce(
-      () =>
-        ({
-          user: {
-            defaultSettings: {
-              videoFilter: undefined,
-              name: '   ',
-            },
-          },
-        }) as unknown as UserContextType
-    );
+    mockUseUserContext.mockReturnValue({
+      user: {
+        defaultSettings: {
+          videoFilter: undefined,
+          name: '   ',
+        },
+      },
+    } as unknown as UserContextType);
 
     render(<MeetingRoom />);
 
     expect(mockedNavigate).toHaveBeenCalledWith('/waiting-room/test-room-name');
+  });
+
+  it('should not redirect to waiting room when username is missing but bypass is true', () => {
+    mockUseUserContext.mockReturnValue({
+      user: {
+        defaultSettings: {
+          videoFilter: undefined,
+          name: '',
+        },
+      },
+    } as unknown as UserContextType);
+
+    mockedLocation.mockReturnValue({
+      pathname: '/room/test-room-name',
+      search: '?bypass=true',
+      hash: '',
+      state: null,
+      key: 'default',
+    });
+
+    render(<MeetingRoom />);
+
+    expect(mockedNavigate).not.toHaveBeenCalledWith('/waiting-room/test-room-name');
   });
 });
 
