@@ -11,7 +11,6 @@ vi.mock('react-i18next', () => ({
     t: (key: string) => {
       const translations: Record<string, string> = {
         'backgroundEffects.title': enTranslations['backgroundEffects.title'],
-        'backgroundEffects.choice': enTranslations['backgroundEffects.choice'],
         'button.cancel': enTranslations['button.cancel'],
         'button.apply': enTranslations['button.apply'],
       };
