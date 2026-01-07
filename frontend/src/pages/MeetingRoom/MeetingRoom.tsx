@@ -91,7 +91,7 @@ const MeetingRoom = (): ReactElement => {
   }, [hasValidUsername, bypass, navigate, roomName]);
 
   useEffect(() => {
-    if (!hasValidUsername) {
+    if (!hasValidUsername && !bypass) {
       return;
     }
 
@@ -103,7 +103,7 @@ const MeetingRoom = (): ReactElement => {
       disconnect?.();
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [roomName, hasValidUsername]);
+  }, [roomName, hasValidUsername, bypass]);
 
   useEffect(() => {
     if (!publisherOptions) {

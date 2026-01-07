@@ -378,17 +378,7 @@ describe('MeetingRoom', () => {
   });
 
   it('should redirect to waiting room when username is missing', () => {
-    mockUseUserContext.mockImplementation(
-      () =>
-        ({
-          user: {
-            defaultSettings: {
-              videoFilter: undefined,
-              name: '',
-            },
-          },
-        }) as unknown as UserContextType
-    );
+    setUserContextWithName('');
 
     render(<MeetingRoom />);
 
@@ -396,17 +386,7 @@ describe('MeetingRoom', () => {
   });
 
   it('should redirect to waiting room when username is only whitespace', () => {
-    mockUseUserContext.mockImplementation(
-      () =>
-        ({
-          user: {
-            defaultSettings: {
-              videoFilter: undefined,
-              name: '   ',
-            },
-          },
-        }) as unknown as UserContextType
-    );
+    setUserContextWithName('   ');
 
     render(<MeetingRoom />);
 
@@ -414,17 +394,7 @@ describe('MeetingRoom', () => {
   });
 
   it('should not redirect to waiting room when username is missing but bypass is true', () => {
-    mockUseUserContext.mockImplementation(
-      () =>
-        ({
-          user: {
-            defaultSettings: {
-              videoFilter: undefined,
-              name: '',
-            },
-          },
-        }) as unknown as UserContextType
-    );
+    setUserContextWithName('');
 
     mockedLocation.mockClear();
     mockedLocation.mockReturnValue({
@@ -440,6 +410,20 @@ describe('MeetingRoom', () => {
     expect(mockedNavigate).not.toHaveBeenCalledWith('/waiting-room/test-room-name');
   });
 });
+
+function setUserContextWithName(name: string) {
+  mockUseUserContext.mockImplementation(
+    () =>
+      ({
+        user: {
+          defaultSettings: {
+            videoFilter: undefined,
+            name,
+          },
+        },
+      }) as unknown as UserContextType
+  );
+}
 
 function render(ui: ReactElement) {
   const { AppConfigWrapper } = makeAppConfigProviderWrapper();
