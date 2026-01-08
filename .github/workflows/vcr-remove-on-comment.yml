@@ -108,7 +108,7 @@ jobs:
           exit 1
 
       - name: Slack notification on removed
-        uses: slackapi/slack-github-action@v1.26.0
+        uses: slackapi/slack-github-action@70cd7be8e40a46e8b0eced40b0de447bdb42f68e # v1.26.0
         with:
           channel-id: '#video-solutions-ci-notifications'
           payload: |
@@ -127,7 +127,7 @@ jobs:
         continue-on-error: true
 
       - name: Slack notification on no instance found
-        uses: slackapi/slack-github-action@v1.26.0
+        uses: slackapi/slack-github-action@70cd7be8e40a46e8b0eced40b0de447bdb42f68e # v1.26.0
         with:
           channel-id: '#video-solutions-ci-notifications'
           payload: |
@@ -146,7 +146,7 @@ jobs:
         continue-on-error: true
 
       - name: Slack notification on failure
-        uses: slackapi/slack-github-action@v1.26.0
+        uses: slackapi/slack-github-action@70cd7be8e40a46e8b0eced40b0de447bdb42f68e # v1.26.0
         with:
           channel-id: '#video-solutions-ci-notifications'
           payload: |

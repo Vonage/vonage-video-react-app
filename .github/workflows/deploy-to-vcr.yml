@@ -25,7 +25,6 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version-file: .nvmrc
-          cache: yarn
 
       - name: Verify Node & Yarn versions
         run: |
@@ -73,7 +72,7 @@ jobs:
           fi
 
       - name: Slack notification on success
-        uses: slackapi/slack-github-action@v1.26.0
+        uses: slackapi/slack-github-action@70cd7be8e40a46e8b0eced40b0de447bdb42f68e # v1.26.0
         with:
           channel-id: '#video-solutions-ci-notifications'
           payload: |
@@ -92,7 +91,7 @@ jobs:
         continue-on-error: true
 
       - name: Slack notification on failure
-        uses: slackapi/slack-github-action@v1.26.0
+        uses: slackapi/slack-github-action@70cd7be8e40a46e8b0eced40b0de447bdb42f68e # v1.26.0
         with:
           channel-id: '#video-solutions-ci-notifications'
           payload: |
