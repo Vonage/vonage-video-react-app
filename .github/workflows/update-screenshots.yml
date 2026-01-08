@@ -92,8 +92,18 @@ jobs:
         if: steps.check-update-screenshots.outputs.result == 'true'
         uses: actions/setup-node@v4
         with:
-          node-version: 22
-          cache: npm
+          node-version-file: .nvmrc
+          cache: yarn
+
+      - name: Cache Playwright browsers
+        if: steps.check-update-screenshots.outputs.result == 'true'
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cache/ms-playwright
+          key: ${{ runner.os }}-playwright-${{ hashFiles('**/yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-playwright-
 
       # -----------------------
       # 5. Install dependencies
@@ -102,14 +112,13 @@ jobs:
         if: steps.check-update-screenshots.outputs.result == 'true'
         run: |
           node -v
-          npm -v
-          npm install --global --ignore-scripts yarn
           yarn --ignore-scripts
 
       # -----------------------
       # 6. Install Playwright browsers (Firefox, WebKit, Chromium)
       # -----------------------
       - name: Install Playwright browsers
+        if: steps.check-update-screenshots.outputs.result == 'true'
         run: npx playwright install --with-deps
 
       # -----------------------
