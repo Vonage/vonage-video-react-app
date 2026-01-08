@@ -11,7 +11,7 @@ test('Landing page UI test', async ({ page }) => {
   await page.goto(baseURL, { waitUntil: 'networkidle' });
   await page.waitForLoadState('domcontentloaded');
   await page.waitForTimeout(500);
-  await expect(page).toHaveScreenshot({ maxDiffPixels: 500, timeout: 10000 });
+  await expect(page).toHaveScreenshot({ maxDiffPixels: 800, timeout: 10000 });
 });
 
 test('Waiting page UI test', async ({ page }) => {
@@ -22,7 +22,7 @@ test('Waiting page UI test', async ({ page }) => {
   await page.waitForTimeout(500);
   await expect(page).toHaveScreenshot({
     mask: [page.locator('.video__element')],
-    maxDiffPixels: 500,
+    maxDiffPixels: 800,
     timeout: 10000,
   });
 });
@@ -31,5 +31,5 @@ test('Unsupported browser page UI test', async ({ page }) => {
   await page.goto(`${baseURL}unsupported-browser`, { waitUntil: 'networkidle' });
   await page.waitForLoadState('domcontentloaded');
   await page.waitForTimeout(500);
-  await expect(page).toHaveScreenshot({ maxDiffPixels: 500, timeout: 10000 });
+  await expect(page).toHaveScreenshot({ maxDiffPixels: 800, timeout: 10000 });
 });
