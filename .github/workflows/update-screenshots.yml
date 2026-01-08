@@ -95,13 +95,20 @@ jobs:
           node-version-file: .nvmrc
           cache: yarn
 
+      - name: Get Playwright version
+        if: steps.check-update-screenshots.outputs.result == 'true'
+        id: pw
+        run: |
+          node -e "const p=require('./package.json'); const spec=(p.devDependencies&&p.devDependencies['@playwright/test'])||(p.dependencies&&p.dependencies['@playwright/test'])||(p.devDependencies&&p.devDependencies['playwright'])||(p.dependencies&&p.dependencies['playwright'])||'unknown'; const safe=String(spec).replace(/[^a-zA-Z0-9._-]/g,''); process.stdout.write('version='+safe+'\n');" >> $GITHUB_OUTPUT
+
       - name: Cache Playwright browsers
         if: steps.check-update-screenshots.outputs.result == 'true'
+        id: cache-pw
         uses: actions/cache@v4
         with:
           path: |
             ~/.cache/ms-playwright
-          key: ${{ runner.os }}-playwright-${{ hashFiles('**/yarn.lock') }}
+          key: ${{ runner.os }}-playwright-${{ steps.pw.outputs.version }}
           restore-keys: |
             ${{ runner.os }}-playwright-
 
