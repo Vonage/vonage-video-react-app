@@ -53,11 +53,6 @@ jobs:
           echo "Removal from forked repositories is not allowed."
           exit 1
 
-      - name: Checkout PR HEAD SHA
-        uses: actions/checkout@v4
-        with:
-          ref: ${{ steps.pr.outputs.head_sha }}
-
       - name: Install VCR CLI
         shell: bash
         run: |
