@@ -94,7 +94,7 @@
       "executor": "nx:run-commands",
       "options": {
         "cwd": "frontend",
-        "command": "mkdir -p ../backend/dist && cp -R dist/. ../backend/dist/"
+        "command": "mkdir -p ../backend/dist/dist && cp -R dist/. ../backend/dist/dist/"
       }
     }
   },

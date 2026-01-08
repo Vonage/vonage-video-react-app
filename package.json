@@ -8,6 +8,7 @@
     "npm": "9.x"
   },
   "scripts": {
+    "prepare": "husky",
     "postinstall": "nx postinstall integration-tests",
     "quality-check": "nx run-many -t ts-check,lint:fix --parallel --maxParallel=4 && prettier . --check --log-level warn",
     "build": "nx run-many -t build -p frontend backend",
@@ -40,7 +41,7 @@
     "ts-check:backend": "nx run backend:ts-check",
     "ts-check:frontend": "nx run frontend:ts-check",
     "ts-check:integration-tests": "nx run integration-tests:ts-check",
-    "deploy:dev": "sh vcrBuild.dev.sh && vcr deploy -f vcr-dev.yml",
+    "deploy:dev": "sh vcrBuild.dev.sh && cd ./backend/dist && vcr deploy -f vcr-dev.yml && cd ../..",
     "vcr:dev:remove": "vcr instance rm --project-name vonage-video-react-app --instance-name vera-dev"
   },
   "scriptsInfo": {
@@ -50,7 +51,8 @@
     "test:frontend:": "Example: 'yarn test:frontend: <name/path>' to run specific tests without coverage",
     "test:frontend:debug": "Debug frontend tests with Vitest/Node inspector",
     "deploy:dev": "copy the vcr-dev.example.yml file as vcr-dev.yml, add your application id and deploy to VCR instance with 'yarn deploy:dev'",
-    "vcr:dev:remove": "Remove the VCR development instance"
+    "vcr:dev:remove": "Remove the VCR development instance",
+    "deploy-vcr": "This command deploys to VCR with the default vcr.yml file, this script is NOT used in our CI/CD pipelines"
   },
   "repository": {
     "type": "git",
