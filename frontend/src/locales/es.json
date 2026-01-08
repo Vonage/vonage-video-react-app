@@ -147,6 +147,7 @@
   "participants.pin": "Fijar a {{participantName}}",
   "participants.pin.video": "Fijar el video de {{participantName}}",
   "participants.screen": "Pantalla de {{participantName}}",
+  "participants.search": "Participantes de la búsqueda",
   "participants.title": "Participantes",
   "participants.unpin": "Desfijar a {{participantName}}",
   "participants.unpin.video": "Desfijar el video de {{participantName}}",
