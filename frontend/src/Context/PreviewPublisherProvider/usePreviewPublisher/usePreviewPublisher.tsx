@@ -188,7 +188,9 @@ const usePreviewPublisher = (
   );
 
   const handleAccessDenied = useCallback(
-    async (event: AccessDeniedEvent) => handlePublisherAccessDenied(event, setAccessStatus),
+    async (event: AccessDeniedEvent) => {
+      await handlePublisherAccessDenied(event, setAccessStatus);
+    },
     [setAccessStatus]
   );
 
