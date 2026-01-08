@@ -58,15 +58,20 @@ test('User should be able to navigate to the next page using enter key', async (
   await page.keyboard.press('Enter');
 
   await expect(page).toHaveURL(`${baseURL}waiting-room/some-room`);
+  await page.waitForLoadState('domcontentloaded');
 
   // This is needed for the DeviceAccessAlert to hide
-  await page.waitForSelector('[role="dialog"]', { state: 'hidden' });
+  await page.waitForSelector('[role="dialog"]', { state: 'hidden', timeout: 10000 });
+  await page.waitForTimeout(500);
 
-  await page.getByLabel('Name').fill('some-user');
+  const nameInput = page.getByLabel('Name');
+  await nameInput.waitFor({ state: 'visible' });
+  await nameInput.fill('some-user');
 
   await page.keyboard.press('Enter');
 
   await expect(page).toHaveURL(`${baseURL}room/some-room`);
+  await page.waitForLoadState('networkidle');
 
-  await page.waitForSelector('.publisher', { state: 'visible' });
+  await page.waitForSelector('.publisher', { state: 'visible', timeout: 10000 });
 });

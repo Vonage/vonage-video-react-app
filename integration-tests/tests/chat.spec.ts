@@ -41,8 +41,9 @@ test.describe('chat', () => {
     await openMeetingRoomWithSettings({ page: pageTwo, username: 'User Two', roomName });
     await waitAndClickFirefox(pageTwo, browserName);
 
-    await pageTwo.waitForSelector('.publisher', { state: 'visible' });
-    await pageTwo.waitForSelector('.subscriber', { state: 'visible' });
+    await pageTwo.waitForSelector('.publisher', { state: 'visible', timeout: 10000 });
+    await pageTwo.waitForSelector('.subscriber', { state: 'visible', timeout: 10000 });
+    await pageTwo.waitForTimeout(1000);
 
     await chatToggleButton(pageOne, isMobile);
 
@@ -58,14 +59,16 @@ test.describe('chat', () => {
 
     // check unread notification is present on page two
     if (isMobile) {
-      await expect(
-        pageTwo
-          .getByTestId('chat-button-unread-count')
-          .filter({ has: pageTwo.locator('[data-testid="MoreVertIcon"]') })
-      ).toHaveText('1');
+      const unreadBadge = pageTwo
+        .getByTestId('chat-button-unread-count')
+        .filter({ has: pageTwo.locator('[data-testid="MoreVertIcon"]') });
+      await unreadBadge.waitFor({ state: 'visible', timeout: 5000 });
+      await expect(unreadBadge).toHaveText('1');
       await chatToggleButton(pageTwo, isMobile);
     } else {
-      await expect(pageTwo.getByTestId('chat-button-unread-count')).toHaveText('1');
+      const unreadBadge = pageTwo.getByTestId('chat-button-unread-count');
+      await unreadBadge.waitFor({ state: 'visible', timeout: 5000 });
+      await expect(unreadBadge).toHaveText('1');
       await pageTwo.getByTestId('chat-button-unread-count').click();
     }
 
