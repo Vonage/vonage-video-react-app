@@ -1,0 +1,147 @@
+name: Remove PR VCR instance on comment
+
+on:
+  issue_comment:
+    types: [created]
+
+permissions:
+  contents: read
+  pull-requests: read
+  issues: write
+
+jobs:
+  remove-vcr:
+    name: Remove VCR instance (comment trigger)
+    # Run only when:
+    # - comment is on a PR
+    # - comment body is exactly 'vcr:remove'
+    if: >
+      github.event.issue.pull_request &&
+      github.event.comment.body == 'vcr:remove'
+    runs-on: [vcp-runner]
+    steps:
+      - name: Load PR details
+        id: pr
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const prNumber = context.payload.issue.number;
+            const { data: pr } = await github.rest.pulls.get({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              pull_number: prNumber,
+            });
+
+            core.setOutput('number', String(pr.number));
+            core.setOutput('head_sha', pr.head.sha);
+            core.setOutput(
+              'is_fork',
+              String(pr.head.repo.full_name !== pr.base.repo.full_name)
+            );
+
+      - name: Block forks
+        if: steps.pr.outputs.is_fork == 'true'
+        run: |
+          echo "Removal from forked repositories is not allowed."
+          exit 1
+
+      - name: Checkout PR HEAD SHA
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ steps.pr.outputs.head_sha }}
+
+      - name: Install VCR CLI
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl --proto =https --max-redirs 0 -fsSL https://raw.githubusercontent.com/Vonage/cloud-runtime-cli/main/script/install.sh -o install.sh
+          sudo bash install.sh
+          vcr -v
+
+      - name: Remove VCR instance (tolerant)
+        id: remove
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          PROJECT_NAME="vonage-video-react-app"
+          INSTANCE_NAME="vera-pr-${{ steps.pr.outputs.number }}"
+
+          echo "instance_name=$INSTANCE_NAME" >> "$GITHUB_OUTPUT"
+          echo "Removing instance: $INSTANCE_NAME"
+
+          set +e
+          vcr instance remove \
+            --project-name "$PROJECT_NAME" \
+            --instance-name "$INSTANCE_NAME" \
+            --api-key "${{ secrets.VCR_API_KEY }}" \
+            --api-secret "${{ secrets.VCR_API_SECRET }}" \
+            --region aws.euw1 \
+            --graphql-endpoint https://graphql.euw1.runtime.vonage.cloud/v1/graphql \
+            2>&1 | tee remove-vcr-logs.log
+          RC=${PIPESTATUS[0]}
+          set -e
+
+          if [ "$RC" -eq 0 ]; then
+            echo "result=removed" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          # Treat "not found" as non-fatal
+          if grep -Eqi 'not found|does not exist|no such|404' remove-vcr-logs.log; then
+            echo "result=missing" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          echo "result=failed" >> "$GITHUB_OUTPUT"
+          exit 1
+
+      - name: Comment on PR (removed)
+        if: steps.remove.outputs.result == 'removed'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const issueNumber = context.payload.issue.number;
+            const { owner, repo } = context.repo;
+            const instanceName = `${{ steps.remove.outputs.instance_name }}`;
+
+            await github.rest.issues.createComment({
+              owner,
+              repo,
+              issue_number: issueNumber,
+              body: `✅ \`${instanceName}\` was removed`
+            });
+
+      - name: Comment on PR (no instance found)
+        if: steps.remove.outputs.result == 'missing'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const issueNumber = context.payload.issue.number;
+            const { owner, repo } = context.repo;
+            const instanceName = `${{ steps.remove.outputs.instance_name }}`;
+
+            await github.rest.issues.createComment({
+              owner,
+              repo,
+              issue_number: issueNumber,
+              body: `ℹ️ No instance was found for \`${instanceName}\``
+            });
+
+      - name: Comment on PR (failed)
+        if: failure()
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const issueNumber = context.payload.issue.number;
+            const { owner, repo } = context.repo;
+
+            const instanceName = `${{ steps.remove.outputs.instance_name }}`;
+            const runUrl = `https://github.com/${owner}/${repo}/actions/runs/${context.runId}`;
+
+            await github.rest.issues.createComment({
+              owner,
+              repo,
+              issue_number: issueNumber,
+              body: `❌ Failed to remove \`${instanceName}\`. Logs: ${runUrl}`
+            });
