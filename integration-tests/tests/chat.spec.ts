@@ -41,9 +41,8 @@ test.describe('chat', () => {
     await openMeetingRoomWithSettings({ page: pageTwo, username: 'User Two', roomName });
     await waitAndClickFirefox(pageTwo, browserName);
 
-    await pageTwo.waitForSelector('.publisher', { state: 'visible', timeout: 10000 });
-    await pageTwo.waitForSelector('.subscriber', { state: 'visible', timeout: 10000 });
-    await pageTwo.waitForTimeout(1000);
+    await pageTwo.waitForSelector('.publisher', { state: 'visible' });
+    await pageTwo.waitForSelector('.subscriber', { state: 'visible' });
 
     await chatToggleButton(pageOne, isMobile);
 

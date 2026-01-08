@@ -150,7 +150,7 @@ const useBackgroundPublisher = (
   }, []);
 
   const handleBackgroundAccessDenied = useCallback(
-    (event: AccessDeniedEvent) => handlePublisherAccessDenied(event, setAccessStatus),
+    async (event: AccessDeniedEvent) => handlePublisherAccessDenied(event, setAccessStatus),
     [setAccessStatus]
   );
 
