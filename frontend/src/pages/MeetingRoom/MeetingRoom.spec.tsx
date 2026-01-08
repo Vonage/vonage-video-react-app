@@ -423,67 +423,6 @@ describe('MeetingRoom', () => {
         ).not.toBeInTheDocument();
       });
     });
-
-    // TODO: Fix the 2 following tests - The 'quality' property is computed by the usePublisherQuality hook
-    // based on OpenTok SDK events and cannot be set via initialValue or direct mutation.
-    // With real providers, 'quality' is read-only and derived from SDK quality events.
-    it.skip('should be displayed when publishing video', async () => {
-      const { rerender } = render(<MeetingRoom />, {
-        publisherContext: {
-          initialValue: {
-            isVideoEnabled: true,
-            quality: 'poor',
-          },
-        },
-      });
-
-      act(() => {
-        rerender(<MeetingRoom />);
-      });
-
-      await waitFor(() => {
-        const connectionAlert = screen.getByText(
-          'Please check your connectivity. Your video may be disabled to improve the user experience'
-        );
-        expect(connectionAlert).toBeInTheDocument();
-      });
-    });
-
-    it.skip('should be hidden when user stops publishing video', () => {
-      const { publisherContext, rerender } = render(<MeetingRoom />, {
-        publisherContext: {
-          initialValue: {
-            isVideoEnabled: true,
-            quality: 'poor',
-          },
-        },
-      });
-
-      act(() => {
-        rerender(<MeetingRoom />);
-      });
-
-      waitFor(() => {
-        const connectionAlert = screen.queryByText(
-          'Please check your connectivity. Your video may be disabled to improve the user experience'
-        );
-        expect(connectionAlert).toBeInTheDocument();
-      });
-      act(() => {
-        publisherContext.current.isVideoEnabled = false;
-      });
-
-      act(() => {
-        rerender(<MeetingRoom />);
-      });
-
-      waitFor(() => {
-        const connectionAlert = screen.queryByText(
-          'Please check your connectivity. Your video may be disabled to improve the user experience'
-        );
-        expect(connectionAlert).not.toBeInTheDocument();
-      });
-    });
   });
 
   it('should redirect user to goodbye page if unable to publish', async () => {
