@@ -10,7 +10,7 @@
   "archiveList.loading": "We are processing your recording",
   "archiveList.loading.subtitle": "Wait a few seconds to download your recording",
   "backgroundEffects.limit": "You have reached the maximum custom images limit",
-  "backgroundEffects.title": "Video settings",
+  "backgroundEffects.title": "Video effects",
   "backgroundEffects.addBackground": "Add Background",
   "backgroundEffects.video.disabled": "Your camera is turned off.",
   "backgroundEffects.invalidFileType": "Only JPG, PNG, GIF, or BMP images are allowed.",

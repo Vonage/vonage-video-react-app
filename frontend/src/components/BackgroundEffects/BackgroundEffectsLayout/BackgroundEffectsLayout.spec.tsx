@@ -65,7 +65,7 @@ describe('BackgroundEffectsLayout (Meeting room)', () => {
 
   it('renders when open', () => {
     renderLayout();
-    expect(screen.getByTestId('right-panel-title')).toHaveTextContent('Video settings');
+    expect(screen.getByTestId('right-panel-title')).toHaveTextContent('Video effects');
     expect(screen.getByTestId('background-video-container')).toBeInTheDocument();
     expect(screen.getByTestId('background-none')).toBeInTheDocument();
     expect(screen.getByTestId('background-bg1')).toBeInTheDocument();
