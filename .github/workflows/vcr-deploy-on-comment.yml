@@ -3,6 +3,12 @@ name: Deploy PR to VCR on comment
 on:
   issue_comment:
     types: [created]
+  workflow_dispatch:
+    inputs:
+      pr_number:
+        description: PR number to deploy
+        required: true
+        type: string
 
 permissions:
   contents: read
@@ -19,8 +25,10 @@ jobs:
     # - comment is on a PR
     # - comment body is exactly 'vcr:deploy'
     if: >
-      github.event.issue.pull_request &&
-      github.event.comment.body == 'vcr:deploy'
+      (github.event_name == 'issue_comment' &&
+       github.event.issue.pull_request &&
+       github.event.comment.body == 'vcr:deploy') ||
+      (github.event_name == 'workflow_dispatch')
     runs-on: [vcp-runner]
     steps:
       - name: Load PR details
@@ -28,7 +36,7 @@ jobs:
         uses: actions/github-script@v7
         with:
           script: |
-            const prNumber = context.payload.issue.number;
+            const prNumber = context.payload.issue?.number ?? Number(context.payload.inputs?.pr_number);
             const { data: pr } = await github.rest.pulls.get({
               owner: context.repo.owner,
               repo: context.repo.repo,
@@ -116,7 +124,7 @@ jobs:
         uses: actions/github-script@v7
         with:
           script: |
-            const issueNumber = context.payload.issue.number;
+            const issueNumber = context.payload.issue?.number ?? Number(context.payload.inputs?.pr_number);
             const { owner, repo } = context.repo;
 
             const prId = `${{ steps.pr.outputs.number }}`;
@@ -144,7 +152,7 @@ jobs:
         uses: actions/github-script@v7
         with:
           script: |
-            const issueNumber = context.payload.issue.number;
+            const issueNumber = context.payload.issue?.number ?? Number(context.payload.inputs?.pr_number);
             const { owner, repo } = context.repo;
 
             const prId = `${{ steps.pr.outputs.number }}`;
