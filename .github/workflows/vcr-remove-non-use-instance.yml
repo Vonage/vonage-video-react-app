@@ -27,6 +27,9 @@ jobs:
       - name: Remove VCR instance (tolerant)
         id: remove
         shell: bash
+        env:
+          VCR_API_KEY: ${{ secrets.VCR_API_KEY }}
+          VCR_API_SECRET: ${{ secrets.VCR_API_SECRET }}
         run: |
           set -euo pipefail
 
@@ -39,8 +42,8 @@ jobs:
           vcr instance remove \
             --project-name "$PROJECT_NAME" \
             --instance-name "$INSTANCE_NAME" \
-            --api-key "${{ secrets.VCR_API_KEY }}" \
-            --api-secret "${{ secrets.VCR_API_SECRET }}" \
+            --api-key "$VCR_API_KEY" \
+            --api-secret "$VCR_API_SECRET" \
             --region aws.euw1 \
             --graphql-endpoint https://graphql.euw1.runtime.vonage.cloud/v1/graphql \
             2>&1 | tee remove-vcr-logs.log
