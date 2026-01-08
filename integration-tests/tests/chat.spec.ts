@@ -35,10 +35,20 @@ test.describe('chat', () => {
     const roomName = crypto.randomBytes(5).toString('hex');
     const pageTwo = await context.newPage();
 
-    await openMeetingRoomWithSettings({ page: pageOne, username: 'User One', roomName });
+    await openMeetingRoomWithSettings({
+      page: pageOne,
+      username: 'User One',
+      roomName,
+      browserName,
+    });
     await waitAndClickFirefox(pageOne, browserName);
 
-    await openMeetingRoomWithSettings({ page: pageTwo, username: 'User Two', roomName });
+    await openMeetingRoomWithSettings({
+      page: pageTwo,
+      username: 'User Two',
+      roomName,
+      browserName,
+    });
     await waitAndClickFirefox(pageTwo, browserName);
 
     await pageTwo.waitForSelector('.publisher', { state: 'visible' });
