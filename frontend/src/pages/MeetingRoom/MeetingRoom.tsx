@@ -23,6 +23,7 @@ import { DEVICE_ACCESS_STATUS } from '../../utils/constants';
 import type { PublishingErrorType } from '../../Context/PublisherProvider/usePublisher/usePublisher';
 import useUserContext from '../../hooks/useUserContext';
 import env from '../../env';
+import useMountEffect from '@common/hooks/useMountEffect';
 
 /**
  * MeetingRoom Component
@@ -84,11 +85,11 @@ const MeetingRoom = (): ReactElement => {
   const searchParams = new URLSearchParams(location.search);
   const bypass = searchParams.get('bypass') === 'true' || env.VITE_BYPASS_WAITING_ROOM; // Testing purpose
 
-  useEffect(() => {
+  useMountEffect(() => {
     if (!hasValidUsername && !bypass) {
       navigate(`/waiting-room/${roomName}`);
     }
-  }, [hasValidUsername, bypass, navigate, roomName]);
+  });
 
   useEffect(() => {
     if (!hasValidUsername && !bypass) {
