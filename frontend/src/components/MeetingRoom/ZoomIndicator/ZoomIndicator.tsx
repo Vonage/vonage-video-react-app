@@ -68,7 +68,7 @@ const ZoomIndicator = ({
         p: 0.75,
         cursor: isZoomed ? 'default' : 'pointer',
       }}
-      onClick={!isZoomed ? handleMainClick : undefined}
+      onClick={isZoomed ? undefined : handleMainClick}
     >
       {/* Main zoom indicator button */}
       <Tooltip
@@ -105,59 +105,57 @@ const ZoomIndicator = ({
       {/* Zoom controls */}
       {isZoomed && (
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 0 }}>
-          {isZoomed && (
-            <>
-              <Tooltip arrow title={t('zoom.out')}>
-                <Box component="span">
-                  <IconButton
-                    onClick={zoomOut}
-                    disabled={!canZoomOut}
-                    data-testid="zoom-out-button"
-                    sx={{
-                      p: 0.5,
-                      color: theme.colors.onDarkGrey,
-                      '&:disabled': {
-                        color: theme.colors.disabled,
-                      },
-                    }}
-                  >
-                    <VividIcon customSize={-6} name="minus-solid" />
-                  </IconButton>
-                </Box>
-              </Tooltip>
+          <>
+            <Tooltip arrow title={t('zoom.out')}>
+              <Box component="span">
+                <IconButton
+                  onClick={zoomOut}
+                  disabled={!canZoomOut}
+                  data-testid="zoom-out-button"
+                  sx={{
+                    p: 0.5,
+                    color: theme.colors.onDarkGrey,
+                    '&:disabled': {
+                      color: theme.colors.disabled,
+                    },
+                  }}
+                >
+                  <VividIcon customSize={-6} name="minus-solid" />
+                </IconButton>
+              </Box>
+            </Tooltip>
 
-              {/* Zoom percentage display */}
-              {isZoomed && (
-                <Tooltip arrow title={t('zoom.current')}>
-                  <Typography
-                    component="span"
-                    sx={{ mx: 1, cursor: 'default', color: theme.colors.onDarkGrey }}
-                    data-testid="zoom-level"
-                  >
-                    {Math.round(zoomLevel * 100)}%
-                  </Typography>
-                </Tooltip>
-              )}
-              <Tooltip arrow title={t('zoom.in')}>
-                <Box component="span">
-                  <IconButton
-                    onClick={zoomIn}
-                    disabled={!canZoomIn}
-                    data-testid="zoom-in-button"
-                    sx={{
-                      p: 0.5,
-                      color: theme.colors.onDarkGrey,
-                      '&:disabled': {
-                        color: theme.colors.disabled,
-                      },
-                    }}
-                  >
-                    <VividIcon customSize={-6} name="plus-solid" />
-                  </IconButton>
-                </Box>
+            {/* Zoom percentage display */}
+            {isZoomed && (
+              <Tooltip arrow title={t('zoom.current')}>
+                <Typography
+                  component="span"
+                  sx={{ mx: 1, cursor: 'default', color: theme.colors.onDarkGrey }}
+                  data-testid="zoom-level"
+                >
+                  {Math.round(zoomLevel * 100)}%
+                </Typography>
               </Tooltip>
-            </>
-          )}
+            )}
+            <Tooltip arrow title={t('zoom.in')}>
+              <Box component="span">
+                <IconButton
+                  onClick={zoomIn}
+                  disabled={!canZoomIn}
+                  data-testid="zoom-in-button"
+                  sx={{
+                    p: 0.5,
+                    color: theme.colors.onDarkGrey,
+                    '&:disabled': {
+                      color: theme.colors.disabled,
+                    },
+                  }}
+                >
+                  <VividIcon customSize={-6} name="plus-solid" />
+                </IconButton>
+              </Box>
+            </Tooltip>
+          </>
         </Box>
       )}
     </Box>
