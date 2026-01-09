@@ -1,18 +1,18 @@
 import { describe, it, expect } from 'vitest';
-import shouldShowYou from './shouldShowYou';
+import shouldShowUser from './shouldShowUser';
 
-describe('shouldShowYou', () => {
+describe('shouldShowUser', () => {
   it('returns true when matcher is undefined', () => {
-    expect(shouldShowYou(undefined, 'Alice')).toBe(true);
+    expect(shouldShowUser(undefined, 'Alice')).toBe(true);
   });
 
   it('returns true when your name matches', () => {
     const m = (n: string) => n.toLowerCase().includes('ali');
-    expect(shouldShowYou(m, 'Alice')).toBe(true);
+    expect(shouldShowUser(m, 'Alice')).toBe(true);
   });
 
   it('returns false when your name does not match', () => {
     const m = (n: string) => n.toLowerCase().includes('bob');
-    expect(shouldShowYou(m, 'Alice')).toBe(false);
+    expect(shouldShowUser(m, 'Alice')).toBe(false);
   });
 });

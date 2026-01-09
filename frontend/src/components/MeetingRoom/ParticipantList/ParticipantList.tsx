@@ -23,7 +23,7 @@ import InputAdornment from '@ui/InputAdornment';
 
 import createNameMatcher from '@utils/participantList/createNameMatcher';
 import getFilteredSubscribers from '@utils/participantList/getFilteredSubscribers';
-import shouldShowYou from '@utils/participantList/shouldShowYou';
+import shouldShowUser from '@utils/participantList/shouldShowUser';
 
 export type ParticipantListProps = {
   handleClose: () => void;
@@ -57,8 +57,8 @@ const ParticipantList = ({ handleClose, isOpen }: ParticipantListProps): ReactEl
 
   const nameMatches = createNameMatcher(query);
   const filteredSubscriberWrappers = getFilteredSubscribers({ subscriberWrappers, nameMatches });
-  const isYouVisible = shouldShowYou(nameMatches, name);
-  const participantCount = (isYouVisible ? 1 : 0) + filteredSubscriberWrappers.length;
+  const isUserVisible = shouldShowUser(nameMatches, name);
+  const participantCount = (isUserVisible ? 1 : 0) + filteredSubscriberWrappers.length;
 
   const copyUrl = () => {
     navigator.clipboard.writeText(roomShareUrl);
@@ -130,20 +130,21 @@ const ParticipantList = ({ handleClose, isOpen }: ParticipantListProps): ReactEl
         <Box sx={{ px: 3, pt: 1, pb: 1 }}>
           <TextField
             fullWidth
+            size="small"
             placeholder={t('participants.search') || 'Search participants'}
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             InputProps={{
               startAdornment: (
                 <InputAdornment position="start">
-                  <VividIcon name="search-line" customSize={-4} />
+                  <VividIcon name="search-line" customSize={-6} />
                 </InputAdornment>
               ),
             }}
           />
         </Box>
         <List sx={{ overflowX: 'auto', height: 'calc(100dvh - 240px)' }}>
-          {isYouVisible && (
+          {isUserVisible && (
             <ParticipantListItem
               key="you"
               dataTestId="participant-list-item-you"

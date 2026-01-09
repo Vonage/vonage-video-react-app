@@ -4,7 +4,7 @@ import type { SubscriberWrapper } from '../../types/session';
 
 const makeWrapper = (name: string | undefined): SubscriberWrapper => {
   return {
-    id: Math.random().toString(36).slice(2),
+    id: `test-id-${name}`,
     isScreenshare: false,
     isPinned: false,
     element: {} as unknown as HTMLVideoElement,
