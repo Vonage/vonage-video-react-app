@@ -10,9 +10,11 @@ type Args = {
 
 const getFilteredSubscribers = ({ subscriberWrappers, nameMatches }: Args): SubscriberWrapper[] => {
   return subscriberWrappers
-    .filter(({ isScreenshare }) => !isScreenshare)
     .filter((subscriberWrapper) => {
+      if (subscriberWrapper.isScreenshare) return false;
+
       if (!nameMatches) return true;
+
       const participantName = subscriberWrapper.subscriber?.stream?.name ?? '';
       return nameMatches(participantName);
     })

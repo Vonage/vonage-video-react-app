@@ -1,4 +1,4 @@
-import { ReactElement, useState } from 'react';
+import { ReactElement, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import useSessionContext from '@hooks/useSessionContext';
 import useUserContext from '@hooks/useUserContext';
@@ -55,10 +55,23 @@ const ParticipantList = ({ handleClose, isOpen }: ParticipantListProps): ReactEl
   const roomShareUrl = useRoomShareUrl();
   const { isAudioEnabled } = usePublisherContext();
 
-  const nameMatches = createNameMatcher(query);
-  const filteredSubscriberWrappers = getFilteredSubscribers({ subscriberWrappers, nameMatches });
-  const isUserVisible = shouldShowUser(nameMatches, name);
-  const participantCount = (isUserVisible ? 1 : 0) + filteredSubscriberWrappers.length;
+  const { filteredSubscriberWrappers, isUserVisible, participantCount } = useMemo(() => {
+    const nameMatches = createNameMatcher(query);
+    const filteredSubscriberWrappersLocal = getFilteredSubscribers({
+      subscriberWrappers,
+      nameMatches,
+    });
+    const isUserVisibleLocal = shouldShowUser(nameMatches, name);
+    const participantCountLocal =
+      (isUserVisibleLocal ? 1 : 0) + filteredSubscriberWrappersLocal.length;
+
+    return {
+      nameMatches,
+      filteredSubscriberWrappers: filteredSubscriberWrappersLocal,
+      isUserVisible: isUserVisibleLocal,
+      participantCount: participantCountLocal,
+    };
+  }, [subscriberWrappers, query, name]);
 
   const copyUrl = () => {
     navigator.clipboard.writeText(roomShareUrl);
