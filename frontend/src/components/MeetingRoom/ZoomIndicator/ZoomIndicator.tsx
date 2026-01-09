@@ -79,7 +79,7 @@ const ZoomIndicator = ({
         onClose={() => setTooltipOpen(false)}
       >
         <IconButton
-          onClick={handleMainClick}
+          onClick={isZoomed ? handleMainClick : undefined}
           data-testid="zoom-indicator-button"
           onMouseLeave={() => setTooltipOpen(false)}
           sx={{
