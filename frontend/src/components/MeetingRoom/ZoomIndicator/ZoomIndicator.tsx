@@ -62,11 +62,13 @@ const ZoomIndicator = ({
         right: 8,
         display: 'flex',
         alignItems: 'center',
-        gap: 1,
+        gap: isZoomed ? 1 : 0,
         borderRadius: theme.shapes.borderRadiusLarge,
         backgroundColor: theme.colors.darkGreyOpacity,
         p: 0.75,
+        cursor: isZoomed ? 'default' : 'pointer',
       }}
+      onClick={!isZoomed ? handleMainClick : undefined}
     >
       {/* Main zoom indicator button */}
       <Tooltip
@@ -81,7 +83,7 @@ const ZoomIndicator = ({
           data-testid="zoom-indicator-button"
           onMouseLeave={() => setTooltipOpen(false)}
           sx={{
-            ml: isZoomed ? 0 : 1,
+            p: isZoomed ? undefined : 0.75,
           }}
         >
           {isZoomed ? (
@@ -101,61 +103,63 @@ const ZoomIndicator = ({
       </Tooltip>
 
       {/* Zoom controls */}
-      <Box sx={{ display: 'flex', alignItems: 'center', gap: 0 }}>
-        {isZoomed && (
-          <>
-            <Tooltip arrow title={t('zoom.out')}>
-              <Box component="span">
-                <IconButton
-                  onClick={zoomOut}
-                  disabled={!canZoomOut}
-                  data-testid="zoom-out-button"
-                  sx={{
-                    p: 0.5,
-                    color: theme.colors.onDarkGrey,
-                    '&:disabled': {
-                      color: theme.colors.disabled,
-                    },
-                  }}
-                >
-                  <VividIcon customSize={-6} name="minus-solid" />
-                </IconButton>
-              </Box>
-            </Tooltip>
-
-            {/* Zoom percentage display */}
-            {isZoomed && (
-              <Tooltip arrow title={t('zoom.current')}>
-                <Typography
-                  component="span"
-                  sx={{ mx: 1, cursor: 'default', color: theme.colors.onDarkGrey }}
-                  data-testid="zoom-level"
-                >
-                  {Math.round(zoomLevel * 100)}%
-                </Typography>
+      {isZoomed && (
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 0 }}>
+          {isZoomed && (
+            <>
+              <Tooltip arrow title={t('zoom.out')}>
+                <Box component="span">
+                  <IconButton
+                    onClick={zoomOut}
+                    disabled={!canZoomOut}
+                    data-testid="zoom-out-button"
+                    sx={{
+                      p: 0.5,
+                      color: theme.colors.onDarkGrey,
+                      '&:disabled': {
+                        color: theme.colors.disabled,
+                      },
+                    }}
+                  >
+                    <VividIcon customSize={-6} name="minus-solid" />
+                  </IconButton>
+                </Box>
               </Tooltip>
-            )}
-            <Tooltip arrow title={t('zoom.in')}>
-              <Box component="span">
-                <IconButton
-                  onClick={zoomIn}
-                  disabled={!canZoomIn}
-                  data-testid="zoom-in-button"
-                  sx={{
-                    p: 0.5,
-                    color: theme.colors.onDarkGrey,
-                    '&:disabled': {
-                      color: theme.colors.disabled,
-                    },
-                  }}
-                >
-                  <VividIcon customSize={-6} name="plus-solid" />
-                </IconButton>
-              </Box>
-            </Tooltip>
-          </>
-        )}
-      </Box>
+
+              {/* Zoom percentage display */}
+              {isZoomed && (
+                <Tooltip arrow title={t('zoom.current')}>
+                  <Typography
+                    component="span"
+                    sx={{ mx: 1, cursor: 'default', color: theme.colors.onDarkGrey }}
+                    data-testid="zoom-level"
+                  >
+                    {Math.round(zoomLevel * 100)}%
+                  </Typography>
+                </Tooltip>
+              )}
+              <Tooltip arrow title={t('zoom.in')}>
+                <Box component="span">
+                  <IconButton
+                    onClick={zoomIn}
+                    disabled={!canZoomIn}
+                    data-testid="zoom-in-button"
+                    sx={{
+                      p: 0.5,
+                      color: theme.colors.onDarkGrey,
+                      '&:disabled': {
+                        color: theme.colors.disabled,
+                      },
+                    }}
+                  >
+                    <VividIcon customSize={-6} name="plus-solid" />
+                  </IconButton>
+                </Box>
+              </Tooltip>
+            </>
+          )}
+        </Box>
+      )}
     </Box>
   );
 };
