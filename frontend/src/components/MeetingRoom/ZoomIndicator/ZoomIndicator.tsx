@@ -54,6 +54,9 @@ const ZoomIndicator = ({
     }
   };
 
+  const outerClickHandler = isZoomed ? undefined : handleMainClick;
+  const innerClickHandler = outerClickHandler ? undefined : handleMainClick;
+
   return (
     <Box
       sx={{
@@ -68,7 +71,7 @@ const ZoomIndicator = ({
         p: 0.75,
         cursor: isZoomed ? 'default' : 'pointer',
       }}
-      onClick={isZoomed ? undefined : handleMainClick}
+      onClick={outerClickHandler}
     >
       {/* Main zoom indicator button */}
       <Tooltip
@@ -79,7 +82,7 @@ const ZoomIndicator = ({
         onClose={() => setTooltipOpen(false)}
       >
         <IconButton
-          onClick={isZoomed ? handleMainClick : undefined}
+          onClick={innerClickHandler}
           data-testid="zoom-indicator-button"
           onMouseLeave={() => setTooltipOpen(false)}
           sx={{
