@@ -11,6 +11,8 @@ import Fade from '@ui/Fade';
 import VividIcon from '@components/VividIcon';
 import usePublisherContext from '@hooks/usePublisherContext';
 import useDevices from '@hooks/useDevices';
+import isRearFacingLabel from '@utils/cameraSwitch/isRearFacingLabel';
+import isFrontFacingLabel from '@utils/cameraSwitch/isFrontFacingLabel';
 
 /**
  * SmallViewportHeader Component
@@ -43,8 +45,30 @@ const SmallViewportHeader = (): ReactElement => {
 
   const { publisher, isVideoEnabled } = usePublisherContext();
 
-  const handleCameraSwitch = () => {
-    publisher?.cycleVideo();
+  const handleCameraToggle = () => {
+    if (!publisher) return;
+
+    const currentSource = publisher.getVideoSource?.();
+
+    const currentDevice = videoInputDevices.find((d) => d.deviceId === currentSource?.deviceId);
+    const currentIsFront = isFrontFacingLabel(currentDevice?.label);
+
+    const pickFront = () =>
+      videoInputDevices.find((d) => isFrontFacingLabel(d.label)) ||
+      videoInputDevices.find((d) => d.deviceId !== currentSource?.deviceId);
+
+    const pickRear = () =>
+      videoInputDevices.find((d) => isRearFacingLabel(d.label)) ||
+      videoInputDevices.find(
+        (d) => !isFrontFacingLabel(d.label) && d.deviceId !== currentSource?.deviceId
+      );
+
+    const target = currentIsFront ? pickRear() : pickFront();
+
+    if (target?.deviceId && target.deviceId !== currentSource?.deviceId) {
+      publisher.setVideoSource(target.deviceId);
+      return;
+    }
   };
 
   return (
@@ -84,7 +108,7 @@ const SmallViewportHeader = (): ReactElement => {
       <Box sx={{ marginX: -1, display: 'flex', alignItems: 'center', gap: 1 }}>
         {isVideoEnabled && videoInputDevices.length > 1 && (
           <Tooltip title={t('devices.video.camera.switch')} placement="bottom">
-            <IconButton sx={{ color: theme.colors.onDarkGrey }} onClick={handleCameraSwitch}>
+            <IconButton sx={{ color: theme.colors.onDarkGrey }} onClick={handleCameraToggle}>
               <VividIcon name="camera-switch-line" customSize={-4} />
             </IconButton>
           </Tooltip>

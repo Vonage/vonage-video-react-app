@@ -144,11 +144,19 @@ describe('SmallViewportHeader component', () => {
     expect(screen.queryByTestId('vivid-icon-camera-switch-line')).not.toBeInTheDocument();
   });
 
-  it('calls publisher.cycleVideo when camera switch button is clicked', () => {
+  it('toggles to the opposite camera device when clicked', () => {
     (useSessionContext as Mock).mockReturnValue({ archiveId: null });
-    const cycleVideo = vi.fn();
+    const setVideoSource = vi.fn();
+    const getVideoSource = vi.fn(() => ({
+      deviceId: allMediaDevices.videoInputDevices[0].deviceId,
+      label: allMediaDevices.videoInputDevices[0].label,
+      kind: 'videoInput',
+    }));
     mockUsePublisherContext.mockReturnValue({
-      publisher: { cycleVideo } as unknown as PublisherContextType['publisher'],
+      publisher: {
+        setVideoSource,
+        getVideoSource,
+      } as unknown as PublisherContextType['publisher'],
       isVideoEnabled: true,
     } as unknown as PublisherContextType);
 
@@ -156,6 +164,7 @@ describe('SmallViewportHeader component', () => {
     const cameraIcon = screen.getByTestId('vivid-icon-camera-switch-line');
     fireEvent.click(cameraIcon);
 
-    expect(cycleVideo).toHaveBeenCalledTimes(1);
+    expect(setVideoSource).toHaveBeenCalledTimes(1);
+    expect(setVideoSource).toHaveBeenCalledWith(allMediaDevices.videoInputDevices[1].deviceId);
   });
 });
