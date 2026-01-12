@@ -84,7 +84,9 @@ export function renderWithAppConfigAndAudioOutput(
     audioOutputOptions?: AudioOutputProviderWrapperOptions['audioOutputOptions'];
   }
 ) {
-  const { AppConfigWrapper } = makeAppConfigProviderWrapper(options?.appConfigOptions);
+  const { AppConfigWrapper, appConfigContext } = makeAppConfigProviderWrapper(
+    options?.appConfigOptions
+  );
   const { AudioOutputProviderWrapper, audioOutputContext } = makeAudioOutputProviderWrapper({
     audioOutputOptions: options?.audioOutputOptions,
   });
@@ -92,6 +94,7 @@ export function renderWithAppConfigAndAudioOutput(
   const wrapper = composeProviders(AudioOutputProviderWrapper, AppConfigWrapper);
 
   return {
+    appConfigContext,
     audioOutputContext,
     ...renderBase(ui, { wrapper }),
   };
