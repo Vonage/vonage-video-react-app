@@ -67,7 +67,6 @@ const SmallViewportHeader = (): ReactElement => {
 
     if (target?.deviceId && target.deviceId !== currentSource?.deviceId) {
       publisher.setVideoSource(target.deviceId);
-      return;
     }
   };
 
