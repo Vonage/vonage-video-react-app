@@ -218,31 +218,24 @@ class VonageVideoClient extends EventEmitter<VonageVideoClientEvents> {
       return false;
     }
 
-    // Error object can have name, message, and code properties
     const otError = error as { name?: string; message?: string; code?: number };
 
-    // Error codes that are recoverable (stream lifecycle issues)
+    // Check by error code
     const recoverableErrorCodes = [
       1501, // OT_STREAM_NOT_FOUND
       1600, // OT_STREAM_DESTROYED
     ];
-
-    // Check by error code (most reliable)
     if (typeof otError.code === 'number' && recoverableErrorCodes.includes(otError.code)) {
-      console.warn(`[SUBSCRIBER] Recoverable error code detected: ${otError.code}`);
       return true;
     }
-
-    // Error names that are recoverable (stream lifecycle issues)
-    const recoverableErrorNames = ['OT_STREAM_NOT_FOUND', 'OT_STREAM_DESTROYED'];
 
     // Check by error name
+    const recoverableErrorNames = ['OT_STREAM_NOT_FOUND', 'OT_STREAM_DESTROYED'];
     if (otError.name && recoverableErrorNames.includes(otError.name)) {
-      console.warn(`[SUBSCRIBER] Recoverable error name detected: ${otError.name}`);
       return true;
     }
 
-    // Check by error message patterns (as fallback)
+    // Check by error message patterns
     if (otError.message) {
       const recoverableMessagePatterns = [
         'stream not found',
@@ -256,13 +249,10 @@ class VonageVideoClient extends EventEmitter<VonageVideoClientEvents> {
       );
 
       if (isRecoverable) {
-        console.warn('[SUBSCRIBER] Recoverable error message detected:', otError.message);
         return true;
       }
     }
 
-    // Log unrecognized error format for debugging
-    console.warn('[SUBSCRIBER] Unrecognized error format - treating as critical:', error);
     return false;
   };
 

@@ -125,7 +125,6 @@ const usePublisher = (): PublisherContextType => {
   }, [publisherOptions]);
 
   const handleAccessAllowed = () => {
-    console.warn('[PUBLISHER] handleAccessAllowed - Device access granted');
     isInitializingPublisherRef.current = false;
     setDeviceAccess({
       microphone: true,
@@ -156,11 +155,6 @@ const usePublisher = (): PublisherContextType => {
   }, []);
 
   const handleStreamCreated = (e: PublisherStreamCreatedEvent) => {
-    console.warn('[PUBLISHER] handleStreamCreated - Stream created successfully', {
-      streamId: e.stream.streamId,
-      hasAudio: e.stream.hasAudio,
-      hasVideo: e.stream.hasVideo,
-    });
     setIsPublishing(true);
     setStream(e.stream);
     // Reset the flag now that the stream is actually established
@@ -170,11 +164,6 @@ const usePublisher = (): PublisherContextType => {
   };
 
   const handleStreamDestroyed = useCallback(() => {
-    console.warn('[PUBLISHER] handleStreamDestroyed - Stream destroyed', {
-      reconnecting,
-      isPublishingToSession: isPublishingToSessionRef.current,
-      wasPublishingBeforeReconnect: wasPublishingBeforeReconnectRef.current,
-    });
     setStream(null);
     setIsPublishing(false);
 
@@ -187,11 +176,6 @@ const usePublisher = (): PublisherContextType => {
       reconnecting === true ||
       wasPublishingBeforeReconnectRef.current;
 
-    console.warn(
-      '[PUBLISHER] handleStreamDestroyed - shouldPreservePublisher:',
-      shouldPreservePublisher
-    );
-
     if (publisherRef?.current && !shouldPreservePublisher) {
       console.warn('[PUBLISHER] handleStreamDestroyed - Destroying publisher');
       publisherRef.current.destroy();
@@ -203,11 +187,6 @@ const usePublisher = (): PublisherContextType => {
 
   const handleAccessDenied = (event: AccessDeniedEvent) => {
     const deviceDeniedAccess = event.message?.startsWith('Microphone') ? 'microphone' : 'camera';
-    console.warn(
-      '[PUBLISHER] handleAccessDenied - Access denied for device:',
-      deviceDeniedAccess,
-      event.message
-    );
     isInitializingPublisherRef.current = false;
     // We check the first word of the message to see if the microphone or camera was denied access.
     setDeviceAccess((prev) => ({
@@ -225,9 +204,6 @@ const usePublisher = (): PublisherContextType => {
    * Method to unpublish from session and destroy publisher
    */
   const unpublish = () => {
-    console.warn('[PUBLISHER] unpublish - Unpublishing stream', {
-      hasPublisher: !!publisherRef?.current,
-    });
     if (publisherRef?.current) {
       sessionUnpublish(publisherRef.current);
       isPublishingToSessionRef.current = false;
@@ -235,7 +211,6 @@ const usePublisher = (): PublisherContextType => {
   };
 
   const handleVideoElementCreated = (event: PublisherVideoElementCreatedEvent) => {
-    console.warn('[PUBLISHER] handleVideoElementCreated - Video element created');
     setPublisherVideoElement(event.element);
     setIsPublishing(true);
   };
@@ -244,7 +219,6 @@ const usePublisher = (): PublisherContextType => {
    * Method to handle the mute force of a participant
    */
   const handleMuteForced = () => {
-    console.warn('[PUBLISHER] handleMuteForced - Participant was force muted');
     if (publisherRef?.current) {
       setIsForceMuted(true);
       setIsAudioEnabled(false);
@@ -270,13 +244,6 @@ const usePublisher = (): PublisherContextType => {
    */
   const initializeLocalPublisher = useCallback(
     (options: PublisherProperties) => {
-      console.warn('[PUBLISHER] initializeLocalPublisher - Starting initialization', {
-        publishVideo: options.publishVideo,
-        publishAudio: options.publishAudio,
-        isPublishingToSession: isPublishingToSessionRef.current,
-        isInitializing: isInitializingPublisherRef.current,
-        hasExistingPublisher: !!publisherRef.current,
-      });
       try {
         // Don't re-initialize if we're currently publishing
         if (isPublishingToSessionRef.current) {
@@ -377,12 +344,7 @@ const usePublisher = (): PublisherContextType => {
    * @returns {void}
    */
   const toggleVideo = () => {
-    console.warn('[PUBLISHER] toggleVideo - Toggling video', {
-      currentState: isVideoEnabled,
-      newState: !isVideoEnabled,
-    });
     if (!publisherRef.current) {
-      console.warn('[PUBLISHER] toggleVideo - No publisher available');
       return;
     }
     publisherRef.current.publishVideo(!isVideoEnabled);
@@ -397,12 +359,7 @@ const usePublisher = (): PublisherContextType => {
    * @returns {void}
    */
   const toggleAudio = () => {
-    console.warn('[PUBLISHER] toggleAudio - Toggling audio', {
-      currentState: isAudioEnabled,
-      newState: !isAudioEnabled,
-    });
     if (!publisherRef.current) {
-      console.warn('[PUBLISHER] toggleAudio - No publisher available');
       return;
     }
     publisherRef.current.publishAudio(!isAudioEnabled);
