@@ -5,7 +5,6 @@ generated-docs/
 
 **/.env
 dist/
-backend/bundle.cjs
 **/dist/
 
 lib-cov
@@ -28,7 +27,6 @@ npm-debug.log
 bower_components
 
 public/js/*
-config.json
 
 server.key
 server.crt

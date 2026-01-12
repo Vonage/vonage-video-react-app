@@ -11,7 +11,6 @@ vi.mock('react-i18next', () => ({
     t: (key: string) => {
       const translations: Record<string, string> = {
         'backgroundEffects.title': enTranslations['backgroundEffects.title'],
-        'backgroundEffects.choice': enTranslations['backgroundEffects.choice'],
         'button.cancel': enTranslations['button.cancel'],
         'button.apply': enTranslations['button.apply'],
       };
@@ -66,7 +65,7 @@ describe('BackgroundEffectsLayout (Meeting room)', () => {
 
   it('renders when open', () => {
     renderLayout();
-    expect(screen.getByTestId('right-panel-title')).toHaveTextContent('Background settings');
+    expect(screen.getByTestId('right-panel-title')).toHaveTextContent('Video effects');
     expect(screen.getByTestId('background-video-container')).toBeInTheDocument();
     expect(screen.getByTestId('background-none')).toBeInTheDocument();
     expect(screen.getByTestId('background-bg1')).toBeInTheDocument();

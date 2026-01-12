@@ -30,7 +30,11 @@ test.describe('Recording Feature', () => {
     await archivingButton.click();
 
     const confirmStartButton = pageOne.getByTestId('popup-dialog-primary-button');
+    await confirmStartButton.waitFor({ state: 'visible' });
     await confirmStartButton.click();
+
+    // Wait a bit to ensure recording is at least 3s long
+    await pageOne.waitForTimeout(3000);
 
     if (isMobile) {
       const recordingIndicator = pageOne

@@ -27,7 +27,7 @@ describe('VideoDevicesOptions', () => {
 
   it('renders the background effects menu item', () => {
     render(<VideoDevicesOptions toggleBackgroundEffects={toggleBackgroundEffects} />);
-    expect(screen.getByTestId('background-effects-text')).toHaveTextContent('Background settings');
+    expect(screen.getByTestId('background-effects-text')).toHaveTextContent('Video effects');
     expect(screen.getByRole('menuitem')).toBeInTheDocument();
   });
 

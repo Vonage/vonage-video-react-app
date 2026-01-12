@@ -22,7 +22,7 @@ describe('BackgroundEffectsDialog', () => {
       <BackgroundEffectsDialog isBackgroundEffectsOpen setIsBackgroundEffectsOpen={() => {}} />
     );
     expect(screen.getByRole('dialog')).toBeInTheDocument();
-    expect(screen.getByText(/background settings/i)).toBeInTheDocument();
+    expect(screen.getByText(/video effects/i)).toBeInTheDocument();
   });
 
   it('does not render dialog when closed', () => {
