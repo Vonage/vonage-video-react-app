@@ -55,6 +55,7 @@ type VonageVideoClientEvents = {
 class VonageVideoClient extends EventEmitter<VonageVideoClientEvents> {
   public clientSession: Session | null;
   private readonly credential: Credential;
+  private hiddenSubscriber: Subscriber | null = null;
 
   /**
    * Creates an instance of VonageVideoClient.
@@ -144,7 +145,8 @@ class VonageVideoClient extends EventEmitter<VonageVideoClientEvents> {
         this.emit('screenshareStreamCreated');
       }
     } catch (syncError) {
-      this.disconnect();
+      // Don't disconnect the entire session when a single subscription fails
+      // This would affect all other participants
       this.handleSubscriptionError(syncError);
     }
   }
@@ -294,6 +296,12 @@ class VonageVideoClient extends EventEmitter<VonageVideoClientEvents> {
    * Disconnects from the current session and cleans up the session object.
    */
   disconnect = () => {
+    // Clean up the hidden subscriber used for captions
+    if (this.hiddenSubscriber) {
+      this.clientSession?.unsubscribe(this.hiddenSubscriber);
+      this.hiddenSubscriber = null;
+    }
+
     this.clientSession?.disconnect();
     this.clientSession = null;
   };
@@ -321,15 +329,12 @@ class VonageVideoClient extends EventEmitter<VonageVideoClientEvents> {
         // the following is needed for the local subscriber to be able to receive captions
         // More information: https://developer.vonage.com/en/video/guides/live-caption#receiving-your-own-live-captions
         if (publisher.stream) {
-          const hiddenSubscriber = this.clientSession?.subscribe(
-            publisher.stream,
-            document.createElement('div'),
-            {
+          this.hiddenSubscriber =
+            this.clientSession?.subscribe(publisher.stream, document.createElement('div'), {
               audioVolume: 0,
-            }
-          );
+            }) ?? null;
 
-          hiddenSubscriber?.on('captionReceived', (captionEvent) => {
+          this.hiddenSubscriber?.on('captionReceived', (captionEvent) => {
             this.emit('localCaptionReceived', captionEvent);
           });
         }
@@ -352,6 +357,12 @@ class VonageVideoClient extends EventEmitter<VonageVideoClientEvents> {
    * @param {Publisher} publisher - The publisher object to be unpublished.
    */
   unpublish = (publisher: Publisher) => {
+    // Clean up the hidden subscriber used for captions
+    if (this.hiddenSubscriber) {
+      this.clientSession?.unsubscribe(this.hiddenSubscriber);
+      this.hiddenSubscriber = null;
+    }
+
     this.clientSession?.unpublish(publisher);
   };
 
