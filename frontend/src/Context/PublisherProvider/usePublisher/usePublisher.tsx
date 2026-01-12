@@ -323,6 +323,7 @@ const usePublisher = (): PublisherContextType => {
       console.warn('[PUBLISHER] publish - Starting publish with retry');
       await idempotentCallbackWithRetry(() => sessionPublish(publisherRef.current!), {
         retries: 2,
+        delayMs: 500,
       });
       console.warn('[PUBLISHER] publish - Publish successful, waiting for streamCreated event');
       // Don't reset isPublishingToSessionRef here - wait for streamCreated event
