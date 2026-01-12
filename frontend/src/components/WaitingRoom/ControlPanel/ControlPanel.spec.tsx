@@ -6,6 +6,7 @@ import { AllMediaDevices } from '@app-types/room';
 import { allMediaDevices } from '@utils/mockData/device';
 import { AppConfigProviderWrapperOptions, makeAppConfigProviderWrapper } from '@test/providers';
 import backgroundEffectsDialog$ from '@Context/BackgroundEffectsDialog';
+import precallNetworkTestDialog$ from '@Context/PrecallNetworkTestDialog';
 import ControlPanel from '.';
 import composeProviders from '@utils/composeProviders';
 
@@ -145,7 +146,11 @@ function render(
 ) {
   const { AppConfigWrapper } = makeAppConfigProviderWrapper(options?.appConfigOptions);
 
-  const wrapper = composeProviders(AppConfigWrapper, backgroundEffectsDialog$.Provider);
+  const wrapper = composeProviders(
+    AppConfigWrapper,
+    backgroundEffectsDialog$.Provider,
+    precallNetworkTestDialog$.Provider
+  );
 
   return renderBase(ui, { ...options, wrapper });
 }

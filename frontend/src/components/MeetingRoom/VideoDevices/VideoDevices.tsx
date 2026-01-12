@@ -113,7 +113,7 @@ const VideoDevices = ({ handleToggle }: VideoDevicesProps): ReactElement | false
                   }}
                 >
                   {isSelected ? (
-                    <Box key={'video-devices-check'} sx={{ mr: 2 }}>
+                    <Box key={'video-devices-check'} sx={{ mr: 2.5 }}>
                       <VividIcon
                         name="check-line"
                         customSize={-6}
@@ -123,7 +123,7 @@ const VideoDevices = ({ handleToggle }: VideoDevicesProps): ReactElement | false
                       />
                     </Box>
                   ) : (
-                    <Box sx={{ width: 40 }} /> // Placeholder when CheckIcon is not displayed
+                    <Box sx={{ minWidth: 36 }} /> // Placeholder when CheckIcon is not displayed
                   )}
                   <Typography noWrap>{option.label}</Typography>
                 </Box>

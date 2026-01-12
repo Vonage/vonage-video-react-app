@@ -13,7 +13,7 @@ vi.mock('opentok-layout-js', () => {
   return { __esModule: true, default: OpenTokLayoutManager, Box: vi.fn(), Element: vi.fn() };
 });
 
-import useLayoutManager from './useLayoutManager';
+import useLayoutManager from '../useLayoutManager';
 import { renderHook } from '@testing-library/react';
 import OpenTokLayoutManager from 'opentok-layout-js';
 
