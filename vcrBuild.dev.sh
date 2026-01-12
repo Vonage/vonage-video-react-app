@@ -1,14 +1,24 @@
 #!/bin/bash
 set -e
 
-# check for pending changes to commit
-if [ -n "$(git status --porcelain)" ]; then
-  echo "You have uncommitted changes. Please commit or stash them before running this script."
+# build artifact
+./vcrBuild.sh
+
+# copy env file to the build output (FAIL if missing)
+if [ -f ./backend/.env ]; then
+  cp ./backend/.env ./backend/dist/.env
+else
+  echo "❌ ERROR: ./backend/.env file not found"
   exit 1
 fi
 
-# execute the original script
-sh ./vcrBuild.sh
+# copy the VCR Development manifest to the build output (FAIL if missing)
+if [ -f ./vcr-dev.yml ]; then
+  cp ./vcr-dev.yml ./backend/dist/vcr-dev.yml
+else
+  echo "❌ ERROR: ./vcr-dev.yml not found"
+  exit 1
+fi
 
-# restore repo state
-git restore .
+echo ""
+echo "Successfully added development files to backend/dist:"

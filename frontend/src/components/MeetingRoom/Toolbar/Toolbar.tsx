@@ -44,7 +44,7 @@ export type ToolbarProps = {
  * It displays the following items:
  * - The current time and meeting room name
  * - The microphone state with the ability to toggle it on/off and open a drop-down with some audio settings
- * - The video state with the ability to toggle it on/off and open a dropdown with some video settings
+ * - The video state with the ability to toggle it on/off and open a dropdown with some video effects
  * - Screensharing button (only on desktop devices)
  * - Button to toggle current layout (grid or active speaker)
  * - Button to express yourself (emojis)

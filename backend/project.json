@@ -16,7 +16,7 @@
       "executor": "nx:run-commands",
       "options": {
         "cwd": "backend",
-        "command": "node bundle.cjs"
+        "command": "node ./dist/bundle.cjs"
       },
       "dependsOn": ["build"]
     },
@@ -25,7 +25,7 @@
       "executor": "nx:run-commands",
       "options": {
         "cwd": "backend",
-        "command": "node bundle.cjs"
+        "command": "node ./dist/bundle.cjs"
       },
       "dependsOn": ["build:development"]
     },

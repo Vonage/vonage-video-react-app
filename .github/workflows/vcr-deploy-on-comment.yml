@@ -1,0 +1,169 @@
+name: Deploy PR to VCR on comment
+
+on:
+  issue_comment:
+    types: [created]
+  workflow_dispatch:
+    inputs:
+      pr_number:
+        description: PR number to deploy
+        required: true
+        type: string
+
+permissions:
+  contents: read
+  pull-requests: read
+  issues: write
+
+env:
+  DOMAIN: ${{ secrets.DOMAIN }}
+
+jobs:
+  build-and-test:
+    name: Deploy to VCR (comment trigger)
+    # Run only when:
+    # - comment is on a PR
+    # - comment body is exactly 'vcr:deploy'
+    if: >
+      (github.event_name == 'issue_comment' &&
+       github.event.issue.pull_request &&
+       github.event.comment.body == 'vcr:deploy') ||
+      (github.event_name == 'workflow_dispatch')
+    runs-on: [vcp-runner]
+    steps:
+      - name: Load PR details
+        id: pr
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const prNumber = context.payload.issue?.number ?? Number(context.payload.inputs?.pr_number);
+            const { data: pr } = await github.rest.pulls.get({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              pull_number: prNumber,
+            });
+
+            core.setOutput('number', String(pr.number));
+            core.setOutput('title', pr.title || '');
+            core.setOutput('head_sha', pr.head.sha);
+            core.setOutput(
+              'is_fork',
+              String(pr.head.repo.full_name !== pr.base.repo.full_name)
+            );
+
+      - name: Block forks
+        if: steps.pr.outputs.is_fork == 'true'
+        run: |
+          echo "Deployment from forked repositories is not allowed."
+          exit 1
+
+      - name: Checkout PR HEAD SHA
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ steps.pr.outputs.head_sha }}
+
+      - name: Setup node
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+
+      - name: Verify Node & Yarn versions
+        run: |
+          node -v
+          yarn -v
+
+      # Create dev VCR config, patch instance name, build artefact
+      - name: Building artefact
+        run: |
+          # Add empty env file to avoid errors during build
+          touch "${{ github.workspace }}/backend/.env"
+
+          # Create a dev-specific VCR config file
+          cp "${{ github.workspace }}/vcr-gha.yml" "${{ github.workspace }}/vcr-dev.yml"
+
+          # REMOVE the domain line entirely for comment-based deploys
+          sed -i '/^[[:space:]]*domains:/d' "${{ github.workspace }}/vcr-dev.yml"
+
+          # Patch instance name to be PR-specific
+          sed -i \
+            "/^instance:/ {n; s/^  name: .*/  name: vera-pr-${{ steps.pr.outputs.number }}/;}" \
+            "${{ github.workspace }}/vcr-dev.yml"
+
+          ./vcrBuild.dev.sh
+
+      - name: Install VCR CLI
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl --proto =https --max-redirs 0 -fsSL https://raw.githubusercontent.com/Vonage/cloud-runtime-cli/main/script/install.sh -o install.sh
+          sudo bash install.sh
+          vcr -v
+
+      - name: Deploy vcr
+        id: deploy
+        env:
+          APP_ID: ${{ secrets.APP_ID }}
+          VCR_API_KEY: ${{ secrets.VCR_API_KEY }}
+          VCR_API_SECRET: ${{ secrets.VCR_API_SECRET }}
+        run: |
+          cd backend/dist
+
+          vcr deploy --filename vcr-dev.yml \
+            --app-id "$APP_ID" \
+            --api-key "$VCR_API_KEY" \
+            --api-secret "$VCR_API_SECRET" \
+            --region aws.euw1 \
+            --graphql-endpoint https://graphql.euw1.runtime.vonage.cloud/v1/graphql \
+            --timeout=15m 2>&1 | tee deploy-vcr-logs.log
+
+          if ! grep -Fxq '| Instance has been deployed!' deploy-vcr-logs.log ; then
+            echo "Deployment failed"
+            exit 1
+          fi
+
+          INSTANCE_URL=$(grep -oE 'https://[^ ]+' deploy-vcr-logs.log | tail -1 | sed -r 's/\x1B\[[0-9;]*[mK]//g')
+
+          if [ -z "$INSTANCE_URL" ]; then
+            echo "Failed to extract instance URL"
+            exit 1
+          fi
+
+          echo "instance_url=$INSTANCE_URL" >> "$GITHUB_OUTPUT"
+
+      - name: Slack notification on success
+        uses: slackapi/slack-github-action@70cd7be8e40a46e8b0eced40b0de447bdb42f68e # v1.26.0
+        with:
+          channel-id: '#video-solutions-ci-notifications'
+          payload: |
+            {
+              "text": "Vera Deployment GHA Job",
+              "attachments": [
+                {
+                  "color": "28a745",
+                  "text": "Vera pull request *<https://github.com/Vonage/vonage-video-react-app/pull/${{ steps.pr.outputs.number }}|${{ steps.pr.outputs.title }}>* \n with commit hash: ${{ steps.pr.outputs.head_sha }} \n is deployed to VCR \nURL: ${{ steps.deploy.outputs.instance_url }} \n*<https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}|Click here to go to build logs>* \n :large_green_circle: :large_green_circle: :large_green_circle: :large_green_circle:"
+                }
+              ]
+            }
+        env:
+          SLACK_BOT_TOKEN: ${{ secrets.SLACK_NOTIFICATION }}
+        if: success()
+        continue-on-error: true
+
+      - name: Slack notification on failure
+        uses: slackapi/slack-github-action@70cd7be8e40a46e8b0eced40b0de447bdb42f68e # v1.26.0
+        with:
+          channel-id: '#video-solutions-ci-notifications'
+          payload: |
+            {
+              "text": "Vera Deployment GHA Job",
+              "attachments": [
+                {
+                  "color": "FF0000",
+                  "text": "Vera pull request *<https://github.com/Vonage/vonage-video-react-app/pull/${{ steps.pr.outputs.number }}|${{ steps.pr.outputs.title }}>* \n with commit hash: ${{ steps.pr.outputs.head_sha }} \n FAILED to deploy to VCR \n *<https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}|Click here to go to build logs>* \n :red_circle: :red_circle: :red_circle: :red_circle:"
+                }
+              ]
+            }
+        env:
+          SLACK_BOT_TOKEN: ${{ secrets.SLACK_NOTIFICATION }}
+        if: failure()
+        continue-on-error: true
