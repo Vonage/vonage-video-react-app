@@ -145,8 +145,21 @@ class VonageVideoClient extends EventEmitter<VonageVideoClientEvents> {
         this.emit('screenshareStreamCreated');
       }
     } catch (syncError) {
-      // Don't disconnect the entire session when a single subscription fails
-      // This would affect all other participants
+      // Check if this is a recoverable error that should not disconnect the user
+      const isRecoverableError = this.isRecoverableSubscriptionError(syncError);
+
+      if (isRecoverableError) {
+        console.warn(
+          '[SUBSCRIBER] Recoverable subscription error - stream likely destroyed:',
+          syncError
+        );
+        // Don't emit subscriptionError for recoverable errors
+        // The stream was likely destroyed before subscription completed (e.g., user refreshed)
+        return;
+      }
+
+      // Only emit subscriptionError for critical errors
+      console.error('[SUBSCRIBER] Critical subscription error:', syncError);
       this.handleSubscriptionError(syncError);
     }
   }
@@ -192,6 +205,43 @@ class VonageVideoClient extends EventEmitter<VonageVideoClientEvents> {
       const { logMovingAvg } = getMovingAverageAudioLevel(audioLevel);
       this.emit('subscriberAudioLevelUpdated', { movingAvg: logMovingAvg, subscriberId: streamId });
     });
+  };
+
+  /**
+   * Determines if a subscription error is recoverable and should not disconnect the user.
+   * @param {unknown} error - The subscription error
+   * @returns {boolean} True if the error is recoverable
+   * @private
+   */
+  private isRecoverableSubscriptionError = (error: unknown): boolean => {
+    if (!error || typeof error !== 'object') {
+      return false;
+    }
+
+    // OTError has name and message properties
+    const otError = error as { name?: string; message?: string };
+
+    // Error names that are recoverable (stream lifecycle issues)
+    const recoverableErrorNames = ['OT_STREAM_NOT_FOUND', 'OT_STREAM_DESTROYED'];
+
+    // Check by error name
+    if (otError.name && recoverableErrorNames.includes(otError.name)) {
+      return true;
+    }
+
+    // Check by error message patterns (as fallback)
+    if (otError.message) {
+      const recoverableMessagePatterns = [
+        'stream not found',
+        'Stream was destroyed before it could be subscribed',
+        'stream was destroyed',
+      ];
+
+      const messageLC = otError.message.toLowerCase();
+      return recoverableMessagePatterns.some((pattern) => messageLC.includes(pattern));
+    }
+
+    return false;
   };
 
   /**
