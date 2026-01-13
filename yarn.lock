@@ -4602,10 +4602,10 @@
     "@vonage/jwt" "1.12.1"
     debug "4.4.1"
 
-"@vonage/client-sdk-video@2.32.0":
-  version "2.32.0"
-  resolved "https://registry.yarnpkg.com/@vonage/client-sdk-video/-/client-sdk-video-2.32.0.tgz#99f8ee54762a635031d0fe9d4a8e5610282820b2"
-  integrity sha512-C4PpaEguFNt5GFSf4sdKELG0yWXgV0i+DihDCaSR7jehxx9mFUfzPBd3rjj+0/qa/+mAkvqRNUWVGXLEw4+pqQ==
+"@vonage/client-sdk-video@2.32.1":
+  version "2.32.1"
+  resolved "https://registry.yarnpkg.com/@vonage/client-sdk-video/-/client-sdk-video-2.32.1.tgz#08aa4ea559648bdbdc69259194cfd1298565fa05"
+  integrity sha512-ko0KRVMbhIHNUR/WgskOD6H3stz702pq2yDeRZf9STNb4srp4MADb7KgleoHeLMNxxFU+ipDMr49xmygZn9rhA==
 
 "@vonage/conversations@1.12.1":
   version "1.12.1"
