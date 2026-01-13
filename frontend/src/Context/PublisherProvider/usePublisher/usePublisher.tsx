@@ -85,6 +85,7 @@ const usePublisher = (): PublisherContextType => {
   const [isPublishing, setIsPublishing] = useState(false);
   const publisherOptions = usePublisherOptions();
   const [isForceMuted, setIsForceMuted] = useState<boolean>(false);
+  const isForceMutedRef = useRef<boolean>(false);
   const [isVideoEnabled, setIsVideoEnabled] = useState<boolean>(false);
   const [isAudioEnabled, setIsAudioEnabled] = useState<boolean>(false);
   const [stream, setStream] = useState<Stream | null>();
@@ -92,6 +93,8 @@ const usePublisher = (): PublisherContextType => {
   const isInitializingPublisherRef = useRef<boolean>(false);
   const [publishingError, setPublishingError] = useState<PublishingErrorType>(null);
   const wasPublishingBeforeReconnectRef = useRef<boolean>(false);
+  const reconnectingRef = useRef<boolean>(false);
+  const consecutivePublishingFailureCountRef = useRef<number>(0);
   const {
     publish: sessionPublish,
     unpublish: sessionUnpublish,
@@ -123,6 +126,29 @@ const usePublisher = (): PublisherContextType => {
     setIsVideoEnabled(!!publisherOptions.publishVideo);
     setIsAudioEnabled(!!publisherOptions.publishAudio);
   }, [publisherOptions]);
+
+  const publisherOptionsWithCurrentMediaState = (() => {
+    if (!publisherOptions) {
+      return null;
+    }
+
+    const shouldPublishAudio = isForceMutedRef.current ? false : isAudioEnabled;
+    const shouldPublishVideo = isVideoEnabled;
+
+    return {
+      ...publisherOptions,
+      publishAudio: shouldPublishAudio,
+      publishVideo: shouldPublishVideo,
+    };
+  })();
+
+  useEffect(() => {
+    reconnectingRef.current = reconnecting === true;
+  }, [reconnecting]);
+
+  useEffect(() => {
+    isForceMutedRef.current = isForceMuted;
+  }, [isForceMuted]);
 
   const handleAccessAllowed = () => {
     isInitializingPublisherRef.current = false;
@@ -161,29 +187,47 @@ const usePublisher = (): PublisherContextType => {
     isPublishingToSessionRef.current = false;
     // Track that we were publishing successfully
     wasPublishingBeforeReconnectRef.current = true;
+
+    // Successful publish resets transient failure tracking
+    consecutivePublishingFailureCountRef.current = 0;
+    setPublishingError(null);
   };
 
   const handleStreamDestroyed = useCallback(() => {
+    console.warn('[PUBLISHER] handleStreamDestroyed', {
+      reconnecting: reconnectingRef.current,
+      connected,
+      isPublishing,
+      hasPublisher: !!publisherRef.current,
+      hasStream: !!publisherRef.current?.stream,
+    });
+
     setStream(null);
     setIsPublishing(false);
 
-    // Don't destroy the publisher in these scenarios:
-    // 1. Currently trying to publish (isPublishingToSessionRef.current = true)
-    // 2. During reconnection (we'll need the publisher to republish)
-    // 3. If we were publishing before reconnect (will republish automatically)
     const shouldPreservePublisher =
+      reconnectingRef.current ||
       isPublishingToSessionRef.current ||
-      reconnecting === true ||
-      wasPublishingBeforeReconnectRef.current;
+      isInitializingPublisherRef.current;
 
-    if (publisherRef?.current && !shouldPreservePublisher) {
+    if (shouldPreservePublisher) {
+      console.warn('[PUBLISHER] handleStreamDestroyed - Preserving publisher', {
+        reconnecting: reconnectingRef.current,
+        isPublishingToSession: isPublishingToSessionRef.current,
+        isInitializingPublisher: isInitializingPublisherRef.current,
+      });
+      isPublishingToSessionRef.current = false;
+      return;
+    }
+
+    if (publisherRef?.current) {
       console.warn('[PUBLISHER] handleStreamDestroyed - Destroying publisher');
       publisherRef.current.destroy();
       publisherRef.current = null;
     } else {
-      console.warn('[PUBLISHER] handleStreamDestroyed - Preserving publisher for reconnection');
+      console.warn('[PUBLISHER] handleStreamDestroyed - Publisher already destroyed');
     }
-  }, [reconnecting]);
+  }, [connected, isPublishing]);
 
   const handleAccessDenied = (event: AccessDeniedEvent) => {
     const deviceDeniedAccess = event.message?.startsWith('Microphone') ? 'microphone' : 'camera';
@@ -212,18 +256,31 @@ const usePublisher = (): PublisherContextType => {
 
   const handleVideoElementCreated = (event: PublisherVideoElementCreatedEvent) => {
     setPublisherVideoElement(event.element);
-    setIsPublishing(true);
   };
 
   /**
    * Method to handle the mute force of a participant
    */
-  const handleMuteForced = () => {
-    if (publisherRef?.current) {
-      setIsForceMuted(true);
-      setIsAudioEnabled(false);
+  const handleMuteForced = useCallback(() => {
+    if (!publisherRef?.current) {
+      return;
     }
-  };
+
+    console.warn('[PUBLISHER] muteForced - enforcing local mute', {
+      reconnecting: reconnectingRef.current,
+      connected,
+    });
+
+    isForceMutedRef.current = true;
+    setIsForceMuted(true);
+    setIsAudioEnabled(false);
+
+    // Force mute must survive reconnection/publisher re-creation; persist mic-off.
+    setStorageItem(STORAGE_KEYS.AUDIO_SOURCE_ENABLED, 'false');
+
+    // Extra safety: enforce mute on the SDK publisher immediately.
+    publisherRef.current.publishAudio(false);
+  }, [connected]);
 
   const addPublisherListeners = useCallback(
     (publisher: Publisher) => {
@@ -235,7 +292,7 @@ const usePublisher = (): PublisherContextType => {
       publisher.on('muteForced', handleMuteForced);
       publisher.on('accessAllowed', handleAccessAllowed);
     },
-    [handleStreamDestroyed]
+    [handleMuteForced, handleStreamDestroyed]
   );
 
   /**
@@ -302,6 +359,7 @@ const usePublisher = (): PublisherContextType => {
   const publish = useCallback(async (): Promise<void> => {
     console.warn('[PUBLISHER] publish - Attempting to publish', {
       connected,
+      reconnecting,
       hasPublisher: !!publisherRef.current,
       isPublishingToSession: isPublishingToSessionRef.current,
     });
@@ -310,6 +368,10 @@ const usePublisher = (): PublisherContextType => {
         console.warn('[PUBLISHER] publish - BLOCKED: Already publishing to session');
         return; // Avoid multiple simultaneous publish attempts
       }
+      if (reconnecting) {
+        console.warn('[PUBLISHER] publish - BLOCKED: Session is reconnecting');
+        return;
+      }
       if (!connected) {
         console.warn('[PUBLISHER] publish - ERROR: Not connected to session');
         throw new Error('You are not connected to session');
@@ -317,6 +379,10 @@ const usePublisher = (): PublisherContextType => {
       if (!publisherRef.current) {
         console.warn('[PUBLISHER] publish - ERROR: Publisher not initialized');
         throw new Error('Publisher is not initialized');
+      }
+      if (publisherRef.current?.stream) {
+        console.warn('[PUBLISHER] publish - already has stream');
+        return;
       }
 
       isPublishingToSessionRef.current = true;
@@ -336,7 +402,7 @@ const usePublisher = (): PublisherContextType => {
         console.warn(err.message);
       }
     }
-  }, [connected, sessionPublish, handlePublishingError]);
+  }, [connected, reconnecting, sessionPublish, handlePublishingError]);
 
   /**
    * Turns the camera on and off
@@ -366,6 +432,7 @@ const usePublisher = (): PublisherContextType => {
     publisherRef.current.publishAudio(!isAudioEnabled);
     setIsAudioEnabled(!isAudioEnabled);
     setStorageItem(STORAGE_KEYS.AUDIO_SOURCE_ENABLED, (!isAudioEnabled).toString());
+    isForceMutedRef.current = false;
     setIsForceMuted(false);
   };
 
@@ -374,17 +441,49 @@ const usePublisher = (): PublisherContextType => {
       if (exceptionEvent.code === 1500) {
         console.warn('Unable to publish to session. Error code:', exceptionEvent.code);
 
-        // Clean up the publisher if getUserMedia failed
-        // This allows the publisher to be reinitialized on retry
-        if (publisherRef.current) {
-          publisherRef.current.destroy();
-          publisherRef.current = null;
+        consecutivePublishingFailureCountRef.current += 1;
+
+        const isBrowserOnline = (() => {
+          if (typeof navigator === 'undefined') return true;
+          return navigator.onLine;
+        })();
+
+        // During network changes, code 1500 is often transient.
+        // Try to recover by recreating the publisher; only surface a blocking error after repeated failures.
+        const shouldTreatAsTransient = reconnectingRef.current || !connected || !isBrowserOnline;
+
+        console.warn('[PUBLISHER] exception 1500', {
+          reconnecting: reconnectingRef.current,
+          connected,
+          isBrowserOnline,
+          consecutivePublishingFailureCount: consecutivePublishingFailureCountRef.current,
+          shouldTreatAsTransient,
+        });
+
+        const publisherToCleanup = publisherRef.current;
+        publisherRef.current = null;
+
+        try {
+          publisherToCleanup?.destroy();
+        } catch {
+          console.warn('[PUBLISHER] exception 1500 - Warning: Failed to destroy publisher');
         }
 
-        // Reset initialization lock to allow retry
+        isPublishingToSessionRef.current = false;
         isInitializingPublisherRef.current = false;
+        setIsPublishing(false);
+        setStream(null);
 
-        handlePublishingError();
+        const shouldSurfaceBlockingError =
+          shouldTreatAsTransient === false && consecutivePublishingFailureCountRef.current >= 3;
+
+        if (shouldSurfaceBlockingError) {
+          handlePublishingError();
+          return;
+        }
+
+        // Let the normal flow recreate/publish when possible
+        // (autoPublish effect + reconnection completion effect)
       }
     };
     // If a user is `Unable to Publish` to a session and an error is thrown, we log it.
@@ -394,49 +493,115 @@ const usePublisher = (): PublisherContextType => {
     return () => {
       OT.off('exception', exceptionHandler);
     };
-  }, [handlePublishingError]);
+  }, [connected, handlePublishingError]);
 
-  // Handle automatic republishing after network reconnection
   useEffect(() => {
+    if (reconnecting !== true) {
+      return;
+    }
+
     console.warn('[PUBLISHER] RECONNECTION useEffect triggered', {
       reconnecting,
-      isPublishing,
       connected,
+      isPublishing,
       wasPublishingBeforeReconnect: wasPublishingBeforeReconnectRef.current,
       hasPublisher: !!publisherRef.current,
+      isPublishingToSession: isPublishingToSessionRef.current,
     });
 
-    // When reconnecting starts, track if we were publishing
-    if (reconnecting === true && isPublishing) {
-      console.warn('[PUBLISHER] RECONNECTION - Started reconnecting, was publishing before');
-      wasPublishingBeforeReconnectRef.current = true;
+    console.warn('[PUBLISHER] RECONNECTION - Session reconnecting, tracking publishing state');
+    wasPublishingBeforeReconnectRef.current = isPublishing;
+    isPublishingToSessionRef.current = false;
+
+    // Don't kick user out due to transient errors while reconnecting
+    setPublishingError(null);
+  }, [reconnecting, connected, isPublishing]);
+
+  useEffect(() => {
+    if (reconnecting !== false) {
+      return;
+    }
+    if (!connected) {
+      return;
+    }
+    if (!wasPublishingBeforeReconnectRef.current) {
+      return;
     }
 
-    // When reconnection completes successfully, republish if we were publishing before
-    if (reconnecting === false && wasPublishingBeforeReconnectRef.current && connected) {
-      console.warn('[PUBLISHER] RECONNECTION - Reconnection complete, attempting to republish');
-      const republish = async () => {
-        try {
-          // Reset the flag to prevent multiple republish attempts
-          isPublishingToSessionRef.current = false;
+    console.warn('[PUBLISHER] RECONNECTION completed', {
+      reconnecting,
+      connected,
+      isPublishing,
+      wasPublishingBeforeReconnect: wasPublishingBeforeReconnectRef.current,
+      hasPublisher: !!publisherRef.current,
+      isPublishingToSession: isPublishingToSessionRef.current,
+      hasPublisherOptions: !!publisherOptions,
+    });
 
-          if (publisherRef.current) {
-            console.warn('[PUBLISHER] RECONNECTION - Republishing stream after reconnection');
-            await publish();
-            wasPublishingBeforeReconnectRef.current = false;
-            console.warn('[PUBLISHER] RECONNECTION - Republish successful');
-          } else {
-            console.warn('[PUBLISHER] RECONNECTION - ERROR: No publisher available for republish');
-          }
-        } catch (error) {
-          console.warn('[PUBLISHER] RECONNECTION - ERROR during republish:', error);
-          // The flag will be reset by the publish error handler
-        }
-      };
+    wasPublishingBeforeReconnectRef.current = false;
 
-      republish();
+    if (publisherRef.current) {
+      return;
     }
-  }, [reconnecting, isPublishing, connected, publish]);
+    if (!publisherOptionsWithCurrentMediaState) {
+      return;
+    }
+
+    console.warn('[PUBLISHER] RECONNECTION - Publisher missing after reconnection, recreating');
+    initializeLocalPublisher(publisherOptionsWithCurrentMediaState);
+  }, [
+    reconnecting,
+    connected,
+    isPublishing,
+    publisherOptions,
+    publisherOptionsWithCurrentMediaState,
+    initializeLocalPublisher,
+  ]);
+
+  useEffect(() => {
+    if (reconnecting !== false) {
+      return;
+    }
+    if (!connected) {
+      return;
+    }
+
+    const publisher = publisherRef.current;
+    if (!publisher) {
+      return;
+    }
+
+    const shouldPublishAudio = isForceMutedRef.current ? false : isAudioEnabled;
+    const shouldPublishVideo = isVideoEnabled;
+
+    console.warn('[PUBLISHER] postReconnect - reapplying media state', {
+      shouldPublishAudio,
+      shouldPublishVideo,
+      isForceMuted,
+      isForceMutedRef: isForceMutedRef.current,
+    });
+
+    publisher.publishAudio(shouldPublishAudio);
+    publisher.publishVideo(shouldPublishVideo);
+  }, [reconnecting, connected, isAudioEnabled, isVideoEnabled, isForceMuted]);
+
+  useEffect(() => {
+    const shouldAutoPublish =
+      !!publisherRef.current && connected && reconnecting === false && !isPublishing;
+
+    console.warn('[PUBLISHER] autoPublish useEffect', {
+      shouldAutoPublish,
+      reconnecting,
+      connected,
+      isPublishing,
+      hasPublisher: !!publisherRef.current,
+      isPublishingToSession: isPublishingToSessionRef.current,
+    });
+
+    if (shouldAutoPublish) {
+      publish();
+    }
+  }, [connected, reconnecting, isPublishing, publish]);
 
   return {
     initializeLocalPublisher,

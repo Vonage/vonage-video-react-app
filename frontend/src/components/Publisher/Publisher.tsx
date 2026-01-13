@@ -53,6 +53,7 @@ const Publisher = ({ box }: PublisherProps): ReactElement => {
 
   const initials = publisher?.stream?.initials;
   const username = publisher?.stream?.name ?? '';
+  const hasVideo = isVideoEnabled && !!element;
   const audioIndicatorStyle: React.CSSProperties = {
     borderRadius: theme.shapes.borderRadiusLarge,
     position: 'absolute',
@@ -74,9 +75,9 @@ const Publisher = ({ box }: PublisherProps): ReactElement => {
       data-testid="publisher-container"
       box={box}
       ref={pubContainerRef}
-      hasVideo={isVideoEnabled}
+      hasVideo={hasVideo}
     >
-      {!isVideoEnabled && (
+      {!hasVideo && (
         <AvatarInitials
           initials={initials}
           height={box.height}

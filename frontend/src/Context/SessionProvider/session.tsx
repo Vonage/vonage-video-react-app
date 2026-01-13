@@ -268,6 +268,7 @@ const SessionProvider = ({ children }: SessionProviderProps): ReactElement => {
   };
   const handleReconnected = () => {
     setReconnecting(false);
+    setSubscriptionError(null);
   };
 
   const handleArchiveStarted = (id: string) => {
@@ -305,9 +306,28 @@ const SessionProvider = ({ children }: SessionProviderProps): ReactElement => {
     activeSpeakerTracker.current.onSubscriberAudioLevelUpdated({ subscriberId, movingAvg });
   };
 
-  const handleSubscriptionError = useCallback((error: unknown) => {
-    setSubscriptionError(error instanceof Error ? error : new Error('Unknown subscription error'));
-  }, []);
+  const handleSubscriptionError = useCallback(
+    (error: unknown) => {
+      const isBrowserOnline = (() => {
+        if (typeof navigator === 'undefined') return true;
+        return navigator.onLine;
+      })();
+
+      if (reconnecting || isBrowserOnline === false) {
+        console.warn('[SUBSCRIBER] Ignoring subscription error during reconnection/offline', {
+          reconnecting,
+          isBrowserOnline,
+          error,
+        });
+        return;
+      }
+
+      setSubscriptionError(
+        error instanceof Error ? error : new Error('Unknown subscription error')
+      );
+    },
+    [reconnecting]
+  );
 
   /**
    * Connects to the session using the provided credentials.

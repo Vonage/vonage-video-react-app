@@ -111,9 +111,9 @@ const MeetingRoom = (): ReactElement => {
     }
   }, [accessStatus]);
 
-  useRedirectOnPublisherError(publishingError);
+  useRedirectOnPublisherError({ publishingError, reconnecting });
 
-  useRedirectOnSubscriberError(subscriptionError);
+  useRedirectOnSubscriberError({ subscriberError: subscriptionError, reconnecting });
 
   return (
     <Box
@@ -177,13 +177,28 @@ const MeetingRoom = (): ReactElement => {
  * This prevents users from subscribing to other participants in the room, and being unable to communicate with them.
  * @param {PublishingErrorType | null} publishingError - The publishing error object or null if no error.
  */
-function useRedirectOnPublisherError(publishingError: PublishingErrorType | null) {
+function useRedirectOnPublisherError(args: {
+  publishingError: PublishingErrorType | null;
+  reconnecting: boolean | null;
+}) {
   const navigate = useNavigate();
   const roomName = useRoomName();
   const { t } = useTranslation();
 
   useEffect(() => {
+    const { publishingError, reconnecting } = args;
+
     if (!publishingError) {
+      return;
+    }
+
+    const isBrowserOnline = (() => {
+      if (typeof navigator === 'undefined') return true;
+      return navigator.onLine;
+    })();
+
+    if (reconnecting === true || isBrowserOnline === false) {
+      // Network changes are often transient; don't redirect during reconnection/offline.
       return;
     }
 
@@ -195,7 +210,7 @@ function useRedirectOnPublisherError(publishingError: PublishingErrorType | null
         roomName,
       },
     });
-  }, [publishingError, navigate, roomName, t]);
+  }, [args, navigate, roomName, t]);
 }
 
 /**
@@ -203,13 +218,27 @@ function useRedirectOnPublisherError(publishingError: PublishingErrorType | null
  * This prevents users from subscribing to other participants in the room, and being unable to communicate with them.
  * @param {Error | null} subscriberError - The subscriber error object or null if no error.
  */
-function useRedirectOnSubscriberError(subscriberError: Error | null) {
+function useRedirectOnSubscriberError(args: {
+  subscriberError: Error | null;
+  reconnecting: boolean | null;
+}) {
   const navigate = useNavigate();
   const roomName = useRoomName();
   const { t } = useTranslation();
 
   useEffect(() => {
+    const { subscriberError, reconnecting } = args;
+
     if (!subscriberError) {
+      return;
+    }
+
+    const isBrowserOnline = (() => {
+      if (typeof navigator === 'undefined') return true;
+      return navigator.onLine;
+    })();
+
+    if (reconnecting === true || isBrowserOnline === false) {
       return;
     }
 
@@ -220,7 +249,7 @@ function useRedirectOnSubscriberError(subscriberError: Error | null) {
         roomName,
       },
     });
-  }, [subscriberError, navigate, roomName, t]);
+  }, [args, navigate, roomName, t]);
 }
 
 export default MeetingRoom;

@@ -177,3 +177,11 @@ export const MAX_ZOOM = 5;
  * This value determines how much the zoom level changes with each zoom action (e.g., mouse wheel event).
  */
 export const ZOOM_STEP = 0.25;
+
+/**
+ * @constant {object} defaultVideoTileDimensions - The default dimensions for video tiles when actual video dimensions are unavailable.
+ */
+export const defaultVideoTileDimensions = {
+  width: 1280,
+  height: 720,
+};

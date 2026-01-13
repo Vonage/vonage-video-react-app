@@ -383,9 +383,17 @@ class VonageVideoClient extends EventEmitter<VonageVideoClientEvents> {
    */
   publish = (publisher: Publisher): Promise<void> => {
     return new Promise((resolve, reject) => {
+      if (!this.clientSession) {
+        reject(new Error('Session is not initialized.'));
+        return;
+      }
+
       this.clientSession?.publish(publisher, (error) => {
         if (error) {
-          reject(new Error(`${error.name}: ${error.message}`));
+          const errorName = error.name || 'OTError';
+          const errorMessage = error.message || 'Unknown publish error';
+          reject(new Error(`${errorName}: ${errorMessage}`));
+          return;
         }
 
         // the following is needed for the local subscriber to be able to receive captions

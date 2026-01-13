@@ -41,9 +41,9 @@ const VideoTileCanvas = ({
   const wrapDimensions = useElementDimensions({ elementRef: wrapRef });
 
   const activeSpeakerId = useActiveSpeaker();
-  const { isPublishing, publisher } = usePublisherContext();
+  const { publisher } = usePublisherContext();
   const getLayout = useLayoutManager();
-  const { connected, subscriberWrappers, layoutMode } = useSessionContext();
+  const { connected, reconnecting, subscriberWrappers, layoutMode } = useSessionContext();
 
   // Determine if we will display a large video tile based on current layout mode and screenshare presence
   const pinnedSubscriberCount = subscriberWrappers.filter(
@@ -91,6 +91,10 @@ const VideoTileCanvas = ({
   // Width is 100vw - 360px panel width - 24px panel right margin - 24px wrapper margin
   const wrapperWidth = isRightPanelOpen ? 'calc(100vw - 392px)' : 'calc(100vw - 24px)';
 
+  const shouldShowProgress = connected !== true || reconnecting === true;
+  const progressTestId =
+    reconnecting === true ? 'reconnecting-progress-spinner' : 'progress-spinner';
+
   return (
     <Box
       ref={wrapRef}
@@ -102,43 +106,37 @@ const VideoTileCanvas = ({
       }}
     >
       <Box id="video-container" sx={{ position: 'relative', width: '100%', height: '100%' }}>
-        {!connected ? (
+        {layoutBoxes.publisherBox && <Publisher box={layoutBoxes.publisherBox} />}
+        {isSharingScreen && (
+          <ScreenSharePublisher
+            publisher={screensharingPublisher}
+            box={layoutBoxes.localScreenshareBox}
+            element={screenshareVideoElement}
+          />
+        )}
+        {// Note: we still render hidden subscribers with flag `hidden`
+        // inside the subscriber component we will unsubscribe to video to save bandwidth
+        [...subscribersInDisplayOrder, ...hiddenSubscribers]?.map((subscriberWrapper, index) => (
+          <Subscriber
+            key={subscriberWrapper.id}
+            subscriberWrapper={subscriberWrapper}
+            isHidden={!subscribersInDisplayOrder.includes(subscriberWrapper)}
+            box={layoutBoxes.subscriberBoxes?.[index]}
+            isActiveSpeaker={activeSpeakerId === subscriberWrapper.id}
+          />
+        ))}
+        {!!hiddenSubscribers.length && layoutBoxes.hiddenParticipantsBox && (
+          <HiddenParticipantsTile
+            hiddenSubscribers={hiddenSubscribers}
+            box={layoutBoxes.hiddenParticipantsBox}
+          />
+        )}
+
+        {shouldShowProgress && (
           <CircularProgress
-            data-testid="progress-spinner"
+            data-testid={progressTestId}
             sx={{ position: 'absolute', top: '50%' }}
           />
-        ) : (
-          <>
-            {isPublishing && layoutBoxes.publisherBox && (
-              <Publisher box={layoutBoxes.publisherBox} />
-            )}
-            {isSharingScreen && (
-              <ScreenSharePublisher
-                publisher={screensharingPublisher}
-                box={layoutBoxes.localScreenshareBox}
-                element={screenshareVideoElement}
-              />
-            )}
-            {// Note: we still render hidden subscribers with flag `hidden`
-            // inside the subscriber component we will unsubscribe to video to save bandwidth
-            [...subscribersInDisplayOrder, ...hiddenSubscribers]?.map(
-              (subscriberWrapper, index) => (
-                <Subscriber
-                  key={subscriberWrapper.id}
-                  subscriberWrapper={subscriberWrapper}
-                  isHidden={!subscribersInDisplayOrder.includes(subscriberWrapper)}
-                  box={layoutBoxes.subscriberBoxes?.[index]}
-                  isActiveSpeaker={activeSpeakerId === subscriberWrapper.id}
-                />
-              )
-            )}
-            {!!hiddenSubscribers.length && layoutBoxes.hiddenParticipantsBox && (
-              <HiddenParticipantsTile
-                hiddenSubscribers={hiddenSubscribers}
-                box={layoutBoxes.hiddenParticipantsBox}
-              />
-            )}
-          </>
         )}
       </Box>
     </Box>
