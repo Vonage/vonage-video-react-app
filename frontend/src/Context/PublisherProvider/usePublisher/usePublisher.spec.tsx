@@ -41,8 +41,6 @@ describe('usePublisher', () => {
   const destroySpy = vi.fn();
   const mockPublisher = Object.assign(new EventEmitter(), {
     destroy: destroySpy,
-    publishAudio: vi.fn(),
-    publishVideo: vi.fn(),
     applyVideoFilter: vi.fn(),
     clearVideoFilter: vi.fn(),
   }) as unknown as Publisher;

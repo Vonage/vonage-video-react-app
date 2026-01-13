@@ -148,53 +148,20 @@ const usePublisher = (): PublisherContextType => {
 
   useEffect(() => {
     isForceMutedRef.current = isForceMuted;
-
-    if (!import.meta.env.DEV) {
-      return;
-    }
-
-    console.warn('[PUBLISHER] isForceMuted changed', {
-      isForceMuted,
-    });
   }, [isForceMuted]);
 
-  const applyPublisherMediaState = useCallback(
-    (reason: string) => {
-      const publisher = publisherRef.current;
-      if (!publisher) {
-        return;
-      }
-
-      const shouldPublishAudio = isForceMutedRef.current ? false : isAudioEnabled;
-      const shouldPublishVideo = isVideoEnabled;
-
-      console.warn('[PUBLISHER] applyPublisherMediaState', {
-        reason,
-        shouldPublishAudio,
-        shouldPublishVideo,
-        isForceMuted: isForceMutedRef.current,
-      });
-
-      publisher.publishAudio(shouldPublishAudio);
-      publisher.publishVideo(shouldPublishVideo);
-    },
-    [isAudioEnabled, isVideoEnabled]
-  );
-
-  const handleAccessAllowed = useCallback(() => {
+  const handleAccessAllowed = () => {
     isInitializingPublisherRef.current = false;
     setDeviceAccess({
       microphone: true,
       camera: true,
     });
+  };
 
-    applyPublisherMediaState('accessAllowed');
-  }, [applyPublisherMediaState]);
-
-  const handleDestroyed = useCallback(() => {
+  const handleDestroyed = () => {
     console.warn('[PUBLISHER] handleDestroyed - Publisher destroyed');
     publisherRef.current = null;
-  }, []);
+  };
 
   /**
    * Change background replacement or blur effect
@@ -213,23 +180,18 @@ const usePublisher = (): PublisherContextType => {
     });
   }, []);
 
-  const handleStreamCreated = useCallback(
-    (event: PublisherStreamCreatedEvent) => {
-      setIsPublishing(true);
-      setStream(event.stream);
-      // Reset the flag now that the stream is actually established
-      isPublishingToSessionRef.current = false;
-      // Track that we were publishing successfully
-      wasPublishingBeforeReconnectRef.current = true;
+  const handleStreamCreated = (e: PublisherStreamCreatedEvent) => {
+    setIsPublishing(true);
+    setStream(e.stream);
+    // Reset the flag now that the stream is actually established
+    isPublishingToSessionRef.current = false;
+    // Track that we were publishing successfully
+    wasPublishingBeforeReconnectRef.current = true;
 
-      // Successful publish resets transient failure tracking
-      consecutivePublishingFailureCountRef.current = 0;
-      setPublishingError(null);
-
-      applyPublisherMediaState('streamCreated');
-    },
-    [applyPublisherMediaState]
-  );
+    // Successful publish resets transient failure tracking
+    consecutivePublishingFailureCountRef.current = 0;
+    setPublishingError(null);
+  };
 
   const handleStreamDestroyed = useCallback(() => {
     console.warn('[PUBLISHER] handleStreamDestroyed', {
@@ -292,9 +254,9 @@ const usePublisher = (): PublisherContextType => {
     }
   };
 
-  const handleVideoElementCreated = useCallback((event: PublisherVideoElementCreatedEvent) => {
+  const handleVideoElementCreated = (event: PublisherVideoElementCreatedEvent) => {
     setPublisherVideoElement(event.element);
-  }, []);
+  };
 
   /**
    * Method to handle the mute force of a participant
@@ -317,8 +279,8 @@ const usePublisher = (): PublisherContextType => {
     setStorageItem(STORAGE_KEYS.AUDIO_SOURCE_ENABLED, 'false');
 
     // Extra safety: enforce mute on the SDK publisher immediately.
-    applyPublisherMediaState('muteForced');
-  }, [applyPublisherMediaState, connected]);
+    publisherRef.current.publishAudio(false);
+  }, [connected]);
 
   const addPublisherListeners = useCallback(
     (publisher: Publisher) => {
@@ -330,14 +292,7 @@ const usePublisher = (): PublisherContextType => {
       publisher.on('muteForced', handleMuteForced);
       publisher.on('accessAllowed', handleAccessAllowed);
     },
-    [
-      handleDestroyed,
-      handleStreamCreated,
-      handleStreamDestroyed,
-      handleVideoElementCreated,
-      handleMuteForced,
-      handleAccessAllowed,
-    ]
+    [handleMuteForced, handleStreamDestroyed]
   );
 
   /**
@@ -474,27 +429,11 @@ const usePublisher = (): PublisherContextType => {
     if (!publisherRef.current) {
       return;
     }
-
-    const nextIsAudioEnabled = !isAudioEnabled;
-    const isAttemptingToUnmuteWhileForceMuted =
-      isForceMutedRef.current === true && nextIsAudioEnabled === true;
-
-    if (isAttemptingToUnmuteWhileForceMuted) {
-      console.warn('[PUBLISHER] toggleAudio - BLOCKED: force muted');
-      applyPublisherMediaState('toggleAudioBlocked');
-      return;
-    }
-
-    publisherRef.current.publishAudio(nextIsAudioEnabled);
-    setIsAudioEnabled(nextIsAudioEnabled);
-    setStorageItem(STORAGE_KEYS.AUDIO_SOURCE_ENABLED, nextIsAudioEnabled.toString());
-
-    // If the user mutes themselves manually, that is compatible with force-mute.
-    // If they unmuted (and were not force-muted), clear force-mute.
-    if (nextIsAudioEnabled) {
-      isForceMutedRef.current = false;
-      setIsForceMuted(false);
-    }
+    publisherRef.current.publishAudio(!isAudioEnabled);
+    setIsAudioEnabled(!isAudioEnabled);
+    setStorageItem(STORAGE_KEYS.AUDIO_SOURCE_ENABLED, (!isAudioEnabled).toString());
+    isForceMutedRef.current = false;
+    setIsForceMuted(false);
   };
 
   useEffect(() => {
@@ -632,8 +571,19 @@ const usePublisher = (): PublisherContextType => {
       return;
     }
 
-    applyPublisherMediaState('postReconnect');
-  }, [reconnecting, connected, applyPublisherMediaState]);
+    const shouldPublishAudio = isForceMutedRef.current ? false : isAudioEnabled;
+    const shouldPublishVideo = isVideoEnabled;
+
+    console.warn('[PUBLISHER] postReconnect - reapplying media state', {
+      shouldPublishAudio,
+      shouldPublishVideo,
+      isForceMuted,
+      isForceMutedRef: isForceMutedRef.current,
+    });
+
+    publisher.publishAudio(shouldPublishAudio);
+    publisher.publishVideo(shouldPublishVideo);
+  }, [reconnecting, connected, isAudioEnabled, isVideoEnabled, isForceMuted]);
 
   useEffect(() => {
     const shouldAutoPublish =
