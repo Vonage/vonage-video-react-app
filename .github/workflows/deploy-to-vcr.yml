@@ -72,12 +72,18 @@ jobs:
           fi
 
       - name: Prepare Slack payload variables
+        env:
+          PR_TITLE: ${{ github.event.pull_request.title }}
+          PR_NUMBER: ${{ github.event.number }}
+          COMMIT_SHA: ${{ github.sha }}
+          REPO: ${{ github.repository }}
+          RUN_ID: ${{ github.run_id }}
         run: |
-          echo "PR_TITLE=${{ github.event.pull_request.title }}" >> $GITHUB_ENV
-          echo "PR_NUMBER=${{ github.event.number }}" >> $GITHUB_ENV
-          echo "COMMIT_SHA=${{ github.sha }}" >> $GITHUB_ENV
-          echo "REPO=${{ github.repository }}" >> $GITHUB_ENV
-          echo "RUN_ID=${{ github.run_id }}" >> $GITHUB_ENV
+          echo "PR_TITLE=$PR_TITLE" >> $GITHUB_ENV
+          echo "PR_NUMBER=$PR_NUMBER" >> $GITHUB_ENV
+          echo "COMMIT_SHA=$COMMIT_SHA" >> $GITHUB_ENV
+          echo "REPO=$REPO" >> $GITHUB_ENV
+          echo "RUN_ID=$RUN_ID" >> $GITHUB_ENV
 
       - name: Slack notification on success
         uses: slackapi/slack-github-action@70cd7be8e40a46e8b0eced40b0de447bdb42f68e # v1.26.0
