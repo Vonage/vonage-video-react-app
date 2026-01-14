@@ -85,11 +85,8 @@ const usePublisher = (): PublisherContextType => {
   const [isPublishing, setIsPublishing] = useState(false);
   const publisherOptions = usePublisherOptions();
   const [isForceMuted, setIsForceMuted] = useState<boolean>(false);
-  const isForceMutedRef = useRef<boolean>(false);
   const [isVideoEnabled, setIsVideoEnabled] = useState<boolean>(false);
   const [isAudioEnabled, setIsAudioEnabled] = useState<boolean>(false);
-  const isAudioEnabledRef = useRef<boolean>(false);
-  const isVideoEnabledRef = useRef<boolean>(false);
   const [stream, setStream] = useState<Stream | null>();
   const isPublishingToSessionRef = useRef<boolean>(false);
   const isInitializingPublisherRef = useRef<boolean>(false);
@@ -143,26 +140,16 @@ const usePublisher = (): PublisherContextType => {
       return;
     }
 
-    logPublisherAudioDebug('publisherOptions effect - applying media defaults from options', {
-      before: {
-        isAudioEnabled: isAudioEnabledRef.current,
-        isVideoEnabled: isVideoEnabledRef.current,
-        isForceMuted: isForceMutedRef.current,
-      },
-      publisherOptionsPublishAudio: publisherOptions.publishAudio,
-      publisherOptionsPublishVideo: publisherOptions.publishVideo,
-    });
-
     setIsVideoEnabled(!!publisherOptions.publishVideo);
     setIsAudioEnabled(!!publisherOptions.publishAudio);
-  }, [publisherOptions, logPublisherAudioDebug]);
+  }, [publisherOptions]);
 
   const publisherOptionsWithCurrentMediaState = (() => {
     if (!publisherOptions) {
       return null;
     }
 
-    const shouldPublishAudio = isForceMutedRef.current ? false : isAudioEnabled;
+    const shouldPublishAudio = isForceMuted ? false : isAudioEnabled;
     const shouldPublishVideo = isVideoEnabled;
 
     return {
@@ -175,18 +162,6 @@ const usePublisher = (): PublisherContextType => {
   useEffect(() => {
     reconnectingRef.current = reconnecting === true;
   }, [reconnecting]);
-
-  useEffect(() => {
-    isForceMutedRef.current = isForceMuted;
-  }, [isForceMuted]);
-
-  useEffect(() => {
-    isAudioEnabledRef.current = isAudioEnabled;
-  }, [isAudioEnabled]);
-
-  useEffect(() => {
-    isVideoEnabledRef.current = isVideoEnabled;
-  }, [isVideoEnabled]);
 
   const handleAccessAllowed = useCallback(() => {
     isInitializingPublisherRef.current = false;
@@ -313,7 +288,6 @@ const usePublisher = (): PublisherContextType => {
       return;
     }
 
-    isForceMutedRef.current = true;
     setIsForceMuted(true);
     setIsAudioEnabled(false);
 
@@ -492,7 +466,6 @@ const usePublisher = (): PublisherContextType => {
     publisherRef.current.publishAudio(nextAudioEnabled);
     setIsAudioEnabled(nextAudioEnabled);
     setStorageItem(STORAGE_KEYS.AUDIO_SOURCE_ENABLED, nextAudioEnabled.toString());
-    isForceMutedRef.current = false;
     setIsForceMuted(false);
 
     logPublisherAudioDebug('toggleAudio (after publishAudio)', {
@@ -627,14 +600,13 @@ const usePublisher = (): PublisherContextType => {
       return;
     }
 
-    const shouldPublishAudio = isForceMutedRef.current ? false : isAudioEnabled;
+    const shouldPublishAudio = isForceMuted ? false : isAudioEnabled;
     const shouldPublishVideo = isVideoEnabled;
 
     console.warn('[PUBLISHER] postReconnect - reapplying media state', {
       shouldPublishAudio,
       shouldPublishVideo,
       isForceMuted,
-      isForceMutedRef: isForceMutedRef.current,
     });
 
     publisher.publishAudio(shouldPublishAudio);
