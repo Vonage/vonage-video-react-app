@@ -34,12 +34,12 @@ import {
   togglePinAndSortByDisplayOrder,
 } from '@utils/sessionStateOperations';
 import { MAX_PIN_COUNT_DESKTOP, MAX_PIN_COUNT_MOBILE } from '@utils/constants';
-import VonageVideoClient from '@utils/VonageVideoClient';
+import VonageVideoSessionClient from '@utils/VonageVideoSessionClient';
 
 export type { ChatMessageType } from '@app-types/chat';
 
 export type SessionContextType = {
-  vonageVideoClient: null | VonageVideoClient;
+  vonageVideoClient: null | VonageVideoSessionClient;
   disconnect: null | (() => void);
   joinRoom: null | ((roomName: string) => Promise<void>);
   forceMute: null | ((stream: Stream) => Promise<void>);
@@ -127,7 +127,7 @@ const SessionProvider = ({ children }: SessionProviderProps): ReactElement => {
   const appConfig = appConfigContext.use.api();
 
   const [lastStreamUpdate, setLastStreamUpdate] = useState<StreamPropertyChangedEvent | null>(null);
-  const vonageVideoClient = useRef<null | VonageVideoClient>(null);
+  const vonageVideoClient = useRef<null | VonageVideoSessionClient>(null);
   const [reconnecting, setReconnecting] = useState(false);
   const [subscriberWrappers, setSubscriberWrappers] = useState<SubscriberWrapper[]>([]);
   const [subscriptionError, setSubscriptionError] = useState<Error | null>(null);
@@ -342,7 +342,7 @@ const SessionProvider = ({ children }: SessionProviderProps): ReactElement => {
       // initialize the session object and set up the relevant event listeners
       // https://tokbox.com/developer/sdks/js/reference/Session.html#events for opentok
       // https://vonage.github.io/conversation-docs/video-js-reference/latest/Session.html#events for unified environment
-      vonageVideoClient.current = new VonageVideoClient(credential);
+      vonageVideoClient.current = new VonageVideoSessionClient(credential);
       vonageVideoClient.current.on('streamPropertyChanged', handleStreamPropertyChanged);
       vonageVideoClient.current.on('sessionReconnecting', handleReconnecting);
       vonageVideoClient.current.on('sessionReconnected', handleReconnected);

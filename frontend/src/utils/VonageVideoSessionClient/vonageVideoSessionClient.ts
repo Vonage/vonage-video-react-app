@@ -23,7 +23,7 @@ import logOnConnect from '../logOnConnect';
 import createMovingAvgAudioLevelTracker from '../movingAverageAudioLevelTracker';
 import idempotentCallbackWithRetry from '../idempotentCallbackWithRetry/idempotentCallbackWithRetry';
 
-type VonageVideoClientEvents = {
+type VonageVideoSessionClientEvents = {
   archiveStarted: [string];
   archiveStopped: [];
   screenshareStreamCreated: [];
@@ -43,22 +43,22 @@ type VonageVideoClientEvents = {
 };
 
 /**
- * VonageVideoClient class - Manages a Vonage Video session, including subscribing to streams,
+ * VonageVideoSessionClient class - Manages a Vonage Video session, including subscribing to streams,
  * handling events, and emitting custom events for session-related actions. It serves to
  * provide a structured interface for interacting with the Vonage Video API and to separate
  * React logic from the Vonage Video API logic, allowing for easier testing and maintenance.
  *
  * This class extends `EventEmitter` to provide event-driven functionality.
- * @class VonageVideoClient
+ * @class VonageVideoSessionClient
  * @augments {EventEmitter}
  */
-class VonageVideoClient extends EventEmitter<VonageVideoClientEvents> {
+class VonageVideoSessionClient extends EventEmitter<VonageVideoSessionClientEvents> {
   public clientSession: Session | null;
   private readonly credential: Credential;
   private hiddenSubscriber: Subscriber | null = null;
 
   /**
-   * Creates an instance of VonageVideoClient.
+   * Creates an instance of VonageVideoSessionClient.
    * Initializes the session and attaches event listeners.
    * @param {Credential} credential - The API key, session ID, and token required to initialize the session.
    */
@@ -403,14 +403,14 @@ class VonageVideoClient extends EventEmitter<VonageVideoClientEvents> {
         // the following is needed for the local subscriber to be able to receive captions
         // More information: https://developer.vonage.com/en/video/guides/live-caption#receiving-your-own-live-captions
         if (publisher.stream) {
-          this.hiddenSubscriber =
+          /*this.hiddenSubscriber =
             this.clientSession?.subscribe(publisher.stream, document.createElement('div'), {
               audioVolume: 0,
             }) ?? null;
 
           this.hiddenSubscriber?.on('captionReceived', (captionEvent) => {
             this.emit('localCaptionReceived', captionEvent);
-          });
+          });*/
         }
 
         resolve();
@@ -457,4 +457,4 @@ class VonageVideoClient extends EventEmitter<VonageVideoClientEvents> {
   }
 }
 
-export default VonageVideoClient;
+export default VonageVideoSessionClient;

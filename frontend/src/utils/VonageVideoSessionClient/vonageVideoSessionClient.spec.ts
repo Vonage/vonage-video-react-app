@@ -9,7 +9,7 @@ import {
 } from '@vonage/client-sdk-video';
 import EventEmitter from 'events';
 import logOnConnect from '../logOnConnect';
-import VonageVideoClient from './vonageVideoClient';
+import VonageVideoSessionClient from './vonageVideoSessionClient';
 import { Credential, SignalEvent, SignalType } from '../../types/session';
 import { wait } from '../idempotentCallbackWithRetry/idempotentCallbackWithRetry';
 
@@ -34,8 +34,8 @@ const fakeCredentials: Credential = {
   token: 'toe-ken',
 };
 
-describe('VonageVideoClient', () => {
-  let vonageVideoClient: VonageVideoClient | null;
+describe('VonageVideoSessionClient', () => {
+  let vonageVideoClient: VonageVideoSessionClient | null;
   let mockSession: TestSession;
 
   beforeEach(() => {
@@ -60,7 +60,7 @@ describe('VonageVideoClient', () => {
     });
     mockSubscribe.mockReturnValue(mockSubscriber);
 
-    vonageVideoClient = new VonageVideoClient(fakeCredentials);
+    vonageVideoClient = new VonageVideoSessionClient(fakeCredentials);
   });
 
   afterEach(() => {

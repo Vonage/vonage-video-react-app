@@ -6,7 +6,7 @@ import { Publisher, Stream } from '@vonage/client-sdk-video';
 import { makeSessionProviderWrapper } from '@test/providers';
 import useSessionContext from '@hooks/useSessionContext';
 import ActiveSpeakerTracker from '@utils/ActiveSpeakerTracker';
-import VonageVideoClient from '@utils/VonageVideoClient';
+import VonageVideoSessionClient from '@utils/VonageVideoSessionClient';
 import { Credential, StreamPropertyChangedEvent, SubscriberWrapper } from '@app-types/session';
 import fetchCredentials from '@api/fetchCredentials';
 import { UserType } from '@Context/user';
@@ -27,7 +27,7 @@ const mockFetchCredentials = fetchCredentials as Mock;
 describe('SessionProvider', () => {
   let activeSpeakerTracker: ActiveSpeakerTracker;
 
-  let vonageVideoClient: VonageVideoClient;
+  let vonageVideoClient: VonageVideoSessionClient;
   let getByTestId: (id: string) => HTMLElement;
 
   const TestComponent = () => {
@@ -137,13 +137,13 @@ describe('SessionProvider', () => {
       connect: vi.fn().mockReturnValue(Promise.resolve()),
       disconnect: vi.fn(),
       forceMuteStream: vi.fn(),
-    }) as unknown as VonageVideoClient;
+    }) as unknown as VonageVideoSessionClient;
 
     const mockedActiveSpeakerTracker = vi.mocked(ActiveSpeakerTracker);
     mockedActiveSpeakerTracker.mockImplementation(() => {
       return activeSpeakerTracker;
     });
-    const mockedVonageVideoClient = vi.mocked(VonageVideoClient);
+    const mockedVonageVideoClient = vi.mocked(VonageVideoSessionClient);
     mockedVonageVideoClient.mockImplementation(() => {
       return vonageVideoClient;
     });
