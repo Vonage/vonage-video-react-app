@@ -88,6 +88,8 @@ const usePublisher = (): PublisherContextType => {
   const isForceMutedRef = useRef<boolean>(false);
   const [isVideoEnabled, setIsVideoEnabled] = useState<boolean>(false);
   const [isAudioEnabled, setIsAudioEnabled] = useState<boolean>(false);
+  const isAudioEnabledRef = useRef<boolean>(false);
+  const isVideoEnabledRef = useRef<boolean>(false);
   const [stream, setStream] = useState<Stream | null>();
   const isPublishingToSessionRef = useRef<boolean>(false);
   const isInitializingPublisherRef = useRef<boolean>(false);
@@ -106,6 +108,56 @@ const usePublisher = (): PublisherContextType => {
     camera: undefined,
   });
 
+  const isPublisherAudioDebugEnabled = useCallback((): boolean => {
+    if (typeof window === 'undefined') return false;
+
+    try {
+      return window.localStorage.getItem('vera:debug:publisher_audio') === 'true';
+    } catch {
+      return false;
+    }
+  }, []);
+
+  const logPublisherAudioDebug = useCallback(
+    (message: string, details?: Record<string, unknown>) => {
+      if (!isPublisherAudioDebugEnabled()) return;
+      console.debug(`[PUBLISHER][AUDIO] ${message}`, details);
+    },
+    [isPublisherAudioDebugEnabled]
+  );
+
+  const getPublisherAudioSnapshot = useCallback((): Record<string, unknown> => {
+    const publisher = publisherRef.current;
+    const publisherStream = publisher?.stream;
+
+    return {
+      connected,
+      reconnecting: reconnectingRef.current,
+      reconnectingState: reconnecting,
+      isPublishing,
+      isPublishingToSession: isPublishingToSessionRef.current,
+      isInitializingPublisher: isInitializingPublisherRef.current,
+      isAudioEnabled,
+      isVideoEnabled,
+      isForceMuted,
+      isForceMutedRef: isForceMutedRef.current,
+      hasPublisher: !!publisher,
+      hasPublisherStream: !!publisherStream,
+      publisherStreamHasAudio: publisherStream?.hasAudio,
+      publisherStreamHasVideo: publisherStream?.hasVideo,
+      publisherOptionsPublishAudio: publisherOptions?.publishAudio,
+      publisherOptionsPublishVideo: publisherOptions?.publishVideo,
+    };
+  }, [
+    connected,
+    reconnecting,
+    isPublishing,
+    isAudioEnabled,
+    isVideoEnabled,
+    isForceMuted,
+    publisherOptions,
+  ]);
+
   // If we do not have audio input or video input access, we cannot publish.
   useEffect(() => {
     if (deviceAccess?.microphone === false || deviceAccess?.camera === false) {
@@ -123,9 +175,19 @@ const usePublisher = (): PublisherContextType => {
       return;
     }
 
+    logPublisherAudioDebug('publisherOptions effect - applying media defaults from options', {
+      before: {
+        isAudioEnabled: isAudioEnabledRef.current,
+        isVideoEnabled: isVideoEnabledRef.current,
+        isForceMuted: isForceMutedRef.current,
+      },
+      publisherOptionsPublishAudio: publisherOptions.publishAudio,
+      publisherOptionsPublishVideo: publisherOptions.publishVideo,
+    });
+
     setIsVideoEnabled(!!publisherOptions.publishVideo);
     setIsAudioEnabled(!!publisherOptions.publishAudio);
-  }, [publisherOptions]);
+  }, [publisherOptions, logPublisherAudioDebug]);
 
   const publisherOptionsWithCurrentMediaState = (() => {
     if (!publisherOptions) {
@@ -150,18 +212,26 @@ const usePublisher = (): PublisherContextType => {
     isForceMutedRef.current = isForceMuted;
   }, [isForceMuted]);
 
-  const handleAccessAllowed = () => {
+  useEffect(() => {
+    isAudioEnabledRef.current = isAudioEnabled;
+  }, [isAudioEnabled]);
+
+  useEffect(() => {
+    isVideoEnabledRef.current = isVideoEnabled;
+  }, [isVideoEnabled]);
+
+  const handleAccessAllowed = useCallback(() => {
     isInitializingPublisherRef.current = false;
     setDeviceAccess({
       microphone: true,
       camera: true,
     });
-  };
+  }, []);
 
-  const handleDestroyed = () => {
+  const handleDestroyed = useCallback(() => {
     console.warn('[PUBLISHER] handleDestroyed - Publisher destroyed');
     publisherRef.current = null;
-  };
+  }, []);
 
   /**
    * Change background replacement or blur effect
@@ -180,18 +250,28 @@ const usePublisher = (): PublisherContextType => {
     });
   }, []);
 
-  const handleStreamCreated = (e: PublisherStreamCreatedEvent) => {
-    setIsPublishing(true);
-    setStream(e.stream);
-    // Reset the flag now that the stream is actually established
-    isPublishingToSessionRef.current = false;
-    // Track that we were publishing successfully
-    wasPublishingBeforeReconnectRef.current = true;
+  const handleStreamCreated = useCallback(
+    (e: PublisherStreamCreatedEvent) => {
+      logPublisherAudioDebug('streamCreated', {
+        streamId: e.stream?.streamId,
+        streamHasAudio: e.stream?.hasAudio,
+        streamHasVideo: e.stream?.hasVideo,
+        snapshot: getPublisherAudioSnapshot(),
+      });
 
-    // Successful publish resets transient failure tracking
-    consecutivePublishingFailureCountRef.current = 0;
-    setPublishingError(null);
-  };
+      setIsPublishing(true);
+      setStream(e.stream);
+      // Reset the flag now that the stream is actually established
+      isPublishingToSessionRef.current = false;
+      // Track that we were publishing successfully
+      wasPublishingBeforeReconnectRef.current = true;
+
+      // Successful publish resets transient failure tracking
+      consecutivePublishingFailureCountRef.current = 0;
+      setPublishingError(null);
+    },
+    [getPublisherAudioSnapshot, logPublisherAudioDebug]
+  );
 
   const handleStreamDestroyed = useCallback(() => {
     console.warn('[PUBLISHER] handleStreamDestroyed', {
@@ -200,6 +280,10 @@ const usePublisher = (): PublisherContextType => {
       isPublishing,
       hasPublisher: !!publisherRef.current,
       hasStream: !!publisherRef.current?.stream,
+    });
+
+    logPublisherAudioDebug('streamDestroyed', {
+      snapshot: getPublisherAudioSnapshot(),
     });
 
     setStream(null);
@@ -227,9 +311,9 @@ const usePublisher = (): PublisherContextType => {
     } else {
       console.warn('[PUBLISHER] handleStreamDestroyed - Publisher already destroyed');
     }
-  }, [connected, isPublishing]);
+  }, [connected, isPublishing, getPublisherAudioSnapshot, logPublisherAudioDebug]);
 
-  const handleAccessDenied = (event: AccessDeniedEvent) => {
+  const handleAccessDenied = useCallback((event: AccessDeniedEvent) => {
     const deviceDeniedAccess = event.message?.startsWith('Microphone') ? 'microphone' : 'camera';
     isInitializingPublisherRef.current = false;
     // We check the first word of the message to see if the microphone or camera was denied access.
@@ -242,7 +326,7 @@ const usePublisher = (): PublisherContextType => {
       publisherRef.current.destroy();
     }
     publisherRef.current = null;
-  };
+  }, []);
 
   /**
    * Method to unpublish from session and destroy publisher
@@ -254,9 +338,9 @@ const usePublisher = (): PublisherContextType => {
     }
   };
 
-  const handleVideoElementCreated = (event: PublisherVideoElementCreatedEvent) => {
+  const handleVideoElementCreated = useCallback((event: PublisherVideoElementCreatedEvent) => {
     setPublisherVideoElement(event.element);
-  };
+  }, []);
 
   /**
    * Method to handle the mute force of a participant
@@ -265,6 +349,10 @@ const usePublisher = (): PublisherContextType => {
     if (!publisherRef?.current) {
       return;
     }
+
+    logPublisherAudioDebug('muteForced (before enforce)', {
+      snapshot: getPublisherAudioSnapshot(),
+    });
 
     console.warn('[PUBLISHER] muteForced - enforcing local mute', {
       reconnecting: reconnectingRef.current,
@@ -280,7 +368,11 @@ const usePublisher = (): PublisherContextType => {
 
     // Extra safety: enforce mute on the SDK publisher immediately.
     publisherRef.current.publishAudio(false);
-  }, [connected]);
+
+    logPublisherAudioDebug('muteForced (after enforce)', {
+      snapshot: getPublisherAudioSnapshot(),
+    });
+  }, [connected, getPublisherAudioSnapshot, logPublisherAudioDebug]);
 
   const addPublisherListeners = useCallback(
     (publisher: Publisher) => {
@@ -292,7 +384,15 @@ const usePublisher = (): PublisherContextType => {
       publisher.on('muteForced', handleMuteForced);
       publisher.on('accessAllowed', handleAccessAllowed);
     },
-    [handleMuteForced, handleStreamDestroyed]
+    [
+      handleAccessAllowed,
+      handleAccessDenied,
+      handleDestroyed,
+      handleMuteForced,
+      handleStreamCreated,
+      handleStreamDestroyed,
+      handleVideoElementCreated,
+    ]
   );
 
   /**
@@ -363,6 +463,10 @@ const usePublisher = (): PublisherContextType => {
       hasPublisher: !!publisherRef.current,
       isPublishingToSession: isPublishingToSessionRef.current,
     });
+
+    logPublisherAudioDebug('publish called', {
+      snapshot: getPublisherAudioSnapshot(),
+    });
     try {
       if (isPublishingToSessionRef.current) {
         console.warn('[PUBLISHER] publish - BLOCKED: Already publishing to session');
@@ -395,6 +499,12 @@ const usePublisher = (): PublisherContextType => {
       // Don't reset isPublishingToSessionRef here - wait for streamCreated event
     } catch (err: unknown) {
       console.warn('[PUBLISHER] publish - ERROR during publish:', err);
+
+      logPublisherAudioDebug('publish failed', {
+        error: err instanceof Error ? { message: err.message, name: err.name } : err,
+        snapshot: getPublisherAudioSnapshot(),
+      });
+
       // Reset the flag on error since we won't get streamCreated
       isPublishingToSessionRef.current = false;
       handlePublishingError();
@@ -402,7 +512,14 @@ const usePublisher = (): PublisherContextType => {
         console.warn(err.message);
       }
     }
-  }, [connected, reconnecting, sessionPublish, handlePublishingError]);
+  }, [
+    connected,
+    reconnecting,
+    sessionPublish,
+    handlePublishingError,
+    getPublisherAudioSnapshot,
+    logPublisherAudioDebug,
+  ]);
 
   /**
    * Turns the camera on and off
@@ -427,13 +544,29 @@ const usePublisher = (): PublisherContextType => {
    */
   const toggleAudio = () => {
     if (!publisherRef.current) {
+      logPublisherAudioDebug('toggleAudio ignored (no publisher)', {
+        snapshot: getPublisherAudioSnapshot(),
+      });
       return;
     }
-    publisherRef.current.publishAudio(!isAudioEnabled);
-    setIsAudioEnabled(!isAudioEnabled);
-    setStorageItem(STORAGE_KEYS.AUDIO_SOURCE_ENABLED, (!isAudioEnabled).toString());
+
+    const nextAudioEnabled = !isAudioEnabled;
+
+    logPublisherAudioDebug('toggleAudio (before publishAudio)', {
+      nextAudioEnabled,
+      snapshot: getPublisherAudioSnapshot(),
+    });
+
+    publisherRef.current.publishAudio(nextAudioEnabled);
+    setIsAudioEnabled(nextAudioEnabled);
+    setStorageItem(STORAGE_KEYS.AUDIO_SOURCE_ENABLED, nextAudioEnabled.toString());
     isForceMutedRef.current = false;
     setIsForceMuted(false);
+
+    logPublisherAudioDebug('toggleAudio (after publishAudio)', {
+      nextAudioEnabled,
+      snapshot: getPublisherAudioSnapshot(),
+    });
   };
 
   useEffect(() => {
@@ -583,7 +716,35 @@ const usePublisher = (): PublisherContextType => {
 
     publisher.publishAudio(shouldPublishAudio);
     publisher.publishVideo(shouldPublishVideo);
-  }, [reconnecting, connected, isAudioEnabled, isVideoEnabled, isForceMuted]);
+
+    logPublisherAudioDebug('postReconnect - after reapplying media state', {
+      shouldPublishAudio,
+      shouldPublishVideo,
+      snapshot: getPublisherAudioSnapshot(),
+    });
+
+    // A second snapshot a tick later helps catch late SDK state flips.
+    if (!isPublisherAudioDebugEnabled()) {
+      return;
+    }
+
+    setTimeout(() => {
+      logPublisherAudioDebug('postReconnect - delayed snapshot', {
+        shouldPublishAudio,
+        shouldPublishVideo,
+        snapshot: getPublisherAudioSnapshot(),
+      });
+    }, 750);
+  }, [
+    reconnecting,
+    connected,
+    isAudioEnabled,
+    isVideoEnabled,
+    isForceMuted,
+    getPublisherAudioSnapshot,
+    logPublisherAudioDebug,
+    isPublisherAudioDebugEnabled,
+  ]);
 
   useEffect(() => {
     const shouldAutoPublish =
