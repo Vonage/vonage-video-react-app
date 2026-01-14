@@ -1,22 +1,25 @@
 import { Fragment, ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
+
+import Box from '@ui/Box';
+import CircularProgress from '@ui/CircularProgress';
+import IconButton from '@ui/IconButton';
 import Link from '@ui/Link';
-import Tooltip from '@ui/Tooltip';
+import List from '@ui/List';
 import ListItem from '@ui/ListItem';
 import ListItemIcon from '@ui/ListItemIcon';
-import CircularProgress from '@ui/CircularProgress';
 import ListItemText from '@ui/ListItemText';
-import Box from '@ui/Box';
+import Stack from '@ui/Stack';
+import Tooltip from '@ui/Tooltip';
 import Typography from '@ui/Typography';
+import useTheme from '@ui/theme';
+
+import Separator from '@components/Separator';
 import VividIcon from '@components/VividIcon';
+
 import { Archive, ArchiveStatus } from '../../../api/archiving/model';
-import IconButton from '@ui/IconButton';
-import List from '@ui/List';
 import formatDuration from '@utils/formatDuration';
 import formatFileSize from '@utils/formatFileSize';
-import Stack from '@ui/Stack';
-import Separator from '@components/Separator';
-import useTheme from '@ui/theme';
 
 const ArchiveErrorIcon = () => {
   const { t } = useTranslation();
@@ -28,9 +31,7 @@ const ArchiveErrorIcon = () => {
         name="warning-line"
         customSize={-6}
         data-testid="archive-error-icon"
-        sx={{
-          color: theme.colors.warning,
-        }}
+        sx={{ color: theme.colors.warning }}
       />
     </Tooltip>
   );
@@ -41,11 +42,9 @@ const ArchivingLoadingIcon = () => {
 
   return (
     <CircularProgress
+      size={20}
       data-testid="archive-loading-spinner"
-      sx={{
-        p: 1,
-        color: theme.colors.primary,
-      }}
+      sx={{ color: theme.colors.primary }}
     />
   );
 };
@@ -57,13 +56,8 @@ const ArchiveStatusContent = ({ status, url }: { status: ArchiveStatus; url: str
   if (status === 'available') {
     return (
       <Link href={url ?? undefined} target="_blank" sx={{ textDecoration: 'none' }}>
-        <Stack
-          direction="row"
-          alignItems="center"
-          spacing={0.5}
-          sx={{ mb: { xs: 2, sm: 2, md: 5, lg: 2 } }}
-        >
-          <IconButton>
+        <Stack direction="row" alignItems="center" spacing={0.5}>
+          <IconButton size="small">
             <VividIcon
               name="download-line"
               customSize={-6}
@@ -78,9 +72,11 @@ const ArchiveStatusContent = ({ status, url }: { status: ArchiveStatus; url: str
       </Link>
     );
   }
+
   if (status === 'pending') {
     return <ArchivingLoadingIcon />;
   }
+
   return <ArchiveErrorIcon />;
 };
 
@@ -128,36 +124,37 @@ const ArchiveList = ({ archives }: ArchiveListProps): ReactElement => {
     );
   }
   return (
-    <Box
-      sx={{
-        width: '100%',
-        maxHeight: '190px',
-      }}
-    >
+    <Box sx={{ width: '100%', maxHeight: '190px', overflowY: 'auto', overflowX: 'hidden' }}>
       <List sx={{ pt: 0 }}>
-        {archives.map((archive, index) => {
-          return (
-            <Fragment key={archive.id}>
-              <ListItem
-                data-testid={`archive-list-item-${archive.id}`}
-                sx={{
-                  px: 0,
-                }}
-                secondaryAction={<ArchiveStatusContent url={archive.url} status={archive.status} />}
-              >
-                <ListItemIcon sx={{ minWidth: '45px' }}>
-                  <VividIcon
-                    name="video-active-line"
-                    customSize={-4}
-                    sx={{ color: theme.colors.secondary }}
-                  />
-                </ListItemIcon>
+        {archives.map((archive, index) => (
+          <Fragment key={archive.id}>
+            <ListItem
+              disableGutters
+              sx={{
+                px: 0,
+                display: 'flex',
+                alignItems: 'flex-start',
+                gap: 1,
+              }}
+              data-testid={`archive-list-item-${archive.id}`}
+            >
+              <ListItemIcon sx={{ minWidth: '45px', mt: '4px' }}>
+                <VividIcon
+                  name="video-active-line"
+                  customSize={-4}
+                  sx={{ color: theme.colors.secondary }}
+                />
+              </ListItemIcon>
+
+              <Box sx={{ flex: 1 }}>
                 <ListItemText
                   primary={
                     <Typography variant="body1">
                       {archive.status === 'pending'
                         ? t('archiveList.loading')
-                        : t('archiveList.archive.index', { index: archives.length - index })}
+                        : t('archiveList.archive.index', {
+                            index: archives.length - index,
+                          })}
                     </Typography>
                   }
                   secondary={
@@ -167,7 +164,7 @@ const ArchiveList = ({ archives }: ArchiveListProps): ReactElement => {
                           t('archiveList.loading.subtitle')
                         ) : (
                           <>
-                            {archive.duration && `${formatDuration(archive.duration)}`}
+                            {archive.duration && formatDuration(archive.duration)}
                             {archive.size && ` • ${formatFileSize(archive.size)}`}
                             {` • ${t('archiveList.archive.createdAt', {
                               createdAt: archive.createdAtFormatted,
@@ -178,12 +175,16 @@ const ArchiveList = ({ archives }: ArchiveListProps): ReactElement => {
                     )
                   }
                 />
-              </ListItem>
+              </Box>
 
-              <Separator width="100%" />
-            </Fragment>
-          );
-        })}
+              <Box sx={{ mt: '4px' }}>
+                <ArchiveStatusContent url={archive.url} status={archive.status} />
+              </Box>
+            </ListItem>
+
+            <Separator width="100%" />
+          </Fragment>
+        ))}
       </List>
     </Box>
   );

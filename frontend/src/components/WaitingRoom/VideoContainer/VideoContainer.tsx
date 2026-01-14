@@ -17,6 +17,8 @@ import useIsSmallViewport from '../../../hooks/useIsSmallViewport';
 import BackgroundEffectsDialog from '../BackgroundEffects/BackgroundEffectsDialog';
 import BackgroundEffectsButton from '../BackgroundEffects/BackgroundEffectsButton';
 import backgroundEffectsDialog$ from '@Context/BackgroundEffectsDialog';
+import PrecallNetworkTestDialog from '../PrecallNetworkTestDialog';
+import precallNetworkTestDialog$ from '@Context/PrecallNetworkTestDialog';
 
 export type VideoContainerProps = {
   username: string;
@@ -35,6 +37,8 @@ const VideoContainer = ({ username }: VideoContainerProps): ReactElement => {
   const containerRef = useRef<HTMLDivElement>(null);
   const [isVideoLoading, setIsVideoLoading] = useState<boolean>(true);
   const [{ isOpen: isBackgroundEffectsOpen }, { open, close }] = backgroundEffectsDialog$.use();
+  const [{ isOpen: isPrecallNetworkTestOpen }, { close: closePrecallTest }] =
+    precallNetworkTestDialog$.use();
   const { user } = useUserContext();
   const { publisherVideoElement, isVideoEnabled, isAudioEnabled, speechLevel } =
     usePreviewPublisherContext();
@@ -123,6 +127,12 @@ const VideoContainer = ({ username }: VideoContainerProps): ReactElement => {
               <BackgroundEffectsDialog
                 isBackgroundEffectsOpen={true}
                 setIsBackgroundEffectsOpen={close}
+              />
+            )}
+            {isPrecallNetworkTestOpen && (
+              <PrecallNetworkTestDialog
+                isPrecallNetworkTestOpen={isPrecallNetworkTestOpen}
+                setIsPrecallNetworkTestOpen={closePrecallTest}
               />
             )}
           </Box>

@@ -10,6 +10,8 @@ const customWordList = [
   'jiraiOSComponentId',
   'supportedLngs',
   'applinks',
+  'precall',
+  'Precall',
 ];
 
 export default customWordList;

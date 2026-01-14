@@ -12,6 +12,7 @@ import DeviceAccessAlert from '../../components/DeviceAccessAlert';
 import { getStorageItem, STORAGE_KEYS } from '../../utils/storage';
 import useBackgroundPublisherContext from '../../hooks/useBackgroundPublisherContext';
 import backgroundEffectsDialog$ from '../../Context/BackgroundEffectsDialog';
+import precallNetworkTestDialog$ from '@Context/PrecallNetworkTestDialog';
 import useAppConfig from '@Context/AppConfig/hooks/useAppConfig';
 
 /**
@@ -25,6 +26,7 @@ import useAppConfig from '@Context/AppConfig/hooks/useAppConfig';
  *   - Button to configure background replacement (if supported).
  * - Audio input, audio output, and video input device selectors.
  * - A username input field.
+ * - A button to run a pre-call network test.
  * - The meeting room name and a button to join the room.
  * @returns {ReactElement} - The waiting room.
  */
@@ -101,46 +103,48 @@ const WaitingRoom = (): ReactElement => {
 
   return (
     <backgroundEffectsDialog$.Provider>
-      <Box data-testid="waitingRoom">
-        <PageLayout>
-          <PageLayout.Banner>
-            <Banner />
-          </PageLayout.Banner>
-          <PageLayout.Left>
-            <Box
-              sx={{
-                maxWidth: '100%',
-                display: 'inline-flex',
-                flexDirection: 'column',
-                height: { xs: 'auto', sm: '400px' },
-              }}
-            >
-              <VideoContainer username={username} />
-              {allowDeviceSelection && accessStatus === DEVICE_ACCESS_STATUS.ACCEPTED && (
-                <ControlPanel
-                  handleAudioInputOpen={handleAudioInputOpen}
-                  handleVideoInputOpen={handleVideoInputOpen}
-                  handleAudioOutputOpen={handleAudioOutputOpen}
-                  handleClose={handleClose}
-                  openAudioInput={openAudioInput}
-                  openVideoInput={openVideoInput}
-                  openAudioOutput={openAudioOutput}
-                  anchorEl={anchorEl}
-                />
-              )}
-            </Box>
-          </PageLayout.Left>
-          <PageLayout.Right>
-            <UsernameInput username={username} setUsername={setUsername} />
-          </PageLayout.Right>
-          <PageLayout.Footer>
-            <Footer />
-          </PageLayout.Footer>
-        </PageLayout>
-        {accessStatus !== DEVICE_ACCESS_STATUS.ACCEPTED && (
-          <DeviceAccessAlert accessStatus={accessStatus} />
-        )}
-      </Box>
+      <precallNetworkTestDialog$.Provider>
+        <Box data-testid="waitingRoom">
+          <PageLayout>
+            <PageLayout.Banner>
+              <Banner />
+            </PageLayout.Banner>
+            <PageLayout.Left>
+              <Box
+                sx={{
+                  maxWidth: '100%',
+                  display: 'inline-flex',
+                  flexDirection: 'column',
+                  height: { xs: 'auto', sm: '400px' },
+                }}
+              >
+                <VideoContainer username={username} />
+                {allowDeviceSelection && accessStatus === DEVICE_ACCESS_STATUS.ACCEPTED && (
+                  <ControlPanel
+                    handleAudioInputOpen={handleAudioInputOpen}
+                    handleVideoInputOpen={handleVideoInputOpen}
+                    handleAudioOutputOpen={handleAudioOutputOpen}
+                    handleClose={handleClose}
+                    openAudioInput={openAudioInput}
+                    openVideoInput={openVideoInput}
+                    openAudioOutput={openAudioOutput}
+                    anchorEl={anchorEl}
+                  />
+                )}
+              </Box>
+            </PageLayout.Left>
+            <PageLayout.Right>
+              <UsernameInput username={username} setUsername={setUsername} />
+            </PageLayout.Right>
+            <PageLayout.Footer>
+              <Footer />
+            </PageLayout.Footer>
+          </PageLayout>
+          {accessStatus !== DEVICE_ACCESS_STATUS.ACCEPTED && (
+            <DeviceAccessAlert accessStatus={accessStatus} />
+          )}
+        </Box>
+      </precallNetworkTestDialog$.Provider>
     </backgroundEffectsDialog$.Provider>
   );
 };

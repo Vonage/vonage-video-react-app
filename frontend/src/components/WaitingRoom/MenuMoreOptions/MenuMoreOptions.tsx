@@ -5,6 +5,7 @@ import { useTranslation } from 'react-i18next';
 import VividIcon from '@components/VividIcon';
 import Box from '@ui/Box';
 import backgroundEffectsDialog$ from '@Context/BackgroundEffectsDialog';
+import precallNetworkTestDialog$ from '@Context/PrecallNetworkTestDialog';
 
 export type MenuMoreOptionsWaitingRoomProps = {
   onClose: () => void;
@@ -29,11 +30,17 @@ const MenuMoreOptions = ({
 }: MenuMoreOptionsWaitingRoomProps): ReactElement => {
   const { t } = useTranslation();
   const { open: openBackgroundEffects } = backgroundEffectsDialog$.use.actions();
+  const { open: openPrecallNetworkTest } = precallNetworkTestDialog$.use.actions();
 
-  const handleClick = useCallback(() => {
+  const handleClickBackgroundEffects = useCallback(() => {
     openBackgroundEffects();
     onClose();
   }, [openBackgroundEffects, onClose]);
+
+  const handleClickNetworkTest = useCallback(() => {
+    openPrecallNetworkTest();
+    onClose();
+  }, [openPrecallNetworkTest, onClose]);
 
   return (
     <Menu
@@ -46,12 +53,21 @@ const MenuMoreOptions = ({
     >
       <MenuItem
         onClick={() => {
-          handleClick();
+          handleClickBackgroundEffects();
         }}
         key="backgroundEffects-option"
       >
         <VividIcon name="gallery-line" customSize={-6} />
         <Box sx={{ ml: 1 }}>{t('backgroundEffects.title')}</Box>
+      </MenuItem>
+      <MenuItem
+        onClick={() => {
+          handleClickNetworkTest();
+        }}
+        key="precallNetworkTest-option"
+      >
+        <VividIcon name="cell-reception-line" customSize={-6} />
+        <Box sx={{ ml: 1 }}>{t('waitingRoom.precallNetworkTest.title')}</Box>
       </MenuItem>
     </Menu>
   );
