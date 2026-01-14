@@ -140,7 +140,11 @@ class VonageVideoClient extends EventEmitter<VonageVideoClientEvents> {
           });
         });
 
+      console.warn('[SUBSCRIBER] Subscribing attempt for stream:', streamId);
+
       await idempotentCallbackWithRetry(() => subscribe());
+
+      console.warn('[SUBSCRIBER] Subscribing succeeded for stream:', streamId);
       if (isScreenshare) {
         this.emit('screenshareStreamCreated');
       }
