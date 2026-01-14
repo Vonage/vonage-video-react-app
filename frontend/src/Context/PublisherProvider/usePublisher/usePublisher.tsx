@@ -100,7 +100,6 @@ const usePublisher = (): PublisherContextType => {
     unpublish: sessionUnpublish,
     connected,
     reconnecting,
-    lastStreamUpdate,
   } = useSessionContext();
   const [deviceAccess, setDeviceAccess] = useState<DeviceAccessStatus>({
     microphone: undefined,
@@ -150,84 +149,6 @@ const usePublisher = (): PublisherContextType => {
   useEffect(() => {
     isForceMutedRef.current = isForceMuted;
   }, [isForceMuted]);
-
-  const enforcePublisherMuteIfNeeded = useCallback(
-    (args: { reason: string; actualHasAudio: boolean }) => {
-      const expectedPublishAudio = isForceMutedRef.current ? false : isAudioEnabled;
-
-      // We only enforce the "mute" direction here to prevent the bug: UI shows muted
-      // but the SDK/WebRTC resumes sending audio after a reconnect.
-      const shouldEnforceMute = expectedPublishAudio === false && args.actualHasAudio === true;
-      if (!shouldEnforceMute) {
-        return;
-      }
-
-      const publisher = publisherRef.current;
-      if (!publisher) {
-        return;
-      }
-
-      if (typeof publisher.publishAudio !== 'function') {
-        console.warn('[PUBLISHER] mute mismatch detected but cannot enforce (no publishAudio)', {
-          reason: args.reason,
-          expectedPublishAudio,
-          actualHasAudio: args.actualHasAudio,
-        });
-        return;
-      }
-
-      console.warn('[PUBLISHER] enforcing mute due to mismatch', {
-        reason: args.reason,
-        expectedPublishAudio,
-        actualHasAudio: args.actualHasAudio,
-        reconnecting: reconnectingRef.current,
-        connected,
-        streamId: publisher.stream?.streamId,
-      });
-
-      publisher.publishAudio(false);
-    },
-    [connected, isAudioEnabled]
-  );
-
-  useEffect(() => {
-    if (!lastStreamUpdate) {
-      return;
-    }
-
-    const publisherStreamId = publisherRef.current?.stream?.streamId;
-    if (!publisherStreamId) {
-      return;
-    }
-
-    const isLocalPublisherStreamUpdate = lastStreamUpdate.stream.streamId === publisherStreamId;
-    if (!isLocalPublisherStreamUpdate) {
-      return;
-    }
-
-    if (lastStreamUpdate.changedProperty !== 'hasAudio') {
-      return;
-    }
-
-    if (typeof lastStreamUpdate.newValue !== 'boolean') {
-      return;
-    }
-
-    console.warn('[PUBLISHER] local stream hasAudio changed', {
-      oldValue: lastStreamUpdate.oldValue,
-      newValue: lastStreamUpdate.newValue,
-      reconnecting: reconnectingRef.current,
-      connected,
-      isAudioEnabled,
-      isForceMuted,
-      isForceMutedRef: isForceMutedRef.current,
-    });
-
-    enforcePublisherMuteIfNeeded({
-      reason: 'streamPropertyChanged:hasAudio',
-      actualHasAudio: lastStreamUpdate.newValue,
-    });
-  }, [connected, enforcePublisherMuteIfNeeded, isAudioEnabled, isForceMuted, lastStreamUpdate]);
 
   const handleAccessAllowed = () => {
     isInitializingPublisherRef.current = false;
@@ -662,33 +583,7 @@ const usePublisher = (): PublisherContextType => {
 
     publisher.publishAudio(shouldPublishAudio);
     publisher.publishVideo(shouldPublishVideo);
-
-    const verifyDelayMs = 750;
-
-    const verifyTimeoutId = window.setTimeout(() => {
-      const publisherAfterDelay = publisherRef.current;
-      const actualHasAudio = publisherAfterDelay?.stream?.hasAudio;
-      if (typeof actualHasAudio !== 'boolean') {
-        return;
-      }
-
-      enforcePublisherMuteIfNeeded({
-        reason: 'postReconnect:verifyStreamHasAudio',
-        actualHasAudio,
-      });
-    }, verifyDelayMs);
-
-    return () => {
-      window.clearTimeout(verifyTimeoutId);
-    };
-  }, [
-    reconnecting,
-    connected,
-    isAudioEnabled,
-    isVideoEnabled,
-    isForceMuted,
-    enforcePublisherMuteIfNeeded,
-  ]);
+  }, [reconnecting, connected, isAudioEnabled, isVideoEnabled, isForceMuted]);
 
   useEffect(() => {
     const shouldAutoPublish =
