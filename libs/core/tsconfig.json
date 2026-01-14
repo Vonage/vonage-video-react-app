@@ -1,14 +1,26 @@
 {
   "extends": "../../tsconfig.base.json",
   "files": [],
-  "include": ["eslint.config.mjs"],
-  "references": [{ "path": "./tsconfig.lib.json" }, { "path": "./tsconfig.spec.json" }],
+  "include": ["eslint.config.mjs", "./test/setup.ts"],
+  "references": [
+    {
+      "path": "./tsconfig.lib.json"
+    },
+    {
+      "path": "./tsconfig.spec.json"
+    }
+  ],
   "compilerOptions": {
+    "rootDir": "..",
     "baseUrl": "./",
-    "moduleResolution": "node",
+    "moduleResolution": "bundler",
+    "composite": true,
     "paths": {
       "@core": ["./src"],
-      "@core/*": ["./src/*"]
-    }
+      "@core/*": ["./src/*"],
+      "@common/*": ["../common/src/*"],
+      "@common": ["../common/src"]
+    },
+    "lib": ["DOM", "DOM.Iterable", "ESNext"]
   }
 }

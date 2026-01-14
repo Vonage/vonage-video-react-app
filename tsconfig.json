@@ -2,5 +2,19 @@
   "extends": "./tsconfig.base.json",
   "compilerOptions": {
     "moduleResolution": "node"
-  }
+  },
+  "references": [
+    {
+      "path": "./integration-tests"
+    },
+    {
+      "path": "./libs/common"
+    },
+    {
+      "path": "./libs/core"
+    },
+    {
+      "path": "./libs/ui"
+    }
+  ]
 }

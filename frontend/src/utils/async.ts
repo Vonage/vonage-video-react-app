@@ -1,36 +1,5 @@
 import { EventEmitter } from 'events';
-
-/**
- * Waits for a specified of time
- * @param {number} delayMs - the number of milliseconds to wait
- * @returns {Promise<void>} a promise that resolves after the delay has elapsed
- */
-export const delay = (delayMs: number): Promise<void> =>
-  new Promise((resolve) => {
-    setTimeout(() => {
-      resolve();
-    }, delayMs);
-  });
-
-export type GetExternalPromiseResolverType = {
-  promise: Promise<unknown>;
-  resolve: () => void;
-};
-/**
- * Creates a promise that can be resolved externally.
- * @returns {GetExternalPromiseResolverType} - An object containing the promise to be resolved and the promise resolver.
- */
-export const getExternalPromiseResolver = (): GetExternalPromiseResolverType => {
-  let resolver: (value: unknown) => void;
-  const promise = new Promise((resolve) => {
-    resolver = resolve;
-  });
-  return {
-    promise,
-    // @ts-expect-error ts thinks this is used before assigned
-    resolve: resolver,
-  };
-};
+import defer from '@common/execution/defer';
 
 /**
  * Waits for a specific event to be emitted from an event emitter.
@@ -46,7 +15,7 @@ export const waitForEvent = async (
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   eventSpy?: (...args: any[]) => void
 ): Promise<void> => {
-  const { promise, resolve } = getExternalPromiseResolver();
+  const { promise, resolve } = defer<void>();
   const handler = (...args: unknown[]) => {
     if (eventSpy) {
       eventSpy(...args);

@@ -8,5 +8,8 @@
     "**/*.spec.ts",
     "**/*.test.tsx",
     "**/*.spec.tsx"
-  ]
+  ],
+  "compilerOptions": {
+    "tsBuildInfoFile": "dist/tsconfig.spec.tsbuildinfo"
+  }
 }
