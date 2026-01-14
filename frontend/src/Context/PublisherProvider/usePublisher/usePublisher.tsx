@@ -105,22 +105,11 @@ const usePublisher = (): PublisherContextType => {
     camera: undefined,
   });
 
-  const isPublisherAudioDebugEnabled = useCallback((): boolean => {
-    if (typeof window === 'undefined') return false;
-
-    try {
-      return window.localStorage.getItem('vera:debug:publisher_audio') === 'true';
-    } catch {
-      return false;
-    }
-  }, []);
-
   const logPublisherAudioDebug = useCallback(
     (message: string, details?: Record<string, unknown>) => {
-      if (!isPublisherAudioDebugEnabled()) return;
       console.debug(`[PUBLISHER][AUDIO] ${message}`, details);
     },
-    [isPublisherAudioDebugEnabled]
+    []
   );
 
   // If we do not have audio input or video input access, we cannot publish.
@@ -617,11 +606,6 @@ const usePublisher = (): PublisherContextType => {
       shouldPublishVideo,
     });
 
-    // A second snapshot a tick later helps catch late SDK state flips.
-    if (!isPublisherAudioDebugEnabled()) {
-      return;
-    }
-
     setTimeout(() => {
       logPublisherAudioDebug('postReconnect - delayed snapshot', {
         shouldPublishAudio,
@@ -635,7 +619,6 @@ const usePublisher = (): PublisherContextType => {
     isVideoEnabled,
     isForceMuted,
     logPublisherAudioDebug,
-    isPublisherAudioDebugEnabled,
   ]);
 
   useEffect(() => {
