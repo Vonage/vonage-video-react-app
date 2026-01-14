@@ -1,5 +1,5 @@
 import { useEffect, ReactElement, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import Box from '@ui/Box';
 import useTheme from '@ui/theme';
@@ -21,6 +21,9 @@ import CaptionsError from '../../components/MeetingRoom/CaptionsError';
 import useBackgroundPublisherContext from '../../hooks/useBackgroundPublisherContext';
 import { DEVICE_ACCESS_STATUS } from '../../utils/constants';
 import type { PublishingErrorType } from '../../Context/PublisherProvider/usePublisher/usePublisher';
+import useUserContext from '../../hooks/useUserContext';
+import env from '../../env';
+import useMountEffect from '@common/hooks/useMountEffect';
 
 /**
  * MeetingRoom Component
@@ -34,7 +37,14 @@ import type { PublishingErrorType } from '../../Context/PublisherProvider/usePub
 const MeetingRoom = (): ReactElement => {
   const { t } = useTranslation();
   const theme = useTheme();
+  const navigate = useNavigate();
+  const location = useLocation();
   const roomName = useRoomName();
+  const {
+    user: {
+      defaultSettings: { name },
+    },
+  } = useUserContext();
   const { publisher, publish, quality, initializeLocalPublisher, publishingError, isVideoEnabled } =
     usePublisherContext();
 
@@ -71,7 +81,21 @@ const MeetingRoom = (): ReactElement => {
     setCaptionsErrorResponse,
   };
 
+  const hasValidUsername = name && name.trim() !== '';
+  const searchParams = new URLSearchParams(location.search);
+  const bypass = searchParams.get('bypass') === 'true' || env.VITE_BYPASS_WAITING_ROOM; // Testing purpose
+
+  useMountEffect(() => {
+    if (!hasValidUsername && !bypass) {
+      navigate(`/waiting-room/${roomName}`);
+    }
+  });
+
   useEffect(() => {
+    if (!hasValidUsername && !bypass) {
+      return;
+    }
+
     if (joinRoom && isValidRoomName(roomName)) {
       joinRoom(roomName);
     }
@@ -80,7 +104,7 @@ const MeetingRoom = (): ReactElement => {
       disconnect?.();
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [roomName]);
+  }, [roomName, hasValidUsername, bypass]);
 
   useEffect(() => {
     if (!publisherOptions) {

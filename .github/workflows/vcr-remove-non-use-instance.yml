@@ -1,0 +1,124 @@
+name: Remove PR VCR instance on merge
+
+on:
+  pull_request:
+    types: [closed]
+
+permissions:
+  contents: read
+  pull-requests: read
+  issues: write
+
+jobs:
+  remove-vcr:
+    name: Remove VCR instance (merge trigger)
+    if: github.event.pull_request.merged == true
+    runs-on: [vcp-runner]
+
+    steps:
+      - name: Install VCR CLI
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl --proto =https --max-redirs 0 -fsSL https://raw.githubusercontent.com/Vonage/cloud-runtime-cli/main/script/install.sh -o install.sh
+          sudo bash install.sh
+          vcr -v
+
+      - name: Remove VCR instance (tolerant)
+        id: remove
+        shell: bash
+        env:
+          VCR_API_KEY: ${{ secrets.VCR_API_KEY }}
+          VCR_API_SECRET: ${{ secrets.VCR_API_SECRET }}
+        run: |
+          set -euo pipefail
+
+          PROJECT_NAME="vonage-video-react-app"
+          INSTANCE_NAME="vera-pr-${{ github.event.pull_request.number }}"
+
+          echo "instance_name=$INSTANCE_NAME" >> "$GITHUB_OUTPUT"
+
+          set +e
+          vcr instance remove \
+            --project-name "$PROJECT_NAME" \
+            --instance-name "$INSTANCE_NAME" \
+            --api-key "$VCR_API_KEY" \
+            --api-secret "$VCR_API_SECRET" \
+            --region aws.euw1 \
+            --graphql-endpoint https://graphql.euw1.runtime.vonage.cloud/v1/graphql \
+            2>&1 | tee remove-vcr-logs.log
+          RC=${PIPESTATUS[0]}
+          set -e
+
+          # Removed successfully
+          if [ "$RC" -eq 0 ]; then
+            echo "result=removed" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          # Instance did not exist -> non-fatal
+          if grep -Eqi 'not found|does not exist|no such|404' remove-vcr-logs.log; then
+            echo "result=missing" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          # Real failure
+          echo "result=failed" >> "$GITHUB_OUTPUT"
+          exit 1
+
+      - name: Slack notification on removed
+        uses: slackapi/slack-github-action@70cd7be8e40a46e8b0eced40b0de447bdb42f68e # v1.26.0
+        with:
+          channel-id: '#video-solutions-ci-notifications'
+          payload: |
+            {
+              "text": "Vera Deployment GHA Job",
+              "attachments": [
+                {
+                  "color": "28a745",
+                  "text": "Vera pull request *<https://github.com/Vonage/vonage-video-react-app/pull/${{ github.event.pull_request.number }}|${{ github.event.pull_request.title }}>* \n with commit hash: ${{ github.sha }} \n had instance removed from VCR \nInstance: `${{ steps.remove.outputs.instance_name }}` \n*<https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}|Click here to go to build logs>* \n :large_green_circle: :large_green_circle: :large_green_circle: :large_green_circle:"
+                }
+              ]
+            }
+        env:
+          SLACK_BOT_TOKEN: ${{ secrets.SLACK_NOTIFICATION }}
+        if: steps.remove.outputs.result == 'removed'
+        continue-on-error: true
+
+      - name: Slack notification on no instance found
+        uses: slackapi/slack-github-action@70cd7be8e40a46e8b0eced40b0de447bdb42f68e # v1.26.0
+        with:
+          channel-id: '#video-solutions-ci-notifications'
+          payload: |
+            {
+              "text": "Vera Deployment GHA Job",
+              "attachments": [
+                {
+                  "color": "FFA500",
+                  "text": "Vera pull request *<https://github.com/Vonage/vonage-video-react-app/pull/${{ github.event.pull_request.number }}|${{ github.event.pull_request.title }}>* \n with commit hash: ${{ github.sha }} \n had no VCR instance to remove \nInstance: `${{ steps.remove.outputs.instance_name }}` \n*<https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}|Click here to go to build logs>*"
+                }
+              ]
+            }
+        env:
+          SLACK_BOT_TOKEN: ${{ secrets.SLACK_NOTIFICATION }}
+        if: steps.remove.outputs.result == 'missing'
+        continue-on-error: true
+
+      - name: Slack notification on failure
+        uses: slackapi/slack-github-action@70cd7be8e40a46e8b0eced40b0de447bdb42f68e # v1.26.0
+        with:
+          channel-id: '#video-solutions-ci-notifications'
+          payload: |
+            {
+              "text": "Vera Deployment GHA Job",
+              "attachments": [
+                {
+                  "color": "FF0000",
+                  "text": "Vera pull request *<https://github.com/Vonage/vonage-video-react-app/pull/${{ github.event.pull_request.number }}|${{ github.event.pull_request.title }}>* \n with commit hash: ${{ github.sha }} \n FAILED to remove instance from VCR \nInstance: `${{ steps.remove.outputs.instance_name }}` \n *<https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}|Click here to go to build logs>* \n :red_circle: :red_circle: :red_circle: :red_circle:"
+                }
+              ]
+            }
+        env:
+          SLACK_BOT_TOKEN: ${{ secrets.SLACK_NOTIFICATION }}
+        if: failure()
+        continue-on-error: true

@@ -262,7 +262,7 @@ describe('DeviceSettingsMenu Component', () => {
     });
   });
 
-  describe('renders the video settings menu', () => {
+  describe('renders the video effects menu', () => {
     const deviceType = 'video';
     it('if prompted', async () => {
       render(
@@ -315,11 +315,11 @@ describe('DeviceSettingsMenu Component', () => {
 
       await waitFor(() => {
         expect(screen.queryByTestId('dropdown-separator')).toBeVisible();
-        expect(screen.queryByText('Background settings')).toBeVisible();
+        expect(screen.queryByText('Video effects')).toBeVisible();
       });
     });
 
-    it('and does not render the dropdown separator and background settings option when media processor is not supported', async () => {
+    it('and does not render the dropdown separator and video effects option when media processor is not supported', async () => {
       render(
         <DeviceSettingsMenu
           deviceType={deviceType}
@@ -334,11 +334,11 @@ describe('DeviceSettingsMenu Component', () => {
 
       await waitFor(() => {
         expect(screen.queryByTestId('dropdown-separator')).not.toBeInTheDocument();
-        expect(screen.queryByText('Background settings')).not.toBeInTheDocument();
+        expect(screen.queryByText('video effects')).not.toBeInTheDocument();
       });
     });
 
-    it('and does not render the dropdown separator and background settings option when allowBackgroundEffects is false', async () => {
+    it('and does not render the dropdown separator and video effects option when allowBackgroundEffects is false', async () => {
       render(
         <DeviceSettingsMenu
           deviceType={deviceType}
@@ -365,7 +365,7 @@ describe('DeviceSettingsMenu Component', () => {
 
       await waitFor(() => {
         expect(screen.queryByTestId('dropdown-separator')).not.toBeInTheDocument();
-        expect(screen.queryByText('Background settings')).not.toBeInTheDocument();
+        expect(screen.queryByText('video effects')).not.toBeInTheDocument();
       });
     });
   });

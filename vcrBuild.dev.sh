@@ -2,7 +2,7 @@
 set -e
 
 # build artifact
-./vcrBuild.sh
+source ./vcrBuild.sh
 
 # copy env file to the build output (FAIL if missing)
 if [ -f ./backend/.env ]; then

@@ -81,8 +81,8 @@ jobs:
         if: steps.check-skip-ci.outputs.result == 'false'
         uses: actions/setup-node@v4
         with:
-          node-version: 22
-          cache: npm
+          node-version-file: .nvmrc
+          cache: yarn
 
       # ----------------------------------------------------
       # Install repository dependencies
@@ -91,8 +91,6 @@ jobs:
         if: steps.check-skip-ci.outputs.result == 'false'
         run: |
           node -v
-          npm -v
-          npm install --global --ignore-scripts yarn
           yarn --ignore-scripts
 
       # ----------------------------------------------------

@@ -1,5 +1,9 @@
-import { render as renderBase, renderHook as renderHookBase } from '@testing-library/react';
-import type { ReactElement } from 'react';
+import {
+  render as renderBase,
+  renderHook as renderHookBase,
+  RenderResult,
+} from '@testing-library/react';
+import type { ComponentType, ReactElement, ReactNode } from 'react';
 import {
   makeAppConfigProviderWrapper,
   AppConfigProviderWrapperOptions,
@@ -13,6 +17,17 @@ import {
   PreviewPublisherProviderWrapperOptions,
 } from '@test/providers';
 import composeProviders from '@utils/composeProviders';
+import type { SessionContextType } from '@Context/SessionProvider/session';
+import type { PublisherContextType } from '@Context/PublisherProvider/usePublisher/usePublisher';
+import type { UserContextType } from '@Context/user';
+import type { AppConfigApi } from '@Context/AppConfig/AppConfigContext';
+
+type RenderWithPublisherResult = RenderResult & {
+  sessionContext: { current: SessionContextType };
+  publisherContext: { current: PublisherContextType };
+  userContext: { current: UserContextType };
+  appConfigContext: { current: AppConfigApi };
+};
 
 /**
  * Renders a component with AppConfigProvider
@@ -25,12 +40,17 @@ export function renderWithAppConfig(ui: ReactElement, options?: AppConfigProvide
 /**
  * Renders a component with PublisherProvider
  */
-export function renderWithPublisher(ui: ReactElement, options?: PublisherProviderWrapperOptions) {
+export function renderWithPublisher(
+  ui: ReactElement,
+  options?: PublisherProviderWrapperOptions
+): RenderWithPublisherResult {
   const { PublisherProviderWrapper, ...contexts } = makePublisherProviderWrapper(options);
+  const renderResult = renderBase(ui, { wrapper: PublisherProviderWrapper });
+
   return {
+    ...renderResult,
     ...contexts,
-    ...renderBase(ui, { wrapper: PublisherProviderWrapper }),
-  };
+  } as RenderWithPublisherResult;
 }
 
 /**
@@ -91,7 +111,10 @@ export function renderWithAppConfigAndAudioOutput(
     audioOutputOptions: options?.audioOutputOptions,
   });
 
-  const wrapper = composeProviders(AudioOutputProviderWrapper, AppConfigWrapper);
+  const wrapper = composeProviders(
+    AudioOutputProviderWrapper as ComponentType<{ children: ReactNode }>,
+    AppConfigWrapper
+  );
 
   return {
     appConfigContext,

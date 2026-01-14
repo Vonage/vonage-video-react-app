@@ -1,12 +1,18 @@
 import { ReactElement, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import Box from '@ui/Box';
 import useTheme from '@ui/theme';
 import useSessionContext from '../../../hooks/useSessionContext';
 import useRoomName from '../../../hooks/useRoomName';
 import useRoomShareUrl from '../../../hooks/useRoomShareUrl';
 import IconButton from '@ui/IconButton';
+import Tooltip from '@ui/Tooltip';
 import Fade from '@ui/Fade';
 import VividIcon from '@components/VividIcon';
+import usePublisherContext from '@hooks/usePublisherContext';
+import useDevices from '@hooks/useDevices';
+import isRearFacingLabel from '@utils/cameraSwitch/isRearFacingLabel';
+import isFrontFacingLabel from '@utils/cameraSwitch/isFrontFacingLabel';
 
 /**
  * SmallViewportHeader Component
@@ -16,10 +22,14 @@ import VividIcon from '@components/VividIcon';
  * @returns {ReactElement} The small viewport header component.
  */
 const SmallViewportHeader = (): ReactElement => {
+  const { t } = useTranslation();
   const theme = useTheme();
   const { archiveId } = useSessionContext();
   const isRecording = !!archiveId;
   const roomName = useRoomName();
+  const {
+    allMediaDevices: { videoInputDevices },
+  } = useDevices();
   const roomShareUrl = useRoomShareUrl();
   const [isCopied, setIsCopied] = useState<boolean>(false);
   const copyUrl = () => {
@@ -32,6 +42,34 @@ const SmallViewportHeader = (): ReactElement => {
       setIsCopied(false);
     }, 3000);
   };
+
+  const { publisher, isVideoEnabled } = usePublisherContext();
+
+  const handleCameraToggle = () => {
+    if (!publisher) return;
+
+    const currentSource = publisher.getVideoSource?.();
+
+    const currentDevice = videoInputDevices.find((d) => d.deviceId === currentSource?.deviceId);
+    const currentIsFront = isFrontFacingLabel(currentDevice?.label);
+
+    const pickFront = () =>
+      videoInputDevices.find((d) => isFrontFacingLabel(d.label)) ||
+      videoInputDevices.find((d) => d.deviceId !== currentSource?.deviceId);
+
+    const pickRear = () =>
+      videoInputDevices.find((d) => isRearFacingLabel(d.label)) ||
+      videoInputDevices.find(
+        (d) => !isFrontFacingLabel(d.label) && d.deviceId !== currentSource?.deviceId
+      );
+
+    const target = currentIsFront ? pickRear() : pickFront();
+
+    if (target?.deviceId && target.deviceId !== currentSource?.deviceId) {
+      publisher.setVideoSource(target.deviceId);
+    }
+  };
+
   return (
     <Box
       data-testid="smallViewportHeader"
@@ -66,19 +104,38 @@ const SmallViewportHeader = (): ReactElement => {
           {roomName}
         </Box>
       </Box>
-      <Box sx={{ marginX: -1 }}>
+      <Box sx={{ marginX: -1, display: 'flex', alignItems: 'center', gap: 1 }}>
+        {isVideoEnabled && videoInputDevices.length > 1 && (
+          <Tooltip title={t('devices.video.camera.switch')} placement="bottom">
+            <IconButton sx={{ color: theme.colors.onDarkGrey }} onClick={handleCameraToggle}>
+              <VividIcon name="camera-switch-line" customSize={-4} />
+            </IconButton>
+          </Tooltip>
+        )}
         <Fade in timeout={500}>
-          <IconButton sx={{ color: theme.colors.onDarkGrey }} onClick={copyUrl} disabled={isCopied}>
-            {isCopied ? (
-              <VividIcon
-                customSize={-4}
-                name="check-sent-line"
-                sx={{ color: theme.colors.success }}
-              />
-            ) : (
-              <VividIcon customSize={-4} name="copy-line" sx={{ color: theme.colors.onDarkGrey }} />
-            )}
-          </IconButton>
+          <Tooltip title={isCopied ? t('chat.copied') : t('chat.copy')} placement="bottom">
+            <Box>
+              <IconButton
+                sx={{ color: theme.colors.onDarkGrey }}
+                onClick={copyUrl}
+                disabled={isCopied}
+              >
+                {isCopied ? (
+                  <VividIcon
+                    customSize={-4}
+                    name="check-sent-line"
+                    sx={{ color: theme.colors.success }}
+                  />
+                ) : (
+                  <VividIcon
+                    customSize={-4}
+                    name="copy-line"
+                    sx={{ color: theme.colors.onDarkGrey }}
+                  />
+                )}
+              </IconButton>
+            </Box>
+          </Tooltip>
         </Fade>
       </Box>
     </Box>

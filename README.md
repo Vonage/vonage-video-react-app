@@ -66,12 +66,12 @@ This application provides features for common conferencing use cases, such as:
   </details>
 - <details>
     <summary>
-      Background settings in meeting and waiting room. You can set predefined images, custom image or slight/strong background blur. Images can be uploaded from local device or URL in these formats: JPG, PNG, GIF or BMP. Background settings are not supported in non-Chromium-based browsers or on iOS.
+      Video effects in meeting and waiting room. You can set predefined images, custom image or slight/strong background blur. Images can be uploaded from local device or URL in these formats: JPG, PNG, GIF or BMP. Video effects are not supported in non-Chromium-based browsers or on iOS.
       
     Please see [OT.hasMediaProcessorSupport](https://vonage.github.io/video-docs/video-js-reference/latest/OT.html#hasMediaProcessorSupport) for more information.
     </summary>
   
-    <img src="docs/assets/BGEffects.png" alt="Screenshot of background settings">
+    <img src="docs/assets/BGEffects.png" alt="Screenshot of video effects">
   </details>
 - <details>
     <summary>
@@ -118,7 +118,7 @@ The Vonage Video API Reference App for React is currently supported on the lates
 - ![Opera icon](/docs/assets/opera.svg) Opera
 - ![Safari icon](/docs/assets/safari.svg) Safari
 
-*Note:* Some browsers such as Firefox or Safari do not support media processors like video and audio filters (e.g background settings): Please see [OT.hasMediaProcessorSupport](https://vonage.github.io/video-docs/video-js-reference/latest/OT.html#hasMediaProcessorSupport) for more information.
+*Note:* Some browsers such as Firefox or Safari do not support media processors like video and audio filters (e.g video effects): Please see [OT.hasMediaProcessorSupport](https://vonage.github.io/video-docs/video-js-reference/latest/OT.html#hasMediaProcessorSupport) for more information.
 
 *Note:* Mobile web views have limited supported at the moment. The minimum supported device width is `360px`.
 

@@ -8,12 +8,6 @@ instance:
   # The placeholder <DOMAIN> will be replaced by sed in .github/workflows/deploy-to-vcr.yml
   domains: <DOMAIN>
   environment:
-    - name: VITE_ENABLE_REPORT_ISSUE
-      value: true
-    - name: VITE_I18N_FALLBACK_LANGUAGE
-      value: 'en'
-    - name: VITE_I18N_SUPPORTED_LANGUAGES
-      value: 'en|en-US|es|es-MX|it'
     - name: VIDEO_SERVICE_PROVIDER
       secret: VIDEO_SERVICE_PROVIDER
     - name: VONAGE_APP_ID
