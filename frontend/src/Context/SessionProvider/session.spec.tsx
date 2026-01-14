@@ -12,7 +12,7 @@ import fetchCredentials from '@api/fetchCredentials';
 import { UserType } from '@Context/user';
 
 vi.mock('@utils/ActiveSpeakerTracker');
-vi.mock('@utils/VonageVideoClient');
+vi.mock('@utils/VonageVideoSessionClient');
 
 // Override the constants for max pinning test
 vi.mock('@utils/constants', () => ({
