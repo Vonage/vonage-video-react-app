@@ -91,7 +91,6 @@ const usePublisher = (): PublisherContextType => {
   const isPublishingToSessionRef = useRef<boolean>(false);
   const isInitializingPublisherRef = useRef<boolean>(false);
   const [publishingError, setPublishingError] = useState<PublishingErrorType>(null);
-  const wasPublishingBeforeReconnectRef = useRef<boolean>(false);
   const reconnectingRef = useRef<boolean>(false);
   const consecutivePublishingFailureCountRef = useRef<number>(0);
   const {
@@ -104,13 +103,6 @@ const usePublisher = (): PublisherContextType => {
     microphone: undefined,
     camera: undefined,
   });
-
-  const logPublisherAudioDebug = useCallback(
-    (message: string, details?: Record<string, unknown>) => {
-      console.debug(`[PUBLISHER][AUDIO] ${message}`, details);
-    },
-    []
-  );
 
   // If we do not have audio input or video input access, we cannot publish.
   useEffect(() => {
@@ -132,21 +124,6 @@ const usePublisher = (): PublisherContextType => {
     setIsVideoEnabled(!!publisherOptions.publishVideo);
     setIsAudioEnabled(!!publisherOptions.publishAudio);
   }, [publisherOptions]);
-
-  const publisherOptionsWithCurrentMediaState = (() => {
-    if (!publisherOptions) {
-      return null;
-    }
-
-    const shouldPublishAudio = isForceMuted ? false : isAudioEnabled;
-    const shouldPublishVideo = isVideoEnabled;
-
-    return {
-      ...publisherOptions,
-      publishAudio: shouldPublishAudio,
-      publishVideo: shouldPublishVideo,
-    };
-  })();
 
   useEffect(() => {
     reconnectingRef.current = reconnecting === true;
@@ -182,27 +159,22 @@ const usePublisher = (): PublisherContextType => {
     });
   }, []);
 
-  const handleStreamCreated = useCallback(
-    (e: PublisherStreamCreatedEvent) => {
-      logPublisherAudioDebug('streamCreated', {
-        streamId: e.stream?.streamId,
-        streamHasAudio: e.stream?.hasAudio,
-        streamHasVideo: e.stream?.hasVideo,
-      });
+  const handleStreamCreated = useCallback((e: PublisherStreamCreatedEvent) => {
+    console.warn('streamCreated', {
+      streamId: e.stream?.streamId,
+      streamHasAudio: e.stream?.hasAudio,
+      streamHasVideo: e.stream?.hasVideo,
+    });
 
-      setIsPublishing(true);
-      setStream(e.stream);
-      // Reset the flag now that the stream is actually established
-      isPublishingToSessionRef.current = false;
-      // Track that we were publishing successfully
-      wasPublishingBeforeReconnectRef.current = true;
+    setIsPublishing(true);
+    setStream(e.stream);
+    // Reset the flag now that the stream is actually established
+    isPublishingToSessionRef.current = false;
 
-      // Successful publish resets transient failure tracking
-      consecutivePublishingFailureCountRef.current = 0;
-      setPublishingError(null);
-    },
-    [logPublisherAudioDebug]
-  );
+    // Successful publish resets transient failure tracking
+    consecutivePublishingFailureCountRef.current = 0;
+    setPublishingError(null);
+  }, []);
 
   const handleStreamDestroyed = useCallback(() => {
     console.warn('[PUBLISHER] handleStreamDestroyed', {
@@ -375,6 +347,8 @@ const usePublisher = (): PublisherContextType => {
       reconnecting,
       hasPublisher: !!publisherRef.current,
       isPublishingToSession: isPublishingToSessionRef.current,
+      isAudioEnabled,
+      isVideoEnabled,
     });
 
     try {
@@ -418,7 +392,14 @@ const usePublisher = (): PublisherContextType => {
         console.warn(err.message);
       }
     }
-  }, [connected, reconnecting, sessionPublish, handlePublishingError]);
+  }, [
+    connected,
+    reconnecting,
+    sessionPublish,
+    handlePublishingError,
+    isAudioEnabled,
+    isVideoEnabled,
+  ]);
 
   /**
    * Turns the camera on and off
@@ -448,7 +429,7 @@ const usePublisher = (): PublisherContextType => {
 
     const nextAudioEnabled = !isAudioEnabled;
 
-    logPublisherAudioDebug('toggleAudio (before publishAudio)', {
+    console.warn('toggleAudio (before publishAudio)', {
       nextAudioEnabled,
     });
 
@@ -457,7 +438,7 @@ const usePublisher = (): PublisherContextType => {
     setStorageItem(STORAGE_KEYS.AUDIO_SOURCE_ENABLED, nextAudioEnabled.toString());
     setIsForceMuted(false);
 
-    logPublisherAudioDebug('toggleAudio (after publishAudio)', {
+    console.warn('toggleAudio (after publishAudio)', {
       nextAudioEnabled,
     });
   };
@@ -530,52 +511,18 @@ const usePublisher = (): PublisherContextType => {
       reconnecting,
       connected,
       isPublishing,
-      wasPublishingBeforeReconnect: wasPublishingBeforeReconnectRef.current,
       hasPublisher: !!publisherRef.current,
       isPublishingToSession: isPublishingToSessionRef.current,
     });
 
     console.warn('[PUBLISHER] RECONNECTION - Session reconnecting, tracking publishing state');
-    wasPublishingBeforeReconnectRef.current = isPublishing;
     isPublishingToSessionRef.current = false;
 
     // Don't kick user out due to transient errors while reconnecting
     setPublishingError(null);
   }, [reconnecting, connected, isPublishing]);
 
-  useEffect(() => {
-    if (reconnecting !== false) {
-      return;
-    }
-    if (!connected) {
-      return;
-    }
-    if (!wasPublishingBeforeReconnectRef.current) {
-      return;
-    }
-
-    console.warn('[PUBLISHER] RECONNECTION completed');
-
-    wasPublishingBeforeReconnectRef.current = false;
-
-    if (publisherRef.current) {
-      return;
-    }
-    if (!publisherOptionsWithCurrentMediaState) {
-      return;
-    }
-
-    console.warn('[PUBLISHER] RECONNECTION - Publisher missing after reconnection, recreating');
-    initializeLocalPublisher(publisherOptionsWithCurrentMediaState);
-  }, [
-    reconnecting,
-    connected,
-    isPublishing,
-    publisherOptions,
-    publisherOptionsWithCurrentMediaState,
-    initializeLocalPublisher,
-  ]);
-
+  // After reconnection, re-apply media state to newly created publisher
   useEffect(() => {
     if (reconnecting !== false) {
       return;
@@ -601,27 +548,13 @@ const usePublisher = (): PublisherContextType => {
     publisher.publishAudio(shouldPublishAudio);
     publisher.publishVideo(shouldPublishVideo);
 
-    logPublisherAudioDebug('postReconnect - after reapplying media state', {
+    console.warn('postReconnect - after reapplying media state', {
       shouldPublishAudio,
       shouldPublishVideo,
     });
+  }, [reconnecting, connected, isAudioEnabled, isVideoEnabled, isForceMuted]);
 
-    setTimeout(() => {
-      logPublisherAudioDebug('postReconnect - delayed snapshot', {
-        shouldPublishAudio,
-        shouldPublishVideo,
-      });
-    }, 750);
-  }, [
-    reconnecting,
-    connected,
-    isAudioEnabled,
-    isVideoEnabled,
-    isForceMuted,
-    logPublisherAudioDebug,
-  ]);
-
-  useEffect(() => {
+  /*useEffect(() => {
     const shouldAutoPublish =
       !!publisherRef.current && connected && reconnecting === false && !isPublishing;
 
@@ -637,7 +570,7 @@ const usePublisher = (): PublisherContextType => {
     if (shouldAutoPublish) {
       publish();
     }
-  }, [connected, reconnecting, isPublishing, publish]);
+  }, [connected, reconnecting, isPublishing, publish]);*/
 
   return {
     initializeLocalPublisher,
