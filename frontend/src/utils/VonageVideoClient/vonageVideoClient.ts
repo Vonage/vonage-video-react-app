@@ -23,7 +23,7 @@ import logOnConnect from '../logOnConnect';
 import createMovingAvgAudioLevelTracker from '../movingAverageAudioLevelTracker';
 import idempotentCallbackWithRetry from '../idempotentCallbackWithRetry/idempotentCallbackWithRetry';
 
-type VonageVideoSessionClientEvents = {
+type VonageVideoClientEvents = {
   archiveStarted: [string];
   archiveStopped: [];
   screenshareStreamCreated: [];
@@ -43,22 +43,22 @@ type VonageVideoSessionClientEvents = {
 };
 
 /**
- * VonageVideoSessionClient class - Manages a Vonage Video session, including subscribing to streams,
+ * VonageVideoClient class - Manages a Vonage Video session, including subscribing to streams,
  * handling events, and emitting custom events for session-related actions. It serves to
  * provide a structured interface for interacting with the Vonage Video API and to separate
  * React logic from the Vonage Video API logic, allowing for easier testing and maintenance.
  *
  * This class extends `EventEmitter` to provide event-driven functionality.
- * @class VonageVideoSessionClient
+ * @class VonageVideoClient
  * @augments {EventEmitter}
  */
-class VonageVideoSessionClient extends EventEmitter<VonageVideoSessionClientEvents> {
+class VonageVideoClient extends EventEmitter<VonageVideoClientEvents> {
   public clientSession: Session | null;
   private readonly credential: Credential;
   private hiddenSubscriber: Subscriber | null = null;
 
   /**
-   * Creates an instance of VonageVideoSessionClient.
+   * Creates an instance of VonageVideoClient.
    * Initializes the session and attaches event listeners.
    * @param {Credential} credential - The API key, session ID, and token required to initialize the session.
    */
@@ -458,4 +458,4 @@ class VonageVideoSessionClient extends EventEmitter<VonageVideoSessionClientEven
   }
 }
 
-export default VonageVideoSessionClient;
+export default VonageVideoClient;

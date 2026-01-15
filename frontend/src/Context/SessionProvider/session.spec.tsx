@@ -6,13 +6,13 @@ import { Publisher, Stream } from '@vonage/client-sdk-video';
 import { makeSessionProviderWrapper } from '@test/providers';
 import useSessionContext from '@hooks/useSessionContext';
 import ActiveSpeakerTracker from '@utils/ActiveSpeakerTracker';
-import VonageVideoSessionClient from '@utils/VonageVideoSessionClient';
+import VonageVideoClient from '@utils/VonageVideoClient';
 import { Credential, StreamPropertyChangedEvent, SubscriberWrapper } from '@app-types/session';
 import fetchCredentials from '@api/fetchCredentials';
 import { UserType } from '@Context/user';
 
 vi.mock('@utils/ActiveSpeakerTracker');
-vi.mock('@utils/VonageVideoSessionClient');
+vi.mock('@utils/VonageVideoClient');
 
 // Override the constants for max pinning test
 vi.mock('@utils/constants', () => ({
@@ -27,7 +27,7 @@ const mockFetchCredentials = fetchCredentials as Mock;
 describe('SessionProvider', () => {
   let activeSpeakerTracker: ActiveSpeakerTracker;
 
-  let vonageVideoClient: VonageVideoSessionClient;
+  let vonageVideoClient: VonageVideoClient;
   let getByTestId: (id: string) => HTMLElement;
 
   const TestComponent = () => {
@@ -137,13 +137,13 @@ describe('SessionProvider', () => {
       connect: vi.fn().mockReturnValue(Promise.resolve()),
       disconnect: vi.fn(),
       forceMuteStream: vi.fn(),
-    }) as unknown as VonageVideoSessionClient;
+    }) as unknown as VonageVideoClient;
 
     const mockedActiveSpeakerTracker = vi.mocked(ActiveSpeakerTracker);
     mockedActiveSpeakerTracker.mockImplementation(() => {
       return activeSpeakerTracker;
     });
-    const mockedVonageVideoClient = vi.mocked(VonageVideoSessionClient);
+    const mockedVonageVideoClient = vi.mocked(VonageVideoClient);
     mockedVonageVideoClient.mockImplementation(() => {
       return vonageVideoClient;
     });

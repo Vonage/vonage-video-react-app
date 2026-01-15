@@ -125,9 +125,7 @@ const usePublisher = (): PublisherContextType => {
     setIsAudioEnabled(!!publisherOptions.publishAudio);
   }, [publisherOptions]);
 
-  useEffect(() => {
-    reconnectingRef.current = reconnecting === true;
-  }, [reconnecting]);
+  reconnectingRef.current = reconnecting === true;
 
   const handleAccessAllowed = useCallback(() => {
     isInitializingPublisherRef.current = false;
