@@ -97,10 +97,20 @@ describe('FilePicker component', () => {
     document.body.appendChild(videoElement);
 
     // Mocking the play method
-    videoElement.play = vi.fn().mockResolvedValue(undefined);
+    vi.spyOn(HTMLMediaElement.prototype, 'play').mockResolvedValue(undefined);
+
+    // Mock canvas context and drawing operations
+    const mockContext = {
+      drawImage: vi.fn(),
+    };
+    vi.spyOn(HTMLCanvasElement.prototype, 'getContext').mockReturnValue(
+      mockContext as unknown as CanvasRenderingContext2D
+    );
 
     // Stub the toDataURL function of HTMLCanvasElement
-    HTMLCanvasElement.prototype.toDataURL = vi.fn(() => 'data:image/png;base64,fakebase64data');
+    vi.spyOn(HTMLCanvasElement.prototype, 'toDataURL').mockReturnValue(
+      'data:image/png;base64,fakebase64data'
+    );
 
     render(<FilePicker onFileSelect={mockFileSelect} />);
 

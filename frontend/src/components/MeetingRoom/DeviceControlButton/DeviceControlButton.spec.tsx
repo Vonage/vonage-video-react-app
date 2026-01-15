@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, beforeEach, Mock, afterEach, afterAll } from 'vitest';
+import { describe, it, expect, vi, beforeEach, Mock, afterEach } from 'vitest';
 import { fireEvent, screen } from '@testing-library/react';
 import { Publisher } from '@vonage/client-sdk-video';
 import { EventEmitter } from 'stream';
@@ -6,8 +6,7 @@ import { PublisherContextType } from '@Context/PublisherProvider';
 import useSpeakingDetector from '@hooks/useSpeakingDetector';
 import usePublisherContext from '@hooks/usePublisherContext';
 import { defaultAudioDevice } from '@utils/mockData/device';
-import { setupNavigatorMocks } from '@test/setup/setupNavigatorMocks';
-import { renderWithAppConfig as render } from '@test/helpers/renderWithProviders';
+import { renderWithAppConfig } from '@test/helpers/renderWithProviders';
 import DeviceControlButton from './DeviceControlButton';
 import enTranslations from '../../../locales/en.json';
 
@@ -42,8 +41,20 @@ const mockUsePublisherContext = usePublisherContext as Mock<[], PublisherContext
 const mockUseSpeakingDetector = useSpeakingDetector as Mock<[], boolean>;
 const mockHandleToggleBackgroundEffects = vi.fn();
 
+const mediaDevicesMock: Partial<MediaDevices> = {
+  ondevicechange: null,
+  enumerateDevices() {
+    throw new Error('enumerateDevices was called but not mocked.');
+  },
+  addEventListener() {
+    throw new Error('addEventListener was called but not mocked.');
+  },
+  removeEventListener() {
+    throw new Error('removeEventListener was called but not mocked.');
+  },
+};
+
 describe('DeviceControlButton', () => {
-  const nativeMediaDevices = global.navigator.mediaDevices;
   let mockPublisher: Publisher;
   let publisherContext: PublisherContextType;
 
@@ -66,18 +77,18 @@ describe('DeviceControlButton', () => {
     mockUsePublisherContext.mockImplementation(() => publisherContext);
     mockUseSpeakingDetector.mockReturnValue(false);
 
-    setupNavigatorMocks();
+    Object.defineProperty(global.navigator, 'mediaDevices', {
+      writable: true,
+      value: mediaDevicesMock,
+    });
+
+    vi.spyOn(mediaDevicesMock, 'addEventListener').mockImplementation(() => {});
+    vi.spyOn(mediaDevicesMock, 'removeEventListener').mockImplementation(() => {});
+    vi.spyOn(mediaDevicesMock, 'enumerateDevices').mockResolvedValue([]);
   });
 
   afterEach(() => {
     vi.resetAllMocks();
-  });
-
-  afterAll(() => {
-    Object.defineProperty(global.navigator, 'mediaDevices', {
-      writable: true,
-      value: nativeMediaDevices,
-    });
   });
 
   it('updates the main publisher and the background replacement publisher when clicked', () => {
@@ -89,7 +100,7 @@ describe('DeviceControlButton', () => {
       isAudioEnabled: true,
       isVideoEnabled: true,
     }));
-    render(
+    renderWithAppConfig(
       <DeviceControlButton
         deviceType="video"
         toggleBackgroundEffects={mockHandleToggleBackgroundEffects}
@@ -103,7 +114,7 @@ describe('DeviceControlButton', () => {
 
   describe('audio DeviceControlButton', () => {
     it('renders by default', () => {
-      render(
+      renderWithAppConfig(
         <DeviceControlButton
           deviceType="audio"
           toggleBackgroundEffects={mockHandleToggleBackgroundEffects}
@@ -117,7 +128,7 @@ describe('DeviceControlButton', () => {
     });
 
     it('renders the button as disabled with greyed out icon and correct tooltip when allowMicrophoneControl is false', async () => {
-      render(
+      renderWithAppConfig(
         <DeviceControlButton
           deviceType="audio"
           toggleBackgroundEffects={mockHandleToggleBackgroundEffects}
@@ -147,7 +158,7 @@ describe('DeviceControlButton', () => {
 
   describe('video DeviceControlButton', () => {
     it('is rendered when it is configured to be enabled', () => {
-      render(
+      renderWithAppConfig(
         <DeviceControlButton
           deviceType="video"
           toggleBackgroundEffects={mockHandleToggleBackgroundEffects}
@@ -162,7 +173,7 @@ describe('DeviceControlButton', () => {
     });
 
     it('renders the button as disabled with greyed out icon and correct tooltip when allowCameraControl is false', async () => {
-      render(
+      renderWithAppConfig(
         <DeviceControlButton
           deviceType="video"
           toggleBackgroundEffects={mockHandleToggleBackgroundEffects}

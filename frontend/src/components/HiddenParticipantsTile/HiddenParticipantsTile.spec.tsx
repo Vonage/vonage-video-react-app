@@ -58,7 +58,6 @@ describe('HiddenParticipantsTile', () => {
       <HiddenParticipantsTile box={box} hiddenSubscribers={currentHiddenSubscribers} />
     );
 
-    // we need to capture it before re-render cause the function doesn't persist across renders
     const toggleParticipantListSpy = vi.mocked(sessionContext.current.toggleParticipantList);
 
     const button = getByTestId('hidden-participants');
@@ -81,7 +80,6 @@ describe('HiddenParticipantsTile', () => {
       <HiddenParticipantsTile box={box} hiddenSubscribers={currentHiddenSubscribers} />
     );
 
-    // we need to capture it before re-render cause the function doesn't persist across renders
     const toggleParticipantListSpy = vi.mocked(sessionContext.current.toggleParticipantList);
 
     const button = getByTestId('hidden-participants');
@@ -111,7 +109,6 @@ describe('HiddenParticipantsTile', () => {
       }
     );
 
-    // we need to capture it before re-render cause the function doesn't persist across renders
     const toggleParticipantListSpy = vi.mocked(sessionContext.current.toggleParticipantList);
 
     const button = getByTestId('hidden-participants');

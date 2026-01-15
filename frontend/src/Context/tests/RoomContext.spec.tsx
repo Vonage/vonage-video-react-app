@@ -6,7 +6,6 @@ import useUserContext from '@hooks/useUserContext';
 import useAudioOutputContext from '@hooks/useAudioOutputContext';
 import { nativeDevices } from '@utils/mockData/device';
 import mergeAppConfigs from '@Context/AppConfig/helpers/mergeAppConfigs';
-import { setupNavigatorMocks } from '@test/setup/setupNavigatorMocks';
 import RoomContext from '../RoomContext';
 import { UserContextType } from '../user';
 import { AudioOutputContextType } from '../AudioOutputProvider';
@@ -39,21 +38,34 @@ const defaultAppConfigValue = mergeAppConfigs({
   isAppConfigLoaded: true,
 });
 
+const mediaDevicesMock: Partial<MediaDevices> = {
+  ondevicechange: null,
+  enumerateDevices() {
+    throw new Error('enumerateDevices was called but not mocked.');
+  },
+  addEventListener() {
+    throw new Error('addEventListener was called but not mocked.');
+  },
+  removeEventListener() {
+    throw new Error('removeEventListener was called but not mocked.');
+  },
+};
+
 describe('RoomContext', () => {
   beforeEach(() => {
     vi.mocked(useUserContext).mockImplementation(() => mockUserContextWithDefaultSettings);
     vi.mocked(useAudioOutputContext).mockImplementation(() => mockUseAudioOutputContextValues);
 
-    setupNavigatorMocks({
-      mediaDevices: {
-        enumerateDevices: vi.fn(
-          () =>
-            new Promise<MediaDeviceInfo[]>((res) => {
-              res(nativeDevices as MediaDeviceInfo[]);
-            })
-        ),
-      },
+    Object.defineProperty(global.navigator, 'mediaDevices', {
+      writable: true,
+      value: mediaDevicesMock,
     });
+
+    vi.spyOn(mediaDevicesMock, 'enumerateDevices').mockResolvedValue(
+      nativeDevices as MediaDeviceInfo[]
+    );
+    vi.spyOn(mediaDevicesMock, 'addEventListener').mockImplementation(() => {});
+    vi.spyOn(mediaDevicesMock, 'removeEventListener').mockImplementation(() => {});
   });
 
   it('renders content', () => {

@@ -1,5 +1,5 @@
 import { act, renderHook as renderHookBase, waitFor } from '@testing-library/react';
-import { afterAll, beforeEach, describe, expect, it, Mock, vi } from 'vitest';
+import { beforeEach, describe, expect, it, Mock, vi } from 'vitest';
 import { hasMediaProcessorSupport, initPublisher, Publisher } from '@vonage/client-sdk-video';
 import EventEmitter from 'node:events';
 import { defaultAudioDevice, defaultVideoDevice } from '@utils/mockData/device';
@@ -9,9 +9,21 @@ import {
 } from '@test/providers';
 import useBackgroundPublisher from './useBackgroundPublisher';
 import { DEVICE_ACCESS_STATUS } from '@utils/constants';
-import { setupNavigatorMocks } from '@test/setup/setupNavigatorMocks';
 
 vi.mock('@vonage/client-sdk-video');
+
+const mediaDevicesMock: Partial<MediaDevices> = {
+  ondevicechange: null,
+  enumerateDevices() {
+    throw new Error('enumerateDevices was called but not mocked.');
+  },
+  addEventListener() {
+    throw new Error('addEventListener was called but not mocked.');
+  },
+  removeEventListener() {
+    throw new Error('removeEventListener was called but not mocked.');
+  },
+};
 
 describe('useBackgroundPublisher', () => {
   const mockPublisher = Object.assign(new EventEmitter(), {
@@ -27,7 +39,21 @@ describe('useBackgroundPublisher', () => {
   beforeEach(() => {
     vi.spyOn(console, 'error');
 
-    setupNavigatorMocks();
+    Object.defineProperty(globalThis.navigator, 'mediaDevices', {
+      writable: true,
+      value: mediaDevicesMock,
+    });
+
+    Object.defineProperty(globalThis.navigator, 'permissions', {
+      writable: true,
+      value: {
+        query: vi.fn().mockResolvedValue({ state: 'granted' }),
+      },
+    });
+
+    vi.spyOn(mediaDevicesMock, 'addEventListener').mockImplementation(() => {});
+    vi.spyOn(mediaDevicesMock, 'removeEventListener').mockImplementation(() => {});
+    vi.spyOn(mediaDevicesMock, 'enumerateDevices').mockResolvedValue([]);
 
     (initPublisher as Mock).mockImplementation(mockedInitPublisher);
     (hasMediaProcessorSupport as Mock).mockImplementation(mockedHasMediaProcessorSupport);
@@ -132,6 +158,7 @@ describe('useBackgroundPublisher', () => {
       await act(async () => {
         await result.current.changeBackground('none');
       });
+      expect(mockPublisher.clearVideoFilter).toHaveBeenCalled();
     });
 
     it('logs an error if applyBackgroundFilter rejects', async () => {
@@ -150,7 +177,6 @@ describe('useBackgroundPublisher', () => {
   });
 
   describe('on accessDenied', () => {
-    const nativePermissions = globalThis.navigator.permissions;
     const mockQuery = vi.fn();
     let mockedPermissionStatus: { onchange: null | (() => void); state: string };
     const emitAccessDeniedError = () => {
@@ -167,17 +193,11 @@ describe('useBackgroundPublisher', () => {
       };
       mockQuery.mockResolvedValue(mockedPermissionStatus);
 
-      setupNavigatorMocks({
-        permissions: {
+      Object.defineProperty(global.navigator, 'permissions', {
+        writable: true,
+        value: {
           query: mockQuery,
         },
-      });
-    });
-
-    afterAll(() => {
-      Object.defineProperty(globalThis.navigator, 'permissions', {
-        writable: true,
-        value: nativePermissions,
       });
     });
 

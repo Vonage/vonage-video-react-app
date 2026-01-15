@@ -15,7 +15,6 @@ import {
   AudioOutputProviderWrapperOptions,
 } from '@test/providers';
 import { renderWithAppConfigAndAudioOutput } from '@test/helpers/renderWithProviders';
-import { setupNavigatorMocks } from '@test/setup/setupNavigatorMocks';
 import DeviceSettingsMenu from './DeviceSettingsMenu';
 
 const {
@@ -52,6 +51,19 @@ vi.mock('@utils/util', async () => {
 // This is returned by Vonage SDK if audioOutput is not supported
 const vonageDefaultEmptyOutputDevice = { deviceId: null, label: null };
 
+const mediaDevicesMock: Partial<MediaDevices> = {
+  ondevicechange: null,
+  enumerateDevices() {
+    throw new Error('enumerateDevices was called but not mocked.');
+  },
+  addEventListener() {
+    throw new Error('addEventListener was called but not mocked.');
+  },
+  removeEventListener() {
+    throw new Error('removeEventListener was called but not mocked.');
+  },
+};
+
 describe('DeviceSettingsMenu Component', () => {
   const mockHandleToggle = vi.fn();
   const mockHandleToggleBackgroundEffects = vi.fn();
@@ -72,13 +84,22 @@ describe('DeviceSettingsMenu Component', () => {
     mockGetActiveAudioOutputDevice.mockResolvedValue(audioOutputDevices[0]);
     mockGetAudioOutputDevices.mockResolvedValue(audioOutputDevices);
     deviceChangeListener = new EventEmitter();
-    setupNavigatorMocks({
-      mediaDevices: {
-        enumerateDevices: vi.fn(() => Promise.resolve(nativeDevices as MediaDeviceInfo[])),
-        addEventListener: vi.fn((event, listener) => deviceChangeListener.on(event, listener)),
-        removeEventListener: vi.fn((event, listener) => deviceChangeListener.off(event, listener)),
-      },
+
+    Object.defineProperty(global.navigator, 'mediaDevices', {
+      writable: true,
+      value: mediaDevicesMock,
     });
+
+    vi.spyOn(mediaDevicesMock, 'enumerateDevices').mockImplementation(() =>
+      Promise.resolve(nativeDevices as MediaDeviceInfo[])
+    );
+    vi.spyOn(mediaDevicesMock, 'addEventListener').mockImplementation((event, listener) => {
+      deviceChangeListener.on(event, listener as (...args: unknown[]) => void);
+    });
+    vi.spyOn(mediaDevicesMock, 'removeEventListener').mockImplementation((event, listener) => {
+      deviceChangeListener.off(event, listener as (...args: unknown[]) => void);
+    });
+
     (hasMediaProcessorSupport as Mock).mockImplementation(mockedHasMediaProcessorSupport);
     mockedHasMediaProcessorSupport.mockReturnValue(false);
   });
