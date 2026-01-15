@@ -5,22 +5,12 @@ import EventEmitter from 'node:events';
 import { defaultAudioDevice, defaultVideoDevice } from '@utils/mockData/device';
 import { DEVICE_ACCESS_STATUS } from '@utils/constants';
 import { renderHookWithPreviewPublisher as render } from '@test/helpers/renderWithProviders';
+import { createMediaDevicesMock, setupMediaDevicesMock } from '@test/mocks/mediaDevicesMock';
 import usePreviewPublisher from './usePreviewPublisher';
 
 vi.mock('@vonage/client-sdk-video');
 
-const mediaDevicesMock: Partial<MediaDevices> = {
-  ondevicechange: null,
-  enumerateDevices() {
-    throw new Error('enumerateDevices was called but not mocked.');
-  },
-  addEventListener() {
-    throw new Error('addEventListener was called but not mocked.');
-  },
-  removeEventListener() {
-    throw new Error('removeEventListener was called but not mocked.');
-  },
-};
+const mediaDevicesMock = createMediaDevicesMock();
 
 describe('usePreviewPublisher', () => {
   const mockPublisher = Object.assign(new EventEmitter(), {
@@ -47,9 +37,7 @@ describe('usePreviewPublisher', () => {
       },
     });
 
-    vi.spyOn(mediaDevicesMock, 'addEventListener').mockImplementation(() => {});
-    vi.spyOn(mediaDevicesMock, 'removeEventListener').mockImplementation(() => {});
-    vi.spyOn(mediaDevicesMock, 'enumerateDevices').mockResolvedValue([]);
+    setupMediaDevicesMock(mediaDevicesMock, vi);
 
     (initPublisher as Mock).mockImplementation(mockedInitPublisher);
     (hasMediaProcessorSupport as Mock).mockImplementation(mockedHasMediaProcessorSupport);

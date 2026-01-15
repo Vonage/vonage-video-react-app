@@ -7,24 +7,14 @@ import {
   getAudioOutputDevices,
   OTError,
 } from '@vonage/client-sdk-video';
+import { createMediaDevicesMock, setupMediaDevicesMock } from '@test/mocks/mediaDevicesMock';
 import useDevices from '../useDevices';
 
 type GetDevicesCallback = (err?: OTError, devices?: Device[]) => void;
 
 vi.mock('@vonage/client-sdk-video');
 
-const mediaDevicesMock: Partial<MediaDevices> = {
-  ondevicechange: null,
-  enumerateDevices() {
-    throw new Error('enumerateDevices was called but not mocked.');
-  },
-  addEventListener() {
-    throw new Error('addEventListener was called but not mocked.');
-  },
-  removeEventListener() {
-    throw new Error('removeEventListener was called but not mocked.');
-  },
-};
+const mediaDevicesMock = createMediaDevicesMock();
 
 describe('useDevices', () => {
   const reMockTheMocks = () => {
@@ -43,9 +33,7 @@ describe('useDevices', () => {
       value: mediaDevicesMock,
     });
 
-    vi.spyOn(mediaDevicesMock, 'enumerateDevices').mockResolvedValue([]);
-    vi.spyOn(mediaDevicesMock, 'addEventListener').mockImplementation(() => {});
-    vi.spyOn(mediaDevicesMock, 'removeEventListener').mockImplementation(() => {});
+    setupMediaDevicesMock(mediaDevicesMock, vi);
   });
 
   it('warns if enumerateDevices is not supported', () => {

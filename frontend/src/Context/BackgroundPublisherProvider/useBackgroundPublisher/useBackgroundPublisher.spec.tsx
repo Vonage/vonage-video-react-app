@@ -7,23 +7,13 @@ import {
   makeBackgroundPublisherProviderWrapper,
   BackgroundPublisherProviderWrapperOptions,
 } from '@test/providers';
+import { createMediaDevicesMock, setupMediaDevicesMock } from '@test/mocks/mediaDevicesMock';
 import useBackgroundPublisher from './useBackgroundPublisher';
 import { DEVICE_ACCESS_STATUS } from '@utils/constants';
 
 vi.mock('@vonage/client-sdk-video');
 
-const mediaDevicesMock: Partial<MediaDevices> = {
-  ondevicechange: null,
-  enumerateDevices() {
-    throw new Error('enumerateDevices was called but not mocked.');
-  },
-  addEventListener() {
-    throw new Error('addEventListener was called but not mocked.');
-  },
-  removeEventListener() {
-    throw new Error('removeEventListener was called but not mocked.');
-  },
-};
+const mediaDevicesMock = createMediaDevicesMock();
 
 describe('useBackgroundPublisher', () => {
   const mockPublisher = Object.assign(new EventEmitter(), {
@@ -51,9 +41,7 @@ describe('useBackgroundPublisher', () => {
       },
     });
 
-    vi.spyOn(mediaDevicesMock, 'addEventListener').mockImplementation(() => {});
-    vi.spyOn(mediaDevicesMock, 'removeEventListener').mockImplementation(() => {});
-    vi.spyOn(mediaDevicesMock, 'enumerateDevices').mockResolvedValue([]);
+    setupMediaDevicesMock(mediaDevicesMock, vi);
 
     (initPublisher as Mock).mockImplementation(mockedInitPublisher);
     (hasMediaProcessorSupport as Mock).mockImplementation(mockedHasMediaProcessorSupport);

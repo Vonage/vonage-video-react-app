@@ -7,6 +7,7 @@ import useSpeakingDetector from '@hooks/useSpeakingDetector';
 import usePublisherContext from '@hooks/usePublisherContext';
 import { defaultAudioDevice } from '@utils/mockData/device';
 import { renderWithAppConfig } from '@test/helpers/renderWithProviders';
+import { createMediaDevicesMock, setupMediaDevicesMock } from '@test/mocks/mediaDevicesMock';
 import DeviceControlButton from './DeviceControlButton';
 import enTranslations from '../../../locales/en.json';
 
@@ -41,18 +42,7 @@ const mockUsePublisherContext = usePublisherContext as Mock<[], PublisherContext
 const mockUseSpeakingDetector = useSpeakingDetector as Mock<[], boolean>;
 const mockHandleToggleBackgroundEffects = vi.fn();
 
-const mediaDevicesMock: Partial<MediaDevices> = {
-  ondevicechange: null,
-  enumerateDevices() {
-    throw new Error('enumerateDevices was called but not mocked.');
-  },
-  addEventListener() {
-    throw new Error('addEventListener was called but not mocked.');
-  },
-  removeEventListener() {
-    throw new Error('removeEventListener was called but not mocked.');
-  },
-};
+const mediaDevicesMock = createMediaDevicesMock();
 
 describe('DeviceControlButton', () => {
   let mockPublisher: Publisher;
@@ -82,9 +72,7 @@ describe('DeviceControlButton', () => {
       value: mediaDevicesMock,
     });
 
-    vi.spyOn(mediaDevicesMock, 'addEventListener').mockImplementation(() => {});
-    vi.spyOn(mediaDevicesMock, 'removeEventListener').mockImplementation(() => {});
-    vi.spyOn(mediaDevicesMock, 'enumerateDevices').mockResolvedValue([]);
+    setupMediaDevicesMock(mediaDevicesMock, vi);
   });
 
   afterEach(() => {

@@ -4,21 +4,11 @@ import { AudioOutputDevice } from '@vonage/client-sdk-video';
 import * as OT from '@vonage/client-sdk-video';
 import { renderHookWithAudioOutput } from '@test/helpers/renderWithProviders';
 import { nativeDevices } from '../../../utils/mockData/device';
+import { createMediaDevicesMock, setupMediaDevicesMock } from '@test/mocks/mediaDevicesMock';
 
 vi.mock('@vonage/client-sdk-video');
 
-const mediaDevicesMock: Partial<MediaDevices> = {
-  ondevicechange: null,
-  enumerateDevices() {
-    throw new Error('enumerateDevices was called but not mocked.');
-  },
-  addEventListener() {
-    throw new Error('addEventListener was called but not mocked.');
-  },
-  removeEventListener() {
-    throw new Error('removeEventListener was called but not mocked.');
-  },
-};
+const mediaDevicesMock = createMediaDevicesMock();
 
 describe('useAudioOutput', () => {
   let mockGetActiveAudioOutputDevice: MockInstance<[], Promise<AudioOutputDevice>>;
@@ -30,11 +20,9 @@ describe('useAudioOutput', () => {
       value: mediaDevicesMock,
     });
 
-    vi.spyOn(mediaDevicesMock, 'addEventListener').mockImplementation(() => {});
-    vi.spyOn(mediaDevicesMock, 'removeEventListener').mockImplementation(() => {});
-    vi.spyOn(mediaDevicesMock, 'enumerateDevices').mockResolvedValue(
-      nativeDevices as MediaDeviceInfo[]
-    );
+    setupMediaDevicesMock(mediaDevicesMock, vi, {
+      enumerateDevices: () => Promise.resolve(nativeDevices as MediaDeviceInfo[]),
+    });
 
     mockGetActiveAudioOutputDevice = vi
       .spyOn(OT, 'getActiveAudioOutputDevice')

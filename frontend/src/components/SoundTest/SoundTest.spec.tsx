@@ -2,6 +2,7 @@ import { describe, it, expect, beforeEach, vi, Mock } from 'vitest';
 import { act, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import VividIcon from '@components/VividIcon';
+import { createMediaDevicesMock, setupMediaDevicesMock } from '@test/mocks/mediaDevicesMock';
 import SoundTest from './SoundTest';
 import useAudioOutputContext from '../../hooks/useAudioOutputContext';
 import { AudioOutputContextType, AudioOutputProvider } from '../../Context/AudioOutputProvider';
@@ -10,18 +11,7 @@ import { nativeDevices } from '../../utils/mockData/device';
 vi.mock('../../hooks/useAudioOutputContext');
 const mockUseAudioOutputContext = useAudioOutputContext as Mock<[], AudioOutputContextType>;
 
-const mediaDevicesMock: Partial<MediaDevices> = {
-  ondevicechange: null,
-  enumerateDevices() {
-    throw new Error('enumerateDevices was called but not mocked.');
-  },
-  addEventListener() {
-    throw new Error('addEventListener was called but not mocked.');
-  },
-  removeEventListener() {
-    throw new Error('removeEventListener was called but not mocked.');
-  },
-};
+const mediaDevicesMock = createMediaDevicesMock();
 
 describe('SoundTest', () => {
   let audioOutputContext: AudioOutputContextType;
@@ -36,14 +26,9 @@ describe('SoundTest', () => {
       value: mediaDevicesMock,
     });
 
-    vi.spyOn(mediaDevicesMock, 'enumerateDevices').mockImplementation(
-      () =>
-        new Promise<MediaDeviceInfo[]>((res) => {
-          res(nativeDevices as MediaDeviceInfo[]);
-        })
-    );
-    vi.spyOn(mediaDevicesMock, 'addEventListener').mockImplementation(() => {});
-    vi.spyOn(mediaDevicesMock, 'removeEventListener').mockImplementation(() => {});
+    setupMediaDevicesMock(mediaDevicesMock, vi, {
+      enumerateDevices: () => Promise.resolve(nativeDevices as MediaDeviceInfo[]),
+    });
 
     global.Audio = vi.fn().mockImplementation(() => ({
       play: playMock,
