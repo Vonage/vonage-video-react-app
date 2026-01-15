@@ -1,4 +1,4 @@
-const mediaDevices: typeof navigator.mediaDevices = {
+const mediaDevicesMock: typeof navigator.mediaDevices = {
   ondevicechange: null,
   enumerateDevices: function (): Promise<MediaDeviceInfo[]> {
     throw new Error('Function not implemented.');
@@ -23,4 +23,4 @@ const mediaDevices: typeof navigator.mediaDevices = {
   },
 };
 
-export default mediaDevices;
+export default mediaDevicesMock;

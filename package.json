@@ -183,6 +183,7 @@
     "i18next-browser-languagedetector": "^8.2.0",
     "json-storage-formatter": "^3.0.2",
     "lodash": "^4.17.21",
+    "normalize-range": "^0.1.2",
     "opentok": "2.22.0",
     "opentok-jwt": "^0.1.5",
     "opentok-layout-js": "^5.5.0",
