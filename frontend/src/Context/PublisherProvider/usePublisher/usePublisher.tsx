@@ -522,56 +522,6 @@ const usePublisher = (): PublisherContextType => {
     setPublishingError(null);
   }, [reconnecting, connected, isPublishing]);
 
-  // After reconnection, re-apply media state to newly created publisher
-  useEffect(() => {
-    if (reconnecting !== false) {
-      return;
-    }
-    if (!connected) {
-      return;
-    }
-
-    const publisher = publisherRef.current;
-    if (!publisher) {
-      return;
-    }
-
-    const shouldPublishAudio = isForceMuted ? false : isAudioEnabled;
-    const shouldPublishVideo = isVideoEnabled;
-
-    console.warn('[PUBLISHER] postReconnect - reapplying media state', {
-      shouldPublishAudio,
-      shouldPublishVideo,
-      isForceMuted,
-    });
-
-    publisher.publishAudio(shouldPublishAudio);
-    publisher.publishVideo(shouldPublishVideo);
-
-    console.warn('postReconnect - after reapplying media state', {
-      shouldPublishAudio,
-      shouldPublishVideo,
-    });
-  }, [reconnecting, connected, isAudioEnabled, isVideoEnabled, isForceMuted]);
-
-  /*useEffect(() => {
-    const shouldAutoPublish =
-      !!publisherRef.current && connected && reconnecting === false && !isPublishing;
-
-    console.warn('[PUBLISHER] autoPublish useEffect', {
-      shouldAutoPublish,
-      reconnecting,
-      connected,
-      isPublishing,
-      hasPublisher: !!publisherRef.current,
-      isPublishingToSession: isPublishingToSessionRef.current,
-    });
-
-    if (shouldAutoPublish) {
-      publish();
-    }
-  }, [connected, reconnecting, isPublishing, publish]);*/
-
   return {
     initializeLocalPublisher,
     isAudioEnabled,
