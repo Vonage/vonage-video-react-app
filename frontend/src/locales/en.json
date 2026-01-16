@@ -150,6 +150,7 @@
   "participants.pin": "Pin {{participantName}}",
   "participants.pin.video": "Pin {{participantName}}'s video",
   "participants.screen": "{{participantName}}'s screen",
+  "participants.search": "Search participants",
   "participants.title": "Participants",
   "participants.unpin": "Unpin {{participantName}}",
   "participants.unpin.video": "Unpin {{participantName}}'s video",

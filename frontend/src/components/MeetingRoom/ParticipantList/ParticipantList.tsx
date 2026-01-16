@@ -1,15 +1,14 @@
 import { ReactElement, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import useSessionContext from '../../../hooks/useSessionContext';
-import useUserContext from '../../../hooks/useUserContext';
-import useAudioLevels from '../../../hooks/useAudioLevels';
+import useSessionContext from '@hooks/useSessionContext';
+import useUserContext from '@hooks/useUserContext';
+import useAudioLevels from '@hooks/useAudioLevels';
 import ParticipantListItem from '../ParticipantListItem';
-import getInitials from '../../../utils/getInitials';
-import { SubscriberWrapper } from '../../../types/session';
-import getParticipantColor from '../../../utils/getParticipantColor';
-import useRoomShareUrl from '../../../hooks/useRoomShareUrl';
+import getInitials from '@utils/getInitials';
+import getParticipantColor from '@utils/getParticipantColor';
+import useRoomShareUrl from '@hooks/useRoomShareUrl';
 import RightPanelTitle from '../RightPanel/RightPanelTitle';
-import usePublisherContext from '../../../hooks/usePublisherContext';
+import usePublisherContext from '@hooks/usePublisherContext';
 import IconButton from '@ui/IconButton';
 import Tooltip from '@ui/Tooltip';
 import Fade from '@ui/Fade';
@@ -19,18 +18,12 @@ import Typography from '@ui/Typography';
 import useTheme from '@ui/theme';
 import Stack from '@ui/Stack';
 import VividIcon from '@components/VividIcon';
+import TextField from '@ui/TextField';
+import InputAdornment from '@ui/InputAdornment';
 
-const compareNameAlphabetically = (a: SubscriberWrapper, b: SubscriberWrapper) => {
-  const nameA = a.subscriber?.stream?.name;
-  const nameB = b.subscriber?.stream?.name;
-  if (!nameA) {
-    return 1;
-  }
-  if (!nameB) {
-    return -1;
-  }
-  return nameA.localeCompare(nameB);
-};
+import createNameMatcher from '@utils/participantList/createNameMatcher';
+import getFilteredSubscribers from '@utils/participantList/getFilteredSubscribers';
+import shouldShowUser from '@utils/participantList/shouldShowUser';
 
 export type ParticipantListProps = {
   handleClose: () => void;
@@ -53,6 +46,7 @@ const ParticipantList = ({ handleClose, isOpen }: ParticipantListProps): ReactEl
   const { subscriberWrappers } = useSessionContext();
   const publisherAudio = useAudioLevels();
   const [isCopied, setIsCopied] = useState<boolean>(false);
+  const [query, setQuery] = useState<string>('');
   const {
     user: {
       defaultSettings: { name },
@@ -61,10 +55,23 @@ const ParticipantList = ({ handleClose, isOpen }: ParticipantListProps): ReactEl
   const roomShareUrl = useRoomShareUrl();
   const { isAudioEnabled } = usePublisherContext();
 
-  const participantCount = useMemo(
-    () => 1 + subscriberWrappers.filter(({ isScreenshare }) => !isScreenshare).length,
-    [subscriberWrappers]
-  );
+  const { filteredSubscriberWrappers, isUserVisible, participantCount } = useMemo(() => {
+    const nameMatches = createNameMatcher(query);
+    const filteredSubscriberWrappersLocal = getFilteredSubscribers({
+      subscriberWrappers,
+      nameMatches,
+    });
+    const isUserVisibleLocal = shouldShowUser(nameMatches, name);
+    const participantCountLocal =
+      (isUserVisibleLocal ? 1 : 0) + filteredSubscriberWrappersLocal.length;
+
+    return {
+      nameMatches,
+      filteredSubscriberWrappers: filteredSubscriberWrappersLocal,
+      isUserVisible: isUserVisibleLocal,
+      participantCount: participantCountLocal,
+    };
+  }, [subscriberWrappers, query, name]);
 
   const copyUrl = () => {
     navigator.clipboard.writeText(roomShareUrl);
@@ -133,37 +140,52 @@ const ParticipantList = ({ handleClose, isOpen }: ParticipantListProps): ReactEl
             </Tooltip>
           </IconButton>
         </Box>
-        <List sx={{ overflowX: 'auto', height: 'calc(100dvh - 240px)' }}>
-          <ParticipantListItem
-            key="you"
-            dataTestId="participant-list-item-you"
-            hasAudio={isAudioEnabled}
-            audioLevel={isAudioEnabled ? publisherAudio : undefined}
-            name={`${name} (${t('user.you')})`}
-            initials={getInitials(name)}
-            avatarColor={getParticipantColor(name)}
+        <Box sx={{ px: 3, pt: 1, pb: 1 }}>
+          <TextField
+            fullWidth
+            size="small"
+            placeholder={t('participants.search') || 'Search participants'}
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            InputProps={{
+              startAdornment: (
+                <InputAdornment position="start">
+                  <VividIcon name="search-line" customSize={-6} />
+                </InputAdornment>
+              ),
+            }}
           />
-          {subscriberWrappers
-            .filter(({ isScreenshare }) => !isScreenshare)
-            .sort(compareNameAlphabetically)
-            .map((subscriberWrapper) => {
-              const { subscriber, id } = subscriberWrapper;
-              const hasAudio = !!subscriber.stream?.hasAudio;
-              const participantName = subscriber?.stream?.name ?? '';
-              const participantStream = subscriber?.stream;
-              return (
-                <ParticipantListItem
-                  key={id}
-                  dataTestId={`participant-list-item-${id}`}
-                  hasAudio={hasAudio}
-                  stream={participantStream}
-                  name={participantName}
-                  initials={getInitials(participantName)}
-                  avatarColor={getParticipantColor(participantName)}
-                  subscriberWrapper={subscriberWrapper}
-                />
-              );
-            })}
+        </Box>
+        <List sx={{ overflowX: 'auto', height: 'calc(100dvh - 240px)' }}>
+          {isUserVisible && (
+            <ParticipantListItem
+              key="you"
+              dataTestId="participant-list-item-you"
+              hasAudio={isAudioEnabled}
+              audioLevel={isAudioEnabled ? publisherAudio : undefined}
+              name={`${name} (${t('user.you')})`}
+              initials={getInitials(name)}
+              avatarColor={getParticipantColor(name)}
+            />
+          )}
+          {filteredSubscriberWrappers.map((subscriberWrapper) => {
+            const { subscriber, id } = subscriberWrapper;
+            const hasAudio = !!subscriber.stream?.hasAudio;
+            const participantName: string = subscriber?.stream?.name ?? '';
+            const participantStream = subscriber?.stream;
+            return (
+              <ParticipantListItem
+                key={id}
+                dataTestId={`participant-list-item-${id}`}
+                hasAudio={hasAudio}
+                stream={participantStream}
+                name={participantName}
+                initials={getInitials(participantName)}
+                avatarColor={getParticipantColor(participantName)}
+                subscriberWrapper={subscriberWrapper}
+              />
+            );
+          })}
         </List>
       </>
     )
