@@ -4,21 +4,9 @@ import { AudioOutputDevice } from '@vonage/client-sdk-video';
 import * as OT from '@vonage/client-sdk-video';
 import { makeAudioOutputProviderWrapper, AudioOutputProviderWrapperOptions } from '@test/providers';
 import { nativeDevices } from '../../../utils/mockData/device';
+import mediaDevicesMock from '@common/test/mocks/mediaDevicesMock';
 
 vi.mock('@vonage/client-sdk-video');
-
-const mediaDevicesMock: Partial<MediaDevices> = {
-  ondevicechange: null,
-  enumerateDevices() {
-    throw new Error('enumerateDevices was called but not mocked.');
-  },
-  addEventListener() {
-    throw new Error('addEventListener was called but not mocked.');
-  },
-  removeEventListener() {
-    throw new Error('removeEventListener was called but not mocked.');
-  },
-};
 
 describe('useAudioOutput', () => {
   vi.clearAllMocks();

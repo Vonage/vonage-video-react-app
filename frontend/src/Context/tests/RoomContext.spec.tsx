@@ -9,6 +9,7 @@ import mergeAppConfigs from '@Context/AppConfig/helpers/mergeAppConfigs';
 import RoomContext from '../RoomContext';
 import { UserContextType } from '../user';
 import { AudioOutputContextType } from '../AudioOutputProvider';
+import mediaDevicesMock from '@common/test/mocks/mediaDevicesMock';
 
 vi.mock('@hooks/useUserContext');
 vi.mock('@hooks/useAudioOutputContext');
@@ -37,19 +38,6 @@ const defaultAppConfigValue = mergeAppConfigs({
    */
   isAppConfigLoaded: true,
 });
-
-const mediaDevicesMock: Partial<MediaDevices> = {
-  ondevicechange: null,
-  enumerateDevices() {
-    throw new Error('enumerateDevices was called but not mocked.');
-  },
-  addEventListener() {
-    throw new Error('addEventListener was called but not mocked.');
-  },
-  removeEventListener() {
-    throw new Error('removeEventListener was called but not mocked.');
-  },
-};
 
 describe('RoomContext', () => {
   beforeEach(() => {

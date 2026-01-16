@@ -8,23 +8,11 @@ import {
   OTError,
 } from '@vonage/client-sdk-video';
 import useDevices from '../useDevices';
+import mediaDevicesMock from '@common/test/mocks/mediaDevicesMock';
 
 type GetDevicesCallback = (err?: OTError, devices?: Device[]) => void;
 
 vi.mock('@vonage/client-sdk-video');
-
-const mediaDevicesMock: Partial<MediaDevices> = {
-  ondevicechange: null,
-  enumerateDevices() {
-    throw new Error('enumerateDevices was called but not mocked.');
-  },
-  addEventListener() {
-    throw new Error('addEventListener was called but not mocked.');
-  },
-  removeEventListener() {
-    throw new Error('removeEventListener was called but not mocked.');
-  },
-};
 
 describe('useDevices', () => {
   const reMockTheMocks = () => {

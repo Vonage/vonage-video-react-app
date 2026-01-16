@@ -25,6 +25,7 @@ import {
 } from '@test/providers';
 import composeProviders from '@utils/composeProviders';
 import DeviceSettingsMenu from './DeviceSettingsMenu';
+import mediaDevicesMock from '@common/test/mocks/mediaDevicesMock';
 
 const {
   mockHasMediaProcessorSupport,
@@ -59,19 +60,6 @@ vi.mock('@utils/util', async () => {
 
 // This is returned by Vonage SDK if audioOutput is not supported
 const vonageDefaultEmptyOutputDevice = { deviceId: null, label: null };
-
-const mediaDevicesMock: Partial<MediaDevices> = {
-  ondevicechange: null,
-  enumerateDevices() {
-    throw new Error('enumerateDevices was called but not mocked.');
-  },
-  addEventListener() {
-    throw new Error('addEventListener was called but not mocked.');
-  },
-  removeEventListener() {
-    throw new Error('removeEventListener was called but not mocked.');
-  },
-};
 
 describe('DeviceSettingsMenu Component', () => {
   const mockHandleToggle = vi.fn();

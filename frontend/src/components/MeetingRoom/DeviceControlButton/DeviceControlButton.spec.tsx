@@ -10,6 +10,7 @@ import { defaultAudioDevice } from '@utils/mockData/device';
 import { AppConfigProviderWrapperOptions, makeAppConfigProviderWrapper } from '@test/providers';
 import DeviceControlButton from './DeviceControlButton';
 import enTranslations from '../../../locales/en.json';
+import mediaDevicesMock from '@common/test/mocks/mediaDevicesMock';
 
 vi.mock('@hooks/usePublisherContext.tsx');
 vi.mock('@hooks/useSpeakingDetector.tsx');
@@ -41,19 +42,6 @@ vi.mock('react-i18next', () => ({
 const mockUsePublisherContext = usePublisherContext as Mock<[], PublisherContextType>;
 const mockUseSpeakingDetector = useSpeakingDetector as Mock<[], boolean>;
 const mockHandleToggleBackgroundEffects = vi.fn();
-
-const mediaDevicesMock: Partial<MediaDevices> = {
-  ondevicechange: null,
-  enumerateDevices() {
-    throw new Error('enumerateDevices was called but not mocked.');
-  },
-  addEventListener() {
-    throw new Error('addEventListener was called but not mocked.');
-  },
-  removeEventListener() {
-    throw new Error('removeEventListener was called but not mocked.');
-  },
-};
 
 describe('DeviceControlButton', () => {
   let mockPublisher: Publisher;

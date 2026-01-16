@@ -8,21 +8,9 @@ import usePreviewPublisher from './usePreviewPublisher';
 import makePreviewPublisherProviderWrapper, {
   PreviewPublisherProviderWrapperOptions,
 } from '@test/providers/makePreviewPublisherProviderWrapper';
+import mediaDevicesMock from '@common/test/mocks/mediaDevicesMock';
 
 vi.mock('@vonage/client-sdk-video');
-
-const mediaDevicesMock: Partial<MediaDevices> = {
-  ondevicechange: null,
-  enumerateDevices() {
-    throw new Error('enumerateDevices was called but not mocked.');
-  },
-  addEventListener() {
-    throw new Error('addEventListener was called but not mocked.');
-  },
-  removeEventListener() {
-    throw new Error('removeEventListener was called but not mocked.');
-  },
-};
 
 describe('usePreviewPublisher', () => {
   const mockPublisher = Object.assign(new EventEmitter(), {
