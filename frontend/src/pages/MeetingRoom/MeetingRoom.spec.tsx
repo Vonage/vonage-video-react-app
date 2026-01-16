@@ -19,8 +19,8 @@ import useToolbarButtons, {
   UseToolbarButtons,
   UseToolbarButtonsProps,
 } from '@hooks/useToolbarButtons';
-import { PublisherProviderWrapperOptions } from '@test/providers';
-import { renderWithPublisher } from '@test/helpers/renderWithProviders';
+import { PublisherProviderWrapperOptions, makePublisherProviderWrapper } from '@test/providers';
+import { render as renderBase } from '@testing-library/react';
 import useMediaQuery from '@ui/useMediaQuery';
 import MeetingRoom from './MeetingRoom';
 import type { Box } from 'opentok-layout-js';
@@ -525,8 +525,13 @@ function setUserContextWithName(name: string) {
 }
 
 function render(ui: ReactElement, options: PublisherProviderWrapperOptions = {}) {
-  return renderWithPublisher(ui, {
+  const { PublisherProviderWrapper, ...props } = makePublisherProviderWrapper({
     ...options,
     publisherContext: {},
   });
+
+  return {
+    ...props,
+    ...renderBase(ui, { wrapper: PublisherProviderWrapper }),
+  };
 }

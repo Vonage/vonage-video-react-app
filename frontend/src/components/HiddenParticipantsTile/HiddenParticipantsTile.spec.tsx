@@ -1,11 +1,10 @@
 import { ReactElement } from 'react';
-import { fireEvent } from '@testing-library/react';
+import { fireEvent, render as renderBase } from '@testing-library/react';
 import { describe, it, expect, vi } from 'vitest';
 import userEvent from '@testing-library/user-event';
 import { Subscriber } from '@vonage/client-sdk-video';
-import type { SessionProviderWrapperOptions } from '@test/providers';
+import { makeSessionProviderWrapper, type SessionProviderWrapperOptions } from '@test/providers';
 import { SubscriberWrapper } from '@app-types/session';
-import { renderWithSession } from '@test/helpers/renderWithProviders';
 import HiddenParticipantsTile from './index';
 
 describe('HiddenParticipantsTile', () => {
@@ -120,7 +119,7 @@ describe('HiddenParticipantsTile', () => {
 });
 
 function render(ui: ReactElement, options?: SessionProviderWrapperOptions) {
-  return renderWithSession(ui, {
+  const { SessionProviderWrapper, sessionContext, appConfigContext } = makeSessionProviderWrapper({
     sessionOptions: {
       __onCreated: (sessionContext) => {
         vi.spyOn(sessionContext, 'toggleParticipantList');
@@ -128,4 +127,10 @@ function render(ui: ReactElement, options?: SessionProviderWrapperOptions) {
     },
     ...options,
   });
+
+  return {
+    ...renderBase(ui, { ...options, wrapper: SessionProviderWrapper }),
+    appConfigContext,
+    sessionContext,
+  };
 }

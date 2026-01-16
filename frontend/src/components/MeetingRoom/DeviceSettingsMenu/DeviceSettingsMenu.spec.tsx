@@ -1,4 +1,11 @@
-import { act, fireEvent, queryByText, screen, waitFor } from '@testing-library/react';
+import {
+  act,
+  fireEvent,
+  queryByText,
+  screen,
+  waitFor,
+  render as renderBase,
+} from '@testing-library/react';
 import { describe, beforeEach, it, Mock, vi, expect } from 'vitest';
 import { ReactElement, RefObject } from 'react';
 import { EventEmitter } from 'node:stream';
@@ -13,9 +20,10 @@ import {
 import {
   AppConfigProviderWrapperOptions,
   AudioOutputProviderWrapperOptions,
+  makeAppConfigProviderWrapper,
+  makeAudioOutputProviderWrapper,
 } from '@test/providers';
-import { renderWithAppConfigAndAudioOutput } from '@test/helpers/renderWithProviders';
-import { createMediaDevicesMock, setupMediaDevicesMock } from '@test/mocks/mediaDevicesMock';
+import composeProviders from '@utils/composeProviders';
 import DeviceSettingsMenu from './DeviceSettingsMenu';
 
 const {
@@ -52,7 +60,18 @@ vi.mock('@utils/util', async () => {
 // This is returned by Vonage SDK if audioOutput is not supported
 const vonageDefaultEmptyOutputDevice = { deviceId: null, label: null };
 
-const mediaDevicesMock = createMediaDevicesMock();
+const mediaDevicesMock: Partial<MediaDevices> = {
+  ondevicechange: null,
+  enumerateDevices() {
+    throw new Error('enumerateDevices was called but not mocked.');
+  },
+  addEventListener() {
+    throw new Error('addEventListener was called but not mocked.');
+  },
+  removeEventListener() {
+    throw new Error('removeEventListener was called but not mocked.');
+  },
+};
 
 describe('DeviceSettingsMenu Component', () => {
   const mockHandleToggle = vi.fn();
@@ -80,14 +99,14 @@ describe('DeviceSettingsMenu Component', () => {
       value: mediaDevicesMock,
     });
 
-    setupMediaDevicesMock(mediaDevicesMock, vi, {
-      enumerateDevices: () => Promise.resolve(nativeDevices as MediaDeviceInfo[]),
-      addEventListener: (event, listener) => {
-        deviceChangeListener.on(event, listener as (...args: unknown[]) => void);
-      },
-      removeEventListener: (event, listener) => {
-        deviceChangeListener.off(event, listener as (...args: unknown[]) => void);
-      },
+    vi.spyOn(mediaDevicesMock, 'enumerateDevices').mockImplementation(() =>
+      Promise.resolve(nativeDevices as MediaDeviceInfo[])
+    );
+    vi.spyOn(mediaDevicesMock, 'addEventListener').mockImplementation((event, listener) => {
+      deviceChangeListener.on(event, listener as (...args: unknown[]) => void);
+    });
+    vi.spyOn(mediaDevicesMock, 'removeEventListener').mockImplementation((event, listener) => {
+      deviceChangeListener.off(event, listener as (...args: unknown[]) => void);
     });
 
     (hasMediaProcessorSupport as Mock).mockImplementation(mockedHasMediaProcessorSupport);
@@ -389,5 +408,12 @@ function render(
     audioOutputOptions?: AudioOutputProviderWrapperOptions['audioOutputOptions'];
   }
 ) {
-  return renderWithAppConfigAndAudioOutput(ui, options);
+  const { AppConfigWrapper } = makeAppConfigProviderWrapper(options?.appConfigOptions);
+  const { AudioOutputProviderWrapper, audioOutputContext } = makeAudioOutputProviderWrapper({
+    audioOutputOptions: options?.audioOutputOptions,
+  });
+
+  const ComposedWrapper = composeProviders(AudioOutputProviderWrapper, AppConfigWrapper);
+
+  return { ...renderBase(ui, { wrapper: ComposedWrapper }), audioOutputContext };
 }
