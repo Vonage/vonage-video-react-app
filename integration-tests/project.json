@@ -7,6 +7,7 @@
   "targets": {
     "test": {
       "executor": "nx:run-commands",
+      "description": "Run playwright tests in all browsers",
       "options": {
         "cwd": "integration-tests",
         "command": "playwright test --project='Google Chrome Fake Devices' --project=firefox --project='Microsoft Edge' --project='Mobile Chrome'"
@@ -27,7 +28,6 @@
       "outputs": [],
       "options": {
         "cwd": "integration-tests",
-        "description": "Update snapshots only for one Playwright test file",
         "command": "playwright test {args._} --project='Google Chrome Fake Devices' --project=firefox --project='Microsoft Edge' --project='Mobile Chrome' --update-snapshots"
       }
     },
@@ -68,11 +68,29 @@
     },
     "test:": {
       "executor": "nx:run-commands",
-      "description": "Run playwright tests in a specific file",
+      "description": "Run playwright tests in a specific file using the compiled version of the app without interruptions",
       "options": {
         "cwd": "integration-tests",
-        "description": "Run playwright tests in a specific file",
-        "command": "playwright test {args._} --project='Google Chrome Fake Devices' --project=firefox --project='Microsoft Edge' --project='Mobile Chrome'"
+        "command": "playwright test {args._} --project='Google Chrome Fake Devices' --workers=1 --headed",
+        "env": { "headedMode": "true" }
+      }
+    },
+    "test:dev": {
+      "executor": "nx:run-commands",
+      "description": "Run playwright tests in a specific file using the dev version of the app without interruptions",
+      "options": {
+        "cwd": "integration-tests",
+        "command": "playwright test {args._} --project='Google Chrome Fake Devices' --workers=1 --headed",
+        "env": { "headedMode": "true", "debugMode": "true" }
+      }
+    },
+    "test:debug": {
+      "executor": "nx:run-commands",
+      "description": "Run playwright tests in a specific file in debug mode with the dev version of the app",
+      "options": {
+        "cwd": "integration-tests",
+        "command": "playwright test {args._} --project='Google Chrome Fake Devices' --workers=1 --timeout=0",
+        "env": { "headedMode": "true", "debugMode": "true", "PWDEBUG": "1" }
       }
     }
   },

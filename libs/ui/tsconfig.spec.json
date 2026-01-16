@@ -13,18 +13,14 @@
       "node",
       "vitest",
       "@testing-library/jest-dom"
-    ]
+    ],
+    "tsBuildInfoFile": "dist/tsconfig.spec.tsbuildinfo"
   },
   "include": [
     "vite.config.ts",
     "src/**/*.test.ts",
     "src/**/*.spec.ts",
     "src/**/*.test.tsx",
-    "src/**/*.spec.tsx",
-    "src/**/*.test.js",
-    "src/**/*.spec.js",
-    "src/**/*.tsx",
-    "src/**/*.ts"
-  ],
-  "references": [{ "path": "./tsconfig.lib.json" }]
+    "src/**/*.spec.tsx"
+  ]
 }

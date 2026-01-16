@@ -1,5 +1,7 @@
+import makeGenericProviderWrapper, {
+  type GenericWrapperOptions,
+} from '@common/test/makeGenericProviderWrapper';
 import UserProvider, { UserContext } from '@Context/user';
-import makeGenericProviderWrapper, { GenericWrapperOptions } from './makeGenericProviderWrapper';
 
 export type UserProviderWrapperOptions = GenericWrapperOptions<
   typeof UserProvider,

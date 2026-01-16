@@ -13,7 +13,7 @@ import usePublisherQuality, { NetworkQuality } from '../usePublisherQuality/useP
 import usePublisherOptions from '../usePublisherOptions';
 import useSessionContext from '../../../hooks/useSessionContext';
 import applyBackgroundFilter from '../../../utils/backgroundFilter/applyBackgroundFilter/applyBackgroundFilter';
-import idempotentCallbackWithRetry from '@utils/idempotentCallbackWithRetry/idempotentCallbackWithRetry';
+import idempotentCallbackWithRetry from '@common/execution/idempotentCallbackWithRetry';
 
 type PublisherStreamCreatedEvent = Event<'streamCreated', Publisher> & {
   stream: Stream;

@@ -5,10 +5,10 @@
     "test": {
       "outputs": ["{projectRoot}/coverage"],
       "cache": true,
-      "dependsOn": ["^build"]
+      "dependsOn": []
     },
     "build": {
-      "dependsOn": ["^build"]
+      "dependsOn": []
     },
     "lint": {
       "cache": true

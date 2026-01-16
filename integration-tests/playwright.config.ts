@@ -2,6 +2,9 @@ import { defineConfig, devices } from '@playwright/test';
 // eslint-disable-next-line @typescript-eslint/no-require-imports
 import path = require('path');
 
+const isHeadedMode = process.env.headedMode === 'true';
+const isDebugMode = process.env.debugMode === 'true';
+
 /**
  * Chromium media testing flags
  * (Fake audio, mock UI, screen capture, autoplay, etc.)
@@ -21,7 +24,10 @@ const chromiumFlags = [
 
 const fakeDeviceChromiumFlags = [
   ...chromiumFlags,
-  '--headless=new',
+
+  // headless only on CI
+  ...(isHeadedMode ? [] : ['--headless=new']),
+
   '--use-fake-device-for-media-stream=device-count=5',
 ];
 
@@ -148,8 +154,15 @@ export default defineConfig({
   ],
   /* Run your local dev server before starting the tests */
   webServer: {
-    command: 'cd .. && yarn start',
-    url: 'http://127.0.0.1:3345',
     reuseExistingServer: true,
+    env: {
+      VITE_AVOID_FETCHING_APP_CONFIG: 'true',
+    },
+    ...(isDebugMode
+      ? {
+          command: 'cd .. && yarn dev',
+          url: 'http://localhost:5173/',
+        }
+      : { command: 'cd .. && yarn start', url: 'http://127.0.0.1:3345' }),
   },
 });

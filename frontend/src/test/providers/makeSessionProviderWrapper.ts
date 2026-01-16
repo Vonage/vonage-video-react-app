@@ -1,10 +1,12 @@
 import SessionProvider, { SessionContext } from '@Context/SessionProvider/session';
 import composeProviders from '@utils/composeProviders';
-import makeGenericProviderWrapper, { GenericWrapperOptions } from './makeGenericProviderWrapper';
 import makeUserProviderWrapper, { UserProviderWrapperOptions } from './makeUserProviderWrapper';
 import makeAppConfigProviderWrapper, {
   AppConfigProviderWrapperOptions,
 } from './makeAppConfigProviderWrapper';
+import makeGenericProviderWrapper, {
+  type GenericWrapperOptions,
+} from '@common/test/makeGenericProviderWrapper';
 
 export type SessionProviderWrapperOptions = GenericWrapperOptions<
   typeof SessionProvider,

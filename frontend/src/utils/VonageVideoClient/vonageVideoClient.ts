@@ -21,7 +21,7 @@ import {
 } from '../../types/session';
 import logOnConnect from '../logOnConnect';
 import createMovingAvgAudioLevelTracker from '../movingAverageAudioLevelTracker';
-import idempotentCallbackWithRetry from '../idempotentCallbackWithRetry/idempotentCallbackWithRetry';
+import idempotentCallbackWithRetry from '@common/execution/idempotentCallbackWithRetry';
 
 type VonageVideoClientEvents = {
   archiveStarted: [string];

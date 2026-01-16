@@ -4,7 +4,7 @@
     "target": "ESNext",
     "lib": ["DOM", "DOM.Iterable", "ESNext"],
     "module": "ESNext",
-    "moduleResolution": "Bundler",
+    "moduleResolution": "bundler",
     "jsx": "react-jsx",
     "allowImportingTsExtensions": true,
     "resolveJsonModule": true,
@@ -26,7 +26,8 @@
       "@utils/*": ["./src/utils/*"],
       "@test/*": ["./src/test/*"],
       "@ui/*": ["../libs/ui/src/*"],
-      "@common/*": ["../libs/common/src/*"]
+      "@common/*": ["../libs/common/src/*"],
+      "@core/*": ["../libs/core/src/*"]
     },
     "types": ["vite/client", "node", "vitest", "vitest/globals"]
   },
@@ -37,7 +38,8 @@
     "src/helpers",
     "eslint.config.mjs",
     "**/*.spec.ts",
-    "**/*.spec.tsx"
+    "**/*.spec.tsx",
+    "vite.config.ts"
   ],
-  "exclude": ["node_modules", "vite.config.ts"]
+  "exclude": ["node_modules"]
 }

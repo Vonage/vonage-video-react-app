@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import waitUntilPlaying from '.';
-import { delay } from '../async';
+import wait from '@common/execution/wait';
 
 describe('waitUntilPlaying', () => {
   it('should resolve on timeupdate event', async () => {
@@ -9,10 +9,10 @@ describe('waitUntilPlaying', () => {
     waitUntilPlaying(videoElem).then(() => {
       resolved = true;
     });
-    await delay(0);
+    await wait(0);
     expect(resolved).toBe(false);
     videoElem.dispatchEvent(new Event('timeupdate'));
-    await delay(0);
+    await wait(0);
     expect(resolved).toBe(true);
   });
 
@@ -22,10 +22,10 @@ describe('waitUntilPlaying', () => {
     waitUntilPlaying(videoElem).then(() => {
       resolved = true;
     });
-    await delay(0);
+    await wait(0);
     expect(resolved).toBe(false);
     videoElem.dispatchEvent(new Event('loadedmetadata'));
-    await delay(0);
+    await wait(0);
     expect(resolved).toBe(true);
   });
   it('should resolve after timeout if no event fired', async () => {
@@ -34,9 +34,9 @@ describe('waitUntilPlaying', () => {
     waitUntilPlaying(videoElem, 50).then(() => {
       resolved = true;
     });
-    await delay(0);
+    await wait(0);
     expect(resolved).toBe(false);
-    await delay(50);
+    await wait(50);
     expect(resolved).toBe(true);
   });
 });
