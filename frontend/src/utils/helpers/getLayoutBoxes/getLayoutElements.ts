@@ -2,7 +2,6 @@ import { Publisher, Subscriber } from '@vonage/client-sdk-video';
 import { Box, Element } from 'opentok-layout-js';
 import { MaybeElement } from '../../layoutManager';
 import { LayoutMode, SubscriberWrapper } from '../../../types/session';
-import { defaultVideoTileDimensions } from '@utils/constants';
 
 const isLayoutElement = (element: Element | MaybeElement): element is Element => {
   return element.width !== undefined && element.height !== undefined;
@@ -28,8 +27,8 @@ const isActiveSpeaker = (activeSpeakerId: string | undefined, id: string, index:
  */
 const getVideoDimensions = (video: Publisher | Subscriber | null) => {
   return {
-    width: video?.videoWidth() ?? defaultVideoTileDimensions.width,
-    height: video?.videoHeight() ?? defaultVideoTileDimensions.height,
+    width: video?.videoWidth() ?? 1280,
+    height: video?.videoHeight() ?? 720,
   };
 };
 /**
