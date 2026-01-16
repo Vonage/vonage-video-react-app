@@ -1,4 +1,4 @@
-import { useEffect, ReactElement, useState } from 'react';
+import { useEffect, ReactElement, useState, useEffectEvent } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import Box from '@ui/Box';
@@ -201,17 +201,17 @@ const MeetingRoom = (): ReactElement => {
  * This prevents users from subscribing to other participants in the room, and being unable to communicate with them.
  * @param {PublishingErrorType | null} publishingError - The publishing error object or null if no error.
  */
-function useRedirectOnPublisherError(args: {
+function useRedirectOnPublisherError({
+  publishingError,
+  reconnecting,
+}: {
   publishingError: PublishingErrorType | null;
   reconnecting: boolean | null;
 }) {
   const navigate = useNavigate();
   const roomName = useRoomName();
-  const { t } = useTranslation();
 
-  useEffect(() => {
-    const { publishingError, reconnecting } = args;
-
+  const maybeRedirect = useEffectEvent(() => {
     if (!publishingError) {
       return;
     }
@@ -227,6 +227,7 @@ function useRedirectOnPublisherError(args: {
     }
 
     const { header, caption } = publishingError;
+
     navigate('/goodbye', {
       state: {
         header,
@@ -234,7 +235,11 @@ function useRedirectOnPublisherError(args: {
         roomName,
       },
     });
-  }, [args, navigate, roomName, t]);
+  });
+
+  useEffect(() => {
+    maybeRedirect();
+  }, [publishingError, reconnecting]);
 }
 
 /**
@@ -242,7 +247,10 @@ function useRedirectOnPublisherError(args: {
  * This prevents users from subscribing to other participants in the room, and being unable to communicate with them.
  * @param {Error | null} subscriberError - The subscriber error object or null if no error.
  */
-function useRedirectOnSubscriberError(args: {
+function useRedirectOnSubscriberError({
+  subscriberError,
+  reconnecting,
+}: {
   subscriberError: Error | null;
   reconnecting: boolean | null;
 }) {
@@ -250,9 +258,7 @@ function useRedirectOnSubscriberError(args: {
   const roomName = useRoomName();
   const { t } = useTranslation();
 
-  useEffect(() => {
-    const { subscriberError, reconnecting } = args;
-
+  const maybeRedirect = useEffectEvent(() => {
     if (!subscriberError) {
       return;
     }
@@ -273,7 +279,11 @@ function useRedirectOnSubscriberError(args: {
         roomName,
       },
     });
-  }, [args, navigate, roomName, t]);
+  });
+
+  useEffect(() => {
+    maybeRedirect();
+  }, [subscriberError, reconnecting]);
 }
 
 export default MeetingRoom;

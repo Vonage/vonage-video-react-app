@@ -366,9 +366,7 @@ const SessionProvider = ({ children }: SessionProviderProps): ReactElement => {
       await vonageVideoClient.current.connect();
       setConnected(true);
     } catch (err: unknown) {
-      if (err instanceof Error) {
-        console.error(err);
-      }
+      console.error(err);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);

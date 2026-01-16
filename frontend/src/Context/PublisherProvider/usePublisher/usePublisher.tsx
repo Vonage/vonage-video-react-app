@@ -88,11 +88,14 @@ const usePublisher = (): PublisherContextType => {
   const [isVideoEnabled, setIsVideoEnabled] = useState<boolean>(false);
   const [isAudioEnabled, setIsAudioEnabled] = useState<boolean>(false);
   const [stream, setStream] = useState<Stream | null>();
+
+  const [publishingError, setPublishingError] = useState<PublishingErrorType>(null);
+
   const isPublishingToSessionRef = useRef<boolean>(false);
   const isInitializingPublisherRef = useRef<boolean>(false);
-  const [publishingError, setPublishingError] = useState<PublishingErrorType>(null);
   const reconnectingRef = useRef<boolean>(false);
   const consecutivePublishingFailureCountRef = useRef<number>(0);
+
   const {
     publish: sessionPublish,
     unpublish: sessionUnpublish,
@@ -177,8 +180,6 @@ const usePublisher = (): PublisherContextType => {
   const handleStreamDestroyed = useCallback(() => {
     console.warn('[PUBLISHER] handleStreamDestroyed', {
       reconnecting: reconnectingRef.current,
-      connected,
-      isPublishing,
       hasPublisher: !!publisherRef.current,
       hasStream: !!publisherRef.current?.stream,
     });
@@ -208,7 +209,7 @@ const usePublisher = (): PublisherContextType => {
     } else {
       console.warn('[PUBLISHER] handleStreamDestroyed - Publisher already destroyed');
     }
-  }, [connected, isPublishing]);
+  }, []);
 
   const handleAccessDenied = useCallback((event: AccessDeniedEvent) => {
     const deviceDeniedAccess = event.message?.startsWith('Microphone') ? 'microphone' : 'camera';
@@ -385,10 +386,13 @@ const usePublisher = (): PublisherContextType => {
 
       // Reset the flag on error since we won't get streamCreated
       isPublishingToSessionRef.current = false;
-      handlePublishingError();
-      if (err instanceof Error) {
-        console.warn(err.message);
+
+      // Don't surface errors during reconnection - they're transient
+      if (!reconnectingRef.current) {
+        handlePublishingError();
       }
+
+      console.warn(err);
     }
   }, [
     connected,
@@ -499,26 +503,6 @@ const usePublisher = (): PublisherContextType => {
       OT.off('exception', exceptionHandler);
     };
   }, [connected, handlePublishingError]);
-
-  useEffect(() => {
-    if (reconnecting !== true) {
-      return;
-    }
-
-    console.warn('[PUBLISHER] RECONNECTION useEffect triggered', {
-      reconnecting,
-      connected,
-      isPublishing,
-      hasPublisher: !!publisherRef.current,
-      isPublishingToSession: isPublishingToSessionRef.current,
-    });
-
-    console.warn('[PUBLISHER] RECONNECTION - Session reconnecting, tracking publishing state');
-    isPublishingToSessionRef.current = false;
-
-    // Don't kick user out due to transient errors while reconnecting
-    setPublishingError(null);
-  }, [reconnecting, connected, isPublishing]);
 
   return {
     initializeLocalPublisher,
