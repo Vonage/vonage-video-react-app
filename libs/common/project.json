@@ -26,12 +26,6 @@
         "command": "vitest run --coverage"
       }
     },
-    "build": {
-      "executor": "@nx/vite:build",
-      "options": {
-        "outputPath": "dist/common"
-      }
-    },
     "ts-check": {
       "executor": "nx:run-commands",
       "options": {

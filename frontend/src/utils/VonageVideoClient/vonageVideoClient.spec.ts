@@ -11,7 +11,7 @@ import EventEmitter from 'events';
 import logOnConnect from '../logOnConnect';
 import VonageVideoClient from './vonageVideoClient';
 import { Credential, SignalEvent, SignalType } from '../../types/session';
-import { wait } from '../idempotentCallbackWithRetry/idempotentCallbackWithRetry';
+import wait from '@common/execution/wait';
 
 vi.mock('../logOnConnect');
 vi.mock('@vonage/client-sdk-video');

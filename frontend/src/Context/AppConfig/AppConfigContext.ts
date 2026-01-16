@@ -12,6 +12,7 @@ const appConfig = createContext(initialValue, {
     updateAppConfig,
     loadAppConfig,
   },
+  name: 'AppConfig',
 });
 
 /**

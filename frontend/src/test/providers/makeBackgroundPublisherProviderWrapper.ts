@@ -3,7 +3,9 @@ import {
   BackgroundPublisherContext,
 } from '@Context/BackgroundPublisherProvider';
 import composeProviders from '@utils/composeProviders';
-import makeGenericProviderWrapper, { GenericWrapperOptions } from './makeGenericProviderWrapper';
+import makeGenericProviderWrapper, {
+  GenericWrapperOptions,
+} from '@common/test/makeGenericProviderWrapper';
 import makePublisherProviderWrapper from './makePublisherProviderWrapper';
 
 export type BackgroundPublisherProviderWrapperOptions = {

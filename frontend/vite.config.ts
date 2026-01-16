@@ -70,6 +70,7 @@ export default defineConfig(({ mode }) => {
         '@test': '/src/test',
         '@ui': path.resolve(__dirname, '../libs/ui/src'),
         '@common': path.resolve(__dirname, '../libs/common/src'),
+        '@core': path.resolve(__dirname, '../libs/core/src'),
       },
     },
 

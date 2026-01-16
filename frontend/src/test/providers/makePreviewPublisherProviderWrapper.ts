@@ -3,7 +3,9 @@ import {
   PreviewPublisherContext,
 } from '@Context/PreviewPublisherProvider';
 import composeProviders from '@utils/composeProviders';
-import makeGenericProviderWrapper, { GenericWrapperOptions } from './makeGenericProviderWrapper';
+import makeGenericProviderWrapper, {
+  GenericWrapperOptions,
+} from '@common/test/makeGenericProviderWrapper';
 import makeUserProviderWrapper from './makeUserProviderWrapper';
 import makeAppConfigProviderWrapper from './makeAppConfigProviderWrapper';
 

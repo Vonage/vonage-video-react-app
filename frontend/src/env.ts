@@ -7,6 +7,8 @@ export type EnvArg = {
   VITE_BYPASS_WAITING_ROOM: boolean;
   VITE_API_URL: string;
   VITE_TUNNEL_DOMAIN: string;
+  VITE_AVOID_FETCHING_APP_CONFIG: string;
+  MODE: 'development' | 'production' | 'test';
 };
 
 export class Env {
@@ -22,6 +24,10 @@ export class Env {
 
   public VITE_TUNNEL_DOMAIN: string | undefined;
 
+  public VITE_AVOID_FETCHING_APP_CONFIG: boolean = true;
+
+  public MODE: 'development' | 'production' | 'test';
+
   constructor(env: Partial<EnvArg>) {
     this.VITE_ENABLE_REPORT_ISSUE = Boolean(env.VITE_ENABLE_REPORT_ISSUE ?? false);
     this.VITE_I18N_FALLBACK_LANGUAGE = env.VITE_I18N_FALLBACK_LANGUAGE || 'en';
@@ -33,6 +39,8 @@ export class Env {
     this.setViteApiUrl(env.VITE_API_URL);
 
     this.VITE_TUNNEL_DOMAIN = env.VITE_TUNNEL_DOMAIN;
+    this.VITE_AVOID_FETCHING_APP_CONFIG = Boolean(env.VITE_AVOID_FETCHING_APP_CONFIG === 'true');
+    this.MODE = env.MODE || 'development';
   }
 
   setViteApiUrl = (envUrl: string | undefined) => {

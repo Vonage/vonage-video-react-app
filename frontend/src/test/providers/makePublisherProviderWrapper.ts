@@ -1,6 +1,8 @@
 import { PublisherProvider, PublisherContext } from '@Context/PublisherProvider';
 import composeProviders from '@utils/composeProviders';
-import makeGenericProviderWrapper, { GenericWrapperOptions } from './makeGenericProviderWrapper';
+import makeGenericProviderWrapper, {
+  GenericWrapperOptions,
+} from '@common/test/makeGenericProviderWrapper';
 import makeSessionProviderWrapper, {
   SessionProviderWrapperOptions,
 } from './makeSessionProviderWrapper';

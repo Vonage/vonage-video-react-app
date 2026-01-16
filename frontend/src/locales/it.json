@@ -148,6 +148,7 @@
   "participants.pin": "Fissa {{participantName}}",
   "participants.pin.video": "Fissa video di {{participantName}}",
   "participants.screen": "Schermo di {{participantName}}",
+  "participants.search": "Cerca partecipanti",
   "participants.title": "Partecipanti",
   "participants.unpin": "Sblocca {{participantName}}",
   "participants.unpin.video": "Sblocca video di {{participantName}}",

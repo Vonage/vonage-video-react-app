@@ -54,6 +54,9 @@ const ZoomIndicator = ({
     }
   };
 
+  const outerClickHandler = isZoomed ? undefined : handleMainClick;
+  const innerClickHandler = outerClickHandler ? undefined : handleMainClick;
+
   return (
     <Box
       sx={{
@@ -62,11 +65,13 @@ const ZoomIndicator = ({
         right: 8,
         display: 'flex',
         alignItems: 'center',
-        gap: 1,
+        gap: isZoomed ? 1 : 0,
         borderRadius: theme.shapes.borderRadiusLarge,
         backgroundColor: theme.colors.darkGreyOpacity,
         p: 0.75,
+        cursor: isZoomed ? 'default' : 'pointer',
       }}
+      onClick={outerClickHandler}
     >
       {/* Main zoom indicator button */}
       <Tooltip
@@ -77,11 +82,11 @@ const ZoomIndicator = ({
         onClose={() => setTooltipOpen(false)}
       >
         <IconButton
-          onClick={handleMainClick}
+          onClick={innerClickHandler}
           data-testid="zoom-indicator-button"
           onMouseLeave={() => setTooltipOpen(false)}
           sx={{
-            ml: isZoomed ? 0 : 1,
+            p: isZoomed ? undefined : 0.75,
           }}
         >
           {isZoomed ? (
@@ -101,8 +106,8 @@ const ZoomIndicator = ({
       </Tooltip>
 
       {/* Zoom controls */}
-      <Box sx={{ display: 'flex', alignItems: 'center', gap: 0 }}>
-        {isZoomed && (
+      {isZoomed && (
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 0 }}>
           <>
             <Tooltip arrow title={t('zoom.out')}>
               <Box component="span">
@@ -154,8 +159,8 @@ const ZoomIndicator = ({
               </Box>
             </Tooltip>
           </>
-        )}
-      </Box>
+        </Box>
+      )}
     </Box>
   );
 };

@@ -1,5 +1,7 @@
 import { AudioOutputProvider, AudioOutputContext } from '@Context/AudioOutputProvider';
-import makeGenericProviderWrapper, { GenericWrapperOptions } from './makeGenericProviderWrapper';
+import makeGenericProviderWrapper, {
+  GenericWrapperOptions,
+} from '@common/test/makeGenericProviderWrapper';
 
 export type AudioOutputProviderWrapperOptions = {
   audioOutputOptions?: GenericWrapperOptions<typeof AudioOutputProvider, typeof AudioOutputContext>;
