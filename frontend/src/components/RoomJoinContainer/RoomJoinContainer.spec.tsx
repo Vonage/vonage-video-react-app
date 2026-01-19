@@ -1,6 +1,7 @@
 import { render, screen } from '@testing-library/react';
 import { beforeEach, describe, expect, it, Mock, vi } from 'vitest';
-import { MemoryRouter, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
+import MemoryRouter from '@test/RouterWrapper';
 import RoomJoinContainer from './index';
 
 vi.mock('react-router-dom', async () => {

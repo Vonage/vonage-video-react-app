@@ -1,7 +1,6 @@
 import { ReactElement, MouseEvent, TouchEvent, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import usePreviewPublisherContext from '@hooks/usePreviewPublisherContext';
-import useDevices from '@hooks/useDevices';
 import useAudioOutputContext from '@hooks/useAudioOutputContext';
 import useIsSmallViewport from '@hooks/useIsSmallViewport';
 import Box from '@ui/Box';
@@ -75,9 +74,10 @@ const ControlPanel = ({
 
   const { t } = useTranslation();
   const isSmallViewport = useIsSmallViewport();
-  const { allMediaDevices } = useDevices();
+
   const { localAudioSource, localVideoSource, changeAudioSource, changeVideoSource } =
     usePreviewPublisherContext();
+
   const { currentAudioOutputDevice, setAudioOutputDevice } = useAudioOutputContext();
   const theme = useTheme();
 
@@ -125,14 +125,14 @@ const ControlPanel = ({
           </Box>
           <VividIcon name="chevron-down-line" customSize={-6} />
         </ButtonBase>
+
         <MenuDevicesWaitingRoom
-          devices={allMediaDevices.audioInputDevices}
+          mediaDeviceKind="audioinput"
           open={openAudioInput}
           onClose={handleClose}
           anchorEl={anchorEl}
           localSource={localAudioSource}
           deviceChangeHandler={changeAudioSource}
-          deviceType="audioInput"
         />
 
         <ButtonBase
@@ -150,13 +150,12 @@ const ControlPanel = ({
           <VividIcon name="chevron-down-line" customSize={-6} />
         </ButtonBase>
         <MenuDevicesWaitingRoom
-          devices={allMediaDevices.videoInputDevices}
+          mediaDeviceKind="videoinput"
           open={openVideoInput}
           onClose={handleClose}
           anchorEl={anchorEl}
           localSource={localVideoSource}
           deviceChangeHandler={changeVideoSource}
-          deviceType="videoInput"
         />
 
         <ButtonBase
@@ -174,13 +173,12 @@ const ControlPanel = ({
           <VividIcon name="chevron-down-line" customSize={-6} />
         </ButtonBase>
         <MenuDevicesWaitingRoom
-          devices={allMediaDevices.audioOutputDevices}
+          mediaDeviceKind="audiooutput"
           open={openAudioOutput}
           onClose={handleClose}
           anchorEl={anchorEl}
           localSource={currentAudioOutputDevice}
           deviceChangeHandler={setAudioOutputDevice}
-          deviceType="audioOutput"
         />
 
         <ButtonBase onClick={handleOpenMoreOptions} sx={buttonSx}>

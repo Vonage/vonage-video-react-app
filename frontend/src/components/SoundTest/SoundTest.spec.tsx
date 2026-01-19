@@ -4,7 +4,6 @@ import userEvent from '@testing-library/user-event';
 import VividIcon from '@components/VividIcon';
 import SoundTest from './SoundTest';
 import { nativeDevices } from '../../utils/mockData/device';
-import mediaDevicesMock from '@common/test/mocks/mediaDevicesMock';
 import { AudioOutputProviderWrapperOptions, makeAudioOutputProviderWrapper } from '@test/providers';
 import { ReactElement } from 'react';
 
@@ -15,19 +14,16 @@ describe('SoundTest', () => {
   beforeEach(() => {
     vi.clearAllMocks();
 
-    if (!globalThis.navigator.mediaDevices) {
-      Object.defineProperty(globalThis.navigator, 'mediaDevices', {
-        writable: true,
-        configurable: true,
-        value: mediaDevicesMock,
-      });
-    }
+    const { mediaDevices } = globalThis.navigator;
 
-    vi.spyOn(globalThis.navigator.mediaDevices, 'enumerateDevices').mockResolvedValue(
-      nativeDevices as MediaDeviceInfo[]
+    vi.spyOn(mediaDevices, 'enumerateDevices').mockImplementation(
+      () =>
+        new Promise<MediaDeviceInfo[]>((res) => {
+          res(nativeDevices);
+        })
     );
-    vi.spyOn(globalThis.navigator.mediaDevices, 'addEventListener').mockImplementation(() => {});
-    vi.spyOn(globalThis.navigator.mediaDevices, 'removeEventListener').mockImplementation(() => {});
+    vi.spyOn(mediaDevices, 'addEventListener').mockImplementation(() => {});
+    vi.spyOn(mediaDevices, 'removeEventListener').mockImplementation(() => {});
 
     global.Audio = vi.fn().mockImplementation(() => ({
       play: playMock,

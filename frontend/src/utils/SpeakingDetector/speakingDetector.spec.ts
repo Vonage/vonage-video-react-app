@@ -2,10 +2,6 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import SpeakingDetector from './speakingDetector';
 import { waitForEvent } from '../async';
 
-const mockGetUserMedia = vi.fn(() =>
-  Promise.resolve({ getTracks: vi.fn(() => [{ stop: vi.fn() }]) })
-);
-
 const mockCreateMediaStreamSource = vi.fn(() => ({ connect: vi.fn(), disconnect: vi.fn() }));
 
 const mockAnalyser = {
@@ -21,14 +17,29 @@ const mockAudioContext = vi.fn(() => ({
   close: vi.fn(),
 })) as unknown as typeof global.AudioContext;
 
-beforeEach(() => {
-  Object.defineProperty(navigator, 'mediaDevices', {
-    writable: true,
-    value: { getUserMedia: mockGetUserMedia },
-  });
+const mockMediaStream = {
+  getVideoTracks: vi.fn(() => []),
+  getAudioTracks: vi.fn(() => []),
+  getTracks: vi.fn(() => [
+    {
+      stop: vi.fn(),
+    } as unknown as MediaStreamTrack,
+  ]),
+} as unknown as MediaStream;
 
+beforeEach(() => {
   global.AudioContext = mockAudioContext;
-  vi.clearAllMocks();
+
+  vi.spyOn(navigator.mediaDevices, 'getUserMedia').mockResolvedValue(mockMediaStream);
+
+  vi.spyOn(navigator.mediaDevices, 'enumerateDevices').mockResolvedValue([
+    {
+      deviceId: '132322',
+      kind: 'audioinput',
+      label: 'Mock Microphone',
+      groupId: 'group1',
+    } as MediaDeviceInfo,
+  ]);
 });
 
 describe('SpeakingDetector', () => {
@@ -38,6 +49,7 @@ describe('SpeakingDetector', () => {
     now += ms;
     dateNowSpy.mockReturnValue(now);
   };
+
   it('should detect speaking while muted and turn off the notification 3 seconds later', async () => {
     const speakingDetector = new SpeakingDetector({ selectedMicrophoneId: '132322' });
     speakingDetector.turnSpeakingDetectorOn();

@@ -17,7 +17,7 @@ import { setStorageItem, STORAGE_KEYS } from '../../../utils/storage';
 import applyBackgroundFilter from '../../../utils/backgroundFilter/applyBackgroundFilter/applyBackgroundFilter';
 import handlePublisherAccessDenied from '../../../utils/publisher/handlePublisherAccessDenied';
 import useStableCallback from '@common/hooks/useStableCallback';
-import devices$ from '@core/stores/devices';
+import mediaDevices$ from '@core/stores/devices';
 
 type PublisherVideoElementCreatedEvent = Event<'videoElementCreated', Publisher> & {
   element: HTMLVideoElement | HTMLObjectElement;
@@ -84,6 +84,15 @@ export type PreviewPublisherInitialValue = Partial<
 const usePreviewPublisher = (
   initialValue?: PreviewPublisherInitialValue
 ): PreviewPublisherContextType => {
+  const videoSourceId = mediaDevices$.useMediaDeviceInfo(
+    'videoinput',
+    (device) => device?.deviceId ?? null
+  );
+  const audioSourceId = mediaDevices$.useMediaDeviceInfo(
+    'audioinput',
+    (device) => device?.deviceId ?? null
+  );
+
   const { setUser, user } = useUserContext();
   const defaultResolution = appConfig$.use.select(
     ({ videoSettings }) => videoSettings.defaultResolution
@@ -213,8 +222,6 @@ const usePreviewPublisher = (
     });
   });
 
-  const [videoSource, audioSource] = devices$.useConnectedDeviceId('videoinput', 'audioinput');
-
   const initLocalPublisher = useStableCallback(() => {
     if (publisherRef.current) {
       return;
@@ -233,8 +240,8 @@ const usePreviewPublisher = (
       insertDefaultUI: false,
       videoFilter,
       resolution: defaultResolution,
-      audioSource,
-      videoSource,
+      audioSource: audioSourceId,
+      videoSource: videoSourceId,
     };
 
     publisherRef.current = initPublisher(undefined, publisherOptions, (err: unknown) => {

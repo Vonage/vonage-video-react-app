@@ -7,9 +7,7 @@ import { ReactElement } from 'react';
 import { UserContextType } from '@Context/user';
 import { SubscriberWrapper } from '@app-types/session';
 import useUserContext from '@hooks/useUserContext';
-import useDevices from '@hooks/useDevices';
-import { AllMediaDevices } from '@app-types/room';
-import { allMediaDevices, defaultAudioDevice } from '@utils/mockData/device';
+import { defaultAudioDevice } from '@utils/mockData/device';
 import useSpeakingDetector from '@hooks/useSpeakingDetector';
 import useLayoutManager, { GetLayout } from '@hooks/useLayoutManager';
 import useActiveSpeaker from '@hooks/useActiveSpeaker';
@@ -56,7 +54,6 @@ vi.mock('../../env', () => ({
   },
 }));
 
-vi.mock('@hooks/useDevices.tsx');
 vi.mock('@hooks/useUserContext.tsx');
 vi.mock('@hooks/useSpeakingDetector.tsx');
 vi.mock('@hooks/useLayoutManager.tsx');
@@ -91,11 +88,6 @@ vi.mock('opentok-layout-js', async () => {
     },
   };
 });
-
-const mockUseDevices = useDevices as Mock<
-  [],
-  { allMediaDevices: AllMediaDevices; getAllMediaDevices: () => void }
->;
 
 const mockUseUserContext = useUserContext as Mock<[], UserContextType>;
 const mockUserContext = {
@@ -159,11 +151,6 @@ describe('MeetingRoom', () => {
       getVideoFilter: vi.fn(() => undefined),
     }) as unknown as Publisher;
 
-    mockUseDevices.mockReturnValue({
-      getAllMediaDevices: vi.fn(),
-      allMediaDevices,
-    });
-
     mockUseSpeakingDetector.mockReturnValue(false);
     mockUseLayoutManager.mockImplementation(() => (_dimensions, elements) => {
       return new Array(elements.length).fill({
@@ -194,18 +181,21 @@ describe('MeetingRoom', () => {
   });
 
   it('should render', async () => {
+    vi.spyOn(globalThis.navigator.mediaDevices, 'enumerateDevices').mockResolvedValue([]);
     render(<MeetingRoom />);
     const meetingRoom = await screen.findByTestId('meetingRoom');
     expect(meetingRoom).not.toBeNull();
   });
 
   it('renders the small viewport header bar if it is on a small tab or device', async () => {
+    vi.spyOn(globalThis.navigator.mediaDevices, 'enumerateDevices').mockResolvedValue([]);
     (useMediaQuery as Mock).mockReturnValue(true);
     render(<MeetingRoom />);
     expect(await screen.findByTestId('smallViewportHeader')).not.toBeNull();
   });
 
   it('does not render the small viewport header bar if it is on desktop', async () => {
+    vi.spyOn(globalThis.navigator.mediaDevices, 'enumerateDevices').mockResolvedValue([]);
     // we do not need to mock the small view port value here given we already do it in beforeEach
     render(<MeetingRoom />);
     await waitFor(() => {
@@ -214,8 +204,9 @@ describe('MeetingRoom', () => {
   });
 
   it('should call joinRoom on render only once', async () => {
+    vi.spyOn(globalThis.navigator.mediaDevices, 'enumerateDevices').mockResolvedValue([]);
     const { sessionContext, rerender } = render(<MeetingRoom />, {
-      sessionContext: {
+      sessionOptions: {
         __onCreated: (context) => {
           context.joinRoom = vi.fn();
         },
@@ -238,13 +229,14 @@ describe('MeetingRoom', () => {
   });
 
   it('should call publish after connected', async () => {
+    vi.spyOn(globalThis.navigator.mediaDevices, 'enumerateDevices').mockResolvedValue([]);
     const { sessionContext, publisherContext } = render(<MeetingRoom />, {
-      publisherContext: {
+      publisherOptions: {
         __onCreated: (context) => {
           context.publish = vi.fn();
         },
       },
-      sessionContext: {
+      sessionOptions: {
         initialValue: {
           connected: false,
         },
@@ -267,13 +259,14 @@ describe('MeetingRoom', () => {
   });
 
   it('should display spinner until session is connected', async () => {
+    vi.spyOn(globalThis.navigator.mediaDevices, 'enumerateDevices').mockResolvedValue([]);
     const { sessionContext, rerender } = render(<MeetingRoom />, {
-      publisherContext: {
+      publisherOptions: {
         initialValue: {
           publisher: mockPublisher,
         },
       },
-      sessionContext: {
+      sessionOptions: {
         initialValue: {
           connected: false,
         },
@@ -296,6 +289,7 @@ describe('MeetingRoom', () => {
   });
 
   it('should hide subscribers and show participant hidden tile', async () => {
+    vi.spyOn(globalThis.navigator.mediaDevices, 'enumerateDevices').mockResolvedValue([]);
     const subscribers = [
       createSubscriberWrapper('sub1'),
       createSubscriberWrapper('sub2'),
@@ -306,13 +300,13 @@ describe('MeetingRoom', () => {
       createSubscriberWrapper('sub7'),
     ];
     const { rerender, sessionContext } = render(<MeetingRoom />, {
-      publisherContext: {
+      publisherOptions: {
         initialValue: {
           publisher: mockPublisher,
           isPublishing: true,
         },
       },
-      sessionContext: {
+      sessionOptions: {
         initialValue: {
           layoutMode: 'active-speaker',
         },
@@ -347,17 +341,18 @@ describe('MeetingRoom', () => {
   });
 
   it('should render subscribers in correct order', async () => {
+    vi.spyOn(globalThis.navigator.mediaDevices, 'enumerateDevices').mockResolvedValue([]);
     const [sub1, sub2, sub3] = new Array(3)
       .fill(0)
       .map((_s, index) => createSubscriberWrapper(`sub${index + 1}`));
     const { sessionContext, rerender } = render(<MeetingRoom />, {
-      publisherContext: {
+      publisherOptions: {
         initialValue: {
           publisher: mockPublisher,
           isPublishing: true,
         },
       },
-      sessionContext: {
+      sessionOptions: {
         __onCreated: (context) => {
           context.joinRoom = vi.fn(async () => {
             context.connected = true;
@@ -398,13 +393,14 @@ describe('MeetingRoom', () => {
   });
 
   it('should display chat unread number', async () => {
+    vi.spyOn(globalThis.navigator.mediaDevices, 'enumerateDevices').mockResolvedValue([]);
     const { sessionContext } = render(<MeetingRoom />, {
-      publisherContext: {
+      publisherOptions: {
         initialValue: {
           publisher: mockPublisher,
         },
       },
-      sessionContext: {
+      sessionOptions: {
         initialValue: {
           connected: true,
         },
@@ -420,8 +416,9 @@ describe('MeetingRoom', () => {
 
   describe('video quality problem alert', () => {
     it('should not be displayed when not publishing video', async () => {
+      vi.spyOn(globalThis.navigator.mediaDevices, 'enumerateDevices').mockResolvedValue([]);
       render(<MeetingRoom />, {
-        publisherContext: {
+        publisherOptions: {
           initialValue: {
             isVideoEnabled: false,
             quality: 'poor',
@@ -440,13 +437,14 @@ describe('MeetingRoom', () => {
   });
 
   it('should redirect user to goodbye page if unable to publish', async () => {
+    vi.spyOn(globalThis.navigator.mediaDevices, 'enumerateDevices').mockResolvedValue([]);
     const publishingBlockedError = {
       header: 'Difficulties joining room',
       caption:
         "We're having trouble connecting you with others in the meeting room. Please check your network and try again.",
     };
     const { rerender } = render(<MeetingRoom />, {
-      publisherContext: {
+      publisherOptions: {
         initialValue: {
           publishingError: publishingBlockedError,
         },
@@ -471,6 +469,7 @@ describe('MeetingRoom', () => {
   });
 
   it('should redirect to waiting room when username is missing', async () => {
+    vi.spyOn(globalThis.navigator.mediaDevices, 'enumerateDevices').mockResolvedValue([]);
     setUserContextWithName('');
 
     render(<MeetingRoom />);
@@ -481,6 +480,7 @@ describe('MeetingRoom', () => {
   });
 
   it('should redirect to waiting room when username is only whitespace', async () => {
+    vi.spyOn(globalThis.navigator.mediaDevices, 'enumerateDevices').mockResolvedValue([]);
     setUserContextWithName('   ');
 
     render(<MeetingRoom />);
@@ -491,6 +491,7 @@ describe('MeetingRoom', () => {
   });
 
   it('should not redirect to waiting room when username is missing but bypass is true', async () => {
+    vi.spyOn(globalThis.navigator.mediaDevices, 'enumerateDevices').mockResolvedValue([]);
     setUserContextWithName('');
 
     mockedLocation.mockClear();

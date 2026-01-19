@@ -6,10 +6,15 @@ import localStorageMock from '@utils/mockData/localStorageMock';
 import DeviceStore from '@utils/DeviceStore';
 import { setStorageItem, STORAGE_KEYS } from '@utils/storage';
 import { AppConfigProviderWrapperOptions, makeAppConfigProviderWrapper } from '@test/providers';
+import makeMediaDeviceInfos from '@common-test/fixtures/makeMediaDeviceInfos';
 import usePublisherOptions from './usePublisherOptions';
 import { UserContextType } from '../../user';
 
 vi.mock('@hooks/useUserContext.tsx');
+
+const devices = makeMediaDeviceInfos();
+const audioDevice = devices.find((d) => d.kind === 'audioinput')!;
+const videoDevice = devices.find((d) => d.kind === 'videoinput')!;
 
 const defaultSettings = {
   publishAudio: false,
@@ -30,8 +35,8 @@ const customSettings = {
     blurStrength: 'high',
   },
   noiseSuppression: false,
-  audioSource: '68f1d1e6f11c629b1febe51a95f8f740f8ac5cd3d4c91419bd2b52bb1a9a01cd',
-  videoSource: 'a68ec4e4a6bc10dc572bd806414b0da27d0aefb0ad822f7ba4cf9b226bb9b7c2',
+  audioSource: audioDevice.deviceId,
+  videoSource: videoDevice.deviceId,
   publishCaptions: true,
 };
 
@@ -53,11 +58,11 @@ describe('usePublisherOptions', () => {
 
   beforeEach(async () => {
     enumerateDevicesMock = vi.fn();
-    vi.stubGlobal('navigator', {
-      mediaDevices: {
-        enumerateDevices: enumerateDevicesMock,
-      },
-    });
+
+    vi.spyOn(navigator.mediaDevices, 'enumerateDevices').mockImplementation(
+      enumerateDevicesMock as unknown as () => Promise<MediaDeviceInfo[]>
+    );
+
     Object.defineProperty(window, 'localStorage', {
       value: localStorageMock,
       writable: true,
@@ -66,6 +71,10 @@ describe('usePublisherOptions', () => {
     enumerateDevicesMock.mockResolvedValue([]);
     await deviceStore.init();
     vi.mocked(useUserContext).mockImplementation(() => mockUserContextWithDefaultSettings);
+  });
+
+  afterEach(() => {
+    vi.restoreAllMocks();
   });
 
   afterAll(() => {
@@ -112,10 +121,8 @@ describe('usePublisherOptions', () => {
     vi.spyOn(OT, 'hasMediaProcessorSupport').mockReturnValue(true);
     setStorageItem(STORAGE_KEYS.VIDEO_SOURCE, customSettings.videoSource);
     setStorageItem(STORAGE_KEYS.AUDIO_SOURCE, customSettings.audioSource);
-    enumerateDevicesMock.mockResolvedValue([
-      { deviceId: customSettings.videoSource, kind: 'videoinput' } as MediaDeviceInfo,
-      { deviceId: customSettings.audioSource, kind: 'audioinput' } as MediaDeviceInfo,
-    ]);
+    const devices = makeMediaDeviceInfos();
+    enumerateDevicesMock.mockResolvedValue(devices);
     await deviceStore.init();
     vi.mocked(useUserContext).mockImplementation(() => mockUserContextWithCustomSettings);
     const { result } = renderHook(() => usePublisherOptions());
@@ -124,8 +131,8 @@ describe('usePublisherOptions', () => {
         resolution: '1280x720',
         publishAudio: true,
         publishVideo: true,
-        audioSource: '68f1d1e6f11c629b1febe51a95f8f740f8ac5cd3d4c91419bd2b52bb1a9a01cd',
-        videoSource: 'a68ec4e4a6bc10dc572bd806414b0da27d0aefb0ad822f7ba4cf9b226bb9b7c2',
+        audioSource: audioDevice.deviceId,
+        videoSource: videoDevice.deviceId,
         insertDefaultUI: false,
         audioFallback: {
           publisher: true,

@@ -1,66 +1,46 @@
-import { describe, it, beforeEach, afterEach, vi, expect, Mock } from 'vitest';
-import { render as renderBase, screen, fireEvent, cleanup } from '@testing-library/react';
-import { Publisher } from '@vonage/client-sdk-video';
-import { EventEmitter } from 'stream';
+import { describe, it, beforeEach, vi, expect } from 'vitest';
+import { render as renderBase, screen, fireEvent, waitFor } from '@testing-library/react';
 import { ReactElement } from 'react';
-import { AppConfigProviderWrapperOptions, makeAppConfigProviderWrapper } from '@test/providers';
-import useDevices from '@hooks/useDevices';
-import usePublisherContext from '@hooks/usePublisherContext';
-import { AllMediaDevices } from '@app-types/room';
-import { PublisherContextType } from '@Context/PublisherProvider';
-import { allMediaDevices, defaultAudioDevice } from '@utils/mockData/device';
-import InputAudioDevices from './InputAudioDevices';
+import { makePublisherProviderWrapper, PublisherProviderWrapperOptions } from '@test/providers';
+import makeMediaDeviceInfos from '@common-test/fixtures/makeMediaDeviceInfos';
+import type MediaDevices$ from '@core/stores/devices';
+import type InputAudioDevicesType from './InputAudioDevices';
+import { Publisher } from '@vonage/client-sdk-video';
+import EventEmitter from 'events';
 
-// Mocks
-vi.mock('@hooks/useDevices');
-vi.mock('@hooks/usePublisherContext');
-vi.mock('@utils/storage', () => ({
-  setStorageItem: vi.fn(),
-  STORAGE_KEYS: {
-    AUDIO_SOURCE: 'audioSource',
-  },
-}));
+const devices = makeMediaDeviceInfos();
+const mockHandleToggle = vi.fn();
+const mockSetAudioSource = vi.fn();
+const mockGetAudioSource = vi.fn();
 
-const mockUseDevices = useDevices as Mock<
-  [],
-  { allMediaDevices: AllMediaDevices; getAllMediaDevices: () => void }
->;
-const mockUsePublisherContext = usePublisherContext as Mock<[], PublisherContextType>;
+// Create a default audio device matching the fixture
+const defaultAudioDevice = devices.find((d) => d.kind === 'audioinput')!;
 
 describe('InputAudioDevices Component', () => {
-  const mockHandleToggle = vi.fn();
-  const mockSetAudioSource = vi.fn();
-  const mockGetAudioSource = vi.fn();
-  let mockPublisher: Publisher;
-  let publisherContext: PublisherContextType;
+  let InputAudioDevices: typeof InputAudioDevicesType;
+  let mediaDevices$: typeof MediaDevices$;
 
-  beforeEach(() => {
+  beforeEach(async () => {
+    // Mock the native devices API - must be in beforeEach because vi.restoreAllMocks() clears them
+    vi.spyOn(globalThis.navigator.mediaDevices, 'addEventListener').mockImplementation(() => {});
+    vi.spyOn(globalThis.navigator.mediaDevices, 'removeEventListener').mockImplementation(() => {});
+    vi.spyOn(globalThis.navigator.mediaDevices, 'dispatchEvent').mockReturnValue(true);
+    vi.spyOn(globalThis.navigator.mediaDevices, 'enumerateDevices').mockResolvedValue(devices);
+    vi.spyOn(globalThis.navigator.mediaDevices, 'getUserMedia').mockResolvedValue({
+      getVideoTracks: () => [],
+      getAudioTracks: () => [],
+      getTracks: () => [],
+    } as unknown as MediaStream);
+
     mockGetAudioSource.mockReturnValue(defaultAudioDevice);
-    mockUseDevices.mockReturnValue({
-      getAllMediaDevices: vi.fn(),
-      allMediaDevices,
-    });
 
-    mockPublisher = Object.assign(new EventEmitter(), {
-      setAudioSource: mockSetAudioSource,
-      getAudioSource: mockGetAudioSource,
-      setVideoSource: vi.fn(),
-      getVideoSource: vi.fn(),
-    }) as unknown as Publisher;
+    ({ InputAudioDevices, mediaDevices$ } = await importInputAudioDevices());
 
-    publisherContext = {
-      publisher: mockPublisher,
-      isPublishing: true,
-      publish: vi.fn() as () => Promise<void>,
-      initializeLocalPublisher: vi.fn(),
-    } as unknown as PublisherContextType;
-
-    mockUsePublisherContext.mockImplementation(() => publisherContext);
-  });
-
-  afterEach(() => {
-    cleanup();
-    vi.resetAllMocks();
+    // Initialize the mediaDevices$ store with the fixture devices
+    mediaDevices$.setState((state) => ({
+      ...state,
+      mediaDeviceInfo: devices,
+    }));
   });
 
   it('renders all available audio input devices', () => {
@@ -69,24 +49,28 @@ describe('InputAudioDevices Component', () => {
     expect(screen.getByText('Microphone')).toBeInTheDocument();
 
     // Check that specific audio input devices are rendered
-    expect(screen.getByText('Default - Soundcore Life A2 NC (Bluetooth)')).toBeInTheDocument();
-    expect(screen.getByText('Soundcore Life A2 NC (Bluetooth)')).toBeInTheDocument();
-    expect(screen.getByText('MacBook Pro Microphone (Built-in)')).toBeInTheDocument();
+    expect(screen.getByText('Default Microphone')).toBeInTheDocument();
+    expect(screen.getByText('USB Headset Microphone')).toBeInTheDocument();
+    expect(screen.getByText('External Microphone')).toBeInTheDocument();
   });
 
-  it('changes audio input device on menu item click', () => {
+  it('changes audio input device on menu item click', async () => {
     render(<InputAudioDevices handleToggle={mockHandleToggle} />);
 
-    const micItem = screen.getByText('MacBook Pro Microphone (Built-in)');
+    const micItem = screen.getByText('External Microphone');
     fireEvent.click(micItem);
 
     expect(mockHandleToggle).toHaveBeenCalledTimes(1);
-    expect(mockSetAudioSource).toHaveBeenCalledWith(
-      '68f1d1e6f11c629b1febe51a95f8f740f8ac5cd3d4c91419bd2b52bb1a9a01cd'
-    );
+    expect(mockSetAudioSource).toHaveBeenCalledWith('audio-input-3');
+
+    await waitFor(() => {
+      expect(
+        mediaDevices$.getState().selection.get('audioinput')?.deviceId === 'audio-input-3'
+      ).toBeTruthy();
+    });
   });
 
-  it('does not call setAudioSource if selected device is not found', () => {
+  it('does not call setAudioSource if selected device is not found', async () => {
     render(<InputAudioDevices handleToggle={mockHandleToggle} />);
 
     const bogusItem = document.createElement('li');
@@ -94,19 +78,35 @@ describe('InputAudioDevices Component', () => {
     fireEvent.click(bogusItem);
 
     expect(mockSetAudioSource).not.toHaveBeenCalled();
+
+    await waitFor(() => {
+      expect(
+        mediaDevices$.getState().selection.get('audioinput')?.deviceId === 'audio-input-3'
+      ).toBeTruthy();
+    });
   });
 
-  it('does not call setAudioSource if publisher is not available', () => {
-    publisherContext.publisher = null;
-    mockUsePublisherContext.mockReturnValue(publisherContext);
+  it('does not call setAudioSource if publisher is not available', async () => {
+    render(<InputAudioDevices handleToggle={mockHandleToggle} />, {
+      publisherOptions: {
+        initialValue: {
+          publisher: null,
+          isPublishing: false,
+        },
+      },
+    });
 
-    render(<InputAudioDevices handleToggle={mockHandleToggle} />);
-
-    const micItem = screen.getByText('MacBook Pro Microphone (Built-in)');
+    const micItem = screen.getByText('External Microphone');
     fireEvent.click(micItem);
 
     expect(mockHandleToggle).toHaveBeenCalledTimes(1);
     expect(mockSetAudioSource).not.toHaveBeenCalled();
+
+    await waitFor(() => {
+      expect(
+        mediaDevices$.getState().selection.get('audioinput')?.deviceId === 'audio-input-3'
+      ).toBeTruthy();
+    });
   });
 
   it('shows check icon for selected device', () => {
@@ -131,26 +131,58 @@ describe('InputAudioDevices Component', () => {
     expect(screen.queryByText('Microphone')).not.toBeInTheDocument();
   });
 
-  it('handles click event when audioDeviceId is found', () => {
+  it('handles click event when audioDeviceId is found', async () => {
     render(<InputAudioDevices handleToggle={mockHandleToggle} />);
 
-    const micItem = screen.getByText('Soundcore Life A2 NC (Bluetooth)');
+    const micItem = screen.getByText('USB Headset Microphone');
     fireEvent.click(micItem);
 
     expect(mockHandleToggle).toHaveBeenCalledTimes(1);
-    expect(mockSetAudioSource).toHaveBeenCalledWith(
-      'd59e9898546591e31374d2eb459566649abe47fd461625da72d0cf75f43dc36f'
-    );
+    expect(mockSetAudioSource).toHaveBeenCalledWith('audio-input-2');
+
+    // Wait for the actual state change to complete
+    await waitFor(() => {
+      expect(
+        mediaDevices$.getState().selection.get('audioinput')?.deviceId === 'audio-input-2'
+      ).toBeTruthy();
+    });
   });
 });
 
 function render(
   ui: ReactElement,
-  options?: {
-    appConfigOptions?: AppConfigProviderWrapperOptions;
-  }
+  { publisherOptions, ...options }: PublisherProviderWrapperOptions = {}
 ) {
-  const { AppConfigWrapper } = makeAppConfigProviderWrapper(options?.appConfigOptions);
+  const mockPublisher = Object.assign(new EventEmitter(), {
+    setAudioSource: mockSetAudioSource,
+    getAudioSource: mockGetAudioSource,
+    setVideoSource: vi.fn(),
+    getVideoSource: vi.fn(),
+  }) as unknown as Publisher;
 
-  return renderBase(ui, { ...options, wrapper: AppConfigWrapper });
+  const { PublisherProviderWrapper, ...publisherContext } = makePublisherProviderWrapper({
+    ...options,
+    publisherOptions: {
+      initialValue: {
+        publisher: mockPublisher,
+        isPublishing: true,
+        ...publisherOptions?.initialValue,
+      },
+    },
+  });
+
+  return {
+    ...publisherContext,
+    ...renderBase(ui, { ...options, wrapper: PublisherProviderWrapper }),
+  };
+}
+
+async function importInputAudioDevices() {
+  const mediaDevices$ = (await import('@core/stores/devices')).default;
+
+  const InputAudioDevices = (
+    await vi.importActual<typeof import('./InputAudioDevices')>('./InputAudioDevices')
+  ).default;
+
+  return { InputAudioDevices, mediaDevices$ };
 }

@@ -3,36 +3,27 @@ import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { ReactElement } from 'react';
 import BackgroundEffectOptions from './BackgroundEffectOptions';
 import { makeBackgroundPublisherProviderWrapper } from '@test/providers';
-import mediaDevicesMock from '@common/test/mocks/mediaDevicesMock';
 
 describe('BackgroundEffectOptions', () => {
   beforeEach(() => {
     vi.clearAllMocks();
 
-    Object.defineProperty(globalThis.navigator, 'mediaDevices', {
-      writable: true,
-      configurable: true,
-      value: mediaDevicesMock,
-    });
+    const { mediaDevices } = globalThis.navigator;
 
-    vi.spyOn(mediaDevicesMock, 'addEventListener').mockImplementation(() => {});
-    vi.spyOn(mediaDevicesMock, 'removeEventListener').mockImplementation(() => {});
-    vi.spyOn(mediaDevicesMock, 'enumerateDevices').mockResolvedValue([]);
-    vi.spyOn(mediaDevicesMock, 'getUserMedia').mockResolvedValue({
+    vi.spyOn(mediaDevices, 'enumerateDevices').mockResolvedValue([]);
+    vi.spyOn(mediaDevices, 'addEventListener').mockImplementation(() => {});
+    vi.spyOn(mediaDevices, 'removeEventListener').mockImplementation(() => {});
+    vi.spyOn(mediaDevices, 'getUserMedia').mockResolvedValue({
       getTracks: () => [],
       getAudioTracks: () => [],
       getVideoTracks: () => [],
     } as unknown as MediaStream);
-    vi.spyOn(mediaDevicesMock, 'getDisplayMedia').mockResolvedValue({} as unknown as MediaStream);
-    vi.spyOn(mediaDevicesMock, 'getSupportedConstraints').mockReturnValue({});
+    vi.spyOn(mediaDevices, 'getDisplayMedia').mockResolvedValue({} as unknown as MediaStream);
+    vi.spyOn(mediaDevices, 'getSupportedConstraints').mockReturnValue({});
 
-    Object.defineProperty(globalThis.navigator, 'permissions', {
-      writable: true,
-      configurable: true,
-      value: {
-        query: vi.fn().mockResolvedValue({ state: 'granted' }),
-      },
-    });
+    const { permissions } = globalThis.navigator;
+
+    vi.spyOn(permissions, 'query').mockResolvedValue({ state: 'granted' } as PermissionStatus);
   });
 
   it('renders background options grid with effects and gallery', async () => {

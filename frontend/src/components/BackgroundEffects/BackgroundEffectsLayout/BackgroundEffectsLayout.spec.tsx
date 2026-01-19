@@ -5,7 +5,6 @@ import { ReactElement } from 'react';
 import { makeRoomContextWrapper } from '@test/providers';
 import BackgroundEffectsLayout from './BackgroundEffectsLayout';
 import enTranslations from '../../../locales/en.json';
-import mediaDevicesMock from '@common/test/mocks/mediaDevicesMock';
 import composeProviders from '@common/helpers/composeProviders';
 import SuspenseBoundary from '@common/components/SuspenseBoundary/SuspenseBoundary';
 
@@ -28,35 +27,27 @@ vi.mock('react-i18next', () => ({
   }),
 }));
 
-mediaDevicesMock.addEventListener = vi.fn();
-mediaDevicesMock.removeEventListener = vi.fn();
-mediaDevicesMock.enumerateDevices = vi.fn(() => Promise.resolve([]));
-mediaDevicesMock.getUserMedia = vi.fn(() =>
-  Promise.resolve({
-    getTracks: () => [],
-    getAudioTracks: () => [],
-    getVideoTracks: () => [],
-  } as unknown as MediaStream)
-);
-
-Object.defineProperty(global.navigator, 'mediaDevices', {
-  writable: true,
-  value: mediaDevicesMock,
-});
-
-Object.defineProperty(global.navigator, 'permissions', {
-  writable: true,
-  value: {
-    query: vi.fn(() => Promise.resolve({ state: 'granted' })),
-  },
-});
-
 describe('BackgroundEffectsLayout (Meeting room)', () => {
   const handleClose = vi.fn();
 
   beforeEach(() => {
     handleClose.mockClear();
     applyBackgroundFilterMock.mockClear();
+
+    const { mediaDevices } = globalThis.navigator;
+
+    vi.spyOn(mediaDevices, 'addEventListener').mockImplementation(() => {});
+    vi.spyOn(mediaDevices, 'removeEventListener').mockImplementation(() => {});
+    vi.spyOn(mediaDevices, 'enumerateDevices').mockResolvedValue([]);
+    vi.spyOn(mediaDevices, 'getUserMedia').mockResolvedValue({
+      getTracks: () => [],
+      getAudioTracks: () => [],
+      getVideoTracks: () => [],
+    } as unknown as MediaStream);
+
+    const { permissions } = globalThis.navigator;
+
+    vi.spyOn(permissions, 'query').mockResolvedValue({ state: 'granted' } as PermissionStatus);
   });
 
   it('renders when open', async () => {
@@ -113,6 +104,21 @@ describe('BackgroundEffects (Waiting Room)', () => {
   beforeEach(() => {
     handleClose.mockClear();
     applyBackgroundFilterMock.mockClear();
+
+    const { mediaDevices } = globalThis.navigator;
+
+    vi.spyOn(mediaDevices, 'addEventListener').mockImplementation(() => {});
+    vi.spyOn(mediaDevices, 'removeEventListener').mockImplementation(() => {});
+    vi.spyOn(mediaDevices, 'enumerateDevices').mockResolvedValue([]);
+    vi.spyOn(mediaDevices, 'getUserMedia').mockResolvedValue({
+      getTracks: () => [],
+      getAudioTracks: () => [],
+      getVideoTracks: () => [],
+    } as unknown as MediaStream);
+
+    const { permissions } = globalThis.navigator;
+
+    vi.spyOn(permissions, 'query').mockResolvedValue({ state: 'granted' } as PermissionStatus);
   });
 
   it('renders when open', async () => {

@@ -8,7 +8,6 @@ import {
   PreviewPublisherProviderWrapperOptions,
 } from '@test/providers';
 import MicButton from './MicButton';
-import mediaDevicesMock from '@common/test/mocks/mediaDevicesMock';
 import composeProviders from '@common/helpers/composeProviders';
 import SuspenseBoundary from '@common/components/SuspenseBoundary/SuspenseBoundary';
 
@@ -16,24 +15,16 @@ describe('MicButton', () => {
   beforeEach(() => {
     vi.clearAllMocks();
 
-    Object.defineProperty(globalThis.navigator, 'mediaDevices', {
-      writable: true,
-      configurable: true,
-      value: mediaDevicesMock,
-    });
+    const { mediaDevices } = globalThis.navigator;
 
-    vi.spyOn(mediaDevicesMock, 'addEventListener').mockImplementation(() => {});
-    vi.spyOn(mediaDevicesMock, 'removeEventListener').mockImplementation(() => {});
-    vi.spyOn(mediaDevicesMock, 'enumerateDevices').mockResolvedValue([]);
-    vi.spyOn(mediaDevicesMock, 'getUserMedia').mockResolvedValue({} as MediaStream);
+    vi.spyOn(mediaDevices, 'enumerateDevices').mockResolvedValue([]);
+    vi.spyOn(mediaDevices, 'addEventListener').mockImplementation(() => {});
+    vi.spyOn(mediaDevices, 'removeEventListener').mockImplementation(() => {});
+    vi.spyOn(mediaDevices, 'getUserMedia').mockResolvedValue({} as MediaStream);
 
-    Object.defineProperty(globalThis.navigator, 'permissions', {
-      writable: true,
-      configurable: true,
-      value: {
-        query: vi.fn().mockResolvedValue({ state: 'granted' }),
-      },
-    });
+    const { permissions } = globalThis.navigator;
+
+    vi.spyOn(permissions, 'query').mockResolvedValue({ state: 'granted' } as PermissionStatus);
   });
 
   it('renders the mic on icon when audio is enabled', async () => {

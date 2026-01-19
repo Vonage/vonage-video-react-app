@@ -7,7 +7,6 @@ import {
   BackgroundPublisherProviderWrapperOptions,
   makeBackgroundPublisherProviderWrapper,
 } from '@test/providers';
-import mediaDevicesMock from '@common/test/mocks/mediaDevicesMock';
 
 describe('EffectOptionButtons', () => {
   const mockHandleBackgroundChange = vi.fn();
@@ -15,26 +14,20 @@ describe('EffectOptionButtons', () => {
   beforeEach(() => {
     vi.clearAllMocks();
 
-    Object.defineProperty(global.navigator, 'mediaDevices', {
-      writable: true,
-      value: mediaDevicesMock,
-    });
+    const { mediaDevices } = globalThis.navigator;
 
-    vi.spyOn(mediaDevicesMock, 'addEventListener').mockImplementation(() => {});
-    vi.spyOn(mediaDevicesMock, 'removeEventListener').mockImplementation(() => {});
-    vi.spyOn(mediaDevicesMock, 'enumerateDevices').mockResolvedValue([]);
-    vi.spyOn(mediaDevicesMock, 'getUserMedia').mockResolvedValue({
+    vi.spyOn(mediaDevices, 'enumerateDevices').mockResolvedValue([]);
+    vi.spyOn(mediaDevices, 'addEventListener').mockImplementation(() => {});
+    vi.spyOn(mediaDevices, 'removeEventListener').mockImplementation(() => {});
+    vi.spyOn(mediaDevices, 'getUserMedia').mockResolvedValue({
       getTracks: () => [],
       getAudioTracks: () => [],
       getVideoTracks: () => [],
     } as unknown as MediaStream);
 
-    Object.defineProperty(global.navigator, 'permissions', {
-      writable: true,
-      value: {
-        query: vi.fn().mockResolvedValue({ state: 'granted' }),
-      },
-    });
+    const { permissions } = globalThis.navigator;
+
+    vi.spyOn(permissions, 'query').mockResolvedValue({ state: 'granted' } as PermissionStatus);
   });
 
   it('renders all effect options', async () => {

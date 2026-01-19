@@ -1,0 +1,52 @@
+import { cleanup } from '@testing-library/react';
+import { vi } from 'vitest';
+
+import {
+  setupWindowNavigatorMock,
+  setupScrollIntoViewMock,
+  setupResizeObserverMock,
+  setupHtmlMediaElementGuards,
+  setupHtmlCanvasElementGuards,
+  setupCancelablePromiseHook,
+  cancelablePromiseTracker,
+} from './helpers';
+
+/**
+ * Setup for FE environments
+ * ```ts
+ * setupWindowNavigatorMock();
+ * setupResizeObserverMock();
+ * setupScrollIntoViewMock();
+ * setupHtmlMediaElementGuards();
+ * setupHtmlCanvasElementGuards();
+ * setupCancelablePromiseHook();
+ * ```
+ */
+export const setupFrontendTestEnvironment = () => {
+  setupWindowNavigatorMock();
+  setupResizeObserverMock();
+  setupScrollIntoViewMock();
+  setupHtmlMediaElementGuards();
+  setupHtmlCanvasElementGuards();
+  setupCancelablePromiseHook();
+};
+
+/**
+ * Mandatory cleanups to enforce clean isolated test.
+ * ```ts
+ * cleanup();
+ * vi.clearAllMocks();
+ * vi.restoreAllMocks();
+ * vi.unstubAllGlobals();
+ * cancelablePromiseTracker.mockClear();
+ * ```
+ */
+export const mandatoryAfterEachCleanup = () => {
+  cleanup();
+  vi.clearAllMocks();
+  vi.restoreAllMocks();
+  vi.unstubAllGlobals();
+  cancelablePromiseTracker.mockClear();
+};
+
+export { cancelablePromiseTracker } from './helpers';

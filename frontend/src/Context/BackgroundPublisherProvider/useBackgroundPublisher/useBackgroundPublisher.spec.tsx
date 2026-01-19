@@ -9,7 +9,6 @@ import {
 } from '@test/providers';
 import useBackgroundPublisher from './useBackgroundPublisher';
 import { DEVICE_ACCESS_STATUS } from '@utils/constants';
-import mediaDevicesMock from '@common/test/mocks/mediaDevicesMock';
 
 vi.mock('@vonage/client-sdk-video');
 
@@ -27,21 +26,15 @@ describe('useBackgroundPublisher', () => {
   beforeEach(() => {
     vi.spyOn(console, 'error');
 
-    Object.defineProperty(globalThis.navigator, 'mediaDevices', {
-      writable: true,
-      value: mediaDevicesMock,
-    });
+    const { mediaDevices } = globalThis.navigator;
 
-    Object.defineProperty(globalThis.navigator, 'permissions', {
-      writable: true,
-      value: {
-        query: vi.fn().mockResolvedValue({ state: 'granted' }),
-      },
-    });
+    vi.spyOn(mediaDevices, 'addEventListener').mockImplementation(() => {});
+    vi.spyOn(mediaDevices, 'removeEventListener').mockImplementation(() => {});
+    vi.spyOn(mediaDevices, 'enumerateDevices').mockResolvedValue([]);
 
-    vi.spyOn(mediaDevicesMock, 'addEventListener').mockImplementation(() => {});
-    vi.spyOn(mediaDevicesMock, 'removeEventListener').mockImplementation(() => {});
-    vi.spyOn(mediaDevicesMock, 'enumerateDevices').mockResolvedValue([]);
+    const { permissions } = globalThis.navigator;
+
+    vi.spyOn(permissions, 'query').mockResolvedValue({ state: 'granted' } as PermissionStatus);
 
     (initPublisher as Mock).mockImplementation(mockedInitPublisher);
     (hasMediaProcessorSupport as Mock).mockImplementation(mockedHasMediaProcessorSupport);
@@ -181,12 +174,9 @@ describe('useBackgroundPublisher', () => {
       };
       mockQuery.mockResolvedValue(mockedPermissionStatus);
 
-      Object.defineProperty(global.navigator, 'permissions', {
-        writable: true,
-        value: {
-          query: mockQuery,
-        },
-      });
+      const { permissions } = globalThis.navigator;
+
+      vi.spyOn(permissions, 'query').mockImplementation(mockQuery);
     });
 
     it('handles permission denial', async () => {

@@ -9,13 +9,14 @@
     "baseUrl": "./",
     "moduleResolution": "node",
     "paths": {
-      "@ui": ["./src"],
       "@ui/*": ["./src/*"],
-      "@common/*": ["../common/src/*"],
-      "@common": ["../common/src"],
+      "@ui": ["./src"],
+      "@common-test/*": ["../common/test/*"],
+      "@common-test": ["../common/test"],
       "@core/*": ["../core/src/*"],
       "@core": ["../core/src"],
-      "@test-helpers/*": ["../common/test/*"]
+      "@common/*": ["../common/src/*"],
+      "@common": ["../common/src"]
     },
     "lib": ["DOM", "DOM.Iterable", "ESNext"]
   }

@@ -1,5 +1,6 @@
 import { render as renderBase, screen } from '@testing-library/react';
-import { MemoryRouter, Route, Routes } from 'react-router-dom';
+import { Route, Routes } from 'react-router-dom';
+import MemoryRouter from '@test/RouterWrapper';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { act, PropsWithChildren, ReactElement } from 'react';
 import useUserContext from '@hooks/useUserContext';
@@ -41,7 +42,7 @@ describe('RoomContext', () => {
         enumerateDevices: vi.fn(
           () =>
             new Promise<MediaDeviceInfo[]>((res) => {
-              res(nativeDevices as MediaDeviceInfo[]);
+              res(nativeDevices);
             })
         ),
         addEventListener: vi.fn(() => []),

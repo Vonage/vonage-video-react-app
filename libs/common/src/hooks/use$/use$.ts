@@ -1,7 +1,7 @@
 /* eslint-disable react-hooks/rules-of-hooks */
-import { use, useContext } from 'react';
-import { suspenseContext, suspenseToken } from '../../components/SuspenseBoundary/SuspenseBoundary';
+import { use } from 'react';
 import isPromise from '../../assertions/isPromise';
+import useAssertSuspense from '../useAssertSuspense';
 
 /**
  * Context-aware wrapper for React's use function.
@@ -10,12 +10,7 @@ import isPromise from '../../assertions/isPromise';
  * @returns The usable resolved value.
  */
 const use$ = <T>(...[usable]: Parameters<typeof use<T>>): T => {
-  const token = useContext(suspenseContext);
-  const isSafelyWrapped = token === suspenseToken;
-
-  if (!isSafelyWrapped) {
-    throw new Error('use$ must be used within a SuspenseBoundary Provider');
-  }
+  useAssertSuspense('use$ must be used within a SuspenseBoundary Provider');
 
   /**
    * Some of our implementations could call use with nonPromise/nonContext values.

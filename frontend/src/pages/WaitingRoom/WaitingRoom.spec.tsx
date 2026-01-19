@@ -4,20 +4,18 @@ import { ReactElement, ReactNode } from 'react';
 import { Publisher } from '@vonage/client-sdk-video';
 import EventEmitter from 'events';
 import userEvent from '@testing-library/user-event';
-import useDevices from '@hooks/useDevices';
-import { allMediaDevices, defaultAudioDevice } from '@utils/mockData/device';
+import { defaultAudioDevice } from '@utils/mockData/device';
 import usePermissions from '@hooks/usePermissions';
 import { DEVICE_ACCESS_STATUS } from '@utils/constants';
 import waitUntilPlaying from '@utils/waitUntilPlaying';
 import { makeRoomContextWrapper, RoomContextWrapperOptions } from '@test/providers';
 import { type PreviewPublisherContextType } from '@Context/PreviewPublisherProvider';
-import mediaDevicesMock from '@common/test/mocks/mediaDevicesMock';
 import backgroundEffectsDialog$ from '@Context/BackgroundEffectsDialog';
 import precallNetworkTestDialog$ from '@Context/PrecallNetworkTestDialog';
 import composeProviders from '@common/helpers/composeProviders';
 import WaitingRoom from './WaitingRoom';
 import SuspenseBoundary from '@common/components/SuspenseBoundary';
-import renderAsyncComponent from '@test-helpers/renderAsyncComponent';
+import renderAsyncComponent from '@common-test/renderAsyncComponent';
 
 const mockedNavigate = vi.fn();
 const mockedParams = { roomName: 'test-room-name' };
@@ -42,22 +40,17 @@ vi.mock('@vonage/client-sdk-video', async () => {
   };
 });
 
-vi.mock('@hooks/useDevices.tsx');
 vi.mock('@hooks/usePermissions.tsx');
 vi.mock('@utils/waitUntilPlaying/waitUntilPlaying.ts');
 
 const { locationBackUp, locationMock } = getLocationMock();
 
 function setupMediaDevices() {
-  Object.defineProperty(globalThis.navigator, 'mediaDevices', {
-    writable: true,
-    configurable: true,
-    value: mediaDevicesMock,
-  });
+  const { mediaDevices } = globalThis.navigator;
 
-  vi.spyOn(mediaDevicesMock, 'addEventListener').mockImplementation(() => {});
-  vi.spyOn(mediaDevicesMock, 'removeEventListener').mockImplementation(() => {});
-  vi.spyOn(mediaDevicesMock, 'enumerateDevices').mockResolvedValue([]);
+  vi.spyOn(mediaDevices, 'addEventListener').mockImplementation(() => {});
+  vi.spyOn(mediaDevices, 'removeEventListener').mockImplementation(() => {});
+  vi.spyOn(mediaDevices, 'enumerateDevices').mockResolvedValue([]);
 }
 
 function setupPermissions() {
@@ -122,11 +115,6 @@ describe('WaitingRoom', () => {
     mockPublisherVideoElement = document.createElement('video');
     mockPublisherVideoElement.title = 'preview-publisher';
     mockedDestroyPublisher = vi.fn();
-
-    vi.mocked(useDevices).mockReturnValue({
-      getAllMediaDevices: vi.fn(),
-      allMediaDevices,
-    });
 
     vi.mocked(usePermissions).mockReturnValue({
       accessStatus: DEVICE_ACCESS_STATUS.ACCEPTED,

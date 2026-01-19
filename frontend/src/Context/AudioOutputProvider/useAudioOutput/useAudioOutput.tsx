@@ -25,6 +25,7 @@ const useAudioOutput = (initialValue?: AudioOutputContextInitialValue): AudioOut
   const [currentAudioOutputDevice, setCurrentAudioOutputDevice] = useState<AudioDeviceId>(
     initialValue?.currentAudioOutputDevice ?? null
   );
+
   const { mediaDevices } = window.navigator;
 
   const updateCurrentAudioOutputDevice = useCallback(() => {

@@ -8,8 +8,7 @@ import usePreviewPublisher from './usePreviewPublisher';
 import makePreviewPublisherProviderWrapper, {
   PreviewPublisherProviderWrapperOptions,
 } from '@test/providers/makePreviewPublisherProviderWrapper';
-import mediaDevicesMock from '@common/test/mocks/mediaDevicesMock';
-import renderAsyncHook from '@test-helpers/renderAsyncHook';
+import renderAsyncHook from '@common-test/renderAsyncHook';
 import composeProviders from '@common/helpers/composeProviders';
 import SuspenseBoundary from '@common/components/SuspenseBoundary';
 
@@ -28,21 +27,15 @@ describe('usePreviewPublisher', () => {
   beforeEach(() => {
     vi.spyOn(console, 'error').mockImplementation(vi.fn());
 
-    Object.defineProperty(global.navigator, 'mediaDevices', {
-      writable: true,
-      value: mediaDevicesMock,
-    });
+    const { mediaDevices } = globalThis.navigator;
 
-    Object.defineProperty(global.navigator, 'permissions', {
-      writable: true,
-      value: {
-        query: vi.fn().mockResolvedValue({ state: 'granted' }),
-      },
-    });
+    vi.spyOn(mediaDevices, 'enumerateDevices').mockResolvedValue([]);
+    vi.spyOn(mediaDevices, 'addEventListener').mockImplementation(() => {});
+    vi.spyOn(mediaDevices, 'removeEventListener').mockImplementation(() => {});
 
-    vi.spyOn(mediaDevicesMock, 'addEventListener').mockImplementation(() => {});
-    vi.spyOn(mediaDevicesMock, 'removeEventListener').mockImplementation(() => {});
-    vi.spyOn(mediaDevicesMock, 'enumerateDevices').mockResolvedValue([]);
+    const { permissions } = globalThis.navigator;
+
+    vi.spyOn(permissions, 'query').mockResolvedValue({ state: 'granted' } as PermissionStatus);
 
     (initPublisher as Mock).mockImplementation(mockedInitPublisher);
     (hasMediaProcessorSupport as Mock).mockImplementation(mockedHasMediaProcessorSupport);
@@ -178,12 +171,9 @@ describe('usePreviewPublisher', () => {
       };
       mockQuery.mockResolvedValue(mockedPermissionStatus);
 
-      Object.defineProperty(global.navigator, 'permissions', {
-        writable: true,
-        value: {
-          query: mockQuery,
-        },
-      });
+      const { permissions } = globalThis.navigator;
+
+      vi.spyOn(permissions, 'query').mockImplementation(mockQuery);
     });
 
     it('handles permission denial', async () => {

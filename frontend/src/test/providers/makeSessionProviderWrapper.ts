@@ -6,7 +6,7 @@ import makeAppConfigProviderWrapper, {
 } from './makeAppConfigProviderWrapper';
 import makeGenericProviderWrapper, {
   type GenericWrapperOptions,
-} from '@common/test/makeGenericProviderWrapper';
+} from '@common-test/makeGenericProviderWrapper';
 
 export type SessionProviderWrapperOptions = {
   sessionOptions?: GenericWrapperOptions<typeof SessionProvider, typeof SessionContext>;

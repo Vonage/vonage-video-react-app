@@ -5,7 +5,7 @@ import {
 import composeProviders from '@common/helpers/composeProviders';
 import makeGenericProviderWrapper, {
   GenericWrapperOptions,
-} from '@common/test/makeGenericProviderWrapper';
+} from '@common-test/makeGenericProviderWrapper';
 import makePublisherProviderWrapper from './makePublisherProviderWrapper';
 
 export type BackgroundPublisherProviderWrapperOptions = {

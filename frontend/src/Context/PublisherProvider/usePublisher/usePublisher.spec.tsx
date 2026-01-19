@@ -52,6 +52,7 @@ describe('usePublisher', () => {
 
   beforeEach(() => {
     vi.spyOn(console, 'warn').mockImplementation(vi.fn());
+    vi.spyOn(globalThis.navigator.mediaDevices, 'enumerateDevices').mockResolvedValue([]);
 
     vi.mocked(useUserContext).mockImplementation(() => mockUserContextWithDefaultSettings);
 

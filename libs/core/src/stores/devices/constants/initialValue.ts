@@ -1,16 +1,19 @@
-import type { Device } from '../schemas';
-import type { AudioOutputDevice } from '../types';
+import type { MediaDeviceInfoJSON } from '../types';
 
-const initialValue = {
-  // Collections
-  devices: [] as Device[],
-  mediaDevices: [] as MediaDeviceInfo[],
-  audioOutputDevices: [] as AudioOutputDevice[],
+/**
+ * This store intent to manage all the media devices available on the client
+ * and the selected devices for audio output, audio input and video input.
+ */
+const initialValue = () => ({
+  /**
+   * Native MediaDeviceInfo from navigator.mediaDevices
+   */
+  mediaDeviceInfo: [] as MediaDeviceInfo[],
 
-  // Selected devices
-  audioOutput: null as AudioOutputDevice | null,
-};
-
-export type InitialValue = typeof initialValue;
+  /**
+   * Serializable selection of media devices
+   */
+  selection: new Map<MediaDeviceKind, MediaDeviceInfoJSON | null>(),
+});
 
 export default initialValue;

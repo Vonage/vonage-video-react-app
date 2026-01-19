@@ -1,8 +1,8 @@
 import { AudioOutputDevice as VonageAudioOutputDevice } from '@vonage/client-sdk-video';
-import { AudioOutputDeviceId } from '../schemas/AudioOutputDevice.schema';
+import { VonageAudioOutputDeviceId } from '../schemas/VonageAudioOutputDevice.schema';
 
 export type AudioOutputDevice = Omit<VonageAudioOutputDevice, 'deviceId'> & {
-  deviceId: AudioOutputDeviceId;
+  deviceId: VonageAudioOutputDeviceId;
 };
 
 export default AudioOutputDevice;

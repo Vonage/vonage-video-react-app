@@ -16,6 +16,7 @@ const customWordList = [
   'Hydrateable',
   'firefoxUserPrefs',
   'PWDEBUG',
+  'unstub',
 ];
 
 export default customWordList;

@@ -14,7 +14,11 @@
     "src/**/*.json",
     "src/theme/helpers/tailwind/index.cjs",
     "../common/src/**/*.ts",
-    "../common/src/**/*.tsx"
+    "../common/src/**/*.tsx",
+    "../common/test/**/*.ts",
+    "../common/test/**/*.tsx",
+    "../core/src/**/*.ts",
+    "../core/src/**/*.tsx"
   ],
   "exclude": ["**/*.spec.*", "**/*.test.*"]
 }

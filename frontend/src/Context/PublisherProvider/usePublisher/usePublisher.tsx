@@ -97,7 +97,7 @@ const usePublisher = (initialValue: PublisherContextInitialValue = {}): Publishe
     HTMLVideoElement | HTMLObjectElement | null
   >(initialValue?.publisherVideoElement ?? null);
 
-  const publisherRef = useRef<Publisher | null>(null);
+  const publisherRef = useRef<Publisher | null>(initialValue.publisher ?? null);
   const quality = usePublisherQuality(publisherRef.current);
 
   const [isPublishing, setIsPublishing] = useState(initialValue?.isPublishing ?? false);

@@ -2,14 +2,14 @@ import { PublisherProvider, PublisherContext } from '@Context/PublisherProvider'
 import composeProviders from '@common/helpers/composeProviders';
 import makeGenericProviderWrapper, {
   GenericWrapperOptions,
-} from '@common/test/makeGenericProviderWrapper';
+} from '@common-test/makeGenericProviderWrapper';
 import makeSessionProviderWrapper, {
   SessionProviderWrapperOptions,
 } from './makeSessionProviderWrapper';
 
 export type PublisherProviderWrapperOptions = {
-  publisherContext?: GenericWrapperOptions<typeof PublisherProvider, typeof PublisherContext>;
-  sessionContext?: SessionProviderWrapperOptions['sessionOptions'];
+  publisherOptions?: GenericWrapperOptions<typeof PublisherProvider, typeof PublisherContext>;
+  sessionOptions?: SessionProviderWrapperOptions['sessionOptions'];
   userOptions?: SessionProviderWrapperOptions['userOptions'];
   appConfigOptions?: SessionProviderWrapperOptions['appConfigOptions'];
 };
@@ -19,18 +19,18 @@ export type PublisherProviderWrapperOptions = {
  * The wrapper includes:
  * - AppConfigProvider: you can override its options via appConfigOptions
  * - UserProvider: you can override its options via userOptions
- * - SessionProvider: you can override its options via sessionContext
- * - PublisherProvider: you can override its options via publisherContext
+ * - SessionProvider: you can override its options via sessionOptions
+ * - PublisherProvider: you can override its options via publisherOptions
  * @param {object} options - The wrapper options.
- * @param {GenericWrapperOptions} [options.publisherContext] - Options for the PublisherProvider wrapper.
- * @param {GenericWrapperOptions} [options.sessionContext] - Options for the SessionProvider wrapper.
+ * @param {GenericWrapperOptions} [options.publisherOptions] - Options for the PublisherProvider wrapper.
+ * @param {GenericWrapperOptions} [options.sessionOptions] - Options for the SessionProvider wrapper.
  * @param {UserProviderWrapperOptions} [options.userOptions] - Options for the UserProvider wrapper.
  * @param {AppConfigProviderWrapperOptions} [options.appConfigOptions] - Options for the AppConfigProvider wrapper.
  * @returns {object} The PublisherProvider wrapper and context getters.
  */
 function makePublisherProviderWrapper({
-  publisherContext: publisherOptions,
-  sessionContext: sessionOptions,
+  publisherOptions,
+  sessionOptions,
   userOptions,
   appConfigOptions,
 }: PublisherProviderWrapperOptions = {}) {

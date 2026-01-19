@@ -1,4 +1,4 @@
-import { useState, useRef, useCallback, useEffect } from 'react';
+import { useState, useRef, useCallback } from 'react';
 import {
   Publisher,
   Event,
@@ -7,8 +7,6 @@ import {
   hasMediaProcessorSupport,
   PublisherProperties,
 } from '@vonage/client-sdk-video';
-import setMediaDevices from '../../../utils/mediaDeviceUtils';
-import useDevices from '../../../hooks/useDevices';
 import usePermissions from '../../../hooks/usePermissions';
 import useUserContext from '../../../hooks/useUserContext';
 import { DEVICE_ACCESS_STATUS } from '../../../utils/constants';
@@ -80,7 +78,6 @@ const useBackgroundPublisher = (
   initialValue?: BackgroundPublisherContextInitialValue
 ): BackgroundPublisherContextType => {
   const { user } = useUserContext();
-  const { allMediaDevices, getAllMediaDevices } = useDevices();
   const { getImagesFromStorage, addImageToStorage, deleteImageFromStorage } = useImageStorage();
   const [publisherVideoElement, setPublisherVideoElement] = useState<
     HTMLVideoElement | HTMLObjectElement | undefined
@@ -107,11 +104,6 @@ const useBackgroundPublisher = (
   const [backgroundSelected, setBackgroundSelected] = useState<string>(
     initialValue?.backgroundSelected ?? ''
   );
-
-  /* This sets the default devices in use so that the user knows what devices they are using */
-  useEffect(() => {
-    setMediaDevices(backgroundPublisherRef, allMediaDevices, () => {}, setLocalVideoSource);
-  }, [allMediaDevices]);
 
   const handleBackgroundDestroyed = () => {
     backgroundPublisherRef.current = null;
@@ -171,10 +163,9 @@ const useBackgroundPublisher = (
       publisher.on('videoElementCreated', handleVideoElementCreated);
       publisher.on('accessAllowed', () => {
         setAccessStatus(DEVICE_ACCESS_STATUS.ACCEPTED);
-        getAllMediaDevices();
       });
     },
-    [getAllMediaDevices, handleBackgroundAccessDenied, setAccessStatus]
+    [handleBackgroundAccessDenied, setAccessStatus]
   );
 
   const initBackgroundLocalPublisher = useCallback(async () => {

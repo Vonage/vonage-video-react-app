@@ -1,4 +1,5 @@
 import { describe, test, expect, vi, beforeEach, afterEach, afterAll } from 'vitest';
+import makeMediaDeviceInfos from '@common-test/fixtures/makeMediaDeviceInfos';
 import DeviceStore from './deviceStore';
 import localStorageMock from '../mockData/localStorageMock';
 import { setStorageItem, STORAGE_KEYS } from '../storage';
@@ -10,11 +11,11 @@ describe('DeviceStore', () => {
   beforeEach(() => {
     deviceStore = new DeviceStore();
     enumerateDevicesMock = vi.fn();
-    vi.stubGlobal('navigator', {
-      mediaDevices: {
-        enumerateDevices: enumerateDevicesMock,
-      },
-    });
+
+    vi.spyOn(navigator.mediaDevices, 'enumerateDevices').mockImplementation(
+      enumerateDevicesMock as unknown as () => Promise<MediaDeviceInfo[]>
+    );
+
     Object.defineProperty(window, 'localStorage', {
       value: localStorageMock,
       writable: true,
@@ -27,26 +28,23 @@ describe('DeviceStore', () => {
 
   afterAll(() => {
     window.localStorage.clear();
-    vi.unstubAllGlobals();
   });
 
   test('returns stored deviceId if it is still connected', async () => {
-    setStorageItem(STORAGE_KEYS.VIDEO_SOURCE, 'device-123');
-    enumerateDevicesMock.mockResolvedValue([
-      { deviceId: 'device-123', kind: 'videoinput' } as MediaDeviceInfo,
-    ]);
+    const devices = makeMediaDeviceInfos();
+    const videoDevice = devices.find((d) => d.kind === 'videoinput')!;
+    setStorageItem(STORAGE_KEYS.VIDEO_SOURCE, videoDevice.deviceId);
+    enumerateDevicesMock.mockResolvedValue(devices);
 
     await deviceStore.init();
     const result = deviceStore.getConnectedDeviceId('videoinput');
 
-    expect(result).toBe('device-123');
+    expect(result).toBe(videoDevice.deviceId);
   });
 
   test('returns undefined if stored device is not connected', async () => {
-    setStorageItem(STORAGE_KEYS.VIDEO_SOURCE, 'device-123');
-    enumerateDevicesMock.mockResolvedValue([
-      { deviceId: 'device-1234', kind: 'videoinput' } as MediaDeviceInfo,
-    ]);
+    setStorageItem(STORAGE_KEYS.VIDEO_SOURCE, 'device-not-connected');
+    enumerateDevicesMock.mockResolvedValue(makeMediaDeviceInfos());
 
     await deviceStore.init();
     const result = deviceStore.getConnectedDeviceId('videoinput');

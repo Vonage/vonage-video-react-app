@@ -1,31 +1,36 @@
+import { vi, describe, it, Mock, expect, beforeEach, beforeAll } from 'vitest';
+import makeMediaDeviceInfos from '@common-test/fixtures/makeMediaDeviceInfos';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
-import { vi, describe, it, Mock, expect, beforeEach, afterEach, beforeAll, afterAll } from 'vitest';
-import SmallViewportHeader from './SmallViewportHeader';
 import useSessionContext from '@hooks/useSessionContext';
 import useRoomName from '@hooks/useRoomName';
 import useRoomShareUrl from '@hooks/useRoomShareUrl';
 import usePublisherContext from '@hooks/usePublisherContext';
-import useDevices from '@hooks/useDevices';
-import { allMediaDevices } from '@utils/mockData/device';
 import { PublisherContextType } from '@Context/PublisherProvider';
-import { AllMediaDevices } from '@app-types/room';
+import type MediaDevices$ from '@core/stores/devices';
+import type SmallViewportHeaderType from './SmallViewportHeader';
 
 vi.mock('@hooks/useSessionContext');
-vi.mock('@hooks/useDevices');
 vi.mock('@hooks/useRoomName');
 vi.mock('@hooks/useRoomShareUrl');
 vi.mock('@hooks/usePublisherContext');
+vi.mock('@common/platform', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('@common/platform')>();
+  return {
+    ...actual,
+    isMobile: () => false,
+  };
+});
 
 const mockUsePublisherContext = usePublisherContext as Mock<[], PublisherContextType>;
-const mockUseDevices = useDevices as Mock<
-  [],
-  { allMediaDevices: AllMediaDevices; getAllMediaDevices: () => void }
->;
+
+const devices = makeMediaDeviceInfos();
+const videoDevices = devices.filter((d) => d.kind === 'videoinput');
 
 describe('SmallViewportHeader component', () => {
   const mockedRoomName = 'test-room-name';
-  const originalClipboard: Clipboard = navigator.clipboard;
   let publisherContext: PublisherContextType;
+  let SmallViewportHeader: typeof SmallViewportHeaderType;
+  let mediaDevices$: typeof MediaDevices$;
 
   beforeAll(() => {
     Object.assign(navigator, {
@@ -33,13 +38,20 @@ describe('SmallViewportHeader component', () => {
         writeText: vi.fn(),
       },
     });
+
+    // Mock the native devices API
+    vi.spyOn(globalThis.navigator.mediaDevices, 'addEventListener').mockImplementation(() => {});
+    vi.spyOn(globalThis.navigator.mediaDevices, 'removeEventListener').mockImplementation(() => {});
+    vi.spyOn(globalThis.navigator.mediaDevices, 'dispatchEvent').mockReturnValue(true);
+    vi.spyOn(globalThis.navigator.mediaDevices, 'enumerateDevices').mockResolvedValue(devices);
+    vi.spyOn(globalThis.navigator.mediaDevices, 'getUserMedia').mockResolvedValue({
+      getVideoTracks: () => [],
+      getAudioTracks: () => [],
+      getTracks: () => [],
+    } as unknown as MediaStream);
   });
 
-  afterAll(() => {
-    Object.assign(navigator, { clipboard: originalClipboard });
-  });
-
-  beforeEach(() => {
+  beforeEach(async () => {
     (useRoomName as Mock).mockReturnValue(mockedRoomName);
     (useRoomShareUrl as Mock).mockReturnValue('https://example.com/room/test-room-name');
 
@@ -49,14 +61,8 @@ describe('SmallViewportHeader component', () => {
     } as unknown as PublisherContextType;
 
     mockUsePublisherContext.mockReturnValue(publisherContext);
-    mockUseDevices.mockReturnValue({
-      getAllMediaDevices: vi.fn(),
-      allMediaDevices,
-    });
-  });
 
-  afterEach(() => {
-    vi.clearAllMocks();
+    ({ SmallViewportHeader, mediaDevices$ } = await importSmallViewportHeader());
   });
 
   it('renders the room name', () => {
@@ -117,41 +123,51 @@ describe('SmallViewportHeader component', () => {
       isVideoEnabled: false,
     } as unknown as PublisherContextType);
 
-    render(<SmallViewportHeader />);
+    const { container } = render(<SmallViewportHeader />);
+
+    console.log(container.innerHTML);
 
     expect(screen.queryByTestId('vivid-icon-camera-switch-line')).not.toBeInTheDocument();
   });
 
   it('does not show the camera switch button when only one video input device is available', () => {
     (useSessionContext as Mock).mockReturnValue({ archiveId: null });
+
     mockUsePublisherContext.mockReturnValue({
       publisher: { cycleVideo: vi.fn() } as unknown as PublisherContextType['publisher'],
       isVideoEnabled: true,
     } as unknown as PublisherContextType);
 
-    const singleVideoDevice: AllMediaDevices = {
-      ...allMediaDevices,
-      videoInputDevices: [allMediaDevices.videoInputDevices[0]],
-    };
+    // Set the store to have only one video device
+    const singleVideoDevice = videoDevices[0];
 
-    mockUseDevices.mockReturnValue({
-      getAllMediaDevices: vi.fn(),
-      allMediaDevices: singleVideoDevice,
-    });
+    mediaDevices$.setState((state) => ({
+      ...state,
+      mediaDeviceInfo: [...devices.filter((d) => d.kind !== 'videoinput'), singleVideoDevice],
+    }));
 
     render(<SmallViewportHeader />);
 
     expect(screen.queryByTestId('vivid-icon-camera-switch-line')).not.toBeInTheDocument();
+
+    // Restore full device list for subsequent tests
+    mediaDevices$.setState((state) => ({
+      ...state,
+      mediaDeviceInfo: devices,
+    }));
   });
 
   it('toggles to the opposite camera device when clicked', () => {
+    const videoInputDevice1 = videoDevices[0];
+
     (useSessionContext as Mock).mockReturnValue({ archiveId: null });
     const setVideoSource = vi.fn();
     const getVideoSource = vi.fn(() => ({
-      deviceId: allMediaDevices.videoInputDevices[0].deviceId,
-      label: allMediaDevices.videoInputDevices[0].label,
+      deviceId: videoInputDevice1.deviceId,
+      label: videoInputDevice1.label,
       kind: 'videoInput',
     }));
+
     mockUsePublisherContext.mockReturnValue({
       publisher: {
         setVideoSource,
@@ -165,6 +181,16 @@ describe('SmallViewportHeader component', () => {
     fireEvent.click(cameraIcon);
 
     expect(setVideoSource).toHaveBeenCalledTimes(1);
-    expect(setVideoSource).toHaveBeenCalledWith(allMediaDevices.videoInputDevices[1].deviceId);
+    expect(setVideoSource).toHaveBeenCalledWith(videoDevices[1].deviceId);
   });
 });
+
+async function importSmallViewportHeader() {
+  const mediaDevices$ = (await import('@core/stores/devices')).default;
+
+  const SmallViewportHeader = (
+    await vi.importActual<typeof import('./SmallViewportHeader')>('./SmallViewportHeader')
+  ).default;
+
+  return { SmallViewportHeader, mediaDevices$ };
+}

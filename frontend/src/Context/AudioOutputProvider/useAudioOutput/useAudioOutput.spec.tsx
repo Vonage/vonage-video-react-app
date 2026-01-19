@@ -4,7 +4,6 @@ import { AudioOutputDevice } from '@vonage/client-sdk-video';
 import * as OT from '@vonage/client-sdk-video';
 import { makeAudioOutputProviderWrapper, AudioOutputProviderWrapperOptions } from '@test/providers';
 import { nativeDevices } from '../../../utils/mockData/device';
-import mediaDevicesMock from '@common/test/mocks/mediaDevicesMock';
 
 vi.mock('@vonage/client-sdk-video');
 
@@ -15,16 +14,11 @@ describe('useAudioOutput', () => {
   let mockSetAudioOutputDevice: MockInstance<[deviceId: string], Promise<void>>;
 
   beforeEach(() => {
-    Object.defineProperty(globalThis.navigator, 'mediaDevices', {
-      writable: true,
-      value: mediaDevicesMock,
-    });
+    const { mediaDevices } = globalThis.navigator;
 
-    vi.spyOn(mediaDevicesMock, 'addEventListener').mockImplementation(() => {});
-    vi.spyOn(mediaDevicesMock, 'removeEventListener').mockImplementation(() => {});
-    vi.spyOn(mediaDevicesMock, 'enumerateDevices').mockResolvedValue(
-      nativeDevices as MediaDeviceInfo[]
-    );
+    vi.spyOn(mediaDevices, 'addEventListener').mockImplementation(() => {});
+    vi.spyOn(mediaDevices, 'removeEventListener').mockImplementation(() => {});
+    vi.spyOn(mediaDevices, 'enumerateDevices').mockResolvedValue(nativeDevices);
 
     mockGetActiveAudioOutputDevice = vi
       .spyOn(OT, 'getActiveAudioOutputDevice')
@@ -87,7 +81,7 @@ describe('useAudioOutput', () => {
     render();
 
     await waitFor(() => {
-      expect(mediaDevicesMock.addEventListener).toHaveBeenCalledWith(
+      expect(globalThis.navigator.mediaDevices.addEventListener).toHaveBeenCalledWith(
         'devicechange',
         expect.any(Function)
       );
@@ -98,12 +92,12 @@ describe('useAudioOutput', () => {
     const { unmount } = render();
 
     await waitFor(() => {
-      expect(mediaDevicesMock.addEventListener).toHaveBeenCalled();
+      expect(globalThis.navigator.mediaDevices.addEventListener).toHaveBeenCalled();
     });
 
     unmount();
 
-    expect(mediaDevicesMock.removeEventListener).toHaveBeenCalledWith(
+    expect(globalThis.navigator.mediaDevices.removeEventListener).toHaveBeenCalledWith(
       'devicechange',
       expect.any(Function)
     );

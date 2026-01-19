@@ -1,5 +1,3 @@
-import { AudioOutputDevice, Device } from '@vonage/client-sdk-video';
-
 /**
  * Cleans up device labels from navigator.mediaDevices by removing technical identifiers
  * while preserving useful descriptive information.
@@ -44,15 +42,13 @@ const cleanDeviceLabel = (label: string): string => {
  * @param {(Device | AudioOutputDevice)[]} devices - The list of media devices.
  * @returns {Array<(Device | AudioOutputDevice)>} The list of devices with cleaned and deduplicated labels.
  */
-const cleanAndDedupeDeviceLabels = (
-  devices: (Device | AudioOutputDevice)[]
-): Array<Device | AudioOutputDevice> => {
+const cleanAndDedupeDeviceLabels = (devices: MediaDeviceInfo[]): Array<MediaDeviceInfo> => {
   const labelCounts = new Map<string, number>();
-
   return devices.map((device) => {
     if (!device.label) {
       return device;
     }
+
     const cleanLabel = cleanDeviceLabel(device.label);
 
     const currentCount = labelCounts.get(cleanLabel) || 0;
@@ -61,9 +57,11 @@ const cleanAndDedupeDeviceLabels = (
     const finalLabel = currentCount > 0 ? `${cleanLabel} (${currentCount + 1})` : cleanLabel;
 
     return {
-      ...device,
+      groupId: device.groupId,
       label: finalLabel,
-    };
+      deviceId: device.deviceId,
+      kind: device.kind,
+    } as MediaDeviceInfo;
   });
 };
 

@@ -1,18 +1,13 @@
-import Box from '@ui/Box';
-import Typography from '@ui/Typography';
-import MenuItem from '@ui/MenuItem';
-import MenuList from '@ui/MenuList';
-import { Device } from '@vonage/client-sdk-video';
-import { MouseEvent as ReactMouseEvent, ReactElement, useMemo } from 'react';
+import { Box, MenuItem, MenuList, Typography } from '@mui/material';
+import { MouseEvent as ReactMouseEvent, ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
 import appConfig$ from '@stores/appConfig';
 import useTheme from '@ui/theme';
 import VividIcon from '@components/VividIcon';
-import useDevices from '@hooks/useDevices';
 import usePublisherContext from '@hooks/usePublisherContext';
-import { setStorageItem, STORAGE_KEYS } from '@utils/storage';
-import cleanAndDedupeDeviceLabels from '@utils/cleanAndDedupeDeviceLabels';
 import Tooltip from '@ui/Tooltip';
+import { useDistinctLabelMediaDevices } from '@ui/hooks';
+import mediaDevices$ from '@core/stores/devices';
 
 export type InputAudioDevicesProps = {
   handleToggle: () => void;
@@ -35,28 +30,22 @@ const InputAudioDevices = ({ handleToggle }: InputAudioDevicesProps): ReactEleme
     ({ meetingRoomSettings }) => meetingRoomSettings.allowDeviceSelection
   );
 
-  const {
-    allMediaDevices: { audioInputDevices },
-  } = useDevices();
+  const audioInputDevices = useDistinctLabelMediaDevices('audioinput');
 
-  const audioInputDevicesCleaned = useMemo(
-    () => cleanAndDedupeDeviceLabels(audioInputDevices),
-    [audioInputDevices]
-  );
-
-  const options = audioInputDevicesCleaned.map((availableDevice) => {
+  const options = audioInputDevices.map((availableDevice) => {
     return availableDevice.label || t('unknown.device');
   });
 
   const handleChangeAudioSource = (event: ReactMouseEvent<HTMLLIElement>) => {
     const menuItem = event.target as HTMLLIElement;
     handleToggle();
-    const audioDeviceId = audioInputDevices?.find((device: Device) => {
+    const audioDeviceId = audioInputDevices?.find((device) => {
       return device.label === menuItem.textContent;
     })?.deviceId;
     if (audioDeviceId) {
+      // [TODO:] Check this while refactoring the publishers... for vera apps this ids must be the same all the time.
       publisher?.setAudioSource(audioDeviceId);
-      setStorageItem(STORAGE_KEYS.AUDIO_SOURCE, audioDeviceId);
+      mediaDevices$.actions.selectDevice('audioinput', audioDeviceId);
     }
   };
 
