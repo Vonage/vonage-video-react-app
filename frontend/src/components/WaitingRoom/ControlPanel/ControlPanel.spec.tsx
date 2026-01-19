@@ -8,7 +8,7 @@ import { makeRoomContextWrapper, type RoomContextWrapperOptions } from '@test/pr
 import backgroundEffectsDialog$ from '@Context/BackgroundEffectsDialog';
 import precallNetworkTestDialog$ from '@Context/PrecallNetworkTestDialog';
 import ControlPanel from '.';
-import composeProviders from '@utils/composeProviders';
+import composeProviders from '@common/helpers/composeProviders';
 import mediaDevicesMock from '@common/test/mocks/mediaDevicesMock';
 
 vi.mock('@hooks/useDevices.tsx');

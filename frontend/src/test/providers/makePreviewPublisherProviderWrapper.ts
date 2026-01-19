@@ -2,7 +2,7 @@ import {
   PreviewPublisherProvider,
   PreviewPublisherContext,
 } from '@Context/PreviewPublisherProvider';
-import composeProviders from '@utils/composeProviders';
+import composeProviders from '@common/helpers/composeProviders';
 import makeGenericProviderWrapper, {
   GenericWrapperOptions,
 } from '@common/test/makeGenericProviderWrapper';

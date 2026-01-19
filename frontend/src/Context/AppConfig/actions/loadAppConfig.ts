@@ -11,38 +11,44 @@ export type AppConfigApi = import('../AppConfigContext').AppConfigApi;
  * @returns {Function} The thunk action to load the app config.
  */
 function loadAppConfig(this: AppConfigApi['actions']) {
-  return async (_: AppConfigApi) => {
-    const fallbackConfig: Partial<AppConfig> = {};
+  return async ({ getMetadata }: AppConfigApi) => {
+    const meta = getMetadata();
 
-    const { result: config, error } = await tryCatch(async () => {
-      // Skip fetching config in CI environments
-      if (env.VITE_AVOID_FETCHING_APP_CONFIG) return {};
+    meta.loadAppConfigPromise = (async () => {
+      const fallbackConfig: Partial<AppConfig> = {};
 
-      const response = await fetch('/config.json', { cache: 'no-cache' });
+      const { result: config, error } = await tryCatch(async () => {
+        // Skip fetching config in CI environments
+        if (env.VITE_AVOID_FETCHING_APP_CONFIG) return {};
 
-      const contentType = response.headers.get('content-type');
+        const response = await fetch('/config.json', { cache: 'no-cache' });
 
-      if (!contentType?.includes('application/json')) {
-        throw new Error('No valid JSON found, using default config');
+        const contentType = response.headers.get('content-type');
+
+        if (!contentType?.includes('application/json')) {
+          throw new Error('No valid JSON found, using default config');
+        }
+
+        // [TODO]: Validate schema of json
+        const json: Partial<AppConfig> = await response.json();
+
+        return json;
+      }, fallbackConfig);
+
+      if (error && env.MODE === 'development') {
+        console.error(
+          [
+            'There was an error loading config.json',
+            'Please make sure to provide a valid config.json file in the public folder.',
+          ].join('\n'),
+          error
+        );
       }
 
-      // [TODO]: Validate schema of json
-      const json: Partial<AppConfig> = await response.json();
+      this.updateAppConfig({ ...config, isAppConfigLoaded: true });
+    })();
 
-      return json;
-    }, fallbackConfig);
-
-    if (error && env.MODE === 'development') {
-      console.error(
-        [
-          'There was an error loading config.json',
-          'Please make sure to provide a valid config.json file in the public folder.',
-        ].join('\n'),
-        error
-      );
-    }
-
-    this.updateAppConfig({ ...config, isAppConfigLoaded: true });
+    return meta.loadAppConfigPromise;
   };
 }
 

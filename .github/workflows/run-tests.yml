@@ -15,7 +15,6 @@ env:
   OT_API_SECRET: ${{secrets.API_SECRET}}
   VONAGE_APP_ID: ${{secrets.VONAGE_APP_ID}}
   VONAGE_PRIVATE_KEY: ${{secrets.VONAGE_PRIVATE_KEY}}
-  VITE_I18N_SUPPORTED_LANGUAGES: 'en|en-US|es|es-MX|it'
 
 jobs:
   run:
@@ -32,6 +31,9 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
             const pr = context.payload.pull_request;
+            if (!pr) {
+              return false;
+            }
             const labels = pr.labels.map(label => label.name);
             return labels.includes("skip-ci");
 

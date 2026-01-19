@@ -36,7 +36,7 @@ describe('POST /feedback/report', () => {
   };
 
   beforeAll(async () => {
-    server = await startServer();
+    server = await startServer(0);
   });
 
   afterAll((done) => {

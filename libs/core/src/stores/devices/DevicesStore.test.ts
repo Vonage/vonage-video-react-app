@@ -1,9 +1,10 @@
 /* eslint-disable @typescript-eslint/no-use-before-define */
 import { vi } from 'vitest';
 import { renderHook, waitFor } from '@testing-library/react';
-import type DeviceStore from './DevicesContext';
+import type DeviceStore from './DevicesStore';
 import type * as ClientSdkVideo from '@vonage/client-sdk-video';
 import wait from '@common/execution/wait';
+import devices$, { initialValue, metadata } from './';
 
 describe('devices$', () => {
   beforeEach(() => {
@@ -25,10 +26,13 @@ describe('devices$', () => {
     vi.spyOn(globalThis.navigator.mediaDevices, 'enumerateDevices').mockImplementation(() =>
       Promise.resolve(mediaDevicesInfo)
     );
+
+    devices$.reset(initialValue, { ...metadata });
+    vi.clearAllMocks();
   });
 
   it('should initialize store correctly', async () => {
-    expect.assertions(9);
+    expect.assertions(11);
 
     const { mediaDevices } = globalThis.navigator;
 
@@ -42,8 +46,12 @@ describe('devices$', () => {
     // Verify initial state and API structure
     expect(state.audioOutputDevices).toBeDefined();
     expect(state.devices).toBeDefined();
-    expect(api.getConnectedDeviceId).toBeDefined();
-    expect(api.updateMediaDevices).toBeDefined();
+
+    // api actions
+    expect(api.setAudioOutputDevice).toBeDefined();
+    expect(api.syncDevicesList).toBeDefined();
+    expect(api.syncAudioOutputDevicesList).toBeDefined();
+    expect(api.syncMediaDevicesList).toBeDefined();
 
     // Verify devicechange event listener was registered only once
     expect(mediaDevices.addEventListener).toHaveBeenCalledTimes(1);
@@ -166,5 +174,5 @@ const devices = [
  * This ensures each test gets a fresh instance of the store and that we can spy on module methods before the store is initialized
  */
 async function importStore() {
-  return (await import(`./DevicesContext?${crypto.randomUUID()}`)).default as typeof DeviceStore;
+  return (await import(`./DevicesStore?${crypto.randomUUID()}`)).default as typeof DeviceStore;
 }

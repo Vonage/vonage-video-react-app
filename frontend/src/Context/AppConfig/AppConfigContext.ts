@@ -8,6 +8,9 @@ import initialValue from './helpers/defaultAppConfig';
  * The store includes Context, Provider, and use hook for consuming the context.
  */
 const appConfig = createContext(initialValue, {
+  metadata: () => ({
+    loadAppConfigPromise: null as null | Promise<void>,
+  }),
   actions: {
     updateAppConfig,
     loadAppConfig,

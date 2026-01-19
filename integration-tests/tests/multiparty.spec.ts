@@ -1,7 +1,7 @@
 import { expect } from '@playwright/test';
 import * as crypto from 'crypto';
 import { test, baseURL } from '../fixtures/testWithLogging';
-import { openMeetingRoomWithSettings, waitAndClickFirefox } from './utils';
+import { openMeetingRoomWithSettings, waitUntilReady } from './utils';
 
 test('should redirect to the waiting room if not bypassed', async ({ page: pageOne }) => {
   const roomName = crypto.randomBytes(5).toString('hex');
@@ -26,13 +26,13 @@ test('should publish and subscribe with 3 participants', async ({
   await pageOne.goto(roomUrl);
 
   // These clicks and waits are needed for firefox
-  await waitAndClickFirefox(pageOne, browserName);
+  await waitUntilReady(pageOne, browserName);
 
   await pageTwo.goto(roomUrl);
-  await waitAndClickFirefox(pageTwo, browserName);
+  await waitUntilReady(pageTwo, browserName);
 
   await pageThree.goto(roomUrl);
-  await waitAndClickFirefox(pageThree, browserName);
+  await waitUntilReady(pageThree, browserName);
 
   await pageThree.waitForSelector('.publisher', { state: 'visible' });
   await pageThree.waitForSelector('.subscriber', { state: 'visible' });
@@ -58,7 +58,7 @@ test('should display username on publisher and subscribers', async ({
     username: 'User One',
     roomName,
   });
-  await waitAndClickFirefox(pageOne, browserName);
+  await waitUntilReady(pageOne, browserName);
 
   await pageOne.waitForSelector('.publisher', { state: 'visible' });
 
@@ -74,7 +74,7 @@ test('should display username on publisher and subscribers', async ({
     username: 'User Two',
     roomName,
   });
-  await waitAndClickFirefox(pageTwo, browserName);
+  await waitUntilReady(pageTwo, browserName);
 
   await pageOne.waitForSelector('.subscriber', { state: 'visible' });
   await expect(await pageOne.locator('.subscriber').getByText('User Two')).toBeVisible();
@@ -92,7 +92,7 @@ test('should display initials on publisher and subscribers', async ({
     roomName,
     videoOff: true,
   });
-  await waitAndClickFirefox(pageOne, browserName);
+  await waitUntilReady(pageOne, browserName);
 
   await pageOne.waitForSelector('.publisher', { state: 'visible' });
 
@@ -106,7 +106,7 @@ test('should display initials on publisher and subscribers', async ({
     roomName,
     videoOff: true,
   });
-  await waitAndClickFirefox(pageTwo, browserName);
+  await waitUntilReady(pageTwo, browserName);
 
   await pageTwo.waitForSelector('.publisher', { state: 'visible' });
   await expect(pageTwo.getByText(/SO/)).toBeVisible();

@@ -13,7 +13,8 @@
       "@common/*": ["../common/src/*"],
       "@common": ["../common/src"],
       "@core/*": ["../core/src/*"],
-      "@core": ["../core/src"]
+      "@core": ["../core/src"],
+      "@test-helpers/*": ["../common/test/*"]
     },
     "lib": ["DOM", "DOM.Iterable", "ESNext"]
   }

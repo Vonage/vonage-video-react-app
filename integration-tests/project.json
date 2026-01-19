@@ -75,6 +75,23 @@
         "env": { "headedMode": "true" }
       }
     },
+    "test:canon": {
+      "executor": "nx:run-commands",
+      "description": "Run playwright tests in a specific file using the compiled version of the app without interruptions",
+      "options": {
+        "cwd": "integration-tests",
+        "command": "playwright test {args._} --project='Google Chrome Fake Devices' --workers=1"
+      }
+    },
+    "test:inspect": {
+      "executor": "nx:run-commands",
+      "description": "Run playwright tests in a specific file with DevTools inspector open",
+      "options": {
+        "cwd": "integration-tests",
+        "command": "playwright test {args._} --project='Google Chrome Fake Devices' --workers=1 --headed",
+        "env": { "headedMode": "true", "inspectMode": "true" }
+      }
+    },
     "test:dev": {
       "executor": "nx:run-commands",
       "description": "Run playwright tests in a specific file using the dev version of the app without interruptions",
@@ -90,7 +107,7 @@
       "options": {
         "cwd": "integration-tests",
         "command": "playwright test {args._} --project='Google Chrome Fake Devices' --workers=1 --timeout=0",
-        "env": { "headedMode": "true", "debugMode": "true", "PWDEBUG": "1" }
+        "env": { "headedMode": "true", "debugMode": "true", "inspectMode": "true", "PWDEBUG": "1" }
       }
     }
   },

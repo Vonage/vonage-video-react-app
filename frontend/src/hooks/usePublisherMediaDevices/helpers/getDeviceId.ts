@@ -1,6 +1,5 @@
 import { getAudioSourceDeviceId } from '@utils/util';
-import { devices$ } from '@core/stores/devices';
-import { DeviceKind } from '@core/stores/devices/actions/getConnectedDeviceId';
+import { devices$, type DeviceKind } from '@core/stores/devices';
 import { Publisher, Device } from '@vonage/client-sdk-video';
 
 const isAudioInputDevice = (device: Device): boolean => device.kind.toLowerCase() === 'audioinput';

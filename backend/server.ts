@@ -20,7 +20,7 @@ if (process.env.__IS_CJS__) {
   runtimeDir = path.dirname(fileURLToPath(import.meta.url));
 }
 
-const port = process.env.VCR_PORT ?? 3345;
+const defaultPort = Number(process.env.VCR_PORT ?? 3345);
 
 const app: Express = express();
 app.use(express.json({ limit: '20mb' }));
@@ -44,7 +44,7 @@ app.get('/*', (_req: Request, res: Response) => {
   res.sendFile(path.join(veraPath, 'index.html'));
 });
 
-const startServer: () => Promise<Server> = () => {
+const startServer: (port?: number) => Promise<Server> = (port = defaultPort) => {
   return new Promise((res) => {
     const server: Server = app.listen(port, () => {
       console.log('Server listening on port', port);

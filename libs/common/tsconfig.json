@@ -8,7 +8,8 @@
     "moduleResolution": "node",
     "paths": {
       "@common": ["./src"],
-      "@common/*": ["./src/*"]
+      "@common/*": ["./src/*"],
+      "@test-helpers/*": ["../test/*"]
     },
     "composite": true,
     "lib": ["DOM", "DOM.Iterable", "ESNext"]

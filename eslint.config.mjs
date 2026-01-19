@@ -60,8 +60,9 @@ export default [
             'integration-tests/main.js',
             'backend/jest.config.js',
             'backend/jest/setEnvVars.js',
+            'frontend/.storybook/main.ts',
+            'frontend/.storybook/preview.tsx',
             // add more config files here if needed, e.g.
-            // 'frontend/tailwind.config.*',
           ],
         },
         tsconfigRootDir: import.meta.dirname,

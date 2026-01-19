@@ -1,7 +1,7 @@
 import { expect } from '@playwright/test';
 import { randomBytes } from 'crypto';
 import { test } from '../fixtures/testWithLogging';
-import { openMeetingRoomWithSettings, waitAndClickFirefox } from './utils';
+import { openMeetingRoomWithSettings, waitUntilReady } from './utils';
 
 test.describe('Recording Feature', () => {
   test('should start and stop recording and verify the download link', async ({
@@ -19,7 +19,7 @@ test.describe('Recording Feature', () => {
       browserName,
     });
 
-    await waitAndClickFirefox(pageOne, browserName);
+    await waitUntilReady(pageOne, browserName);
     await pageOne.waitForSelector('.publisher', { state: 'visible' });
 
     if (isMobile) {
