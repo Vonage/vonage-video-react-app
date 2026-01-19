@@ -1,16 +1,33 @@
-import type { Device } from '../schemas';
-import type { AudioOutputDevice } from '../types';
+import { MediaDeviceInfoJSON, Prettify } from '@common/types';
 
-const initialValue = {
-  // Collections
-  devices: [] as Device[],
-  mediaDevices: [] as MediaDeviceInfo[],
-  audioOutputDevices: [] as AudioOutputDevice[],
+/**
+ * This store intent to manage all the media devices available on the client
+ * and the selected devices for audio output, audio input and video input.
+ */
+const initialValue = () => {
+  const selection: Record<MediaDeviceKind, string | undefined> = {
+    /**
+     * Selected audio input.
+     */
+    audioinput: undefined,
 
-  // Selected devices
-  audioOutput: null as AudioOutputDevice | null,
+    /**
+     * Selected audio output. Note that if the browser does not support selecting audio output devices, this will always be undefined and the app should fallback to using the default audio output device.
+     */
+    audiooutput: undefined,
+
+    /**
+     * Selected video input.
+     */
+    videoinput: undefined,
+  };
+
+  return Object.assign(selection, {
+    /**
+     * Native MediaDeviceInfo from navigator.mediaDevices
+     */
+    mediaDeviceInfo: [] as MediaDeviceInfoJSON[],
+  });
 };
 
-export type InitialValue = typeof initialValue;
-
-export default initialValue;
+export default initialValue as () => Prettify<ReturnType<typeof initialValue>>;

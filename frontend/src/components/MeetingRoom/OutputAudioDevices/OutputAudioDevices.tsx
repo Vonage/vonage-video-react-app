@@ -1,12 +1,7 @@
-import { MouseEvent, ReactElement, useMemo } from 'react';
-import type { AudioOutputDevice } from '@vonage/client-sdk-video';
+import { ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
 import appConfig$ from '@stores/appConfig';
-import useTheme from '@ui/theme';
-import useDevices from '@hooks/useDevices';
-import useAudioOutputContext from '@hooks/useAudioOutputContext';
-import { isGetActiveAudioOutputDeviceSupported } from '@utils/util';
-import cleanAndDedupeDeviceLabels from '@utils/cleanAndDedupeDeviceLabels';
+import type { MediaDeviceInfoJSON } from '@common/types';
 import DropdownSeparator from '../DropdownSeparator';
 import Box from '@ui/Box';
 import Typography from '@ui/Typography';
@@ -14,6 +9,10 @@ import MenuList from '@ui/MenuList';
 import MenuItem from '@ui/MenuItem';
 import VividIcon from '@components/VividIcon';
 import Tooltip from '@ui/Tooltip';
+import { useDistinctLabelMediaDevices } from '@ui/hooks';
+import { isSinkIdSupported } from '@common/platform';
+import mediaDevices$ from '@core/stores/devices';
+import useTheme from '@ui/theme';
 
 export type OutputAudioDevicesProps = {
   handleToggle: () => void;
@@ -30,38 +29,30 @@ export type OutputAudioDevicesProps = {
 const OutputAudioDevices = ({ handleToggle }: OutputAudioDevicesProps): ReactElement | false => {
   const { t } = useTranslation();
   const theme = useTheme();
-  const { currentAudioOutputDevice, setAudioOutputDevice } = useAudioOutputContext();
+
+  const currentAudioOutputId = mediaDevices$.useDeviceId('audiooutput');
 
   const allowDeviceSelection = appConfig$.use.select(
     ({ meetingRoomSettings }) => meetingRoomSettings.allowDeviceSelection
   );
 
-  const {
-    allMediaDevices: { audioOutputDevices },
-  } = useDevices();
-  const defaultOutputDevices = [{ deviceId: 'default', label: t('devices.audio.defaultLabel') }];
-
-  const isAudioOutputSupported = isGetActiveAudioOutputDeviceSupported();
-
-  const availableDevices = isAudioOutputSupported ? audioOutputDevices : defaultOutputDevices;
-  const availableDevicesCleaned = useMemo(
-    () => cleanAndDedupeDeviceLabels(availableDevices),
-    [availableDevices]
+  const availableDevices = useDistinctLabelMediaDevices('audiooutput', (devices) =>
+    isSinkIdSupported()
+      ? devices.map((device) =>
+          // Rename default audio output device to user-friendly label
+          device.deviceId === 'default'
+            ? { ...device, label: t('devices.audio.defaultLabel') }
+            : device
+        )
+      : [{ deviceId: 'default', label: t('devices.audio.defaultLabel') } as MediaDeviceInfoJSON]
   );
 
-  const handleChangeAudioOutput = async (event: MouseEvent<HTMLLIElement>) => {
-    const menuItem = event.target as HTMLLIElement;
+  const handleChangeAudioOutput = async (deviceId: string) => {
     handleToggle();
 
-    if (isAudioOutputSupported) {
-      const deviceId = availableDevicesCleaned?.find((device: AudioOutputDevice) => {
-        return device.label === menuItem.textContent;
-      })?.deviceId;
+    if (!isSinkIdSupported()) return;
 
-      if (deviceId) {
-        await setAudioOutputDevice(deviceId);
-      }
-    }
+    await mediaDevices$.actions.selectDevice('audiooutput', deviceId);
   };
 
   return (
@@ -83,16 +74,18 @@ const OutputAudioDevices = ({ handleToggle }: OutputAudioDevicesProps): ReactEle
             {t('devices.audio.speakers.full')}
           </Typography>
         </Box>
+
         <MenuList data-testid="output-devices">
-          {availableDevicesCleaned?.map((device: AudioOutputDevice) => {
+          {availableDevices?.map((device: MediaDeviceInfoJSON) => {
             // If audio output device selection is not supported we show the default device as selected
             const isSelected =
-              device.deviceId === currentAudioOutputDevice || availableDevicesCleaned.length === 1;
+              device.deviceId === currentAudioOutputId || availableDevices.length === 1;
+
             return (
               <MenuItem
                 key={device.deviceId}
                 selected={isSelected}
-                onClick={handleChangeAudioOutput}
+                onClick={() => handleChangeAudioOutput(device.deviceId)}
                 sx={{
                   backgroundColor: 'transparent',
                   '&.Mui-selected': {

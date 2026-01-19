@@ -1,4 +1,4 @@
-import { afterEach, beforeEach, afterAll, describe, expect, it, vi } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import { renderHook } from '@testing-library/react';
 import { Dispatch, SetStateAction } from 'react';
 import ResizeObserver from 'resize-observer-polyfill';
@@ -26,20 +26,8 @@ vi.mock('resize-observer-polyfill', () => ({
 }));
 
 describe('useDropdownResizeObserver', () => {
-  let mockSetIsOpen: Dispatch<SetStateAction<boolean>>;
+  const mockSetIsOpen = vi.fn() as Dispatch<SetStateAction<boolean>>;
   let mockDropdownRefElement: HTMLElement;
-
-  beforeEach(() => {
-    mockSetIsOpen = vi.fn();
-  });
-
-  afterEach(() => {
-    vi.clearAllMocks();
-  });
-
-  afterAll(() => {
-    vi.unstubAllGlobals();
-  });
 
   it('should initialize the resize observer', () => {
     mockDropdownRefElement = document.createElement('div');
@@ -60,7 +48,11 @@ describe('useDropdownResizeObserver', () => {
       writable: true,
       value: 50,
     });
-    vi.stubGlobal('innerHeight', 500);
+    Object.defineProperty(window, 'innerHeight', {
+      configurable: true,
+      writable: true,
+      value: 500,
+    });
 
     renderHook(() =>
       useDropdownResizeObserver({

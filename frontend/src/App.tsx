@@ -1,4 +1,4 @@
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Routes, FutureConfig } from 'react-router-dom';
 import './css/App.css';
 import './css/index.css';
 import MeetingRoom from './pages/MeetingRoom';
@@ -21,6 +21,14 @@ import WaitingRoomSkeleton from '@pages/WaitingRoom/WaitingRoom.skeleton';
 import MeetingRoomSkeleton from '@pages/MeetingRoom/MeetingRoom.skeleton';
 import SessionProvider from '@Context/SessionProvider/session';
 
+const futureConfig: Partial<FutureConfig> = {
+  /**
+   * Enable relative splat paths to ensure that dynamic imports in the app work correctly regardless of the base path.
+   */
+  v7_relativeSplatPath: true,
+  v7_startTransition: true,
+};
+
 const InnerApp = () => {
   const theme = useTheme();
 
@@ -37,7 +45,7 @@ const InnerApp = () => {
         height: '100dvh',
       }}
     >
-      <Router>
+      <Router future={futureConfig}>
         <Routes>
           <Route element={<RedirectToUnsupportedBrowserPage />}>
             <Route

@@ -1,49 +1,68 @@
-import createGlobalState, { type InferStateApi } from 'react-global-state-hooks/createGlobalState';
-import syncDevicesList from './actions/syncDevicesList';
-import syncAudioOutputDevicesList from './actions/syncAudioOutputDevicesList';
-import syncMediaDevicesList from './actions/syncMediaDevicesList';
-import { assertDevicesState } from './schemas/DevicesState.schema';
-import setAudioOutputDevice from './actions/setAudioOutputDevice';
-import setupDeviceStore from './actions/setupDeviceStore';
-import initialValue from './constants/initialValue';
-import metadata from './constants/metadata';
+import { createGlobalState, type InferAPI } from 'react-global-state-hooks';
+import { syncMediaDevicesInfo, selectDevice, getUserMedia } from './actions';
+import { initialValue, metadata } from './constants';
+import { setupDeviceStore } from './helpers';
+import type { DevicesStoreState } from './types';
+import { safelyParseDevicesStoreState } from './schemas/DevicesStoreState.schema';
+
+export type MediaDevicesAPI = InferAPI<typeof mediaDevicesStore>;
 
 /**
- * Devices store:
- * - devices: all media devices
- * - audioOutputDevices: all audio output devices
- * - audioOutput: selected audio output device
- *
- * Associated hooks:
- * - useAudioInputDevices: get all audio input devices
- * - useVideoInputDevices: get all video input devices
- * - useAudioOutputDevices: get all audio output devices
- * - useConnectedDeviceId: get the currently connected device id for a given kind, uses suspense
+ * MediaDevices Store
+ * Handles media devices information and selection
  */
-const devicesStore = createGlobalState(initialValue, {
+const mediaDevicesStore = createGlobalState(initialValue, {
   metadata,
   actions: {
-    syncDevicesList,
-    syncAudioOutputDevicesList,
-    syncMediaDevicesList,
-    setAudioOutputDevice,
+    /**
+     * Manually syncs the media devices info from navigator.mediaDevices
+     * [IMPORTANT] You usually don't need to call this method manually as the store is already
+     * listening to devicechange events (if supported by the platform).
+     */
+    syncMediaDevicesInfo,
+
+    /**
+     * Selects a media device by kind and deviceId
+     */
+    selectDevice,
+
+    /**
+     * Gets user media with specified constraints
+     * Use this method instead of directly calling navigator.mediaDevices.getUserMedia to keep
+     * the store in sync with granted media permissions.
+     */
+    getUserMedia,
   },
   localStorage: {
     key: 'vera-devices-store',
     validator: ({ restored, initial }) => {
-      assertDevicesState(restored);
+      const { error } = safelyParseDevicesStoreState(restored);
+      if (!error) return restored;
 
-      metadata.restoredAudioOutput = restored.audioOutput;
+      // Log warning if restored state is invalid
+      if (error && restored) {
+        console.warn(
+          '[MediaDevicesStore] Restored state from localStorage is invalid, using initial state instead.',
+          error
+        );
+      }
 
-      // prevents restoring until checking if the device is available
-      return initial;
+      return initial as DevicesStoreState;
+    },
+    selector: (state) => {
+      const { videoinput, audioinput, audiooutput } = state as DevicesStoreState;
+      return {
+        videoinput,
+        audioinput,
+        audiooutput,
+      };
     },
   },
   callbacks: {
-    onInit: setupDeviceStore,
+    onInit: (api) => {
+      return setupDeviceStore(api);
+    },
   },
 });
 
-export type DevicesApi = InferStateApi<typeof devicesStore>;
-
-export default devicesStore;
+export default mediaDevicesStore;

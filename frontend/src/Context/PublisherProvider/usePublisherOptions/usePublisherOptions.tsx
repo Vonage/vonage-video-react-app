@@ -1,4 +1,4 @@
-import { useRef, useEffect, useState } from 'react';
+import { useMemo } from 'react';
 import {
   PublisherProperties,
   VideoFilter,
@@ -8,8 +8,9 @@ import {
 import appConfig$ from '@stores/appConfig';
 import useUserContext from '@hooks/useUserContext';
 import getInitials from '@utils/getInitials';
-import DeviceStore from '@utils/DeviceStore';
 import { getStorageItem, STORAGE_KEYS } from '@utils/storage';
+import { useDeviceId } from '@core/stores/devices/hooks';
+import useStableCallback from '@common/hooks/useStableCallback';
 
 /**
  * React hook to get PublisherProperties combining default options and options set in UserContext
@@ -33,63 +34,59 @@ const usePublisherOptions = (): PublisherProperties | null => {
   const { name, noiseSuppression, backgroundFilter, publishAudio, publishVideo, publishCaptions } =
     user.defaultSettings;
 
-  const [publisherOptions, setPublisherOptions] = useState<PublisherProperties | null>(null);
-  const deviceStoreRef = useRef<DeviceStore | null>(null);
+  const videoSource = useDeviceId('videoinput');
+  const audioSource = useDeviceId('audioinput');
 
-  useEffect(() => {
-    const setOptions = async () => {
-      if (!deviceStoreRef.current) {
-        deviceStoreRef.current = new DeviceStore();
-        await deviceStoreRef.current.init();
-      }
+  const getOptions = useStableCallback(() => {
+    const initials = getInitials(name);
 
-      const videoSource = deviceStoreRef.current.getConnectedDeviceId('videoinput');
-      const audioSource = deviceStoreRef.current.getConnectedDeviceId('audioinput');
+    const audioFilter: AudioFilter | undefined =
+      noiseSuppression && hasMediaProcessorSupport()
+        ? { type: 'advancedNoiseSuppression' }
+        : undefined;
 
-      const initials = getInitials(name);
+    const videoFilter: VideoFilter | undefined =
+      backgroundFilter && hasMediaProcessorSupport() ? backgroundFilter : undefined;
 
-      const audioFilter: AudioFilter | undefined =
-        noiseSuppression && hasMediaProcessorSupport()
-          ? { type: 'advancedNoiseSuppression' }
-          : undefined;
+    const isAudioDisabled = getStorageItem(STORAGE_KEYS.AUDIO_SOURCE_ENABLED) === 'false';
+    const isVideoDisabled = getStorageItem(STORAGE_KEYS.VIDEO_SOURCE_ENABLED) === 'false';
 
-      const videoFilter: VideoFilter | undefined =
-        backgroundFilter && hasMediaProcessorSupport() ? backgroundFilter : undefined;
-
-      const isAudioDisabled = getStorageItem(STORAGE_KEYS.AUDIO_SOURCE_ENABLED) === 'false';
-      const isVideoDisabled = getStorageItem(STORAGE_KEYS.VIDEO_SOURCE_ENABLED) === 'false';
-
-      const options = {
-        audioFallback: { publisher: true },
-        audioSource,
-        initials,
-        insertDefaultUI: false,
-        name,
-        publishAudio: allowAudioOnJoin && publishAudio && !isAudioDisabled,
-        publishVideo: allowVideoOnJoin && publishVideo && !isVideoDisabled,
-        resolution: defaultResolution,
-        audioFilter,
-        videoFilter,
-        videoSource,
-        publishCaptions,
-      };
-      setPublisherOptions(options);
+    const options = {
+      audioFallback: { publisher: true },
+      audioFilter,
+      audioSource,
+      initials,
+      insertDefaultUI: false,
+      name,
+      publishAudio: allowAudioOnJoin && publishAudio && !isAudioDisabled,
+      publishCaptions,
+      publishVideo: allowVideoOnJoin && publishVideo && !isVideoDisabled,
+      resolution: defaultResolution,
+      videoFilter,
+      videoSource,
     };
 
-    setOptions();
-  }, [
-    allowAudioOnJoin,
-    defaultResolution,
-    allowVideoOnJoin,
-    name,
-    noiseSuppression,
-    backgroundFilter,
-    publishAudio,
-    publishVideo,
-    publishCaptions,
-  ]);
+    return options;
+  });
 
-  return publisherOptions;
+  return useMemo(
+    () => getOptions(),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [
+      getOptions,
+      allowAudioOnJoin,
+      allowVideoOnJoin,
+      audioSource,
+      backgroundFilter,
+      defaultResolution,
+      name,
+      noiseSuppression,
+      publishAudio,
+      publishCaptions,
+      publishVideo,
+      videoSource,
+    ]
+  );
 };
 
 export default usePublisherOptions;

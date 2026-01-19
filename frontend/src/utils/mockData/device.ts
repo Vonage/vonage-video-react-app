@@ -1,4 +1,4 @@
-import { AudioOutputDevice, Device } from '@vonage/client-sdk-video';
+import type { MediaDeviceInfoJSON } from '@common/types';
 import { AllMediaDevices } from '../../types';
 
 /**
@@ -13,7 +13,7 @@ export const defaultAudioDevice = {
   kind: 'audioInput',
 };
 
-export const audioInputDevices: Device[] = [
+export const audioInputDevices = [
   {
     deviceId: 'default',
     label: 'Default - Soundcore Life A2 NC (Bluetooth)',
@@ -29,9 +29,15 @@ export const audioInputDevices: Device[] = [
     label: 'MacBook Pro Microphone (Built-in)',
     kind: 'audioInput',
   },
-];
+].map(
+  (device) =>
+    ({
+      ...device,
+      kind: device.kind.toLowerCase(),
+    }) as MediaDeviceInfoJSON
+);
 
-export const videoInputDevices: Device[] = [
+export const videoInputDevices = [
   {
     deviceId: 'a68ec4e4a6bc10dc572bd806414b0da27d0aefb0ad822f7ba4cf9b226bb9b7c2',
     label: 'FaceTime HD Camera (2C0E:82E3)',
@@ -42,9 +48,15 @@ export const videoInputDevices: Device[] = [
     label: 'External Web Camera',
     kind: 'videoInput',
   },
-];
+].map(
+  (device) =>
+    ({
+      ...device,
+      kind: device.kind.toLowerCase(),
+    }) as MediaDeviceInfoJSON
+);
 
-export const audioOutputDevices: AudioOutputDevice[] = [
+export const audioOutputDevices = [
   {
     deviceId: 'default',
     label: 'System Default',
@@ -57,9 +69,20 @@ export const audioOutputDevices: AudioOutputDevice[] = [
     deviceId: '86e5a9ea93853f6cf7a39c93a0eb979ea9f9e5c97767268629a9ceafd668cdb7',
     label: 'MacBook Pro Speakers (Built-in)',
   },
-];
+].map(
+  (device) =>
+    ({
+      ...device,
+      kind: 'audiooutput',
+    }) as MediaDeviceInfoJSON
+);
 
-export const nativeDevices = [...audioInputDevices, ...videoInputDevices, ...audioOutputDevices];
+export const nativeDevices = [
+  ...audioInputDevices,
+  ...videoInputDevices,
+  ...audioOutputDevices,
+] as MediaDeviceInfo[];
+
 /**
  * Default mocked video input device.
  * @property {string} deviceId - The unique identifier for the audio device.

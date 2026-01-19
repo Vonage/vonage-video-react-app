@@ -1,13 +1,13 @@
 import { render as renderBase, screen } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 import { ReactElement } from 'react';
-import { makeSessionProviderWrapper, type SessionProviderWrapperOptions } from '@test/providers';
+import { makeTestProvider, providers, ProviderOptions } from '@test/providers';
 import ChatButton from './ChatButton';
 
 describe('ChatButton', () => {
   it('should show unread message number', () => {
     render(<ChatButton handleClick={() => {}} isOpen={false} />, {
-      sessionOptions: {
+      sessionContext: {
         __interceptor: (context) => {
           if (context) {
             context.unreadCount = 10;
@@ -21,7 +21,7 @@ describe('ChatButton', () => {
 
   it('should not show unread message number when number is 0', () => {
     render(<ChatButton handleClick={() => {}} isOpen={false} />, {
-      sessionOptions: {
+      sessionContext: {
         __interceptor: (context) => {
           if (context) {
             context.unreadCount = 0;
@@ -55,7 +55,7 @@ describe('ChatButton', () => {
 
   it('is not rendered when allowChat is false', () => {
     render(<ChatButton handleClick={() => {}} isOpen />, {
-      appConfigOptions: {
+      appConfigContext: {
         value: {
           meetingRoomSettings: {
             allowChat: false,
@@ -68,8 +68,27 @@ describe('ChatButton', () => {
   });
 });
 
-function render(ui: ReactElement, options?: SessionProviderWrapperOptions) {
-  const { SessionProviderWrapper } = makeSessionProviderWrapper(options);
+type RenderOptions = {
+  sessionContext?: ProviderOptions['SessionContext'];
+  appConfigContext?: ProviderOptions['AppConfigContext'];
+  userContext?: ProviderOptions['UserContext'];
+};
 
-  return renderBase(ui, { wrapper: SessionProviderWrapper });
+function render(
+  ui: ReactElement,
+  { sessionContext, appConfigContext, userContext }: RenderOptions = {}
+) {
+  const { wrapper, ...context } = makeTestProvider(
+    [providers.appConfig, providers.user, providers.session],
+    {
+      sessionContext,
+      appConfigContext,
+      userContext,
+    }
+  );
+
+  return {
+    ...context,
+    ...renderBase(ui, { wrapper }),
+  };
 }

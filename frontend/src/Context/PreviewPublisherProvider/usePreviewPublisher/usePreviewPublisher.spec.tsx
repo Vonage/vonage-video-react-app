@@ -5,13 +5,11 @@ import EventEmitter from 'node:events';
 import { defaultAudioDevice, defaultVideoDevice } from '@utils/mockData/device';
 import { DEVICE_ACCESS_STATUS } from '@utils/constants';
 import usePreviewPublisher from './usePreviewPublisher';
-import makePreviewPublisherProviderWrapper, {
-  PreviewPublisherProviderWrapperOptions,
-} from '@test/providers/makePreviewPublisherProviderWrapper';
-import mediaDevicesMock from '@common/test/mocks/mediaDevicesMock';
-import renderAsyncHook from '@test-helpers/renderAsyncHook';
+import { makeTestProvider, providers, type ProviderOptions } from '@test/providers';
+import renderAsyncHook from '@common-test/renderAsyncHook';
 import composeProviders from '@common/helpers/composeProviders';
 import SuspenseBoundary from '@common/components/SuspenseBoundary';
+import { setupWindowNavigatorMock } from '@common-test/fixtures';
 
 vi.mock('@vonage/client-sdk-video');
 
@@ -28,21 +26,16 @@ describe('usePreviewPublisher', () => {
   beforeEach(() => {
     vi.spyOn(console, 'error').mockImplementation(vi.fn());
 
-    Object.defineProperty(global.navigator, 'mediaDevices', {
-      writable: true,
-      value: mediaDevicesMock,
-    });
-
-    Object.defineProperty(global.navigator, 'permissions', {
-      writable: true,
-      value: {
-        query: vi.fn().mockResolvedValue({ state: 'granted' }),
+    setupWindowNavigatorMock({
+      mediaDevices: {
+        addEventListener: vi.fn(),
+        enumerateDevices: Promise.resolve([]),
       },
     });
 
-    vi.spyOn(mediaDevicesMock, 'addEventListener').mockImplementation(() => {});
-    vi.spyOn(mediaDevicesMock, 'removeEventListener').mockImplementation(() => {});
-    vi.spyOn(mediaDevicesMock, 'enumerateDevices').mockResolvedValue([]);
+    const { permissions } = globalThis.navigator;
+
+    vi.spyOn(permissions, 'query').mockResolvedValue({ state: 'granted' } as PermissionStatus);
 
     (initPublisher as Mock).mockImplementation(mockedInitPublisher);
     (hasMediaProcessorSupport as Mock).mockImplementation(mockedHasMediaProcessorSupport);
@@ -178,12 +171,9 @@ describe('usePreviewPublisher', () => {
       };
       mockQuery.mockResolvedValue(mockedPermissionStatus);
 
-      Object.defineProperty(global.navigator, 'permissions', {
-        writable: true,
-        value: {
-          query: mockQuery,
-        },
-      });
+      const { permissions } = globalThis.navigator;
+
+      vi.spyOn(permissions, 'query').mockImplementation(mockQuery);
     });
 
     it('handles permission denial', async () => {
@@ -227,18 +217,34 @@ describe('usePreviewPublisher', () => {
   });
 });
 
-async function render(options?: PreviewPublisherProviderWrapperOptions) {
-  const { PreviewPublisherProviderWrapper, previewPublisherContext } =
-    makePreviewPublisherProviderWrapper(options);
+type RenderOptions = {
+  appConfigContext?: ProviderOptions['AppConfigContext'];
+  userContext?: ProviderOptions['UserContext'];
+  previewPublisherContext?: ProviderOptions['PreviewPublisherContext'];
+};
 
-  const wrapper = composeProviders(SuspenseBoundary, PreviewPublisherProviderWrapper);
+async function render({
+  appConfigContext,
+  userContext,
+  previewPublisherContext,
+}: RenderOptions = {}) {
+  const { wrapper, ...context } = makeTestProvider(
+    [providers.appConfig, providers.user, providers.previewPublisher],
+    {
+      appConfigContext,
+      userContext,
+      previewPublisherContext,
+    }
+  );
+
+  const composedWrapper = composeProviders(SuspenseBoundary, wrapper);
 
   const rendered = await renderAsyncHook(() => usePreviewPublisher(), {
-    wrapper,
+    wrapper: composedWrapper,
   });
 
   return {
     ...rendered,
-    previewPublisherContext,
+    ...context,
   };
 }

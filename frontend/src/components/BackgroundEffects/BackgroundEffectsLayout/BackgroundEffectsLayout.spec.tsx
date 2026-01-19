@@ -2,12 +2,12 @@ import { render as renderBase, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { ReactElement } from 'react';
-import { makeRoomContextWrapper } from '@test/providers';
+import { makeTestProvider, providers } from '@test/providers';
 import BackgroundEffectsLayout from './BackgroundEffectsLayout';
 import enTranslations from '../../../locales/en.json';
-import mediaDevicesMock from '@common/test/mocks/mediaDevicesMock';
 import composeProviders from '@common/helpers/composeProviders';
 import SuspenseBoundary from '@common/components/SuspenseBoundary/SuspenseBoundary';
+import { setupWindowNavigatorMock, makeMediaStreamMock } from '@common-test/fixtures';
 
 const applyBackgroundFilterMock = vi.fn(() => Promise.resolve());
 
@@ -28,35 +28,30 @@ vi.mock('react-i18next', () => ({
   }),
 }));
 
-mediaDevicesMock.addEventListener = vi.fn();
-mediaDevicesMock.removeEventListener = vi.fn();
-mediaDevicesMock.enumerateDevices = vi.fn(() => Promise.resolve([]));
-mediaDevicesMock.getUserMedia = vi.fn(() =>
-  Promise.resolve({
-    getTracks: () => [],
-    getAudioTracks: () => [],
-    getVideoTracks: () => [],
-  } as unknown as MediaStream)
-);
-
-Object.defineProperty(global.navigator, 'mediaDevices', {
-  writable: true,
-  value: mediaDevicesMock,
-});
-
-Object.defineProperty(global.navigator, 'permissions', {
-  writable: true,
-  value: {
-    query: vi.fn(() => Promise.resolve({ state: 'granted' })),
-  },
-});
-
 describe('BackgroundEffectsLayout (Meeting room)', () => {
   const handleClose = vi.fn();
 
   beforeEach(() => {
     handleClose.mockClear();
     applyBackgroundFilterMock.mockClear();
+
+    setupWindowNavigatorMock({
+      mediaDevices: {
+        addEventListener: vi.fn(),
+        removeEventListener: vi.fn(),
+        enumerateDevices: Promise.resolve([]),
+        getUserMedia: Promise.resolve(
+          makeMediaStreamMock({
+            getTracks: vi.fn().mockReturnValue([]),
+            getAudioTracks: vi.fn().mockReturnValue([]),
+            getVideoTracks: vi.fn().mockReturnValue([]),
+          })
+        ),
+      },
+      permissions: {
+        query: vi.fn().mockResolvedValue({ state: 'granted' } as PermissionStatus),
+      },
+    });
   });
 
   it('renders when open', async () => {
@@ -113,6 +108,23 @@ describe('BackgroundEffects (Waiting Room)', () => {
   beforeEach(() => {
     handleClose.mockClear();
     applyBackgroundFilterMock.mockClear();
+
+    setupWindowNavigatorMock({
+      mediaDevices: {
+        addEventListener: vi.fn(),
+        removeEventListener: vi.fn(),
+        enumerateDevices: Promise.resolve([]),
+        getUserMedia: Promise.resolve(
+          makeMediaStreamMock({
+            getVideoTracks: [],
+            getAudioTracks: [],
+          })
+        ),
+      },
+      permissions: {
+        query: vi.fn().mockResolvedValue({ state: 'granted' } as PermissionStatus),
+      },
+    });
   });
 
   it('renders when open', async () => {
@@ -164,9 +176,19 @@ describe('BackgroundEffects (Waiting Room)', () => {
 });
 
 function render(ui: ReactElement) {
-  const { RoomProviderWrapper } = makeRoomContextWrapper();
+  const { wrapper: roomWrapper, ...context } = makeTestProvider([
+    providers.appConfig,
+    providers.user,
+    providers.session,
+    providers.publisher,
+    providers.backgroundPublisher,
+    providers.previewPublisher,
+  ]);
 
-  const wrapper = composeProviders(SuspenseBoundary, RoomProviderWrapper);
+  const wrapper = composeProviders(SuspenseBoundary, roomWrapper);
 
-  return renderBase(ui, { wrapper });
+  return {
+    ...context,
+    ...renderBase(ui, { wrapper }),
+  };
 }

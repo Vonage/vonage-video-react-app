@@ -3,11 +3,8 @@ import { render as renderBase, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { ReactElement } from 'react';
 import EffectOptionButtons from './EffectOptionButtons';
-import {
-  BackgroundPublisherProviderWrapperOptions,
-  makeBackgroundPublisherProviderWrapper,
-} from '@test/providers';
-import mediaDevicesMock from '@common/test/mocks/mediaDevicesMock';
+import { makeTestProvider, providers, type ProviderOptions } from '@test/providers';
+import { setupWindowNavigatorMock, makeMediaStreamMock } from '@common-test/fixtures';
 
 describe('EffectOptionButtons', () => {
   const mockHandleBackgroundChange = vi.fn();
@@ -15,26 +12,22 @@ describe('EffectOptionButtons', () => {
   beforeEach(() => {
     vi.clearAllMocks();
 
-    Object.defineProperty(global.navigator, 'mediaDevices', {
-      writable: true,
-      value: mediaDevicesMock,
-    });
-
-    vi.spyOn(mediaDevicesMock, 'addEventListener').mockImplementation(() => {});
-    vi.spyOn(mediaDevicesMock, 'removeEventListener').mockImplementation(() => {});
-    vi.spyOn(mediaDevicesMock, 'enumerateDevices').mockResolvedValue([]);
-    vi.spyOn(mediaDevicesMock, 'getUserMedia').mockResolvedValue({
-      getTracks: () => [],
-      getAudioTracks: () => [],
-      getVideoTracks: () => [],
-    } as unknown as MediaStream);
-
-    Object.defineProperty(global.navigator, 'permissions', {
-      writable: true,
-      value: {
-        query: vi.fn().mockResolvedValue({ state: 'granted' }),
+    setupWindowNavigatorMock({
+      mediaDevices: {
+        addEventListener: vi.fn(),
+        enumerateDevices: Promise.resolve([]),
+        getUserMedia: Promise.resolve(
+          makeMediaStreamMock({
+            getVideoTracks: [],
+            getAudioTracks: [],
+          })
+        ),
       },
     });
+
+    const { permissions } = globalThis.navigator;
+
+    vi.spyOn(permissions, 'query').mockResolvedValue({ state: 'granted' } as PermissionStatus);
   });
 
   it('renders all effect options', async () => {
@@ -48,7 +41,7 @@ describe('EffectOptionButtons', () => {
 
   it('marks the selected option as selected', async () => {
     render(<EffectOptionButtons />, {
-      backgroundPublisherOptions: {
+      backgroundPublisherContext: {
         __onCreated: (context) => {
           context.backgroundSelected = 'low-blur';
         },
@@ -62,7 +55,7 @@ describe('EffectOptionButtons', () => {
 
   it('sets the selected background', async () => {
     render(<EffectOptionButtons />, {
-      backgroundPublisherOptions: {
+      backgroundPublisherContext: {
         __interceptor: (context) => {
           context.handleBackgroundChange = mockHandleBackgroundChange;
         },
@@ -80,7 +73,7 @@ describe('EffectOptionButtons', () => {
 
   it('sets the selected background with high blur', async () => {
     render(<EffectOptionButtons />, {
-      backgroundPublisherOptions: {
+      backgroundPublisherContext: {
         __interceptor: (context) => {
           context.handleBackgroundChange = mockHandleBackgroundChange;
         },
@@ -98,17 +91,42 @@ describe('EffectOptionButtons', () => {
 });
 
 type RenderOptions = {
-  backgroundPublisherOptions?: BackgroundPublisherProviderWrapperOptions['backgroundPublisherOptions'];
+  appConfigContext?: ProviderOptions['AppConfigContext'];
+  userContext?: ProviderOptions['UserContext'];
+  sessionContext?: ProviderOptions['SessionContext'];
+  publisherContext?: ProviderOptions['PublisherContext'];
+  backgroundPublisherContext?: ProviderOptions['BackgroundPublisherContext'];
 };
 
-function render(ui: ReactElement, options?: RenderOptions) {
-  const { BackgroundPublisherProviderWrapper, ...backgroundProps } =
-    makeBackgroundPublisherProviderWrapper({
-      backgroundPublisherOptions: options?.backgroundPublisherOptions,
-    });
+function render(
+  ui: ReactElement,
+  {
+    appConfigContext,
+    userContext,
+    sessionContext,
+    publisherContext,
+    backgroundPublisherContext,
+  }: RenderOptions = {}
+) {
+  const { wrapper, ...context } = makeTestProvider(
+    [
+      providers.appConfig,
+      providers.user,
+      providers.session,
+      providers.publisher,
+      providers.backgroundPublisher,
+    ],
+    {
+      appConfigContext,
+      userContext,
+      sessionContext,
+      publisherContext,
+      backgroundPublisherContext,
+    }
+  );
 
   return {
-    ...backgroundProps,
-    ...renderBase(ui, { wrapper: BackgroundPublisherProviderWrapper }),
+    ...context,
+    ...renderBase(ui, { wrapper }),
   };
 }

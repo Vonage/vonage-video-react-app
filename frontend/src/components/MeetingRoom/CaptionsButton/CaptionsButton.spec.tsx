@@ -7,7 +7,7 @@ import useRoomName from '@hooks/useRoomName';
 import { SessionContextType } from '@Context/SessionProvider/session';
 import useSessionContext from '@hooks/useSessionContext';
 import { SubscriberWrapper } from '@app-types/session';
-import { AppConfigProviderWrapperOptions, makeAppConfigProviderWrapper } from '@test/providers';
+import { makeTestProvider, providers, ProviderOptions } from '@test/providers';
 import { enableCaptions, disableCaptions } from '@api/captions';
 import CaptionsButton, { CaptionsState } from './CaptionsButton';
 
@@ -81,7 +81,7 @@ describe('CaptionsButton', () => {
 
   it('turns the captions on when button is pressed', async () => {
     render(<CaptionsButton handleClick={mockHandleCloseMenu} captionsState={mockCaptionsState} />, {
-      appConfigOptions: {
+      appConfigContext: {
         value: {
           meetingRoomSettings: {
             allowCaptions: true,
@@ -99,7 +99,7 @@ describe('CaptionsButton', () => {
 
   it('is not rendered when allowCaptions is false', () => {
     render(<CaptionsButton handleClick={mockHandleCloseMenu} captionsState={mockCaptionsState} />, {
-      appConfigOptions: {
+      appConfigContext: {
         value: {
           meetingRoomSettings: {
             allowCaptions: false,
@@ -112,13 +112,17 @@ describe('CaptionsButton', () => {
   });
 });
 
-function render(
-  ui: ReactElement,
-  options?: {
-    appConfigOptions?: AppConfigProviderWrapperOptions;
-  }
-) {
-  const { AppConfigWrapper } = makeAppConfigProviderWrapper(options?.appConfigOptions);
+type RenderOptions = {
+  appConfigContext?: ProviderOptions['AppConfigContext'];
+};
 
-  return renderBase(ui, { ...options, wrapper: AppConfigWrapper });
+function render(ui: ReactElement, { appConfigContext }: RenderOptions = {}) {
+  const { wrapper, ...context } = makeTestProvider([providers.appConfig], {
+    appConfigContext,
+  });
+
+  return {
+    ...context,
+    ...renderBase(ui, { wrapper }),
+  };
 }

@@ -2,7 +2,7 @@ import { describe, it, expect } from 'vitest';
 import { render, renderHook } from '@testing-library/react';
 import React, { FC } from 'react';
 import SuspenseBoundary, { suspenseContext, suspenseToken } from './';
-import makeGenericProviderWrapper from '../../test/makeGenericProviderWrapper';
+import { makeGenericProviderWrapper } from '@common-test';
 import defer from '@common/execution/defer';
 import use$ from '@common/hooks/use$';
 

@@ -2,13 +2,7 @@
   "extends": "./tsconfig.json",
   "compilerOptions": {
     "module": "ESNext",
-    "types": [
-      "vitest/globals",
-      "vitest/importMeta",
-      "vite/client",
-      "node",
-      "@testing-library/jest-dom"
-    ]
+    "types": ["vitest/globals", "vitest/importMeta", "vite/client", "node"]
   },
   "include": [
     "vite.config.ts",
@@ -19,7 +13,9 @@
     "src/**/*.spec.ts",
     "../common/src/**/*.ts",
     "../common/src/**/*.tsx",
-    "../common/test/**/*.ts"
+    "../common/test/**/*.ts",
+    "../common/test/makeGenericProviderWrapper.tsx",
+    "../common/src/types/MediaDeviceInfoJSON.ts"
   ],
   "tsBuildInfoFile": "dist/tsconfig.spec.tsbuildinfo"
 }

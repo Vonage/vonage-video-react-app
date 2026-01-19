@@ -1,20 +1,14 @@
 import { afterEach, beforeEach, describe, expect, it, Mock, vi } from 'vitest';
 import { render as renderBase, screen } from '@testing-library/react';
 import { ReactElement, useRef } from 'react';
-import * as util from '@utils/util';
+import { isMobile } from '@common/platform';
 import isReportIssueEnabled from '@utils/isReportIssueEnabled';
-import { makeSessionProviderWrapper, type SessionProviderWrapperOptions } from '@test/providers';
+import { makeTestProvider, providers, ProviderOptions } from '@test/providers';
 import ToolbarOverflowMenu, { CaptionsState } from './ToolbarOverflowMenu';
 import Button from '@ui/Button';
 
 vi.mock('@hooks/useRoomName');
-vi.mock('@utils/util', async (importOriginal) => {
-  const actual = await importOriginal<typeof import('@utils/util')>();
-  return {
-    ...actual,
-    isMobile: vi.fn(),
-  };
-});
+vi.mock('@common/platform');
 vi.mock('@utils/isReportIssueEnabled');
 
 const mockOpenEmojiGrid = vi.fn();
@@ -49,8 +43,8 @@ const TestComponent = ({ defaultOpen = false }: { defaultOpen?: boolean }) => {
 
 describe('ToolbarOverflowMenu', () => {
   beforeEach(() => {
-    const isMobileMock = util.isMobile as unknown as Mock<[], boolean>;
-    isMobileMock.mockReturnValue(false);
+    vi.mocked(isMobile).mockImplementation(() => false);
+    mockIsReportIssueEnabled.mockReturnValue(false);
   });
 
   afterEach(() => {
@@ -98,7 +92,7 @@ describe('ToolbarOverflowMenu', () => {
 
   describe('ScreenSharingButton', () => {
     it('is not rendered for mobile devices', () => {
-      (util.isMobile as Mock).mockImplementation(() => true);
+      vi.mocked(isMobile).mockImplementation(() => true);
       render(<TestComponent defaultOpen />);
 
       expect(screen.queryByTestId('screensharing-button')).not.toBeInTheDocument();
@@ -112,8 +106,27 @@ describe('ToolbarOverflowMenu', () => {
   });
 });
 
-function render(ui: ReactElement, options?: SessionProviderWrapperOptions) {
-  const { SessionProviderWrapper } = makeSessionProviderWrapper(options);
+type RenderOptions = {
+  sessionContext?: ProviderOptions['SessionContext'];
+  appConfigContext?: ProviderOptions['AppConfigContext'];
+  userContext?: ProviderOptions['UserContext'];
+};
 
-  return renderBase(ui, { wrapper: SessionProviderWrapper });
+function render(
+  ui: ReactElement,
+  { sessionContext, appConfigContext, userContext }: RenderOptions = {}
+) {
+  const { wrapper, ...context } = makeTestProvider(
+    [providers.appConfig, providers.user, providers.session],
+    {
+      sessionContext,
+      appConfigContext,
+      userContext,
+    }
+  );
+
+  return {
+    ...context,
+    ...renderBase(ui, { wrapper }),
+  };
 }

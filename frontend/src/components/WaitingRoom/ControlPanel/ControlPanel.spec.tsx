@@ -1,39 +1,23 @@
-import { afterEach, beforeEach, describe, expect, it, Mock, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { cleanup, screen, render as renderBase } from '@testing-library/react';
 import { ReactElement } from 'react';
-import useDevices from '@hooks/useDevices';
-import { AllMediaDevices } from '@app-types/room';
-import { allMediaDevices } from '@utils/mockData/device';
-import { makeRoomContextWrapper, type RoomContextWrapperOptions } from '@test/providers';
+import { makeTestProvider, providers, ProviderOptions } from '@test/providers';
 import backgroundEffectsDialog$ from '@Context/BackgroundEffectsDialog';
 import precallNetworkTestDialog$ from '@Context/PrecallNetworkTestDialog';
 import ControlPanel from '.';
 import composeProviders from '@common/helpers/composeProviders';
-import mediaDevicesMock from '@common/test/mocks/mediaDevicesMock';
 import SuspenseBoundary from '@common/components/SuspenseBoundary';
-
-vi.mock('@hooks/useDevices.tsx');
-
-const mockUseDevices = useDevices as Mock<
-  [],
-  { allMediaDevices: AllMediaDevices; getAllMediaDevices: () => void }
->;
+import { setupWindowNavigatorMock } from '@common-test/fixtures';
 
 describe('ControlPanel', () => {
   beforeEach(() => {
-    mockUseDevices.mockReturnValue({
-      getAllMediaDevices: vi.fn(),
-      allMediaDevices,
+    setupWindowNavigatorMock({
+      mediaDevices: {
+        addEventListener: vi.fn(),
+        removeEventListener: vi.fn(),
+        enumerateDevices: Promise.resolve([]),
+      },
     });
-
-    Object.defineProperty(global.navigator, 'mediaDevices', {
-      writable: true,
-      value: mediaDevicesMock,
-    });
-
-    vi.spyOn(mediaDevicesMock, 'addEventListener').mockImplementation(() => {});
-    vi.spyOn(mediaDevicesMock, 'removeEventListener').mockImplementation(() => {});
-    vi.spyOn(mediaDevicesMock, 'enumerateDevices').mockResolvedValue([]);
 
     Object.defineProperty(global.navigator, 'permissions', {
       writable: true,
@@ -79,7 +63,7 @@ describe('ControlPanel', () => {
       />
     );
 
-    expect(screen.queryByTestId('audioInput-menu')).not.toBeInTheDocument();
+    expect(screen.queryByTestId('audioinput-menu')).not.toBeInTheDocument();
     rerender(
       <ControlPanel
         handleAudioInputOpen={() => {}}
@@ -92,7 +76,7 @@ describe('ControlPanel', () => {
         anchorEl={null}
       />
     );
-    expect(screen.getByTestId('audioInput-menu')).toBeVisible();
+    expect(screen.getByTestId('audioinput-menu')).toBeVisible();
   });
 
   it('should open video input devices menu', () => {
@@ -109,7 +93,7 @@ describe('ControlPanel', () => {
       />
     );
 
-    expect(screen.queryByTestId('videoInput-menu')).not.toBeInTheDocument();
+    expect(screen.queryByTestId('videoinput-menu')).not.toBeInTheDocument();
     rerender(
       <ControlPanel
         handleAudioInputOpen={() => {}}
@@ -122,7 +106,7 @@ describe('ControlPanel', () => {
         anchorEl={null}
       />
     );
-    expect(screen.getByTestId('videoInput-menu')).toBeVisible();
+    expect(screen.getByTestId('videoinput-menu')).toBeVisible();
   });
 
   it('should open audio output devices menu', () => {
@@ -139,7 +123,7 @@ describe('ControlPanel', () => {
       />
     );
 
-    expect(screen.queryByTestId('audioOutput-menu')).not.toBeInTheDocument();
+    expect(screen.queryByTestId('audiooutput-menu')).not.toBeInTheDocument();
     rerender(
       <ControlPanel
         handleAudioInputOpen={() => {}}
@@ -152,24 +136,58 @@ describe('ControlPanel', () => {
         anchorEl={null}
       />
     );
-    expect(screen.getByTestId('audioOutput-menu')).toBeVisible();
+    expect(screen.getByTestId('audiooutput-menu')).toBeVisible();
   });
 });
 
+type RenderOptions = {
+  appConfigContext?: ProviderOptions['AppConfigContext'];
+  userContext?: ProviderOptions['UserContext'];
+  sessionContext?: ProviderOptions['SessionContext'];
+  publisherContext?: ProviderOptions['PublisherContext'];
+  backgroundPublisherContext?: ProviderOptions['BackgroundPublisherContext'];
+  previewPublisherContext?: ProviderOptions['PreviewPublisherContext'];
+};
+
 function render(
   ui: ReactElement,
-  options?: {
-    roomContextOptions?: RoomContextWrapperOptions;
-  }
+  {
+    appConfigContext,
+    userContext,
+    sessionContext,
+    publisherContext,
+    backgroundPublisherContext,
+    previewPublisherContext,
+  }: RenderOptions = {}
 ) {
-  const { RoomProviderWrapper } = makeRoomContextWrapper(options?.roomContextOptions);
+  const { wrapper: ControlPanelWrapper, ...context } = makeTestProvider(
+    [
+      providers.appConfig,
+      providers.user,
+      providers.session,
+      providers.publisher,
+      providers.backgroundPublisher,
+      providers.previewPublisher,
+    ],
+    {
+      appConfigContext,
+      userContext,
+      sessionContext,
+      publisherContext,
+      backgroundPublisherContext,
+      previewPublisherContext,
+    }
+  );
 
   const wrapper = composeProviders(
     SuspenseBoundary,
-    RoomProviderWrapper,
+    ControlPanelWrapper,
     backgroundEffectsDialog$.Provider,
     precallNetworkTestDialog$.Provider
   );
 
-  return renderBase(ui, { ...options, wrapper });
+  return {
+    ...context,
+    ...renderBase(ui, { wrapper }),
+  };
 }

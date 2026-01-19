@@ -1,4 +1,4 @@
-import { AudioOutputDevice, Device } from '@vonage/client-sdk-video';
+import type { MediaDeviceInfoJSON } from '@common/types';
 
 /**
  * Cleans up device labels from navigator.mediaDevices by removing technical identifiers
@@ -41,18 +41,16 @@ const cleanDeviceLabel = (label: string): string => {
  * Cleans and deduplicates device labels.
  * If multiple devices have the same cleaned label, they are suffixed with a number.
  * For example, two devices both labeled "Logitech Webcam" become "Logitech Webcam" and "Logitech Webcam (2)".
- * @param {(Device | AudioOutputDevice)[]} devices - The list of media devices.
- * @returns {Array<(Device | AudioOutputDevice)>} The list of devices with cleaned and deduplicated labels.
+ * @param {MediaDeviceInfoJSON[]} devices - The list of media devices.
+ * @returns {Array<MediaDeviceInfoJSON>} The list of devices with cleaned and deduplicated labels.
  */
-const cleanAndDedupeDeviceLabels = (
-  devices: (Device | AudioOutputDevice)[]
-): Array<Device | AudioOutputDevice> => {
+const cleanAndDedupeDeviceLabels = (devices: MediaDeviceInfoJSON[]): Array<MediaDeviceInfoJSON> => {
   const labelCounts = new Map<string, number>();
-
   return devices.map((device) => {
     if (!device.label) {
       return device;
     }
+
     const cleanLabel = cleanDeviceLabel(device.label);
 
     const currentCount = labelCounts.get(cleanLabel) || 0;

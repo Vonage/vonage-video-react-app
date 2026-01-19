@@ -1,18 +1,12 @@
-import { describe, it, expect, vi, beforeEach, afterEach, afterAll } from 'vitest';
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { renderHook } from '@testing-library/react';
 import { RefObject } from 'react';
 import useElementDimensions from '../useElementDimensions';
 
 describe('useElementDimensions', () => {
   let elementRef: RefObject<HTMLDivElement>;
-  const ResizeObserverMock = vi.fn(() => ({
-    observe: vi.fn(),
-    unobserve: vi.fn(),
-    disconnect: vi.fn(),
-  }));
-  beforeEach(() => {
-    vi.stubGlobal('ResizeObserver', ResizeObserverMock);
 
+  beforeEach(() => {
     elementRef = { current: document.createElement('div') };
     Object.defineProperty(elementRef.current, 'offsetWidth', {
       configurable: true,
@@ -29,10 +23,6 @@ describe('useElementDimensions', () => {
 
   afterEach(() => {
     vi.restoreAllMocks();
-  });
-
-  afterAll(() => {
-    vi.unstubAllGlobals();
   });
 
   it('initially returns dimensions as { width: 0, height: 0 }', () => {

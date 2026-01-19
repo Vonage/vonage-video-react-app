@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, afterAll } from 'vitest';
-import { Device } from '@vonage/client-sdk-video';
+import type { MediaDeviceInfoJSON } from '@common/types';
 import * as util from './util';
 
 const chromeUserAgent =
@@ -80,20 +80,12 @@ describe('isWebKit', () => {
   });
 });
 
-describe('getBackgroundGradient', () => {
-  it('should return a linear gradient with the specified fill percentage', () => {
-    const level = 50;
-    const result = util.getBackgroundGradient(level);
-    expect(result).toBe('linear-gradient(to top, rgba(26,115,232,.9) 50%, transparent 50%)');
-  });
-});
-
 describe('getAudioSourceDeviceId', () => {
   it('returns the correct deviceId when a matching device is found', () => {
-    const devices: Device[] = [
-      { kind: 'audioInput', deviceId: 'device1', label: 'Microphone 1' },
-      { kind: 'audioInput', deviceId: 'device2', label: 'Microphone 2' },
-    ];
+    const devices = [
+      { kind: 'audioinput', deviceId: 'device1', label: 'Microphone 1' },
+      { kind: 'audioinput', deviceId: 'device2', label: 'Microphone 2' },
+    ] as MediaDeviceInfoJSON[];
     const currentAudioSource = { label: 'Microphone 2' } as MediaStreamTrack;
 
     const result = util.getAudioSourceDeviceId(devices, currentAudioSource);
@@ -101,10 +93,10 @@ describe('getAudioSourceDeviceId', () => {
   });
 
   it('returns an empty string when no matching device is found', () => {
-    const devices: Device[] = [
-      { kind: 'audioInput', deviceId: 'device1', label: 'Microphone 1' },
-      { kind: 'audioInput', deviceId: 'device2', label: 'Microphone 2' },
-    ];
+    const devices = [
+      { kind: 'audioinput', deviceId: 'device1', label: 'Microphone 1' },
+      { kind: 'audioinput', deviceId: 'device2', label: 'Microphone 2' },
+    ] as MediaDeviceInfoJSON[];
     const currentAudioSource = { label: 'Not Matching Microphone' } as MediaStreamTrack;
 
     const result = util.getAudioSourceDeviceId(devices, currentAudioSource);

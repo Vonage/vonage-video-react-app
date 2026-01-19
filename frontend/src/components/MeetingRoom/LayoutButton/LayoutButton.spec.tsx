@@ -3,7 +3,7 @@ import { afterEach, describe, expect, it, vi, beforeEach } from 'vitest';
 import userEvent from '@testing-library/user-event';
 import { ReactElement } from 'react';
 import LayoutButton from './LayoutButton';
-import { makeSessionProviderWrapper, type SessionProviderWrapperOptions } from '@test/providers';
+import { makeTestProvider, providers, type ProviderOptions } from '@test/providers';
 
 describe('LayoutButton', () => {
   beforeEach(() => {
@@ -16,7 +16,7 @@ describe('LayoutButton', () => {
   it('should render the sidebar view icon if it is an active speaker layout', () => {
     const mockSetLayoutMode = vi.fn();
     render(<LayoutButton isScreenSharePresent={false} isPinningPresent={false} />, {
-      sessionOptions: {
+      sessionContext: {
         __interceptor: (context) => {
           if (context) {
             context.layoutMode = 'active-speaker';
@@ -31,7 +31,7 @@ describe('LayoutButton', () => {
   it('should call the set layout mode function when triggered', async () => {
     const mockSetLayoutMode = vi.fn();
     render(<LayoutButton isScreenSharePresent={false} isPinningPresent={false} />, {
-      sessionOptions: {
+      sessionContext: {
         __interceptor: (context) => {
           if (context) {
             context.layoutMode = 'active-speaker';
@@ -48,7 +48,7 @@ describe('LayoutButton', () => {
 
     // Test with grid layout
     render(<LayoutButton isScreenSharePresent={false} isPinningPresent={false} />, {
-      sessionOptions: {
+      sessionContext: {
         __interceptor: (context) => {
           if (context) {
             context.layoutMode = 'grid';
@@ -65,7 +65,7 @@ describe('LayoutButton', () => {
   it('should render the sidebar window icon if it is a grid layout', () => {
     const mockSetLayoutMode = vi.fn();
     render(<LayoutButton isScreenSharePresent={false} isPinningPresent={false} />, {
-      sessionOptions: {
+      sessionContext: {
         __interceptor: (context) => {
           if (context) {
             context.layoutMode = 'grid';
@@ -80,7 +80,7 @@ describe('LayoutButton', () => {
   it('should render the tooltip title that mentions switching to grid layout', async () => {
     const mockSetLayoutMode = vi.fn();
     render(<LayoutButton isScreenSharePresent={false} isPinningPresent={false} />, {
-      sessionOptions: {
+      sessionContext: {
         __interceptor: (context) => {
           if (context) {
             context.layoutMode = 'active-speaker';
@@ -99,7 +99,7 @@ describe('LayoutButton', () => {
   it('should render the tooltip title that mentions switching to active speaker layout', async () => {
     const mockSetLayoutMode = vi.fn();
     render(<LayoutButton isScreenSharePresent={false} isPinningPresent={false} />, {
-      sessionOptions: {
+      sessionContext: {
         __interceptor: (context) => {
           if (context) {
             context.layoutMode = 'grid';
@@ -118,7 +118,7 @@ describe('LayoutButton', () => {
   it('should render the tooltip title that mentions switching layouts is not allowed when screenshare is present if currently in the grid mode', async () => {
     const mockSetLayoutMode = vi.fn();
     render(<LayoutButton isScreenSharePresent isPinningPresent={false} />, {
-      sessionOptions: {
+      sessionContext: {
         __interceptor: (context) => {
           if (context) {
             context.layoutMode = 'grid';
@@ -137,7 +137,7 @@ describe('LayoutButton', () => {
   it('should render the tooltip title that mentions switching layouts is not allowed when screenshare is present if currently in the active speaker mode', async () => {
     const mockSetLayoutMode = vi.fn();
     render(<LayoutButton isScreenSharePresent isPinningPresent={false} />, {
-      sessionOptions: {
+      sessionContext: {
         __interceptor: (context) => {
           if (context) {
             context.layoutMode = 'active-speaker';
@@ -156,7 +156,7 @@ describe('LayoutButton', () => {
   it('should render the tooltip title that mentions switching layouts is not allowed when a pinned participant is present', async () => {
     const mockSetLayoutMode = vi.fn();
     render(<LayoutButton isScreenSharePresent={false} isPinningPresent />, {
-      sessionOptions: {
+      sessionContext: {
         __interceptor: (context) => {
           if (context) {
             context.setLayoutMode = mockSetLayoutMode;
@@ -172,8 +172,27 @@ describe('LayoutButton', () => {
   });
 });
 
-function render(ui: ReactElement, options?: SessionProviderWrapperOptions) {
-  const { SessionProviderWrapper } = makeSessionProviderWrapper(options);
+type RenderOptions = {
+  appConfigContext?: ProviderOptions['AppConfigContext'];
+  userContext?: ProviderOptions['UserContext'];
+  sessionContext?: ProviderOptions['SessionContext'];
+};
 
-  return renderBase(ui, { wrapper: SessionProviderWrapper });
+function render(
+  ui: ReactElement,
+  { appConfigContext, userContext, sessionContext }: RenderOptions = {}
+) {
+  const { wrapper, ...context } = makeTestProvider(
+    [providers.appConfig, providers.user, providers.session],
+    {
+      appConfigContext,
+      userContext,
+      sessionContext,
+    }
+  );
+
+  return {
+    ...context,
+    ...renderBase(ui, { wrapper }),
+  };
 }
