@@ -1,12 +1,12 @@
 import { render as renderBase, screen } from '@testing-library/react';
-import type { MediaDeviceInfoJSON } from '@common/types';
+import type { MediaDeviceInfoJSON } from '@web/types';
 import { Route, Routes } from 'react-router-dom';
 import MemoryRouter from '@test/RouterWrapper';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { act, ReactElement } from 'react';
 import { nativeDevices } from '@utils/mockData/device';
-import composeProviders from '@common/helpers/composeProviders';
-import SuspenseBoundary from '@common/components/SuspenseBoundary/SuspenseBoundary';
+import composeProviders from '@web/helpers/composeProviders';
+import SuspenseBoundary from '@web/components/SuspenseBoundary/SuspenseBoundary';
 import { makeTestProvider, ProviderOptions, providers } from '@test/providers';
 import useUserContext from '@hooks/useUserContext';
 

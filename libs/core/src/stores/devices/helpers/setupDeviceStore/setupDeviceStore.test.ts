@@ -4,7 +4,7 @@ import { waitFor } from '@testing-library/dom';
 import mediaDevices$ from '../../devices$';
 import { setupPartialMock } from '@common-test/helpers';
 import { SPY_MARK } from '@common/types';
-import { setupWindowNavigatorMock } from '@common-test/fixtures';
+import { setupWindowNavigatorMock } from '@web-test/fixtures';
 
 describe('setupDeviceStore', () => {
   beforeEach(() => {

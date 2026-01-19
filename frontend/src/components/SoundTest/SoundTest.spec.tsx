@@ -6,7 +6,7 @@ import SoundTest from './SoundTest';
 import { nativeDevices } from '../../utils/mockData/device';
 import { makeTestProvider, providers } from '@test/providers';
 import { ReactElement } from 'react';
-import { setupWindowNavigatorMock } from '@common-test/fixtures';
+import { setupWindowNavigatorMock } from '@web-test/fixtures';
 
 describe('SoundTest', () => {
   const playMock = vi.fn();

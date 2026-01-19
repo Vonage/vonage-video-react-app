@@ -1,11 +1,7 @@
-import '@testing-library/jest-dom/vitest';
-import { beforeEach, afterEach } from 'vitest';
-import { setupFrontendTestEnvironment, mandatoryAfterEachCleanup } from '@common-test/environment';
-
-beforeEach(() => {
-  setupFrontendTestEnvironment();
-});
+import { afterEach, vi } from 'vitest';
 
 afterEach(() => {
-  mandatoryAfterEachCleanup();
+  vi.clearAllMocks();
+  vi.restoreAllMocks();
+  vi.unstubAllGlobals();
 });

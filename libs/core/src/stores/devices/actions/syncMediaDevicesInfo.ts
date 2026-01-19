@@ -1,10 +1,10 @@
 import { CancelablePromise } from 'easy-cancelable-promise';
 import { getMediaDevicesInfo, reviseMediaSelection } from '../helpers';
 import type { DevicesAPI } from '../types';
-import type { MediaDeviceInfoJSON } from '@common/types';
+import type { MediaDeviceInfoJSON } from '@web/types';
 import { setAudioOutputDevice as setVonageAudioOutputDevice } from '@vonage/client-sdk-video';
 import { attempt } from '@common/execution';
-import { isSinkIdSupported } from '@common/platform';
+import { isSinkIdSupported } from '@web/platform';
 
 /**
  * Syncs the media devices info by fetching the latest media devices and updating the store state.

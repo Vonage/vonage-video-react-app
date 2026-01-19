@@ -2,7 +2,7 @@ import type { Any, UseHookOptions } from 'react-global-state-hooks';
 import mediaDevicesMap$ from '../observables/mediaDevicesMap$';
 import { isFunction, isString } from '@common/assertions';
 import useMediaDeviceInfoByKind$ from './useMediaDeviceInfoByKind$';
-import type { MediaDeviceInfoJSON } from '@common/types';
+import type { MediaDeviceInfoJSON } from '@web/types';
 
 /**
  * Returns media devices organized by kind and deviceId.

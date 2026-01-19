@@ -6,4 +6,5 @@ export { default as isObject } from './isObject';
 export { default as isPromise } from './isPromise';
 export { default as isRecord } from './isRecord';
 export { default as isString } from './isString';
-export { default as createStoreApiAssertion } from './createStoreApiAssertion';
+export { default as isUndefined } from './isUndefined';
+export { default as isNotNil } from './isNotNil';

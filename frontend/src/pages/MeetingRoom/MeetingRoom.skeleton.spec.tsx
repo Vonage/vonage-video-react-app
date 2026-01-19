@@ -1,6 +1,6 @@
 import { render } from '@testing-library/react';
 import { describe, it, expect, beforeAll } from 'vitest';
-import { setupWindowNavigatorMock } from '@common-test/fixtures';
+import { setupWindowNavigatorMock } from '@web-test/fixtures';
 import MeetingRoomSkeleton from './MeetingRoom.skeleton';
 
 describe('MeetingRoomSkeleton', () => {

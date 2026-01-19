@@ -6,10 +6,10 @@ import { defaultAudioDevice, defaultVideoDevice } from '@utils/mockData/device';
 import { DEVICE_ACCESS_STATUS } from '@utils/constants';
 import usePreviewPublisher from './usePreviewPublisher';
 import { makeTestProvider, providers, type ProviderOptions } from '@test/providers';
-import renderAsyncHook from '@common-test/renderAsyncHook';
-import composeProviders from '@common/helpers/composeProviders';
-import SuspenseBoundary from '@common/components/SuspenseBoundary';
-import { setupWindowNavigatorMock } from '@common-test/fixtures';
+import renderAsyncHook from '@web-test/renderAsyncHook';
+import composeProviders from '@web/helpers/composeProviders';
+import SuspenseBoundary from '@web/components/SuspenseBoundary';
+import { setupWindowNavigatorMock } from '@web-test/fixtures';
 
 vi.mock('@vonage/client-sdk-video');
 

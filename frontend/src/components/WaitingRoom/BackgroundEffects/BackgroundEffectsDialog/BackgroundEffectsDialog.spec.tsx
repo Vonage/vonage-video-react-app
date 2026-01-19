@@ -5,7 +5,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { makeTestProvider, providers } from '@test/providers';
 import type { ProviderOptions } from '@test/providers';
 import BackgroundEffectsDialog from './BackgroundEffectsDialog';
-import { setupWindowNavigatorMock, makeMediaStreamMock } from '@common-test/fixtures';
+import { setupWindowNavigatorMock, makeMediaStreamMock } from '@web-test/fixtures';
 
 describe('BackgroundEffectsDialog', () => {
   beforeEach(() => {

@@ -1,9 +1,9 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { renderHook, waitFor } from '@testing-library/react';
-import type { MediaDeviceInfoJSON } from '@common/types';
+import type { MediaDeviceInfoJSON } from '@web/types';
 import useDistinctLabelMediaDevices from '.';
 import mediaDevices$ from '@core/stores/devices';
-import { makeMediaDeviceInfos, setupWindowNavigatorMock } from '@common-test/fixtures';
+import { makeMediaDeviceInfos, setupWindowNavigatorMock } from '@web-test/fixtures';
 
 const devices = makeMediaDeviceInfos();
 

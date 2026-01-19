@@ -28,7 +28,6 @@ describe('isApplicationError', () => {
         fallbackMessage: 'User friendly message',
         statusCode: 500,
       },
-      recoverable: true,
     };
 
     expect(isApplicationError(plainObject)).toBe(true);

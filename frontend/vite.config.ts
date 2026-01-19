@@ -23,6 +23,7 @@ const vitestConfig: VitestUserConfigInterface = defineVitestConfig({
     coverage: {
       provider: 'v8',
       reporter: ['text', 'lcov'],
+      exclude: ['**/test/**', '**/index.ts'],
     },
   },
 });
@@ -70,8 +71,10 @@ export default defineConfig(({ mode }) => {
         '@test': '/src/test',
         '@ui': path.resolve(__dirname, '../libs/ui/src'),
         '@common': path.resolve(__dirname, '../libs/common/src'),
+        '@web': path.resolve(__dirname, '../libs/common/srcBrowser'),
         '@core': path.resolve(__dirname, '../libs/core/src'),
         '@common-test': path.resolve(__dirname, '../libs/common/test'),
+        '@web-test': path.resolve(__dirname, '../libs/common/testBrowser'),
         '@core-test': path.resolve(__dirname, '../libs/core/test'),
         '@ui-test': path.resolve(__dirname, '../libs/ui/test'),
         '@stores': '/src/stores',

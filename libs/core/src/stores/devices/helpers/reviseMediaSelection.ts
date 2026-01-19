@@ -1,4 +1,4 @@
-import { isSinkIdSupported } from '@common/platform';
+import { isSinkIdSupported } from '@web/platform';
 import organizeMediaDevicesByKind from './organizeMediaDevicesByKind';
 import type { DevicesStoreState } from '../types';
 

@@ -1,6 +1,6 @@
 import makeGenericProviderWrapper, {
   type GenericWrapperOptions,
-} from '@common-test/makeGenericProviderWrapper';
+} from '@web-test/makeGenericProviderWrapper';
 import UserProvider, { UserContext } from '@Context/user';
 
 export type UserProviderWrapperOptions = GenericWrapperOptions<

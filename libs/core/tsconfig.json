@@ -20,8 +20,14 @@
       "@common/*": ["../common/src/*"],
       "@core": ["./src"],
       "@core/*": ["./src/*"],
+      "@common": ["../common/src"],
+      "@common/*": ["../common/src/*"],
+      "@web": ["../common/srcBrowser"],
+      "@web/*": ["../common/srcBrowser/*"],
       "@common-test": ["../common/test"],
-      "@common-test/*": ["../common/test/*"]
+      "@common-test/*": ["../common/test/*"],
+      "@web-test": ["../common/testBrowser"],
+      "@web-test/*": ["../common/testBrowser/*"]
     },
     "lib": ["DOM", "DOM.Iterable", "ESNext"]
   }

@@ -20,7 +20,7 @@ import { render as renderBase } from '@testing-library/react';
 import useMediaQuery from '@ui/useMediaQuery';
 import MeetingRoom from './MeetingRoom';
 import type { Box } from 'opentok-layout-js';
-import { setupWindowNavigatorMock } from '@common-test/fixtures';
+import { setupWindowNavigatorMock } from '@web-test/fixtures';
 
 const mockedNavigate = vi.fn();
 const mockedParams = { roomName: 'test-room-name' };

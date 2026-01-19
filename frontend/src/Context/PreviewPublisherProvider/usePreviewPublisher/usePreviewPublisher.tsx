@@ -16,7 +16,7 @@ import { AccessDeniedEvent } from '../../PublisherProvider/usePublisher/usePubli
 import { setStorageItem, STORAGE_KEYS } from '../../../utils/storage';
 import applyBackgroundFilter from '../../../utils/backgroundFilter/applyBackgroundFilter/applyBackgroundFilter';
 import handlePublisherAccessDenied from '../../../utils/publisher/handlePublisherAccessDenied';
-import useStableCallback from '@common/hooks/useStableCallback';
+import useStableCallback from '@web/hooks/useStableCallback';
 import mediaDevices$ from '@core/stores/devices';
 import useSyncPublisherDevices from '@Context/PublisherProvider/usePublisher/hooks/useSyncPublisherDevices/useSyncPublisherDevices';
 import waitUntilPlaying from '@utils/waitUntilPlaying';

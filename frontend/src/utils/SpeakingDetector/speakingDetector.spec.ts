@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import SpeakingDetector from './speakingDetector';
 import { waitForEvent } from '../async';
-import { setupWindowNavigatorMock } from '@common-test/fixtures';
+import { setupWindowNavigatorMock } from '@web-test/fixtures';
 
 const mockCreateMediaStreamSource = vi.fn(() => ({ connect: vi.fn(), disconnect: vi.fn() }));
 

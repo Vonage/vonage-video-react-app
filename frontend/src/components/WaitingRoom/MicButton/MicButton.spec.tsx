@@ -3,13 +3,13 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { ReactElement } from 'react';
 import { makeTestProvider, providers, ProviderOptions } from '@test/providers';
 import MicButton from './MicButton';
-import SuspenseBoundary from '@common/components/SuspenseBoundary/SuspenseBoundary';
-import composeProviders from '@common/helpers/composeProviders';
+import SuspenseBoundary from '@web/components/SuspenseBoundary/SuspenseBoundary';
+import composeProviders from '@web/helpers/composeProviders';
 import {
   setupWindowNavigatorMock,
   makeMediaStreamMock,
   makeMediaDeviceInfos,
-} from '@common-test/fixtures';
+} from '@web-test/fixtures';
 import { mediaDevices$ } from '@core/stores';
 
 const mockDevices = makeMediaDeviceInfos();

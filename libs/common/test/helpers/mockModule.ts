@@ -1,6 +1,6 @@
-import { isFunction } from '@common/assertions';
-import { type Mockable, SPY_MARK } from '@common/types';
-import type { Any, AnyFunction } from 'react-hooks-global-states';
+import isFunction from '@common/assertions/isFunction';
+import { Any, AnyFunction } from '@common/types';
+import { type Mockable, SPY_MARK } from '@common/types/Mockable';
 import { vi, afterEach } from 'vitest';
 
 const RESTORES = Symbol('mockModule:restores');
@@ -12,10 +12,10 @@ const HOOKED = new WeakSet<object>();
  * 
  * @example
  * ```tsx
- * import * as platform from '@common/platform';
+ * import * as platform from '@web/platform';
  
    return mockModule(
-     '@common/platform',
+     '@web/platform',
      platform,
      {
        isSinkIdSupported: false,

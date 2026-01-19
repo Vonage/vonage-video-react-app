@@ -6,7 +6,7 @@ import { defaultAudioDevice, defaultVideoDevice } from '@utils/mockData/device';
 import { makeTestProvider, providers, ProviderOptions } from '@test/providers';
 import useBackgroundPublisher from './useBackgroundPublisher';
 import { DEVICE_ACCESS_STATUS } from '@utils/constants';
-import { setupWindowNavigatorMock } from '@common-test/fixtures';
+import { setupWindowNavigatorMock } from '@web-test/fixtures';
 
 vi.mock('@vonage/client-sdk-video');
 

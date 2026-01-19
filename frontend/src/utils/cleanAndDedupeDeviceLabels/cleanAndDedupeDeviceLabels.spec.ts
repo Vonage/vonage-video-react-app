@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import type { MediaDeviceInfoJSON } from '@common/types';
+import type { MediaDeviceInfoJSON } from '@web/types';
 import cleanAndDedupeDeviceLabels from './cleanAndDedupeDeviceLabels';
 
 const createMockDevice = (deviceId: string, label: string) =>

@@ -10,8 +10,14 @@
     "paths": {
       "@common": ["./src"],
       "@common/*": ["./src/*"],
+      "@web": ["./srcBrowser"],
+      "@web/*": ["./srcBrowser/*"],
+      "@node": ["./srcNode"],
+      "@node/*": ["./srcNode/*"],
       "@common-test": ["./test"],
-      "@common-test/*": ["./test/*"]
+      "@common-test/*": ["./test/*"],
+      "@web-test": ["./testBrowser"],
+      "@web-test/*": ["./testBrowser/*"]
     },
     "composite": true,
     "lib": ["DOM", "DOM.Iterable", "ESNext"]

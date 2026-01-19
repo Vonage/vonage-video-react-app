@@ -1,4 +1,4 @@
-import type { MediaDeviceInfoJSON } from '@common/types';
+import type { MediaDeviceInfoJSON } from '@web/types';
 
 type Result = Record<MediaDeviceKind, Record<string, MediaDeviceInfoJSON>>;
 

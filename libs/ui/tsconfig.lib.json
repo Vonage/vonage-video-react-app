@@ -15,8 +15,12 @@
     "src/theme/helpers/tailwind/index.cjs",
     "../common/src/**/*.ts",
     "../common/src/**/*.tsx",
+    "../common/srcBrowser/**/*.ts",
+    "../common/srcBrowser/**/*.tsx",
     "../common/test/**/*.ts",
     "../common/test/**/*.tsx",
+    "../common/testBrowser/**/*.ts",
+    "../common/testBrowser/**/*.tsx",
     "../core/src/**/*.ts",
     "../core/src/**/*.tsx"
   ],

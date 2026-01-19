@@ -1,5 +1,5 @@
-import { isFunction } from '@common/assertions';
-import type { Any } from 'react-hooks-global-states';
+import isFunction from '@common/assertions/isFunction';
+import { Any } from '@common/types';
 import { vi } from 'vitest';
 
 /**

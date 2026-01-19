@@ -1,10 +1,10 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import type { MediaDeviceInfoJSON } from '@common/types';
+import type { MediaDeviceInfoJSON } from '@web/types';
 import filterMobileCameras from './filterMobileCameras';
-import { isMobile } from '@common/platform';
+import { isMobile } from '@web/platform';
 import { isFrontFacingLabel, isRearFacingLabel } from '@utils/cameraSwitch';
 
-vi.mock('@common/platform');
+vi.mock('@web/platform');
 vi.mock('@utils/cameraSwitch');
 const createMockDevice = (deviceId: string, label: string): MediaDeviceInfoJSON =>
   ({

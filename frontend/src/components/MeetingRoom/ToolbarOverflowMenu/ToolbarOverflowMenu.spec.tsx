@@ -1,14 +1,14 @@
 import { afterEach, beforeEach, describe, expect, it, Mock, vi } from 'vitest';
 import { render as renderBase, screen } from '@testing-library/react';
 import { ReactElement, useRef } from 'react';
-import { isMobile } from '@common/platform';
+import { isMobile } from '@web/platform';
 import isReportIssueEnabled from '@utils/isReportIssueEnabled';
 import { makeTestProvider, providers, ProviderOptions } from '@test/providers';
 import ToolbarOverflowMenu, { CaptionsState } from './ToolbarOverflowMenu';
 import Button from '@ui/Button';
 
 vi.mock('@hooks/useRoomName');
-vi.mock('@common/platform');
+vi.mock('@web/platform');
 vi.mock('@utils/isReportIssueEnabled');
 
 const mockOpenEmojiGrid = vi.fn();

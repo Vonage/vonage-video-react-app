@@ -5,8 +5,8 @@ import localStorageMock from '@utils/mockData/localStorageMock';
 import mediaDevices$ from '@core/stores/devices';
 import { setStorageItem, STORAGE_KEYS } from '@utils/storage';
 import { makeTestProvider, providers, ProviderOptions } from '@test/providers';
-import makeMediaDeviceInfos from '@common-test/fixtures/makeMediaDeviceInfos';
-import { setupWindowNavigatorMock } from '@common-test/fixtures';
+import makeMediaDeviceInfos from '@web-test/fixtures/makeMediaDeviceInfos';
+import { setupWindowNavigatorMock } from '@web-test/fixtures';
 import usePublisherOptions from './usePublisherOptions';
 
 const devices = makeMediaDeviceInfos();

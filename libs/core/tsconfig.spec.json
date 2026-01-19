@@ -9,13 +9,14 @@
     "test/**/*.ts",
     "src/**/*.ts",
     "src/**/*.tsx",
-    "src/**/*.test.ts",
-    "src/**/*.spec.ts",
     "../common/src/**/*.ts",
     "../common/src/**/*.tsx",
+    "../common/srcBrowser/**/*.ts",
+    "../common/srcBrowser/**/*.tsx",
     "../common/test/**/*.ts",
-    "../common/test/makeGenericProviderWrapper.tsx",
-    "../common/src/types/MediaDeviceInfoJSON.ts"
+    "../common/test/**/*.tsx",
+    "../common/testBrowser/**/*.ts",
+    "../common/testBrowser/**/*.tsx"
   ],
   "tsBuildInfoFile": "dist/tsconfig.spec.tsbuildinfo"
 }

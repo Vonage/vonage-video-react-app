@@ -1,7 +1,7 @@
 import type CancelablePromise from 'easy-cancelable-promise';
-import type { MediaDeviceInfoJSON } from '@common/types';
+import type { MediaDeviceInfoJSON } from '@web/types';
 import { markDevicesApiMetadata } from '../assertions';
-import { isSinkIdSupported } from '@common/platform';
+import { isSinkIdSupported } from '@web/platform';
 
 const metadata = () => {
   const meta = {

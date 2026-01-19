@@ -1,4 +1,4 @@
-import composeProviders, { type ProviderComponent } from '@common/helpers/composeProviders';
+import composeProviders, { type ProviderComponent } from '@web/helpers/composeProviders';
 import {
   makeAppConfigProviderWrapper,
   makeBackgroundPublisherProviderWrapper,

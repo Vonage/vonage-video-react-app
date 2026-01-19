@@ -1,4 +1,4 @@
-import type { MediaDeviceInfoJSON } from '@common/types';
+import type { MediaDeviceInfoJSON } from '@web/types';
 
 export type AllMediaDevices = {
   audioInputDevices: MediaDeviceInfoJSON[];

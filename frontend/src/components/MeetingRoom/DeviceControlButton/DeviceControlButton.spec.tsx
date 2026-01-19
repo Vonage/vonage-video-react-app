@@ -10,7 +10,7 @@ import { defaultAudioDevice } from '@utils/mockData/device';
 import { makeTestProvider, providers, type ProviderOptions } from '@test/providers';
 import DeviceControlButton from './DeviceControlButton';
 import enTranslations from '../../../locales/en.json';
-import { setupWindowNavigatorMock } from '@common-test/fixtures';
+import { setupWindowNavigatorMock } from '@web-test/fixtures';
 
 vi.mock('@hooks/usePublisherContext.tsx');
 vi.mock('@hooks/useSpeakingDetector.tsx');

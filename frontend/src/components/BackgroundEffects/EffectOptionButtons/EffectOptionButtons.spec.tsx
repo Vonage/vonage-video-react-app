@@ -4,7 +4,7 @@ import userEvent from '@testing-library/user-event';
 import { ReactElement } from 'react';
 import EffectOptionButtons from './EffectOptionButtons';
 import { makeTestProvider, providers, type ProviderOptions } from '@test/providers';
-import { setupWindowNavigatorMock, makeMediaStreamMock } from '@common-test/fixtures';
+import { setupWindowNavigatorMock, makeMediaStreamMock } from '@web-test/fixtures';
 
 describe('EffectOptionButtons', () => {
   const mockHandleBackgroundChange = vi.fn();

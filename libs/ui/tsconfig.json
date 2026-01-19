@@ -10,13 +10,16 @@
     "moduleResolution": "node",
     "paths": {
       "@ui/*": ["./src/*"],
-      "@ui": ["./src"],
-      "@common-test/*": ["../common/test/*"],
-      "@common-test": ["../common/test"],
-      "@core/*": ["../core/src/*"],
-      "@core": ["../core/src"],
+      "@common": ["../common/src"],
       "@common/*": ["../common/src/*"],
-      "@common": ["../common/src"]
+      "@web": ["../common/srcBrowser"],
+      "@web/*": ["../common/srcBrowser/*"],
+      "@common-test": ["../common/test"],
+      "@common-test/*": ["../common/test/*"],
+      "@web-test": ["../common/testBrowser"],
+      "@web-test/*": ["../common/testBrowser/*"],
+      "@core": ["../core/src"],
+      "@core/*": ["../core/src/*"]
     },
     "lib": ["DOM", "DOM.Iterable", "ESNext"]
   }

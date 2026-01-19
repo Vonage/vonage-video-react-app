@@ -2,7 +2,7 @@ import { describe, it, beforeEach, vi, expect } from 'vitest';
 import { render as renderBase, screen, fireEvent, waitFor } from '@testing-library/react';
 import { ReactElement } from 'react';
 import { makeTestProvider, providers, type ProviderOptions } from '@test/providers';
-import { makeMediaDeviceInfos, setupWindowNavigatorMock } from '@common-test/fixtures';
+import { makeMediaDeviceInfos, setupWindowNavigatorMock } from '@web-test/fixtures';
 import VideoDevices from './VideoDevices';
 import type { AnyFunction } from 'react-global-state-hooks';
 import mediaDevices$ from '@core/stores/devices/devices$';

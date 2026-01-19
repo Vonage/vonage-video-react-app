@@ -1,7 +1,7 @@
 import { ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
 import appConfig$ from '@stores/appConfig';
-import type { MediaDeviceInfoJSON } from '@common/types';
+import type { MediaDeviceInfoJSON } from '@web/types';
 import DropdownSeparator from '../DropdownSeparator';
 import Box from '@ui/Box';
 import Typography from '@ui/Typography';
@@ -10,7 +10,7 @@ import MenuItem from '@ui/MenuItem';
 import VividIcon from '@components/VividIcon';
 import Tooltip from '@ui/Tooltip';
 import { useDistinctLabelMediaDevices } from '@ui/hooks';
-import { isSinkIdSupported } from '@common/platform';
+import { isSinkIdSupported } from '@web/platform';
 import mediaDevices$ from '@core/stores/devices';
 import useTheme from '@ui/theme';
 

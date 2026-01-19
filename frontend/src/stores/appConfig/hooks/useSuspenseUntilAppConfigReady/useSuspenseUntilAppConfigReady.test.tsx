@@ -2,9 +2,9 @@ import { describe, it, expect } from 'vitest';
 import { StrictMode } from 'react';
 import appConfig$ from '../..';
 import { makeTestProvider, ProviderOptions, providers } from '@test/providers';
-import composeProviders from '@common/helpers/composeProviders';
-import SuspenseBoundary from '@common/components/SuspenseBoundary';
-import renderAsyncHook from '@common-test/renderAsyncHook';
+import composeProviders from '@web/helpers/composeProviders';
+import SuspenseBoundary from '@web/components/SuspenseBoundary';
+import renderAsyncHook from '@web-test/renderAsyncHook';
 
 describe('useSuspenseUntilAppConfigReady', () => {
   it('should not trigger duplicate subscriptions in strict mode', async () => {

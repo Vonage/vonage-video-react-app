@@ -1,5 +1,5 @@
 import { idempotentCallbackWithRetry } from '@common/execution';
-import type { MediaDeviceInfoJSON } from '@common/types';
+import type { MediaDeviceInfoJSON } from '@web/types';
 
 /**
  * Retrieves the list of media devices from the browser.

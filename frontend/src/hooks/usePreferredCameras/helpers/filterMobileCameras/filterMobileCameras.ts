@@ -1,5 +1,5 @@
-import type { MediaDeviceInfoJSON } from '@common/types';
-import { isMobile } from '@common/platform';
+import type { MediaDeviceInfoJSON } from '@web/types';
+import { isMobile } from '@web/platform';
 import { isFrontFacingLabel, isRearFacingLabel } from '@utils/cameraSwitch';
 
 /**

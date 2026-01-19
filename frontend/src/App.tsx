@@ -16,7 +16,7 @@ import AppContextProvider from './AppContextProvider';
 import type { AppConfig } from '@stores/appConfig';
 import { DeepPartial } from './types';
 import RedirectToUnsupportedBrowserPage from '@components/RedirectToUnsupportedBrowserPage';
-import SuspenseBoundary from '@common/components/SuspenseBoundary/SuspenseBoundary';
+import SuspenseBoundary from '@web/components/SuspenseBoundary/SuspenseBoundary';
 import WaitingRoomSkeleton from '@pages/WaitingRoom/WaitingRoom.skeleton';
 import MeetingRoomSkeleton from '@pages/MeetingRoom/MeetingRoom.skeleton';
 import SessionProvider from '@Context/SessionProvider/session';

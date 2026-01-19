@@ -5,9 +5,9 @@ import { ReactElement } from 'react';
 import { makeTestProvider, providers } from '@test/providers';
 import BackgroundEffectsLayout from './BackgroundEffectsLayout';
 import enTranslations from '../../../locales/en.json';
-import composeProviders from '@common/helpers/composeProviders';
-import SuspenseBoundary from '@common/components/SuspenseBoundary/SuspenseBoundary';
-import { setupWindowNavigatorMock, makeMediaStreamMock } from '@common-test/fixtures';
+import composeProviders from '@web/helpers/composeProviders';
+import SuspenseBoundary from '@web/components/SuspenseBoundary/SuspenseBoundary';
+import { setupWindowNavigatorMock, makeMediaStreamMock } from '@web-test/fixtures';
 
 const applyBackgroundFilterMock = vi.fn(() => Promise.resolve());
 

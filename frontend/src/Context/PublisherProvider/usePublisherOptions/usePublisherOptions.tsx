@@ -10,7 +10,7 @@ import useUserContext from '@hooks/useUserContext';
 import getInitials from '@utils/getInitials';
 import { getStorageItem, STORAGE_KEYS } from '@utils/storage';
 import { useDeviceId } from '@core/stores/devices/hooks';
-import useStableCallback from '@common/hooks/useStableCallback';
+import useStableCallback from '@web/hooks/useStableCallback';
 
 /**
  * React hook to get PublisherProperties combining default options and options set in UserContext

@@ -4,7 +4,7 @@ import {
 } from '@Context/PreviewPublisherProvider';
 import makeGenericProviderWrapper, {
   GenericWrapperOptions,
-} from '@common-test/makeGenericProviderWrapper';
+} from '@web-test/makeGenericProviderWrapper';
 
 export type PreviewPublisherProviderWrapperOptions = GenericWrapperOptions<
   typeof PreviewPublisherProvider,

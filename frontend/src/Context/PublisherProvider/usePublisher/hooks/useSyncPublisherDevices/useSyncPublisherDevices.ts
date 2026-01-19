@@ -1,6 +1,6 @@
 import type { Publisher } from '@vonage/client-sdk-video';
 import mediaDevices$ from '@core/stores/devices/devices$';
-import { useMountEffect } from '@common/hooks';
+import { useMountEffect } from '@web/hooks';
 import attempt from 'lodash/attempt';
 import type { UnsubscribeCallback } from 'react-global-state-hooks';
 
