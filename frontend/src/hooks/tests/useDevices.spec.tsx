@@ -1,4 +1,4 @@
-import { afterAll, beforeEach, describe, expect, it, vi } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { renderHook, waitFor } from '@testing-library/react';
 import {
   AudioOutputDevice,
@@ -8,13 +8,13 @@ import {
   OTError,
 } from '@vonage/client-sdk-video';
 import useDevices from '../useDevices';
+import mediaDevicesMock from '@common/test/mocks/mediaDevicesMock';
 
 type GetDevicesCallback = (err?: OTError, devices?: Device[]) => void;
 
 vi.mock('@vonage/client-sdk-video');
 
 describe('useDevices', () => {
-  const nativeMediaDevices = global.navigator.mediaDevices;
   const reMockTheMocks = () => {
     vi.mocked(getDevices).mockImplementation((callback: GetDevicesCallback) => {
       callback(undefined, []);
@@ -28,19 +28,12 @@ describe('useDevices', () => {
 
     Object.defineProperty(global.navigator, 'mediaDevices', {
       writable: true,
-      value: {
-        enumerateDevices: vi.fn(() => Promise.resolve([])),
-        addEventListener: vi.fn(() => []),
-        removeEventListener: vi.fn(() => []),
-      },
+      value: mediaDevicesMock,
     });
-  });
 
-  afterAll(() => {
-    Object.defineProperty(global.navigator, 'mediaDevices', {
-      writable: true,
-      value: nativeMediaDevices,
-    });
+    vi.spyOn(mediaDevicesMock, 'enumerateDevices').mockResolvedValue([]);
+    vi.spyOn(mediaDevicesMock, 'addEventListener').mockImplementation(() => {});
+    vi.spyOn(mediaDevicesMock, 'removeEventListener').mockImplementation(() => {});
   });
 
   it('warns if enumerateDevices is not supported', () => {

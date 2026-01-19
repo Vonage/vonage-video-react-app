@@ -107,11 +107,30 @@ export const SessionContext = createContext<SessionContextType>({
 
 export type ConnectionEventType = { connection: Connection; reason?: string; id?: string };
 
+export type SessionContextInitialValue = Partial<
+  Pick<
+    SessionContextType,
+    | 'connected'
+    | 'reconnecting'
+    | 'layoutMode'
+    | 'subscriberWrappers'
+    | 'lastStreamUpdate'
+    | 'subscriptionError'
+    | 'ownCaptions'
+    | 'archiveId'
+    | 'activeSpeakerId'
+  >
+>;
+
 /**
  * @typedef {object} SessionProviderProps
  * @property {ReactNode} children - The content to be rendered as children.
+ * @property {SessionContextInitialValue} initialValue - Optional initial values for session context state.
  */
-export type SessionProviderProps = { children: ReactNode };
+export type SessionProviderProps = {
+  children: ReactNode;
+  initialValue?: SessionContextInitialValue;
+};
 
 const MAX_PIN_COUNT = isMobile() ? MAX_PIN_COUNT_MOBILE : MAX_PIN_COUNT_DESKTOP;
 
@@ -123,23 +142,34 @@ const MAX_PIN_COUNT = isMobile() ? MAX_PIN_COUNT_MOBILE : MAX_PIN_COUNT_DESKTOP;
  * @param {SessionProviderProps} props - The provider properties
  * @returns {SessionContextType} a context provider for a publisher preview
  */
-const SessionProvider = ({ children }: SessionProviderProps): ReactElement => {
+const SessionProvider = ({ children, initialValue = {} }: SessionProviderProps): ReactElement => {
   const appConfig = appConfigContext.use.api();
 
-  const [lastStreamUpdate, setLastStreamUpdate] = useState<StreamPropertyChangedEvent | null>(null);
+  const [lastStreamUpdate, setLastStreamUpdate] = useState<StreamPropertyChangedEvent | null>(
+    initialValue?.lastStreamUpdate ?? null
+  );
   const vonageVideoClient = useRef<null | VonageVideoClient>(null);
-  const [reconnecting, setReconnecting] = useState(false);
-  const [subscriberWrappers, setSubscriberWrappers] = useState<SubscriberWrapper[]>([]);
-  const [subscriptionError, setSubscriptionError] = useState<Error | null>(null);
-  const [ownCaptions, setOwnCaptions] = useState<string | null>(null);
+  const [reconnecting, setReconnecting] = useState(initialValue?.reconnecting ?? false);
+  const [subscriberWrappers, setSubscriberWrappers] = useState<SubscriberWrapper[]>(
+    initialValue?.subscriberWrappers ?? []
+  );
+  const [subscriptionError, setSubscriptionError] = useState<Error | null>(
+    initialValue?.subscriptionError ?? null
+  );
+  const [ownCaptions, setOwnCaptions] = useState<string | null>(initialValue?.ownCaptions ?? null);
 
-  const [layoutMode, setLayoutMode] = useState<LayoutMode>(() => {
-    return appConfig.getState().meetingRoomSettings.defaultLayoutMode;
-  });
+  const [layoutMode, setLayoutMode] = useState<LayoutMode>(
+    initialValue?.layoutMode ??
+      (() => {
+        return appConfig.getState().meetingRoomSettings.defaultLayoutMode;
+      })()
+  );
 
-  const [archiveId, setArchiveId] = useState<string | null>(null);
+  const [archiveId, setArchiveId] = useState<string | null>(initialValue?.archiveId ?? null);
   const activeSpeakerTracker = useRef<ActiveSpeakerTracker>(new ActiveSpeakerTracker());
-  const [activeSpeakerId, setActiveSpeakerId] = useState<string | undefined>();
+  const [activeSpeakerId, setActiveSpeakerId] = useState<string | undefined>(
+    initialValue?.activeSpeakerId ?? undefined
+  );
   const activeSpeakerIdRef = useRef<string | undefined>(undefined);
   const { messages, onChatMessage, sendChatMessage } = useChat({
     signal: vonageVideoClient.current?.signal,
@@ -238,7 +268,7 @@ const SessionProvider = ({ children }: SessionProviderProps): ReactElement => {
   }, [moveSubscriberToTopOfDisplayOrder, setActiveSpeakerIdAndRef]);
 
   const { user } = useUserContext();
-  const [connected, setConnected] = useState(false);
+  const [connected, setConnected] = useState(initialValue?.connected ?? false);
 
   /**
    * Handles changes to stream properties. This triggers a re-render when a stream property changes

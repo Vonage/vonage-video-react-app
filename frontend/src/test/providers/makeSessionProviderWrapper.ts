@@ -8,10 +8,8 @@ import makeGenericProviderWrapper, {
   type GenericWrapperOptions,
 } from '@common/test/makeGenericProviderWrapper';
 
-export type SessionProviderWrapperOptions = GenericWrapperOptions<
-  typeof SessionProvider,
-  typeof SessionContext
-> & {
+export type SessionProviderWrapperOptions = {
+  sessionOptions?: GenericWrapperOptions<typeof SessionProvider, typeof SessionContext>;
   appConfigOptions?: AppConfigProviderWrapperOptions;
   userOptions?: UserProviderWrapperOptions;
 };
@@ -21,16 +19,17 @@ export type SessionProviderWrapperOptions = GenericWrapperOptions<
  * The wrapper includes:
  * - AppConfigProvider: you can override its options via appConfigOptions
  * - UserProvider: you can override its options via userOptions
- * - SessionProvider: you can override its options via the rest of the options
+ * - SessionProvider: you can override its options via sessionOptions
  * @param {object} options - The wrapper options.
+ * @param {GenericWrapperOptions} [options.sessionOptions] - Options for the SessionProvider wrapper.
  * @param {AppConfigProviderWrapperOptions} [options.appConfigOptions] - Options for the AppConfigProvider wrapper.
  * @param {UserProviderWrapperOptions} [options.userOptions] - Options for the UserProvider wrapper.
  * @returns {object} The SessionProvider wrapper and context getters.
  */
 function makeSessionProviderWrapper({
+  sessionOptions,
   appConfigOptions,
   userOptions,
-  ...sessionOptions
 }: SessionProviderWrapperOptions = {}) {
   const { AppConfigWrapper, appConfigContext } = makeAppConfigProviderWrapper(appConfigOptions);
 

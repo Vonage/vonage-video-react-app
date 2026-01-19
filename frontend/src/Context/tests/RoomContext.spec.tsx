@@ -1,6 +1,6 @@
 import { render, screen } from '@testing-library/react';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { PropsWithChildren } from 'react';
 import useUserContext from '@hooks/useUserContext';
 import useAudioOutputContext from '@hooks/useAudioOutputContext';
@@ -9,6 +9,7 @@ import mergeAppConfigs from '@Context/AppConfig/helpers/mergeAppConfigs';
 import RoomContext from '../RoomContext';
 import { UserContextType } from '../user';
 import { AudioOutputContextType } from '../AudioOutputProvider';
+import mediaDevicesMock from '@common/test/mocks/mediaDevicesMock';
 
 vi.mock('@hooks/useUserContext');
 vi.mock('@hooks/useAudioOutputContext');
@@ -39,31 +40,20 @@ const defaultAppConfigValue = mergeAppConfigs({
 });
 
 describe('RoomContext', () => {
-  const nativeMediaDevices = global.navigator.mediaDevices;
   beforeEach(() => {
     vi.mocked(useUserContext).mockImplementation(() => mockUserContextWithDefaultSettings);
     vi.mocked(useAudioOutputContext).mockImplementation(() => mockUseAudioOutputContextValues);
 
     Object.defineProperty(global.navigator, 'mediaDevices', {
       writable: true,
-      value: {
-        enumerateDevices: vi.fn(
-          () =>
-            new Promise<MediaDeviceInfo[]>((res) => {
-              res(nativeDevices as MediaDeviceInfo[]);
-            })
-        ),
-        addEventListener: vi.fn(() => []),
-        removeEventListener: vi.fn(() => []),
-      },
+      value: mediaDevicesMock,
     });
-  });
 
-  afterEach(() => {
-    Object.defineProperty(global.navigator, 'mediaDevices', {
-      writable: true,
-      value: nativeMediaDevices,
-    });
+    vi.spyOn(mediaDevicesMock, 'enumerateDevices').mockResolvedValue(
+      nativeDevices as MediaDeviceInfo[]
+    );
+    vi.spyOn(mediaDevicesMock, 'addEventListener').mockImplementation(() => {});
+    vi.spyOn(mediaDevicesMock, 'removeEventListener').mockImplementation(() => {});
   });
 
   it('renders content', () => {

@@ -25,6 +25,11 @@ describe('ReduceNoiseTestSpeakers', () => {
   let publisherContext: PublisherContextType;
 
   beforeEach(() => {
+    // Mock HTMLMediaElement methods used by SoundTest component
+    vi.spyOn(HTMLMediaElement.prototype, 'pause').mockImplementation(() => {});
+    vi.spyOn(HTMLMediaElement.prototype, 'play').mockResolvedValue(undefined);
+    vi.spyOn(HTMLMediaElement.prototype, 'load').mockImplementation(() => {});
+
     mockPublisher = Object.assign(new EventEmitter(), {
       applyVideoFilter: vi.fn(),
       clearVideoFilter: vi.fn(),

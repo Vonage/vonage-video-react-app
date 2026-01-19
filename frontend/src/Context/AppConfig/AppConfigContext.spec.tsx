@@ -53,7 +53,9 @@ describe('AppConfigContext', () => {
 
     expect(appConfig).not.toEqual(mockConfig);
 
-    await loadAppConfig();
+    await act(async () => {
+      await loadAppConfig();
+    });
 
     [appConfig, { loadAppConfig }] = result.current;
 

@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/react';
+import { act, render, screen, waitFor } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 import BackgroundVideoContainer from './BackgroundVideoContainer';
 
@@ -13,16 +13,24 @@ describe('BackgroundVideoContainer', () => {
     expect(screen.getByText(/Your camera is turned off/i)).toBeInTheDocument();
   });
 
-  it('renders video element when video is enabled', () => {
+  it('renders video element when video is enabled', async () => {
     const videoEl = document.createElement('video');
-    render(<BackgroundVideoContainer isParentVideoEnabled publisherVideoElement={videoEl} />);
-    expect(videoEl.classList.contains('video__element')).toBe(true);
-    expect(videoEl.title).toBe('publisher-preview');
+    act(() => {
+      render(<BackgroundVideoContainer isParentVideoEnabled publisherVideoElement={videoEl} />);
+    });
+    await waitFor(() => {
+      expect(videoEl.classList.contains('video__element')).toBe(true);
+      expect(videoEl.title).toBe('publisher-preview');
+    });
   });
 
-  it('shows loading spinner while video is loading', () => {
+  it('shows loading spinner while video is loading', async () => {
     const videoEl = document.createElement('video');
-    render(<BackgroundVideoContainer isParentVideoEnabled publisherVideoElement={videoEl} />);
-    expect(screen.getByRole('progressbar')).toBeInTheDocument();
+    act(() => {
+      render(<BackgroundVideoContainer isParentVideoEnabled publisherVideoElement={videoEl} />);
+    });
+    await waitFor(() => {
+      expect(screen.getByRole('progressbar')).toBeInTheDocument();
+    });
   });
 });

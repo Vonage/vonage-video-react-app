@@ -119,18 +119,21 @@ describe('usePublisher', () => {
   });
 
   describe('changeBackground', () => {
-    let result: ReturnType<typeof renderHook>['result'];
     beforeEach(() => {
       vi.mocked(initPublisher).mockImplementation(() => mockPublisher);
-      result = renderHook(() => usePublisher()).result;
-      act(() => {
-        (result.current as ReturnType<typeof usePublisher>).initializeLocalPublisher({});
-      });
     });
 
-    it('applies low blur filter', () => {
+    it('applies low blur filter', async () => {
+      const { result } = renderHook(() => usePublisher());
       act(() => {
-        (result.current as ReturnType<typeof usePublisher>).changeBackground('low-blur');
+        result.current.initializeLocalPublisher({});
+      });
+      await waitFor(() => {
+        expect(result.current.publisher).toBe(mockPublisher);
+      });
+
+      act(() => {
+        result.current.changeBackground('low-blur');
       });
       expect(mockPublisher.applyVideoFilter).toHaveBeenCalledWith({
         type: 'backgroundBlur',
@@ -138,9 +141,17 @@ describe('usePublisher', () => {
       });
     });
 
-    it('applies background replacement with image', () => {
+    it('applies background replacement with image', async () => {
+      const { result } = renderHook(() => usePublisher());
       act(() => {
-        (result.current as ReturnType<typeof usePublisher>).changeBackground('bg1.jpg');
+        result.current.initializeLocalPublisher({});
+      });
+      await waitFor(() => {
+        expect(result.current.publisher).toBe(mockPublisher);
+      });
+
+      act(() => {
+        result.current.changeBackground('bg1.jpg');
       });
       expect(mockPublisher.applyVideoFilter).toHaveBeenCalledWith({
         type: 'backgroundReplacement',
@@ -148,9 +159,17 @@ describe('usePublisher', () => {
       });
     });
 
-    it('clears video filter for unknown option', () => {
+    it('clears video filter for unknown option', async () => {
+      const { result } = renderHook(() => usePublisher());
       act(() => {
-        (result.current as ReturnType<typeof usePublisher>).changeBackground('none');
+        result.current.initializeLocalPublisher({});
+      });
+      await waitFor(() => {
+        expect(result.current.publisher).toBe(mockPublisher);
+      });
+
+      act(() => {
+        result.current.changeBackground('none');
       });
       expect(mockPublisher.clearVideoFilter).toHaveBeenCalled();
     });

@@ -76,8 +76,10 @@ function makeGenericProviderWrapper<
    * @returns {React.ReactElement} The provider wrapper component.
    */
   const ProviderWrapper = ({ children }: PropsWithChildren) => {
+    const { __interceptor, __onCreated, ...providerProps } = options || {};
+
     return (
-      <ContextProvider {...(options?.props as Parameters<TProvider>[0])}>
+      <ContextProvider {...(providerProps as Parameters<TProvider>[0])}>
         <Interceptor />
         {children}
       </ContextProvider>

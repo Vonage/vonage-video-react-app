@@ -1,5 +1,5 @@
-import { describe, it, expect, vi, beforeEach, Mock, afterEach, afterAll } from 'vitest';
-import { fireEvent, render as renderBase, screen } from '@testing-library/react';
+import { describe, it, expect, vi, beforeEach, Mock, afterEach } from 'vitest';
+import { fireEvent, screen, render as renderBase } from '@testing-library/react';
 import { Publisher } from '@vonage/client-sdk-video';
 import { EventEmitter } from 'stream';
 import { ReactElement } from 'react';
@@ -10,6 +10,7 @@ import { defaultAudioDevice } from '@utils/mockData/device';
 import { AppConfigProviderWrapperOptions, makeAppConfigProviderWrapper } from '@test/providers';
 import DeviceControlButton from './DeviceControlButton';
 import enTranslations from '../../../locales/en.json';
+import mediaDevicesMock from '@common/test/mocks/mediaDevicesMock';
 
 vi.mock('@hooks/usePublisherContext.tsx');
 vi.mock('@hooks/useSpeakingDetector.tsx');
@@ -43,7 +44,6 @@ const mockUseSpeakingDetector = useSpeakingDetector as Mock<[], boolean>;
 const mockHandleToggleBackgroundEffects = vi.fn();
 
 describe('DeviceControlButton', () => {
-  const nativeMediaDevices = global.navigator.mediaDevices;
   let mockPublisher: Publisher;
   let publisherContext: PublisherContextType;
 
@@ -68,28 +68,16 @@ describe('DeviceControlButton', () => {
 
     Object.defineProperty(global.navigator, 'mediaDevices', {
       writable: true,
-      value: {
-        enumerateDevices: vi.fn(
-          () =>
-            new Promise<MediaDeviceInfo[]>((res) => {
-              res([]);
-            })
-        ),
-        addEventListener: vi.fn(() => []),
-        removeEventListener: vi.fn(() => []),
-      },
+      value: mediaDevicesMock,
     });
+
+    vi.spyOn(mediaDevicesMock, 'addEventListener').mockImplementation(() => {});
+    vi.spyOn(mediaDevicesMock, 'removeEventListener').mockImplementation(() => {});
+    vi.spyOn(mediaDevicesMock, 'enumerateDevices').mockResolvedValue([]);
   });
 
   afterEach(() => {
     vi.resetAllMocks();
-  });
-
-  afterAll(() => {
-    Object.defineProperty(global.navigator, 'mediaDevices', {
-      writable: true,
-      value: nativeMediaDevices,
-    });
   });
 
   it('updates the main publisher and the background replacement publisher when clicked', () => {

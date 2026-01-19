@@ -1,93 +1,121 @@
-import { beforeEach, describe, it, expect, vi, afterAll, MockInstance } from 'vitest';
-import { act, renderHook, waitFor } from '@testing-library/react';
+import { beforeEach, describe, it, expect, vi, MockInstance } from 'vitest';
+import { act, waitFor, renderHook as renderHookBase } from '@testing-library/react';
 import { AudioOutputDevice } from '@vonage/client-sdk-video';
 import * as OT from '@vonage/client-sdk-video';
-import useAudioOutput from './useAudioOutput';
+import { makeAudioOutputProviderWrapper, AudioOutputProviderWrapperOptions } from '@test/providers';
 import { nativeDevices } from '../../../utils/mockData/device';
+import mediaDevicesMock from '@common/test/mocks/mediaDevicesMock';
 
 vi.mock('@vonage/client-sdk-video');
 
 describe('useAudioOutput', () => {
-  const nativeMediaDevices = global.navigator.mediaDevices;
+  vi.clearAllMocks();
+
   let mockGetActiveAudioOutputDevice: MockInstance<[], Promise<AudioOutputDevice>>;
   let mockSetAudioOutputDevice: MockInstance<[deviceId: string], Promise<void>>;
 
   beforeEach(() => {
-    vi.resetAllMocks();
-    Object.defineProperty(global.navigator, 'mediaDevices', {
+    Object.defineProperty(globalThis.navigator, 'mediaDevices', {
       writable: true,
-      value: {
-        enumerateDevices: vi.fn(
-          () =>
-            new Promise<MediaDeviceInfo[]>((res) => {
-              res(nativeDevices as MediaDeviceInfo[]);
-            })
-        ),
-        addEventListener: vi.fn(() => []),
-        removeEventListener: vi.fn(() => []),
-      },
+      value: mediaDevicesMock,
     });
-    mockGetActiveAudioOutputDevice = vi.spyOn(OT, 'getActiveAudioOutputDevice').mockImplementation(
-      () =>
-        new Promise<AudioOutputDevice>((res) => {
-          res({
-            deviceId: 'some-device-id',
-            label: 'some-device-label',
-          });
-        })
+
+    vi.spyOn(mediaDevicesMock, 'addEventListener').mockImplementation(() => {});
+    vi.spyOn(mediaDevicesMock, 'removeEventListener').mockImplementation(() => {});
+    vi.spyOn(mediaDevicesMock, 'enumerateDevices').mockResolvedValue(
+      nativeDevices as MediaDeviceInfo[]
     );
-    mockSetAudioOutputDevice = vi.spyOn(OT, 'setAudioOutputDevice').mockImplementation(
-      () =>
-        new Promise<void>((res) => {
-          res();
+
+    mockGetActiveAudioOutputDevice = vi
+      .spyOn(OT, 'getActiveAudioOutputDevice')
+      .mockImplementation(() =>
+        Promise.resolve({
+          deviceId: 'some-device-id',
+          label: 'some-device-label',
         })
-    );
+      );
+    mockSetAudioOutputDevice = vi
+      .spyOn(OT, 'setAudioOutputDevice')
+      .mockImplementation(() => Promise.resolve());
   });
 
-  afterAll(() => {
-    vi.restoreAllMocks();
-    Object.defineProperty(global.navigator, 'mediaDevices', {
-      writable: true,
-      value: nativeMediaDevices,
+  it('should provide initial state', async () => {
+    const { audioOutputContext } = render();
+
+    await waitFor(() => {
+      expect(audioOutputContext.current.currentAudioOutputDevice).toBeDefined();
     });
-  });
 
-  it('should provide initial state', () => {
-    const { result } = renderHook(() => useAudioOutput());
-
-    expect(result.current.currentAudioOutputDevice).toBeUndefined();
-    expect(result.current.setAudioOutputDevice).toBeDefined();
+    expect(audioOutputContext.current.setAudioOutputDevice).toBeDefined();
   });
 
   it('should call getActiveAudioOutputDevice when initialized', async () => {
-    const { result } = renderHook(() => useAudioOutput());
+    const { audioOutputContext } = render();
 
-    await waitFor(() => expect(result.current.currentAudioOutputDevice).toBe('some-device-id'));
+    await waitFor(() =>
+      expect(audioOutputContext.current.currentAudioOutputDevice).toBe('some-device-id')
+    );
 
     expect(mockGetActiveAudioOutputDevice).toHaveBeenCalledOnce();
   });
 
   it('should update currentAudioOutputDevice when setAudioOutputDevice is called', async () => {
     const newAudioOutput = 'new-audio-output-device';
-    const { result, rerender } = renderHook(() => useAudioOutput());
+    const { audioOutputContext, rerender } = render();
 
     await act(async () => {
-      await result.current.setAudioOutputDevice(newAudioOutput);
+      await audioOutputContext.current.setAudioOutputDevice(newAudioOutput);
     });
 
     rerender();
 
-    expect(result.current.currentAudioOutputDevice).toBe(newAudioOutput);
+    expect(audioOutputContext.current.currentAudioOutputDevice).toBe(newAudioOutput);
   });
 
   it('should call setAudioOutputDevice when currentAudioOutputDevice is called', async () => {
     const newAudioOutput = 'new-audio-output-device';
-    const { result } = renderHook(() => useAudioOutput());
+    const { audioOutputContext } = render();
 
     await act(async () => {
-      await result.current.setAudioOutputDevice(newAudioOutput);
+      await audioOutputContext.current.setAudioOutputDevice(newAudioOutput);
     });
 
     expect(mockSetAudioOutputDevice).toHaveBeenCalledOnce();
   });
+
+  it('should register devicechange event listener on mount', async () => {
+    render();
+
+    await waitFor(() => {
+      expect(mediaDevicesMock.addEventListener).toHaveBeenCalledWith(
+        'devicechange',
+        expect.any(Function)
+      );
+    });
+  });
+
+  it('should remove devicechange event listener on unmount', async () => {
+    const { unmount } = render();
+
+    await waitFor(() => {
+      expect(mediaDevicesMock.addEventListener).toHaveBeenCalled();
+    });
+
+    unmount();
+
+    expect(mediaDevicesMock.removeEventListener).toHaveBeenCalledWith(
+      'devicechange',
+      expect.any(Function)
+    );
+  });
 });
+
+function render(options?: AudioOutputProviderWrapperOptions) {
+  const { AudioOutputProviderWrapper, audioOutputContext } =
+    makeAudioOutputProviderWrapper(options);
+
+  return {
+    ...renderHookBase(() => {}, { wrapper: AudioOutputProviderWrapper }),
+    audioOutputContext,
+  };
+}

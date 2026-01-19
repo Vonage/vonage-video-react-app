@@ -46,7 +46,7 @@ export type PublisherContextType = {
   isVideoEnabled: boolean;
   publish: () => Promise<void>;
   publisher: Publisher | null;
-  publisherVideoElement: HTMLVideoElement | HTMLObjectElement | undefined;
+  publisherVideoElement: HTMLVideoElement | HTMLObjectElement | null;
   quality: NetworkQuality;
   stream: Stream | null | undefined;
   toggleAudio: () => void;
@@ -54,6 +54,22 @@ export type PublisherContextType = {
   changeBackground: (backgroundSelected: string) => void;
   unpublish: () => void;
 };
+
+export type PublisherContextInitialValue = Partial<
+  Pick<
+    PublisherContextType,
+    | 'initializeLocalPublisher'
+    | 'isAudioEnabled'
+    | 'isForceMuted'
+    | 'isPublishing'
+    | 'publishingError'
+    | 'isVideoEnabled'
+    | 'publisher'
+    | 'publisherVideoElement'
+    | 'quality'
+    | 'stream'
+  >
+>;
 
 /**
  * Hook wrapper for creation, interaction with, and state for local video publisher.
@@ -75,21 +91,30 @@ export type PublisherContextType = {
  * @property {() => void} unpublish - Method to unpublish from session and destroy publisher (for ending a call).
  * @returns {PublisherContextType} the publisher context
  */
-const usePublisher = (): PublisherContextType => {
+const usePublisher = (initialValue: PublisherContextInitialValue = {}): PublisherContextType => {
   const { t } = useTranslation();
   const [publisherVideoElement, setPublisherVideoElement] = useState<
-    HTMLVideoElement | HTMLObjectElement
-  >();
+    HTMLVideoElement | HTMLObjectElement | null
+  >(initialValue?.publisherVideoElement ?? null);
+
   const publisherRef = useRef<Publisher | null>(null);
   const quality = usePublisherQuality(publisherRef.current);
-  const [isPublishing, setIsPublishing] = useState(false);
-  const publisherOptions = usePublisherOptions();
-  const [isForceMuted, setIsForceMuted] = useState<boolean>(false);
-  const [isVideoEnabled, setIsVideoEnabled] = useState<boolean>(false);
-  const [isAudioEnabled, setIsAudioEnabled] = useState<boolean>(false);
-  const [stream, setStream] = useState<Stream | null>();
 
-  const [publishingError, setPublishingError] = useState<PublishingErrorType>(null);
+  const [isPublishing, setIsPublishing] = useState(initialValue?.isPublishing ?? false);
+
+  const publisherOptions = usePublisherOptions();
+  const [isForceMuted, setIsForceMuted] = useState<boolean>(initialValue?.isForceMuted ?? false);
+  const [isVideoEnabled, setIsVideoEnabled] = useState<boolean>(
+    initialValue?.isVideoEnabled ?? false
+  );
+  const [isAudioEnabled, setIsAudioEnabled] = useState<boolean>(
+    initialValue?.isAudioEnabled ?? false
+  );
+  const [stream, setStream] = useState<Stream | null>(initialValue?.stream ?? null);
+
+  const [publishingError, setPublishingError] = useState<PublishingErrorType>(
+    initialValue?.publishingError ?? null
+  );
 
   const isPublishingToSessionRef = useRef<boolean>(false);
   const isInitializingPublisherRef = useRef<boolean>(false);
