@@ -223,19 +223,6 @@ const useBackgroundPublisher = (
   }, [addPublisherListeners, isVideoEnabled]);
 
   /**
-   * Destroys the background publisher
-   * @returns {void}
-   */
-  const destroyBackgroundPublisher = useCallback(() => {
-    if (backgroundPublisherRef.current) {
-      backgroundPublisherRef.current.destroy();
-      backgroundPublisherRef.current = null;
-    } else {
-      console.error('pub not destroyed');
-    }
-  }, []);
-
-  /**
    * Turns the camera on and off
    * A wrapper for Publisher.publishVideo()
    * More details here: https://vonage.github.io/conversation-docs/video-js-reference/latest/Publisher.html#publishVideo
