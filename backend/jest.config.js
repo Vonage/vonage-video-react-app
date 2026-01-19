@@ -12,8 +12,19 @@ export default {
   },
   coverageProvider: 'v8',
   roots: ['<rootDir>/'],
+  modulePaths: ['<rootDir>'],
   testMatch: ['**/tests/**/*.+(ts|tsx)', '**/?(*.)+(test).+(ts|tsx)'],
-  setupFiles: ['<rootDir>/jest/documentPolyfill.js', '<rootDir>/jest/setEnvVars.js'],
+  setupFiles: ['<rootDir>/jest/setEnvVars.js'],
+  moduleNameMapper: {
+    '^@api-lib$': '<rootDir>/../libs/api/src',
+    '^@api-lib/(.*)$': '<rootDir>/../libs/api/src/$1',
+    '^@common$': '<rootDir>/../libs/common/src',
+    '^@common/(.*)$': '<rootDir>/../libs/common/src/$1',
+    '^@common-test$': '<rootDir>/../libs/common/test',
+    '^@common-test/(.*)$': '<rootDir>/../libs/common/test/$1',
+    '^@node$': '<rootDir>/../libs/common/srcNode',
+    '^@node/(.*)$': '<rootDir>/../libs/common/srcNode/$1',
+  },
   transform: {
     '^.+\\.tsx?$': [
       'ts-jest',

@@ -1,40 +1,39 @@
+import { describe, it, expect } from 'vitest';
 import { VALID_SESSION_ID, INVALID_SESSION_IDS } from '@common-test/fixtures';
-import assertVonageSessionId from '.';
+import assertSessionId from '.';
 
-describe('assertVonageSessionId', () => {
+describe('assertSessionId', () => {
   it('should not throw for a valid session ID', () => {
-    expect(() => assertVonageSessionId(VALID_SESSION_ID)).not.toThrow();
+    expect(() => assertSessionId(VALID_SESSION_ID)).not.toThrow();
   });
 
   it('should throw for an empty string', () => {
-    expect(() => assertVonageSessionId(INVALID_SESSION_IDS.empty)).toThrow(
-      'Invalid sessionId format'
-    );
+    expect(() => assertSessionId(INVALID_SESSION_IDS.empty)).toThrow('Invalid sessionId format');
   });
 
   it('should throw for a session ID without underscore separator', () => {
-    expect(() => assertVonageSessionId(INVALID_SESSION_IDS.noUnderscore)).toThrow(
+    expect(() => assertSessionId(INVALID_SESSION_IDS.noUnderscore)).toThrow(
       'Invalid sessionId format'
     );
   });
 
   it('should throw for a session ID with multiple underscores', () => {
-    expect(() => assertVonageSessionId(INVALID_SESSION_IDS.multipleUnderscores)).toThrow(
+    expect(() => assertSessionId(INVALID_SESSION_IDS.multipleUnderscores)).toThrow(
       'Invalid sessionId format'
     );
   });
 
   it('should throw for a session ID with too few decoded fields', () => {
-    expect(() => assertVonageSessionId(INVALID_SESSION_IDS.tooFewFields)).toThrow(
+    expect(() => assertSessionId(INVALID_SESSION_IDS.tooFewFields)).toThrow(
       'Invalid sessionId format'
     );
   });
 
   it('should throw for null', () => {
-    expect(() => assertVonageSessionId(null)).toThrow();
+    expect(() => assertSessionId(null)).toThrow();
   });
 
   it('should throw for undefined', () => {
-    expect(() => assertVonageSessionId(undefined)).toThrow();
+    expect(() => assertSessionId(undefined)).toThrow();
   });
 });

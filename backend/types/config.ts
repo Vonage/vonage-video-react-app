@@ -16,6 +16,7 @@ export type VonageConfig = {
   applicationId: string;
   privateKey: string;
 };
+
 export type OpentokConfig = {
   provider: 'opentok';
   apiKey: string;

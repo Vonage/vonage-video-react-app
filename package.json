@@ -33,7 +33,7 @@
   },
   "scriptsInfo": {
     "build": "Build projects. Usage: 'yarn build' (frontend+backend), 'yarn build frontend', 'yarn build backend', 'yarn build room' (VeraRoom web component)",
-    "dev": "Run dev servers. Usage: 'yarn dev' (frontend+backend), 'yarn dev frontend', 'yarn dev backend', 'yarn dev room' (Storybook for VeraRoom)",
+    "dev": "Run dev servers. Usage: 'yarn dev' (frontend+backend), 'yarn dev frontend', 'yarn dev backend', 'yarn dev debug' (--inspect), 'yarn dev debug wait' (--inspect-brk), 'yarn dev room' (VeraRoom example)",
     "lint:fix": "Format and lint fix (workspace-wide by default). Optionally scope to a single Nx project: 'yarn lint:fix <project>'",
     "quality-check": "Run ts-check + lint + prettier check (workspace-wide by default). Optionally scope to a single Nx project: 'yarn quality-check <project>'",
     "start": "Start production build. Usage: 'yarn start' (build frontend + start backend), 'yarn start room' (build and serve VeraRoom example)",
@@ -155,6 +155,8 @@
     "@mui/icons-material": "^5.17.1",
     "@mui/joy": "^5.0.0-beta.36",
     "@mui/material": "^5.17.1",
+    "@trpc/client": "^11.11.0",
+    "@trpc/server": "^11.11.0",
     "@vonage/auth": "^1.13.1",
     "@vonage/client-sdk-video": "2.32.1",
     "@vonage/server-sdk": "3.25.1",

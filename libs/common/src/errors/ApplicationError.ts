@@ -1,13 +1,17 @@
-import StatusCodeEnum from 'status-code-enum';
+import { StatusCode } from 'status-code-enum';
 import type { ApplicationErrorState, ApplicationErrorFallbackConfig, ErrorSeverity } from './types';
 import mapSourceToState from './helpers/mapSourceToState';
+import { Any } from '@common/types';
 
 class ApplicationError extends Error {
-  public values: string[] = [];
+  /**
+   * An array to hold any specific issues related to the error, such as validation errors, zod issues etc
+   */
+  public issues: Any[] = [];
 
   public severity: ErrorSeverity;
 
-  public statusCode: StatusCodeEnum;
+  public statusCode: StatusCode;
 
   public fallbackConfig: ApplicationErrorFallbackConfig;
 
@@ -23,7 +27,7 @@ class ApplicationError extends Error {
     src: unknown;
     fallbackConfig: ApplicationErrorFallbackConfig;
   }) {
-    const state: Partial<ApplicationErrorState> & {
+    const state: ApplicationErrorState & {
       message: string;
       fallbackConfig: ApplicationErrorFallbackConfig;
     } = {
@@ -37,16 +41,16 @@ class ApplicationError extends Error {
      * If the message is already in the values array
      * We replace it with the fallback message to provide more context and avoid redundancy.
      */
-    const hasMessageRedundancy = state.message === state.values?.[0];
+    const hasMessageRedundancy = state.message === state.issues?.[0];
     const message = hasMessageRedundancy ? state.fallbackConfig.fallbackMessage : state.message;
 
     super(message);
 
     this.stack = state.stack ?? this.stack;
     this.severity = state.severity ?? 'error';
-    this.values = state.values ?? [];
+    this.issues = state.issues ?? [];
     this.fallbackConfig = state.fallbackConfig;
-    this.statusCode = state.statusCode ?? StatusCodeEnum.ServerErrorInternal;
+    this.statusCode = state.statusCode ?? StatusCode.ServerErrorInternal;
   }
 
   /**
@@ -61,12 +65,12 @@ class ApplicationError extends Error {
    */
   add = (message: string, map?: Record<string, unknown>) => {
     if (!map) {
-      this.values.push(message);
+      this.issues.push(message);
 
       return this;
     }
 
-    this.values.push(
+    this.issues.push(
       message.replace(/{(\w+)}/g, (match, propName) => {
         const propValue = map[propName];
         if (propValue === undefined) return match;
@@ -78,7 +82,7 @@ class ApplicationError extends Error {
     return this;
   };
 
-  setStatusCode(statusCode: StatusCodeEnum): this {
+  setStatusCode(statusCode: StatusCode): this {
     this.statusCode = statusCode;
 
     return this;
@@ -88,7 +92,7 @@ class ApplicationError extends Error {
    * Check if the custom validation has any violations and throw the error if it does.
    */
   assert = () => {
-    if (this.values.length) throw this;
+    if (this.issues.length) throw this;
   };
 
   public exportSafely = () => {
@@ -98,12 +102,12 @@ class ApplicationError extends Error {
   public exportSafelyBase = (): {
     message: string;
     severity: ErrorSeverity;
-    values?: string[];
+    issues?: string[];
     stack?: string;
     fallbackMessage?: string;
-    statusCode: StatusCodeEnum;
+    statusCode: StatusCode;
   } => {
-    const { fallbackConfig, message, severity, stack, values, statusCode } = this;
+    const { fallbackConfig, message, severity, stack, issues, statusCode } = this;
 
     // Prevent disclosure of private sensitive info
     if (globalThis.process?.env?.NODE_ENV === 'development') {
@@ -112,7 +116,7 @@ class ApplicationError extends Error {
         message,
         severity,
         stack,
-        values,
+        issues,
         statusCode,
       };
     }
@@ -121,7 +125,7 @@ class ApplicationError extends Error {
       // prevent disclosing unhandled messages on production
       message: fallbackConfig.fallbackMessage,
       severity,
-      values,
+      issues,
       statusCode,
     };
   };

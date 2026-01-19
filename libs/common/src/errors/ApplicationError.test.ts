@@ -20,7 +20,7 @@ describe('ApplicationError', () => {
 
     expect(error.message).toBe('Test error');
     expect(error.severity).toBe('validation');
-    expect(error.values).toEqual(['Email is required', 'Password too short']);
+    expect(error.issues).toEqual(['Email is required', 'Password too short']);
     expect(error.statusCode).toBe(StatusCodeEnum.ClientErrorUnauthorized);
     expect(() => error.assert()).toThrow(ApplicationError);
   });
