@@ -370,11 +370,6 @@ const SessionProvider = ({ children, initialValue = {} }: SessionProviderProps):
       })();
 
       if (reconnecting || isBrowserOnline === false) {
-        console.warn('[SUBSCRIBER] Ignoring subscription error during reconnection/offline', {
-          reconnecting,
-          isBrowserOnline,
-          error,
-        });
         return;
       }
 

@@ -162,11 +162,8 @@ class VonageVideoClient extends EventEmitter<VonageVideoClientEvents> {
           });
         });
 
-      console.warn('[SUBSCRIBER] Subscribing attempt for stream:', streamId);
-
       await idempotentCallbackWithRetry(() => subscribe());
 
-      console.warn('[SUBSCRIBER] Subscribing succeeded for stream:', streamId);
       if (isScreenshare) {
         this.emit('screenshareStreamCreated');
       }
@@ -175,10 +172,6 @@ class VonageVideoClient extends EventEmitter<VonageVideoClientEvents> {
       const isRecoverableError = this.isRecoverableSubscriptionError(syncError);
 
       if (isRecoverableError) {
-        console.warn(
-          '[SUBSCRIBER] Recoverable subscription error - stream likely destroyed:',
-          syncError
-        );
         // Don't emit subscriptionError for recoverable errors
         // The stream was likely destroyed before subscription completed (e.g., user refreshed)
         return;
@@ -493,7 +486,6 @@ class VonageVideoClient extends EventEmitter<VonageVideoClientEvents> {
         // the following is needed for the local subscriber to be able to receive captions
         // More information: https://developer.vonage.com/en/video/guides/live-caption#receiving-your-own-live-captions
         if (publisher.stream) {
-          console.warn('[PUBLISHER] autosubscribe user to own captions stream');
           this.hiddenSubscriber =
             this.clientSession?.subscribe(publisher.stream, document.createElement('div'), {
               audioVolume: 0,
