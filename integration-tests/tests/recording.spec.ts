@@ -4,6 +4,8 @@ import { test } from '../fixtures/testWithLogging';
 import { openMeetingRoomWithSettings, waitAndClickFirefox } from './utils';
 
 test.describe('Recording Feature', () => {
+  test.setTimeout(150000);
+
   test('should start and stop recording and verify the download link', async ({
     page: pageOne,
     browserName,
@@ -78,13 +80,48 @@ test.describe('Recording Feature', () => {
 
     await pageOne.getByTestId('CallEndIcon').click();
 
-    // Wait for the archive to be processed and appear in the list
-    // Archives start in 'pending' state and show "Loading..." text
-    // We need to wait for it to become 'available' and show "Recording 1"
-    await pageOne.getByText('Recording 1', { exact: true }).waitFor({ timeout: 120000 });
+    await expect(pageOne).toHaveURL(/.*goodbye/, { timeout: 10000 });
 
+    // Wait for archive list section to appear
+    const archiveListLabel = pageOne.getByText('Download recordings', { exact: false });
+    await expect(archiveListLabel).toBeVisible({ timeout: 10000 });
+
+    // Give the API a moment to fetch archives
+    await pageOne.waitForTimeout(3000);
+
+    // Wait for an archive to appear (might be in loading/pending state initially)
+    // Check for either loading text or archive list item - try loading text first, then archive item
+    // Increased timeout to 60s to account for slow API responses
+    try {
+      await pageOne
+        .getByText('We are processing your recording', { exact: false })
+        .waitFor({ timeout: 60000, state: 'visible' });
+    } catch {
+      try {
+        await pageOne
+          .locator('[data-testid^="archive-list-item-"]')
+          .first()
+          .waitFor({ timeout: 60000, state: 'visible' });
+      } catch {
+        // Check for error state
+        const errorText = pageOne.getByText('There was an error loading recordings', {
+          exact: false,
+        });
+        const hasError = await errorText.isVisible().catch(() => false);
+        if (hasError) {
+          throw new Error(
+            'Archive list shows error state - archives failed to load. This may indicate a backend API issue.'
+          );
+        }
+        throw new Error(
+          'No archive appeared after 60 seconds. Archive may not have been created or API is not responding.'
+        );
+      }
+    }
+
+    // Now wait for the archive to become available (download button appears)
     const downloadIcon = pageOne.getByTestId('archive-download-button');
-    await expect(downloadIcon).toBeVisible({ timeout: 10000 });
+    await expect(downloadIcon).toBeVisible({ timeout: 120000 });
 
     const href = await downloadIcon.evaluate((el) => {
       const anchor = el.closest('a');

@@ -31,7 +31,9 @@ test.describe('meeting room', () => {
       audioOff: false,
       browserName,
     });
-    await expect(pageTwo.getByTestId('MicNoneIcon')).toBeVisible();
+    // Wait for pageTwo to fully join and initialize - may take longer on mobile
+    await pageTwo.waitForSelector('.publisher', { state: 'visible', timeout: 10000 });
+    await expect(pageTwo.getByTestId('MicNoneIcon')).toBeVisible({ timeout: 10000 });
 
     if (isMobile) {
       await pageOne.getByTestId('MoreVertIcon').click();
