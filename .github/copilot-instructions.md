@@ -1246,7 +1246,7 @@ const Button = ({ size, variant }) => {
 };
 
 const button = tv({
-  base: 'rounded font-medium transition active:opacity-80',
+  base: 'rounded-sm font-medium transition active:opacity-80',
 
   variants: {
     variant: {

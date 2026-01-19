@@ -13,6 +13,14 @@
         "command": "vite build && nx run frontend:cp-build"
       }
     },
+    "build-room": {
+      "executor": "nx:run-commands",
+      "outputs": ["{projectRoot}/distRoom"],
+      "options": {
+        "cwd": "frontend",
+        "command": "vite build --config src/VeraRoom/vite.veraroom.config.ts && vite build --config src/VeraRoom/example/vite.example.config.ts"
+      }
+    },
     "dev": {
       "executor": "nx:run-commands",
       "options": {
@@ -37,15 +45,13 @@
     "lint": {
       "executor": "nx:run-commands",
       "options": {
-        "cwd": "frontend",
-        "command": "eslint 'src/**/*.{ts,tsx}' --report-unused-disable-directives --max-warnings 0"
+        "command": "eslint 'frontend/src/**/*.{ts,tsx}' --config frontend/eslint.config.mjs --report-unused-disable-directives --max-warnings 0"
       }
     },
     "lint:fix": {
       "executor": "nx:run-commands",
       "options": {
-        "cwd": "frontend",
-        "command": "eslint 'src/**/*.{ts,tsx}' --fix --report-unused-disable-directives --max-warnings 0"
+        "command": "eslint 'frontend/src/**/*.{ts,tsx}' --config frontend/eslint.config.mjs --fix --report-unused-disable-directives --max-warnings 0"
       }
     },
     "test": {

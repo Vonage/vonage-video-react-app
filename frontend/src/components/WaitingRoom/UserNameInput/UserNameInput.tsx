@@ -92,7 +92,7 @@ const UsernameInput = ({
       className={twMerge('flex flex-col gap-4 lg:max-w-[500px]', className)}
       {...cardProps}
     >
-      <Typography className="text-vera-secondary !text-vera-heading-4">
+      <Typography className="text-vera-secondary text-vera-heading-4!">
         {t('waitingRoom.user.input.title')}
       </Typography>
 
@@ -119,11 +119,11 @@ const UsernameInput = ({
 
       <Separator width="100%" />
 
-      <Typography className={'text-vera-secondary !text-vera-heading-4'}>
+      <Typography className={'text-vera-secondary text-vera-heading-4!'}>
         {t('waitingRoom.title')}
       </Typography>
 
-      <Typography className="text-vera-tertiary !text-vera-heading-4" noWrap>
+      <Typography className="text-vera-tertiary text-vera-heading-4!" noWrap>
         {roomName}
       </Typography>
 

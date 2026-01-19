@@ -1,7 +1,7 @@
+// eslint-disable-next-line @typescript-eslint/no-require-imports
 const veraUI = require('./src/theme/helpers/tailwind/veraUI.cjs');
 
 const config = {
-  content: ['./src/**/*.{js,ts,jsx,tsx}'],
   darkMode: 'class',
   theme: {
     extend: {

@@ -1,0 +1,20 @@
+{
+  "React Component": {
+    "scope": "typescriptreact",
+    "prefix": "reactComponent",
+    "description": "Vera react component template with tailwind",
+    "body": [
+      "import classNames from 'classnames';",
+      "import type { ComponentProps, FC } from 'react';",
+      "import { twMerge } from 'tailwind-merge';",
+      "",
+      "type ${TM_FILENAME_BASE}Props = ComponentProps<'${1:div}'> & {$2};",
+      "",
+      "const ${TM_FILENAME_BASE}: FC<${TM_FILENAME_BASE}Props> = ({ className, ...props }) => {",
+      "  return <${1:div} className={twMerge(classNames('${TM_FILENAME_BASE}', className))} {...props}$0 />;",
+      "};",
+      "",
+      "export default ${TM_FILENAME_BASE};",
+    ],
+  },
+}

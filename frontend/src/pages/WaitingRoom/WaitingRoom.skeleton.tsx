@@ -11,7 +11,11 @@ type WaitingRoomSkeletonProps = ComponentProps<'div'>;
 
 const WaitingRoomSkeleton: React.FC<WaitingRoomSkeletonProps> = ({ className, ...props }) => {
   return (
-    <Box data-testid="waitingRoom" className={classNames(className)} {...props}>
+    <Box
+      data-testid="waitingRoom"
+      className={classNames('WaitingRoomSkeleton', className)}
+      {...props}
+    >
       <PageLayout>
         <PageLayout.Banner>
           <Banner />

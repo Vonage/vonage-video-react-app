@@ -80,5 +80,5 @@ jobs:
 
       - name: Run license check
         run: |
-          npx license-checker --json > scripts/allLicenseResults.json
+          npx license-checker --production --json > scripts/allLicenseResults.json
           node scripts/licenseCheck.js

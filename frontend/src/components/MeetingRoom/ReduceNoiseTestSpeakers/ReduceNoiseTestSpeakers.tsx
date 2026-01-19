@@ -50,6 +50,7 @@ const ReduceNoiseTestSpeakers = (): ReactElement | false => {
   useEffect(() => {
     if (isPublishing) {
       const audioFilter = publisher?.getAudioFilter();
+
       // eslint-disable-next-line react-hooks/set-state-in-effect
       setIsToggled(audioFilter !== null);
     }

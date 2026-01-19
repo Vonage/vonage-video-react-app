@@ -8,15 +8,13 @@
     "lint": {
       "executor": "nx:run-commands",
       "options": {
-        "cwd": "libs/ui",
-        "command": "eslint 'src/**/*.{ts,tsx}' --report-unused-disable-directives --max-warnings 0"
+        "command": "eslint 'libs/ui/src/**/*.{ts,tsx}' --config libs/ui/eslint.config.mjs --report-unused-disable-directives --max-warnings 0"
       }
     },
     "lint:fix": {
       "executor": "nx:run-commands",
       "options": {
-        "cwd": "libs/ui",
-        "command": "eslint 'src/**/*.{ts,tsx}' --fix --report-unused-disable-directives --max-warnings 0"
+        "command": "eslint 'libs/ui/src/**/*.{ts,tsx}' --config libs/ui/eslint.config.mjs --fix --report-unused-disable-directives --max-warnings 0"
       }
     },
     "test": {
