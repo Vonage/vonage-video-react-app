@@ -1,1 +1,1 @@
-export { default } from './composeProviders';
+export { default, type ProviderComponent } from './composeProviders';

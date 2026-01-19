@@ -1,19 +1,31 @@
 import type CancelablePromise from 'easy-cancelable-promise';
-import type { AudioOutputDevice } from '../types';
-import type { InitialValue } from './initialValue';
+import type { MediaDeviceInfoJSON } from '@common/types';
+import { markDevicesApiMetadata } from '../assertions';
+import { isSinkIdSupported } from '@common/platform';
 
-const metadata = {
-  // promises to track loading state
-  loadingDevices: null as null | CancelablePromise<InitialValue['devices']>,
+const metadata = () => {
+  const meta = {
+    /**
+     * Indicates if setSinkId is supported for audio output devices.
+     */
+    isSinkIdSupported: isSinkIdSupported(),
 
-  loadingAudioOutputDevices: null as null | CancelablePromise<InitialValue['audioOutputDevices']>,
+    /**
+     * Static flag to know if the current platform support devicechange event
+     */
+    hasDeviceChangeCapability:
+      typeof globalThis.navigator.mediaDevices?.ondevicechange !== 'undefined',
 
-  loadingMediaDevices: null as null | CancelablePromise<MediaDeviceInfo[]>,
+    loadingMediaDevices: null as null | CancelablePromise<MediaDeviceInfoJSON[]>,
 
-  // temporary backup for the local storage restored value
-  restoredAudioOutput: null as AudioOutputDevice | null,
+    // temporary backup for the local storage restored value
+    // localstorage value needs to be confirmed against actual available devices
+    restoredSelection: new Map<MediaDeviceKind, MediaDeviceInfoJSON>(),
+  };
+
+  markDevicesApiMetadata(meta);
+
+  return meta;
 };
-
-export type Metadata = typeof metadata;
 
 export default metadata;

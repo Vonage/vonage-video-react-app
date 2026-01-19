@@ -1,57 +1,29 @@
 import { PublisherProvider, PublisherContext } from '@Context/PublisherProvider';
-import composeProviders from '@common/helpers/composeProviders';
 import makeGenericProviderWrapper, {
   GenericWrapperOptions,
-} from '@common/test/makeGenericProviderWrapper';
-import makeSessionProviderWrapper, {
-  SessionProviderWrapperOptions,
-} from './makeSessionProviderWrapper';
+} from '@common-test/makeGenericProviderWrapper';
 
-export type PublisherProviderWrapperOptions = {
-  publisherContext?: GenericWrapperOptions<typeof PublisherProvider, typeof PublisherContext>;
-  sessionContext?: SessionProviderWrapperOptions['sessionOptions'];
-  userOptions?: SessionProviderWrapperOptions['userOptions'];
-  appConfigOptions?: SessionProviderWrapperOptions['appConfigOptions'];
-};
+export type PublisherProviderWrapperOptions = GenericWrapperOptions<
+  typeof PublisherProvider,
+  typeof PublisherContext
+>;
 
 /**
  * Creates wrapper for the PublisherProvider context.
- * The wrapper includes:
- * - AppConfigProvider: you can override its options via appConfigOptions
- * - UserProvider: you can override its options via userOptions
- * - SessionProvider: you can override its options via sessionContext
- * - PublisherProvider: you can override its options via publisherContext
+ * Allows overriding context values via options and accessing the context value.
  * @param {object} options - The wrapper options.
- * @param {GenericWrapperOptions} [options.publisherContext] - Options for the PublisherProvider wrapper.
- * @param {GenericWrapperOptions} [options.sessionContext] - Options for the SessionProvider wrapper.
- * @param {UserProviderWrapperOptions} [options.userOptions] - Options for the UserProvider wrapper.
- * @param {AppConfigProviderWrapperOptions} [options.appConfigOptions] - Options for the AppConfigProvider wrapper.
- * @returns {object} The PublisherProvider wrapper and context getters.
+ * @returns {object} The PublisherProvider wrapper and context getter.
  */
-function makePublisherProviderWrapper({
-  publisherContext: publisherOptions,
-  sessionContext: sessionOptions,
-  userOptions,
-  appConfigOptions,
-}: PublisherProviderWrapperOptions = {}) {
-  const { SessionProviderWrapper, ...session } = makeSessionProviderWrapper({
-    sessionOptions,
-    userOptions,
-    appConfigOptions,
-  });
-
-  const [PublisherProviderWrapper, publisherContext] = makeGenericProviderWrapper(
+function makePublisherProviderWrapper(options: PublisherProviderWrapperOptions = {}) {
+  const [wrapper, context] = makeGenericProviderWrapper(
     PublisherProvider,
     PublisherContext,
-    publisherOptions
+    options
   );
 
-  const composeWrapper = composeProviders(SessionProviderWrapper, PublisherProviderWrapper);
-
   return {
-    ...session,
-    publisherContext,
-    PublisherProviderWrapper: composeWrapper,
+    wrapper,
+    context,
   };
 }
 

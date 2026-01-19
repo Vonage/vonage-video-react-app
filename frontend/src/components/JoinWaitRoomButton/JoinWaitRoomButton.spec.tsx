@@ -1,5 +1,6 @@
 import { render, screen, fireEvent } from '@testing-library/react';
-import { MemoryRouter, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
+import MemoryRouter from '@test/RouterWrapper';
 import { describe, expect, it, Mock, vi, beforeEach } from 'vitest';
 import JoinWaitRoomButton from './JoinWaitRoomButton';
 

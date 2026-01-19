@@ -2,36 +2,28 @@ import { render as renderBase, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import type { ReactElement } from 'react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import makeBackgroundPublisherProviderWrapper, {
-  type BackgroundPublisherProviderWrapperOptions,
-} from '@test/providers/makeBackgroundPublisherProviderWrapper';
-import mediaDevicesMock from '@common/test/mocks/mediaDevicesMock';
+import { makeTestProvider, providers } from '@test/providers';
+import type { ProviderOptions } from '@test/providers';
 import BackgroundEffectsDialog from './BackgroundEffectsDialog';
+import { setupWindowNavigatorMock, makeMediaStreamMock } from '@common-test/fixtures';
 
 describe('BackgroundEffectsDialog', () => {
   beforeEach(() => {
     vi.clearAllMocks();
 
-    Object.defineProperty(globalThis.navigator, 'mediaDevices', {
-      writable: true,
-      configurable: true,
-      value: mediaDevicesMock,
-    });
-
-    vi.spyOn(mediaDevicesMock, 'addEventListener').mockImplementation(() => {});
-    vi.spyOn(mediaDevicesMock, 'removeEventListener').mockImplementation(() => {});
-    vi.spyOn(mediaDevicesMock, 'enumerateDevices').mockResolvedValue([]);
-    vi.spyOn(mediaDevicesMock, 'getUserMedia').mockResolvedValue({} as unknown as MediaStream);
-    vi.spyOn(mediaDevicesMock, 'getDisplayMedia').mockResolvedValue({} as unknown as MediaStream);
-    vi.spyOn(mediaDevicesMock, 'getSupportedConstraints').mockReturnValue({});
-
-    Object.defineProperty(globalThis.navigator, 'permissions', {
-      writable: true,
-      configurable: true,
-      value: {
-        query: vi.fn().mockResolvedValue({ state: 'granted' }),
+    setupWindowNavigatorMock({
+      mediaDevices: {
+        addEventListener: vi.fn(),
+        enumerateDevices: Promise.resolve([]),
+        getUserMedia: Promise.resolve(makeMediaStreamMock({})),
+        getDisplayMedia: Promise.resolve(makeMediaStreamMock({})),
+        getSupportedConstraints: vi.fn().mockReturnValue({}),
       },
     });
+
+    const { permissions } = globalThis.navigator;
+
+    vi.spyOn(permissions, 'query').mockResolvedValue({ state: 'granted' } as PermissionStatus);
   });
 
   it('renders dialog when open', async () => {
@@ -80,13 +72,43 @@ describe('BackgroundEffectsDialog', () => {
   });
 });
 
-function render(ui: ReactElement, options: BackgroundPublisherProviderWrapperOptions = {}) {
-  const { BackgroundPublisherProviderWrapper, ...props } = makeBackgroundPublisherProviderWrapper({
-    ...options,
-  });
+type RenderOptions = {
+  appConfigContext?: ProviderOptions['AppConfigContext'];
+  userContext?: ProviderOptions['UserContext'];
+  sessionContext?: ProviderOptions['SessionContext'];
+  publisherContext?: ProviderOptions['PublisherContext'];
+  backgroundPublisherContext?: ProviderOptions['BackgroundPublisherContext'];
+};
+
+function render(
+  ui: ReactElement,
+  {
+    appConfigContext,
+    userContext,
+    sessionContext,
+    publisherContext,
+    backgroundPublisherContext,
+  }: RenderOptions = {}
+) {
+  const { wrapper, ...context } = makeTestProvider(
+    [
+      providers.appConfig,
+      providers.user,
+      providers.session,
+      providers.publisher,
+      providers.backgroundPublisher,
+    ],
+    {
+      appConfigContext,
+      userContext,
+      sessionContext,
+      publisherContext,
+      backgroundPublisherContext,
+    }
+  );
 
   return {
-    ...props,
-    ...renderBase(ui, { wrapper: BackgroundPublisherProviderWrapper }),
+    ...context,
+    ...renderBase(ui, { wrapper }),
   };
 }

@@ -1,5 +1,4 @@
-export { default as useAudioInputDevices } from './useAudioInputDevices';
-export { default as useAudioOutput } from './useAudioOutput';
-export { default as useAudioOutputDevices } from './useAudioOutputDevices';
-export { default as useVideoInputDevices } from './useVideoInputDevices';
-export { default as useConnectedDeviceId } from './useConnectedDeviceId';
+export { default as useMediaDeviceInfo } from './useMediaDeviceInfo';
+export { default as useMediaDeviceInfoByKind$ } from './useMediaDeviceInfoByKind$';
+export { default as useMediaDevices } from './useMediaDevices';
+export { default as useDeviceId } from './useDeviceId';

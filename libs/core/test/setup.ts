@@ -1,17 +1,11 @@
 import '@testing-library/jest-dom/vitest';
-import { cleanup } from '@testing-library/react';
-import { afterEach, beforeAll, vi } from 'vitest';
-import mediaDevicesMock from '@common/test/mocks/mediaDevicesMock';
+import { beforeEach, afterEach } from 'vitest';
+import { setupFrontendTestEnvironment, mandatoryAfterEachCleanup } from '@common-test/environment';
 
-beforeAll(() => {
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-expect-error
-  globalThis.navigator.mediaDevices = mediaDevicesMock;
+beforeEach(() => {
+  setupFrontendTestEnvironment();
 });
 
 afterEach(() => {
-  cleanup();
-
-  vi.clearAllMocks();
-  vi.restoreAllMocks();
+  mandatoryAfterEachCleanup();
 });

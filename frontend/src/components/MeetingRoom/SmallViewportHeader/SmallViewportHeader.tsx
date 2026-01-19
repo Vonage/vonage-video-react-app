@@ -10,9 +10,8 @@ import Tooltip from '@ui/Tooltip';
 import Fade from '@ui/Fade';
 import VividIcon from '@components/VividIcon';
 import usePublisherContext from '@hooks/usePublisherContext';
-import useDevices from '@hooks/useDevices';
-import isRearFacingLabel from '@utils/cameraSwitch/isRearFacingLabel';
-import isFrontFacingLabel from '@utils/cameraSwitch/isFrontFacingLabel';
+import { isRearFacingLabel, isFrontFacingLabel } from '@utils/cameraSwitch';
+import usePreferredCameras from '@hooks/usePreferredCameras';
 
 /**
  * SmallViewportHeader Component
@@ -27,9 +26,10 @@ const SmallViewportHeader = (): ReactElement => {
   const { archiveId } = useSessionContext();
   const isRecording = !!archiveId;
   const roomName = useRoomName();
-  const {
-    allMediaDevices: { videoInputDevices },
-  } = useDevices();
+
+  // Get preferred video input devices (cameras)
+  const videoInputDevices = usePreferredCameras();
+
   const roomShareUrl = useRoomShareUrl();
   const [isCopied, setIsCopied] = useState<boolean>(false);
   const copyUrl = () => {

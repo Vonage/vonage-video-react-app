@@ -1,7 +1,7 @@
 import { describe, expect, it, vi, afterEach } from 'vitest';
 import { act, render as renderBase, screen, cleanup } from '@testing-library/react';
 import { ReactElement } from 'react';
-import { makeSessionProviderWrapper, type SessionProviderWrapperOptions } from '@test/providers';
+import { makeTestProvider, providers, type ProviderOptions } from '@test/providers';
 import ToolbarOverflowButton from './ToolbarOverflowButton';
 import {
   ToolbarOverflowMenuProps,
@@ -31,7 +31,7 @@ describe('ToolbarOverflowButton', () => {
   };
   it('renders', () => {
     render(<ToolbarOverflowButton {...defaultProps} />, {
-      sessionOptions: {
+      sessionContext: {
         __interceptor: (context) => {
           if (context) {
             context.subscriberWrappers = [];
@@ -46,7 +46,7 @@ describe('ToolbarOverflowButton', () => {
   });
   it('toggling shows and hides the toolbar buttons', () => {
     render(<ToolbarOverflowButton {...defaultProps} />, {
-      sessionOptions: {
+      sessionContext: {
         __interceptor: (context) => {
           if (context) {
             context.subscriberWrappers = [];
@@ -69,7 +69,7 @@ describe('ToolbarOverflowButton', () => {
   });
   it('should have the unread messages badge present', () => {
     render(<ToolbarOverflowButton {...defaultProps} />, {
-      sessionOptions: {
+      sessionContext: {
         __interceptor: (context) => {
           if (context) {
             context.subscriberWrappers = [];
@@ -84,7 +84,27 @@ describe('ToolbarOverflowButton', () => {
     expect(screen.queryAllByTestId('chat-button-unread-count').length).toBe(2);
   });
 });
-function render(ui: ReactElement, options?: SessionProviderWrapperOptions) {
-  const { SessionProviderWrapper } = makeSessionProviderWrapper(options);
-  return renderBase(ui, { wrapper: SessionProviderWrapper });
+type RenderOptions = {
+  appConfigContext?: ProviderOptions['AppConfigContext'];
+  userContext?: ProviderOptions['UserContext'];
+  sessionContext?: ProviderOptions['SessionContext'];
+};
+
+function render(
+  ui: ReactElement,
+  { appConfigContext, userContext, sessionContext }: RenderOptions = {}
+) {
+  const { wrapper, ...context } = makeTestProvider(
+    [providers.appConfig, providers.user, providers.session],
+    {
+      appConfigContext,
+      userContext,
+      sessionContext,
+    }
+  );
+
+  return {
+    ...context,
+    ...renderBase(ui, { wrapper }),
+  };
 }

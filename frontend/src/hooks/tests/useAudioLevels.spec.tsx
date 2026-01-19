@@ -1,11 +1,12 @@
 import { Mock, afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { act, renderHook, waitFor } from '@testing-library/react';
+import { act, renderHook as renderHookBase, waitFor } from '@testing-library/react';
 import { Publisher } from '@vonage/client-sdk-video';
 import EventEmitter from 'events';
 
 import { PublisherContextType } from '../../Context/PublisherProvider';
 import useAudioLevels from '../useAudioLevels';
 import usePublisherContext from '../usePublisherContext';
+import { makeTestProvider, ProviderOptions, providers } from '@test/providers';
 
 vi.mock('../usePublisherContext.tsx');
 
@@ -25,10 +26,12 @@ describe('usePublisherAudioLevels', () => {
     };
 
     mockPublisher = new EventEmitter();
+
     const mockPublisherContext = {
       publisher: mockPublisher as unknown as Publisher,
       isPublishing: true,
     } as PublisherContextType;
+
     mockUsePublisherContext.mockImplementation(() => mockPublisherContext);
   });
 
@@ -93,3 +96,21 @@ describe('usePublisherAudioLevels', () => {
     await waitFor(() => expect(result.current).toBeGreaterThan(initialLevel));
   });
 });
+
+type RenderOptions = {
+  userContext?: ProviderOptions['UserContext'];
+};
+
+function renderHook<Result, Props>(
+  render: (initialProps: Props) => Result,
+  { userContext }: RenderOptions = {}
+) {
+  const { wrapper, ...context } = makeTestProvider([providers.user], {
+    userContext,
+  });
+
+  return {
+    ...context,
+    ...renderHookBase(render, { wrapper }),
+  };
+}

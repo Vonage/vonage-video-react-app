@@ -28,7 +28,7 @@ import {
   LayoutMode,
 } from '@app-types/session';
 import { ChatMessageType } from '@app-types/chat';
-import { isMobile } from '@utils/util';
+import { isMobile } from '@common/platform';
 import {
   sortByDisplayPriority,
   togglePinAndSortByDisplayOrder,
