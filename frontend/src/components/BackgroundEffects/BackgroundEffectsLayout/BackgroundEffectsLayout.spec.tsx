@@ -7,6 +7,12 @@ import BackgroundEffectsLayout from './BackgroundEffectsLayout';
 import enTranslations from '../../../locales/en.json';
 import mediaDevicesMock from '@common/test/mocks/mediaDevicesMock';
 
+const applyBackgroundFilterMock = vi.fn(() => Promise.resolve());
+
+vi.mock('../../../utils/backgroundFilter/applyBackgroundFilter/applyBackgroundFilter', () => ({
+  default: () => applyBackgroundFilterMock(),
+}));
+
 vi.mock('react-i18next', () => ({
   useTranslation: () => ({
     t: (key: string) => {
@@ -48,6 +54,7 @@ describe('BackgroundEffectsLayout (Meeting room)', () => {
 
   beforeEach(() => {
     handleClose.mockClear();
+    applyBackgroundFilterMock.mockClear();
   });
 
   it('renders when open', async () => {
@@ -78,6 +85,7 @@ describe('BackgroundEffectsLayout (Meeting room)', () => {
     render(<BackgroundEffectsLayout mode="meeting" isOpen handleClose={handleClose} />);
     await userEvent.click(screen.getByTestId('background-effect-apply-button'));
     expect(handleClose).toHaveBeenCalled();
+    expect(applyBackgroundFilterMock).toHaveBeenCalled();
   });
 
   it('calls setBackgroundSelected when effect option none is clicked', async () => {
@@ -102,6 +110,7 @@ describe('BackgroundEffects (Waiting Room)', () => {
 
   beforeEach(() => {
     handleClose.mockClear();
+    applyBackgroundFilterMock.mockClear();
   });
 
   it('renders when open', async () => {
@@ -131,8 +140,8 @@ describe('BackgroundEffects (Waiting Room)', () => {
   it('calls handleClose and changeBackground when Apply is clicked', async () => {
     render(<BackgroundEffectsLayout mode="waiting" isOpen handleClose={handleClose} />);
     await userEvent.click(screen.getByTestId('background-effect-apply-button'));
-
     expect(handleClose).toHaveBeenCalled();
+    expect(applyBackgroundFilterMock).toHaveBeenCalled();
   });
 
   it('calls setBackgroundSelected when effect option none is clicked', async () => {
