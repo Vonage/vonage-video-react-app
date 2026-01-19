@@ -80,18 +80,26 @@ test.describe('Recording Feature', () => {
 
     await pageOne.getByTestId('CallEndIcon').click();
 
-    await expect(pageOne).toHaveURL(/.*goodbye/, { timeout: 10000 });
+    await expect(pageOne).toHaveURL(/\/goodbye/, { timeout: 10000 });
 
     // Wait for archive list section to appear
     const archiveListLabel = pageOne.getByText('Download recordings', { exact: false });
     await expect(archiveListLabel).toBeVisible({ timeout: 10000 });
 
-    // Give the API a moment to fetch archives
-    await pageOne.waitForTimeout(3000);
+    // Wait for the archives API call to complete
+    // If this times out, we continue anyway since we check for archive content below
+    await pageOne
+      .waitForResponse(
+        (response) =>
+          response.url().includes('/archive') && response.status() === 200 && response.ok(),
+        { timeout: 10000 }
+      )
+      .catch(() => {
+        // Intentionally empty - timeout is acceptable here as we have fallback checks below
+      });
 
     // Wait for an archive to appear (might be in loading/pending state initially)
     // Check for either loading text or archive list item - try loading text first, then archive item
-    // Increased timeout to 60s to account for slow API responses
     try {
       await pageOne
         .getByText('We are processing your recording', { exact: false })
