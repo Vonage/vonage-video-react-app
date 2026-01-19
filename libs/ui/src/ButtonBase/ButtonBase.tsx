@@ -1,6 +1,6 @@
 import { ButtonBase as MUIButtonBase, ButtonBaseProps as MUIButtonBaseProps } from '@mui/material';
 
-type ButtonBaseProps = MUIButtonBaseProps;
+export type ButtonBaseProps = MUIButtonBaseProps;
 
 const ButtonBase = (buttonBaseProps: ButtonBaseProps) => {
   return <MUIButtonBase {...buttonBaseProps} />;

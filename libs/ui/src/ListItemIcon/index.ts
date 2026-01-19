@@ -1,1 +1,1 @@
-export { default } from './ListItemIcon';
+export { default, type ListItemIconProps } from './ListItemIcon';

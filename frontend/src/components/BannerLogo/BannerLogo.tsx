@@ -20,6 +20,7 @@ const BannerLogo = (): ReactElement => {
     <Box data-testid="banner-logo">
       <Box
         data-testid="banner-logo-image"
+        className="dark:invert"
         component="img"
         src={isTablet ? '/images/vonage-logo-mobile.svg' : '/images/vonage-logo-desktop.svg'}
         alt={isTablet ? 'Vonage-mobile-logo' : 'Vonage-desktop-logo'}

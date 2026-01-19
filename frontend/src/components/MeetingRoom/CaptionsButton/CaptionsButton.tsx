@@ -1,7 +1,7 @@
 import { Dispatch, ReactElement, useState, SetStateAction } from 'react';
 import { AxiosError } from 'axios';
 import { useTranslation } from 'react-i18next';
-import { useIsMeetingCaptionsAllowed } from '@stores/appConfig';
+import appConfig$ from '@stores/appConfig';
 import { disableCaptions, enableCaptions } from '@api/captions';
 import useRoomName from '@hooks/useRoomName';
 import ToolbarButton from '../ToolbarButton';
@@ -36,7 +36,7 @@ const CaptionsButton = ({
   handleClick,
   captionsState,
 }: CaptionsButtonProps): ReactElement | false => {
-  const isMeetingCaptionsAllowed = useIsMeetingCaptionsAllowed();
+  const isMeetingCaptionsAllowed = appConfig$.useIsMeetingCaptionsAllowed();
 
   const { t } = useTranslation();
   const roomName = useRoomName();

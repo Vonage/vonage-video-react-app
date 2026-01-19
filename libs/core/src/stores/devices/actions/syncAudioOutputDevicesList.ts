@@ -2,7 +2,7 @@ import CancelablePromise from 'easy-cancelable-promise';
 import getAudioOutputDevices from '../helpers/getAudioOutputDevices';
 import type { AudioOutputDevice } from '../types';
 
-export type DevicesApi = import('../DevicesStore').DevicesApi;
+export type DevicesApi = import('../devicesStore').DevicesApi;
 
 /**
  * Syncs the audio output devices list

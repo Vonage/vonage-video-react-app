@@ -3,7 +3,7 @@ import {
   ButtonGroupProps as MUIButtonGroupProps,
 } from '@mui/material';
 
-type ButtonGroupProps = MUIButtonGroupProps;
+export type ButtonGroupProps = MUIButtonGroupProps;
 
 const ButtonGroup = (buttonGroupProps: ButtonGroupProps) => {
   return <MUIButtonGroup {...buttonGroupProps} />;

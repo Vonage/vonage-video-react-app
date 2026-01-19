@@ -5,7 +5,7 @@ import MenuList from '@ui/MenuList';
 import { Device } from '@vonage/client-sdk-video';
 import { MouseEvent as ReactMouseEvent, ReactElement, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useAppConfig } from '@stores/appConfig';
+import appConfig$ from '@stores/appConfig';
 import useTheme from '@ui/theme';
 import VividIcon from '@components/VividIcon';
 import useDevices from '@hooks/useDevices';
@@ -30,7 +30,7 @@ const InputAudioDevices = ({ handleToggle }: InputAudioDevicesProps): ReactEleme
   const theme = useTheme();
   const { publisher } = usePublisherContext();
 
-  const allowDeviceSelection = useAppConfig(
+  const allowDeviceSelection = appConfig$.use.select(
     ({ meetingRoomSettings }) => meetingRoomSettings.allowDeviceSelection
   );
 

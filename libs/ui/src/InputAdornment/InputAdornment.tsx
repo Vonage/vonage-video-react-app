@@ -3,7 +3,7 @@ import {
   InputAdornmentProps as MUIInputAdornmentProps,
 } from '@mui/material';
 
-type InputAdornmentProps = MUIInputAdornmentProps;
+export type InputAdornmentProps = MUIInputAdornmentProps;
 
 const InputAdornment = (inputAdornmentProps: InputAdornmentProps) => {
   return <MUIInputAdornment {...inputAdornmentProps} />;

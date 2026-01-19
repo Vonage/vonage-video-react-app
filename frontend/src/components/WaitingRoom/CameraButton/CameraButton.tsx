@@ -2,7 +2,7 @@ import { ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
 import usePreviewPublisherContext from '@hooks/usePreviewPublisherContext';
 import useBackgroundPublisherContext from '@hooks/useBackgroundPublisherContext';
-import { useIsCameraControlAllowed } from '@stores/appConfig';
+import appConfig$ from '@stores/appConfig';
 import { VIDEO_CONTAINER_BUTTON_SIZE_WR } from '@utils/constants';
 import useTheme from '@ui/theme';
 import Tooltip from '@ui/Tooltip';
@@ -20,7 +20,7 @@ const CameraButton = (): ReactElement | false => {
   const { t } = useTranslation();
   const { isVideoEnabled, toggleVideo } = usePreviewPublisherContext();
   const { toggleVideo: toggleBackgroundVideoPublisher } = useBackgroundPublisherContext();
-  const allowCameraControl = useIsCameraControlAllowed();
+  const allowCameraControl = appConfig$.useIsCameraControlAllowed();
   const theme = useTheme();
 
   const title = isVideoEnabled

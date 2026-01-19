@@ -1,0 +1,27 @@
+import createContext, { type InferContextApi } from 'react-global-state-hooks/createContext';
+import updateAppConfig from './actions/updateAppConfig';
+import loadAppConfig from './actions/loadAppConfig';
+import initialValue from './helpers/defaultAppConfig';
+
+/**
+ * Creates the AppConfig store
+ * The store includes Context, Provider, and use hook for consuming the context.
+ */
+const appConfigStore = createContext(initialValue, {
+  metadata: () => ({
+    loadAppConfigPromise: null as null | Promise<void>,
+  }),
+  actions: {
+    updateAppConfig,
+    loadAppConfig,
+  },
+  name: 'AppConfig',
+});
+
+/**
+ * The AppConfig context type.
+ * Represents the shape of the context including state and actions.
+ */
+export type AppConfigApi = InferContextApi<typeof appConfigStore.Context>;
+
+export default appConfigStore;

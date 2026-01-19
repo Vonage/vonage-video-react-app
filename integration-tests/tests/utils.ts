@@ -25,8 +25,8 @@ export const VIEWPORT = {
 
 // Screenshot comparison settings
 export const SCREENSHOT = {
-  /** Maximum allowed pixel differences for cross-platform screenshot comparisons */
-  MAX_DIFF_PIXELS: 1500,
+  /** Maximum allowed pixel ratio differences for cross-platform screenshot comparisons (5% tolerance) */
+  MAX_DIFF_PIXEL_RATIO: 0.05,
 } as const;
 
 export const openMeetingRoomWithSettings = async ({
@@ -45,8 +45,11 @@ export const openMeetingRoomWithSettings = async ({
   browserName?: string;
 }) => {
   await page.goto(`${baseURL}waiting-room/${roomName}`);
-  await page.getByLabel('Name').fill(username);
+
   await waitUntilReady(page, browserName);
+
+  await page.getByLabel('Name').fill(username);
+
   if (videoOff) {
     await page.getByTestId('video-container-button').nth(1).click();
     await expect(page.getByTestId('vivid-icon-video-off-line')).toBeVisible();

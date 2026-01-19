@@ -1,7 +1,7 @@
 import { MouseEvent, ReactElement, useMemo } from 'react';
 import type { AudioOutputDevice } from '@vonage/client-sdk-video';
 import { useTranslation } from 'react-i18next';
-import { useAppConfig } from '@stores/appConfig';
+import appConfig$ from '@stores/appConfig';
 import useTheme from '@ui/theme';
 import useDevices from '@hooks/useDevices';
 import useAudioOutputContext from '@hooks/useAudioOutputContext';
@@ -31,7 +31,7 @@ const OutputAudioDevices = ({ handleToggle }: OutputAudioDevicesProps): ReactEle
   const theme = useTheme();
   const { currentAudioOutputDevice, setAudioOutputDevice } = useAudioOutputContext();
 
-  const allowDeviceSelection = useAppConfig(
+  const allowDeviceSelection = appConfig$.use.select(
     ({ meetingRoomSettings }) => meetingRoomSettings.allowDeviceSelection
   );
 

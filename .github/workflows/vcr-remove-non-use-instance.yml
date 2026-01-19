@@ -1,4 +1,4 @@
-name: Remove PR VCR instance on merge
+name: Remove PR VCR instance on close
 
 on:
   pull_request:
@@ -11,8 +11,7 @@ permissions:
 
 jobs:
   remove-vcr:
-    name: Remove VCR instance (merge trigger)
-    if: github.event.pull_request.merged == true
+    name: Remove VCR instance
     runs-on: [vcp-runner]
 
     steps:

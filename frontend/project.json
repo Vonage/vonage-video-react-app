@@ -17,7 +17,7 @@
       "executor": "nx:run-commands",
       "options": {
         "cwd": "frontend",
-        "command": "concurrently \"yarn --silent ts-check:watch\" \"vite --host\""
+        "command": "concurrently \"nx run frontend:ts-check:watch\" \"vite --host\""
       }
     },
     "serve": {
@@ -52,14 +52,12 @@
       "executor": "nx:run-commands",
       "options": {
         "cwd": "frontend",
-        "command": "bash -c 'source ../vcrBuild.env.sh && vitest run --coverage'"
-      }
-    },
-    "test:watch": {
-      "executor": "nx:run-commands",
-      "options": {
-        "cwd": "frontend",
-        "command": "bash -c 'source ../vcrBuild.env.sh && vitest'"
+        "command": "bash -c 'source ../vcrBuild.env.sh && vitest run'"
+      },
+      "configurations": {
+        "coverage": {
+          "command": "bash -c 'source ../vcrBuild.env.sh && vitest run --coverage'"
+        }
       }
     },
     "docs": {

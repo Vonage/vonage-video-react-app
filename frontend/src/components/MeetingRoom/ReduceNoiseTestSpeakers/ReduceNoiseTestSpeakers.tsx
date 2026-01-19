@@ -3,7 +3,7 @@ import { hasMediaProcessorSupport } from '@vonage/client-sdk-video';
 import ToggleOffIcon from '@mui/icons-material/ToggleOff';
 import ToggleOnIcon from '@mui/icons-material/ToggleOn';
 import { useTranslation } from 'react-i18next';
-import { useAppConfig } from '@stores/appConfig';
+import appConfig$ from '@stores/appConfig';
 import useTheme from '@ui/theme';
 import usePublisherContext from '@hooks/usePublisherContext';
 import { setStorageItem, STORAGE_KEYS } from '@utils/storage';
@@ -29,7 +29,7 @@ const ReduceNoiseTestSpeakers = (): ReactElement | false => {
   const theme = useTheme();
   const { publisher, isPublishing } = usePublisherContext();
 
-  const allowAdvancedNoiseSuppression = useAppConfig(
+  const allowAdvancedNoiseSuppression = appConfig$.use.select(
     ({ audioSettings }) => audioSettings.allowAdvancedNoiseSuppression
   );
 

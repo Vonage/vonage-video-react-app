@@ -1,6 +1,6 @@
 import { ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useShouldShowParticipantList } from '@stores/appConfig';
+import appConfig$ from '@stores/appConfig';
 import ToolbarButton from '../ToolbarButton';
 import Badge from '@ui/Badge';
 import Tooltip from '@ui/Tooltip';
@@ -31,7 +31,7 @@ const ParticipantListButton = ({
   participantCount,
   isOverflowButton = false,
 }: ParticipantListButtonProps): ReactElement | false => {
-  const showParticipantList = useShouldShowParticipantList();
+  const showParticipantList = appConfig$.useShouldShowParticipantList();
   const theme = useTheme();
   const { t } = useTranslation();
 

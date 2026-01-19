@@ -1,1 +1,1 @@
-export { default } from './InputAdornment';
+export { default, type InputAdornmentProps } from './InputAdornment';

@@ -9,6 +9,7 @@
 */dist/
 */node_modules/
 public/js/
+frontend/docs/
 
 # dependency generator
 scripts/*

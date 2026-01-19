@@ -5,7 +5,7 @@
   "root": "backend",
   "sourceRoot": "backend",
   "targets": {
-    "serve": {
+    "dev": {
       "executor": "nx:run-commands",
       "options": {
         "cwd": "backend",
@@ -20,28 +20,27 @@
       },
       "dependsOn": ["build"]
     },
-
-    "start:development": {
+    "start:bundled": {
       "executor": "nx:run-commands",
       "options": {
         "cwd": "backend",
         "command": "node ./dist/bundle.cjs"
       },
-      "dependsOn": ["build:development"]
+      "dependsOn": ["build:dev"]
     },
     "build": {
       "executor": "nx:run-commands",
       "options": {
-        "cwd": ".",
-        "command": "webpack --config backend/webpack.config.cjs --target node --mode production"
+        "cwd": "backend",
+        "command": "webpack --config ../backend/webpack.config.cjs --target node --mode production"
       },
       "outputs": ["{workspaceRoot}/backend/dist"]
     },
-    "build:development": {
+    "build:dev": {
       "executor": "nx:run-commands",
       "options": {
-        "cwd": ".",
-        "command": "webpack --config backend/webpack.config.cjs --target node --mode development"
+        "cwd": "backend",
+        "command": "webpack --config ../backend/webpack.config.cjs --target node --mode development"
       },
       "outputs": ["{workspaceRoot}/backend/dist"]
     },
@@ -56,22 +55,14 @@
       "executor": "nx:run-commands",
       "options": {
         "cwd": "backend",
-        "command": "bash -c 'source ../vcrBuild.env.sh && NODE_OPTIONS=\"--experimental-vm-modules\" jest --maxWorkers=1 --coverage'"
+        "command": "bash -c 'source ../vcrBuild.env.sh && NODE_OPTIONS=\"--experimental-vm-modules\" jest --maxWorkers=1'"
       },
+      "inputs": ["default", "^default", { "externalDependencies": ["jest", "ts-jest"] }],
       "configurations": {
-        "watch": {
-          "command": "bash -c 'source ../vcrBuild.env.sh && NODE_OPTIONS=\"--experimental-vm-modules\" jest --maxWorkers=1 --coverage --watch'"
+        "coverage": {
+          "command": "bash -c 'source ../vcrBuild.env.sh && NODE_OPTIONS=\"--experimental-vm-modules\" jest --maxWorkers=1 --coverage'"
         }
-      },
-      "inputs": ["default", "^default", { "externalDependencies": ["jest", "ts-jest"] }]
-    },
-    "test:debug": {
-      "executor": "nx:run-commands",
-      "options": {
-        "cwd": "backend",
-        "command": "bash -c 'source ../vcrBuild.env.sh && NODE_OPTIONS=\"--experimental-vm-modules --inspect-brk\" jest --runInBand --detectOpenHandles --verbose'"
-      },
-      "inputs": ["default", "^default", { "externalDependencies": ["jest", "ts-jest"] }]
+      }
     },
     "lint": {
       "executor": "nx:run-commands",

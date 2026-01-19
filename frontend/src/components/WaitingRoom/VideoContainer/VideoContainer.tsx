@@ -77,7 +77,6 @@ const VideoContainer = ({ username }: VideoContainerProps): ReactElement => {
         aspectRatio: '16 / 9',
         width: { xs: '100dvw', sm: '583px' },
         maxWidth: '100%',
-        height: { sm: `${VIDEO_CONTAINER_HEIGHT_WR}px` },
         flexDirection: 'column',
         alignItems: 'center',
         justifyContent: 'center',
@@ -90,17 +89,23 @@ const VideoContainer = ({ username }: VideoContainerProps): ReactElement => {
         ref={containerRef}
         sx={{ display: isBackgroundEffectsOpen ? 'none' : 'block' }}
         data-video-container
+        className="animate-fade-in"
       />
+
       <VignetteEffect />
-      {isVideoLoading && <VideoLoading />}
+
+      {isVideoLoading && <VideoLoading className="animate-fade-in" />}
+
       <PreviewAvatar
         initials={initials}
         username={user.defaultSettings.name}
         isVideoEnabled={isVideoEnabled}
         isVideoLoading={isVideoLoading}
       />
+
       {!isVideoLoading && (
         <Box
+          className="animate-fade-in"
           sx={{
             position: 'absolute',
             left: 0,

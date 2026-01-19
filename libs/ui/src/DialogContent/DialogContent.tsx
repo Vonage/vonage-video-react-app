@@ -3,7 +3,7 @@ import {
   DialogContentProps as MUIDialogContentProps,
 } from '@mui/material';
 
-type DialogContentProps = MUIDialogContentProps;
+export type DialogContentProps = MUIDialogContentProps;
 
 const DialogContent = (dialogContentProps: DialogContentProps) => {
   return <MUIDialogContent {...dialogContentProps} />;
