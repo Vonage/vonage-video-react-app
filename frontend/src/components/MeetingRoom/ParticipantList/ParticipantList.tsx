@@ -156,7 +156,7 @@ const ParticipantList = ({ handleClose, isOpen }: ParticipantListProps): ReactEl
             }}
           />
         </Box>
-        <List sx={{ overflowX: 'auto', height: 'calc(100dvh - 240px)' }}>
+        <List sx={{ overflowX: 'auto', height: 'calc(100dvh - 296px)' }}>
           {isUserVisible && (
             <ParticipantListItem
               key="you"
