@@ -126,7 +126,7 @@ The Vonage Video API Reference App for React is currently supported on the lates
 ## Cross-Platform Support
 Looking to build on other platforms? The Vonage Video API Reference App is also available for:
 
-- *IOS*: [vonage-video-ios-app](https://github.com/Vonage/vonage-video-ios-app)
+- *iOS*: [vonage-video-ios-app](https://github.com/Vonage/vonage-video-ios-app)
 - *Android*: [vonage-video-android-app](https://github.com/Vonage/vonage-video-android-app)
 
 These reference apps share the same backend infrastructure and demonstrate consistent best practices across all platforms, making it easy to build unified video experiences for your users.
