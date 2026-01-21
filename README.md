@@ -5,9 +5,9 @@
 
 - [Table of Contents](#table-of-contents)
 - [What is it?](#what-is-it)
+- [Cross-Platform Support](#cross-platform-support)
 - [Why use it?](#why-use-it)
 - [Project Architecture](#project-architecture)
-- [Cross-Platform Support](#cross-platform-support)
 - [Platforms Supported](#platforms-supported)
 - [Requirements](#requirements)
 - [Running Locally](#running-locally)
