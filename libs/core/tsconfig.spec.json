@@ -18,7 +18,8 @@
     "src/**/*.test.ts",
     "src/**/*.spec.ts",
     "../common/src/**/*.ts",
-    "../common/src/**/*.tsx"
+    "../common/src/**/*.tsx",
+    "../common/test/**/*.ts"
   ],
   "tsBuildInfoFile": "dist/tsconfig.spec.tsbuildinfo"
 }

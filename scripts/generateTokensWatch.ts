@@ -23,7 +23,7 @@ watch(tokensDir, { recursive: true }, (eventType, filename) => {
     try {
       execSync(`tsx ${generateScript}`, { stdio: 'inherit' });
     } catch (error) {
-      console.error('\x1b[31m✖ Generation failed\x1b[0m');
+      console.error('\x1b[31m✖ Generation failed\x1b[0m', error);
     }
   }
 });
