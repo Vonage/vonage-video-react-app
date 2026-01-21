@@ -7,6 +7,7 @@
 - [What is it?](#what-is-it)
 - [Why use it?](#why-use-it)
 - [Project Architecture](#project-architecture)
+- [Cross-Platform Support](#cross-platform-support)
 - [Platforms Supported](#platforms-supported)
 - [Requirements](#requirements)
 - [Running Locally](#running-locally)
@@ -121,6 +122,14 @@ The Vonage Video API Reference App for React is currently supported on the lates
 *Note:* Some browsers such as Firefox or Safari do not support media processors like video and audio filters (e.g video effects): Please see [OT.hasMediaProcessorSupport](https://vonage.github.io/video-docs/video-js-reference/latest/OT.html#hasMediaProcessorSupport) for more information.
 
 *Note:* Mobile web views have limited supported at the moment. The minimum supported device width is `360px`.
+
+## Cross-Platform Support
+Looking to build on other platforms? The Vonage Video API Reference App is also available for:
+
+- *IOS*: [vonage-video-ios-app](https://github.com/Vonage/vonage-video-ios-app)
+- *Android*: [vonage-video-android-app](https://github.com/Vonage/vonage-video-android-app)
+
+These reference apps share the same backend infrastructure and demonstrate consistent best practices across all platforms, making it easy to build unified video experiences for your users.
 
 ## Requirements
 
