@@ -1,6 +1,6 @@
-import appConfig from '../AppConfigContext';
+import appConfig$ from '../AppConfigContext';
 
-const useShouldShowParticipantList = appConfig.use.createSelectorHook(
+const useShouldShowParticipantList = appConfig$.use.createSelectorHook(
   ({ isAppConfigLoaded, meetingRoomSettings }) =>
     isAppConfigLoaded && meetingRoomSettings.showParticipantList
 );

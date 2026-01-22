@@ -7,7 +7,7 @@ import initialValue from './helpers/defaultAppConfig';
  * Creates the AppConfig store
  * The store includes Context, Provider, and use hook for consuming the context.
  */
-const appConfig = createContext(initialValue, {
+const appConfig$ = createContext(initialValue, {
   metadata: () => ({
     loadAppConfigPromise: null as null | Promise<void>,
   }),
@@ -22,6 +22,6 @@ const appConfig = createContext(initialValue, {
  * The AppConfig context type.
  * Represents the shape of the context including state and actions.
  */
-export type AppConfigApi = InferContextApi<typeof appConfig.Context>;
+export type AppConfigApi = InferContextApi<typeof appConfig$.Context>;
 
-export default appConfig;
+export default appConfig$;

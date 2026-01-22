@@ -1,6 +1,6 @@
-import appConfig from '../AppConfigContext';
+import appConfig$ from '../AppConfigContext';
 
-const useIsMeetingChatAllowed = appConfig.use.createSelectorHook(
+const useIsMeetingChatAllowed = appConfig$.use.createSelectorHook(
   ({ isAppConfigLoaded, meetingRoomSettings }) => isAppConfigLoaded && meetingRoomSettings.allowChat
 );
 

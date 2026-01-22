@@ -1,6 +1,6 @@
-import appConfig from '../AppConfigContext';
+import appConfig$ from '../AppConfigContext';
 
-const useIsCameraControlAllowed = appConfig.use.createSelectorHook(
+const useIsCameraControlAllowed = appConfig$.use.createSelectorHook(
   ({ isAppConfigLoaded, videoSettings }) => isAppConfigLoaded && videoSettings.allowCameraControl
 );
 

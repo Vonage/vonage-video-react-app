@@ -1,4 +1,4 @@
-import appConfig from '../AppConfigContext';
+import appConfig$ from '../AppConfigContext';
 import { AppConfig } from '../AppConfigContext.types';
 
 /**
@@ -11,7 +11,7 @@ function useAppConfig<Selection>(
   selector: (state: AppConfig) => Selection,
   dependencies?: unknown[]
 ): Selection {
-  return appConfig.use.select(selector, dependencies);
+  return appConfig$.use.select(selector, dependencies);
 }
 
 export default useAppConfig;
