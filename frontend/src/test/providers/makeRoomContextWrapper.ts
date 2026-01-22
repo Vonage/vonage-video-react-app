@@ -5,7 +5,12 @@ import makeBackgroundPublisherProviderWrapper from './makeBackgroundPublisherPro
 import makeAudioOutputProviderWrapper from './makeAudioOutputProviderWrapper';
 import makePreviewPublisherProviderWrapper from './makePreviewPublisherProviderWrapper';
 
-export type RoomContextWrapperOptions = Record<string, never>;
+export type RoomContextWrapperOptions = {
+  publisherContext?: PublisherProviderWrapperOptions['publisherContext'];
+  sessionContext?: SessionProviderWrapperOptions['sessionOptions'];
+  userOptions?: UserProviderWrapperOptions['userOptions'];
+  appConfigOptions?: AppConfigProviderWrapperOptions;
+};
 
 /**
  * Creates wrapper for RoomContext which composes multiple providers.
