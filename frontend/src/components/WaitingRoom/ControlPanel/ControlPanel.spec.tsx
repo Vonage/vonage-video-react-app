@@ -1,6 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, Mock, vi } from 'vitest';
 import { cleanup, screen, render as renderBase } from '@testing-library/react';
-import { ComponentType, ReactElement, ReactNode } from 'react';
+import { ReactElement } from 'react';
 import useDevices from '@hooks/useDevices';
 import { AllMediaDevices } from '@app-types/room';
 import { allMediaDevices } from '@utils/mockData/device';
@@ -164,7 +164,7 @@ function render(
   const { RoomProviderWrapper } = makeRoomContextWrapper(options?.roomContextOptions);
 
   const wrapper = composeProviders(
-    RoomProviderWrapper as ComponentType<{ children: ReactNode }>,
+    RoomProviderWrapper,
     backgroundEffectsDialog$.Provider,
     precallNetworkTestDialog$.Provider
   );

@@ -4,6 +4,10 @@ import makeUserProviderWrapper from './makeUserProviderWrapper';
 import makeBackgroundPublisherProviderWrapper from './makeBackgroundPublisherProviderWrapper';
 import makeAudioOutputProviderWrapper from './makeAudioOutputProviderWrapper';
 import makePreviewPublisherProviderWrapper from './makePreviewPublisherProviderWrapper';
+import type { PublisherProviderWrapperOptions } from './makePublisherProviderWrapper';
+import type { SessionProviderWrapperOptions } from './makeSessionProviderWrapper';
+import type { UserProviderWrapperOptions } from './makeUserProviderWrapper';
+import type { AppConfigProviderWrapperOptions } from './makeAppConfigProviderWrapper';
 
 export type RoomContextWrapperOptions = {
   publisherContext?: PublisherProviderWrapperOptions['publisherContext'];
