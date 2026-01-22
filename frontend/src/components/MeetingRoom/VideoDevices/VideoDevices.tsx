@@ -127,7 +127,9 @@ const VideoDevices = ({ handleToggle }: VideoDevicesProps): ReactElement | false
                     <Box sx={{ minWidth: 36 }} /> // Placeholder when CheckIcon is not displayed
                   )}
                   <Tooltip title={option.label} placement="right" arrow>
-                    <Typography noWrap>{option.label}</Typography>
+                    <Typography component="span" noWrap>
+                      {option.label}
+                    </Typography>
                   </Tooltip>
                 </Box>
               </MenuItem>

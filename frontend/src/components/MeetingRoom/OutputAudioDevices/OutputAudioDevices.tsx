@@ -127,7 +127,9 @@ const OutputAudioDevices = ({ handleToggle }: OutputAudioDevicesProps): ReactEle
                     <Box sx={{ minWidth: 36 }} />
                   )}
                   <Tooltip title={device.label} placement="right" arrow>
-                    <Typography noWrap>{device.label}</Typography>
+                    <Typography component="span" noWrap>
+                      {device.label}
+                    </Typography>
                   </Tooltip>
                 </Box>
               </MenuItem>

@@ -118,7 +118,9 @@ const InputAudioDevices = ({ handleToggle }: InputAudioDevicesProps): ReactEleme
                     <Box sx={{ minWidth: 36 }} />
                   )}
                   <Tooltip title={option} placement="right" arrow>
-                    <Typography noWrap>{option}</Typography>
+                    <Typography component="span" noWrap>
+                      {option}
+                    </Typography>
                   </Tooltip>
                 </Box>
               </MenuItem>
