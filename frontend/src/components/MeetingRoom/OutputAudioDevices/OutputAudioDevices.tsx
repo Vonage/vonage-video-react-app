@@ -13,6 +13,7 @@ import Typography from '@ui/Typography';
 import MenuList from '@ui/MenuList';
 import MenuItem from '@ui/MenuItem';
 import VividIcon from '@components/VividIcon';
+import Tooltip from '@ui/Tooltip';
 
 export type OutputAudioDevicesProps = {
   handleToggle: () => void;
@@ -123,9 +124,11 @@ const OutputAudioDevices = ({ handleToggle }: OutputAudioDevicesProps): ReactEle
                       />
                     </Box>
                   ) : (
-                    <Box sx={{ minWidth: 36 }} /> // Placeholder when CheckIcon is not displayed
+                    <Box sx={{ minWidth: 36 }} />
                   )}
-                  <Typography noWrap>{device.label}</Typography>
+                  <Tooltip title={device.label} placement="right" arrow>
+                    <Typography noWrap>{device.label}</Typography>
+                  </Tooltip>
                 </Box>
               </MenuItem>
             );

@@ -12,6 +12,7 @@ import Typography from '@ui/Typography';
 import MenuList from '@ui/MenuList';
 import MenuItem from '@ui/MenuItem';
 import VividIcon from '@components/VividIcon';
+import Tooltip from '@ui/Tooltip';
 
 export type VideoDevicesProps = {
   handleToggle: () => void;
@@ -125,7 +126,9 @@ const VideoDevices = ({ handleToggle }: VideoDevicesProps): ReactElement | false
                   ) : (
                     <Box sx={{ minWidth: 36 }} /> // Placeholder when CheckIcon is not displayed
                   )}
-                  <Typography noWrap>{option.label}</Typography>
+                  <Tooltip title={option.label} placement="right" arrow>
+                    <Typography noWrap>{option.label}</Typography>
+                  </Tooltip>
                 </Box>
               </MenuItem>
             );

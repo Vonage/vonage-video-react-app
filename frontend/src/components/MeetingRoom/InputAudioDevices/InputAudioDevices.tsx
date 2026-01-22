@@ -12,6 +12,7 @@ import useDevices from '@hooks/useDevices';
 import usePublisherContext from '@hooks/usePublisherContext';
 import { setStorageItem, STORAGE_KEYS } from '@utils/storage';
 import cleanAndDedupeDeviceLabels from '@utils/cleanAndDedupeDeviceLabels';
+import Tooltip from '@ui/Tooltip';
 
 export type InputAudioDevicesProps = {
   handleToggle: () => void;
@@ -114,9 +115,11 @@ const InputAudioDevices = ({ handleToggle }: InputAudioDevicesProps): ReactEleme
                       />
                     </Box>
                   ) : (
-                    <Box sx={{ minWidth: 36 }} /> // Placeholder when CheckIcon is not displayed
+                    <Box sx={{ minWidth: 36 }} />
                   )}
-                  <Typography noWrap>{option}</Typography>
+                  <Tooltip title={option} placement="right" arrow>
+                    <Typography noWrap>{option}</Typography>
+                  </Tooltip>
                 </Box>
               </MenuItem>
             );
