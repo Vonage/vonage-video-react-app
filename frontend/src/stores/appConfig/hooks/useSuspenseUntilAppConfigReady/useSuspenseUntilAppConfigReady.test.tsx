@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { StrictMode } from 'react';
-import appConfig$, { useSuspenseUntilAppConfigReady } from '../../';
+import appConfig$, { useSuspenseUntilAppConfigReady } from '../..';
 import { AppConfigProviderWrapperOptions, makeAppConfigProviderWrapper } from '@test/providers';
 import composeProviders from '@common/helpers/composeProviders';
 import SuspenseBoundary from '@common/components/SuspenseBoundary';

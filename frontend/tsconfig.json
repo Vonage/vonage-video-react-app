@@ -28,7 +28,8 @@
       "@ui/*": ["../libs/ui/src/*"],
       "@common/*": ["../libs/common/src/*"],
       "@core/*": ["../libs/core/src/*"],
-      "@test-helpers/*": ["../libs/common/test/*"]
+      "@test-helpers/*": ["../libs/common/test/*"],
+      "@stores/*": ["./src/stores/*"]
     },
     "types": ["vite/client", "node", "vitest", "vitest/globals"]
   },

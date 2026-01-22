@@ -1,4 +1,4 @@
-import { AppConfig } from '../AppConfigContext.types';
+import type { AppConfig } from '..';
 
 const defaultAppConfig: AppConfig = {
   isAppConfigLoaded: false,

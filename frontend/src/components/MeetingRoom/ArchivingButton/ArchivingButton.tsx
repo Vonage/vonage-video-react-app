@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import useRoomName from '@hooks/useRoomName';
 import { startArchiving, stopArchiving } from '@api/archiving';
 import useSessionContext from '@hooks/useSessionContext';
-import useAppConfig from '@Context/AppConfig/hooks/useAppConfig';
+import { useAppConfig } from '@stores/appConfig';
 import ToolbarButton from '../ToolbarButton';
 import PopupDialog, { DialogTexts } from '../PopupDialog';
 import Tooltip from '@ui/Tooltip';

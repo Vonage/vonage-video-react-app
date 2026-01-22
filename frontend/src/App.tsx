@@ -13,7 +13,7 @@ import RoomProvider from './Context/RoomProvider';
 import Box from '@ui/Box';
 import useTheme from '@ui/theme';
 import AppContextProvider from './AppContextProvider';
-import { AppConfig } from '@Context/AppConfig/AppConfigContext.types';
+import type { AppConfig } from '@stores/appConfig';
 import { DeepPartial } from './types';
 import RedirectToUnsupportedBrowserPage from '@components/RedirectToUnsupportedBrowserPage';
 import SuspenseBoundary from '@common/components/SuspenseBoundary/SuspenseBoundary';

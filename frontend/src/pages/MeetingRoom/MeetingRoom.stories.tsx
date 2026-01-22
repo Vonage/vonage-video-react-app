@@ -41,13 +41,7 @@ export const Skeleton: Story = {
  * Demonstrates how to customize the skeleton appearance using the sx prop
  */
 export const SkeletonWithCustomSx: Story = {
-  render: () => (
-    <MeetingRoomSkeleton
-      sx={{
-        backgroundColor: '#1a1a2e',
-      }}
-    />
-  ),
+  render: () => <MeetingRoomSkeleton />,
 };
 
 /**

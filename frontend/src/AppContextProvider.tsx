@@ -1,8 +1,7 @@
-import { AppConfigApi } from '@Context/AppConfig/actions/loadAppConfig';
+import type { AppConfigApi } from '@stores/appConfig';
 import React, { type PropsWithChildren } from 'react';
-import appConfig, { AppConfig } from '@Context/AppConfig';
+import appConfig, { type AppConfig, mergeAppConfigs } from '@stores/appConfig';
 import UserProvider from '@Context/user';
-import mergeAppConfigs from '@Context/AppConfig/helpers/mergeAppConfigs';
 import { DeepPartial } from './types';
 import { ThemeProvider } from '@ui/theme';
 

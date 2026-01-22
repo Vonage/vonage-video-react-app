@@ -2,7 +2,7 @@ import { hasMediaProcessorSupport } from '@vonage/client-sdk-video';
 import { ReactElement } from 'react';
 import PortraitIcon from '@mui/icons-material/Portrait';
 import { useTranslation } from 'react-i18next';
-import useAppConfig from '@Context/AppConfig/hooks/useAppConfig';
+import { useAppConfig } from '@stores/appConfig';
 import Box from '@ui/Box';
 import Tooltip from '@ui/Tooltip';
 import useTheme from '@ui/theme';

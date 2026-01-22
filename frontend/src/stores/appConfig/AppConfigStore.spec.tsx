@@ -1,8 +1,8 @@
 import { describe, expect, it, vi } from 'vitest';
 import { act, renderHook as renderHookBase, waitFor } from '@testing-library/react';
 import defaultAppConfig from './helpers/defaultAppConfig';
-import appConfigStore from './AppConfigContext';
-import type { AppConfig } from './AppConfigContext.types';
+import appConfigStore from './AppConfigStore';
+import type { AppConfig } from '.';
 
 describe('AppConfigContext', () => {
   it('returns the default config when no config.json is loaded', async () => {

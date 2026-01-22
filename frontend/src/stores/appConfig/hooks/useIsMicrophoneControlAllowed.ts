@@ -1,4 +1,4 @@
-import appConfig$ from '../AppConfigContext';
+import appConfig$ from '../AppConfigStore';
 
 const useIsMicrophoneControlAllowed = appConfig$.use.createSelectorHook(
   ({ isAppConfigLoaded, audioSettings }) =>

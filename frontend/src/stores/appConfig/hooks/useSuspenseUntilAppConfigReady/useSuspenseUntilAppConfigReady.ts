@@ -1,7 +1,7 @@
 import useSuspenseMemo from '@common/hooks/useSuspenseMemo';
 import { useEffect } from 'react';
 import defer from '@common/execution/defer';
-import appConfig$ from '../../AppConfigContext';
+import appConfig$ from '../../AppConfigStore';
 
 /**
  * Suspends the component or hook until the app configuration is fully loaded.

@@ -1,4 +1,4 @@
-import appConfig$ from '../AppConfigContext';
+import appConfig$ from '../AppConfigStore';
 
 const useIsMeetingCaptionsAllowed = appConfig$.use.createSelectorHook(
   ({ isAppConfigLoaded, meetingRoomSettings }) =>

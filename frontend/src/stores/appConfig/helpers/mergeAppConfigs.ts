@@ -1,5 +1,5 @@
 import type { DeepPartial } from '@app-types/index';
-import type { AppConfig } from '../AppConfigContext.types';
+import type { AppConfig } from '..';
 import defaultAppConfig from './defaultAppConfig';
 
 /**

@@ -1,8 +1,8 @@
 import tryCatch from '@common/execution/tryCatch';
-import type { AppConfig } from '../AppConfigContext.types';
+import type { AppConfig } from '..';
 import env from '../../../env';
 
-export type AppConfigApi = import('../AppConfigContext').AppConfigApi;
+export type AppConfigApi = import('../AppConfigStore').AppConfigApi;
 
 /**
  * Loads the application configuration from public/config.json file.

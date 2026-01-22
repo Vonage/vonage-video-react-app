@@ -1,7 +1,7 @@
 import Badge from '@ui/Badge';
 import { ForwardedRef, forwardRef, ReactElement } from 'react';
 import useSessionContext from '@hooks/useSessionContext';
-import useIsMeetingChatAllowed from '@Context/AppConfig/hooks/useIsMeetingChatAllowed';
+import { useIsMeetingChatAllowed } from '@stores/appConfig';
 import useTheme from '@ui/theme';
 
 export type UnreadMessagesBadgeProps = {

@@ -1,6 +1,6 @@
 import { ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
-import useIsMicrophoneControlAllowed from '@Context/AppConfig/hooks/useIsMicrophoneControlAllowed';
+import { useIsMicrophoneControlAllowed } from '@stores/appConfig';
 import usePreviewPublisherContext from '@hooks/usePreviewPublisherContext';
 import useTheme from '@ui/theme';
 import Box from '@ui/Box';

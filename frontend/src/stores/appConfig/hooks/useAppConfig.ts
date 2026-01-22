@@ -1,5 +1,5 @@
-import appConfig$ from '../AppConfigContext';
-import { AppConfig } from '../AppConfigContext.types';
+import appConfig$ from '../AppConfigStore';
+import type { AppConfig } from '..';
 
 /**
  * Hook to access the AppConfig state with a selector.

@@ -1,6 +1,6 @@
 import { ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
-import useShouldShowParticipantList from '@Context/AppConfig/hooks/useShouldShowParticipantList';
+import { useShouldShowParticipantList } from '@stores/appConfig';
 import ToolbarButton from '../ToolbarButton';
 import Badge from '@ui/Badge';
 import Tooltip from '@ui/Tooltip';

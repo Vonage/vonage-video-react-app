@@ -1,8 +1,8 @@
 import type { DeepPartial } from '@app-types/index';
-import type { AppConfig } from '../AppConfigContext.types';
+import type { AppConfig } from '..';
 import mergeAppConfigs from '../helpers/mergeAppConfigs';
 
-export type AppConfigApi = import('../AppConfigContext').AppConfigApi;
+export type AppConfigApi = import('../AppConfigStore').AppConfigApi;
 
 /**
  * Partially updates the app config state

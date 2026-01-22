@@ -1,4 +1,4 @@
-import appConfig$ from '../AppConfigContext';
+import appConfig$ from '../AppConfigStore';
 
 const useIsBackgroundEffectsAllowed = appConfig$.use.createSelectorHook(
   ({ isAppConfigLoaded, videoSettings }) =>
