@@ -33,6 +33,8 @@ describe('ArchivingButton', () => {
     sessionContext = {
       subscriberWrappers: [],
       archiveId: null,
+      markArchiveStartRequestedBySelf: vi.fn(),
+      resetArchiveStartRequestedBySelf: vi.fn(),
     } as unknown as SessionContextType;
 
     mockUseSessionContext.mockReturnValue(sessionContext as unknown as SessionContextType);
@@ -67,6 +69,8 @@ describe('ArchivingButton', () => {
     mockUseSessionContext.mockReturnValue({
       subscriberWrappers: [],
       archiveId: 'test-archive-id',
+      markArchiveStartRequestedBySelf: vi.fn(),
+      resetArchiveStartRequestedBySelf: vi.fn(),
     } as unknown as SessionContextType);
 
     render(<ArchivingButton handleClick={mockHandleCloseMenu} />);
@@ -78,6 +82,8 @@ describe('ArchivingButton', () => {
     mockUseSessionContext.mockReturnValue({
       subscriberWrappers: [],
       archiveId: testArchiveId,
+      markArchiveStartRequestedBySelf: vi.fn(),
+      resetArchiveStartRequestedBySelf: vi.fn(),
     } as unknown as SessionContextType);
 
     render(<ArchivingButton handleClick={mockHandleCloseMenu} />);

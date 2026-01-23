@@ -24,6 +24,7 @@ import type { PublishingErrorType } from '../../Context/PublisherProvider/usePub
 import useUserContext from '../../hooks/useUserContext';
 import env from '../../env';
 import useMountEffect from '@common/hooks/useMountEffect';
+import RecordingPopUpIndicator from '@components/MeetingRoom/RecordingPopupIndicator';
 
 /**
  * MeetingRoom Component
@@ -67,6 +68,8 @@ const MeetingRoom = (): ReactElement => {
     toggleBackgroundEffects,
     closeRightPanel,
     toggleReportIssue,
+    archiveId,
+    archiveIdStartedBySelf,
   } = useSessionContext();
   const { isSharingScreen, screensharingPublisher, screenshareVideoElement, toggleShareScreen } =
     useScreenShare();
@@ -139,6 +142,11 @@ const MeetingRoom = (): ReactElement => {
 
   useRedirectOnSubscriberError({ subscriberError: subscriptionError, reconnecting });
 
+  const shouldPromptRecordingConsent =
+    !!archiveId && (archiveIdStartedBySelf === null || archiveId !== archiveIdStartedBySelf);
+
+  const recordingPopupIndicatorKey = archiveId ?? 'unknown-archive-id';
+
   return (
     <Box
       data-testid="meetingRoom"
@@ -166,6 +174,7 @@ const MeetingRoom = (): ReactElement => {
           setCaptionsErrorResponse={setCaptionsErrorResponse}
         />
       )}
+      {shouldPromptRecordingConsent && <RecordingPopUpIndicator key={recordingPopupIndicatorKey} />}
       <Toolbar
         isSharingScreen={isSharingScreen}
         toggleShareScreen={toggleShareScreen}

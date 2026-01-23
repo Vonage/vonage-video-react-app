@@ -33,7 +33,8 @@ const ArchivingButton = ({
   const { t } = useTranslation();
   const roomName = useRoomName();
   const theme = useTheme();
-  const { archiveId } = useSessionContext();
+  const { archiveId, markArchiveStartRequestedBySelf, resetArchiveStartRequestedBySelf } =
+    useSessionContext();
   const allowArchiving = useAppConfig(
     ({ meetingRoomSettings }) => meetingRoomSettings.allowArchiving
   );
@@ -72,9 +73,11 @@ const ArchivingButton = ({
   const handleDialogClick = async (action: 'start' | 'stop') => {
     if (action === 'start') {
       if (!archiveId && roomName) {
+        markArchiveStartRequestedBySelf();
         try {
           await startArchiving(roomName);
         } catch (err) {
+          resetArchiveStartRequestedBySelf();
           console.log(err);
         }
       }

@@ -35,6 +35,7 @@ const GoodBye = (): ReactElement => {
   const archives = useArchives({ roomName });
   const header: string = location.state?.header || t('goodbye.default.header');
   const caption: string = location.state?.caption || t('goodbye.default.message');
+  const isSelfDeclinedRecording: boolean = location.state?.isSelfDeclinedRecording || false;
 
   return (
     <PageLayout>
@@ -49,6 +50,7 @@ const GoodBye = (): ReactElement => {
           <Card
             sx={{
               alignItems: 'center',
+              minWidth: { xs: '100%', lg: '500px' },
             }}
           >
             <Typography
@@ -65,23 +67,24 @@ const GoodBye = (): ReactElement => {
             <ReenterRoomButton roomName={roomName} />
             <GoToLandingPageButton />
           </Card>
-
-          <Card
-            sx={{
-              minWidth: { xs: '100%', lg: '500px' },
-            }}
-          >
-            <Typography
-              variant="h6"
+          {!isSelfDeclinedRecording && (
+            <Card
               sx={{
-                color: theme.colors.textSecondary,
-                mb: 3,
+                minWidth: { xs: '100%', lg: '500px' },
               }}
             >
-              {t('archiveList.label')}
-            </Typography>
-            <ArchiveList archives={archives} />
-          </Card>
+              <Typography
+                variant="h6"
+                sx={{
+                  color: theme.colors.textSecondary,
+                  mb: 3,
+                }}
+              >
+                {t('archiveList.label')}
+              </Typography>
+              <ArchiveList archives={archives} />
+            </Card>
+          )}
         </Stack>
       </PageLayout.Right>
       <PageLayout.Footer>
