@@ -31,7 +31,7 @@ const RecordingPopUpIndicator = (): ReactElement => {
     });
   };
 
-  const handleClose = () => {
+  const handleDecline = () => {
     setIsModalOpen(false);
     redirectToGoodbye();
   };
@@ -43,7 +43,7 @@ const RecordingPopUpIndicator = (): ReactElement => {
   return (
     <PopupDialog
       isOpen={isModalOpen}
-      handleClose={handleClose}
+      handleClose={handleDecline}
       handleActionClick={handleActionClick}
       actionText={actionText}
     />
