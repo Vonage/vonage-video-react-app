@@ -38,6 +38,21 @@
         "cwd": "libs/ui",
         "command": "tsc -p tsconfig.lib.json --pretty true --noEmit"
       }
+    },
+    "storybook": {
+      "executor": "nx:run-commands",
+      "options": {
+        "cwd": "libs/ui",
+        "command": "storybook dev -p 6007"
+      }
+    },
+    "build-storybook": {
+      "executor": "nx:run-commands",
+      "outputs": ["{projectRoot}/storybook-static"],
+      "options": {
+        "cwd": "libs/ui",
+        "command": "storybook build"
+      }
     }
   },
   "tags": ["scope:ui", "type:lib"]

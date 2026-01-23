@@ -1,7 +1,7 @@
 import { expect } from '@playwright/test';
 import { randomBytes } from 'crypto';
 import { test } from '../fixtures/testWithLogging';
-import { openMeetingRoomWithSettings, waitAndClickFirefox } from './utils';
+import { openMeetingRoomWithSettings, waitUntilReady } from './utils';
 
 test.describe('meeting room', () => {
   test('should allow a user to mute another participant', async ({
@@ -22,7 +22,7 @@ test.describe('meeting room', () => {
       browserName,
     });
     // These clicks and waits are needed for firefox
-    await waitAndClickFirefox(pageOne, browserName);
+    await waitUntilReady(pageOne, browserName);
 
     await openMeetingRoomWithSettings({
       page: pageTwo,

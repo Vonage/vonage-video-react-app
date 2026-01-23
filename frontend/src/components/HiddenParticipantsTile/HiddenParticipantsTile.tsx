@@ -3,7 +3,7 @@ import { Box } from 'opentok-layout-js';
 import { SubscriberWrapper } from '@app-types/session';
 import getBoxStyle from '@utils/helpers/getBoxStyle';
 import useSessionContext from '@hooks/useSessionContext';
-import useShouldShowParticipantList from '@Context/AppConfig/hooks/useShouldShowParticipantList';
+import { useShouldShowParticipantList } from '@stores/appConfig';
 import AvatarInitials from '../AvatarInitials';
 import AvatarGroup from '@ui/AvatarGroup';
 import ButtonBase from '@ui/ButtonBase';

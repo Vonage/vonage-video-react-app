@@ -15,7 +15,7 @@ import useRightPanel, { RightPanelActiveTab } from '@hooks/useRightPanel';
 import useUserContext from '@hooks/useUserContext';
 import useChat from '@hooks/useChat';
 import useEmoji, { EmojiWrapper } from '@hooks/useEmoji';
-import appConfigContext from '@Context/AppConfig';
+import appConfigContext from '@stores/appConfig';
 import fetchCredentials from '@api/fetchCredentials';
 import ActiveSpeakerTracker from '@utils/ActiveSpeakerTracker';
 import {

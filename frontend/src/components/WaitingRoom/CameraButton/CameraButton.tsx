@@ -2,7 +2,7 @@ import { ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
 import usePreviewPublisherContext from '@hooks/usePreviewPublisherContext';
 import useBackgroundPublisherContext from '@hooks/useBackgroundPublisherContext';
-import useIsCameraControlAllowed from '@Context/AppConfig/hooks/useIsCameraControlAllowed';
+import { useIsCameraControlAllowed } from '@stores/appConfig';
 import { VIDEO_CONTAINER_BUTTON_SIZE_WR } from '@utils/constants';
 import useTheme from '@ui/theme';
 import Tooltip from '@ui/Tooltip';

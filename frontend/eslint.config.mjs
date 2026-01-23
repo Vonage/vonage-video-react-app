@@ -27,6 +27,9 @@ export default [
             'subscriber',
             'screen-subscriber',
             'bg-notVeryGray-100',
+
+            // custom tailwind classes defined in our tailwind.config.ts
+            'animate-fade-in',
           ],
         },
       ],

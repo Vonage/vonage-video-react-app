@@ -9,7 +9,7 @@ import {
   makeAppConfigProviderWrapper,
   type AppConfigProviderWrapperOptions,
 } from '@test/providers';
-import composeProviders from '@utils/composeProviders';
+import composeProviders from '@common/helpers/composeProviders';
 import mediaDevicesMock from '@common/test/mocks/mediaDevicesMock';
 import CameraButton from './CameraButton';
 

@@ -149,12 +149,14 @@ const MeetingRoom = (): ReactElement => {
       }}
     >
       {isSmallViewport && <SmallViewportHeader />}
+
       <VideoTileCanvas
         isSharingScreen={isSharingScreen}
         screensharingPublisher={screensharingPublisher}
         screenshareVideoElement={screenshareVideoElement}
         isRightPanelOpen={rightPanelActiveTab !== 'closed'}
       />
+
       <RightPanel activeTab={rightPanelActiveTab} handleClose={closeRightPanel} />
       <EmojisOrigin />
       {isUserCaptionsEnabled && <CaptionsBox />}

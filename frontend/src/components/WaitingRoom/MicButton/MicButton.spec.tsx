@@ -9,7 +9,7 @@ import {
 } from '@test/providers';
 import MicButton from './MicButton';
 import mediaDevicesMock from '@common/test/mocks/mediaDevicesMock';
-import composeProviders from '@utils/composeProviders';
+import composeProviders from '@common/helpers/composeProviders';
 
 describe('MicButton', () => {
   beforeEach(() => {

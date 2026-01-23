@@ -1,6 +1,6 @@
 import { ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
-import useIsMeetingChatAllowed from '@Context/AppConfig/hooks/useIsMeetingChatAllowed';
+import { useIsMeetingChatAllowed } from '@stores/appConfig';
 import ToolbarButton from '../ToolbarButton';
 import UnreadMessagesBadge from '../UnreadMessagesBadge';
 import Tooltip from '@ui/Tooltip';

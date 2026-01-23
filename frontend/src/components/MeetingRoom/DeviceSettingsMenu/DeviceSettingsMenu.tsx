@@ -1,6 +1,6 @@
 import { ReactElement, RefObject, Dispatch, SetStateAction } from 'react';
 import { hasMediaProcessorSupport } from '@vonage/client-sdk-video';
-import useAppConfig from '@Context/AppConfig/hooks/useAppConfig';
+import { useAppConfig } from '@stores/appConfig';
 import useTheme from '@ui/theme';
 import InputDevices from '../InputAudioDevices';
 import OutputDevices from '../OutputAudioDevices';

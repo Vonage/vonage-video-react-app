@@ -11,7 +11,7 @@ describe('GET /_/health', () => {
   let server: Server;
 
   beforeAll(async () => {
-    server = await startServer();
+    server = await startServer(0);
   });
 
   afterAll((done) => {

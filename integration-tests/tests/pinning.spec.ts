@@ -1,7 +1,7 @@
 import { expect } from '@playwright/test';
 import * as crypto from 'crypto';
 import { test } from '../fixtures/testWithLogging';
-import { openMeetingRoomWithSettings, waitAndClickFirefox } from './utils';
+import { openMeetingRoomWithSettings, waitUntilReady } from './utils';
 
 test.describe('participant pinning', () => {
   test('pinned participants should be larger', async ({
@@ -23,7 +23,7 @@ test.describe('participant pinning', () => {
       browserName,
     });
     // These clicks and waits are needed for firefox
-    await waitAndClickFirefox(pageOne, browserName);
+    await waitUntilReady(pageOne, browserName);
 
     await openMeetingRoomWithSettings({
       page: pageTwo,
@@ -32,7 +32,7 @@ test.describe('participant pinning', () => {
       audioOff: true,
       browserName,
     });
-    await waitAndClickFirefox(pageTwo, browserName);
+    await waitUntilReady(pageTwo, browserName);
     await openMeetingRoomWithSettings({
       page: pageThree,
       username: 'User Three',
@@ -40,7 +40,7 @@ test.describe('participant pinning', () => {
       audioOff: true,
       browserName,
     });
-    await waitAndClickFirefox(pageThree, browserName);
+    await waitUntilReady(pageThree, browserName);
 
     await pageThree.waitForSelector('.publisher', { state: 'visible' });
     await pageThree.waitForSelector('.subscriber', { state: 'visible' });

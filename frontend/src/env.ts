@@ -1,10 +1,10 @@
 export type Lang = 'en' | 'it' | 'es' | 'es-MX' | 'en-US';
 
 export type EnvArg = {
-  VITE_ENABLE_REPORT_ISSUE: boolean;
+  VITE_ENABLE_REPORT_ISSUE: boolean | string;
   VITE_I18N_FALLBACK_LANGUAGE: Lang;
   VITE_I18N_SUPPORTED_LANGUAGES: string;
-  VITE_BYPASS_WAITING_ROOM: boolean;
+  VITE_BYPASS_WAITING_ROOM: boolean | string;
   VITE_API_URL: string;
   VITE_TUNNEL_DOMAIN: string;
   VITE_AVOID_FETCHING_APP_CONFIG: string;
@@ -29,17 +29,17 @@ export class Env {
   public MODE: 'development' | 'production' | 'test';
 
   constructor(env: Partial<EnvArg>) {
-    this.VITE_ENABLE_REPORT_ISSUE = Boolean(env.VITE_ENABLE_REPORT_ISSUE ?? false);
+    this.VITE_ENABLE_REPORT_ISSUE = toBoolean(env.VITE_ENABLE_REPORT_ISSUE);
     this.VITE_I18N_FALLBACK_LANGUAGE = env.VITE_I18N_FALLBACK_LANGUAGE || 'en';
 
     this.setSupportedLanguages(env.VITE_I18N_SUPPORTED_LANGUAGES);
 
-    this.VITE_BYPASS_WAITING_ROOM = Boolean(env.VITE_BYPASS_WAITING_ROOM ?? false);
+    this.VITE_BYPASS_WAITING_ROOM = toBoolean(env.VITE_BYPASS_WAITING_ROOM);
 
     this.setViteApiUrl(env.VITE_API_URL);
 
     this.VITE_TUNNEL_DOMAIN = env.VITE_TUNNEL_DOMAIN;
-    this.VITE_AVOID_FETCHING_APP_CONFIG = Boolean(env.VITE_AVOID_FETCHING_APP_CONFIG === 'true');
+    this.VITE_AVOID_FETCHING_APP_CONFIG = toBoolean(env.VITE_AVOID_FETCHING_APP_CONFIG);
     this.MODE = env.MODE || 'development';
   }
 
@@ -79,6 +79,10 @@ export class Env {
 
     this.VITE_I18N_SUPPORTED_LANGUAGES = languages;
   };
+}
+
+function toBoolean(value: string | boolean | undefined): boolean {
+  return value === true || value === 'true';
 }
 
 export default new Env(import.meta.env as unknown as EnvArg);

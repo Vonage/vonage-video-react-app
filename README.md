@@ -11,6 +11,7 @@
 - [Platforms Supported](#platforms-supported)
 - [Requirements](#requirements)
 - [Running Locally](#running-locally)
+- [Storybook](#storybook)
 - [Testing on Multiple Devices](#testing-on-multiple-devices)
 - [Deployment to Vonage Cloud Runtime](#deployment-to-vonage-cloud-runtime)
 - [Testing](#testing)
@@ -196,6 +197,28 @@ These reference apps share the same backend infrastructure and demonstrate consi
     ```
 
     This starts both the backend server (port **3345**) and the frontend Vite dev server (port **5173**). You can now access the app at [http://localhost:5173](http://localhost:5173).
+
+## Storybook
+
+Storybook is available for developing and testing UI components in isolation.
+
+To run Storybook for the frontend:
+
+```bash
+yarn storybook:frontend
+```
+
+This will start the Storybook dev server at [http://localhost:6006](http://localhost:6006).
+
+-----
+
+To run Storybook for the ui:
+
+```bash
+yarn storybook:ui
+```
+
+This will start the Storybook dev server at [http://localhost:6007](http://localhost:6007).
 
 ## Testing on Multiple Devices
 

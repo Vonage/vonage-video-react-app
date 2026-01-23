@@ -1,7 +1,7 @@
 import Tooltip from '@ui/Tooltip';
 import { Dispatch, ReactElement, SetStateAction, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
-import useAppConfig from '@Context/AppConfig/hooks/useAppConfig';
+import { useAppConfig } from '@stores/appConfig';
 import useTheme from '@ui/theme';
 import ToolbarButton from '../ToolbarButton';
 import EmojiGrid from '../EmojiGrid/EmojiGrid';

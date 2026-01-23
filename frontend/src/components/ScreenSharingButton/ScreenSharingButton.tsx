@@ -1,7 +1,7 @@
 import Tooltip from '@ui/Tooltip';
 import { ReactElement, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import useAppConfig from '@Context/AppConfig/hooks/useAppConfig';
+import { useAppConfig } from '@stores/appConfig';
 import { isMobile } from '@utils/util';
 import ToolbarButton from '../MeetingRoom/ToolbarButton';
 import PopupDialog, { DialogTexts } from '../MeetingRoom/PopupDialog';

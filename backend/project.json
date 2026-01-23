@@ -56,11 +56,11 @@
       "executor": "nx:run-commands",
       "options": {
         "cwd": "backend",
-        "command": "NODE_OPTIONS=\"--experimental-vm-modules\" jest --maxWorkers=1 --coverage"
+        "command": "bash -c 'source ../vcrBuild.env.sh && NODE_OPTIONS=\"--experimental-vm-modules\" jest --maxWorkers=1 --coverage'"
       },
       "configurations": {
         "watch": {
-          "command": "NODE_OPTIONS=\"--experimental-vm-modules\" jest --maxWorkers=1 --coverage --watch"
+          "command": "bash -c 'source ../vcrBuild.env.sh && NODE_OPTIONS=\"--experimental-vm-modules\" jest --maxWorkers=1 --coverage --watch'"
         }
       },
       "inputs": ["default", "^default", { "externalDependencies": ["jest", "ts-jest"] }]
@@ -69,7 +69,7 @@
       "executor": "nx:run-commands",
       "options": {
         "cwd": "backend",
-        "command": "NODE_OPTIONS=\"--experimental-vm-modules --inspect-brk\" jest --runInBand --detectOpenHandles --verbose"
+        "command": "bash -c 'source ../vcrBuild.env.sh && NODE_OPTIONS=\"--experimental-vm-modules --inspect-brk\" jest --runInBand --detectOpenHandles --verbose'"
       },
       "inputs": ["default", "^default", { "externalDependencies": ["jest", "ts-jest"] }]
     },

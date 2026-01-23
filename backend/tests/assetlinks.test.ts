@@ -9,7 +9,7 @@ describe('GET /.well-known/assetlinks.json', () => {
   let server: Server;
 
   beforeAll(async () => {
-    server = await startServer();
+    server = await startServer(0);
   });
 
   afterAll((done) => {

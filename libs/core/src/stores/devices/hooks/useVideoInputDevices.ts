@@ -1,5 +1,5 @@
 import type { Device } from '@vonage/client-sdk-video';
-import devices$ from '../DevicesContext';
+import devices$ from '../DevicesStore';
 
 const isVideoInputDevice = (device: Device): boolean => device.kind.toLowerCase() === 'videoinput';
 

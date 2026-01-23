@@ -1,4 +1,4 @@
-import composeProviders from '@utils/composeProviders';
+import composeProviders from '@common/helpers/composeProviders';
 import makeAppConfigProviderWrapper from './makeAppConfigProviderWrapper';
 import makeUserProviderWrapper from './makeUserProviderWrapper';
 import makeBackgroundPublisherProviderWrapper from './makeBackgroundPublisherProviderWrapper';

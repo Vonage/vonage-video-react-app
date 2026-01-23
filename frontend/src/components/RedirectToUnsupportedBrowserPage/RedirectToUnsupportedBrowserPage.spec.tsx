@@ -1,21 +1,15 @@
-import { describe, it, expect, vi, Mock, afterEach } from 'vitest';
+import { describe, it, expect, vi, Mock } from 'vitest';
 import { checkSystemRequirements } from '@vonage/client-sdk-video';
 import { render } from '@testing-library/react';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import RedirectToUnsupportedBrowserPage from './RedirectToUnsupportedBrowserPage';
 
-vi.mock('@vonage/client-sdk-video', () => ({
-  checkSystemRequirements: vi.fn(),
-}));
+vi.mock('@vonage/client-sdk-video', () => ({ checkSystemRequirements: vi.fn() }));
 
 describe('RedirectToUnsupportedBrowserPage', () => {
   const supportedText = 'You have arrived';
-  const unsupportedText = 'Your browser is not compatible.';
+  const unsupportedText = 'Your browser is unsupported';
   const TestComponent = () => <div>{supportedText}</div>;
-
-  afterEach(() => {
-    vi.clearAllMocks();
-  });
 
   it('for unsupported browsers, redirects to the unsupported browser page', () => {
     // Mocking an unsupported browser
@@ -25,14 +19,10 @@ describe('RedirectToUnsupportedBrowserPage', () => {
       <MemoryRouter initialEntries={['/waiting-room/happy-hippo']}>
         <Routes>
           <Route path="/unsupported-browser" element={<div>{unsupportedText}</div>} />
-          <Route
-            path="/waiting-room/happy-hippo"
-            element={
-              <RedirectToUnsupportedBrowserPage>
-                <TestComponent />
-              </RedirectToUnsupportedBrowserPage>
-            }
-          />
+
+          <Route element={<RedirectToUnsupportedBrowserPage />}>
+            <Route path="/waiting-room/happy-hippo" element={<TestComponent />} />
+          </Route>
         </Routes>
       </MemoryRouter>
     );
@@ -48,14 +38,9 @@ describe('RedirectToUnsupportedBrowserPage', () => {
       <MemoryRouter initialEntries={['/happy-path']}>
         <Routes>
           <Route path="/unsupported-browser" element={<div>{unsupportedText}</div>} />
-          <Route
-            path="/happy-path"
-            element={
-              <RedirectToUnsupportedBrowserPage>
-                <TestComponent />
-              </RedirectToUnsupportedBrowserPage>
-            }
-          />
+          <Route element={<RedirectToUnsupportedBrowserPage />}>
+            <Route path="/happy-path" element={<TestComponent />} />
+          </Route>
         </Routes>
       </MemoryRouter>
     );

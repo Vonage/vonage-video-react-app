@@ -1,7 +1,7 @@
 import { expect } from '@playwright/test';
 import * as crypto from 'crypto';
 import { test } from '../fixtures/testWithLogging';
-import { openMeetingRoomWithSettings, waitAndClickFirefox } from './utils';
+import { openMeetingRoomWithSettings, waitUntilReady } from './utils';
 
 /**
  * Toggles the chat button in the application.
@@ -40,7 +40,7 @@ test.describe('chat', () => {
       roomName,
       browserName,
     });
-    await waitAndClickFirefox(pageOne, browserName);
+    await waitUntilReady(pageOne, browserName);
 
     // Wait for pageOne's publisher to be ready before opening pageTwo
     // This prevents both pages from competing for fake media devices simultaneously
@@ -53,7 +53,7 @@ test.describe('chat', () => {
       roomName,
       browserName,
     });
-    await waitAndClickFirefox(pageTwo, browserName);
+    await waitUntilReady(pageTwo, browserName);
 
     await pageTwo.waitForSelector('.publisher', { state: 'visible' });
     await pageTwo.waitForSelector('.subscriber', { state: 'visible' });
