@@ -173,14 +173,14 @@ const SessionProvider = ({ children, initialValue = {} }: SessionProviderProps):
 
   const [archiveId, setArchiveId] = useState<string | null>(initialValue?.archiveId ?? null);
   const [archiveIdStartedBySelf, setArchiveIdStartedBySelf] = useState<string | null>(null);
-  const isArchiveStartRequestedBySelfRef = useRef<boolean>(false);
+  const archiveStartRequestedBySelfRef = useRef<boolean>(false);
 
   const markArchiveStartRequestedBySelf = useCallback(() => {
-    isArchiveStartRequestedBySelfRef.current = true;
+    archiveStartRequestedBySelfRef.current = true;
   }, []);
 
   const resetArchiveStartRequestedBySelf = useCallback(() => {
-    isArchiveStartRequestedBySelfRef.current = false;
+    archiveStartRequestedBySelfRef.current = false;
   }, []);
   const activeSpeakerTracker = useRef<ActiveSpeakerTracker>(new ActiveSpeakerTracker());
   const [activeSpeakerId, setActiveSpeakerId] = useState<string | undefined>(
