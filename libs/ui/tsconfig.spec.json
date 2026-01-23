@@ -22,6 +22,8 @@
     "src/**/*.spec.ts",
     "src/**/*.test.tsx",
     "src/**/*.spec.tsx",
+    "src/**/*.ts",
+    "src/**/*.tsx",
     "../common/test/**/*.ts"
   ]
 }

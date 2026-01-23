@@ -21,6 +21,7 @@
     "docs": "nx run frontend:docs",
     "docs:watch": "nx run frontend:docs:watch",
     "storybook:frontend": "nx storybook frontend",
+    "storybook:ui": "nx storybook ui",
     "lint": "nx run-many -t lint",
     "lint:filenames": "./scripts/lintFileNames.sh",
     "lint:fix": "prettier --log-level warn --write . && nx run-many -t lint -- --fix && prettier --log-level warn --check .",
