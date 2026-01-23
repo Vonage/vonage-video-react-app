@@ -198,6 +198,42 @@ describe('useNetworkTest', () => {
     expect(result.current.state.isTestingQuality).toBe(false);
   });
 
+  it('stopTest prevents late quality results from updating state', async () => {
+    const { result } = renderHook(() => useNetworkTest());
+
+    let resolveQualityTest: ((value: QualityResults) => void) | null = null;
+
+    mockNetworkTest.testQuality.mockImplementation(() => {
+      return new Promise<QualityResults>((resolve) => {
+        resolveQualityTest = resolve;
+      });
+    });
+
+    act(() => {
+      result.current.testQuality('test-room');
+    });
+
+    await waitFor(() => {
+      expect(result.current.state.isTestingQuality).toBe(true);
+    });
+
+    act(() => {
+      result.current.stopTest();
+    });
+
+    await waitFor(() => {
+      expect(result.current.state.isTestingQuality).toBe(false);
+    });
+
+    act(() => {
+      resolveQualityTest?.(mockQualityResults);
+    });
+
+    await waitFor(() => {
+      expect(result.current.state.qualityResults).toBeNull();
+    });
+  });
+
   it('clearResults resets state to initial values', async () => {
     const { result } = renderHook(() => useNetworkTest());
 

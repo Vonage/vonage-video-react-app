@@ -1,4 +1,4 @@
-import { ReactElement, useEffect, useMemo, useCallback } from 'react';
+import { ReactElement, useEffect, useCallback, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import Dialog from '@ui/Dialog';
 import DialogTitle from '@ui/DialogTitle';
@@ -8,11 +8,12 @@ import useTheme from '@ui/theme';
 import VividIcon from '@components/VividIcon';
 import Typography from '@ui/Typography';
 import Box from '@ui/Box';
-import Button from '@ui/Button';
 import CircularProgress from '@ui/CircularProgress';
 import useNetworkTest from '@hooks/useNetworkTest';
 import useRoomName from '@hooks/useRoomName';
+import tryCatch from '@common/execution/tryCatch';
 import PrecallNetworkTestQualityRow from './PrecallNetworkTestQualityRow';
+import DialogActionsRow from './DialogActionsRow';
 
 export type PrecallNetworkTestDialogProps = {
   isPrecallNetworkTestOpen: boolean;
@@ -37,66 +38,89 @@ const PrecallNetworkTestDialog = ({
   const roomName = useRoomName();
   const { state, testQuality, stopTest, clearResults } = useNetworkTest();
 
+  const [hasUserStoppedTest, setHasUserStoppedTest] = useState(false);
+
   const handleClose = useCallback(() => {
     stopTest();
     clearResults();
+    setHasUserStoppedTest(false);
     setIsPrecallNetworkTestOpen(false);
   }, [stopTest, clearResults, setIsPrecallNetworkTestOpen]);
 
+  const handleStopTest = useCallback(() => {
+    stopTest();
+    clearResults();
+    setHasUserStoppedTest(true);
+  }, [stopTest, clearResults]);
+
   const handleStartTest = useCallback(async () => {
-    try {
-      await testQuality(roomName);
-    } catch (error) {
+    const { error } = await tryCatch(() => testQuality(roomName));
+
+    if (error) {
       console.error('Network test failed:', error);
     }
   }, [testQuality, roomName]);
 
   const handleRetry = useCallback(() => {
+    setHasUserStoppedTest(false);
     clearResults();
     handleStartTest();
   }, [clearResults, handleStartTest]);
 
-  const handleStopTest = useCallback(() => {
-    stopTest();
-    clearResults();
-    setIsPrecallNetworkTestOpen(false);
-  }, [stopTest, clearResults, setIsPrecallNetworkTestOpen]);
-
   useEffect(() => {
-    if (isPrecallNetworkTestOpen) {
-      handleStartTest();
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+    if (!isPrecallNetworkTestOpen) return;
 
-  const audioScore = state.qualityResults?.audio?.mos
-    ? Math.round(state.qualityResults.audio.mos * 100) / 100
-    : null;
-  const videoScore = state.qualityResults?.video?.mos
-    ? Math.round(state.qualityResults.video.mos * 100) / 100
-    : null;
+    if (hasUserStoppedTest) return;
 
-  const isGoodScoreQuality = (score: number | null) => {
-    return score !== null && score >= 3;
+    const hasExistingResultsOrError = Boolean(state.qualityResults || state.error);
+    if (state.isTestingQuality || hasExistingResultsOrError) return;
+
+    handleStartTest();
+  }, [
+    isPrecallNetworkTestOpen,
+    hasUserStoppedTest,
+    state.isTestingQuality,
+    state.qualityResults,
+    state.error,
+    handleStartTest,
+  ]);
+
+  const getRoundedQualityScore = function getRoundedQualityScore(
+    score: number | undefined
+  ): number | null {
+    if (typeof score !== 'number') return null;
+    return Math.round(score * 100) / 100;
   };
+  const audioScore = getRoundedQualityScore(state.qualityResults?.audio?.mos);
+  const videoScore = getRoundedQualityScore(state.qualityResults?.video?.mos);
 
-  const audioSupportTitle = useMemo(() => {
+  const audioSupportTitle = (() => {
     if (audioScore === null) return undefined;
-    return t(
-      isGoodScoreQuality(audioScore)
-        ? 'waitingRoom.precallNetworkTest.audioSupported'
-        : 'waitingRoom.precallNetworkTest.audioNotSupported'
-    );
-  }, [audioScore, t]);
 
-  const videoSupportTitle = useMemo(() => {
+    const translationKey =
+      audioScore >= 3
+        ? 'waitingRoom.precallNetworkTest.audioSupported'
+        : 'waitingRoom.precallNetworkTest.audioNotSupported';
+
+    return t(translationKey);
+  })();
+
+  const videoSupportTitle = (() => {
     if (videoScore === null) return undefined;
-    return t(
-      isGoodScoreQuality(videoScore)
+
+    const translationKey =
+      videoScore >= 3
         ? 'waitingRoom.precallNetworkTest.videoSupported'
-        : 'waitingRoom.precallNetworkTest.videoNotSupported'
-    );
-  }, [videoScore, t]);
+        : 'waitingRoom.precallNetworkTest.videoNotSupported';
+
+    return t(translationKey);
+  })();
+
+  const shouldShowTestingState = state.isTestingQuality && !hasUserStoppedTest;
+  const shouldShowResultsState =
+    !state.isTestingQuality && Boolean(state.qualityResults || state.error);
+
+  const shouldShowStoppedState = hasUserStoppedTest && !state.qualityResults && !state.error;
 
   return (
     <Dialog open={isPrecallNetworkTestOpen} onClose={handleClose} maxWidth="md" fullWidth>
@@ -144,7 +168,7 @@ const PrecallNetworkTestDialog = ({
             {t('waitingRoom.precallNetworkTest.subtitle')}
           </Typography>
 
-          {state.isTestingQuality && (
+          {shouldShowTestingState && (
             <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
               <Box
                 sx={{
@@ -156,38 +180,56 @@ const PrecallNetworkTestDialog = ({
               >
                 <CircularProgress size={60} />
               </Box>
-              <Box
-                sx={{
-                  display: 'flex',
-                  p: 2,
-                  justifyContent: 'end',
-                }}
-              >
-                <Button
-                  variant="text"
-                  onClick={handleClose}
-                  sx={{
-                    mr: 1,
-                    color: theme.colors.textSecondary,
-                  }}
-                >
-                  {t('button.close')}
-                </Button>
-                <Button
-                  variant="contained"
-                  onClick={handleStopTest}
-                  sx={{
-                    color: theme.colors.onPrimary,
-                    ml: 2,
-                  }}
-                >
-                  {t('waitingRoom.precallNetworkTest.stopTest')}
-                </Button>
-              </Box>
+              <DialogActionsRow
+                closeButtonText={t('button.close')}
+                onClose={handleClose}
+                primaryButtonText={t('waitingRoom.precallNetworkTest.stopTest')}
+                onPrimaryClick={handleStopTest}
+              />
             </Box>
           )}
 
-          {!state.isTestingQuality && (state.qualityResults || state.error) && (
+          {shouldShowStoppedState && (
+            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
+              <Box
+                sx={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'center',
+                  gap: 2,
+                  py: 2,
+                }}
+              >
+                <Typography
+                  variant="h6"
+                  sx={{
+                    color: theme.colors.textSecondary,
+                    textAlign: 'center',
+                  }}
+                >
+                  {t('waitingRoom.precallNetworkTest.stoppedTitle')}
+                </Typography>
+                <Typography
+                  variant="body2"
+                  sx={{
+                    color: theme.colors.textSecondary,
+                    textAlign: 'center',
+                  }}
+                >
+                  {t('waitingRoom.precallNetworkTest.stoppedMessage')}
+                </Typography>
+              </Box>
+
+              <DialogActionsRow
+                closeButtonText={t('button.close')}
+                onClose={handleClose}
+                primaryButtonText={t('waitingRoom.precallNetworkTest.retryTest')}
+                onPrimaryClick={handleRetry}
+              />
+            </Box>
+          )}
+
+          {shouldShowResultsState && (
             <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
               {state.error ? (
                 <Box
@@ -240,34 +282,12 @@ const PrecallNetworkTestDialog = ({
                 </Box>
               )}
 
-              <Box
-                sx={{
-                  display: 'flex',
-                  p: 2,
-                  justifyContent: 'end',
-                }}
-              >
-                <Button
-                  variant="text"
-                  onClick={handleClose}
-                  sx={{
-                    mr: 1,
-                    color: theme.colors.textSecondary,
-                  }}
-                >
-                  {t('button.close')}
-                </Button>
-                <Button
-                  variant="contained"
-                  onClick={handleRetry}
-                  sx={{
-                    color: theme.colors.onPrimary,
-                    ml: 2,
-                  }}
-                >
-                  {t('waitingRoom.precallNetworkTest.retryTest')}
-                </Button>
-              </Box>
+              <DialogActionsRow
+                closeButtonText={t('button.close')}
+                onClose={handleClose}
+                primaryButtonText={t('waitingRoom.precallNetworkTest.retryTest')}
+                onPrimaryClick={handleRetry}
+              />
             </Box>
           )}
         </Box>

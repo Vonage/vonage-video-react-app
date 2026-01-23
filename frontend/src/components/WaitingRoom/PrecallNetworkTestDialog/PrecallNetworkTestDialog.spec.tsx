@@ -86,7 +86,21 @@ describe('PrecallNetworkTestDialog', () => {
     await userEvent.click(screen.getByText(/stop test/i));
     expect(useNetworkTestMock.stopTest).toHaveBeenCalled();
     expect(useNetworkTestMock.clearResults).toHaveBeenCalled();
-    expect(setOpen).toHaveBeenCalledWith(false);
+    expect(setOpen).not.toHaveBeenCalled();
+    expect(screen.getByText(/retry test/i)).toBeInTheDocument();
+  });
+
+  it('shows stopped message when user stops the test', async () => {
+    useNetworkTestMock.state.isTestingQuality = true;
+
+    render(
+      <PrecallNetworkTestDialog isPrecallNetworkTestOpen setIsPrecallNetworkTestOpen={() => {}} />
+    );
+
+    await userEvent.click(screen.getByText(/stop test/i));
+
+    expect(screen.getByText(/test stopped/i)).toBeInTheDocument();
+    expect(screen.getByText(/you stopped the network test/i)).toBeInTheDocument();
   });
 
   it('renders results with audio/video and scores', () => {

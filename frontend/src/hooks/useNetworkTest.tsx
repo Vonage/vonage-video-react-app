@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import NetworkTest, { ErrorNames } from '@vonage/video-client-network-test';
 import OT from '@vonage/client-sdk-video';
 import fetchCredentials from '../api/fetchCredentials';
+import tryCatch from '@common/execution/tryCatch';
 
 export type QualityResults = {
   video?: {
@@ -105,6 +106,18 @@ const useNetworkTest = (): NetworkTestHookType => {
 
   const networkTestRef = useRef<InstanceType<typeof NetworkTest> | null>(null);
 
+  /**
+   * The @vonage/video-client-network-test library `stop()` does not guarantee that an in-flight
+   * `testQuality()` promise will never resolve afterwards (the library may wait for enough stats
+   * before completing). To ensure the UI truly stops, we invalidate the active run so any late
+   * callbacks/results are ignored and cannot update React state.
+   */
+  const activeQualityTestRunIdentifierRef = useRef(0);
+
+  const isActiveQualityTestRun = useCallback((runIdentifier: number) => {
+    return activeQualityTestRunIdentifierRef.current === runIdentifier;
+  }, []);
+
   const clearResults = useCallback(() => {
     setState({
       isTestingQuality: false,
@@ -116,13 +129,15 @@ const useNetworkTest = (): NetworkTestHookType => {
   }, []);
 
   const stopTest = useCallback(() => {
-    if (networkTestRef.current) {
-      try {
-        networkTestRef.current.stop();
-      } catch (error) {
-        console.warn('Error stopping network test:', error);
-      }
+    activeQualityTestRunIdentifierRef.current += 1;
+
+    const networkTest = networkTestRef.current;
+    networkTestRef.current = null;
+
+    if (networkTest) {
+      void tryCatch(() => networkTest.stop());
     }
+
     setState((prev) => ({
       ...prev,
       isTestingQuality: false,
@@ -135,6 +150,9 @@ const useNetworkTest = (): NetworkTestHookType => {
       options: NetworkTestOptions = {},
       updateCallback?: (stats: QualityUpdateStats) => void
     ): Promise<QualityResults> => {
+      const runIdentifier = activeQualityTestRunIdentifierRef.current + 1;
+      activeQualityTestRunIdentifierRef.current = runIdentifier;
+
       setState((prev) => ({
         ...prev,
         isTestingQuality: true,
@@ -144,6 +162,11 @@ const useNetworkTest = (): NetworkTestHookType => {
 
       try {
         const credentials = await fetchCredentials(roomName);
+
+        if (!isActiveQualityTestRun(runIdentifier)) {
+          return {};
+        }
+
         const { apiKey, sessionId, token } = credentials.data;
 
         const networkTest = new NetworkTest(
@@ -159,6 +182,8 @@ const useNetworkTest = (): NetworkTestHookType => {
         networkTestRef.current = networkTest;
 
         const internalUpdateCallback = (stats: QualityUpdateStats) => {
+          if (!isActiveQualityTestRun(runIdentifier)) return;
+
           setState((prev) => ({
             ...prev,
             qualityStats: stats,
@@ -170,6 +195,10 @@ const useNetworkTest = (): NetworkTestHookType => {
 
         const results = await networkTest.testQuality(internalUpdateCallback);
 
+        if (!isActiveQualityTestRun(runIdentifier)) {
+          return results;
+        }
+
         setState((prev) => ({
           ...prev,
           isTestingQuality: false,
@@ -178,6 +207,10 @@ const useNetworkTest = (): NetworkTestHookType => {
 
         return results;
       } catch (error) {
+        if (!isActiveQualityTestRun(runIdentifier)) {
+          return {};
+        }
+
         const networkError: NetworkTestError = {
           message:
             error instanceof Error ? error.message : t('waitingRoom.precallNetworkTest.error'),
@@ -193,7 +226,7 @@ const useNetworkTest = (): NetworkTestHookType => {
         throw error;
       }
     },
-    [t]
+    [t, isActiveQualityTestRun]
   );
 
   return {
