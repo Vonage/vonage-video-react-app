@@ -11,7 +11,17 @@ import {
 } from '@test/providers';
 import composeProviders from '@common/helpers/composeProviders';
 import mediaDevicesMock from '@common/test/mocks/mediaDevicesMock';
+import type { PreviewPublisherContextType } from '@Context/PreviewPublisherProvider';
+import type { BackgroundPublisherContextType } from '@Context/BackgroundPublisherProvider';
 import CameraButton from './CameraButton';
+
+type PreviewPublisherContextWithMock = PreviewPublisherContextType & {
+  _previewToggleMockApplied?: boolean;
+};
+
+type BackgroundPublisherContextWithMock = BackgroundPublisherContextType & {
+  _backgroundToggleMockApplied?: boolean;
+};
 
 describe('CameraButton', () => {
   beforeEach(() => {
@@ -96,23 +106,27 @@ describe('CameraButton', () => {
       },
       previewPublisherOptions: {
         __interceptor: (context) => {
-          if (!context.toggleVideo.toString().includes('previewToggleMock')) {
+          const contextWithMock = context as PreviewPublisherContextWithMock;
+          if (!contextWithMock._previewToggleMockApplied) {
             const originalToggle = context.toggleVideo.bind(context);
             context.toggleVideo = () => {
               previewToggleMock();
               return originalToggle();
             };
+            contextWithMock._previewToggleMockApplied = true;
           }
         },
       },
       backgroundPublisherOptions: {
         __interceptor: (context) => {
-          if (!context.toggleVideo.toString().includes('backgroundToggleMock')) {
+          const contextWithMock = context as BackgroundPublisherContextWithMock;
+          if (!contextWithMock._backgroundToggleMockApplied) {
             const originalToggle = context.toggleVideo.bind(context);
             context.toggleVideo = () => {
               backgroundToggleMock();
               return originalToggle();
             };
+            contextWithMock._backgroundToggleMockApplied = true;
           }
         },
       },
