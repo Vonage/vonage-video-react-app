@@ -320,18 +320,18 @@ const SessionProvider = ({ children, initialValue = {} }: SessionProviderProps):
   const handleArchiveStarted = (id: string) => {
     setArchiveId(id);
 
-    if (!isArchiveStartRequestedBySelfRef.current) {
+    if (!archiveStartRequestedBySelfRef.current) {
       return;
     }
 
     setArchiveIdStartedBySelf(id);
-    isArchiveStartRequestedBySelfRef.current = false;
+    archiveStartRequestedBySelfRef.current = false;
   };
 
   const handleArchiveStopped = () => {
     setArchiveId(null);
     setArchiveIdStartedBySelf(null);
-    isArchiveStartRequestedBySelfRef.current = false;
+    archiveStartRequestedBySelfRef.current = false;
   };
 
   const handleSubscriberVideoElementCreated = (subscriberWrapper: SubscriberWrapper) => {
