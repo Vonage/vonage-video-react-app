@@ -84,6 +84,8 @@ export type PreviewPublisherInitialValue = Partial<
 const usePreviewPublisher = (
   initialValue?: PreviewPublisherInitialValue
 ): PreviewPublisherContextType => {
+  const [videoSource, audioSource] = devices$.useConnectedDeviceId('videoinput', 'audioinput');
+
   const { setUser, user } = useUserContext();
   const defaultResolution = appConfig$.use.select(
     ({ videoSettings }) => videoSettings.defaultResolution
@@ -212,8 +214,6 @@ const usePreviewPublisher = (
       setAccessStatus(DEVICE_ACCESS_STATUS.ACCEPTED);
     });
   });
-
-  const [videoSource, audioSource] = devices$.useConnectedDeviceId('videoinput', 'audioinput');
 
   const initLocalPublisher = useStableCallback(() => {
     if (publisherRef.current) {

@@ -7,8 +7,12 @@ const initialValue = {
   mediaDevices: [] as MediaDeviceInfo[],
   audioOutputDevices: [] as AudioOutputDevice[],
 
-  // Selected devices
+  // Selected audio output device
   audioOutput: null as AudioOutputDevice | null,
+
+  // Selected input devices
+  audioInputDeviceId: null as MediaDeviceKind | null,
+  videoInputDeviceId: null as MediaDeviceKind | null,
 };
 
 export type InitialValue = typeof initialValue;

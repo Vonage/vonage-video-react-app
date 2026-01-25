@@ -2,7 +2,6 @@ import { Publisher } from '@vonage/client-sdk-video';
 import { useCallback, useState } from 'react';
 import getDeviceId from './helpers/getDeviceId';
 import useStableRef from '@common/hooks/useStableRef';
-import type { DeviceKind } from '@core/stores/devices';
 
 type UpdateCallback = () => void;
 
@@ -11,7 +10,7 @@ type Media = [string | null, UpdateCallback];
 /**
  * Return the publisher media id for the given kind ('audioinput' | 'videoinput')
  */
-const usePublisherMediaDeviceId = (publisher: Publisher | null, kind: DeviceKind): Media => {
+const usePublisherMediaDeviceId = (publisher: Publisher | null, kind: MediaDeviceKind): Media => {
   const [trigger, setTrigger] = useState({});
 
   const refreshDeviceId = useCallback(() => setTrigger({}), []);
