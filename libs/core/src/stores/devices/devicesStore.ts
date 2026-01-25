@@ -2,7 +2,7 @@ import createGlobalState, { type InferStateApi } from 'react-global-state-hooks/
 import syncDevicesList from './actions/syncDevicesList';
 import syncAudioOutputDevicesList from './actions/syncAudioOutputDevicesList';
 import syncMediaDevicesList from './actions/syncMediaDevicesList';
-import { assertDevicesState } from './schemas/DevicesState.schema';
+import { assertDevicesState } from './schemas/VonageDevicesState.schema';
 import setAudioOutputDevice from './actions/setAudioOutputDevice';
 import setupDeviceStore from './actions/setupDeviceStore';
 import initialValue from './constants/initialValue';
@@ -37,6 +37,13 @@ const devicesStore = createGlobalState(initialValue, {
 
       // prevents restoring until checking if the device is available
       return initial;
+    },
+    selector: ({ selectedAudioInput, selectedAudioOutput, selectedVideoInput }) => {
+      return {
+        selectedAudioInput,
+        selectedAudioOutput,
+        selectedVideoInput,
+      } as const;
     },
   },
   callbacks: {

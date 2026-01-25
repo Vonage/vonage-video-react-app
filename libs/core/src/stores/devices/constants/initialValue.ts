@@ -1,18 +1,22 @@
-import type { Device } from '../schemas';
+import type { VonageDevice } from '../schemas';
 import type { AudioOutputDevice } from '../types';
 
+/**
+ * This store intent to manage all the media devices available on the client
+ * and the selected devices for audio output, audio input and video input.
+ */
 const initialValue = {
   // Collections
-  devices: [] as Device[],
+  devices: [] as VonageDevice[],
   mediaDevices: [] as MediaDeviceInfo[],
   audioOutputDevices: [] as AudioOutputDevice[],
 
   // Selected audio output device
-  audioOutput: null as AudioOutputDevice | null,
+  selectedAudioOutput: null as AudioOutputDevice | null,
 
   // Selected input devices
-  audioInputDeviceId: null as MediaDeviceKind | null,
-  videoInputDeviceId: null as MediaDeviceKind | null,
+  selectedAudioInput: null as MediaDeviceInfo | null,
+  selectedVideoInput: null as MediaDeviceInfo | null,
 };
 
 export type InitialValue = typeof initialValue;

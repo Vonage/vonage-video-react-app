@@ -1,5 +1,5 @@
 import attempt from '@common/execution/attempt';
-import type { AudioOutputDeviceId } from '../../schemas/AudioOutputDevice.schema';
+import type { VonageAudioOutputDeviceId } from '../../schemas/VonageAudioOutputDevice.schema';
 
 export type DevicesApi = import('../../devicesStore').DevicesApi;
 
@@ -19,7 +19,7 @@ function setupDeviceStore(api: unknown) {
   /**
    * Syncs audio output devices and audio output selected device
    */
-  const syncAudioOutputDevices = (deviceId: AudioOutputDeviceId | undefined) => {
+  const syncAudioOutputDevices = (deviceId: VonageAudioOutputDeviceId | undefined) => {
     return actions.syncAudioOutputDevicesList().then((devices) => {
       return attempt(
         () => actions.setAudioOutputDevice(deviceId ?? null),
@@ -42,7 +42,7 @@ function setupDeviceStore(api: unknown) {
   globalThis.navigator.mediaDevices.addEventListener(
     'devicechange',
     () => {
-      const { audioOutput } = getState();
+      const { selectedAudioOutput: audioOutput } = getState();
 
       void actions.syncDevicesList();
       void actions.syncMediaDevicesList();

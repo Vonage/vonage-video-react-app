@@ -1,22 +1,26 @@
 /* eslint-disable @typescript-eslint/no-unsafe-return */
 import useSuspenseMemo from '@common/hooks/useSuspenseMemo';
 import devicesStore from '../../devicesStore';
-import type { DeviceId } from '../../schemas';
+import type { VonageDeviceId } from '../../schemas';
 import devicesMap$ from '../../observables/devicesMap$';
 
 /**
  * Returns the id of the connected device for the given kind ('audioinput' | 'videoinput')
  * The Id retrieval is asynchronous and will suspend the component until the id is available.
  */
-function useConnectedDeviceId(kind: MediaDeviceKind): string | null;
+function useConnectedDeviceId(kind: MediaDeviceKind): MediaDeviceInfo | null;
 
 /**
  * Returns the ids of the connected devices for the given kinds ('audioinput' | 'videoinput')
  * The Ids retrieval is asynchronous and will suspend the component until the ids are available.
  */
-function useConnectedDeviceId(...kinds: [MediaDeviceKind, MediaDeviceKind]): (string | null)[];
+function useConnectedDeviceId(
+  ...kinds: [MediaDeviceKind, MediaDeviceKind]
+): (MediaDeviceInfo | null)[];
 
-function useConnectedDeviceId(...kinds: MediaDeviceKind[]): string | null | (string | null)[] {
+function useConnectedDeviceId(
+  ...kinds: MediaDeviceKind[]
+): MediaDeviceInfo | null | (MediaDeviceInfo | null)[] {
   const mediaDevices = devicesStore.use.select((state) => state.mediaDevices);
 
   const results = useSuspenseMemo(() => {
@@ -28,17 +32,16 @@ function useConnectedDeviceId(...kinds: MediaDeviceKind[]): string | null | (str
       console.log('devicesMap in useConnectedDeviceId:', devicesMap);
 
       // selected devices synchronized with local store
-      const { audioInputDeviceId, videoInputDeviceId } = devicesStore.getState();
+      const { selectedDevices } = devicesStore.getState();
 
       const devices = kinds.map((kind) => {
-        const deviceId = kind === 'audioinput' ? audioInputDeviceId : videoInputDeviceId;
-
-        if (!deviceId) return devicesMap[kind]?.['default']?.deviceId ?? null;
+        const device = selectedDevices.get(kind);
+        if (!device) return devicesMap[kind]?.['default'] ?? null;
 
         const perKind = devicesMap[kind];
         if (Object.keys(perKind || {}).length === 0) return null;
 
-        return perKind[deviceId as DeviceId]?.deviceId ?? null;
+        return perKind[device.deviceId as VonageDeviceId] ?? null;
       });
 
       return kinds.length === 1 ? devices[0] : devices;
