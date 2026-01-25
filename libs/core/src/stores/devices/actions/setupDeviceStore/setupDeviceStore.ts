@@ -1,5 +1,5 @@
-import attempt from '@common/execution/attempt';
-import type { VonageAudioOutputDeviceId } from '../../schemas/VonageAudioOutputDevice.schema';
+import syncAudioOutputDevices from './helpers/syncAudioOutputDevices';
+import syncMediaDevices from './helpers/syncMediaDevices';
 
 export type DevicesApi = import('../../devicesStore').DevicesApi;
 
@@ -16,25 +16,10 @@ function setupDeviceStore(api: unknown) {
     return;
   }
 
-  /**
-   * Syncs audio output devices and audio output selected device
-   */
-  const syncAudioOutputDevices = (deviceId: VonageAudioOutputDeviceId | undefined) => {
-    return actions.syncAudioOutputDevicesList().then((devices) => {
-      return attempt(
-        () => actions.setAudioOutputDevice(deviceId ?? null),
-        () => {
-          const defaultDevice = devices.find((device) => device.deviceId === 'default');
-          actions.setAudioOutputDevice(defaultDevice?.deviceId ?? null);
-        }
-      );
-    });
-  };
-
   // Initial sync of all devices
   void actions.syncDevicesList();
-  void actions.syncMediaDevicesList();
-  void syncAudioOutputDevices(metadata.restoredAudioOutput?.deviceId);
+  void syncMediaDevices(actions, undefined);
+  void syncAudioOutputDevices(actions, metadata.restoredAudioOutput?.deviceId);
 
   const abortController = new AbortController();
 
@@ -45,8 +30,8 @@ function setupDeviceStore(api: unknown) {
       const { selectedAudioOutput: audioOutput } = getState();
 
       void actions.syncDevicesList();
-      void actions.syncMediaDevicesList();
-      void syncAudioOutputDevices(audioOutput?.deviceId);
+      void syncMediaDevices(actions, undefined);
+      void syncAudioOutputDevices(actions, audioOutput?.deviceId);
     },
     abortController
   );

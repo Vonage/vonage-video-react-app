@@ -8,17 +8,15 @@ import devicesMap$ from '../../observables/devicesMap$';
  * Returns the id of the connected device for the given kind ('audioinput' | 'videoinput')
  * The Id retrieval is asynchronous and will suspend the component until the id is available.
  */
-function useConnectedDeviceId(kind: MediaDeviceKind): MediaDeviceInfo | null;
+function useDevice(kind: MediaDeviceKind): MediaDeviceInfo | null;
 
 /**
  * Returns the ids of the connected devices for the given kinds ('audioinput' | 'videoinput')
  * The Ids retrieval is asynchronous and will suspend the component until the ids are available.
  */
-function useConnectedDeviceId(
-  ...kinds: [MediaDeviceKind, MediaDeviceKind]
-): (MediaDeviceInfo | null)[];
+function useDevice(...kinds: [MediaDeviceKind, MediaDeviceKind]): (MediaDeviceInfo | null)[];
 
-function useConnectedDeviceId(
+function useDevice(
   ...kinds: MediaDeviceKind[]
 ): MediaDeviceInfo | null | (MediaDeviceInfo | null)[] {
   const mediaDevices = devicesStore.use.select((state) => state.mediaDevices);
@@ -58,4 +56,4 @@ function useConnectedDeviceId(
   return results;
 }
 
-export default useConnectedDeviceId;
+export default useDevice;

@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import use$ from '../use$';
 import useStableRef from '../useStableRef';
+import { suspenseContext, suspenseToken } from '@common/components/SuspenseBoundary';
 
 type Builder<T> = () => Promise<T> | T;
 
@@ -17,6 +18,13 @@ type Builder<T> = () => Promise<T> | T;
  * @returns The callback's returned value (or the resolved value if async).
  */
 function useSuspenseMemo<T>(callback: Builder<T>, dependencies: React.DependencyList): T {
+  const token = useContext(suspenseContext);
+  const isSafelyWrapped = token === suspenseToken;
+
+  if (!isSafelyWrapped) {
+    throw new Error('useSuspenseMemo must be used within a SuspenseBoundary');
+  }
+
   const usable = useStableRef<Promise<T> | T>(() => callback(), dependencies).current;
 
   return use$(usable as Promise<T>);
