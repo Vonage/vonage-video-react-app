@@ -1,7 +1,6 @@
 import { vi, describe, it, expect } from 'vitest';
 import setupDeviceStore from './';
-
-export type DevicesApi = import('../../devicesStore').DevicesApi;
+import type { DevicesApiPrivate } from '../../types';
 
 describe('setupDeviceStore', () => {
   it('should initialize device sync and register event listener', () => {
@@ -50,5 +49,5 @@ function createMockApi() {
     },
     getMetadata: vi.fn().mockReturnValue({}),
     getState: vi.fn().mockReturnValue({}),
-  } as unknown as DevicesApi;
+  } as unknown as DevicesApiPrivate;
 }

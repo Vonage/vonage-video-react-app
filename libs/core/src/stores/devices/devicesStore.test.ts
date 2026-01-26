@@ -3,9 +3,13 @@ import { vi } from 'vitest';
 import { renderHook, waitFor } from '@testing-library/react';
 import type DeviceStore from './devicesStore';
 import type * as ClientSdkVideo from '@vonage/client-sdk-video';
+import type { NativeMediaDeviceInfo } from './schemas';
 import wait from '@common/execution/wait';
-import devices$, { initialValue, metadata } from '.';
+import devices$, { DevicesApiPrivate, initialValue, metadata } from '.';
 import SuspenseBoundary from '@common/components/SuspenseBoundary';
+
+type State = ReturnType<DevicesApiPrivate['getState']>;
+type Api = DevicesApiPrivate['actions'];
 
 describe('devices$', () => {
   beforeEach(() => {
@@ -25,7 +29,7 @@ describe('devices$', () => {
     vi.spyOn(globalThis.navigator.mediaDevices, 'addEventListener').mockImplementation(() => {});
 
     vi.spyOn(globalThis.navigator.mediaDevices, 'enumerateDevices').mockImplementation(() =>
-      Promise.resolve(mediaDevicesInfo)
+      Promise.resolve(mediaDevicesInfo as unknown as MediaDeviceInfo[])
     );
 
     devices$.reset(initialValue, { ...metadata });
@@ -44,8 +48,7 @@ describe('devices$', () => {
       wrapper: SuspenseBoundary,
     });
 
-    let [state, api] = result.current;
-
+    let [state, api] = result.current as unknown as [State, Api];
     // Verify initial state and API structure
     expect(state.audioOutputDevices).toBeDefined();
     expect(state.devices).toBeDefined();
@@ -73,7 +76,7 @@ describe('devices$', () => {
 
     // Wait for devices to load asynchronously
     await waitFor(() => {
-      [state, api] = result.current;
+      [state, api] = result.current as unknown as [State, Api];
       if (state.devices.length === 0) throw new Error('Devices not loaded yet');
     });
 
@@ -116,8 +119,8 @@ describe('devices$', () => {
     });
 
     const newMediaDevicesInfo = [
-      { deviceId: 'audio-input-2', kind: 'audioinput', label: 'Microphone 2' },
-      { deviceId: 'video-input-2', kind: 'videoinput', label: 'Camera 2' },
+      { deviceId: 'audio-input-2', kind: 'audioinput', label: 'Microphone 2', groupId: 'group2' },
+      { deviceId: 'video-input-2', kind: 'videoinput', label: 'Camera 2', groupId: 'group2' },
     ] as MediaDeviceInfo[];
 
     vi.mocked(globalThis.navigator.mediaDevices.enumerateDevices).mockImplementation(() =>
@@ -165,9 +168,9 @@ vi.mock('@vonage/client-sdk-video', (): typeof ClientSdkVideo => {
 });
 
 const mediaDevicesInfo = [
-  { deviceId: 'audio-input-1', kind: 'audioinput', label: 'Microphone 1' },
-  { deviceId: 'video-input-1', kind: 'videoinput', label: 'Camera 1' },
-] as MediaDeviceInfo[];
+  { deviceId: 'audio-input-1', kind: 'audioinput', label: 'Microphone 1', groupId: 'group1' },
+  { deviceId: 'video-input-1', kind: 'videoinput', label: 'Camera 1', groupId: 'group1' },
+] as NativeMediaDeviceInfo[];
 
 const devices = [
   { deviceId: 'audio-input-1', kind: 'audioInput', label: 'Microphone 1' },

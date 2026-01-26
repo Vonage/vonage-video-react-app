@@ -1,4 +1,4 @@
-import type { VonageDevice } from '../schemas';
+import type { VonageDevice, NativeMediaDeviceInfo } from '../schemas';
 import type { AudioOutputDevice } from '../types';
 
 /**
@@ -8,15 +8,15 @@ import type { AudioOutputDevice } from '../types';
 const initialValue = {
   // Collections
   devices: [] as VonageDevice[],
-  mediaDevices: [] as MediaDeviceInfo[],
+  mediaDevices: [] as NativeMediaDeviceInfo[],
   audioOutputDevices: [] as AudioOutputDevice[],
 
   // Selected audio output device
   selectedAudioOutput: null as AudioOutputDevice | null,
 
   // Selected input devices
-  selectedAudioInput: null as MediaDeviceInfo | null,
-  selectedVideoInput: null as MediaDeviceInfo | null,
+  selectedAudioInput: null as NativeMediaDeviceInfo | null,
+  selectedVideoInput: null as NativeMediaDeviceInfo | null,
 };
 
 export type InitialValue = typeof initialValue;

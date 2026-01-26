@@ -43,6 +43,6 @@ describe('useSuspenseMemo', () => {
   it('should throw error when used outside SuspenseBoundary Provider', () => {
     expect(() => {
       renderHook(() => useSuspenseMemo(() => 'test', []));
-    }).toThrow('use$ must be used within a SuspenseBoundary Provider');
+    }).toThrow('useSuspenseMemo must be used within a SuspenseBoundary Provider');
   });
 });

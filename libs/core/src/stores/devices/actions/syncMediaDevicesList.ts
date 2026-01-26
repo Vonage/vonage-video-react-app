@@ -1,30 +1,53 @@
 import CancelablePromise from 'easy-cancelable-promise';
-
-export type DevicesApi = import('../devicesStore').DevicesApi;
+import { attempt } from 'lodash';
+import type { DevicesApiPrivate, NativeMediaDeviceInfo } from '../types';
+import getMediaDevices from '../helpers/getMediaDevices';
 
 /**
- * Syncs the native MediaDeviceInfo list from navigator.mediaDevices
+ * Syncs the native NativeMediaDeviceInfo list from navigator.mediaDevices
  */
-function syncMediaDevicesList(this: DevicesApi['actions']) {
-  return ({ getMetadata, setState }: DevicesApi): CancelablePromise<MediaDeviceInfo[]> => {
+function syncMediaDevicesList(this: DevicesApiPrivate['actions']) {
+  return ({
+    getMetadata,
+    setState,
+    getState,
+  }: DevicesApiPrivate): CancelablePromise<NativeMediaDeviceInfo[]> => {
     const meta = getMetadata();
 
     // cancel ongoing update
     meta.loadingMediaDevices?.cancel();
 
-    meta.loadingMediaDevices = new CancelablePromise<MediaDeviceInfo[]>(
+    meta.loadingMediaDevices = new CancelablePromise<NativeMediaDeviceInfo[]>(
       async (resolve, _, { isPending }) => {
-        const mediaDevices = await navigator.mediaDevices.enumerateDevices();
+        const devices = await getMediaDevices();
 
         // promise was cancelled
         if (!isPending()) return;
 
         setState((state) => ({
           ...state,
-          mediaDevices,
+          mediaDevices: devices,
         }));
 
-        resolve(mediaDevices);
+        const tryToRestoreSelection = () => {
+          const { selectedAudioOutput } = getState();
+
+          return this.setAudioOutputDevice(selectedAudioOutput?.deviceId);
+        };
+
+        const fallbackToDefault = () => {
+          if (!isPending()) return;
+
+          const deviceId =
+            devices.find((device) => device.deviceId === 'default')?.deviceId ?? null;
+
+          return this.setMediaDevice(deviceId);
+        };
+
+        // tries to restore previous selected audio output device
+        await attempt(tryToRestoreSelection, fallbackToDefault);
+
+        resolve(devices);
       }
     );
 

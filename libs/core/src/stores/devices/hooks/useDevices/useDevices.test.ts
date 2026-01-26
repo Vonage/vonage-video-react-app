@@ -7,6 +7,7 @@ import wait from '@common/execution/wait';
 import SuspenseBoundary from '@common/components/SuspenseBoundary';
 import defer from 'easy-cancelable-promise/defer';
 import renderAsyncHook from '@test-helpers/renderAsyncHook';
+import type { NativeDeviceKind, NativeMediaDeviceInfo } from '../../schemas';
 
 describe('devices$', () => {
   beforeEach(() => {
@@ -22,7 +23,7 @@ describe('devices$', () => {
     vi.spyOn(globalThis.navigator.mediaDevices, 'addEventListener').mockImplementation(() => {});
 
     vi.spyOn(globalThis.navigator.mediaDevices, 'enumerateDevices').mockImplementation(() =>
-      Promise.resolve(mediaDevicesInfo)
+      Promise.resolve(mediaDevicesInfo as unknown as MediaDeviceInfo[])
     );
 
     devices$.reset(initialValue, { ...metadata });
@@ -32,7 +33,7 @@ describe('devices$', () => {
   it('should initialize correctly without suspense', async () => {
     expect.assertions(1);
 
-    const { result } = await renderAsyncHook(() => devices$.useConnectedDeviceId('audioinput'), {
+    const { result } = await renderAsyncHook(() => devices$.useDevices('audioinput'), {
       wrapper: SuspenseBoundary,
     });
 
@@ -42,14 +43,14 @@ describe('devices$', () => {
   });
 
   it('should initialize correctly with suspense', async () => {
-    const loadingMediaDevicesDeferred = defer<MediaDeviceInfo[]>();
+    const loadingMediaDevicesDeferred = defer<NativeMediaDeviceInfo[]>();
 
     devices$.setMetadata((metadata) => ({
       ...metadata,
       loadingMediaDevices: loadingMediaDevicesDeferred.promise,
     }));
 
-    const { result } = await renderAsyncHook(() => devices$.useConnectedDeviceId('audioinput'), {
+    const { result } = await renderAsyncHook(() => devices$.useDevices('audioinput'), {
       wrapper: SuspenseBoundary,
     });
 
@@ -81,8 +82,13 @@ vi.mock('@vonage/client-sdk-video', (): typeof ClientSdkVideo => {
 });
 
 const mediaDevicesInfo = [
-  { deviceId: 'audioinput-1', kind: 'audioinput', label: 'Microphone 1' },
-] as MediaDeviceInfo[];
+  {
+    deviceId: 'audioinput-1',
+    kind: 'audioinput' as NativeDeviceKind,
+    label: 'Microphone 1',
+    groupId: 'group-1',
+  },
+] as unknown as NativeMediaDeviceInfo[];
 
 const devices = [] as ClientSdkVideo.Device[];
 // #endregion

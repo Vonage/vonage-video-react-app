@@ -1,5 +1,5 @@
 import devicesStore from '../devicesStore';
-import type { VonageDeviceId } from '../schemas';
+import type { NativeMediaDeviceInfo } from '../schemas';
 
 const devicesMap$ = devicesStore.createObservable(
   ({ mediaDevices }) => {
@@ -9,12 +9,12 @@ const devicesMap$ = devicesStore.createObservable(
           default: device,
         };
 
-        devices[device.deviceId as VonageDeviceId] = device;
+        devices[device.deviceId] = device;
         acc[device.kind] = devices;
 
         return acc;
       },
-      {} as Record<MediaDeviceKind, Record<VonageDeviceId | 'default', MediaDeviceInfo>>
+      {} as Record<MediaDeviceKind, Record<string, NativeMediaDeviceInfo>>
     );
   },
   {

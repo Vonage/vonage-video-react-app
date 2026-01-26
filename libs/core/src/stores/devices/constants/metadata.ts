@@ -1,7 +1,7 @@
 import type CancelablePromise from 'easy-cancelable-promise';
 import type { AudioOutputDevice } from '../types';
+import type { NativeMediaDeviceInfo } from '../schemas';
 import type { InitialValue } from './initialValue';
-import type { MediaDeviceInfo } from '../schemas';
 
 const metadata = {
   // promises to track loading state
@@ -9,12 +9,12 @@ const metadata = {
 
   loadingAudioOutputDevices: null as null | CancelablePromise<InitialValue['audioOutputDevices']>,
 
-  loadingMediaDevices: null as null | CancelablePromise<MediaDeviceInfo[]>,
+  loadingMediaDevices: null as null | CancelablePromise<NativeMediaDeviceInfo[]>,
 
   // temporary backup for the local storage restored value
   restoredAudioOutput: null as AudioOutputDevice | null,
-  restoredAudioInput: null as MediaDeviceInfo | null,
-  restoredVideoInput: null as MediaDeviceInfo | null,
+  restoredAudioInput: null as NativeMediaDeviceInfo | null,
+  restoredVideoInput: null as NativeMediaDeviceInfo | null,
 };
 
 export type Metadata = typeof metadata;

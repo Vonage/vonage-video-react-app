@@ -1,18 +1,18 @@
 import z from 'zod';
 import { VonageDeviceSchema } from './VonageDevice.schema';
 import { VonageAudioOutputDeviceSchema } from './VonageAudioOutputDevice.schema';
-import MediaDeviceInfoSchema from './MediaDeviceInfo.schema';
+import NativeMediaDeviceInfoSchema from './NativeMediaDeviceInfo.schema';
 
 export const DevicesStoreSchema = z.object({
   // Collections
   devices: z.array(VonageDeviceSchema),
-  mediaDevices: z.array(MediaDeviceInfoSchema),
+  mediaDevices: z.array(NativeMediaDeviceInfoSchema),
   audioOutputDevices: z.array(VonageAudioOutputDeviceSchema),
 
   // Selected devices
   selectedAudioOutput: VonageAudioOutputDeviceSchema.nullable(),
-  selectedAudioInput: MediaDeviceInfoSchema.nullable(),
-  selectedVideoInput: MediaDeviceInfoSchema.nullable(),
+  selectedAudioInput: NativeMediaDeviceInfoSchema.nullable(),
+  selectedVideoInput: NativeMediaDeviceInfoSchema.nullable(),
 });
 
 export type DevicesStore = z.infer<typeof DevicesStoreSchema>;

@@ -1,12 +1,22 @@
 import createGlobalState, { type InferStateApi } from 'react-global-state-hooks/createGlobalState';
-import syncDevicesList from './actions/syncDevicesList';
-import syncAudioOutputDevicesList from './actions/syncAudioOutputDevicesList';
-import syncMediaDevicesList from './actions/syncMediaDevicesList';
 import { assertDevicesStore } from './schemas/DevicesStore.schema';
-import setAudioOutputDevice from './actions/setAudioOutputDevice';
-import setupDeviceStore from './actions/setupDeviceStore';
-import initialValue from './constants/initialValue';
-import metadata from './constants/metadata';
+
+import {
+  setupDeviceStore,
+  setAudioOutputDevice,
+  setMediaDevice,
+  syncDevicesList,
+  syncAudioOutputDevicesList,
+  syncMediaDevicesList,
+} from './actions';
+
+import { initialValue, metadata } from './constants';
+
+const internalActions = {
+  syncDevicesList,
+  syncAudioOutputDevicesList,
+  syncMediaDevicesList,
+};
 
 /**
  * Devices store:
@@ -23,22 +33,16 @@ import metadata from './constants/metadata';
 const devicesStore = createGlobalState(initialValue, {
   metadata,
   actions: {
-    syncDevicesList,
-    syncAudioOutputDevicesList,
-    syncMediaDevicesList,
+    /**
+     * Sets the audio output device by its device ID. Throws if the deviceId does not exist.
+     */
     setAudioOutputDevice,
+    setMediaDevice,
   },
   localStorage: {
     key: 'vera-devices-store',
-    validator: ({ restored, initial }) => {
+    validator: ({ restored }) => {
       assertDevicesStore(restored);
-
-      metadata.restoredAudioOutput = restored.selectedAudioOutput;
-      metadata.restoredAudioInput = restored.selectedAudioInput;
-      metadata.restoredVideoInput = restored.selectedVideoInput;
-
-      // prevents restoring until checking if the device is available
-      return initial;
     },
     selector: ({ selectedAudioInput, selectedAudioOutput, selectedVideoInput }) => {
       return {
@@ -49,10 +53,20 @@ const devicesStore = createGlobalState(initialValue, {
     },
   },
   callbacks: {
-    onInit: setupDeviceStore,
+    onInit: (api) => {
+      // Extend actions type to include internal actions
+      // This avoids polluting the public API with internal actions
+      api.actions = Object.assign(api.actions, internalActions);
+
+      return setupDeviceStore(api);
+    },
   },
 });
 
 export type DevicesApi = InferStateApi<typeof devicesStore>;
+
+export type DevicesApiPrivate = DevicesApi & {
+  actions: typeof internalActions;
+};
 
 export default devicesStore;

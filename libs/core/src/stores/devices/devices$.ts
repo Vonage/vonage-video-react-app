@@ -5,10 +5,10 @@ import {
   useSelectedAudioOutput,
   useAudioOutputDevices,
   useVideoInputDevices,
-  useConnectedDeviceId,
+  useDevices,
   useSelectedAudioInput,
   useSelectedVideoInput,
-  useAudioOutput, // legacy alias
+  useAudioOutput,
 } from './hooks';
 
 import { devicesMap$ } from './observables';
@@ -19,10 +19,9 @@ const devices$ = Object.assign(store, {
   useSelectedAudioOutput,
   useAudioOutputDevices,
   useVideoInputDevices,
-  useConnectedDeviceId,
+  useDevices,
   useSelectedAudioInput,
   useSelectedVideoInput,
-  // Legacy alias
   useAudioOutput,
 
   // Observables

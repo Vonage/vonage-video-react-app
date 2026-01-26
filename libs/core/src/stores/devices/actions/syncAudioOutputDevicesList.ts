@@ -1,18 +1,17 @@
 import CancelablePromise from 'easy-cancelable-promise';
 import getAudioOutputDevices from '../helpers/getAudioOutputDevices';
-import type { AudioOutputDevice } from '../types';
-
-export type DevicesApi = import('../devicesStore').DevicesApi;
+import type { DevicesApiPrivate, AudioOutputDevice } from '../types';
+import attempt from '@common/execution/attempt';
 
 /**
- * Syncs the audio output devices list
+ * Syncs the audio output devices list and tries to restore the previous selected audio output device
  */
-function syncAudioOutputDevicesList(this: DevicesApi['actions']) {
+function syncAudioOutputDevicesList(this: DevicesApiPrivate['actions']) {
   return ({
     getMetadata,
     setState,
     getState,
-  }: DevicesApi): CancelablePromise<AudioOutputDevice[]> => {
+  }: DevicesApiPrivate): CancelablePromise<AudioOutputDevice[]> => {
     const meta = getMetadata();
 
     // cancel ongoing update
@@ -21,17 +20,35 @@ function syncAudioOutputDevicesList(this: DevicesApi['actions']) {
     // we use a cancelable promise to avoid render a discarded audio output devices list
     meta.loadingAudioOutputDevices = new CancelablePromise<AudioOutputDevice[]>(
       async (resolve, _, { isPending }) => {
-        const audioOutputDevices = await getAudioOutputDevices();
+        const devices = await getAudioOutputDevices();
 
         // promise was cancelled
         if (!isPending()) return;
 
         setState({
           ...getState(),
-          audioOutputDevices,
+          audioOutputDevices: devices,
         });
 
-        resolve(audioOutputDevices);
+        const tryToRestoreSelection = () => {
+          const { selectedAudioOutput } = getState();
+
+          return this.setAudioOutputDevice(selectedAudioOutput?.deviceId);
+        };
+
+        const fallbackToDefault = () => {
+          if (!isPending()) return;
+
+          const deviceId =
+            devices.find((device) => device.deviceId === 'default')?.deviceId ?? null;
+
+          return this.setAudioOutputDevice(deviceId);
+        };
+
+        // tries to restore previous selected audio output device
+        await attempt(tryToRestoreSelection, fallbackToDefault);
+
+        resolve(devices);
       }
     );
 

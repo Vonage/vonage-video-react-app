@@ -1,14 +1,10 @@
-import syncAudioOutputDevices from './helpers/syncAudioOutputDevices';
-import syncMediaDevices from './helpers/syncMediaDevices';
-
-export type DevicesApi = import('../../devicesStore').DevicesApi;
+import type { DevicesApiPrivate } from '../../types';
 
 /**
- * onInit action DeviceStore setup
+ * Pull devices lists and try to restore previous selected devices
  */
 function setupDeviceStore(api: unknown) {
-  const { actions, getMetadata, getState } = api as DevicesApi;
-  const metadata = getMetadata();
+  const { actions } = api as DevicesApiPrivate;
 
   // no support for media devices
   if (!globalThis.navigator.mediaDevices?.addEventListener) {
@@ -18,8 +14,8 @@ function setupDeviceStore(api: unknown) {
 
   // Initial sync of all devices
   void actions.syncDevicesList();
-  void syncMediaDevices(actions, undefined);
-  void syncAudioOutputDevices(actions, metadata.restoredAudioOutput?.deviceId);
+  void actions.syncMediaDevicesList();
+  void actions.syncAudioOutputDevicesList();
 
   const abortController = new AbortController();
 
@@ -27,11 +23,9 @@ function setupDeviceStore(api: unknown) {
   globalThis.navigator.mediaDevices.addEventListener(
     'devicechange',
     () => {
-      const { selectedAudioOutput: audioOutput } = getState();
-
       void actions.syncDevicesList();
-      void syncMediaDevices(actions, undefined);
-      void syncAudioOutputDevices(actions, audioOutput?.deviceId);
+      void actions.syncMediaDevicesList();
+      void actions.syncAudioOutputDevicesList();
     },
     abortController
   );

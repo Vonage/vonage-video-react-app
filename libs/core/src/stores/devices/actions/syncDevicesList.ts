@@ -1,14 +1,17 @@
 import CancelablePromise from 'easy-cancelable-promise';
 import getDevices from '../helpers/getDevices';
+import type { DevicesApiPrivate } from '../types';
 import type { VonageDevice } from '../schemas';
-
-export type DevicesApi = import('../devicesStore').DevicesApi;
 
 /**
  * Syncs the devices list from Vonage SDK
  */
-function syncDevicesList(this: DevicesApi['actions']) {
-  return ({ getMetadata, setState, getState }: DevicesApi): CancelablePromise<VonageDevice[]> => {
+function syncDevicesList(this: DevicesApiPrivate['actions']) {
+  return ({
+    getMetadata,
+    setState,
+    getState,
+  }: DevicesApiPrivate): CancelablePromise<VonageDevice[]> => {
     const meta = getMetadata();
 
     // cancel ongoing update
