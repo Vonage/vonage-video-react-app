@@ -13,6 +13,7 @@ export type BackgroundPublisherProviderWrapperOptions = {
     typeof BackgroundPublisherProvider,
     typeof BackgroundPublisherContext
   >;
+  skipAppConfigAndUser?: boolean;
 };
 
 /**
@@ -20,12 +21,16 @@ export type BackgroundPublisherProviderWrapperOptions = {
  * Allows accessing the context value for testing.
  * @param {object} options - The wrapper options.
  * @param {GenericWrapperOptions} [options.backgroundPublisherOptions] - Options for the BackgroundPublisherProvider wrapper.
+ * @param {boolean} [options.skipAppConfigAndUser] - If true, skips creating AppConfig and User providers in nested providers.
  * @returns The BackgroundPublisherProvider wrapper and context getter.
  */
 function makeBackgroundPublisherProviderWrapper({
   backgroundPublisherOptions,
+  skipAppConfigAndUser,
 }: BackgroundPublisherProviderWrapperOptions = {}) {
-  const { PublisherProviderWrapper, ...publisher } = makePublisherProviderWrapper();
+  const { PublisherProviderWrapper, ...publisher } = makePublisherProviderWrapper({
+    skipAppConfigAndUser,
+  });
 
   const [BackgroundPublisherProviderWrapper, backgroundPublisherContext] =
     makeGenericProviderWrapper(
