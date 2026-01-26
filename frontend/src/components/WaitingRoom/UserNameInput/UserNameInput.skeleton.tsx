@@ -1,68 +1,31 @@
-import { ReactElement } from 'react';
-import { Box } from '@mui/material';
-import classNames from 'classnames';
+import { FC } from 'react';
+import { Card, CardProps } from '@ui';
+import { Skeleton } from '@mui/material';
+import Separator from '@components/Separator';
 
-const UsernameInputSkeleton = (): ReactElement => {
+type UsernameInputSkeletonProps = Omit<CardProps<'form'>, 'sx'>;
+
+const UsernameInputSkeleton: FC<UsernameInputSkeletonProps> = ({ className, ...props }) => {
   return (
-    <form className="opacity-80 flex w-full flex-col justify-center px-6 md:relative md:top-[-48px] md:max-w-[480px]">
-      <div className="mt-4 flex flex-col items-center justify-end">
-        <Box
-          className={classNames(
-            'mb-2 text-[28px] leading-8 w-2/4',
-            // skeleton like appearance
-            'rounded-md bg-skeletonLike'
-          )}
-        >
-          &nbsp;
-        </Box>
+    <Card component="form" className={className} {...props}>
+      <div className="w-full flex flex-col gap-4">
+        {/* title */}
+        <Skeleton variant="text" className="!h-10 w-2/3" />
 
-        <Box
-          className={classNames(
-            'flex flex-col content-end py-2 text-lg decoration-solid w-2/3 ',
-            // skeleton like appearance
-            'rounded-md bg-skeletonLike'
-          )}
-        >
-          &nbsp;
-        </Box>
+        {/* name input */}
+        <Skeleton variant="text" id="user-name" className={'!h-10'} />
 
-        <Box
-          className={classNames(
-            'mt-6 text-[24px] leading-8 w-2/4',
-            // skeleton like appearance
-            'rounded-md bg-skeletonLike'
-          )}
-        >
-          &nbsp;
-        </Box>
+        <Separator width="100%" />
 
-        <Box
-          className={classNames(
-            'mb-5 flex flex-wrap items-center justify-center w-2/4',
-            // skeleton like appearance
-            'rounded-md'
-          )}
-        >
-          <Box
-            className={classNames(
-              'w-full flex pl-0 text-[24px] leading-8 bg-skeletonLike',
-              // skeleton like appearance
-              'rounded-md bg-skeletonLike'
-            )}
-            sx={{ marginTop: '20px' }}
-          >
-            &nbsp;
-          </Box>
-        </Box>
+        {/* subtitle */}
+        <Skeleton className={'!h-10'} />
 
-        <Box
-          className={classNames('!bg-skeletonLike')}
-          sx={{ width: '117px', borderRadius: '24px', height: '48px' }}
-        >
-          &nbsp;
-        </Box>
+        {/* room name */}
+        <Skeleton variant="text" className={'!h-10 w-5/6'} />
+
+        <Skeleton variant="rounded" className="!h-8 !rounded-lg" />
       </div>
-    </form>
+    </Card>
   );
 };
 

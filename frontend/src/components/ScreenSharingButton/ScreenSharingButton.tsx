@@ -1,7 +1,7 @@
 import Tooltip from '@ui/Tooltip';
 import { ReactElement, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useAppConfig } from '@stores/appConfig';
+import appConfig$ from '@stores/appConfig';
 import { isMobile } from '@utils/util';
 import ToolbarButton from '../MeetingRoom/ToolbarButton';
 import PopupDialog, { DialogTexts } from '../MeetingRoom/PopupDialog';
@@ -32,7 +32,7 @@ const ScreenSharingButton = ({
   isViewingScreenShare,
   isOverflowButton = false,
 }: ScreenShareButtonProps): ReactElement | false => {
-  const allowScreenShare = useAppConfig(
+  const allowScreenShare = appConfig$.use.select(
     ({ meetingRoomSettings }) => meetingRoomSettings.allowScreenShare
   );
   const { t } = useTranslation();

@@ -6,6 +6,8 @@ import { makeRoomContextWrapper } from '@test/providers';
 import BackgroundEffectsLayout from './BackgroundEffectsLayout';
 import enTranslations from '../../../locales/en.json';
 import mediaDevicesMock from '@common/test/mocks/mediaDevicesMock';
+import composeProviders from '@common/helpers/composeProviders';
+import SuspenseBoundary from '@common/components/SuspenseBoundary/SuspenseBoundary';
 
 const applyBackgroundFilterMock = vi.fn(() => Promise.resolve());
 
@@ -163,5 +165,8 @@ describe('BackgroundEffects (Waiting Room)', () => {
 
 function render(ui: ReactElement) {
   const { RoomProviderWrapper } = makeRoomContextWrapper();
-  return renderBase(ui, { wrapper: RoomProviderWrapper });
+
+  const wrapper = composeProviders(SuspenseBoundary, RoomProviderWrapper);
+
+  return renderBase(ui, { wrapper });
 }

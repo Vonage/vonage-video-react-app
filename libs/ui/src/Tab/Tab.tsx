@@ -1,6 +1,6 @@
 import { Tab as MUITab, TabProps as MUITabProps } from '@mui/material';
 
-type TabProps = MUITabProps;
+export type TabProps = MUITabProps;
 
 const Tab = (tabProps: TabProps) => {
   return <MUITab {...tabProps} />;

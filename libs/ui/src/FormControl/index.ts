@@ -1,1 +1,1 @@
-export { default } from './FormControl';
+export { default, type FormControlProps } from './FormControl';

@@ -1,5 +1,5 @@
 export type { AppConfig } from './types';
-export { default, type AppConfigApi } from './AppConfigStore';
-export * from './hooks';
+export type { AppConfigApi } from './appConfigStore';
 export type * from './types';
 export * from './helpers';
+export { default } from './appConfig$';

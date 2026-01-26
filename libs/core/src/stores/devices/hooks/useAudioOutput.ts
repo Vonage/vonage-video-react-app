@@ -1,5 +1,5 @@
-import devices$ from '../DevicesStore';
+import devicesStore from '../devicesStore';
 
-const useAudioOutput = devices$.createSelectorHook((state) => state.audioOutput);
+const useAudioOutput = devicesStore.createSelectorHook((state) => state.audioOutput);
 
 export default useAudioOutput;

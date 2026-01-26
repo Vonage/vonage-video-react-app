@@ -25,6 +25,7 @@ import useUserContext from '../../hooks/useUserContext';
 import env from '../../env';
 import useMountEffect from '@common/hooks/useMountEffect';
 import RecordingPopUpIndicator from '@components/MeetingRoom/RecordingPopupIndicator';
+import classNames from 'classnames';
 
 /**
  * MeetingRoom Component
@@ -147,6 +148,8 @@ const MeetingRoom = (): ReactElement => {
 
   const recordingPopupIndicatorKey = archiveId ?? 'unknown-archive-id';
 
+  const isRecording = !!archiveId;
+
   return (
     <Box
       data-testid="meetingRoom"
@@ -155,6 +158,7 @@ const MeetingRoom = (): ReactElement => {
         width: '100vw',
         backgroundColor: theme.colors.darkBackground,
       }}
+      className={classNames({ recording: isRecording })}
     >
       {isSmallViewport && <SmallViewportHeader />}
 

@@ -1,9 +1,9 @@
 import type { Device } from '@vonage/client-sdk-video';
-import devices$ from '../DevicesStore';
+import devicesStore from '../devicesStore';
 
 const isVideoInputDevice = (device: Device): boolean => device.kind.toLowerCase() === 'videoinput';
 
-const useVideoInputDevices = devices$.createSelectorHook((state) =>
+const useVideoInputDevices = devicesStore.createSelectorHook((state) =>
   state.devices.filter(isVideoInputDevice)
 );
 

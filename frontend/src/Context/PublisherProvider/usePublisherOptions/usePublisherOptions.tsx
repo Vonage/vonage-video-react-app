@@ -5,7 +5,7 @@ import {
   AudioFilter,
   hasMediaProcessorSupport,
 } from '@vonage/client-sdk-video';
-import { useAppConfig } from '@stores/appConfig';
+import appConfig$ from '@stores/appConfig';
 import useUserContext from '@hooks/useUserContext';
 import getInitials from '@utils/getInitials';
 import DeviceStore from '@utils/DeviceStore';
@@ -19,9 +19,15 @@ import { getStorageItem, STORAGE_KEYS } from '@utils/storage';
 const usePublisherOptions = (): PublisherProperties | null => {
   const { user } = useUserContext();
 
-  const defaultResolution = useAppConfig(({ videoSettings }) => videoSettings.defaultResolution);
-  const allowVideoOnJoin = useAppConfig(({ videoSettings }) => videoSettings.allowVideoOnJoin);
-  const allowAudioOnJoin = useAppConfig(({ audioSettings }) => audioSettings.allowAudioOnJoin);
+  const defaultResolution = appConfig$.use.select(
+    ({ videoSettings }) => videoSettings.defaultResolution
+  );
+  const allowVideoOnJoin = appConfig$.use.select(
+    ({ videoSettings }) => videoSettings.allowVideoOnJoin
+  );
+  const allowAudioOnJoin = appConfig$.use.select(
+    ({ audioSettings }) => audioSettings.allowAudioOnJoin
+  );
 
   // Extract individual properties to avoid object reference changes
   const { name, noiseSuppression, backgroundFilter, publishAudio, publishVideo, publishCaptions } =

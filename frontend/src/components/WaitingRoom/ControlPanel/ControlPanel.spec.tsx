@@ -10,6 +10,7 @@ import precallNetworkTestDialog$ from '@Context/PrecallNetworkTestDialog';
 import ControlPanel from '.';
 import composeProviders from '@common/helpers/composeProviders';
 import mediaDevicesMock from '@common/test/mocks/mediaDevicesMock';
+import SuspenseBoundary from '@common/components/SuspenseBoundary';
 
 vi.mock('@hooks/useDevices.tsx');
 
@@ -164,6 +165,7 @@ function render(
   const { RoomProviderWrapper } = makeRoomContextWrapper(options?.roomContextOptions);
 
   const wrapper = composeProviders(
+    SuspenseBoundary,
     RoomProviderWrapper,
     backgroundEffectsDialog$.Provider,
     precallNetworkTestDialog$.Provider

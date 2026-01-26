@@ -1,6 +1,6 @@
 import { Dialog as MUIDialog, DialogProps as MUIDialogProps } from '@mui/material';
 
-type DialogProps = MUIDialogProps;
+export type DialogProps = MUIDialogProps;
 
 const Dialog = (dialogProps: DialogProps) => {
   return <MUIDialog {...dialogProps} />;

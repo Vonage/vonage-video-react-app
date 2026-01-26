@@ -1,16 +1,30 @@
-name: check-lint-issues
+name: 👮 QA
 
 on: [pull_request, workflow_dispatch]
 
-permissions:
-  contents: read
 concurrency:
-  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number }}
   cancel-in-progress: true
 
 jobs:
-  run:
+  # ----------------------------------------------------
+  # Code Quality Checks (Matrix)
+  # ----------------------------------------------------
+  quality-checks:
+    name: ${{ matrix.check.name }}
     runs-on: ubuntu-22.04
+    permissions:
+      contents: read
+
+    strategy:
+      matrix:
+        check:
+          - name: ESLint
+            command: yarn lint
+          - name: Prettier
+            command: yarn prettier . --check --log-level warn
+          - name: TypeScript Check
+            command: yarn ts-check
 
     steps:
       - name: Checkout
@@ -23,23 +37,46 @@ jobs:
           cache: yarn
 
       - name: Install Dependencies
-        run: |
-          node -v
-          npm -v
-          npm install --global yarn
-          yarn
+        run: yarn
 
-      - name: Check for lint issues
-        run: |
-          yarn lint && yarn prettier . --check --log-level warn
+      - name: Run ${{ matrix.check.name }}
+        run: ${{ matrix.check.command }}
 
-      - name: Check for TS errors
-        run: |
-          yarn ts-check
+  # ----------------------------------------------------
+  # Filename Linting
+  # ----------------------------------------------------
+  lint-filenames:
+    name: Filename Linting
+    runs-on: ubuntu-22.04
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
 
       - name: Check that new files are camelCase
-        run: |
-          yarn lint:filenames
+        run: ./scripts/lintFileNames.sh
+
+  # ----------------------------------------------------
+  # License Check
+  # ----------------------------------------------------
+  license-check:
+    name: License Check
+    runs-on: ubuntu-22.04
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup node
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: yarn
+
+      - name: Install Dependencies
+        run: yarn
 
       - name: Run license check
         run: |

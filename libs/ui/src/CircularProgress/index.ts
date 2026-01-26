@@ -1,1 +1,1 @@
-export { default } from './CircularProgress';
+export { default, type CircularProgressProps } from './CircularProgress';

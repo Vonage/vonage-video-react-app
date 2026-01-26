@@ -486,8 +486,6 @@ src/
 - **Rule:** Do not overexpose components/helpers/utils/hooks/types to higher levels when they are only useful for a specific domain.
 - **Rule:** Only promote an entity to a higher level when strictly necessary.
 - **Rule:** When possible, each domain should have an `index.ts` that exports the default entry point of that domain (example: `LoginForm/index.ts` exporting `LoginForm.tsx`).
-- **Rule:** Avoid barrel files (`index.ts`) inside folders that contain multiple different components/hooks/utils/types (e.g. `LoginForm/components/index.ts` must not exist).
-  - This reduces circular dependencies and improves lazy loading.
 
 ---
 

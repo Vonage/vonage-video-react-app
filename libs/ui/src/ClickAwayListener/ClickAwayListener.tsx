@@ -3,7 +3,7 @@ import {
   ClickAwayListenerProps as MUIClickAwayListenerProps,
 } from '@mui/material';
 
-type ClickAwayListenerProps = MUIClickAwayListenerProps;
+export type ClickAwayListenerProps = MUIClickAwayListenerProps;
 
 const ClickAwayListener = (clickAwayListenerProps: ClickAwayListenerProps) => {
   return <MUIClickAwayListener {...clickAwayListenerProps} />;

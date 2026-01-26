@@ -288,6 +288,11 @@ const lightColors: ThemeTokens['colors'] = {
     type: 'color',
     description: 'Text color used for disabled elements.',
   },
+  'skeleton-like': {
+    value: colorVariables.neutral[300],
+    type: 'color',
+    description: 'Color used for skeleton loading states.',
+  },
 };
 
 const darkColors: ThemeTokens['colors'] = {
@@ -507,6 +512,11 @@ const darkColors: ThemeTokens['colors'] = {
     value: colorVariables.neutral[600],
     type: 'color',
     description: 'Text color used for disabled elements.',
+  },
+  'skeleton-like': {
+    value: colorVariables.neutral[800],
+    type: 'color',
+    description: 'Color used for skeleton loading states.',
   },
 };
 

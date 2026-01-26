@@ -52,7 +52,7 @@ export default defineConfig({
   /* Fail the build on CI if you accidentally left test.only in the source code. */
   forbidOnly: !!process.env.CI,
   /* There are plenty of flaky test so retry is needed */
-  retries: 2,
+  retries: process.env.CI ? 2 : 0,
   /* Enable parallel execution with 2 workers on CI for faster runs */
   workers: process.env.CI ? 2 : undefined,
   /* Reporter to use. See https://playwright.dev/docs/test-reporters */
@@ -76,25 +76,7 @@ export default defineConfig({
   /* Configure projects for major browsers */
   projects: [
     {
-      // -----------------------------------------------------
-      // CHROME (real Chrome)
-      // -----------------------------------------------------
-      name: 'Google Chrome',
-      use: {
-        ...devices['Desktop Chrome'],
-        viewport: { width: VIEWPORT.WIDTH, height: VIEWPORT.HEIGHT },
-        channel: 'chrome',
-        launchOptions: {
-          args: chromiumFlags,
-        },
-      },
-    },
-
-    {
-      // -----------------------------------------------------
-      // CHROME WITH FAKE DEVICES (simulates multiple cameras/mics)
-      // Use bundled Chromium instead of system Chrome for consistency
-      // -----------------------------------------------------
+      // Desktop Chromium (Fake Devices, stable for automation)
       name: 'Google Chrome Fake Devices',
       use: {
         ...(isInspectMode || isDebugMode ? {} : devices['Desktop Chrome']),
@@ -106,17 +88,13 @@ export default defineConfig({
         },
       },
     },
-
-    // -----------------------------------------------------
-    // FIREFOX
-    // -----------------------------------------------------
     {
+      // Desktop Firefox
       name: 'firefox',
       use: {
         ...devices['Desktop Firefox'],
         viewport: { width: VIEWPORT.WIDTH, height: VIEWPORT.HEIGHT },
         launchOptions: {
-          // eslint-disable-next-line @cspell/spellchecker
           firefoxUserPrefs: {
             'media.navigator.permission.disabled': true,
             'media.navigator.streams.fake': true,
@@ -128,40 +106,19 @@ export default defineConfig({
         },
       },
     },
-
-    // -----------------------------------------------------
-    // SAFARI / WEBKIT
-    // -----------------------------------------------------
     {
+      // Desktop Safari / WebKit
       name: 'webkit',
       use: {
         ...devices['Desktop Safari'],
         viewport: { width: VIEWPORT.WIDTH, height: VIEWPORT.HEIGHT },
         launchOptions: {
-          args: [], // no media flags allowed for WebKit
+          args: [],
         },
       },
     },
-
-    // -----------------------------------------------------
-    // EDGE
-    // -----------------------------------------------------
     {
-      name: 'Microsoft Edge',
-      use: {
-        ...devices['Desktop Edge'],
-        viewport: { width: VIEWPORT.WIDTH, height: VIEWPORT.HEIGHT },
-        channel: 'msedge',
-        launchOptions: {
-          args: fakeDeviceChromiumFlags,
-        },
-      },
-    },
-
-    // -----------------------------------------------------
-    // MOBILE CHROME (Pixel 5)
-    // -----------------------------------------------------
-    {
+      // Mobile Chromium (Pixel 5)
       name: 'Mobile Chrome',
       use: {
         ...devices['Pixel 5'],

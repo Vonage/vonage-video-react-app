@@ -1,1 +1,1 @@
-export { default } from './DialogTitle';
+export { default, type DialogTitleProps } from './DialogTitle';

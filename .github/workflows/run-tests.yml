@@ -1,13 +1,10 @@
-name: run-tests
+name: 🧑‍💻
 
 on: [pull_request, workflow_dispatch]
 
 concurrency:
-  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number }}
   cancel-in-progress: true
-
-permissions:
-  contents: read
 
 env:
   VIDEO_SERVICE_PROVIDER: ${{vars.VIDEO_SERVICE_PROVIDER}}
@@ -17,44 +14,75 @@ env:
   VONAGE_PRIVATE_KEY: ${{secrets.VONAGE_PRIVATE_KEY}}
 
 jobs:
-  run:
+  # ----------------------------------------------------
+  # Unit Tests (Matrix)
+  # ----------------------------------------------------
+  unit-tests:
+    name: Unit Tests - ${{ matrix.project }}
     runs-on: ubuntu-22.04
+    permissions:
+      contents: read
+
+    strategy:
+      matrix:
+        project: [frontend, backend, ui, core, common]
 
     steps:
-      # ----------------------------------------------------
-      # Skip CI if label is present
-      # ----------------------------------------------------
-      - name: Check for "skip-ci" label
-        id: check-skip-ci
-        uses: actions/github-script@v6
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          script: |
-            const pr = context.payload.pull_request;
-            if (!pr) {
-              return false;
-            }
-            const labels = pr.labels.map(label => label.name);
-            return labels.includes("skip-ci");
-
-      - name: Skip CI
-        if: steps.check-skip-ci.outputs.result == 'true'
-        run: echo "Skipping CI :^)"
-
-      # ----------------------------------------------------
-      # Checkout
-      # ----------------------------------------------------
       - name: Checkout
-        if: steps.check-skip-ci.outputs.result == 'false'
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
-      # ----------------------------------------------------
-      # Install Chrome
-      # ----------------------------------------------------
+      - name: Setup node
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: yarn
+
+      - name: Install Dependencies
+        run: yarn --ignore-scripts
+
+      - name: Run ${{ matrix.project }} unit tests
+        run: NX_DAEMON=false yarn nx test ${{ matrix.project }} --configuration=coverage
+
+      - name: Upload coverage
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-${{ matrix.project }}
+          path: |
+            ${{ matrix.project }}/coverage/
+            libs/${{ matrix.project }}/coverage/
+          retention-days: 1
+
+  # ----------------------------------------------------
+  # Integration Tests (Playwright)
+  # ----------------------------------------------------
+  integration-tests:
+    name: 🤖 E2E / ${{ matrix.browser.name }}
+    runs-on: ubuntu-22.04
+    if: github.event.pull_request.head.repo.fork == false
+    permissions:
+      contents: read
+
+    strategy:
+      fail-fast: false
+      matrix:
+        browser:
+          - name: Chrome
+            project: Google Chrome Fake Devices
+          - name: Firefox
+            project: firefox
+          - name: Mobile Chrome
+            project: Mobile Chrome
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
       - name: Install chrome latest
-        if: steps.check-skip-ci.outputs.result == 'false'
+        if: matrix.browser.name != 'Firefox'
         run: |
           wget --max-redirect=0 -q -O - https://dl.google.com/linux/linux_signing_key.pub | sudo apt-key add -
           sudo sh -c 'echo "deb [arch=amd64] https://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google.list'
@@ -62,59 +90,81 @@ jobs:
           echo "Installed Chrome:"
           /usr/bin/google-chrome-stable --version
 
-      # ----------------------------------------------------
-      # Install Edge
-      # ----------------------------------------------------
-      - name: Install edge latest
-        if: steps.check-skip-ci.outputs.result == 'false'
-        run: |
-          curl https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor > microsoft.gpg
-          sudo install -o root -g root -m 644 microsoft.gpg /etc/apt/trusted.gpg.d/
-          sudo sh -c 'echo "deb [arch=amd64] https://packages.microsoft.com/repos/edge stable main" > /etc/apt/sources.list.d/microsoft-edge-stable.list'
-          sudo rm microsoft.gpg
-          sudo apt update && sudo apt install -y microsoft-edge-stable
-          echo "Installed Edge:"
-          /usr/bin/microsoft-edge-stable --version
-
-      # ----------------------------------------------------
-      # Setup Node
-      # ----------------------------------------------------
       - name: Setup node
-        if: steps.check-skip-ci.outputs.result == 'false'
         uses: actions/setup-node@v4
         with:
           node-version-file: .nvmrc
           cache: yarn
 
-      # ----------------------------------------------------
-      # Install repository dependencies
-      # ----------------------------------------------------
       - name: Install Dependencies
-        if: steps.check-skip-ci.outputs.result == 'false'
         run: |
           node -v
           yarn --ignore-scripts
 
-      # ----------------------------------------------------
-      # Install Playwright browsers (Chromium, WebKit, Firefox)
-      # ----------------------------------------------------
+      - name: Cache Playwright browsers
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-browsers-${{ hashFiles('**/package.json') }}
+
       - name: Install Playwright Browsers
-        if: steps.check-skip-ci.outputs.result == 'false'
         run: npx playwright install --with-deps
 
-      # ----------------------------------------------------
-      # Run Unit Tests
-      # ----------------------------------------------------
-      - name: Run unit tests
-        if: steps.check-skip-ci.outputs.result == 'false'
+      - name: Run integration tests
         run: |
-          NX_DAEMON=false yarn test
+          echo "VIDEO_SERVICE_PROVIDER: $VIDEO_SERVICE_PROVIDER"
+          Xvfb :99 & export DISPLAY=:99
+          cd integration-tests && npx playwright test --project='${{ matrix.browser.project }}'
 
-      # ----------------------------------------------------
-      # SonarCloud Scan PR
-      # ----------------------------------------------------
+      - name: Upload Playwright Report
+        uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: playwright-report-${{ matrix.browser.name }}
+          path: integration-tests/playwright-report/
+          retention-days: 7
+
+  # ----------------------------------------------------
+  # SonarCloud Analysis
+  # ----------------------------------------------------
+  sonarcloud:
+    name: SonarCloud
+    runs-on: ubuntu-22.04
+    needs: [unit-tests]
+    if: github.event.pull_request.head.repo.fork == false
+    permissions:
+      contents: read
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup node
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: yarn
+
+      - name: Install Dependencies
+        run: |
+          node -v
+          yarn --ignore-scripts
+
+      - name: Download all coverage artifacts
+        uses: actions/download-artifact@v4
+        with:
+          pattern: coverage-*
+          merge-multiple: false
+
+      - name: List coverage files
+        run: |
+          echo "Listing coverage files:"
+          find . -name "lcov.info" -type f
+          ls -la coverage-* || true
+
       - name: SonarCloud Scan On PR
-        if: steps.check-skip-ci.outputs.result == 'false' && github.event.pull_request.head.repo.fork == false
         uses: SonarSource/sonarqube-scan-action@v4
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -128,11 +178,7 @@ jobs:
             -Dsonar.pullrequest.branch="$PR_BRANCH"
             -Dsonar.pullrequest.base="$BASE_BRANCH"
 
-      # ----------------------------------------------------
-      # SonarCloud Branch Analysis
-      # ----------------------------------------------------
       - name: SonarCloud Branch Analysis On base branch
-        if: steps.check-skip-ci.outputs.result == 'false' && github.event.pull_request.head.repo.fork == false
         uses: SonarSource/sonarqube-scan-action@v4
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -141,13 +187,3 @@ jobs:
         with:
           args: >
             -Dsonar.branch.name="$BASE_BRANCH"
-
-      # ----------------------------------------------------
-      # Run Integration Tests (Playwright)
-      # ----------------------------------------------------
-      - name: Run integration tests
-        if: steps.check-skip-ci.outputs.result == 'false' && github.event.pull_request.head.repo.fork == false
-        run: |
-          echo "VIDEO_SERVICE_PROVIDER: $VIDEO_SERVICE_PROVIDER"
-          Xvfb :99 & export DISPLAY=:99
-          yarn test:integration

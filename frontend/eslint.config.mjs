@@ -13,7 +13,7 @@ export default [
     settings: {
       tailwindcss: {
         // path is relative to THIS file (frontend/)
-        config: './tailwind.config.js',
+        config: './tailwind.config.cjs',
       },
     },
     rules: {
@@ -27,9 +27,6 @@ export default [
             'subscriber',
             'screen-subscriber',
             'bg-notVeryGray-100',
-
-            // custom tailwind classes defined in our tailwind.config.ts
-            'animate-fade-in',
           ],
         },
       ],

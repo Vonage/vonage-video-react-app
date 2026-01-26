@@ -1,6 +1,6 @@
 import { ListItem as MUIListItem, ListItemProps as MUIListItemProps } from '@mui/material';
 
-type ListItemProps = MUIListItemProps;
+export type ListItemProps = MUIListItemProps;
 
 const ListItem = (listItemProps: ListItemProps) => {
   return <MUIListItem {...listItemProps} />;

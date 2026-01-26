@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-use-before-define */
 import { vi } from 'vitest';
 import { waitFor } from '@testing-library/react';
-import devices$, { initialValue, metadata, useConnectedDeviceId } from '@core/stores/devices';
+import devices$, { initialValue, metadata } from '@core/stores/devices';
 import type * as ClientSdkVideo from '@vonage/client-sdk-video';
 import wait from '@common/execution/wait';
 import SuspenseBoundary from '@common/components/SuspenseBoundary';
@@ -32,7 +32,7 @@ describe('devices$', () => {
   it('should initialize correctly without suspense', async () => {
     expect.assertions(1);
 
-    const { result } = await renderAsyncHook(() => useConnectedDeviceId('audioinput'), {
+    const { result } = await renderAsyncHook(() => devices$.useConnectedDeviceId('audioinput'), {
       wrapper: SuspenseBoundary,
     });
 
@@ -49,7 +49,7 @@ describe('devices$', () => {
       loadingMediaDevices: loadingMediaDevicesDeferred.promise,
     }));
 
-    const { result } = await renderAsyncHook(() => useConnectedDeviceId('audioinput'), {
+    const { result } = await renderAsyncHook(() => devices$.useConnectedDeviceId('audioinput'), {
       wrapper: SuspenseBoundary,
     });
 

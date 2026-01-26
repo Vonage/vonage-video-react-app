@@ -1,4 +1,4 @@
-import { useState, useEffect, MouseEvent, ReactElement, TouchEvent } from 'react';
+import { useState, useEffect, MouseEvent, TouchEvent, FC } from 'react';
 import Box from '@ui/Box';
 import PageLayout from '@ui/PageLayout';
 import Banner from '@components/Banner';
@@ -13,7 +13,10 @@ import { getStorageItem, STORAGE_KEYS } from '../../utils/storage';
 import useBackgroundPublisherContext from '../../hooks/useBackgroundPublisherContext';
 import backgroundEffectsDialog$ from '../../Context/BackgroundEffectsDialog';
 import precallNetworkTestDialog$ from '@Context/PrecallNetworkTestDialog';
-import { useAppConfig } from '@stores/appConfig';
+import appConfig$ from '@stores/appConfig';
+import { BoxProps } from '@mui/material';
+
+type WaitingRoomProps = Omit<BoxProps, 'sx'>;
 
 /**
  * WaitingRoom Component
@@ -30,7 +33,7 @@ import { useAppConfig } from '@stores/appConfig';
  * - The meeting room name and a button to join the room.
  * @returns {ReactElement} - The waiting room.
  */
-const WaitingRoom = (): ReactElement => {
+const WaitingRoom: FC<WaitingRoomProps> = () => {
   const { initLocalPublisher, publisher, accessStatus, destroyPublisher } =
     usePreviewPublisherContext();
 
@@ -43,7 +46,7 @@ const WaitingRoom = (): ReactElement => {
   const [openAudioOutput, setOpenAudioOutput] = useState<boolean>(false);
   const [username, setUsername] = useState(getStorageItem(STORAGE_KEYS.USERNAME) ?? '');
 
-  const allowDeviceSelection = useAppConfig(
+  const allowDeviceSelection = appConfig$.use.select(
     ({ waitingRoomSettings }) => waitingRoomSettings.allowDeviceSelection
   );
 
@@ -109,15 +112,9 @@ const WaitingRoom = (): ReactElement => {
             <PageLayout.Banner>
               <Banner />
             </PageLayout.Banner>
+
             <PageLayout.Left>
-              <Box
-                sx={{
-                  maxWidth: '100%',
-                  display: 'inline-flex',
-                  flexDirection: 'column',
-                  height: { xs: 'auto', sm: '400px' },
-                }}
-              >
+              <Box className="flex-col sm:inline-flex h-auto sm:h-[400px] animate-fade-in">
                 <VideoContainer username={username} />
                 {allowDeviceSelection && accessStatus === DEVICE_ACCESS_STATUS.ACCEPTED && (
                   <ControlPanel
@@ -133,9 +130,15 @@ const WaitingRoom = (): ReactElement => {
                 )}
               </Box>
             </PageLayout.Left>
+
             <PageLayout.Right>
-              <UsernameInput username={username} setUsername={setUsername} />
+              <UsernameInput
+                className="flex-col sm:inline-flex h-auto sm:h-[400px] animate-fade-in"
+                username={username}
+                setUsername={setUsername}
+              />
             </PageLayout.Right>
+
             <PageLayout.Footer>
               <Footer />
             </PageLayout.Footer>

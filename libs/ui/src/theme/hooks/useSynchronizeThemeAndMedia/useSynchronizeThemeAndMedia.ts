@@ -1,0 +1,61 @@
+import React from 'react';
+import isDarkMode from '../../helpers/isDarkMode';
+import getTokensByMode from '../../helpers/getTokensByMode';
+import type { Theme } from '@ui/theme';
+import useStableRef from '@common/hooks/useStableRef';
+import useMountEffect from '@common/hooks/useMountEffect';
+
+const VERA_DARK_MODE_CLASSES = ['vera-dark-mode', 'dark'];
+
+const useSynchronizeThemeAndMedia = ({
+  setTokens,
+}: {
+  setTokens: React.Dispatch<React.SetStateAction<Theme>>;
+}) => {
+  const modeRef = useStableRef<'light' | 'dark'>(isDarkMode() ? 'dark' : 'light');
+
+  useMountEffect(() => {
+    const isMatchMediaSupported = !!globalThis.matchMedia;
+
+    if (!isMatchMediaSupported) {
+      return;
+    }
+
+    const setDocumentMode = (mode: 'light' | 'dark') => {
+      const { documentElement } = globalThis.document;
+
+      if (mode === 'dark') {
+        documentElement.classList.add(...VERA_DARK_MODE_CLASSES);
+      } else {
+        documentElement.classList.remove(...VERA_DARK_MODE_CLASSES);
+      }
+    };
+
+    const toggleTheme = () => {
+      const newMode = isDarkMode() ? 'dark' : 'light';
+      const didChange = modeRef.current !== newMode;
+
+      if (!didChange) {
+        return;
+      }
+
+      setTokens(getTokensByMode(newMode));
+      setDocumentMode(newMode);
+    };
+
+    const subscribeToMediaChanges = () => {
+      const abort = new AbortController();
+      const media = globalThis.matchMedia('(prefers-color-scheme: dark)');
+
+      media.addEventListener('change', toggleTheme, abort);
+
+      return () => abort.abort();
+    };
+
+    setDocumentMode(modeRef.current);
+
+    return subscribeToMediaChanges();
+  });
+};
+
+export default useSynchronizeThemeAndMedia;

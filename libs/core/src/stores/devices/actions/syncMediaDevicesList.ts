@@ -1,6 +1,6 @@
 import CancelablePromise from 'easy-cancelable-promise';
 
-export type DevicesApi = import('../DevicesStore').DevicesApi;
+export type DevicesApi = import('../devicesStore').DevicesApi;
 
 /**
  * Syncs the native MediaDeviceInfo list from navigator.mediaDevices

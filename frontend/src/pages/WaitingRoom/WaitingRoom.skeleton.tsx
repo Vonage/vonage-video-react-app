@@ -1,33 +1,35 @@
 import React, { ComponentProps } from 'react';
-import useIsSmallViewport from '@hooks/useIsSmallViewport';
 import Banner from '@components/Banner';
 import VideoContainerSkeleton from '@components/WaitingRoom/VideoContainer/VideoContainer.skeleton';
 import UsernameInputSkeleton from '@components/WaitingRoom/UserNameInput/UserNameInput.skeleton';
 import classNames from 'classnames';
 import Box from '@ui/Box';
 import PageLayout from '@ui/PageLayout';
+import Footer from '@components/Footer/Footer';
 
 type WaitingRoomSkeletonProps = ComponentProps<'div'>;
 
 const WaitingRoomSkeleton: React.FC<WaitingRoomSkeletonProps> = ({ className, ...props }) => {
-  const isSmallViewport = useIsSmallViewport();
-
   return (
     <Box data-testid="waitingRoom" className={classNames(className)} {...props}>
       <PageLayout>
         <PageLayout.Banner>
           <Banner />
         </PageLayout.Banner>
+
         <PageLayout.Left>
-          <div
-            className={`max-w-full flex-col ${isSmallViewport ? '' : 'h-[394px]'} sm:inline-flex`}
-          >
+          <div className="flex-col sm:inline-flex h-auto sm:h-[400px]">
             <VideoContainerSkeleton />
           </div>
         </PageLayout.Left>
+
         <PageLayout.Right>
-          <UsernameInputSkeleton />
+          <UsernameInputSkeleton className="flex-col sm:inline-flex h-auto sm:h-[400px] animate-fade-in" />
         </PageLayout.Right>
+
+        <PageLayout.Footer>
+          <Footer />
+        </PageLayout.Footer>
       </PageLayout>
     </Box>
   );

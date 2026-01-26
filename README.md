@@ -293,48 +293,9 @@ Enjoy testing!
 
 ## Deployment to Vonage Cloud Runtime
 
-You can easily deploy your local branch to Vonage Cloud Runtime (VCR) using the tools in this repository. See https://developer.vonage.com/en/vonage-cloud-runtime/overview for an overview of Vonage Cloud Runtime.
+You can deploy the application to Vonage Cloud Runtime (VCR) for testing in a cloud environment. See the [VCR overview](https://developer.vonage.com/en/vonage-cloud-runtime/overview) for more information.
 
-Firstly, install the VCR cli: https://developer.vonage.com/en/vonage-cloud-runtime/getting-started/working-locally#cli-installation.
-
-Run `vcr configure` entering your Vonage API Key and Secret, and select a region. You can find your API key and secret on the dashboard: https://dashboard.nexmo.com/.
-
-Now run `vcr init` and follow the steps to:
-1. choose a project name
-2. choose an instance name
-3. select `nodejs22` for the runtime
-4. Select a region for your app
-5. Choose or create an application for deployment. :warning: You should use a separate Vonage application to your Vonage Video application (i.e. the value you used for `VONAGE_APP_ID` in the `backend/.env` file) to avoid issues with your private key
-6. Choose an application for debug, if you SKIP it will re-use the application from your deployment
-7. For the product template select SKIP
-
-You will see a new file created `./vcr.yml`. This file is ignored by git so that each developer can have their own deployment setup locally. This file is still missing the `entrypoint` and `build-script` fields which you can copy and paste from `./vcr.yml.example`.
-
-Your file should now look something like this:
-```yaml
-project:
-  name: my-project-name
-instance:
-  name: my-instance-name
-  runtime: nodejs22
-  region: aws.euw1
-  entrypoint: [yarn, run-server]
-  application-id: my-deployment-app-id
-debug:
-  entrypoint: [yarn, run-server]
-  application-id: my-debug-app-id
-```
-
-Now run `yarn deploy-vcr` to deploy your project.
-After a successful deployment the url of you instance will be shown in the output as 'Instance host address'.
-You can also check your instances at https://dashboard.nexmo.com/serverless/instances.
-
-Note: This will deploy the project using your local code and .env files, which is useful for debugging.
-For a more centralized deployment to VCR see our GHA workflow `.github/workflows/deploy-to-vcr.yml`.
-
-### Development Deployment from Local
-
-For quick development deployments directly from your local machine, you can use the `deploy:dev` script:
+For quick development deployments directly from your local machine, you can use the `vcr:dev` script:
 
 1. **Install the VCR CLI** (if not already installed):
    
@@ -355,13 +316,15 @@ For quick development deployments directly from your local machine, you can use 
    ```
 
    Replace `<app-id>` with your Vonage application ID.
+   
+   > ⚠️ **Warning**: You should use a **separate** Vonage application for VCR deployment (different from the `VONAGE_APP_ID` in your `backend/.env` file) to avoid issues with your private key.
 
 4. **Set up your development configuration**:
 
    Copy the development configuration example file:
 
    ```bash
-   cp vcr-dev.example.yml vcr-dev.yml
+   cp vcr.yml.example vcr-dev.yml
    ```
 
    Open `vcr-dev.yml` and add your application ID.
@@ -369,7 +332,7 @@ For quick development deployments directly from your local machine, you can use 
 5. **Deploy to development**:
 
    ```bash
-   yarn deploy:dev
+   yarn vcr:dev
    ```
 
 This will deploy using your local development configuration and code, making it quick to test changes in a cloud environment.
@@ -417,12 +380,6 @@ yarn test
 yarn test:backend
 ```
 
-- To run backend tests in watch mode (ie you're adding more tests):
-
-```console
-yarn test:backend:watch
-```
-
 - For additional CLI options, see [jest docs](https://jestjs.io/docs/cli).
 
 ### Frontend Suite
@@ -435,12 +392,6 @@ Alternatively you can run the tests in the terminal:
 
 ```console
 yarn test:frontend
-```
-
-- To run frontend tests in watch mode (ie you're adding more tests):
-
-```console
-yarn test:frontend:watch
 ```
 
 - For additional CLI options, see [vitest docs](https://vitest.dev/guide/cli#options)
@@ -479,7 +430,7 @@ Generated documents can be found in the `frontend/dist` folder.
 To generate documentation, run the following in the terminal
 
 ```console
-yarn docs
+yarn nx run frontend:docs
 ```
 
 ## Code of Conduct

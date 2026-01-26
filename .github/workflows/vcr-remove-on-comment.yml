@@ -41,6 +41,7 @@ jobs:
             });
 
             core.setOutput('number', String(pr.number));
+            core.setOutput('title', pr.title || '');
             core.setOutput('head_sha', pr.head.sha);
             core.setOutput(
               'is_fork',
@@ -112,7 +113,7 @@ jobs:
               "attachments": [
                 {
                   "color": "28a745",
-                  "text": "Vera pull request *<https://github.com/Vonage/vonage-video-react-app/pull/${{ steps.pr.outputs.number }}|#${{ steps.pr.outputs.number }}>* \n with commit hash: ${{ steps.pr.outputs.head_sha }} \n had instance removed from VCR \nInstance: `${{ steps.remove.outputs.instance_name }}` \n*<https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}|Click here to go to build logs>* \n :large_green_circle: :large_green_circle: :large_green_circle: :large_green_circle:"
+                  "text": "Vera pull request *<https://github.com/Vonage/vonage-video-react-app/pull/${{ steps.pr.outputs.number }}|#${{ steps.pr.outputs.number }} - ${{ steps.pr.outputs.title }}>* \n with commit hash: ${{ steps.pr.outputs.head_sha }} \n had instance removed from VCR \nInstance: `${{ steps.remove.outputs.instance_name }}` \n*<https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}|Click here to go to build logs>* \n :large_green_circle: :large_green_circle: :large_green_circle: :large_green_circle:"
                 }
               ]
             }
@@ -131,7 +132,7 @@ jobs:
               "attachments": [
                 {
                   "color": "FFA500",
-                  "text": "Vera pull request *<https://github.com/Vonage/vonage-video-react-app/pull/${{ steps.pr.outputs.number }}|#${{ steps.pr.outputs.number }}>* \n with commit hash: ${{ steps.pr.outputs.head_sha }} \n had no VCR instance to remove \nInstance: `${{ steps.remove.outputs.instance_name }}` \n*<https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}|Click here to go to build logs>*"
+                  "text": "Vera pull request *<https://github.com/Vonage/vonage-video-react-app/pull/${{ steps.pr.outputs.number }}|#${{ steps.pr.outputs.number }} - ${{ steps.pr.outputs.title }}>* \n with commit hash: ${{ steps.pr.outputs.head_sha }} \n had no VCR instance to remove \nInstance: `${{ steps.remove.outputs.instance_name }}` \n*<https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}|Click here to go to build logs>*"
                 }
               ]
             }
@@ -150,7 +151,7 @@ jobs:
               "attachments": [
                 {
                   "color": "FF0000",
-                  "text": "Vera pull request *<https://github.com/Vonage/vonage-video-react-app/pull/${{ steps.pr.outputs.number }}|#${{ steps.pr.outputs.number }}>* \n with commit hash: ${{ steps.pr.outputs.head_sha }} \n FAILED to remove instance from VCR \nInstance: `${{ steps.remove.outputs.instance_name }}` \n *<https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}|Click here to go to build logs>* \n :red_circle: :red_circle: :red_circle: :red_circle:"
+                  "text": "Vera pull request *<https://github.com/Vonage/vonage-video-react-app/pull/${{ steps.pr.outputs.number }}|#${{ steps.pr.outputs.number }} - ${{ steps.pr.outputs.title }}>* \n with commit hash: ${{ steps.pr.outputs.head_sha }} \n FAILED to remove instance from VCR \nInstance: `${{ steps.remove.outputs.instance_name }}` \n *<https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}|Click here to go to build logs>* \n :red_circle: :red_circle: :red_circle: :red_circle:"
                 }
               ]
             }
