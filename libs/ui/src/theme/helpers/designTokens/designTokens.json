@@ -42,7 +42,8 @@
       "on-dark-grey": "#FFFFFF",
       "dark-grey-opacity": "#333333CD",
       "disabled": "#E6E6E6",
-      "text-disabled": "#B3B3B3"
+      "text-disabled": "#B3B3B3",
+      "skeleton-like": "#B3B3B3"
     },
     "dark": {
       "primary": "#B27BF2",
@@ -86,7 +87,8 @@
       "on-dark-grey": "#FFFFFF",
       "dark-grey-opacity": "#333333CD",
       "disabled": "#333333",
-      "text-disabled": "#666666"
+      "text-disabled": "#666666",
+      "skeleton-like": "#333333"
     }
   },
   "borderRadius": {

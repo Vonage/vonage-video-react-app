@@ -6,7 +6,6 @@ import Button from '@ui/Button';
 import Box from '@ui/Box';
 import Typography from '@ui/Typography';
 import Card from '@ui/Card';
-import useTheme from '@ui/theme';
 import useUserContext from '@hooks/useUserContext';
 import { UserType } from '@Context/user';
 import useRoomName from '@hooks/useRoomName';
@@ -14,8 +13,10 @@ import isValidRoomName from '@utils/isValidRoomName';
 import isValidUserName from '@utils/isValidUserName';
 import { setStorageItem, STORAGE_KEYS } from '@utils/storage';
 import Separator from '@components/Separator';
+import { CardProps } from '@mui/material';
+import { twMerge } from 'tailwind-merge';
 
-export type UserNameInputProps = {
+export type UserNameInputProps = Omit<CardProps, 'sx'> & {
   username: string;
   setUsername: Dispatch<SetStateAction<string>>;
 };
@@ -29,13 +30,17 @@ export type UserNameInputProps = {
  *  @property {Dispatch<SetStateAction<string>>} setUsername - Function to update the user's username.
  * @returns {ReactElement} The UsernameInput component.
  */
-const UsernameInput = ({ username, setUsername }: UserNameInputProps): ReactElement => {
+const UsernameInput = ({
+  username,
+  setUsername,
+  className,
+  ...cardProps
+}: UserNameInputProps): ReactElement => {
   const { t } = useTranslation();
   const { setUser } = useUserContext();
   const navigate = useNavigate();
   const roomName = useRoomName();
   const [isUserNameInvalid, setIsUserNameInvalid] = useState(false);
-  const theme = useTheme();
   const inputRef = useRef<HTMLInputElement>(null);
 
   const onChangeParticipantName = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -82,17 +87,12 @@ const UsernameInput = ({ username, setUsername }: UserNameInputProps): ReactElem
   };
 
   return (
-    <Card component="form">
-      <Typography sx={{ mb: 2, typography: 'h6', color: theme.colors.textSecondary }}>
+    <Card component="form" className={twMerge('flex flex-col gap-4', className)} {...cardProps}>
+      <Typography className="text-vera-secondary !text-vera-heading-4">
         {t('waitingRoom.user.input.title')}
       </Typography>
-      <Box
-        sx={{
-          width: '100%',
-          mt: 2,
-          mb: 2,
-        }}
-      >
+
+      <Box className="w-full">
         <TextField
           fullWidth
           size="small"
@@ -115,15 +115,14 @@ const UsernameInput = ({ username, setUsername }: UserNameInputProps): ReactElem
 
       <Separator width="100%" />
 
-      <Typography sx={{ mt: 3, mb: 2, typography: 'h6', color: theme.colors.textSecondary }}>
+      <Typography className={'text-vera-secondary !text-vera-heading-4'}>
         {t('waitingRoom.title')}
       </Typography>
 
-      <Box>
-        <Typography sx={{ mb: 2, typography: 'h6', color: theme.colors.textTertiary }} noWrap>
-          {roomName}
-        </Typography>
-      </Box>
+      <Typography className="text-vera-tertiary !text-vera-heading-4" noWrap>
+        {roomName}
+      </Typography>
+
       <Button onClick={handleJoinClick} variant="contained" color="primary" type="submit" fullWidth>
         {t('button.join')}
       </Button>

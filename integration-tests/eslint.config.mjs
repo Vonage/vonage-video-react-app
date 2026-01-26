@@ -32,6 +32,16 @@ export default [
     },
   },
 
+  // Enable async rules for this test file only
+  {
+    files: ['tests/recording.spec.ts'],
+    rules: {
+      '@typescript-eslint/await-thenable': 'error',
+      '@typescript-eslint/no-misused-promises': 'error',
+      '@typescript-eslint/no-floating-promises': 'error',
+    },
+  },
+
   // Fixtures: disable restrictions and allow devDependencies
   {
     files: ['fixtures/**/*.{ts,tsx,js,jsx}'],

@@ -24,6 +24,7 @@ import type { PublishingErrorType } from '../../Context/PublisherProvider/usePub
 import useUserContext from '../../hooks/useUserContext';
 import env from '../../env';
 import useMountEffect from '@common/hooks/useMountEffect';
+import classNames from 'classnames';
 
 /**
  * MeetingRoom Component
@@ -67,6 +68,7 @@ const MeetingRoom = (): ReactElement => {
     toggleBackgroundEffects,
     closeRightPanel,
     toggleReportIssue,
+    archiveId,
   } = useSessionContext();
   const { isSharingScreen, screensharingPublisher, screenshareVideoElement, toggleShareScreen } =
     useScreenShare();
@@ -139,6 +141,8 @@ const MeetingRoom = (): ReactElement => {
 
   useRedirectOnSubscriberError({ subscriberError: subscriptionError, reconnecting });
 
+  const isRecording = !!archiveId;
+
   return (
     <Box
       data-testid="meetingRoom"
@@ -147,6 +151,7 @@ const MeetingRoom = (): ReactElement => {
         width: '100vw',
         backgroundColor: theme.colors.darkBackground,
       }}
+      className={classNames({ recording: isRecording })}
     >
       {isSmallViewport && <SmallViewportHeader />}
 

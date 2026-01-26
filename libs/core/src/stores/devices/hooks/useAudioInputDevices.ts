@@ -1,9 +1,9 @@
 import type { Device } from '@vonage/client-sdk-video';
-import devices$ from '../DevicesStore';
+import devicesStore from '../devicesStore';
 
 const isAudioInputDevice = (device: Device): boolean => device.kind.toLowerCase() === 'audioinput';
 
-const useAudioInputDevices = devices$.createSelectorHook(
+const useAudioInputDevices = devicesStore.createSelectorHook(
   (state) => state.devices.filter(isAudioInputDevice),
   {
     isEqualRoot: (prev, next) => prev.devices === next.devices,

@@ -3,12 +3,13 @@ import { useTranslation } from 'react-i18next';
 import useRoomName from '@hooks/useRoomName';
 import { startArchiving, stopArchiving } from '@api/archiving';
 import useSessionContext from '@hooks/useSessionContext';
-import { useAppConfig } from '@stores/appConfig';
+import appConfig$ from '@stores/appConfig';
 import ToolbarButton from '../ToolbarButton';
 import PopupDialog, { DialogTexts } from '../PopupDialog';
 import Tooltip from '@ui/Tooltip';
 import useTheme from '@ui/theme';
 import VividIcon from '@components/VividIcon';
+import classNames from 'classnames';
 
 export type ArchivingButtonProps = {
   isOverflowButton?: boolean;
@@ -34,7 +35,7 @@ const ArchivingButton = ({
   const roomName = useRoomName();
   const theme = useTheme();
   const { archiveId } = useSessionContext();
-  const allowArchiving = useAppConfig(
+  const allowArchiving = appConfig$.use.select(
     ({ meetingRoomSettings }) => meetingRoomSettings.allowArchiving
   );
   const isRecording = !!archiveId;
@@ -95,6 +96,7 @@ const ArchivingButton = ({
           <ToolbarButton
             onClick={handleButtonClick}
             data-testid="archiving-button"
+            className={classNames({ recording: isRecording })}
             icon={
               <VividIcon
                 name={isRecording ? 'radio-checked-2-line' : 'radio-checked-2-solid'}

@@ -1,5 +1,5 @@
 import useSuspenseMemo from '@common/hooks/useSuspenseMemo';
-import devices$ from '../../DevicesStore';
+import devicesStore from '../../devicesStore';
 import type { DeviceKind } from '../../types';
 import getConnectedDeviceIds from './helpers/getConnectedDeviceIds';
 
@@ -16,10 +16,10 @@ function useConnectedDeviceId(kind: DeviceKind): string | null;
 function useConnectedDeviceId(...kinds: [DeviceKind, ...DeviceKind[]]): (string | null)[];
 
 function useConnectedDeviceId(...kinds: DeviceKind[]): string | null | (string | null)[] {
-  const mediaDevices = devices$.use.select((state) => state.mediaDevices);
+  const mediaDevices = devicesStore.use.select((state) => state.mediaDevices);
 
   return useSuspenseMemo(() => {
-    const meta = devices$.getMetadata();
+    const meta = devicesStore.getMetadata();
 
     // suspend until media devices are loaded and ids are available
     if (meta.loadingMediaDevices?.status === 'pending') {

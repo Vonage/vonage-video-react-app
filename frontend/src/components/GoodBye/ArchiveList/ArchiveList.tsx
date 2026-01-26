@@ -20,6 +20,7 @@ import VividIcon from '@components/VividIcon';
 import { Archive, ArchiveStatus } from '../../../api/archiving/model';
 import formatDuration from '@utils/formatDuration';
 import formatFileSize from '@utils/formatFileSize';
+import classNames from 'classnames';
 
 const ArchiveErrorIcon = () => {
   const { t } = useTranslation();
@@ -109,7 +110,13 @@ const ArchiveList = ({ archives }: ArchiveListProps): ReactElement => {
   if (!archives.length) {
     return (
       <>
-        <Stack direction="row" alignItems="center" spacing={1.5} sx={{ mb: 2 }}>
+        <Stack
+          data-testid="archive-list-empty"
+          direction="row"
+          alignItems="center"
+          spacing={1.5}
+          sx={{ mb: 2 }}
+        >
           <VividIcon
             name="video-active-line"
             customSize={-4}
@@ -149,7 +156,13 @@ const ArchiveList = ({ archives }: ArchiveListProps): ReactElement => {
               <Box sx={{ flex: 1 }}>
                 <ListItemText
                   primary={
-                    <Typography variant="body1">
+                    <Typography
+                      variant="body1"
+                      data-testid={`archive-list-item-title-${index}`}
+                      className={classNames({
+                        pending: archive.status === 'pending',
+                      })}
+                    >
                       {archive.status === 'pending'
                         ? t('archiveList.loading')
                         : t('archiveList.archive.index', {

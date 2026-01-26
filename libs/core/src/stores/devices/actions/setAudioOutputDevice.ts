@@ -4,7 +4,7 @@ import {
 } from '../schemas/AudioOutputDevice.schema';
 import getAudioOutputDevices from '../helpers/getAudioOutputDevices';
 
-export type DevicesApi = import('../DevicesStore').DevicesApi;
+export type DevicesApi = import('../devicesStore').DevicesApi;
 
 /**
  * Sets the audio output device by its device ID.

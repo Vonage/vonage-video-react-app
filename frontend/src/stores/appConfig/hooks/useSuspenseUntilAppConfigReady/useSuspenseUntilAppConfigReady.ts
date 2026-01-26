@@ -1,13 +1,13 @@
 import useSuspenseMemo from '@common/hooks/useSuspenseMemo';
 import { useEffect } from 'react';
 import defer from '@common/execution/defer';
-import appConfig$ from '../../AppConfigStore';
+import appConfigStore from '../../appConfigStore';
 
 /**
  * Suspends the component or hook until the app configuration is fully loaded.
  */
 const useSuspenseUntilAppConfigReady = (): void => {
-  const observable = appConfig$.use.observable(({ isAppConfigLoaded }) => isAppConfigLoaded);
+  const observable = appConfigStore.use.observable(({ isAppConfigLoaded }) => isAppConfigLoaded);
 
   useSuspenseMemo(() => {
     const isAppConfigLoaded = observable.getState();

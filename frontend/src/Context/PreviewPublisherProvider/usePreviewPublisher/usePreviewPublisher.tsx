@@ -1,4 +1,4 @@
-import { useState, useRef, useCallback, useEffect } from 'react';
+import { useState, useRef, useCallback } from 'react';
 import {
   Publisher,
   Event,
@@ -7,18 +7,17 @@ import {
   hasMediaProcessorSupport,
   PublisherProperties,
 } from '@vonage/client-sdk-video';
-import { useAppConfig } from '@stores/appConfig';
-import setMediaDevices from '../../../utils/mediaDeviceUtils';
-import useDevices from '../../../hooks/useDevices';
+import appConfig$ from '@stores/appConfig';
 import usePermissions from '../../../hooks/usePermissions';
 import useUserContext from '../../../hooks/useUserContext';
 import { DEVICE_ACCESS_STATUS } from '../../../utils/constants';
 import { UserType } from '../../user';
 import { AccessDeniedEvent } from '../../PublisherProvider/usePublisher/usePublisher';
-import DeviceStore from '../../../utils/DeviceStore';
 import { setStorageItem, STORAGE_KEYS } from '../../../utils/storage';
 import applyBackgroundFilter from '../../../utils/backgroundFilter/applyBackgroundFilter/applyBackgroundFilter';
 import handlePublisherAccessDenied from '../../../utils/publisher/handlePublisherAccessDenied';
+import useStableCallback from '@common/hooks/useStableCallback';
+import devices$ from '@core/stores/devices';
 
 type PublisherVideoElementCreatedEvent = Event<'videoElementCreated', Publisher> & {
   element: HTMLVideoElement | HTMLObjectElement;
@@ -40,7 +39,7 @@ export type PreviewPublisherContextType = {
   accessStatus: string | null;
   changeAudioSource: (deviceId: string) => void;
   changeVideoSource: (deviceId: string) => void;
-  initLocalPublisher: () => Promise<void>;
+  initLocalPublisher: () => void;
   speechLevel: number;
 };
 
@@ -86,8 +85,9 @@ const usePreviewPublisher = (
   initialValue?: PreviewPublisherInitialValue
 ): PreviewPublisherContextType => {
   const { setUser, user } = useUserContext();
-  const defaultResolution = useAppConfig(({ videoSettings }) => videoSettings.defaultResolution);
-  const { allMediaDevices, getAllMediaDevices } = useDevices();
+  const defaultResolution = appConfig$.use.select(
+    ({ videoSettings }) => videoSettings.defaultResolution
+  );
   const [publisherVideoElement, setPublisherVideoElement] = useState<
     HTMLVideoElement | HTMLObjectElement | undefined
   >(initialValue?.publisherVideoElement ?? undefined);
@@ -113,13 +113,6 @@ const usePreviewPublisher = (
   const [localAudioSource, setLocalAudioSource] = useState<string | undefined>(
     initialValue?.localAudioSource ?? undefined
   );
-  const deviceStoreRef = useRef<DeviceStore>(new DeviceStore());
-
-  /* This sets the default devices in use so that the user knows what devices they are using */
-  useEffect(() => {
-    setMediaDevices(publisherRef, allMediaDevices, setLocalAudioSource, setLocalVideoSource);
-  }, [allMediaDevices]);
-
   const handlePreviewDestroyed = () => {
     publisherRef.current = null;
   };
@@ -205,26 +198,24 @@ const usePreviewPublisher = (
     setSpeechLevel(Math.min(Math.max(currentLogLevel, 0), 1) * 100);
   }, []);
 
-  const addPublisherListeners = useCallback(
-    (publisher: Publisher | null) => {
-      if (!publisher) {
-        return;
-      }
-      publisher.on('destroyed', handlePreviewDestroyed);
-      publisher.on('accessDenied', handleAccessDenied);
-      publisher.on('videoElementCreated', handleVideoElementCreated);
-      publisher.on('audioLevelUpdated', ({ audioLevel }: { audioLevel: number }) => {
-        calculateAudioLevel(audioLevel);
-      });
-      publisher.on('accessAllowed', () => {
-        setAccessStatus(DEVICE_ACCESS_STATUS.ACCEPTED);
-        getAllMediaDevices();
-      });
-    },
-    [calculateAudioLevel, getAllMediaDevices, handleAccessDenied, setAccessStatus]
-  );
+  const addPublisherListeners = useStableCallback((publisher: Publisher | null) => {
+    if (!publisher) {
+      return;
+    }
+    publisher.on('destroyed', handlePreviewDestroyed);
+    publisher.on('accessDenied', handleAccessDenied);
+    publisher.on('videoElementCreated', handleVideoElementCreated);
+    publisher.on('audioLevelUpdated', ({ audioLevel }: { audioLevel: number }) => {
+      calculateAudioLevel(audioLevel);
+    });
+    publisher.on('accessAllowed', () => {
+      setAccessStatus(DEVICE_ACCESS_STATUS.ACCEPTED);
+    });
+  });
 
-  const initLocalPublisher = useCallback(async () => {
+  const [videoSource, audioSource] = devices$.useConnectedDeviceId('videoinput', 'audioinput');
+
+  const initLocalPublisher = useStableCallback(() => {
     if (publisherRef.current) {
       return;
     }
@@ -237,10 +228,6 @@ const usePreviewPublisher = (
     if (initialBackgroundRef.current && hasMediaProcessorSupport()) {
       videoFilter = initialBackgroundRef.current;
     }
-
-    await deviceStoreRef.current.init();
-    const videoSource = deviceStoreRef.current.getConnectedDeviceId('videoinput');
-    const audioSource = deviceStoreRef.current.getConnectedDeviceId('audioinput');
 
     const publisherOptions: PublisherProperties = {
       insertDefaultUI: false,
@@ -259,7 +246,7 @@ const usePreviewPublisher = (
       }
     });
     addPublisherListeners(publisherRef.current);
-  }, [addPublisherListeners, defaultResolution]);
+  });
 
   /**
    * Destroys the preview publisher

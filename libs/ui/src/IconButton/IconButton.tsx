@@ -1,6 +1,6 @@
 import { IconButton as MUIIconButton, IconButtonProps as MUIIconButtonProps } from '@mui/material';
 
-type IconButtonProps = MUIIconButtonProps;
+export type IconButtonProps = MUIIconButtonProps;
 
 const IconButton = (iconButtonProps: IconButtonProps) => {
   return <MUIIconButton {...iconButtonProps} />;

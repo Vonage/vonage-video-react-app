@@ -2,7 +2,7 @@ import CancelablePromise from 'easy-cancelable-promise';
 import getDevices from '../helpers/getDevices';
 import type { Device } from '../schemas';
 
-export type DevicesApi = import('../DevicesStore').DevicesApi;
+export type DevicesApi = import('../devicesStore').DevicesApi;
 
 /**
  * Syncs the devices list from Vonage SDK

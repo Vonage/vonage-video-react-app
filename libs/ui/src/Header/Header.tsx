@@ -6,7 +6,7 @@ import {
 } from '@mui/material';
 import { ReactNode } from 'react';
 
-type HeaderProps = {
+export type HeaderProps = {
   children: ReactNode;
   appBarProps?: MUIAppBarProps;
   toolbarProps?: MUIToolbarProps;

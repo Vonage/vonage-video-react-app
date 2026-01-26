@@ -1,6 +1,6 @@
 import { Avatar as MUIAvatar, AvatarProps as MUIAvatarProps } from '@mui/material';
 
-type AvatarProps = MUIAvatarProps;
+export type AvatarProps = MUIAvatarProps;
 
 const Avatar = (avatarProps: AvatarProps) => {
   return <MUIAvatar {...avatarProps} />;

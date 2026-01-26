@@ -1,6 +1,6 @@
 import { ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useIsMicrophoneControlAllowed } from '@stores/appConfig';
+import appConfig$ from '@stores/appConfig';
 import usePreviewPublisherContext from '@hooks/usePreviewPublisherContext';
 import useTheme from '@ui/theme';
 import Box from '@ui/Box';
@@ -20,7 +20,7 @@ const MicButton = (): ReactElement | false => {
   const { isAudioEnabled, toggleAudio } = usePreviewPublisherContext();
   const theme = useTheme();
 
-  const allowMicrophoneControl = useIsMicrophoneControlAllowed();
+  const allowMicrophoneControl = appConfig$.useIsMicrophoneControlAllowed();
 
   const title = isAudioEnabled
     ? t('devices.audio.microphone.state.off')

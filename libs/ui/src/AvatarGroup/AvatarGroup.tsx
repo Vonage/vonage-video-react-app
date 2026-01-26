@@ -3,7 +3,7 @@ import {
   AvatarGroupProps as MUIAvatarGroupProps,
 } from '@mui/material';
 
-type AvatarGroupProps = MUIAvatarGroupProps;
+export type AvatarGroupProps = MUIAvatarGroupProps;
 
 const AvatarGroup = (avatarGroupProps: AvatarGroupProps) => {
   return <MUIAvatarGroup {...avatarGroupProps} />;

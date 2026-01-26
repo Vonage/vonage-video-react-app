@@ -1,4 +1,4 @@
-import { act, waitFor, renderHook as renderHookBase } from '@testing-library/react';
+import { act, waitFor } from '@testing-library/react';
 import { beforeEach, describe, expect, it, Mock, vi } from 'vitest';
 import { hasMediaProcessorSupport, initPublisher, Publisher } from '@vonage/client-sdk-video';
 import EventEmitter from 'node:events';
@@ -9,6 +9,9 @@ import makePreviewPublisherProviderWrapper, {
   PreviewPublisherProviderWrapperOptions,
 } from '@test/providers/makePreviewPublisherProviderWrapper';
 import mediaDevicesMock from '@common/test/mocks/mediaDevicesMock';
+import renderAsyncHook from '@test-helpers/renderAsyncHook';
+import composeProviders from '@common/helpers/composeProviders';
+import SuspenseBoundary from '@common/components/SuspenseBoundary';
 
 vi.mock('@vonage/client-sdk-video');
 
@@ -48,9 +51,9 @@ describe('usePreviewPublisher', () => {
   describe('initLocalPublisher', () => {
     it('should call initLocalPublisher', async () => {
       mockedInitPublisher.mockReturnValue(mockPublisher);
-      const { result } = render();
+      const { result } = await render();
 
-      await result.current.initLocalPublisher();
+      result.current.initLocalPublisher();
 
       expect(mockedInitPublisher).toHaveBeenCalled();
     });
@@ -64,16 +67,16 @@ describe('usePreviewPublisher', () => {
         callback(error);
       });
 
-      const { result } = render();
-      await result.current.initLocalPublisher();
+      const { result } = await render();
+      result.current.initLocalPublisher();
       expect(console.error).toHaveBeenCalledWith('initPublisher error: ', error);
     });
 
     it('should apply background high blur when initialized and changed background', async () => {
       mockedHasMediaProcessorSupport.mockReturnValue(true);
       mockedInitPublisher.mockReturnValue(mockPublisher);
-      const { result } = render();
-      await result.current.initLocalPublisher();
+      const { result } = await render();
+      result.current.initLocalPublisher();
 
       await act(async () => {
         await result.current.changeBackground('high-blur');
@@ -87,8 +90,8 @@ describe('usePreviewPublisher', () => {
     it('should not replace background when initialized if the device does not support it', async () => {
       mockedHasMediaProcessorSupport.mockReturnValue(false);
       mockedInitPublisher.mockReturnValue(mockPublisher);
-      const { result } = render();
-      await result.current.initLocalPublisher();
+      const { result } = await render();
+      result.current.initLocalPublisher();
       expect(mockedInitPublisher).toHaveBeenCalledWith(
         undefined,
         expect.objectContaining({
@@ -101,15 +104,18 @@ describe('usePreviewPublisher', () => {
 
   describe('changeBackground', () => {
     let result: ReturnType<typeof usePreviewPublisher>;
+
     beforeEach(async () => {
       mockedHasMediaProcessorSupport.mockReturnValue(true);
       mockedInitPublisher.mockReturnValue(mockPublisher);
-      const renderResult = render();
+      const renderResult = await render();
 
       result = renderResult.result.current;
-      await act(async () => {
-        await result.initLocalPublisher();
+
+      act(() => {
+        result.initLocalPublisher();
       });
+
       (mockPublisher.applyVideoFilter as Mock).mockClear();
       (mockPublisher.clearVideoFilter as Mock).mockClear();
     });
@@ -145,9 +151,9 @@ describe('usePreviewPublisher', () => {
         throw new Error('Simulated internal failure');
       });
 
-      const { result: res } = render();
+      const { result: res } = await render();
       await act(async () => {
-        await res.current.initLocalPublisher();
+        res.current.initLocalPublisher();
         await res.current.changeBackground('low-blur');
       });
 
@@ -183,10 +189,10 @@ describe('usePreviewPublisher', () => {
     it('handles permission denial', async () => {
       mockedInitPublisher.mockReturnValue(mockPublisher);
 
-      const { result } = render();
+      const { result } = await render();
 
-      await act(async () => {
-        await result.current.initLocalPublisher();
+      act(() => {
+        result.current.initLocalPublisher();
       });
 
       expect(result.current.accessStatus).not.toBe(DEVICE_ACCESS_STATUS.REJECTED);
@@ -206,10 +212,10 @@ describe('usePreviewPublisher', () => {
       });
       mockedInitPublisher.mockReturnValue(mockPublisher);
 
-      const { result } = render();
+      const { result } = await render();
 
-      await act(async () => {
-        await result.current.initLocalPublisher();
+      act(() => {
+        result.current.initLocalPublisher();
       });
 
       expect(emitAccessDeniedError).not.toThrow();
@@ -221,14 +227,18 @@ describe('usePreviewPublisher', () => {
   });
 });
 
-function render(options?: PreviewPublisherProviderWrapperOptions) {
+async function render(options?: PreviewPublisherProviderWrapperOptions) {
   const { PreviewPublisherProviderWrapper, previewPublisherContext } =
     makePreviewPublisherProviderWrapper(options);
 
+  const wrapper = composeProviders(SuspenseBoundary, PreviewPublisherProviderWrapper);
+
+  const rendered = await renderAsyncHook(() => usePreviewPublisher(), {
+    wrapper,
+  });
+
   return {
-    ...renderHookBase(() => usePreviewPublisher(), {
-      wrapper: PreviewPublisherProviderWrapper,
-    }),
+    ...rendered,
     previewPublisherContext,
   };
 }

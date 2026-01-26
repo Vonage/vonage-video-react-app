@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it, vi, Mock, beforeAll, afterAll } from 'vitest';
-import { render as renderBase, screen, waitFor } from '@testing-library/react';
+import { screen, waitFor } from '@testing-library/react';
 import { ReactElement, ReactNode } from 'react';
 import { Publisher } from '@vonage/client-sdk-video';
 import EventEmitter from 'events';
@@ -16,6 +16,8 @@ import backgroundEffectsDialog$ from '@Context/BackgroundEffectsDialog';
 import precallNetworkTestDialog$ from '@Context/PrecallNetworkTestDialog';
 import composeProviders from '@common/helpers/composeProviders';
 import WaitingRoom from './WaitingRoom';
+import SuspenseBoundary from '@common/components/SuspenseBoundary';
+import renderAsyncComponent from '@test-helpers/renderAsyncComponent';
 
 const mockedNavigate = vi.fn();
 const mockedParams = { roomName: 'test-room-name' };
@@ -29,6 +31,14 @@ vi.mock('react-router-dom', async () => {
     useParams: () => mockedParams,
     useLocation: () => mockedLocation,
     Link: ({ children, to }: { children: ReactNode; to: string }) => <a href={to}>{children}</a>,
+  };
+});
+
+vi.mock('@vonage/client-sdk-video', async () => {
+  const actual = await vi.importActual('@vonage/client-sdk-video');
+  return {
+    ...actual,
+    Publisher: vi.fn(),
   };
 });
 
@@ -102,6 +112,7 @@ describe('WaitingRoom', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     vi.spyOn(console, 'error').mockImplementation(() => {});
+    vi.spyOn(console, 'warn').mockImplementation(() => {});
 
     setupMediaDevices();
     setupPermissions();
@@ -128,14 +139,14 @@ describe('WaitingRoom', () => {
   });
 
   it('should render', async () => {
-    render(<WaitingRoom />);
+    await render(<WaitingRoom />);
     await waitFor(() => {
       expect(screen.getByTestId('waitingRoom')).toBeInTheDocument();
     });
   });
 
   it('should display a video loading element on entering', async () => {
-    render(<WaitingRoom />, {
+    await render(<WaitingRoom />, {
       appConfigOptions: {
         value: {
           isAppConfigLoaded: false,
@@ -152,7 +163,7 @@ describe('WaitingRoom', () => {
   });
 
   it('should eventually display a preview publisher', async () => {
-    const { container } = render(<WaitingRoom />, {
+    const { container } = await render(<WaitingRoom />, {
       previewPublisherOptions: {
         __interceptor: (context: PreviewPublisherContextType) => {
           context.publisher = mockPublisher;
@@ -171,7 +182,7 @@ describe('WaitingRoom', () => {
   it('should call destroyPublisher when navigating away from waiting room', async () => {
     const user = userEvent.setup();
 
-    const { unmount } = render(<WaitingRoom />, {
+    const { unmount } = await render(<WaitingRoom />, {
       previewPublisherOptions: {
         __onCreated: (context: PreviewPublisherContextType) => {
           context.publisher = mockPublisher;
@@ -205,7 +216,7 @@ describe('WaitingRoom', () => {
   });
 
   it('should reload window when device permissions change', async () => {
-    render(<WaitingRoom />, {
+    await render(<WaitingRoom />, {
       previewPublisherOptions: {
         __interceptor: (context: PreviewPublisherContextType) => {
           context.accessStatus = DEVICE_ACCESS_STATUS.ACCEPTED;
@@ -221,7 +232,7 @@ describe('WaitingRoom', () => {
       setAccessStatus: vi.fn(),
     });
 
-    render(<WaitingRoom />);
+    await render(<WaitingRoom />);
 
     await waitFor(() => {
       expect(globalThis.location.reload).toHaveBeenCalled();
@@ -229,7 +240,7 @@ describe('WaitingRoom', () => {
   });
 
   it('should not render ControlPanel when allowDeviceSelection is false', async () => {
-    const { container } = render(<WaitingRoom />, {
+    const { container } = await render(<WaitingRoom />, {
       appConfigOptions: {
         value: {
           waitingRoomSettings: {
@@ -254,7 +265,7 @@ describe('WaitingRoom', () => {
   });
 
   it('should render ControlPanel when allowDeviceSelection is true', async () => {
-    render(<WaitingRoom />, {
+    await render(<WaitingRoom />, {
       appConfigOptions: {
         value: {
           waitingRoomSettings: {
@@ -292,17 +303,20 @@ function getLocationMock() {
   return { locationBackUp: location, locationMock };
 }
 
-function render(ui: ReactElement, options?: RoomContextWrapperOptions) {
+async function render(ui: ReactElement, options?: RoomContextWrapperOptions) {
   const { RoomProviderWrapper, ...contexts } = makeRoomContextWrapper(options);
 
   const Wrapper = composeProviders(
+    SuspenseBoundary,
     RoomProviderWrapper,
     backgroundEffectsDialog$.Provider,
     precallNetworkTestDialog$.Provider
   );
 
+  const renderResult = await renderAsyncComponent(ui, { wrapper: Wrapper });
+
   return {
     ...contexts,
-    ...renderBase(ui, { wrapper: Wrapper }),
+    ...renderResult,
   };
 }

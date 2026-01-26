@@ -1,11 +1,11 @@
 project:
-  name:  <add your project name>
+  name: vonage-video-react-app # replace with your project name
 instance:
-  name: <add your instance name>
+  name: vera-dev # replace with your instance name
   runtime: nodejs22
-  region: <add your region>
-  entrypoint: [yarn, run-server]
-  application-id: <add your deployment application-id>
+  region: aws.euw1 # replace with your desired region
+  # We run this locally so the vcr only needs to pick up the artefact backend/dist/**
+  entrypoint: [node, bundle.cjs]
+  application-id: ${DEV_VCR_APP_ID} # replace with your VCR Application ID
 debug:
-  entrypoint: [yarn, run-server]
-  application-id: <add your debug application-id>
+  entrypoint: [node, bundle.cjs]

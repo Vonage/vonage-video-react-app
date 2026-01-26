@@ -26,6 +26,7 @@
       "@utils/*": ["./src/utils/*"],
       "@test/*": ["./src/test/*"],
       "@ui/*": ["../libs/ui/src/*"],
+      "@ui": ["../libs/ui/src"],
       "@common/*": ["../libs/common/src/*"],
       "@core/*": ["../libs/core/src/*"],
       "@test-helpers/*": ["../libs/common/test/*"],

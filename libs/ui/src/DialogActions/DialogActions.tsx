@@ -3,7 +3,7 @@ import {
   DialogActionsProps as MUIDialogActionsProps,
 } from '@mui/material';
 
-type DialogActionsProps = MUIDialogActionsProps;
+export type DialogActionsProps = MUIDialogActionsProps;
 
 const DialogActions = (dialogActionsProps: DialogActionsProps) => {
   return <MUIDialogActions {...dialogActionsProps} />;

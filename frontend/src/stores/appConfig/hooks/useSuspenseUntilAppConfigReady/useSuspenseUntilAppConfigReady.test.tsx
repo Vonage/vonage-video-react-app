@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { StrictMode } from 'react';
-import appConfig$, { useSuspenseUntilAppConfigReady } from '../..';
+import appConfig$ from '../..';
 import { AppConfigProviderWrapperOptions, makeAppConfigProviderWrapper } from '@test/providers';
 import composeProviders from '@common/helpers/composeProviders';
 import SuspenseBoundary from '@common/components/SuspenseBoundary';
@@ -10,7 +10,7 @@ describe('useSuspenseUntilAppConfigReady', () => {
   it('should not trigger duplicate subscriptions in strict mode', async () => {
     const { result } = await renderHook(
       () => {
-        useSuspenseUntilAppConfigReady();
+        appConfig$.useSuspenseUntilAppConfigReady();
 
         return appConfig$.use.select((state) => state.isAppConfigLoaded);
       },
