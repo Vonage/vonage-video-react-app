@@ -4,6 +4,7 @@
   "include": ["eslint.config.mjs"],
   "references": [{ "path": "./tsconfig.lib.json" }, { "path": "./tsconfig.spec.json" }],
   "compilerOptions": {
+    "rootDir": "..",
     "composite": true,
     "baseUrl": "./",
     "moduleResolution": "node",
@@ -13,7 +14,8 @@
       "@common/*": ["../common/src/*"],
       "@common": ["../common/src"],
       "@core/*": ["../core/src/*"],
-      "@core": ["../core/src"]
+      "@core": ["../core/src"],
+      "@test-helpers/*": ["../common/test/*"]
     },
     "lib": ["DOM", "DOM.Iterable", "ESNext"]
   }

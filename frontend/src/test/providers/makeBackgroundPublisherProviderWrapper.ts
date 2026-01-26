@@ -2,7 +2,7 @@ import {
   BackgroundPublisherProvider,
   BackgroundPublisherContext,
 } from '@Context/BackgroundPublisherProvider';
-import composeProviders from '@utils/composeProviders';
+import composeProviders from '@common/helpers/composeProviders';
 import makeGenericProviderWrapper, {
   GenericWrapperOptions,
 } from '@common/test/makeGenericProviderWrapper';

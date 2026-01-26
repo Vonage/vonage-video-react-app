@@ -14,6 +14,7 @@ export default defineConfig(() => ({
   resolve: {
     alias: {
       '@common': path.resolve(__dirname, './src'),
+      '@test-helpers': path.resolve(__dirname, '../test'),
     },
   },
   // Uncomment this if you are using workers.

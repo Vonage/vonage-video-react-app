@@ -7,7 +7,7 @@ import {
   hasMediaProcessorSupport,
   PublisherProperties,
 } from '@vonage/client-sdk-video';
-import useAppConfig from '@Context/AppConfig/hooks/useAppConfig';
+import { useAppConfig } from '@stores/appConfig';
 import setMediaDevices from '../../../utils/mediaDeviceUtils';
 import useDevices from '../../../hooks/useDevices';
 import usePermissions from '../../../hooks/usePermissions';

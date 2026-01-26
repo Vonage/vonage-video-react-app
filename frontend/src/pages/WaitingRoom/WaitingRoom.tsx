@@ -13,7 +13,7 @@ import { getStorageItem, STORAGE_KEYS } from '../../utils/storage';
 import useBackgroundPublisherContext from '../../hooks/useBackgroundPublisherContext';
 import backgroundEffectsDialog$ from '../../Context/BackgroundEffectsDialog';
 import precallNetworkTestDialog$ from '@Context/PrecallNetworkTestDialog';
-import useAppConfig from '@Context/AppConfig/hooks/useAppConfig';
+import { useAppConfig } from '@stores/appConfig';
 
 /**
  * WaitingRoom Component

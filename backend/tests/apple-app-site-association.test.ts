@@ -9,7 +9,7 @@ describe('GET /.well-known/apple-app-site-association', () => {
   let server: Server;
 
   beforeAll(async () => {
-    server = await startServer();
+    server = await startServer(0);
   });
 
   afterAll((done) => {

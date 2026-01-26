@@ -5,11 +5,13 @@
 
 - [Table of Contents](#table-of-contents)
 - [What is it?](#what-is-it)
+- [Cross-Platform Support](#cross-platform-support)
 - [Why use it?](#why-use-it)
 - [Project Architecture](#project-architecture)
 - [Platforms Supported](#platforms-supported)
 - [Requirements](#requirements)
 - [Running Locally](#running-locally)
+- [Storybook](#storybook)
 - [Testing on Multiple Devices](#testing-on-multiple-devices)
 - [Deployment to Vonage Cloud Runtime](#deployment-to-vonage-cloud-runtime)
 - [Testing](#testing)
@@ -122,6 +124,14 @@ The Vonage Video API Reference App for React is currently supported on the lates
 
 *Note:* Mobile web views have limited supported at the moment. The minimum supported device width is `360px`.
 
+## Cross-Platform Support
+Looking to build on other platforms? The Vonage Video API Reference App is also available for:
+
+- *iOS*: [vonage-video-ios-app](https://github.com/Vonage/vonage-video-ios-app)
+- *Android*: [vonage-video-android-app](https://github.com/Vonage/vonage-video-android-app)
+
+These reference apps share the same backend infrastructure and demonstrate consistent best practices across all platforms, making it easy to build unified video experiences for your users.
+
 ## Requirements
 
 
@@ -187,6 +197,28 @@ The Vonage Video API Reference App for React is currently supported on the lates
     ```
 
     This starts both the backend server (port **3345**) and the frontend Vite dev server (port **5173**). You can now access the app at [http://localhost:5173](http://localhost:5173).
+
+## Storybook
+
+Storybook is available for developing and testing UI components in isolation.
+
+To run Storybook for the frontend:
+
+```bash
+yarn storybook:frontend
+```
+
+This will start the Storybook dev server at [http://localhost:6006](http://localhost:6006).
+
+-----
+
+To run Storybook for the ui:
+
+```bash
+yarn storybook:ui
+```
+
+This will start the Storybook dev server at [http://localhost:6007](http://localhost:6007).
 
 ## Testing on Multiple Devices
 

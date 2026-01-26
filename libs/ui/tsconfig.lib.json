@@ -9,6 +9,6 @@
     "types": ["node", "vite/client"],
     "tsBuildInfoFile": "dist/tsconfig.lib.tsbuildinfo"
   },
-  "include": ["src/**/*.ts", "src/**/*.tsx"],
-  "exclude": ["**/*.spec.*", "**/*.test.*", "**/*.story.*"]
+  "include": ["src/**/*.ts", "src/**/*.tsx", "src/**/*.json"],
+  "exclude": ["**/*.spec.*", "**/*.test.*"]
 }

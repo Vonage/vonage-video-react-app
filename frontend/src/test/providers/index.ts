@@ -13,14 +13,6 @@ export {
   type UserProviderWrapperOptions,
 } from './makeUserProviderWrapper';
 
-/**
- * TODO: We still need to create provider wrappers for the following contexts:
- *
- * RoomProvider
- *
- * Right now we are mocking all those context which downgrades the quality of our tests.
- */
-
 export {
   default as makeAudioOutputProviderWrapper,
   type AudioOutputProviderWrapperOptions,
@@ -40,3 +32,8 @@ export {
   default as makeBackgroundPublisherProviderWrapper,
   type BackgroundPublisherProviderWrapperOptions,
 } from './makeBackgroundPublisherProviderWrapper';
+
+export {
+  default as makeRoomContextWrapper,
+  type RoomContextWrapperOptions,
+} from './makeRoomContextWrapper';

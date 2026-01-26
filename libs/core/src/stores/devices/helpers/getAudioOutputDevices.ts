@@ -1,7 +1,5 @@
-import {
-  getAudioOutputDevices as getVonageAudioOutputDevices,
-  AudioOutputDevice,
-} from '@vonage/client-sdk-video';
+import { getAudioOutputDevices as getVonageAudioOutputDevices } from '@vonage/client-sdk-video';
+import AudioOutputDevice from '../types/AudioOutputDevice';
 
 const renameDefaultDevice = (
   audioOutput: AudioOutputDevice,
@@ -11,10 +9,12 @@ const renameDefaultDevice = (
 
 const getAudioOutputDevices = (defaultLabel = 'System Default') => {
   // Vonage Video API's getAudioOutputDevices retrieves all audio output devices (speakers)
-  return getVonageAudioOutputDevices().then((audioOutputDevices) => {
-    // Rename the label of the default audio output to the provided label
-    return audioOutputDevices.map((device) => renameDefaultDevice(device, defaultLabel));
-  });
+  return (getVonageAudioOutputDevices() as Promise<AudioOutputDevice[]>).then(
+    (audioOutputDevices) => {
+      // Rename the label of the default audio output to the provided label
+      return audioOutputDevices.map((device) => renameDefaultDevice(device, defaultLabel));
+    }
+  );
 };
 
 export default getAudioOutputDevices;

@@ -1,4 +1,4 @@
-import devices$ from '../DevicesContext';
+import devices$ from '../DevicesStore';
 
 const useAudioOutputDevices = devices$.createSelectorHook((state) => state.audioOutputDevices);
 

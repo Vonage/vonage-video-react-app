@@ -1,7 +1,7 @@
 import { Dispatch, ReactElement, useState, SetStateAction } from 'react';
 import { AxiosError } from 'axios';
 import { useTranslation } from 'react-i18next';
-import useIsMeetingCaptionsAllowed from '@Context/AppConfig/hooks/useIsMeetingCaptionsAllowed';
+import { useIsMeetingCaptionsAllowed } from '@stores/appConfig';
 import { disableCaptions, enableCaptions } from '@api/captions';
 import useRoomName from '@hooks/useRoomName';
 import ToolbarButton from '../ToolbarButton';

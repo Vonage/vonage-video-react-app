@@ -3,7 +3,7 @@ import * as path from 'node:path';
 import designTokens from '../designTokens.js';
 import type { Device, ThemeTypeface, ThemeTypeScale, ThemeWeight } from '@ui/theme';
 
-const outputFile = path.resolve('frontend/src/designTokens/designTokens.json');
+const outputFile = path.resolve('libs/ui/src/theme/helpers/designTokens/designTokens.json');
 
 type FontSize = {
   fontSize: string;
@@ -73,7 +73,7 @@ function designTokensToJson() {
   };
 
   // Write or overwrite the file
-  fs.writeFileSync(outputFile, JSON.stringify(tailwindExtend, null, 2), {
+  fs.writeFileSync(outputFile, JSON.stringify(tailwindExtend, null, 2) + '\n', {
     flag: 'w',
   });
 

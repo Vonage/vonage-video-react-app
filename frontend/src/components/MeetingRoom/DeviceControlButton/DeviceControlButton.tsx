@@ -1,7 +1,6 @@
 import { useState, useRef, useCallback, ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
-import useIsMicrophoneControlAllowed from '@Context/AppConfig/hooks/useIsMicrophoneControlAllowed';
-import useIsCameraControlAllowed from '@Context/AppConfig/hooks/useIsCameraControlAllowed';
+import { useIsCameraControlAllowed, useIsMicrophoneControlAllowed } from '@stores/appConfig';
 import usePublisherContext from '@hooks/usePublisherContext';
 import useBackgroundPublisherContext from '@hooks/useBackgroundPublisherContext';
 import getControlButtonTooltip from '@utils/getControlButtonTooltip';

@@ -27,7 +27,9 @@
       "@test/*": ["./src/test/*"],
       "@ui/*": ["../libs/ui/src/*"],
       "@common/*": ["../libs/common/src/*"],
-      "@core/*": ["../libs/core/src/*"]
+      "@core/*": ["../libs/core/src/*"],
+      "@test-helpers/*": ["../libs/common/test/*"],
+      "@stores/*": ["./src/stores/*"]
     },
     "types": ["vite/client", "node", "vitest", "vitest/globals"]
   },
@@ -39,7 +41,10 @@
     "eslint.config.mjs",
     "**/*.spec.ts",
     "**/*.spec.tsx",
-    "vite.config.ts"
+    "vite.config.ts",
+    ".storybook/main.ts",
+    ".storybook/preview.tsx",
+    "../libs/common/test/**/*.ts"
   ],
   "exclude": ["node_modules"]
 }

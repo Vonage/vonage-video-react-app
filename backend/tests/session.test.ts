@@ -50,7 +50,7 @@ describe.each([
   const roomName = 'awesomeRoomName';
 
   beforeAll(async () => {
-    server = await startServer();
+    server = await startServer(0);
     await sessionStorage.setSession('awesomeRoomName', 'someSessionId');
   });
 

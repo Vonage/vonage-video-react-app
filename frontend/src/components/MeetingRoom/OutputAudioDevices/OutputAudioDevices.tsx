@@ -1,7 +1,7 @@
 import { MouseEvent, ReactElement, useMemo } from 'react';
 import type { AudioOutputDevice } from '@vonage/client-sdk-video';
 import { useTranslation } from 'react-i18next';
-import useAppConfig from '@Context/AppConfig/hooks/useAppConfig';
+import { useAppConfig } from '@stores/appConfig';
 import useTheme from '@ui/theme';
 import useDevices from '@hooks/useDevices';
 import useAudioOutputContext from '@hooks/useAudioOutputContext';

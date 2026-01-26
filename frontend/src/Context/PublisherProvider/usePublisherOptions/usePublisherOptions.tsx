@@ -5,7 +5,7 @@ import {
   AudioFilter,
   hasMediaProcessorSupport,
 } from '@vonage/client-sdk-video';
-import useAppConfig from '@Context/AppConfig/hooks/useAppConfig';
+import { useAppConfig } from '@stores/appConfig';
 import useUserContext from '@hooks/useUserContext';
 import getInitials from '@utils/getInitials';
 import DeviceStore from '@utils/DeviceStore';
