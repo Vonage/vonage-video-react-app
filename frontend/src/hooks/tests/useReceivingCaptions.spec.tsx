@@ -1,20 +1,13 @@
 import { renderHook, act } from '@testing-library/react';
-import { describe, it, expect, beforeEach, vi, Mock } from 'vitest';
+import { describe, it, expect, vi } from 'vitest';
 import { Subscriber } from '@vonage/client-sdk-video';
 import { EventEmitter } from 'events';
 import useReceivingCaptions from '../useReceivingCaptions';
 import { SubscriberWrapper } from '../../types/session';
-import useSessionContext from '../useSessionContext';
-import { SessionContextType } from '../../Context/SessionProvider/session';
 
-vi.mock('../useSessionContext');
-
-const mockUseSessionContext = useSessionContext as Mock<[], SessionContextType>;
 type TestSubscriber = Subscriber & EventEmitter;
 
 describe('useReceivingCaptions', () => {
-  let sessionContext: SessionContextType;
-
   const createSubscriberWrapper = (id: string): SubscriberWrapper => {
     const mockSubscriber = Object.assign(new EventEmitter(), {
       id,
@@ -41,12 +34,6 @@ describe('useReceivingCaptions', () => {
       subscriber: mockSubscriber,
     };
   };
-  beforeEach(() => {
-    sessionContext = {
-      subscriberWrappers: [],
-    } as unknown as SessionContextType;
-    mockUseSessionContext.mockReturnValue(sessionContext as unknown as SessionContextType);
-  });
 
   it('should return initial empty values when no subscriber is provided', () => {
     const { result } = renderHook(() => useReceivingCaptions({ subscriber: undefined }));

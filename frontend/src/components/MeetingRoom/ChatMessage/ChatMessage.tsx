@@ -76,6 +76,7 @@ const ChatMessage = ({
         secondary={
           <Typography
             variant="body2"
+            component="span"
             sx={{ color: theme.colors.textSecondary, overflowWrap: 'break-word' }}
             data-testid="chat-msg-content"
           >

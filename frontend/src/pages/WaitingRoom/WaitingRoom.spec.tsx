@@ -10,7 +10,7 @@ import usePermissions from '@hooks/usePermissions';
 import { DEVICE_ACCESS_STATUS } from '@utils/constants';
 import waitUntilPlaying from '@utils/waitUntilPlaying';
 import { makeRoomContextWrapper, RoomContextWrapperOptions } from '@test/providers';
-import { PreviewPublisherContextType } from '@Context/PreviewPublisherProvider';
+import { type PreviewPublisherContextType } from '@Context/PreviewPublisherProvider';
 import mediaDevicesMock from '@common/test/mocks/mediaDevicesMock';
 import backgroundEffectsDialog$ from '@Context/BackgroundEffectsDialog';
 import precallNetworkTestDialog$ from '@Context/PrecallNetworkTestDialog';
