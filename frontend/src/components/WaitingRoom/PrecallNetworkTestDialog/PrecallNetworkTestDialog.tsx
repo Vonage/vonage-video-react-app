@@ -199,6 +199,7 @@ const PrecallNetworkTestDialog = ({
                   alignItems: 'center',
                   gap: 2,
                   py: 2,
+                  minHeight: 100,
                 }}
               >
                 <Typography
@@ -240,6 +241,7 @@ const PrecallNetworkTestDialog = ({
                     alignItems: 'center',
                     gap: 2,
                     py: 2,
+                    minHeight: 100,
                   }}
                 >
                   <Typography
