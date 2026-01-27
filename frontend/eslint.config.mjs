@@ -13,7 +13,7 @@ export default [
     settings: {
       tailwindcss: {
         // path is relative to THIS file (frontend/)
-        config: './tailwind.config.js',
+        config: './tailwind.config.cjs',
       },
     },
     rules: {

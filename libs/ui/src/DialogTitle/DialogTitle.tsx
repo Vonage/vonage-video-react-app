@@ -3,7 +3,7 @@ import {
   DialogTitleProps as MUIDialogTitleProps,
 } from '@mui/material';
 
-type DialogTitleProps = MUIDialogTitleProps;
+export type DialogTitleProps = MUIDialogTitleProps;
 
 const DialogTitle = (dialogTitleProps: DialogTitleProps) => {
   return <MUIDialogTitle {...dialogTitleProps} />;

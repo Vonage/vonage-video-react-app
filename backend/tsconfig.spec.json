@@ -7,7 +7,8 @@
     "**/*.test.ts",
     "**/*.spec.ts",
     "**/*.test.tsx",
-    "**/*.spec.tsx"
+    "**/*.spec.tsx",
+    "../libs/common/test/**/*.ts"
   ],
   "compilerOptions": {
     "tsBuildInfoFile": "dist/tsconfig.spec.tsbuildinfo"

@@ -4,17 +4,24 @@ import './css/index.css';
 import MeetingRoom from './pages/MeetingRoom';
 import GoodBye from './pages/GoodBye/index';
 import WaitingRoom from './pages/WaitingRoom';
-import SessionProvider from './Context/SessionProvider/session';
 import { PreviewPublisherProvider } from './Context/PreviewPublisherProvider';
 import LandingPage from './pages/LandingPage';
 import { PublisherProvider } from './Context/PublisherProvider';
 import RedirectToWaitingRoom from './components/RedirectToWaitingRoom';
 import UnsupportedBrowserPage from './pages/UnsupportedBrowserPage';
-import RoomContext from './Context/RoomContext';
+import RoomProvider from './Context/RoomProvider';
 import Box from '@ui/Box';
-import useTheme, { ThemeProvider } from '@ui/theme';
+import useTheme from '@ui/theme';
+import AppContextProvider from './AppContextProvider';
+import type { AppConfig } from '@stores/appConfig';
+import { DeepPartial } from './types';
+import RedirectToUnsupportedBrowserPage from '@components/RedirectToUnsupportedBrowserPage';
+import SuspenseBoundary from '@common/components/SuspenseBoundary/SuspenseBoundary';
+import WaitingRoomSkeleton from '@pages/WaitingRoom/WaitingRoom.skeleton';
+import MeetingRoomSkeleton from '@pages/MeetingRoom/MeetingRoom.skeleton';
+import SessionProvider from '@Context/SessionProvider/session';
 
-const App = () => {
+const InnerApp = () => {
   const theme = useTheme();
 
   return (
@@ -31,28 +38,38 @@ const App = () => {
     >
       <Router>
         <Routes>
-          <Route element={<RoomContext />}>
+          <Route element={<RedirectToUnsupportedBrowserPage />}>
             <Route
               path="/waiting-room/:roomName"
               element={
-                <PreviewPublisherProvider>
-                  <WaitingRoom />
-                </PreviewPublisherProvider>
+                <SuspenseBoundary fallback={<WaitingRoomSkeleton />}>
+                  <RoomProvider>
+                    <PreviewPublisherProvider>
+                      <WaitingRoom />
+                    </PreviewPublisherProvider>
+                  </RoomProvider>
+                </SuspenseBoundary>
               }
             />
+
             <Route
               path="/room/:roomName"
               element={
-                <SessionProvider>
-                  <RedirectToWaitingRoom>
-                    <PublisherProvider>
-                      <MeetingRoom />
-                    </PublisherProvider>
-                  </RedirectToWaitingRoom>
-                </SessionProvider>
+                <RedirectToWaitingRoom>
+                  <SuspenseBoundary fallback={<MeetingRoomSkeleton />}>
+                    <RoomProvider>
+                      <SessionProvider>
+                        <PublisherProvider>
+                          <MeetingRoom />
+                        </PublisherProvider>
+                      </SessionProvider>
+                    </RoomProvider>
+                  </SuspenseBoundary>
+                </RedirectToWaitingRoom>
               }
             />
           </Route>
+
           <Route path="/goodbye" element={<GoodBye />} />
           <Route path="*" element={<LandingPage />} />
           <Route path="/unsupported-browser" element={<UnsupportedBrowserPage />} />
@@ -62,12 +79,15 @@ const App = () => {
   );
 };
 
-const AppWrapper = () => {
+/**
+ * The wrapper is necessary temporarily since app also need to have access to theme context.
+ */
+const App = ({ appConfigValue }: { appConfigValue?: DeepPartial<AppConfig> }) => {
   return (
-    <ThemeProvider>
-      <App />
-    </ThemeProvider>
+    <AppContextProvider appConfigValue={appConfigValue}>
+      <InnerApp />
+    </AppContextProvider>
   );
 };
 
-export default AppWrapper;
+export default App;

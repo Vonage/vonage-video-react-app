@@ -1,7 +1,6 @@
 import { useState, useRef, useCallback, ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
-import useIsMicrophoneControlAllowed from '@Context/AppConfig/hooks/useIsMicrophoneControlAllowed';
-import useIsCameraControlAllowed from '@Context/AppConfig/hooks/useIsCameraControlAllowed';
+import appConfig$ from '@stores/appConfig';
 import usePublisherContext from '@hooks/usePublisherContext';
 import useBackgroundPublisherContext from '@hooks/useBackgroundPublisherContext';
 import getControlButtonTooltip from '@utils/getControlButtonTooltip';
@@ -39,8 +38,8 @@ const DeviceControlButton = ({
   const { toggleVideo: toggleBackgroundVideoPublisher } = useBackgroundPublisherContext();
   const theme = useTheme();
 
-  const isMicrophoneControlAllowed = useIsMicrophoneControlAllowed();
-  const isCameraControlAllowed = useIsCameraControlAllowed();
+  const isMicrophoneControlAllowed = appConfig$.useIsMicrophoneControlAllowed();
+  const isCameraControlAllowed = appConfig$.useIsCameraControlAllowed();
 
   const isAudio = deviceType === 'audio';
   const [open, setOpen] = useState<boolean>(false);

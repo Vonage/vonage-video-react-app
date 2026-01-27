@@ -1,7 +1,7 @@
 import { useState, useEffect, MouseEvent, ReactElement } from 'react';
 import { Device } from '@vonage/client-sdk-video';
 import { useTranslation } from 'react-i18next';
-import useAppConfig from '@Context/AppConfig/hooks/useAppConfig';
+import appConfig$ from '@stores/appConfig';
 import useTheme from '@ui/theme';
 import useDevices from '@hooks/useDevices';
 import usePublisherContext from '@hooks/usePublisherContext';
@@ -12,6 +12,7 @@ import Typography from '@ui/Typography';
 import MenuList from '@ui/MenuList';
 import MenuItem from '@ui/MenuItem';
 import VividIcon from '@components/VividIcon';
+import Tooltip from '@ui/Tooltip';
 
 export type VideoDevicesProps = {
   handleToggle: () => void;
@@ -30,7 +31,7 @@ const VideoDevices = ({ handleToggle }: VideoDevicesProps): ReactElement | false
   const theme = useTheme();
   const { isPublishing, publisher } = usePublisherContext();
 
-  const allowDeviceSelection = useAppConfig(
+  const allowDeviceSelection = appConfig$.use.select(
     ({ meetingRoomSettings }) => meetingRoomSettings.allowDeviceSelection
   );
 
@@ -125,7 +126,11 @@ const VideoDevices = ({ handleToggle }: VideoDevicesProps): ReactElement | false
                   ) : (
                     <Box sx={{ minWidth: 36 }} /> // Placeholder when CheckIcon is not displayed
                   )}
-                  <Typography noWrap>{option.label}</Typography>
+                  <Tooltip title={option.label} placement="right" arrow>
+                    <Typography component="span" noWrap>
+                      {option.label}
+                    </Typography>
+                  </Tooltip>
                 </Box>
               </MenuItem>
             );

@@ -3,7 +3,7 @@ import {
   ListItemIconProps as MUIListItemIconProps,
 } from '@mui/material';
 
-type ListItemIconProps = MUIListItemIconProps;
+export type ListItemIconProps = MUIListItemIconProps;
 
 const ListItemIcon = (listItemIconProps: ListItemIconProps) => {
   return <MUIListItemIcon {...listItemIconProps} />;

@@ -1,5 +1,5 @@
 import { PublisherProvider, PublisherContext } from '@Context/PublisherProvider';
-import composeProviders from '@utils/composeProviders';
+import composeProviders from '@common/helpers/composeProviders';
 import makeGenericProviderWrapper, {
   GenericWrapperOptions,
 } from '@common/test/makeGenericProviderWrapper';

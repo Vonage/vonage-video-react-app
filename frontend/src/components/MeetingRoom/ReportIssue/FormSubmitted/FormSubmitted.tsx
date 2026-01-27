@@ -83,7 +83,11 @@ const FormSubmitted = ({
               </Link>
             </Box>
           ) : (
-            <Typography variant="body1" data-testid="error-text">
+            <Typography
+              variant="body1"
+              data-testid="error-text"
+              sx={{ color: theme.colors.textSecondary }}
+            >
               {t('feedbackForm.submitted.error')}
             </Typography>
           )}

@@ -116,6 +116,7 @@ export type ColorsTokens = {
 
   disabled: ColorTokenItem;
   'text-disabled': ColorTokenItem;
+  'skeleton-like': ColorTokenItem;
 };
 
 export type ShapeTokenItem = {

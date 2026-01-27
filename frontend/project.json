@@ -17,7 +17,7 @@
       "executor": "nx:run-commands",
       "options": {
         "cwd": "frontend",
-        "command": "concurrently \"yarn --silent ts-check:watch\" \"vite --host\""
+        "command": "concurrently \"nx run frontend:ts-check:watch\" \"vite --host\""
       }
     },
     "serve": {
@@ -52,14 +52,12 @@
       "executor": "nx:run-commands",
       "options": {
         "cwd": "frontend",
-        "command": "vitest run --coverage"
-      }
-    },
-    "test:watch": {
-      "executor": "nx:run-commands",
-      "options": {
-        "cwd": "frontend",
-        "command": "vitest"
+        "command": "bash -c 'source ../vcrBuild.env.sh && vitest run'"
+      },
+      "configurations": {
+        "coverage": {
+          "command": "bash -c 'source ../vcrBuild.env.sh && vitest run --coverage'"
+        }
       }
     },
     "docs": {
@@ -95,6 +93,21 @@
       "options": {
         "cwd": "frontend",
         "command": "mkdir -p ../backend/dist/dist && cp -R dist/. ../backend/dist/dist/"
+      }
+    },
+    "storybook": {
+      "executor": "nx:run-commands",
+      "options": {
+        "cwd": "frontend",
+        "command": "storybook dev -p 6006"
+      }
+    },
+    "build-storybook": {
+      "executor": "nx:run-commands",
+      "outputs": ["{projectRoot}/storybook-static"],
+      "options": {
+        "cwd": "frontend",
+        "command": "storybook build"
       }
     }
   },

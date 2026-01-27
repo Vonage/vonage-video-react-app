@@ -2,7 +2,7 @@ import { ThemeProvider as ThemeProviderBase, CssBaseline } from '@mui/material';
 import React, { PropsWithChildren, useMemo, useState } from 'react';
 import getTokensByMode from './helpers/getTokensByMode';
 import isDarkMode from './helpers/isDarkMode';
-import useSynchronizeThemeAndMedia from './hooks/useSynchronizeThemeAndMedia';
+import useSynchronizeThemeAndMedia from './hooks/useSynchronizeThemeAndMedia/useSynchronizeThemeAndMedia';
 import getMuiCustomTheme from './helpers/getMuiCustomTheme';
 import Theme, { PartialTheme } from './themeContext.types';
 import { mergeThemeConfigurations } from './helpers/mergeThemeConfigurations';

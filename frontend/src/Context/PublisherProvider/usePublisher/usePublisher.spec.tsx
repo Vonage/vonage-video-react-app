@@ -9,7 +9,7 @@ import {
 import EventEmitter from 'events';
 import useUserContext from '@hooks/useUserContext';
 import useSessionContext from '@hooks/useSessionContext';
-import appConfig from '@Context/AppConfig';
+import appConfig from '@stores/appConfig';
 import usePublisher from './usePublisher';
 import { UserContextType } from '../../user';
 import { SessionContextType } from '../../SessionProvider/session';

@@ -4,11 +4,13 @@ import { ReactElement } from 'react';
 import useDevices from '@hooks/useDevices';
 import { AllMediaDevices } from '@app-types/room';
 import { allMediaDevices } from '@utils/mockData/device';
-import { AppConfigProviderWrapperOptions, makeAppConfigProviderWrapper } from '@test/providers';
+import { makeRoomContextWrapper, type RoomContextWrapperOptions } from '@test/providers';
 import backgroundEffectsDialog$ from '@Context/BackgroundEffectsDialog';
 import precallNetworkTestDialog$ from '@Context/PrecallNetworkTestDialog';
 import ControlPanel from '.';
-import composeProviders from '@utils/composeProviders';
+import composeProviders from '@common/helpers/composeProviders';
+import mediaDevicesMock from '@common/test/mocks/mediaDevicesMock';
+import SuspenseBoundary from '@common/components/SuspenseBoundary';
 
 vi.mock('@hooks/useDevices.tsx');
 
@@ -22,6 +24,22 @@ describe('ControlPanel', () => {
     mockUseDevices.mockReturnValue({
       getAllMediaDevices: vi.fn(),
       allMediaDevices,
+    });
+
+    Object.defineProperty(global.navigator, 'mediaDevices', {
+      writable: true,
+      value: mediaDevicesMock,
+    });
+
+    vi.spyOn(mediaDevicesMock, 'addEventListener').mockImplementation(() => {});
+    vi.spyOn(mediaDevicesMock, 'removeEventListener').mockImplementation(() => {});
+    vi.spyOn(mediaDevicesMock, 'enumerateDevices').mockResolvedValue([]);
+
+    Object.defineProperty(global.navigator, 'permissions', {
+      writable: true,
+      value: {
+        query: vi.fn().mockResolvedValue({ state: 'granted' }),
+      },
     });
   });
 
@@ -141,13 +159,14 @@ describe('ControlPanel', () => {
 function render(
   ui: ReactElement,
   options?: {
-    appConfigOptions?: AppConfigProviderWrapperOptions;
+    roomContextOptions?: RoomContextWrapperOptions;
   }
 ) {
-  const { AppConfigWrapper } = makeAppConfigProviderWrapper(options?.appConfigOptions);
+  const { RoomProviderWrapper } = makeRoomContextWrapper(options?.roomContextOptions);
 
   const wrapper = composeProviders(
-    AppConfigWrapper,
+    SuspenseBoundary,
+    RoomProviderWrapper,
     backgroundEffectsDialog$.Provider,
     precallNetworkTestDialog$.Provider
   );

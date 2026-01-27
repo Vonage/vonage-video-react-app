@@ -1,5 +1,6 @@
 # ignore techdocs output folder
 generated-docs/
+frontend/docs/
 
 **/node_modules/*
 

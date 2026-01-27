@@ -1,7 +1,7 @@
 import { MouseEvent, ReactElement, useMemo } from 'react';
 import type { AudioOutputDevice } from '@vonage/client-sdk-video';
 import { useTranslation } from 'react-i18next';
-import useAppConfig from '@Context/AppConfig/hooks/useAppConfig';
+import appConfig$ from '@stores/appConfig';
 import useTheme from '@ui/theme';
 import useDevices from '@hooks/useDevices';
 import useAudioOutputContext from '@hooks/useAudioOutputContext';
@@ -13,6 +13,7 @@ import Typography from '@ui/Typography';
 import MenuList from '@ui/MenuList';
 import MenuItem from '@ui/MenuItem';
 import VividIcon from '@components/VividIcon';
+import Tooltip from '@ui/Tooltip';
 
 export type OutputAudioDevicesProps = {
   handleToggle: () => void;
@@ -31,7 +32,7 @@ const OutputAudioDevices = ({ handleToggle }: OutputAudioDevicesProps): ReactEle
   const theme = useTheme();
   const { currentAudioOutputDevice, setAudioOutputDevice } = useAudioOutputContext();
 
-  const allowDeviceSelection = useAppConfig(
+  const allowDeviceSelection = appConfig$.use.select(
     ({ meetingRoomSettings }) => meetingRoomSettings.allowDeviceSelection
   );
 
@@ -123,9 +124,13 @@ const OutputAudioDevices = ({ handleToggle }: OutputAudioDevicesProps): ReactEle
                       />
                     </Box>
                   ) : (
-                    <Box sx={{ minWidth: 36 }} /> // Placeholder when CheckIcon is not displayed
+                    <Box sx={{ minWidth: 36 }} />
                   )}
-                  <Typography noWrap>{device.label}</Typography>
+                  <Tooltip title={device.label} placement="right" arrow>
+                    <Typography component="span" noWrap>
+                      {device.label}
+                    </Typography>
+                  </Tooltip>
                 </Box>
               </MenuItem>
             );

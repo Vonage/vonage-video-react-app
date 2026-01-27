@@ -1,15 +1,9 @@
-import { ForwardedRef, forwardRef, ReactElement, MouseEvent, TouchEvent } from 'react';
-import IconButton from '@ui/IconButton';
-import { SxProps } from '@ui/SxProps';
+import { ForwardedRef, forwardRef, ReactElement } from 'react';
 import useTheme from '@ui/theme';
+import { IconButton, IconButtonProps } from '@mui/material';
 
-export type ToolbarButtonProps = {
-  onClick:
-    | (() => void)
-    | ((event: MouseEvent<HTMLButtonElement> | TouchEvent<HTMLButtonElement>) => void);
+export type ToolbarButtonProps = IconButtonProps & {
   icon: ReactElement;
-  sx?: SxProps;
-  id?: string;
   isOverflowButton?: boolean;
 };
 
@@ -28,11 +22,12 @@ const ToolbarButton = forwardRef(function ToolbarButton(
   props: ToolbarButtonProps,
   ref: ForwardedRef<HTMLButtonElement>
 ) {
-  const { icon: Icon, sx = {}, isOverflowButton, ...rest } = props;
+  const { className, icon: Icon, sx = {}, isOverflowButton, ...rest } = props;
   const theme = useTheme();
 
   return (
     <IconButton
+      className={className}
       {...rest}
       edge="start"
       size="small"

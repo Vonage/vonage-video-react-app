@@ -23,7 +23,12 @@
       "executor": "nx:run-commands",
       "options": {
         "cwd": "libs/core",
-        "command": "vitest run --coverage"
+        "command": "vitest run"
+      },
+      "configurations": {
+        "coverage": {
+          "command": "vitest run --coverage"
+        }
       }
     },
     "build": {

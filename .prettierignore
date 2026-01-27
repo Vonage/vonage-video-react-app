@@ -1,6 +1,7 @@
 # Generated or irrelevant files
 *.d.ts
 *.log
+frontend/docs/
 
 # Documentation [todo]: We should be able to use prettier for this to ensure consistent formatting
 *.md

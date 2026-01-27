@@ -1,35 +1,50 @@
 import { expect } from '@playwright/test';
 import { test, baseURL } from '../fixtures/testWithLogging';
+import { TIMEOUTS, VIEWPORT, SCREENSHOT } from './utils';
 
-test.beforeEach(async ({ page }) => {
+test('Landing page UI test', async ({ page, isMobile }) => {
+  if (!isMobile) {
+    await page.setViewportSize({ width: VIEWPORT.WIDTH, height: VIEWPORT.HEIGHT });
+  }
+
   await page.clock.setFixedTime(new Date('2024-02-02T10:00:00'));
-  await page.goto(`${baseURL}waiting-room/test-room`);
-  await page.waitForTimeout(1000);
-});
-
-test('Landing page UI test', async ({ page }) => {
   await page.goto(baseURL, { waitUntil: 'networkidle' });
-  await page.waitForLoadState('domcontentloaded');
-  await page.waitForTimeout(500);
-  await expect(page).toHaveScreenshot({ maxDiffPixels: 800, timeout: 10000 });
-});
-
-test('Waiting page UI test', async ({ page }) => {
-  await page.waitForLoadState('networkidle');
-  await page
-    .waitForSelector('.video__element', { state: 'attached', timeout: 5000 })
-    .catch(() => {});
-  await page.waitForTimeout(500);
+  await page.waitForTimeout(500); // Let page settle for screenshot
   await expect(page).toHaveScreenshot({
-    mask: [page.locator('.video__element')],
-    maxDiffPixels: 800,
-    timeout: 10000,
+    maxDiffPixelRatio: SCREENSHOT.MAX_DIFF_PIXEL_RATIO,
+    timeout: TIMEOUTS.DEFAULT,
   });
 });
 
-test('Unsupported browser page UI test', async ({ page }) => {
+test('Waiting page UI test', async ({ page, isMobile }) => {
+  if (!isMobile) {
+    await page.setViewportSize({ width: VIEWPORT.WIDTH, height: VIEWPORT.HEIGHT });
+  }
+
+  await page.clock.setFixedTime(new Date('2024-02-02T10:00:00'));
+  await page.goto(`${baseURL}waiting-room/test-room`);
+  await page.waitForLoadState('networkidle');
+  await page
+    .waitForSelector('.video__element', { state: 'attached', timeout: TIMEOUTS.DEFAULT })
+    .catch(() => {});
+  await page.waitForTimeout(500); // Let page settle for screenshot
+  await expect(page).toHaveScreenshot({
+    mask: [page.locator('.video__element')],
+    maxDiffPixelRatio: SCREENSHOT.MAX_DIFF_PIXEL_RATIO,
+    timeout: TIMEOUTS.DEFAULT,
+  });
+});
+
+test('Unsupported browser page UI test', async ({ page, isMobile }) => {
+  if (!isMobile) {
+    await page.setViewportSize({ width: VIEWPORT.WIDTH, height: VIEWPORT.HEIGHT });
+  }
+
+  await page.clock.setFixedTime(new Date('2024-02-02T10:00:00'));
   await page.goto(`${baseURL}unsupported-browser`, { waitUntil: 'networkidle' });
-  await page.waitForLoadState('domcontentloaded');
-  await page.waitForTimeout(500);
-  await expect(page).toHaveScreenshot({ maxDiffPixels: 800, timeout: 10000 });
+  await page.waitForTimeout(500); // Let page settle for screenshot
+  await expect(page).toHaveScreenshot({
+    maxDiffPixelRatio: SCREENSHOT.MAX_DIFF_PIXEL_RATIO,
+    timeout: TIMEOUTS.DEFAULT,
+  });
 });

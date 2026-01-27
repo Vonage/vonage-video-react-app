@@ -1,8 +1,8 @@
-import type { DeviceKind } from '@core/stores/devices/actions/getConnectedDeviceId';
 import { Publisher } from '@vonage/client-sdk-video';
 import { useCallback, useState } from 'react';
 import getDeviceId from './helpers/getDeviceId';
 import useStableRef from '@common/hooks/useStableRef';
+import type { DeviceKind } from '@core/stores/devices';
 
 type UpdateCallback = () => void;
 

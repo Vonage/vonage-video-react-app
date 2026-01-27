@@ -1,5 +1,5 @@
 import SessionProvider, { SessionContext } from '@Context/SessionProvider/session';
-import composeProviders from '@utils/composeProviders';
+import composeProviders from '@common/helpers/composeProviders';
 import makeUserProviderWrapper, { UserProviderWrapperOptions } from './makeUserProviderWrapper';
 import makeAppConfigProviderWrapper, {
   AppConfigProviderWrapperOptions,

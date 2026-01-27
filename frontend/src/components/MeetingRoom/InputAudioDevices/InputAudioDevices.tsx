@@ -5,13 +5,14 @@ import MenuList from '@ui/MenuList';
 import { Device } from '@vonage/client-sdk-video';
 import { MouseEvent as ReactMouseEvent, ReactElement, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import useAppConfig from '@Context/AppConfig/hooks/useAppConfig';
+import appConfig$ from '@stores/appConfig';
 import useTheme from '@ui/theme';
 import VividIcon from '@components/VividIcon';
 import useDevices from '@hooks/useDevices';
 import usePublisherContext from '@hooks/usePublisherContext';
 import { setStorageItem, STORAGE_KEYS } from '@utils/storage';
 import cleanAndDedupeDeviceLabels from '@utils/cleanAndDedupeDeviceLabels';
+import Tooltip from '@ui/Tooltip';
 
 export type InputAudioDevicesProps = {
   handleToggle: () => void;
@@ -30,7 +31,7 @@ const InputAudioDevices = ({ handleToggle }: InputAudioDevicesProps): ReactEleme
   const theme = useTheme();
   const { publisher } = usePublisherContext();
 
-  const allowDeviceSelection = useAppConfig(
+  const allowDeviceSelection = appConfig$.use.select(
     ({ meetingRoomSettings }) => meetingRoomSettings.allowDeviceSelection
   );
 
@@ -114,9 +115,13 @@ const InputAudioDevices = ({ handleToggle }: InputAudioDevicesProps): ReactEleme
                       />
                     </Box>
                   ) : (
-                    <Box sx={{ minWidth: 36 }} /> // Placeholder when CheckIcon is not displayed
+                    <Box sx={{ minWidth: 36 }} />
                   )}
-                  <Typography noWrap>{option}</Typography>
+                  <Tooltip title={option} placement="right" arrow>
+                    <Typography component="span" noWrap>
+                      {option}
+                    </Typography>
+                  </Tooltip>
                 </Box>
               </MenuItem>
             );

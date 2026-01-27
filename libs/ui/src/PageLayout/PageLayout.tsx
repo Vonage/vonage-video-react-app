@@ -7,7 +7,7 @@ import useTheme from '../theme';
 
 type WithChildren = { children: React.ReactNode };
 
-type PageLayoutProps = BoxProps;
+export type PageLayoutProps = BoxProps;
 
 export enum PageLayoutRegions {
   Banner = 'Banner',

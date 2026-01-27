@@ -2,7 +2,7 @@ import React from 'react';
 import Box, { BoxProps } from '../Box/Box';
 import useTheme from '../theme';
 
-type CardProps<C extends React.ElementType = 'div'> = BoxProps<C>;
+export type CardProps<C extends React.ElementType = 'div'> = BoxProps<C>;
 
 const Card = <C extends React.ElementType = 'div'>({ sx, ...cardProps }: CardProps<C>) => {
   const theme = useTheme();

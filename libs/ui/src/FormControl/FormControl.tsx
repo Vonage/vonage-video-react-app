@@ -3,7 +3,7 @@ import {
   FormControlProps as MUIFormControlProps,
 } from '@mui/material';
 
-type FormControlProps = MUIFormControlProps;
+export type FormControlProps = MUIFormControlProps;
 
 const FormControl = (formControlProps: FormControlProps) => {
   return <MUIFormControl {...formControlProps} />;

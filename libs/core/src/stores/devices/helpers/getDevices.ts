@@ -1,17 +1,18 @@
-import { getDevices as getVonageDevices, Device, OTError } from '@vonage/client-sdk-video';
+import { getDevices as getVonageDevices } from '@vonage/client-sdk-video';
+import type { Device } from '../schemas';
 
 /**
  * Helper to get all media meta using Vonage Video API's getDevices method
  */
 const getDevices = () =>
   new Promise<Device[]>((resolve, reject) => {
-    getVonageDevices((err?: OTError, devices?: Device[]) => {
+    getVonageDevices((err, devices) => {
       if (err || !devices) {
         reject(err ?? new Error('Failed to get devices'));
         return;
       }
 
-      resolve(devices);
+      resolve(devices as Device[]);
     });
   });
 

@@ -1,7 +1,7 @@
 import { DeepPartial } from '@app-types/index';
-import appConfig, { type AppConfig } from '@Context/AppConfig';
-import defaultAppConfig from '@Context/AppConfig/helpers/defaultAppConfig';
-import mergeAppConfigs from '@Context/AppConfig/helpers/mergeAppConfigs';
+import appConfig, { type AppConfig } from '@stores/appConfig';
+import defaultAppConfig from '@stores/appConfig/helpers/defaultAppConfig';
+import mergeAppConfigs from '@stores/appConfig/helpers/mergeAppConfigs';
 
 export type AppConfigProviderWrapperOptions = {
   value?: DeepPartial<AppConfig>;

@@ -71,9 +71,7 @@ const ToolbarOverflowButton = ({
                 customSize={-5}
                 data-testid="MoreVertIcon"
                 sx={{
-                  color: isToolbarOverflowMenuOpen
-                    ? theme.colors.onBackground
-                    : theme.colors.background,
+                  color: isToolbarOverflowMenuOpen ? theme.colors.onSurface : theme.colors.surface,
                 }}
               />
             }

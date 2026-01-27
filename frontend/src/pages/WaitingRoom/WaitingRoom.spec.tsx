@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it, vi, Mock, beforeAll, afterAll } from 'vitest';
-import { act, render as renderBase, screen } from '@testing-library/react';
+import { act, screen } from '@testing-library/react';
 import { ReactElement, ReactNode } from 'react';
 import { Publisher } from '@vonage/client-sdk-video';
 import EventEmitter from 'events';
@@ -20,6 +20,9 @@ import waitUntilPlaying from '@utils/waitUntilPlaying';
 import { BackgroundPublisherContextType } from '@Context/BackgroundPublisherProvider';
 import { AppConfigProviderWrapperOptions, makeAppConfigProviderWrapper } from '@test/providers';
 import WaitingRoom from './WaitingRoom';
+import composeProviders from '@common/helpers/composeProviders';
+import SuspenseBoundary from '@common/components/SuspenseBoundary';
+import renderAsyncComponent from '@test-helpers/renderAsyncComponent';
 
 const mockedNavigate = vi.fn();
 const mockedParams = { roomName: 'test-room-name' };
@@ -121,14 +124,14 @@ describe('WaitingRoom', () => {
     vi.spyOn(globalThis.location, 'reload');
   });
 
-  it('should render', () => {
-    render(<WaitingRoomWithProviders />);
+  it('should render', async () => {
+    await render(<WaitingRoomWithProviders />);
     const waitingRoom = screen.getByTestId('waitingRoom');
     expect(waitingRoom).not.toBeNull();
   });
 
-  it('should display a video loading element on entering', () => {
-    render(<WaitingRoomWithProviders />, {
+  it('should display a video loading element on entering', async () => {
+    await render(<WaitingRoomWithProviders />, {
       appConfigOptions: {
         value: {
           isAppConfigLoaded: false,
@@ -149,7 +152,7 @@ describe('WaitingRoom', () => {
     previewPublisherContext.publisherVideoElement = mockPublisherVideoElement;
     previewPublisherContext.isVideoEnabled = true;
 
-    const { rerender, container } = render(<WaitingRoomWithProviders />);
+    const { rerender, container } = await render(<WaitingRoomWithProviders />);
 
     // TODO: investigate why this needs to be awaited or the test fails
     // eslint-disable-next-line @typescript-eslint/await-thenable
@@ -167,7 +170,7 @@ describe('WaitingRoom', () => {
     previewPublisherContext.publisher = mockPublisher;
     previewPublisherContext.destroyPublisher = mockedDestroyPublisher;
 
-    const { unmount } = render(<WaitingRoomWithProviders />);
+    const { unmount } = await render(<WaitingRoomWithProviders />);
 
     // Verify we're in the waiting room for test-room-name
     expect(screen.getByText('test-room-name')).toBeInTheDocument();
@@ -186,8 +189,8 @@ describe('WaitingRoom', () => {
     expect(mockedDestroyPublisher).toHaveBeenCalled();
   });
 
-  it('should reload window when device permissions change', () => {
-    const { rerender } = render(<WaitingRoomWithProviders />);
+  it('should reload window when device permissions change', async () => {
+    const { rerender } = await render(<WaitingRoomWithProviders />);
     expect(globalThis.location.reload).not.toBeCalled();
 
     act(() => {
@@ -197,10 +200,10 @@ describe('WaitingRoom', () => {
     expect(globalThis.location.reload).toBeCalled();
   });
 
-  it('should not render ControlPanel when allowDeviceSelection is false', () => {
+  it('should not render ControlPanel when allowDeviceSelection is false', async () => {
     previewPublisherContext.accessStatus = DEVICE_ACCESS_STATUS.ACCEPTED;
 
-    const { queryByTestId } = render(<WaitingRoomWithProviders />, {
+    const { queryByTestId } = await render(<WaitingRoomWithProviders />, {
       appConfigOptions: {
         value: {
           waitingRoomSettings: {
@@ -213,10 +216,10 @@ describe('WaitingRoom', () => {
     expect(queryByTestId('ControlPanel')).not.toBeInTheDocument();
   });
 
-  it('should render ControlPanel when allowDeviceSelection is true', () => {
+  it('should render ControlPanel when allowDeviceSelection is true', async () => {
     previewPublisherContext.accessStatus = DEVICE_ACCESS_STATUS.ACCEPTED;
 
-    const { queryByTestId } = render(<WaitingRoomWithProviders />, {
+    const { queryByTestId } = await render(<WaitingRoomWithProviders />, {
       appConfigOptions: {
         value: {
           waitingRoomSettings: {
@@ -255,5 +258,7 @@ function render(
 ) {
   const { AppConfigWrapper } = makeAppConfigProviderWrapper(options?.appConfigOptions);
 
-  return renderBase(ui, { wrapper: AppConfigWrapper });
+  const wrapper = composeProviders(SuspenseBoundary, AppConfigWrapper);
+
+  return renderAsyncComponent(ui, { wrapper });
 }
