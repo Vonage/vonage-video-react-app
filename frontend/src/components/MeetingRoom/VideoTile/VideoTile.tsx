@@ -75,11 +75,11 @@ const VideoTile = forwardRef(
           sx={{
             position: 'relative',
             left: 0,
-            top: 0,
+            top: '-4px',
             width: '100%',
             height: '100%',
             overflow: 'hidden',
-            borderRadius: 3,
+            borderRadius: theme.shapes.borderRadiusLarge,
             backgroundColor: theme.colors.darkGrey,
             display: hasVideo ? 'block' : 'none',
             ...(isTalking && {
@@ -95,7 +95,7 @@ const VideoTile = forwardRef(
             width: '100%',
             height: '100%',
             overflow: 'hidden',
-            borderRadius: 3,
+            borderRadius: theme.shapes.borderRadiusLarge,
             backgroundColor: theme.colors.darkGrey,
             display: hasVideo ? 'none' : 'block',
             ...(isTalking && {

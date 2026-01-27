@@ -177,3 +177,8 @@ export const MAX_ZOOM = 5;
  * This value determines how much the zoom level changes with each zoom action (e.g., mouse wheel event).
  */
 export const ZOOM_STEP = 0.25;
+
+/**
+ * @constant {number} SMALL_RIGHT_PANEL_WIDTH - The width in pixels of the right panel on small viewports.
+ */
+export const SMALL_RIGHT_PANEL_WIDTH = 350;

@@ -7,6 +7,7 @@ import useIsSmallViewport from '../../../hooks/useIsSmallViewport';
 import BackgroundEffectsLayout from '../../BackgroundEffects/BackgroundEffectsLayout';
 import Box from '@ui/Box';
 import useTheme from '@ui/theme';
+import { SMALL_RIGHT_PANEL_WIDTH } from '@utils/constants';
 
 export type RightPanelProps = {
   handleClose: () => void;
@@ -38,7 +39,7 @@ const RightPanel = ({ activeTab, handleClose }: RightPanelProps): ReactElement =
         bgcolor: theme.colors.surface,
         transition: 'right 0.3s',
         borderRadius: 2,
-        width: isSmallViewport ? '100dvw' : '360px',
+        width: isSmallViewport ? '100dvw' : SMALL_RIGHT_PANEL_WIDTH,
         height: isSmallViewport ? 'calc(100dvh - 80px)' : 'calc(100dvh - 96px)',
         mr: isSmallViewport ? 0 : 2,
         mt: isSmallViewport ? 0 : 2,

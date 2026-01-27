@@ -15,14 +15,15 @@ const getBoxStyle = (box: Box | undefined, isScreenShare?: boolean): CSSProperti
   box && {
     left: box.left,
     top: box.top,
-    // We subtract the margins from width and height
+    // We subtract the margins from width and height.
+    // Screenshare tiles do not apply the default outer margin.
     width:
       typeof box.width === 'number' && Number.isFinite(box.width)
-        ? box.width - VIDEO_TILE_MARGIN - (isScreenShare ? 0 : 6)
+        ? box.width - (isScreenShare ? 0 : VIDEO_TILE_MARGIN) - (isScreenShare ? 0 : 6)
         : 0,
     height:
       typeof box.height === 'number' && Number.isFinite(box.height)
-        ? box.height - VIDEO_TILE_MARGIN
+        ? box.height - (isScreenShare ? 0 : VIDEO_TILE_MARGIN)
         : 0,
     aspectRatio: '16 / 9',
   };

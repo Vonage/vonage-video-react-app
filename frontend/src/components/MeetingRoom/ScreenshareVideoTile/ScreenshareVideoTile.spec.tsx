@@ -309,7 +309,7 @@ describe('ScreenshareVideoTile', () => {
       const tile = screen.getByTestId('screenshare-tile');
       expect(tile).toHaveStyle({
         position: 'absolute',
-        margin: '8px',
+        margin: '0px',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
