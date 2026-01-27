@@ -1,13 +1,9 @@
-import { beforeEach, describe, expect, it, Mock, vi } from 'vitest';
-import { render, screen, fireEvent } from '@testing-library/react';
-import { SessionContextType } from '../../../Context/SessionProvider/session';
-import useSessionContext from '../../../hooks/useSessionContext';
+import { describe, expect, it, vi, afterEach } from 'vitest';
+import { render as renderBase, screen, fireEvent, cleanup } from '@testing-library/react';
+import { ReactElement } from 'react';
+import { makeSessionProviderWrapper, type SessionProviderWrapperOptions } from '@test/providers';
 import ChatInput from './ChatInput';
 import { ChatMessageType } from '../../../types/chat';
-
-vi.mock('../../../hooks/useSessionContext.tsx');
-vi.mock('../../../hooks/useUserContext');
-const mockUseSessionContext = useSessionContext as Mock<[], SessionContextType>;
 
 const testMessages: ChatMessageType[] = [
   {
@@ -17,27 +13,38 @@ const testMessages: ChatMessageType[] = [
   },
 ];
 
-describe('ChatInput', () => {
-  let sessionContext: SessionContextType;
-  const sendChatMessageMock = vi.fn();
+const sendChatMessageMock = vi.fn();
 
-  beforeEach(() => {
+describe('ChatInput', () => {
+  afterEach(() => {
+    cleanup();
     vi.clearAllMocks();
-    sessionContext = {
-      messages: testMessages,
-      sendChatMessage: sendChatMessageMock,
-    } as unknown as SessionContextType;
-    mockUseSessionContext.mockReturnValue(sessionContext as unknown as SessionContextType);
   });
 
   it('renders the chat input field', () => {
-    render(<ChatInput />);
+    render(<ChatInput />, {
+      sessionOptions: {
+        __interceptor: (context) => {
+          if (context) {
+            context.sendChatMessage = sendChatMessageMock;
+          }
+        },
+      },
+    });
     const input = screen.getByPlaceholderText('Send a message');
     expect(input).toBeInTheDocument();
   });
 
   it('does not send a message when composing', () => {
-    render(<ChatInput />);
+    render(<ChatInput />, {
+      sessionOptions: {
+        __interceptor: (context) => {
+          if (context) {
+            context.sendChatMessage = sendChatMessageMock;
+          }
+        },
+      },
+    });
     const input = screen.getByPlaceholderText('Send a message');
 
     fireEvent.compositionStart(input);
@@ -50,7 +57,15 @@ describe('ChatInput', () => {
   });
 
   it('sends a message on Enter when not composing', () => {
-    render(<ChatInput />);
+    render(<ChatInput />, {
+      sessionOptions: {
+        __interceptor: (context) => {
+          if (context) {
+            context.sendChatMessage = sendChatMessageMock;
+          }
+        },
+      },
+    });
     const input = screen.getByPlaceholderText('Send a message');
 
     fireEvent.change(input, { target: { value: testMessages[0].message } });
@@ -60,7 +75,15 @@ describe('ChatInput', () => {
   });
 
   it('does not send a message on Enter if Shift is pressed', () => {
-    render(<ChatInput />);
+    render(<ChatInput />, {
+      sessionOptions: {
+        __interceptor: (context) => {
+          if (context) {
+            context.sendChatMessage = sendChatMessageMock;
+          }
+        },
+      },
+    });
     const input = screen.getByPlaceholderText('Send a message');
 
     fireEvent.change(input, { target: { value: testMessages[0].message } });
@@ -70,7 +93,15 @@ describe('ChatInput', () => {
   });
 
   it('trims whitespace before sending a message', () => {
-    render(<ChatInput />);
+    render(<ChatInput />, {
+      sessionOptions: {
+        __interceptor: (context) => {
+          if (context) {
+            context.sendChatMessage = sendChatMessageMock;
+          }
+        },
+      },
+    });
     const input = screen.getByPlaceholderText('Send a message');
 
     fireEvent.change(input, { target: { value: `   ${testMessages[0].message}   ` } });
@@ -80,7 +111,15 @@ describe('ChatInput', () => {
   });
 
   it('does not send an empty message', () => {
-    render(<ChatInput />);
+    render(<ChatInput />, {
+      sessionOptions: {
+        __interceptor: (context) => {
+          if (context) {
+            context.sendChatMessage = sendChatMessageMock;
+          }
+        },
+      },
+    });
     const input = screen.getByPlaceholderText('Send a message');
     const sendButton = screen.getByRole('button');
 
@@ -89,3 +128,9 @@ describe('ChatInput', () => {
     expect(sendChatMessageMock).not.toHaveBeenCalled();
   });
 });
+
+function render(ui: ReactElement, options?: SessionProviderWrapperOptions) {
+  const { SessionProviderWrapper } = makeSessionProviderWrapper(options);
+
+  return renderBase(ui, { wrapper: SessionProviderWrapper });
+}

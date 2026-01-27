@@ -1,18 +1,12 @@
-import { beforeEach, describe, expect, it, Mock, vi } from 'vitest';
-import { act, render, screen } from '@testing-library/react';
+import { describe, expect, it, vi, afterEach } from 'vitest';
+import { act, cleanup, render as renderBase, screen } from '@testing-library/react';
 import { Subscriber } from '@vonage/client-sdk-video';
 import { SubscriberWrapper } from '../../../types/session';
 import ParticipantListItemMenu from '.';
-import useSessionContext from '../../../hooks/useSessionContext';
-import { SessionContextType } from '../../../Context/SessionProvider/session';
-
-vi.mock('../../../hooks/useSessionContext');
-
-const mockUseSessionContext = useSessionContext as Mock<[], SessionContextType>;
+import { makeSessionProviderWrapper, type SessionProviderWrapperOptions } from '@test/providers';
+import { ReactElement } from 'react';
 
 describe('ParticipantListItem', () => {
-  let mockSessionContext: SessionContextType;
-
   const mockSubscriberWrapper: SubscriberWrapper = {
     id: 'subId',
     isPinned: false,
@@ -24,16 +18,25 @@ describe('ParticipantListItem', () => {
     participantName: 'John Doe',
     subscriberWrapper: mockSubscriberWrapper,
   };
-  beforeEach(() => {
-    mockSessionContext = {
-      isMaxPinned: false,
-      pinSubscriber: vi.fn(),
-    } as unknown as SessionContextType;
-    mockUseSessionContext.mockImplementation(() => mockSessionContext);
+
+  const mockPinSubscriber = vi.fn();
+
+  afterEach(() => {
+    cleanup();
+    vi.clearAllMocks();
   });
 
   it('closes menu after clicking menu item', () => {
-    render(<ParticipantListItemMenu {...defaultProps} />);
+    render(<ParticipantListItemMenu {...defaultProps} />, {
+      sessionOptions: {
+        __interceptor: (context) => {
+          if (context) {
+            context.isMaxPinned = false;
+            context.pinSubscriber = mockPinSubscriber;
+          }
+        },
+      },
+    });
     const menuButton = screen.getByRole('button');
     act(() => menuButton.click());
     expect(screen.getByTestId('pin-menu-item')).toBeVisible();
@@ -43,56 +46,90 @@ describe('ParticipantListItem', () => {
   });
 
   it('can pin participant', () => {
-    render(<ParticipantListItemMenu {...defaultProps} />);
+    render(<ParticipantListItemMenu {...defaultProps} />, {
+      sessionOptions: {
+        __interceptor: (context) => {
+          if (context) {
+            context.isMaxPinned = false;
+            context.pinSubscriber = mockPinSubscriber;
+          }
+        },
+      },
+    });
     const menuButton = screen.getByRole('button');
     act(() => menuButton.click());
     const pinButton = screen.getByText('Pin John Doe');
     act(() => pinButton.click());
-    expect(mockSessionContext.pinSubscriber).toHaveBeenCalledWith('subId');
+    expect(mockPinSubscriber).toHaveBeenCalledWith('subId');
   });
 
   it('can unpin participant', () => {
     render(
       <ParticipantListItemMenu
         {...{ ...defaultProps, subscriberWrapper: { ...mockSubscriberWrapper, isPinned: true } }}
-      />
+      />,
+      {
+        sessionOptions: {
+          __interceptor: (context) => {
+            if (context) {
+              context.isMaxPinned = false;
+              context.pinSubscriber = mockPinSubscriber;
+            }
+          },
+        },
+      }
     );
     const menuButton = screen.getByRole('button');
     act(() => menuButton.click());
     const pinButton = screen.getByText('Unpin John Doe');
     act(() => pinButton.click());
-    expect(mockSessionContext.pinSubscriber).toHaveBeenCalledWith('subId');
+    expect(mockPinSubscriber).toHaveBeenCalledWith('subId');
   });
 
   it('cannot pin participant if maximum number of tiles are pinned', () => {
-    mockSessionContext = {
-      isMaxPinned: true,
-      pinSubscriber: vi.fn(),
-    } as unknown as SessionContextType;
-    mockUseSessionContext.mockImplementation(() => mockSessionContext);
-    render(<ParticipantListItemMenu {...defaultProps} />);
+    render(<ParticipantListItemMenu {...defaultProps} />, {
+      sessionOptions: {
+        __interceptor: (context) => {
+          if (context) {
+            context.isMaxPinned = true;
+            context.pinSubscriber = mockPinSubscriber;
+          }
+        },
+      },
+    });
     const menuButton = screen.getByRole('button');
     act(() => menuButton.click());
     const pinButton = screen.getByText(/You can't pin any more tiles/);
     act(() => pinButton.click());
-    expect(mockSessionContext.pinSubscriber).not.toHaveBeenCalled();
+    expect(mockPinSubscriber).not.toHaveBeenCalled();
   });
 
   it('can still unpin participant if maximum number of tiles are pinned', () => {
-    mockSessionContext = {
-      isMaxPinned: true,
-      pinSubscriber: vi.fn(),
-    } as unknown as SessionContextType;
-    mockUseSessionContext.mockImplementation(() => mockSessionContext);
     render(
       <ParticipantListItemMenu
         {...{ ...defaultProps, subscriberWrapper: { ...mockSubscriberWrapper, isPinned: true } }}
-      />
+      />,
+      {
+        sessionOptions: {
+          __interceptor: (context) => {
+            if (context) {
+              context.isMaxPinned = true;
+              context.pinSubscriber = mockPinSubscriber;
+            }
+          },
+        },
+      }
     );
     const menuButton = screen.getByRole('button');
     act(() => menuButton.click());
     const pinButton = screen.getByText('Unpin John Doe');
     act(() => pinButton.click());
-    expect(mockSessionContext.pinSubscriber).toHaveBeenCalledWith('subId');
+    expect(mockPinSubscriber).toHaveBeenCalledWith('subId');
   });
 });
+
+function render(ui: ReactElement, options?: SessionProviderWrapperOptions) {
+  const { SessionProviderWrapper } = makeSessionProviderWrapper(options);
+
+  return renderBase(ui, { wrapper: SessionProviderWrapper });
+}
