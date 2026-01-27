@@ -9,8 +9,8 @@ describe('DialogActionsRow', () => {
       <DialogActionsRow
         closeButtonText="Close"
         onClose={() => {}}
-        primaryButtonText="Retry"
-        onPrimaryClick={() => {}}
+        actionButtonText="Retry"
+        onActionClick={() => {}}
       />
     );
 
@@ -20,14 +20,14 @@ describe('DialogActionsRow', () => {
 
   it('calls handlers when buttons are clicked', async () => {
     const onClose = vi.fn();
-    const onPrimaryClick = vi.fn();
+    const onActionClick = vi.fn();
 
     render(
       <DialogActionsRow
         closeButtonText="Close"
         onClose={onClose}
-        primaryButtonText="Retry"
-        onPrimaryClick={onPrimaryClick}
+        actionButtonText="Retry"
+        onActionClick={onActionClick}
       />
     );
 
@@ -35,6 +35,6 @@ describe('DialogActionsRow', () => {
     await userEvent.click(screen.getByRole('button', { name: 'Retry' }));
 
     expect(onClose).toHaveBeenCalledTimes(1);
-    expect(onPrimaryClick).toHaveBeenCalledTimes(1);
+    expect(onActionClick).toHaveBeenCalledTimes(1);
   });
 });

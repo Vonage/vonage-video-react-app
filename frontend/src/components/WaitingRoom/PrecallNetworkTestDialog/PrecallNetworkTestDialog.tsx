@@ -175,7 +175,8 @@ const PrecallNetworkTestDialog = ({
                   display: 'flex',
                   flexDirection: 'column',
                   alignItems: 'center',
-                  mt: 4,
+                  gap: 2,
+                  py: 2,
                 }}
               >
                 <CircularProgress size={60} />
@@ -183,8 +184,8 @@ const PrecallNetworkTestDialog = ({
               <DialogActionsRow
                 closeButtonText={t('button.close')}
                 onClose={handleClose}
-                primaryButtonText={t('waitingRoom.precallNetworkTest.stopTest')}
-                onPrimaryClick={handleStopTest}
+                actionButtonText={t('waitingRoom.precallNetworkTest.stopTest')}
+                onActionClick={handleStopTest}
               />
             </Box>
           )}
@@ -223,8 +224,8 @@ const PrecallNetworkTestDialog = ({
               <DialogActionsRow
                 closeButtonText={t('button.close')}
                 onClose={handleClose}
-                primaryButtonText={t('waitingRoom.precallNetworkTest.retryTest')}
-                onPrimaryClick={handleRetry}
+                actionButtonText={t('waitingRoom.precallNetworkTest.retryTest')}
+                onActionClick={handleRetry}
               />
             </Box>
           )}
@@ -285,8 +286,8 @@ const PrecallNetworkTestDialog = ({
               <DialogActionsRow
                 closeButtonText={t('button.close')}
                 onClose={handleClose}
-                primaryButtonText={t('waitingRoom.precallNetworkTest.retryTest')}
-                onPrimaryClick={handleRetry}
+                actionButtonText={t('waitingRoom.precallNetworkTest.retryTest')}
+                onActionClick={handleRetry}
               />
             </Box>
           )}

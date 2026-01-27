@@ -6,8 +6,8 @@ import useTheme from '@ui/theme';
 export type DialogActionsRowProps = {
   closeButtonText: string;
   onClose: () => void;
-  primaryButtonText: string;
-  onPrimaryClick: () => void;
+  actionButtonText: string;
+  onActionClick: () => void;
   textColor?: string;
   primaryTextColor?: string;
 };
@@ -15,8 +15,8 @@ export type DialogActionsRowProps = {
 const DialogActionsRow = function DialogActionsRow({
   closeButtonText,
   onClose,
-  primaryButtonText,
-  onPrimaryClick,
+  actionButtonText,
+  onActionClick,
   textColor,
   primaryTextColor,
 }: DialogActionsRowProps): ReactElement {
@@ -45,13 +45,14 @@ const DialogActionsRow = function DialogActionsRow({
       </Button>
       <Button
         variant="contained"
-        onClick={onPrimaryClick}
+        onClick={onActionClick}
         sx={{
           color: resolvedPrimaryTextColor,
-          ml: 2,
+          minWidth: 100,
+          ml: 1,
         }}
       >
-        {primaryButtonText}
+        {actionButtonText}
       </Button>
     </Box>
   );
