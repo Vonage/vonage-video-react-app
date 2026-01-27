@@ -48,6 +48,28 @@ vi.mock('@utils/waitUntilPlaying/waitUntilPlaying.ts');
 
 const { locationBackUp, locationMock } = getLocationMock();
 
+function setupMediaDevices() {
+  Object.defineProperty(globalThis.navigator, 'mediaDevices', {
+    writable: true,
+    configurable: true,
+    value: mediaDevicesMock,
+  });
+
+  vi.spyOn(mediaDevicesMock, 'addEventListener').mockImplementation(() => {});
+  vi.spyOn(mediaDevicesMock, 'removeEventListener').mockImplementation(() => {});
+  vi.spyOn(mediaDevicesMock, 'enumerateDevices').mockResolvedValue([]);
+}
+
+function setupPermissions() {
+  Object.defineProperty(globalThis.navigator, 'permissions', {
+    writable: true,
+    configurable: true,
+    value: {
+      query: vi.fn().mockResolvedValue({ state: 'granted' }),
+    },
+  });
+}
+
 describe('WaitingRoom', () => {
   beforeAll(() => {
     globalThis.location = locationMock;
@@ -73,28 +95,6 @@ describe('WaitingRoom', () => {
   let mockedDestroyPublisher: Mock;
   let mockPublisher: Publisher;
   let mockPublisherVideoElement: HTMLVideoElement;
-
-  function setupMediaDevices() {
-    Object.defineProperty(globalThis.navigator, 'mediaDevices', {
-      writable: true,
-      configurable: true,
-      value: mediaDevicesMock,
-    });
-
-    vi.spyOn(mediaDevicesMock, 'addEventListener').mockImplementation(() => {});
-    vi.spyOn(mediaDevicesMock, 'removeEventListener').mockImplementation(() => {});
-    vi.spyOn(mediaDevicesMock, 'enumerateDevices').mockResolvedValue([]);
-  }
-
-  function setupPermissions() {
-    Object.defineProperty(globalThis.navigator, 'permissions', {
-      writable: true,
-      configurable: true,
-      value: {
-        query: vi.fn().mockResolvedValue({ state: 'granted' }),
-      },
-    });
-  }
 
   function createMockPublisher() {
     return Object.assign(new EventEmitter(), {

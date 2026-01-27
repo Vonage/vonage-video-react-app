@@ -47,7 +47,7 @@ describe('useCollectBrowserInformation', () => {
       get connectionId() {
         return 'yourConnectionId';
       },
-    }) as Partial<VonageVideoClient> as VonageVideoClient;
+    }) as VonageVideoClient;
 
     const { result } = render({
       sessionOptions: {
