@@ -322,6 +322,7 @@ const SessionProvider = ({ children, initialValue = {} }: SessionProviderProps):
   };
 
   const handleSubscriberDestroyed = (streamId: string) => {
+    console.warn(`Subscriber with stream ID ${streamId} destroyed`);
     activeSpeakerTracker.current.onSubscriberDestroyed(streamId);
     const isNotDestroyedStreamId = ({ id }: { id: string }) => streamId !== id;
     setSubscriberWrappers((prevSubscriberWrappers) =>

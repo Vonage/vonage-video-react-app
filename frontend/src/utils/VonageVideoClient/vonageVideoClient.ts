@@ -195,10 +195,12 @@ class VonageVideoClient extends EventEmitter<VonageVideoClientEvents> {
         subscriber,
       };
 
+      console.warn(`SubscriberVideoElementCreated ${streamId}`);
       this.emit('subscriberVideoElementCreated', subscriberWrapper);
     });
 
     subscriber.on('destroyed', () => {
+      console.warn(`subscriberDestroyed ${streamId}`);
       this.emit('subscriberDestroyed', streamId);
     });
 
