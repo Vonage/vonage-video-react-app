@@ -177,6 +177,7 @@ const PrecallNetworkTestDialog = ({
                   alignItems: 'center',
                   gap: 2,
                   py: 2,
+                  minHeight: 100,
                 }}
               >
                 <CircularProgress size={60} />
