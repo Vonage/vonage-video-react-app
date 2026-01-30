@@ -11,6 +11,7 @@ import { EventEmitter } from 'events';
 import {
   Credential,
   StreamCreatedEvent,
+  StreamDestroyedEvent,
   VideoElementCreatedEvent,
   SubscriberWrapper,
   SignalEvent,
@@ -56,6 +57,7 @@ class VonageVideoClient extends EventEmitter<VonageVideoClientEvents> {
   public clientSession: Session | null;
   private readonly credential: Credential;
   private hiddenSubscriber: Subscriber | null = null;
+  private readonly streams = new Map<string, Stream>();
 
   /**
    * Creates an instance of VonageVideoClient.
@@ -89,6 +91,7 @@ class VonageVideoClient extends EventEmitter<VonageVideoClientEvents> {
       this.handleStreamPropertyChanged(event)
     );
     this.clientSession.on('streamCreated', (event) => this.handleStreamCreated(event));
+    this.clientSession.on('streamDestroyed', (event) => this.handleStreamDestroyed(event));
   };
 
   /**
@@ -104,6 +107,24 @@ class VonageVideoClient extends EventEmitter<VonageVideoClientEvents> {
       return;
     }
     const { stream } = event;
+    const { streamId } = stream;
+
+    this.streams.set(streamId, stream);
+
+    await this.subscribeToStream(stream);
+  }
+
+  private handleStreamDestroyed(event: StreamDestroyedEvent) {
+    const { stream } = event;
+    const streamId = String(stream.streamId);
+    this.streams.delete(streamId);
+  }
+
+  private subscribeToStream = async (stream: Stream) => {
+    if (this.clientSession === null) {
+      return;
+    }
+
     const { streamId, videoType } = stream;
     const isScreenshare = videoType === 'screen';
     const subscriberOptions: SubscriberProperties = {
@@ -166,7 +187,32 @@ class VonageVideoClient extends EventEmitter<VonageVideoClientEvents> {
       console.error('[SUBSCRIBER] Critical subscription error:', syncError);
       this.handleSubscriptionError(syncError);
     }
-  }
+  };
+
+  hasStream = (streamId: string): boolean => {
+    return this.streams.has(streamId);
+  };
+
+  getStream = (streamId: string): Stream | undefined => {
+    return this.streams.get(streamId);
+  };
+
+  getActiveStreams = (): Stream[] => {
+    return Array.from(this.streams.values());
+  };
+
+  resubscribeToStreamId = async (streamId: string): Promise<void> => {
+    if (this.clientSession === null) {
+      return;
+    }
+
+    const stream = this.streams.get(streamId);
+    if (!stream) {
+      return;
+    }
+
+    await this.subscribeToStream(stream);
+  };
 
   /**
    * Sets up event listeners for a subscriber
