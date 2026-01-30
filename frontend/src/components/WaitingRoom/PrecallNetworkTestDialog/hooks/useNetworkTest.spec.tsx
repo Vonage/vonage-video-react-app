@@ -1,14 +1,16 @@
 import { describe, it, expect, vi, beforeEach, Mock } from 'vitest';
 import { renderHook, waitFor, act } from '@testing-library/react';
 import fetchCredentials from '@api/fetchCredentials';
+import NetworkTestConstructor from '@vonage/video-client-network-test';
 
-const mockNetworkTest = {
+const mockNetworkTest = vi.hoisted(() => ({
   testQuality: vi.fn(),
   stop: vi.fn(),
-};
+}));
 
 vi.mock('@vonage/video-client-network-test', () => {
   const MockNetworkTest = vi.fn(() => mockNetworkTest);
+
   return {
     __esModule: true,
     default: MockNetworkTest,
@@ -34,9 +36,9 @@ vi.mock('react-i18next', () => ({
   }),
 }));
 
-import useNetworkTest from '../useNetworkTest';
-import type { QualityResults, QualityUpdateStats } from '../useNetworkTest';
-import NetworkTestConstructor from '@vonage/video-client-network-test';
+import useNetworkTest, { type QualityResults } from './useNetworkTest';
+import wait from '@common/execution/wait/wait';
+import CancelablePromise from 'easy-cancelable-promise';
 
 describe('useNetworkTest', () => {
   const mockCredentials = {
@@ -81,7 +83,6 @@ describe('useNetworkTest', () => {
       isTestingQuality: false,
       connectivityResults: null,
       qualityResults: null,
-      qualityStats: null,
       error: null,
     });
   });
@@ -103,41 +104,6 @@ describe('useNetworkTest', () => {
       },
       {}
     );
-  });
-
-  it('testQuality calls update callback with stats', async () => {
-    const { result } = renderHook(() => useNetworkTest());
-    const mockUpdateCallback = vi.fn();
-    const mockStats: QualityUpdateStats = {
-      audio: {
-        timestamp: 123456,
-        bytesSent: 1000,
-        bytesReceived: 900,
-        packetsReceived: 100,
-        packetsLost: 2,
-      },
-      video: {
-        timestamp: 123456,
-        bytesSent: 5000,
-        bytesReceived: 4800,
-        frameRate: 30,
-        packetsReceived: 200,
-        packetsLost: 5,
-      },
-      phase: 'testing',
-    };
-
-    mockNetworkTest.testQuality.mockImplementation((callback) => {
-      callback(mockStats);
-      return mockQualityResults;
-    });
-
-    await act(async () => {
-      await result.current.testQuality('test-room', {}, mockUpdateCallback);
-    });
-
-    expect(mockUpdateCallback).toHaveBeenCalledWith(mockStats);
-    expect(result.current.state.qualityStats).toEqual(mockStats);
   });
 
   it('testQuality returns quality results', async () => {
@@ -168,11 +134,17 @@ describe('useNetworkTest', () => {
     });
   });
 
+  /**
+   * TODO: We need to find a way of tell vitest that the unhandled reject is actually expected here.
+   */
   it('stopTest stops the network test instance', async () => {
     const { result } = renderHook(() => useNetworkTest());
+    let promise: CancelablePromise<QualityResults>;
+
+    vi.spyOn(mockNetworkTest, 'testQuality').mockImplementation(() => wait(10));
 
     act(() => {
-      result.current.testQuality('test-room');
+      promise = result.current.testQuality('test-room');
     });
 
     await waitFor(() => {
@@ -180,10 +152,10 @@ describe('useNetworkTest', () => {
     });
 
     act(() => {
-      result.current.stopTest();
+      result.current.stopTest()?.catch(() => {});
     });
 
-    expect(mockNetworkTest.stop).toHaveBeenCalled();
+    expect(promise!.status).toBe('canceled');
     expect(result.current.state.isTestingQuality).toBe(false);
   });
 
@@ -191,7 +163,7 @@ describe('useNetworkTest', () => {
     const { result } = renderHook(() => useNetworkTest());
 
     act(() => {
-      result.current.stopTest();
+      result.current.stopTest()?.catch(() => {});
     });
 
     expect(mockNetworkTest.stop).not.toHaveBeenCalled();
@@ -218,7 +190,7 @@ describe('useNetworkTest', () => {
     });
 
     act(() => {
-      result.current.stopTest();
+      result.current.stopTest()?.catch(() => {});
     });
 
     await waitFor(() => {
@@ -251,7 +223,6 @@ describe('useNetworkTest', () => {
       isTestingQuality: false,
       connectivityResults: null,
       qualityResults: null,
-      qualityStats: null,
       error: null,
     });
   });

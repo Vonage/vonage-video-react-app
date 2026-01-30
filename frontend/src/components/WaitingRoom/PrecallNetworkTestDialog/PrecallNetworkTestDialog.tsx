@@ -9,11 +9,11 @@ import VividIcon from '@components/VividIcon';
 import Typography from '@ui/Typography';
 import Box from '@ui/Box';
 import CircularProgress from '@ui/CircularProgress';
-import useNetworkTest from '@hooks/useNetworkTest';
 import useRoomName from '@hooks/useRoomName';
 import tryCatch from '@common/execution/tryCatch';
 import PrecallNetworkTestQualityRow from './PrecallNetworkTestQualityRow';
 import DialogActionsRow from './DialogActionsRow';
+import useNetworkTest from './hooks/useNetworkTest';
 
 export type PrecallNetworkTestDialogProps = {
   isPrecallNetworkTestOpen: boolean;
@@ -54,7 +54,11 @@ const PrecallNetworkTestDialog = ({
   }, [stopTest, clearResults]);
 
   const handleStartTest = useCallback(async () => {
-    const { error } = await tryCatch(() => testQuality(roomName));
+    const { error } = await tryCatch(() =>
+      testQuality(roomName).onProgress((_, stats) => {
+        console.log('Quality test stats update:', stats);
+      })
+    );
 
     if (error) {
       console.error('Network test failed:', error);
@@ -66,24 +70,6 @@ const PrecallNetworkTestDialog = ({
     clearResults();
     handleStartTest();
   }, [clearResults, handleStartTest]);
-
-  useEffect(() => {
-    if (!isPrecallNetworkTestOpen) return;
-
-    if (hasUserStoppedTest) return;
-
-    const hasExistingResultsOrError = Boolean(state.qualityResults || state.error);
-    if (state.isTestingQuality || hasExistingResultsOrError) return;
-
-    handleStartTest();
-  }, [
-    isPrecallNetworkTestOpen,
-    hasUserStoppedTest,
-    state.isTestingQuality,
-    state.qualityResults,
-    state.error,
-    handleStartTest,
-  ]);
 
   const getRoundedQualityScore = function getRoundedQualityScore(
     score: number | undefined
@@ -121,6 +107,24 @@ const PrecallNetworkTestDialog = ({
     !state.isTestingQuality && Boolean(state.qualityResults || state.error);
 
   const shouldShowStoppedState = hasUserStoppedTest && !state.qualityResults && !state.error;
+
+  useEffect(() => {
+    if (!isPrecallNetworkTestOpen) return;
+
+    if (hasUserStoppedTest) return;
+
+    const hasExistingResultsOrError = Boolean(state.qualityResults || state.error);
+    if (state.isTestingQuality || hasExistingResultsOrError) return;
+
+    handleStartTest();
+  }, [
+    isPrecallNetworkTestOpen,
+    hasUserStoppedTest,
+    state.isTestingQuality,
+    state.qualityResults,
+    state.error,
+    handleStartTest,
+  ]);
 
   return (
     <Dialog open={isPrecallNetworkTestOpen} onClose={handleClose} maxWidth="md" fullWidth>
