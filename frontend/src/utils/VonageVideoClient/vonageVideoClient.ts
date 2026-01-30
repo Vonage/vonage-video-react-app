@@ -22,12 +22,13 @@ import {
 import logOnConnect from '../logOnConnect';
 import createMovingAvgAudioLevelTracker from '../movingAverageAudioLevelTracker';
 import idempotentCallbackWithRetry from '@common/execution/idempotentCallbackWithRetry';
+import { frontendLogger } from '../../logger';
 
 type VonageVideoClientEvents = {
   archiveStarted: [string];
   archiveStopped: [];
   screenshareStreamCreated: [];
-  sessionDisconnected: [];
+  sessionDisconnected: [{ reason?: string }];
   sessionReconnected: [];
   sessionReconnecting: [];
   signal: [SignalEvent];
@@ -81,7 +82,7 @@ class VonageVideoClient extends EventEmitter<VonageVideoClientEvents> {
     }
     this.clientSession.on('archiveStarted', (event) => this.handleArchiveStarted(event));
     this.clientSession.on('archiveStopped', () => this.handleArchiveStopped());
-    this.clientSession.on('sessionDisconnected', () => this.handleSessionDisconnected());
+    this.clientSession.on('sessionDisconnected', (event) => this.handleSessionDisconnected(event));
     this.clientSession.on('sessionReconnected', () => this.handleReconnected());
     this.clientSession.on('sessionReconnecting', () => this.handleReconnecting());
     this.clientSession.on('signal', (event) => this.handleSignal(event));
@@ -266,7 +267,11 @@ class VonageVideoClient extends EventEmitter<VonageVideoClientEvents> {
    * @private
    */
   private handleSubscriptionError = (error: unknown) => {
-    console.error(`Subscription failed`, error);
+    frontendLogger.reportError(error, {
+      source: 'subscription',
+      sessionId: this.sessionId,
+      connectionId: this.connectionId,
+    });
 
     this.emit('subscriptionError', error ?? new Error('Unknown subscription error'));
   };
@@ -298,6 +303,12 @@ class VonageVideoClient extends EventEmitter<VonageVideoClientEvents> {
    * @private
    */
   private handleReconnecting = () => {
+    frontendLogger.log('CallReconnecting', {
+      sessionId: this.sessionId,
+      connectionId: this.connectionId,
+      timestamp: Date.now(),
+    });
+
     this.emit('sessionReconnecting');
   };
 
@@ -306,6 +317,12 @@ class VonageVideoClient extends EventEmitter<VonageVideoClientEvents> {
    * @private
    */
   private handleReconnected = () => {
+    frontendLogger.log('CallReconnected', {
+      sessionId: this.sessionId,
+      connectionId: this.connectionId,
+      timestamp: Date.now(),
+    });
+
     this.emit('sessionReconnected');
   };
 
@@ -313,8 +330,19 @@ class VonageVideoClient extends EventEmitter<VonageVideoClientEvents> {
    * Emits an event when the session is disconnected.
    * @private
    */
-  private handleSessionDisconnected = () => {
-    this.emit('sessionDisconnected');
+  private handleSessionDisconnected = (event: { reason?: string }) => {
+    const reason = event?.reason || 'unknown';
+    const sessionId = this.sessionId;
+    const connectionId = this.connectionId;
+
+    frontendLogger.log('CallEnded', {
+      reason,
+      sessionId,
+      connectionId,
+      timestamp: Date.now(),
+    });
+
+    this.emit('sessionDisconnected', { reason });
   };
 
   /**
@@ -348,10 +376,24 @@ class VonageVideoClient extends EventEmitter<VonageVideoClientEvents> {
       this.clientSession?.connect(token, (err?: OTError) => {
         if (err) {
           console.error('Error connecting to session:', err);
-          // We ignore the following lint warning because we are rejecting with an OTError object.
-          reject(err); // NOSONAR
+
+          frontendLogger.reportError(err, {
+            source: 'connection',
+            sessionId,
+          });
+
+          reject(err);
         } else {
+          // TODO: Deprecate logOnConnect once Logger + gollum
+          // fully replace opentok-solutions-logging analytics.
           logOnConnect(apiKey, sessionId, this.clientSession?.connection?.connectionId);
+
+          frontendLogger.log('CallStarted', {
+            sessionId,
+            connectionId: this.clientSession?.connection?.connectionId,
+            timestamp: Date.now(),
+          });
+
           resolve();
         }
       });
@@ -394,6 +436,12 @@ class VonageVideoClient extends EventEmitter<VonageVideoClientEvents> {
 
       this.clientSession?.publish(publisher, (error) => {
         if (error) {
+          frontendLogger.reportError(error, {
+            source: 'publishing',
+            sessionId: this.sessionId,
+            connectionId: this.connectionId,
+            errorCode: (error as { code?: number })?.code,
+          });
           const errorName = error.name || 'OTError';
           const errorMessage = error.message || 'Unknown publish error';
           reject(new Error(`${errorName}: ${errorMessage}`));

@@ -12,9 +12,16 @@ import logOnConnect from '../logOnConnect';
 import VonageVideoClient from './vonageVideoClient';
 import { Credential, SignalEvent, SignalType } from '../../types/session';
 import wait from '@common/execution/wait';
+import { frontendLogger } from '../../logger';
 
 vi.mock('../logOnConnect');
 vi.mock('@vonage/client-sdk-video');
+vi.mock('../../logger', () => ({
+  frontendLogger: {
+    log: vi.fn(),
+    reportError: vi.fn(),
+  },
+}));
 
 type TestSubscriber = Subscriber & EventEmitter;
 const mockSubscriber = Object.assign(new EventEmitter(), {
@@ -48,6 +55,7 @@ describe('VonageVideoClient', () => {
       forceMuteStream: vi.fn(),
       publish: mockPublish,
       unpublish: vi.fn(),
+      sessionId: fakeCredentials.sessionId,
       connection: {
         connectionId: 'connection-id',
       },
@@ -292,6 +300,30 @@ describe('VonageVideoClient', () => {
         mockSession.emit('sessionDisconnected');
       });
       return sessionDisconnectedPromise;
+    });
+
+    it('should call frontendLogger.log(CallEnded, ...) with reason, sessionId, connectionId, timestamp when session disconnects', async () => {
+      await vonageVideoClient?.connect();
+
+      const logSpy = vi.spyOn(frontendLogger, 'log');
+      logSpy.mockClear();
+
+      mockSession.emit('sessionDisconnected', { reason: 'forceDisconnected' });
+
+      await wait(0);
+
+      expect(logSpy).toHaveBeenCalledWith(
+        'CallEnded',
+        expect.objectContaining({
+          reason: 'forceDisconnected',
+          sessionId: 'session-id',
+          connectionId: 'connection-id',
+        })
+      );
+
+      expect(logSpy).toHaveBeenCalledTimes(1);
+      expect(logSpy.mock.calls[0][1]).toHaveProperty('timestamp');
+      expect(typeof (logSpy.mock.calls[0][1] as { timestamp: number }).timestamp).toBe('number');
     });
 
     it('should emit sessionReconnected when the session reconnects', async () => {
