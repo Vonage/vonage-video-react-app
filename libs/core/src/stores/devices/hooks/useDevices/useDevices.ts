@@ -30,7 +30,6 @@ function useDevices(
   const mediaDevices = devicesStore.use.select((state) => state.mediaDevices);
 
   const results = useSuspenseMemo(() => {
-    debugger;
     const meta = devicesStore.getMetadata();
 
     const getDevices = () => {

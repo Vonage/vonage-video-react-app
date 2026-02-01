@@ -3,16 +3,16 @@ import {
   type VonageAudioOutputDeviceId,
 } from '../schemas/VonageAudioOutputDevice.schema';
 import getAudioOutputDevices from '../helpers/getAudioOutputDevices';
-import type { DevicesApiPrivate } from '../types';
+import type { DevicesAPI } from '../types';
 
 /**
  * Sets the audio output device by its device ID.
  */
 function setAudioOutputDevice(
-  this: DevicesApiPrivate['actions'],
+  this: DevicesAPI['actions'],
   deviceId: VonageAudioOutputDeviceId | null | undefined
 ) {
-  return async ({ setState }: DevicesApiPrivate): Promise<void> => {
+  return async ({ setState }: DevicesAPI): Promise<void> => {
     // clean up audio output device
     if (deviceId === null) {
       setState((state) => ({

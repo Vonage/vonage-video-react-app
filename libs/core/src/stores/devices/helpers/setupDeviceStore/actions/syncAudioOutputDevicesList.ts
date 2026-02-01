@@ -1,17 +1,17 @@
 import CancelablePromise from 'easy-cancelable-promise';
-import getAudioOutputDevices from '../helpers/getAudioOutputDevices';
-import type { DevicesApiPrivate, AudioOutputDevice } from '../types';
+import getAudioOutputDevices from '../../getAudioOutputDevices';
+import type { DevicesAPI, AudioOutputDevice } from '../../../types';
 import attempt from '@common/execution/attempt';
 
 /**
  * Syncs the audio output devices list and tries to restore the previous selected audio output device
  */
-function syncAudioOutputDevicesList(this: DevicesApiPrivate['actions']) {
+function syncAudioOutputDevicesList(this: DevicesAPI['actions']) {
   return ({
     getMetadata,
     setState,
     getState,
-  }: DevicesApiPrivate): CancelablePromise<AudioOutputDevice[]> => {
+  }: DevicesAPI): CancelablePromise<AudioOutputDevice[]> => {
     const meta = getMetadata();
 
     // cancel ongoing update

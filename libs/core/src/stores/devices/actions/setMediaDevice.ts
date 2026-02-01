@@ -1,12 +1,12 @@
 import { assertNativeMediaDeviceInfo } from '../schemas';
 import getMediaDevices from '../helpers/getMediaDevices';
-import type { DevicesApiPrivate } from '../types';
+import type { DevicesAPI } from '../types';
 
 /**
  * Sets the media input device by its device ID.
  */
-function setMediaDevice(this: DevicesApiPrivate['actions'], deviceId: string | null | undefined) {
-  return async ({ setState }: DevicesApiPrivate): Promise<void> => {
+function setMediaDevice(this: DevicesAPI['actions'], deviceId: string | null | undefined) {
+  return async ({ setState }: DevicesAPI): Promise<void> => {
     // clean up media device
     if (deviceId === null) {
       setState((state) => ({

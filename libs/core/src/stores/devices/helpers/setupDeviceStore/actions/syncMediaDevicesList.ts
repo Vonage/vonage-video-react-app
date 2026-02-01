@@ -1,17 +1,17 @@
 import CancelablePromise from 'easy-cancelable-promise';
 import { attempt } from 'lodash';
-import type { DevicesApiPrivate, NativeMediaDeviceInfo } from '../types';
-import getMediaDevices from '../helpers/getMediaDevices';
+import type { DevicesAPI, NativeMediaDeviceInfo } from '../../../types';
+import getMediaDevices from '../../getMediaDevices';
 
 /**
  * Syncs the native NativeMediaDeviceInfo list from navigator.mediaDevices
  */
-function syncMediaDevicesList(this: DevicesApiPrivate['actions']) {
+function syncMediaDevicesList(this: DevicesAPI['actions']) {
   return ({
     getMetadata,
     setState,
     getState,
-  }: DevicesApiPrivate): CancelablePromise<NativeMediaDeviceInfo[]> => {
+  }: DevicesAPI): CancelablePromise<NativeMediaDeviceInfo[]> => {
     const meta = getMetadata();
 
     // cancel ongoing update

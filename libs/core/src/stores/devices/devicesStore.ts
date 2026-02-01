@@ -1,22 +1,9 @@
-import createGlobalState, { type InferStateApi } from 'react-global-state-hooks/createGlobalState';
-import { assertDevicesStore } from './schemas/DevicesStore.schema';
-
-import {
-  setupDeviceStore,
-  setAudioOutputDevice,
-  setMediaDevice,
-  syncDevicesList,
-  syncAudioOutputDevicesList,
-  syncMediaDevicesList,
-} from './actions';
-
+import { createGlobalState, type InferAPI } from 'react-global-state-hooks';
+import { assertDevicesStoreState } from './schemas/DevicesStoreState.schema';
+import { setupDeviceStore, setAudioOutputDevice, setMediaDevice } from './actions';
 import { initialValue, metadata } from './constants';
 
-const internalActions = {
-  syncDevicesList,
-  syncAudioOutputDevicesList,
-  syncMediaDevicesList,
-};
+export type DevicesAPI = InferAPI<typeof devicesStore>;
 
 /**
  * Devices store:
@@ -42,7 +29,7 @@ const devicesStore = createGlobalState(initialValue, {
   localStorage: {
     key: 'vera-devices-store',
     validator: ({ restored }) => {
-      assertDevicesStore(restored);
+      assertDevicesStoreState(restored);
     },
     selector: ({ selectedAudioInput, selectedAudioOutput, selectedVideoInput }) => {
       return {
@@ -54,19 +41,9 @@ const devicesStore = createGlobalState(initialValue, {
   },
   callbacks: {
     onInit: (api) => {
-      // Extend actions type to include internal actions
-      // This avoids polluting the public API with internal actions
-      api.actions = Object.assign(api.actions, internalActions);
-
       return setupDeviceStore(api);
     },
   },
 });
-
-export type DevicesApi = InferStateApi<typeof devicesStore>;
-
-export type DevicesApiPrivate = DevicesApi & {
-  actions: typeof internalActions;
-};
 
 export default devicesStore;

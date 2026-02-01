@@ -15,10 +15,10 @@ export const DevicesStoreSchema = z.object({
   selectedVideoInput: NativeMediaDeviceInfoSchema.nullable(),
 });
 
-export type DevicesStore = z.infer<typeof DevicesStoreSchema>;
+export type DevicesStoreState = z.infer<typeof DevicesStoreSchema>;
 
-export function assertDevicesStore(data: unknown): asserts data is DevicesStore {
+export function assertDevicesStoreState(data: unknown): asserts data is DevicesStoreState {
   DevicesStoreSchema.parse(data);
 }
 
-export default DevicesStore;
+export default DevicesStoreState;

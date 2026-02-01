@@ -1,10 +1,14 @@
-import type { DevicesApiPrivate } from '../../types';
+import { assertDevicesAPI } from '../../assertions';
+import internalActions from './actions';
 
 /**
  * Pull devices lists and try to restore previous selected devices
  */
 function setupDeviceStore(api: unknown) {
-  const { actions } = api as DevicesApiPrivate;
+  assertDevicesAPI(api);
+
+  const { syncDevicesList, syncMediaDevicesList, syncAudioOutputDevicesList } =
+    internalActions(api);
 
   // no support for media devices
   if (!globalThis.navigator.mediaDevices?.addEventListener) {
@@ -13,9 +17,9 @@ function setupDeviceStore(api: unknown) {
   }
 
   // Initial sync of all devices
-  void actions.syncDevicesList();
-  void actions.syncMediaDevicesList();
-  void actions.syncAudioOutputDevicesList();
+  void syncDevicesList();
+  void syncMediaDevicesList();
+  void syncAudioOutputDevicesList();
 
   const abortController = new AbortController();
 
@@ -23,9 +27,9 @@ function setupDeviceStore(api: unknown) {
   globalThis.navigator.mediaDevices.addEventListener(
     'devicechange',
     () => {
-      void actions.syncDevicesList();
-      void actions.syncMediaDevicesList();
-      void actions.syncAudioOutputDevicesList();
+      void syncDevicesList();
+      void syncMediaDevicesList();
+      void syncAudioOutputDevicesList();
     },
     abortController
   );

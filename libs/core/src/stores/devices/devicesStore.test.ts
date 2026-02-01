@@ -5,11 +5,11 @@ import type DeviceStore from './devicesStore';
 import type * as ClientSdkVideo from '@vonage/client-sdk-video';
 import type { NativeMediaDeviceInfo } from './schemas';
 import wait from '@common/execution/wait';
-import devices$, { DevicesApiPrivate, initialValue, metadata } from '.';
+import devices$, { type DevicesAPI } from '.';
 import SuspenseBoundary from '@common/components/SuspenseBoundary';
 
-type State = ReturnType<DevicesApiPrivate['getState']>;
-type Api = DevicesApiPrivate['actions'];
+type State = ReturnType<DevicesAPI['getState']>;
+type Api = DevicesAPI['actions'];
 
 describe('devices$', () => {
   beforeEach(() => {
@@ -32,7 +32,7 @@ describe('devices$', () => {
       Promise.resolve(mediaDevicesInfo as unknown as MediaDeviceInfo[])
     );
 
-    devices$.reset(initialValue, { ...metadata });
+    devices$.reset();
     vi.clearAllMocks();
   });
 
@@ -55,9 +55,7 @@ describe('devices$', () => {
 
     // api actions
     expect(api.setAudioOutputDevice).toBeDefined();
-    expect(api.syncDevicesList).toBeDefined();
-    expect(api.syncAudioOutputDevicesList).toBeDefined();
-    expect(api.syncMediaDevicesList).toBeDefined();
+    expect(api.setMediaDevice).toBeDefined();
 
     // Verify devicechange event listener was registered only once
     expect(mediaDevices.addEventListener).toHaveBeenCalledTimes(1);

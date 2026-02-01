@@ -5,7 +5,7 @@ import type { AudioOutputDevice } from '../types';
  * This store intent to manage all the media devices available on the client
  * and the selected devices for audio output, audio input and video input.
  */
-const initialValue = {
+const initialValue = () => ({
   // Collections
   devices: [] as VonageDevice[],
   mediaDevices: [] as NativeMediaDeviceInfo[],
@@ -17,8 +17,8 @@ const initialValue = {
   // Selected input devices
   selectedAudioInput: null as NativeMediaDeviceInfo | null,
   selectedVideoInput: null as NativeMediaDeviceInfo | null,
-};
+});
 
-export type InitialValue = typeof initialValue;
+export type InitialValue = ReturnType<typeof initialValue>;
 
 export default initialValue;
