@@ -2,15 +2,17 @@ import CancelablePromise from 'easy-cancelable-promise';
 import { attempt } from 'lodash';
 import type { DevicesAPI, NativeMediaDeviceInfo } from '../../../types';
 import getMediaDevices from '../../getMediaDevices';
+import type { SetupAPI } from '../types/SetupAPI';
 
 /**
  * Syncs the native NativeMediaDeviceInfo list from navigator.mediaDevices
  */
-function syncMediaDevicesList(this: DevicesAPI['actions']) {
+function syncMediaDevicesList(this: SetupAPI) {
   return ({
     getMetadata,
     setState,
     getState,
+    actions,
   }: DevicesAPI): CancelablePromise<NativeMediaDeviceInfo[]> => {
     const meta = getMetadata();
 
@@ -32,7 +34,7 @@ function syncMediaDevicesList(this: DevicesAPI['actions']) {
         const tryToRestoreSelection = () => {
           const { selectedAudioOutput } = getState();
 
-          return this.setAudioOutputDevice(selectedAudioOutput?.deviceId);
+          return actions.setAudioOutputDevice(selectedAudioOutput?.deviceId);
         };
 
         const fallbackToDefault = () => {
@@ -41,7 +43,7 @@ function syncMediaDevicesList(this: DevicesAPI['actions']) {
           const deviceId =
             devices.find((device) => device.deviceId === 'default')?.deviceId ?? null;
 
-          return this.setMediaDevice(deviceId);
+          return actions.setMediaDevice(deviceId);
         };
 
         // tries to restore previous selected audio output device

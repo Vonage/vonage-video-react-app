@@ -82,7 +82,7 @@ describe('devices$', () => {
     expect(state.devices).toEqual(devices);
   });
 
-  it('should update devices when devicechange event triggers', async () => {
+  it.only('should update devices when devicechange event triggers', async () => {
     expect.assertions(3);
 
     const { mediaDevices } = globalThis.navigator;

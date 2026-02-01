@@ -7,10 +7,11 @@ const actionsMock = vi.hoisted(() => {
   return {
     syncDevicesList: vi.fn(),
     syncMediaDevicesList: vi.fn(),
+    syncAudioOutputDevicesList: vi.fn(),
   };
 });
 
-vi.mock('../../actions', () => {
+vi.mock('./actions', () => {
   return {
     default: () => actionsMock,
   };
@@ -18,6 +19,8 @@ vi.mock('../../actions', () => {
 
 describe('setupDeviceStore', () => {
   it('should initialize device sync and register event listener', () => {
+    vi.spyOn(globalThis.navigator.mediaDevices, 'enumerateDevices').mockResolvedValue([]);
+
     const addEventListenerSpy = vi
       .spyOn(globalThis.navigator.mediaDevices, 'addEventListener')
       .mockImplementation(() => {});
@@ -28,6 +31,7 @@ describe('setupDeviceStore', () => {
 
     expect(actionsMock.syncDevicesList).toHaveBeenCalledTimes(1);
     expect(actionsMock.syncMediaDevicesList).toHaveBeenCalledTimes(1);
+    expect(actionsMock.syncAudioOutputDevicesList).toHaveBeenCalledTimes(1);
 
     expect(addEventListenerSpy).toHaveBeenCalledWith(
       'devicechange',
@@ -41,6 +45,7 @@ describe('setupDeviceStore', () => {
 
     expect(actionsMock.syncDevicesList).toHaveBeenCalledTimes(2);
     expect(actionsMock.syncMediaDevicesList).toHaveBeenCalledTimes(2);
+    expect(actionsMock.syncAudioOutputDevicesList).toHaveBeenCalledTimes(2);
 
     // Get the AbortController that was passed to addEventListener
     const abortController = addEventListenerSpy.mock.calls[0][2] as AbortController;

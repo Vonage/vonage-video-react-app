@@ -2,11 +2,12 @@ import CancelablePromise from 'easy-cancelable-promise';
 import getDevices from '../../getDevices';
 import type { DevicesAPI } from '../../../types';
 import type { VonageDevice } from '../../../schemas';
+import type { SetupAPI } from '../types/SetupAPI';
 
 /**
  * Syncs the devices list from Vonage SDK
  */
-function syncDevicesList(this: DevicesAPI['actions']) {
+function syncDevicesList(this: SetupAPI) {
   return ({ getMetadata, setState, getState }: DevicesAPI): CancelablePromise<VonageDevice[]> => {
     const meta = getMetadata();
 
