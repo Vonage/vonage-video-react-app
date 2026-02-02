@@ -15,4 +15,5 @@ registerIcon();
 const rootElement = document.getElementById('root')!;
 await frontendLogger.setup(() => createConsoleLoggerProvider());
 
-ReactDOM.createRoot(rootElement).render(<App />);
+const root = ReactDOM.createRoot(rootElement, frontendLogger.getReactRootOptions());
+root.render(<App />);
