@@ -8,16 +8,8 @@ import type { DevicesStoreState } from './types';
 export type DevicesAPI = InferAPI<typeof devicesStore>;
 
 /**
- * Devices store:
- * - devices: all media devices
- * - audioOutputDevices: all audio output devices
- * - audioOutput: selected audio output device
- *
- * Associated hooks:
- * - useAudioInputDevices: get all audio input devices
- * - useVideoInputDevices: get all video input devices
- * - useAudioOutputDevices: get all audio output devices
- * - useConnectedDeviceId: get the currently connected device id for a given kind, uses suspense
+ * Devices Store
+ * Handles media devices information and selection
  */
 const devicesStore = createGlobalState(initialValue, {
   metadata,

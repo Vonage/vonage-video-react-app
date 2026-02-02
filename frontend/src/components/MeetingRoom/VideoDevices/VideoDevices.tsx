@@ -1,5 +1,4 @@
 import { useState, useEffect, MouseEvent, ReactElement } from 'react';
-import { Device } from '@vonage/client-sdk-video';
 import { useTranslation } from 'react-i18next';
 import appConfig$ from '@stores/appConfig';
 import useTheme from '@ui/theme';
@@ -35,7 +34,7 @@ const VideoDevices = ({ handleToggle }: VideoDevicesProps): ReactElement | false
   );
 
   const { allMediaDevices } = useDevices();
-  const [devicesAvailable, setDevicesAvailable] = useState<Device[]>([]);
+  const [devicesAvailable, setDevicesAvailable] = useState<MediaDeviceInfo[]>([]);
   const [options, setOptions] = useState<{ deviceId: string; label: string }[]>([]);
 
   const changeVideoSource = (videoDeviceId: string) => {

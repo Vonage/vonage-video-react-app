@@ -2,7 +2,6 @@ import Box from '@ui/Box';
 import Typography from '@ui/Typography';
 import MenuItem from '@ui/MenuItem';
 import MenuList from '@ui/MenuList';
-import { Device } from '@vonage/client-sdk-video';
 import { MouseEvent as ReactMouseEvent, ReactElement, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import appConfig$ from '@stores/appConfig';
@@ -50,7 +49,7 @@ const InputAudioDevices = ({ handleToggle }: InputAudioDevicesProps): ReactEleme
   const handleChangeAudioSource = (event: ReactMouseEvent<HTMLLIElement>) => {
     const menuItem = event.target as HTMLLIElement;
     handleToggle();
-    const audioDeviceId = audioInputDevices?.find((device: Device) => {
+    const audioDeviceId = audioInputDevices?.find((device) => {
       return device.label === menuItem.textContent;
     })?.deviceId;
     if (audioDeviceId) {

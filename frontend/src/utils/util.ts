@@ -1,4 +1,4 @@
-import { VideoFilter, Device } from '@vonage/client-sdk-video';
+import { VideoFilter } from '@vonage/client-sdk-video';
 import { UAParser } from 'ua-parser-js';
 
 /**
@@ -19,10 +19,10 @@ export const getBackgroundGradient = (level: number) => {
  * @returns {string} - Returns device ID for the matching audio input device, or an empty string if there is no match or the input parameters are invalid.
  */
 export const getAudioSourceDeviceId = (
-  audioInputDevices: Device[],
+  audioInputDevices: MediaDeviceInfo[],
   currentAudioSource: MediaStreamTrack
 ): string => {
-  const isCurrentAudioSource = (audioInputDevice: Device) =>
+  const isCurrentAudioSource = (audioInputDevice: MediaDeviceInfo) =>
     audioInputDevice.label === currentAudioSource?.label;
   const currentDeviceId = audioInputDevices.find(isCurrentAudioSource)?.deviceId;
   return currentDeviceId ?? '';

@@ -3,22 +3,27 @@ import mediaDeviceInfoByKind$ from '../observables/mediaDeviceInfoByKind$';
 import useMediaDeviceInfoByKind$ from './useMediaDeviceInfoByKind$';
 
 /**
- * Returns media devices for a specific kind organized by deviceId.
+ * Returns the selected media device for a specific kind.
  */
-function useMediaDeviceInfo<Selection>(
-  kind: MediaDeviceKind,
-  selector?: (state: MediaDeviceInfo) => Selection,
-  options?: Options<Selection>
-): Record<string, MediaDeviceInfo>;
+function useMediaDeviceInfo(kind: MediaDeviceKind): MediaDeviceInfo;
 
 /**
  * Returns media devices for a specific kind organized by deviceId.
  */
 function useMediaDeviceInfo<Selection>(
   kind: MediaDeviceKind,
-  selector?: (state: MediaDeviceInfo) => Selection,
+  selector: (state: MediaDeviceInfo) => Selection,
+  options?: Options<Selection>
+): Selection;
+
+/**
+ * Returns media devices for a specific kind organized by deviceId.
+ */
+function useMediaDeviceInfo<Selection>(
+  kind: MediaDeviceKind,
+  selector: (state: MediaDeviceInfo) => Selection,
   dependencies?: Dependencies
-): Record<string, MediaDeviceInfo>;
+): Selection;
 
 function useMediaDeviceInfo(
   ...args: [
@@ -26,7 +31,7 @@ function useMediaDeviceInfo(
     arg2?: Selector | undefined,
     arg3?: Options<unknown> | Dependencies | undefined,
   ]
-): Record<string, MediaDeviceInfo> | Record<MediaDeviceKind, Record<string, MediaDeviceInfo>> {
+): Any {
   const [kind, selector, arg3] = args;
 
   const dependencies = Array.isArray(arg3) ? arg3 : [];

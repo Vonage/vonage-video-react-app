@@ -1,5 +1,4 @@
 import { describe, it, expect, vi, afterAll } from 'vitest';
-import { Device } from '@vonage/client-sdk-video';
 import * as util from './util';
 
 const chromeUserAgent =
@@ -90,10 +89,10 @@ describe('getBackgroundGradient', () => {
 
 describe('getAudioSourceDeviceId', () => {
   it('returns the correct deviceId when a matching device is found', () => {
-    const devices: Device[] = [
-      { kind: 'audioInput', deviceId: 'device1', label: 'Microphone 1' },
-      { kind: 'audioInput', deviceId: 'device2', label: 'Microphone 2' },
-    ];
+    const devices = [
+      { kind: 'audioinput', deviceId: 'device1', label: 'Microphone 1' },
+      { kind: 'audioinput', deviceId: 'device2', label: 'Microphone 2' },
+    ] as MediaDeviceInfo[];
     const currentAudioSource = { label: 'Microphone 2' } as MediaStreamTrack;
 
     const result = util.getAudioSourceDeviceId(devices, currentAudioSource);
@@ -101,10 +100,10 @@ describe('getAudioSourceDeviceId', () => {
   });
 
   it('returns an empty string when no matching device is found', () => {
-    const devices: Device[] = [
-      { kind: 'audioInput', deviceId: 'device1', label: 'Microphone 1' },
-      { kind: 'audioInput', deviceId: 'device2', label: 'Microphone 2' },
-    ];
+    const devices = [
+      { kind: 'audioinput', deviceId: 'device1', label: 'Microphone 1' },
+      { kind: 'audioinput', deviceId: 'device2', label: 'Microphone 2' },
+    ] as MediaDeviceInfo[];
     const currentAudioSource = { label: 'Not Matching Microphone' } as MediaStreamTrack;
 
     const result = util.getAudioSourceDeviceId(devices, currentAudioSource);

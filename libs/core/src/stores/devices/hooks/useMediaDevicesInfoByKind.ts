@@ -6,40 +6,50 @@ import useMediaDeviceInfoByKind$ from './useMediaDeviceInfoByKind$';
 /**
  * Returns media devices organized by kind and deviceId.
  */
-function useMediaDevicesInfoByKind<Selection>(
-  selector?: (state: DevicesInfoByKind) => Selection,
-  dependencies?: Dependencies
-): Record<MediaDeviceKind, Record<string, MediaDeviceInfo>>;
+function useMediaDevicesInfoByKind(): DevicesInfoByKind;
+
+/**
+ * Returns media devices for a specific kind organized by deviceId.
+ */
+function useMediaDevicesInfoByKind(kind: MediaDeviceKind): DevicesInfoByKind;
 
 /**
  * Returns media devices organized by kind and deviceId.
  */
 function useMediaDevicesInfoByKind<Selection>(
-  selector?: (state: DevicesInfoByKind) => Selection,
-  options?: Options<Selection>
-): Record<MediaDeviceKind, Record<string, MediaDeviceInfo>>;
-
-/**
- * Returns media devices for a specific kind organized by deviceId.
- */
-function useMediaDevicesInfoByKind<Selection>(
-  kind: MediaDeviceKind,
-  selector?: (state: DevicesInfoByKind) => Selection,
-  options?: Options<Selection>
-): Record<string, MediaDeviceInfo>;
-
-/**
- * Returns media devices for a specific kind organized by deviceId.
- */
-function useMediaDevicesInfoByKind<Selection>(
-  kind: MediaDeviceKind,
-  selector?: (state: DevicesInfoByKind) => Selection,
+  selector: (state: DevicesInfoByKind) => Selection,
   dependencies?: Dependencies
-): Record<string, MediaDeviceInfo>;
+): Selection;
+
+/**
+ * Returns media devices organized by kind and deviceId.
+ */
+function useMediaDevicesInfoByKind<Selection>(
+  selector: (state: DevicesInfoByKind) => Selection,
+  options?: Options<Selection>
+): Selection;
+
+/**
+ * Returns media devices for a specific kind organized by deviceId.
+ */
+function useMediaDevicesInfoByKind<Selection>(
+  kind: MediaDeviceKind,
+  selector: (state: DevicesInfoByKind) => Selection,
+  options?: Options<Selection>
+): Selection;
+
+/**
+ * Returns media devices for a specific kind organized by deviceId.
+ */
+function useMediaDevicesInfoByKind<Selection>(
+  kind: MediaDeviceKind,
+  selector: (state: DevicesInfoByKind) => Selection,
+  dependencies?: Dependencies
+): Selection;
 
 function useMediaDevicesInfoByKind(
   ...args: [
-    arg1: MediaDeviceKind | Selector | undefined,
+    arg1?: MediaDeviceKind | Selector | undefined,
     arg2?: Selector | Options<unknown> | Dependencies | undefined,
     arg3?: Options<unknown> | Dependencies | undefined,
   ]
