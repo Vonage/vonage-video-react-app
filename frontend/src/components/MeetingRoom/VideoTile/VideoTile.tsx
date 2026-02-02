@@ -74,8 +74,8 @@ const VideoTile = forwardRef(
           ref={ref}
           sx={{
             position: 'relative',
-            left: 0,
-            top: '-4px',
+            left: isScreenshare ? 0 : '4px',
+            top: isScreenshare ? 0 : '4px',
             width: '100%',
             height: '100%',
             overflow: 'hidden',
@@ -90,8 +90,8 @@ const VideoTile = forwardRef(
         <Box
           sx={{
             position: 'relative',
-            left: 0,
-            top: 0,
+            left: isScreenshare ? 0 : '4px',
+            top: isScreenshare ? 0 : '4px',
             width: '100%',
             height: '100%',
             overflow: 'hidden',
