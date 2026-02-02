@@ -1,7 +1,9 @@
 import { createGlobalState, type InferAPI } from 'react-global-state-hooks';
-import { assertDevicesStoreState } from './schemas/DevicesStoreState.schema';
-import { setupDeviceStore, setAudioOutputDevice, setMediaDevice } from './actions';
+import { safelyParseDevicesStoreState } from './schemas/DevicesStoreState.schema';
+import { syncMediaDevicesInfo, selectDevice } from './actions';
 import { initialValue, metadata } from './constants';
+import { setupDeviceStore } from './helpers';
+import type { DevicesStoreState } from './types';
 
 export type DevicesAPI = InferAPI<typeof devicesStore>;
 
@@ -21,21 +23,37 @@ const devicesStore = createGlobalState(initialValue, {
   metadata,
   actions: {
     /**
-     * Sets the audio output device by its device ID. Throws if the deviceId does not exist.
+     * Manually syncs the media devices info from navigator.mediaDevices
+     * [IMPORTANT] You usually don't need to call this method manually as the store is already
+     * listening to devicechange events (if supported by the platform).
      */
-    setAudioOutputDevice,
-    setMediaDevice,
+    syncMediaDevicesInfo,
+
+    /**
+     * Selects a media device by kind and deviceId
+     */
+    selectDevice,
   },
   localStorage: {
     key: 'vera-devices-store',
-    validator: ({ restored }) => {
-      assertDevicesStoreState(restored);
+    validator: ({ restored, initial }) => {
+      const { error } = safelyParseDevicesStoreState(restored);
+      if (!error) return restored;
+
+      // Log warning if restored state is invalid
+      if (error && restored) {
+        console.warn(
+          '[DevicesStore] Restored state from localStorage is invalid, using initial state instead.',
+          error
+        );
+      }
+
+      return initial as DevicesStoreState;
     },
-    selector: ({ selectedAudioInput, selectedAudioOutput, selectedVideoInput }) => {
+    selector: (state) => {
+      const { selection } = state as DevicesStoreState;
       return {
-        selectedAudioInput,
-        selectedAudioOutput,
-        selectedVideoInput,
+        selection,
       };
     },
   },

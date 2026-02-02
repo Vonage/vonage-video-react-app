@@ -1,7 +1,7 @@
 import z from 'zod';
 
-export const DeviceKindSchema = z.enum(['audioInput', 'videoInput']).brand<'vonage'>();
+export const VonageDeviceKindSchema = z.enum(['audioInput', 'videoInput']).brand<'vonage'>();
 
-export type DeviceKind = z.infer<typeof DeviceKindSchema>;
+export type VonageDeviceKind = z.infer<typeof VonageDeviceKindSchema>;
 
-export default DeviceKind;
+export default VonageDeviceKind;

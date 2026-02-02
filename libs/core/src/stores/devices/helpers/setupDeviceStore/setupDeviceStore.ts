@@ -1,5 +1,4 @@
 import { assertDevicesAPI } from '../../assertions';
-import internalActions from './actions';
 
 /**
  * Pull devices lists and try to restore previous selected devices
@@ -7,19 +6,13 @@ import internalActions from './actions';
 function setupDeviceStore(api: unknown) {
   assertDevicesAPI(api);
 
-  const { syncDevicesList, syncMediaDevicesList, syncAudioOutputDevicesList } =
-    internalActions(api);
-
   // no support for media devices
   if (!globalThis.navigator.mediaDevices?.addEventListener) {
     console.warn('enumerateDevices() not supported.');
     return;
   }
 
-  // Initial sync of all devices
-  void syncDevicesList();
-  void syncMediaDevicesList();
-  void syncAudioOutputDevicesList();
+  void api.actions.syncMediaDevicesInfo();
 
   const abortController = new AbortController();
 
@@ -27,9 +20,7 @@ function setupDeviceStore(api: unknown) {
   globalThis.navigator.mediaDevices.addEventListener(
     'devicechange',
     () => {
-      void syncDevicesList();
-      void syncMediaDevicesList();
-      void syncAudioOutputDevicesList();
+      void api.actions.syncMediaDevicesInfo();
     },
     abortController
   );

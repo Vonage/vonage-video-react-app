@@ -11,7 +11,7 @@ import {
   useAudioOutput,
 } from './hooks';
 
-import { devicesMap$ } from './observables';
+import { mediaDeviceInfoByKind$ } from './observables';
 
 const devices$ = Object.assign(store, {
   // Hooks
@@ -25,7 +25,7 @@ const devices$ = Object.assign(store, {
   useAudioOutput,
 
   // Observables
-  devicesMap$,
+  mediaDeviceInfoByKind$,
 });
 
 export default devices$;

@@ -1,3 +1,5 @@
-export type * from './AudioOutputDevice';
-export type * from './DevicesAPI';
-export type * from '../schemas';
+export * from './AudioOutputDevice';
+export * from './DevicesAPI';
+export * from './DevicesStoreState';
+export * from './DevicesStoreMeta';
+export * from './MediaDeviceInfoJSON';

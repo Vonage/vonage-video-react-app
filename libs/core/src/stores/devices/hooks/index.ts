@@ -1,4 +1,4 @@
-export { default as useAudioInputDevices } from './useAudioInputDevices';
+export { default as useMediaDevicesInfoByKind } from './useMediaDevicesInfoByKind';
 export { default as useSelectedAudioOutput } from './useSelectedAudioOutput';
 export { default as useAudioOutputDevices } from './useAudioOutputDevices';
 export { default as useVideoInputDevices } from './useVideoInputDevices';

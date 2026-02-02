@@ -1,12 +1,12 @@
 import z from 'zod';
-import { DeviceKindSchema } from './VonageDeviceKind.schema';
+import { VonageDeviceKindSchema } from './VonageDeviceKind.schema';
 
 export const VonageDeviceId = z.string().brand('DeviceId');
 
 export const VonageDeviceSchema = z.object({
   deviceId: VonageDeviceId,
   label: z.string(),
-  kind: DeviceKindSchema,
+  kind: VonageDeviceKindSchema,
 });
 
 export type VonageDeviceId = z.infer<typeof VonageDeviceId>;

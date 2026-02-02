@@ -1,1 +1,1 @@
-export { default as devicesMap$ } from './devicesMap$';
+export { default as mediaDeviceInfoByKind$ } from './mediaDeviceInfoByKind$';
