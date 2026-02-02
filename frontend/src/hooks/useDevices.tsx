@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
-import { getDevices, getAudioOutputDevices, Device, OTError } from '@vonage/client-sdk-video';
+import { getDevices, getAudioOutputDevices } from '@vonage/client-sdk-video';
 import { useTranslation } from 'react-i18next';
 import { AllMediaDevices } from '../types';
 import isAudioInputDevice from '../utils/isAudioInputDevice';
@@ -33,20 +33,31 @@ const useDevices = () => {
       return;
     }
 
-    return new Promise<void>((_resolve, reject) => {
-      // Vonage Video API's getDevices retrieves all audio and video input devices
-      getDevices(async (err?: OTError, devices?: Device[]) => {
+    return new Promise<void>((resolve, reject) => {
+      getDevices(async (err, devices) => {
         if (err) {
-          // We ignore the following lint warning because we are rejecting with an OTError object.
           reject(err); // NOSONAR
+          return;
         }
 
-        // Vonage Video API's getAudioOutputDevices retrieves all audio output devices (speakers)
+        // Normalize device.kind to lowercase
+        const normalizedDevices: MediaDeviceInfo[] = (devices || []).map((device) => ({
+          ...device,
+          kind: device.kind.toLowerCase() as MediaDeviceKind,
+        })) as MediaDeviceInfo[];
+
+        // Get audio input devices
+        const audioInputDevices = normalizedDevices.filter(isAudioInputDevice);
+
+        // Get video input devices
+        const videoInputDevices = normalizedDevices.filter(isVideoInputDevice);
+
+        // Get audio output devices
         let audioOutputDevices: MediaDeviceInfo[] = (await getAudioOutputDevices()).map(
           (device) =>
             ({
               ...device,
-              kind: 'audiooutput',
+              kind: 'audiooutput' as MediaDeviceKind,
             }) as MediaDeviceInfo
         );
 
@@ -55,28 +66,14 @@ const useDevices = () => {
           renameDefaultAudioOutputDevice(device, t('devices.audio.defaultLabel'))
         );
 
-        // Filter audio input devices from the list retrieved by Vonage Video API's getDevices
-        const audioInputDevices = (devices?.filter(isAudioInputDevice) || []).map((device) => {
-          return {
-            ...device,
-            kind: device.kind.toLowerCase(),
-          } as MediaDeviceInfo;
-        });
-
-        // Filter video input devices from the list retrieved by Vonage Video API's getDevices
-        const videoInputDevices = (devices?.filter(isVideoInputDevice) || []).map((device) => {
-          return {
-            ...device,
-            kind: device.kind.toLowerCase(),
-          } as MediaDeviceInfo;
-        });
-
         // Update the state with the new devices
         setAllMediaDevices({
           audioInputDevices,
           videoInputDevices,
           audioOutputDevices,
         });
+
+        resolve();
       });
     });
   }, [mediaDevices.enumerateDevices, t]);

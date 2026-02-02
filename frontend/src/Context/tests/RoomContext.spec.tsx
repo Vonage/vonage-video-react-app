@@ -41,7 +41,7 @@ describe('RoomContext', () => {
         enumerateDevices: vi.fn(
           () =>
             new Promise<MediaDeviceInfo[]>((res) => {
-              res(nativeDevices as MediaDeviceInfo[]);
+              res(nativeDevices);
             })
         ),
         addEventListener: vi.fn(() => []),

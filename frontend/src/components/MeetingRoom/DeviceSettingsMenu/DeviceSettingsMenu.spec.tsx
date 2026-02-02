@@ -88,7 +88,7 @@ describe('DeviceSettingsMenu Component', () => {
     });
 
     vi.spyOn(mediaDevicesMock, 'enumerateDevices').mockImplementation(() =>
-      Promise.resolve(nativeDevices as MediaDeviceInfo[])
+      Promise.resolve(nativeDevices)
     );
     vi.spyOn(mediaDevicesMock, 'addEventListener').mockImplementation((event, listener) => {
       deviceChangeListener.on(event, listener as (...args: unknown[]) => void);

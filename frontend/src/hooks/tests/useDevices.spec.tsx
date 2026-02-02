@@ -1,36 +1,21 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { renderHook, waitFor } from '@testing-library/react';
-import {
-  AudioOutputDevice,
-  Device,
-  getDevices,
-  getAudioOutputDevices,
-  OTError,
-} from '@vonage/client-sdk-video';
+import { getDevices, getAudioOutputDevices, type Device } from '@vonage/client-sdk-video';
 import useDevices from '../useDevices';
 import mediaDevicesMock from '@common/test/mocks/mediaDevicesMock';
-
-type GetDevicesCallback = (err?: OTError, devices?: Device[]) => void;
 
 vi.mock('@vonage/client-sdk-video');
 
 describe('useDevices', () => {
-  const reMockTheMocks = () => {
-    vi.mocked(getDevices).mockImplementation((callback: GetDevicesCallback) => {
-      callback(undefined, []);
-    });
-    vi.mocked(getAudioOutputDevices).mockImplementation(() => Promise.resolve([]));
-  };
-
   beforeEach(() => {
     vi.resetAllMocks();
-    reMockTheMocks();
 
     Object.defineProperty(global.navigator, 'mediaDevices', {
       writable: true,
       value: mediaDevicesMock,
     });
 
+    // Set default mock that will be used if not overridden in tests
     vi.spyOn(mediaDevicesMock, 'enumerateDevices').mockResolvedValue([]);
     vi.spyOn(mediaDevicesMock, 'addEventListener').mockImplementation(() => {});
     vi.spyOn(mediaDevicesMock, 'removeEventListener').mockImplementation(() => {});
@@ -61,16 +46,22 @@ describe('useDevices', () => {
   });
 
   it('returns any connected audioInputDevices', async () => {
-    const audioInputDevices: Device[] = [
+    const audioInputDevices: MediaDeviceInfo[] = [
       {
-        kind: 'audioInput',
+        kind: 'audioinput',
         deviceId: 'some-id',
         label: 'Purple HairPods',
+        groupId: 'group-id',
+        toJSON: () => ({}),
       },
     ];
-    vi.mocked(getDevices).mockImplementation((callback: GetDevicesCallback) => {
-      callback(undefined, audioInputDevices);
+
+    vi.mocked(getDevices).mockImplementationOnce((callback) => {
+      setTimeout(() => {
+        callback(undefined, audioInputDevices as unknown as Device[]);
+      }, 0);
     });
+    vi.mocked(getAudioOutputDevices).mockImplementationOnce(() => Promise.resolve([]));
 
     const { result } = renderHook(() => useDevices());
 
@@ -80,16 +71,21 @@ describe('useDevices', () => {
   });
 
   it('returns any connected videoInputDevices', async () => {
-    const videoInputDevices: Device[] = [
+    const videoInputDevices: MediaDeviceInfo[] = [
       {
-        kind: 'videoInput',
+        kind: 'videoinput',
         deviceId: 'some-id',
-        label: 'Purple HairPods',
+        label: 'Webcam',
+        groupId: 'group-id',
+        toJSON: () => ({}),
       },
     ];
-    vi.mocked(getDevices).mockImplementation((callback: GetDevicesCallback) => {
-      callback(undefined, videoInputDevices);
+    vi.mocked(getDevices).mockImplementationOnce((callback) => {
+      setTimeout(() => {
+        callback(undefined, videoInputDevices as unknown as Device[]);
+      }, 0);
     });
+    vi.mocked(getAudioOutputDevices).mockImplementationOnce(() => Promise.resolve([]));
 
     const { result } = renderHook(() => useDevices());
 
@@ -99,13 +95,23 @@ describe('useDevices', () => {
   });
 
   it('returns any connected audioOutputDevices', async () => {
-    const audioOutputDevices: AudioOutputDevice[] = [
+    const audioOutputDevices: MediaDeviceInfo[] = [
       {
         deviceId: 'some-id',
         label: 'Purple HairPods',
+        kind: 'audiooutput',
+        groupId: 'group-id',
+        toJSON: () => ({}),
       },
     ];
-    vi.mocked(getAudioOutputDevices).mockImplementation(() => Promise.resolve(audioOutputDevices));
+    vi.mocked(getAudioOutputDevices).mockImplementationOnce(() =>
+      Promise.resolve(audioOutputDevices)
+    );
+    vi.mocked(getDevices).mockImplementationOnce((callback) => {
+      setTimeout(() => {
+        callback(undefined, []);
+      }, 0);
+    });
 
     const { result } = renderHook(() => useDevices());
 

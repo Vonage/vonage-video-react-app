@@ -5,14 +5,14 @@ import useMediaDeviceInfoByKind$ from './useMediaDeviceInfoByKind$';
 /**
  * Returns the selected media device for a specific kind.
  */
-function useMediaDeviceInfo(kind: MediaDeviceKind): MediaDeviceInfo;
+function useMediaDeviceInfo(kind: MediaDeviceKind): MediaDeviceInfo | null;
 
 /**
  * Returns media devices for a specific kind organized by deviceId.
  */
 function useMediaDeviceInfo<Selection>(
   kind: MediaDeviceKind,
-  selector: (state: MediaDeviceInfo) => Selection,
+  selector: (state: MediaDeviceInfo | null) => Selection,
   options?: Options<Selection>
 ): Selection;
 
@@ -21,7 +21,7 @@ function useMediaDeviceInfo<Selection>(
  */
 function useMediaDeviceInfo<Selection>(
   kind: MediaDeviceKind,
-  selector: (state: MediaDeviceInfo) => Selection,
+  selector: (state: MediaDeviceInfo | null) => Selection,
   dependencies?: Dependencies
 ): Selection;
 

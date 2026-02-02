@@ -15,7 +15,9 @@ describe('assertRecord', () => {
   });
 
   it('should use default error message when message is not provided', () => {
-    expect(() => assertRecord(null)).toThrow('Expected value to be a record (plain object)');
+    expect(() => assertRecord(null)).toThrow(
+      'Expected value to be a record Record<string, unknown>'
+    );
   });
 
   it('should use custom error message when provided', () => {

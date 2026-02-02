@@ -27,7 +27,7 @@ describe('SoundTest', () => {
     vi.spyOn(mediaDevicesMock, 'enumerateDevices').mockImplementation(
       () =>
         new Promise<MediaDeviceInfo[]>((res) => {
-          res(nativeDevices as MediaDeviceInfo[]);
+          res(nativeDevices);
         })
     );
     vi.spyOn(mediaDevicesMock, 'addEventListener').mockImplementation(() => {});

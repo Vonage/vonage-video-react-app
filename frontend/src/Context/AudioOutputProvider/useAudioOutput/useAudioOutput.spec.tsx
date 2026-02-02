@@ -22,9 +22,7 @@ describe('useAudioOutput', () => {
 
     vi.spyOn(mediaDevicesMock, 'addEventListener').mockImplementation(() => {});
     vi.spyOn(mediaDevicesMock, 'removeEventListener').mockImplementation(() => {});
-    vi.spyOn(mediaDevicesMock, 'enumerateDevices').mockResolvedValue(
-      nativeDevices as MediaDeviceInfo[]
-    );
+    vi.spyOn(mediaDevicesMock, 'enumerateDevices').mockResolvedValue(nativeDevices);
 
     mockGetActiveAudioOutputDevice = vi
       .spyOn(OT, 'getActiveAudioOutputDevice')

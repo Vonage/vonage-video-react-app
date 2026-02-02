@@ -84,8 +84,14 @@ export type PreviewPublisherInitialValue = Partial<
 const usePreviewPublisher = (
   initialValue?: PreviewPublisherInitialValue
 ): PreviewPublisherContextType => {
-  const videoSourceId = devices$.useMediaDeviceInfo('videoinput', ({ deviceId }) => deviceId);
-  const audioSourceId = devices$.useMediaDeviceInfo('audioinput', ({ deviceId }) => deviceId);
+  const videoSourceId = devices$.useMediaDeviceInfo(
+    'videoinput',
+    (device) => device?.deviceId ?? null
+  );
+  const audioSourceId = devices$.useMediaDeviceInfo(
+    'audioinput',
+    (device) => device?.deviceId ?? null
+  );
 
   const { setUser, user } = useUserContext();
   const defaultResolution = appConfig$.use.select(
