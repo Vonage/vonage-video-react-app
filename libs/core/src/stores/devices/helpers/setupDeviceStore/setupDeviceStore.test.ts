@@ -3,36 +3,20 @@ import setupDeviceStore from '.';
 import type { DevicesAPI } from '../../types';
 import { metadata } from '../../constants';
 
-const actionsMock = vi.hoisted(() => {
-  return {
-    syncDevicesList: vi.fn(),
-    syncMediaDevicesList: vi.fn(),
-    syncAudioOutputDevicesList: vi.fn(),
-  };
-});
-
-vi.mock('./actions', () => {
-  return {
-    default: () => actionsMock,
-  };
-});
-
 describe('setupDeviceStore', () => {
   it('should initialize device sync and register event listener', () => {
-    vi.spyOn(globalThis.navigator.mediaDevices, 'enumerateDevices').mockResolvedValue([]);
+    const mockApi: DevicesAPI = createMockApi();
 
     const addEventListenerSpy = vi
       .spyOn(globalThis.navigator.mediaDevices, 'addEventListener')
       .mockImplementation(() => {});
 
-    const mockApi = createMockApi();
-
     const cleanup = setupDeviceStore(mockApi);
 
-    expect(actionsMock.syncDevicesList).toHaveBeenCalledTimes(1);
-    expect(actionsMock.syncMediaDevicesList).toHaveBeenCalledTimes(1);
-    expect(actionsMock.syncAudioOutputDevicesList).toHaveBeenCalledTimes(1);
+    // Should call syncMediaDevicesInfo once on init
+    expect(mockApi.actions.syncMediaDevicesInfo).toHaveBeenCalledTimes(1);
 
+    // Should register devicechange listener
     expect(addEventListenerSpy).toHaveBeenCalledWith(
       'devicechange',
       expect.any(Function),
@@ -43,27 +27,55 @@ describe('setupDeviceStore', () => {
     const deviceChangeHandler = addEventListenerSpy.mock.calls[0][1] as () => void;
     deviceChangeHandler();
 
-    expect(actionsMock.syncDevicesList).toHaveBeenCalledTimes(2);
-    expect(actionsMock.syncMediaDevicesList).toHaveBeenCalledTimes(2);
-    expect(actionsMock.syncAudioOutputDevicesList).toHaveBeenCalledTimes(2);
+    // Should call syncMediaDevicesInfo again on devicechange
+    expect(mockApi.actions.syncMediaDevicesInfo).toHaveBeenCalledTimes(2);
 
     // Get the AbortController that was passed to addEventListener
     const abortController = addEventListenerSpy.mock.calls[0][2] as AbortController;
     const abortSpy = vi.spyOn(abortController, 'abort');
 
     // Call cleanup
-    cleanup!();
+    cleanup?.();
 
     expect(abortSpy).toHaveBeenCalledTimes(1);
+
+    addEventListenerSpy.mockRestore();
+  });
+
+  it('should return undefined when mediaDevices is not supported', () => {
+    const mockApi = createMockApi();
+
+    // Mock unsupported environment
+    const originalMediaDevices = globalThis.navigator.mediaDevices;
+    Object.defineProperty(globalThis.navigator, 'mediaDevices', {
+      value: undefined,
+      writable: true,
+    });
+
+    const cleanup = setupDeviceStore(mockApi);
+
+    expect(cleanup).toBeUndefined();
+    expect(mockApi.actions.syncMediaDevicesInfo).not.toHaveBeenCalled();
+
+    // Restore
+    Object.defineProperty(globalThis.navigator, 'mediaDevices', {
+      value: originalMediaDevices,
+      writable: true,
+    });
   });
 });
 
-function createMockApi() {
+function createMockApi(): DevicesAPI {
   return {
     actions: {
-      setAudioOutputDevice: vi.fn(),
+      syncMediaDevicesInfo: vi.fn(),
+      selectDevice: vi.fn(),
     },
-    getMetadata: vi.fn(metadata),
-    getState: vi.fn().mockReturnValue({}),
+    getMetadata: vi.fn(() => metadata()),
+    getState: vi.fn().mockReturnValue({
+      mediaDeviceInfo: [],
+      selection: new Map(),
+    }),
+    setMetadata: vi.fn(),
   } as unknown as DevicesAPI;
 }
