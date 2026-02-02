@@ -13,7 +13,12 @@ registerIcon();
  * This element must exist in the DOM for the application to mount correctly.
  */
 const rootElement = document.getElementById('root')!;
-await frontendLogger.setup(() => createConsoleLoggerProvider());
 
-const root = ReactDOM.createRoot(rootElement, frontendLogger.getReactRootOptions());
-root.render(<App />);
+async function bootstrapApp() {
+  await frontendLogger.setup(() => createConsoleLoggerProvider());
+
+  const root = ReactDOM.createRoot(rootElement, frontendLogger.getReactRootOptions());
+  root.render(<App />);
+}
+
+bootstrapApp();
