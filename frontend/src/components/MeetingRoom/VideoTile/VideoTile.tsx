@@ -74,12 +74,12 @@ const VideoTile = forwardRef(
           ref={ref}
           sx={{
             position: 'relative',
-            left: 0,
-            top: 0,
+            left: isScreenshare ? 0 : '4px',
+            top: isScreenshare ? 0 : '4px',
             width: '100%',
             height: '100%',
             overflow: 'hidden',
-            borderRadius: 3,
+            borderRadius: theme.shapes.borderRadiusLarge,
             backgroundColor: theme.colors.darkGrey,
             display: hasVideo ? 'block' : 'none',
             ...(isTalking && {
@@ -90,12 +90,12 @@ const VideoTile = forwardRef(
         <Box
           sx={{
             position: 'relative',
-            left: 0,
-            top: 0,
+            left: isScreenshare ? 0 : '4px',
+            top: isScreenshare ? 0 : '4px',
             width: '100%',
             height: '100%',
             overflow: 'hidden',
-            borderRadius: 3,
+            borderRadius: theme.shapes.borderRadiusLarge,
             backgroundColor: theme.colors.darkGrey,
             display: hasVideo ? 'none' : 'block',
             ...(isTalking && {

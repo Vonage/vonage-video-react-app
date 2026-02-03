@@ -61,7 +61,7 @@ const ZoomIndicator = ({
     <Box
       sx={{
         position: 'absolute',
-        bottom: 4,
+        bottom: 8,
         right: 8,
         display: 'flex',
         alignItems: 'center',

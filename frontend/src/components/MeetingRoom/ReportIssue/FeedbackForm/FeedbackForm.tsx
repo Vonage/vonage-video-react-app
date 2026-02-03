@@ -73,8 +73,8 @@ const FeedbackForm = ({
   // 208px = 64px panel header + 80px toolbar if small viewport + (40px submit button + 24px submit button margin)
   const height = isSmallViewport ? 'calc(100dvh - 208px)' : 'calc(100dvh - 224px)';
   // For small viewports: width = 100dvw - 50px of margin
-  // For desktop viewports: 310px = 360px RightPanel - 50px margin
-  const width = isSmallViewport ? 'calc(100dvw - 50px)' : '310px';
+  // For desktop viewports: 310px = 350px RightPanel - 50px margin
+  const width = isSmallViewport ? 'calc(100dvw - 50px)' : '300px';
 
   const getColorStyle = (value: string, maxLength: number) => {
     return value.length >= maxLength || value.length === 0 ? theme.colors.error : 'inherit';
