@@ -118,7 +118,8 @@ const useNetworkTest = () => {
   }, []);
 
   const stopTest = useCallback(() => {
-    return testPromiseRef.current?.cancel();
+    testPromiseRef.current?.cancel();
+    testPromiseRef.current = null;
   }, []);
 
   const testQuality = useCallback(
