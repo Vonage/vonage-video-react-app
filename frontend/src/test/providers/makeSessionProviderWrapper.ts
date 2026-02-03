@@ -16,7 +16,6 @@ export type SessionProviderWrapperOptions = {
    * If true, skips creating AppConfig and User providers (useful when they're already provided at a higher level).
    * Defaults to false for backward compatibility when used standalone.
    */
-  skipAppConfigAndUser?: boolean;
 };
 
 /**
@@ -27,30 +26,20 @@ export type SessionProviderWrapperOptions = {
  * - SessionProvider: you can override its options via sessionOptions
  * @param {object} options - The wrapper options.
  * @param {GenericWrapperOptions} [options.sessionOptions] - Options for the SessionProvider wrapper.
- * @param {AppConfigProviderWrapperOptions} [options.appConfigOptions] - Options for the AppConfigProvider wrapper (only used if skipAppConfigAndUser is false).
- * @param {UserProviderWrapperOptions} [options.userOptions] - Options for the UserProvider wrapper (only used if skipAppConfigAndUser is false).
- * @param {boolean} [options.skipAppConfigAndUser] - If true, skips creating AppConfig and User providers.
+ * @param {AppConfigProviderWrapperOptions} [options.appConfigOptions] - Options for the AppConfigProvider wrapper.
+ * @param {UserProviderWrapperOptions} [options.userOptions] - Options for the UserProvider wrapper.
  * @returns {object} The SessionProvider wrapper and context getters.
  */
 function makeSessionProviderWrapper({
   sessionOptions,
   appConfigOptions,
   userOptions,
-  skipAppConfigAndUser = false,
 }: SessionProviderWrapperOptions = {}) {
   const [SessionProviderWrapper, sessionContext] = makeGenericProviderWrapper(
     SessionProvider,
     SessionContext,
     sessionOptions
   );
-
-  // Only create AppConfig and User providers if not skipped (for standalone usage)
-  if (skipAppConfigAndUser) {
-    return {
-      SessionProviderWrapper,
-      sessionContext,
-    };
-  }
 
   const { AppConfigWrapper, appConfigContext } = makeAppConfigProviderWrapper(appConfigOptions);
 
