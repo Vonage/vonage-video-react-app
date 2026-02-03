@@ -12,7 +12,7 @@ import logOnConnect from '../logOnConnect';
 import VonageVideoClient from './vonageVideoClient';
 import { Credential, SignalEvent, SignalType } from '../../types/session';
 import wait from '@common/execution/wait';
-import { frontendLogger } from '../../logger';
+import frontendLogger from '../../logger';
 
 vi.mock('../logOnConnect');
 vi.mock('@vonage/client-sdk-video');

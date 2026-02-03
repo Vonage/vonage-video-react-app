@@ -1,33 +1,45 @@
+import { waitFor } from '@testing-library/dom';
 import { FrontendLogger } from './FrontendLogger';
-import { LoggerBase } from '@common/logger';
-
-vi.mock('@common/logger/LoggerBase', () => {
-  return {
-    LoggerBase: class {
-      log = vi.fn();
-    },
-  };
-});
+import { type LoggerProviderConfig } from '@common/logger';
 
 describe('FrontendLogger', () => {
+  // TODO: add more use cases, when the setup is sync, when the setup fails, etc.
+  // when the provider specific methods fails
   it('logs events via LoggerBase', () => {
-    const baseLogSpy = vi.spyOn(LoggerBase.prototype, 'log');
+    expect.assertions(3);
+
+    const provider: LoggerProviderConfig = {
+      verbose: true,
+      log: vi.fn(),
+      reportError: vi.fn(),
+    };
+
+    const consoleLogSpy = vi.spyOn(console, 'log').mockImplementation(() => {});
 
     const logger = new FrontendLogger();
+
+    logger.setup(() => Promise.resolve(provider));
 
     logger.log('CallStarted', { sessionId: '123', connectionId: '456' });
 
-    expect(baseLogSpy).toHaveBeenCalledWith(
-      'CallStarted',
-      expect.objectContaining({ sessionId: '123', connectionId: '456' })
-    );
+    waitFor(() => {
+      expect(provider.log).toHaveBeenCalledWith(
+        'CallStarted',
+        expect.objectContaining({ sessionId: '123', connectionId: '456' })
+      );
+    });
 
-    baseLogSpy.mockRestore();
-  });
+    logger.reportError(new Error('Test error'), { type: 'test' });
 
-  it('does not throw when payload is undefined', () => {
-    const logger = new FrontendLogger();
+    waitFor(() => {
+      expect(provider.reportError).toHaveBeenCalledWith(
+        expect.objectContaining({ message: 'Test error' }),
+        expect.objectContaining({ type: 'test' })
+      );
+    });
 
-    expect(() => logger.log('CallStarted', undefined)).not.toThrow();
+    waitFor(() => {
+      expect(consoleLogSpy).toHaveBeenCalledTimes(2);
+    });
   });
 });

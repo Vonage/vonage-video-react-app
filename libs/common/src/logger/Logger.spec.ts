@@ -1,3 +1,4 @@
+import { waitFor } from '@testing-library/dom';
 import { LoggerBase as LoggerBaseClass, LoggerFeature, type LoggerProviderConfig } from './Logger';
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 
@@ -17,10 +18,12 @@ describe('LoggerBase', () => {
     vi.restoreAllMocks();
   });
 
-  it('should set provider when setup is called with valid provider', async () => {
-    await loggerBase.setup(() => Promise.resolve(minimalProvider));
+  it('should set provider when setup is called with valid provider', () => {
+    loggerBase.setup(() => Promise.resolve(minimalProvider));
 
-    expect(loggerBase['provider']).not.toBeNull();
+    waitFor(() => {
+      expect(loggerBase['provider']).not.toBeNull();
+    });
   });
 
   it('should warn if provider not set when log is called', async () => {
@@ -32,21 +35,21 @@ describe('LoggerBase', () => {
     expect(consoleSpy).toHaveBeenCalledWith(expect.stringContaining('No provider configured'));
   });
 
-  it('should warn if the provider is missing the feature', async () => {
+  it('should warn if the provider is missing the feature', () => {
     const fakeProviderMissingLog = {
       [LoggerFeature.ReportError]: () => {},
     } as unknown as LoggerProviderConfig;
 
-    await loggerBase.setup(() => fakeProviderMissingLog);
+    loggerBase.setup(() => fakeProviderMissingLog);
     const consoleSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
 
     loggerBase.log('TestEvent');
 
-    await Promise.resolve();
-
-    expect(consoleSpy).toHaveBeenCalledWith(
-      expect.stringContaining('The provider does not implement the log feature')
-    );
+    waitFor(() => {
+      expect(consoleSpy).toHaveBeenCalledWith(
+        expect.stringContaining('The provider does not implement the log feature')
+      );
+    });
   });
 
   it('group() should return a new logger instance with group context', () => {
@@ -57,15 +60,18 @@ describe('LoggerBase', () => {
     expect(typeof grouped.reportError).toBe('function');
   });
 
-  it('should handle rejected promise from setup gracefully', async () => {
+  it('should handle rejected promise from setup gracefully', () => {
     const consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
 
     const badProvider = () => Promise.reject(new Error('Failed to init'));
 
     const loggerBase = new LoggerBaseClass();
-    await loggerBase.setup(badProvider);
 
-    expect(consoleErrorSpy.mock.calls[0][0]).toContain('Initialization failed');
-    expect(consoleErrorSpy.mock.calls[0][1]).toBeInstanceOf(Error);
+    loggerBase.setup(badProvider);
+
+    waitFor(() => {
+      expect(consoleErrorSpy.mock.calls[0][0]).toContain('Initialization failed');
+      expect(consoleErrorSpy.mock.calls[0][1]).toBeInstanceOf(Error);
+    });
   });
 });

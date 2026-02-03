@@ -2,8 +2,7 @@ import ReactDOM from 'react-dom/client';
 import { registerIcon } from '@vonage/vivid';
 import App from './App.jsx';
 import './i18n.js';
-import { frontendLogger } from './logger';
-import { createConsoleLoggerProvider } from './logger/providers/consoleProvider.ts';
+import Logger from './logger';
 
 // Register Vivid icons for use throughout the application
 registerIcon();
@@ -14,11 +13,20 @@ registerIcon();
  */
 const rootElement = document.getElementById('root')!;
 
-async function bootstrapApp() {
-  await frontendLogger.setup(() => createConsoleLoggerProvider());
+const { onUncaughtError, onRecoverableError, onCaughtError } = Logger;
 
-  const root = ReactDOM.createRoot(rootElement, frontendLogger.getReactRootOptions());
-  root.render(<App />);
-}
+/**
+ * Here you should set your actual logging provider configuration.
+ * Optional for testing you can uncomment this and use verbose true to see logs in console.
+ */
+// Logger.setup(() => ({
+//   verbose: false,
+//   log: (_eventName: string, _payload?: Record<string, unknown>) => {},
+//   reportError: (_error: Error, _context?: Record<string, unknown>) => {},
+// }));
 
-bootstrapApp();
+ReactDOM.createRoot(rootElement, {
+  onUncaughtError,
+  onRecoverableError,
+  onCaughtError,
+}).render(<App />);

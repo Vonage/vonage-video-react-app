@@ -1,7 +1,7 @@
 import tryCatch from '@common/execution/tryCatch';
-import wait from '@common/execution/wait';
 import isPromise from '@common/assertions/isPromise';
 import isNil from '@common/assertions/isNil';
+import isErrorLike from '@common/assertions/isErrorLike';
 
 export enum LoggerFeature {
   ReportError = 'reportError',
@@ -61,37 +61,39 @@ export class LoggerBase implements LoggerProviderConfig {
    * Sets up the logger provider.
    * @param callback A callback that returns a LoggerProvider or a Promise that resolves to a LoggerProvider.
    */
-  public async setup(callback: () => Promise<LoggerProviderConfig> | LoggerProviderConfig) {
-    // prevents the initialization from blocking the main thread
-    // logger always has low priority
-    await wait(0);
+  public setup(callback: () => Promise<LoggerProviderConfig> | LoggerProviderConfig) {
+    const tryCatchResultCandidate = tryCatch(() => callback());
 
-    type SetupResult = { result: LoggerProviderConfig | null; error: unknown };
-    let tryCatchResult = tryCatch(() => callback()) as SetupResult | Promise<SetupResult>;
-    if (isPromise(tryCatchResult)) {
-      tryCatchResult = await tryCatchResult;
-    }
-    const { result, error } = tryCatchResult;
-
-    if (!result || error) {
-      this.error = error ?? new Error('[Logger] Setup callback did not return a provider.');
-      return void this.onLoggerInitializationFailed(this.error);
-    }
-
-    const isSynchronousProvider = !isPromise(result);
+    const isSynchronousProvider = !isPromise(tryCatchResultCandidate);
 
     // return the provider directly if it's synchronous
     if (isSynchronousProvider) {
+      const { result, error } = tryCatchResultCandidate;
+
+      if (!result || error) {
+        this.error = error ?? new Error('[Logger] Setup callback did not return a provider.');
+        return void this.onLoggerInitializationFailed(this.error);
+      }
+
       this.provider = Promise.resolve(result);
       return;
     }
 
     // handle asynchronous provider with error reporting
-    this.provider = (result as Promise<LoggerProviderConfig>).catch((initError) => {
-      this.error = initError;
-      this.onLoggerInitializationFailed(this.error);
+    this.provider = tryCatchResultCandidate.then((tryCatchResult) => {
+      const { result, error } = tryCatchResult as {
+        result: NonNullable<LoggerProviderConfig | Promise<LoggerProviderConfig>> | null;
+        error: unknown;
+      };
 
-      throw this.error;
+      if (!result || error) {
+        this.error = error ?? new Error('[Logger] Setup callback did not return a provider.');
+        void this.onLoggerInitializationFailed(this.error);
+
+        throw this.error;
+      }
+
+      return result;
     });
   }
 
@@ -119,7 +121,9 @@ export class LoggerBase implements LoggerProviderConfig {
     console.log(`${color}[Logger] ${feature}\n\n${formatted}\n${AnsiColors.reset}`);
   }
 
-  protected async tryExecuteFeature<T extends LoggerFeature>(featureKey: T) {
+  protected async tryExecuteFeature<T extends LoggerFeature>(
+    featureKey: T
+  ): Promise<((...args: Parameters<LoggerProviderConfig[T]>) => void) | undefined> {
     // errors are already reported during setup
     if (!isNil(this.error)) return;
 
@@ -137,7 +141,9 @@ export class LoggerBase implements LoggerProviderConfig {
       return;
     }
 
-    const provider = await this.provider;
+    const { result: provider } = await tryCatch(() => Promise.resolve(this.provider!));
+    if (!provider) return this.tryExecuteFeature(featureKey);
+
     const isFeatureMissing = isNil(provider[featureKey]);
 
     // acknowledge lack of feature only once
@@ -154,15 +160,15 @@ export class LoggerBase implements LoggerProviderConfig {
       return;
     }
 
-    type FeatureType = (...args: Parameters<(typeof provider)[T]>) => void;
-
-    return (...args: Parameters<FeatureType>): void => {
+    return (...args): void => {
       if (provider.verbose) {
         this.logLoggerEvent(featureKey, ...args);
       }
 
       // avoids destructuring the feature method to preserve `this` context
-      return (provider[featureKey] as FeatureType)(...args);
+      return (provider[featureKey] as (...args: Parameters<LoggerProviderConfig[T]>) => void)(
+        ...args
+      );
     };
   }
 
@@ -194,7 +200,17 @@ export class LoggerBase implements LoggerProviderConfig {
    */
   public reportError(error: unknown, extra?: Record<string, unknown>) {
     void this.tryExecuteFeature(LoggerFeature.ReportError).then((feature) =>
-      feature?.(error, extra ?? {})
+      feature?.(
+        isErrorLike(error)
+          ? {
+              ...error,
+              message: error.message,
+              name: error.name,
+              stack: error.stack,
+            }
+          : error,
+        extra ?? {}
+      )
     );
   }
 

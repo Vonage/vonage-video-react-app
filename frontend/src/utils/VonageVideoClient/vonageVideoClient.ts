@@ -22,7 +22,7 @@ import {
 import logOnConnect from '../logOnConnect';
 import createMovingAvgAudioLevelTracker from '../movingAverageAudioLevelTracker';
 import idempotentCallbackWithRetry from '@common/execution/idempotentCallbackWithRetry';
-import { frontendLogger } from '../../logger';
+import frontendLogger from '../../logger';
 
 type VonageVideoClientEvents = {
   archiveStarted: [string];
