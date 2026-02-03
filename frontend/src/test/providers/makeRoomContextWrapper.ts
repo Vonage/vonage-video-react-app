@@ -2,18 +2,19 @@ import composeProviders from '@common/helpers/composeProviders';
 import makeAppConfigProviderWrapper from './makeAppConfigProviderWrapper';
 import makeUserProviderWrapper from './makeUserProviderWrapper';
 import makeBackgroundPublisherProviderWrapper from './makeBackgroundPublisherProviderWrapper';
-import makeAudioOutputProviderWrapper from './makeAudioOutputProviderWrapper';
+import makeAudioOutputProviderWrapper, {
+  AudioOutputProviderWrapperOptions,
+} from './makeAudioOutputProviderWrapper';
 import makePreviewPublisherProviderWrapper from './makePreviewPublisherProviderWrapper';
-import type { PublisherProviderWrapperOptions } from './makePublisherProviderWrapper';
-import type { SessionProviderWrapperOptions } from './makeSessionProviderWrapper';
 import type { UserProviderWrapperOptions } from './makeUserProviderWrapper';
 import type { AppConfigProviderWrapperOptions } from './makeAppConfigProviderWrapper';
+import type { PreviewPublisherProviderWrapperOptions } from './makePreviewPublisherProviderWrapper';
 
 export type RoomContextWrapperOptions = {
-  publisherContext?: PublisherProviderWrapperOptions['publisherContext'];
-  sessionContext?: SessionProviderWrapperOptions['sessionOptions'];
   userOptions?: UserProviderWrapperOptions['userOptions'];
   appConfigOptions?: AppConfigProviderWrapperOptions;
+  previewPublisherOptions?: PreviewPublisherProviderWrapperOptions['previewPublisherOptions'];
+  audioOutputOptions?: AudioOutputProviderWrapperOptions['audioOutputOptions'];
 };
 
 /**
@@ -25,17 +26,39 @@ export type RoomContextWrapperOptions = {
  * - PreviewPublisher
  * - AudioOutput
  *
- * @param {object} _options - The wrapper options (reserved for future use).
+ * @param {object} options - The wrapper options.
+ * @param {AppConfigProviderWrapperOptions} [options.appConfigOptions] - Options for the AppConfigProvider wrapper.
+ * @param {UserProviderWrapperOptions} [options.userOptions] - Options for the UserProvider wrapper.
+ * @param {PreviewPublisherProviderWrapperOptions} [options.previewPublisherOptions] - Options for the PreviewPublisherProvider wrapper.
+ * @param {AudioOutputProviderWrapperOptions} [options.audioOutputOptions] - Options for the AudioOutputProvider wrapper.
+ * @param {PublisherProviderWrapperOptions} [options.publisherOptions] - Options for the PublisherProvider wrapper.
+ * @param {SessionProviderWrapperOptions} [options.sessionOptions] - Options for the SessionProvider wrapper.
  * @returns The composed RoomContext wrapper and all context getters.
  */
-function makeRoomContextWrapper(_options: RoomContextWrapperOptions = {}) {
-  const { AppConfigWrapper, ...appConfigContext } = makeAppConfigProviderWrapper();
-  const { UserProviderWrapper, ...userContext } = makeUserProviderWrapper();
+function makeRoomContextWrapper({
+  appConfigOptions,
+  userOptions,
+  previewPublisherOptions,
+  audioOutputOptions,
+}: RoomContextWrapperOptions = {}) {
+  const { AppConfigWrapper, ...appConfigContext } = makeAppConfigProviderWrapper(appConfigOptions);
+
+  const { UserProviderWrapper, ...userContext } = makeUserProviderWrapper({
+    userOptions,
+  });
+
   const { BackgroundPublisherProviderWrapper, ...backgroundPublisherContext } =
     makeBackgroundPublisherProviderWrapper();
+
   const { PreviewPublisherProviderWrapper, ...previewPublisherContext } =
-    makePreviewPublisherProviderWrapper();
-  const { AudioOutputProviderWrapper, ...audioOutputContext } = makeAudioOutputProviderWrapper();
+    makePreviewPublisherProviderWrapper({
+      previewPublisherOptions,
+      AppConfigWrapper,
+    });
+
+  const { AudioOutputProviderWrapper, ...audioOutputContext } = makeAudioOutputProviderWrapper({
+    audioOutputOptions,
+  });
 
   const RoomProviderWrapper = composeProviders(
     AppConfigWrapper,

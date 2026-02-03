@@ -3,17 +3,18 @@ import { render as renderBase, screen } from '@testing-library/react';
 import { ReactElement, useRef } from 'react';
 import * as util from '@utils/util';
 import isReportIssueEnabled from '@utils/isReportIssueEnabled';
-import { makeAppConfigProviderWrapper } from '@test/providers';
+import { makeSessionProviderWrapper, type SessionProviderWrapperOptions } from '@test/providers';
 import ToolbarOverflowMenu, { CaptionsState } from './ToolbarOverflowMenu';
 import Button from '@ui/Button';
 
-vi.mock('@hooks/useSessionContext', () => ({
-  default: () => ({
-    subscriberWrappers: [],
-  }),
-}));
 vi.mock('@hooks/useRoomName');
-vi.mock('@utils/util', () => ({ isMobile: vi.fn() }));
+vi.mock('@utils/util', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('@utils/util')>();
+  return {
+    ...actual,
+    isMobile: vi.fn(),
+  };
+});
 vi.mock('@utils/isReportIssueEnabled');
 
 const mockOpenEmojiGrid = vi.fn();
@@ -48,8 +49,8 @@ const TestComponent = ({ defaultOpen = false }: { defaultOpen?: boolean }) => {
 
 describe('ToolbarOverflowMenu', () => {
   beforeEach(() => {
-    (util.isMobile as Mock).mockImplementation(() => false);
-    mockIsReportIssueEnabled.mockReturnValue(false);
+    const isMobileMock = util.isMobile as unknown as Mock<[], boolean>;
+    isMobileMock.mockReturnValue(false);
   });
 
   afterEach(() => {
@@ -111,8 +112,8 @@ describe('ToolbarOverflowMenu', () => {
   });
 });
 
-function render(ui: ReactElement) {
-  const { AppConfigWrapper } = makeAppConfigProviderWrapper();
+function render(ui: ReactElement, options?: SessionProviderWrapperOptions) {
+  const { SessionProviderWrapper } = makeSessionProviderWrapper(options);
 
-  return renderBase(ui, { wrapper: AppConfigWrapper });
+  return renderBase(ui, { wrapper: SessionProviderWrapper });
 }

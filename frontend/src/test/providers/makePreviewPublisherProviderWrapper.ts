@@ -7,12 +7,22 @@ import makeGenericProviderWrapper, {
   GenericWrapperOptions,
 } from '@common/test/makeGenericProviderWrapper';
 import makeUserProviderWrapper from './makeUserProviderWrapper';
-import makeAppConfigProviderWrapper from './makeAppConfigProviderWrapper';
+import makeAppConfigProviderWrapper, {
+  AppConfigProviderWrapperOptions,
+} from './makeAppConfigProviderWrapper';
+import type { AppConfig } from '@stores/appConfig';
+import type { FC, PropsWithChildren } from 'react';
 
 export type PreviewPublisherProviderWrapperOptions = {
   previewPublisherOptions?: GenericWrapperOptions<
     typeof PreviewPublisherProvider,
     typeof PreviewPublisherContext
+  >;
+  appConfigOptions?: AppConfigProviderWrapperOptions;
+  AppConfigWrapper?: FC<
+    PropsWithChildren<{
+      value?: AppConfig | ((initialValue: AppConfig) => AppConfig) | undefined;
+    }>
   >;
 };
 
@@ -25,15 +35,19 @@ export type PreviewPublisherProviderWrapperOptions = {
  */
 function makePreviewPublisherProviderWrapper({
   previewPublisherOptions,
+  ...options
 }: PreviewPublisherProviderWrapperOptions = {}) {
-  const { UserProviderWrapper, ...user } = makeUserProviderWrapper();
-  const { AppConfigWrapper, ...appConfigContext } = makeAppConfigProviderWrapper();
-
   const [PreviewPublisherProviderWrapper, previewPublisherContext] = makeGenericProviderWrapper(
     PreviewPublisherProvider,
     PreviewPublisherContext,
     previewPublisherOptions
   );
+
+  const { UserProviderWrapper, ...user } = makeUserProviderWrapper();
+
+  const { AppConfigWrapper, ...appConfigContext } = options.AppConfigWrapper
+    ? { AppConfigWrapper: options.AppConfigWrapper }
+    : makeAppConfigProviderWrapper(options.appConfigOptions);
 
   const composeWrapper = composeProviders(
     AppConfigWrapper,

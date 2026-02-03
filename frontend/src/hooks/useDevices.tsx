@@ -11,6 +11,7 @@ import { AllMediaDevices } from '../types';
 import isAudioInputDevice from '../utils/isAudioInputDevice';
 import isVideoInputDevice from '../utils/isVideoInputDevice';
 import renameDefaultAudioOutputDevice from '../utils/renameDefaultAudioOutputDevice';
+import filterMobileCameras from '../utils/filterMobileCameras';
 
 /**
  * React hook that retrieves and maintains the available audio/video input/output devices from the user's device.
@@ -58,7 +59,10 @@ const useDevices = () => {
         const audioInputDevices = devices?.filter(isAudioInputDevice) || [];
 
         // Filter video input devices from the list retrieved by Vonage Video API's getDevices
-        const videoInputDevices = devices?.filter(isVideoInputDevice) || [];
+        const allVideoInputDevices = devices?.filter(isVideoInputDevice) || [];
+
+        // On mobile devices, filter to only one primary front and one primary rear camera
+        const videoInputDevices = filterMobileCameras(allVideoInputDevices);
 
         // Update the state with the new devices
         setAllMediaDevices({
