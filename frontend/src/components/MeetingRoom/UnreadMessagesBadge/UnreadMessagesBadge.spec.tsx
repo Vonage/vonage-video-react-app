@@ -1,53 +1,53 @@
-import { describe, it, vi, expect, Mock, beforeEach } from 'vitest';
-import { render as renderBase, screen } from '@testing-library/react';
+import { describe, it, expect, afterEach } from 'vitest';
+import { render as renderBase, screen, cleanup } from '@testing-library/react';
 import VividIcon from '@components/VividIcon';
 import { ReactElement } from 'react';
-import useSessionContext from '@hooks/useSessionContext';
-import { SessionContextType } from '@Context/SessionProvider/session';
-import { AppConfigProviderWrapperOptions, makeAppConfigProviderWrapper } from '@test/providers';
+import { makeSessionProviderWrapper, type SessionProviderWrapperOptions } from '@test/providers';
 import UnreadMessagesBadge from './UnreadMessagesBadge';
 import ToolbarButton from '../ToolbarButton';
-
-vi.mock('@hooks/useSessionContext');
-
-const mockUseSessionContext = useSessionContext as Mock<[], SessionContextType>;
-const sessionContext = {
-  unreadCount: 0,
-} as unknown as SessionContextType;
 const LittleButton = () => (
   <ToolbarButton onClick={() => {}} icon={<VividIcon name="chat-solid" customSize={-6} />} />
 );
 
 describe('UnreadMessagesBadge', () => {
-  beforeEach(() => {
-    mockUseSessionContext.mockReturnValue(sessionContext);
+  afterEach(() => {
+    cleanup();
   });
 
   it('shows badge with correct unread message count', () => {
-    let sessionContextWithMessages: SessionContextType = {
-      ...sessionContext,
-      unreadCount: 8,
-    } as unknown as SessionContextType;
-    mockUseSessionContext.mockReturnValue(sessionContextWithMessages);
-
-    const { rerender } = render(
+    render(
       <UnreadMessagesBadge>
         <LittleButton />
-      </UnreadMessagesBadge>
+      </UnreadMessagesBadge>,
+      {
+        sessionOptions: {
+          __interceptor: (context) => {
+            if (context) {
+              context.unreadCount = 8;
+            }
+          },
+        },
+      }
     );
 
     expect(screen.getByTestId('chat-button-unread-count')).toBeVisible();
     expect(screen.getByTestId('chat-button-unread-count').textContent).toBe('8');
 
-    sessionContextWithMessages = {
-      ...sessionContext,
-      unreadCount: 9,
-    } as unknown as SessionContextType;
-    mockUseSessionContext.mockReturnValue(sessionContextWithMessages);
-    rerender(
+    cleanup();
+
+    render(
       <UnreadMessagesBadge>
         <LittleButton />
-      </UnreadMessagesBadge>
+      </UnreadMessagesBadge>,
+      {
+        sessionOptions: {
+          __interceptor: (context) => {
+            if (context) {
+              context.unreadCount = 9;
+            }
+          },
+        },
+      }
     );
     expect(screen.getByTestId('chat-button-unread-count')).toBeVisible();
     expect(screen.getByTestId('chat-button-unread-count').textContent).toBe('9');
@@ -80,15 +80,19 @@ describe('UnreadMessagesBadge', () => {
   });
 
   it('should not show unread message badge when message count is non zero and the toolbar is open', () => {
-    const sessionContextWithMessages: SessionContextType = {
-      ...sessionContext,
-      unreadCount: 8,
-    } as unknown as SessionContextType;
-    mockUseSessionContext.mockReturnValue(sessionContextWithMessages);
     render(
       <UnreadMessagesBadge isToolbarOverflowMenuOpen>
         <LittleButton />
-      </UnreadMessagesBadge>
+      </UnreadMessagesBadge>,
+      {
+        sessionOptions: {
+          __interceptor: (context) => {
+            if (context) {
+              context.unreadCount = 8;
+            }
+          },
+        },
+      }
     );
 
     const badge = screen.getByTestId('chat-button-unread-count');
@@ -98,15 +102,19 @@ describe('UnreadMessagesBadge', () => {
   });
 
   it('should not show unread message badge when a new message comes in and the toolbar is open', () => {
-    let sessionContextWithMessages: SessionContextType = {
-      ...sessionContext,
-      unreadCount: 0,
-    } as unknown as SessionContextType;
-    mockUseSessionContext.mockReturnValue(sessionContextWithMessages);
     const { rerender } = render(
       <UnreadMessagesBadge isToolbarOverflowMenuOpen>
         <LittleButton />
-      </UnreadMessagesBadge>
+      </UnreadMessagesBadge>,
+      {
+        sessionOptions: {
+          __interceptor: (context) => {
+            if (context) {
+              context.unreadCount = 0;
+            }
+          },
+        },
+      }
     );
 
     const badge = screen.getByTestId('chat-button-unread-count');
@@ -115,11 +123,6 @@ describe('UnreadMessagesBadge', () => {
     expect(badge.offsetWidth).toBe(0);
 
     // a new message comes in
-    sessionContextWithMessages = {
-      ...sessionContext,
-      unreadCount: 1,
-    } as unknown as SessionContextType;
-    mockUseSessionContext.mockReturnValue(sessionContextWithMessages);
     rerender(
       <UnreadMessagesBadge isToolbarOverflowMenuOpen>
         <LittleButton />
@@ -133,15 +136,19 @@ describe('UnreadMessagesBadge', () => {
   });
 
   it('should show the unread message badge when a new message comes in and the toolbar was opened at first but is now closed', () => {
-    let sessionContextWithMessages: SessionContextType = {
-      ...sessionContext,
-      unreadCount: 0,
-    } as unknown as SessionContextType;
-    mockUseSessionContext.mockReturnValue(sessionContextWithMessages);
-    const { rerender } = render(
+    render(
       <UnreadMessagesBadge isToolbarOverflowMenuOpen>
         <LittleButton />
-      </UnreadMessagesBadge>
+      </UnreadMessagesBadge>,
+      {
+        sessionOptions: {
+          __interceptor: (context) => {
+            if (context) {
+              context.unreadCount = 0;
+            }
+          },
+        },
+      }
     );
 
     const badge = screen.getByTestId('chat-button-unread-count');
@@ -149,16 +156,22 @@ describe('UnreadMessagesBadge', () => {
     expect(badge.offsetHeight).toBe(0);
     expect(badge.offsetWidth).toBe(0);
 
+    cleanup();
+
     // a new message comes in and toolbar has been closed
-    sessionContextWithMessages = {
-      ...sessionContext,
-      unreadCount: 1,
-    } as unknown as SessionContextType;
-    mockUseSessionContext.mockReturnValue(sessionContextWithMessages);
-    rerender(
+    render(
       <UnreadMessagesBadge isToolbarOverflowMenuOpen={false}>
         <LittleButton />
-      </UnreadMessagesBadge>
+      </UnreadMessagesBadge>,
+      {
+        sessionOptions: {
+          __interceptor: (context) => {
+            if (context) {
+              context.unreadCount = 1;
+            }
+          },
+        },
+      }
     );
 
     const updatedBadge = screen.getByTestId('chat-button-unread-count');
@@ -167,17 +180,18 @@ describe('UnreadMessagesBadge', () => {
   });
 
   it('should not show the message badge when allowChat is false', () => {
-    const sessionContextWithMessages: SessionContextType = {
-      ...sessionContext,
-      unreadCount: 8,
-    } as unknown as SessionContextType;
-    mockUseSessionContext.mockReturnValue(sessionContextWithMessages);
-
     render(
       <UnreadMessagesBadge>
         <LittleButton />
       </UnreadMessagesBadge>,
       {
+        sessionOptions: {
+          __interceptor: (context) => {
+            if (context) {
+              context.unreadCount = 8;
+            }
+          },
+        },
         appConfigOptions: {
           value: {
             meetingRoomSettings: {
@@ -195,13 +209,8 @@ describe('UnreadMessagesBadge', () => {
   });
 });
 
-function render(
-  ui: ReactElement,
-  options?: {
-    appConfigOptions?: AppConfigProviderWrapperOptions;
-  }
-) {
-  const { AppConfigWrapper } = makeAppConfigProviderWrapper(options?.appConfigOptions);
+function render(ui: ReactElement, options?: SessionProviderWrapperOptions) {
+  const { SessionProviderWrapper } = makeSessionProviderWrapper(options);
 
-  return renderBase(ui, { ...options, wrapper: AppConfigWrapper });
+  return renderBase(ui, { wrapper: SessionProviderWrapper });
 }

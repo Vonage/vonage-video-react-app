@@ -1,35 +1,29 @@
 import { afterEach, beforeEach, describe, expect, it, Mock, vi } from 'vitest';
-import { cleanup, render, screen, within, fireEvent, waitFor } from '@testing-library/react';
+import {
+  cleanup,
+  render as renderBase,
+  screen,
+  within,
+  fireEvent,
+  waitFor,
+} from '@testing-library/react';
+import { ReactElement } from 'react';
 import { Subscriber as OTSubscriber } from '@vonage/client-sdk-video';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { SessionContextType } from '@Context/SessionProvider/session';
 import { SubscriberWrapper } from '@app-types/session';
-import useUserContext from '@hooks/useUserContext';
-import { UserContextType } from '@Context/user';
-import useSessionContext from '@hooks/useSessionContext';
 import useRoomShareUrl from '@hooks/useRoomShareUrl';
+import { makeSessionProviderWrapper, type SessionProviderWrapperOptions } from '@test/providers';
 import ParticipantList from './ParticipantList';
 
 const mockedRoomName = { roomName: 'test-room-name' };
 
-vi.mock('@hooks/useSessionContext.tsx');
-vi.mock('@hooks/useUserContext');
 vi.mock('@hooks/useRoomShareUrl');
 vi.mock('react-router-dom', () => ({
   useNavigate: vi.fn(),
   useLocation: vi.fn(),
   useParams: () => mockedRoomName,
 }));
-const mockUseSessionContext = useSessionContext as Mock<[], SessionContextType>;
 const mockNavigate = vi.fn();
-
-const mockUserContextWithDefaultSettings = {
-  user: {
-    defaultSettings: {
-      name: 'Local Participant',
-    },
-  },
-} as UserContextType;
 
 const createSubscriberWrapper = (
   name: string,
@@ -71,22 +65,15 @@ const createTestSubscriberWrappers = () => {
 };
 
 describe('ParticipantList', () => {
-  let sessionContext: SessionContextType;
   let originalClipboard: Clipboard;
 
   beforeEach(() => {
-    vi.mocked(useUserContext).mockImplementation(() => mockUserContextWithDefaultSettings);
-
     originalClipboard = navigator.clipboard;
     Object.assign(navigator, {
       clipboard: {
         writeText: vi.fn(),
       },
     });
-    sessionContext = {
-      subscriberWrappers: createTestSubscriberWrappers(),
-    } as unknown as SessionContextType;
-    mockUseSessionContext.mockReturnValue(sessionContext as unknown as SessionContextType);
   });
   afterEach(() => {
     Object.assign(navigator, { clipboard: originalClipboard });
@@ -94,14 +81,48 @@ describe('ParticipantList', () => {
   });
 
   it('does not render when closed', () => {
-    render(<ParticipantList isOpen={false} handleClose={() => {}} />);
+    render(<ParticipantList isOpen={false} handleClose={() => {}} />, {
+      sessionOptions: {
+        __interceptor: (context) => {
+          if (context) {
+            context.subscriberWrappers = createTestSubscriberWrappers();
+          }
+        },
+      },
+      userOptions: {
+        userOptions: {
+          __interceptor: (context) => {
+            if (context) {
+              context.user.defaultSettings.name = 'Local Participant';
+            }
+          },
+        },
+      },
+    });
     expect(screen.queryByText('Participants')).not.toBeInTheDocument();
   });
 
   it('copies room share URL to clipboard', async () => {
     (useRoomShareUrl as Mock).mockReturnValue('https://example.com/room123');
 
-    render(<ParticipantList isOpen handleClose={() => {}} />);
+    render(<ParticipantList isOpen handleClose={() => {}} />, {
+      sessionOptions: {
+        __interceptor: (context) => {
+          if (context) {
+            context.subscriberWrappers = createTestSubscriberWrappers();
+          }
+        },
+      },
+      userOptions: {
+        userOptions: {
+          __interceptor: (context) => {
+            if (context) {
+              context.user.defaultSettings.name = 'Local Participant';
+            }
+          },
+        },
+      },
+    });
 
     const copyButton = screen.getByTestId('vivid-icon-copy-line');
     fireEvent.click(copyButton);
@@ -117,7 +138,24 @@ describe('ParticipantList', () => {
     (useLocation as Mock).mockReturnValue({
       state: mockedRoomName,
     });
-    render(<ParticipantList handleClose={() => {}} isOpen />);
+    render(<ParticipantList handleClose={() => {}} isOpen />, {
+      sessionOptions: {
+        __interceptor: (context) => {
+          if (context) {
+            context.subscriberWrappers = createTestSubscriberWrappers();
+          }
+        },
+      },
+      userOptions: {
+        userOptions: {
+          __interceptor: (context) => {
+            if (context) {
+              context.user.defaultSettings.name = 'Local Participant';
+            }
+          },
+        },
+      },
+    });
 
     const namesInOrder = screen
       .getAllByTestId('participant-list-item', { exact: false })
@@ -136,7 +174,24 @@ describe('ParticipantList', () => {
   });
 
   it('filters list by query and hides You when not matching', () => {
-    render(<ParticipantList handleClose={() => {}} isOpen />);
+    render(<ParticipantList handleClose={() => {}} isOpen />, {
+      sessionOptions: {
+        __interceptor: (context) => {
+          if (context) {
+            context.subscriberWrappers = createTestSubscriberWrappers();
+          }
+        },
+      },
+      userOptions: {
+        userOptions: {
+          __interceptor: (context) => {
+            if (context) {
+              context.user.defaultSettings.name = 'Local Participant';
+            }
+          },
+        },
+      },
+    });
 
     const input = screen.getByPlaceholderText('Search participants');
     fireEvent.change(input, { target: { value: 'alex' } });
@@ -150,7 +205,24 @@ describe('ParticipantList', () => {
   });
 
   it('shows You when query matches local participant name (case-insensitive)', () => {
-    render(<ParticipantList handleClose={() => {}} isOpen />);
+    render(<ParticipantList handleClose={() => {}} isOpen />, {
+      sessionOptions: {
+        __interceptor: (context) => {
+          if (context) {
+            context.subscriberWrappers = createTestSubscriberWrappers();
+          }
+        },
+      },
+      userOptions: {
+        userOptions: {
+          __interceptor: (context) => {
+            if (context) {
+              context.user.defaultSettings.name = 'Local Participant';
+            }
+          },
+        },
+      },
+    });
 
     const input = screen.getByPlaceholderText('Search participants');
     fireEvent.change(input, { target: { value: 'LOCAL' } });
@@ -163,7 +235,24 @@ describe('ParticipantList', () => {
   });
 
   it('restores full list after clearing query', () => {
-    render(<ParticipantList handleClose={() => {}} isOpen />);
+    render(<ParticipantList handleClose={() => {}} isOpen />, {
+      sessionOptions: {
+        __interceptor: (context) => {
+          if (context) {
+            context.subscriberWrappers = createTestSubscriberWrappers();
+          }
+        },
+      },
+      userOptions: {
+        userOptions: {
+          __interceptor: (context) => {
+            if (context) {
+              context.user.defaultSettings.name = 'Local Participant';
+            }
+          },
+        },
+      },
+    });
 
     const input = screen.getByPlaceholderText('Search participants');
     fireEvent.change(input, { target: { value: 'zzz' } });
@@ -188,3 +277,9 @@ describe('ParticipantList', () => {
     ]);
   });
 });
+
+function render(ui: ReactElement, options?: SessionProviderWrapperOptions) {
+  const { SessionProviderWrapper } = makeSessionProviderWrapper(options);
+
+  return renderBase(ui, { wrapper: SessionProviderWrapper });
+}

@@ -1,26 +1,21 @@
 import { beforeEach, describe, expect, it, vi, Mock, beforeAll, afterAll } from 'vitest';
-import { act, screen } from '@testing-library/react';
+import { screen, waitFor } from '@testing-library/react';
 import { ReactElement, ReactNode } from 'react';
 import { Publisher } from '@vonage/client-sdk-video';
 import EventEmitter from 'events';
 import userEvent from '@testing-library/user-event';
-import UserProvider, { UserContextType } from '@Context/user';
-import useUserContext from '@hooks/useUserContext';
-import {
-  PreviewPublisherContextType,
-  PreviewPublisherProvider,
-} from '@Context/PreviewPublisherProvider';
 import useDevices from '@hooks/useDevices';
 import { allMediaDevices, defaultAudioDevice } from '@utils/mockData/device';
-import usePreviewPublisherContext from '@hooks/usePreviewPublisherContext';
-import useBackgroundPublisherContext from '@hooks/useBackgroundPublisherContext';
 import usePermissions from '@hooks/usePermissions';
 import { DEVICE_ACCESS_STATUS } from '@utils/constants';
 import waitUntilPlaying from '@utils/waitUntilPlaying';
-import { BackgroundPublisherContextType } from '@Context/BackgroundPublisherProvider';
-import { AppConfigProviderWrapperOptions, makeAppConfigProviderWrapper } from '@test/providers';
-import WaitingRoom from './WaitingRoom';
+import { makeRoomContextWrapper, RoomContextWrapperOptions } from '@test/providers';
+import { type PreviewPublisherContextType } from '@Context/PreviewPublisherProvider';
+import mediaDevicesMock from '@common/test/mocks/mediaDevicesMock';
+import backgroundEffectsDialog$ from '@Context/BackgroundEffectsDialog';
+import precallNetworkTestDialog$ from '@Context/PrecallNetworkTestDialog';
 import composeProviders from '@common/helpers/composeProviders';
+import WaitingRoom from './WaitingRoom';
 import SuspenseBoundary from '@common/components/SuspenseBoundary';
 import renderAsyncComponent from '@test-helpers/renderAsyncComponent';
 
@@ -38,36 +33,59 @@ vi.mock('react-router-dom', async () => {
     Link: ({ children, to }: { children: ReactNode; to: string }) => <a href={to}>{children}</a>,
   };
 });
-const WaitingRoomWithProviders = () => (
-  <UserProvider>
-    <PreviewPublisherProvider>
-      <WaitingRoom />
-    </PreviewPublisherProvider>
-  </UserProvider>
-);
+
+vi.mock('@vonage/client-sdk-video', async () => {
+  const actual = await vi.importActual('@vonage/client-sdk-video');
+  return {
+    ...actual,
+    Publisher: vi.fn(),
+  };
+});
 
 vi.mock('@hooks/useDevices.tsx');
-vi.mock('@hooks/useUserContext.tsx');
-vi.mock('@hooks/usePreviewPublisherContext.tsx');
-vi.mock('@hooks/useBackgroundPublisherContext.tsx');
 vi.mock('@hooks/usePermissions.tsx');
 vi.mock('@utils/waitUntilPlaying/waitUntilPlaying.ts');
 
-const mockUserContext = {
-  user: {
-    defaultSettings: {
-      videoFilter: undefined,
-      name: 'John Doe',
-    },
-  },
-  setUser: vi.fn(),
-} as unknown as UserContextType;
-
 const { locationBackUp, locationMock } = getLocationMock();
+
+function setupMediaDevices() {
+  Object.defineProperty(globalThis.navigator, 'mediaDevices', {
+    writable: true,
+    configurable: true,
+    value: mediaDevicesMock,
+  });
+
+  vi.spyOn(mediaDevicesMock, 'addEventListener').mockImplementation(() => {});
+  vi.spyOn(mediaDevicesMock, 'removeEventListener').mockImplementation(() => {});
+  vi.spyOn(mediaDevicesMock, 'enumerateDevices').mockResolvedValue([]);
+}
+
+function setupPermissions() {
+  Object.defineProperty(globalThis.navigator, 'permissions', {
+    writable: true,
+    configurable: true,
+    value: {
+      query: vi.fn().mockResolvedValue({ state: 'granted' }),
+    },
+  });
+}
 
 describe('WaitingRoom', () => {
   beforeAll(() => {
     globalThis.location = locationMock;
+
+    if (!globalThis.performance.timing) {
+      Object.defineProperty(globalThis.performance, 'timing', {
+        writable: true,
+        configurable: true,
+        value: {
+          navigationStart: Date.now(),
+          loadEventEnd: 0,
+          domContentLoadedEventEnd: 0,
+          domComplete: 0,
+        },
+      });
+    }
   });
 
   afterAll(() => {
@@ -75,63 +93,60 @@ describe('WaitingRoom', () => {
   });
 
   let mockedDestroyPublisher: Mock;
-  let previewPublisherContext: PreviewPublisherContextType;
-  let backgroundPublisherContext: BackgroundPublisherContextType;
   let mockPublisher: Publisher;
   let mockPublisherVideoElement: HTMLVideoElement;
 
-  beforeEach(() => {
-    vi.mocked(useUserContext).mockImplementation(() => mockUserContext);
-    vi.mocked(useDevices).mockReturnValue({
-      getAllMediaDevices: vi.fn(),
-      allMediaDevices,
-    });
-    mockPublisher = Object.assign(new EventEmitter(), {
+  function createMockPublisher() {
+    return Object.assign(new EventEmitter(), {
       applyVideoFilter: vi.fn(),
       clearVideoFilter: vi.fn(),
       getAudioSource: () => defaultAudioDevice,
       videoWidth: () => 1280,
       videoHeight: () => 720,
+      destroy: vi.fn(),
+      on: vi.fn(),
+      off: vi.fn(),
     }) as unknown as Publisher;
+  }
+
+  beforeEach(() => {
+    vi.clearAllMocks();
+    vi.spyOn(console, 'error').mockImplementation(() => {});
+    vi.spyOn(console, 'warn').mockImplementation(() => {});
+
+    setupMediaDevices();
+    setupPermissions();
+
+    mockPublisher = createMockPublisher();
+
     mockPublisherVideoElement = document.createElement('video');
     mockPublisherVideoElement.title = 'preview-publisher';
     mockedDestroyPublisher = vi.fn();
-    previewPublisherContext = {
-      publisher: null,
-      initLocalPublisher: vi.fn(),
-      destroyPublisher: mockedDestroyPublisher,
-    } as unknown as PreviewPublisherContextType;
-    vi.mocked(usePreviewPublisherContext).mockImplementation(() => previewPublisherContext);
-    backgroundPublisherContext = {
-      publisher: null,
-      initBackgroundLocalPublisher: vi.fn(),
-      destroyBackgroundPublisher: mockedDestroyPublisher,
-      handleBackgroundChange: vi.fn(),
-      handleAddCustomImage: vi.fn(),
-    } as unknown as BackgroundPublisherContextType;
-    vi.mocked(useBackgroundPublisherContext).mockImplementation(() => backgroundPublisherContext);
+
+    vi.mocked(useDevices).mockReturnValue({
+      getAllMediaDevices: vi.fn(),
+      allMediaDevices,
+    });
+
     vi.mocked(usePermissions).mockReturnValue({
       accessStatus: DEVICE_ACCESS_STATUS.ACCEPTED,
       setAccessStatus: vi.fn(),
     });
-    vi.mocked(waitUntilPlaying).mockImplementation(
-      () =>
-        new Promise<void>((res) => {
-          res();
-        })
-    );
+
+    vi.mocked(waitUntilPlaying).mockResolvedValue();
 
     vi.spyOn(globalThis.location, 'reload');
   });
 
   it('should render', async () => {
-    await render(<WaitingRoomWithProviders />);
-    const waitingRoom = screen.getByTestId('waitingRoom');
-    expect(waitingRoom).not.toBeNull();
+    await render(<WaitingRoom />);
+    await waitFor(() => {
+      expect(screen.getByTestId('waitingRoom')).toBeInTheDocument();
+    });
   });
 
   it('should display a video loading element on entering', async () => {
-    await render(<WaitingRoomWithProviders />, {
+    await render(<WaitingRoom />, {
       appConfigOptions: {
         value: {
           isAppConfigLoaded: false,
@@ -142,68 +157,90 @@ describe('WaitingRoom', () => {
       },
     });
 
-    const videoLoadingElement = screen.getByTestId('VideoLoading');
-    expect(videoLoadingElement).toBeVisible();
+    await waitFor(() => {
+      expect(screen.getByTestId('VideoLoading')).toBeVisible();
+    });
   });
 
   it('should eventually display a preview publisher', async () => {
-    // After the preview publisher initializes.
-    previewPublisherContext.publisher = mockPublisher;
-    previewPublisherContext.publisherVideoElement = mockPublisherVideoElement;
-    previewPublisherContext.isVideoEnabled = true;
-
-    const { rerender, container } = await render(<WaitingRoomWithProviders />);
-
-    // TODO: investigate why this needs to be awaited or the test fails
-    // eslint-disable-next-line @typescript-eslint/await-thenable
-    await act(() => {
-      rerender(<WaitingRoomWithProviders />);
+    const { container } = await render(<WaitingRoom />, {
+      previewPublisherOptions: {
+        __interceptor: (context: PreviewPublisherContextType) => {
+          context.publisher = mockPublisher;
+          context.publisherVideoElement = mockPublisherVideoElement;
+          context.isVideoEnabled = true;
+        },
+      },
     });
 
-    expect(container.querySelector('[data-video-container]')).toBeVisible();
-    expect(screen.getByTitle('publisher-preview')).toBeVisible();
+    await waitFor(() => {
+      expect(container.querySelector('[data-video-container]')).toBeVisible();
+      expect(screen.getByTitle('publisher-preview')).toBeVisible();
+    });
   });
 
   it('should call destroyPublisher when navigating away from waiting room', async () => {
     const user = userEvent.setup();
 
-    previewPublisherContext.publisher = mockPublisher;
-    previewPublisherContext.destroyPublisher = mockedDestroyPublisher;
+    const { unmount } = await render(<WaitingRoom />, {
+      previewPublisherOptions: {
+        __onCreated: (context: PreviewPublisherContextType) => {
+          context.publisher = mockPublisher;
+          const originalDestroy = context.destroyPublisher.bind(context);
+          context.destroyPublisher = () => {
+            mockedDestroyPublisher();
+            return originalDestroy();
+          };
+        },
+        __interceptor: (context: PreviewPublisherContextType) => {
+          context.publisher = mockPublisher;
+        },
+      },
+    });
 
-    const { unmount } = await render(<WaitingRoomWithProviders />);
+    await waitFor(() => {
+      expect(screen.getByText('test-room-name')).toBeInTheDocument();
+    });
 
-    // Verify we're in the waiting room for test-room-name
-    expect(screen.getByText('test-room-name')).toBeInTheDocument();
-
-    // Submit a name to navigate away from the waiting room
     const input = screen.getByRole('textbox', { name: /name/i });
     await user.type(input, 'Betsey Trotwood');
     expect(input).toHaveValue('Betsey Trotwood');
 
-    // TODO: pending check that the enter was called
     await user.keyboard('{Enter}');
 
-    // force unmount to simulate navigating away
     unmount();
 
-    expect(mockedDestroyPublisher).toHaveBeenCalled();
+    await waitFor(() => {
+      expect(mockedDestroyPublisher).toHaveBeenCalled();
+    });
   });
 
   it('should reload window when device permissions change', async () => {
-    const { rerender } = await render(<WaitingRoomWithProviders />);
-    expect(globalThis.location.reload).not.toBeCalled();
-
-    act(() => {
-      previewPublisherContext.accessStatus = DEVICE_ACCESS_STATUS.ACCESS_CHANGED;
+    await render(<WaitingRoom />, {
+      previewPublisherOptions: {
+        __interceptor: (context: PreviewPublisherContextType) => {
+          context.accessStatus = DEVICE_ACCESS_STATUS.ACCEPTED;
+        },
+      },
     });
-    rerender(<WaitingRoomWithProviders />);
-    expect(globalThis.location.reload).toBeCalled();
+
+    expect(globalThis.location.reload).not.toHaveBeenCalled();
+
+    // Simulate device permission change by updating the mock and rerendering
+    vi.mocked(usePermissions).mockReturnValue({
+      accessStatus: DEVICE_ACCESS_STATUS.ACCESS_CHANGED,
+      setAccessStatus: vi.fn(),
+    });
+
+    await render(<WaitingRoom />);
+
+    await waitFor(() => {
+      expect(globalThis.location.reload).toHaveBeenCalled();
+    });
   });
 
   it('should not render ControlPanel when allowDeviceSelection is false', async () => {
-    previewPublisherContext.accessStatus = DEVICE_ACCESS_STATUS.ACCEPTED;
-
-    const { queryByTestId } = await render(<WaitingRoomWithProviders />, {
+    const { container } = await render(<WaitingRoom />, {
       appConfigOptions: {
         value: {
           waitingRoomSettings: {
@@ -211,15 +248,24 @@ describe('WaitingRoom', () => {
           },
         },
       },
+      previewPublisherOptions: {
+        __interceptor: (context: PreviewPublisherContextType) => {
+          context.accessStatus = DEVICE_ACCESS_STATUS.ACCEPTED;
+        },
+      },
     });
 
-    expect(queryByTestId('ControlPanel')).not.toBeInTheDocument();
+    await waitFor(
+      () => {
+        const controlPanel = container.querySelector('[data-testid="ControlPanel"]');
+        expect(controlPanel).not.toBeInTheDocument();
+      },
+      { timeout: 3000 }
+    );
   });
 
   it('should render ControlPanel when allowDeviceSelection is true', async () => {
-    previewPublisherContext.accessStatus = DEVICE_ACCESS_STATUS.ACCEPTED;
-
-    const { queryByTestId } = await render(<WaitingRoomWithProviders />, {
+    await render(<WaitingRoom />, {
       appConfigOptions: {
         value: {
           waitingRoomSettings: {
@@ -227,9 +273,16 @@ describe('WaitingRoom', () => {
           },
         },
       },
+      previewPublisherOptions: {
+        __interceptor: (context: PreviewPublisherContextType) => {
+          context.accessStatus = DEVICE_ACCESS_STATUS.ACCEPTED;
+        },
+      },
     });
 
-    expect(queryByTestId('ControlPanel')).toBeInTheDocument();
+    await waitFor(() => {
+      expect(screen.queryByTestId('ControlPanel')).toBeInTheDocument();
+    });
   });
 });
 
@@ -250,15 +303,20 @@ function getLocationMock() {
   return { locationBackUp: location, locationMock };
 }
 
-function render(
-  ui: ReactElement,
-  options?: {
-    appConfigOptions?: AppConfigProviderWrapperOptions;
-  }
-) {
-  const { AppConfigWrapper } = makeAppConfigProviderWrapper(options?.appConfigOptions);
+async function render(ui: ReactElement, options?: RoomContextWrapperOptions) {
+  const { RoomProviderWrapper, ...contexts } = makeRoomContextWrapper(options);
 
-  const wrapper = composeProviders(SuspenseBoundary, AppConfigWrapper);
+  const Wrapper = composeProviders(
+    SuspenseBoundary,
+    RoomProviderWrapper,
+    backgroundEffectsDialog$.Provider,
+    precallNetworkTestDialog$.Provider
+  );
 
-  return renderAsyncComponent(ui, { wrapper });
+  const renderResult = await renderAsyncComponent(ui, { wrapper: Wrapper });
+
+  return {
+    ...contexts,
+    ...renderResult,
+  };
 }

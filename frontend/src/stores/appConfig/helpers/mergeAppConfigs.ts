@@ -25,13 +25,21 @@ function mergeAppConfigs(
   const previous = shouldUseDefault ? defaultAppConfig : args.previous;
   const updates = shouldUseDefault ? args : args.updates;
 
+  const {
+    videoSettings: updatesVideoSettings,
+    audioSettings: updatesAudioSettings,
+    waitingRoomSettings: updatesWaitingRoomSettings,
+    meetingRoomSettings: updatesMeetingRoomSettings,
+    ...topLevelUpdates
+  } = updates || {};
+
   return {
     ...previous,
-    ...updates,
-    videoSettings: { ...previous.videoSettings, ...updates.videoSettings },
-    audioSettings: { ...previous.audioSettings, ...updates.audioSettings },
-    waitingRoomSettings: { ...previous.waitingRoomSettings, ...updates.waitingRoomSettings },
-    meetingRoomSettings: { ...previous.meetingRoomSettings, ...updates.meetingRoomSettings },
+    ...topLevelUpdates,
+    videoSettings: { ...previous.videoSettings, ...updatesVideoSettings },
+    audioSettings: { ...previous.audioSettings, ...updatesAudioSettings },
+    waitingRoomSettings: { ...previous.waitingRoomSettings, ...updatesWaitingRoomSettings },
+    meetingRoomSettings: { ...previous.meetingRoomSettings, ...updatesMeetingRoomSettings },
   };
 }
 

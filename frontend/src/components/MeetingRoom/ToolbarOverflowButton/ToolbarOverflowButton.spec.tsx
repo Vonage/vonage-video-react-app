@@ -1,45 +1,20 @@
-import { beforeEach, describe, expect, it, Mock, vi } from 'vitest';
-import { act, render as renderBase, screen } from '@testing-library/react';
+import { describe, expect, it, vi, afterEach } from 'vitest';
+import { act, render as renderBase, screen, cleanup } from '@testing-library/react';
 import { ReactElement } from 'react';
-import useSessionContext from '@hooks/useSessionContext';
-import { SessionContextType } from '@Context/SessionProvider/session';
-import useUserContext from '@hooks/useUserContext';
-import { UserContextType } from '@Context/user';
-import { makeAppConfigProviderWrapper } from '@test/providers';
+import { makeSessionProviderWrapper, type SessionProviderWrapperOptions } from '@test/providers';
 import ToolbarOverflowButton from './ToolbarOverflowButton';
 import {
   ToolbarOverflowMenuProps,
   CaptionsState,
 } from '../ToolbarOverflowMenu/ToolbarOverflowMenu';
 
-vi.mock('@hooks/useSessionContext');
-vi.mock('@hooks/useUserContext');
 vi.mock('@hooks/useRoomName');
-const mockUseSessionContext = useSessionContext as Mock<[], SessionContextType>;
-const mockUseUserContext = useUserContext as Mock<[], UserContextType>;
-const mockSetUser = vi.fn();
-
-const defaultUserContext = {
-  user: {
-    defaultSettings: {
-      openEmojisGrid: false,
-    },
-  },
-  setUser: mockSetUser,
-} as unknown as UserContextType;
-const sessionContext = {
-  subscriberWrappers: [],
-  layoutMode: 'grid',
-  setLayoutMode: vi.fn(),
-  unreadCount: 0,
-} as unknown as SessionContextType;
-
 describe('ToolbarOverflowButton', () => {
-  beforeEach(() => {
-    mockUseSessionContext.mockReturnValue(sessionContext);
-    mockUseUserContext.mockReturnValue(defaultUserContext);
+  const mockSetLayoutMode = vi.fn();
+  afterEach(() => {
+    cleanup();
+    vi.clearAllMocks();
   });
-
   const defaultProps: ToolbarOverflowMenuProps = {
     toggleShareScreen: vi.fn(),
     isSharingScreen: false,
@@ -54,38 +29,62 @@ describe('ToolbarOverflowButton', () => {
       setCaptionsErrorResponse: vi.fn(),
     } as CaptionsState,
   };
-
   it('renders', () => {
-    render(<ToolbarOverflowButton {...defaultProps} />);
+    render(<ToolbarOverflowButton {...defaultProps} />, {
+      sessionOptions: {
+        __interceptor: (context) => {
+          if (context) {
+            context.subscriberWrappers = [];
+            context.layoutMode = 'grid';
+            context.setLayoutMode = mockSetLayoutMode;
+            context.unreadCount = 0;
+          }
+        },
+      },
+    });
     expect(screen.queryByTestId('hidden-toolbar-items')).toBeInTheDocument();
   });
-
   it('toggling shows and hides the toolbar buttons', () => {
-    render(<ToolbarOverflowButton {...defaultProps} />);
-
+    render(<ToolbarOverflowButton {...defaultProps} />, {
+      sessionOptions: {
+        __interceptor: (context) => {
+          if (context) {
+            context.subscriberWrappers = [];
+            context.layoutMode = 'grid';
+            context.setLayoutMode = mockSetLayoutMode;
+            context.unreadCount = 0;
+          }
+        },
+      },
+    });
     expect(screen.queryByTestId('layout-button')).not.toBeVisible();
     expect(screen.queryByTestId('emoji-grid-button')).not.toBeVisible();
     expect(screen.queryByTestId('archiving-button')).not.toBeVisible();
-
     act(() => {
       screen.getByTestId('hidden-toolbar-items').click();
     });
-
     expect(screen.queryByTestId('layout-button')).toBeVisible();
     expect(screen.queryByTestId('emoji-grid-button')).toBeVisible();
     expect(screen.queryByTestId('archiving-button')).toBeVisible();
   });
-
   it('should have the unread messages badge present', () => {
-    render(<ToolbarOverflowButton {...defaultProps} />);
-
+    render(<ToolbarOverflowButton {...defaultProps} />, {
+      sessionOptions: {
+        __interceptor: (context) => {
+          if (context) {
+            context.subscriberWrappers = [];
+            context.layoutMode = 'grid';
+            context.setLayoutMode = mockSetLayoutMode;
+            context.unreadCount = 0;
+          }
+        },
+      },
+    });
     // We expect the ChatButton in the ToolbarOverflowMenu and the ToolbarOverflowButton to have an unread messages badge present
     expect(screen.queryAllByTestId('chat-button-unread-count').length).toBe(2);
   });
 });
-
-function render(ui: ReactElement) {
-  const { AppConfigWrapper } = makeAppConfigProviderWrapper();
-
-  return renderBase(ui, { wrapper: AppConfigWrapper });
+function render(ui: ReactElement, options?: SessionProviderWrapperOptions) {
+  const { SessionProviderWrapper } = makeSessionProviderWrapper(options);
+  return renderBase(ui, { wrapper: SessionProviderWrapper });
 }
