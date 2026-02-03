@@ -12,10 +12,6 @@ export type SessionProviderWrapperOptions = {
   sessionOptions?: GenericWrapperOptions<typeof SessionProvider, typeof SessionContext>;
   appConfigOptions?: AppConfigProviderWrapperOptions;
   userOptions?: UserProviderWrapperOptions;
-  /**
-   * If true, skips creating AppConfig and User providers (useful when they're already provided at a higher level).
-   * Defaults to false for backward compatibility when used standalone.
-   */
 };
 
 /**
