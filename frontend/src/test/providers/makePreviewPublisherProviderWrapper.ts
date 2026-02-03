@@ -10,6 +10,8 @@ import makeUserProviderWrapper from './makeUserProviderWrapper';
 import makeAppConfigProviderWrapper, {
   AppConfigProviderWrapperOptions,
 } from './makeAppConfigProviderWrapper';
+import type { AppConfig } from '@stores/appConfig';
+import type { FC, PropsWithChildren } from 'react';
 
 export type PreviewPublisherProviderWrapperOptions = {
   previewPublisherOptions?: GenericWrapperOptions<
@@ -17,11 +19,11 @@ export type PreviewPublisherProviderWrapperOptions = {
     typeof PreviewPublisherContext
   >;
   appConfigOptions?: AppConfigProviderWrapperOptions;
-  /**
-   * If true, skips creating AppConfig and User providers (useful when they're already provided at a higher level).
-   * Defaults to false for backward compatibility when used standalone.
-   */
-  skipAppConfigAndUser?: boolean;
+  AppConfigWrapper?: FC<
+    PropsWithChildren<{
+      value?: AppConfig | ((initialValue: AppConfig) => AppConfig) | undefined;
+    }>
+  >;
 };
 
 /**
@@ -29,14 +31,11 @@ export type PreviewPublisherProviderWrapperOptions = {
  * Allows accessing the context value for testing.
  * @param {object} options - The wrapper options.
  * @param {GenericWrapperOptions} [options.previewPublisherOptions] - Options for the PreviewPublisherProvider wrapper.
- * @param {AppConfigProviderWrapperOptions} [options.appConfigOptions] - Options for the AppConfigProvider wrapper (only used if skipAppConfigAndUser is false).
- * @param {boolean} [options.skipAppConfigAndUser] - If true, skips creating AppConfig and User providers.
  * @returns The PreviewPublisherProvider wrapper and context getter.
  */
 function makePreviewPublisherProviderWrapper({
   previewPublisherOptions,
-  appConfigOptions,
-  skipAppConfigAndUser = false,
+  ...options
 }: PreviewPublisherProviderWrapperOptions = {}) {
   const [PreviewPublisherProviderWrapper, previewPublisherContext] = makeGenericProviderWrapper(
     PreviewPublisherProvider,
@@ -44,16 +43,11 @@ function makePreviewPublisherProviderWrapper({
     previewPublisherOptions
   );
 
-  // Only create AppConfig and User providers if not skipped (for standalone usage)
-  if (skipAppConfigAndUser) {
-    return {
-      previewPublisherContext,
-      PreviewPublisherProviderWrapper,
-    };
-  }
-
   const { UserProviderWrapper, ...user } = makeUserProviderWrapper();
-  const { AppConfigWrapper, ...appConfigContext } = makeAppConfigProviderWrapper(appConfigOptions);
+
+  const { AppConfigWrapper, ...appConfigContext } = options.AppConfigWrapper
+    ? { AppConfigWrapper: options.AppConfigWrapper }
+    : makeAppConfigProviderWrapper(options.appConfigOptions);
 
   const composeWrapper = composeProviders(
     AppConfigWrapper,

@@ -42,18 +42,20 @@ function makeRoomContextWrapper({
   audioOutputOptions,
 }: RoomContextWrapperOptions = {}) {
   const { AppConfigWrapper, ...appConfigContext } = makeAppConfigProviderWrapper(appConfigOptions);
+
   const { UserProviderWrapper, ...userContext } = makeUserProviderWrapper({
     userOptions,
   });
+
   const { BackgroundPublisherProviderWrapper, ...backgroundPublisherContext } =
-    makeBackgroundPublisherProviderWrapper({
-      skipAppConfigAndUser: true, // Skip since we already provide AppConfig and User at the top level
-    });
+    makeBackgroundPublisherProviderWrapper();
+
   const { PreviewPublisherProviderWrapper, ...previewPublisherContext } =
     makePreviewPublisherProviderWrapper({
       previewPublisherOptions,
-      skipAppConfigAndUser: true,
+      AppConfigWrapper,
     });
+
   const { AudioOutputProviderWrapper, ...audioOutputContext } = makeAudioOutputProviderWrapper({
     audioOutputOptions,
   });

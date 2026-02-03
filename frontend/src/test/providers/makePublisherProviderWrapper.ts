@@ -12,7 +12,6 @@ export type PublisherProviderWrapperOptions = {
   sessionContext?: SessionProviderWrapperOptions['sessionOptions'];
   userOptions?: SessionProviderWrapperOptions['userOptions'];
   appConfigOptions?: SessionProviderWrapperOptions['appConfigOptions'];
-  skipAppConfigAndUser?: SessionProviderWrapperOptions['skipAppConfigAndUser'];
 };
 
 /**
@@ -34,13 +33,11 @@ function makePublisherProviderWrapper({
   sessionContext: sessionOptions,
   userOptions,
   appConfigOptions,
-  skipAppConfigAndUser,
 }: PublisherProviderWrapperOptions = {}) {
   const { SessionProviderWrapper, ...session } = makeSessionProviderWrapper({
     sessionOptions,
     userOptions,
     appConfigOptions,
-    skipAppConfigAndUser,
   });
 
   const [PublisherProviderWrapper, publisherContext] = makeGenericProviderWrapper(
