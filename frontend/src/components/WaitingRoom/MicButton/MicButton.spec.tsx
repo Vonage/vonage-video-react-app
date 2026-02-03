@@ -1,8 +1,9 @@
 import { render as renderBase, screen, fireEvent } from '@testing-library/react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { ReactElement } from 'react';
+import { ReactElement, type ReactNode } from 'react';
 import { AppConfigProviderWrapperOptions, makeAppConfigProviderWrapper } from '@test/providers';
 import MicButton from './MicButton';
+import SuspenseBoundary from '@common/components/SuspenseBoundary/SuspenseBoundary';
 
 let isAudioEnabled = true;
 const toggleAudioMock = vi.fn();
@@ -63,5 +64,11 @@ function render(
 ) {
   const { AppConfigWrapper } = makeAppConfigProviderWrapper(options?.appConfigOptions);
 
-  return renderBase(ui, { ...options, wrapper: AppConfigWrapper });
+  const Wrapper = ({ children }: { children: ReactNode }) => (
+    <SuspenseBoundary>
+      <AppConfigWrapper>{children}</AppConfigWrapper>
+    </SuspenseBoundary>
+  );
+
+  return renderBase(ui, { ...options, wrapper: Wrapper });
 }
