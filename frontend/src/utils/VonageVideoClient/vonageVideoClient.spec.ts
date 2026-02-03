@@ -17,7 +17,7 @@ import frontendLogger from '../../logger';
 vi.mock('../logOnConnect');
 vi.mock('@vonage/client-sdk-video');
 vi.mock('../../logger', () => ({
-  frontendLogger: {
+  default: {
     log: vi.fn(),
     reportError: vi.fn(),
   },

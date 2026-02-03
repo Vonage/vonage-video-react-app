@@ -36,7 +36,7 @@ const devicesStore = createGlobalState(initialValue, {
       metadata.restoredAudioOutput = restored.audioOutput;
 
       // prevents restoring until checking if the device is available
-      return initial as typeof initialValue;
+      return initial;
     },
   },
   callbacks: {

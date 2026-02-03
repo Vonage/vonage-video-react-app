@@ -1,10 +1,13 @@
 import { waitFor } from '@testing-library/dom';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { FrontendLogger } from './FrontendLogger';
 import { type LoggerProviderConfig } from '@common/logger';
 
 describe('FrontendLogger', () => {
-  // TODO: add more use cases, when the setup is sync, when the setup fails, etc.
-  // when the provider specific methods fails
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
   it('logs events via LoggerBase', () => {
     expect.assertions(3);
 
@@ -40,6 +43,69 @@ describe('FrontendLogger', () => {
 
     waitFor(() => {
       expect(consoleLogSpy).toHaveBeenCalledTimes(2);
+    });
+  });
+
+  it('forwards log and reportError when setup is sync', async () => {
+    const provider: LoggerProviderConfig = {
+      verbose: false,
+      log: vi.fn(),
+      reportError: vi.fn(),
+    };
+
+    const logger = new FrontendLogger();
+    logger.setup(() => provider);
+
+    logger.log('SyncEvent', { id: '1' });
+    logger.reportError(new Error('Sync error'), { source: 'test' });
+
+    await waitFor(() => {
+      expect(provider.log).toHaveBeenCalledWith('SyncEvent', expect.objectContaining({ id: '1' }));
+    });
+    await waitFor(() => {
+      expect(provider.reportError).toHaveBeenCalledWith(
+        expect.objectContaining({ message: 'Sync error' }),
+        expect.objectContaining({ source: 'test' })
+      );
+    });
+  });
+
+  it('reports initialization failure when setup fails', async () => {
+    const consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+
+    const logger = new FrontendLogger();
+    logger.setup(() => Promise.reject(new Error('Failed to load provider')));
+
+    await waitFor(() => {
+      expect(consoleErrorSpy).toHaveBeenCalledWith(
+        expect.stringContaining('Initialization failed'),
+        expect.any(Error)
+      );
+    });
+  });
+
+  it('when provider methods are called, they receive the correct arguments', async () => {
+    const provider: LoggerProviderConfig = {
+      log: vi.fn(),
+      reportError: vi.fn(),
+    };
+
+    const logger = new FrontendLogger();
+    logger.setup(() => Promise.resolve(provider));
+
+    logger.log('EventName', { key: 'value' });
+    logger.reportError(new Error('Err'), { context: 'test' });
+
+    await waitFor(() => {
+      expect(provider.log).toHaveBeenCalledWith('EventName', { key: 'value' });
+    });
+    await waitFor(() => {
+      expect(provider.reportError).toHaveBeenCalledWith(
+        expect.objectContaining({ message: 'Err' }),
+        {
+          context: 'test',
+        }
+      );
     });
   });
 });

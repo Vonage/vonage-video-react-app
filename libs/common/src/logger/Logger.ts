@@ -80,7 +80,7 @@ export class LoggerBase implements LoggerProviderConfig {
     }
 
     // handle asynchronous provider with error reporting
-    this.provider = tryCatchResultCandidate.then((tryCatchResult) => {
+    const providerPromise = tryCatchResultCandidate.then((tryCatchResult) => {
       const { result, error } = tryCatchResult as {
         result: NonNullable<LoggerProviderConfig | Promise<LoggerProviderConfig>> | null;
         error: unknown;
@@ -94,6 +94,18 @@ export class LoggerBase implements LoggerProviderConfig {
       }
 
       return result;
+    });
+
+    // Absorb rejection so callers that don't await don't get unhandled rejection
+    this.provider = providerPromise.catch((err: unknown) => {
+      if (this.error !== err) {
+        this.error = err;
+        this.onLoggerInitializationFailed(err);
+      }
+      return {
+        [LoggerFeature.Log]: () => {},
+        [LoggerFeature.ReportError]: () => {},
+      };
     });
   }
 
