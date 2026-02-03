@@ -17,7 +17,6 @@ const customWordList = [
   'firefoxUserPrefs',
   'gollum',
   'PWDEBUG',
-  'gollum',
 ];
 
 export default customWordList;

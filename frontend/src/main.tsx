@@ -22,7 +22,7 @@ const { onUncaughtError, onRecoverableError, onCaughtError } = Logger;
 // Logger.setup(() => ({
 //   verbose: false,
 //   log: (_eventName: string, _payload?: Record<string, unknown>) => {},
-//   reportError: (_error: Error, _context?: Record<string, unknown>) => {},
+//   reportError: (_error: unknown, _context?: Record<string, unknown>) => {},
 // }));
 
 ReactDOM.createRoot(rootElement, {

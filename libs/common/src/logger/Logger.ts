@@ -20,6 +20,9 @@ export const ColorsPerFeature = {
   [LoggerFeature.Log]: AnsiColors.blue,
 } as const;
 
+/** Max retries when provider resolution returns null, to avoid infinite recursion. */
+const MAX_PROVIDER_RESOLVE_RETRIES = 2;
+
 /**
  * Logger provider interface defining the available logger features.
  */
@@ -126,6 +129,7 @@ export class LoggerBase implements LoggerProviderConfig {
      *   "arg1": "event name",
      *   "arg2": { ... }
      */
+    // Strip outer braces from pretty-printed JSON (first and last lines).
     const formatted =
       tryCatch(() => JSON.stringify(data, null, 2).split('\n').slice(1, -1).join('\n')).result ??
       '<unable to format data>';
@@ -134,7 +138,8 @@ export class LoggerBase implements LoggerProviderConfig {
   }
 
   protected async tryExecuteFeature<T extends LoggerFeature>(
-    featureKey: T
+    featureKey: T,
+    resolveRetryCount = 0
   ): Promise<((...args: Parameters<LoggerProviderConfig[T]>) => void) | undefined> {
     // errors are already reported during setup
     if (!isNil(this.error)) return;
@@ -154,7 +159,10 @@ export class LoggerBase implements LoggerProviderConfig {
     }
 
     const { result: provider } = await tryCatch(() => Promise.resolve(this.provider!));
-    if (!provider) return this.tryExecuteFeature(featureKey);
+    if (!provider) {
+      if (resolveRetryCount >= MAX_PROVIDER_RESOLVE_RETRIES) return;
+      return this.tryExecuteFeature(featureKey, resolveRetryCount + 1);
+    }
 
     const isFeatureMissing = isNil(provider[featureKey]);
 
