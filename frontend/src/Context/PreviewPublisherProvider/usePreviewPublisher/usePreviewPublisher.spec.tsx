@@ -100,6 +100,21 @@ describe('usePreviewPublisher', () => {
         expect.any(Function)
       );
     });
+
+    it('should not pass audioSource or videoSource to initPublisher when device IDs are falsy (e.g. empty or null)', async () => {
+      mockedInitPublisher.mockReturnValue(mockPublisher);
+
+      mockPublisher.getAudioSource = vi.fn().mockReturnValue('');
+      mockPublisher.getVideoSource = vi.fn().mockReturnValue('');
+
+      const { result } = await render();
+      result.current.initLocalPublisher();
+
+      expect(mockedInitPublisher).toHaveBeenCalled();
+      const options = mockedInitPublisher.mock.calls[0][1];
+      expect(options.audioSource).toBeUndefined();
+      expect(options.videoSource).toBeUndefined();
+    });
   });
 
   describe('changeBackground', () => {
