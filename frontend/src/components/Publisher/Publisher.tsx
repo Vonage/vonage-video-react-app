@@ -8,6 +8,8 @@ import NameDisplay from '../MeetingRoom/NameDisplay';
 import AudioIndicator from '../MeetingRoom/AudioIndicator';
 import VideoTile from '../MeetingRoom/VideoTile';
 import useTheme from '@ui/theme';
+import { ABSOLUTE_DISTANCE_THRESHOLD_REM_VALUE } from '@utils/constants';
+import toRemValue from '@common/helpers/toRemValue';
 
 export type PublisherProps = {
   box: Box;
@@ -57,8 +59,8 @@ const Publisher = ({ box }: PublisherProps): ReactElement => {
   const audioIndicatorStyle: React.CSSProperties = {
     borderRadius: theme.shapes.borderRadiusLarge,
     position: 'absolute',
-    top: '0.75rem',
-    right: '0.75rem',
+    top: toRemValue(ABSOLUTE_DISTANCE_THRESHOLD_REM_VALUE),
+    right: toRemValue(ABSOLUTE_DISTANCE_THRESHOLD_REM_VALUE),
     backgroundColor: theme.colors.darkBackground,
     height: '1.5rem',
     width: '1.5rem',
