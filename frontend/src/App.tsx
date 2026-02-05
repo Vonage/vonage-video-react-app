@@ -34,7 +34,6 @@ const InnerApp = () => {
         position: 'relative',
         overflowX: 'hidden',
         overflowY: 'auto',
-        WebkitOverflowScrolling: 'touch',
         height: '100dvh',
       }}
     >
