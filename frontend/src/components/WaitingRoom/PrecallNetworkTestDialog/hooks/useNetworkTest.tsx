@@ -1,6 +1,9 @@
 import { useState, useCallback, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
-import NetworkTest, { ErrorNames } from '@vonage/video-client-network-test';
+import NetworkTest, {
+  type ErrorNames,
+  type QualityTestResults,
+} from '@vonage/video-client-network-test';
 import OT from '@vonage/client-sdk-video';
 import fetchCredentials from '@api/fetchCredentials';
 import CancelablePromise from 'easy-cancelable-promise/CancelablePromise';
@@ -119,7 +122,6 @@ const useNetworkTest = () => {
 
   const stopTest = useCallback(() => {
     testPromiseRef.current?.cancel();
-    //testPromiseRef.current = null;
   }, []);
 
   const testQuality = useCallback(
@@ -163,7 +165,14 @@ const useNetworkTest = () => {
               }));
             });
 
-            const qualityResults = await new Promise<QualityResults>((res, rej) => {
+            // timeout after 30s
+
+            const qualityResults = await new Promise<QualityTestResults>((res, rej) => {
+              const timeout = setTimeout(
+                () => rej(new Error('Network test timed out')),
+                options.timeout || 30000
+              );
+
               networkTest
                 .testQuality((qualityUpdateStats) => {
                   if (isCanceled()) return;
@@ -171,15 +180,18 @@ const useNetworkTest = () => {
                   reportProgress(-1, qualityUpdateStats);
                 })
                 .then(res)
-                .catch(rej);
+                .catch(rej)
+                .finally(() => {
+                  clearTimeout(timeout);
+                });
             });
 
-            console.log('Quality Test Results:', isCanceled());
             if (isCanceled()) return;
 
             setState((prev) => ({
               ...prev,
               qualityResults,
+              isTestingQuality: false,
             }));
 
             return resolve(qualityResults);
@@ -195,14 +207,10 @@ const useNetworkTest = () => {
             setState((prev) => ({
               ...prev,
               error: networkError,
+              isTestingQuality: false,
             }));
 
             reject(networkError);
-          } finally {
-            setState((prev) => ({
-              ...prev,
-              isTestingQuality: false,
-            }));
           }
         }
       ));
