@@ -119,7 +119,7 @@ const useNetworkTest = () => {
 
   const stopTest = useCallback(() => {
     testPromiseRef.current?.cancel();
-    testPromiseRef.current = null;
+    //testPromiseRef.current = null;
   }, []);
 
   const testQuality = useCallback(
@@ -174,6 +174,7 @@ const useNetworkTest = () => {
                 .catch(rej);
             });
 
+            console.log('Quality Test Results:', isCanceled());
             if (isCanceled()) return;
 
             setState((prev) => ({

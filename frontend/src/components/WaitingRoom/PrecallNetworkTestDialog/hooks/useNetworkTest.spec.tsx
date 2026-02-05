@@ -152,8 +152,10 @@ describe('useNetworkTest', () => {
     });
 
     act(() => {
-      result.current.stopTest()?.catch(() => {});
+      result.current.stopTest();
     });
+
+    void promise!.catch(() => {});
 
     expect(promise!.status).toBe('canceled');
     expect(result.current.state.isTestingQuality).toBe(false);
@@ -163,7 +165,7 @@ describe('useNetworkTest', () => {
     const { result } = renderHook(() => useNetworkTest());
 
     act(() => {
-      result.current.stopTest()?.catch(() => {});
+      result.current.stopTest();
     });
 
     expect(mockNetworkTest.stop).not.toHaveBeenCalled();
@@ -173,6 +175,8 @@ describe('useNetworkTest', () => {
   it('stopTest prevents late quality results from updating state', async () => {
     const { result } = renderHook(() => useNetworkTest());
 
+    let promise: CancelablePromise<QualityResults> | null = null;
+
     let resolveQualityTest: ((value: QualityResults) => void) | null = null;
 
     mockNetworkTest.testQuality.mockImplementation(() => {
@@ -181,17 +185,17 @@ describe('useNetworkTest', () => {
       });
     });
 
-    act(() => {
-      result.current.testQuality('test-room');
-    });
+    promise = result.current.testQuality('test-room');
 
     await waitFor(() => {
       expect(result.current.state.isTestingQuality).toBe(true);
     });
 
     act(() => {
-      result.current.stopTest()?.catch(() => {});
+      result.current.stopTest();
     });
+
+    void promise?.catch(() => {});
 
     await waitFor(() => {
       expect(result.current.state.isTestingQuality).toBe(false);
