@@ -10,6 +10,7 @@ import {
 import MicButton from './MicButton';
 import mediaDevicesMock from '@common/test/mocks/mediaDevicesMock';
 import composeProviders from '@common/helpers/composeProviders';
+import SuspenseBoundary from '@common/components/SuspenseBoundary/SuspenseBoundary';
 
 describe('MicButton', () => {
   beforeEach(() => {
@@ -122,8 +123,14 @@ function render(ui: ReactElement, options?: RenderOptions) {
     previewPublisherOptions: options.previewPublisherOptions,
   });
 
+  const Wrapper = composeProviders(
+    SuspenseBoundary,
+    AppConfigWrapper,
+    PreviewPublisherProviderWrapper
+  );
+
   return renderBase(ui, {
     ...options,
-    wrapper: composeProviders(AppConfigWrapper, PreviewPublisherProviderWrapper),
+    wrapper: Wrapper,
   });
 }

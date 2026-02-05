@@ -14,6 +14,7 @@ import mediaDevicesMock from '@common/test/mocks/mediaDevicesMock';
 import type { PreviewPublisherContextType } from '@Context/PreviewPublisherProvider';
 import type { BackgroundPublisherContextType } from '@Context/BackgroundPublisherProvider';
 import CameraButton from './CameraButton';
+import SuspenseBoundary from '@common/components/SuspenseBoundary/SuspenseBoundary';
 
 type PreviewPublisherContextWithMock = PreviewPublisherContextType & {
   _previewToggleMockApplied?: boolean;
@@ -179,6 +180,7 @@ function render(ui: ReactElement, options: RenderOptions = {}) {
     });
 
   const Wrapper = composeProviders(
+    SuspenseBoundary,
     AppConfigWrapper,
     PreviewPublisherProviderWrapper,
     BackgroundPublisherProviderWrapper

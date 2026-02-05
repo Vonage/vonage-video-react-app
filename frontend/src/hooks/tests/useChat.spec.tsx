@@ -1,30 +1,24 @@
 import { act, renderHook } from '@testing-library/react';
-import { beforeEach, describe, expect, it, Mock, vi } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import useChat from '../useChat';
-import useUserContext from '../useUserContext';
-import { UserContextType } from '../../Context/user';
+import { makeUserProviderWrapper } from '@test/providers';
 
-vi.mock('../useUserContext.tsx');
-const mockUseUserContext = useUserContext as Mock<[], UserContextType>;
-const mockUserContext = {
-  user: {
-    defaultSettings: { name: 'Local User' },
-  },
-} as UserContextType;
 const mockSignal = vi.fn();
 
 describe('useChat', () => {
   beforeEach(() => {
-    mockUseUserContext.mockImplementation(() => mockUserContext);
+    vi.clearAllMocks();
   });
 
   it('onChatMessage should parse message and update messages state', () => {
-    const { result, rerender } = renderHook(() => useChat({ signal: mockSignal }));
+    const { UserProviderWrapper } = makeUserProviderWrapper();
+    const { result } = renderHook(() => useChat({ signal: mockSignal }), {
+      wrapper: UserProviderWrapper,
+    });
 
     act(() => {
       result.current.onChatMessage('{"participantName":"Remote User","text":"Hello!"}');
     });
-    rerender();
 
     expect(result.current.messages[0]).toMatchObject({
       participantName: 'Remote User',
@@ -34,7 +28,16 @@ describe('useChat', () => {
   });
 
   it('sendChatMessage should send message via signal', () => {
-    const { result } = renderHook(() => useChat({ signal: mockSignal }));
+    const { UserProviderWrapper } = makeUserProviderWrapper({
+      userOptions: {
+        __interceptor: (context) => {
+          context!.user.defaultSettings.name = 'Local User';
+        },
+      },
+    });
+    const { result } = renderHook(() => useChat({ signal: mockSignal }), {
+      wrapper: UserProviderWrapper,
+    });
 
     result.current.sendChatMessage('Hello there!');
 
