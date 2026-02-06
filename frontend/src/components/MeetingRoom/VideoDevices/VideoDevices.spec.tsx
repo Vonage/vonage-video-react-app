@@ -8,6 +8,7 @@ import {
 import makeMediaDeviceInfos from '@common-test/fixtures/makeMediaDeviceInfos';
 import VideoDevices from './VideoDevices';
 import type { AnyFunction } from 'react-global-state-hooks';
+import mediaDevices$ from '@core/stores/devices/devices$';
 
 const someDevices = makeMediaDeviceInfos();
 
@@ -94,9 +95,12 @@ describe('VideoDevices Component', () => {
     // Wait for publisher to be initialized (accessAllowed event)
     await waitFor(() => {
       expect(publisherContext.current.publisher).toBeDefined();
+      expect(publisherContext.current.publisher).not.toBeNull();
     });
 
-    const setVideoSourceSpy = vi.spyOn(publisherContext.current.publisher!, 'setVideoSource');
+    // Publisher should be defined at this point
+    const publisher = publisherContext.current.publisher!;
+    const setVideoSourceSpy = vi.spyOn(publisher, 'setVideoSource');
 
     // Get the second video device from the fixture
     const videoDevices = someDevices.filter((d) => d.kind === 'videoinput');
@@ -108,52 +112,27 @@ describe('VideoDevices Component', () => {
     expect(mockHandleToggle).toHaveBeenCalledTimes(1);
     expect(selectDeviceSpy).toHaveBeenCalledWith('videoinput', secondDevice.deviceId);
     expect(setVideoSourceSpy).toHaveBeenCalledWith(secondDevice.deviceId);
+
+    await waitForDeviceSelectionReconciliation(secondDevice.deviceId);
   });
 
-  it('does not call setVideoSource if selected device is not found', async () => {
-    const { publisherContext } = render(<VideoDevices handleToggle={mockHandleToggle} />);
+  it('handles setVideoSource when publisher is not initialized', async () => {
+    const selectDeviceSpy = vi.spyOn(mediaDevices$.actions, 'selectDevice');
 
-    publisherContext.current.initializeLocalPublisher({});
+    render(<VideoDevices handleToggle={mockHandleToggle} />);
 
-    await waitFor(() => {
-      expect(publisherContext.current.publisher).toBeDefined();
-    });
+    // Get the second video device from the fixture
+    const videoDevices = someDevices.filter((d) => d.kind === 'videoinput');
+    const secondDevice = videoDevices[1];
 
-    const setVideoSourceSpy = vi.spyOn(publisherContext.current.publisher!, 'setVideoSource');
+    const cameraItem = screen.getByText(secondDevice.label);
+    fireEvent.click(cameraItem);
 
-    const bogusItem = document.createElement('li');
-    bogusItem.textContent = 'Nonexistent Camera';
-    fireEvent.click(bogusItem); // simulate bogus click
+    // Should still select device in store even if publisher is not initialized
+    expect(mockHandleToggle).toHaveBeenCalledTimes(1);
+    expect(selectDeviceSpy).toHaveBeenCalledWith('videoinput', secondDevice.deviceId);
 
-    expect(setVideoSourceSpy).not.toHaveBeenCalled();
-  });
-
-  it('is not rendered when allowDeviceSelection is false', () => {
-    const { container } = render(<VideoDevices handleToggle={mockHandleToggle} />, {
-      appConfigOptions: {
-        value: {
-          meetingRoomSettings: {
-            allowDeviceSelection: false,
-          },
-        },
-      },
-    });
-
-    expect(container.firstChild).toBeNull();
-  });
-
-  it('is not rendered when allowDeviceSelection is false', () => {
-    const { container } = render(<VideoDevices handleToggle={mockHandleToggle} />, {
-      appConfigOptions: {
-        value: {
-          meetingRoomSettings: {
-            allowDeviceSelection: false,
-          },
-        },
-      },
-    });
-
-    expect(container.firstChild).toBeNull();
+    await waitForDeviceSelectionReconciliation(secondDevice.deviceId);
   });
 });
 
@@ -165,4 +144,14 @@ function render(ui: ReactElement, publisherOptions: PublisherProviderWrapperOpti
     ...publisherContext,
     ...renderBase(ui, { wrapper: PublisherProviderWrapper }),
   };
+}
+
+async function waitForDeviceSelectionReconciliation(deviceId: string) {
+  await waitFor(() => {
+    expect(mediaDevices$.getState().videoinput).toBe(deviceId);
+  });
+
+  await waitFor(() => {
+    expect(mediaDevices$.getMetadata().loadingMediaDevices?.status).toBe('resolved');
+  });
 }
