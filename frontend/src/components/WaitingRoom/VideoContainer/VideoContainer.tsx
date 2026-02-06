@@ -24,6 +24,8 @@ export type VideoContainerProps = {
   username: string;
 };
 
+const DESKTOP_VIDEO_WIDTH = 585;
+
 /**
  * VideoContainer Component
  *
@@ -45,7 +47,6 @@ const VideoContainer = ({ username }: VideoContainerProps): ReactElement => {
   const initials = getInitials(username);
   const isSmallViewport = useIsSmallViewport();
   const theme = useTheme();
-  const DESKTOP_VIDEO_WIDTH = 585;
 
   useEffect(() => {
     if (publisherVideoElement && containerRef.current && isVideoEnabled) {
@@ -78,7 +79,7 @@ const VideoContainer = ({ username }: VideoContainerProps): ReactElement => {
         aspectRatio: '16 / 9',
         width: {
           xs: '100dvw',
-          sm: `${DESKTOP_VIDEO_WIDTH - 1}px`,
+          sm: `${DESKTOP_VIDEO_WIDTH - 1}px`, // -1px to account for border on video element
           md: `100%`,
         },
         maxWidth: '100%',
