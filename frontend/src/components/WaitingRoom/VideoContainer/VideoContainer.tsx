@@ -45,6 +45,7 @@ const VideoContainer = ({ username }: VideoContainerProps): ReactElement => {
   const initials = getInitials(username);
   const isSmallViewport = useIsSmallViewport();
   const theme = useTheme();
+  const DESKTOP_VIDEO_WIDTH = 585;
 
   useEffect(() => {
     if (publisherVideoElement && containerRef.current && isVideoEnabled) {
@@ -56,7 +57,7 @@ const VideoContainer = ({ username }: VideoContainerProps): ReactElement => {
       // eslint-disable-next-line react-hooks/immutability
       myVideoElement.style.borderRadius = isSmallViewport ? '0px' : theme.shapes.borderRadiusLarge;
       myVideoElement.style.height = isSmallViewport ? '' : `${VIDEO_CONTAINER_HEIGHT_WR}px`;
-      myVideoElement.style.width = isSmallViewport ? '100dvw' : '584px';
+      myVideoElement.style.width = isSmallViewport ? '100dvw' : `${DESKTOP_VIDEO_WIDTH}px`;
       myVideoElement.style.marginLeft = 'auto';
       myVideoElement.style.marginRight = 'auto';
       myVideoElement.style.transform = 'scaleX(-1)';
@@ -75,14 +76,18 @@ const VideoContainer = ({ username }: VideoContainerProps): ReactElement => {
         position: 'relative',
         display: 'flex',
         aspectRatio: '16 / 9',
-        width: { xs: '100dvw', sm: '583px' },
+        width: {
+          xs: '100dvw',
+          sm: `${DESKTOP_VIDEO_WIDTH - 1}px`,
+          md: `100%`,
+        },
         maxWidth: '100%',
         flexDirection: 'column',
         alignItems: 'center',
         justifyContent: 'center',
-        backgroundColor: theme.colors.secondary,
+        backgroundColor: theme.colors.surface,
         borderRadius: { xs: 0, sm: '12px' },
-        WebkitMask: `linear-gradient(${theme.colors.secondary} 0 0)`,
+        WebkitMask: `linear-gradient(${theme.colors.surface} 0 0)`,
       }}
     >
       <Box
