@@ -1,4 +1,5 @@
 import { VideoFilter } from '@vonage/client-sdk-video';
+import type { MediaDeviceInfoJSON } from '@common/types';
 import { isMobile, isWebKit } from '@common/platform';
 
 // Re-export platform helpers for backwards compatibility
@@ -11,10 +12,10 @@ export { isMobile, isWebKit };
  * @returns {string} - Returns device ID for the matching audio input device, or an empty string if there is no match or the input parameters are invalid.
  */
 export const getAudioSourceDeviceId = (
-  audioInputDevices: MediaDeviceInfo[],
+  audioInputDevices: MediaDeviceInfoJSON[],
   currentAudioSource: MediaStreamTrack
 ): string => {
-  const isCurrentAudioSource = (audioInputDevice: MediaDeviceInfo) =>
+  const isCurrentAudioSource = (audioInputDevice: MediaDeviceInfoJSON) =>
     audioInputDevice.label === currentAudioSource?.label;
   const currentDeviceId = audioInputDevices.find(isCurrentAudioSource)?.deviceId;
   return currentDeviceId ?? '';

@@ -1,4 +1,5 @@
 import { describe, it, expect } from 'vitest';
+import type { MediaDeviceInfoJSON } from '@common/types';
 import cleanAndDedupeDeviceLabels from './cleanAndDedupeDeviceLabels';
 
 const createMockDevice = (deviceId: string, label: string) =>
@@ -6,14 +7,14 @@ const createMockDevice = (deviceId: string, label: string) =>
     deviceId,
     label,
     kind: 'videoinput',
-  }) as MediaDeviceInfo;
+  }) as MediaDeviceInfoJSON;
 
 const createMockAudioDevice = (deviceId: string, label: string) =>
   ({
     deviceId,
     label,
     kind: 'audioinput',
-  }) as MediaDeviceInfo;
+  }) as MediaDeviceInfoJSON;
 
 describe('cleanAndDedupeDeviceLabels', () => {
   describe('Device Label Cleaning', () => {
@@ -90,7 +91,7 @@ describe('cleanAndDedupeDeviceLabels', () => {
       ['empty label', [createMockDevice('1', '')], ['']],
       [
         'null label',
-        [{ deviceId: '1', label: null, kind: 'videoinput' } as unknown as MediaDeviceInfo],
+        [{ deviceId: '1', label: null, kind: 'videoinput' } as unknown as MediaDeviceInfoJSON],
         [null],
       ],
     ])('handles %s', (_, input, expected) => {
@@ -136,7 +137,7 @@ describe('cleanAndDedupeDeviceLabels', () => {
     it('works with mixed Device and AudioOutputDevice types', () => {
       const devices = [
         createMockDevice('1', 'Camera (0000:0001)'),
-        { deviceId: '2', label: 'Speaker (0000:0002)' } as MediaDeviceInfo,
+        { deviceId: '2', label: 'Speaker (0000:0002)' } as MediaDeviceInfoJSON,
       ];
 
       const result = cleanAndDedupeDeviceLabels(devices);

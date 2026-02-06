@@ -1,4 +1,5 @@
 import { describe, it, expect, vi, afterAll } from 'vitest';
+import type { MediaDeviceInfoJSON } from '@common/types';
 import * as util from './util';
 
 const chromeUserAgent =
@@ -84,7 +85,7 @@ describe('getAudioSourceDeviceId', () => {
     const devices = [
       { kind: 'audioinput', deviceId: 'device1', label: 'Microphone 1' },
       { kind: 'audioinput', deviceId: 'device2', label: 'Microphone 2' },
-    ] as MediaDeviceInfo[];
+    ] as MediaDeviceInfoJSON[];
     const currentAudioSource = { label: 'Microphone 2' } as MediaStreamTrack;
 
     const result = util.getAudioSourceDeviceId(devices, currentAudioSource);
@@ -95,7 +96,7 @@ describe('getAudioSourceDeviceId', () => {
     const devices = [
       { kind: 'audioinput', deviceId: 'device1', label: 'Microphone 1' },
       { kind: 'audioinput', deviceId: 'device2', label: 'Microphone 2' },
-    ] as MediaDeviceInfo[];
+    ] as MediaDeviceInfoJSON[];
     const currentAudioSource = { label: 'Not Matching Microphone' } as MediaStreamTrack;
 
     const result = util.getAudioSourceDeviceId(devices, currentAudioSource);

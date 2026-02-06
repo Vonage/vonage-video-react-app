@@ -1,4 +1,4 @@
-import { useState, useEffect, MouseEvent, TouchEvent, FC } from 'react';
+import { useState, useEffect, MouseEvent, TouchEvent, FC, useEffectEvent } from 'react';
 import Box from '@ui/Box';
 import PageLayout from '@ui/PageLayout';
 import Banner from '@components/Banner';
@@ -50,7 +50,7 @@ const WaitingRoom: FC<WaitingRoomProps> = () => {
     ({ waitingRoomSettings }) => waitingRoomSettings.allowDeviceSelection
   );
 
-  useEffect(() => {
+  const stableInitLocalPublisher = useEffectEvent(() => {
     if (!publisher) {
       initLocalPublisher();
     }
@@ -61,7 +61,11 @@ const WaitingRoom: FC<WaitingRoomProps> = () => {
         destroyPublisher();
       }
     };
-  }, [initLocalPublisher, publisher, destroyPublisher]);
+  });
+
+  useEffect(() => {
+    return stableInitLocalPublisher();
+  }, [publisher]);
 
   useEffect(() => {
     if (!backgroundPublisher) {

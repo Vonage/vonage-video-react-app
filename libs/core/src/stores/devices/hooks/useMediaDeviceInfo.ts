@@ -1,17 +1,18 @@
 import type { Any, UseHookOptions } from 'react-global-state-hooks';
+import type { MediaDeviceInfoJSON } from '@common/types';
 import useMediaDeviceInfoByKind$ from './useMediaDeviceInfoByKind$';
 
 /**
  * Returns the selected media device for a specific kind.
  */
-function useMediaDeviceInfo(kind: MediaDeviceKind): MediaDeviceInfo | null;
+function useMediaDeviceInfo(kind: MediaDeviceKind): MediaDeviceInfoJSON | null;
 
 /**
  * Returns media devices for a specific kind organized by deviceId.
  */
 function useMediaDeviceInfo<Selection>(
   kind: MediaDeviceKind,
-  selector: (state: MediaDeviceInfo | null) => Selection,
+  selector: (state: MediaDeviceInfoJSON | null) => Selection,
   options?: Options<Selection>
 ): Selection;
 
@@ -20,7 +21,7 @@ function useMediaDeviceInfo<Selection>(
  */
 function useMediaDeviceInfo<Selection>(
   kind: MediaDeviceKind,
-  selector: (state: MediaDeviceInfo | null) => Selection,
+  selector: (state: MediaDeviceInfoJSON | null) => Selection,
   dependencies?: Dependencies
 ): Selection;
 
@@ -42,10 +43,17 @@ function useMediaDeviceInfo(
         }
       : arg3;
 
-  return useMediaDeviceInfoByKind$((state) => selector?.(state[kind]) ?? state[kind], {
-    ...options,
-    dependencies: [kind, ...(options.dependencies ?? [])],
-  }) as Record<string, MediaDeviceInfo> | Record<MediaDeviceKind, Record<string, MediaDeviceInfo>>;
+  return useMediaDeviceInfoByKind$(
+    (state) => {
+      return selector?.(state[kind]) ?? state[kind];
+    },
+    {
+      ...options,
+      dependencies: [kind, ...(options.dependencies ?? [])],
+    }
+  ) as
+    | Record<string, MediaDeviceInfoJSON>
+    | Record<MediaDeviceKind, Record<string, MediaDeviceInfoJSON>>;
 }
 
 type Selector = (state: Any) => Any;

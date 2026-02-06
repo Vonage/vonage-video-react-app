@@ -1,6 +1,6 @@
-import { assertMediaDeviceInfo, assertDeviceKind } from '../schemas';
 import type { DevicesAPI } from '../types';
 import { getMediaDevicesInfo } from '../helpers';
+import { assertDeviceKind, assertMediaDeviceInfo } from '@common/schemas';
 
 /**
  * Selects a media device by kind and deviceId
@@ -17,7 +17,7 @@ function selectDevice(
     if (deviceId === null) {
       store.setState((state) => ({
         ...state,
-        selection: new Map(state.selection).set(kind, null),
+        [kind]: undefined,
       }));
 
       return;
@@ -35,7 +35,7 @@ function selectDevice(
     store.setState((state) => ({
       ...state,
       mediaDeviceInfo,
-      selection: new Map(state.selection).set(kind, devicesInfo),
+      [kind]: devicesInfo.deviceId,
     }));
 
     await this.syncMediaDevicesInfo();

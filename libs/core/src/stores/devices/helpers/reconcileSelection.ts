@@ -1,5 +1,4 @@
-import { MediaDeviceInfoJSON, DevicesAPI } from '../types';
-import organizeMediaDevicesByKind from './organizeMediaDevicesByKind';
+import type { DevicesAPI } from '../types';
 import { setAudioOutputDevice as setVonageAudioOutputDevice } from '@vonage/client-sdk-video';
 
 /**
@@ -7,100 +6,50 @@ import { setAudioOutputDevice as setVonageAudioOutputDevice } from '@vonage/clie
  * with the available media devices.
  */
 const reconcileSelection = async ({ getState, setState }: DevicesAPI) => {
-  const { selection, mediaDeviceInfo } = getState();
-
-  const mediaDeviceInfoByKind = organizeMediaDevicesByKind({ mediaDeviceInfo });
-
   const stream = await navigator.mediaDevices.getUserMedia({
     video: true,
     audio: true,
   });
 
-  const videoInput = (() => {
-    const selected = selection.get('videoinput');
-    if (selected) return selected;
+  const currentState = getState();
+  const updates: Partial<Record<MediaDeviceKind, string | undefined>> = {};
 
-    return stream.getVideoTracks()[0]?.getSettings() ?? null;
+  const videoinput = (() => {
+    if (currentState.videoinput) return currentState.videoinput;
+    return stream.getVideoTracks()[0]?.getSettings()?.deviceId ?? undefined;
   })();
 
-  const audioInput = (() => {
-    const selected = selection.get('audioinput');
-    if (selected) return selected;
-
-    return stream.getAudioTracks()[0]?.getSettings() ?? null;
+  const audioinput = (() => {
+    if (currentState.audioinput) return currentState.audioinput;
+    return stream.getAudioTracks()[0]?.getSettings()?.deviceId ?? undefined;
   })();
 
-  const audioOutput = (() => {
-    const selected = selection.get('audiooutput');
-    if (selected) return selected;
-
-    return mediaDeviceInfoByKind['audiooutput']?.['default'] ?? null;
+  const audiooutput = (() => {
+    if (currentState.audiooutput) return currentState.audiooutput;
+    return undefined;
   })();
 
-  // reconcile selection mapping only what has changed
-  const newSelection = new Map(
-    (
-      [
-        ['videoinput', videoInput],
-        ['audioinput', audioInput],
-        ['audiooutput', audioOutput],
-      ] as [MediaDeviceKind, MediaDeviceInfoJSON | null][]
-    ).reduce((acc: [MediaDeviceKind, MediaDeviceInfoJSON | null][], [kind, device]) => {
-      const available = mediaDeviceInfoByKind[kind] ?? {};
-      const current = available[device?.deviceId ?? 'default'] ?? null;
+  const didVideoInputChange = videoinput !== currentState.videoinput;
+  const didAudioInputChange = audioinput !== currentState.audioinput;
+  const didAudioOutputChange = audiooutput !== currentState.audiooutput;
 
-      // no need to update selection
-      if (selection.has(kind) && isSameDevice(current, device)) return acc;
+  if (didVideoInputChange) updates.videoinput = videoinput;
+  if (didAudioInputChange) updates.audioinput = audioinput;
+  if (didAudioOutputChange) updates.audiooutput = audiooutput;
 
-      const item = (() => {
-        if (current) return { ...current };
-        if (available['default']) return { ...available['default'] };
-
-        return null;
-      })();
-
-      // converts the device info proto into literal object
-      acc.push([
-        kind,
-        {
-          deviceId: item?.deviceId ?? 'default',
-          kind: kind,
-          label: item?.label ?? '',
-          groupId: item?.groupId ?? '',
-        },
-      ]);
-
-      return acc;
-    }, [])
-  );
-
-  const shouldUpdateSelection = newSelection.size > 0;
+  const shouldUpdateSelection = Object.keys(updates).length > 0;
   if (!shouldUpdateSelection) return;
 
   // concatenate new selection with the existing one
   setState((state) => ({
     ...state,
-    selection: new Map([...state.selection, ...newSelection]),
+    ...updates,
   }));
 
   // if the audio device changed, reconcileSelection with Vonage SDK
-  if (newSelection.has('audiooutput')) {
-    void setVonageAudioOutputDevice(newSelection.get('audiooutput')?.deviceId || 'default');
+  if (updates.audiooutput) {
+    void setVonageAudioOutputDevice(updates.audiooutput);
   }
 };
-
-function isSameDevice(
-  deviceA: MediaDeviceInfoJSON | null,
-  deviceB: MediaDeviceInfoJSON | null
-): boolean {
-  if (deviceA === deviceB) return true;
-
-  const isSameLabel = deviceA?.label === deviceB?.label;
-  const isSameDeviceId = deviceA?.deviceId === deviceB?.deviceId;
-  const isSameGroupId = deviceA?.groupId === deviceB?.groupId;
-  const isSameKind = deviceA?.kind === deviceB?.kind;
-
-  return isSameLabel && isSameDeviceId && isSameGroupId && isSameKind;
-}
 
 export default reconcileSelection;

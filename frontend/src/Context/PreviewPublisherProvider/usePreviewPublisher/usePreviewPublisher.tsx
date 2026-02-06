@@ -34,8 +34,6 @@ export type PreviewPublisherContextType = {
   toggleVideo: () => void;
   changeBackground: (backgroundSelected: string) => Promise<void>;
   backgroundFilter: VideoFilter | undefined;
-  localAudioSource: string | undefined;
-  localVideoSource: string | undefined;
   accessStatus: string | null;
   changeAudioSource: (deviceId: string) => void;
   changeVideoSource: (deviceId: string) => void;
@@ -52,8 +50,6 @@ export type PreviewPublisherInitialValue = Partial<
     | 'isVideoEnabled'
     | 'speechLevel'
     | 'backgroundFilter'
-    | 'localAudioSource'
-    | 'localVideoSource'
     | 'accessStatus'
     | 'publisher'
   >
@@ -84,14 +80,8 @@ export type PreviewPublisherInitialValue = Partial<
 const usePreviewPublisher = (
   initialValue?: PreviewPublisherInitialValue
 ): PreviewPublisherContextType => {
-  const videoSourceId = mediaDevices$.useMediaDeviceInfo(
-    'videoinput',
-    (device) => device?.deviceId ?? null
-  );
-  const audioSourceId = mediaDevices$.useMediaDeviceInfo(
-    'audioinput',
-    (device) => device?.deviceId ?? null
-  );
+  const videoSourceId = mediaDevices$.useDeviceId('videoinput');
+  const audioSourceId = mediaDevices$.useDeviceId('audioinput');
 
   const { setUser, user } = useUserContext();
   const defaultResolution = appConfig$.use.select(
@@ -115,12 +105,6 @@ const usePreviewPublisher = (
   );
   const [isAudioEnabled, setIsAudioEnabled] = useState<boolean>(
     initialValue?.isAudioEnabled ?? true
-  );
-  const [localVideoSource, setLocalVideoSource] = useState<string | undefined>(
-    initialValue?.localVideoSource ?? undefined
-  );
-  const [localAudioSource, setLocalAudioSource] = useState<string | undefined>(
-    initialValue?.localAudioSource ?? undefined
   );
   const handlePreviewDestroyed = () => {
     publisherRef.current = null;
@@ -154,9 +138,10 @@ const usePreviewPublisher = (
       if (!deviceId || !publisherRef.current) {
         return;
       }
+
       publisherRef.current.setAudioSource(deviceId);
-      setLocalAudioSource(deviceId);
-      setStorageItem(STORAGE_KEYS.AUDIO_SOURCE, deviceId);
+      mediaDevices$.actions.selectDevice('audioinput', deviceId);
+
       if (setUser) {
         setUser((prevUser: UserType) => ({
           ...prevUser,
@@ -176,9 +161,10 @@ const usePreviewPublisher = (
       if (!deviceId || !publisherRef.current) {
         return;
       }
+
       publisherRef.current.setVideoSource(deviceId);
-      setLocalVideoSource(deviceId);
-      setStorageItem(STORAGE_KEYS.VIDEO_SOURCE, deviceId);
+      mediaDevices$.actions.selectDevice('videoinput', deviceId);
+
       if (setUser) {
         setUser((prevUser: UserType) => ({
           ...prevUser,
@@ -325,8 +311,6 @@ const usePreviewPublisher = (
     backgroundFilter,
     changeAudioSource,
     changeVideoSource,
-    localAudioSource,
-    localVideoSource,
     accessStatus,
     speechLevel,
   };

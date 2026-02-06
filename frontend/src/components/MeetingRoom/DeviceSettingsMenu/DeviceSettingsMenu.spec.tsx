@@ -9,6 +9,7 @@ import {
 import { describe, beforeEach, it, vi, expect } from 'vitest';
 import { ReactElement, RefObject } from 'react';
 import { hasMediaProcessorSupport } from '@vonage/client-sdk-video';
+import type { MediaDeviceInfoJSON } from '@common/types';
 import { AppConfigProviderWrapperOptions, makeAppConfigProviderWrapper } from '@test/providers';
 import { isSinkIdSupported } from '@common/platform';
 import makeMediaDeviceInfos from '@common-test/fixtures/makeMediaDeviceInfos';
@@ -43,9 +44,10 @@ describe('DeviceSettingsMenu Component', () => {
 
   let mediaDevices$: typeof import('@core/stores/devices').default;
   let DeviceSettingsMenuComponent: typeof import('./DeviceSettingsMenu').default;
-  let defaultSpeakers: MediaDeviceInfo;
-  let usbHeadsetSpeakers: MediaDeviceInfo;
-  let bluetoothSpeakers: MediaDeviceInfo;
+
+  let defaultSpeakers: MediaDeviceInfoJSON;
+  let usbHeadsetSpeakers: MediaDeviceInfoJSON;
+  let bluetoothSpeakers: MediaDeviceInfoJSON;
 
   beforeEach(async () => {
     vi.mocked(isSinkIdSupported).mockReturnValue(true);

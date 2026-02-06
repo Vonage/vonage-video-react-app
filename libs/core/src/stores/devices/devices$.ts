@@ -2,7 +2,7 @@ import type { Prettify } from '@common/types';
 
 import mediaDevicesStore from './devicesStore';
 
-import { useMediaDeviceInfo, useMediaDevices } from './hooks';
+import { useMediaDeviceInfo, useMediaDevices, useDeviceId } from './hooks';
 import { mediaDevicesMap$ } from './observables';
 
 const extensions = {
@@ -18,6 +18,11 @@ const extensions = {
    * @example
    */
   useMediaDevices,
+
+  /**
+   * Hook to get the selected media device id for a specific kind from the store.
+   */
+  useDeviceId,
 
   /**
    * Observable map of media devices by kind.

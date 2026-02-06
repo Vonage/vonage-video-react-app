@@ -1,8 +1,9 @@
+import type { MediaDeviceInfoJSON } from '@common/types';
 import { getAudioSourceDeviceId } from '@utils/util';
 import mediaDevices$ from '@core/stores/devices';
 import { Publisher } from '@vonage/client-sdk-video';
 
-const isAudioInputDevice = (device: MediaDeviceInfo): boolean =>
+const isAudioInputDevice = (device: MediaDeviceInfoJSON): boolean =>
   device.kind.toLowerCase() === 'audioinput';
 
 function getDeviceId(publisher: Publisher | null, kind: MediaDeviceKind): string | null {
@@ -16,7 +17,10 @@ function getDeviceId(publisher: Publisher | null, kind: MediaDeviceKind): string
   if (kind === 'audioinput') {
     // [TODO]: check why audio needs to lookup differently than video, legacy setMediaDevices, mediaDeviceUtils.ts
     const source = publisher.getAudioSource();
-    const audioInputDevices = mediaDevices$.getState().mediaDeviceInfo.filter(isAudioInputDevice);
+    const audioInputDevices: MediaDeviceInfoJSON[] = mediaDevices$
+      .getState()
+      .mediaDeviceInfo.filter(isAudioInputDevice);
+
     return getAudioSourceDeviceId(audioInputDevices, source);
   }
 

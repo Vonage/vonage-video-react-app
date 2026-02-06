@@ -1,9 +1,9 @@
 import { createGlobalState, type InferAPI } from 'react-global-state-hooks';
-import { safelyParseDevicesStoreState } from './schemas/DevicesStoreState.schema';
 import { syncMediaDevicesInfo, selectDevice, getUserMedia } from './actions';
 import { initialValue, metadata } from './constants';
 import { setupDeviceStore } from './helpers';
 import type { DevicesStoreState } from './types';
+import { safelyParseDevicesStoreState } from './schemas/DevicesStoreState.schema';
 
 export type MediaDevicesAPI = InferAPI<typeof mediaDevicesStore>;
 
@@ -50,9 +50,11 @@ const mediaDevicesStore = createGlobalState(initialValue, {
       return initial as DevicesStoreState;
     },
     selector: (state) => {
-      const { selection } = state as DevicesStoreState;
+      const { videoinput, audioinput, audiooutput } = state as DevicesStoreState;
       return {
-        selection,
+        videoinput,
+        audioinput,
+        audiooutput,
       };
     },
   },

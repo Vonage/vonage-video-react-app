@@ -1,4 +1,5 @@
 import useMediaDeviceInfoByKind$ from '@core/stores/devices/hooks/useMediaDeviceInfoByKind$';
+import type { MediaDeviceInfoJSON } from '@common/types';
 import { cleanAndDedupeDeviceLabels } from './helpers';
 import { mediaDevicesMap$ } from '@core/stores/devices/observables';
 import type { Any, UseHookOptions } from 'react-global-state-hooks';
@@ -12,7 +13,7 @@ import type { Any, UseHookOptions } from 'react-global-state-hooks';
  * @param kind - The type of media device ('audioinput', 'videoinput', 'audiooutput').
  * @returns Array of media devices for the specified kind with cleaned labels.
  */
-function useDistinctLabelMediaDevices(kind: MediaDeviceKind): MediaDeviceInfo[];
+function useDistinctLabelMediaDevices(kind: MediaDeviceKind): MediaDeviceInfoJSON[];
 
 /**
  * Returns a selected subset of devices for a specific kind with cleaned, distinct labels.
@@ -27,7 +28,7 @@ function useDistinctLabelMediaDevices(kind: MediaDeviceKind): MediaDeviceInfo[];
  */
 function useDistinctLabelMediaDevices<Selection>(
   kind: MediaDeviceKind,
-  selector: (state: MediaDeviceInfo[]) => Selection,
+  selector: (state: MediaDeviceInfoJSON[]) => Selection,
   options?: Options<Selection>
 ): Selection;
 
@@ -44,7 +45,7 @@ function useDistinctLabelMediaDevices<Selection>(
  */
 function useDistinctLabelMediaDevices<Selection>(
   kind: MediaDeviceKind,
-  selector: (state: MediaDeviceInfo[]) => Selection,
+  selector: (state: MediaDeviceInfoJSON[]) => Selection,
   dependencies?: Dependencies
 ): Selection;
 
@@ -52,7 +53,7 @@ function useDistinctLabelMediaDevices(
   kind: MediaDeviceKind,
   selector: Selector = (devices) => devices,
   args?: Options<unknown> | Dependencies
-): MediaDeviceInfo[] {
+): MediaDeviceInfoJSON[] {
   const dependencies = Array.isArray(args) ? args : [];
   const options = Array.isArray(args) ? { dependencies } : (args ?? {});
 
@@ -67,10 +68,10 @@ function useDistinctLabelMediaDevices(
         return prev[kind] === next[kind];
       },
     }
-  ) as MediaDeviceInfo[];
+  ) as MediaDeviceInfoJSON[];
 }
 
-type Selector = (devices: MediaDeviceInfo[]) => Any;
+type Selector = (devices: MediaDeviceInfoJSON[]) => Any;
 
 type DevicesInfoByKind = ReturnType<(typeof mediaDevicesMap$)['getState']>;
 

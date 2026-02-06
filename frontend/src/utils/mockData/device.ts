@@ -1,3 +1,4 @@
+import type { MediaDeviceInfoJSON } from '@common/types';
 import { AllMediaDevices } from '../../types';
 
 /**
@@ -33,7 +34,7 @@ export const audioInputDevices = [
     ({
       ...device,
       kind: device.kind.toLowerCase(),
-    }) as MediaDeviceInfo
+    }) as MediaDeviceInfoJSON
 );
 
 export const videoInputDevices = [
@@ -52,7 +53,7 @@ export const videoInputDevices = [
     ({
       ...device,
       kind: device.kind.toLowerCase(),
-    }) as MediaDeviceInfo
+    }) as MediaDeviceInfoJSON
 );
 
 export const audioOutputDevices = [
@@ -73,10 +74,15 @@ export const audioOutputDevices = [
     ({
       ...device,
       kind: 'audiooutput',
-    }) as MediaDeviceInfo
+    }) as MediaDeviceInfoJSON
 );
 
-export const nativeDevices = [...audioInputDevices, ...videoInputDevices, ...audioOutputDevices];
+export const nativeDevices = [
+  ...audioInputDevices,
+  ...videoInputDevices,
+  ...audioOutputDevices,
+] as MediaDeviceInfo[];
+
 /**
  * Default mocked video input device.
  * @property {string} deviceId - The unique identifier for the audio device.

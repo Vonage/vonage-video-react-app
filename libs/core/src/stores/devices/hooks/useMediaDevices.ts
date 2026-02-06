@@ -2,6 +2,7 @@ import type { Any, UseHookOptions } from 'react-global-state-hooks';
 import mediaDevicesMap$ from '../observables/mediaDevicesMap$';
 import { isFunction, isString } from '@common/assertions';
 import useMediaDeviceInfoByKind$ from './useMediaDeviceInfoByKind$';
+import type { MediaDeviceInfoJSON } from '@common/types';
 
 /**
  * Returns media devices organized by kind and deviceId.
@@ -11,7 +12,7 @@ function useMediaDevices(): DevicesInfoByKind;
 /**
  * Returns media devices for a specific kind organized by deviceId.
  */
-function useMediaDevices(kind: MediaDeviceKind): Record<string, MediaDeviceInfo>;
+function useMediaDevices(kind: MediaDeviceKind): Record<string, MediaDeviceInfoJSON>;
 
 /**
  * Returns media devices organized by kind and deviceId.
@@ -53,7 +54,9 @@ function useMediaDevices(
     arg2?: Selector | Options<unknown> | Dependencies | undefined,
     arg3?: Options<unknown> | Dependencies | undefined,
   ]
-): Record<string, MediaDeviceInfo> | Record<MediaDeviceKind, Record<string, MediaDeviceInfo>> {
+):
+  | Record<string, MediaDeviceInfoJSON>
+  | Record<MediaDeviceKind, Record<string, MediaDeviceInfoJSON>> {
   const [arg1, arg2, arg3] = args;
 
   const kind = isString(arg1) ? arg1 : undefined;
@@ -88,7 +91,9 @@ function useMediaDevices(
 
       return prev === next;
     },
-  }) as Record<string, MediaDeviceInfo> | Record<MediaDeviceKind, Record<string, MediaDeviceInfo>>;
+  }) as
+    | Record<string, MediaDeviceInfoJSON>
+    | Record<MediaDeviceKind, Record<string, MediaDeviceInfoJSON>>;
 }
 
 type Selector = (state: Any) => Any;

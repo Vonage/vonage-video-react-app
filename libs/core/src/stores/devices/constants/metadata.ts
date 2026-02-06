@@ -1,4 +1,5 @@
 import type CancelablePromise from 'easy-cancelable-promise';
+import type { MediaDeviceInfoJSON } from '@common/types';
 import { markDevicesApiMetadata } from '../assertions';
 import { isSinkIdSupported } from '@common/platform';
 
@@ -15,11 +16,11 @@ const metadata = () => {
     hasDeviceChangeCapability:
       typeof globalThis.navigator.mediaDevices?.ondevicechange !== 'undefined',
 
-    loadingMediaDevices: null as null | CancelablePromise<MediaDeviceInfo[]>,
+    loadingMediaDevices: null as null | CancelablePromise<MediaDeviceInfoJSON[]>,
 
     // temporary backup for the local storage restored value
     // localstorage value needs to be confirmed against actual available devices
-    restoredSelection: new Map<MediaDeviceKind, MediaDeviceInfo>(),
+    restoredSelection: new Map<MediaDeviceKind, MediaDeviceInfoJSON>(),
   };
 
   markDevicesApiMetadata(meta);

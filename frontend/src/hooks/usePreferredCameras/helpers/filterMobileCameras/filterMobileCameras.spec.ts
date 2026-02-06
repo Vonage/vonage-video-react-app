@@ -1,16 +1,17 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
+import type { MediaDeviceInfoJSON } from '@common/types';
 import filterMobileCameras from './filterMobileCameras';
 import { isMobile } from '@common/platform';
 import { isFrontFacingLabel, isRearFacingLabel } from '@utils/cameraSwitch';
 
 vi.mock('@common/platform');
 vi.mock('@utils/cameraSwitch');
-const createMockDevice = (deviceId: string, label: string): MediaDeviceInfo =>
+const createMockDevice = (deviceId: string, label: string): MediaDeviceInfoJSON =>
   ({
     kind: 'videoinput',
     deviceId,
     label,
-  }) as MediaDeviceInfo;
+  }) as MediaDeviceInfoJSON;
 
 describe('filterMobileCameras', () => {
   beforeEach(() => {
@@ -21,7 +22,7 @@ describe('filterMobileCameras', () => {
     it('should return all devices unchanged', () => {
       vi.mocked(isMobile).mockReturnValue(false);
 
-      const devices: MediaDeviceInfo[] = [
+      const devices: MediaDeviceInfoJSON[] = [
         createMockDevice('1', 'Front Camera 1'),
         createMockDevice('2', 'Front Camera 2'),
         createMockDevice('3', 'Rear Camera 1'),
@@ -49,7 +50,7 @@ describe('filterMobileCameras', () => {
         (label) => label?.toLowerCase().includes('rear') ?? false
       );
 
-      const devices: MediaDeviceInfo[] = [
+      const devices: MediaDeviceInfoJSON[] = [
         createMockDevice('1', 'Front Camera 1'),
         createMockDevice('2', 'Front Camera 2'),
         createMockDevice('3', 'Rear Camera 1'),
@@ -71,7 +72,7 @@ describe('filterMobileCameras', () => {
         (label) => label?.toLowerCase().includes('rear') ?? false
       );
 
-      const devices: MediaDeviceInfo[] = [
+      const devices: MediaDeviceInfoJSON[] = [
         createMockDevice('1', 'Front Camera 1'),
         createMockDevice('2', 'Front Camera 2'),
         createMockDevice('3', 'Rear Camera 1'),
@@ -95,7 +96,7 @@ describe('filterMobileCameras', () => {
       );
       vi.mocked(isRearFacingLabel).mockReturnValue(false);
 
-      const devices: MediaDeviceInfo[] = [
+      const devices: MediaDeviceInfoJSON[] = [
         createMockDevice('1', 'Front Camera 1'),
         createMockDevice('2', 'Front Camera 2'),
       ];
@@ -112,7 +113,7 @@ describe('filterMobileCameras', () => {
         (label) => label?.toLowerCase().includes('rear') ?? false
       );
 
-      const devices: MediaDeviceInfo[] = [
+      const devices: MediaDeviceInfoJSON[] = [
         createMockDevice('1', 'Rear Camera 1'),
         createMockDevice('2', 'Rear Camera 2'),
       ];
@@ -124,7 +125,7 @@ describe('filterMobileCameras', () => {
     });
 
     it('should handle empty device array', () => {
-      const devices: MediaDeviceInfo[] = [];
+      const devices: MediaDeviceInfoJSON[] = [];
 
       const result = filterMobileCameras(devices);
 
@@ -136,7 +137,7 @@ describe('filterMobileCameras', () => {
       vi.mocked(isFrontFacingLabel).mockReturnValue(false);
       vi.mocked(isRearFacingLabel).mockReturnValue(false);
 
-      const devices: MediaDeviceInfo[] = [
+      const devices: MediaDeviceInfoJSON[] = [
         createMockDevice('1', ''),
         createMockDevice('2', 'Front Camera'),
       ];
@@ -159,7 +160,7 @@ describe('filterMobileCameras', () => {
         (label) => label?.toLowerCase().includes('rear') ?? false
       );
 
-      const devices: MediaDeviceInfo[] = [
+      const devices: MediaDeviceInfoJSON[] = [
         createMockDevice('1', 'User Camera'),
         createMockDevice('2', 'User Camera 2'),
         createMockDevice('3', 'Rear Camera'),

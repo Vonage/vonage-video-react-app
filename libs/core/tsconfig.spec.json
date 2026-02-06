@@ -14,7 +14,8 @@
     "../common/src/**/*.ts",
     "../common/src/**/*.tsx",
     "../common/test/**/*.ts",
-    "../common/test/makeGenericProviderWrapper.tsx"
+    "../common/test/makeGenericProviderWrapper.tsx",
+    "../common/src/types/MediaDeviceInfoJSON.ts"
   ],
   "tsBuildInfoFile": "dist/tsconfig.spec.tsbuildinfo"
 }

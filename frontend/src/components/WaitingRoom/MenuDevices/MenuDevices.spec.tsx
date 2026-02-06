@@ -28,7 +28,6 @@ describe('MenuDevices Component', () => {
 
     const kind = 'audioinput';
     const audioInputDevices = someDevices.filter((d) => d.kind === kind);
-    const firstDevice = audioInputDevices[0];
     const secondDevice = audioInputDevices[1];
 
     render(
@@ -37,7 +36,6 @@ describe('MenuDevices Component', () => {
         onClose={mockOnClose}
         open
         anchorEl={anchorEl}
-        localSource={firstDevice.deviceId}
         deviceChangeHandler={mockDeviceChangeHandler}
       />
     );
@@ -66,7 +64,6 @@ describe('MenuDevices Component', () => {
         onClose={mockOnClose}
         open
         anchorEl={anchorEl}
-        localSource={firstDevice.deviceId}
         deviceChangeHandler={mockDeviceChangeHandler}
       />
     );
@@ -95,13 +92,18 @@ function testDeviceKindRendering(kind: MediaDeviceKind) {
   const devicesOfKind = someDevices.filter((d) => d.kind === kind);
   const firstDevice = devicesOfKind[0];
 
+  // Set the first device as selected in the store for this kind
+  mediaDevices$.setState((state) => ({
+    ...state,
+    [kind]: firstDevice.deviceId,
+  }));
+
   const { unmount } = render(
     <MenuDevices
       mediaDeviceKind={kind}
       onClose={mockOnClose}
       open
       anchorEl={anchorEl}
-      localSource={firstDevice.deviceId}
       deviceChangeHandler={mockDeviceChangeHandler}
     />
   );

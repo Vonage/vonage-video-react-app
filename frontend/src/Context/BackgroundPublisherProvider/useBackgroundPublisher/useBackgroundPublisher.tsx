@@ -11,11 +11,11 @@ import usePermissions from '../../../hooks/usePermissions';
 import useUserContext from '../../../hooks/useUserContext';
 import { DEVICE_ACCESS_STATUS } from '../../../utils/constants';
 import { AccessDeniedEvent } from '../../PublisherProvider/usePublisher/usePublisher';
-import DeviceStore from '../../../utils/DeviceStore';
 import applyBackgroundFilter from '../../../utils/backgroundFilter/applyBackgroundFilter/applyBackgroundFilter';
 import useImageStorage, { StoredImage } from '../../../utils/useImageStorage/useImageStorage';
 import getInitialBackgroundFilter from '../../../utils/backgroundFilter/getInitialBackgroundFilter/getInitialBackgroundFilter';
 import handlePublisherAccessDenied from '../../../utils/publisher/handlePublisherAccessDenied';
+import mediaDevices$ from '@core/stores/devices';
 
 export type BackgroundPublisherContextType = {
   isPublishing: boolean;
@@ -29,7 +29,7 @@ export type BackgroundPublisherContextType = {
   localVideoSource: string | undefined;
   accessStatus: string | null;
   changeVideoSource: (deviceId: string) => void;
-  initBackgroundLocalPublisher: () => Promise<void>;
+  initBackgroundLocalPublisher: () => void;
   customImages: StoredImage[];
   addCustomImage: (dataUrl: string) => void;
   deleteCustomImage: (id: string) => void;
@@ -83,24 +83,30 @@ const useBackgroundPublisher = (
     HTMLVideoElement | HTMLObjectElement | undefined
   >(initialValue?.publisherVideoElement ?? undefined);
   const { setAccessStatus, accessStatus } = usePermissions();
+
   const backgroundPublisherRef = useRef<Publisher | null>(null);
   const [isPublishing, setIsPublishing] = useState<boolean>(initialValue?.isPublishing ?? false);
+
   const initialBackgroundRef = useRef<VideoFilter | undefined>(
     user.defaultSettings.backgroundFilter
   );
+
   const [backgroundFilter, setBackgroundFilter] = useState<VideoFilter | undefined>(
     () => initialValue?.backgroundFilter ?? user.defaultSettings.backgroundFilter
   );
+
   const [isVideoEnabled, setIsVideoEnabled] = useState<boolean>(
     initialValue?.isVideoEnabled ?? true
   );
+
   const [localVideoSource, setLocalVideoSource] = useState<string | undefined>(
     initialValue?.localVideoSource ?? undefined
   );
-  const deviceStoreRef = useRef<DeviceStore>(new DeviceStore());
+
   const [customImages, setCustomImages] = useState<StoredImage[]>(
     () => initialValue?.customImages ?? getImagesFromStorage()
   );
+
   const [backgroundSelected, setBackgroundSelected] = useState<string>(
     initialValue?.backgroundSelected ?? ''
   );
@@ -168,7 +174,7 @@ const useBackgroundPublisher = (
     [handleBackgroundAccessDenied, setAccessStatus]
   );
 
-  const initBackgroundLocalPublisher = useCallback(async () => {
+  const initBackgroundLocalPublisher = useCallback(() => {
     if (backgroundPublisherRef.current) {
       return;
     }
@@ -179,14 +185,11 @@ const useBackgroundPublisher = (
       videoFilter = initialBackgroundRef.current;
     }
 
-    await deviceStoreRef.current.init();
-    const videoSource = deviceStoreRef.current.getConnectedDeviceId('videoinput');
-
     const publisherOptions: PublisherProperties = {
       insertDefaultUI: false,
       videoFilter,
       resolution: '1280x720',
-      videoSource,
+      videoSource: mediaDevices$.getState().videoinput,
       publishAudio: false,
       publishVideo: isVideoEnabled,
     };

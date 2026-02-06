@@ -64,9 +64,7 @@ describe('InputAudioDevices Component', () => {
     expect(mockSetAudioSource).toHaveBeenCalledWith('audio-input-3');
 
     await waitFor(() => {
-      expect(
-        mediaDevices$.getState().selection.get('audioinput')?.deviceId === 'audio-input-3'
-      ).toBeTruthy();
+      expect(mediaDevices$.getState().audioinput === 'audio-input-3').toBeTruthy();
     });
   });
 
@@ -80,9 +78,7 @@ describe('InputAudioDevices Component', () => {
     expect(mockSetAudioSource).not.toHaveBeenCalled();
 
     await waitFor(() => {
-      expect(
-        mediaDevices$.getState().selection.get('audioinput')?.deviceId === 'audio-input-3'
-      ).toBeTruthy();
+      expect(mediaDevices$.getState().audioinput === 'audio-input-3').toBeTruthy();
     });
   });
 
@@ -103,9 +99,7 @@ describe('InputAudioDevices Component', () => {
     expect(mockSetAudioSource).not.toHaveBeenCalled();
 
     await waitFor(() => {
-      expect(
-        mediaDevices$.getState().selection.get('audioinput')?.deviceId === 'audio-input-3'
-      ).toBeTruthy();
+      expect(mediaDevices$.getState().audioinput === 'audio-input-3').toBeTruthy();
     });
   });
 
@@ -142,9 +136,7 @@ describe('InputAudioDevices Component', () => {
 
     // Wait for the actual state change to complete
     await waitFor(() => {
-      expect(
-        mediaDevices$.getState().selection.get('audioinput')?.deviceId === 'audio-input-2'
-      ).toBeTruthy();
+      expect(mediaDevices$.getState().audioinput === 'audio-input-2').toBeTruthy();
     });
   });
 });

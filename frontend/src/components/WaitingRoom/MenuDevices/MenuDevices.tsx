@@ -13,7 +13,6 @@ export type MenuDevicesWaitingRoomProps = {
   open: boolean;
   mediaDeviceKind: MediaDeviceKind;
   anchorEl: HTMLElement | null;
-  localSource: string | undefined | null;
   deviceChangeHandler: (deviceId: string) => void;
 };
 
@@ -36,10 +35,11 @@ const MenuDevices = ({
   onClose,
   open,
   anchorEl,
-  localSource,
   deviceChangeHandler,
 }: MenuDevicesWaitingRoomProps): ReactElement => {
   const devices = mediaDevices$.useMediaDevices(mediaDeviceKind, (state) => Object.values(state));
+
+  const localSource = mediaDevices$.useDeviceId(mediaDeviceKind);
 
   const handleClick = (deviceId: string) => {
     deviceChangeHandler(deviceId);
@@ -65,6 +65,7 @@ const MenuDevices = ({
               if (!device.deviceId) {
                 return;
               }
+
               handleClick(device.deviceId);
             }}
             key={device.deviceId}

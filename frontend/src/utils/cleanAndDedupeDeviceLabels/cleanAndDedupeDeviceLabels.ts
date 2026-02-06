@@ -1,3 +1,5 @@
+import type { MediaDeviceInfoJSON } from '@common/types';
+
 /**
  * Cleans up device labels from navigator.mediaDevices by removing technical identifiers
  * while preserving useful descriptive information.
@@ -39,10 +41,10 @@ const cleanDeviceLabel = (label: string): string => {
  * Cleans and deduplicates device labels.
  * If multiple devices have the same cleaned label, they are suffixed with a number.
  * For example, two devices both labeled "Logitech Webcam" become "Logitech Webcam" and "Logitech Webcam (2)".
- * @param {(Device | AudioOutputDevice)[]} devices - The list of media devices.
- * @returns {Array<(Device | AudioOutputDevice)>} The list of devices with cleaned and deduplicated labels.
+ * @param {MediaDeviceInfoJSON[]} devices - The list of media devices.
+ * @returns {Array<MediaDeviceInfoJSON>} The list of devices with cleaned and deduplicated labels.
  */
-const cleanAndDedupeDeviceLabels = (devices: MediaDeviceInfo[]): Array<MediaDeviceInfo> => {
+const cleanAndDedupeDeviceLabels = (devices: MediaDeviceInfoJSON[]): Array<MediaDeviceInfoJSON> => {
   const labelCounts = new Map<string, number>();
   return devices.map((device) => {
     if (!device.label) {
@@ -57,11 +59,9 @@ const cleanAndDedupeDeviceLabels = (devices: MediaDeviceInfo[]): Array<MediaDevi
     const finalLabel = currentCount > 0 ? `${cleanLabel} (${currentCount + 1})` : cleanLabel;
 
     return {
-      groupId: device.groupId,
+      ...device,
       label: finalLabel,
-      deviceId: device.deviceId,
-      kind: device.kind,
-    } as MediaDeviceInfo;
+    };
   });
 };
 

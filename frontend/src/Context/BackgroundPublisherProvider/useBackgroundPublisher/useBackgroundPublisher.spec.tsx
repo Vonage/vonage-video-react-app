@@ -41,18 +41,18 @@ describe('useBackgroundPublisher', () => {
   });
 
   describe('initBackgroundLocalPublisher', () => {
-    it('should call initBackgroundLocalPublisher', async () => {
+    it('should call initBackgroundLocalPublisher', () => {
       mockedInitPublisher.mockReturnValue(mockPublisher);
       const { result } = render();
 
-      await act(async () => {
-        await result.current.initBackgroundLocalPublisher();
+      act(() => {
+        result.current.initBackgroundLocalPublisher();
       });
 
       expect(mockedInitPublisher).toHaveBeenCalled();
     });
 
-    it('should log access denied errors', async () => {
+    it('should log access denied errors', () => {
       const error = new Error(
         "It hit me pretty hard, how there's no kind of sad in this world that will stop it turning."
       );
@@ -62,8 +62,8 @@ describe('useBackgroundPublisher', () => {
       });
 
       const { result } = render();
-      await act(async () => {
-        await result.current.initBackgroundLocalPublisher();
+      act(() => {
+        result.current.initBackgroundLocalPublisher();
       });
       expect(console.error).toHaveBeenCalledWith('initPublisher error: ', error);
     });
@@ -72,8 +72,8 @@ describe('useBackgroundPublisher', () => {
       mockedHasMediaProcessorSupport.mockReturnValue(true);
       mockedInitPublisher.mockReturnValue(mockPublisher);
       const { result } = render();
-      await act(async () => {
-        await result.current.initBackgroundLocalPublisher();
+      act(() => {
+        result.current.initBackgroundLocalPublisher();
       });
 
       await act(async () => {
@@ -85,12 +85,12 @@ describe('useBackgroundPublisher', () => {
       });
     });
 
-    it('should not replace background when initialized if the device does not support it', async () => {
+    it('should not replace background when initialized if the device does not support it', () => {
       mockedHasMediaProcessorSupport.mockReturnValue(false);
       mockedInitPublisher.mockReturnValue(mockPublisher);
       const { result } = render();
-      await act(async () => {
-        await result.current.initBackgroundLocalPublisher();
+      act(() => {
+        result.current.initBackgroundLocalPublisher();
       });
       expect(mockedInitPublisher).toHaveBeenCalledWith(
         undefined,
@@ -104,12 +104,12 @@ describe('useBackgroundPublisher', () => {
 
   describe('changeBackground', () => {
     let result: ReturnType<typeof render>['result'];
-    beforeEach(async () => {
+    beforeEach(() => {
       mockedHasMediaProcessorSupport.mockReturnValue(true);
       mockedInitPublisher.mockReturnValue(mockPublisher);
       result = render().result;
-      await act(async () => {
-        await result.current.initBackgroundLocalPublisher();
+      act(() => {
+        result.current.initBackgroundLocalPublisher();
       });
       (mockPublisher.applyVideoFilter as Mock).mockClear();
       (mockPublisher.clearVideoFilter as Mock).mockClear();
@@ -149,7 +149,7 @@ describe('useBackgroundPublisher', () => {
 
       const { result: res } = render();
       await act(async () => {
-        await res.current.initBackgroundLocalPublisher();
+        res.current.initBackgroundLocalPublisher();
         await res.current.changeBackground('low-blur');
       });
 
@@ -184,9 +184,10 @@ describe('useBackgroundPublisher', () => {
 
       const { result } = render();
 
-      await act(async () => {
-        await result.current.initBackgroundLocalPublisher();
+      act(() => {
+        result.current.initBackgroundLocalPublisher();
       });
+
       expect(result.current.accessStatus).not.toBe(DEVICE_ACCESS_STATUS.REJECTED);
 
       act(() => {
@@ -198,7 +199,7 @@ describe('useBackgroundPublisher', () => {
       });
     });
 
-    it('does not throw on older, unsupported browsers', async () => {
+    it('does not throw on older, unsupported browsers', () => {
       mockQuery.mockImplementation(() => {
         return Promise.reject(new Error('Whoops'));
       });
@@ -206,8 +207,8 @@ describe('useBackgroundPublisher', () => {
 
       const { result } = render();
 
-      await act(async () => {
-        await result.current.initBackgroundLocalPublisher();
+      act(() => {
+        result.current.initBackgroundLocalPublisher();
       });
 
       expect(emitAccessDeniedError).not.toThrow();

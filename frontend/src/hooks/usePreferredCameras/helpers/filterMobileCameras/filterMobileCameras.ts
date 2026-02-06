@@ -1,3 +1,4 @@
+import type { MediaDeviceInfoJSON } from '@common/types';
 import { isMobile } from '@common/platform';
 import { isFrontFacingLabel, isRearFacingLabel } from '@utils/cameraSwitch';
 
@@ -12,7 +13,7 @@ import { isFrontFacingLabel, isRearFacingLabel } from '@utils/cameraSwitch';
  * @param {Device[]} videoInputDevices - Array of video input devices to filter
  * @returns {Device[]} - Filtered array containing at most one front and one rear camera on mobile, or all devices on desktop
  */
-function filterMobileCameras(videoInputDevices: MediaDeviceInfo[]): MediaDeviceInfo[] {
+function filterMobileCameras(videoInputDevices: MediaDeviceInfoJSON[]): MediaDeviceInfoJSON[] {
   if (!isMobile()) return videoInputDevices;
 
   const front = videoInputDevices.find((d) => isFrontFacingLabel(d.label));
@@ -21,7 +22,7 @@ function filterMobileCameras(videoInputDevices: MediaDeviceInfo[]): MediaDeviceI
     (d) => !isFrontFacingLabel(d.label) && !isRearFacingLabel(d.label)
   );
 
-  return [front, rear, ...unknown].filter((d): d is MediaDeviceInfo => d !== undefined);
+  return [front, rear, ...unknown].filter((d): d is MediaDeviceInfoJSON => d !== undefined);
 }
 
 export default filterMobileCameras;

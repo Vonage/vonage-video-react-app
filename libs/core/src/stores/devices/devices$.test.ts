@@ -76,7 +76,19 @@ describe('mediaDevices$ namespace', () => {
       }
     });
 
-    expect(state.mediaDeviceInfo).toEqual(newMediaDevicesInfo);
+    expect(state.mediaDeviceInfo).toEqual(
+      expect.arrayContaining(
+        newMediaDevicesInfo.map((device): unknown => {
+          return expect.objectContaining({
+            deviceId: device.deviceId,
+            kind: device.kind,
+            label: device.label,
+            groupId: device.groupId,
+          });
+        })
+      )
+    );
+
     expect(vi.mocked(mediaDevices.enumerateDevices)).toHaveBeenCalled();
   });
 });

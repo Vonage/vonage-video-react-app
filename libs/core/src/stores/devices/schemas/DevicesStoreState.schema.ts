@@ -1,22 +1,26 @@
 import z from 'zod';
-import MediaDeviceInfoSchema from './MediaDeviceInfo.schema';
-import DeviceKindSchema from './DeviceKindSchema.schema';
-import type { DevicesStoreState } from '../types/DevicesStoreState';
+import { MediaDeviceInfoJSON, MediaDeviceInfoJSONSchema, DeviceKindSchema } from '@common/schemas';
+import type { DevicesStoreState } from '../types';
 
-export const DevicesStoreSchema = z.object({
-  mediaDeviceInfo: z.array(MediaDeviceInfoSchema),
-  selection: z.map(DeviceKindSchema, MediaDeviceInfoSchema),
-});
+export const DevicesStoreSchema = z.intersection(
+  z.object({
+    mediaDeviceInfo: z.array(MediaDeviceInfoJSONSchema),
+  }),
+  z.record(DeviceKindSchema, z.string().optional())
+);
 
 export function assertDevicesStoreState(data: unknown): asserts data is DevicesStoreState {
   DevicesStoreSchema.parse(data);
 }
 
 export function safelyParseDevicesStoreState(data: unknown) {
-  return DevicesStoreSchema.safeParse(data) as z.ZodSafeParseResult<{
-    mediaDeviceInfo: MediaDeviceInfo[];
-    selection: Map<'audioinput' | 'videoinput' | 'audiooutput', MediaDeviceInfo>;
-  }>;
+  return DevicesStoreSchema.safeParse(data) as z.ZodSafeParseResult<
+    {
+      mediaDeviceInfo: MediaDeviceInfoJSON[];
+    } & {
+      [K in MediaDeviceKind]: MediaDeviceInfoJSON | undefined;
+    }
+  >;
 }
 
 export default DevicesStoreSchema;

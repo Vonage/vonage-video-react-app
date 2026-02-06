@@ -1,3 +1,5 @@
+import type { MediaDeviceInfoJSON } from '@common/types';
+
 /**
  * Cleans up device labels from navigator.mediaDevices by removing technical identifiers
  * while preserving useful descriptive information.
@@ -42,7 +44,7 @@ const cleanDeviceLabel = (label: string): string => {
  * @param {(Device | AudioOutputDevice)[]} devices - The list of media devices.
  * @returns {Array<(Device | AudioOutputDevice)>} The list of devices with cleaned and deduplicated labels.
  */
-const cleanAndDedupeDeviceLabels = (devices: MediaDeviceInfo[]): Array<MediaDeviceInfo> => {
+const cleanAndDedupeDeviceLabels = (devices: MediaDeviceInfoJSON[]): Array<MediaDeviceInfoJSON> => {
   const labelCounts = new Map<string, number>();
 
   return devices.map((device) => {

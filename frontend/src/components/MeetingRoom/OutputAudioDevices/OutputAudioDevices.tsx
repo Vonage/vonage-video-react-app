@@ -1,6 +1,7 @@
 import { ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
 import appConfig$ from '@stores/appConfig';
+import type { MediaDeviceInfoJSON } from '@common/types';
 import DropdownSeparator from '../DropdownSeparator';
 import Box from '@ui/Box';
 import Typography from '@ui/Typography';
@@ -29,10 +30,7 @@ const OutputAudioDevices = ({ handleToggle }: OutputAudioDevicesProps): ReactEle
   const { t } = useTranslation();
   const theme = useTheme();
 
-  const currentAudioOutputId = mediaDevices$.useMediaDeviceInfo(
-    'audiooutput',
-    (device) => device?.deviceId ?? null
-  );
+  const currentAudioOutputId = mediaDevices$.useDeviceId('audiooutput');
 
   const allowDeviceSelection = appConfig$.use.select(
     ({ meetingRoomSettings }) => meetingRoomSettings.allowDeviceSelection
@@ -40,8 +38,13 @@ const OutputAudioDevices = ({ handleToggle }: OutputAudioDevicesProps): ReactEle
 
   const availableDevices = useDistinctLabelMediaDevices('audiooutput', (devices) =>
     isSinkIdSupported()
-      ? devices
-      : [{ deviceId: 'default', label: t('devices.audio.defaultLabel') } as MediaDeviceInfo]
+      ? devices.map((device) =>
+          // Rename default audio output device to user-friendly label
+          device.deviceId === 'default'
+            ? { ...device, label: t('devices.audio.defaultLabel') }
+            : device
+        )
+      : [{ deviceId: 'default', label: t('devices.audio.defaultLabel') } as MediaDeviceInfoJSON]
   );
 
   const handleChangeAudioOutput = async (deviceId: string) => {
@@ -73,7 +76,7 @@ const OutputAudioDevices = ({ handleToggle }: OutputAudioDevicesProps): ReactEle
         </Box>
 
         <MenuList data-testid="output-devices">
-          {availableDevices?.map((device: MediaDeviceInfo) => {
+          {availableDevices?.map((device: MediaDeviceInfoJSON) => {
             // If audio output device selection is not supported we show the default device as selected
             const isSelected =
               device.deviceId === currentAudioOutputId || availableDevices.length === 1;

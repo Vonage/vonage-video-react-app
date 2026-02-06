@@ -75,10 +75,9 @@ const ControlPanel = ({
   const { t } = useTranslation();
   const isSmallViewport = useIsSmallViewport();
 
-  const { localAudioSource, localVideoSource, changeAudioSource, changeVideoSource } =
-    usePreviewPublisherContext();
+  const { changeAudioSource, changeVideoSource } = usePreviewPublisherContext();
+  const { setAudioOutputDevice } = useAudioOutputContext();
 
-  const { currentAudioOutputDevice, setAudioOutputDevice } = useAudioOutputContext();
   const theme = useTheme();
 
   const buttonSx: SxProps = {
@@ -131,7 +130,6 @@ const ControlPanel = ({
           open={openAudioInput}
           onClose={handleClose}
           anchorEl={anchorEl}
-          localSource={localAudioSource}
           deviceChangeHandler={changeAudioSource}
         />
 
@@ -149,12 +147,12 @@ const ControlPanel = ({
           </Box>
           <VividIcon name="chevron-down-line" customSize={-6} />
         </ButtonBase>
+
         <MenuDevicesWaitingRoom
           mediaDeviceKind="videoinput"
           open={openVideoInput}
           onClose={handleClose}
           anchorEl={anchorEl}
-          localSource={localVideoSource}
           deviceChangeHandler={changeVideoSource}
         />
 
@@ -172,12 +170,12 @@ const ControlPanel = ({
           </Box>
           <VividIcon name="chevron-down-line" customSize={-6} />
         </ButtonBase>
+
         <MenuDevicesWaitingRoom
           mediaDeviceKind="audiooutput"
           open={openAudioOutput}
           onClose={handleClose}
           anchorEl={anchorEl}
-          localSource={currentAudioOutputDevice}
           deviceChangeHandler={setAudioOutputDevice}
         />
 

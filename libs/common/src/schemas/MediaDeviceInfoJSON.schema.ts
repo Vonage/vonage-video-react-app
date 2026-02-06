@@ -6,7 +6,7 @@ export type MediaDeviceInfoJSON = Omit<MediaDeviceInfo, 'toJSON'>;
 /**
  * Native browser MediaDeviceInfo schema
  */
-const MediaDeviceInfoSchema: z.ZodType<MediaDeviceInfoJSON> = z.object({
+export const MediaDeviceInfoJSONSchema: z.ZodType<MediaDeviceInfoJSON> = z.looseObject({
   deviceId: z.string(),
   kind: DeviceKindSchema,
   label: z.string(),
@@ -14,7 +14,7 @@ const MediaDeviceInfoSchema: z.ZodType<MediaDeviceInfoJSON> = z.object({
 });
 
 export function assertMediaDeviceInfo(data: unknown): asserts data is MediaDeviceInfoJSON {
-  MediaDeviceInfoSchema.parse(data);
+  MediaDeviceInfoJSONSchema.parse(data);
 }
 
-export default MediaDeviceInfoSchema;
+export default MediaDeviceInfoJSONSchema;

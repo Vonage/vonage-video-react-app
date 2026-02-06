@@ -1,4 +1,5 @@
 import { render as renderBase, screen } from '@testing-library/react';
+import type { MediaDeviceInfoJSON } from '@common/types';
 import { Route, Routes } from 'react-router-dom';
 import MemoryRouter from '@test/RouterWrapper';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
@@ -41,7 +42,7 @@ describe('RoomContext', () => {
       value: {
         enumerateDevices: vi.fn(
           () =>
-            new Promise<MediaDeviceInfo[]>((res) => {
+            new Promise<MediaDeviceInfoJSON[]>((res) => {
               res(nativeDevices);
             })
         ),

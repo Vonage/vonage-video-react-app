@@ -1,6 +1,7 @@
 import { describe, it, beforeEach, vi, expect } from 'vitest';
 import { render as renderBase, screen, fireEvent, waitFor } from '@testing-library/react';
 import { ReactElement } from 'react';
+import type { MediaDeviceInfoJSON } from '@common/types';
 import { AppConfigProviderWrapperOptions, makeAppConfigProviderWrapper } from '@test/providers';
 import { isSinkIdSupported } from '@common/platform';
 import {
@@ -25,9 +26,9 @@ describe('OutputAudioDevices Component', () => {
   let mediaDevices$: typeof MediaDevices$;
   let OutputAudioDevices: typeof import('./OutputAudioDevices').default;
 
-  let defaultSpeakers: MediaDeviceInfo;
-  let usbHeadsetSpeakers: MediaDeviceInfo;
-  let bluetoothSpeakers: MediaDeviceInfo;
+  let defaultSpeakers: MediaDeviceInfoJSON;
+  let usbHeadsetSpeakers: MediaDeviceInfoJSON;
+  let bluetoothSpeakers: MediaDeviceInfoJSON;
 
   beforeEach(async () => {
     // Mock enumerateDevices before importing the store to prevent the disruptive mock from throwing
@@ -91,10 +92,7 @@ describe('OutputAudioDevices Component', () => {
     expect(selectDeviceSpy).toHaveBeenCalledWith('audiooutput', usbHeadsetSpeakers.deviceId);
 
     await waitFor(() => {
-      expect(
-        mediaDevices$.getState().selection.get('audiooutput')?.deviceId ===
-          usbHeadsetSpeakers.deviceId
-      ).toBeTruthy();
+      expect(mediaDevices$.getState().audiooutput === usbHeadsetSpeakers.deviceId).toBeTruthy();
     });
   });
 

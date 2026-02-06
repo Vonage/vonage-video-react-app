@@ -3,7 +3,7 @@ import { renderHook as renderHookBase, waitFor } from '@testing-library/react';
 import OT from '@vonage/client-sdk-video';
 import useUserContext from '@hooks/useUserContext';
 import localStorageMock from '@utils/mockData/localStorageMock';
-import DeviceStore from '@utils/DeviceStore';
+import mediaDevices$ from '@core/stores/devices';
 import { setStorageItem, STORAGE_KEYS } from '@utils/storage';
 import { AppConfigProviderWrapperOptions, makeAppConfigProviderWrapper } from '@test/providers';
 import makeMediaDeviceInfos from '@common-test/fixtures/makeMediaDeviceInfos';
@@ -54,22 +54,27 @@ const mockUserContextWithCustomSettings = {
 
 describe('usePublisherOptions', () => {
   let enumerateDevicesMock: ReturnType<typeof vi.fn>;
-  let deviceStore: DeviceStore;
 
-  beforeEach(async () => {
+  beforeEach(() => {
     enumerateDevicesMock = vi.fn();
 
     vi.spyOn(navigator.mediaDevices, 'enumerateDevices').mockImplementation(
-      enumerateDevicesMock as unknown as () => Promise<MediaDeviceInfo[]>
+      enumerateDevicesMock as () => Promise<MediaDeviceInfo[]>
     );
 
     Object.defineProperty(window, 'localStorage', {
       value: localStorageMock,
       writable: true,
     });
-    deviceStore = new DeviceStore();
     enumerateDevicesMock.mockResolvedValue([]);
-    await deviceStore.init();
+
+    // Reset mediaDevices$ store to initial state
+    mediaDevices$.setState((state) => ({
+      ...state,
+      mediaDeviceInfo: [],
+      selection: new Map(),
+    }));
+
     vi.mocked(useUserContext).mockImplementation(() => mockUserContextWithDefaultSettings);
   });
 
@@ -119,11 +124,19 @@ describe('usePublisherOptions', () => {
 
   it('should use custom settings', async () => {
     vi.spyOn(OT, 'hasMediaProcessorSupport').mockReturnValue(true);
-    setStorageItem(STORAGE_KEYS.VIDEO_SOURCE, customSettings.videoSource);
-    setStorageItem(STORAGE_KEYS.AUDIO_SOURCE, customSettings.audioSource);
     const devices = makeMediaDeviceInfos();
     enumerateDevicesMock.mockResolvedValue(devices);
-    await deviceStore.init();
+
+    // Update mediaDevices$ store with devices and selections
+    mediaDevices$.setState((state) => ({
+      ...state,
+      mediaDeviceInfo: devices,
+      selection: new Map([
+        ['audioinput', audioDevice],
+        ['videoinput', videoDevice],
+      ]),
+    }));
+
     vi.mocked(useUserContext).mockImplementation(() => mockUserContextWithCustomSettings);
     const { result } = renderHook(() => usePublisherOptions());
     await waitFor(() => {
@@ -204,7 +217,6 @@ describe('usePublisherOptions', () => {
     setStorageItem(STORAGE_KEYS.AUDIO_SOURCE_ENABLED, 'false');
     setStorageItem(STORAGE_KEYS.VIDEO_SOURCE_ENABLED, 'true');
 
-    await deviceStore.init();
     vi.mocked(useUserContext).mockImplementation(() => mockUserContextWithCustomSettings);
     const { result } = renderHook(() => usePublisherOptions());
     await waitFor(() => {
