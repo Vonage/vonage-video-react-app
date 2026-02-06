@@ -80,7 +80,7 @@ const VideoContainer = ({ username }: VideoContainerProps): ReactElement => {
         width: {
           xs: '100dvw',
           sm: `${DESKTOP_VIDEO_WIDTH - 1}px`, // -1px to account for border on video element
-          md: `100%`,
+          md: '100%',
         },
         maxWidth: '100%',
         flexDirection: 'column',
