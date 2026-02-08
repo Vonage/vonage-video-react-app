@@ -2,4 +2,4 @@ export {
   setupFrontendTestEnvironment,
   mandatoryAfterEachCleanup,
   cancelablePromiseTracker,
-} from './frontendEnvironment';
+} from './setupFrontendTestEnvironment';

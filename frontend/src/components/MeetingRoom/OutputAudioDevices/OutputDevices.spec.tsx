@@ -1,21 +1,24 @@
+import {
+  makeMediaDeviceInfos,
+  makeMediaStreamMock,
+  mockPlatformModule,
+  setupWindowNavigatorMock,
+} from '@common-test/fixtures';
 import { describe, it, beforeEach, vi, expect } from 'vitest';
 import { render as renderBase, screen, fireEvent, waitFor } from '@testing-library/react';
 import { ReactElement } from 'react';
 import type { MediaDeviceInfoJSON } from '@common/types';
 import { AppConfigProviderWrapperOptions, makeAppConfigProviderWrapper } from '@test/providers';
 import { isSinkIdSupported } from '@common/platform';
-import {
-  setupMediaDevicesMock,
-  makeMediaStreamMock,
-  makeMediaDeviceInfos,
-} from '@common-test/fixtures';
-import { importMediaDevices$, MediaDevices$ } from '@core-test/fixtures';
+import mediaDevices$ from '@core/stores/devices';
+import OutputAudioDevices from './OutputAudioDevices';
 
-// Mocks
 vi.mock('@common/platform', async () => {
-  return (await import('@common-test/fixtures/makePlatformMock')).default(() => ({
+  const actual = await vi.importActual('@common/platform');
+
+  return mockPlatformModule(actual, {
     isSinkIdSupported: true,
-  }));
+  });
 });
 
 const someDevices = makeMediaDeviceInfos();
@@ -23,29 +26,12 @@ const someDevices = makeMediaDeviceInfos();
 describe('OutputAudioDevices Component', () => {
   const mockHandleToggle = vi.fn();
 
-  let mediaDevices$: typeof MediaDevices$;
-  let OutputAudioDevices: typeof import('./OutputAudioDevices').default;
-
   let defaultSpeakers: MediaDeviceInfoJSON;
   let usbHeadsetSpeakers: MediaDeviceInfoJSON;
   let bluetoothSpeakers: MediaDeviceInfoJSON;
 
-  beforeEach(async () => {
-    // Mock enumerateDevices before importing the store to prevent the disruptive mock from throwing
-    setupMediaDevicesMock({
-      enumerateDevices: Promise.resolve(someDevices),
-      addEventListener: vi.fn(),
-      getUserMedia: Promise.resolve(
-        makeMediaStreamMock({
-          getTracks: () => [],
-          getAudioTracks: () => [],
-          getVideoTracks: () => [],
-        })
-      ),
-    });
-
-    ({ OutputAudioDevices, mediaDevices$ } = await dynamicImports());
-
+  beforeEach(() => {
+    mediaDevices$.reset();
     mediaDevices$.setState((state) => ({
       ...state,
       mediaDeviceInfo: someDevices,
@@ -53,6 +39,20 @@ describe('OutputAudioDevices Component', () => {
 
     const audioOutputDevices = Object.values(mediaDevices$.mediaDevicesMap$.getState().audiooutput);
     [defaultSpeakers, usbHeadsetSpeakers, bluetoothSpeakers] = audioOutputDevices;
+
+    // after initializing the store to avoid having to mock all the mediaDevices$ sync logic.
+    setupWindowNavigatorMock({
+      mediaDevices: {
+        addEventListener: vi.fn(),
+        enumerateDevices: Promise.resolve(someDevices),
+        getUserMedia: Promise.resolve(
+          makeMediaStreamMock({
+            getVideoTracks: [],
+            getAudioTracks: [],
+          })
+        ),
+      },
+    });
   });
 
   it('renders all available audio output devices when supported', () => {
@@ -159,14 +159,4 @@ function render(
   const { AppConfigWrapper } = makeAppConfigProviderWrapper(options?.appConfigOptions);
 
   return renderBase(ui, { ...options, wrapper: AppConfigWrapper });
-}
-
-async function dynamicImports() {
-  const { mediaDevices$ } = await importMediaDevices$();
-
-  const OutputAudioDevices = (
-    await vi.importActual<typeof import('./OutputAudioDevices')>('./OutputAudioDevices')
-  ).default;
-
-  return { OutputAudioDevices, mediaDevices$ };
 }

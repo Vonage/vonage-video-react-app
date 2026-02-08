@@ -27,6 +27,11 @@ export type OutputAudioDevicesProps = {
  * @returns {ReactElement | false} - The OutputAudioDevices component.
  */
 const OutputAudioDevices = ({ handleToggle }: OutputAudioDevicesProps): ReactElement | false => {
+  console.log({
+    isSinkIdSupported,
+    addEventListener: navigator.mediaDevices?.addEventListener,
+  });
+
   const { t } = useTranslation();
   const theme = useTheme();
 

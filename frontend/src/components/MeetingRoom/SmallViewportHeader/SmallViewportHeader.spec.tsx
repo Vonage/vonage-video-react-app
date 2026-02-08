@@ -62,7 +62,13 @@ describe('SmallViewportHeader component', () => {
 
     mockUsePublisherContext.mockReturnValue(publisherContext);
 
-    ({ SmallViewportHeader, mediaDevices$ } = await importSmallViewportHeader());
+    ({ SmallViewportHeader, mediaDevices$ } = await dynamicImports());
+
+    // Initialize the store with video devices
+    mediaDevices$.setState((state) => ({
+      ...state,
+      mediaDeviceInfo: devices,
+    }));
   });
 
   it('renders the room name', () => {
@@ -185,7 +191,7 @@ describe('SmallViewportHeader component', () => {
   });
 });
 
-async function importSmallViewportHeader() {
+async function dynamicImports() {
   const mediaDevices$ = (await import('@core/stores/devices')).default;
 
   const SmallViewportHeader = (

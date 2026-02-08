@@ -3,10 +3,15 @@ import { describe, expect, it, vi } from 'vitest';
 import FilePicker from './FilePicker';
 import { isMobile } from '@common/platform';
 import '@testing-library/jest-dom';
+import { setupWindowNavigatorMock } from '@common-test/environment';
 
 vi.mock('@common/platform');
 
 describe('FilePicker component', () => {
+  beforeEach(() => {
+    setupWindowNavigatorMock();
+  });
+
   const mockFileSelect = vi.fn();
 
   it('renders the "Add screenshot" button initially', () => {

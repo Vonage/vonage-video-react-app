@@ -1,5 +1,5 @@
 import type { Mockable } from '@common/types';
-import { makeGenericMock } from '@common-test/helpers';
+import { setupPartialMock } from '@common-test/helpers';
 import { type MediaStream, mediaStreamMock } from '@common-test/mocks';
 
 /**
@@ -7,11 +7,7 @@ import { type MediaStream, mediaStreamMock } from '@common-test/mocks';
  * Non provider methods will crash if invoked, ensuring that only the intended methods are used in tests.
  */
 const makeMediaStreamMock = <T extends Mockable<MediaStream>>(mock: T): MediaStream => {
-  return makeGenericMock({
-    description: 'navigator.mediaDevices.getUserMedia()',
-    actual: mediaStreamMock(),
-    mock,
-  });
+  return setupPartialMock('navigator.mediaDevices.getUserMedia()', mediaStreamMock(), mock);
 };
 
 export default makeMediaStreamMock;

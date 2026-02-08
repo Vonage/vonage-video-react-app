@@ -11,7 +11,7 @@ import Fade from '@ui/Fade';
 import VividIcon from '@components/VividIcon';
 import usePublisherContext from '@hooks/usePublisherContext';
 import { isRearFacingLabel, isFrontFacingLabel } from '@utils/cameraSwitch';
-import usePreferredCameras from '@hooks/usePreferredCameras/usePreferredCameras';
+import usePreferredCameras from '@hooks/usePreferredCameras';
 
 /**
  * SmallViewportHeader Component

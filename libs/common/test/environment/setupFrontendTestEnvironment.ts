@@ -2,7 +2,6 @@ import { cleanup } from '@testing-library/react';
 import { vi } from 'vitest';
 
 import {
-  setupWindowNavigatorMock,
   setupScrollIntoViewMock,
   setupResizeObserverMock,
   setupHtmlMediaElementGuards,
@@ -23,7 +22,6 @@ import {
  * ```
  */
 export const setupFrontendTestEnvironment = () => {
-  setupWindowNavigatorMock();
   setupResizeObserverMock();
   setupScrollIntoViewMock();
   setupHtmlMediaElementGuards();
