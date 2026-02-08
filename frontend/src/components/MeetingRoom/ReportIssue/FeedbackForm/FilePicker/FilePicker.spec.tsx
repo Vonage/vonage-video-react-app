@@ -3,7 +3,7 @@ import { describe, expect, it, vi } from 'vitest';
 import FilePicker from './FilePicker';
 import { isMobile } from '@common/platform';
 import '@testing-library/jest-dom';
-import { setupWindowNavigatorMock } from '@common-test/environment';
+import { setupWindowNavigatorMock } from '@common-test/fixtures';
 
 vi.mock('@common/platform');
 
