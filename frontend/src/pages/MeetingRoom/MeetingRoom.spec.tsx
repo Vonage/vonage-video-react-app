@@ -4,9 +4,7 @@ import { act, screen, waitFor } from '@testing-library/react';
 import { Publisher, Subscriber } from '@vonage/client-sdk-video';
 import { EventEmitter } from 'node:stream';
 import { ReactElement } from 'react';
-import { UserContextType } from '@Context/user';
 import { SubscriberWrapper } from '@app-types/session';
-import useUserContext from '@hooks/useUserContext';
 import { defaultAudioDevice } from '@utils/mockData/device';
 import useSpeakingDetector, { UseSpeakingDetectorOptions } from '@hooks/useSpeakingDetector';
 import useLayoutManager, { GetLayout } from '@hooks/useLayoutManager';
@@ -48,17 +46,14 @@ vi.mock('react-router-dom', async () => {
   };
 });
 
-vi.mock('@ui/useMediaQuery', () => ({
-  default: vi.fn(),
-}));
+vi.mock('@ui/useMediaQuery');
 
-vi.mock('../../env', () => ({
-  default: {
-    VITE_BYPASS_WAITING_ROOM: false,
-  },
-}));
+// vi.mock('../../env', () => ({
+//   default: {
+//     VITE_BYPASS_WAITING_ROOM: false,
+//   },
+// }));
 
-vi.mock('@hooks/useUserContext');
 vi.mock('@hooks/useSpeakingDetector');
 vi.mock('@hooks/useLayoutManager');
 vi.mock('@hooks/useActiveSpeaker');
@@ -92,16 +87,6 @@ vi.mock('opentok-layout-js', async () => {
     },
   };
 });
-
-const mockUseUserContext = useUserContext as Mock<[], UserContextType>;
-const mockUserContext = {
-  user: {
-    defaultSettings: {
-      videoFilter: undefined,
-      name: 'John Doe',
-    },
-  },
-} as unknown as UserContextType;
 
 const mockUseSpeakingDetector = useSpeakingDetector as Mock<[UseSpeakingDetectorOptions], boolean>;
 const mockUseLayoutManager = useLayoutManager as Mock<[], GetLayout>;
@@ -152,7 +137,7 @@ describe('MeetingRoom', () => {
       state: null,
       key: 'default',
     });
-    mockUseUserContext.mockImplementation(() => mockUserContext);
+
     mockPublisher = Object.assign(new EventEmitter(), {
       applyVideoFilter: vi.fn(),
       clearVideoFilter: vi.fn(),
@@ -471,9 +456,15 @@ describe('MeetingRoom', () => {
   });
 
   it('should redirect to waiting room when username is missing', async () => {
-    setUserContextWithName('');
-
-    render(<MeetingRoom />);
+    render(<MeetingRoom />, {
+      userOptions: {
+        value: {
+          defaultSettings: {
+            name: '',
+          },
+        },
+      },
+    });
 
     await waitFor(() => {
       expect(mockedNavigate).toHaveBeenCalledWith('/waiting-room/test-room-name');
@@ -481,9 +472,15 @@ describe('MeetingRoom', () => {
   });
 
   it('should redirect to waiting room when username is only whitespace', async () => {
-    setUserContextWithName('   ');
-
-    render(<MeetingRoom />);
+    render(<MeetingRoom />, {
+      userOptions: {
+        value: {
+          defaultSettings: {
+            name: '   ',
+          },
+        },
+      },
+    });
 
     await waitFor(() => {
       expect(mockedNavigate).toHaveBeenCalledWith('/waiting-room/test-room-name');
@@ -491,8 +488,6 @@ describe('MeetingRoom', () => {
   });
 
   it('should not redirect to waiting room when username is missing but bypass is true', async () => {
-    setUserContextWithName('');
-
     mockedLocation.mockClear();
     mockedLocation.mockReturnValue({
       pathname: '/room/test-room-name',
@@ -502,7 +497,15 @@ describe('MeetingRoom', () => {
       key: 'default',
     });
 
-    render(<MeetingRoom />);
+    render(<MeetingRoom />, {
+      userOptions: {
+        value: {
+          defaultSettings: {
+            name: '',
+          },
+        },
+      },
+    });
 
     await waitFor(() => {
       expect(mockedNavigate).not.toHaveBeenCalledWith('/waiting-room/test-room-name');
@@ -510,52 +513,25 @@ describe('MeetingRoom', () => {
   });
 });
 
-function setUserContextWithName(name: string) {
-  mockUseUserContext.mockImplementation(
-    () =>
-      ({
-        user: {
-          defaultSettings: {
-            videoFilter: undefined,
-            name,
-          },
+function render(
+  ui: ReactElement,
+  { userOptions, ...options }: PublisherProviderWrapperOptions = {}
+) {
+  const { PublisherProviderWrapper, ...props } = makePublisherProviderWrapper({
+    ...options,
+    userOptions: {
+      ...userOptions,
+      value: {
+        defaultSettings: {
+          name: 'John Doe',
         },
-      }) as unknown as UserContextType
-  );
-}
-
-function render(ui: ReactElement, options: PublisherProviderWrapperOptions = {}) {
-  const { PublisherProviderWrapper, ...props } = makePublisherProviderWrapper(options);
+        ...userOptions?.value,
+      },
+    },
+  });
 
   return {
     ...props,
     ...renderBase(ui, { wrapper: PublisherProviderWrapper }),
   };
 }
-
-// function render(ui: ReactElement, options: PublisherProviderWrapperOptions = {}) {
-//   const { PublisherProviderWrapper, ...props } = makePublisherProviderWrapper(options);
-// ',
-//     });
-
-//     render(<MeetingRoom />);
-
-//     await waitFor(() => {
-//       expect(mockedNavigate).not.toHaveBeenCalledWith('/waiting-room/test-room-name');
-//     });
-//   });
-// });
-
-// function setUserContextWithName(name: string) {
-//   mockUseUserContext.mockImplementation(
-//     () =>
-//       ({
-//         user: {
-//           defaultSettings: {
-//             videoFilter: undefined,
-//             name,
-//           },
-//         },
-//       }) as unknown as UserContextType
-//   );
-// }
