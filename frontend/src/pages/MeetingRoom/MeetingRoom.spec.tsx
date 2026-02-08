@@ -15,13 +15,7 @@ import useToolbarButtons, {
   UseToolbarButtons,
   UseToolbarButtonsProps,
 } from '@hooks/useToolbarButtons';
-import {
-  BackgroundPublisherProviderWrapperOptions,
-  makeBackgroundPublisherProviderWrapper,
-  makeAppConfigProviderWrapper,
-  makeUserProviderWrapper,
-  makePublisherProviderWrapper,
-} from '@test/providers';
+import { PublisherProviderWrapperOptions, makePublisherProviderWrapper } from '@test/providers';
 import { render as renderBase } from '@testing-library/react';
 import useMediaQuery from '@ui/useMediaQuery';
 import MeetingRoom from './MeetingRoom';
@@ -31,6 +25,16 @@ import { setupWindowNavigatorMock } from '@common-test/fixtures';
 const mockedNavigate = vi.fn();
 const mockedParams = { roomName: 'test-room-name' };
 const mockedLocation = vi.fn<[], ReturnType<typeof import('react-router-dom').useLocation>>();
+
+vi.mock('@hooks/useBackgroundPublisherContext', () => ({
+  __esModule: true,
+  default: () => ({
+    initBackgroundLocalPublisher: vi.fn(),
+    destroyBackgroundLocalPublisher: vi.fn(),
+    backgroundPublisher: null,
+    accessStatus: undefined,
+  }),
+}));
 
 vi.mock('react-router-dom', async () => {
   const mod = await vi.importActual<typeof import('react-router-dom')>('react-router-dom');
@@ -511,38 +515,23 @@ describe('MeetingRoom', () => {
 
 function render(
   ui: ReactElement,
-  {
-    userOptions,
-    appConfigOptions,
-    sessionOptions,
-    publisherOptions,
-    backgroundPublisherOptions,
-  }: BackgroundPublisherProviderWrapperOptions = {}
+  { userOptions, ...options }: PublisherProviderWrapperOptions = {}
 ) {
-  const { BasePublisherProviderWrapper, BaseSessionProviderWrapper, User } =
-    makePublisherProviderWrapper({
-      publisherOptions,
-      sessionOptions,
-      userOptions,
-      appConfigOptions,
-    });
-
-  const { BackgroundPublisherProviderWrapper, ...backgroundPublisherContext } =
-    makeBackgroundPublisherProviderWrapper({
-      backgroundPublisherOptions,
-      publisherOptions,
-      sessionOptions,
-      userOptions,
-      appConfigOptions,
-      SessionProviderWrapper: BasePublisherProviderWrapper,
-    });
+  const { PublisherProviderWrapper, ...props } = makePublisherProviderWrapper({
+    ...options,
+    userOptions: {
+      ...userOptions,
+      value: {
+        defaultSettings: {
+          name: 'John Doe',
+        },
+        ...userOptions?.value,
+      },
+    },
+  });
 
   return {
-    backgroundPublisherContext,
-    publisherContext,
-    sessionContext,
-    appConfigContext,
-    userContext,
-    ...renderBase(ui, { wrapper: BackgroundPublisherProviderWrapper }),
+    ...props,
+    ...renderBase(ui, { wrapper: PublisherProviderWrapper }),
   };
 }
