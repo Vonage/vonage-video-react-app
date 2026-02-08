@@ -171,13 +171,13 @@ describe('BackgroundEffects (Waiting Room)', () => {
 
 function render(ui: ReactElement) {
   const { wrapper: roomWrapper } = makeTestProvider([
-    providers.AppConfig,
-    providers.User,
-    providers.Session,
-    providers.Publisher,
-    providers.BackgroundPublisher,
-    providers.PreviewPublisher,
-    providers.AudioOutput,
+    providers.appConfig,
+    providers.user,
+    providers.session,
+    providers.publisher,
+    providers.backgroundPublisher,
+    providers.previewPublisher,
+    providers.audioOutput,
   ]);
 
   const wrapper = composeProviders(SuspenseBoundary, roomWrapper);

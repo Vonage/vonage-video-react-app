@@ -3,8 +3,7 @@ import { render as renderBase, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import BackgroundGallery from './BackgroundGallery';
 import enTranslations from '../../../locales/en.json';
-import { makeTestProvider, providers } from '@test/providers';
-import type { BackgroundPublisherProviderWrapperOptions } from '@test/providers';
+import { makeTestProvider, providers, ProviderOptions } from '@test/providers';
 import { ReactElement } from 'react';
 
 const customImages = [
@@ -161,25 +160,42 @@ describe('BackgroundGallery', () => {
 });
 
 type RenderOptions = {
-  backgroundPublisherOptions?: BackgroundPublisherProviderWrapperOptions['backgroundPublisherContext'];
+  appConfigContext?: ProviderOptions['AppConfigContext'];
+  userContext?: ProviderOptions['UserContext'];
+  sessionContext?: ProviderOptions['SessionContext'];
+  publisherContext?: ProviderOptions['PublisherContext'];
+  backgroundPublisherContext?: ProviderOptions['BackgroundPublisherContext'];
 };
 
-function render(ui: ReactElement, options?: RenderOptions) {
-  const { wrapper, ...backgroundProps } = makeTestProvider(
+function render(
+  ui: ReactElement,
+  {
+    appConfigContext,
+    userContext,
+    sessionContext,
+    publisherContext,
+    backgroundPublisherContext,
+  }: RenderOptions = {}
+) {
+  const { wrapper, ...context } = makeTestProvider(
     [
-      providers.AppConfig,
-      providers.User,
-      providers.Session,
-      providers.Publisher,
-      providers.BackgroundPublisher,
+      providers.appConfig,
+      providers.user,
+      providers.session,
+      providers.publisher,
+      providers.backgroundPublisher,
     ],
     {
-      backgroundPublisherContext: options?.backgroundPublisherOptions,
+      appConfigContext,
+      userContext,
+      sessionContext,
+      publisherContext,
+      backgroundPublisherContext,
     }
   );
 
   return {
-    ...backgroundProps,
+    ...context,
     ...renderBase(ui, { wrapper }),
   };
 }

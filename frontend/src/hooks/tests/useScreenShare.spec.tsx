@@ -2,8 +2,7 @@ import { beforeEach, afterEach, describe, expect, it, vi } from 'vitest';
 import { renderHook as renderHookBase, act } from '@testing-library/react';
 import { Publisher, initPublisher } from '@vonage/client-sdk-video';
 import useScreenShare from '../useScreenShare';
-import { makeTestProvider, providers } from '@test/providers';
-import type { SessionProviderWrapperOptions } from '@test/providers';
+import { makeTestProvider, providers, ProviderOptions } from '@test/providers';
 import EventEmitter from 'events';
 import type VonageVideoClient from '../../utils/VonageVideoClient';
 import { type UserContextType } from '../../Context/user';
@@ -128,14 +127,18 @@ describe('useScreenSharing', () => {
   });
 });
 
-function render(options?: {
-  userOptions?: SessionProviderWrapperOptions;
-  sessionOptions?: SessionProviderWrapperOptions;
-}) {
-  const { wrapper } = makeTestProvider(
-    [providers.AppConfig, providers.User, providers.Session],
-    options
-  );
+type RenderOptions = {
+  appConfigContext?: ProviderOptions['AppConfigContext'];
+  userContext?: ProviderOptions['UserContext'];
+  sessionContext?: ProviderOptions['SessionContext'];
+};
+
+function render({ appConfigContext, userContext, sessionContext }: RenderOptions = {}) {
+  const { wrapper } = makeTestProvider([providers.appConfig, providers.user, providers.session], {
+    appConfigContext,
+    userContext,
+    sessionContext,
+  });
 
   return renderHookBase(() => useScreenShare(), {
     wrapper,

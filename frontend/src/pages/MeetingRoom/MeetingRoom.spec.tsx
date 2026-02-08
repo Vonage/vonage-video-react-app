@@ -528,7 +528,7 @@ function render(
   } = {}
 ) {
   const { wrapper, ...props } = makeTestProvider(
-    [providers.AppConfig, providers.User, providers.Session, providers.Publisher],
+    [providers.appConfig, providers.user, providers.session, providers.publisher],
     {
       userContext: {
         ...userContext,

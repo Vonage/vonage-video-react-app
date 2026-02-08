@@ -12,7 +12,7 @@ import { Subscriber as OTSubscriber } from '@vonage/client-sdk-video';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { SubscriberWrapper } from '@app-types/session';
 import useRoomShareUrl from '@hooks/useRoomShareUrl';
-import { makeSessionProviderWrapper, type SessionProviderWrapperOptions } from '@test/providers';
+import { makeTestProvider, providers, ProviderOptions } from '@test/providers';
 import ParticipantList from './ParticipantList';
 
 const mockedRoomName = { roomName: 'test-room-name' };
@@ -266,8 +266,27 @@ describe('ParticipantList', () => {
   });
 });
 
-function render(ui: ReactElement, options?: SessionProviderWrapperOptions) {
-  const { SessionProviderWrapper } = makeSessionProviderWrapper(options);
+type RenderOptions = {
+  appConfigContext?: ProviderOptions['AppConfigContext'];
+  sessionContext?: ProviderOptions['SessionContext'];
+  userContext?: ProviderOptions['UserContext'];
+};
 
-  return renderBase(ui, { wrapper: SessionProviderWrapper });
+function render(
+  ui: ReactElement,
+  { appConfigContext, sessionContext, userContext }: RenderOptions = {}
+) {
+  const { wrapper, ...context } = makeTestProvider(
+    [providers.appConfig, providers.user, providers.session],
+    {
+      appConfigContext,
+      sessionContext,
+      userContext,
+    }
+  );
+
+  return {
+    ...context,
+    ...renderBase(ui, { wrapper }),
+  };
 }

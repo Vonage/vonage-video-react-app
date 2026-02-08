@@ -1,56 +1,16 @@
 import { describe, expect, it, vi, beforeEach, afterAll } from 'vitest';
 import { renderHook as renderHookBase, waitFor } from '@testing-library/react';
 import OT from '@vonage/client-sdk-video';
-import useUserContext from '@hooks/useUserContext';
 import localStorageMock from '@utils/mockData/localStorageMock';
 import mediaDevices$ from '@core/stores/devices';
 import { setStorageItem, STORAGE_KEYS } from '@utils/storage';
-import { AppConfigProviderWrapperOptions, makeAppConfigProviderWrapper } from '@test/providers';
+import { makeTestProvider, providers, ProviderOptions } from '@test/providers';
 import makeMediaDeviceInfos from '@common-test/fixtures/makeMediaDeviceInfos';
 import usePublisherOptions from './usePublisherOptions';
-import { UserContextType } from '../../user';
-
-vi.mock('@hooks/useUserContext.tsx');
 
 const devices = makeMediaDeviceInfos();
 const audioDevice = devices.find((d) => d.kind === 'audioinput')!;
 const videoDevice = devices.find((d) => d.kind === 'videoinput')!;
-
-const defaultSettings = {
-  publishAudio: false,
-  publishVideo: false,
-  name: '',
-  noiseSuppression: true,
-  audioSource: undefined,
-  videoSource: undefined,
-  publishCaptions: true,
-};
-
-const customSettings = {
-  publishAudio: true,
-  publishVideo: true,
-  name: 'Foo Bar',
-  backgroundFilter: {
-    type: 'backgroundBlur',
-    blurStrength: 'high',
-  },
-  noiseSuppression: false,
-  audioSource: audioDevice.deviceId,
-  videoSource: videoDevice.deviceId,
-  publishCaptions: true,
-};
-
-const mockUserContextWithDefaultSettings = {
-  userContext: {
-    defaultSettings,
-  },
-} as UserContextType;
-
-const mockUserContextWithCustomSettings = {
-  userContext: {
-    defaultSettings: customSettings,
-  },
-} as UserContextType;
 
 describe('usePublisherOptions', () => {
   let enumerateDevicesMock: ReturnType<typeof vi.fn>;
@@ -74,8 +34,6 @@ describe('usePublisherOptions', () => {
       mediaDeviceInfo: [],
       selection: new Map(),
     }));
-
-    vi.mocked(useUserContext).mockImplementation(() => mockUserContextWithDefaultSettings);
   });
 
   afterEach(() => {
@@ -88,7 +46,6 @@ describe('usePublisherOptions', () => {
 
   it('should use default settings', async () => {
     vi.spyOn(OT, 'hasMediaProcessorSupport').mockReturnValue(true);
-    vi.mocked(useUserContext).mockImplementation(() => mockUserContextWithDefaultSettings);
     const { result } = renderHook(() => usePublisherOptions());
     await waitFor(() => {
       expect(result.current).toEqual({
@@ -114,7 +71,6 @@ describe('usePublisherOptions', () => {
 
   it('should not have advanced noise suppression if not supported by browser', async () => {
     vi.spyOn(OT, 'hasMediaProcessorSupport').mockReturnValue(false);
-    vi.mocked(useUserContext).mockImplementation(() => mockUserContextWithDefaultSettings);
     const { result } = renderHook(() => usePublisherOptions());
 
     await waitFor(() => {
@@ -137,7 +93,6 @@ describe('usePublisherOptions', () => {
       ]),
     }));
 
-    vi.mocked(useUserContext).mockImplementation(() => mockUserContextWithCustomSettings);
     const { result } = renderHook(() => usePublisherOptions());
     await waitFor(() => {
       expect(result.current).toEqual({
@@ -217,8 +172,26 @@ describe('usePublisherOptions', () => {
     setStorageItem(STORAGE_KEYS.AUDIO_SOURCE_ENABLED, 'false');
     setStorageItem(STORAGE_KEYS.VIDEO_SOURCE_ENABLED, 'true');
 
-    vi.mocked(useUserContext).mockImplementation(() => mockUserContextWithCustomSettings);
-    const { result } = renderHook(() => usePublisherOptions());
+    const { result } = renderHook(() => usePublisherOptions(), {
+      userContext: {
+        value: {
+          defaultSettings: {
+            publishAudio: true,
+            publishVideo: true,
+            name: 'Foo Bar',
+            backgroundFilter: {
+              type: 'backgroundBlur',
+              blurStrength: 'high',
+            },
+            noiseSuppression: false,
+            audioSource: audioDevice.deviceId,
+            videoSource: videoDevice.deviceId,
+            publishCaptions: true,
+          },
+        },
+      },
+    });
+
     await waitFor(() => {
       expect(result.current?.publishAudio).toBe(false);
       expect(result.current?.publishVideo).toBe(true);
@@ -226,11 +199,37 @@ describe('usePublisherOptions', () => {
   });
 });
 
+type RenderOptions = {
+  appConfigContext?: ProviderOptions['AppConfigContext'];
+  userContext?: ProviderOptions['UserContext'];
+};
+
 function renderHook<Result, Props>(
   render: (initialProps: Props) => Result,
-  { appConfigOptions }: AppConfigProviderWrapperOptions = {}
+  { appConfigContext, userContext }: RenderOptions = {}
 ) {
-  const { AppConfigWrapper } = makeAppConfigProviderWrapper({ appConfigOptions });
+  const { wrapper, ...context } = makeTestProvider([providers.appConfig, providers.user], {
+    appConfigContext,
+    userContext: {
+      value: {
+        ...userContext?.value,
+        defaultSettings: {
+          publishAudio: false,
+          publishVideo: false,
+          name: '',
+          noiseSuppression: true,
+          audioSource: undefined,
+          videoSource: undefined,
+          publishCaptions: true,
+          ...userContext?.value?.defaultSettings,
+        },
+      },
+      ...userContext,
+    },
+  });
 
-  return renderHookBase(render, { wrapper: AppConfigWrapper });
+  return {
+    ...context,
+    ...renderHookBase(render, { wrapper }),
+  };
 }

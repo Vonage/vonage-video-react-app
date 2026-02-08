@@ -3,8 +3,7 @@ import { beforeEach, describe, expect, it, Mock, vi } from 'vitest';
 import { hasMediaProcessorSupport, initPublisher, Publisher } from '@vonage/client-sdk-video';
 import EventEmitter from 'node:events';
 import { defaultAudioDevice, defaultVideoDevice } from '@utils/mockData/device';
-import { makeTestProvider, providers } from '@test/providers';
-import type { BackgroundPublisherProviderWrapperOptions } from '@test/providers';
+import { makeTestProvider, providers, ProviderOptions } from '@test/providers';
 import useBackgroundPublisher from './useBackgroundPublisher';
 import { DEVICE_ACCESS_STATUS } from '@utils/constants';
 
@@ -223,22 +222,42 @@ describe('useBackgroundPublisher', () => {
   });
 });
 
-function render(options?: BackgroundPublisherProviderWrapperOptions) {
-  const { wrapper, backgroundPublisherContext } = makeTestProvider(
+type RenderOptions = {
+  appConfigContext?: ProviderOptions['AppConfigContext'];
+  userContext?: ProviderOptions['UserContext'];
+  sessionContext?: ProviderOptions['SessionContext'];
+  publisherContext?: ProviderOptions['PublisherContext'];
+  backgroundPublisherContext?: ProviderOptions['BackgroundPublisherContext'];
+};
+
+function render({
+  appConfigContext,
+  userContext,
+  sessionContext,
+  publisherContext,
+  backgroundPublisherContext,
+}: RenderOptions = {}) {
+  const { wrapper, ...context } = makeTestProvider(
     [
-      providers.AppConfig,
-      providers.User,
-      providers.Session,
-      providers.Publisher,
-      providers.BackgroundPublisher,
+      providers.appConfig,
+      providers.user,
+      providers.session,
+      providers.publisher,
+      providers.backgroundPublisher,
     ],
-    options
+    {
+      appConfigContext,
+      userContext,
+      sessionContext,
+      publisherContext,
+      backgroundPublisherContext,
+    }
   );
 
   return {
+    ...context,
     ...renderHookBase(() => useBackgroundPublisher(), {
       wrapper,
     }),
-    backgroundPublisherContext,
   };
 }

@@ -1,15 +1,10 @@
 import { render as renderBase, screen, fireEvent, waitFor } from '@testing-library/react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { ReactElement } from 'react';
-import {
-  AppConfigProviderWrapperOptions,
-  makeAppConfigProviderWrapper,
-  makePreviewPublisherProviderWrapper,
-  PreviewPublisherProviderWrapperOptions,
-} from '@test/providers';
+import { makeTestProvider, providers, ProviderOptions } from '@test/providers';
 import MicButton from './MicButton';
-import composeProviders from '@common/helpers/composeProviders';
 import SuspenseBoundary from '@common/components/SuspenseBoundary/SuspenseBoundary';
+import composeProviders from '@common/helpers/composeProviders';
 
 describe('MicButton', () => {
   beforeEach(() => {
@@ -96,34 +91,28 @@ describe('MicButton', () => {
 });
 
 type RenderOptions = {
-  appConfigOptions?: AppConfigProviderWrapperOptions['appConfigOptions'];
-  previewPublisherOptions?: PreviewPublisherProviderWrapperOptions['previewPublisherOptions'];
+  appConfigContext?: ProviderOptions['AppConfigContext'];
+  userContext?: ProviderOptions['UserContext'];
+  previewPublisherContext?: ProviderOptions['PreviewPublisherContext'];
 };
 
 function render(
   ui: ReactElement,
-  { appConfigOptions, previewPublisherOptions }: RenderOptions = {}
+  { appConfigContext, userContext, previewPublisherContext }: RenderOptions = {}
 ) {
-  // TODO: If the component uses the context we cannot optionally wrap with the provider, we should always wrap with the provider!
-  const { AppConfigWrapper } = makeAppConfigProviderWrapper({ appConfigOptions });
-
-  if (!previewPublisherOptions) {
-    return renderBase(ui, {
-      wrapper: AppConfigWrapper,
-    });
-  }
-
-  const { PreviewPublisherProviderWrapper } = makePreviewPublisherProviderWrapper({
-    previewPublisherOptions,
-  });
-
-  const Wrapper = composeProviders(
-    SuspenseBoundary,
-    AppConfigWrapper,
-    PreviewPublisherProviderWrapper
+  const { wrapper: MainWrapper, ...context } = makeTestProvider(
+    [providers.appConfig, providers.user, providers.previewPublisher],
+    {
+      appConfigContext,
+      userContext,
+      previewPublisherContext,
+    }
   );
 
-  return renderBase(ui, {
-    wrapper: Wrapper,
-  });
+  const wrapper = composeProviders(SuspenseBoundary, MainWrapper);
+
+  return {
+    ...context,
+    ...renderBase(ui, { wrapper }),
+  };
 }

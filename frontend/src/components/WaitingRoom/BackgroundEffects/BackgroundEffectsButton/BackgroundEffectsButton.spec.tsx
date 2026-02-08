@@ -2,7 +2,7 @@ import { render as renderBase, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, expect, it, vi } from 'vitest';
 import { ReactElement } from 'react';
-import { AppConfigProviderWrapperOptions, makeAppConfigProviderWrapper } from '@test/providers';
+import { makeTestProvider, providers, ProviderOptions } from '@test/providers';
 import BackgroundEffectsButton from './BackgroundEffectsButton';
 
 const { mockHasMediaProcessorSupport } = vi.hoisted(() => {
@@ -51,8 +51,17 @@ describe('BackgroundEffectsButton', () => {
   });
 });
 
-function render(ui: ReactElement, { appConfigOptions }: AppConfigProviderWrapperOptions = {}) {
-  const { AppConfigWrapper } = makeAppConfigProviderWrapper({ appConfigOptions });
+type RenderOptions = {
+  appConfigContext?: ProviderOptions['AppConfigContext'];
+};
 
-  return renderBase(ui, { wrapper: AppConfigWrapper });
+function render(ui: ReactElement, { appConfigContext }: RenderOptions = {}) {
+  const { wrapper, ...context } = makeTestProvider([providers.appConfig], {
+    appConfigContext,
+  });
+
+  return {
+    ...context,
+    ...renderBase(ui, { wrapper }),
+  };
 }

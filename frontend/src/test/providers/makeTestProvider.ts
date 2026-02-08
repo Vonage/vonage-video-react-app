@@ -16,26 +16,26 @@ import type { Any, AnyFunction } from 'react-global-state-hooks';
  * Keep updated accordingly to the providers you have and their dependencies.
  */
 export enum providers {
-  AppConfig = 'appConfig',
-  User = 'user',
-  Session = 'session',
-  Publisher = 'publisher',
-  BackgroundPublisher = 'backgroundPublisher',
-  PreviewPublisher = 'previewPublisher',
-  AudioOutput = 'audioOutput',
+  appConfig = 'appConfig',
+  user = 'user',
+  session = 'session',
+  publisher = 'publisher',
+  backgroundPublisher = 'backgroundPublisher',
+  previewPublisher = 'previewPublisher',
+  audioOutput = 'audioOutput',
 }
 
 /**
  * Keep updated accordingly to the providers you have and their dependencies.
  */
 const MAKERS = {
-  [providers.AppConfig]: makeAppConfigProviderWrapper,
-  [providers.User]: makeUserProviderWrapper,
-  [providers.Session]: makeSessionProviderWrapper,
-  [providers.Publisher]: makePublisherProviderWrapper,
-  [providers.BackgroundPublisher]: makeBackgroundPublisherProviderWrapper,
-  [providers.PreviewPublisher]: makePreviewPublisherProviderWrapper,
-  [providers.AudioOutput]: makeAudioOutputProviderWrapper,
+  [providers.appConfig]: makeAppConfigProviderWrapper,
+  [providers.user]: makeUserProviderWrapper,
+  [providers.session]: makeSessionProviderWrapper,
+  [providers.publisher]: makePublisherProviderWrapper,
+  [providers.backgroundPublisher]: makeBackgroundPublisherProviderWrapper,
+  [providers.previewPublisher]: makePreviewPublisherProviderWrapper,
+  [providers.audioOutput]: makeAudioOutputProviderWrapper,
 } as const;
 
 type ProvidersMakers = typeof MAKERS;
@@ -44,18 +44,18 @@ type ProvidersMakers = typeof MAKERS;
  * Keep updated accordingly to the providers you have and their dependencies.
  */
 const PROVIDER_DEPENDENCIES = {
-  [providers.AppConfig]: [],
-  [providers.User]: [],
-  [providers.Session]: [providers.AppConfig, providers.User],
-  [providers.Publisher]: [providers.AppConfig, providers.User, providers.Session],
-  [providers.BackgroundPublisher]: [
-    providers.AppConfig,
-    providers.User,
-    providers.Session,
-    providers.Publisher,
+  [providers.appConfig]: [],
+  [providers.user]: [],
+  [providers.session]: [providers.appConfig, providers.user],
+  [providers.publisher]: [providers.appConfig, providers.user, providers.session],
+  [providers.backgroundPublisher]: [
+    providers.appConfig,
+    providers.user,
+    providers.session,
+    providers.publisher,
   ],
-  [providers.PreviewPublisher]: [providers.AppConfig, providers.User],
-  [providers.AudioOutput]: [],
+  [providers.previewPublisher]: [providers.appConfig, providers.user],
+  [providers.audioOutput]: [],
 } as const;
 
 /**
@@ -69,7 +69,7 @@ type ProviderOptionsFor<Keys extends readonly providers[]> = {
  * Infer the context britches for the provided keys
  */
 type ProviderContextsFor<Keys extends readonly providers[]> = {
-  [K in Keys[number] as `${K}Context`]: ReturnType<ProvidersMakers[K]>['context'];
+  [K in Keys[number] as `${K}Context`]: NonNullable<ReturnType<ProvidersMakers[K]>['context']>;
 };
 
 function makeTestProvider<

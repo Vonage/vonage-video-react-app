@@ -1,7 +1,7 @@
 import { describe, expect, it, vi } from 'vitest';
 import { fireEvent, render as renderBase, screen } from '@testing-library/react';
 import { ReactElement } from 'react';
-import { AppConfigProviderWrapperOptions, makeAppConfigProviderWrapper } from '@test/providers';
+import { makeTestProvider, providers, ProviderOptions } from '@test/providers';
 import ScreenSharingButton, { ScreenShareButtonProps } from './ScreenSharingButton';
 
 describe('ScreenSharingButton', () => {
@@ -59,8 +59,17 @@ describe('ScreenSharingButton', () => {
   });
 });
 
-function render(ui: ReactElement, { appConfigOptions }: AppConfigProviderWrapperOptions = {}) {
-  const { AppConfigWrapper } = makeAppConfigProviderWrapper({ appConfigOptions });
+type RenderOptions = {
+  appConfigContext?: ProviderOptions['AppConfigContext'];
+};
 
-  return renderBase(ui, { wrapper: AppConfigWrapper });
+function render(ui: ReactElement, { appConfigContext }: RenderOptions = {}) {
+  const { wrapper, ...context } = makeTestProvider([providers.appConfig], {
+    appConfigContext,
+  });
+
+  return {
+    ...context,
+    ...renderBase(ui, { wrapper }),
+  };
 }

@@ -41,11 +41,11 @@ describe('BackgroundEffectOptions', () => {
 
 function render(ui: ReactElement) {
   const { wrapper } = makeTestProvider([
-    providers.AppConfig,
-    providers.User,
-    providers.Session,
-    providers.Publisher,
-    providers.BackgroundPublisher,
+    providers.appConfig,
+    providers.user,
+    providers.session,
+    providers.publisher,
+    providers.backgroundPublisher,
   ]);
 
   return renderBase(ui, {

@@ -1,7 +1,7 @@
 import { act, render as renderBase, screen } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi, Mock } from 'vitest';
 import { ReactElement, useState } from 'react';
-import { AppConfigProviderWrapperOptions, makeAppConfigProviderWrapper } from '@test/providers';
+import { makeTestProvider, providers, ProviderOptions } from '@test/providers';
 import useMediaQuery from '@ui/useMediaQuery';
 import EmojiGridButton from './EmojiGridButton';
 
@@ -59,8 +59,17 @@ describe('EmojiGridButton', () => {
   });
 });
 
-function render(ui: ReactElement, { appConfigOptions }: AppConfigProviderWrapperOptions = {}) {
-  const { AppConfigWrapper } = makeAppConfigProviderWrapper({ appConfigOptions });
+type RenderOptions = {
+  appConfigContext?: ProviderOptions['AppConfigContext'];
+};
 
-  return renderBase(ui, { wrapper: AppConfigWrapper });
+function render(ui: ReactElement, { appConfigContext }: RenderOptions = {}) {
+  const { wrapper, ...context } = makeTestProvider([providers.appConfig], {
+    appConfigContext,
+  });
+
+  return {
+    ...context,
+    ...renderBase(ui, { wrapper }),
+  };
 }

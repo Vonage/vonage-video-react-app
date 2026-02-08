@@ -1,16 +1,12 @@
 import { render as renderBase, screen, fireEvent, waitFor } from '@testing-library/react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import type { ReactElement } from 'react';
-import { makeTestProvider, providers } from '@test/providers';
-import type {
-  PreviewPublisherProviderWrapperOptions,
-  BackgroundPublisherProviderWrapperOptions,
-  AppConfigProviderWrapperOptions,
-} from '@test/providers';
+import { makeTestProvider, ProviderOptions, providers } from '@test/providers';
 import type { PreviewPublisherContextType } from '@Context/PreviewPublisherProvider';
 import type { BackgroundPublisherContextType } from '@Context/BackgroundPublisherProvider';
 import CameraButton from './CameraButton';
 import SuspenseBoundary from '@common/components/SuspenseBoundary/SuspenseBoundary';
+import composeProviders from '@common/helpers/composeProviders';
 
 type PreviewPublisherContextWithMock = PreviewPublisherContextType & {
   _previewToggleMockApplied?: boolean;
@@ -152,37 +148,48 @@ describe('CameraButton', () => {
 });
 
 type RenderOptions = {
-  previewPublisherOptions?: PreviewPublisherProviderWrapperOptions['previewPublisherOptions'];
-  backgroundPublisherOptions?: BackgroundPublisherProviderWrapperOptions['backgroundPublisherContext'];
-  appConfigOptions?: AppConfigProviderWrapperOptions['appConfigOptions'];
+  appConfigContext?: ProviderOptions['AppConfigContext'];
+  userContext?: ProviderOptions['UserContext'];
+  sessionContext?: ProviderOptions['SessionContext'];
+  publisherContext?: ProviderOptions['PublisherContext'];
+  backgroundPublisherContext?: ProviderOptions['BackgroundPublisherContext'];
+  previewPublisherContext?: ProviderOptions['PreviewPublisherContext'];
 };
 
 function render(
   ui: ReactElement,
-  { previewPublisherOptions, backgroundPublisherOptions, appConfigOptions }: RenderOptions = {}
+  {
+    appConfigContext,
+    userContext,
+    sessionContext,
+    publisherContext,
+    backgroundPublisherContext,
+    previewPublisherContext,
+  }: RenderOptions = {}
 ) {
-  const { wrapper, ...props } = makeTestProvider(
+  const { wrapper: ButtonWrapper, ...props } = makeTestProvider(
     [
-      providers.AppConfig,
-      providers.User,
-      providers.Session,
-      providers.Publisher,
-      providers.BackgroundPublisher,
-      providers.PreviewPublisher,
+      providers.appConfig,
+      providers.user,
+      providers.session,
+      providers.publisher,
+      providers.backgroundPublisher,
+      providers.previewPublisher,
     ],
     {
-      appConfigContext: { appConfigOptions },
-      previewPublisherContext: { previewPublisherOptions },
-      backgroundPublisherContext: { backgroundPublisherOptions },
+      appConfigContext,
+      userContext,
+      sessionContext,
+      publisherContext,
+      backgroundPublisherContext,
+      previewPublisherContext,
     }
   );
 
-  const Wrapper: React.FC<React.PropsWithChildren> = ({ children }) => (
-    <SuspenseBoundary>{wrapper({ children })}</SuspenseBoundary>
-  );
+  const wrapper = composeProviders(SuspenseBoundary, ButtonWrapper);
 
   return {
     ...props,
-    ...renderBase(ui, { wrapper: Wrapper }),
+    ...renderBase(ui, { wrapper }),
   };
 }

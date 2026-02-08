@@ -1,8 +1,7 @@
 import { describe, it, beforeEach, vi, expect } from 'vitest';
 import { render as renderBase, screen, fireEvent, waitFor } from '@testing-library/react';
 import { ReactElement } from 'react';
-import { makeTestProvider, providers } from '@test/providers';
-import type { PublisherProviderWrapperOptions } from '@test/providers';
+import { makeTestProvider, providers, ProviderOptions } from '@test/providers';
 import makeMediaDeviceInfos from '@common-test/fixtures/makeMediaDeviceInfos';
 import type MediaDevices$ from '@core/stores/devices';
 import type InputAudioDevicesType from './InputAudioDevices';
@@ -87,7 +86,7 @@ describe('InputAudioDevices Component', () => {
     render(<InputAudioDevices handleToggle={mockHandleToggle} />, {
       publisherContext: {
         initialValue: {
-          publisherContext: null,
+          publisher: null,
           isPublishing: false,
         },
       },
@@ -144,9 +143,16 @@ describe('InputAudioDevices Component', () => {
 
 function render(
   ui: ReactElement,
-  options: {
-    publisherOptions?: PublisherProviderWrapperOptions;
-    appConfigOptions?: { meetingRoomSettings?: any };
+  {
+    appConfigContext,
+    userContext,
+    sessionContext,
+    publisherContext,
+  }: {
+    appConfigContext?: ProviderOptions['AppConfigContext'];
+    userContext?: ProviderOptions['UserContext'];
+    sessionContext?: ProviderOptions['SessionContext'];
+    publisherContext?: ProviderOptions['PublisherContext'];
   } = {}
 ) {
   const mockPublisher = Object.assign(new EventEmitter(), {
@@ -157,16 +163,18 @@ function render(
   }) as unknown as Publisher;
 
   const { wrapper, ...context } = makeTestProvider(
-    [providers.AppConfig, providers.User, providers.Session, providers.Publisher],
+    [providers.appConfig, providers.user, providers.session, providers.publisher],
     {
-      ...options,
       publisherContext: {
         initialValue: {
-          publisherContext: mockPublisher,
+          publisher: mockPublisher,
           isPublishing: true,
-          ...options.publisherOptions?.initialValue,
+          ...publisherContext?.initialValue,
         },
       },
+      appConfigContext,
+      userContext,
+      sessionContext,
     }
   );
 

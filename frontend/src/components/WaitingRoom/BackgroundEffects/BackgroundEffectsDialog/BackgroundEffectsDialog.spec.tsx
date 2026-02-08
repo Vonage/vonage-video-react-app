@@ -3,7 +3,7 @@ import userEvent from '@testing-library/user-event';
 import type { ReactElement } from 'react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { makeTestProvider, providers } from '@test/providers';
-import type { BackgroundPublisherProviderWrapperOptions } from '@test/providers';
+import type { ProviderOptions } from '@test/providers';
 import BackgroundEffectsDialog from './BackgroundEffectsDialog';
 
 describe('BackgroundEffectsDialog', () => {
@@ -70,17 +70,38 @@ describe('BackgroundEffectsDialog', () => {
   });
 });
 
-function render(ui: ReactElement, options: BackgroundPublisherProviderWrapperOptions = {}) {
+type RenderOptions = {
+  appConfigContext?: ProviderOptions['AppConfigContext'];
+  userContext?: ProviderOptions['UserContext'];
+  sessionContext?: ProviderOptions['SessionContext'];
+  publisherContext?: ProviderOptions['PublisherContext'];
+  backgroundPublisherContext?: ProviderOptions['BackgroundPublisherContext'];
+};
+
+function render(
+  ui: ReactElement,
+  {
+    appConfigContext,
+    userContext,
+    sessionContext,
+    publisherContext,
+    backgroundPublisherContext,
+  }: RenderOptions = {}
+) {
   const { wrapper, ...props } = makeTestProvider(
     [
-      providers.AppConfig,
-      providers.User,
-      providers.Session,
-      providers.Publisher,
-      providers.BackgroundPublisher,
+      providers.appConfig,
+      providers.user,
+      providers.session,
+      providers.publisher,
+      providers.backgroundPublisher,
     ],
     {
-      ...options,
+      appConfigContext,
+      userContext,
+      sessionContext,
+      publisherContext,
+      backgroundPublisherContext,
     }
   );
 

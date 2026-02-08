@@ -11,7 +11,7 @@ describe('useChat', () => {
   });
 
   it('onChatMessage should parse message and update messages state', () => {
-    const { wrapper } = makeTestProvider([providers.User]);
+    const { wrapper } = makeTestProvider([providers.user]);
     const { result } = renderHook(() => useChat({ signal: mockSignal }), {
       wrapper,
     });
@@ -28,7 +28,7 @@ describe('useChat', () => {
   });
 
   it('sendChatMessage should send message via signal', () => {
-    const { wrapper } = makeTestProvider([providers.User], {
+    const { wrapper } = makeTestProvider([providers.user], {
       userContext: {
         __interceptor: (context) => {
           context!.user.defaultSettings.name = 'Local User';

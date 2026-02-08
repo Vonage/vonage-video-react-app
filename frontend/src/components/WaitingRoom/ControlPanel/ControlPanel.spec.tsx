@@ -1,13 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { cleanup, screen, render as renderBase } from '@testing-library/react';
 import { ReactElement } from 'react';
-import { makeTestProvider, providers } from '@test/providers';
-import type {
-  AppConfigProviderWrapperOptions,
-  UserProviderWrapperOptions,
-  PreviewPublisherProviderWrapperOptions,
-  AudioOutputProviderWrapperOptions,
-} from '@test/providers';
+import { makeTestProvider, providers, ProviderOptions } from '@test/providers';
 import backgroundEffectsDialog$ from '@Context/BackgroundEffectsDialog';
 import precallNetworkTestDialog$ from '@Context/PrecallNetworkTestDialog';
 import ControlPanel from '.';
@@ -143,34 +137,58 @@ describe('ControlPanel', () => {
   });
 });
 
+type RenderOptions = {
+  appConfigContext?: ProviderOptions['AppConfigContext'];
+  userContext?: ProviderOptions['UserContext'];
+  sessionContext?: ProviderOptions['SessionContext'];
+  publisherContext?: ProviderOptions['PublisherContext'];
+  backgroundPublisherContext?: ProviderOptions['BackgroundPublisherContext'];
+  previewPublisherContext?: ProviderOptions['PreviewPublisherContext'];
+  audioOutputContext?: ProviderOptions['AudioOutputContext'];
+};
+
 function render(
   ui: ReactElement,
-  options?: {
-    appConfigOptions?: AppConfigProviderWrapperOptions;
-    userOptions?: UserProviderWrapperOptions;
-    previewPublisherOptions?: PreviewPublisherProviderWrapperOptions;
-    audioOutputOptions?: AudioOutputProviderWrapperOptions;
-  }
+  {
+    appConfigContext,
+    userContext,
+    sessionContext,
+    publisherContext,
+    backgroundPublisherContext,
+    previewPublisherContext,
+    audioOutputContext,
+  }: RenderOptions = {}
 ) {
-  const { wrapper: roomWrapper } = makeTestProvider(
+  const { wrapper: ControlPanelWrapper, ...context } = makeTestProvider(
     [
-      providers.AppConfig,
-      providers.User,
-      providers.Session,
-      providers.Publisher,
-      providers.BackgroundPublisher,
-      providers.PreviewPublisher,
-      providers.AudioOutput,
+      providers.appConfig,
+      providers.user,
+      providers.session,
+      providers.publisher,
+      providers.backgroundPublisher,
+      providers.previewPublisher,
+      providers.audioOutput,
     ],
-    options
+    {
+      appConfigContext,
+      userContext,
+      sessionContext,
+      publisherContext,
+      backgroundPublisherContext,
+      previewPublisherContext,
+      audioOutputContext,
+    }
   );
 
   const wrapper = composeProviders(
     SuspenseBoundary,
-    roomWrapper,
+    ControlPanelWrapper,
     backgroundEffectsDialog$.Provider,
     precallNetworkTestDialog$.Provider
   );
 
-  return renderBase(ui, { ...options, wrapper });
+  return {
+    ...context,
+    ...renderBase(ui, { wrapper }),
+  };
 }
