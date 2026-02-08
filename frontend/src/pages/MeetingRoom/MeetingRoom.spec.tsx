@@ -22,10 +22,12 @@ import { render as renderBase } from '@testing-library/react';
 import useMediaQuery from '@ui/useMediaQuery';
 import MeetingRoom from './MeetingRoom';
 import type { Box } from 'opentok-layout-js';
+import { setupWindowNavigatorMock } from '@common-test/fixtures';
 
 const mockedNavigate = vi.fn();
 const mockedParams = { roomName: 'test-room-name' };
 const mockedLocation = vi.fn<[], ReturnType<typeof import('react-router-dom').useLocation>>();
+
 vi.mock('@hooks/useBackgroundPublisherContext', () => ({
   __esModule: true,
   default: () => ({
@@ -35,6 +37,7 @@ vi.mock('@hooks/useBackgroundPublisherContext', () => ({
     accessStatus: undefined,
   }),
 }));
+
 vi.mock('react-router-dom', async () => {
   const mod = await vi.importActual<typeof import('react-router-dom')>('react-router-dom');
   return {
@@ -44,6 +47,7 @@ vi.mock('react-router-dom', async () => {
     useLocation: () => mockedLocation(),
   };
 });
+
 vi.mock('@ui/useMediaQuery', () => ({
   default: vi.fn(),
 }));
@@ -98,6 +102,7 @@ const mockUserContext = {
     },
   },
 } as unknown as UserContextType;
+
 const mockUseSpeakingDetector = useSpeakingDetector as Mock<[], boolean>;
 const mockUseLayoutManager = useLayoutManager as Mock<[], GetLayout>;
 const mockUseActiveSpeaker = useActiveSpeaker as Mock<[], string | undefined>;
@@ -133,7 +138,17 @@ describe('MeetingRoom', () => {
   let mockPublisher: Publisher;
 
   beforeEach(() => {
-    mockedNavigate.mockClear();
+    // after initializing the store to avoid having to mock all the mediaDevices$ sync logic.
+    setupWindowNavigatorMock({
+      // language: undefined,
+      // userAgent: undefined,
+      // userAgentData: undefined,
+      // onLine: undefined,
+      // cookieEnabled: undefined,
+    });
+
+    console.log('navigator.mediaDevices', navigator.mediaDevices);
+
     mockedLocation.mockReturnValue({
       pathname: '/room/test-room-name',
       search: '',
