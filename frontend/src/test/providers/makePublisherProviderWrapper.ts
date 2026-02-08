@@ -42,12 +42,14 @@ function makePublisherProviderWrapper({
   appConfigOptions,
   ...options
 }: PublisherProviderWrapperOptions = {}) {
-  const sessionResult = options.SessionProviderWrapper
+  const { SessionProviderWrapper, ...sessionProvider } = options.SessionProviderWrapper
     ? {
         SessionProviderWrapper: options.SessionProviderWrapper,
         BaseSessionProviderWrapper: options.SessionProviderWrapper,
         sessionContext: { current: null! },
+        BaseUserProviderWrapper: undefined,
         userContext: { current: null! },
+        BaseAppConfigWrapper: undefined,
         appConfigContext: { current: null! },
       }
     : makeSessionProviderWrapper({
@@ -58,8 +60,6 @@ function makePublisherProviderWrapper({
         UserProviderWrapper: options.UserProviderWrapper,
       });
 
-  const { SessionProviderWrapper, BaseSessionProviderWrapper, ...session } = sessionResult;
-
   const [BasePublisherProviderWrapper, publisherContext] = makeGenericProviderWrapper(
     PublisherProvider,
     PublisherContext,
@@ -69,11 +69,10 @@ function makePublisherProviderWrapper({
   const composeWrapper = composeProviders(SessionProviderWrapper, BasePublisherProviderWrapper);
 
   return {
-    ...session,
-    BasePublisherProviderWrapper,
-    BaseSessionProviderWrapper,
+    ...sessionProvider,
     publisherContext,
     PublisherProviderWrapper: composeWrapper,
+    BasePublisherProviderWrapper,
   };
 }
 

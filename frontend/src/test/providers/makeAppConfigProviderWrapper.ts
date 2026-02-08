@@ -32,7 +32,11 @@ function makeAppConfigProviderWrapper({ appConfigOptions }: AppConfigProviderWra
       value: initialState,
     });
 
-  return { AppConfigWrapper, appConfigContext };
+  return {
+    AppConfigWrapper,
+    BaseAppConfigWrapper: AppConfigWrapper,
+    appConfigContext,
+  };
 }
 
 export default makeAppConfigProviderWrapper;

@@ -23,7 +23,11 @@ function makeAudioOutputProviderWrapper({
     audioOutputOptions
   );
 
-  return { AudioOutputProviderWrapper, audioOutputContext };
+  return {
+    AudioOutputProviderWrapper,
+    BaseAudioOutputProviderWrapper: AudioOutputProviderWrapper,
+    audioOutputContext,
+  };
 }
 
 export default makeAudioOutputProviderWrapper;

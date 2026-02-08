@@ -54,32 +54,27 @@ function makeBackgroundPublisherProviderWrapper({
   appConfigOptions,
   ...options
 }: BackgroundPublisherProviderWrapperOptions = {}) {
-  const publisherResult = options.PublisherProviderWrapper
+  const { PublisherProviderWrapper, ...publisherProvider } = options.PublisherProviderWrapper
     ? {
-        PublisherProviderWrapper: options.PublisherProviderWrapper,
+        BaseAppConfigWrapper: undefined,
         BasePublisherProviderWrapper: options.PublisherProviderWrapper,
         BaseSessionProviderWrapper: undefined,
+        BaseUserProviderWrapper: undefined,
+        PublisherProviderWrapper: options.PublisherProviderWrapper,
+        appConfigContext: { current: null! },
         publisherContext: { current: null! },
         sessionContext: { current: null! },
         userContext: { current: null! },
-        appConfigContext: { current: null! },
       }
     : makePublisherProviderWrapper({
+        AppConfigWrapper: options.AppConfigWrapper,
+        SessionProviderWrapper: options.SessionProviderWrapper,
+        UserProviderWrapper: options.UserProviderWrapper,
+        appConfigOptions,
         publisherOptions,
         sessionOptions,
         userOptions,
-        appConfigOptions,
-        SessionProviderWrapper: options.SessionProviderWrapper,
-        AppConfigWrapper: options.AppConfigWrapper,
-        UserProviderWrapper: options.UserProviderWrapper,
       });
-
-  const {
-    PublisherProviderWrapper,
-    BasePublisherProviderWrapper,
-    BaseSessionProviderWrapper,
-    ...publisher
-  } = publisherResult;
 
   const [BaseBackgroundPublisherProviderWrapper, backgroundPublisherContext] =
     makeGenericProviderWrapper(
@@ -94,12 +89,10 @@ function makeBackgroundPublisherProviderWrapper({
   );
 
   return {
-    ...publisher,
-    BaseBackgroundPublisherProviderWrapper,
-    BasePublisherProviderWrapper,
-    BaseSessionProviderWrapper,
+    ...publisherProvider,
     backgroundPublisherContext,
     BackgroundPublisherProviderWrapper: composeWrapper,
+    BaseBackgroundPublisherProviderWrapper,
   };
 }
 

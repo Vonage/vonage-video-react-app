@@ -48,16 +48,21 @@ function makeSessionProviderWrapper({
     sessionOptions
   );
 
-  const appConfigResult = options.AppConfigWrapper
-    ? { AppConfigWrapper: options.AppConfigWrapper, appConfigContext: { current: null! } }
+  const { AppConfigWrapper, ...appConfigProvider } = options.AppConfigWrapper
+    ? {
+        AppConfigWrapper: options.AppConfigWrapper,
+        BaseAppConfigWrapper: options.AppConfigWrapper,
+        appConfigContext: { current: null! },
+      }
     : makeAppConfigProviderWrapper({ appConfigOptions });
 
-  const userResult = options.UserProviderWrapper
-    ? { UserProviderWrapper: options.UserProviderWrapper, userContext: { current: null! } }
+  const { UserProviderWrapper, ...userProvider } = options.UserProviderWrapper
+    ? {
+        UserProviderWrapper: options.UserProviderWrapper,
+        BaseUserProviderWrapper: options.UserProviderWrapper,
+        userContext: { current: null! },
+      }
     : makeUserProviderWrapper({ userOptions });
-
-  const { AppConfigWrapper, appConfigContext } = appConfigResult;
-  const { UserProviderWrapper, userContext } = userResult;
 
   const composeWrapper = composeProviders(
     AppConfigWrapper,
@@ -66,11 +71,11 @@ function makeSessionProviderWrapper({
   );
 
   return {
+    ...appConfigProvider,
+    ...userProvider,
     BaseSessionProviderWrapper,
     SessionProviderWrapper: composeWrapper,
     sessionContext,
-    userContext,
-    appConfigContext,
   };
 }
 

@@ -21,7 +21,11 @@ function makeUserProviderWrapper({ userOptions }: UserProviderWrapperOptions = {
     userOptions
   );
 
-  return { UserProviderWrapper, userContext };
+  return {
+    UserProviderWrapper,
+    BaseUserProviderWrapper: UserProviderWrapper,
+    userContext,
+  };
 }
 
 export default makeUserProviderWrapper;

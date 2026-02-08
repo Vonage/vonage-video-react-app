@@ -54,16 +54,21 @@ function makePreviewPublisherProviderWrapper({
     previewPublisherOptions
   );
 
-  const userResult = options.UserProviderWrapper
-    ? { UserProviderWrapper: options.UserProviderWrapper, userContext: { current: null! } }
+  const { UserProviderWrapper, ...userProvider } = options.UserProviderWrapper
+    ? {
+        UserProviderWrapper: options.UserProviderWrapper,
+        BaseUserProviderWrapper: options.UserProviderWrapper,
+        userContext: { current: null! },
+      }
     : makeUserProviderWrapper({ userOptions });
 
-  const appConfigResult = options.AppConfigWrapper
-    ? { AppConfigWrapper: options.AppConfigWrapper, appConfigContext: { current: null! } }
+  const { AppConfigWrapper, ...appConfigProvider } = options.AppConfigWrapper
+    ? {
+        AppConfigWrapper: options.AppConfigWrapper,
+        BaseAppConfigWrapper: options.AppConfigWrapper,
+        appConfigContext: { current: null! },
+      }
     : makeAppConfigProviderWrapper({ appConfigOptions });
-
-  const { UserProviderWrapper, userContext } = userResult;
-  const { AppConfigWrapper, appConfigContext } = appConfigResult;
 
   const composeWrapper = composeProviders(
     AppConfigWrapper,
@@ -72,11 +77,11 @@ function makePreviewPublisherProviderWrapper({
   );
 
   return {
+    ...userProvider,
+    ...appConfigProvider,
     BasePreviewPublisherProviderWrapper,
-    PreviewPublisherProviderWrapper: composeWrapper,
     previewPublisherContext,
-    userContext,
-    appConfigContext,
+    PreviewPublisherProviderWrapper: composeWrapper,
   };
 }
 
