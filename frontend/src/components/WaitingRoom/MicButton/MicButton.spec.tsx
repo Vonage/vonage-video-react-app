@@ -29,7 +29,7 @@ describe('MicButton', () => {
 
   it('renders the mic on icon when audio is enabled', async () => {
     render(<MicButton />, {
-      previewPublisherOptions: {
+      previewPublisherContext: {
         __onCreated: (context) => {
           context.isAudioEnabled = true;
         },
@@ -43,7 +43,7 @@ describe('MicButton', () => {
 
   it('renders the mic off icon when audio is disabled', async () => {
     render(<MicButton />, {
-      previewPublisherOptions: {
+      previewPublisherContext: {
         __onCreated: (context) => {
           context.isAudioEnabled = false;
         },
@@ -58,7 +58,7 @@ describe('MicButton', () => {
   it('calls toggleAudio when clicked', async () => {
     const toggleAudioMock = vi.fn();
     render(<MicButton />, {
-      previewPublisherOptions: {
+      previewPublisherContext: {
         __onCreated: (context) => {
           context.isAudioEnabled = true;
           const originalToggle = context.toggleAudio.bind(context);
@@ -79,7 +79,7 @@ describe('MicButton', () => {
 
   it('is not rendered when allowMicrophoneControl is false', async () => {
     render(<MicButton />, {
-      appConfigOptions: {
+      appConfigContext: {
         value: {
           isAppConfigLoaded: true,
           audioSettings: {

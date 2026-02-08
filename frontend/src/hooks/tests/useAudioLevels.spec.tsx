@@ -26,7 +26,7 @@ describe('usePublisherAudioLevels', () => {
 
     mockPublisher = new EventEmitter();
     const mockPublisherContext = {
-      publisher: mockPublisher as unknown as Publisher,
+      publisherContext: mockPublisher as unknown as Publisher,
       isPublishing: true,
     } as PublisherContextType;
     mockUsePublisherContext.mockImplementation(() => mockPublisherContext);

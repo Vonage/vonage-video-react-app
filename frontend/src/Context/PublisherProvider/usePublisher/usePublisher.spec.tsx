@@ -26,7 +26,7 @@ const defaultSettings = {
   publishCaptions: false,
 };
 const mockUserContextWithDefaultSettings = {
-  user: {
+  userContext: {
     defaultSettings,
     issues: { reconnections: 0, audioFallbacks: 0 },
   },

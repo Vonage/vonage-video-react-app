@@ -2,7 +2,7 @@ import { render as renderBase, screen, waitFor } from '@testing-library/react';
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { ReactElement } from 'react';
 import BackgroundEffectOptions from './BackgroundEffectOptions';
-import { makeBackgroundPublisherProviderWrapper } from '@test/providers';
+import { makeTestProvider, providers } from '@test/providers';
 
 describe('BackgroundEffectOptions', () => {
   beforeEach(() => {
@@ -40,9 +40,15 @@ describe('BackgroundEffectOptions', () => {
 });
 
 function render(ui: ReactElement) {
-  const { BackgroundPublisherProviderWrapper } = makeBackgroundPublisherProviderWrapper();
+  const { wrapper } = makeTestProvider([
+    providers.AppConfig,
+    providers.User,
+    providers.Session,
+    providers.Publisher,
+    providers.BackgroundPublisher,
+  ]);
 
   return renderBase(ui, {
-    wrapper: BackgroundPublisherProviderWrapper,
+    wrapper,
   });
 }

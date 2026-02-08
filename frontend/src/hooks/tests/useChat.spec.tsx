@@ -1,7 +1,7 @@
 import { act, renderHook } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import useChat from '../useChat';
-import { makeUserProviderWrapper } from '@test/providers';
+import { makeTestProvider, providers } from '@test/providers';
 
 const mockSignal = vi.fn();
 
@@ -11,9 +11,9 @@ describe('useChat', () => {
   });
 
   it('onChatMessage should parse message and update messages state', () => {
-    const { UserProviderWrapper } = makeUserProviderWrapper();
+    const { wrapper } = makeTestProvider([providers.User]);
     const { result } = renderHook(() => useChat({ signal: mockSignal }), {
-      wrapper: UserProviderWrapper,
+      wrapper,
     });
 
     act(() => {
@@ -28,15 +28,15 @@ describe('useChat', () => {
   });
 
   it('sendChatMessage should send message via signal', () => {
-    const { UserProviderWrapper } = makeUserProviderWrapper({
-      userOptions: {
+    const { wrapper } = makeTestProvider([providers.User], {
+      userContext: {
         __interceptor: (context) => {
           context!.user.defaultSettings.name = 'Local User';
         },
       },
     });
     const { result } = renderHook(() => useChat({ signal: mockSignal }), {
-      wrapper: UserProviderWrapper,
+      wrapper,
     });
 
     result.current.sendChatMessage('Hello there!');

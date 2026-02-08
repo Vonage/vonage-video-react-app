@@ -97,7 +97,7 @@ describe('HiddenParticipantsTile', () => {
     const { sessionContext, getByTestId } = render(
       <HiddenParticipantsTile box={box} hiddenSubscribers={currentHiddenSubscribers} />,
       {
-        appConfigOptions: {
+        appConfigContext: {
           value: {
             isAppConfigLoaded: false,
             meetingRoomSettings: {
@@ -120,7 +120,7 @@ describe('HiddenParticipantsTile', () => {
 
 function render(ui: ReactElement, options?: SessionProviderWrapperOptions) {
   const { SessionProviderWrapper, sessionContext, appConfigContext } = makeSessionProviderWrapper({
-    sessionOptions: {
+    sessionContext: {
       __onCreated: (sessionContext) => {
         vi.spyOn(sessionContext, 'toggleParticipantList');
       },

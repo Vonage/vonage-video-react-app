@@ -55,7 +55,7 @@ describe('MutingDialog', () => {
 
   it('triggers the force mute of the participant and closes the dialog when Mute button is clicked', () => {
     render(<MutingDialog {...defaultProps} />, {
-      sessionOptions: {
+      sessionContext: {
         __interceptor: (context) => {
           if (context) {
             context.forceMute = mockForceMute;

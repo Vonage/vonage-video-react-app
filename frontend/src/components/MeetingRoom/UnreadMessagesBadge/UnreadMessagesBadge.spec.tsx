@@ -20,7 +20,7 @@ describe('UnreadMessagesBadge', () => {
         <LittleButton />
       </UnreadMessagesBadge>,
       {
-        sessionOptions: {
+        sessionContext: {
           __interceptor: (context) => {
             if (context) {
               context.unreadCount = 8;
@@ -40,7 +40,7 @@ describe('UnreadMessagesBadge', () => {
         <LittleButton />
       </UnreadMessagesBadge>,
       {
-        sessionOptions: {
+        sessionContext: {
           __interceptor: (context) => {
             if (context) {
               context.unreadCount = 9;
@@ -85,7 +85,7 @@ describe('UnreadMessagesBadge', () => {
         <LittleButton />
       </UnreadMessagesBadge>,
       {
-        sessionOptions: {
+        sessionContext: {
           __interceptor: (context) => {
             if (context) {
               context.unreadCount = 8;
@@ -107,7 +107,7 @@ describe('UnreadMessagesBadge', () => {
         <LittleButton />
       </UnreadMessagesBadge>,
       {
-        sessionOptions: {
+        sessionContext: {
           __interceptor: (context) => {
             if (context) {
               context.unreadCount = 0;
@@ -141,7 +141,7 @@ describe('UnreadMessagesBadge', () => {
         <LittleButton />
       </UnreadMessagesBadge>,
       {
-        sessionOptions: {
+        sessionContext: {
           __interceptor: (context) => {
             if (context) {
               context.unreadCount = 0;
@@ -164,7 +164,7 @@ describe('UnreadMessagesBadge', () => {
         <LittleButton />
       </UnreadMessagesBadge>,
       {
-        sessionOptions: {
+        sessionContext: {
           __interceptor: (context) => {
             if (context) {
               context.unreadCount = 1;
@@ -185,14 +185,14 @@ describe('UnreadMessagesBadge', () => {
         <LittleButton />
       </UnreadMessagesBadge>,
       {
-        sessionOptions: {
+        sessionContext: {
           __interceptor: (context) => {
             if (context) {
               context.unreadCount = 8;
             }
           },
         },
-        appConfigOptions: {
+        appConfigContext: {
           value: {
             meetingRoomSettings: {
               allowChat: false,

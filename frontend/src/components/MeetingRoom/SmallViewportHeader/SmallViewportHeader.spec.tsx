@@ -56,7 +56,7 @@ describe('SmallViewportHeader component', () => {
     (useRoomShareUrl as Mock).mockReturnValue('https://example.com/room/test-room-name');
 
     publisherContext = {
-      publisher: { cycleVideo: vi.fn() } as unknown as PublisherContextType['publisher'],
+      publisherContext: { cycleVideo: vi.fn() } as unknown as PublisherContextType['publisher'],
       isVideoEnabled: true,
     } as unknown as PublisherContextType;
 
@@ -113,7 +113,7 @@ describe('SmallViewportHeader component', () => {
   it('shows the camera switch button when video is enabled', () => {
     (useSessionContext as Mock).mockReturnValue({ archiveId: null });
     mockUsePublisherContext.mockReturnValue({
-      publisher: { cycleVideo: vi.fn() } as unknown as PublisherContextType['publisher'],
+      publisherContext: { cycleVideo: vi.fn() } as unknown as PublisherContextType['publisher'],
       isVideoEnabled: true,
     } as unknown as PublisherContextType);
 
@@ -125,7 +125,7 @@ describe('SmallViewportHeader component', () => {
   it('does not show the camera switch button when video is disabled', () => {
     (useSessionContext as Mock).mockReturnValue({ archiveId: null });
     mockUsePublisherContext.mockReturnValue({
-      publisher: { cycleVideo: vi.fn() } as unknown as PublisherContextType['publisher'],
+      publisherContext: { cycleVideo: vi.fn() } as unknown as PublisherContextType['publisher'],
       isVideoEnabled: false,
     } as unknown as PublisherContextType);
 
@@ -140,7 +140,7 @@ describe('SmallViewportHeader component', () => {
     (useSessionContext as Mock).mockReturnValue({ archiveId: null });
 
     mockUsePublisherContext.mockReturnValue({
-      publisher: { cycleVideo: vi.fn() } as unknown as PublisherContextType['publisher'],
+      publisherContext: { cycleVideo: vi.fn() } as unknown as PublisherContextType['publisher'],
       isVideoEnabled: true,
     } as unknown as PublisherContextType);
 
@@ -175,7 +175,7 @@ describe('SmallViewportHeader component', () => {
     }));
 
     mockUsePublisherContext.mockReturnValue({
-      publisher: {
+      publisherContext: {
         setVideoSource,
         getVideoSource,
       } as unknown as PublisherContextType['publisher'],

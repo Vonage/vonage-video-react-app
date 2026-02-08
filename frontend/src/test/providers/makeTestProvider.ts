@@ -1,4 +1,5 @@
 import composeProviders from '@common/helpers/composeProviders';
+
 import {
   makeAppConfigProviderWrapper,
   makeAudioOutputProviderWrapper,
@@ -8,12 +9,13 @@ import {
   makeSessionProviderWrapper,
   makeUserProviderWrapper,
 } from './makersIndex';
+
 import type { Any, AnyFunction } from 'react-global-state-hooks';
 
 /**
  * Keep updated accordingly to the providers you have and their dependencies.
  */
-enum providers {
+export enum providers {
   AppConfig = 'appConfig',
   User = 'user',
   Session = 'session',
@@ -56,34 +58,18 @@ const PROVIDER_DEPENDENCIES = {
   [providers.AudioOutput]: [],
 } as const;
 
-type ExtractFirstParamType<F extends AnyFunction> = F extends (arg: infer A, ...rest: Any[]) => Any
-  ? A
-  : never;
-
-type ExtractedOptionsType<A> =
-  NonNullable<A> extends Record<`${string}Options`, Any>
-    ? NonNullable<A>[Extract<keyof NonNullable<A>, `${string}Options`>]
-    : undefined;
-
 /**
  * Infer the possible parameters for the provided keys
  */
-type ProviderOptionsFor<Keys extends readonly providers[]> = Partial<{
-  [K in Keys[number] as `${K}Options`]: ExtractedOptionsType<
-    ExtractFirstParamType<ProvidersMakers[K]>
-  >;
-}>;
+type ProviderOptionsFor<Keys extends readonly providers[]> = {
+  [K in Keys[number] as `${K}Context`]: Parameters<ProvidersMakers[K]>[0] | undefined;
+};
 
 /**
  * Infer the context britches for the provided keys
  */
 type ProviderContextsFor<Keys extends readonly providers[]> = {
-  [K in Keys[number] as `${K}Context`]: ReturnType<ProvidersMakers[K]> extends Record<
-    `${K}Context`,
-    infer C
-  >
-    ? C
-    : never;
+  [K in Keys[number] as `${K}Context`]: ReturnType<ProvidersMakers[K]>['context'];
 };
 
 function makeTestProvider<
@@ -125,7 +111,7 @@ function makeTestProvider<
     const providersWrappersAndContexts = keys.map((key) => {
       const maker = MAKERS[key];
       const makerOptions = {
-        [`${key}Options`]: options?.[`${key}Options` as keyof Options],
+        [`${key}Options`]: options?.[`${key}Context` as keyof Options],
       };
 
       return maker(makerOptions);
@@ -134,5 +120,12 @@ function makeTestProvider<
 
   return null as Any;
 }
+
+/**
+ * All parameters
+ */
+export type ProviderOptions = {
+  [K in providers as `${Capitalize<K>}Context`]?: Parameters<ProvidersMakers[K]>[0];
+};
 
 export default makeTestProvider;

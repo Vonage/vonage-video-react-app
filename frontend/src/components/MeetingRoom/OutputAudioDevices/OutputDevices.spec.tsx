@@ -136,7 +136,7 @@ describe('OutputAudioDevices Component', () => {
 
   it('is not rendered when allowDeviceSelection is false', () => {
     render(<OutputAudioDevices handleToggle={mockHandleToggle} />, {
-      appConfigOptions: {
+      appConfigContext: {
         value: {
           meetingRoomSettings: {
             allowDeviceSelection: false,

@@ -23,7 +23,7 @@ describe('ChatInput', () => {
 
   it('renders the chat input field', () => {
     render(<ChatInput />, {
-      sessionOptions: {
+      sessionContext: {
         __interceptor: (context) => {
           if (context) {
             context.sendChatMessage = sendChatMessageMock;
@@ -37,7 +37,7 @@ describe('ChatInput', () => {
 
   it('does not send a message when composing', () => {
     render(<ChatInput />, {
-      sessionOptions: {
+      sessionContext: {
         __interceptor: (context) => {
           if (context) {
             context.sendChatMessage = sendChatMessageMock;
@@ -58,7 +58,7 @@ describe('ChatInput', () => {
 
   it('sends a message on Enter when not composing', () => {
     render(<ChatInput />, {
-      sessionOptions: {
+      sessionContext: {
         __interceptor: (context) => {
           if (context) {
             context.sendChatMessage = sendChatMessageMock;
@@ -76,7 +76,7 @@ describe('ChatInput', () => {
 
   it('does not send a message on Enter if Shift is pressed', () => {
     render(<ChatInput />, {
-      sessionOptions: {
+      sessionContext: {
         __interceptor: (context) => {
           if (context) {
             context.sendChatMessage = sendChatMessageMock;
@@ -94,7 +94,7 @@ describe('ChatInput', () => {
 
   it('trims whitespace before sending a message', () => {
     render(<ChatInput />, {
-      sessionOptions: {
+      sessionContext: {
         __interceptor: (context) => {
           if (context) {
             context.sendChatMessage = sendChatMessageMock;
@@ -112,7 +112,7 @@ describe('ChatInput', () => {
 
   it('does not send an empty message', () => {
     render(<ChatInput />, {
-      sessionOptions: {
+      sessionContext: {
         __interceptor: (context) => {
           if (context) {
             context.sendChatMessage = sendChatMessageMock;

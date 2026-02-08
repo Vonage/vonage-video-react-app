@@ -5,11 +5,9 @@ import { startArchiving, stopArchiving } from '@api/archiving';
 import useRoomName from '@hooks/useRoomName';
 import useSessionContext from '@hooks/useSessionContext';
 import { SessionContextType } from '@Context/SessionProvider/session';
-import {
-  type AppConfigProviderWrapperOptions,
-  makeAppConfigProviderWrapper,
-} from '@test/providers';
+import { type AppConfigProviderWrapperOptions, makeTestProvider } from '@test/providers';
 import ArchivingButton from './ArchivingButton';
+import { providers } from '@test/providers/makeTestProvider';
 
 vi.mock('@hooks/useSessionContext');
 vi.mock('@hooks/useRoomName');
@@ -94,11 +92,9 @@ describe('ArchivingButton', () => {
 
   it('is not rendered when allowArchiving is disabled', () => {
     render(<ArchivingButton handleClick={mockHandleCloseMenu} />, {
-      appConfigOptions: {
-        value: {
-          meetingRoomSettings: {
-            allowArchiving: false,
-          },
+      appConfigContext: {
+        meetingRoomSettings: {
+          allowArchiving: false,
         },
       },
     });
@@ -107,8 +103,11 @@ describe('ArchivingButton', () => {
   });
 });
 
-function render(ui: ReactElement, { appConfigOptions }: AppConfigProviderWrapperOptions = {}) {
-  const { AppConfigWrapper } = makeAppConfigProviderWrapper({ appConfigOptions });
+function render(ui: ReactElement, options: AppConfigProviderWrapperOptions = {}) {
+  const { wrapper, ...context } = makeTestProvider([providers.AppConfig], options);
 
-  return renderBase(ui, { wrapper: AppConfigWrapper });
+  return {
+    ...context,
+    ...renderBase(ui, { wrapper }),
+  };
 }

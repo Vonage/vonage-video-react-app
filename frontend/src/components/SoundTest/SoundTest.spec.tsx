@@ -148,7 +148,7 @@ function render(
   }
 ) {
   const { AudioOutputProviderWrapper, audioOutputContext } = makeAudioOutputProviderWrapper({
-    audioOutputOptions: options?.audioOutputOptions,
+    audioOutputContext: options?.audioOutputOptions,
   });
 
   return { ...renderBase(ui, { wrapper: AudioOutputProviderWrapper }), audioOutputContext };

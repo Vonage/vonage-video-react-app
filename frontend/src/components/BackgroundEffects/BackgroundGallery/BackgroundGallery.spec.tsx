@@ -3,10 +3,8 @@ import { render as renderBase, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import BackgroundGallery from './BackgroundGallery';
 import enTranslations from '../../../locales/en.json';
-import {
-  BackgroundPublisherProviderWrapperOptions,
-  makeBackgroundPublisherProviderWrapper,
-} from '@test/providers';
+import { makeTestProvider, providers } from '@test/providers';
+import type { BackgroundPublisherProviderWrapperOptions } from '@test/providers';
 import { ReactElement } from 'react';
 
 const customImages = [
@@ -82,7 +80,7 @@ describe('BackgroundGallery', () => {
 
   it('sets the selected built-in background', async () => {
     render(<BackgroundGallery />, {
-      backgroundPublisherOptions: {
+      backgroundPublisherContext: {
         __interceptor: (context) => {
           context.handleBackgroundChange = mockHandleBackgroundChange;
         },
@@ -95,7 +93,7 @@ describe('BackgroundGallery', () => {
 
   it('sets the selected custom image', async () => {
     render(<BackgroundGallery />, {
-      backgroundPublisherOptions: {
+      backgroundPublisherContext: {
         __interceptor: (context) => {
           context.handleBackgroundChange = mockHandleBackgroundChange;
         },
@@ -108,7 +106,7 @@ describe('BackgroundGallery', () => {
 
   it('marks the built-in background as selected', async () => {
     render(<BackgroundGallery />, {
-      backgroundPublisherOptions: {
+      backgroundPublisherContext: {
         __onCreated: (context) => {
           context.backgroundSelected = 'plane.jpg';
         },
@@ -122,7 +120,7 @@ describe('BackgroundGallery', () => {
 
   it('marks the custom image as selected', async () => {
     render(<BackgroundGallery />, {
-      backgroundPublisherOptions: {
+      backgroundPublisherContext: {
         __onCreated: (context) => {
           context.backgroundSelected = 'data:image/png;base64,custom2';
         },
@@ -137,7 +135,7 @@ describe('BackgroundGallery', () => {
 
   it('calls onDelete when deleting a custom image', async () => {
     render(<BackgroundGallery />, {
-      backgroundPublisherOptions: {
+      backgroundPublisherContext: {
         __interceptor: (context) => {
           context.deleteCustomImage = mockDeleteCustomImage;
         },
@@ -150,7 +148,7 @@ describe('BackgroundGallery', () => {
 
   it("doesn't delete custom image if it's selected", async () => {
     render(<BackgroundGallery />, {
-      backgroundPublisherOptions: {
+      backgroundPublisherContext: {
         __onCreated: (context) => {
           context.backgroundSelected = 'data:image/png;base64,custom1';
         },
@@ -163,17 +161,25 @@ describe('BackgroundGallery', () => {
 });
 
 type RenderOptions = {
-  backgroundPublisherOptions?: BackgroundPublisherProviderWrapperOptions['backgroundPublisherOptions'];
+  backgroundPublisherOptions?: BackgroundPublisherProviderWrapperOptions['backgroundPublisherContext'];
 };
 
 function render(ui: ReactElement, options?: RenderOptions) {
-  const { BackgroundPublisherProviderWrapper, ...backgroundProps } =
-    makeBackgroundPublisherProviderWrapper({
-      backgroundPublisherOptions: options?.backgroundPublisherOptions,
-    });
+  const { wrapper, ...backgroundProps } = makeTestProvider(
+    [
+      providers.AppConfig,
+      providers.User,
+      providers.Session,
+      providers.Publisher,
+      providers.BackgroundPublisher,
+    ],
+    {
+      backgroundPublisherContext: options?.backgroundPublisherOptions,
+    }
+  );
 
   return {
     ...backgroundProps,
-    ...renderBase(ui, { wrapper: BackgroundPublisherProviderWrapper }),
+    ...renderBase(ui, { wrapper }),
   };
 }

@@ -136,7 +136,7 @@ describe('VideoDevices Component', () => {
   });
 });
 
-function render(ui: ReactElement, publisherOptions: PublisherProviderWrapperOptions = {}) {
+function render(ui: ReactElement, publisherContext: PublisherProviderWrapperOptions = {}) {
   const { PublisherProviderWrapper, ...publisherContext } =
     makePublisherProviderWrapper(publisherOptions);
 

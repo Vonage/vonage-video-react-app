@@ -82,14 +82,14 @@ describe('ParticipantList', () => {
 
   it('does not render when closed', () => {
     render(<ParticipantList isOpen={false} handleClose={() => {}} />, {
-      sessionOptions: {
+      sessionContext: {
         __interceptor: (context) => {
           if (context) {
             context.subscriberWrappers = createTestSubscriberWrappers();
           }
         },
       },
-      userOptions: {
+      userContext: {
         __interceptor: (context) => {
           if (context) {
             context.user.defaultSettings.name = 'Local Participant';
@@ -104,14 +104,14 @@ describe('ParticipantList', () => {
     (useRoomShareUrl as Mock).mockReturnValue('https://example.com/room123');
 
     render(<ParticipantList isOpen handleClose={() => {}} />, {
-      sessionOptions: {
+      sessionContext: {
         __interceptor: (context) => {
           if (context) {
             context.subscriberWrappers = createTestSubscriberWrappers();
           }
         },
       },
-      userOptions: {
+      userContext: {
         __interceptor: (context) => {
           if (context) {
             context.user.defaultSettings.name = 'Local Participant';
@@ -135,14 +135,14 @@ describe('ParticipantList', () => {
       state: mockedRoomName,
     });
     render(<ParticipantList handleClose={() => {}} isOpen />, {
-      sessionOptions: {
+      sessionContext: {
         __interceptor: (context) => {
           if (context) {
             context.subscriberWrappers = createTestSubscriberWrappers();
           }
         },
       },
-      userOptions: {
+      userContext: {
         __interceptor: (context) => {
           if (context) {
             context.user.defaultSettings.name = 'Local Participant';
@@ -169,14 +169,14 @@ describe('ParticipantList', () => {
 
   it('filters list by query and hides You when not matching', () => {
     render(<ParticipantList handleClose={() => {}} isOpen />, {
-      sessionOptions: {
+      sessionContext: {
         __interceptor: (context) => {
           if (context) {
             context.subscriberWrappers = createTestSubscriberWrappers();
           }
         },
       },
-      userOptions: {
+      userContext: {
         __interceptor: (context) => {
           if (context) {
             context.user.defaultSettings.name = 'Local Participant';
@@ -198,14 +198,14 @@ describe('ParticipantList', () => {
 
   it('shows You when query matches local participant name (case-insensitive)', () => {
     render(<ParticipantList handleClose={() => {}} isOpen />, {
-      sessionOptions: {
+      sessionContext: {
         __interceptor: (context) => {
           if (context) {
             context.subscriberWrappers = createTestSubscriberWrappers();
           }
         },
       },
-      userOptions: {
+      userContext: {
         __interceptor: (context) => {
           if (context) {
             context.user.defaultSettings.name = 'Local Participant';
@@ -226,14 +226,14 @@ describe('ParticipantList', () => {
 
   it('restores full list after clearing query', () => {
     render(<ParticipantList handleClose={() => {}} isOpen />, {
-      sessionOptions: {
+      sessionContext: {
         __interceptor: (context) => {
           if (context) {
             context.subscriberWrappers = createTestSubscriberWrappers();
           }
         },
       },
-      userOptions: {
+      userContext: {
         __interceptor: (context) => {
           if (context) {
             context.user.defaultSettings.name = 'Local Participant';

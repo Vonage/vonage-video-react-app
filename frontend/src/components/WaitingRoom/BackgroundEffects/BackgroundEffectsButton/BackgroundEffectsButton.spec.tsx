@@ -39,7 +39,7 @@ describe('BackgroundEffectsButton', () => {
 
   it('is not rendered when background effects are not allowed', () => {
     render(<BackgroundEffectsButton onClick={mockOnClick} />, {
-      appConfigOptions: {
+      appConfigContext: {
         value: {
           videoSettings: {
             allowBackgroundEffects: false,

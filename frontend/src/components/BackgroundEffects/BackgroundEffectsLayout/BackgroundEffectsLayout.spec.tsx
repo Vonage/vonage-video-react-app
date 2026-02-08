@@ -2,7 +2,7 @@ import { render as renderBase, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { ReactElement } from 'react';
-import { makeRoomContextWrapper } from '@test/providers';
+import { makeTestProvider, providers } from '@test/providers';
 import BackgroundEffectsLayout from './BackgroundEffectsLayout';
 import enTranslations from '../../../locales/en.json';
 import composeProviders from '@common/helpers/composeProviders';
@@ -170,9 +170,17 @@ describe('BackgroundEffects (Waiting Room)', () => {
 });
 
 function render(ui: ReactElement) {
-  const { RoomProviderWrapper } = makeRoomContextWrapper();
+  const { wrapper: roomWrapper } = makeTestProvider([
+    providers.AppConfig,
+    providers.User,
+    providers.Session,
+    providers.Publisher,
+    providers.BackgroundPublisher,
+    providers.PreviewPublisher,
+    providers.AudioOutput,
+  ]);
 
-  const wrapper = composeProviders(SuspenseBoundary, RoomProviderWrapper);
+  const wrapper = composeProviders(SuspenseBoundary, roomWrapper);
 
   return renderBase(ui, { wrapper });
 }

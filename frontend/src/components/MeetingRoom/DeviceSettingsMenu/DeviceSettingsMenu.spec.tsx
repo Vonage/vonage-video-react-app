@@ -346,7 +346,7 @@ describe('DeviceSettingsMenu Component', () => {
           setIsOpen={mockSetIsOpen}
         />,
         {
-          appConfigOptions: {
+          appConfigContext: {
             value: {
               videoSettings: {
                 allowBackgroundEffects: false,

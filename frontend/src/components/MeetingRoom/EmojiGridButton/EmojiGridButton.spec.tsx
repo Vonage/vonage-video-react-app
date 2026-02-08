@@ -48,7 +48,7 @@ describe('EmojiGridButton', () => {
 
   it('is not rendered when allowEmojis is false', () => {
     render(<TestComponent />, {
-      appConfigOptions: {
+      appConfigContext: {
         value: {
           meetingRoomSettings: { allowEmojis: false },
         },

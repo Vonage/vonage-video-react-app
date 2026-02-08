@@ -9,7 +9,7 @@ import usePublisherQuality from './usePublisherQuality';
 vi.mock('@hooks/useUserContext.tsx');
 
 const mockUserContext = {
-  user: {
+  userContext: {
     issues: {
       audioFallbacks: 0,
     },

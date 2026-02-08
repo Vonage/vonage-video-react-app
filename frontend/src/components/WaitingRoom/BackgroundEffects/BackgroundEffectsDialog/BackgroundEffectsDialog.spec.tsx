@@ -2,9 +2,8 @@ import { render as renderBase, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import type { ReactElement } from 'react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import makeBackgroundPublisherProviderWrapper, {
-  type BackgroundPublisherProviderWrapperOptions,
-} from '@test/providers/makeBackgroundPublisherProviderWrapper';
+import { makeTestProvider, providers } from '@test/providers';
+import type { BackgroundPublisherProviderWrapperOptions } from '@test/providers';
 import BackgroundEffectsDialog from './BackgroundEffectsDialog';
 
 describe('BackgroundEffectsDialog', () => {
@@ -72,12 +71,21 @@ describe('BackgroundEffectsDialog', () => {
 });
 
 function render(ui: ReactElement, options: BackgroundPublisherProviderWrapperOptions = {}) {
-  const { BackgroundPublisherProviderWrapper, ...props } = makeBackgroundPublisherProviderWrapper({
-    ...options,
-  });
+  const { wrapper, ...props } = makeTestProvider(
+    [
+      providers.AppConfig,
+      providers.User,
+      providers.Session,
+      providers.Publisher,
+      providers.BackgroundPublisher,
+    ],
+    {
+      ...options,
+    }
+  );
 
   return {
     ...props,
-    ...renderBase(ui, { wrapper: BackgroundPublisherProviderWrapper }),
+    ...renderBase(ui, { wrapper }),
   };
 }

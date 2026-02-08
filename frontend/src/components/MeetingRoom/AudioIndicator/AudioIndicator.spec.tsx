@@ -33,7 +33,7 @@ describe('AudioIndicator', () => {
 
   it('renders Mic icon when participant is unmuted but not speaking', () => {
     render(<AudioIndicator {...defaultProps} />, {
-      sessionOptions: {
+      sessionContext: {
         __interceptor: (context) => {
           if (context) {
             context.forceMute = mockForceMute;
@@ -47,7 +47,7 @@ describe('AudioIndicator', () => {
 
   it('renders Mic off icon when participant is muted', () => {
     render(<AudioIndicator {...defaultProps} hasAudio={false} />, {
-      sessionOptions: {
+      sessionContext: {
         __interceptor: (context) => {
           if (context) {
             context.forceMute = mockForceMute;

@@ -41,7 +41,7 @@ describe('ReduceNoiseTestSpeakers', () => {
       videoHeight: () => 720,
     }) as unknown as Publisher;
     publisherContext = {
-      publisher: mockPublisher,
+      publisherContext: mockPublisher,
       isPublishing: true,
       publish: vi.fn() as () => Promise<void>,
       initializeLocalPublisher: vi.fn(() => {
@@ -133,7 +133,7 @@ describe('ReduceNoiseTestSpeakers', () => {
 
   it('does not render the Advanced Noise Suppression option if allowAdvancedNoiseSuppression is false', () => {
     render(<ReduceNoiseTestSpeakers />, {
-      appConfigOptions: { value: { audioSettings: { allowAdvancedNoiseSuppression: false } } },
+      appConfigContext: { value: { audioSettings: { allowAdvancedNoiseSuppression: false } } },
     });
 
     expect(screen.queryByText('Advanced Noise Suppression')).not.toBeInTheDocument();

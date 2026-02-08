@@ -46,7 +46,7 @@ describe('ScreenSharingButton', () => {
 
   it('is not rendered when allowScreenShare is false', () => {
     render(<ScreenSharingButton {...defaultProps} />, {
-      appConfigOptions: {
+      appConfigContext: {
         value: {
           meetingRoomSettings: {
             allowScreenShare: false,

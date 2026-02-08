@@ -50,7 +50,7 @@ describe('useCollectBrowserInformation', () => {
     }) as VonageVideoClient;
 
     const { result } = render({
-      sessionOptions: {
+      sessionContext: {
         __interceptor: (context) => {
           if (context) {
             context.vonageVideoClient = mockVonageVideoClient;

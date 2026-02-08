@@ -31,7 +31,7 @@ describe('ToolbarOverflowButton', () => {
   };
   it('renders', () => {
     render(<ToolbarOverflowButton {...defaultProps} />, {
-      sessionOptions: {
+      sessionContext: {
         __interceptor: (context) => {
           if (context) {
             context.subscriberWrappers = [];
@@ -46,7 +46,7 @@ describe('ToolbarOverflowButton', () => {
   });
   it('toggling shows and hides the toolbar buttons', () => {
     render(<ToolbarOverflowButton {...defaultProps} />, {
-      sessionOptions: {
+      sessionContext: {
         __interceptor: (context) => {
           if (context) {
             context.subscriberWrappers = [];
@@ -69,7 +69,7 @@ describe('ToolbarOverflowButton', () => {
   });
   it('should have the unread messages badge present', () => {
     render(<ToolbarOverflowButton {...defaultProps} />, {
-      sessionOptions: {
+      sessionContext: {
         __interceptor: (context) => {
           if (context) {
             context.subscriberWrappers = [];

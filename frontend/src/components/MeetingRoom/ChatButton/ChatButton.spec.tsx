@@ -7,7 +7,7 @@ import ChatButton from './ChatButton';
 describe('ChatButton', () => {
   it('should show unread message number', () => {
     render(<ChatButton handleClick={() => {}} isOpen={false} />, {
-      sessionOptions: {
+      sessionContext: {
         __interceptor: (context) => {
           if (context) {
             context.unreadCount = 10;
@@ -21,7 +21,7 @@ describe('ChatButton', () => {
 
   it('should not show unread message number when number is 0', () => {
     render(<ChatButton handleClick={() => {}} isOpen={false} />, {
-      sessionOptions: {
+      sessionContext: {
         __interceptor: (context) => {
           if (context) {
             context.unreadCount = 0;
@@ -55,7 +55,7 @@ describe('ChatButton', () => {
 
   it('is not rendered when allowChat is false', () => {
     render(<ChatButton handleClick={() => {}} isOpen />, {
-      appConfigOptions: {
+      appConfigContext: {
         value: {
           meetingRoomSettings: {
             allowChat: false,

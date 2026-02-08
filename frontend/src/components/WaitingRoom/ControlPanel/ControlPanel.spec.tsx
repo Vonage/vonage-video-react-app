@@ -1,7 +1,13 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { cleanup, screen, render as renderBase } from '@testing-library/react';
 import { ReactElement } from 'react';
-import { makeRoomContextWrapper, type RoomContextWrapperOptions } from '@test/providers';
+import { makeTestProvider, providers } from '@test/providers';
+import type {
+  AppConfigProviderWrapperOptions,
+  UserProviderWrapperOptions,
+  PreviewPublisherProviderWrapperOptions,
+  AudioOutputProviderWrapperOptions,
+} from '@test/providers';
 import backgroundEffectsDialog$ from '@Context/BackgroundEffectsDialog';
 import precallNetworkTestDialog$ from '@Context/PrecallNetworkTestDialog';
 import ControlPanel from '.';
@@ -140,14 +146,28 @@ describe('ControlPanel', () => {
 function render(
   ui: ReactElement,
   options?: {
-    roomContextOptions?: RoomContextWrapperOptions;
+    appConfigOptions?: AppConfigProviderWrapperOptions;
+    userOptions?: UserProviderWrapperOptions;
+    previewPublisherOptions?: PreviewPublisherProviderWrapperOptions;
+    audioOutputOptions?: AudioOutputProviderWrapperOptions;
   }
 ) {
-  const { RoomProviderWrapper } = makeRoomContextWrapper(options?.roomContextOptions);
+  const { wrapper: roomWrapper } = makeTestProvider(
+    [
+      providers.AppConfig,
+      providers.User,
+      providers.Session,
+      providers.Publisher,
+      providers.BackgroundPublisher,
+      providers.PreviewPublisher,
+      providers.AudioOutput,
+    ],
+    options
+  );
 
   const wrapper = composeProviders(
     SuspenseBoundary,
-    RoomProviderWrapper,
+    roomWrapper,
     backgroundEffectsDialog$.Provider,
     precallNetworkTestDialog$.Provider
   );

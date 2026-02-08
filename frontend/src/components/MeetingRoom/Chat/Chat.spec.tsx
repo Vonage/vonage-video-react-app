@@ -36,7 +36,7 @@ describe('Chat', () => {
 
   it('should display messages', () => {
     render(<Chat handleClose={() => {}} isOpen />, {
-      sessionOptions: {
+      sessionContext: {
         __interceptor: (context: SessionContextType) => {
           if (context) {
             context.messages = testMessages;

@@ -25,7 +25,7 @@ describe('ParticipantListButton', () => {
   });
   it('is not rendered when showParticipantList is false', () => {
     render(<ParticipantListButton handleClick={() => {}} isOpen={false} participantCount={10} />, {
-      appConfigOptions: {
+      appConfigContext: {
         value: {
           meetingRoomSettings: {
             showParticipantList: false,

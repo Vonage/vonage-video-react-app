@@ -15,7 +15,7 @@ import useToolbarButtons, {
   UseToolbarButtons,
   UseToolbarButtonsProps,
 } from '@hooks/useToolbarButtons';
-import { PublisherProviderWrapperOptions, makePublisherProviderWrapper } from '@test/providers';
+import { makeTestProvider, providers, ProviderOptions } from '@test/providers';
 import { render as renderBase } from '@testing-library/react';
 import useMediaQuery from '@ui/useMediaQuery';
 import MeetingRoom from './MeetingRoom';
@@ -31,7 +31,7 @@ vi.mock('@hooks/useBackgroundPublisherContext', () => ({
   default: () => ({
     initBackgroundLocalPublisher: vi.fn(),
     destroyBackgroundLocalPublisher: vi.fn(),
-    backgroundPublisher: null,
+    backgroundPublisherContext: null,
     accessStatus: undefined,
   }),
 }));
@@ -198,7 +198,7 @@ describe('MeetingRoom', () => {
 
   it('should call joinRoom on render only once', async () => {
     const { sessionContext, rerender } = render(<MeetingRoom />, {
-      sessionOptions: {
+      sessionContext: {
         __onCreated: (context) => {
           context.joinRoom = vi.fn();
         },
@@ -222,12 +222,12 @@ describe('MeetingRoom', () => {
 
   it('should call publish after connected', async () => {
     const { sessionContext, publisherContext } = render(<MeetingRoom />, {
-      publisherOptions: {
+      publisherContext: {
         __onCreated: (context) => {
           context.publish = vi.fn();
         },
       },
-      sessionOptions: {
+      sessionContext: {
         initialValue: {
           connected: false,
         },
@@ -251,12 +251,12 @@ describe('MeetingRoom', () => {
 
   it('should display spinner until session is connected', async () => {
     const { sessionContext, rerender } = render(<MeetingRoom />, {
-      publisherOptions: {
+      publisherContext: {
         initialValue: {
           publisher: mockPublisher,
         },
       },
-      sessionOptions: {
+      sessionContext: {
         initialValue: {
           connected: false,
         },
@@ -289,13 +289,13 @@ describe('MeetingRoom', () => {
       createSubscriberWrapper('sub7'),
     ];
     const { rerender, sessionContext } = render(<MeetingRoom />, {
-      publisherOptions: {
+      publisherContext: {
         initialValue: {
           publisher: mockPublisher,
           isPublishing: true,
         },
       },
-      sessionOptions: {
+      sessionContext: {
         initialValue: {
           layoutMode: 'active-speaker',
         },
@@ -336,13 +336,13 @@ describe('MeetingRoom', () => {
       .map((_s, index) => createSubscriberWrapper(`sub${index + 1}`));
 
     const { sessionContext, rerender } = render(<MeetingRoom />, {
-      publisherOptions: {
+      publisherContext: {
         initialValue: {
           publisher: mockPublisher,
           isPublishing: true,
         },
       },
-      sessionOptions: {
+      sessionContext: {
         __onCreated: (context) => {
           context.joinRoom = vi.fn(async () => {
             context.connected = true;
@@ -384,12 +384,12 @@ describe('MeetingRoom', () => {
 
   it.skip('should display chat unread number', async () => {
     const { sessionContext } = render(<MeetingRoom />, {
-      publisherOptions: {
+      publisherContext: {
         initialValue: {
           publisher: mockPublisher,
         },
       },
-      sessionOptions: {
+      sessionContext: {
         initialValue: {
           connected: true,
         },
@@ -406,7 +406,7 @@ describe('MeetingRoom', () => {
   describe('video quality problem alert', () => {
     it('should not be displayed when not publishing video', async () => {
       render(<MeetingRoom />, {
-        publisherOptions: {
+        publisherContext: {
           initialValue: {
             isVideoEnabled: false,
             quality: 'poor',
@@ -431,7 +431,7 @@ describe('MeetingRoom', () => {
         "We're having trouble connecting you with others in the meeting room. Please check your network and try again.",
     };
     const { rerender } = render(<MeetingRoom />, {
-      publisherOptions: {
+      publisherContext: {
         initialValue: {
           publishingError: publishingBlockedError,
         },
@@ -457,7 +457,7 @@ describe('MeetingRoom', () => {
 
   it('should redirect to waiting room when username is missing', async () => {
     render(<MeetingRoom />, {
-      userOptions: {
+      userContext: {
         value: {
           defaultSettings: {
             name: '',
@@ -473,7 +473,7 @@ describe('MeetingRoom', () => {
 
   it('should redirect to waiting room when username is only whitespace', async () => {
     render(<MeetingRoom />, {
-      userOptions: {
+      userContext: {
         value: {
           defaultSettings: {
             name: '   ',
@@ -498,7 +498,7 @@ describe('MeetingRoom', () => {
     });
 
     render(<MeetingRoom />, {
-      userOptions: {
+      userContext: {
         value: {
           defaultSettings: {
             name: '',
@@ -515,23 +515,38 @@ describe('MeetingRoom', () => {
 
 function render(
   ui: ReactElement,
-  { userOptions, ...options }: PublisherProviderWrapperOptions = {}
+  {
+    appConfigContext,
+    userContext,
+    sessionContext,
+    publisherContext,
+  }: {
+    appConfigContext?: ProviderOptions['AppConfigContext'];
+    userContext?: ProviderOptions['UserContext'];
+    sessionContext?: ProviderOptions['SessionContext'];
+    publisherContext?: ProviderOptions['PublisherContext'];
+  } = {}
 ) {
-  const { PublisherProviderWrapper, ...props } = makePublisherProviderWrapper({
-    ...options,
-    userOptions: {
-      ...userOptions,
-      value: {
-        defaultSettings: {
-          name: 'John Doe',
+  const { wrapper, ...props } = makeTestProvider(
+    [providers.AppConfig, providers.User, providers.Session, providers.Publisher],
+    {
+      userContext: {
+        ...userContext,
+        value: {
+          defaultSettings: {
+            name: 'John Doe',
+          },
+          ...userContext?.value,
         },
-        ...userOptions?.value,
       },
-    },
-  });
+      appConfigContext,
+      sessionContext,
+      publisherContext,
+    }
+  );
 
   return {
     ...props,
-    ...renderBase(ui, { wrapper: PublisherProviderWrapper }),
+    ...renderBase(ui, { wrapper }),
   };
 }

@@ -41,7 +41,7 @@ describe('EffectOptionButtons', () => {
 
   it('marks the selected option as selected', async () => {
     render(<EffectOptionButtons />, {
-      backgroundPublisherOptions: {
+      backgroundPublisherContext: {
         __onCreated: (context) => {
           context.backgroundSelected = 'low-blur';
         },
@@ -55,7 +55,7 @@ describe('EffectOptionButtons', () => {
 
   it('sets the selected background', async () => {
     render(<EffectOptionButtons />, {
-      backgroundPublisherOptions: {
+      backgroundPublisherContext: {
         __interceptor: (context) => {
           context.handleBackgroundChange = mockHandleBackgroundChange;
         },
@@ -73,7 +73,7 @@ describe('EffectOptionButtons', () => {
 
   it('sets the selected background with high blur', async () => {
     render(<EffectOptionButtons />, {
-      backgroundPublisherOptions: {
+      backgroundPublisherContext: {
         __interceptor: (context) => {
           context.handleBackgroundChange = mockHandleBackgroundChange;
         },
@@ -91,13 +91,13 @@ describe('EffectOptionButtons', () => {
 });
 
 type RenderOptions = {
-  backgroundPublisherOptions?: BackgroundPublisherProviderWrapperOptions['backgroundPublisherOptions'];
+  backgroundPublisherOptions?: BackgroundPublisherProviderWrapperOptions['backgroundPublisherContext'];
 };
 
 function render(ui: ReactElement, options?: RenderOptions) {
   const { BackgroundPublisherProviderWrapper, ...backgroundProps } =
     makeBackgroundPublisherProviderWrapper({
-      backgroundPublisherOptions: options?.backgroundPublisherOptions,
+      backgroundPublisherContext: options?.backgroundPublisherOptions,
     });
 
   return {

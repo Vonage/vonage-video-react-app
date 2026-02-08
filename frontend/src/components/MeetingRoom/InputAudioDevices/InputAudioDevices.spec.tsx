@@ -1,7 +1,8 @@
 import { describe, it, beforeEach, vi, expect } from 'vitest';
 import { render as renderBase, screen, fireEvent, waitFor } from '@testing-library/react';
 import { ReactElement } from 'react';
-import { makePublisherProviderWrapper, PublisherProviderWrapperOptions } from '@test/providers';
+import { makeTestProvider, providers } from '@test/providers';
+import type { PublisherProviderWrapperOptions } from '@test/providers';
 import makeMediaDeviceInfos from '@common-test/fixtures/makeMediaDeviceInfos';
 import type MediaDevices$ from '@core/stores/devices';
 import type InputAudioDevicesType from './InputAudioDevices';
@@ -84,9 +85,9 @@ describe('InputAudioDevices Component', () => {
 
   it('does not call setAudioSource if publisher is not available', async () => {
     render(<InputAudioDevices handleToggle={mockHandleToggle} />, {
-      publisherOptions: {
+      publisherContext: {
         initialValue: {
-          publisher: null,
+          publisherContext: null,
           isPublishing: false,
         },
       },
@@ -113,7 +114,7 @@ describe('InputAudioDevices Component', () => {
 
   it('is not rendered when allowDeviceSelection is false', () => {
     render(<InputAudioDevices handleToggle={mockHandleToggle} />, {
-      appConfigOptions: {
+      appConfigContext: {
         value: {
           meetingRoomSettings: {
             allowDeviceSelection: false,
@@ -143,7 +144,10 @@ describe('InputAudioDevices Component', () => {
 
 function render(
   ui: ReactElement,
-  { publisherOptions, ...options }: PublisherProviderWrapperOptions = {}
+  options: {
+    publisherOptions?: PublisherProviderWrapperOptions;
+    appConfigOptions?: { meetingRoomSettings?: any };
+  } = {}
 ) {
   const mockPublisher = Object.assign(new EventEmitter(), {
     setAudioSource: mockSetAudioSource,
@@ -152,20 +156,23 @@ function render(
     getVideoSource: vi.fn(),
   }) as unknown as Publisher;
 
-  const { PublisherProviderWrapper, ...publisherContext } = makePublisherProviderWrapper({
-    ...options,
-    publisherOptions: {
-      initialValue: {
-        publisher: mockPublisher,
-        isPublishing: true,
-        ...publisherOptions?.initialValue,
+  const { wrapper, ...context } = makeTestProvider(
+    [providers.AppConfig, providers.User, providers.Session, providers.Publisher],
+    {
+      ...options,
+      publisherContext: {
+        initialValue: {
+          publisherContext: mockPublisher,
+          isPublishing: true,
+          ...options.publisherOptions?.initialValue,
+        },
       },
-    },
-  });
+    }
+  );
 
   return {
-    ...publisherContext,
-    ...renderBase(ui, { ...options, wrapper: PublisherProviderWrapper }),
+    ...context,
+    ...renderBase(ui, { wrapper }),
   };
 }
 

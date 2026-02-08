@@ -32,8 +32,3 @@ export {
   default as makeBackgroundPublisherProviderWrapper,
   type BackgroundPublisherProviderWrapperOptions,
 } from './makeBackgroundPublisherProviderWrapper';
-
-export {
-  default as makeRoomContextWrapper,
-  type RoomContextWrapperOptions,
-} from './makeRoomContextWrapper';

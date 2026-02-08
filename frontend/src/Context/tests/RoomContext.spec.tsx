@@ -25,7 +25,7 @@ const fakeName = 'Tommy Traddles';
 const fakeAudioOutput = 'their-device-id';
 
 const mockUserContextWithDefaultSettings = {
-  user: { defaultSettings: { name: fakeName } },
+  userContext: { defaultSettings: { name: fakeName } },
 } as UserContextType;
 const mockUseAudioOutputContextValues = {
   currentAudioOutputDevice: fakeAudioOutput,

@@ -41,13 +41,13 @@ const customSettings = {
 };
 
 const mockUserContextWithDefaultSettings = {
-  user: {
+  userContext: {
     defaultSettings,
   },
 } as UserContextType;
 
 const mockUserContextWithCustomSettings = {
-  user: {
+  userContext: {
     defaultSettings: customSettings,
   },
 } as UserContextType;
@@ -99,7 +99,7 @@ describe('usePublisherOptions', () => {
         videoSource: undefined,
         insertDefaultUI: false,
         audioFallback: {
-          publisher: true,
+          publisherContext: true,
         },
         audioFilter: {
           type: 'advancedNoiseSuppression',
@@ -148,7 +148,7 @@ describe('usePublisherOptions', () => {
         videoSource: videoDevice.deviceId,
         insertDefaultUI: false,
         audioFallback: {
-          publisher: true,
+          publisherContext: true,
         },
         audioFilter: undefined,
         videoFilter: {
@@ -165,7 +165,7 @@ describe('usePublisherOptions', () => {
   describe('configurable features', () => {
     it('should disable audio publishing when allowAudioOnJoin is false', async () => {
       const { result } = renderHook(() => usePublisherOptions(), {
-        appConfigOptions: {
+        appConfigContext: {
           value: {
             audioSettings: {
               allowAudioOnJoin: false,
@@ -181,7 +181,7 @@ describe('usePublisherOptions', () => {
 
     it('should disable video publishing when allowVideoOnJoin is false', async () => {
       const { result } = renderHook(() => usePublisherOptions(), {
-        appConfigOptions: {
+        appConfigContext: {
           value: {
             audioSettings: {
               allowAudioOnJoin: false,
@@ -197,7 +197,7 @@ describe('usePublisherOptions', () => {
 
     it('should configure resolution from config', async () => {
       const { result } = renderHook(() => usePublisherOptions(), {
-        appConfigOptions: {
+        appConfigContext: {
           value: {
             videoSettings: {
               defaultResolution: '640x480',

@@ -55,7 +55,7 @@ describe('DeviceControlButton', () => {
       videoHeight: () => 720,
     }) as unknown as Publisher;
     publisherContext = {
-      publisher: null,
+      publisherContext: null,
       isPublishing: true,
       publish: vi.fn() as () => Promise<void>,
       initializeLocalPublisher: vi.fn(() => {
@@ -119,7 +119,7 @@ describe('DeviceControlButton', () => {
           toggleBackgroundEffects={mockHandleToggleBackgroundEffects}
         />,
         {
-          appConfigOptions: {
+          appConfigContext: {
             value: {
               audioSettings: {
                 allowMicrophoneControl: false,
@@ -166,7 +166,7 @@ describe('DeviceControlButton', () => {
           toggleBackgroundEffects={mockHandleToggleBackgroundEffects}
         />,
         {
-          appConfigOptions: {
+          appConfigContext: {
             value: {
               audioSettings: {
                 allowMicrophoneControl: true,

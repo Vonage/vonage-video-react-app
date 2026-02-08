@@ -81,7 +81,7 @@ describe('CaptionsButton', () => {
 
   it('turns the captions on when button is pressed', async () => {
     render(<CaptionsButton handleClick={mockHandleCloseMenu} captionsState={mockCaptionsState} />, {
-      appConfigOptions: {
+      appConfigContext: {
         value: {
           meetingRoomSettings: {
             allowCaptions: true,
@@ -99,7 +99,7 @@ describe('CaptionsButton', () => {
 
   it('is not rendered when allowCaptions is false', () => {
     render(<CaptionsButton handleClick={mockHandleCloseMenu} captionsState={mockCaptionsState} />, {
-      appConfigOptions: {
+      appConfigContext: {
         value: {
           meetingRoomSettings: {
             allowCaptions: false,

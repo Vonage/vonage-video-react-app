@@ -28,7 +28,7 @@ describe('ParticipantListItem', () => {
 
   it('closes menu after clicking menu item', () => {
     render(<ParticipantListItemMenu {...defaultProps} />, {
-      sessionOptions: {
+      sessionContext: {
         __interceptor: (context) => {
           if (context) {
             context.isMaxPinned = false;
@@ -47,7 +47,7 @@ describe('ParticipantListItem', () => {
 
   it('can pin participant', () => {
     render(<ParticipantListItemMenu {...defaultProps} />, {
-      sessionOptions: {
+      sessionContext: {
         __interceptor: (context) => {
           if (context) {
             context.isMaxPinned = false;
@@ -69,7 +69,7 @@ describe('ParticipantListItem', () => {
         {...{ ...defaultProps, subscriberWrapper: { ...mockSubscriberWrapper, isPinned: true } }}
       />,
       {
-        sessionOptions: {
+        sessionContext: {
           __interceptor: (context) => {
             if (context) {
               context.isMaxPinned = false;
@@ -88,7 +88,7 @@ describe('ParticipantListItem', () => {
 
   it('cannot pin participant if maximum number of tiles are pinned', () => {
     render(<ParticipantListItemMenu {...defaultProps} />, {
-      sessionOptions: {
+      sessionContext: {
         __interceptor: (context) => {
           if (context) {
             context.isMaxPinned = true;
@@ -110,7 +110,7 @@ describe('ParticipantListItem', () => {
         {...{ ...defaultProps, subscriberWrapper: { ...mockSubscriberWrapper, isPinned: true } }}
       />,
       {
-        sessionOptions: {
+        sessionContext: {
           __interceptor: (context) => {
             if (context) {
               context.isMaxPinned = true;
