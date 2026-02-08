@@ -19,48 +19,64 @@ export type PreviewPublisherProviderWrapperOptions = {
     typeof PreviewPublisherContext
   >;
   appConfigOptions?: AppConfigProviderWrapperOptions['appConfigOptions'];
+  userOptions?: import('./makeUserProviderWrapper').UserProviderWrapperOptions['userOptions'];
   AppConfigWrapper?: FC<
     PropsWithChildren<{
       value?: AppConfig | ((initialValue: AppConfig) => AppConfig) | undefined;
     }>
   >;
+  UserProviderWrapper?: FC<PropsWithChildren>;
 };
 
 /**
  * Creates wrapper for the PreviewPublisherProvider context.
- * Allows accessing the context value for testing.
+ * The wrapper includes:
+ * - AppConfigProvider: you can override its options via appConfigOptions or pass a pre-made AppConfigWrapper
+ * - UserProvider: you can override its options via userOptions or pass a pre-made UserProviderWrapper
+ * - PreviewPublisherProvider: you can override its options via previewPublisherOptions
  * @param {object} options - The wrapper options.
  * @param {GenericWrapperOptions} [options.previewPublisherOptions] - Options for the PreviewPublisherProvider wrapper.
- * @returns The PreviewPublisherProvider wrapper and context getter.
+ * @param {AppConfigProviderWrapperOptions} [options.appConfigOptions] - Options for the AppConfigProvider wrapper.
+ * @param {UserProviderWrapperOptions} [options.userOptions] - Options for the UserProvider wrapper.
+ * @param {FC} [options.AppConfigWrapper] - Pre-made AppConfigWrapper to avoid re-creating it.
+ * @param {FC} [options.UserProviderWrapper] - Pre-made UserProviderWrapper to avoid re-creating it.
+ * @returns The PreviewPublisherProvider wrapper (both base and composed), and context getters.
  */
 function makePreviewPublisherProviderWrapper({
   previewPublisherOptions,
   appConfigOptions,
+  userOptions,
   ...options
 }: PreviewPublisherProviderWrapperOptions = {}) {
-  const [PreviewPublisherProviderWrapper, previewPublisherContext] = makeGenericProviderWrapper(
+  const [BasePreviewPublisherProviderWrapper, previewPublisherContext] = makeGenericProviderWrapper(
     PreviewPublisherProvider,
     PreviewPublisherContext,
     previewPublisherOptions
   );
 
-  const { UserProviderWrapper, ...user } = makeUserProviderWrapper();
+  const userResult = options.UserProviderWrapper
+    ? { UserProviderWrapper: options.UserProviderWrapper, userContext: { current: null! } }
+    : makeUserProviderWrapper({ userOptions });
 
-  const { AppConfigWrapper, ...appConfigContext } = options.AppConfigWrapper
-    ? { AppConfigWrapper: options.AppConfigWrapper }
+  const appConfigResult = options.AppConfigWrapper
+    ? { AppConfigWrapper: options.AppConfigWrapper, appConfigContext: { current: null! } }
     : makeAppConfigProviderWrapper({ appConfigOptions });
+
+  const { UserProviderWrapper, userContext } = userResult;
+  const { AppConfigWrapper, appConfigContext } = appConfigResult;
 
   const composeWrapper = composeProviders(
     AppConfigWrapper,
     UserProviderWrapper,
-    PreviewPublisherProviderWrapper
+    BasePreviewPublisherProviderWrapper
   );
 
   return {
-    ...user,
-    ...appConfigContext,
-    previewPublisherContext,
+    BasePreviewPublisherProviderWrapper,
     PreviewPublisherProviderWrapper: composeWrapper,
+    previewPublisherContext,
+    userContext,
+    appConfigContext,
   };
 }
 

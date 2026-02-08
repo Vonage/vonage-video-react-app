@@ -15,6 +15,8 @@ export type RoomContextWrapperOptions = {
   appConfigOptions?: AppConfigProviderWrapperOptions['appConfigOptions'];
   previewPublisherOptions?: PreviewPublisherProviderWrapperOptions['previewPublisherOptions'];
   audioOutputOptions?: AudioOutputProviderWrapperOptions['audioOutputOptions'];
+  AppConfigWrapper?: PreviewPublisherProviderWrapperOptions['AppConfigWrapper'];
+  UserProviderWrapper?: PreviewPublisherProviderWrapperOptions['UserProviderWrapper'];
 };
 
 /**
@@ -31,8 +33,8 @@ export type RoomContextWrapperOptions = {
  * @param {UserProviderWrapperOptions} [options.userOptions] - Options for the UserProvider wrapper.
  * @param {PreviewPublisherProviderWrapperOptions} [options.previewPublisherOptions] - Options for the PreviewPublisherProvider wrapper.
  * @param {AudioOutputProviderWrapperOptions} [options.audioOutputOptions] - Options for the AudioOutputProvider wrapper.
- * @param {PublisherProviderWrapperOptions} [options.publisherOptions] - Options for the PublisherProvider wrapper.
- * @param {SessionProviderWrapperOptions} [options.sessionOptions] - Options for the SessionProvider wrapper.
+ * @param {FC} [options.AppConfigWrapper] - Pre-made AppConfigWrapper to avoid re-creating it.
+ * @param {FC} [options.UserProviderWrapper] - Pre-made UserProviderWrapper to avoid re-creating it.
  * @returns The composed RoomContext wrapper and all context getters.
  */
 function makeRoomContextWrapper({
@@ -40,22 +42,30 @@ function makeRoomContextWrapper({
   userOptions,
   previewPublisherOptions,
   audioOutputOptions,
+  ...options
 }: RoomContextWrapperOptions = {}) {
-  const { AppConfigWrapper, ...appConfigContext } = makeAppConfigProviderWrapper({
-    appConfigOptions,
-  });
+  const appConfigResult = options.AppConfigWrapper
+    ? { AppConfigWrapper: options.AppConfigWrapper, appConfigContext: { current: null! } }
+    : makeAppConfigProviderWrapper({ appConfigOptions });
 
-  const { UserProviderWrapper, ...userContext } = makeUserProviderWrapper({
-    userOptions,
-  });
+  const userResult = options.UserProviderWrapper
+    ? { UserProviderWrapper: options.UserProviderWrapper, userContext: { current: null! } }
+    : makeUserProviderWrapper({ userOptions });
+
+  const { AppConfigWrapper, appConfigContext } = appConfigResult;
+  const { UserProviderWrapper, userContext } = userResult;
 
   const { BackgroundPublisherProviderWrapper, ...backgroundPublisherContext } =
-    makeBackgroundPublisherProviderWrapper();
+    makeBackgroundPublisherProviderWrapper({
+      AppConfigWrapper,
+      UserProviderWrapper,
+    });
 
   const { PreviewPublisherProviderWrapper, ...previewPublisherContext } =
     makePreviewPublisherProviderWrapper({
       previewPublisherOptions,
       AppConfigWrapper,
+      UserProviderWrapper,
     });
 
   const { AudioOutputProviderWrapper, ...audioOutputContext } = makeAudioOutputProviderWrapper({
@@ -71,12 +81,12 @@ function makeRoomContextWrapper({
   );
 
   return {
-    RoomProviderWrapper,
     ...appConfigContext,
     ...userContext,
     ...backgroundPublisherContext,
     ...previewPublisherContext,
     ...audioOutputContext,
+    RoomProviderWrapper,
   };
 }
 
