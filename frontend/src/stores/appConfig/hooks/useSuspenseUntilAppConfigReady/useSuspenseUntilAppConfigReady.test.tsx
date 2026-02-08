@@ -29,13 +29,9 @@ describe('useSuspenseUntilAppConfigReady', () => {
 
 async function renderHook<Result, Props>(
   render: (initialProps: Props) => Result,
-  options?: {
-    appConfigOptions?: AppConfigProviderWrapperOptions;
-  }
+  { appConfigOptions }: AppConfigProviderWrapperOptions = {}
 ) {
-  const { appConfigContext, AppConfigWrapper } = makeAppConfigProviderWrapper(
-    options?.appConfigOptions
-  );
+  const { appConfigContext, AppConfigWrapper } = makeAppConfigProviderWrapper({ appConfigOptions });
 
   const wrapper = composeProviders(StrictMode, SuspenseBoundary, AppConfigWrapper);
   const result = await renderAsyncHook(render, { wrapper });

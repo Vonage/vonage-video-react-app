@@ -90,12 +90,10 @@ describe('ParticipantList', () => {
         },
       },
       userOptions: {
-        userOptions: {
-          __interceptor: (context) => {
-            if (context) {
-              context.user.defaultSettings.name = 'Local Participant';
-            }
-          },
+        __interceptor: (context) => {
+          if (context) {
+            context.user.defaultSettings.name = 'Local Participant';
+          }
         },
       },
     });
@@ -114,12 +112,10 @@ describe('ParticipantList', () => {
         },
       },
       userOptions: {
-        userOptions: {
-          __interceptor: (context) => {
-            if (context) {
-              context.user.defaultSettings.name = 'Local Participant';
-            }
-          },
+        __interceptor: (context) => {
+          if (context) {
+            context.user.defaultSettings.name = 'Local Participant';
+          }
         },
       },
     });
@@ -147,12 +143,10 @@ describe('ParticipantList', () => {
         },
       },
       userOptions: {
-        userOptions: {
-          __interceptor: (context) => {
-            if (context) {
-              context.user.defaultSettings.name = 'Local Participant';
-            }
-          },
+        __interceptor: (context) => {
+          if (context) {
+            context.user.defaultSettings.name = 'Local Participant';
+          }
         },
       },
     });
@@ -183,12 +177,10 @@ describe('ParticipantList', () => {
         },
       },
       userOptions: {
-        userOptions: {
-          __interceptor: (context) => {
-            if (context) {
-              context.user.defaultSettings.name = 'Local Participant';
-            }
-          },
+        __interceptor: (context) => {
+          if (context) {
+            context.user.defaultSettings.name = 'Local Participant';
+          }
         },
       },
     });
@@ -214,12 +206,10 @@ describe('ParticipantList', () => {
         },
       },
       userOptions: {
-        userOptions: {
-          __interceptor: (context) => {
-            if (context) {
-              context.user.defaultSettings.name = 'Local Participant';
-            }
-          },
+        __interceptor: (context) => {
+          if (context) {
+            context.user.defaultSettings.name = 'Local Participant';
+          }
         },
       },
     });
@@ -244,12 +234,10 @@ describe('ParticipantList', () => {
         },
       },
       userOptions: {
-        userOptions: {
-          __interceptor: (context) => {
-            if (context) {
-              context.user.defaultSettings.name = 'Local Participant';
-            }
-          },
+        __interceptor: (context) => {
+          if (context) {
+            context.user.defaultSettings.name = 'Local Participant';
+          }
         },
       },
     });

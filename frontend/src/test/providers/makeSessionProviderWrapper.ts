@@ -10,8 +10,8 @@ import makeGenericProviderWrapper, {
 
 export type SessionProviderWrapperOptions = {
   sessionOptions?: GenericWrapperOptions<typeof SessionProvider, typeof SessionContext>;
-  appConfigOptions?: AppConfigProviderWrapperOptions;
-  userOptions?: UserProviderWrapperOptions;
+  appConfigOptions?: AppConfigProviderWrapperOptions['appConfigOptions'];
+  userOptions?: UserProviderWrapperOptions['userOptions'];
 };
 
 /**
@@ -37,9 +37,9 @@ function makeSessionProviderWrapper({
     sessionOptions
   );
 
-  const { AppConfigWrapper, appConfigContext } = makeAppConfigProviderWrapper(appConfigOptions);
+  const { AppConfigWrapper, appConfigContext } = makeAppConfigProviderWrapper({ appConfigOptions });
 
-  const { UserProviderWrapper, userContext } = makeUserProviderWrapper(userOptions);
+  const { UserProviderWrapper, userContext } = makeUserProviderWrapper({ userOptions });
 
   const composeWrapper = composeProviders(
     AppConfigWrapper,

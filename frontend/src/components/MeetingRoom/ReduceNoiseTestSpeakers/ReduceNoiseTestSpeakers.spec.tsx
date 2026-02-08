@@ -140,11 +140,8 @@ describe('ReduceNoiseTestSpeakers', () => {
   });
 });
 
-function render(
-  ui: ReactElement,
-  options?: { appConfigOptions?: AppConfigProviderWrapperOptions }
-) {
-  const { AppConfigWrapper } = makeAppConfigProviderWrapper(options?.appConfigOptions);
+function render(ui: ReactElement, { appConfigOptions }: AppConfigProviderWrapperOptions = {}) {
+  const { AppConfigWrapper } = makeAppConfigProviderWrapper({ appConfigOptions });
 
-  return renderBase(ui, { ...options, wrapper: AppConfigWrapper });
+  return renderBase(ui, { wrapper: AppConfigWrapper });
 }

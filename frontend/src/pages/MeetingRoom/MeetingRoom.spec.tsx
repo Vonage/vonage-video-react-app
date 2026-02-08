@@ -532,3 +532,30 @@ function render(ui: ReactElement, options: PublisherProviderWrapperOptions = {})
     ...renderBase(ui, { wrapper: PublisherProviderWrapper }),
   };
 }
+
+// function render(ui: ReactElement, options: PublisherProviderWrapperOptions = {}) {
+//   const { PublisherProviderWrapper, ...props } = makePublisherProviderWrapper(options);
+// ',
+//     });
+
+//     render(<MeetingRoom />);
+
+//     await waitFor(() => {
+//       expect(mockedNavigate).not.toHaveBeenCalledWith('/waiting-room/test-room-name');
+//     });
+//   });
+// });
+
+// function setUserContextWithName(name: string) {
+//   mockUseUserContext.mockImplementation(
+//     () =>
+//       ({
+//         user: {
+//           defaultSettings: {
+//             videoFilter: undefined,
+//             name,
+//           },
+//         },
+//       }) as unknown as UserContextType
+//   );
+// }

@@ -18,7 +18,7 @@ export type PreviewPublisherProviderWrapperOptions = {
     typeof PreviewPublisherProvider,
     typeof PreviewPublisherContext
   >;
-  appConfigOptions?: AppConfigProviderWrapperOptions;
+  appConfigOptions?: AppConfigProviderWrapperOptions['appConfigOptions'];
   AppConfigWrapper?: FC<
     PropsWithChildren<{
       value?: AppConfig | ((initialValue: AppConfig) => AppConfig) | undefined;
@@ -35,6 +35,7 @@ export type PreviewPublisherProviderWrapperOptions = {
  */
 function makePreviewPublisherProviderWrapper({
   previewPublisherOptions,
+  appConfigOptions,
   ...options
 }: PreviewPublisherProviderWrapperOptions = {}) {
   const [PreviewPublisherProviderWrapper, previewPublisherContext] = makeGenericProviderWrapper(
@@ -47,7 +48,7 @@ function makePreviewPublisherProviderWrapper({
 
   const { AppConfigWrapper, ...appConfigContext } = options.AppConfigWrapper
     ? { AppConfigWrapper: options.AppConfigWrapper }
-    : makeAppConfigProviderWrapper(options.appConfigOptions);
+    : makeAppConfigProviderWrapper({ appConfigOptions });
 
   const composeWrapper = composeProviders(
     AppConfigWrapper,

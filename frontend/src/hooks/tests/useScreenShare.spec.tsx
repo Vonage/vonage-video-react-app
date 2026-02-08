@@ -38,10 +38,8 @@ describe('useScreenSharing', () => {
   it('initializes screen sharing publisher and publishes', async () => {
     const { result } = render({
       userOptions: {
-        userOptions: {
-          __interceptor: (context: UserContextType | null) => {
-            context!.user.defaultSettings.name = 'TestUser';
-          },
+        __interceptor: (context: UserContextType | null) => {
+          context!.user.defaultSettings.name = 'TestUser';
         },
       },
       sessionOptions: {
@@ -78,10 +76,8 @@ describe('useScreenSharing', () => {
   it('unpublishes screen sharing when already sharing', async () => {
     const { result } = render({
       userOptions: {
-        userOptions: {
-          __interceptor: (context: UserContextType | null) => {
-            context!.user.defaultSettings.name = 'TestUser';
-          },
+        __interceptor: (context: UserContextType | null) => {
+          context!.user.defaultSettings.name = 'TestUser';
         },
       },
       sessionOptions: {
@@ -108,10 +104,8 @@ describe('useScreenSharing', () => {
   it('does not initialize publisher if session is null', async () => {
     const { result } = render({
       userOptions: {
-        userOptions: {
-          __interceptor: (context: UserContextType | null) => {
-            context!.user.defaultSettings.name = 'TestUser';
-          },
+        __interceptor: (context: UserContextType | null) => {
+          context!.user.defaultSettings.name = 'TestUser';
         },
       },
       sessionOptions: {

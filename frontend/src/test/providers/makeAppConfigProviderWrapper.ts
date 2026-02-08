@@ -4,7 +4,9 @@ import defaultAppConfig from '@stores/appConfig/helpers/defaultAppConfig';
 import mergeAppConfigs from '@stores/appConfig/helpers/mergeAppConfigs';
 
 export type AppConfigProviderWrapperOptions = {
-  value?: DeepPartial<AppConfig>;
+  appConfigOptions?: {
+    value?: DeepPartial<AppConfig>;
+  };
 };
 
 /**
@@ -13,7 +15,7 @@ export type AppConfigProviderWrapperOptions = {
  * @param {object} appConfigOptions - The wrapper options.
  * @returns {object} The AppConfigProvider wrapper and context getter.
  */
-function makeAppConfigProviderWrapper(appConfigOptions?: AppConfigProviderWrapperOptions) {
+function makeAppConfigProviderWrapper({ appConfigOptions }: AppConfigProviderWrapperOptions = {}) {
   const initialState = mergeAppConfigs({
     previous: defaultAppConfig,
     updates: {

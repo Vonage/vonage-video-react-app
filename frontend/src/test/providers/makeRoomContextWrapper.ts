@@ -12,7 +12,7 @@ import type { PreviewPublisherProviderWrapperOptions } from './makePreviewPublis
 
 export type RoomContextWrapperOptions = {
   userOptions?: UserProviderWrapperOptions['userOptions'];
-  appConfigOptions?: AppConfigProviderWrapperOptions;
+  appConfigOptions?: AppConfigProviderWrapperOptions['appConfigOptions'];
   previewPublisherOptions?: PreviewPublisherProviderWrapperOptions['previewPublisherOptions'];
   audioOutputOptions?: AudioOutputProviderWrapperOptions['audioOutputOptions'];
 };
@@ -41,7 +41,9 @@ function makeRoomContextWrapper({
   previewPublisherOptions,
   audioOutputOptions,
 }: RoomContextWrapperOptions = {}) {
-  const { AppConfigWrapper, ...appConfigContext } = makeAppConfigProviderWrapper(appConfigOptions);
+  const { AppConfigWrapper, ...appConfigContext } = makeAppConfigProviderWrapper({
+    appConfigOptions,
+  });
 
   const { UserProviderWrapper, ...userContext } = makeUserProviderWrapper({
     userOptions,

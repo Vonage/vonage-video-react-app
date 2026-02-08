@@ -157,17 +157,20 @@ describe('CameraButton', () => {
 type RenderOptions = {
   previewPublisherOptions?: PreviewPublisherProviderWrapperOptions['previewPublisherOptions'];
   backgroundPublisherOptions?: BackgroundPublisherProviderWrapperOptions['backgroundPublisherOptions'];
-  appConfigOptions?: AppConfigProviderWrapperOptions;
+  appConfigOptions?: AppConfigProviderWrapperOptions['appConfigOptions'];
 };
 
-function render(ui: ReactElement, options: RenderOptions = {}) {
-  const { AppConfigWrapper } = makeAppConfigProviderWrapper(options.appConfigOptions);
+function render(
+  ui: ReactElement,
+  { previewPublisherOptions, backgroundPublisherOptions, appConfigOptions }: RenderOptions = {}
+) {
+  const { AppConfigWrapper } = makeAppConfigProviderWrapper({ appConfigOptions });
   const { PreviewPublisherProviderWrapper, ...previewProps } = makePreviewPublisherProviderWrapper({
-    previewPublisherOptions: options.previewPublisherOptions,
+    previewPublisherOptions,
   });
   const { BackgroundPublisherProviderWrapper, ...backgroundProps } =
     makeBackgroundPublisherProviderWrapper({
-      backgroundPublisherOptions: options.backgroundPublisherOptions,
+      backgroundPublisherOptions,
     });
 
   const Wrapper = composeProviders(

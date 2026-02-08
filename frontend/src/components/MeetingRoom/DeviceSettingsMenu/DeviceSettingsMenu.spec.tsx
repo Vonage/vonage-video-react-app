@@ -367,15 +367,10 @@ describe('DeviceSettingsMenu Component', () => {
   });
 });
 
-function render(
-  ui: ReactElement,
-  options?: {
-    appConfigOptions?: AppConfigProviderWrapperOptions;
-  }
-) {
-  const { AppConfigWrapper, ...appConfigContext } = makeAppConfigProviderWrapper(
-    options?.appConfigOptions
-  );
+function render(ui: ReactElement, { appConfigOptions }: AppConfigProviderWrapperOptions = {}) {
+  const { AppConfigWrapper, ...appConfigContext } = makeAppConfigProviderWrapper({
+    appConfigOptions,
+  });
 
   return {
     ...appConfigContext,

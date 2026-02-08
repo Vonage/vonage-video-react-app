@@ -96,22 +96,25 @@ describe('MicButton', () => {
 });
 
 type RenderOptions = {
-  appConfigOptions?: AppConfigProviderWrapperOptions;
+  appConfigOptions?: AppConfigProviderWrapperOptions['appConfigOptions'];
   previewPublisherOptions?: PreviewPublisherProviderWrapperOptions['previewPublisherOptions'];
 };
 
-function render(ui: ReactElement, options?: RenderOptions) {
-  const { AppConfigWrapper } = makeAppConfigProviderWrapper(options?.appConfigOptions);
+function render(
+  ui: ReactElement,
+  { appConfigOptions, previewPublisherOptions }: RenderOptions = {}
+) {
+  // TODO: If the component uses the context we cannot optionally wrap with the provider, we should always wrap with the provider!
+  const { AppConfigWrapper } = makeAppConfigProviderWrapper({ appConfigOptions });
 
-  if (!options?.previewPublisherOptions) {
+  if (!previewPublisherOptions) {
     return renderBase(ui, {
-      ...options,
       wrapper: AppConfigWrapper,
     });
   }
 
   const { PreviewPublisherProviderWrapper } = makePreviewPublisherProviderWrapper({
-    previewPublisherOptions: options.previewPublisherOptions,
+    previewPublisherOptions,
   });
 
   const Wrapper = composeProviders(
@@ -121,7 +124,6 @@ function render(ui: ReactElement, options?: RenderOptions) {
   );
 
   return renderBase(ui, {
-    ...options,
     wrapper: Wrapper,
   });
 }

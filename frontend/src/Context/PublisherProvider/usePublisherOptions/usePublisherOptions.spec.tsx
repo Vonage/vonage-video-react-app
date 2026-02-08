@@ -228,11 +228,9 @@ describe('usePublisherOptions', () => {
 
 function renderHook<Result, Props>(
   render: (initialProps: Props) => Result,
-  options?: {
-    appConfigOptions?: AppConfigProviderWrapperOptions;
-  }
+  { appConfigOptions }: AppConfigProviderWrapperOptions = {}
 ) {
-  const { AppConfigWrapper } = makeAppConfigProviderWrapper(options?.appConfigOptions);
+  const { AppConfigWrapper } = makeAppConfigProviderWrapper({ appConfigOptions });
 
-  return renderHookBase(render, { ...options, wrapper: AppConfigWrapper });
+  return renderHookBase(render, { wrapper: AppConfigWrapper });
 }
