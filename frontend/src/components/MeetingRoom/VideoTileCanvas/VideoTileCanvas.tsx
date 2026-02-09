@@ -13,8 +13,8 @@ import useSubscribersInDisplayOrder from '../../../hooks/useSubscribersInDisplay
 import getLayoutBoxes from '../../../utils/helpers/getLayoutBoxes';
 import useActiveSpeaker from '../../../hooks/useActiveSpeaker';
 import useIsSmallViewport from '../../../hooks/useIsSmallViewport';
-import CircularProgress from '@ui/CircularProgress';
-import Box from '@ui/Box';
+import CircularProgress from '@mui/material/CircularProgress';
+import Box from '@mui/material/Box';
 
 export type VideoTileCanvasProps = {
   isSharingScreen: boolean;

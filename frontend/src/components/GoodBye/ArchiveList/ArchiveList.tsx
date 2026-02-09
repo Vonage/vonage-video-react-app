@@ -1,17 +1,17 @@
 import { Fragment, ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
 
-import Box from '@ui/Box';
-import CircularProgress from '@ui/CircularProgress';
-import IconButton from '@ui/IconButton';
-import Link from '@ui/Link';
-import List from '@ui/List';
-import ListItem from '@ui/ListItem';
-import ListItemIcon from '@ui/ListItemIcon';
-import ListItemText from '@ui/ListItemText';
-import Stack from '@ui/Stack';
-import Tooltip from '@ui/Tooltip';
-import Typography from '@ui/Typography';
+import Box from '@mui/material/Box';
+import CircularProgress from '@mui/material/CircularProgress';
+import IconButton from '@mui/material/IconButton';
+import Link from '@mui/material/Link';
+import List from '@mui/material/List';
+import ListItem from '@mui/material/ListItem';
+import ListItemIcon from '@mui/material/ListItemIcon';
+import ListItemText from '@mui/material/ListItemText';
+import Stack from '@mui/material/Stack';
+import Tooltip from '@mui/material/Tooltip';
+import Typography from '@mui/material/Typography';
 import useTheme from '@ui/theme';
 
 import Separator from '@components/Separator';

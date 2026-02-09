@@ -2,8 +2,8 @@ import { Dispatch, ReactElement, SetStateAction } from 'react';
 import { useTranslation } from 'react-i18next';
 import { CAPTION_ERROR_DISPLAY_DURATION_MS } from '../../../utils/constants';
 import useIsSmallViewport from '../../../hooks/useIsSmallViewport';
-import Snackbar from '@ui/Snackbar';
-import Alert from '@ui/Alert';
+import Snackbar from '@mui/material/Snackbar';
+import Alert from '@mui/material/Alert';
 
 export type CaptionsErrorProps = {
   captionsErrorResponse: string | null;

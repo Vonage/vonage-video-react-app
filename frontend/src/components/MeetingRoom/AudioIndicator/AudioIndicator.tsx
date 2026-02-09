@@ -4,10 +4,10 @@ import { useTranslation } from 'react-i18next';
 import PopupDialog, { DialogTexts } from '../PopupDialog';
 import VoiceIndicatorIcon from '../VoiceIndicator/VoiceIndicator';
 import useSessionContext from '../../../hooks/useSessionContext';
-import IconButton from '@ui/IconButton';
-import Tooltip from '@ui/Tooltip';
+import IconButton from '@mui/material/IconButton';
+import Tooltip from '@mui/material/Tooltip';
 import VividIcon from '@components/VividIcon';
-import Box from '@ui/Box';
+import Box from '@mui/material/Box';
 import useTheme from '@ui/theme';
 
 export type AudioIndicatorProps = {

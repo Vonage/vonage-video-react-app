@@ -1,6 +1,6 @@
 import { useNavigate } from 'react-router-dom';
 import { ReactElement } from 'react';
-import Typography from '@ui/Typography';
+import Typography from '@mui/material/Typography';
 import { useTranslation } from 'react-i18next';
 import Card from '@ui/Card';
 import generateRoomName from '../../utils/generateRoomName';

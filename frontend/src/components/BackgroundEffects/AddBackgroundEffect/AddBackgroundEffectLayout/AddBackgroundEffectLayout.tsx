@@ -1,8 +1,8 @@
 import { ChangeEvent, ReactElement, useState, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
-import Box from '@ui/Box';
-import Snackbar from '@ui/Snackbar';
-import Alert from '@ui/Alert';
+import Box from '@mui/material/Box';
+import Snackbar from '@mui/material/Snackbar';
+import Alert from '@mui/material/Alert';
 import VividIcon from '@components/VividIcon';
 import { ALLOWED_TYPES, MAX_SIZE_MB } from '../../../../utils/constants';
 import useImageStorage from '@utils/useImageStorage/useImageStorage';

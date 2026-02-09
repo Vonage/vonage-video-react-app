@@ -1,7 +1,7 @@
 import { ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
-import List from '@ui/List';
-import Typography from '@ui/Typography';
+import List from '@mui/material/List';
+import Typography from '@mui/material/Typography';
 import { SUPPORTED_BROWSERS } from '../../../utils/constants';
 import SupportedBrowserListItem from '../SupportedBrowserListItem';
 import Card from '@ui/Card';

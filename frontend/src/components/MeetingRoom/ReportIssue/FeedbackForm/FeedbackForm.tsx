@@ -8,11 +8,11 @@ import {
 } from '../../../../utils/constants';
 import HelperText from './HelperText';
 import useIsSmallViewport from '../../../../hooks/useIsSmallViewport';
-import Box from '@ui/Box';
-import TextField from '@ui/TextField';
-import Typography from '@ui/Typography';
-import Button from '@ui/Button';
-import CircularProgress from '@ui/CircularProgress';
+import Box from '@mui/material/Box';
+import TextField from '@mui/material/TextField';
+import Typography from '@mui/material/Typography';
+import Button from '@mui/material/Button';
+import CircularProgress from '@mui/material/CircularProgress';
 import useTheme from '@ui/theme';
 
 export type FormType = {

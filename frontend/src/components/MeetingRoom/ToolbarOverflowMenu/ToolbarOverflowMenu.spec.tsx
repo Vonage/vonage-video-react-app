@@ -5,7 +5,7 @@ import * as util from '@utils/util';
 import isReportIssueEnabled from '@utils/isReportIssueEnabled';
 import { makeSessionProviderWrapper, type SessionProviderWrapperOptions } from '@test/providers';
 import ToolbarOverflowMenu, { CaptionsState } from './ToolbarOverflowMenu';
-import Button from '@ui/Button';
+import Button from '@mui/material/Button';
 
 vi.mock('@hooks/useRoomName');
 vi.mock('@utils/util', async (importOriginal) => {

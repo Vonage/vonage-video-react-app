@@ -4,11 +4,11 @@ import usePreviewPublisherContext from '@hooks/usePreviewPublisherContext';
 import useDevices from '@hooks/useDevices';
 import useAudioOutputContext from '@hooks/useAudioOutputContext';
 import useIsSmallViewport from '@hooks/useIsSmallViewport';
-import Box from '@ui/Box';
-import type { SxProps } from '@ui/SxProps';
+import Box from '@mui/material/Box';
+import type { SxProps } from '@mui/material';
 import useTheme from '@ui/theme';
 import VividIcon from '@components/VividIcon';
-import ButtonBase from '@ui/ButtonBase';
+import ButtonBase from '@mui/material/ButtonBase';
 import MenuDevicesWaitingRoom from '../MenuDevices';
 import MenuMoreOptions from '../MenuMoreOptions/MenuMoreOptions';
 

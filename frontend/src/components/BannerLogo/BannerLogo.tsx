@@ -1,6 +1,6 @@
 import { ReactElement } from 'react';
 import { useNavigate } from 'react-router-dom';
-import Box from '@ui/Box';
+import Box from '@mui/material/Box';
 import useIsTabletViewport from '@hooks/useIsTabletViewport';
 
 /**

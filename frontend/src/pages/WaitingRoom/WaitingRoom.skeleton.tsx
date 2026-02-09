@@ -3,7 +3,7 @@ import Banner from '@components/Banner';
 import VideoContainerSkeleton from '@components/WaitingRoom/VideoContainer/VideoContainer.skeleton';
 import UsernameInputSkeleton from '@components/WaitingRoom/UserNameInput/UserNameInput.skeleton';
 import classNames from 'classnames';
-import Box from '@ui/Box';
+import Box from '@mui/material/Box';
 import PageLayout from '@ui/PageLayout';
 import Footer from '@components/Footer/Footer';
 

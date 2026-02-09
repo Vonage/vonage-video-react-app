@@ -1,9 +1,9 @@
 import { ReactElement, useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import ClickAwayListener from '@ui/ClickAwayListener';
-import MenuItem from '@ui/MenuItem';
+import ClickAwayListener from '@mui/material/ClickAwayListener';
+import MenuItem from '@mui/material/MenuItem';
 import useAudioOutputContext from '../../hooks/useAudioOutputContext';
-import Typography from '@ui/Typography';
+import Typography from '@mui/material/Typography';
 import useTheme from '@ui/theme';
 
 export type SoundTestProps = {

@@ -1,6 +1,6 @@
 import { Subscriber } from '@vonage/client-sdk-video';
 import { ReactElement, useState, useRef, useEffect } from 'react';
-import Typography from '@ui/Typography';
+import Typography from '@mui/material/Typography';
 import { useTranslation } from 'react-i18next';
 import useReceivingCaptions from '../../../../../hooks/useReceivingCaptions';
 import { CAPTION_DISPLAY_DURATION_MS } from '../../../../../utils/constants';

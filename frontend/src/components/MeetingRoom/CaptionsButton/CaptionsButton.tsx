@@ -5,7 +5,7 @@ import appConfig$ from '@stores/appConfig';
 import { disableCaptions, enableCaptions } from '@api/captions';
 import useRoomName from '@hooks/useRoomName';
 import ToolbarButton from '../ToolbarButton';
-import Tooltip from '@ui/Tooltip';
+import Tooltip from '@mui/material/Tooltip';
 import VividIcon from '@components/VividIcon';
 import useTheme from '@ui/theme';
 

@@ -1,5 +1,5 @@
 import { Dispatch, ReactElement, useState, SetStateAction } from 'react';
-import Tooltip from '@ui/Tooltip';
+import Tooltip from '@mui/material/Tooltip';
 import VividIcon from '@components/VividIcon';
 import { useTranslation } from 'react-i18next';
 import useTheme from '@ui/theme';

@@ -1,9 +1,9 @@
 import { ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
-import Box from '@ui/Box';
-import Button from '@ui/Button';
-import Typography from '@ui/Typography';
-import Link from '@ui/Link';
+import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
+import Typography from '@mui/material/Typography';
+import Link from '@mui/material/Link';
 import useTheme from '@ui/theme';
 
 export type TicketResponseType = {

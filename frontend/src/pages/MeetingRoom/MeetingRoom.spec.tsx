@@ -21,7 +21,7 @@ import useToolbarButtons, {
 } from '@hooks/useToolbarButtons';
 import { PublisherProviderWrapperOptions, makePublisherProviderWrapper } from '@test/providers';
 import { render as renderBase } from '@testing-library/react';
-import useMediaQuery from '@ui/useMediaQuery';
+import useMediaQuery from '@mui/material/useMediaQuery';
 import MeetingRoom from './MeetingRoom';
 import type { Box } from 'opentok-layout-js';
 
@@ -46,7 +46,7 @@ vi.mock('react-router-dom', async () => {
     useLocation: () => mockedLocation(),
   };
 });
-vi.mock('@ui/useMediaQuery', () => ({
+vi.mock('@mui/material/useMediaQuery', () => ({
   default: vi.fn(),
 }));
 

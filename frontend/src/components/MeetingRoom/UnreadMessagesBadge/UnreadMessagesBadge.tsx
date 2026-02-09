@@ -1,4 +1,4 @@
-import Badge from '@ui/Badge';
+import Badge from '@mui/material/Badge';
 import { ForwardedRef, forwardRef, ReactElement } from 'react';
 import useSessionContext from '@hooks/useSessionContext';
 import appConfig$ from '@stores/appConfig';

@@ -1,9 +1,9 @@
 import { AudioOutputDevice, Device } from '@vonage/client-sdk-video';
 import { ReactElement, useMemo } from 'react';
-import MenuItem from '@ui/MenuItem';
-import Menu from '@ui/Menu';
+import MenuItem from '@mui/material/MenuItem';
+import Menu from '@mui/material/Menu';
 import VividIcon from '@components/VividIcon';
-import Box from '@ui/Box';
+import Box from '@mui/material/Box';
 import cleanAndDedupeDeviceLabels from '@utils/cleanAndDedupeDeviceLabels/cleanAndDedupeDeviceLabels';
 import SoundTest from '../../SoundTest';
 import { isGetActiveAudioOutputDeviceSupported } from '@utils/util';

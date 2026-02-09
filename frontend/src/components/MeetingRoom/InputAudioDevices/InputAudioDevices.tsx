@@ -1,7 +1,7 @@
-import Box from '@ui/Box';
-import Typography from '@ui/Typography';
-import MenuItem from '@ui/MenuItem';
-import MenuList from '@ui/MenuList';
+import Box from '@mui/material/Box';
+import Typography from '@mui/material/Typography';
+import MenuItem from '@mui/material/MenuItem';
+import MenuList from '@mui/material/MenuList';
 import { Device } from '@vonage/client-sdk-video';
 import { MouseEvent as ReactMouseEvent, ReactElement, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -12,7 +12,7 @@ import useDevices from '@hooks/useDevices';
 import usePublisherContext from '@hooks/usePublisherContext';
 import { setStorageItem, STORAGE_KEYS } from '@utils/storage';
 import cleanAndDedupeDeviceLabels from '@utils/cleanAndDedupeDeviceLabels';
-import Tooltip from '@ui/Tooltip';
+import Tooltip from '@mui/material/Tooltip';
 
 export type InputAudioDevicesProps = {
   handleToggle: () => void;

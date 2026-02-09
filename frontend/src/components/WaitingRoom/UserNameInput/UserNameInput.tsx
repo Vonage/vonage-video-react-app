@@ -1,10 +1,10 @@
 import React, { Dispatch, MouseEvent, ReactElement, SetStateAction, useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import TextField from '@ui/TextField';
-import Button from '@ui/Button';
-import Box from '@ui/Box';
-import Typography from '@ui/Typography';
+import TextField from '@mui/material/TextField';
+import Button from '@mui/material/Button';
+import Box from '@mui/material/Box';
+import Typography from '@mui/material/Typography';
 import Card from '@ui/Card';
 import useUserContext from '@hooks/useUserContext';
 import { UserType } from '@Context/user';

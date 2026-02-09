@@ -1,4 +1,4 @@
-import Box from '@ui/Box';
+import Box from '@mui/material/Box';
 import LanguageSelector from '../LanguageSelector';
 import type { BoxProps } from '@mui/material';
 

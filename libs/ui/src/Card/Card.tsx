@@ -1,14 +1,26 @@
 import React from 'react';
-import Box, { BoxProps } from '../Box/Box';
 import useTheme from '../theme';
+import Box from '@mui/material/Box';
+import type { Theme as MaterialThemeType } from '@mui/material';
+import type { OverrideProps } from '@mui/material/OverridableComponent';
+import type { BoxTypeMap } from '@mui/system';
+import type { OverridableComponent } from '@mui/types';
 
-export type CardProps<C extends React.ElementType = 'div'> = BoxProps<C>;
+type CardTypeMap<
+  AdditionalProps = object,
+  RootComponent extends React.ElementType = 'div',
+> = BoxTypeMap<AdditionalProps, RootComponent, MaterialThemeType>;
 
-const Card = <C extends React.ElementType = 'div'>({ sx, ...cardProps }: CardProps<C>) => {
+export type CardProps<
+  RootComponent extends React.ElementType = CardTypeMap['defaultComponent'],
+  AdditionalProps = object,
+> = OverrideProps<CardTypeMap<AdditionalProps, RootComponent>, RootComponent>;
+
+const Card = (({ sx, ...cardProps }: CardProps) => {
   const theme = useTheme();
 
   return (
-    <Box<C>
+    <Box
       sx={{
         maxWidth: { xs: '100%', md: '500px' },
         flex: 1,
@@ -20,9 +32,9 @@ const Card = <C extends React.ElementType = 'div'>({ sx, ...cardProps }: CardPro
         borderRadius: theme.shapes.borderRadiusMedium,
         ...sx,
       }}
-      {...(cardProps as BoxProps<C>)}
+      {...cardProps}
     />
   );
-};
+}) as OverridableComponent<CardTypeMap>;
 
 export default Card;

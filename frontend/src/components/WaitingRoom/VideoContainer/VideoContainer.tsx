@@ -1,6 +1,6 @@
 import { useRef, useState, useEffect, ReactElement } from 'react';
-import Box from '@ui/Box';
-import Stack from '@ui/Stack';
+import Box from '@mui/material/Box';
+import Stack from '@mui/material/Stack';
 import useTheme from '@ui/theme';
 import { VIDEO_CONTAINER_HEIGHT_WR } from '@utils/constants';
 import MicButton from '../MicButton';
