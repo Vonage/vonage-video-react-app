@@ -1,6 +1,6 @@
 import { waitFor } from '@testing-library/dom';
 import { vi, describe, it, beforeEach, expect } from 'vitest';
-import { FrontendLogger } from './FrontendLogger';
+import { FrontendLogger } from './Logger';
 import type { LoggerProviderConfig } from '@common/logger';
 
 describe('FrontendLogger', () => {
@@ -19,7 +19,10 @@ describe('FrontendLogger', () => {
     logger.reportError(new Error('Err'), { context: 'test' });
 
     await waitFor(() => {
-      expect(provider.log).toHaveBeenCalledWith('EventName', { key: 'value' });
+      expect(provider.log).toHaveBeenCalledWith(
+        'EventName',
+        expect.objectContaining({ key: 'value', timestamp: expect.any(Number) })
+      );
     });
     await waitFor(() => {
       expect(provider.reportError).toHaveBeenCalledWith(
@@ -38,7 +41,10 @@ describe('FrontendLogger', () => {
     syncLogger.reportError(new Error('Sync error'), { source: 'test' });
 
     await waitFor(() => {
-      expect(syncProvider.log).toHaveBeenCalledWith('SyncEvent', { id: '1' });
+      expect(syncProvider.log).toHaveBeenCalledWith(
+        'SyncEvent',
+        expect.objectContaining({ id: '1', timestamp: expect.any(Number) })
+      );
     });
     await waitFor(() => {
       expect(syncProvider.reportError).toHaveBeenCalledWith(

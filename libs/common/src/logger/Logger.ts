@@ -240,7 +240,8 @@ export class LoggerBase implements LoggerProviderConfig {
    * @param extra Additional data associated with the event.
    */
   public log(event: string, extra?: Record<string, unknown>) {
-    void this.tryExecuteFeature(LoggerFeature.Log).then((feature) => feature?.(event, extra ?? {}));
+    const payload = { ...(extra ?? {}), timestamp: Date.now() };
+    void this.tryExecuteFeature(LoggerFeature.Log).then((feature) => feature?.(event, payload));
   }
 }
 

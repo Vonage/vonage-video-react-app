@@ -65,6 +65,43 @@ describe('LoggerBase', () => {
   });
 
   describe('group() reportError and log forward with group context', () => {
+    it('should pass payload with auto-generated timestamp (Date.now()) to provider', async () => {
+      const provider = { ...minimalProvider, reportError: vi.fn(), log: vi.fn() };
+      loggerBase.setup(() => provider);
+
+      const before = Date.now();
+      loggerBase.log('TestEvent', { sessionId: 's1' });
+      const after = Date.now();
+
+      await waitFor(() => {
+        expect(provider.log).toHaveBeenCalledWith(
+          'TestEvent',
+          expect.objectContaining({
+            sessionId: 's1',
+            timestamp: expect.any(Number),
+          })
+        );
+      });
+
+      const payload = (provider.log as ReturnType<typeof vi.fn>).mock.calls[0][1] as {
+        sessionId: string;
+        timestamp: number;
+      };
+      expect(payload.timestamp).toBeGreaterThanOrEqual(before);
+      expect(payload.timestamp).toBeLessThanOrEqual(after);
+    });
+
+    it('should add timestamp when log() is called without extra', async () => {
+      const provider = { ...minimalProvider, reportError: vi.fn(), log: vi.fn() };
+      loggerBase.setup(() => provider);
+
+      loggerBase.log('EventOnly');
+
+      await waitFor(() => {
+        expect(provider.log).toHaveBeenCalledWith('EventOnly', { timestamp: expect.any(Number) });
+      });
+    });
+
     it('should forward reportError with groupId, groupName, context and extra', async () => {
       const provider = {
         ...minimalProvider,

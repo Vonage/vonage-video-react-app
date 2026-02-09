@@ -268,7 +268,7 @@ class VonageVideoClient extends EventEmitter<VonageVideoClientEvents> {
    */
   private handleSubscriptionError = (error: unknown) => {
     frontendLogger.reportError(error, {
-      source: 'subscription',
+      source: 'vonageVideoClient.handleSubscriptionError',
       sessionId: this.sessionId,
       connectionId: this.connectionId,
     });
@@ -303,10 +303,9 @@ class VonageVideoClient extends EventEmitter<VonageVideoClientEvents> {
    * @private
    */
   private handleReconnecting = () => {
-    frontendLogger.log('CallReconnecting', {
+    frontendLogger.log('vonageVideoClient.handleReconnecting', {
       sessionId: this.sessionId,
       connectionId: this.connectionId,
-      timestamp: Date.now(),
     });
 
     this.emit('sessionReconnecting');
@@ -317,10 +316,9 @@ class VonageVideoClient extends EventEmitter<VonageVideoClientEvents> {
    * @private
    */
   private handleReconnected = () => {
-    frontendLogger.log('CallReconnected', {
+    frontendLogger.log('vonageVideoClient.handleReconnected', {
       sessionId: this.sessionId,
       connectionId: this.connectionId,
-      timestamp: Date.now(),
     });
 
     this.emit('sessionReconnected');
@@ -335,11 +333,10 @@ class VonageVideoClient extends EventEmitter<VonageVideoClientEvents> {
     const sessionId = this.sessionId;
     const connectionId = this.connectionId;
 
-    frontendLogger.log('CallEnded', {
+    frontendLogger.log('vonageVideoClient.handleSessionDisconnected', {
       reason,
       sessionId,
       connectionId,
-      timestamp: Date.now(),
     });
 
     this.emit('sessionDisconnected', { reason });
@@ -375,10 +372,8 @@ class VonageVideoClient extends EventEmitter<VonageVideoClientEvents> {
       }
       this.clientSession?.connect(token, (err?: OTError) => {
         if (err) {
-          console.error('Error connecting to session:', err);
-
           frontendLogger.reportError(err, {
-            source: 'connection',
+            source: 'vonageVideoClient.connect.error',
             sessionId,
           });
 
@@ -388,10 +383,9 @@ class VonageVideoClient extends EventEmitter<VonageVideoClientEvents> {
           // fully replace opentok-solutions-logging analytics.
           logOnConnect(apiKey, sessionId, this.clientSession?.connection?.connectionId);
 
-          frontendLogger.log('CallStarted', {
+          frontendLogger.log('vonageVideoClient.connect.success', {
             sessionId,
             connectionId: this.clientSession?.connection?.connectionId,
-            timestamp: Date.now(),
           });
 
           resolve();
@@ -437,7 +431,7 @@ class VonageVideoClient extends EventEmitter<VonageVideoClientEvents> {
       this.clientSession?.publish(publisher, (error) => {
         if (error) {
           frontendLogger.reportError(error, {
-            source: 'publishing',
+            source: 'vonageVideoClient.publish.error',
             sessionId: this.sessionId,
             connectionId: this.connectionId,
             errorCode: (error as { code?: number })?.code,
