@@ -1,5 +1,7 @@
 import mediaDevices$ from '@core/stores/devices';
-import filterMobileCameras from './helpers/filterMobileCameras';
+
+// reverted filter by mobile camera
+// import filterMobileCameras from './helpers/filterMobileCameras';
 
 /**
  * React hook that returns filtered video input devices for camera selection.
@@ -13,7 +15,7 @@ import filterMobileCameras from './helpers/filterMobileCameras';
  * @returns Filtered array containing at most one front and one rear camera on mobile, or all video input devices on desktop.
  */
 const usePreferredCameras = mediaDevices$.mediaDevicesMap$.createSelectorHook(
-  (state) => filterMobileCameras(Object.values(state.videoinput)),
+  (state) => Object.values(state.videoinput),
   {
     // avoid re-computing unless the videoinput devices change
     isEqualRoot: (a, b) => a.videoinput === b.videoinput,
