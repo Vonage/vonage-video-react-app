@@ -1213,19 +1213,19 @@ Rationale (kept as background, not rules):
 - MUI themes can trigger global re-renders; Tailwind is static.
 
 - **Rule:** MUI `Grid` is banned in favor of Tailwind grid/flex utilities.
-- **Rule:** Do not use Tailwind `group` classes, as they break the atomic, predictable nature of Tailwind.
+- **Rule:** Do not create composite utility classes using @apply. Always apply Tailwind utilities inline in JSX/HTML.
 
-**Violation (group classes):**
+**Violation (compose classes):**
 
 ```css
-// Bad: using groups
+// Bad: using compose classes
 .vera-button {
   @apply rounded-full font-medium transition active:opacity-80;
 }
 ```
 
 ```tsx
-// Bad: using groups
+// Bad: using compose classes
 <button className="vera-button group" />
 ```
 

@@ -26,6 +26,7 @@ const InnerApp = () => {
 
   return (
     <Box
+      // eslint-disable-next-line tailwindcss/no-custom-classname
       sx={{
         backgroundColor: {
           xs: theme.colors.surface,
@@ -36,7 +37,9 @@ const InnerApp = () => {
         overflowY: 'auto',
         height: '100dvh',
       }}
+      className="child:bg-blue-500"
     >
+      <div className="test_test w-96 h-96"></div>
       <Router>
         <Routes>
           <Route element={<RedirectToUnsupportedBrowserPage />}>
