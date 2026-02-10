@@ -31,9 +31,12 @@ function generateVeraUIPlugin() {
  */
 const plugin = require('tailwindcss/plugin');
 
-const veraUI = plugin(({ addUtilities, addBase }) => {
+const veraUI = plugin(({ addUtilities, addBase, addVariant }) => {
   const fontSizeUtilities = {};
   const fontWeightUtilities = {};
+
+  // Add custom variants
+  addVariant('child', '& > *');
 
   // Add CSS variables for theme-aware colors
   addBase({

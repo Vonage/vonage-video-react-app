@@ -344,7 +344,7 @@ describe('SessionProvider', () => {
       const { getByTestId } = await renderAndWaitForConnection();
 
       act(() => {
-        vonageVideoClient.emit('sessionDisconnected');
+        vonageVideoClient.emit('sessionDisconnected', { reason: 'test reason' });
       });
 
       await waitFor(() => expect(getByTestId('connected')).toHaveTextContent('false'));

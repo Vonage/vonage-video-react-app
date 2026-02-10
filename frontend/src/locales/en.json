@@ -194,6 +194,8 @@
   "waitingRoom.precallNetworkTest.title": "Pre-call network test",
   "waitingRoom.precallNetworkTest.subtitle": "Test your device access, network connectivity and call quality before joining",
   "waitingRoom.precallNetworkTest.stopTest": "Stop test",
+  "waitingRoom.precallNetworkTest.stoppedTitle": "Test stopped",
+  "waitingRoom.precallNetworkTest.stoppedMessage": "You stopped the network test. You can retry when you're ready.",
   "waitingRoom.precallNetworkTest.retryTest": "Retry test",
   "waitingRoom.precallNetworkTest.audio": "Audio",
   "waitingRoom.precallNetworkTest.video": "Video",

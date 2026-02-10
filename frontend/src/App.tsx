@@ -32,7 +32,8 @@ const InnerApp = () => {
           md: theme.colors.background,
         },
         position: 'relative',
-        overflow: 'hidden',
+        overflowX: 'hidden',
+        overflowY: 'auto',
         height: '100dvh',
       }}
     >

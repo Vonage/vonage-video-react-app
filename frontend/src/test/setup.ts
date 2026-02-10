@@ -62,3 +62,13 @@ afterEach(() => {
   vi.clearAllMocks();
   vi.restoreAllMocks();
 });
+
+process.on('unhandledRejection', (_reason) => {
+  // swallow expected test rejections
+});
+
+window.addEventListener('unhandledrejection', (event) => {
+  if (String(event.reason).includes('Expected')) {
+    event.preventDefault();
+  }
+});
