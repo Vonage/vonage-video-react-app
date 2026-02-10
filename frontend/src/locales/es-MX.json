@@ -192,6 +192,8 @@
   "waitingRoom.precallNetworkTest.title": "Prueba de red antes de la llamada",
   "waitingRoom.precallNetworkTest.subtitle": "Prueba el acceso a tus dispositivos, la conectividad de red y la calidad de la llamada antes de unirte",
   "waitingRoom.precallNetworkTest.stopTest": "Detener prueba",
+  "waitingRoom.precallNetworkTest.stoppedTitle": "Prueba detenida",
+  "waitingRoom.precallNetworkTest.stoppedMessage": "Has detenido la prueba de red. Puedes volver a intentarlo cuando estés listo.",
   "waitingRoom.precallNetworkTest.retryTest": "Reintentar prueba",
   "waitingRoom.precallNetworkTest.audio": "Audio",
   "waitingRoom.precallNetworkTest.video": "Video",
