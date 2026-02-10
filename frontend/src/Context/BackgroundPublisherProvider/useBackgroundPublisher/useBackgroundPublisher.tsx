@@ -195,7 +195,7 @@ const useBackgroundPublisher = (
       insertDefaultUI: false,
       videoFilter,
       resolution: '1280x720',
-      videoSource,
+      videoSource: videoSource || undefined,
       publishAudio: false,
       publishVideo: isVideoEnabled,
     };
