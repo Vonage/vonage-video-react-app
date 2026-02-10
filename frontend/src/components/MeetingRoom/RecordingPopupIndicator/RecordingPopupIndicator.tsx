@@ -8,6 +8,12 @@ type RecordingPopUpIndicatorProps = {
   shouldPromptRecordingConsent?: boolean;
 };
 
+/**
+ * RecordingPopUpIndicator component displays a popup dialog to prompt the user for recording consent.
+ * @param {RecordingPopUpIndicatorProps} props - The props for the component.
+ *  @property {boolean} shouldPromptRecordingConsent - Flag indicating whether to prompt for recording consent.
+ * @returns ReactElement representing the recording consent popup dialog.
+ */
 const RecordingPopUpIndicator = ({
   shouldPromptRecordingConsent = false,
 }: RecordingPopUpIndicatorProps): ReactElement => {
