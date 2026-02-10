@@ -16,7 +16,12 @@ const config = {
   },
   // classes to always allow even if not found in files
   safelist: [...veraUI.safelist],
-  plugins: [veraUI],
+  plugins: [
+    veraUI,
+    function ({ addVariant }) {
+      addVariant('child', '& > *');
+    },
+  ],
 };
 
 module.exports = config;
