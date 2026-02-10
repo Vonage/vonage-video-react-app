@@ -44,7 +44,7 @@ describe('RecordingPopUpIndicator', () => {
   });
 
   it('renders the consent dialog with translated text', () => {
-    render(<RecordingPopUpIndicator />);
+    render(<RecordingPopUpIndicator shouldPromptRecordingConsent />);
 
     expect(screen.getByText(translationsByKey['recording.consent.dialog.title'])).toBeVisible();
     expect(screen.getByText(translationsByKey['recording.consent.dialog.content'])).toBeVisible();
@@ -53,7 +53,7 @@ describe('RecordingPopUpIndicator', () => {
   });
 
   it('redirects to /goodbye when the user declines consent', () => {
-    render(<RecordingPopUpIndicator />);
+    render(<RecordingPopUpIndicator shouldPromptRecordingConsent />);
 
     fireEvent.click(screen.getByText(translationsByKey['recording.consent.dialog.decline']));
 
@@ -71,7 +71,7 @@ describe('RecordingPopUpIndicator', () => {
   });
 
   it('closes the dialog without redirect when the user consents', async () => {
-    render(<RecordingPopUpIndicator />);
+    render(<RecordingPopUpIndicator shouldPromptRecordingConsent />);
 
     fireEvent.click(screen.getByTestId('popup-dialog-primary-button'));
 

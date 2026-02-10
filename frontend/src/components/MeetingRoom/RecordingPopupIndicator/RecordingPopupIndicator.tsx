@@ -4,12 +4,18 @@ import { useTranslation } from 'react-i18next';
 import useRoomName from '@hooks/useRoomName';
 import PopupDialog, { type DialogTexts } from '../PopupDialog';
 
-const RecordingPopUpIndicator = (): ReactElement => {
+type RecordingPopUpIndicatorProps = {
+  shouldPromptRecordingConsent?: boolean;
+};
+
+const RecordingPopUpIndicator = ({
+  shouldPromptRecordingConsent = false,
+}: RecordingPopUpIndicatorProps): ReactElement => {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const roomName = useRoomName();
 
-  const [isModalOpen, setIsModalOpen] = useState<boolean>(true);
+  const [hasBeenNotified, setHasBeenNotified] = useState<boolean>(false);
 
   const actionText = useMemo<DialogTexts>(() => {
     return {
@@ -32,17 +38,19 @@ const RecordingPopUpIndicator = (): ReactElement => {
   };
 
   const handleDecline = () => {
-    setIsModalOpen(false);
+    setHasBeenNotified(true);
     redirectToGoodbye();
   };
 
   const handleActionClick = () => {
-    setIsModalOpen(false);
+    setHasBeenNotified(true);
   };
+
+  const shouldOpenDialog = shouldPromptRecordingConsent && hasBeenNotified === false;
 
   return (
     <PopupDialog
-      isOpen={isModalOpen}
+      isOpen={shouldOpenDialog}
       handleClose={handleDecline}
       handleActionClick={handleActionClick}
       actionText={actionText}

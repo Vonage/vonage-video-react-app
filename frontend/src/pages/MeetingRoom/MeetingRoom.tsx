@@ -146,8 +146,6 @@ const MeetingRoom = (): ReactElement => {
   const shouldPromptRecordingConsent =
     !!archiveId && (archiveIdStartedBySelf === null || archiveId !== archiveIdStartedBySelf);
 
-  const recordingPopupIndicatorKey = archiveId ?? 'unknown-archive-id';
-
   const isRecording = !!archiveId;
 
   return (
@@ -178,7 +176,7 @@ const MeetingRoom = (): ReactElement => {
           setCaptionsErrorResponse={setCaptionsErrorResponse}
         />
       )}
-      {shouldPromptRecordingConsent && <RecordingPopUpIndicator key={recordingPopupIndicatorKey} />}
+      <RecordingPopUpIndicator shouldPromptRecordingConsent={shouldPromptRecordingConsent} />
       <Toolbar
         isSharingScreen={isSharingScreen}
         toggleShareScreen={toggleShareScreen}
