@@ -1,0 +1,24 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "files": [],
+  "include": ["eslint.config.mjs", "vite.config.ts", "./test/setup.ts"],
+  "references": [
+    {
+      "path": "./tsconfig.lib.json"
+    },
+    {
+      "path": "./tsconfig.spec.json"
+    }
+  ],
+  "compilerOptions": {
+    "rootDir": "..",
+    "baseUrl": "./",
+    "moduleResolution": "node",
+    "composite": true,
+    "paths": {
+      "@api-lib": ["./src"],
+      "@api-lib/*": ["./src/*"]
+    },
+    "lib": ["ESNext"]
+  }
+}

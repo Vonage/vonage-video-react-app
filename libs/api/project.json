@@ -1,0 +1,43 @@
+{
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "name": "api",
+  "projectType": "library",
+  "root": "libs/api",
+  "sourceRoot": "libs/api/src",
+  "targets": {
+    "lint": {
+      "executor": "nx:run-commands",
+      "options": {
+        "cwd": "libs/api",
+        "command": "eslint 'src/**/*.{ts,tsx}' --report-unused-disable-directives --max-warnings 0"
+      }
+    },
+    "lint:fix": {
+      "executor": "nx:run-commands",
+      "options": {
+        "cwd": "libs/api",
+        "command": "eslint 'src/**/*.{ts,tsx}' --fix --report-unused-disable-directives --max-warnings 0"
+      }
+    },
+    "test": {
+      "executor": "nx:run-commands",
+      "options": {
+        "cwd": "libs/api",
+        "command": "vitest run"
+      },
+      "configurations": {
+        "coverage": {
+          "command": "vitest run --coverage"
+        }
+      }
+    },
+    "ts-check": {
+      "executor": "nx:run-commands",
+      "options": {
+        "cwd": "libs/api",
+        "command": "tsc -p tsconfig.lib.json --pretty true --noEmit"
+      }
+    }
+  },
+  "tags": ["scope:api", "type:lib"]
+}

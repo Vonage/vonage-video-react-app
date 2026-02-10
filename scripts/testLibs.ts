@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 import { execSync } from 'child_process';
 
-type LibraryName = 'core' | 'ui' | 'common';
+type LibraryName = 'core' | 'ui' | 'common' | 'api';
 
 const VALID_MODES = ['watch', '--watch', 'coverage'] as const;
 
@@ -79,6 +79,7 @@ function runCoverage(lib: LibraryName, testPattern?: string) {
  * @example
  * yarn test:core
  * yarn test:common
+ * yarn test:api
  * yarn test:ui
  * yarn test:core src/stores/devices/devicesStore.test.ts
  * yarn test:common watch
@@ -90,9 +91,10 @@ function main() {
   const args = process.argv.slice(2);
   const [lib, secondArg, thirdArg] = args as [LibraryName, string?, string?];
 
-  if (!lib || !['core', 'ui', 'common'].includes(lib)) {
+  if (!lib || !['core', 'ui', 'common', 'api'].includes(lib)) {
     console.error('\n❌ Error: First argument must be a library name\n');
     console.error('Valid libraries:');
+    console.error('  • api    - Backend API library (@api-lib)');
     console.error('  • core   - Core library (@core)');
     console.error('  • ui     - UI library (@ui)');
     console.error('  • common - Common library (@common)\n');

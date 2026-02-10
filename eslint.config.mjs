@@ -14,6 +14,7 @@ import customWordList from './customWordList.mjs';
 const tsProjects = [
   './backend/tsconfig.json',
   './frontend/tsconfig.json',
+  './libs/api/tsconfig.json',
   './libs/ui/tsconfig.json',
   './integration-tests/tsconfig.json',
 ];

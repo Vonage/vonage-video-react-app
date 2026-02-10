@@ -9,6 +9,7 @@ When reviewing code, Copilot must also evaluate changes according to these rules
 
 - **Rule:** Vera is a video call application built with Vonage Video API and is being transformed into a reusable component library for Vonage Video API React SDK users.
 - **Rule:** Video components, hooks, and primitives must be extracted into `libs/ui` and `libs/core`.
+- **Rule:** Backend-agnostic Vonage Video API handler logic must live in `libs/api`.
 - **Rule:** New features must be designed with **reusability** in mind and must remain **agnostic of Vera** wherever possible.
 
 ---
@@ -17,7 +18,7 @@ When reviewing code, Copilot must also evaluate changes according to these rules
 
 This is a mono repo containing:
 
-- Libs: `ui`, `core`, `common`
+- Libs: `ui`, `core`, `common`, `api`
 - Main projects: `frontend`, `backend`
 - `integration-test`
 
@@ -45,6 +46,8 @@ TypeScript version: `^5.8.3`
   - `libs/ui` for visual components  
   - `libs/core` if it is faceless (non-visual logic).
   - `libs/common` for helpers, utilities, and hooks that are agnostic of the project.
+- **Rule:** If the code is **backend-oriented** and represents **agnostic Vonage Video API orchestration**, it must be placed in `libs/api`.
+- **Rule:** Vera-specific business logic (roles, permissions, product policy/decisions) must stay in the app layer (`frontend`/`backend`).
 - **Rule:** This is **especially enforced** for video-related components such as publishers, subscribers, sessions, `videoView`s, etc.
 - **Rule:** Helpers, utilities, and hooks that are agnostic of the project must be placed in `libs/common`.
 - **Rule:** Logic that is shared between different projects (**frontend**, **backend**, **libs**) should be proposed for `libs/common`.

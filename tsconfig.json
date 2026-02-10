@@ -8,6 +8,9 @@
       "path": "./integration-tests"
     },
     {
+      "path": "./libs/api"
+    },
+    {
       "path": "./libs/common"
     },
     {
