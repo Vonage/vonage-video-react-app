@@ -1,7 +1,7 @@
 const veraUI = require('../libs/ui/src/theme/helpers/tailwind/veraUI.cjs');
 
 const config = {
-  content: ['./index.html', './src/**/*.{js,ts,jsx,tsx}'],
+  content: ['./index.html', './src/**/*.{js,ts,jsx,tsx}', '../libs/**/*/src/**/*.{js,ts,jsx,tsx}'],
   darkMode: 'class',
   theme: {
     extend: {
