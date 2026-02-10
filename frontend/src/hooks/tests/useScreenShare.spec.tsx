@@ -1,46 +1,34 @@
-import { Mock, beforeEach, afterEach, describe, expect, it, vi } from 'vitest';
-import { renderHook, act } from '@testing-library/react';
+import { beforeEach, afterEach, describe, expect, it, vi } from 'vitest';
+import { renderHook as renderHookBase, act } from '@testing-library/react';
 import { Publisher, initPublisher } from '@vonage/client-sdk-video';
 import useScreenShare from '../useScreenShare';
-import useSessionContext from '../useSessionContext';
-import useUserContext from '../useUserContext';
+import { makeSessionProviderWrapper, type SessionProviderWrapperOptions } from '@test/providers';
+import EventEmitter from 'events';
 import type VonageVideoClient from '../../utils/VonageVideoClient';
+import { type UserContextType } from '../../Context/user';
 
 // Mocking dependencies
 vi.mock('@vonage/client-sdk-video', () => ({
   initPublisher: vi.fn(),
 }));
 
-vi.mock('../useSessionContext');
-vi.mock('../useUserContext');
-const mockPublish = vi.fn();
-const mockUnpublish = vi.fn();
-
 describe('useScreenSharing', () => {
   let mockVonageVideoClient: Partial<VonageVideoClient>;
   let mockPublisher: Partial<Publisher>;
-  let mockUserContext: { user: { defaultSettings: { name: string } } };
+  const mockPublish = vi.fn();
+  const mockUnpublish = vi.fn();
 
   beforeEach(() => {
-    mockVonageVideoClient = {
+    mockVonageVideoClient = Object.assign(new EventEmitter(), {
       on: vi.fn(),
-    } as unknown as VonageVideoClient;
+    }) as unknown as Partial<VonageVideoClient> as VonageVideoClient;
 
     mockPublisher = {
-      // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
-      on: vi.fn() as Mock, // NOSONAR
+      on: vi.fn(),
       destroy: vi.fn(),
-    };
+    } as unknown as Partial<Publisher>;
 
-    mockUserContext = { user: { defaultSettings: { name: 'TestUser' } } };
-
-    (useSessionContext as Mock).mockReturnValue({
-      vonageVideoClient: mockVonageVideoClient,
-      publish: mockPublish,
-      unpublish: mockUnpublish,
-    });
-    (useUserContext as Mock).mockReturnValue(mockUserContext);
-    (initPublisher as Mock).mockReturnValue(mockPublisher as Publisher);
+    (initPublisher as ReturnType<typeof vi.fn>).mockReturnValue(mockPublisher as Publisher);
   });
 
   afterEach(() => {
@@ -48,7 +36,24 @@ describe('useScreenSharing', () => {
   });
 
   it('initializes screen sharing publisher and publishes', async () => {
-    const { result } = renderHook(() => useScreenShare());
+    const { result } = render({
+      userOptions: {
+        userOptions: {
+          __interceptor: (context: UserContextType | null) => {
+            context!.user.defaultSettings.name = 'TestUser';
+          },
+        },
+      },
+      sessionOptions: {
+        __interceptor: (context) => {
+          if (context) {
+            context.vonageVideoClient = mockVonageVideoClient as unknown as VonageVideoClient;
+            context.publish = mockPublish;
+            context.unpublish = mockUnpublish;
+          }
+        },
+      },
+    });
 
     await act(async () => {
       // toggling screen share on
@@ -71,7 +76,24 @@ describe('useScreenSharing', () => {
   });
 
   it('unpublishes screen sharing when already sharing', async () => {
-    const { result } = renderHook(() => useScreenShare());
+    const { result } = render({
+      userOptions: {
+        userOptions: {
+          __interceptor: (context: UserContextType | null) => {
+            context!.user.defaultSettings.name = 'TestUser';
+          },
+        },
+      },
+      sessionOptions: {
+        __interceptor: (context) => {
+          if (context) {
+            context.vonageVideoClient = mockVonageVideoClient as unknown as VonageVideoClient;
+            context.publish = mockPublish;
+            context.unpublish = mockUnpublish;
+          }
+        },
+      },
+    });
 
     await act(async () => {
       // toggling screen share on
@@ -84,9 +106,24 @@ describe('useScreenSharing', () => {
   });
 
   it('does not initialize publisher if session is null', async () => {
-    (useSessionContext as Mock).mockReturnValue({ session: null });
-
-    const { result } = renderHook(() => useScreenShare());
+    const { result } = render({
+      userOptions: {
+        userOptions: {
+          __interceptor: (context: UserContextType | null) => {
+            context!.user.defaultSettings.name = 'TestUser';
+          },
+        },
+      },
+      sessionOptions: {
+        __interceptor: (context) => {
+          if (context) {
+            context.vonageVideoClient = null;
+            context.publish = mockPublish;
+            context.unpublish = mockUnpublish;
+          }
+        },
+      },
+    });
 
     await act(async () => {
       await result.current.toggleShareScreen();
@@ -95,3 +132,11 @@ describe('useScreenSharing', () => {
     expect(initPublisher).not.toHaveBeenCalled();
   });
 });
+
+function render(options?: SessionProviderWrapperOptions) {
+  const { SessionProviderWrapper } = makeSessionProviderWrapper(options);
+
+  return renderHookBase(() => useScreenShare(), {
+    wrapper: SessionProviderWrapper,
+  });
+}

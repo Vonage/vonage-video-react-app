@@ -11,6 +11,7 @@ import { EventEmitter } from 'events';
 import {
   Credential,
   StreamCreatedEvent,
+  StreamDestroyedEvent,
   VideoElementCreatedEvent,
   SubscriberWrapper,
   SignalEvent,
@@ -22,12 +23,13 @@ import {
 import logOnConnect from '../logOnConnect';
 import createMovingAvgAudioLevelTracker from '../movingAverageAudioLevelTracker';
 import idempotentCallbackWithRetry from '@common/execution/idempotentCallbackWithRetry';
+import frontendLogger from '../../logger';
 
 type VonageVideoClientEvents = {
   archiveStarted: [string];
   archiveStopped: [];
   screenshareStreamCreated: [];
-  sessionDisconnected: [];
+  sessionDisconnected: [{ reason?: string }];
   sessionReconnected: [];
   sessionReconnecting: [];
   signal: [SignalEvent];
@@ -56,6 +58,7 @@ class VonageVideoClient extends EventEmitter<VonageVideoClientEvents> {
   public clientSession: Session | null;
   private readonly credential: Credential;
   private hiddenSubscriber: Subscriber | null = null;
+  private readonly streams = new Map<string, Stream>();
 
   /**
    * Creates an instance of VonageVideoClient.
@@ -81,7 +84,7 @@ class VonageVideoClient extends EventEmitter<VonageVideoClientEvents> {
     }
     this.clientSession.on('archiveStarted', (event) => this.handleArchiveStarted(event));
     this.clientSession.on('archiveStopped', () => this.handleArchiveStopped());
-    this.clientSession.on('sessionDisconnected', () => this.handleSessionDisconnected());
+    this.clientSession.on('sessionDisconnected', (event) => this.handleSessionDisconnected(event));
     this.clientSession.on('sessionReconnected', () => this.handleReconnected());
     this.clientSession.on('sessionReconnecting', () => this.handleReconnecting());
     this.clientSession.on('signal', (event) => this.handleSignal(event));
@@ -89,6 +92,7 @@ class VonageVideoClient extends EventEmitter<VonageVideoClientEvents> {
       this.handleStreamPropertyChanged(event)
     );
     this.clientSession.on('streamCreated', (event) => this.handleStreamCreated(event));
+    this.clientSession.on('streamDestroyed', (event) => this.handleStreamDestroyed(event));
   };
 
   /**
@@ -104,6 +108,24 @@ class VonageVideoClient extends EventEmitter<VonageVideoClientEvents> {
       return;
     }
     const { stream } = event;
+    const { streamId } = stream;
+
+    this.streams.set(streamId, stream);
+
+    await this.subscribeToStream(stream);
+  }
+
+  private handleStreamDestroyed(event: StreamDestroyedEvent) {
+    const { stream } = event;
+    const streamId = String(stream.streamId);
+    this.streams.delete(streamId);
+  }
+
+  private subscribeToStream = async (stream: Stream) => {
+    if (this.clientSession === null) {
+      return;
+    }
+
     const { streamId, videoType } = stream;
     const isScreenshare = videoType === 'screen';
     const subscriberOptions: SubscriberProperties = {
@@ -166,7 +188,32 @@ class VonageVideoClient extends EventEmitter<VonageVideoClientEvents> {
       console.error('[SUBSCRIBER] Critical subscription error:', syncError);
       this.handleSubscriptionError(syncError);
     }
-  }
+  };
+
+  hasStream = (streamId: string): boolean => {
+    return this.streams.has(streamId);
+  };
+
+  getStream = (streamId: string): Stream | undefined => {
+    return this.streams.get(streamId);
+  };
+
+  getActiveStreams = (): Stream[] => {
+    return Array.from(this.streams.values());
+  };
+
+  resubscribeToStreamId = async (streamId: string): Promise<void> => {
+    if (this.clientSession === null) {
+      return;
+    }
+
+    const stream = this.streams.get(streamId);
+    if (!stream) {
+      return;
+    }
+
+    await this.subscribeToStream(stream);
+  };
 
   /**
    * Sets up event listeners for a subscriber
@@ -195,10 +242,12 @@ class VonageVideoClient extends EventEmitter<VonageVideoClientEvents> {
         subscriber,
       };
 
+      console.warn(`SubscriberVideoElementCreated ${streamId}`);
       this.emit('subscriberVideoElementCreated', subscriberWrapper);
     });
 
     subscriber.on('destroyed', () => {
+      console.warn(`subscriberDestroyed ${streamId}`);
       this.emit('subscriberDestroyed', streamId);
     });
 
@@ -266,7 +315,11 @@ class VonageVideoClient extends EventEmitter<VonageVideoClientEvents> {
    * @private
    */
   private handleSubscriptionError = (error: unknown) => {
-    console.error(`Subscription failed`, error);
+    frontendLogger.reportError(error, {
+      source: 'vonageVideoClient.handleSubscriptionError',
+      sessionId: this.sessionId,
+      connectionId: this.connectionId,
+    });
 
     this.emit('subscriptionError', error ?? new Error('Unknown subscription error'));
   };
@@ -298,6 +351,11 @@ class VonageVideoClient extends EventEmitter<VonageVideoClientEvents> {
    * @private
    */
   private handleReconnecting = () => {
+    frontendLogger.log('vonageVideoClient.handleReconnecting', {
+      sessionId: this.sessionId,
+      connectionId: this.connectionId,
+    });
+
     this.emit('sessionReconnecting');
   };
 
@@ -306,6 +364,11 @@ class VonageVideoClient extends EventEmitter<VonageVideoClientEvents> {
    * @private
    */
   private handleReconnected = () => {
+    frontendLogger.log('vonageVideoClient.handleReconnected', {
+      sessionId: this.sessionId,
+      connectionId: this.connectionId,
+    });
+
     this.emit('sessionReconnected');
   };
 
@@ -313,8 +376,18 @@ class VonageVideoClient extends EventEmitter<VonageVideoClientEvents> {
    * Emits an event when the session is disconnected.
    * @private
    */
-  private handleSessionDisconnected = () => {
-    this.emit('sessionDisconnected');
+  private handleSessionDisconnected = (event: { reason?: string }) => {
+    const reason = event?.reason || 'unknown';
+    const sessionId = this.sessionId;
+    const connectionId = this.connectionId;
+
+    frontendLogger.log('vonageVideoClient.handleSessionDisconnected', {
+      reason,
+      sessionId,
+      connectionId,
+    });
+
+    this.emit('sessionDisconnected', { reason });
   };
 
   /**
@@ -347,11 +420,22 @@ class VonageVideoClient extends EventEmitter<VonageVideoClientEvents> {
       }
       this.clientSession?.connect(token, (err?: OTError) => {
         if (err) {
-          console.error('Error connecting to session:', err);
-          // We ignore the following lint warning because we are rejecting with an OTError object.
-          reject(err); // NOSONAR
+          frontendLogger.reportError(err, {
+            source: 'vonageVideoClient.connect.error',
+            sessionId,
+          });
+
+          reject(err);
         } else {
+          // TODO: Deprecate logOnConnect once Logger + gollum
+          // fully replace opentok-solutions-logging analytics.
           logOnConnect(apiKey, sessionId, this.clientSession?.connection?.connectionId);
+
+          frontendLogger.log('vonageVideoClient.connect.success', {
+            sessionId,
+            connectionId: this.clientSession?.connection?.connectionId,
+          });
+
           resolve();
         }
       });
@@ -394,6 +478,12 @@ class VonageVideoClient extends EventEmitter<VonageVideoClientEvents> {
 
       this.clientSession?.publish(publisher, (error) => {
         if (error) {
+          frontendLogger.reportError(error, {
+            source: 'vonageVideoClient.publish.error',
+            sessionId: this.sessionId,
+            connectionId: this.connectionId,
+            errorCode: (error as { code?: number })?.code,
+          });
           const errorName = error.name || 'OTError';
           const errorMessage = error.message || 'Unknown publish error';
           reject(new Error(`${errorName}: ${errorMessage}`));

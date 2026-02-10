@@ -1,35 +1,34 @@
 import { render as renderBase, screen } from '@testing-library/react';
-import { beforeEach, describe, expect, it, Mock, vi } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import { ReactElement } from 'react';
-import useSessionContext from '@hooks/useSessionContext';
-import { SessionContextType } from '@Context/SessionProvider/session';
-import { AppConfigProviderWrapperOptions, makeAppConfigProviderWrapper } from '@test/providers';
+import { makeSessionProviderWrapper, type SessionProviderWrapperOptions } from '@test/providers';
 import ChatButton from './ChatButton';
 
-vi.mock('@hooks/useSessionContext');
-const mockUseSessionContext = useSessionContext as Mock<[], SessionContextType>;
-const sessionContext = {
-  unreadCount: 10,
-} as unknown as SessionContextType;
-
 describe('ChatButton', () => {
-  beforeEach(() => {
-    mockUseSessionContext.mockReturnValue(sessionContext);
-  });
-
   it('should show unread message number', () => {
-    render(<ChatButton handleClick={() => {}} isOpen={false} />);
+    render(<ChatButton handleClick={() => {}} isOpen={false} />, {
+      sessionOptions: {
+        __interceptor: (context) => {
+          if (context) {
+            context.unreadCount = 10;
+          }
+        },
+      },
+    });
     expect(screen.getByTestId('chat-button-unread-count')).toBeVisible();
     expect(screen.getByTestId('chat-button-unread-count').textContent).toBe('10');
   });
 
   it('should not show unread message number when number is 0', () => {
-    const sessionContextAllRead = {
-      ...sessionContext,
-      unreadCount: 0,
-    } as unknown as SessionContextType;
-    mockUseSessionContext.mockReturnValue(sessionContextAllRead);
-    render(<ChatButton handleClick={() => {}} isOpen={false} />);
+    render(<ChatButton handleClick={() => {}} isOpen={false} />, {
+      sessionOptions: {
+        __interceptor: (context) => {
+          if (context) {
+            context.unreadCount = 0;
+          }
+        },
+      },
+    });
 
     const badge = screen.getByTestId('chat-button-unread-count');
     // Check badge is hidden:  MUI hides badge by setting dimensions to 0x0
@@ -69,13 +68,8 @@ describe('ChatButton', () => {
   });
 });
 
-function render(
-  ui: ReactElement,
-  options?: {
-    appConfigOptions?: AppConfigProviderWrapperOptions;
-  }
-) {
-  const { AppConfigWrapper } = makeAppConfigProviderWrapper(options?.appConfigOptions);
+function render(ui: ReactElement, options?: SessionProviderWrapperOptions) {
+  const { SessionProviderWrapper } = makeSessionProviderWrapper(options);
 
-  return renderBase(ui, { ...options, wrapper: AppConfigWrapper });
+  return renderBase(ui, { wrapper: SessionProviderWrapper });
 }

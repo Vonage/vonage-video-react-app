@@ -1,20 +1,12 @@
-import { describe, it, expect, vi, beforeEach, afterEach, Mock } from 'vitest';
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
+import { renderHook as renderHookBase } from '@testing-library/react';
 import useCollectBrowserInformation from '../useCollectBrowserInformation';
-import useSessionContext from '../useSessionContext';
-
-vi.mock('../useSessionContext', () => ({
-  default: vi.fn(),
-}));
+import { makeSessionProviderWrapper, type SessionProviderWrapperOptions } from '@test/providers';
+import EventEmitter from 'events';
+import type VonageVideoClient from '@utils/VonageVideoClient';
 
 describe('useCollectBrowserInformation', () => {
   beforeEach(() => {
-    (useSessionContext as Mock).mockReturnValue({
-      vonageVideoClient: {
-        sessionId: 'someSessionId',
-        connectionId: 'yourConnectionId',
-      },
-    });
-
     // Mock navigator properties
     vi.spyOn(navigator, 'userAgent', 'get').mockReturnValue('FakeUserAgent');
     vi.spyOn(navigator, 'language', 'get').mockReturnValue('en-US');
@@ -48,9 +40,26 @@ describe('useCollectBrowserInformation', () => {
   });
 
   it('should collect all browser information correctly', () => {
-    const result = useCollectBrowserInformation();
+    const mockVonageVideoClient = Object.assign(new EventEmitter(), {
+      get sessionId() {
+        return 'someSessionId';
+      },
+      get connectionId() {
+        return 'yourConnectionId';
+      },
+    }) as VonageVideoClient;
 
-    expect(result).toEqual({
+    const { result } = render({
+      sessionOptions: {
+        __interceptor: (context) => {
+          if (context) {
+            context.vonageVideoClient = mockVonageVideoClient;
+          }
+        },
+      },
+    });
+
+    expect(result.current).toEqual({
       sessionId: 'someSessionId',
       browser: 'FakeUserAgent',
       screenResolution: '2560x1440',
@@ -68,3 +77,11 @@ describe('useCollectBrowserInformation', () => {
     });
   });
 });
+
+function render(options?: SessionProviderWrapperOptions) {
+  const { SessionProviderWrapper } = makeSessionProviderWrapper(options);
+
+  return renderHookBase(() => useCollectBrowserInformation(), {
+    wrapper: SessionProviderWrapper,
+  });
+}

@@ -3,15 +3,16 @@ import ParticipantList from '../ParticipantList/ParticipantList';
 import Chat from '../Chat';
 import ReportIssue from '../ReportIssue';
 import type { RightPanelActiveTab } from '../../../hooks/useRightPanel';
-import useIsSmallViewport from '../../../hooks/useIsSmallViewport';
 import BackgroundEffectsLayout from '../../BackgroundEffects/BackgroundEffectsLayout';
-import Box from '@ui/Box';
+import Box, { BoxProps } from '@ui/Box';
 import useTheme from '@ui/theme';
+import classNames from 'classnames';
+import { twMerge } from 'tailwind-merge';
 
 export type RightPanelProps = {
   handleClose: () => void;
   activeTab: RightPanelActiveTab;
-};
+} & BoxProps;
 
 /**
  * RightPanel Component
@@ -22,13 +23,25 @@ export type RightPanelProps = {
  *   @property {Function} handleClose - click handler to close the panel
  * @returns {ReactElement} RightPanel Component
  */
-const RightPanel = ({ activeTab, handleClose }: RightPanelProps): ReactElement => {
-  const isSmallViewport = useIsSmallViewport();
+const RightPanel = ({
+  activeTab,
+  handleClose,
+  className,
+  ...boxProps
+}: RightPanelProps): ReactElement => {
   const theme = useTheme();
 
   return (
     <Box
       data-testid="right-panel"
+      className={twMerge(
+        classNames([
+          'w-[100dvw] vera-desktop:w-[350px]',
+          'h-[calc(100dvh-80px)] vera-desktop:h-[calc(100dvh-96px)]',
+          'mr-0 vera-desktop:mr-4 mt-0 vera-desktop:mt-4',
+          className,
+        ])
+      )}
       sx={{
         position: 'absolute',
         top: 0,
@@ -38,11 +51,8 @@ const RightPanel = ({ activeTab, handleClose }: RightPanelProps): ReactElement =
         bgcolor: theme.colors.surface,
         transition: 'right 0.3s',
         borderRadius: 2,
-        width: isSmallViewport ? '100dvw' : '360px',
-        height: isSmallViewport ? 'calc(100dvh - 80px)' : 'calc(100dvh - 96px)',
-        mr: isSmallViewport ? 0 : 2,
-        mt: isSmallViewport ? 0 : 2,
       }}
+      {...boxProps}
     >
       <ParticipantList handleClose={handleClose} isOpen={activeTab === 'participant-list'} />
       <BackgroundEffectsLayout

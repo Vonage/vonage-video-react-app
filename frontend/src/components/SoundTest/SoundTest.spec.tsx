@@ -1,37 +1,33 @@
-import { describe, it, expect, beforeEach, vi, Mock } from 'vitest';
-import { act, render, screen } from '@testing-library/react';
+import { describe, it, expect, beforeEach, vi } from 'vitest';
+import { act, render as renderBase, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import VividIcon from '@components/VividIcon';
 import SoundTest from './SoundTest';
-import useAudioOutputContext from '../../hooks/useAudioOutputContext';
-import { AudioOutputContextType, AudioOutputProvider } from '../../Context/AudioOutputProvider';
 import { nativeDevices } from '../../utils/mockData/device';
 import mediaDevicesMock from '@common/test/mocks/mediaDevicesMock';
-
-vi.mock('../../hooks/useAudioOutputContext');
-const mockUseAudioOutputContext = useAudioOutputContext as Mock<[], AudioOutputContextType>;
+import { AudioOutputProviderWrapperOptions, makeAudioOutputProviderWrapper } from '@test/providers';
+import { ReactElement } from 'react';
 
 describe('SoundTest', () => {
-  let audioOutputContext: AudioOutputContextType;
   const playMock = vi.fn();
   const pauseMock = vi.fn();
 
   beforeEach(() => {
-    vi.resetAllMocks();
+    vi.clearAllMocks();
 
-    Object.defineProperty(global.navigator, 'mediaDevices', {
-      writable: true,
-      value: mediaDevicesMock,
-    });
+    if (!globalThis.navigator.mediaDevices) {
+      Object.defineProperty(globalThis.navigator, 'mediaDevices', {
+        writable: true,
+        configurable: true,
+        value: mediaDevicesMock,
+      });
+    }
 
-    vi.spyOn(mediaDevicesMock, 'enumerateDevices').mockImplementation(
-      () =>
-        new Promise<MediaDeviceInfo[]>((res) => {
-          res(nativeDevices as MediaDeviceInfo[]);
-        })
+    vi.spyOn(globalThis.navigator.mediaDevices, 'enumerateDevices').mockResolvedValue(
+      nativeDevices as MediaDeviceInfo[]
     );
-    vi.spyOn(mediaDevicesMock, 'addEventListener').mockImplementation(() => {});
-    vi.spyOn(mediaDevicesMock, 'removeEventListener').mockImplementation(() => {});
+    vi.spyOn(globalThis.navigator.mediaDevices, 'addEventListener').mockImplementation(() => {});
+    vi.spyOn(globalThis.navigator.mediaDevices, 'removeEventListener').mockImplementation(() => {});
 
     global.Audio = vi.fn().mockImplementation(() => ({
       play: playMock,
@@ -39,24 +35,13 @@ describe('SoundTest', () => {
       currentTime: 9001,
       setSinkId: vi.fn(),
     }));
-
-    audioOutputContext = {
-      audioOutput: 'some-device-id',
-      setAudioOutput: vi.fn(),
-    } as unknown as AudioOutputContextType;
-
-    mockUseAudioOutputContext.mockReturnValue(
-      audioOutputContext as unknown as AudioOutputContextType
-    );
   });
 
   it('renders', () => {
     render(
-      <AudioOutputProvider>
-        <SoundTest>
-          <VividIcon name="hearing-line" customSize={-5} />
-        </SoundTest>
-      </AudioOutputProvider>
+      <SoundTest>
+        <VividIcon name="hearing-line" customSize={-5} />
+      </SoundTest>
     );
 
     const renderedSoundTest = screen.getByTestId('soundTest');
@@ -66,11 +51,9 @@ describe('SoundTest', () => {
 
   it('clicking the SoundTest toggles audio playing', () => {
     render(
-      <AudioOutputProvider>
-        <SoundTest>
-          <VividIcon name="hearing-line" customSize={-5} />
-        </SoundTest>
-      </AudioOutputProvider>
+      <SoundTest>
+        <VividIcon name="hearing-line" customSize={-5} />
+      </SoundTest>
     );
 
     const renderedSoundTest = screen.getByTestId('soundTest');
@@ -95,11 +78,9 @@ describe('SoundTest', () => {
 
   it('displays `Test speakers` when audio is not playing', () => {
     render(
-      <AudioOutputProvider>
-        <SoundTest>
-          <VividIcon name="hearing-line" customSize={-5} />
-        </SoundTest>
-      </AudioOutputProvider>
+      <SoundTest>
+        <VividIcon name="hearing-line" customSize={-5} />
+      </SoundTest>
     );
 
     const displayedText = screen.getByText('Test speakers');
@@ -108,11 +89,9 @@ describe('SoundTest', () => {
 
   it('displays `Stop testing` when audio is playing', () => {
     render(
-      <AudioOutputProvider>
-        <SoundTest>
-          <VividIcon name="hearing-line" customSize={-5} />
-        </SoundTest>
-      </AudioOutputProvider>
+      <SoundTest>
+        <VividIcon name="hearing-line" customSize={-5} />
+      </SoundTest>
     );
 
     const renderedSoundTest = screen.getByTestId('soundTest');
@@ -131,12 +110,11 @@ describe('SoundTest', () => {
       currentTime: 9001,
       setSinkId: undefined,
     }));
+
     render(
-      <AudioOutputProvider>
-        <SoundTest>
-          <VividIcon name="hearing-line" customSize={-5} />
-        </SoundTest>
-      </AudioOutputProvider>
+      <SoundTest>
+        <VividIcon name="hearing-line" customSize={-5} />
+      </SoundTest>
     );
 
     const renderedSoundTest = screen.getByTestId('soundTest');
@@ -150,11 +128,9 @@ describe('SoundTest', () => {
 
   it('stops playing the sound when user clicks away', async () => {
     render(
-      <AudioOutputProvider>
-        <SoundTest>
-          <VividIcon name="hearing-line" customSize={-5} />
-        </SoundTest>
-      </AudioOutputProvider>
+      <SoundTest>
+        <VividIcon name="hearing-line" customSize={-5} />
+      </SoundTest>
     );
 
     const renderedSoundTest = screen.getByTestId('soundTest');
@@ -168,3 +144,16 @@ describe('SoundTest', () => {
     expect(pauseMock).toHaveBeenCalledOnce();
   });
 });
+
+function render(
+  ui: ReactElement,
+  options?: {
+    audioOutputOptions?: AudioOutputProviderWrapperOptions['audioOutputOptions'];
+  }
+) {
+  const { AudioOutputProviderWrapper, audioOutputContext } = makeAudioOutputProviderWrapper({
+    audioOutputOptions: options?.audioOutputOptions,
+  });
+
+  return { ...renderBase(ui, { wrapper: AudioOutputProviderWrapper }), audioOutputContext };
+}

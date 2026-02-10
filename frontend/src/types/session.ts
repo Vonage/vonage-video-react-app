@@ -26,6 +26,10 @@ export type StreamCreatedEvent = Event<'streamCreated', Session> & {
   stream: Stream;
 };
 
+export type StreamDestroyedEvent = Event<'streamDestroyed', Session> & {
+  stream: Stream;
+};
+
 export type VideoElementCreatedEvent = Event<'videoElementCreated', Subscriber> & {
   element: HTMLVideoElement | HTMLObjectElement;
 };

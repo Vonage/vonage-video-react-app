@@ -124,7 +124,7 @@ export const TABLET_VIEWPORT = 899;
 /*
  * @constant {number} VIDEO_CONTAINER_HEIGHT_WR - The fixed height for the video container in the waiting room.
  */
-export const VIDEO_CONTAINER_HEIGHT_WR = 335;
+export const VIDEO_CONTAINER_HEIGHT_WR = 360;
 
 /*
  * @constant {number} VIDEO_CONTAINER_BUTTON_SIZE_WR - The fixed height for the video container buttons in the waiting room.
@@ -177,3 +177,8 @@ export const MAX_ZOOM = 5;
  * This value determines how much the zoom level changes with each zoom action (e.g., mouse wheel event).
  */
 export const ZOOM_STEP = 0.25;
+
+/** @constant {number} ABSOLUTE_DISTANCE_THRESHOLD_REM_VALUE - The distance threshold used for absolute positioning of subscriber/publisher UI indicators.
+ * This value is defined in rem units to ensure responsiveness across different screen sizes.
+ */
+export const ABSOLUTE_DISTANCE_THRESHOLD_REM_VALUE = 0.75;

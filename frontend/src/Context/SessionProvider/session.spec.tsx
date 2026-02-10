@@ -135,6 +135,9 @@ describe('SessionProvider', () => {
       connect: vi.fn().mockReturnValue(Promise.resolve()),
       disconnect: vi.fn(),
       forceMuteStream: vi.fn(),
+      hasStream: vi.fn().mockReturnValue(true),
+      resubscribeToStreamId: vi.fn().mockResolvedValue(undefined),
+      emitSubscriberDestroyedOnce: vi.fn(),
     }) as unknown as VonageVideoClient;
 
     const mockedActiveSpeakerTracker = vi.mocked(ActiveSpeakerTracker);
@@ -278,6 +281,7 @@ describe('SessionProvider', () => {
       });
 
       act(() => {
+        vonageVideoClient.hasStream = vi.fn().mockReturnValue(false);
         vonageVideoClient.emit('subscriberDestroyed', 'sub1');
       });
 
@@ -340,7 +344,7 @@ describe('SessionProvider', () => {
       const { getByTestId } = await renderAndWaitForConnection();
 
       act(() => {
-        vonageVideoClient.emit('sessionDisconnected');
+        vonageVideoClient.emit('sessionDisconnected', { reason: 'test reason' });
       });
 
       await waitFor(() => expect(getByTestId('connected')).toHaveTextContent('false'));

@@ -15,6 +15,7 @@ const customWordList = [
   'Rendererable',
   'Hydrateable',
   'firefoxUserPrefs',
+  'gollum',
   'PWDEBUG',
 ];
 

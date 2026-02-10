@@ -31,15 +31,15 @@ function makeSessionProviderWrapper({
   appConfigOptions,
   userOptions,
 }: SessionProviderWrapperOptions = {}) {
-  const { AppConfigWrapper, appConfigContext } = makeAppConfigProviderWrapper(appConfigOptions);
-
-  const { UserProviderWrapper, userContext } = makeUserProviderWrapper(userOptions);
-
   const [SessionProviderWrapper, sessionContext] = makeGenericProviderWrapper(
     SessionProvider,
     SessionContext,
     sessionOptions
   );
+
+  const { AppConfigWrapper, appConfigContext } = makeAppConfigProviderWrapper(appConfigOptions);
+
+  const { UserProviderWrapper, userContext } = makeUserProviderWrapper(userOptions);
 
   const composeWrapper = composeProviders(
     AppConfigWrapper,
