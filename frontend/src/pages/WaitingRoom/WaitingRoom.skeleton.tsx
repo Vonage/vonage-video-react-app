@@ -24,7 +24,7 @@ const WaitingRoomSkeleton: React.FC<WaitingRoomSkeletonProps> = ({ className, ..
         </PageLayout.Left>
 
         <PageLayout.Right>
-          <UsernameInputSkeleton className="flex-col sm:inline-flex h-auto sm:h-[400px] animate-fade-in" />
+          <UsernameInputSkeleton className="flex-col sm:inline-flex h-auto sm:h-[400px] animate-fade-in lg:max-w-[500px]" />
         </PageLayout.Right>
 
         <PageLayout.Footer>

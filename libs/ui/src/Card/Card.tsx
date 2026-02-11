@@ -22,7 +22,6 @@ const Card = ({ className, ...cardProps }: CardProps) => {
     <Box
       className={twMerge(
         classNames(
-          'lg:max-w-[500px]',
           'max-w-full flex-1 flex flex-col items-start bg-vera-surface p-0 md:p-10 rounded-[8px]',
           className
         )

@@ -87,7 +87,11 @@ const UsernameInput = ({
   };
 
   return (
-    <Card component="form" className={twMerge('flex flex-col gap-4', className)} {...cardProps}>
+    <Card
+      component="form"
+      className={twMerge('flex flex-col gap-4 lg:max-w-[500px]', className)}
+      {...cardProps}
+    >
       <Typography className="text-vera-secondary !text-vera-heading-4">
         {t('waitingRoom.user.input.title')}
       </Typography>

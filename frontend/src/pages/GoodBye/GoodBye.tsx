@@ -47,6 +47,7 @@ const GoodBye = (): ReactElement => {
       <PageLayout.Right>
         <Stack direction="column" gap={4}>
           <Card
+            className="lg:max-w-[500px]"
             sx={{
               alignItems: 'center',
             }}
@@ -66,11 +67,7 @@ const GoodBye = (): ReactElement => {
             <GoToLandingPageButton />
           </Card>
 
-          <Card
-            sx={{
-              minWidth: { xs: '100%', lg: '500px' },
-            }}
-          >
+          <Card className="min-w-full lg:min-w-[500px] lg:max-w-[500px]">
             <Typography
               variant="h6"
               sx={{
