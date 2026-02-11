@@ -1,10 +1,9 @@
 import { Box, MenuItem, MenuList, Typography } from '@mui/material';
-import { MouseEvent as ReactMouseEvent, ReactElement } from 'react';
+import type { ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
 import appConfig$ from '@stores/appConfig';
 import useTheme from '@ui/theme';
 import VividIcon from '@components/VividIcon';
-import usePublisherContext from '@hooks/usePublisherContext';
 import Tooltip from '@ui/Tooltip';
 import { useDistinctLabelMediaDevices } from '@ui/hooks';
 import mediaDevices$ from '@core/stores/devices';
@@ -24,29 +23,24 @@ export type InputAudioDevicesProps = {
 const InputAudioDevices = ({ handleToggle }: InputAudioDevicesProps): ReactElement | false => {
   const { t } = useTranslation();
   const theme = useTheme();
-  const { publisher } = usePublisherContext();
 
   const allowDeviceSelection = appConfig$.use.select(
     ({ meetingRoomSettings }) => meetingRoomSettings.allowDeviceSelection
   );
 
-  const audioInputDevices = useDistinctLabelMediaDevices('audioinput');
+  // Use store's selection as source of truth, not publisher.getAudioSource() which can be stale
+  const selectedDeviceId = mediaDevices$.useDeviceId('audioinput');
 
-  const options = audioInputDevices.map((availableDevice) => {
-    return availableDevice.label || t('unknown.device');
-  });
+  const audioInputDevices = useDistinctLabelMediaDevices('audioinput', (devices) =>
+    devices.map((device) => ({
+      ...device,
+      label: device.label || t('unknown.device'),
+    }))
+  );
 
-  const handleChangeAudioSource = (event: ReactMouseEvent<HTMLLIElement>) => {
-    const menuItem = event.target as HTMLLIElement;
+  const handleChangeAudioSource = (deviceId: string) => {
     handleToggle();
-    const audioDeviceId = audioInputDevices?.find((device) => {
-      return device.label === menuItem.textContent;
-    })?.deviceId;
-    if (audioDeviceId) {
-      // [TODO:] Check this while refactoring the publishers... for vera apps this ids must be the same all the time.
-      publisher?.setAudioSource(audioDeviceId);
-      mediaDevices$.actions.selectDevice('audioinput', audioDeviceId);
-    }
+    mediaDevices$.actions.selectDevice('audioinput', deviceId);
   };
 
   return (
@@ -66,13 +60,13 @@ const InputAudioDevices = ({ handleToggle }: InputAudioDevicesProps): ReactEleme
           <Typography sx={{ ml: 2 }}>{t('devices.audio.microphone.full')}</Typography>
         </Box>
         <MenuList>
-          {options.map((option: string) => {
-            const isSelected = option === publisher?.getAudioSource().label;
+          {audioInputDevices.map((device) => {
+            const isSelected = device.deviceId === selectedDeviceId;
             return (
               <MenuItem
-                key={option}
+                key={device.deviceId}
                 selected={isSelected}
-                onClick={(event) => handleChangeAudioSource(event)}
+                onClick={() => handleChangeAudioSource(device.deviceId)}
                 sx={{
                   backgroundColor: 'transparent',
                   '&.Mui-selected': {
@@ -85,7 +79,7 @@ const InputAudioDevices = ({ handleToggle }: InputAudioDevicesProps): ReactEleme
                 }}
               >
                 <Box
-                  key={`${option}-input-device`}
+                  key={`${device.deviceId}-input-device`}
                   sx={{
                     display: 'flex',
                     mb: 0.5,
@@ -106,9 +100,9 @@ const InputAudioDevices = ({ handleToggle }: InputAudioDevicesProps): ReactEleme
                   ) : (
                     <Box sx={{ minWidth: 36 }} />
                   )}
-                  <Tooltip title={option} placement="right" arrow>
+                  <Tooltip title={device.label} placement="right" arrow>
                     <Typography component="span" noWrap>
-                      {option}
+                      {device.label}
                     </Typography>
                   </Tooltip>
                 </Box>

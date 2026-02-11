@@ -1,6 +1,10 @@
 import type { DevicesAPI } from '../../types';
-import { getMediaDevicesInfo, reviseMediaSelection } from '../../helpers';
+import { getMediaDevicesInfo } from '../../helpers';
 import { assertDeviceKind, assertMediaDeviceInfo } from '@common/schemas';
+import assertMediaStreamAccess from '../../helpers/assertMediaStreamAccess';
+import isSinkIdSupported from '@common/platform/isSinkIdSupported/isSinkIdSupported';
+import { attempt } from '@common/execution';
+import { setAudioOutputDevice as setVonageAudioOutputDevice } from '@vonage/client-sdk-video';
 
 /**
  * Selects a media device by kind and deviceId
@@ -8,13 +12,12 @@ import { assertDeviceKind, assertMediaDeviceInfo } from '@common/schemas';
 function selectDevice(
   this: DevicesAPI['actions'],
   kind: MediaDeviceKind,
-  deviceId: string | null | undefined
+  deviceId: string | undefined
 ) {
   return async (store: DevicesAPI): Promise<void> => {
     assertDeviceKind(kind);
 
-    // clean up media device
-    if (deviceId === null) {
+    if (!deviceId) {
       store.setState((state) => ({
         ...state,
         [kind]: undefined,
@@ -41,44 +44,20 @@ function selectDevice(
       mediaDeviceInfo.find((device) => device.kind === kind && device.deviceId === deviceId) ??
       null;
 
-    // throw if device not found
     assertMediaDeviceInfo(devicesInfo);
+
+    if (kind !== 'audiooutput') await assertMediaStreamAccess({ kind, deviceId });
+
+    // reconcile audio output device with Vonage SDK if it changed
+    if (kind === 'audiooutput' && isSinkIdSupported()) {
+      // if the audio device changed, reconcileSelection with Vonage SDK
+      void attempt(() => setVonageAudioOutputDevice(deviceId));
+    }
 
     store.setState((state) => ({
       ...state,
-      mediaDeviceInfo,
-      [kind]: devicesInfo.deviceId,
+      [kind]: deviceId,
     }));
-
-    // every time the media devices info is synced we should reconcile the current selection with the available devices and update if necessary.
-    const [videoStream, audioStream] = await Promise.all([
-      navigator.mediaDevices
-        .getUserMedia({
-          video: true,
-        })
-        .catch((error) => {
-          store.setState((state) => ({
-            ...state,
-            videoinput: undefined,
-          }));
-
-          throw error;
-        }),
-      navigator.mediaDevices
-        .getUserMedia({
-          audio: true,
-        })
-        .catch((error) => {
-          store.setState((state) => ({
-            ...state,
-            audioinput: undefined,
-          }));
-
-          throw error;
-        }),
-    ]);
-
-    reviseMediaSelection({ videoStream, audioStream, store });
   };
 }
 

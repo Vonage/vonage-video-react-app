@@ -5,7 +5,14 @@ import BackgroundGallery from './BackgroundGallery';
 import enTranslations from '../../../locales/en.json';
 import { makeTestProvider, providers, ProviderOptions } from '@test/providers';
 import { ReactElement } from 'react';
-import { setupWindowNavigatorMock, makeMediaStreamMock } from '@common-test/fixtures';
+import {
+  setupWindowNavigatorMock,
+  makeMediaStreamMock,
+  makeMediaDeviceInfos,
+} from '@common-test/fixtures';
+import { mediaDevices$ } from '@core/stores';
+
+const mockDevices = makeMediaDeviceInfos();
 
 const customImages = [
   { id: 'custom1', dataUrl: 'data:image/png;base64,custom1' },
@@ -47,7 +54,7 @@ describe('BackgroundGallery', () => {
     setupWindowNavigatorMock({
       mediaDevices: {
         addEventListener: vi.fn(),
-        enumerateDevices: Promise.resolve([]),
+        enumerateDevices: Promise.resolve(mockDevices),
         getUserMedia: Promise.resolve(
           makeMediaStreamMock({
             getVideoTracks: [],
@@ -56,6 +63,12 @@ describe('BackgroundGallery', () => {
         ),
       },
     });
+
+    // Initialize the mediaDevices$ store with mock devices to prevent useSyncPublisherDevices from disabling video/audio
+    mediaDevices$.setState((state) => ({
+      ...state,
+      mediaDeviceInfo: mockDevices,
+    }));
 
     const { permissions } = globalThis.navigator;
 

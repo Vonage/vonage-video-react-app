@@ -32,6 +32,7 @@ describe('InputAudioDevices Component', () => {
         enumerateDevices: Promise.resolve(devices),
         getUserMedia: Promise.resolve(
           makeMediaStreamMock({
+            getTracks: [],
             getVideoTracks: [],
             getAudioTracks: [],
           })
@@ -60,37 +61,39 @@ describe('InputAudioDevices Component', () => {
   });
 
   it('changes audio input device on menu item click', async () => {
+    const selectDeviceSpy = vi.spyOn(mediaDevices$.actions, 'selectDevice');
+
     render(<InputAudioDevices handleToggle={mockHandleToggle} />);
 
     const micItem = screen.getByText('External Microphone');
     fireEvent.click(micItem);
 
     expect(mockHandleToggle).toHaveBeenCalledTimes(1);
-    expect(mockSetAudioSource).toHaveBeenCalledWith('audio-input-3');
+    expect(selectDeviceSpy).toHaveBeenCalledWith('audioinput', 'audio-input-3');
 
     await waitFor(() => {
       expect(mediaDevices$.getState().audioinput === 'audio-input-3').toBeTruthy();
     });
   });
 
-  it('does not call setAudioSource if selected device is not found', async () => {
+  it('does not call selectDevice if selected device is not found', () => {
+    const selectDeviceSpy = vi.spyOn(mediaDevices$.actions, 'selectDevice');
+
     render(<InputAudioDevices handleToggle={mockHandleToggle} />);
 
     // Clear any calls from initial render/sync
-    mockSetAudioSource.mockClear();
+    selectDeviceSpy.mockClear();
 
     const bogusItem = document.createElement('li');
     bogusItem.textContent = 'Nonexistent Microphone';
     fireEvent.click(bogusItem);
 
-    expect(mockSetAudioSource).not.toHaveBeenCalled();
-
-    await waitFor(() => {
-      expect(mediaDevices$.getState().audioinput === 'audio-input-3').toBeTruthy();
-    });
+    expect(selectDeviceSpy).not.toHaveBeenCalled();
   });
 
-  it('does not call setAudioSource if publisher is not available', async () => {
+  it('selects device even if publisher is not available', async () => {
+    const selectDeviceSpy = vi.spyOn(mediaDevices$.actions, 'selectDevice');
+
     render(<InputAudioDevices handleToggle={mockHandleToggle} />, {
       publisherContext: {
         initialValue: {
@@ -104,7 +107,9 @@ describe('InputAudioDevices Component', () => {
     fireEvent.click(micItem);
 
     expect(mockHandleToggle).toHaveBeenCalledTimes(1);
-    expect(mockSetAudioSource).not.toHaveBeenCalled();
+    // Device selection happens in the store regardless of publisher availability
+    // useSyncPublisherDevices will sync when publisher becomes available
+    expect(selectDeviceSpy).toHaveBeenCalledWith('audioinput', 'audio-input-3');
 
     await waitFor(() => {
       expect(mediaDevices$.getState().audioinput === 'audio-input-3').toBeTruthy();
@@ -134,13 +139,15 @@ describe('InputAudioDevices Component', () => {
   });
 
   it('handles click event when audioDeviceId is found', async () => {
+    const selectDeviceSpy = vi.spyOn(mediaDevices$.actions, 'selectDevice');
+
     render(<InputAudioDevices handleToggle={mockHandleToggle} />);
 
     const micItem = screen.getByText('USB Headset Microphone');
     fireEvent.click(micItem);
 
     expect(mockHandleToggle).toHaveBeenCalledTimes(1);
-    expect(mockSetAudioSource).toHaveBeenCalledWith('audio-input-2');
+    expect(selectDeviceSpy).toHaveBeenCalledWith('audioinput', 'audio-input-2');
 
     // Wait for the actual state change to complete
     await waitFor(() => {

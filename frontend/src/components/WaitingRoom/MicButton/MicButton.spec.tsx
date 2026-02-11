@@ -5,7 +5,14 @@ import { makeTestProvider, providers, ProviderOptions } from '@test/providers';
 import MicButton from './MicButton';
 import SuspenseBoundary from '@common/components/SuspenseBoundary/SuspenseBoundary';
 import composeProviders from '@common/helpers/composeProviders';
-import { setupWindowNavigatorMock, makeMediaStreamMock } from '@common-test/fixtures';
+import {
+  setupWindowNavigatorMock,
+  makeMediaStreamMock,
+  makeMediaDeviceInfos,
+} from '@common-test/fixtures';
+import { mediaDevices$ } from '@core/stores';
+
+const mockDevices = makeMediaDeviceInfos();
 
 describe('MicButton', () => {
   beforeEach(() => {
@@ -14,10 +21,16 @@ describe('MicButton', () => {
     setupWindowNavigatorMock({
       mediaDevices: {
         addEventListener: vi.fn(),
-        enumerateDevices: Promise.resolve([]),
+        enumerateDevices: Promise.resolve(mockDevices),
         getUserMedia: Promise.resolve(makeMediaStreamMock({})),
       },
     });
+
+    // Initialize the mediaDevices$ store with mock devices to prevent useSyncPublisherDevices from disabling audio
+    mediaDevices$.setState((state) => ({
+      ...state,
+      mediaDeviceInfo: mockDevices,
+    }));
 
     const { permissions } = globalThis.navigator;
 

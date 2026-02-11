@@ -1,3 +1,3 @@
 import startServer from './server';
 
-startServer();
+void startServer();

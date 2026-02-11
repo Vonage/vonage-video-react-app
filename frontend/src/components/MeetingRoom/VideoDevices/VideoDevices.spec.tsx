@@ -83,19 +83,7 @@ describe('VideoDevices Component', () => {
   it('changes video source on menu item click', async () => {
     const selectDeviceSpy = vi.spyOn(mediaDevices$.actions, 'selectDevice');
 
-    const { publisherContext } = render(<VideoDevices handleToggle={mockHandleToggle} />);
-
-    publisherContext.current.initializeLocalPublisher({});
-
-    // Wait for publisher to be initialized (accessAllowed event)
-    await waitFor(() => {
-      expect(publisherContext.current.publisher).toBeDefined();
-      expect(publisherContext.current.publisher).not.toBeNull();
-    });
-
-    // Publisher should be defined at this point
-    const publisher = publisherContext.current.publisher!;
-    const setVideoSourceSpy = vi.spyOn(publisher, 'setVideoSource');
+    render(<VideoDevices handleToggle={mockHandleToggle} />);
 
     // Get the second video device from the fixture
     const videoDevices = someDevices.filter((d) => d.kind === 'videoinput');
@@ -106,7 +94,8 @@ describe('VideoDevices Component', () => {
 
     expect(mockHandleToggle).toHaveBeenCalledTimes(1);
     expect(selectDeviceSpy).toHaveBeenCalledWith('videoinput', secondDevice.deviceId);
-    expect(setVideoSourceSpy).toHaveBeenCalledWith(secondDevice.deviceId);
+    // Note: publisher.setVideoSource is now called by useSyncPublisherDevices hook,
+    // not by the VideoDevices component directly
 
     await waitForDeviceSelectionReconciliation(secondDevice.deviceId);
   });
@@ -161,10 +150,8 @@ function render(
 async function waitForDeviceSelectionReconciliation(deviceId: string) {
   await waitFor(() => {
     expect(navigator.mediaDevices.getUserMedia).toHaveBeenCalledWith({
-      video: true,
-    });
-    expect(navigator.mediaDevices.getUserMedia).toHaveBeenCalledWith({
-      audio: true,
+      video: { deviceId: { exact: deviceId } },
+      audio: false,
     });
   });
 

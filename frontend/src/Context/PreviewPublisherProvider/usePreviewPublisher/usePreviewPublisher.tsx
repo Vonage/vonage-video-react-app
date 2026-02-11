@@ -19,6 +19,7 @@ import handlePublisherAccessDenied from '../../../utils/publisher/handlePublishe
 import useStableCallback from '@common/hooks/useStableCallback';
 import mediaDevices$ from '@core/stores/devices';
 import useSyncPublisherDevices from '@Context/PublisherProvider/usePublisher/hooks/useSyncPublisherDevices/useSyncPublisherDevices';
+import waitUntilPlaying from '@utils/waitUntilPlaying';
 
 type PublisherVideoElementCreatedEvent = Event<'videoElementCreated', Publisher> & {
   element: HTMLVideoElement | HTMLObjectElement;
@@ -40,6 +41,7 @@ export type PreviewPublisherContextType = {
   changeVideoSource: (deviceId: string) => void;
   initLocalPublisher: () => void;
   speechLevel: number;
+  isVideoLoading: boolean;
 };
 
 export type PreviewPublisherInitialValue = Partial<
@@ -110,6 +112,8 @@ const usePreviewPublisher = (
   const handlePreviewDestroyed = () => {
     publisherRef.current = null;
   };
+
+  const [isVideoLoading, setIsVideoLoading] = useState(isVideoEnabled);
 
   // Sync publisher with selected devices from store (handles device changes and disconnections)
   useSyncPublisherDevices(publisherRef, { setIsAudioEnabled, setIsVideoEnabled });
@@ -189,6 +193,15 @@ const usePreviewPublisher = (
   const handleVideoElementCreated = (event: PublisherVideoElementCreatedEvent) => {
     setPublisherVideoElement(event.element);
     setIsPublishing(true);
+
+    event.element.classList.add('video__element');
+    event.element.title = 'publisher-preview';
+
+    if (!isVideoLoading) return;
+
+    waitUntilPlaying(event.element).then(() => {
+      setIsVideoLoading(false);
+    });
   };
 
   /* TODO: Replace with mvgAverage utils once merged */ // NOSONAR
@@ -318,6 +331,7 @@ const usePreviewPublisher = (
     changeVideoSource,
     accessStatus,
     speechLevel,
+    isVideoLoading,
   };
 };
 export default usePreviewPublisher;

@@ -106,14 +106,4 @@ type Options<Selection> = UseHookOptions<Selection, DevicesInfoByKind> & {
 
 type Dependencies = unknown[];
 
-export default Object.assign(useMediaDevices, {
-  /**
-   * Selector to transform the selected devices object into an array of devices.
-   */
-  asArray: (selected: Record<string, MediaDeviceInfoJSON>) => Object.values(selected),
-
-  /**
-   * Selector to get the count of devices from the selected devices object.
-   */
-  count: (selected: Record<string, MediaDeviceInfoJSON>) => Object.keys(selected).length,
-});
+export default useMediaDevices;

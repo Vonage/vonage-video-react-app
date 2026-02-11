@@ -2,59 +2,49 @@ import { CancelablePromise } from 'easy-cancelable-promise';
 import { getMediaDevicesInfo, reviseMediaSelection } from '../helpers';
 import type { DevicesAPI } from '../types';
 import type { MediaDeviceInfoJSON } from '@common/types';
+import { setAudioOutputDevice as setVonageAudioOutputDevice } from '@vonage/client-sdk-video';
+import { attempt } from '@common/execution';
+import { isSinkIdSupported } from '@common/platform';
 
 /**
- * Sets the audio output device by its device ID.
+ * Syncs the media devices info by fetching the latest media devices and updating the store state.
+ * It also checks if the current selected devices are still valid with the new media devices info and updates the selection if necessary.
  */
 function syncMediaDevicesInfo(this: DevicesAPI['actions']) {
   return async (store: DevicesAPI): Promise<MediaDeviceInfoJSON[]> => {
     const meta = store.getMetadata();
 
     // cancel ongoing update
-    meta.loadingMediaDevices?.cancel();
+    void meta.loadingMediaDevices?.cancel();
 
     meta.loadingMediaDevices = new CancelablePromise<MediaDeviceInfoJSON[]>(
-      async (resolve, reject, { isPending }) => {
+      async (resolve, reject, { isCanceled }) => {
         try {
           const mediaDeviceInfo = await getMediaDevicesInfo();
 
-          // promise was cancelled
-          if (!isPending()) return;
+          if (isCanceled()) return;
 
           store.setState((state) => ({
             ...state,
             mediaDeviceInfo,
           }));
 
-          // every time the media devices info is synced we should reconcile the current selection with the available devices and update if necessary.
-          const [videoStream, audioStream] = await Promise.all([
-            navigator.mediaDevices
-              .getUserMedia({
-                video: true,
-              })
-              .catch((error) => {
-                store.setState((state) => ({
-                  ...state,
-                  videoinput: undefined,
-                }));
+          const state = store.getState();
 
-                throw error;
-              }),
-            navigator.mediaDevices
-              .getUserMedia({
-                audio: true,
-              })
-              .catch((error) => {
-                store.setState((state) => ({
-                  ...state,
-                  audioinput: undefined,
-                }));
+          const updates = reviseMediaSelection(state);
 
-                throw error;
-              }),
-          ]);
+          if (updates) {
+            store.setState((state) => ({
+              ...state,
+              ...updates,
+            }));
+          }
 
-          reviseMediaSelection({ videoStream, audioStream, store });
+          // reconcile audio output device with Vonage SDK if it changed
+          if (updates?.audiooutput && isSinkIdSupported()) {
+            // if the audio device changed, reconcileSelection with Vonage SDK
+            void attempt(() => setVonageAudioOutputDevice(updates.audiooutput!));
+          }
 
           resolve(mediaDeviceInfo);
         } catch (error) {

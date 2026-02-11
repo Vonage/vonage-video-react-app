@@ -17,11 +17,10 @@ function setupDeviceStore(api: unknown) {
   const abortController = new AbortController();
 
   void attempt(() => {
-    setVonageAudioOutputDevice(api.getState().audiooutput!);
+    void setVonageAudioOutputDevice(api.getState().audiooutput!);
   });
 
   const syncMediaDevicesInfoDebounced = debounce(() => {
-    console.info('%c[MediaDevicesStore]%c Syncing media devices info...', 'color: gray', '');
     void api.actions.syncMediaDevicesInfo().catch(() => {});
   }, 10);
 

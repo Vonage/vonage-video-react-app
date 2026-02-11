@@ -12,6 +12,7 @@ describe('selectDevice', () => {
         addEventListener: vi.fn(),
         enumerateDevices: Promise.resolve(devices),
         getUserMedia: Promise.resolve({
+          getTracks: () => [{ stop: vi.fn() }],
           getVideoTracks: () => [],
           getAudioTracks: () => [],
         } as unknown as MediaStream),
@@ -30,7 +31,7 @@ describe('selectDevice', () => {
 
   it('should clear device when deviceId is null', async () => {
     const boundSelectDevice = selectDevice.bind(mediaDevices$.actions);
-    const action = boundSelectDevice('audioinput', null);
+    const action = boundSelectDevice('audioinput', undefined);
 
     await action(mediaDevices$);
 

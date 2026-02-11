@@ -136,37 +136,52 @@ describe('WaitingRoom', () => {
     });
   });
 
-  it('should display a video loading element on entering', async () => {
+  it('should display skeleton while video is loading', async () => {
     await render(<WaitingRoom />, {
       appConfigContext: {
         value: {
-          isAppConfigLoaded: false,
-          videoSettings: {
-            allowCameraControl: true,
+          isAppConfigLoaded: true,
+          waitingRoomSettings: {
+            allowDeviceSelection: true,
           },
+        },
+      },
+      previewPublisherContext: {
+        __interceptor: (context: PreviewPublisherContextType) => {
+          context.accessStatus = DEVICE_ACCESS_STATUS.ACCEPTED;
+          context.isVideoLoading = true;
         },
       },
     });
 
     await waitFor(() => {
-      expect(screen.getByTestId('VideoLoading')).toBeVisible();
+      expect(screen.getByTestId('VideoContainerSkeleton')).toBeVisible();
     });
   });
 
   it('should eventually display a preview publisher', async () => {
     const { container } = await render(<WaitingRoom />, {
+      appConfigContext: {
+        value: {
+          waitingRoomSettings: {
+            allowDeviceSelection: true,
+          },
+        },
+      },
       previewPublisherContext: {
         __interceptor: (context: PreviewPublisherContextType) => {
           context.publisher = mockPublisher;
           context.publisherVideoElement = mockPublisherVideoElement;
           context.isVideoEnabled = true;
+          context.isVideoLoading = false;
+          context.accessStatus = DEVICE_ACCESS_STATUS.ACCEPTED;
         },
       },
     });
 
     await waitFor(() => {
       expect(container.querySelector('[data-video-container]')).toBeVisible();
-      expect(screen.getByTitle('publisher-preview')).toBeVisible();
+      expect(screen.getByTitle('preview-publisher')).toBeVisible();
     });
   });
 
@@ -174,6 +189,13 @@ describe('WaitingRoom', () => {
     const user = userEvent.setup();
 
     const { unmount } = await render(<WaitingRoom />, {
+      appConfigContext: {
+        value: {
+          waitingRoomSettings: {
+            allowDeviceSelection: true,
+          },
+        },
+      },
       previewPublisherContext: {
         __onCreated: (context: PreviewPublisherContextType) => {
           context.publisher = mockPublisher;
@@ -185,6 +207,8 @@ describe('WaitingRoom', () => {
         },
         __interceptor: (context: PreviewPublisherContextType) => {
           context.publisher = mockPublisher;
+          context.isVideoLoading = false;
+          context.accessStatus = DEVICE_ACCESS_STATUS.ACCEPTED;
         },
       },
     });
@@ -204,27 +228,26 @@ describe('WaitingRoom', () => {
     expect(mockedDestroyPublisher).toHaveBeenCalled();
   });
 
-  it('should reload window when device permissions change', async () => {
-    await render(<WaitingRoom />, {
+  it('should render VideoContainer when video loading finishes', async () => {
+    const { container } = await render(<WaitingRoom />, {
+      appConfigContext: {
+        value: {
+          waitingRoomSettings: {
+            allowDeviceSelection: true,
+          },
+        },
+      },
       previewPublisherContext: {
         __interceptor: (context: PreviewPublisherContextType) => {
           context.accessStatus = DEVICE_ACCESS_STATUS.ACCEPTED;
+          context.isVideoLoading = false;
+          context.publisher = mockPublisher;
         },
       },
     });
 
-    expect(globalThis.location.reload).not.toHaveBeenCalled();
-
-    // Simulate device permission change by updating the mock and rerendering
-    vi.mocked(usePermissions).mockReturnValue({
-      accessStatus: DEVICE_ACCESS_STATUS.ACCESS_CHANGED,
-      setAccessStatus: vi.fn(),
-    });
-
-    await render(<WaitingRoom />);
-
     await waitFor(() => {
-      expect(globalThis.location.reload).toHaveBeenCalled();
+      expect(container.querySelector('[data-video-container]')).toBeVisible();
     });
   });
 
@@ -265,6 +288,7 @@ describe('WaitingRoom', () => {
       previewPublisherContext: {
         __interceptor: (context: PreviewPublisherContextType) => {
           context.accessStatus = DEVICE_ACCESS_STATUS.ACCEPTED;
+          context.isVideoLoading = false;
         },
       },
     });

@@ -1,15 +1,15 @@
 import type { MediaDeviceInfoJSON } from '@common/types';
 
+type Result = Record<MediaDeviceKind, Record<string, MediaDeviceInfoJSON>>;
+
 const organizeMediaDevicesByKind = ({
   mediaDeviceInfo,
 }: {
   mediaDeviceInfo: MediaDeviceInfoJSON[];
-}) => {
+}): Result => {
   return mediaDeviceInfo.reduce(
     (acc, device) => {
-      const devices = acc[device.kind] || {
-        default: device,
-      };
+      const devices = acc[device.kind];
 
       devices[device.deviceId] = device;
       acc[device.kind] = devices;
@@ -20,7 +20,7 @@ const organizeMediaDevicesByKind = ({
       audioinput: {},
       audiooutput: {},
       videoinput: {},
-    } as Record<MediaDeviceKind, Record<string, MediaDeviceInfoJSON>>
+    } as Result
   );
 };
 

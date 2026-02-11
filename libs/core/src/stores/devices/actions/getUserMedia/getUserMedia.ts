@@ -4,7 +4,7 @@ function getUserMedia(this: DevicesAPI['actions'], constraints: MediaStreamConst
   return (_: DevicesAPI): Promise<MediaStream> => {
     return navigator.mediaDevices.getUserMedia(constraints).then((stream) => {
       // After successfully getting user media, sync the media devices info
-      this.syncMediaDevicesInfo();
+      void this.syncMediaDevicesInfo();
       return stream;
     });
   };

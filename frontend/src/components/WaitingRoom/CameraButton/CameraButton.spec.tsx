@@ -7,7 +7,14 @@ import type { BackgroundPublisherContextType } from '@Context/BackgroundPublishe
 import CameraButton from './CameraButton';
 import SuspenseBoundary from '@common/components/SuspenseBoundary/SuspenseBoundary';
 import composeProviders from '@common/helpers/composeProviders';
-import { setupWindowNavigatorMock, makeMediaStreamMock } from '@common-test/fixtures';
+import {
+  setupWindowNavigatorMock,
+  makeMediaStreamMock,
+  makeMediaDeviceInfos,
+} from '@common-test/fixtures';
+import { mediaDevices$ } from '@core/stores';
+
+const mockDevices = makeMediaDeviceInfos();
 
 type PreviewPublisherContextWithMock = PreviewPublisherContextType & {
   _previewToggleMockApplied?: boolean;
@@ -24,10 +31,16 @@ describe('CameraButton', () => {
     setupWindowNavigatorMock({
       mediaDevices: {
         addEventListener: vi.fn(),
-        enumerateDevices: Promise.resolve([]),
+        enumerateDevices: Promise.resolve(mockDevices),
         getUserMedia: Promise.resolve(makeMediaStreamMock({})),
       },
     });
+
+    // Initialize the mediaDevices$ store with mock devices to prevent useSyncPublisherDevices from disabling video
+    mediaDevices$.setState((state) => ({
+      ...state,
+      mediaDeviceInfo: mockDevices,
+    }));
 
     const { permissions } = globalThis.navigator;
 

@@ -17,22 +17,19 @@ const useSyncPublisherDevices = (
 ): void => {
   // Sync video source
   useMountEffect(() => {
-    // Track previous values to detect disconnection (transition from value to undefined)
-    let prevVideoInput = mediaDevices$.getState().videoinput;
-    let prevAudioInput = mediaDevices$.getState().audioinput;
-
     const subscribers = [
       args.setIsVideoEnabled
         ? mediaDevices$.subscribe(
             ({ videoinput }) => videoinput,
             (input) => {
-              attempt(() => publisherRef.current?.setVideoSource(input!));
+              const didChanged = publisherRef.current?.getVideoSource()?.deviceId !== input;
+              if (didChanged) attempt(() => publisherRef.current?.setVideoSource(input!));
 
-              // Only disable if device was disconnected (had value before, now undefined)
-              if (!input && prevVideoInput) {
-                args.setIsVideoEnabled?.(false);
-              }
-              prevVideoInput = input;
+              if (hasDevices('videoinput')) return;
+              args.setIsVideoEnabled?.(false);
+            },
+            {
+              skipFirst: true,
             }
           )
         : undefined,
@@ -41,13 +38,14 @@ const useSyncPublisherDevices = (
         ? mediaDevices$.subscribe(
             ({ audioinput }) => audioinput,
             (input) => {
-              attempt(() => publisherRef.current?.setAudioSource(input!));
+              const didChanged = publisherRef.current?.getAudioSource()?.id !== input;
+              if (didChanged) attempt(() => publisherRef.current?.setAudioSource(input!));
 
-              // Only disable if device was disconnected (had value before, now undefined)
-              if (!input && prevAudioInput) {
-                args.setIsAudioEnabled?.(false);
-              }
-              prevAudioInput = input;
+              if (hasDevices('audioinput')) return;
+              args.setIsAudioEnabled?.(false);
+            },
+            {
+              skipFirst: true,
             }
           )
         : undefined,
@@ -58,4 +56,9 @@ const useSyncPublisherDevices = (
     };
   });
 };
+
+function hasDevices(kind: MediaDeviceKind): boolean {
+  return Object.keys(mediaDevices$.mediaDevicesMap$.getState()[kind]).length > 0;
+}
+
 export default useSyncPublisherDevices;

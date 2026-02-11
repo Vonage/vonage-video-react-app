@@ -66,7 +66,7 @@ test('should display username on publisher and subscribers', async ({
     .getByTestId('publisher-container')
     .getByText('User One')
     .waitFor({ state: 'visible' });
-  expect(await pageOne.getByTestId('publisher-container').getByText('User One')).toBeVisible();
+  void expect(await pageOne.getByTestId('publisher-container').getByText('User One')).toBeVisible();
 
   const pageTwo = await context.newPage();
   await openMeetingRoomWithSettings({

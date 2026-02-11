@@ -2,7 +2,6 @@ import { ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
 import appConfig$ from '@stores/appConfig';
 import useTheme from '@ui/theme';
-import usePublisherContext from '@hooks/usePublisherContext';
 import { Box, Typography, MenuList, MenuItem, Tooltip, BoxProps } from '@mui/material';
 import VividIcon from '@components/VividIcon';
 import { useDistinctLabelMediaDevices } from '@ui/hooks';
@@ -28,11 +27,12 @@ const VideoDevices = ({
   const { t } = useTranslation();
   const theme = useTheme();
 
-  const { publisher } = usePublisherContext();
-
   const allowDeviceSelection = appConfig$.use.select(
     ({ meetingRoomSettings }) => meetingRoomSettings.allowDeviceSelection
   );
+
+  // Use store's selection as source of truth, not publisher.getVideoSource() which can be stale
+  const selectedDeviceId = mediaDevices$.useDeviceId('videoinput');
 
   const devicesAvailable = useDistinctLabelMediaDevices('videoinput', (devices) =>
     devices.map((device) => ({
@@ -43,9 +43,7 @@ const VideoDevices = ({
 
   const handleChangeVideoSource = (deviceId: string) => {
     handleToggle();
-
     mediaDevices$.actions.selectDevice('videoinput', deviceId);
-    publisher?.setVideoSource(deviceId);
   };
 
   return (
@@ -67,7 +65,7 @@ const VideoDevices = ({
         </Box>
         <MenuList id="split-button-menu">
           {devicesAvailable.map((option) => {
-            const isSelected = option.deviceId === publisher?.getVideoSource().deviceId;
+            const isSelected = option.deviceId === selectedDeviceId;
             return (
               <MenuItem
                 key={option.deviceId}

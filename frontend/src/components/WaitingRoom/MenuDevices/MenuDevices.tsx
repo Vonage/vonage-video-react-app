@@ -37,10 +37,7 @@ const MenuDevices = ({
   anchorEl,
   deviceChangeHandler,
 }: MenuDevicesWaitingRoomProps): ReactElement => {
-  const devices = mediaDevices$.useMediaDevices(
-    mediaDeviceKind,
-    mediaDevices$.useMediaDevices.asArray
-  );
+  const devices = mediaDevices$.useMediaDevices(mediaDeviceKind, Object.values<MediaDeviceInfo>);
 
   const localSource = mediaDevices$.useDeviceId(mediaDeviceKind);
 
