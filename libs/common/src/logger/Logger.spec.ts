@@ -18,11 +18,29 @@ describe('LoggerBase', () => {
     vi.restoreAllMocks();
   });
 
-  it('warns when logging without a provider', () => {
+  it('buffers log when no provider (no warn); flushed when setup() completes', async () => {
     const consoleSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
 
-    loggerBase.log('TestEvent');
-    expect(consoleSpy).toHaveBeenCalled();
+    loggerBase.log('EarlyEvent', { sessionId: 's1' });
+    loggerBase.reportError(new Error('Early error'), { source: 'test' });
+
+    expect(consoleSpy).not.toHaveBeenCalled();
+    expect(loggerBase['queue']).toHaveLength(2);
+
+    const provider = { ...minimalProvider, log: vi.fn(), reportError: vi.fn() };
+    loggerBase.setup(() => provider);
+
+    await waitFor(() => {
+      expect(provider.log).toHaveBeenCalledWith(
+        'EarlyEvent',
+        expect.objectContaining({ sessionId: 's1', timestamp: expect.any(Number) })
+      );
+      expect(provider.reportError).toHaveBeenCalledWith(
+        expect.objectContaining({ message: 'Early error' }),
+        { source: 'test', timestamp: expect.any(Number) }
+      );
+    });
+    expect(loggerBase['queue']).toHaveLength(0);
   });
 
   it('should warn if the provider is missing the feature', async () => {
@@ -167,7 +185,7 @@ describe('LoggerBase', () => {
             name: 'Error',
             stack: expect.any(String),
           }),
-          { source: 'test' }
+          { source: 'test', timestamp: expect.any(Number) }
         );
       });
     });
@@ -180,7 +198,10 @@ describe('LoggerBase', () => {
       loggerBase.reportError(raw, { code: 500 });
 
       await waitFor(() => {
-        expect(provider.reportError).toHaveBeenCalledWith(raw, { code: 500 });
+        expect(provider.reportError).toHaveBeenCalledWith(raw, {
+          code: 500,
+          timestamp: expect.any(Number),
+        });
       });
     });
 
@@ -193,7 +214,7 @@ describe('LoggerBase', () => {
       await waitFor(() => {
         expect(provider.reportError).toHaveBeenCalledWith(
           expect.objectContaining({ message: 'E' }),
-          {}
+          expect.objectContaining({ timestamp: expect.any(Number) })
         );
       });
     });

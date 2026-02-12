@@ -27,7 +27,7 @@ describe('FrontendLogger', () => {
     await waitFor(() => {
       expect(provider.reportError).toHaveBeenCalledWith(
         expect.objectContaining({ message: 'Err' }),
-        { context: 'test' }
+        { context: 'test', timestamp: expect.any(Number) }
       );
     });
   });
@@ -49,7 +49,7 @@ describe('FrontendLogger', () => {
     await waitFor(() => {
       expect(syncProvider.reportError).toHaveBeenCalledWith(
         expect.objectContaining({ message: 'Sync error' }),
-        { source: 'test' }
+        { source: 'test', timestamp: expect.any(Number) }
       );
     });
   });
@@ -102,7 +102,7 @@ describe('FrontendLogger', () => {
     await waitFor(() => {
       expect(provider.reportError).toHaveBeenCalledWith(
         expect.objectContaining({ message: 'Test error' }),
-        { type, ...expectedExtra }
+        { type, ...expectedExtra, timestamp: expect.any(Number) }
       );
     });
   });

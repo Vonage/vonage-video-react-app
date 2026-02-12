@@ -24,6 +24,13 @@ export const ColorsPerFeature = {
 const MAX_PROVIDER_RESOLVE_RETRIES = 2;
 
 /**
+ * Events buffered when provider is not yet set. Flushed to the provider when setup() completes.
+ */
+type QueuedLog = { type: 'log'; args: [string, Record<string, unknown>] };
+type QueuedReportError = { type: 'reportError'; args: [unknown, Record<string, unknown>] };
+type QueuedEvent = QueuedLog | QueuedReportError;
+
+/**
  * Logger provider interface defining the available logger features.
  */
 export type LoggerProviderConfig = {
@@ -56,8 +63,33 @@ export class LoggerBase implements LoggerProviderConfig {
 
   protected provider: Promise<LoggerProviderConfig> | null = null;
 
+  /**
+   * In-memory queue for log/reportError calls made before setup() completes.
+   * Drained in order when setup() resolves; not used after that.
+   */
+  protected queue: QueuedEvent[] = [];
+
   protected onLoggerInitializationFailed(error: unknown) {
     console.error('[Logger] Initialization failed. Logger will be disabled.', error);
+  }
+
+  /**
+   * Drains the in-memory queue into the given provider.
+   * Called when setup() completes so early logs are not lost.
+   */
+  protected flushQueue(provider: LoggerProviderConfig): void {
+    while (this.queue.length > 0) {
+      const event = this.queue.shift()!;
+      try {
+        if (event.type === 'log') {
+          provider[LoggerFeature.Log]?.(event.args[0], event.args[1]);
+        } else {
+          provider[LoggerFeature.ReportError]?.(event.args[0], event.args[1]);
+        }
+      } catch (err) {
+        console.error('[Logger] Failed to flush queued event to provider.', err);
+      }
+    }
   }
 
   /**
@@ -75,10 +107,11 @@ export class LoggerBase implements LoggerProviderConfig {
 
       if (!result || error) {
         this.error = error ?? new Error('[Logger] Setup callback did not return a provider.');
-        return void this.onLoggerInitializationFailed(this.error);
+        return this.onLoggerInitializationFailed(this.error);
       }
 
       this.provider = Promise.resolve(result);
+      void this.flushQueue(result as LoggerProviderConfig);
       return;
     }
 
@@ -91,11 +124,12 @@ export class LoggerBase implements LoggerProviderConfig {
 
       if (!result || error) {
         this.error = error ?? new Error('[Logger] Setup callback did not return a provider.');
-        void this.onLoggerInitializationFailed(this.error);
+        this.onLoggerInitializationFailed(this.error);
 
         throw this.error;
       }
 
+      void this.flushQueue(result as LoggerProviderConfig);
       return result;
     });
 
@@ -214,33 +248,58 @@ export class LoggerBase implements LoggerProviderConfig {
   }
 
   /**
+   * Enriches context with a timestamp. Use for all provider/queue payloads so log, reportError,
+   * and any future methods attach a consistent client timestamp.
+   */
+  protected withTimestamp<T extends Record<string, unknown>>(data: T): T & { timestamp: number } {
+    return {
+      ...data,
+      timestamp: Date.now(),
+    };
+  }
+
+  /**
    * Reports an error event to the logger provider.
+   * Before setup(): event is buffered and flushed when setup() completes.
    * @param error The error to report.
    * @param extra Additional context information.
    */
   public reportError(error: unknown, extra?: Record<string, unknown>) {
+    const normalizedError = isErrorLike(error)
+      ? {
+          ...error,
+          message: error.message,
+          name: error.name,
+          stack: error.stack,
+        }
+      : error;
+
+    const extraRecord = this.withTimestamp(extra ?? {});
+
+    if (this.provider === null) {
+      this.queue.push({ type: 'reportError', args: [normalizedError, extraRecord] });
+      return;
+    }
+
     void this.tryExecuteFeature(LoggerFeature.ReportError).then((feature) =>
-      feature?.(
-        isErrorLike(error)
-          ? {
-              ...error,
-              message: error.message,
-              name: error.name,
-              stack: error.stack,
-            }
-          : error,
-        extra ?? {}
-      )
+      feature?.(normalizedError, extraRecord)
     );
   }
 
   /**
    * Logs an event to the logger provider.
+   * Before setup(): event is buffered and flushed when setup() completes.
    * @param event The name of the event to log.
    * @param extra Additional data associated with the event.
    */
-  public log(event: string, extra?: Record<string, unknown>) {
-    const payload = { ...(extra ?? {}), timestamp: Date.now() };
+  public log(event: string, extra: Record<string, unknown> = {}) {
+    const payload = this.withTimestamp(extra);
+
+    if (this.provider === null) {
+      this.queue.push({ type: 'log', args: [event, payload] });
+      return;
+    }
+
     void this.tryExecuteFeature(LoggerFeature.Log).then((feature) => feature?.(event, payload));
   }
 }

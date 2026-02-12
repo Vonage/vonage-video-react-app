@@ -60,4 +60,9 @@ describe('Environment Variables', () => {
     const openTokAPISecret = 'opentokAPISecret';
     expect(process.env.OT_API_SECRET).toBe(openTokAPISecret);
   });
+
+  test('should have the correct GOLLUM_BASE_URL', () => {
+    const gollumBaseUrl = 'https://example.com';
+    expect(process.env.GOLLUM_BASE_URL).toBe(gollumBaseUrl);
+  });
 });

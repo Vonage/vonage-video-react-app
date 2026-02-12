@@ -310,7 +310,7 @@ describe('VonageVideoClient', () => {
       await wait(0);
 
       expect(logSpy).toHaveBeenCalledWith(
-        'vonageVideoClient.handleSessionDisconnected',
+        'CallEnded',
         expect.objectContaining({
           reason: 'forceDisconnected',
           sessionId: 'session-id',
