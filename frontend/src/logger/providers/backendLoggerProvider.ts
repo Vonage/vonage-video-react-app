@@ -25,7 +25,7 @@ export function createBackendLoggingProvider(): LoggerProviderConfig {
       });
     },
 
-    reportError: (error: unknown, extra: Record<string, unknown>) => {
+    reportError: (error: unknown, extra?: Record<string, unknown>) => {
       // Fire-and-forget: logging must not throw or block the UI; errors are intentionally swallowed.
       tryCatch(() => {
         const parsedExtra = parseExtra(extra);

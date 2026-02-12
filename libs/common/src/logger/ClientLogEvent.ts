@@ -34,7 +34,7 @@ export type ClientLogEvent = {
   clientVersion?: string;
   logVersion?: string;
   /** window.location.origin (Gollum source) */
-  source?: string;
+  source: string;
   name?: string;
   componentId?: string;
   /** apiKey / applicationId from frontend extra */

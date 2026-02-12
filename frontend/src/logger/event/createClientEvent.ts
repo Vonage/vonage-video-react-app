@@ -2,7 +2,7 @@ import type { ClientLogEvent } from '@common/logger';
 import getAppVersion from '@utils/getAppVersion';
 
 /** Correlation id: same for all events from this page load. Enables grouping in Kibana. */
-const GUID = crypto.randomUUID();
+const correlationIdForPageLoad = crypto.randomUUID();
 
 type ClientEventInput = {
   level: ClientLogEvent['level'];
@@ -27,9 +27,9 @@ export function createClientEvent(input: ClientEventInput): ClientLogEvent {
     sessionId: input.sessionId,
     connectionId: input.connectionId,
     clientSystemTime: input.timestamp ?? Date.now(),
-    userAgent: typeof navigator !== 'undefined' ? navigator.userAgent : '',
+    userAgent: typeof navigator === 'undefined' ? '' : navigator.userAgent,
     level: input.level,
-    guid: GUID,
+    guid: correlationIdForPageLoad,
     clientVersion: getAppVersion(),
     source:
       typeof window !== 'undefined' && window.location.origin ? window.location.origin : 'unknown',

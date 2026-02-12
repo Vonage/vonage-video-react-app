@@ -8,6 +8,7 @@ const createBaseEvent = (): ClientLogEvent => ({
   clientSystemTime: Date.now(),
   userAgent: 'Mozilla/5.0',
   guid: 'guid-1',
+  source: 'test-source',
 });
 
 describe('serializeClientEvent', () => {
@@ -20,12 +21,14 @@ describe('serializeClientEvent', () => {
     expect(result.payload).toBeUndefined();
   });
 
-  it('returns event as-is when payload is null', () => {
+  it('normalizes payload: null to undefined so backend never receives invalid null', () => {
     const event = { ...createBaseEvent(), payload: null } as unknown as ClientLogEvent;
 
     const result = serializeClientEvent(event);
 
-    expect(result).toBe(event);
+    expect(result.payload).toBeUndefined();
+    expect(result.action).toBe(event.action);
+    expect(result.guid).toBe(event.guid);
   });
 
   it('serializes primitive values in payload unchanged', () => {

@@ -8,12 +8,12 @@ vi.mock('../../utils/constants', () => ({
 }));
 
 describe('BackendLogTransport', () => {
-  let fetchSpy: MockInstance<
+  let fetchSpy!: MockInstance<
     [input: string | URL | Request, init?: RequestInit],
     Promise<Response>
   >;
-  let sendBeaconSpy: ReturnType<typeof vi.fn>;
-  let pagehideHandler: (evt?: Event) => void;
+  let sendBeaconSpy!: ReturnType<typeof vi.fn>;
+  let pagehideHandler!: (evt?: Event) => void;
 
   beforeEach(() => {
     fetchSpy = vi.spyOn(global, 'fetch').mockResolvedValue({ ok: true } as Response);
@@ -68,6 +68,37 @@ describe('BackendLogTransport', () => {
     expect(() => transport.send(event as Parameters<BackendLogTransport['send']>[0])).not.toThrow();
 
     await vi.waitFor(() => expect(fetchSpy).toHaveBeenCalled());
+  });
+
+  it('removes only the correct pending entry when duplicate events serialize to same JSON', async () => {
+    const resolveFns: ((res: Response) => void)[] = [];
+    fetchSpy.mockImplementation(
+      () =>
+        new Promise<Response>((resolve) => {
+          resolveFns.push(resolve);
+        })
+    );
+
+    const transport = new BackendLogTransport();
+    const duplicateEvent = {
+      action: 'Duplicate',
+      level: 'info' as const,
+      clientSystemTime: 999,
+      userAgent: '',
+      guid: 'guid-1',
+    };
+
+    transport.send(duplicateEvent as Parameters<BackendLogTransport['send']>[0]);
+    transport.send(duplicateEvent as Parameters<BackendLogTransport['send']>[0]);
+
+    expect(fetchSpy).toHaveBeenCalledTimes(2);
+    resolveFns.forEach((resolve) => resolve({ ok: true } as Response));
+
+    await new Promise((r) => setTimeout(r, 0));
+
+    // Simulate pagehide - should send 0 (both completed) not 2 (wrong removal)
+    pagehideHandler();
+    expect(sendBeaconSpy).not.toHaveBeenCalled();
   });
 
   it('pagehide flushes pending events via sendBeacon when fetch was cancelled', () => {

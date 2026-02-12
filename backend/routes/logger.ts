@@ -1,5 +1,4 @@
-import express from 'express';
-import { Request, Response, Router } from 'express';
+import express, { Request, Response, Router } from 'express';
 import { forwardToGollum } from '../services/gollumClientService';
 import { ClientLogEventSchema } from '../types/ClientLogEventSchema';
 

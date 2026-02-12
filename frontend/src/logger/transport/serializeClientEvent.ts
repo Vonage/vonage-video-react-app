@@ -31,7 +31,12 @@ function serializeValue(value: unknown): Primitive | Record<string, unknown> {
  * circular refs → '[unserializable]'. Returns event unchanged if payload is absent.
  */
 export function serializeClientEvent(event: ClientLogEvent): ClientLogEvent {
-  if (!event.payload) return event;
+  if (event.payload == null) {
+    if (event.payload === undefined) {
+      return event;
+    }
+    return { ...event, payload: undefined };
+  }
 
   const payload: Record<string, unknown> = {};
 

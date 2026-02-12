@@ -78,16 +78,17 @@ export class LoggerBase implements LoggerProviderConfig {
    * Called when setup() completes so early logs are not lost.
    */
   protected flushQueue(provider: LoggerProviderConfig): void {
-    while (this.queue.length > 0) {
-      const event = this.queue.shift()!;
-      try {
+    const events = this.queue.splice(0, this.queue.length);
+    for (const event of events) {
+      const { error } = tryCatch(() => {
         if (event.type === 'log') {
           provider[LoggerFeature.Log]?.(event.args[0], event.args[1]);
         } else {
           provider[LoggerFeature.ReportError]?.(event.args[0], event.args[1]);
         }
-      } catch (err) {
-        console.error('[Logger] Failed to flush queued event to provider.', err);
+      });
+      if (error) {
+        console.error('[Logger] Failed to flush queued event to provider.', error);
       }
     }
   }
@@ -111,7 +112,7 @@ export class LoggerBase implements LoggerProviderConfig {
       }
 
       this.provider = Promise.resolve(result);
-      void this.flushQueue(result as LoggerProviderConfig);
+      this.flushQueue(result as LoggerProviderConfig);
       return;
     }
 
@@ -129,7 +130,7 @@ export class LoggerBase implements LoggerProviderConfig {
         throw this.error;
       }
 
-      void this.flushQueue(result as LoggerProviderConfig);
+      this.flushQueue(result as LoggerProviderConfig);
       return result;
     });
 
