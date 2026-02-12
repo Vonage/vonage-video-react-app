@@ -39,6 +39,7 @@ const HiddenParticipantsTile = ({
       id="hidden-participants"
       data-testid="hidden-participants"
       sx={{
+        m: 0.5,
         position: 'absolute',
         display: 'flex',
         alignItems: 'center',

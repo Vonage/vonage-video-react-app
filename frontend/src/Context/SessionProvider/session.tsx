@@ -339,10 +339,7 @@ const SessionProvider = ({ children, initialValue = {} }: SessionProviderProps):
 
     if (doesStreamStillExistInSession) {
       vonageVideoClient.current!.resubscribeToStreamId(streamId);
-      console.warn(`Subscriber with stream ID ${streamId} resubscribing`, {
-        doesStreamStillExistInSession,
-      });
-      return;
+      console.warn(`Subscriber with stream ID ${streamId} resubscribing`);
     }
     destroySubscriber(streamId);
   };
@@ -353,6 +350,7 @@ const SessionProvider = ({ children, initialValue = {} }: SessionProviderProps):
     setSubscriberWrappers((prevSubscriberWrappers) =>
       prevSubscriberWrappers.filter(isNotDestroyedStreamId)
     );
+    console.warn(`Subscriber stream ID ${streamId} destroyed and cleaned up`);
   }
 
   const handleSubscriberAudioLevelUpdated = ({
