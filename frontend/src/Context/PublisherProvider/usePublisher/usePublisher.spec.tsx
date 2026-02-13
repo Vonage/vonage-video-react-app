@@ -8,6 +8,7 @@ import {
 } from '@vonage/client-sdk-video';
 import EventEmitter from 'events';
 import usePublisher from './usePublisher';
+import { setStorageItem, STORAGE_KEYS } from '@utils/storage';
 import { makeTestProvider, ProviderOptions, providers } from '@test/providers';
 import SuspenseBoundary from '@common/components/SuspenseBoundary';
 import composeProviders from '@common/helpers/composeProviders';
@@ -121,6 +122,39 @@ describe('usePublisher', () => {
       await waitFor(() => {
         expect(result.current.publisher).toBeNull();
       });
+    });
+
+    it('should apply storage preference and mute audio when user joins with mic off', async () => {
+      setStorageItem(STORAGE_KEYS.AUDIO_SOURCE_ENABLED, 'false');
+      try {
+        mockedInitPublisher.mockReturnValue(mockPublisher);
+        const { result } = renderHook(() => usePublisher(), {
+          userContext: {
+            value: {
+              defaultSettings: {
+                publishAudio: true,
+                publishVideo: false,
+                name: '',
+                noiseSuppression: true,
+                publishCaptions: false,
+              },
+            },
+          },
+        });
+
+        act(() => {
+          result.current.initializeLocalPublisher({});
+          // @ts-expect-error We simulate allowing camera and microphone permissions in a browser.
+          mockPublisher.emit('accessAllowed');
+        });
+
+        await waitFor(() => {
+          expect(publishAudioSpy).toHaveBeenCalledWith(false);
+          expect(result.current.isAudioEnabled).toBe(false);
+        });
+      } finally {
+        setStorageItem(STORAGE_KEYS.AUDIO_SOURCE_ENABLED, 'true');
+      }
     });
   });
 

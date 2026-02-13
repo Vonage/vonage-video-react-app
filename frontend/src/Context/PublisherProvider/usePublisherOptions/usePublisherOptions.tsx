@@ -50,6 +50,11 @@ const usePublisherOptions = (): PublisherProperties | null => {
 
     const isVideoDisabled = getStorageItem(STORAGE_KEYS.VIDEO_SOURCE_ENABLED) === 'false';
 
+    // Audio: always request when allowed. The SDK does not acquire microphone when publishAudio is
+    // false, so publishAudio(true) later would fail. The initial mute is applied in usePublisher
+    // after accessAllowed.
+    // Video: can use storage here. The SDK still acquires the camera when publishVideo is false
+    // (videoSource is provided), so publishVideo(true) works when toggling later.
     const options = {
       audioFallback: { publisher: true },
       audioFilter,

@@ -16,6 +16,9 @@ import useSessionContext from '../../../hooks/useSessionContext';
 import applyBackgroundFilter from '../../../utils/backgroundFilter/applyBackgroundFilter/applyBackgroundFilter';
 import idempotentCallbackWithRetry from '@common/execution/idempotentCallbackWithRetry';
 
+const getUserPrefersAudioOn = (): boolean =>
+  getStorageItem(STORAGE_KEYS.AUDIO_SOURCE_ENABLED) !== 'false';
+
 type PublisherStreamCreatedEvent = Event<'streamCreated', Publisher> & {
   stream: Stream;
 };
@@ -154,10 +157,7 @@ const usePublisher = (initialValue: PublisherContextInitialValue = {}): Publishe
     }
 
     setIsVideoEnabled(!!publisherOptions.publishVideo);
-    const wantsAudioOn =
-      publisherOptions.publishAudio &&
-      getStorageItem(STORAGE_KEYS.AUDIO_SOURCE_ENABLED) !== 'false';
-    setIsAudioEnabled(!!wantsAudioOn);
+    setIsAudioEnabled(!!(publisherOptions.publishAudio && getUserPrefersAudioOn()));
   }, [publisherOptions]);
 
   reconnectingRef.current = reconnecting === true;
@@ -168,8 +168,7 @@ const usePublisher = (initialValue: PublisherContextInitialValue = {}): Publishe
       microphone: true,
       camera: true,
     });
-    const wantsAudioOn = getStorageItem(STORAGE_KEYS.AUDIO_SOURCE_ENABLED) !== 'false';
-    if (!wantsAudioOn && publisherRef.current) {
+    if (!getUserPrefersAudioOn() && publisherRef.current) {
       publisherRef.current.publishAudio(false);
       setIsAudioEnabled(false);
     }
