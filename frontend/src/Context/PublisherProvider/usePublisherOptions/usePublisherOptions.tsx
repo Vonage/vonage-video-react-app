@@ -48,7 +48,6 @@ const usePublisherOptions = (): PublisherProperties | null => {
     const videoFilter: VideoFilter | undefined =
       backgroundFilter && hasMediaProcessorSupport() ? backgroundFilter : undefined;
 
-    const isAudioDisabled = getStorageItem(STORAGE_KEYS.AUDIO_SOURCE_ENABLED) === 'false';
     const isVideoDisabled = getStorageItem(STORAGE_KEYS.VIDEO_SOURCE_ENABLED) === 'false';
 
     const options = {
@@ -58,7 +57,7 @@ const usePublisherOptions = (): PublisherProperties | null => {
       initials,
       insertDefaultUI: false,
       name,
-      publishAudio: allowAudioOnJoin && publishAudio && !isAudioDisabled,
+      publishAudio: allowAudioOnJoin && publishAudio,
       publishCaptions,
       publishVideo: allowVideoOnJoin && publishVideo && !isVideoDisabled,
       resolution: defaultResolution,

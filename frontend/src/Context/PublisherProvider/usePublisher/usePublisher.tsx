@@ -8,7 +8,7 @@ import OT, {
   PublisherProperties,
 } from '@vonage/client-sdk-video';
 import { useTranslation } from 'react-i18next';
-import { setStorageItem, STORAGE_KEYS } from '@utils/storage';
+import { getStorageItem, setStorageItem, STORAGE_KEYS } from '@utils/storage';
 import usePublisherQuality, { NetworkQuality } from '../usePublisherQuality/usePublisherQuality';
 import useSyncPublisherDevices from './hooks/useSyncPublisherDevices/useSyncPublisherDevices';
 import usePublisherOptions from '../usePublisherOptions';
@@ -154,7 +154,10 @@ const usePublisher = (initialValue: PublisherContextInitialValue = {}): Publishe
     }
 
     setIsVideoEnabled(!!publisherOptions.publishVideo);
-    setIsAudioEnabled(!!publisherOptions.publishAudio);
+    const wantsAudioOn =
+      publisherOptions.publishAudio &&
+      getStorageItem(STORAGE_KEYS.AUDIO_SOURCE_ENABLED) !== 'false';
+    setIsAudioEnabled(!!wantsAudioOn);
   }, [publisherOptions]);
 
   reconnectingRef.current = reconnecting === true;
@@ -165,6 +168,11 @@ const usePublisher = (initialValue: PublisherContextInitialValue = {}): Publishe
       microphone: true,
       camera: true,
     });
+    const wantsAudioOn = getStorageItem(STORAGE_KEYS.AUDIO_SOURCE_ENABLED) !== 'false';
+    if (!wantsAudioOn && publisherRef.current) {
+      publisherRef.current.publishAudio(false);
+      setIsAudioEnabled(false);
+    }
   }, []);
 
   const handleDestroyed = useCallback(() => {

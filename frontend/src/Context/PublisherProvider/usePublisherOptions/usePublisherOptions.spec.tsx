@@ -186,7 +186,7 @@ describe('usePublisherOptions', () => {
     });
   });
 
-  it('should disable audio and video from storage options', async () => {
+  it('should always request audio when allowed (storage mute applied in usePublisher)', async () => {
     vi.spyOn(OT, 'hasMediaProcessorSupport').mockReturnValue(true);
     setStorageItem(STORAGE_KEYS.AUDIO_SOURCE_ENABLED, 'false');
     setStorageItem(STORAGE_KEYS.VIDEO_SOURCE_ENABLED, 'true');
@@ -212,7 +212,7 @@ describe('usePublisherOptions', () => {
     });
 
     await waitFor(() => {
-      expect(result.current?.publishAudio).toBe(false);
+      expect(result.current?.publishAudio).toBe(true);
       expect(result.current?.publishVideo).toBe(true);
     });
   });
