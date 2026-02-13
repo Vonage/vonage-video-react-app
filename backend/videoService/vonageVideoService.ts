@@ -5,7 +5,6 @@ import {
   Resolution,
   SingleArchiveResponse,
   Video,
-  EnableCaptionResponse,
   CaptionOptions,
 } from '@vonage/video';
 import { VideoService } from './videoServiceInterface';
@@ -67,7 +66,7 @@ class VonageVideoService implements VideoService {
     return 'Archive stopped successfully';
   }
 
-  async enableCaptions(sessionId: string): Promise<EnableCaptionResponse> {
+  async enableCaptions(sessionId: string): Promise<void> {
     const requestToken = this.generateToken(sessionId);
     const { token } = requestToken;
 
@@ -82,21 +81,10 @@ class VonageVideoService implements VideoService {
         // However, it may also increase the number of inaccuracies in the captions.
         partialCaptions: 'true',
       };
-      const captionsId = await this.vonageVideo.enableCaptions(sessionId, token, captionOptions);
-      return captionsId;
+      await this.vonageVideo.enableCaptions(sessionId, token, captionOptions);
     } catch (error: unknown) {
       const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
       throw new Error(`Failed to enable captions: ${errorMessage}`);
-    }
-  }
-
-  async disableCaptions(captionsId: string): Promise<string> {
-    try {
-      await this.vonageVideo.disableCaptions(captionsId);
-      return 'Captions stopped successfully';
-    } catch (error: unknown) {
-      const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
-      throw new Error(`Failed to disable captions: ${errorMessage}`);
     }
   }
 }

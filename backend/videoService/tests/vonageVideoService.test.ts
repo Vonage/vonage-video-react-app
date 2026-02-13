@@ -7,7 +7,6 @@ const mockToken = 'mockToken';
 const mockApplicationId = 'mockApplicationId';
 const mockArchiveId = 'mockArchiveId';
 const mockRoomName = 'awesomeRoomName';
-const mockCaptionId = 'mockCaptionId';
 const mockPrivateKey = 'mockPrivateKey';
 
 // eslint-disable-next-line @typescript-eslint/await-thenable
@@ -27,12 +26,7 @@ await jest.unstable_mockModule('@vonage/video', () => {
       stopArchive: jest.fn<() => Promise<{ status: number }>>().mockResolvedValue({
         status: 200,
       }),
-      enableCaptions: jest.fn<() => Promise<{ captionsId: string }>>().mockResolvedValue({
-        captionsId: mockCaptionId,
-      }),
-      disableCaptions: jest.fn<() => Promise<{ status: number }>>().mockResolvedValue({
-        status: 200,
-      }),
+      enableCaptions: jest.fn<() => Promise<void>>().mockResolvedValue(undefined),
     })),
     LayoutType: {
       BEST_FIT: 'bestFit',
@@ -86,11 +80,6 @@ describe('VonageVideoService', () => {
 
   it('enables captions', async () => {
     const captionResponse = await vonageVideoService.enableCaptions(mockSessionId);
-    expect(captionResponse.captionsId).toBe(mockCaptionId);
-  });
-
-  it('disables captions', async () => {
-    const captionResponse = await vonageVideoService.disableCaptions(mockCaptionId);
-    expect(captionResponse).toBe('Captions stopped successfully');
+    expect(captionResponse).toBeUndefined();
   });
 });

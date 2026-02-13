@@ -45,9 +45,6 @@ describe('UserCaption', () => {
   beforeEach(() => {
     sessionContext = {
       subscriberWrappers: [],
-      currentCaptionsId: {
-        current: '1-2-3-4',
-      },
     } as unknown as SessionContextType;
     mockUseSessionContext.mockReturnValue(sessionContext as unknown as SessionContextType);
   });

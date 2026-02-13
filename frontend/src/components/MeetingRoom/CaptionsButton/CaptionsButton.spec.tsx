@@ -1,21 +1,21 @@
-import { describe, expect, it, vi, beforeEach, Mock } from 'vitest';
+import { describe, expect, it, vi, beforeEach } from 'vitest';
+import type { Mock } from 'vitest';
 import { render as renderBase, screen, act, waitFor } from '@testing-library/react';
 import type { AxiosResponse } from 'axios';
-import { Subscriber } from '@vonage/client-sdk-video';
-import { ReactElement } from 'react';
+import type { Subscriber } from '@vonage/client-sdk-video';
+import type { ReactElement } from 'react';
 import useRoomName from '@hooks/useRoomName';
-import { SessionContextType } from '@Context/SessionProvider/session';
+import type { SessionContextType } from '@Context/SessionProvider/session';
 import useSessionContext from '@hooks/useSessionContext';
-import { SubscriberWrapper } from '@app-types/session';
+import type { SubscriberWrapper } from '@app-types/session';
 import { makeTestProvider, providers, ProviderOptions } from '@test/providers';
-import { enableCaptions, disableCaptions } from '@api/captions';
+import { enableCaptions } from '@api/captions';
 import CaptionsButton, { CaptionsState } from './CaptionsButton';
 
 vi.mock('@hooks/useSessionContext');
 vi.mock('@hooks/useRoomName');
 vi.mock('@api/captions', () => ({
   enableCaptions: vi.fn(),
-  disableCaptions: vi.fn(),
 }));
 
 const mockUseSessionContext = useSessionContext as Mock<[], SessionContextType>;
@@ -58,10 +58,7 @@ describe('CaptionsButton', () => {
     vi.clearAllMocks();
     (useRoomName as Mock).mockReturnValue(mockedRoomName);
     (enableCaptions as Mock).mockResolvedValue({
-      data: { captions: { captionsId: '1-2-3-4', status: 200 } },
-    } as AxiosResponse);
-    (disableCaptions as Mock).mockResolvedValue({
-      data: { status: 200 },
+      data: { captions: { status: 200 } },
     } as AxiosResponse);
     sessionContext = {
       subscriberWrappers: [createSubscriberWrapper('subscriber-1')],

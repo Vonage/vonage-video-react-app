@@ -2,7 +2,7 @@ import { Dispatch, ReactElement, useState, SetStateAction } from 'react';
 import { AxiosError } from 'axios';
 import { useTranslation } from 'react-i18next';
 import appConfig$ from '@stores/appConfig';
-import { disableCaptions, enableCaptions } from '@api/captions';
+import { enableCaptions } from '@api/captions';
 import useRoomName from '@hooks/useRoomName';
 import ToolbarButton from '../ToolbarButton';
 import Tooltip from '@ui/Tooltip';
@@ -40,7 +40,7 @@ const CaptionsButton = ({
 
   const { t } = useTranslation();
   const roomName = useRoomName();
-  const [captionsId, setCaptionsId] = useState<string>('');
+  const [captionsEnabled, setCaptionsEnabled] = useState<boolean>(false);
   const { isUserCaptionsEnabled, setIsUserCaptionsEnabled, setCaptionsErrorResponse } =
     captionsState;
   const title = isUserCaptionsEnabled ? t('captions.disable') : t('captions.enable');
@@ -52,18 +52,18 @@ const CaptionsButton = ({
     }
   };
 
-  const sessionCaptionsEnabled = !!roomName && !!captionsId;
+  const sessionCaptionsEnabled = !!roomName && captionsEnabled;
 
   const handleCaptionsErrorResponse = (message: string | null) => {
     setCaptionsErrorResponse(message || t('errors.unknown'));
-    setCaptionsId('');
+    setCaptionsEnabled(false);
     setIsUserCaptionsEnabled(false);
   };
 
   const handleCaptionsEnable = async () => {
     try {
-      const response = await enableCaptions(roomName);
-      setCaptionsId(response.data.captionsId);
+      await enableCaptions(roomName);
+      setCaptionsEnabled(true);
       setIsUserCaptionsEnabled(true);
     } catch (error) {
       if (error instanceof AxiosError) {
@@ -73,10 +73,9 @@ const CaptionsButton = ({
     }
   };
 
-  const handleCaptionsDisable = async () => {
+  const handleCaptionsDisable = () => {
     try {
-      setCaptionsId('');
-      await disableCaptions(roomName, captionsId);
+      setCaptionsEnabled(false);
       setIsUserCaptionsEnabled(false);
     } catch (error) {
       if (error instanceof AxiosError) {
@@ -90,7 +89,7 @@ const CaptionsButton = ({
     if (action === 'enable') {
       await handleCaptionsEnable();
     } else if (action === 'disable' && sessionCaptionsEnabled) {
-      await handleCaptionsDisable();
+      handleCaptionsDisable();
     }
   };
 

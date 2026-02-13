@@ -5,7 +5,6 @@ const mockToken = 'mockToken';
 const mockApiKey = 'mockApplicationId';
 const mockArchiveId = 'mockArchiveId';
 const mockRoomName = 'awesomeRoomName';
-const mockCaptionId = 'mockCaptionId';
 const mockApiSecret = 'mockApiSecret';
 
 // eslint-disable-next-line @typescript-eslint/await-thenable
@@ -57,9 +56,7 @@ await jest.unstable_mockModule('opentok', () => ({
 // eslint-disable-next-line @typescript-eslint/await-thenable
 await jest.unstable_mockModule('axios', () => ({
   default: {
-    post: jest.fn<() => Promise<{ data: { captionsId: string } }>>().mockResolvedValue({
-      data: { captionsId: mockCaptionId },
-    }),
+    post: jest.fn<() => Promise<void>>().mockResolvedValue(undefined),
   },
 }));
 
@@ -110,11 +107,6 @@ describe('OpentokVideoService', () => {
 
   it('enables captions', async () => {
     const captionResponse = await opentokVideoService.enableCaptions(mockSessionId);
-    expect(captionResponse.captionsId).toBe(mockCaptionId);
-  });
-
-  it('disables captions', async () => {
-    const captionResponse = await opentokVideoService.disableCaptions(mockCaptionId);
-    expect(captionResponse).toBe('Captions stopped successfully');
+    expect(captionResponse).toBeUndefined();
   });
 });

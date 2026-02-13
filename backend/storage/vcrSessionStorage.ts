@@ -28,50 +28,5 @@ class VcrSessionStorage implements SessionStorage {
     // created before hand but never accessed.
     await this.setKeyExpiry(key);
   }
-
-  async setCaptionsId(roomName: string, captionsId: string): Promise<void> {
-    const key = `captionsIds:${roomName}`;
-    await this.dbState.set(key, captionsId);
-    await this.setKeyExpiry(key);
-  }
-
-  async getCaptionsId(roomName: string): Promise<string | null> {
-    const key = `captionsIds:${roomName}`;
-    const captionsId: string | null = await this.dbState.get(key);
-    if (!captionsId) {
-      return null;
-    }
-    return captionsId;
-  }
-
-  async incrementCaptionsUserCount(roomName: string): Promise<number> {
-    const key = `captionsUserCount:${roomName}`;
-    const currentCaptionsUsersCount = await this.dbState.get(key);
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
-    // eslint-disable-next-line @typescript-eslint/restrict-plus-operands
-    const newCaptionsUsersCount = currentCaptionsUsersCount ? currentCaptionsUsersCount + 1 : 1;
-    await this.dbState.set(key, newCaptionsUsersCount);
-    await this.setKeyExpiry(key);
-
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-    return newCaptionsUsersCount;
-  }
-
-  async decrementCaptionsUserCount(roomName: string): Promise<number> {
-    const key = `captionsUserCount:${roomName}`;
-    const currentCaptionsUsersCount = await this.dbState.get(key);
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
-    const newCaptionsUsersCount = currentCaptionsUsersCount ? currentCaptionsUsersCount - 1 : 0;
-    if (newCaptionsUsersCount < 0) {
-      await this.dbState.delete(key);
-      return 0;
-    }
-    await this.dbState.set(key, newCaptionsUsersCount);
-    await this.setKeyExpiry(key);
-
-    return newCaptionsUsersCount;
-  }
 }
 export default VcrSessionStorage;
