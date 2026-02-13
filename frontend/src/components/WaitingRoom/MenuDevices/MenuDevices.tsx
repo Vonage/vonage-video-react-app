@@ -7,6 +7,7 @@ import cleanAndDedupeDeviceLabels from '@utils/cleanAndDedupeDeviceLabels/cleanA
 import SoundTest from '../../SoundTest';
 import { isGetActiveAudioOutputDeviceSupported } from '@utils/util';
 import mediaDevices$ from '@core/stores/devices';
+import filterMobileCameras from '@hooks/usePreferredCameras/helpers/filterMobileCameras';
 
 export type MenuDevicesWaitingRoomProps = {
   onClose: () => void;
@@ -37,7 +38,8 @@ const MenuDevices = ({
   anchorEl,
   deviceChangeHandler,
 }: MenuDevicesWaitingRoomProps): ReactElement => {
-  const devices = mediaDevices$.useMediaDevices(mediaDeviceKind, Object.values<MediaDeviceInfo>);
+  const rawDevices = mediaDevices$.useMediaDevices(mediaDeviceKind, Object.values<MediaDeviceInfo>);
+  const devices = mediaDeviceKind === 'videoinput' ? filterMobileCameras(rawDevices) : rawDevices;
 
   const localSource = mediaDevices$.useDeviceId(mediaDeviceKind);
 

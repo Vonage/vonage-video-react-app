@@ -4,8 +4,9 @@ import appConfig$ from '@stores/appConfig';
 import useTheme from '@ui/theme';
 import { Box, Typography, MenuList, MenuItem, Tooltip, BoxProps } from '@mui/material';
 import VividIcon from '@components/VividIcon';
-import { useDistinctLabelMediaDevices } from '@ui/hooks';
 import mediaDevices$ from '@core/stores/devices';
+import usePreferredCameras from '@hooks/usePreferredCameras';
+import cleanAndDedupeDeviceLabels from '@utils/cleanAndDedupeDeviceLabels/cleanAndDedupeDeviceLabels';
 
 export type VideoDevicesProps = BoxProps & {
   handleToggle: () => void;
@@ -34,12 +35,12 @@ const VideoDevices = ({
   // Use store's selection as source of truth, not publisher.getVideoSource() which can be stale
   const selectedDeviceId = mediaDevices$.useDeviceId('videoinput');
 
-  const devicesAvailable = useDistinctLabelMediaDevices('videoinput', (devices) =>
-    devices.map((device) => ({
-      ...device,
-      label: device.label ?? t('unknown.device'),
-    }))
-  );
+  // Use filtered cameras (one front + one rear on mobile) to avoid black screen with duplicate devices
+  const preferredCameras = usePreferredCameras();
+  const devicesAvailable = cleanAndDedupeDeviceLabels(preferredCameras).map((device) => ({
+    ...device,
+    label: device.label ?? t('unknown.device'),
+  }));
 
   const handleChangeVideoSource = (deviceId: string) => {
     handleToggle();
