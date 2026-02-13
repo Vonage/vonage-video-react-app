@@ -192,6 +192,8 @@
   "waitingRoom.precallNetworkTest.title": "Test di rete pre-chiamata",
   "waitingRoom.precallNetworkTest.subtitle": "Verifica l'accesso ai dispositivi, la connettività di rete e la qualità della chiamata prima di unirti",
   "waitingRoom.precallNetworkTest.stopTest": "Interrompi test",
+  "waitingRoom.precallNetworkTest.stoppedTitle": "Test interrotto",
+  "waitingRoom.precallNetworkTest.stoppedMessage": "Hai interrotto il test di rete. Puoi riprovare quando vuoi.",
   "waitingRoom.precallNetworkTest.retryTest": "Riprova test",
   "waitingRoom.precallNetworkTest.audio": "Audio",
   "waitingRoom.precallNetworkTest.video": "Video",

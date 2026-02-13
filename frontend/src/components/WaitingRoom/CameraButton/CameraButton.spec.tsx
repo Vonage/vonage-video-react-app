@@ -1,20 +1,20 @@
 import { render as renderBase, screen, fireEvent, waitFor } from '@testing-library/react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import type { ReactElement } from 'react';
-import {
-  makePreviewPublisherProviderWrapper,
-  type PreviewPublisherProviderWrapperOptions,
-  makeBackgroundPublisherProviderWrapper,
-  type BackgroundPublisherProviderWrapperOptions,
-  makeAppConfigProviderWrapper,
-  type AppConfigProviderWrapperOptions,
-} from '@test/providers';
-import composeProviders from '@common/helpers/composeProviders';
-import mediaDevicesMock from '@common/test/mocks/mediaDevicesMock';
+import { makeTestProvider, ProviderOptions, providers } from '@test/providers';
 import type { PreviewPublisherContextType } from '@Context/PreviewPublisherProvider';
 import type { BackgroundPublisherContextType } from '@Context/BackgroundPublisherProvider';
 import CameraButton from './CameraButton';
 import SuspenseBoundary from '@common/components/SuspenseBoundary/SuspenseBoundary';
+import composeProviders from '@common/helpers/composeProviders';
+import {
+  setupWindowNavigatorMock,
+  makeMediaStreamMock,
+  makeMediaDeviceInfos,
+} from '@common-test/fixtures';
+import { mediaDevices$ } from '@core/stores';
+
+const mockDevices = makeMediaDeviceInfos();
 
 type PreviewPublisherContextWithMock = PreviewPublisherContextType & {
   _previewToggleMockApplied?: boolean;
@@ -28,29 +28,28 @@ describe('CameraButton', () => {
   beforeEach(() => {
     vi.clearAllMocks();
 
-    Object.defineProperty(globalThis.navigator, 'mediaDevices', {
-      writable: true,
-      configurable: true,
-      value: mediaDevicesMock,
-    });
-
-    vi.spyOn(mediaDevicesMock, 'addEventListener').mockImplementation(() => {});
-    vi.spyOn(mediaDevicesMock, 'removeEventListener').mockImplementation(() => {});
-    vi.spyOn(mediaDevicesMock, 'enumerateDevices').mockResolvedValue([]);
-    vi.spyOn(mediaDevicesMock, 'getUserMedia').mockResolvedValue({} as MediaStream);
-
-    Object.defineProperty(globalThis.navigator, 'permissions', {
-      writable: true,
-      configurable: true,
-      value: {
-        query: vi.fn().mockResolvedValue({ state: 'granted' }),
+    setupWindowNavigatorMock({
+      mediaDevices: {
+        addEventListener: vi.fn(),
+        enumerateDevices: Promise.resolve(mockDevices),
+        getUserMedia: Promise.resolve(makeMediaStreamMock({})),
       },
     });
+
+    // Initialize the mediaDevices$ store with mock devices to prevent useSyncPublisherDevices from disabling video
+    mediaDevices$.setState((state) => ({
+      ...state,
+      mediaDeviceInfo: mockDevices,
+    }));
+
+    const { permissions } = globalThis.navigator;
+
+    vi.spyOn(permissions, 'query').mockResolvedValue({ state: 'granted' } as PermissionStatus);
   });
 
   it('renders the video on icon when video is enabled', async () => {
     render(<CameraButton />, {
-      appConfigOptions: {
+      appConfigContext: {
         value: {
           isAppConfigLoaded: true,
           videoSettings: {
@@ -58,7 +57,7 @@ describe('CameraButton', () => {
           },
         },
       },
-      previewPublisherOptions: {
+      previewPublisherContext: {
         __onCreated: (context) => {
           context.isVideoEnabled = true;
         },
@@ -72,7 +71,7 @@ describe('CameraButton', () => {
 
   it('renders the video off icon when video is disabled', async () => {
     render(<CameraButton />, {
-      appConfigOptions: {
+      appConfigContext: {
         value: {
           isAppConfigLoaded: true,
           videoSettings: {
@@ -80,7 +79,7 @@ describe('CameraButton', () => {
           },
         },
       },
-      previewPublisherOptions: {
+      previewPublisherContext: {
         __onCreated: (context) => {
           context.isVideoEnabled = false;
         },
@@ -97,7 +96,7 @@ describe('CameraButton', () => {
     const backgroundToggleMock = vi.fn();
 
     render(<CameraButton />, {
-      appConfigOptions: {
+      appConfigContext: {
         value: {
           isAppConfigLoaded: true,
           videoSettings: {
@@ -105,7 +104,7 @@ describe('CameraButton', () => {
           },
         },
       },
-      previewPublisherOptions: {
+      previewPublisherContext: {
         __interceptor: (context) => {
           const contextWithMock = context as PreviewPublisherContextWithMock;
           if (!contextWithMock._previewToggleMockApplied) {
@@ -118,7 +117,7 @@ describe('CameraButton', () => {
           }
         },
       },
-      backgroundPublisherOptions: {
+      backgroundPublisherContext: {
         __interceptor: (context) => {
           const contextWithMock = context as BackgroundPublisherContextWithMock;
           if (!contextWithMock._backgroundToggleMockApplied) {
@@ -147,7 +146,7 @@ describe('CameraButton', () => {
 
   it('is not rendered when allowCameraControl is false', async () => {
     render(<CameraButton />, {
-      appConfigOptions: {
+      appConfigContext: {
         value: {
           isAppConfigLoaded: true,
           videoSettings: {
@@ -164,31 +163,48 @@ describe('CameraButton', () => {
 });
 
 type RenderOptions = {
-  previewPublisherOptions?: PreviewPublisherProviderWrapperOptions['previewPublisherOptions'];
-  backgroundPublisherOptions?: BackgroundPublisherProviderWrapperOptions['backgroundPublisherOptions'];
-  appConfigOptions?: AppConfigProviderWrapperOptions;
+  appConfigContext?: ProviderOptions['AppConfigContext'];
+  userContext?: ProviderOptions['UserContext'];
+  sessionContext?: ProviderOptions['SessionContext'];
+  publisherContext?: ProviderOptions['PublisherContext'];
+  backgroundPublisherContext?: ProviderOptions['BackgroundPublisherContext'];
+  previewPublisherContext?: ProviderOptions['PreviewPublisherContext'];
 };
 
-function render(ui: ReactElement, options: RenderOptions = {}) {
-  const { AppConfigWrapper } = makeAppConfigProviderWrapper(options.appConfigOptions);
-  const { PreviewPublisherProviderWrapper, ...previewProps } = makePreviewPublisherProviderWrapper({
-    previewPublisherOptions: options.previewPublisherOptions,
-  });
-  const { BackgroundPublisherProviderWrapper, ...backgroundProps } =
-    makeBackgroundPublisherProviderWrapper({
-      backgroundPublisherOptions: options.backgroundPublisherOptions,
-    });
-
-  const Wrapper = composeProviders(
-    SuspenseBoundary,
-    AppConfigWrapper,
-    PreviewPublisherProviderWrapper,
-    BackgroundPublisherProviderWrapper
+function render(
+  ui: ReactElement,
+  {
+    appConfigContext,
+    userContext,
+    sessionContext,
+    publisherContext,
+    backgroundPublisherContext,
+    previewPublisherContext,
+  }: RenderOptions = {}
+) {
+  const { wrapper: ButtonWrapper, ...context } = makeTestProvider(
+    [
+      providers.appConfig,
+      providers.user,
+      providers.session,
+      providers.publisher,
+      providers.backgroundPublisher,
+      providers.previewPublisher,
+    ],
+    {
+      appConfigContext,
+      userContext,
+      sessionContext,
+      publisherContext,
+      backgroundPublisherContext,
+      previewPublisherContext,
+    }
   );
 
+  const wrapper = composeProviders(SuspenseBoundary, ButtonWrapper);
+
   return {
-    ...previewProps,
-    ...backgroundProps,
-    ...renderBase(ui, { wrapper: Wrapper }),
+    ...context,
+    ...renderBase(ui, { wrapper }),
   };
 }

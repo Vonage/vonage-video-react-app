@@ -77,8 +77,8 @@ describe('InMemorySessionStorage', () => {
   describe('removeCaptionsUserCount', () => {
     it('should remove captions users', async () => {
       await storage.setSession(room, 'session123');
-      storage.incrementCaptionsUserCount(room);
-      storage.incrementCaptionsUserCount(room);
+      void storage.incrementCaptionsUserCount(room);
+      void storage.incrementCaptionsUserCount(room);
       let count = await storage.decrementCaptionsUserCount(room);
       expect(count).toBe(1);
       count = await storage.decrementCaptionsUserCount(room);

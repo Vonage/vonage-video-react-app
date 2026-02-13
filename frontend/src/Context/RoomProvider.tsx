@@ -1,5 +1,4 @@
 import { PropsWithChildren } from 'react';
-import { AudioOutputProvider } from './AudioOutputProvider';
 import { BackgroundPublisherProvider } from './BackgroundPublisherProvider';
 
 /**
@@ -8,9 +7,7 @@ import { BackgroundPublisherProvider } from './BackgroundPublisherProvider';
  * @returns {ReactElement} The context.
  */
 const RoomProvider: React.FC<PropsWithChildren> = ({ children }) => (
-  <BackgroundPublisherProvider>
-    <AudioOutputProvider>{children}</AudioOutputProvider>
-  </BackgroundPublisherProvider>
+  <BackgroundPublisherProvider>{children}</BackgroundPublisherProvider>
 );
 
 export default RoomProvider;

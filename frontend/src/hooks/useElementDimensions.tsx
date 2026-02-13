@@ -1,6 +1,5 @@
 import { Dimensions } from '@vonage/client-sdk-video';
 import { throttle } from 'lodash';
-import ResizeObserverPolyfill from 'resize-observer-polyfill';
 import { RefObject, useEffect, useRef, useState } from 'react';
 
 export type UseElementDimensionsProps = {
@@ -26,7 +25,7 @@ const useElementDimensions = ({ elementRef }: UseElementDimensionsProps): Dimens
           width: elementCurrent.offsetWidth,
         });
       }, 20);
-      resizeObserver.current = new ResizeObserverPolyfill(() => {
+      resizeObserver.current = new ResizeObserver(() => {
         throttledSetDimensions();
       });
       resizeObserver.current?.observe(elementCurrent);

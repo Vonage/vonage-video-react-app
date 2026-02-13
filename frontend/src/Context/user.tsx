@@ -10,6 +10,7 @@ import {
 import { VideoFilter } from '@vonage/client-sdk-video';
 import { getStorageItem, STORAGE_KEYS } from '../utils/storage';
 import { parseVideoFilter } from '../utils/util';
+import { DeepPartial } from '@app-types';
 
 // Define the shape of the User context
 export type UserContextType = {
@@ -41,7 +42,7 @@ export const UserContext = createContext<UserContextType | null>(null);
 
 export type UserProviderProps = {
   children: ReactNode;
-  value?: UserType;
+  value?: DeepPartial<UserType>;
 };
 
 /**
@@ -55,24 +56,24 @@ const UserProvider = ({ children, value: initialUserState }: UserProviderProps):
   const backgroundFilter = parseVideoFilter(getStorageItem(STORAGE_KEYS.BACKGROUND_REPLACEMENT));
   const name = getStorageItem(STORAGE_KEYS.USERNAME) ?? '';
 
-  const [user, setUser] = useState<UserType>(
-    initialUserState ?? {
-      defaultSettings: {
-        publishAudio: true,
-        publishVideo: true,
-        name,
-        backgroundFilter,
-        noiseSuppression,
-        audioSource: undefined,
-        videoSource: undefined,
-        publishCaptions: true,
-      },
-      issues: {
-        reconnections: 0, // Start with zero reconnections
-        audioFallbacks: 0, // Start with zero audio fallbacks
-      },
-    }
-  );
+  const [user, setUser] = useState<UserType>(() => ({
+    defaultSettings: {
+      publishAudio: true,
+      publishVideo: true,
+      name,
+      backgroundFilter,
+      noiseSuppression,
+      audioSource: undefined,
+      videoSource: undefined,
+      publishCaptions: true,
+      ...initialUserState?.defaultSettings,
+    },
+    issues: {
+      reconnections: 0, // Start with zero reconnections
+      audioFallbacks: 0, // Start with zero audio fallbacks
+      ...initialUserState?.issues,
+    },
+  }));
 
   const value = useMemo(
     () => ({

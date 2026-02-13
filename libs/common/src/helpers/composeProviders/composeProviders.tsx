@@ -1,7 +1,7 @@
 import React from 'react';
 
-type ProviderProps = { children: React.ReactNode };
-type ProviderComponent = React.ComponentType<ProviderProps>;
+export type ProviderProps = { children: React.ReactNode };
+export type ProviderComponent = React.ComponentType<ProviderProps>;
 
 /**
  * Composes multiple context providers into a single provider component.

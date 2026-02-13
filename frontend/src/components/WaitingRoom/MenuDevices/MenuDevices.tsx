@@ -1,21 +1,19 @@
-import { AudioOutputDevice, Device } from '@vonage/client-sdk-video';
 import { ReactElement, useMemo } from 'react';
-import MenuItem from '@ui/MenuItem';
+import MenuItem from '@mui/material/MenuItem';
 import Menu from '@ui/Menu';
 import VividIcon from '@components/VividIcon';
 import Box from '@ui/Box';
 import cleanAndDedupeDeviceLabels from '@utils/cleanAndDedupeDeviceLabels/cleanAndDedupeDeviceLabels';
 import SoundTest from '../../SoundTest';
 import { isGetActiveAudioOutputDeviceSupported } from '@utils/util';
+import mediaDevices$ from '@core/stores/devices';
 
 export type MenuDevicesWaitingRoomProps = {
   onClose: () => void;
   open: boolean;
-  devices: (Device | AudioOutputDevice)[];
+  mediaDeviceKind: MediaDeviceKind;
   anchorEl: HTMLElement | null;
-  localSource: string | undefined | null;
   deviceChangeHandler: (deviceId: string) => void;
-  deviceType: string;
 };
 
 /**
@@ -30,18 +28,19 @@ export type MenuDevicesWaitingRoomProps = {
  *  @property {HTMLElement | null} anchorEl - The anchor element.
  *  @property {string | undefined} localSource - The deviceId for the user's currently used device.
  *  @property {Function} deviceChangeHandler - Handles changing the device.
- *  @property {string} deviceType - The device type for the menu, either `audioInput`, `audioOutput`, or `videoInput`.
  * @returns {ReactElement} - The MenuDevices component
  */
 const MenuDevices = ({
-  devices,
+  mediaDeviceKind,
   onClose,
   open,
   anchorEl,
-  localSource,
   deviceChangeHandler,
-  deviceType,
 }: MenuDevicesWaitingRoomProps): ReactElement => {
+  const devices = mediaDevices$.useMediaDevices(mediaDeviceKind, Object.values<MediaDeviceInfo>);
+
+  const localSource = mediaDevices$.useDeviceId(mediaDeviceKind);
+
   const handleClick = (deviceId: string) => {
     deviceChangeHandler(deviceId);
     onClose();
@@ -56,15 +55,17 @@ const MenuDevices = ({
       open={open}
       onClose={onClose}
       MenuListProps={{ 'aria-labelledby': 'basic-button' }}
-      data-testid={`${deviceType}-menu`}
+      data-testid={`${mediaDeviceKind}-menu`}
     >
-      {(deviceType !== 'audioOutput' || isGetActiveAudioOutputDeviceSupported()) &&
+      {(mediaDeviceKind !== 'audiooutput' || isGetActiveAudioOutputDeviceSupported()) &&
         processedDevices.map((device) => (
           <MenuItem
+            data-testid={`${mediaDeviceKind}-menu-item-${device.deviceId}`}
             onClick={() => {
               if (!device.deviceId) {
                 return;
               }
+
               handleClick(device.deviceId);
             }}
             key={device.deviceId}
@@ -73,7 +74,8 @@ const MenuDevices = ({
             {device.label}
           </MenuItem>
         ))}
-      {deviceType === 'audioOutput' && (
+
+      {mediaDeviceKind === 'audiooutput' && (
         <SoundTest>
           <Box sx={{ mr: 1 }}>
             <VividIcon name="hearing-line" customSize={-5} />

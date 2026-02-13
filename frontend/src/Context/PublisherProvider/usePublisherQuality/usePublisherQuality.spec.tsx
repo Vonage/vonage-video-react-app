@@ -3,18 +3,27 @@ import { act, renderHook, waitFor } from '@testing-library/react';
 import { Publisher } from '@vonage/client-sdk-video';
 import EventEmitter from 'events';
 import useUserContext from '@hooks/useUserContext';
-import { UserContextType } from '../../user';
+import type { UserContextType } from '../../user';
 import usePublisherQuality from './usePublisherQuality';
 
 vi.mock('@hooks/useUserContext.tsx');
 
-const mockUserContext = {
+const mockUserContext: UserContextType = {
   user: {
+    defaultSettings: {
+      publishAudio: false,
+      publishVideo: false,
+      name: '',
+      noiseSuppression: true,
+      publishCaptions: false,
+    },
     issues: {
+      reconnections: 0,
       audioFallbacks: 0,
     },
   },
-} as UserContextType;
+  setUser: vi.fn(),
+};
 
 describe('usePublisherQuality', () => {
   beforeEach(() => {

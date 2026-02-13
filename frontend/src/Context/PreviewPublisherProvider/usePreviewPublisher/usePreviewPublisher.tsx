@@ -17,7 +17,9 @@ import { setStorageItem, STORAGE_KEYS } from '../../../utils/storage';
 import applyBackgroundFilter from '../../../utils/backgroundFilter/applyBackgroundFilter/applyBackgroundFilter';
 import handlePublisherAccessDenied from '../../../utils/publisher/handlePublisherAccessDenied';
 import useStableCallback from '@common/hooks/useStableCallback';
-import devices$ from '@core/stores/devices';
+import mediaDevices$ from '@core/stores/devices';
+import useSyncPublisherDevices from '@Context/PublisherProvider/usePublisher/hooks/useSyncPublisherDevices/useSyncPublisherDevices';
+import waitUntilPlaying from '@utils/waitUntilPlaying';
 
 type PublisherVideoElementCreatedEvent = Event<'videoElementCreated', Publisher> & {
   element: HTMLVideoElement | HTMLObjectElement;
@@ -34,13 +36,12 @@ export type PreviewPublisherContextType = {
   toggleVideo: () => void;
   changeBackground: (backgroundSelected: string) => Promise<void>;
   backgroundFilter: VideoFilter | undefined;
-  localAudioSource: string | undefined;
-  localVideoSource: string | undefined;
   accessStatus: string | null;
   changeAudioSource: (deviceId: string) => void;
   changeVideoSource: (deviceId: string) => void;
   initLocalPublisher: () => void;
   speechLevel: number;
+  isVideoLoading: boolean;
 };
 
 export type PreviewPublisherInitialValue = Partial<
@@ -52,8 +53,6 @@ export type PreviewPublisherInitialValue = Partial<
     | 'isVideoEnabled'
     | 'speechLevel'
     | 'backgroundFilter'
-    | 'localAudioSource'
-    | 'localVideoSource'
     | 'accessStatus'
     | 'publisher'
   >
@@ -84,6 +83,9 @@ export type PreviewPublisherInitialValue = Partial<
 const usePreviewPublisher = (
   initialValue?: PreviewPublisherInitialValue
 ): PreviewPublisherContextType => {
+  const videoSourceId = mediaDevices$.useDeviceId('videoinput');
+  const audioSourceId = mediaDevices$.useDeviceId('audioinput');
+
   const { setUser, user } = useUserContext();
   const defaultResolution = appConfig$.use.select(
     ({ videoSettings }) => videoSettings.defaultResolution
@@ -107,15 +109,14 @@ const usePreviewPublisher = (
   const [isAudioEnabled, setIsAudioEnabled] = useState<boolean>(
     initialValue?.isAudioEnabled ?? true
   );
-  const [localVideoSource, setLocalVideoSource] = useState<string | undefined>(
-    initialValue?.localVideoSource ?? undefined
-  );
-  const [localAudioSource, setLocalAudioSource] = useState<string | undefined>(
-    initialValue?.localAudioSource ?? undefined
-  );
   const handlePreviewDestroyed = () => {
     publisherRef.current = null;
   };
+
+  const [isVideoLoading, setIsVideoLoading] = useState(isVideoEnabled);
+
+  // Sync publisher with selected devices from store (handles device changes and disconnections)
+  useSyncPublisherDevices(publisherRef, { setIsAudioEnabled, setIsVideoEnabled });
 
   /**
    * Change background replacement or blur effect
@@ -145,9 +146,10 @@ const usePreviewPublisher = (
       if (!deviceId || !publisherRef.current) {
         return;
       }
+
       publisherRef.current.setAudioSource(deviceId);
-      setLocalAudioSource(deviceId);
-      setStorageItem(STORAGE_KEYS.AUDIO_SOURCE, deviceId);
+      mediaDevices$.actions.selectDevice('audioinput', deviceId);
+
       if (setUser) {
         setUser((prevUser: UserType) => ({
           ...prevUser,
@@ -167,9 +169,10 @@ const usePreviewPublisher = (
       if (!deviceId || !publisherRef.current) {
         return;
       }
+
       publisherRef.current.setVideoSource(deviceId);
-      setLocalVideoSource(deviceId);
-      setStorageItem(STORAGE_KEYS.VIDEO_SOURCE, deviceId);
+      mediaDevices$.actions.selectDevice('videoinput', deviceId);
+
       if (setUser) {
         setUser((prevUser: UserType) => ({
           ...prevUser,
@@ -190,6 +193,15 @@ const usePreviewPublisher = (
   const handleVideoElementCreated = (event: PublisherVideoElementCreatedEvent) => {
     setPublisherVideoElement(event.element);
     setIsPublishing(true);
+
+    event.element.classList.add('video__element');
+    event.element.title = 'publisher-preview';
+
+    if (!isVideoLoading) return;
+
+    waitUntilPlaying(event.element).then(() => {
+      setIsVideoLoading(false);
+    });
   };
 
   /* TODO: Replace with mvgAverage utils once merged */ // NOSONAR
@@ -212,8 +224,6 @@ const usePreviewPublisher = (
       setAccessStatus(DEVICE_ACCESS_STATUS.ACCEPTED);
     });
   });
-
-  const [videoSource, audioSource] = devices$.useConnectedDeviceId('videoinput', 'audioinput');
 
   const initLocalPublisher = useStableCallback(() => {
     if (publisherRef.current) {
@@ -272,6 +282,7 @@ const usePreviewPublisher = (
     if (!publisherRef.current) {
       return;
     }
+
     publisherRef.current.publishVideo(!isVideoEnabled);
     setStorageItem(STORAGE_KEYS.VIDEO_SOURCE_ENABLED, (!isVideoEnabled).toString());
     setIsVideoEnabled(!isVideoEnabled);
@@ -319,10 +330,9 @@ const usePreviewPublisher = (
     backgroundFilter,
     changeAudioSource,
     changeVideoSource,
-    localAudioSource,
-    localVideoSource,
     accessStatus,
     speechLevel,
+    isVideoLoading,
   };
 };
 export default usePreviewPublisher;

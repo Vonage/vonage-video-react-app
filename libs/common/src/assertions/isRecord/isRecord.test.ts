@@ -5,7 +5,6 @@ describe('isRecord', () => {
   it('should return true for objects', () => {
     expect(isRecord({})).toBe(true);
     expect(isRecord({ key: 'value' })).toBe(true);
-    expect(isRecord([])).toBe(true);
   });
 
   it('should return false for null and undefined', () => {

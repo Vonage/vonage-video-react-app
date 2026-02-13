@@ -2,47 +2,33 @@ import {
   BackgroundPublisherProvider,
   BackgroundPublisherContext,
 } from '@Context/BackgroundPublisherProvider';
-import composeProviders from '@common/helpers/composeProviders';
 import makeGenericProviderWrapper, {
   GenericWrapperOptions,
-} from '@common/test/makeGenericProviderWrapper';
-import makePublisherProviderWrapper from './makePublisherProviderWrapper';
+} from '@common-test/makeGenericProviderWrapper';
 
-export type BackgroundPublisherProviderWrapperOptions = {
-  backgroundPublisherOptions?: GenericWrapperOptions<
-    typeof BackgroundPublisherProvider,
-    typeof BackgroundPublisherContext
-  >;
-};
+export type BackgroundPublisherProviderWrapperOptions = GenericWrapperOptions<
+  typeof BackgroundPublisherProvider,
+  typeof BackgroundPublisherContext
+>;
 
 /**
  * Creates wrapper for the BackgroundPublisherProvider context.
- * Allows accessing the context value for testing.
+ * Allows overriding context values via options and accessing the context value.
  * @param {object} options - The wrapper options.
- * @param {GenericWrapperOptions} [options.backgroundPublisherOptions] - Options for the BackgroundPublisherProvider wrapper.
  * @returns The BackgroundPublisherProvider wrapper and context getter.
  */
-function makeBackgroundPublisherProviderWrapper({
-  backgroundPublisherOptions,
-}: BackgroundPublisherProviderWrapperOptions = {}) {
-  const { PublisherProviderWrapper, ...publisher } = makePublisherProviderWrapper();
-
-  const [BackgroundPublisherProviderWrapper, backgroundPublisherContext] =
-    makeGenericProviderWrapper(
-      BackgroundPublisherProvider,
-      BackgroundPublisherContext,
-      backgroundPublisherOptions
-    );
-
-  const composeWrapper = composeProviders(
-    PublisherProviderWrapper,
-    BackgroundPublisherProviderWrapper
+function makeBackgroundPublisherProviderWrapper(
+  options: BackgroundPublisherProviderWrapperOptions = {}
+) {
+  const [wrapper, context] = makeGenericProviderWrapper(
+    BackgroundPublisherProvider,
+    BackgroundPublisherContext,
+    options
   );
 
   return {
-    ...publisher,
-    backgroundPublisherContext,
-    BackgroundPublisherProviderWrapper: composeWrapper,
+    wrapper,
+    context,
   };
 }
 

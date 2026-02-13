@@ -28,13 +28,14 @@ import {
   LayoutMode,
 } from '@app-types/session';
 import { ChatMessageType } from '@app-types/chat';
-import { isMobile } from '@utils/util';
+import { isMobile } from '@common/platform';
 import {
   sortByDisplayPriority,
   togglePinAndSortByDisplayOrder,
 } from '@utils/sessionStateOperations';
 import { MAX_PIN_COUNT_DESKTOP, MAX_PIN_COUNT_MOBILE } from '@utils/constants';
 import VonageVideoClient from '@utils/VonageVideoClient';
+import wait from '@common/execution/wait';
 
 export type { ChatMessageType } from '@app-types/chat';
 
@@ -321,13 +322,38 @@ const SessionProvider = ({ children, initialValue = {} }: SessionProviderProps):
     setOwnCaptions(event.caption);
   };
 
-  const handleSubscriberDestroyed = (streamId: string) => {
+  const handleSubscriberDestroyed = async (streamId: string) => {
+    await wait(500);
+
+    const doesStreamStillExistInSession = (() => {
+      if (!vonageVideoClient.current) {
+        return false;
+      }
+
+      return vonageVideoClient.current.hasStream(streamId);
+    })();
+
+    console.warn(`Subscriber with stream ID ${streamId} destroyed`, {
+      doesStreamStillExistInSession,
+    });
+
+    if (doesStreamStillExistInSession) {
+      vonageVideoClient.current!.resubscribeToStreamId(streamId);
+      console.warn(`Subscriber with stream ID ${streamId} resubscribing`, {
+        doesStreamStillExistInSession,
+      });
+      return;
+    }
+    destroySubscriber(streamId);
+  };
+
+  function destroySubscriber(streamId: string) {
     activeSpeakerTracker.current.onSubscriberDestroyed(streamId);
     const isNotDestroyedStreamId = ({ id }: { id: string }) => streamId !== id;
     setSubscriberWrappers((prevSubscriberWrappers) =>
       prevSubscriberWrappers.filter(isNotDestroyedStreamId)
     );
-  };
+  }
 
   const handleSubscriberAudioLevelUpdated = ({
     movingAvg,

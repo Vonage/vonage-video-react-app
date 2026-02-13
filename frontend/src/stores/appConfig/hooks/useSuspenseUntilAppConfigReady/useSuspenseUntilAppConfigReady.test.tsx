@@ -1,10 +1,10 @@
 import { describe, it, expect } from 'vitest';
 import { StrictMode } from 'react';
 import appConfig$ from '../..';
-import { AppConfigProviderWrapperOptions, makeAppConfigProviderWrapper } from '@test/providers';
+import { makeTestProvider, ProviderOptions, providers } from '@test/providers';
 import composeProviders from '@common/helpers/composeProviders';
 import SuspenseBoundary from '@common/components/SuspenseBoundary';
-import renderAsyncHook from '@test-helpers/renderAsyncHook';
+import renderAsyncHook from '@common-test/renderAsyncHook';
 
 describe('useSuspenseUntilAppConfigReady', () => {
   it('should not trigger duplicate subscriptions in strict mode', async () => {
@@ -15,7 +15,7 @@ describe('useSuspenseUntilAppConfigReady', () => {
         return appConfig$.use.select((state) => state.isAppConfigLoaded);
       },
       {
-        appConfigOptions: {
+        appConfigContext: {
           value: {
             isAppConfigLoaded: false,
           },
@@ -27,21 +27,23 @@ describe('useSuspenseUntilAppConfigReady', () => {
   });
 });
 
+type RenderOptions = {
+  appConfigContext?: ProviderOptions['AppConfigContext'];
+};
+
 async function renderHook<Result, Props>(
   render: (initialProps: Props) => Result,
-  options?: {
-    appConfigOptions?: AppConfigProviderWrapperOptions;
-  }
+  { appConfigContext }: RenderOptions = {}
 ) {
-  const { appConfigContext, AppConfigWrapper } = makeAppConfigProviderWrapper(
-    options?.appConfigOptions
-  );
+  const { wrapper: MainWrapper, ...context } = makeTestProvider([providers.appConfig], {
+    appConfigContext,
+  });
 
-  const wrapper = composeProviders(StrictMode, SuspenseBoundary, AppConfigWrapper);
+  const wrapper = composeProviders(StrictMode, SuspenseBoundary, MainWrapper);
   const result = await renderAsyncHook(render, { wrapper });
 
   return {
+    ...context,
     ...result,
-    appConfigContext,
   };
 }

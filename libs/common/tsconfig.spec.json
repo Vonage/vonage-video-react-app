@@ -6,14 +6,7 @@
     "module": "ESNext",
     "moduleResolution": "Bundler",
     "lib": ["DOM", "DOM.Iterable", "ESNext"],
-    "types": [
-      "vitest/globals",
-      "vitest/importMeta",
-      "vite/client",
-      "node",
-      "vitest",
-      "@testing-library/jest-dom"
-    ],
+    "types": ["vitest/globals", "vitest/importMeta", "vite/client", "node", "vitest"],
     "tsBuildInfoFile": "dist/tsconfig.spec.tsbuildinfo"
   },
   "include": [
@@ -25,6 +18,7 @@
     "src/**/*.spec.ts",
     "src/**/*.test.tsx",
     "src/**/*.spec.tsx",
-    "../common/test/**/*.ts"
+    "../common/test/**/*.ts",
+    "test/makeGenericProviderWrapper.tsx"
   ]
 }

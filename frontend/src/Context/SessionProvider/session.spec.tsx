@@ -8,8 +8,7 @@ import ActiveSpeakerTracker from '@utils/ActiveSpeakerTracker';
 import VonageVideoClient from '@utils/VonageVideoClient';
 import { Credential, StreamPropertyChangedEvent, SubscriberWrapper } from '@app-types/session';
 import fetchCredentials from '@api/fetchCredentials';
-import { makeSessionProviderWrapper } from '@test/providers';
-import composeProviders from '@common/helpers/composeProviders';
+import { makeTestProvider, ProviderOptions, providers } from '@test/providers';
 
 vi.mock('@utils/ActiveSpeakerTracker');
 vi.mock('@utils/VonageVideoClient');
@@ -135,6 +134,9 @@ describe('SessionProvider', () => {
       connect: vi.fn().mockReturnValue(Promise.resolve()),
       disconnect: vi.fn(),
       forceMuteStream: vi.fn(),
+      hasStream: vi.fn().mockReturnValue(true),
+      resubscribeToStreamId: vi.fn().mockResolvedValue(undefined),
+      emitSubscriberDestroyedOnce: vi.fn(),
     }) as unknown as VonageVideoClient;
 
     const mockedActiveSpeakerTracker = vi.mocked(ActiveSpeakerTracker);
@@ -278,6 +280,7 @@ describe('SessionProvider', () => {
       });
 
       act(() => {
+        vonageVideoClient.hasStream = vi.fn().mockReturnValue(false);
         vonageVideoClient.emit('subscriberDestroyed', 'sub1');
       });
 
@@ -340,7 +343,7 @@ describe('SessionProvider', () => {
       const { getByTestId } = await renderAndWaitForConnection();
 
       act(() => {
-        vonageVideoClient.emit('sessionDisconnected');
+        vonageVideoClient.emit('sessionDisconnected', { reason: 'test reason' });
       });
 
       await waitFor(() => expect(getByTestId('connected')).toHaveTextContent('false'));
@@ -468,19 +471,39 @@ describe('SessionProvider', () => {
   });
 });
 
-type RenderOverrides = {
-  session?: Parameters<typeof makeSessionProviderWrapper>[0];
+type RenderOptions = {
+  appConfigContext?: ProviderOptions['AppConfigContext'];
+  userContext?: ProviderOptions['UserContext'];
+  sessionContext?: ProviderOptions['SessionContext'];
 };
 
-function render(ui: ReactElement, overrides: RenderOverrides = {}) {
-  const { session } = overrides;
-
-  const { SessionProviderWrapper, ...props } = makeSessionProviderWrapper(session);
-
-  const wrapper = composeProviders(SessionProviderWrapper);
+function render(
+  ui: ReactElement,
+  { appConfigContext, userContext, sessionContext }: RenderOptions = {}
+) {
+  const { wrapper, ...context } = makeTestProvider(
+    [providers.appConfig, providers.user, providers.session],
+    {
+      appConfigContext,
+      userContext: {
+        ...userContext,
+        value: {
+          defaultSettings: {
+            publishAudio: false,
+            publishVideo: false,
+            name: '',
+            noiseSuppression: true,
+            publishCaptions: false,
+            ...userContext?.value?.defaultSettings,
+          },
+        },
+      },
+      sessionContext,
+    }
+  );
 
   return {
-    ...props,
+    ...context,
     ...renderBase(ui, { wrapper }),
   };
 }

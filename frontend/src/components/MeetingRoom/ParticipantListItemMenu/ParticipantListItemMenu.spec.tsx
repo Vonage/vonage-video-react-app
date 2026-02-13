@@ -3,7 +3,7 @@ import { act, cleanup, render as renderBase, screen } from '@testing-library/rea
 import { Subscriber } from '@vonage/client-sdk-video';
 import { SubscriberWrapper } from '../../../types/session';
 import ParticipantListItemMenu from '.';
-import { makeSessionProviderWrapper, type SessionProviderWrapperOptions } from '@test/providers';
+import { makeTestProvider, providers, type ProviderOptions } from '@test/providers';
 import { ReactElement } from 'react';
 
 describe('ParticipantListItem', () => {
@@ -28,7 +28,7 @@ describe('ParticipantListItem', () => {
 
   it('closes menu after clicking menu item', () => {
     render(<ParticipantListItemMenu {...defaultProps} />, {
-      sessionOptions: {
+      sessionContext: {
         __interceptor: (context) => {
           if (context) {
             context.isMaxPinned = false;
@@ -47,7 +47,7 @@ describe('ParticipantListItem', () => {
 
   it('can pin participant', () => {
     render(<ParticipantListItemMenu {...defaultProps} />, {
-      sessionOptions: {
+      sessionContext: {
         __interceptor: (context) => {
           if (context) {
             context.isMaxPinned = false;
@@ -69,7 +69,7 @@ describe('ParticipantListItem', () => {
         {...{ ...defaultProps, subscriberWrapper: { ...mockSubscriberWrapper, isPinned: true } }}
       />,
       {
-        sessionOptions: {
+        sessionContext: {
           __interceptor: (context) => {
             if (context) {
               context.isMaxPinned = false;
@@ -88,7 +88,7 @@ describe('ParticipantListItem', () => {
 
   it('cannot pin participant if maximum number of tiles are pinned', () => {
     render(<ParticipantListItemMenu {...defaultProps} />, {
-      sessionOptions: {
+      sessionContext: {
         __interceptor: (context) => {
           if (context) {
             context.isMaxPinned = true;
@@ -110,7 +110,7 @@ describe('ParticipantListItem', () => {
         {...{ ...defaultProps, subscriberWrapper: { ...mockSubscriberWrapper, isPinned: true } }}
       />,
       {
-        sessionOptions: {
+        sessionContext: {
           __interceptor: (context) => {
             if (context) {
               context.isMaxPinned = true;
@@ -128,8 +128,27 @@ describe('ParticipantListItem', () => {
   });
 });
 
-function render(ui: ReactElement, options?: SessionProviderWrapperOptions) {
-  const { SessionProviderWrapper } = makeSessionProviderWrapper(options);
+type RenderOptions = {
+  appConfigContext?: ProviderOptions['AppConfigContext'];
+  userContext?: ProviderOptions['UserContext'];
+  sessionContext?: ProviderOptions['SessionContext'];
+};
 
-  return renderBase(ui, { wrapper: SessionProviderWrapper });
+function render(
+  ui: ReactElement,
+  { appConfigContext, userContext, sessionContext }: RenderOptions = {}
+) {
+  const { wrapper, ...context } = makeTestProvider(
+    [providers.appConfig, providers.user, providers.session],
+    {
+      appConfigContext,
+      userContext,
+      sessionContext,
+    }
+  );
+
+  return {
+    ...context,
+    ...renderBase(ui, { wrapper }),
+  };
 }

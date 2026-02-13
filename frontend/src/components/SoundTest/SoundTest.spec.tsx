@@ -4,9 +4,9 @@ import userEvent from '@testing-library/user-event';
 import VividIcon from '@components/VividIcon';
 import SoundTest from './SoundTest';
 import { nativeDevices } from '../../utils/mockData/device';
-import mediaDevicesMock from '@common/test/mocks/mediaDevicesMock';
-import { AudioOutputProviderWrapperOptions, makeAudioOutputProviderWrapper } from '@test/providers';
+import { makeTestProvider, providers } from '@test/providers';
 import { ReactElement } from 'react';
+import { setupWindowNavigatorMock } from '@common-test/fixtures';
 
 describe('SoundTest', () => {
   const playMock = vi.fn();
@@ -15,19 +15,15 @@ describe('SoundTest', () => {
   beforeEach(() => {
     vi.clearAllMocks();
 
-    if (!globalThis.navigator.mediaDevices) {
-      Object.defineProperty(globalThis.navigator, 'mediaDevices', {
-        writable: true,
-        configurable: true,
-        value: mediaDevicesMock,
-      });
-    }
-
-    vi.spyOn(globalThis.navigator.mediaDevices, 'enumerateDevices').mockResolvedValue(
-      nativeDevices as MediaDeviceInfo[]
-    );
-    vi.spyOn(globalThis.navigator.mediaDevices, 'addEventListener').mockImplementation(() => {});
-    vi.spyOn(globalThis.navigator.mediaDevices, 'removeEventListener').mockImplementation(() => {});
+    setupWindowNavigatorMock({
+      mediaDevices: {
+        addEventListener: vi.fn(),
+        removeEventListener: vi.fn(),
+        enumerateDevices: new Promise<MediaDeviceInfo[]>((res) => {
+          res(nativeDevices);
+        }),
+      },
+    });
 
     global.Audio = vi.fn().mockImplementation(() => ({
       play: playMock,
@@ -145,15 +141,11 @@ describe('SoundTest', () => {
   });
 });
 
-function render(
-  ui: ReactElement,
-  options?: {
-    audioOutputOptions?: AudioOutputProviderWrapperOptions['audioOutputOptions'];
-  }
-) {
-  const { AudioOutputProviderWrapper, audioOutputContext } = makeAudioOutputProviderWrapper({
-    audioOutputOptions: options?.audioOutputOptions,
-  });
+function render(ui: ReactElement) {
+  const { wrapper, ...context } = makeTestProvider([providers.appConfig]);
 
-  return { ...renderBase(ui, { wrapper: AudioOutputProviderWrapper }), audioOutputContext };
+  return {
+    ...context,
+    ...renderBase(ui, { wrapper }),
+  };
 }

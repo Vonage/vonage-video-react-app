@@ -1,127 +1,326 @@
-import { render, screen, waitFor } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { describe, expect, it, vi, beforeEach } from 'vitest';
+import { describe, expect, it, vi, beforeEach, afterAll, type Mock } from 'vitest';
+import type { QualityResults } from './hooks/useNetworkTest';
+import type CancelablePromise from 'easy-cancelable-promise/CancelablePromise';
 import PrecallNetworkTestDialog from './PrecallNetworkTestDialog';
 
-type QualityResults = {
-  audio?: { mos?: number };
-  video?: { mos?: number };
+type NetworkTestState = {
+  isTestingQuality: boolean;
+  connectivityResults: unknown;
+  qualityResults: QualityResults | null;
+  error: { name: string; message: string } | null;
 };
 
+type NetworkTestHook = {
+  state: NetworkTestState;
+  testQuality: Mock<[roomName: string], CancelablePromise<QualityResults>>;
+  stopTest: Mock;
+  clearResults: Mock;
+};
+
+const mockRoomName = 'test-room';
+
 vi.mock('@hooks/useRoomName', () => ({
-  __esModule: true,
-  default: () => 'test-room',
+  default: () => mockRoomName,
 }));
 
-const makeUseNetworkTestMock = () => {
-  const state: {
-    isTestingQuality: boolean;
-    qualityResults: QualityResults | null;
-    error: { name: string; message: string } | null;
-  } = {
-    isTestingQuality: false,
-    qualityResults: null,
-    error: null,
-  };
+const mockUseNetworkTest = vi.fn<[], NetworkTestHook>();
+
+vi.mock('./hooks/useNetworkTest', () => ({
+  default: () => mockUseNetworkTest(),
+}));
+
+function createNetworkTestHook(overrides?: Partial<NetworkTestState>): NetworkTestHook {
   return {
-    state,
-    testQuality: vi.fn().mockResolvedValue(undefined),
+    state: {
+      isTestingQuality: false,
+      connectivityResults: null,
+      qualityResults: null,
+      error: null,
+      ...overrides,
+    },
+    testQuality: vi.fn(() => ({
+      onProgress: vi.fn().mockReturnThis(),
+    })) as unknown as Mock<[roomName: string], CancelablePromise<QualityResults>>,
     stopTest: vi.fn(),
     clearResults: vi.fn(),
   };
-};
-
-const useNetworkTestMock = makeUseNetworkTestMock();
-
-vi.mock('@hooks/useNetworkTest', () => ({
-  __esModule: true,
-  default: () => useNetworkTestMock,
-}));
+}
 
 describe('PrecallNetworkTestDialog', () => {
+  let networkTestHook: NetworkTestHook;
+  let unhandledRejectionHandler: ((reason: unknown) => void) | null = null;
+
   beforeEach(() => {
-    useNetworkTestMock.state.isTestingQuality = false;
-    useNetworkTestMock.state.qualityResults = null;
-    useNetworkTestMock.state.error = null;
-    useNetworkTestMock.testQuality.mockClear();
-    useNetworkTestMock.stopTest.mockClear();
-    useNetworkTestMock.clearResults.mockClear();
-  });
-
-  it('renders dialog when open', () => {
-    render(
-      <PrecallNetworkTestDialog isPrecallNetworkTestOpen setIsPrecallNetworkTestOpen={() => {}} />
-    );
-    expect(screen.getByRole('dialog')).toBeInTheDocument();
-    expect(screen.getByText(/pre-call network test/i)).toBeInTheDocument();
-  });
-
-  it('does not render when closed', () => {
-    const { queryByRole } = render(
-      <PrecallNetworkTestDialog
-        isPrecallNetworkTestOpen={false}
-        setIsPrecallNetworkTestOpen={() => {}}
-      />
-    );
-    expect(queryByRole('dialog')).not.toBeInTheDocument();
-  });
-
-  it('shows spinner and Stop button when testing', () => {
-    useNetworkTestMock.state.isTestingQuality = true;
-
-    render(
-      <PrecallNetworkTestDialog isPrecallNetworkTestOpen setIsPrecallNetworkTestOpen={() => {}} />
-    );
-
-    expect(screen.getByText(/stop test/i)).toBeInTheDocument();
-  });
-
-  it('clicking Stop stops test and closes dialog', async () => {
-    useNetworkTestMock.state.isTestingQuality = true;
-    const setOpen = vi.fn();
-    render(
-      <PrecallNetworkTestDialog isPrecallNetworkTestOpen setIsPrecallNetworkTestOpen={setOpen} />
-    );
-
-    await userEvent.click(screen.getByText(/stop test/i));
-    expect(useNetworkTestMock.stopTest).toHaveBeenCalled();
-    expect(useNetworkTestMock.clearResults).toHaveBeenCalled();
-    expect(setOpen).toHaveBeenCalledWith(false);
-  });
-
-  it('renders results with audio/video and scores', () => {
-    useNetworkTestMock.state.qualityResults = {
-      audio: { mos: 4.2 },
-      video: { mos: 3.75 },
+    // Ignore "Promise canceled" errors from CancelablePromise cleanup
+    unhandledRejectionHandler = (reason: unknown) => {
+      if (reason instanceof Error && reason.message === 'Promise canceled') {
+        return;
+      }
+      throw reason;
     };
+    process.on('unhandledRejection', unhandledRejectionHandler);
 
-    render(
-      <PrecallNetworkTestDialog isPrecallNetworkTestOpen setIsPrecallNetworkTestOpen={() => {}} />
-    );
-
-    expect(screen.getByText(/audio/i)).toBeInTheDocument();
-    expect(screen.getByText(/video/i)).toBeInTheDocument();
-    expect(screen.getAllByText(/quality:/i).length).toBeGreaterThanOrEqual(1);
-    expect(screen.getByText('4.20/5')).toBeInTheDocument();
-    expect(screen.getByText('3.75/5')).toBeInTheDocument();
+    networkTestHook = createNetworkTestHook();
+    mockUseNetworkTest.mockReturnValue(networkTestHook);
   });
 
-  it('Retry clears results and starts test', async () => {
-    useNetworkTestMock.state.qualityResults = {
-      audio: { mos: 4.2 },
-      video: { mos: 3.75 },
-    };
-    useNetworkTestMock.testQuality.mockResolvedValue(undefined);
+  afterAll(() => {
+    if (unhandledRejectionHandler) {
+      process.off('unhandledRejection', unhandledRejectionHandler);
+    }
+  });
 
-    render(
-      <PrecallNetworkTestDialog isPrecallNetworkTestOpen setIsPrecallNetworkTestOpen={() => {}} />
-    );
+  describe('Dialog visibility', () => {
+    it('renders dialog when open', () => {
+      render(
+        <PrecallNetworkTestDialog isPrecallNetworkTestOpen setIsPrecallNetworkTestOpen={vi.fn()} />
+      );
 
-    await userEvent.click(screen.getByText(/retry test/i));
+      expect(screen.getByRole('dialog')).toBeInTheDocument();
+      expect(screen.getByText(/pre-call network test/i)).toBeInTheDocument();
+    });
 
-    await waitFor(() => {
-      expect(useNetworkTestMock.clearResults).toHaveBeenCalled();
-      expect(useNetworkTestMock.testQuality).toHaveBeenCalledWith('test-room');
+    it('does not render when closed', () => {
+      render(
+        <PrecallNetworkTestDialog
+          isPrecallNetworkTestOpen={false}
+          setIsPrecallNetworkTestOpen={vi.fn()}
+        />
+      );
+
+      expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
+    });
+
+    it('closes dialog when close button is clicked', async () => {
+      const setOpen = vi.fn();
+
+      render(
+        <PrecallNetworkTestDialog isPrecallNetworkTestOpen setIsPrecallNetworkTestOpen={setOpen} />
+      );
+
+      const closeButton = screen.getByLabelText(/close/i);
+      await userEvent.click(closeButton);
+
+      expect(networkTestHook.stopTest).toHaveBeenCalled();
+      expect(networkTestHook.clearResults).toHaveBeenCalled();
+      expect(setOpen).toHaveBeenCalledWith(false);
+    });
+  });
+
+  describe('Testing state', () => {
+    it('shows loading spinner when test is running', () => {
+      networkTestHook = createNetworkTestHook({ isTestingQuality: true });
+      mockUseNetworkTest.mockReturnValue(networkTestHook);
+
+      render(
+        <PrecallNetworkTestDialog isPrecallNetworkTestOpen setIsPrecallNetworkTestOpen={vi.fn()} />
+      );
+
+      expect(screen.getByRole('progressbar')).toBeInTheDocument();
+      expect(screen.getByText(/stop test/i)).toBeInTheDocument();
+    });
+
+    it('stops test when stop button is clicked', async () => {
+      networkTestHook = createNetworkTestHook({ isTestingQuality: true });
+      mockUseNetworkTest.mockReturnValue(networkTestHook);
+
+      render(
+        <PrecallNetworkTestDialog isPrecallNetworkTestOpen setIsPrecallNetworkTestOpen={vi.fn()} />
+      );
+
+      await userEvent.click(screen.getByText(/stop test/i));
+
+      expect(networkTestHook.stopTest).toHaveBeenCalled();
+      expect(networkTestHook.clearResults).toHaveBeenCalled();
+    });
+
+    it('shows stopped state after user stops test', async () => {
+      networkTestHook = createNetworkTestHook({ isTestingQuality: true });
+      mockUseNetworkTest.mockReturnValue(networkTestHook);
+
+      const { rerender } = render(
+        <PrecallNetworkTestDialog isPrecallNetworkTestOpen setIsPrecallNetworkTestOpen={vi.fn()} />
+      );
+
+      await userEvent.click(screen.getByText(/stop test/i));
+
+      networkTestHook = createNetworkTestHook({ isTestingQuality: false });
+      mockUseNetworkTest.mockReturnValue(networkTestHook);
+
+      rerender(
+        <PrecallNetworkTestDialog isPrecallNetworkTestOpen setIsPrecallNetworkTestOpen={vi.fn()} />
+      );
+
+      expect(screen.getByText(/test stopped/i)).toBeInTheDocument();
+      expect(screen.getByText(/retry test/i)).toBeInTheDocument();
+    });
+  });
+
+  describe('Results state', () => {
+    it('displays successful audio and video quality results', () => {
+      networkTestHook = createNetworkTestHook({
+        qualityResults: {
+          audio: { mos: 4.2 },
+          video: { mos: 3.75 },
+        },
+      });
+      mockUseNetworkTest.mockReturnValue(networkTestHook);
+
+      render(
+        <PrecallNetworkTestDialog isPrecallNetworkTestOpen setIsPrecallNetworkTestOpen={vi.fn()} />
+      );
+
+      expect(screen.getByText(/audio/i)).toBeInTheDocument();
+      expect(screen.getByText(/video/i)).toBeInTheDocument();
+      expect(screen.getByText('4.20/5')).toBeInTheDocument();
+      expect(screen.getByText('3.75/5')).toBeInTheDocument();
+      expect(screen.getByTitle(/audio is supported/i)).toBeInTheDocument();
+      expect(screen.getByTitle(/video is supported/i)).toBeInTheDocument();
+    });
+
+    it('displays poor quality indicators for low scores', () => {
+      networkTestHook = createNetworkTestHook({
+        qualityResults: {
+          audio: { mos: 2.5 },
+          video: { mos: 1.8 },
+        },
+      });
+      mockUseNetworkTest.mockReturnValue(networkTestHook);
+
+      render(
+        <PrecallNetworkTestDialog isPrecallNetworkTestOpen setIsPrecallNetworkTestOpen={vi.fn()} />
+      );
+
+      expect(screen.getByText('2.50/5')).toBeInTheDocument();
+      expect(screen.getByText('1.80/5')).toBeInTheDocument();
+      expect(screen.getByTitle(/audio is not supported/i)).toBeInTheDocument();
+      expect(screen.getByTitle(/video is not supported/i)).toBeInTheDocument();
+    });
+
+    it('displays error state when test fails', () => {
+      networkTestHook = createNetworkTestHook({
+        error: {
+          name: 'NetworkError',
+          message: 'Connection failed',
+        },
+      });
+      mockUseNetworkTest.mockReturnValue(networkTestHook);
+
+      render(
+        <PrecallNetworkTestDialog isPrecallNetworkTestOpen setIsPrecallNetworkTestOpen={vi.fn()} />
+      );
+
+      expect(screen.getByText(/test failed/i)).toBeInTheDocument();
+      expect(screen.getByText('Connection failed')).toBeInTheDocument();
+      expect(screen.getByText(/retry test/i)).toBeInTheDocument();
+    });
+  });
+
+  describe('Retry functionality', () => {
+    it('clears results and starts new test when retry is clicked', async () => {
+      networkTestHook = createNetworkTestHook({
+        qualityResults: {
+          audio: { mos: 4.2 },
+          video: { mos: 3.75 },
+        },
+      });
+      mockUseNetworkTest.mockReturnValue(networkTestHook);
+
+      render(
+        <PrecallNetworkTestDialog isPrecallNetworkTestOpen setIsPrecallNetworkTestOpen={vi.fn()} />
+      );
+
+      await userEvent.click(screen.getByText(/retry test/i));
+
+      expect(networkTestHook.clearResults).toHaveBeenCalled();
+      expect(networkTestHook.testQuality).toHaveBeenCalledWith(mockRoomName);
+    });
+
+    it('retries test from stopped state', async () => {
+      networkTestHook = createNetworkTestHook({ isTestingQuality: true });
+      mockUseNetworkTest.mockReturnValue(networkTestHook);
+
+      const { rerender } = render(
+        <PrecallNetworkTestDialog isPrecallNetworkTestOpen setIsPrecallNetworkTestOpen={vi.fn()} />
+      );
+
+      await userEvent.click(screen.getByText(/stop test/i));
+
+      networkTestHook = createNetworkTestHook({ isTestingQuality: false });
+      mockUseNetworkTest.mockReturnValue(networkTestHook);
+
+      rerender(
+        <PrecallNetworkTestDialog isPrecallNetworkTestOpen setIsPrecallNetworkTestOpen={vi.fn()} />
+      );
+
+      await userEvent.click(screen.getByText(/retry test/i));
+
+      expect(networkTestHook.clearResults).toHaveBeenCalled();
+      expect(networkTestHook.testQuality).toHaveBeenCalledWith(mockRoomName);
+    });
+
+    it('retries test from error state', async () => {
+      networkTestHook = createNetworkTestHook({
+        error: { name: 'NetworkError', message: 'Failed' },
+      });
+      mockUseNetworkTest.mockReturnValue(networkTestHook);
+
+      render(
+        <PrecallNetworkTestDialog isPrecallNetworkTestOpen setIsPrecallNetworkTestOpen={vi.fn()} />
+      );
+
+      await userEvent.click(screen.getByText(/retry test/i));
+
+      expect(networkTestHook.clearResults).toHaveBeenCalled();
+      expect(networkTestHook.testQuality).toHaveBeenCalledWith(mockRoomName);
+    });
+  });
+
+  describe('Auto-start behavior', () => {
+    it('automatically starts test when dialog opens', () => {
+      const { rerender } = render(
+        <PrecallNetworkTestDialog
+          isPrecallNetworkTestOpen={false}
+          setIsPrecallNetworkTestOpen={vi.fn()}
+        />
+      );
+
+      expect(networkTestHook.testQuality).not.toHaveBeenCalled();
+
+      rerender(
+        <PrecallNetworkTestDialog isPrecallNetworkTestOpen setIsPrecallNetworkTestOpen={vi.fn()} />
+      );
+
+      expect(networkTestHook.testQuality).toHaveBeenCalledWith(mockRoomName);
+    });
+
+    it('does not auto-start if test is already running', () => {
+      networkTestHook = createNetworkTestHook({ isTestingQuality: true });
+      mockUseNetworkTest.mockReturnValue(networkTestHook);
+
+      render(
+        <PrecallNetworkTestDialog isPrecallNetworkTestOpen setIsPrecallNetworkTestOpen={vi.fn()} />
+      );
+
+      expect(networkTestHook.testQuality).not.toHaveBeenCalled();
+    });
+
+    it('does not auto-start if results already exist', () => {
+      networkTestHook = createNetworkTestHook({
+        qualityResults: {
+          audio: { mos: 4.2 },
+          video: { mos: 3.75 },
+        },
+      });
+      mockUseNetworkTest.mockReturnValue(networkTestHook);
+
+      render(
+        <PrecallNetworkTestDialog isPrecallNetworkTestOpen setIsPrecallNetworkTestOpen={vi.fn()} />
+      );
+
+      expect(networkTestHook.testQuality).not.toHaveBeenCalled();
     });
   });
 });

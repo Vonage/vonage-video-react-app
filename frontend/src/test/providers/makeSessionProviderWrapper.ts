@@ -1,57 +1,25 @@
 import SessionProvider, { SessionContext } from '@Context/SessionProvider/session';
-import composeProviders from '@common/helpers/composeProviders';
-import makeUserProviderWrapper, { UserProviderWrapperOptions } from './makeUserProviderWrapper';
-import makeAppConfigProviderWrapper, {
-  AppConfigProviderWrapperOptions,
-} from './makeAppConfigProviderWrapper';
 import makeGenericProviderWrapper, {
   type GenericWrapperOptions,
-} from '@common/test/makeGenericProviderWrapper';
+} from '@common-test/makeGenericProviderWrapper';
 
-export type SessionProviderWrapperOptions = {
-  sessionOptions?: GenericWrapperOptions<typeof SessionProvider, typeof SessionContext>;
-  appConfigOptions?: AppConfigProviderWrapperOptions;
-  userOptions?: UserProviderWrapperOptions;
-};
+export type SessionProviderWrapperOptions = GenericWrapperOptions<
+  typeof SessionProvider,
+  typeof SessionContext
+>;
 
 /**
  * Creates wrapper for the SessionProvider context.
- * The wrapper includes:
- * - AppConfigProvider: you can override its options via appConfigOptions
- * - UserProvider: you can override its options via userOptions
- * - SessionProvider: you can override its options via sessionOptions
+ * Allows overriding context values via options and accessing the context value.
  * @param {object} options - The wrapper options.
- * @param {GenericWrapperOptions} [options.sessionOptions] - Options for the SessionProvider wrapper.
- * @param {AppConfigProviderWrapperOptions} [options.appConfigOptions] - Options for the AppConfigProvider wrapper.
- * @param {UserProviderWrapperOptions} [options.userOptions] - Options for the UserProvider wrapper.
- * @returns {object} The SessionProvider wrapper and context getters.
+ * @returns {object} The SessionProvider wrapper and context getter.
  */
-function makeSessionProviderWrapper({
-  sessionOptions,
-  appConfigOptions,
-  userOptions,
-}: SessionProviderWrapperOptions = {}) {
-  const [SessionProviderWrapper, sessionContext] = makeGenericProviderWrapper(
-    SessionProvider,
-    SessionContext,
-    sessionOptions
-  );
-
-  const { AppConfigWrapper, appConfigContext } = makeAppConfigProviderWrapper(appConfigOptions);
-
-  const { UserProviderWrapper, userContext } = makeUserProviderWrapper(userOptions);
-
-  const composeWrapper = composeProviders(
-    AppConfigWrapper,
-    UserProviderWrapper,
-    SessionProviderWrapper
-  );
+function makeSessionProviderWrapper(options: SessionProviderWrapperOptions = {}) {
+  const [wrapper, context] = makeGenericProviderWrapper(SessionProvider, SessionContext, options);
 
   return {
-    SessionProviderWrapper: composeWrapper,
-    sessionContext,
-    userContext,
-    appConfigContext,
+    wrapper,
+    context,
   };
 }
 

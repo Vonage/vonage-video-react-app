@@ -1,44 +1,45 @@
 import { render as renderBase, screen, fireEvent, waitFor } from '@testing-library/react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { ReactElement } from 'react';
-import {
-  AppConfigProviderWrapperOptions,
-  makeAppConfigProviderWrapper,
-  makePreviewPublisherProviderWrapper,
-  PreviewPublisherProviderWrapperOptions,
-} from '@test/providers';
+import { makeTestProvider, providers, ProviderOptions } from '@test/providers';
 import MicButton from './MicButton';
-import mediaDevicesMock from '@common/test/mocks/mediaDevicesMock';
-import composeProviders from '@common/helpers/composeProviders';
 import SuspenseBoundary from '@common/components/SuspenseBoundary/SuspenseBoundary';
+import composeProviders from '@common/helpers/composeProviders';
+import {
+  setupWindowNavigatorMock,
+  makeMediaStreamMock,
+  makeMediaDeviceInfos,
+} from '@common-test/fixtures';
+import { mediaDevices$ } from '@core/stores';
+
+const mockDevices = makeMediaDeviceInfos();
 
 describe('MicButton', () => {
   beforeEach(() => {
     vi.clearAllMocks();
 
-    Object.defineProperty(globalThis.navigator, 'mediaDevices', {
-      writable: true,
-      configurable: true,
-      value: mediaDevicesMock,
-    });
-
-    vi.spyOn(mediaDevicesMock, 'addEventListener').mockImplementation(() => {});
-    vi.spyOn(mediaDevicesMock, 'removeEventListener').mockImplementation(() => {});
-    vi.spyOn(mediaDevicesMock, 'enumerateDevices').mockResolvedValue([]);
-    vi.spyOn(mediaDevicesMock, 'getUserMedia').mockResolvedValue({} as MediaStream);
-
-    Object.defineProperty(globalThis.navigator, 'permissions', {
-      writable: true,
-      configurable: true,
-      value: {
-        query: vi.fn().mockResolvedValue({ state: 'granted' }),
+    setupWindowNavigatorMock({
+      mediaDevices: {
+        addEventListener: vi.fn(),
+        enumerateDevices: Promise.resolve(mockDevices),
+        getUserMedia: Promise.resolve(makeMediaStreamMock({})),
       },
     });
+
+    // Initialize the mediaDevices$ store with mock devices to prevent useSyncPublisherDevices from disabling audio
+    mediaDevices$.setState((state) => ({
+      ...state,
+      mediaDeviceInfo: mockDevices,
+    }));
+
+    const { permissions } = globalThis.navigator;
+
+    vi.spyOn(permissions, 'query').mockResolvedValue({ state: 'granted' } as PermissionStatus);
   });
 
   it('renders the mic on icon when audio is enabled', async () => {
     render(<MicButton />, {
-      previewPublisherOptions: {
+      previewPublisherContext: {
         __onCreated: (context) => {
           context.isAudioEnabled = true;
         },
@@ -52,7 +53,7 @@ describe('MicButton', () => {
 
   it('renders the mic off icon when audio is disabled', async () => {
     render(<MicButton />, {
-      previewPublisherOptions: {
+      previewPublisherContext: {
         __onCreated: (context) => {
           context.isAudioEnabled = false;
         },
@@ -67,7 +68,7 @@ describe('MicButton', () => {
   it('calls toggleAudio when clicked', async () => {
     const toggleAudioMock = vi.fn();
     render(<MicButton />, {
-      previewPublisherOptions: {
+      previewPublisherContext: {
         __onCreated: (context) => {
           context.isAudioEnabled = true;
           const originalToggle = context.toggleAudio.bind(context);
@@ -88,7 +89,7 @@ describe('MicButton', () => {
 
   it('is not rendered when allowMicrophoneControl is false', async () => {
     render(<MicButton />, {
-      appConfigOptions: {
+      appConfigContext: {
         value: {
           isAppConfigLoaded: true,
           audioSettings: {
@@ -105,32 +106,28 @@ describe('MicButton', () => {
 });
 
 type RenderOptions = {
-  appConfigOptions?: AppConfigProviderWrapperOptions;
-  previewPublisherOptions?: PreviewPublisherProviderWrapperOptions['previewPublisherOptions'];
+  appConfigContext?: ProviderOptions['AppConfigContext'];
+  userContext?: ProviderOptions['UserContext'];
+  previewPublisherContext?: ProviderOptions['PreviewPublisherContext'];
 };
 
-function render(ui: ReactElement, options?: RenderOptions) {
-  const { AppConfigWrapper } = makeAppConfigProviderWrapper(options?.appConfigOptions);
-
-  if (!options?.previewPublisherOptions) {
-    return renderBase(ui, {
-      ...options,
-      wrapper: AppConfigWrapper,
-    });
-  }
-
-  const { PreviewPublisherProviderWrapper } = makePreviewPublisherProviderWrapper({
-    previewPublisherOptions: options.previewPublisherOptions,
-  });
-
-  const Wrapper = composeProviders(
-    SuspenseBoundary,
-    AppConfigWrapper,
-    PreviewPublisherProviderWrapper
+function render(
+  ui: ReactElement,
+  { appConfigContext, userContext, previewPublisherContext }: RenderOptions = {}
+) {
+  const { wrapper: MainWrapper, ...context } = makeTestProvider(
+    [providers.appConfig, providers.user, providers.previewPublisher],
+    {
+      appConfigContext,
+      userContext,
+      previewPublisherContext,
+    }
   );
 
-  return renderBase(ui, {
-    ...options,
-    wrapper: Wrapper,
-  });
+  const wrapper = composeProviders(SuspenseBoundary, MainWrapper);
+
+  return {
+    ...context,
+    ...renderBase(ui, { wrapper }),
+  };
 }

@@ -3,7 +3,7 @@ import { fireEvent, render as renderBase } from '@testing-library/react';
 import { describe, it, expect, vi } from 'vitest';
 import userEvent from '@testing-library/user-event';
 import { Subscriber } from '@vonage/client-sdk-video';
-import { makeSessionProviderWrapper, type SessionProviderWrapperOptions } from '@test/providers';
+import { makeTestProvider, providers, ProviderOptions } from '@test/providers';
 import { SubscriberWrapper } from '@app-types/session';
 import HiddenParticipantsTile from './index';
 
@@ -97,7 +97,7 @@ describe('HiddenParticipantsTile', () => {
     const { sessionContext, getByTestId } = render(
       <HiddenParticipantsTile box={box} hiddenSubscribers={currentHiddenSubscribers} />,
       {
-        appConfigOptions: {
+        appConfigContext: {
           value: {
             isAppConfigLoaded: false,
             meetingRoomSettings: {
@@ -118,19 +118,32 @@ describe('HiddenParticipantsTile', () => {
   });
 });
 
-function render(ui: ReactElement, options?: SessionProviderWrapperOptions) {
-  const { SessionProviderWrapper, sessionContext, appConfigContext } = makeSessionProviderWrapper({
-    sessionOptions: {
-      __onCreated: (sessionContext) => {
-        vi.spyOn(sessionContext, 'toggleParticipantList');
+type RenderOptions = {
+  appConfigContext?: ProviderOptions['AppConfigContext'];
+  sessionContext?: ProviderOptions['SessionContext'];
+  userContext?: ProviderOptions['UserContext'];
+};
+
+function render(
+  ui: ReactElement,
+  { appConfigContext, sessionContext, userContext }: RenderOptions = {}
+) {
+  const { wrapper, ...context } = makeTestProvider(
+    [providers.appConfig, providers.user, providers.session],
+    {
+      sessionContext: {
+        __onCreated: (context) => {
+          vi.spyOn(context, 'toggleParticipantList');
+        },
+        ...sessionContext,
       },
-    },
-    ...options,
-  });
+      appConfigContext,
+      userContext,
+    }
+  );
 
   return {
-    ...renderBase(ui, { ...options, wrapper: SessionProviderWrapper }),
-    appConfigContext,
-    sessionContext,
+    ...context,
+    ...renderBase(ui, { wrapper }),
   };
 }

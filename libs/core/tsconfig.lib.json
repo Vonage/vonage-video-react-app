@@ -10,6 +10,14 @@
     "types": ["node", "vite/client"],
     "tsBuildInfoFile": "dist/tsconfig.lib.tsbuildinfo"
   },
-  "include": ["src/**/*.ts", "src/**/*.tsx", "../common/src/**/*.ts", "../common/src/**/*.tsx"],
+  "include": [
+    "src/**/*.ts",
+    "src/**/*.tsx",
+    "../common/src/**/*.ts",
+    "../common/src/**/*.tsx",
+    "../common/test/**/*.ts",
+    "../common/test/makeGenericProviderWrapper.tsx",
+    "../common/src/types/MediaDeviceInfoJSON.ts"
+  ],
   "exclude": ["**/*.spec.*", "**/*.test.*"]
 }

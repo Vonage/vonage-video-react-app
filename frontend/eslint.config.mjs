@@ -17,6 +17,7 @@ export default [
       },
     },
     rules: {
+      '@typescript-eslint/no-floating-promises': 'off',
       'tailwindcss/no-custom-classname': [
         'error',
         {

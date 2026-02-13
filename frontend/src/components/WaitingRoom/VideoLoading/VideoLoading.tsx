@@ -16,7 +16,7 @@ type VideoLoadingProps = {
 const VideoLoading: FC<VideoLoadingProps> = ({ className, ...props }) => {
   return (
     <Box
-      className={twMerge('absolute flex rounded-vera-large bg-vera-secondary', className)}
+      className={twMerge('absolute flex rounded-vera-large', className)}
       {...props}
       data-testid="VideoLoading"
     >

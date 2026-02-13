@@ -1,24 +1,20 @@
-import { useRef, useState, useEffect, ReactElement } from 'react';
-import Box from '@ui/Box';
-import Stack from '@ui/Stack';
-import useTheme from '@ui/theme';
+import { useRef, useEffect, ReactElement } from 'react';
 import { VIDEO_CONTAINER_HEIGHT_WR } from '@utils/constants';
 import MicButton from '../MicButton';
 import CameraButton from '../CameraButton';
 import VideoLoading from '../VideoLoading';
-import waitUntilPlaying from '../../../utils/waitUntilPlaying';
 import useUserContext from '../../../hooks/useUserContext';
 import usePreviewPublisherContext from '../../../hooks/usePreviewPublisherContext';
 import getInitials from '../../../utils/getInitials';
 import PreviewAvatar from '../PreviewAvatar';
 import VoiceIndicatorIcon from '../../MeetingRoom/VoiceIndicator/VoiceIndicator';
 import VignetteEffect from '../VignetteEffect';
-import useIsSmallViewport from '../../../hooks/useIsSmallViewport';
 import BackgroundEffectsDialog from '../BackgroundEffects/BackgroundEffectsDialog';
 import BackgroundEffectsButton from '../BackgroundEffects/BackgroundEffectsButton';
 import backgroundEffectsDialog$ from '@Context/BackgroundEffectsDialog';
 import PrecallNetworkTestDialog from '../PrecallNetworkTestDialog';
 import precallNetworkTestDialog$ from '@Context/PrecallNetworkTestDialog';
+import classNames from 'classnames';
 
 export type VideoContainerProps = {
   username: string;
@@ -35,62 +31,52 @@ export type VideoContainerProps = {
  */
 const VideoContainer = ({ username }: VideoContainerProps): ReactElement => {
   const containerRef = useRef<HTMLDivElement>(null);
-  const [isVideoLoading, setIsVideoLoading] = useState<boolean>(true);
   const [{ isOpen: isBackgroundEffectsOpen }, { open, close }] = backgroundEffectsDialog$.use();
   const [{ isOpen: isPrecallNetworkTestOpen }, { close: closePrecallTest }] =
     precallNetworkTestDialog$.use();
   const { user } = useUserContext();
-  const { publisherVideoElement, isVideoEnabled, isAudioEnabled, speechLevel } =
+  const { publisherVideoElement, isVideoEnabled, isAudioEnabled, speechLevel, isVideoLoading } =
     usePreviewPublisherContext();
   const initials = getInitials(username);
-  const isSmallViewport = useIsSmallViewport();
-  const theme = useTheme();
 
   useEffect(() => {
-    if (publisherVideoElement && containerRef.current && isVideoEnabled) {
-      containerRef.current.appendChild(publisherVideoElement);
-      const myVideoElement = publisherVideoElement as HTMLElement;
-      myVideoElement.classList.add('video__element');
-      // eslint-disable-next-line react-hooks/immutability
-      myVideoElement.title = 'publisher-preview';
-      // eslint-disable-next-line react-hooks/immutability
-      myVideoElement.style.borderRadius = isSmallViewport ? '0px' : theme.shapes.borderRadiusLarge;
-      myVideoElement.style.height = isSmallViewport ? '' : `${VIDEO_CONTAINER_HEIGHT_WR}px`;
-      myVideoElement.style.width = isSmallViewport ? '100dvw' : '584px';
-      myVideoElement.style.marginLeft = 'auto';
-      myVideoElement.style.marginRight = 'auto';
-      myVideoElement.style.transform = 'scaleX(-1)';
-      myVideoElement.style.objectFit = 'contain';
-      myVideoElement.style.aspectRatio = '16 / 9';
+    if (!publisherVideoElement) return;
 
-      waitUntilPlaying(publisherVideoElement).then(() => {
-        setIsVideoLoading(false);
-      });
-    }
-  }, [isSmallViewport, publisherVideoElement, isVideoEnabled, theme.shapes.borderRadiusLarge]);
+    containerRef.current!.appendChild(publisherVideoElement);
+  }, [publisherVideoElement]);
 
   return (
-    <Box
-      sx={{
-        position: 'relative',
-        display: 'flex',
-        aspectRatio: '16 / 9',
-        width: { xs: '100dvw', sm: '583px' },
-        maxWidth: '100%',
-        flexDirection: 'column',
-        alignItems: 'center',
-        justifyContent: 'center',
-        backgroundColor: theme.colors.secondary,
-        borderRadius: { xs: 0, sm: '12px' },
-        WebkitMask: `linear-gradient(${theme.colors.secondary} 0 0)`,
-      }}
+    <div
+      className={classNames(
+        'relative flex flex-col items-center justify-center',
+        'aspect-video max-w-full',
+        'bg-vera-surface',
+        'rounded-vera-none sm:rounded-vera-large',
+        '[-webkit-mask:linear-gradient(var(--vera-surface)_0_0)]',
+        'box-border w-[100dvw] sm:w-[584px] md:w-full'
+      )}
     >
-      <Box
+      <div
         ref={containerRef}
-        sx={{ display: isBackgroundEffectsOpen ? 'none' : 'block' }}
+        className={classNames(
+          'child:mx-auto',
+          'child:animate-[fade-in_.6s_linear]',
+          'child:-scale-x-100',
+          'child:object-contain',
+          'child:aspect-[16/9]',
+          'child:w-[100dvw]',
+          'child:rounded-none',
+          'child:md:w-[585px]',
+          `child:md:h-[${VIDEO_CONTAINER_HEIGHT_WR}px]`,
+          'child:md:rounded-vera-large',
+          'bg-vera-secondary',
+
+          {
+            hidden: isBackgroundEffectsOpen,
+          }
+        )}
         data-video-container
-        className="animate-fade-in"
-      />
+      ></div>
 
       <VignetteEffect />
 
@@ -104,29 +90,17 @@ const VideoContainer = ({ username }: VideoContainerProps): ReactElement => {
       />
 
       {!isVideoLoading && (
-        <Box
-          className="animate-fade-in"
-          sx={{
-            position: 'absolute',
-            left: 0,
-            right: 0,
-            bottom: '5%',
-            display: 'flex',
-            height: 'fit-content',
-            alignItems: 'center',
-            justifyContent: 'center',
-          }}
-        >
+        <div className="absolute inset-x-0 bottom-[5%] flex h-fit items-center justify-center animate-fade-in">
           {isAudioEnabled && (
-            <Box sx={{ position: 'absolute', left: '16px', top: '12px' }}>
+            <div className="absolute left-4 top-3">
               <VoiceIndicatorIcon publisherAudioLevel={speechLevel} size={24} />
-            </Box>
+            </div>
           )}
-          <Stack direction="row" spacing={1.5}>
+          <div className="flex flex-row gap-1.5">
             <MicButton />
             <CameraButton />
-          </Stack>
-          <Box sx={{ position: 'absolute', right: '20px' }}>
+          </div>
+          <div className="absolute right-5">
             <BackgroundEffectsButton onClick={open} />
             {isBackgroundEffectsOpen && (
               <BackgroundEffectsDialog
@@ -140,10 +114,10 @@ const VideoContainer = ({ username }: VideoContainerProps): ReactElement => {
                 setIsPrecallNetworkTestOpen={closePrecallTest}
               />
             )}
-          </Box>
-        </Box>
+          </div>
+        </div>
       )}
-    </Box>
+    </div>
   );
 };
 

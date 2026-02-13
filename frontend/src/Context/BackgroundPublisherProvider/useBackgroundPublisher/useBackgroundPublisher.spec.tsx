@@ -3,13 +3,10 @@ import { beforeEach, describe, expect, it, Mock, vi } from 'vitest';
 import { hasMediaProcessorSupport, initPublisher, Publisher } from '@vonage/client-sdk-video';
 import EventEmitter from 'node:events';
 import { defaultAudioDevice, defaultVideoDevice } from '@utils/mockData/device';
-import {
-  makeBackgroundPublisherProviderWrapper,
-  BackgroundPublisherProviderWrapperOptions,
-} from '@test/providers';
+import { makeTestProvider, providers, ProviderOptions } from '@test/providers';
 import useBackgroundPublisher from './useBackgroundPublisher';
 import { DEVICE_ACCESS_STATUS } from '@utils/constants';
-import mediaDevicesMock from '@common/test/mocks/mediaDevicesMock';
+import { setupWindowNavigatorMock } from '@common-test/fixtures';
 
 vi.mock('@vonage/client-sdk-video');
 
@@ -27,39 +24,34 @@ describe('useBackgroundPublisher', () => {
   beforeEach(() => {
     vi.spyOn(console, 'error');
 
-    Object.defineProperty(globalThis.navigator, 'mediaDevices', {
-      writable: true,
-      value: mediaDevicesMock,
-    });
-
-    Object.defineProperty(globalThis.navigator, 'permissions', {
-      writable: true,
-      value: {
-        query: vi.fn().mockResolvedValue({ state: 'granted' }),
+    setupWindowNavigatorMock({
+      mediaDevices: {
+        addEventListener: vi.fn(),
+        enumerateDevices: Promise.resolve([]),
       },
     });
 
-    vi.spyOn(mediaDevicesMock, 'addEventListener').mockImplementation(() => {});
-    vi.spyOn(mediaDevicesMock, 'removeEventListener').mockImplementation(() => {});
-    vi.spyOn(mediaDevicesMock, 'enumerateDevices').mockResolvedValue([]);
+    const { permissions } = globalThis.navigator;
+
+    vi.spyOn(permissions, 'query').mockResolvedValue({ state: 'granted' } as PermissionStatus);
 
     (initPublisher as Mock).mockImplementation(mockedInitPublisher);
     (hasMediaProcessorSupport as Mock).mockImplementation(mockedHasMediaProcessorSupport);
   });
 
   describe('initBackgroundLocalPublisher', () => {
-    it('should call initBackgroundLocalPublisher', async () => {
+    it('should call initBackgroundLocalPublisher', () => {
       mockedInitPublisher.mockReturnValue(mockPublisher);
       const { result } = render();
 
-      await act(async () => {
-        await result.current.initBackgroundLocalPublisher();
+      act(() => {
+        result.current.initBackgroundLocalPublisher();
       });
 
       expect(mockedInitPublisher).toHaveBeenCalled();
     });
 
-    it('should log access denied errors', async () => {
+    it('should log access denied errors', () => {
       const error = new Error(
         "It hit me pretty hard, how there's no kind of sad in this world that will stop it turning."
       );
@@ -69,8 +61,8 @@ describe('useBackgroundPublisher', () => {
       });
 
       const { result } = render();
-      await act(async () => {
-        await result.current.initBackgroundLocalPublisher();
+      act(() => {
+        result.current.initBackgroundLocalPublisher();
       });
       expect(console.error).toHaveBeenCalledWith('initPublisher error: ', error);
     });
@@ -79,8 +71,8 @@ describe('useBackgroundPublisher', () => {
       mockedHasMediaProcessorSupport.mockReturnValue(true);
       mockedInitPublisher.mockReturnValue(mockPublisher);
       const { result } = render();
-      await act(async () => {
-        await result.current.initBackgroundLocalPublisher();
+      act(() => {
+        result.current.initBackgroundLocalPublisher();
       });
 
       await act(async () => {
@@ -92,12 +84,12 @@ describe('useBackgroundPublisher', () => {
       });
     });
 
-    it('should not replace background when initialized if the device does not support it', async () => {
+    it('should not replace background when initialized if the device does not support it', () => {
       mockedHasMediaProcessorSupport.mockReturnValue(false);
       mockedInitPublisher.mockReturnValue(mockPublisher);
       const { result } = render();
-      await act(async () => {
-        await result.current.initBackgroundLocalPublisher();
+      act(() => {
+        result.current.initBackgroundLocalPublisher();
       });
       expect(mockedInitPublisher).toHaveBeenCalledWith(
         undefined,
@@ -111,12 +103,12 @@ describe('useBackgroundPublisher', () => {
 
   describe('changeBackground', () => {
     let result: ReturnType<typeof render>['result'];
-    beforeEach(async () => {
+    beforeEach(() => {
       mockedHasMediaProcessorSupport.mockReturnValue(true);
       mockedInitPublisher.mockReturnValue(mockPublisher);
       result = render().result;
-      await act(async () => {
-        await result.current.initBackgroundLocalPublisher();
+      act(() => {
+        result.current.initBackgroundLocalPublisher();
       });
       (mockPublisher.applyVideoFilter as Mock).mockClear();
       (mockPublisher.clearVideoFilter as Mock).mockClear();
@@ -156,7 +148,7 @@ describe('useBackgroundPublisher', () => {
 
       const { result: res } = render();
       await act(async () => {
-        await res.current.initBackgroundLocalPublisher();
+        res.current.initBackgroundLocalPublisher();
         await res.current.changeBackground('low-blur');
       });
 
@@ -181,12 +173,9 @@ describe('useBackgroundPublisher', () => {
       };
       mockQuery.mockResolvedValue(mockedPermissionStatus);
 
-      Object.defineProperty(global.navigator, 'permissions', {
-        writable: true,
-        value: {
-          query: mockQuery,
-        },
-      });
+      const { permissions } = globalThis.navigator;
+
+      vi.spyOn(permissions, 'query').mockImplementation(mockQuery);
     });
 
     it('handles permission denial', async () => {
@@ -194,9 +183,10 @@ describe('useBackgroundPublisher', () => {
 
       const { result } = render();
 
-      await act(async () => {
-        await result.current.initBackgroundLocalPublisher();
+      act(() => {
+        result.current.initBackgroundLocalPublisher();
       });
+
       expect(result.current.accessStatus).not.toBe(DEVICE_ACCESS_STATUS.REJECTED);
 
       act(() => {
@@ -216,8 +206,8 @@ describe('useBackgroundPublisher', () => {
 
       const { result } = render();
 
-      await act(async () => {
-        await result.current.initBackgroundLocalPublisher();
+      act(() => {
+        result.current.initBackgroundLocalPublisher();
       });
 
       expect(emitAccessDeniedError).not.toThrow();
@@ -226,22 +216,52 @@ describe('useBackgroundPublisher', () => {
         emitAccessDeniedError();
       });
 
-      expect(console.error).toHaveBeenCalledWith(
-        'Error querying permissions:',
-        expect.objectContaining({ message: 'Whoops' })
-      );
+      await waitFor(() => {
+        expect(console.error).toHaveBeenCalledWith(
+          'Error querying permissions:',
+          expect.objectContaining({ message: 'Whoops' })
+        );
+      });
     });
   });
 });
 
-function render(options?: BackgroundPublisherProviderWrapperOptions) {
-  const { BackgroundPublisherProviderWrapper, backgroundPublisherContext } =
-    makeBackgroundPublisherProviderWrapper(options);
+type RenderOptions = {
+  appConfigContext?: ProviderOptions['AppConfigContext'];
+  userContext?: ProviderOptions['UserContext'];
+  sessionContext?: ProviderOptions['SessionContext'];
+  publisherContext?: ProviderOptions['PublisherContext'];
+  backgroundPublisherContext?: ProviderOptions['BackgroundPublisherContext'];
+};
+
+function render({
+  appConfigContext,
+  userContext,
+  sessionContext,
+  publisherContext,
+  backgroundPublisherContext,
+}: RenderOptions = {}) {
+  const { wrapper, ...context } = makeTestProvider(
+    [
+      providers.appConfig,
+      providers.user,
+      providers.session,
+      providers.publisher,
+      providers.backgroundPublisher,
+    ],
+    {
+      appConfigContext,
+      userContext,
+      sessionContext,
+      publisherContext,
+      backgroundPublisherContext,
+    }
+  );
 
   return {
+    ...context,
     ...renderHookBase(() => useBackgroundPublisher(), {
-      wrapper: BackgroundPublisherProviderWrapper,
+      wrapper,
     }),
-    backgroundPublisherContext,
   };
 }

@@ -15,7 +15,9 @@ const customWordList = [
   'Rendererable',
   'Hydrateable',
   'firefoxUserPrefs',
+  'gollum',
   'PWDEBUG',
+  'unstub',
 ];
 
 export default customWordList;

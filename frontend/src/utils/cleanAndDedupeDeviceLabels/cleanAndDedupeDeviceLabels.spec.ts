@@ -1,18 +1,20 @@
 import { describe, it, expect } from 'vitest';
-import { AudioOutputDevice, Device } from '@vonage/client-sdk-video';
+import type { MediaDeviceInfoJSON } from '@common/types';
 import cleanAndDedupeDeviceLabels from './cleanAndDedupeDeviceLabels';
 
-const createMockDevice = (deviceId: string, label: string): Device => ({
-  deviceId,
-  label,
-  kind: 'videoInput',
-});
+const createMockDevice = (deviceId: string, label: string) =>
+  ({
+    deviceId,
+    label,
+    kind: 'videoinput',
+  }) as MediaDeviceInfoJSON;
 
-const createMockAudioDevice = (deviceId: string, label: string): Device => ({
-  deviceId,
-  label,
-  kind: 'audioInput',
-});
+const createMockAudioDevice = (deviceId: string, label: string) =>
+  ({
+    deviceId,
+    label,
+    kind: 'audioinput',
+  }) as MediaDeviceInfoJSON;
 
 describe('cleanAndDedupeDeviceLabels', () => {
   describe('Device Label Cleaning', () => {
@@ -87,7 +89,11 @@ describe('cleanAndDedupeDeviceLabels', () => {
       // Description, input, expected output
       ['empty array', [], []],
       ['empty label', [createMockDevice('1', '')], ['']],
-      ['null label', [{ deviceId: '1', label: null, kind: 'videoInput' }], [null]],
+      [
+        'null label',
+        [{ deviceId: '1', label: null, kind: 'videoinput' } as unknown as MediaDeviceInfoJSON],
+        [null],
+      ],
     ])('handles %s', (_, input, expected) => {
       const result = cleanAndDedupeDeviceLabels(input);
       expect(result.map((d) => d.label)).toEqual(expected);
@@ -131,7 +137,7 @@ describe('cleanAndDedupeDeviceLabels', () => {
     it('works with mixed Device and AudioOutputDevice types', () => {
       const devices = [
         createMockDevice('1', 'Camera (0000:0001)'),
-        { deviceId: '2', label: 'Speaker (0000:0002)' } as AudioOutputDevice,
+        { deviceId: '2', label: 'Speaker (0000:0002)' } as MediaDeviceInfoJSON,
       ];
 
       const result = cleanAndDedupeDeviceLabels(devices);

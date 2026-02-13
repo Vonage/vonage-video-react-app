@@ -3,12 +3,16 @@ import { render as renderBase, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import BackgroundGallery from './BackgroundGallery';
 import enTranslations from '../../../locales/en.json';
-import {
-  BackgroundPublisherProviderWrapperOptions,
-  makeBackgroundPublisherProviderWrapper,
-} from '@test/providers';
-import mediaDevicesMock from '@common/test/mocks/mediaDevicesMock';
+import { makeTestProvider, providers, ProviderOptions } from '@test/providers';
 import { ReactElement } from 'react';
+import {
+  setupWindowNavigatorMock,
+  makeMediaStreamMock,
+  makeMediaDeviceInfos,
+} from '@common-test/fixtures';
+import { mediaDevices$ } from '@core/stores';
+
+const mockDevices = makeMediaDeviceInfos();
 
 const customImages = [
   { id: 'custom1', dataUrl: 'data:image/png;base64,custom1' },
@@ -47,26 +51,28 @@ describe('BackgroundGallery', () => {
   beforeEach(() => {
     vi.clearAllMocks();
 
-    Object.defineProperty(global.navigator, 'mediaDevices', {
-      writable: true,
-      value: mediaDevicesMock,
-    });
-
-    vi.spyOn(mediaDevicesMock, 'addEventListener').mockImplementation(() => {});
-    vi.spyOn(mediaDevicesMock, 'removeEventListener').mockImplementation(() => {});
-    vi.spyOn(mediaDevicesMock, 'enumerateDevices').mockResolvedValue([]);
-    vi.spyOn(mediaDevicesMock, 'getUserMedia').mockResolvedValue({
-      getTracks: () => [],
-      getAudioTracks: () => [],
-      getVideoTracks: () => [],
-    } as unknown as MediaStream);
-
-    Object.defineProperty(global.navigator, 'permissions', {
-      writable: true,
-      value: {
-        query: vi.fn().mockResolvedValue({ state: 'granted' }),
+    setupWindowNavigatorMock({
+      mediaDevices: {
+        addEventListener: vi.fn(),
+        enumerateDevices: Promise.resolve(mockDevices),
+        getUserMedia: Promise.resolve(
+          makeMediaStreamMock({
+            getVideoTracks: [],
+            getAudioTracks: [],
+          })
+        ),
       },
     });
+
+    // Initialize the mediaDevices$ store with mock devices to prevent useSyncPublisherDevices from disabling video/audio
+    mediaDevices$.setState((state) => ({
+      ...state,
+      mediaDeviceInfo: mockDevices,
+    }));
+
+    const { permissions } = globalThis.navigator;
+
+    vi.spyOn(permissions, 'query').mockResolvedValue({ state: 'granted' } as PermissionStatus);
   });
 
   it('renders all built-in backgrounds as selectable options', async () => {
@@ -89,7 +95,7 @@ describe('BackgroundGallery', () => {
 
   it('sets the selected built-in background', async () => {
     render(<BackgroundGallery />, {
-      backgroundPublisherOptions: {
+      backgroundPublisherContext: {
         __interceptor: (context) => {
           context.handleBackgroundChange = mockHandleBackgroundChange;
         },
@@ -102,7 +108,7 @@ describe('BackgroundGallery', () => {
 
   it('sets the selected custom image', async () => {
     render(<BackgroundGallery />, {
-      backgroundPublisherOptions: {
+      backgroundPublisherContext: {
         __interceptor: (context) => {
           context.handleBackgroundChange = mockHandleBackgroundChange;
         },
@@ -115,7 +121,7 @@ describe('BackgroundGallery', () => {
 
   it('marks the built-in background as selected', async () => {
     render(<BackgroundGallery />, {
-      backgroundPublisherOptions: {
+      backgroundPublisherContext: {
         __onCreated: (context) => {
           context.backgroundSelected = 'plane.jpg';
         },
@@ -129,7 +135,7 @@ describe('BackgroundGallery', () => {
 
   it('marks the custom image as selected', async () => {
     render(<BackgroundGallery />, {
-      backgroundPublisherOptions: {
+      backgroundPublisherContext: {
         __onCreated: (context) => {
           context.backgroundSelected = 'data:image/png;base64,custom2';
         },
@@ -144,7 +150,7 @@ describe('BackgroundGallery', () => {
 
   it('calls onDelete when deleting a custom image', async () => {
     render(<BackgroundGallery />, {
-      backgroundPublisherOptions: {
+      backgroundPublisherContext: {
         __interceptor: (context) => {
           context.deleteCustomImage = mockDeleteCustomImage;
         },
@@ -157,7 +163,7 @@ describe('BackgroundGallery', () => {
 
   it("doesn't delete custom image if it's selected", async () => {
     render(<BackgroundGallery />, {
-      backgroundPublisherOptions: {
+      backgroundPublisherContext: {
         __onCreated: (context) => {
           context.backgroundSelected = 'data:image/png;base64,custom1';
         },
@@ -170,17 +176,42 @@ describe('BackgroundGallery', () => {
 });
 
 type RenderOptions = {
-  backgroundPublisherOptions?: BackgroundPublisherProviderWrapperOptions['backgroundPublisherOptions'];
+  appConfigContext?: ProviderOptions['AppConfigContext'];
+  userContext?: ProviderOptions['UserContext'];
+  sessionContext?: ProviderOptions['SessionContext'];
+  publisherContext?: ProviderOptions['PublisherContext'];
+  backgroundPublisherContext?: ProviderOptions['BackgroundPublisherContext'];
 };
 
-function render(ui: ReactElement, options?: RenderOptions) {
-  const { BackgroundPublisherProviderWrapper, ...backgroundProps } =
-    makeBackgroundPublisherProviderWrapper({
-      backgroundPublisherOptions: options?.backgroundPublisherOptions,
-    });
+function render(
+  ui: ReactElement,
+  {
+    appConfigContext,
+    userContext,
+    sessionContext,
+    publisherContext,
+    backgroundPublisherContext,
+  }: RenderOptions = {}
+) {
+  const { wrapper, ...context } = makeTestProvider(
+    [
+      providers.appConfig,
+      providers.user,
+      providers.session,
+      providers.publisher,
+      providers.backgroundPublisher,
+    ],
+    {
+      appConfigContext,
+      userContext,
+      sessionContext,
+      publisherContext,
+      backgroundPublisherContext,
+    }
+  );
 
   return {
-    ...backgroundProps,
-    ...renderBase(ui, { wrapper: BackgroundPublisherProviderWrapper }),
+    ...context,
+    ...renderBase(ui, { wrapper }),
   };
 }
