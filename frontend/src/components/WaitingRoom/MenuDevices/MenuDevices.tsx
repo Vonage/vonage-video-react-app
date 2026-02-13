@@ -39,7 +39,10 @@ const MenuDevices = ({
   deviceChangeHandler,
 }: MenuDevicesWaitingRoomProps): ReactElement => {
   const rawDevices = mediaDevices$.useMediaDevices(mediaDeviceKind, Object.values<MediaDeviceInfo>);
-  const devices = mediaDeviceKind === 'videoinput' ? filterMobileCameras(rawDevices) : rawDevices;
+  const devices = useMemo(
+    () => (mediaDeviceKind === 'videoinput' ? filterMobileCameras(rawDevices) : rawDevices),
+    [mediaDeviceKind, rawDevices]
+  );
 
   const localSource = mediaDevices$.useDeviceId(mediaDeviceKind);
 

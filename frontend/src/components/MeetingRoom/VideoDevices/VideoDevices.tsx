@@ -1,4 +1,4 @@
-import { ReactElement } from 'react';
+import { ReactElement, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import appConfig$ from '@stores/appConfig';
 import useTheme from '@ui/theme';
@@ -37,10 +37,14 @@ const VideoDevices = ({
 
   // Use filtered cameras (one front + one rear on mobile) to avoid black screen with duplicate devices
   const preferredCameras = usePreferredCameras();
-  const devicesAvailable = cleanAndDedupeDeviceLabels(preferredCameras).map((device) => ({
-    ...device,
-    label: device.label ?? t('unknown.device'),
-  }));
+  const devicesAvailable = useMemo(
+    () =>
+      cleanAndDedupeDeviceLabels(preferredCameras).map((device) => ({
+        ...device,
+        label: device.label ?? t('unknown.device'),
+      })),
+    [preferredCameras, t]
+  );
 
   const handleChangeVideoSource = (deviceId: string) => {
     handleToggle();
