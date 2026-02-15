@@ -24,6 +24,7 @@
     "test:backend": "npx tsx scripts/testBackend.ts",
     "test:frontend": "npx tsx scripts/testFrontend.ts",
     "test:integration": "npx tsx scripts/testIntegration.ts",
+    "test:api": "npx tsx scripts/testLibs.ts api",
     "test:core": "npx tsx scripts/testLibs.ts core",
     "test:ui": "npx tsx scripts/testLibs.ts ui",
     "test:common": "npx tsx scripts/testLibs.ts common",

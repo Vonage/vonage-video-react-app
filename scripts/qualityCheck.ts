@@ -10,11 +10,12 @@ import { execSync } from 'child_process';
  * - Runs Prettier in check mode across the repo
  *
  * Optionally, you can scope the checks to a single project:
+ * - `yarn quality-check api`
  * - `yarn quality-check frontend`
- * - `yarn quality-check backend`
  *
  * @example
  * yarn quality-check
+ * yarn quality-check api
  * yarn quality-check frontend
  * yarn quality-check backend
  */
@@ -22,6 +23,7 @@ import { execSync } from 'child_process';
 const PROJECT_ROOTS: Record<string, string> = {
   frontend: 'frontend',
   backend: 'backend',
+  api: 'libs/api',
   core: 'libs/core',
   ui: 'libs/ui',
   common: 'libs/common',
@@ -42,6 +44,7 @@ function printHelp() {
   console.log('');
   console.log('Examples:');
   console.log('  yarn quality-check');
+  console.log('  yarn quality-check api');
   console.log('  yarn quality-check frontend');
 }
 
