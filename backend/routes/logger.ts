@@ -14,8 +14,14 @@ loggerRouter.post('/', (req: Request, res: Response) => {
   const parsed = ClientLogEventSchema.safeParse(req.body);
 
   if (!parsed.success) {
+    const errors = parsed.error.issues.map((issue) => ({
+      path: issue.path.join('.') || '(root)',
+      message: issue.message,
+    }));
+
     return res.status(400).json({
       message: 'Invalid log payload',
+      errors,
     });
   }
 

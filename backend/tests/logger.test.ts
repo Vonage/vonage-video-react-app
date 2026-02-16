@@ -81,7 +81,8 @@ describe('POST /internal/client-logs', () => {
       });
 
     expect(res.statusCode).toEqual(400);
-    expect(res.body).toEqual({ message: 'Invalid log payload' });
+    expect(res.body).toMatchObject({ message: 'Invalid log payload', errors: expect.any(Array) });
+    expect(res.body.errors.length).toBeGreaterThan(0);
     expect(mockForwardToGollum).not.toHaveBeenCalled();
   });
 
@@ -96,7 +97,8 @@ describe('POST /internal/client-logs', () => {
       );
 
     expect(res.statusCode).toEqual(400);
-    expect(res.body).toEqual({ message: 'Invalid log payload' });
+    expect(res.body).toMatchObject({ message: 'Invalid log payload', errors: expect.any(Array) });
+    expect(res.body.errors.length).toBeGreaterThan(0);
     expect(mockForwardToGollum).not.toHaveBeenCalled();
   });
 
@@ -107,7 +109,8 @@ describe('POST /internal/client-logs', () => {
       .send({});
 
     expect(res.statusCode).toEqual(400);
-    expect(res.body).toEqual({ message: 'Invalid log payload' });
+    expect(res.body).toMatchObject({ message: 'Invalid log payload', errors: expect.any(Array) });
+    expect(res.body.errors.length).toBeGreaterThan(0);
     expect(mockForwardToGollum).not.toHaveBeenCalled();
   });
 
