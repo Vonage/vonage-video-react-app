@@ -26,9 +26,7 @@ function syncMediaDevicesInfo(this: DevicesAPI['actions']) {
 
           // Exclude devices with empty deviceId.
           // Passing "" to getUserMedia causes OT_CONSTRAINTS_NOT_SATISFIED.
-          const usableMediaDeviceInfo = mediaDeviceInfo.filter(
-            (d) => d.deviceId && d.deviceId.trim()
-          );
+          const usableMediaDeviceInfo = mediaDeviceInfo.filter((d) => d.deviceId?.trim());
 
           store.setState((state) => ({
             ...state,
