@@ -39,7 +39,7 @@ loggerRouter.post('/', (req: Request, res: Response, next: express.NextFunction)
     next(new Error('Unexpected: parse succeeded but result is null'));
     return;
   }
-  attempt(() => forwardToGollum(event as ClientLogEvent), console.error);
+  void attempt(() => forwardToGollum(event as ClientLogEvent), console.error);
   return res.sendStatus(204);
 });
 
