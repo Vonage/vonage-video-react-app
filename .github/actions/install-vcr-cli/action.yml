@@ -1,0 +1,13 @@
+name: Install VCR CLI
+description: Downloads and installs the Vonage Cloud Runtime CLI
+
+runs:
+  using: composite
+  steps:
+    - name: Install VCR CLI
+      shell: bash
+      run: |
+        set -euo pipefail
+        curl --proto =https --max-redirs 0 -fsSL https://raw.githubusercontent.com/Vonage/cloud-runtime-cli/main/script/install.sh -o install.sh
+        sudo bash install.sh
+        vcr -v
