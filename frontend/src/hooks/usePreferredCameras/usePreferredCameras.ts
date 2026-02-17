@@ -1,4 +1,5 @@
 import mediaDevices$ from '@core/stores/devices';
+import cleanAndDedupeDeviceLabels from '@utils/cleanAndDedupeDeviceLabels';
 import filterMobileCameras from './helpers/filterMobileCameras';
 
 /**
@@ -11,14 +12,14 @@ import filterMobileCameras from './helpers/filterMobileCameras';
  *
  * On non-mobile devices, returns all available video input devices unchanged.
  *
- * @returns Filtered array: on mobile, at most one front + one rear + unknown cameras; on desktop, all video input devices.
+ * Applies cleanAndDedupeDeviceLabels so labels are consistent across the app (MeetingRoom, WaitingRoom, etc.).
+ * @returns Filtered array: on mobile, at most one front + one rear + unknown cameras; on desktop, all video input devices. Labels are cleaned and deduped.
  */
 const usePreferredCameras = mediaDevices$.mediaDevicesMap$.createSelectorHook(
-  (state) => filterMobileCameras(Object.values(state.videoinput)),
+  (state) => cleanAndDedupeDeviceLabels(filterMobileCameras(Object.values(state.videoinput))),
   {
     // avoid re-computing unless the videoinput devices change
     isEqualRoot: (a, b) => a.videoinput === b.videoinput,
   }
 );
-
 export default usePreferredCameras;

@@ -6,7 +6,6 @@ import { Box, Typography, MenuList, MenuItem, Tooltip, BoxProps } from '@mui/mat
 import VividIcon from '@components/VividIcon';
 import mediaDevices$ from '@core/stores/devices';
 import usePreferredCameras from '@hooks/usePreferredCameras';
-import cleanAndDedupeDeviceLabels from '@utils/cleanAndDedupeDeviceLabels/cleanAndDedupeDeviceLabels';
 
 export type VideoDevicesProps = BoxProps & {
   handleToggle: () => void;
@@ -39,7 +38,7 @@ const VideoDevices = ({
   const preferredCameras = usePreferredCameras();
   const devicesAvailable = useMemo(
     () =>
-      cleanAndDedupeDeviceLabels(preferredCameras).map((device) => ({
+      preferredCameras.map((device) => ({
         ...device,
         label: device.label ?? t('unknown.device'),
       })),
