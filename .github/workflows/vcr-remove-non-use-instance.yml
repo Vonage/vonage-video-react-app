@@ -12,7 +12,7 @@ permissions:
 jobs:
   remove-vcr:
     name: Remove VCR instance
-    runs-on: [vcp-runner]
+    runs-on: ubuntu-22.04
 
     steps:
       - name: Install VCR CLI
