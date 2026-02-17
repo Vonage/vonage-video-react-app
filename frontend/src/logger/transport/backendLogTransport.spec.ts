@@ -7,6 +7,10 @@ vi.mock('../../utils/constants', () => ({
   API_URL: MOCK_API_URL,
 }));
 
+vi.mock('../../utils/getAppVersion', () => ({
+  default: () => 'vera-1.0.0-test',
+}));
+
 describe('BackendLogTransport', () => {
   let fetchSpy!: MockInstance<
     [input: string | URL | Request, init?: RequestInit],
@@ -31,20 +35,12 @@ describe('BackendLogTransport', () => {
     );
   });
 
-  it('send() POSTs to API_URL/internal/client-logs with JSON body and correct options', () => {
+  it('log() POSTs to API_URL/client-logs with JSON body and correct options', () => {
     const transport = new BackendLogTransport();
-    const event = {
-      action: 'Test',
-      level: 'info' as const,
-      clientSystemTime: 1,
-      userAgent: '',
-      guid: 'guid-1',
-    };
-
-    transport.send(event as Parameters<BackendLogTransport['send']>[0]);
+    transport.log('Test', { sessionId: 's1', connectionId: 'c1', partnerId: 'p1' });
 
     expect(fetchSpy).toHaveBeenCalledWith(
-      `${MOCK_API_URL}/internal/client-logs`,
+      `${MOCK_API_URL}/client-logs`,
       expect.objectContaining({
         method: 'POST',
         body: expect.any(String),
@@ -54,18 +50,11 @@ describe('BackendLogTransport', () => {
     );
   });
 
-  it('send() does not throw when fetch rejects', async () => {
-    fetchSpy.mockRejectedValueOnce(new Error('Network error'));
+  it('log() does not throw when fetch rejects', async () => {
+    fetchSpy.mockRejectedValue(new Error('Network error'));
     const transport = new BackendLogTransport();
-    const event = {
-      action: 'Test',
-      level: 'info' as const,
-      clientSystemTime: 1,
-      userAgent: '',
-      guid: 'guid-1',
-    };
 
-    expect(() => transport.send(event as Parameters<BackendLogTransport['send']>[0])).not.toThrow();
+    expect(() => transport.log('Test', {})).not.toThrow();
 
     await vi.waitFor(() => expect(fetchSpy).toHaveBeenCalled());
   });
@@ -80,23 +69,15 @@ describe('BackendLogTransport', () => {
     );
 
     const transport = new BackendLogTransport();
-    const duplicateEvent = {
-      action: 'Duplicate',
-      level: 'info' as const,
-      clientSystemTime: 999,
-      userAgent: '',
-      guid: 'guid-1',
-    };
-
-    transport.send(duplicateEvent as Parameters<BackendLogTransport['send']>[0]);
-    transport.send(duplicateEvent as Parameters<BackendLogTransport['send']>[0]);
+    const extra = { sessionId: 's', connectionId: 'c', partnerId: 'p', timestamp: 999 };
+    transport.log('Duplicate', extra);
+    transport.log('Duplicate', extra);
 
     expect(fetchSpy).toHaveBeenCalledTimes(2);
     resolveFns.forEach((resolve) => resolve({ ok: true } as Response));
 
     await new Promise((r) => setTimeout(r, 0));
 
-    // Simulate pagehide - should send 0 (both completed) not 2 (wrong removal)
     pagehideHandler();
     expect(sendBeaconSpy).not.toHaveBeenCalled();
   });
@@ -104,24 +85,18 @@ describe('BackendLogTransport', () => {
   it('pagehide flushes pending events via sendBeacon when fetch was cancelled', () => {
     fetchSpy.mockImplementation(() => new Promise(() => {}));
     const transport = new BackendLogTransport();
-    const event = {
-      action: 'HandleSessionDisconnected',
-      level: 'info' as const,
-      clientSystemTime: Date.now(),
-      userAgent: 'Mozilla/5.0',
-      guid: 'guid-1',
-    };
+    transport.log('HandleSessionDisconnected', {
+      sessionId: 's1',
+      connectionId: 'c1',
+      partnerId: 'p1',
+    });
 
-    transport.send(event as Parameters<BackendLogTransport['send']>[0]);
     expect(fetchSpy).toHaveBeenCalled();
     expect(sendBeaconSpy).not.toHaveBeenCalled();
 
     pagehideHandler();
 
-    expect(sendBeaconSpy).toHaveBeenCalledWith(
-      `${MOCK_API_URL}/internal/client-logs`,
-      expect.any(Blob)
-    );
+    expect(sendBeaconSpy).toHaveBeenCalledWith(`${MOCK_API_URL}/client-logs`, expect.any(Blob));
     const blob = sendBeaconSpy.mock.calls[0][1] as Blob;
     expect(blob.type).toBe('application/json');
     expect(blob.size).toBeGreaterThan(0);

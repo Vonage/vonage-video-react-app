@@ -1,24 +1,23 @@
-/* eslint-disable @typescript-eslint/await-thenable */
 import { afterAll, beforeAll, beforeEach, describe, expect, it, jest } from '@jest/globals';
+import axios from 'axios';
 import request from 'supertest';
 import { Server } from 'http';
 import mockOpentokConfig from '../helpers/__mocks__/config';
 
-await jest.unstable_mockModule('../helpers/config', mockOpentokConfig);
+jest.mock('../helpers/config', mockOpentokConfig);
 
-const mockForwardToGollum = jest.fn<() => Promise<void>>().mockResolvedValue(undefined);
-
-await jest.unstable_mockModule('../services/gollumClientService', () => ({
-  forwardToGollum: mockForwardToGollum,
-}));
+jest.mock('axios');
 
 // This needs to be set before the server is imported
 process.env.VIDEO_SERVICE_PROVIDER = 'opentok';
-const startServer = (await import('../server')).default;
+const startServer = (await import('../server')).default as (port?: number) => Promise<Server>;
 
 const createValidLogPayload = (overrides?: Record<string, unknown>) => ({
   action: 'EnterMeeting',
   variation: 'Success',
+  sessionId: 's1',
+  connectionId: 'c1',
+  partnerId: 'apiKey',
   clientSystemTime: Date.now(),
   source: 'https://example.com',
   guid: crypto.randomUUID(),
@@ -27,8 +26,9 @@ const createValidLogPayload = (overrides?: Record<string, unknown>) => ({
   ...overrides,
 });
 
-describe('POST /internal/client-logs', () => {
+describe('POST /client-logs', () => {
   let server: Server;
+  const mockPost = jest.spyOn(axios, 'post');
 
   beforeAll(async () => {
     server = await startServer(0);
@@ -39,10 +39,11 @@ describe('POST /internal/client-logs', () => {
   });
 
   beforeEach(() => {
-    mockForwardToGollum.mockClear();
+    mockPost.mockClear();
+    mockPost.mockResolvedValue({ status: 200 });
   });
 
-  it('returns 200 and forwards valid payload to Gollum', async () => {
+  it('returns 204 and forwards valid payload to Gollum', async () => {
     const payload = createValidLogPayload({
       action: 'vonageVideoClient.connect.success',
       sessionId: 's1',
@@ -50,13 +51,14 @@ describe('POST /internal/client-logs', () => {
     });
 
     const res = await request(server)
-      .post('/internal/client-logs')
+      .post('/client-logs')
       .set('Content-Type', 'application/json')
       .send(payload);
 
-    expect(res.statusCode).toEqual(200);
-    expect(mockForwardToGollum).toHaveBeenCalledTimes(1);
-    expect(mockForwardToGollum).toHaveBeenCalledWith(
+    expect(res.statusCode).toEqual(204);
+    expect(mockPost).toHaveBeenCalledTimes(1);
+    expect(mockPost).toHaveBeenCalledWith(
+      'https://example.com',
       expect.objectContaining({
         action: 'vonageVideoClient.connect.success',
         variation: 'Success',
@@ -67,13 +69,18 @@ describe('POST /internal/client-logs', () => {
         guid: payload.guid,
         userAgent: payload.userAgent,
         level: 'info',
+        serverReceivedTime: expect.any(Number),
+      }),
+      expect.objectContaining({
+        headers: { 'Content-Type': 'application/json' },
+        timeout: 5000,
       })
     );
   });
 
   it('returns 400 for invalid payload (missing required fields)', async () => {
     const res = await request(server)
-      .post('/internal/client-logs')
+      .post('/client-logs')
       .set('Content-Type', 'application/json')
       .send({
         action: 'SomeAction',
@@ -81,14 +88,20 @@ describe('POST /internal/client-logs', () => {
       });
 
     expect(res.statusCode).toEqual(400);
-    expect(res.body).toMatchObject({ message: 'Invalid log payload', errors: expect.any(Array) });
-    expect(res.body.errors.length).toBeGreaterThan(0);
-    expect(mockForwardToGollum).not.toHaveBeenCalled();
+    expect(res.body).toMatchObject({
+      message: 'Invalid request',
+      severity: 'error',
+      statusCode: 400,
+      code: 'VALIDATION_ERROR',
+      issues: expect.any(Array),
+    });
+    expect(res.body.issues.length).toBeGreaterThan(0);
+    expect(mockPost).not.toHaveBeenCalled();
   });
 
   it('returns 400 for invalid level', async () => {
     const res = await request(server)
-      .post('/internal/client-logs')
+      .post('/client-logs')
       .set('Content-Type', 'application/json')
       .send(
         createValidLogPayload({
@@ -97,21 +110,31 @@ describe('POST /internal/client-logs', () => {
       );
 
     expect(res.statusCode).toEqual(400);
-    expect(res.body).toMatchObject({ message: 'Invalid log payload', errors: expect.any(Array) });
-    expect(res.body.errors.length).toBeGreaterThan(0);
-    expect(mockForwardToGollum).not.toHaveBeenCalled();
+    expect(res.body).toMatchObject({
+      message: 'Invalid request',
+      severity: 'error',
+      statusCode: 400,
+      code: 'VALIDATION_ERROR',
+      issues: expect.any(Array),
+    });
+    expect(mockPost).not.toHaveBeenCalled();
   });
 
   it('returns 400 for empty body', async () => {
     const res = await request(server)
-      .post('/internal/client-logs')
+      .post('/client-logs')
       .set('Content-Type', 'application/json')
       .send({});
 
     expect(res.statusCode).toEqual(400);
-    expect(res.body).toMatchObject({ message: 'Invalid log payload', errors: expect.any(Array) });
-    expect(res.body.errors.length).toBeGreaterThan(0);
-    expect(mockForwardToGollum).not.toHaveBeenCalled();
+    expect(res.body).toMatchObject({
+      message: 'Invalid request',
+      severity: 'error',
+      statusCode: 400,
+      code: 'VALIDATION_ERROR',
+      issues: expect.any(Array),
+    });
+    expect(mockPost).not.toHaveBeenCalled();
   });
 
   it('forwards payload with optional fields when present', async () => {
@@ -123,18 +146,20 @@ describe('POST /internal/client-logs', () => {
     });
 
     const res = await request(server)
-      .post('/internal/client-logs')
+      .post('/client-logs')
       .set('Content-Type', 'application/json')
       .send(payload);
 
-    expect(res.statusCode).toEqual(200);
-    expect(mockForwardToGollum).toHaveBeenCalledWith(
+    expect(res.statusCode).toEqual(204);
+    expect(mockPost).toHaveBeenCalledWith(
+      expect.any(String),
       expect.objectContaining({
         payload: { error: { message: 'Something broke' } },
         partnerId: '100',
         componentId: 'comp-1',
         name: 'MeetingComponent',
-      })
+      }),
+      expect.any(Object)
     );
   });
 });

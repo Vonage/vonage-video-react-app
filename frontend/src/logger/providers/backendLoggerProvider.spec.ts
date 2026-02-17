@@ -37,7 +37,7 @@ describe('createBackendLoggingProvider', () => {
     }).not.toThrow();
 
     expect(fetchSpy).toHaveBeenCalledWith(
-      `${MOCK_API_URL}/internal/client-logs`,
+      `${MOCK_API_URL}/client-logs`,
       expect.objectContaining({
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -72,7 +72,7 @@ describe('createBackendLoggingProvider', () => {
     }).not.toThrow();
 
     expect(fetchSpy).toHaveBeenCalledWith(
-      `${MOCK_API_URL}/internal/client-logs`,
+      `${MOCK_API_URL}/client-logs`,
       expect.objectContaining({
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },

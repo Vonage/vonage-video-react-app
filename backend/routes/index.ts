@@ -11,6 +11,6 @@ router.use('/_', healthRoute);
 router.use('/session', sessionRouter);
 router.use('/feedback', feedbackRouter);
 router.use('/.well-known', wellKnownRouter);
-router.use('/internal/client-logs', loggerRouter);
+router.use('/client-logs', loggerRouter);
 
 export default router;

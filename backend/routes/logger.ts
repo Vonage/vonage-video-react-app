@@ -1,34 +1,48 @@
 import express, { Request, Response, Router } from 'express';
+import { ZodError } from 'zod';
+import attempt from '@common/execution/attempt';
+import tryCatch from '@common/execution/tryCatch';
+import { validationErrorHandler } from '../middleware/validationErrorHandler';
+import { ValidationError } from '../errors/ValidationError';
 import { forwardToGollum } from '../services/gollumClientService';
-import { ClientLogEventSchema } from '../types/ClientLogEventSchema';
+import type { ClientLogEvent } from '@common/logger';
+import { ClientLogEventSchema } from '../types/ClientLogEvent';
 
 const loggerRouter = Router();
 
 /** JSON body parser with 50kb limit (logger route only; avoids large payloads). */
 loggerRouter.use(express.json({ limit: '50kb' }));
 
+function formatValidationIssues(error: ZodError): { path: (string | number)[]; message: string }[] {
+  return error.issues.map((issue) => ({
+    path: issue.path as (string | number)[],
+    message: issue.message,
+  }));
+}
+
 /**
  * Backend logging endpoint. Validates the payload and forwards to Gollum/HLG when configured.
+ * Fails fast on data violation. Returns 204 No Content on success (standard for logs).
  */
-loggerRouter.post('/', (req: Request, res: Response) => {
-  const parsed = ClientLogEventSchema.safeParse(req.body);
+loggerRouter.post('/', (req: Request, res: Response, next: express.NextFunction) => {
+  const { result: event, error } = tryCatch(() => ClientLogEventSchema.parse(req.body));
 
-  if (!parsed.success) {
-    const errors = parsed.error.issues.map((issue) => ({
-      path: issue.path.join('.') || '(root)',
-      message: issue.message,
-    }));
-
-    return res.status(400).json({
-      message: 'Invalid log payload',
-      errors,
-    });
+  if (error) {
+    if (error instanceof ZodError) {
+      return next(new ValidationError(formatValidationIssues(error)));
+    }
+    next(error);
+    return;
   }
 
-  const event = parsed.data;
-  void forwardToGollum(event).catch(console.error);
-
-  return res.sendStatus(200);
+  if (!event) {
+    next(new Error('Unexpected: parse succeeded but result is null'));
+    return;
+  }
+  attempt(() => forwardToGollum(event as ClientLogEvent), console.error);
+  return res.sendStatus(204);
 });
+
+loggerRouter.use(validationErrorHandler);
 
 export default loggerRouter;

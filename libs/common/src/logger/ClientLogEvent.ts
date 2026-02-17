@@ -19,8 +19,8 @@ export type ClientLogEvent = {
   variation?: string;
   /** Event-specific data */
   payload?: Record<string, ClientLogPayloadValue>;
-  sessionId?: string;
-  connectionId?: string;
+  sessionId: string;
+  connectionId: string;
   /** Date.now() at client */
   clientSystemTime: number;
   /** navigator.userAgent */
@@ -38,5 +38,5 @@ export type ClientLogEvent = {
   name?: string;
   componentId?: string;
   /** apiKey / applicationId from frontend extra */
-  partnerId?: string;
+  partnerId: string;
 };

@@ -4,6 +4,10 @@ export default {
   testEnvironment: 'node',
   clearMocks: true,
   moduleDirectories: ['ts', 'tsx', 'node_modules'],
+  moduleNameMapper: {
+    '^@common/(.*)$': '<rootDir>/../libs/common/src/$1',
+    '^@common$': '<rootDir>/../libs/common/src',
+  },
   coverageProvider: 'v8',
   roots: ['<rootDir>/'],
   testMatch: ['**/tests/**/*.+(ts|tsx)', '**/?(*.)+(test).+(ts|tsx)'],

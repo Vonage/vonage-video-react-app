@@ -19,6 +19,7 @@ describe('createClientEvent', () => {
       sessionId: 'sid-1',
       connectionId: 'conn-1',
       timestamp: 1234567890,
+      partnerId: 'partner-123',
     });
 
     expect(event).toMatchObject({
@@ -38,7 +39,13 @@ describe('createClientEvent', () => {
 
   it('uses Date.now() when timestamp is not provided', () => {
     const before = Date.now();
-    const event = createClientEvent({ level: 'info', action: 'A' });
+    const event = createClientEvent({
+      level: 'info',
+      action: 'A',
+      sessionId: 'sid-1',
+      connectionId: 'conn-1',
+      partnerId: 'partner-123',
+    });
     const after = Date.now();
 
     expect(event.clientSystemTime).toBeGreaterThanOrEqual(before);
@@ -52,6 +59,8 @@ describe('createClientEvent', () => {
       variation: 'TypeError',
       payload: {},
       partnerId: 'partner-123',
+      sessionId: 'sid-1',
+      connectionId: 'conn-1',
     });
 
     expect(event.clientVersion).toBe(MOCK_VERSION);
@@ -62,8 +71,21 @@ describe('createClientEvent', () => {
   });
 
   it('uses the same guid for all events from the same module (same page load)', () => {
-    const event1 = createClientEvent({ level: 'info', action: 'E1' });
-    const event2 = createClientEvent({ level: 'info', action: 'E2' });
+    const event1 = createClientEvent({
+      level: 'info',
+      action: 'Error',
+      sessionId: 'sid-1',
+      connectionId: 'conn-1',
+      partnerId: 'partner-123',
+    });
+    const event2 = createClientEvent({
+      level: 'info',
+      action: 'Error',
+      sessionId: 'sid-1',
+      connectionId: 'conn-1',
+      timestamp: 1234567890,
+      partnerId: 'partner-123',
+    });
 
     expect(event1.guid).toBe(event2.guid);
   });

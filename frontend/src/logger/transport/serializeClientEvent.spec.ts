@@ -5,6 +5,9 @@ import type { ClientLogEvent } from '@common/logger';
 const createBaseEvent = (): ClientLogEvent => ({
   action: 'TestAction',
   level: 'info',
+  sessionId: 's1',
+  connectionId: 'c1',
+  partnerId: 'apiKey',
   clientSystemTime: Date.now(),
   userAgent: 'Mozilla/5.0',
   guid: 'guid-1',

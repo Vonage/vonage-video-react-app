@@ -9,10 +9,10 @@ type ClientEventInput = {
   action: string;
   variation?: string;
   payload?: Record<string, unknown>;
-  sessionId?: string;
-  connectionId?: string;
+  sessionId: string;
+  connectionId: string;
   timestamp?: number;
-  partnerId?: string;
+  partnerId: string;
 };
 
 /**

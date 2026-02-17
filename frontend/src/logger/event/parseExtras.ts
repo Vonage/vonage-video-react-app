@@ -1,3 +1,5 @@
+import isString from '@common/assertions/isString';
+
 type ParsedExtra = {
   sessionId?: string;
   connectionId?: string;
@@ -14,10 +16,10 @@ export function parseExtra(extra?: Record<string, unknown>): ParsedExtra {
   const { sessionId, connectionId, timestamp, partnerId, ...rest } = extra ?? {};
 
   return {
-    sessionId: typeof sessionId === 'string' ? sessionId : undefined,
-    connectionId: typeof connectionId === 'string' ? connectionId : undefined,
+    sessionId: isString(sessionId) ? sessionId : undefined,
+    connectionId: isString(connectionId) ? connectionId : undefined,
     timestamp: typeof timestamp === 'number' ? timestamp : undefined,
-    partnerId: typeof partnerId === 'string' ? partnerId : undefined,
+    partnerId: isString(partnerId) ? partnerId : undefined,
     payload: Object.keys(rest).length ? rest : undefined,
   };
 }

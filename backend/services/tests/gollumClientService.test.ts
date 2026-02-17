@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { describe, expect, it, beforeEach, jest } from '@jest/globals';
-import type { ClientLogEvent } from '../../types/ClientLogEventSchema';
+import type { ClientLogEvent } from '@common/logger';
 import { forwardToGollum } from '../gollumClientService';
 
 jest.mock('axios');
@@ -8,6 +8,9 @@ jest.mock('axios');
 const createValidClientLogEvent = (overrides?: Partial<ClientLogEvent>): ClientLogEvent => ({
   action: 'EnterMeeting',
   variation: 'Success',
+  sessionId: 's1',
+  connectionId: 'c1',
+  partnerId: 'apiKey',
   clientSystemTime: Date.now(),
   source: 'https://example.com',
   guid: crypto.randomUUID(),
@@ -76,18 +79,11 @@ describe('gollumClientService', () => {
     );
   });
 
-  it('should not throw when axios.post rejects (fire-and-forget)', async () => {
-    const consoleSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
+  it('should reject when axios.post fails (route catches via attempt)', async () => {
     const event = createValidClientLogEvent();
 
     mockPost.mockRejectedValue(new Error('Network error'));
 
-    await expect(forwardToGollum(event)).resolves.not.toThrow();
-
-    expect(consoleSpy).toHaveBeenCalledWith(
-      expect.stringContaining('[logger]'),
-      expect.any(String)
-    );
-    consoleSpy.mockRestore();
+    await expect(forwardToGollum(event)).rejects.toThrow('Network error');
   });
 });
