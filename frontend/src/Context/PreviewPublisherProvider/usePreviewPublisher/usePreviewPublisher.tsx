@@ -239,7 +239,6 @@ const usePreviewPublisher = (
       videoFilter = initialBackgroundRef.current;
     }
 
-    // Omit empty deviceId so SDK uses default device (Firefox returns "" before permission).
     const publisherOptions: PublisherProperties = {
       insertDefaultUI: false,
       videoFilter,
