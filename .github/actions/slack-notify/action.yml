@@ -24,8 +24,8 @@ runs:
             "text": "Vera Deployment GHA Job",
             "attachments": [
               {
-                "color": "${{ inputs.color }}",
-                "text": "${{ inputs.message }}"
+                "color": ${{ toJson(inputs.color) }},
+                "text": ${{ toJson(inputs.message) }}
               }
             ]
           }

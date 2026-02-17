@@ -54,6 +54,9 @@ jobs:
           echo "Removal from forked repositories is not allowed."
           exit 1
 
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
       - name: Install VCR CLI
         uses: ./.github/actions/install-vcr-cli
 
