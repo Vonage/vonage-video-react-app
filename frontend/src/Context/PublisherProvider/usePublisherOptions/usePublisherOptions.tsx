@@ -37,6 +37,11 @@ const usePublisherOptions = (): PublisherProperties | null => {
   const videoSource = useDeviceId('videoinput');
   const audioSource = useDeviceId('audioinput');
 
+  // Read storage outside getOptions so these values are in the dependency array.
+  // When user toggles audio/video, storage updates and triggers re-render; options must recompute.
+  const isAudioDisabled = getStorageItem(STORAGE_KEYS.AUDIO_SOURCE_ENABLED) === 'false';
+  const isVideoDisabled = getStorageItem(STORAGE_KEYS.VIDEO_SOURCE_ENABLED) === 'false';
+
   const getOptions = useStableCallback(() => {
     const initials = getInitials(name);
 
@@ -47,8 +52,6 @@ const usePublisherOptions = (): PublisherProperties | null => {
 
     const videoFilter: VideoFilter | undefined =
       backgroundFilter && hasMediaProcessorSupport() ? backgroundFilter : undefined;
-
-    const isVideoDisabled = getStorageItem(STORAGE_KEYS.VIDEO_SOURCE_ENABLED) === 'false';
 
     // Audio: always request when allowed. The SDK does not acquire microphone when publishAudio is
     // false, so publishAudio(true) later would fail. The initial mute is applied in usePublisher
@@ -89,6 +92,8 @@ const usePublisherOptions = (): PublisherProperties | null => {
       publishCaptions,
       publishVideo,
       videoSource,
+      isAudioDisabled,
+      isVideoDisabled,
     ]
   );
 };
