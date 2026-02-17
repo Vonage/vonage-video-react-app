@@ -24,9 +24,15 @@ function syncMediaDevicesInfo(this: DevicesAPI['actions']) {
 
           if (isCanceled()) return;
 
+          // Exclude devices with empty deviceId.
+          // Passing "" to getUserMedia causes OT_CONSTRAINTS_NOT_SATISFIED.
+          const usableMediaDeviceInfo = mediaDeviceInfo.filter(
+            (d) => d.deviceId && d.deviceId.trim()
+          );
+
           store.setState((state) => ({
             ...state,
-            mediaDeviceInfo,
+            mediaDeviceInfo: usableMediaDeviceInfo,
           }));
 
           const state = store.getState();
@@ -46,7 +52,7 @@ function syncMediaDevicesInfo(this: DevicesAPI['actions']) {
             void attempt(() => setVonageAudioOutputDevice(updates.audiooutput!));
           }
 
-          resolve(mediaDeviceInfo);
+          resolve(usableMediaDeviceInfo);
         } catch (error) {
           reject(error ?? new Error('Failed to sync media devices info'));
         }

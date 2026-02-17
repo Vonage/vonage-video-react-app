@@ -244,8 +244,8 @@ const usePreviewPublisher = (
       insertDefaultUI: false,
       videoFilter,
       resolution: defaultResolution,
-      audioSource: audioSourceId || undefined,
-      videoSource: videoSourceId || undefined,
+      audioSource: audioSourceId,
+      videoSource: videoSourceId,
     };
 
     publisherRef.current = initPublisher(undefined, publisherOptions, (err: unknown) => {
