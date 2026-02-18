@@ -1,7 +1,6 @@
 import { ReactElement } from 'react';
 import Box from '@ui/Box';
 import Typography from '@ui/Typography';
-import useTheme from '@ui/theme';
 
 export type NameDisplayProps = {
   containerWidth: number;
@@ -18,19 +17,12 @@ export type NameDisplayProps = {
  * @returns {ReactElement} The NameDisplay component.
  */
 const NameDisplay = ({ name, containerWidth }: NameDisplayProps): ReactElement => {
-  const theme = useTheme();
   const safeMaxWidth =
     typeof containerWidth === 'number' && Number.isFinite(containerWidth) ? containerWidth : 0;
   return (
     <Box
-      sx={{
-        position: 'absolute',
-        bottom: '10px',
-        left: '10px',
-        overflow: 'hidden',
-        textOverflow: 'ellipsis',
-        whiteSpace: 'nowrap',
-        color: theme.colors.accent,
+      className="absolute bottom-2.5 left-2.5 overflow-hidden text-ellipsis whitespace-nowrap bg-vera-dark-grey-opacity text-vera-accent rounded-vera-medium px-2 py-1"
+      style={{
         maxWidth: Math.max(0, safeMaxWidth - 32),
       }}
     >
