@@ -17,7 +17,7 @@ import useStableCallback from '@web/hooks/useStableCallback';
  * @returns {PublisherProperties | null} publisher properties object
  */
 
-const usePublisherOptions = (): PublisherProperties | null => {
+const usePublisherOptions = (): PublisherProperties => {
   const { user } = useUserContext();
 
   const defaultResolution = appConfig$.use.select(

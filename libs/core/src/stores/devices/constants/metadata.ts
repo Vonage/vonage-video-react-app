@@ -16,7 +16,15 @@ const metadata = () => {
     hasDeviceChangeCapability:
       typeof globalThis.navigator.mediaDevices?.ondevicechange !== 'undefined',
 
+    /**
+     * This promise is used to track the ongoing loading of media devices, to prevent multiple simultaneous calls to getMediaDevicesInfo, which could cause race conditions
+     */
     loadingMediaDevices: null as null | CancelablePromise<MediaDeviceInfoJSON[]>,
+
+    /**
+     * allows us to delay syncs and queries until permissions are reviewed.
+     */
+    permissionsRequests: null as unknown as Promise<void>,
 
     /**
      * bounded vanilla getUserMedia function

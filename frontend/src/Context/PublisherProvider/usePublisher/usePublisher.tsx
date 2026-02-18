@@ -54,6 +54,7 @@ export type PublisherContextType = {
   toggleVideo: () => void;
   changeBackground: (backgroundSelected: string) => void;
   unpublish: () => void;
+  publisherOptions: PublisherProperties;
 };
 
 export type PublisherContextInitialValue = Partial<
@@ -552,6 +553,7 @@ const usePublisher = (initialValue: PublisherContextInitialValue = {}): Publishe
     toggleVideo,
     changeBackground,
     unpublish,
+    publisherOptions,
   };
 };
 export default usePublisher;

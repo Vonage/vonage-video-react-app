@@ -2,6 +2,7 @@ import { setAudioOutputDevice as setVonageAudioOutputDevice } from '@vonage/clie
 import debounce from '@common/execution/debounce';
 import { assertDevicesAPI } from '../../assertions';
 import { attempt } from '@common/execution';
+import isFirefox from '@web/platform/isFirefox';
 
 /**
  * Avoid money patching getUserMedia in non browser environment, like test or server side rendering
@@ -19,15 +20,41 @@ function setupDeviceStore(api: unknown) {
     return;
   }
 
+  const meta = api.getMetadata();
+  const __getUserMedia = globalThis.navigator.mediaDevices.getUserMedia;
+  const shouldMonkeyPatchGetUserMedia = isBrowserEnvironment && __getUserMedia;
+
   const abortController = new AbortController();
 
   void attempt(() => {
     void setVonageAudioOutputDevice(api.getState().audiooutput!);
   });
 
-  const syncMediaDevicesInfoDebounced = debounce(() => {
+  const syncMediaDevicesInfoDebounced = debounce(async () => {
+    await meta.permissionsRequests;
+
     void api.actions.syncMediaDevicesInfo().catch(() => {});
   }, 10);
+
+  meta.permissionsRequests = isFirefox()
+    ? navigator.mediaDevices.enumerateDevices().then((devices) => {
+        if (abortController.signal.aborted) {
+          throw new Error('aborting enumerateDevices query');
+        }
+
+        const hasLabels = devices.some((device) => device.label);
+        if (hasLabels) return;
+
+        //we should request permissions to be able to see the devices labels.
+        return navigator.mediaDevices.getUserMedia({ audio: true, video: true }).then((stream) => {
+          stream.getTracks().forEach((track) => track.stop());
+        });
+      })
+    : Promise.resolve();
+
+  void meta.permissionsRequests.then(() => {
+    syncMediaDevicesInfoDebounced();
+  });
 
   // listen for permission changes to resync devices when granted
   void Promise.allSettled(
@@ -40,11 +67,11 @@ function setupDeviceStore(api: unknown) {
           },
           abortController
         );
+
+        return status;
       });
     })
-  ).finally(() => {
-    syncMediaDevicesInfoDebounced();
-  });
+  );
 
   // keep all devices synced on devicechange event
   globalThis.navigator.mediaDevices.addEventListener(
@@ -60,15 +87,11 @@ function setupDeviceStore(api: unknown) {
     'visibilitychange',
     () => {
       if (document.visibilityState === 'visible') {
-        void api.actions.syncMediaDevicesInfo();
+        syncMediaDevicesInfoDebounced();
       }
     },
     abortController
   );
-
-  const meta = api.getMetadata();
-  const __getUserMedia = globalThis.navigator.mediaDevices.getUserMedia;
-  const shouldMonkeyPatchGetUserMedia = isBrowserEnvironment && __getUserMedia;
 
   // make accessible to the actions the vanilla getUserMedia function
   meta.__getUserMedia = __getUserMedia.bind(navigator.mediaDevices);
