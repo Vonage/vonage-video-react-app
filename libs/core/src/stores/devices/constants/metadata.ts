@@ -18,9 +18,10 @@ const metadata = () => {
 
     loadingMediaDevices: null as null | CancelablePromise<MediaDeviceInfoJSON[]>,
 
-    // temporary backup for the local storage restored value
-    // localstorage value needs to be confirmed against actual available devices
-    restoredSelection: new Map<MediaDeviceKind, MediaDeviceInfoJSON>(),
+    /**
+     * bounded vanilla getUserMedia function
+     */
+    __getUserMedia: undefined as typeof globalThis.navigator.mediaDevices.getUserMedia | undefined,
   };
 
   markDevicesApiMetadata(meta);

@@ -15,12 +15,15 @@ const getMediaDevicesInfo = async (): Promise<MediaDeviceInfoJSON[]> => {
       // native MediaDeviceInfo objects have methods and properties that may not be serializable, or work well when destructured,
       // so we create plain objects with the same properties.
       navigator.mediaDevices.enumerateDevices().then((devices) =>
-        devices.map((device) => ({
-          deviceId: device.deviceId,
-          kind: device.kind,
-          label: device.label,
-          groupId: device.groupId,
-        }))
+        devices
+          .map((device) => ({
+            deviceId: device.deviceId,
+            kind: device.kind,
+            label: device.label,
+            groupId: device.groupId,
+          }))
+          // Filter out devices with empty deviceId (e.g., Firefox before permission is granted)
+          .filter((device) => device.deviceId)
       ),
     {
       delayMs: 100,

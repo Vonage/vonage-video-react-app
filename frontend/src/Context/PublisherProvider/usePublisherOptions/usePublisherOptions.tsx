@@ -37,6 +37,9 @@ const usePublisherOptions = (): PublisherProperties | null => {
   const videoSource = useDeviceId('videoinput');
   const audioSource = useDeviceId('audioinput');
 
+  const isAudioEnabled = getStorageItem(STORAGE_KEYS.AUDIO_SOURCE_ENABLED) !== 'false';
+  const isVideoEnabled = getStorageItem(STORAGE_KEYS.VIDEO_SOURCE_ENABLED) !== 'false';
+
   const getOptions = useStableCallback(() => {
     const initials = getInitials(name);
 
@@ -48,9 +51,6 @@ const usePublisherOptions = (): PublisherProperties | null => {
     const videoFilter: VideoFilter | undefined =
       backgroundFilter && hasMediaProcessorSupport() ? backgroundFilter : undefined;
 
-    const isAudioDisabled = getStorageItem(STORAGE_KEYS.AUDIO_SOURCE_ENABLED) === 'false';
-    const isVideoDisabled = getStorageItem(STORAGE_KEYS.VIDEO_SOURCE_ENABLED) === 'false';
-
     const options = {
       audioFallback: { publisher: true },
       audioFilter,
@@ -58,9 +58,9 @@ const usePublisherOptions = (): PublisherProperties | null => {
       initials,
       insertDefaultUI: false,
       name,
-      publishAudio: allowAudioOnJoin && publishAudio && !isAudioDisabled,
+      publishAudio: allowAudioOnJoin && publishAudio && isAudioEnabled,
       publishCaptions,
-      publishVideo: allowVideoOnJoin && publishVideo && !isVideoDisabled,
+      publishVideo: allowVideoOnJoin && publishVideo && isVideoEnabled,
       resolution: defaultResolution,
       videoFilter,
       videoSource,
@@ -85,6 +85,8 @@ const usePublisherOptions = (): PublisherProperties | null => {
       publishCaptions,
       publishVideo,
       videoSource,
+      isAudioEnabled,
+      isVideoEnabled,
     ]
   );
 };

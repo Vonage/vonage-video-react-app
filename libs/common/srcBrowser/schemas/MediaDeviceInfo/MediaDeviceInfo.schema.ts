@@ -7,7 +7,7 @@ export type MediaDeviceInfoJSON = Omit<MediaDeviceInfo, 'toJSON'>;
  * Native browser MediaDeviceInfo schema
  */
 export const MediaDeviceInfoJSONSchema: z.ZodType<MediaDeviceInfoJSON> = z.looseObject({
-  deviceId: z.string(),
+  deviceId: z.string().min(1, 'deviceId cannot be empty'),
   kind: DeviceKindSchema,
   label: z.string(),
   groupId: z.string(),

@@ -2,6 +2,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import SpeakingDetector from './speakingDetector';
 import { waitForEvent } from '../async';
 import { setupWindowNavigatorMock } from '@web-test/fixtures';
+import { mediaDevices$ } from '@core/stores';
 
 const mockCreateMediaStreamSource = vi.fn(() => ({ connect: vi.fn(), disconnect: vi.fn() }));
 
@@ -42,8 +43,11 @@ beforeEach(() => {
           groupId: 'group1',
         } as MediaDeviceInfo,
       ]),
+      addEventListener: vi.fn(),
     },
   });
+
+  mediaDevices$.reset();
 });
 
 describe('SpeakingDetector', () => {
