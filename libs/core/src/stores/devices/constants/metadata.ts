@@ -1,4 +1,4 @@
-import type CancelablePromise from 'easy-cancelable-promise';
+import CancelablePromise from 'easy-cancelable-promise';
 import type { MediaDeviceInfoJSON } from '@web/types';
 import { markDevicesApiMetadata } from '../assertions';
 import { isSinkIdSupported } from '@web/platform';
@@ -24,10 +24,10 @@ const metadata = () => {
     /**
      * allows us to delay syncs and queries until permissions are reviewed.
      */
-    permissionsRequests: null as unknown as Promise<void>,
+    permissionsRequests: CancelablePromise.resolve(),
 
     /**
-     * bounded vanilla getUserMedia function
+     * bound vanilla getUserMedia function
      */
     __getUserMedia: undefined as typeof globalThis.navigator.mediaDevices.getUserMedia | undefined,
   };

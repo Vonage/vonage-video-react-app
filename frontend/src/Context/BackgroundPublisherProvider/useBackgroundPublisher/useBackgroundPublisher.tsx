@@ -19,6 +19,7 @@ import mediaDevices$ from '@core/stores/devices';
 import useSyncPublisherDevices from '@Context/PublisherProvider/usePublisher/hooks/useSyncPublisherDevices';
 import { getStorageItem, STORAGE_KEYS } from '@utils/storage';
 import attempt from '@common/execution/attempt/attempt';
+import { useMountEffect } from '@web/hooks';
 
 export type BackgroundPublisherContextType = {
   isPublishing: boolean;
@@ -308,6 +309,12 @@ const useBackgroundPublisher = (
     },
     [addCustomImage, handleBackgroundChange]
   );
+
+  useMountEffect(() => {
+    return () => {
+      destroyBackgroundPublisher();
+    };
+  });
 
   return {
     initBackgroundLocalPublisher,

@@ -21,6 +21,7 @@ import mediaDevices$ from '@core/stores/devices';
 import useSyncPublisherDevices from '@Context/PublisherProvider/usePublisher/hooks/useSyncPublisherDevices/useSyncPublisherDevices';
 import waitUntilPlaying from '@utils/waitUntilPlaying';
 import { attempt } from '@common/execution';
+import { useMountEffect } from '@web/hooks';
 
 type PublisherVideoElementCreatedEvent = Event<'videoElementCreated', Publisher> & {
   element: HTMLVideoElement | HTMLObjectElement;
@@ -319,6 +320,12 @@ const usePreviewPublisher = (
       }));
     }
   };
+
+  useMountEffect(() => {
+    return () => {
+      destroyPublisher();
+    };
+  });
 
   return {
     isAudioEnabled,

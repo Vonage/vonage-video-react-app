@@ -104,7 +104,6 @@ const usePublisher = (initialValue: PublisherContextInitialValue = {}): Publishe
 
   const [isPublishing, setIsPublishing] = useState(initialValue?.isPublishing ?? false);
 
-  const publisherOptions = usePublisherOptions();
   const [isForceMuted, setIsForceMuted] = useState<boolean>(initialValue?.isForceMuted ?? false);
 
   const [isVideoEnabled, setIsVideoEnabled] = useState<boolean>(
@@ -114,6 +113,8 @@ const usePublisher = (initialValue: PublisherContextInitialValue = {}): Publishe
   const [isAudioEnabled, setIsAudioEnabled] = useState<boolean>(
     initialValue?.isAudioEnabled ?? getStorageItem(STORAGE_KEYS.AUDIO_SOURCE_ENABLED) !== 'false'
   );
+
+  const publisherOptions = usePublisherOptions({ isAudioEnabled, isVideoEnabled });
 
   const [stream, setStream] = useState<Stream | null>(initialValue?.stream ?? null);
 
@@ -151,15 +152,6 @@ const usePublisher = (initialValue: PublisherContextInitialValue = {}): Publishe
       setPublishingError(accessDeniedError);
     }
   }, [deviceAccess, t]);
-
-  useEffect(() => {
-    if (!publisherOptions) {
-      return;
-    }
-
-    setIsVideoEnabled(!!publisherOptions.publishVideo);
-    setIsAudioEnabled(!!publisherOptions.publishAudio);
-  }, [publisherOptions]);
 
   reconnectingRef.current = reconnecting === true;
 

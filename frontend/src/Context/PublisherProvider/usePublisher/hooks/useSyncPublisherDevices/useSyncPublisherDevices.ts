@@ -21,9 +21,14 @@ const useSyncPublisherDevices = (
       args.setIsVideoEnabled
         ? mediaDevices$.subscribe(
             ({ videoinput }) => videoinput,
-            (input) => {
+            async (input) => {
               const didChanged = publisherRef.current?.getVideoSource()?.deviceId !== input;
               if (didChanged) attempt(() => publisherRef.current?.setVideoSource(input!));
+
+              const { permissionsRequests } = mediaDevices$.getMetadata();
+              if (permissionsRequests.status === 'pending') {
+                await permissionsRequests;
+              }
 
               if (hasDevices('videoinput')) return;
               args.setIsVideoEnabled?.(false);
@@ -37,9 +42,14 @@ const useSyncPublisherDevices = (
       args?.setIsAudioEnabled
         ? mediaDevices$.subscribe(
             ({ audioinput }) => audioinput,
-            (input) => {
+            async (input) => {
               const didChanged = publisherRef.current?.getAudioSource()?.id !== input;
               if (didChanged) attempt(() => publisherRef.current?.setAudioSource(input!));
+
+              const { permissionsRequests } = mediaDevices$.getMetadata();
+              if (permissionsRequests.status === 'pending') {
+                await permissionsRequests;
+              }
 
               if (hasDevices('audioinput')) return;
               args.setIsAudioEnabled?.(false);

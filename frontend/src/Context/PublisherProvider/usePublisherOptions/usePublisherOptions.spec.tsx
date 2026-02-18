@@ -3,7 +3,6 @@ import { renderHook as renderHookBase, waitFor } from '@testing-library/react';
 import OT from '@vonage/client-sdk-video';
 import localStorageMock from '@utils/mockData/localStorageMock';
 import mediaDevices$ from '@core/stores/devices';
-import { setStorageItem, STORAGE_KEYS } from '@utils/storage';
 import { makeTestProvider, providers, ProviderOptions } from '@test/providers';
 import makeMediaDeviceInfos from '@web-test/fixtures/makeMediaDeviceInfos';
 import { setupWindowNavigatorMock } from '@web-test/fixtures';
@@ -47,7 +46,9 @@ describe('usePublisherOptions', () => {
 
   it('should use default settings', async () => {
     vi.spyOn(OT, 'hasMediaProcessorSupport').mockReturnValue(true);
-    const { result } = renderHook(() => usePublisherOptions());
+    const { result } = renderHook(() =>
+      usePublisherOptions({ isAudioEnabled: false, isVideoEnabled: false })
+    );
     await waitFor(() => {
       expect(result.current).toEqual({
         resolution: '1280x720',
@@ -72,7 +73,9 @@ describe('usePublisherOptions', () => {
 
   it('should not have advanced noise suppression if not supported by browser', async () => {
     vi.spyOn(OT, 'hasMediaProcessorSupport').mockReturnValue(false);
-    const { result } = renderHook(() => usePublisherOptions());
+    const { result } = renderHook(() =>
+      usePublisherOptions({ isAudioEnabled: true, isVideoEnabled: true })
+    );
 
     await waitFor(() => {
       expect(result.current?.audioFilter).toBe(undefined);
@@ -93,25 +96,28 @@ describe('usePublisherOptions', () => {
       videoinput: videoDevice.deviceId,
     }));
 
-    const { result } = renderHook(() => usePublisherOptions(), {
-      userContext: {
-        value: {
-          defaultSettings: {
-            publishAudio: true,
-            publishVideo: true,
-            name: 'Foo Bar',
-            backgroundFilter: {
-              type: 'backgroundBlur',
-              blurStrength: 'high',
+    const { result } = renderHook(
+      () => usePublisherOptions({ isAudioEnabled: true, isVideoEnabled: true }),
+      {
+        userContext: {
+          value: {
+            defaultSettings: {
+              publishAudio: true,
+              publishVideo: true,
+              name: 'Foo Bar',
+              backgroundFilter: {
+                type: 'backgroundBlur',
+                blurStrength: 'high',
+              },
+              noiseSuppression: false,
+              audioSource: audioDevice.deviceId,
+              videoSource: videoDevice.deviceId,
+              publishCaptions: true,
             },
-            noiseSuppression: false,
-            audioSource: audioDevice.deviceId,
-            videoSource: videoDevice.deviceId,
-            publishCaptions: true,
           },
         },
-      },
-    });
+      }
+    );
 
     await waitFor(() => {
       expect(result.current).toEqual({
@@ -138,15 +144,18 @@ describe('usePublisherOptions', () => {
 
   describe('configurable features', () => {
     it('should disable audio publishing when allowAudioOnJoin is false', async () => {
-      const { result } = renderHook(() => usePublisherOptions(), {
-        appConfigContext: {
-          value: {
-            audioSettings: {
-              allowAudioOnJoin: false,
+      const { result } = renderHook(
+        () => usePublisherOptions({ isAudioEnabled: true, isVideoEnabled: true }),
+        {
+          appConfigContext: {
+            value: {
+              audioSettings: {
+                allowAudioOnJoin: false,
+              },
             },
           },
-        },
-      });
+        }
+      );
 
       await waitFor(() => {
         expect(result.current?.publishAudio).toBe(false);
@@ -154,15 +163,18 @@ describe('usePublisherOptions', () => {
     });
 
     it('should disable video publishing when allowVideoOnJoin is false', async () => {
-      const { result } = renderHook(() => usePublisherOptions(), {
-        appConfigContext: {
-          value: {
-            audioSettings: {
-              allowAudioOnJoin: false,
+      const { result } = renderHook(
+        () => usePublisherOptions({ isAudioEnabled: true, isVideoEnabled: true }),
+        {
+          appConfigContext: {
+            value: {
+              videoSettings: {
+                allowVideoOnJoin: false,
+              },
             },
           },
-        },
-      });
+        }
+      );
 
       await waitFor(() => {
         expect(result.current?.publishVideo).toBe(false);
@@ -170,15 +182,18 @@ describe('usePublisherOptions', () => {
     });
 
     it('should configure resolution from config', async () => {
-      const { result } = renderHook(() => usePublisherOptions(), {
-        appConfigContext: {
-          value: {
-            videoSettings: {
-              defaultResolution: '640x480',
+      const { result } = renderHook(
+        () => usePublisherOptions({ isAudioEnabled: true, isVideoEnabled: true }),
+        {
+          appConfigContext: {
+            value: {
+              videoSettings: {
+                defaultResolution: '640x480',
+              },
             },
           },
-        },
-      });
+        }
+      );
 
       await waitFor(() => {
         expect(result.current?.resolution).toBe('640x480');
@@ -186,30 +201,31 @@ describe('usePublisherOptions', () => {
     });
   });
 
-  it('should disable audio and video from storage options', async () => {
+  it('should disable audio and video based on isAudioEnabled and isVideoEnabled params', async () => {
     vi.spyOn(OT, 'hasMediaProcessorSupport').mockReturnValue(true);
-    setStorageItem(STORAGE_KEYS.AUDIO_SOURCE_ENABLED, 'false');
-    setStorageItem(STORAGE_KEYS.VIDEO_SOURCE_ENABLED, 'true');
 
-    const { result } = renderHook(() => usePublisherOptions(), {
-      userContext: {
-        value: {
-          defaultSettings: {
-            publishAudio: true,
-            publishVideo: true,
-            name: 'Foo Bar',
-            backgroundFilter: {
-              type: 'backgroundBlur',
-              blurStrength: 'high',
+    const { result } = renderHook(
+      () => usePublisherOptions({ isAudioEnabled: false, isVideoEnabled: true }),
+      {
+        userContext: {
+          value: {
+            defaultSettings: {
+              publishAudio: true,
+              publishVideo: true,
+              name: 'Foo Bar',
+              backgroundFilter: {
+                type: 'backgroundBlur',
+                blurStrength: 'high',
+              },
+              noiseSuppression: false,
+              audioSource: audioDevice.deviceId,
+              videoSource: videoDevice.deviceId,
+              publishCaptions: true,
             },
-            noiseSuppression: false,
-            audioSource: audioDevice.deviceId,
-            videoSource: videoDevice.deviceId,
-            publishCaptions: true,
           },
         },
-      },
-    });
+      }
+    );
 
     await waitFor(() => {
       expect(result.current?.publishAudio).toBe(false);
