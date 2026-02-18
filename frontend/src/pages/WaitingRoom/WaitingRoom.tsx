@@ -1,4 +1,4 @@
-import { useState, useEffect, MouseEvent, TouchEvent, FC } from 'react';
+import { useState, useEffect, MouseEvent, TouchEvent, FC, useEffectEvent } from 'react';
 import Box from '@ui/Box';
 import PageLayout from '@ui/PageLayout';
 import Banner from '@components/Banner';
@@ -15,6 +15,8 @@ import backgroundEffectsDialog$ from '../../Context/BackgroundEffectsDialog';
 import precallNetworkTestDialog$ from '@Context/PrecallNetworkTestDialog';
 import appConfig$ from '@stores/appConfig';
 import { BoxProps } from '@mui/material';
+import VideoContainerSkeleton from '@components/WaitingRoom/VideoContainer/VideoContainer.skeleton';
+import UsernameInputSkeleton from '@components/WaitingRoom/UserNameInput/UserNameInput.skeleton';
 
 type WaitingRoomProps = Omit<BoxProps, 'sx'>;
 
@@ -34,7 +36,7 @@ type WaitingRoomProps = Omit<BoxProps, 'sx'>;
  * @returns {ReactElement} - The waiting room.
  */
 const WaitingRoom: FC<WaitingRoomProps> = () => {
-  const { initLocalPublisher, publisher, accessStatus, destroyPublisher } =
+  const { initLocalPublisher, publisher, accessStatus, destroyPublisher, isVideoLoading } =
     usePreviewPublisherContext();
 
   const { initBackgroundLocalPublisher, publisher: backgroundPublisher } =
@@ -50,7 +52,7 @@ const WaitingRoom: FC<WaitingRoomProps> = () => {
     ({ waitingRoomSettings }) => waitingRoomSettings.allowDeviceSelection
   );
 
-  useEffect(() => {
+  const stableInitLocalPublisher = useEffectEvent(() => {
     if (!publisher) {
       initLocalPublisher();
     }
@@ -61,20 +63,17 @@ const WaitingRoom: FC<WaitingRoomProps> = () => {
         destroyPublisher();
       }
     };
-  }, [initLocalPublisher, publisher, destroyPublisher]);
+  });
+
+  useEffect(() => {
+    return stableInitLocalPublisher();
+  }, [publisher]);
 
   useEffect(() => {
     if (!backgroundPublisher) {
       initBackgroundLocalPublisher();
     }
   }, [initBackgroundLocalPublisher, backgroundPublisher]);
-
-  // After changing device permissions, reload the page to reflect the device's permission change.
-  useEffect(() => {
-    if (accessStatus === DEVICE_ACCESS_STATUS.ACCESS_CHANGED) {
-      window.location.reload();
-    }
-  }, [accessStatus]);
 
   const handleAudioInputOpen = (
     event: MouseEvent<HTMLButtonElement> | TouchEvent<HTMLButtonElement>
@@ -104,6 +103,9 @@ const WaitingRoom: FC<WaitingRoomProps> = () => {
     setOpenVideoInput(false);
   };
 
+  const isRoomReady =
+    allowDeviceSelection && accessStatus === DEVICE_ACCESS_STATUS.ACCEPTED && !isVideoLoading;
+
   return (
     <backgroundEffectsDialog$.Provider>
       <precallNetworkTestDialog$.Provider>
@@ -114,29 +116,38 @@ const WaitingRoom: FC<WaitingRoomProps> = () => {
             </PageLayout.Banner>
 
             <PageLayout.Left>
-              <Box className="flex-col sm:inline-flex h-auto sm:h-[400px] animate-fade-in">
-                <VideoContainer username={username} />
-                {allowDeviceSelection && accessStatus === DEVICE_ACCESS_STATUS.ACCEPTED && (
-                  <ControlPanel
-                    handleAudioInputOpen={handleAudioInputOpen}
-                    handleVideoInputOpen={handleVideoInputOpen}
-                    handleAudioOutputOpen={handleAudioOutputOpen}
-                    handleClose={handleClose}
-                    openAudioInput={openAudioInput}
-                    openVideoInput={openVideoInput}
-                    openAudioOutput={openAudioOutput}
-                    anchorEl={anchorEl}
-                  />
+              <Box className="relative flex flex-col sm:inline-flex h-auto sm:h-[400px] animate-fade-in">
+                {isRoomReady && (
+                  <>
+                    <VideoContainer username={username} />
+
+                    <ControlPanel
+                      handleAudioInputOpen={handleAudioInputOpen}
+                      handleVideoInputOpen={handleVideoInputOpen}
+                      handleAudioOutputOpen={handleAudioOutputOpen}
+                      handleClose={handleClose}
+                      openAudioInput={openAudioInput}
+                      openVideoInput={openVideoInput}
+                      openAudioOutput={openAudioOutput}
+                      anchorEl={anchorEl}
+                    />
+                  </>
                 )}
+
+                {!isRoomReady && <VideoContainerSkeleton />}
               </Box>
             </PageLayout.Left>
 
             <PageLayout.Right>
-              <UsernameInput
-                className="flex-col sm:inline-flex h-auto sm:h-[400px] animate-fade-in"
-                username={username}
-                setUsername={setUsername}
-              />
+              {isRoomReady && (
+                <UsernameInput
+                  className="flex-col sm:inline-flex h-auto sm:h-[400px] animate-fade-in"
+                  username={username}
+                  setUsername={setUsername}
+                />
+              )}
+
+              {!isRoomReady && <UsernameInputSkeleton />}
             </PageLayout.Right>
 
             <PageLayout.Footer>

@@ -9,8 +9,6 @@ class ApplicationError extends Error {
 
   public statusCode: StatusCodeEnum;
 
-  public recoverable: boolean;
-
   public fallbackConfig: ApplicationErrorFallbackConfig;
 
   /**
@@ -49,7 +47,6 @@ class ApplicationError extends Error {
     this.values = state.values ?? [];
     this.fallbackConfig = state.fallbackConfig;
     this.statusCode = state.statusCode ?? StatusCodeEnum.ServerErrorInternal;
-    this.recoverable = state.recoverable ?? true;
   }
 
   /**
@@ -105,9 +102,8 @@ class ApplicationError extends Error {
     stack?: string;
     fallbackMessage?: string;
     statusCode: StatusCodeEnum;
-    recoverable: boolean;
   } => {
-    const { fallbackConfig, message, severity, stack, values, statusCode, recoverable } = this;
+    const { fallbackConfig, message, severity, stack, values, statusCode } = this;
 
     // Prevent disclosure of private sensitive info
     if (process.env.NODE_ENV === 'production') {
@@ -117,7 +113,6 @@ class ApplicationError extends Error {
         severity,
         values,
         statusCode,
-        recoverable,
       };
     }
 
@@ -128,7 +123,6 @@ class ApplicationError extends Error {
       stack,
       values,
       statusCode,
-      recoverable,
     };
   };
 }

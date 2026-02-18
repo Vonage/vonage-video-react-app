@@ -2,7 +2,7 @@ import { beforeEach, afterEach, describe, expect, it, vi } from 'vitest';
 import { renderHook as renderHookBase, act } from '@testing-library/react';
 import { Publisher, initPublisher } from '@vonage/client-sdk-video';
 import useScreenShare from '../useScreenShare';
-import { makeSessionProviderWrapper, type SessionProviderWrapperOptions } from '@test/providers';
+import { makeTestProvider, providers, ProviderOptions } from '@test/providers';
 import EventEmitter from 'events';
 import type VonageVideoClient from '../../utils/VonageVideoClient';
 import { type UserContextType } from '../../Context/user';
@@ -37,14 +37,12 @@ describe('useScreenSharing', () => {
 
   it('initializes screen sharing publisher and publishes', async () => {
     const { result } = render({
-      userOptions: {
-        userOptions: {
-          __interceptor: (context: UserContextType | null) => {
-            context!.user.defaultSettings.name = 'TestUser';
-          },
+      userContext: {
+        __interceptor: (context: UserContextType | null) => {
+          context!.user.defaultSettings.name = 'TestUser';
         },
       },
-      sessionOptions: {
+      sessionContext: {
         __interceptor: (context) => {
           if (context) {
             context.vonageVideoClient = mockVonageVideoClient as unknown as VonageVideoClient;
@@ -77,14 +75,12 @@ describe('useScreenSharing', () => {
 
   it('unpublishes screen sharing when already sharing', async () => {
     const { result } = render({
-      userOptions: {
-        userOptions: {
-          __interceptor: (context: UserContextType | null) => {
-            context!.user.defaultSettings.name = 'TestUser';
-          },
+      userContext: {
+        __interceptor: (context: UserContextType | null) => {
+          context!.user.defaultSettings.name = 'TestUser';
         },
       },
-      sessionOptions: {
+      sessionContext: {
         __interceptor: (context) => {
           if (context) {
             context.vonageVideoClient = mockVonageVideoClient as unknown as VonageVideoClient;
@@ -107,14 +103,12 @@ describe('useScreenSharing', () => {
 
   it('does not initialize publisher if session is null', async () => {
     const { result } = render({
-      userOptions: {
-        userOptions: {
-          __interceptor: (context: UserContextType | null) => {
-            context!.user.defaultSettings.name = 'TestUser';
-          },
+      userContext: {
+        __interceptor: (context: UserContextType | null) => {
+          context!.user.defaultSettings.name = 'TestUser';
         },
       },
-      sessionOptions: {
+      sessionContext: {
         __interceptor: (context) => {
           if (context) {
             context.vonageVideoClient = null;
@@ -133,10 +127,26 @@ describe('useScreenSharing', () => {
   });
 });
 
-function render(options?: SessionProviderWrapperOptions) {
-  const { SessionProviderWrapper } = makeSessionProviderWrapper(options);
+type RenderOptions = {
+  appConfigContext?: ProviderOptions['AppConfigContext'];
+  userContext?: ProviderOptions['UserContext'];
+  sessionContext?: ProviderOptions['SessionContext'];
+};
 
-  return renderHookBase(() => useScreenShare(), {
-    wrapper: SessionProviderWrapper,
-  });
+function render({ appConfigContext, userContext, sessionContext }: RenderOptions = {}) {
+  const { wrapper, ...context } = makeTestProvider(
+    [providers.appConfig, providers.user, providers.session],
+    {
+      appConfigContext,
+      userContext,
+      sessionContext,
+    }
+  );
+
+  return {
+    ...context,
+    ...renderHookBase(() => useScreenShare(), {
+      wrapper,
+    }),
+  };
 }

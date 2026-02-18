@@ -213,7 +213,7 @@ export default [
        * We already catch error because that could have been prevented by proper this rule usage
        * It will require significant refactoring to enable it though
        */
-      '@typescript-eslint/no-floating-promises': 'off',
+      '@typescript-eslint/no-floating-promises': 'error',
 
       /**
        * Avoid creating class and interface with same name

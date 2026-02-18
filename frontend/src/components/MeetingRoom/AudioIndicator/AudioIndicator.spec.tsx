@@ -2,7 +2,7 @@ import { describe, expect, it, vi, beforeEach } from 'vitest';
 import { render as renderBase, screen } from '@testing-library/react';
 import { Stream } from '@vonage/client-sdk-video';
 import AudioIndicator, { AudioIndicatorProps } from './AudioIndicator';
-import { makeSessionProviderWrapper, type SessionProviderWrapperOptions } from '@test/providers';
+import { makeTestProvider, providers, type ProviderOptions } from '@test/providers';
 import { ReactElement } from 'react';
 
 describe('AudioIndicator', () => {
@@ -33,7 +33,7 @@ describe('AudioIndicator', () => {
 
   it('renders Mic icon when participant is unmuted but not speaking', () => {
     render(<AudioIndicator {...defaultProps} />, {
-      sessionOptions: {
+      sessionContext: {
         __interceptor: (context) => {
           if (context) {
             context.forceMute = mockForceMute;
@@ -47,7 +47,7 @@ describe('AudioIndicator', () => {
 
   it('renders Mic off icon when participant is muted', () => {
     render(<AudioIndicator {...defaultProps} hasAudio={false} />, {
-      sessionOptions: {
+      sessionContext: {
         __interceptor: (context) => {
           if (context) {
             context.forceMute = mockForceMute;
@@ -60,8 +60,27 @@ describe('AudioIndicator', () => {
   });
 });
 
-function render(ui: ReactElement, options?: SessionProviderWrapperOptions) {
-  const { SessionProviderWrapper } = makeSessionProviderWrapper(options);
+type RenderOptions = {
+  appConfigContext?: ProviderOptions['AppConfigContext'];
+  userContext?: ProviderOptions['UserContext'];
+  sessionContext?: ProviderOptions['SessionContext'];
+};
 
-  return renderBase(ui, { wrapper: SessionProviderWrapper });
+function render(
+  ui: ReactElement,
+  { appConfigContext, userContext, sessionContext }: RenderOptions = {}
+) {
+  const { wrapper, ...context } = makeTestProvider(
+    [providers.appConfig, providers.user, providers.session],
+    {
+      appConfigContext,
+      userContext,
+      sessionContext,
+    }
+  );
+
+  return {
+    ...context,
+    ...renderBase(ui, { wrapper }),
+  };
 }

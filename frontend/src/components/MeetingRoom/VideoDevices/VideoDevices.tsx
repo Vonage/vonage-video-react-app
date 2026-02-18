@@ -1,20 +1,13 @@
-import { useState, useEffect, MouseEvent, ReactElement } from 'react';
-import { Device } from '@vonage/client-sdk-video';
+import { ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
 import appConfig$ from '@stores/appConfig';
 import useTheme from '@ui/theme';
-import useDevices from '@hooks/useDevices';
-import usePublisherContext from '@hooks/usePublisherContext';
-import { setStorageItem, STORAGE_KEYS } from '@utils/storage';
-import cleanAndDedupeDeviceLabels from '@utils/cleanAndDedupeDeviceLabels';
-import Box from '@ui/Box';
-import Typography from '@ui/Typography';
-import MenuList from '@ui/MenuList';
-import MenuItem from '@ui/MenuItem';
+import { Box, Typography, MenuList, MenuItem, Tooltip, BoxProps } from '@mui/material';
 import VividIcon from '@components/VividIcon';
-import Tooltip from '@ui/Tooltip';
+import { useDistinctLabelMediaDevices } from '@ui/hooks';
+import mediaDevices$ from '@core/stores/devices';
 
-export type VideoDevicesProps = {
+export type VideoDevicesProps = BoxProps & {
   handleToggle: () => void;
 };
 
@@ -26,48 +19,31 @@ export type VideoDevicesProps = {
  *  @property {() => void} handleToggle - the function that handles the toggle of video output device.
  * @returns {ReactElement | false} - the video output devices component.
  */
-const VideoDevices = ({ handleToggle }: VideoDevicesProps): ReactElement | false => {
+const VideoDevices = ({
+  handleToggle,
+  className,
+  ...boxProps
+}: VideoDevicesProps): ReactElement | false => {
   const { t } = useTranslation();
   const theme = useTheme();
-  const { isPublishing, publisher } = usePublisherContext();
 
   const allowDeviceSelection = appConfig$.use.select(
     ({ meetingRoomSettings }) => meetingRoomSettings.allowDeviceSelection
   );
 
-  const { allMediaDevices } = useDevices();
-  const [devicesAvailable, setDevicesAvailable] = useState<Device[]>([]);
-  const [options, setOptions] = useState<{ deviceId: string; label: string }[]>([]);
+  // Use store's selection as source of truth, not publisher.getVideoSource() which can be stale
+  const selectedDeviceId = mediaDevices$.useDeviceId('videoinput');
 
-  const changeVideoSource = (videoDeviceId: string) => {
-    publisher?.setVideoSource(videoDeviceId);
-    setStorageItem(STORAGE_KEYS.VIDEO_SOURCE, videoDeviceId);
-  };
+  const devicesAvailable = useDistinctLabelMediaDevices('videoinput', (devices) =>
+    devices.map((device) => ({
+      ...device,
+      label: device.label ?? t('unknown.device'),
+    }))
+  );
 
-  useEffect(() => {
-    setDevicesAvailable(allMediaDevices.videoInputDevices);
-  }, [publisher, allMediaDevices, devicesAvailable, isPublishing]);
-
-  useEffect(() => {
-    if (devicesAvailable) {
-      const cleanDevicesAvailable = cleanAndDedupeDeviceLabels(devicesAvailable);
-
-      const videoDevicesAvailable = cleanDevicesAvailable.map((availableDevice) => ({
-        deviceId: availableDevice.deviceId as string,
-        label: availableDevice.label || t('unknown.device'),
-      }));
-      setOptions(videoDevicesAvailable);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [devicesAvailable]);
-
-  const handleChangeVideoSource = (event: MouseEvent<HTMLLIElement>) => {
-    const menuItem = event.target as HTMLLIElement;
+  const handleChangeVideoSource = (deviceId: string) => {
     handleToggle();
-    const selectedDevice = options.find((device) => device.label === menuItem.textContent);
-    if (selectedDevice) {
-      changeVideoSource(selectedDevice.deviceId);
-    }
+    mediaDevices$.actions.selectDevice('videoinput', deviceId);
   };
 
   return (
@@ -81,18 +57,20 @@ const VideoDevices = ({ handleToggle }: VideoDevicesProps): ReactElement | false
             mb: 0.5,
             color: theme.colors.tertiary,
           }}
+          className={className}
+          {...boxProps}
         >
           <VividIcon name="video-line" customSize={-5} />
           <Typography sx={{ ml: 2 }}>{t('devices.video.camera.full')}</Typography>
         </Box>
         <MenuList id="split-button-menu">
-          {options.map((option) => {
-            const isSelected = option.deviceId === publisher?.getVideoSource().deviceId;
+          {devicesAvailable.map((option) => {
+            const isSelected = option.deviceId === selectedDeviceId;
             return (
               <MenuItem
                 key={option.deviceId}
                 selected={isSelected}
-                onClick={(event) => handleChangeVideoSource(event)}
+                onClick={() => handleChangeVideoSource(option.deviceId)}
                 sx={{
                   backgroundColor: 'transparent',
                   '&.Mui-selected': {

@@ -10,6 +10,7 @@ import OT, {
 import { useTranslation } from 'react-i18next';
 import { setStorageItem, STORAGE_KEYS } from '@utils/storage';
 import usePublisherQuality, { NetworkQuality } from '../usePublisherQuality/usePublisherQuality';
+import useSyncPublisherDevices from './hooks/useSyncPublisherDevices/useSyncPublisherDevices';
 import usePublisherOptions from '../usePublisherOptions';
 import useSessionContext from '../../../hooks/useSessionContext';
 import applyBackgroundFilter from '../../../utils/backgroundFilter/applyBackgroundFilter/applyBackgroundFilter';
@@ -97,7 +98,7 @@ const usePublisher = (initialValue: PublisherContextInitialValue = {}): Publishe
     HTMLVideoElement | HTMLObjectElement | null
   >(initialValue?.publisherVideoElement ?? null);
 
-  const publisherRef = useRef<Publisher | null>(null);
+  const publisherRef = useRef<Publisher | null>(initialValue.publisher ?? null);
   const quality = usePublisherQuality(publisherRef.current);
 
   const [isPublishing, setIsPublishing] = useState(initialValue?.isPublishing ?? false);
@@ -131,6 +132,9 @@ const usePublisher = (initialValue: PublisherContextInitialValue = {}): Publishe
     microphone: undefined,
     camera: undefined,
   });
+
+  // Sync publisher with selected devices from store (handles device changes and disconnections)
+  useSyncPublisherDevices(publisherRef, { setIsAudioEnabled, setIsVideoEnabled });
 
   // If we do not have audio input or video input access, we cannot publish.
   useEffect(() => {

@@ -11,7 +11,7 @@
     "prepare": "husky",
     "postinstall": "nx postinstall integration-tests",
     "generate:tokens": "npx tsx scripts/generateTokens.ts",
-    "quality-check": "nx run-many -t ts-check,lint --parallel && prettier . --check --log-level warn",
+    "quality-check": "npx tsx scripts/qualityCheck.ts",
     "build": "nx run-many -t build -p frontend backend",
     "dev": "concurrently 'nx run frontend:dev' 'nx run backend:dev'",
     "storybook": "nx storybook",
@@ -32,6 +32,7 @@
   },
   "scriptsInfo": {
     "dev": "Run both frontend and backend in development mode with hot reload",
+    "quality-check": "Run ts-check + lint + prettier check (workspace-wide by default). Optionally scope to a single Nx project: 'yarn quality-check <project>'",
     "start:backend": "Run backend server. Usage: 'yarn start:backend' (dev mode), 'yarn start:backend debug' (debug mode), 'yarn start:backend bundled' (bundled dev mode)",
     "test:backend": "Run backend tests. Usage: 'yarn test:backend' (all), 'yarn test:backend <path>' (specific), 'yarn test:backend watch <path>' (watch mode), 'yarn test:backend debug <path>' (debug mode)",
     "test:frontend": "Run frontend tests. Usage: 'yarn test:frontend' (all), 'yarn test:frontend <path>' (specific), 'yarn test:frontend watch <path>' (watch mode), 'yarn test:frontend debug <path>' (debug mode)",

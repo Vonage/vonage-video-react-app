@@ -1,9 +1,8 @@
-import { useRef, useState, useEffect, ReactElement } from 'react';
+import { useRef, useEffect, ReactElement } from 'react';
 import { VIDEO_CONTAINER_HEIGHT_WR } from '@utils/constants';
 import MicButton from '../MicButton';
 import CameraButton from '../CameraButton';
 import VideoLoading from '../VideoLoading';
-import waitUntilPlaying from '../../../utils/waitUntilPlaying';
 import useUserContext from '../../../hooks/useUserContext';
 import usePreviewPublisherContext from '../../../hooks/usePreviewPublisherContext';
 import getInitials from '../../../utils/getInitials';
@@ -32,28 +31,19 @@ export type VideoContainerProps = {
  */
 const VideoContainer = ({ username }: VideoContainerProps): ReactElement => {
   const containerRef = useRef<HTMLDivElement>(null);
-  const [isVideoLoading, setIsVideoLoading] = useState<boolean>(true);
   const [{ isOpen: isBackgroundEffectsOpen }, { open, close }] = backgroundEffectsDialog$.use();
   const [{ isOpen: isPrecallNetworkTestOpen }, { close: closePrecallTest }] =
     precallNetworkTestDialog$.use();
   const { user } = useUserContext();
-  const { publisherVideoElement, isVideoEnabled, isAudioEnabled, speechLevel } =
+  const { publisherVideoElement, isVideoEnabled, isAudioEnabled, speechLevel, isVideoLoading } =
     usePreviewPublisherContext();
   const initials = getInitials(username);
 
   useEffect(() => {
-    if (publisherVideoElement && containerRef.current && isVideoEnabled) {
-      containerRef.current.appendChild(publisherVideoElement);
-      const myVideoElement = publisherVideoElement as HTMLElement;
-      myVideoElement.classList.add('video__element');
-      // eslint-disable-next-line react-hooks/immutability
-      myVideoElement.title = 'publisher-preview';
+    if (!publisherVideoElement) return;
 
-      waitUntilPlaying(publisherVideoElement).then(() => {
-        setIsVideoLoading(false);
-      });
-    }
-  }, [publisherVideoElement, isVideoEnabled]);
+    containerRef.current!.appendChild(publisherVideoElement);
+  }, [publisherVideoElement]);
 
   return (
     <div
@@ -69,8 +59,8 @@ const VideoContainer = ({ username }: VideoContainerProps): ReactElement => {
       <div
         ref={containerRef}
         className={classNames(
-          'animate-fade-in',
           'child:mx-auto',
+          'child:animate-[fade-in_.6s_linear]',
           'child:-scale-x-100',
           'child:object-contain',
           'child:aspect-[16/9]',
@@ -79,13 +69,14 @@ const VideoContainer = ({ username }: VideoContainerProps): ReactElement => {
           'child:md:w-[585px]',
           `child:md:h-[${VIDEO_CONTAINER_HEIGHT_WR}px]`,
           'child:md:rounded-vera-large',
+          'bg-vera-secondary',
 
-          isBackgroundEffectsOpen && 'hidden',
-          'animate-fade-in',
-          { hidden: isBackgroundEffectsOpen }
+          {
+            hidden: isBackgroundEffectsOpen,
+          }
         )}
         data-video-container
-      />
+      ></div>
 
       <VignetteEffect />
 
