@@ -12,7 +12,7 @@ on:
 
 permissions:
   contents: read
-  pull-requests: read
+  pull-requests: write
   issues: write
 
 env:
@@ -103,6 +103,19 @@ jobs:
           api-secret: ${{ secrets.VCR_API_SECRET }}
           filename: vcr-dev.yml
 
+      - name: Comment PR on success
+        if: success()
+        uses: actions/github-script@v7
+        with:
+          script: |
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: ${{ steps.pr.outputs.number }},
+              body: `## ✅ Deployed to VCR\n\n**URL:** ${{ steps.deploy.outputs.instance-url }}\n\n**Commit:** \`${{ steps.pr.outputs.head_sha }}\`\n\n[View build logs](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }})`
+            });
+        continue-on-error: true
+
       - name: Slack notification on success
         uses: ./.github/actions/slack-notify
         with:
@@ -110,6 +123,19 @@ jobs:
           color: '28a745'
           message: "Vera pull request *<https://github.com/Vonage/vonage-video-react-app/pull/${{ steps.pr.outputs.number }}|${{ steps.pr.outputs.title }}>* \n with commit hash: ${{ steps.pr.outputs.head_sha }} \n is deployed to VCR \nURL: ${{ steps.deploy.outputs.instance-url }} \n*<https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}|Click here to go to build logs>* \n :large_green_circle: :large_green_circle: :large_green_circle: :large_green_circle:"
         if: success()
+        continue-on-error: true
+
+      - name: Comment PR on failure
+        if: failure()
+        uses: actions/github-script@v7
+        with:
+          script: |
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: ${{ steps.pr.outputs.number }},
+              body: `## ❌ Deployment to VCR Failed\n\n**Commit:** \`${{ steps.pr.outputs.head_sha }}\`\n\n[View build logs](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }})`
+            });
         continue-on-error: true
 
       - name: Slack notification on failure
