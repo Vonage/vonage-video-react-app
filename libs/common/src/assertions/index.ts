@@ -1,0 +1,10 @@
+export { default as assertRecord } from './assertRecord';
+export { default as isErrorLike } from './isErrorLike';
+export { default as isFunction } from './isFunction';
+export { default as isNil } from './isNil';
+export { default as isObject } from './isObject';
+export { default as isPromise } from './isPromise';
+export { default as isRecord } from './isRecord';
+export { default as isString } from './isString';
+export { default as isUndefined } from './isUndefined';
+export { default as isNotNil } from './isNotNil';

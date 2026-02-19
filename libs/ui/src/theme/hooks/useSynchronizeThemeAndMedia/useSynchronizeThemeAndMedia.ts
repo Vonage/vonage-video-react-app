@@ -2,8 +2,8 @@ import React from 'react';
 import isDarkMode from '../../helpers/isDarkMode';
 import getTokensByMode from '../../helpers/getTokensByMode';
 import type { Theme } from '@ui/theme';
-import useStableRef from '@common/hooks/useStableRef';
-import useMountEffect from '@common/hooks/useMountEffect';
+import useStableRef from '@web/hooks/useStableRef';
+import useMountEffect from '@web/hooks/useMountEffect';
 
 const VERA_DARK_MODE_CLASSES = ['vera-dark-mode', 'dark'];
 

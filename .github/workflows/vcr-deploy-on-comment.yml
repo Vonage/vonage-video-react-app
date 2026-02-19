@@ -29,7 +29,7 @@ jobs:
        github.event.issue.pull_request &&
        github.event.comment.body == 'vcr:deploy') ||
       (github.event_name == 'workflow_dispatch')
-    runs-on: [vcp-runner]
+    runs-on: ubuntu-22.04
     steps:
       - name: Load PR details
         id: pr
@@ -92,78 +92,31 @@ jobs:
           ./vcrBuild.dev.sh
 
       - name: Install VCR CLI
-        shell: bash
-        run: |
-          set -euo pipefail
-          curl --proto =https --max-redirs 0 -fsSL https://raw.githubusercontent.com/Vonage/cloud-runtime-cli/main/script/install.sh -o install.sh
-          sudo bash install.sh
-          vcr -v
+        uses: ./.github/actions/install-vcr-cli
 
       - name: Deploy vcr
         id: deploy
-        env:
-          APP_ID: ${{ secrets.APP_ID }}
-          VCR_API_KEY: ${{ secrets.VCR_API_KEY }}
-          VCR_API_SECRET: ${{ secrets.VCR_API_SECRET }}
-        run: |
-          cd backend/dist
-
-          vcr deploy --filename vcr-dev.yml \
-            --app-id "$APP_ID" \
-            --api-key "$VCR_API_KEY" \
-            --api-secret "$VCR_API_SECRET" \
-            --region aws.euw1 \
-            --graphql-endpoint https://graphql.euw1.runtime.vonage.cloud/v1/graphql \
-            --timeout=15m 2>&1 | tee deploy-vcr-logs.log
-
-          if ! grep -Fxq '| Instance has been deployed!' deploy-vcr-logs.log ; then
-            echo "Deployment failed"
-            exit 1
-          fi
-
-          INSTANCE_URL=$(grep -oE 'https://[^ ]+' deploy-vcr-logs.log | tail -1 | sed -r 's/\x1B\[[0-9;]*[mK]//g')
-
-          if [ -z "$INSTANCE_URL" ]; then
-            echo "Failed to extract instance URL"
-            exit 1
-          fi
-
-          echo "instance_url=$INSTANCE_URL" >> "$GITHUB_OUTPUT"
+        uses: ./.github/actions/deploy-vcr
+        with:
+          app-id: ${{ secrets.APP_ID }}
+          api-key: ${{ secrets.VCR_API_KEY }}
+          api-secret: ${{ secrets.VCR_API_SECRET }}
+          filename: vcr-dev.yml
 
       - name: Slack notification on success
-        uses: slackapi/slack-github-action@70cd7be8e40a46e8b0eced40b0de447bdb42f68e # v1.26.0
+        uses: ./.github/actions/slack-notify
         with:
-          channel-id: '#video-solutions-ci-notifications'
-          payload: |
-            {
-              "text": "Vera Deployment GHA Job",
-              "attachments": [
-                {
-                  "color": "28a745",
-                  "text": "Vera pull request *<https://github.com/Vonage/vonage-video-react-app/pull/${{ steps.pr.outputs.number }}|${{ steps.pr.outputs.title }}>* \n with commit hash: ${{ steps.pr.outputs.head_sha }} \n is deployed to VCR \nURL: ${{ steps.deploy.outputs.instance_url }} \n*<https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}|Click here to go to build logs>* \n :large_green_circle: :large_green_circle: :large_green_circle: :large_green_circle:"
-                }
-              ]
-            }
-        env:
-          SLACK_BOT_TOKEN: ${{ secrets.SLACK_NOTIFICATION }}
+          slack-bot-token: ${{ secrets.SLACK_NOTIFICATION }}
+          color: '28a745'
+          message: "Vera pull request *<https://github.com/Vonage/vonage-video-react-app/pull/${{ steps.pr.outputs.number }}|${{ steps.pr.outputs.title }}>* \n with commit hash: ${{ steps.pr.outputs.head_sha }} \n is deployed to VCR \nURL: ${{ steps.deploy.outputs.instance-url }} \n*<https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}|Click here to go to build logs>* \n :large_green_circle: :large_green_circle: :large_green_circle: :large_green_circle:"
         if: success()
         continue-on-error: true
 
       - name: Slack notification on failure
-        uses: slackapi/slack-github-action@70cd7be8e40a46e8b0eced40b0de447bdb42f68e # v1.26.0
+        uses: ./.github/actions/slack-notify
         with:
-          channel-id: '#video-solutions-ci-notifications'
-          payload: |
-            {
-              "text": "Vera Deployment GHA Job",
-              "attachments": [
-                {
-                  "color": "FF0000",
-                  "text": "Vera pull request *<https://github.com/Vonage/vonage-video-react-app/pull/${{ steps.pr.outputs.number }}|${{ steps.pr.outputs.title }}>* \n with commit hash: ${{ steps.pr.outputs.head_sha }} \n FAILED to deploy to VCR \n *<https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}|Click here to go to build logs>* \n :red_circle: :red_circle: :red_circle: :red_circle:"
-                }
-              ]
-            }
-        env:
-          SLACK_BOT_TOKEN: ${{ secrets.SLACK_NOTIFICATION }}
+          slack-bot-token: ${{ secrets.SLACK_NOTIFICATION }}
+          color: FF0000
+          message: "Vera pull request *<https://github.com/Vonage/vonage-video-react-app/pull/${{ steps.pr.outputs.number }}|${{ steps.pr.outputs.title }}>* \n with commit hash: ${{ steps.pr.outputs.head_sha }} \n FAILED to deploy to VCR \n *<https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}|Click here to go to build logs>* \n :red_circle: :red_circle: :red_circle: :red_circle:"
         if: failure()
         continue-on-error: true

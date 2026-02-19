@@ -7,10 +7,10 @@ import { PublisherContextType } from '@Context/PublisherProvider';
 import useSpeakingDetector from '@hooks/useSpeakingDetector';
 import usePublisherContext from '@hooks/usePublisherContext';
 import { defaultAudioDevice } from '@utils/mockData/device';
-import { AppConfigProviderWrapperOptions, makeAppConfigProviderWrapper } from '@test/providers';
+import { makeTestProvider, providers, type ProviderOptions } from '@test/providers';
 import DeviceControlButton from './DeviceControlButton';
 import enTranslations from '../../../locales/en.json';
-import mediaDevicesMock from '@common/test/mocks/mediaDevicesMock';
+import { setupWindowNavigatorMock } from '@web-test/fixtures';
 
 vi.mock('@hooks/usePublisherContext.tsx');
 vi.mock('@hooks/useSpeakingDetector.tsx');
@@ -56,7 +56,7 @@ describe('DeviceControlButton', () => {
       videoHeight: () => 720,
     }) as unknown as Publisher;
     publisherContext = {
-      publisher: null,
+      publisherContext: null,
       isPublishing: true,
       publish: vi.fn() as () => Promise<void>,
       initializeLocalPublisher: vi.fn(() => {
@@ -66,14 +66,12 @@ describe('DeviceControlButton', () => {
     mockUsePublisherContext.mockImplementation(() => publisherContext);
     mockUseSpeakingDetector.mockReturnValue(false);
 
-    Object.defineProperty(global.navigator, 'mediaDevices', {
-      writable: true,
-      value: mediaDevicesMock,
+    setupWindowNavigatorMock({
+      mediaDevices: {
+        addEventListener: vi.fn(),
+        enumerateDevices: Promise.resolve([]),
+      },
     });
-
-    vi.spyOn(mediaDevicesMock, 'addEventListener').mockImplementation(() => {});
-    vi.spyOn(mediaDevicesMock, 'removeEventListener').mockImplementation(() => {});
-    vi.spyOn(mediaDevicesMock, 'enumerateDevices').mockResolvedValue([]);
   });
 
   afterEach(() => {
@@ -123,7 +121,7 @@ describe('DeviceControlButton', () => {
           toggleBackgroundEffects={mockHandleToggleBackgroundEffects}
         />,
         {
-          appConfigOptions: {
+          appConfigContext: {
             value: {
               audioSettings: {
                 allowMicrophoneControl: false,
@@ -170,7 +168,7 @@ describe('DeviceControlButton', () => {
           toggleBackgroundEffects={mockHandleToggleBackgroundEffects}
         />,
         {
-          appConfigOptions: {
+          appConfigContext: {
             value: {
               audioSettings: {
                 allowMicrophoneControl: true,
@@ -196,13 +194,17 @@ describe('DeviceControlButton', () => {
   });
 });
 
-function render(
-  ui: ReactElement,
-  options?: {
-    appConfigOptions?: AppConfigProviderWrapperOptions;
-  }
-) {
-  const { AppConfigWrapper } = makeAppConfigProviderWrapper(options?.appConfigOptions);
+type RenderOptions = {
+  appConfigContext?: ProviderOptions['AppConfigContext'];
+};
 
-  return renderBase(ui, { ...options, wrapper: AppConfigWrapper });
+function render(ui: ReactElement, { appConfigContext }: RenderOptions = {}) {
+  const { wrapper, ...context } = makeTestProvider([providers.appConfig], {
+    appConfigContext,
+  });
+
+  return {
+    ...context,
+    ...renderBase(ui, { wrapper }),
+  };
 }

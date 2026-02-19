@@ -32,7 +32,11 @@ module.exports = (env, options) => {
       conditionNames: ['node', 'require', 'default'],
 
       alias: {
-        // '@src': path.resolve(__dirname, 'src'),
+        '@src': path.resolve(__dirname, 'src'),
+        '@common': path.resolve(__dirname, '../libs/common/src'),
+        '@node': path.resolve(__dirname, '../libs/common/srcNode'),
+        '@common-test/*': ['../libs/common/test/*'],
+        '@node-test/*': ['../libs/common/srcNode/test/*'],
       },
     },
     module: {

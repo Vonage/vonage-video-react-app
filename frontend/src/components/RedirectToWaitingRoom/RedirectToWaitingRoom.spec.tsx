@@ -11,7 +11,8 @@ vi.mock('../../env', async () => {
 });
 
 import { render } from '@testing-library/react';
-import { MemoryRouter, Route, Routes } from 'react-router-dom';
+import { Route, Routes } from 'react-router-dom';
+import MemoryRouter from '@test/RouterWrapper';
 import { ReactElement } from 'react';
 import env from '../../env';
 import RedirectToWaitingRoom from './RedirectToWaitingRoom';

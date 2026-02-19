@@ -1,7 +1,7 @@
 import { render as renderBase, screen } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 import { ReactElement } from 'react';
-import { AppConfigProviderWrapperOptions, makeAppConfigProviderWrapper } from '@test/providers';
+import { makeTestProvider, providers, type ProviderOptions } from '@test/providers';
 import ParticipantListButton from './ParticipantListButton';
 
 describe('ParticipantListButton', () => {
@@ -25,7 +25,7 @@ describe('ParticipantListButton', () => {
   });
   it('is not rendered when showParticipantList is false', () => {
     render(<ParticipantListButton handleClick={() => {}} isOpen={false} participantCount={10} />, {
-      appConfigOptions: {
+      appConfigContext: {
         value: {
           meetingRoomSettings: {
             showParticipantList: false,
@@ -38,13 +38,17 @@ describe('ParticipantListButton', () => {
   });
 });
 
-function render(
-  ui: ReactElement,
-  options?: {
-    appConfigOptions?: AppConfigProviderWrapperOptions;
-  }
-) {
-  const { AppConfigWrapper } = makeAppConfigProviderWrapper(options?.appConfigOptions);
+type RenderOptions = {
+  appConfigContext?: ProviderOptions['AppConfigContext'];
+};
 
-  return renderBase(ui, { ...options, wrapper: AppConfigWrapper });
+function render(ui: ReactElement, { appConfigContext }: RenderOptions = {}) {
+  const { wrapper, ...context } = makeTestProvider([providers.appConfig], {
+    appConfigContext,
+  });
+
+  return {
+    ...context,
+    ...renderBase(ui, { wrapper }),
+  };
 }

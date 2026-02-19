@@ -2,7 +2,7 @@ import { ChangeEvent, useRef, useState, ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
 import Box from '@mui/material/Box';
 import captureScreenshot from '../../../../../utils/captureScreenshot';
-import { isMobile } from '@utils/util';
+import { isMobile } from '@web/platform';
 import Button from '@mui/material/Button';
 import IconButton from '@mui/material/IconButton';
 import Tooltip from '@mui/material/Tooltip';

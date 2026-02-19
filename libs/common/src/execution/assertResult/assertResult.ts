@@ -1,9 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import ApplicationError from '@common/errors/ApplicationError';
-import isApplicationError from '@common/errors/assertions/isApplicationError';
 import { ApplicationErrorFallbackConfig } from '@common/errors/types';
 import isFunction from '@common/assertions/isFunction';
 import isPromise from '@common/assertions/isPromise';
+import ApplicationError, { isApplicationError } from '@common/errors';
 
 export type ErrorProps = {
   fallbackConfig: ApplicationErrorFallbackConfig;

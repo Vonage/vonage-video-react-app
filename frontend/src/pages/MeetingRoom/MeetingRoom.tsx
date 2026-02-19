@@ -23,7 +23,7 @@ import { DEVICE_ACCESS_STATUS } from '../../utils/constants';
 import type { PublishingErrorType } from '../../Context/PublisherProvider/usePublisher/usePublisher';
 import useUserContext from '../../hooks/useUserContext';
 import env from '../../env';
-import useMountEffect from '@common/hooks/useMountEffect';
+import useMountEffect from '@web/hooks/useMountEffect';
 import classNames from 'classnames';
 
 /**

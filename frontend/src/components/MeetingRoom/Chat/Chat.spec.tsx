@@ -3,7 +3,7 @@ import { cleanup, render as renderBase, screen, within } from '@testing-library/
 import { ReactElement } from 'react';
 import Chat from './Chat';
 import { ChatMessageType } from '../../../types/chat';
-import { makeSessionProviderWrapper, type SessionProviderWrapperOptions } from '@test/providers';
+import { makeTestProvider, providers, ProviderOptions } from '@test/providers';
 import { SessionContextType } from '../../../Context/SessionProvider/session';
 
 const testMessages: ChatMessageType[] = [
@@ -36,7 +36,7 @@ describe('Chat', () => {
 
   it('should display messages', () => {
     render(<Chat handleClose={() => {}} isOpen />, {
-      sessionOptions: {
+      sessionContext: {
         __interceptor: (context: SessionContextType) => {
           if (context) {
             context.messages = testMessages;
@@ -58,8 +58,27 @@ describe('Chat', () => {
   });
 });
 
-function render(ui: ReactElement, options?: SessionProviderWrapperOptions) {
-  const { SessionProviderWrapper } = makeSessionProviderWrapper(options);
+type RenderOptions = {
+  sessionContext?: ProviderOptions['SessionContext'];
+  appConfigContext?: ProviderOptions['AppConfigContext'];
+  userContext?: ProviderOptions['UserContext'];
+};
 
-  return renderBase(ui, { wrapper: SessionProviderWrapper });
+function render(
+  ui: ReactElement,
+  { sessionContext, appConfigContext, userContext }: RenderOptions = {}
+) {
+  const { wrapper, ...context } = makeTestProvider(
+    [providers.appConfig, providers.user, providers.session],
+    {
+      sessionContext,
+      appConfigContext,
+      userContext,
+    }
+  );
+
+  return {
+    ...context,
+    ...renderBase(ui, { wrapper }),
+  };
 }

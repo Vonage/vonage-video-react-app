@@ -1,19 +1,22 @@
-import { DeepPartial } from '@app-types/index';
-import appConfig, { type AppConfig } from '@stores/appConfig';
+import { DeepPartial } from '@app-types';
+import appConfig from '@stores/appConfig';
 import defaultAppConfig from '@stores/appConfig/helpers/defaultAppConfig';
 import mergeAppConfigs from '@stores/appConfig/helpers/mergeAppConfigs';
 
-export type AppConfigProviderWrapperOptions = {
-  value?: DeepPartial<AppConfig>;
+export type AppConfigProviderWrapperOptions = Omit<
+  Parameters<typeof appConfig.Provider.makeProviderWrapper>[0],
+  'value'
+> & {
+  value?: DeepPartial<typeof defaultAppConfig>;
 };
 
 /**
  * Creates wrapper for the AppConfigProvider context.
  * Allows overriding context values via options and accessing the context value.
- * @param {object} appConfigOptions - The wrapper options.
+ * @param {object} options - The wrapper options.
  * @returns {object} The AppConfigProvider wrapper and context getter.
  */
-function makeAppConfigProviderWrapper(appConfigOptions?: AppConfigProviderWrapperOptions) {
+function makeAppConfigProviderWrapper(options: AppConfigProviderWrapperOptions = {}) {
   const initialState = mergeAppConfigs({
     previous: defaultAppConfig,
     updates: {
@@ -21,16 +24,14 @@ function makeAppConfigProviderWrapper(appConfigOptions?: AppConfigProviderWrappe
        * This flag marks the app config as loaded to prevent fetching it during tests.
        */
       isAppConfigLoaded: true,
-      ...appConfigOptions?.value,
+      ...options.value,
     },
   });
 
-  const { wrapper: AppConfigWrapper, context: appConfigContext } =
-    appConfig.Provider.makeProviderWrapper({
-      value: initialState,
-    });
-
-  return { AppConfigWrapper, appConfigContext };
+  return appConfig.Provider.makeProviderWrapper({
+    ...options,
+    value: initialState,
+  });
 }
 
 export default makeAppConfigProviderWrapper;

@@ -1,7 +1,7 @@
 import { describe, expect, it, vi, afterEach } from 'vitest';
 import { render as renderBase, screen, fireEvent, cleanup } from '@testing-library/react';
 import { ReactElement } from 'react';
-import { makeSessionProviderWrapper, type SessionProviderWrapperOptions } from '@test/providers';
+import { makeTestProvider, providers, type ProviderOptions } from '@test/providers';
 import ChatInput from './ChatInput';
 import { ChatMessageType } from '../../../types/chat';
 
@@ -23,7 +23,7 @@ describe('ChatInput', () => {
 
   it('renders the chat input field', () => {
     render(<ChatInput />, {
-      sessionOptions: {
+      sessionContext: {
         __interceptor: (context) => {
           if (context) {
             context.sendChatMessage = sendChatMessageMock;
@@ -37,7 +37,7 @@ describe('ChatInput', () => {
 
   it('does not send a message when composing', () => {
     render(<ChatInput />, {
-      sessionOptions: {
+      sessionContext: {
         __interceptor: (context) => {
           if (context) {
             context.sendChatMessage = sendChatMessageMock;
@@ -58,7 +58,7 @@ describe('ChatInput', () => {
 
   it('sends a message on Enter when not composing', () => {
     render(<ChatInput />, {
-      sessionOptions: {
+      sessionContext: {
         __interceptor: (context) => {
           if (context) {
             context.sendChatMessage = sendChatMessageMock;
@@ -76,7 +76,7 @@ describe('ChatInput', () => {
 
   it('does not send a message on Enter if Shift is pressed', () => {
     render(<ChatInput />, {
-      sessionOptions: {
+      sessionContext: {
         __interceptor: (context) => {
           if (context) {
             context.sendChatMessage = sendChatMessageMock;
@@ -94,7 +94,7 @@ describe('ChatInput', () => {
 
   it('trims whitespace before sending a message', () => {
     render(<ChatInput />, {
-      sessionOptions: {
+      sessionContext: {
         __interceptor: (context) => {
           if (context) {
             context.sendChatMessage = sendChatMessageMock;
@@ -112,7 +112,7 @@ describe('ChatInput', () => {
 
   it('does not send an empty message', () => {
     render(<ChatInput />, {
-      sessionOptions: {
+      sessionContext: {
         __interceptor: (context) => {
           if (context) {
             context.sendChatMessage = sendChatMessageMock;
@@ -129,8 +129,27 @@ describe('ChatInput', () => {
   });
 });
 
-function render(ui: ReactElement, options?: SessionProviderWrapperOptions) {
-  const { SessionProviderWrapper } = makeSessionProviderWrapper(options);
+type RenderOptions = {
+  appConfigContext?: ProviderOptions['AppConfigContext'];
+  userContext?: ProviderOptions['UserContext'];
+  sessionContext?: ProviderOptions['SessionContext'];
+};
 
-  return renderBase(ui, { wrapper: SessionProviderWrapper });
+function render(
+  ui: ReactElement,
+  { appConfigContext, userContext, sessionContext }: RenderOptions = {}
+) {
+  const { wrapper, ...context } = makeTestProvider(
+    [providers.appConfig, providers.user, providers.session],
+    {
+      appConfigContext,
+      userContext,
+      sessionContext,
+    }
+  );
+
+  return {
+    ...context,
+    ...renderBase(ui, { wrapper }),
+  };
 }

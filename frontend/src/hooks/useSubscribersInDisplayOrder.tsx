@@ -1,7 +1,6 @@
-import { useState } from 'react';
-import { isEqual } from 'lodash';
 import getSubscribersInDisplayOrder from '../utils/helpers/getSubscribersInDisplayOrder';
 import { SubscriberWrapper } from '../types/session';
+import { useAccumulator } from '@web/hooks';
 
 /**
  * Hook to get SubscriberWrappers in display order. This hook keeps the state of previous subscribers on screen
@@ -11,18 +10,12 @@ import { SubscriberWrapper } from '../types/session';
  * @returns {SubscriberWrapper[]} subscribersInDisplayOrder - SubscriberWrappers to be displayed in display order
  */
 const useSubscribersInDisplayOrder = (subscribersOnScreen: SubscriberWrapper[]) => {
-  const [previousDisplayOrder, setPreviousDisplayOrder] = useState<SubscriberWrapper[]>([]);
-
-  const subscribersInDisplayOrder = getSubscribersInDisplayOrder(
-    subscribersOnScreen,
-    previousDisplayOrder
-  );
-
-  if (!isEqual(subscribersInDisplayOrder, previousDisplayOrder)) {
-    // We must check that this value has changed before calling setState or we can cause an infinite render loop
-    setPreviousDisplayOrder(subscribersInDisplayOrder);
-  }
-  return subscribersInDisplayOrder;
+  return useAccumulator(
+    (previousDisplayOrder): SubscriberWrapper[] => {
+      return getSubscribersInDisplayOrder(subscribersOnScreen, previousDisplayOrder ?? []);
+    },
+    [subscribersOnScreen]
+  ).current;
 };
 
 export default useSubscribersInDisplayOrder;

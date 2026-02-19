@@ -2,7 +2,7 @@ import { describe, it, expect, afterEach } from 'vitest';
 import { render as renderBase, screen, cleanup } from '@testing-library/react';
 import VividIcon from '@components/VividIcon';
 import { ReactElement } from 'react';
-import { makeSessionProviderWrapper, type SessionProviderWrapperOptions } from '@test/providers';
+import { makeTestProvider, providers, ProviderOptions } from '@test/providers';
 import UnreadMessagesBadge from './UnreadMessagesBadge';
 import ToolbarButton from '../ToolbarButton';
 const LittleButton = () => (
@@ -20,7 +20,7 @@ describe('UnreadMessagesBadge', () => {
         <LittleButton />
       </UnreadMessagesBadge>,
       {
-        sessionOptions: {
+        sessionContext: {
           __interceptor: (context) => {
             if (context) {
               context.unreadCount = 8;
@@ -40,7 +40,7 @@ describe('UnreadMessagesBadge', () => {
         <LittleButton />
       </UnreadMessagesBadge>,
       {
-        sessionOptions: {
+        sessionContext: {
           __interceptor: (context) => {
             if (context) {
               context.unreadCount = 9;
@@ -85,7 +85,7 @@ describe('UnreadMessagesBadge', () => {
         <LittleButton />
       </UnreadMessagesBadge>,
       {
-        sessionOptions: {
+        sessionContext: {
           __interceptor: (context) => {
             if (context) {
               context.unreadCount = 8;
@@ -107,7 +107,7 @@ describe('UnreadMessagesBadge', () => {
         <LittleButton />
       </UnreadMessagesBadge>,
       {
-        sessionOptions: {
+        sessionContext: {
           __interceptor: (context) => {
             if (context) {
               context.unreadCount = 0;
@@ -141,7 +141,7 @@ describe('UnreadMessagesBadge', () => {
         <LittleButton />
       </UnreadMessagesBadge>,
       {
-        sessionOptions: {
+        sessionContext: {
           __interceptor: (context) => {
             if (context) {
               context.unreadCount = 0;
@@ -164,7 +164,7 @@ describe('UnreadMessagesBadge', () => {
         <LittleButton />
       </UnreadMessagesBadge>,
       {
-        sessionOptions: {
+        sessionContext: {
           __interceptor: (context) => {
             if (context) {
               context.unreadCount = 1;
@@ -185,14 +185,14 @@ describe('UnreadMessagesBadge', () => {
         <LittleButton />
       </UnreadMessagesBadge>,
       {
-        sessionOptions: {
+        sessionContext: {
           __interceptor: (context) => {
             if (context) {
               context.unreadCount = 8;
             }
           },
         },
-        appConfigOptions: {
+        appConfigContext: {
           value: {
             meetingRoomSettings: {
               allowChat: false,
@@ -209,8 +209,27 @@ describe('UnreadMessagesBadge', () => {
   });
 });
 
-function render(ui: ReactElement, options?: SessionProviderWrapperOptions) {
-  const { SessionProviderWrapper } = makeSessionProviderWrapper(options);
+type RenderOptions = {
+  sessionContext?: ProviderOptions['SessionContext'];
+  appConfigContext?: ProviderOptions['AppConfigContext'];
+  userContext?: ProviderOptions['UserContext'];
+};
 
-  return renderBase(ui, { wrapper: SessionProviderWrapper });
+function render(
+  ui: ReactElement,
+  { sessionContext, appConfigContext, userContext }: RenderOptions = {}
+) {
+  const { wrapper, ...context } = makeTestProvider(
+    [providers.appConfig, providers.user, providers.session],
+    {
+      sessionContext,
+      appConfigContext,
+      userContext,
+    }
+  );
+
+  return {
+    ...context,
+    ...renderBase(ui, { wrapper }),
+  };
 }

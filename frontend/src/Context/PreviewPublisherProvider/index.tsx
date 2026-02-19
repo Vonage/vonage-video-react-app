@@ -1,4 +1,4 @@
-import { ReactNode, createContext, useMemo } from 'react';
+import { ReactNode, createContext } from 'react';
 import usePreviewPublisher from './usePreviewPublisher';
 
 export type PreviewPublisherContextType = ReturnType<typeof usePreviewPublisher>;
@@ -20,8 +20,10 @@ export type PreviewPublisherProviderProps = {
  */
 export const PreviewPublisherProvider = ({ children }: { children: ReactNode }) => {
   const previewPublisherContext = usePreviewPublisher();
-  const value = useMemo(() => previewPublisherContext, [previewPublisherContext]);
+
   return (
-    <PreviewPublisherContext.Provider value={value}>{children}</PreviewPublisherContext.Provider>
+    <PreviewPublisherContext.Provider value={previewPublisherContext}>
+      {children}
+    </PreviewPublisherContext.Provider>
   );
 };

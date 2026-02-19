@@ -4,7 +4,7 @@ import userEvent from '@testing-library/user-event';
 import { ReactElement } from 'react';
 import backgroundEffectsDialog$ from '@Context/BackgroundEffectsDialog';
 import precallNetworkTestDialog$ from '@Context/PrecallNetworkTestDialog';
-import composeProviders from '@common/helpers/composeProviders';
+import composeProviders from '@web/helpers/composeProviders';
 import MenuMoreOptions from './MenuMoreOptions';
 
 describe('MenuMoreOptions', () => {

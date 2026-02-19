@@ -15,7 +15,7 @@ describe('useSynchronizeThemeAndMedia', () => {
       addEventListener: addEventListenerSpy,
     });
 
-    vi.stubGlobal('matchMedia', matchMediaMock);
+    vi.spyOn(window, 'matchMedia').mockImplementation(matchMediaMock);
 
     renderHook(() => useSynchronizeThemeAndMedia({ setTokens }));
 
@@ -36,7 +36,7 @@ describe('useSynchronizeThemeAndMedia', () => {
       addEventListener: vi.fn(),
     });
 
-    vi.stubGlobal('matchMedia', matchMediaMock);
+    vi.spyOn(window, 'matchMedia').mockImplementation(matchMediaMock);
 
     renderHook(() => useSynchronizeThemeAndMedia({ setTokens }));
 
@@ -58,7 +58,7 @@ describe('useSynchronizeThemeAndMedia', () => {
       addEventListener: addEventListenerSpy,
     });
 
-    vi.stubGlobal('matchMedia', matchMediaMock);
+    vi.spyOn(window, 'matchMedia').mockImplementation(matchMediaMock);
 
     renderHook(() => useSynchronizeThemeAndMedia({ setTokens }));
 
@@ -84,7 +84,7 @@ describe('useSynchronizeThemeAndMedia', () => {
       addEventListener: addEventListenerSpy,
     });
 
-    vi.stubGlobal('matchMedia', matchMediaMock);
+    vi.spyOn(window, 'matchMedia').mockImplementation(matchMediaMock);
 
     const { unmount } = renderHook(() => useSynchronizeThemeAndMedia({ setTokens }));
 

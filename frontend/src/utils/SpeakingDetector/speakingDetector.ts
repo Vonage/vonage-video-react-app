@@ -1,3 +1,4 @@
+import mediaDevices$ from '@core/stores/devices';
 import { EventEmitter } from 'events';
 
 export type SpeakingDetectorOptions = {
@@ -81,7 +82,7 @@ class SpeakingDetector extends EventEmitter {
         return;
       }
       this.audioContext = new AudioContext();
-      this.stream = await navigator.mediaDevices.getUserMedia({
+      this.stream = await mediaDevices$.actions.getUserMedia({
         audio: {
           deviceId: this.selectedMicrophoneId,
         },

@@ -1,7 +1,6 @@
 {
   "extends": "./tsconfig.json",
   "compilerOptions": {
-    "rootDir": "src",
     "outDir": "dist",
     "jsx": "react-jsx",
     "module": "ESNext",
@@ -9,6 +8,16 @@
     "types": ["node", "vite/client"],
     "tsBuildInfoFile": "dist/tsconfig.lib.tsbuildinfo"
   },
-  "include": ["src/**/*.ts", "src/**/*.tsx"],
+  "include": [
+    "testBrowser/**/*.tsx",
+    "testBrowser/**/*.ts",
+    "test/**/*.tsx",
+    "test/**/*.ts",
+    "srcNode/**/*.ts",
+    "srcBrowser/**/*.tsx",
+    "srcBrowser/**/*.ts",
+    "src/**/*.tsx",
+    "src/**/*.ts"
+  ],
   "exclude": ["**/*.spec.*", "**/*.test.*"]
 }
