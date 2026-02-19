@@ -95,7 +95,7 @@ const CaptionsButton = ({
   };
 
   const handleActionClick = () => {
-    handleCaptions(isUserCaptionsEnabled ? 'disable' : 'enable');
+    void handleCaptions(isUserCaptionsEnabled ? 'disable' : 'enable');
     handleClose();
   };
 

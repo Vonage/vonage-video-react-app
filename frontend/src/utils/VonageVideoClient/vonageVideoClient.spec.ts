@@ -104,7 +104,7 @@ describe('VonageVideoClient', () => {
     it('emits an event containing a SubscriberWrapper', () =>
       new Promise<void>((done) => {
         const streamId = 'stream-id';
-        vonageVideoClient?.connect().then(() => {
+        void vonageVideoClient?.connect().then(() => {
           vonageVideoClient?.on('subscriberVideoElementCreated', (subscriberWrapper) => {
             expect(subscriberWrapper.id).toBe(streamId);
             expect(subscriberWrapper).toHaveProperty('subscriber');
@@ -199,7 +199,7 @@ describe('VonageVideoClient', () => {
     } as unknown as Stream;
 
     await vonageVideoClient?.connect();
-    vonageVideoClient?.forceMuteStream(mockStream);
+    void vonageVideoClient?.forceMuteStream(mockStream);
 
     expect(mockSession.forceMuteStream).toHaveBeenCalledWith(mockStream);
   });
@@ -211,7 +211,7 @@ describe('VonageVideoClient', () => {
 
     it('should publish a stream to the session', async () => {
       await vonageVideoClient?.connect();
-      vonageVideoClient?.publish(mockPublisher);
+      void vonageVideoClient?.publish(mockPublisher);
       expect(mockSession.publish).toHaveBeenCalledWith(mockPublisher, expect.any(Function));
       expect(mockSession.publish).toHaveBeenCalledTimes(1);
     });
@@ -226,7 +226,7 @@ describe('VonageVideoClient', () => {
 
       await vonageVideoClient?.connect();
 
-      expect(() => vonageVideoClient?.publish(mockPublisher)).rejects.toThrow(
+      void expect(() => vonageVideoClient?.publish(mockPublisher)).rejects.toThrow(
         `${error.name}: ${error.message}`
       );
     });
@@ -238,7 +238,7 @@ describe('VonageVideoClient', () => {
     } as unknown as Publisher;
 
     await vonageVideoClient?.connect();
-    vonageVideoClient?.publish(mockPublisher);
+    void vonageVideoClient?.publish(mockPublisher);
     vonageVideoClient?.unpublish(mockPublisher);
 
     expect(mockSession.unpublish).toHaveBeenCalledWith(mockPublisher);

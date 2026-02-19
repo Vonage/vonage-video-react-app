@@ -40,7 +40,7 @@ const InputAudioDevices = ({ handleToggle }: InputAudioDevicesProps): ReactEleme
 
   const handleChangeAudioSource = (deviceId: string) => {
     handleToggle();
-    mediaDevices$.actions.selectDevice('audioinput', deviceId);
+    void mediaDevices$.actions.selectDevice('audioinput', deviceId);
   };
 
   return (

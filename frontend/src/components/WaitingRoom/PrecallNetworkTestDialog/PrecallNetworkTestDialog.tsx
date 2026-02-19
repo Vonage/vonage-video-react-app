@@ -68,7 +68,7 @@ const PrecallNetworkTestDialog = ({
   const handleRetry = useCallback(() => {
     setHasUserStoppedTest(false);
     clearResults();
-    handleStartTest();
+    void handleStartTest();
   }, [clearResults, handleStartTest]);
 
   const getRoundedQualityScore = function getRoundedQualityScore(
@@ -116,7 +116,7 @@ const PrecallNetworkTestDialog = ({
     const hasExistingResultsOrError = Boolean(state.qualityResults || state.error);
     if (state.isTestingQuality || hasExistingResultsOrError) return;
 
-    handleStartTest();
+    void handleStartTest();
   }, [
     isPrecallNetworkTestOpen,
     hasUserStoppedTest,

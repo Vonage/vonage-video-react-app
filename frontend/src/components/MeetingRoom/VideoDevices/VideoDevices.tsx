@@ -43,7 +43,7 @@ const VideoDevices = ({
 
   const handleChangeVideoSource = (deviceId: string) => {
     handleToggle();
-    mediaDevices$.actions.selectDevice('videoinput', deviceId);
+    void mediaDevices$.actions.selectDevice('videoinput', deviceId);
   };
 
   return (

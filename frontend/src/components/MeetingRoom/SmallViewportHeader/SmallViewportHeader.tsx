@@ -33,7 +33,7 @@ const SmallViewportHeader = (): ReactElement => {
   const roomShareUrl = useRoomShareUrl();
   const [isCopied, setIsCopied] = useState<boolean>(false);
   const copyUrl = () => {
-    navigator.clipboard.writeText(roomShareUrl);
+    void navigator.clipboard.writeText(roomShareUrl);
 
     setIsCopied(true);
 
@@ -66,7 +66,7 @@ const SmallViewportHeader = (): ReactElement => {
     const target = currentIsFront ? pickRear() : pickFront();
 
     if (target?.deviceId && target.deviceId !== currentSource?.deviceId) {
-      publisher.setVideoSource(target.deviceId);
+      void publisher.setVideoSource(target.deviceId);
     }
   };
 

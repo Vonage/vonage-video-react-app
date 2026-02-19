@@ -176,7 +176,7 @@ const ControlPanel = ({
           onClose={handleClose}
           anchorEl={anchorEl}
           deviceChangeHandler={(deviceId) => {
-            mediaDevices$.actions.selectDevice('audiooutput', deviceId);
+            void mediaDevices$.actions.selectDevice('audiooutput', deviceId);
           }}
         />
 

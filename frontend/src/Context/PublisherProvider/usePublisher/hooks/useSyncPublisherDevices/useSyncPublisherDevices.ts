@@ -23,7 +23,7 @@ const useSyncPublisherDevices = (
             ({ videoinput }) => videoinput,
             (input) => {
               const didChanged = publisherRef.current?.getVideoSource()?.deviceId !== input;
-              if (didChanged) attempt(() => publisherRef.current?.setVideoSource(input!));
+              if (didChanged) void attempt(() => publisherRef.current?.setVideoSource(input!));
 
               if (hasDevices('videoinput')) return;
               args.setIsVideoEnabled?.(false);
@@ -39,7 +39,7 @@ const useSyncPublisherDevices = (
             ({ audioinput }) => audioinput,
             (input) => {
               const didChanged = publisherRef.current?.getAudioSource()?.id !== input;
-              if (didChanged) attempt(() => publisherRef.current?.setAudioSource(input!));
+              if (didChanged) void attempt(() => publisherRef.current?.setAudioSource(input!));
 
               if (hasDevices('audioinput')) return;
               args.setIsAudioEnabled?.(false);

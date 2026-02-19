@@ -59,7 +59,7 @@ const AudioIndicator = ({
 
   const handleActionClick = () => {
     if (forceMute && stream) {
-      forceMute(stream);
+      void forceMute(stream);
       handleClose();
     }
   };
