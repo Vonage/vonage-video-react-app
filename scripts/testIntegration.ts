@@ -6,6 +6,8 @@ const args = process.argv.slice(2);
 
 const VALID_MODES = ['debug', 'inspect', 'canon', 'update', 'updateScreenshots'] as const;
 
+type ValidMode = (typeof VALID_MODES)[number];
+
 /**
  * Checks if a string looks like a file path.
  * File paths typically contain '/' or '.' characters.
@@ -16,10 +18,15 @@ const isFilePath = (str: string): boolean => {
 
 /**
  * Helper to execute shell commands with visible output.
+ * Clears NODE_OPTIONS by default to prevent debugger from attaching to child processes.
+ * Pass preserveNodeOptions=true to keep debugger for debug/inspect modes.
  */
-const runCommand = (command: string) => {
+const runCommand = (command: string, { preserveNodeOptions = false } = {}) => {
   console.log(`\n🚀 Running: ${command}\n`);
-  execSync(command, { stdio: 'inherit' });
+  execSync(command, {
+    stdio: 'inherit',
+    env: preserveNodeOptions ? process.env : { ...process.env, NODE_OPTIONS: '' },
+  });
 };
 
 /**
@@ -52,7 +59,8 @@ const runDebug = (testNameOrPath?: string) => {
   console.log(`\n🐛 Debug mode activated (Playwright Inspector) for ${target}\n`);
   const testArg = testNameOrPath || '';
   runCommand(
-    `cd integration-tests && headedMode=true debugMode=true inspectMode=true PWDEBUG=1 playwright test ${testArg} --project='Google Chrome Fake Devices' --workers=1 --timeout=0`
+    `cd integration-tests && headedMode=true debugMode=true inspectMode=true PWDEBUG=1 playwright test ${testArg} --project='Google Chrome Fake Devices' --workers=1 --timeout=0`,
+    { preserveNodeOptions: true }
   );
 };
 
@@ -65,7 +73,8 @@ const runInspect = (testNameOrPath?: string) => {
   console.log(`\n🔍 Inspect mode activated (Chrome DevTools) for ${target}\n`);
   const testArg = testNameOrPath || '';
   runCommand(
-    `cd integration-tests && headedMode=true inspectMode=true playwright test ${testArg} --project='Google Chrome Fake Devices' --workers=1 --headed`
+    `cd integration-tests && headedMode=true inspectMode=true playwright test ${testArg} --project='Google Chrome Fake Devices' --workers=1 --headed`,
+    { preserveNodeOptions: true }
   );
 };
 
@@ -130,7 +139,7 @@ const main = () => {
   const isInspectMode = firstArg === 'inspect';
   const isCanonMode = firstArg === 'canon';
   const isUpdateMode = firstArg === 'update' || firstArg === 'updateScreenshots';
-  const isKnownMode = VALID_MODES.includes(firstArg as any);
+  const isKnownMode = VALID_MODES.includes(firstArg as ValidMode);
 
   if (noArgs) {
     runAllTests();
