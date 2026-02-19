@@ -22,13 +22,13 @@ const WaitingRoomSkeleton: React.FC<WaitingRoomSkeletonProps> = ({ className, ..
         </PageLayout.Banner>
 
         <PageLayout.Left>
-          <div className="flex-col sm:inline-flex h-auto sm:h-[400px]">
+          <div className="flex-col sm:inline-flex h-auto sm:h-100">
             <VideoContainerSkeleton />
           </div>
         </PageLayout.Left>
 
         <PageLayout.Right>
-          <UsernameInputSkeleton className="flex-col sm:inline-flex h-auto sm:h-[400px] animate-fade-in lg:max-w-[500px]" />
+          <UsernameInputSkeleton className="flex-col sm:inline-flex h-auto sm:h-100 animate-fade-in lg:max-w-125" />
         </PageLayout.Right>
 
         <PageLayout.Footer>

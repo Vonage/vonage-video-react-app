@@ -3,6 +3,9 @@
 /* Tailwind CSS v4 config directive */
 @config '../../tailwind.config.cjs';
 
+/* Libs source - outside frontend, needs explicit @source */
+@source "../../../libs/ui/**/*.tsx";
+
 /* base app styles */
 @import '../css/App.css';
 
