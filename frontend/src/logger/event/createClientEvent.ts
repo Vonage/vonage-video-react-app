@@ -1,5 +1,6 @@
 import type { ClientLogEvent } from '@common/logger';
 import getAppVersion from '@utils/getAppVersion';
+import OT from '@vonage/client-sdk-video';
 
 /** Correlation id: same for all events from this page load. Enables grouping in Kibana. */
 const correlationIdForPageLoad = crypto.randomUUID();
@@ -31,6 +32,7 @@ export function createClientEvent(input: ClientEventInput): ClientLogEvent {
     level: input.level,
     guid: correlationIdForPageLoad,
     clientVersion: getAppVersion(),
+    sdkId: (OT as { version?: string }).version ?? 'unknown',
     source:
       typeof window !== 'undefined' && window.location.origin ? window.location.origin : 'unknown',
     name: 'vera',

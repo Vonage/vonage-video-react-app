@@ -32,6 +32,7 @@ export type ClientLogEvent = {
    */
   guid: string;
   clientVersion?: string;
+  sdkId?: string;
   logVersion?: string;
   /** window.location.origin (Gollum source) */
   source: string;

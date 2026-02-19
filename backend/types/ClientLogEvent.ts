@@ -12,6 +12,7 @@ export const ClientLogEventSchema = z.object({
   level: z.enum(['info', 'error']),
   userAgent: z.string(),
   clientVersion: z.string().optional(),
+  sdkId: z.string().optional(),
   componentId: z.string().optional(),
   partnerId: z.string(),
   logVersion: z.string().optional(),
