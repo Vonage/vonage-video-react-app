@@ -3,75 +3,50 @@ import useIsSmallViewport from '@hooks/useIsSmallViewport';
 import SmallViewportHeader from '@components/MeetingRoom/SmallViewportHeader';
 import Box from '@mui/material/Box';
 import type { BoxProps } from '@mui/material/Box';
-import useTheme from '@ui/theme';
 import CircularProgress from '@mui/material/CircularProgress';
+import classNames from 'classnames';
+import { twMerge } from 'tailwind-merge';
 
 type MeetingRoomSkeletonProps = BoxProps;
 
-const MeetingRoomSkeleton: React.FC<MeetingRoomSkeletonProps> = ({ sx, ...props }) => {
-  const theme = useTheme();
+const MeetingRoomSkeleton: React.FC<MeetingRoomSkeletonProps> = ({ className, ...props }) => {
   const isSmallViewport = useIsSmallViewport();
-
-  // Height is 100dvh - toolbar height (80px) and header height (80px) - 24px wrapper margin on small viewport device
-  // Height is 100dvh - toolbar height (80px) - 24px wrapper margin on desktop
-  const wrapperHeight = isSmallViewport ? 'calc(100dvh - 184px)' : 'calc(100dvh - 104px)';
-  const wrapperWidth = 'calc(100vw - 24px)';
 
   return (
     <Box
       data-testid="meetingRoom"
-      sx={{
-        height: 'calc(100dvh - 80px)',
-        width: '100vw',
-        backgroundColor: theme.colors.darkBackground,
-        ...sx,
-      }}
       {...props}
-      className="animate-fade-in"
+      className={twMerge(
+        classNames(
+          'MeetingRoomSkeleton h-full w-screen bg-vera-dark-background flex flex-col',
+          className
+        )
+      )}
     >
       {isSmallViewport && <SmallViewportHeader />}
 
       {/* VideoTileCanvas Skeleton */}
-      <Box
-        sx={{
-          padding: 3,
-          width: wrapperWidth,
-          height: wrapperHeight,
-        }}
-      >
-        <Box
-          sx={{ position: 'relative', width: '100%', height: '100%' }}
-          className="flex justify-center items-center"
-        >
-          <CircularProgress
-            data-testid="progress-spinner"
-            sx={{ position: 'absolute', top: '50%' }}
-          />
+      <Box className="px-6 flex-1">
+        <Box className="flex justify-center items-center w-full h-full relative">
+          <CircularProgress data-testid="progress-spinner" className="absolute top-1/2" />
         </Box>
       </Box>
 
       {/* Toolbar Skeleton */}
-      <Box
-        sx={{
-          height: '80px',
-          display: 'flex',
-          flexDirection: 'row',
-          gap: 3,
-          justifyContent: 'center',
-          alignItems: 'center',
-          backgroundColor: 'rgb(32, 33, 36)',
-          padding: 4,
-        }}
-      >
-        <ButtonGroupSkeleton>
-          <ToolBarButtonSkeleton isTransparent />
-          <ToolBarButtonSkeleton isTransparent />
-        </ButtonGroupSkeleton>
+      <Box className="flex flex-row gap-6 justify-center items-center h-20 p-4">
+        {!isSmallViewport && (
+          <>
+            <ButtonGroupSkeleton>
+              <ToolBarButtonSkeleton isTransparent />
+              <ToolBarButtonSkeleton isTransparent />
+            </ButtonGroupSkeleton>
 
-        <ButtonGroupSkeleton>
-          <ToolBarButtonSkeleton isTransparent />
-          <ToolBarButtonSkeleton isTransparent />
-        </ButtonGroupSkeleton>
+            <ButtonGroupSkeleton>
+              <ToolBarButtonSkeleton isTransparent />
+              <ToolBarButtonSkeleton isTransparent />
+            </ButtonGroupSkeleton>
+          </>
+        )}
 
         {new Array(3).fill(null).map((_, index) => (
           <ToolBarButtonSkeleton key={index} />
@@ -94,18 +69,13 @@ function ToolBarButtonSkeleton({ isTransparent, isExit }: ToolBarButtonSkeletonP
       component="button"
       tabIndex={-1}
       type="button"
-      sx={{
-        height: '48px',
-        width: '48px',
-        backgroundColor: isExit
-          ? 'rgb(239, 68, 68)'
-          : isTransparent
-            ? 'transparent'
-            : 'rgba(60, 64, 67, .55)',
-        borderRadius: '50%',
-        border: 'none',
-        cursor: 'pointer',
-      }}
+      className={twMerge(
+        classNames('h-12 w-12 rounded-full border-none cursor-pointer text-vera-on-secondary', {
+          'bg-vera-alert-text': isExit,
+          'bg-transparent': isTransparent && !isExit,
+          'bg-vera-dark-grey-opacity': !isExit && !isTransparent,
+        })
+      )}
     />
   );
 }
@@ -116,17 +86,7 @@ type ButtonGroupSkeletonProps = {
 
 function ButtonGroupSkeleton({ children }: ButtonGroupSkeletonProps) {
   return (
-    <Box
-      sx={{
-        backgroundColor: 'rgba(60, 64, 67, .55)',
-        borderRadius: '50px',
-        display: 'flex',
-        flexDirection: 'row',
-        gap: 1,
-      }}
-    >
-      {children}
-    </Box>
+    <Box className="flex flex-row gap-2 rounded-full bg-vera-dark-grey-opacity">{children}</Box>
   );
 }
 

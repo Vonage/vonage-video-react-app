@@ -7,6 +7,8 @@ import type { UnsubscribeCallback } from 'react-global-state-hooks';
 /**
  * Syncs publisher video/audio sources with the selected devices from the store.
  * Handles device changes (user selection) and disconnections (hardware unplugged).
+ *
+ * This is temporal until we refactor the publishers and we implement a more robust solution syncing with the publisher.
  */
 const useSyncPublisherDevices = (
   publisherRef: React.RefObject<Publisher | null>,
@@ -25,9 +27,9 @@ const useSyncPublisherDevices = (
               const didChanged = publisherRef.current?.getVideoSource()?.deviceId !== input;
               if (didChanged) attempt(() => publisherRef.current?.setVideoSource(input!));
 
-              const { permissionsRequests } = mediaDevices$.getMetadata();
-              if (permissionsRequests.status === 'pending') {
-                await permissionsRequests;
+              const { isStoreReady } = mediaDevices$.getMetadata();
+              if (isStoreReady.status === 'pending') {
+                await isStoreReady;
               }
 
               if (hasDevices('videoinput')) return;
@@ -46,9 +48,9 @@ const useSyncPublisherDevices = (
               const didChanged = publisherRef.current?.getAudioSource()?.id !== input;
               if (didChanged) attempt(() => publisherRef.current?.setAudioSource(input!));
 
-              const { permissionsRequests } = mediaDevices$.getMetadata();
-              if (permissionsRequests.status === 'pending') {
-                await permissionsRequests;
+              const { isStoreReady } = mediaDevices$.getMetadata();
+              if (isStoreReady.status === 'pending') {
+                await isStoreReady;
               }
 
               if (hasDevices('audioinput')) return;

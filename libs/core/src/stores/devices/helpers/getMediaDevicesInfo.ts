@@ -8,7 +8,7 @@ import { actions } from 'react-global-state-hooks';
 const getMediaDevicesInfo$ = actions<DevicesAPI>()({
   getMediaDevicesInfo() {
     return ({ getMetadata }): Promise<MediaDeviceInfoJSON[]> => {
-      const { permissionsRequests } = getMetadata();
+      const { isStoreReady } = getMetadata();
 
       /**
        * Some browsers may intermittently fail to return the device list.
@@ -17,7 +17,7 @@ const getMediaDevicesInfo$ = actions<DevicesAPI>()({
       return idempotentCallbackWithRetry(
         async () => {
           // Wait for permissions to be resolved before querying devices, as some browsers (e.g., Firefox) require permissions to be granted before providing device labels and IDs.
-          await permissionsRequests;
+          await isStoreReady;
 
           // Convert MediaDeviceInfo objects to plain JSON-serializable objects
           // native MediaDeviceInfo objects have methods and properties that may not be serializable, or work well when destructured,

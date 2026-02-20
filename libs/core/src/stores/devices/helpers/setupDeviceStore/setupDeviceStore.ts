@@ -27,18 +27,31 @@ function setupDeviceStore(api: unknown) {
 
   const abortController = new AbortController();
 
+  // make accessible to the actions the vanilla getUserMedia function
+  meta.__getUserMedia = __getUserMedia.bind(navigator.mediaDevices);
+
   void attempt(() => {
     void setVonageAudioOutputDevice(api.getState().audiooutput!);
   });
 
   const syncMediaDevicesInfoDebounced = debounce(async () => {
-    await meta.permissionsRequests;
+    await meta.isStoreReady;
 
     void api.actions.syncMediaDevicesInfo().catch(() => {});
   }, 10);
 
-  meta.permissionsRequests = new CancelablePromise((resolve, reject, { isCanceled }) => {
-    if (!isFirefox()) return resolve();
+  meta.isStoreReady = new CancelablePromise((resolve, reject, { isCanceled }) => {
+    const syncDevicesAndResolve = () => {
+      void api.actions
+        .syncMediaDevicesInfo()
+        .then(() => resolve())
+        .catch(reject);
+    };
+
+    if (!isFirefox()) {
+      void syncDevicesAndResolve();
+      return;
+    }
 
     void navigator.mediaDevices
       .enumerateDevices()
@@ -49,22 +62,16 @@ function setupDeviceStore(api: unknown) {
         if (hasLabels) return;
 
         //we should request permissions to be able to see the devices labels.
-        return navigator.mediaDevices.getUserMedia({ audio: true, video: true }).then((stream) => {
+        return meta.__getUserMedia!({ audio: true, video: true }).then((stream) => {
           stream.getTracks().forEach((track) => track.stop());
         });
       })
-      .then(resolve)
+      .then(() => syncDevicesAndResolve())
       .catch(reject);
   });
 
   abortController.signal.addEventListener('abort', () => {
-    void meta.permissionsRequests.cancel(
-      new Error('permissions request cancelled due to store cleanup')
-    );
-  });
-
-  void meta.permissionsRequests.then(() => {
-    syncMediaDevicesInfoDebounced();
+    void meta.isStoreReady.cancel(new Error('permissions request cancelled due to store cleanup'));
   });
 
   // listen for permission changes to resync devices when granted
@@ -103,9 +110,6 @@ function setupDeviceStore(api: unknown) {
     },
     abortController
   );
-
-  // make accessible to the actions the vanilla getUserMedia function
-  meta.__getUserMedia = __getUserMedia.bind(navigator.mediaDevices);
 
   /**
    * Restore the original getUserMedia function.
