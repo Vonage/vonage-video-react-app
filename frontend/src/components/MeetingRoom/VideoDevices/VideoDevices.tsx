@@ -1,11 +1,11 @@
-import { ReactElement, useMemo } from 'react';
+import { ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
 import appConfig$ from '@stores/appConfig';
 import useTheme from '@ui/theme';
 import { Box, Typography, MenuList, MenuItem, Tooltip, BoxProps } from '@mui/material';
 import VividIcon from '@components/VividIcon';
 import mediaDevices$ from '@core/stores/devices';
-import usePreferredCameras from '@hooks/usePreferredCameras';
+import usePreferredDevices from '@hooks/usePreferredDevices';
 
 export type VideoDevicesProps = BoxProps & {
   handleToggle: () => void;
@@ -34,16 +34,8 @@ const VideoDevices = ({
   // Use store's selection as source of truth, not publisher.getVideoSource() which can be stale
   const selectedDeviceId = mediaDevices$.useDeviceId('videoinput');
 
-  // Use filtered cameras (one front + one rear on mobile) to avoid black screen with duplicate devices
-  const preferredCameras = usePreferredCameras();
-  const devicesAvailable = useMemo(
-    () =>
-      preferredCameras.map((device) => ({
-        ...device,
-        label: device.label ?? t('unknown.device'),
-      })),
-    [preferredCameras, t]
-  );
+  // Use filtered cameras (one front + one rear on mobile) with cleaned labels and fallback
+  const devicesAvailable = usePreferredDevices('videoinput');
 
   const handleChangeVideoSource = (deviceId: string) => {
     handleToggle();

@@ -1,13 +1,12 @@
-import { ReactElement, useMemo } from 'react';
+import { ReactElement } from 'react';
 import MenuItem from '@mui/material/MenuItem';
 import Menu from '@mui/material/Menu';
 import VividIcon from '@components/VividIcon';
 import Box from '@mui/material/Box';
-import cleanAndDedupeDeviceLabels from '@utils/cleanAndDedupeDeviceLabels/cleanAndDedupeDeviceLabels';
 import SoundTest from '../../SoundTest';
 import { isGetActiveAudioOutputDeviceSupported } from '@utils/util';
 import mediaDevices$ from '@core/stores/devices';
-import usePreferredCameras from '@hooks/usePreferredCameras';
+import usePreferredDevices from '@hooks/usePreferredDevices';
 
 export type MenuDevicesWaitingRoomProps = {
   onClose: () => void;
@@ -38,9 +37,7 @@ const MenuDevices = ({
   anchorEl,
   deviceChangeHandler,
 }: MenuDevicesWaitingRoomProps): ReactElement => {
-  const preferredCameras = usePreferredCameras();
-  const rawDevices = mediaDevices$.useMediaDevices(mediaDeviceKind, Object.values<MediaDeviceInfo>);
-  const devices = mediaDeviceKind === 'videoinput' ? preferredCameras : rawDevices;
+  const processedDevices = usePreferredDevices(mediaDeviceKind);
 
   const localSource = mediaDevices$.useDeviceId(mediaDeviceKind);
 
@@ -48,11 +45,6 @@ const MenuDevices = ({
     deviceChangeHandler(deviceId);
     onClose();
   };
-
-  const processedDevices = useMemo(
-    () => (mediaDeviceKind === 'videoinput' ? devices : cleanAndDedupeDeviceLabels(devices)),
-    [mediaDeviceKind, devices]
-  );
 
   return (
     <Menu
