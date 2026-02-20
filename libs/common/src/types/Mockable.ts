@@ -1,4 +1,5 @@
-import type { Any, AnyFunction } from 'react-global-state-hooks';
+import type { Any } from './Any';
+import type { AnyFunction } from './AnyFunction';
 
 export const SPY_MARK = Symbol('spy_mark');
 

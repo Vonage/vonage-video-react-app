@@ -1,8 +1,8 @@
 import { ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
-import Tooltip from '@ui/Tooltip';
-import Link from '@ui/Link';
-import IconButton from '@ui/IconButton';
+import Tooltip from '@mui/material/Tooltip';
+import Link from '@mui/material/Link';
+import IconButton from '@mui/material/IconButton';
 import VividIcon from '@components/VividIcon';
 
 /**

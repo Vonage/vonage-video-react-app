@@ -4,7 +4,7 @@ import {
 } from '@Context/BackgroundPublisherProvider';
 import makeGenericProviderWrapper, {
   GenericWrapperOptions,
-} from '@common-test/makeGenericProviderWrapper';
+} from '@web-test/makeGenericProviderWrapper';
 
 export type BackgroundPublisherProviderWrapperOptions = GenericWrapperOptions<
   typeof BackgroundPublisherProvider,

@@ -10,7 +10,6 @@ export const isApplicationError = (source: unknown): source is ApplicationError 
     source.values,
     source.severity,
     source.statusCode,
-    source.recoverable,
     source.fallbackConfig,
     source.message,
     source.stack,

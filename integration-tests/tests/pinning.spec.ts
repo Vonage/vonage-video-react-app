@@ -96,10 +96,12 @@ test.describe('participant pinning', () => {
 
     await pageThree.getByTestId('right-panel-title').getByTestId('CloseIcon').click();
 
+    // Wait for layout to re-render
+    await pageThree.waitForTimeout(1000);
+
     const newUserTwoSubscriberRet = await userTwoSubscriber.boundingBox();
     const newPublisherRect = await publisher.boundingBox();
 
-    await pageThree.waitForTimeout(1000);
     expect(newUserTwoSubscriberRet.width).toBeLessThan(1.2 * newPublisherRect.width);
     expect(newUserTwoSubscriberRet.height).toBeLessThan(2 * newPublisherRect.height);
   });

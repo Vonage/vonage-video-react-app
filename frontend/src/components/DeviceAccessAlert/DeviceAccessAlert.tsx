@@ -2,11 +2,11 @@ import { ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
 import { DEVICE_ACCESS_STATUS } from '../../utils/constants';
 import { isWebKit } from '../../utils/util';
-import Alert from '@ui/Alert';
-import Dialog from '@ui/Dialog';
-import Box from '@ui/Box';
-import Stack from '@ui/Stack';
-import AlertTitle from '@ui/AlertTitle';
+import Alert from '@mui/material/Alert';
+import Dialog from '@mui/material/Dialog';
+import Box from '@mui/material/Box';
+import Stack from '@mui/material/Stack';
+import AlertTitle from '@mui/material/AlertTitle';
 
 export type DeviceAccessAlertProps = {
   accessStatus: string | null;

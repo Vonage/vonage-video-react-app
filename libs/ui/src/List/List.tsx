@@ -1,9 +1,0 @@
-import { List as MUIList, ListProps as MUIListProps } from '@mui/material';
-
-export type ListProps = MUIListProps;
-
-const List = (listProps: ListProps) => {
-  return <MUIList {...listProps} />;
-};
-
-export default List;

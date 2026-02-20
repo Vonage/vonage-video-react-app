@@ -1,6 +1,6 @@
-import Alert from '@ui/Alert';
-import AlertTitle from '@ui/AlertTitle';
-import { SxProps } from '@ui/SxProps';
+import Alert from '@mui/material/Alert';
+import AlertTitle from '@mui/material/AlertTitle';
+import type { SxProps } from '@mui/material';
 import { ReactElement, useState } from 'react';
 import useIsSmallViewport from '../../../hooks/useIsSmallViewport';
 

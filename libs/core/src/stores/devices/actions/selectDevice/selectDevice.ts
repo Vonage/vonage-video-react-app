@@ -1,8 +1,8 @@
 import type { DevicesAPI } from '../../types';
-import { getMediaDevicesInfo } from '../../helpers';
-import { assertDeviceKind, assertMediaDeviceInfo } from '@common/schemas';
+import { getMediaDevicesInfo$ } from '../../helpers';
+import { assertDeviceKind, assertMediaDeviceInfo } from '@web/schemas';
 import assertMediaStreamAccess from '../../helpers/assertMediaStreamAccess';
-import isSinkIdSupported from '@common/platform/isSinkIdSupported/isSinkIdSupported';
+import isSinkIdSupported from '@web/platform/isSinkIdSupported/isSinkIdSupported';
 import { attempt } from '@common/execution';
 import { setAudioOutputDevice as setVonageAudioOutputDevice } from '@vonage/client-sdk-video';
 
@@ -27,6 +27,7 @@ function selectDevice(
     }
 
     const meta = store.getMetadata();
+    const { getMediaDevicesInfo } = getMediaDevicesInfo$(store);
 
     /**
      * This is to prevent the super rare edge case where there could be an ongoing sync at the same time the user selects a device.

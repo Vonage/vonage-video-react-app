@@ -1,5 +1,5 @@
 import z from 'zod';
-import { MediaDeviceInfoJSON, MediaDeviceInfoJSONSchema, DeviceKindSchema } from '@common/schemas';
+import { MediaDeviceInfoJSON, MediaDeviceInfoJSONSchema, DeviceKindSchema } from '@web/schemas';
 import type { DevicesStoreState } from '../types';
 
 export const DevicesStoreSchema = z.intersection(

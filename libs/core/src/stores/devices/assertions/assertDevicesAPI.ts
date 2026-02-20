@@ -1,5 +1,5 @@
 import type { DevicesAPI } from '../types';
-import { createStoreApiAssertion } from '@common/assertions';
+import { createStoreApiAssertion } from '@web/assertions';
 
 const assertion = createStoreApiAssertion<DevicesAPI>('DevicesStore');
 

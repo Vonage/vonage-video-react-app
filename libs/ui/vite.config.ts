@@ -15,7 +15,9 @@ export default defineConfig(() => ({
     alias: {
       '@ui': path.resolve(__dirname, './src'),
       '@common': path.resolve(__dirname, '../common/src'),
+      '@web': path.resolve(__dirname, '../common/srcBrowser'),
       '@common-test': path.resolve(__dirname, '../common/test'),
+      '@web-test': path.resolve(__dirname, '../common/testBrowser'),
       '@core': path.resolve(__dirname, '../core/src'),
     },
   },
@@ -56,6 +58,7 @@ export default defineConfig(() => ({
       reportsDirectory: './coverage',
       provider: 'v8' as const,
       reporter: ['text', 'lcov'],
+      exclude: ['test/**', '**/index.ts'],
     },
   },
 }));

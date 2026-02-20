@@ -1,7 +1,7 @@
 import SessionProvider, { SessionContext } from '@Context/SessionProvider/session';
 import makeGenericProviderWrapper, {
   type GenericWrapperOptions,
-} from '@common-test/makeGenericProviderWrapper';
+} from '@web-test/makeGenericProviderWrapper';
 
 export type SessionProviderWrapperOptions = GenericWrapperOptions<
   typeof SessionProvider,

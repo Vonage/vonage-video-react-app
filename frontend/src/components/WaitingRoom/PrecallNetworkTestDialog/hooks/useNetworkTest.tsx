@@ -8,7 +8,7 @@ import OT from '@vonage/client-sdk-video';
 import fetchCredentials from '@api/fetchCredentials';
 import CancelablePromise from 'easy-cancelable-promise/CancelablePromise';
 import attempt from '@common/execution/attempt';
-import useMountEffect from '@common/hooks/useMountEffect';
+import useMountEffect from '@web/hooks/useMountEffect';
 
 export type QualityResults = {
   video?: {

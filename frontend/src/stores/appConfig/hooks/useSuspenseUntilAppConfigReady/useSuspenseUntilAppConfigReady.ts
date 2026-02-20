@@ -1,4 +1,4 @@
-import useSuspenseMemo from '@common/hooks/useSuspenseMemo';
+import useSuspenseMemo from '@web/hooks/useSuspenseMemo';
 import { useEffect } from 'react';
 import defer from '@common/execution/defer';
 import appConfigStore from '../../appConfigStore';

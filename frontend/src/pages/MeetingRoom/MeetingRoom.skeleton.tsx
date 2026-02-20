@@ -1,9 +1,10 @@
 import React from 'react';
 import useIsSmallViewport from '@hooks/useIsSmallViewport';
 import SmallViewportHeader from '@components/MeetingRoom/SmallViewportHeader';
-import Box, { BoxProps } from '@ui/Box';
+import Box from '@mui/material/Box';
+import type { BoxProps } from '@mui/material/Box';
 import useTheme from '@ui/theme';
-import CircularProgress from '@ui/CircularProgress';
+import CircularProgress from '@mui/material/CircularProgress';
 
 type MeetingRoomSkeletonProps = BoxProps;
 

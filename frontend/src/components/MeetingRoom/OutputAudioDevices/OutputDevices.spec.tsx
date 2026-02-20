@@ -3,18 +3,18 @@ import {
   makeMediaStreamMock,
   mockPlatformModule,
   setupWindowNavigatorMock,
-} from '@common-test/fixtures';
+} from '@web-test/fixtures';
 import { describe, it, beforeEach, vi, expect } from 'vitest';
 import { render as renderBase, screen, fireEvent, waitFor } from '@testing-library/react';
 import { ReactElement } from 'react';
-import type { MediaDeviceInfoJSON } from '@common/types';
+import type { MediaDeviceInfoJSON } from '@web/types';
 import { makeTestProvider, providers, type ProviderOptions } from '@test/providers';
-import { isSinkIdSupported } from '@common/platform';
+import { isSinkIdSupported } from '@web/platform';
 import mediaDevices$ from '@core/stores/devices';
 import OutputAudioDevices from './OutputAudioDevices';
 
-vi.mock('@common/platform', async () => {
-  const actual = await vi.importActual('@common/platform');
+vi.mock('@web/platform', async () => {
+  const actual = await vi.importActual('@web/platform');
 
   return mockPlatformModule(actual, {
     isSinkIdSupported: true,

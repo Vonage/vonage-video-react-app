@@ -1,7 +1,7 @@
 import { PublisherProvider, PublisherContext } from '@Context/PublisherProvider';
 import makeGenericProviderWrapper, {
   GenericWrapperOptions,
-} from '@common-test/makeGenericProviderWrapper';
+} from '@web-test/makeGenericProviderWrapper';
 
 export type PublisherProviderWrapperOptions = GenericWrapperOptions<
   typeof PublisherProvider,

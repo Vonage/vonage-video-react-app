@@ -2,7 +2,7 @@ import { ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
 import useSessionContext from '../../../hooks/useSessionContext';
 import ToolbarButton from '../ToolbarButton';
-import Tooltip from '@ui/Tooltip';
+import Tooltip from '@mui/material/Tooltip';
 import VividIcon from '@components/VividIcon';
 import useTheme from '@ui/theme';
 

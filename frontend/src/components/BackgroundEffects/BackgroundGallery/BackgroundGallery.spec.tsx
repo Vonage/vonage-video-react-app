@@ -9,7 +9,7 @@ import {
   setupWindowNavigatorMock,
   makeMediaStreamMock,
   makeMediaDeviceInfos,
-} from '@common-test/fixtures';
+} from '@web-test/fixtures';
 import { mediaDevices$ } from '@core/stores';
 
 const mockDevices = makeMediaDeviceInfos();

@@ -9,10 +9,10 @@ import {
 import EventEmitter from 'events';
 import usePublisher from './usePublisher';
 import { makeTestProvider, ProviderOptions, providers } from '@test/providers';
-import SuspenseBoundary from '@common/components/SuspenseBoundary';
-import composeProviders from '@common/helpers/composeProviders';
+import SuspenseBoundary from '@web/components/SuspenseBoundary';
+import composeProviders from '@web/helpers/composeProviders';
 import { StrictMode } from 'react';
-import { setupWindowNavigatorMock, makeMediaDeviceInfos } from '@common-test/fixtures';
+import { setupWindowNavigatorMock, makeMediaDeviceInfos } from '@web-test/fixtures';
 import mediaDevices$ from '@core/stores/devices';
 
 vi.mock('@vonage/client-sdk-video');

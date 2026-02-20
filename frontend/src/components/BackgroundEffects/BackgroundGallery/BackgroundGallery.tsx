@@ -1,8 +1,8 @@
 import { ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
-import Box from '@ui/Box';
-import Tooltip from '@ui/Tooltip';
-import IconButton from '@ui/IconButton';
+import Box from '@mui/material/Box';
+import Tooltip from '@mui/material/Tooltip';
+import IconButton from '@mui/material/IconButton';
 import VividIcon from '@components/VividIcon';
 import useTheme from '@ui/theme';
 import { BACKGROUNDS_PATH } from '@utils/constants';

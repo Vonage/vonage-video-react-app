@@ -9,14 +9,14 @@ import {
 import { describe, beforeEach, it, vi, expect } from 'vitest';
 import { ReactElement, RefObject } from 'react';
 import { hasMediaProcessorSupport } from '@vonage/client-sdk-video';
-import type { MediaDeviceInfoJSON } from '@common/types';
+import type { MediaDeviceInfoJSON } from '@web/types';
 import { makeTestProvider, providers, type ProviderOptions } from '@test/providers';
-import { isSinkIdSupported } from '@common/platform';
+import { isSinkIdSupported } from '@web/platform';
 import {
   makeMediaDeviceInfos,
   makeMediaStreamMock,
   setupWindowNavigatorMock,
-} from '@common-test/fixtures';
+} from '@web-test/fixtures';
 import { mediaDevices$ } from '@core/stores';
 import DeviceSettingsMenuComponent from './DeviceSettingsMenu';
 
@@ -35,7 +35,7 @@ vi.mock('@vonage/client-sdk-video', () => ({
   setAudioOutputDevice: mockSetAudioOutputDevice,
 }));
 
-vi.mock('@common/platform');
+vi.mock('@web/platform');
 
 const someDevices = makeMediaDeviceInfos();
 

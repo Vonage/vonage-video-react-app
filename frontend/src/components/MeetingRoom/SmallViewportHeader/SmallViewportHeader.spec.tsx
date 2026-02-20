@@ -3,7 +3,7 @@ import {
   makeMediaDeviceInfos,
   makeMediaStreamMock,
   setupWindowNavigatorMock,
-} from '@common-test/fixtures';
+} from '@web-test/fixtures';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import useSessionContext from '@hooks/useSessionContext';
 import useRoomName from '@hooks/useRoomName';
@@ -17,8 +17,8 @@ vi.mock('@hooks/useSessionContext');
 vi.mock('@hooks/useRoomName');
 vi.mock('@hooks/useRoomShareUrl');
 vi.mock('@hooks/usePublisherContext');
-vi.mock('@common/platform', async (importOriginal) => {
-  const actual = await importOriginal<typeof import('@common/platform')>();
+vi.mock('@web/platform', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('@web/platform')>();
   return {
     ...actual,
     isMobile: () => false,

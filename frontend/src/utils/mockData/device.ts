@@ -1,4 +1,4 @@
-import type { MediaDeviceInfoJSON } from '@common/types';
+import type { MediaDeviceInfoJSON } from '@web/types';
 import { AllMediaDevices } from '../../types';
 
 /**

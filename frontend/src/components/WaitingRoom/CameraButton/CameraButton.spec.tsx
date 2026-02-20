@@ -5,13 +5,13 @@ import { makeTestProvider, ProviderOptions, providers } from '@test/providers';
 import type { PreviewPublisherContextType } from '@Context/PreviewPublisherProvider';
 import type { BackgroundPublisherContextType } from '@Context/BackgroundPublisherProvider';
 import CameraButton from './CameraButton';
-import SuspenseBoundary from '@common/components/SuspenseBoundary/SuspenseBoundary';
-import composeProviders from '@common/helpers/composeProviders';
+import SuspenseBoundary from '@web/components/SuspenseBoundary/SuspenseBoundary';
+import composeProviders from '@web/helpers/composeProviders';
 import {
   setupWindowNavigatorMock,
   makeMediaStreamMock,
   makeMediaDeviceInfos,
-} from '@common-test/fixtures';
+} from '@web-test/fixtures';
 import { mediaDevices$ } from '@core/stores';
 
 const mockDevices = makeMediaDeviceInfos();

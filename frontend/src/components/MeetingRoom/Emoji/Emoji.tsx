@@ -1,8 +1,8 @@
 import { CSSProperties, ReactElement } from 'react';
 import { EmojiWrapper } from '../../../hooks/useEmoji';
 import { EMOJI_DISPLAY_DURATION } from '../../../utils/constants';
-import Chip from '@ui/Chip';
-import Box from '@ui/Box';
+import Chip from '@mui/material/Chip';
+import Box from '@mui/material/Box';
 import useTheme from '@ui/theme';
 import useIsSmallViewport from '@hooks/useIsSmallViewport';
 

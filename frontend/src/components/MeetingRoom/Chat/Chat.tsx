@@ -6,8 +6,8 @@ import ChatMessage from '../ChatMessage';
 import ChatInput from '../ChatInput';
 import useSessionContext from '../../../hooks/useSessionContext';
 import RightPanelTitle from '../RightPanel/RightPanelTitle';
-import List from '@ui/List';
-import Box from '@ui/Box';
+import List from '@mui/material/List';
+import Box from '@mui/material/Box';
 
 export type ChatProps = {
   handleClose: () => void;

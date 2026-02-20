@@ -3,7 +3,7 @@ import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { ReactElement } from 'react';
 import BackgroundEffectOptions from './BackgroundEffectOptions';
 import { makeTestProvider, providers } from '@test/providers';
-import { setupWindowNavigatorMock, makeMediaStreamMock } from '@common-test/fixtures';
+import { setupWindowNavigatorMock, makeMediaStreamMock } from '@web-test/fixtures';
 
 describe('BackgroundEffectOptions', () => {
   beforeEach(() => {

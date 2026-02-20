@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import appConfig$ from '@stores/appConfig';
 import ToolbarButton from '../ToolbarButton';
 import UnreadMessagesBadge from '../UnreadMessagesBadge';
-import Tooltip from '@ui/Tooltip';
+import Tooltip from '@mui/material/Tooltip';
 import useTheme from '@ui/theme';
 import VividIcon from '@components/VividIcon';
 

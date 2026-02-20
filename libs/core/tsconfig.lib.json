@@ -15,9 +15,12 @@
     "src/**/*.tsx",
     "../common/src/**/*.ts",
     "../common/src/**/*.tsx",
+    "../common/srcBrowser/**/*.ts",
+    "../common/srcBrowser/**/*.tsx",
     "../common/test/**/*.ts",
-    "../common/test/makeGenericProviderWrapper.tsx",
-    "../common/src/types/MediaDeviceInfoJSON.ts"
+    "../common/test/**/*.tsx",
+    "../common/testBrowser/**/*.ts",
+    "../common/testBrowser/**/*.tsx"
   ],
   "exclude": ["**/*.spec.*", "**/*.test.*"]
 }

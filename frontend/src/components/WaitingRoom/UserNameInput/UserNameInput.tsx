@@ -1,10 +1,10 @@
 import React, { Dispatch, MouseEvent, ReactElement, SetStateAction, useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import TextField from '@ui/TextField';
-import Button from '@ui/Button';
-import Box from '@ui/Box';
-import Typography from '@ui/Typography';
+import TextField from '@mui/material/TextField';
+import Button from '@mui/material/Button';
+import Box from '@mui/material/Box';
+import Typography from '@mui/material/Typography';
 import Card from '@ui/Card';
 import useUserContext from '@hooks/useUserContext';
 import { UserType } from '@Context/user';
@@ -87,7 +87,11 @@ const UsernameInput = ({
   };
 
   return (
-    <Card component="form" className={twMerge('flex flex-col gap-4', className)} {...cardProps}>
+    <Card
+      component="form"
+      className={twMerge('flex flex-col gap-4 lg:max-w-[500px]', className)}
+      {...cardProps}
+    >
       <Typography className="text-vera-secondary !text-vera-heading-4">
         {t('waitingRoom.user.input.title')}
       </Typography>

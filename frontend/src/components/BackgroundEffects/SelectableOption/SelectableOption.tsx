@@ -1,7 +1,7 @@
 import { ReactElement, ReactNode } from 'react';
 import useTheme from '@ui/theme';
-import Box from '@ui/Box';
-import Tooltip from '@ui/Tooltip';
+import Box from '@mui/material/Box';
+import Tooltip from '@mui/material/Tooltip';
 import { DEFAULT_SELECTABLE_OPTION_WIDTH } from '../../../utils/constants';
 
 export type SelectableOptionProps = {

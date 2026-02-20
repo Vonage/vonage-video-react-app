@@ -8,6 +8,16 @@
     "types": ["node", "vite/client"],
     "tsBuildInfoFile": "dist/tsconfig.lib.tsbuildinfo"
   },
-  "include": ["src/**/*.ts", "src/**/*.tsx", "test/**/*.ts", "test/makeGenericProviderWrapper.tsx"],
+  "include": [
+    "testBrowser/**/*.tsx",
+    "testBrowser/**/*.ts",
+    "test/**/*.tsx",
+    "test/**/*.ts",
+    "srcNode/**/*.ts",
+    "srcBrowser/**/*.tsx",
+    "srcBrowser/**/*.ts",
+    "src/**/*.tsx",
+    "src/**/*.ts"
+  ],
   "exclude": ["**/*.spec.*", "**/*.test.*"]
 }

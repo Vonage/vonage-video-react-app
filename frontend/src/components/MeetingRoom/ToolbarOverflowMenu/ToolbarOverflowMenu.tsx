@@ -10,10 +10,10 @@ import useSessionContext from '../../../hooks/useSessionContext';
 import ScreenSharingButton from '../../ScreenSharingButton';
 import getOverflowMenuButtons from '../../../utils/getOverflowMenuButtons';
 import isReportIssueEnabled from '../../../utils/isReportIssueEnabled';
-import Box from '@ui/Box';
-import ClickAwayListener from '@ui/ClickAwayListener';
-import Grow from '@ui/Grow';
-import Portal from '@ui/Portal';
+import Box from '@mui/material/Box';
+import ClickAwayListener from '@mui/material/ClickAwayListener';
+import Grow from '@mui/material/Grow';
+import Portal from '@mui/material/Portal';
 import useTheme from '@ui/theme';
 
 export type CaptionsState = {

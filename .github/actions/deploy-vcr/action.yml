@@ -1,0 +1,57 @@
+name: Deploy to VCR
+description: Deploys the application to Vonage Cloud Runtime
+
+inputs:
+  app-id:
+    description: VCR application ID
+    required: true
+  api-key:
+    description: VCR API key
+    required: true
+  api-secret:
+    description: VCR API secret
+    required: true
+  filename:
+    description: VCR config filename to deploy with
+    required: true
+
+outputs:
+  instance-url:
+    description: The deployed instance URL (if available)
+    value: ${{ steps.deploy.outputs.instance_url }}
+
+runs:
+  using: composite
+  steps:
+    - name: Deploy to VCR
+      id: deploy
+      shell: bash
+      env:
+        APP_ID: ${{ inputs.app-id }}
+        VCR_API_KEY: ${{ inputs.api-key }}
+        VCR_API_SECRET: ${{ inputs.api-secret }}
+        VCR_FILENAME: ${{ inputs.filename }}
+      run: |
+        cd backend/dist
+
+        vcr deploy \
+          --filename "$VCR_FILENAME" \
+          --app-id "$APP_ID" \
+          --api-key "$VCR_API_KEY" \
+          --api-secret "$VCR_API_SECRET" \
+          --region aws.euw1 \
+          --graphql-endpoint https://graphql.euw1.runtime.vonage.cloud/v1/graphql \
+          --timeout=15m \
+          2>&1 | tee deploy-vcr-logs.log
+
+        if ! grep -Fxq '| Instance has been deployed!' deploy-vcr-logs.log ; then
+          echo "Deployment failed"
+          exit 1
+        fi
+
+        INSTANCE_URL=$(grep -oE 'https://[^ ]+' deploy-vcr-logs.log | tail -1 | sed -r 's/\x1B\[[0-9;]*[mK]//g')
+        if [ -z "$INSTANCE_URL" ]; then
+          echo "Failed to extract instance URL from deploy logs"
+          exit 1
+        fi
+        echo "instance_url=${INSTANCE_URL}" >> "$GITHUB_OUTPUT"

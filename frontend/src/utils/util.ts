@@ -1,6 +1,6 @@
 import { VideoFilter } from '@vonage/client-sdk-video';
-import type { MediaDeviceInfoJSON } from '@common/types';
-import { isMobile, isWebKit } from '@common/platform';
+import type { MediaDeviceInfoJSON } from '@web/types';
+import { isMobile, isWebKit } from '@web/platform';
 
 // Re-export platform helpers for backwards compatibility
 export { isMobile, isWebKit };

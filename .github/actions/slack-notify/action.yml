@@ -1,0 +1,33 @@
+name: Slack Notification
+description: Sends a Slack notification to the CI channel
+
+inputs:
+  slack-bot-token:
+    description: Slack bot token for authentication
+    required: true
+  color:
+    description: Attachment color hex code (e.g. 28a745 for green, FF0000 for red, FFA500 for orange)
+    required: true
+  message:
+    description: The attachment text content (supports Slack markdown)
+    required: true
+
+runs:
+  using: composite
+  steps:
+    - name: Send Slack notification
+      uses: slackapi/slack-github-action@70cd7be8e40a46e8b0eced40b0de447bdb42f68e # v1.26.0
+      with:
+        channel-id: '#video-solutions-ci-notifications'
+        payload: |
+          {
+            "text": "Vera Deployment GHA Job",
+            "attachments": [
+              {
+                "color": ${{ toJson(inputs.color) }},
+                "text": ${{ toJson(inputs.message) }}
+              }
+            ]
+          }
+      env:
+        SLACK_BOT_TOKEN: ${{ inputs.slack-bot-token }}

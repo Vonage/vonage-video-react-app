@@ -1,4 +1,4 @@
-import { MediaDeviceInfoJSON, Prettify } from '@common/types';
+import { MediaDeviceInfoJSON, Prettify } from '@web/types';
 
 /**
  * This store intent to manage all the media devices available on the client

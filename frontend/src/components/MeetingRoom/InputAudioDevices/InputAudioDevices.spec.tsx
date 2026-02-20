@@ -6,7 +6,7 @@ import {
   makeMediaDeviceInfos,
   makeMediaStreamMock,
   setupWindowNavigatorMock,
-} from '@common-test/fixtures';
+} from '@web-test/fixtures';
 import { Publisher } from '@vonage/client-sdk-video';
 import EventEmitter from 'events';
 import { mediaDevices$ } from '@core/stores';

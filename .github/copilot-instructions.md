@@ -45,6 +45,7 @@ TypeScript version: `^5.8.3`
   - `libs/ui` for visual components  
   - `libs/core` if it is faceless (non-visual logic).
   - `libs/common` for helpers, utilities, and hooks that are agnostic of the project.
+- **Rule:** Vera-specific business logic (roles, permissions, product policy/decisions) must stay in the app layer (`frontend`/`backend`).
 - **Rule:** This is **especially enforced** for video-related components such as publishers, subscribers, sessions, `videoView`s, etc.
 - **Rule:** Helpers, utilities, and hooks that are agnostic of the project must be placed in `libs/common`.
 - **Rule:** Logic that is shared between different projects (**frontend**, **backend**, **libs**) should be proposed for `libs/common`.

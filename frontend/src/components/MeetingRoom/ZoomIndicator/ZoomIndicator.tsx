@@ -1,10 +1,10 @@
 import { ReactElement, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { MAX_ZOOM, MIN_ZOOM } from '../../../utils/constants';
-import Tooltip from '@ui/Tooltip';
-import IconButton from '@ui/IconButton';
-import Box from '@ui/Box';
-import Typography from '@ui/Typography';
+import Tooltip from '@mui/material/Tooltip';
+import IconButton from '@mui/material/IconButton';
+import Box from '@mui/material/Box';
+import Typography from '@mui/material/Typography';
 import useTheme from '@ui/theme';
 import VividIcon from '@components/VividIcon';
 

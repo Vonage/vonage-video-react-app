@@ -10,15 +10,14 @@
     "tsBuildInfoFile": "dist/tsconfig.spec.tsbuildinfo"
   },
   "include": [
-    "vite.config.ts",
-    "test/**/*.ts",
     "src/**/*.ts",
     "src/**/*.tsx",
-    "src/**/*.test.ts",
-    "src/**/*.spec.ts",
-    "src/**/*.test.tsx",
-    "src/**/*.spec.tsx",
-    "../common/test/**/*.ts",
-    "test/makeGenericProviderWrapper.tsx"
+    "srcBrowser/**/*.ts",
+    "srcBrowser/**/*.tsx",
+    "srcNode/**/*.ts",
+    "test/**/*.ts",
+    "testBrowser/**/*.ts",
+    "testBrowser/**/*.tsx",
+    "vite.config.ts"
   ]
 }

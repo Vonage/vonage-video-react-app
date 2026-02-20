@@ -5,9 +5,9 @@ import { makeTestProvider, providers, ProviderOptions } from '@test/providers';
 import backgroundEffectsDialog$ from '@Context/BackgroundEffectsDialog';
 import precallNetworkTestDialog$ from '@Context/PrecallNetworkTestDialog';
 import ControlPanel from '.';
-import composeProviders from '@common/helpers/composeProviders';
-import SuspenseBoundary from '@common/components/SuspenseBoundary';
-import { setupWindowNavigatorMock } from '@common-test/fixtures';
+import composeProviders from '@web/helpers/composeProviders';
+import SuspenseBoundary from '@web/components/SuspenseBoundary';
+import { setupWindowNavigatorMock } from '@web-test/fixtures';
 
 describe('ControlPanel', () => {
   beforeEach(() => {

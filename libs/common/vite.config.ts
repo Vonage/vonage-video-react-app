@@ -15,6 +15,9 @@ export default defineConfig(() => ({
     alias: {
       '@common': path.resolve(__dirname, './src'),
       '@common-test': path.resolve(__dirname, './test'),
+      '@web-test': path.resolve(__dirname, './testBrowser'),
+      '@web': path.resolve(__dirname, './srcBrowser'),
+      '@node': path.resolve(__dirname, './srcNode'),
     },
   },
   // Uncomment this if you are using workers.
@@ -48,12 +51,14 @@ export default defineConfig(() => ({
     globals: true,
     environment: 'jsdom',
     setupFiles: './test/setup.ts',
-    include: ['{src,tests}/**/*.{test,spec}.{js,mjs,cjs,ts,mts,cts,jsx,tsx}'],
+    include: ['{src,srcBrowser,srcNode,tests}/**/*.{test,spec}.{js,mjs,cjs,ts,mts,cts,jsx,tsx}'],
     reporters: ['default'],
     coverage: {
       reportsDirectory: './coverage',
       provider: 'v8' as const,
       reporter: ['text', 'lcov'],
+      include: ['src/**/*.{ts,tsx}', 'srcBrowser/**/*.{ts,tsx}', 'srcNode/**/*.{ts,tsx}'],
+      exclude: ['test/**', 'testBrowser/**', '**/index.ts'],
     },
   },
 }));

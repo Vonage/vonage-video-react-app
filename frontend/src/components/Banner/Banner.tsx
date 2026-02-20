@@ -1,5 +1,5 @@
 import { ReactElement } from 'react';
-import Box from '@ui/Box';
+import Box from '@mui/material/Box';
 import Header from '@ui/Header';
 import BannerLogo from '../BannerLogo';
 import BannerLanguage from '../BannerLanguage';

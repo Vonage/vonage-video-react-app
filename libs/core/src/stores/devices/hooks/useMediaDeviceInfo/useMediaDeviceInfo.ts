@@ -1,8 +1,8 @@
-import type { MediaDeviceInfoJSON } from '@common/types';
 import useMediaDeviceInfoByKind$ from '../useMediaDeviceInfoByKind$';
 import mediaDevices from '../../devicesStore';
 import { UseHookOptions } from 'react-global-state-hooks';
 import { isString } from '@common/assertions';
+import type { MediaDeviceInfoJSON } from '@web/types';
 
 /**
  * Returns the selected media device for a specific kind.

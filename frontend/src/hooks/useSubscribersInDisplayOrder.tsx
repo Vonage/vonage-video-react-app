@@ -1,6 +1,6 @@
 import getSubscribersInDisplayOrder from '../utils/helpers/getSubscribersInDisplayOrder';
 import { SubscriberWrapper } from '../types/session';
-import { useAccumulator } from '@common/hooks';
+import { useAccumulator } from '@web/hooks';
 
 /**
  * Hook to get SubscriberWrappers in display order. This hook keeps the state of previous subscribers on screen

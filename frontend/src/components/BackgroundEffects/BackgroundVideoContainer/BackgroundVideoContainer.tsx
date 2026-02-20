@@ -1,10 +1,10 @@
 import { useRef, useState, useEffect, ReactElement } from 'react';
-import useMediaQuery from '@ui/useMediaQuery';
+import useMediaQuery from '@mui/material/useMediaQuery';
 import { useTranslation } from 'react-i18next';
-import CircularProgress from '@ui/CircularProgress';
+import CircularProgress from '@mui/material/CircularProgress';
 import useTheme from '@ui/theme';
-import Box from '@ui/Box';
-import Typography from '@ui/Typography';
+import Box from '@mui/material/Box';
+import Typography from '@mui/material/Typography';
 import waitUntilPlaying from '../../../utils/waitUntilPlaying';
 import useIsTabletViewport from '../../../hooks/useIsTabletViewport';
 

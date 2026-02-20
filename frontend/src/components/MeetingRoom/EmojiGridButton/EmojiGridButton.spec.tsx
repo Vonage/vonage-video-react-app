@@ -2,10 +2,10 @@ import { act, render as renderBase, screen } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi, Mock } from 'vitest';
 import { ReactElement, useState } from 'react';
 import { makeTestProvider, providers, ProviderOptions } from '@test/providers';
-import useMediaQuery from '@ui/useMediaQuery';
+import useMediaQuery from '@mui/material/useMediaQuery';
 import EmojiGridButton from './EmojiGridButton';
 
-vi.mock('@ui/useMediaQuery', () => ({
+vi.mock('@mui/material/useMediaQuery', () => ({
   default: vi.fn(),
 }));
 vi.mock('@utils/emojis', () => ({

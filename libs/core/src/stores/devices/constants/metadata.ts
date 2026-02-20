@@ -1,7 +1,7 @@
-import type CancelablePromise from 'easy-cancelable-promise';
-import type { MediaDeviceInfoJSON } from '@common/types';
+import CancelablePromise from 'easy-cancelable-promise';
+import type { MediaDeviceInfoJSON } from '@web/types';
 import { markDevicesApiMetadata } from '../assertions';
-import { isSinkIdSupported } from '@common/platform';
+import { isSinkIdSupported } from '@web/platform';
 
 const metadata = () => {
   const meta = {
@@ -16,11 +16,20 @@ const metadata = () => {
     hasDeviceChangeCapability:
       typeof globalThis.navigator.mediaDevices?.ondevicechange !== 'undefined',
 
+    /**
+     * This promise is used to track the ongoing loading of media devices, to prevent multiple simultaneous calls to getMediaDevicesInfo, which could cause race conditions
+     */
     loadingMediaDevices: null as null | CancelablePromise<MediaDeviceInfoJSON[]>,
 
-    // temporary backup for the local storage restored value
-    // localstorage value needs to be confirmed against actual available devices
-    restoredSelection: new Map<MediaDeviceKind, MediaDeviceInfoJSON>(),
+    /**
+     * allows us to delay syncs and queries until permissions are reviewed.
+     */
+    permissionsRequests: CancelablePromise.resolve(),
+
+    /**
+     * bound vanilla getUserMedia function
+     */
+    __getUserMedia: undefined as typeof globalThis.navigator.mediaDevices.getUserMedia | undefined,
   };
 
   markDevicesApiMetadata(meta);

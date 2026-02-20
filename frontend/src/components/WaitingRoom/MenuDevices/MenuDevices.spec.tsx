@@ -1,7 +1,7 @@
 import { render, screen } from '@testing-library/react';
 import { describe, it, vi, expect, beforeAll } from 'vitest';
 import userEvent from '@testing-library/user-event';
-import { makeMediaDeviceInfos, setupWindowNavigatorMock } from '@common-test/fixtures';
+import { makeMediaDeviceInfos, setupWindowNavigatorMock } from '@web-test/fixtures';
 
 import MenuDevices from './MenuDevices';
 import * as util from '@utils/util';

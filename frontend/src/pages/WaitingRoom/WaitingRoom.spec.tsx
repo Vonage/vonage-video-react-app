@@ -12,11 +12,11 @@ import { makeTestProvider, providers, ProviderOptions } from '@test/providers';
 import { type PreviewPublisherContextType } from '@Context/PreviewPublisherProvider';
 import backgroundEffectsDialog$ from '@Context/BackgroundEffectsDialog';
 import precallNetworkTestDialog$ from '@Context/PrecallNetworkTestDialog';
-import composeProviders from '@common/helpers/composeProviders';
+import composeProviders from '@web/helpers/composeProviders';
 import WaitingRoom from './WaitingRoom';
-import SuspenseBoundary from '@common/components/SuspenseBoundary';
-import renderAsyncComponent from '@common-test/renderAsyncComponent';
-import { setupWindowNavigatorMock } from '@common-test/fixtures';
+import SuspenseBoundary from '@web/components/SuspenseBoundary';
+import renderAsyncComponent from '@web-test/renderAsyncComponent';
+import { setupWindowNavigatorMock } from '@web-test/fixtures';
 
 const mockedNavigate = vi.fn();
 const mockedParams = { roomName: 'test-room-name' };
