@@ -298,6 +298,24 @@ describe('VonageVideoClient', () => {
       return sessionDisconnectedPromise;
     });
 
+    it('should log to kibana using logOnConnect with "EnterMeeting" event and "vonageVideoClient.connect.success" event.eventSource', async () => {
+      await vonageVideoClient?.connect();
+      await wait(0);
+
+      expect(mockProvider.log).toHaveBeenCalledWith(
+        'EnterMeeting',
+        expect.objectContaining({
+          eventSource: 'vonageVideoClient.connect.success',
+        })
+      );
+
+      expect(logOnConnect).toHaveBeenCalledWith(
+        fakeCredentials.apiKey,
+        fakeCredentials.sessionId,
+        'connection-id'
+      );
+    });
+
     it('should call frontendLogger.log(CallEnded, ...) with reason, sessionId, connectionId, timestamp when session disconnects', async () => {
       await vonageVideoClient?.connect();
       await wait(0);

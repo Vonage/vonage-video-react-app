@@ -20,7 +20,6 @@ import {
   LocalCaptionReceived,
   StreamPropertyChangedEvent,
 } from '../../types/session';
-import logOnConnect from '../logOnConnect';
 import createMovingAvgAudioLevelTracker from '../movingAverageAudioLevelTracker';
 import idempotentCallbackWithRetry from '@common/execution/idempotentCallbackWithRetry';
 import frontendLogger from '../../logger';
@@ -436,10 +435,6 @@ class VonageVideoClient extends EventEmitter<VonageVideoClientEvents> {
 
           reject(err);
         } else {
-          // TODO: Deprecate logOnConnect once Logger backend provider
-          // fully replaces opentok-solutions-logging analytics.
-          logOnConnect(apiKey, sessionId, this.clientSession?.connection?.connectionId);
-
           frontendLogger.log('EnterMeeting', {
             eventSource: 'vonageVideoClient.connect.success',
             sessionId,
