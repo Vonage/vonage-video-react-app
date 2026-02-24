@@ -78,9 +78,8 @@ This application provides features for common conferencing use cases, such as:
 - <details>
     <summary>
       Configurable features: adapt the app to your specific use cases and roles.
-      Configuration is handled through a <em>config.json</em> file that can be moved to the <em>frontend/public</em> folder; there's an example in the base directory, <em>config.example.json</em>. Changes to the config file will be reflected immediately in most cases, but some rooms will need to be re-joined to take effect (For example: "setting the default layout" or "audio on join").
+      Configuration is handled through environment variables defined in <em>vcrBuild.env.sh</em>. Edit that file to enable or disable features such as camera control, microphone control, background effects, screen sharing, chat, emojis, archiving, captions, device selection, default resolution, layout mode, and more. Some settings (for example: "default layout" or "audio on join") require rejoining the room to take effect.
     </summary>
-    <img src="docs/assets/configFile.png" alt="Screenshot of a config.json">
 - <details>
     <summary>Composed archiving capabilities to record your meetings.</summary>
     <img src="docs/assets/Archiving.png" alt="Screenshot of archiving dialog box">
