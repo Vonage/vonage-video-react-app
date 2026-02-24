@@ -1,6 +1,5 @@
 import { useState, useRef, useCallback, ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
-import appConfig$ from '@stores/appConfig';
 import usePublisherContext from '@hooks/usePublisherContext';
 import useBackgroundPublisherContext from '@hooks/useBackgroundPublisherContext';
 import getControlButtonTooltip from '@utils/getControlButtonTooltip';
@@ -13,6 +12,7 @@ import Tooltip from '@mui/material/Tooltip';
 import VividIcon from '@components/VividIcon';
 import Box from '@mui/material/Box';
 import usePushToTalk from '@hooks/usePushToTalk';
+import env from '../../../env';
 
 export type DeviceControlButtonProps = {
   deviceType: 'audio' | 'video';
@@ -38,8 +38,8 @@ const DeviceControlButton = ({
   const { toggleVideo: toggleBackgroundVideoPublisher } = useBackgroundPublisherContext();
   const theme = useTheme();
 
-  const isMicrophoneControlAllowed = appConfig$.useIsMicrophoneControlAllowed();
-  const isCameraControlAllowed = appConfig$.useIsCameraControlAllowed();
+  const isMicrophoneControlAllowed = env.VITE_ALLOW_MICROPHONE_CONTROL;
+  const isCameraControlAllowed = env.VITE_ALLOW_CAMERA_CONTROL;
 
   const isAudio = deviceType === 'audio';
   const [open, setOpen] = useState<boolean>(false);

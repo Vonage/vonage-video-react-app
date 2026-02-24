@@ -472,35 +472,27 @@ describe('SessionProvider', () => {
 });
 
 type RenderOptions = {
-  appConfigContext?: ProviderOptions['AppConfigContext'];
   userContext?: ProviderOptions['UserContext'];
   sessionContext?: ProviderOptions['SessionContext'];
 };
 
-function render(
-  ui: ReactElement,
-  { appConfigContext, userContext, sessionContext }: RenderOptions = {}
-) {
-  const { wrapper, ...context } = makeTestProvider(
-    [providers.appConfig, providers.user, providers.session],
-    {
-      appConfigContext,
-      userContext: {
-        ...userContext,
-        value: {
-          defaultSettings: {
-            publishAudio: false,
-            publishVideo: false,
-            name: '',
-            noiseSuppression: true,
-            publishCaptions: false,
-            ...userContext?.value?.defaultSettings,
-          },
+function render(ui: ReactElement, { userContext, sessionContext }: RenderOptions = {}) {
+  const { wrapper, ...context } = makeTestProvider([providers.user, providers.session], {
+    userContext: {
+      ...userContext,
+      value: {
+        defaultSettings: {
+          publishAudio: false,
+          publishVideo: false,
+          name: '',
+          noiseSuppression: true,
+          publishCaptions: false,
+          ...userContext?.value?.defaultSettings,
         },
       },
-      sessionContext,
-    }
-  );
+    },
+    sessionContext,
+  });
 
   return {
     ...context,

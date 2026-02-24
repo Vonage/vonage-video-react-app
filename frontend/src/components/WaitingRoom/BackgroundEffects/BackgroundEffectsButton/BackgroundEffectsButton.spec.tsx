@@ -2,8 +2,9 @@ import { render as renderBase, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, expect, it, vi } from 'vitest';
 import { ReactElement } from 'react';
-import { makeTestProvider, providers, ProviderOptions } from '@test/providers';
+import { makeTestProvider } from '@test/providers';
 import BackgroundEffectsButton from './BackgroundEffectsButton';
+import env from '../../../../env';
 
 const { mockHasMediaProcessorSupport } = vi.hoisted(() => {
   return {
@@ -38,27 +39,18 @@ describe('BackgroundEffectsButton', () => {
   });
 
   it('is not rendered when background effects are not allowed', () => {
-    render(<BackgroundEffectsButton onClick={mockOnClick} />, {
-      appConfigContext: {
-        value: {
-          videoSettings: {
-            allowBackgroundEffects: false,
-          },
-        },
-      },
+    env.partialUpdate({
+      VITE_ALLOW_BACKGROUND_EFFECTS: false,
     });
+
+    render(<BackgroundEffectsButton onClick={mockOnClick} />);
+
     expect(screen.queryByLabelText(/video effects/i)).not.toBeInTheDocument();
   });
 });
 
-type RenderOptions = {
-  appConfigContext?: ProviderOptions['AppConfigContext'];
-};
-
-function render(ui: ReactElement, { appConfigContext }: RenderOptions = {}) {
-  const { wrapper, ...context } = makeTestProvider([providers.appConfig], {
-    appConfigContext,
-  });
+function render(ui: ReactElement) {
+  const { wrapper, ...context } = makeTestProvider([]);
 
   return {
     ...context,

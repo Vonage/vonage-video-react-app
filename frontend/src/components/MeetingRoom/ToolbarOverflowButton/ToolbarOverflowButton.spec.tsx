@@ -85,23 +85,15 @@ describe('ToolbarOverflowButton', () => {
   });
 });
 type RenderOptions = {
-  appConfigContext?: ProviderOptions['AppConfigContext'];
   userContext?: ProviderOptions['UserContext'];
   sessionContext?: ProviderOptions['SessionContext'];
 };
 
-function render(
-  ui: ReactElement,
-  { appConfigContext, userContext, sessionContext }: RenderOptions = {}
-) {
-  const { wrapper, ...context } = makeTestProvider(
-    [providers.appConfig, providers.user, providers.session],
-    {
-      appConfigContext,
-      userContext,
-      sessionContext,
-    }
-  );
+function render(ui: ReactElement, { userContext, sessionContext }: RenderOptions = {}) {
+  const { wrapper, ...context } = makeTestProvider([providers.user, providers.session], {
+    userContext,
+    sessionContext,
+  });
 
   return {
     ...context,

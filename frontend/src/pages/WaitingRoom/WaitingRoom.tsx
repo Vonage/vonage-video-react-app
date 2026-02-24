@@ -13,10 +13,10 @@ import { getStorageItem, STORAGE_KEYS } from '../../utils/storage';
 import useBackgroundPublisherContext from '../../hooks/useBackgroundPublisherContext';
 import backgroundEffectsDialog$ from '../../Context/BackgroundEffectsDialog';
 import precallNetworkTestDialog$ from '@Context/PrecallNetworkTestDialog';
-import appConfig$ from '@stores/appConfig';
 import { BoxProps } from '@mui/material';
 import VideoContainerSkeleton from '@components/WaitingRoom/VideoContainer/VideoContainer.skeleton';
 import UsernameInputSkeleton from '@components/WaitingRoom/UserNameInput/UserNameInput.skeleton';
+import env from '../../env';
 
 type WaitingRoomProps = Omit<BoxProps, 'sx'>;
 
@@ -48,9 +48,7 @@ const WaitingRoom: FC<WaitingRoomProps> = () => {
   const [openAudioOutput, setOpenAudioOutput] = useState<boolean>(false);
   const [username, setUsername] = useState(getStorageItem(STORAGE_KEYS.USERNAME) ?? '');
 
-  const allowDeviceSelection = appConfig$.use.select(
-    ({ waitingRoomSettings }) => waitingRoomSettings.allowDeviceSelection
-  );
+  const allowDeviceSelection = env.VITE_WAITING_ROOM_ALLOW_DEVICE_SELECTION;
 
   const stableInitLocalPublisher = useEffectEvent(() => {
     if (!publisher) {

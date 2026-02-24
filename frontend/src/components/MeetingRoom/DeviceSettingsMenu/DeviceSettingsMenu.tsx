@@ -1,6 +1,5 @@
 import { ReactElement, RefObject, Dispatch, SetStateAction } from 'react';
 import { hasMediaProcessorSupport } from '@vonage/client-sdk-video';
-import appConfig$ from '@stores/appConfig';
 import useTheme from '@ui/theme';
 import InputDevices from '../InputAudioDevices';
 import OutputDevices from '../OutputAudioDevices';
@@ -14,6 +13,7 @@ import Grow from '@mui/material/Grow';
 import ClickAwayListener from '@mui/material/ClickAwayListener';
 import Paper from '@mui/material/Paper';
 import Box from '@mui/material/Box';
+import env from '../../../env';
 
 export type DeviceSettingsMenuProps = {
   deviceType: 'audio' | 'video';
@@ -52,7 +52,7 @@ const DeviceSettingsMenu = ({
   handleClose,
   setIsOpen,
 }: DeviceSettingsMenuProps): ReactElement | false => {
-  const allowBackgroundEffects = appConfig$.useIsBackgroundEffectsAllowed();
+  const allowBackgroundEffects = env.VITE_ALLOW_BACKGROUND_EFFECTS;
   const theme = useTheme();
 
   const isAudio = deviceType === 'audio';

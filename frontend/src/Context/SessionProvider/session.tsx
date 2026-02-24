@@ -15,7 +15,6 @@ import useRightPanel, { RightPanelActiveTab } from '@hooks/useRightPanel';
 import useUserContext from '@hooks/useUserContext';
 import useChat from '@hooks/useChat';
 import useEmoji, { EmojiWrapper } from '@hooks/useEmoji';
-import appConfigContext from '@stores/appConfig';
 import fetchCredentials from '@api/fetchCredentials';
 import ActiveSpeakerTracker from '@utils/ActiveSpeakerTracker';
 import {
@@ -36,6 +35,7 @@ import {
 import { MAX_PIN_COUNT_DESKTOP, MAX_PIN_COUNT_MOBILE } from '@utils/constants';
 import VonageVideoClient from '@utils/VonageVideoClient';
 import wait from '@common/execution/wait';
+import env from '../../env';
 
 export type { ChatMessageType } from '@app-types/chat';
 
@@ -144,8 +144,6 @@ const MAX_PIN_COUNT = isMobile() ? MAX_PIN_COUNT_MOBILE : MAX_PIN_COUNT_DESKTOP;
  * @returns {SessionContextType} a context provider for a publisher preview
  */
 const SessionProvider = ({ children, initialValue = {} }: SessionProviderProps): ReactElement => {
-  const appConfig = appConfigContext.use.api();
-
   const [lastStreamUpdate, setLastStreamUpdate] = useState<StreamPropertyChangedEvent | null>(
     initialValue?.lastStreamUpdate ?? null
   );
@@ -162,7 +160,7 @@ const SessionProvider = ({ children, initialValue = {} }: SessionProviderProps):
   const [layoutMode, setLayoutMode] = useState<LayoutMode>(
     initialValue?.layoutMode ??
       (() => {
-        return appConfig.getState().meetingRoomSettings.defaultLayoutMode;
+        return env.VITE_DEFAULT_LAYOUT_MODE as LayoutMode;
       })()
   );
 

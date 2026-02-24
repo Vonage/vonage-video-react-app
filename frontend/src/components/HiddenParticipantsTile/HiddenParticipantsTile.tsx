@@ -3,11 +3,11 @@ import { Box } from 'opentok-layout-js';
 import { SubscriberWrapper } from '@app-types/session';
 import getBoxStyle from '@utils/helpers/getBoxStyle';
 import useSessionContext from '@hooks/useSessionContext';
-import appConfig$ from '@stores/appConfig';
 import AvatarInitials from '../AvatarInitials';
 import AvatarGroup from '@mui/material/AvatarGroup';
 import ButtonBase from '@mui/material/ButtonBase';
 import useTheme from '@ui/theme';
+import env from '../../env';
 
 export type HiddenParticipantsTileProps = {
   box: Box;
@@ -29,7 +29,7 @@ const HiddenParticipantsTile = ({
 }: HiddenParticipantsTileProps): ReactElement => {
   const { toggleParticipantList } = useSessionContext();
 
-  const showParticipantList = appConfig$.useShouldShowParticipantList();
+  const showParticipantList = env.VITE_SHOW_PARTICIPANT_LIST;
   const theme = useTheme();
 
   const { height, width } = box;

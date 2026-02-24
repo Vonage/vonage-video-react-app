@@ -1,8 +1,8 @@
 import Badge from '@mui/material/Badge';
 import { ForwardedRef, forwardRef, ReactElement } from 'react';
 import useSessionContext from '@hooks/useSessionContext';
-import appConfig$ from '@stores/appConfig';
 import useTheme from '@ui/theme';
+import env from '../../../env';
 
 export type UnreadMessagesBadgeProps = {
   children: ReactElement;
@@ -22,7 +22,7 @@ const UnreadMessagesBadge = forwardRef(function UnreadMessagesBadge(
   props: UnreadMessagesBadgeProps,
   ref: ForwardedRef<HTMLSpanElement>
 ) {
-  const isMeetingChatAllowed = appConfig$.useIsMeetingChatAllowed();
+  const isMeetingChatAllowed = env.VITE_ALLOW_CHAT;
   const theme = useTheme();
 
   const { children, isToolbarOverflowMenuOpen, ...rest } = props;

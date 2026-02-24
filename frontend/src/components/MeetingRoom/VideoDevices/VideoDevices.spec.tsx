@@ -121,7 +121,6 @@ describe('VideoDevices Component', () => {
 });
 
 type RenderOptions = {
-  appConfigContext?: ProviderOptions['AppConfigContext'];
   userContext?: ProviderOptions['UserContext'];
   sessionContext?: ProviderOptions['SessionContext'];
   publisherContext?: ProviderOptions['PublisherContext'];
@@ -129,12 +128,11 @@ type RenderOptions = {
 
 function render(
   ui: ReactElement,
-  { appConfigContext, userContext, sessionContext, publisherContext }: RenderOptions = {}
+  { userContext, sessionContext, publisherContext }: RenderOptions = {}
 ) {
   const { wrapper, ...context } = makeTestProvider(
-    [providers.appConfig, providers.user, providers.session, providers.publisher],
+    [providers.user, providers.session, providers.publisher],
     {
-      appConfigContext,
       userContext,
       sessionContext,
       publisherContext,

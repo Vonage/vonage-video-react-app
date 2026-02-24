@@ -1,11 +1,11 @@
 import Tooltip from '@mui/material/Tooltip';
 import { Dispatch, ReactElement, SetStateAction, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
-import appConfig$ from '@stores/appConfig';
 import useTheme from '@ui/theme';
 import ToolbarButton from '../ToolbarButton';
 import EmojiGrid from '../EmojiGrid/EmojiGrid';
 import VividIcon from '@components/VividIcon';
+import env from '../../../env';
 
 export type EmojiGridProps = {
   isEmojiGridOpen: boolean;
@@ -31,9 +31,7 @@ const EmojiGridButton = ({
   isParentOpen,
   isOverflowButton = false,
 }: EmojiGridProps): ReactElement | false => {
-  const allowEmojis = appConfig$.use.select(
-    ({ meetingRoomSettings }) => meetingRoomSettings.allowEmojis
-  );
+  const allowEmojis = env.VITE_ALLOW_EMOJIS;
   const { t } = useTranslation();
   const theme = useTheme();
   const anchorRef = useRef<HTMLButtonElement>(null);
