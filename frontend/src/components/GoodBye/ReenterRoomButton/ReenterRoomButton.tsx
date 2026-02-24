@@ -1,5 +1,5 @@
 import VividIcon from '@components/VividIcon';
-import Button from '@ui/Button';
+import Button from '@mui/material/Button';
 import { ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';

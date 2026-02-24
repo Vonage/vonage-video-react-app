@@ -17,6 +17,9 @@ import getInitialBackgroundFilter from '../../../utils/backgroundFilter/getIniti
 import handlePublisherAccessDenied from '../../../utils/publisher/handlePublisherAccessDenied';
 import mediaDevices$ from '@core/stores/devices';
 import useSyncPublisherDevices from '@Context/PublisherProvider/usePublisher/hooks/useSyncPublisherDevices';
+import { getStorageItem, STORAGE_KEYS } from '@utils/storage';
+import attempt from '@common/execution/attempt/attempt';
+import { useMountEffect } from '@web/hooks';
 
 export type BackgroundPublisherContextType = {
   isPublishing: boolean;
@@ -97,7 +100,7 @@ const useBackgroundPublisher = (
   );
 
   const [isVideoEnabled, setIsVideoEnabled] = useState<boolean>(
-    initialValue?.isVideoEnabled ?? true
+    initialValue?.isVideoEnabled ?? getStorageItem(STORAGE_KEYS.VIDEO_SOURCE_ENABLED) !== 'false'
   );
 
   const [localVideoSource, setLocalVideoSource] = useState<string | undefined>(
@@ -178,10 +181,20 @@ const useBackgroundPublisher = (
     [handleBackgroundAccessDenied, setAccessStatus]
   );
 
+  /**
+   * Destroys the background publisher
+   * @returns {void}
+   */
+  const destroyBackgroundPublisher = useCallback(() => {
+    attempt(() => {
+      backgroundPublisherRef.current?.destroy();
+    });
+
+    backgroundPublisherRef.current = null;
+  }, []);
+
   const initBackgroundLocalPublisher = useCallback(() => {
-    if (backgroundPublisherRef.current) {
-      return;
-    }
+    if (backgroundPublisherRef.current) return;
 
     // Set videoFilter based on user's selected background
     let videoFilter: VideoFilter | undefined;
@@ -208,19 +221,6 @@ const useBackgroundPublisher = (
     });
     addPublisherListeners(backgroundPublisherRef.current);
   }, [addPublisherListeners, isVideoEnabled]);
-
-  /**
-   * Destroys the background publisher
-   * @returns {void}
-   */
-  const destroyBackgroundPublisher = useCallback(() => {
-    if (backgroundPublisherRef.current) {
-      backgroundPublisherRef.current.destroy();
-      backgroundPublisherRef.current = null;
-    } else {
-      console.warn('pub not destroyed');
-    }
-  }, []);
 
   /**
    * Turns the camera on and off
@@ -309,6 +309,12 @@ const useBackgroundPublisher = (
     },
     [addCustomImage, handleBackgroundChange]
   );
+
+  useMountEffect(() => {
+    return () => {
+      destroyBackgroundPublisher();
+    };
+  });
 
   return {
     initBackgroundLocalPublisher,

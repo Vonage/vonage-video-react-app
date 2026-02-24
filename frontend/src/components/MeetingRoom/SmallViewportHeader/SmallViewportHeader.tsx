@@ -1,13 +1,13 @@
 import { ReactElement, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import Box from '@ui/Box';
+import Box from '@mui/material/Box';
 import useTheme from '@ui/theme';
 import useSessionContext from '../../../hooks/useSessionContext';
 import useRoomName from '../../../hooks/useRoomName';
 import useRoomShareUrl from '../../../hooks/useRoomShareUrl';
-import IconButton from '@ui/IconButton';
-import Tooltip from '@ui/Tooltip';
-import Fade from '@ui/Fade';
+import IconButton from '@mui/material/IconButton';
+import Tooltip from '@mui/material/Tooltip';
+import Fade from '@mui/material/Fade';
 import VividIcon from '@components/VividIcon';
 import usePublisherContext from '@hooks/usePublisherContext';
 import { isRearFacingLabel, isFrontFacingLabel } from '@utils/cameraSwitch';

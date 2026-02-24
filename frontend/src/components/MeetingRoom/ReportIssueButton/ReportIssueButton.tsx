@@ -1,4 +1,4 @@
-import Tooltip from '@ui/Tooltip';
+import Tooltip from '@mui/material/Tooltip';
 import { ReactElement, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import ToolbarButton from '../ToolbarButton';

@@ -1,7 +1,7 @@
 import React from 'react';
-import Stack from '../Stack';
-import Box from '../Box';
-import { BoxProps } from '@mui/material';
+import Box from '@mui/material/Box';
+import Stack from '@mui/material/Stack';
+import type { BoxProps } from '@mui/material/Box';
 import isFunction from 'lodash/isFunction';
 import useTheme from '../theme';
 

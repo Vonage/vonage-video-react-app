@@ -13,13 +13,15 @@ import useUserContext from '../../../hooks/useUserContext';
 import { DEVICE_ACCESS_STATUS } from '../../../utils/constants';
 import { UserType } from '../../user';
 import { AccessDeniedEvent } from '../../PublisherProvider/usePublisher/usePublisher';
-import { setStorageItem, STORAGE_KEYS } from '../../../utils/storage';
+import { setStorageItem, getStorageItem, STORAGE_KEYS } from '../../../utils/storage';
 import applyBackgroundFilter from '../../../utils/backgroundFilter/applyBackgroundFilter/applyBackgroundFilter';
 import handlePublisherAccessDenied from '../../../utils/publisher/handlePublisherAccessDenied';
 import useStableCallback from '@web/hooks/useStableCallback';
 import mediaDevices$ from '@core/stores/devices';
 import useSyncPublisherDevices from '@Context/PublisherProvider/usePublisher/hooks/useSyncPublisherDevices/useSyncPublisherDevices';
 import waitUntilPlaying from '@utils/waitUntilPlaying';
+import { attempt } from '@common/execution';
+import { useMountEffect } from '@web/hooks';
 
 type PublisherVideoElementCreatedEvent = Event<'videoElementCreated', Publisher> & {
   element: HTMLVideoElement | HTMLObjectElement;
@@ -104,11 +106,15 @@ const usePreviewPublisher = (
     () => initialValue?.backgroundFilter ?? user.defaultSettings.backgroundFilter
   );
   const [isVideoEnabled, setIsVideoEnabled] = useState<boolean>(
-    initialValue?.isVideoEnabled ?? true
+    () =>
+      initialValue?.isVideoEnabled ?? getStorageItem(STORAGE_KEYS.VIDEO_SOURCE_ENABLED) !== 'false'
   );
+
   const [isAudioEnabled, setIsAudioEnabled] = useState<boolean>(
-    initialValue?.isAudioEnabled ?? true
+    () =>
+      initialValue?.isAudioEnabled ?? getStorageItem(STORAGE_KEYS.AUDIO_SOURCE_ENABLED) !== 'false'
   );
+
   const handlePreviewDestroyed = () => {
     publisherRef.current = null;
   };
@@ -229,9 +235,6 @@ const usePreviewPublisher = (
     if (publisherRef.current) {
       return;
     }
-    // We reset user preferences as we want to start with both devices enabled
-    setStorageItem(STORAGE_KEYS.AUDIO_SOURCE_ENABLED, 'true');
-    setStorageItem(STORAGE_KEYS.VIDEO_SOURCE_ENABLED, 'true');
 
     // Set videoFilter based on user's selected background
     let videoFilter: VideoFilter | undefined;
@@ -243,6 +246,8 @@ const usePreviewPublisher = (
       insertDefaultUI: false,
       videoFilter,
       resolution: defaultResolution,
+      publishAudio: isAudioEnabled,
+      publishVideo: isVideoEnabled,
       audioSource: audioSourceId,
       videoSource: videoSourceId,
     };
@@ -264,11 +269,13 @@ const usePreviewPublisher = (
    */
   const destroyPublisher = useCallback(() => {
     if (publisherRef.current) {
-      publisherRef.current.destroy();
-      publisherRef.current = null;
-    } else {
-      console.warn('pub not destroyed');
+      attempt(() => {
+        // There is a known race condition in Firefox during navigation where the DOM elements are destroyed before the publisher is destroyed, causing OT to throw an error.
+        publisherRef.current?.destroy();
+      });
     }
+
+    publisherRef.current = null;
   }, []);
 
   /**
@@ -313,6 +320,12 @@ const usePreviewPublisher = (
       }));
     }
   };
+
+  useMountEffect(() => {
+    return () => {
+      destroyPublisher();
+    };
+  });
 
   return {
     isAudioEnabled,

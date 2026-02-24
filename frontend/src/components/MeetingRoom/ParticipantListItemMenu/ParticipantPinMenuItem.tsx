@@ -2,9 +2,9 @@ import { ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
 import { SubscriberWrapper } from '../../../types/session';
 import useSessionContext from '../../../hooks/useSessionContext';
-import MenuItem from '@ui/MenuItem';
-import ListItemIcon from '@ui/ListItemIcon';
-import ListItemText from '@ui/ListItemText';
+import MenuItem from '@mui/material/MenuItem';
+import ListItemIcon from '@mui/material/ListItemIcon';
+import ListItemText from '@mui/material/ListItemText';
 import VividIcon from '@components/VividIcon';
 import useTheme from '@ui/theme';
 

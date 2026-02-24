@@ -1,6 +1,6 @@
 import { ReactElement } from 'react';
-import Box from '@ui/Box';
-import Typography from '@ui/Typography';
+import Box from '@mui/material/Box';
+import Typography from '@mui/material/Typography';
 import useTheme from '@ui/theme';
 
 export type GoodByeMessageProps = {

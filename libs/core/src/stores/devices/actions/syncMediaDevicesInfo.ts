@@ -1,5 +1,5 @@
 import { CancelablePromise } from 'easy-cancelable-promise';
-import { getMediaDevicesInfo, reviseMediaSelection } from '../helpers';
+import { getMediaDevicesInfo$, reviseMediaSelection } from '../helpers';
 import type { DevicesAPI } from '../types';
 import type { MediaDeviceInfoJSON } from '@web/types';
 import { setAudioOutputDevice as setVonageAudioOutputDevice } from '@vonage/client-sdk-video';
@@ -13,6 +13,7 @@ import { isSinkIdSupported } from '@web/platform';
 function syncMediaDevicesInfo(this: DevicesAPI['actions']) {
   return async (store: DevicesAPI): Promise<MediaDeviceInfoJSON[]> => {
     const meta = store.getMetadata();
+    const { getMediaDevicesInfo } = getMediaDevicesInfo$(store);
 
     // cancel ongoing update
     void meta.loadingMediaDevices?.cancel();

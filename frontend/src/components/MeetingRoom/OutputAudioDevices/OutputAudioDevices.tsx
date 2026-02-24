@@ -3,16 +3,16 @@ import { useTranslation } from 'react-i18next';
 import appConfig$ from '@stores/appConfig';
 import type { MediaDeviceInfoJSON } from '@web/types';
 import DropdownSeparator from '../DropdownSeparator';
-import Box from '@ui/Box';
-import Typography from '@ui/Typography';
-import MenuList from '@ui/MenuList';
-import MenuItem from '@ui/MenuItem';
+import Box from '@mui/material/Box';
+import Typography from '@mui/material/Typography';
+import MenuList from '@mui/material/MenuList';
+import MenuItem from '@mui/material/MenuItem';
 import VividIcon from '@components/VividIcon';
-import Tooltip from '@ui/Tooltip';
 import { useDistinctLabelMediaDevices } from '@ui/hooks';
 import { isSinkIdSupported } from '@web/platform';
 import mediaDevices$ from '@core/stores/devices';
 import useTheme from '@ui/theme';
+import { Tooltip } from '@mui/material';
 
 export type OutputAudioDevicesProps = {
   handleToggle: () => void;

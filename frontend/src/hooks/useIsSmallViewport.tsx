@@ -1,4 +1,4 @@
-import useMediaQuery from '@ui/useMediaQuery';
+import useMediaQuery from '@mui/material/useMediaQuery';
 import { SMALL_VIEWPORT } from '../utils/constants';
 
 /**

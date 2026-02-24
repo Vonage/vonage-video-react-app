@@ -1,10 +1,10 @@
 import { useState, MouseEvent, ReactElement } from 'react';
 import { SubscriberWrapper } from '../../../types/session';
 import ParticipantPinMenuItem from './ParticipantPinMenuItem';
-import IconButton from '@ui/IconButton';
-import Popper from '@ui/Popper';
-import ClickAwayListener from '@ui/ClickAwayListener';
-import Paper from '@ui/Paper';
+import IconButton from '@mui/material/IconButton';
+import Popper from '@mui/material/Popper';
+import ClickAwayListener from '@mui/material/ClickAwayListener';
+import Paper from '@mui/material/Paper';
 import VividIcon from '@components/VividIcon';
 import useTheme from '@ui/theme';
 

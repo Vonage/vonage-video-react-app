@@ -1,12 +1,12 @@
 import { ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
-import Dialog from '@ui/Dialog';
-import DialogTitle from '@ui/DialogTitle';
-import IconButton from '@ui/IconButton';
-import DialogContent from '@ui/DialogContent';
+import Dialog from '@mui/material/Dialog';
+import DialogTitle from '@mui/material/DialogTitle';
+import IconButton from '@mui/material/IconButton';
+import DialogContent from '@mui/material/DialogContent';
 import useTheme from '@ui/theme';
 import VividIcon from '@components/VividIcon';
-import Typography from '@ui/Typography';
+import Typography from '@mui/material/Typography';
 import BackgroundEffectsLayout from '../../../BackgroundEffects/BackgroundEffectsLayout';
 
 export type BackgroundEffectsDialogProps = {

@@ -3,7 +3,7 @@ import type { Theme } from '@ui/theme';
 import isDarkMode from './isDarkMode';
 
 // Extend theme options
-declare module '@mui/material/styles' {
+declare module '@mui/material' {
   interface TypeText {
     tertiary: string;
     main: string;
