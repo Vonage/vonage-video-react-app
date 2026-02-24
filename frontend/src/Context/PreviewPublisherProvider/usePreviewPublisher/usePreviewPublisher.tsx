@@ -26,7 +26,7 @@ import { useMountEffect } from '@web/hooks';
 import { isAndroid } from '@utils/util';
 
 /** Delay before switching camera on Android to allow the previous camera to fully release. */
-const ANDROID_CAMERA_SWITCH_DELAY_MS = 1000;
+const ANDROID_CAMERA_SWITCH_DELAY_MS = 100;
 
 type PublisherVideoElementCreatedEvent = Event<'videoElementCreated', Publisher> & {
   element: HTMLVideoElement | HTMLObjectElement;
@@ -172,35 +172,42 @@ const usePreviewPublisher = (
   );
 
   /**
-   * Change video camera in use
+   * Change video camera in use.
+   * On Android, stops video first and waits for camera release before switching.
    * @returns {void}
    */
   const changeVideoSource = useCallback(
-    async (deviceId: string) => {
-      if (!deviceId || !publisherRef.current) {
-        return;
-      }
-      const publisher = publisherRef.current;
-      const currentDeviceId = publisher.getVideoSource().deviceId;
-      if (deviceId === currentDeviceId) return;
+    (deviceId: string) => {
+      void (async () => {
+        if (!deviceId || !publisherRef.current) {
+          return;
+        }
+        const publisher = publisherRef.current;
+        const currentDeviceId = publisher.getVideoSource()?.deviceId;
+        if (deviceId === currentDeviceId) return;
 
-      if (isAndroid()) {
-        publisher.publishVideo(false);
-        await wait(ANDROID_CAMERA_SWITCH_DELAY_MS);
-      }
+        if (isAndroid()) {
+          publisher.publishVideo(false);
+          await wait(ANDROID_CAMERA_SWITCH_DELAY_MS);
+        }
 
-      await publisher.setVideoSource(deviceId);
+        await publisher.setVideoSource(deviceId);
 
-      mediaDevices$.actions.selectDevice('videoinput', deviceId);
+        if (isAndroid()) {
+          publisher.publishVideo(isVideoEnabled);
+        }
 
-      if (setUser) {
-        setUser((prevUser: UserType) => ({
-          ...prevUser,
-          defaultSettings: { ...prevUser.defaultSettings, videoSource: deviceId },
-        }));
-      }
+        mediaDevices$.actions.selectDevice('videoinput', deviceId);
+
+        if (setUser) {
+          setUser((prevUser: UserType) => ({
+            ...prevUser,
+            defaultSettings: { ...prevUser.defaultSettings, videoSource: deviceId },
+          }));
+        }
+      })();
     },
-    [setUser]
+    [setUser, isVideoEnabled]
   );
 
   const handleAccessDenied = useCallback(
