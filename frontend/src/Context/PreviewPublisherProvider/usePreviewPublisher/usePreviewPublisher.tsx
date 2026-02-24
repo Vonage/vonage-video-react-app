@@ -21,7 +21,12 @@ import mediaDevices$ from '@core/stores/devices';
 import useSyncPublisherDevices from '@Context/PublisherProvider/usePublisher/hooks/useSyncPublisherDevices/useSyncPublisherDevices';
 import waitUntilPlaying from '@utils/waitUntilPlaying';
 import { attempt } from '@common/execution';
+import wait from '@common/execution/wait';
 import { useMountEffect } from '@web/hooks';
+import { isAndroid } from '@utils/util';
+
+/** Delay before switching camera on Android to allow the previous camera to fully release. */
+const ANDROID_CAMERA_SWITCH_DELAY_MS = 1000;
 
 type PublisherVideoElementCreatedEvent = Event<'videoElementCreated', Publisher> & {
   element: HTMLVideoElement | HTMLObjectElement;
@@ -171,12 +176,21 @@ const usePreviewPublisher = (
    * @returns {void}
    */
   const changeVideoSource = useCallback(
-    (deviceId: string) => {
+    async (deviceId: string) => {
       if (!deviceId || !publisherRef.current) {
         return;
       }
+      const publisher = publisherRef.current;
+      const currentDeviceId = publisher.getVideoSource().deviceId;
+      if (deviceId === currentDeviceId) return;
 
-      publisherRef.current.setVideoSource(deviceId);
+      if (isAndroid()) {
+        publisher.publishVideo(false);
+        await wait(ANDROID_CAMERA_SWITCH_DELAY_MS);
+      }
+
+      await publisher.setVideoSource(deviceId);
+
       mediaDevices$.actions.selectDevice('videoinput', deviceId);
 
       if (setUser) {

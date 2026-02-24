@@ -6,6 +6,15 @@ import { isMobile, isWebKit } from '@web/platform';
 export { isMobile, isWebKit };
 
 /**
+ * Checks if the current device/browser is Android.
+ * @returns {boolean} - Returns `true` if the current device is Android, else `false`.
+ */
+export const isAndroid = (): boolean => {
+  if (typeof navigator === 'undefined') return false;
+  return navigator.userAgent.toLowerCase().includes('android');
+};
+
+/**
  * Returns the device ID for the current audio input source.
  * @param {Device[]} audioInputDevices - An array of audio input devices.
  * @param {MediaStreamTrack} currentAudioSource - The current audio source.
@@ -27,12 +36,8 @@ export const getAudioSourceDeviceId = (
  */
 export const isGetActiveAudioOutputDeviceSupported = () => {
   const userAgent = navigator.userAgent.toLowerCase();
-
   const isFirefox = userAgent.includes('firefox');
-
-  const isAndroid = userAgent.includes('android');
-
-  return !isFirefox && !isWebKit() && !isAndroid;
+  return !isFirefox && !isWebKit() && !isAndroid();
 };
 
 /**

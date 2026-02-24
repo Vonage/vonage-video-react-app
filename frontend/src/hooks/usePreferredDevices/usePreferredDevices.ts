@@ -1,8 +1,7 @@
-import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import mediaDevices$ from '@core/stores/devices';
 import cleanAndDedupeDeviceLabels from '@utils/cleanAndDedupeDeviceLabels';
 import filterMobileCameras from './helpers/filterMobileCameras';
+import useMediaDeviceInfoByKind$ from '@core/stores/devices/hooks/useMediaDeviceInfoByKind$';
 
 /**
  * React hook that returns filtered and processed media devices for the given kind.
@@ -20,17 +19,26 @@ import filterMobileCameras from './helpers/filterMobileCameras';
  */
 function usePreferredDevices(kind: MediaDeviceKind) {
   const { t } = useTranslation();
-  const rawDevicesByKind = mediaDevices$.useMediaDevices(kind, (devices) => Object.values(devices));
 
-  return useMemo(() => {
-    const devices =
-      kind === 'videoinput' ? filterMobileCameras(rawDevicesByKind) : rawDevicesByKind;
-    const cleaned = cleanAndDedupeDeviceLabels(devices);
-    return cleaned.map((device) => ({
-      ...device,
-      label: device.label ?? t('unknown.device'),
-    }));
-  }, [kind, rawDevicesByKind, t]);
+  return useMediaDeviceInfoByKind$(
+    (devicesByKind) => {
+      const array = Object.values(devicesByKind[kind] ?? {});
+      const devices = kind === 'videoinput' ? filterMobileCameras(array) : array;
+
+      return cleanAndDedupeDeviceLabels(
+        devices.map((device) => ({
+          ...device,
+          label: device.label ?? t('unknown.device'),
+        }))
+      );
+    },
+    {
+      dependencies: [kind],
+      isEqualRoot: (prev, next) => {
+        return prev[kind] === next[kind];
+      },
+    }
+  );
 }
 
 export default usePreferredDevices;
