@@ -41,16 +41,20 @@ const ScreenSharePublisher = ({
   const streamName = publisher?.stream?.name ?? '';
   return (
     box && (
-      <VideoTile
-        id="screen-publisher-container"
-        box={box}
-        data-testid="screen-publisher-container"
-        hasVideo
-        ref={containerRef}
-        isScreenshare
-      >
-        <ScreenShareNameDisplay name={streamName} box={box} />
-      </VideoTile>
+      <>
+        <VideoTile
+          id="screen-publisher-container"
+          box={box}
+          data-testid="screen-publisher-container"
+          hasVideo
+          ref={containerRef}
+          isScreenshare
+        >
+          <ScreenShareNameDisplay name={streamName} box={box} />
+        </VideoTile>
+
+        <div id="screen-share-hidden-message">You are sharing your screen.</div>
+      </>
     )
   );
 };
