@@ -10,7 +10,7 @@ const UsernameInputSkeleton: FC<UsernameInputSkeletonProps> = ({ className, ...p
   return (
     <Card
       component="form"
-      className={twMerge('flex-col sm:inline-flex h-auto sm:h-[400px] lg:max-w-[500px]', className)}
+      className={twMerge('flex-col sm:inline-flex h-auto sm:h-100 lg:max-w-125', className)}
       {...props}
     >
       <div className="w-full flex flex-col gap-4">
