@@ -1,7 +1,7 @@
 import { useTranslation } from 'react-i18next';
+import mediaDevices$ from '@core/stores/devices';
 import cleanAndDedupeDeviceLabels from '@utils/cleanAndDedupeDeviceLabels';
 import filterMobileCameras from './helpers/filterMobileCameras';
-import useMediaDeviceInfoByKind$ from '@core/stores/devices/hooks/useMediaDeviceInfoByKind$';
 
 /**
  * React hook that returns filtered and processed media devices for the given kind.
@@ -20,7 +20,7 @@ import useMediaDeviceInfoByKind$ from '@core/stores/devices/hooks/useMediaDevice
 function usePreferredDevices(kind: MediaDeviceKind) {
   const { t } = useTranslation();
 
-  return useMediaDeviceInfoByKind$(
+  return mediaDevices$.useMediaDeviceInfoByKind(
     (devicesByKind) => {
       const array = Object.values(devicesByKind[kind] ?? {});
       const devices = kind === 'videoinput' ? filterMobileCameras(array) : array;
