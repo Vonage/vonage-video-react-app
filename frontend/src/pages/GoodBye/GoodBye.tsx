@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next';
 import PageLayout from '@ui/PageLayout';
 import Banner from '@components/Banner';
 import Footer from '@components/Footer/Footer';
-import Typography from '@ui/Typography';
+import Typography from '@mui/material/Typography';
 import useArchives from '../../hooks/useArchives';
 import ArchiveList from '../../components/GoodBye/ArchiveList';
 import GoodByeMessage from '../../components/GoodBye/GoodbyeMessage';
@@ -12,7 +12,7 @@ import useRoomName from '../../hooks/useRoomName';
 import ReenterRoomButton from '@components/GoodBye/ReenterRoomButton';
 import GoToLandingPageButton from '@components/GoodBye/GoToLandingPageButton';
 import Card from '@ui/Card';
-import Stack from '@ui/Stack';
+import Stack from '@mui/material/Stack';
 import useTheme from '@ui/theme';
 
 /**
@@ -47,6 +47,7 @@ const GoodBye = (): ReactElement => {
       <PageLayout.Right>
         <Stack direction="column" gap={4}>
           <Card
+            className="lg:max-w-[500px]"
             sx={{
               alignItems: 'center',
             }}
@@ -66,11 +67,7 @@ const GoodBye = (): ReactElement => {
             <GoToLandingPageButton />
           </Card>
 
-          <Card
-            sx={{
-              minWidth: { xs: '100%', lg: '500px' },
-            }}
-          >
+          <Card className="min-w-full lg:min-w-[500px] lg:max-w-[500px]">
             <Typography
               variant="h6"
               sx={{

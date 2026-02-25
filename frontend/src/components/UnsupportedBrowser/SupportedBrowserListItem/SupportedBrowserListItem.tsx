@@ -1,13 +1,13 @@
 import { ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
-import ListItem from '@ui/ListItem';
-import Link from '@ui/Link';
-import IconButton from '@ui/IconButton';
-import ListItemText from '@ui/ListItemText';
+import ListItem from '@mui/material/ListItem';
+import Link from '@mui/material/Link';
+import IconButton from '@mui/material/IconButton';
+import ListItemText from '@mui/material/ListItemText';
 import VividIcon from '@components/VividIcon';
 import { Typography } from '@mui/material';
 import Separator from '@components/Separator';
-import Box from '@ui/Box';
+import Box from '@mui/material/Box';
 import useTheme from '@ui/theme';
 
 export type SupportedBrowserListItemProps = {

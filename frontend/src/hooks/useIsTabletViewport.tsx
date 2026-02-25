@@ -1,4 +1,4 @@
-import useMediaQuery from '@ui/useMediaQuery';
+import useMediaQuery from '@mui/material/useMediaQuery';
 import { TABLET_VIEWPORT } from '../utils/constants';
 
 /**

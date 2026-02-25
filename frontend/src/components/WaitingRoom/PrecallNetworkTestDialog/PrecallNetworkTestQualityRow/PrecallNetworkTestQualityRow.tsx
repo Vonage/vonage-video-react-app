@@ -1,6 +1,6 @@
 import { ReactElement, useMemo } from 'react';
-import Box from '@ui/Box';
-import Typography from '@ui/Typography';
+import Box from '@mui/material/Box';
+import Typography from '@mui/material/Typography';
 import VividIcon from '@components/VividIcon';
 import useTheme from '@ui/theme';
 import { useTranslation } from 'react-i18next';

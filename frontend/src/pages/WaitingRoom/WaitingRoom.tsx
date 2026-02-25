@@ -1,5 +1,5 @@
 import { useState, useEffect, MouseEvent, TouchEvent, FC, useEffectEvent } from 'react';
-import Box from '@ui/Box';
+import Box from '@mui/material/Box';
 import PageLayout from '@ui/PageLayout';
 import Banner from '@components/Banner';
 import Footer from '@components/Footer/Footer';

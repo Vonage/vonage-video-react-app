@@ -1,10 +1,9 @@
-import { Box, MenuItem, MenuList, Typography } from '@mui/material';
+import { Box, MenuItem, MenuList, Tooltip, Typography } from '@mui/material';
 import type { ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
 import appConfig$ from '@stores/appConfig';
 import useTheme from '@ui/theme';
 import VividIcon from '@components/VividIcon';
-import Tooltip from '@ui/Tooltip';
 import { useDistinctLabelMediaDevices } from '@ui/hooks';
 import mediaDevices$ from '@core/stores/devices';
 

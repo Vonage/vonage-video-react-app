@@ -14,7 +14,7 @@ import getBoxStyle from '../../../utils/helpers/getBoxStyle';
 import ZoomIndicator from '../ZoomIndicator';
 import { MAX_ZOOM, MIN_ZOOM, ZOOM_STEP } from '../../../utils/constants';
 import useTheme from '@ui/theme';
-import CustomBox from '@ui/Box';
+import CustomBox from '@mui/material/Box';
 
 export type ScreenshareVideoTileProps = {
   'data-testid': string;

@@ -1,7 +1,7 @@
 import { ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
-import Stack from '@ui/Stack';
-import Typography from '@ui/Typography';
+import Stack from '@mui/material/Stack';
+import Typography from '@mui/material/Typography';
 import useTheme from '@ui/theme';
 import Separator from '../Separator';
 

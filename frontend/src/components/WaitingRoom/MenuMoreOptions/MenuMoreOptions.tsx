@@ -1,9 +1,9 @@
 import { ReactElement, useCallback } from 'react';
-import MenuItem from '@ui/MenuItem';
-import Menu from '@ui/Menu';
+import MenuItem from '@mui/material/MenuItem';
+import Menu from '@mui/material/Menu';
 import { useTranslation } from 'react-i18next';
 import VividIcon from '@components/VividIcon';
-import Box from '@ui/Box';
+import Box from '@mui/material/Box';
 import backgroundEffectsDialog$ from '@Context/BackgroundEffectsDialog';
 import precallNetworkTestDialog$ from '@Context/PrecallNetworkTestDialog';
 

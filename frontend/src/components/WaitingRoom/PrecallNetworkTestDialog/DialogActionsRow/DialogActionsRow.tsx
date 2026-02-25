@@ -1,7 +1,6 @@
 import { ReactElement } from 'react';
-import Box from '@ui/Box';
-import Button from '@ui/Button';
 import useTheme from '@ui/theme';
+import { Box, Button } from '@mui/material';
 
 export type DialogActionsRowProps = {
   closeButtonText: string;

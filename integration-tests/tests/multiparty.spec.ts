@@ -147,6 +147,9 @@ test.describe('display name for screenshare', () => {
       await pageOne.getByTestId('screen-publisher-container').getByText(`User One's screen`)
     ).toBeVisible();
 
+    // Wait for the screen-subscriber to appear
+    await pageTwo.waitForSelector('.screen-subscriber', { state: 'visible' });
+
     await expect(
       await pageTwo.locator('.screen-subscriber').getByText(`User One's screen`)
     ).toBeVisible();

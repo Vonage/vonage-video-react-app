@@ -1,5 +1,5 @@
 import { ReactElement } from 'react';
-import Avatar from '@ui/Avatar';
+import Avatar from '@mui/material/Avatar';
 import useTheme from '@ui/theme';
 import useWindowWidth from '../../../hooks/useWindowWidth';
 import AvatarInitials from '../../AvatarInitials';

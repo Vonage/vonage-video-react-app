@@ -1,5 +1,5 @@
 import useTheme from '@ui/theme';
-import Chip from '@ui/Chip';
+import Chip from '@mui/material/Chip';
 import { Box } from 'opentok-layout-js';
 import { ReactElement } from 'react';
 

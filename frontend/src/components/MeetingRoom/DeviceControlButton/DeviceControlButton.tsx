@@ -7,11 +7,11 @@ import getControlButtonTooltip from '@utils/getControlButtonTooltip';
 import useTheme from '@ui/theme';
 import DeviceSettingsMenu from '../DeviceSettingsMenu';
 import MutedAlert from '../../MutedAlert';
-import ButtonGroup from '@ui/ButtonGroup';
-import IconButton from '@ui/IconButton';
-import Tooltip from '@ui/Tooltip';
+import ButtonGroup from '@mui/material/ButtonGroup';
+import IconButton from '@mui/material/IconButton';
+import Tooltip from '@mui/material/Tooltip';
 import VividIcon from '@components/VividIcon';
-import Box from '@ui/Box';
+import Box from '@mui/material/Box';
 import usePushToTalk from '@hooks/usePushToTalk';
 
 export type DeviceControlButtonProps = {

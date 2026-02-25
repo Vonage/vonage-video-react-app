@@ -3,7 +3,7 @@ import Banner from '@components/Banner';
 import VideoContainerSkeleton from '@components/WaitingRoom/VideoContainer/VideoContainer.skeleton';
 import UsernameInputSkeleton from '@components/WaitingRoom/UserNameInput/UserNameInput.skeleton';
 import classNames from 'classnames';
-import Box from '@ui/Box';
+import Box from '@mui/material/Box';
 import PageLayout from '@ui/PageLayout';
 import Footer from '@components/Footer/Footer';
 
@@ -24,7 +24,7 @@ const WaitingRoomSkeleton: React.FC<WaitingRoomSkeletonProps> = ({ className, ..
         </PageLayout.Left>
 
         <PageLayout.Right>
-          <UsernameInputSkeleton className="flex-col sm:inline-flex h-auto sm:h-[400px] animate-fade-in" />
+          <UsernameInputSkeleton className="flex-col sm:inline-flex h-auto sm:h-[400px] animate-fade-in lg:max-w-[500px]" />
         </PageLayout.Right>
 
         <PageLayout.Footer>

@@ -8,7 +8,7 @@ import OT, {
   PublisherProperties,
 } from '@vonage/client-sdk-video';
 import { useTranslation } from 'react-i18next';
-import { setStorageItem, STORAGE_KEYS } from '@utils/storage';
+import { getStorageItem, setStorageItem, STORAGE_KEYS } from '@utils/storage';
 import usePublisherQuality, { NetworkQuality } from '../usePublisherQuality/usePublisherQuality';
 import useSyncPublisherDevices from './hooks/useSyncPublisherDevices/useSyncPublisherDevices';
 import usePublisherOptions from '../usePublisherOptions';
@@ -54,6 +54,7 @@ export type PublisherContextType = {
   toggleVideo: () => void;
   changeBackground: (backgroundSelected: string) => void;
   unpublish: () => void;
+  publisherOptions: PublisherProperties;
 };
 
 export type PublisherContextInitialValue = Partial<
@@ -103,14 +104,18 @@ const usePublisher = (initialValue: PublisherContextInitialValue = {}): Publishe
 
   const [isPublishing, setIsPublishing] = useState(initialValue?.isPublishing ?? false);
 
-  const publisherOptions = usePublisherOptions();
   const [isForceMuted, setIsForceMuted] = useState<boolean>(initialValue?.isForceMuted ?? false);
+
   const [isVideoEnabled, setIsVideoEnabled] = useState<boolean>(
-    initialValue?.isVideoEnabled ?? false
+    initialValue?.isVideoEnabled ?? getStorageItem(STORAGE_KEYS.VIDEO_SOURCE_ENABLED) !== 'false'
   );
+
   const [isAudioEnabled, setIsAudioEnabled] = useState<boolean>(
-    initialValue?.isAudioEnabled ?? false
+    initialValue?.isAudioEnabled ?? getStorageItem(STORAGE_KEYS.AUDIO_SOURCE_ENABLED) !== 'false'
   );
+
+  const publisherOptions = usePublisherOptions({ isAudioEnabled, isVideoEnabled });
+
   const [stream, setStream] = useState<Stream | null>(initialValue?.stream ?? null);
 
   const [publishingError, setPublishingError] = useState<PublishingErrorType>(
@@ -147,15 +152,6 @@ const usePublisher = (initialValue: PublisherContextInitialValue = {}): Publishe
       setPublishingError(accessDeniedError);
     }
   }, [deviceAccess, t]);
-
-  useEffect(() => {
-    if (!publisherOptions) {
-      return;
-    }
-
-    setIsVideoEnabled(!!publisherOptions.publishVideo);
-    setIsAudioEnabled(!!publisherOptions.publishAudio);
-  }, [publisherOptions]);
 
   reconnectingRef.current = reconnecting === true;
 
@@ -549,6 +545,7 @@ const usePublisher = (initialValue: PublisherContextInitialValue = {}): Publishe
     toggleVideo,
     changeBackground,
     unpublish,
+    publisherOptions,
   };
 };
 export default usePublisher;

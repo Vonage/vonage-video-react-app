@@ -5,7 +5,7 @@ import { isMobile } from '@web/platform';
 import isReportIssueEnabled from '@utils/isReportIssueEnabled';
 import { makeTestProvider, providers, ProviderOptions } from '@test/providers';
 import ToolbarOverflowMenu, { CaptionsState } from './ToolbarOverflowMenu';
-import Button from '@ui/Button';
+import Button from '@mui/material/Button';
 
 vi.mock('@hooks/useRoomName');
 vi.mock('@web/platform');

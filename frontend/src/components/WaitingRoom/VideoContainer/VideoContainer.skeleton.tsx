@@ -17,7 +17,7 @@ const VideoContainerSkeleton: FC<VideoContainerSkeletonProps> = ({ className, ..
           'bg-vera-surface',
           'rounded-vera-none sm:rounded-vera-large',
           '[-webkit-mask:linear-gradient(var(--vera-surface)_0_0)]',
-          'box-border w-[100dvw] sm:w-[584px] md:w-full',
+          'box-border w-[100dvw] sm:w-[584px]',
 
           // visibility & positioning
           'opacity-80',

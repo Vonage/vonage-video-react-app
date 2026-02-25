@@ -1,5 +1,5 @@
 import type { DevicesAPI } from '../../types';
-import { getMediaDevicesInfo } from '../../helpers';
+import { getMediaDevicesInfo$ } from '../../helpers';
 import { assertDeviceKind, assertMediaDeviceInfo } from '@web/schemas';
 import assertMediaStreamAccess from '../../helpers/assertMediaStreamAccess';
 import isSinkIdSupported from '@web/platform/isSinkIdSupported/isSinkIdSupported';
@@ -27,6 +27,7 @@ function selectDevice(
     }
 
     const meta = store.getMetadata();
+    const { getMediaDevicesInfo } = getMediaDevicesInfo$(store);
 
     /**
      * This is to prevent the super rare edge case where there could be an ongoing sync at the same time the user selects a device.

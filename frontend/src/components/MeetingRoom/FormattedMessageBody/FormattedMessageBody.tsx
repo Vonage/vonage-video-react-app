@@ -1,5 +1,5 @@
 import { ReactElement } from 'react';
-import Link from '@ui/Link';
+import Link from '@mui/material/Link';
 import linkGroupsParser from '../../../utils/linkGroupsParser';
 
 export type FormattedMessageBodyProps = {

@@ -8,7 +8,6 @@ import {
 import appConfig$ from '@stores/appConfig';
 import useUserContext from '@hooks/useUserContext';
 import getInitials from '@utils/getInitials';
-import { getStorageItem, STORAGE_KEYS } from '@utils/storage';
 import { useDeviceId } from '@core/stores/devices/hooks';
 import useStableCallback from '@web/hooks/useStableCallback';
 
@@ -17,7 +16,13 @@ import useStableCallback from '@web/hooks/useStableCallback';
  * @returns {PublisherProperties | null} publisher properties object
  */
 
-const usePublisherOptions = (): PublisherProperties | null => {
+const usePublisherOptions = ({
+  isAudioEnabled,
+  isVideoEnabled,
+}: {
+  isAudioEnabled: boolean;
+  isVideoEnabled: boolean;
+}): PublisherProperties => {
   const { user } = useUserContext();
 
   const defaultResolution = appConfig$.use.select(
@@ -48,9 +53,6 @@ const usePublisherOptions = (): PublisherProperties | null => {
     const videoFilter: VideoFilter | undefined =
       backgroundFilter && hasMediaProcessorSupport() ? backgroundFilter : undefined;
 
-    const isAudioDisabled = getStorageItem(STORAGE_KEYS.AUDIO_SOURCE_ENABLED) === 'false';
-    const isVideoDisabled = getStorageItem(STORAGE_KEYS.VIDEO_SOURCE_ENABLED) === 'false';
-
     const options = {
       audioFallback: { publisher: true },
       audioFilter,
@@ -58,9 +60,9 @@ const usePublisherOptions = (): PublisherProperties | null => {
       initials,
       insertDefaultUI: false,
       name,
-      publishAudio: allowAudioOnJoin && publishAudio && !isAudioDisabled,
+      publishAudio: allowAudioOnJoin && publishAudio && isAudioEnabled,
       publishCaptions,
-      publishVideo: allowVideoOnJoin && publishVideo && !isVideoDisabled,
+      publishVideo: allowVideoOnJoin && publishVideo && isVideoEnabled,
       resolution: defaultResolution,
       videoFilter,
       videoSource,
@@ -85,6 +87,8 @@ const usePublisherOptions = (): PublisherProperties | null => {
       publishCaptions,
       publishVideo,
       videoSource,
+      isAudioEnabled,
+      isVideoEnabled,
     ]
   );
 };

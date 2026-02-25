@@ -1,5 +1,5 @@
 import { ReactElement, useState } from 'react';
-import Stack from '@ui/Stack';
+import Stack from '@mui/material/Stack';
 import JoinWaitRoomButton from '../JoinWaitRoomButton';
 import RoomNameInput from '../RoomNameInput';
 

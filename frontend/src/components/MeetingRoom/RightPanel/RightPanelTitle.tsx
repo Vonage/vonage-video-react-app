@@ -1,8 +1,8 @@
-import IconButton from '@ui/IconButton';
+import IconButton from '@mui/material/IconButton';
 import { ReactElement } from 'react';
 import VividIcon from '@components/VividIcon';
-import Box from '@ui/Box';
-import Typography from '@ui/Typography';
+import Box from '@mui/material/Box';
+import Typography from '@mui/material/Typography';
 import useTheme from '@ui/theme';
 
 export type RightPanelTitleProps = {

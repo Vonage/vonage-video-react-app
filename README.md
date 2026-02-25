@@ -1,5 +1,11 @@
 # Vonage Video API Reference App for React
 
+<img src="https://developer.nexmo.com/assets/images/Vonage_Nexmo.svg" height="48px" alt="Nexmo is now known as Vonage" />
+
+## Welcome to Vonage
+
+If you're new to Vonage, you can [sign up for a Vonage API account](https://dashboard.vonage.com/?utm_source=DEV_REL&utm_medium=github&utm_campaign=vonage-video-react-app) and get some free credit to get you started.
+
 ## Table of Contents
 <!-- TOC -->
 

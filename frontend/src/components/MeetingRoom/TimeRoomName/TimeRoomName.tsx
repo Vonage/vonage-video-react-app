@@ -1,7 +1,7 @@
 import { ReactElement } from 'react';
 import useDateTime from '../../../hooks/useDateTime';
 import useRoomName from '../../../hooks/useRoomName';
-import Box from '@ui/Box';
+import Box from '@mui/material/Box';
 import useTheme from '@ui/theme';
 
 /**

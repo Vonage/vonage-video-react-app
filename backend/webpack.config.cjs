@@ -37,6 +37,7 @@ module.exports = (env, options) => {
         '@node': path.resolve(__dirname, '../libs/common/srcNode'),
         '@common-test/*': ['../libs/common/test/*'],
         '@node-test/*': ['../libs/common/srcNode/test/*'],
+        '@api-lib': path.resolve(__dirname, '../libs/api/src'),
       },
     },
     module: {

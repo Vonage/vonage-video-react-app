@@ -1,4 +1,4 @@
-import Box from '@ui/Box';
+import Box from '@mui/material/Box';
 import { ReactElement } from 'react';
 import useTheme from '@ui/theme';
 
