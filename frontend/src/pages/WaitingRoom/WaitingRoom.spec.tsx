@@ -17,7 +17,7 @@ import WaitingRoom from './WaitingRoom';
 import SuspenseBoundary from '@web/components/SuspenseBoundary';
 import renderAsyncComponent from '@web-test/renderAsyncComponent';
 import { setupWindowNavigatorMock } from '@web-test/fixtures';
-import env from '../../env';
+import { env } from '../../env';
 
 const mockedNavigate = vi.fn();
 const mockedParams = { roomName: 'test-room-name' };
@@ -139,7 +139,7 @@ describe('WaitingRoom', () => {
 
   it('should display skeleton while video is loading', async () => {
     env.partialUpdate({
-      VITE_WAITING_ROOM_ALLOW_DEVICE_SELECTION: true,
+      WAITING_ROOM_ALLOW_DEVICE_SELECTION: true,
     });
 
     await render(<WaitingRoom />, {
@@ -158,7 +158,7 @@ describe('WaitingRoom', () => {
 
   it('should eventually display a preview publisher', async () => {
     env.partialUpdate({
-      VITE_WAITING_ROOM_ALLOW_DEVICE_SELECTION: true,
+      WAITING_ROOM_ALLOW_DEVICE_SELECTION: true,
     });
 
     const { container } = await render(<WaitingRoom />, {
@@ -183,7 +183,7 @@ describe('WaitingRoom', () => {
     const user = userEvent.setup();
 
     env.partialUpdate({
-      VITE_WAITING_ROOM_ALLOW_DEVICE_SELECTION: true,
+      WAITING_ROOM_ALLOW_DEVICE_SELECTION: true,
     });
 
     const { unmount } = await render(<WaitingRoom />, {
@@ -221,7 +221,7 @@ describe('WaitingRoom', () => {
 
   it('should render VideoContainer when video loading finishes', async () => {
     env.partialUpdate({
-      VITE_WAITING_ROOM_ALLOW_DEVICE_SELECTION: true,
+      WAITING_ROOM_ALLOW_DEVICE_SELECTION: true,
     });
 
     const { container } = await render(<WaitingRoom />, {
@@ -241,7 +241,7 @@ describe('WaitingRoom', () => {
 
   it('should not render ControlPanel when allowDeviceSelection is false', async () => {
     env.partialUpdate({
-      VITE_WAITING_ROOM_ALLOW_DEVICE_SELECTION: false,
+      WAITING_ROOM_ALLOW_DEVICE_SELECTION: false,
     });
 
     const { container } = await render(<WaitingRoom />, {
@@ -263,7 +263,7 @@ describe('WaitingRoom', () => {
 
   it('should render ControlPanel when allowDeviceSelection is true', async () => {
     env.partialUpdate({
-      VITE_WAITING_ROOM_ALLOW_DEVICE_SELECTION: true,
+      WAITING_ROOM_ALLOW_DEVICE_SELECTION: true,
     });
 
     await render(<WaitingRoom />, {

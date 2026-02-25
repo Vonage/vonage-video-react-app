@@ -7,7 +7,7 @@ import useSessionContext from '@hooks/useSessionContext';
 import { SessionContextType } from '@Context/SessionProvider/session';
 import { makeTestProvider } from '@test/providers';
 import ArchivingButton from './ArchivingButton';
-import env from '../../../env';
+import { env } from '../../../env';
 
 vi.mock('@hooks/useSessionContext');
 vi.mock('@hooks/useRoomName');
@@ -92,7 +92,7 @@ describe('ArchivingButton', () => {
 
   it('is not rendered when allowArchiving is disabled', () => {
     env.partialUpdate({
-      VITE_ALLOW_ARCHIVING: false,
+      ALLOW_ARCHIVING: false,
     });
     render(<ArchivingButton handleClick={mockHandleCloseMenu} />);
 

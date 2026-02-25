@@ -7,7 +7,7 @@ import { makeTestProvider, providers, ProviderOptions } from '@test/providers';
 import makeMediaDeviceInfos from '@web-test/fixtures/makeMediaDeviceInfos';
 import { setupWindowNavigatorMock } from '@web-test/fixtures';
 import usePublisherOptions from './usePublisherOptions';
-import env from '../../../env';
+import { env } from '../../../env';
 
 const devices = makeMediaDeviceInfos();
 const audioDevice = devices.find((d) => d.kind === 'audioinput')!;
@@ -23,9 +23,9 @@ describe('usePublisherOptions', () => {
     });
 
     env.partialUpdate({
-      VITE_ALLOW_VIDEO_ON_JOIN: true,
-      VITE_ALLOW_AUDIO_ON_JOIN: true,
-      VITE_DEFAULT_RESOLUTION: '1280x720',
+      ALLOW_VIDEO_ON_JOIN: true,
+      ALLOW_AUDIO_ON_JOIN: true,
+      DEFAULT_RESOLUTION: '1280x720',
     });
 
     Object.defineProperty(window, 'localStorage', {
@@ -152,7 +152,7 @@ describe('usePublisherOptions', () => {
   describe('configurable features', () => {
     it('should disable audio publishing when allowAudioOnJoin is false', async () => {
       env.partialUpdate({
-        VITE_ALLOW_AUDIO_ON_JOIN: false,
+        ALLOW_AUDIO_ON_JOIN: false,
       });
 
       const { result } = renderHook(() =>
@@ -166,7 +166,7 @@ describe('usePublisherOptions', () => {
 
     it('should disable video publishing when allowVideoOnJoin is false', async () => {
       env.partialUpdate({
-        VITE_ALLOW_VIDEO_ON_JOIN: false,
+        ALLOW_VIDEO_ON_JOIN: false,
       });
 
       const { result } = renderHook(() =>
@@ -180,7 +180,7 @@ describe('usePublisherOptions', () => {
 
     it('should configure resolution from config', async () => {
       env.partialUpdate({
-        VITE_DEFAULT_RESOLUTION: '640x480',
+        DEFAULT_RESOLUTION: '640x480',
       });
 
       const { result } = renderHook(() =>

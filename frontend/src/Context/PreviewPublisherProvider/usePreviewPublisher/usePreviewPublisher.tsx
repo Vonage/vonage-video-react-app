@@ -15,7 +15,7 @@ import useSyncPublisherDevices from '@Context/PublisherProvider/usePublisher/hoo
 import waitUntilPlaying from '@utils/waitUntilPlaying';
 import { attempt } from '@common/execution';
 import { useMountEffect } from '@web/hooks';
-import env from '../../../env';
+import { env } from '../../../env';
 
 type PublisherVideoElementCreatedEvent = Event<'videoElementCreated', Publisher> & {
   element: HTMLVideoElement | HTMLObjectElement;
@@ -83,7 +83,6 @@ const usePreviewPublisher = (
   const audioSourceId = mediaDevices$.useDeviceId('audioinput');
 
   const { setUser, user } = useUserContext();
-  const defaultResolution = env.VITE_DEFAULT_RESOLUTION;
   const [publisherVideoElement, setPublisherVideoElement] = useState<
     HTMLVideoElement | HTMLObjectElement | undefined
   >(initialValue?.publisherVideoElement ?? undefined);
@@ -237,7 +236,7 @@ const usePreviewPublisher = (
     const publisherOptions: PublisherProperties = {
       insertDefaultUI: false,
       videoFilter,
-      resolution: defaultResolution,
+      resolution: env.DEFAULT_RESOLUTION,
       publishAudio: isAudioEnabled,
       publishVideo: isVideoEnabled,
       audioSource: audioSourceId,

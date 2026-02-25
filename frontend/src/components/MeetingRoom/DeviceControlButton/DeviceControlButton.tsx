@@ -12,7 +12,7 @@ import Tooltip from '@mui/material/Tooltip';
 import VividIcon from '@components/VividIcon';
 import Box from '@mui/material/Box';
 import usePushToTalk from '@hooks/usePushToTalk';
-import env from '../../../env';
+import { env } from '../../../env';
 
 export type DeviceControlButtonProps = {
   deviceType: 'audio' | 'video';
@@ -38,20 +38,17 @@ const DeviceControlButton = ({
   const { toggleVideo: toggleBackgroundVideoPublisher } = useBackgroundPublisherContext();
   const theme = useTheme();
 
-  const isMicrophoneControlAllowed = env.VITE_ALLOW_MICROPHONE_CONTROL;
-  const isCameraControlAllowed = env.VITE_ALLOW_CAMERA_CONTROL;
-
   const isAudio = deviceType === 'audio';
   const [open, setOpen] = useState<boolean>(false);
   const anchorRef = useRef<HTMLInputElement | null>(null);
-  const isButtonDisabled = isAudio ? !isMicrophoneControlAllowed : !isCameraControlAllowed;
+  const isButtonDisabled = isAudio ? !env.ALLOW_MICROPHONE_CONTROL : !env.ALLOW_CAMERA_CONTROL;
 
   const tooltipTitle = getControlButtonTooltip({
     isAudio,
     isAudioEnabled,
     isVideoEnabled,
-    allowMicrophoneControl: isMicrophoneControlAllowed,
-    allowCameraControl: isCameraControlAllowed,
+    allowMicrophoneControl: env.ALLOW_MICROPHONE_CONTROL,
+    allowCameraControl: env.ALLOW_CAMERA_CONTROL,
     t,
   });
 
@@ -68,7 +65,7 @@ const DeviceControlButton = ({
 
   const renderControlIcon = () => {
     if (isAudio) {
-      if (!isMicrophoneControlAllowed) {
+      if (!env.ALLOW_MICROPHONE_CONTROL) {
         return (
           <VividIcon
             name="microphone-2-solid"
@@ -97,7 +94,7 @@ const DeviceControlButton = ({
       );
     }
 
-    if (!isCameraControlAllowed) {
+    if (!env.ALLOW_CAMERA_CONTROL) {
       return <VividIcon name="video-solid" customSize={-6} sx={{ color: theme.colors.disabled }} />;
     }
     if (isVideoEnabled) {
@@ -130,7 +127,7 @@ const DeviceControlButton = ({
   };
 
   usePushToTalk({
-    enabled: isAudio && isMicrophoneControlAllowed,
+    enabled: isAudio && env.ALLOW_MICROPHONE_CONTROL,
     isAudioEnabled,
     toggleAudio,
   });

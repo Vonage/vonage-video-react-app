@@ -13,7 +13,7 @@ import {
   makeMediaDeviceInfos,
 } from '@web-test/fixtures';
 import { mediaDevices$ } from '@core/stores';
-import env from '../../../env';
+import { env } from '../../../env';
 
 const mockDevices = makeMediaDeviceInfos();
 
@@ -29,7 +29,7 @@ describe('CameraButton', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     env.partialUpdate({
-      VITE_ALLOW_CAMERA_CONTROL: true,
+      ALLOW_CAMERA_CONTROL: true,
     });
 
     setupWindowNavigatorMock({
@@ -126,7 +126,7 @@ describe('CameraButton', () => {
 
   it('is not rendered when allowCameraControl is false', async () => {
     env.partialUpdate({
-      VITE_ALLOW_CAMERA_CONTROL: false,
+      ALLOW_CAMERA_CONTROL: false,
     });
 
     render(<CameraButton />);

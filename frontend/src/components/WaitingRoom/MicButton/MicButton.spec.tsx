@@ -5,7 +5,7 @@ import { makeTestProvider, providers, type ProviderOptions } from '@test/provide
 import MicButton from './MicButton';
 import SuspenseBoundary from '@web/components/SuspenseBoundary/SuspenseBoundary';
 import composeProviders from '@web/helpers/composeProviders';
-import env from '../../../env';
+import { env } from '../../../env';
 import {
   setupWindowNavigatorMock,
   makeMediaStreamMock,
@@ -20,7 +20,7 @@ describe('MicButton', () => {
     vi.clearAllMocks();
 
     env.partialUpdate({
-      VITE_ALLOW_MICROPHONE_CONTROL: true,
+      ALLOW_MICROPHONE_CONTROL: true,
     });
 
     setupWindowNavigatorMock({
@@ -94,7 +94,7 @@ describe('MicButton', () => {
 
   it('is not rendered when allowMicrophoneControl is false', async () => {
     env.partialUpdate({
-      VITE_ALLOW_MICROPHONE_CONTROL: false,
+      ALLOW_MICROPHONE_CONTROL: false,
     });
 
     render(<MicButton />);

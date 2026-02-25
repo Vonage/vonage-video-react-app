@@ -3,7 +3,7 @@ import { fireEvent, render as renderBase, screen } from '@testing-library/react'
 import { ReactElement } from 'react';
 import { makeTestProvider } from '@test/providers';
 import ScreenSharingButton, { ScreenShareButtonProps } from './ScreenSharingButton';
-import env from '../../env';
+import { env } from '../../env';
 
 describe('ScreenSharingButton', () => {
   const mockToggleScreenShare = vi.fn();
@@ -47,7 +47,7 @@ describe('ScreenSharingButton', () => {
 
   it('is not rendered when allowScreenShare is false', () => {
     env.partialUpdate({
-      VITE_ALLOW_SCREEN_SHARE: false,
+      ALLOW_SCREEN_SHARE: false,
     });
 
     render(<ScreenSharingButton {...defaultProps} />);

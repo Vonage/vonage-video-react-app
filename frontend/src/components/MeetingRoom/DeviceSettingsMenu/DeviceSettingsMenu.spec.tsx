@@ -12,7 +12,7 @@ import { hasMediaProcessorSupport } from '@vonage/client-sdk-video';
 import type { MediaDeviceInfoJSON } from '@web/types';
 import { makeTestProvider } from '@test/providers';
 import { isSinkIdSupported } from '@web/platform';
-import env from '../../../env';
+import { env } from '../../../env';
 import {
   makeMediaDeviceInfos,
   makeMediaStreamMock,
@@ -341,8 +341,8 @@ describe('DeviceSettingsMenu Component', () => {
 
     it('and does not render the dropdown separator and video effects option when allowBackgroundEffects is false', async () => {
       env.partialUpdate({
-        VITE_ALLOW_BACKGROUND_EFFECTS: false,
-        VITE_MEETING_ROOM_ALLOW_DEVICE_SELECTION: true,
+        ALLOW_BACKGROUND_EFFECTS: false,
+        MEETING_ROOM_ALLOW_DEVICE_SELECTION: true,
       });
 
       render(

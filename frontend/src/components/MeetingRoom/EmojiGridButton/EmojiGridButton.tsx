@@ -5,7 +5,7 @@ import useTheme from '@ui/theme';
 import ToolbarButton from '../ToolbarButton';
 import EmojiGrid from '../EmojiGrid/EmojiGrid';
 import VividIcon from '@components/VividIcon';
-import env from '../../../env';
+import { env } from '../../../env';
 
 export type EmojiGridProps = {
   isEmojiGridOpen: boolean;
@@ -31,7 +31,6 @@ const EmojiGridButton = ({
   isParentOpen,
   isOverflowButton = false,
 }: EmojiGridProps): ReactElement | false => {
-  const allowEmojis = env.VITE_ALLOW_EMOJIS;
   const { t } = useTranslation();
   const theme = useTheme();
   const anchorRef = useRef<HTMLButtonElement>(null);
@@ -40,7 +39,7 @@ const EmojiGridButton = ({
   };
 
   return (
-    allowEmojis && (
+    env.ALLOW_EMOJIS && (
       <>
         <Tooltip title={t('emoji.tooltip')} aria-label={t('emoji.ariaLabel')}>
           <ToolbarButton

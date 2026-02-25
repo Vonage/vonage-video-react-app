@@ -4,7 +4,7 @@ import { ReactElement, useState } from 'react';
 import { makeTestProvider } from '@test/providers';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import EmojiGridButton from './EmojiGridButton';
-import env from '../../../env';
+import { env } from '../../../env';
 
 vi.mock('@mui/material/useMediaQuery', () => ({
   default: vi.fn(),
@@ -49,7 +49,7 @@ describe('EmojiGridButton', () => {
 
   it('is not rendered when allowEmojis is false', () => {
     env.partialUpdate({
-      VITE_ALLOW_EMOJIS: false,
+      ALLOW_EMOJIS: false,
     });
 
     render(<TestComponent />);

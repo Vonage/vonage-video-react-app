@@ -4,7 +4,7 @@ import { describe, expect, it, vi } from 'vitest';
 import { ReactElement } from 'react';
 import { makeTestProvider } from '@test/providers';
 import BackgroundEffectsButton from './BackgroundEffectsButton';
-import env from '../../../../env';
+import { env } from '../../../../env';
 
 const { mockHasMediaProcessorSupport } = vi.hoisted(() => {
   return {
@@ -17,6 +17,12 @@ vi.mock('@vonage/client-sdk-video', () => ({
 
 describe('BackgroundEffectsButton', () => {
   const mockOnClick = vi.fn();
+  beforeEach(() => {
+    vi.clearAllMocks();
+    env.partialUpdate({
+      ALLOW_BACKGROUND_EFFECTS: true,
+    });
+  });
 
   it('renders the button if media processor is supported', () => {
     mockHasMediaProcessorSupport.mockReturnValue(true);
@@ -40,7 +46,7 @@ describe('BackgroundEffectsButton', () => {
 
   it('is not rendered when background effects are not allowed', () => {
     env.partialUpdate({
-      VITE_ALLOW_BACKGROUND_EFFECTS: false,
+      ALLOW_BACKGROUND_EFFECTS: false,
     });
 
     render(<BackgroundEffectsButton onClick={mockOnClick} />);

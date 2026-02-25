@@ -52,7 +52,7 @@ vi.mock('@mui/material/useMediaQuery', () => ({
 
 // vi.mock('../../env', () => ({
 //   default: {
-//     VITE_BYPASS_WAITING_ROOM: false,
+//     BYPASS_WAITING_ROOM: false,
 //   },
 // }));
 

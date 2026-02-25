@@ -6,7 +6,7 @@ import ToolbarButton from '../MeetingRoom/ToolbarButton';
 import PopupDialog, { DialogTexts } from '../MeetingRoom/PopupDialog';
 import VividIcon from '@components/VividIcon';
 import useTheme from '@ui/theme';
-import env from '../../env';
+import { env } from '../../env';
 
 export type ScreenShareButtonProps = {
   toggleScreenShare: () => void;
@@ -32,7 +32,6 @@ const ScreenSharingButton = ({
   isViewingScreenShare,
   isOverflowButton = false,
 }: ScreenShareButtonProps): ReactElement | false => {
-  const allowScreenShare = env.VITE_ALLOW_SCREEN_SHARE;
   const { t } = useTranslation();
   const theme = useTheme();
   const title = isSharingScreen ? t('screenSharing.title.stop') : t('screenSharing.title.start');
@@ -40,7 +39,7 @@ const ScreenSharingButton = ({
 
   // Screensharing relies on the getDisplayMedia browser API which is unsupported on mobile devices
   // See: https://developer.mozilla.org/en-US/docs/Web/API/MediaDevices/getDisplayMedia#browser_compatibility
-  const shouldDisplayScreenShareButton = !isMobile() && allowScreenShare;
+  const shouldDisplayScreenShareButton = !isMobile() && env.ALLOW_SCREEN_SHARE;
 
   const handleButtonClick = () =>
     isViewingScreenShare ? setIsModalOpen((prev) => !prev) : toggleScreenShare();

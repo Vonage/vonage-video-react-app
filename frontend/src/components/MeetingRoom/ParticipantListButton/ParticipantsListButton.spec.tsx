@@ -3,7 +3,7 @@ import { describe, expect, it, vi } from 'vitest';
 import { ReactElement } from 'react';
 import { makeTestProvider } from '@test/providers';
 import ParticipantListButton from './ParticipantListButton';
-import env from '../../../env';
+import { env } from '../../../env';
 
 describe('ParticipantListButton', () => {
   it('should show participant number', () => {
@@ -26,7 +26,7 @@ describe('ParticipantListButton', () => {
   });
   it('is not rendered when showParticipantList is false', () => {
     env.partialUpdate({
-      VITE_SHOW_PARTICIPANT_LIST: false,
+      SHOW_PARTICIPANT_LIST: false,
     });
 
     render(<ParticipantListButton handleClick={() => {}} isOpen={false} participantCount={10} />);

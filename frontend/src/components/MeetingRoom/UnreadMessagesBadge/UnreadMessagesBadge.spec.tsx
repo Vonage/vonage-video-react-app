@@ -4,7 +4,7 @@ import VividIcon from '@components/VividIcon';
 import { ReactElement } from 'react';
 import { makeTestProvider, providers, type ProviderOptions } from '@test/providers';
 import UnreadMessagesBadge from './UnreadMessagesBadge';
-import env from '../../../env';
+import { env } from '../../../env';
 import ToolbarButton from '../ToolbarButton';
 const LittleButton = () => (
   <ToolbarButton onClick={() => {}} icon={<VividIcon name="chat-solid" customSize={-6} />} />
@@ -182,7 +182,7 @@ describe('UnreadMessagesBadge', () => {
 
   it('should not show the message badge when allowChat is false', () => {
     env.partialUpdate({
-      VITE_ALLOW_CHAT: false,
+      ALLOW_CHAT: false,
     });
 
     render(

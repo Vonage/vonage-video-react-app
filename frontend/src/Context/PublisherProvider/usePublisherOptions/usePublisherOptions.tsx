@@ -9,7 +9,7 @@ import useUserContext from '@hooks/useUserContext';
 import getInitials from '@utils/getInitials';
 import { useDeviceId } from '@core/stores/devices/hooks';
 import useStableCallback from '@web/hooks/useStableCallback';
-import env from '../../../env';
+import { env } from '../../../env';
 
 /**
  * React hook to get PublisherProperties combining default options and options set in UserContext
@@ -50,10 +50,10 @@ const usePublisherOptions = ({
       initials,
       insertDefaultUI: false,
       name,
-      publishAudio: env.VITE_ALLOW_AUDIO_ON_JOIN && publishAudio && isAudioEnabled,
+      publishAudio: env.ALLOW_AUDIO_ON_JOIN && publishAudio && isAudioEnabled,
       publishCaptions,
-      publishVideo: env.VITE_ALLOW_VIDEO_ON_JOIN && publishVideo && isVideoEnabled,
-      resolution: env.VITE_DEFAULT_RESOLUTION,
+      publishVideo: env.ALLOW_VIDEO_ON_JOIN && publishVideo && isVideoEnabled,
+      resolution: env.DEFAULT_RESOLUTION,
       videoFilter,
       videoSource,
     };

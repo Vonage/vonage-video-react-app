@@ -36,7 +36,7 @@ import {
 import { MAX_PIN_COUNT_DESKTOP, MAX_PIN_COUNT_MOBILE } from '@utils/constants';
 import VonageVideoClient from '@utils/VonageVideoClient';
 import wait from '@common/execution/wait';
-import env from '../../env';
+import { env } from '../../env';
 
 export type { ChatMessageType } from '@app-types/chat';
 
@@ -161,9 +161,10 @@ const SessionProvider = ({ children, initialValue = {} }: SessionProviderProps):
   const [layoutMode, setLayoutMode] = useState<LayoutMode>(
     initialValue?.layoutMode ??
       (() => {
-        const defaultLayoutMode = env.VITE_DEFAULT_LAYOUT_MODE;
-        const isValidLayoutMode = (LAYOUT_MODES as readonly string[]).includes(defaultLayoutMode);
-        return isValidLayoutMode ? (defaultLayoutMode as LayoutMode) : 'grid';
+        const isValidLayoutMode = (LAYOUT_MODES as readonly string[]).includes(
+          env.DEFAULT_LAYOUT_MODE
+        );
+        return isValidLayoutMode ? env.DEFAULT_LAYOUT_MODE : 'grid';
       })()
   );
 

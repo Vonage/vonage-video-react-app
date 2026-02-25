@@ -11,7 +11,7 @@ import type { MediaDeviceInfoJSON } from '@web/types';
 import { makeTestProvider } from '@test/providers';
 import { isSinkIdSupported } from '@web/platform';
 import mediaDevices$ from '@core/stores/devices';
-import env from '../../../env';
+import { env } from '../../../env';
 import OutputAudioDevices from './OutputAudioDevices';
 
 vi.mock('@web/platform', async () => {
@@ -137,7 +137,7 @@ describe('OutputAudioDevices Component', () => {
 
   it('is not rendered when allowDeviceSelection is false', () => {
     env.partialUpdate({
-      VITE_MEETING_ROOM_ALLOW_DEVICE_SELECTION: false,
+      MEETING_ROOM_ALLOW_DEVICE_SELECTION: false,
     });
 
     render(<OutputAudioDevices handleToggle={mockHandleToggle} />);

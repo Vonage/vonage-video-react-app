@@ -13,7 +13,7 @@ import Grow from '@mui/material/Grow';
 import ClickAwayListener from '@mui/material/ClickAwayListener';
 import Paper from '@mui/material/Paper';
 import Box from '@mui/material/Box';
-import env from '../../../env';
+import { env } from '../../../env';
 
 export type DeviceSettingsMenuProps = {
   deviceType: 'audio' | 'video';
@@ -52,11 +52,10 @@ const DeviceSettingsMenu = ({
   handleClose,
   setIsOpen,
 }: DeviceSettingsMenuProps): ReactElement | false => {
-  const allowBackgroundEffects = env.VITE_ALLOW_BACKGROUND_EFFECTS;
   const theme = useTheme();
 
   const isAudio = deviceType === 'audio';
-  const shouldDisplayBackgroundEffects = hasMediaProcessorSupport() && allowBackgroundEffects;
+  const shouldDisplayBackgroundEffects = hasMediaProcessorSupport() && env.ALLOW_BACKGROUND_EFFECTS;
 
   const handleToggleBackgroundEffects = () => {
     toggleBackgroundEffects();

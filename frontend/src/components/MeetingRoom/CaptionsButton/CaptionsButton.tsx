@@ -7,7 +7,7 @@ import ToolbarButton from '../ToolbarButton';
 import Tooltip from '@mui/material/Tooltip';
 import VividIcon from '@components/VividIcon';
 import useTheme from '@ui/theme';
-import env from '../../../env';
+import { env } from '../../../env';
 
 export type CaptionsState = {
   isUserCaptionsEnabled: boolean;
@@ -36,8 +36,6 @@ const CaptionsButton = ({
   handleClick,
   captionsState,
 }: CaptionsButtonProps): ReactElement | false => {
-  const isMeetingCaptionsAllowed = env.VITE_ALLOW_CAPTIONS;
-
   const { t } = useTranslation();
   const roomName = useRoomName();
   const [captionsId, setCaptionsId] = useState<string>('');
@@ -100,7 +98,7 @@ const CaptionsButton = ({
   };
 
   return (
-    isMeetingCaptionsAllowed && (
+    env.ALLOW_CAPTIONS && (
       <Tooltip title={title} aria-label={t('captions.ariaLabel')}>
         <ToolbarButton
           onClick={handleActionClick}

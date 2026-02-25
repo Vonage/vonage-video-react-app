@@ -15,7 +15,7 @@ import Typography from '@mui/material/Typography';
 import Grow from '@mui/material/Grow';
 import VividIcon from '@components/VividIcon';
 import Box from '@mui/material/Box';
-import env from '../../../env';
+import { env } from '../../../env';
 
 /**
  * ReduceNoiseTestSpeakers Component
@@ -29,10 +29,8 @@ const ReduceNoiseTestSpeakers = (): ReactElement | false => {
   const theme = useTheme();
   const { publisher, isPublishing } = usePublisherContext();
 
-  const allowAdvancedNoiseSuppression = env.VITE_ALLOW_ADVANCED_NOISE_SUPPRESSION;
-
   const [isToggled, setIsToggled] = useState(false);
-  const shouldDisplayANS = hasMediaProcessorSupport() && allowAdvancedNoiseSuppression;
+  const shouldDisplayANS = hasMediaProcessorSupport() && env.ALLOW_ADVANCED_NOISE_SUPPRESSION;
 
   const handleToggle = async () => {
     const newState = !isToggled;

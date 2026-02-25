@@ -3,7 +3,7 @@ import { describe, expect, it, vi } from 'vitest';
 import { ReactElement } from 'react';
 import { makeTestProvider, providers, ProviderOptions } from '@test/providers';
 import ChatButton from './ChatButton';
-import env from './../../../env';
+import { env } from './../../../env';
 
 describe('ChatButton', () => {
   it('should show unread message number', () => {
@@ -56,7 +56,7 @@ describe('ChatButton', () => {
 
   it('is not rendered when allowChat is false', () => {
     env.partialUpdate({
-      VITE_ALLOW_CHAT: false,
+      ALLOW_CHAT: false,
     });
     render(<ChatButton handleClick={() => {}} isOpen />);
 

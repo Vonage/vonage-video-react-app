@@ -132,19 +132,19 @@ export default defineConfig({
   webServer: {
     reuseExistingServer: true,
     env: {
-      VITE_AVOID_FETCHING_APP_CONFIG: 'true',
-      VITE_BYPASS_WAITING_ROOM: 'false',
+      AVOID_FETCHING_APP_CONFIG: 'true',
+      BYPASS_WAITING_ROOM: 'false',
     },
 
     ...(isDebugMode
       ? {
           command:
-            'bash -c "cd .. && source vcrBuild.env.sh && VITE_AVOID_FETCHING_APP_CONFIG=true VITE_BYPASS_WAITING_ROOM=false yarn dev"',
+            'bash -c "cd .. && source vcrBuild.env.sh && AVOID_FETCHING_APP_CONFIG=true BYPASS_WAITING_ROOM=false yarn dev"',
           url: 'http://localhost:5173/',
         }
       : {
           command:
-            'bash -c "cd .. && source vcrBuild.env.sh && VITE_AVOID_FETCHING_APP_CONFIG=true VITE_BYPASS_WAITING_ROOM=false yarn start"',
+            'bash -c "cd .. && source vcrBuild.env.sh && AVOID_FETCHING_APP_CONFIG=true BYPASS_WAITING_ROOM=false yarn start"',
           url: 'http://127.0.0.1:3345',
         }),
   },

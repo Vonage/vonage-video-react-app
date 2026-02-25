@@ -2,7 +2,7 @@ import { describe, it, beforeEach, vi, expect } from 'vitest';
 import { render as renderBase, screen, fireEvent, waitFor } from '@testing-library/react';
 import { ReactElement } from 'react';
 import { makeTestProvider, providers, type ProviderOptions } from '@test/providers';
-import env from '../../../env';
+import { env } from '../../../env';
 import {
   makeMediaDeviceInfos,
   makeMediaStreamMock,
@@ -26,7 +26,7 @@ describe('InputAudioDevices Component', () => {
     vi.clearAllMocks();
 
     env.partialUpdate({
-      VITE_MEETING_ROOM_ALLOW_DEVICE_SELECTION: true,
+      MEETING_ROOM_ALLOW_DEVICE_SELECTION: true,
     });
 
     // Mock the native devices API - must be in beforeEach because vi.restoreAllMocks() clears them
@@ -131,7 +131,7 @@ describe('InputAudioDevices Component', () => {
 
   it('is not rendered when allowDeviceSelection is false', () => {
     env.partialUpdate({
-      VITE_MEETING_ROOM_ALLOW_DEVICE_SELECTION: false,
+      MEETING_ROOM_ALLOW_DEVICE_SELECTION: false,
     });
 
     render(<InputAudioDevices handleToggle={mockHandleToggle} />);

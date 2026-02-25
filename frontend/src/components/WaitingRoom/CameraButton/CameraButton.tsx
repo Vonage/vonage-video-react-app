@@ -8,7 +8,7 @@ import Tooltip from '@mui/material/Tooltip';
 import Box from '@mui/material/Box';
 import VividIcon from '@components/VividIcon';
 import VideoContainerButton from '../VideoContainerButton';
-import env from '../../../env';
+import { env } from '../../../env';
 
 /**
  * CameraButton Component
@@ -20,7 +20,6 @@ const CameraButton = (): ReactElement | false => {
   const { t } = useTranslation();
   const { isVideoEnabled, toggleVideo } = usePreviewPublisherContext();
   const { toggleVideo: toggleBackgroundVideoPublisher } = useBackgroundPublisherContext();
-  const allowCameraControl = env.VITE_ALLOW_CAMERA_CONTROL;
   const theme = useTheme();
 
   const title = isVideoEnabled
@@ -33,7 +32,7 @@ const CameraButton = (): ReactElement | false => {
   };
 
   return (
-    allowCameraControl && (
+    env.ALLOW_CAMERA_CONTROL && (
       <Box
         data-testid="camera-button-wrapper"
         sx={{

@@ -7,7 +7,7 @@ import Tooltip from '@mui/material/Tooltip';
 import useTheme from '@ui/theme';
 import { VIDEO_CONTAINER_BUTTON_SIZE_WR } from '@utils/constants';
 import VideoContainerButton from '../../VideoContainerButton';
-import env from '../../../../env';
+import { env } from '../../../../env';
 
 export type BackgroundEffectsButtonProps = {
   onClick: () => void;
@@ -24,9 +24,7 @@ export type BackgroundEffectsButtonProps = {
 const BackgroundEffectsButton = ({
   onClick,
 }: BackgroundEffectsButtonProps): ReactElement | false => {
-  const allowBackgroundEffects = env.VITE_ALLOW_BACKGROUND_EFFECTS;
-
-  const shouldDisplayBackgroundEffects = hasMediaProcessorSupport() && allowBackgroundEffects;
+  const shouldDisplayBackgroundEffects = hasMediaProcessorSupport() && env.ALLOW_BACKGROUND_EFFECTS;
   const { t } = useTranslation();
   const theme = useTheme();
 

@@ -5,7 +5,7 @@ import { Box, Typography, MenuList, MenuItem, Tooltip, BoxProps } from '@mui/mat
 import VividIcon from '@components/VividIcon';
 import { useDistinctLabelMediaDevices } from '@ui/hooks';
 import mediaDevices$ from '@core/stores/devices';
-import env from '../../../env';
+import { env } from '../../../env';
 
 export type VideoDevicesProps = BoxProps & {
   handleToggle: () => void;
@@ -27,8 +27,6 @@ const VideoDevices = ({
   const { t } = useTranslation();
   const theme = useTheme();
 
-  const allowDeviceSelection = env.VITE_MEETING_ROOM_ALLOW_DEVICE_SELECTION;
-
   // Use store's selection as source of truth, not publisher.getVideoSource() which can be stale
   const selectedDeviceId = mediaDevices$.useDeviceId('videoinput');
 
@@ -45,7 +43,7 @@ const VideoDevices = ({
   };
 
   return (
-    allowDeviceSelection && (
+    env.MEETING_ROOM_ALLOW_DEVICE_SELECTION && (
       <>
         <Box
           sx={{

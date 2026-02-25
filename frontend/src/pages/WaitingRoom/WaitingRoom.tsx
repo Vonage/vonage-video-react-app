@@ -16,7 +16,7 @@ import precallNetworkTestDialog$ from '@Context/PrecallNetworkTestDialog';
 import { BoxProps } from '@mui/material';
 import VideoContainerSkeleton from '@components/WaitingRoom/VideoContainer/VideoContainer.skeleton';
 import UsernameInputSkeleton from '@components/WaitingRoom/UserNameInput/UserNameInput.skeleton';
-import env from '../../env';
+import { env } from '../../env';
 
 type WaitingRoomProps = Omit<BoxProps, 'sx'>;
 
@@ -47,8 +47,6 @@ const WaitingRoom: FC<WaitingRoomProps> = () => {
   const [openVideoInput, setOpenVideoInput] = useState<boolean>(false);
   const [openAudioOutput, setOpenAudioOutput] = useState<boolean>(false);
   const [username, setUsername] = useState(getStorageItem(STORAGE_KEYS.USERNAME) ?? '');
-
-  const allowDeviceSelection = env.VITE_WAITING_ROOM_ALLOW_DEVICE_SELECTION;
 
   const stableInitLocalPublisher = useEffectEvent(() => {
     if (!publisher) {
@@ -102,7 +100,9 @@ const WaitingRoom: FC<WaitingRoomProps> = () => {
   };
 
   const isRoomReady =
-    allowDeviceSelection && accessStatus === DEVICE_ACCESS_STATUS.ACCEPTED && !isVideoLoading;
+    env.WAITING_ROOM_ALLOW_DEVICE_SELECTION &&
+    accessStatus === DEVICE_ACCESS_STATUS.ACCEPTED &&
+    !isVideoLoading;
 
   return (
     <backgroundEffectsDialog$.Provider>

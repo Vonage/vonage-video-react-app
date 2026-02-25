@@ -9,7 +9,7 @@ import usePublisherContext from '@hooks/usePublisherContext';
 import { defaultAudioDevice } from '@utils/mockData/device';
 import { makeTestProvider } from '@test/providers';
 import DeviceControlButton from './DeviceControlButton';
-import env from '../../../env';
+import { env } from '../../../env';
 import enTranslations from '../../../locales/en.json';
 import { setupWindowNavigatorMock } from '@web-test/fixtures';
 
@@ -50,8 +50,8 @@ describe('DeviceControlButton', () => {
 
   beforeEach(() => {
     env.partialUpdate({
-      VITE_ALLOW_MICROPHONE_CONTROL: true,
-      VITE_ALLOW_CAMERA_CONTROL: true,
+      ALLOW_MICROPHONE_CONTROL: true,
+      ALLOW_CAMERA_CONTROL: true,
     });
     mockPublisher = Object.assign(new EventEmitter(), {
       applyVideoFilter: vi.fn(),
@@ -121,8 +121,8 @@ describe('DeviceControlButton', () => {
 
     it('renders the button as disabled with greyed out icon and correct tooltip when allowMicrophoneControl is false', async () => {
       env.partialUpdate({
-        VITE_ALLOW_MICROPHONE_CONTROL: false,
-        VITE_ALLOW_CAMERA_CONTROL: true,
+        ALLOW_MICROPHONE_CONTROL: false,
+        ALLOW_CAMERA_CONTROL: true,
       });
 
       render(
@@ -161,8 +161,8 @@ describe('DeviceControlButton', () => {
 
     it('renders the button as disabled with greyed out icon and correct tooltip when allowCameraControl is false', async () => {
       env.partialUpdate({
-        VITE_ALLOW_MICROPHONE_CONTROL: true,
-        VITE_ALLOW_CAMERA_CONTROL: false,
+        ALLOW_MICROPHONE_CONTROL: true,
+        ALLOW_CAMERA_CONTROL: false,
       });
 
       render(

@@ -10,7 +10,7 @@ import { SubscriberWrapper } from '@app-types/session';
 import { makeTestProvider } from '@test/providers';
 import { enableCaptions, disableCaptions } from '@api/captions';
 import CaptionsButton, { CaptionsState } from './CaptionsButton';
-import env from '../../../env';
+import { env } from '../../../env';
 
 vi.mock('@hooks/useSessionContext');
 vi.mock('@hooks/useRoomName');
@@ -82,7 +82,7 @@ describe('CaptionsButton', () => {
 
   it('turns the captions on when button is pressed', async () => {
     env.partialUpdate({
-      VITE_ALLOW_CAPTIONS: true,
+      ALLOW_CAPTIONS: true,
     });
     render(<CaptionsButton handleClick={mockHandleCloseMenu} captionsState={mockCaptionsState} />);
 
@@ -95,7 +95,7 @@ describe('CaptionsButton', () => {
 
   it('is not rendered when allowCaptions is false', () => {
     env.partialUpdate({
-      VITE_ALLOW_CAPTIONS: false,
+      ALLOW_CAPTIONS: false,
     });
     render(<CaptionsButton handleClick={mockHandleCloseMenu} captionsState={mockCaptionsState} />);
 

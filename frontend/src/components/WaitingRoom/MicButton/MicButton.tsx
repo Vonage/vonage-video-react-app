@@ -7,7 +7,7 @@ import Tooltip from '@mui/material/Tooltip';
 import VividIcon from '@components/VividIcon';
 import { VIDEO_CONTAINER_BUTTON_SIZE_WR } from '@utils/constants';
 import VideoContainerButton from '../VideoContainerButton';
-import env from '../../../env';
+import { env } from '../../../env';
 
 /**
  * MicButton Component
@@ -25,7 +25,7 @@ const MicButton = (): ReactElement | false => {
     : t('devices.audio.microphone.state.on');
 
   return (
-    env.VITE_ALLOW_MICROPHONE_CONTROL && (
+    env.ALLOW_MICROPHONE_CONTROL && (
       <Box
         data-testid="mic-button-wrapper"
         sx={{

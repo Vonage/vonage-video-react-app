@@ -275,9 +275,9 @@ To test the video API across multiple devices on your local network, you can use
 
     ``` ini
     # Frontend tunnel domain
-    VITE_TUNNEL_DOMAIN=your-frontend-domain.ngrok.io
+    TUNNEL_DOMAIN=your-frontend-domain.ngrok.io
     # Backend tunnel domain  
-    VITE_API_URL=https://your-backend-domain.ngrok.io
+    API_URL=https://your-backend-domain.ngrok.io
     ```
 
     **Note:** ngrok assigns temporary domains. You'll need to update your environment variables each time the domains change.
