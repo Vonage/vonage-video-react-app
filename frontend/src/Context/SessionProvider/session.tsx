@@ -25,6 +25,7 @@ import {
   SubscriberAudioLevelUpdatedEvent,
   SubscriberWrapper,
   LayoutMode,
+  LAYOUT_MODES,
 } from '@app-types/session';
 import { ChatMessageType } from '@app-types/chat';
 import { isMobile } from '@web/platform';
@@ -160,7 +161,9 @@ const SessionProvider = ({ children, initialValue = {} }: SessionProviderProps):
   const [layoutMode, setLayoutMode] = useState<LayoutMode>(
     initialValue?.layoutMode ??
       (() => {
-        return env.VITE_DEFAULT_LAYOUT_MODE as LayoutMode;
+        const defaultLayoutMode = env.VITE_DEFAULT_LAYOUT_MODE;
+        const isValidLayoutMode = (LAYOUT_MODES as readonly string[]).includes(defaultLayoutMode);
+        return isValidLayoutMode ? (defaultLayoutMode as LayoutMode) : 'grid';
       })()
   );
 

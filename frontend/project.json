@@ -10,28 +10,28 @@
       "outputs": ["{projectRoot}/dist"],
       "options": {
         "cwd": "frontend",
-        "command": "bash -c 'source ../vcrBuild.env.sh' && vite build && nx run frontend:cp-build"
+        "command": "bash -c 'source ../vcrBuild.env.sh && vite build && nx run frontend:cp-build'"
       }
     },
     "dev": {
       "executor": "nx:run-commands",
       "options": {
         "cwd": "frontend",
-        "command": "bash -c 'source ../vcrBuild.env.sh' && concurrently \"nx run frontend:ts-check:watch\" \"vite --host\""
+        "command": "bash -c 'source ../vcrBuild.env.sh && concurrently \"nx run frontend:ts-check:watch\" \"vite --host\"'"
       }
     },
     "serve": {
       "executor": "nx:run-commands",
       "options": {
         "cwd": "frontend",
-        "command": "bash -c 'source ../vcrBuild.env.sh' && vite --host"
+        "command": "bash -c 'source ../vcrBuild.env.sh && vite --host'"
       }
     },
     "preview": {
       "executor": "nx:run-commands",
       "options": {
         "cwd": "frontend",
-        "command": "bash -c 'source ../vcrBuild.env.sh' && vite preview"
+        "command": "bash -c 'source ../vcrBuild.env.sh && vite preview'"
       }
     },
     "lint": {
@@ -64,7 +64,7 @@
       "executor": "nx:run-commands",
       "options": {
         "cwd": "frontend",
-        "command": "typedoc'"
+        "command": "typedoc"
       }
     },
     "docs:watch": {
@@ -99,7 +99,7 @@
       "executor": "nx:run-commands",
       "options": {
         "cwd": "frontend",
-        "command": "bash -c 'source ../vcrBuild.env.sh' && storybook dev -p 6006"
+        "command": "bash -c 'source ../vcrBuild.env.sh && storybook dev -p 6006'"
       }
     },
     "build-storybook": {
@@ -107,7 +107,7 @@
       "outputs": ["{projectRoot}/storybook-static"],
       "options": {
         "cwd": "frontend",
-        "command": "bash -c 'source ../vcrBuild.env.sh' && storybook build"
+        "command": "bash -c 'source ../vcrBuild.env.sh && storybook build'"
       }
     }
   },

@@ -105,35 +105,38 @@ export class Env {
 
     this.setSupportedLanguages(env.VITE_I18N_SUPPORTED_LANGUAGES);
 
-    this.VITE_ALLOW_BACKGROUND_EFFECTS = toBoolean(env.VITE_ALLOW_BACKGROUND_EFFECTS);
-    this.VITE_ALLOW_CAMERA_CONTROL = toBoolean(env.VITE_ALLOW_CAMERA_CONTROL);
-    this.VITE_ALLOW_VIDEO_ON_JOIN = toBoolean(env.VITE_ALLOW_VIDEO_ON_JOIN);
+    this.VITE_ALLOW_BACKGROUND_EFFECTS = toBoolean(env.VITE_ALLOW_BACKGROUND_EFFECTS, true);
+    this.VITE_ALLOW_CAMERA_CONTROL = toBoolean(env.VITE_ALLOW_CAMERA_CONTROL, true);
+    this.VITE_ALLOW_VIDEO_ON_JOIN = toBoolean(env.VITE_ALLOW_VIDEO_ON_JOIN, true);
     this.VITE_DEFAULT_RESOLUTION = env.VITE_DEFAULT_RESOLUTION || this.VITE_DEFAULT_RESOLUTION;
     this.VITE_ALLOW_ADVANCED_NOISE_SUPPRESSION = toBoolean(
-      env.VITE_ALLOW_ADVANCED_NOISE_SUPPRESSION
+      env.VITE_ALLOW_ADVANCED_NOISE_SUPPRESSION,
+      true
     );
-    this.VITE_ALLOW_AUDIO_ON_JOIN = toBoolean(env.VITE_ALLOW_AUDIO_ON_JOIN);
-    this.VITE_ALLOW_MICROPHONE_CONTROL = toBoolean(env.VITE_ALLOW_MICROPHONE_CONTROL);
+    this.VITE_ALLOW_AUDIO_ON_JOIN = toBoolean(env.VITE_ALLOW_AUDIO_ON_JOIN, true);
+    this.VITE_ALLOW_MICROPHONE_CONTROL = toBoolean(env.VITE_ALLOW_MICROPHONE_CONTROL, true);
     this.VITE_WAITING_ROOM_ALLOW_DEVICE_SELECTION = toBoolean(
-      env.VITE_WAITING_ROOM_ALLOW_DEVICE_SELECTION
+      env.VITE_WAITING_ROOM_ALLOW_DEVICE_SELECTION,
+      true
     );
-    this.VITE_ALLOW_ARCHIVING = toBoolean(env.VITE_ALLOW_ARCHIVING);
-    this.VITE_ALLOW_CAPTIONS = toBoolean(env.VITE_ALLOW_CAPTIONS);
-    this.VITE_ALLOW_CHAT = toBoolean(env.VITE_ALLOW_CHAT);
+    this.VITE_ALLOW_ARCHIVING = toBoolean(env.VITE_ALLOW_ARCHIVING, true);
+    this.VITE_ALLOW_CAPTIONS = toBoolean(env.VITE_ALLOW_CAPTIONS, true);
+    this.VITE_ALLOW_CHAT = toBoolean(env.VITE_ALLOW_CHAT, true);
     this.VITE_MEETING_ROOM_ALLOW_DEVICE_SELECTION = toBoolean(
-      env.VITE_MEETING_ROOM_ALLOW_DEVICE_SELECTION
+      env.VITE_MEETING_ROOM_ALLOW_DEVICE_SELECTION,
+      true
     );
-    this.VITE_ALLOW_EMOJIS = toBoolean(env.VITE_ALLOW_EMOJIS);
-    this.VITE_ALLOW_SCREEN_SHARE = toBoolean(env.VITE_ALLOW_SCREEN_SHARE);
+    this.VITE_ALLOW_EMOJIS = toBoolean(env.VITE_ALLOW_EMOJIS, true);
+    this.VITE_ALLOW_SCREEN_SHARE = toBoolean(env.VITE_ALLOW_SCREEN_SHARE, true);
     this.VITE_DEFAULT_LAYOUT_MODE = env.VITE_DEFAULT_LAYOUT_MODE || this.VITE_DEFAULT_LAYOUT_MODE;
-    this.VITE_SHOW_PARTICIPANT_LIST = toBoolean(env.VITE_SHOW_PARTICIPANT_LIST);
+    this.VITE_SHOW_PARTICIPANT_LIST = toBoolean(env.VITE_SHOW_PARTICIPANT_LIST, true);
 
     this.VITE_BYPASS_WAITING_ROOM = toBoolean(env.VITE_BYPASS_WAITING_ROOM);
 
     this.setViteApiUrl(env.VITE_API_URL);
 
     this.VITE_TUNNEL_DOMAIN = env.VITE_TUNNEL_DOMAIN;
-    this.VITE_AVOID_FETCHING_APP_CONFIG = toBoolean(env.VITE_AVOID_FETCHING_APP_CONFIG);
+    this.VITE_AVOID_FETCHING_APP_CONFIG = toBoolean(env.VITE_AVOID_FETCHING_APP_CONFIG, true);
     this.MODE = env.MODE || 'development';
   }
 
@@ -143,7 +146,9 @@ export class Env {
       ...partial,
     };
     const next = new Env(this.raw);
+    const savedInitialRaw = this.initialRaw;
     Object.assign(this, next);
+    this.initialRaw = savedInitialRaw;
   }
 
   reset() {
@@ -190,7 +195,8 @@ export class Env {
   };
 }
 
-function toBoolean(value: string | boolean | undefined): boolean {
+function toBoolean(value: string | boolean | undefined, defaultValue: boolean = false): boolean {
+  if (value === undefined) return defaultValue;
   return value === true || value === 'true';
 }
 export default new Env(import.meta.env as unknown as EnvArg);
