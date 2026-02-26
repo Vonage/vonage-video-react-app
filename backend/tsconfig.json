@@ -1,11 +1,6 @@
 {
   "extends": "../tsconfig.base.json",
   "compilerOptions": {
-    "baseUrl": ".",
-    "paths": {
-      "@common/*": ["../libs/common/src/*"],
-      "@common": ["../libs/common/src"]
-    },
     "composite": false,
     "target": "ESNext",
     "lib": ["ESNext"],
