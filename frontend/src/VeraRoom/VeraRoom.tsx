@@ -37,33 +37,26 @@ type VeraRoomProps = ComponentProps<'div'> & BridgeProps;
  * Props are supplied by VeraRoomElement on every attribute change; React
  * reconciliation ensures that only what changed actually re-renders.
  */
-const VeraRoom: FC<VeraRoomProps> = ({
-  className,
-  entryPoint = '',
-  sessionIdentifier = '',
-  language = '',
-  ...props
-}) => {
+const VeraRoom: FC<VeraRoomProps> = ({ className, ...props }) => {
+  const sessionIdentifier = bridge$.use.select((state) => state.sessionIdentifier);
   const initialEntry = sessionIdentifier ? `/waiting-room/${sessionIdentifier}` : '/waiting-room';
 
   return (
-    <bridge$.Provider>
-      <AppContextProvider>
-        <div className={twMerge(classNames('VeraRoom w-full h-full', className))} {...props}>
-          <MemoryRouter initialEntries={[initialEntry]}>
-            <RoomProvider>
-              <Routes>
-                <Route path="/waiting-room/:roomName" element={<WaitingRoomStage />} />
-                {/* Fallback route when no session-identifier attribute is set */}
-                <Route path="/waiting-room" element={<WaitingRoomStage />} />
-                <Route path="/room/:roomName" element={<MeetingRoomStage />} />
-                <Route path="/goodbye" element={<GoodByeStage />} />
-              </Routes>
-            </RoomProvider>
-          </MemoryRouter>
-        </div>
-      </AppContextProvider>
-    </bridge$.Provider>
+    <AppContextProvider>
+      <div className={twMerge(classNames('VeraRoom w-full h-full', className))} {...props}>
+        <MemoryRouter initialEntries={[initialEntry]}>
+          <RoomProvider>
+            <Routes>
+              <Route path="/waiting-room/:roomName" element={<WaitingRoomStage />} />
+              {/* Fallback route when no session-identifier attribute is set */}
+              <Route path="/waiting-room" element={<WaitingRoomStage />} />
+              <Route path="/room/:roomName" element={<MeetingRoomStage />} />
+              <Route path="/goodbye" element={<GoodByeStage />} />
+            </Routes>
+          </RoomProvider>
+        </MemoryRouter>
+      </div>
+    </AppContextProvider>
   );
 };
 

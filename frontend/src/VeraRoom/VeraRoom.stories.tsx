@@ -14,11 +14,11 @@ export default meta;
 type Story = StoryObj;
 
 export const Default: Story = {
-  render: () => <vera-room />,
+  render: () => <vera-room session-identifier="test-123" />,
 };
 
 export const WithEntryPoint: Story = {
-  render: () => <vera-room entry-point="storybook" />,
+  render: () => <vera-room session-identifier="test-session-123" entry-point="storybook" />,
 };
 
 export const WithSessionIdentifier: Story = {

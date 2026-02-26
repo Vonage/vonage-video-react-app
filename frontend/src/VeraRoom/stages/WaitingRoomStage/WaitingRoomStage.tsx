@@ -159,6 +159,8 @@ const WaitingRoomStageContent: FC = () => {
  * redirects to /waiting-room/:sessionIdentifier so useRoomName() resolves correctly.
  */
 const WaitingRoomStage: FC = () => {
+  console.log(bridge$.use.select((state) => state));
+
   const { roomName } = useParams<{ roomName?: string }>();
   const sessionIdentifier = bridge$.use.select((state) => state.sessionIdentifier);
 
@@ -182,6 +184,7 @@ const WaitingRoomStage: FC = () => {
 
   return (
     <PreviewPublisherProvider>
+      {sessionIdentifier}
       <WaitingRoomStageContent />
     </PreviewPublisherProvider>
   );

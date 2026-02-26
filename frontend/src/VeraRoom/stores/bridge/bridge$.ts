@@ -15,12 +15,8 @@ const bridge$ = createContext(initialState, {
     /**
      * Merges the provided attribute values into the bridge state.
      */
-    update(attributes: Partial<BridgeState>) {
-      return ({
-        setState,
-      }: {
-        setState: (updater: (state: BridgeState) => BridgeState) => void;
-      }) => {
+    partialUpdate(attributes: Partial<BridgeState>) {
+      return ({ setState }) => {
         setState((state) => ({ ...state, ...attributes }));
       };
     },
