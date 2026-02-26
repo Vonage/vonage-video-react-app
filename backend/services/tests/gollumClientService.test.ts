@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { describe, expect, it, beforeEach, jest } from '@jest/globals';
-import type { ClientLogEvent } from '@common/logger';
+import type { ClientLogEvent } from '@common/types';
 import { forwardToGollum } from '../gollumClientService';
 
 jest.mock('axios');

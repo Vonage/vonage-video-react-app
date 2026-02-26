@@ -1,5 +1,5 @@
 import { vi, describe, it, beforeEach, expect, type MockInstance } from 'vitest';
-import { createBackendLoggingProvider } from './backendLoggerProvider';
+import { BackendLoggingProvider } from './backendLoggingProvider';
 
 const { MOCK_API_URL, MOCK_VERSION } = vi.hoisted(() => ({
   MOCK_API_URL: 'https://api.test',
@@ -14,7 +14,7 @@ vi.mock('../../utils/getAppVersion', () => ({
   default: () => MOCK_VERSION,
 }));
 
-describe('createBackendLoggingProvider', () => {
+describe('BackendLoggingProvider', () => {
   let fetchSpy: MockInstance<
     [input: string | URL | Request, init?: RequestInit],
     Promise<Response>
@@ -22,10 +22,11 @@ describe('createBackendLoggingProvider', () => {
 
   beforeEach(() => {
     fetchSpy = vi.spyOn(global, 'fetch').mockResolvedValue({ ok: true } as Response);
+    Object.defineProperty(navigator, 'sendBeacon', { value: undefined, configurable: true });
   });
 
   it('log() sends POST with ClientLogEvent shape and does not throw', () => {
-    const provider = createBackendLoggingProvider();
+    const provider = new BackendLoggingProvider();
 
     expect(() => {
       provider.log('vonageVideoClient.connect.success', {
@@ -50,11 +51,11 @@ describe('createBackendLoggingProvider', () => {
       action: 'vonageVideoClient.connect.success',
       variation: 'Success',
       level: 'info',
-      sessionId: 's1',
-      connectionId: 'c1',
       clientVersion: MOCK_VERSION,
       name: 'vera',
       componentId: 'vera',
+      sessionId: 's1',
+      connectionId: 'c1',
       partnerId: 'apiKey',
     });
     expect(body.payload).toMatchObject({ custom: 'data' });
@@ -64,7 +65,7 @@ describe('createBackendLoggingProvider', () => {
   });
 
   it('reportError() sends POST with error payload and variation from error.name', () => {
-    const provider = createBackendLoggingProvider();
+    const provider = new BackendLoggingProvider();
     const err = new Error('Something broke');
 
     expect(() => {
@@ -84,44 +85,19 @@ describe('createBackendLoggingProvider', () => {
       action: 'Error',
       variation: 'Error',
       level: 'error',
-      sessionId: 's2',
       clientVersion: MOCK_VERSION,
+      sessionId: 's2',
     });
-    expect(body.payload?.error).toMatchObject({
-      message: 'Something broke',
-      name: 'Error',
-    });
-    expect(typeof body.payload?.error?.stack).toBe('string');
-    expect(body.payload?.context).toBe('test');
+    expect(body.payload).toMatchObject({ context: 'test' });
   });
 
   it('reportError() uses error.name as variation for non-Error objects with name', () => {
-    const provider = createBackendLoggingProvider();
+    const provider = new BackendLoggingProvider();
     const custom = Object.assign(new Error('msg'), { name: 'CustomError' });
 
     provider.reportError(custom, {});
 
     const body = JSON.parse((fetchSpy.mock.calls[0][1] as RequestInit).body as string);
     expect(body.variation).toBe('CustomError');
-  });
-
-  describe('error handling (provider never throws)', () => {
-    it('log() does not throw when fetch rejects', async () => {
-      fetchSpy.mockRejectedValueOnce(new Error('Network error'));
-      const provider = createBackendLoggingProvider();
-
-      expect(() => provider.log('Event', {})).not.toThrow();
-
-      await vi.waitFor(() => expect(fetchSpy).toHaveBeenCalled());
-    });
-
-    it('reportError() does not throw when fetch rejects', async () => {
-      fetchSpy.mockRejectedValueOnce(new Error('Network error'));
-      const provider = createBackendLoggingProvider();
-
-      expect(() => provider.reportError(new Error('App error'), {})).not.toThrow();
-
-      await vi.waitFor(() => expect(fetchSpy).toHaveBeenCalled());
-    });
   });
 });

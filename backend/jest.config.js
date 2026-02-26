@@ -7,6 +7,8 @@ export default {
   moduleNameMapper: {
     '^@common/(.*)$': '<rootDir>/../libs/common/src/$1',
     '^@common$': '<rootDir>/../libs/common/src',
+    '^@api-lib/(.*)$': '<rootDir>/../libs/api/src/$1',
+    '^@api-lib$': '<rootDir>/../libs/api/src',
   },
   coverageProvider: 'v8',
   roots: ['<rootDir>/'],

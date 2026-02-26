@@ -1,6 +1,6 @@
 import axios from 'axios';
 import loadConfig from '../helpers/config';
-import type { ClientLogEvent } from '@common/logger';
+import type { ClientLogEvent } from '@common/types';
 
 const { gollumUrl } = loadConfig();
 
@@ -11,10 +11,9 @@ const { gollumUrl } = loadConfig();
  */
 export async function forwardToGollum(event: ClientLogEvent): Promise<void> {
   if (!gollumUrl) {
-    console.warn(
+    throw new Error(
       '[logger] GOLLUM_BASE_URL not configured - logs will not be forwarded to Kibana. Set GOLLUM_BASE_URL in backend .env if you need log ingestion.'
     );
-    return;
   }
 
   const body = {

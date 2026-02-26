@@ -8,7 +8,7 @@ import { registerIcon } from '@vonage/vivid';
 import App from './App.jsx';
 import './i18n.js';
 import Logger from './logger';
-import { createBackendLoggingProvider } from './logger/providers';
+import { BackendLoggingProvider } from './logger/providers';
 
 // Register Vivid icons for use throughout the application
 registerIcon();
@@ -21,7 +21,7 @@ const rootElement = document.getElementById('root')!;
 
 const { onUncaughtError, onRecoverableError, onCaughtError } = Logger;
 
-Logger.setup(() => createBackendLoggingProvider());
+Logger.setup(() => new BackendLoggingProvider());
 
 ReactDOM.createRoot(rootElement, {
   onUncaughtError,

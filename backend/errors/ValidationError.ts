@@ -1,17 +1,31 @@
+import StatusCodeEnum from 'status-code-enum';
+import ApplicationError from '@common/errors/ApplicationError';
+
 export type ValidationIssue = {
   path: (string | number)[];
   message: string;
 };
 
-export class ValidationError extends Error {
-  public readonly statusCode = 400;
+export class ValidationError extends ApplicationError {
   public readonly code = 'VALIDATION_ERROR';
-  public readonly severity = 'error';
   public readonly issues: ValidationIssue[];
 
   constructor(issues: ValidationIssue[], message = 'Invalid request') {
-    super(message);
+    super({
+      src: new Error(message),
+      fallbackConfig: {
+        fallbackMessage: message,
+        statusCode: StatusCodeEnum.ClientErrorBadRequest,
+        severity: 'error',
+      },
+    });
     this.name = 'ValidationError';
     this.issues = issues;
   }
+
+  public override exportSafely = () => ({
+    ...this.exportSafelyBase(),
+    code: 'VALIDATION_ERROR',
+    issues: this.issues,
+  });
 }

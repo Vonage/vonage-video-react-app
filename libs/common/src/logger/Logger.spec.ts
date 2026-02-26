@@ -18,29 +18,26 @@ describe('LoggerBase', () => {
     vi.restoreAllMocks();
   });
 
-  it('buffers log when no provider (no warn); flushed when setup() completes', async () => {
+  it('warns and drops logs when no provider; logs go to provider after setup()', async () => {
     const consoleSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
 
     loggerBase.log('EarlyEvent', { sessionId: 's1' });
     loggerBase.reportError(new Error('Early error'), { source: 'test' });
 
-    expect(consoleSpy).not.toHaveBeenCalled();
-    expect(loggerBase['queue']).toHaveLength(2);
+    expect(consoleSpy).toHaveBeenCalledWith(expect.stringContaining('No provider configured'));
 
     const provider = { ...minimalProvider, log: vi.fn(), reportError: vi.fn() };
     loggerBase.setup(() => provider);
 
+    loggerBase.log('AfterSetup', { sessionId: 's2' });
+
     await waitFor(() => {
       expect(provider.log).toHaveBeenCalledWith(
-        'EarlyEvent',
-        expect.objectContaining({ sessionId: 's1', timestamp: expect.any(Number) })
-      );
-      expect(provider.reportError).toHaveBeenCalledWith(
-        expect.objectContaining({ message: 'Early error' }),
-        { source: 'test', timestamp: expect.any(Number) }
+        'AfterSetup',
+        expect.objectContaining({ sessionId: 's2' })
       );
     });
-    expect(loggerBase['queue']).toHaveLength(0);
+    expect(provider.log).not.toHaveBeenCalledWith('EarlyEvent', expect.anything());
   });
 
   it('should warn if the provider is missing the feature', async () => {
@@ -83,40 +80,28 @@ describe('LoggerBase', () => {
   });
 
   describe('group() reportError and log forward with group context', () => {
-    it('should pass payload with auto-generated timestamp (Date.now()) to provider', async () => {
+    it('should pass payload unchanged to provider', async () => {
       const provider = { ...minimalProvider, reportError: vi.fn(), log: vi.fn() };
       loggerBase.setup(() => provider);
 
-      const before = Date.now();
       loggerBase.log('TestEvent', { sessionId: 's1' });
-      const after = Date.now();
 
       await waitFor(() => {
         expect(provider.log).toHaveBeenCalledWith(
           'TestEvent',
-          expect.objectContaining({
-            sessionId: 's1',
-            timestamp: expect.any(Number),
-          })
+          expect.objectContaining({ sessionId: 's1' })
         );
       });
-
-      const payload = (provider.log as ReturnType<typeof vi.fn>).mock.calls[0][1] as {
-        sessionId: string;
-        timestamp: number;
-      };
-      expect(payload.timestamp).toBeGreaterThanOrEqual(before);
-      expect(payload.timestamp).toBeLessThanOrEqual(after);
     });
 
-    it('should add timestamp when log() is called without extra', async () => {
+    it('should pass empty object when log() is called without extra', async () => {
       const provider = { ...minimalProvider, reportError: vi.fn(), log: vi.fn() };
       loggerBase.setup(() => provider);
 
       loggerBase.log('EventOnly');
 
       await waitFor(() => {
-        expect(provider.log).toHaveBeenCalledWith('EventOnly', { timestamp: expect.any(Number) });
+        expect(provider.log).toHaveBeenCalledWith('EventOnly', {});
       });
     });
 
@@ -185,7 +170,7 @@ describe('LoggerBase', () => {
             name: 'Error',
             stack: expect.any(String),
           }),
-          { source: 'test', timestamp: expect.any(Number) }
+          { source: 'test' }
         );
       });
     });
@@ -198,10 +183,7 @@ describe('LoggerBase', () => {
       loggerBase.reportError(raw, { code: 500 });
 
       await waitFor(() => {
-        expect(provider.reportError).toHaveBeenCalledWith(raw, {
-          code: 500,
-          timestamp: expect.any(Number),
-        });
+        expect(provider.reportError).toHaveBeenCalledWith(raw, { code: 500 });
       });
     });
 
@@ -214,7 +196,7 @@ describe('LoggerBase', () => {
       await waitFor(() => {
         expect(provider.reportError).toHaveBeenCalledWith(
           expect.objectContaining({ message: 'E' }),
-          expect.objectContaining({ timestamp: expect.any(Number) })
+          {}
         );
       });
     });

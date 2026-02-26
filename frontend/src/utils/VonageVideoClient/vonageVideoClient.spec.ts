@@ -316,7 +316,7 @@ describe('VonageVideoClient', () => {
       );
     });
 
-    it('should call frontendLogger.log(CallEnded, ...) with reason, sessionId, connectionId, timestamp when session disconnects', async () => {
+    it('should call frontendLogger.log(CallEnded, ...) with reason, sessionId, connectionId when session disconnects', async () => {
       await vonageVideoClient?.connect();
       await wait(0);
 
@@ -337,8 +337,6 @@ describe('VonageVideoClient', () => {
       );
 
       expect(logSpy).toHaveBeenCalledTimes(1);
-      expect(logSpy.mock.calls[0][1]).toHaveProperty('timestamp');
-      expect(typeof (logSpy.mock.calls[0][1] as { timestamp: number }).timestamp).toBe('number');
     });
 
     it('should emit sessionReconnected when the session reconnects', async () => {

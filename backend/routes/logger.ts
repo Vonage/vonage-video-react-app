@@ -1,12 +1,8 @@
 import express, { Request, Response, Router } from 'express';
 import { ZodError } from 'zod';
 import attempt from '@common/execution/attempt';
-import tryCatch from '@common/execution/tryCatch';
-import { validationErrorHandler } from '../middleware/validationErrorHandler';
-import { ValidationError } from '../errors/ValidationError';
 import { forwardToGollum } from '../services/gollumClientService';
-import type { ClientLogEvent } from '@common/logger';
-import { ClientLogEventSchema } from '../types/ClientLogEvent';
+import { ClientLogEventSchema } from '@common/types';
 
 const loggerRouter = Router();
 
@@ -24,25 +20,22 @@ function formatValidationIssues(error: ZodError): { path: (string | number)[]; m
  * Backend logging endpoint. Validates the payload and forwards to Gollum/HLG when configured.
  * Fails fast on data violation. Returns 204 No Content on success (standard for logs).
  */
-loggerRouter.post('/', (req: Request, res: Response, next: express.NextFunction) => {
-  const { result: event, error } = tryCatch(() => ClientLogEventSchema.parse(req.body));
+loggerRouter.post('/', (req: Request, res: Response) => {
+  const parsed = ClientLogEventSchema.safeParse(req.body);
 
-  if (error) {
-    if (error instanceof ZodError) {
-      return next(new ValidationError(formatValidationIssues(error)));
-    }
-    next(error);
-    return;
+  if (!parsed.success) {
+    return res.status(400).json({
+      message: 'Invalid request',
+      severity: 'error',
+      statusCode: 400,
+      code: 'VALIDATION_ERROR',
+      issues: formatValidationIssues(parsed.error as ZodError),
+    });
   }
 
-  if (!event) {
-    next(new Error('Unexpected: parse succeeded but result is null'));
-    return;
-  }
-  void attempt(() => forwardToGollum(event as ClientLogEvent), console.error);
+  const event = parsed.data;
+  void attempt(() => forwardToGollum(event), console.error);
   return res.sendStatus(204);
 });
-
-loggerRouter.use(validationErrorHandler);
 
 export default loggerRouter;

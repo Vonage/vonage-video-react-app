@@ -1,4 +1,4 @@
-import type { ClientLogEvent } from '@common/logger';
+import type { ClientLogEvent } from '@common/types';
 import getAppVersion from '@utils/getAppVersion';
 import OT from '@vonage/client-sdk-video';
 
@@ -8,12 +8,11 @@ const correlationIdForPageLoad = crypto.randomUUID();
 type ClientEventInput = {
   level: ClientLogEvent['level'];
   action: string;
-  variation?: string;
   payload?: Record<string, unknown>;
-  sessionId: string;
-  connectionId: string;
+  sessionId?: string;
+  connectionId?: string;
   timestamp?: number;
-  partnerId: string;
+  partnerId?: string;
 };
 
 /**
@@ -21,12 +20,9 @@ type ClientEventInput = {
  * Uses input.timestamp or Date.now() for clientSystemTime.
  */
 export function createClientEvent(input: ClientEventInput): ClientLogEvent {
-  return {
+  const event: ClientLogEvent = {
     action: input.action,
-    variation: input.variation,
-    payload: input.payload as ClientLogEvent['payload'],
-    sessionId: input.sessionId,
-    connectionId: input.connectionId,
+    payload: input.payload,
     clientSystemTime: input.timestamp ?? Date.now(),
     userAgent: typeof navigator === 'undefined' ? '' : navigator.userAgent,
     level: input.level,
@@ -37,6 +33,9 @@ export function createClientEvent(input: ClientEventInput): ClientLogEvent {
       typeof window !== 'undefined' && window.location.origin ? window.location.origin : 'unknown',
     name: 'vera',
     componentId: 'vera',
-    partnerId: input.partnerId,
   };
+  if (input.sessionId !== undefined) event.sessionId = input.sessionId;
+  if (input.connectionId !== undefined) event.connectionId = input.connectionId;
+  if (input.partnerId !== undefined) event.partnerId = input.partnerId;
+  return event;
 }

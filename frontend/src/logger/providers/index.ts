@@ -1,1 +1,1 @@
-export { createBackendLoggingProvider } from './backendLoggerProvider';
+export { BackendLoggingProvider } from './backendLoggingProvider';

@@ -14,7 +14,6 @@ describe('createClientEvent', () => {
     const event = createClientEvent({
       level: 'info',
       action: 'TestAction',
-      variation: 'Success',
       payload: { key: 'value' },
       sessionId: 'sid-1',
       connectionId: 'conn-1',
@@ -24,7 +23,6 @@ describe('createClientEvent', () => {
 
     expect(event).toMatchObject({
       action: 'TestAction',
-      variation: 'Success',
       payload: { key: 'value' },
       sessionId: 'sid-1',
       connectionId: 'conn-1',
@@ -37,7 +35,7 @@ describe('createClientEvent', () => {
     expect(typeof event.userAgent).toBe('string');
   });
 
-  it('uses Date.now() when timestamp is not provided', () => {
+  it('uses Date.now() when clientSystemTime is not provided', () => {
     const before = Date.now();
     const event = createClientEvent({
       level: 'info',
@@ -56,7 +54,6 @@ describe('createClientEvent', () => {
     const event = createClientEvent({
       level: 'error',
       action: 'Error',
-      variation: 'TypeError',
       payload: {},
       partnerId: 'partner-123',
       sessionId: 'sid-1',
@@ -68,6 +65,19 @@ describe('createClientEvent', () => {
     expect(event.name).toBe('vera');
     expect(event.componentId).toBe('vera');
     expect(event.partnerId).toBe('partner-123');
+  });
+
+  it('omits sessionId, connectionId, partnerId when not provided', () => {
+    const event = createClientEvent({
+      level: 'info',
+      action: 'TestAction',
+      payload: { key: 'value' },
+    });
+
+    expect(event).not.toHaveProperty('sessionId');
+    expect(event).not.toHaveProperty('connectionId');
+    expect(event).not.toHaveProperty('partnerId');
+    expect(event).toMatchObject({ action: 'TestAction', payload: { key: 'value' } });
   });
 
   it('uses the same guid for all events from the same module (same page load)', () => {
