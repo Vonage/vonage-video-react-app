@@ -6,9 +6,12 @@ import {
   bridgeAttributesMap,
   bridgeAttributes,
 } from './stores/bridge';
+import { initialState } from './stores/bridge/constants';
 import type { Any, KebabToCamel } from '@common/types';
 import { ShadowStylesProvider } from './providers';
 import veraStyles from './styles.css?inline';
+
+type BridgeProps = ReturnType<typeof initialState>;
 
 class VeraRoomElement extends HTMLElement {
   static tagName = 'vera-room';
@@ -17,6 +20,12 @@ class VeraRoomElement extends HTMLElement {
   shadow: ShadowRoot;
   mount: HTMLDivElement;
   root?: ReactDOM.Root;
+
+  /**
+   * Mirror of the observed HTML attributes as camelCase props.
+   * Updated in attributeChangedCallback and passed to <VeraRoom> on every render.
+   */
+  private bridgeProps: BridgeProps = initialState();
 
   constructor() {
     super();
@@ -52,12 +61,9 @@ class VeraRoomElement extends HTMLElement {
   connectedCallback() {
     if (!this.root) {
       this.root = ReactDOM.createRoot(this.mount);
-      this.root.render(
-        <ShadowStylesProvider shadowRoot={this.shadow}>
-          <VeraRoom />
-        </ShadowStylesProvider>
-      );
     }
+
+    this.renderReactTree();
   }
 
   disconnectedCallback() {
@@ -74,8 +80,20 @@ class VeraRoomElement extends HTMLElement {
 
     const updates = VeraRoomElement.tryParseAttribute(name, newValue);
 
-    // [todo]: update store through the bridge
-    console.log('Attribute updated:', updates);
+    this.bridgeProps = { ...this.bridgeProps, ...updates };
+    this.renderReactTree();
+  }
+
+  /**
+   * (Re-)renders the React tree with the current bridge props.
+   * React's reconciler diffs against the previous render, so this is safe to call on every attribute change.
+   */
+  private renderReactTree() {
+    this.root?.render(
+      <ShadowStylesProvider shadowRoot={this.shadow}>
+        <VeraRoom {...this.bridgeProps} />
+      </ShadowStylesProvider>
+    );
   }
 
   static tryParseAttribute<T extends BridgeAttribute>(
@@ -89,7 +107,7 @@ class VeraRoomElement extends HTMLElement {
         case 'string':
           return String(value);
         default:
-          throw new Error(`Unsupported type: ${meta.type}`);
+          throw new Error(`Unsupported attribute type for "${name}"`);
       }
     })();
 
