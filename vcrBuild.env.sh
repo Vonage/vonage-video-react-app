@@ -2,4 +2,4 @@
 
 export VITE_ENABLE_REPORT_ISSUE=true
 export VITE_I18N_FALLBACK_LANGUAGE='en'
-export VITE_I18N_SUPPORTED_LANGUAGES='en|en-US|es|es-MX|it'
+export VITE_I18N_SUPPORTED_LANGUAGES='en|en-US|es|es-MX|it|de'

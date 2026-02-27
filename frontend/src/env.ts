@@ -1,4 +1,4 @@
-export type Lang = 'en' | 'it' | 'es' | 'es-MX' | 'en-US';
+export type Lang = 'en' | 'it' | 'es' | 'es-MX' | 'en-US' | 'de';
 
 export type EnvArg = {
   VITE_ENABLE_REPORT_ISSUE: boolean | string;

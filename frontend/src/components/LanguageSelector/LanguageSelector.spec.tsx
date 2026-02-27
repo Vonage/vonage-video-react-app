@@ -31,6 +31,7 @@ const mockT = vi.fn((key: string) => {
     'languages.spanish': 'Español',
     'languages.spanishMX': 'Español (México)',
     'languages.italian': 'Italiano',
+    'languages.german': 'Deutsch',
   };
   return translations[key] || key;
 });
@@ -110,7 +111,7 @@ describe('LanguageSelector', () => {
     });
 
     it('shows all languages when all are supported', async () => {
-      env.setSupportedLanguages('en|es|es-MX|it|en-US');
+      env.setSupportedLanguages('en|es|es-MX|it|en-US|de');
 
       render(<LanguageSelector />);
 
@@ -123,6 +124,7 @@ describe('LanguageSelector', () => {
         expect(screen.getByTestId('language-option-es-MX')).toBeInTheDocument();
         expect(screen.getByTestId('language-option-it')).toBeInTheDocument();
         expect(screen.getByTestId('language-option-en-US')).toBeInTheDocument();
+        expect(screen.getByTestId('language-option-de')).toBeInTheDocument();
       });
     });
 
@@ -213,6 +215,16 @@ describe('LanguageSelector', () => {
 
       expect(screen.getByText('Italiano')).toBeInTheDocument();
       expect(screen.getByTestId('vivid-icon-flag-italy')).toBeInTheDocument();
+    });
+
+    it('displays German language correctly', () => {
+      env.setSupportedLanguages('en|es|it');
+      mockI18n.language = 'de';
+
+      render(<LanguageSelector />);
+
+      expect(screen.getByText('Deutsch')).toBeInTheDocument();
+      expect(screen.getByTestId('vivid-icon-flag-germany')).toBeInTheDocument();
     });
 
     it('displays Mexican Spanish correctly', () => {

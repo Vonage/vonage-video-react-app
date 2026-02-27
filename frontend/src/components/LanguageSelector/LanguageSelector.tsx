@@ -15,6 +15,7 @@ const languageOptions: LanguageOption[] = [
   { code: 'en', name: 'English', flag: 'flag-united-kingdom' },
   { code: 'en-US', name: 'English (US)', flag: 'flag-united-states' },
   { code: 'it', name: 'Italiano', flag: 'flag-italy' },
+  { code: 'de', name: 'Deutsch', flag: 'flag-germany' },
   { code: 'es', name: 'Español', flag: 'flag-spain' },
   { code: 'es-MX', name: 'Español (México)', flag: 'flag-mexico' },
 ];
