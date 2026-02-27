@@ -218,7 +218,7 @@ describe('LanguageSelector', () => {
     });
 
     it('displays German language correctly', () => {
-      env.setSupportedLanguages('en|es|it');
+      env.setSupportedLanguages('en|es|it|de');
       mockI18n.language = 'de';
 
       render(<LanguageSelector />);
