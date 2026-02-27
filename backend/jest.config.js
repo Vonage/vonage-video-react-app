@@ -13,7 +13,7 @@ export default {
   coverageProvider: 'v8',
   roots: ['<rootDir>/'],
   testMatch: ['**/tests/**/*.+(ts|tsx)', '**/?(*.)+(test).+(ts|tsx)'],
-  setupFiles: ['<rootDir>/jest/setEnvVars.js'],
+  setupFiles: ['<rootDir>/jest/documentPolyfill.js', '<rootDir>/jest/setEnvVars.js'],
   transform: {
     '^.+\\.tsx?$': [
       'ts-jest',

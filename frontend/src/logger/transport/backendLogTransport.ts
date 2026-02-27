@@ -48,7 +48,7 @@ export class BackendLogTransport {
         partnerId: typeof partnerId === 'string' ? partnerId : undefined,
         payload: errorPayload,
       }),
-      variation: isErrorLike(error) ? ((error as Error).name ?? 'Error') : 'Error',
+      variation: isErrorLike(error) ? ((error as Error).name ?? 'Error') : 'Failure',
     };
     this.send(clientEvent);
   }

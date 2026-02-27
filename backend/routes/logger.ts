@@ -1,7 +1,7 @@
 import express, { Request, Response, Router } from 'express';
 import { ZodError } from 'zod';
 import attempt from '@common/execution/attempt';
-import { forwardToGollum } from '../services/gollumClientService';
+import { forward } from '../services/loggerService';
 import { ClientLogEventSchema } from '@common/types';
 
 const loggerRouter = Router();
@@ -17,8 +17,9 @@ function formatValidationIssues(error: ZodError): { path: (string | number)[]; m
 }
 
 /**
- * Backend logging endpoint. Validates the payload and forwards to Gollum/HLG when configured.
- * Fails fast on data violation. Returns 204 No Content on success (standard for logs).
+ * Backend logging endpoint. Validates the payload and forwards to Kibana when configured.
+ * For EnterMeeting events, also sends the OTKAnalytics-formatted log.
+ * Fails fast on data violation. Returns 204 No Content on success.
  */
 loggerRouter.post('/', (req: Request, res: Response) => {
   const parsed = ClientLogEventSchema.safeParse(req.body);
@@ -34,7 +35,8 @@ loggerRouter.post('/', (req: Request, res: Response) => {
   }
 
   const event = parsed.data;
-  void attempt(() => forwardToGollum(event), console.error);
+  void attempt(() => forward(event), console.error);
+
   return res.sendStatus(204);
 });
 

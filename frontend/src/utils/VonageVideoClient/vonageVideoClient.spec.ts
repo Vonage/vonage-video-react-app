@@ -8,13 +8,11 @@ import {
   Subscriber,
 } from '@vonage/client-sdk-video';
 import EventEmitter from 'events';
-import logOnConnect from '../logOnConnect';
 import VonageVideoClient from './vonageVideoClient';
 import { Credential, SignalEvent, SignalType } from '../../types/session';
 import wait from '@common/execution/wait';
 import frontendLogger from '../../logger';
 
-vi.mock('../logOnConnect');
 vi.mock('@vonage/client-sdk-video');
 const mockProvider = { log: vi.fn(), reportError: vi.fn() };
 
@@ -82,8 +80,17 @@ describe('VonageVideoClient', () => {
   describe('connect to session', () => {
     it('logs on successful connection', async () => {
       await vonageVideoClient?.connect();
+      await wait(0);
 
-      expect(logOnConnect).toHaveBeenCalled();
+      expect(mockProvider.log).toHaveBeenCalledWith(
+        'EnterMeeting',
+        expect.objectContaining({
+          eventSource: 'vonageVideoClient.connect.success',
+          sessionId: fakeCredentials.sessionId,
+          connectionId: 'connection-id',
+          partnerId: fakeCredentials.apiKey,
+        })
+      );
       expect(console.error).not.toHaveBeenCalled();
       expect(vonageVideoClient).not.toBeUndefined();
     });
@@ -95,7 +102,7 @@ describe('VonageVideoClient', () => {
       });
       await expect(() => vonageVideoClient?.connect()).rejects.toThrowError(fakeError);
 
-      expect(logOnConnect).not.toHaveBeenCalled();
+      expect(mockProvider.log).not.toHaveBeenCalledWith('EnterMeeting', expect.anything());
       expect(vonageVideoClient).not.toBeUndefined();
     });
   });
@@ -298,7 +305,7 @@ describe('VonageVideoClient', () => {
       return sessionDisconnectedPromise;
     });
 
-    it('should log to kibana using logOnConnect with "EnterMeeting" event and "vonageVideoClient.connect.success" event.eventSource', async () => {
+    it('should log EnterMeeting to provider (backend handles Kibana via logOnConnect)', async () => {
       await vonageVideoClient?.connect();
       await wait(0);
 
@@ -306,13 +313,10 @@ describe('VonageVideoClient', () => {
         'EnterMeeting',
         expect.objectContaining({
           eventSource: 'vonageVideoClient.connect.success',
+          sessionId: fakeCredentials.sessionId,
+          connectionId: 'connection-id',
+          partnerId: fakeCredentials.apiKey,
         })
-      );
-
-      expect(logOnConnect).toHaveBeenCalledWith(
-        fakeCredentials.apiKey,
-        fakeCredentials.sessionId,
-        'connection-id'
       );
     });
 

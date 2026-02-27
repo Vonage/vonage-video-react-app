@@ -429,7 +429,7 @@ class VonageVideoClient extends EventEmitter<VonageVideoClientEvents> {
           frontendLogger.reportError(err, {
             eventSource: 'vonageVideoClient.connect.error',
             sessionId,
-            connectionId: this.clientSession?.connection?.connectionId,
+            connectionId: this.connectionId,
             partnerId: apiKey,
           });
 
@@ -438,7 +438,7 @@ class VonageVideoClient extends EventEmitter<VonageVideoClientEvents> {
           frontendLogger.log('EnterMeeting', {
             eventSource: 'vonageVideoClient.connect.success',
             sessionId,
-            connectionId: this.clientSession?.connection?.connectionId,
+            connectionId: this.connectionId,
             partnerId: apiKey,
           });
 
