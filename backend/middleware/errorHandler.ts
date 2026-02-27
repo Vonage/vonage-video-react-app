@@ -50,7 +50,23 @@ export function errorHandler(
   });
 
   // avoids exposing sensitive information while still providing useful error information
-  const safeError = applicationError.exportSafely();
+  let safeError = applicationError.exportSafely();
+  let statusCode =
+    applicationError.statusCode ?? (safeError as { statusCode?: number }).statusCode ?? 500;
+
+  // ValidationError: use its exportSafely for proper statusCode and issues (avoids ESM/instanceof quirks)
+  if (
+    typeof error === 'object' &&
+    error !== null &&
+    (error as { code?: string }).code === 'VALIDATION_ERROR' &&
+    Array.isArray((error as { issues?: unknown }).issues)
+  ) {
+    const validationSafe = (error as ValidationError).exportSafely();
+    safeError = validationSafe;
+    statusCode = validationSafe.statusCode ?? 400;
+  }
+
+  const safeErrorWithStatus = { ...safeError, statusCode };
 
   const accepts = req.headers.accept ?? '';
 
@@ -60,20 +76,20 @@ export function errorHandler(
     req.headers?.['content-type']?.includes('application/json');
 
   if (isJsonRequest) {
-    res.status(applicationError.statusCode).json(safeError);
+    res.status(statusCode).json(safeErrorWithStatus);
     return;
   }
 
   const isHtmlRequest = accepts.includes('text/html');
 
   if (isHtmlRequest) {
-    res.status(applicationError.statusCode).render('index', {
-      error: safeError,
+    res.status(statusCode).render('index', {
+      error: safeErrorWithStatus,
     });
 
     return;
   }
 
   // fallback to plain text response for other request types
-  res.status(applicationError.statusCode).send(safeError.message);
+  res.status(statusCode).send(safeError.message);
 }

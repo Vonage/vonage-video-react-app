@@ -23,9 +23,13 @@ export class ValidationError extends ApplicationError {
     this.issues = issues;
   }
 
-  public override exportSafely = () => ({
-    ...this.exportSafelyBase(),
-    code: 'VALIDATION_ERROR',
-    issues: this.issues,
-  });
+  public override exportSafely = () => {
+    const base = this.exportSafelyBase();
+    return {
+      ...base,
+      code: 'VALIDATION_ERROR',
+      issues: this.issues,
+      statusCode: base.statusCode ?? this.statusCode ?? 400,
+    };
+  };
 }
