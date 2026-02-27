@@ -4,7 +4,7 @@ export {
   ClientLogEventSchema,
   type ClientLogEvent,
   type SerializedError,
-} from './ClientLogEvent.schema';
+} from '../schemas/ClientLogEvent';
 export * from './DecodedSessionId';
 export * from './Any';
 export * from './AnyFunction';
