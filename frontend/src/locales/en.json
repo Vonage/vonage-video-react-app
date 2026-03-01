@@ -90,6 +90,7 @@
   "devices.video.disable": "Disable video",
   "devices.video.disabled": "Camera control is disabled in this application",
   "devices.video.enable": "Enable video",
+  "devices.video.mirrorSelfView": "Mirror Self View",
   "emoji.ariaLabel": "open sendable emoji menu",
   "emoji.tooltip": "Express yourself",
   "errors.unknown": "Unknown error occurred",

@@ -29,6 +29,7 @@ export type UserType = {
     backgroundFilter?: VideoFilter; // The background replacement filter applied to the video
     audioSource?: string; // The selected audio input source (optional)
     videoSource?: string; // The selected video input source (optional)
+    mirrorSelfView: boolean; // Whether the self-view is mirrored (horizontally flipped)
   };
   issues: {
     reconnections: number; // The number of reconnections the user has experienced
@@ -55,6 +56,8 @@ const UserProvider = ({ children, value: initialUserState }: UserProviderProps):
   const noiseSuppression = getStorageItem(STORAGE_KEYS.NOISE_SUPPRESSION) === 'true';
   const backgroundFilter = parseVideoFilter(getStorageItem(STORAGE_KEYS.BACKGROUND_REPLACEMENT));
   const name = getStorageItem(STORAGE_KEYS.USERNAME) ?? '';
+  // Default is true (mirrored); null (no entry) also maps to true via !== 'false'
+  const mirrorSelfView = getStorageItem(STORAGE_KEYS.MIRROR_SELF_VIEW) !== 'false';
 
   const [user, setUser] = useState<UserType>(() => ({
     defaultSettings: {
@@ -63,6 +66,7 @@ const UserProvider = ({ children, value: initialUserState }: UserProviderProps):
       name,
       backgroundFilter,
       noiseSuppression,
+      mirrorSelfView,
       audioSource: undefined,
       videoSource: undefined,
       publishCaptions: true,

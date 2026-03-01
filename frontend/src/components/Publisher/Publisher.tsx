@@ -10,6 +10,7 @@ import VideoTile from '../MeetingRoom/VideoTile';
 import useTheme from '@ui/theme';
 import { ABSOLUTE_DISTANCE_THRESHOLD_REM_VALUE } from '@utils/constants';
 import toRemValue from '@common/helpers/toRemValue';
+import useUserContext from '../../hooks/useUserContext';
 
 export type PublisherProps = {
   box: Box;
@@ -33,26 +34,37 @@ const Publisher = ({ box }: PublisherProps): ReactElement => {
   } = usePublisherContext();
   const audioLevel = useAudioLevels();
   const theme = useTheme();
+  const { user } = useUserContext();
+  const { mirrorSelfView } = user.defaultSettings;
   // We store this in a ref to get a reference to the div so that we can append a video to it
   const pubContainerRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
-    if (element && pubContainerRef.current) {
-      element.classList.add('video__element');
+    if (!element || !pubContainerRef.current) return;
 
-      // Apply MUI-style inline styles instead of Tailwind classes
+    element.classList.add('video__element');
 
-      // eslint-disable-next-line react-hooks/immutability
-      element.style.width = '100%';
-      element.style.height = '100%';
-      element.style.position = 'absolute';
-      element.style.borderRadius = theme.shapes.borderRadiusLarge;
-      element.style.objectFit = 'contain';
-      element.style.transformOrigin = '50% 50%'; // origin-[50%_50%]
-      element.style.transform = 'scaleX(-1)'; // -scale-x-100 (mirror the publisher)
+    // Apply MUI-style inline styles instead of Tailwind classes
 
-      pubContainerRef.current.appendChild(element);
-    }
+    // eslint-disable-next-line react-hooks/immutability
+    element.style.width = '100%';
+    element.style.height = '100%';
+    element.style.position = 'absolute';
+    element.style.borderRadius = theme.shapes.borderRadiusLarge;
+    element.style.objectFit = 'cover';
+    element.style.transformOrigin = '50% 50%';
+
+    pubContainerRef.current.appendChild(element);
   }, [element, theme.shapes.borderRadiusLarge]);
+
+  useEffect(() => {
+    if (!element) return;
+
+    // The SDK mirrors the publisher via .OT_mirrored (scaleX(-1)).
+    // When mirror is ON, we leave transform unset (SDK handles it).
+    // When mirror is OFF, we apply scaleX(-1) to cancel the SDK's mirror.
+    // eslint-disable-next-line react-hooks/immutability
+    element.style.transform = mirrorSelfView ? 'none' : 'scaleX(-1)';
+  }, [element, mirrorSelfView]);
 
   const initials = publisher?.stream?.initials;
   const username = publisher?.stream?.name ?? '';

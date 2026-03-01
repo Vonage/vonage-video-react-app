@@ -16,6 +16,7 @@ const mockUserContext: UserContextType = {
       name: '',
       noiseSuppression: true,
       publishCaptions: false,
+      mirrorSelfView: true,
     },
     issues: {
       reconnections: 0,

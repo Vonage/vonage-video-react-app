@@ -88,6 +88,7 @@
   "devices.video.camera.full": "Camera",
   "devices.video.disable": "Disattiva video",
   "devices.video.enable": "Attiva video",
+  "devices.video.mirrorSelfView": "Mirroring del tuo video",
   "emoji.ariaLabel": "apri menu emoji",
   "emoji.tooltip": "Esprimiti",
   "errors.unknown": "Errore sconosciuto",

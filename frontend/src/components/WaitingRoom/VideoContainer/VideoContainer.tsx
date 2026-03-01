@@ -11,6 +11,7 @@ import VoiceIndicatorIcon from '../../MeetingRoom/VoiceIndicator/VoiceIndicator'
 import VignetteEffect from '../VignetteEffect';
 import BackgroundEffectsDialog from '../BackgroundEffects/BackgroundEffectsDialog';
 import BackgroundEffectsButton from '../BackgroundEffects/BackgroundEffectsButton';
+import MirrorSelfViewButton from '../MirrorSelfViewButton';
 import backgroundEffectsDialog$ from '@Context/BackgroundEffectsDialog';
 import PrecallNetworkTestDialog from '../PrecallNetworkTestDialog';
 import precallNetworkTestDialog$ from '@Context/PrecallNetworkTestDialog';
@@ -38,12 +39,22 @@ const VideoContainer = ({ username }: VideoContainerProps): ReactElement => {
   const { publisherVideoElement, isVideoEnabled, isAudioEnabled, speechLevel, isVideoLoading } =
     usePreviewPublisherContext();
   const initials = getInitials(username);
+  const { mirrorSelfView } = user.defaultSettings;
 
   useEffect(() => {
     if (!publisherVideoElement) return;
 
+    // eslint-disable-next-line react-hooks/immutability
+    publisherVideoElement.style.objectFit = 'cover';
     containerRef.current!.appendChild(publisherVideoElement);
   }, [publisherVideoElement]);
+
+  useEffect(() => {
+    if (!publisherVideoElement) return;
+
+    // eslint-disable-next-line react-hooks/immutability
+    publisherVideoElement.style.transform = mirrorSelfView ? 'none' : 'scaleX(-1)';
+  }, [publisherVideoElement, mirrorSelfView]);
 
   return (
     <div
@@ -61,8 +72,6 @@ const VideoContainer = ({ username }: VideoContainerProps): ReactElement => {
         className={classNames(
           'child:mx-auto',
           'child:animate-[fade-in_.6s_linear]',
-          'child:-scale-x-100',
-          'child:object-contain',
           'child:aspect-video',
           'child:w-dvw',
           'child:rounded-none',
@@ -100,7 +109,8 @@ const VideoContainer = ({ username }: VideoContainerProps): ReactElement => {
             <MicButton />
             <CameraButton />
           </div>
-          <div className="absolute right-5">
+          <div className="absolute right-5 flex flex-row gap-2">
+            <MirrorSelfViewButton />
             <BackgroundEffectsButton onClick={open} />
             {isBackgroundEffectsOpen && (
               <BackgroundEffectsDialog

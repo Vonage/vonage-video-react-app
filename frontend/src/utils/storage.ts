@@ -7,6 +7,7 @@ export const STORAGE_KEYS = {
   BACKGROUND_REPLACEMENT: 'backgroundReplacement',
   USERNAME: 'username',
   BACKGROUND_IMAGE: 'userBackgroundImage',
+  MIRROR_SELF_VIEW: 'mirrorSelfView',
 };
 
 export const setStorageItem = (key: string, value: string) => {

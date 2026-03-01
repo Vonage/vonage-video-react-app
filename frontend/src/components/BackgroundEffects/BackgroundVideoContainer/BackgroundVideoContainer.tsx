@@ -7,6 +7,7 @@ import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import waitUntilPlaying from '../../../utils/waitUntilPlaying';
 import useIsTabletViewport from '../../../hooks/useIsTabletViewport';
+import useUserContext from '../../../hooks/useUserContext';
 
 export type BackgroundVideoContainerProps = {
   isFixedWidth?: boolean;
@@ -35,6 +36,8 @@ const BackgroundVideoContainer = ({
   const isTabletViewport = useIsTabletViewport();
   const isLGViewport = useMediaQuery(`(max-width:1199px)`);
   const theme = useTheme();
+  const { user } = useUserContext();
+  const { mirrorSelfView } = user.defaultSettings;
 
   useEffect(() => {
     if (publisherVideoElement && containerRef.current) {
@@ -62,8 +65,8 @@ const BackgroundVideoContainer = ({
       myVideoElement.style.marginLeft = 'auto';
       myVideoElement.style.marginRight = 'auto';
       myVideoElement.style.marginBottom = '1px';
-      myVideoElement.style.transform = 'scaleX(-1)';
-      myVideoElement.style.objectFit = 'contain';
+      myVideoElement.style.transform = mirrorSelfView ? 'none' : 'scaleX(-1)';
+      myVideoElement.style.objectFit = 'cover';
       myVideoElement.style.aspectRatio = '16 / 9';
 
       void waitUntilPlaying(publisherVideoElement).then(() => {
@@ -79,6 +82,7 @@ const BackgroundVideoContainer = ({
     isParentVideoEnabled,
     isLGViewport,
     theme.shapes.borderRadiusLarge,
+    mirrorSelfView,
   ]);
 
   let containerWidth = '100%';

@@ -8,6 +8,8 @@ import useDropdownResizeObserver from '../../../hooks/useDropdownResizeObserver'
 import VideoDevices from '../VideoDevices';
 import DropdownSeparator from '../DropdownSeparator';
 import VideoDevicesOptions from '../VideoDevicesOptions';
+import MirrorSelfViewToggle from '../MirrorSelfViewToggle/MirrorSelfViewToggle';
+import MenuList from '@mui/material/MenuList';
 import Popper from '@mui/material/Popper';
 import Grow from '@mui/material/Grow';
 import ClickAwayListener from '@mui/material/ClickAwayListener';
@@ -84,6 +86,10 @@ const DeviceSettingsMenu = ({
             <VideoDevicesOptions toggleBackgroundEffects={handleToggleBackgroundEffects} />
           </>
         )}
+        <DropdownSeparator />
+        <MenuList sx={{ display: 'flex', flexDirection: 'column', mt: 1 }}>
+          <MirrorSelfViewToggle />
+        </MenuList>
       </>
     );
   };
