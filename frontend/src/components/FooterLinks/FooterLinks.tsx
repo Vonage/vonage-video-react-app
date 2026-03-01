@@ -4,6 +4,8 @@ import Typography from '@mui/material/Typography';
 import { useTranslation } from 'react-i18next';
 import useTheme from '@ui/theme';
 import GHRepoButton from '../GHRepoButton';
+import getAppVersion from '@utils/getAppVersion';
+import sdkPackageInfo from '@vonage/client-sdk-video/package.json';
 
 /**
  * FooterLinks Component
@@ -27,6 +29,17 @@ const FooterLinks = (): ReactElement => {
         }}
       >
         {t('footer.github.title')}
+      </Typography>
+      <Typography
+        variant="body2"
+        data-testid="app-version"
+        sx={{
+          color: theme.colors.textTertiary,
+          display: { xs: 'none', md: 'block' },
+          ml: 1,
+        }}
+      >
+        {getAppVersion().replace('vera-', 'v')} (SDK {sdkPackageInfo.version})
       </Typography>
     </Stack>
   );
