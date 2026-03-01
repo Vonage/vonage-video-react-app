@@ -43,6 +43,7 @@ describe('UserContext', () => {
         audioSource: undefined,
         videoSource: undefined,
         publishCaptions: true,
+        mirrorSelfView: true,
       },
       issues: {
         reconnections: 0,

@@ -10,9 +10,8 @@ import { describe, beforeEach, it, vi, expect } from 'vitest';
 import { ReactElement, RefObject } from 'react';
 import { hasMediaProcessorSupport } from '@vonage/client-sdk-video';
 import type { MediaDeviceInfoJSON } from '@web/types';
-import { makeTestProvider } from '@test/providers';
+import { makeTestProvider, providers, type ProviderOptions } from '@test/providers';
 import { isSinkIdSupported } from '@web/platform';
-import { env } from '../../../env';
 import {
   makeMediaDeviceInfos,
   makeMediaStreamMock,
@@ -315,12 +314,12 @@ describe('DeviceSettingsMenu Component', () => {
       );
 
       await waitFor(() => {
-        expect(screen.queryByTestId('dropdown-separator')).toBeVisible();
+        expect(screen.queryAllByTestId('dropdown-separator')[0]).toBeVisible();
         expect(screen.queryByText('Video effects')).toBeVisible();
       });
     });
 
-    it('and does not render the dropdown separator and video effects option when media processor is not supported', async () => {
+    it('and does not render the video effects option when media processor is not supported', async () => {
       render(
         <DeviceSettingsMenuComponent
           deviceType={deviceType}
@@ -334,17 +333,12 @@ describe('DeviceSettingsMenu Component', () => {
       );
 
       await waitFor(() => {
-        expect(screen.queryByTestId('dropdown-separator')).not.toBeInTheDocument();
-        expect(screen.queryByText('video effects')).not.toBeInTheDocument();
+        expect(screen.queryByText('Video effects')).not.toBeInTheDocument();
+        expect(screen.queryByText('Mirror Self View')).toBeInTheDocument();
       });
     });
 
-    it('and does not render the dropdown separator and video effects option when allowBackgroundEffects is false', async () => {
-      env.partialUpdate({
-        ALLOW_BACKGROUND_EFFECTS: false,
-        MEETING_ROOM_ALLOW_DEVICE_SELECTION: true,
-      });
-
+    it('and does not render the video effects option when allowBackgroundEffects is false', async () => {
       render(
         <DeviceSettingsMenuComponent
           deviceType={deviceType}
@@ -358,15 +352,23 @@ describe('DeviceSettingsMenu Component', () => {
       );
 
       await waitFor(() => {
-        expect(screen.queryByTestId('dropdown-separator')).not.toBeInTheDocument();
-        expect(screen.queryByText('video effects')).not.toBeInTheDocument();
+        expect(screen.queryByText('Video effects')).not.toBeInTheDocument();
+        expect(screen.queryByText('Mirror Self View')).toBeInTheDocument();
       });
     });
   });
 });
 
-function render(ui: ReactElement) {
-  const { wrapper, ...context } = makeTestProvider([]);
+type RenderOptions = {
+  appConfigContext?: ProviderOptions['AppConfigContext'];
+  userContext?: ProviderOptions['UserContext'];
+};
+
+function render(ui: ReactElement, { appConfigContext, userContext }: RenderOptions = {}) {
+  const { wrapper, ...context } = makeTestProvider([providers.appConfig, providers.user], {
+    appConfigContext,
+    userContext,
+  });
 
   return {
     ...context,
