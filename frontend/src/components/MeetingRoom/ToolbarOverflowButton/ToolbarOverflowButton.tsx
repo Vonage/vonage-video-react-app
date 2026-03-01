@@ -1,4 +1,5 @@
 import { Dispatch, ReactElement, useState, SetStateAction } from 'react';
+import { VideoContentHint } from '@vonage/client-sdk-video';
 import Tooltip from '@mui/material/Tooltip';
 import VividIcon from '@components/VividIcon';
 import { useTranslation } from 'react-i18next';
@@ -14,10 +15,12 @@ export type CaptionsState = {
 };
 
 export type ToolbarOverflowButtonProps = {
-  toggleShareScreen: () => void;
+  toggleShareScreen: (hint?: VideoContentHint) => void;
   isSharingScreen: boolean;
   toolbarButtonsCount: number;
   captionsState: CaptionsState;
+  changeContentHint: (hint: VideoContentHint) => void;
+  currentContentHint: VideoContentHint;
 };
 
 /**
@@ -37,6 +40,8 @@ const ToolbarOverflowButton = ({
   isSharingScreen,
   toolbarButtonsCount,
   captionsState,
+  changeContentHint,
+  currentContentHint,
 }: ToolbarOverflowButtonProps): ReactElement => {
   const { t } = useTranslation();
   const theme = useTheme();
@@ -91,6 +96,8 @@ const ToolbarOverflowButton = ({
         closeMenu={handleClickAway}
         toolbarButtonsCount={toolbarButtonsCount}
         captionsState={captionsState}
+        changeContentHint={changeContentHint}
+        currentContentHint={currentContentHint}
       />
     </>
   );

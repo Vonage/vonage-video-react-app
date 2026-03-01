@@ -7,37 +7,44 @@ import { env } from '../../env';
 
 describe('ScreenSharingButton', () => {
   const mockToggleScreenShare = vi.fn();
+  const mockChangeContentHint = vi.fn();
 
   const defaultProps: ScreenShareButtonProps = {
     toggleScreenShare: mockToggleScreenShare,
     isSharingScreen: false,
     isViewingScreenShare: false,
+    changeContentHint: mockChangeContentHint,
+    currentContentHint: '',
   };
 
   it('renders the share screen button', () => {
     render(<ScreenSharingButton {...defaultProps} />);
     expect(screen.getByTestId('ScreenShareIcon')).toBeInTheDocument();
-
-    const button = screen.getByRole('button');
-    button.click();
-    expect(mockToggleScreenShare).toHaveBeenCalled();
   });
 
-  it('renders the share screen off button', () => {
-    render(<ScreenSharingButton {...defaultProps} isSharingScreen />);
-    expect(screen.getByTestId('ScreenShareIcon')).toBeInTheDocument();
+  it('opens the ContentHintMenu when the share button is clicked (not yet sharing)', () => {
+    render(<ScreenSharingButton {...defaultProps} />);
+    fireEvent.click(screen.getByTestId('screensharing-button'));
+    expect(screen.getByTestId('content-hint-primary-button')).toBeInTheDocument();
+  });
 
-    const button = screen.getByRole('button');
-    button.click();
+  it('calls toggleScreenShare with the selected hint when Share is confirmed in ContentHintMenu', () => {
+    render(<ScreenSharingButton {...defaultProps} />);
+    fireEvent.click(screen.getByTestId('screensharing-button'));
+    fireEvent.click(screen.getByTestId('content-hint-primary-button'));
+    expect(mockToggleScreenShare).toHaveBeenCalledWith('detail');
+  });
+
+  it('calls toggleScreenShare directly when the button is clicked while already sharing', () => {
+    render(<ScreenSharingButton {...defaultProps} isSharingScreen />);
+    fireEvent.click(screen.getByTestId('screensharing-button'));
     expect(mockToggleScreenShare).toHaveBeenCalled();
   });
 
   it('renders the pop up dialog to confirm that user wants to kick off another screenshare', () => {
     render(<ScreenSharingButton {...defaultProps} isViewingScreenShare />);
-    const button = screen.getByRole('button');
-    expect(button).toBeInTheDocument();
-
-    fireEvent.click(button);
+    fireEvent.click(screen.getByTestId('screensharing-button'));
+    fireEvent.click(screen.getByTestId('content-hint-primary-button'));
     expect(
       screen.getByText(
         'Looks like there is someone else sharing their screen. If you continue, their screen is no longer going to be shared.'

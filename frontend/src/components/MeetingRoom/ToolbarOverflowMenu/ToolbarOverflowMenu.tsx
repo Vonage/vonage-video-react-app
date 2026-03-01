@@ -1,4 +1,5 @@
 import { Dispatch, ReactElement, SetStateAction } from 'react';
+import { VideoContentHint } from '@vonage/client-sdk-video';
 import ArchivingButton from '../ArchivingButton';
 import CaptionsButton from '../CaptionsButton';
 import EmojiGridButton from '../EmojiGridButton';
@@ -27,10 +28,12 @@ export type ToolbarOverflowMenuProps = {
   isEmojiGridOpen: boolean;
   setIsEmojiGridOpen: Dispatch<SetStateAction<boolean>>;
   closeMenu: () => void;
-  toggleShareScreen: () => void;
+  toggleShareScreen: (hint?: VideoContentHint) => void;
   isSharingScreen: boolean;
   toolbarButtonsCount: number;
   captionsState: CaptionsState;
+  changeContentHint: (hint: VideoContentHint) => void;
+  currentContentHint: VideoContentHint;
 };
 
 /**
@@ -57,6 +60,8 @@ const ToolbarOverflowMenu = ({
   isSharingScreen,
   toolbarButtonsCount,
   captionsState,
+  changeContentHint,
+  currentContentHint,
 }: ToolbarOverflowMenuProps): ReactElement => {
   const {
     subscriberWrappers,
@@ -86,6 +91,8 @@ const ToolbarOverflowMenu = ({
       isSharingScreen={isSharingScreen}
       isViewingScreenShare={isViewingScreenShare}
       isOverflowButton
+      changeContentHint={changeContentHint}
+      currentContentHint={currentContentHint}
       key="ScreenSharingButton"
     />,
     <LayoutButton

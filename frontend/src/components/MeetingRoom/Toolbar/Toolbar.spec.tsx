@@ -69,6 +69,8 @@ describe('Toolbar', () => {
       setIsUserCaptionsEnabled: vi.fn(),
       setCaptionsErrorResponse: vi.fn(),
     } as CaptionsState,
+    changeContentHint: vi.fn(),
+    currentContentHint: '',
   };
 
   it('does not render the Report Issue button if it is configured to be disabled', () => {

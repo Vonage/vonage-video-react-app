@@ -49,6 +49,8 @@ const MeetingRoom = ({
     quality,
     isVideoEnabled,
     isRecording,
+    changeContentHint,
+    currentContentHint,
     isUserCaptionsEnabled,
     captionsErrorResponse,
     setCaptionsErrorResponse,
@@ -105,6 +107,8 @@ const MeetingRoom = ({
           subscriberWrappers.filter(({ isScreenshare }) => !isScreenshare).length + 1
         }
         captionsState={captionsState}
+        changeContentHint={changeContentHint}
+        currentContentHint={currentContentHint}
       />
       {reconnecting && (
         <ConnectionAlert

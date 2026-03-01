@@ -17,6 +17,7 @@ describe('useScreenSharing', () => {
   let mockPublisher: Partial<Publisher>;
   const mockPublish = vi.fn();
   const mockUnpublish = vi.fn();
+  const mockSetVideoContentHint = vi.fn();
 
   beforeEach(() => {
     mockVonageVideoClient = Object.assign(new EventEmitter(), {
@@ -26,6 +27,7 @@ describe('useScreenSharing', () => {
     mockPublisher = {
       on: vi.fn(),
       destroy: vi.fn(),
+      setVideoContentHint: mockSetVideoContentHint,
     } as unknown as Partial<Publisher>;
 
     (initPublisher as ReturnType<typeof vi.fn>).mockReturnValue(mockPublisher as Publisher);
@@ -35,7 +37,7 @@ describe('useScreenSharing', () => {
     vi.clearAllMocks();
   });
 
-  it('initializes screen sharing publisher and publishes', async () => {
+  it('initializes screen sharing publisher and publishes with default (empty) content hint', async () => {
     const { result } = render({
       userContext: {
         __interceptor: (context: UserContextType | null) => {
@@ -54,7 +56,7 @@ describe('useScreenSharing', () => {
     });
 
     await act(async () => {
-      // toggling screen share on
+      // toggling screen share on (default hint = '')
       await result.current.toggleShareScreen();
     });
 
@@ -63,7 +65,7 @@ describe('useScreenSharing', () => {
       {
         videoSource: 'screen',
         insertDefaultUI: false,
-        videoContentHint: 'detail',
+        videoContentHint: '',
         name: "TestUser's screen",
       },
       expect.any(Function)
@@ -71,6 +73,40 @@ describe('useScreenSharing', () => {
     expect(mockPublisher.on).toHaveBeenCalledWith('streamCreated', expect.any(Function));
     expect(mockPublisher.on).toHaveBeenCalledWith('streamDestroyed', expect.any(Function));
     expect(mockPublisher.on).toHaveBeenCalledWith('mediaStopped', expect.any(Function));
+  });
+
+  it('initializes screen sharing publisher with the specified content hint', async () => {
+    const { result } = render({
+      userContext: {
+        __interceptor: (context: UserContextType | null) => {
+          context!.user.defaultSettings.name = 'TestUser';
+        },
+      },
+      sessionContext: {
+        __interceptor: (context) => {
+          if (context) {
+            context.vonageVideoClient = mockVonageVideoClient as unknown as VonageVideoClient;
+            context.publish = mockPublish;
+            context.unpublish = mockUnpublish;
+          }
+        },
+      },
+    });
+
+    await act(async () => {
+      await result.current.toggleShareScreen('motion');
+    });
+
+    expect(initPublisher).toHaveBeenCalledWith(
+      undefined,
+      {
+        videoSource: 'screen',
+        insertDefaultUI: false,
+        videoContentHint: 'motion',
+        name: "TestUser's screen",
+      },
+      expect.any(Function)
+    );
   });
 
   it('unpublishes screen sharing when already sharing', async () => {
@@ -124,6 +160,68 @@ describe('useScreenSharing', () => {
     });
 
     expect(initPublisher).not.toHaveBeenCalled();
+  });
+
+  it('calls publisher.setVideoContentHint when changeContentHint is invoked', async () => {
+    const { result } = render({
+      userContext: {
+        __interceptor: (context: UserContextType | null) => {
+          context!.user.defaultSettings.name = 'TestUser';
+        },
+      },
+      sessionContext: {
+        __interceptor: (context) => {
+          if (context) {
+            context.vonageVideoClient = mockVonageVideoClient as unknown as VonageVideoClient;
+            context.publish = mockPublish;
+            context.unpublish = mockUnpublish;
+          }
+        },
+      },
+    });
+
+    // Start sharing so the publisher ref is populated
+    await act(async () => {
+      await result.current.toggleShareScreen();
+    });
+
+    act(() => {
+      result.current.changeContentHint('text');
+    });
+
+    expect(mockSetVideoContentHint).toHaveBeenCalledWith('text');
+  });
+
+  it('updates currentContentHint when changeContentHint is invoked', async () => {
+    const { result } = render({
+      userContext: {
+        __interceptor: (context: UserContextType | null) => {
+          context!.user.defaultSettings.name = 'TestUser';
+        },
+      },
+      sessionContext: {
+        __interceptor: (context) => {
+          if (context) {
+            context.vonageVideoClient = mockVonageVideoClient as unknown as VonageVideoClient;
+            context.publish = mockPublish;
+            context.unpublish = mockUnpublish;
+          }
+        },
+      },
+    });
+
+    expect(result.current.currentContentHint).toBe('');
+
+    // Start sharing so the publisher ref is populated
+    await act(async () => {
+      await result.current.toggleShareScreen();
+    });
+
+    act(() => {
+      result.current.changeContentHint('detail');
+    });
+
+    expect(result.current.currentContentHint).toBe('detail');
   });
 });
 

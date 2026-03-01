@@ -37,6 +37,8 @@ const TestComponent = ({ defaultOpen = false }: { defaultOpen?: boolean }) => {
         isSharingScreen={false}
         toolbarButtonsCount={0}
         captionsState={mockCaptionsState}
+        changeContentHint={vi.fn()}
+        currentContentHint=""
       />
     </>
   );

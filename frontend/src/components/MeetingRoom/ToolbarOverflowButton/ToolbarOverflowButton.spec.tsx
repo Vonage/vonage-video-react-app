@@ -28,6 +28,8 @@ describe('ToolbarOverflowButton', () => {
       setIsUserCaptionsEnabled: vi.fn(),
       setCaptionsErrorResponse: vi.fn(),
     } as CaptionsState,
+    changeContentHint: vi.fn(),
+    currentContentHint: '',
   };
   it('renders', () => {
     render(<ToolbarOverflowButton {...defaultProps} />, {

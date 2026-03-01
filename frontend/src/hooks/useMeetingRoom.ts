@@ -56,8 +56,14 @@ const useMeetingRoom = () => {
     archiveId,
   } = useSessionContext();
 
-  const { isSharingScreen, screensharingPublisher, screenshareVideoElement, toggleShareScreen } =
-    useScreenShare();
+  const {
+    isSharingScreen,
+    screensharingPublisher,
+    screenshareVideoElement,
+    toggleShareScreen,
+    changeContentHint,
+    currentContentHint,
+  } = useScreenShare();
 
   const isSmallViewport = useIsSmallViewport();
 
@@ -133,6 +139,8 @@ const useMeetingRoom = () => {
     screensharingPublisher,
     screenshareVideoElement,
     toggleShareScreen,
+    changeContentHint,
+    currentContentHint,
     rightPanelActiveTab,
     toggleChat,
     toggleParticipantList,

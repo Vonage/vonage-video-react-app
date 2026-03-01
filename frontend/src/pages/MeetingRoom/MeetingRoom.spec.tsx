@@ -164,6 +164,8 @@ describe('MeetingRoom', () => {
       isSharingScreen: false,
       screenshareVideoElement: undefined,
       screensharingPublisher: null,
+      changeContentHint: vi.fn(),
+      currentContentHint: '',
     });
     (useMediaQuery as Mock).mockReturnValue(false);
     mockUseToolbarButtons.mockImplementation(

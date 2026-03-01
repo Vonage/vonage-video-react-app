@@ -1,4 +1,5 @@
 import { Dispatch, ReactElement, SetStateAction, useCallback, useRef, useState } from 'react';
+import { VideoContentHint } from '@vonage/client-sdk-video';
 import useSessionContext from '@hooks/useSessionContext';
 import { RightPanelActiveTab } from '@hooks/useRightPanel';
 import isReportIssueEnabled from '@utils/isReportIssueEnabled';
@@ -26,7 +27,7 @@ export type CaptionsState = {
 };
 
 export type ToolbarProps = {
-  toggleShareScreen: () => void;
+  toggleShareScreen: (hint?: VideoContentHint) => void;
   isSharingScreen: boolean;
   rightPanelActiveTab: RightPanelActiveTab;
   toggleParticipantList: () => void;
@@ -35,6 +36,8 @@ export type ToolbarProps = {
   toggleReportIssue: () => void;
   participantCount: number;
   captionsState: CaptionsState;
+  changeContentHint: (hint: VideoContentHint) => void;
+  currentContentHint: VideoContentHint;
 };
 
 /**
@@ -70,6 +73,8 @@ const Toolbar = ({
   toggleReportIssue,
   participantCount,
   captionsState,
+  changeContentHint,
+  currentContentHint,
 }: ToolbarProps): ReactElement => {
   const theme = useTheme();
   const { disconnect, subscriberWrappers } = useSessionContext();
@@ -93,6 +98,8 @@ const Toolbar = ({
       toggleScreenShare={toggleShareScreen}
       isSharingScreen={isSharingScreen}
       isViewingScreenShare={isViewingScreenShare}
+      changeContentHint={changeContentHint}
+      currentContentHint={currentContentHint}
       key="ScreenSharingButton"
     />,
     <LayoutButton
@@ -204,6 +211,8 @@ const Toolbar = ({
               toggleShareScreen={toggleShareScreen}
               toolbarButtonsCount={toolbarButtonsDisplayed}
               captionsState={captionsState}
+              changeContentHint={changeContentHint}
+              currentContentHint={currentContentHint}
             />
           )}
           <ExitButton handleLeave={handleLeave} />
