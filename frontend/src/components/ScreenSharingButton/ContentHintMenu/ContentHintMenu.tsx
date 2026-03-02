@@ -69,6 +69,10 @@ const HINT_OPTIONS: HintOption[] = [
  * A popover menu anchored to the screen share toolbar button that allows the user to select
  * a videoContentHint optimization mode before starting screen share, or change it on the fly
  * while already sharing.
+ *
+ * The UI design — a dropdown with an ⓘ info button showing per-option descriptions on hover —
+ * is inspired by the equivalent screen sharing optimization selector in Cisco WebEx.
+ *
  * @param {ContentHintMenuProps} props - The props for the component.
  * @returns {ReactElement} The ContentHintMenu component.
  */
