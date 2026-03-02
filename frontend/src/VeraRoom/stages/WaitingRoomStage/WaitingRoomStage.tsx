@@ -1,150 +1,20 @@
-import {
-  useState,
-  useEffect,
-  type MouseEvent,
-  type TouchEvent,
-  type FC,
-  useEffectEvent,
-} from 'react';
+import { type FC } from 'react';
 import { Navigate, useParams } from 'react-router-dom';
-import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
+import bridge$ from '../../stores/bridge';
 import { PreviewPublisherProvider } from '@Context/PreviewPublisherProvider';
 import backgroundEffectsDialog$ from '@Context/BackgroundEffectsDialog';
 import precallNetworkTestDialog$ from '@Context/PrecallNetworkTestDialog';
-import usePreviewPublisherContext from '@hooks/usePreviewPublisherContext';
-import useBackgroundPublisherContext from '@hooks/useBackgroundPublisherContext';
-import ControlPanel from '@components/WaitingRoom/ControlPanel';
-import VideoContainer from '@components/WaitingRoom/VideoContainer';
-import UsernameInput from '@components/WaitingRoom/UserNameInput';
-import VideoContainerSkeleton from '@components/WaitingRoom/VideoContainer/VideoContainer.skeleton';
-import UsernameInputSkeleton from '@components/WaitingRoom/UserNameInput/UserNameInput.skeleton';
+import useWaitingRoom from '@hooks/useWaitingRoom';
+import { Box } from '@mui/material';
 import DeviceAccessAlert from '@components/DeviceAccessAlert';
 import { DEVICE_ACCESS_STATUS } from '@utils/constants';
-import { getStorageItem, STORAGE_KEYS } from '@utils/storage';
-import appConfig$ from '@stores/appConfig';
-import bridge$ from '../../stores/bridge';
-
-/**
- * Inner content — must be rendered inside PreviewPublisherProvider.
- */
-const WaitingRoomStageContent: FC = () => {
-  const { initLocalPublisher, publisher, accessStatus, destroyPublisher, isVideoLoading } =
-    usePreviewPublisherContext();
-
-  const { initBackgroundLocalPublisher, publisher: backgroundPublisher } =
-    useBackgroundPublisherContext();
-
-  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
-  const [openAudioInput, setOpenAudioInput] = useState(false);
-  const [openVideoInput, setOpenVideoInput] = useState(false);
-  const [openAudioOutput, setOpenAudioOutput] = useState(false);
-  const [username, setUsername] = useState(getStorageItem(STORAGE_KEYS.USERNAME) ?? '');
-
-  const allowDeviceSelection = appConfig$.use.select(
-    ({ waitingRoomSettings }) => waitingRoomSettings.allowDeviceSelection
-  );
-
-  const stableInitLocalPublisher = useEffectEvent(() => {
-    if (!publisher) {
-      initLocalPublisher();
-    }
-
-    return () => {
-      if (publisher) {
-        destroyPublisher();
-      }
-    };
-  });
-
-  useEffect(() => {
-    return stableInitLocalPublisher();
-  }, [publisher]);
-
-  useEffect(() => {
-    if (!backgroundPublisher) {
-      initBackgroundLocalPublisher();
-    }
-  }, [initBackgroundLocalPublisher, backgroundPublisher]);
-
-  const handleAudioInputOpen = (
-    event: MouseEvent<HTMLButtonElement> | TouchEvent<HTMLButtonElement>
-  ) => {
-    setAnchorEl(event.currentTarget);
-    setOpenAudioInput(true);
-  };
-
-  const handleVideoInputOpen = (
-    event: MouseEvent<HTMLButtonElement> | TouchEvent<HTMLButtonElement>
-  ) => {
-    setAnchorEl(event.currentTarget);
-    setOpenVideoInput(true);
-  };
-
-  const handleAudioOutputOpen = (
-    event: MouseEvent<HTMLButtonElement> | TouchEvent<HTMLButtonElement>
-  ) => {
-    setAnchorEl(event.currentTarget);
-    setOpenAudioOutput(true);
-  };
-
-  const handleClose = () => {
-    setAnchorEl(null);
-    setOpenAudioInput(false);
-    setOpenAudioOutput(false);
-    setOpenVideoInput(false);
-  };
-
-  const isRoomReady =
-    allowDeviceSelection && accessStatus === DEVICE_ACCESS_STATUS.ACCEPTED && !isVideoLoading;
-
-  return (
-    <backgroundEffectsDialog$.Provider>
-      <precallNetworkTestDialog$.Provider>
-        <Box
-          data-testid="waitingRoomStage"
-          className="flex flex-col md:flex-row gap-6 p-6 h-full w-full overflow-auto"
-        >
-          <Box className="flex flex-col gap-4 flex-1 items-center justify-center">
-            {isRoomReady && (
-              <>
-                <VideoContainer username={username} />
-                <ControlPanel
-                  handleAudioInputOpen={handleAudioInputOpen}
-                  handleVideoInputOpen={handleVideoInputOpen}
-                  handleAudioOutputOpen={handleAudioOutputOpen}
-                  handleClose={handleClose}
-                  openAudioInput={openAudioInput}
-                  openVideoInput={openVideoInput}
-                  openAudioOutput={openAudioOutput}
-                  anchorEl={anchorEl}
-                />
-              </>
-            )}
-
-            {!isRoomReady && <VideoContainerSkeleton />}
-          </Box>
-
-          <Box className="flex flex-col flex-1 items-center justify-center">
-            {isRoomReady && (
-              <UsernameInput
-                className="flex-col sm:inline-flex h-auto sm:h-100 animate-fade-in"
-                username={username}
-                setUsername={setUsername}
-              />
-            )}
-
-            {!isRoomReady && <UsernameInputSkeleton />}
-          </Box>
-        </Box>
-
-        {accessStatus !== DEVICE_ACCESS_STATUS.ACCEPTED && (
-          <DeviceAccessAlert accessStatus={accessStatus} />
-        )}
-      </precallNetworkTestDialog$.Provider>
-    </backgroundEffectsDialog$.Provider>
-  );
-};
+import UsernameInputSkeleton from '@components/WaitingRoom/UserNameInput/UserNameInput.skeleton';
+import UsernameInput from '@components/WaitingRoom/UserNameInput';
+import VideoContainerSkeleton from '@components/WaitingRoom/VideoContainer/VideoContainer.skeleton';
+import ControlPanel from '@components/WaitingRoom/ControlPanel';
+import VideoContainer from '@components/WaitingRoom/VideoContainer';
+import { PageLayoutEmbed } from '@ui';
 
 /**
  * WaitingRoomStage
@@ -159,8 +29,6 @@ const WaitingRoomStageContent: FC = () => {
  * redirects to /waiting-room/:sessionIdentifier so useRoomName() resolves correctly.
  */
 const WaitingRoomStage: FC = () => {
-  console.log(bridge$.use.select((state) => state));
-
   const { roomName } = useParams<{ roomName?: string }>();
   const sessionIdentifier = bridge$.use.select((state) => state.sessionIdentifier);
 
@@ -184,10 +52,76 @@ const WaitingRoomStage: FC = () => {
 
   return (
     <PreviewPublisherProvider>
-      {sessionIdentifier}
       <WaitingRoomStageContent />
     </PreviewPublisherProvider>
   );
 };
+
+function WaitingRoomStageContent() {
+  const {
+    anchorEl,
+    openAudioInput,
+    openVideoInput,
+    openAudioOutput,
+    username,
+    setUsername,
+    accessStatus,
+    isRoomReady,
+    handleAudioInputOpen,
+    handleVideoInputOpen,
+    handleAudioOutputOpen,
+    handleClose,
+  } = useWaitingRoom();
+
+  return (
+    <backgroundEffectsDialog$.Provider>
+      <precallNetworkTestDialog$.Provider>
+        <Box data-testid="waitingRoom" sx={{ height: '100%' }}>
+          <PageLayoutEmbed>
+            <PageLayoutEmbed.Left>
+              <Box
+                className={`relative flex flex-col sm:inline-flex h-auto max-w-full animate-fade-in`}
+              >
+                {isRoomReady && (
+                  <>
+                    <VideoContainer username={username} />
+
+                    <ControlPanel
+                      handleAudioInputOpen={handleAudioInputOpen}
+                      handleVideoInputOpen={handleVideoInputOpen}
+                      handleAudioOutputOpen={handleAudioOutputOpen}
+                      handleClose={handleClose}
+                      openAudioInput={openAudioInput}
+                      openVideoInput={openVideoInput}
+                      openAudioOutput={openAudioOutput}
+                      anchorEl={anchorEl}
+                    />
+                  </>
+                )}
+
+                {!isRoomReady && <VideoContainerSkeleton />}
+              </Box>
+            </PageLayoutEmbed.Left>
+
+            <PageLayoutEmbed.Right>
+              {isRoomReady && (
+                <UsernameInput
+                  className={`flex-col sm:inline-flex h-auto animate-fade-in`}
+                  username={username}
+                  setUsername={setUsername}
+                />
+              )}
+
+              {!isRoomReady && <UsernameInputSkeleton />}
+            </PageLayoutEmbed.Right>
+          </PageLayoutEmbed>
+          {accessStatus !== DEVICE_ACCESS_STATUS.ACCEPTED && (
+            <DeviceAccessAlert accessStatus={accessStatus} />
+          )}
+        </Box>
+      </precallNetworkTestDialog$.Provider>
+    </backgroundEffectsDialog$.Provider>
+  );
+}
 
 export default WaitingRoomStage;

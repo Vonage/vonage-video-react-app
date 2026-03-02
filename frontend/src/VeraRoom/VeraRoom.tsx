@@ -1,7 +1,5 @@
-import classNames from 'classnames';
 import type { ComponentProps, FC } from 'react';
 import { MemoryRouter, Routes, Route } from 'react-router-dom';
-import { twMerge } from 'tailwind-merge';
 import AppContextProvider from '../AppContextProvider';
 import RoomProvider from '@Context/RoomProvider';
 import bridge$ from './stores/bridge';
@@ -43,7 +41,7 @@ const VeraRoom: FC<VeraRoomProps> = ({ className, ...props }) => {
 
   return (
     <AppContextProvider>
-      <div className={twMerge(classNames('VeraRoom w-full h-full', className))} {...props}>
+      <div className={['VeraRoom', 'h-full', className].filter(Boolean).join(' ')} {...props}>
         <MemoryRouter initialEntries={[initialEntry]}>
           <RoomProvider>
             <Routes>
