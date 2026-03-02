@@ -58,8 +58,8 @@ function setupDeviceStore(api: unknown) {
       .then((devices) => {
         if (isCanceled()) return;
 
-        const hasLabels = devices.some((device) => device.label);
-        if (hasLabels) return;
+        const hasValidDevices = devices.some((device) => device.label && device.deviceId);
+        if (hasValidDevices) return;
 
         //we should request permissions to be able to see the devices labels.
         return meta.__getUserMedia!({ audio: true, video: true }).then((stream) => {

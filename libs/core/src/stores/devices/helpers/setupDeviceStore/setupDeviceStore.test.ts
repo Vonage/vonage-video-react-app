@@ -290,6 +290,42 @@ describe('setupDeviceStore', () => {
       expect(mockStream.getTracks).toHaveBeenCalled();
     });
 
+    it('should request permissions when on Firefox and deviceIds are empty but labels are present', async () => {
+      vi.spyOn(isFirefoxModule, 'default').mockReturnValue(true);
+
+      const mockStream = {
+        getTracks: vi.fn().mockReturnValue([{ stop: vi.fn() }, { stop: vi.fn() }]),
+      };
+
+      const getUserMediaSpy = vi.fn(() =>
+        Promise.resolve(mockStream)
+      ) as unknown as typeof navigator.mediaDevices.getUserMedia;
+
+      setupWindowNavigatorMock({
+        mediaDevices: {
+          addEventListener: vi.fn(),
+          enumerateDevices: vi.fn().mockResolvedValue([
+            { deviceId: '', kind: 'audioinput', label: 'Microphone' },
+            { deviceId: '', kind: 'videoinput', label: 'Camera' },
+          ]),
+          getUserMedia: getUserMediaSpy,
+        },
+      });
+
+      const api$ = makeApiClone();
+
+      setupDeviceStore(api$);
+
+      await waitFor(
+        () => {
+          expect(getUserMediaSpy).toHaveBeenCalledWith({ audio: true, video: true });
+        },
+        { timeout: 200 }
+      );
+
+      expect(mockStream.getTracks).toHaveBeenCalled();
+    });
+
     it('should NOT request permissions when on Firefox and device labels are present', async () => {
       vi.spyOn(isFirefoxModule, 'default').mockReturnValue(true);
 
