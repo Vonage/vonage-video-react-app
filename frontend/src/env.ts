@@ -152,6 +152,7 @@ export class Env {
   public MEETING_ROOM_ALLOW_DEVICE_SELECTION: boolean;
   public ALLOW_EMOJIS: boolean;
   public ALLOW_SCREEN_SHARE: boolean;
+  public ALLOW_CONTENT_HINTS: boolean;
   public DEFAULT_LAYOUT_MODE: LayoutMode;
   public SHOW_PARTICIPANT_LIST: boolean;
   public BYPASS_WAITING_ROOM: boolean;
@@ -194,6 +195,7 @@ export class Env {
     );
     this.ALLOW_EMOJIS = parseBoolean(env.ALLOW_EMOJIS, true);
     this.ALLOW_SCREEN_SHARE = parseBoolean(env.ALLOW_SCREEN_SHARE, true);
+    this.ALLOW_CONTENT_HINTS = parseBoolean(env.ALLOW_CONTENT_HINTS, true);
     this.SHOW_PARTICIPANT_LIST = parseBoolean(env.SHOW_PARTICIPANT_LIST, true);
     this.BYPASS_WAITING_ROOM = parseBoolean(env.BYPASS_WAITING_ROOM, false);
     this.AVOID_FETCHING_APP_CONFIG = parseBoolean(env.AVOID_FETCHING_APP_CONFIG, true);

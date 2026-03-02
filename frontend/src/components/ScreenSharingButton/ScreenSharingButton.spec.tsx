@@ -61,6 +61,35 @@ describe('ScreenSharingButton', () => {
 
     expect(screen.queryByTestId('ScreenShareIcon')).not.toBeInTheDocument();
   });
+
+  it('calls toggleScreenShare immediately when clicked and allowContentHints is false', () => {
+    render(<ScreenSharingButton {...defaultProps} />, {
+      appConfigContext: {
+        value: {
+          meetingRoomSettings: {
+            allowContentHints: false,
+          },
+        },
+      },
+    });
+    fireEvent.click(screen.getByTestId('screensharing-button'));
+    expect(mockToggleScreenShare).toHaveBeenCalledWith();
+    expect(screen.queryByTestId('content-hint-primary-button')).not.toBeInTheDocument();
+  });
+
+  it('does not open ContentHintMenu when clicked and allowContentHints is false', () => {
+    render(<ScreenSharingButton {...defaultProps} />, {
+      appConfigContext: {
+        value: {
+          meetingRoomSettings: {
+            allowContentHints: false,
+          },
+        },
+      },
+    });
+    fireEvent.click(screen.getByTestId('screensharing-button'));
+    expect(screen.queryByTestId('content-hint-menu')).not.toBeInTheDocument();
+  });
 });
 
 function render(ui: ReactElement) {

@@ -43,6 +43,7 @@ const ScreenSharingButton = ({
   changeContentHint,
   currentContentHint,
 }: ScreenShareButtonProps): ReactElement | false => {
+  const allowContentHints = env.ALLOW_CONTENT_HINTS;
   const { t } = useTranslation();
   const theme = useTheme();
 
@@ -70,13 +71,18 @@ const ScreenSharingButton = ({
       toggleScreenShare();
       return;
     }
-    // Not sharing: open ContentHintMenu so the user can pick a content hint
+    // Not sharing: when content hints are disabled, start sharing immediately;
+    // otherwise open the ContentHintMenu so the user can pick a hint first.
+    if (!allowContentHints) {
+      toggleScreenShare();
+      return;
+    }
     setSelectedHint('detail');
     setIsContentHintMenuOpen(true);
   };
 
   const handleButtonMouseEnter = () => {
-    if (!isSharingScreen) {
+    if (!isSharingScreen || !allowContentHints) {
       return;
     }
     // While sharing: cancel any pending close timer and open the menu with the current hint
