@@ -1,12 +1,12 @@
 import { afterEach, beforeEach, describe, expect, it, Mock, vi } from 'vitest';
 import { render, screen, waitFor } from '@testing-library/react';
 import { ReactElement, useRef, useState } from 'react';
-import Button from '@ui/Button';
-import useMediaQuery from '@ui/useMediaQuery';
+import Button from '@mui/material/Button';
+import useMediaQuery from '@mui/material/useMediaQuery';
 import EmojiGrid from './EmojiGrid';
 import SendEmojiButton from '../SendEmojiButton';
 
-vi.mock('@ui/useMediaQuery', () => ({
+vi.mock('@mui/material/useMediaQuery', () => ({
   default: vi.fn(),
 }));
 vi.mock('../SendEmojiButton');

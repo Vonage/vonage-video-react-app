@@ -131,6 +131,7 @@ export default defineConfig({
   /* Run your local dev server before starting the tests */
   webServer: {
     reuseExistingServer: true,
+    timeout: 120 * 1000, // 2 minutes for CI builds with terser minification
     env: {
       VITE_AVOID_FETCHING_APP_CONFIG: 'true',
       VITE_BYPASS_WAITING_ROOM: 'false',

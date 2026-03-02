@@ -1,8 +1,8 @@
 import { ReactElement, useCallback, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import useMediaQuery from '@ui/useMediaQuery';
-import Box from '@ui/Box';
-import Button from '@ui/Button';
+import useMediaQuery from '@mui/material/useMediaQuery';
+import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
 import useTheme from '@ui/theme';
 import usePublisherContext from '../../../hooks/usePublisherContext';
 import BackgroundVideoContainer from '../BackgroundVideoContainer';
@@ -52,7 +52,7 @@ const BackgroundEffectsLayout = ({
   } = useBackgroundPublisherContext();
 
   const handleApplyBackgroundSelect = () => {
-    changeBackground(backgroundSelected);
+    void changeBackground(backgroundSelected);
     handleClose();
   };
 
@@ -65,7 +65,7 @@ const BackgroundEffectsLayout = ({
   useEffect(() => {
     if (isOpen) {
       const currentOption = setInitialBackgroundReplacement();
-      changeBackgroundPreview(currentOption);
+      void changeBackgroundPreview(currentOption);
     }
   }, [isOpen, publisher, changeBackgroundPreview, setInitialBackgroundReplacement]);
 
@@ -83,7 +83,7 @@ const BackgroundEffectsLayout = ({
         sx={{ mr: 1, color: theme.colors.textSecondary }}
         onClick={() => {
           const currentOption = setInitialBackgroundReplacement();
-          changeBackgroundPreview(currentOption);
+          void changeBackgroundPreview(currentOption);
           handleClose();
         }}
       >

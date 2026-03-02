@@ -1,9 +1,9 @@
 import { KeyboardEvent, ReactElement, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import useSessionContext from '../../../hooks/useSessionContext';
-import IconButton from '@ui/IconButton';
-import InputAdornment from '@ui/InputAdornment';
-import TextField from '@ui/TextField';
+import IconButton from '@mui/material/IconButton';
+import InputAdornment from '@mui/material/InputAdornment';
+import TextField from '@mui/material/TextField';
 import useTheme from '@ui/theme';
 import VividIcon from '@components/VividIcon';
 

@@ -1,4 +1,4 @@
-import { useState, useRef, useCallback, useEffect } from 'react';
+import { useState, useRef, useCallback } from 'react';
 import {
   Publisher,
   Event,
@@ -7,17 +7,19 @@ import {
   hasMediaProcessorSupport,
   PublisherProperties,
 } from '@vonage/client-sdk-video';
-import setMediaDevices from '../../../utils/mediaDeviceUtils';
-import useDevices from '../../../hooks/useDevices';
 import usePermissions from '../../../hooks/usePermissions';
 import useUserContext from '../../../hooks/useUserContext';
 import { DEVICE_ACCESS_STATUS } from '../../../utils/constants';
 import { AccessDeniedEvent } from '../../PublisherProvider/usePublisher/usePublisher';
-import DeviceStore from '../../../utils/DeviceStore';
 import applyBackgroundFilter from '../../../utils/backgroundFilter/applyBackgroundFilter/applyBackgroundFilter';
 import useImageStorage, { StoredImage } from '../../../utils/useImageStorage/useImageStorage';
 import getInitialBackgroundFilter from '../../../utils/backgroundFilter/getInitialBackgroundFilter/getInitialBackgroundFilter';
 import handlePublisherAccessDenied from '../../../utils/publisher/handlePublisherAccessDenied';
+import mediaDevices$ from '@core/stores/devices';
+import useSyncPublisherDevices from '@Context/PublisherProvider/usePublisher/hooks/useSyncPublisherDevices';
+import { getStorageItem, STORAGE_KEYS } from '@utils/storage';
+import attempt from '@common/execution/attempt/attempt';
+import { useMountEffect } from '@web/hooks';
 
 export type BackgroundPublisherContextType = {
   isPublishing: boolean;
@@ -31,7 +33,7 @@ export type BackgroundPublisherContextType = {
   localVideoSource: string | undefined;
   accessStatus: string | null;
   changeVideoSource: (deviceId: string) => void;
-  initBackgroundLocalPublisher: () => Promise<void>;
+  initBackgroundLocalPublisher: () => void;
   customImages: StoredImage[];
   addCustomImage: (dataUrl: string) => void;
   deleteCustomImage: (id: string) => void;
@@ -80,42 +82,45 @@ const useBackgroundPublisher = (
   initialValue?: BackgroundPublisherContextInitialValue
 ): BackgroundPublisherContextType => {
   const { user } = useUserContext();
-  const { allMediaDevices, getAllMediaDevices } = useDevices();
   const { getImagesFromStorage, addImageToStorage, deleteImageFromStorage } = useImageStorage();
   const [publisherVideoElement, setPublisherVideoElement] = useState<
     HTMLVideoElement | HTMLObjectElement | undefined
   >(initialValue?.publisherVideoElement ?? undefined);
   const { setAccessStatus, accessStatus } = usePermissions();
+
   const backgroundPublisherRef = useRef<Publisher | null>(null);
   const [isPublishing, setIsPublishing] = useState<boolean>(initialValue?.isPublishing ?? false);
+
   const initialBackgroundRef = useRef<VideoFilter | undefined>(
     user.defaultSettings.backgroundFilter
   );
+
   const [backgroundFilter, setBackgroundFilter] = useState<VideoFilter | undefined>(
     () => initialValue?.backgroundFilter ?? user.defaultSettings.backgroundFilter
   );
+
   const [isVideoEnabled, setIsVideoEnabled] = useState<boolean>(
-    initialValue?.isVideoEnabled ?? true
+    initialValue?.isVideoEnabled ?? getStorageItem(STORAGE_KEYS.VIDEO_SOURCE_ENABLED) !== 'false'
   );
+
   const [localVideoSource, setLocalVideoSource] = useState<string | undefined>(
     initialValue?.localVideoSource ?? undefined
   );
-  const deviceStoreRef = useRef<DeviceStore>(new DeviceStore());
+
   const [customImages, setCustomImages] = useState<StoredImage[]>(
     () => initialValue?.customImages ?? getImagesFromStorage()
   );
+
   const [backgroundSelected, setBackgroundSelected] = useState<string>(
     initialValue?.backgroundSelected ?? ''
   );
 
-  /* This sets the default devices in use so that the user knows what devices they are using */
-  useEffect(() => {
-    setMediaDevices(backgroundPublisherRef, allMediaDevices, () => {}, setLocalVideoSource);
-  }, [allMediaDevices]);
-
   const handleBackgroundDestroyed = () => {
     backgroundPublisherRef.current = null;
   };
+
+  // Sync publisher with selected devices from store (handles device changes and disconnections)
+  useSyncPublisherDevices(backgroundPublisherRef, { setIsVideoEnabled });
 
   /**
    * Change background replacement or blur effect
@@ -145,7 +150,7 @@ const useBackgroundPublisher = (
     if (!deviceId || !backgroundPublisherRef.current) {
       return;
     }
-    backgroundPublisherRef.current.setVideoSource(deviceId);
+    void backgroundPublisherRef.current.setVideoSource(deviceId);
     setLocalVideoSource(deviceId);
   }, []);
 
@@ -171,16 +176,25 @@ const useBackgroundPublisher = (
       publisher.on('videoElementCreated', handleVideoElementCreated);
       publisher.on('accessAllowed', () => {
         setAccessStatus(DEVICE_ACCESS_STATUS.ACCEPTED);
-        getAllMediaDevices();
       });
     },
-    [getAllMediaDevices, handleBackgroundAccessDenied, setAccessStatus]
+    [handleBackgroundAccessDenied, setAccessStatus]
   );
 
-  const initBackgroundLocalPublisher = useCallback(async () => {
-    if (backgroundPublisherRef.current) {
-      return;
-    }
+  /**
+   * Destroys the background publisher
+   * @returns {void}
+   */
+  const destroyBackgroundPublisher = useCallback(() => {
+    attempt(() => {
+      backgroundPublisherRef.current?.destroy();
+    });
+
+    backgroundPublisherRef.current = null;
+  }, []);
+
+  const initBackgroundLocalPublisher = useCallback(() => {
+    if (backgroundPublisherRef.current) return;
 
     // Set videoFilter based on user's selected background
     let videoFilter: VideoFilter | undefined;
@@ -188,14 +202,11 @@ const useBackgroundPublisher = (
       videoFilter = initialBackgroundRef.current;
     }
 
-    await deviceStoreRef.current.init();
-    const videoSource = deviceStoreRef.current.getConnectedDeviceId('videoinput');
-
     const publisherOptions: PublisherProperties = {
       insertDefaultUI: false,
       videoFilter,
       resolution: '1280x720',
-      videoSource,
+      videoSource: mediaDevices$.getState().videoinput,
       publishAudio: false,
       publishVideo: isVideoEnabled,
     };
@@ -210,19 +221,6 @@ const useBackgroundPublisher = (
     });
     addPublisherListeners(backgroundPublisherRef.current);
   }, [addPublisherListeners, isVideoEnabled]);
-
-  /**
-   * Destroys the background publisher
-   * @returns {void}
-   */
-  const destroyBackgroundPublisher = useCallback(() => {
-    if (backgroundPublisherRef.current) {
-      backgroundPublisherRef.current.destroy();
-      backgroundPublisherRef.current = null;
-    } else {
-      console.warn('pub not destroyed');
-    }
-  }, []);
 
   /**
    * Turns the camera on and off
@@ -311,6 +309,12 @@ const useBackgroundPublisher = (
     },
     [addCustomImage, handleBackgroundChange]
   );
+
+  useMountEffect(() => {
+    return () => {
+      destroyBackgroundPublisher();
+    };
+  });
 
   return {
     initBackgroundLocalPublisher,

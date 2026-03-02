@@ -25,7 +25,7 @@ export const DEVICE_ACCESS_STATUS = {
 /**
  * @constant {string} TEXT_SHADOW - The text shadow style used for display purposes.
  */
-export const TEXT_SHADOW = '[text-shadow:_0_1px_2px_rgb(0_0_0_/_60%)]';
+export const TEXT_SHADOW = '[text-shadow:0_1px_2px_rgb(0_0_0/60%)]';
 
 /**
  * @constant {number} EMOJI_DISPLAY_DURATION - The duration in milliseconds for which emojis are displayed.

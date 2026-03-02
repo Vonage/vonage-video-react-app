@@ -66,7 +66,7 @@ test('should display username on publisher and subscribers', async ({
     .getByTestId('publisher-container')
     .getByText('User One')
     .waitFor({ state: 'visible' });
-  expect(await pageOne.getByTestId('publisher-container').getByText('User One')).toBeVisible();
+  void expect(await pageOne.getByTestId('publisher-container').getByText('User One')).toBeVisible();
 
   const pageTwo = await context.newPage();
   await openMeetingRoomWithSettings({
@@ -146,6 +146,9 @@ test.describe('display name for screenshare', () => {
     await expect(
       await pageOne.getByTestId('screen-publisher-container').getByText(`User One's screen`)
     ).toBeVisible();
+
+    // Wait for the screen-subscriber to appear
+    await pageTwo.waitForSelector('.screen-subscriber', { state: 'visible' });
 
     await expect(
       await pageTwo.locator('.screen-subscriber').getByText(`User One's screen`)

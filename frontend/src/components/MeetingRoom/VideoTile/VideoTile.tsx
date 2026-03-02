@@ -1,7 +1,7 @@
 import { Box as LayoutBox } from 'opentok-layout-js';
 import { ForwardedRef, forwardRef, ReactElement, ReactNode } from 'react';
 import getBoxStyle from '../../../utils/helpers/getBoxStyle';
-import Box from '@ui/Box';
+import Box from '@mui/material/Box';
 import useTheme from '@ui/theme';
 
 export type VideoTileProps = {

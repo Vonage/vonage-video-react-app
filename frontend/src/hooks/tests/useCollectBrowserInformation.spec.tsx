@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { renderHook as renderHookBase } from '@testing-library/react';
 import useCollectBrowserInformation from '../useCollectBrowserInformation';
-import { makeSessionProviderWrapper, type SessionProviderWrapperOptions } from '@test/providers';
+import { makeTestProvider, providers, ProviderOptions } from '@test/providers';
 import EventEmitter from 'events';
 import type VonageVideoClient from '@utils/VonageVideoClient';
 
@@ -50,7 +50,7 @@ describe('useCollectBrowserInformation', () => {
     }) as VonageVideoClient;
 
     const { result } = render({
-      sessionOptions: {
+      sessionContext: {
         __interceptor: (context) => {
           if (context) {
             context.vonageVideoClient = mockVonageVideoClient;
@@ -78,10 +78,26 @@ describe('useCollectBrowserInformation', () => {
   });
 });
 
-function render(options?: SessionProviderWrapperOptions) {
-  const { SessionProviderWrapper } = makeSessionProviderWrapper(options);
+type RenderOptions = {
+  appConfigContext?: ProviderOptions['AppConfigContext'];
+  userContext?: ProviderOptions['UserContext'];
+  sessionContext?: ProviderOptions['SessionContext'];
+};
 
-  return renderHookBase(() => useCollectBrowserInformation(), {
-    wrapper: SessionProviderWrapper,
-  });
+function render({ sessionContext, appConfigContext, userContext }: RenderOptions = {}) {
+  const { wrapper, ...context } = makeTestProvider(
+    [providers.appConfig, providers.user, providers.session],
+    {
+      appConfigContext,
+      userContext,
+      sessionContext,
+    }
+  );
+
+  return {
+    ...context,
+    ...renderHookBase(() => useCollectBrowserInformation(), {
+      wrapper,
+    }),
+  };
 }

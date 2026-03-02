@@ -22,7 +22,6 @@ export const mapSourceToState = (src: unknown): Partial<ApplicationErrorState> =
           stack: src.stack,
           values: src.values,
           statusCode: src.statusCode,
-          recoverable: src.recoverable,
         };
 
         return copy;

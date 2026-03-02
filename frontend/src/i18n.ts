@@ -4,7 +4,7 @@ import LanguageDetector from 'i18next-browser-languagedetector';
 import resources from './locales';
 import env from './env';
 
-i18n
+void i18n
   // detect user language: https://github.com/i18next/i18next-browser-languageDetector
   .use(LanguageDetector)
   .use(initReactI18next)
@@ -13,6 +13,11 @@ i18n
     fallbackLng: env.VITE_I18N_FALLBACK_LANGUAGE,
     supportedLngs: env.VITE_I18N_SUPPORTED_LANGUAGES,
     resources,
+
+    /**
+     * Suppress the warning about using the fallback language when a translation key is missing in the current language.
+     */
+    showSupportNotice: false,
   });
 
 export default i18n;

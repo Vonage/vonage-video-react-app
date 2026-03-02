@@ -1,7 +1,7 @@
 import { useEffect, ReactElement, useState, useEffectEvent } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import Box from '@ui/Box';
+import Box from '@mui/material/Box';
 import useTheme from '@ui/theme';
 import usePublisherContext from '../../hooks/usePublisherContext';
 import ConnectionAlert from '../../components/MeetingRoom/ConnectionAlert';
@@ -14,7 +14,6 @@ import EmojisOrigin from '../../components/MeetingRoom/EmojisOrigin';
 import RightPanel from '../../components/MeetingRoom/RightPanel';
 import useRoomName from '../../hooks/useRoomName';
 import isValidRoomName from '../../utils/isValidRoomName';
-import usePublisherOptions from '../../Context/PublisherProvider/usePublisherOptions';
 import CaptionsBox from '../../components/MeetingRoom/CaptionsButton/CaptionsBox';
 import useIsSmallViewport from '../../hooks/useIsSmallViewport';
 import CaptionsError from '../../components/MeetingRoom/CaptionsError';
@@ -23,8 +22,8 @@ import { DEVICE_ACCESS_STATUS } from '../../utils/constants';
 import type { PublishingErrorType } from '../../Context/PublisherProvider/usePublisher/usePublisher';
 import useUserContext from '../../hooks/useUserContext';
 import env from '../../env';
-import useMountEffect from '@common/hooks/useMountEffect';
 import RecordingPopUpIndicator from '@components/MeetingRoom/RecordingPopupIndicator';
+import useMountEffect from '@web/hooks/useMountEffect';
 import classNames from 'classnames';
 
 /**
@@ -47,8 +46,15 @@ const MeetingRoom = (): ReactElement => {
       defaultSettings: { name },
     },
   } = useUserContext();
-  const { publisher, publish, quality, initializeLocalPublisher, publishingError, isVideoEnabled } =
-    usePublisherContext();
+  const {
+    publisher,
+    publish,
+    quality,
+    initializeLocalPublisher,
+    publishingError,
+    isVideoEnabled,
+    publisherOptions,
+  } = usePublisherContext();
 
   const {
     initBackgroundLocalPublisher,
@@ -74,7 +80,6 @@ const MeetingRoom = (): ReactElement => {
   } = useSessionContext();
   const { isSharingScreen, screensharingPublisher, screenshareVideoElement, toggleShareScreen } =
     useScreenShare();
-  const publisherOptions = usePublisherOptions();
   const isSmallViewport = useIsSmallViewport();
 
   const [isUserCaptionsEnabled, setIsUserCaptionsEnabled] = useState<boolean>(false);
@@ -101,7 +106,7 @@ const MeetingRoom = (): ReactElement => {
     }
 
     if (joinRoom && isValidRoomName(roomName)) {
-      joinRoom(roomName);
+      void joinRoom(roomName);
     }
     return () => {
       // Ensure to disconnect session when unmounting meeting room in order
@@ -122,13 +127,13 @@ const MeetingRoom = (): ReactElement => {
 
   useEffect(() => {
     if (connected && publisher && publish) {
-      publish();
+      void publish();
     }
   }, [publisher, publish, connected]);
 
   useEffect(() => {
     if (!backgroundPublisher) {
-      initBackgroundLocalPublisher();
+      void initBackgroundLocalPublisher();
     }
   }, [initBackgroundLocalPublisher, backgroundPublisher]);
 

@@ -1,14 +1,14 @@
 import { ReactElement, useEffect, useCallback, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import Dialog from '@ui/Dialog';
-import DialogTitle from '@ui/DialogTitle';
-import IconButton from '@ui/IconButton';
-import DialogContent from '@ui/DialogContent';
+import Dialog from '@mui/material/Dialog';
+import DialogTitle from '@mui/material/DialogTitle';
+import IconButton from '@mui/material/IconButton';
+import DialogContent from '@mui/material/DialogContent';
 import useTheme from '@ui/theme';
 import VividIcon from '@components/VividIcon';
-import Typography from '@ui/Typography';
-import Box from '@ui/Box';
-import CircularProgress from '@ui/CircularProgress';
+import Typography from '@mui/material/Typography';
+import Box from '@mui/material/Box';
+import CircularProgress from '@mui/material/CircularProgress';
 import useRoomName from '@hooks/useRoomName';
 import tryCatch from '@common/execution/tryCatch';
 import PrecallNetworkTestQualityRow from './PrecallNetworkTestQualityRow';
@@ -68,7 +68,7 @@ const PrecallNetworkTestDialog = ({
   const handleRetry = useCallback(() => {
     setHasUserStoppedTest(false);
     clearResults();
-    handleStartTest();
+    void handleStartTest();
   }, [clearResults, handleStartTest]);
 
   const getRoundedQualityScore = function getRoundedQualityScore(
@@ -116,7 +116,7 @@ const PrecallNetworkTestDialog = ({
     const hasExistingResultsOrError = Boolean(state.qualityResults || state.error);
     if (state.isTestingQuality || hasExistingResultsOrError) return;
 
-    handleStartTest();
+    void handleStartTest();
   }, [
     isPrecallNetworkTestOpen,
     hasUserStoppedTest,

@@ -1,7 +1,7 @@
 import { ReactElement } from 'react';
-import Box from '@ui/Box';
+import Box from '@mui/material/Box';
 import FooterLinks from '@components/FooterLinks';
-import Stack from '@ui/Stack';
+import Stack from '@mui/material/Stack';
 import useTheme from '@ui/theme';
 
 /**

@@ -1,9 +1,9 @@
-import Box from '@ui/Box';
-import ClickAwayListener from '@ui/ClickAwayListener';
-import Grid from '@ui/Grid';
-import Grow from '@ui/Grow';
-import Paper from '@ui/Paper';
-import Popper from '@ui/Popper';
+import Box from '@mui/material/Box';
+import ClickAwayListener from '@mui/material/ClickAwayListener';
+import Grid from '@mui/material/Grid';
+import Grow from '@mui/material/Grow';
+import Paper from '@mui/material/Paper';
+import Popper from '@mui/material/Popper';
 import useTheme from '@ui/theme';
 import {
   Dispatch,

@@ -16,7 +16,6 @@ describe('isApplicationErrorLike', () => {
       message: 'Test error',
       severity: 'error' as const,
       statusCode: 500,
-      recoverable: true,
       fallbackConfig: {
         fallbackMessage: 'User message',
         statusCode: 500,

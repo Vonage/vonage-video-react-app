@@ -5,8 +5,8 @@ import getBoxStyle from '@utils/helpers/getBoxStyle';
 import useSessionContext from '@hooks/useSessionContext';
 import appConfig$ from '@stores/appConfig';
 import AvatarInitials from '../AvatarInitials';
-import AvatarGroup from '@ui/AvatarGroup';
-import ButtonBase from '@ui/ButtonBase';
+import AvatarGroup from '@mui/material/AvatarGroup';
+import ButtonBase from '@mui/material/ButtonBase';
 import useTheme from '@ui/theme';
 
 export type HiddenParticipantsTileProps = {
@@ -39,6 +39,7 @@ const HiddenParticipantsTile = ({
       id="hidden-participants"
       data-testid="hidden-participants"
       sx={{
+        m: 0.5,
         position: 'absolute',
         display: 'flex',
         alignItems: 'center',

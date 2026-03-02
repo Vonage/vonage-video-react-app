@@ -1,16 +1,15 @@
 import { ReactElement, MouseEvent, TouchEvent, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import usePreviewPublisherContext from '@hooks/usePreviewPublisherContext';
-import useDevices from '@hooks/useDevices';
-import useAudioOutputContext from '@hooks/useAudioOutputContext';
 import useIsSmallViewport from '@hooks/useIsSmallViewport';
-import Box from '@ui/Box';
-import type { SxProps } from '@ui/SxProps';
+import Box from '@mui/material/Box';
+import type { SxProps } from '@mui/material';
 import useTheme from '@ui/theme';
 import VividIcon from '@components/VividIcon';
-import ButtonBase from '@ui/ButtonBase';
+import ButtonBase from '@mui/material/ButtonBase';
 import MenuDevicesWaitingRoom from '../MenuDevices';
 import MenuMoreOptions from '../MenuMoreOptions/MenuMoreOptions';
+import { mediaDevices$ } from '@core/stores';
 
 const textSx: SxProps = {
   flex: '1 1 0',
@@ -75,10 +74,9 @@ const ControlPanel = ({
 
   const { t } = useTranslation();
   const isSmallViewport = useIsSmallViewport();
-  const { allMediaDevices } = useDevices();
-  const { localAudioSource, localVideoSource, changeAudioSource, changeVideoSource } =
-    usePreviewPublisherContext();
-  const { currentAudioOutputDevice, setAudioOutputDevice } = useAudioOutputContext();
+
+  const { changeAudioSource, changeVideoSource } = usePreviewPublisherContext();
+
   const theme = useTheme();
 
   const buttonSx: SxProps = {
@@ -125,14 +123,13 @@ const ControlPanel = ({
           </Box>
           <VividIcon name="chevron-down-line" customSize={-6} />
         </ButtonBase>
+
         <MenuDevicesWaitingRoom
-          devices={allMediaDevices.audioInputDevices}
+          mediaDeviceKind="audioinput"
           open={openAudioInput}
           onClose={handleClose}
           anchorEl={anchorEl}
-          localSource={localAudioSource}
           deviceChangeHandler={changeAudioSource}
-          deviceType="audioInput"
         />
 
         <ButtonBase
@@ -149,14 +146,13 @@ const ControlPanel = ({
           </Box>
           <VividIcon name="chevron-down-line" customSize={-6} />
         </ButtonBase>
+
         <MenuDevicesWaitingRoom
-          devices={allMediaDevices.videoInputDevices}
+          mediaDeviceKind="videoinput"
           open={openVideoInput}
           onClose={handleClose}
           anchorEl={anchorEl}
-          localSource={localVideoSource}
           deviceChangeHandler={changeVideoSource}
-          deviceType="videoInput"
         />
 
         <ButtonBase
@@ -173,14 +169,15 @@ const ControlPanel = ({
           </Box>
           <VividIcon name="chevron-down-line" customSize={-6} />
         </ButtonBase>
+
         <MenuDevicesWaitingRoom
-          devices={allMediaDevices.audioOutputDevices}
+          mediaDeviceKind="audiooutput"
           open={openAudioOutput}
           onClose={handleClose}
           anchorEl={anchorEl}
-          localSource={currentAudioOutputDevice}
-          deviceChangeHandler={setAudioOutputDevice}
-          deviceType="audioOutput"
+          deviceChangeHandler={(deviceId) => {
+            void mediaDevices$.actions.selectDevice('audiooutput', deviceId);
+          }}
         />
 
         <ButtonBase onClick={handleOpenMoreOptions} sx={buttonSx}>

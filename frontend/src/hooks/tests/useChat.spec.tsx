@@ -1,7 +1,7 @@
-import { act, renderHook } from '@testing-library/react';
+import { act, renderHook as renderHookBase } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import useChat from '../useChat';
-import { makeUserProviderWrapper } from '@test/providers';
+import { makeTestProvider, ProviderOptions, providers } from '@test/providers';
 
 const mockSignal = vi.fn();
 
@@ -11,10 +11,7 @@ describe('useChat', () => {
   });
 
   it('onChatMessage should parse message and update messages state', () => {
-    const { UserProviderWrapper } = makeUserProviderWrapper();
-    const { result } = renderHook(() => useChat({ signal: mockSignal }), {
-      wrapper: UserProviderWrapper,
-    });
+    const { result } = renderHook(() => useChat({ signal: mockSignal }));
 
     act(() => {
       result.current.onChatMessage('{"participantName":"Remote User","text":"Hello!"}');
@@ -28,15 +25,14 @@ describe('useChat', () => {
   });
 
   it('sendChatMessage should send message via signal', () => {
-    const { UserProviderWrapper } = makeUserProviderWrapper({
-      userOptions: {
-        __interceptor: (context) => {
-          context!.user.defaultSettings.name = 'Local User';
+    const { result } = renderHook(() => useChat({ signal: mockSignal }), {
+      userContext: {
+        value: {
+          defaultSettings: {
+            name: 'Local User',
+          },
         },
       },
-    });
-    const { result } = renderHook(() => useChat({ signal: mockSignal }), {
-      wrapper: UserProviderWrapper,
     });
 
     result.current.sendChatMessage('Hello there!');
@@ -47,3 +43,21 @@ describe('useChat', () => {
     });
   });
 });
+
+type RenderOptions = {
+  userContext?: ProviderOptions['UserContext'];
+};
+
+function renderHook<Result, Props>(
+  render: (initialProps: Props) => Result,
+  { userContext }: RenderOptions = {}
+) {
+  const { wrapper, ...context } = makeTestProvider([providers.user], {
+    userContext,
+  });
+
+  return {
+    ...context,
+    ...renderHookBase(render, { wrapper }),
+  };
+}

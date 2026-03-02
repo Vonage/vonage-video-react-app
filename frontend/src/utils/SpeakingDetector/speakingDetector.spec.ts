@@ -1,10 +1,8 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import SpeakingDetector from './speakingDetector';
 import { waitForEvent } from '../async';
-
-const mockGetUserMedia = vi.fn(() =>
-  Promise.resolve({ getTracks: vi.fn(() => [{ stop: vi.fn() }]) })
-);
+import { setupWindowNavigatorMock } from '@web-test/fixtures';
+import { mediaDevices$ } from '@core/stores';
 
 const mockCreateMediaStreamSource = vi.fn(() => ({ connect: vi.fn(), disconnect: vi.fn() }));
 
@@ -21,14 +19,35 @@ const mockAudioContext = vi.fn(() => ({
   close: vi.fn(),
 })) as unknown as typeof global.AudioContext;
 
+const mockMediaStream = {
+  getVideoTracks: vi.fn(() => []),
+  getAudioTracks: vi.fn(() => []),
+  getTracks: vi.fn(() => [
+    {
+      stop: vi.fn(),
+    } as unknown as MediaStreamTrack,
+  ]),
+} as unknown as MediaStream;
+
 beforeEach(() => {
-  Object.defineProperty(navigator, 'mediaDevices', {
-    writable: true,
-    value: { getUserMedia: mockGetUserMedia },
+  global.AudioContext = mockAudioContext;
+
+  setupWindowNavigatorMock({
+    mediaDevices: {
+      getUserMedia: Promise.resolve(mockMediaStream),
+      enumerateDevices: Promise.resolve([
+        {
+          deviceId: '132322',
+          kind: 'audioinput',
+          label: 'Mock Microphone',
+          groupId: 'group1',
+        } as MediaDeviceInfo,
+      ]),
+      addEventListener: vi.fn(),
+    },
   });
 
-  global.AudioContext = mockAudioContext;
-  vi.clearAllMocks();
+  mediaDevices$.reset();
 });
 
 describe('SpeakingDetector', () => {
@@ -38,9 +57,10 @@ describe('SpeakingDetector', () => {
     now += ms;
     dateNowSpy.mockReturnValue(now);
   };
+
   it('should detect speaking while muted and turn off the notification 3 seconds later', async () => {
     const speakingDetector = new SpeakingDetector({ selectedMicrophoneId: '132322' });
-    speakingDetector.turnSpeakingDetectorOn();
+    void speakingDetector.turnSpeakingDetectorOn();
     const isSpeakingDetectorSpy = vi.fn();
     const isSpeakingDetectorOffSpy = vi.fn();
     const waitForIsSpeakingWhileMuted = waitForEvent(

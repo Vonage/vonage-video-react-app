@@ -30,6 +30,13 @@ const addLogger = (page: Page, context: BrowserContext) => {
 
 const test = (() => {
   return baseTest.extend({
+    context: async ({ context }, use) => {
+      // Clear localStorage on every page load to ensure consistent initial state
+      await context.addInitScript(() => {
+        localStorage.clear();
+      });
+      await use(context);
+    },
     page: async ({ page, context }, use) => {
       const loggedPage = addLogger(page, context);
       await use(loggedPage);

@@ -2,8 +2,8 @@ import { ReactElement } from 'react';
 import useTheme from '@ui/theme';
 import useSessionContext from '../../../hooks/useSessionContext';
 import useIsSmallViewport from '../../../hooks/useIsSmallViewport';
-import Grid from '@ui/Grid';
-import Button from '@ui/Button';
+import Grid from '@mui/material/Grid';
+import Button from '@mui/material/Button';
 
 export type SendEmojiButtonProps = {
   emoji: string;

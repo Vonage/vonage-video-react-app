@@ -2,12 +2,14 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react-swc';
 import dts from 'vite-plugin-dts';
+import tailwindcss from '@tailwindcss/vite';
 import * as path from 'node:path';
 
 export default defineConfig(() => ({
   root: __dirname,
   cacheDir: '../../node_modules/.vite/ui',
   plugins: [
+    tailwindcss(),
     react(),
     dts({ entryRoot: 'src', tsconfigPath: path.join(__dirname, 'tsconfig.lib.json') }),
   ],
@@ -15,7 +17,10 @@ export default defineConfig(() => ({
     alias: {
       '@ui': path.resolve(__dirname, './src'),
       '@common': path.resolve(__dirname, '../common/src'),
-      '@test-helpers': path.resolve(__dirname, '../common/test'),
+      '@web': path.resolve(__dirname, '../common/srcBrowser'),
+      '@common-test': path.resolve(__dirname, '../common/test'),
+      '@web-test': path.resolve(__dirname, '../common/testBrowser'),
+      '@core': path.resolve(__dirname, '../core/src'),
     },
   },
   // Uncomment this if you are using workers.
@@ -55,6 +60,7 @@ export default defineConfig(() => ({
       reportsDirectory: './coverage',
       provider: 'v8' as const,
       reporter: ['text', 'lcov'],
+      exclude: ['test/**', '**/index.ts'],
     },
   },
 }));

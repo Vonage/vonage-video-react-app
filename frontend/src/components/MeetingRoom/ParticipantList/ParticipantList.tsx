@@ -9,17 +9,17 @@ import getParticipantColor from '@utils/getParticipantColor';
 import useRoomShareUrl from '@hooks/useRoomShareUrl';
 import RightPanelTitle from '../RightPanel/RightPanelTitle';
 import usePublisherContext from '@hooks/usePublisherContext';
-import IconButton from '@ui/IconButton';
-import Tooltip from '@ui/Tooltip';
-import Fade from '@ui/Fade';
-import List from '@ui/List';
-import Box from '@ui/Box';
-import Typography from '@ui/Typography';
+import IconButton from '@mui/material/IconButton';
+import Tooltip from '@mui/material/Tooltip';
+import Fade from '@mui/material/Fade';
+import List from '@mui/material/List';
+import Box from '@mui/material/Box';
+import Typography from '@mui/material/Typography';
 import useTheme from '@ui/theme';
-import Stack from '@ui/Stack';
+import Stack from '@mui/material/Stack';
 import VividIcon from '@components/VividIcon';
-import TextField from '@ui/TextField';
-import InputAdornment from '@ui/InputAdornment';
+import TextField from '@mui/material/TextField';
+import InputAdornment from '@mui/material/InputAdornment';
 
 import createNameMatcher from '@utils/participantList/createNameMatcher';
 import getFilteredSubscribers from '@utils/participantList/getFilteredSubscribers';
@@ -74,7 +74,7 @@ const ParticipantList = ({ handleClose, isOpen }: ParticipantListProps): ReactEl
   }, [subscriberWrappers, query, name]);
 
   const copyUrl = () => {
-    navigator.clipboard.writeText(roomShareUrl);
+    void navigator.clipboard.writeText(roomShareUrl);
 
     setIsCopied(true);
 

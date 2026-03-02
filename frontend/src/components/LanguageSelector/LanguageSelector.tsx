@@ -1,10 +1,10 @@
 import { ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
-import Box from '@ui/Box';
-import MenuItem from '@ui/MenuItem';
-import FormControl from '@ui/FormControl';
-import Select from '@ui/Select';
-import { SelectChangeEvent } from '@ui/SelectChangeEvent';
+import Box from '@mui/material/Box';
+import MenuItem from '@mui/material/MenuItem';
+import FormControl from '@mui/material/FormControl';
+import Select from '@mui/material/Select';
+import type { SelectChangeEvent } from '@mui/material/Select';
 import useTheme from '@ui/theme';
 import { LanguageOption, LanguageSelectorProps } from './LanguageSelector.types';
 import useIsSmallViewport from '../../hooks/useIsSmallViewport';
@@ -46,7 +46,7 @@ const LanguageSelector = ({ showFlag = true }: LanguageSelectorProps): ReactElem
 
   const handleLanguageChange = (event: SelectChangeEvent<string>) => {
     const newLanguage = event.target.value;
-    i18n.changeLanguage(newLanguage);
+    void i18n.changeLanguage(newLanguage);
   };
 
   const currentLanguage = i18n.language || 'en';

@@ -1,5 +1,5 @@
-import Fade from '@ui/Fade';
-import Alert from '@ui/Alert';
+import Fade from '@mui/material/Fade';
+import Alert from '@mui/material/Alert';
 import { useState, useEffect, ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
 import useSpeakingDetector from '../../hooks/useSpeakingDetector';

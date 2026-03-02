@@ -1,17 +1,18 @@
 import { render, screen, fireEvent } from '@testing-library/react';
-import { describe, expect, it, vi, Mock, beforeEach } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import FilePicker from './FilePicker';
-import * as util from '@utils/util';
+import { isMobile } from '@web/platform';
 import '@testing-library/jest-dom';
+import { setupWindowNavigatorMock } from '@web-test/fixtures';
 
-vi.mock('@utils/util', () => ({ isMobile: vi.fn() }));
+vi.mock('@web/platform');
 
 describe('FilePicker component', () => {
-  const mockFileSelect = vi.fn();
-
   beforeEach(() => {
-    (util.isMobile as Mock).mockImplementation(() => false);
+    setupWindowNavigatorMock();
   });
+
+  const mockFileSelect = vi.fn();
 
   it('renders the "Add screenshot" button initially', () => {
     render(<FilePicker onFileSelect={mockFileSelect} />);
@@ -27,7 +28,8 @@ describe('FilePicker component', () => {
     });
 
     it('is not rendered on mobile devices', () => {
-      (util.isMobile as Mock).mockImplementation(() => true);
+      vi.mocked(isMobile).mockImplementation(() => true);
+
       const addButton = screen.queryByText(/capture screenshot/i);
       expect(addButton).not.toBeInTheDocument();
     });
@@ -73,28 +75,16 @@ describe('FilePicker component', () => {
   });
 
   it('takes a screenshot when Capture screenshot button is clicked', async () => {
-    const nativeMediaDevices = global.navigator.mediaDevices;
-    vi.stubGlobal(
-      'MediaStream',
-      vi.fn().mockImplementation(() => ({
-        active: true,
-        getTracks: () => [],
-      }))
-    );
+    const MockMediaStream = vi.fn().mockImplementation(() => ({
+      active: true,
+      getTracks: () => [],
+    }));
 
-    Object.defineProperty(global.navigator, 'mediaDevices', {
-      writable: true,
-      value: {
-        getDisplayMedia: vi.fn(),
-      },
-    });
-    const mockStream = new global.MediaStream();
-    (navigator.mediaDevices.getDisplayMedia as Mock).mockResolvedValue(mockStream);
+    const getDisplayMediaMock = vi.fn();
+    vi.spyOn(navigator.mediaDevices, 'getDisplayMedia').mockImplementation(getDisplayMediaMock);
 
-    // Mocking video element and canvas
-    const videoElement = document.createElement('video');
-    videoElement.srcObject = mockStream;
-    document.body.appendChild(videoElement);
+    const mockStream = new MockMediaStream();
+    getDisplayMediaMock.mockResolvedValue(mockStream);
 
     // Mocking the play method
     vi.spyOn(HTMLMediaElement.prototype, 'play').mockResolvedValue(undefined);
@@ -125,9 +115,7 @@ describe('FilePicker component', () => {
       preferCurrentTab: true,
     };
 
-    expect(navigator.mediaDevices.getDisplayMedia).toHaveBeenCalledWith(
-      expectedDisplayMediaOptions
-    );
+    expect(getDisplayMediaMock).toHaveBeenCalledWith(expectedDisplayMediaOptions);
 
     const image = await screen.findByAltText('screenshot');
     expect(image).toBeInTheDocument();
@@ -135,12 +123,5 @@ describe('FilePicker component', () => {
 
     const imageSrc = image.getAttribute('src');
     expect(mockFileSelect).toHaveBeenCalledWith(imageSrc);
-
-    // Cleanup
-    vi.unstubAllGlobals();
-    Object.defineProperty(global.navigator, 'mediaDevices', {
-      writable: true,
-      value: nativeMediaDevices,
-    });
   });
 });

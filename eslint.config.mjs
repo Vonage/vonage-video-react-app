@@ -10,13 +10,18 @@ import prettier from 'eslint-config-prettier';
 import prettierPlugin from 'eslint-plugin-prettier';
 import cspell from '@cspell/eslint-plugin';
 import customWordList from './customWordList.mjs';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 
 const tsProjects = [
   './backend/tsconfig.json',
   './frontend/tsconfig.json',
+  './libs/api/tsconfig.json',
   './libs/ui/tsconfig.json',
   './integration-tests/tsconfig.json',
 ];
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 export default [
   // Nx base and TypeScript presets
@@ -86,7 +91,7 @@ export default [
     },
     settings: {
       react: { version: 'detect' },
-      tailwindcss: { config: './frontend/tailwind.config.js' },
+      tailwindcss: { config: path.join(__dirname, 'frontend/src/css/index.css') },
       'import/resolver': {
         typescript: { project: tsProjects },
         node: { extensions: ['.js', '.jsx', '.ts', '.tsx', '.mjs', '.cjs'] },
@@ -213,7 +218,7 @@ export default [
        * We already catch error because that could have been prevented by proper this rule usage
        * It will require significant refactoring to enable it though
        */
-      '@typescript-eslint/no-floating-promises': 'off',
+      '@typescript-eslint/no-floating-promises': 'error',
 
       /**
        * Avoid creating class and interface with same name
@@ -282,5 +287,9 @@ export default [
         },
       ],
     },
+  },
+  {
+    files: ['**/*.cjs'],
+    ...tseslint.configs.disableTypeChecked,
   },
 ];

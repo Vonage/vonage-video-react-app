@@ -1,10 +1,10 @@
 import { useRef, useState, useEffect, ReactElement } from 'react';
-import useMediaQuery from '@ui/useMediaQuery';
+import useMediaQuery from '@mui/material/useMediaQuery';
 import { useTranslation } from 'react-i18next';
-import CircularProgress from '@ui/CircularProgress';
+import CircularProgress from '@mui/material/CircularProgress';
 import useTheme from '@ui/theme';
-import Box from '@ui/Box';
-import Typography from '@ui/Typography';
+import Box from '@mui/material/Box';
+import Typography from '@mui/material/Typography';
 import waitUntilPlaying from '../../../utils/waitUntilPlaying';
 import useIsTabletViewport from '../../../hooks/useIsTabletViewport';
 
@@ -41,8 +41,10 @@ const BackgroundVideoContainer = ({
       containerRef.current.appendChild(publisherVideoElement);
       const myVideoElement = publisherVideoElement as HTMLElement;
       myVideoElement.classList.add('video__element');
+
       // eslint-disable-next-line react-hooks/immutability
       myVideoElement.title = 'publisher-preview';
+
       // eslint-disable-next-line react-hooks/immutability
       myVideoElement.style.borderRadius = theme.shapes.borderRadiusLarge;
       myVideoElement.style.maxHeight = isTabletViewport ? '80%' : '450px';
@@ -64,7 +66,7 @@ const BackgroundVideoContainer = ({
       myVideoElement.style.objectFit = 'contain';
       myVideoElement.style.aspectRatio = '16 / 9';
 
-      waitUntilPlaying(publisherVideoElement).then(() => {
+      void waitUntilPlaying(publisherVideoElement).then(() => {
         setIsVideoLoading(false);
       });
     }

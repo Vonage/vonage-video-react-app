@@ -6,7 +6,7 @@ import useSessionContext from '@hooks/useSessionContext';
 import appConfig$ from '@stores/appConfig';
 import ToolbarButton from '../ToolbarButton';
 import PopupDialog, { DialogTexts } from '../PopupDialog';
-import Tooltip from '@ui/Tooltip';
+import Tooltip from '@mui/material/Tooltip';
 import useTheme from '@ui/theme';
 import VividIcon from '@components/VividIcon';
 import classNames from 'classnames';
@@ -83,13 +83,13 @@ const ArchivingButton = ({
         }
       }
     } else if (archiveId && roomName) {
-      stopArchiving(roomName, archiveId);
+      void stopArchiving(roomName, archiveId);
     }
   };
 
   const handleActionClick = () => {
     handleClose();
-    handleDialogClick(isRecording ? 'stop' : 'start');
+    void handleDialogClick(isRecording ? 'stop' : 'start');
   };
 
   return (

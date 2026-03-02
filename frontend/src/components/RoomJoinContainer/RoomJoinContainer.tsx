@@ -1,6 +1,6 @@
 import { useNavigate } from 'react-router-dom';
 import { ReactElement } from 'react';
-import Typography from '@ui/Typography';
+import Typography from '@mui/material/Typography';
 import { useTranslation } from 'react-i18next';
 import Card from '@ui/Card';
 import generateRoomName from '../../utils/generateRoomName';
@@ -26,7 +26,7 @@ const RoomJoinContainer = (): ReactElement => {
   };
 
   return (
-    <Card component="form">
+    <Card component="form" className="lg:max-w-125">
       <Typography sx={{ mb: 2, typography: 'h6', color: theme.colors.textSecondary }}>
         {t('button.startNewRoom')}
       </Typography>

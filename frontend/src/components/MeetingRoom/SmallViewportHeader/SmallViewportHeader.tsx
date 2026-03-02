@@ -1,18 +1,17 @@
 import { ReactElement, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import Box from '@ui/Box';
+import Box from '@mui/material/Box';
 import useTheme from '@ui/theme';
 import useSessionContext from '../../../hooks/useSessionContext';
 import useRoomName from '../../../hooks/useRoomName';
 import useRoomShareUrl from '../../../hooks/useRoomShareUrl';
-import IconButton from '@ui/IconButton';
-import Tooltip from '@ui/Tooltip';
-import Fade from '@ui/Fade';
+import IconButton from '@mui/material/IconButton';
+import Tooltip from '@mui/material/Tooltip';
+import Fade from '@mui/material/Fade';
 import VividIcon from '@components/VividIcon';
 import usePublisherContext from '@hooks/usePublisherContext';
-import useDevices from '@hooks/useDevices';
-import isRearFacingLabel from '@utils/cameraSwitch/isRearFacingLabel';
-import isFrontFacingLabel from '@utils/cameraSwitch/isFrontFacingLabel';
+import { isRearFacingLabel, isFrontFacingLabel } from '@utils/cameraSwitch';
+import usePreferredCameras from '@hooks/usePreferredCameras';
 
 /**
  * SmallViewportHeader Component
@@ -27,13 +26,14 @@ const SmallViewportHeader = (): ReactElement => {
   const { archiveId } = useSessionContext();
   const isRecording = !!archiveId;
   const roomName = useRoomName();
-  const {
-    allMediaDevices: { videoInputDevices },
-  } = useDevices();
+
+  // Get preferred video input devices (cameras)
+  const videoInputDevices = usePreferredCameras();
+
   const roomShareUrl = useRoomShareUrl();
   const [isCopied, setIsCopied] = useState<boolean>(false);
   const copyUrl = () => {
-    navigator.clipboard.writeText(roomShareUrl);
+    void navigator.clipboard.writeText(roomShareUrl);
 
     setIsCopied(true);
 
@@ -66,7 +66,7 @@ const SmallViewportHeader = (): ReactElement => {
     const target = currentIsFront ? pickRear() : pickFront();
 
     if (target?.deviceId && target.deviceId !== currentSource?.deviceId) {
-      publisher.setVideoSource(target.deviceId);
+      void publisher.setVideoSource(target.deviceId);
     }
   };
 

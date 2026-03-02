@@ -8,8 +8,7 @@ import ActiveSpeakerTracker from '@utils/ActiveSpeakerTracker';
 import VonageVideoClient from '@utils/VonageVideoClient';
 import { Credential, StreamPropertyChangedEvent, SubscriberWrapper } from '@app-types/session';
 import fetchCredentials from '@api/fetchCredentials';
-import { makeSessionProviderWrapper } from '@test/providers';
-import composeProviders from '@common/helpers/composeProviders';
+import { makeTestProvider, ProviderOptions, providers } from '@test/providers';
 
 vi.mock('@utils/ActiveSpeakerTracker');
 vi.mock('@utils/VonageVideoClient');
@@ -47,7 +46,7 @@ describe('SessionProvider', () => {
 
     useEffect(() => {
       if (joinRoom) {
-        joinRoom('TestComponentRoom');
+        void joinRoom('TestComponentRoom');
       }
     }, [joinRoom]);
 
@@ -57,7 +56,7 @@ describe('SessionProvider', () => {
           data-testid="publish"
           onClick={() => {
             if (publish) {
-              publish({} as unknown as Publisher);
+              void publish({} as unknown as Publisher);
             }
           }}
           type="button"
@@ -88,7 +87,7 @@ describe('SessionProvider', () => {
           data-testid="forceMute"
           onClick={() => {
             if (forceMute) {
-              forceMute({} as unknown as Stream);
+              void forceMute({} as unknown as Stream);
             }
           }}
           type="button"
@@ -163,14 +162,14 @@ describe('SessionProvider', () => {
 
   it('should update activeSpeaker state when activeSpeakerTracker emits event', async () => {
     const { getByTestId } = await renderAndWaitForConnection();
-    act(() =>
+    void act(() =>
       activeSpeakerTracker.emit('activeSpeakerChanged', {
         previousActiveSpeaker: { subscriberId: undefined, movingAvg: 0 },
         newActiveSpeaker: { subscriberId: 'sub1', movingAvg: 0.3 },
       })
     );
     await waitFor(() => expect(getByTestId('activeSpeaker')).toHaveTextContent('sub1'));
-    act(() =>
+    void act(() =>
       activeSpeakerTracker.emit('activeSpeakerChanged', {
         previousActiveSpeaker: { subscriberId: 'sub1', movingAvg: 0 },
         newActiveSpeaker: { subscriberId: 'sub2', movingAvg: 0.4 },
@@ -472,19 +471,39 @@ describe('SessionProvider', () => {
   });
 });
 
-type RenderOverrides = {
-  session?: Parameters<typeof makeSessionProviderWrapper>[0];
+type RenderOptions = {
+  appConfigContext?: ProviderOptions['AppConfigContext'];
+  userContext?: ProviderOptions['UserContext'];
+  sessionContext?: ProviderOptions['SessionContext'];
 };
 
-function render(ui: ReactElement, overrides: RenderOverrides = {}) {
-  const { session } = overrides;
-
-  const { SessionProviderWrapper, ...props } = makeSessionProviderWrapper(session);
-
-  const wrapper = composeProviders(SessionProviderWrapper);
+function render(
+  ui: ReactElement,
+  { appConfigContext, userContext, sessionContext }: RenderOptions = {}
+) {
+  const { wrapper, ...context } = makeTestProvider(
+    [providers.appConfig, providers.user, providers.session],
+    {
+      appConfigContext,
+      userContext: {
+        ...userContext,
+        value: {
+          defaultSettings: {
+            publishAudio: false,
+            publishVideo: false,
+            name: '',
+            noiseSuppression: true,
+            publishCaptions: false,
+            ...userContext?.value?.defaultSettings,
+          },
+        },
+      },
+      sessionContext,
+    }
+  );
 
   return {
-    ...props,
+    ...context,
     ...renderBase(ui, { wrapper }),
   };
 }

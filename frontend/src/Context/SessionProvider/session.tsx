@@ -28,7 +28,7 @@ import {
   LayoutMode,
 } from '@app-types/session';
 import { ChatMessageType } from '@app-types/chat';
-import { isMobile } from '@utils/util';
+import { isMobile } from '@web/platform';
 import {
   sortByDisplayPriority,
   togglePinAndSortByDisplayOrder,
@@ -337,9 +337,10 @@ const SessionProvider = ({ children, initialValue = {} }: SessionProviderProps):
 
   const handleSubscriberVideoElementCreated = (subscriberWrapper: SubscriberWrapper) => {
     setSubscriberWrappers((previousSubscriberWrappers) =>
-      [subscriberWrapper, ...previousSubscriberWrappers].toSorted(
-        sortByDisplayPriority(activeSpeakerIdRef.current)
-      )
+      [
+        subscriberWrapper,
+        ...previousSubscriberWrappers.filter(({ id }) => id !== subscriberWrapper.id),
+      ].toSorted(sortByDisplayPriority(activeSpeakerIdRef.current))
     );
   };
 
@@ -363,10 +364,8 @@ const SessionProvider = ({ children, initialValue = {} }: SessionProviderProps):
     });
 
     if (doesStreamStillExistInSession) {
-      vonageVideoClient.current!.resubscribeToStreamId(streamId);
-      console.warn(`Subscriber with stream ID ${streamId} resubscribing`, {
-        doesStreamStillExistInSession,
-      });
+      void vonageVideoClient.current!.resubscribeToStreamId(streamId);
+      console.warn(`Subscriber with stream ID ${streamId} resubscribing`);
       return;
     }
     destroySubscriber(streamId);
@@ -378,6 +377,7 @@ const SessionProvider = ({ children, initialValue = {} }: SessionProviderProps):
     setSubscriberWrappers((prevSubscriberWrappers) =>
       prevSubscriberWrappers.filter(isNotDestroyedStreamId)
     );
+    console.warn(`Subscriber stream ID ${streamId} destroyed and cleaned up`);
   }
 
   const handleSubscriberAudioLevelUpdated = ({

@@ -3,13 +3,13 @@ import { Stream } from '@vonage/client-sdk-video';
 import AudioIndicator from '../AudioIndicator';
 import ParticipantListItemMenu from '../ParticipantListItemMenu';
 import { SubscriberWrapper } from '../../../types/session';
-import ListItem from '@ui/ListItem';
-import Avatar from '@ui/Avatar';
-import Typography from '@ui/Typography';
-import Badge from '@ui/Badge';
+import ListItem from '@mui/material/ListItem';
+import Avatar from '@mui/material/Avatar';
+import Typography from '@mui/material/Typography';
+import Badge from '@mui/material/Badge';
 import useTheme from '@ui/theme';
 import VividIcon from '@components/VividIcon';
-import Box from '@ui/Box';
+import Box from '@mui/material/Box';
 
 export type ParticipantListItemProps = {
   stream?: Stream;

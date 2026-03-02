@@ -1,4 +1,4 @@
-import Button from '@ui/Button';
+import Button from '@mui/material/Button';
 import { Dispatch, MouseEvent, ReactElement, SetStateAction } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';

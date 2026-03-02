@@ -1,5 +1,5 @@
 import { ReactElement } from 'react';
-import Box from '@ui/Box';
+import Box from '@mui/material/Box';
 import useTheme from '@ui/theme';
 import { VIDEO_CONTAINER_HEIGHT_WR } from '@utils/constants';
 
