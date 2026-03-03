@@ -37,8 +37,10 @@ const PageLayoutEmbed = ({ children, sx, ...props }: PageLayoutEmbedProps): Reac
       {...props}
     >
       <Stack
+        className="bg-vera-surface"
         direction={{ xs: 'column', md: 'row' }}
         sx={{
+          display: { xs: 'block', md: 'flex' },
           flex: 1,
           minHeight: 0,
           width: '100%',
