@@ -67,6 +67,6 @@ describe('getArchives', () => {
 
   it('it throws with error when api call throws', () => {
     mockListArchives.mockRejectedValue(new AxiosError('Network Error', 'ERR_NETWORK'));
-    expect(getArchives('en', 'roomName')).rejects.toThrowError();
+    void expect(getArchives('en', 'roomName')).rejects.toThrowError();
   });
 });

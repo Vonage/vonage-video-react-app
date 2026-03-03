@@ -32,7 +32,7 @@ const useArchives = ({ roomName }: UseArchivesProps): Archive[] | 'error' => {
         // If we have archives not yet available for download we poll the API every 5s to see if its' available.
         if (archiveData.hasPending && pollingIntervalRef.current === undefined) {
           pollingIntervalRef.current = setInterval(() => {
-            fetchArchives();
+            void fetchArchives();
           }, 5000);
         } else if (!archiveData.hasPending && pollingIntervalRef.current !== undefined) {
           clearInterval(pollingIntervalRef.current);
@@ -41,7 +41,7 @@ const useArchives = ({ roomName }: UseArchivesProps): Archive[] | 'error' => {
         setArchives(archiveData.archives);
       }
     };
-    fetchArchives();
+    void fetchArchives();
     return () => {
       if (pollingIntervalRef.current) {
         clearInterval(pollingIntervalRef.current);

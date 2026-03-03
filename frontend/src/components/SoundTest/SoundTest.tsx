@@ -35,13 +35,13 @@ const SoundTest = ({ children }: SoundTestProps): ReactElement => {
 
   useEffect(() => {
     if (currentAudioOutputDevice) {
-      audioElement.setSinkId?.(currentAudioOutputDevice);
+      void audioElement.setSinkId?.(currentAudioOutputDevice);
     }
   }, [audioElement, currentAudioOutputDevice]);
 
   const handlePlayAudio = useCallback(() => {
     if (!audioIsPlaying) {
-      audioElement.play();
+      void audioElement.play();
       setAudioIsPlaying(true);
     } else {
       // Stop playing the audio and reset the playback to the beginning of the track.

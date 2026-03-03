@@ -6,7 +6,7 @@ describe('waitUntilPlaying', () => {
   it('should resolve on timeupdate event', async () => {
     const videoElem = document.createElement('video');
     let resolved = false;
-    waitUntilPlaying(videoElem).then(() => {
+    void waitUntilPlaying(videoElem).then(() => {
       resolved = true;
     });
     await wait(0);
@@ -19,7 +19,7 @@ describe('waitUntilPlaying', () => {
   it('should resolve on loadedmetadata event', async () => {
     const videoElem = document.createElement('video');
     let resolved = false;
-    waitUntilPlaying(videoElem).then(() => {
+    void waitUntilPlaying(videoElem).then(() => {
       resolved = true;
     });
     await wait(0);
@@ -31,7 +31,7 @@ describe('waitUntilPlaying', () => {
   it('should resolve after timeout if no event fired', async () => {
     const videoElem = document.createElement('video');
     let resolved = false;
-    waitUntilPlaying(videoElem, 50).then(() => {
+    void waitUntilPlaying(videoElem, 50).then(() => {
       resolved = true;
     });
     await wait(0);

@@ -339,7 +339,7 @@ const SessionProvider = ({ children, initialValue = {} }: SessionProviderProps):
     });
 
     if (doesStreamStillExistInSession) {
-      vonageVideoClient.current!.resubscribeToStreamId(streamId);
+      void vonageVideoClient.current!.resubscribeToStreamId(streamId);
       console.warn(`Subscriber with stream ID ${streamId} resubscribing`);
       return;
     }

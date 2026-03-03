@@ -66,7 +66,7 @@ const BackgroundVideoContainer = ({
       myVideoElement.style.objectFit = 'contain';
       myVideoElement.style.aspectRatio = '16 / 9';
 
-      waitUntilPlaying(publisherVideoElement).then(() => {
+      void waitUntilPlaying(publisherVideoElement).then(() => {
         setIsVideoLoading(false);
       });
     }

@@ -26,7 +26,7 @@ const useSpeakingDetector = ({
     speakingDetectorRef.current = new SpeakingDetector({
       selectedMicrophoneId,
     });
-    speakingDetectorRef.current.turnSpeakingDetectorOn();
+    void speakingDetectorRef.current.turnSpeakingDetectorOn();
 
     const handleSpeakingWhileMuted = () => {
       setIsSpeakingWhileMuted(true);

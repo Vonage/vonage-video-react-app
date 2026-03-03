@@ -80,13 +80,13 @@ const ArchivingButton = ({
         }
       }
     } else if (archiveId && roomName) {
-      stopArchiving(roomName, archiveId);
+      void stopArchiving(roomName, archiveId);
     }
   };
 
   const handleActionClick = () => {
     handleClose();
-    handleDialogClick(isRecording ? 'stop' : 'start');
+    void handleDialogClick(isRecording ? 'stop' : 'start');
   };
 
   return (
