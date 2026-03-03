@@ -10,7 +10,11 @@ import Tooltip from '@mui/material/Tooltip';
 import Fade from '@mui/material/Fade';
 import VividIcon from '@components/VividIcon';
 import usePublisherContext from '@hooks/usePublisherContext';
-import { isRearFacingLabel, isFrontFacingLabel } from '@utils/cameraSwitch';
+import {
+  isRearFacingLabel,
+  isFrontFacingLabel,
+  resolveMobileVideoSource,
+} from '@utils/cameraSwitch';
 import usePreferredDevices from '@hooks/usePreferredDevices';
 
 /**
@@ -66,7 +70,9 @@ const SmallViewportHeader = (): ReactElement => {
     const target = currentIsFront ? pickRear() : pickFront();
 
     if (target?.deviceId && target.deviceId !== currentSource?.deviceId) {
-      void publisher.setVideoSource(target.deviceId);
+      void resolveMobileVideoSource(target.deviceId, target.label).then((resolvedDeviceId) => {
+        void publisher.setVideoSource(resolvedDeviceId);
+      });
     }
   };
 

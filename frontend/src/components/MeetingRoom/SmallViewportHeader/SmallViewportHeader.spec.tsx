@@ -167,7 +167,7 @@ describe('SmallViewportHeader component', () => {
     }));
   });
 
-  it('toggles to the opposite camera device when clicked', () => {
+  it('toggles to the opposite camera device when clicked', async () => {
     const videoInputDevice1 = videoDevices[0];
 
     (useSessionContext as Mock).mockReturnValue({ archiveId: null });
@@ -190,7 +190,9 @@ describe('SmallViewportHeader component', () => {
     const cameraIcon = screen.getByTestId('vivid-icon-camera-switch-line');
     fireEvent.click(cameraIcon);
 
-    expect(setVideoSource).toHaveBeenCalledTimes(1);
-    expect(setVideoSource).toHaveBeenCalledWith(videoDevices[1].deviceId);
+    await waitFor(() => {
+      expect(setVideoSource).toHaveBeenCalledTimes(1);
+      expect(setVideoSource).toHaveBeenCalledWith(videoDevices[1].deviceId);
+    });
   });
 });

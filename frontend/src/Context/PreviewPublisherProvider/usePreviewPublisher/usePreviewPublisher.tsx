@@ -24,6 +24,7 @@ import { attempt } from '@common/execution';
 import wait from '@common/execution/wait';
 import { useMountEffect } from '@web/hooks';
 import { isAndroid } from '@utils/util';
+import { resolveMobileVideoSource } from '@utils/cameraSwitch';
 
 /** Delay before switching camera on Android to allow the previous camera to fully release. */
 const ANDROID_CAMERA_SWITCH_DELAY_MS = 100;
@@ -103,6 +104,7 @@ const usePreviewPublisher = (
   const [speechLevel, setSpeechLevel] = useState(initialValue?.speechLevel ?? 0);
   const { setAccessStatus, accessStatus } = usePermissions();
   const publisherRef = useRef<Publisher | null>(null);
+  const isInitializingPublisherRef = useRef(false);
   const [isPublishing, setIsPublishing] = useState<boolean>(initialValue?.isPublishing ?? false);
   const initialBackgroundRef = useRef<VideoFilter | undefined>(
     user.defaultSettings.backgroundFilter
@@ -173,6 +175,8 @@ const usePreviewPublisher = (
 
   /**
    * Change video camera in use.
+   * On mobile, resolves the actual accessible camera via facingMode constraints to handle
+   * devices like Samsung S24+ that enumerate multiple cameras, some of which are inaccessible.
    * On Android, stops video first and waits for camera release before switching.
    * @returns {void}
    */
@@ -186,18 +190,22 @@ const usePreviewPublisher = (
         const currentDeviceId = publisher.getVideoSource()?.deviceId;
         if (deviceId === currentDeviceId) return;
 
+        const deviceEntry = mediaDevices$.mediaDevicesMap$.getState()['videoinput']?.[deviceId];
+        const label = typeof deviceEntry?.label === 'string' ? deviceEntry.label : null;
+        const resolvedDeviceId = await resolveMobileVideoSource(deviceId, label);
+
         if (isAndroid()) {
           publisher.publishVideo(false);
           await wait(ANDROID_CAMERA_SWITCH_DELAY_MS);
         }
 
-        await publisher.setVideoSource(deviceId);
+        await publisher.setVideoSource(resolvedDeviceId);
 
         if (isAndroid()) {
           publisher.publishVideo(isVideoEnabled);
         }
 
-        await mediaDevices$.actions.selectDevice('videoinput', deviceId);
+        void mediaDevices$.actions.selectDevice('videoinput', deviceId);
 
         if (setUser) {
           setUser((prevUser: UserType) => ({
@@ -253,35 +261,55 @@ const usePreviewPublisher = (
   });
 
   const initLocalPublisher = useStableCallback(() => {
-    if (publisherRef.current) {
+    if (publisherRef.current || isInitializingPublisherRef.current) {
       return;
     }
+    isInitializingPublisherRef.current = true;
 
-    // Set videoFilter based on user's selected background
-    let videoFilter: VideoFilter | undefined;
-    if (initialBackgroundRef.current && hasMediaProcessorSupport()) {
-      videoFilter = initialBackgroundRef.current;
-    }
+    void (async () => {
+      try {
+        // On mobile, resolve the actual accessible camera via facingMode so devices like
+        // Samsung S24+ use a working camera rather than an inaccessible enumerated deviceId.
+        const deviceEntry =
+          videoSourceId != null
+            ? mediaDevices$.mediaDevicesMap$.getState()['videoinput']?.[videoSourceId]
+            : undefined;
+        const label = typeof deviceEntry?.label === 'string' ? deviceEntry.label : null;
+        const resolvedVideoSourceId = videoSourceId
+          ? await resolveMobileVideoSource(videoSourceId, label)
+          : videoSourceId;
 
-    const publisherOptions: PublisherProperties = {
-      insertDefaultUI: false,
-      videoFilter,
-      resolution: defaultResolution,
-      publishAudio: isAudioEnabled,
-      publishVideo: isVideoEnabled,
-      audioSource: audioSourceId,
-      videoSource: videoSourceId,
-    };
+        if (publisherRef.current) return;
 
-    publisherRef.current = initPublisher(undefined, publisherOptions, (err: unknown) => {
-      if (err instanceof Error) {
-        publisherRef.current = null;
-        if (err.name === 'OT_USER_MEDIA_ACCESS_DENIED') {
-          console.error('initPublisher error: ', err);
+        // Set videoFilter based on user's selected background
+        let videoFilter: VideoFilter | undefined;
+        if (initialBackgroundRef.current && hasMediaProcessorSupport()) {
+          videoFilter = initialBackgroundRef.current;
         }
+
+        const publisherOptions: PublisherProperties = {
+          insertDefaultUI: false,
+          videoFilter,
+          resolution: defaultResolution,
+          publishAudio: isAudioEnabled,
+          publishVideo: isVideoEnabled,
+          audioSource: audioSourceId,
+          videoSource: resolvedVideoSourceId,
+        };
+
+        publisherRef.current = initPublisher(undefined, publisherOptions, (err: unknown) => {
+          if (err instanceof Error) {
+            publisherRef.current = null;
+            if (err.name === 'OT_USER_MEDIA_ACCESS_DENIED') {
+              console.error('initPublisher error: ', err);
+            }
+          }
+        });
+        addPublisherListeners(publisherRef.current);
+      } finally {
+        isInitializingPublisherRef.current = false;
       }
-    });
-    addPublisherListeners(publisherRef.current);
+    })();
   });
 
   /**
