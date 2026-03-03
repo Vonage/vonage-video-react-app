@@ -65,7 +65,7 @@ describe('usePreviewPublisher', () => {
       expect(console.error).toHaveBeenCalledWith('initPublisher error: ', error);
     });
 
-    it('should apply background high blur when initialized and changed background', async () => {
+    it('should apply background high blur-sm when initialized and changed background', async () => {
       mockedHasMediaProcessorSupport.mockReturnValue(true);
       mockedInitPublisher.mockReturnValue(mockPublisher);
       const { result } = await render();
@@ -113,7 +113,7 @@ describe('usePreviewPublisher', () => {
       (mockPublisher.clearVideoFilter as Mock).mockClear();
     });
 
-    it('applies low blur filter', async () => {
+    it('applies low blur-sm filter', async () => {
       await act(async () => {
         await result.changeBackground('low-blur');
       });

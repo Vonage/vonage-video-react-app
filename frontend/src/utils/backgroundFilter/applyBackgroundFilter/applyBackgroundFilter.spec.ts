@@ -29,7 +29,7 @@ describe('applyBackgroundFilter', () => {
     expect(setStorageItem).not.toHaveBeenCalled();
   });
 
-  it('applies low blur filter', async () => {
+  it('applies low blur-sm filter', async () => {
     await applyBackgroundFilter({ publisher: mockPublisher, backgroundSelected: 'low-blur' });
 
     expect(mockPublisher.applyVideoFilter).toHaveBeenCalledWith({
@@ -46,7 +46,7 @@ describe('applyBackgroundFilter', () => {
     );
   });
 
-  it('applies high blur filter', async () => {
+  it('applies high blur-sm filter', async () => {
     await applyBackgroundFilter({ publisher: mockPublisher, backgroundSelected: 'high-blur' });
 
     expect(mockPublisher.applyVideoFilter).toHaveBeenCalledWith({

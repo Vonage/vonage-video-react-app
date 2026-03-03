@@ -45,7 +45,7 @@ const MutingDialog = ({ isOpen, setIsOpen, stream }: MutingDialogProps): ReactEl
 
   const handleActionClick = () => {
     if (forceMute && stream) {
-      forceMute(stream);
+      void forceMute(stream);
       handleClose();
     }
   };

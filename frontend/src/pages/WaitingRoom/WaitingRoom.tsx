@@ -116,7 +116,7 @@ const WaitingRoom: FC<WaitingRoomProps> = () => {
             </PageLayout.Banner>
 
             <PageLayout.Left>
-              <Box className="relative flex flex-col sm:inline-flex h-auto sm:h-[400px] animate-fade-in">
+              <Box className="relative flex flex-col sm:inline-flex h-auto sm:h-100 animate-fade-in">
                 {isRoomReady && (
                   <>
                     <VideoContainer username={username} />
@@ -141,7 +141,7 @@ const WaitingRoom: FC<WaitingRoomProps> = () => {
             <PageLayout.Right>
               {isRoomReady && (
                 <UsernameInput
-                  className="flex-col sm:inline-flex h-auto sm:h-[400px] animate-fade-in"
+                  className="flex-col sm:inline-flex h-auto sm:h-100 animate-fade-in"
                   username={username}
                   setUsername={setUsername}
                 />

@@ -4,7 +4,7 @@ import LanguageDetector from 'i18next-browser-languagedetector';
 import resources from './locales';
 import env from './env';
 
-i18n
+void i18n
   // detect user language: https://github.com/i18next/i18next-browser-languageDetector
   .use(LanguageDetector)
   .use(initReactI18next)

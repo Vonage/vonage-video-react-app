@@ -27,6 +27,7 @@ const SoundTest = ({ children }: SoundTestProps): ReactElement => {
 
   const stopAudio = useCallback(() => {
     audioElement.pause();
+
     // eslint-disable-next-line react-hooks/immutability
     audioElement.currentTime = 0;
     setAudioIsPlaying(false);
@@ -34,13 +35,13 @@ const SoundTest = ({ children }: SoundTestProps): ReactElement => {
 
   useEffect(() => {
     if (currentAudioOutputDevice) {
-      audioElement.setSinkId?.(currentAudioOutputDevice);
+      void audioElement.setSinkId?.(currentAudioOutputDevice);
     }
   }, [audioElement, currentAudioOutputDevice]);
 
   const handlePlayAudio = useCallback(() => {
     if (!audioIsPlaying) {
-      audioElement.play();
+      void audioElement.play();
       setAudioIsPlaying(true);
     } else {
       // Stop playing the audio and reset the playback to the beginning of the track.

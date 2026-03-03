@@ -28,7 +28,7 @@ function fetchAppConfiguration(context: AppConfigApi): void {
     return;
   }
 
-  context.actions.loadAppConfig();
+  void context.actions.loadAppConfig();
 }
 
 export default AppContextProvider;

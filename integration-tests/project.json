@@ -38,14 +38,14 @@
       "executor": "nx:run-commands",
       "options": {
         "cwd": "integration-tests",
-        "command": "eslint . --report-unused-disable-directives --max-warnings 0"
+        "command": "eslint '**/*.ts' --report-unused-disable-directives --max-warnings 0"
       }
     },
     "lint:fix": {
       "executor": "nx:run-commands",
       "options": {
         "cwd": "integration-tests",
-        "command": "eslint . --fix --report-unused-disable-directives --max-warnings 0"
+        "command": "eslint '**/*.ts' --fix --report-unused-disable-directives --max-warnings 0"
       }
     }
   },

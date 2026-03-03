@@ -13,7 +13,7 @@ const decodeSessionId = (sessionId: string): DecodedSessionId => {
     throw new Error('Invalid sessionId format');
   }
 
-  const info = sessionId.split('_')[1];
+  const info = splittedSession[1];
   const buf = Buffer.from(info, 'base64');
   const decoder = new StringDecoder('utf8');
   const decodedSession = decoder.write(buf);

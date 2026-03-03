@@ -46,7 +46,7 @@ describe('SessionProvider', () => {
 
     useEffect(() => {
       if (joinRoom) {
-        joinRoom('TestComponentRoom');
+        void joinRoom('TestComponentRoom');
       }
     }, [joinRoom]);
 
@@ -56,7 +56,7 @@ describe('SessionProvider', () => {
           data-testid="publish"
           onClick={() => {
             if (publish) {
-              publish({} as unknown as Publisher);
+              void publish({} as unknown as Publisher);
             }
           }}
           type="button"
@@ -87,7 +87,7 @@ describe('SessionProvider', () => {
           data-testid="forceMute"
           onClick={() => {
             if (forceMute) {
-              forceMute({} as unknown as Stream);
+              void forceMute({} as unknown as Stream);
             }
           }}
           type="button"
@@ -162,14 +162,14 @@ describe('SessionProvider', () => {
 
   it('should update activeSpeaker state when activeSpeakerTracker emits event', async () => {
     const { getByTestId } = await renderAndWaitForConnection();
-    act(() =>
+    void act(() =>
       activeSpeakerTracker.emit('activeSpeakerChanged', {
         previousActiveSpeaker: { subscriberId: undefined, movingAvg: 0 },
         newActiveSpeaker: { subscriberId: 'sub1', movingAvg: 0.3 },
       })
     );
     await waitFor(() => expect(getByTestId('activeSpeaker')).toHaveTextContent('sub1'));
-    act(() =>
+    void act(() =>
       activeSpeakerTracker.emit('activeSpeakerChanged', {
         previousActiveSpeaker: { subscriberId: 'sub1', movingAvg: 0 },
         newActiveSpeaker: { subscriberId: 'sub2', movingAvg: 0.4 },
