@@ -4,6 +4,8 @@ import { isFunction, isString } from '@common/assertions';
 import useMediaDeviceInfoByKind$ from './useMediaDeviceInfoByKind$';
 import type { MediaDeviceInfoJSON } from '@web/types';
 
+type MediaDevicesMap = Record<MediaDeviceKind, Record<string, MediaDeviceInfoJSON>>;
+
 /**
  * Returns media devices organized by kind and deviceId.
  */
@@ -82,16 +84,19 @@ function useMediaDevices(
     return { dependencies };
   })();
 
-  return useMediaDeviceInfoByKind$((state) => selector(kind ? state[kind] : state), {
-    ...options,
-    dependencies: [kind, ...(options.dependencies ?? [])],
-    isEqualRoot: (prev, next) => {
-      if (options.isEqualRoot) return options.isEqualRoot(prev, next);
-      if (kind) return prev[kind] === next[kind];
+  return useMediaDeviceInfoByKind$(
+    (state: MediaDevicesMap) => selector(kind ? state[kind] : state),
+    {
+      ...options,
+      dependencies: [kind, ...(options.dependencies ?? [])],
+      isEqualRoot: (prev, next) => {
+        if (options.isEqualRoot) return options.isEqualRoot(prev, next);
+        if (kind) return prev[kind] === next[kind];
 
-      return prev === next;
-    },
-  }) as
+        return prev === next;
+      },
+    }
+  ) as
     | Record<string, MediaDeviceInfoJSON>
     | Record<MediaDeviceKind, Record<string, MediaDeviceInfoJSON>>;
 }

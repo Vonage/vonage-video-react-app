@@ -4,6 +4,8 @@ import { UseHookOptions } from 'react-global-state-hooks';
 import { isString } from '@common/assertions';
 import type { MediaDeviceInfoJSON } from '@web/types';
 
+type MediaDevicesMap = Record<MediaDeviceKind, Record<string, MediaDeviceInfoJSON>>;
+
 /**
  * Returns the selected media device for a specific kind.
  */
@@ -27,12 +29,12 @@ function useMediaDeviceInfo(
   const options = isString(arg1) ? arg2 : arg1;
 
   return useMediaDeviceInfoByKind$(
-    (state) => {
+    (state: MediaDevicesMap) => {
       return getDeviceInfo(kind, deviceId, state);
     },
     {
       dependencies: [kind, deviceId],
-      isEqualRoot: (prev, next) => {
+      isEqualRoot: (prev: MediaDevicesMap, next: MediaDevicesMap) => {
         const deviceA = getDeviceInfo(kind, deviceId, prev);
         const deviceB = getDeviceInfo(kind, deviceId, next);
 
