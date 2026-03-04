@@ -176,7 +176,6 @@ describe('BackgroundGallery', () => {
 });
 
 type RenderOptions = {
-  appConfigContext?: ProviderOptions['AppConfigContext'];
   userContext?: ProviderOptions['UserContext'];
   sessionContext?: ProviderOptions['SessionContext'];
   publisherContext?: ProviderOptions['PublisherContext'];
@@ -185,24 +184,11 @@ type RenderOptions = {
 
 function render(
   ui: ReactElement,
-  {
-    appConfigContext,
-    userContext,
-    sessionContext,
-    publisherContext,
-    backgroundPublisherContext,
-  }: RenderOptions = {}
+  { userContext, sessionContext, publisherContext, backgroundPublisherContext }: RenderOptions = {}
 ) {
   const { wrapper, ...context } = makeTestProvider(
-    [
-      providers.appConfig,
-      providers.user,
-      providers.session,
-      providers.publisher,
-      providers.backgroundPublisher,
-    ],
+    [providers.user, providers.session, providers.publisher, providers.backgroundPublisher],
     {
-      appConfigContext,
       userContext,
       sessionContext,
       publisherContext,

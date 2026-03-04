@@ -580,19 +580,17 @@ describe('usePublisher', () => {
 });
 
 type RenderOptions = {
-  appConfigContext?: ProviderOptions['AppConfigContext'];
   userContext?: ProviderOptions['UserContext'];
   sessionContext?: ProviderOptions['SessionContext'];
 };
 
 function renderHook<Result, Props>(
   render: (initialProps: Props) => Result,
-  { appConfigContext, userContext, sessionContext }: RenderOptions = {}
+  { userContext, sessionContext }: RenderOptions = {}
 ) {
   const { wrapper: MainWrapper, ...context } = makeTestProvider(
-    [providers.appConfig, providers.user, providers.session],
+    [providers.user, providers.session],
     {
-      appConfigContext,
       userContext: {
         ...userContext,
         value: {

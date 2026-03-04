@@ -218,24 +218,15 @@ describe('usePreviewPublisher', () => {
 });
 
 type RenderOptions = {
-  appConfigContext?: ProviderOptions['AppConfigContext'];
   userContext?: ProviderOptions['UserContext'];
   previewPublisherContext?: ProviderOptions['PreviewPublisherContext'];
 };
 
-async function render({
-  appConfigContext,
-  userContext,
-  previewPublisherContext,
-}: RenderOptions = {}) {
-  const { wrapper, ...context } = makeTestProvider(
-    [providers.appConfig, providers.user, providers.previewPublisher],
-    {
-      appConfigContext,
-      userContext,
-      previewPublisherContext,
-    }
-  );
+async function render({ userContext, previewPublisherContext }: RenderOptions = {}) {
+  const { wrapper, ...context } = makeTestProvider([providers.user, providers.previewPublisher], {
+    userContext,
+    previewPublisherContext,
+  });
 
   const composedWrapper = composeProviders(SuspenseBoundary, wrapper);
 

@@ -17,6 +17,7 @@ import WaitingRoom from './WaitingRoom';
 import SuspenseBoundary from '@web/components/SuspenseBoundary';
 import renderAsyncComponent from '@web-test/renderAsyncComponent';
 import { setupWindowNavigatorMock } from '@web-test/fixtures';
+import { env } from '../../env';
 
 const mockedNavigate = vi.fn();
 const mockedParams = { roomName: 'test-room-name' };
@@ -137,15 +138,11 @@ describe('WaitingRoom', () => {
   });
 
   it('should display skeleton while video is loading', async () => {
+    env.partialUpdate({
+      WAITING_ROOM_ALLOW_DEVICE_SELECTION: true,
+    });
+
     await render(<WaitingRoom />, {
-      appConfigContext: {
-        value: {
-          isAppConfigLoaded: true,
-          waitingRoomSettings: {
-            allowDeviceSelection: true,
-          },
-        },
-      },
       previewPublisherContext: {
         __interceptor: (context: PreviewPublisherContextType) => {
           context.accessStatus = DEVICE_ACCESS_STATUS.ACCEPTED;
@@ -160,14 +157,11 @@ describe('WaitingRoom', () => {
   });
 
   it('should eventually display a preview publisher', async () => {
+    env.partialUpdate({
+      WAITING_ROOM_ALLOW_DEVICE_SELECTION: true,
+    });
+
     const { container } = await render(<WaitingRoom />, {
-      appConfigContext: {
-        value: {
-          waitingRoomSettings: {
-            allowDeviceSelection: true,
-          },
-        },
-      },
       previewPublisherContext: {
         __interceptor: (context: PreviewPublisherContextType) => {
           context.publisher = mockPublisher;
@@ -188,14 +182,11 @@ describe('WaitingRoom', () => {
   it('should call destroyPublisher when navigating away from waiting room', async () => {
     const user = userEvent.setup();
 
+    env.partialUpdate({
+      WAITING_ROOM_ALLOW_DEVICE_SELECTION: true,
+    });
+
     const { unmount } = await render(<WaitingRoom />, {
-      appConfigContext: {
-        value: {
-          waitingRoomSettings: {
-            allowDeviceSelection: true,
-          },
-        },
-      },
       previewPublisherContext: {
         __onCreated: (context: PreviewPublisherContextType) => {
           context.publisher = mockPublisher;
@@ -229,14 +220,11 @@ describe('WaitingRoom', () => {
   });
 
   it('should render VideoContainer when video loading finishes', async () => {
+    env.partialUpdate({
+      WAITING_ROOM_ALLOW_DEVICE_SELECTION: true,
+    });
+
     const { container } = await render(<WaitingRoom />, {
-      appConfigContext: {
-        value: {
-          waitingRoomSettings: {
-            allowDeviceSelection: true,
-          },
-        },
-      },
       previewPublisherContext: {
         __interceptor: (context: PreviewPublisherContextType) => {
           context.accessStatus = DEVICE_ACCESS_STATUS.ACCEPTED;
@@ -252,14 +240,11 @@ describe('WaitingRoom', () => {
   });
 
   it('should not render ControlPanel when allowDeviceSelection is false', async () => {
+    env.partialUpdate({
+      WAITING_ROOM_ALLOW_DEVICE_SELECTION: false,
+    });
+
     const { container } = await render(<WaitingRoom />, {
-      appConfigContext: {
-        value: {
-          waitingRoomSettings: {
-            allowDeviceSelection: false,
-          },
-        },
-      },
       previewPublisherContext: {
         __interceptor: (context: PreviewPublisherContextType) => {
           context.accessStatus = DEVICE_ACCESS_STATUS.ACCEPTED;
@@ -277,14 +262,11 @@ describe('WaitingRoom', () => {
   });
 
   it('should render ControlPanel when allowDeviceSelection is true', async () => {
+    env.partialUpdate({
+      WAITING_ROOM_ALLOW_DEVICE_SELECTION: true,
+    });
+
     await render(<WaitingRoom />, {
-      appConfigContext: {
-        value: {
-          waitingRoomSettings: {
-            allowDeviceSelection: true,
-          },
-        },
-      },
       previewPublisherContext: {
         __interceptor: (context: PreviewPublisherContextType) => {
           context.accessStatus = DEVICE_ACCESS_STATUS.ACCEPTED;
@@ -317,7 +299,6 @@ function getLocationMock() {
 }
 
 type RenderOptions = {
-  appConfigContext?: ProviderOptions['AppConfigContext'];
   userContext?: ProviderOptions['UserContext'];
   sessionContext?: ProviderOptions['SessionContext'];
   publisherContext?: ProviderOptions['PublisherContext'];
@@ -328,7 +309,6 @@ type RenderOptions = {
 async function render(
   ui: ReactElement,
   {
-    appConfigContext,
     userContext,
     sessionContext,
     publisherContext,
@@ -338,7 +318,6 @@ async function render(
 ) {
   const { wrapper: MainWrapper, ...contexts } = makeTestProvider(
     [
-      providers.appConfig,
       providers.user,
       providers.session,
       providers.publisher,
@@ -346,7 +325,6 @@ async function render(
       providers.previewPublisher,
     ],
     {
-      appConfigContext,
       userContext,
       sessionContext,
       publisherContext,

@@ -1,11 +1,11 @@
 import { ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
-import appConfig$ from '@stores/appConfig';
 import ToolbarButton from '../ToolbarButton';
 import UnreadMessagesBadge from '../UnreadMessagesBadge';
 import Tooltip from '@mui/material/Tooltip';
 import useTheme from '@ui/theme';
 import VividIcon from '@components/VividIcon';
+import { env } from '../../../env';
 
 export type ChatButtonProps = {
   handleClick: () => void;
@@ -29,12 +29,11 @@ const ChatButton = ({
   isOpen,
   isOverflowButton = false,
 }: ChatButtonProps): ReactElement | false => {
-  const isMeetingChatAllowed = appConfig$.useIsMeetingChatAllowed();
   const theme = useTheme();
   const { t } = useTranslation();
 
   return (
-    isMeetingChatAllowed && (
+    env.ALLOW_CHAT && (
       <Tooltip title={isOpen ? t('chat.close') : t('chat.open')} aria-label={t('chat.ariaLabel')}>
         <UnreadMessagesBadge>
           <ToolbarButton

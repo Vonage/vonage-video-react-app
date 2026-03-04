@@ -9,7 +9,7 @@ import useTheme from '@ui/theme';
 import { LanguageOption, LanguageSelectorProps } from './LanguageSelector.types';
 import useIsSmallViewport from '../../hooks/useIsSmallViewport';
 import VividIcon from '../VividIcon/VividIcon';
-import env from '../../env';
+import { env } from '../../env';
 
 const languageOptions: LanguageOption[] = [
   { code: 'en', name: 'English', flag: 'flag-united-kingdom' },
@@ -30,7 +30,7 @@ const SelectIconComponent =
 /**
  * LanguageSelector Component
  * A dropdown component that allows users to select their preferred language.
- * The available languages are determined by the VITE_I18N_SUPPORTED_LANGUAGES environment variable.
+ * The available languages are determined by the I18N_SUPPORTED_LANGUAGES environment variable.
  * @param {LanguageSelectorProps} props - The props for the component.
  * @property {boolean} showFlag - Whether to display the country flag alongside the language name.
  * @returns {ReactElement} The rendered LanguageSelector component.
@@ -41,7 +41,7 @@ const LanguageSelector = ({ showFlag = true }: LanguageSelectorProps): ReactElem
   const isSmallViewport = useIsSmallViewport();
 
   const supportedLanguages = languageOptions.filter((option) =>
-    env.VITE_I18N_SUPPORTED_LANGUAGES.includes(option.code)
+    env.I18N_SUPPORTED_LANGUAGES.includes(option.code)
   );
 
   const handleLanguageChange = (event: SelectChangeEvent<string>) => {

@@ -44,7 +44,6 @@ describe('BackgroundEffectOptions', () => {
 
 function render(ui: ReactElement) {
   const { wrapper, ...context } = makeTestProvider([
-    providers.appConfig,
     providers.user,
     providers.session,
     providers.publisher,

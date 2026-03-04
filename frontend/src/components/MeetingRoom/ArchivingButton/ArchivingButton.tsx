@@ -3,13 +3,13 @@ import { useTranslation } from 'react-i18next';
 import useRoomName from '@hooks/useRoomName';
 import { startArchiving, stopArchiving } from '@api/archiving';
 import useSessionContext from '@hooks/useSessionContext';
-import appConfig$ from '@stores/appConfig';
 import ToolbarButton from '../ToolbarButton';
 import PopupDialog, { DialogTexts } from '../PopupDialog';
 import Tooltip from '@mui/material/Tooltip';
 import useTheme from '@ui/theme';
 import VividIcon from '@components/VividIcon';
 import classNames from 'classnames';
+import { env } from '../../../env';
 
 export type ArchivingButtonProps = {
   isOverflowButton?: boolean;
@@ -36,9 +36,6 @@ const ArchivingButton = ({
   const theme = useTheme();
   const { archiveId, markArchiveStartRequestedBySelf, resetArchiveStartRequestedBySelf } =
     useSessionContext();
-  const allowArchiving = appConfig$.use.select(
-    ({ meetingRoomSettings }) => meetingRoomSettings.allowArchiving
-  );
   const isRecording = !!archiveId;
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const title = isRecording ? t('recording.stop.title') : t('recording.start.title');
@@ -93,7 +90,7 @@ const ArchivingButton = ({
   };
 
   return (
-    allowArchiving && (
+    env.ALLOW_ARCHIVING && (
       <>
         <Tooltip title={title} aria-label={t('recording.tooltip.ariaLabel')}>
           <ToolbarButton

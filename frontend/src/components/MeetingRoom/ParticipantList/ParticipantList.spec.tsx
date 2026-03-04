@@ -267,23 +267,15 @@ describe('ParticipantList', () => {
 });
 
 type RenderOptions = {
-  appConfigContext?: ProviderOptions['AppConfigContext'];
   sessionContext?: ProviderOptions['SessionContext'];
   userContext?: ProviderOptions['UserContext'];
 };
 
-function render(
-  ui: ReactElement,
-  { appConfigContext, sessionContext, userContext }: RenderOptions = {}
-) {
-  const { wrapper, ...context } = makeTestProvider(
-    [providers.appConfig, providers.user, providers.session],
-    {
-      appConfigContext,
-      sessionContext,
-      userContext,
-    }
-  );
+function render(ui: ReactElement, { sessionContext, userContext }: RenderOptions = {}) {
+  const { wrapper, ...context } = makeTestProvider([providers.user, providers.session], {
+    sessionContext,
+    userContext,
+  });
 
   return {
     ...context,

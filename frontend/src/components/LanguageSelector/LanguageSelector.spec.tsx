@@ -1,18 +1,8 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 
-vi.mock('../../env', async () => {
-  const actual = await vi.importActual<typeof import('../../env')>('../../env');
-  const { Env } = actual;
-
-  return {
-    ...actual,
-    default: new Env({}),
-  };
-});
-
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import LanguageSelector from './LanguageSelector';
-import env from '../../env';
+import { env } from '../../env';
 
 // Mock VividIcon component
 vi.mock('../VividIcon/VividIcon', () => ({

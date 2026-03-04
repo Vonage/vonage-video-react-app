@@ -1,6 +1,5 @@
 import { ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
-import appConfig$ from '@stores/appConfig';
 import usePreviewPublisherContext from '@hooks/usePreviewPublisherContext';
 import useTheme from '@ui/theme';
 import Box from '@mui/material/Box';
@@ -8,6 +7,7 @@ import Tooltip from '@mui/material/Tooltip';
 import VividIcon from '@components/VividIcon';
 import { VIDEO_CONTAINER_BUTTON_SIZE_WR } from '@utils/constants';
 import VideoContainerButton from '../VideoContainerButton';
+import { env } from '../../../env';
 
 /**
  * MicButton Component
@@ -20,14 +20,12 @@ const MicButton = (): ReactElement | false => {
   const { isAudioEnabled, toggleAudio } = usePreviewPublisherContext();
   const theme = useTheme();
 
-  const allowMicrophoneControl = appConfig$.useIsMicrophoneControlAllowed();
-
   const title = isAudioEnabled
     ? t('devices.audio.microphone.state.off')
     : t('devices.audio.microphone.state.on');
 
   return (
-    allowMicrophoneControl && (
+    env.ALLOW_MICROPHONE_CONTROL && (
       <Box
         data-testid="mic-button-wrapper"
         sx={{
