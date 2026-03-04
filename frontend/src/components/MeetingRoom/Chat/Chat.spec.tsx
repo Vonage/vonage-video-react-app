@@ -60,22 +60,14 @@ describe('Chat', () => {
 
 type RenderOptions = {
   sessionContext?: ProviderOptions['SessionContext'];
-  appConfigContext?: ProviderOptions['AppConfigContext'];
   userContext?: ProviderOptions['UserContext'];
 };
 
-function render(
-  ui: ReactElement,
-  { sessionContext, appConfigContext, userContext }: RenderOptions = {}
-) {
-  const { wrapper, ...context } = makeTestProvider(
-    [providers.appConfig, providers.user, providers.session],
-    {
-      sessionContext,
-      appConfigContext,
-      userContext,
-    }
-  );
+function render(ui: ReactElement, { sessionContext, userContext }: RenderOptions = {}) {
+  const { wrapper, ...context } = makeTestProvider([providers.user, providers.session], {
+    sessionContext,
+    userContext,
+  });
 
   return {
     ...context,

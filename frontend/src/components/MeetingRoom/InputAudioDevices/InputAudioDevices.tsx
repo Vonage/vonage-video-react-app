@@ -1,11 +1,11 @@
 import { Box, MenuItem, MenuList, Tooltip, Typography } from '@mui/material';
 import type { ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
-import appConfig$ from '@stores/appConfig';
 import useTheme from '@ui/theme';
 import VividIcon from '@components/VividIcon';
 import { useDistinctLabelMediaDevices } from '@ui/hooks';
 import mediaDevices$ from '@core/stores/devices';
+import { env } from '../../../env';
 
 export type InputAudioDevicesProps = {
   handleToggle: () => void;
@@ -23,10 +23,6 @@ const InputAudioDevices = ({ handleToggle }: InputAudioDevicesProps): ReactEleme
   const { t } = useTranslation();
   const theme = useTheme();
 
-  const allowDeviceSelection = appConfig$.use.select(
-    ({ meetingRoomSettings }) => meetingRoomSettings.allowDeviceSelection
-  );
-
   // Use store's selection as source of truth, not publisher.getAudioSource() which can be stale
   const selectedDeviceId = mediaDevices$.useDeviceId('audioinput');
 
@@ -43,7 +39,7 @@ const InputAudioDevices = ({ handleToggle }: InputAudioDevicesProps): ReactEleme
   };
 
   return (
-    allowDeviceSelection && (
+    env.MEETING_ROOM_ALLOW_DEVICE_SELECTION && (
       <>
         <Box
           sx={{

@@ -128,20 +128,15 @@ describe('useScreenSharing', () => {
 });
 
 type RenderOptions = {
-  appConfigContext?: ProviderOptions['AppConfigContext'];
   userContext?: ProviderOptions['UserContext'];
   sessionContext?: ProviderOptions['SessionContext'];
 };
 
-function render({ appConfigContext, userContext, sessionContext }: RenderOptions = {}) {
-  const { wrapper, ...context } = makeTestProvider(
-    [providers.appConfig, providers.user, providers.session],
-    {
-      appConfigContext,
-      userContext,
-      sessionContext,
-    }
-  );
+function render({ userContext, sessionContext }: RenderOptions = {}) {
+  const { wrapper, ...context } = makeTestProvider([providers.user, providers.session], {
+    userContext,
+    sessionContext,
+  });
 
   return {
     ...context,

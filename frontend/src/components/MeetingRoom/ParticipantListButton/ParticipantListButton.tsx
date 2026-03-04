@@ -1,11 +1,11 @@
 import { ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
-import appConfig$ from '@stores/appConfig';
 import ToolbarButton from '../ToolbarButton';
 import Badge from '@mui/material/Badge';
 import Tooltip from '@mui/material/Tooltip';
 import useTheme from '@ui/theme';
 import VividIcon from '@components/VividIcon';
+import { env } from '../../../env';
 
 export type ParticipantListButtonProps = {
   handleClick: () => void;
@@ -31,12 +31,11 @@ const ParticipantListButton = ({
   participantCount,
   isOverflowButton = false,
 }: ParticipantListButtonProps): ReactElement | false => {
-  const showParticipantList = appConfig$.useShouldShowParticipantList();
   const theme = useTheme();
   const { t } = useTranslation();
 
   return (
-    showParticipantList && (
+    env.SHOW_PARTICIPANT_LIST && (
       <Tooltip
         title={isOpen ? t('participants.list.close') : t('participants.list.open')}
         aria-label={t('participants.list.ariaLabel')}

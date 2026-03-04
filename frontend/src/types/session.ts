@@ -56,4 +56,6 @@ export type StreamPropertyChangedEvent = {
   newValue: boolean | { width: number; height: number };
 };
 
-export type LayoutMode = 'grid' | 'active-speaker';
+export const LAYOUT_MODES = ['grid', 'active-speaker'] as const;
+
+export type LayoutMode = (typeof LAYOUT_MODES)[number];

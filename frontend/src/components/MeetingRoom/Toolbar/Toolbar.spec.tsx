@@ -9,7 +9,7 @@ import useToolbarButtons, {
   UseToolbarButtonsProps,
 } from '@hooks/useToolbarButtons';
 import { RIGHT_PANEL_BUTTON_COUNT } from '@utils/constants';
-import { makeTestProvider, providers, ProviderOptions } from '@test/providers';
+import { makeTestProvider } from '@test/providers';
 import Toolbar, { ToolbarProps, CaptionsState } from './Toolbar';
 
 const mockedRoomName = { roomName: 'test-room-name' };
@@ -118,14 +118,8 @@ describe('Toolbar', () => {
   });
 });
 
-type RenderOptions = {
-  appConfigContext?: ProviderOptions['AppConfigContext'];
-};
-
-function render(ui: ReactElement, { appConfigContext }: RenderOptions = {}) {
-  const { wrapper, ...context } = makeTestProvider([providers.appConfig], {
-    appConfigContext,
-  });
+function render(ui: ReactElement) {
+  const { wrapper, ...context } = makeTestProvider([]);
 
   return {
     ...context,

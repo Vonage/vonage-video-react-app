@@ -7,9 +7,10 @@ import useRoomName from '@hooks/useRoomName';
 import { SessionContextType } from '@Context/SessionProvider/session';
 import useSessionContext from '@hooks/useSessionContext';
 import { SubscriberWrapper } from '@app-types/session';
-import { makeTestProvider, providers, ProviderOptions } from '@test/providers';
+import { makeTestProvider } from '@test/providers';
 import { enableCaptions, disableCaptions } from '@api/captions';
 import CaptionsButton, { CaptionsState } from './CaptionsButton';
+import { env } from '../../../env';
 
 vi.mock('@hooks/useSessionContext');
 vi.mock('@hooks/useRoomName');
@@ -80,15 +81,10 @@ describe('CaptionsButton', () => {
   });
 
   it('turns the captions on when button is pressed', async () => {
-    render(<CaptionsButton handleClick={mockHandleCloseMenu} captionsState={mockCaptionsState} />, {
-      appConfigContext: {
-        value: {
-          meetingRoomSettings: {
-            allowCaptions: true,
-          },
-        },
-      },
+    env.partialUpdate({
+      ALLOW_CAPTIONS: true,
     });
+    render(<CaptionsButton handleClick={mockHandleCloseMenu} captionsState={mockCaptionsState} />);
 
     act(() => screen.getByTestId('captions-button').click());
 
@@ -98,28 +94,17 @@ describe('CaptionsButton', () => {
   });
 
   it('is not rendered when allowCaptions is false', () => {
-    render(<CaptionsButton handleClick={mockHandleCloseMenu} captionsState={mockCaptionsState} />, {
-      appConfigContext: {
-        value: {
-          meetingRoomSettings: {
-            allowCaptions: false,
-          },
-        },
-      },
+    env.partialUpdate({
+      ALLOW_CAPTIONS: false,
     });
+    render(<CaptionsButton handleClick={mockHandleCloseMenu} captionsState={mockCaptionsState} />);
 
     expect(screen.queryByTestId('captions-button')).not.toBeInTheDocument();
   });
 });
 
-type RenderOptions = {
-  appConfigContext?: ProviderOptions['AppConfigContext'];
-};
-
-function render(ui: ReactElement, { appConfigContext }: RenderOptions = {}) {
-  const { wrapper, ...context } = makeTestProvider([providers.appConfig], {
-    appConfigContext,
-  });
+function render(ui: ReactElement) {
+  const { wrapper, ...context } = makeTestProvider([]);
 
   return {
     ...context,

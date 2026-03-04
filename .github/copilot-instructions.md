@@ -96,7 +96,7 @@ if (condition1) {
     }
 }
 
-this.VITE_API_URL = url;
+this.API_URL = url;
 ```
 
 **Correct:**
@@ -109,7 +109,7 @@ const url = (() => {
     return 'value3';
 })();
 
-this.VITE_API_URL = url;
+this.API_URL = url;
 ```
 
 - **Rule:** Use named boolean expressions or named helper functions for complex boolean conditions.

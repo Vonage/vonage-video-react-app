@@ -141,7 +141,6 @@ describe('ControlPanel', () => {
 });
 
 type RenderOptions = {
-  appConfigContext?: ProviderOptions['AppConfigContext'];
   userContext?: ProviderOptions['UserContext'];
   sessionContext?: ProviderOptions['SessionContext'];
   publisherContext?: ProviderOptions['PublisherContext'];
@@ -152,7 +151,6 @@ type RenderOptions = {
 function render(
   ui: ReactElement,
   {
-    appConfigContext,
     userContext,
     sessionContext,
     publisherContext,
@@ -162,7 +160,6 @@ function render(
 ) {
   const { wrapper: ControlPanelWrapper, ...context } = makeTestProvider(
     [
-      providers.appConfig,
       providers.user,
       providers.session,
       providers.publisher,
@@ -170,7 +167,6 @@ function render(
       providers.previewPublisher,
     ],
     {
-      appConfigContext,
       userContext,
       sessionContext,
       publisherContext,

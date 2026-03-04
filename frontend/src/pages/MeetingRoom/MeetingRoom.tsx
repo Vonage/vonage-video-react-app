@@ -21,7 +21,7 @@ import useBackgroundPublisherContext from '../../hooks/useBackgroundPublisherCon
 import { DEVICE_ACCESS_STATUS } from '../../utils/constants';
 import type { PublishingErrorType } from '../../Context/PublisherProvider/usePublisher/usePublisher';
 import useUserContext from '../../hooks/useUserContext';
-import env from '../../env';
+import { env } from '../../env';
 import useMountEffect from '@web/hooks/useMountEffect';
 import classNames from 'classnames';
 
@@ -90,7 +90,7 @@ const MeetingRoom = (): ReactElement => {
 
   const hasValidUsername = name && name.trim() !== '';
   const searchParams = new URLSearchParams(location.search);
-  const bypass = searchParams.get('bypass') === 'true' || env.VITE_BYPASS_WAITING_ROOM; // Testing purpose
+  const bypass = searchParams.get('bypass') === 'true' || env.BYPASS_WAITING_ROOM; // Testing purpose
 
   useMountEffect(() => {
     if (!hasValidUsername && !bypass) {

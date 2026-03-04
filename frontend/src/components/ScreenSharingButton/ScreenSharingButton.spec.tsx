@@ -1,8 +1,9 @@
 import { describe, expect, it, vi } from 'vitest';
 import { fireEvent, render as renderBase, screen } from '@testing-library/react';
 import { ReactElement } from 'react';
-import { makeTestProvider, providers, ProviderOptions } from '@test/providers';
+import { makeTestProvider } from '@test/providers';
 import ScreenSharingButton, { ScreenShareButtonProps } from './ScreenSharingButton';
+import { env } from '../../env';
 
 describe('ScreenSharingButton', () => {
   const mockToggleScreenShare = vi.fn();
@@ -45,28 +46,18 @@ describe('ScreenSharingButton', () => {
   });
 
   it('is not rendered when allowScreenShare is false', () => {
-    render(<ScreenSharingButton {...defaultProps} />, {
-      appConfigContext: {
-        value: {
-          meetingRoomSettings: {
-            allowScreenShare: false,
-          },
-        },
-      },
+    env.partialUpdate({
+      ALLOW_SCREEN_SHARE: false,
     });
+
+    render(<ScreenSharingButton {...defaultProps} />);
 
     expect(screen.queryByTestId('ScreenShareIcon')).not.toBeInTheDocument();
   });
 });
 
-type RenderOptions = {
-  appConfigContext?: ProviderOptions['AppConfigContext'];
-};
-
-function render(ui: ReactElement, { appConfigContext }: RenderOptions = {}) {
-  const { wrapper, ...context } = makeTestProvider([providers.appConfig], {
-    appConfigContext,
-  });
+function render(ui: ReactElement) {
+  const { wrapper, ...context } = makeTestProvider([]);
 
   return {
     ...context,
