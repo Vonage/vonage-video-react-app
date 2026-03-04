@@ -180,6 +180,12 @@ const usePreviewPublisher = (
    * On Android, stops video first and waits for camera release before switching.
    * @returns {void}
    */
+  const getVideoDeviceLabel = (deviceId: string | null | undefined): string | null => {
+    if (!deviceId) return null;
+    const entry = mediaDevices$.mediaDevicesMap$.getState()['videoinput']?.[deviceId];
+    return typeof entry?.label === 'string' ? entry.label : null;
+  };
+
   const changeVideoSource = useCallback(
     (deviceId: string) => {
       void (async () => {
@@ -190,14 +196,18 @@ const usePreviewPublisher = (
         const currentDeviceId = publisher.getVideoSource()?.deviceId;
         if (deviceId === currentDeviceId) return;
 
-        const deviceEntry = mediaDevices$.mediaDevicesMap$.getState()['videoinput']?.[deviceId];
-        const label = typeof deviceEntry?.label === 'string' ? deviceEntry.label : null;
-        const resolvedDeviceId = await resolveMobileVideoSource(deviceId, label);
-
+        // Release the current camera first on Android so it is not held
+        // when resolveMobileVideoSource opens the new camera via getUserMedia.
+        // Samsung devices can enforce exclusive camera2 access across streams.
         if (isAndroid()) {
           publisher.publishVideo(false);
           await wait(ANDROID_CAMERA_SWITCH_DELAY_MS);
         }
+
+        const resolvedDeviceId = await resolveMobileVideoSource(
+          deviceId,
+          getVideoDeviceLabel(deviceId)
+        );
 
         await publisher.setVideoSource(resolvedDeviceId);
 
@@ -205,7 +215,7 @@ const usePreviewPublisher = (
           publisher.publishVideo(isVideoEnabled);
         }
 
-        void mediaDevices$.actions.selectDevice('videoinput', deviceId);
+        await mediaDevices$.actions.selectDevice('videoinput', deviceId);
 
         if (setUser) {
           setUser((prevUser: UserType) => ({
@@ -270,13 +280,8 @@ const usePreviewPublisher = (
       try {
         // On mobile, resolve the actual accessible camera via facingMode so devices like
         // Samsung S24+ use a working camera rather than an inaccessible enumerated deviceId.
-        const deviceEntry =
-          videoSourceId != null
-            ? mediaDevices$.mediaDevicesMap$.getState()['videoinput']?.[videoSourceId]
-            : undefined;
-        const label = typeof deviceEntry?.label === 'string' ? deviceEntry.label : null;
         const resolvedVideoSourceId = videoSourceId
-          ? await resolveMobileVideoSource(videoSourceId, label)
+          ? await resolveMobileVideoSource(videoSourceId, getVideoDeviceLabel(videoSourceId))
           : videoSourceId;
 
         if (publisherRef.current) return;

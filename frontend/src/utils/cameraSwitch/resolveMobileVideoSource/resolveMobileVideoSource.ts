@@ -29,7 +29,7 @@ async function resolveMobileVideoSource(deviceId: string, label?: string | null)
 
   try {
     const stream = await navigator.mediaDevices.getUserMedia({
-      video: { facingMode: { ideal: facingMode } },
+      video: { facingMode: { exact: facingMode } },
     });
     const resolvedId = stream.getVideoTracks()[0]?.getSettings().deviceId;
     stream.getTracks().forEach((t) => t.stop());

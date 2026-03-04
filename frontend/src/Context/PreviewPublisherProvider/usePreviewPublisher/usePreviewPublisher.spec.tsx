@@ -10,8 +10,13 @@ import renderAsyncHook from '@web-test/renderAsyncHook';
 import composeProviders from '@web/helpers/composeProviders';
 import SuspenseBoundary from '@web/components/SuspenseBoundary';
 import { setupWindowNavigatorMock } from '@web-test/fixtures';
+import { resolveMobileVideoSource } from '@utils/cameraSwitch';
+import mediaDevices$ from '@core/stores/devices';
 
 vi.mock('@vonage/client-sdk-video');
+vi.mock('@utils/cameraSwitch', () => ({
+  resolveMobileVideoSource: vi.fn((deviceId: string) => Promise.resolve(deviceId)),
+}));
 
 describe('usePreviewPublisher', () => {
   const mockPublisher = Object.assign(new EventEmitter(), {
@@ -213,6 +218,62 @@ describe('usePreviewPublisher', () => {
       act(emitAccessDeniedError);
 
       expect(console.error).toHaveBeenCalledWith('Error querying permissions:', expect.any(Error));
+    });
+  });
+
+  describe('getVideoDeviceLabel', () => {
+    beforeEach(() => {
+      (mockPublisher as unknown as { setVideoSource: Mock }).setVideoSource = vi
+        .fn()
+        .mockResolvedValue(undefined);
+      mockedInitPublisher.mockReturnValue(mockPublisher);
+      vi.mocked(resolveMobileVideoSource).mockImplementation((deviceId) =>
+        Promise.resolve(deviceId)
+      );
+      vi.spyOn(mediaDevices$.actions, 'selectDevice').mockResolvedValue(undefined);
+    });
+
+    it('passes the device label from the store to resolveMobileVideoSource', async () => {
+      vi.spyOn(mediaDevices$.mediaDevicesMap$, 'getState').mockReturnValue({
+        audioinput: {},
+        audiooutput: {},
+        videoinput: {
+          'video-input-1': {
+            deviceId: 'video-input-1',
+            kind: 'videoinput' as MediaDeviceKind,
+            label: 'Default Camera',
+            groupId: 'group-2',
+          },
+        },
+      });
+
+      const { result } = await render();
+      act(() => {
+        result.current.initLocalPublisher();
+      });
+
+      act(() => {
+        result.current.changeVideoSource('video-input-1');
+      });
+
+      await waitFor(() => {
+        expect(resolveMobileVideoSource).toHaveBeenCalledWith('video-input-1', 'Default Camera');
+      });
+    });
+
+    it('passes null as the label when the device is not in the store', async () => {
+      const { result } = await render();
+      act(() => {
+        result.current.initLocalPublisher();
+      });
+
+      act(() => {
+        result.current.changeVideoSource('unknown-device-id');
+      });
+
+      await waitFor(() => {
+        expect(resolveMobileVideoSource).toHaveBeenCalledWith('unknown-device-id', null);
+      });
     });
   });
 });

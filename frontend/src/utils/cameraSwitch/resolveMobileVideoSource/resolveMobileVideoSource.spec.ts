@@ -106,7 +106,7 @@ describe('resolveMobileVideoSource', () => {
       const result = await resolveMobileVideoSource('original-id', 'Front Camera');
 
       expect(getUserMediaMock).toHaveBeenCalledWith({
-        video: { facingMode: { ideal: 'user' } },
+        video: { facingMode: { exact: 'user' } },
       });
       expect(result).toBe(resolvedId);
     });
@@ -135,7 +135,7 @@ describe('resolveMobileVideoSource', () => {
       const result = await resolveMobileVideoSource('original-id', 'Rear Camera');
 
       expect(getUserMediaMock).toHaveBeenCalledWith({
-        video: { facingMode: { ideal: 'environment' } },
+        video: { facingMode: { exact: 'environment' } },
       });
       expect(result).toBe(resolvedId);
     });
