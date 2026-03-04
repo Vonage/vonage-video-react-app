@@ -1,9 +1,9 @@
 import { VideoFilter } from '@vonage/client-sdk-video';
 import type { MediaDeviceInfoJSON } from '@web/types';
-import { isMobile, isWebKit } from '@web/platform';
+import { isWebKit } from '@web/platform';
 
 // Re-export platform helpers for backwards compatibility
-export { isMobile, isWebKit };
+export { isMobile, isWebKit } from '@web/platform';
 
 /**
  * Checks if the current device/browser is Android.
