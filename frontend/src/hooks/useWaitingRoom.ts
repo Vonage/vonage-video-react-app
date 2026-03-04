@@ -2,9 +2,9 @@ import { useState, useEffect, useEffectEvent } from 'react';
 import type { MouseEvent, TouchEvent } from 'react';
 import usePreviewPublisherContext from './usePreviewPublisherContext';
 import useBackgroundPublisherContext from './useBackgroundPublisherContext';
-import appConfig$ from '@stores/appConfig';
 import { getStorageItem, STORAGE_KEYS } from '../utils/storage';
 import { DEVICE_ACCESS_STATUS } from '../utils/constants';
+import { env } from '../env';
 
 const useWaitingRoom = () => {
   const { initLocalPublisher, publisher, accessStatus, destroyPublisher, isVideoLoading } =
@@ -18,10 +18,6 @@ const useWaitingRoom = () => {
   const [openVideoInput, setOpenVideoInput] = useState<boolean>(false);
   const [openAudioOutput, setOpenAudioOutput] = useState<boolean>(false);
   const [username, setUsername] = useState(getStorageItem(STORAGE_KEYS.USERNAME) ?? '');
-
-  const allowDeviceSelection = appConfig$.use.select(
-    ({ waitingRoomSettings }) => waitingRoomSettings.allowDeviceSelection
-  );
 
   const stableInitLocalPublisher = useEffectEvent(() => {
     if (!publisher) {
@@ -74,7 +70,9 @@ const useWaitingRoom = () => {
   };
 
   const isRoomReady =
-    allowDeviceSelection && accessStatus === DEVICE_ACCESS_STATUS.ACCEPTED && !isVideoLoading;
+    env.WAITING_ROOM_ALLOW_DEVICE_SELECTION &&
+    accessStatus === DEVICE_ACCESS_STATUS.ACCEPTED &&
+    !isVideoLoading;
 
   return {
     anchorEl,

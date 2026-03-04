@@ -13,13 +13,14 @@ import RoomProvider from './Context/RoomProvider';
 import Box from '@mui/material/Box';
 import useTheme from '@ui/theme';
 import AppContextProvider from './AppContextProvider';
-import type { AppConfig } from '@stores/appConfig';
-import { DeepPartial } from './types';
 import RedirectToUnsupportedBrowserPage from '@components/RedirectToUnsupportedBrowserPage';
 import SuspenseBoundary from '@web/components/SuspenseBoundary/SuspenseBoundary';
 import WaitingRoomSkeleton from '@pages/WaitingRoom/WaitingRoom.skeleton';
 import MeetingRoomSkeleton from '@pages/MeetingRoom/MeetingRoom.skeleton';
 import SessionProvider from '@Context/SessionProvider/session';
+import ErrorBoundary from './components/ErrorBoundary';
+import EnvGuard from './components/EnvGuard';
+import { ErrorPage } from './pages/ErrorBoundary';
 
 const futureConfig: Partial<FutureConfig> = {
   /**
@@ -91,10 +92,13 @@ const InnerApp = () => {
 /**
  * The wrapper is necessary temporarily since app also need to have access to theme context.
  */
-const App = ({ appConfigValue }: { appConfigValue?: DeepPartial<AppConfig> }) => {
+const App = () => {
   return (
-    <AppContextProvider appConfigValue={appConfigValue}>
-      <InnerApp />
+    <AppContextProvider>
+      <ErrorBoundary fallback={(error) => <ErrorPage error={error} />}>
+        <EnvGuard />
+        <InnerApp />
+      </ErrorBoundary>
     </AppContextProvider>
   );
 };

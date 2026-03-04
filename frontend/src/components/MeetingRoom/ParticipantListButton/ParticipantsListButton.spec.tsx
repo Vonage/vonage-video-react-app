@@ -1,8 +1,9 @@
 import { render as renderBase, screen } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 import { ReactElement } from 'react';
-import { makeTestProvider, providers, type ProviderOptions } from '@test/providers';
+import { makeTestProvider } from '@test/providers';
 import ParticipantListButton from './ParticipantListButton';
+import { env } from '../../../env';
 
 describe('ParticipantListButton', () => {
   it('should show participant number', () => {
@@ -24,28 +25,18 @@ describe('ParticipantListButton', () => {
     expect(handleClick).toHaveBeenCalled();
   });
   it('is not rendered when showParticipantList is false', () => {
-    render(<ParticipantListButton handleClick={() => {}} isOpen={false} participantCount={10} />, {
-      appConfigContext: {
-        value: {
-          meetingRoomSettings: {
-            showParticipantList: false,
-          },
-        },
-      },
+    env.partialUpdate({
+      SHOW_PARTICIPANT_LIST: false,
     });
+
+    render(<ParticipantListButton handleClick={() => {}} isOpen={false} participantCount={10} />);
 
     expect(screen.queryByTestId('participant-list-button')).not.toBeInTheDocument();
   });
 });
 
-type RenderOptions = {
-  appConfigContext?: ProviderOptions['AppConfigContext'];
-};
-
-function render(ui: ReactElement, { appConfigContext }: RenderOptions = {}) {
-  const { wrapper, ...context } = makeTestProvider([providers.appConfig], {
-    appConfigContext,
-  });
+function render(ui: ReactElement) {
+  const { wrapper, ...context } = makeTestProvider([]);
 
   return {
     ...context,

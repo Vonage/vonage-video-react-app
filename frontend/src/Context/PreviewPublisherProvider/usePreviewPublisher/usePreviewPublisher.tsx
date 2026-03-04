@@ -1,13 +1,6 @@
 import { useState, useRef, useCallback } from 'react';
-import {
-  Publisher,
-  Event,
-  initPublisher,
-  VideoFilter,
-  hasMediaProcessorSupport,
-  PublisherProperties,
-} from '@vonage/client-sdk-video';
-import appConfig$ from '@stores/appConfig';
+import { initPublisher, hasMediaProcessorSupport } from '@vonage/client-sdk-video';
+import type { Event, Publisher, PublisherProperties, VideoFilter } from '@vonage/client-sdk-video';
 import usePermissions from '../../../hooks/usePermissions';
 import useUserContext from '../../../hooks/useUserContext';
 import { DEVICE_ACCESS_STATUS } from '../../../utils/constants';
@@ -22,6 +15,7 @@ import useSyncPublisherDevices from '@Context/PublisherProvider/usePublisher/hoo
 import waitUntilPlaying from '@utils/waitUntilPlaying';
 import { attempt } from '@common/execution';
 import { useMountEffect } from '@web/hooks';
+import { env } from '../../../env';
 
 type PublisherVideoElementCreatedEvent = Event<'videoElementCreated', Publisher> & {
   element: HTMLVideoElement | HTMLObjectElement;
@@ -89,9 +83,6 @@ const usePreviewPublisher = (
   const audioSourceId = mediaDevices$.useDeviceId('audioinput');
 
   const { setUser, user } = useUserContext();
-  const defaultResolution = appConfig$.use.select(
-    ({ videoSettings }) => videoSettings.defaultResolution
-  );
   const [publisherVideoElement, setPublisherVideoElement] = useState<
     HTMLVideoElement | HTMLObjectElement | undefined
   >(initialValue?.publisherVideoElement ?? undefined);
@@ -245,7 +236,7 @@ const usePreviewPublisher = (
     const publisherOptions: PublisherProperties = {
       insertDefaultUI: false,
       videoFilter,
-      resolution: defaultResolution,
+      resolution: env.DEFAULT_RESOLUTION,
       publishAudio: isAudioEnabled,
       publishVideo: isVideoEnabled,
       audioSource: audioSourceId,

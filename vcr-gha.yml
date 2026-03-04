@@ -20,8 +20,8 @@ instance:
     - name: OT_API_SECRET
       # pragma: allowlist secret
       secret: OT_API_SECRET
-    - name: VITE_ENABLE_REPORT_ISSUE
-      secret: VITE_ENABLE_REPORT_ISSUE
+    - name: ENABLE_REPORT_ISSUE
+      secret: ENABLE_REPORT_ISSUE
     - name: JIRA_URL
       secret: JIRA_URL
     - name: JIRA_API_URL

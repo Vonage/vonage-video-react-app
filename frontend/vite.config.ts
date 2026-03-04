@@ -41,11 +41,51 @@ export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, __dirname, '');
 
   const isDevelopment = mode === 'development';
+  const isTest = mode === 'test';
+
+  // Explicitly list every key the Env class reads.
+  // In test mode we skip all custom vars so the Env class defaults apply
+  // (avoids injecting values sourced from vcrBuild.env.sh into tests).
+  // In non-test mode we expose only these known keys — no leakage of
+  // PATH, secrets, etc. that envPrefix: '' would expose.
+  const appEnvKeys = [
+    'I18N_FALLBACK_LANGUAGE',
+    'I18N_SUPPORTED_LANGUAGES',
+    'ENABLE_REPORT_ISSUE',
+    'ALLOW_BACKGROUND_EFFECTS',
+    'ALLOW_CAMERA_CONTROL',
+    'ALLOW_VIDEO_ON_JOIN',
+    'ALLOW_ADVANCED_NOISE_SUPPRESSION',
+    'ALLOW_AUDIO_ON_JOIN',
+    'ALLOW_MICROPHONE_CONTROL',
+    'WAITING_ROOM_ALLOW_DEVICE_SELECTION',
+    'ALLOW_ARCHIVING',
+    'ALLOW_CAPTIONS',
+    'ALLOW_CHAT',
+    'MEETING_ROOM_ALLOW_DEVICE_SELECTION',
+    'ALLOW_EMOJIS',
+    'ALLOW_SCREEN_SHARE',
+    'SHOW_PARTICIPANT_LIST',
+    'BYPASS_WAITING_ROOM',
+    'AVOID_FETCHING_APP_CONFIG',
+    'DEFAULT_RESOLUTION',
+    'DEFAULT_LAYOUT_MODE',
+    'API_URL',
+    'TUNNEL_DOMAIN',
+  ] as const;
+
+  const appEnvObject = {
+    MODE: mode,
+    ...(isTest ? {} : Object.fromEntries(appEnvKeys.map((key) => [key, env[key] ?? '']))),
+  };
 
   return mergeConfig(vitestConfig, {
+    define: {
+      __APP_ENV__: JSON.stringify(appEnvObject),
+    },
     server: {
       host: true,
-      allowedHosts: ['*', env.VITE_TUNNEL_DOMAIN],
+      allowedHosts: ['*', env.TUNNEL_DOMAIN],
     },
     optimizeDeps: {
       include: ['@emotion/react', '@emotion/styled', '@mui/material/Tooltip'],

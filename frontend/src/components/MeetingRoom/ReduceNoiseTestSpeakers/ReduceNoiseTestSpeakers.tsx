@@ -3,7 +3,6 @@ import { hasMediaProcessorSupport } from '@vonage/client-sdk-video';
 import ToggleOffIcon from '@mui/icons-material/ToggleOff';
 import ToggleOnIcon from '@mui/icons-material/ToggleOn';
 import { useTranslation } from 'react-i18next';
-import appConfig$ from '@stores/appConfig';
 import useTheme from '@ui/theme';
 import usePublisherContext from '@hooks/usePublisherContext';
 import { setStorageItem, STORAGE_KEYS } from '@utils/storage';
@@ -16,6 +15,7 @@ import Typography from '@mui/material/Typography';
 import Grow from '@mui/material/Grow';
 import VividIcon from '@components/VividIcon';
 import Box from '@mui/material/Box';
+import { env } from '../../../env';
 
 /**
  * ReduceNoiseTestSpeakers Component
@@ -29,12 +29,8 @@ const ReduceNoiseTestSpeakers = (): ReactElement | false => {
   const theme = useTheme();
   const { publisher, isPublishing } = usePublisherContext();
 
-  const allowAdvancedNoiseSuppression = appConfig$.use.select(
-    ({ audioSettings }) => audioSettings.allowAdvancedNoiseSuppression
-  );
-
   const [isToggled, setIsToggled] = useState(false);
-  const shouldDisplayANS = hasMediaProcessorSupport() && allowAdvancedNoiseSuppression;
+  const shouldDisplayANS = hasMediaProcessorSupport() && env.ALLOW_ADVANCED_NOISE_SUPPRESSION;
 
   const handleToggle = async () => {
     const newState = !isToggled;

@@ -20,7 +20,7 @@ async function clickOnReportIssueButton(page, isMobile) {
 }
 
 test.describe('FeedbackForm Component', () => {
-  const isReportIssueEnabled = !!process.env.VITE_ENABLE_REPORT_ISSUE;
+  const isReportIssueEnabled = !!process.env.ENABLE_REPORT_ISSUE;
   test.skip(!isReportIssueEnabled, 'Skipping tests if report issues are disabled');
   test.beforeEach(async ({ page }) => {
     const roomUrl = `${baseURL}room/test`;

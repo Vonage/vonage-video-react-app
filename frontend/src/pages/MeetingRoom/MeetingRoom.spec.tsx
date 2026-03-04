@@ -52,7 +52,7 @@ vi.mock('@mui/material/useMediaQuery', () => ({
 
 // vi.mock('../../env', () => ({
 //   default: {
-//     VITE_BYPASS_WAITING_ROOM: false,
+//     BYPASS_WAITING_ROOM: false,
 //   },
 // }));
 
@@ -517,19 +517,17 @@ describe('MeetingRoom', () => {
 function render(
   ui: ReactElement,
   {
-    appConfigContext,
     userContext,
     sessionContext,
     publisherContext,
   }: {
-    appConfigContext?: ProviderOptions['AppConfigContext'];
     userContext?: ProviderOptions['UserContext'];
     sessionContext?: ProviderOptions['SessionContext'];
     publisherContext?: ProviderOptions['PublisherContext'];
   } = {}
 ) {
   const { wrapper, ...context } = makeTestProvider(
-    [providers.appConfig, providers.user, providers.session, providers.publisher],
+    [providers.user, providers.session, providers.publisher],
     {
       userContext: {
         ...userContext,
@@ -540,7 +538,6 @@ function render(
           ...userContext?.value,
         },
       },
-      appConfigContext,
       sessionContext,
       publisherContext,
     }

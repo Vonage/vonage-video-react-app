@@ -1,10 +1,11 @@
 import { render as renderBase, screen, fireEvent, waitFor } from '@testing-library/react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { ReactElement } from 'react';
-import { makeTestProvider, providers, ProviderOptions } from '@test/providers';
+import { makeTestProvider, providers, type ProviderOptions } from '@test/providers';
 import MicButton from './MicButton';
 import SuspenseBoundary from '@web/components/SuspenseBoundary/SuspenseBoundary';
 import composeProviders from '@web/helpers/composeProviders';
+import { env } from '../../../env';
 import {
   setupWindowNavigatorMock,
   makeMediaStreamMock,
@@ -17,6 +18,10 @@ const mockDevices = makeMediaDeviceInfos();
 describe('MicButton', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+
+    env.partialUpdate({
+      ALLOW_MICROPHONE_CONTROL: true,
+    });
 
     setupWindowNavigatorMock({
       mediaDevices: {
@@ -88,16 +93,11 @@ describe('MicButton', () => {
   });
 
   it('is not rendered when allowMicrophoneControl is false', async () => {
-    render(<MicButton />, {
-      appConfigContext: {
-        value: {
-          isAppConfigLoaded: true,
-          audioSettings: {
-            allowMicrophoneControl: false,
-          },
-        },
-      },
+    env.partialUpdate({
+      ALLOW_MICROPHONE_CONTROL: false,
     });
+
+    render(<MicButton />);
 
     await waitFor(() => {
       expect(screen.queryByTestId('vivid-icon-microphone-line')).not.toBeInTheDocument();
@@ -106,19 +106,14 @@ describe('MicButton', () => {
 });
 
 type RenderOptions = {
-  appConfigContext?: ProviderOptions['AppConfigContext'];
   userContext?: ProviderOptions['UserContext'];
   previewPublisherContext?: ProviderOptions['PreviewPublisherContext'];
 };
 
-function render(
-  ui: ReactElement,
-  { appConfigContext, userContext, previewPublisherContext }: RenderOptions = {}
-) {
+function render(ui: ReactElement, { userContext, previewPublisherContext }: RenderOptions = {}) {
   const { wrapper: MainWrapper, ...context } = makeTestProvider(
-    [providers.appConfig, providers.user, providers.previewPublisher],
+    [providers.user, providers.previewPublisher],
     {
-      appConfigContext,
       userContext,
       previewPublisherContext,
     }

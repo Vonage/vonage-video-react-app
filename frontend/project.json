@@ -10,7 +10,7 @@
       "outputs": ["{projectRoot}/dist"],
       "options": {
         "cwd": "frontend",
-        "command": "vite build && nx run frontend:cp-build"
+        "command": "bash -c 'source ../vcrBuild.env.sh && vite build && nx run frontend:cp-build'"
       }
     },
     "build-room": {
@@ -25,21 +25,21 @@
       "executor": "nx:run-commands",
       "options": {
         "cwd": "frontend",
-        "command": "concurrently \"nx run frontend:ts-check:watch\" \"vite --host\""
+        "command": "bash -c 'source ../vcrBuild.env.sh && concurrently \"nx run frontend:ts-check:watch\" \"vite --host\"'"
       }
     },
     "serve": {
       "executor": "nx:run-commands",
       "options": {
         "cwd": "frontend",
-        "command": "vite --host"
+        "command": "bash -c 'source ../vcrBuild.env.sh && vite --host'"
       }
     },
     "preview": {
       "executor": "nx:run-commands",
       "options": {
         "cwd": "frontend",
-        "command": "vite preview"
+        "command": "bash -c 'source ../vcrBuild.env.sh && vite preview'"
       }
     },
     "lint": {
@@ -105,7 +105,7 @@
       "executor": "nx:run-commands",
       "options": {
         "cwd": "frontend",
-        "command": "storybook dev -p 6006"
+        "command": "bash -c 'source ../vcrBuild.env.sh && storybook dev -p 6006'"
       }
     },
     "build-storybook": {
@@ -113,7 +113,7 @@
       "outputs": ["{projectRoot}/storybook-static"],
       "options": {
         "cwd": "frontend",
-        "command": "storybook build"
+        "command": "bash -c 'source ../vcrBuild.env.sh && storybook build'"
       }
     }
   },

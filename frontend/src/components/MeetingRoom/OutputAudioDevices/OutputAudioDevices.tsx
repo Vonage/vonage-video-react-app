@@ -1,6 +1,5 @@
 import { ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
-import appConfig$ from '@stores/appConfig';
 import type { MediaDeviceInfoJSON } from '@web/types';
 import DropdownSeparator from '../DropdownSeparator';
 import Box from '@mui/material/Box';
@@ -13,6 +12,7 @@ import { isSinkIdSupported } from '@web/platform';
 import mediaDevices$ from '@core/stores/devices';
 import useTheme from '@ui/theme';
 import { Tooltip } from '@mui/material';
+import { env } from '../../../env';
 
 export type OutputAudioDevicesProps = {
   handleToggle: () => void;
@@ -31,10 +31,6 @@ const OutputAudioDevices = ({ handleToggle }: OutputAudioDevicesProps): ReactEle
   const theme = useTheme();
 
   const currentAudioOutputId = mediaDevices$.useDeviceId('audiooutput');
-
-  const allowDeviceSelection = appConfig$.use.select(
-    ({ meetingRoomSettings }) => meetingRoomSettings.allowDeviceSelection
-  );
 
   const availableDevices = useDistinctLabelMediaDevices('audiooutput', (devices) =>
     isSinkIdSupported()
@@ -56,7 +52,7 @@ const OutputAudioDevices = ({ handleToggle }: OutputAudioDevicesProps): ReactEle
   };
 
   return (
-    allowDeviceSelection && (
+    env.MEETING_ROOM_ALLOW_DEVICE_SELECTION && (
       <>
         <DropdownSeparator />
         <Box

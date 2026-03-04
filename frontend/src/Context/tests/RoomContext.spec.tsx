@@ -80,33 +80,28 @@ describe('RoomContext', () => {
 });
 
 type RenderOptions = {
-  appConfigContext?: ProviderOptions['AppConfigContext'];
   userContext?: ProviderOptions['UserContext'];
 };
 
-async function render(ui: ReactElement, { appConfigContext, userContext }: RenderOptions = {}) {
-  const { wrapper: MainWrapper, ...context } = makeTestProvider(
-    [providers.appConfig, providers.user],
-    {
-      appConfigContext,
-      userContext: {
-        value: {
-          ...userContext?.value,
-          defaultSettings: {
-            publishAudio: true,
-            publishVideo: true,
-            name: fakeName,
-            noiseSuppression: false,
-            audioSource: undefined,
-            videoSource: undefined,
-            publishCaptions: true,
-            ...userContext?.value?.defaultSettings,
-          },
+async function render(ui: ReactElement, { userContext }: RenderOptions = {}) {
+  const { wrapper: MainWrapper, ...context } = makeTestProvider([providers.user], {
+    userContext: {
+      value: {
+        ...userContext?.value,
+        defaultSettings: {
+          publishAudio: true,
+          publishVideo: true,
+          name: fakeName,
+          noiseSuppression: false,
+          audioSource: undefined,
+          videoSource: undefined,
+          publishCaptions: true,
+          ...userContext?.value?.defaultSettings,
         },
-        ...userContext,
       },
-    }
-  );
+      ...userContext,
+    },
+  });
 
   const wrapper = composeProviders(SuspenseBoundary, MainWrapper);
 
