@@ -46,7 +46,7 @@ const LanguageSelector = ({ showFlag = true }: LanguageSelectorProps): ReactElem
 
   const handleLanguageChange = (event: SelectChangeEvent<string>) => {
     const newLanguage = event.target.value;
-    i18n.changeLanguage(newLanguage);
+    void i18n.changeLanguage(newLanguage);
   };
 
   const currentLanguage = i18n.language || 'en';

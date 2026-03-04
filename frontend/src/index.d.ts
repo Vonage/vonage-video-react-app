@@ -1,3 +1,27 @@
-type Camelize<S extends string> = S extends `${infer Head}-${infer Tail}`
-  ? `${Head}${Capitalize<Camelize<Tail>>}`
-  : S;
+/**
+ * Attributes available on the vera-room custom element.
+ * These map to the bridge attributes used for configuration.
+ */
+type VeraRoomAttributes = {
+  /** The entry point identifier for logging and session source tracking */
+  'entry-point'?: string;
+
+  /** Session identifier to join an existing session directly */
+  'session-identifier'?: string;
+};
+
+declare module 'react' {
+  namespace JSX {
+    interface IntrinsicElements {
+      /**
+       * Vera embeddable web component for video conferencing.
+       */
+      'vera-room': React.DetailedHTMLProps<
+        React.HTMLAttributes<HTMLElement> & VeraRoomAttributes,
+        HTMLElement
+      >;
+    }
+  }
+}
+
+export {};

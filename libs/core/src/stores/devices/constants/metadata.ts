@@ -22,9 +22,9 @@ const metadata = () => {
     loadingMediaDevices: null as null | CancelablePromise<MediaDeviceInfoJSON[]>,
 
     /**
-     * allows us to delay syncs and queries until permissions are reviewed.
+     * A promise that resolves when the media devices store is ready and full loaded with the available media devices.
      */
-    permissionsRequests: CancelablePromise.resolve(),
+    isStoreReady: CancelablePromise.resolve(),
 
     /**
      * bound vanilla getUserMedia function

@@ -7,6 +7,9 @@ import { SPY_MARK } from '@common/types';
 import { setupWindowNavigatorMock } from '@web-test/fixtures';
 import * as vonageClientSdk from '@vonage/client-sdk-video';
 import * as isFirefoxModule from '@web/platform/isFirefox';
+import { makeMediaDeviceInfos } from '@web-test/fixtures';
+
+const someDevices = makeMediaDeviceInfos();
 
 describe('setupDeviceStore', () => {
   beforeEach(() => {
@@ -16,6 +19,7 @@ describe('setupDeviceStore', () => {
     setupWindowNavigatorMock({
       mediaDevices: {
         addEventListener: vi.fn(),
+        enumerateDevices: Promise.resolve(someDevices),
       },
     });
   });
@@ -253,14 +257,18 @@ describe('setupDeviceStore', () => {
         getTracks: vi.fn().mockReturnValue([{ stop: vi.fn() }, { stop: vi.fn() }]),
       };
 
+      const getUserMediaSpy = vi.fn(() =>
+        Promise.resolve(mockStream)
+      ) as unknown as typeof navigator.mediaDevices.getUserMedia;
+
       setupWindowNavigatorMock({
         mediaDevices: {
           addEventListener: vi.fn(),
-          enumerateDevices: vi.fn().mockResolvedValue([
+          enumerateDevices: Promise.resolve([
             { deviceId: 'device1', kind: 'audioinput', label: '' },
             { deviceId: 'device2', kind: 'videoinput', label: '' },
-          ]),
-          getUserMedia: vi.fn().mockResolvedValue(mockStream),
+          ] as MediaDeviceInfo[]),
+          getUserMedia: getUserMediaSpy,
         },
       });
 
@@ -270,7 +278,7 @@ describe('setupDeviceStore', () => {
 
       await waitFor(
         () => {
-          expect(navigator.mediaDevices.getUserMedia).toHaveBeenCalledWith({
+          expect(getUserMediaSpy).toHaveBeenCalledWith({
             audio: true,
             video: true,
           });

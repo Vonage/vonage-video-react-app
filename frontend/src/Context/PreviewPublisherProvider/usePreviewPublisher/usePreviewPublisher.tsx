@@ -144,8 +144,8 @@ const usePreviewPublisher = (
         return;
       }
 
-      publisherRef.current.setAudioSource(deviceId);
-      mediaDevices$.actions.selectDevice('audioinput', deviceId);
+      void publisherRef.current.setAudioSource(deviceId);
+      void mediaDevices$.actions.selectDevice('audioinput', deviceId);
 
       if (setUser) {
         setUser((prevUser: UserType) => ({
@@ -167,8 +167,8 @@ const usePreviewPublisher = (
         return;
       }
 
-      publisherRef.current.setVideoSource(deviceId);
-      mediaDevices$.actions.selectDevice('videoinput', deviceId);
+      void publisherRef.current.setVideoSource(deviceId);
+      void mediaDevices$.actions.selectDevice('videoinput', deviceId);
 
       if (setUser) {
         setUser((prevUser: UserType) => ({
@@ -196,7 +196,7 @@ const usePreviewPublisher = (
 
     if (!isVideoLoading) return;
 
-    waitUntilPlaying(event.element).then(() => {
+    void waitUntilPlaying(event.element).then(() => {
       setIsVideoLoading(false);
     });
   };

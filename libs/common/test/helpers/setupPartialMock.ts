@@ -67,9 +67,6 @@ function setupPartialMock<T extends object>(
       );
     }
 
-    // is already a spy skip
-    if (vi.isMockFunction(currentValue)) return;
-
     // Spy the function without modifying its implementation
     if (value === SPY_MARK) {
       if (isFunction(currentValue)) {

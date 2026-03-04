@@ -104,7 +104,7 @@ const MeetingRoom = (): ReactElement => {
     }
 
     if (joinRoom && isValidRoomName(roomName)) {
-      joinRoom(roomName);
+      void joinRoom(roomName);
     }
     return () => {
       // Ensure to disconnect session when unmounting meeting room in order
@@ -125,13 +125,13 @@ const MeetingRoom = (): ReactElement => {
 
   useEffect(() => {
     if (connected && publisher && publish) {
-      publish();
+      void publish();
     }
   }, [publisher, publish, connected]);
 
   useEffect(() => {
     if (!backgroundPublisher) {
-      initBackgroundLocalPublisher();
+      void initBackgroundLocalPublisher();
     }
   }, [initBackgroundLocalPublisher, backgroundPublisher]);
 

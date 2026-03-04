@@ -71,7 +71,7 @@ describe('EffectOptionButtons', () => {
     });
   });
 
-  it('sets the selected background with high blur', async () => {
+  it('sets the selected background with high blur-sm', async () => {
     render(<EffectOptionButtons />, {
       backgroundPublisherContext: {
         __interceptor: (context) => {

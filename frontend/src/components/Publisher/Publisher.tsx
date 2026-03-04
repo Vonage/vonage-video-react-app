@@ -40,6 +40,7 @@ const Publisher = ({ box }: PublisherProps): ReactElement => {
       element.classList.add('video__element');
 
       // Apply MUI-style inline styles instead of Tailwind classes
+
       // eslint-disable-next-line react-hooks/immutability
       element.style.width = '100%';
       element.style.height = '100%';

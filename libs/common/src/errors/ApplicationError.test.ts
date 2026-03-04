@@ -1,14 +1,8 @@
-import { describe, it, expect, afterEach } from 'vitest';
+import { describe, it, expect } from 'vitest';
 import StatusCodeEnum from 'status-code-enum';
 import ApplicationError from './ApplicationError';
 
 describe('ApplicationError', () => {
-  const originalEnv = process.env.NODE_ENV;
-
-  afterEach(() => {
-    process.env.NODE_ENV = originalEnv;
-  });
-
   it('should create error, add messages, assert, and chain methods', () => {
     const error = new ApplicationError({
       src: new Error('Test error'),
@@ -32,8 +26,6 @@ describe('ApplicationError', () => {
   });
 
   it('should hide sensitive information in production mode', () => {
-    process.env.NODE_ENV = 'production';
-
     const error = new ApplicationError({
       src: new Error('Internal database error'),
       fallbackConfig: {

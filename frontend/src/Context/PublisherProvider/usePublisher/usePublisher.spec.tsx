@@ -340,7 +340,7 @@ describe('usePublisher', () => {
       act(() => {
         // Normally this is async, but it was being called twice in a useEffect hook.
         // To accurately test this, let's call it without await.
-        result.current.publish();
+        void result.current.publish();
       });
       await act(async () => {
         await result.current.publish();
