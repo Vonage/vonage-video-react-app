@@ -69,6 +69,8 @@ const ScreenshareVideoTile = forwardRef(
     }, [zoomLevel]);
 
     const onWheel = (event: WheelEvent<HTMLDivElement>) => {
+      if (!hasMediaProcessorSupport()) return;
+
       event.preventDefault();
 
       const isWheelPositive = event.deltaY > 0;
