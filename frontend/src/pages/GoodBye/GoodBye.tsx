@@ -73,20 +73,14 @@ const GoodBye = (): ReactElement => {
               <Typography
                 variant="h6"
                 sx={{
-                  minWidth: { xs: '100%', lg: '500px' },
+                  color: theme.colors.textSecondary,
+                  mb: 3,
                 }}
               >
-                <Typography
-                  variant="h6"
-                  sx={{
-                    color: theme.colors.textSecondary,
-                    mb: 3,
-                  }}
-                >
-                  {t('archiveList.label')}
-                </Typography>
-                <ArchiveList archives={archives} />
-              </Card>
+                {t('archiveList.label')}
+              </Typography>
+              <ArchiveList archives={archives} />
+            </Card>
           )}
         </Stack>
       </PageLayout.Right>
