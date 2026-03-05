@@ -12,9 +12,12 @@ import { ShadowStylesProvider } from './providers';
 import veraStyles from './styles.css?inline';
 import { defer } from 'easy-cancelable-promise';
 import { BridgeAPI } from './stores/bridge/types';
+import { registerIcon } from '@vonage/vivid';
 
 type BridgeState = ReturnType<BridgeAPI['getState']>;
 type BridgeContext = ReturnType<typeof bridge$.Provider.makeProviderWrapper>['context'];
+
+registerIcon();
 
 class VeraRoomElement extends HTMLElement {
   static tagName = 'vera-room';
