@@ -112,6 +112,20 @@ describe('UsernameInput', () => {
     expect(mockNavigate).not.toHaveBeenCalled();
   });
 
+  it('disables the join button when room name becomes invalid after a re-render', () => {
+    vi.mocked(useRoomName).mockReturnValue('valid-room');
+    const { rerender } = render(<UsernameInput username="John" setUsername={vi.fn()} />);
+
+    expect(screen.getByRole('button', { name: 'button.join' })).toBeEnabled();
+    expect(screen.queryByText('waitingRoom.invalidRoomName')).not.toBeInTheDocument();
+
+    vi.mocked(useRoomName).mockReturnValue('Invalid@Room!');
+    rerender(<UsernameInput username="John" setUsername={vi.fn()} />);
+
+    expect(screen.getByRole('button', { name: 'button.join' })).toBeDisabled();
+    expect(screen.getByText('waitingRoom.invalidRoomName')).toBeVisible();
+  });
+
   it('re-enables the join button when room name becomes valid after a re-render', () => {
     vi.mocked(useRoomName).mockReturnValue('Invalid Room!');
     const { rerender } = render(<UsernameInput username="John" setUsername={vi.fn()} />);
