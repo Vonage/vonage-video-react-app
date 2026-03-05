@@ -1,6 +1,7 @@
 import { render, screen, fireEvent } from '@testing-library/react';
-import { describe, it, expect, vi } from 'vitest';
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { Box } from 'opentok-layout-js';
+import { hasMediaProcessorSupport } from '@vonage/client-sdk-video';
 import ScreenshareVideoTile from './ScreenshareVideoTile';
 
 vi.mock('../ZoomIndicator', () => ({
@@ -357,6 +358,36 @@ describe('ScreenshareVideoTile', () => {
       render(<ScreenshareVideoTile {...defaultProps} />);
 
       expect(screen.getByTestId('zoom-indicator')).toBeInTheDocument();
+    });
+
+    describe('when hasMediaProcessorSupport returns false', () => {
+      beforeEach(() => {
+        vi.mocked(hasMediaProcessorSupport).mockReturnValue(false);
+      });
+
+      afterEach(() => {
+        vi.mocked(hasMediaProcessorSupport).mockReturnValue(true);
+      });
+
+      it('does not render ZoomIndicator', () => {
+        render(<ScreenshareVideoTile {...defaultProps} />);
+
+        expect(screen.queryByTestId('zoom-indicator')).not.toBeInTheDocument();
+      });
+
+      it('does not change zoom level on wheel events', () => {
+        const { rerender } = render(<ScreenshareVideoTile {...defaultProps} />);
+        const tile = screen.getByTestId('screenshare-tile');
+
+        fireEvent.wheel(tile, { deltaY: -100 });
+        fireEvent.wheel(tile, { deltaY: -100 });
+
+        // Re-enable support to expose ZoomIndicator and read the zoom level
+        vi.mocked(hasMediaProcessorSupport).mockReturnValue(true);
+        rerender(<ScreenshareVideoTile {...defaultProps} />);
+
+        expect(screen.getByTestId('zoom-level')).toHaveTextContent('1');
+      });
     });
   });
 
