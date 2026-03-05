@@ -204,6 +204,7 @@
   "waitingRoom.precallNetworkTest.videoSupported": "Il video è supportato",
   "waitingRoom.precallNetworkTest.videoNotSupported": "Il video non è supportato",
   "waitingRoom.user.input.error": "Il nome non può essere vuoto né contenere caratteri speciali.",
+  "waitingRoom.invalidRoomName": "Il nome della stanza nell'URL non è valido. Sono consentiti solo lettere, numeri, trattini, trattini bassi e segni più.",
   "zoom.reset": "Reimposta zoom",
   "zoom.start": "Inizia zoom",
   "zoom.out": "Zoom indietro",

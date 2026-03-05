@@ -204,6 +204,7 @@
   "waitingRoom.precallNetworkTest.videoSupported": "El video es compatible",
   "waitingRoom.precallNetworkTest.videoNotSupported": "El video no es compatible",
   "waitingRoom.user.input.error": "El nombre no puede estar vacío ni contener caracteres especiales.",
+  "waitingRoom.invalidRoomName": "El nombre de sala en la URL no es válido. Solo se permiten letras, números, guiones, guiones bajos y signos de más.",
   "zoom.reset": "Restablecer zoom",
   "zoom.start": "Iniciar zoom",
   "zoom.out": "Alejar zoom",

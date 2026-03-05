@@ -41,6 +41,7 @@ const UsernameInput = ({
   const navigate = useNavigate();
   const roomName = useRoomName();
   const [isUserNameInvalid, setIsUserNameInvalid] = useState(false);
+  const [isRoomNameInvalid, setIsRoomNameInvalid] = useState(!isValidRoomName(roomName));
   const inputRef = useRef<HTMLInputElement>(null);
 
   const onChangeParticipantName = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -63,27 +64,29 @@ const UsernameInput = ({
 
   const handleJoinClick = (event: MouseEvent) => {
     event.preventDefault();
-    if (validateForm() && roomName) {
-      if (!isValidRoomName(roomName)) {
-        return;
-      }
-      setUser((prevUser: UserType) => ({
-        ...prevUser,
-        defaultSettings: {
-          ...prevUser.defaultSettings,
-          name: username,
-        },
-      }));
-      setStorageItem(STORAGE_KEYS.USERNAME, username);
-      // This takes the user to the meeting room and allows them to enter it
-      // Otherwise if they entered the room directly, they are going to be redirected back to the waiting room
-      // Setting hasAccess is required so that we are not redirected back to the waiting room
-      navigate(`/room/${roomName}`, {
-        state: {
-          hasAccess: true,
-        },
-      });
+
+    if (!validateForm() || !roomName) return;
+
+    if (!isValidRoomName(roomName)) {
+      setIsRoomNameInvalid(true);
+      // TODO: Add a logging service instead of console.error
+      console.error('Invalid room name:', roomName);
+      return;
     }
+    setUser((prevUser: UserType) => ({
+      ...prevUser,
+      defaultSettings: {
+        ...prevUser.defaultSettings,
+        name: username,
+      },
+    }));
+    setStorageItem(STORAGE_KEYS.USERNAME, username);
+    // This takes the user to the meeting room and allows them to enter it
+    // Otherwise if they entered the room directly, they are going to be redirected back to the waiting room
+    // Setting hasAccess is required so that we are not redirected back to the waiting room
+    navigate(`/room/${roomName}`, {
+      state: { hasAccess: true },
+    });
   };
 
   return (
@@ -127,7 +130,20 @@ const UsernameInput = ({
         {roomName}
       </Typography>
 
-      <Button onClick={handleJoinClick} variant="contained" color="primary" type="submit" fullWidth>
+      {isRoomNameInvalid && (
+        <Typography className="text-vera-error" variant="caption">
+          {t('waitingRoom.invalidRoomName')}
+        </Typography>
+      )}
+
+      <Button
+        onClick={handleJoinClick}
+        variant="contained"
+        color="primary"
+        type="submit"
+        fullWidth
+        disabled={isRoomNameInvalid}
+      >
         {t('button.join')}
       </Button>
     </Card>

@@ -206,6 +206,7 @@
   "waitingRoom.precallNetworkTest.videoSupported": "Video is supported",
   "waitingRoom.precallNetworkTest.videoNotSupported": "Video is not supported",
   "waitingRoom.user.input.error": "Name cannot be empty or contain special characters.",
+  "waitingRoom.invalidRoomName": "The room name in the URL is invalid. Only letters, numbers, hyphens, underscores, and plus signs are allowed.",
   "zoom.reset": "Reset Zoom",
   "zoom.start": "Start Zooming",
   "zoom.out": "Zoom out",
