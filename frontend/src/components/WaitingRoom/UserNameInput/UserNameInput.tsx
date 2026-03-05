@@ -41,7 +41,7 @@ const UsernameInput = ({
   const navigate = useNavigate();
   const roomName = useRoomName();
   const [isUserNameInvalid, setIsUserNameInvalid] = useState(false);
-  const [isRoomNameInvalid, setIsRoomNameInvalid] = useState(!isValidRoomName(roomName));
+  const isRoomNameInvalid = !isValidRoomName(roomName);
   const inputRef = useRef<HTMLInputElement>(null);
 
   const onChangeParticipantName = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -68,7 +68,6 @@ const UsernameInput = ({
     if (!validateForm() || !roomName) return;
 
     if (!isValidRoomName(roomName)) {
-      setIsRoomNameInvalid(true);
       // TODO: Add a logging service instead of console.error
       console.error('Invalid room name:', roomName);
       return;
