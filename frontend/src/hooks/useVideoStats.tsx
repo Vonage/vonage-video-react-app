@@ -71,7 +71,16 @@ const useVideoStats = (publisher: Publisher | null): VideoStats => {
   // during render (derived state pattern).
   if (trackedPublisher !== publisher) {
     setTrackedPublisher(publisher);
-    setStats(publisher ? readPublisherStats(publisher) : NULL_STATS);
+
+    const nextStats = publisher ? readPublisherStats(publisher) : NULL_STATS;
+    const hasChanged =
+      stats.width !== nextStats.width ||
+      stats.height !== nextStats.height ||
+      stats.frameRate !== nextStats.frameRate;
+
+    if (hasChanged) {
+      setStats(nextStats);
+    }
   }
 
   useEffect(() => {
