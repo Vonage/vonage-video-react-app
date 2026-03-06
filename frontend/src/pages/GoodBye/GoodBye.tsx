@@ -39,13 +39,13 @@ const GoodBye = (): ReactElement => {
             <p className="text-xl font-medium font-vera-plain text-vera-secondary mb-3 w-full text-left">
               {t('goodBye.title')}
             </p>
-            <div className="mb-6">
+            <div className="mb-6 w-full">
               <ReenterRoomButton roomName={roomName} />
             </div>
             <GoToLandingPageButton />
           </Card>
 
-          <Card className="min-w-full lg:min-w-125 lg:max-w-12">
+          <Card className="min-w-full lg:min-w-125">
             <p className="text-xl font-medium font-vera-plain text-vera-secondary mb-6">
               {t('archiveList.label')}
             </p>

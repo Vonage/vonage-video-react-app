@@ -4,6 +4,7 @@ import getTokensByMode from './helpers/getTokensByMode';
 import isDarkMode from './helpers/isDarkMode';
 import useSynchronizeThemeAndMedia from './hooks/useSynchronizeThemeAndMedia/useSynchronizeThemeAndMedia';
 import getMuiCustomTheme from './helpers/getMuiCustomTheme';
+import { useShadowPortalContainer } from './shadowPortal/shadowPortalContext';
 import Theme, { PartialTheme } from './themeContext.types';
 import { mergeThemeConfigurations } from './helpers/mergeThemeConfigurations';
 
@@ -43,7 +44,11 @@ export const ThemeProvider: React.FC<PropsWithChildren<ThemeProviderProps>> = ({
     return isDarkMode() ? themeSource.dark : themeSource.light;
   });
 
-  const muiTheme = useMemo(() => getMuiCustomTheme({ tokens }), [tokens]);
+  const shadowPortalContainer = useShadowPortalContainer();
+  const muiTheme = useMemo(
+    () => getMuiCustomTheme({ tokens, container: shadowPortalContainer }),
+    [tokens, shadowPortalContainer]
+  );
 
   useSynchronizeThemeAndMedia({ setTokens });
 

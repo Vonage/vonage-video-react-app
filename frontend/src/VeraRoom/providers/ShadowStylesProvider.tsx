@@ -2,6 +2,7 @@ import type { FC, PropsWithChildren } from 'react';
 import { useMemo } from 'react';
 import createCache from '@emotion/cache';
 import { CacheProvider } from '@emotion/react';
+import ShadowPortalContext from '@ui/theme/shadowPortal/shadowPortalContext';
 
 type ShadowStylesProviderProps = PropsWithChildren<{
   shadowRoot: ShadowRoot;
@@ -45,7 +46,18 @@ const ShadowStylesProvider: FC<ShadowStylesProviderProps> = ({ shadowRoot, child
     });
   }, [shadowRoot]);
 
-  return <CacheProvider value={emotionCache}>{children}</CacheProvider>;
+  const portalContainer = useMemo(() => {
+    const div = document.createElement('div');
+    div.setAttribute('data-portal-container', 'vera');
+    shadowRoot.appendChild(div);
+    return div;
+  }, [shadowRoot]);
+
+  return (
+    <ShadowPortalContext.Provider value={portalContainer}>
+      <CacheProvider value={emotionCache}>{children}</CacheProvider>
+    </ShadowPortalContext.Provider>
+  );
 };
 
 export default ShadowStylesProvider;

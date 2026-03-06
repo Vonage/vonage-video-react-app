@@ -35,7 +35,7 @@ const GoodByeStage: FC = () => {
             <ReenterRoomButton roomName={roomName} />
           </Card>
 
-          <Card className="min-w-full lg:min-w-125 lg:max-w-12">
+          <Card className="min-w-full lg:min-w-125">
             <p className="text-xl font-medium font-vera-plain text-vera-secondary mb-6">
               {t('archiveList.label')}
             </p>

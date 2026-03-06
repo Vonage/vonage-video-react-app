@@ -41,8 +41,6 @@ type Story = StoryObj<VeraRoomProps>;
 
 const StableVeraRoom = memo(
   forwardRef<HTMLElement, VeraRoomProps>((props, ref) => {
-    console.log('Rendering StableVeraRoom');
-
     return (
       <vera-room
         session-identifier={props.sessionIdentifier}
