@@ -5,7 +5,11 @@ import type { Publisher } from '@vonage/client-sdk-video';
 import { makeTestProvider, providers } from '@test/providers';
 import composeProviders from '@web/helpers/composeProviders';
 import SuspenseBoundary from '@web/components/SuspenseBoundary/SuspenseBoundary';
-import { setupWindowNavigatorMock, makeMediaStreamMock, makeMediaDeviceInfos } from '@web-test/fixtures';
+import {
+  setupWindowNavigatorMock,
+  makeMediaStreamMock,
+  makeMediaDeviceInfos,
+} from '@web-test/fixtures';
 import VideoStatsOverlay from './VideoStatsOverlay';
 
 const mockDevices = makeMediaDeviceInfos();
