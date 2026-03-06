@@ -1,4 +1,4 @@
-import type { ComponentProps, FC } from 'react';
+import { useMemo, useRef, type ComponentProps, type FC } from 'react';
 import { MemoryRouter, Routes, Route } from 'react-router-dom';
 import AppContextProvider from '../AppContextProvider';
 import RoomProvider from '@Context/RoomProvider';
@@ -6,6 +6,9 @@ import bridge$ from './stores/bridge';
 import WaitingRoomStage from './stages/WaitingRoomStage';
 import MeetingRoomStage from './stages/MeetingRoomStage';
 import GoodByeStage from './stages/GoodByeStage';
+import useLanguageSync from './hooks/useLanguageSync';
+import { ThemeProviderPropsBase } from '@ui/theme/themeContext';
+import { useMountEffect } from '@web/hooks';
 
 type BridgeProps = {
   /** Identifier passed in from the `entry-point` HTML attribute. */
@@ -36,12 +39,29 @@ type VeraRoomProps = ComponentProps<'div'> & BridgeProps;
  * reconciliation ensures that only what changed actually re-renders.
  */
 const VeraRoom: FC<VeraRoomProps> = ({ className, ...props }) => {
+  useLanguageSync();
+
+  const theme = useMemo((): ThemeProviderPropsBase['theme'] => {
+    const container = globalThis.document.createElement('div');
+    return { lightMode: {}, darkMode: {}, base: { container: container } };
+  }, []);
+
+  const mainContainer = useRef<HTMLDivElement>(null);
+
   const sessionIdentifier = bridge$.use.select((state) => state.sessionIdentifier);
   const initialEntry = sessionIdentifier ? `/waiting-room/${sessionIdentifier}` : '/waiting-room';
 
+  useMountEffect(() => {
+    mainContainer.current?.appendChild(theme?.base?.container || document.createElement('div'));
+  });
+
   return (
-    <AppContextProvider>
-      <div className={['VeraRoom', 'h-full', className].filter(Boolean).join(' ')} {...props}>
+    <AppContextProvider theme={theme}>
+      <div
+        ref={mainContainer}
+        className={['VeraRoom', 'h-full', className].filter(Boolean).join(' ')}
+        {...props}
+      >
         <MemoryRouter initialEntries={[initialEntry]}>
           <RoomProvider>
             <Routes>

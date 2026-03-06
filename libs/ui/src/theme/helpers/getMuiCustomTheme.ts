@@ -22,13 +22,12 @@ declare module '@mui/material' {
   }
 }
 
-const getMuiCustomTheme = ({
-  tokens,
-  container,
-}: {
+export type GetMuiCustomThemeProps = {
   tokens: Theme;
   container?: HTMLElement | null;
-}) => {
+};
+
+const getMuiCustomTheme = ({ tokens, container }: GetMuiCustomThemeProps) => {
   const buttonSx = {
     height: 40, // 40px
     textTransform: 'none',

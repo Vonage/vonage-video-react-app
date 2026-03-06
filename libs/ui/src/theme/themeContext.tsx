@@ -3,8 +3,7 @@ import React, { PropsWithChildren, useMemo, useState } from 'react';
 import getTokensByMode from './helpers/getTokensByMode';
 import isDarkMode from './helpers/isDarkMode';
 import useSynchronizeThemeAndMedia from './hooks/useSynchronizeThemeAndMedia/useSynchronizeThemeAndMedia';
-import getMuiCustomTheme from './helpers/getMuiCustomTheme';
-import { useShadowPortalContainer } from './shadowPortal/shadowPortalContext';
+import getMuiCustomTheme, { GetMuiCustomThemeProps } from './helpers/getMuiCustomTheme';
 import Theme, { PartialTheme } from './themeContext.types';
 import { mergeThemeConfigurations } from './helpers/mergeThemeConfigurations';
 
@@ -13,17 +12,17 @@ const defaultDarkValue: Theme = getTokensByMode('dark');
 
 const themeContext = React.createContext(defaultLightValue);
 
-export type ThemeProviderProps = PropsWithChildren & {
+export type ThemeProviderPropsBase = {
   theme?: {
     lightMode: PartialTheme;
     darkMode?: PartialTheme;
+    base?: Omit<GetMuiCustomThemeProps, 'tokens'>;
   };
 };
 
-export const ThemeProvider: React.FC<PropsWithChildren<ThemeProviderProps>> = ({
-  children,
-  theme,
-}) => {
+export type ThemeProviderProps = PropsWithChildren<ThemeProviderPropsBase>;
+
+export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children, theme }) => {
   const themeSource: {
     light: Theme;
     dark: Theme;
@@ -44,10 +43,9 @@ export const ThemeProvider: React.FC<PropsWithChildren<ThemeProviderProps>> = ({
     return isDarkMode() ? themeSource.dark : themeSource.light;
   });
 
-  const shadowPortalContainer = useShadowPortalContainer();
   const muiTheme = useMemo(
-    () => getMuiCustomTheme({ tokens, container: shadowPortalContainer }),
-    [tokens, shadowPortalContainer]
+    () => getMuiCustomTheme({ ...theme?.base, tokens }),
+    [tokens, theme?.base]
   );
 
   useSynchronizeThemeAndMedia({ setTokens });
