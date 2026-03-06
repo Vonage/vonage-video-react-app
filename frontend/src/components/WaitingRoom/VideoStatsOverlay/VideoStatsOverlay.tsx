@@ -14,8 +14,8 @@ const VideoStatsOverlay = (): ReactElement => {
   const { height, frameRate } = useVideoStats(publisher);
 
   const resolution = formatResolution(height);
-  const fps = formatFrameRate(frameRate);
-  const label = [resolution, fps].filter(Boolean).join(' ') || '–';
+  const frameRateLabel = formatFrameRate(frameRate);
+  const label = [resolution, frameRateLabel].filter(Boolean).join(' ') || '–';
 
   return (
     <div

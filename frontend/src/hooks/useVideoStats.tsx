@@ -21,12 +21,12 @@ export const formatResolution = (height: number | null): string | null => {
 
 /**
  * Formats a frame rate value into a display string.
- * @param {number | null} fps - The frame rate in frames per second.
- * @returns {string | null} The formatted frame rate (e.g. "30fps"), or null if fps is not available.
+ * @param {number | null} frameRate - The frame rate in frames per second.
+ * @returns {string | null} The formatted frame rate (e.g. "30fps"), or null if frameRate is not available.
  */
-export const formatFrameRate = (fps: number | null): string | null => {
-  if (fps === null) return null;
-  return `${Math.round(fps)}fps`;
+export const formatFrameRate = (frameRate: number | null): string | null => {
+  if (frameRate === null) return null;
+  return `${Math.round(frameRate)}fps`;
 };
 
 const NULL_STATS: VideoStats = { width: null, height: null, frameRate: null };

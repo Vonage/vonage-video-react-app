@@ -86,6 +86,18 @@ describe('VideoStatsOverlay', () => {
     expect(await screen.findByText('720p')).toBeInTheDocument();
   });
 
+  it('should display "–" when no stats are available', async () => {
+    (mockPublisher.videoWidth as ReturnType<typeof vi.fn>).mockReturnValue(undefined);
+    (mockPublisher.videoHeight as ReturnType<typeof vi.fn>).mockReturnValue(undefined);
+    (mockPublisher.getVideoSource as ReturnType<typeof vi.fn>).mockReturnValue({
+      track: null,
+    });
+
+    render(<VideoStatsOverlay />);
+
+    expect(await screen.findByText('–')).toBeInTheDocument();
+  });
+
   it('should display 1080p for full HD resolution', async () => {
     (mockPublisher.videoWidth as ReturnType<typeof vi.fn>).mockReturnValue(1920);
     (mockPublisher.videoHeight as ReturnType<typeof vi.fn>).mockReturnValue(1080);
