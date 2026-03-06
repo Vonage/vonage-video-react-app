@@ -63,11 +63,19 @@ const useVideoStats = (publisher: Publisher | null): VideoStats => {
   const [stats, setStats] = useState<VideoStats>(() =>
     publisher ? readPublisherStats(publisher) : NULL_STATS
   );
+  const [trackedPublisher, setTrackedPublisher] = useState(publisher);
+
+  // When the publisher instance changes, update stats during render rather than
+  // inside an effect to avoid a synchronous setState-in-effect lint violation.
+  // React immediately re-renders with the updated state when setState is called
+  // during render (derived state pattern).
+  if (trackedPublisher !== publisher) {
+    setTrackedPublisher(publisher);
+    setStats(publisher ? readPublisherStats(publisher) : NULL_STATS);
+  }
 
   useEffect(() => {
     if (!publisher) return;
-
-    setStats(readPublisherStats(publisher));
 
     const intervalId = setInterval(() => {
       const next = readPublisherStats(publisher);
