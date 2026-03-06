@@ -6,6 +6,12 @@ import backgroundEffectsDialog$ from '@Context/BackgroundEffectsDialog';
 import precallNetworkTestDialog$ from '@Context/PrecallNetworkTestDialog';
 import composeProviders from '@web/helpers/composeProviders';
 import MenuMoreOptions from './MenuMoreOptions';
+import { env } from '../../../env';
+
+const mockHasMediaProcessorSupport = vi.hoisted(() => vi.fn(() => true));
+vi.mock('@vonage/client-sdk-video', () => ({
+  hasMediaProcessorSupport: mockHasMediaProcessorSupport,
+}));
 
 describe('MenuMoreOptions', () => {
   const mockOnClose = vi.fn();
@@ -27,7 +33,7 @@ describe('MenuMoreOptions', () => {
     expect(screen.queryByText(/video effects/i)).not.toBeInTheDocument();
   });
 
-  it('should display video effects option', () => {
+  it('should display video effects option when media processor is supported', () => {
     render(<MenuMoreOptions onClose={mockOnClose} open anchorEl={mockAnchorEl} />);
 
     expect(screen.getByText(/video effects/i)).toBeInTheDocument();
@@ -47,6 +53,28 @@ describe('MenuMoreOptions', () => {
     render(<MenuMoreOptions onClose={mockOnClose} open anchorEl={mockAnchorEl} />);
 
     expect(screen.getByTestId('vivid-icon-gallery-line')).toBeInTheDocument();
+  });
+
+  it('should not display video effects option when media processor is not supported', () => {
+    mockHasMediaProcessorSupport.mockReturnValue(false);
+    render(<MenuMoreOptions onClose={mockOnClose} open anchorEl={mockAnchorEl} />);
+
+    expect(screen.queryByText(/video effects/i)).not.toBeInTheDocument();
+  });
+
+  it('should not display video effects option when background effects are not allowed', () => {
+    env.partialUpdate({ ALLOW_BACKGROUND_EFFECTS: false });
+    render(<MenuMoreOptions onClose={mockOnClose} open anchorEl={mockAnchorEl} />);
+
+    expect(screen.queryByText(/video effects/i)).not.toBeInTheDocument();
+  });
+
+  it('should still display precall network test when media processor is not supported', () => {
+    mockHasMediaProcessorSupport.mockReturnValue(false);
+    render(<MenuMoreOptions onClose={mockOnClose} open anchorEl={mockAnchorEl} />);
+
+    expect(screen.queryByText(/video effects/i)).not.toBeInTheDocument();
+    expect(screen.getByText(/pre-call network test/i)).toBeInTheDocument();
   });
 });
 
