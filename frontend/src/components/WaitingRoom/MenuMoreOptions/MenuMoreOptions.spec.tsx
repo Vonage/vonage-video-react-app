@@ -1,17 +1,13 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { render as renderBase, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { ReactElement } from 'react';
+import * as clientSdkVideo from '@vonage/client-sdk-video';
 import backgroundEffectsDialog$ from '@Context/BackgroundEffectsDialog';
 import precallNetworkTestDialog$ from '@Context/PrecallNetworkTestDialog';
 import composeProviders from '@web/helpers/composeProviders';
 import MenuMoreOptions from './MenuMoreOptions';
 import { env } from '../../../env';
-
-const mockHasMediaProcessorSupport = vi.hoisted(() => vi.fn(() => true));
-vi.mock('@vonage/client-sdk-video', () => ({
-  hasMediaProcessorSupport: mockHasMediaProcessorSupport,
-}));
 
 describe('MenuMoreOptions', () => {
   const mockOnClose = vi.fn();
@@ -19,6 +15,11 @@ describe('MenuMoreOptions', () => {
 
   beforeEach(() => {
     mockOnClose.mockClear();
+    vi.spyOn(clientSdkVideo, 'hasMediaProcessorSupport').mockReturnValue(true);
+  });
+
+  afterEach(() => {
+    vi.restoreAllMocks();
   });
 
   it('should render when open is true', () => {
@@ -56,7 +57,7 @@ describe('MenuMoreOptions', () => {
   });
 
   it('should not display video effects option when media processor is not supported', () => {
-    mockHasMediaProcessorSupport.mockReturnValue(false);
+    vi.spyOn(clientSdkVideo, 'hasMediaProcessorSupport').mockReturnValue(false);
     render(<MenuMoreOptions onClose={mockOnClose} open anchorEl={mockAnchorEl} />);
 
     expect(screen.queryByText(/video effects/i)).not.toBeInTheDocument();
@@ -70,7 +71,7 @@ describe('MenuMoreOptions', () => {
   });
 
   it('should still display precall network test when media processor is not supported', () => {
-    mockHasMediaProcessorSupport.mockReturnValue(false);
+    vi.spyOn(clientSdkVideo, 'hasMediaProcessorSupport').mockReturnValue(false);
     render(<MenuMoreOptions onClose={mockOnClose} open anchorEl={mockAnchorEl} />);
 
     expect(screen.queryByText(/video effects/i)).not.toBeInTheDocument();
