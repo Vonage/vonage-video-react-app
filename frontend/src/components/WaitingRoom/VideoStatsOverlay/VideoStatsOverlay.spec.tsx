@@ -28,6 +28,7 @@ function render(ui: ReactElement) {
   const { wrapper: roomWrapper, ...context } = makeTestProvider(
     [providers.user, providers.previewPublisher],
     {
+      userContext: undefined,
       previewPublisherContext: {
         __onCreated: (ctx) => {
           ctx.publisher = mockPublisher;

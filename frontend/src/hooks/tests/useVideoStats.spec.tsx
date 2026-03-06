@@ -119,6 +119,29 @@ describe('useVideoStats', () => {
     });
   });
 
+  it('should update stats when publisher instance changes', () => {
+    const firstPublisher = createMockPublisher(640, 480, 30);
+    const secondPublisher = createMockPublisher(1280, 720, 60);
+
+    const { result, rerender } = renderHook(({ pub }) => useVideoStats(pub), {
+      initialProps: { pub: firstPublisher as Publisher | null },
+    });
+
+    expect(result.current).toEqual({
+      width: 640,
+      height: 480,
+      frameRate: 30,
+    });
+
+    rerender({ pub: secondPublisher as Publisher | null });
+
+    expect(result.current).toEqual({
+      width: 1280,
+      height: 720,
+      frameRate: 60,
+    });
+  });
+
   it('should clean up interval on unmount', () => {
     const clearIntervalSpy = vi.spyOn(global, 'clearInterval');
     const publisher = createMockPublisher(1280, 720, 30);

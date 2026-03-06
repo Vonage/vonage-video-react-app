@@ -67,6 +67,8 @@ const useVideoStats = (publisher: Publisher | null): VideoStats => {
   useEffect(() => {
     if (!publisher) return;
 
+    setStats(readPublisherStats(publisher));
+
     const intervalId = setInterval(() => {
       const next = readPublisherStats(publisher);
       setStats((prev) => {

@@ -82,7 +82,11 @@ const VideoContainer = ({ username }: VideoContainerProps): ReactElement => {
 
       <VignetteEffect />
 
-      {env.SHOW_VIDEO_STATS && isVideoEnabled && !isVideoLoading && <VideoStatsOverlay />}
+      {env.SHOW_VIDEO_STATS && isVideoEnabled && !isVideoLoading && (
+        <div className="absolute left-4 top-3 z-10">
+          <VideoStatsOverlay />
+        </div>
+      )}
 
       {isVideoLoading && <VideoLoading className="animate-fade-in" />}
 

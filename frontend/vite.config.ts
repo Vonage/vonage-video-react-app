@@ -72,6 +72,7 @@ export default defineConfig(({ mode }) => {
     'DEFAULT_LAYOUT_MODE',
     'API_URL',
     'TUNNEL_DOMAIN',
+    'SHOW_VIDEO_STATS',
   ] as const;
 
   const appEnvObject = {
