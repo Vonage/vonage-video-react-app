@@ -1776,3 +1776,21 @@ const useVideoStats = (publisher: Publisher | null) => {
     return stats;
 };
 ```
+
+---
+
+# CI Validation Workflow
+
+These rules define how to validate changes before and after pushing, to avoid wasting CI cycles on issues that can be caught locally.
+
+- **Rule:** Before pushing a branch, always run the linter and tests locally for affected projects. Only push once local checks pass.
+
+```bash
+# Run lint and tests only for projects affected by your changes
+npx nx affected --target=lint
+npx nx affected --target=test
+```
+
+- **Rule:** After pushing, check the CI workflow status. Do not mark a task complete while any CI job is pending or failing.
+- **Rule:** If CI fails, read the job logs, fix the root cause locally, verify with the affected lint/test commands, then push the fix. Do not push speculative fixes without first reproducing the failure locally.
+- **Rule:** A task is not complete until both the `👮 QA` (lint + cspell) and `🧑‍💻` (tests) workflows are green on the pushed branch.
