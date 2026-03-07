@@ -1679,7 +1679,6 @@ const Component = () => {
         ...
     );
 };
-```
 ---
 
 ## setState in effects and during render
