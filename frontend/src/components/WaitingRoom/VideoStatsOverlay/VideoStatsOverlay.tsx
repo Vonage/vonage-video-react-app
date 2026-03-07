@@ -1,6 +1,6 @@
 import type { ReactElement } from 'react';
 import usePreviewPublisherContext from '../../../hooks/usePreviewPublisherContext';
-import useVideoStats, { formatResolution, formatFrameRate } from '../../../hooks/useVideoStats';
+import useVideoStats, { formatResolution, formatFrameRate } from '@core/hooks/useVideoStats';
 
 /**
  * VideoStatsOverlay Component

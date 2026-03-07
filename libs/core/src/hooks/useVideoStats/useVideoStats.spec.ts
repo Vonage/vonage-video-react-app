@@ -1,7 +1,7 @@
 import { renderHook, act } from '@testing-library/react';
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import type { Publisher } from '@vonage/client-sdk-video';
-import useVideoStats, { formatResolution, formatFrameRate } from '../useVideoStats';
+import useVideoStats, { formatResolution, formatFrameRate } from './index';
 
 describe('useVideoStats', () => {
   beforeEach(() => {
