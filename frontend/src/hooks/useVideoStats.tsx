@@ -42,12 +42,12 @@ const NULL_STATS: VideoStats = { width: null, height: null, frameRate: null };
  * underlying `MediaStreamTrack` via `publisher.getVideoSource().track` and call the
  * standard Web API `track.getSettings().frameRate`.
  *
- * @param {Publisher} publisher - An initialised Vonage publisher instance.
+ * @param {Publisher} publisher - An initialized Vonage publisher instance.
  * @returns {VideoStats} The current width, height, and frame rate (each `null` if unavailable).
  */
 function readPublisherStats(publisher: Publisher): VideoStats {
   // videoWidth() / videoHeight() return `undefined` before the camera stream is ready;
-  // we normalise to `null` to keep VideoStats consistently typed.
+  // we normalize to `null` to keep VideoStats consistently typed.
   const width = publisher.videoWidth() ?? null;
   const height = publisher.videoHeight() ?? null;
 
