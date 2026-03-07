@@ -1684,13 +1684,13 @@ const Component = () => {
 
 ## setState in effects and during render
 
-- **Rule:** Never call `setState` directly inside an effect body (`useEffect` or `useLayoutEffect`). The project enforces `react-hooks/set-state-in-effect`, which flags any synchronous `setState` call at the top level of an effect callback.
-- **Rule:** When you need to update state from inside an effect, wrap the call in a **named helper function** declared inside the effect. Calls through a function are not flagged by the rule.
+- **Rule:** Never call `setState` directly inside an effect body (`useEffect` or `useLayoutEffect`). To follow React best practices, enable the ESLint rule `react-hooks/no-direct-set-state-in-use-effect`, which flags any synchronous `setState` call at the top level of an effect callback.
+- **Rule:** When you need to update state from inside an effect, wrap the call in a **named helper function** declared inside the effect instead of calling `setState` inline.
 
 **Violation:**
 
 ```tsx
-// Bad: setState called directly in effect body — triggers react-hooks/set-state-in-effect
+// Bad: setState called directly in effect body — triggers react-hooks/no-direct-set-state-in-use-effect
 useEffect(() => {
     setStats(readStats(publisher)); // ❌ direct setState in effect
 }, [publisher]);
