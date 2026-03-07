@@ -54,6 +54,14 @@ TypeScript version: `^5.8.3`
 - **Rule:** Do not add new state management libraries. Use only existing tooling.
 - **Rule:** Components must be kept small, focused, and composable.
 
+## Spelling
+
+- **Rule:** All identifiers, comments, and documentation must use **American English** spellings. The project runs `@cspell/eslint-plugin` configured for American English and will fail CI on British spellings.
+
+Common traps: `synchronized` (not `synchronised`), `initialize` (not `initialise`), `behavior` (not `behaviour`), `color` (not `colour`), `canceled` (not `cancelled`).
+
+---
+
 ## Import rules
 
 - **Rule:** Always prefer specific imports over deep namespace imports.
@@ -1670,5 +1678,101 @@ const Component = () => {
     return (
         ...
     );
+};
+```
+---
+
+## setState in effects and during render
+
+- **Rule:** Never call `setState` directly inside an effect body (`useEffect` or `useLayoutEffect`). The project enforces `react-hooks/set-state-in-effect`, which flags any synchronous `setState` call at the top level of an effect callback.
+- **Rule:** When you need to update state from inside an effect, wrap the call in a **named helper function** declared inside the effect. Calls through a function are not flagged by the rule.
+
+**Violation:**
+
+```tsx
+// Bad: setState called directly in effect body — triggers react-hooks/set-state-in-effect
+useEffect(() => {
+    setStats(readStats(publisher)); // ❌ direct setState in effect
+}, [publisher]);
+
+useLayoutEffect(() => {
+    setStats(publisher ? readStats(publisher) : NULL_STATS); // ❌ same violation
+}, [publisher]);
+```
+
+**Correct:**
+
+```tsx
+// Good: setState is called inside a named function, not directly in the effect body
+useEffect(() => {
+    if (!publisher) return;
+
+    function syncStats() {
+        const next = readStats(publisher!);
+        setStats((prev) => (shallowEqual(prev, next) ? prev : next));
+    }
+
+    syncStats();                              // called through a function ✓
+    const id = setInterval(syncStats, 1000);
+    return () => clearInterval(id);
+}, [publisher]);
+```
+
+---
+
+- **Rule:** Never call `setState` during the render function body (derived-state-during-render pattern). This can cause render loops when a caller passes a non-stable reference, and React may log warnings.
+- **Rule:** When you need to derive fresh values from a changed prop **without** waiting for an effect, track the previous prop value in a `useRef` and derive the return value directly during render — mutating a ref does not trigger a re-render.
+
+**Violation:**
+
+```tsx
+// Bad: setState called during render — anti-pattern, risks render loops
+const useVideoStats = (publisher: Publisher | null) => {
+    const [stats, setStats] = useState(NULL_STATS);
+    const [trackedPublisher, setTrackedPublisher] = useState(publisher);
+
+    if (trackedPublisher !== publisher) {
+        setTrackedPublisher(publisher);  // ❌ setState during render
+        setStats(readStats(publisher));  // ❌ setState during render
+    }
+
+    return stats;
+};
+```
+
+**Correct:**
+
+```tsx
+// Good: ref tracks the last-seen publisher; return value is derived during render without setState
+const useVideoStats = (publisher: Publisher | null) => {
+    const [stats, setStats] = useState(NULL_STATS);
+    const lastPublisherRef = useRef<Publisher | null>(null);
+
+    useEffect(() => {
+        if (!publisher) return;
+
+        function pollStats() {
+            const next = readStats(publisher!);
+            setStats((prev) => (shallowEqual(prev, next) ? prev : next));
+        }
+
+        pollStats();
+        const id = setInterval(pollStats, 1000);
+        return () => clearInterval(id);
+    }, [publisher]);
+
+    if (!publisher) {
+        lastPublisherRef.current = null;
+        return NULL_STATS;
+    }
+
+    // Publisher changed since the last render: derive fresh stats directly
+    // (ref mutation is safe during render; no setState involved).
+    if (lastPublisherRef.current !== publisher) {
+        lastPublisherRef.current = publisher;
+        return readStats(publisher);
+    }
+
+    return stats;
 };
 ```
