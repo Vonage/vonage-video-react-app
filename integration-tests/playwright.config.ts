@@ -64,9 +64,6 @@ export default defineConfig({
 
     ...(isInspectMode || isDebugMode
       ? {
-          launchOptions: {
-            devtools: isInspectMode,
-          },
           navigationTimeout: 1000 * 60 * 5, // 5 minutes
           actionTimeout: 1000 * 60 * 5, // 5 minutes
         }
@@ -84,7 +81,6 @@ export default defineConfig({
           isInspectMode || isDebugMode ? null : { width: VIEWPORT.WIDTH, height: VIEWPORT.HEIGHT },
         launchOptions: {
           args: fakeDeviceChromiumFlags,
-          devtools: isInspectMode,
         },
       },
     },
