@@ -177,7 +177,7 @@
   "screenSharing.title.start": "Start screen share",
   "screenSharing.title.stop": "Stop screen share",
   "screenSharing.tooltip.ariaLabel": "Start or stop screen share",
-  "screenSharing.contentHint.label": "What do you want to share?",
+  "screenSharing.contentHint.label": "Content optimisation",
   "screenSharing.contentHint.auto": "Auto",
   "screenSharing.contentHint.auto.description": "Will try to guess",
   "screenSharing.contentHint.motion": "Optimise for Motion",

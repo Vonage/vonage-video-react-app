@@ -175,7 +175,7 @@
   "screenSharing.title.start": "Iniciar compartir pantalla",
   "screenSharing.title.stop": "Detener compartir pantalla",
   "screenSharing.tooltip.ariaLabel": "Iniciar o detener compartir pantalla",
-  "screenSharing.contentHint.label": "¿Qué deseas compartir?",
+  "screenSharing.contentHint.label": "Optimización del contenido",
   "screenSharing.contentHint.auto": "Automático",
   "screenSharing.contentHint.auto.description": "Intentará adivinar el tipo de contenido.",
   "screenSharing.contentHint.motion": "Optimizar para movimiento",
