@@ -59,11 +59,15 @@ const Publisher = ({ box }: PublisherProps): ReactElement => {
   useEffect(() => {
     if (!element) return;
 
-    // The SDK mirrors the publisher via .OT_mirrored (scaleX(-1)).
-    // When mirror is ON, we leave transform unset (SDK handles it).
-    // When mirror is OFF, we apply scaleX(-1) to cancel the SDK's mirror.
+    // The SDK mirrors the publisher via .OT_mirrored (scale(-1, 1) on .OT_video-element).
+    // When mirror is ON, clear the inline style so the SDK's CSS class takes effect.
+    // When mirror is OFF, set scaleX(1) to override and cancel the SDK's mirror.
     // eslint-disable-next-line react-hooks/immutability
-    element.style.transform = mirrorSelfView ? 'none' : 'scaleX(-1)';
+    if (mirrorSelfView) {
+      element.style.removeProperty('transform');
+    } else {
+      element.style.transform = 'scaleX(1)';
+    }
   }, [element, mirrorSelfView]);
 
   const initials = publisher?.stream?.initials;

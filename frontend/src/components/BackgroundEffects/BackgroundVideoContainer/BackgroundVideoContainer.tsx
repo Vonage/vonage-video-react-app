@@ -31,7 +31,6 @@ const BackgroundVideoContainer = ({
   const { t } = useTranslation();
   const containerRef = useRef<HTMLDivElement>(null);
   const [isVideoLoading, setIsVideoLoading] = useState<boolean>(true);
-  const isSMViewport = useMediaQuery(`(max-width:500px)`);
   const isMDViewport = useMediaQuery(`(max-width:768px)`);
   const isTabletViewport = useIsTabletViewport();
   const isLGViewport = useMediaQuery(`(max-width:1199px)`);
@@ -65,7 +64,11 @@ const BackgroundVideoContainer = ({
       myVideoElement.style.marginLeft = 'auto';
       myVideoElement.style.marginRight = 'auto';
       myVideoElement.style.marginBottom = '1px';
-      myVideoElement.style.transform = mirrorSelfView ? 'none' : 'scaleX(-1)';
+      // The SDK mirrors the preview publisher via .OT_mirrored (scale(-1, 1) on .OT_video-element).
+      // When mirror is ON, clear the inline style so the SDK's CSS class takes effect.
+      // When mirror is OFF, set scaleX(1) to override and cancel the SDK's mirror.
+      // eslint-disable-next-line react-hooks/immutability
+      myVideoElement.style.transform = mirrorSelfView ? '' : 'scaleX(1)';
       myVideoElement.style.objectFit = 'cover';
       myVideoElement.style.aspectRatio = '16 / 9';
 
@@ -76,7 +79,6 @@ const BackgroundVideoContainer = ({
   }, [
     isTabletViewport,
     isMDViewport,
-    isSMViewport,
     publisherVideoElement,
     isFixedWidth,
     isParentVideoEnabled,
