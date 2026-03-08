@@ -116,7 +116,11 @@ const ScreenSharingButton = ({
     // Cancel the close timer when mouse enters the menu
     if (hoverTimerRef.current) {
       clearTimeout(hoverTimerRef.current);
-      hoverTimerRef.current = undefined; = () => {
+      hoverTimerRef.current = undefined;
+    }
+  };
+
+  const handleMenuMouseLeave = () => {
     // Clear any existing close timer before starting a new one
     clearTimeout(hoverTimerRef.current);
     // Start close timer when the mouse leaves the menu
