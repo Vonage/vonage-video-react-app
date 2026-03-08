@@ -1,5 +1,5 @@
 import { Dispatch, ReactElement, SetStateAction, useCallback, useRef, useState } from 'react';
-import { VideoContentHint } from '@vonage/client-sdk-video';
+import type { VideoContentHint } from '@vonage/client-sdk-video';
 import useSessionContext from '@hooks/useSessionContext';
 import { RightPanelActiveTab } from '@hooks/useRightPanel';
 import isReportIssueEnabled from '@utils/isReportIssueEnabled';
