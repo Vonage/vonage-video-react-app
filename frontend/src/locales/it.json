@@ -190,6 +190,7 @@
   "screenSharing.contentHint.apply": "Applica",
   "screenSharing.contentHint.cancel": "Annulla",
   "screenSharing.contentHint.infoLabel": "Ulteriori informazioni sulle modalità di ottimizzazione",
+  "screenSharing.contentHint.currentHint": "Corrente: {{hint}}",
   "soundTest.start": "Test altoparlanti",
   "soundTest.stop": "Interrompi test",
   "toolbar.tooltip.ariaLabel": "apri menu strumenti aggiuntivi",

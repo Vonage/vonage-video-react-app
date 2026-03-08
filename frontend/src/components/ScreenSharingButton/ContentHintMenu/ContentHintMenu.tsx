@@ -101,6 +101,17 @@ const ContentHintMenu = ({
   // actually changed the hint away from the currently active value.
   const showPrimaryAction = isSharingScreen ? selectedHint !== currentContentHint : true;
 
+  // Render the selected hint label in the dropdown trigger. When sharing and the dropdown
+  // still shows the active hint (no change yet), prefix it with "Current: <hint>" so the
+  // user immediately knows which mode is live — the prefix disappears the moment they
+  // pick a different option, which also reveals the Apply button.
+  const renderSelectValue = (value: VideoContentHint) => {
+    const option = HINT_OPTIONS.find(({ value: v }) => v === value);
+    const hintLabel = option ? t(option.labelKey) : value;
+    const isShowingActiveHint = isSharingScreen && value === currentContentHint;
+    return isShowingActiveHint ? t('screenSharing.contentHint.currentHint', { hint: hintLabel }) : hintLabel;
+  };
+
   const primaryActionLabel = isSharingScreen
     ? t('screenSharing.contentHint.apply')
     : t('screenSharing.contentHint.share');
@@ -183,6 +194,7 @@ const ContentHintMenu = ({
                         onChange={(e) => onHintChange(e.target.value as VideoContentHint)}
                         onOpen={() => setIsSelectOpen(true)}
                         onClose={() => setIsSelectOpen(false)}
+                        renderValue={renderSelectValue}
                         inputProps={{ 'aria-labelledby': 'content-hint-select-label' }}
                         sx={{
                           color: theme.colors.onSurface,
