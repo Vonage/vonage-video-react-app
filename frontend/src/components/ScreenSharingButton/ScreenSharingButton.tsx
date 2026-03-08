@@ -48,7 +48,7 @@ const ScreenSharingButton = ({
   const theme = useTheme();
 
   const buttonRef = useRef<HTMLButtonElement>(null);
-  const hoverTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const hoverTimerRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
 
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [isContentHintMenuOpen, setIsContentHintMenuOpen] = useState<boolean>(false);
@@ -95,9 +95,7 @@ const ScreenSharingButton = ({
     // While sharing: cancel any pending close timer and open the menu with the current hint
     if (hoverTimerRef.current) {
       clearTimeout(hoverTimerRef.current);
-      hoverTimerRef.current = null;
-    }
-    setSelectedHint(currentContentHint);
+      hoverTimerRef.current = undefined;
     setIsContentHintMenuOpen(true);
   };
 
@@ -118,11 +116,7 @@ const ScreenSharingButton = ({
     // Cancel the close timer when mouse enters the menu
     if (hoverTimerRef.current) {
       clearTimeout(hoverTimerRef.current);
-      hoverTimerRef.current = null;
-    }
-  };
-
-  const handleMenuMouseLeave = () => {
+      hoverTimerRef.current = undefined; = () => {
     // Clear any existing close timer before starting a new one
     clearTimeout(hoverTimerRef.current);
     // Start close timer when the mouse leaves the menu
