@@ -1,5 +1,5 @@
 import { Dispatch, ReactElement, useState, SetStateAction } from 'react';
-import { VideoContentHint } from '@vonage/client-sdk-video';
+import type { VideoContentHint } from '@vonage/client-sdk-video';
 import Tooltip from '@mui/material/Tooltip';
 import VividIcon from '@components/VividIcon';
 import { useTranslation } from 'react-i18next';
