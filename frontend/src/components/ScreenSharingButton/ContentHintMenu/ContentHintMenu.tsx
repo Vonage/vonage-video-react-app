@@ -109,7 +109,9 @@ const ContentHintMenu = ({
     const option = HINT_OPTIONS.find(({ value: v }) => v === value);
     const hintLabel = option ? t(option.labelKey) : value;
     const isShowingActiveHint = isSharingScreen && value === currentContentHint;
-    return isShowingActiveHint ? t('screenSharing.contentHint.currentHint', { hint: hintLabel }) : hintLabel;
+    return isShowingActiveHint
+      ? t('screenSharing.contentHint.currentHint', { hint: hintLabel })
+      : hintLabel;
   };
 
   const primaryActionLabel = isSharingScreen
