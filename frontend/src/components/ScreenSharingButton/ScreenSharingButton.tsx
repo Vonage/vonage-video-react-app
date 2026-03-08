@@ -43,7 +43,7 @@ const ScreenSharingButton = ({
   changeContentHint,
   currentContentHint,
 }: ScreenShareButtonProps): ReactElement | false => {
-  const allowContentHints = env.ALLOW_CONTENT_HINTS;
+  const allowContentHints = env.ALLOW_SCREEN_SHARE_OPTIMIZATION;
   const { t } = useTranslation();
   const theme = useTheme();
 
