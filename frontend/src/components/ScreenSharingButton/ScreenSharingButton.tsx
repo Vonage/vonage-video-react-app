@@ -96,6 +96,8 @@ const ScreenSharingButton = ({
     if (hoverTimerRef.current) {
       clearTimeout(hoverTimerRef.current);
       hoverTimerRef.current = undefined;
+    }
+    setSelectedHint(currentContentHint);
     setIsContentHintMenuOpen(true);
   };
 
