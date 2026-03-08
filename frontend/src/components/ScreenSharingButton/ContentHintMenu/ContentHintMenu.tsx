@@ -169,6 +169,7 @@ const ContentHintMenu = ({
                 {/* Label + Select + Info icon */}
                 <Box>
                   <Typography
+                    id="content-hint-select-label"
                     variant="caption"
                     sx={{ color: theme.colors.onSurface, mb: 0.75, display: 'block', opacity: 0.8 }}
                   >
@@ -182,6 +183,7 @@ const ContentHintMenu = ({
                         onChange={(e) => onHintChange(e.target.value as VideoContentHint)}
                         onOpen={() => setIsSelectOpen(true)}
                         onClose={() => setIsSelectOpen(false)}
+                        inputProps={{ 'aria-labelledby': 'content-hint-select-label' }}
                         sx={{
                           color: theme.colors.onSurface,
                           '.MuiOutlinedInput-notchedOutline': {

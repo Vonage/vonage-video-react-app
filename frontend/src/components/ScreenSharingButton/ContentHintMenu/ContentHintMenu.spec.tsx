@@ -1,7 +1,7 @@
 import { describe, expect, it, vi } from 'vitest';
 import { fireEvent, render as renderBase, screen } from '@testing-library/react';
 import { ReactElement, RefObject } from 'react';
-import { makeTestProvider, providers, ProviderOptions } from '@test/providers';
+import { makeTestProvider } from '@test/providers';
 import ContentHintMenu, { ContentHintMenuProps } from './ContentHintMenu';
 
 describe('ContentHintMenu', () => {
@@ -105,14 +105,8 @@ describe('ContentHintMenu', () => {
   });
 });
 
-type RenderOptions = {
-  appConfigContext?: ProviderOptions['AppConfigContext'];
-};
-
-function render(ui: ReactElement, { appConfigContext }: RenderOptions = {}) {
-  const { wrapper, ...context } = makeTestProvider([providers.appConfig], {
-    appConfigContext,
-  });
+function render(ui: ReactElement) {
+  const { wrapper, ...context } = makeTestProvider([]);
 
   return {
     ...context,

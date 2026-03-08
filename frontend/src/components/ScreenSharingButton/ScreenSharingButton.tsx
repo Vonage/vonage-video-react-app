@@ -1,7 +1,7 @@
 import Tooltip from '@mui/material/Tooltip';
-import { ReactElement, useRef, useState } from 'react';
+import { ReactElement, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { VideoContentHint } from '@vonage/client-sdk-video';
+import type { VideoContentHint } from '@vonage/client-sdk-video';
 import { isMobile } from '@web/platform';
 import ToolbarButton from '../MeetingRoom/ToolbarButton';
 import PopupDialog, { DialogTexts } from '../MeetingRoom/PopupDialog';
@@ -54,6 +54,13 @@ const ScreenSharingButton = ({
   const [isContentHintMenuOpen, setIsContentHintMenuOpen] = useState<boolean>(false);
   const [selectedHint, setSelectedHint] = useState<VideoContentHint>('');
 
+  // Clear any pending hover timer when the component unmounts to prevent state updates on an unmounted component
+  useEffect(() => {
+    return () => {
+      clearTimeout(hoverTimerRef.current);
+    };
+  }, []);
+
   const title = isSharingScreen ? t('screenSharing.title.stop') : t('screenSharing.title.start');
 
   // Screensharing relies on the getDisplayMedia browser API which is unsupported on mobile devices
@@ -98,6 +105,9 @@ const ScreenSharingButton = ({
     if (!isSharingScreen) {
       return;
     }
+    // Clear any existing close timer before starting a new one so we never
+    // have two concurrent timers racing each other.
+    clearTimeout(hoverTimerRef.current);
     // Start a close timer so the menu stays open if the mouse moves directly onto it
     hoverTimerRef.current = setTimeout(() => {
       setIsContentHintMenuOpen(false);
@@ -113,6 +123,8 @@ const ScreenSharingButton = ({
   };
 
   const handleMenuMouseLeave = () => {
+    // Clear any existing close timer before starting a new one
+    clearTimeout(hoverTimerRef.current);
     // Start close timer when the mouse leaves the menu
     hoverTimerRef.current = setTimeout(() => {
       setIsContentHintMenuOpen(false);

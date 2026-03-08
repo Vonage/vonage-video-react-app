@@ -1,5 +1,5 @@
 import { useState, useRef, useCallback } from 'react';
-import { Publisher, initPublisher, VideoContentHint } from '@vonage/client-sdk-video';
+import { initPublisher, type Publisher, type VideoContentHint } from '@vonage/client-sdk-video';
 import { useTranslation } from 'react-i18next';
 import useSessionContext from './useSessionContext';
 import useUserContext from './useUserContext';
@@ -71,7 +71,7 @@ const useScreenShare = (): UseScreenShareType => {
 
   // Using useCallback to memoize the function to avoid unnecessary re-renders
   const toggleShareScreen = useCallback(
-    async (contentHint: VideoContentHint = '') => {
+    async (contentHint: VideoContentHint = 'detail') => {
       if (vonageVideoClient) {
         if (!isSharingScreen) {
           // Initializing the publisher for screen sharing.

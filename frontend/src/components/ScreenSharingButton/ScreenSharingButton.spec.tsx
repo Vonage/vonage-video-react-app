@@ -1,4 +1,4 @@
-import { describe, expect, it, vi } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 import { fireEvent, render as renderBase, screen } from '@testing-library/react';
 import { ReactElement } from 'react';
 import { makeTestProvider } from '@test/providers';
@@ -16,6 +16,13 @@ describe('ScreenSharingButton', () => {
     changeContentHint: mockChangeContentHint,
     currentContentHint: '',
   };
+
+  afterEach(() => {
+    env.partialUpdate({
+      ALLOW_SCREEN_SHARE: true,
+      ALLOW_SCREEN_SHARE_OPTIMIZATION: true,
+    });
+  });
 
   it('renders the share screen button', () => {
     render(<ScreenSharingButton {...defaultProps} />);
@@ -63,30 +70,18 @@ describe('ScreenSharingButton', () => {
   });
 
   it('calls toggleScreenShare immediately when clicked and allowContentHints is false', () => {
-    render(<ScreenSharingButton {...defaultProps} />, {
-      appConfigContext: {
-        value: {
-          meetingRoomSettings: {
-            allowContentHints: false,
-          },
-        },
-      },
-    });
+    env.partialUpdate({ ALLOW_SCREEN_SHARE_OPTIMIZATION: false });
+
+    render(<ScreenSharingButton {...defaultProps} />);
     fireEvent.click(screen.getByTestId('screensharing-button'));
     expect(mockToggleScreenShare).toHaveBeenCalledWith();
     expect(screen.queryByTestId('content-hint-primary-button')).not.toBeInTheDocument();
   });
 
   it('does not open ContentHintMenu when clicked and allowContentHints is false', () => {
-    render(<ScreenSharingButton {...defaultProps} />, {
-      appConfigContext: {
-        value: {
-          meetingRoomSettings: {
-            allowContentHints: false,
-          },
-        },
-      },
-    });
+    env.partialUpdate({ ALLOW_SCREEN_SHARE_OPTIMIZATION: false });
+
+    render(<ScreenSharingButton {...defaultProps} />);
     fireEvent.click(screen.getByTestId('screensharing-button'));
     expect(screen.queryByTestId('content-hint-menu')).not.toBeInTheDocument();
   });

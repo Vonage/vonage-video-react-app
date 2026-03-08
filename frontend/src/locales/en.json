@@ -191,6 +191,7 @@
   "screenSharing.contentHint.share": "Share",
   "screenSharing.contentHint.apply": "Apply",
   "screenSharing.contentHint.cancel": "Cancel",
+  "screenSharing.contentHint.infoLabel": "More information about optimization modes",
   "soundTest.start": "Test speakers",
   "soundTest.stop": "Stop testing",
   "toolbar.tooltip.ariaLabel": "open additional toolbar items menu",
