@@ -67,7 +67,6 @@ const BackgroundVideoContainer = ({
       // The SDK mirrors the preview publisher via .OT_mirrored (scale(-1, 1) on .OT_video-element).
       // When mirror is ON, clear the inline style so the SDK's CSS class takes effect.
       // When mirror is OFF, set scaleX(1) to override and cancel the SDK's mirror.
-      // eslint-disable-next-line react-hooks/immutability
       myVideoElement.style.transform = mirrorSelfView ? '' : 'scaleX(1)';
       myVideoElement.style.objectFit = 'cover';
       myVideoElement.style.aspectRatio = '16 / 9';
