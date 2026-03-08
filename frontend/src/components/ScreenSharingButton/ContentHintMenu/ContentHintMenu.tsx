@@ -210,6 +210,7 @@ const ContentHintMenu = ({
                     <Tooltip title={infoTooltipContent} placement="right" arrow enterDelay={100}>
                       <IconButton
                         size="small"
+                        aria-label={t('screenSharing.contentHint.infoLabel')}
                         data-testid="content-hint-info-button"
                         sx={{
                           color: `${theme.colors.onSurface}99`,
