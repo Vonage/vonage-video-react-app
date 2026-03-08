@@ -1,5 +1,5 @@
 import { ReactElement, RefObject, useState } from 'react';
-import { VideoContentHint } from '@vonage/client-sdk-video';
+import type { VideoContentHint } from '@vonage/client-sdk-video';
 import { useTranslation } from 'react-i18next';
 import InfoOutlined from '@mui/icons-material/InfoOutlined';
 import useTheme from '@ui/theme';
