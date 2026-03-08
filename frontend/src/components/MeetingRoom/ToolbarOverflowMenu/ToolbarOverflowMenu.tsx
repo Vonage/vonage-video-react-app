@@ -1,5 +1,5 @@
 import { Dispatch, ReactElement, SetStateAction } from 'react';
-import { VideoContentHint } from '@vonage/client-sdk-video';
+import type { VideoContentHint } from '@vonage/client-sdk-video';
 import ArchivingButton from '../ArchivingButton';
 import CaptionsButton from '../CaptionsButton';
 import EmojiGridButton from '../EmojiGridButton';
