@@ -56,7 +56,7 @@ describe('useScreenSharing', () => {
     });
 
     await act(async () => {
-      // toggling screen share on (default hint = '')
+      // toggling screen share on (default hint = 'detail')
       await result.current.toggleShareScreen();
     });
 
@@ -65,7 +65,7 @@ describe('useScreenSharing', () => {
       {
         videoSource: 'screen',
         insertDefaultUI: false,
-        videoContentHint: '',
+        videoContentHint: 'detail',
         name: "TestUser's screen",
       },
       expect.any(Function)
