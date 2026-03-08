@@ -11,6 +11,7 @@ import { ReactElement, RefObject } from 'react';
 import { hasMediaProcessorSupport } from '@vonage/client-sdk-video';
 import type { MediaDeviceInfoJSON } from '@web/types';
 import { makeTestProvider, providers, type ProviderOptions } from '@test/providers';
+import { env } from '../../../env';
 import { isSinkIdSupported } from '@web/platform';
 import {
   makeMediaDeviceInfos,
@@ -339,6 +340,11 @@ describe('DeviceSettingsMenu Component', () => {
     });
 
     it('and does not render the video effects option when allowBackgroundEffects is false', async () => {
+      env.partialUpdate({
+        ALLOW_BACKGROUND_EFFECTS: false,
+        MEETING_ROOM_ALLOW_DEVICE_SELECTION: true,
+      });
+
       render(
         <DeviceSettingsMenuComponent
           deviceType={deviceType}
@@ -360,13 +366,11 @@ describe('DeviceSettingsMenu Component', () => {
 });
 
 type RenderOptions = {
-  appConfigContext?: ProviderOptions['AppConfigContext'];
   userContext?: ProviderOptions['UserContext'];
 };
 
-function render(ui: ReactElement, { appConfigContext, userContext }: RenderOptions = {}) {
-  const { wrapper, ...context } = makeTestProvider([providers.appConfig, providers.user], {
-    appConfigContext,
+function render(ui: ReactElement, { userContext }: RenderOptions = {}) {
+  const { wrapper, ...context } = makeTestProvider([providers.user], {
     userContext,
   });
 
