@@ -1,9 +1,11 @@
 import { ReactElement, useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import MenuItem from '@mui/material/MenuItem';
 import Menu from '@mui/material/Menu';
 import VividIcon from '@components/VividIcon';
 import Box from '@mui/material/Box';
 import cleanAndDedupeDeviceLabels from '@utils/cleanAndDedupeDeviceLabels/cleanAndDedupeDeviceLabels';
+import mergeDefaultAudioOutput from '@utils/mergeDefaultAudioOutput/mergeDefaultAudioOutput';
 import SoundTest from '../../SoundTest';
 import { isGetActiveAudioOutputDeviceSupported } from '@utils/util';
 import mediaDevices$ from '@core/stores/devices';
@@ -37,6 +39,7 @@ const MenuDevices = ({
   anchorEl,
   deviceChangeHandler,
 }: MenuDevicesWaitingRoomProps): ReactElement => {
+  const { t } = useTranslation();
   const devices = mediaDevices$.useMediaDevices(mediaDeviceKind, Object.values<MediaDeviceInfo>);
 
   const localSource = mediaDevices$.useDeviceId(mediaDeviceKind);
@@ -46,7 +49,13 @@ const MenuDevices = ({
     onClose();
   };
 
-  const processedDevices = useMemo(() => cleanAndDedupeDeviceLabels(devices), [devices]);
+  const { devices: processedDevices, systemDefaultDeviceId } = useMemo(() => {
+    const cleaned = cleanAndDedupeDeviceLabels(devices);
+    if (mediaDeviceKind === 'audiooutput') {
+      return mergeDefaultAudioOutput(cleaned, t('devices.audio.defaultLabel'));
+    }
+    return { devices: cleaned, systemDefaultDeviceId: null };
+  }, [devices, mediaDeviceKind, t]);
 
   return (
     <Menu
@@ -69,9 +78,12 @@ const MenuDevices = ({
               handleClick(device.deviceId);
             }}
             key={device.deviceId}
-            selected={device.deviceId === localSource}
+            selected={
+              device.deviceId === localSource ||
+              (localSource === 'default' && device.deviceId === systemDefaultDeviceId)
+            }
           >
-            {device.label}
+            <span className="whitespace-break-spaces">{device.label}</span>
           </MenuItem>
         ))}
 

@@ -13,6 +13,7 @@ import mediaDevices$ from '@core/stores/devices';
 import useTheme from '@ui/theme';
 import { Tooltip } from '@mui/material';
 import { env } from '../../../env';
+import mergeDefaultAudioOutput from '@utils/mergeDefaultAudioOutput/mergeDefaultAudioOutput';
 
 export type OutputAudioDevicesProps = {
   handleToggle: () => void;
@@ -32,15 +33,20 @@ const OutputAudioDevices = ({ handleToggle }: OutputAudioDevicesProps): ReactEle
 
   const currentAudioOutputId = mediaDevices$.useDeviceId('audiooutput');
 
-  const availableDevices = useDistinctLabelMediaDevices('audiooutput', (devices) =>
-    isSinkIdSupported()
-      ? devices.map((device) =>
-          // Rename default audio output device to user-friendly label
-          device.deviceId === 'default'
-            ? { ...device, label: t('devices.audio.defaultLabel') }
-            : device
-        )
-      : [{ deviceId: 'default', label: t('devices.audio.defaultLabel') } as MediaDeviceInfoJSON]
+  const { devices: availableDevices, systemDefaultDeviceId } = useDistinctLabelMediaDevices(
+    'audiooutput',
+    (devices) =>
+      isSinkIdSupported()
+        ? mergeDefaultAudioOutput(devices, t('devices.audio.defaultLabel'))
+        : {
+            devices: [
+              {
+                deviceId: 'default',
+                label: t('devices.audio.defaultLabel'),
+              } as MediaDeviceInfoJSON,
+            ],
+            systemDefaultDeviceId: null,
+          }
   );
 
   const handleChangeAudioOutput = async (deviceId: string) => {
@@ -75,7 +81,9 @@ const OutputAudioDevices = ({ handleToggle }: OutputAudioDevicesProps): ReactEle
           {availableDevices?.map((device: MediaDeviceInfoJSON) => {
             // If audio output device selection is not supported we show the default device as selected
             const isSelected =
-              device.deviceId === currentAudioOutputId || availableDevices.length === 1;
+              device.deviceId === currentAudioOutputId ||
+              (currentAudioOutputId === 'default' && device.deviceId === systemDefaultDeviceId) ||
+              availableDevices.length === 1;
 
             return (
               <MenuItem
@@ -116,7 +124,7 @@ const OutputAudioDevices = ({ handleToggle }: OutputAudioDevicesProps): ReactEle
                     <Box sx={{ minWidth: 36 }} />
                   )}
                   <Tooltip title={device.label} placement="right" arrow>
-                    <Typography component="span" noWrap>
+                    <Typography component="span" className="whitespace-break-spaces">
                       {device.label}
                     </Typography>
                   </Tooltip>
