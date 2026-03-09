@@ -90,7 +90,10 @@ class VeraRoomElement extends HTMLElement {
 
   readInitialAttributes() {
     const initialValue = bridgeAttributes.reduce((acc, name) => {
-      const value = VeraRoomElement.tryParseAttribute(name, this.getAttribute(name));
+      const rawValue = this.getAttribute(name);
+      if (rawValue === null) return acc;
+
+      const value = VeraRoomElement.tryParseAttribute(name, rawValue);
 
       return { ...acc, ...value };
     }, initialState()) as BridgeState;
@@ -109,6 +112,7 @@ class VeraRoomElement extends HTMLElement {
 
   async attributeChangedCallback(name: string, oldValue: unknown, newValue: unknown) {
     if (oldValue === newValue || !isBridgeAttribute(name)) return;
+    if (newValue === null) return;
 
     const updates = VeraRoomElement.tryParseAttribute(name, newValue);
 
