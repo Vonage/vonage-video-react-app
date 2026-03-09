@@ -35,7 +35,7 @@ const GoodBye = (): ReactElement => {
       </PageLayout.Left>
       <PageLayout.Right>
         <Stack direction="column" gap={4}>
-          <Card className="lg:min-w-125 items-center">
+          <Card className="lg:min-w-100 xl:min-w-125 items-center">
             <p className="text-xl font-medium font-vera-plain text-vera-secondary mb-3 w-full text-left">
               {t('goodBye.title')}
             </p>
@@ -45,7 +45,7 @@ const GoodBye = (): ReactElement => {
             <GoToLandingPageButton />
           </Card>
 
-          <Card className="min-w-full lg:min-w-125">
+          <Card className="min-w-full lg:min-w-100 xl:min-w-125">
             <p className="text-xl font-medium font-vera-plain text-vera-secondary mb-6">
               {t('archiveList.label')}
             </p>
