@@ -13,7 +13,7 @@ import mediaDevices$ from '@core/stores/devices';
 import useTheme from '@ui/theme';
 import { Tooltip } from '@mui/material';
 import { env } from '../../../env';
-import mergeDefaultAudioOutput from '@utils/mergeDefaultAudioOutput/mergeDefaultAudioOutput';
+import mergeDefaultAudioOutput from '@utils/mergeDefaultAudioOutput';
 
 export type OutputAudioDevicesProps = {
   handleToggle: () => void;
@@ -37,7 +37,7 @@ const OutputAudioDevices = ({ handleToggle }: OutputAudioDevicesProps): ReactEle
     'audiooutput',
     (devices) =>
       isSinkIdSupported()
-        ? mergeDefaultAudioOutput(devices, t('devices.audio.defaultLabel'))
+        ? mergeDefaultAudioOutput({ devices, systemDefaultLabel: t('devices.audio.defaultLabel') })
         : {
             devices: [
               {

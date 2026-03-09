@@ -1,11 +1,12 @@
-import { ReactElement, useMemo } from 'react';
+import { useMemo } from 'react';
+import type { ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
 import MenuItem from '@mui/material/MenuItem';
 import Menu from '@mui/material/Menu';
 import VividIcon from '@components/VividIcon';
 import Box from '@mui/material/Box';
 import cleanAndDedupeDeviceLabels from '@utils/cleanAndDedupeDeviceLabels/cleanAndDedupeDeviceLabels';
-import mergeDefaultAudioOutput from '@utils/mergeDefaultAudioOutput/mergeDefaultAudioOutput';
+import mergeDefaultAudioOutput from '@utils/mergeDefaultAudioOutput';
 import SoundTest from '../../SoundTest';
 import { isGetActiveAudioOutputDeviceSupported } from '@utils/util';
 import mediaDevices$ from '@core/stores/devices';
@@ -52,7 +53,10 @@ const MenuDevices = ({
   const { devices: processedDevices, systemDefaultDeviceId } = useMemo(() => {
     const cleaned = cleanAndDedupeDeviceLabels(devices);
     if (mediaDeviceKind === 'audiooutput') {
-      return mergeDefaultAudioOutput(cleaned, t('devices.audio.defaultLabel'));
+      return mergeDefaultAudioOutput({
+        devices: cleaned,
+        systemDefaultLabel: t('devices.audio.defaultLabel'),
+      });
     }
     return { devices: cleaned, systemDefaultDeviceId: null };
   }, [devices, mediaDeviceKind, t]);

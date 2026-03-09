@@ -10,6 +10,11 @@ export type MergeDefaultAudioOutputResult = {
   systemDefaultDeviceId: string | null;
 };
 
+type MergeDefaultAudioOutputArgs = {
+  devices: MediaDeviceInfoJSON[];
+  systemDefaultLabel: string;
+};
+
 /**
  * Merges the Chrome "default" audio output device into the matching actual device.
  *
@@ -18,13 +23,13 @@ export type MergeDefaultAudioOutputResult = {
  * This function removes that virtual entry and appends a suffix (e.g. "- System Default")
  * to the matched actual device's label, avoiding the duplicated entry in the UI.
  *
- * @param devices - List of audiooutput devices (labels should already be cleaned/deduped).
- * @param systemDefaultLabel - Translated label for "System Default".
+ * If no real devices are present (only the virtual "default" exists), the default
+ * entry is preserved and renamed to the translated system default label.
  */
-const mergeDefaultAudioOutput = (
-  devices: MediaDeviceInfoJSON[],
-  systemDefaultLabel: string
-): MergeDefaultAudioOutputResult => {
+const mergeDefaultAudioOutput = ({
+  devices,
+  systemDefaultLabel,
+}: MergeDefaultAudioOutputArgs): MergeDefaultAudioOutputResult => {
   const defaultDevice = devices.find((d) => d.deviceId === 'default');
 
   if (!defaultDevice) {
@@ -33,13 +38,22 @@ const mergeDefaultAudioOutput = (
 
   const nonDefaultDevices = devices.filter((d) => d.deviceId !== 'default');
 
-  // Chrome labels the default device as "Default - <actual device name>"
-  const match = defaultDevice.label?.match(/^Default\s*-\s*(.+)$/i);
-  if (!match) {
+  if (nonDefaultDevices.length === 0) {
+    return {
+      devices: [{ ...defaultDevice, label: systemDefaultLabel }],
+      systemDefaultDeviceId: null,
+    };
+  }
+
+  // Chrome labels the default device as "Default - <actual device name>".
+  // Use exec + slice instead of a capture group to avoid super-linear backtracking.
+  const label = defaultDevice.label ?? '';
+  const prefixMatch = /^Default\s*-\s*/i.exec(label);
+  if (!prefixMatch) {
     return { devices: nonDefaultDevices, systemDefaultDeviceId: null };
   }
 
-  const actualLabel = match[1].trim();
+  const actualLabel = label.slice(prefixMatch[0].length).trim();
   let systemDefaultDeviceId: string | null = null;
 
   const mergedDevices = nonDefaultDevices.map((d) => {
