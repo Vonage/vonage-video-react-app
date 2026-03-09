@@ -6,7 +6,7 @@ import Menu from '@mui/material/Menu';
 import VividIcon from '@components/VividIcon';
 import Box from '@mui/material/Box';
 import cleanAndDedupeDeviceLabels from '@utils/cleanAndDedupeDeviceLabels/cleanAndDedupeDeviceLabels';
-import mergeDefaultAudioOutput from '@utils/mergeDefaultAudioOutput';
+import mergeDefaultAudioOutput from '@web/helpers/mergeDefaultAudioOutput';
 import SoundTest from '../../SoundTest';
 import { isGetActiveAudioOutputDeviceSupported } from '@utils/util';
 import mediaDevices$ from '@core/stores/devices';

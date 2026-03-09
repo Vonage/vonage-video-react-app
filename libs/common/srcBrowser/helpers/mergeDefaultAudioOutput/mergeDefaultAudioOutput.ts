@@ -54,17 +54,13 @@ const mergeDefaultAudioOutput = ({
   }
 
   const actualLabel = label.slice(prefixMatch[0].length).trim();
-  let systemDefaultDeviceId: string | null = null;
+  const matchedDevice = nonDefaultDevices.find((d) => d.label === actualLabel) ?? null;
 
-  const mergedDevices = nonDefaultDevices.map((d) => {
-    if (d.label === actualLabel) {
-      systemDefaultDeviceId = d.deviceId;
-      return { ...d, label: `${d.label} - ${systemDefaultLabel}` };
-    }
-    return d;
-  });
+  const mergedDevices = nonDefaultDevices.map((d) =>
+    d.label === actualLabel ? { ...d, label: `${d.label} - ${systemDefaultLabel}` } : d
+  );
 
-  return { devices: mergedDevices, systemDefaultDeviceId };
+  return { devices: mergedDevices, systemDefaultDeviceId: matchedDevice?.deviceId ?? null };
 };
 
 export default mergeDefaultAudioOutput;

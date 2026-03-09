@@ -8,12 +8,12 @@ import MenuList from '@mui/material/MenuList';
 import MenuItem from '@mui/material/MenuItem';
 import VividIcon from '@components/VividIcon';
 import { useDistinctLabelMediaDevices } from '@ui/hooks';
+import mergeDefaultAudioOutput from '@web/helpers/mergeDefaultAudioOutput';
 import { isSinkIdSupported } from '@web/platform';
 import mediaDevices$ from '@core/stores/devices';
 import useTheme from '@ui/theme';
 import { Tooltip } from '@mui/material';
 import { env } from '../../../env';
-import mergeDefaultAudioOutput from '@utils/mergeDefaultAudioOutput';
 
 export type OutputAudioDevicesProps = {
   handleToggle: () => void;
