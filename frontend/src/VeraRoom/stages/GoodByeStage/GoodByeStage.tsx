@@ -28,7 +28,7 @@ const GoodByeStage: FC = () => {
       </PageLayoutEmbed.Left>
       <PageLayoutEmbed.Right>
         <Stack direction="column" gap={4}>
-          <Card className="lg:max-w-125 items-center">
+          <Card className="lg:min-w-125 items-center">
             <p className="text-xl font-medium font-vera-plain text-vera-secondary mb-3 w-full text-left">
               {t('goodBye.title')}
             </p>
