@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render as renderBase, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { ReactElement } from 'react';
@@ -16,10 +16,6 @@ describe('MenuMoreOptions', () => {
   beforeEach(() => {
     mockOnClose.mockClear();
     vi.spyOn(clientSdkVideo, 'hasMediaProcessorSupport').mockReturnValue(true);
-  });
-
-  afterEach(() => {
-    vi.restoreAllMocks();
   });
 
   it('should render when open is true', () => {
