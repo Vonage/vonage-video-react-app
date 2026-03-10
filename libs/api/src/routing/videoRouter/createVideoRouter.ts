@@ -47,11 +47,19 @@ function createVideoRouter<
 
   // We used callbacks to easily track the orchestrator methods and their types
   const router = trpcRoot.router({
-    ensureSession: makeMutation({
-      key: VideoAction.ensureSession,
-      config: handlersConfig?.ensureSession,
+    createSession: makeMutation({
+      key: VideoAction.createSession,
+      config: handlersConfig?.createSession,
       callback: (orchestrator, payload) => {
-        return orchestrator.ensureSession(payload);
+        return orchestrator.createSession(payload);
+      },
+    }),
+
+    decodeSessionId: makeQuery({
+      key: VideoAction.decodeSessionId,
+      config: handlersConfig?.decodeSessionId,
+      callback: (orchestrator, payload) => {
+        return orchestrator.decodeSessionId(payload);
       },
     }),
 

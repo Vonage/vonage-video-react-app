@@ -1,17 +1,18 @@
 import { makeInternalErrorHandler } from '@api-lib/errors';
-import type { JoinSessionPayload } from '@api-lib/schemas/JoinSessionPayload.schema';
-import { type IVideoOrchestrator, TokenRole } from '@api-lib/types';
-import ensureSession from './ensureSession';
+import { assertResult } from '@api-lib/executions';
+import { type IVideoOrchestrator, TokenRole, type JoinSessionPayload } from '@api-lib/types';
+import { decodeSessionId } from '@node/helpers';
 
 const threeHoursInMilliseconds = 3 * 60 * 60 * 1000;
 
-async function joinSession(this: IVideoOrchestrator, payload: JoinSessionPayload) {
+function joinSession(this: IVideoOrchestrator, payload: JoinSessionPayload) {
   try {
     const { sessionId, clientTokenOptions } = payload;
 
-    const session = await ensureSession.call(this, {
-      sessionId,
-    });
+    const session = assertResult(
+      () => decodeSessionId(sessionId),
+      makeInternalErrorHandler(`Unable to decode sessionId ${sessionId}`)
+    );
 
     const token = this.createEphemeralToken({
       sessionId,

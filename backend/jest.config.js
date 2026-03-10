@@ -15,6 +15,8 @@ export default {
   modulePaths: ['<rootDir>'],
   testMatch: ['**/tests/**/*.+(ts|tsx)', '**/?(*.)+(test).+(ts|tsx)'],
   setupFiles: ['<rootDir>/jest/setEnvVars.js'],
+  coveragePathIgnorePatterns: ['/node_modules/', '/tests/', '/index\\.ts$'],
+  collectCoverageFrom: ['**/*.{ts,tsx}', '!**/node_modules/**', '!**/tests/**', '!**/index.ts'],
   moduleNameMapper: {
     '^@api-lib$': '<rootDir>/../libs/api/src',
     '^@api-lib/(.*)$': '<rootDir>/../libs/api/src/$1',

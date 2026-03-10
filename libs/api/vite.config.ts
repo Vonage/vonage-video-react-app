@@ -24,6 +24,7 @@ export default defineConfig(() => ({
       reportsDirectory: './coverage',
       provider: 'v8' as const,
       reporter: ['text', 'lcov'],
+      exclude: ['test/**', '**/index.ts'],
     },
   },
 }));

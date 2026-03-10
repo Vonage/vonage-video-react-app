@@ -2,7 +2,8 @@ import { VideoAction } from '@api-lib/types';
 import {
   EnableCaptionsPayloadSchema,
   DisableCaptionsPayloadSchema,
-  EnsureSessionPayloadSchema,
+  CreateSessionPayloadSchema,
+  DecodeSessionIdPayloadSchema,
   JoinSessionPayloadSchema,
   SearchArchivesPayloadSchema,
   StartArchivePayloadSchema,
@@ -12,7 +13,8 @@ import {
 import type { ZodType } from 'zod';
 
 const schemasByAction = {
-  [VideoAction.ensureSession]: EnsureSessionPayloadSchema.optional(),
+  [VideoAction.createSession]: CreateSessionPayloadSchema.optional(),
+  [VideoAction.decodeSessionId]: DecodeSessionIdPayloadSchema,
   [VideoAction.startArchive]: StartArchivePayloadSchema,
   [VideoAction.stopArchive]: StopArchivePayloadSchema,
   [VideoAction.searchArchives]: SearchArchivesPayloadSchema,

@@ -20,8 +20,8 @@ type LinkOptions = Parameters<typeof httpBatchLink<IVideoRouter>>[0];
  *   url: 'http://localhost:4000/trpc',
  * });
  *
- * videoClient.ensureSession.mutate(); // creates a new session
- * videoClient.ensureSession.mutate({ sessionId: 'existing-session-id' }); // uses an existing session
+ * videoClient.createSession.mutate(); // creates a new session
+ * videoClient.createSession.mutate({ sessionId: 'existing-session-id' }); // uses an existing session
  * ```
  */
 function createVideoClient(linkOptions: LinkOptions): VideoClient;
@@ -39,8 +39,8 @@ function createVideoClient(linkOptions: LinkOptions): VideoClient;
  *   ],
  * });
  *
- * videoClient.ensureSession.mutate(); // creates a new session
- * videoClient.ensureSession.mutate({ sessionId: 'existing-session-id' }); // uses an existing session
+ * videoClient.createSession.mutate(); // creates a new session
+ * videoClient.createSession.mutate({ sessionId: 'existing-session-id' }); // uses an existing session
  * ```
  */
 function createVideoClient(links: Links): VideoClient;

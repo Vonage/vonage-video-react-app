@@ -22,24 +22,33 @@ sessionRouter.get('/:room', async (req: Request<{ room: string }>, res: Response
     // the actual problem is that the roomName is not a valid identifier, and the creation of the session is async.
     // If the identifier where the sessionId, we wont need to block calls
     const session = await blockCallsForArgs(async () => {
-      const restoredSessionId = ((await sessionService.getSession(roomName)) as SessionId) ?? null;
-      const { sessionId } = await videoClient.ensureSession({ sessionId: restoredSessionId });
+      const sessionId = ((await sessionService.getSession(roomName)) as SessionId) ?? null;
 
-      const session = await videoClient.joinSession({
-        sessionId,
-      });
+      if (sessionId) {
+        return {
+          ...videoClient.decodeSessionId({ sessionId }),
+          sessionId,
+        };
+      }
+
+      const session = await videoClient.createSession();
 
       await sessionService.setSession(roomName, session.sessionId);
 
       return session;
     })(roomName);
 
+    const { token } = videoClient.joinSession({
+      sessionId: session.sessionId,
+    });
+
     res.json({
       ...session,
+      token,
       apiKey: session.applicationId,
       captionsId,
     });
-  } catch (error: unknown) {
+  } catch (error) {
     const applicationError = makeInternalErrorHandler('Failed to get or create session')(
       error
     ).exportSafely();
@@ -197,26 +206,3 @@ function makeVideoOrchestrator() {
 }
 
 export default sessionRouter;
-
-// const captionOptions: CaptionOptions = {
-//   // The full list of supported languages can be found here: https://developer.vonage.com/en/video/guides/live-caption#supported-languages
-//   languageCode: 'en-US',
-//   // The maximum duration of the captions in seconds. The default is 14,400 seconds (4 hours).
-//   maxDuration: 1800,
-//   // Enabling partial captions allows for more frequent updates to the captions.
-//   // This is useful for real-time applications where the captions need to be updated frequently.
-//   // However, it may also increase the number of inaccuracies in the captions.
-//   partialCaptions: 'true',
-// };
-
-// return this.vonageVideo.startArchive(sessionId, {
-//   name: roomName,
-//   resolution: Resolution.FHD_LANDSCAPE,
-//   layout: {
-//     // In multiparty archives, we use the 'bestFit' layout to scale based on the number of streams. For screen-sharing archives,
-//     // we select 'horizontalPresentation' so the screenshare stream is displayed prominently along with other streams.
-//     // See: https://developer.vonage.com/en/video/guides/archive-broadcast-layout#layout-types-for-screen-sharing
-//     type: LayoutType.BEST_FIT,
-//     screenshareType: 'horizontalPresentation',
-//   },
-// });

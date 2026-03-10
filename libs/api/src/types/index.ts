@@ -3,7 +3,8 @@ export type * from './IVideoOrchestrator';
 // Schema types
 export type {
   VideoOrchestratorConfig,
-  EnsureSessionPayload,
+  CreateSessionPayload,
+  DecodeSessionIdPayload,
   CreateEphemeralTokenPayload,
   StartArchivePayload,
   StopArchivePayload,

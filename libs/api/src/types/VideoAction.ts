@@ -1,6 +1,7 @@
 export enum VideoAction {
   createEphemeralToken = 'createEphemeralToken',
-  ensureSession = 'ensureSession',
+  createSession = 'createSession',
+  decodeSessionId = 'decodeSessionId',
   startArchive = 'startArchive',
   stopArchive = 'stopArchive',
   searchArchives = 'searchArchives',

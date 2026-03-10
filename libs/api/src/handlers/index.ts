@@ -1,4 +1,5 @@
-export { default as ensureSession } from './ensureSession';
+export { default as createSession } from './createSession';
+export { default as decodeSessionId } from './decodeSessionId';
 export { default as enableCaptions } from './enableCaptions';
 export { default as disableCaptions } from './disableCaptions';
 export { default as createEphemeralToken } from './createEphemeralToken';

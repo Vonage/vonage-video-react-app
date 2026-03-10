@@ -3,7 +3,8 @@ import { Video } from '@vonage/video';
 import { Auth } from '@vonage/auth';
 import { assertVideoOrchestratorConfig } from '@api-lib/schemas';
 import {
-  ensureSession,
+  createSession,
+  decodeSessionId,
   startArchive,
   stopArchive,
   searchArchives,
@@ -69,9 +70,14 @@ class VideoOrchestrator implements IVideoOrchestrator {
   );
 
   /**
-   * Ensures a session exists or retrieves an existing one based on the provided sessionId
+   * Creates or retrieves a session based on the provided sessionId
    */
-  public ensureSession = this.createVideoHandler(VideoAction.ensureSession, ensureSession);
+  public createSession = this.createVideoHandler(VideoAction.createSession, createSession);
+
+  /**
+   * Decodes a sessionId and returns its components
+   */
+  public decodeSessionId = this.createVideoHandler(VideoAction.decodeSessionId, decodeSessionId);
 
   /**
    * Starts an archive for a given session
