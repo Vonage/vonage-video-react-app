@@ -166,27 +166,9 @@ html {
 }
 
 body.screensharing-entire #screen-publisher-container {
-  display: none !important
+  display: none !important;
 }
 
 body.screensharing-entire .controls {
   display: none !important;
-}
-
-#screen-share-hidden-message {
-  display: none;
-}
-
-body.screensharing-entire #screen-share-hidden-message {
-  display: flex;
-  position: fixed;
-  inset: 0;
-  align-items: center;
-  justify-content: center;
-  font-size: 1.6rem;
-  font-weight: 500;
-  background: rgba(0, 0, 0, 0.6);
-  z-index: 999;
-  color: white;
-  pointer-events: none;
 }

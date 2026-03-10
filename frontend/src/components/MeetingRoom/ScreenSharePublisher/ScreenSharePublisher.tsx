@@ -4,6 +4,8 @@ import { Publisher } from '@vonage/client-sdk-video';
 import VideoTile from '../VideoTile';
 import ScreenShareNameDisplay from '../../ScreenShareNameDisplay';
 import useTheme from '@ui/theme';
+import { useTranslation } from 'react-i18next';
+import styles from './ScreenSharePublisher.module.scss';
 
 export type ScreenSharePublisherProps = {
   box: Box | undefined;
@@ -39,6 +41,7 @@ const ScreenSharePublisher = ({
     }
   }, [element, theme.shapes.borderRadiusLarge]);
   const streamName = publisher?.stream?.name ?? '';
+  const { t } = useTranslation();
   return (
     box && (
       <>
@@ -53,7 +56,7 @@ const ScreenSharePublisher = ({
           <ScreenShareNameDisplay name={streamName} box={box} />
         </VideoTile>
 
-        <div id="screen-share-hidden-message">You are sharing your screen.</div>
+        <div className={styles.overlay}>{t('screenSharing.dialog.hiddenMessage')}</div>
       </>
     )
   );

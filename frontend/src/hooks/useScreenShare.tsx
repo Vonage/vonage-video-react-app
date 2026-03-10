@@ -1,4 +1,4 @@
-import { useState, useRef, useCallback, useEffect } from 'react'; //
+import { useState, useRef, useCallback } from 'react'; //
 import { Publisher, initPublisher } from '@vonage/client-sdk-video';
 import { useTranslation } from 'react-i18next';
 import useSessionContext from './useSessionContext';
@@ -33,28 +33,33 @@ const useScreenShare = (): UseScreenShareType => {
   const [screenshareVideoElement, setScreenshareVideoElement] = useState<
     HTMLVideoElement | HTMLObjectElement
   >();
-  const [isSharingEntireScreen, setIsSharingEntireScreen] = useState(false);
+  screenSharingPubRef.current?.on('videoElementCreated', (e) => {
+    const videoEl = e.element as HTMLVideoElement;
+    setScreenshareVideoElement(videoEl);
 
-  useEffect(() => {
-    if (isSharingEntireScreen) {
+    const mediaStream = videoEl.srcObject as MediaStream | null;
+    const track = mediaStream?.getVideoTracks?.()[0];
+    const displaySurface = track?.getSettings?.()?.displaySurface;
+
+    if (displaySurface === 'monitor') {
       document.body.classList.add('screensharing-entire');
     } else {
       document.body.classList.remove('screensharing-entire');
     }
-    return () => {
-      document.body.classList.remove('screensharing-entire');
-    };
-  }, [isSharingEntireScreen]);
+
+    console.log('displaySurface:', displaySurface);
+  });
 
   const onScreenShareStopped = useCallback(() => {
     setIsSharingScreen(false);
-    setIsSharingEntireScreen(false);
+    document.body.classList.remove('screensharing-entire');
     setScreenshareVideoElement(undefined);
     screenSharingPubRef.current = null;
   }, []);
 
   const unpublishScreenshare = useCallback(() => {
     if (screenSharingPubRef.current) {
+      document.body.classList.remove('screensharing-entire');
       unpublish(screenSharingPubRef.current);
       setIsSharingScreen(false);
     }
@@ -98,7 +103,11 @@ const useScreenShare = (): UseScreenShareType => {
           const mediaStream = videoEl.srcObject as MediaStream | null;
           const track = mediaStream?.getVideoTracks?.()[0];
           const displaySurface = track?.getSettings?.()?.displaySurface;
-          setIsSharingEntireScreen(displaySurface === 'monitor');
+          if (displaySurface === 'monitor') {
+            document.body.classList.add('screensharing-entire');
+          } else {
+            document.body.classList.remove('screensharing-entire');
+          }
         });
 
         screenSharingPubRef.current?.on('streamDestroyed', () => {
