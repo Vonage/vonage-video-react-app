@@ -3,11 +3,11 @@ import { Box } from 'opentok-layout-js';
 import { SubscriberWrapper } from '@app-types/session';
 import getBoxStyle from '@utils/helpers/getBoxStyle';
 import useSessionContext from '@hooks/useSessionContext';
-import appConfig$ from '@stores/appConfig';
 import AvatarInitials from '../AvatarInitials';
 import AvatarGroup from '@mui/material/AvatarGroup';
 import ButtonBase from '@mui/material/ButtonBase';
 import useTheme from '@ui/theme';
+import { env } from '../../env';
 
 export type HiddenParticipantsTileProps = {
   box: Box;
@@ -29,7 +29,6 @@ const HiddenParticipantsTile = ({
 }: HiddenParticipantsTileProps): ReactElement => {
   const { toggleParticipantList } = useSessionContext();
 
-  const showParticipantList = appConfig$.useShouldShowParticipantList();
   const theme = useTheme();
 
   const { height, width } = box;
@@ -47,15 +46,15 @@ const HiddenParticipantsTile = ({
         borderRadius: 3,
         backgroundColor: theme.colors.darkGrey,
         transition: 'background-color 150ms',
-        cursor: showParticipantList ? 'pointer' : 'default',
-        ...(showParticipantList && {
+        cursor: env.SHOW_PARTICIPANT_LIST ? 'pointer' : 'default',
+        ...(env.SHOW_PARTICIPANT_LIST && {
           '&:hover': {
             backgroundColor: theme.colors.darkGreyHover,
           },
         }),
         ...getBoxStyle(box),
       }}
-      onClick={showParticipantList ? toggleParticipantList : () => {}}
+      onClick={env.SHOW_PARTICIPANT_LIST ? toggleParticipantList : () => {}}
       type="button"
     >
       <AvatarGroup

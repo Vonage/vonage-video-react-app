@@ -3,6 +3,7 @@ import { describe, expect, it, vi } from 'vitest';
 import { ReactElement } from 'react';
 import { makeTestProvider, providers, ProviderOptions } from '@test/providers';
 import ChatButton from './ChatButton';
+import { env } from './../../../env';
 
 describe('ChatButton', () => {
   it('should show unread message number', () => {
@@ -54,15 +55,10 @@ describe('ChatButton', () => {
   });
 
   it('is not rendered when allowChat is false', () => {
-    render(<ChatButton handleClick={() => {}} isOpen />, {
-      appConfigContext: {
-        value: {
-          meetingRoomSettings: {
-            allowChat: false,
-          },
-        },
-      },
+    env.partialUpdate({
+      ALLOW_CHAT: false,
     });
+    render(<ChatButton handleClick={() => {}} isOpen />);
 
     expect(screen.queryByTestId('ChatIcon')).not.toBeInTheDocument();
   });
@@ -70,22 +66,14 @@ describe('ChatButton', () => {
 
 type RenderOptions = {
   sessionContext?: ProviderOptions['SessionContext'];
-  appConfigContext?: ProviderOptions['AppConfigContext'];
   userContext?: ProviderOptions['UserContext'];
 };
 
-function render(
-  ui: ReactElement,
-  { sessionContext, appConfigContext, userContext }: RenderOptions = {}
-) {
-  const { wrapper, ...context } = makeTestProvider(
-    [providers.appConfig, providers.user, providers.session],
-    {
-      sessionContext,
-      appConfigContext,
-      userContext,
-    }
-  );
+function render(ui: ReactElement, { sessionContext, userContext }: RenderOptions = {}) {
+  const { wrapper, ...context } = makeTestProvider([providers.user, providers.session], {
+    userContext,
+    sessionContext,
+  });
 
   return {
     ...context,

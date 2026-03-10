@@ -8,9 +8,10 @@ import { describe, it, beforeEach, vi, expect } from 'vitest';
 import { render as renderBase, screen, fireEvent, waitFor } from '@testing-library/react';
 import { ReactElement } from 'react';
 import type { MediaDeviceInfoJSON } from '@web/types';
-import { makeTestProvider, providers, type ProviderOptions } from '@test/providers';
+import { makeTestProvider } from '@test/providers';
 import { isSinkIdSupported } from '@web/platform';
 import mediaDevices$ from '@core/stores/devices';
+import { env } from '../../../env';
 import OutputAudioDevices from './OutputAudioDevices';
 
 vi.mock('@web/platform', async () => {
@@ -135,29 +136,19 @@ describe('OutputAudioDevices Component', () => {
   });
 
   it('is not rendered when allowDeviceSelection is false', () => {
-    render(<OutputAudioDevices handleToggle={mockHandleToggle} />, {
-      appConfigContext: {
-        value: {
-          meetingRoomSettings: {
-            allowDeviceSelection: false,
-          },
-        },
-      },
+    env.partialUpdate({
+      MEETING_ROOM_ALLOW_DEVICE_SELECTION: false,
     });
+
+    render(<OutputAudioDevices handleToggle={mockHandleToggle} />);
 
     expect(screen.queryByTestId('output-device-title')).not.toBeInTheDocument();
     expect(screen.queryByTestId('output-devices')).not.toBeInTheDocument();
   });
 });
 
-type RenderOptions = {
-  appConfigContext?: ProviderOptions['AppConfigContext'];
-};
-
-function render(ui: ReactElement, { appConfigContext }: RenderOptions = {}) {
-  const { wrapper, ...context } = makeTestProvider([providers.appConfig], {
-    appConfigContext,
-  });
+function render(ui: ReactElement) {
+  const { wrapper, ...context } = makeTestProvider([]);
 
   return {
     ...context,

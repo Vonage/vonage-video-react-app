@@ -208,5 +208,7 @@
   "zoom.start": "Iniciar zoom",
   "zoom.out": "Alejar zoom",
   "zoom.in": "Acercar zoom",
-  "zoom.current": "Zoom actual"
+  "zoom.current": "Zoom actual",
+  "errorPage.title": "Algo salió mal",
+  "errorPage.description": "La aplicación no pudo iniciarse. Recarga la página o contacta con soporte si el problema persiste."
 }

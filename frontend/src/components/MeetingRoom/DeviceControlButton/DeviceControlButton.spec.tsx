@@ -7,8 +7,9 @@ import { PublisherContextType } from '@Context/PublisherProvider';
 import useSpeakingDetector from '@hooks/useSpeakingDetector';
 import usePublisherContext from '@hooks/usePublisherContext';
 import { defaultAudioDevice } from '@utils/mockData/device';
-import { makeTestProvider, providers, type ProviderOptions } from '@test/providers';
+import { makeTestProvider } from '@test/providers';
 import DeviceControlButton from './DeviceControlButton';
+import { env } from '../../../env';
 import enTranslations from '../../../locales/en.json';
 import { setupWindowNavigatorMock } from '@web-test/fixtures';
 
@@ -48,6 +49,10 @@ describe('DeviceControlButton', () => {
   let publisherContext: PublisherContextType;
 
   beforeEach(() => {
+    env.partialUpdate({
+      ALLOW_MICROPHONE_CONTROL: true,
+      ALLOW_CAMERA_CONTROL: true,
+    });
     mockPublisher = Object.assign(new EventEmitter(), {
       applyVideoFilter: vi.fn(),
       clearVideoFilter: vi.fn(),
@@ -115,23 +120,16 @@ describe('DeviceControlButton', () => {
     });
 
     it('renders the button as disabled with greyed out icon and correct tooltip when allowMicrophoneControl is false', async () => {
+      env.partialUpdate({
+        ALLOW_MICROPHONE_CONTROL: false,
+        ALLOW_CAMERA_CONTROL: true,
+      });
+
       render(
         <DeviceControlButton
           deviceType="audio"
           toggleBackgroundEffects={mockHandleToggleBackgroundEffects}
-        />,
-        {
-          appConfigContext: {
-            value: {
-              audioSettings: {
-                allowMicrophoneControl: false,
-              },
-              videoSettings: {
-                allowCameraControl: true,
-              },
-            },
-          },
-        }
+        />
       );
       const micButton = screen.getByLabelText('Microphone');
       expect(micButton).toBeInTheDocument();
@@ -162,23 +160,16 @@ describe('DeviceControlButton', () => {
     });
 
     it('renders the button as disabled with greyed out icon and correct tooltip when allowCameraControl is false', async () => {
+      env.partialUpdate({
+        ALLOW_MICROPHONE_CONTROL: true,
+        ALLOW_CAMERA_CONTROL: false,
+      });
+
       render(
         <DeviceControlButton
           deviceType="video"
           toggleBackgroundEffects={mockHandleToggleBackgroundEffects}
-        />,
-        {
-          appConfigContext: {
-            value: {
-              audioSettings: {
-                allowMicrophoneControl: true,
-              },
-              videoSettings: {
-                allowCameraControl: false,
-              },
-            },
-          },
-        }
+        />
       );
 
       const videoButton = screen.getByLabelText('Camera');
@@ -194,14 +185,8 @@ describe('DeviceControlButton', () => {
   });
 });
 
-type RenderOptions = {
-  appConfigContext?: ProviderOptions['AppConfigContext'];
-};
-
-function render(ui: ReactElement, { appConfigContext }: RenderOptions = {}) {
-  const { wrapper, ...context } = makeTestProvider([providers.appConfig], {
-    appConfigContext,
-  });
+function render(ui: ReactElement) {
+  const { wrapper, ...context } = makeTestProvider([]);
 
   return {
     ...context,

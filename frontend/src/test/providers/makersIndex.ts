@@ -1,9 +1,4 @@
 export {
-  default as makeAppConfigProviderWrapper,
-  type AppConfigProviderWrapperOptions,
-} from './makeAppConfigProviderWrapper';
-
-export {
   default as makeSessionProviderWrapper,
   type SessionProviderWrapperOptions,
 } from './makeSessionProviderWrapper';

@@ -13,6 +13,7 @@ import {
   makeMediaDeviceInfos,
 } from '@web-test/fixtures';
 import { mediaDevices$ } from '@core/stores';
+import { env } from '../../../env';
 
 const mockDevices = makeMediaDeviceInfos();
 
@@ -27,6 +28,9 @@ type BackgroundPublisherContextWithMock = BackgroundPublisherContextType & {
 describe('CameraButton', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    env.partialUpdate({
+      ALLOW_CAMERA_CONTROL: true,
+    });
 
     setupWindowNavigatorMock({
       mediaDevices: {
@@ -49,14 +53,6 @@ describe('CameraButton', () => {
 
   it('renders the video on icon when video is enabled', async () => {
     render(<CameraButton />, {
-      appConfigContext: {
-        value: {
-          isAppConfigLoaded: true,
-          videoSettings: {
-            allowCameraControl: true,
-          },
-        },
-      },
       previewPublisherContext: {
         __onCreated: (context) => {
           context.isVideoEnabled = true;
@@ -71,14 +67,6 @@ describe('CameraButton', () => {
 
   it('renders the video off icon when video is disabled', async () => {
     render(<CameraButton />, {
-      appConfigContext: {
-        value: {
-          isAppConfigLoaded: true,
-          videoSettings: {
-            allowCameraControl: true,
-          },
-        },
-      },
       previewPublisherContext: {
         __onCreated: (context) => {
           context.isVideoEnabled = false;
@@ -96,14 +84,6 @@ describe('CameraButton', () => {
     const backgroundToggleMock = vi.fn();
 
     render(<CameraButton />, {
-      appConfigContext: {
-        value: {
-          isAppConfigLoaded: true,
-          videoSettings: {
-            allowCameraControl: true,
-          },
-        },
-      },
       previewPublisherContext: {
         __interceptor: (context) => {
           const contextWithMock = context as PreviewPublisherContextWithMock;
@@ -145,25 +125,19 @@ describe('CameraButton', () => {
   });
 
   it('is not rendered when allowCameraControl is false', async () => {
-    render(<CameraButton />, {
-      appConfigContext: {
-        value: {
-          isAppConfigLoaded: true,
-          videoSettings: {
-            allowCameraControl: false,
-          },
-        },
-      },
+    env.partialUpdate({
+      ALLOW_CAMERA_CONTROL: false,
     });
 
+    render(<CameraButton />);
+
     await waitFor(() => {
-      expect(screen.queryByTestId('VideocamIcon')).not.toBeInTheDocument();
+      expect(screen.queryByTestId('camera-button-wrapper')).not.toBeInTheDocument();
     });
   });
 });
 
 type RenderOptions = {
-  appConfigContext?: ProviderOptions['AppConfigContext'];
   userContext?: ProviderOptions['UserContext'];
   sessionContext?: ProviderOptions['SessionContext'];
   publisherContext?: ProviderOptions['PublisherContext'];
@@ -174,7 +148,6 @@ type RenderOptions = {
 function render(
   ui: ReactElement,
   {
-    appConfigContext,
     userContext,
     sessionContext,
     publisherContext,
@@ -184,7 +157,6 @@ function render(
 ) {
   const { wrapper: ButtonWrapper, ...context } = makeTestProvider(
     [
-      providers.appConfig,
       providers.user,
       providers.session,
       providers.publisher,
@@ -192,7 +164,6 @@ function render(
       providers.previewPublisher,
     ],
     {
-      appConfigContext,
       userContext,
       sessionContext,
       publisherContext,

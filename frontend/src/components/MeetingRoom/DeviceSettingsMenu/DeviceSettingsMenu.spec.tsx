@@ -10,8 +10,9 @@ import { describe, beforeEach, it, vi, expect } from 'vitest';
 import { ReactElement, RefObject } from 'react';
 import { hasMediaProcessorSupport } from '@vonage/client-sdk-video';
 import type { MediaDeviceInfoJSON } from '@web/types';
-import { makeTestProvider, providers, type ProviderOptions } from '@test/providers';
+import { makeTestProvider } from '@test/providers';
 import { isSinkIdSupported } from '@web/platform';
+import { env } from '../../../env';
 import {
   makeMediaDeviceInfos,
   makeMediaStreamMock,
@@ -339,6 +340,11 @@ describe('DeviceSettingsMenu Component', () => {
     });
 
     it('and does not render the dropdown separator and video effects option when allowBackgroundEffects is false', async () => {
+      env.partialUpdate({
+        ALLOW_BACKGROUND_EFFECTS: false,
+        MEETING_ROOM_ALLOW_DEVICE_SELECTION: true,
+      });
+
       render(
         <DeviceSettingsMenuComponent
           deviceType={deviceType}
@@ -348,19 +354,7 @@ describe('DeviceSettingsMenu Component', () => {
           isOpen
           anchorRef={mockAnchorRef}
           setIsOpen={mockSetIsOpen}
-        />,
-        {
-          appConfigContext: {
-            value: {
-              videoSettings: {
-                allowBackgroundEffects: false,
-              },
-              meetingRoomSettings: {
-                allowDeviceSelection: true,
-              },
-            },
-          },
-        }
+        />
       );
 
       await waitFor(() => {
@@ -371,14 +365,8 @@ describe('DeviceSettingsMenu Component', () => {
   });
 });
 
-type RenderOptions = {
-  appConfigContext?: ProviderOptions['AppConfigContext'];
-};
-
-function render(ui: ReactElement, { appConfigContext }: RenderOptions = {}) {
-  const { wrapper, ...context } = makeTestProvider([providers.appConfig], {
-    appConfigContext,
-  });
+function render(ui: ReactElement) {
+  const { wrapper, ...context } = makeTestProvider([]);
 
   return {
     ...context,

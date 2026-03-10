@@ -1,20 +1,10 @@
 import { describe, it, expect, vi } from 'vitest';
 
-vi.mock('../../env', async () => {
-  const actual = await vi.importActual<typeof import('../../env')>('../../env');
-  const { Env } = actual;
-
-  return {
-    ...actual,
-    default: new Env({}),
-  };
-});
-
 import { render } from '@testing-library/react';
 import { Route, Routes } from 'react-router-dom';
 import MemoryRouter from '@test/RouterWrapper';
 import { ReactElement } from 'react';
-import env from '../../env';
+import { env } from '../../env';
 import RedirectToWaitingRoom from './RedirectToWaitingRoom';
 
 const mockedRoomName = { roomName: 'test-room-name' };
@@ -31,7 +21,7 @@ describe('RedirectToWaitingRoom Component', () => {
   const TestComponent = (): ReactElement => <div>TestComponent</div>;
 
   it('navigates to the waiting room if the user does not have access', () => {
-    env.VITE_BYPASS_WAITING_ROOM = false;
+    env.BYPASS_WAITING_ROOM = false;
 
     const { container } = render(
       <MemoryRouter initialEntries={[{ pathname: '/room', state: { hasAccess: false } }]}>
@@ -53,7 +43,7 @@ describe('RedirectToWaitingRoom Component', () => {
   });
 
   it('navigates to the waiting room if the user does not have access by setting bypass to false', () => {
-    env.VITE_BYPASS_WAITING_ROOM = false;
+    env.BYPASS_WAITING_ROOM = false;
 
     const { container } = render(
       <MemoryRouter initialEntries={['/room?bypass=false']}>
@@ -75,7 +65,7 @@ describe('RedirectToWaitingRoom Component', () => {
   });
 
   it('renders the child component if the user set bypass to true', () => {
-    env.VITE_BYPASS_WAITING_ROOM = false;
+    env.BYPASS_WAITING_ROOM = false;
 
     const { getByText } = render(
       <MemoryRouter initialEntries={['/room?bypass=true']}>
@@ -88,8 +78,8 @@ describe('RedirectToWaitingRoom Component', () => {
     expect(getByText('TestComponent')).toBeInTheDocument();
   });
 
-  it('renders the child component if the user set VITE_BYPASS_WAITING_ROOM to true', () => {
-    env.VITE_BYPASS_WAITING_ROOM = true;
+  it('renders the child component if the user set BYPASS_WAITING_ROOM to true', () => {
+    env.BYPASS_WAITING_ROOM = true;
 
     const { getByText } = render(
       <MemoryRouter initialEntries={['/room']}>
@@ -103,7 +93,7 @@ describe('RedirectToWaitingRoom Component', () => {
   });
 
   it('renders the child component if the user has access', () => {
-    env.VITE_BYPASS_WAITING_ROOM = false;
+    env.BYPASS_WAITING_ROOM = false;
 
     const { getByText } = render(
       <MemoryRouter initialEntries={[{ pathname: '/room', state: { hasAccess: true } }]}>
