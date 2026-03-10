@@ -10,25 +10,25 @@ const UsernameInputSkeleton: FC<UsernameInputSkeletonProps> = ({ className, ...p
   return (
     <Card
       component="form"
-      className={twMerge('flex-col sm:inline-flex h-auto sm:h-[400px] lg:max-w-[500px]', className)}
+      className={twMerge('flex-col sm:inline-flex h-auto sm:h-100 lg:max-w-125', className)}
       {...props}
     >
       <div className="w-full flex flex-col gap-4">
         {/* title */}
-        <Skeleton variant="text" className="!h-7 sm:!h-10 w-2/3" />
+        <Skeleton variant="text" className="h-7! sm:h-10! w-2/3" />
 
         {/* name input */}
-        <Skeleton variant="text" id="user-name" className="!h-7 sm:!h-10" />
+        <Skeleton variant="text" id="user-name" className="h-7! sm:h-10!" />
 
         <Separator width="100%" />
 
         {/* subtitle */}
-        <Skeleton className="!h-7 sm:!h-10" />
+        <Skeleton className="h-7! sm:h-10!" />
 
         {/* room name */}
-        <Skeleton variant="text" className="!h-7 sm:!h-10 w-5/6" />
+        <Skeleton variant="text" className="h-7! sm:h-10! w-5/6" />
 
-        <Skeleton variant="rounded" className="!h-7 sm:!h-8 !rounded-lg" />
+        <Skeleton variant="rounded" className="h-7! sm:h-8! rounded-lg!" />
       </div>
     </Card>
   );

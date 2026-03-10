@@ -60,6 +60,7 @@ const Subscriber = ({
   useEffect(() => {
     if (subscriberWrapper && subRef.current) {
       const { element } = subscriberWrapper;
+
       // eslint-disable-next-line react-hooks/immutability
       element.id = subscriberWrapper.id;
       element.classList.add('video__element');

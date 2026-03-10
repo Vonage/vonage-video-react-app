@@ -26,7 +26,7 @@ const RoomJoinContainer = (): ReactElement => {
   };
 
   return (
-    <Card component="form" className="lg:max-w-[500px]">
+    <Card component="form" className="lg:max-w-125">
       <Typography sx={{ mb: 2, typography: 'h6', color: theme.colors.textSecondary }}>
         {t('button.startNewRoom')}
       </Typography>

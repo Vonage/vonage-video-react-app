@@ -8,3 +8,4 @@ export {
 export * from './DecodedSessionId';
 export * from './Any';
 export * from './AnyFunction';
+export * from './KebabToCamel';

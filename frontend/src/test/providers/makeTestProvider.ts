@@ -1,6 +1,5 @@
 import composeProviders, { type ProviderComponent } from '@web/helpers/composeProviders';
 import {
-  makeAppConfigProviderWrapper,
   makeBackgroundPublisherProviderWrapper,
   makePreviewPublisherProviderWrapper,
   makePublisherProviderWrapper,
@@ -12,7 +11,6 @@ import {
  * Keep updated accordingly to the providers you have and their dependencies.
  */
 export enum providers {
-  appConfig = 'appConfig',
   user = 'user',
   session = 'session',
   publisher = 'publisher',
@@ -24,7 +22,6 @@ export enum providers {
  * Keep updated accordingly to the providers you have and their dependencies.
  */
 const MAKERS = {
-  [providers.appConfig]: makeAppConfigProviderWrapper,
   [providers.user]: makeUserProviderWrapper,
   [providers.session]: makeSessionProviderWrapper,
   [providers.publisher]: makePublisherProviderWrapper,
@@ -38,17 +35,11 @@ type ProvidersMakers = typeof MAKERS;
  * Keep updated accordingly to the providers you have and their dependencies.
  */
 const PROVIDER_DEPENDENCIES = {
-  [providers.appConfig]: [],
   [providers.user]: [],
-  [providers.session]: [providers.appConfig, providers.user],
-  [providers.publisher]: [providers.appConfig, providers.user, providers.session],
-  [providers.backgroundPublisher]: [
-    providers.appConfig,
-    providers.user,
-    providers.session,
-    providers.publisher,
-  ],
-  [providers.previewPublisher]: [providers.appConfig, providers.user],
+  [providers.session]: [providers.user],
+  [providers.publisher]: [providers.user, providers.session],
+  [providers.backgroundPublisher]: [providers.user, providers.session, providers.publisher],
+  [providers.previewPublisher]: [providers.user],
 } as const;
 
 /**

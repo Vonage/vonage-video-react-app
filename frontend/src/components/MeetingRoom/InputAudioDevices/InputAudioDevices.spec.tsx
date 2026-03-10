@@ -1,7 +1,8 @@
 import { describe, it, beforeEach, vi, expect } from 'vitest';
 import { render as renderBase, screen, fireEvent, waitFor } from '@testing-library/react';
 import { ReactElement } from 'react';
-import { makeTestProvider, providers, ProviderOptions } from '@test/providers';
+import { makeTestProvider, providers, type ProviderOptions } from '@test/providers';
+import { env } from '../../../env';
 import {
   makeMediaDeviceInfos,
   makeMediaStreamMock,
@@ -23,6 +24,10 @@ const defaultAudioDevice = devices.find((d) => d.kind === 'audioinput')!;
 describe('InputAudioDevices Component', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+
+    env.partialUpdate({
+      MEETING_ROOM_ALLOW_DEVICE_SELECTION: true,
+    });
 
     // Mock the native devices API - must be in beforeEach because vi.restoreAllMocks() clears them
     setupWindowNavigatorMock({
@@ -125,15 +130,11 @@ describe('InputAudioDevices Component', () => {
   });
 
   it('is not rendered when allowDeviceSelection is false', () => {
-    render(<InputAudioDevices handleToggle={mockHandleToggle} />, {
-      appConfigContext: {
-        value: {
-          meetingRoomSettings: {
-            allowDeviceSelection: false,
-          },
-        },
-      },
+    env.partialUpdate({
+      MEETING_ROOM_ALLOW_DEVICE_SELECTION: false,
     });
+
+    render(<InputAudioDevices handleToggle={mockHandleToggle} />);
 
     expect(screen.queryByText('Microphone')).not.toBeInTheDocument();
   });
@@ -159,12 +160,10 @@ describe('InputAudioDevices Component', () => {
 function render(
   ui: ReactElement,
   {
-    appConfigContext,
     userContext,
     sessionContext,
     publisherContext,
   }: {
-    appConfigContext?: ProviderOptions['AppConfigContext'];
     userContext?: ProviderOptions['UserContext'];
     sessionContext?: ProviderOptions['SessionContext'];
     publisherContext?: ProviderOptions['PublisherContext'];
@@ -178,8 +177,10 @@ function render(
   }) as unknown as Publisher;
 
   const { wrapper, ...context } = makeTestProvider(
-    [providers.appConfig, providers.user, providers.session, providers.publisher],
+    [providers.user, providers.session, providers.publisher],
     {
+      userContext,
+      sessionContext,
       publisherContext: {
         initialValue: {
           publisher: mockPublisher,
@@ -187,9 +188,6 @@ function render(
           ...publisherContext?.initialValue,
         },
       },
-      appConfigContext,
-      userContext,
-      sessionContext,
     }
   );
 

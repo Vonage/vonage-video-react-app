@@ -44,8 +44,7 @@ sauce-connect.log
 
 .tern-project
 
-/.vscode
-!/.vscode/extensions.json
+.vscode/settings.json
 
 build
 
@@ -63,3 +62,4 @@ vitest.config.*.timestamp*
 *.tsbuildinfo
 vcr-dev.yml
 
+/frontend/distRoom

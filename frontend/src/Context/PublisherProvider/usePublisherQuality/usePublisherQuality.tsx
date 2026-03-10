@@ -18,6 +18,7 @@ const usePublisherQuality = (publisher: Publisher | null): NetworkQuality => {
 
   const handleVideoDisabled = useCallback(() => {
     setQuality('bad');
+
     // eslint-disable-next-line react-hooks/immutability
     user.issues.audioFallbacks += 1;
   }, [user]);

@@ -60,7 +60,7 @@ describe('SpeakingDetector', () => {
 
   it('should detect speaking while muted and turn off the notification 3 seconds later', async () => {
     const speakingDetector = new SpeakingDetector({ selectedMicrophoneId: '132322' });
-    speakingDetector.turnSpeakingDetectorOn();
+    void speakingDetector.turnSpeakingDetectorOn();
     const isSpeakingDetectorSpy = vi.fn();
     const isSpeakingDetectorOffSpy = vi.fn();
     const waitForIsSpeakingWhileMuted = waitForEvent(

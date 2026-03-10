@@ -22,13 +22,17 @@ const runCommand = (command: string) => {
   execSync(command, { stdio: 'inherit' });
 };
 
+const runCommandWithVcrEnv = (command: string) => {
+  runCommand(`. ./vcrBuild.env.sh && ${command}`);
+};
+
 /**
  * Runs all frontend unit tests using Vitest.
  * Executes the nx test target for the frontend project.
  */
 const runAllTests = () => {
   console.log('\n🤖 Running all frontend tests...\n');
-  runCommand('nx test frontend');
+  runCommandWithVcrEnv('nx test frontend');
 };
 
 /**
@@ -37,7 +41,7 @@ const runAllTests = () => {
  */
 const runSpecificTest = (testFilePath: string) => {
   console.log(`\n🤖 Running specific test: ${testFilePath}\n`);
-  runCommand(
+  runCommandWithVcrEnv(
     `vitest --root frontend --config vite.config.ts --reporter=verbose --no-coverage --bail=1 --run ${testFilePath}`
   );
 };
@@ -51,9 +55,7 @@ const runWatch = (testFilePath?: string) => {
   const target = testFilePath ? `file: ${testFilePath}` : 'all tests';
   console.log(`\n👀 Watch mode activated for ${target}\n`);
   const testArg = testFilePath ? ` ${testFilePath}` : '';
-  runCommand(
-    `bash -c 'source ./vcrBuild.env.sh && vitest --root frontend --config vite.config.ts${testArg}'`
-  );
+  runCommandWithVcrEnv(`vitest --root frontend --config vite.config.ts${testArg}`);
 };
 
 /**
@@ -65,7 +67,7 @@ const runDebug = (testNameOrPath?: string) => {
   const target = testNameOrPath ? `test: ${testNameOrPath}` : 'all tests';
   console.log(`\n🐛 Debug mode activated for ${target}\n`);
   const testArg = testNameOrPath ? ` ${testNameOrPath}` : '';
-  runCommand(
+  runCommandWithVcrEnv(
     `vitest --disableConsoleIntercept=true --silent=false --no-file-parallelism --inspect-brk --root frontend --config vite.config.ts --no-coverage${testArg}`
   );
 };
@@ -79,13 +81,13 @@ const runCoverage = (testFilePath?: string) => {
   const target = testFilePath ? `file: ${testFilePath}` : 'all tests';
   console.log(`\n📊 Coverage mode activated for ${target}\n`);
   if (testFilePath) {
-    runCommand(
+    runCommandWithVcrEnv(
       `vitest --root frontend --config vite.config.ts --reporter=verbose --coverage --bail=1 --run ${testFilePath}`
     );
     return;
   }
 
-  runCommand('nx test frontend --configuration=coverage');
+  runCommandWithVcrEnv('nx test frontend --configuration=coverage');
 };
 
 /**

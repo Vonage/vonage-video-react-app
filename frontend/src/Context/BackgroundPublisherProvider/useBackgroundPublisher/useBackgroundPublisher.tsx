@@ -150,7 +150,7 @@ const useBackgroundPublisher = (
     if (!deviceId || !backgroundPublisherRef.current) {
       return;
     }
-    backgroundPublisherRef.current.setVideoSource(deviceId);
+    void backgroundPublisherRef.current.setVideoSource(deviceId);
     setLocalVideoSource(deviceId);
   }, []);
 

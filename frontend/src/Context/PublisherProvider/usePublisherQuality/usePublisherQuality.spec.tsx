@@ -33,21 +33,21 @@ describe('usePublisherQuality', () => {
   it('should set quality to good on videoEnabled event', async () => {
     const mockPublisher = new EventEmitter();
     const { result } = renderHook(() => usePublisherQuality(mockPublisher as unknown as Publisher));
-    act(() => mockPublisher.emit('videoEnabled'));
+    void act(() => mockPublisher.emit('videoEnabled'));
     await waitFor(() => expect(result.current).toBe('good'));
   });
 
   it('should set quality to good on videoDisableWarningLifted event', async () => {
     const mockPublisher = new EventEmitter();
     const { result } = renderHook(() => usePublisherQuality(mockPublisher as unknown as Publisher));
-    act(() => mockPublisher.emit('videoDisableWarningLifted'));
+    void act(() => mockPublisher.emit('videoDisableWarningLifted'));
     await waitFor(() => expect(result.current).toBe('good'));
   });
 
   it('should set quality to good on videoDisabled event', async () => {
     const mockPublisher = new EventEmitter();
     const { result } = renderHook(() => usePublisherQuality(mockPublisher as unknown as Publisher));
-    act(() => mockPublisher.emit('videoDisabled'));
+    void act(() => mockPublisher.emit('videoDisabled'));
     await waitFor(() => expect(result.current).toBe('bad'));
     expect(useUserContext().user.issues.audioFallbacks).toBe(1);
   });
@@ -55,7 +55,7 @@ describe('usePublisherQuality', () => {
   it('should set quality to good on videoDisableWarning event', async () => {
     const mockPublisher = new EventEmitter();
     const { result } = renderHook(() => usePublisherQuality(mockPublisher as unknown as Publisher));
-    act(() => mockPublisher.emit('videoDisableWarning'));
+    void act(() => mockPublisher.emit('videoDisableWarning'));
     await waitFor(() => expect(result.current).toBe('poor'));
   });
 });

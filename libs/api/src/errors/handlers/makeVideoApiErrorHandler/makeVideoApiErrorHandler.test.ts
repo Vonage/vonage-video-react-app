@@ -6,6 +6,10 @@ describe('makeVideoApiErrorHandler', () => {
 
   const handler = makeVideoApiErrorHandler(safeMessage);
 
+  beforeEach(() => {
+    process.env.NODE_ENV = 'development';
+  });
+
   it('should correctly handle string errors', () => {
     const src = 'This is a string error';
     const error = handler(src).exportSafely();

@@ -52,7 +52,7 @@ function convertSxToStyle(sx?: SxProps<Theme>, style?: CSSProperties): CSSProper
 function captureRefComponent(element: HTMLElement | null) {
   if (!element || hasMediaProcessorSupport()) return;
 
-  customElements.whenDefined('vwc-icon').then(() => {
+  void customElements.whenDefined('vwc-icon').then(() => {
     const elementWithShadow = element as HTMLElement & { shadowRoot: ShadowRoot | null };
     const figure = elementWithShadow.shadowRoot?.querySelector('figure');
     if (figure) {

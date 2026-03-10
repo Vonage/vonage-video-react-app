@@ -30,7 +30,6 @@ frontend/src/test/
 │   ├── makeUserProviderWrapper.ts
 │   ├── makeSessionProviderWrapper.ts
 │   ├── makePublisherProviderWrapper.ts
-│   ├── makeAppConfigProviderWrapper.ts
 │   ├── makeAudioOutputProviderWrapper.ts
 │   ├── makePreviewPublisherProviderWrapper.ts
 │   ├── makeBackgroundPublisherProviderWrapper.ts
@@ -78,10 +77,9 @@ vi.mock('@hooks/useUserContext');
 
 ## Available Wrappers
 
-- `makePublisherProviderWrapper()` - Publisher + Session + User + AppConfig
-- `makeSessionProviderWrapper()` - Session + User + AppConfig  
+- `makePublisherProviderWrapper()` - Publisher + Session + User
+- `makeSessionProviderWrapper()` - Session + User  
 - `makeUserProviderWrapper()` - User only
-- `makeAppConfigProviderWrapper()` - AppConfig only
 - `makeAudioOutputProviderWrapper()` - AudioOutput only
 - `makePreviewPublisherProviderWrapper()` - PreviewPublisher only
 - `makeBackgroundPublisherProviderWrapper()` - BackgroundPublisher only
@@ -242,7 +240,7 @@ Choose the smallest wrapper needed for your test.
 // ✅ Component only needs user context
 const { UserProviderWrapper } = makeUserProviderWrapper({...});
 
-// ✅ Component needs session + user + appConfig
+// ✅ Component needs session + user
 const { SessionProviderWrapper } = makeSessionProviderWrapper({...});
 ```
 
