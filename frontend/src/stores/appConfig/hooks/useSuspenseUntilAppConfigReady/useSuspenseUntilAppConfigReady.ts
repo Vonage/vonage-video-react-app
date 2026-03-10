@@ -9,7 +9,7 @@ import appConfigStore from '../../appConfigStore';
 const useSuspenseUntilAppConfigReady = (): void => {
   const observable = appConfigStore.use.observable(({ isAppConfigLoaded }) => isAppConfigLoaded);
 
-  useSuspenseMemo(() => {
+  void useSuspenseMemo(() => {
     const isAppConfigLoaded = observable.getState();
 
     if (isAppConfigLoaded) {
