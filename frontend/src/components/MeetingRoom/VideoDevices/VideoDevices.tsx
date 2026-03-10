@@ -4,6 +4,7 @@ import useTheme from '@ui/theme';
 import { Box, Typography, MenuList, MenuItem, Tooltip, BoxProps } from '@mui/material';
 import VividIcon from '@components/VividIcon';
 import { useDistinctLabelMediaDevices } from '@ui/hooks';
+import mergeDefaultDeviceLabel from '@web/helpers/mergeDefaultDeviceLabel';
 import mediaDevices$ from '@core/stores/devices';
 import { env } from '../../../env';
 
@@ -30,11 +31,15 @@ const VideoDevices = ({
   // Use store's selection as source of truth, not publisher.getVideoSource() which can be stale
   const selectedDeviceId = mediaDevices$.useDeviceId('videoinput');
 
-  const devicesAvailable = useDistinctLabelMediaDevices('videoinput', (devices) =>
-    devices.map((device) => ({
-      ...device,
-      label: device.label ?? t('unknown.device'),
-    }))
+  const { devices: devicesAvailable, systemDefaultDeviceId } = useDistinctLabelMediaDevices(
+    'videoinput',
+    (devices) => {
+      const withFallback = devices.map((d) => ({ ...d, label: d.label ?? t('unknown.device') }));
+      return mergeDefaultDeviceLabel({
+        devices: withFallback,
+        systemDefaultLabel: t('devices.audio.defaultLabel'),
+      });
+    }
   );
 
   const handleChangeVideoSource = (deviceId: string) => {
@@ -61,7 +66,9 @@ const VideoDevices = ({
         </Box>
         <MenuList id="split-button-menu">
           {devicesAvailable.map((option) => {
-            const isSelected = option.deviceId === selectedDeviceId;
+            const isSelected =
+              option.deviceId === selectedDeviceId ||
+              (selectedDeviceId === 'default' && option.deviceId === systemDefaultDeviceId);
             return (
               <MenuItem
                 key={option.deviceId}

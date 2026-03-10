@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import useTheme from '@ui/theme';
 import VividIcon from '@components/VividIcon';
 import { useDistinctLabelMediaDevices } from '@ui/hooks';
+import mergeDefaultDeviceLabel from '@web/helpers/mergeDefaultDeviceLabel';
 import mediaDevices$ from '@core/stores/devices';
 import { env } from '../../../env';
 
@@ -26,11 +27,15 @@ const InputAudioDevices = ({ handleToggle }: InputAudioDevicesProps): ReactEleme
   // Use store's selection as source of truth, not publisher.getAudioSource() which can be stale
   const selectedDeviceId = mediaDevices$.useDeviceId('audioinput');
 
-  const audioInputDevices = useDistinctLabelMediaDevices('audioinput', (devices) =>
-    devices.map((device) => ({
-      ...device,
-      label: device.label || t('unknown.device'),
-    }))
+  const { devices: audioInputDevices, systemDefaultDeviceId } = useDistinctLabelMediaDevices(
+    'audioinput',
+    (devices) => {
+      const withFallback = devices.map((d) => ({ ...d, label: d.label || t('unknown.device') }));
+      return mergeDefaultDeviceLabel({
+        devices: withFallback,
+        systemDefaultLabel: t('devices.audio.defaultLabel'),
+      });
+    }
   );
 
   const handleChangeAudioSource = (deviceId: string) => {
@@ -56,7 +61,9 @@ const InputAudioDevices = ({ handleToggle }: InputAudioDevicesProps): ReactEleme
         </Box>
         <MenuList>
           {audioInputDevices.map((device) => {
-            const isSelected = device.deviceId === selectedDeviceId;
+            const isSelected =
+              device.deviceId === selectedDeviceId ||
+              (selectedDeviceId === 'default' && device.deviceId === systemDefaultDeviceId);
             return (
               <MenuItem
                 key={device.deviceId}

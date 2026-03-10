@@ -1,17 +1,20 @@
 import { describe, it, expect } from 'vitest';
 import type { MediaDeviceInfoJSON } from '@web/types';
-import mergeDefaultAudioOutput from '.';
+import mergeDefaultDeviceLabel from '.';
 
-const makeDevice = (deviceId: string, label: string): MediaDeviceInfoJSON =>
-  ({ deviceId, label, kind: 'audiooutput', groupId: '' }) as MediaDeviceInfoJSON;
+const makeDevice = (
+  deviceId: string,
+  label: string,
+  kind: MediaDeviceKind = 'audiooutput'
+): MediaDeviceInfoJSON => ({ deviceId, label, kind, groupId: '' }) as MediaDeviceInfoJSON;
 
 const SYSTEM_DEFAULT_LABEL = 'System Default';
 
-describe('mergeDefaultAudioOutput', () => {
+describe('mergeDefaultDeviceLabel', () => {
   it('returns devices unchanged when no "default" device is present', () => {
     const devices = [makeDevice('abc', 'MacBook Pro Speakers'), makeDevice('def', 'USB Headset')];
 
-    const { devices: result, systemDefaultDeviceId } = mergeDefaultAudioOutput({
+    const { devices: result, systemDefaultDeviceId } = mergeDefaultDeviceLabel({
       devices,
       systemDefaultLabel: SYSTEM_DEFAULT_LABEL,
     });
@@ -27,7 +30,7 @@ describe('mergeDefaultAudioOutput', () => {
       makeDevice('def', 'USB Headset'),
     ];
 
-    const { devices: result, systemDefaultDeviceId } = mergeDefaultAudioOutput({
+    const { devices: result, systemDefaultDeviceId } = mergeDefaultDeviceLabel({
       devices,
       systemDefaultLabel: SYSTEM_DEFAULT_LABEL,
     });
@@ -47,7 +50,7 @@ describe('mergeDefaultAudioOutput', () => {
       makeDevice('abc', 'MacBook Pro Speakers'),
     ];
 
-    const { devices: result, systemDefaultDeviceId } = mergeDefaultAudioOutput({
+    const { devices: result, systemDefaultDeviceId } = mergeDefaultDeviceLabel({
       devices,
       systemDefaultLabel: SYSTEM_DEFAULT_LABEL,
     });
@@ -61,7 +64,7 @@ describe('mergeDefaultAudioOutput', () => {
   it('removes the "default" device when its label does not follow the "Default - X" format', () => {
     const devices = [makeDevice('default', 'Default'), makeDevice('abc', 'MacBook Pro Speakers')];
 
-    const { devices: result, systemDefaultDeviceId } = mergeDefaultAudioOutput({
+    const { devices: result, systemDefaultDeviceId } = mergeDefaultDeviceLabel({
       devices,
       systemDefaultLabel: SYSTEM_DEFAULT_LABEL,
     });
@@ -74,7 +77,7 @@ describe('mergeDefaultAudioOutput', () => {
   it('preserves the "default" device renamed to the translated label when it is the only device', () => {
     const devices = [makeDevice('default', 'Default - MacBook Pro Speakers')];
 
-    const { devices: result, systemDefaultDeviceId } = mergeDefaultAudioOutput({
+    const { devices: result, systemDefaultDeviceId } = mergeDefaultDeviceLabel({
       devices,
       systemDefaultLabel: SYSTEM_DEFAULT_LABEL,
     });
@@ -91,7 +94,7 @@ describe('mergeDefaultAudioOutput', () => {
       makeDevice('abc', 'MacBook Pro Speakers'),
     ];
 
-    const { devices: result } = mergeDefaultAudioOutput({
+    const { devices: result } = mergeDefaultDeviceLabel({
       devices,
       systemDefaultLabel: 'Système par défaut',
     });
@@ -107,7 +110,7 @@ describe('mergeDefaultAudioOutput', () => {
       makeDevice('abc', 'MacBook Pro Speakers'),
     ];
 
-    const { devices: result, systemDefaultDeviceId } = mergeDefaultAudioOutput({
+    const { devices: result, systemDefaultDeviceId } = mergeDefaultDeviceLabel({
       devices,
       systemDefaultLabel: SYSTEM_DEFAULT_LABEL,
     });
@@ -125,12 +128,44 @@ describe('mergeDefaultAudioOutput', () => {
       makeDevice('def', 'Bluetooth Speaker'),
     ];
 
-    const { devices: result, systemDefaultDeviceId } = mergeDefaultAudioOutput({
+    const { devices: result, systemDefaultDeviceId } = mergeDefaultDeviceLabel({
       devices,
       systemDefaultLabel: SYSTEM_DEFAULT_LABEL,
     });
 
     expect(result.every((d) => !d.label.includes('System Default'))).toBe(true);
     expect(systemDefaultDeviceId).toBeNull();
+  });
+
+  it('works for audioinput devices', () => {
+    const devices = [
+      makeDevice('default', 'Default - MacBook Pro Microphone', 'audioinput'),
+      makeDevice('abc', 'MacBook Pro Microphone', 'audioinput'),
+    ];
+
+    const { devices: result, systemDefaultDeviceId } = mergeDefaultDeviceLabel({
+      devices,
+      systemDefaultLabel: SYSTEM_DEFAULT_LABEL,
+    });
+
+    expect(result).toHaveLength(1);
+    expect(result[0].label).toBe('MacBook Pro Microphone - System Default');
+    expect(systemDefaultDeviceId).toBe('abc');
+  });
+
+  it('works for videoinput devices', () => {
+    const devices = [
+      makeDevice('default', 'Default - FaceTime HD Camera', 'videoinput'),
+      makeDevice('abc', 'FaceTime HD Camera', 'videoinput'),
+    ];
+
+    const { devices: result, systemDefaultDeviceId } = mergeDefaultDeviceLabel({
+      devices,
+      systemDefaultLabel: SYSTEM_DEFAULT_LABEL,
+    });
+
+    expect(result).toHaveLength(1);
+    expect(result[0].label).toBe('FaceTime HD Camera - System Default');
+    expect(systemDefaultDeviceId).toBe('abc');
   });
 });

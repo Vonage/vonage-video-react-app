@@ -8,7 +8,7 @@ import MenuList from '@mui/material/MenuList';
 import MenuItem from '@mui/material/MenuItem';
 import VividIcon from '@components/VividIcon';
 import { useDistinctLabelMediaDevices } from '@ui/hooks';
-import mergeDefaultAudioOutput from '@web/helpers/mergeDefaultAudioOutput';
+import mergeDefaultDeviceLabel from '@web/helpers/mergeDefaultDeviceLabel';
 import { isSinkIdSupported } from '@web/platform';
 import mediaDevices$ from '@core/stores/devices';
 import useTheme from '@ui/theme';
@@ -37,7 +37,7 @@ const OutputAudioDevices = ({ handleToggle }: OutputAudioDevicesProps): ReactEle
     'audiooutput',
     (devices) =>
       isSinkIdSupported()
-        ? mergeDefaultAudioOutput({ devices, systemDefaultLabel: t('devices.audio.defaultLabel') })
+        ? mergeDefaultDeviceLabel({ devices, systemDefaultLabel: t('devices.audio.defaultLabel') })
         : {
             devices: [
               {

@@ -6,7 +6,7 @@ import Menu from '@mui/material/Menu';
 import VividIcon from '@components/VividIcon';
 import Box from '@mui/material/Box';
 import cleanAndDedupeDeviceLabels from '@utils/cleanAndDedupeDeviceLabels/cleanAndDedupeDeviceLabels';
-import mergeDefaultAudioOutput from '@web/helpers/mergeDefaultAudioOutput';
+import mergeDefaultDeviceLabel from '@web/helpers/mergeDefaultDeviceLabel';
 import SoundTest from '../../SoundTest';
 import { isGetActiveAudioOutputDeviceSupported } from '@utils/util';
 import mediaDevices$ from '@core/stores/devices';
@@ -52,14 +52,11 @@ const MenuDevices = ({
 
   const { devices: processedDevices, systemDefaultDeviceId } = useMemo(() => {
     const cleaned = cleanAndDedupeDeviceLabels(devices);
-    if (mediaDeviceKind === 'audiooutput') {
-      return mergeDefaultAudioOutput({
-        devices: cleaned,
-        systemDefaultLabel: t('devices.audio.defaultLabel'),
-      });
-    }
-    return { devices: cleaned, systemDefaultDeviceId: null };
-  }, [devices, mediaDeviceKind, t]);
+    return mergeDefaultDeviceLabel({
+      devices: cleaned,
+      systemDefaultLabel: t('devices.audio.defaultLabel'),
+    });
+  }, [devices, t]);
 
   return (
     <Menu

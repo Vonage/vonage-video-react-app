@@ -1,6 +1,6 @@
 import type { MediaDeviceInfoJSON } from '@web/types';
 
-export type MergeDefaultAudioOutputResult = {
+export type MergeDefaultDeviceLabelResult = {
   devices: MediaDeviceInfoJSON[];
   /**
    * The deviceId of the real device that was matched to the "default" virtual device.
@@ -10,26 +10,27 @@ export type MergeDefaultAudioOutputResult = {
   systemDefaultDeviceId: string | null;
 };
 
-type MergeDefaultAudioOutputArgs = {
+type MergeDefaultDeviceLabelArgs = {
   devices: MediaDeviceInfoJSON[];
   systemDefaultLabel: string;
 };
 
 /**
- * Merges the Chrome "default" audio output device into the matching actual device.
+ * Merges the Chrome/Safari "default" device into the matching actual device.
  *
- * Chrome exposes a virtual device with deviceId "default" and a label like
- * "Default - MacBook Pro Speakers (Built-in)" alongside the real device entry.
+ * Chrome and Safari expose a virtual device with deviceId "default" and a label like
+ * "Default - MacBook Pro Speakers (Built-in)" alongside the real device entry, for all
+ * device kinds (audioinput, audiooutput, videoinput).
  * This function removes that virtual entry and appends a suffix (e.g. "- System Default")
  * to the matched actual device's label, avoiding the duplicated entry in the UI.
  *
  * If no real devices are present (only the virtual "default" exists), the default
  * entry is preserved and renamed to the translated system default label.
  */
-const mergeDefaultAudioOutput = ({
+const mergeDefaultDeviceLabel = ({
   devices,
   systemDefaultLabel,
-}: MergeDefaultAudioOutputArgs): MergeDefaultAudioOutputResult => {
+}: MergeDefaultDeviceLabelArgs): MergeDefaultDeviceLabelResult => {
   const defaultDevice = devices.find((d) => d.deviceId === 'default');
 
   if (!defaultDevice) {
@@ -45,7 +46,7 @@ const mergeDefaultAudioOutput = ({
     };
   }
 
-  // Chrome labels the default device as "Default - <actual device name>".
+  // Chrome/Safari labels the default device as "Default - <actual device name>".
   // Use exec + slice instead of a capture group to avoid super-linear backtracking.
   const label = defaultDevice.label ?? '';
   const prefixMatch = /^Default\s*-\s*/i.exec(label);
@@ -59,8 +60,7 @@ const mergeDefaultAudioOutput = ({
   const mergedDevices = nonDefaultDevices.map((d) =>
     d.label === actualLabel ? { ...d, label: `${d.label} - ${systemDefaultLabel}` } : d
   );
-
   return { devices: mergedDevices, systemDefaultDeviceId: matchedDevice?.deviceId ?? null };
 };
 
-export default mergeDefaultAudioOutput;
+export default mergeDefaultDeviceLabel;
