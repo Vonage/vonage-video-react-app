@@ -20,9 +20,9 @@ const VideoStatsOverlay = (): ReactElement => {
   return (
     <div
       data-testid="video-stats-overlay"
-      className="rounded bg-black/60 px-2 py-0.5 pointer-events-none"
+      className="rounded bg-vera-dark-grey-opacity px-2 py-0.5 pointer-events-none"
     >
-      <span className="text-white text-[0.7rem] font-medium leading-[1.4] tracking-[0.02em]">
+      <span className="text-vera-accent text-[0.7rem] font-medium leading-[1.4] tracking-[0.02em]">
         {label}
       </span>
     </div>

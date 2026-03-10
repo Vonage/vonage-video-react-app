@@ -24,27 +24,6 @@ const mockPublisher = {
   }),
 } as unknown as Publisher;
 
-function render(ui: ReactElement) {
-  const { wrapper: roomWrapper, ...context } = makeTestProvider(
-    [providers.user, providers.previewPublisher],
-    {
-      userContext: undefined,
-      previewPublisherContext: {
-        __onCreated: (ctx) => {
-          ctx.publisher = mockPublisher;
-        },
-      },
-    }
-  );
-
-  const wrapper = composeProviders(SuspenseBoundary, roomWrapper);
-
-  return {
-    ...context,
-    ...renderBase(ui, { wrapper }),
-  };
-}
-
 describe('VideoStatsOverlay', () => {
   beforeEach(() => {
     vi.clearAllMocks();
@@ -107,3 +86,24 @@ describe('VideoStatsOverlay', () => {
     expect(await screen.findByText(/1080p/)).toBeInTheDocument();
   });
 });
+
+function render(ui: ReactElement) {
+  const { wrapper: roomWrapper, ...context } = makeTestProvider(
+    [providers.user, providers.previewPublisher],
+    {
+      userContext: undefined,
+      previewPublisherContext: {
+        __onCreated: (ctx) => {
+          ctx.publisher = mockPublisher;
+        },
+      },
+    }
+  );
+
+  const wrapper = composeProviders(SuspenseBoundary, roomWrapper);
+
+  return {
+    ...context,
+    ...renderBase(ui, { wrapper }),
+  };
+}
