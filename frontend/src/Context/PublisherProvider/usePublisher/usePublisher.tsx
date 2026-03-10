@@ -15,6 +15,7 @@ import usePublisherOptions from '../usePublisherOptions';
 import useSessionContext from '../../../hooks/useSessionContext';
 import applyBackgroundFilter from '../../../utils/backgroundFilter/applyBackgroundFilter/applyBackgroundFilter';
 import idempotentCallbackWithRetry from '@common/execution/idempotentCallbackWithRetry';
+import frontendLogger from '../../../logger';
 
 type PublisherStreamCreatedEvent = Event<'streamCreated', Publisher> & {
   stream: Stream;
@@ -164,6 +165,8 @@ const usePublisher = (initialValue: PublisherContextInitialValue = {}): Publishe
   }, []);
 
   const handleDestroyed = useCallback(() => {
+    frontendLogger.log('usePublisher: handle destroyed');
+
     publisherRef.current = null;
   }, []);
 
@@ -185,6 +188,11 @@ const usePublisher = (initialValue: PublisherContextInitialValue = {}): Publishe
   }, []);
 
   const handleStreamCreated = useCallback((e: PublisherStreamCreatedEvent) => {
+    frontendLogger.log('usePublisher: handle stream created', {
+      streamId: e.stream?.streamId,
+      streamHasAudio: e.stream?.hasAudio,
+      streamHasVideo: e.stream?.hasVideo,
+    });
     setIsPublishing(true);
     setStream(e.stream);
     // Reset the flag now that the stream is actually established
@@ -196,6 +204,11 @@ const usePublisher = (initialValue: PublisherContextInitialValue = {}): Publishe
   }, []);
 
   const handleStreamDestroyed = useCallback(() => {
+    frontendLogger.log('usePublisher: handle stream destroyed', {
+      reconnecting: reconnectingRef.current,
+      hasPublisher: !!publisherRef.current,
+      hasStream: !!publisherRef.current?.stream,
+    });
     setStream(null);
     setIsPublishing(false);
 
@@ -205,6 +218,11 @@ const usePublisher = (initialValue: PublisherContextInitialValue = {}): Publishe
       isInitializingPublisherRef.current;
 
     if (shouldPreservePublisher) {
+      frontendLogger.log('usePublisher: handle stream destroyed - preserving publisher', {
+        reconnecting: reconnectingRef.current,
+        isPublishingToSession: isPublishingToSessionRef.current,
+        isInitializingPublisher: isInitializingPublisherRef.current,
+      });
       isPublishingToSessionRef.current = false;
       return;
     }
@@ -309,9 +327,12 @@ const usePublisher = (initialValue: PublisherContextInitialValue = {}): Publishe
         addPublisherListeners(publisher);
         publisherRef.current = publisher;
 
+        frontendLogger.log('usePublisher: initialize local publisher');
+
         // NOTE: isInitializingPublisherRef.current will be reset in handleAccessAllowed or handleAccessDenied
         // NOT here, because getUserMedia is async and we need to keep the lock until media access is granted/denied
       } catch (error) {
+        frontendLogger.reportError(error, { source: 'usePublisher: initialize local publisher' });
         isInitializingPublisherRef.current = false;
         if (error instanceof Error) {
           console.error(error.stack);
@@ -361,8 +382,10 @@ const usePublisher = (initialValue: PublisherContextInitialValue = {}): Publishe
         retries: 2,
         delayMs: 500,
       });
+      frontendLogger.log('usePublisher: publish success');
       // Don't reset isPublishingToSessionRef here - wait for streamCreated event
     } catch (err: unknown) {
+      frontendLogger.reportError(err, { source: 'usePublisher: publish' });
       // Reset the flag on error since we won't get streamCreated
       isPublishingToSessionRef.current = false;
 
@@ -412,6 +435,7 @@ const usePublisher = (initialValue: PublisherContextInitialValue = {}): Publishe
   useEffect(() => {
     const exceptionHandler = (exceptionEvent: ExceptionEvent) => {
       if (exceptionEvent.code === 1500) {
+        frontendLogger.log('usePublisher: exception 1500', { code: exceptionEvent.code });
         consecutivePublishingFailureCountRef.current += 1;
 
         const isBrowserOnline = (() => {
