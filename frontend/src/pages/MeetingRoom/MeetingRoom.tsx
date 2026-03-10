@@ -93,6 +93,11 @@ const MeetingRoom = (): ReactElement => {
   const bypass = searchParams.get('bypass') === 'true' || env.BYPASS_WAITING_ROOM; // Testing purpose
 
   useMountEffect(() => {
+    if (!isValidRoomName(roomName)) {
+      navigate(`/waiting-room/${roomName}`);
+      return;
+    }
+
     if (!hasValidUsername && !bypass) {
       navigate(`/waiting-room/${roomName}`);
     }
