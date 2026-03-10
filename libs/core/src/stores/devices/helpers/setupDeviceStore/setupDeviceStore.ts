@@ -30,7 +30,7 @@ function setupDeviceStore(api: unknown) {
   // make accessible to the actions the vanilla getUserMedia function
   meta.__getUserMedia = __getUserMedia.bind(navigator.mediaDevices);
 
-  void attempt(() => {
+  attempt(() => {
     void setVonageAudioOutputDevice(api.getState().audiooutput!);
   });
 

@@ -35,7 +35,7 @@ loggerRouter.post('/', (req: Request, res: Response) => {
   }
 
   const event = parsed.data;
-  void attempt(() => forward(event), console.error);
+  attempt(() => forward(event), console.error);
 
   return res.sendStatus(204);
 });

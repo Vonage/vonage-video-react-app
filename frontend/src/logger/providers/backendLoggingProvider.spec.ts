@@ -21,7 +21,7 @@ describe('BackendLoggingProvider', () => {
   >;
 
   beforeEach(() => {
-    fetchSpy = vi.spyOn(global, 'fetch').mockResolvedValue({ ok: true } as Response);
+    fetchSpy = vi.spyOn(globalThis, 'fetch').mockResolvedValue({ ok: true } as Response);
     Object.defineProperty(navigator, 'sendBeacon', { value: undefined, configurable: true });
   });
 

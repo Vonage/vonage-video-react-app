@@ -19,7 +19,7 @@ describe('BackendLogTransport', () => {
   let sendBeaconSpy!: ReturnType<typeof vi.fn>;
 
   beforeEach(() => {
-    fetchSpy = vi.spyOn(global, 'fetch').mockResolvedValue({ ok: true } as Response);
+    fetchSpy = vi.spyOn(globalThis, 'fetch').mockResolvedValue({ ok: true } as Response);
     sendBeaconSpy = vi.fn().mockReturnValue(true);
     Object.defineProperty(navigator, 'sendBeacon', { value: sendBeaconSpy, configurable: true });
   });

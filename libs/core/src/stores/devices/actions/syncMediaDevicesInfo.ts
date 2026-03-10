@@ -44,7 +44,7 @@ function syncMediaDevicesInfo(this: DevicesAPI['actions']) {
           // reconcile audio output device with Vonage SDK if it changed
           if (updates?.audiooutput && isSinkIdSupported()) {
             // if the audio device changed, reconcileSelection with Vonage SDK
-            void attempt(() => setVonageAudioOutputDevice(updates.audiooutput!));
+            attempt(() => setVonageAudioOutputDevice(updates.audiooutput!));
           }
 
           resolve(mediaDeviceInfo);

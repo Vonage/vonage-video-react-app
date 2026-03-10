@@ -17,7 +17,7 @@ describe('attempt', () => {
     expect(onError).toHaveBeenCalledWith(error);
   });
 
-  it('should handle asynchronous function with error', async () => {
+  it('should handle asynchronous function with error', () => {
     const error = new Error('async error');
 
     const mockCallback = vi.fn((): Promise<void> => {
@@ -26,7 +26,7 @@ describe('attempt', () => {
 
     const onError = vi.fn();
 
-    await attempt(() => mockCallback(), onError);
+    attempt(() => mockCallback(), onError);
 
     expect(mockCallback).toHaveBeenCalledTimes(1);
     expect(onError).toHaveBeenCalledWith(error);

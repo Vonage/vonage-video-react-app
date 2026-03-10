@@ -1,7 +1,7 @@
 import { afterAll, beforeAll, beforeEach, describe, expect, it, jest } from '@jest/globals';
 import axios from 'axios';
 import request from 'supertest';
-import { Server } from 'http';
+import { Server } from 'node:http';
 import mockOpentokConfig from '../helpers/__mocks__/config';
 
 jest.mock('../helpers/config', mockOpentokConfig);
