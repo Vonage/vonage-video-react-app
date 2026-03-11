@@ -226,7 +226,7 @@ This will start the Storybook dev server at [http://localhost:6007](http://local
 
 ## UI Customization
 
-The app's look and feel is driven by a **design token system**. Tokens are TypeScript source files that define colors, typography, and shape values. When you edit them and regenerate, the changes propagate consistently through both the MUI theme and the Tailwind CSS configuration used across the entire interface.
+The app's look and feel is driven by a **design token system**. Tokens are the building blocks of the UI theme and are defined in TypeScript source files. When you edit them and regenerate, the changes propagate consistently through both the MUI theme and the Tailwind CSS configuration used across the entire interface.
 
 ### Token files
 
