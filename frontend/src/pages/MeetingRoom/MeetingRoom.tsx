@@ -24,6 +24,7 @@ import useUserContext from '../../hooks/useUserContext';
 import { env } from '../../env';
 import useMountEffect from '@web/hooks/useMountEffect';
 import classNames from 'classnames';
+import ErrorPage from '../ErrorBoundary/ErrorPage';
 
 /**
  * MeetingRoom Component
@@ -93,11 +94,6 @@ const MeetingRoom = (): ReactElement => {
   const bypass = searchParams.get('bypass') === 'true' || env.BYPASS_WAITING_ROOM; // Testing purpose
 
   useMountEffect(() => {
-    if (!isValidRoomName(roomName)) {
-      navigate(`/waiting-room/${roomName}`);
-      return;
-    }
-
     if (!hasValidUsername && !bypass) {
       navigate(`/waiting-room/${roomName}`);
     }
@@ -150,6 +146,13 @@ const MeetingRoom = (): ReactElement => {
   useRedirectOnPublisherError({ publishingError, reconnecting });
 
   useRedirectOnSubscriberError({ subscriberError: subscriptionError, reconnecting });
+
+  const hasValidRoomName = isValidRoomName(roomName);
+  const invalidRoomNameErrorMessage = `The URL contains special characters ${roomName}, please insert the correct URL.`;
+
+  if (!hasValidRoomName) {
+    return <ErrorPage error={new Error(invalidRoomNameErrorMessage)} />;
+  }
 
   const isRecording = !!archiveId;
 
