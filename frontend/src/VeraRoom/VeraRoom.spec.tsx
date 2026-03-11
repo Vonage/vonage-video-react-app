@@ -1,17 +1,20 @@
 import { render, screen } from '@testing-library/react';
-import { describe, it, expect, beforeAll } from 'vitest';
+import { describe, it, expect, beforeEach } from 'vitest';
 import bridge$ from './stores/bridge';
 import VeraRoom from './VeraRoom';
+import { setupWindowNavigatorMock } from '@web-test/fixtures';
 
 const renderWithBridge = (ui: React.ReactElement) =>
   render(<bridge$.Provider>{ui}</bridge$.Provider>);
 
-beforeAll(() => {
-  Object.defineProperty(navigator, 'permissions', {
-    value: {
-      query: () => Promise.resolve({ state: 'granted', addEventListener: () => {} }),
+beforeEach(() => {
+  setupWindowNavigatorMock({
+    permissions: {
+      query: Promise.resolve({
+        state: 'granted',
+        addEventListener: () => {},
+      } as unknown as PermissionStatus),
     },
-    writable: true,
   });
 });
 

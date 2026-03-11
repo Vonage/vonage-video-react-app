@@ -1,13 +1,10 @@
 import { waitFor, renderHook as renderHookBase } from '@testing-library/react';
-import { describe, it, expect, vi, beforeEach, afterEach, type Mock } from 'vitest';
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import useMeetingRoom from '../useMeetingRoom';
 import { makeTestProvider, ProviderOptions, providers } from '@test/providers';
 import MemoryRouter from '@test/RouterWrapper';
 import { DEVICE_ACCESS_STATUS } from '@utils/constants';
 import { env } from '../../env';
-import useSessionContext from '../useSessionContext';
-import usePublisherContext from '../usePublisherContext';
-import useUserContext from '../useUserContext';
 
 const mockNavigate = vi.fn();
 const mockLocation = { search: '' };
@@ -38,68 +35,19 @@ vi.mock('../useScreenShare', () => ({
   }),
 }));
 
-vi.mock('../useSessionContext');
-vi.mock('../usePublisherContext');
-vi.mock('../useUserContext');
-
-const mockJoinRoom = vi.fn();
-const mockDisconnect = vi.fn();
-const mockUseSessionContext = useSessionContext as Mock;
-const mockUsePublisherContext = usePublisherContext as Mock;
-const mockUseUserContext = useUserContext as Mock;
-
-const mockInitializeLocalPublisher = vi.fn();
-const mockPublish = vi.fn();
-const mockInitBackgroundLocalPublisher = vi.fn();
-
 vi.mock('../useBackgroundPublisherContext', () => ({
   default: () => ({
-    initBackgroundLocalPublisher: mockInitBackgroundLocalPublisher,
+    initBackgroundLocalPublisher: vi.fn(),
     publisher: null,
     accessStatus: DEVICE_ACCESS_STATUS.ACCEPTED,
   }),
 }));
-
-const defaultSessionContext = {
-  joinRoom: mockJoinRoom,
-  subscriptionError: null,
-  subscriberWrappers: [],
-  connected: true,
-  disconnect: mockDisconnect,
-  reconnecting: false,
-  rightPanelActiveTab: null,
-  toggleChat: vi.fn(),
-  toggleParticipantList: vi.fn(),
-  toggleBackgroundEffects: vi.fn(),
-  closeRightPanel: vi.fn(),
-  toggleReportIssue: vi.fn(),
-  archiveId: null,
-};
-
-const defaultPublisherContext = {
-  publisher: null,
-  publish: mockPublish,
-  quality: null,
-  initializeLocalPublisher: mockInitializeLocalPublisher,
-  publishingError: null,
-  isVideoEnabled: true,
-  publisherOptions: { audioSource: true, videoSource: true },
-};
-
-const defaultUserContext = {
-  user: {
-    defaultSettings: { name: 'Test User' },
-  },
-};
 
 describe('useMeetingRoom', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     mockLocation.search = '';
     env.BYPASS_WAITING_ROOM = false;
-    mockUseSessionContext.mockReturnValue({ ...defaultSessionContext });
-    mockUsePublisherContext.mockReturnValue({ ...defaultPublisherContext });
-    mockUseUserContext.mockReturnValue({ ...defaultUserContext });
   });
 
   afterEach(() => {
@@ -122,18 +70,19 @@ describe('useMeetingRoom', () => {
   });
 
   it('isRecording is true when archiveId is set', async () => {
-    mockUseSessionContext.mockReturnValue({ ...defaultSessionContext, archiveId: 'archive-123' });
+    const { result } = renderHook(() => useMeetingRoom(), {
+      sessionContext: { initialValue: { archiveId: 'archive-123' } },
+    });
 
-    const { result } = renderHook(() => useMeetingRoom());
     await waitFor(() => {
       expect(result.current.isRecording).toBe(true);
     });
   });
 
   it('navigates to waiting room when username is missing and bypass is false', async () => {
-    mockUseUserContext.mockReturnValue({ user: { defaultSettings: { name: '' } } });
-
-    renderHook(() => useMeetingRoom());
+    renderHook(() => useMeetingRoom(), {
+      userContext: { value: { defaultSettings: { name: '' } } },
+    });
 
     await waitFor(() => {
       expect(mockNavigate).toHaveBeenCalledWith('/waiting-room/test-room');
@@ -142,9 +91,16 @@ describe('useMeetingRoom', () => {
 
   it('does not navigate to waiting room when bypass is true', async () => {
     mockLocation.search = '?bypass=true';
-    mockUseUserContext.mockReturnValue({ user: { defaultSettings: { name: '' } } });
+    const mockJoinRoom = vi.fn();
 
-    renderHook(() => useMeetingRoom());
+    renderHook(() => useMeetingRoom(), {
+      userContext: { value: { defaultSettings: { name: '' } } },
+      sessionContext: {
+        __interceptor: (ctx) => {
+          if (ctx) ctx.joinRoom = mockJoinRoom;
+        },
+      },
+    });
 
     await waitFor(() => {
       expect(mockJoinRoom).toHaveBeenCalledWith('test-room');
@@ -153,15 +109,15 @@ describe('useMeetingRoom', () => {
   });
 
   it('navigates to goodbye when publishingError is set and user is online', async () => {
-    mockUsePublisherContext.mockReturnValue({
-      ...defaultPublisherContext,
-      publishingError: { header: 'Publisher error', caption: 'Could not publish' },
-      publisherOptions: null,
-    });
-
     vi.spyOn(navigator, 'onLine', 'get').mockReturnValue(true);
 
-    renderHook(() => useMeetingRoom());
+    renderHook(() => useMeetingRoom(), {
+      publisherContext: {
+        initialValue: {
+          publishingError: { header: 'Publisher error', caption: 'Could not publish' },
+        },
+      },
+    });
 
     await waitFor(() => {
       expect(mockNavigate).toHaveBeenCalledWith(
@@ -177,15 +133,16 @@ describe('useMeetingRoom', () => {
   });
 
   it('does not navigate to goodbye when reconnecting is true', async () => {
-    mockUsePublisherContext.mockReturnValue({
-      ...defaultPublisherContext,
-      publishingError: { header: 'err', caption: 'desc' },
-      publisherOptions: null,
+    vi.spyOn(navigator, 'onLine', 'get').mockReturnValue(true);
+
+    renderHook(() => useMeetingRoom(), {
+      publisherContext: {
+        initialValue: {
+          publishingError: { header: 'err', caption: 'desc' },
+        },
+      },
+      sessionContext: { initialValue: { reconnecting: true } },
     });
-
-    mockUseSessionContext.mockReturnValue({ ...defaultSessionContext, reconnecting: true });
-
-    renderHook(() => useMeetingRoom());
 
     await new Promise((r) => setTimeout(r, 50));
     expect(mockNavigate).not.toHaveBeenCalledWith('/goodbye', expect.anything());
@@ -194,12 +151,25 @@ describe('useMeetingRoom', () => {
 
 type RenderOptions = {
   userContext?: ProviderOptions['UserContext'];
+  sessionContext?: ProviderOptions['SessionContext'];
+  publisherContext?: ProviderOptions['PublisherContext'];
 };
 
-function renderHook<Result>(render: () => Result, { userContext }: RenderOptions = {}) {
-  const { wrapper: ProvidersWrapper, ...context } = makeTestProvider([providers.user], {
-    userContext,
-  });
+function renderHook<Result>(
+  render: () => Result,
+  { userContext, sessionContext, publisherContext }: RenderOptions = {}
+) {
+  const { wrapper: ProvidersWrapper, ...context } = makeTestProvider(
+    [providers.user, providers.session, providers.publisher],
+    {
+      userContext: {
+        value: { defaultSettings: { name: 'Test User' } },
+        ...userContext,
+      },
+      sessionContext,
+      publisherContext,
+    }
+  );
 
   const RouterWrapper = ({ children }: { children: React.ReactNode }) => (
     <MemoryRouter initialEntries={['/meeting-room/test-room']}>

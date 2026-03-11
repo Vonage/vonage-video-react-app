@@ -1,22 +1,23 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { setupWindowNavigatorMock } from '@web-test/fixtures';
 
 // Mock CSSStyleSheet since JSDOM doesn't support replaceSync
 class MockCSSStyleSheet {
   replaceSync = vi.fn();
 }
 
-// Mock usePermissions to prevent navigator.permissions.query crash in JSDOM
-vi.mock('@hooks/usePermissions', () => ({
-  default: vi.fn(() => ({ accessStatus: null, setAccessStatus: vi.fn() })),
-}));
-
-// Apply globally for all describe blocks in this file
 beforeEach(() => {
   vi.stubGlobal('CSSStyleSheet', MockCSSStyleSheet);
-  Object.defineProperty(navigator, 'permissions', {
-    value: { query: vi.fn().mockResolvedValue({ state: 'granted' }) },
-    writable: true,
-    configurable: true,
+  setupWindowNavigatorMock({
+    mediaDevices: {
+      addEventListener: vi.fn(),
+      enumerateDevices: Promise.resolve([]),
+    },
+    permissions: {
+      query: Promise.resolve({
+        state: 'granted',
+      } as unknown as PermissionStatus),
+    },
   });
 });
 

@@ -1,6 +1,6 @@
-import { useEffect } from 'react';
 import i18n from '../../i18n';
 import bridge$ from '../stores/bridge';
+import { useMountEffect } from '@web/hooks';
 
 /**
  * Syncs the `language` bridge attribute to i18next whenever it changes.
@@ -14,12 +14,16 @@ import bridge$ from '../stores/bridge';
  * so the browser-detected language (set during i18n.init) remains active.
  */
 const useLanguageSync = () => {
-  const language = bridge$.use.select((state) => state.language);
+  const bridge = bridge$.use.api();
 
-  useEffect(() => {
-    if (!language) return;
-    void i18n.changeLanguage(language);
-  }, [language]);
+  useMountEffect(() => {
+    return bridge.subscribe(
+      ({ language }) => language,
+      (language) => {
+        void i18n.changeLanguage(language);
+      }
+    );
+  });
 };
 
 export default useLanguageSync;

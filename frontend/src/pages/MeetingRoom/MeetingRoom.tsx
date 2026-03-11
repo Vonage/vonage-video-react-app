@@ -1,5 +1,5 @@
 import type { ReactElement } from 'react';
-import Box from '@mui/material/Box';
+import Box, { BoxProps } from '@mui/material/Box';
 import ConnectionAlert from '../../components/MeetingRoom/ConnectionAlert';
 import Toolbar from '../../components/MeetingRoom/Toolbar';
 import VideoTileCanvas from '../../components/MeetingRoom/VideoTileCanvas';
@@ -10,6 +10,7 @@ import CaptionsBox from '../../components/MeetingRoom/CaptionsButton/CaptionsBox
 import CaptionsError from '../../components/MeetingRoom/CaptionsError';
 import classNames from 'classnames';
 import useMeetingRoom from '../../hooks/useMeetingRoom';
+import { twMerge } from 'tailwind-merge';
 
 /**
  * MeetingRoom Component
@@ -20,13 +21,15 @@ import useMeetingRoom from '../../hooks/useMeetingRoom';
  * - A toolbar to control user media, adjust room properties, and set viewing options.
  * @returns {ReactElement} - The meeting room.
  */
-const MeetingRoom = ({
-  className,
-  fullSize = false,
-}: {
-  className?: string;
+type MeetingRoomProps = BoxProps & {
   fullSize?: boolean;
-}): ReactElement => {
+};
+
+const MeetingRoom = ({
+  fullSize = false,
+  className,
+  // ...props
+}: MeetingRoomProps): ReactElement => {
   const {
     t,
     isSmallViewport,
@@ -55,8 +58,7 @@ const MeetingRoom = ({
     <Box
       data-testid="meetingRoom"
       className={classNames(
-        className ?? 'h-[calc(100dvh-80px)] w-screen',
-        'bg-vera-dark-background',
+        twMerge('h-[calc(100dvh-80px)] w-screen bg-vera-dark-background', className),
         {
           recording: isRecording,
         }

@@ -1,45 +1,29 @@
-import { render, screen } from '@testing-library/react';
-import { describe, it, expect, vi, beforeEach, type Mock } from 'vitest';
+import { render as renderBase, screen } from '@testing-library/react';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
+import type { ReactElement } from 'react';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import bridge$ from '../../stores/bridge';
-import useWaitingRoom from '@hooks/useWaitingRoom';
 import WaitingRoomStage from './WaitingRoomStage';
+import { makeTestProvider, providers, type ProviderOptions } from '@test/providers';
+import { DEVICE_ACCESS_STATUS } from '@utils/constants';
+import { env } from '../../../env';
 
-vi.mock('@Context/PreviewPublisherProvider', () => ({
-  PreviewPublisherProvider: ({ children }: { children: React.ReactNode }) => children,
-  PreviewPublisherContext: {},
+vi.mock('@vonage/client-sdk-video');
+vi.mock('@utils/waitUntilPlaying/waitUntilPlaying', () => ({ default: () => Promise.resolve() }));
+
+vi.mock('@hooks/usePermissions', () => ({
+  default: () => ({
+    accessStatus: DEVICE_ACCESS_STATUS.ACCEPTED,
+    setAccessStatus: vi.fn(),
+  }),
 }));
 
-vi.mock('@Context/BackgroundEffectsDialog', () => ({
-  default: {
-    Provider: ({ children }: { children: React.ReactNode }) => children,
-  },
+vi.mock('@hooks/useBackgroundPublisherContext', () => ({
+  default: () => ({
+    initBackgroundLocalPublisher: vi.fn(),
+    publisher: null,
+  }),
 }));
-
-vi.mock('@Context/PrecallNetworkTestDialog', () => ({
-  default: {
-    Provider: ({ children }: { children: React.ReactNode }) => children,
-  },
-}));
-
-vi.mock('@hooks/useWaitingRoom');
-
-const mockUseWaitingRoom = useWaitingRoom as Mock;
-
-const defaultWaitingRoomReturn = {
-  anchorEl: null,
-  openAudioInput: false,
-  openVideoInput: false,
-  openAudioOutput: false,
-  username: 'TestUser',
-  setUsername: vi.fn(),
-  accessStatus: 'accepted',
-  isRoomReady: true,
-  handleAudioInputOpen: vi.fn(),
-  handleVideoInputOpen: vi.fn(),
-  handleAudioOutputOpen: vi.fn(),
-  handleClose: vi.fn(),
-};
 
 vi.mock('@components/WaitingRoom/VideoContainer', () => ({
   default: () => <div data-testid="video-container" />,
@@ -79,40 +63,58 @@ vi.mock('@ui', async () => {
   };
 });
 
-const renderStage = (initialRoute: string) =>
-  render(
-    <bridge$.Provider>
-      <MemoryRouter initialEntries={[initialRoute]}>
-        <Routes>
-          <Route path="/waiting-room/:roomName" element={<WaitingRoomStage />} />
-          <Route path="/waiting-room" element={<WaitingRoomStage />} />
-          <Route path="/meeting-room" element={<div data-testid="meeting-room" />} />
-        </Routes>
-      </MemoryRouter>
-    </bridge$.Provider>
-  );
+type RenderOptions = {
+  userContext?: ProviderOptions['UserContext'];
+  initialRoute?: string;
+};
+
+function render(
+  ui: ReactElement,
+  { userContext, initialRoute = '/waiting-room/my-room' }: RenderOptions = {}
+) {
+  const { wrapper: ProvidersWrapper, ...context } = makeTestProvider([providers.user], {
+    userContext,
+  });
+
+  return {
+    ...context,
+    ...renderBase(
+      <bridge$.Provider>
+        <ProvidersWrapper>
+          <MemoryRouter initialEntries={[initialRoute]}>
+            <Routes>
+              <Route path="/waiting-room/:roomName" element={ui} />
+              <Route path="/waiting-room" element={ui} />
+              <Route path="/meeting-room" element={<div data-testid="meeting-room" />} />
+            </Routes>
+          </MemoryRouter>
+        </ProvidersWrapper>
+      </bridge$.Provider>
+    ),
+  };
+}
 
 describe('WaitingRoomStage', () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    mockUseWaitingRoom.mockReturnValue({ ...defaultWaitingRoomReturn });
+    env.WAITING_ROOM_ALLOW_DEVICE_SELECTION = true;
+    localStorage.setItem('videoSourceEnabled', 'false');
+  });
+
+  afterEach(() => {
+    localStorage.clear();
   });
 
   it('renders content when roomName is in URL params', () => {
-    renderStage('/waiting-room/my-room');
+    render(<WaitingRoomStage />, { initialRoute: '/waiting-room/my-room' });
     expect(screen.getByTestId('video-container')).toBeInTheDocument();
     expect(screen.getByTestId('username-input')).toBeInTheDocument();
     expect(screen.getByTestId('control-panel')).toBeInTheDocument();
   });
 
   it('renders skeletons when isRoomReady is false', () => {
-    mockUseWaitingRoom.mockReturnValue({
-      ...defaultWaitingRoomReturn,
-      accessStatus: 'pending',
-      isRoomReady: false,
-    });
-
-    renderStage('/waiting-room/my-room');
+    localStorage.setItem('videoSourceEnabled', 'true');
+    render(<WaitingRoomStage />, { initialRoute: '/waiting-room/my-room' });
 
     expect(screen.getByTestId('video-container-skeleton')).toBeInTheDocument();
     expect(screen.getByTestId('username-input-skeleton')).toBeInTheDocument();
@@ -120,7 +122,7 @@ describe('WaitingRoomStage', () => {
   });
 
   it('shows config error message when no roomName and no sessionIdentifier', () => {
-    renderStage('/waiting-room');
+    render(<WaitingRoomStage />, { initialRoute: '/waiting-room' });
     expect(screen.getByText(/session-identifier/i)).toBeInTheDocument();
   });
 
@@ -143,7 +145,7 @@ describe('WaitingRoomStage', () => {
       );
     };
 
-    render(
+    renderBase(
       <bridge$.Provider>
         <Wrapper />
       </bridge$.Provider>

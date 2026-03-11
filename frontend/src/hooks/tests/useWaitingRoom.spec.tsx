@@ -1,41 +1,35 @@
 import { act, renderHook as renderHookBase } from '@testing-library/react';
-import { describe, it, expect, vi, beforeEach, type Mock } from 'vitest';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
 import useWaitingRoom from '../useWaitingRoom';
-import usePreviewPublisherContext from '../usePreviewPublisherContext';
-import useBackgroundPublisherContext from '../useBackgroundPublisherContext';
 import { makeTestProvider, ProviderOptions, providers } from '@test/providers';
 import { DEVICE_ACCESS_STATUS } from '@utils/constants';
 import { env } from '../../env';
+import { setupWindowNavigatorMock } from '@web-test/fixtures';
 
-vi.mock('../usePreviewPublisherContext');
-vi.mock('../useBackgroundPublisherContext');
+vi.mock('@vonage/client-sdk-video');
 
-const mockInitLocalPublisher = vi.fn();
-const mockDestroyPublisher = vi.fn();
-const mockInitBackgroundLocalPublisher = vi.fn();
-
-const defaultPreviewContext = {
-  initLocalPublisher: mockInitLocalPublisher,
-  publisher: null,
-  accessStatus: DEVICE_ACCESS_STATUS.ACCEPTED,
-  destroyPublisher: mockDestroyPublisher,
-  isVideoLoading: false,
-};
-
-const defaultBackgroundContext = {
-  initBackgroundLocalPublisher: mockInitBackgroundLocalPublisher,
-  publisher: null,
-};
-
-const mockUsePreviewPublisherContext = usePreviewPublisherContext as Mock;
-const mockUseBackgroundPublisherContext = useBackgroundPublisherContext as Mock;
+vi.mock('../useBackgroundPublisherContext', () => ({
+  default: () => ({
+    initBackgroundLocalPublisher: vi.fn(),
+    publisher: null,
+  }),
+}));
 
 describe('useWaitingRoom', () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    mockUsePreviewPublisherContext.mockReturnValue({ ...defaultPreviewContext });
-    mockUseBackgroundPublisherContext.mockReturnValue({ ...defaultBackgroundContext });
     env.WAITING_ROOM_ALLOW_DEVICE_SELECTION = true;
+
+    setupWindowNavigatorMock({
+      mediaDevices: {
+        addEventListener: vi.fn(),
+        enumerateDevices: Promise.resolve([]),
+      },
+    });
+
+    vi.spyOn(globalThis.navigator.permissions, 'query').mockResolvedValue({
+      state: 'granted',
+    } as PermissionStatus);
   });
 
   it('returns all expected fields', () => {
@@ -58,22 +52,25 @@ describe('useWaitingRoom', () => {
   });
 
   it('isRoomReady is false when isVideoLoading is true', () => {
-    mockUsePreviewPublisherContext.mockReturnValue({
-      ...defaultPreviewContext,
-      isVideoLoading: true,
+    const { result } = renderHook(() => useWaitingRoom(), {
+      previewPublisherContext: {
+        __interceptor: (ctx) => {
+          if (ctx) ctx.isVideoLoading = true;
+        },
+      },
     });
-
-    const { result } = renderHook(() => useWaitingRoom());
     expect(result.current.isRoomReady).toBe(false);
   });
 
   it('isRoomReady is false when accessStatus is not ACCEPTED', () => {
-    mockUsePreviewPublisherContext.mockReturnValue({
-      ...defaultPreviewContext,
-      accessStatus: DEVICE_ACCESS_STATUS.PENDING,
+    const { result } = renderHook(() => useWaitingRoom(), {
+      previewPublisherContext: {
+        __interceptor: (ctx) => {
+          if (ctx) ctx.accessStatus = DEVICE_ACCESS_STATUS.PENDING;
+        },
+      },
     });
 
-    const { result } = renderHook(() => useWaitingRoom());
     expect(result.current.isRoomReady).toBe(false);
   });
 
@@ -183,10 +180,27 @@ describe('useWaitingRoom', () => {
 
 type RenderOptions = {
   userContext?: ProviderOptions['UserContext'];
+  previewPublisherContext?: ProviderOptions['PreviewPublisherContext'];
 };
 
-function renderHook<Result>(render: () => Result, { userContext }: RenderOptions = {}) {
-  const { wrapper, ...context } = makeTestProvider([providers.user], { userContext });
+function renderHook<Result>(
+  render: () => Result,
+  { userContext, previewPublisherContext }: RenderOptions = {}
+) {
+  const { wrapper, ...context } = makeTestProvider([providers.user, providers.previewPublisher], {
+    userContext,
+    previewPublisherContext: {
+      ...previewPublisherContext,
+      __interceptor: (ctx) => {
+        if (ctx) {
+          ctx.accessStatus = DEVICE_ACCESS_STATUS.ACCEPTED;
+          ctx.isVideoLoading = false;
+        }
+        previewPublisherContext?.__interceptor?.(ctx);
+      },
+    },
+  });
+
   return {
     ...context,
     ...renderHookBase(render, { wrapper }),
