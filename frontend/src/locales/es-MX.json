@@ -170,6 +170,8 @@
   "recording.consent.dialog.decline": "No doy mi consentimiento",
   "recording.consent.goodbye.header": "Grabación rechazada",
   "recording.consent.goodbye.message": "Decidiste no dar tu consentimiento para la grabación. Vuelve a unirte cuando la grabación se detenga o pide al anfitrión que la desactive.",
+  "recording.popup.title": "Grabación",
+  "recording.popup.subtitle": "Esta reunión se está grabando",
   "recording.tooltip.ariaLabel": "diseño de video",
   "room.exit.ariaLabel": "salir",
   "room.exit.tooltip": "Salir de la reunión",

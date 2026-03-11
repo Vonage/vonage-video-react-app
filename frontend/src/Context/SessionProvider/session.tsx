@@ -56,6 +56,8 @@ export type SessionContextType = {
   setLayoutMode: Dispatch<SetStateAction<LayoutMode>>;
   archiveId: string | null;
   archiveIdStartedBySelf: string | null;
+  recordingAlreadyNotified: boolean;
+  setRecordingAlreadyNotified: Dispatch<SetStateAction<boolean>>;
   markArchiveStartRequestedBySelf: () => void;
   resetArchiveStartRequestedBySelf: () => void;
   rightPanelActiveTab: RightPanelActiveTab;
@@ -94,6 +96,8 @@ export const SessionContext = createContext<SessionContextType>({
   setLayoutMode: () => {},
   archiveId: null,
   archiveIdStartedBySelf: null,
+  recordingAlreadyNotified: false,
+  setRecordingAlreadyNotified: () => {},
   markArchiveStartRequestedBySelf: () => {},
   resetArchiveStartRequestedBySelf: () => {},
   rightPanelActiveTab: 'closed',
@@ -176,6 +180,7 @@ const SessionProvider = ({ children, initialValue = {} }: SessionProviderProps):
 
   const [archiveId, setArchiveId] = useState<string | null>(initialValue?.archiveId ?? null);
   const [archiveIdStartedBySelf, setArchiveIdStartedBySelf] = useState<string | null>(null);
+  const [recordingAlreadyNotified, setRecordingAlreadyNotified] = useState<boolean>(false);
   const archiveStartRequestedBySelfRef = useRef<boolean>(false);
 
   const markArchiveStartRequestedBySelf = useCallback(() => {
@@ -534,6 +539,8 @@ const SessionProvider = ({ children, initialValue = {} }: SessionProviderProps):
       reconnecting,
       subscriberWrappers,
       layoutMode,
+      recordingAlreadyNotified,
+      setRecordingAlreadyNotified,
       setLayoutMode,
       rightPanelActiveTab,
       toggleParticipantList,
@@ -557,6 +564,8 @@ const SessionProvider = ({ children, initialValue = {} }: SessionProviderProps):
       archiveIdStartedBySelf,
       markArchiveStartRequestedBySelf,
       resetArchiveStartRequestedBySelf,
+      setRecordingAlreadyNotified,
+      recordingAlreadyNotified,
       vonageVideoClient,
       disconnect,
       unreadCount,

@@ -3,9 +3,11 @@ import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import useRoomName from '@hooks/useRoomName';
 import PopupDialog, { type DialogTexts } from '../PopupDialog';
+import useSessionContext from '@hooks/useSessionContext';
 
 type RecordingPopUpIndicatorProps = {
   shouldPromptRecordingConsent?: boolean;
+  onNotified?: () => void;
 };
 
 /**
@@ -16,7 +18,9 @@ type RecordingPopUpIndicatorProps = {
  */
 const RecordingPopUpIndicator = ({
   shouldPromptRecordingConsent = false,
+  onNotified,
 }: RecordingPopUpIndicatorProps): ReactElement => {
+  const { setRecordingAlreadyNotified } = useSessionContext();
   const { t } = useTranslation();
   const navigate = useNavigate();
   const roomName = useRoomName();
@@ -50,6 +54,8 @@ const RecordingPopUpIndicator = ({
 
   const handleActionClick = () => {
     setHasBeenNotified(true);
+    setRecordingAlreadyNotified(true);
+    onNotified?.();
   };
 
   const shouldOpenDialog = shouldPromptRecordingConsent && hasBeenNotified === false;

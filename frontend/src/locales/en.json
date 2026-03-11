@@ -172,6 +172,8 @@
   "recording.consent.dialog.decline": "I do not consent",
   "recording.consent.goodbye.header": "Recording declined",
   "recording.consent.goodbye.message": "You chose not to consent to recording. Please rejoin when recording is stopped or ask the host to disable recording.",
+  "recording.popup.title": "Recording",
+  "recording.popup.subtitle": "This meeting is being recorded",
   "recording.tooltip.ariaLabel": "video layout",
   "room.exit.ariaLabel": "exit",
   "room.exit.tooltip": "Exit meeting",

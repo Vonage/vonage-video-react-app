@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next';
 import Box from '@mui/material/Box';
 import useTheme from '@ui/theme';
 import usePublisherContext from '../../hooks/usePublisherContext';
-import ConnectionAlert from '../../components/MeetingRoom/ConnectionAlert';
+import PopupAlert from '../../components/MeetingRoom/PopupAlert';
 import Toolbar from '../../components/MeetingRoom/Toolbar';
 import useSessionContext from '../../hooks/useSessionContext';
 import useScreenShare from '../../hooks/useScreenShare';
@@ -25,6 +25,7 @@ import { env } from '../../env';
 import RecordingPopUpIndicator from '@components/MeetingRoom/RecordingPopupIndicator';
 import useMountEffect from '@web/hooks/useMountEffect';
 import classNames from 'classnames';
+import { RECORDING_POPUP_TIMEOUT_MS } from '../../utils/constants';
 
 /**
  * MeetingRoom Component
@@ -77,6 +78,7 @@ const MeetingRoom = (): ReactElement => {
     toggleReportIssue,
     archiveId,
     archiveIdStartedBySelf,
+    recordingAlreadyNotified,
   } = useSessionContext();
   const { isSharingScreen, screensharingPublisher, screenshareVideoElement, toggleShareScreen } =
     useScreenShare();
@@ -153,6 +155,12 @@ const MeetingRoom = (): ReactElement => {
 
   const isRecording = !!archiveId;
 
+  const [latestNotifiedArchiveId, setLatestNotifiedArchiveId] = useState<string | null>(null);
+
+  const handleRecordingNotified = () => {
+    setLatestNotifiedArchiveId(archiveId);
+  };
+
   return (
     <Box
       data-testid="meetingRoom"
@@ -181,7 +189,12 @@ const MeetingRoom = (): ReactElement => {
           setCaptionsErrorResponse={setCaptionsErrorResponse}
         />
       )}
-      <RecordingPopUpIndicator shouldPromptRecordingConsent={shouldPromptRecordingConsent} />
+      {!recordingAlreadyNotified && (
+        <RecordingPopUpIndicator
+          shouldPromptRecordingConsent={shouldPromptRecordingConsent}
+          onNotified={handleRecordingNotified}
+        />
+      )}
       <Toolbar
         isSharingScreen={isSharingScreen}
         toggleShareScreen={toggleShareScreen}
@@ -195,15 +208,23 @@ const MeetingRoom = (): ReactElement => {
         }
         captionsState={captionsState}
       />
+      {recordingAlreadyNotified && !archiveIdStartedBySelf && isRecording && archiveId !== latestNotifiedArchiveId && (
+        <PopupAlert
+          title={t('recording.popup.title')}
+          message={t('recording.popup.subtitle')}
+          severity="info"
+          timeout={RECORDING_POPUP_TIMEOUT_MS}
+        />
+      )}
       {reconnecting && (
-        <ConnectionAlert
+        <PopupAlert
           title={t('connectionAlert.reconnecting.title')}
           message={t('connectionAlert.reconnecting.message')}
           severity="error"
         />
       )}
       {!reconnecting && quality !== 'good' && isVideoEnabled && (
-        <ConnectionAlert
+        <PopupAlert
           closable
           title={t('connectionAlert.quality.title')}
           message={t('connectionAlert.quality.message')}

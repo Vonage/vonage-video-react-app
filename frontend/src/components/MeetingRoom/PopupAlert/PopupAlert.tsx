@@ -3,32 +3,45 @@ import AlertTitle from '@mui/material/AlertTitle';
 import type { SxProps } from '@mui/material';
 import { ReactElement, useState } from 'react';
 import useIsSmallViewport from '../../../hooks/useIsSmallViewport';
+import useOnMountEffect from '@web/hooks/useMountEffect';
 
-export type ConnectionAlertProps = {
+export type PopupAlertProps = {
   title: string;
   message: string;
   closable?: boolean;
-  severity: 'warning' | 'error';
+  severity: 'warning' | 'error' | 'info';
+  timeout?: number;
 };
 
 /**
- * ConnectionAlert Component
+ * PopupAlert Component
  * An MUI Alert to display the title and message for connection issues.
- * @param {ConnectionAlertProps} props - the props for this component
+ * @param {PopupAlertProps} props - the props for this component
  * @property {boolean} [closable] (optional) default false - whether alert should be closable
  * @property {string} title - Alert title
  * @property {string} message - Alert message body
- * @property {'warning' | 'error'} severity - MUI Severity, warning or error. Determines color and icon of Alert
- * @returns {ReactElement | false} ConnectionAlert Component
+ * @property {'warning' | 'error' | 'info'} severity - MUI Severity, warning, error, or info. Determines color and icon of Alert
+ * @returns {ReactElement | false} PopupAlert Component
  */
-const ConnectionAlert = ({
+const PopupAlert = ({
   closable = false,
   title,
   message,
   severity,
-}: ConnectionAlertProps): ReactElement | false => {
+  timeout,
+}: PopupAlertProps): ReactElement | false => {
   const [closed, setClosed] = useState(false);
   const isSmallViewport = useIsSmallViewport();
+
+  useOnMountEffect(() => {
+    if (timeout === undefined) return;
+
+    const timer = setTimeout(() => {
+      setClosed(true);
+    }, timeout);
+
+    return () => clearTimeout(timer);
+  });
   const sxProps: SxProps = isSmallViewport
     ? {
         left: '50%',
@@ -68,4 +81,4 @@ const ConnectionAlert = ({
   );
 };
 
-export default ConnectionAlert;
+export default PopupAlert;
