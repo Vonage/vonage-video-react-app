@@ -16,7 +16,7 @@ const FooterLinks = (): ReactElement => {
   const { t } = useTranslation();
 
   return (
-    <Stack direction="row" alignItems="center" data-testid="footer-links" sx={{ py: 1 }}>
+    <Stack direction="row" alignItems="center" data-testid="footer-links" className="py-2">
       <GHRepoButton />
       <Typography
         variant="body2"
