@@ -139,7 +139,7 @@
   "layout.tooltip.switchToGrid": "Passa al layout Griglia",
   "mutedAlert.message.forceMuted": "Sei stato disattivato da un altro partecipante. Clicca sul microfono per riattivarlo.",
   "mutedAlert.message.muted": "Stai parlando? Il tuo microfono è attualmente disattivato. Clicca sul microfono per attivarlo.",
-  "meetingRoom.invalidRoomNameError": "L'URL contiene caratteri speciali ${roomName}, per favore inserisci l'URL corretto.",
+  "meetingRoom.invalidRoomNameError": "L'URL contiene caratteri speciali {{roomName}}, per favore inserisci l'URL corretto.",
   "participants.list.ariaLabel": "attiva/disattiva la lista dei partecipanti",
   "participants.list.close": "Chiudi la lista dei partecipanti",
   "participants.list.open": "Apri la lista dei partecipanti",

@@ -141,7 +141,7 @@
   "layout.tooltip.switchToGrid": "Switch to Grid layout",
   "mutedAlert.message.forceMuted": "You have been muted by another participant. Click on the mic to unmute yourself.",
   "mutedAlert.message.muted": "Are you talking? Your mic is off. Click on the mic to turn it on.",
-  "meetingRoom.invalidRoomNameError": "The URL contains special characters ${roomName}, please insert the correct URL.",
+  "meetingRoom.invalidRoomNameError": "The URL contains special characters {{roomName}}, please insert the correct URL.",
   "participants.list.ariaLabel": "toggle participant list",
   "participants.list.close": "Close participant list",
   "participants.list.open": "Open participant list",
