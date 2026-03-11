@@ -148,7 +148,7 @@ const MeetingRoom = (): ReactElement => {
   useRedirectOnSubscriberError({ subscriberError: subscriptionError, reconnecting });
 
   const hasValidRoomName = isValidRoomName(roomName);
-  const invalidRoomNameErrorMessage = `The URL contains special characters ${roomName}, please insert the correct URL.`;
+  const invalidRoomNameErrorMessage = t('meetingRoom.invalidRoomNameError', { roomName });
 
   if (!hasValidRoomName) {
     return <ErrorPage error={new Error(invalidRoomNameErrorMessage)} />;

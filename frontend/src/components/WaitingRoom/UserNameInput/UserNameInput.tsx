@@ -130,17 +130,13 @@ const UsernameInput = ({
       </Typography>
 
       {isRoomNameInvalid && (
-        <Typography className="text-vera-error" variant="caption">
-          {t('waitingRoom.invalidRoomName')}
-        </Typography>
+        <p className="text-vera-error text-xs leading-4">{t('waitingRoom.invalidRoomName')}</p>
       )}
 
       <Button
         onClick={handleJoinClick}
         variant="contained"
-        color="primary"
-        type="submit"
-        fullWidth
+        className="w-full"
         disabled={isRoomNameInvalid}
       >
         {t('button.join')}
