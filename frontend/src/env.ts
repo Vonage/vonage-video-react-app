@@ -61,6 +61,35 @@ function parseOptionalString(value: unknown): string | undefined {
   return value;
 }
 
+function parseOptionalInteger(
+  value: unknown,
+  name: string,
+  { min, max }: { min?: number; max?: number } = {}
+): number | undefined {
+  if (value === undefined || value === null || value === '') return undefined;
+
+  if (typeof value === 'string') {
+    const parsed = Number.parseInt(value, 10);
+    if (Number.isNaN(parsed)) {
+      throw new Error(`Invalid integer env value for ${name}: ${toDisplayString(value)}`);
+    }
+    value = parsed;
+  }
+
+  if (typeof value !== 'number' || !Number.isFinite(value)) {
+    throw new Error(`Invalid integer env value for ${name}: ${toDisplayString(value)}`);
+  }
+
+  if (min !== undefined && value < min) {
+    throw new Error(`Env ${name} must be >= ${min}`);
+  }
+  if (max !== undefined && value > max) {
+    throw new Error(`Env ${name} must be <= ${max}`);
+  }
+
+  return value;
+}
+
 const LANGS: Lang[] = ['en', 'it', 'es', 'es-MX', 'en-US', 'de'];
 
 function parseLang(value: unknown, fallback: Lang): Lang {
@@ -152,7 +181,12 @@ export class Env {
   public MEETING_ROOM_ALLOW_DEVICE_SELECTION: boolean;
   public ALLOW_EMOJIS: boolean;
   public ALLOW_SCREEN_SHARE: boolean;
+  public ALLOW_LAYOUT_ADJUST_VIEW: boolean;
   public DEFAULT_LAYOUT_MODE: LayoutMode;
+  public TILE_LIMIT_GRID_DESKTOP: number | undefined;
+  public TILE_LIMIT_GRID_MOBILE: number | undefined;
+  public TILE_LIMIT_SPEAKER_DESKTOP: number | undefined;
+  public TILE_LIMIT_SPEAKER_MOBILE: number | undefined;
   public SHOW_PARTICIPANT_LIST: boolean;
   public BYPASS_WAITING_ROOM: boolean;
   public API_URL: string;
@@ -194,6 +228,7 @@ export class Env {
     );
     this.ALLOW_EMOJIS = parseBoolean(env.ALLOW_EMOJIS, true);
     this.ALLOW_SCREEN_SHARE = parseBoolean(env.ALLOW_SCREEN_SHARE, true);
+    this.ALLOW_LAYOUT_ADJUST_VIEW = parseBoolean(env.ALLOW_LAYOUT_ADJUST_VIEW, true);
     this.SHOW_PARTICIPANT_LIST = parseBoolean(env.SHOW_PARTICIPANT_LIST, true);
     this.BYPASS_WAITING_ROOM = parseBoolean(env.BYPASS_WAITING_ROOM, false);
     this.AVOID_FETCHING_APP_CONFIG = parseBoolean(env.AVOID_FETCHING_APP_CONFIG, true);
@@ -201,6 +236,33 @@ export class Env {
     this.DEFAULT_RESOLUTION = parseResolution(env.DEFAULT_RESOLUTION, '1280x720');
 
     this.DEFAULT_LAYOUT_MODE = parseLayoutMode(env.DEFAULT_LAYOUT_MODE, 'active-speaker');
+
+    this.TILE_LIMIT_GRID_DESKTOP = parseOptionalInteger(
+      env.TILE_LIMIT_GRID_DESKTOP,
+      'TILE_LIMIT_GRID_DESKTOP',
+      {
+        min: 1,
+        max: 49,
+      }
+    );
+    this.TILE_LIMIT_GRID_MOBILE = parseOptionalInteger(
+      env.TILE_LIMIT_GRID_MOBILE,
+      'TILE_LIMIT_GRID_MOBILE',
+      {
+        min: 1,
+        max: 20,
+      }
+    );
+    this.TILE_LIMIT_SPEAKER_DESKTOP = parseOptionalInteger(
+      env.TILE_LIMIT_SPEAKER_DESKTOP,
+      'TILE_LIMIT_SPEAKER_DESKTOP',
+      { min: 1, max: 20 }
+    );
+    this.TILE_LIMIT_SPEAKER_MOBILE = parseOptionalInteger(
+      env.TILE_LIMIT_SPEAKER_MOBILE,
+      'TILE_LIMIT_SPEAKER_MOBILE',
+      { min: 1, max: 10 }
+    );
 
     this.API_URL = parseString(env.API_URL, 'API_URL', '');
     this.setApiUrl(this.API_URL);

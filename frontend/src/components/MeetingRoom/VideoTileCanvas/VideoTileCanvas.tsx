@@ -45,7 +45,8 @@ const VideoTileCanvas = ({
   const activeSpeakerId = useActiveSpeaker();
   const { publisher } = usePublisherContext();
   const getLayout = useLayoutManager();
-  const { connected, reconnecting, subscriberWrappers, layoutMode } = useSessionContext();
+  const { connected, reconnecting, subscriberWrappers, layoutMode, tileLimits } =
+    useSessionContext();
 
   // Determine if we will display a large video tile based on current layout mode and screenshare presence
   const pinnedSubscriberCount = subscriberWrappers.filter(
@@ -62,6 +63,7 @@ const VideoTileCanvas = ({
     isViewingLargeTile,
     isSharingScreen: !!screensharingPublisher,
     pinnedSubscriberCount,
+    tileLimits,
   });
 
   // We keep track of the current position of subscribers so we can maintain position to avoid subscribers jumping around the screen

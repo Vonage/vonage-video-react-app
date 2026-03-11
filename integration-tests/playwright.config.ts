@@ -135,6 +135,7 @@ export default defineConfig({
     env: {
       AVOID_FETCHING_APP_CONFIG: 'true',
       BYPASS_WAITING_ROOM: 'false',
+      VIDEO_SERVICE_PROVIDER: 'vonage',
     },
 
     ...(isDebugMode

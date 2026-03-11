@@ -98,5 +98,30 @@ describe('getMaxSubscribersOnScreenCount', () => {
         })
       ).toBe(7);
     });
+    it('should respect custom tile limits', () => {
+      const maxGrid = getMaxSubscriberOnScreenCount({
+        isViewingLargeTile: false,
+        isSharingScreen: false,
+        pinnedSubscriberCount: 0,
+        tileLimits: { grid: 15, speaker: 5 },
+      });
+      expect(maxGrid).toBe(15);
+
+      const maxSpeakerSharing = getMaxSubscriberOnScreenCount({
+        isViewingLargeTile: true,
+        isSharingScreen: true,
+        pinnedSubscriberCount: 0,
+        tileLimits: { grid: 15, speaker: 8 },
+      });
+      expect(maxSpeakerSharing).toBe(7);
+
+      const maxSpeakerPinned = getMaxSubscriberOnScreenCount({
+        isViewingLargeTile: true,
+        isSharingScreen: false,
+        pinnedSubscriberCount: 3,
+        tileLimits: { grid: 15, speaker: 6 },
+      });
+      expect(maxSpeakerPinned).toBe(8);
+    });
   });
 });

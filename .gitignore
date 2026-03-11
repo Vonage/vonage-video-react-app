@@ -36,6 +36,7 @@ server.csr
 dump.rdb
 coverage/
 /coverage/*
+tests-out/
 OpenTok-iOS-2.4.0/
 opentok-ios-sdk-*
 /BrowserStackLocal

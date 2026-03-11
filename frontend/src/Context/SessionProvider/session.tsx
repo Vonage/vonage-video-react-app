@@ -38,6 +38,18 @@ import VonageVideoClient from '@utils/VonageVideoClient';
 import wait from '@common/execution/wait';
 import { env } from '../../env';
 import frontendLogger from '../../logger';
+import {
+  DeviceTileLimits,
+  DeviceType,
+  TileLimitBounds,
+  TilePreference,
+  getDeviceType,
+  getEffectiveLimits,
+  getInitialTilePreference,
+  normalizePreferenceForDevice,
+  persistTilePreference,
+  getBaseLimits,
+} from '@utils/tileLimits';
 
 export type { ChatMessageType } from '@app-types/chat';
 
@@ -71,6 +83,12 @@ export type SessionContextType = {
   unpublish: (publisher: Publisher) => void;
   lastStreamUpdate: StreamPropertyChangedEvent | null;
   subscriptionError: Error | null;
+  tilePreferences: TilePreference;
+  setTilePreferences: Dispatch<SetStateAction<TilePreference>>;
+  tileLimits: DeviceTileLimits;
+  tileLimitBounds: TileLimitBounds;
+  deviceType: DeviceType;
+  baseTileLimits: DeviceTileLimits;
 };
 
 /**
@@ -106,6 +124,12 @@ export const SessionContext = createContext<SessionContextType>({
   unpublish: () => {},
   lastStreamUpdate: null,
   subscriptionError: null,
+  tilePreferences: { grid: 0, speaker: 0 },
+  setTilePreferences: () => {},
+  tileLimits: { grid: 0, speaker: 0 },
+  tileLimitBounds: { grid: { min: 0, max: 0 }, speaker: { min: 0, max: 0 } },
+  deviceType: 'desktop',
+  baseTileLimits: { grid: 0, speaker: 0 },
 });
 
 export type ConnectionEventType = { connection: Connection; reason?: string; id?: string };
@@ -146,6 +170,11 @@ const MAX_PIN_COUNT = isMobile() ? MAX_PIN_COUNT_MOBILE : MAX_PIN_COUNT_DESKTOP;
  * @returns {SessionContextType} a context provider for a publisher preview
  */
 const SessionProvider = ({ children, initialValue = {} }: SessionProviderProps): ReactElement => {
+  const initialDeviceType = getDeviceType();
+  const [deviceType, setDeviceType] = useState<DeviceType>(initialDeviceType);
+  const [tilePreferences, setTilePreferences] = useState<TilePreference>(() =>
+    getInitialTilePreference(initialDeviceType)
+  );
   const [lastStreamUpdate, setLastStreamUpdate] = useState<StreamPropertyChangedEvent | null>(
     initialValue?.lastStreamUpdate ?? null
   );
@@ -211,6 +240,23 @@ const SessionProvider = ({ children, initialValue = {} }: SessionProviderProps):
     },
     [onEmoji]
   );
+  useEffect(() => {
+    persistTilePreference(tilePreferences);
+  }, [tilePreferences]);
+
+  useEffect(() => {
+    const nextDeviceType = getDeviceType();
+    if (nextDeviceType !== deviceType) {
+      setDeviceType(nextDeviceType);
+      setTilePreferences((prev) => normalizePreferenceForDevice(prev, nextDeviceType));
+    }
+  }, [deviceType]);
+
+  const { limits: tileLimits, bounds: tileLimitBounds } = useMemo(
+    () => getEffectiveLimits(deviceType, tilePreferences),
+    [deviceType, tilePreferences]
+  );
+  const baseTileLimits = useMemo(() => getBaseLimits()[deviceType], [deviceType]);
 
   const setActiveSpeakerIdAndRef = useCallback((id: string | undefined) => {
     // We store the current active speaker id in a ref so it can be accessed later when sorting the subscriberWrappers for display.
@@ -522,6 +568,12 @@ const SessionProvider = ({ children, initialValue = {} }: SessionProviderProps):
       unpublish,
       lastStreamUpdate,
       subscriptionError,
+      tilePreferences,
+      setTilePreferences,
+      tileLimits,
+      tileLimitBounds,
+      deviceType,
+      baseTileLimits,
     }),
     [
       activeSpeakerId,
@@ -553,6 +605,12 @@ const SessionProvider = ({ children, initialValue = {} }: SessionProviderProps):
       unpublish,
       lastStreamUpdate,
       subscriptionError,
+      tilePreferences,
+      setTilePreferences,
+      tileLimits,
+      tileLimitBounds,
+      deviceType,
+      baseTileLimits,
     ]
   );
 

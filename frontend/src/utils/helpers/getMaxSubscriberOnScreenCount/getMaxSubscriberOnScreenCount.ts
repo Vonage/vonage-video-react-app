@@ -1,15 +1,11 @@
-import {
-  MAX_TILES_GRID_VIEW_DESKTOP,
-  MAX_TILES_GRID_VIEW_MOBILE,
-  MAX_TILES_SPEAKER_VIEW_DESKTOP,
-  MAX_TILES_SPEAKER_VIEW_MOBILE,
-} from '../../constants';
-import { isMobile } from '../../util';
+import { getBaseLimits, getDeviceType, DeviceTileLimits, DeviceType } from '../../tileLimits';
 
 export type GetMaxSubscriberOnScreenCountProps = {
   isViewingLargeTile: boolean;
   isSharingScreen: boolean;
   pinnedSubscriberCount: number;
+  tileLimits?: DeviceTileLimits;
+  deviceTypeOverride?: DeviceType;
 };
 
 /**
@@ -24,22 +20,32 @@ const getMaxSubscriberOnScreenCount = ({
   isViewingLargeTile,
   isSharingScreen,
   pinnedSubscriberCount,
+  tileLimits,
+  deviceTypeOverride,
 }: GetMaxSubscriberOnScreenCountProps): number => {
-  if (isMobile()) {
-    return isViewingLargeTile ? MAX_TILES_SPEAKER_VIEW_MOBILE : MAX_TILES_GRID_VIEW_MOBILE;
+  const baseLimits = getBaseLimits();
+  const deviceType = deviceTypeOverride ?? getDeviceType();
+  const fallbackLimits = baseLimits[deviceType];
+  const { grid: baseGridLimit, speaker: baseSpeakerLimit } = {
+    grid: Math.max(1, tileLimits?.grid ?? fallbackLimits.grid),
+    speaker: Math.max(1, tileLimits?.speaker ?? fallbackLimits.speaker),
+  };
+
+  if (deviceType === 'mobile') {
+    return isViewingLargeTile ? baseSpeakerLimit : baseGridLimit;
   }
 
   if (!isViewingLargeTile) {
-    return MAX_TILES_GRID_VIEW_DESKTOP;
+    return baseGridLimit;
   }
   if (isSharingScreen) {
-    return MAX_TILES_SPEAKER_VIEW_DESKTOP - 1;
+    return Math.max(baseSpeakerLimit - 1, 1);
   }
   if (pinnedSubscriberCount > 1) {
     // As subscribers are moved to the pinned area, we allow for one more subscriber in the non-pinned are to replace it.
-    return MAX_TILES_SPEAKER_VIEW_DESKTOP + pinnedSubscriberCount - 1;
+    return baseSpeakerLimit + pinnedSubscriberCount - 1;
   }
-  return MAX_TILES_SPEAKER_VIEW_DESKTOP;
+  return baseSpeakerLimit;
 };
 
 export default getMaxSubscriberOnScreenCount;

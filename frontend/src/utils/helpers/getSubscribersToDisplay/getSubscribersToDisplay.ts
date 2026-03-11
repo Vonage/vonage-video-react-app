@@ -1,5 +1,6 @@
 import { SubscriberWrapper } from '../../../types/session';
 import getMaxSubscriberOnScreenCount from '../getMaxSubscriberOnScreenCount';
+import { DeviceTileLimits, DeviceType } from '../../tileLimits';
 
 export type SubscribersToDisplayAndHide = {
   hiddenSubscribers: SubscriberWrapper[];
@@ -11,6 +12,8 @@ export type GetSubscribersToDisplayProps = {
   isSharingScreen: boolean;
   pinnedSubscriberCount: number;
   isViewingLargeTile: boolean;
+  tileLimits?: DeviceTileLimits;
+  deviceTypeOverride?: DeviceType;
 };
 
 /**
@@ -27,11 +30,15 @@ const getSubscribersToDisplay = ({
   isViewingLargeTile,
   isSharingScreen,
   pinnedSubscriberCount,
+  tileLimits,
+  deviceTypeOverride,
 }: GetSubscribersToDisplayProps): SubscribersToDisplayAndHide => {
   const maxSubscribersOnScreenCount = getMaxSubscriberOnScreenCount({
     isViewingLargeTile,
     isSharingScreen,
     pinnedSubscriberCount,
+    tileLimits,
+    deviceTypeOverride,
   });
   const shouldHideSubscribers = subscriberWrappers.length > maxSubscribersOnScreenCount;
 

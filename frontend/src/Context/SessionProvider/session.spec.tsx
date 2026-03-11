@@ -13,11 +13,15 @@ import { makeTestProvider, ProviderOptions, providers } from '@test/providers';
 vi.mock('@utils/ActiveSpeakerTracker');
 vi.mock('@utils/VonageVideoClient');
 
-// Override the constants for max pinning test
-vi.mock('@utils/constants', () => ({
-  MAX_PIN_COUNT_MOBILE: 1,
-  MAX_PIN_COUNT_DESKTOP: 1,
-}));
+// Override the constants for max pinning test while preserving other exports
+vi.mock('@utils/constants', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('@utils/constants')>();
+  return {
+    ...actual,
+    MAX_PIN_COUNT_MOBILE: 1,
+    MAX_PIN_COUNT_DESKTOP: 1,
+  };
+});
 
 vi.mock('@api/fetchCredentials');
 
