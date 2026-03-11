@@ -18,14 +18,13 @@ import CaptionsBox from '../../components/MeetingRoom/CaptionsButton/CaptionsBox
 import useIsSmallViewport from '../../hooks/useIsSmallViewport';
 import CaptionsError from '../../components/MeetingRoom/CaptionsError';
 import useBackgroundPublisherContext from '../../hooks/useBackgroundPublisherContext';
-import { DEVICE_ACCESS_STATUS } from '../../utils/constants';
+import { DEVICE_ACCESS_STATUS, RECORDING_POPUP_TIMEOUT_MS } from '@utils/constants';
 import type { PublishingErrorType } from '../../Context/PublisherProvider/usePublisher/usePublisher';
 import useUserContext from '../../hooks/useUserContext';
 import { env } from '../../env';
 import RecordingPopUpIndicator from '@components/MeetingRoom/RecordingPopupIndicator';
 import useMountEffect from '@web/hooks/useMountEffect';
 import classNames from 'classnames';
-import { RECORDING_POPUP_TIMEOUT_MS } from '../../utils/constants';
 
 /**
  * MeetingRoom Component
