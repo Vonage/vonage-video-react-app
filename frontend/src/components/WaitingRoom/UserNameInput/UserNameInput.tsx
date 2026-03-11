@@ -1,4 +1,11 @@
-import React, { Dispatch, MouseEvent, ReactElement, SetStateAction, useState, useRef } from 'react';
+import React, {
+  Dispatch,
+  SubmitEventHandler,
+  ReactElement,
+  SetStateAction,
+  useState,
+  useRef,
+} from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import TextField from '@mui/material/TextField';
@@ -62,7 +69,7 @@ const UsernameInput = ({
     return true;
   };
 
-  const handleJoinClick = (event: MouseEvent) => {
+  const handleJoinClick: SubmitEventHandler<HTMLFormElement> = (event) => {
     event.preventDefault();
 
     if (!validateForm() || !roomName) return;
@@ -91,6 +98,8 @@ const UsernameInput = ({
   return (
     <Card
       component="form"
+      onSubmit={handleJoinClick}
+      noValidate
       className={twMerge('flex flex-col gap-4 lg:max-w-125', className)}
       {...cardProps}
     >
@@ -133,12 +142,7 @@ const UsernameInput = ({
         <p className="text-vera-error text-xs leading-4">{t('waitingRoom.invalidRoomName')}</p>
       )}
 
-      <Button
-        onClick={handleJoinClick}
-        variant="contained"
-        className="w-full"
-        disabled={isRoomNameInvalid}
-      >
+      <Button type="submit" variant="contained" className="w-full" disabled={isRoomNameInvalid}>
         {t('button.join')}
       </Button>
     </Card>
