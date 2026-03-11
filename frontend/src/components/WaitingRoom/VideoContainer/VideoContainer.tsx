@@ -44,6 +44,8 @@ const VideoContainer = ({ username }: VideoContainerProps): ReactElement => {
   useEffect(() => {
     if (!publisherVideoElement) return;
 
+    // Vonage/OT injects the video element with object-fit=contain by default, which leaves letterboxing
+    // inside our 16:9 tile. We set cover here so the preview fills the tile consistently.
     // eslint-disable-next-line react-hooks/immutability
     publisherVideoElement.style.objectFit = 'cover';
     containerRef.current!.appendChild(publisherVideoElement);
@@ -52,11 +54,21 @@ const VideoContainer = ({ username }: VideoContainerProps): ReactElement => {
   useEffect(() => {
     if (!publisherVideoElement) return;
 
+    const isSdkMirroring = publisherVideoElement.classList.contains('OT_mirrored');
     // The SDK mirrors the preview publisher via .OT_mirrored (scale(-1, 1) on .OT_video-element).
-    // When mirror is ON, clear the inline style so the SDK's CSS class takes effect.
+    // When mirror is ON, prefer the SDK class; fall back to an inline mirror if the class is absent.
     // When mirror is OFF, set scaleX(1) to override and cancel the SDK's mirror.
-    // eslint-disable-next-line react-hooks/immutability
-    publisherVideoElement.style.transform = mirrorSelfView ? '' : 'scaleX(1)';
+    if (mirrorSelfView) {
+      if (isSdkMirroring) {
+        publisherVideoElement.style.removeProperty('transform');
+      } else {
+        // eslint-disable-next-line react-hooks/immutability
+        publisherVideoElement.style.transform = 'scaleX(-1)';
+      }
+    } else {
+      // eslint-disable-next-line react-hooks/immutability
+      publisherVideoElement.style.transform = 'scaleX(1)';
+    }
   }, [publisherVideoElement, mirrorSelfView]);
 
   return (

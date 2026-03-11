@@ -2,13 +2,9 @@ import { ReactElement } from 'react';
 import ToggleOffIcon from '@mui/icons-material/ToggleOff';
 import ToggleOnIcon from '@mui/icons-material/ToggleOn';
 import { useTranslation } from 'react-i18next';
-import useTheme from '@ui/theme';
 import { setStorageItem, STORAGE_KEYS } from '@utils/storage';
 import MenuItem from '@mui/material/MenuItem';
-import IconButton from '@mui/material/IconButton';
-import Typography from '@mui/material/Typography';
 import Grow from '@mui/material/Grow';
-import Box from '@mui/material/Box';
 import FlipIcon from '@mui/icons-material/Flip';
 import useUserContext from '@hooks/useUserContext';
 
@@ -22,7 +18,6 @@ import useUserContext from '@hooks/useUserContext';
  */
 const MirrorSelfViewToggle = (): ReactElement => {
   const { t } = useTranslation();
-  const theme = useTheme();
   const { user, setUser } = useUserContext();
   const isToggled = user.defaultSettings.mirrorSelfView;
 
@@ -41,34 +36,28 @@ const MirrorSelfViewToggle = (): ReactElement => {
   return (
     <MenuItem
       onClick={handleToggle}
-      sx={{
-        '&:hover': {
-          backgroundColor: theme.colors.background,
-        },
-      }}
+      role="menuitemcheckbox"
+      aria-checked={isToggled}
+      className="flex items-center gap-3 rounded-vera-medium px-3 py-2 text-vera-on-surface hover:bg-vera-background focus-visible:outline-none"
     >
-      <Box sx={{ mr: 2 }}>
-        <FlipIcon sx={{ fontSize: 24, color: theme.colors.secondary }} />
-      </Box>
-      <Typography variant="body1" noWrap sx={{ mr: 2 }}>
+      <FlipIcon className="h-6 w-6 text-vera-secondary" />
+      <span className="flex-1 truncate text-base font-normal">
         {t('devices.video.mirrorSelfView')}
-      </Typography>
-      <IconButton disableRipple>
+      </span>
+      <span className="relative flex h-6 w-11 items-center justify-center">
         <Grow in={!isToggled} timeout={300}>
           <ToggleOffIcon
             data-testid="mirror-toggle-off-icon"
-            fontSize="large"
-            sx={{ position: 'absolute', color: theme.colors.secondary }}
+            className="absolute inset-0 h-6 w-11 text-vera-secondary"
           />
         </Grow>
         <Grow in={isToggled} timeout={300}>
           <ToggleOnIcon
             data-testid="mirror-toggle-on-icon"
-            fontSize="large"
-            sx={{ position: 'absolute', color: theme.colors.secondary }}
+            className="absolute inset-0 h-6 w-11 text-vera-secondary"
           />
         </Grow>
-      </IconButton>
+      </span>
     </MenuItem>
   );
 };

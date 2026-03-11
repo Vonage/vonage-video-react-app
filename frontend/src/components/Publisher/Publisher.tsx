@@ -60,10 +60,15 @@ const Publisher = ({ box }: PublisherProps): ReactElement => {
     if (!element) return;
 
     // The SDK mirrors the publisher via .OT_mirrored (scale(-1, 1) on .OT_video-element).
-    // When mirror is ON, clear the inline style so the SDK's CSS class takes effect.
+    // When mirror is ON, prefer the SDK class; fall back to an inline mirror if the class is absent.
     // When mirror is OFF, set scaleX(1) to override and cancel the SDK's mirror.
+    const isSdkMirroring = element.classList.contains('OT_mirrored');
     if (mirrorSelfView) {
-      element.style.removeProperty('transform');
+      if (isSdkMirroring) {
+        element.style.removeProperty('transform');
+      } else {
+        element.style.transform = 'scaleX(-1)';
+      }
     } else {
       // eslint-disable-next-line react-hooks/immutability
       element.style.transform = 'scaleX(1)';

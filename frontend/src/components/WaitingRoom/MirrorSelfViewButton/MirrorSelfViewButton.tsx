@@ -1,9 +1,7 @@
 import { ReactElement } from 'react';
 import FlipIcon from '@mui/icons-material/Flip';
 import { useTranslation } from 'react-i18next';
-import Box from '@mui/material/Box';
 import Tooltip from '@mui/material/Tooltip';
-import useTheme from '@ui/theme';
 import { VIDEO_CONTAINER_BUTTON_SIZE_WR } from '@utils/constants';
 import VideoContainerButton from '../VideoContainerButton';
 import useUserContext from '../../../hooks/useUserContext';
@@ -18,7 +16,6 @@ import { setStorageItem, STORAGE_KEYS } from '../../../utils/storage';
  */
 const MirrorSelfViewButton = (): ReactElement => {
   const { t } = useTranslation();
-  const theme = useTheme();
   const { user, setUser } = useUserContext();
   const isMirrored = user.defaultSettings.mirrorSelfView;
 
@@ -35,14 +32,11 @@ const MirrorSelfViewButton = (): ReactElement => {
   };
 
   return (
-    <Box
-      sx={{
-        display: 'flex',
+    <div
+      className="flex items-center justify-center overflow-hidden rounded-full border border-vera-on-secondary"
+      style={{
         width: `${VIDEO_CONTAINER_BUTTON_SIZE_WR}px`,
         height: `${VIDEO_CONTAINER_BUTTON_SIZE_WR}px`,
-        borderRadius: '50%',
-        border: `1px solid ${theme.colors.onSecondary}`,
-        overflow: 'hidden',
       }}
     >
       <Tooltip
@@ -52,23 +46,17 @@ const MirrorSelfViewButton = (): ReactElement => {
       >
         <VideoContainerButton
           onClick={handleToggle}
-          sx={{
-            '&:hover': {
-              backgroundColor: `${theme.colors.onSecondary}99`,
-            },
-          }}
+          aria-label={t('devices.video.mirrorSelfView')}
+          className="hover:bg-vera-on-secondary/60 focus-visible:outline-none"
           icon={
             <FlipIcon
-              sx={{
-                fontSize: '24px',
-                color: isMirrored ? theme.colors.accent : theme.colors.onSecondary,
-              }}
+              className={`h-6 w-6 ${isMirrored ? 'text-vera-accent' : 'text-vera-on-secondary'}`}
               data-testid="mirror-self-view-icon"
             />
           }
         />
       </Tooltip>
-    </Box>
+    </div>
   );
 };
 

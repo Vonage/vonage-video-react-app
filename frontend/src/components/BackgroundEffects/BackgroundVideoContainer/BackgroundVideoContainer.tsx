@@ -64,10 +64,19 @@ const BackgroundVideoContainer = ({
       myVideoElement.style.marginLeft = 'auto';
       myVideoElement.style.marginRight = 'auto';
       myVideoElement.style.marginBottom = '1px';
+      const isSdkMirroring = myVideoElement.classList.contains('OT_mirrored');
       // The SDK mirrors the preview publisher via .OT_mirrored (scale(-1, 1) on .OT_video-element).
-      // When mirror is ON, clear the inline style so the SDK's CSS class takes effect.
+      // When mirror is ON, prefer the SDK class; fall back to an inline mirror if the class is absent.
       // When mirror is OFF, set scaleX(1) to override and cancel the SDK's mirror.
-      myVideoElement.style.transform = mirrorSelfView ? '' : 'scaleX(1)';
+      if (mirrorSelfView) {
+        if (isSdkMirroring) {
+          myVideoElement.style.removeProperty('transform');
+        } else {
+          myVideoElement.style.transform = 'scaleX(-1)';
+        }
+      } else {
+        myVideoElement.style.transform = 'scaleX(1)';
+      }
       myVideoElement.style.objectFit = 'cover';
       myVideoElement.style.aspectRatio = '16 / 9';
 

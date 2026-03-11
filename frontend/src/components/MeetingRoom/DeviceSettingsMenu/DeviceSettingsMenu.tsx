@@ -1,6 +1,6 @@
 import { ReactElement, RefObject, Dispatch, SetStateAction } from 'react';
 import { hasMediaProcessorSupport } from '@vonage/client-sdk-video';
-import useTheme from '@ui/theme';
+import classNames from 'classnames';
 import InputDevices from '../InputAudioDevices';
 import OutputDevices from '../OutputAudioDevices';
 import ReduceNoiseTestSpeakers from '../ReduceNoiseTestSpeakers';
@@ -14,7 +14,6 @@ import Popper from '@mui/material/Popper';
 import Grow from '@mui/material/Grow';
 import ClickAwayListener from '@mui/material/ClickAwayListener';
 import Paper from '@mui/material/Paper';
-import Box from '@mui/material/Box';
 import { env } from '../../../env';
 
 export type DeviceSettingsMenuProps = {
@@ -54,10 +53,21 @@ const DeviceSettingsMenu = ({
   handleClose,
   setIsOpen,
 }: DeviceSettingsMenuProps): ReactElement | false => {
-  const theme = useTheme();
-
   const isAudio = deviceType === 'audio';
   const shouldDisplayBackgroundEffects = hasMediaProcessorSupport() && env.ALLOW_BACKGROUND_EFFECTS;
+  const popperTransformClasses = isAudio
+    ? [
+        'translate-y-[-2%]',
+        'translate-x-[5%]',
+        'max-[740px]:translate-x-[-10%]',
+        'max-[450px]:translate-x-[-5%]',
+      ]
+    : [
+        'translate-y-[-5%]',
+        'translate-x-[-15%]',
+        'max-[740px]:translate-x-[-40%]',
+        'max-[450px]:translate-x-[-5%]',
+      ];
 
   const handleToggleBackgroundEffects = () => {
     toggleBackgroundEffects();
@@ -87,7 +97,7 @@ const DeviceSettingsMenu = ({
           </>
         )}
         <DropdownSeparator />
-        <MenuList sx={{ display: 'flex', flexDirection: 'column', mt: 1 }}>
+        <MenuList className="mt-1 flex flex-col">
           <MirrorSelfViewToggle />
         </MenuList>
       </>
@@ -104,44 +114,29 @@ const DeviceSettingsMenu = ({
       placement="bottom-start"
     >
       {({ TransitionProps, placement }) => (
-        <Grow
-          {...TransitionProps}
-          style={{ transformOrigin: placement === 'bottom' ? 'center top' : 'center bottom' }}
-        >
-          <Box sx={{ textAlign: 'left', fontWeight: 'normal' }}>
-            <ClickAwayListener onClickAway={handleClose}>
-              <Paper
-                sx={(t) => ({
-                  backgroundColor: theme.colors.surface,
-                  color: theme.colors.onSurface,
-                  padding: { xs: 1, sm: 2 },
-                  borderRadius: 2,
-                  zIndex: 1,
-                  transform: isAudio
-                    ? 'translateY(-2%) translateX(5%)'
-                    : 'translateY(-5%) translateX(-15%)',
-                  [t.breakpoints.down(741)]: {
-                    transform: isAudio
-                      ? 'translateY(-2%) translateX(-10%)'
-                      : 'translateY(-5%) translateX(-40%)',
-                  },
-                  [t.breakpoints.down(450)]: {
-                    transform: isAudio
-                      ? 'translateY(-2%) translateX(-5%)'
-                      : 'translateY(-5%) translateX(-5%)',
-                  },
-                  width: { xs: '90vw', sm: '100%' },
-                  maxWidth: 400,
-                  position: 'relative',
-                })}
-              >
-                {renderSettingsMenu()}
-              </Paper>
-            </ClickAwayListener>
-          </Box>
-        </Grow>
-      )}
-    </Popper>
+          <Grow
+            {...TransitionProps}
+            style={{ transformOrigin: placement === 'bottom' ? 'center top' : 'center bottom' }}
+          >
+            <div className="text-left font-normal">
+              <ClickAwayListener onClickAway={handleClose}>
+                <Paper
+                  className={classNames(
+                    'relative z-10',
+                    'bg-vera-surface text-vera-on-surface',
+                    'p-1 sm:p-2',
+                    'rounded-vera-large',
+                    'w-[90vw] sm:w-full max-w-[400px]',
+                    popperTransformClasses
+                  )}
+                >
+                  {renderSettingsMenu()}
+                </Paper>
+              </ClickAwayListener>
+            </div>
+          </Grow>
+        )}
+      </Popper>
   );
 };
 

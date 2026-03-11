@@ -1,10 +1,12 @@
 import IconButton from '@mui/material/IconButton';
 import type { SxProps } from '@mui/material';
+import classNames from 'classnames';
 import { ForwardedRef, forwardRef, ReactElement } from 'react';
 
 export type VideoContainerButtonProps = {
   onClick: () => void;
   icon: ReactElement;
+  className?: string;
   sx?: SxProps;
 };
 
@@ -22,17 +24,14 @@ const VideoContainerButton = forwardRef(function VideoContainerButton(
   props: VideoContainerButtonProps,
   ref: ForwardedRef<HTMLButtonElement>
 ): ReactElement {
-  const { icon: Icon, sx = {}, ...rest } = props;
+  const { icon: Icon, sx, className, ...rest } = props;
   return (
     <IconButton
       {...rest}
       data-testid="video-container-button"
       ref={ref}
-      sx={{
-        height: '100%',
-        width: '100%',
-        ...sx,
-      }}
+      className={classNames('h-full w-full p-0', className)}
+      sx={sx}
     >
       {Icon}
     </IconButton>
