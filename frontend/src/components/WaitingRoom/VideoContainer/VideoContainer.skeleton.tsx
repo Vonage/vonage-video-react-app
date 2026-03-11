@@ -26,7 +26,7 @@ const VideoContainerSkeleton: FC<VideoContainerSkeletonProps> = ({ className, ..
           'sm:h-[328px]',
 
           // background & shape
-          'bg-black md:rounded-xl overflow-hidden',
+          'bg-vera-skeleton-like md:rounded-vera-large overflow-hidden',
 
           className
         )
