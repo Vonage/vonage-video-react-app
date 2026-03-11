@@ -207,14 +207,17 @@ const MeetingRoom = (): ReactElement => {
         }
         captionsState={captionsState}
       />
-      {recordingAlreadyNotified && !archiveIdStartedBySelf && isRecording && archiveId !== latestNotifiedArchiveId && (
-        <PopupAlert
-          title={t('recording.popup.title')}
-          message={t('recording.popup.subtitle')}
-          severity="info"
-          timeout={RECORDING_POPUP_TIMEOUT_MS}
-        />
-      )}
+      {recordingAlreadyNotified &&
+        !archiveIdStartedBySelf &&
+        isRecording &&
+        archiveId !== latestNotifiedArchiveId && (
+          <PopupAlert
+            title={t('recording.popup.title')}
+            message={t('recording.popup.subtitle')}
+            severity="info"
+            timeout={RECORDING_POPUP_TIMEOUT_MS}
+          />
+        )}
       {reconnecting && (
         <PopupAlert
           title={t('connectionAlert.reconnecting.title')}
