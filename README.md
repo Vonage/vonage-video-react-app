@@ -179,16 +179,18 @@ These reference apps share the same backend infrastructure and demonstrate consi
 
 - **Environment Variables**
 
-  In the root project directory, create the environment files by running:
+  In the root project directory, create the backend environment file by running:
 
   ``` bash
-  cp backend/.env.example backend/.env && cp frontend/.env.example frontend/.env
+  cp backend/.env.example backend/.env
   ```
 
   Then, open **backend/.env** and fill in the required configuration:
 
   - **VONAGE_APP_ID** – This is the ID of your Vonage application. You can find it on the [Applications page](https://dashboard.vonage.com/applications).
   - **VONAGE_PRIVATE_KEY** – If you've already generated a private key, use that. Otherwise, use the key you downloaded when creating the app.
+
+  Frontend feature flags and display settings are configured in [`vcrBuild.env.sh`](vcrBuild.env.sh). The defaults work out of the box — edit that file only when you need to customise behaviour. See [Environment Configuration](#environment-configuration) for the full list of available options.
 
 </br>
 
@@ -311,17 +313,21 @@ The watcher monitors the entire `libs/ui/src/theme/helpers/designTokens/` direct
 
 ## Environment Configuration
 
-The app is split into a **backend** and a **frontend**, each configured through its own `.env` file. Both files are created from the same copy command shown in [Running Locally](#running-locally):
+The app has two parts — a **backend** server and a **frontend** UI. The backend is configured through `backend/.env`. Frontend settings are configured through [`vcrBuild.env.sh`](vcrBuild.env.sh), which is the single place for all frontend configuration.
+
+Create the backend configuration file by running:
 
 ```bash
-cp backend/.env.example backend/.env && cp frontend/.env.example frontend/.env
+cp backend/.env.example backend/.env
 ```
+
+Then open it in a text editor and fill in the values described below.
 
 ---
 
 ### Backend (`backend/.env`)
 
-The backend reads its variables at startup via [backend/helpers/config.ts](backend/helpers/config.ts).
+Open `backend/.env` and configure the following variables.
 
 #### Video service provider
 
@@ -381,11 +387,20 @@ Enables the in-call issue reporting tool to file tickets directly into Jira.
 
 ---
 
-### Frontend (`frontend/.env`)
+### Frontend
 
-The frontend reads its variables at build time. Vite injects only the explicitly listed keys into the `__APP_ENV__` global — no other environment variables leak into the bundle. The full list of accepted keys is defined in [frontend/vite.config.ts](frontend/vite.config.ts) and parsed by [frontend/src/env.ts](frontend/src/env.ts).
+Frontend settings control which features are visible, what language the app uses, and how the video room behaves by default. **All frontend configuration lives in a single file: [`vcrBuild.env.sh`](vcrBuild.env.sh).**
 
-> **Note:** Changes to `frontend/.env` require restarting the dev server (`yarn dev`) or a new production build to take effect.
+This file is loaded automatically whenever the app is built or deployed. To change a setting, open [`vcrBuild.env.sh`](vcrBuild.env.sh), update the relevant `export` line, and restart or rebuild:
+
+```bash
+# vcrBuild.env.sh
+export ALLOW_CHAT=false
+export DEFAULT_LAYOUT_MODE='grid'
+export I18N_SUPPORTED_LANGUAGES='en|es'
+```
+
+> **Note:** After editing [`vcrBuild.env.sh`](vcrBuild.env.sh) you need to restart the app (`yarn dev`) or trigger a new build for the changes to take effect.
 
 #### Network
 
@@ -488,16 +503,14 @@ To test the video API across multiple devices on your local network, you can use
 
     </br>
 
-5. Copy the domains from both outputs and update your **frontend/.env** file:
+5. Copy the domains from both outputs and update [`vcrBuild.env.sh`](vcrBuild.env.sh):
 
-    ``` ini
-    # Frontend tunnel domain
-    TUNNEL_DOMAIN=your-frontend-domain.ngrok.io
-    # Backend tunnel domain  
-    API_URL=https://your-backend-domain.ngrok.io
+    ``` bash
+    export TUNNEL_DOMAIN=your-frontend-domain.ngrok.io
+    export API_URL=https://your-backend-domain.ngrok.io
     ```
 
-    **Note:** ngrok assigns temporary domains. You'll need to update your environment variables each time the domains change.
+    **Note:** ngrok assigns temporary domains. You'll need to update these values each time the domains change.
 
   </br>
 
