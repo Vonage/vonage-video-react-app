@@ -5,7 +5,6 @@ import VideoTile from '../VideoTile';
 import ScreenShareNameDisplay from '../../ScreenShareNameDisplay';
 import useTheme from '@ui/theme';
 import { useTranslation } from 'react-i18next';
-import styles from './ScreenSharePublisher.module.scss';
 
 export type ScreenSharePublisherProps = {
   box: Box | undefined;
@@ -29,6 +28,7 @@ const ScreenSharePublisher = ({
 }: ScreenSharePublisherProps): ReactElement | undefined => {
   const theme = useTheme();
   const containerRef = useRef<HTMLDivElement>(null);
+  const { t } = useTranslation();
   useEffect(() => {
     if (element && containerRef.current) {
       Object.assign(element.style, {
@@ -41,22 +41,41 @@ const ScreenSharePublisher = ({
     }
   }, [element, theme.shapes.borderRadiusLarge]);
   const streamName = publisher?.stream?.name ?? '';
-  const { t } = useTranslation();
+  const videoEl = element as HTMLVideoElement | undefined;
+  const mediaStream = videoEl?.srcObject as MediaStream | null;
+  const track = mediaStream?.getVideoTracks?.()[0];
+  const displaySurface = track?.getSettings?.()?.displaySurface;
+  const isEntireScreen = displaySurface === 'monitor';
   return (
     box && (
       <>
-        <VideoTile
-          id="screen-publisher-container"
-          box={box}
-          data-testid="screen-publisher-container"
-          hasVideo
-          ref={containerRef}
-          isScreenshare
-        >
-          <ScreenShareNameDisplay name={streamName} box={box} />
-        </VideoTile>
+        {!isEntireScreen && (
+          <VideoTile
+            id="screen-publisher-container"
+            box={box}
+            data-testid="screen-publisher-container"
+            hasVideo
+            ref={containerRef}
+            isScreenshare
+          >
+            <ScreenShareNameDisplay name={streamName} box={box} />
+          </VideoTile>
+        )}
 
-        <div className={styles.overlay}>{t('screenSharing.dialog.hiddenMessage')}</div>
+        {isEntireScreen && (
+          <div
+            style={{
+              position: 'absolute',
+              top: box.top - 2,
+              left: box.left - 2,
+              width: box.width + 4,
+              height: box.height + 4,
+            }}
+            className="flex items-center justify-center text-xl font-medium bg-black text-white pointer-events-none rounded-2xl"
+          >
+            {t('screenSharing.dialog.hiddenMessage')}
+          </div>
+        )}
       </>
     )
   );

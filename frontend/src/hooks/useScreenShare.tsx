@@ -33,22 +33,6 @@ const useScreenShare = (): UseScreenShareType => {
   const [screenshareVideoElement, setScreenshareVideoElement] = useState<
     HTMLVideoElement | HTMLObjectElement
   >();
-  screenSharingPubRef.current?.on('videoElementCreated', (e) => {
-    const videoEl = e.element as HTMLVideoElement;
-    setScreenshareVideoElement(videoEl);
-
-    const mediaStream = videoEl.srcObject as MediaStream | null;
-    const track = mediaStream?.getVideoTracks?.()[0];
-    const displaySurface = track?.getSettings?.()?.displaySurface;
-
-    if (displaySurface === 'monitor') {
-      document.body.classList.add('screensharing-entire');
-    } else {
-      document.body.classList.remove('screensharing-entire');
-    }
-
-    console.log('displaySurface:', displaySurface);
-  });
 
   const onScreenShareStopped = useCallback(() => {
     setIsSharingScreen(false);

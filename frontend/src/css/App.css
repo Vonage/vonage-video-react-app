@@ -22,7 +22,6 @@ html {
   0% {
     height: 75%;
   }
-
   100% {
     height: 100%;
   }
@@ -93,37 +92,31 @@ html {
   padding: 8px;
   max-height: 35vh;
 }
-
 @media (min-width: 899px) and (min-height: 920px) {
   .choose-background-effect-grid-waiting {
     max-height: 55vh;
   }
 }
-
 @media (max-height: 875px) {
   .choose-background-effect-grid-waiting {
     max-height: 34vh;
   }
 }
-
 @media (max-height: 750px) {
   .choose-background-effect-grid-waiting {
     max-height: 35vh;
   }
 }
-
 @media (max-width: 600px) {
   .choose-background-effect-grid-waiting {
     max-height: 25vh;
   }
 }
-
 @media (max-width: 425px) {
   .choose-background-effect-grid-waiting {
     max-height: 32vh;
   }
 }
-
 @media (max-height: 680px) {
   .choose-background-effect-grid-waiting {
     max-height: 44vh;
@@ -158,17 +151,8 @@ html {
 .file-upload-drop-area-text {
   font-size: 1rem;
 }
-
 @media (max-width: 375px) and (max-height: 667px) {
   .file-upload-drop-area-text {
     font-size: 0.9rem !important;
   }
-}
-
-body.screensharing-entire #screen-publisher-container {
-  display: none !important;
-}
-
-body.screensharing-entire .controls {
-  display: none !important;
 }
