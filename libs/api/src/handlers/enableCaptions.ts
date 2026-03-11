@@ -1,13 +1,10 @@
 import { makeInternalErrorHandler, makeThirdPartyErrorHandler } from '@api-lib/errors/handlers';
 import type { EnableCaptionsPayload } from '@api-lib/schemas';
-import type { IVideoOrchestrator } from '@api-lib/types';
+import type { IVideoClient } from '@api-lib/types';
 import { isErrorLike } from '@common/assertions';
 import { tryCatch } from '@common/execution';
 
-async function enableCaptions(
-  this: IVideoOrchestrator,
-  payload: EnableCaptionsPayload
-): Promise<void> {
+async function enableCaptions(this: IVideoClient, payload: EnableCaptionsPayload): Promise<void> {
   try {
     const { sessionId, captionOptions } = payload;
 

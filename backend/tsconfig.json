@@ -17,7 +17,9 @@
       "@common-test": ["../libs/common/test"],
       "@common-test/*": ["../libs/common/test/*"],
       "@node": ["../libs/common/srcNode"],
-      "@node/*": ["../libs/common/srcNode/*"]
+      "@node/*": ["../libs/common/srcNode/*"],
+      "@node-test": ["../libs/common/testNode"],
+      "@node-test/*": ["../libs/common/testNode/*"]
     }
   }
 }

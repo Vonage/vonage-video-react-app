@@ -1,10 +1,10 @@
 import { makeInternalErrorHandler, makeThirdPartyErrorHandler } from '@api-lib/errors';
 import { assertResult } from '@api-lib/executions';
-import type { IVideoOrchestrator, CreateSessionPayload } from '@api-lib/types';
+import type { IVideoClient, CreateSessionPayload } from '@api-lib/types';
 import { decodeSessionId } from '@node/helpers';
 import { MediaMode } from '@vonage/video';
 
-async function createSession(this: IVideoOrchestrator, payload?: CreateSessionPayload) {
+async function createSession(this: IVideoClient, payload?: CreateSessionPayload) {
   try {
     const { sessionOptions } = payload ?? {};
 

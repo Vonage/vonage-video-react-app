@@ -1,17 +1,14 @@
 import { makeInternalErrorHandler, makeThirdPartyErrorHandler } from '@api-lib/errors';
 import { assertResult } from '@api-lib/executions';
 import type { CreateEphemeralTokenPayload } from '@api-lib/schemas/CreateEphemeralTokenPayload.schema';
-import { TokenRole, type IVideoOrchestrator } from '@api-lib/types';
+import { TokenRole, type IVideoClient } from '@api-lib/types';
 import type { ClientTokenOptions } from '@vonage/video';
 
 /**
  * Creates an ephemeral client token with a default 30 seconds expiration time
  * This token is meant to be used for server-to-server operations that require a token
  */
-function createEphemeralToken(
-  this: IVideoOrchestrator,
-  payload: CreateEphemeralTokenPayload
-): string {
+function createEphemeralToken(this: IVideoClient, payload: CreateEphemeralTokenPayload): string {
   try {
     const { sessionId, clientTokenOptions } = payload;
 

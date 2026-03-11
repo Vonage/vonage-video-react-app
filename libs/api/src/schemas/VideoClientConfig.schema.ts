@@ -4,23 +4,21 @@ import ConfigParamsSchema from './ConfigParams.schema';
 import { Auth } from '@vonage/auth';
 import { makeBadRequestErrorHandler } from '@api-lib/errors';
 
-export const VideoOrchestratorConfigSchema = z.object({
+export const VideoClientConfigSchema = z.object({
   auth: AuthParamsSchema.or(z.instanceof(Auth)),
   videoParams: ConfigParamsSchema.optional(),
-}) satisfies z.ZodType<VideoOrchestratorConfig>;
+}) satisfies z.ZodType<VideoClientConfig>;
 
-export type VideoOrchestratorConfig = {
+export type VideoClientConfig = {
   auth: AuthParams | Auth;
 
   videoParams?: z.infer<typeof ConfigParamsSchema>;
 };
 
-export function assertVideoOrchestratorConfig(
-  config: unknown
-): asserts config is VideoOrchestratorConfig {
-  const { error } = VideoOrchestratorConfigSchema.safeParse(config);
+export function assertVideoClientConfig(config: unknown): asserts config is VideoClientConfig {
+  const { error } = VideoClientConfigSchema.safeParse(config);
 
   if (error) {
-    throw makeBadRequestErrorHandler('Invalid video orchestrator config')(error);
+    throw makeBadRequestErrorHandler('Invalid video client config')(error);
   }
 }

@@ -16,6 +16,7 @@ export default defineConfig(() => ({
       '@common': path.resolve(__dirname, './src'),
       '@common-test': path.resolve(__dirname, './test'),
       '@web-test': path.resolve(__dirname, './testBrowser'),
+      '@node-test': path.resolve(__dirname, './testNode'),
       '@web': path.resolve(__dirname, './srcBrowser'),
       '@node': path.resolve(__dirname, './srcNode'),
     },

@@ -1,6 +1,6 @@
 import { createExpressMiddleware } from '@trpc/server/adapters/express';
 import type { videoRouterContext } from '@api-lib/constants';
-import type { VideoOrchestrator } from '@api-lib/core';
+import type { VideoClient } from '@api-lib/core';
 import type { VideoRouterConfig } from '@api-lib/schemas';
 import createVideoRouter from '../videoRouter';
 import { HandlersConfig } from '@api-lib/types/HandlersConfig';
@@ -12,7 +12,7 @@ import { HandlersConfig } from '@api-lib/types/HandlersConfig';
 function createVideoHandler<
   TContext extends {
     [videoRouterContext]: {
-      orchestrator: VideoOrchestrator;
+      orchestrator: VideoClient;
     };
   },
   TMeta extends object,

@@ -2,7 +2,7 @@ import { Request, Response, Router } from 'express';
 import validator from 'validator';
 import createVideoService from '../videoService/videoServiceFactory';
 import getSessionStorageService from '../sessionStorageService';
-import { VideoOrchestrator } from '@api-lib/core';
+import { createVideoClient } from '@api-lib/core';
 import { SessionId } from '@common/types';
 import blockCallsForArgs from '../helpers/blockCallsForArgs';
 import { makeInternalErrorHandler } from '@api-lib/errors';
@@ -15,7 +15,7 @@ sessionRouter.get('/:room', async (req: Request<{ room: string }>, res: Response
   try {
     const { room: roomName } = req.params;
 
-    const videoClient = makeVideoOrchestrator();
+    const videoClient = makeVideoClient();
 
     const captionsId = await sessionService.getCaptionsId(roomName);
 
@@ -192,8 +192,8 @@ sessionRouter.post(
   }
 );
 
-function makeVideoOrchestrator() {
-  return new VideoOrchestrator({
+function makeVideoClient() {
+  return createVideoClient({
     auth: {
       authType: 'jwt',
       applicationId: process.env.VONAGE_APP_ID!,

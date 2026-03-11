@@ -5,7 +5,7 @@ import {
   type AnyMutationProcedure,
 } from '@trpc/server';
 import { assertVideoRouterConfig, type VideoRouterConfig } from '@api-lib/schemas';
-import { VideoOrchestrator } from '@api-lib/core';
+import { VideoClient } from '@api-lib/core';
 import type { HandlerConfig, HandlersConfig } from '@api-lib/types';
 import { VideoAction } from '@api-lib/types';
 import { Any, Prettify } from '@common/types';
@@ -16,7 +16,7 @@ import { toTRPCError } from '@api-lib/errors/helpers';
 function createVideoRouter<
   TContext extends {
     [videoRouterContext]: {
-      orchestrator: VideoOrchestrator;
+      orchestrator: VideoClient;
     };
   },
   TMeta extends object,
@@ -39,7 +39,7 @@ function createVideoRouter<
 
   const makeOrchestrator: Parameters<typeof trpcRoot.procedure.use>[0] = async ({ ctx, next }) => {
     ctx[videoRouterContext] = {
-      orchestrator: new VideoOrchestrator({ auth, videoParams }),
+      orchestrator: new VideoClient({ auth, videoParams }),
     };
 
     return next();
@@ -114,9 +114,9 @@ function createVideoRouter<
 
   function makeInput<
     ActionKey extends VideoAction,
-    Config extends HandlerConfig<ActionKey, Parameters<VideoOrchestrator[ActionKey]>[0]>,
+    Config extends HandlerConfig<ActionKey, Parameters<VideoClient[ActionKey]>[0]>,
   >(_videoAction: ActionKey, config: Config | undefined) {
-    type Input = Parameters<VideoOrchestrator[ActionKey]>[0];
+    type Input = Parameters<VideoClient[ActionKey]>[0];
     type SelectInput = Config['selectInput'] extends (...args: Any[]) => infer R ? R : Input;
 
     // input validation is performed by video orchestrator handlers
@@ -133,15 +133,15 @@ function createVideoRouter<
   function makeMutation<
     ActionKey extends VideoAction,
     Action extends (
-      orchestrator: VideoOrchestrator,
-      payload: Parameters<VideoOrchestrator[ActionKey]>[0]
-    ) => ReturnType<VideoOrchestrator[ActionKey]>,
-    Config extends HandlerConfig<ActionKey, Parameters<VideoOrchestrator[ActionKey]>[0]>,
+      orchestrator: VideoClient,
+      payload: Parameters<VideoClient[ActionKey]>[0]
+    ) => ReturnType<VideoClient[ActionKey]>,
+    Config extends HandlerConfig<ActionKey, Parameters<VideoClient[ActionKey]>[0]>,
   >({ key, callback, config }: { key: ActionKey; callback: Action; config: Config | undefined }) {
     const { input, parser } = makeInput(key, config);
 
     return input.mutation(async (opts) => {
-      const payload = parser(opts.input) as Parameters<VideoOrchestrator[ActionKey]>[0];
+      const payload = parser(opts.input) as Parameters<VideoClient[ActionKey]>[0];
       const orchestrator = opts.ctx[videoRouterContext].orchestrator;
 
       return callback(orchestrator, payload);
@@ -151,15 +151,15 @@ function createVideoRouter<
   function makeQuery<
     ActionKey extends VideoAction,
     Action extends (
-      orchestrator: VideoOrchestrator,
-      payload: Parameters<VideoOrchestrator[ActionKey]>[0]
-    ) => ReturnType<VideoOrchestrator[ActionKey]>,
-    Config extends HandlerConfig<ActionKey, Parameters<VideoOrchestrator[ActionKey]>[0]>,
+      orchestrator: VideoClient,
+      payload: Parameters<VideoClient[ActionKey]>[0]
+    ) => ReturnType<VideoClient[ActionKey]>,
+    Config extends HandlerConfig<ActionKey, Parameters<VideoClient[ActionKey]>[0]>,
   >({ key, callback, config }: { key: ActionKey; callback: Action; config: Config | undefined }) {
     const { input, parser } = makeInput(key, config);
 
     return input.query(async (opts) => {
-      const payload = parser(opts.input) as Parameters<VideoOrchestrator[ActionKey]>[0];
+      const payload = parser(opts.input) as Parameters<VideoClient[ActionKey]>[0];
       const orchestrator = opts.ctx[videoRouterContext].orchestrator;
 
       return callback(orchestrator, payload);

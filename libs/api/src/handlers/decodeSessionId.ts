@@ -1,8 +1,8 @@
 import { makeInternalErrorHandler } from '@api-lib/errors';
-import type { IVideoOrchestrator, DecodeSessionIdPayload } from '@api-lib/types';
+import type { IVideoClient, DecodeSessionIdPayload } from '@api-lib/types';
 import { decodeSessionId as decodeSessionIdHelper } from '@node/helpers';
 
-function decodeSessionId(this: IVideoOrchestrator, payload: DecodeSessionIdPayload) {
+function decodeSessionId(this: IVideoClient, payload: DecodeSessionIdPayload) {
   try {
     const { sessionId } = payload;
 

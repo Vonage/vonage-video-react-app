@@ -9,7 +9,7 @@ export * from './StartArchivePayload.schema';
 export * from './StopArchivePayload.schema';
 export * from './ArchiveSearchFilter.schema';
 export * from './VideoAction.schema';
-export * from './VideoOrchestratorConfig.schema';
+export * from './VideoClientConfig.schema';
 export * from './AlgorithmTypes.schema';
 export * from './SignedHashParams.schema';
 export * from './ACLRule.schema';

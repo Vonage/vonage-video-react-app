@@ -1,1 +1,1 @@
-export { default as VideoOrchestrator } from './VideoOrchestrator';
+export { default as VideoClient, createVideoClient } from './VideoClient';

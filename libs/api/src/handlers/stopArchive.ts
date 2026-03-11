@@ -1,11 +1,11 @@
 import { makeThirdPartyErrorHandler } from '@api-lib/errors';
 import makeInternalErrorHandler from '@api-lib/errors/handlers/makeInternalErrorHandler/makeInternalErrorHandler';
-import type { IVideoOrchestrator, StopArchivePayload } from '@api-lib/types';
+import type { IVideoClient, StopArchivePayload } from '@api-lib/types';
 import { assertResult } from '@common/execution';
 import type { SingleArchiveResponse } from '@vonage/video';
 
 async function stopArchive(
-  this: IVideoOrchestrator,
+  this: IVideoClient,
   payload: StopArchivePayload
 ): Promise<SingleArchiveResponse> {
   try {

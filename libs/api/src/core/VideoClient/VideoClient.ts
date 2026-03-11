@@ -1,7 +1,7 @@
 import type { Any } from '@common/types';
 import { Video } from '@vonage/video';
 import { Auth } from '@vonage/auth';
-import { assertVideoOrchestratorConfig } from '@api-lib/schemas';
+import { assertVideoClientConfig } from '@api-lib/schemas';
 import {
   createSession,
   decodeSessionId,
@@ -13,25 +13,25 @@ import {
   createEphemeralToken,
   joinSession,
 } from '@api-lib/handlers';
-import { VideoAction, type VideoOrchestratorConfig } from '@api-lib/types';
+import { VideoAction, type VideoClientConfig } from '@api-lib/types';
 import schemasByAction from '@api-lib/constants/schemasByAction';
 import { makeBadRequestErrorHandler } from '@api-lib/errors';
 
 /**
- * Forces VideoOrchestrator to have a method for each VideoAction
+ * Forces VideoClient to have a method for each VideoAction
  * and correctly types the payload and return type
  */
-type IVideoOrchestrator = {
-  [key in VideoAction]: (this: VideoOrchestrator, ...args: Any[]) => unknown;
+type IVideoClient = {
+  [key in VideoAction]: (this: VideoClient, ...args: Any[]) => unknown;
 };
 
-class VideoOrchestrator implements IVideoOrchestrator {
-  protected readonly auth$: Auth;
+class VideoClient implements IVideoClient {
+  public readonly auth$: Auth;
 
-  protected readonly video$: Video;
+  public readonly video$: Video;
 
-  constructor(config: VideoOrchestratorConfig) {
-    assertVideoOrchestratorConfig(config);
+  constructor(config: VideoClientConfig) {
+    assertVideoClientConfig(config);
 
     const { auth, videoParams } = config;
 
@@ -40,7 +40,7 @@ class VideoOrchestrator implements IVideoOrchestrator {
   }
 
   /**
-   * VideoOrchestrator instance should be used for one single session and requests
+   * VideoClient instance should be used for one single session and requests
    */
   protected createVideoHandler<Action extends (this: this, payload: Any) => unknown>(
     videoAction: VideoAction,
@@ -110,4 +110,4 @@ class VideoOrchestrator implements IVideoOrchestrator {
   public joinSession = this.createVideoHandler(VideoAction.joinSession, joinSession);
 }
 
-export default VideoOrchestrator;
+export default VideoClient;

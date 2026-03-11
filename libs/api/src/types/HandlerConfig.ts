@@ -1,9 +1,9 @@
 import type { VideoAction } from './VideoAction';
-import type { IVideoOrchestrator } from './IVideoOrchestrator';
+import type { IVideoClient } from './IVideoClient';
 
 export type HandlerConfig<
   Action extends VideoAction,
-  Payload = Parameters<IVideoOrchestrator[Action]>[0],
+  Payload = Parameters<IVideoClient[Action]>[0],
 > = {
   /**
    * Define the public input for the web client service.

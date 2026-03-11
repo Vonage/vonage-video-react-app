@@ -1,8 +1,8 @@
-export type * from './IVideoOrchestrator';
+export type * from './IVideoClient';
 
 // Schema types
 export type {
-  VideoOrchestratorConfig,
+  VideoClientConfig,
   CreateSessionPayload,
   DecodeSessionIdPayload,
   CreateEphemeralTokenPayload,
@@ -13,6 +13,7 @@ export type {
   JoinSessionPayload,
   SessionOptions,
   VideoPayload,
+  VideoRouterConfig,
 } from '../schemas';
 
 export type * from './IVideoRouter';
