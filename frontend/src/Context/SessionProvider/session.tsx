@@ -240,8 +240,21 @@ const SessionProvider = ({ children, initialValue = {} }: SessionProviderProps):
     },
     [onEmoji]
   );
+  const tilePreferencePersistTimeout = useRef<number | null>(null);
   useEffect(() => {
-    persistTilePreference(tilePreferences);
+    if (tilePreferencePersistTimeout.current !== null) {
+      window.clearTimeout(tilePreferencePersistTimeout.current);
+    }
+
+    const timeoutId = window.setTimeout(() => {
+      persistTilePreference(tilePreferences);
+    }, 200);
+
+    tilePreferencePersistTimeout.current = timeoutId;
+
+    return () => {
+      window.clearTimeout(timeoutId);
+    };
   }, [tilePreferences]);
 
   useEffect(() => {
