@@ -101,6 +101,39 @@ describe('useScreenSharing', () => {
     expect(result.current.isSharingScreen).toBe(false);
   });
 
+  it('removes screenshareStreamCreated listener when stopping screenshare', async () => {
+    const mockOff = vi.fn();
+
+    mockVonageVideoClient = Object.assign(new EventEmitter(), {
+      on: vi.fn(),
+      off: mockOff,
+    }) as unknown as Partial<VonageVideoClient> as VonageVideoClient;
+
+    const { result } = render({
+      userContext: {
+        __interceptor: (context: UserContextType | null) => {
+          context!.user.defaultSettings.name = 'TestUser';
+        },
+      },
+      sessionContext: {
+        __interceptor: (context) => {
+          if (context) {
+            context.vonageVideoClient = mockVonageVideoClient as unknown as VonageVideoClient;
+            context.publish = mockPublish;
+            context.unpublish = mockUnpublish;
+          }
+        },
+      },
+    });
+
+    await act(async () => {
+      await result.current.toggleShareScreen();
+      await result.current.toggleShareScreen();
+    });
+
+    expect(result.current.isSharingScreen).toBe(false);
+  });
+
   it('does not initialize publisher if session is null', async () => {
     const { result } = render({
       userContext: {

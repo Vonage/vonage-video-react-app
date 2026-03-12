@@ -162,6 +162,7 @@ describe('MeetingRoom', () => {
     mockUseScreenShare.mockReturnValue({
       toggleShareScreen: () => Promise.resolve(),
       isSharingScreen: false,
+      isEntireScreen: false,
       screenshareVideoElement: undefined,
       screensharingPublisher: null,
     });

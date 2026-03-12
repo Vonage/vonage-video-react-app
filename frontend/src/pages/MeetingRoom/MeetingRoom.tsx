@@ -76,8 +76,13 @@ const MeetingRoom = (): ReactElement => {
     toggleReportIssue,
     archiveId,
   } = useSessionContext();
-  const { isSharingScreen, screensharingPublisher, screenshareVideoElement, toggleShareScreen } =
-    useScreenShare();
+  const {
+    isSharingScreen,
+    isEntireScreen,
+    screensharingPublisher,
+    screenshareVideoElement,
+    toggleShareScreen,
+  } = useScreenShare();
   const isSmallViewport = useIsSmallViewport();
 
   const [isUserCaptionsEnabled, setIsUserCaptionsEnabled] = useState<boolean>(false);
@@ -162,6 +167,7 @@ const MeetingRoom = (): ReactElement => {
 
       <VideoTileCanvas
         isSharingScreen={isSharingScreen}
+        isEntireScreen={isEntireScreen}
         screensharingPublisher={screensharingPublisher}
         screenshareVideoElement={screenshareVideoElement}
         isRightPanelOpen={rightPanelActiveTab !== 'closed'}
