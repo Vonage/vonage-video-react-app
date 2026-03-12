@@ -69,14 +69,25 @@ function parseOptionalInteger(
   if (value === undefined || value === null || value === '') return undefined;
 
   if (typeof value === 'string') {
-    const parsed = Number.parseInt(value, 10);
-    if (Number.isNaN(parsed)) {
+    const trimmed = value.trim();
+    if (trimmed === '') {
       throw new Error(`Invalid integer env value for ${name}: ${toDisplayString(value)}`);
     }
+
+    const isValidIntegerString = /^[+-]?\d+$/.test(trimmed);
+    if (!isValidIntegerString) {
+      throw new Error(`Invalid integer env value for ${name}: ${toDisplayString(value)}`);
+    }
+
+    const parsed = Number(trimmed);
+    if (!Number.isFinite(parsed)) {
+      throw new Error(`Invalid integer env value for ${name}: ${toDisplayString(value)}`);
+    }
+
     value = parsed;
   }
 
-  if (typeof value !== 'number' || !Number.isFinite(value)) {
+  if (typeof value !== 'number' || !Number.isFinite(value) || !Number.isInteger(value)) {
     throw new Error(`Invalid integer env value for ${name}: ${toDisplayString(value)}`);
   }
 
