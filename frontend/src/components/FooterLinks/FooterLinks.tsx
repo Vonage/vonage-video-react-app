@@ -20,14 +20,14 @@ const FooterLinks = (): ReactElement => {
       <GHRepoButton />
       <Typography
         variant="body2"
-        className="hidden md:block ml-2 text-vera-text-tertiary text-sm"
+        className="hidden min-[900px]:block ml-2 text-vera-text-tertiary text-sm"
       >
         {t('footer.github.title')}
       </Typography>
       <Typography
         variant="body2"
         data-testid="app-version"
-        className="hidden md:block ml-2 text-vera-text-tertiary text-sm"
+        className="hidden min-[900px]:block ml-2 text-vera-text-tertiary text-sm"
       >
         {getAppVersion().replace('vera-', 'v')} (SDK {sdkPackageInfo.version})
       </Typography>
