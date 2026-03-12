@@ -15,16 +15,21 @@ vi.mock('@vonage/client-sdk-video', () => ({
 describe('useScreenSharing', () => {
   let mockVonageVideoClient: Partial<VonageVideoClient>;
   let mockPublisher: Partial<Publisher>;
+  let handlers: Record<string, (...args: unknown[]) => void>;
   const mockPublish = vi.fn();
   const mockUnpublish = vi.fn();
 
   beforeEach(() => {
+    handlers = {};
     mockVonageVideoClient = Object.assign(new EventEmitter(), {
       on: vi.fn(),
+      off: vi.fn(),
     }) as unknown as Partial<VonageVideoClient> as VonageVideoClient;
 
     mockPublisher = {
-      on: vi.fn(),
+      on: vi.fn((event, cb) => {
+        handlers[event] = cb;
+      }),
       destroy: vi.fn(),
     } as unknown as Partial<Publisher>;
 
@@ -101,14 +106,7 @@ describe('useScreenSharing', () => {
     expect(result.current.isSharingScreen).toBe(false);
   });
 
-  it('removes screenshareStreamCreated listener when stopping screenshare', async () => {
-    const mockOff = vi.fn();
-
-    mockVonageVideoClient = Object.assign(new EventEmitter(), {
-      on: vi.fn(),
-      off: mockOff,
-    }) as unknown as Partial<VonageVideoClient> as VonageVideoClient;
-
+  it('sets isEntireScreen to true when displaySurface is monitor', async () => {
     const { result } = render({
       userContext: {
         __interceptor: (context: UserContextType | null) => {
@@ -128,10 +126,95 @@ describe('useScreenSharing', () => {
 
     await act(async () => {
       await result.current.toggleShareScreen();
+    });
+
+    const mockVideoEl = {
+      srcObject: {
+        getVideoTracks: () => [{ getSettings: () => ({ displaySurface: 'monitor' }) }],
+      },
+    } as unknown as HTMLVideoElement;
+
+    act(() => {
+      handlers['videoElementCreated']({ element: mockVideoEl });
+    });
+
+    expect(result.current.isEntireScreen).toBe(true);
+  });
+
+  it('sets isEntireScreen to false when displaySurface is window', async () => {
+    const { result } = render({
+      userContext: {
+        __interceptor: (context: UserContextType | null) => {
+          context!.user.defaultSettings.name = 'TestUser';
+        },
+      },
+      sessionContext: {
+        __interceptor: (context) => {
+          if (context) {
+            context.vonageVideoClient = mockVonageVideoClient as unknown as VonageVideoClient;
+            context.publish = mockPublish;
+            context.unpublish = mockUnpublish;
+          }
+        },
+      },
+    });
+
+    await act(async () => {
       await result.current.toggleShareScreen();
     });
 
-    expect(result.current.isSharingScreen).toBe(false);
+    const mockVideoEl = {
+      srcObject: {
+        getVideoTracks: () => [{ getSettings: () => ({ displaySurface: 'window' }) }],
+      },
+    } as unknown as HTMLVideoElement;
+
+    act(() => {
+      handlers['videoElementCreated']({ element: mockVideoEl });
+    });
+
+    expect(result.current.isEntireScreen).toBe(false);
+  });
+
+  it('resets isEntireScreen when streamDestroyed fires', async () => {
+    const { result } = render({
+      userContext: {
+        __interceptor: (context: UserContextType | null) => {
+          context!.user.defaultSettings.name = 'TestUser';
+        },
+      },
+      sessionContext: {
+        __interceptor: (context) => {
+          if (context) {
+            context.vonageVideoClient = mockVonageVideoClient as unknown as VonageVideoClient;
+            context.publish = mockPublish;
+            context.unpublish = mockUnpublish;
+          }
+        },
+      },
+    });
+
+    await act(async () => {
+      await result.current.toggleShareScreen();
+    });
+
+    const mockVideoEl = {
+      srcObject: {
+        getVideoTracks: () => [{ getSettings: () => ({ displaySurface: 'monitor' }) }],
+      },
+    } as unknown as HTMLVideoElement;
+
+    act(() => {
+      handlers['videoElementCreated']({ element: mockVideoEl });
+    });
+
+    expect(result.current.isEntireScreen).toBe(true);
+
+    act(() => {
+      handlers['streamDestroyed']();
+    });
+
+    expect(result.current.isEntireScreen).toBe(false);
   });
 
   it('does not initialize publisher if session is null', async () => {
