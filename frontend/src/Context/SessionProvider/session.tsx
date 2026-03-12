@@ -181,8 +181,12 @@ const SessionProvider = ({ children, initialValue = {} }: SessionProviderProps):
   );
 
   const [archiveId, setArchiveId] = useState<string | null>(initialValue?.archiveId ?? null);
-  const [archiveIdStartedBySelf, setArchiveIdStartedBySelf] = useState<string | null>(initialValue?.archiveIdStartedBySelf ?? null);
-  const [recordingAlreadyNotified, setRecordingAlreadyNotified] = useState<boolean>(initialValue?.recordingAlreadyNotified ?? false);
+  const [archiveIdStartedBySelf, setArchiveIdStartedBySelf] = useState<string | null>(
+    initialValue?.archiveIdStartedBySelf ?? null
+  );
+  const [recordingAlreadyNotified, setRecordingAlreadyNotified] = useState<boolean>(
+    initialValue?.recordingAlreadyNotified ?? false
+  );
   const archiveStartRequestedBySelfRef = useRef<boolean>(false);
 
   const markArchiveStartRequestedBySelf = useCallback(() => {

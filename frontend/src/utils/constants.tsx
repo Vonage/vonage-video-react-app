@@ -189,7 +189,6 @@ export const ABSOLUTE_DISTANCE_THRESHOLD_REM_VALUE = 0.75;
  */
 export const RECORDING_POPUP_TIMEOUT_MS = 5000;
 
-
 /**
  * @constant {number} RECORDING_START_DELAY - The delay in milliseconds before starting the recording after the user initiates it.
  * This delay allows for any necessary setup or confirmation dialogs to be completed before the recording starts.
