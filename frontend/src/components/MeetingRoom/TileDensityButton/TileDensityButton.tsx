@@ -38,7 +38,7 @@ const TileSlider = ({ label, value, min, max, onChange }: SliderProps) => (
       onChange={(event) => onChange(Number(event.target.value))}
       className="w-full accent-[var(--vera-primary)]"
       style={{ accentColor: 'var(--vera-primary)' }}
-      data-testid={`tile-slider-${label}`}
+      data-testid="tile-slider"
     />
     <div className="flex items-center justify-between text-[10px] text-vera-text-tertiary">
       <span>{min}</span>
