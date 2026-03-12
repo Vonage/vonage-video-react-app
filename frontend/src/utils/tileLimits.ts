@@ -36,13 +36,17 @@ const USER_MINS: Record<DeviceType, TilePreference> = {
 };
 
 const BASE_LIMITS: Record<DeviceType, DeviceTileLimits> = {
-  desktop: {
-    grid: env.TILE_LIMIT_GRID_DESKTOP ?? MAX_TILES_GRID_VIEW_DESKTOP,
-    speaker: env.TILE_LIMIT_SPEAKER_DESKTOP ?? MAX_TILES_SPEAKER_VIEW_DESKTOP,
+  get desktop() {
+    return {
+      grid: env.TILE_LIMIT_GRID_DESKTOP ?? MAX_TILES_GRID_VIEW_DESKTOP,
+      speaker: env.TILE_LIMIT_SPEAKER_DESKTOP ?? MAX_TILES_SPEAKER_VIEW_DESKTOP,
+    };
   },
-  mobile: {
-    grid: env.TILE_LIMIT_GRID_MOBILE ?? MAX_TILES_GRID_VIEW_MOBILE,
-    speaker: env.TILE_LIMIT_SPEAKER_MOBILE ?? MAX_TILES_SPEAKER_VIEW_MOBILE,
+  get mobile() {
+    return {
+      grid: env.TILE_LIMIT_GRID_MOBILE ?? MAX_TILES_GRID_VIEW_MOBILE,
+      speaker: env.TILE_LIMIT_SPEAKER_MOBILE ?? MAX_TILES_SPEAKER_VIEW_MOBILE,
+    };
   },
 };
 
