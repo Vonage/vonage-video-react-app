@@ -139,6 +139,7 @@ describe('useScreenSharing', () => {
     });
 
     expect(result.current.isEntireScreen).toBe(true);
+    expect(result.current.screenshareVideoElement).toBe(mockVideoEl);
   });
 
   it('sets isEntireScreen to false when displaySurface is window', async () => {
@@ -208,6 +209,7 @@ describe('useScreenSharing', () => {
       handlers['videoElementCreated']({ element: mockVideoEl });
     });
 
+    expect(result.current.screenshareVideoElement).toBe(mockVideoEl);
     expect(result.current.isEntireScreen).toBe(true);
 
     act(() => {
@@ -215,6 +217,8 @@ describe('useScreenSharing', () => {
     });
 
     expect(result.current.isEntireScreen).toBe(false);
+    expect(result.current.isSharingScreen).toBe(false);
+    expect(result.current.screenshareVideoElement).toBe(undefined);
   });
 
   it('does not initialize publisher if session is null', async () => {
