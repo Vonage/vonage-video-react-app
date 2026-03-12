@@ -10,6 +10,7 @@ export type ScreenSharePublisherProps = {
   box: Box | undefined;
   element: HTMLElement | HTMLObjectElement | undefined;
   publisher: Publisher | null;
+  isEntireScreen: boolean;
 };
 
 /**
@@ -25,6 +26,7 @@ const ScreenSharePublisher = ({
   box,
   element,
   publisher,
+  isEntireScreen,
 }: ScreenSharePublisherProps): ReactElement | undefined => {
   const theme = useTheme();
   const containerRef = useRef<HTMLDivElement>(null);
@@ -41,42 +43,24 @@ const ScreenSharePublisher = ({
     }
   }, [element, theme.shapes.borderRadiusLarge]);
   const streamName = publisher?.stream?.name ?? '';
-  const videoEl = element as HTMLVideoElement | undefined;
-  const mediaStream = videoEl?.srcObject as MediaStream | null;
-  const track = mediaStream?.getVideoTracks?.()[0];
-  const displaySurface = track?.getSettings?.()?.displaySurface;
-  const isEntireScreen = displaySurface === 'monitor';
   return (
     box && (
-      <>
-        {!isEntireScreen && (
-          <VideoTile
-            id="screen-publisher-container"
-            box={box}
-            data-testid="screen-publisher-container"
-            hasVideo
-            ref={containerRef}
-            isScreenshare
-          >
-            <ScreenShareNameDisplay name={streamName} box={box} />
-          </VideoTile>
-        )}
-
-        {isEntireScreen && (
-          <div
-            style={{
-              position: 'absolute',
-              top: box.top - 2,
-              left: box.left - 2,
-              width: box.width + 4,
-              height: box.height + 4,
-            }}
-            className="flex items-center justify-center text-xl font-medium bg-black text-white pointer-events-none rounded-2xl"
-          >
+      <VideoTile
+        id="screen-publisher-container"
+        box={box}
+        data-testid="screen-publisher-container"
+        hasVideo
+        ref={containerRef}
+        isScreenshare
+      >
+        {isEntireScreen ? (
+          <div className="absolute inset-0 flex items-center justify-center text-xl font-medium bg-black text-white pointer-events-none">
             {t('screenSharing.dialog.hiddenMessage')}
           </div>
+        ) : (
+          <ScreenShareNameDisplay name={streamName} box={box} />
         )}
-      </>
+      </VideoTile>
     )
   );
 };
