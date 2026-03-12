@@ -258,13 +258,30 @@ const SessionProvider = ({ children, initialValue = {} }: SessionProviderProps):
   }, [tilePreferences]);
 
   useEffect(() => {
-    const nextDeviceType = getDeviceType();
-    if (nextDeviceType !== deviceType) {
-      setDeviceType(nextDeviceType);
-      setTilePreferences((prev) => normalizePreferenceForDevice(prev, nextDeviceType));
-    }
-  }, [deviceType]);
+    const handleDeviceTypeChange = () => {
+      const nextDeviceType = getDeviceType();
 
+      setDeviceType((previousDeviceType) => {
+        if (nextDeviceType === previousDeviceType) return previousDeviceType;
+
+        setTilePreferences((previousPreference) =>
+          normalizePreferenceForDevice(previousPreference, nextDeviceType)
+        );
+
+        return nextDeviceType;
+      });
+    };
+
+    handleDeviceTypeChange();
+
+    window.addEventListener('resize', handleDeviceTypeChange);
+    window.addEventListener('orientationchange', handleDeviceTypeChange);
+
+    return () => {
+      window.removeEventListener('resize', handleDeviceTypeChange);
+      window.removeEventListener('orientationchange', handleDeviceTypeChange);
+    };
+  }, []);
   const { limits: tileLimits, bounds: tileLimitBounds } = useMemo(
     () => getEffectiveLimits(deviceType, tilePreferences),
     [deviceType, tilePreferences]
