@@ -188,3 +188,10 @@ export const ABSOLUTE_DISTANCE_THRESHOLD_REM_VALUE = 0.75;
  * @constant {number} RECORDING_POPUP_TIMEOUT_MS - The duration in milliseconds for which the recording consent popup is displayed before automatically closing.
  */
 export const RECORDING_POPUP_TIMEOUT_MS = 5000;
+
+
+/**
+ * @constant {number} RECORDING_START_DELAY - The delay in milliseconds before starting the recording after the user initiates it.
+ * This delay allows for any necessary setup or confirmation dialogs to be completed before the recording starts.
+ */
+export const RECORDING_START_DELAY = 3000;

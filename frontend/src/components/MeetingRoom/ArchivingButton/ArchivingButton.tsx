@@ -10,6 +10,7 @@ import useTheme from '@ui/theme';
 import VividIcon from '@components/VividIcon';
 import classNames from 'classnames';
 import { env } from '../../../env';
+import { RECORDING_START_DELAY } from '@utils/constants';
 
 export type ArchivingButtonProps = {
   isOverflowButton?: boolean;
@@ -72,12 +73,14 @@ const ArchivingButton = ({
     if (action === 'start') {
       if (!archiveId && roomName) {
         markArchiveStartRequestedBySelf();
-        try {
-          await startArchiving(roomName);
-        } catch (err) {
-          resetArchiveStartRequestedBySelf();
-          console.log(err);
-        }
+        setTimeout(async () => {
+          try {
+            await startArchiving(roomName);
+          } catch (err) {
+            resetArchiveStartRequestedBySelf();
+            console.log(err);
+          }
+        }, RECORDING_START_DELAY);
       }
     } else if (archiveId && roomName) {
       void stopArchiving(roomName, archiveId);

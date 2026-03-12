@@ -131,6 +131,8 @@ export type SessionContextInitialValue = Partial<
     | 'ownCaptions'
     | 'archiveId'
     | 'activeSpeakerId'
+    | 'recordingAlreadyNotified'
+    | 'archiveIdStartedBySelf'
   >
 >;
 
@@ -179,8 +181,8 @@ const SessionProvider = ({ children, initialValue = {} }: SessionProviderProps):
   );
 
   const [archiveId, setArchiveId] = useState<string | null>(initialValue?.archiveId ?? null);
-  const [archiveIdStartedBySelf, setArchiveIdStartedBySelf] = useState<string | null>(null);
-  const [recordingAlreadyNotified, setRecordingAlreadyNotified] = useState<boolean>(false);
+  const [archiveIdStartedBySelf, setArchiveIdStartedBySelf] = useState<string | null>(initialValue?.archiveIdStartedBySelf ?? null);
+  const [recordingAlreadyNotified, setRecordingAlreadyNotified] = useState<boolean>(initialValue?.recordingAlreadyNotified ?? false);
   const archiveStartRequestedBySelfRef = useRef<boolean>(false);
 
   const markArchiveStartRequestedBySelf = useCallback(() => {
