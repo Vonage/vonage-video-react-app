@@ -84,6 +84,11 @@ const LayoutButton = ({
     if (isDisabled) {
       return;
     }
+
+    if (anchorEl === event.currentTarget) {
+      handleClose();
+      return;
+    }
     setAnchorEl(event.currentTarget);
   };
 
