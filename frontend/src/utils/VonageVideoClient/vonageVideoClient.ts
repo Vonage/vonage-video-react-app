@@ -6,6 +6,7 @@ import {
   Stream,
   Subscriber,
   SubscriberProperties,
+  Connection,
 } from '@vonage/client-sdk-video';
 import { EventEmitter } from 'events';
 import {
@@ -36,6 +37,9 @@ type VonageVideoClientEvents = {
   'signal:chat': [SignalEvent];
   'signal:emoji': [SignalEvent];
   'signal:captions': [SignalEvent];
+  'signal:raiseHand': [SignalEvent];
+  connectionCreated: [Connection];
+  connectionDestroyed: [Connection];
   streamPropertyChanged: [StreamPropertyChangedEvent];
   subscriberVideoElementCreated: [SubscriberWrapper];
   subscriberDestroyed: [string];
@@ -88,6 +92,8 @@ class VonageVideoClient extends EventEmitter<VonageVideoClientEvents> {
     this.clientSession.on('sessionReconnected', () => this.handleReconnected());
     this.clientSession.on('sessionReconnecting', () => this.handleReconnecting());
     this.clientSession.on('signal', (event) => this.handleSignal(event));
+    this.clientSession.on('connectionCreated', (event) => this.emit('connectionCreated', event.connection));
+    this.clientSession.on('connectionDestroyed', (event) => this.emit('connectionDestroyed', event.connection));
     this.clientSession.on('streamPropertyChanged', (event) =>
       this.handleStreamPropertyChanged(event)
     );
@@ -354,7 +360,12 @@ class VonageVideoClient extends EventEmitter<VonageVideoClientEvents> {
    */
   private handleSignal = (event: SignalEvent) => {
     const { type } = event;
-    if (type === 'signal:chat' || type === 'signal:emoji' || type === 'signal:captions') {
+    if (
+      type === 'signal:chat' ||
+      type === 'signal:emoji' ||
+      type === 'signal:captions' ||
+      type === 'signal:raiseHand'
+    ) {
       this.emit(type, event);
     }
   };
@@ -526,7 +537,8 @@ class VonageVideoClient extends EventEmitter<VonageVideoClientEvents> {
    * @param {SignalType} data - The signal data to be sent.
    */
   signal = (data: SignalType) => {
-    this.clientSession?.signal(data);
+    const { to, ...rest } = data;
+    this.clientSession?.signal(to ? { ...rest, to } : rest);
   };
 
   /**

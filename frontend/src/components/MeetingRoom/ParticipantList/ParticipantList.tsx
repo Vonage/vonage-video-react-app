@@ -24,6 +24,7 @@ import InputAdornment from '@mui/material/InputAdornment';
 import createNameMatcher from '@utils/participantList/createNameMatcher';
 import getFilteredSubscribers from '@utils/participantList/getFilteredSubscribers';
 import shouldShowUser from '@utils/participantList/shouldShowUser';
+import RaisedHandsSection from '../RaisedHandsSection';
 
 export type ParticipantListProps = {
   handleClose: () => void;
@@ -156,6 +157,7 @@ const ParticipantList = ({ handleClose, isOpen }: ParticipantListProps): ReactEl
             }}
           />
         </Box>
+        <RaisedHandsSection />
         <List sx={{ overflowX: 'auto', height: 'calc(100dvh - 296px)' }}>
           {isUserVisible && (
             <ParticipantListItem

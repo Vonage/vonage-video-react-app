@@ -10,6 +10,8 @@ import VideoTile from '../MeetingRoom/VideoTile';
 import useTheme from '@ui/theme';
 import { ABSOLUTE_DISTANCE_THRESHOLD_REM_VALUE } from '@utils/constants';
 import toRemValue from '@common/helpers/toRemValue';
+import RaiseHandBadge from '../MeetingRoom/RaiseHandBadge';
+import useSessionContext from '../../hooks/useSessionContext';
 
 export type PublisherProps = {
   box: Box;
@@ -33,6 +35,7 @@ const Publisher = ({ box }: PublisherProps): ReactElement => {
   } = usePublisherContext();
   const audioLevel = useAudioLevels();
   const theme = useTheme();
+  const { localHandIsRaised } = useSessionContext();
   // We store this in a ref to get a reference to the div so that we can append a video to it
   const pubContainerRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
@@ -80,6 +83,7 @@ const Publisher = ({ box }: PublisherProps): ReactElement => {
       ref={pubContainerRef}
       hasVideo={hasVideo}
     >
+      {localHandIsRaised && <RaiseHandBadge />}
       {!hasVideo && (
         <AvatarInitials
           initials={initials}

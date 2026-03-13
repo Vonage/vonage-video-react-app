@@ -1,4 +1,6 @@
 import Tooltip from '@mui/material/Tooltip';
+import Badge from '@mui/material/Badge';
+import Box from '@mui/material/Box';
 import { Dispatch, ReactElement, SetStateAction, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import useTheme from '@ui/theme';
@@ -6,6 +8,7 @@ import ToolbarButton from '../ToolbarButton';
 import EmojiGrid from '../EmojiGrid/EmojiGrid';
 import VividIcon from '@components/VividIcon';
 import { env } from '../../../env';
+import useSessionContext from '@hooks/useSessionContext';
 
 export type EmojiGridProps = {
   isEmojiGridOpen: boolean;
@@ -33,6 +36,7 @@ const EmojiGridButton = ({
 }: EmojiGridProps): ReactElement | false => {
   const { t } = useTranslation();
   const theme = useTheme();
+  const { localHandIsRaised } = useSessionContext();
   const anchorRef = useRef<HTMLButtonElement>(null);
   const handleToggle = () => {
     setIsEmojiGridOpen((prevOpen) => !prevOpen);
@@ -42,24 +46,43 @@ const EmojiGridButton = ({
     env.ALLOW_EMOJIS && (
       <>
         <Tooltip title={t('emoji.tooltip')} aria-label={t('emoji.ariaLabel')}>
-          <ToolbarButton
-            onClick={handleToggle}
-            icon={
-              <VividIcon
-                name="emoji-solid"
-                customSize={-5}
-                sx={{
-                  color: isEmojiGridOpen ? theme.colors.secondary : theme.colors.onSecondary,
-                }}
-              />
-            }
-            ref={anchorRef}
-            data-testid="emoji-grid-button"
+          <Badge
+            data-testid="raise-hand-active-badge"
+            badgeContent={localHandIsRaised ? '✋' : null}
+            invisible={!localHandIsRaised}
+            overlap="circular"
             sx={{
-              marginTop: isOverflowButton ? '0px' : '4px',
+              '& .MuiBadge-badge': {
+                fontSize: '0.7rem',
+                minWidth: '16px',
+                height: '16px',
+                padding: '0 2px',
+                backgroundColor: theme.colors.primary,
+                color: theme.colors.onPrimary,
+              },
             }}
-            isOverflowButton={isOverflowButton}
-          />
+          >
+            <ToolbarButton
+              onClick={handleToggle}
+              icon={
+                <Box sx={{ position: 'relative', display: 'flex' }}>
+                  <VividIcon
+                    name="emoji-solid"
+                    customSize={-5}
+                    sx={{
+                      color: isEmojiGridOpen ? theme.colors.secondary : theme.colors.onSecondary,
+                    }}
+                  />
+                </Box>
+              }
+              ref={anchorRef}
+              data-testid="emoji-grid-button"
+              sx={{
+                marginTop: isOverflowButton ? '0px' : '4px',
+              }}
+              isOverflowButton={isOverflowButton}
+            />
+          </Badge>
         </Tooltip>
 
         <EmojiGrid

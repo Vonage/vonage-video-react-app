@@ -15,6 +15,7 @@ import useTheme from '@ui/theme';
 import { ABSOLUTE_DISTANCE_THRESHOLD_REM_VALUE } from '@utils/constants';
 import toRemValue from '@common/helpers/toRemValue';
 import attempt from '@common/execution/attempt';
+import RaiseHandBadge from '../MeetingRoom/RaiseHandBadge';
 
 export type SubscriberProps = {
   subscriberWrapper: SubscriberWrapper;
@@ -41,7 +42,9 @@ const Subscriber = ({
   box,
   isActiveSpeaker,
 }: SubscriberProps): ReactElement => {
-  const { isMaxPinned, pinSubscriber } = useSessionContext();
+  const { isMaxPinned, pinSubscriber, raisedHands } = useSessionContext();
+  const connectionId = subscriberWrapper.subscriber.stream?.connection?.connectionId ?? '';
+  const isHandRaised = raisedHands.some((h) => h.connectionId === connectionId);
   const theme = useTheme();
   const { isPinned, subscriber } = subscriberWrapper;
   const isScreenShare = subscriber?.stream?.videoType === 'screen';
@@ -136,6 +139,7 @@ const Subscriber = ({
       onMouseEnter={() => setIsTileHovered(true)}
       onMouseLeave={() => setIsTileHovered(false)}
     >
+      {isHandRaised && <RaiseHandBadge />}
       <PinButton
         isPinned={isPinned}
         isTileHovered={isTileHovered}

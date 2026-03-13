@@ -15,6 +15,9 @@ import useRightPanel, { RightPanelActiveTab } from '@hooks/useRightPanel';
 import useUserContext from '@hooks/useUserContext';
 import useChat from '@hooks/useChat';
 import useEmoji, { EmojiWrapper } from '@hooks/useEmoji';
+import useRaiseHand from '@hooks/useRaiseHand';
+import type { RaiseHandState } from '@app-types/session';
+import appConfigContext from '@stores/appConfig';
 import fetchCredentials from '@api/fetchCredentials';
 import ActiveSpeakerTracker from '@utils/ActiveSpeakerTracker';
 import {
@@ -67,6 +70,12 @@ export type SessionContextType = {
   ownCaptions: string | null;
   sendEmoji: (emoji: string) => void;
   emojiQueue: EmojiWrapper[];
+  raisedHands: RaiseHandState[];
+  raisedHandCount: number;
+  localHandIsRaised: boolean;
+  raiseHand: () => void;
+  lowerHand: (connectionId?: string) => void;
+  lowerAllHands: () => void;
   publish: (publisher: Publisher) => Promise<void>;
   unpublish: (publisher: Publisher) => void;
   lastStreamUpdate: StreamPropertyChangedEvent | null;
@@ -102,6 +111,12 @@ export const SessionContext = createContext<SessionContextType>({
   ownCaptions: null,
   sendEmoji: () => {},
   emojiQueue: [],
+  raisedHands: [],
+  raisedHandCount: 0,
+  localHandIsRaised: false,
+  raiseHand: () => {},
+  lowerHand: () => {},
+  lowerAllHands: () => {},
   publish: async () => Promise.resolve(),
   unpublish: () => {},
   lastStreamUpdate: null,
@@ -185,6 +200,27 @@ const SessionProvider = ({ children, initialValue = {} }: SessionProviderProps):
     signal: vonageVideoClient.current?.signal,
     getConnectionId,
   });
+
+  const { user } = useUserContext();
+
+  const {
+    raisedHands,
+    raisedHandCount,
+    localHandIsRaised,
+    raiseHand,
+    lowerHand,
+    lowerAllHands,
+    onRaiseHandSignal,
+    onConnectionCreated: onRaiseHandConnectionCreated,
+    onConnectionDestroyed: onRaiseHandConnectionDestroyed,
+    resetAllHands,
+  } = useRaiseHand({
+    signal: vonageVideoClient.current?.signal,
+    getConnectionId,
+    subscriberWrappers,
+    activeSpeakerId,
+    localUserName: user?.defaultSettings.name ?? '',
+  });
   const {
     closeRightPanel,
     toggleParticipantList,
@@ -210,6 +246,16 @@ const SessionProvider = ({ children, initialValue = {} }: SessionProviderProps):
       });
     },
     [onEmoji]
+  );
+
+  const handleRaiseHandSignal = useCallback(
+    (event: SignalEvent) => {
+      setSubscriberWrappers((currentSubscriberWrappers) => {
+        onRaiseHandSignal(event, currentSubscriberWrappers);
+        return [...currentSubscriberWrappers]; // Return unchanged state
+      });
+    },
+    [onRaiseHandSignal]
   );
 
   const setActiveSpeakerIdAndRef = useCallback((id: string | undefined) => {
@@ -271,7 +317,6 @@ const SessionProvider = ({ children, initialValue = {} }: SessionProviderProps):
     });
   }, [moveSubscriberToTopOfDisplayOrder, setActiveSpeakerIdAndRef]);
 
-  const { user } = useUserContext();
   const [connected, setConnected] = useState(initialValue?.connected ?? false);
 
   /**
@@ -303,6 +348,7 @@ const SessionProvider = ({ children, initialValue = {} }: SessionProviderProps):
   const handleReconnected = () => {
     setReconnecting(false);
     setSubscriptionError(null);
+    resetAllHands();
   };
 
   const handleArchiveStarted = (id: string) => {
@@ -409,6 +455,11 @@ const SessionProvider = ({ children, initialValue = {} }: SessionProviderProps):
       vonageVideoClient.current.on('archiveStopped', handleArchiveStopped);
       vonageVideoClient.current.on('signal:chat', handleChatSignal);
       vonageVideoClient.current.on('signal:emoji', handleEmoji);
+      vonageVideoClient.current.on('signal:raiseHand', handleRaiseHandSignal);
+      vonageVideoClient.current.on('connectionCreated', onRaiseHandConnectionCreated);
+      vonageVideoClient.current.on('connectionDestroyed', (conn) =>
+        onRaiseHandConnectionDestroyed(conn.connectionId)
+      );
       vonageVideoClient.current.on(
         'subscriberAudioLevelUpdated',
         handleSubscriberAudioLevelUpdated
@@ -518,6 +569,12 @@ const SessionProvider = ({ children, initialValue = {} }: SessionProviderProps):
       ownCaptions,
       sendEmoji,
       emojiQueue,
+      raisedHands,
+      raisedHandCount,
+      localHandIsRaised,
+      raiseHand,
+      lowerHand,
+      lowerAllHands,
       publish,
       unpublish,
       lastStreamUpdate,
@@ -549,6 +606,12 @@ const SessionProvider = ({ children, initialValue = {} }: SessionProviderProps):
       ownCaptions,
       sendEmoji,
       emojiQueue,
+      raisedHands,
+      raisedHandCount,
+      localHandIsRaised,
+      raiseHand,
+      lowerHand,
+      lowerAllHands,
       publish,
       unpublish,
       lastStreamUpdate,

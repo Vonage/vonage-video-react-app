@@ -41,8 +41,24 @@ export type SignalEvent = {
 };
 
 export type SignalType = {
-  type: 'emoji' | 'chat' | 'captions';
+  type: 'emoji' | 'chat' | 'captions' | 'raiseHand';
   data: string;
+  to?: Connection;
+};
+
+/**
+ * Raised-hand state for a single participant.
+ * Keyed by connectionId in the raise-hand map.
+ */
+export type RaiseHandState = {
+  /** The connection ID of the participant (key into the map). */
+  connectionId: string;
+  /** Participant's display name, used in UI (toast, queue list, pill). */
+  participantName: string;
+  /** Whether the hand is currently raised. */
+  raisedHand: boolean;
+  /** Epoch ms when the hand was raised; null when lowered. */
+  raisedHandTimestamp: number | null;
 };
 
 export type SubscriberAudioLevelUpdatedEvent = { movingAvg: number; subscriberId: string };

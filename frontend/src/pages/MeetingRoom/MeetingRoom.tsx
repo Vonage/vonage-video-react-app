@@ -5,6 +5,8 @@ import Toolbar from '../../components/MeetingRoom/Toolbar';
 import VideoTileCanvas from '../../components/MeetingRoom/VideoTileCanvas';
 import SmallViewportHeader from '../../components/MeetingRoom/SmallViewportHeader';
 import EmojisOrigin from '../../components/MeetingRoom/EmojisOrigin';
+import RaiseHandToast from '../../components/MeetingRoom/RaiseHandToast';
+import RaiseHandPill from '../../components/MeetingRoom/RaiseHandPill';
 import RightPanel from '../../components/MeetingRoom/RightPanel';
 import CaptionsBox from '../../components/MeetingRoom/CaptionsButton/CaptionsBox';
 import CaptionsError from '../../components/MeetingRoom/CaptionsError';
@@ -86,6 +88,8 @@ const MeetingRoom = ({
 
       <RightPanel activeTab={rightPanelActiveTab} handleClose={closeRightPanel} />
       <EmojisOrigin />
+      <RaiseHandToast />
+      <RaiseHandPill />
       {isUserCaptionsEnabled && <CaptionsBox />}
       {captionsErrorResponse && (
         <CaptionsError

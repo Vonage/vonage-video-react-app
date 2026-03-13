@@ -212,5 +212,22 @@
   "zoom.in": "Zoom in",
   "zoom.current": "Current zoom",
   "errorPage.title": "Something went wrong",
-  "errorPage.description": "The application could not start. Please reload the page or contact support if the problem persists."
+  "errorPage.description": "The application could not start. Please reload the page or contact support if the problem persists.",
+  "raiseHand.button.raise": "Raise hand",
+  "raiseHand.button.lower": "Lower hand",
+  "raiseHand.section.title": "Raised hands",
+  "raiseHand.section.lowerAll": "Lower all",
+  "raiseHand.section.lowerParticipant": "Lower {{name}}'s hand",
+  "raiseHand.lowerAll.dialogTitle": "Lower all hands?",
+  "raiseHand.lowerAll.dialogBody": "This will lower {{count}} raised hand.",
+  "raiseHand.lowerAll.dialogBody_plural": "This will lower {{count}} raised hands.",
+  "raiseHand.lowerAll.confirmButton": "Lower all hands",
+  "raiseHand.toast.singleRaised": "{{name}} raised their hand",
+  "raiseHand.toast.multipleRaised": "{{count}} participants raised their hands",
+  "raiseHand.toast.viewQueue": "View queue",
+  "raiseHand.pill.ariaLabel": "Raised hands — first in queue: {{name}}. Click to open participants panel.",
+  "raiseHand.pill.popoverTitle": "Raised hands",
+  "raiseHand.pill.viewAll": "View all ({{count}}) >",
+  "raiseHand.selfLowerPill.ariaLabel": "Lower your raised hand",
+  "raiseHand.selfLowerPill.label": "Lower hand"
 }

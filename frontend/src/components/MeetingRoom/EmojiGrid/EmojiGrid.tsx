@@ -14,9 +14,11 @@ import {
   useMemo,
   useState,
 } from 'react';
+import Divider from '@mui/material/Divider';
 import useIsSmallViewport from '../../../hooks/useIsSmallViewport';
 import SendEmojiButton from '../SendEmojiButton';
 import emojiMap from '../../../utils/emojis';
+import RaiseHandButton from '../RaiseHandButton';
 
 export type EmojiGridProps = {
   isEmojiGridOpen: boolean;
@@ -91,6 +93,7 @@ const EmojiGrid = ({
                 data-testid="emoji-grid"
                 sx={{
                   display: 'flex',
+                  flexDirection: 'column',
                   alignItems: 'center',
                   justifyContent: 'center',
                   backgroundColor: theme.colors.darkGreyOpacity,
@@ -110,6 +113,10 @@ const EmojiGrid = ({
                     <SendEmojiButton key={emoji} emoji={emoji} />
                   ))}
                 </Grid>
+                <Divider sx={{ my: 1, borderColor: theme.colors.darkGrey }} />
+                <Box sx={{ width: '100%', px: 0.5 }}>
+                  <RaiseHandButton />
+                </Box>
               </Paper>
             </ClickAwayListener>
           </Box>
