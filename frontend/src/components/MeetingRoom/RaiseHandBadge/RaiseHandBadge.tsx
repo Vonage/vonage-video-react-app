@@ -48,12 +48,13 @@ const RaiseHandBadge = ({ tileWidth }: RaiseHandBadgeProps): ReactElement => {
         userSelect: 'none',
         pointerEvents: 'none',
         zIndex: 10,
-        animation: 'raiseHandIn 500ms cubic-bezier(0.34, 1.56, 0.64, 1) both',
+        animation: 'raiseHandIn 600ms ease-out both',
         '@keyframes raiseHandIn': {
-          '0%':   { opacity: 0, transform: 'scale(0) rotate(-360deg)' },
-          '60%':  { opacity: 1, transform: 'scale(1.2) rotate(15deg)' },
+          '0%':   { opacity: 0, transform: 'scale(0.3) rotate(-270deg)' },
+          '20%':  { opacity: 1, transform: 'scale(0.7) rotate(-100deg)' },
+          '60%':  { transform: 'scale(1.2) rotate(15deg)' },
           '80%':  { transform: 'scale(0.9) rotate(-5deg)' },
-          '100%': { opacity: 1, transform: 'scale(1) rotate(0deg)' },
+          '100%': { transform: 'scale(1) rotate(0deg)' },
         },
       }}
     >
