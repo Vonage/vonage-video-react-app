@@ -1,5 +1,4 @@
 import { ReactElement } from 'react';
-import Box from '@mui/material/Box';
 
 export type RaiseHandBadgeProps = {
   /**
@@ -35,31 +34,14 @@ const RaiseHandBadge = ({ tileWidth }: RaiseHandBadgeProps): ReactElement => {
     : '12px';
 
   return (
-    <Box
+    <div
       aria-label="Hand raised"
       data-testid="raise-hand-badge"
-      sx={{
-        position: 'absolute',
-        top: offset,
-        left: offset,
-        fontSize,
-        lineHeight: 1,
-        filter: 'drop-shadow(0 1px 3px rgba(0,0,0,0.7))',
-        userSelect: 'none',
-        pointerEvents: 'none',
-        zIndex: 10,
-        animation: 'raiseHandIn 600ms ease-out both',
-        '@keyframes raiseHandIn': {
-          '0%':   { opacity: 0, transform: 'scale(0.3) rotate(-270deg)' },
-          '20%':  { opacity: 1, transform: 'scale(0.7) rotate(-100deg)' },
-          '60%':  { transform: 'scale(1.2) rotate(15deg)' },
-          '80%':  { transform: 'scale(0.9) rotate(-5deg)' },
-          '100%': { transform: 'scale(1) rotate(0deg)' },
-        },
-      }}
+      className="absolute leading-none select-none pointer-events-none z-10 drop-shadow-[0_1px_3px_rgba(0,0,0,0.7)] animate-raise-hand-in"
+      style={{ fontSize, top: offset, left: offset }}
     >
       ✋
-    </Box>
+    </div>
   );
 };
 
