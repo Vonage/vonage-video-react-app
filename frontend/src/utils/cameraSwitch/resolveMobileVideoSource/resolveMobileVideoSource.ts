@@ -1,4 +1,5 @@
 import { isMobile } from '@web/platform';
+import frontendLogger from '../../../logger';
 import isFrontFacingLabel from '../isFrontFacingLabel';
 import isRearFacingLabel from '../isRearFacingLabel';
 
@@ -19,11 +20,31 @@ import isRearFacingLabel from '../isRearFacingLabel';
  * @returns The resolved (working) deviceId, or the original if resolution fails
  */
 async function resolveMobileVideoSource(deviceId: string, label?: string | null): Promise<string> {
+  frontendLogger.log('resolveMobileVideoSource - entry', {
+    isMobile: isMobile(),
+    deviceId: deviceId.slice(0, 12),
+    label,
+  });
+  // Remove this log after debugging, as it may contain sensitive info
+  console.log('deviceId', deviceId);
   if (!isMobile() || !deviceId) return deviceId;
+
+  const allDevices = await navigator.mediaDevices.enumerateDevices();
+  const videoDevices = allDevices.filter((d) => d.kind === 'videoinput');
+  frontendLogger.log('resolveMobileVideoSource - available video devices', {
+    devices: videoDevices.map((d, i) => ({ i, label: d.label, deviceId: d.deviceId.slice(0, 12) })),
+  });
+  frontendLogger.log('resolveMobileVideoSource - requested', {
+    label,
+    deviceId: deviceId.slice(0, 12),
+  });
+  console.log('videoDevices', videoDevices);
 
   let facingMode: 'user' | 'environment' | null = null;
   if (isFrontFacingLabel(label ?? undefined)) facingMode = 'user';
   else if (isRearFacingLabel(label ?? undefined)) facingMode = 'environment';
+
+  frontendLogger.log('resolveMobileVideoSource - resolved facingMode', { facingMode });
 
   if (!facingMode) return deviceId;
 
@@ -33,8 +54,15 @@ async function resolveMobileVideoSource(deviceId: string, label?: string | null)
     });
     const resolvedId = stream.getVideoTracks()[0]?.getSettings().deviceId;
     stream.getTracks().forEach((t) => t.stop());
+    frontendLogger.log('resolveMobileVideoSource - resolved deviceId', {
+      resolvedId: resolvedId?.slice(0, 12) ?? 'none (fallback)',
+    });
     return resolvedId ?? deviceId;
-  } catch {
+  } catch (err) {
+    frontendLogger.log(
+      'resolveMobileVideoSource - getUserMedia failed, falling back to original deviceId',
+      { err }
+    );
     return deviceId;
   }
 }
