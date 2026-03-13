@@ -93,7 +93,9 @@ describe('VideoDevices Component', () => {
     fireEvent.click(cameraItem);
 
     expect(mockHandleToggle).toHaveBeenCalledTimes(1);
-    expect(selectDeviceSpy).toHaveBeenCalledWith('videoinput', secondDevice.deviceId);
+    await waitFor(() => {
+      expect(selectDeviceSpy).toHaveBeenCalledWith('videoinput', secondDevice.deviceId);
+    });
     // Note: publisher.setVideoSource is now called by useSyncPublisherDevices hook,
     // not by the VideoDevices component directly
 
@@ -114,7 +116,9 @@ describe('VideoDevices Component', () => {
 
     // Should still select device in store even if publisher is not initialized
     expect(mockHandleToggle).toHaveBeenCalledTimes(1);
-    expect(selectDeviceSpy).toHaveBeenCalledWith('videoinput', secondDevice.deviceId);
+    await waitFor(() => {
+      expect(selectDeviceSpy).toHaveBeenCalledWith('videoinput', secondDevice.deviceId);
+    });
 
     await waitForDeviceSelectionReconciliation(secondDevice.deviceId);
   });

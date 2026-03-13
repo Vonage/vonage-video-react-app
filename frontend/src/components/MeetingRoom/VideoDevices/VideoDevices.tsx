@@ -5,6 +5,7 @@ import { Box, Typography, MenuList, MenuItem, Tooltip, BoxProps } from '@mui/mat
 import VividIcon from '@components/VividIcon';
 import mediaDevices$ from '@core/stores/devices';
 import usePreferredDevices from '@hooks/usePreferredDevices';
+import { resolveMobileVideoSource } from '@utils/cameraSwitch';
 import { env } from '../../../env';
 
 export type VideoDevicesProps = BoxProps & {
@@ -33,9 +34,11 @@ const VideoDevices = ({
   // Use filtered cameras (one front + one rear on mobile) with cleaned labels and fallback
   const devicesAvailable = usePreferredDevices('videoinput');
 
-  const handleChangeVideoSource = (deviceId: string) => {
+  const handleChangeVideoSource = (deviceId: string, label: string) => {
     handleToggle();
-    void mediaDevices$.actions.selectDevice('videoinput', deviceId);
+    void resolveMobileVideoSource(deviceId, label).then((resolvedDeviceId) => {
+      void mediaDevices$.actions.selectDevice('videoinput', resolvedDeviceId);
+    });
   };
 
   return (
@@ -62,7 +65,7 @@ const VideoDevices = ({
               <MenuItem
                 key={option.deviceId}
                 selected={isSelected}
-                onClick={() => handleChangeVideoSource(option.deviceId)}
+                onClick={() => handleChangeVideoSource(option.deviceId, option.label)}
                 sx={{
                   backgroundColor: 'transparent',
                   '&.Mui-selected': {
