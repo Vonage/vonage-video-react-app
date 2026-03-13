@@ -29,9 +29,7 @@ const RaiseHandBadge = ({ tileWidth }: RaiseHandBadgeProps): ReactElement => {
     : 'clamp(16px, 3vw, 96px)';
 
   // ~1.5% of tile width so the badge breathes away from the corner proportionally
-  const offset = tileWidth
-    ? `${Math.max(Math.round(tileWidth * 0.015), 8)}px`
-    : '12px';
+  const offset = tileWidth ? `${Math.max(Math.round(tileWidth * 0.015), 8)}px` : '12px';
 
   return (
     <div
@@ -40,7 +38,9 @@ const RaiseHandBadge = ({ tileWidth }: RaiseHandBadgeProps): ReactElement => {
       className="absolute leading-none select-none pointer-events-none z-10 drop-shadow-[0_1px_3px_rgba(0,0,0,0.7)] animate-raise-hand-in"
       style={{ fontSize, top: offset, left: offset }}
     >
-      ✋
+      <span role="img" aria-hidden="true">
+        ✋
+      </span>
     </div>
   );
 };

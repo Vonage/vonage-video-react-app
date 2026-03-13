@@ -28,10 +28,9 @@ describe('RaisedHandsSection', () => {
     } as unknown as SessionContextType);
   });
 
-  it('renders nothing when raisedHandCount is 0', () => {
-    render(<RaisedHandsSection />);
-    expect(screen.queryByTestId('raised-hands-section')).not.toBeInTheDocument();
-  });
+  // Note: visibility when raisedHandCount === 0 is gated by the parent
+  // (ParticipantList: `{raisedHandCount > 0 && <RaisedHandsSection />}`).
+  // The component itself always renders when mounted.
 
   it('renders the section when raisedHandCount > 0', () => {
     mockUseSessionContext.mockReturnValue({

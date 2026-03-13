@@ -25,13 +25,11 @@ import LowerAllDialog from './LowerAllDialog';
  * Moderators can lower individual hands or all hands at once (guarded by
  * isModeratorRole() — always true in v1).
  */
-const RaisedHandsSection = (): ReactElement | null => {
+const RaisedHandsSection = (): ReactElement => {
   const { t } = useTranslation();
   const theme = useTheme();
   const { raisedHands, raisedHandCount, lowerHand, lowerAllHands } = useSessionContext();
   const [isLowerAllDialogOpen, setIsLowerAllDialogOpen] = useState(false);
-
-  if (raisedHandCount === 0) return null;
 
   const handleLowerAllClick = () => setIsLowerAllDialogOpen(true);
   const handleLowerAllConfirm = () => {
@@ -105,15 +103,21 @@ const RaisedHandsSection = (): ReactElement | null => {
             sx={{ pr: isModeratorRole() ? '48px' : 1 }}
             secondaryAction={
               isModeratorRole() ? (
-                <Tooltip title={t('raiseHand.section.lowerParticipant', { name: state.participantName })}>
+                <Tooltip
+                  title={t('raiseHand.section.lowerParticipant', { name: state.participantName })}
+                >
                   <IconButton
                     size="small"
-                    aria-label={t('raiseHand.section.lowerParticipant', { name: state.participantName })}
+                    aria-label={t('raiseHand.section.lowerParticipant', {
+                      name: state.participantName,
+                    })}
                     data-testid={`lower-hand-${state.connectionId}`}
                     onClick={() => lowerHand(state.connectionId)}
                     sx={{ color: theme.colors.textTertiary }}
                   >
-                    <span role="img" aria-hidden="true" style={{ fontSize: '1rem' }}>✋</span>
+                    <span role="img" aria-hidden="true" style={{ fontSize: '1rem' }}>
+                      ✋
+                    </span>
                   </IconButton>
                 </Tooltip>
               ) : undefined

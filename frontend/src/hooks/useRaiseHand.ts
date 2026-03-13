@@ -1,8 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Connection } from '@vonage/client-sdk-video';
 import { RaiseHandState, SignalEvent, SignalType, SubscriberWrapper } from '../types/session';
-
-const AUTO_SPEAK_LOWER_THRESHOLD_MS = 2_000;
+import { useAutoLowerOnDominantSpeaker } from './useAutoLowerOnDominantSpeaker';
 
 // ---------------------------------------------------------------------------
 // Signal payload shapes
@@ -74,7 +73,6 @@ export type UseRaiseHand = {
 const useRaiseHand = ({
   signal,
   getConnectionId,
-  subscriberWrappers,
   activeSpeakerId,
   localUserName,
 }: UseRaiseHandProps): UseRaiseHand => {
@@ -84,22 +82,18 @@ const useRaiseHand = ({
   // Ref so signal callbacks (closures) always see the latest map without a
   // stale closure, and so the auto-lower timer always has the current state.
   const raisedHandsMapRef = useRef<Map<string, RaiseHandState>>(raisedHandsMap);
-  useEffect(() => {
-    raisedHandsMapRef.current = raisedHandsMap;
-  }, [raisedHandsMap]);
 
   // Ref to the latest `signal` function so that `onConnectionCreated` (which
   // is registered once with an EventEmitter inside `connect()` and therefore
   // captures the first-render value of `signal`) always calls the up-to-date
   // signal function rather than the stale `undefined` it saw at mount time.
   const signalRef = useRef(signal);
-  useEffect(() => {
-    signalRef.current = signal;
-  }, [signal]);
 
-  // Track active-speaker timer for auto-lower
-  const autoLowerTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const wasActiveSpeakerRef = useRef<boolean>(false);
+  // Sync both refs in a single effect — one effect per hook guideline.
+  useEffect(() => {
+    raisedHandsMapRef.current = raisedHandsMap;
+    signalRef.current = signal;
+  }, [raisedHandsMap, signal]);
 
   // -------------------------------------------------------------------------
   // Derived state
@@ -127,8 +121,7 @@ const useRaiseHand = ({
   const getParticipantName = useCallback(
     (connectionId: string, wrappers: SubscriberWrapper[]): string => {
       const wrapper = wrappers.find(
-        (w) =>
-          w.subscriber.stream?.connection?.connectionId === connectionId && !w.isScreenshare
+        (w) => w.subscriber.stream?.connection?.connectionId === connectionId && !w.isScreenshare
       );
       return wrapper?.subscriber.stream?.name ?? '';
     },
@@ -207,7 +200,10 @@ const useRaiseHand = ({
         return next;
       });
 
-      signal({ type: 'raiseHand', data: JSON.stringify({ ...payload, connectionId: targetConnectionId }) });
+      signal({
+        type: 'raiseHand',
+        data: JSON.stringify({ ...payload, connectionId: targetConnectionId }),
+      });
     },
     [signal, getConnectionId]
   );
@@ -256,10 +252,14 @@ const useRaiseHand = ({
 
       if (parsed.raisedHand) {
         // A participant raised their hand
-        const name = senderConnectionId === localConnectionId
-          ? localUserName
-          : getParticipantName(senderConnectionId, currentSubscriberWrappers);
-        updateHandState(senderConnectionId, name, { raisedHand: true, timestamp: parsed.timestamp });
+        const name =
+          senderConnectionId === localConnectionId
+            ? localUserName
+            : getParticipantName(senderConnectionId, currentSubscriberWrappers);
+        updateHandState(senderConnectionId, name, {
+          raisedHand: true,
+          timestamp: parsed.timestamp,
+        });
       } else {
         // A hand was lowered — figure out whose
         const targetConnectionId = parsed.connectionId ?? senderConnectionId;
@@ -309,56 +309,15 @@ const useRaiseHand = ({
   }, []);
 
   // -------------------------------------------------------------------------
-  // Auto-lower: if local user is dominant speaker for >2 s while hand raised
+  // Auto-lower: delegated to dedicated hook (keeps useRaiseHand to one effect)
   // -------------------------------------------------------------------------
-  useEffect(() => {
-    // activeSpeakerId is the subscriber-wrapper id. A value of `undefined`
-    // typically means the local publisher is the dominant speaker (no remote
-    // subscriber has taken over).
-    const localConnectionId = getConnectionId();
-    const localHandUp = localConnectionId
-      ? raisedHandsMapRef.current.get(localConnectionId)?.raisedHand === true
-      : false;
-
-    const isLocalDominant = activeSpeakerId === undefined;
-
-    if (isLocalDominant && localHandUp && !wasActiveSpeakerRef.current) {
-      // Start the 2-second timer
-      wasActiveSpeakerRef.current = true;
-      autoLowerTimerRef.current = setTimeout(() => {
-        const currentLocalConnectionId = getConnectionId();
-        if (!currentLocalConnectionId || !signal) return;
-        const currentState = raisedHandsMapRef.current.get(currentLocalConnectionId);
-        if (!currentState?.raisedHand) return;
-
-        // Auto-lower with 'auto-speak' marker
-        setRaisedHandsMap((prev) => {
-          const next = new Map(prev);
-          next.delete(currentLocalConnectionId);
-          return next;
-        });
-        signal({
-          type: 'raiseHand',
-          data: JSON.stringify({ raisedHand: false, timestamp: null, loweredBy: 'auto-speak', connectionId: currentLocalConnectionId }),
-        });
-      }, AUTO_SPEAK_LOWER_THRESHOLD_MS);
-    } else if (!isLocalDominant || !localHandUp) {
-      // Cancel any pending auto-lower timer
-      wasActiveSpeakerRef.current = false;
-      if (autoLowerTimerRef.current) {
-        clearTimeout(autoLowerTimerRef.current);
-        autoLowerTimerRef.current = null;
-      }
-    }
-
-    return () => {
-      if (autoLowerTimerRef.current) {
-        clearTimeout(autoLowerTimerRef.current);
-        autoLowerTimerRef.current = null;
-      }
-    };
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [activeSpeakerId]);
+  useAutoLowerOnDominantSpeaker({
+    activeSpeakerId,
+    getConnectionId,
+    raisedHandsMapRef,
+    signal,
+    setRaisedHandsMap,
+  });
 
   // -------------------------------------------------------------------------
 

@@ -9,7 +9,6 @@ import IconButton from '@mui/material/IconButton';
 import CloseIcon from '@mui/icons-material/Close';
 import useTheme from '@ui/theme';
 import useSessionContext from '@hooks/useSessionContext';
-import useUserContext from '@hooks/useUserContext';
 
 /** Duration (ms) after which a toast auto-dismisses. */
 const TOAST_DURATION_MS = 4_000;
@@ -43,12 +42,8 @@ type ToastState = {
 const RaiseHandToast = (): ReactElement => {
   const { t } = useTranslation();
   const theme = useTheme();
-  const { raisedHands, raisedHandCount, toggleParticipantList } = useSessionContext();
-  const {
-    user: {
-      defaultSettings: { name: localUserName },
-    },
-  } = useUserContext();
+  const { raisedHands, raisedHandCount, toggleParticipantList, getConnectionId } =
+    useSessionContext();
 
   const [toast, setToast] = useState<ToastState>({ open: false, message: '' });
 
@@ -117,7 +112,8 @@ const RaiseHandToast = (): ReactElement => {
     const newlyRaised = raisedHands.filter((h) => !prevIds.has(h.connectionId));
 
     // Filter out the local user's own raise (do not toast to yourself)
-    const remoteNewlyRaised = newlyRaised.filter((h) => h.participantName !== localUserName);
+    const localConnectionId = getConnectionId();
+    const remoteNewlyRaised = newlyRaised.filter((h) => h.connectionId !== localConnectionId);
 
     if (remoteNewlyRaised.length > 0) {
       // Chime logic — once per session (resets when count drops to 0)
@@ -141,15 +137,13 @@ const RaiseHandToast = (): ReactElement => {
 
     prevRaisedHandCountRef.current = raisedHandCount;
     prevRaisedHandsRef.current = raisedHands;
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [raisedHands]);
 
-  // Cleanup coalesce timer on unmount
-  useEffect(() => {
+    // Cleanup: clear any pending coalesce timer (also runs on unmount)
     return () => {
       if (coalesceTimerRef.current) clearTimeout(coalesceTimerRef.current);
     };
-  }, []);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [raisedHands]);
 
   const handleClose = () => setToast((prev) => ({ ...prev, open: false }));
 
@@ -176,7 +170,9 @@ const RaiseHandToast = (): ReactElement => {
         }}
         message={
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-            <span aria-hidden="true" style={{ fontSize: '1.1rem' }}>✋</span>
+            <span aria-hidden="true" style={{ fontSize: '1.1rem' }}>
+              ✋
+            </span>
             <Typography variant="body2">{toast.message}</Typography>
           </Box>
         }

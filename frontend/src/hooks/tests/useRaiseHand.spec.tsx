@@ -10,7 +10,10 @@ const mockGetConnectionId = vi.fn();
 const LOCAL_CONNECTION_ID = 'local-123';
 const REMOTE_CONNECTION_ID = 'remote-456';
 
-const makeRemoteSignalEvent = (payload: object, connectionId = REMOTE_CONNECTION_ID): SignalEvent => ({
+const makeRemoteSignalEvent = (
+  payload: object,
+  connectionId = REMOTE_CONNECTION_ID
+): SignalEvent => ({
   type: 'signal:raiseHand',
   data: JSON.stringify(payload),
   from: { connectionId, creationTime: 1, data: '' } as Connection,
@@ -29,7 +32,7 @@ const makeSubscriberWrapper = (connectionId: string, name: string): SubscriberWr
     isScreenshare: false,
     id: connectionId,
     isPinned: false,
-  } as unknown as SubscriberWrapper);
+  }) as unknown as SubscriberWrapper;
 
 const defaultProps = {
   signal: mockSignal,
@@ -73,9 +76,9 @@ describe('useRaiseHand', () => {
     });
 
     expect(mockSignal).toBeCalledTimes(1);
-    const call = mockSignal.mock.calls[0][0];
+    const call = mockSignal.mock.calls[0][0] as { type: string; data: string };
     expect(call.type).toBe('raiseHand');
-    const data = JSON.parse(call.data);
+    const data = JSON.parse(call.data) as Record<string, unknown>;
     expect(data.raisedHand).toBe(true);
     expect(data.timestamp).toBe(12_000_000);
   });
@@ -103,7 +106,7 @@ describe('useRaiseHand', () => {
     act(() => result.current.lowerHand());
 
     expect(mockSignal).toBeCalledTimes(1);
-    const data = JSON.parse(mockSignal.mock.calls[0][0].data);
+    const data = JSON.parse(mockSignal.mock.calls[0][0].data as string) as Record<string, unknown>;
     expect(data.raisedHand).toBe(false);
     expect(data.timestamp).toBeNull();
   });
@@ -124,7 +127,7 @@ describe('useRaiseHand', () => {
 
     act(() => result.current.lowerHand(REMOTE_CONNECTION_ID));
 
-    const data = JSON.parse(mockSignal.mock.calls[0][0].data);
+    const data = JSON.parse(mockSignal.mock.calls[0][0].data as string) as Record<string, unknown>;
     expect(data.raisedHand).toBe(false);
     expect(data.loweredBy).toBe(LOCAL_CONNECTION_ID);
     expect(data.connectionId).toBe(REMOTE_CONNECTION_ID);
@@ -192,11 +195,17 @@ describe('useRaiseHand', () => {
     act(() => {
       // Bob raised first (lower timestamp)
       result.current.onRaiseHandSignal(
-        { ...makeRemoteSignalEvent({ raisedHand: true, timestamp: 1000 }, 'conn-b'), from: { connectionId: 'conn-b', creationTime: 1, data: '' } as Connection },
+        {
+          ...makeRemoteSignalEvent({ raisedHand: true, timestamp: 1000 }, 'conn-b'),
+          from: { connectionId: 'conn-b', creationTime: 1, data: '' } as Connection,
+        },
         [wrapperA, wrapperB]
       );
       result.current.onRaiseHandSignal(
-        { ...makeRemoteSignalEvent({ raisedHand: true, timestamp: 2000 }, 'conn-a'), from: { connectionId: 'conn-a', creationTime: 1, data: '' } as Connection },
+        {
+          ...makeRemoteSignalEvent({ raisedHand: true, timestamp: 2000 }, 'conn-a'),
+          from: { connectionId: 'conn-a', creationTime: 1, data: '' } as Connection,
+        },
         [wrapperA, wrapperB]
       );
     });
@@ -218,11 +227,19 @@ describe('useRaiseHand', () => {
 
     act(() => {
       result.current.onRaiseHandSignal(
-        { type: 'signal:raiseHand', data: JSON.stringify({ raisedHand: true, timestamp: 1 }), from: { connectionId: 'conn-a', creationTime: 1, data: '' } as Connection },
+        {
+          type: 'signal:raiseHand',
+          data: JSON.stringify({ raisedHand: true, timestamp: 1 }),
+          from: { connectionId: 'conn-a', creationTime: 1, data: '' } as Connection,
+        },
         [wrapperA, wrapperB]
       );
       result.current.onRaiseHandSignal(
-        { type: 'signal:raiseHand', data: JSON.stringify({ raisedHand: true, timestamp: 2 }), from: { connectionId: 'conn-b', creationTime: 1, data: '' } as Connection },
+        {
+          type: 'signal:raiseHand',
+          data: JSON.stringify({ raisedHand: true, timestamp: 2 }),
+          from: { connectionId: 'conn-b', creationTime: 1, data: '' } as Connection,
+        },
         [wrapperA, wrapperB]
       );
     });
@@ -268,7 +285,9 @@ describe('useRaiseHand', () => {
     const { result } = renderHook(() => useRaiseHand(defaultProps));
 
     act(() => {
-      result.current.onRaiseHandSignal(makeRemoteSignalEvent({ raisedHand: true, timestamp: 1 }), [wrapper]);
+      result.current.onRaiseHandSignal(makeRemoteSignalEvent({ raisedHand: true, timestamp: 1 }), [
+        wrapper,
+      ]);
     });
 
     await waitFor(() => expect(result.current.raisedHandCount).toBe(1));
@@ -282,12 +301,11 @@ describe('useRaiseHand', () => {
   // Auto-lower: local user becomes dominant speaker
   // ---------------------------------------------------------------------------
 
-  it('auto-lowers after 2s when local user is dominant speaker with hand raised', async () => {
+  it('auto-lowers after 2s when local user is dominant speaker with hand raised', () => {
     vi.useFakeTimers();
-    const { result, rerender } = renderHook(
-      (props) => useRaiseHand(props),
-      { initialProps: { ...defaultProps, activeSpeakerId: 'some-remote' as string | undefined } }
-    );
+    const { result, rerender } = renderHook((props) => useRaiseHand(props), {
+      initialProps: { ...defaultProps, activeSpeakerId: 'some-remote' as string | undefined },
+    });
 
     // Raise hand first
     act(() => result.current.raiseHand());
@@ -297,18 +315,20 @@ describe('useRaiseHand', () => {
     rerender({ ...defaultProps, activeSpeakerId: undefined });
 
     // Before 2s — hand should still be up
-    act(() => vi.advanceTimersByTime(1900));
+    void act(() => vi.advanceTimersByTime(1900));
     expect(result.current.localHandIsRaised).toBe(true);
 
     // After 2s — should auto-lower (use act to flush state updates from the timer)
-    await act(async () => { vi.advanceTimersByTime(200); });
+    act(() => {
+      vi.advanceTimersByTime(200);
+    });
 
     expect(result.current.localHandIsRaised).toBe(false);
 
     // Should have sent an auto-speak signal
     const signals = mockSignal.mock.calls;
     const autoLowerSignal = signals.find((call) => {
-      const d = JSON.parse(call[0].data);
+      const d = JSON.parse(call[0].data as string) as Record<string, unknown>;
       return d.loweredBy === 'auto-speak';
     });
     expect(autoLowerSignal).toBeDefined();
@@ -331,7 +351,7 @@ describe('useRaiseHand', () => {
     expect(mockSignal).toBeCalledTimes(1);
     const call = mockSignal.mock.calls[0][0];
     expect(call.to).toEqual(newConnection);
-    const data = JSON.parse(call.data);
+    const data = JSON.parse(call.data as string) as Record<string, unknown>;
     expect(data.raisedHand).toBe(true);
   });
 

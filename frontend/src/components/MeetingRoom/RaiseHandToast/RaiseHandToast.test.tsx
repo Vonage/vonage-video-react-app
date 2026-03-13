@@ -1,17 +1,15 @@
 import { describe, it, expect, vi, beforeEach, afterEach, Mock } from 'vitest';
 import { render, screen, act } from '@testing-library/react';
 import useSessionContext from '@hooks/useSessionContext';
-import useUserContext from '@hooks/useUserContext';
 import { SessionContextType } from '@Context/SessionProvider/session';
-import { UserContextType } from '@Context/user';
 import { RaiseHandState } from '@app-types/session';
 import RaiseHandToast from './RaiseHandToast';
 
 vi.mock('@hooks/useSessionContext');
-vi.mock('@hooks/useUserContext');
 
 const mockUseSessionContext = useSessionContext as Mock<[], SessionContextType>;
-const mockUseUserContext = useUserContext as Mock<[], UserContextType>;
+
+const LOCAL_CONN_ID = 'conn-local';
 
 const makeHand = (id: string, name: string, ts: number): RaiseHandState => ({
   connectionId: id,
@@ -20,30 +18,18 @@ const makeHand = (id: string, name: string, ts: number): RaiseHandState => ({
   raisedHandTimestamp: ts,
 });
 
-const mockUserContext = {
-  user: {
-    defaultSettings: {
-      name: 'Local User',
-      publishAudio: true,
-      publishVideo: true,
-      noiseSuppression: false,
-      publishCaptions: false,
-    },
-    issues: { reconnections: 0, audioFallbacks: 0 },
-  },
-  setUser: vi.fn(),
-} as unknown as UserContextType;
-
 describe('RaiseHandToast', () => {
   const mockToggle = vi.fn();
+  const mockGetConnectionId = vi.fn().mockReturnValue(LOCAL_CONN_ID);
 
   beforeEach(() => {
     vi.clearAllMocks();
-    mockUseUserContext.mockReturnValue(mockUserContext);
+    mockGetConnectionId.mockReturnValue(LOCAL_CONN_ID);
     mockUseSessionContext.mockReturnValue({
       raisedHands: [],
       raisedHandCount: 0,
       toggleParticipantList: mockToggle,
+      getConnectionId: mockGetConnectionId,
     } as unknown as SessionContextType);
   });
 
@@ -62,7 +48,7 @@ describe('RaiseHandToast', () => {
     }
   });
 
-  it('shows a toast when a remote participant raises their hand', async () => {
+  it('shows a toast when a remote participant raises their hand', () => {
     vi.useFakeTimers();
     const { rerender } = render(<RaiseHandToast />);
 
@@ -71,19 +57,20 @@ describe('RaiseHandToast', () => {
       raisedHands: [makeHand('conn-b', 'Bob', Date.now())],
       raisedHandCount: 1,
       toggleParticipantList: mockToggle,
+      getConnectionId: mockGetConnectionId,
     } as unknown as SessionContextType);
 
     rerender(<RaiseHandToast />);
 
     // Advance past the 2s coalesce window — act flushes the state update
-    await act(async () => {
+    act(() => {
       vi.advanceTimersByTime(2100);
     });
 
     expect(screen.getByTestId('raise-hand-toast')).toBeVisible();
   });
 
-  it('shows "View queue" button in the toast after a raise', async () => {
+  it('shows "View queue" button in the toast after a raise', () => {
     vi.useFakeTimers();
     const { rerender } = render(<RaiseHandToast />);
 
@@ -91,11 +78,12 @@ describe('RaiseHandToast', () => {
       raisedHands: [makeHand('conn-b', 'Bob', Date.now())],
       raisedHandCount: 1,
       toggleParticipantList: mockToggle,
+      getConnectionId: mockGetConnectionId,
     } as unknown as SessionContextType);
 
     rerender(<RaiseHandToast />);
 
-    await act(async () => {
+    act(() => {
       vi.advanceTimersByTime(2100);
     });
 

@@ -37,9 +37,7 @@ const LowerAllDialog = ({
       aria-labelledby="lower-all-dialog-title"
       data-testid="lower-all-dialog"
     >
-      <DialogTitle id="lower-all-dialog-title">
-        {t('raiseHand.lowerAll.dialogTitle')}
-      </DialogTitle>
+      <DialogTitle id="lower-all-dialog-title">{t('raiseHand.lowerAll.dialogTitle')}</DialogTitle>
       <DialogContent>
         <Typography variant="body1">
           {t('raiseHand.lowerAll.dialogBody', { count: raisedHandCount })}

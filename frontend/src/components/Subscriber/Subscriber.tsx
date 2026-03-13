@@ -46,7 +46,8 @@ const Subscriber = ({
   const { isMaxPinned, pinSubscriber, raisedHands } = useSessionContext();
   const isRaiseHandAllowed = env.ALLOW_RAISE_HAND;
   const connectionId = subscriberWrapper.subscriber.stream?.connection?.connectionId ?? '';
-  const isHandRaised = isRaiseHandAllowed && raisedHands.some((h) => h.connectionId === connectionId);
+  const isHandRaised =
+    isRaiseHandAllowed && raisedHands.some((h) => h.connectionId === connectionId);
   const theme = useTheme();
   const { isPinned, subscriber } = subscriberWrapper;
   const isScreenShare = subscriber?.stream?.videoType === 'screen';

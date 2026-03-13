@@ -28,10 +28,9 @@ describe('RaiseHandPill', () => {
     } as unknown as SessionContextType);
   });
 
-  it('renders nothing when raisedHandCount is 0', () => {
-    render(<RaiseHandPill />);
-    expect(screen.queryByTestId('raise-hand-pill')).not.toBeInTheDocument();
-  });
+  // Note: visibility when raisedHandCount === 0 is gated by the parent
+  // (MeetingRoom: `{isRaiseHandAllowed && raisedHandCount > 0 && <RaiseHandPill />}`).
+  // The component itself always renders when mounted.
 
   it('shows the first-in-queue participant name', () => {
     mockUseSessionContext.mockReturnValue({

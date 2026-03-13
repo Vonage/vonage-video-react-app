@@ -29,9 +29,7 @@ const RaiseHandButton = (): ReactElement => {
     }
   };
 
-  const label = localHandIsRaised
-    ? t('raiseHand.button.lower')
-    : t('raiseHand.button.raise');
+  const label = localHandIsRaised ? t('raiseHand.button.lower') : t('raiseHand.button.raise');
 
   return (
     <Button
@@ -49,9 +47,7 @@ const RaiseHandButton = (): ReactElement => {
         textTransform: 'none',
         backgroundColor: localHandIsRaised ? theme.colors.primary : 'transparent',
         color: localHandIsRaised ? theme.colors.onPrimary : theme.colors.onDarkGrey,
-        border: localHandIsRaised
-          ? `1px solid ${theme.colors.primary}`
-          : '1px solid transparent',
+        border: localHandIsRaised ? `1px solid ${theme.colors.primary}` : '1px solid transparent',
         '&:hover': {
           backgroundColor: localHandIsRaised
             ? theme.colors.primaryHover

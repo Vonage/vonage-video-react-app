@@ -44,7 +44,7 @@ export type ParticipantListProps = {
 const ParticipantList = ({ handleClose, isOpen }: ParticipantListProps): ReactElement | false => {
   const { t } = useTranslation();
   const theme = useTheme();
-  const { subscriberWrappers } = useSessionContext();
+  const { subscriberWrappers, raisedHandCount } = useSessionContext();
   const publisherAudio = useAudioLevels();
   const [isCopied, setIsCopied] = useState<boolean>(false);
   const [query, setQuery] = useState<string>('');
@@ -157,7 +157,7 @@ const ParticipantList = ({ handleClose, isOpen }: ParticipantListProps): ReactEl
             }}
           />
         </Box>
-        <RaisedHandsSection />
+        {raisedHandCount > 0 && <RaisedHandsSection />}
         <List sx={{ overflowX: 'auto', height: 'calc(100dvh - 296px)' }}>
           {isUserVisible && (
             <ParticipantListItem

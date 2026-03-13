@@ -9,10 +9,10 @@ const config = {
       keyframes: {
         'fade-in': { '0%': { opacity: '20%' }, '100%': { opacity: '1' } },
         'raise-hand-in': {
-          '0%':   { opacity: '0', transform: 'scale(0.3) rotate(-270deg)' },
-          '20%':  { opacity: '1', transform: 'scale(0.7) rotate(-100deg)' },
-          '60%':  { transform: 'scale(1.2) rotate(15deg)' },
-          '80%':  { transform: 'scale(0.9) rotate(-5deg)' },
+          '0%': { opacity: '0', transform: 'scale(0.3) rotate(-270deg)' },
+          '20%': { opacity: '1', transform: 'scale(0.7) rotate(-100deg)' },
+          '60%': { transform: 'scale(1.2) rotate(15deg)' },
+          '80%': { transform: 'scale(0.9) rotate(-5deg)' },
           '100%': { transform: 'scale(1) rotate(0deg)' },
         },
       },

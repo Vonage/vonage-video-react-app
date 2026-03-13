@@ -92,8 +92,12 @@ class VonageVideoClient extends EventEmitter<VonageVideoClientEvents> {
     this.clientSession.on('sessionReconnected', () => this.handleReconnected());
     this.clientSession.on('sessionReconnecting', () => this.handleReconnecting());
     this.clientSession.on('signal', (event) => this.handleSignal(event));
-    this.clientSession.on('connectionCreated', (event) => this.emit('connectionCreated', event.connection));
-    this.clientSession.on('connectionDestroyed', (event) => this.emit('connectionDestroyed', event.connection));
+    this.clientSession.on('connectionCreated', (event) =>
+      this.emit('connectionCreated', event.connection)
+    );
+    this.clientSession.on('connectionDestroyed', (event) =>
+      this.emit('connectionDestroyed', event.connection)
+    );
     this.clientSession.on('streamPropertyChanged', (event) =>
       this.handleStreamPropertyChanged(event)
     );

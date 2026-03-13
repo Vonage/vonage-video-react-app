@@ -79,6 +79,7 @@ export type SessionContextType = {
   unpublish: (publisher: Publisher) => void;
   lastStreamUpdate: StreamPropertyChangedEvent | null;
   subscriptionError: Error | null;
+  getConnectionId: () => string | undefined;
 };
 
 /**
@@ -120,6 +121,7 @@ export const SessionContext = createContext<SessionContextType>({
   unpublish: () => {},
   lastStreamUpdate: null,
   subscriptionError: null,
+  getConnectionId: () => undefined,
 });
 
 export type ConnectionEventType = { connection: Connection; reason?: string; id?: string };
@@ -251,7 +253,7 @@ const SessionProvider = ({ children, initialValue = {} }: SessionProviderProps):
     (event: SignalEvent) => {
       setSubscriberWrappers((currentSubscriberWrappers) => {
         onRaiseHandSignal(event, currentSubscriberWrappers);
-        return [...currentSubscriberWrappers]; // Return unchanged state
+        return currentSubscriberWrappers; // Same reference — no spurious re-render of subscriber tiles
       });
     },
     [onRaiseHandSignal]
@@ -578,6 +580,7 @@ const SessionProvider = ({ children, initialValue = {} }: SessionProviderProps):
       unpublish,
       lastStreamUpdate,
       subscriptionError,
+      getConnectionId,
     }),
     [
       activeSpeakerId,
@@ -615,6 +618,7 @@ const SessionProvider = ({ children, initialValue = {} }: SessionProviderProps):
       unpublish,
       lastStreamUpdate,
       subscriptionError,
+      getConnectionId,
     ]
   );
 

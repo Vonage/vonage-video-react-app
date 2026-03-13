@@ -91,7 +91,7 @@ const MeetingRoom = ({
       <RightPanel activeTab={rightPanelActiveTab} handleClose={closeRightPanel} />
       <EmojisOrigin />
       {isRaiseHandAllowed && <RaiseHandToast />}
-      {isRaiseHandAllowed && <RaiseHandPill />}
+      {isRaiseHandAllowed && raisedHandCount > 0 && <RaiseHandPill />}
       {isUserCaptionsEnabled && <CaptionsBox />}
       {captionsErrorResponse && (
         <CaptionsError

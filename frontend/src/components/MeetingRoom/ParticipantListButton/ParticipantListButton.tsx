@@ -43,7 +43,7 @@ const ParticipantListButton = ({
         title={isOpen ? t('participants.list.close') : t('participants.list.open')}
         aria-label={t('participants.list.ariaLabel')}
       >
-        {/* Outer badge: raised-hand count indicator (primary colour) */}
+        {/* Outer badge: raised-hand count indicator (primary color) */}
         <Badge
           badgeContent={raisedHandCount > 0 ? '✋' : null}
           invisible={raisedHandCount === 0}
@@ -63,7 +63,7 @@ const ParticipantListButton = ({
             zIndex: 1,
           }}
         >
-          {/* Inner badge: participant count (tertiary colour) */}
+          {/* Inner badge: participant count (tertiary color) */}
           <Badge
             badgeContent={participantCount}
             sx={{

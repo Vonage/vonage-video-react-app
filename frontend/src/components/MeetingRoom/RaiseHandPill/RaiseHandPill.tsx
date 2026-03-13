@@ -24,14 +24,12 @@ const MAX_POPOVER_NAMES = 3;
  * - Click → opens the Participants panel to view the full queue.
  * - Hover → shows a floating mini-popover: first 3 names + "View all (N) >" CTA.
  */
-const RaiseHandPill = (): ReactElement | null => {
+const RaiseHandPill = (): ReactElement => {
   const { t } = useTranslation();
   const theme = useTheme();
   const { raisedHands, raisedHandCount, toggleParticipantList } = useSessionContext();
   const [hoverOpen, setHoverOpen] = useState(false);
   const anchorRef = useRef<HTMLButtonElement | null>(null);
-
-  if (raisedHandCount === 0) return null;
 
   const firstInQueue = raisedHands[0];
 
@@ -44,7 +42,7 @@ const RaiseHandPill = (): ReactElement | null => {
         onClick={toggleParticipantList}
         onMouseEnter={() => setHoverOpen(true)}
         onMouseLeave={() => setHoverOpen(false)}
-        aria-label={t('raiseHand.pill.ariaLabel', { name: firstInQueue.participantName })}
+        aria-label={t('raiseHand.pill.ariaLabel', { name: firstInQueue?.participantName ?? '' })}
         sx={{
           position: 'fixed',
           top: '16px',
@@ -70,15 +68,14 @@ const RaiseHandPill = (): ReactElement | null => {
           '&:hover': { backgroundColor: theme.colors.primaryHover },
         }}
       >
-        <Box component="span" aria-hidden="true" sx={{ fontSize: '1rem' }}>✋</Box>
+        <Box component="span" aria-hidden="true" sx={{ fontSize: '1rem' }}>
+          ✋
+        </Box>
         <Typography variant="caption" sx={{ fontWeight: 600 }} noWrap>
-          {firstInQueue.participantName}
+          {firstInQueue?.participantName}
         </Typography>
         {raisedHandCount > 1 && (
-          <Typography
-            variant="caption"
-            sx={{ opacity: 0.8, ml: 0.25 }}
-          >
+          <Typography variant="caption" sx={{ opacity: 0.8, ml: 0.25 }}>
             +{raisedHandCount - 1}
           </Typography>
         )}
@@ -110,14 +107,19 @@ const RaiseHandPill = (): ReactElement | null => {
               }}
             >
               <Box sx={{ px: 2, pt: 1.5, pb: 0.5 }}>
-                <Typography variant="caption" sx={{ fontWeight: 700, textTransform: 'uppercase', opacity: 0.7 }}>
+                <Typography
+                  variant="caption"
+                  sx={{ fontWeight: 700, textTransform: 'uppercase', opacity: 0.7 }}
+                >
                   {t('raiseHand.pill.popoverTitle')}
                 </Typography>
               </Box>
               <List dense disablePadding>
                 {raisedHands.slice(0, MAX_POPOVER_NAMES).map((h) => (
                   <ListItem key={h.connectionId} sx={{ py: 0.25 }}>
-                    <Box component="span" aria-hidden="true" sx={{ mr: 1 }}>✋</Box>
+                    <Box component="span" aria-hidden="true" sx={{ mr: 1 }}>
+                      ✋
+                    </Box>
                     <ListItemText
                       primary={h.participantName}
                       primaryTypographyProps={{ variant: 'body2', noWrap: true }}
