@@ -317,10 +317,10 @@ For quick development deployments directly from your local machine, you can use 
 3. **Generate application keys**:
 
    ```bash
-   vcr app generate-keys --app-id <app-id> docs
+   vcr app generate-keys --app-id <app-id> --region <region>
    ```
 
-   Replace `<app-id>` with your Vonage application ID.
+   Replace `<app-id>` with your Vonage application ID and `<region>` with your region.
    
    > ⚠️ **Warning**: You should use a **separate** Vonage application for VCR deployment (different from the `VONAGE_APP_ID` in your `backend/.env` file) to avoid issues with your private key.
 

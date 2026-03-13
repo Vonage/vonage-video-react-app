@@ -1,11 +1,12 @@
 import { ReactElement, useCallback } from 'react';
+import { hasMediaProcessorSupport } from '@vonage/client-sdk-video';
 import MenuItem from '@mui/material/MenuItem';
 import Menu from '@mui/material/Menu';
 import { useTranslation } from 'react-i18next';
 import VividIcon from '@components/VividIcon';
-import Box from '@mui/material/Box';
 import backgroundEffectsDialog$ from '@Context/BackgroundEffectsDialog';
 import precallNetworkTestDialog$ from '@Context/PrecallNetworkTestDialog';
+import { env } from '../../../env';
 
 export type MenuMoreOptionsWaitingRoomProps = {
   onClose: () => void;
@@ -29,6 +30,7 @@ const MenuMoreOptions = ({
   anchorEl,
 }: MenuMoreOptionsWaitingRoomProps): ReactElement => {
   const { t } = useTranslation();
+  const shouldDisplayBackgroundEffects = hasMediaProcessorSupport() && env.ALLOW_BACKGROUND_EFFECTS;
   const { open: openBackgroundEffects } = backgroundEffectsDialog$.use.actions();
   const { open: openPrecallNetworkTest } = precallNetworkTestDialog$.use.actions();
 
@@ -51,15 +53,17 @@ const MenuMoreOptions = ({
       MenuListProps={{ 'aria-labelledby': 'basic-button' }}
       data-testid="menu-more-options"
     >
-      <MenuItem
-        onClick={() => {
-          handleClickBackgroundEffects();
-        }}
-        key="backgroundEffects-option"
-      >
-        <VividIcon name="gallery-line" customSize={-6} />
-        <Box sx={{ ml: 1 }}>{t('backgroundEffects.title')}</Box>
-      </MenuItem>
+      {shouldDisplayBackgroundEffects && (
+        <MenuItem
+          onClick={() => {
+            handleClickBackgroundEffects();
+          }}
+          key="backgroundEffects-option"
+        >
+          <VividIcon name="gallery-line" customSize={-6} />
+          <span className="ml-2">{t('backgroundEffects.title')}</span>
+        </MenuItem>
+      )}
       <MenuItem
         onClick={() => {
           handleClickNetworkTest();
@@ -67,7 +71,7 @@ const MenuMoreOptions = ({
         key="precallNetworkTest-option"
       >
         <VividIcon name="cell-reception-line" customSize={-6} />
-        <Box sx={{ ml: 1 }}>{t('waitingRoom.precallNetworkTest.title')}</Box>
+        <span className="ml-2">{t('waitingRoom.precallNetworkTest.title')}</span>
       </MenuItem>
     </Menu>
   );

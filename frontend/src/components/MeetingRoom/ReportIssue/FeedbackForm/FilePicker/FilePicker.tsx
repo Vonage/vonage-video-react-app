@@ -73,7 +73,7 @@ const FilePicker = ({
       onFileSelect(screenshotData);
     } catch (error: unknown) {
       if (error instanceof Error) {
-        console.warn(error.message);
+        console.error(error.message);
       }
     }
   };
