@@ -26,17 +26,17 @@ type IVideoClient = {
 };
 
 class VideoClient implements IVideoClient {
-  public readonly auth$: Auth;
+  public readonly _auth: Auth;
 
-  public readonly video$: Video;
+  public readonly _video: Video;
 
   constructor(config: VideoClientConfig) {
     assertVideoClientConfig(config);
 
     const { auth, videoParams } = config;
 
-    this.auth$ = auth instanceof Auth ? auth : new Auth(auth);
-    this.video$ = new Video(this.auth$, videoParams);
+    this._auth = auth instanceof Auth ? auth : new Auth(auth);
+    this._video = new Video(this._auth, videoParams);
   }
 
   /**

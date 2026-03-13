@@ -1,4 +1,4 @@
-import { makeInternalErrorHandler, makeThirdPartyErrorHandler } from '@api-lib/errors/handlers';
+import { makeInternalErrorHandler, makeThirdPartyErrorHandler } from '@api-lib/errors';
 import type { EnableCaptionsPayload } from '@api-lib/schemas';
 import type { IVideoClient } from '@api-lib/types';
 import { isErrorLike } from '@common/assertions';
@@ -11,7 +11,7 @@ async function enableCaptions(this: IVideoClient, payload: EnableCaptionsPayload
     const clientToken = this.createEphemeralToken({ sessionId });
 
     const { error } = await tryCatch(() =>
-      this.video$.enableCaptions(sessionId, clientToken, captionOptions)
+      this._video.enableCaptions(sessionId, clientToken, captionOptions)
     );
 
     if (error && isErrorLike(error)) {

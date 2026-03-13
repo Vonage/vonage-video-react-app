@@ -3,7 +3,7 @@ import type { videoRouterContext } from '@api-lib/constants';
 import type { VideoClient } from '@api-lib/core';
 import type { VideoRouterConfig } from '@api-lib/schemas';
 import createVideoRouter from '../videoRouter';
-import { HandlersConfig } from '@api-lib/types/HandlersConfig';
+import type { HandlersConfig } from '@api-lib/types';
 
 /**
  * Creates a video handler:

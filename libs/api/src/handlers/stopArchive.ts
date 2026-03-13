@@ -1,5 +1,4 @@
-import { makeThirdPartyErrorHandler } from '@api-lib/errors';
-import makeInternalErrorHandler from '@api-lib/errors/handlers/makeInternalErrorHandler/makeInternalErrorHandler';
+import { makeInternalErrorHandler, makeThirdPartyErrorHandler } from '@api-lib/errors';
 import type { IVideoClient, StopArchivePayload } from '@api-lib/types';
 import { assertResult } from '@common/execution';
 import type { SingleArchiveResponse } from '@vonage/video';
@@ -10,7 +9,7 @@ async function stopArchive(
 ): Promise<SingleArchiveResponse> {
   try {
     const archiveResponse = await assertResult(
-      () => this.video$.stopArchive(payload.archiveId),
+      () => this._video.stopArchive(payload.archiveId),
       makeThirdPartyErrorHandler('Failed to stop archive')
     );
 

@@ -168,11 +168,9 @@ function createVideoRouter<
 
   // prettify is necessary to hide the internal TRPC types and prevent d.ts errors.
   return Object.assign(router as Prettify<typeof router>, {
-    before(_middleware: Any) {},
-
-    after(_middleware: Any) {},
-
-    override(_method: string, _path: string, _handler: Any) {},
+    override(_method: string, _path: string, _handler: Any) {
+      throw new Error('Overriding handlers is not implemented yet');
+    },
   });
 }
 

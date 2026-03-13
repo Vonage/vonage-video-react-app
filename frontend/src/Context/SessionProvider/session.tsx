@@ -306,8 +306,6 @@ const SessionProvider = ({ children, initialValue = {} }: SessionProviderProps):
   };
 
   const handleArchiveStarted = (id: string) => {
-    console.log('Archive started with ID:', id);
-
     setArchiveId(id);
   };
 

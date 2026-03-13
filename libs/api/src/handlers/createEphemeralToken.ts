@@ -13,16 +13,16 @@ function createEphemeralToken(this: IVideoClient, payload: CreateEphemeralTokenP
     const { sessionId, clientTokenOptions } = payload;
 
     const tokenOptions: ClientTokenOptions = {
-      role: clientTokenOptions?.role ?? TokenRole.MODERATOR,
+      role: TokenRole.MODERATOR,
 
       // Chosen 30s because our K8s probes use 10s timeouts; allows one retry + margin.
-      expireTime: clientTokenOptions?.expireTime ?? Date.now() + 30 * 1000,
+      expireTime: Date.now() + 30 * 1000,
 
       ...clientTokenOptions,
     };
 
     const token = assertResult(
-      () => this.video$.generateClientToken(sessionId, tokenOptions),
+      () => this._video.generateClientToken(sessionId, tokenOptions),
       makeThirdPartyErrorHandler('Failed to generate client token')
     );
 

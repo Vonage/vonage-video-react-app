@@ -9,7 +9,7 @@ async function createSession(this: IVideoClient, payload?: CreateSessionPayload)
     const { sessionOptions } = payload ?? {};
 
     const { sessionId } = await assertResult(() => {
-      return this.video$.createSession({
+      return this._video.createSession({
         mediaMode: MediaMode.ROUTED,
         ...sessionOptions,
       });

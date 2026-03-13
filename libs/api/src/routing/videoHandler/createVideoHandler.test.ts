@@ -77,11 +77,6 @@ describe('createVideoHandler', () => {
       expect(() => createVideoHandler(validConfig)).not.toThrow();
     });
 
-    it('should accept Auth instance as auth config', () => {
-      // This test verifies the type accepts Auth instance, actual functionality is tested in VideoClient tests
-      expect(true).toBe(true);
-    });
-
     it('should accept optional videoParams', () => {
       setupMocks();
 

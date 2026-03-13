@@ -14,7 +14,7 @@ export default {
   roots: ['<rootDir>/'],
   modulePaths: ['<rootDir>'],
   testMatch: ['**/tests/**/*.+(ts|tsx)', '**/?(*.)+(test).+(ts|tsx)'],
-  setupFiles: ['<rootDir>/jest/setEnvVars.js'],
+  setupFiles: ['<rootDir>/jest/documentPolyfill.js', '<rootDir>/jest/setEnvVars.js'],
   coveragePathIgnorePatterns: ['/node_modules/', '/tests/', '/index\\.ts$'],
   collectCoverageFrom: ['**/*.{ts,tsx}', '!**/node_modules/**', '!**/tests/**', '!**/index.ts'],
   moduleNameMapper: {

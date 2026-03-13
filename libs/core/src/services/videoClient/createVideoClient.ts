@@ -1,7 +1,7 @@
 // eslint-disable-next-line @nx/enforce-module-boundaries
 import type { IVideoRouter } from '../../../../api/src/types/IVideoRouter';
 import { createTRPCClient, httpBatchLink } from '@trpc/client';
-import { Prettify } from '@common/types';
+import type { Prettify } from '@common/types';
 
 type VideoClient = Prettify<ReturnType<typeof createTRPCClient<IVideoRouter>>>;
 

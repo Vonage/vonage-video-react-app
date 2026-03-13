@@ -1,4 +1,4 @@
-import { makeInternalErrorHandler, makeThirdPartyErrorHandler } from '@api-lib/errors/handlers';
+import { makeInternalErrorHandler, makeThirdPartyErrorHandler } from '@api-lib/errors';
 import type { DisableCaptionsPayload } from '@api-lib/schemas';
 import type { IVideoClient } from '@api-lib/types';
 import { isErrorLike } from '@common/assertions';
@@ -8,7 +8,7 @@ async function disableCaptions(this: IVideoClient, payload: DisableCaptionsPaylo
   try {
     const { captionsId } = payload;
 
-    const { error } = await tryCatch(() => this.video$.disableCaptions(captionsId));
+    const { error } = await tryCatch(() => this._video.disableCaptions(captionsId));
 
     if (error && isErrorLike(error)) {
       const isCaptionsNotFound = error.message.toLowerCase().includes('caption not found');

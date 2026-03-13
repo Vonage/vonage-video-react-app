@@ -11,13 +11,13 @@ async function startArchive(
     const { sessionId, archiveOptions } = payload;
 
     const archive = await assertResult(
-      () => this.video$.startArchive(sessionId, archiveOptions),
+      () => this._video.startArchive(sessionId, archiveOptions),
       makeThirdPartyErrorHandler('Failed to start archive')
     );
 
     return archive;
   } catch (error: unknown) {
-    throw makeInternalErrorHandler('Failed to start captions')(error);
+    throw makeInternalErrorHandler('Failed to start archive')(error);
   }
 }
 
