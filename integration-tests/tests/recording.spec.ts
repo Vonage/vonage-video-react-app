@@ -73,6 +73,9 @@ test.describe('Recording Feature', () => {
     }
 
     await test.step('Wait during recording', async () => {
+      // Wait for the recording to actually start (accounts for RECORDING_START_DELAY + API latency)
+      await expect(meetingRoom).toHaveClass(/\brecording\b/, { timeout: 10_000 });
+
       // If the archiving is less than 1 second the endpoint will not respond with the archive
       await pageOne.waitForTimeout(1000);
     });
