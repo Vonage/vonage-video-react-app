@@ -69,7 +69,7 @@ const ArchivingButton = ({
     }
   };
 
-  const handleDialogClick = async (action: 'start' | 'stop') => {
+  const handleDialogClick = (action: 'start' | 'stop') => {
     if (action === 'start') {
       if (!archiveId && roomName) {
         markArchiveStartRequestedBySelf();
