@@ -1,10 +1,16 @@
 import { afterEach, beforeEach, describe, expect, it, Mock, vi } from 'vitest';
-import { render, screen, waitFor } from '@testing-library/react';
+import { render as renderBase, screen, waitFor } from '@testing-library/react';
 import { ReactElement, useRef, useState } from 'react';
 import Button from '@mui/material/Button';
 import useMediaQuery from '@mui/material/useMediaQuery';
+import { makeTestProvider, providers } from '../../../test/providers';
 import EmojiGrid from './EmojiGrid';
 import SendEmojiButton from '../SendEmojiButton';
+
+function render(ui: ReactElement) {
+  const { wrapper } = makeTestProvider([providers.appConfig]);
+  return renderBase(ui, { wrapper });
+}
 
 vi.mock('@mui/material/useMediaQuery', () => ({
   default: vi.fn(),

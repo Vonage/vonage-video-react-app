@@ -19,6 +19,7 @@ import useIsSmallViewport from '../../../hooks/useIsSmallViewport';
 import SendEmojiButton from '../SendEmojiButton';
 import emojiMap from '../../../utils/emojis';
 import RaiseHandButton from '../RaiseHandButton';
+import { env } from '../../../env';
 
 export type EmojiGridProps = {
   isEmojiGridOpen: boolean;
@@ -45,6 +46,7 @@ const EmojiGrid = ({
   isParentOpen,
 }: EmojiGridProps): ReactElement => {
   const isSmallViewport = useIsSmallViewport();
+  const isRaiseHandAllowed = env.ALLOW_RAISE_HAND;
 
   const theme = useTheme();
   const [isAnchorReady, setIsAnchorReady] = useState<boolean>(false);
@@ -113,10 +115,14 @@ const EmojiGrid = ({
                     <SendEmojiButton key={emoji} emoji={emoji} />
                   ))}
                 </Grid>
-                <Divider sx={{ my: 1, borderColor: theme.colors.darkGrey }} />
-                <Box sx={{ width: '100%', px: 0.5 }}>
-                  <RaiseHandButton />
-                </Box>
+                {isRaiseHandAllowed && (
+                  <>
+                    <Divider sx={{ my: 1, borderColor: theme.colors.darkGrey }} />
+                    <Box sx={{ width: '100%', px: 0.5 }}>
+                      <RaiseHandButton />
+                    </Box>
+                  </>
+                )}
               </Paper>
             </ClickAwayListener>
           </Box>

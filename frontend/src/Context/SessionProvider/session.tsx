@@ -17,7 +17,6 @@ import useChat from '@hooks/useChat';
 import useEmoji, { EmojiWrapper } from '@hooks/useEmoji';
 import useRaiseHand from '@hooks/useRaiseHand';
 import type { RaiseHandState } from '@app-types/session';
-import appConfigContext from '@stores/appConfig';
 import fetchCredentials from '@api/fetchCredentials';
 import ActiveSpeakerTracker from '@utils/ActiveSpeakerTracker';
 import {

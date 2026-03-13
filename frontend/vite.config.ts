@@ -64,6 +64,7 @@ export default defineConfig(({ mode }) => {
     'ALLOW_CHAT',
     'MEETING_ROOM_ALLOW_DEVICE_SELECTION',
     'ALLOW_EMOJIS',
+    'ALLOW_RAISE_HAND',
     'ALLOW_SCREEN_SHARE',
     'SHOW_PARTICIPANT_LIST',
     'BYPASS_WAITING_ROOM',

@@ -7,6 +7,7 @@ import SmallViewportHeader from '../../components/MeetingRoom/SmallViewportHeade
 import EmojisOrigin from '../../components/MeetingRoom/EmojisOrigin';
 import RaiseHandToast from '../../components/MeetingRoom/RaiseHandToast';
 import RaiseHandPill from '../../components/MeetingRoom/RaiseHandPill';
+import { env } from '../../env';
 import RightPanel from '../../components/MeetingRoom/RightPanel';
 import CaptionsBox from '../../components/MeetingRoom/CaptionsButton/CaptionsBox';
 import CaptionsError from '../../components/MeetingRoom/CaptionsError';
@@ -56,6 +57,7 @@ const MeetingRoom = ({
     setCaptionsErrorResponse,
     captionsState,
   } = useMeetingRoom();
+  const isRaiseHandAllowed = env.ALLOW_RAISE_HAND;
 
   return (
     <Box
@@ -88,8 +90,8 @@ const MeetingRoom = ({
 
       <RightPanel activeTab={rightPanelActiveTab} handleClose={closeRightPanel} />
       <EmojisOrigin />
-      <RaiseHandToast />
-      <RaiseHandPill />
+      {isRaiseHandAllowed && <RaiseHandToast />}
+      {isRaiseHandAllowed && <RaiseHandPill />}
       {isUserCaptionsEnabled && <CaptionsBox />}
       {captionsErrorResponse && (
         <CaptionsError

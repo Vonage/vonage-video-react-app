@@ -1,10 +1,17 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import { act, cleanup, render, screen } from '@testing-library/react';
+import { act, cleanup, render as renderBase, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { Subscriber as OTSubscriber } from '@vonage/client-sdk-video';
 import { Box } from 'opentok-layout-js';
+import { ReactElement } from 'react';
 import { SubscriberWrapper } from '../../types/session';
+import { makeTestProvider, providers } from '../../test/providers';
 import Subscriber from './Subscriber';
+
+function render(ui: ReactElement) {
+  const { wrapper } = makeTestProvider([providers.appConfig, providers.user, providers.session]);
+  return renderBase(ui, { wrapper });
+}
 
 describe('Subscriber', () => {
   afterEach(() => {
