@@ -141,7 +141,7 @@ const Subscriber = ({
       onMouseEnter={() => setIsTileHovered(true)}
       onMouseLeave={() => setIsTileHovered(false)}
     >
-      {isHandRaised && <RaiseHandBadge />}
+      {isHandRaised && <RaiseHandBadge tileWidth={box?.width} />}
       <PinButton
         isPinned={isPinned}
         isTileHovered={isTileHovered}

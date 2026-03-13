@@ -85,7 +85,7 @@ const Publisher = ({ box }: PublisherProps): ReactElement => {
       ref={pubContainerRef}
       hasVideo={hasVideo}
     >
-      {isRaiseHandAllowed && localHandIsRaised && <RaiseHandBadge />}
+      {isRaiseHandAllowed && localHandIsRaised && <RaiseHandBadge tileWidth={box.width} />}
       {!hasVideo && (
         <AvatarInitials
           initials={initials}
