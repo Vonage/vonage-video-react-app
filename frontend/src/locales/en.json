@@ -87,6 +87,8 @@
   "devices.video.camera.state.on": "Enable camera",
   "devices.video.camera.state.off": "Disable camera",
   "devices.video.camera.full": "Camera",
+  "devices.video.camera.front": "Front Camera",
+  "devices.video.camera.rear": "Back Camera",
   "devices.video.disable": "Disable video",
   "devices.video.disabled": "Camera control is disabled in this application",
   "devices.video.enable": "Enable video",

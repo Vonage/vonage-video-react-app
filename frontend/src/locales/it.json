@@ -86,6 +86,8 @@
   "devices.video.camera.state.on": "Attiva camera",
   "devices.video.camera.state.off": "Disattiva camera",
   "devices.video.camera.full": "Camera",
+  "devices.video.camera.front": "Fotocamera frontale",
+  "devices.video.camera.rear": "Fotocamera posteriore",
   "devices.video.disable": "Disattiva video",
   "devices.video.enable": "Attiva video",
   "emoji.ariaLabel": "apri menu emoji",

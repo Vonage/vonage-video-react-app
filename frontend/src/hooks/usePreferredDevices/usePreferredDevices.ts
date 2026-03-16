@@ -1,6 +1,8 @@
 import { useTranslation } from 'react-i18next';
 import mediaDevices$ from '@core/stores/devices';
 import cleanAndDedupeDeviceLabels from '@utils/cleanAndDedupeDeviceLabels';
+import { isMobile } from '@web/platform';
+import { isFrontFacingLabel, isRearFacingLabel } from '@utils/cameraSwitch';
 import filterMobileCameras from './helpers/filterMobileCameras';
 
 /**
@@ -25,12 +27,16 @@ function usePreferredDevices(kind: MediaDeviceKind) {
       const array = Object.values(devicesByKind[kind] ?? {});
       const devices = kind === 'videoinput' ? filterMobileCameras(array) : array;
 
-      return cleanAndDedupeDeviceLabels(
-        devices.map((device) => ({
-          ...device,
-          label: device.label ?? t('unknown.device'),
-        }))
-      );
+      const labeled = devices.map((device) => {
+        let label = device.label ?? t('unknown.device');
+        if (kind === 'videoinput' && isMobile()) {
+          if (isFrontFacingLabel(label)) label = t('devices.video.camera.front');
+          else if (isRearFacingLabel(label)) label = t('devices.video.camera.rear');
+        }
+        return { ...device, label };
+      });
+
+      return cleanAndDedupeDeviceLabels(labeled);
     },
     {
       dependencies: [kind],

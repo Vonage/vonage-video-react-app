@@ -86,6 +86,8 @@
   "devices.video.camera.state.on": "Encender cámara",
   "devices.video.camera.state.off": "Apagar cámara",
   "devices.video.camera.full": "Cámara",
+  "devices.video.camera.front": "Cámara frontal",
+  "devices.video.camera.rear": "Cámara trasera",
   "devices.video.disable": "Apagar video",
   "devices.video.enable": "Encender video",
   "emoji.ariaLabel": "abrir menú de emojis",
