@@ -23,6 +23,7 @@ import {
   Credential,
   LocalCaptionReceived,
   SignalEvent,
+  SignalType,
   StreamPropertyChangedEvent,
   SubscriberAudioLevelUpdatedEvent,
   SubscriberWrapper,
@@ -80,6 +81,9 @@ export type SessionContextType = {
   lastStreamUpdate: StreamPropertyChangedEvent | null;
   subscriptionError: Error | null;
   getConnectionId: () => string | undefined;
+  setRaisedHandsMap: Dispatch<SetStateAction<Map<string, RaiseHandState>>>;
+  raisedHandsMapRef: React.RefObject<Map<string, RaiseHandState>>;
+  signal: ((data: SignalType) => void) | undefined;
 };
 
 /**
@@ -122,6 +126,9 @@ export const SessionContext = createContext<SessionContextType>({
   lastStreamUpdate: null,
   subscriptionError: null,
   getConnectionId: () => undefined,
+  setRaisedHandsMap: () => {},
+  raisedHandsMapRef: { current: new Map() },
+  signal: undefined,
 });
 
 export type ConnectionEventType = { connection: Connection; reason?: string; id?: string };
@@ -215,11 +222,12 @@ const SessionProvider = ({ children, initialValue = {} }: SessionProviderProps):
     onConnectionCreated: onRaiseHandConnectionCreated,
     onConnectionDestroyed: onRaiseHandConnectionDestroyed,
     resetAllHands,
+    setRaisedHandsMap,
+    raisedHandsMapRef,
   } = useRaiseHand({
     signal: vonageVideoClient.current?.signal,
     getConnectionId,
     subscriberWrappers,
-    activeSpeakerId,
     localUserName: user?.defaultSettings.name ?? '',
   });
   const {
@@ -581,6 +589,9 @@ const SessionProvider = ({ children, initialValue = {} }: SessionProviderProps):
       lastStreamUpdate,
       subscriptionError,
       getConnectionId,
+      setRaisedHandsMap,
+      raisedHandsMapRef,
+      signal: vonageVideoClient.current?.signal,
     }),
     [
       activeSpeakerId,
@@ -619,6 +630,8 @@ const SessionProvider = ({ children, initialValue = {} }: SessionProviderProps):
       lastStreamUpdate,
       subscriptionError,
       getConnectionId,
+      setRaisedHandsMap,
+      raisedHandsMapRef,
     ]
   );
 

@@ -1,12 +1,15 @@
 import { Dispatch, SetStateAction, useEffect, useRef } from 'react';
 import { RaiseHandState, SignalType } from '../types/session';
 
-/** Duration (ms) the local user must be dominant speaker before their hand is auto-lowered. */
+/** Duration (ms) the local user must be continuously speaking before their hand is auto-lowered. */
 const AUTO_SPEAK_LOWER_THRESHOLD_MS = 2_000;
 
+/** Publisher audio level (0–100) above which we consider the local user to be speaking. */
+const SPEAKING_THRESHOLD = 10;
+
 export type UseAutoLowerOnDominantSpeakerProps = {
-  /** Current active speaker subscriber id (undefined = local publisher is dominant speaker). */
-  activeSpeakerId: string | undefined;
+  /** Publisher audio level as a 0–100 percentage (from useAudioLevels). */
+  publisherAudioLevel: number;
   /** Returns the connection ID of the local user. */
   getConnectionId: () => string | undefined;
   /** Ref to the live raised-hands map (avoids stale closure on the timer callback). */
@@ -18,40 +21,41 @@ export type UseAutoLowerOnDominantSpeakerProps = {
 };
 
 /**
- * Auto-lowers the local user's raised hand when they become the dominant
- * speaker for longer than `AUTO_SPEAK_LOWER_THRESHOLD_MS` (2 s).
+ * Auto-lowers the local user's raised hand when they speak continuously
+ * for longer than `AUTO_SPEAK_LOWER_THRESHOLD_MS` (2 s).
+ *
+ * Uses the publisher's audio level (from `useAudioLevels`) for direct
+ * detection rather than the `ActiveSpeakerTracker` (which only tracks
+ * remote subscribers and would false-positive on silence).
  *
  * Extracted from `useRaiseHand` so that each hook/component stays within the
  * project guideline of a single `useEffect`.
  */
 export function useAutoLowerOnDominantSpeaker({
-  activeSpeakerId,
+  publisherAudioLevel,
   getConnectionId,
   raisedHandsMapRef,
   signal,
   setRaisedHandsMap,
 }: UseAutoLowerOnDominantSpeakerProps): void {
-  // Track active-speaker timer for auto-lower
+  // Track speaking timer for auto-lower
   const autoLowerTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const wasActiveSpeakerRef = useRef<boolean>(false);
+  const wasSpeakingRef = useRef<boolean>(false);
 
   // -------------------------------------------------------------------------
-  // Auto-lower: if local user is dominant speaker for >2 s while hand raised
+  // Auto-lower: if local user speaks for >2 s while hand is raised
   // -------------------------------------------------------------------------
   useEffect(() => {
-    // activeSpeakerId is the subscriber-wrapper id. A value of `undefined`
-    // typically means the local publisher is the dominant speaker (no remote
-    // subscriber has taken over).
     const localConnectionId = getConnectionId();
     const localHandUp = localConnectionId
       ? raisedHandsMapRef.current.get(localConnectionId)?.raisedHand === true
       : false;
 
-    const isLocalDominant = activeSpeakerId === undefined;
+    const isLocalSpeaking = publisherAudioLevel > SPEAKING_THRESHOLD;
 
-    if (isLocalDominant && localHandUp && !wasActiveSpeakerRef.current) {
+    if (isLocalSpeaking && localHandUp && !wasSpeakingRef.current) {
       // Start the 2-second timer
-      wasActiveSpeakerRef.current = true;
+      wasSpeakingRef.current = true;
       autoLowerTimerRef.current = setTimeout(() => {
         const currentLocalConnectionId = getConnectionId();
         if (!currentLocalConnectionId || !signal) return;
@@ -74,9 +78,9 @@ export function useAutoLowerOnDominantSpeaker({
           }),
         });
       }, AUTO_SPEAK_LOWER_THRESHOLD_MS);
-    } else if (!isLocalDominant || !localHandUp) {
+    } else if (!isLocalSpeaking || !localHandUp) {
       // Cancel any pending auto-lower timer
-      wasActiveSpeakerRef.current = false;
+      wasSpeakingRef.current = false;
       if (autoLowerTimerRef.current) {
         clearTimeout(autoLowerTimerRef.current);
         autoLowerTimerRef.current = null;
@@ -90,5 +94,5 @@ export function useAutoLowerOnDominantSpeaker({
       }
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [activeSpeakerId]);
+  }, [publisherAudioLevel]);
 }

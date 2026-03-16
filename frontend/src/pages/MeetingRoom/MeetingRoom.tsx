@@ -8,11 +8,14 @@ import EmojisOrigin from '../../components/MeetingRoom/EmojisOrigin';
 import RaiseHandToast from '../../components/MeetingRoom/RaiseHandToast';
 import RaiseHandPill from '../../components/MeetingRoom/RaiseHandPill';
 import { env } from '../../env';
+import useAudioLevels from '../../hooks/useAudioLevels';
+import { useAutoLowerOnDominantSpeaker } from '../../hooks/useAutoLowerOnDominantSpeaker';
 import RightPanel from '../../components/MeetingRoom/RightPanel';
 import CaptionsBox from '../../components/MeetingRoom/CaptionsButton/CaptionsBox';
 import CaptionsError from '../../components/MeetingRoom/CaptionsError';
 import classNames from 'classnames';
 import useMeetingRoom from '../../hooks/useMeetingRoom';
+import useSessionContext from '../../hooks/useSessionContext';
 import { twMerge } from 'tailwind-merge';
 import RecordingIndicator from '../../components/MeetingRoom/RecordingIndicator';
 
@@ -58,6 +61,16 @@ const MeetingRoom = ({
     captionsState,
   } = useMeetingRoom();
   const isRaiseHandAllowed = env.ALLOW_RAISE_HAND;
+  const { getConnectionId, setRaisedHandsMap, raisedHandsMapRef, signal } = useSessionContext();
+  const publisherAudioLevel = useAudioLevels();
+
+  useAutoLowerOnDominantSpeaker({
+    publisherAudioLevel,
+    getConnectionId,
+    raisedHandsMapRef,
+    signal,
+    setRaisedHandsMap,
+  });
 
   return (
     <Box

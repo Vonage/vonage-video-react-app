@@ -1,7 +1,6 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { Dispatch, SetStateAction, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Connection } from '@vonage/client-sdk-video';
 import { RaiseHandState, SignalEvent, SignalType, SubscriberWrapper } from '../types/session';
-import { useAutoLowerOnDominantSpeaker } from './useAutoLowerOnDominantSpeaker';
 
 // ---------------------------------------------------------------------------
 // Signal payload shapes
@@ -18,8 +17,6 @@ export type UseRaiseHandProps = {
   getConnectionId: () => string | undefined;
   /** All current subscriber wrappers (used to look up participant names). */
   subscriberWrappers: SubscriberWrapper[];
-  /** Current active speaker subscriber id (from ActiveSpeakerTracker). */
-  activeSpeakerId: string | undefined;
   /** Local user's display name (for late-joiner sync payload). */
   localUserName: string;
 };
@@ -59,6 +56,10 @@ export type UseRaiseHand = {
   onConnectionDestroyed: (connectionId: string) => void;
   /** Reset all raised hands (call on session reconnect). */
   resetAllHands: () => void;
+  /** State setter for the raised-hands map (used by useAutoLowerOnDominantSpeaker). */
+  setRaisedHandsMap: Dispatch<SetStateAction<Map<string, RaiseHandState>>>;
+  /** Ref to the live raised-hands map (used by useAutoLowerOnDominantSpeaker). */
+  raisedHandsMapRef: React.RefObject<Map<string, RaiseHandState>>;
 };
 
 /**
@@ -73,7 +74,6 @@ export type UseRaiseHand = {
 const useRaiseHand = ({
   signal,
   getConnectionId,
-  activeSpeakerId,
   localUserName,
 }: UseRaiseHandProps): UseRaiseHand => {
   // Map<connectionId, RaiseHandState> — source of truth for all raised hands
@@ -309,17 +309,6 @@ const useRaiseHand = ({
   }, []);
 
   // -------------------------------------------------------------------------
-  // Auto-lower: delegated to dedicated hook (keeps useRaiseHand to one effect)
-  // -------------------------------------------------------------------------
-  useAutoLowerOnDominantSpeaker({
-    activeSpeakerId,
-    getConnectionId,
-    raisedHandsMapRef,
-    signal,
-    setRaisedHandsMap,
-  });
-
-  // -------------------------------------------------------------------------
 
   return {
     raisedHands,
@@ -332,6 +321,8 @@ const useRaiseHand = ({
     onConnectionCreated,
     onConnectionDestroyed,
     resetAllHands,
+    setRaisedHandsMap,
+    raisedHandsMapRef,
   };
 };
 

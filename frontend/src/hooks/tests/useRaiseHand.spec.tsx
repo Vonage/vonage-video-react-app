@@ -38,7 +38,6 @@ const defaultProps = {
   signal: mockSignal,
   getConnectionId: mockGetConnectionId,
   subscriberWrappers: [],
-  activeSpeakerId: undefined as string | undefined,
   localUserName: 'Alice',
 };
 
@@ -300,39 +299,6 @@ describe('useRaiseHand', () => {
   // ---------------------------------------------------------------------------
   // Auto-lower: local user becomes dominant speaker
   // ---------------------------------------------------------------------------
-
-  it('auto-lowers after 2s when local user is dominant speaker with hand raised', () => {
-    vi.useFakeTimers();
-    const { result, rerender } = renderHook((props) => useRaiseHand(props), {
-      initialProps: { ...defaultProps, activeSpeakerId: 'some-remote' as string | undefined },
-    });
-
-    // Raise hand first
-    act(() => result.current.raiseHand());
-    expect(result.current.localHandIsRaised).toBe(true);
-
-    // Local user becomes dominant speaker (activeSpeakerId → undefined)
-    rerender({ ...defaultProps, activeSpeakerId: undefined });
-
-    // Before 2s — hand should still be up
-    void act(() => vi.advanceTimersByTime(1900));
-    expect(result.current.localHandIsRaised).toBe(true);
-
-    // After 2s — should auto-lower (use act to flush state updates from the timer)
-    act(() => {
-      vi.advanceTimersByTime(200);
-    });
-
-    expect(result.current.localHandIsRaised).toBe(false);
-
-    // Should have sent an auto-speak signal
-    const signals = mockSignal.mock.calls;
-    const autoLowerSignal = signals.find((call) => {
-      const d = JSON.parse(call[0].data as string) as Record<string, unknown>;
-      return d.loweredBy === 'auto-speak';
-    });
-    expect(autoLowerSignal).toBeDefined();
-  });
 
   // ---------------------------------------------------------------------------
   // Late-joiner sync
