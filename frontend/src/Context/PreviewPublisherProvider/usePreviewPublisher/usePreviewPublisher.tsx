@@ -206,7 +206,7 @@ const usePreviewPublisher = (
           publisher.publishVideo(isVideoEnabled);
         }
 
-        await mediaDevices$.actions.selectDevice('videoinput', deviceId);
+        await mediaDevices$.actions.selectDevice('videoinput', resolvedDeviceId);
 
         if (setUser) {
           setUser((prevUser: UserType) => ({

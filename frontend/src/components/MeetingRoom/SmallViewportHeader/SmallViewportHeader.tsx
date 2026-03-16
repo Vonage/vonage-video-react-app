@@ -10,6 +10,7 @@ import Tooltip from '@mui/material/Tooltip';
 import Fade from '@mui/material/Fade';
 import VividIcon from '@components/VividIcon';
 import usePublisherContext from '@hooks/usePublisherContext';
+import mediaDevices$ from '@core/stores/devices';
 import {
   isRearFacingLabel,
   isFrontFacingLabel,
@@ -72,6 +73,7 @@ const SmallViewportHeader = (): ReactElement => {
     if (target?.deviceId && target.deviceId !== currentSource?.deviceId) {
       void resolveMobileVideoSource(target.deviceId, target.label).then((resolvedDeviceId) => {
         void publisher.setVideoSource(resolvedDeviceId);
+        void mediaDevices$.actions.selectDevice('videoinput', resolvedDeviceId);
       });
     }
   };
