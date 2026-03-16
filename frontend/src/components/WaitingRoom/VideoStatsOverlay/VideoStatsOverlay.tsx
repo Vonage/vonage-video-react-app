@@ -22,9 +22,7 @@ const VideoStatsOverlay = (): ReactElement => {
       data-testid="video-stats-overlay"
       className="rounded bg-vera-dark-grey-opacity px-2 py-0.5 pointer-events-none"
     >
-      <span className="text-vera-accent text-vera-caption-semibold leading-[1.4] tracking-[0.02em]">
-        {label}
-      </span>
+      <span className="text-vera-accent text-vera-caption-semibold tracking-[0.02em]">{label}</span>
     </div>
   );
 };
