@@ -10,12 +10,15 @@ import RaiseHandPill from '../../components/MeetingRoom/RaiseHandPill';
 import { env } from '../../env';
 import useAudioLevels from '../../hooks/useAudioLevels';
 import { useAutoLowerOnDominantSpeaker } from '../../hooks/useAutoLowerOnDominantSpeaker';
+import useHandRaiseDetection from '../../hooks/useHandRaiseDetection';
 import RightPanel from '../../components/MeetingRoom/RightPanel';
 import CaptionsBox from '../../components/MeetingRoom/CaptionsButton/CaptionsBox';
 import CaptionsError from '../../components/MeetingRoom/CaptionsError';
 import classNames from 'classnames';
 import useMeetingRoom from '../../hooks/useMeetingRoom';
 import useSessionContext from '../../hooks/useSessionContext';
+import usePublisherContext from '../../hooks/usePublisherContext';
+import useUserContext from '../../hooks/useUserContext';
 import { twMerge } from 'tailwind-merge';
 import RecordingIndicator from '../../components/MeetingRoom/RecordingIndicator';
 
@@ -61,8 +64,24 @@ const MeetingRoom = ({
     captionsState,
   } = useMeetingRoom();
   const isRaiseHandAllowed = env.ALLOW_RAISE_HAND;
-  const { getConnectionId, setRaisedHandsMap, raisedHandsMapRef, signal } = useSessionContext();
+  const isHandRaiseDetectionAllowed = env.ALLOW_HAND_RAISE_DETECTION ?? false;
+  const {
+    getConnectionId,
+    setRaisedHandsMap,
+    raisedHandsMapRef,
+    signal,
+    raisedHandCount,
+    localHandIsRaised,
+    raiseHand,
+  } = useSessionContext();
+  const { publisherVideoElement } = usePublisherContext();
+  const {
+    user: {
+      defaultSettings: { backgroundFilter },
+    },
+  } = useUserContext();
   const publisherAudioLevel = useAudioLevels();
+  const hasBackgroundEffect = !!backgroundFilter;
 
   useAutoLowerOnDominantSpeaker({
     publisherAudioLevel,
@@ -70,6 +89,17 @@ const MeetingRoom = ({
     raisedHandsMapRef,
     signal,
     setRaisedHandsMap,
+  });
+
+  useHandRaiseDetection({
+    enabled:
+      isRaiseHandAllowed &&
+      isHandRaiseDetectionAllowed &&
+      isVideoEnabled &&
+      !localHandIsRaised &&
+      !hasBackgroundEffect,
+    videoElement: publisherVideoElement as HTMLVideoElement | null,
+    onHandRaised: raiseHand,
   });
 
   return (

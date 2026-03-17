@@ -3,5 +3,8 @@
   "version": "1.4.1",
   "private": true,
   "description": "React reference application for the Vonage Video web client SDK.",
-  "type": "module"
+  "type": "module",
+  "dependencies": {
+    "@mediapipe/tasks-vision": "^0.10.32"
+  }
 }
