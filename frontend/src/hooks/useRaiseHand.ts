@@ -233,9 +233,39 @@ const useRaiseHand = ({
     });
   }, [signal, getConnectionId]);
 
+  /**
+   * Reset all raised hands on session reconnect.
+   * If the local user had their hand raised, re-broadcast the original
+   * timestamp so their queue position is preserved for other participants.
+   */
   const resetAllHands = useCallback(() => {
-    setRaisedHandsMap(new Map());
-  }, []);
+    const localConnectionId = getConnectionId();
+    const currentSignal = signalRef.current;
+
+    // Capture local hand state before clearing
+    const localState = localConnectionId
+      ? raisedHandsMapRef.current.get(localConnectionId)
+      : undefined;
+
+    // Clear all remote hands — they will re-sync via connectionCreated
+    if (localState?.raisedHand && localState.raisedHandTimestamp !== null && localConnectionId) {
+      // Preserve local hand with original timestamp
+      const preserved = new Map<string, RaiseHandState>();
+      preserved.set(localConnectionId, localState);
+      setRaisedHandsMap(preserved);
+
+      // Re-broadcast to all participants so they restore our queue position
+      if (currentSignal) {
+        const payload: RaiseHandPayload = {
+          raisedHand: true,
+          timestamp: localState.raisedHandTimestamp,
+        };
+        currentSignal({ type: 'raiseHand', data: JSON.stringify(payload) });
+      }
+    } else {
+      setRaisedHandsMap(new Map());
+    }
+  }, [getConnectionId]);
 
   // -------------------------------------------------------------------------
   // Inbound signal handler
