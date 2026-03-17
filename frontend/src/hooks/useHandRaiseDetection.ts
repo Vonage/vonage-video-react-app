@@ -25,18 +25,25 @@ const GESTURE_RECOGNIZER_MODEL =
 // Types
 // ---------------------------------------------------------------------------
 
+/** Gesture names returned by the MediaPipe GestureRecognizer model. */
+type GestureName = 'Open_Palm' | 'Thumb_Up' | 'Thumb_Down';
+
 export type UseHandRaiseDetectionProps = {
   /** Whether detection is enabled (feature flag + user opt-in + hand not already raised + video on + no background effects). */
   enabled: boolean;
   /** The publisher's HTMLVideoElement to analyze. */
   videoElement: HTMLVideoElement | null;
-  /** Callback when a raised hand is detected. */
+  /** Callback when a raised hand (Open_Palm) is detected. */
   onHandRaised: () => void;
+  /** Callback when a Thumb_Up gesture is detected. */
+  onThumbsUp?: () => void;
+  /** Callback when a Thumb_Down gesture is detected. */
+  onThumbsDown?: () => void;
   /** Minimum duration (ms) the gesture must be sustained before triggering. Defaults to 2 000 ms. */
   detectionDurationMs?: number;
   /** Interval (ms) between gesture recognition runs. Defaults to 500 ms. */
   detectionIntervalMs?: number;
-  /** Minimum confidence (0–1) for the Open_Palm gesture to count. Defaults to 0.45. */
+  /** Minimum confidence (0–1) for a gesture to count. Defaults to 0.45. */
   gestureConfidence?: number;
   /** Inference delegate: 'GPU' (WebGL, default) or 'CPU' (XNNPACK). */
   delegate?: 'GPU' | 'CPU';
@@ -57,23 +64,34 @@ export type UseHandRaiseDetectionProps = {
  * Detection criteria:
  * - Gesture classified as `Open_Palm` with confidence ≥ configurable threshold (default 0.45)
  */
+/** Per-gesture tracking state for sustained detection. */
+type GestureState = {
+  consecutiveDetections: number;
+  hasFired: boolean;
+};
+
 const useHandRaiseDetection = ({
   enabled,
   videoElement,
   onHandRaised,
+  onThumbsUp,
+  onThumbsDown,
   detectionDurationMs = DEFAULT_DETECTION_DURATION_MS,
   detectionIntervalMs = DEFAULT_DETECTION_INTERVAL_MS,
   gestureConfidence = DEFAULT_GESTURE_CONFIDENCE,
   delegate = 'GPU',
 }: UseHandRaiseDetectionProps): void => {
   // Stable refs to avoid stale closures inside the interval callback.
-  const onHandRaisedRef = useRef(onHandRaised);
-  onHandRaisedRef.current = onHandRaised;
+  const callbacksRef = useRef({ onHandRaised, onThumbsUp, onThumbsDown });
+  callbacksRef.current = { onHandRaised, onThumbsUp, onThumbsDown };
 
   const recognizerRef = useRef<import('@mediapipe/tasks-vision').GestureRecognizer | null>(null);
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
-  const consecutiveDetectionsRef = useRef(0);
-  const hasFiredRef = useRef(false);
+  const gestureStateRef = useRef<Record<GestureName, GestureState>>({
+    Open_Palm: { consecutiveDetections: 0, hasFired: false },
+    Thumb_Up: { consecutiveDetections: 0, hasFired: false },
+    Thumb_Down: { consecutiveDetections: 0, hasFired: false },
+  });
   const isLoadingRef = useRef(false);
 
   const requiredConsecutiveDetections = Math.max(
@@ -128,9 +146,8 @@ const useHandRaiseDetection = ({
 
       if (cancelled || !recognizerRef.current) return;
 
-      // Reset detection state
-      consecutiveDetectionsRef.current = 0;
-      hasFiredRef.current = false;
+      // Reset detection state for all gestures
+      resetGestureState();
 
       // Start the detection loop
       intervalRef.current = setInterval(() => {
@@ -141,21 +158,33 @@ const useHandRaiseDetection = ({
 
         try {
           const result = recognizer.recognizeForVideo(videoElement, performance.now());
+          const detected = detectGesture(result, gestureConfidence);
+          const state = gestureStateRef.current;
+          const callbacks = callbacksRef.current;
 
-          const isRaisedHand = detectRaisedHand(result, gestureConfidence);
+          // Map gesture names to their callbacks
+          const gestureCallbacks: Record<GestureName, (() => void) | undefined> = {
+            Open_Palm: callbacks.onHandRaised,
+            Thumb_Up: callbacks.onThumbsUp,
+            Thumb_Down: callbacks.onThumbsDown,
+          };
 
-          if (isRaisedHand) {
-            consecutiveDetectionsRef.current += 1;
-            if (
-              consecutiveDetectionsRef.current >= requiredConsecutiveDetections &&
-              !hasFiredRef.current
-            ) {
-              hasFiredRef.current = true;
-              onHandRaisedRef.current();
+          for (const gesture of Object.keys(state) as GestureName[]) {
+            if (detected === gesture) {
+              state[gesture].consecutiveDetections += 1;
+              const cb = gestureCallbacks[gesture];
+              if (
+                state[gesture].consecutiveDetections >= requiredConsecutiveDetections &&
+                !state[gesture].hasFired &&
+                cb
+              ) {
+                state[gesture].hasFired = true;
+                cb();
+              }
+            } else {
+              state[gesture].consecutiveDetections = 0;
+              state[gesture].hasFired = false;
             }
-          } else {
-            consecutiveDetectionsRef.current = 0;
-            hasFiredRef.current = false;
           }
         } catch (err) {
           console.warn('[useHandRaiseDetection] Frame processing error:', err);
@@ -172,13 +201,19 @@ const useHandRaiseDetection = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [enabled, videoElement, requiredConsecutiveDetections]);
 
+  function resetGestureState() {
+    for (const gesture of Object.keys(gestureStateRef.current) as GestureName[]) {
+      gestureStateRef.current[gesture].consecutiveDetections = 0;
+      gestureStateRef.current[gesture].hasFired = false;
+    }
+  }
+
   function cleanup() {
     if (intervalRef.current) {
       clearInterval(intervalRef.current);
       intervalRef.current = null;
     }
-    consecutiveDetectionsRef.current = 0;
-    hasFiredRef.current = false;
+    resetGestureState();
 
     // Dispose the model to free memory when detection is disabled
     if (recognizerRef.current) {
@@ -193,30 +228,39 @@ const useHandRaiseDetection = ({
 // Detection logic
 // ---------------------------------------------------------------------------
 
+/** Gestures we track from the MediaPipe model. */
+const TRACKED_GESTURES: ReadonlySet<string> = new Set<GestureName>([
+  'Open_Palm',
+  'Thumb_Up',
+  'Thumb_Down',
+]);
+
 /**
- * Returns true if the GestureRecognizer result contains an Open_Palm gesture.
+ * Returns the detected {@link GestureName} if the top gesture is one we track
+ * and meets the confidence threshold, or `null` otherwise.
  *
- * We rely solely on the Open_Palm gesture classification (sustained for ≥ 2 s)
- * rather than wrist position. MediaPipe's normalized wrist y-coordinates are
- * unreliable in typical video-call framing (head + shoulders) — the wrist
- * barely moves in normalized space even when the hand is clearly raised.
- * The Open_Palm gesture itself is a strong enough signal: people don't
- * normally hold an open palm facing the camera for 2 seconds.
+ * We rely on gesture classification (sustained for a configurable duration)
+ * rather than wrist position. MediaPipe's normalised wrist y-coordinates are
+ * unreliable in typical video-call framing (head + shoulders).
  */
-function detectRaisedHand(
+function detectGesture(
   result: import('@mediapipe/tasks-vision').GestureRecognizerResult,
   gestureConfidence: number
-): boolean {
+): GestureName | null {
   const { gestures } = result;
 
   if (!gestures?.length) {
-    return false;
+    return null;
   }
 
   const topGesture = gestures[0]?.[0];
-  if (!topGesture) return false;
+  if (!topGesture) return null;
 
-  return topGesture.categoryName === 'Open_Palm' && topGesture.score >= gestureConfidence;
+  if (topGesture.score >= gestureConfidence && TRACKED_GESTURES.has(topGesture.categoryName)) {
+    return topGesture.categoryName as GestureName;
+  }
+
+  return null;
 }
 
 export default useHandRaiseDetection;

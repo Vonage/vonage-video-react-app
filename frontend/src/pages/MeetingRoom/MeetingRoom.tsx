@@ -11,6 +11,7 @@ import { env } from '../../env';
 import useAudioLevels from '../../hooks/useAudioLevels';
 import { useAutoLowerOnDominantSpeaker } from '../../hooks/useAutoLowerOnDominantSpeaker';
 import useHandRaiseDetection from '../../hooks/useHandRaiseDetection';
+import emojiMap from '../../utils/emojis/emojis';
 import RightPanel from '../../components/MeetingRoom/RightPanel';
 import CaptionsBox from '../../components/MeetingRoom/CaptionsButton/CaptionsBox';
 import CaptionsError from '../../components/MeetingRoom/CaptionsError';
@@ -73,6 +74,7 @@ const MeetingRoom = ({
     raisedHandCount,
     localHandIsRaised,
     raiseHand,
+    sendEmoji,
   } = useSessionContext();
   const { publisherVideoElement } = usePublisherContext();
   const {
@@ -100,6 +102,8 @@ const MeetingRoom = ({
       !hasBackgroundEffect,
     videoElement: publisherVideoElement as HTMLVideoElement | null,
     onHandRaised: raiseHand,
+    onThumbsUp: () => sendEmoji(emojiMap.THUMBS_UP),
+    onThumbsDown: () => sendEmoji(emojiMap.THUMBS_DOWN),
   });
 
   return (
