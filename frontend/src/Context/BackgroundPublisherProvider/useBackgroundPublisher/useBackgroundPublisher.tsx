@@ -20,6 +20,7 @@ import useSyncPublisherDevices from '@Context/PublisherProvider/usePublisher/hoo
 import { getStorageItem, STORAGE_KEYS } from '@utils/storage';
 import attempt from '@common/execution/attempt/attempt';
 import { useMountEffect } from '@web/hooks';
+import { env } from '../../../env';
 
 export type BackgroundPublisherContextType = {
   isPublishing: boolean;
@@ -82,6 +83,7 @@ const useBackgroundPublisher = (
   initialValue?: BackgroundPublisherContextInitialValue
 ): BackgroundPublisherContextType => {
   const { user } = useUserContext();
+  const videoSourceId = mediaDevices$.useMediaDeviceInfo('videoinput')?.deviceId;
   const { getImagesFromStorage, addImageToStorage, deleteImageFromStorage } = useImageStorage();
   const [publisherVideoElement, setPublisherVideoElement] = useState<
     HTMLVideoElement | HTMLObjectElement | undefined
@@ -205,8 +207,8 @@ const useBackgroundPublisher = (
     const publisherOptions: PublisherProperties = {
       insertDefaultUI: false,
       videoFilter,
-      resolution: '1280x720',
-      videoSource: mediaDevices$.getState().videoinput,
+      resolution: videoSourceId ? env.DEFAULT_RESOLUTION : undefined,
+      videoSource: videoSourceId,
       publishAudio: false,
       publishVideo: isVideoEnabled,
     };
@@ -220,7 +222,7 @@ const useBackgroundPublisher = (
       }
     });
     addPublisherListeners(backgroundPublisherRef.current);
-  }, [addPublisherListeners, isVideoEnabled]);
+  }, [addPublisherListeners, isVideoEnabled, videoSourceId]);
 
   /**
    * Turns the camera on and off

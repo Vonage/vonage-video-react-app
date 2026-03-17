@@ -7,7 +7,7 @@ import {
 } from '@vonage/client-sdk-video';
 import useUserContext from '@hooks/useUserContext';
 import getInitials from '@utils/getInitials';
-import { useDeviceId } from '@core/stores/devices/hooks';
+import { useMediaDeviceInfo } from '@core/stores/devices/hooks';
 import useStableCallback from '@web/hooks/useStableCallback';
 import { env } from '../../../env';
 
@@ -29,8 +29,8 @@ const usePublisherOptions = ({
   const { name, noiseSuppression, backgroundFilter, publishAudio, publishVideo, publishCaptions } =
     user.defaultSettings;
 
-  const videoSource = useDeviceId('videoinput');
-  const audioSource = useDeviceId('audioinput');
+  const videoSource = useMediaDeviceInfo('videoinput')?.deviceId;
+  const audioSource = useMediaDeviceInfo('audioinput')?.deviceId;
 
   const getOptions = useStableCallback(() => {
     const initials = getInitials(name);
@@ -53,7 +53,7 @@ const usePublisherOptions = ({
       publishAudio: env.ALLOW_AUDIO_ON_JOIN && publishAudio && isAudioEnabled,
       publishCaptions,
       publishVideo: env.ALLOW_VIDEO_ON_JOIN && publishVideo && isVideoEnabled,
-      resolution: env.DEFAULT_RESOLUTION,
+      resolution: videoSource ? env.DEFAULT_RESOLUTION : undefined,
       videoFilter,
       videoSource,
     };
