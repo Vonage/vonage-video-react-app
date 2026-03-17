@@ -94,10 +94,9 @@ const MeetingRoom = ({
   });
 
   const gestureProgress = useGestureDetection({
-    enabled:
-      isRaiseHandAllowed && isGestureDetectionAllowed && isVideoEnabled && !hasBackgroundEffect,
+    enabled: isGestureDetectionAllowed && isVideoEnabled && !hasBackgroundEffect,
     videoElement: publisherVideoElement as HTMLVideoElement | null,
-    onHandRaised: !localHandIsRaised ? raiseHand : () => {},
+    onHandRaised: isRaiseHandAllowed && !localHandIsRaised ? raiseHand : () => {},
     onThumbsUp: () => sendEmoji(emojiMap.THUMBS_UP),
     onThumbsDown: () => sendEmoji(emojiMap.THUMBS_DOWN),
   });
