@@ -67,10 +67,10 @@ const Publisher = ({ box }: PublisherProps): ReactElement => {
       if (isSdkMirroring) {
         element.style.removeProperty('transform');
       } else {
+        // eslint-disable-next-line react-hooks/immutability
         element.style.transform = 'scaleX(-1)';
       }
     } else {
-      // eslint-disable-next-line react-hooks/immutability
       element.style.transform = 'scaleX(1)';
     }
   }, [element, mirrorSelfView]);

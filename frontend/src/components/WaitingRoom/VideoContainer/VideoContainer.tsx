@@ -44,7 +44,7 @@ const VideoContainer = ({ username }: VideoContainerProps): ReactElement => {
   useEffect(() => {
     if (!publisherVideoElement) return;
 
-    // Vonage/OT injects the video element with object-fit=contain by default, which leaves letterboxing
+    // Vonage/OT injects the video element with object-fit=contain by default, which leaves black bars
     // inside our 16:9 tile. We set cover here so the preview fills the tile consistently.
     // eslint-disable-next-line react-hooks/immutability
     publisherVideoElement.style.objectFit = 'cover';
@@ -66,7 +66,6 @@ const VideoContainer = ({ username }: VideoContainerProps): ReactElement => {
         publisherVideoElement.style.transform = 'scaleX(-1)';
       }
     } else {
-      // eslint-disable-next-line react-hooks/immutability
       publisherVideoElement.style.transform = 'scaleX(1)';
     }
   }, [publisherVideoElement, mirrorSelfView]);
