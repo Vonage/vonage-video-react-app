@@ -90,6 +90,12 @@ const useHandRaiseDetection = ({
     let cancelled = false;
 
     const start = async () => {
+      // Guard: browser must support WebAssembly (required by MediaPipe WASM runtime)
+      if (typeof WebAssembly === 'undefined') {
+        console.warn('[useHandRaiseDetection] WebAssembly not supported — skipping detection');
+        return;
+      }
+
       // Load the recognizer if not already loaded
       if (!recognizerRef.current && !isLoadingRef.current) {
         isLoadingRef.current = true;
