@@ -1,5 +1,6 @@
 import { ReactElement, useRef } from 'react';
 import { Publisher as OTPublisher } from '@vonage/client-sdk-video';
+import type { GestureProgress } from '../../../hooks/useGestureDetection';
 import useLayoutManager from '../../../hooks/useLayoutManager';
 import usePublisherContext from '../../../hooks/usePublisherContext';
 import useSessionContext from '../../../hooks/useSessionContext';
@@ -22,6 +23,7 @@ export type VideoTileCanvasProps = {
   screenshareVideoElement: HTMLVideoElement | HTMLObjectElement | undefined;
   isRightPanelOpen: boolean;
   fullSize?: boolean;
+  gestureProgress?: GestureProgress;
 };
 
 /**
@@ -37,6 +39,7 @@ const VideoTileCanvas = ({
   screenshareVideoElement,
   isRightPanelOpen,
   fullSize = false,
+  gestureProgress,
 }: VideoTileCanvasProps): ReactElement => {
   // Use a ref on the container div in order to update canvas when resized
   const wrapRef = useRef<HTMLDivElement | null>(null);
@@ -114,7 +117,9 @@ const VideoTileCanvas = ({
       }}
     >
       <Box id="video-container" sx={{ position: 'relative', width: '100%', height: '100%' }}>
-        {layoutBoxes.publisherBox && <Publisher box={layoutBoxes.publisherBox} />}
+        {layoutBoxes.publisherBox && (
+          <Publisher box={layoutBoxes.publisherBox} gestureProgress={gestureProgress} />
+        )}
         {isSharingScreen && (
           <ScreenSharePublisher
             publisher={screensharingPublisher}

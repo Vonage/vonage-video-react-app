@@ -93,15 +93,11 @@ const MeetingRoom = ({
     setRaisedHandsMap,
   });
 
-  useGestureDetection({
+  const gestureProgress = useGestureDetection({
     enabled:
-      isRaiseHandAllowed &&
-      isGestureDetectionAllowed &&
-      isVideoEnabled &&
-      !localHandIsRaised &&
-      !hasBackgroundEffect,
+      isRaiseHandAllowed && isGestureDetectionAllowed && isVideoEnabled && !hasBackgroundEffect,
     videoElement: publisherVideoElement as HTMLVideoElement | null,
-    onHandRaised: raiseHand,
+    onHandRaised: !localHandIsRaised ? raiseHand : () => {},
     onThumbsUp: () => sendEmoji(emojiMap.THUMBS_UP),
     onThumbsDown: () => sendEmoji(emojiMap.THUMBS_DOWN),
   });
@@ -133,6 +129,7 @@ const MeetingRoom = ({
         screenshareVideoElement={screenshareVideoElement}
         isRightPanelOpen={rightPanelActiveTab !== 'closed'}
         fullSize={fullSize}
+        gestureProgress={gestureProgress}
       />
 
       <RightPanel activeTab={rightPanelActiveTab} handleClose={closeRightPanel} />

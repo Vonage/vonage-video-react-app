@@ -60,7 +60,22 @@ html {
   }
 }
 
-/* 
+/*
+  GestureProgressRing: smoothly fills the SVG progress ring from empty to full.
+  Used via inline style with dynamic animation-duration.
+  pathLength="1" on the circle normalises stroke-dashoffset to the 0–1 range.
+*/
+@keyframes gesture-ring-fill {
+  0% {
+    stroke-dashoffset: 1;
+  }
+
+  100% {
+    stroke-dashoffset: 0;
+  }
+}
+
+/*
   HiddenParticipantsTile styles:
   These rules style the avatar group shown when participants are hidden.
   - The default border color is a dark gray.

@@ -1,12 +1,12 @@
 /* cspell:words mediapipe MEDIAPIPE XNNPACK normalised fileset */
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 // ---------------------------------------------------------------------------
 // Constants
 // ---------------------------------------------------------------------------
 
 /** Default interval (ms) between gesture recognition runs on a video frame. */
-const DEFAULT_DETECTION_INTERVAL_MS = 500;
+const DEFAULT_DETECTION_INTERVAL_MS = 250;
 
 /** Default minimum duration (ms) the Open_Palm gesture must be sustained before triggering. */
 const DEFAULT_DETECTION_DURATION_MS = 2000;
@@ -26,7 +26,24 @@ const GESTURE_RECOGNIZER_MODEL =
 // ---------------------------------------------------------------------------
 
 /** Gesture names returned by the MediaPipe GestureRecognizer model. */
-type GestureName = 'Open_Palm' | 'Thumb_Up' | 'Thumb_Down';
+export type GestureName = 'Open_Palm' | 'Thumb_Up' | 'Thumb_Down';
+
+/** Maps each tracked gesture to the emoji shown in the progress ring. */
+export const GESTURE_EMOJI_MAP: Record<GestureName, string> = {
+  Open_Palm: '✋',
+  Thumb_Up: '👍',
+  Thumb_Down: '👎',
+};
+
+/** Progress state exposed to the UI for rendering the progress ring. */
+export type GestureProgress = {
+  /** Which gesture is currently being detected. */
+  gesture: GestureName;
+  /** Whether the gesture is still being detected or has completed (fired). */
+  state: 'detecting' | 'completed';
+  /** Total duration (ms) for the ring fill animation. */
+  durationMs: number;
+} | null;
 
 export type UseGestureDetectionProps = {
   /** Whether detection is enabled (feature flag + user opt-in + hand not already raised + video on + no background effects). */
@@ -80,7 +97,7 @@ const useGestureDetection = ({
   detectionIntervalMs = DEFAULT_DETECTION_INTERVAL_MS,
   gestureConfidence = DEFAULT_GESTURE_CONFIDENCE,
   delegate = 'GPU',
-}: UseGestureDetectionProps): void => {
+}: UseGestureDetectionProps): GestureProgress => {
   // Stable refs to avoid stale closures inside the interval callback.
   const callbacksRef = useRef({ onHandRaised, onThumbsUp, onThumbsDown });
   callbacksRef.current = { onHandRaised, onThumbsUp, onThumbsDown };
@@ -93,6 +110,9 @@ const useGestureDetection = ({
     Thumb_Down: { consecutiveDetections: 0, hasFired: false },
   });
   const isLoadingRef = useRef(false);
+  const completionTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const [gestureProgress, setGestureProgress] = useState<GestureProgress>(null);
 
   const requiredConsecutiveDetections = Math.max(
     1,
@@ -169,9 +189,21 @@ const useGestureDetection = ({
             Thumb_Down: callbacks.onThumbsDown,
           };
 
+          // Track whether any gesture is actively being detected this tick
+          let activeGesture: GestureName | null = null;
+
           for (const gesture of Object.keys(state) as GestureName[]) {
             if (detected === gesture) {
+              // First detection — start the ring animation
+              if (state[gesture].consecutiveDetections === 0) {
+                setGestureProgress({
+                  gesture,
+                  state: 'detecting',
+                  durationMs: detectionDurationMs,
+                });
+              }
               state[gesture].consecutiveDetections += 1;
+              activeGesture = gesture;
               const cb = gestureCallbacks[gesture];
               if (
                 state[gesture].consecutiveDetections >= requiredConsecutiveDetections &&
@@ -180,11 +212,25 @@ const useGestureDetection = ({
               ) {
                 state[gesture].hasFired = true;
                 cb();
+                // Show completed ring briefly, then clear
+                setGestureProgress({
+                  gesture,
+                  state: 'completed',
+                  durationMs: detectionDurationMs,
+                });
+                completionTimeoutRef.current = setTimeout(() => {
+                  setGestureProgress(null);
+                }, 400);
               }
             } else {
               state[gesture].consecutiveDetections = 0;
               state[gesture].hasFired = false;
             }
+          }
+
+          // Clear progress only if NO gesture is active this tick
+          if (!activeGesture) {
+            setGestureProgress(null);
           }
         } catch (err) {
           console.warn('[useGestureDetection] Frame processing error:', err);
@@ -213,7 +259,12 @@ const useGestureDetection = ({
       clearInterval(intervalRef.current);
       intervalRef.current = null;
     }
+    if (completionTimeoutRef.current) {
+      clearTimeout(completionTimeoutRef.current);
+      completionTimeoutRef.current = null;
+    }
     resetGestureState();
+    setGestureProgress(null);
 
     // Dispose the model to free memory when detection is disabled
     if (recognizerRef.current) {
@@ -222,6 +273,8 @@ const useGestureDetection = ({
     }
     isLoadingRef.current = false;
   }
+
+  return gestureProgress;
 };
 
 // ---------------------------------------------------------------------------

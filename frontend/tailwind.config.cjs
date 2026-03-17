@@ -15,10 +15,15 @@ const config = {
           '80%': { transform: 'scale(0.9) rotate(-5deg)' },
           '100%': { transform: 'scale(1) rotate(0deg)' },
         },
+        'gesture-ring-in': {
+          '0%': { opacity: '0', transform: 'scale(0.5)' },
+          '100%': { opacity: '1', transform: 'scale(1)' },
+        },
       },
       animation: {
         'fade-in': 'fade-in 0.5s ease-in-out',
         'raise-hand-in': 'raise-hand-in 600ms ease-out both',
+        'gesture-ring-in': 'gesture-ring-in 200ms ease-out both',
       },
     },
   },
