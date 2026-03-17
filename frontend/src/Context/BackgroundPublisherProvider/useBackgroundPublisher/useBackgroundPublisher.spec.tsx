@@ -6,9 +6,13 @@ import { defaultAudioDevice, defaultVideoDevice } from '@utils/mockData/device';
 import { makeTestProvider, providers, ProviderOptions } from '@test/providers';
 import useBackgroundPublisher from './useBackgroundPublisher';
 import { DEVICE_ACCESS_STATUS } from '@utils/constants';
-import { setupWindowNavigatorMock } from '@web-test/fixtures';
+import { setupWindowNavigatorMock, makeMediaDeviceInfos } from '@web-test/fixtures';
+import mediaDevices$ from '@core/stores/devices';
 
 vi.mock('@vonage/client-sdk-video');
+
+const devices = makeMediaDeviceInfos();
+const videoDevice = devices.find((device) => device.kind === 'videoinput')!;
 
 describe('useBackgroundPublisher', () => {
   const mockPublisher = Object.assign(new EventEmitter(), {
@@ -37,6 +41,12 @@ describe('useBackgroundPublisher', () => {
 
     (initPublisher as Mock).mockImplementation(mockedInitPublisher);
     (hasMediaProcessorSupport as Mock).mockImplementation(mockedHasMediaProcessorSupport);
+
+    mediaDevices$.setState((state) => ({
+      ...state,
+      mediaDeviceInfo: devices,
+      videoinput: videoDevice.deviceId,
+    }));
   });
 
   describe('initBackgroundLocalPublisher', () => {
@@ -98,6 +108,26 @@ describe('useBackgroundPublisher', () => {
         }),
         expect.any(Function)
       );
+    });
+
+    it('should reject access when there is no camera device', async () => {
+      mediaDevices$.setState((state) => ({
+        ...state,
+        mediaDeviceInfo: [],
+        videoinput: undefined,
+      }));
+
+      const { result } = render();
+
+      act(() => {
+        result.current.initBackgroundLocalPublisher();
+      });
+
+      await waitFor(() => {
+        expect(result.current.accessStatus).toBe(DEVICE_ACCESS_STATUS.REJECTED);
+      });
+
+      expect(mockedInitPublisher).not.toHaveBeenCalled();
     });
   });
 

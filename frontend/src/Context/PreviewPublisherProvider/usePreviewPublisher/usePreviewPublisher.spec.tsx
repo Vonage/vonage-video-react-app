@@ -9,9 +9,14 @@ import { makeTestProvider, providers, type ProviderOptions } from '@test/provide
 import renderAsyncHook from '@web-test/renderAsyncHook';
 import composeProviders from '@web/helpers/composeProviders';
 import SuspenseBoundary from '@web/components/SuspenseBoundary';
-import { setupWindowNavigatorMock } from '@web-test/fixtures';
+import { setupWindowNavigatorMock, makeMediaDeviceInfos } from '@web-test/fixtures';
+import mediaDevices$ from '@core/stores/devices';
 
 vi.mock('@vonage/client-sdk-video');
+
+const devices = makeMediaDeviceInfos();
+const audioDevice = devices.find((device) => device.kind === 'audioinput')!;
+const videoDevice = devices.find((device) => device.kind === 'videoinput')!;
 
 describe('usePreviewPublisher', () => {
   const mockPublisher = Object.assign(new EventEmitter(), {
@@ -39,6 +44,13 @@ describe('usePreviewPublisher', () => {
 
     (initPublisher as Mock).mockImplementation(mockedInitPublisher);
     (hasMediaProcessorSupport as Mock).mockImplementation(mockedHasMediaProcessorSupport);
+
+    mediaDevices$.setState((state) => ({
+      ...state,
+      mediaDeviceInfo: devices,
+      audioinput: audioDevice.deviceId,
+      videoinput: videoDevice.deviceId,
+    }));
   });
 
   describe('initLocalPublisher', () => {
@@ -92,6 +104,27 @@ describe('usePreviewPublisher', () => {
         }),
         expect.any(Function)
       );
+    });
+
+    it('should reject access when there are no input devices', async () => {
+      mediaDevices$.setState((state) => ({
+        ...state,
+        mediaDeviceInfo: [],
+        audioinput: undefined,
+        videoinput: undefined,
+      }));
+
+      const { result } = await render();
+
+      act(() => {
+        result.current.initLocalPublisher();
+      });
+
+      await waitFor(() => {
+        expect(result.current.accessStatus).toBe(DEVICE_ACCESS_STATUS.REJECTED);
+      });
+
+      expect(mockedInitPublisher).not.toHaveBeenCalled();
     });
   });
 
