@@ -50,7 +50,7 @@ const GestureProgressRing = ({
             cy={size / 2}
             r={radius}
             fill="none"
-            stroke="rgba(255, 255, 255, 0.3)"
+            className="stroke-vera-on-dark-grey/30"
             strokeWidth={RING_STROKE_WIDTH}
             pathLength={1}
           />
@@ -60,7 +60,7 @@ const GestureProgressRing = ({
             cy={size / 2}
             r={radius}
             fill="none"
-            stroke="white"
+            className="stroke-vera-on-dark-grey"
             strokeWidth={RING_STROKE_WIDTH}
             strokeLinecap="round"
             pathLength={1}
@@ -77,7 +77,7 @@ const GestureProgressRing = ({
         </svg>
         {/* Emoji centered inside the ring */}
         <span
-          className="absolute inset-0 flex items-center justify-center select-none drop-shadow-[0_1px_3px_rgba(0,0,0,0.7)]"
+          className="absolute inset-0 flex items-center justify-center select-none drop-shadow-[0_1px_3px_var(--vera-dark-grey-opacity)]"
           style={{ fontSize: size * 0.5 }}
           role="img"
           aria-hidden="true"

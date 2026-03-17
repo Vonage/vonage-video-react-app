@@ -196,7 +196,7 @@ export class Env {
     );
     this.ALLOW_EMOJIS = parseBoolean(env.ALLOW_EMOJIS, true);
     this.ALLOW_RAISE_HAND = parseBoolean(env.ALLOW_RAISE_HAND, true);
-    this.ALLOW_GESTURE_DETECTION = parseBoolean(env.ALLOW_GESTURE_DETECTION, false);
+    this.ALLOW_GESTURE_DETECTION = parseBoolean(env.ALLOW_GESTURE_DETECTION, true);
     this.ALLOW_SCREEN_SHARE = parseBoolean(env.ALLOW_SCREEN_SHARE, true);
     this.SHOW_PARTICIPANT_LIST = parseBoolean(env.SHOW_PARTICIPANT_LIST, true);
     this.BYPASS_WAITING_ROOM = parseBoolean(env.BYPASS_WAITING_ROOM, false);

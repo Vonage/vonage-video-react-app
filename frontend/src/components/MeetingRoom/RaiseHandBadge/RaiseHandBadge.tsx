@@ -35,7 +35,7 @@ const RaiseHandBadge = ({ tileWidth }: RaiseHandBadgeProps): ReactElement => {
     <div
       aria-label="Hand raised"
       data-testid="raise-hand-badge"
-      className="absolute leading-none select-none pointer-events-none z-10 drop-shadow-[0_1px_3px_rgba(0,0,0,0.7)] animate-raise-hand-in"
+      className="absolute leading-none select-none pointer-events-none z-10 drop-shadow-[0_1px_3px_var(--vera-dark-grey-opacity)] animate-raise-hand-in"
       style={{ fontSize, top: offset, left: offset }}
     >
       <span role="img" aria-hidden="true">
