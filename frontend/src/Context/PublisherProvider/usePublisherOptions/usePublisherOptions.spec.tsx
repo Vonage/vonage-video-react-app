@@ -58,7 +58,7 @@ describe('usePublisherOptions', () => {
     );
     await waitFor(() => {
       expect(result.current).toEqual({
-        resolution: '1280x720',
+        resolution: undefined,
         publishAudio: false,
         publishVideo: false,
         audioSource: undefined,
@@ -183,6 +183,12 @@ describe('usePublisherOptions', () => {
         DEFAULT_RESOLUTION: '640x480',
       });
 
+      mediaDevices$.setState((state) => ({
+        ...state,
+        mediaDeviceInfo: devices,
+        videoinput: videoDevice.deviceId,
+      }));
+
       const { result } = renderHook(() =>
         usePublisherOptions({ isAudioEnabled: true, isVideoEnabled: true })
       );
@@ -195,6 +201,13 @@ describe('usePublisherOptions', () => {
 
   it('should disable audio and video based on isAudioEnabled and isVideoEnabled params', async () => {
     vi.spyOn(OT, 'hasMediaProcessorSupport').mockReturnValue(true);
+
+    mediaDevices$.setState((state) => ({
+      ...state,
+      mediaDeviceInfo: devices,
+      audioinput: audioDevice.deviceId,
+      videoinput: videoDevice.deviceId,
+    }));
 
     const { result } = renderHook(
       () => usePublisherOptions({ isAudioEnabled: false, isVideoEnabled: true }),

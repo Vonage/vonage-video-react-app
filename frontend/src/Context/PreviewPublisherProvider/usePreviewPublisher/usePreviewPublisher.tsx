@@ -79,8 +79,8 @@ export type PreviewPublisherInitialValue = Partial<
 const usePreviewPublisher = (
   initialValue?: PreviewPublisherInitialValue
 ): PreviewPublisherContextType => {
-  const videoSourceId = mediaDevices$.useDeviceId('videoinput');
-  const audioSourceId = mediaDevices$.useDeviceId('audioinput');
+  const videoSourceId = mediaDevices$.useMediaDeviceInfo('videoinput')?.deviceId;
+  const audioSourceId = mediaDevices$.useMediaDeviceInfo('audioinput')?.deviceId;
 
   const { setUser, user } = useUserContext();
   const [publisherVideoElement, setPublisherVideoElement] = useState<
@@ -236,7 +236,7 @@ const usePreviewPublisher = (
     const publisherOptions: PublisherProperties = {
       insertDefaultUI: false,
       videoFilter,
-      resolution: env.DEFAULT_RESOLUTION,
+      resolution: videoSourceId ? env.DEFAULT_RESOLUTION : undefined,
       publishAudio: isAudioEnabled,
       publishVideo: isVideoEnabled,
       audioSource: audioSourceId,
