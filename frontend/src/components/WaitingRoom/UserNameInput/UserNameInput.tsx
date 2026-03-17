@@ -139,7 +139,9 @@ const UsernameInput = ({
       </Typography>
 
       {isRoomNameInvalid && (
-        <p className="text-vera-error text-xs leading-4">{t('waitingRoom.invalidRoomName')}</p>
+        <p className="text-vera-error text-vera-caption leading-4">
+          {t('waitingRoom.invalidRoomName')}
+        </p>
       )}
 
       <Button type="submit" variant="contained" className="w-full" disabled={isRoomNameInvalid}>
