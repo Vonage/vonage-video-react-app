@@ -11,6 +11,8 @@ import Fade from '@mui/material/Fade';
 import VividIcon from '@components/VividIcon';
 import usePublisherContext from '@hooks/usePublisherContext';
 import mediaDevices$ from '@core/stores/devices';
+import wait from '@common/execution/wait';
+import { isAndroid } from '@utils/util';
 import {
   isRearFacingLabel,
   isFrontFacingLabel,
@@ -71,10 +73,18 @@ const SmallViewportHeader = (): ReactElement => {
     const target = currentIsFront ? pickRear() : pickFront();
 
     if (target?.deviceId && target.deviceId !== currentSource?.deviceId) {
-      void resolveMobileVideoSource(target.deviceId, target.label).then((resolvedDeviceId) => {
-        void publisher.setVideoSource(resolvedDeviceId);
-        void mediaDevices$.actions.selectDevice('videoinput', resolvedDeviceId);
-      });
+      void (async () => {
+        if (isAndroid()) {
+          publisher.publishVideo(false);
+          await wait(100);
+        }
+        const resolvedDeviceId = await resolveMobileVideoSource(target.deviceId, target.label);
+        await publisher.setVideoSource(resolvedDeviceId);
+        if (isAndroid()) {
+          publisher.publishVideo(isVideoEnabled);
+        }
+        await mediaDevices$.actions.selectDevice('videoinput', resolvedDeviceId);
+      })();
     }
   };
 

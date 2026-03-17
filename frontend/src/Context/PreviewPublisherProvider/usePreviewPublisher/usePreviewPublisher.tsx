@@ -275,6 +275,10 @@ const usePreviewPublisher = (
           ? await resolveMobileVideoSource(videoSourceId, getVideoDeviceLabel(videoSourceId))
           : videoSourceId;
 
+        if (resolvedVideoSourceId && resolvedVideoSourceId !== videoSourceId) {
+          await mediaDevices$.actions.selectDevice('videoinput', resolvedVideoSourceId);
+        }
+
         if (publisherRef.current) return;
 
         // Set videoFilter based on user's selected background

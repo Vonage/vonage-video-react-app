@@ -276,6 +276,49 @@ describe('usePreviewPublisher', () => {
       });
     });
   });
+
+  describe('initLocalPublisher - resolved deviceId written to store', () => {
+    beforeEach(() => {
+      mockedInitPublisher.mockReturnValue(mockPublisher);
+      vi.spyOn(mediaDevices$.actions, 'selectDevice').mockResolvedValue(undefined);
+    });
+
+    it('writes resolved deviceId to store when resolution returns a different id', async () => {
+      mediaDevices$.setState((state) => ({ ...state, videoinput: 'initial-device-id' }));
+      vi.mocked(resolveMobileVideoSource).mockResolvedValue('resolved-device-id');
+
+      const { result } = await render();
+      act(() => {
+        result.current.initLocalPublisher();
+      });
+
+      await waitFor(() => {
+        expect(mediaDevices$.actions.selectDevice).toHaveBeenCalledWith(
+          'videoinput',
+          'resolved-device-id'
+        );
+      });
+    });
+
+    it('does not write to store when resolved deviceId matches the original', async () => {
+      mediaDevices$.setState((state) => ({ ...state, videoinput: 'same-device-id' }));
+      vi.mocked(resolveMobileVideoSource).mockResolvedValue('same-device-id');
+
+      const { result } = await render();
+      act(() => {
+        result.current.initLocalPublisher();
+      });
+
+      await waitFor(() => {
+        expect(mockedInitPublisher).toHaveBeenCalled();
+      });
+
+      expect(mediaDevices$.actions.selectDevice).not.toHaveBeenCalledWith(
+        'videoinput',
+        'same-device-id'
+      );
+    });
+  });
 });
 
 type RenderOptions = {

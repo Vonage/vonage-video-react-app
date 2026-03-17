@@ -1,4 +1,4 @@
-import { vi, describe, it, Mock, expect, beforeEach, beforeAll } from 'vitest';
+import { vi, describe, it, Mock, expect, beforeEach, beforeAll, afterEach } from 'vitest';
 import {
   makeMediaDeviceInfos,
   makeMediaStreamMock,
@@ -11,6 +11,8 @@ import useRoomShareUrl from '@hooks/useRoomShareUrl';
 import usePublisherContext from '@hooks/usePublisherContext';
 import { PublisherContextType } from '@Context/PublisherProvider';
 import mediaDevices$ from '@core/stores/devices';
+import { isAndroid } from '@utils/util';
+import { resolveMobileVideoSource } from '@utils/cameraSwitch';
 import SmallViewportHeader from './SmallViewportHeader';
 
 vi.mock('@hooks/useSessionContext');
@@ -24,6 +26,21 @@ vi.mock('@web/platform', async (importOriginal) => {
     isMobile: () => false,
   };
 });
+
+vi.mock('@utils/util', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('@utils/util')>();
+  return { ...actual, isAndroid: vi.fn(() => false) };
+});
+
+vi.mock('@utils/cameraSwitch', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('@utils/cameraSwitch')>();
+  return {
+    ...actual,
+    resolveMobileVideoSource: vi.fn((deviceId: string) => Promise.resolve(deviceId)),
+  };
+});
+
+vi.mock('@common/execution/wait', () => ({ default: vi.fn(() => Promise.resolve()) }));
 
 const mockUsePublisherContext = usePublisherContext as Mock<[], PublisherContextType>;
 
@@ -73,6 +90,8 @@ describe('SmallViewportHeader component', () => {
       ...state,
       mediaDeviceInfo: devices,
     }));
+
+    vi.spyOn(mediaDevices$.actions, 'selectDevice').mockResolvedValue(undefined);
   });
 
   it('renders the room name', () => {
@@ -133,9 +152,7 @@ describe('SmallViewportHeader component', () => {
       isVideoEnabled: false,
     } as unknown as PublisherContextType);
 
-    const { container } = render(<SmallViewportHeader />);
-
-    console.log(container.innerHTML);
+    render(<SmallViewportHeader />);
 
     expect(screen.queryByTestId('vivid-icon-camera-switch-line')).not.toBeInTheDocument();
   });
@@ -159,12 +176,6 @@ describe('SmallViewportHeader component', () => {
     render(<SmallViewportHeader />);
 
     expect(screen.queryByTestId('vivid-icon-camera-switch-line')).not.toBeInTheDocument();
-
-    // Restore full device list for subsequent tests
-    mediaDevices$.setState((state) => ({
-      ...state,
-      mediaDeviceInfo: devices,
-    }));
   });
 
   it('toggles to the opposite camera device when clicked', async () => {
@@ -193,6 +204,102 @@ describe('SmallViewportHeader component', () => {
     await waitFor(() => {
       expect(setVideoSource).toHaveBeenCalledTimes(1);
       expect(setVideoSource).toHaveBeenCalledWith(videoDevices[1].deviceId);
+    });
+  });
+
+  describe('camera toggle - Android', () => {
+    const videoInputDevice1 = videoDevices[0];
+    const videoInputDevice2 = videoDevices[1];
+    let publishVideo: Mock;
+    let setVideoSource: Mock;
+
+    beforeEach(() => {
+      vi.mocked(isAndroid).mockReturnValue(true);
+      vi.mocked(resolveMobileVideoSource).mockResolvedValue('resolved-device-id');
+      (useSessionContext as Mock).mockReturnValue({ archiveId: null });
+
+      publishVideo = vi.fn();
+      setVideoSource = vi.fn().mockResolvedValue(undefined);
+
+      mockUsePublisherContext.mockReturnValue({
+        publisher: {
+          setVideoSource,
+          publishVideo,
+          getVideoSource: vi.fn(() => ({
+            deviceId: videoInputDevice1.deviceId,
+            label: videoInputDevice1.label,
+            kind: 'videoInput',
+          })),
+        } as unknown as PublisherContextType['publisher'],
+        isVideoEnabled: true,
+      } as unknown as PublisherContextType);
+    });
+
+    afterEach(() => {
+      vi.mocked(isAndroid).mockReturnValue(false);
+    });
+
+    it('calls publishVideo(false) before resolving the camera on Android', async () => {
+      const callOrder: string[] = [];
+      publishVideo.mockImplementation(() => callOrder.push('publishVideo'));
+      vi.mocked(resolveMobileVideoSource).mockImplementation((deviceId) => {
+        callOrder.push('resolve');
+        return Promise.resolve(deviceId);
+      });
+
+      render(<SmallViewportHeader />);
+      fireEvent.click(screen.getByTestId('vivid-icon-camera-switch-line'));
+
+      await waitFor(() => expect(callOrder).toContain('resolve'));
+
+      expect(callOrder[0]).toBe('publishVideo');
+      expect(publishVideo).toHaveBeenCalledWith(false);
+    });
+
+    it('re-enables video after switching on Android', async () => {
+      render(<SmallViewportHeader />);
+      fireEvent.click(screen.getByTestId('vivid-icon-camera-switch-line'));
+
+      await waitFor(() => {
+        expect(publishVideo).toHaveBeenCalledWith(false);
+        expect(publishVideo).toHaveBeenCalledWith(true);
+      });
+    });
+
+    it('updates device store with the resolved deviceId after toggle', async () => {
+      render(<SmallViewportHeader />);
+      fireEvent.click(screen.getByTestId('vivid-icon-camera-switch-line'));
+
+      await waitFor(() => {
+        expect(mediaDevices$.actions.selectDevice).toHaveBeenCalledWith(
+          'videoinput',
+          'resolved-device-id'
+        );
+      });
+    });
+
+    it('calls setVideoSource with the resolved deviceId', async () => {
+      render(<SmallViewportHeader />);
+      fireEvent.click(screen.getByTestId('vivid-icon-camera-switch-line'));
+
+      await waitFor(() => {
+        expect(setVideoSource).toHaveBeenCalledWith('resolved-device-id');
+      });
+    });
+
+    it('does not call publishVideo on non-Android', async () => {
+      vi.mocked(isAndroid).mockReturnValue(false);
+      // reset to pass-through so we can assert on the raw deviceId
+      vi.mocked(resolveMobileVideoSource).mockImplementation((id) => Promise.resolve(id));
+
+      render(<SmallViewportHeader />);
+      fireEvent.click(screen.getByTestId('vivid-icon-camera-switch-line'));
+
+      await waitFor(() => {
+        expect(setVideoSource).toHaveBeenCalledWith(videoInputDevice2.deviceId);
+      });
+
+      expect(publishVideo).not.toHaveBeenCalled();
     });
   });
 });
