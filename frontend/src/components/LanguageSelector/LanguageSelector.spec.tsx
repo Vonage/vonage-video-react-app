@@ -18,6 +18,7 @@ const mockChangeLanguage = vi.fn();
 const mockT = vi.fn((key: string) => {
   const translations: Record<string, string> = {
     'languages.english': 'English',
+    'languages.german': 'Deutsch',
     'languages.spanish': 'Español',
     'languages.spanishMX': 'Español (México)',
     'languages.italian': 'Italiano',
@@ -54,7 +55,7 @@ describe('LanguageSelector', () => {
 
   describe('Rendering', () => {
     it('renders with default props', () => {
-      env.setSupportedLanguages('en|es|it');
+      env.setSupportedLanguages('en|es|it|de');
 
       render(<LanguageSelector />);
 
@@ -84,7 +85,7 @@ describe('LanguageSelector', () => {
 
   describe('Supported Languages', () => {
     it('shows only supported languages from environment variable', async () => {
-      env.setSupportedLanguages('en|es');
+      env.setSupportedLanguages('en|es|de');
 
       render(<LanguageSelector />);
 
@@ -94,13 +95,14 @@ describe('LanguageSelector', () => {
       await waitFor(() => {
         expect(screen.getByTestId('language-option-en')).toBeInTheDocument();
         expect(screen.getByTestId('language-option-es')).toBeInTheDocument();
+        expect(screen.getByTestId('language-option-de')).toBeInTheDocument();
         expect(screen.queryByTestId('language-option-it')).not.toBeInTheDocument();
         expect(screen.queryByTestId('language-option-es-MX')).not.toBeInTheDocument();
       });
     });
 
     it('shows all languages when all are supported', async () => {
-      env.setSupportedLanguages('en|es|es-MX|it|en-US');
+      env.setSupportedLanguages('en|es|es-MX|it|en-US|de');
 
       render(<LanguageSelector />);
 
@@ -113,6 +115,7 @@ describe('LanguageSelector', () => {
         expect(screen.getByTestId('language-option-es-MX')).toBeInTheDocument();
         expect(screen.getByTestId('language-option-it')).toBeInTheDocument();
         expect(screen.getByTestId('language-option-en-US')).toBeInTheDocument();
+        expect(screen.getByTestId('language-option-de')).toBeInTheDocument();
       });
     });
 
@@ -223,6 +226,16 @@ describe('LanguageSelector', () => {
 
       expect(screen.getByText('English (US)')).toBeInTheDocument();
       expect(screen.getByTestId('vivid-icon-flag-united-states')).toBeInTheDocument();
+    });
+
+    it('displays German correctly', () => {
+      env.setSupportedLanguages('en|de');
+      mockI18n.language = 'de';
+
+      render(<LanguageSelector />);
+
+      expect(screen.getByText('Deutsch')).toBeInTheDocument();
+      expect(screen.getByTestId('vivid-icon-flag-germany')).toBeInTheDocument();
     });
 
     it('handles unsupported language gracefully', () => {
