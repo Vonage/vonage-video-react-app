@@ -43,8 +43,11 @@ function setupDeviceStore(api: unknown) {
   meta.isStoreReady = new CancelablePromise((resolve, reject, { isCanceled }) => {
     const syncDevicesAndResolve = () => {
       void api.actions
-        .syncMediaDevicesInfo()
-        .then(() => resolve())
+        // Bootstrap sync must bypass isStoreReady or the store would wait on itself while initializing.
+        .syncMediaDevicesInfo({ skipStoreReady: true })
+        .then(() => {
+          resolve();
+        })
         .catch(reject);
     };
 

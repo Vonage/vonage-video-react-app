@@ -250,6 +250,35 @@ describe('setupDeviceStore', () => {
   });
 
   describe('Firefox permission handling', () => {
+    it('should resolve store readiness and sync devices when Firefox labels are already present', async () => {
+      vi.spyOn(isFirefoxModule, 'default').mockReturnValue(true);
+
+      const api$ = makeApiClone();
+
+      setupWindowNavigatorMock({
+        mediaDevices: {
+          addEventListener: vi.fn(),
+          enumerateDevices: vi.fn().mockResolvedValue([
+            { deviceId: 'device1', kind: 'audioinput', label: 'Microphone' },
+            { deviceId: 'device2', kind: 'videoinput', label: 'Camera' },
+          ]),
+          getUserMedia: vi.fn(),
+        },
+      });
+
+      setupDeviceStore(api$);
+
+      await waitFor(
+        async () => {
+          await expect(api$.getMetadata().isStoreReady).resolves.toBeUndefined();
+          expect(mediaDevices$.actions.syncMediaDevicesInfo).toHaveBeenCalledWith({
+            skipStoreReady: true,
+          });
+        },
+        { timeout: 200 }
+      );
+    });
+
     it('should request permissions when on Firefox and device labels are empty', async () => {
       vi.spyOn(isFirefoxModule, 'default').mockReturnValue(true);
 

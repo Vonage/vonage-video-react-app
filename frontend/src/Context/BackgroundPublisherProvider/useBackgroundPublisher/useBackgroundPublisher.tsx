@@ -83,7 +83,6 @@ const useBackgroundPublisher = (
   initialValue?: BackgroundPublisherContextInitialValue
 ): BackgroundPublisherContextType => {
   const { user } = useUserContext();
-  const videoSourceId = mediaDevices$.useMediaDeviceInfo('videoinput')?.deviceId;
   const { getImagesFromStorage, addImageToStorage, deleteImageFromStorage } = useImageStorage();
   const [publisherVideoElement, setPublisherVideoElement] = useState<
     HTMLVideoElement | HTMLObjectElement | undefined
@@ -198,7 +197,8 @@ const useBackgroundPublisher = (
   const initBackgroundLocalPublisher = useCallback(() => {
     if (backgroundPublisherRef.current) return;
 
-    // Set videoFilter based on user's selected background
+    const { videoinput: currentVideoSourceId } = mediaDevices$.getState();
+
     let videoFilter: VideoFilter | undefined;
     if (initialBackgroundRef.current && hasMediaProcessorSupport()) {
       videoFilter = initialBackgroundRef.current;
@@ -207,11 +207,17 @@ const useBackgroundPublisher = (
     const publisherOptions: PublisherProperties = {
       insertDefaultUI: false,
       videoFilter,
-      resolution: videoSourceId ? env.DEFAULT_RESOLUTION : undefined,
-      videoSource: videoSourceId,
+      resolution: currentVideoSourceId ? env.DEFAULT_RESOLUTION : undefined,
+      videoSource: currentVideoSourceId,
       publishAudio: false,
       publishVideo: isVideoEnabled,
     };
+
+    // Avoid calling getUserMedia and initializing publisher if there are no input devices, as it will throw an error
+    if (!publisherOptions.videoSource) {
+      setAccessStatus(DEVICE_ACCESS_STATUS.REJECTED);
+      return;
+    }
 
     backgroundPublisherRef.current = initPublisher(undefined, publisherOptions, (err: unknown) => {
       if (err instanceof Error) {
@@ -222,7 +228,7 @@ const useBackgroundPublisher = (
       }
     });
     addPublisherListeners(backgroundPublisherRef.current);
-  }, [addPublisherListeners, isVideoEnabled, videoSourceId]);
+  }, [addPublisherListeners, isVideoEnabled, setAccessStatus]);
 
   /**
    * Turns the camera on and off

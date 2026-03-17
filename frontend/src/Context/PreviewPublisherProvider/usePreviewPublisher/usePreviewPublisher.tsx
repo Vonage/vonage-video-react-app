@@ -79,9 +79,6 @@ export type PreviewPublisherInitialValue = Partial<
 const usePreviewPublisher = (
   initialValue?: PreviewPublisherInitialValue
 ): PreviewPublisherContextType => {
-  const videoSourceId = mediaDevices$.useMediaDeviceInfo('videoinput')?.deviceId;
-  const audioSourceId = mediaDevices$.useMediaDeviceInfo('audioinput')?.deviceId;
-
   const { setUser, user } = useUserContext();
   const [publisherVideoElement, setPublisherVideoElement] = useState<
     HTMLVideoElement | HTMLObjectElement | undefined
@@ -227,7 +224,9 @@ const usePreviewPublisher = (
       return;
     }
 
-    // Set videoFilter based on user's selected background
+    const { audioinput: currentAudioSourceId, videoinput: currentVideoSourceId } =
+      mediaDevices$.getState();
+
     let videoFilter: VideoFilter | undefined;
     if (initialBackgroundRef.current && hasMediaProcessorSupport()) {
       videoFilter = initialBackgroundRef.current;
@@ -236,12 +235,18 @@ const usePreviewPublisher = (
     const publisherOptions: PublisherProperties = {
       insertDefaultUI: false,
       videoFilter,
-      resolution: videoSourceId ? env.DEFAULT_RESOLUTION : undefined,
+      resolution: currentVideoSourceId ? env.DEFAULT_RESOLUTION : undefined,
       publishAudio: isAudioEnabled,
       publishVideo: isVideoEnabled,
-      audioSource: audioSourceId,
-      videoSource: videoSourceId,
+      audioSource: currentAudioSourceId,
+      videoSource: currentVideoSourceId,
     };
+
+    // Avoid calling getUserMedia and initializing publisher if there are no input devices, as it will throw an error
+    if (!publisherOptions.audioSource && !publisherOptions.videoSource) {
+      setAccessStatus(DEVICE_ACCESS_STATUS.REJECTED);
+      return;
+    }
 
     publisherRef.current = initPublisher(undefined, publisherOptions, (err: unknown) => {
       if (err instanceof Error) {
@@ -251,6 +256,7 @@ const usePreviewPublisher = (
         }
       }
     });
+
     addPublisherListeners(publisherRef.current);
   });
 

@@ -6,11 +6,15 @@ import { setAudioOutputDevice as setVonageAudioOutputDevice } from '@vonage/clie
 import { attempt } from '@common/execution';
 import { isSinkIdSupported } from '@web/platform';
 
+type SyncMediaDevicesInfoArgs = {
+  skipStoreReady?: boolean;
+};
+
 /**
  * Syncs the media devices info by fetching the latest media devices and updating the store state.
  * It also checks if the current selected devices are still valid with the new media devices info and updates the selection if necessary.
  */
-function syncMediaDevicesInfo(this: DevicesAPI['actions']) {
+function syncMediaDevicesInfo(this: DevicesAPI['actions'], args: SyncMediaDevicesInfoArgs = {}) {
   return async (store: DevicesAPI): Promise<MediaDeviceInfoJSON[]> => {
     const meta = store.getMetadata();
     const { getMediaDevicesInfo } = getMediaDevicesInfo$(store);
@@ -21,7 +25,9 @@ function syncMediaDevicesInfo(this: DevicesAPI['actions']) {
     meta.loadingMediaDevices = new CancelablePromise<MediaDeviceInfoJSON[]>(
       async (resolve, reject, { isCanceled }) => {
         try {
-          const mediaDeviceInfo = await getMediaDevicesInfo();
+          const mediaDeviceInfo = await getMediaDevicesInfo({
+            skipStoreReady: args.skipStoreReady,
+          });
 
           if (isCanceled()) return;
 
