@@ -114,29 +114,29 @@ const DeviceSettingsMenu = ({
       placement="bottom-start"
     >
       {({ TransitionProps, placement }) => (
-          <Grow
-            {...TransitionProps}
-            style={{ transformOrigin: placement === 'bottom' ? 'center top' : 'center bottom' }}
-          >
-            <div className="text-left font-normal">
-              <ClickAwayListener onClickAway={handleClose}>
-                <Paper
-                  className={classNames(
-                    'relative z-10',
-                    'bg-vera-surface text-vera-on-surface',
-                    'p-1 sm:p-2',
-                    'rounded-vera-large',
-                    'w-[90vw] sm:w-full max-w-[400px]',
-                    popperTransformClasses
-                  )}
-                >
-                  {renderSettingsMenu()}
-                </Paper>
-              </ClickAwayListener>
-            </div>
-          </Grow>
-        )}
-      </Popper>
+        <Grow
+          {...TransitionProps}
+          style={{ transformOrigin: placement === 'bottom' ? 'center top' : 'center bottom' }}
+        >
+          <div className="text-left font-normal">
+            <ClickAwayListener onClickAway={handleClose}>
+              <Paper
+                className={classNames(
+                  'relative z-10',
+                  'bg-vera-surface text-vera-on-surface',
+                  'p-1 sm:p-2',
+                  'rounded-vera-large',
+                  'w-[90vw] sm:w-full max-w-[400px]',
+                  popperTransformClasses
+                )}
+              >
+                {renderSettingsMenu()}
+              </Paper>
+            </ClickAwayListener>
+          </div>
+        </Grow>
+      )}
+    </Popper>
   );
 };
 

@@ -90,6 +90,7 @@
   "devices.video.disable": "Video deaktivieren",
   "devices.video.disabled": "Kamerasteuerung ist in dieser Anwendung deaktiviert",
   "devices.video.enable": "Video aktivieren",
+  "devices.video.mirrorSelfView": "Selbstansicht spiegeln",
   "emoji.ariaLabel": "Emoji-Menü öffnen",
   "emoji.tooltip": "Drücken Sie sich aus",
   "errors.unknown": "Unbekannter Fehler aufgetreten",
