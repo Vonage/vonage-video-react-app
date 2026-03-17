@@ -212,5 +212,22 @@
   "zoom.in": "Zoom hinausfahren",
   "zoom.current": "Aktueller Zoom",
   "errorPage.title": "Etwas ist schiefgelaufen",
-  "errorPage.description": "Die Anwendung konnte nicht gestartet werden. Bitte laden Sie die Seite neu oder wenden Sie sich an den Support, wenn das Problem weiterhin besteht."
+  "errorPage.description": "Die Anwendung konnte nicht gestartet werden. Bitte laden Sie die Seite neu oder wenden Sie sich an den Support, wenn das Problem weiterhin besteht.",
+  "raiseHand.button.raise": "Hand heben",
+  "raiseHand.button.lower": "Hand senken",
+  "raiseHand.section.title": "Gehobene Hände",
+  "raiseHand.section.lowerAll": "Alle senken",
+  "raiseHand.section.lowerParticipant": "Hand von {{name}} senken",
+  "raiseHand.lowerAll.dialogTitle": "Alle Hände senken?",
+  "raiseHand.lowerAll.dialogBody": "Dies senkt {{count}} gehobene Hand.",
+  "raiseHand.lowerAll.dialogBody_plural": "Dies senkt {{count}} gehobene Hände.",
+  "raiseHand.lowerAll.confirmButton": "Alle Hände senken",
+  "raiseHand.toast.singleRaised": "{{name}} hat die Hand gehoben",
+  "raiseHand.toast.multipleRaised": "{{count}} Teilnehmer haben die Hand gehoben",
+  "raiseHand.toast.viewQueue": "Warteschlange anzeigen",
+  "raiseHand.pill.ariaLabel": "Gehobene Hände — zuerst in der Warteschlange: {{name}}. Klicken, um das Teilnehmerpanel zu öffnen.",
+  "raiseHand.pill.popoverTitle": "Gehobene Hände",
+  "raiseHand.pill.viewAll": "Alle anzeigen ({{count}}) >",
+  "raiseHand.selfLowerPill.ariaLabel": "Eigene gehobene Hand senken",
+  "raiseHand.selfLowerPill.label": "Hand senken"
 }
