@@ -4,10 +4,9 @@ import { waitFor } from '@testing-library/dom';
 import mediaDevices$ from '../../devices$';
 import { setupPartialMock } from '@common-test/helpers';
 import { SPY_MARK } from '@common/types';
-import { setupWindowNavigatorMock } from '@web-test/fixtures';
+import { setupWindowNavigatorMock, makeMediaDeviceInfos } from '@web-test/fixtures';
 import * as vonageClientSdk from '@vonage/client-sdk-video';
 import * as isFirefoxModule from '@web/platform/isFirefox';
-import { makeMediaDeviceInfos } from '@web-test/fixtures';
 
 const someDevices = makeMediaDeviceInfos();
 
