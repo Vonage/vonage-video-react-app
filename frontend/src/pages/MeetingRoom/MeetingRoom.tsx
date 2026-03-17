@@ -10,7 +10,7 @@ import RaiseHandPill from '../../components/MeetingRoom/RaiseHandPill';
 import { env } from '../../env';
 import useAudioLevels from '../../hooks/useAudioLevels';
 import { useAutoLowerOnDominantSpeaker } from '../../hooks/useAutoLowerOnDominantSpeaker';
-import useHandRaiseDetection from '../../hooks/useHandRaiseDetection';
+import useGestureDetection from '../../hooks/useGestureDetection';
 import emojiMap from '../../utils/emojis/emojis';
 import RightPanel from '../../components/MeetingRoom/RightPanel';
 import CaptionsBox from '../../components/MeetingRoom/CaptionsButton/CaptionsBox';
@@ -65,7 +65,7 @@ const MeetingRoom = ({
     captionsState,
   } = useMeetingRoom();
   const isRaiseHandAllowed = env.ALLOW_RAISE_HAND;
-  const isHandRaiseDetectionAllowed = env.ALLOW_HAND_RAISE_DETECTION ?? false;
+  const isHandRaiseDetectionAllowed = env.ALLOW_GESTURE_DETECTION ?? false;
   const {
     getConnectionId,
     setRaisedHandsMap,
@@ -93,10 +93,10 @@ const MeetingRoom = ({
     setRaisedHandsMap,
   });
 
-  useHandRaiseDetection({
+  useGestureDetection({
     enabled:
       isRaiseHandAllowed &&
-      isHandRaiseDetectionAllowed &&
+      isGestureDetectionAllowed &&
       isVideoEnabled &&
       !localHandIsRaised &&
       !hasBackgroundEffect,

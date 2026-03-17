@@ -28,7 +28,7 @@ const GESTURE_RECOGNIZER_MODEL =
 /** Gesture names returned by the MediaPipe GestureRecognizer model. */
 type GestureName = 'Open_Palm' | 'Thumb_Up' | 'Thumb_Down';
 
-export type UseHandRaiseDetectionProps = {
+export type UseGestureDetectionProps = {
   /** Whether detection is enabled (feature flag + user opt-in + hand not already raised + video on + no background effects). */
   enabled: boolean;
   /** The publisher's HTMLVideoElement to analyze. */
@@ -70,7 +70,7 @@ type GestureState = {
   hasFired: boolean;
 };
 
-const useHandRaiseDetection = ({
+const useGestureDetection = ({
   enabled,
   videoElement,
   onHandRaised,
@@ -80,7 +80,7 @@ const useHandRaiseDetection = ({
   detectionIntervalMs = DEFAULT_DETECTION_INTERVAL_MS,
   gestureConfidence = DEFAULT_GESTURE_CONFIDENCE,
   delegate = 'GPU',
-}: UseHandRaiseDetectionProps): void => {
+}: UseGestureDetectionProps): void => {
   // Stable refs to avoid stale closures inside the interval callback.
   const callbacksRef = useRef({ onHandRaised, onThumbsUp, onThumbsDown });
   callbacksRef.current = { onHandRaised, onThumbsUp, onThumbsDown };
@@ -110,7 +110,7 @@ const useHandRaiseDetection = ({
     const start = async () => {
       // Guard: browser must support WebAssembly (required by MediaPipe WASM runtime)
       if (typeof WebAssembly === 'undefined') {
-        console.warn('[useHandRaiseDetection] WebAssembly not supported — skipping detection');
+        console.warn('[useGestureDetection] WebAssembly not supported — skipping detection');
         return;
       }
 
@@ -137,7 +137,7 @@ const useHandRaiseDetection = ({
             numHands: 1,
           });
         } catch (err) {
-          console.warn('[useHandRaiseDetection] Failed to load GestureRecognizer:', err);
+          console.warn('[useGestureDetection] Failed to load GestureRecognizer:', err);
           isLoadingRef.current = false;
           return;
         }
@@ -187,7 +187,7 @@ const useHandRaiseDetection = ({
             }
           }
         } catch (err) {
-          console.warn('[useHandRaiseDetection] Frame processing error:', err);
+          console.warn('[useGestureDetection] Frame processing error:', err);
         }
       }, detectionIntervalMs);
     };
@@ -263,4 +263,4 @@ function detectGesture(
   return null;
 }
 
-export default useHandRaiseDetection;
+export default useGestureDetection;
