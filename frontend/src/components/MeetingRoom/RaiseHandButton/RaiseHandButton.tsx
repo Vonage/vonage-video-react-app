@@ -1,9 +1,5 @@
 import { ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
-import Button from '@mui/material/Button';
-import Typography from '@mui/material/Typography';
-import Box from '@mui/material/Box';
-import useTheme from '@ui/theme';
 import useSessionContext from '@hooks/useSessionContext';
 
 /**
@@ -18,7 +14,6 @@ import useSessionContext from '@hooks/useSessionContext';
  */
 const RaiseHandButton = (): ReactElement => {
   const { t } = useTranslation();
-  const theme = useTheme();
   const { localHandIsRaised, raiseHand, lowerHand } = useSessionContext();
 
   const handleClick = () => {
@@ -32,40 +27,25 @@ const RaiseHandButton = (): ReactElement => {
   const label = localHandIsRaised ? t('raiseHand.button.lower') : t('raiseHand.button.raise');
 
   return (
-    <Button
+    <button
+      type="button"
       data-testid="raise-hand-button"
       onClick={handleClick}
       aria-label={label}
       aria-pressed={localHandIsRaised}
-      fullWidth
-      variant="text"
-      sx={{
-        justifyContent: 'center',
-        px: 1.5,
-        py: 1,
-        borderRadius: 1,
-        textTransform: 'none',
-        backgroundColor: localHandIsRaised ? theme.colors.primary : 'transparent',
-        color: localHandIsRaised ? theme.colors.onPrimary : theme.colors.onDarkGrey,
-        border: localHandIsRaised ? `1px solid ${theme.colors.primary}` : '1px solid transparent',
-        '&:hover': {
-          backgroundColor: localHandIsRaised
-            ? theme.colors.primaryHover
-            : theme.colors.darkGreyHover,
-        },
-      }}
+      className={[
+        'flex w-full items-center justify-center gap-1.5 rounded px-3 py-2 text-sm',
+        'border transition-colors',
+        localHandIsRaised
+          ? 'border-vera-primary bg-vera-primary text-vera-on-primary hover:bg-vera-primary-hover'
+          : 'border-transparent bg-transparent text-vera-on-dark-grey hover:bg-vera-dark-grey-hover',
+      ].join(' ')}
     >
-      <Box
-        component="span"
-        sx={{ fontSize: '1.25rem', mr: 1.5, lineHeight: 1, flexShrink: 0 }}
-        aria-hidden="true"
-      >
+      <span aria-hidden="true" className="shrink-0 text-xl leading-none">
         ✋
-      </Box>
-      <Typography variant="body2" noWrap>
-        {label}
-      </Typography>
-    </Button>
+      </span>
+      <span className="truncate">{label}</span>
+    </button>
   );
 };
 

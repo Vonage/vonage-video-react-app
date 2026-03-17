@@ -2,12 +2,6 @@ import { ReactElement, useCallback, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import Snackbar from '@mui/material/Snackbar';
 import SnackbarContent from '@mui/material/SnackbarContent';
-import Button from '@mui/material/Button';
-import Typography from '@mui/material/Typography';
-import Box from '@mui/material/Box';
-import IconButton from '@mui/material/IconButton';
-import CloseIcon from '@mui/icons-material/Close';
-import useTheme from '@ui/theme';
 import useSessionContext from '@hooks/useSessionContext';
 
 /** Duration (ms) after which a toast auto-dismisses. */
@@ -41,7 +35,6 @@ type ToastState = {
  */
 const RaiseHandToast = (): ReactElement => {
   const { t } = useTranslation();
-  const theme = useTheme();
   const { raisedHands, raisedHandCount, toggleParticipantList, getConnectionId } =
     useSessionContext();
 
@@ -159,48 +152,41 @@ const RaiseHandToast = (): ReactElement => {
       onClose={handleClose}
       anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
       data-testid="raise-hand-toast"
-      sx={{ mb: 12 }} // Sit above the toolbar
+      className="mb-12"
     >
       <SnackbarContent
-        sx={{
-          backgroundColor: theme.colors.darkGrey,
-          color: theme.colors.onDarkGrey,
-          display: 'flex',
-          alignItems: 'center',
-        }}
+        className="flex items-center bg-vera-dark-grey text-vera-on-dark-grey"
         message={
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-            <span aria-hidden="true" style={{ fontSize: '1.1rem' }}>
+          <span className="flex items-center gap-2">
+            <span aria-hidden="true" className="text-lg leading-none">
               ✋
             </span>
-            <Typography variant="body2">{toast.message}</Typography>
-          </Box>
+            <span className="text-sm">{toast.message}</span>
+          </span>
         }
         action={
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+          <span className="flex items-center gap-1">
             {!toast.isLoweredByModerator && (
-              <Button
-                size="small"
+              <button
+                type="button"
                 onClick={handleViewQueue}
                 data-testid="raise-hand-toast-view-queue"
-                sx={{
-                  color: theme.colors.primary,
-                  textTransform: 'none',
-                  fontWeight: 600,
-                }}
+                className="cursor-pointer border-none bg-transparent px-2 py-1 text-sm font-semibold text-vera-primary hover:underline"
               >
                 {t('raiseHand.toast.viewQueue')}
-              </Button>
+              </button>
             )}
-            <IconButton
-              size="small"
+            <button
+              type="button"
               aria-label={t('button.close')}
               onClick={handleClose}
-              sx={{ color: theme.colors.onDarkGrey }}
+              className="cursor-pointer rounded-full border-none bg-transparent p-1 text-vera-on-dark-grey hover:opacity-80"
             >
-              <CloseIcon fontSize="small" />
-            </IconButton>
-          </Box>
+              <svg className="h-5 w-5" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z" />
+              </svg>
+            </button>
+          </span>
         }
       />
     </Snackbar>

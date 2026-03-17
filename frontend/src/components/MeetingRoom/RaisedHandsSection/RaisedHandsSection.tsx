@@ -1,16 +1,5 @@
 import { ReactElement, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import Box from '@mui/material/Box';
-import Typography from '@mui/material/Typography';
-import List from '@mui/material/List';
-import ListItem from '@mui/material/ListItem';
-import ListItemText from '@mui/material/ListItemText';
-import IconButton from '@mui/material/IconButton';
-import Tooltip from '@mui/material/Tooltip';
-import Divider from '@mui/material/Divider';
-import Button from '@mui/material/Button';
-import Badge from '@mui/material/Badge';
-import useTheme from '@ui/theme';
 import useSessionContext from '@hooks/useSessionContext';
 import { isModeratorRole } from '../../../utils/raiseHandRole';
 import LowerAllDialog from './LowerAllDialog';
@@ -27,7 +16,6 @@ import LowerAllDialog from './LowerAllDialog';
  */
 const RaisedHandsSection = (): ReactElement => {
   const { t } = useTranslation();
-  const theme = useTheme();
   const { raisedHands, raisedHandCount, lowerHand, lowerAllHands } = useSessionContext();
   const [isLowerAllDialogOpen, setIsLowerAllDialogOpen] = useState(false);
 
@@ -41,97 +29,64 @@ const RaisedHandsSection = (): ReactElement => {
   return (
     <>
       {/* Section header */}
-      <Box
-        sx={{
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          px: 3,
-          pt: 1.5,
-          pb: 0.5,
-        }}
+      <div
+        className="flex items-center justify-between px-6 pb-1 pt-3"
         data-testid="raised-hands-section"
       >
-        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-          <Typography variant="subtitle2" sx={{ color: theme.colors.textSecondary }}>
+        <div className="flex items-center gap-2">
+          <span className="text-sm font-medium text-vera-text-secondary">
             {t('raiseHand.section.title')}
-          </Typography>
-          <Badge
-            badgeContent={raisedHandCount}
+          </span>
+          <span
             data-testid="raised-hands-count-badge"
-            sx={{
-              '& .MuiBadge-badge': {
-                position: 'relative',
-                transform: 'none',
-                backgroundColor: theme.colors.primary,
-                color: theme.colors.onPrimary,
-                fontSize: '0.7rem',
-                minWidth: '20px',
-                height: '20px',
-                borderRadius: '10px',
-              },
-            }}
-          />
-        </Box>
+            className="inline-flex h-5 min-w-[20px] items-center justify-center rounded-full bg-vera-primary px-1.5 text-[0.7rem] text-vera-on-primary"
+          >
+            {raisedHandCount}
+          </span>
+        </div>
 
         {isModeratorRole() && (
-          <Button
+          <button
+            type="button"
             data-testid="lower-all-button"
-            variant="text"
-            size="small"
             onClick={handleLowerAllClick}
-            sx={{
-              color: theme.colors.textPrimary,
-              textTransform: 'none',
-              fontSize: '0.8rem',
-              p: 0,
-              minWidth: 'auto',
-              '&:hover': { textDecoration: 'underline', background: 'transparent' },
-            }}
+            className="cursor-pointer border-none bg-transparent p-0 text-[0.8rem] text-vera-text-primary hover:underline"
           >
             {t('raiseHand.section.lowerAll')}
-          </Button>
+          </button>
         )}
-      </Box>
+      </div>
 
       {/* Queue list */}
-      <List dense disablePadding sx={{ px: 1 }}>
+      <ul className="m-0 list-none px-2 py-0">
         {raisedHands.map((state) => (
-          <ListItem
+          <li
             key={state.connectionId}
             data-testid={`raised-hand-item-${state.connectionId}`}
-            sx={{ pr: isModeratorRole() ? '48px' : 1 }}
-            secondaryAction={
-              isModeratorRole() ? (
-                <Tooltip
-                  title={t('raiseHand.section.lowerParticipant', { name: state.participantName })}
-                >
-                  <IconButton
-                    size="small"
-                    aria-label={t('raiseHand.section.lowerParticipant', {
-                      name: state.participantName,
-                    })}
-                    data-testid={`lower-hand-${state.connectionId}`}
-                    onClick={() => lowerHand(state.connectionId)}
-                    sx={{ color: theme.colors.textTertiary }}
-                  >
-                    <span role="img" aria-hidden="true" style={{ fontSize: '1rem' }}>
-                      ✋
-                    </span>
-                  </IconButton>
-                </Tooltip>
-              ) : undefined
-            }
+            className={`flex items-center py-1 pl-4 ${isModeratorRole() ? 'pr-12' : 'pr-2'}`}
           >
-            <ListItemText
-              primary={state.participantName}
-              primaryTypographyProps={{ variant: 'body2', noWrap: true }}
-            />
-          </ListItem>
+            <span className="flex-1 truncate text-sm">{state.participantName}</span>
+            {isModeratorRole() && (
+              <button
+                type="button"
+                aria-label={t('raiseHand.section.lowerParticipant', {
+                  name: state.participantName,
+                })}
+                data-testid={`lower-hand-${state.connectionId}`}
+                onClick={() => lowerHand(state.connectionId)}
+                className="cursor-pointer border-none bg-transparent p-1 text-base text-vera-text-tertiary hover:opacity-80"
+                title={t('raiseHand.section.lowerParticipant', { name: state.participantName })}
+              >
+                <span role="img" aria-hidden="true">
+                  ✋
+                </span>
+              </button>
+            )}
+          </li>
         ))}
-      </List>
+      </ul>
 
-      <Divider sx={{ mt: 1, mx: 2 }} />
+      <hr className="mx-4 mt-2 border-vera-border" />
 
       {/* Confirmation dialog */}
       <LowerAllDialog
