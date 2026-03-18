@@ -2,9 +2,9 @@ import { expect } from '@playwright/test';
 import { test, baseURL } from '../fixtures/testWithLogging';
 import { primeMediaDevices } from './utils';
 
-test.beforeEach(async ({ page }) => {
+test.beforeEach(async ({ page, browserName }) => {
   await page.goto(`${baseURL}waiting-room/test-room`);
-  await primeMediaDevices({ page });
+  await primeMediaDevices({ page, browserName });
   await page.waitForTimeout(1000);
 });
 
