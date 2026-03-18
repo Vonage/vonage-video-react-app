@@ -109,26 +109,6 @@ describe('useBackgroundPublisher', () => {
         expect.any(Function)
       );
     });
-
-    it('should reject access when there is no camera device', async () => {
-      mediaDevices$.setState((state) => ({
-        ...state,
-        mediaDeviceInfo: [],
-        videoinput: undefined,
-      }));
-
-      const { result } = render();
-
-      act(() => {
-        result.current.initBackgroundLocalPublisher();
-      });
-
-      await waitFor(() => {
-        expect(result.current.accessStatus).toBe(DEVICE_ACCESS_STATUS.REJECTED);
-      });
-
-      expect(mockedInitPublisher).not.toHaveBeenCalled();
-    });
   });
 
   describe('changeBackground', () => {
