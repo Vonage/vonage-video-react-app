@@ -42,17 +42,16 @@ const VideoContainer = ({ username }: VideoContainerProps): ReactElement => {
   const { mirrorSelfView } = user.defaultSettings;
 
   useEffect(() => {
-    if (!publisherVideoElement) return;
+    if (!publisherVideoElement || !containerRef.current) return;
 
     // Vonage/OT injects the video element with object-fit=contain by default, which leaves black bars
     // inside our 16:9 tile. We set cover here so the preview fills the tile consistently.
     // eslint-disable-next-line react-hooks/immutability
     publisherVideoElement.style.objectFit = 'cover';
-    containerRef.current!.appendChild(publisherVideoElement);
-  }, [publisherVideoElement]);
 
-  useEffect(() => {
-    if (!publisherVideoElement) return;
+    if (!containerRef.current.contains(publisherVideoElement)) {
+      containerRef.current.appendChild(publisherVideoElement);
+    }
 
     const isSdkMirroring = publisherVideoElement.classList.contains('OT_mirrored');
     // The SDK mirrors the preview publisher via .OT_mirrored (scale(-1, 1) on .OT_video-element).
