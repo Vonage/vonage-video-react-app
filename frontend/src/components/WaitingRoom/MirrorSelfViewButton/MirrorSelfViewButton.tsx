@@ -4,8 +4,8 @@ import { useTranslation } from 'react-i18next';
 import Tooltip from '@mui/material/Tooltip';
 import { VIDEO_CONTAINER_BUTTON_SIZE_WR } from '@utils/constants';
 import VideoContainerButton from '../VideoContainerButton';
-import useUserContext from '../../../hooks/useUserContext';
-import { setStorageItem, STORAGE_KEYS } from '../../../utils/storage';
+import useUserContext from '@hooks/useUserContext';
+import { setStorageItem, STORAGE_KEYS } from '@utils/storage';
 
 /**
  * MirrorSelfViewButton Component
