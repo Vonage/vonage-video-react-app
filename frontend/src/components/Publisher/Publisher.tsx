@@ -16,6 +16,27 @@ export type PublisherProps = {
   box: Box;
 };
 
+const applyMirrorSelfView = (args: {
+  element: HTMLElement;
+  mirrorSelfView: boolean;
+}) => {
+  const { element, mirrorSelfView } = args;
+
+  const isSdkMirroring = element.classList.contains('OT_mirrored');
+  if (mirrorSelfView) {
+    if (isSdkMirroring) {
+      element.style.removeProperty('transform');
+      return;
+    }
+
+    // eslint-disable-next-line react-hooks/immutability
+    element.style.transform = 'scaleX(-1)';
+    return;
+  }
+
+  element.style.transform = 'scaleX(1)';
+};
+
 /**
  * Publisher component
  *
@@ -54,26 +75,9 @@ const Publisher = ({ box }: PublisherProps): ReactElement => {
     element.style.transformOrigin = '50% 50%';
 
     pubContainerRef.current.appendChild(element);
-  }, [element, theme.shapes.borderRadiusLarge]);
 
-  useEffect(() => {
-    if (!element) return;
-
-    // The SDK mirrors the publisher via .OT_mirrored (scale(-1, 1) on .OT_video-element).
-    // When mirror is ON, prefer the SDK class; fall back to an inline mirror if the class is absent.
-    // When mirror is OFF, set scaleX(1) to override and cancel the SDK's mirror.
-    const isSdkMirroring = element.classList.contains('OT_mirrored');
-    if (mirrorSelfView) {
-      if (isSdkMirroring) {
-        element.style.removeProperty('transform');
-      } else {
-        // eslint-disable-next-line react-hooks/immutability
-        element.style.transform = 'scaleX(-1)';
-      }
-    } else {
-      element.style.transform = 'scaleX(1)';
-    }
-  }, [element, mirrorSelfView]);
+    applyMirrorSelfView({ element, mirrorSelfView });
+  }, [element, mirrorSelfView, theme.shapes.borderRadiusLarge]);
 
   const initials = publisher?.stream?.initials;
   const username = publisher?.stream?.name ?? '';
