@@ -11,12 +11,17 @@ import composeProviders from '@web/helpers/composeProviders';
 import SuspenseBoundary from '@web/components/SuspenseBoundary';
 import { setupWindowNavigatorMock } from '@web-test/fixtures';
 import { resolveMobileVideoSource } from '@utils/cameraSwitch';
+import { isAndroid } from '@utils/util';
 import mediaDevices$ from '@core/stores/devices';
 
 vi.mock('@vonage/client-sdk-video');
 vi.mock('@utils/cameraSwitch', () => ({
   resolveMobileVideoSource: vi.fn((deviceId: string) => Promise.resolve(deviceId)),
 }));
+vi.mock('@utils/util', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('@utils/util')>();
+  return { ...actual, isAndroid: vi.fn(() => false) };
+});
 
 describe('usePreviewPublisher', () => {
   const mockPublisher = Object.assign(new EventEmitter(), {
@@ -223,9 +228,11 @@ describe('usePreviewPublisher', () => {
 
   describe('getVideoDeviceLabel', () => {
     beforeEach(() => {
+      vi.mocked(isAndroid).mockReturnValue(true);
       (mockPublisher as unknown as { setVideoSource: Mock }).setVideoSource = vi
         .fn()
         .mockResolvedValue(undefined);
+      (mockPublisher as unknown as { publishVideo: Mock }).publishVideo = vi.fn();
       mockedInitPublisher.mockReturnValue(mockPublisher);
       vi.mocked(resolveMobileVideoSource).mockImplementation((deviceId) =>
         Promise.resolve(deviceId)
@@ -279,6 +286,7 @@ describe('usePreviewPublisher', () => {
 
   describe('initLocalPublisher - resolved deviceId written to store', () => {
     beforeEach(() => {
+      vi.mocked(isAndroid).mockReturnValue(true);
       mockedInitPublisher.mockReturnValue(mockPublisher);
       vi.spyOn(mediaDevices$.actions, 'selectDevice').mockResolvedValue(undefined);
     });

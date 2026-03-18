@@ -187,18 +187,18 @@ const usePreviewPublisher = (
         const currentDeviceId = publisher.getVideoSource()?.deviceId;
         if (deviceId === currentDeviceId) return;
 
-        // Release the current camera first on Android so it is not held
-        // when resolveMobileVideoSource opens the new camera via getUserMedia.
-        // Samsung devices can enforce exclusive camera2 access across streams.
+        // Android: release camera before getUserMedia acquires the new one.
         if (isAndroid()) {
           publisher.publishVideo(false);
           await wait(ANDROID_CAMERA_SWITCH_DELAY_MS);
         }
 
-        const resolvedDeviceId = await resolveMobileVideoSource(
-          deviceId,
-          getVideoDeviceLabel(deviceId)
-        );
+        // Android: facingMode resolution finds the correct physical camera ID.
+        // iOS: device IDs are stable; skipping getUserMedia avoids interrupting
+        // the active stream, which would cause a layout shift.
+        const resolvedDeviceId = isAndroid()
+          ? await resolveMobileVideoSource(deviceId, getVideoDeviceLabel(deviceId))
+          : deviceId;
 
         await publisher.setVideoSource(resolvedDeviceId);
 
@@ -269,8 +269,8 @@ const usePreviewPublisher = (
 
     void (async () => {
       try {
-        // On mobile, resolve the actual accessible camera via facingMode so devices like
-        // Samsung S24+ use a working camera rather than an inaccessible enumerated deviceId.
+        // On mobile, resolve the actual accessible camera via facingMode so devices
+        // use a working camera rather than an inaccessible enumerated deviceId.
         const resolvedVideoSourceId = videoSourceId
           ? await resolveMobileVideoSource(videoSourceId, getVideoDeviceLabel(videoSourceId))
           : videoSourceId;

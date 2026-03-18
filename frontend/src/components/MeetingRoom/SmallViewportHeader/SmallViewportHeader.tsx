@@ -52,40 +52,46 @@ const SmallViewportHeader = (): ReactElement => {
 
   const { publisher, isVideoEnabled } = usePublisherContext();
 
+  // State-based toggle always alternates regardless of switch success, avoiding
+  // getting stuck on black screen. Initialized from store so joining with the
+  // rear camera selected starts with the correct facing direction.
+  const [facing, setFacing] = useState<'front' | 'rear'>(() => {
+    const selectedId = mediaDevices$.getState().videoinput;
+    if (!selectedId) return 'front';
+    const selected = videoInputDevices.find((d) => d.deviceId === selectedId);
+    return selected && isRearFacingLabel(selected.label) ? 'rear' : 'front';
+  });
+
   const handleCameraToggle = () => {
     if (!publisher) return;
 
-    const currentSource = publisher.getVideoSource?.();
+    const nextFacing = facing === 'front' ? 'rear' : 'front';
+    const target =
+      nextFacing === 'front'
+        ? videoInputDevices.find((d) => isFrontFacingLabel(d.label))
+        : videoInputDevices.find((d) => isRearFacingLabel(d.label));
 
-    const currentDevice = videoInputDevices.find((d) => d.deviceId === currentSource?.deviceId);
-    const currentIsFront = isFrontFacingLabel(currentDevice?.label);
+    if (!target) return;
 
-    const pickFront = () =>
-      videoInputDevices.find((d) => isFrontFacingLabel(d.label)) ||
-      videoInputDevices.find((d) => d.deviceId !== currentSource?.deviceId);
+    setFacing(nextFacing);
 
-    const pickRear = () =>
-      videoInputDevices.find((d) => isRearFacingLabel(d.label)) ||
-      videoInputDevices.find(
-        (d) => !isFrontFacingLabel(d.label) && d.deviceId !== currentSource?.deviceId
-      );
-
-    const target = currentIsFront ? pickRear() : pickFront();
-
-    if (target?.deviceId && target.deviceId !== currentSource?.deviceId) {
-      void (async () => {
-        if (isAndroid()) {
-          publisher.publishVideo(false);
-          await wait(100);
-        }
-        const resolvedDeviceId = await resolveMobileVideoSource(target.deviceId, target.label);
-        await publisher.setVideoSource(resolvedDeviceId);
-        if (isAndroid()) {
-          publisher.publishVideo(isVideoEnabled);
-        }
-        await mediaDevices$.actions.selectDevice('videoinput', resolvedDeviceId);
-      })();
-    }
+    void (async () => {
+      if (isAndroid()) {
+        publisher.publishVideo(false);
+        await wait(100);
+      }
+      // Android: facingMode resolution finds the correct physical camera ID.
+      // iOS: device IDs are stable; skipping getUserMedia avoids interrupting
+      // the active stream, which would cause a layout shift.
+      const resolvedDeviceId = isAndroid()
+        ? await resolveMobileVideoSource(target.deviceId, target.label)
+        : target.deviceId;
+      await publisher.setVideoSource(resolvedDeviceId);
+      if (isAndroid()) {
+        publisher.publishVideo(isVideoEnabled);
+      }
+      await mediaDevices$.actions.selectDevice('videoinput', resolvedDeviceId);
+    })();
   };
 
   return (

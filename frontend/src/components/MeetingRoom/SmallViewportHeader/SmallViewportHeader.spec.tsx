@@ -79,7 +79,7 @@ describe('SmallViewportHeader component', () => {
     (useRoomShareUrl as Mock).mockReturnValue('https://example.com/room/test-room-name');
 
     publisherContext = {
-      publisherContext: { cycleVideo: vi.fn() } as unknown as PublisherContextType['publisher'],
+      publisher: null,
       isVideoEnabled: true,
     } as unknown as PublisherContextType;
 
@@ -136,7 +136,7 @@ describe('SmallViewportHeader component', () => {
   it('shows the camera switch button when video is enabled', () => {
     (useSessionContext as Mock).mockReturnValue({ archiveId: null });
     mockUsePublisherContext.mockReturnValue({
-      publisherContext: { cycleVideo: vi.fn() } as unknown as PublisherContextType['publisher'],
+      publisher: null,
       isVideoEnabled: true,
     } as unknown as PublisherContextType);
 
@@ -148,7 +148,7 @@ describe('SmallViewportHeader component', () => {
   it('does not show the camera switch button when video is disabled', () => {
     (useSessionContext as Mock).mockReturnValue({ archiveId: null });
     mockUsePublisherContext.mockReturnValue({
-      publisherContext: { cycleVideo: vi.fn() } as unknown as PublisherContextType['publisher'],
+      publisher: null,
       isVideoEnabled: false,
     } as unknown as PublisherContextType);
 
@@ -178,40 +178,130 @@ describe('SmallViewportHeader component', () => {
     expect(screen.queryByTestId('vivid-icon-camera-switch-line')).not.toBeInTheDocument();
   });
 
-  it('toggles to the opposite camera device when clicked', async () => {
-    const videoInputDevice1 = videoDevices[0];
-
+  it('toggles to the rear camera on first click', async () => {
     (useSessionContext as Mock).mockReturnValue({ archiveId: null });
-    const setVideoSource = vi.fn();
-    const getVideoSource = vi.fn(() => ({
-      deviceId: videoInputDevice1.deviceId,
-      label: videoInputDevice1.label,
-      kind: 'videoInput',
+    const setVideoSource = vi.fn().mockResolvedValue(undefined);
+
+    const frontCamera = {
+      deviceId: 'front-camera',
+      kind: 'videoinput' as MediaDeviceKind,
+      label: 'camera 1, facing front',
+      groupId: 'group-front',
+      toJSON: () => ({
+        deviceId: 'front-camera',
+        kind: 'videoinput' as MediaDeviceKind,
+        label: 'camera 1, facing front',
+        groupId: 'group-front',
+      }),
+    } as MediaDeviceInfo;
+    const rearCamera = {
+      deviceId: 'rear-camera',
+      kind: 'videoinput' as MediaDeviceKind,
+      label: 'camera 0, facing back',
+      groupId: 'group-rear',
+      toJSON: () => ({
+        deviceId: 'rear-camera',
+        kind: 'videoinput' as MediaDeviceKind,
+        label: 'camera 0, facing back',
+        groupId: 'group-rear',
+      }),
+    } as MediaDeviceInfo;
+
+    mediaDevices$.setState((state) => ({
+      ...state,
+      mediaDeviceInfo: [...devices.filter((d) => d.kind !== 'videoinput'), frontCamera, rearCamera],
     }));
 
     mockUsePublisherContext.mockReturnValue({
-      publisher: {
-        setVideoSource,
-        getVideoSource,
-      } as unknown as PublisherContextType['publisher'],
+      publisher: { setVideoSource } as unknown as PublisherContextType['publisher'],
+      isVideoEnabled: true,
+    } as unknown as PublisherContextType);
+
+    render(<SmallViewportHeader />);
+    fireEvent.click(screen.getByTestId('vivid-icon-camera-switch-line'));
+
+    await waitFor(() => {
+      expect(setVideoSource).toHaveBeenCalledWith(rearCamera.deviceId);
+    });
+  });
+
+  it('toggles back to front camera on second click', async () => {
+    (useSessionContext as Mock).mockReturnValue({ archiveId: null });
+    const setVideoSource = vi.fn().mockResolvedValue(undefined);
+
+    const frontCamera = {
+      deviceId: 'front-camera',
+      kind: 'videoinput' as MediaDeviceKind,
+      label: 'camera 1, facing front',
+      groupId: 'group-front',
+      toJSON: () => ({
+        deviceId: 'front-camera',
+        kind: 'videoinput' as MediaDeviceKind,
+        label: 'camera 1, facing front',
+        groupId: 'group-front',
+      }),
+    } as MediaDeviceInfo;
+    const rearCamera = {
+      deviceId: 'rear-camera',
+      kind: 'videoinput' as MediaDeviceKind,
+      label: 'camera 0, facing back',
+      groupId: 'group-rear',
+      toJSON: () => ({
+        deviceId: 'rear-camera',
+        kind: 'videoinput' as MediaDeviceKind,
+        label: 'camera 0, facing back',
+        groupId: 'group-rear',
+      }),
+    } as MediaDeviceInfo;
+
+    mediaDevices$.setState((state) => ({
+      ...state,
+      mediaDeviceInfo: [...devices.filter((d) => d.kind !== 'videoinput'), frontCamera, rearCamera],
+    }));
+
+    mockUsePublisherContext.mockReturnValue({
+      publisher: { setVideoSource } as unknown as PublisherContextType['publisher'],
       isVideoEnabled: true,
     } as unknown as PublisherContextType);
 
     render(<SmallViewportHeader />);
     const cameraIcon = screen.getByTestId('vivid-icon-camera-switch-line');
-    fireEvent.click(cameraIcon);
 
-    await waitFor(() => {
-      expect(setVideoSource).toHaveBeenCalledTimes(1);
-      expect(setVideoSource).toHaveBeenCalledWith(videoDevices[1].deviceId);
-    });
+    fireEvent.click(cameraIcon);
+    await waitFor(() => expect(setVideoSource).toHaveBeenCalledWith(rearCamera.deviceId));
+
+    fireEvent.click(cameraIcon);
+    await waitFor(() => expect(setVideoSource).toHaveBeenCalledWith(frontCamera.deviceId));
   });
 
   describe('camera toggle - Android', () => {
-    const videoInputDevice1 = videoDevices[0];
-    const videoInputDevice2 = videoDevices[1];
     let publishVideo: Mock;
     let setVideoSource: Mock;
+
+    const frontCamera = {
+      deviceId: 'front-camera',
+      kind: 'videoinput' as MediaDeviceKind,
+      label: 'camera 1, facing front',
+      groupId: 'group-front',
+      toJSON: () => ({
+        deviceId: 'front-camera',
+        kind: 'videoinput' as MediaDeviceKind,
+        label: 'camera 1, facing front',
+        groupId: 'group-front',
+      }),
+    } as MediaDeviceInfo;
+    const rearCamera = {
+      deviceId: 'rear-camera',
+      kind: 'videoinput' as MediaDeviceKind,
+      label: 'camera 0, facing back',
+      groupId: 'group-rear',
+      toJSON: () => ({
+        deviceId: 'rear-camera',
+        kind: 'videoinput' as MediaDeviceKind,
+        label: 'camera 0, facing back',
+        groupId: 'group-rear',
+      }),
+    } as MediaDeviceInfo;
 
     beforeEach(() => {
       vi.mocked(isAndroid).mockReturnValue(true);
@@ -221,15 +311,19 @@ describe('SmallViewportHeader component', () => {
       publishVideo = vi.fn();
       setVideoSource = vi.fn().mockResolvedValue(undefined);
 
+      mediaDevices$.setState((state) => ({
+        ...state,
+        mediaDeviceInfo: [
+          ...devices.filter((d) => d.kind !== 'videoinput'),
+          frontCamera,
+          rearCamera,
+        ],
+      }));
+
       mockUsePublisherContext.mockReturnValue({
         publisher: {
           setVideoSource,
           publishVideo,
-          getVideoSource: vi.fn(() => ({
-            deviceId: videoInputDevice1.deviceId,
-            label: videoInputDevice1.label,
-            kind: 'videoInput',
-          })),
         } as unknown as PublisherContextType['publisher'],
         isVideoEnabled: true,
       } as unknown as PublisherContextType);
@@ -287,19 +381,18 @@ describe('SmallViewportHeader component', () => {
       });
     });
 
-    it('does not call publishVideo on non-Android', async () => {
+    it('does not call publishVideo or resolveMobileVideoSource on non-Android', async () => {
       vi.mocked(isAndroid).mockReturnValue(false);
-      // reset to pass-through so we can assert on the raw deviceId
-      vi.mocked(resolveMobileVideoSource).mockImplementation((id) => Promise.resolve(id));
 
       render(<SmallViewportHeader />);
       fireEvent.click(screen.getByTestId('vivid-icon-camera-switch-line'));
 
       await waitFor(() => {
-        expect(setVideoSource).toHaveBeenCalledWith(videoInputDevice2.deviceId);
+        expect(setVideoSource).toHaveBeenCalledWith(rearCamera.deviceId);
       });
 
       expect(publishVideo).not.toHaveBeenCalled();
+      expect(resolveMobileVideoSource).not.toHaveBeenCalled();
     });
   });
 });
