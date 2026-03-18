@@ -9,7 +9,7 @@
 import { BrowserContext, Page, test as baseTest } from '@playwright/test';
 
 const isDebugMode = process.env.debugMode === 'true';
-const e2eStorageInitializedKey = '__vera_e2e_storage_initialized__';
+const devicesStoreKey = 'vera-devices-store';
 
 const baseURL = isDebugMode ? 'http://localhost:5173/' : 'http://127.0.0.1:3345/';
 
@@ -32,15 +32,16 @@ const addLogger = (page: Page, context: BrowserContext) => {
 const test = (() => {
   return baseTest.extend({
     context: async ({ context }, use) => {
-      // Clear localStorage only once per tab so tests start clean while still allowing reload-based flows.
+      // Clear localStorage on every page load to ensure consistent initial state
       await context.addInitScript((key) => {
-        if (sessionStorage.getItem(key)) {
-          return;
-        }
+        const preservedDevicesStore = localStorage.getItem(key);
 
         localStorage.clear();
-        sessionStorage.setItem(key, 'true');
-      }, e2eStorageInitializedKey);
+
+        if (preservedDevicesStore) {
+          localStorage.setItem(key, preservedDevicesStore);
+        }
+      }, devicesStoreKey);
       await use(context);
     },
     page: async ({ page, context }, use) => {

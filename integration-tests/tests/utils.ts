@@ -9,36 +9,10 @@ type PersistedDeviceSelection = {
   videoinput?: string;
 };
 
-type PrimeMediaDevicesArgs = {
-  page: Page;
-  browserName?: string;
-};
-
 export const waitUntilReady = async (page, browserName) => {
   // Firefox needs delay and then click for publisher to initialize
   if (browserName === 'firefox') {
     await page.waitForTimeout(3000);
-    await page
-      .waitForSelector('.video__element', { state: 'attached', timeout: 10_000 })
-      .catch(() => {});
-
-    const hasPreviewVideo = (await page.locator('.video__element').count()) > 0;
-
-    if (hasPreviewVideo) {
-      await page.locator('.video__element').first().click();
-      return;
-    }
-
-    const isPermissionDialogVisible = await page
-      .getByRole('dialog')
-      .isVisible()
-      .catch(() => false);
-
-    if (isPermissionDialogVisible) {
-      await page.getByRole('dialog').click();
-      return;
-    }
-
     await page.locator('#root').click();
   } else {
     await page.waitForTimeout(1000);
@@ -63,11 +37,7 @@ export const SCREENSHOT = {
   MAX_DIFF_PIXEL_RATIO: 0.5,
 } as const;
 
-export const primeMediaDevices = async ({ page, browserName }: PrimeMediaDevicesArgs) => {
-  if (browserName === 'firefox') {
-    return;
-  }
-
+export const primeMediaDevices = async ({ page }: { page: Page }) => {
   const hasPersistedDeviceSelection = await page.evaluate((key) => {
     const storedSelection = localStorage.getItem(key);
 
@@ -84,45 +54,32 @@ export const primeMediaDevices = async ({ page, browserName }: PrimeMediaDevices
     return;
   }
 
-  const persistedDeviceSelection = await (async () => {
-    try {
-      await page.waitForFunction(
-        async () => {
-          const devices = await navigator.mediaDevices.enumerateDevices();
+  await page.waitForFunction(async () => {
+    const devices = await navigator.mediaDevices.enumerateDevices();
 
-          const hasAudioInput = devices.some(
-            (device) => device.kind === 'audioinput' && Boolean(device.deviceId)
-          );
-          const hasVideoInput = devices.some(
-            (device) => device.kind === 'videoinput' && Boolean(device.deviceId)
-          );
+    const hasAudioInput = devices.some(
+      (device) => device.kind === 'audioinput' && Boolean(device.deviceId)
+    );
+    const hasVideoInput = devices.some(
+      (device) => device.kind === 'videoinput' && Boolean(device.deviceId)
+    );
 
-          return hasAudioInput && hasVideoInput;
-        },
-        { timeout: 5_000 }
-      );
-    } catch {
-      return null;
-    }
+    return hasAudioInput && hasVideoInput;
+  });
 
-    return page.evaluate(async () => {
-      const devices = await navigator.mediaDevices.enumerateDevices();
+  const persistedDeviceSelection = await page.evaluate(async () => {
+    const devices = await navigator.mediaDevices.enumerateDevices();
 
-      const pickDeviceId = (kind: MediaDeviceKind) => {
-        return devices.find((device) => device.kind === kind && device.deviceId)?.deviceId;
-      };
+    const pickDeviceId = (kind: MediaDeviceKind) => {
+      return devices.find((device) => device.kind === kind && device.deviceId)?.deviceId;
+    };
 
-      return {
-        audioinput: pickDeviceId('audioinput'),
-        audiooutput: pickDeviceId('audiooutput'),
-        videoinput: pickDeviceId('videoinput'),
-      };
-    });
-  })();
-
-  if (!persistedDeviceSelection?.audioinput || !persistedDeviceSelection?.videoinput) {
-    return;
-  }
+    return {
+      audioinput: pickDeviceId('audioinput'),
+      audiooutput: pickDeviceId('audiooutput'),
+      videoinput: pickDeviceId('videoinput'),
+    };
+  });
 
   await page.evaluate(
     ({ key, persistedDeviceSelection }) => {
@@ -160,29 +117,9 @@ export const openMeetingRoomWithSettings = async ({
   audioOff?: boolean;
   browserName?: string;
 }) => {
-  if (browserName === 'firefox') {
-    await page.goto(baseURL);
-    await page.evaluate(
-      ({ username, isAudioEnabled, isVideoEnabled }) => {
-        localStorage.setItem('username', username);
-        localStorage.setItem('audioSourceEnabled', String(isAudioEnabled));
-        localStorage.setItem('videoSourceEnabled', String(isVideoEnabled));
-      },
-      {
-        username,
-        isAudioEnabled: !audioOff,
-        isVideoEnabled: !videoOff,
-      }
-    );
-
-    await page.goto(`${baseURL}room/${roomName}?bypass=true`);
-    await waitUntilReady(page, browserName);
-    return;
-  }
-
   await page.goto(`${baseURL}waiting-room/${roomName}`);
 
-  await primeMediaDevices({ page, browserName });
+  await primeMediaDevices({ page });
 
   await waitUntilReady(page, browserName);
 
