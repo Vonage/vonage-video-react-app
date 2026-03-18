@@ -213,12 +213,6 @@ const useBackgroundPublisher = (
       publishVideo: isVideoEnabled,
     };
 
-    // Avoid calling getUserMedia and initializing publisher if there are no input devices, as it will throw an error
-    if (!publisherOptions.videoSource) {
-      setAccessStatus(DEVICE_ACCESS_STATUS.REJECTED);
-      return;
-    }
-
     backgroundPublisherRef.current = initPublisher(undefined, publisherOptions, (err: unknown) => {
       if (err instanceof Error) {
         backgroundPublisherRef.current = null;
@@ -228,7 +222,7 @@ const useBackgroundPublisher = (
       }
     });
     addPublisherListeners(backgroundPublisherRef.current);
-  }, [addPublisherListeners, isVideoEnabled, setAccessStatus]);
+  }, [addPublisherListeners, isVideoEnabled]);
 
   /**
    * Turns the camera on and off
