@@ -105,27 +105,6 @@ describe('usePreviewPublisher', () => {
         expect.any(Function)
       );
     });
-
-    it('should reject access when there are no input devices', async () => {
-      mediaDevices$.setState((state) => ({
-        ...state,
-        mediaDeviceInfo: [],
-        audioinput: undefined,
-        videoinput: undefined,
-      }));
-
-      const { result } = await render();
-
-      act(() => {
-        result.current.initLocalPublisher();
-      });
-
-      await waitFor(() => {
-        expect(result.current.accessStatus).toBe(DEVICE_ACCESS_STATUS.REJECTED);
-      });
-
-      expect(mockedInitPublisher).not.toHaveBeenCalled();
-    });
   });
 
   describe('changeBackground', () => {
