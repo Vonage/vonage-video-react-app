@@ -315,7 +315,7 @@ describe('DeviceSettingsMenu Component', () => {
       );
 
       await waitFor(() => {
-        expect(screen.queryAllByTestId('dropdown-separator')[0]).toBeVisible();
+        expect(screen.getAllByTestId('dropdown-separator')[0]).toBeVisible();
         expect(screen.queryByText('Video effects')).toBeVisible();
       });
     });
