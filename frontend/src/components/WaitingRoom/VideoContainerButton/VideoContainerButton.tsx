@@ -30,7 +30,7 @@ const VideoContainerButton = forwardRef(function VideoContainerButton(
       {...rest}
       data-testid="video-container-button"
       ref={ref}
-      className={classNames('h-full w-full p-0', className)}
+      className={classNames('!h-full !w-full !p-0', className)}
       sx={sx}
     >
       {Icon}
