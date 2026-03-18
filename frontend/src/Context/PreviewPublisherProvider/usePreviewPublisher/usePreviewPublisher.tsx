@@ -242,6 +242,11 @@ const usePreviewPublisher = (
       videoSource: currentVideoSourceId,
     };
 
+    // Avoid calling getUserMedia and initializing publisher if there are no input devices, as it will throw an error
+    if (!publisherOptions.videoSource) {
+      return;
+    }
+
     publisherRef.current = initPublisher(undefined, publisherOptions, (err: unknown) => {
       if (err instanceof Error) {
         publisherRef.current = null;
