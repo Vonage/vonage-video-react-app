@@ -1,6 +1,6 @@
 import { expect } from '@playwright/test';
 import { test, baseURL } from '../fixtures/testWithLogging';
-import { TIMEOUTS, VIEWPORT, SCREENSHOT } from './utils';
+import { TIMEOUTS, VIEWPORT, SCREENSHOT, primeMediaDevices } from './utils';
 
 test('Landing page UI test', async ({ page, isMobile }) => {
   if (!isMobile) {
@@ -24,6 +24,7 @@ test('Waiting page UI test', async ({ page, isMobile }) => {
 
   await page.clock.setFixedTime(new Date('2024-02-02T10:00:00'));
   await page.goto(`${baseURL}waiting-room/test-room`);
+  await primeMediaDevices({ page });
   await page.waitForLoadState('networkidle');
   await page
     .waitForSelector('.video__element', { state: 'attached', timeout: TIMEOUTS.DEFAULT })
