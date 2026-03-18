@@ -8,7 +8,6 @@ test.beforeEach(async ({ page }) => {
 
 test('should navigate to waiting room then publish in room via room name textbox', async ({
   page,
-  browserName,
 }) => {
   await page.getByRole('textbox', { name: /Room name/i }).fill('some-room');
 
@@ -16,7 +15,7 @@ test('should navigate to waiting room then publish in room via room name textbox
 
   await expect(page).toHaveURL(`${baseURL}waiting-room/some-room`);
 
-  await primeMediaDevices({ page, browserName });
+  await primeMediaDevices({ page });
 
   await page.waitForSelector('.video__element', { state: 'visible' });
 
@@ -31,13 +30,12 @@ test('should navigate to waiting room then publish in room via room name textbox
 
 test('should navigate to waiting room then publish in room via Create room button', async ({
   page,
-  browserName,
 }) => {
   await page.getByRole('button', { name: 'Create a new room' }).click();
 
   await expect(page.url()).toContain('waiting-room/');
 
-  await primeMediaDevices({ page, browserName });
+  await primeMediaDevices({ page });
 
   await page.waitForSelector('.video__element', { state: 'visible' });
 
@@ -59,10 +57,7 @@ test('GitHub Logo Redirect to Vonage GitHub URL in New Tab', async ({ page, cont
   await expect(newPage).toHaveURL('https://github.com/Vonage/vonage-video-react-app/');
 });
 
-test('User should be able to navigate to the next page using enter key', async ({
-  page,
-  browserName,
-}) => {
+test('User should be able to navigate to the next page using enter key', async ({ page }) => {
   await page.getByRole('textbox', { name: /Room name/i }).fill('some-room');
 
   await page.keyboard.press('Enter');
@@ -70,7 +65,7 @@ test('User should be able to navigate to the next page using enter key', async (
   await expect(page).toHaveURL(`${baseURL}waiting-room/some-room`);
   await page.waitForLoadState('domcontentloaded');
 
-  await primeMediaDevices({ page, browserName });
+  await primeMediaDevices({ page });
 
   // This is needed for the DeviceAccessAlert to hide
   await page.waitForSelector('[role="dialog"]', { state: 'hidden', timeout: 10000 });
