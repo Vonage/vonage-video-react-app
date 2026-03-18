@@ -1,5 +1,6 @@
 import { expect } from '@playwright/test';
 import { test, baseURL } from '../fixtures/testWithLogging';
+import { primeMediaDevices } from './utils';
 
 test.beforeEach(async ({ page }) => {
   await page.goto(baseURL);
@@ -13,6 +14,8 @@ test('should navigate to waiting room then publish in room via room name textbox
   await page.locator('button:text("Join waiting room")').click();
 
   await expect(page).toHaveURL(`${baseURL}waiting-room/some-room`);
+
+  await primeMediaDevices({ page });
 
   await page.waitForSelector('.video__element', { state: 'visible' });
 
@@ -31,6 +34,8 @@ test('should navigate to waiting room then publish in room via Create room butto
   await page.getByRole('button', { name: 'Create a new room' }).click();
 
   await expect(page.url()).toContain('waiting-room/');
+
+  await primeMediaDevices({ page });
 
   await page.waitForSelector('.video__element', { state: 'visible' });
 
@@ -59,6 +64,8 @@ test('User should be able to navigate to the next page using enter key', async (
 
   await expect(page).toHaveURL(`${baseURL}waiting-room/some-room`);
   await page.waitForLoadState('domcontentloaded');
+
+  await primeMediaDevices({ page });
 
   // This is needed for the DeviceAccessAlert to hide
   await page.waitForSelector('[role="dialog"]', { state: 'hidden', timeout: 10000 });

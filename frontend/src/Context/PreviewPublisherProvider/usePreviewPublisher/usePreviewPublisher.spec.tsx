@@ -2,6 +2,7 @@ import { act, waitFor } from '@testing-library/react';
 import { beforeEach, describe, expect, it, Mock, vi } from 'vitest';
 import { hasMediaProcessorSupport, initPublisher, Publisher } from '@vonage/client-sdk-video';
 import EventEmitter from 'node:events';
+import CancelablePromise from 'easy-cancelable-promise';
 import { defaultAudioDevice, defaultVideoDevice } from '@utils/mockData/device';
 import { DEVICE_ACCESS_STATUS } from '@utils/constants';
 import usePreviewPublisher from './usePreviewPublisher';
@@ -44,6 +45,8 @@ describe('usePreviewPublisher', () => {
 
     (initPublisher as Mock).mockImplementation(mockedInitPublisher);
     (hasMediaProcessorSupport as Mock).mockImplementation(mockedHasMediaProcessorSupport);
+
+    mediaDevices$.getMetadata().isStoreReady = CancelablePromise.resolve();
 
     mediaDevices$.setState((state) => ({
       ...state,
@@ -104,6 +107,27 @@ describe('usePreviewPublisher', () => {
         }),
         expect.any(Function)
       );
+    });
+
+    it('should reject access when there are no input devices', async () => {
+      mediaDevices$.setState((state) => ({
+        ...state,
+        mediaDeviceInfo: [],
+        audioinput: undefined,
+        videoinput: undefined,
+      }));
+
+      const { result } = await render();
+
+      act(() => {
+        result.current.initLocalPublisher();
+      });
+
+      await waitFor(() => {
+        expect(result.current.accessStatus).toBe(DEVICE_ACCESS_STATUS.REJECTED);
+      });
+
+      expect(mockedInitPublisher).not.toHaveBeenCalled();
     });
   });
 

@@ -9,6 +9,7 @@
 import { BrowserContext, Page, test as baseTest } from '@playwright/test';
 
 const isDebugMode = process.env.debugMode === 'true';
+const devicesStoreKey = 'vera-devices-store';
 
 const baseURL = isDebugMode ? 'http://localhost:5173/' : 'http://127.0.0.1:3345/';
 
@@ -32,9 +33,15 @@ const test = (() => {
   return baseTest.extend({
     context: async ({ context }, use) => {
       // Clear localStorage on every page load to ensure consistent initial state
-      await context.addInitScript(() => {
+      await context.addInitScript((key) => {
+        const preservedDevicesStore = localStorage.getItem(key);
+
         localStorage.clear();
-      });
+
+        if (preservedDevicesStore) {
+          localStorage.setItem(key, preservedDevicesStore);
+        }
+      }, devicesStoreKey);
       await use(context);
     },
     page: async ({ page, context }, use) => {
