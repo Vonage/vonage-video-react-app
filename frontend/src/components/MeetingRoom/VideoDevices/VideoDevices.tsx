@@ -5,6 +5,7 @@ import { Box, Typography, MenuList, MenuItem, Tooltip, BoxProps } from '@mui/mat
 import VividIcon from '@components/VividIcon';
 import { useDistinctLabelMediaDevices } from '@ui/hooks';
 import mediaDevices$ from '@core/stores/devices';
+import translateMediaDeviceLabel from '@utils/translateMediaDeviceLabel/translateMediaDeviceLabel';
 import { env } from '../../../env';
 
 export type VideoDevicesProps = BoxProps & {
@@ -24,17 +25,25 @@ const VideoDevices = ({
   className,
   ...boxProps
 }: VideoDevicesProps): ReactElement | false => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const theme = useTheme();
 
   // Use store's selection as source of truth, not publisher.getVideoSource() which can be stale
   const selectedDeviceId = mediaDevices$.useDeviceId('videoinput');
 
-  const devicesAvailable = useDistinctLabelMediaDevices('videoinput', (devices) =>
-    devices.map((device) => ({
-      ...device,
-      label: device.label ?? t('unknown.device'),
-    }))
+  const devicesAvailable = useDistinctLabelMediaDevices(
+    'videoinput',
+    (devices) =>
+      devices.map((device) => ({
+        ...device,
+        label: device.label
+          ? translateMediaDeviceLabel({
+              label: device.label,
+              translate: t,
+            })
+          : t('unknown.device'),
+      })),
+    [i18n.language]
   );
 
   const handleChangeVideoSource = (deviceId: string) => {

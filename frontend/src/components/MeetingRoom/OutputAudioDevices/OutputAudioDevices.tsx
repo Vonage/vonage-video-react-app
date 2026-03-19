@@ -12,6 +12,7 @@ import { isSinkIdSupported } from '@web/platform';
 import mediaDevices$ from '@core/stores/devices';
 import useTheme from '@ui/theme';
 import { Tooltip } from '@mui/material';
+import translateMediaDeviceLabel from '@utils/translateMediaDeviceLabel/translateMediaDeviceLabel';
 import { env } from '../../../env';
 
 export type OutputAudioDevicesProps = {
@@ -27,20 +28,28 @@ export type OutputAudioDevicesProps = {
  * @returns {ReactElement | false} - The OutputAudioDevices component.
  */
 const OutputAudioDevices = ({ handleToggle }: OutputAudioDevicesProps): ReactElement | false => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const theme = useTheme();
 
   const currentAudioOutputId = mediaDevices$.useDeviceId('audiooutput');
 
-  const availableDevices = useDistinctLabelMediaDevices('audiooutput', (devices) =>
-    isSinkIdSupported()
-      ? devices.map((device) =>
-          // Rename default audio output device to user-friendly label
-          device.deviceId === 'default'
-            ? { ...device, label: t('devices.audio.defaultLabel') }
-            : device
-        )
-      : [{ deviceId: 'default', label: t('devices.audio.defaultLabel') } as MediaDeviceInfoJSON]
+  const availableDevices = useDistinctLabelMediaDevices(
+    'audiooutput',
+    (devices) =>
+      isSinkIdSupported()
+        ? devices.map((device) =>
+            device.deviceId === 'default'
+              ? { ...device, label: t('devices.audio.defaultLabel') }
+              : {
+                  ...device,
+                  label: translateMediaDeviceLabel({
+                    label: device.label,
+                    translate: t,
+                  }),
+                }
+          )
+        : [{ deviceId: 'default', label: t('devices.audio.defaultLabel') } as MediaDeviceInfoJSON],
+    [i18n.language]
   );
 
   const handleChangeAudioOutput = async (deviceId: string) => {

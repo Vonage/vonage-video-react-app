@@ -70,6 +70,8 @@
   "devices.audio.disable": "Mikrofon deaktivieren",
   "devices.audio.disabled": "Mikrofonsteuerung ist in dieser Anwendung deaktiviert",
   "devices.audio.enable": "Mikrofon aktivieren oder Leertaste halten, um vorübergehend stummschaltung aufzuheben",
+  "devices.label.builtIn": "Integriert",
+  "devices.label.defaultPrefix": "Standard",
   "devices.audio.microphone.ariaLabel": "Audio umschalten",
   "devices.audio.microphone.full": "Mikrofon",
   "devices.audio.microphone.short": "Mikro",

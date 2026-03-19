@@ -5,6 +5,7 @@ import useTheme from '@ui/theme';
 import VividIcon from '@components/VividIcon';
 import { useDistinctLabelMediaDevices } from '@ui/hooks';
 import mediaDevices$ from '@core/stores/devices';
+import translateMediaDeviceLabel from '@utils/translateMediaDeviceLabel/translateMediaDeviceLabel';
 import { env } from '../../../env';
 
 export type InputAudioDevicesProps = {
@@ -20,17 +21,25 @@ export type InputAudioDevicesProps = {
  * @returns {ReactElement | false} - The InputAudioDevices component.
  */
 const InputAudioDevices = ({ handleToggle }: InputAudioDevicesProps): ReactElement | false => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const theme = useTheme();
 
   // Use store's selection as source of truth, not publisher.getAudioSource() which can be stale
   const selectedDeviceId = mediaDevices$.useDeviceId('audioinput');
 
-  const audioInputDevices = useDistinctLabelMediaDevices('audioinput', (devices) =>
-    devices.map((device) => ({
-      ...device,
-      label: device.label || t('unknown.device'),
-    }))
+  const audioInputDevices = useDistinctLabelMediaDevices(
+    'audioinput',
+    (devices) =>
+      devices.map((device) => ({
+        ...device,
+        label: device.label
+          ? translateMediaDeviceLabel({
+              label: device.label,
+              translate: t,
+            })
+          : t('unknown.device'),
+      })),
+    [i18n.language]
   );
 
   const handleChangeAudioSource = (deviceId: string) => {
