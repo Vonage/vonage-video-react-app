@@ -157,7 +157,7 @@ const MeetingRoom = (): ReactElement => {
       {isRecording && !isSmallViewport && (
         <Box
           data-testid="meetingRoomRecordingIndicatorContainer"
-          className="pointer-events-none absolute left-4 top-4 z-4 flex h-8 w-8 items-center justify-center rounded-full bg-vera-dark-grey-opacity backdrop-blur-sm"
+          className="pointer-events-none absolute left-4 top-4 z-10 flex h-8 w-8 items-center justify-center rounded-full bg-vera-dark-grey-opacity backdrop-blur-sm"
         >
           <RecordingIndicator />
         </Box>
