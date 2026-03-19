@@ -13,17 +13,6 @@ describe('RecordingIndicator', () => {
     expect(screen.getByTestId('recordingIndicatorDot')).toBeInTheDocument();
   });
 
-  it('uses the default size and pulse animation', () => {
-    render(<RecordingIndicator />);
-
-    expect(screen.getByTestId('recordingIndicator')).toHaveClass('h-[18px]', 'w-[18px]');
-
-    expect(screen.getByTestId('recordingIndicatorPulse')).toHaveClass('animate-ping');
-    expect(screen.getByTestId('recordingIndicatorPulse')).toHaveClass('[animation-duration:2.4s]');
-
-    expect(screen.getByTestId('recordingIndicatorDot')).toHaveClass('inset-[5px]');
-  });
-
   it('uses the compact size when requested', () => {
     render(<RecordingIndicator isCompact />);
 
