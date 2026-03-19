@@ -2,7 +2,6 @@ import { useEffect, ReactElement, useState, useEffectEvent } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import Box from '@mui/material/Box';
-import useTheme from '@ui/theme';
 import usePublisherContext from '../../hooks/usePublisherContext';
 import ConnectionAlert from '../../components/MeetingRoom/ConnectionAlert';
 import Toolbar from '../../components/MeetingRoom/Toolbar';
@@ -24,6 +23,7 @@ import useUserContext from '../../hooks/useUserContext';
 import { env } from '../../env';
 import useMountEffect from '@web/hooks/useMountEffect';
 import classNames from 'classnames';
+import RecordingIndicator from '../../components/MeetingRoom/RecordingIndicator';
 
 /**
  * MeetingRoom Component
@@ -36,7 +36,6 @@ import classNames from 'classnames';
  */
 const MeetingRoom = (): ReactElement => {
   const { t } = useTranslation();
-  const theme = useTheme();
   const navigate = useNavigate();
   const location = useLocation();
   const roomName = useRoomName();
@@ -151,13 +150,19 @@ const MeetingRoom = (): ReactElement => {
   return (
     <Box
       data-testid="meetingRoom"
-      sx={{
-        height: 'calc(100dvh - 80px)',
-        width: '100vw',
-        backgroundColor: theme.colors.darkBackground,
-      }}
-      className={classNames({ recording: isRecording })}
+      className={classNames('relative h-[calc(100dvh-80px)] w-screen bg-vera-dark-background', {
+        recording: isRecording,
+      })}
     >
+      {isRecording && !isSmallViewport && (
+        <Box
+          data-testid="meetingRoomRecordingIndicatorContainer"
+          className="pointer-events-none absolute left-4 top-4 z-4 flex h-8 w-8 items-center justify-center rounded-full bg-vera-dark-grey-opacity backdrop-blur-sm"
+        >
+          <RecordingIndicator />
+        </Box>
+      )}
+
       {isSmallViewport && <SmallViewportHeader />}
 
       <VideoTileCanvas
