@@ -109,6 +109,48 @@ describe('useBackgroundPublisher', () => {
         expect.any(Function)
       );
     });
+
+    it('should wait for the device store before rejecting missing devices', async () => {
+      mockedInitPublisher.mockReturnValue(mockPublisher);
+
+      let resolveStoreReady!: () => void;
+      const isStoreReady = Object.assign(
+        new Promise<void>((resolve) => {
+          resolveStoreReady = resolve;
+        }),
+        { status: 'pending' as const }
+      );
+
+      vi.spyOn(mediaDevices$, 'getMetadata').mockReturnValue({
+        ...mediaDevices$.getMetadata(),
+        isStoreReady: isStoreReady as ReturnType<typeof mediaDevices$.getMetadata>['isStoreReady'],
+      });
+
+      mediaDevices$.setState((state) => ({
+        ...state,
+        videoinput: undefined,
+      }));
+
+      const { result } = render();
+
+      act(() => {
+        result.current.initBackgroundLocalPublisher();
+      });
+
+      expect(mockedInitPublisher).not.toHaveBeenCalled();
+      expect(result.current.accessStatus).not.toBe(DEVICE_ACCESS_STATUS.REJECTED);
+
+      mediaDevices$.setState((state) => ({
+        ...state,
+        videoinput: videoDevice.deviceId,
+      }));
+
+      resolveStoreReady();
+
+      await waitFor(() => {
+        expect(mockedInitPublisher).toHaveBeenCalled();
+      });
+    });
   });
 
   describe('changeBackground', () => {
