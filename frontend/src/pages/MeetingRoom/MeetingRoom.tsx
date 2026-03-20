@@ -150,7 +150,7 @@ const MeetingRoom = (): ReactElement => {
   return (
     <Box
       data-testid="meetingRoom"
-      className={classNames('relative h-[calc(100dvh-80px)] w-screen bg-vera-dark-background', {
+      className={classNames('h-[calc(100dvh-80px)] w-screen bg-vera-dark-background', {
         recording: isRecording,
       })}
     >
