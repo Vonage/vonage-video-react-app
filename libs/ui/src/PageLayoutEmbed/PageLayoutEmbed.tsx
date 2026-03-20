@@ -7,24 +7,22 @@ import { isFunction } from '@common/assertions';
 
 type WithChildren = { children: React.ReactNode };
 
-export type PageLayoutProps = BoxProps;
+export type PageLayoutEmbedProps = BoxProps;
 
-export enum PageLayoutRegions {
+export enum PageLayoutEmbedRegions {
   Banner = 'Banner',
   Left = 'Left',
   Right = 'Right',
   Footer = 'Footer',
 }
 
-const PageLayout = ({ children, sx, ...props }: PageLayoutProps): React.ReactNode => {
+const PageLayoutEmbed = ({ children, sx, ...props }: PageLayoutEmbedProps): React.ReactNode => {
   const theme = useTheme();
 
   const childrenArray = React.Children.toArray(children);
 
-  const banner = pickChild(childrenArray, PageLayoutRegions.Banner);
-  const left = pickChild(childrenArray, PageLayoutRegions.Left);
-  const right = pickChild(childrenArray, PageLayoutRegions.Right);
-  const footer = pickChild(childrenArray, PageLayoutRegions.Footer);
+  const left = pickChild(childrenArray, PageLayoutEmbedRegions.Left);
+  const right = pickChild(childrenArray, PageLayoutEmbedRegions.Right);
 
   return (
     <Box
@@ -32,33 +30,33 @@ const PageLayout = ({ children, sx, ...props }: PageLayoutProps): React.ReactNod
       sx={{
         display: 'flex',
         flexDirection: 'column',
-        minHeight: '100vh',
-        gap: { xs: 4, sm: 'unset' },
+        height: '100%',
+        overflow: 'hidden',
         ...sx,
       }}
       {...props}
     >
-      {banner}
-
       <Stack
+        className="bg-vera-surface"
         direction={{ xs: 'column', md: 'row' }}
         sx={{
-          gap: { xs: 2, md: 0 },
-          flex: 2,
+          display: { xs: 'block', md: 'flex' },
+          flex: 1,
+          minHeight: 0,
           width: '100%',
-          mt: 2,
+          overflow: 'auto',
         }}
       >
         {left && (
           <Box
             sx={{
-              flex: { xs: 0, md: 1 },
+              flex: 1,
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              bgcolor: { xs: theme.colors.surface, md: theme.colors.surface },
-              overflow: 'hidden',
-              px: { xs: 0, sm: 5 },
+              bgcolor: theme.colors.surface,
+              pt: { xs: 2, md: 0 },
+              px: { xs: 0, md: 5 },
             }}
           >
             {left}
@@ -68,7 +66,7 @@ const PageLayout = ({ children, sx, ...props }: PageLayoutProps): React.ReactNod
         {right && (
           <Box
             sx={{
-              flex: { xs: 0, md: 1 },
+              flex: 1,
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
@@ -81,54 +79,35 @@ const PageLayout = ({ children, sx, ...props }: PageLayoutProps): React.ReactNod
           </Box>
         )}
       </Stack>
-
-      {footer}
     </Box>
   );
 };
 
-const PageLayoutBanner: React.FC<WithChildren> = ({ children }) => {
+const PageLayoutEmbedLeft: React.FC<WithChildren> = ({ children }) => {
   return children;
 };
 
-const PageLayoutLeft: React.FC<WithChildren> = ({ children }) => {
+const PageLayoutEmbedRight: React.FC<WithChildren> = ({ children }) => {
   return children;
 };
 
-const PageLayoutRight: React.FC<WithChildren> = ({ children }) => {
-  return children;
-};
-
-const PageLayoutFooter: React.FC<WithChildren> = ({ children }) => {
-  return children;
-};
-
-PageLayoutBanner.displayName = PageLayoutRegions.Banner;
-PageLayoutLeft.displayName = PageLayoutRegions.Left;
-PageLayoutRight.displayName = PageLayoutRegions.Right;
-PageLayoutFooter.displayName = PageLayoutRegions.Footer;
-
-/**
- * Banner that will be displayed at the top of the layout
- */
-PageLayout.Banner = PageLayoutBanner;
+PageLayoutEmbedLeft.displayName = PageLayoutEmbedRegions.Left;
+PageLayoutEmbedRight.displayName = PageLayoutEmbedRegions.Right;
 
 /**
  * Content for the left column
  */
-PageLayout.Left = PageLayoutLeft;
+PageLayoutEmbed.Left = PageLayoutEmbedLeft;
 
 /**
  * Content for the right column
  */
-PageLayout.Right = PageLayoutRight;
+PageLayoutEmbed.Right = PageLayoutEmbedRight;
 
-/**
- * Content for the left column
- */
-PageLayout.Footer = PageLayoutFooter;
-
-function pickChild(children: React.ReactNode[], identifier: PageLayoutRegions): React.ReactNode {
+function pickChild(
+  children: React.ReactNode[],
+  identifier: PageLayoutEmbedRegions
+): React.ReactNode {
   return (
     children.find((child: unknown) => {
       const isValidElement = React.isValidElement(child) && isFunction(child.type);
@@ -139,4 +118,4 @@ function pickChild(children: React.ReactNode[], identifier: PageLayoutRegions): 
   );
 }
 
-export default PageLayout;
+export default PageLayoutEmbed;

@@ -1,14 +1,23 @@
 import ReactDOM from 'react-dom/client';
 import VeraRoom from './VeraRoom';
-import {
+import bridge$, {
   type BridgeAttribute,
   isBridgeAttribute,
   bridgeAttributesMap,
   bridgeAttributes,
+  initialState,
 } from './stores/bridge';
 import type { Any, KebabToCamel } from '@common/types';
 import { ShadowStylesProvider } from './providers';
 import veraStyles from './styles.css?inline';
+import { defer } from 'easy-cancelable-promise';
+import { BridgeAPI } from './stores/bridge/types';
+import { registerIcon } from '@vonage/vivid';
+
+type BridgeState = ReturnType<BridgeAPI['getState']>;
+type BridgeContext = ReturnType<typeof bridge$.Provider.makeProviderWrapper>['context'];
+
+registerIcon();
 
 class VeraRoomElement extends HTMLElement {
   static tagName = 'vera-room';
@@ -17,6 +26,8 @@ class VeraRoomElement extends HTMLElement {
   shadow: ShadowRoot;
   mount: HTMLDivElement;
   root?: ReactDOM.Root;
+  context?: BridgeContext;
+  isBridgeReady = defer<void>();
 
   constructor() {
     super();
@@ -42,6 +53,7 @@ class VeraRoomElement extends HTMLElement {
       .vera-room-root {
         width: 100%;
         height: 100%;
+        overflow: auto;
       }
     `;
 
@@ -51,13 +63,42 @@ class VeraRoomElement extends HTMLElement {
 
   connectedCallback() {
     if (!this.root) {
-      this.root = ReactDOM.createRoot(this.mount);
-      this.root.render(
+      this.renderReactTree();
+    }
+  }
+
+  renderReactTree() {
+    const { wrapper: BridgeProvider, context } = bridge$.Provider.makeProviderWrapper({
+      onCreated: () => {
+        this.isBridgeReady.resolve();
+      },
+    });
+
+    this.context = context;
+    this.root = ReactDOM.createRoot(this.mount);
+
+    const initialState = this.readInitialAttributes();
+
+    this.root?.render(
+      <BridgeProvider value={initialState}>
         <ShadowStylesProvider shadowRoot={this.shadow}>
           <VeraRoom />
         </ShadowStylesProvider>
-      );
-    }
+      </BridgeProvider>
+    );
+  }
+
+  readInitialAttributes() {
+    const initialValue = bridgeAttributes.reduce((acc, name) => {
+      const rawValue = this.getAttribute(name);
+      if (rawValue === null) return acc;
+
+      const value = VeraRoomElement.tryParseAttribute(name, rawValue);
+
+      return { ...acc, ...value };
+    }, initialState()) as BridgeState;
+
+    return initialValue;
   }
 
   disconnectedCallback() {
@@ -69,13 +110,17 @@ class VeraRoomElement extends HTMLElement {
     return bridgeAttributes;
   }
 
-  attributeChangedCallback(name: string, oldValue: unknown, newValue: unknown) {
+  async attributeChangedCallback(name: string, oldValue: unknown, newValue: unknown) {
     if (oldValue === newValue || !isBridgeAttribute(name)) return;
+    if (newValue === null) return;
 
     const updates = VeraRoomElement.tryParseAttribute(name, newValue);
 
-    // [todo]: update store through the bridge
-    console.log('Attribute updated:', updates);
+    if (this.isBridgeReady.isPending()) {
+      await this.isBridgeReady.promise;
+    }
+
+    this.context?.current.actions.partialUpdate(updates);
   }
 
   static tryParseAttribute<T extends BridgeAttribute>(
@@ -89,7 +134,7 @@ class VeraRoomElement extends HTMLElement {
         case 'string':
           return String(value);
         default:
-          throw new Error(`Unsupported type: ${meta.type}`);
+          throw new Error(`Unsupported attribute type for "${name}"`);
       }
     })();
 
