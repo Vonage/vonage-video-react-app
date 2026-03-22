@@ -1,0 +1,418 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Share your screen</title>
+    <style>
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      :root {
+        --vonage-purple: #7b2d8b;
+        --vonage-purple-dark: #5d1e6a;
+        --bg: #1a1a2e;
+        --surface: #16213e;
+        --surface-hover: #1e2d50;
+        --border: #2a3a5c;
+        --border-selected: #7b2d8b;
+        --text-primary: #e8eaf0;
+        --text-secondary: #8892aa;
+        --radius: 10px;
+        --thumb-w: 220px;
+        --thumb-h: 124px;
+      }
+
+      body {
+        font-family:
+          -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+        background: var(--bg);
+        color: var(--text-primary);
+        height: 100vh;
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+        -webkit-app-region: no-drag;
+        user-select: none;
+      }
+
+      /* ── Header ─────────────────────────────────────────────────── */
+      header {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 14px 20px;
+        background: var(--surface);
+        border-bottom: 1px solid var(--border);
+        -webkit-app-region: drag;
+        flex-shrink: 0;
+      }
+
+      .logo {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        -webkit-app-region: no-drag;
+      }
+
+      .logo svg {
+        width: 32px;
+        height: 32px;
+        flex-shrink: 0;
+      }
+
+      .logo-wordmark {
+        font-size: 18px;
+        font-weight: 700;
+        letter-spacing: -0.3px;
+        color: #ffffff;
+      }
+
+      header h1 {
+        font-size: 14px;
+        font-weight: 500;
+        color: var(--text-secondary);
+        margin-left: auto;
+        -webkit-app-region: no-drag;
+      }
+
+      /* ── Tabs ────────────────────────────────────────────────────── */
+      .tabs {
+        display: flex;
+        gap: 4px;
+        padding: 12px 20px 0;
+        flex-shrink: 0;
+        background: var(--bg);
+      }
+
+      .tab-btn {
+        background: none;
+        border: none;
+        border-bottom: 2px solid transparent;
+        color: var(--text-secondary);
+        cursor: pointer;
+        font-size: 13px;
+        font-weight: 500;
+        padding: 6px 14px 8px;
+        transition:
+          color 0.15s,
+          border-color 0.15s;
+        outline: none;
+      }
+
+      .tab-btn:hover {
+        color: var(--text-primary);
+      }
+
+      .tab-btn.active {
+        color: var(--text-primary);
+        border-bottom-color: var(--vonage-purple);
+      }
+
+      /* ── Source grid ─────────────────────────────────────────────── */
+      .grid-wrapper {
+        flex: 1;
+        overflow-y: auto;
+        padding: 16px 20px;
+        scrollbar-width: thin;
+        scrollbar-color: var(--border) transparent;
+      }
+
+      .grid-wrapper::-webkit-scrollbar {
+        width: 6px;
+      }
+
+      .grid-wrapper::-webkit-scrollbar-track {
+        background: transparent;
+      }
+
+      .grid-wrapper::-webkit-scrollbar-thumb {
+        background: var(--border);
+        border-radius: 3px;
+      }
+
+      .source-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(var(--thumb-w), 1fr));
+        gap: 12px;
+      }
+
+      .source-card {
+        background: var(--surface);
+        border: 2px solid var(--border);
+        border-radius: var(--radius);
+        cursor: pointer;
+        overflow: hidden;
+        transition:
+          border-color 0.15s,
+          background 0.15s,
+          transform 0.1s;
+        outline: none;
+      }
+
+      .source-card:hover {
+        background: var(--surface-hover);
+        border-color: color-mix(in srgb, var(--vonage-purple) 50%, var(--border));
+        transform: translateY(-1px);
+      }
+
+      .source-card.selected {
+        border-color: var(--border-selected);
+        box-shadow: 0 0 0 1px var(--border-selected);
+      }
+
+      .thumb-wrapper {
+        width: 100%;
+        aspect-ratio: 16/9;
+        background: #0d0d1a;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
+      }
+
+      .thumb-wrapper img {
+        max-width: 100%;
+        max-height: 100%;
+        object-fit: contain;
+      }
+
+      .card-label {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        padding: 8px 10px;
+        min-width: 0;
+      }
+
+      .app-icon {
+        width: 18px;
+        height: 18px;
+        object-fit: contain;
+        flex-shrink: 0;
+        border-radius: 3px;
+      }
+
+      .app-icon-placeholder {
+        width: 18px;
+        height: 18px;
+        flex-shrink: 0;
+        background: var(--border);
+        border-radius: 3px;
+      }
+
+      .source-name {
+        font-size: 12px;
+        color: var(--text-primary);
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+
+      /* empty state */
+      .empty {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        height: 200px;
+        color: var(--text-secondary);
+        font-size: 14px;
+      }
+
+      /* ── Footer ─────────────────────────────────────────────────── */
+      footer {
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        gap: 10px;
+        padding: 12px 20px;
+        border-top: 1px solid var(--border);
+        background: var(--surface);
+        flex-shrink: 0;
+      }
+
+      .btn {
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 13px;
+        font-weight: 500;
+        padding: 8px 20px;
+        transition:
+          background 0.15s,
+          opacity 0.15s;
+        outline: none;
+      }
+
+      .btn-cancel {
+        background: transparent;
+        border: 1px solid var(--border);
+        color: var(--text-secondary);
+      }
+
+      .btn-cancel:hover {
+        background: var(--surface-hover);
+        color: var(--text-primary);
+      }
+
+      .btn-share {
+        background: var(--vonage-purple);
+        color: #ffffff;
+      }
+
+      .btn-share:hover:not(:disabled) {
+        background: var(--vonage-purple-dark);
+      }
+
+      .btn-share:disabled {
+        opacity: 0.4;
+        cursor: not-allowed;
+      }
+    </style>
+  </head>
+
+  <body>
+    <header>
+      <!-- Vonage logo mark + wordmark -->
+      <div class="logo">
+        <!--
+          Vonage "V" mark — simplified path based on the official logo shape.
+          Uses the brand purple #7B2D8B as fill.
+        -->
+        <svg viewBox="15 16 306 306" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <path
+            fill="#ffffff"
+            d="M101.8,74H58.7l61.5,139.7c0.5,1.1,2,1.1,2.4,0l20.4-48.1L101.8,74z"
+          />
+          <path
+            fill="#ffffff"
+            d="M233,74c0,0-66,151.2-74.9,165.2c-10.3,16.2-17.1,22.4-29.7,24.4
+               c-0.1,0-0.2,0.1-0.2,0.2c0,0.1,0.1,0.2,0.2,0.2h39.5
+               c17.1,0,29.4-14.3,36.3-26.9C211.9,222.9,276.8,74,276.8,74H233z"
+          />
+        </svg>
+        <span class="logo-wordmark">Vonage</span>
+      </div>
+      <h1>Choose what to share</h1>
+    </header>
+
+    <nav class="tabs">
+      <button class="tab-btn active" data-tab="screen">Entire screen</button>
+      <button class="tab-btn" data-tab="window">Window</button>
+    </nav>
+
+    <div class="grid-wrapper">
+      <div class="source-grid" id="grid">
+        <div class="empty">Loading sources…</div>
+      </div>
+    </div>
+
+    <footer>
+      <button class="btn btn-cancel" id="cancelBtn">Cancel</button>
+      <button class="btn btn-share" id="shareBtn" disabled>Share</button>
+    </footer>
+
+    <script>
+      let allSources = [];
+      let selectedId = null;
+      let activeTab = 'screen';
+
+      const grid = document.getElementById('grid');
+      const shareBtn = document.getElementById('shareBtn');
+      const cancelBtn = document.getElementById('cancelBtn');
+
+      // ── Tab switching ──────────────────────────────────────────────
+      document.querySelectorAll('.tab-btn').forEach((btn) => {
+        btn.addEventListener('click', () => {
+          document.querySelectorAll('.tab-btn').forEach((b) => b.classList.remove('active'));
+          btn.classList.add('active');
+          activeTab = btn.dataset.tab;
+          renderGrid();
+        });
+      });
+
+      // ── Render ─────────────────────────────────────────────────────
+      function renderGrid() {
+        const filtered = allSources.filter((s) =>
+          activeTab === 'screen' ? s.id.startsWith('screen:') : !s.id.startsWith('screen:')
+        );
+
+        if (filtered.length === 0) {
+          grid.innerHTML = '<div class="empty">No sources available</div>';
+          return;
+        }
+
+        grid.innerHTML = '';
+        filtered.forEach((source) => {
+          const card = document.createElement('div');
+          card.className = 'source-card' + (source.id === selectedId ? ' selected' : '');
+          card.tabIndex = 0;
+          card.setAttribute('role', 'button');
+          card.setAttribute('aria-label', source.name);
+          card.dataset.id = source.id;
+
+          card.innerHTML = `
+            <div class="thumb-wrapper">
+              <img src="${source.thumbnail}" alt="${escapeHtml(source.name)}" />
+            </div>
+            <div class="card-label">
+              ${
+                source.appIcon
+                  ? `<img class="app-icon" src="${source.appIcon}" alt="" />`
+                  : `<div class="app-icon-placeholder"></div>`
+              }
+              <span class="source-name" title="${escapeHtml(source.name)}">${escapeHtml(source.name)}</span>
+            </div>
+          `;
+
+          card.addEventListener('click', () => selectSource(source.id));
+          card.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' || e.key === ' ') selectSource(source.id);
+          });
+
+          grid.appendChild(card);
+        });
+      }
+
+      function selectSource(id) {
+        selectedId = id;
+        shareBtn.disabled = false;
+        document.querySelectorAll('.source-card').forEach((c) => {
+          c.classList.toggle('selected', c.dataset.id === id);
+        });
+      }
+
+      function escapeHtml(str) {
+        return str
+          .replace(/&/g, '&amp;')
+          .replace(/</g, '&lt;')
+          .replace(/>/g, '&gt;')
+          .replace(/"/g, '&quot;');
+      }
+
+      // ── IPC ────────────────────────────────────────────────────────
+      window.pickerBridge.onSources((sources) => {
+        allSources = sources;
+        renderGrid();
+        // Auto-select first screen
+        const firstScreen = sources.find((s) => s.id.startsWith('screen:'));
+        if (firstScreen) selectSource(firstScreen.id);
+      });
+
+      shareBtn.addEventListener('click', () => {
+        if (selectedId) window.pickerBridge.selectSource(selectedId);
+      });
+
+      cancelBtn.addEventListener('click', () => {
+        window.pickerBridge.cancel();
+      });
+    </script>
+  </body>
+</html>

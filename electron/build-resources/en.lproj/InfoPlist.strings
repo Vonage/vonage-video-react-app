@@ -1,0 +1,4 @@
+/* English — macOS permission usage descriptions */
+"NSCameraUsageDescription" = "Vonage Video needs camera access for video calls.";
+"NSMicrophoneUsageDescription" = "Vonage Video needs microphone access for audio in calls.";
+"NSScreenCaptureDescription" = "Vonage Video needs screen recording access for screen sharing.";

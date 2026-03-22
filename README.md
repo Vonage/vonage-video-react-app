@@ -35,6 +35,7 @@ If you're new to Vonage, you can [sign up for a Vonage API account](https://dash
 - [Getting Involved](#getting-involved)
 - [Known Issues](#known-issues)
 - [Report Issues](#report-issues)
+- [Electron Desktop App](#electron-desktop-app)
 
 <!-- /TOC -->
 ## What is it?
@@ -134,6 +135,7 @@ Looking to build on other platforms? The Vonage Video API Reference App is also 
 
 - *iOS*: [vonage-video-ios-app](https://github.com/Vonage/vonage-video-ios-app)
 - *Android*: [vonage-video-android-app](https://github.com/Vonage/vonage-video-android-app)
+- *Desktop (macOS, Windows, Linux)*: See [Electron Desktop App](#electron-desktop-app) below
 
 These reference apps share the same backend infrastructure and demonstrate consistent best practices across all platforms, making it easy to build unified video experiences for your users.
 
@@ -453,3 +455,41 @@ We track known issues in [Known Issues](./docs/KNOWN_ISSUES.md). Please refer to
 ## Report Issues
 
 If you have any issues, feel free to open an issue or reach out to support via [support@api.vonage.com](support@api.vonage.com).
+
+## Electron Desktop App
+
+The Reference App can also run as a native desktop application using [Electron](https://www.electronjs.org/). The same React frontend is served locally inside an Electron `BrowserWindow`, so all features (video calls, screen sharing, chat, reactions, etc.) work identically to the web version.
+
+For a detailed explanation of the implementation, see [electron/ELECTRON.md](electron/ELECTRON.md).
+
+### Quick Start
+
+```bash
+yarn dev electron
+```
+
+This single command starts the backend server and the Electron desktop app together. It builds the frontend, compiles the Electron main process, and launches the app.
+
+Alternatively, you can run them separately:
+
+```bash
+# Terminal 1: start the backend
+yarn dev backend
+
+# Terminal 2: build and launch Electron only
+yarn dev:electron
+```
+
+### macOS Permissions
+
+On macOS, you will be prompted to grant **Camera** and **Microphone** access on first use. For **Screen Sharing**, you must manually enable Screen Recording in **System Settings > Privacy & Security > Screen & System Audio Recording** and restart the app.
+
+### Packaging for Distribution
+
+To build platform-specific installers (`.dmg` for macOS, `.exe` for Windows, `.AppImage` for Linux):
+
+```bash
+yarn build:electron
+```
+
+Output is written to the `dist/` directory. See `electron/electron-builder.json` for packaging configuration.

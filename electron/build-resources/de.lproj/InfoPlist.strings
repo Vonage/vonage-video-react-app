@@ -1,0 +1,4 @@
+/* Deutsch — macOS Berechtigungsbeschreibungen */
+"NSCameraUsageDescription" = "Vonage Video benötigt Zugriff auf die Kamera für Videoanrufe.";
+"NSMicrophoneUsageDescription" = "Vonage Video benötigt Zugriff auf das Mikrofon für Audio in Anrufen.";
+"NSScreenCaptureDescription" = "Vonage Video benötigt Zugriff auf die Bildschirmaufnahme für die Bildschirmübertragung.";

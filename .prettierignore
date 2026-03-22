@@ -5,6 +5,9 @@ frontend/docs/
 # Documentation [todo]: We should be able to use prettier for this to ensure consistent formatting
 *.md
 
+# Claude Code local config
+.claude/
+
 # Build and dependency folders
 dist/
 node_modules/

@@ -12,6 +12,7 @@ import usePublisherContext from '@hooks/usePublisherContext';
 import { isRearFacingLabel, isFrontFacingLabel } from '@utils/cameraSwitch';
 import usePreferredCameras from '@hooks/usePreferredCameras';
 import RecordingIndicator from '../RecordingIndicator';
+import { copyTextToClipboard } from '@utils/clipboard';
 
 /**
  * SmallViewportHeader Component
@@ -32,7 +33,7 @@ const SmallViewportHeader = (): ReactElement => {
   const roomShareUrl = useRoomShareUrl();
   const [isCopied, setIsCopied] = useState<boolean>(false);
   const copyUrl = () => {
-    void navigator.clipboard.writeText(roomShareUrl);
+    void copyTextToClipboard(roomShareUrl);
 
     setIsCopied(true);
 

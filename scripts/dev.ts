@@ -34,6 +34,14 @@ function devBackend(): void {
 }
 
 /**
+ * Starts the backend dev server and launches the Electron desktop app.
+ * The backend runs in the background; the Electron app is the foreground process.
+ */
+function devElectron(): void {
+  runCommand("concurrently --kill-others 'nx run backend:dev' 'npx tsx scripts/electronDev.ts'");
+}
+
+/**
  * Runs Storybook focused on VeraRoom component.
  */
 function devRoom(): void {
@@ -58,6 +66,7 @@ function devRoom(): void {
  * - yarn dev           (run frontend and backend)
  * - yarn dev frontend  (run only frontend)
  * - yarn dev backend   (run only backend)
+ * - yarn dev electron  (run backend + Electron desktop app)
  * - yarn dev room      (run Storybook for VeraRoom)
  */
 function main(): void {
@@ -69,6 +78,9 @@ function main(): void {
       return;
     case 'backend':
       devBackend();
+      return;
+    case 'electron':
+      devElectron();
       return;
     case 'room':
       devRoom();

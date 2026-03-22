@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+  <dict>
+    <!-- Required for camera access -->
+    <key>com.apple.security.device.camera</key>
+    <true/>
+    <!-- Required for microphone access -->
+    <key>com.apple.security.device.microphone</key>
+    <true/>
+    <!-- Required for screen recording (screen share) -->
+    <key>com.apple.security.screen-capture</key>
+    <true/>
+    <!-- Required for V8 JIT compilation in Electron's renderer -->
+    <key>com.apple.security.cs.allow-jit</key>
+    <true/>
+    <!-- Required for unsigned dynamic libraries (Electron internals) -->
+    <key>com.apple.security.cs.allow-unsigned-executable-memory</key>
+    <true/>
+    <!-- Required for outbound network connections (WebRTC, API calls) -->
+    <key>com.apple.security.network.client</key>
+    <true/>
+    <!-- Required for embedded server to accept inbound localhost connections -->
+    <key>com.apple.security.network.server</key>
+    <true/>
+    <!-- Disable macOS Camera Reactions (floating emoji/effects overlay introduced in macOS 14).
+         Setting this to false suppresses the system-level camera effects UI so that
+         participants see a clean video feed without unexpected overlays. -->
+    <key>com.apple.developer.avfoundation.camera-reactions</key>
+    <false/>
+  </dict>
+</plist>

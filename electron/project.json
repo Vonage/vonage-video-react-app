@@ -1,0 +1,35 @@
+{
+  "name": "electron",
+  "projectType": "application",
+  "root": "electron",
+  "targets": {
+    "ts-check": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "tsc -p electron/tsconfig.json --noEmit",
+        "cwd": "{workspaceRoot}"
+      }
+    },
+    "build": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "tsc -p electron/tsconfig.json",
+        "cwd": "{workspaceRoot}"
+      }
+    },
+    "dev": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "npx tsx scripts/electronDev.ts",
+        "cwd": "{workspaceRoot}"
+      }
+    },
+    "package": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "npx tsx scripts/electronPackage.ts",
+        "cwd": "{workspaceRoot}"
+      }
+    }
+  }
+}

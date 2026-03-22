@@ -7,6 +7,7 @@ import ParticipantListItem from '../ParticipantListItem';
 import getInitials from '@utils/getInitials';
 import getParticipantColor from '@utils/getParticipantColor';
 import useRoomShareUrl from '@hooks/useRoomShareUrl';
+import { copyTextToClipboard } from '@utils/clipboard';
 import RightPanelTitle from '../RightPanel/RightPanelTitle';
 import usePublisherContext from '@hooks/usePublisherContext';
 import IconButton from '@mui/material/IconButton';
@@ -74,7 +75,7 @@ const ParticipantList = ({ handleClose, isOpen }: ParticipantListProps): ReactEl
   }, [subscriberWrappers, query, name]);
 
   const copyUrl = () => {
-    void navigator.clipboard.writeText(roomShareUrl);
+    void copyTextToClipboard(roomShareUrl);
 
     setIsCopied(true);
 

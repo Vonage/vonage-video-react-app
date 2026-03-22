@@ -1,0 +1,81 @@
+{
+  "$schema": "https://raw.githubusercontent.com/electron-userland/electron-builder/master/packages/app-builder-lib/scheme.json",
+  "appId": "com.vonage.video-react-app",
+  "productName": "Vonage Video",
+  "copyright": "Copyright © 2026 Vonage",
+  "main": "electron/dist/main.js",
+  "asar": true,
+  "icon": "electron/assets/app-icon.png",
+  "files": ["electron/dist/**"],
+  "extraResources": [
+    {
+      "from": "frontend/dist",
+      "to": "frontend-dist"
+    },
+    {
+      "from": "electron/picker.html",
+      "to": "picker.html"
+    },
+    {
+      "from": "electron/about.html",
+      "to": "about.html"
+    },
+    {
+      "from": "electron/assets",
+      "to": "electron-assets"
+    }
+  ],
+  "directories": {
+    "output": "dist/electron",
+    "buildResources": "electron/build-resources"
+  },
+  "publish": [
+    {
+      "provider": "github",
+      "owner": "Vonage",
+      "repo": "vonage-video-react-app",
+      "releaseType": "release"
+    }
+  ],
+  "mac": {
+    "category": "public.app-category.video",
+    "hardenedRuntime": true,
+    "entitlements": "electron/entitlements.mac.plist",
+    "entitlementsInherit": "electron/entitlements.mac.plist",
+    "extendInfo": {
+      "NSCameraUsageDescription": "Vonage Video needs camera access for video calls.",
+      "NSMicrophoneUsageDescription": "Vonage Video needs microphone access for audio in calls.",
+      "NSScreenCaptureDescription": "Vonage Video needs screen recording access for screen sharing."
+    },
+    "locales": ["en", "de", "it", "es", "es_MX"],
+    "target": [
+      {
+        "target": "dmg",
+        "arch": ["arm64", "x64"]
+      }
+    ]
+  },
+  "win": {
+    "icon": "electron/assets/app-icon.png",
+    "target": [
+      {
+        "target": "nsis",
+        "arch": ["x64"]
+      }
+    ]
+  },
+  "linux": {
+    "icon": "electron/assets/app-icon.png",
+    "target": [
+      {
+        "target": "AppImage",
+        "arch": ["x64"]
+      }
+    ],
+    "category": "Video"
+  },
+  "nsis": {
+    "oneClick": false,
+    "allowToChangeInstallationDirectory": true
+  }
+}
