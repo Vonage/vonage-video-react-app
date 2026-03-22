@@ -26,6 +26,15 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.resolve(__dirname, '..');
 const ASSETS = path.resolve(__dirname, '../electron/assets');
 
+// This script uses macOS-only tools (sips, iconutil). On other platforms,
+// skip generation and rely on the committed icon assets.
+if (process.platform !== 'darwin') {
+  console.log(
+    '[generateElectronIcons] Skipping — macOS-only tools required. Using committed assets.'
+  );
+  process.exit(0);
+}
+
 // ─── Vonage V mark paths ──────────────────────────────────────────────────────
 //
 // Extracted verbatim from frontend/public/images/vonage-logo-desktop.svg.

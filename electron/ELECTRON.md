@@ -24,7 +24,7 @@ The Electron integration follows a **localhost embedding** strategy:
 
 The main process starts a lightweight HTTP server that serves the pre-built frontend (`frontend/dist/`), then opens a `BrowserWindow` pointing at `http://localhost:<port>`. From the renderer's perspective, it's just a browser hitting localhost — so `BrowserRouter`, `window.location`, `localStorage`, and all existing web app logic work unchanged.
 
-The **backend runs separately** (not embedded in Electron). In dev mode, the backend runs on port 3345 as usual. The frontend's `env.ts` auto-detects `localhost` and sets `API_URL` to `http://localhost:3345`.
+The **backend runs separately** alongside Electron. In dev mode, `yarn dev:electron` starts the backend on port 3345 via `concurrently` while the Electron app serves the frontend from a built-in static HTTP server. The frontend's `env.ts` auto-detects `localhost` and sets `API_URL` to `http://localhost:3345`. For packaged builds, the backend can be embedded via `require()` of the CommonJS bundle.
 
 ## File Structure
 

@@ -94,9 +94,17 @@ const MIME: Record<string, string> = {
 function startStaticServer(): Promise<void> {
   return new Promise((resolve, reject) => {
     const server = http.createServer((req, res) => {
-      const rawPath = (req.url ?? '/').split('?')[0];
+      const rawPath = decodeURIComponent((req.url ?? '/').split('?')[0]);
       const urlPath = rawPath === '/' ? '/index.html' : rawPath;
-      const filePath = path.join(frontendDistPath, urlPath);
+      const filePath = path.resolve(frontendDistPath, `.${urlPath}`);
+
+      // Prevent path traversal — resolved path must stay inside frontendDistPath
+      if (!filePath.startsWith(frontendDistPath)) {
+        res.writeHead(403);
+        res.end('Forbidden');
+        return;
+      }
+
       const ext = path.extname(filePath).toLowerCase();
 
       fs.readFile(filePath, (err, data) => {
@@ -156,7 +164,7 @@ function openAboutWindow(): void {
       preload: path.join(__dirname, 'preload.js'),
       contextIsolation: true,
       nodeIntegration: false,
-      sandbox: false,
+      sandbox: true,
     },
     show: false,
   });
@@ -305,13 +313,27 @@ function configureMediaPermissions(): void {
     'clipboard-sanitized-write',
   ];
 
-  session.defaultSession.setPermissionCheckHandler((_wc, permission) =>
-    ALLOWED_CHECK.includes(permission)
-  );
+  const isTrustedOrigin = (url: string | undefined): boolean => {
+    if (!url) return false;
+    try {
+      const origin = new URL(url).origin;
+      return (
+        origin === `http://localhost:${STATIC_PORT}` || origin === `http://127.0.0.1:${STATIC_PORT}`
+      );
+    } catch {
+      return false;
+    }
+  };
 
-  session.defaultSession.setPermissionRequestHandler((_wc, permission, callback) =>
-    callback(ALLOWED_REQUEST.includes(permission))
-  );
+  session.defaultSession.setPermissionCheckHandler((wc, permission) => {
+    if (!isTrustedOrigin(wc?.getURL())) return false;
+    return ALLOWED_CHECK.includes(permission);
+  });
+
+  session.defaultSession.setPermissionRequestHandler((wc, permission, callback) => {
+    if (!isTrustedOrigin(wc?.getURL())) return callback(false);
+    callback(ALLOWED_REQUEST.includes(permission));
+  });
 }
 
 // ─── Content Security Policy ──────────────────────────────────────────────────
@@ -382,8 +404,15 @@ async function showScreenRecordingDeniedDialog(): Promise<void> {
 
 type PickerCallback = (sourceId: string | null) => void;
 let pendingPickerCallback: PickerCallback | null = null;
+let pickerWindowRef: BrowserWindow | null = null;
 
 async function openScreenPicker(onSelect: PickerCallback): Promise<void> {
+  // If a picker is already open, focus it and reject the new request
+  if (pickerWindowRef && !pickerWindowRef.isDestroyed()) {
+    pickerWindowRef.focus();
+    onSelect(null);
+    return;
+  }
   // macOS: Screen Recording is a TCC permission that cannot be requested
   // programmatically.  Check the current status and bail out early with a
   // helpful dialog if it has been denied so the user knows what to do.
@@ -419,7 +448,7 @@ async function openScreenPicker(onSelect: PickerCallback): Promise<void> {
     return;
   }
 
-  const pickerWin = new BrowserWindow({
+  pickerWindowRef = new BrowserWindow({
     width: 720,
     height: 520,
     resizable: false,
@@ -434,6 +463,7 @@ async function openScreenPicker(onSelect: PickerCallback): Promise<void> {
     },
   });
 
+  const pickerWin = pickerWindowRef;
   pickerWin.setMenu(null);
 
   const serialisedSources = sources.map((s) => ({
@@ -451,6 +481,7 @@ async function openScreenPicker(onSelect: PickerCallback): Promise<void> {
   });
 
   pickerWin.on('closed', () => {
+    pickerWindowRef = null;
     if (pendingPickerCallback) {
       pendingPickerCallback(null);
       pendingPickerCallback = null;
@@ -461,24 +492,22 @@ async function openScreenPicker(onSelect: PickerCallback): Promise<void> {
 }
 
 function registerPickerIpc(): void {
-  ipcMain.on('screen-picker:select', (_event, sourceId: string) => {
+  ipcMain.on('screen-picker:select', (event, sourceId: string) => {
     if (pendingPickerCallback) {
       pendingPickerCallback(sourceId);
       pendingPickerCallback = null;
     }
-    BrowserWindow.getAllWindows()
-      .filter((w) => w.getTitle() === 'Share your screen')
-      .forEach((w) => w.close());
+    const pickerWindow = BrowserWindow.fromWebContents(event.sender);
+    if (pickerWindow) pickerWindow.close();
   });
 
-  ipcMain.on('screen-picker:cancel', () => {
+  ipcMain.on('screen-picker:cancel', (event) => {
     if (pendingPickerCallback) {
       pendingPickerCallback(null);
       pendingPickerCallback = null;
     }
-    BrowserWindow.getAllWindows()
-      .filter((w) => w.getTitle() === 'Share your screen')
-      .forEach((w) => w.close());
+    const pickerWindow = BrowserWindow.fromWebContents(event.sender);
+    if (pickerWindow) pickerWindow.close();
   });
 
   // Open a URL in the system browser — used by the About window GitHub link.
@@ -666,7 +695,7 @@ function createMainWindow(): BrowserWindow {
       preload: path.join(__dirname, 'preload.js'),
       contextIsolation: true,
       nodeIntegration: false,
-      sandbox: false,
+      sandbox: true,
     },
   });
 
