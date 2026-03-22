@@ -4,9 +4,13 @@
     <meta charset="UTF-8" />
     <meta
       http-equiv="Content-Security-Policy"
-      content="default-src 'none'; style-src 'unsafe-inline'; script-src 'unsafe-inline';"
+      content="default-src 'none'; style-src 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; script-src 'unsafe-inline';"
     />
     <title>About Vonage Video</title>
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap"
+    />
     <style>
       *,
       *::before,
@@ -16,12 +20,21 @@
         padding: 0;
       }
 
+      :root {
+        --vera-primary: #9941ff;
+        --vera-surface: #ffffff;
+        --vera-background: #f5f0fd;
+        --vera-border: #e6e6e6;
+        --vera-text-primary: #000000;
+        --vera-text-tertiary: #757575;
+      }
+
       html,
       body {
         height: 100%;
-        background: #f2f2f7;
-        font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, sans-serif;
-        color: #1c1c1e;
+        background: var(--vera-background);
+        font-family: Inter, sans-serif, system-ui, ui-sans-serif;
+        color: var(--vera-text-primary);
         -webkit-font-smoothing: antialiased;
         user-select: none;
         -webkit-app-region: drag;
@@ -43,7 +56,7 @@
         width: 100px;
         height: 100px;
         border-radius: 22px;
-        background: #fff;
+        background: var(--vera-surface);
         display: flex;
         align-items: center;
         justify-content: center;
@@ -60,29 +73,29 @@
         font-size: 22px;
         font-weight: 600;
         letter-spacing: -0.3px;
-        color: #1c1c1e;
+        color: var(--vera-text-primary);
       }
 
       .app-version {
         font-size: 16px;
-        color: #1c1c1e;
+        color: var(--vera-text-primary);
       }
 
       .build-info {
         font-size: 14px;
-        color: #3a3a3c;
+        color: var(--vera-text-tertiary);
       }
 
       .divider {
         width: 260px;
         height: 1px;
-        background: rgba(0, 0, 0, 0.12);
+        background: var(--vera-border);
         margin: 10px 0;
       }
 
       .credits {
         font-size: 14px;
-        color: #3a3a3c;
+        color: var(--vera-text-tertiary);
         text-align: center;
       }
 
@@ -97,17 +110,17 @@
         background: transparent;
         border: none;
         cursor: pointer;
-        color: #0066cc;
+        color: var(--vera-primary);
         font-size: 14px;
         font-family: inherit;
         -webkit-app-region: no-drag;
         transition: background 0.12s;
       }
       .github-btn:hover {
-        background: rgba(0, 102, 204, 0.08);
+        background: rgba(153, 65, 255, 0.08);
       }
       .github-btn:active {
-        background: rgba(0, 102, 204, 0.16);
+        background: rgba(153, 65, 255, 0.16);
       }
       .github-btn svg {
         width: 18px;
@@ -117,7 +130,7 @@
 
       .copyright {
         font-size: 13px;
-        color: #48484a;
+        color: var(--vera-text-tertiary);
         margin-top: 8px;
       }
     </style>

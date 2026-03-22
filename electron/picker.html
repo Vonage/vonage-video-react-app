@@ -4,6 +4,10 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Share your screen</title>
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap"
+    />
     <style>
       *,
       *::before,
@@ -14,25 +18,25 @@
       }
 
       :root {
-        --vonage-purple: #7b2d8b;
-        --vonage-purple-dark: #5d1e6a;
-        --bg: #1a1a2e;
-        --surface: #16213e;
-        --surface-hover: #1e2d50;
-        --border: #2a3a5c;
-        --border-selected: #7b2d8b;
-        --text-primary: #e8eaf0;
-        --text-secondary: #8892aa;
+        --vera-primary: #b27bf2;
+        --vera-primary-hover: #9941ff;
+        --vera-primary-dim: rgba(178, 123, 242, 0.5);
+        --vera-dark-background: #202124;
+        --vera-dark-grey: #333333;
+        --vera-dark-grey-hover: #3d3d3d;
+        --vera-border: #444444;
+        --vera-border-selected: #b27bf2;
+        --vera-on-dark-grey: #ffffff;
+        --vera-text-secondary: #a0a0a0;
         --radius: 10px;
         --thumb-w: 220px;
         --thumb-h: 124px;
       }
 
       body {
-        font-family:
-          -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-        background: var(--bg);
-        color: var(--text-primary);
+        font-family: Inter, sans-serif, system-ui, ui-sans-serif;
+        background: var(--vera-dark-background);
+        color: var(--vera-on-dark-grey);
         height: 100vh;
         display: flex;
         flex-direction: column;
@@ -47,8 +51,8 @@
         align-items: center;
         gap: 10px;
         padding: 14px 20px;
-        background: var(--surface);
-        border-bottom: 1px solid var(--border);
+        background: var(--vera-dark-grey);
+        border-bottom: 1px solid var(--vera-border);
         -webkit-app-region: drag;
         flex-shrink: 0;
       }
@@ -76,7 +80,7 @@
       header h1 {
         font-size: 14px;
         font-weight: 500;
-        color: var(--text-secondary);
+        color: var(--vera-text-secondary);
         margin-left: auto;
         -webkit-app-region: no-drag;
       }
@@ -87,14 +91,14 @@
         gap: 4px;
         padding: 12px 20px 0;
         flex-shrink: 0;
-        background: var(--bg);
+        background: var(--vera-dark-background);
       }
 
       .tab-btn {
         background: none;
         border: none;
         border-bottom: 2px solid transparent;
-        color: var(--text-secondary);
+        color: var(--vera-text-secondary);
         cursor: pointer;
         font-size: 13px;
         font-weight: 500;
@@ -106,12 +110,12 @@
       }
 
       .tab-btn:hover {
-        color: var(--text-primary);
+        color: var(--vera-on-dark-grey);
       }
 
       .tab-btn.active {
-        color: var(--text-primary);
-        border-bottom-color: var(--vonage-purple);
+        color: var(--vera-on-dark-grey);
+        border-bottom-color: var(--vera-primary);
       }
 
       /* ── Source grid ─────────────────────────────────────────────── */
@@ -120,7 +124,7 @@
         overflow-y: auto;
         padding: 16px 20px;
         scrollbar-width: thin;
-        scrollbar-color: var(--border) transparent;
+        scrollbar-color: var(--vera-border) transparent;
       }
 
       .grid-wrapper::-webkit-scrollbar {
@@ -132,7 +136,7 @@
       }
 
       .grid-wrapper::-webkit-scrollbar-thumb {
-        background: var(--border);
+        background: var(--vera-border);
         border-radius: 3px;
       }
 
@@ -143,8 +147,8 @@
       }
 
       .source-card {
-        background: var(--surface);
-        border: 2px solid var(--border);
+        background: var(--vera-dark-grey);
+        border: 2px solid var(--vera-border);
         border-radius: var(--radius);
         cursor: pointer;
         overflow: hidden;
@@ -156,20 +160,20 @@
       }
 
       .source-card:hover {
-        background: var(--surface-hover);
-        border-color: color-mix(in srgb, var(--vonage-purple) 50%, var(--border));
+        background: var(--vera-dark-grey-hover);
+        border-color: var(--vera-primary-dim);
         transform: translateY(-1px);
       }
 
       .source-card.selected {
-        border-color: var(--border-selected);
-        box-shadow: 0 0 0 1px var(--border-selected);
+        border-color: var(--vera-border-selected);
+        box-shadow: 0 0 0 1px var(--vera-border-selected);
       }
 
       .thumb-wrapper {
         width: 100%;
         aspect-ratio: 16/9;
-        background: #0d0d1a;
+        background: #1a1a1a;
         display: flex;
         align-items: center;
         justify-content: center;
@@ -202,13 +206,13 @@
         width: 18px;
         height: 18px;
         flex-shrink: 0;
-        background: var(--border);
+        background: var(--vera-border);
         border-radius: 3px;
       }
 
       .source-name {
         font-size: 12px;
-        color: var(--text-primary);
+        color: var(--vera-on-dark-grey);
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
@@ -222,7 +226,7 @@
         justify-content: center;
         gap: 10px;
         height: 200px;
-        color: var(--text-secondary);
+        color: var(--vera-text-secondary);
         font-size: 14px;
       }
 
@@ -233,8 +237,8 @@
         justify-content: flex-end;
         gap: 10px;
         padding: 12px 20px;
-        border-top: 1px solid var(--border);
-        background: var(--surface);
+        border-top: 1px solid var(--vera-border);
+        background: var(--vera-dark-grey);
         flex-shrink: 0;
       }
 
@@ -253,22 +257,22 @@
 
       .btn-cancel {
         background: transparent;
-        border: 1px solid var(--border);
-        color: var(--text-secondary);
+        border: 1px solid var(--vera-border);
+        color: var(--vera-text-secondary);
       }
 
       .btn-cancel:hover {
-        background: var(--surface-hover);
-        color: var(--text-primary);
+        background: var(--vera-dark-grey-hover);
+        color: var(--vera-on-dark-grey);
       }
 
       .btn-share {
-        background: var(--vonage-purple);
+        background: var(--vera-primary);
         color: #ffffff;
       }
 
       .btn-share:hover:not(:disabled) {
-        background: var(--vonage-purple-dark);
+        background: var(--vera-primary-hover);
       }
 
       .btn-share:disabled {
