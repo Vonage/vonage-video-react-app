@@ -21,6 +21,7 @@ export type VideoTileCanvasProps = {
   screensharingPublisher: OTPublisher | null;
   screenshareVideoElement: HTMLVideoElement | HTMLObjectElement | undefined;
   isRightPanelOpen: boolean;
+  fullSize?: boolean;
 };
 
 /**
@@ -35,6 +36,7 @@ const VideoTileCanvas = ({
   screensharingPublisher,
   screenshareVideoElement,
   isRightPanelOpen,
+  fullSize = false,
 }: VideoTileCanvasProps): ReactElement => {
   // Use a ref on the container div in order to update canvas when resized
   const wrapRef = useRef<HTMLDivElement | null>(null);
@@ -86,10 +88,16 @@ const VideoTileCanvas = ({
 
   // Height is 100dvh - toolbar height (80px) and header height (80px) - 24px wrapper margin on small viewport device
   // Height is 100dvh - toolbar height (80px) - 24px wrapper margin on desktop
-  const wrapperHeight = isSmallViewport ? 'calc(100dvh - 184px)' : 'calc(100dvh - 104px)';
+  const wrapperHeight = (() => {
+    if (fullSize) return isSmallViewport ? 'calc(100% - 184px)' : 'calc(100% - 104px)';
+    return isSmallViewport ? 'calc(100dvh - 184px)' : 'calc(100dvh - 104px)';
+  })();
 
   // Width is 100vw - 360px panel width - 24px panel right margin - 24px wrapper margin
-  const wrapperWidth = isRightPanelOpen ? 'calc(100vw - 392px)' : 'calc(100vw - 24px)';
+  const wrapperWidth = (() => {
+    if (fullSize) return isRightPanelOpen ? 'calc(100% - 392px)' : 'calc(100% - 24px)';
+    return isRightPanelOpen ? 'calc(100vw - 392px)' : 'calc(100vw - 24px)';
+  })();
 
   const shouldShowProgress = connected !== true || reconnecting === true;
   const progressTestId =
@@ -135,7 +143,12 @@ const VideoTileCanvas = ({
         {shouldShowProgress && (
           <CircularProgress
             data-testid={progressTestId}
-            sx={{ position: 'absolute', top: '50%' }}
+            sx={{
+              position: 'absolute',
+              top: '50%',
+              left: '50%',
+              transform: 'translate(-50%, -50%)',
+            }}
           />
         )}
       </Box>

@@ -8,6 +8,12 @@ type VeraRoomAttributes = {
 
   /** Session identifier to join an existing session directly */
   'session-identifier'?: string;
+
+  /**
+   * BCP-47 language tag for the UI locale (e.g. 'en', 'es', 'it').
+   * Falls back to the browser's detected language when not provided.
+   */
+  language?: string;
 };
 
 declare module 'react' {

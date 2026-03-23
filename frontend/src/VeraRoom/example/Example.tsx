@@ -17,8 +17,15 @@ const Example = () => {
             The component below is a fully functional video room embedded using the{' '}
             <code className="text-vera-primary">&lt;vera-room&gt;</code> custom element.
           </p>
-          <div className="w-full rounded-lg overflow-hidden bg-vera-dark-background shadow-lg border border-vera-dark-grey">
-            <vera-room />
+          <div
+            className="w-full rounded-lg overflow-hidden bg-vera-dark-background shadow-lg border border-vera-dark-grey"
+            style={{ height: '600px' }}
+          >
+            <vera-room
+              session-identifier="demo-room"
+              language="en"
+              style={{ width: '100%', height: '100%' }}
+            />
           </div>
         </section>
 

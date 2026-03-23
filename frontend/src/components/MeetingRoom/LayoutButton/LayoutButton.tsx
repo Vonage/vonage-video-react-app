@@ -10,6 +10,7 @@ export type LayoutButtonProps = {
   isScreenSharePresent: boolean;
   isPinningPresent: boolean;
   isOverflowButton?: boolean;
+  onLayoutModeChange?: () => void;
 };
 
 /**
@@ -26,6 +27,7 @@ const LayoutButton = ({
   isScreenSharePresent,
   isPinningPresent,
   isOverflowButton = false,
+  onLayoutModeChange,
 }: LayoutButtonProps): ReactElement => {
   const { t } = useTranslation();
   const { layoutMode, setLayoutMode } = useSessionContext();
@@ -36,7 +38,9 @@ const LayoutButton = ({
     if (isDisabled) {
       return;
     }
+
     setLayoutMode((prev) => (prev === 'grid' ? 'active-speaker' : 'grid'));
+    onLayoutModeChange?.();
   };
 
   const getTooltipTitle = () => {
