@@ -1,9 +1,10 @@
 import { ReactElement } from 'react';
-import Stack from '@mui/material/Stack';
-import Typography from '@mui/material/Typography';
 import { useTranslation } from 'react-i18next';
-import useTheme from '@ui/theme';
 import GHRepoButton from '../GHRepoButton';
+import getAppVersion from '@utils/getAppVersion';
+import sdkPackageInfo from '@vonage/client-sdk-video/package.json';
+
+const formatDisplayVersion = (version: string): string => version.replace(/^vera-/, 'v');
 
 /**
  * FooterLinks Component
@@ -13,22 +14,20 @@ import GHRepoButton from '../GHRepoButton';
  */
 const FooterLinks = (): ReactElement => {
   const { t } = useTranslation();
-  const theme = useTheme();
 
   return (
-    <Stack direction="row" alignItems="center" data-testid="footer-links" sx={{ py: 1 }}>
+    <div className="flex items-center gap-2 py-2" data-testid="footer-links">
       <GHRepoButton />
-      <Typography
-        variant="body2"
-        sx={{
-          color: theme.colors.textTertiary,
-          display: { xs: 'none', md: 'block' },
-          ml: 1,
-        }}
-      >
+      <span className="hidden min-[900px]:block text-vera-text-tertiary text-vera-body-base">
         {t('footer.github.title')}
-      </Typography>
-    </Stack>
+      </span>
+      <span
+        data-testid="app-version"
+        className="hidden min-[900px]:block text-vera-text-tertiary text-vera-body-base"
+      >
+        {formatDisplayVersion(getAppVersion())} (SDK {sdkPackageInfo.version})
+      </span>
+    </div>
   );
 };
 

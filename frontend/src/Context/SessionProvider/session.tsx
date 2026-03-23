@@ -37,6 +37,7 @@ import { MAX_PIN_COUNT_DESKTOP, MAX_PIN_COUNT_MOBILE } from '@utils/constants';
 import VonageVideoClient from '@utils/VonageVideoClient';
 import wait from '@common/execution/wait';
 import { env } from '../../env';
+import frontendLogger from '../../logger';
 
 export type { ChatMessageType } from '@app-types/chat';
 
@@ -372,10 +373,9 @@ const SessionProvider = ({ children, initialValue = {} }: SessionProviderProps):
       })();
 
       if (reconnecting || isBrowserOnline === false) {
-        console.warn('[SUBSCRIBER] Ignoring subscription error during reconnection/offline', {
+        frontendLogger.log('Session: ignoring subscription error during reconnection/offline', {
           reconnecting,
           isBrowserOnline,
-          error,
         });
         return;
       }

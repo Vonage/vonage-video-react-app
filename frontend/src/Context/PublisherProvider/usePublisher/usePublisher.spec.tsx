@@ -38,7 +38,7 @@ describe('usePublisher', () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
-    vi.spyOn(console, 'warn').mockImplementation(vi.fn());
+    vi.spyOn(console, 'error').mockImplementation(vi.fn());
     setupWindowNavigatorMock({
       mediaDevices: {
         enumerateDevices: Promise.resolve(someDevices),
