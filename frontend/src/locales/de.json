@@ -93,6 +93,7 @@
   "emoji.ariaLabel": "Emoji-Menü öffnen",
   "emoji.tooltip": "Drücken Sie sich aus",
   "errors.unknown": "Unbekannter Fehler aufgetreten",
+  "errors.invalidRoomNameError": "Die URL enthält Sonderzeichen {{roomName}}, bitte geben Sie die korrekte URL ein.",
   "feedbackForm.ariaLabel": "Problemmeldeformular umschalten",
   "feedbackForm.close": "Problemmeldeformular schließen",
   "feedbackForm.disclaiamer.label": "Bitte fügen Sie keine sensiblen Informationen ein.",

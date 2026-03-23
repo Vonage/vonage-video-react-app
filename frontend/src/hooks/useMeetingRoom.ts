@@ -74,13 +74,20 @@ const useMeetingRoom = () => {
     }
   });
 
+  const hasValidRoomName = isValidRoomName(roomName);
+  const invalidRoomNameErrorMessage = t('errors.invalidRoomNameError', { roomName });
+
   useEffect(() => {
     if (!hasValidUsername && !bypass) {
       return;
     }
 
-    if (joinRoom && isValidRoomName(roomName)) {
+    if (joinRoom && hasValidRoomName) {
       void joinRoom(roomName);
+    }
+
+    if (!hasValidRoomName) {
+      throw new Error(invalidRoomNameErrorMessage);
     }
     return () => {
       disconnect?.();

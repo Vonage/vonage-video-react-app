@@ -55,13 +55,6 @@ const MeetingRoom = ({
     captionsState,
   } = useMeetingRoom();
 
-  // const hasValidRoomName = isValidRoomName(roomName);
-  // const invalidRoomNameErrorMessage = t('errors.invalidRoomNameError', { roomName });
-
-  // if (!hasValidRoomName) {
-  //   throw new Error(invalidRoomNameErrorMessage);
-  // }
-
   return (
     <Box
       data-testid="meetingRoom"
