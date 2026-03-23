@@ -128,6 +128,42 @@
         flex-shrink: 0;
       }
 
+      /* Check for Updates button */
+      .update-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        margin-top: 2px;
+        padding: 8px 18px;
+        border-radius: 8px;
+        background: var(--vera-primary);
+        border: none;
+        cursor: pointer;
+        color: #ffffff;
+        font-size: 13px;
+        font-weight: 500;
+        font-family: inherit;
+        -webkit-app-region: no-drag;
+        transition:
+          background 0.12s,
+          opacity 0.12s;
+      }
+      .update-btn:hover {
+        opacity: 0.88;
+      }
+      .update-btn:active {
+        opacity: 0.76;
+      }
+      .update-btn:disabled {
+        opacity: 0.5;
+        cursor: default;
+      }
+      .update-status {
+        font-size: 12px;
+        color: var(--vera-text-tertiary);
+        min-height: 16px;
+      }
+
       .copyright {
         font-size: 13px;
         color: var(--vera-text-tertiary);
@@ -186,6 +222,9 @@
         Vonage/vonage-video-react-app
       </button>
 
+      <button class="update-btn" id="update-btn">Check for Updates…</button>
+      <div class="update-status" id="update-status"></div>
+
       <div class="copyright" id="copyright">© 2026 Vonage</div>
     </div>
 
@@ -204,6 +243,28 @@
       document.getElementById('github-btn').addEventListener('click', () => {
         window.electron &&
           window.electron.openExternal('https://github.com/Vonage/vonage-video-react-app');
+      });
+
+      // Check for Updates
+      const updateBtn = document.getElementById('update-btn');
+      const updateStatus = document.getElementById('update-status');
+      updateBtn.addEventListener('click', async () => {
+        if (!window.electron || !window.electron.checkForUpdates) {
+          updateStatus.textContent = 'Updates not available in dev mode';
+          return;
+        }
+        updateBtn.disabled = true;
+        updateBtn.textContent = 'Checking…';
+        updateStatus.textContent = '';
+        try {
+          const result = await window.electron.checkForUpdates();
+          updateStatus.textContent = result;
+        } catch (err) {
+          updateStatus.textContent = 'Could not check for updates';
+        } finally {
+          updateBtn.disabled = false;
+          updateBtn.textContent = 'Check for Updates…';
+        }
       });
     </script>
   </body>

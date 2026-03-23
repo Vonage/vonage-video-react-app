@@ -14,5 +14,7 @@ interface Window {
      * can fail silently when the window loses focus mid-call.
      */
     copyToClipboard: (text: string) => Promise<void>;
+    /** Check for application updates. Returns a status message string. */
+    checkForUpdates: () => Promise<string>;
   };
 }

@@ -11,6 +11,8 @@ contextBridge.exposeInMainWorld('electron', {
   isElectron: true,
   /** Open a URL in the system default browser (used by the About window). */
   openExternal: (url: string) => ipcRenderer.send('open-external', url),
+  /** Check for application updates (used by the About window). */
+  checkForUpdates: () => ipcRenderer.invoke('check-for-updates'),
   /**
    * Write text to the clipboard via the main process.
    * navigator.clipboard.writeText() can silently fail in Electron when the

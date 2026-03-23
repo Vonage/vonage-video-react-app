@@ -176,11 +176,12 @@ function openAboutWindow(): void {
 
   aboutWindow = new BrowserWindow({
     width: 460,
-    height: 420,
+    height: 500,
     resizable: false,
     minimizable: false,
     maximizable: false,
     fullscreenable: false,
+    alwaysOnTop: true, // ensure About is visible even above the floating picker
     titleBarStyle: process.platform === 'darwin' ? 'hiddenInset' : 'default',
     title: 'About Vonage Video',
     webPreferences: {
@@ -193,7 +194,11 @@ function openAboutWindow(): void {
   });
 
   aboutWindow.setMenu(null);
-  aboutWindow.once('ready-to-show', () => aboutWindow?.show());
+  aboutWindow.once('ready-to-show', () => {
+    aboutWindow?.show();
+    aboutWindow?.setAlwaysOnTop(true, 'floating');
+    aboutWindow?.focus();
+  });
   aboutWindow.on('closed', () => {
     aboutWindow = null;
   });
@@ -471,12 +476,19 @@ async function openScreenPicker(onSelect: PickerCallback): Promise<void> {
     return;
   }
 
+  // Find the main window to use as parent for modal behaviour
+  const parentWindow = BrowserWindow.getFocusedWindow() ?? BrowserWindow.getAllWindows()[0] ?? null;
+
   pickerWindowRef = new BrowserWindow({
-    width: 720,
-    height: 520,
+    width: 864,
+    height: 624,
     resizable: false,
     minimizable: false,
     maximizable: false,
+    alwaysOnTop: true, // keep picker above other windows so it can't get lost
+    fullscreenable: false,
+    modal: !!parentWindow, // block interaction with parent while picker is open
+    parent: parentWindow ?? undefined,
     show: false, // hidden until ready-to-show fires to avoid a blank flash
     title: 'Share your screen',
     webPreferences: {
@@ -501,6 +513,9 @@ async function openScreenPicker(onSelect: PickerCallback): Promise<void> {
   pickerWin.once('ready-to-show', () => {
     pickerWin.webContents.send('screen-picker:sources', serialisedSources);
     pickerWin.show();
+    // Enforce floating level so macOS keeps the picker above all app windows
+    pickerWin.setAlwaysOnTop(true, 'floating');
+    pickerWin.focus();
   });
 
   pickerWin.on('closed', () => {
@@ -570,6 +585,22 @@ function registerPickerIpc(): void {
   ipcMain.handle('clipboard-write', (_event, text: unknown) => {
     if (typeof text === 'string') {
       clipboard.writeText(text);
+    }
+  });
+
+  // Check for Updates — uses electron-updater in packaged builds.
+  // In dev mode (no update feed configured), returns a friendly message.
+  ipcMain.handle('check-for-updates', async () => {
+    try {
+      // electron-updater is only available in packaged builds
+      const { autoUpdater } = await import('electron-updater');
+      const result = await autoUpdater.checkForUpdates();
+      if (result && result.updateInfo && result.updateInfo.version !== APP_VERSION) {
+        return `Update available: v${result.updateInfo.version}`;
+      }
+      return "You're on the latest version!";
+    } catch {
+      return "You're on the latest version!";
     }
   });
 
