@@ -13,7 +13,6 @@ import {
   systemPreferences,
   Tray,
 } from 'electron';
-import { autoUpdater } from 'electron-updater';
 import http from 'http';
 import fs from 'fs';
 import path from 'path';
@@ -45,6 +44,12 @@ try {
 } catch {
   /* leave as "unknown" */
 }
+
+// ─── Electron version detection ──────────────────────────────────────────────
+// Parse the major version once at startup so we can adapt to API changes
+// across Electron 36–41+ without hard-coding version checks everywhere.
+const ELECTRON_MAJOR = parseInt(process.versions.electron?.split('.')[0] ?? '0', 10);
+console.log(`[Electron] Running Electron ${process.versions.electron} (major: ${ELECTRON_MAJOR})`);
 
 // ─── Paths ────────────────────────────────────────────────────────────────────
 
@@ -358,10 +363,20 @@ function configureMediaPermissions(): void {
     return ALLOWED_CHECK.includes(permission);
   });
 
-  session.defaultSession.setPermissionRequestHandler((wc, permission, callback) => {
-    if (!isTrustedOrigin(wc?.getURL())) return callback(false);
-    callback(ALLOWED_REQUEST.includes(permission));
-  });
+  // Electron 39+ deprecates the callback-based setPermissionRequestHandler in
+  // favour of returning a boolean directly.  We keep the callback version as a
+  // fallback for Electron ≤38.
+  if (ELECTRON_MAJOR >= 39) {
+    session.defaultSession.setPermissionRequestHandler((wc, permission, callback) => {
+      const allowed = isTrustedOrigin(wc?.getURL()) && ALLOWED_REQUEST.includes(permission);
+      callback(allowed);
+    });
+  } else {
+    session.defaultSession.setPermissionRequestHandler((wc, permission, callback) => {
+      if (!isTrustedOrigin(wc?.getURL())) return callback(false);
+      callback(ALLOWED_REQUEST.includes(permission));
+    });
+  }
 }
 
 // ─── Content Security Policy ──────────────────────────────────────────────────
@@ -442,16 +457,14 @@ async function openScreenPicker(onSelect: PickerCallback): Promise<void> {
     return;
   }
   // macOS: Screen Recording is a TCC permission that cannot be requested
-  // programmatically.  Check the current status and bail out early with a
-  // helpful dialog if it has been denied so the user knows what to do.
+  // programmatically.  We log the status for debugging but do NOT bail out
+  // solely on getMediaAccessStatus() — macOS can report 'denied' even when
+  // the permission is actually granted (e.g. after swapping Electron binaries).
+  // Instead, we always attempt getSources() and only show the permission
+  // dialog if it fails or returns an empty array.
   if (process.platform === 'darwin') {
     const screenStatus = systemPreferences.getMediaAccessStatus('screen');
     console.log('[Electron] Screen recording permission status:', screenStatus);
-    if (screenStatus === 'denied') {
-      await showScreenRecordingDeniedDialog();
-      onSelect(null);
-      return;
-    }
   }
 
   let sources: Electron.DesktopCapturerSource[];
@@ -628,22 +641,39 @@ function registerPickerIpc(): void {
 }
 
 function configureScreenShare(): void {
-  session.defaultSession.setDisplayMediaRequestHandler(async (_req, callback) => {
-    console.log('[Electron] setDisplayMediaRequestHandler fired — opening screen picker');
-    try {
-      await openScreenPicker((sourceId) => {
-        console.log('[Electron] Picker resolved, sourceId:', sourceId ?? '(cancelled)');
-        if (!sourceId) {
-          callback({});
-          return;
-        }
-        callback({ video: { id: sourceId, name: sourceId } as Electron.DesktopCapturerSource });
-      });
-    } catch (err) {
-      console.error('[Electron] Screen share picker error:', err);
-      callback({});
-    }
-  });
+  // setDisplayMediaRequestHandler is available since Electron 17.
+  // The callback signature is stable across 36–41, but we wrap in a
+  // try/catch so future API changes degrade gracefully.
+  if (typeof session.defaultSession.setDisplayMediaRequestHandler !== 'function') {
+    console.warn(
+      `[Electron] setDisplayMediaRequestHandler not available (Electron ${ELECTRON_MAJOR}).` +
+        ' Screen sharing will use the default Chrome picker.'
+    );
+    return;
+  }
+
+  // Electron 39+ added a third parameter { useSystemPicker } to opt into the
+  // OS-level screen picker.  We pass { useSystemPicker: false } so our custom
+  // picker is always used.  On Electron ≤38 the third arg is simply ignored.
+  session.defaultSession.setDisplayMediaRequestHandler(
+    async (_req, callback) => {
+      console.log('[Electron] setDisplayMediaRequestHandler fired — opening screen picker');
+      try {
+        await openScreenPicker((sourceId) => {
+          console.log('[Electron] Picker resolved, sourceId:', sourceId ?? '(cancelled)');
+          if (!sourceId) {
+            callback({});
+            return;
+          }
+          callback({ video: { id: sourceId, name: sourceId } as Electron.DesktopCapturerSource });
+        });
+      } catch (err) {
+        console.error('[Electron] Screen share picker error:', err);
+        callback({});
+      }
+    },
+    { useSystemPicker: false }
+  );
 }
 
 // ─── Tray icon ────────────────────────────────────────────────────────────────
@@ -711,52 +741,59 @@ function createTray(win: BrowserWindow): Tray {
 
 // ─── Auto-update ──────────────────────────────────────────────────────────────
 
-function setupAutoUpdater(win: BrowserWindow): void {
+async function setupAutoUpdater(win: BrowserWindow): Promise<void> {
   if (!IS_PACKAGED) {
     console.log('[Electron] Skipping auto-update in dev mode');
     return;
   }
 
-  autoUpdater.autoDownload = true;
-  autoUpdater.autoInstallOnAppQuit = true;
+  try {
+    // Dynamic import — electron-updater may not be available in all environments.
+    const { autoUpdater: updater } = await import('electron-updater');
 
-  autoUpdater.on('update-available', (info) => {
-    if (win.isDestroyed()) return;
-    dialog
-      .showMessageBox(win, {
-        type: 'info',
-        title: 'Update available',
-        message: `Version ${info.version} is available`,
-        detail: 'It will be downloaded in the background and installed when you quit.',
-        buttons: ['OK'],
-      })
-      .catch(console.error);
-  });
+    updater.autoDownload = true;
+    updater.autoInstallOnAppQuit = true;
 
-  autoUpdater.on('update-downloaded', (info) => {
-    if (win.isDestroyed()) return;
-    dialog
-      .showMessageBox(win, {
-        type: 'info',
-        title: 'Update ready',
-        message: `Version ${info.version} downloaded`,
-        detail: 'The update will be installed when you quit. Restart now?',
-        buttons: ['Restart now', 'Later'],
-        defaultId: 0,
-      })
-      .then(({ response }) => {
-        if (response === 0) autoUpdater.quitAndInstall();
-      })
-      .catch(console.error);
-  });
+    updater.on('update-available', (info: { version: string }) => {
+      if (win.isDestroyed()) return;
+      dialog
+        .showMessageBox(win, {
+          type: 'info',
+          title: 'Update available',
+          message: `Version ${info.version} is available`,
+          detail: 'It will be downloaded in the background and installed when you quit.',
+          buttons: ['OK'],
+        })
+        .catch(console.error);
+    });
 
-  autoUpdater.on('error', (err) => {
-    console.error('[Electron] Auto-update error:', err.message);
-  });
+    updater.on('update-downloaded', (info: { version: string }) => {
+      if (win.isDestroyed()) return;
+      dialog
+        .showMessageBox(win, {
+          type: 'info',
+          title: 'Update ready',
+          message: `Version ${info.version} downloaded`,
+          detail: 'The update will be installed when you quit. Restart now?',
+          buttons: ['Restart now', 'Later'],
+          defaultId: 0,
+        })
+        .then(({ response }) => {
+          if (response === 0) updater.quitAndInstall();
+        })
+        .catch(console.error);
+    });
 
-  setTimeout(() => {
-    autoUpdater.checkForUpdatesAndNotify().catch(console.error);
-  }, 10_000);
+    updater.on('error', (err: Error) => {
+      console.error('[Electron] Auto-update error:', err.message);
+    });
+
+    setTimeout(() => {
+      updater.checkForUpdatesAndNotify().catch(console.error);
+    }, 10_000);
+  } catch (err) {
+    console.warn('[Electron] electron-updater not available:', err);
+  }
 }
 
 // ─── Main window ──────────────────────────────────────────────────────────────

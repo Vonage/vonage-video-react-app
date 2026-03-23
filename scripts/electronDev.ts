@@ -87,6 +87,12 @@ function patchElectronAppName(): void {
   patch('NSCameraUsageDescription', CAMERA_DESC);
   patch('NSMicrophoneUsageDescription', MIC_DESC);
   patch('NSScreenCaptureDescription', SCREEN_DESC);
+  // Electron 39+ on macOS 14.2+ requires audio capture description for
+  // desktopCapturer (CoreAudio Tap API).
+  patch(
+    'NSAudioCaptureUsageDescription',
+    'Vonage Video needs audio capture access for screen sharing with audio.'
+  );
 
   fs.writeFileSync(plistPath, plist, 'utf8');
 
