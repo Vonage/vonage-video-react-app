@@ -94,7 +94,15 @@ const MIME: Record<string, string> = {
 function startStaticServer(): Promise<void> {
   return new Promise((resolve, reject) => {
     const server = http.createServer((req, res) => {
-      const rawPath = decodeURIComponent((req.url ?? '/').split('?')[0]);
+      let rawPath: string;
+
+      try {
+        rawPath = decodeURIComponent((req.url ?? '/').split('?')[0]);
+      } catch {
+        res.writeHead(400);
+        res.end('Bad Request');
+        return;
+      }
       const urlPath = rawPath === '/' ? '/index.html' : rawPath;
       const filePath = path.resolve(frontendDistPath, `.${urlPath}`);
 
