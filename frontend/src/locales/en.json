@@ -188,6 +188,7 @@
   "unknown.device": "Unknown Device",
   "user.unknown": "unknown user",
   "user.you": "You",
+  "waitingRoom.devices.noDevicesFound": "No devices found",
   "waitingRoom.title": "Prepare to join",
   "waitingRoom.user.input.title": "Enter your name",
   "waitingRoom.user.input.label": "Name",

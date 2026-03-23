@@ -2,12 +2,12 @@ import { ReactElement, useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import ClickAwayListener from '@mui/material/ClickAwayListener';
 import MenuItem from '@mui/material/MenuItem';
-import Typography from '@mui/material/Typography';
 import useTheme from '@ui/theme';
 import { mediaDevices$ } from '@core/stores';
 
 export type SoundTestProps = {
   children: ReactElement;
+  isFromMeetingRoom?: boolean;
 };
 
 /**
@@ -18,7 +18,7 @@ export type SoundTestProps = {
  *  @property {ReactElement} children - The icon to be rendered for the sound test.
  * @returns {ReactElement} The SoundTest component
  */
-const SoundTest = ({ children }: SoundTestProps): ReactElement => {
+const SoundTest = ({ children, isFromMeetingRoom = false }: SoundTestProps): ReactElement => {
   const { t } = useTranslation();
   const theme = useTheme();
   const [audioIsPlaying, setAudioIsPlaying] = useState(false);
@@ -61,9 +61,16 @@ const SoundTest = ({ children }: SoundTestProps): ReactElement => {
         }}
       >
         {children}
-        <Typography variant="body1">
+        <span
+          data-testid="soundTestLabel"
+          className={
+            isFromMeetingRoom
+              ? 'text-vera-heading-4 font-vera-body-base md:text-[1.125rem] md:leading-6'
+              : 'text-vera-body-base'
+          }
+        >
           {!audioIsPlaying ? t('soundTest.start') : t('soundTest.stop')}
-        </Typography>
+        </span>
       </MenuItem>
     </ClickAwayListener>
   );

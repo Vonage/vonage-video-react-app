@@ -188,6 +188,7 @@
   "unknown.device": "Unbekanntes Gerät",
   "user.unknown": "unbekannter Benutzer",
   "user.you": "Sie",
+  "waitingRoom.devices.noDevicesFound": "Keine Geräte gefunden",
   "waitingRoom.title": "Vorbereitung zum Beitreten",
   "waitingRoom.user.input.title": "Geben Sie Ihren Namen ein",
   "waitingRoom.user.input.label": "Name",

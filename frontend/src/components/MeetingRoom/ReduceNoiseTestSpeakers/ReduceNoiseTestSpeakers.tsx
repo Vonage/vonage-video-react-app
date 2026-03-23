@@ -102,7 +102,7 @@ const ReduceNoiseTestSpeakers = (): ReactElement | false => {
             </IconButton>
           </MenuItem>
         )}
-        <SoundTest>
+        <SoundTest isFromMeetingRoom>
           <Box sx={{ mr: 1.5 }}>
             <VividIcon
               customSize={-4}
