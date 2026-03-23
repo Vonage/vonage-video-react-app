@@ -128,6 +128,7 @@ contextBridge.exposeInMainWorld('electron', {
   isElectron: true,
   openExternal: (url) => ipcRenderer.send('open-external', url),
   copyToClipboard: (text) => ipcRenderer.invoke('clipboard-write', text),
+  checkForUpdates: () => ipcRenderer.invoke('check-for-updates'),
   desktopCapturer: {
     getSources: (opts) => ipcRenderer.invoke('desktop-capturer-get-sources', opts),
   },
@@ -197,6 +198,44 @@ yarn build:electron
 ```
 
 This runs `scripts/electronPackage.ts` which builds everything and then invokes `electron-builder` to produce platform-specific installers.
+
+## Electron Version Compatibility
+
+The code is **version-adaptive** — it detects the Electron major version at startup (`ELECTRON_MAJOR`) and adapts API calls accordingly. This ensures the app works across a wide range of Electron versions without code changes.
+
+### Tested Versions
+
+| Electron | Chromium | Node | Status |
+|---|---|---|---|
+| 36.9.5 | 128 | 20.18 | ✅ All features working |
+| 39.8.3 | 134 | 22.x | ✅ All features working |
+| 41.0.3 | 136 | 24.x | ✅ All features working |
+
+### Version-Specific Adaptations
+
+- **Electron 39+**: `setDisplayMediaRequestHandler` requires `{ useSystemPicker: false }` as a second argument to use the custom picker instead of the OS-level system picker (which became the default in Electron 39).
+- **Electron 39+**: Permission request handler callback patterns differ; the code branches based on `ELECTRON_MAJOR`.
+- **macOS 14.2+ / Electron 39+**: `NSAudioCaptureUsageDescription` is added to `Info.plist` during dev-mode patching to support the CoreAudio Tap API used for desktop audio capture.
+- **All versions**: `electron-updater` is dynamically imported (no top-level import) so the app starts cleanly even if the package is unavailable.
+- **Screen Recording pre-check**: The code always attempts `desktopCapturer.getSources()` rather than bailing out when `systemPreferences.getMediaAccessStatus('screen')` reports `'denied'` — macOS TCC can report stale status after Electron binary swaps (e.g. version upgrades).
+- **`setDisplayMediaRequestHandler`**: Runtime feature-checked before use. If unavailable (unlikely in modern Electron), the app falls back to Chrome's built-in picker.
+
+### Upgrading Electron
+
+To test with a different Electron version:
+
+```bash
+# Install a specific version
+rm -rf node_modules/electron && yarn add electron@41.0.3 --dev
+
+# Reset macOS Screen Recording permission (new binary = new TCC entry)
+tccutil reset ScreenCapture com.github.electron
+
+# Launch and re-grant Screen Recording in System Settings when prompted
+yarn dev:electron
+```
+
+**Important**: After swapping Electron versions on macOS, you must re-grant Screen Recording permission. macOS ties TCC permissions to the binary hash — a different Electron version has a different binary.
 
 ## What Did NOT Need Changes
 
