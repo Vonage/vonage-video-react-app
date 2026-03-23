@@ -90,14 +90,14 @@ const AudioIndicator = ({
         >
           {hasAudio ? (
             <VividIcon
-              customSize={-6}
+              customSize={-5}
               name="microphone-2-solid"
               data-testid="MicIcon"
               sx={sxProperties}
             />
           ) : (
             <VividIcon
-              customSize={-6}
+              customSize={-5}
               name="mic-mute-solid"
               sx={{
                 ...sxProperties,

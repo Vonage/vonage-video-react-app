@@ -2,7 +2,7 @@
 
 export ENABLE_REPORT_ISSUE=true
 export I18N_FALLBACK_LANGUAGE='en'
-export I18N_SUPPORTED_LANGUAGES='en|en-US|es|es-MX|it'
+export I18N_SUPPORTED_LANGUAGES='en|en-US|es|es-MX|it|de'
 export ALLOW_BACKGROUND_EFFECTS=true
 export ALLOW_CAMERA_CONTROL=true
 export ALLOW_VIDEO_ON_JOIN=true

@@ -26,7 +26,6 @@ const ReenterRoomButton = ({ roomName }: ReenterRoomButtonProps): ReactElement |
   return (
     roomName && (
       <Button
-        sx={{ mb: 3 }}
         startIcon={<VividIcon name="enter-line" customSize={-5} />}
         variant="contained"
         data-testid="reenterButton"

@@ -161,11 +161,20 @@ class VonageVideoClient extends EventEmitter<VonageVideoClientEvents> {
           });
         });
 
-      console.warn('[SUBSCRIBER] Subscribing attempt for stream:', streamId);
+      frontendLogger.log('vonageVideoClient: subscribe attempt to stream', {
+        streamId,
+        sessionId: this.sessionId,
+        connectionId: this.connectionId,
+      });
 
       await idempotentCallbackWithRetry(() => subscribe());
 
-      console.warn('[SUBSCRIBER] Subscribing succeeded for stream:', streamId);
+      frontendLogger.log('vonageVideoClient: subscribed to stream', {
+        streamId,
+        sessionId: this.sessionId,
+        connectionId: this.connectionId,
+      });
+
       if (isScreenshare) {
         this.emit('screenshareStreamCreated');
       }
@@ -174,10 +183,6 @@ class VonageVideoClient extends EventEmitter<VonageVideoClientEvents> {
       const isRecoverableError = this.isRecoverableSubscriptionError(syncError);
 
       if (isRecoverableError) {
-        console.warn(
-          '[SUBSCRIBER] Recoverable subscription error - stream likely destroyed:',
-          syncError
-        );
         // Don't emit subscriptionError for recoverable errors
         // The stream was likely destroyed before subscription completed (e.g., user refreshed)
         return;
@@ -241,12 +246,20 @@ class VonageVideoClient extends EventEmitter<VonageVideoClientEvents> {
         subscriber,
       };
 
-      console.warn(`SubscriberVideoElementCreated ${streamId}`);
+      frontendLogger.log('vonageVideoClient: subscriber video element created', {
+        streamId,
+        sessionId: this.sessionId,
+        connectionId: this.connectionId,
+      });
       this.emit('subscriberVideoElementCreated', subscriberWrapper);
     });
 
     subscriber.on('destroyed', () => {
-      console.warn(`subscriberDestroyed ${streamId}`);
+      frontendLogger.log('vonageVideoClient: subscriber destroyed', {
+        streamId,
+        sessionId: this.sessionId,
+        connectionId: this.connectionId,
+      });
       this.emit('subscriberDestroyed', streamId);
     });
 
@@ -351,8 +364,7 @@ class VonageVideoClient extends EventEmitter<VonageVideoClientEvents> {
    * @private
    */
   private handleReconnecting = () => {
-    frontendLogger.log('CallReconnecting', {
-      eventSource: 'vonageVideoClient.handleReconnecting',
+    frontendLogger.log('vonageVideoClient: is reconnecting', {
       sessionId: this.sessionId,
       connectionId: this.connectionId,
       partnerId: this.credential.apiKey,
@@ -366,8 +378,7 @@ class VonageVideoClient extends EventEmitter<VonageVideoClientEvents> {
    * @private
    */
   private handleReconnected = () => {
-    frontendLogger.log('CallReconnected', {
-      eventSource: 'vonageVideoClient.handleReconnected',
+    frontendLogger.log('vonageVideoClient: reconnected', {
       sessionId: this.sessionId,
       connectionId: this.connectionId,
       partnerId: this.credential.apiKey,
@@ -385,8 +396,7 @@ class VonageVideoClient extends EventEmitter<VonageVideoClientEvents> {
     const sessionId = this.sessionId;
     const connectionId = this.connectionId;
 
-    frontendLogger.log('CallEnded', {
-      eventSource: 'vonageVideoClient.handleSessionDisconnected',
+    frontendLogger.log('vonageVideoClient: handle session disconnected', {
       reason,
       sessionId,
       connectionId,
@@ -500,7 +510,6 @@ class VonageVideoClient extends EventEmitter<VonageVideoClientEvents> {
         // the following is needed for the local subscriber to be able to receive captions
         // More information: https://developer.vonage.com/en/video/guides/live-caption#receiving-your-own-live-captions
         if (publisher.stream) {
-          console.warn('[PUBLISHER] autosubscribe user to own captions stream');
           this.hiddenSubscriber =
             this.clientSession?.subscribe(publisher.stream, document.createElement('div'), {
               audioVolume: 0,
