@@ -17,6 +17,6 @@ describe('ArchiveListItem', () => {
     render(<ArchiveListItem archive={pendingArchive} archiveCount={1} archiveIndex={0} />);
 
     expect(screen.getByText('We are processing your recording')).toBeVisible();
-    expect(screen.getByText('Please wait a few seconds to download your recording')).toBeVisible();
+    expect(screen.getByText('Wait a few seconds to download your recording')).toBeVisible();
   });
 });
