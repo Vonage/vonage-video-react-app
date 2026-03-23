@@ -43,6 +43,7 @@ const LandingPageWelcome = (): ReactElement => {
     >
       <Box
         sx={{
+          pl: { xs: 3, sm: 0 },
           pb: { xs: 0, md: 5 },
           color: theme.colors.textSecondary,
           display: 'flex',

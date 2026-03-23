@@ -5,17 +5,15 @@ import Box from '@mui/material/Box';
 import useTheme from '@ui/theme';
 import usePublisherContext from '../../hooks/usePublisherContext';
 import PopupAlert from '../../components/MeetingRoom/PopupAlert';
+import type { ReactElement } from 'react';
+import Box, { BoxProps } from '@mui/material/Box';
+import ConnectionAlert from '../../components/MeetingRoom/ConnectionAlert';
 import Toolbar from '../../components/MeetingRoom/Toolbar';
-import useSessionContext from '../../hooks/useSessionContext';
-import useScreenShare from '../../hooks/useScreenShare';
 import VideoTileCanvas from '../../components/MeetingRoom/VideoTileCanvas';
 import SmallViewportHeader from '../../components/MeetingRoom/SmallViewportHeader';
 import EmojisOrigin from '../../components/MeetingRoom/EmojisOrigin';
 import RightPanel from '../../components/MeetingRoom/RightPanel';
-import useRoomName from '../../hooks/useRoomName';
-import isValidRoomName from '../../utils/isValidRoomName';
 import CaptionsBox from '../../components/MeetingRoom/CaptionsButton/CaptionsBox';
-import useIsSmallViewport from '../../hooks/useIsSmallViewport';
 import CaptionsError from '../../components/MeetingRoom/CaptionsError';
 import useBackgroundPublisherContext from '../../hooks/useBackgroundPublisherContext';
 import { DEVICE_ACCESS_STATUS, RECORDING_POPUP_TIMEOUT_MS } from '@utils/constants';
@@ -25,6 +23,8 @@ import { env } from '../../env';
 import RecordingPopUpIndicator from '@components/MeetingRoom/RecordingPopupIndicator';
 import useMountEffect from '@web/hooks/useMountEffect';
 import classNames from 'classnames';
+import useMeetingRoom from '../../hooks/useMeetingRoom';
+import { twMerge } from 'tailwind-merge';
 
 /**
  * MeetingRoom Component
@@ -35,40 +35,22 @@ import classNames from 'classnames';
  * - A toolbar to control user media, adjust room properties, and set viewing options.
  * @returns {ReactElement} - The meeting room.
  */
-const MeetingRoom = (): ReactElement => {
-  const { t } = useTranslation();
-  const theme = useTheme();
-  const navigate = useNavigate();
-  const location = useLocation();
-  const roomName = useRoomName();
-  const {
-    user: {
-      defaultSettings: { name },
-    },
-  } = useUserContext();
-  const {
-    publisher,
-    publish,
-    quality,
-    initializeLocalPublisher,
-    publishingError,
-    isVideoEnabled,
-    publisherOptions,
-  } = usePublisherContext();
+type MeetingRoomProps = BoxProps & {
+  fullSize?: boolean;
+};
 
+const MeetingRoom = ({
+  fullSize = false,
+  className,
+  // ...props
+}: MeetingRoomProps): ReactElement => {
   const {
-    initBackgroundLocalPublisher,
-    publisher: backgroundPublisher,
-    accessStatus,
-  } = useBackgroundPublisherContext();
-
-  const {
-    joinRoom,
-    subscriptionError,
-    subscriberWrappers,
-    connected,
-    disconnect,
-    reconnecting,
+    t,
+    isSmallViewport,
+    isSharingScreen,
+    screensharingPublisher,
+    screenshareVideoElement,
+    toggleShareScreen,
     rightPanelActiveTab,
     toggleChat,
     toggleParticipantList,
@@ -86,8 +68,13 @@ const MeetingRoom = (): ReactElement => {
   const [isUserCaptionsEnabled, setIsUserCaptionsEnabled] = useState<boolean>(false);
   const [captionsErrorResponse, setCaptionsErrorResponse] = useState<string | null>('');
   const captionsState = {
+    subscriberWrappers,
+    reconnecting,
+    quality,
+    isVideoEnabled,
+    isRecording,
     isUserCaptionsEnabled,
-    setIsUserCaptionsEnabled,
+    captionsErrorResponse,
     setCaptionsErrorResponse,
   };
 
@@ -153,6 +140,8 @@ const MeetingRoom = (): ReactElement => {
     !!archiveId && (archiveIdStartedBySelf === null || archiveId !== archiveIdStartedBySelf);
 
   const isRecording = !!archiveId;
+    captionsState,
+  } = useMeetingRoom();
 
   const [latestNotifiedArchiveId, setLatestNotifiedArchiveId] = useState<string | null>(null);
 
@@ -163,12 +152,12 @@ const MeetingRoom = (): ReactElement => {
   return (
     <Box
       data-testid="meetingRoom"
-      sx={{
-        height: 'calc(100dvh - 80px)',
-        width: '100vw',
-        backgroundColor: theme.colors.darkBackground,
-      }}
-      className={classNames({ recording: isRecording })}
+      className={classNames(
+        twMerge('h-[calc(100dvh-80px)] w-screen bg-vera-dark-background', className),
+        {
+          recording: isRecording,
+        }
+      )}
     >
       {isSmallViewport && <SmallViewportHeader />}
 
@@ -177,6 +166,7 @@ const MeetingRoom = (): ReactElement => {
         screensharingPublisher={screensharingPublisher}
         screenshareVideoElement={screenshareVideoElement}
         isRightPanelOpen={rightPanelActiveTab !== 'closed'}
+        fullSize={fullSize}
       />
 
       <RightPanel activeTab={rightPanelActiveTab} handleClose={closeRightPanel} />
@@ -236,95 +226,5 @@ const MeetingRoom = (): ReactElement => {
     </Box>
   );
 };
-
-/**
- *  If the user is unable to publish, we redirect them to the goodbye page.
- * This prevents users from subscribing to other participants in the room, and being unable to communicate with them.
- * @param {PublishingErrorType | null} publishingError - The publishing error object or null if no error.
- */
-function useRedirectOnPublisherError({
-  publishingError,
-  reconnecting,
-}: {
-  publishingError: PublishingErrorType | null;
-  reconnecting: boolean | null;
-}) {
-  const navigate = useNavigate();
-  const roomName = useRoomName();
-
-  const maybeRedirect = useEffectEvent(() => {
-    if (!publishingError) {
-      return;
-    }
-
-    const isBrowserOnline = (() => {
-      if (typeof navigator === 'undefined') return true;
-      return navigator.onLine;
-    })();
-
-    if (reconnecting === true || isBrowserOnline === false) {
-      // Network changes are often transient; don't redirect during reconnection/offline.
-      return;
-    }
-
-    const { header, caption } = publishingError;
-
-    navigate('/goodbye', {
-      state: {
-        header,
-        caption,
-        roomName,
-      },
-    });
-  });
-
-  useEffect(() => {
-    maybeRedirect();
-  }, [publishingError, reconnecting]);
-}
-
-/**
- *  If the user is unable to subscribe, we redirect them to the goodbye page.
- * This prevents users from subscribing to other participants in the room, and being unable to communicate with them.
- * @param {Error | null} subscriberError - The subscriber error object or null if no error.
- */
-function useRedirectOnSubscriberError({
-  subscriberError,
-  reconnecting,
-}: {
-  subscriberError: Error | null;
-  reconnecting: boolean | null;
-}) {
-  const navigate = useNavigate();
-  const roomName = useRoomName();
-  const { t } = useTranslation();
-
-  const maybeRedirect = useEffectEvent(() => {
-    if (!subscriberError) {
-      return;
-    }
-
-    const isBrowserOnline = (() => {
-      if (typeof navigator === 'undefined') return true;
-      return navigator.onLine;
-    })();
-
-    if (reconnecting === true || isBrowserOnline === false) {
-      return;
-    }
-
-    navigate('/goodbye', {
-      state: {
-        header: t('subscribingErrors.blocked.title'),
-        caption: t('subscribingErrors.blocked.message'),
-        roomName,
-      },
-    });
-  });
-
-  useEffect(() => {
-    maybeRedirect();
-  }, [subscriberError, reconnecting]);
-}
 
 export default MeetingRoom;

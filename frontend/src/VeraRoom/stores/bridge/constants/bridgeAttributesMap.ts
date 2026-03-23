@@ -18,6 +18,16 @@ const bridgeAttributesMap = {
     type: 'string',
     default: '',
   }),
+
+  /**
+   * BCP-47 language tag for the UI locale (e.g. 'en', 'es', 'it').
+   * Falls back to the browser's detected language when not provided.
+   */
+  language: new BridgeAttributeMeta({
+    key: 'language',
+    type: 'string',
+    default: '',
+  }),
 } as const;
 
 export default bridgeAttributesMap;

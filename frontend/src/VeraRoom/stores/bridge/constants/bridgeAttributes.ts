@@ -1,3 +1,3 @@
-const bridgeAttributes = ['entry-point', 'session-identifier'] as const;
+const bridgeAttributes = ['entry-point', 'session-identifier', 'language'] as const;
 
 export default bridgeAttributes;

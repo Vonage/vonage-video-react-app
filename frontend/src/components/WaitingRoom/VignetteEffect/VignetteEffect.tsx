@@ -19,7 +19,7 @@ const VignetteEffect = (): ReactElement => {
         position: 'absolute',
         height: `${VIDEO_CONTAINER_HEIGHT_WR + 1}px`,
         width: '100%',
-        boxShadow: `inset 0px 64px 30px -20px ${theme.colors.secondary}66, inset 0px -64px 30px -20px ${theme.colors.secondary}66`,
+        boxShadow: `inset 0px 100px 30px -20px ${theme.colors.secondary}66, inset 0px -100px 30px -20px ${theme.colors.secondary}66`,
       }}
     />
   );
