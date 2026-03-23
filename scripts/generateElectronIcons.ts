@@ -15,6 +15,12 @@
  *   electron/assets/tray-template@2x.png    32×32   (macOS Retina)
  *   electron/assets/app-icon.png           512×512  (app window icon / electron-builder)
  *   electron/assets/app-icon.icns                   (macOS bundle icon — replaces electron.icns)
+ *
+ * Note: electron/assets/app-icon.ico (Windows application icon) is a committed
+ * asset generated separately. The ICO format requires special tooling that is
+ * not available cross-platform without additional dependencies. To regenerate
+ * it, use an online PNG-to-ICO converter or a tool like ImageMagick:
+ *   magick electron/assets/app-icon.png -define icon:auto-resize=256,128,64,48,32,16 electron/assets/app-icon.ico
  */
 
 import { execSync } from 'child_process';

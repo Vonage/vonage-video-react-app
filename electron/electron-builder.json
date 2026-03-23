@@ -56,11 +56,11 @@
     ]
   },
   "win": {
-    "icon": "electron/assets/app-icon.png",
+    "icon": "electron/assets/app-icon.ico",
     "target": [
       {
         "target": "nsis",
-        "arch": ["x64"]
+        "arch": ["x64", "arm64"]
       }
     ]
   },
@@ -69,7 +69,7 @@
     "target": [
       {
         "target": "AppImage",
-        "arch": ["x64"]
+        "arch": ["x64", "arm64"]
       }
     ],
     "category": "Video"
