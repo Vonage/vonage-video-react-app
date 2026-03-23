@@ -4,7 +4,6 @@ import { useTranslation } from 'react-i18next';
 import useTheme from '@ui/theme';
 import VividIcon from '@components/VividIcon';
 import { useDistinctLabelMediaDevices } from '@ui/hooks';
-import mergeDefaultDeviceLabel from '@web/helpers/mergeDefaultDeviceLabel';
 import mediaDevices$ from '@core/stores/devices';
 import { env } from '../../../env';
 
@@ -21,7 +20,7 @@ export type InputAudioDevicesProps = {
  * @returns {ReactElement | false} - The InputAudioDevices component.
  */
 const InputAudioDevices = ({ handleToggle }: InputAudioDevicesProps): ReactElement | false => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const theme = useTheme();
 
   // Use store's selection as source of truth, not publisher.getAudioSource() which can be stale
@@ -29,12 +28,11 @@ const InputAudioDevices = ({ handleToggle }: InputAudioDevicesProps): ReactEleme
 
   const { devices: audioInputDevices, systemDefaultDeviceId } = useDistinctLabelMediaDevices(
     'audioinput',
-    (devices) => {
-      const withFallback = devices.map((d) => ({ ...d, label: d.label || t('unknown.device') }));
-      return mergeDefaultDeviceLabel({
-        devices: withFallback,
-        systemDefaultLabel: t('devices.audio.defaultLabel'),
-      });
+    (devices) => devices.map((d) => ({ ...d, label: d.label ?? t('unknown.device') })),
+    {
+      systemDefaultLabel: t('devices.defaultLabel'),
+      translate: t,
+      dependencies: [i18n.language],
     }
   );
 

@@ -18,6 +18,13 @@
     "src/**/*.spec.tsx",
     "src/**/*.ts",
     "src/**/*.tsx",
+    "src/**/*.json",
+    "../common/src/**/*.ts",
+    "../common/src/**/*.tsx",
+    "../common/srcBrowser/**/*.ts",
+    "../common/srcBrowser/**/*.tsx",
+    "../common/testBrowser/**/*.ts",
+    "../common/testBrowser/**/*.tsx",
     "../common/test/**/*.ts",
     "../core/src/**/*.ts"
   ]

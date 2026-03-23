@@ -8,7 +8,6 @@ import MenuList from '@mui/material/MenuList';
 import MenuItem from '@mui/material/MenuItem';
 import VividIcon from '@components/VividIcon';
 import { useDistinctLabelMediaDevices } from '@ui/hooks';
-import mergeDefaultDeviceLabel from '@web/helpers/mergeDefaultDeviceLabel';
 import { isSinkIdSupported } from '@web/platform';
 import mediaDevices$ from '@core/stores/devices';
 import useTheme from '@ui/theme';
@@ -28,26 +27,23 @@ export type OutputAudioDevicesProps = {
  * @returns {ReactElement | false} - The OutputAudioDevices component.
  */
 const OutputAudioDevices = ({ handleToggle }: OutputAudioDevicesProps): ReactElement | false => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const theme = useTheme();
 
   const currentAudioOutputId = mediaDevices$.useDeviceId('audiooutput');
 
-  const { devices: availableDevices, systemDefaultDeviceId } = useDistinctLabelMediaDevices(
-    'audiooutput',
-    (devices) =>
-      isSinkIdSupported()
-        ? mergeDefaultDeviceLabel({ devices, systemDefaultLabel: t('devices.audio.defaultLabel') })
-        : {
-            devices: [
-              {
-                deviceId: 'default',
-                label: t('devices.audio.defaultLabel'),
-              } as MediaDeviceInfoJSON,
-            ],
-            systemDefaultDeviceId: null,
-          }
-  );
+  const mergedOutputDevices = useDistinctLabelMediaDevices('audiooutput', undefined, {
+    systemDefaultLabel: t('devices.defaultLabel'),
+    translate: t,
+    dependencies: [i18n.language],
+  });
+
+  const { devices: availableDevices, systemDefaultDeviceId } = isSinkIdSupported()
+    ? mergedOutputDevices
+    : {
+        devices: [{ deviceId: 'default', label: t('devices.defaultLabel') } as MediaDeviceInfoJSON],
+        systemDefaultDeviceId: null,
+      };
 
   const handleChangeAudioOutput = async (deviceId: string) => {
     handleToggle();

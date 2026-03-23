@@ -1,12 +1,10 @@
-import { useMemo } from 'react';
 import type { ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
 import MenuItem from '@mui/material/MenuItem';
 import Menu from '@mui/material/Menu';
 import VividIcon from '@components/VividIcon';
 import Box from '@mui/material/Box';
-import cleanAndDedupeDeviceLabels from '@utils/cleanAndDedupeDeviceLabels/cleanAndDedupeDeviceLabels';
-import mergeDefaultDeviceLabel from '@web/helpers/mergeDefaultDeviceLabel';
+import { useDistinctLabelMediaDevices } from '@ui/hooks';
 import SoundTest from '../../SoundTest';
 import { isGetActiveAudioOutputDeviceSupported } from '@utils/util';
 import mediaDevices$ from '@core/stores/devices';
@@ -40,9 +38,7 @@ const MenuDevices = ({
   anchorEl,
   deviceChangeHandler,
 }: MenuDevicesWaitingRoomProps): ReactElement => {
-  const { t } = useTranslation();
-  const devices = mediaDevices$.useMediaDevices(mediaDeviceKind, Object.values<MediaDeviceInfo>);
-
+  const { t, i18n } = useTranslation();
   const localSource = mediaDevices$.useDeviceId(mediaDeviceKind);
 
   const handleClick = (deviceId: string) => {
@@ -50,13 +46,15 @@ const MenuDevices = ({
     onClose();
   };
 
-  const { devices: processedDevices, systemDefaultDeviceId } = useMemo(() => {
-    const cleaned = cleanAndDedupeDeviceLabels(devices);
-    return mergeDefaultDeviceLabel({
-      devices: cleaned,
-      systemDefaultLabel: t('devices.audio.defaultLabel'),
-    });
-  }, [devices, t]);
+  const { devices: processedDevices, systemDefaultDeviceId } = useDistinctLabelMediaDevices(
+    mediaDeviceKind,
+    undefined,
+    {
+      systemDefaultLabel: t('devices.defaultLabel'),
+      translate: t,
+      dependencies: [i18n.language],
+    }
+  );
 
   return (
     <Menu

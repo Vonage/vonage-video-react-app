@@ -3,6 +3,9 @@ import type { MediaDeviceInfoJSON } from '@web/types';
 import { cleanAndDedupeDeviceLabels } from './helpers';
 import { mediaDevicesMap$ } from '@core/stores/devices/observables';
 import type { Any, UseHookOptions } from 'react-global-state-hooks';
+import mergeDefaultDeviceLabel from '@web/helpers/mergeDefaultDeviceLabel';
+import type { MergeDefaultDeviceLabelResult } from '@web/helpers/mergeDefaultDeviceLabel';
+import translateMediaDeviceLabel from '@web/helpers/translateMediaDeviceLabel';
 
 /**
  * Returns media devices for a specific kind with cleaned, distinct labels.
@@ -14,6 +17,21 @@ import type { Any, UseHookOptions } from 'react-global-state-hooks';
  * @returns Array of media devices for the specified kind with cleaned labels.
  */
 function useDistinctLabelMediaDevices(kind: MediaDeviceKind): MediaDeviceInfoJSON[];
+
+/**
+ * Returns media devices with the browser's virtual "default" entry merged into the
+ * matching real device, appending systemDefaultLabel as a suffix (e.g. "- System Default").
+ *
+ * @param kind - The type of media device ('audioinput', 'videoinput', 'audiooutput').
+ * @param selector - Optional function to transform devices before the merge (e.g. label fallbacks).
+ * @param options - Must include systemDefaultLabel; the translated label for the system default device.
+ * @returns An object with the merged devices array and the systemDefaultDeviceId.
+ */
+function useDistinctLabelMediaDevices(
+  kind: MediaDeviceKind,
+  selector: ((state: MediaDeviceInfoJSON[]) => MediaDeviceInfoJSON[]) | undefined,
+  options: Options<unknown> & { systemDefaultLabel: string; translate?: (key: string) => string }
+): MergeDefaultDeviceLabelResult;
 
 /**
  * Returns a selected subset of devices for a specific kind with cleaned, distinct labels.
@@ -51,14 +69,41 @@ function useDistinctLabelMediaDevices<Selection>(
 
 function useDistinctLabelMediaDevices<Selection = MediaDeviceInfoJSON[]>(
   kind: MediaDeviceKind,
-  selector: Selector = (devices): MediaDeviceInfoJSON[] => devices,
+  selector?: Selector,
   args?: Options<unknown> | Dependencies
 ): Selection {
+  const effectiveSelector: Selector = selector ?? ((devices): MediaDeviceInfoJSON[] => devices);
   const dependencies = Array.isArray(args) ? args : [];
-  const options = Array.isArray(args) ? { dependencies } : (args ?? {});
+  const { systemDefaultLabel, translate, ...options } = Array.isArray(args)
+    ? ({ dependencies } as Options<unknown> & {
+        systemDefaultLabel?: string;
+        translate?: (key: string) => string;
+      })
+    : ((args ?? {}) as Options<unknown> & {
+        systemDefaultLabel?: string;
+        translate?: (key: string) => string;
+      });
 
   return useMediaDeviceInfoByKind$(
-    (state) => selector(cleanAndDedupeDeviceLabels(Object.values(state[kind]))),
+    (state) => {
+      const cleaned = cleanAndDedupeDeviceLabels(Object.values(state[kind]));
+      const selected = effectiveSelector(cleaned);
+      if (systemDefaultLabel !== undefined) {
+        const merged = mergeDefaultDeviceLabel({
+          devices: selected as MediaDeviceInfoJSON[],
+          systemDefaultLabel,
+        });
+        if (!translate) return merged;
+        return {
+          ...merged,
+          devices: merged.devices.map((d) => ({
+            ...d,
+            label: d.label ? translateMediaDeviceLabel({ label: d.label, translate }) : d.label,
+          })),
+        };
+      }
+      return selected;
+    },
     {
       ...options,
       dependencies: [kind, ...(options.dependencies ?? [])],

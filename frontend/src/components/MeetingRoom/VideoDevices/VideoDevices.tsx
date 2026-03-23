@@ -4,7 +4,6 @@ import useTheme from '@ui/theme';
 import { Box, Typography, MenuList, MenuItem, Tooltip, BoxProps } from '@mui/material';
 import VividIcon from '@components/VividIcon';
 import { useDistinctLabelMediaDevices } from '@ui/hooks';
-import mergeDefaultDeviceLabel from '@web/helpers/mergeDefaultDeviceLabel';
 import mediaDevices$ from '@core/stores/devices';
 import { env } from '../../../env';
 
@@ -25,7 +24,7 @@ const VideoDevices = ({
   className,
   ...boxProps
 }: VideoDevicesProps): ReactElement | false => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const theme = useTheme();
 
   // Use store's selection as source of truth, not publisher.getVideoSource() which can be stale
@@ -33,12 +32,11 @@ const VideoDevices = ({
 
   const { devices: devicesAvailable, systemDefaultDeviceId } = useDistinctLabelMediaDevices(
     'videoinput',
-    (devices) => {
-      const withFallback = devices.map((d) => ({ ...d, label: d.label ?? t('unknown.device') }));
-      return mergeDefaultDeviceLabel({
-        devices: withFallback,
-        systemDefaultLabel: t('devices.audio.defaultLabel'),
-      });
+    (devices) => devices.map((d) => ({ ...d, label: d.label ?? t('unknown.device') })),
+    {
+      systemDefaultLabel: t('devices.defaultLabel'),
+      translate: t,
+      dependencies: [i18n.language],
     }
   );
 
