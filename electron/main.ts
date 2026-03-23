@@ -99,7 +99,12 @@ function startStaticServer(): Promise<void> {
       const filePath = path.resolve(frontendDistPath, `.${urlPath}`);
 
       // Prevent path traversal — resolved path must stay inside frontendDistPath
-      if (!filePath.startsWith(frontendDistPath)) {
+      const relativePath = path.relative(frontendDistPath, filePath);
+      const isPathOutsideFrontendDist =
+        path.isAbsolute(relativePath) ||
+        relativePath === '..' ||
+        relativePath.startsWith('..' + path.sep);
+      if (isPathOutsideFrontendDist) {
         res.writeHead(403);
         res.end('Forbidden');
         return;
