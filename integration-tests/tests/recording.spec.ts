@@ -19,7 +19,7 @@ test.describe('Recording Feature', () => {
     const confirmButton = pageOne.getByTestId('popup-dialog-primary-button');
     const meetingRoom = pageOne.getByTestId('meetingRoom');
     const checkedIcon = pageOne.locator(
-      '[data-testid="smallViewportHeader"] [data-testid="RadioButtonCheckedIcon"]'
+      '[data-testid="smallViewportHeader"] [data-testid="recordingIndicator"]'
     );
     const endCallButton = pageOne.getByTestId('CallEndIcon');
     const recordingItem = pageOne.getByTestId('archive-list-item-title-0');

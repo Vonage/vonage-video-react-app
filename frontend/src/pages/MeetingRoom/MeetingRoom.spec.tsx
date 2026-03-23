@@ -198,6 +198,19 @@ describe('MeetingRoom', () => {
     });
   });
 
+  it('renders the recording indicator on desktop while recording is active', async () => {
+    render(<MeetingRoom />, {
+      sessionContext: {
+        initialValue: {
+          archiveId: 'archive-123',
+        },
+      },
+    });
+
+    expect(await screen.findByTestId('meetingRoomRecordingIndicatorContainer')).toBeVisible();
+    expect(screen.getByTestId('recordingIndicator')).toBeVisible();
+  });
+
   it('should call joinRoom on render only once', async () => {
     const { sessionContext, rerender } = render(<MeetingRoom />, {
       sessionContext: {

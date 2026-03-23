@@ -1,6 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it, Mock, vi } from 'vitest';
 import { render as renderBase, screen } from '@testing-library/react';
 import { ReactElement, useRef } from 'react';
+import userEvent from '@testing-library/user-event';
 import { isMobile } from '@web/platform';
 import isReportIssueEnabled from '@utils/isReportIssueEnabled';
 import { makeTestProvider, providers, ProviderOptions } from '@test/providers';
@@ -88,6 +89,16 @@ describe('ToolbarOverflowMenu', () => {
     expect(screen.queryByTestId('report-issue-button')).not.toBeInTheDocument();
     expect(screen.getByTestId('participant-list-button')).toBeVisible();
     expect(screen.getByTestId('chat-button')).toBeVisible();
+  });
+
+  it('closes the overflow menu after changing the layout', async () => {
+    const user = userEvent.setup();
+
+    render(<TestComponent defaultOpen />);
+
+    await user.click(screen.getByTestId('layout-button'));
+
+    expect(mockHandleClickAway).toHaveBeenCalled();
   });
 
   describe('ScreenSharingButton', () => {
