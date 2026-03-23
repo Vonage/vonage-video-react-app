@@ -14,4 +14,16 @@ describe('FooterLinks', () => {
     const footerLinks = screen.getByTestId('footer-links');
     expect(footerLinks).toBeInTheDocument();
   });
+
+  it('displays the app version', () => {
+    render(
+      <MemoryRouter>
+        <FooterLinks />
+      </MemoryRouter>
+    );
+
+    const versionElement = screen.getByTestId('app-version');
+    expect(versionElement).toBeInTheDocument();
+    expect(versionElement.textContent).toMatch(/^v\d+\.\d+\.\d+ \(SDK \d+\.\d+\.\d+\)$/);
+  });
 });

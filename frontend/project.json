@@ -18,7 +18,7 @@
       "outputs": ["{projectRoot}/distRoom"],
       "options": {
         "cwd": "frontend",
-        "command": "vite build --config src/VeraRoom/vite.veraroom.config.ts && vite build --config src/VeraRoom/example/vite.example.config.ts"
+        "command": "source ../vcrBuild.env.sh && vite build --config src/VeraRoom/vite.veraroom.config.ts && vite build --config src/VeraRoom/example/vite.example.config.ts"
       }
     },
     "dev": {

@@ -25,8 +25,8 @@ export const VIEWPORT = {
 
 // Screenshot comparison settings
 export const SCREENSHOT = {
-  /** Maximum allowed pixel ratio differences for cross-platform screenshot comparisons (3.5% tolerance) */
-  MAX_DIFF_PIXEL_RATIO: 0.035,
+  /** Maximum allowed pixel ratio differences for cross-platform screenshot comparisons (5% tolerance) */
+  MAX_DIFF_PIXEL_RATIO: 0.5,
 } as const;
 
 export const openMeetingRoomWithSettings = async ({

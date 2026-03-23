@@ -14,6 +14,7 @@ import { env } from '../../env';
 const languageOptions: LanguageOption[] = [
   { code: 'en', name: 'English', flag: 'flag-united-kingdom' },
   { code: 'en-US', name: 'English (US)', flag: 'flag-united-states' },
+  { code: 'de', name: 'Deutsch', flag: 'flag-germany' },
   { code: 'it', name: 'Italiano', flag: 'flag-italy' },
   { code: 'es', name: 'Español', flag: 'flag-spain' },
   { code: 'es-MX', name: 'Español (México)', flag: 'flag-mexico' },

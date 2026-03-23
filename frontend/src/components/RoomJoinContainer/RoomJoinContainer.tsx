@@ -1,13 +1,11 @@
 import { useNavigate } from 'react-router-dom';
 import { ReactElement } from 'react';
-import Typography from '@mui/material/Typography';
 import { useTranslation } from 'react-i18next';
 import Card from '@ui/Card';
 import generateRoomName from '../../utils/generateRoomName';
 import NewRoomButton from '../NewRoomButton';
 import JoinContainerSeparator from '../JoinContainerSeparator';
 import JoinExistingRoom from '../JoinExistingRoom';
-import useTheme from '@ui/theme';
 
 /**
  * RoomJoinContainer Component
@@ -17,7 +15,6 @@ import useTheme from '@ui/theme';
  */
 const RoomJoinContainer = (): ReactElement => {
   const { t } = useTranslation();
-  const theme = useTheme();
   const navigate = useNavigate();
   const randomRoom = generateRoomName();
 
@@ -27,14 +24,14 @@ const RoomJoinContainer = (): ReactElement => {
 
   return (
     <Card component="form" className="lg:max-w-125">
-      <Typography sx={{ mb: 2, typography: 'h6', color: theme.colors.textSecondary }}>
+      <h6 className="text-xl font-medium font-vera-plain text-vera-secondary mb-4">
         {t('button.startNewRoom')}
-      </Typography>
+      </h6>
       <NewRoomButton handleNewRoom={handleNewRoom} />
       <JoinContainerSeparator />
-      <Typography sx={{ mb: 2, typography: 'h6', color: theme.colors.textSecondary }}>
+      <h6 className="text-xl font-medium font-vera-plain text-vera-secondary mb-4">
         {t('button.joinExistingMeeting')}
-      </Typography>
+      </h6>
       <JoinExistingRoom />
     </Card>
   );

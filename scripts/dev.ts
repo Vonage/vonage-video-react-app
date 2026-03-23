@@ -1,7 +1,6 @@
 #!/usr/bin/env npx tsx
 
-import { execSync, spawn } from 'child_process';
-import * as path from 'node:path';
+import { execSync } from 'child_process';
 
 const args = process.argv.slice(2);
 
@@ -35,38 +34,15 @@ function devBackend(): void {
 }
 
 /**
- * Builds VeraRoom and serves the example page with http-server.
+ * Runs Storybook focused on VeraRoom component.
  */
 function devRoom(): void {
-  // Build
-  console.log('\n📦 Building VeraRoom...\n');
-  runCommand('nx run frontend:build-room');
+  const storyPath = '/story/veraroom-veraroomelement--default';
 
-  const distRoomPath = path.resolve(__dirname, '../frontend/distRoom');
+  console.log('\n📚 Starting Storybook for VeraRoom...\n');
+  console.log(`🌐 Opening: http://localhost:6006/?path=${storyPath}\n`);
 
-  // Start http-server on port 3345
-  const server = spawn('npx', ['http-server', distRoomPath, '-c-1', '-p', '3345'], {
-    stdio: ['inherit', 'pipe', 'inherit'],
-    shell: true,
-  });
-
-  server.stdout?.on('data', (data: Buffer) => {
-    const output = data.toString();
-    process.stdout.write(output);
-
-    // Print URL once server is ready
-    if (output.includes('Available on')) {
-      console.log('\n' + '='.repeat(50));
-      console.log('🌐 VeraRoom Example:');
-      console.log('   http://localhost:3345/example.html');
-      console.log('='.repeat(50) + '\n');
-    }
-  });
-
-  server.on('error', (err) => {
-    console.error('Failed to start http-server:', err);
-    process.exit(1);
-  });
+  runCommand(`nx run frontend:storybook -- --initial-path="${storyPath}"`);
 }
 
 /**
@@ -76,13 +52,13 @@ function devRoom(): void {
  * - No args: Run both frontend and backend in dev mode
  * - frontend: Run only frontend dev server
  * - backend: Run only backend dev server
- * - room: Build VeraRoom and serve example.html
+ * - room: Run Storybook focused on VeraRoom component
  *
  * Usage:
  * - yarn dev           (run frontend and backend)
  * - yarn dev frontend  (run only frontend)
  * - yarn dev backend   (run only backend)
- * - yarn dev room      (build and serve VeraRoom example)
+ * - yarn dev room      (run Storybook for VeraRoom)
  */
 function main(): void {
   const [target] = args;

@@ -47,6 +47,7 @@ const ScreenshareVideoTile = forwardRef(
     ref: ForwardedRef<HTMLDivElement>
   ): ReactElement => {
     const theme = useTheme();
+    const isZoomSupported = hasMediaProcessorSupport();
     // Zoom state management
     const [zoomLevel, setZoomLevel] = useState<number>(1);
     const [panOffset, setPanOffset] = useState<{ x: number; y: number }>({
@@ -69,6 +70,8 @@ const ScreenshareVideoTile = forwardRef(
     }, [zoomLevel]);
 
     const onWheel = (event: WheelEvent<HTMLDivElement>) => {
+      if (!isZoomSupported) return;
+
       event.preventDefault();
 
       const isWheelPositive = event.deltaY > 0;
@@ -215,7 +218,7 @@ const ScreenshareVideoTile = forwardRef(
         />
         {children}
 
-        {hasMediaProcessorSupport() && (
+        {isZoomSupported && (
           <ZoomIndicator
             resetZoom={resetZoom}
             zoomLevel={zoomLevel}

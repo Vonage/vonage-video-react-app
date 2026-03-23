@@ -94,7 +94,7 @@ const AddBackgroundEffectLayout = ({
         title={t('backgroundEffects.addBackground')}
         isSelected={backgroundSelected === 'add-background'}
         onClick={handleClick}
-        icon={<VividIcon name="gallery-line" customSize={-2} />}
+        icon={<VividIcon name="add-image-line" customSize={-2} style={{ marginLeft: '2px' }} />}
       />
 
       <Snackbar

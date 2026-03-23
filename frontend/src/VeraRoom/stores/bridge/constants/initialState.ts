@@ -7,6 +7,7 @@ function initialValue() {
   } = {
     entryPoint: bridgeAttributesMap['entry-point'].value,
     sessionIdentifier: bridgeAttributesMap['session-identifier'].value,
+    language: bridgeAttributesMap['language'].value,
   };
 
   return {

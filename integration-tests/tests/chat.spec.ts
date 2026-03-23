@@ -63,12 +63,14 @@ test.describe('chat', () => {
     // Send button is greyed out when text box empty
     await expect(pageOne.getByTestId('SendIcon')).toHaveCSS('color', 'rgb(230, 230, 230)');
 
-    await pageOne.getByPlaceholder('Send a message').fill('Hi there, welcome to the meeting!');
+    const chatInputOne = pageOne.getByPlaceholder('Send a message');
+
+    await chatInputOne.fill('Hi there, welcome to the meeting!');
 
     // Send button is blue when text in box
     await expect(pageOne.getByTestId('SendIcon')).toHaveCSS('color', 'rgb(153, 65, 255)');
 
-    await pageOne.getByTestId('SendIcon').click();
+    await chatInputOne.press('Enter');
 
     // check unread notification is present on page two
     if (isMobile) {
@@ -96,8 +98,10 @@ test.describe('chat', () => {
       'Hi there, welcome to the meeting!'
     );
     await expect(pageTwo.getByTestId('chat-msg-participant-name')).toHaveText('User One');
-    await pageTwo.getByPlaceholder('Send a message').fill('Thanks!');
-    await pageTwo.getByTestId('SendIcon').click();
+    const chatInputTwo = pageTwo.getByPlaceholder('Send a message');
+
+    await chatInputTwo.fill('Thanks!');
+    await chatInputTwo.press('Enter');
 
     const messageTwo = await pageTwo.getByTestId('chat-message').nth(1);
 
