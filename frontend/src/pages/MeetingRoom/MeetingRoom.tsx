@@ -1,13 +1,6 @@
-import { useEffect, ReactElement, useState, useEffectEvent } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
-import { useTranslation } from 'react-i18next';
-import Box from '@mui/material/Box';
-import useTheme from '@ui/theme';
-import usePublisherContext from '../../hooks/usePublisherContext';
-import PopupAlert from '../../components/MeetingRoom/PopupAlert';
 import type { ReactElement } from 'react';
 import Box, { BoxProps } from '@mui/material/Box';
-import ConnectionAlert from '../../components/MeetingRoom/ConnectionAlert';
+import PopupAlert from '@components/MeetingRoom/PopupAlert';
 import Toolbar from '../../components/MeetingRoom/Toolbar';
 import VideoTileCanvas from '../../components/MeetingRoom/VideoTileCanvas';
 import SmallViewportHeader from '../../components/MeetingRoom/SmallViewportHeader';
@@ -15,17 +8,12 @@ import EmojisOrigin from '../../components/MeetingRoom/EmojisOrigin';
 import RightPanel from '../../components/MeetingRoom/RightPanel';
 import CaptionsBox from '../../components/MeetingRoom/CaptionsButton/CaptionsBox';
 import CaptionsError from '../../components/MeetingRoom/CaptionsError';
-import useBackgroundPublisherContext from '../../hooks/useBackgroundPublisherContext';
-import { DEVICE_ACCESS_STATUS, RECORDING_POPUP_TIMEOUT_MS } from '@utils/constants';
-import type { PublishingErrorType } from '../../Context/PublisherProvider/usePublisher/usePublisher';
-import useUserContext from '../../hooks/useUserContext';
-import { env } from '../../env';
-import RecordingPopUpIndicator from '@components/MeetingRoom/RecordingPopupIndicator';
-import useMountEffect from '@web/hooks/useMountEffect';
 import classNames from 'classnames';
 import useMeetingRoom from '../../hooks/useMeetingRoom';
 import { twMerge } from 'tailwind-merge';
 import RecordingIndicator from '../../components/MeetingRoom/RecordingIndicator';
+import RecordingPopUpIndicator from '@components/MeetingRoom/RecordingPopupIndicator';
+import { RECORDING_POPUP_TIMEOUT_MS } from '@utils/constants';
 
 /**
  * MeetingRoom Component
@@ -58,17 +46,6 @@ const MeetingRoom = ({
     toggleBackgroundEffects,
     closeRightPanel,
     toggleReportIssue,
-    archiveId,
-    archiveIdStartedBySelf,
-    recordingAlreadyNotified,
-  } = useSessionContext();
-  const { isSharingScreen, screensharingPublisher, screenshareVideoElement, toggleShareScreen } =
-    useScreenShare();
-  const isSmallViewport = useIsSmallViewport();
-
-  const [isUserCaptionsEnabled, setIsUserCaptionsEnabled] = useState<boolean>(false);
-  const [captionsErrorResponse, setCaptionsErrorResponse] = useState<string | null>('');
-  const captionsState = {
     subscriberWrappers,
     reconnecting,
     quality,
@@ -77,78 +54,14 @@ const MeetingRoom = ({
     isUserCaptionsEnabled,
     captionsErrorResponse,
     setCaptionsErrorResponse,
-  };
-
-  const hasValidUsername = name && name.trim() !== '';
-  const searchParams = new URLSearchParams(location.search);
-  const bypass = searchParams.get('bypass') === 'true' || env.BYPASS_WAITING_ROOM; // Testing purpose
-
-  useMountEffect(() => {
-    if (!hasValidUsername && !bypass) {
-      navigate(`/waiting-room/${roomName}`);
-    }
-  });
-
-  useEffect(() => {
-    if (!hasValidUsername && !bypass) {
-      return;
-    }
-
-    if (joinRoom && isValidRoomName(roomName)) {
-      void joinRoom(roomName);
-    }
-    return () => {
-      // Ensure to disconnect session when unmounting meeting room in order
-      disconnect?.();
-    };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [roomName, hasValidUsername, bypass]);
-
-  useEffect(() => {
-    if (!publisherOptions) {
-      return;
-    }
-
-    if (!publisher) {
-      initializeLocalPublisher(publisherOptions);
-    }
-  }, [initializeLocalPublisher, publisherOptions, publisher]);
-
-  useEffect(() => {
-    if (connected && publisher && publish) {
-      void publish();
-    }
-  }, [publisher, publish, connected]);
-
-  useEffect(() => {
-    if (!backgroundPublisher) {
-      void initBackgroundLocalPublisher();
-    }
-  }, [initBackgroundLocalPublisher, backgroundPublisher]);
-
-  // After changing device permissions, reload the page to reflect the device's permission change.
-  useEffect(() => {
-    if (accessStatus === DEVICE_ACCESS_STATUS.ACCESS_CHANGED) {
-      window.location.reload();
-    }
-  }, [accessStatus]);
-
-  useRedirectOnPublisherError({ publishingError, reconnecting });
-
-  useRedirectOnSubscriberError({ subscriberError: subscriptionError, reconnecting });
-
-  const shouldPromptRecordingConsent =
-    !!archiveId && (archiveIdStartedBySelf === null || archiveId !== archiveIdStartedBySelf);
-
-  const isRecording = !!archiveId;
     captionsState,
+    recordingAlreadyNotified,
+    archiveIdStartedBySelf,
+    archiveId,
+    shouldPromptRecordingConsent,
+    latestNotifiedArchiveId,
+    handleRecordingNotified,
   } = useMeetingRoom();
-
-  const [latestNotifiedArchiveId, setLatestNotifiedArchiveId] = useState<string | null>(null);
-
-  const handleRecordingNotified = () => {
-    setLatestNotifiedArchiveId(archiveId);
-  };
 
   return (
     <Box
