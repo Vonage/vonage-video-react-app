@@ -69,16 +69,17 @@ const UsernameInput = ({
     return true;
   };
 
+  const invalidRoomNameErrorMessage = t('errors.invalidRoomNameError', { roomName });
+
   const handleJoinClick: SubmitEventHandler<HTMLFormElement> = (event) => {
     event.preventDefault();
 
     if (!validateForm() || !roomName) return;
 
     if (!isValidRoomName(roomName)) {
-      // TODO: Add a logging service instead of console.error
-      console.error('Invalid room name:', roomName);
-      return;
+      throw new Error(invalidRoomNameErrorMessage);
     }
+
     setUser((prevUser: UserType) => ({
       ...prevUser,
       defaultSettings: {

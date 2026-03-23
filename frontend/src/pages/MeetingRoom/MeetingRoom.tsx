@@ -24,7 +24,6 @@ import useUserContext from '../../hooks/useUserContext';
 import { env } from '../../env';
 import useMountEffect from '@web/hooks/useMountEffect';
 import classNames from 'classnames';
-import ErrorPage from '../ErrorBoundary/ErrorPage';
 
 /**
  * MeetingRoom Component
@@ -148,10 +147,10 @@ const MeetingRoom = (): ReactElement => {
   useRedirectOnSubscriberError({ subscriberError: subscriptionError, reconnecting });
 
   const hasValidRoomName = isValidRoomName(roomName);
-  const invalidRoomNameErrorMessage = t('meetingRoom.invalidRoomNameError', { roomName });
+  const invalidRoomNameErrorMessage = t('errors.invalidRoomNameError', { roomName });
 
   if (!hasValidRoomName) {
-    return <ErrorPage error={new Error(invalidRoomNameErrorMessage)} />;
+    throw new Error(invalidRoomNameErrorMessage);
   }
 
   const isRecording = !!archiveId;
