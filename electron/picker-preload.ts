@@ -21,4 +21,7 @@ contextBridge.exposeInMainWorld('pickerBridge', {
   cancel: () => {
     ipcRenderer.send('screen-picker:cancel');
   },
+  requestRefresh: () => {
+    ipcRenderer.send('screen-picker:refresh');
+  },
 });

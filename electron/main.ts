@@ -95,7 +95,6 @@ function startStaticServer(): Promise<void> {
   return new Promise((resolve, reject) => {
     const server = http.createServer((req, res) => {
       let rawPath: string;
-
       try {
         rawPath = decodeURIComponent((req.url ?? '/').split('?')[0]);
       } catch {
@@ -103,16 +102,19 @@ function startStaticServer(): Promise<void> {
         res.end('Bad Request');
         return;
       }
+
       const urlPath = rawPath === '/' ? '/index.html' : rawPath;
       const filePath = path.resolve(frontendDistPath, `.${urlPath}`);
 
-      // Prevent path traversal — resolved path must stay inside frontendDistPath
+      // Prevent path traversal — resolved path must stay inside frontendDistPath.
+      // Use path.relative() instead of startsWith() to avoid prefix collisions
+      // (e.g. frontendDistPath + "../frontend-dist2" sharing the same prefix).
       const relativePath = path.relative(frontendDistPath, filePath);
-      const isPathOutsideFrontendDist =
+      if (
         path.isAbsolute(relativePath) ||
         relativePath === '..' ||
-        relativePath.startsWith('..' + path.sep);
-      if (isPathOutsideFrontendDist) {
+        relativePath.startsWith('..' + path.sep)
+      ) {
         res.writeHead(403);
         res.end('Forbidden');
         return;
@@ -122,6 +124,14 @@ function startStaticServer(): Promise<void> {
 
       fs.readFile(filePath, (err, data) => {
         if (err) {
+          // Only SPA-fallback to index.html for route requests (no file extension).
+          // Missing static assets (e.g. /assets/app.css) return 404 so build/packaging
+          // issues surface immediately instead of silently serving HTML.
+          if (ext) {
+            res.writeHead(404);
+            res.end('Not found');
+            return;
+          }
           fs.readFile(path.join(frontendDistPath, 'index.html'), (_e2, indexData) => {
             if (_e2) {
               res.writeHead(404);
@@ -512,6 +522,29 @@ function registerPickerIpc(): void {
     }
     const pickerWindow = BrowserWindow.fromWebContents(event.sender);
     if (pickerWindow) pickerWindow.close();
+  });
+
+  // Periodic thumbnail refresh — the picker UI requests updated sources every 2s
+  ipcMain.on('screen-picker:refresh', async (event) => {
+    const pickerWindow = BrowserWindow.fromWebContents(event.sender);
+    if (!pickerWindow || pickerWindow.isDestroyed()) return;
+    try {
+      const sources = await desktopCapturer.getSources({
+        types: ['screen', 'window'],
+        thumbnailSize: { width: 280, height: 158 },
+      });
+      const serialised = sources.map((s) => ({
+        id: s.id,
+        name: s.name,
+        thumbnail: s.thumbnail.toDataURL(),
+        appIcon: s.appIcon ? s.appIcon.toDataURL() : null,
+      }));
+      if (!pickerWindow.isDestroyed()) {
+        pickerWindow.webContents.send('screen-picker:sources', serialised);
+      }
+    } catch {
+      // Silently ignore refresh failures — the picker will retry on next interval
+    }
   });
 
   ipcMain.on('screen-picker:cancel', (event) => {

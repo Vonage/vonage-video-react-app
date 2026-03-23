@@ -56,8 +56,13 @@ function patchElectronAppName(): void {
 
   let plist = fs.readFileSync(plistPath, 'utf8');
 
-  const already = plist.includes(`<string>${PRODUCT_NAME}</string>`);
-  if (already) {
+  // Check specifically for CFBundleDisplayName being set to our product name.
+  // A broader check (e.g. any occurrence of the name string) could cause false
+  // positives if only one key was patched in a previous run.
+  const alreadyPatched = new RegExp(
+    `<key>CFBundleDisplayName</key>\\s*<string>${PRODUCT_NAME}</string>`
+  ).test(plist);
+  if (alreadyPatched) {
     console.log(`  ✅ Electron.app already patched for "${PRODUCT_NAME}" — skipping\n`);
     return;
   }

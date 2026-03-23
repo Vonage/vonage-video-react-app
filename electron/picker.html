@@ -417,6 +417,20 @@
       cancelBtn.addEventListener('click', () => {
         window.pickerBridge.cancel();
       });
+
+      // ── Escape key to cancel ────────────────────────────────────────
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+          window.pickerBridge.cancel();
+        }
+      });
+
+      // ── Periodic thumbnail refresh ──────────────────────────────────
+      // Re-request sources every 2 seconds so thumbnails stay current.
+      // The main process re-captures via desktopCapturer.getSources().
+      setInterval(() => {
+        window.pickerBridge.requestRefresh?.();
+      }, 2000);
     </script>
   </body>
 </html>
