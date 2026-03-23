@@ -45,12 +45,12 @@ const GoodBye = (): ReactElement => {
             <GoToLandingPageButton />
           </Card>
           {!isSelfDeclinedRecording && (
-          <Card className="w-full max-w-125">
-            <p className="text-xl font-medium font-vera-plain text-vera-secondary mb-6">
-              {t('archiveList.label')}
-            </p>
-            <ArchiveList archives={archives} />
-          </Card>
+            <Card className="w-full max-w-125">
+              <p className="text-xl font-medium font-vera-plain text-vera-secondary mb-6">
+                {t('archiveList.label')}
+              </p>
+              <ArchiveList archives={archives} />
+            </Card>
           )}
         </Stack>
       </PageLayout.Right>
