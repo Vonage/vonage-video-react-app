@@ -890,10 +890,22 @@ async function main(): Promise<void> {
   configureScreenShare();
   registerPickerIpc();
 
-  // Probe desktopCapturer early so macOS registers the app in the Screen
-  // Recording list under System Settings → Privacy & Security.  Without this
-  // call the app never appears in the list and the user must manually add it.
-  // The result is intentionally discarded — we only care about the side-effect.
+  await startStaticServer();
+
+  // Create the main window and load the frontend BEFORE showing any permission
+  // dialogs — this way the app is visible and responsive immediately.
+  // Use `let` so the activate handler can reassign after the window is destroyed
+  let win = createMainWindow();
+  tray = createTray(win);
+  setupAutoUpdater(win);
+
+  await win.loadURL(`http://localhost:${STATIC_PORT}`);
+
+  // Probe desktopCapturer so macOS registers the app in the Screen Recording
+  // list under System Settings → Privacy & Security.  Without this call the
+  // app never appears in the list and the user must manually add it.
+  // Delayed until after the window is loaded so the OS permission dialog
+  // appears in front of the app rather than behind it.
   if (process.platform === 'darwin') {
     desktopCapturer
       .getSources({ types: ['screen'], thumbnailSize: { width: 1, height: 1 } })
@@ -907,17 +919,6 @@ async function main(): Promise<void> {
         );
       });
   }
-
-  await startStaticServer();
-
-  // Create the main window and load the frontend BEFORE showing any permission
-  // dialogs — this way the app is visible and responsive immediately.
-  // Use `let` so the activate handler can reassign after the window is destroyed
-  let win = createMainWindow();
-  tray = createTray(win);
-  setupAutoUpdater(win);
-
-  await win.loadURL(`http://localhost:${STATIC_PORT}`);
 
   app.on('activate', () => {
     // Don't rely on getAllWindows().length — the About / picker windows inflate it.
