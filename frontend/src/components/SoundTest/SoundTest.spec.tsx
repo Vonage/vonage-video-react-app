@@ -99,9 +99,9 @@ describe('SoundTest', () => {
     expect(displayedText).toBeInTheDocument();
   });
 
-  it('uses a larger label variant when rendered from meeting room', () => {
+  it('applies custom label classes', () => {
     render(
-      <SoundTest isFromMeetingRoom>
+      <SoundTest labelClassName="text-vera-body-extended">
         <VividIcon name="hearing-line" customSize={-5} />
       </SoundTest>
     );

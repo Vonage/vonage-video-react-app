@@ -1,5 +1,5 @@
 import { act, render, screen } from '@testing-library/react';
-import { describe, it, vi, expect, beforeAll, afterEach } from 'vitest';
+import { describe, it, vi, expect, beforeAll, beforeEach, afterEach } from 'vitest';
 import userEvent from '@testing-library/user-event';
 import { makeMediaDeviceInfos, setupWindowNavigatorMock } from '@web-test/fixtures';
 
@@ -17,7 +17,10 @@ describe('MenuDevices Component', () => {
         enumerateDevices: Promise.resolve(someDevices),
       },
     });
+  });
 
+  beforeEach(() => {
+    mediaDevices$.reset();
     mediaDevices$.setState((state) => ({
       ...state,
       mediaDeviceInfo: someDevices,
@@ -26,6 +29,7 @@ describe('MenuDevices Component', () => {
 
   afterEach(() => {
     act(() => {
+      mediaDevices$.reset();
       mediaDevices$.setState((state) => ({
         ...state,
         mediaDeviceInfo: someDevices,
