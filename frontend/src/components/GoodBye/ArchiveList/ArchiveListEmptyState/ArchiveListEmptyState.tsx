@@ -1,5 +1,3 @@
-import Stack from '@mui/material/Stack';
-import Typography from '@mui/material/Typography';
 import type { ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -11,17 +9,12 @@ const ArchiveListEmptyState = (): ReactElement => {
 
   return (
     <>
-      <Stack
-        alignItems="center"
-        className="mb-2 flex-row gap-1.5"
-        data-testid="archive-list-empty"
-        direction="row"
-      >
+      <div className="mb-4 flex flex-row items-center gap-1.5" data-testid="archive-list-empty">
         <VividIcon className="text-vera-secondary" customSize={-4} name="video-active-line" />
-        <Typography className="text-vera-text-secondary" variant="body1">
+        <p className="text-vera-text-secondary text-vera-body-extended ml-2">
           {t('archiveList.empty')}
-        </Typography>
-      </Stack>
+        </p>
+      </div>
 
       <Separator width="100%" />
     </>

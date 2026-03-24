@@ -1,9 +1,7 @@
 import CircularProgress from '@mui/material/CircularProgress';
-import IconButton from '@mui/material/IconButton';
 import Link from '@mui/material/Link';
 import Stack from '@mui/material/Stack';
 import Tooltip from '@mui/material/Tooltip';
-import Typography from '@mui/material/Typography';
 import type { ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -16,20 +14,24 @@ const ArchiveStatusContent = ({ status, url }: ArchiveStatusContentProps): React
 
   if (status === 'available') {
     return (
-      <Link className="no-underline" href={url ?? undefined} rel="noreferrer" target="_blank">
+      <Link
+        className="no-underline hover:no-underline"
+        href={url ?? undefined}
+        rel="noreferrer"
+        target="_blank"
+        underline="none"
+      >
         <Stack alignItems="center" className="flex-row gap-0.5" direction="row">
-          <IconButton size="small">
-            <VividIcon
-              className="text-vera-text-primary"
-              customSize={-6}
-              data-testid="archive-download-button"
-              name="download-line"
-            />
-          </IconButton>
+          <span
+            className="inline-flex min-h-8 min-w-8 items-center justify-center"
+            data-testid="archive-download-button"
+          >
+            <VividIcon className="text-vera-text-primary" customSize={-6} name="download-line" />
+          </span>
 
-          <Typography className="text-vera-text-primary" variant="caption">
+          <span className="text-vera-text-primary text-vera-caption">
             {t('archiveList.download')}
-          </Typography>
+          </span>
         </Stack>
       </Link>
     );

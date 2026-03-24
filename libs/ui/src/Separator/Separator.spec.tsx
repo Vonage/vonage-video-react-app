@@ -10,9 +10,15 @@ describe('Separator', () => {
     expect(screen.getByTestId('separator')).toBeInTheDocument();
   });
 
-  it('applies right spacing when orientation is right', () => {
-    render(<Separator orientation="right" />);
+  it('merges custom classes into the separator root element', () => {
+    render(<Separator className="mr-2" />);
 
-    expect(screen.getByTestId('separator')).toHaveClass('ml-2');
+    expect(screen.getByTestId('separator')).toHaveClass('mr-2');
+  });
+
+  it('allows style width to override the width prop', () => {
+    render(<Separator width="50%" style={{ width: '100%' }} />);
+
+    expect(screen.getByTestId('separator')).toHaveStyle({ width: '100%' });
   });
 });

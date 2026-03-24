@@ -1,8 +1,6 @@
 import Box from '@mui/material/Box';
 import ListItem from '@mui/material/ListItem';
 import ListItemIcon from '@mui/material/ListItemIcon';
-import Typography from '@mui/material/Typography';
-import classNames from 'classnames';
 import { Fragment, type ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -42,29 +40,26 @@ const ArchiveListItem = ({
   return (
     <Fragment>
       <ListItem
-        className="flex items-start gap-1 px-0"
+        className="flex items-start gap-1 px-0 mb-1.5 mt-1.5"
         data-testid={`archive-list-item-${archive.id}`}
         disableGutters
       >
-        <ListItemIcon className="mt-1 min-w-11.25">
+        <ListItemIcon className="mt-1 min-w-8">
           <VividIcon className="text-vera-secondary" customSize={-4} name="video-active-line" />
         </ListItemIcon>
 
         <Box className="flex-1">
-          <Typography
-            className={classNames('text-vera-text-secondary', {
-              pending: isArchivePending,
-            })}
+          <p
+            className="text-vera-text-secondary text-vera-body-extended"
             data-testid={`archive-list-item-title-${archiveIndex}`}
-            variant="body1"
           >
             {archiveTitle}
-          </Typography>
+          </p>
 
           {shouldRenderSubtitle && (
-            <Typography className="text-vera-text-tertiary" variant="caption">
+            <p className="text-vera-text-tertiary text-vera-caption">
               {isArchivePending ? t('archiveList.loading.subtitle') : archiveDetails}
-            </Typography>
+            </p>
           )}
         </Box>
 

@@ -1,4 +1,3 @@
-import Typography from '@mui/material/Typography';
 import type { ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -10,9 +9,9 @@ const ArchiveListErrorState = (): ReactElement => {
   return (
     <div className="flex items-center gap-1">
       <VividIcon className="text-vera-warning" customSize={-4} name="warning-line" />
-      <Typography className="text-vera-text-tertiary" variant="h6">
+      <p className="text-vera-text-tertiary text-vera-heading-4 ml-1">
         {t('archiveList.error.text')}
-      </Typography>
+      </p>
     </div>
   );
 };

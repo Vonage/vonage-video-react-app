@@ -17,7 +17,7 @@ const JoinContainerSeparator = (): ReactElement => {
 
   return (
     <Stack direction="row" alignItems="center" width="100%" sx={{ my: 4 }}>
-      <Separator orientation="left" />
+      <Separator className="mr-2" />
       <Typography
         variant="body2"
         sx={{
@@ -27,7 +27,7 @@ const JoinContainerSeparator = (): ReactElement => {
       >
         {t('common.or')}
       </Typography>
-      <Separator orientation="right" />
+      <Separator className="ml-2" />
     </Stack>
   );
 };

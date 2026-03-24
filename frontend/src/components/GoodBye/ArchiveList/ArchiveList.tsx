@@ -25,7 +25,7 @@ const ArchiveList = ({ archives }: ArchiveListProps): ReactElement => {
   }
 
   return (
-    <Box className="max-h-[190px] w-full overflow-x-hidden overflow-y-auto">
+    <Box className="max-h-[190px] w-full overflow-x-hidden overflow-y-auto pr-2">
       <List className="pt-0">
         {archives.map((archive, index) => (
           <ArchiveListItem
