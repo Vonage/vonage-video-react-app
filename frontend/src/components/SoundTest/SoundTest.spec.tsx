@@ -106,10 +106,7 @@ describe('SoundTest', () => {
       </SoundTest>
     );
 
-    expect(screen.getByTestId('soundTestLabel')).toHaveClass(
-      'text-vera-heading-4',
-      'font-vera-body-base'
-    );
+    expect(screen.getByTestId('soundTestLabel')).toHaveClass('text-vera-body-extended');
   });
 
   it('does not throw if setSinkId is undefined', () => {
