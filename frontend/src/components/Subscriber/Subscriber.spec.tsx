@@ -9,7 +9,7 @@ import { makeTestProvider, providers } from '../../test/providers';
 import Subscriber from './Subscriber';
 
 function render(ui: ReactElement) {
-  const { wrapper } = makeTestProvider([providers.appConfig, providers.user, providers.session]);
+  const { wrapper } = makeTestProvider([providers.user, providers.session]);
   return renderBase(ui, { wrapper });
 }
 

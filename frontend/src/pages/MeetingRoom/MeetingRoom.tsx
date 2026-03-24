@@ -65,7 +65,7 @@ const MeetingRoom = ({
     captionsState,
   } = useMeetingRoom();
   const isRaiseHandAllowed = env.ALLOW_RAISE_HAND;
-  const isHandRaiseDetectionAllowed = env.ALLOW_GESTURE_DETECTION ?? false;
+  const isGestureDetectionAllowed = env.ALLOW_GESTURE_DETECTION ?? false;
   const {
     getConnectionId,
     setRaisedHandsMap,

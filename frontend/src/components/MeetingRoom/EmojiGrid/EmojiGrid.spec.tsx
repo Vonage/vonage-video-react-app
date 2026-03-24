@@ -3,12 +3,12 @@ import { render as renderBase, screen, waitFor } from '@testing-library/react';
 import { ReactElement, useRef, useState } from 'react';
 import Button from '@mui/material/Button';
 import useMediaQuery from '@mui/material/useMediaQuery';
-import { makeTestProvider, providers } from '../../../test/providers';
+import { makeTestProvider } from '../../../test/providers';
 import EmojiGrid from './EmojiGrid';
 import SendEmojiButton from '../SendEmojiButton';
 
 function render(ui: ReactElement) {
-  const { wrapper } = makeTestProvider([providers.appConfig]);
+  const { wrapper } = makeTestProvider([]);
   return renderBase(ui, { wrapper });
 }
 
