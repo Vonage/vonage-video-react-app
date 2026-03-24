@@ -52,7 +52,7 @@ function selectDevice(
     // reconcile audio output device with Vonage SDK if it changed
     if (kind === 'audiooutput' && isSinkIdSupported()) {
       // if the audio device changed, reconcileSelection with Vonage SDK
-      void attempt(() => setVonageAudioOutputDevice(deviceId));
+      attempt(() => setVonageAudioOutputDevice(deviceId));
     }
 
     store.setState((state) => ({

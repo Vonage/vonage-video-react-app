@@ -178,7 +178,19 @@ export const MAX_ZOOM = 5;
  */
 export const ZOOM_STEP = 0.25;
 
-/** @constant {number} ABSOLUTE_DISTANCE_THRESHOLD_REM_VALUE - The distance threshold used for absolute positioning of subscriber/publisher UI indicators.
+/**
+ * @constant {number} ABSOLUTE_DISTANCE_THRESHOLD_REM_VALUE - The distance threshold used for absolute positioning of subscriber/publisher UI indicators.
  * This value is defined in rem units to ensure responsiveness across different screen sizes.
  */
 export const ABSOLUTE_DISTANCE_THRESHOLD_REM_VALUE = 0.75;
+
+/**
+ * @constant {number} RECORDING_POPUP_TIMEOUT_MS - The duration in milliseconds for which the recording consent popup is displayed before automatically closing.
+ */
+export const RECORDING_POPUP_TIMEOUT_MS = 5000;
+
+/**
+ * @constant {number} RECORDING_START_DELAY - The delay in milliseconds before starting the recording after the user initiates it.
+ * This delay allows for any necessary setup or confirmation dialogs to be completed before the recording starts.
+ */
+export const RECORDING_START_DELAY = 3000;

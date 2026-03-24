@@ -75,7 +75,7 @@ export class LoggerBase implements LoggerProviderConfig {
 
       if (!result || error) {
         this.error = error ?? new Error('[Logger] Setup callback did not return a provider.');
-        return void this.onLoggerInitializationFailed(this.error);
+        return this.onLoggerInitializationFailed(this.error);
       }
 
       this.provider = Promise.resolve(result);
@@ -91,7 +91,7 @@ export class LoggerBase implements LoggerProviderConfig {
 
       if (!result || error) {
         this.error = error ?? new Error('[Logger] Setup callback did not return a provider.');
-        void this.onLoggerInitializationFailed(this.error);
+        this.onLoggerInitializationFailed(this.error);
 
         throw this.error;
       }
@@ -219,18 +219,19 @@ export class LoggerBase implements LoggerProviderConfig {
    * @param extra Additional context information.
    */
   public reportError(error: unknown, extra?: Record<string, unknown>) {
+    const normalizedError = isErrorLike(error)
+      ? {
+          ...error,
+          message: error.message,
+          name: error.name,
+          stack: error.stack,
+        }
+      : error;
+
+    const extraRecord = extra ?? {};
+
     void this.tryExecuteFeature(LoggerFeature.ReportError).then((feature) =>
-      feature?.(
-        isErrorLike(error)
-          ? {
-              ...error,
-              message: error.message,
-              name: error.name,
-              stack: error.stack,
-            }
-          : error,
-        extra ?? {}
-      )
+      feature?.(normalizedError, extraRecord)
     );
   }
 
@@ -239,9 +240,8 @@ export class LoggerBase implements LoggerProviderConfig {
    * @param event The name of the event to log.
    * @param extra Additional data associated with the event.
    */
-  public log(event: string, extra?: Record<string, unknown>) {
-    const payload = { ...(extra ?? {}), timestamp: Date.now() };
-    void this.tryExecuteFeature(LoggerFeature.Log).then((feature) => feature?.(event, payload));
+  public log(event: string, extra: Record<string, unknown> = {}) {
+    void this.tryExecuteFeature(LoggerFeature.Log).then((feature) => feature?.(event, extra));
   }
 }
 

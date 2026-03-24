@@ -10,6 +10,7 @@ import useTheme from '@ui/theme';
 import VividIcon from '@components/VividIcon';
 import classNames from 'classnames';
 import { env } from '../../../env';
+import { RECORDING_START_DELAY } from '@utils/constants';
 
 export type ArchivingButtonProps = {
   isOverflowButton?: boolean;
@@ -34,7 +35,8 @@ const ArchivingButton = ({
   const { t } = useTranslation();
   const roomName = useRoomName();
   const theme = useTheme();
-  const { archiveId } = useSessionContext();
+  const { archiveId, markArchiveStartRequestedBySelf, resetArchiveStartRequestedBySelf } =
+    useSessionContext();
   const isRecording = !!archiveId;
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const title = isRecording ? t('recording.stop.title') : t('recording.start.title');
@@ -67,14 +69,18 @@ const ArchivingButton = ({
     }
   };
 
-  const handleDialogClick = async (action: 'start' | 'stop') => {
+  const handleDialogClick = (action: 'start' | 'stop') => {
     if (action === 'start') {
       if (!archiveId && roomName) {
-        try {
-          await startArchiving(roomName);
-        } catch (err) {
-          console.log(err);
-        }
+        markArchiveStartRequestedBySelf();
+        setTimeout(async () => {
+          try {
+            await startArchiving(roomName);
+          } catch (err) {
+            resetArchiveStartRequestedBySelf();
+            console.log(err);
+          }
+        }, RECORDING_START_DELAY);
       }
     } else if (archiveId && roomName) {
       void stopArchiving(roomName, archiveId);
