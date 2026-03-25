@@ -9,14 +9,9 @@ import { makeTestProvider, providers, type ProviderOptions } from '@test/provide
 import renderAsyncHook from '@web-test/renderAsyncHook';
 import composeProviders from '@web/helpers/composeProviders';
 import SuspenseBoundary from '@web/components/SuspenseBoundary';
-import { setupWindowNavigatorMock, makeMediaDeviceInfos } from '@web-test/fixtures';
-import mediaDevices$ from '@core/stores/devices';
+import { setupWindowNavigatorMock } from '@web-test/fixtures';
 
 vi.mock('@vonage/client-sdk-video');
-
-const devices = makeMediaDeviceInfos();
-const audioDevice = devices.find((device) => device.kind === 'audioinput')!;
-const videoDevice = devices.find((device) => device.kind === 'videoinput')!;
 
 describe('usePreviewPublisher', () => {
   const mockPublisher = Object.assign(new EventEmitter(), {
@@ -44,13 +39,6 @@ describe('usePreviewPublisher', () => {
 
     (initPublisher as Mock).mockImplementation(mockedInitPublisher);
     (hasMediaProcessorSupport as Mock).mockImplementation(mockedHasMediaProcessorSupport);
-
-    mediaDevices$.setState((state) => ({
-      ...state,
-      mediaDeviceInfo: devices,
-      audioinput: audioDevice.deviceId,
-      videoinput: videoDevice.deviceId,
-    }));
   });
 
   describe('initLocalPublisher', () => {
@@ -104,50 +92,6 @@ describe('usePreviewPublisher', () => {
         }),
         expect.any(Function)
       );
-    });
-
-    it('should wait for the device store before rejecting missing devices', async () => {
-      mockedInitPublisher.mockReturnValue(mockPublisher);
-
-      let resolveStoreReady!: () => void;
-      const isStoreReady = Object.assign(
-        new Promise<void>((resolve) => {
-          resolveStoreReady = resolve;
-        }),
-        { status: 'pending' as const }
-      );
-
-      vi.spyOn(mediaDevices$, 'getMetadata').mockReturnValue({
-        ...mediaDevices$.getMetadata(),
-        isStoreReady: isStoreReady as ReturnType<typeof mediaDevices$.getMetadata>['isStoreReady'],
-      });
-
-      mediaDevices$.setState((state) => ({
-        ...state,
-        audioinput: undefined,
-        videoinput: undefined,
-      }));
-
-      const { result } = await render();
-
-      act(() => {
-        result.current.initLocalPublisher();
-      });
-
-      expect(mockedInitPublisher).not.toHaveBeenCalled();
-      expect(result.current.accessStatus).not.toBe(DEVICE_ACCESS_STATUS.REJECTED);
-
-      mediaDevices$.setState((state) => ({
-        ...state,
-        audioinput: audioDevice.deviceId,
-        videoinput: videoDevice.deviceId,
-      }));
-
-      resolveStoreReady();
-
-      await waitFor(() => {
-        expect(mockedInitPublisher).toHaveBeenCalled();
-      });
     });
   });
 

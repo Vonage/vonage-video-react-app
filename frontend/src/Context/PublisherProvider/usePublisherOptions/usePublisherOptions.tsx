@@ -53,7 +53,7 @@ const usePublisherOptions = ({
       publishAudio: env.ALLOW_AUDIO_ON_JOIN && publishAudio && isAudioEnabled,
       publishCaptions,
       publishVideo: env.ALLOW_VIDEO_ON_JOIN && publishVideo && isVideoEnabled,
-      resolution: videoSource ? env.DEFAULT_RESOLUTION : undefined,
+      resolution: env.DEFAULT_RESOLUTION,
       videoFilter,
       videoSource,
     };

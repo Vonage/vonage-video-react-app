@@ -79,6 +79,9 @@ export type PreviewPublisherInitialValue = Partial<
 const usePreviewPublisher = (
   initialValue?: PreviewPublisherInitialValue
 ): PreviewPublisherContextType => {
+  const videoSourceId = mediaDevices$.useDeviceId('videoinput');
+  const audioSourceId = mediaDevices$.useDeviceId('audioinput');
+
   const { setUser, user } = useUserContext();
   const [publisherVideoElement, setPublisherVideoElement] = useState<
     HTMLVideoElement | HTMLObjectElement | undefined
@@ -86,8 +89,7 @@ const usePreviewPublisher = (
   const [speechLevel, setSpeechLevel] = useState(initialValue?.speechLevel ?? 0);
   const { setAccessStatus, accessStatus } = usePermissions();
   const publisherRef = useRef<Publisher | null>(null);
-  const isWaitingForVideoSourceRef = useRef(false);
-  const retryInitLocalPublisherRef = useRef<() => void>(() => undefined);
+
   const [isPublishing, setIsPublishing] = useState<boolean>(initialValue?.isPublishing ?? false);
   const initialBackgroundRef = useRef<VideoFilter | undefined>(
     user.defaultSettings.backgroundFilter
@@ -226,32 +228,6 @@ const usePreviewPublisher = (
       return;
     }
 
-    const { audioinput: currentAudioSourceId, videoinput: currentVideoSourceId } =
-      mediaDevices$.getState();
-    const { isStoreReady } = mediaDevices$.getMetadata();
-
-    const shouldWaitForDeviceStore = !currentVideoSourceId && isStoreReady.status === 'pending';
-
-    if (shouldWaitForDeviceStore) {
-      if (isWaitingForVideoSourceRef.current) {
-        return;
-      }
-
-      isWaitingForVideoSourceRef.current = true;
-
-      void isStoreReady.finally(() => {
-        isWaitingForVideoSourceRef.current = false;
-        retryInitLocalPublisherRef.current();
-      });
-
-      return;
-    }
-
-    if (!currentVideoSourceId) {
-      setAccessStatus(DEVICE_ACCESS_STATUS.REJECTED);
-      return;
-    }
-
     let videoFilter: VideoFilter | undefined;
     if (initialBackgroundRef.current && hasMediaProcessorSupport()) {
       videoFilter = initialBackgroundRef.current;
@@ -260,11 +236,11 @@ const usePreviewPublisher = (
     const publisherOptions: PublisherProperties = {
       insertDefaultUI: false,
       videoFilter,
-      resolution: currentVideoSourceId ? env.DEFAULT_RESOLUTION : undefined,
+      resolution: env.DEFAULT_RESOLUTION,
       publishAudio: isAudioEnabled,
       publishVideo: isVideoEnabled,
-      audioSource: currentAudioSourceId,
-      videoSource: currentVideoSourceId,
+      audioSource: audioSourceId,
+      videoSource: videoSourceId,
     };
 
     publisherRef.current = initPublisher(undefined, publisherOptions, (err: unknown) => {
@@ -278,8 +254,6 @@ const usePreviewPublisher = (
 
     addPublisherListeners(publisherRef.current);
   });
-
-  retryInitLocalPublisherRef.current = initLocalPublisher;
 
   /**
    * Destroys the preview publisher

@@ -27,6 +27,8 @@ function setupDeviceStore(api: unknown) {
 
   const abortController = new AbortController();
 
+  meta.isFirstMediaDevicesInfoQuery = true;
+
   // make accessible to the actions the vanilla getUserMedia function
   meta.__getUserMedia = __getUserMedia.bind(navigator.mediaDevices);
 
@@ -43,8 +45,7 @@ function setupDeviceStore(api: unknown) {
   meta.isStoreReady = new CancelablePromise((resolve, reject, { isCanceled }) => {
     const syncDevicesAndResolve = () => {
       void api.actions
-        // Bootstrap sync must bypass isStoreReady or the store would wait on itself while initializing.
-        .syncMediaDevicesInfo({ skipStoreReady: true })
+        .syncMediaDevicesInfo()
         .then(() => {
           resolve();
         })
