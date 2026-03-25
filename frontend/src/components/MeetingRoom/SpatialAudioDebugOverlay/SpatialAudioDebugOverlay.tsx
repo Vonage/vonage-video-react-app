@@ -37,17 +37,24 @@ const SpatialAudioDebugOverlay = ({ pan }: SpatialAudioDebugOverlayProps): React
         left: '0.5rem',
         backgroundColor: 'rgba(0, 0, 0, 0.65)',
         borderRadius: '4px',
-        padding: '2px 6px',
+        padding: '4px 6px',
         fontFamily: 'monospace',
-        fontSize: '0.7rem',
-        lineHeight: 1.4,
-        color,
+        fontSize: '0.85rem',
+        lineHeight: 1.5,
         zIndex: 10,
         pointerEvents: 'none',
         userSelect: 'none',
+        display: 'flex',
+        flexDirection: 'column',
+        gap: '2px',
       }}
     >
-      {direction} {formatted}
+      <Box sx={{ color: '#e5e7eb', fontWeight: 'bold', fontSize: '0.75rem', letterSpacing: '0.05em' }}>
+        Stereo Panning Debug
+      </Box>
+      <Box sx={{ color }}>
+        {direction} {formatted}
+      </Box>
     </Box>
   );
 };
