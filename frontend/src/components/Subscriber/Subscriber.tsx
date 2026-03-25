@@ -53,7 +53,7 @@ const Subscriber = ({
   const isTalking = useSubscriberTalking({ subscriber, isActiveSpeaker });
   const [isTileHovered, setIsTileHovered] = useState<boolean>(false);
 
-  useSpatialAudio(subscriber, box, containerWidth, isSpatialAudioEnabled);
+  useSpatialAudio({ subscriber, box, containerWidth, isEnabled: isSpatialAudioEnabled });
 
   useEffect(() => {
     // If hidden - Unsubscribe from video to save bandwidth and cpu

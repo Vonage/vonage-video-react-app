@@ -31,17 +31,20 @@ function calculatePan(box: Box, containerWidth: number): number {
  * - Disconnects all Web Audio nodes.
  * - Restores the subscriber's pre-mute audio volume.
  *
- * @param subscriber - The Vonage Subscriber instance.
- * @param box - The tile's layout box (position and dimensions).
- * @param containerWidth - The width of the video tile container in pixels.
- * @param isEnabled - Whether spatial audio is currently enabled by the user.
+ * @param params - Spatial audio configuration.
+ * @param params.subscriber - The Vonage Subscriber instance.
+ * @param params.box - The tile's layout box (position and dimensions).
+ * @param params.containerWidth - The width of the video tile container in pixels.
+ * @param params.isEnabled - Whether spatial audio is currently enabled by the user.
  */
-const useSpatialAudio = (
-  subscriber: Subscriber | null | undefined,
-  box: Box | undefined,
-  containerWidth: number,
-  isEnabled: boolean
-): void => {
+type UseSpatialAudioParams = {
+  subscriber: Subscriber | null | undefined;
+  box: Box | undefined;
+  containerWidth: number;
+  isEnabled: boolean;
+};
+
+const useSpatialAudio = ({ subscriber, box, containerWidth, isEnabled }: UseSpatialAudioParams): void => {
   const audioContextRef = useRef<AudioContext | null>(null);
   const sourceNodeRef = useRef<MediaStreamAudioSourceNode | null>(null);
   const pannerNodeRef = useRef<StereoPannerNode | null>(null);
