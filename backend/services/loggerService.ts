@@ -85,9 +85,9 @@ export function logOnConnect(event: ClientLogEvent): void {
  * Forwards a validated ClientLogEvent: always to Gollum, and for EnterMeeting also via OTKAnalytics.
  */
 export async function forward(event: ClientLogEvent): Promise<void> {
-  await forwardToGollum(event);
-
   if (event.action === LOG_ACTION_ENTER_MEETING) {
     logOnConnect(event);
   }
+
+  await forwardToGollum(event);
 }

@@ -163,16 +163,12 @@ class VonageVideoClient extends EventEmitter<VonageVideoClientEvents> {
 
       frontendLogger.log('vonageVideoClient: subscribe attempt to stream', {
         streamId,
-        sessionId: this.sessionId,
-        connectionId: this.connectionId,
       });
 
       await idempotentCallbackWithRetry(() => subscribe());
 
       frontendLogger.log('vonageVideoClient: subscribed to stream', {
         streamId,
-        sessionId: this.sessionId,
-        connectionId: this.connectionId,
       });
 
       if (isScreenshare) {
@@ -248,8 +244,6 @@ class VonageVideoClient extends EventEmitter<VonageVideoClientEvents> {
 
       frontendLogger.log('vonageVideoClient: subscriber video element created', {
         streamId,
-        sessionId: this.sessionId,
-        connectionId: this.connectionId,
       });
       this.emit('subscriberVideoElementCreated', subscriberWrapper);
     });
@@ -257,8 +251,6 @@ class VonageVideoClient extends EventEmitter<VonageVideoClientEvents> {
     subscriber.on('destroyed', () => {
       frontendLogger.log('vonageVideoClient: subscriber destroyed', {
         streamId,
-        sessionId: this.sessionId,
-        connectionId: this.connectionId,
       });
       this.emit('subscriberDestroyed', streamId);
     });
@@ -329,8 +321,6 @@ class VonageVideoClient extends EventEmitter<VonageVideoClientEvents> {
   private handleSubscriptionError = (error: unknown) => {
     frontendLogger.reportError(error, {
       eventSource: 'vonageVideoClient.handleSubscriptionError',
-      sessionId: this.sessionId,
-      connectionId: this.connectionId,
       partnerId: this.credential.apiKey,
     });
 
@@ -365,8 +355,6 @@ class VonageVideoClient extends EventEmitter<VonageVideoClientEvents> {
    */
   private handleReconnecting = () => {
     frontendLogger.log('vonageVideoClient: is reconnecting', {
-      sessionId: this.sessionId,
-      connectionId: this.connectionId,
       partnerId: this.credential.apiKey,
     });
 
@@ -379,8 +367,6 @@ class VonageVideoClient extends EventEmitter<VonageVideoClientEvents> {
    */
   private handleReconnected = () => {
     frontendLogger.log('vonageVideoClient: reconnected', {
-      sessionId: this.sessionId,
-      connectionId: this.connectionId,
       partnerId: this.credential.apiKey,
     });
 
@@ -393,13 +379,9 @@ class VonageVideoClient extends EventEmitter<VonageVideoClientEvents> {
    */
   private handleSessionDisconnected = (event: { reason?: string }) => {
     const reason = event?.reason || 'unknown';
-    const sessionId = this.sessionId;
-    const connectionId = this.connectionId;
 
     frontendLogger.log('vonageVideoClient: handle session disconnected', {
       reason,
-      sessionId,
-      connectionId,
       partnerId: this.credential.apiKey,
     });
 
@@ -496,8 +478,6 @@ class VonageVideoClient extends EventEmitter<VonageVideoClientEvents> {
         if (error) {
           frontendLogger.reportError(error, {
             eventSource: 'vonageVideoClient.publish.error',
-            sessionId: this.sessionId,
-            connectionId: this.connectionId,
             errorCode: (error as { code?: number })?.code,
             partnerId: this.credential.apiKey,
           });

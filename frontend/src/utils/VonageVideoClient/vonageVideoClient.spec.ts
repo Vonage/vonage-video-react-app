@@ -320,7 +320,7 @@ describe('VonageVideoClient', () => {
       );
     });
 
-    it('should call frontendLogger.log(CallEnded, ...) with reason, sessionId, connectionId when session disconnects', async () => {
+    it('should call frontendLogger.log with reason and partnerId when session disconnects', async () => {
       await vonageVideoClient?.connect();
       await wait(0);
 
@@ -335,8 +335,7 @@ describe('VonageVideoClient', () => {
         'vonageVideoClient: handle session disconnected',
         expect.objectContaining({
           reason: 'forceDisconnected',
-          sessionId: 'session-id',
-          connectionId: 'connection-id',
+          partnerId: 'api-key',
         })
       );
 

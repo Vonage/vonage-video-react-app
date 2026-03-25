@@ -22,3 +22,8 @@ export {
   default as makeBackgroundPublisherProviderWrapper,
   type BackgroundPublisherProviderWrapperOptions,
 } from './makeBackgroundPublisherProviderWrapper';
+
+export {
+  default as makeLoggerProviderWrapper,
+  type LoggerProviderWrapperOptions,
+} from './makeLoggerProviderWrapper';

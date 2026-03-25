@@ -1,6 +1,7 @@
 import composeProviders, { type ProviderComponent } from '@web/helpers/composeProviders';
 import {
   makeBackgroundPublisherProviderWrapper,
+  makeLoggerProviderWrapper,
   makePreviewPublisherProviderWrapper,
   makePublisherProviderWrapper,
   makeSessionProviderWrapper,
@@ -16,6 +17,7 @@ export enum providers {
   publisher = 'publisher',
   backgroundPublisher = 'backgroundPublisher',
   previewPublisher = 'previewPublisher',
+  logger = 'logger',
 }
 
 /**
@@ -27,6 +29,7 @@ const MAKERS = {
   [providers.publisher]: makePublisherProviderWrapper,
   [providers.backgroundPublisher]: makeBackgroundPublisherProviderWrapper,
   [providers.previewPublisher]: makePreviewPublisherProviderWrapper,
+  [providers.logger]: makeLoggerProviderWrapper,
 } as const;
 
 type ProvidersMakers = typeof MAKERS;
@@ -40,6 +43,7 @@ const PROVIDER_DEPENDENCIES = {
   [providers.publisher]: [providers.user, providers.session],
   [providers.backgroundPublisher]: [providers.user, providers.session, providers.publisher],
   [providers.previewPublisher]: [providers.user],
+  [providers.logger]: [providers.user, providers.session],
 } as const;
 
 /**

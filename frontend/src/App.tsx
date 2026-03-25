@@ -18,6 +18,7 @@ import SuspenseBoundary from '@web/components/SuspenseBoundary/SuspenseBoundary'
 import WaitingRoomSkeleton from '@pages/WaitingRoom/WaitingRoom.skeleton';
 import MeetingRoomSkeleton from '@pages/MeetingRoom/MeetingRoom.skeleton';
 import SessionProvider from '@Context/SessionProvider/session';
+import LoggerProvider from '@Context/LoggerProvider';
 import ErrorBoundary from './components/ErrorBoundary';
 import EnvGuard from './components/EnvGuard';
 import { ErrorPage } from './pages/ErrorBoundary';
@@ -69,9 +70,11 @@ const InnerApp = () => {
                   <SuspenseBoundary fallback={<MeetingRoomSkeleton />}>
                     <RoomProvider>
                       <SessionProvider>
-                        <PublisherProvider>
-                          <MeetingRoom />
-                        </PublisherProvider>
+                        <LoggerProvider>
+                          <PublisherProvider>
+                            <MeetingRoom />
+                          </PublisherProvider>
+                        </LoggerProvider>
                       </SessionProvider>
                     </RoomProvider>
                   </SuspenseBoundary>
