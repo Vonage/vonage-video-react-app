@@ -49,7 +49,9 @@ const SpatialAudioDebugOverlay = ({ pan }: SpatialAudioDebugOverlayProps): React
         gap: '2px',
       }}
     >
-      <Box sx={{ color: '#e5e7eb', fontWeight: 'bold', fontSize: '0.75rem', letterSpacing: '0.05em' }}>
+      <Box
+        sx={{ color: '#e5e7eb', fontWeight: 'bold', fontSize: '0.75rem', letterSpacing: '0.05em' }}
+      >
         Stereo Panning Debug
       </Box>
       <Box sx={{ color }}>
