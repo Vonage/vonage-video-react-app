@@ -61,6 +61,9 @@ function makeSubscriber(volume = 80): Subscriber {
   }) as unknown as Subscriber;
 }
 
+/** Cast a mocked Subscriber back to EventEmitter to allow .emit() in tests. */
+const asEmitter = (sub: Subscriber): EventEmitter => sub as unknown as EventEmitter;
+
 // ─── Box helper ──────────────────────────────────────────────────────────────
 
 const makeBox = (left: number, width: number): Box => ({ left, width, top: 0, height: 100 }) as Box;
@@ -139,7 +142,7 @@ describe('useSpatialAudio', () => {
     );
 
     act(() => {
-      subscriber.emit('mediaStreamAvailable', { mediaStream });
+      asEmitter(subscriber).emit('mediaStreamAvailable', { mediaStream });
     });
 
     expect(MockAudioContext).not.toHaveBeenCalled();
@@ -164,7 +167,7 @@ describe('useSpatialAudio', () => {
     );
 
     act(() => {
-      subscriber.emit('mediaStreamAvailable', { mediaStream });
+      asEmitter(subscriber).emit('mediaStreamAvailable', { mediaStream });
     });
 
     // Subscriber should never be muted — activation failed silently
@@ -180,7 +183,7 @@ describe('useSpatialAudio', () => {
     );
 
     act(() => {
-      subscriber.emit('mediaStreamAvailable', { mediaStream });
+      asEmitter(subscriber).emit('mediaStreamAvailable', { mediaStream });
     });
 
     expect(MockAudioContext).toHaveBeenCalledTimes(1);
@@ -199,7 +202,7 @@ describe('useSpatialAudio', () => {
     );
 
     act(() => {
-      subscriber.emit('mediaStreamAvailable', { mediaStream });
+      asEmitter(subscriber).emit('mediaStreamAvailable', { mediaStream });
     });
 
     expect(subscriber.setAudioVolume).toHaveBeenCalledWith(0);
@@ -216,7 +219,7 @@ describe('useSpatialAudio', () => {
     );
 
     act(() => {
-      subscriber.emit('mediaStreamAvailable', { mediaStream });
+      asEmitter(subscriber).emit('mediaStreamAvailable', { mediaStream });
     });
 
     expect(subscriber.setAudioVolume).toHaveBeenCalledWith(0);
@@ -237,7 +240,7 @@ describe('useSpatialAudio', () => {
     );
 
     act(() => {
-      subscriber.emit('mediaStreamAvailable', { mediaStream });
+      asEmitter(subscriber).emit('mediaStreamAvailable', { mediaStream });
     });
 
     rerender({ isEnabled: false });
@@ -256,7 +259,7 @@ describe('useSpatialAudio', () => {
     );
 
     act(() => {
-      subscriber.emit('mediaStreamAvailable', { mediaStream: emptyStream });
+      asEmitter(subscriber).emit('mediaStreamAvailable', { mediaStream: emptyStream });
     });
 
     expect(MockAudioContext).not.toHaveBeenCalled();
@@ -271,7 +274,7 @@ describe('useSpatialAudio', () => {
     );
 
     act(() => {
-      subscriber.emit('mediaStreamAvailable', { mediaStream });
+      asEmitter(subscriber).emit('mediaStreamAvailable', { mediaStream });
     });
 
     expect(MockAudioContext).not.toHaveBeenCalled();
@@ -286,7 +289,7 @@ describe('useSpatialAudio', () => {
     );
 
     act(() => {
-      subscriber.emit('mediaStreamAvailable', { mediaStream });
+      asEmitter(subscriber).emit('mediaStreamAvailable', { mediaStream });
     });
 
     unmount();
@@ -328,7 +331,7 @@ describe('useSpatialAudio', () => {
     );
 
     act(() => {
-      subscriber.emit('mediaStreamAvailable', { mediaStream });
+      asEmitter(subscriber).emit('mediaStreamAvailable', { mediaStream });
     });
 
     // Move tile to the right and advance past the 150ms debounce
@@ -352,7 +355,7 @@ describe('useSpatialAudio', () => {
 
     // Stream arrives after the hook is already enabled
     act(() => {
-      subscriber.emit('mediaStreamAvailable', { mediaStream });
+      asEmitter(subscriber).emit('mediaStreamAvailable', { mediaStream });
     });
 
     // AudioContext should have been created exactly once
