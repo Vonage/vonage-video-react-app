@@ -70,6 +70,8 @@ export type SessionContextType = {
   pinSubscriber: (subscriberId: string) => void;
   isMaxPinned: boolean;
   ownCaptions: string | null;
+  isSpatialAudioEnabled: boolean;
+  toggleSpatialAudio: () => void;
   sendEmoji: (emoji: string) => void;
   emojiQueue: EmojiWrapper[];
   publish: (publisher: Publisher) => Promise<void>;
@@ -110,6 +112,8 @@ export const SessionContext = createContext<SessionContextType>({
   pinSubscriber: () => {},
   isMaxPinned: false,
   ownCaptions: null,
+  isSpatialAudioEnabled: false,
+  toggleSpatialAudio: () => {},
   sendEmoji: () => {},
   emojiQueue: [],
   publish: async () => Promise.resolve(),
@@ -286,6 +290,11 @@ const SessionProvider = ({ children, initialValue = {} }: SessionProviderProps):
     },
     [activeSpeakerId]
   );
+
+  const [isSpatialAudioEnabled, setIsSpatialAudioEnabled] = useState(false);
+  const toggleSpatialAudio = useCallback(() => {
+    setIsSpatialAudioEnabled((prev) => !prev);
+  }, []);
 
   // hook to keep track of the active speaker during the call and move it to the top of the display order
   useEffect(() => {
@@ -557,6 +566,8 @@ const SessionProvider = ({ children, initialValue = {} }: SessionProviderProps):
       pinSubscriber,
       isMaxPinned,
       ownCaptions,
+      isSpatialAudioEnabled,
+      toggleSpatialAudio,
       sendEmoji,
       emojiQueue,
       publish,
@@ -593,6 +604,8 @@ const SessionProvider = ({ children, initialValue = {} }: SessionProviderProps):
       pinSubscriber,
       isMaxPinned,
       ownCaptions,
+      isSpatialAudioEnabled,
+      toggleSpatialAudio,
       sendEmoji,
       emojiQueue,
       publish,

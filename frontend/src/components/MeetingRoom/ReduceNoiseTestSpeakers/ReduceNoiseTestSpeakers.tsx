@@ -28,7 +28,6 @@ const ReduceNoiseTestSpeakers = (): ReactElement | false => {
   const { t } = useTranslation();
   const theme = useTheme();
   const { publisher, isPublishing } = usePublisherContext();
-
   const [isToggled, setIsToggled] = useState(false);
   const shouldDisplayANS = hasMediaProcessorSupport() && env.ALLOW_ADVANCED_NOISE_SUPPRESSION;
 

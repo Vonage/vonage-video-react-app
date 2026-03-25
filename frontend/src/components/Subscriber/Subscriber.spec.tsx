@@ -56,6 +56,7 @@ describe('Subscriber', () => {
         isHidden={false}
         box={mockedBox}
         isActiveSpeaker={false}
+        containerWidth={0}
       />
     );
 
@@ -74,6 +75,7 @@ describe('Subscriber', () => {
         isHidden={false}
         box={mockedBox}
         isActiveSpeaker={false}
+        containerWidth={0}
       />
     );
 
@@ -92,6 +94,7 @@ describe('Subscriber', () => {
         isHidden={false}
         box={mockedBox}
         isActiveSpeaker={false}
+        containerWidth={0}
       />
     );
 
@@ -110,6 +113,7 @@ describe('Subscriber', () => {
         isHidden={false}
         box={mockedBox}
         isActiveSpeaker={false}
+        containerWidth={0}
       />
     );
 
@@ -130,6 +134,7 @@ describe('Subscriber', () => {
         isHidden={false}
         box={mockedBox}
         isActiveSpeaker={false}
+        containerWidth={0}
       />
     );
 
@@ -150,6 +155,7 @@ describe('Subscriber', () => {
         isHidden={false}
         box={mockedBox}
         isActiveSpeaker={false}
+        containerWidth={0}
       />
     );
 

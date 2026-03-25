@@ -4,6 +4,7 @@ import useTheme from '@ui/theme';
 import InputDevices from '../InputAudioDevices';
 import OutputDevices from '../OutputAudioDevices';
 import ReduceNoiseTestSpeakers from '../ReduceNoiseTestSpeakers';
+import SpatialAudioToggle from '../SpatialAudioToggle';
 import useDropdownResizeObserver from '../../../hooks/useDropdownResizeObserver';
 import VideoDevices from '../VideoDevices';
 import DropdownSeparator from '../DropdownSeparator';
@@ -71,6 +72,7 @@ const DeviceSettingsMenu = ({
           <InputDevices handleToggle={handleToggle} />
           <OutputDevices handleToggle={handleToggle} />
           <ReduceNoiseTestSpeakers />
+          <SpatialAudioToggle />
         </>
       );
     }

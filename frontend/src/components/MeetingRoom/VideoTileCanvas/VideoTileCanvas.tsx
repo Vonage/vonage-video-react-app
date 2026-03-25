@@ -131,6 +131,7 @@ const VideoTileCanvas = ({
             isHidden={!subscribersInDisplayOrder.includes(subscriberWrapper)}
             box={layoutBoxes.subscriberBoxes?.[index]}
             isActiveSpeaker={activeSpeakerId === subscriberWrapper.id}
+            containerWidth={wrapDimensions.width}
           />
         ))}
         {!!hiddenSubscribers.length && layoutBoxes.hiddenParticipantsBox && (

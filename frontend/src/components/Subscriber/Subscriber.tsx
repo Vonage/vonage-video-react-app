@@ -15,12 +15,14 @@ import useTheme from '@ui/theme';
 import { ABSOLUTE_DISTANCE_THRESHOLD_REM_VALUE } from '@utils/constants';
 import toRemValue from '@common/helpers/toRemValue';
 import attempt from '@common/execution/attempt';
+import useSpatialAudio from '../../hooks/useSpatialAudio';
 
 export type SubscriberProps = {
   subscriberWrapper: SubscriberWrapper;
   isHidden: boolean;
   box: Box | undefined;
   isActiveSpeaker: boolean;
+  containerWidth: number;
 };
 
 /**
@@ -40,14 +42,17 @@ const Subscriber = ({
   isHidden,
   box,
   isActiveSpeaker,
+  containerWidth,
 }: SubscriberProps): ReactElement => {
-  const { isMaxPinned, pinSubscriber } = useSessionContext();
+  const { isMaxPinned, pinSubscriber, isSpatialAudioEnabled } = useSessionContext();
   const theme = useTheme();
   const { isPinned, subscriber } = subscriberWrapper;
   const isScreenShare = subscriber?.stream?.videoType === 'screen';
   const subRef = useRef<HTMLDivElement>(null);
   const isTalking = useSubscriberTalking({ subscriber, isActiveSpeaker });
   const [isTileHovered, setIsTileHovered] = useState<boolean>(false);
+
+  useSpatialAudio(subscriber, box, containerWidth, isSpatialAudioEnabled);
 
   useEffect(() => {
     // If hidden - Unsubscribe from video to save bandwidth and cpu
