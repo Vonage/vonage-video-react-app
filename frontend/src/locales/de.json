@@ -212,5 +212,8 @@
   "zoom.in": "Zoom hinausfahren",
   "zoom.current": "Aktueller Zoom",
   "errorPage.title": "Etwas ist schiefgelaufen",
-  "errorPage.description": "Die Anwendung konnte nicht gestartet werden. Bitte laden Sie die Seite neu oder wenden Sie sich an den Support, wenn das Problem weiterhin besteht."
+  "errorPage.description": "Die Anwendung konnte nicht gestartet werden. Bitte laden Sie die Seite neu oder wenden Sie sich an den Support, wenn das Problem weiterhin besteht.",
+  "spatialAudio.label": "Räumliches Audio",
+  "spatialAudio.ariaLabel": "Räumliches Audio umschalten",
+  "spatialAudio.tooltip.unsupported": "Diese Funktion wird vom verwendeten Browser nicht unterstützt"
 }

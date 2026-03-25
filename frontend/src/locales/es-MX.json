@@ -218,5 +218,8 @@
   "zoom.in": "Acercar zoom",
   "zoom.current": "Zoom actual",
   "errorPage.title": "Algo salió mal",
-  "errorPage.description": "La aplicación no pudo iniciarse. Recarga la página o contacta con soporte si el problema persiste."
+  "errorPage.description": "La aplicación no pudo iniciarse. Recarga la página o contacta con soporte si el problema persiste.",
+  "spatialAudio.label": "Audio Espacial",
+  "spatialAudio.ariaLabel": "Alternar audio espacial",
+  "spatialAudio.tooltip.unsupported": "Esta función no es compatible con el navegador en uso"
 }

@@ -222,5 +222,6 @@
   "errorPage.title": "Something went wrong",
   "errorPage.description": "The application could not start. Please reload the page or contact support if the problem persists.",
   "spatialAudio.label": "Spatial Audio",
-  "spatialAudio.ariaLabel": "Toggle spatial audio"
+  "spatialAudio.ariaLabel": "Toggle spatial audio",
+  "spatialAudio.tooltip.unsupported": "Feature is not supported by the browser in use"
 }

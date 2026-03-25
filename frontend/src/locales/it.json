@@ -218,5 +218,8 @@
   "zoom.in": "Zoom avanti",
   "zoom.current": "Zoom attuale",
   "errorPage.title": "Qualcosa è andato storto",
-  "errorPage.description": "L'applicazione non è riuscita ad avviarsi. Ricarica la pagina o contatta il supporto se il problema persiste."
+  "errorPage.description": "L'applicazione non è riuscita ad avviarsi. Ricarica la pagina o contatta il supporto se il problema persiste.",
+  "spatialAudio.label": "Audio Spaziale",
+  "spatialAudio.ariaLabel": "Attiva/disattiva audio spaziale",
+  "spatialAudio.tooltip.unsupported": "Questa funzione non è supportata dal browser in uso"
 }
