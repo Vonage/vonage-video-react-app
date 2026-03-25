@@ -153,7 +153,6 @@ const useSpatialAudio = ({
     } else if (!shouldBeActive && isSpatialActiveRef.current) {
       deactivate(subscriber);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isEnabled, subscriber, box, containerWidth]);
 
   // Update the pan value whenever the tile position or container width changes.
@@ -185,7 +184,6 @@ const useSpatialAudio = ({
         deactivate(subscriberRef.current);
       }
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 };
 
