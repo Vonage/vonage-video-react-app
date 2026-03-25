@@ -66,29 +66,6 @@ const useSpatialAudio = ({
     subscriberRef.current = subscriber;
   }, [subscriber]);
 
-  // Capture the subscriber's MediaStream as soon as it becomes available.
-  // If spatial audio is already enabled when the stream arrives, activate immediately.
-  useEffect(() => {
-    if (!subscriber) return;
-
-    const handleMediaStreamAvailable = ({ mediaStream }: { mediaStream: MediaStream }) => {
-      mediaStreamRef.current = mediaStream;
-
-      // Retry activation if the user had already toggled spatial audio on
-      // before the stream was ready (race condition fix).
-      if (isEnabled && !isSpatialActiveRef.current) {
-        activate(subscriber, mediaStream, box, containerWidth);
-      }
-    };
-
-    subscriber.on('mediaStreamAvailable', handleMediaStreamAvailable);
-
-    return () => {
-      subscriber.off('mediaStreamAvailable', handleMediaStreamAvailable);
-    };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [subscriber]);
-
   // Activates the Web Audio pipeline for a given subscriber and stream.
   const activate = (
     sub: Subscriber,
@@ -123,6 +100,29 @@ const useSpatialAudio = ({
       // AudioContext creation can fail (e.g. in test environments) — fail silently.
     }
   };
+
+  // Capture the subscriber's MediaStream as soon as it becomes available.
+  // If spatial audio is already enabled when the stream arrives, activate immediately.
+  useEffect(() => {
+    if (!subscriber) return;
+
+    const handleMediaStreamAvailable = ({ mediaStream }: { mediaStream: MediaStream }) => {
+      mediaStreamRef.current = mediaStream;
+
+      // Retry activation if the user had already toggled spatial audio on
+      // before the stream was ready (race condition fix).
+      if (isEnabled && !isSpatialActiveRef.current) {
+        activate(subscriber, mediaStream, box, containerWidth);
+      }
+    };
+
+    subscriber.on('mediaStreamAvailable', handleMediaStreamAvailable);
+
+    return () => {
+      subscriber.off('mediaStreamAvailable', handleMediaStreamAvailable);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [subscriber]);
 
   // Deactivates the Web Audio pipeline and restores the subscriber's original volume.
   const deactivate = (sub: Subscriber | null | undefined) => {
