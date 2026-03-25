@@ -66,6 +66,7 @@ export default defineConfig(({ mode }) => {
     'ALLOW_EMOJIS',
     'ALLOW_SCREEN_SHARE',
     'ALLOW_SPATIAL_AUDIO',
+    'SPATIAL_AUDIO_DEBUG',
     'SHOW_PARTICIPANT_LIST',
     'BYPASS_WAITING_ROOM',
     'AVOID_FETCHING_APP_CONFIG',

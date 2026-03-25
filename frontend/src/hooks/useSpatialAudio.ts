@@ -8,7 +8,7 @@ import hasWebAudioSupport from '@utils/hasWebAudioSupport';
  * based on the horizontal center of the tile relative to the container width.
  * The result is clamped to [-1, 1] to stay within the valid StereoPannerNode range.
  */
-function calculatePan(box: Box, containerWidth: number): number {
+export function calculatePan(box: Box, containerWidth: number): number {
   if (containerWidth <= 0) return 0;
   const tileCenterX = box.left + box.width / 2;
   const rawPan = (tileCenterX / containerWidth) * 2 - 1;

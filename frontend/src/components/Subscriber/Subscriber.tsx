@@ -15,7 +15,9 @@ import useTheme from '@ui/theme';
 import { ABSOLUTE_DISTANCE_THRESHOLD_REM_VALUE } from '@utils/constants';
 import toRemValue from '@common/helpers/toRemValue';
 import attempt from '@common/execution/attempt';
-import useSpatialAudio from '../../hooks/useSpatialAudio';
+import useSpatialAudio, { calculatePan } from '../../hooks/useSpatialAudio';
+import SpatialAudioDebugOverlay from '../MeetingRoom/SpatialAudioDebugOverlay';
+import { env } from '../../env';
 
 export type SubscriberProps = {
   subscriberWrapper: SubscriberWrapper;
@@ -166,6 +168,9 @@ const Subscriber = ({
         />
       )}
       {box && <NameDisplay name={username} containerWidth={box.width} />}
+      {env.SPATIAL_AUDIO_DEBUG && isSpatialAudioEnabled && box && (
+        <SpatialAudioDebugOverlay pan={calculatePan(box, containerWidth)} />
+      )}
     </VideoTile>
   );
 };

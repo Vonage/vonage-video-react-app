@@ -153,6 +153,7 @@ export class Env {
   public ALLOW_EMOJIS: boolean;
   public ALLOW_SCREEN_SHARE: boolean;
   public ALLOW_SPATIAL_AUDIO: boolean;
+  public SPATIAL_AUDIO_DEBUG: boolean;
   public DEFAULT_LAYOUT_MODE: LayoutMode;
   public SHOW_PARTICIPANT_LIST: boolean;
   public BYPASS_WAITING_ROOM: boolean;
@@ -196,6 +197,7 @@ export class Env {
     this.ALLOW_EMOJIS = parseBoolean(env.ALLOW_EMOJIS, true);
     this.ALLOW_SCREEN_SHARE = parseBoolean(env.ALLOW_SCREEN_SHARE, true);
     this.ALLOW_SPATIAL_AUDIO = parseBoolean(env.ALLOW_SPATIAL_AUDIO, true);
+    this.SPATIAL_AUDIO_DEBUG = parseBoolean(env.SPATIAL_AUDIO_DEBUG, false);
     this.SHOW_PARTICIPANT_LIST = parseBoolean(env.SHOW_PARTICIPANT_LIST, true);
     this.BYPASS_WAITING_ROOM = parseBoolean(env.BYPASS_WAITING_ROOM, false);
     this.AVOID_FETCHING_APP_CONFIG = parseBoolean(env.AVOID_FETCHING_APP_CONFIG, true);
