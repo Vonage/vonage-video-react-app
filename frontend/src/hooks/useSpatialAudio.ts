@@ -44,7 +44,12 @@ type UseSpatialAudioParams = {
   isEnabled: boolean;
 };
 
-const useSpatialAudio = ({ subscriber, box, containerWidth, isEnabled }: UseSpatialAudioParams): void => {
+const useSpatialAudio = ({
+  subscriber,
+  box,
+  containerWidth,
+  isEnabled,
+}: UseSpatialAudioParams): void => {
   const audioContextRef = useRef<AudioContext | null>(null);
   const sourceNodeRef = useRef<MediaStreamAudioSourceNode | null>(null);
   const pannerNodeRef = useRef<StereoPannerNode | null>(null);
