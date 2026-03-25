@@ -46,6 +46,8 @@ const SpatialAudioToggle = (): ReactElement | null => {
       >
         <MenuItem
           onClick={toggleSpatialAudio}
+          role="menuitemcheckbox"
+          aria-checked={isSpatialAudioEnabled}
           aria-label={t('spatialAudio.ariaLabel')}
           sx={{
             '&:hover': {

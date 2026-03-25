@@ -35,6 +35,7 @@ export type SubscriberProps = {
  *  @property {boolean} isHidden - Whether the participant is hidden.
  *  @property {Box | undefined} box - The Box of the parent element.
  *  @property {boolean} isActiveSpeaker - Whether the participant is the active speaker.
+ *  @property {number} containerWidth - The width of the video tile container in pixels, used for spatial audio panning.
  * @returns {ReactElement} - The Subscriber component.
  */
 const Subscriber = ({
