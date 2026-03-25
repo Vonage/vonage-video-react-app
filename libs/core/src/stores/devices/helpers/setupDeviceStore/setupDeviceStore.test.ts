@@ -270,9 +270,7 @@ describe('setupDeviceStore', () => {
       await waitFor(
         async () => {
           await expect(api$.getMetadata().isStoreReady).resolves.toBeUndefined();
-          expect(mediaDevices$.actions.syncMediaDevicesInfo).toHaveBeenCalledWith({
-            skipStoreReady: true,
-          });
+          expect(mediaDevices$.actions.syncMediaDevicesInfo).toHaveBeenCalledWith();
         },
         { timeout: 200 }
       );

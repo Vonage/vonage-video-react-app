@@ -3,18 +3,16 @@ import type { MediaDeviceInfoJSON } from '@web/types';
 import { DevicesAPI } from '../types';
 import { actions } from 'react-global-state-hooks';
 
-type GetMediaDevicesInfoArgs = {
-  skipStoreReady?: boolean;
-};
-
 /**
  * Retrieves the list of media devices from the browser.
  */
 const getMediaDevicesInfo$ = actions<DevicesAPI>()({
-  getMediaDevicesInfo(args: GetMediaDevicesInfoArgs = {}) {
+  getMediaDevicesInfo() {
     return ({ getMetadata }): Promise<MediaDeviceInfoJSON[]> => {
-      const { isStoreReady } = getMetadata();
-      const shouldSkipStoreReady = args.skipStoreReady === true;
+      const metadata = getMetadata();
+      const shouldSkipStoreReady = metadata.isFirstMediaDevicesInfoQuery;
+
+      metadata.isFirstMediaDevicesInfoQuery = false;
 
       /**
        * Some browsers may intermittently fail to return the device list.
@@ -24,7 +22,7 @@ const getMediaDevicesInfo$ = actions<DevicesAPI>()({
         async () => {
           // Wait for permissions to be resolved before querying devices, as some browsers (e.g., Firefox) require permissions to be granted before providing device labels and IDs.
           if (!shouldSkipStoreReady) {
-            await isStoreReady;
+            await metadata.isStoreReady;
           }
 
           // Convert MediaDeviceInfo objects to plain JSON-serializable objects

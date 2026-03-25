@@ -90,8 +90,6 @@ const useBackgroundPublisher = (
   const { setAccessStatus, accessStatus } = usePermissions();
 
   const backgroundPublisherRef = useRef<Publisher | null>(null);
-  const isWaitingForVideoSourceRef = useRef(false);
-  const retryInitBackgroundPublisherRef = useRef<() => void>(() => undefined);
   const [isPublishing, setIsPublishing] = useState<boolean>(initialValue?.isPublishing ?? false);
 
   const initialBackgroundRef = useRef<VideoFilter | undefined>(
@@ -199,26 +197,6 @@ const useBackgroundPublisher = (
   const initBackgroundLocalPublisher = useCallback(() => {
     if (backgroundPublisherRef.current) return;
 
-    const { videoinput: currentVideoSourceId } = mediaDevices$.getState();
-    const { isStoreReady } = mediaDevices$.getMetadata();
-
-    const shouldWaitForDeviceStore = !currentVideoSourceId && isStoreReady.status === 'pending';
-
-    if (shouldWaitForDeviceStore) {
-      if (isWaitingForVideoSourceRef.current) {
-        return;
-      }
-
-      isWaitingForVideoSourceRef.current = true;
-
-      void isStoreReady.finally(() => {
-        isWaitingForVideoSourceRef.current = false;
-        retryInitBackgroundPublisherRef.current();
-      });
-
-      return;
-    }
-
     let videoFilter: VideoFilter | undefined;
     if (initialBackgroundRef.current && hasMediaProcessorSupport()) {
       videoFilter = initialBackgroundRef.current;
@@ -227,17 +205,11 @@ const useBackgroundPublisher = (
     const publisherOptions: PublisherProperties = {
       insertDefaultUI: false,
       videoFilter,
-      resolution: currentVideoSourceId ? env.DEFAULT_RESOLUTION : undefined,
-      videoSource: currentVideoSourceId,
+      resolution: env.DEFAULT_RESOLUTION,
+      videoSource: mediaDevices$.getState().videoinput,
       publishAudio: false,
       publishVideo: isVideoEnabled,
     };
-
-    // Avoid calling getUserMedia and initializing publisher if there are no input devices, as it will throw an error
-    if (!publisherOptions.videoSource) {
-      setAccessStatus(DEVICE_ACCESS_STATUS.REJECTED);
-      return;
-    }
 
     backgroundPublisherRef.current = initPublisher(undefined, publisherOptions, (err: unknown) => {
       if (err instanceof Error) {
@@ -248,9 +220,7 @@ const useBackgroundPublisher = (
       }
     });
     addPublisherListeners(backgroundPublisherRef.current);
-  }, [addPublisherListeners, isVideoEnabled, setAccessStatus]);
-
-  retryInitBackgroundPublisherRef.current = initBackgroundLocalPublisher;
+  }, [addPublisherListeners, isVideoEnabled]);
 
   /**
    * Turns the camera on and off
