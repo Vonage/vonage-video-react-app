@@ -38,6 +38,23 @@ export function releaseSharedAudioContext(): void {
 }
 
 /**
+ * Updates the output device of the shared AudioContext.
+ * Uses AudioContext.setSinkId() which is available in Chrome 110+ and Edge 110+.
+ * No-op if the context doesn't exist or the browser doesn't support setSinkId.
+ */
+export function updateSharedAudioContextSinkId(deviceId: string): void {
+  if (!sharedContext) return;
+
+  // setSinkId is not yet in the TypeScript lib types, so we need to check at runtime.
+  const ctx = sharedContext as AudioContext & {
+    setSinkId?: (sinkId: string) => Promise<void>;
+  };
+  if (typeof ctx.setSinkId === 'function') {
+    void ctx.setSinkId(deviceId);
+  }
+}
+
+/**
  * Returns the current reference count (for testing).
  */
 export function getSharedAudioContextRefCount(): number {

@@ -2,7 +2,11 @@ import { useEffect, useId, useRef } from 'react';
 import { Subscriber } from '@vonage/client-sdk-video';
 import { Box } from 'opentok-layout-js';
 import hasWebAudioSupport from '@utils/hasWebAudioSupport';
-import { acquireSharedAudioContext, releaseSharedAudioContext } from '@utils/sharedAudioContext';
+import {
+  acquireSharedAudioContext,
+  releaseSharedAudioContext,
+  updateSharedAudioContextSinkId,
+} from '@utils/sharedAudioContext';
 import {
   registerPanner,
   unregisterPanner,
@@ -48,6 +52,7 @@ type UseSpatialAudioParams = {
   box: Box | undefined;
   containerWidth: number;
   isEnabled: boolean;
+  audioOutputDeviceId?: string;
 };
 
 const useSpatialAudio = ({
@@ -55,6 +60,7 @@ const useSpatialAudio = ({
   box,
   containerWidth,
   isEnabled,
+  audioOutputDeviceId,
 }: UseSpatialAudioParams): void => {
   const pannerId = useId();
   const audioContextRef = useRef<AudioContext | null>(null);
@@ -174,6 +180,13 @@ const useSpatialAudio = ({
     if (!isSpatialActiveRef.current || !box || containerWidth <= 0) return;
     updatePannerLayout(pannerId, box, containerWidth);
   }, [pannerId, box, containerWidth]);
+
+  // Sync the shared AudioContext output device when the user switches speakers.
+  // Uses AudioContext.setSinkId() (Chrome 110+, Edge 110+). No-op on unsupported browsers.
+  useEffect(() => {
+    if (!isSpatialActiveRef.current || !audioOutputDeviceId) return;
+    updateSharedAudioContextSinkId(audioOutputDeviceId);
+  }, [audioOutputDeviceId]);
 
   // Full cleanup on unmount — uses subscriberRef to always get the latest instance.
   useEffect(() => {

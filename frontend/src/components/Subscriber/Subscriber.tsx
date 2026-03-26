@@ -17,6 +17,7 @@ import toRemValue from '@common/helpers/toRemValue';
 import attempt from '@common/execution/attempt';
 import useSpatialAudio, { calculatePan } from '../../hooks/useSpatialAudio';
 import SpatialAudioDebugOverlay from '../MeetingRoom/SpatialAudioDebugOverlay';
+import mediaDevices$ from '@core/stores/devices';
 import { env } from '../../env';
 
 const isSpatialDebugFromUrl =
@@ -58,7 +59,14 @@ const Subscriber = ({
   const isTalking = useSubscriberTalking({ subscriber, isActiveSpeaker });
   const [isTileHovered, setIsTileHovered] = useState<boolean>(false);
 
-  useSpatialAudio({ subscriber, box, containerWidth, isEnabled: isSpatialAudioEnabled });
+  const audioOutputDeviceId = mediaDevices$.useDeviceId('audiooutput');
+  useSpatialAudio({
+    subscriber,
+    box,
+    containerWidth,
+    isEnabled: isSpatialAudioEnabled,
+    audioOutputDeviceId: audioOutputDeviceId ?? undefined,
+  });
 
   useEffect(() => {
     // If hidden - Unsubscribe from video to save bandwidth and cpu

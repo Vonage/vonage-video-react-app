@@ -124,7 +124,11 @@ SessionProvider (isSpatialAudioEnabled state)
 **Problem:** CI runs `--max-warnings 0`, so the `react-hooks/exhaustive-deps` warnings for `activate` and `deactivate` in `useSpatialAudio.ts` caused the build to fail. These functions are intentionally excluded from deps — they use refs for the latest state and should not trigger re-renders.
 **Solution:** Added `eslint-disable-next-line react-hooks/exhaustive-deps` comments, matching the existing pattern in the codebase.
 
-### Issue 11: Safari AudioContext limit (4 max) — Performance
+### Issue 11: Speaker device switch not followed by Web Audio pipeline
+**Problem:** When spatial audio is active, the subscriber's native `<audio>` element is muted and all audio goes through the `AudioContext.destination`. If the user switches speakers mid-call, the Vonage SDK updates `setSinkId` on the muted `<audio>` element (no effect), but the `AudioContext` continues outputting to the original device.
+**Solution:** Added `updateSharedAudioContextSinkId()` which calls `AudioContext.setSinkId()` (Chrome 110+, Edge 110+) when the audio output device changes. On Safari and Firefox, speaker switching UI isn't available (`isSinkIdSupported()` returns `false`), so no mismatch can occur.
+
+### Issue 12: Safari AudioContext limit (4 max) — Performance
 **Problem:** Each subscriber created its own `AudioContext`. With 5+ participants (plus SpeakingDetector's context), Safari would fail silently or throw.
 **Evaluated strategies:**
 
@@ -282,12 +286,32 @@ SessionProvider (isSpatialAudioEnabled state)
 - Follows the existing `?bypass=true` URL parameter pattern used elsewhere in the app
 - Makes it easier to toggle debug visualization at runtime without rebuilding
 
+### Phase 11: Speaker Device Switch Handling
+**Commit:** `fix(spatial-audio): sync AudioContext output when speaker device changes`
+
+- **Problem:** When spatial audio is active, the subscriber's native `<audio>` element is muted (`setAudioVolume(0)`) and all audio goes through the Web Audio pipeline. If the user switches speakers mid-call, the Vonage SDK updates `setSinkId` on the `<audio>` element (no effect since it's muted), but the `AudioContext.destination` continues outputting to the original device.
+- Added `updateSharedAudioContextSinkId()` to the shared AudioContext utility — calls `AudioContext.setSinkId()` (Chrome 110+, Edge 110+)
+- Added `audioOutputDeviceId` param to `useSpatialAudio` hook
+- New `useEffect` syncs the AudioContext output device when the user switches speakers
+- `Subscriber.tsx` passes `mediaDevices$.useDeviceId('audiooutput')` to the hook
+- No-op on browsers that don't support `AudioContext.setSinkId()` (Safari, Firefox) — but those browsers also don't support `HTMLMediaElement.setSinkId()`, so the speaker switch UI isn't available in the first place
+- Added 3 unit tests for `updateSharedAudioContextSinkId`
+
+**Browser support matrix:**
+
+| Browser | Can switch speakers? | AudioContext follows? | Issue? |
+|---------|---------------------|----------------------|--------|
+| Chrome 110+ | Yes | Yes (via `setSinkId()`) | Fixed |
+| Edge 110+ | Yes | Yes (via `setSinkId()`) | Fixed |
+| Firefox | No (`setSinkId` behind flag) | N/A | No issue — can't switch speakers |
+| Safari | No | N/A | No issue — can't switch speakers |
+
 ---
 
 ## PR
 
 **PR #423:** `feature/spatial-audio` → `develop`
 **Repository:** https://github.com/Vonage/vonage-video-react-app/pull/423
-**Total commits:** 15
-**Files changed:** 31
-**Tests added:** 54+
+**Total commits:** 16
+**Files changed:** 32
+**Tests added:** 57+

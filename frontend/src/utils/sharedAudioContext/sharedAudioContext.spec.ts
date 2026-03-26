@@ -2,6 +2,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import {
   acquireSharedAudioContext,
   releaseSharedAudioContext,
+  updateSharedAudioContextSinkId,
   getSharedAudioContextRefCount,
   resetSharedAudioContext,
 } from './sharedAudioContext';
@@ -81,5 +82,37 @@ describe('sharedAudioContext', () => {
     releaseSharedAudioContext();
     releaseSharedAudioContext();
     expect(getSharedAudioContextRefCount()).toBe(0);
+  });
+
+  describe('updateSharedAudioContextSinkId', () => {
+    it('calls setSinkId on the shared context when supported', () => {
+      const mockSetSinkId = vi.fn().mockResolvedValue(undefined);
+      const mockCtxWithSinkId = vi.fn(
+        () =>
+          ({
+            close: mockClose,
+            get state() {
+              return mockState;
+            },
+            setSinkId: mockSetSinkId,
+          }) as unknown as AudioContext
+      );
+      global.AudioContext = mockCtxWithSinkId;
+
+      acquireSharedAudioContext();
+      updateSharedAudioContextSinkId('speaker-device-123');
+      expect(mockSetSinkId).toHaveBeenCalledWith('speaker-device-123');
+    });
+
+    it('does nothing when no shared context exists', () => {
+      // No acquire — context is null
+      expect(() => updateSharedAudioContextSinkId('device-1')).not.toThrow();
+    });
+
+    it('does nothing when setSinkId is not supported', () => {
+      acquireSharedAudioContext();
+      // Default mock has no setSinkId — should not throw
+      expect(() => updateSharedAudioContextSinkId('device-1')).not.toThrow();
+    });
   });
 });
