@@ -1,8 +1,13 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useId, useRef } from 'react';
 import { Subscriber } from '@vonage/client-sdk-video';
 import { Box } from 'opentok-layout-js';
 import hasWebAudioSupport from '@utils/hasWebAudioSupport';
 import { acquireSharedAudioContext, releaseSharedAudioContext } from '@utils/sharedAudioContext';
+import {
+  registerPanner,
+  unregisterPanner,
+  updatePannerLayout,
+} from '@utils/spatialAudioPanManager';
 
 /**
  * Calculates a stereo pan value from -1 (full left) to +1 (full right)
@@ -51,12 +56,12 @@ const useSpatialAudio = ({
   containerWidth,
   isEnabled,
 }: UseSpatialAudioParams): void => {
+  const pannerId = useId();
   const audioContextRef = useRef<AudioContext | null>(null);
   const sourceNodeRef = useRef<MediaStreamAudioSourceNode | null>(null);
   const pannerNodeRef = useRef<StereoPannerNode | null>(null);
   const mediaStreamRef = useRef<MediaStream | null>(null);
   const isSpatialActiveRef = useRef(false);
-  const panDebounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   // Track the latest subscriber in a ref so cleanup always operates on the correct instance.
   const subscriberRef = useRef<Subscriber | null | undefined>(subscriber);
   // Track the pre-mute volume so we can restore it exactly on deactivation.
@@ -93,6 +98,8 @@ const useSpatialAudio = ({
       sourceNodeRef.current = sourceNode;
       pannerNodeRef.current = pannerNode;
 
+      registerPanner(pannerId, pannerNode, audioContext, currentBox, currentContainerWidth);
+
       // Capture current volume before muting so we can restore it on deactivation.
       preMuteVolumeRef.current = sub.getAudioVolume();
       sub.setAudioVolume(0);
@@ -127,6 +134,8 @@ const useSpatialAudio = ({
 
   // Deactivates the Web Audio pipeline and restores the subscriber's original volume.
   const deactivate = (sub: Subscriber | null | undefined) => {
+    unregisterPanner(pannerId);
+
     try {
       sourceNodeRef.current?.disconnect();
       pannerNodeRef.current?.disconnect();
@@ -159,30 +168,15 @@ const useSpatialAudio = ({
   }, [isEnabled, subscriber, box, containerWidth]);
 
   // Update the pan value whenever the tile position or container width changes.
-  // Debounced to 150ms so rapid resize events don't thrash the audio graph.
+  // The centralized pan manager batches all updates into a single rAF callback.
   useEffect(() => {
-    if (!isSpatialActiveRef.current || !pannerNodeRef.current || !box || containerWidth <= 0) {
-      return;
-    }
-
-    if (panDebounceRef.current !== null) {
-      clearTimeout(panDebounceRef.current);
-    }
-
-    panDebounceRef.current = setTimeout(() => {
-      panDebounceRef.current = null;
-      if (!pannerNodeRef.current || !box || containerWidth <= 0) return;
-      const pan = calculatePan(box, containerWidth);
-      pannerNodeRef.current.pan.setValueAtTime(pan, audioContextRef.current?.currentTime ?? 0);
-    }, 150);
-  }, [box, containerWidth]);
+    if (!isSpatialActiveRef.current || !box || containerWidth <= 0) return;
+    updatePannerLayout(pannerId, box, containerWidth);
+  }, [pannerId, box, containerWidth]);
 
   // Full cleanup on unmount — uses subscriberRef to always get the latest instance.
   useEffect(() => {
     return () => {
-      if (panDebounceRef.current !== null) {
-        clearTimeout(panDebounceRef.current);
-      }
       if (isSpatialActiveRef.current) {
         deactivate(subscriberRef.current);
       }
