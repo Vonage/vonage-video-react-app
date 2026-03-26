@@ -23,7 +23,22 @@
           return url;
         }
 
-        return url.replace(defaultVonageVideoHost, vonageVideoHost);
+        try {
+          const parsedUrl = new URL(url, window.location.href);
+
+          if (parsedUrl.origin !== defaultVonageVideoHost) {
+            return url;
+          }
+
+          const targetOriginUrl = new URL(vonageVideoHost);
+
+          parsedUrl.protocol = targetOriginUrl.protocol;
+          parsedUrl.host = targetOriginUrl.host;
+
+          return parsedUrl.toString();
+        } catch (error) {
+          return url;
+        }
       };
 
       const originalXmlHttpRequestOpen = window.XMLHttpRequest.prototype.open;
