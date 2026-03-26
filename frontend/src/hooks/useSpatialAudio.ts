@@ -2,6 +2,7 @@ import { useEffect, useRef } from 'react';
 import { Subscriber } from '@vonage/client-sdk-video';
 import { Box } from 'opentok-layout-js';
 import hasWebAudioSupport from '@utils/hasWebAudioSupport';
+import { acquireSharedAudioContext, releaseSharedAudioContext } from '@utils/sharedAudioContext';
 
 /**
  * Calculates a stereo pan value from -1 (full left) to +1 (full right)
@@ -79,7 +80,7 @@ const useSpatialAudio = ({
     if (audioTracks.length === 0) return;
 
     try {
-      const audioContext = new AudioContext();
+      const audioContext = acquireSharedAudioContext();
       const audioOnlyStream = new MediaStream(audioTracks);
       const sourceNode = audioContext.createMediaStreamSource(audioOnlyStream);
       const pannerNode = audioContext.createStereoPanner();
@@ -129,7 +130,9 @@ const useSpatialAudio = ({
     try {
       sourceNodeRef.current?.disconnect();
       pannerNodeRef.current?.disconnect();
-      void audioContextRef.current?.close();
+      if (audioContextRef.current) {
+        releaseSharedAudioContext();
+      }
     } catch {
       // Ignore errors during cleanup.
     }
