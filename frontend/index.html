@@ -12,6 +12,48 @@
   </head>
   <body>
     <div id="root"></div>
+    <!-- Uncomment this block to force the Vonage browser SDK to use the dev video host. -->
+    <!--
+    <script>
+      const defaultVonageVideoHost = 'https://video.api.vonage.com';
+      const vonageVideoHost = 'https://video.api.dev.vonage.com';
+
+      const rewriteVonageVideoUrl = (url) => {
+        if (typeof url !== 'string') {
+          return url;
+        }
+
+        try {
+          const parsedUrl = new URL(url, window.location.href);
+
+          if (parsedUrl.origin !== defaultVonageVideoHost) {
+            return url;
+          }
+
+          const targetOriginUrl = new URL(vonageVideoHost);
+
+          parsedUrl.protocol = targetOriginUrl.protocol;
+          parsedUrl.host = targetOriginUrl.host;
+
+          return parsedUrl.toString();
+        } catch (error) {
+          return url;
+        }
+      };
+
+      const originalXmlHttpRequestOpen = window.XMLHttpRequest.prototype.open;
+
+      window.XMLHttpRequest.prototype.open = function (method, url, ...rest) {
+        return originalXmlHttpRequestOpen.call(this, method, rewriteVonageVideoUrl(url), ...rest);
+      };
+
+      window.OTProperties = {
+        ...window.OTProperties,
+        apiURL: vonageVideoHost,
+        vonageAPIURL: vonageVideoHost,
+      };
+    </script>
+    -->
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>

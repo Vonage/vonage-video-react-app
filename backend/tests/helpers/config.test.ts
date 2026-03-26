@@ -38,4 +38,21 @@ describe('loadConfig', () => {
 
     expect(() => loadConfig()).toThrow('Missing config values for Vonage');
   });
+
+  test('should include videoHost for Vonage config when VONAGE_VIDEO_HOST is set', () => {
+    process.env.VIDEO_SERVICE_PROVIDER = 'vonage';
+    process.env.VONAGE_APP_ID = 'test-app-id';
+    process.env.VONAGE_PRIVATE_KEY = 'test-private-key';
+    process.env.VONAGE_VIDEO_HOST = 'https://video.api.dev.vonage.com';
+
+    const config = loadConfig();
+
+    expect(config.provider).toBe('vonage');
+
+    if (config.provider === 'vonage') {
+      expect(config.applicationId).toBe('test-app-id');
+      expect(config.privateKey).toBe('test-private-key');
+      expect(config.videoHost).toBe('https://video.api.dev.vonage.com');
+    }
+  });
 });
