@@ -116,7 +116,15 @@ SessionProvider (isSpatialAudioEnabled state)
 **Problem:** The env flag was defined in `env.ts` but wasn't being injected by Vite.
 **Solution:** Added `'ALLOW_SPATIAL_AUDIO'` and `'SPATIAL_AUDIO_DEBUG'` to the `appEnvKeys` array in `vite.config.ts`.
 
-### Issue 9: Safari AudioContext limit (4 max) — Performance
+### Issue 9: CSpell unknown word "panners"
+**Problem:** CI's `@cspell/spellchecker` ESLint rule flagged "panners" as an unknown word in `spatialAudioPanManager.ts` JSDoc comments.
+**Solution:** Added `'panners'` to `customWordList.mjs` (the project's shared CSpell dictionary).
+
+### Issue 10: `react-hooks/exhaustive-deps` warnings treated as errors
+**Problem:** CI runs `--max-warnings 0`, so the `react-hooks/exhaustive-deps` warnings for `activate` and `deactivate` in `useSpatialAudio.ts` caused the build to fail. These functions are intentionally excluded from deps — they use refs for the latest state and should not trigger re-renders.
+**Solution:** Added `eslint-disable-next-line react-hooks/exhaustive-deps` comments, matching the existing pattern in the codebase.
+
+### Issue 11: Safari AudioContext limit (4 max) — Performance
 **Problem:** Each subscriber created its own `AudioContext`. With 5+ participants (plus SpeakingDetector's context), Safari would fail silently or throw.
 **Evaluated strategies:**
 
@@ -238,12 +246,19 @@ SessionProvider (isSpatialAudioEnabled state)
 - Added 8 unit tests for the pan manager
 - Most noticeable improvement during window resize with many participants
 
+### Phase 9: CI ESLint Fixes
+**Commit:** `fix(spatial-audio): resolve ESLint cspell and exhaustive-deps warnings`
+
+- Added `panners` to `customWordList.mjs` — CI's `@cspell/spellchecker` rule flagged it as an unknown word in `spatialAudioPanManager.ts` comments
+- Added `eslint-disable-next-line react-hooks/exhaustive-deps` to two `useEffect` blocks in `useSpatialAudio.ts` (lines 168 and 184) — `activate` and `deactivate` are intentionally excluded from deps because they use refs for the latest state
+- CI runs ESLint with `--max-warnings 0`, so warnings are treated as errors
+
 ---
 
 ## PR
 
 **PR #423:** `feature/spatial-audio` → `develop`
 **Repository:** https://github.com/Vonage/vonage-video-react-app/pull/423
-**Total commits:** 13
-**Files changed:** 30
+**Total commits:** 14
+**Files changed:** 31
 **Tests added:** 54+

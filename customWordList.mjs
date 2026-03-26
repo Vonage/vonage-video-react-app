@@ -18,6 +18,7 @@ const customWordList = [
   'gollum',
   'PWDEBUG',
   'unstub',
+  'panners',
 ];
 
 export default customWordList;
