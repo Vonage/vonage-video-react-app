@@ -11,6 +11,7 @@ const createVideoService = (): VideoService => {
     return new VonageVideoService({
       applicationId: config.applicationId,
       privateKey: config.privateKey,
+      videoHost: config.videoHost,
       provider,
     });
   }
