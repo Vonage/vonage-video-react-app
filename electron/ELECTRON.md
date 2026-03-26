@@ -220,9 +220,34 @@ The code is **version-adaptive** — it detects the Electron major version at st
 - **Screen Recording pre-check**: The code always attempts `desktopCapturer.getSources()` rather than bailing out when `systemPreferences.getMediaAccessStatus('screen')` reports `'denied'` — macOS TCC can report stale status after Electron binary swaps (e.g. version upgrades).
 - **`setDisplayMediaRequestHandler`**: Runtime feature-checked before use. If unavailable (unlikely in modern Electron), the app falls back to Chrome's built-in picker.
 
-### Upgrading Electron
+### Testing with Different Electron Versions
 
-To test with a different Electron version:
+Use the helper script to test with any Electron version or channel:
+
+```bash
+# Specific version
+yarn test:electron-version 41.0.3
+
+# Latest stable
+yarn test:electron-version latest
+
+# Pre-release channels
+yarn test:electron-version beta      # next stable candidate
+yarn test:electron-version alpha     # early development
+yarn test:electron-version nightly   # daily Chromium tip builds
+```
+
+The script will:
+1. Save your current Electron version
+2. Install the requested version
+3. Reset macOS Screen Recording permission (TCC) for the new binary
+4. Run TypeScript check to verify the code compiles against the new types
+5. Launch the app for manual testing
+6. **Restore the original version** when you close the app
+
+#### Manual version swap
+
+If you prefer to do it manually:
 
 ```bash
 # Install a specific version
@@ -233,9 +258,26 @@ tccutil reset ScreenCapture com.github.electron
 
 # Launch and re-grant Screen Recording in System Settings when prompted
 yarn dev:electron
+
+# Restore original version when done
+git checkout -- package.json yarn.lock
+yarn install
 ```
 
-**Important**: After swapping Electron versions on macOS, you must re-grant Screen Recording permission. macOS ties TCC permissions to the binary hash — a different Electron version has a different binary.
+#### macOS TCC permissions after version swap
+
+**Important**: After swapping Electron versions on macOS, you must re-grant Screen Recording permission. macOS ties TCC permissions to the binary hash — a different Electron version has a different binary. The app will show a permission dialog on first screen share attempt; grant it, and macOS will force-quit the app. Relaunch to use screen sharing.
+
+#### Electron release channels
+
+| Channel | Install | Use case |
+|---|---|---|
+| **Stable** | `electron@latest` | Production, CI |
+| **Beta** | `electron@beta` | Pre-release validation before next stable |
+| **Alpha** | `electron@alpha` | Early testing of upcoming features |
+| **Nightly** | `electron@nightly` | Bleeding-edge Chromium, breaking change detection |
+
+Release schedule: https://www.electronjs.org/docs/latest/tutorial/electron-timelines
 
 ## What Did NOT Need Changes
 
