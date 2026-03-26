@@ -17,6 +17,20 @@ import http from 'http';
 import fs from 'fs';
 import path from 'path';
 
+// ─── IPC Channel Reference ───────────────────────────────────────────────────
+//
+// Channels used for renderer ↔ main process communication:
+//   open-external                renderer → main  Open URL in default browser
+//   clipboard-write              renderer → main  Write text to system clipboard
+//   check-for-updates            renderer → main  Trigger auto-update check
+//   desktop-capturer-get-sources renderer → main  Show screen picker, return selected source
+//   screen-picker:sources        main → picker    Send available screens/windows to picker
+//   screen-picker:select         picker → main    User selected a source
+//   screen-picker:refresh        picker → main    Refresh source thumbnails
+//   screen-picker:cancel         picker → main    User cancelled picker
+//   about:versions               main → about     Send version info to About dialog
+//   about:update-status          main → about     Send update check result to About dialog
+
 // ─── App identity ─────────────────────────────────────────────────────────────
 
 /**
@@ -49,6 +63,9 @@ try {
 // ─── Electron version detection ──────────────────────────────────────────────
 // Parse the major version once at startup so we can adapt to API changes
 // across Electron 36–41+ without hard-coding version checks everywhere.
+//   - Electron 39+: setDisplayMediaRequestHandler requires { useSystemPicker: false }
+//   - Electron 39+: permission handler callback patterns changed
+//   - macOS 14.2+ / Electron 39+: requires NSAudioCaptureUsageDescription
 const electronMajorVersion = parseInt(process.versions.electron?.split('.')[0] ?? '0', 10);
 console.log(
   `[Electron] Running Electron ${process.versions.electron} (major: ${electronMajorVersion})`
@@ -164,7 +181,10 @@ function startStaticServer(): Promise<void> {
       console.log(`[Electron] Frontend served at http://localhost:${staticPort}`);
       resolve();
     });
-    server.on('error', reject);
+    server.on('error', (err: NodeJS.ErrnoException) => {
+      console.error(`[Electron] Static server failed on port ${staticPort}:`, err.message);
+      reject(err);
+    });
   });
 }
 
@@ -425,6 +445,7 @@ function configureContentSecurityPolicy(): void {
       },
     });
   });
+  console.log('[Electron] Content Security Policy configured for trusted origins');
 }
 
 // ─── Screen share picker ──────────────────────────────────────────────────────
@@ -826,9 +847,66 @@ function createMainWindow(): BrowserWindow {
   win.webContents.on('did-navigate-in-page', (_e, url) => trackUrl(url));
   win.webContents.on('did-finish-load', () => trackUrl(win.webContents.getURL()));
 
+  // ── Navigation restrictions (Electron security checklist) ────────────────
+  // Prevent the renderer from navigating away from trusted localhost.
+  // See: https://www.electronjs.org/docs/latest/tutorial/security#13-disable-or-limit-navigation
+  win.webContents.on('will-navigate', (event, url) => {
+    try {
+      const parsedUrl = new URL(url);
+      if (parsedUrl.origin !== `http://localhost:${staticPort}`) {
+        console.warn(`[Electron] Blocked navigation to: ${url}`);
+        event.preventDefault();
+      }
+    } catch {
+      event.preventDefault();
+    }
+  });
+
+  // Block new window creation — external links go through shell.openExternal instead.
+  // See: https://www.electronjs.org/docs/latest/tutorial/security#14-disable-or-limit-creation-of-new-windows
+  win.webContents.setWindowOpenHandler(({ url }) => {
+    if (url.startsWith('https://')) shell.openExternal(url);
+    return { action: 'deny' };
+  });
+
+  // ── Process crash / unresponsive recovery ──────────────────────────────
+  win.webContents.on('render-process-gone', (_event, details) => {
+    console.error('[Electron] Render process gone:', details.reason);
+    dialog
+      .showMessageBox({
+        type: 'error',
+        title: 'Vonage Video encountered a problem',
+        message: `The application crashed (${details.reason}).`,
+        detail: 'The app will restart.',
+        buttons: ['Restart'],
+      })
+      .then(() => {
+        app.relaunch();
+        app.exit(0);
+      });
+  });
+
+  win.on('unresponsive', () => {
+    console.warn('[Electron] Window became unresponsive');
+    dialog
+      .showMessageBox(win, {
+        type: 'warning',
+        title: 'Vonage Video is not responding',
+        message: 'The application appears to be frozen.',
+        buttons: ['Wait', 'Restart'],
+        defaultId: 0,
+      })
+      .then(({ response }) => {
+        if (response === 1) {
+          app.relaunch();
+          app.exit(0);
+        }
+      });
+  });
+
   win.once('ready-to-show', () => {
     win.show();
-    if (!isPackaged) win.webContents.openDevTools({ mode: 'detach' });
+    // DevTools available via View menu (Cmd+Option+I) — no auto-open
   });
 
   win.on('close', async (event) => {
@@ -893,6 +971,10 @@ async function main(): Promise<void> {
   configureContentSecurityPolicy();
   configureScreenShare();
   registerPickerIpc();
+
+  // Disable spellchecker — video apps don't need it, and it can send typed
+  // text to OS-level spell check services.
+  session.defaultSession.setSpellCheckerLanguages([]);
 
   await startStaticServer();
 

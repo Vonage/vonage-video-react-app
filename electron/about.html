@@ -245,6 +245,13 @@
           window.electron.openExternal('https://github.com/Vonage/vonage-video-react-app');
       });
 
+      // Keyboard shortcuts: Escape or Cmd/Ctrl+W to close
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' || ((e.metaKey || e.ctrlKey) && e.key === 'w')) {
+          window.close();
+        }
+      });
+
       // Check for Updates
       const updateBtn = document.getElementById('update-btn');
       const updateStatus = document.getElementById('update-status');
