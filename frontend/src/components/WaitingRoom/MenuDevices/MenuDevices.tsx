@@ -86,7 +86,7 @@ const MenuDevices = ({
         </MenuItem>
       )}
 
-      {mediaDeviceKind === 'audiooutput' && (
+      {mediaDeviceKind === 'audiooutput' && !shouldDisplayEmptyState && (
         <SoundTest>
           <Box sx={{ mr: 1 }}>
             <VividIcon name="hearing-line" customSize={-5} />
