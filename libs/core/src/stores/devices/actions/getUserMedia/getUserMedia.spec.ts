@@ -2,6 +2,7 @@ import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import getUserMedia from '.';
 import mediaDevices$ from '../../devices$';
 import { makeMediaDeviceInfos, setupWindowNavigatorMock } from '@web-test/fixtures';
+import { mediaDevicesEnvelop } from '@core/interceptors';
 
 const devices = makeMediaDeviceInfos();
 
@@ -20,6 +21,8 @@ describe('getUserMedia', () => {
         getUserMedia: Promise.resolve(mockStream),
       },
     });
+
+    mediaDevicesEnvelop.rebind(navigator);
 
     mediaDevices$.reset();
   });

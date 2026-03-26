@@ -7,6 +7,7 @@ import { SPY_MARK } from '@common/types';
 import { setupWindowNavigatorMock, makeMediaDeviceInfos } from '@web-test/fixtures';
 import * as vonageClientSdk from '@vonage/client-sdk-video';
 import * as isFirefoxModule from '@web/platform/isFirefox';
+import { mediaDevicesEnvelop } from '@core/interceptors';
 
 const someDevices = makeMediaDeviceInfos();
 
@@ -21,6 +22,8 @@ describe('setupDeviceStore', () => {
         enumerateDevices: Promise.resolve(someDevices),
       },
     });
+
+    mediaDevicesEnvelop.rebind(navigator);
   });
 
   it('should initialize device sync and register event listener', async () => {
@@ -189,6 +192,8 @@ describe('setupDeviceStore', () => {
         },
       });
 
+      mediaDevicesEnvelop.rebind(navigator);
+
       const api$ = makeApiClone();
 
       setupDeviceStore(api$);
@@ -234,6 +239,8 @@ describe('setupDeviceStore', () => {
         },
       });
 
+      mediaDevicesEnvelop.rebind(navigator);
+
       const api$ = makeApiClone();
 
       setupDeviceStore(api$);
@@ -264,6 +271,8 @@ describe('setupDeviceStore', () => {
           getUserMedia: vi.fn(),
         },
       });
+
+      mediaDevicesEnvelop.rebind(navigator);
 
       setupDeviceStore(api$);
 
@@ -298,6 +307,8 @@ describe('setupDeviceStore', () => {
         },
       });
 
+      mediaDevicesEnvelop.rebind(navigator);
+
       const api$ = makeApiClone();
 
       setupDeviceStore(api$);
@@ -330,6 +341,8 @@ describe('setupDeviceStore', () => {
         },
       });
 
+      mediaDevicesEnvelop.rebind(navigator);
+
       const api$ = makeApiClone();
 
       setupDeviceStore(api$);
@@ -352,6 +365,8 @@ describe('setupDeviceStore', () => {
           getUserMedia: vi.fn(),
         },
       });
+
+      mediaDevicesEnvelop.rebind(navigator);
 
       const api$ = makeApiClone();
 
@@ -376,8 +391,8 @@ describe('setupDeviceStore', () => {
   // in the test environment. The monkey patching behavior is verified via
   // integration tests in a real browser environment.
 
-  describe('metadata setup', () => {
-    it('should set __getUserMedia on metadata', () => {
+  describe('envelope original method access', () => {
+    it('should make getUserMedia available via the mediaDevices envelope', () => {
       const originalGetUserMedia = vi.fn();
 
       setupWindowNavigatorMock({
@@ -387,12 +402,16 @@ describe('setupDeviceStore', () => {
         },
       });
 
+      mediaDevicesEnvelop.rebind(navigator);
+
       const api$ = makeApiClone();
 
       setupDeviceStore(api$);
 
-      const metadata = api$.getMetadata();
-      expect(metadata.__getUserMedia).toBeDefined();
+      const envelopGetUserMedia = mediaDevicesEnvelop.getOriginal('getUserMedia');
+
+      expect(envelopGetUserMedia).toBeDefined();
+      expect(typeof envelopGetUserMedia).toBe('function');
     });
   });
 
@@ -407,6 +426,8 @@ describe('setupDeviceStore', () => {
           enumerateDevices: vi.fn().mockReturnValue(neverResolve),
         },
       });
+
+      mediaDevicesEnvelop.rebind(navigator);
 
       const api$ = makeApiClone();
 

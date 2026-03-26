@@ -3,6 +3,9 @@
 // issue that can surface as `createTheme_default is not a function`.
 import '@mui/material/styles/createTheme';
 
+// runs interceptors before vonage sdk clones and destructure resources like mediaDevices
+import '@core/interceptors';
+
 import ReactDOM from 'react-dom/client';
 import { registerIcon } from '@vonage/vivid';
 import App from './App.jsx';

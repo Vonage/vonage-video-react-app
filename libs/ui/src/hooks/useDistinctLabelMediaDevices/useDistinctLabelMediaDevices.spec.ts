@@ -4,6 +4,7 @@ import type { MediaDeviceInfoJSON } from '@web/types';
 import useDistinctLabelMediaDevices from '.';
 import mediaDevices$ from '@core/stores/devices';
 import { makeMediaDeviceInfos, setupWindowNavigatorMock } from '@web-test/fixtures';
+import { mediaDevicesEnvelop } from '@core/interceptors';
 
 const devices = makeMediaDeviceInfos();
 
@@ -19,6 +20,8 @@ describe('useDistinctLabelMediaDevices', () => {
         } as unknown as MediaStream),
       },
     });
+
+    mediaDevicesEnvelop.rebind(navigator);
 
     mediaDevices$.reset();
   });
