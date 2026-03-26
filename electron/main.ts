@@ -28,19 +28,20 @@ app.setName('Vonage Video');
 
 // ─── Versions (read once at startup) ─────────────────────────────────────────
 
-let APP_VERSION = 'unknown';
-let SDK_VERSION = 'unknown';
+let applicationVersion = 'unknown';
+let videoSdkVersion = 'unknown';
 
 try {
   // eslint-disable-next-line @typescript-eslint/no-require-imports
-  APP_VERSION = (require('../../package.json') as { version: string }).version;
+  applicationVersion = (require('../../package.json') as { version: string }).version;
 } catch {
   /* leave as "unknown" */
 }
 
 try {
   // eslint-disable-next-line @typescript-eslint/no-require-imports
-  SDK_VERSION = (require('@vonage/client-sdk-video/package.json') as { version: string }).version;
+  videoSdkVersion = (require('@vonage/client-sdk-video/package.json') as { version: string })
+    .version;
 } catch {
   /* leave as "unknown" */
 }
@@ -48,35 +49,37 @@ try {
 // ─── Electron version detection ──────────────────────────────────────────────
 // Parse the major version once at startup so we can adapt to API changes
 // across Electron 36–41+ without hard-coding version checks everywhere.
-const ELECTRON_MAJOR = parseInt(process.versions.electron?.split('.')[0] ?? '0', 10);
-console.log(`[Electron] Running Electron ${process.versions.electron} (major: ${ELECTRON_MAJOR})`);
+const electronMajorVersion = parseInt(process.versions.electron?.split('.')[0] ?? '0', 10);
+console.log(
+  `[Electron] Running Electron ${process.versions.electron} (major: ${electronMajorVersion})`
+);
 
 // ─── Paths ────────────────────────────────────────────────────────────────────
 
-const IS_PACKAGED = app.isPackaged;
+const isPackaged = app.isPackaged;
 
-const ASSETS_DIR = IS_PACKAGED
+const assetsDirectory = isPackaged
   ? path.join(process.resourcesPath, 'electron-assets')
   : path.join(__dirname, '../assets');
 
-const frontendDistPath = IS_PACKAGED
+const frontendDistPath = isPackaged
   ? path.join(process.resourcesPath, 'frontend-dist')
   : path.join(__dirname, '../../frontend/dist');
 
-const pickerHtmlPath = IS_PACKAGED
+const pickerHtmlPath = isPackaged
   ? path.join(process.resourcesPath, 'picker.html')
   : path.join(__dirname, '../picker.html');
 
-const aboutHtmlPath = IS_PACKAGED
+const aboutHtmlPath = isPackaged
   ? path.join(process.resourcesPath, 'about.html')
   : path.join(__dirname, '../about.html');
 
 // ─── Static file server ───────────────────────────────────────────────────────
 
 // 0 = let the OS pick a free port; resolved to actual port after server starts.
-let STATIC_PORT = Number(process.env.ELECTRON_FRONTEND_PORT ?? 0);
+let staticPort = Number(process.env.ELECTRON_FRONTEND_PORT ?? 0);
 
-const MIME: Record<string, string> = {
+const mimeTypes: Record<string, string> = {
   '.html': 'text/html; charset=utf-8',
   '.js': 'application/javascript',
   '.mjs': 'application/javascript',
@@ -148,17 +151,17 @@ function startStaticServer(): Promise<void> {
           });
           return;
         }
-        res.writeHead(200, { 'Content-Type': MIME[ext] ?? 'application/octet-stream' });
+        res.writeHead(200, { 'Content-Type': mimeTypes[ext] ?? 'application/octet-stream' });
         res.end(data);
       });
     });
 
-    server.listen(STATIC_PORT, '127.0.0.1', () => {
-      // If port was 0, the OS assigned a free one — update STATIC_PORT so
+    server.listen(staticPort, '127.0.0.1', () => {
+      // If port was 0, the OS assigned a free one — update staticPort so
       // loadURL() uses the correct address.
       const addr = server.address();
-      if (addr && typeof addr === 'object') STATIC_PORT = addr.port;
-      console.log(`[Electron] Frontend served at http://localhost:${STATIC_PORT}`);
+      if (addr && typeof addr === 'object') staticPort = addr.port;
+      console.log(`[Electron] Frontend served at http://localhost:${staticPort}`);
       resolve();
     });
     server.on('error', reject);
@@ -210,8 +213,8 @@ function openAboutWindow(): void {
 
   aboutWindow.loadFile(aboutHtmlPath, {
     query: {
-      appVersion: APP_VERSION,
-      sdkVersion: SDK_VERSION,
+      appVersion: applicationVersion,
+      sdkVersion: videoSdkVersion,
       electronVersion: process.versions.electron ?? 'unknown',
     },
   });
@@ -276,7 +279,7 @@ function buildAndSetAppMenu(): void {
         { role: 'zoomOut' as const },
         { type: 'separator' as const },
         { role: 'togglefullscreen' as const },
-        ...(!IS_PACKAGED
+        ...(!isPackaged
           ? [
               { type: 'separator' as const },
               { role: 'reload' as const },
@@ -323,7 +326,7 @@ function setCallState(inCall: boolean): void {
 function configureMediaPermissions(): void {
   // Permissions granted when the page calls navigator.mediaDevices.getUserMedia()
   // or requestPermission() — fires in setPermissionRequestHandler.
-  const ALLOWED_REQUEST = [
+  const allowedRequestPermissions = [
     'media',
     'display-capture',
     'mediaKeySystem',
@@ -338,8 +341,8 @@ function configureMediaPermissions(): void {
   // rather than the generic 'media' used by the request handler.
   // If these return false the browser silently denies getUserMedia without
   // ever reaching macOS TCC, so we must explicitly allow them here.
-  const ALLOWED_CHECK = [
-    ...ALLOWED_REQUEST,
+  const allowedCheckPermissions = [
+    ...allowedRequestPermissions,
     'default-microphone',
     'default-camera',
     'default-speaker',
@@ -351,7 +354,7 @@ function configureMediaPermissions(): void {
     try {
       const origin = new URL(url).origin;
       return (
-        origin === `http://localhost:${STATIC_PORT}` || origin === `http://127.0.0.1:${STATIC_PORT}`
+        origin === `http://localhost:${staticPort}` || origin === `http://127.0.0.1:${staticPort}`
       );
     } catch {
       return false;
@@ -360,28 +363,29 @@ function configureMediaPermissions(): void {
 
   session.defaultSession.setPermissionCheckHandler((wc, permission) => {
     if (!isTrustedOrigin(wc?.getURL())) return false;
-    return ALLOWED_CHECK.includes(permission);
+    return allowedCheckPermissions.includes(permission);
   });
 
   // Electron 39+ deprecates the callback-based setPermissionRequestHandler in
   // favour of returning a boolean directly.  We keep the callback version as a
   // fallback for Electron ≤38.
-  if (ELECTRON_MAJOR >= 39) {
+  if (electronMajorVersion >= 39) {
     session.defaultSession.setPermissionRequestHandler((wc, permission, callback) => {
-      const allowed = isTrustedOrigin(wc?.getURL()) && ALLOWED_REQUEST.includes(permission);
+      const allowed =
+        isTrustedOrigin(wc?.getURL()) && allowedRequestPermissions.includes(permission);
       callback(allowed);
     });
   } else {
     session.defaultSession.setPermissionRequestHandler((wc, permission, callback) => {
       if (!isTrustedOrigin(wc?.getURL())) return callback(false);
-      callback(ALLOWED_REQUEST.includes(permission));
+      callback(allowedRequestPermissions.includes(permission));
     });
   }
 }
 
 // ─── Content Security Policy ──────────────────────────────────────────────────
 
-function configureCSP(): void {
+function configureContentSecurityPolicy(): void {
   session.defaultSession.webRequest.onHeadersReceived((details, callback) => {
     callback({
       responseHeaders: {
@@ -608,7 +612,7 @@ function registerPickerIpc(): void {
       // electron-updater is only available in packaged builds
       const { autoUpdater } = await import('electron-updater');
       const result = await autoUpdater.checkForUpdates();
-      if (result && result.updateInfo && result.updateInfo.version !== APP_VERSION) {
+      if (result && result.updateInfo && result.updateInfo.version !== applicationVersion) {
         return `Update available: v${result.updateInfo.version}`;
       }
       return "You're on the latest version!";
@@ -646,7 +650,7 @@ function configureScreenShare(): void {
   // try/catch so future API changes degrade gracefully.
   if (typeof session.defaultSession.setDisplayMediaRequestHandler !== 'function') {
     console.warn(
-      `[Electron] setDisplayMediaRequestHandler not available (Electron ${ELECTRON_MAJOR}).` +
+      `[Electron] setDisplayMediaRequestHandler not available (Electron ${electronMajorVersion}).` +
         ' Screen sharing will use the default Chrome picker.'
     );
     return;
@@ -682,12 +686,12 @@ let tray: Tray | null = null;
 
 function loadTrayIcon(): Electron.NativeImage {
   if (process.platform === 'darwin') {
-    const iconPath = path.join(ASSETS_DIR, 'tray-template.png');
+    const iconPath = path.join(assetsDirectory, 'tray-template.png');
     const image = nativeImage.createFromPath(iconPath);
     image.setTemplateImage(true);
     return image;
   }
-  return nativeImage.createFromPath(path.join(ASSETS_DIR, 'tray-icon.png'));
+  return nativeImage.createFromPath(path.join(assetsDirectory, 'tray-icon.png'));
 }
 
 function buildTrayMenu(win: BrowserWindow): Electron.Menu {
@@ -705,7 +709,7 @@ function buildTrayMenu(win: BrowserWindow): Electron.Menu {
     {
       label: 'Open in Browser',
       click: () => {
-        shell.openExternal(`http://localhost:${STATIC_PORT}`).catch(console.error);
+        shell.openExternal(`http://localhost:${staticPort}`).catch(console.error);
       },
     },
     { type: 'separator' },
@@ -742,7 +746,7 @@ function createTray(win: BrowserWindow): Tray {
 // ─── Auto-update ──────────────────────────────────────────────────────────────
 
 async function setupAutoUpdater(win: BrowserWindow): Promise<void> {
-  if (!IS_PACKAGED) {
+  if (!isPackaged) {
     console.log('[Electron] Skipping auto-update in dev mode');
     return;
   }
@@ -824,7 +828,7 @@ function createMainWindow(): BrowserWindow {
 
   win.once('ready-to-show', () => {
     win.show();
-    if (!IS_PACKAGED) win.webContents.openDevTools({ mode: 'detach' });
+    if (!isPackaged) win.webContents.openDevTools({ mode: 'detach' });
   });
 
   win.on('close', async (event) => {
@@ -858,7 +862,7 @@ function createMainWindow(): BrowserWindow {
 async function main(): Promise<void> {
   // Single-instance lock — if another instance is already running, focus it
   // and exit this one.  Skip in dev mode so rapid re-launches work cleanly.
-  if (IS_PACKAGED) {
+  if (isPackaged) {
     const gotLock = app.requestSingleInstanceLock();
     if (!gotLock) {
       app.quit();
@@ -880,13 +884,13 @@ async function main(): Promise<void> {
 
   // Set Dock icon on macOS (overrides the generic Electron atom in dev mode)
   if (process.platform === 'darwin') {
-    const dockIcon = nativeImage.createFromPath(path.join(ASSETS_DIR, 'app-icon.png'));
+    const dockIcon = nativeImage.createFromPath(path.join(assetsDirectory, 'app-icon.png'));
     if (!dockIcon.isEmpty()) app.dock?.setIcon(dockIcon);
   }
 
   // ── Core setup ────────────────────────────────────────────────────────────
   configureMediaPermissions();
-  configureCSP();
+  configureContentSecurityPolicy();
   configureScreenShare();
   registerPickerIpc();
 
@@ -899,7 +903,7 @@ async function main(): Promise<void> {
   tray = createTray(win);
   setupAutoUpdater(win);
 
-  await win.loadURL(`http://localhost:${STATIC_PORT}`);
+  await win.loadURL(`http://localhost:${staticPort}`);
 
   // Probe desktopCapturer so macOS registers the app in the Screen Recording
   // list under System Settings → Privacy & Security.  Without this call the
@@ -926,7 +930,7 @@ async function main(): Promise<void> {
     if (win.isDestroyed()) {
       win = createMainWindow();
       tray?.setContextMenu(buildTrayMenu(win));
-      win.loadURL(`http://localhost:${STATIC_PORT}`).catch(console.error);
+      win.loadURL(`http://localhost:${staticPort}`).catch(console.error);
     } else {
       win.show();
       win.focus();
