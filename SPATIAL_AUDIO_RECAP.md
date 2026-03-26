@@ -177,6 +177,27 @@ SessionProvider (isSpatialAudioEnabled state)
 | Safari max participants | 4 | **Unlimited** | Breaking bug fixed |
 | Main-thread scheduling | N independent | 1 batched rAF | Frame-coherent |
 
+### Known Limitation: Mono Output Devices
+
+**Problem:** Spatial audio panning only has an audible effect on stereo (or multi-channel) output devices. If the user's output device is mono, the OS downmixes `(L+R)/2` and panning is silently lost.
+
+**Common mono scenarios in video calls:**
+- Bluetooth HFP mode (AirPods, Jabra, etc. switch from stereo A2DP to mono HFP when the mic is active)
+- Single-ear Bluetooth earpieces (Jabra Talk, Plantronics Voyager)
+- USB speakerphones (Jabra Speak, Poly)
+- Phone built-in speakers (often route call audio to the mono earpiece)
+
+**Can we detect it?** No — there is no browser API that reliably reports the physical output device's channel count:
+
+| API | Reports | Useful? |
+|-----|---------|---------|
+| `AudioContext.destination.maxChannelCount` | OS audio mixer channels (usually `2`) | No — reports stereo even with mono device connected |
+| `navigator.mediaDevices.enumerateDevices()` | Device ID, label, kind | No — no channel count property |
+| Media Capabilities API | Codec decode/encode support | No — unrelated to output topology |
+| `AudioContext.sinkId` | Routes to a specific device | No — no channel info exposed |
+
+**Verdict:** No action needed. The feature degrades gracefully — `StereoPannerNode` produces stereo output, the OS downmixes to mono transparently, and no errors occur. A warning would require information the browser doesn't expose.
+
 ---
 
 ## 4. Progressive Implementation Timeline
