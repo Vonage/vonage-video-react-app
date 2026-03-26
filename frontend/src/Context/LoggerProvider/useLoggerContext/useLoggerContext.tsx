@@ -4,8 +4,10 @@ import useUserContext from '@hooks/useUserContext';
 import frontendLogger from '../../../logger';
 
 /**
- * Derives logger context (userId, sessionId, connectionId) from UserContext and SessionContext
- * and keeps the frontendLogger in sync via setContext/clearContext.
+ * Syncs userId, sessionId, and connectionId from UserContext and SessionContext
+ * into the global frontendLogger on every change.
+ * When the session ends, vonageVideoClient becomes null and sessionId/connectionId
+ * naturally become undefined, so no explicit clearContext is needed.
  */
 const useLoggerContext = () => {
   const { vonageVideoClient } = useSessionContext();
@@ -17,10 +19,6 @@ const useLoggerContext = () => {
 
   useEffect(() => {
     frontendLogger.setContext({ userId, sessionId, connectionId });
-
-    return () => {
-      frontendLogger.clearContext();
-    };
   }, [userId, sessionId, connectionId]);
 
   return { userId, sessionId, connectionId };

@@ -12,7 +12,6 @@ vi.mock('../../../logger', () => ({
 }));
 
 const mockSetContext = vi.mocked(frontendLogger.setContext);
-const mockClearContext = vi.mocked(frontendLogger.clearContext);
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const mockVonageVideoClient = { sessionId: 'session-1', connectionId: 'connection-1' } as any;
@@ -55,12 +54,20 @@ describe('useLoggerContext', () => {
     expect(mockSetContext).toHaveBeenCalledWith(expect.objectContaining({ userId: undefined }));
   });
 
-  it('calls clearContext on unmount', () => {
-    const { unmount } = render();
+  it('never calls clearContext so async events always keep their context', () => {
+    const mockClearContext = vi.mocked(frontendLogger.clearContext);
+    const { unmount } = render({
+      userContext: { value: { defaultSettings: { name: 'user-1' } } },
+      sessionContext: {
+        __interceptor: (ctx) => {
+          if (ctx) ctx.vonageVideoClient = mockVonageVideoClient;
+        },
+      },
+    });
 
     unmount();
 
-    expect(mockClearContext).toHaveBeenCalledTimes(1);
+    expect(mockClearContext).not.toHaveBeenCalled();
   });
 
   it('returns derived userId, sessionId and connectionId', () => {

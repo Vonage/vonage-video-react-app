@@ -34,12 +34,12 @@ describe('LoggerProvider', () => {
     });
   });
 
-  it('calls clearContext on unmount', () => {
+  it('never calls clearContext so async events always keep their context', () => {
     const { unmount } = render();
 
     unmount();
 
-    expect(mockClearContext).toHaveBeenCalledTimes(1);
+    expect(mockClearContext).not.toHaveBeenCalled();
   });
 
   it('re-calls setContext when userId changes', async () => {
