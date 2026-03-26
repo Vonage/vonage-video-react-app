@@ -128,7 +128,46 @@ SessionProvider (isSpatialAudioEnabled state)
 | 4 | Lazy AudioContext resume | Very Low | Low | Deferred (quick win) |
 | 5 | AudioWorklet for pan computation | High | Low | Not recommended |
 
-**Solution implemented:** Strategy 1 — `sharedAudioContext.ts` singleton with `acquireSharedAudioContext()` / `releaseSharedAudioContext()` ref counting. All subscribers share 1 AudioContext regardless of participant count.
+**Solutions implemented:** Strategy 1 (Shared Singleton AudioContext) and Strategy 3 (Batched rAF Pan Updates).
+
+### Performance Impact — Before & After Each Optimisation
+
+**Baseline (Phase 1-6, before any optimisation):**
+
+| Participants | AudioContexts | Timers (resize) | Memory overhead | Safari |
+|-------------|--------------|-----------------|-----------------|--------|
+| 2 | 1 | 1 | ~2 MB | OK |
+| 5 | 4 | 4 | ~8 MB | Risk (4 limit) |
+| 10 | 9 | 9 | ~18 MB | Broken |
+| 25 | 24 | 24 | ~48 MB | Broken |
+
+**After Phase 7 — Shared Singleton AudioContext:**
+
+| Participants | AudioContexts | Timers (resize) | Memory saved | Safari |
+|-------------|--------------|-----------------|-------------|--------|
+| 2 | **1** | 1 | 0 | OK |
+| 5 | **1** | 4 | ~6 MB (~75%) | **Fixed** |
+| 10 | **1** | 9 | ~16 MB (~89%) | **Fixed** |
+| 25 | **1** | 24 | ~46 MB (~96%) | **Fixed** |
+
+**After Phase 8 — Batched rAF Pan Updates:**
+
+| Participants | AudioContexts | Timers (resize) | Main-thread scheduling reduction |
+|-------------|--------------|-----------------|----------------------------------|
+| 2 | 1 | **1 rAF** | Negligible |
+| 5 | 1 | **1 rAF** | ~4x fewer timer callbacks |
+| 10 | 1 | **1 rAF** | ~9x fewer timer callbacks |
+| 25 | 1 | **1 rAF** | ~24x fewer timer callbacks |
+
+**Combined improvement summary (Phases 7+8):**
+
+| Metric | Before | After | Improvement |
+|--------|--------|-------|-------------|
+| AudioContexts (10 participants) | 9 | **1** | 89% reduction |
+| Memory (10 participants) | ~18 MB | ~2 MB | 89% reduction |
+| Timer callbacks during resize | N per frame | **1** per frame | N× reduction |
+| Safari max participants | 4 | **Unlimited** | Breaking bug fixed |
+| Main-thread scheduling | N independent | 1 batched rAF | Frame-coherent |
 
 ---
 
