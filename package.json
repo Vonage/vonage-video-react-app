@@ -32,7 +32,8 @@
     "vcr:dev": "npx tsx scripts/vcrDev.ts",
     "dev:electron": "npx tsx scripts/electronDev.ts",
     "build:electron": "npx tsx scripts/electronPackage.ts",
-    "test:electron-version": "npx tsx scripts/testElectronVersion.ts"
+    "test:electron-version": "npx tsx scripts/testElectronVersion.ts",
+    "test:tcc": "npx tsx scripts/testTcc.ts"
   },
   "scriptsInfo": {
     "build": "Build projects. Usage: 'yarn build' (frontend+backend), 'yarn build frontend', 'yarn build backend', 'yarn build room' (VeraRoom web component)",
@@ -47,7 +48,8 @@
     "vcr:dev": "Manage VCR dev instance. Usage: 'yarn vcr:dev' (deploy), 'yarn vcr:dev rm' or 'yarn vcr:dev --rm' (remove instance). Note: Copy vcr.yml.example as vcr-dev.yml and add your application ID before deploying",
     "dev:electron": "Build frontend+backend+electron then launch Electron app in dev mode",
     "build:electron": "Build all and package Electron app for distribution (dmg/exe/AppImage)",
-    "test:electron-version": "Test the app with a different Electron version (e.g. yarn test:electron-version 41.0.3)"
+    "test:electron-version": "Test the app with a different Electron version (e.g. yarn test:electron-version 41.0.3)",
+    "test:tcc": "Diagnose macOS TCC permissions (camera, mic, screen recording) for Electron"
   },
   "repository": {
     "type": "git",

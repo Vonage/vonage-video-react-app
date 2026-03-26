@@ -162,6 +162,37 @@ Screen Recording cannot be requested programmatically on macOS. On first launch,
 
 If Screen Recording is denied when the user tries to share their screen, the app shows a dialog with a button to open System Settings directly.
 
+### Troubleshooting TCC Permissions
+
+If camera, microphone, or screen recording aren't working:
+
+```bash
+# Check current TCC status for Electron
+yarn test:tcc
+
+# Reset all Electron permissions (forces re-grant on next launch)
+tccutil reset All com.github.electron
+
+# Reset only Screen Recording
+tccutil reset ScreenCapture com.github.electron
+
+# Reset only Camera
+tccutil reset Camera com.github.electron
+
+# Reset only Microphone
+tccutil reset Microphone com.github.electron
+```
+
+**Common TCC issues:**
+
+| Symptom | Cause | Fix |
+|---|---|---|
+| Camera/mic prompt never appears | Electron spawned from terminal, not via Launch Services | Use `yarn dev electron` or `yarn dev:electron` (launches via `open -n`) |
+| Screen Recording shows as enabled but doesn't work | Binary hash changed (Electron version swap) | Toggle OFF then ON in System Settings, restart app |
+| Permission dialog appears behind app window | Probe fires before window loads | Fixed — probe now fires after `win.loadURL()` completes |
+| "Vonage Video cannot access your screen" after granting | macOS requires app restart after granting Screen Recording | Close and relaunch the app |
+| Permissions work in one Electron version but not another | Different binary = different TCC entry | Run `tccutil reset ScreenCapture com.github.electron` and re-grant |
+
 ### Entitlements (Packaged Builds)
 
 For distribution, the app must be signed with entitlements (`entitlements.mac.plist`) that declare camera, microphone, and screen capture access. These are used by `electron-builder` during packaging.
