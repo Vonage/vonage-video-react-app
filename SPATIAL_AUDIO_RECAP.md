@@ -253,12 +253,20 @@ SessionProvider (isSpatialAudioEnabled state)
 - Added `eslint-disable-next-line react-hooks/exhaustive-deps` to two `useEffect` blocks in `useSpatialAudio.ts` (lines 168 and 184) — `activate` and `deactivate` are intentionally excluded from deps because they use refs for the latest state
 - CI runs ESLint with `--max-warnings 0`, so warnings are treated as errors
 
+### Phase 10: URL Parameter for Debug Overlay
+**Commit:** `feat(spatial-audio): add ?spatialDebug=true URL parameter for debug overlay`
+
+- Added `?spatialDebug=true` URL parameter support alongside the `SPATIAL_AUDIO_DEBUG` env var
+- Debug overlay is now visible when **either** `SPATIAL_AUDIO_DEBUG=true` (env) **or** `?spatialDebug=true` (URL param) is set
+- Follows the existing `?bypass=true` URL parameter pattern used elsewhere in the app
+- Makes it easier to toggle debug visualization at runtime without rebuilding
+
 ---
 
 ## PR
 
 **PR #423:** `feature/spatial-audio` → `develop`
 **Repository:** https://github.com/Vonage/vonage-video-react-app/pull/423
-**Total commits:** 14
+**Total commits:** 15
 **Files changed:** 31
 **Tests added:** 54+

@@ -19,6 +19,9 @@ import useSpatialAudio, { calculatePan } from '../../hooks/useSpatialAudio';
 import SpatialAudioDebugOverlay from '../MeetingRoom/SpatialAudioDebugOverlay';
 import { env } from '../../env';
 
+const isSpatialDebugFromUrl =
+  new URLSearchParams(window.location.search).get('spatialDebug') === 'true';
+
 export type SubscriberProps = {
   subscriberWrapper: SubscriberWrapper;
   isHidden: boolean;
@@ -168,7 +171,7 @@ const Subscriber = ({
         />
       )}
       {box && <NameDisplay name={username} containerWidth={box.width} />}
-      {env.SPATIAL_AUDIO_DEBUG && isSpatialAudioEnabled && box && (
+      {(env.SPATIAL_AUDIO_DEBUG || isSpatialDebugFromUrl) && isSpatialAudioEnabled && box && (
         <SpatialAudioDebugOverlay pan={calculatePan(box, containerWidth)} />
       )}
     </VideoTile>
