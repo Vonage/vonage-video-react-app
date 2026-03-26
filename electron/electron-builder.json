@@ -3,7 +3,6 @@
   "appId": "com.vonage.video-react-app",
   "productName": "Vonage Video",
   "copyright": "Copyright © 2026 Vonage",
-  "main": "electron/dist/main.js",
   "asar": true,
   "icon": "electron/assets/app-icon.png",
   "files": ["electron/dist/**"],
@@ -47,7 +46,7 @@
       "NSMicrophoneUsageDescription": "Vonage Video needs microphone access for audio in calls.",
       "NSScreenCaptureDescription": "Vonage Video needs screen recording access for screen sharing."
     },
-    "locales": ["en", "de", "it", "es", "es_MX"],
+    "electronLanguages": ["en", "de", "it", "es", "es_MX"],
     "target": [
       {
         "target": "dmg",
