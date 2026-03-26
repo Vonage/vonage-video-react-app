@@ -54,6 +54,8 @@ const useMeetingRoom = () => {
     closeRightPanel,
     toggleReportIssue,
     archiveId,
+    recordingAlreadyNotified,
+    archiveIdStartedBySelf,
   } = useSessionContext();
 
   const { isSharingScreen, screensharingPublisher, screenshareVideoElement, toggleShareScreen } =
@@ -63,6 +65,13 @@ const useMeetingRoom = () => {
 
   const [isUserCaptionsEnabled, setIsUserCaptionsEnabled] = useState<boolean>(false);
   const [captionsErrorResponse, setCaptionsErrorResponse] = useState<string | null>('');
+
+  const [latestNotifiedArchiveId, setLatestNotifiedArchiveId] = useState<string | null>(null);
+  const handleRecordingNotified = () => {
+    setLatestNotifiedArchiveId(archiveId);
+  };
+  const shouldPromptRecordingConsent =
+    !!archiveId && (archiveIdStartedBySelf === null || archiveId !== archiveIdStartedBySelf);
 
   const hasValidUsername = name && name.trim() !== '';
   const searchParams = new URLSearchParams(location.search);
@@ -148,6 +157,12 @@ const useMeetingRoom = () => {
     captionsErrorResponse,
     setCaptionsErrorResponse,
     captionsState,
+    recordingAlreadyNotified,
+    archiveIdStartedBySelf,
+    archiveId,
+    shouldPromptRecordingConsent,
+    handleRecordingNotified,
+    latestNotifiedArchiveId,
   };
 };
 

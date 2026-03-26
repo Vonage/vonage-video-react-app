@@ -23,7 +23,7 @@ import useGoodByePage from '../../hooks/useGoodByePage';
  */
 const GoodBye = (): ReactElement => {
   const { t } = useTranslation();
-  const { roomName, archives, header, caption } = useGoodByePage();
+  const { roomName, archives, header, caption, isSelfDeclinedRecording } = useGoodByePage();
 
   return (
     <PageLayout>
@@ -34,8 +34,8 @@ const GoodBye = (): ReactElement => {
         <GoodByeMessage header={header} message={caption} />
       </PageLayout.Left>
       <PageLayout.Right>
-        <Stack direction="column" gap={4}>
-          <Card className="lg:min-w-100 xl:min-w-125 items-center">
+        <Stack direction="column" gap={4} className="w-full items-center">
+          <Card className="w-full max-w-125">
             <p className="text-xl font-medium font-vera-plain text-vera-secondary mb-3 w-full text-left">
               {t('goodBye.title')}
             </p>
@@ -44,13 +44,14 @@ const GoodBye = (): ReactElement => {
             </div>
             <GoToLandingPageButton />
           </Card>
-
-          <Card className="min-w-full lg:min-w-100 xl:min-w-125">
-            <p className="text-xl font-medium font-vera-plain text-vera-secondary mb-6">
-              {t('archiveList.label')}
-            </p>
-            <ArchiveList archives={archives} />
-          </Card>
+          {!isSelfDeclinedRecording && (
+            <Card className="w-full max-w-125">
+              <p className="text-xl font-medium font-vera-plain text-vera-secondary mb-6">
+                {t('archiveList.label')}
+              </p>
+              <ArchiveList archives={archives} />
+            </Card>
+          )}
         </Stack>
       </PageLayout.Right>
       <PageLayout.Footer>
