@@ -221,6 +221,49 @@ describe('useScreenSharing', () => {
     expect(result.current.screenshareVideoElement).toBe(undefined);
   });
 
+  it('sets isEntireScreen to true when displaySurface is undefined but dimensions match the screen area', async () => {
+    const { result } = render({
+      userContext: {
+        __interceptor: (context: UserContextType | null) => {
+          context!.user.defaultSettings.name = 'TestUser';
+        },
+      },
+      sessionContext: {
+        __interceptor: (context) => {
+          if (context) {
+            context.vonageVideoClient = mockVonageVideoClient as unknown as VonageVideoClient;
+            context.publish = mockPublish;
+            context.unpublish = mockUnpublish;
+          }
+        },
+      },
+    });
+
+    await act(async () => {
+      await result.current.toggleShareScreen();
+    });
+
+    const mockVideoEl = {
+      srcObject: {
+        getVideoTracks: () => [
+          {
+            getSettings: () => ({
+              displaySurface: undefined,
+              width: window.screen.width,
+              height: window.screen.height,
+            }),
+          },
+        ],
+      },
+    } as unknown as HTMLVideoElement;
+
+    act(() => {
+      handlers['videoElementCreated']({ element: mockVideoEl });
+    });
+
+    expect(result.current.isEntireScreen).toBe(true);
+  });
+
   it('does not initialize publisher if session is null', async () => {
     const { result } = render({
       userContext: {

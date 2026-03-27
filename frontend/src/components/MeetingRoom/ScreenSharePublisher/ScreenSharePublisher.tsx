@@ -54,7 +54,7 @@ const ScreenSharePublisher = ({
         isScreenshare
       >
         {isEntireScreen ? (
-          <div className="absolute inset-0 flex items-center justify-center text-xl font-medium bg-vera-dark-background text-vera-on-background pointer-events-none">
+          <div className="absolute inset-0 flex items-center justify-center text-vera-heading-4 font-vera-plain bg-vera-dark-background text-vera-on-background pointer-events-none">
             {t('screenSharing.dialog.hiddenMessage')}
           </div>
         ) : (

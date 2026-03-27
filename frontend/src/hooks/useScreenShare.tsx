@@ -88,8 +88,20 @@ const useScreenShare = (): UseScreenShareType => {
           setScreenshareVideoElement(videoEl);
           const mediaStream = videoEl.srcObject as MediaStream | null;
           const track = mediaStream?.getVideoTracks?.()[0];
-          const displaySurface = track?.getSettings?.()?.displaySurface;
-          setIsEntireScreen(displaySurface === 'monitor');
+          const settings = track?.getSettings?.();
+          const displaySurface = settings?.displaySurface;
+
+          const width = settings?.width;
+          const height = settings?.height;
+
+          const isMonitor =
+            displaySurface === 'monitor' ||
+            (!displaySurface &&
+              width !== undefined &&
+              height !== undefined &&
+              width * height >= window.screen.width * window.screen.height);
+
+          setIsEntireScreen(isMonitor);
         });
 
         screenSharingPubRef.current?.on('streamDestroyed', () => {
