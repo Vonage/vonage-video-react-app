@@ -28,15 +28,12 @@ type MeetingRoomProps = BoxProps & {
   fullSize?: boolean;
 };
 
-const MeetingRoom = ({
-  fullSize = false,
-  className,
-  // ...props
-}: MeetingRoomProps): ReactElement => {
+const MeetingRoom = ({ fullSize = false, className }: MeetingRoomProps): ReactElement => {
   const {
     t,
     isSmallViewport,
     isSharingScreen,
+    isEntireScreen,
     screensharingPublisher,
     screenshareVideoElement,
     toggleShareScreen,
@@ -46,20 +43,6 @@ const MeetingRoom = ({
     toggleBackgroundEffects,
     closeRightPanel,
     toggleReportIssue,
-    archiveId,
-  } = useSessionContext();
-  const {
-    isSharingScreen,
-    isEntireScreen,
-    screensharingPublisher,
-    screenshareVideoElement,
-    toggleShareScreen,
-  } = useScreenShare();
-  const isSmallViewport = useIsSmallViewport();
-
-  const [isUserCaptionsEnabled, setIsUserCaptionsEnabled] = useState<boolean>(false);
-  const [captionsErrorResponse, setCaptionsErrorResponse] = useState<string | null>('');
-  const captionsState = {
     subscriberWrappers,
     reconnecting,
     quality,
@@ -76,7 +59,6 @@ const MeetingRoom = ({
     latestNotifiedArchiveId,
     handleRecordingNotified,
   } = useMeetingRoom();
-
   return (
     <Box
       data-testid="meetingRoom"
