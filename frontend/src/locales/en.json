@@ -166,6 +166,14 @@
   "recording.stop.dialog.content": "You can download the recording from the \"Goodbye\" page after you leave the room.",
   "recording.stop.dialog.title": "Stop Recording?",
   "recording.stop.title": "Stop recording",
+  "recording.consent.dialog.title": "This meeting is being recorded",
+  "recording.consent.dialog.content": "The host has started recording this meeting. Do you consent to being recorded?",
+  "recording.consent.dialog.accept": "I consent",
+  "recording.consent.dialog.decline": "I do not consent",
+  "recording.consent.goodbye.header": "Recording declined",
+  "recording.consent.goodbye.message": "You chose not to consent to recording. Please rejoin when recording is stopped or ask the host to disable recording.",
+  "recording.popup.title": "Recording",
+  "recording.popup.subtitle": "This meeting is being recorded",
   "recording.tooltip.ariaLabel": "video layout",
   "room.exit.ariaLabel": "exit",
   "room.exit.tooltip": "Exit meeting",
@@ -189,6 +197,7 @@
   "unknown.device": "Unknown Device",
   "user.unknown": "unknown user",
   "user.you": "You",
+  "waitingRoom.devices.noDevicesFound": "No devices found",
   "waitingRoom.title": "Prepare to join",
   "waitingRoom.user.input.title": "Enter your name",
   "waitingRoom.user.input.label": "Name",
@@ -211,5 +220,7 @@
   "zoom.start": "Start Zooming",
   "zoom.out": "Zoom out",
   "zoom.in": "Zoom in",
-  "zoom.current": "Current zoom"
+  "zoom.current": "Current zoom",
+  "errorPage.title": "Something went wrong",
+  "errorPage.description": "The application could not start. Please reload the page or contact support if the problem persists."
 }

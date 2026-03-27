@@ -9,6 +9,7 @@ When reviewing code, Copilot must also evaluate changes according to these rules
 
 - **Rule:** Vera is a video call application built with Vonage Video API and is being transformed into a reusable component library for Vonage Video API React SDK users.
 - **Rule:** Video components, hooks, and primitives must be extracted into `libs/ui` and `libs/core`.
+- **Rule:** Backend-agnostic Vonage Video API handler logic must live in `libs/api`.
 - **Rule:** New features must be designed with **reusability** in mind and must remain **agnostic of Vera** wherever possible.
 
 ---
@@ -17,7 +18,7 @@ When reviewing code, Copilot must also evaluate changes according to these rules
 
 This is a mono repo containing:
 
-- Libs: `ui`, `core`, `common`
+- Libs: `ui`, `core`, `common`, `api`
 - Main projects: `frontend`, `backend`
 - `integration-test`
 
@@ -95,7 +96,7 @@ if (condition1) {
     }
 }
 
-this.VITE_API_URL = url;
+this.API_URL = url;
 ```
 
 **Correct:**
@@ -108,7 +109,7 @@ const url = (() => {
     return 'value3';
 })();
 
-this.VITE_API_URL = url;
+this.API_URL = url;
 ```
 
 - **Rule:** Use named boolean expressions or named helper functions for complex boolean conditions.
@@ -1245,7 +1246,7 @@ const Button = ({ size, variant }) => {
 };
 
 const button = tv({
-  base: 'rounded font-medium transition active:opacity-80',
+  base: 'rounded-sm font-medium transition active:opacity-80',
 
   variants: {
     variant: {

@@ -164,6 +164,14 @@
   "recording.stop.dialog.content": "Puoi scaricare la registrazione dalla pagina \"Addio\" dopo aver lasciato la stanza.",
   "recording.stop.dialog.title": "Interrompere la registrazione?",
   "recording.stop.title": "Interrompi registrazione",
+  "recording.consent.dialog.title": "Questa riunione è in registrazione",
+  "recording.consent.dialog.content": "L'organizzatore ha avviato la registrazione di questa riunione. Acconsenti a essere registrato?",
+  "recording.consent.dialog.accept": "Acconsento",
+  "recording.consent.dialog.decline": "Non acconsento",
+  "recording.consent.goodbye.header": "Registrazione rifiutata",
+  "recording.consent.goodbye.message": "Hai scelto di non acconsentire alla registrazione. Rientra quando la registrazione è stata interrotta o chiedi all'organizzatore di disattivarla.",
+  "recording.popup.title": "Registrazione",
+  "recording.popup.subtitle": "Questa riunione viene registrata",
   "recording.tooltip.ariaLabel": "layout video",
   "room.exit.ariaLabel": "esci",
   "room.exit.tooltip": "Esci dalla riunione",
@@ -187,6 +195,7 @@
   "unknown.device": "Dispositivo sconosciuto",
   "user.unknown": "utente sconosciuto",
   "user.you": "Tu",
+  "waitingRoom.devices.noDevicesFound": "Nessun dispositivo trovato",
   "waitingRoom.title": "Preparati per unirti",
   "waitingRoom.user.input.title": "Inserisci il tuo nome",
   "waitingRoom.user.input.label": "Nome",
@@ -209,5 +218,7 @@
   "zoom.start": "Inizia zoom",
   "zoom.out": "Zoom indietro",
   "zoom.in": "Zoom avanti",
-  "zoom.current": "Zoom attuale"
+  "zoom.current": "Zoom attuale",
+  "errorPage.title": "Qualcosa è andato storto",
+  "errorPage.description": "L'applicazione non è riuscita ad avviarsi. Ricarica la pagina o contatta il supporto se il problema persiste."
 }

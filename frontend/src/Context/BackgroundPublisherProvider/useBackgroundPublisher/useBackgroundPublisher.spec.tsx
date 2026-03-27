@@ -67,7 +67,7 @@ describe('useBackgroundPublisher', () => {
       expect(console.error).toHaveBeenCalledWith('initPublisher error: ', error);
     });
 
-    it('should apply background high blur when initialized and changed background', async () => {
+    it('should apply background high blur-sm when initialized and changed background', async () => {
       mockedHasMediaProcessorSupport.mockReturnValue(true);
       mockedInitPublisher.mockReturnValue(mockPublisher);
       const { result } = render();
@@ -114,7 +114,7 @@ describe('useBackgroundPublisher', () => {
       (mockPublisher.clearVideoFilter as Mock).mockClear();
     });
 
-    it('applies low blur filter', async () => {
+    it('applies low blur-sm filter', async () => {
       await act(async () => {
         await result.current.changeBackground('low-blur');
       });
@@ -227,7 +227,6 @@ describe('useBackgroundPublisher', () => {
 });
 
 type RenderOptions = {
-  appConfigContext?: ProviderOptions['AppConfigContext'];
   userContext?: ProviderOptions['UserContext'];
   sessionContext?: ProviderOptions['SessionContext'];
   publisherContext?: ProviderOptions['PublisherContext'];
@@ -235,22 +234,14 @@ type RenderOptions = {
 };
 
 function render({
-  appConfigContext,
   userContext,
   sessionContext,
   publisherContext,
   backgroundPublisherContext,
 }: RenderOptions = {}) {
   const { wrapper, ...context } = makeTestProvider(
-    [
-      providers.appConfig,
-      providers.user,
-      providers.session,
-      providers.publisher,
-      providers.backgroundPublisher,
-    ],
+    [providers.user, providers.session, providers.publisher, providers.backgroundPublisher],
     {
-      appConfigContext,
       userContext,
       sessionContext,
       publisherContext,

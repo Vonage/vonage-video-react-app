@@ -52,7 +52,7 @@ const BackgroundEffectsLayout = ({
   } = useBackgroundPublisherContext();
 
   const handleApplyBackgroundSelect = () => {
-    changeBackground(backgroundSelected);
+    void changeBackground(backgroundSelected);
     handleClose();
   };
 
@@ -65,7 +65,7 @@ const BackgroundEffectsLayout = ({
   useEffect(() => {
     if (isOpen) {
       const currentOption = setInitialBackgroundReplacement();
-      changeBackgroundPreview(currentOption);
+      void changeBackgroundPreview(currentOption);
     }
   }, [isOpen, publisher, changeBackgroundPreview, setInitialBackgroundReplacement]);
 
@@ -83,7 +83,7 @@ const BackgroundEffectsLayout = ({
         sx={{ mr: 1, color: theme.colors.textSecondary }}
         onClick={() => {
           const currentOption = setInitialBackgroundReplacement();
-          changeBackgroundPreview(currentOption);
+          void changeBackgroundPreview(currentOption);
           handleClose();
         }}
       >

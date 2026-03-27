@@ -8,6 +8,7 @@ import { registerIcon } from '@vonage/vivid';
 import App from './App.jsx';
 import './i18n.js';
 import Logger from './logger';
+import { BackendLoggingProvider } from './logger/providers';
 
 // Register Vivid icons for use throughout the application
 registerIcon();
@@ -20,15 +21,7 @@ const rootElement = document.getElementById('root')!;
 
 const { onUncaughtError, onRecoverableError, onCaughtError } = Logger;
 
-/**
- * Here you should set your actual logging provider configuration.
- * Optional for testing you can uncomment this and use verbose true to see logs in console.
- */
-// Logger.setup(() => ({
-//   verbose: false,
-//   log: (_eventName: string, _payload?: Record<string, unknown>) => {},
-//   reportError: (_error: unknown, _context?: Record<string, unknown>) => {},
-// }));
+Logger.setup(() => new BackendLoggingProvider());
 
 ReactDOM.createRoot(rootElement, {
   onUncaughtError,

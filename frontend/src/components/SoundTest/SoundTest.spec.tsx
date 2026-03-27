@@ -4,7 +4,7 @@ import userEvent from '@testing-library/user-event';
 import VividIcon from '@components/VividIcon';
 import SoundTest from './SoundTest';
 import { nativeDevices } from '../../utils/mockData/device';
-import { makeTestProvider, providers } from '@test/providers';
+import { makeTestProvider } from '@test/providers';
 import { ReactElement } from 'react';
 import { setupWindowNavigatorMock } from '@web-test/fixtures';
 
@@ -99,6 +99,16 @@ describe('SoundTest', () => {
     expect(displayedText).toBeInTheDocument();
   });
 
+  it('applies custom label classes', () => {
+    render(
+      <SoundTest labelClassName="text-vera-body-extended">
+        <VividIcon name="hearing-line" customSize={-5} />
+      </SoundTest>
+    );
+
+    expect(screen.getByTestId('soundTestLabel')).toHaveClass('text-vera-body-extended');
+  });
+
   it('does not throw if setSinkId is undefined', () => {
     global.Audio = vi.fn().mockImplementation(() => ({
       play: playMock,
@@ -142,7 +152,7 @@ describe('SoundTest', () => {
 });
 
 function render(ui: ReactElement) {
-  const { wrapper, ...context } = makeTestProvider([providers.appConfig]);
+  const { wrapper, ...context } = makeTestProvider([]);
 
   return {
     ...context,

@@ -106,21 +106,21 @@ class ApplicationError extends Error {
     const { fallbackConfig, message, severity, stack, values, statusCode } = this;
 
     // Prevent disclosure of private sensitive info
-    if (process.env.NODE_ENV === 'production') {
+    if (globalThis.process?.env?.NODE_ENV === 'development') {
       return {
-        // prevent disclosing unhandled messages on production
-        message: fallbackConfig.fallbackMessage,
+        fallbackMessage: fallbackConfig.fallbackMessage,
+        message,
         severity,
+        stack,
         values,
         statusCode,
       };
     }
 
     return {
-      fallbackMessage: fallbackConfig.fallbackMessage,
-      message,
+      // prevent disclosing unhandled messages on production
+      message: fallbackConfig.fallbackMessage,
       severity,
-      stack,
       values,
       statusCode,
     };

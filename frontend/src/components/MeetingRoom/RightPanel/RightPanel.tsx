@@ -37,7 +37,7 @@ const RightPanel = ({
       data-testid="right-panel"
       className={twMerge(
         classNames([
-          'w-[100dvw] vera-desktop:w-[350px]',
+          'w-dvw vera-desktop:w-[350px]',
           'h-[calc(100dvh-80px)] vera-desktop:h-[calc(100dvh-96px)]',
           'mr-0 vera-desktop:mr-4 mt-0 vera-desktop:mt-4',
           className,

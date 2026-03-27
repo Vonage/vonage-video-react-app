@@ -74,7 +74,7 @@ const ParticipantList = ({ handleClose, isOpen }: ParticipantListProps): ReactEl
   }, [subscriberWrappers, query, name]);
 
   const copyUrl = () => {
-    navigator.clipboard.writeText(roomShareUrl);
+    void navigator.clipboard.writeText(roomShareUrl);
 
     setIsCopied(true);
 

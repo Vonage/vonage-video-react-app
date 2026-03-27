@@ -10,13 +10,18 @@ import prettier from 'eslint-config-prettier';
 import prettierPlugin from 'eslint-plugin-prettier';
 import cspell from '@cspell/eslint-plugin';
 import customWordList from './customWordList.mjs';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 
 const tsProjects = [
   './backend/tsconfig.json',
   './frontend/tsconfig.json',
+  './libs/api/tsconfig.json',
   './libs/ui/tsconfig.json',
   './integration-tests/tsconfig.json',
 ];
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 export default [
   // Nx base and TypeScript presets
@@ -67,6 +72,7 @@ export default [
             'frontend/.storybook/preview.tsx',
             'libs/ui/.storybook/main.ts',
             'libs/ui/.storybook/preview.tsx',
+            'backend/jest/documentPolyfill.js',
             // add more config files here if needed, e.g.
           ],
         },
@@ -86,7 +92,7 @@ export default [
     },
     settings: {
       react: { version: 'detect' },
-      tailwindcss: { config: './frontend/tailwind.config.js' },
+      tailwindcss: { config: path.join(__dirname, 'frontend/src/css/index.css') },
       'import/resolver': {
         typescript: { project: tsProjects },
         node: { extensions: ['.js', '.jsx', '.ts', '.tsx', '.mjs', '.cjs'] },
@@ -282,5 +288,9 @@ export default [
         },
       ],
     },
+  },
+  {
+    files: ['**/*.cjs'],
+    ...tseslint.configs.disableTypeChecked,
   },
 ];

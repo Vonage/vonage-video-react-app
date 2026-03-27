@@ -20,7 +20,6 @@ import {
   LocalCaptionReceived,
   StreamPropertyChangedEvent,
 } from '../../types/session';
-import logOnConnect from '../logOnConnect';
 import createMovingAvgAudioLevelTracker from '../movingAverageAudioLevelTracker';
 import idempotentCallbackWithRetry from '@common/execution/idempotentCallbackWithRetry';
 import frontendLogger from '../../logger';
@@ -162,11 +161,20 @@ class VonageVideoClient extends EventEmitter<VonageVideoClientEvents> {
           });
         });
 
-      console.warn('[SUBSCRIBER] Subscribing attempt for stream:', streamId);
+      frontendLogger.log('vonageVideoClient: subscribe attempt to stream', {
+        streamId,
+        sessionId: this.sessionId,
+        connectionId: this.connectionId,
+      });
 
       await idempotentCallbackWithRetry(() => subscribe());
 
-      console.warn('[SUBSCRIBER] Subscribing succeeded for stream:', streamId);
+      frontendLogger.log('vonageVideoClient: subscribed to stream', {
+        streamId,
+        sessionId: this.sessionId,
+        connectionId: this.connectionId,
+      });
+
       if (isScreenshare) {
         this.emit('screenshareStreamCreated');
       }
@@ -175,10 +183,6 @@ class VonageVideoClient extends EventEmitter<VonageVideoClientEvents> {
       const isRecoverableError = this.isRecoverableSubscriptionError(syncError);
 
       if (isRecoverableError) {
-        console.warn(
-          '[SUBSCRIBER] Recoverable subscription error - stream likely destroyed:',
-          syncError
-        );
         // Don't emit subscriptionError for recoverable errors
         // The stream was likely destroyed before subscription completed (e.g., user refreshed)
         return;
@@ -242,12 +246,20 @@ class VonageVideoClient extends EventEmitter<VonageVideoClientEvents> {
         subscriber,
       };
 
-      console.warn(`SubscriberVideoElementCreated ${streamId}`);
+      frontendLogger.log('vonageVideoClient: subscriber video element created', {
+        streamId,
+        sessionId: this.sessionId,
+        connectionId: this.connectionId,
+      });
       this.emit('subscriberVideoElementCreated', subscriberWrapper);
     });
 
     subscriber.on('destroyed', () => {
-      console.warn(`subscriberDestroyed ${streamId}`);
+      frontendLogger.log('vonageVideoClient: subscriber destroyed', {
+        streamId,
+        sessionId: this.sessionId,
+        connectionId: this.connectionId,
+      });
       this.emit('subscriberDestroyed', streamId);
     });
 
@@ -316,9 +328,10 @@ class VonageVideoClient extends EventEmitter<VonageVideoClientEvents> {
    */
   private handleSubscriptionError = (error: unknown) => {
     frontendLogger.reportError(error, {
-      source: 'vonageVideoClient.handleSubscriptionError',
+      eventSource: 'vonageVideoClient.handleSubscriptionError',
       sessionId: this.sessionId,
       connectionId: this.connectionId,
+      partnerId: this.credential.apiKey,
     });
 
     this.emit('subscriptionError', error ?? new Error('Unknown subscription error'));
@@ -351,9 +364,10 @@ class VonageVideoClient extends EventEmitter<VonageVideoClientEvents> {
    * @private
    */
   private handleReconnecting = () => {
-    frontendLogger.log('vonageVideoClient.handleReconnecting', {
+    frontendLogger.log('vonageVideoClient: is reconnecting', {
       sessionId: this.sessionId,
       connectionId: this.connectionId,
+      partnerId: this.credential.apiKey,
     });
 
     this.emit('sessionReconnecting');
@@ -364,9 +378,10 @@ class VonageVideoClient extends EventEmitter<VonageVideoClientEvents> {
    * @private
    */
   private handleReconnected = () => {
-    frontendLogger.log('vonageVideoClient.handleReconnected', {
+    frontendLogger.log('vonageVideoClient: reconnected', {
       sessionId: this.sessionId,
       connectionId: this.connectionId,
+      partnerId: this.credential.apiKey,
     });
 
     this.emit('sessionReconnected');
@@ -381,10 +396,11 @@ class VonageVideoClient extends EventEmitter<VonageVideoClientEvents> {
     const sessionId = this.sessionId;
     const connectionId = this.connectionId;
 
-    frontendLogger.log('vonageVideoClient.handleSessionDisconnected', {
+    frontendLogger.log('vonageVideoClient: handle session disconnected', {
       reason,
       sessionId,
       connectionId,
+      partnerId: this.credential.apiKey,
     });
 
     this.emit('sessionDisconnected', { reason });
@@ -421,19 +437,19 @@ class VonageVideoClient extends EventEmitter<VonageVideoClientEvents> {
       this.clientSession?.connect(token, (err?: OTError) => {
         if (err) {
           frontendLogger.reportError(err, {
-            source: 'vonageVideoClient.connect.error',
+            eventSource: 'vonageVideoClient.connect.error',
             sessionId,
+            connectionId: this.connectionId,
+            partnerId: apiKey,
           });
 
           reject(err);
         } else {
-          // TODO: Deprecate logOnConnect once Logger + gollum
-          // fully replace opentok-solutions-logging analytics.
-          logOnConnect(apiKey, sessionId, this.clientSession?.connection?.connectionId);
-
-          frontendLogger.log('vonageVideoClient.connect.success', {
+          frontendLogger.log('EnterMeeting', {
+            eventSource: 'vonageVideoClient.connect.success',
             sessionId,
-            connectionId: this.clientSession?.connection?.connectionId,
+            connectionId: this.connectionId,
+            partnerId: apiKey,
           });
 
           resolve();
@@ -479,10 +495,11 @@ class VonageVideoClient extends EventEmitter<VonageVideoClientEvents> {
       this.clientSession?.publish(publisher, (error) => {
         if (error) {
           frontendLogger.reportError(error, {
-            source: 'vonageVideoClient.publish.error',
+            eventSource: 'vonageVideoClient.publish.error',
             sessionId: this.sessionId,
             connectionId: this.connectionId,
             errorCode: (error as { code?: number })?.code,
+            partnerId: this.credential.apiKey,
           });
           const errorName = error.name || 'OTError';
           const errorMessage = error.message || 'Unknown publish error';
@@ -493,7 +510,6 @@ class VonageVideoClient extends EventEmitter<VonageVideoClientEvents> {
         // the following is needed for the local subscriber to be able to receive captions
         // More information: https://developer.vonage.com/en/video/guides/live-caption#receiving-your-own-live-captions
         if (publisher.stream) {
-          console.warn('[PUBLISHER] autosubscribe user to own captions stream');
           this.hiddenSubscriber =
             this.clientSession?.subscribe(publisher.stream, document.createElement('div'), {
               audioVolume: 0,

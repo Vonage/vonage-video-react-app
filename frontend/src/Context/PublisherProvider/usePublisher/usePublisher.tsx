@@ -15,6 +15,7 @@ import usePublisherOptions from '../usePublisherOptions';
 import useSessionContext from '../../../hooks/useSessionContext';
 import applyBackgroundFilter from '../../../utils/backgroundFilter/applyBackgroundFilter/applyBackgroundFilter';
 import idempotentCallbackWithRetry from '@common/execution/idempotentCallbackWithRetry';
+import frontendLogger from '../../../logger';
 
 type PublisherStreamCreatedEvent = Event<'streamCreated', Publisher> & {
   stream: Stream;
@@ -164,7 +165,8 @@ const usePublisher = (initialValue: PublisherContextInitialValue = {}): Publishe
   }, []);
 
   const handleDestroyed = useCallback(() => {
-    console.warn('[PUBLISHER] handleDestroyed - Publisher destroyed');
+    frontendLogger.log('usePublisher: handle destroyed');
+
     publisherRef.current = null;
   }, []);
 
@@ -186,12 +188,11 @@ const usePublisher = (initialValue: PublisherContextInitialValue = {}): Publishe
   }, []);
 
   const handleStreamCreated = useCallback((e: PublisherStreamCreatedEvent) => {
-    console.warn('streamCreated', {
+    frontendLogger.log('usePublisher: handle stream created', {
       streamId: e.stream?.streamId,
       streamHasAudio: e.stream?.hasAudio,
       streamHasVideo: e.stream?.hasVideo,
     });
-
     setIsPublishing(true);
     setStream(e.stream);
     // Reset the flag now that the stream is actually established
@@ -203,12 +204,11 @@ const usePublisher = (initialValue: PublisherContextInitialValue = {}): Publishe
   }, []);
 
   const handleStreamDestroyed = useCallback(() => {
-    console.warn('[PUBLISHER] handleStreamDestroyed', {
+    frontendLogger.log('usePublisher: handle stream destroyed', {
       reconnecting: reconnectingRef.current,
       hasPublisher: !!publisherRef.current,
       hasStream: !!publisherRef.current?.stream,
     });
-
     setStream(null);
     setIsPublishing(false);
 
@@ -218,7 +218,7 @@ const usePublisher = (initialValue: PublisherContextInitialValue = {}): Publishe
       isInitializingPublisherRef.current;
 
     if (shouldPreservePublisher) {
-      console.warn('[PUBLISHER] handleStreamDestroyed - Preserving publisher', {
+      frontendLogger.log('usePublisher: handle stream destroyed - preserving publisher', {
         reconnecting: reconnectingRef.current,
         isPublishingToSession: isPublishingToSessionRef.current,
         isInitializingPublisher: isInitializingPublisherRef.current,
@@ -228,11 +228,8 @@ const usePublisher = (initialValue: PublisherContextInitialValue = {}): Publishe
     }
 
     if (publisherRef?.current) {
-      console.warn('[PUBLISHER] handleStreamDestroyed - Destroying publisher');
       publisherRef.current.destroy();
       publisherRef.current = null;
-    } else {
-      console.warn('[PUBLISHER] handleStreamDestroyed - Publisher already destroyed');
     }
   }, []);
 
@@ -313,36 +310,32 @@ const usePublisher = (initialValue: PublisherContextInitialValue = {}): Publishe
       try {
         // Don't re-initialize if we're currently publishing
         if (isPublishingToSessionRef.current) {
-          console.warn(
-            '[PUBLISHER] initializeLocalPublisher - BLOCKED: Already publishing to session'
-          );
           return;
         }
         // Don't re-initialize if we're already initializing
         if (isInitializingPublisherRef.current) {
-          console.warn('[PUBLISHER] initializeLocalPublisher - BLOCKED: Already initializing');
           return;
         }
         // Don't re-initialize if we already have a publisher
         if (publisherRef.current) {
-          console.warn('[PUBLISHER] initializeLocalPublisher - BLOCKED: Publisher already exists');
           return;
         }
         isInitializingPublisherRef.current = true;
 
-        console.warn('[PUBLISHER] initializeLocalPublisher - Creating new publisher');
         const publisher = initPublisher(undefined, options);
         // Add listeners synchronously as some events could be fired before callback is invoked
         addPublisherListeners(publisher);
         publisherRef.current = publisher;
 
+        frontendLogger.log('usePublisher: initialize local publisher');
+
         // NOTE: isInitializingPublisherRef.current will be reset in handleAccessAllowed or handleAccessDenied
         // NOT here, because getUserMedia is async and we need to keep the lock until media access is granted/denied
       } catch (error) {
-        console.warn('[PUBLISHER] initializeLocalPublisher - ERROR during initialization:', error);
+        frontendLogger.reportError(error, { source: 'usePublisher: initialize local publisher' });
         isInitializingPublisherRef.current = false;
         if (error instanceof Error) {
-          console.warn(error.stack);
+          console.error(error.stack);
         }
       }
     },
@@ -366,49 +359,33 @@ const usePublisher = (initialValue: PublisherContextInitialValue = {}): Publishe
    * @returns {Promise<void>}
    */
   const publish = useCallback(async (): Promise<void> => {
-    console.warn('[PUBLISHER] publish - Attempting to publish', {
-      connected,
-      reconnecting,
-      hasPublisher: !!publisherRef.current,
-      isPublishingToSession: isPublishingToSessionRef.current,
-      isAudioEnabled,
-      isVideoEnabled,
-    });
-
     try {
       if (isPublishingToSessionRef.current) {
-        console.warn('[PUBLISHER] publish - BLOCKED: Already publishing to session');
         return; // Avoid multiple simultaneous publish attempts
       }
       if (reconnecting) {
-        console.warn('[PUBLISHER] publish - BLOCKED: Session is reconnecting');
         return;
       }
       if (!connected) {
-        console.warn('[PUBLISHER] publish - ERROR: Not connected to session');
         throw new Error('You are not connected to session');
       }
       if (!publisherRef.current) {
-        console.warn('[PUBLISHER] publish - ERROR: Publisher not initialized');
         throw new Error('Publisher is not initialized');
       }
       if (publisherRef.current?.stream) {
-        console.warn('[PUBLISHER] publish - already has stream');
         return;
       }
 
       isPublishingToSessionRef.current = true;
 
-      console.warn('[PUBLISHER] publish - Starting publish with retry');
       await idempotentCallbackWithRetry(() => sessionPublish(publisherRef.current!), {
         retries: 2,
         delayMs: 500,
       });
-      console.warn('[PUBLISHER] publish - Publish successful, waiting for streamCreated event');
+      frontendLogger.log('usePublisher: publish success');
       // Don't reset isPublishingToSessionRef here - wait for streamCreated event
     } catch (err: unknown) {
-      console.warn('[PUBLISHER] publish - ERROR during publish:', err);
-
+      frontendLogger.reportError(err, { source: 'usePublisher: publish' });
       // Reset the flag on error since we won't get streamCreated
       isPublishingToSessionRef.current = false;
 
@@ -417,16 +394,9 @@ const usePublisher = (initialValue: PublisherContextInitialValue = {}): Publishe
         handlePublishingError();
       }
 
-      console.warn(err);
+      console.error(err);
     }
-  }, [
-    connected,
-    reconnecting,
-    sessionPublish,
-    handlePublishingError,
-    isAudioEnabled,
-    isVideoEnabled,
-  ]);
+  }, [connected, reconnecting, sessionPublish, handlePublishingError]);
 
   /**
    * Turns the camera on and off
@@ -456,25 +426,16 @@ const usePublisher = (initialValue: PublisherContextInitialValue = {}): Publishe
 
     const nextAudioEnabled = !isAudioEnabled;
 
-    console.warn('toggleAudio (before publishAudio)', {
-      nextAudioEnabled,
-    });
-
     publisherRef.current.publishAudio(nextAudioEnabled);
     setIsAudioEnabled(nextAudioEnabled);
     setStorageItem(STORAGE_KEYS.AUDIO_SOURCE_ENABLED, nextAudioEnabled.toString());
     setIsForceMuted(false);
-
-    console.warn('toggleAudio (after publishAudio)', {
-      nextAudioEnabled,
-    });
   };
 
   useEffect(() => {
     const exceptionHandler = (exceptionEvent: ExceptionEvent) => {
       if (exceptionEvent.code === 1500) {
-        console.warn('Unable to publish to session. Error code:', exceptionEvent.code);
-
+        frontendLogger.log('usePublisher: exception 1500', { code: exceptionEvent.code });
         consecutivePublishingFailureCountRef.current += 1;
 
         const isBrowserOnline = (() => {
@@ -486,21 +447,13 @@ const usePublisher = (initialValue: PublisherContextInitialValue = {}): Publishe
         // Try to recover by recreating the publisher; only surface a blocking error after repeated failures.
         const shouldTreatAsTransient = reconnectingRef.current || !connected || !isBrowserOnline;
 
-        console.warn('[PUBLISHER] exception 1500', {
-          reconnecting: reconnectingRef.current,
-          connected,
-          isBrowserOnline,
-          consecutivePublishingFailureCount: consecutivePublishingFailureCountRef.current,
-          shouldTreatAsTransient,
-        });
-
         const publisherToCleanup = publisherRef.current;
         publisherRef.current = null;
 
         try {
           publisherToCleanup?.destroy();
         } catch {
-          console.warn('[PUBLISHER] exception 1500 - Warning: Failed to destroy publisher');
+          console.error('[PUBLISHER] exception 1500 - Warning: Failed to destroy publisher');
         }
 
         isPublishingToSessionRef.current = false;

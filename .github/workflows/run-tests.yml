@@ -25,7 +25,7 @@ jobs:
 
     strategy:
       matrix:
-        project: [frontend, backend, ui, core, common]
+        project: [frontend, backend, ui, core, common, api]
 
     steps:
       - name: Checkout

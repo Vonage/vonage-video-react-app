@@ -3,7 +3,7 @@ import use$ from '../use$';
 import useStableRef from '../useStableRef';
 import useAssertSuspense from '../useAssertSuspense';
 
-type Builder<T> = () => Promise<T> | T;
+type Builder<T, P extends Promise<T>> = () => T | P;
 
 /**
  * Like useMemo, but supports async values through Suspense.
@@ -17,10 +17,13 @@ type Builder<T> = () => Promise<T> | T;
  *                      result is a Promise, rendering will suspend.
  * @returns The callback's returned value (or the resolved value if async).
  */
-function useSuspenseMemo<T>(callback: Builder<T>, dependencies: React.DependencyList): T {
+function useSuspenseMemo<T, P extends Promise<T> = Promise<T>>(
+  callback: Builder<T, P>,
+  dependencies: React.DependencyList
+): T {
   useAssertSuspense('useSuspenseMemo must be used within a SuspenseBoundary Provider');
 
-  const usable = useStableRef<Promise<T> | T>(() => callback(), dependencies).current;
+  const usable = useStableRef<P | T>(() => callback(), dependencies).current;
 
   return use$(usable as Promise<T>);
 }

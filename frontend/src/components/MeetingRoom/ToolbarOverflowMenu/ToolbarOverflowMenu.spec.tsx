@@ -1,6 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it, Mock, vi } from 'vitest';
 import { render as renderBase, screen } from '@testing-library/react';
 import { ReactElement, useRef } from 'react';
+import userEvent from '@testing-library/user-event';
 import { isMobile } from '@web/platform';
 import isReportIssueEnabled from '@utils/isReportIssueEnabled';
 import { makeTestProvider, providers, ProviderOptions } from '@test/providers';
@@ -90,6 +91,16 @@ describe('ToolbarOverflowMenu', () => {
     expect(screen.getByTestId('chat-button')).toBeVisible();
   });
 
+  it('closes the overflow menu after changing the layout', async () => {
+    const user = userEvent.setup();
+
+    render(<TestComponent defaultOpen />);
+
+    await user.click(screen.getByTestId('layout-button'));
+
+    expect(mockHandleClickAway).toHaveBeenCalled();
+  });
+
   describe('ScreenSharingButton', () => {
     it('is not rendered for mobile devices', () => {
       vi.mocked(isMobile).mockImplementation(() => true);
@@ -108,22 +119,14 @@ describe('ToolbarOverflowMenu', () => {
 
 type RenderOptions = {
   sessionContext?: ProviderOptions['SessionContext'];
-  appConfigContext?: ProviderOptions['AppConfigContext'];
   userContext?: ProviderOptions['UserContext'];
 };
 
-function render(
-  ui: ReactElement,
-  { sessionContext, appConfigContext, userContext }: RenderOptions = {}
-) {
-  const { wrapper, ...context } = makeTestProvider(
-    [providers.appConfig, providers.user, providers.session],
-    {
-      sessionContext,
-      appConfigContext,
-      userContext,
-    }
-  );
+function render(ui: ReactElement, { sessionContext, userContext }: RenderOptions = {}) {
+  const { wrapper, ...context } = makeTestProvider([providers.user, providers.session], {
+    sessionContext,
+    userContext,
+  });
 
   return {
     ...context,

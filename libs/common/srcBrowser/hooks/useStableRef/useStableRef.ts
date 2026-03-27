@@ -1,10 +1,10 @@
 import React from 'react';
-import isNil from 'lodash/isNil';
 import isFunction from 'json-storage-formatter/isFunction';
 import type { CleanupFunction, RefCreator } from './useStableRef.types';
 import useNonDisposableStableRef from './hooks/useNonDisposableStableRef';
 import useSimpleRef from './hooks/useSimpleRef';
 import useDisposableStableRef from './hooks/useDisposableStableRef';
+import { isNil } from '@common/assertions';
 
 /**
  * @description Hook to create a stable ref value.

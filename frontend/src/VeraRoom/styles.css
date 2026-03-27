@@ -1,0 +1,28 @@
+@import 'tailwindcss';
+
+/* Tailwind CSS v4 config directive */
+@config '../../tailwind.config.cjs';
+
+/* Libs source - outside frontend, needs explicit @source */
+@source "../../../libs/ui/**/*.tsx";
+
+/* base app styles */
+@import '../css/App.css';
+
+/*
+  The default border color has changed to `currentcolor` in Tailwind CSS v4,
+  so we've added these compatibility styles to make sure everything still
+  looks the same as it did with Tailwind CSS v3.
+
+  If we ever want to remove these styles, we need to add an explicit border
+  color utility to any element that depends on these defaults.
+*/
+@layer base {
+  *,
+  ::after,
+  ::before,
+  ::backdrop,
+  ::file-selector-button {
+    border-color: var(--color-gray-200, currentcolor);
+  }
+}

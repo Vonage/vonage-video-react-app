@@ -2,8 +2,8 @@ import React from 'react';
 import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
 import type { BoxProps } from '@mui/material/Box';
-import isFunction from 'lodash/isFunction';
 import useTheme from '../theme';
+import { isFunction } from '@common/assertions';
 
 type WithChildren = { children: React.ReactNode };
 
@@ -44,7 +44,6 @@ const PageLayout = ({ children, sx, ...props }: PageLayoutProps): React.ReactNod
         direction={{ xs: 'column', md: 'row' }}
         sx={{
           gap: { xs: 2, md: 0 },
-          display: 'flex',
           flex: 2,
           width: '100%',
           mt: 2,
@@ -59,7 +58,7 @@ const PageLayout = ({ children, sx, ...props }: PageLayoutProps): React.ReactNod
               justifyContent: 'center',
               bgcolor: { xs: theme.colors.surface, md: theme.colors.surface },
               overflow: 'hidden',
-              px: { xs: 3, sm: 5 },
+              px: { xs: 0, sm: 5 },
             }}
           >
             {left}
@@ -74,6 +73,7 @@ const PageLayout = ({ children, sx, ...props }: PageLayoutProps): React.ReactNod
               alignItems: 'center',
               justifyContent: 'center',
               bgcolor: { xs: theme.colors.surface, md: theme.colors.background },
+              py: 1,
               px: { xs: 3, sm: 5 },
             }}
           >

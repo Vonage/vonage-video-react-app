@@ -52,7 +52,7 @@ vi.mock('@mui/material/useMediaQuery', () => ({
 
 // vi.mock('../../env', () => ({
 //   default: {
-//     VITE_BYPASS_WAITING_ROOM: false,
+//     BYPASS_WAITING_ROOM: false,
 //   },
 // }));
 
@@ -197,6 +197,19 @@ describe('MeetingRoom', () => {
     await waitFor(() => {
       expect(screen.queryByTestId('smallViewportHeader')).toBeNull();
     });
+  });
+
+  it('renders the recording indicator on desktop while recording is active', async () => {
+    render(<MeetingRoom />, {
+      sessionContext: {
+        initialValue: {
+          archiveId: 'archive-123',
+        },
+      },
+    });
+
+    expect(await screen.findByTestId('meetingRoomRecordingIndicatorContainer')).toBeVisible();
+    expect(screen.getByTestId('recordingIndicator')).toBeVisible();
   });
 
   it('should call joinRoom on render only once', async () => {
@@ -518,19 +531,17 @@ describe('MeetingRoom', () => {
 function render(
   ui: ReactElement,
   {
-    appConfigContext,
     userContext,
     sessionContext,
     publisherContext,
   }: {
-    appConfigContext?: ProviderOptions['AppConfigContext'];
     userContext?: ProviderOptions['UserContext'];
     sessionContext?: ProviderOptions['SessionContext'];
     publisherContext?: ProviderOptions['PublisherContext'];
   } = {}
 ) {
   const { wrapper, ...context } = makeTestProvider(
-    [providers.appConfig, providers.user, providers.session, providers.publisher],
+    [providers.user, providers.session, providers.publisher],
     {
       userContext: {
         ...userContext,
@@ -541,7 +552,6 @@ function render(
           ...userContext?.value,
         },
       },
-      appConfigContext,
       sessionContext,
       publisherContext,
     }

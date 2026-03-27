@@ -2,8 +2,9 @@ import { describe, it, expect, afterEach } from 'vitest';
 import { render as renderBase, screen, cleanup } from '@testing-library/react';
 import VividIcon from '@components/VividIcon';
 import { ReactElement } from 'react';
-import { makeTestProvider, providers, ProviderOptions } from '@test/providers';
+import { makeTestProvider, providers, type ProviderOptions } from '@test/providers';
 import UnreadMessagesBadge from './UnreadMessagesBadge';
+import { env } from '../../../env';
 import ToolbarButton from '../ToolbarButton';
 const LittleButton = () => (
   <ToolbarButton onClick={() => {}} icon={<VividIcon name="chat-solid" customSize={-6} />} />
@@ -180,6 +181,10 @@ describe('UnreadMessagesBadge', () => {
   });
 
   it('should not show the message badge when allowChat is false', () => {
+    env.partialUpdate({
+      ALLOW_CHAT: false,
+    });
+
     render(
       <UnreadMessagesBadge>
         <LittleButton />
@@ -190,13 +195,6 @@ describe('UnreadMessagesBadge', () => {
             if (context) {
               context.unreadCount = 8;
             }
-          },
-        },
-        appConfigContext: {
-          value: {
-            meetingRoomSettings: {
-              allowChat: false,
-            },
           },
         },
       }
@@ -211,22 +209,14 @@ describe('UnreadMessagesBadge', () => {
 
 type RenderOptions = {
   sessionContext?: ProviderOptions['SessionContext'];
-  appConfigContext?: ProviderOptions['AppConfigContext'];
   userContext?: ProviderOptions['UserContext'];
 };
 
-function render(
-  ui: ReactElement,
-  { sessionContext, appConfigContext, userContext }: RenderOptions = {}
-) {
-  const { wrapper, ...context } = makeTestProvider(
-    [providers.appConfig, providers.user, providers.session],
-    {
-      sessionContext,
-      appConfigContext,
-      userContext,
-    }
-  );
+function render(ui: ReactElement, { sessionContext, userContext }: RenderOptions = {}) {
+  const { wrapper, ...context } = makeTestProvider([providers.user, providers.session], {
+    userContext,
+    sessionContext,
+  });
 
   return {
     ...context,

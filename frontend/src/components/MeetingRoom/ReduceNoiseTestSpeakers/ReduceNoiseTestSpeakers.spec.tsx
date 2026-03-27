@@ -6,8 +6,9 @@ import { ReactElement } from 'react';
 import { defaultAudioDevice } from '@utils/mockData/device';
 import usePublisherContext from '@hooks/usePublisherContext';
 import { PublisherContextType } from '@Context/PublisherProvider';
-import { makeTestProvider, providers, type ProviderOptions } from '@test/providers';
+import { makeTestProvider } from '@test/providers';
 import ReduceNoiseTestSpeakers from './ReduceNoiseTestSpeakers';
+import { env } from '../../../env';
 
 vi.mock('@hooks/usePublisherContext');
 
@@ -132,22 +133,18 @@ describe('ReduceNoiseTestSpeakers', () => {
   });
 
   it('does not render the Advanced Noise Suppression option if allowAdvancedNoiseSuppression is false', () => {
-    render(<ReduceNoiseTestSpeakers />, {
-      appConfigContext: { value: { audioSettings: { allowAdvancedNoiseSuppression: false } } },
+    env.partialUpdate({
+      ALLOW_ADVANCED_NOISE_SUPPRESSION: false,
     });
+
+    render(<ReduceNoiseTestSpeakers />);
 
     expect(screen.queryByText('Advanced Noise Suppression')).not.toBeInTheDocument();
   });
 });
 
-type RenderOptions = {
-  appConfigContext?: ProviderOptions['AppConfigContext'];
-};
-
-function render(ui: ReactElement, { appConfigContext }: RenderOptions = {}) {
-  const { wrapper, ...context } = makeTestProvider([providers.appConfig], {
-    appConfigContext,
-  });
+function render(ui: ReactElement) {
+  const { wrapper, ...context } = makeTestProvider([]);
 
   return {
     ...context,

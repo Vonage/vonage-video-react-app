@@ -1,11 +1,11 @@
-import { Box, MenuItem, MenuList, Tooltip, Typography } from '@mui/material';
+import { Box, MenuItem, MenuList, Tooltip } from '@mui/material';
 import type { ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
-import appConfig$ from '@stores/appConfig';
 import useTheme from '@ui/theme';
 import VividIcon from '@components/VividIcon';
 import { useDistinctLabelMediaDevices } from '@ui/hooks';
 import mediaDevices$ from '@core/stores/devices';
+import { env } from '../../../env';
 
 export type InputAudioDevicesProps = {
   handleToggle: () => void;
@@ -23,10 +23,6 @@ const InputAudioDevices = ({ handleToggle }: InputAudioDevicesProps): ReactEleme
   const { t } = useTranslation();
   const theme = useTheme();
 
-  const allowDeviceSelection = appConfig$.use.select(
-    ({ meetingRoomSettings }) => meetingRoomSettings.allowDeviceSelection
-  );
-
   // Use store's selection as source of truth, not publisher.getAudioSource() which can be stale
   const selectedDeviceId = mediaDevices$.useDeviceId('audioinput');
 
@@ -39,11 +35,11 @@ const InputAudioDevices = ({ handleToggle }: InputAudioDevicesProps): ReactEleme
 
   const handleChangeAudioSource = (deviceId: string) => {
     handleToggle();
-    mediaDevices$.actions.selectDevice('audioinput', deviceId);
+    void mediaDevices$.actions.selectDevice('audioinput', deviceId);
   };
 
   return (
-    allowDeviceSelection && (
+    env.MEETING_ROOM_ALLOW_DEVICE_SELECTION && (
       <>
         <Box
           sx={{
@@ -55,8 +51,8 @@ const InputAudioDevices = ({ handleToggle }: InputAudioDevicesProps): ReactEleme
             color: theme.colors.tertiary,
           }}
         >
-          <VividIcon name="microphone-2-line" customSize={-5} />
-          <Typography sx={{ ml: 2 }}>{t('devices.audio.microphone.full')}</Typography>
+          <VividIcon name="microphone-2-line" customSize={-6} />
+          <p className="text-vera-body-extended ml-4">{t('devices.audio.microphone.full')}</p>
         </Box>
         <MenuList>
           {audioInputDevices.map((device) => {
@@ -100,9 +96,7 @@ const InputAudioDevices = ({ handleToggle }: InputAudioDevicesProps): ReactEleme
                     <Box sx={{ minWidth: 36 }} />
                   )}
                   <Tooltip title={device.label} placement="right" arrow>
-                    <Typography component="span" noWrap>
-                      {device.label}
-                    </Typography>
+                    <span className="text-vera-body-extended truncate">{device.label}</span>
                   </Tooltip>
                 </Box>
               </MenuItem>

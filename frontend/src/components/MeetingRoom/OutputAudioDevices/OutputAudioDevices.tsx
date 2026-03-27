@@ -1,10 +1,8 @@
 import { ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
-import appConfig$ from '@stores/appConfig';
 import type { MediaDeviceInfoJSON } from '@web/types';
 import DropdownSeparator from '../DropdownSeparator';
 import Box from '@mui/material/Box';
-import Typography from '@mui/material/Typography';
 import MenuList from '@mui/material/MenuList';
 import MenuItem from '@mui/material/MenuItem';
 import VividIcon from '@components/VividIcon';
@@ -13,6 +11,7 @@ import { isSinkIdSupported } from '@web/platform';
 import mediaDevices$ from '@core/stores/devices';
 import useTheme from '@ui/theme';
 import { Tooltip } from '@mui/material';
+import { env } from '../../../env';
 
 export type OutputAudioDevicesProps = {
   handleToggle: () => void;
@@ -31,10 +30,6 @@ const OutputAudioDevices = ({ handleToggle }: OutputAudioDevicesProps): ReactEle
   const theme = useTheme();
 
   const currentAudioOutputId = mediaDevices$.useDeviceId('audiooutput');
-
-  const allowDeviceSelection = appConfig$.use.select(
-    ({ meetingRoomSettings }) => meetingRoomSettings.allowDeviceSelection
-  );
 
   const availableDevices = useDistinctLabelMediaDevices('audiooutput', (devices) =>
     isSinkIdSupported()
@@ -56,7 +51,7 @@ const OutputAudioDevices = ({ handleToggle }: OutputAudioDevicesProps): ReactEle
   };
 
   return (
-    allowDeviceSelection && (
+    env.MEETING_ROOM_ALLOW_DEVICE_SELECTION && (
       <>
         <DropdownSeparator />
         <Box
@@ -70,9 +65,9 @@ const OutputAudioDevices = ({ handleToggle }: OutputAudioDevicesProps): ReactEle
           }}
         >
           <VividIcon name="audio-mid-line" customSize={-5} />
-          <Typography sx={{ ml: 2 }} data-testid="output-device-title">
+          <p className="text-vera-body-extended ml-4" data-testid="output-device-title">
             {t('devices.audio.speakers.full')}
-          </Typography>
+          </p>
         </Box>
 
         <MenuList data-testid="output-devices">
@@ -120,9 +115,7 @@ const OutputAudioDevices = ({ handleToggle }: OutputAudioDevicesProps): ReactEle
                     <Box sx={{ minWidth: 36 }} />
                   )}
                   <Tooltip title={device.label} placement="right" arrow>
-                    <Typography component="span" noWrap>
-                      {device.label}
-                    </Typography>
+                    <span className="text-vera-body-extended truncate">{device.label}</span>
                   </Tooltip>
                 </Box>
               </MenuItem>

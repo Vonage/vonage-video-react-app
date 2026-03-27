@@ -1,4 +1,5 @@
 import { ReactElement, useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import MenuItem from '@mui/material/MenuItem';
 import Menu from '@mui/material/Menu';
 import VividIcon from '@components/VividIcon';
@@ -37,6 +38,7 @@ const MenuDevices = ({
   anchorEl,
   deviceChangeHandler,
 }: MenuDevicesWaitingRoomProps): ReactElement => {
+  const { t } = useTranslation();
   const devices = mediaDevices$.useMediaDevices(mediaDeviceKind, Object.values<MediaDeviceInfo>);
 
   const localSource = mediaDevices$.useDeviceId(mediaDeviceKind);
@@ -47,6 +49,9 @@ const MenuDevices = ({
   };
 
   const processedDevices = useMemo(() => cleanAndDedupeDeviceLabels(devices), [devices]);
+  const shouldDisplayDevices =
+    mediaDeviceKind !== 'audiooutput' || isGetActiveAudioOutputDeviceSupported();
+  const shouldDisplayEmptyState = shouldDisplayDevices && processedDevices.length === 0;
 
   return (
     <Menu
@@ -57,7 +62,7 @@ const MenuDevices = ({
       MenuListProps={{ 'aria-labelledby': 'basic-button' }}
       data-testid={`${mediaDeviceKind}-menu`}
     >
-      {(mediaDeviceKind !== 'audiooutput' || isGetActiveAudioOutputDeviceSupported()) &&
+      {shouldDisplayDevices &&
         processedDevices.map((device) => (
           <MenuItem
             data-testid={`${mediaDeviceKind}-menu-item-${device.deviceId}`}
@@ -75,7 +80,13 @@ const MenuDevices = ({
           </MenuItem>
         ))}
 
-      {mediaDeviceKind === 'audiooutput' && (
+      {shouldDisplayEmptyState && (
+        <MenuItem disabled data-testid={`${mediaDeviceKind}-menu-empty-state`}>
+          {t('waitingRoom.devices.noDevicesFound')}
+        </MenuItem>
+      )}
+
+      {mediaDeviceKind === 'audiooutput' && !shouldDisplayEmptyState && (
         <SoundTest>
           <Box sx={{ mr: 1 }}>
             <VividIcon name="hearing-line" customSize={-5} />

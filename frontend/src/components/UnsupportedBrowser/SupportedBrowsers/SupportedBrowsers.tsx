@@ -19,7 +19,7 @@ const SupportedBrowsers = (): ReactElement => {
 
   return (
     <Card
-      className="lg:max-w-[500px]"
+      className="lg:max-w-125"
       sx={{
         display: 'block',
       }}

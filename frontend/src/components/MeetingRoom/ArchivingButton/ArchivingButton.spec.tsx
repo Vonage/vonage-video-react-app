@@ -1,13 +1,13 @@
 import { describe, expect, it, vi, beforeEach, Mock } from 'vitest';
-import { render as renderBase, screen, act, waitFor } from '@testing-library/react';
+import { render as renderBase, screen, act } from '@testing-library/react';
 import { ReactElement } from 'react';
 import { startArchiving, stopArchiving } from '@api/archiving';
 import useRoomName from '@hooks/useRoomName';
 import useSessionContext from '@hooks/useSessionContext';
 import { SessionContextType } from '@Context/SessionProvider/session';
-import { makeTestProvider, type ProviderOptions } from '@test/providers';
+import { makeTestProvider } from '@test/providers';
 import ArchivingButton from './ArchivingButton';
-import { providers } from '@test/providers/makeTestProvider';
+import { env } from '../../../env';
 
 vi.mock('@hooks/useSessionContext');
 vi.mock('@hooks/useRoomName');
@@ -31,6 +31,8 @@ describe('ArchivingButton', () => {
     sessionContext = {
       subscriberWrappers: [],
       archiveId: null,
+      markArchiveStartRequestedBySelf: vi.fn(),
+      resetArchiveStartRequestedBySelf: vi.fn(),
     } as unknown as SessionContextType;
 
     mockUseSessionContext.mockReturnValue(sessionContext as unknown as SessionContextType);
@@ -48,6 +50,7 @@ describe('ArchivingButton', () => {
   });
 
   it('triggers the start archiving when button is pressed', async () => {
+    vi.useFakeTimers();
     (startArchiving as Mock).mockResolvedValue({ data: { success: true } });
     render(<ArchivingButton handleClick={mockHandleCloseMenu} />);
 
@@ -56,15 +59,22 @@ describe('ArchivingButton', () => {
 
     // click the button to start archiving
     act(() => screen.getByTestId('popup-dialog-primary-button').click());
-    await waitFor(() => {
-      expect(startArchiving).toHaveBeenCalledWith(mockedRoomName);
+
+    await act(async () => {
+      await vi.runAllTimersAsync();
     });
+
+    expect(startArchiving).toHaveBeenCalledWith(mockedRoomName);
+
+    vi.useRealTimers();
   });
 
   it('shows stop recording dialog when archiving is active', () => {
     mockUseSessionContext.mockReturnValue({
       subscriberWrappers: [],
       archiveId: 'test-archive-id',
+      markArchiveStartRequestedBySelf: vi.fn(),
+      resetArchiveStartRequestedBySelf: vi.fn(),
     } as unknown as SessionContextType);
 
     render(<ArchivingButton handleClick={mockHandleCloseMenu} />);
@@ -73,9 +83,12 @@ describe('ArchivingButton', () => {
   });
 
   it('triggers stop archiving when recording is active', async () => {
+    vi.useFakeTimers();
     mockUseSessionContext.mockReturnValue({
       subscriberWrappers: [],
       archiveId: testArchiveId,
+      markArchiveStartRequestedBySelf: vi.fn(),
+      resetArchiveStartRequestedBySelf: vi.fn(),
     } as unknown as SessionContextType);
 
     render(<ArchivingButton handleClick={mockHandleCloseMenu} />);
@@ -85,37 +98,28 @@ describe('ArchivingButton', () => {
 
     // click the button to stop archiving
     act(() => screen.getByTestId('popup-dialog-primary-button').click());
-    await waitFor(() => {
-      expect(stopArchiving).toHaveBeenCalledWith(mockedRoomName, testArchiveId);
+
+    await act(async () => {
+      await vi.runAllTimersAsync();
     });
+
+    expect(stopArchiving).toHaveBeenCalledWith(mockedRoomName, testArchiveId);
+
+    vi.useRealTimers();
   });
 
   it('is not rendered when allowArchiving is disabled', () => {
-    render(<ArchivingButton handleClick={mockHandleCloseMenu} />, {
-      appConfigContext: {
-        value: {
-          meetingRoomSettings: {
-            allowArchiving: false,
-          },
-        },
-      },
+    env.partialUpdate({
+      ALLOW_ARCHIVING: false,
     });
+    render(<ArchivingButton handleClick={mockHandleCloseMenu} />);
 
     expect(screen.queryByTestId('archiving-button')).not.toBeInTheDocument();
   });
 });
 
-function render(
-  ui: ReactElement,
-  {
-    appConfigContext,
-  }: {
-    appConfigContext?: ProviderOptions['AppConfigContext'];
-  } = {}
-) {
-  const { wrapper, ...context } = makeTestProvider([providers.appConfig], {
-    appConfigContext,
-  });
+function render(ui: ReactElement) {
+  const { wrapper, ...context } = makeTestProvider([]);
 
   return {
     ...context,

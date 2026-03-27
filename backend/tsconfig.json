@@ -10,6 +10,8 @@
     "types": ["node", "jest"],
     "baseUrl": ".",
     "paths": {
+      "@api-lib": ["../libs/api/src"],
+      "@api-lib/*": ["../libs/api/src/*"],
       "@common": ["../libs/common/src"],
       "@common/*": ["../libs/common/src/*"],
       "@common-test": ["../libs/common/test"],

@@ -30,7 +30,7 @@ const AvatarInitials = ({
   height = 80,
   width = 80,
 }: InitialsProps): ReactElement => {
-  const diameter = Math.min(height, width) * 0.53;
+  const diameter = Math.min(height, width) * 0.5;
 
   return (
     <Avatar

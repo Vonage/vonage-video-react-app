@@ -1,0 +1,16 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "types": ["vitest/globals", "vitest/importMeta", "node"],
+    "tsBuildInfoFile": "dist/tsconfig.spec.tsbuildinfo"
+  },
+  "include": [
+    "vite.config.ts",
+    "test/**/*.ts",
+    "src/**/*.ts",
+    "src/**/*.test.ts",
+    "src/**/*.spec.ts"
+  ]
+}

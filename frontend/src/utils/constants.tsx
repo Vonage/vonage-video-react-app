@@ -1,11 +1,11 @@
-import env from '../env';
+import { env } from '../env';
 import isReportIssueEnabled from './isReportIssueEnabled/isReportIssueEnabled';
 
 /**
  * @constant {string} API_URL - The base URL determined by the current environment.
  */
 export const API_URL =
-  env.VITE_API_URL ||
+  env.API_URL ||
   (window.location.origin.includes('localhost') ? 'http://localhost:3345' : window.location.origin);
 
 /**
@@ -25,7 +25,7 @@ export const DEVICE_ACCESS_STATUS = {
 /**
  * @constant {string} TEXT_SHADOW - The text shadow style used for display purposes.
  */
-export const TEXT_SHADOW = '[text-shadow:_0_1px_2px_rgb(0_0_0_/_60%)]';
+export const TEXT_SHADOW = '[text-shadow:0_1px_2px_rgb(0_0_0/60%)]';
 
 /**
  * @constant {number} EMOJI_DISPLAY_DURATION - The duration in milliseconds for which emojis are displayed.
@@ -178,7 +178,19 @@ export const MAX_ZOOM = 5;
  */
 export const ZOOM_STEP = 0.25;
 
-/** @constant {number} ABSOLUTE_DISTANCE_THRESHOLD_REM_VALUE - The distance threshold used for absolute positioning of subscriber/publisher UI indicators.
+/**
+ * @constant {number} ABSOLUTE_DISTANCE_THRESHOLD_REM_VALUE - The distance threshold used for absolute positioning of subscriber/publisher UI indicators.
  * This value is defined in rem units to ensure responsiveness across different screen sizes.
  */
 export const ABSOLUTE_DISTANCE_THRESHOLD_REM_VALUE = 0.75;
+
+/**
+ * @constant {number} RECORDING_POPUP_TIMEOUT_MS - The duration in milliseconds for which the recording consent popup is displayed before automatically closing.
+ */
+export const RECORDING_POPUP_TIMEOUT_MS = 5000;
+
+/**
+ * @constant {number} RECORDING_START_DELAY - The delay in milliseconds before starting the recording after the user initiates it.
+ * This delay allows for any necessary setup or confirmation dialogs to be completed before the recording starts.
+ */
+export const RECORDING_START_DELAY = 3000;

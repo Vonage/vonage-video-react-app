@@ -10,3 +10,4 @@ process.env.VONAGE_APP_ID = 'vonageAppId';
 process.env.VONAGE_PRIVATE_KEY = 'vonagePrivateKey';
 process.env.OT_API_KEY = 'someOpenTokKey';
 process.env.OT_API_SECRET = 'opentokAPISecret';
+process.env.GOLLUM_BASE_URL = 'https://example.com';

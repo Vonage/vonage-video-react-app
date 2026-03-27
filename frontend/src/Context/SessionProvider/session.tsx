@@ -15,7 +15,6 @@ import useRightPanel, { RightPanelActiveTab } from '@hooks/useRightPanel';
 import useUserContext from '@hooks/useUserContext';
 import useChat from '@hooks/useChat';
 import useEmoji, { EmojiWrapper } from '@hooks/useEmoji';
-import appConfigContext from '@stores/appConfig';
 import fetchCredentials from '@api/fetchCredentials';
 import ActiveSpeakerTracker from '@utils/ActiveSpeakerTracker';
 import {
@@ -26,6 +25,7 @@ import {
   SubscriberAudioLevelUpdatedEvent,
   SubscriberWrapper,
   LayoutMode,
+  LAYOUT_MODES,
 } from '@app-types/session';
 import { ChatMessageType } from '@app-types/chat';
 import { isMobile } from '@web/platform';
@@ -36,6 +36,8 @@ import {
 import { MAX_PIN_COUNT_DESKTOP, MAX_PIN_COUNT_MOBILE } from '@utils/constants';
 import VonageVideoClient from '@utils/VonageVideoClient';
 import wait from '@common/execution/wait';
+import { env } from '../../env';
+import frontendLogger from '../../logger';
 
 export type { ChatMessageType } from '@app-types/chat';
 
@@ -54,6 +56,11 @@ export type SessionContextType = {
   layoutMode: LayoutMode;
   setLayoutMode: Dispatch<SetStateAction<LayoutMode>>;
   archiveId: string | null;
+  archiveIdStartedBySelf: string | null;
+  recordingAlreadyNotified: boolean;
+  setRecordingAlreadyNotified: Dispatch<SetStateAction<boolean>>;
+  markArchiveStartRequestedBySelf: () => void;
+  resetArchiveStartRequestedBySelf: () => void;
   rightPanelActiveTab: RightPanelActiveTab;
   toggleParticipantList: () => void;
   toggleBackgroundEffects: () => void;
@@ -89,6 +96,11 @@ export const SessionContext = createContext<SessionContextType>({
   layoutMode: 'grid',
   setLayoutMode: () => {},
   archiveId: null,
+  archiveIdStartedBySelf: null,
+  recordingAlreadyNotified: false,
+  setRecordingAlreadyNotified: () => {},
+  markArchiveStartRequestedBySelf: () => {},
+  resetArchiveStartRequestedBySelf: () => {},
   rightPanelActiveTab: 'closed',
   toggleParticipantList: () => {},
   toggleBackgroundEffects: () => {},
@@ -120,6 +132,8 @@ export type SessionContextInitialValue = Partial<
     | 'ownCaptions'
     | 'archiveId'
     | 'activeSpeakerId'
+    | 'recordingAlreadyNotified'
+    | 'archiveIdStartedBySelf'
   >
 >;
 
@@ -144,8 +158,6 @@ const MAX_PIN_COUNT = isMobile() ? MAX_PIN_COUNT_MOBILE : MAX_PIN_COUNT_DESKTOP;
  * @returns {SessionContextType} a context provider for a publisher preview
  */
 const SessionProvider = ({ children, initialValue = {} }: SessionProviderProps): ReactElement => {
-  const appConfig = appConfigContext.use.api();
-
   const [lastStreamUpdate, setLastStreamUpdate] = useState<StreamPropertyChangedEvent | null>(
     initialValue?.lastStreamUpdate ?? null
   );
@@ -162,11 +174,29 @@ const SessionProvider = ({ children, initialValue = {} }: SessionProviderProps):
   const [layoutMode, setLayoutMode] = useState<LayoutMode>(
     initialValue?.layoutMode ??
       (() => {
-        return appConfig.getState().meetingRoomSettings.defaultLayoutMode;
+        const isValidLayoutMode = (LAYOUT_MODES as readonly string[]).includes(
+          env.DEFAULT_LAYOUT_MODE
+        );
+        return isValidLayoutMode ? env.DEFAULT_LAYOUT_MODE : 'grid';
       })()
   );
 
   const [archiveId, setArchiveId] = useState<string | null>(initialValue?.archiveId ?? null);
+  const [archiveIdStartedBySelf, setArchiveIdStartedBySelf] = useState<string | null>(
+    initialValue?.archiveIdStartedBySelf ?? null
+  );
+  const [recordingAlreadyNotified, setRecordingAlreadyNotified] = useState<boolean>(
+    initialValue?.recordingAlreadyNotified ?? false
+  );
+  const archiveStartRequestedBySelfRef = useRef<boolean>(false);
+
+  const markArchiveStartRequestedBySelf = useCallback(() => {
+    archiveStartRequestedBySelfRef.current = true;
+  }, []);
+
+  const resetArchiveStartRequestedBySelf = useCallback(() => {
+    archiveStartRequestedBySelfRef.current = false;
+  }, []);
   const activeSpeakerTracker = useRef<ActiveSpeakerTracker>(new ActiveSpeakerTracker());
   const [activeSpeakerId, setActiveSpeakerId] = useState<string | undefined>(
     initialValue?.activeSpeakerId ?? undefined
@@ -304,10 +334,19 @@ const SessionProvider = ({ children, initialValue = {} }: SessionProviderProps):
 
   const handleArchiveStarted = (id: string) => {
     setArchiveId(id);
+
+    if (!archiveStartRequestedBySelfRef.current) {
+      return;
+    }
+
+    setArchiveIdStartedBySelf(id);
+    archiveStartRequestedBySelfRef.current = false;
   };
 
   const handleArchiveStopped = () => {
     setArchiveId(null);
+    setArchiveIdStartedBySelf(null);
+    archiveStartRequestedBySelfRef.current = false;
   };
 
   const handleSubscriberVideoElementCreated = (subscriberWrapper: SubscriberWrapper) => {
@@ -339,7 +378,7 @@ const SessionProvider = ({ children, initialValue = {} }: SessionProviderProps):
     });
 
     if (doesStreamStillExistInSession) {
-      vonageVideoClient.current!.resubscribeToStreamId(streamId);
+      void vonageVideoClient.current!.resubscribeToStreamId(streamId);
       console.warn(`Subscriber with stream ID ${streamId} resubscribing`);
       return;
     }
@@ -370,10 +409,9 @@ const SessionProvider = ({ children, initialValue = {} }: SessionProviderProps):
       })();
 
       if (reconnecting || isBrowserOnline === false) {
-        console.warn('[SUBSCRIBER] Ignoring subscription error during reconnection/offline', {
+        frontendLogger.log('Session: ignoring subscription error during reconnection/offline', {
           reconnecting,
           isBrowserOnline,
-          error,
         });
         return;
       }
@@ -493,6 +531,9 @@ const SessionProvider = ({ children, initialValue = {} }: SessionProviderProps):
     () => ({
       activeSpeakerId,
       archiveId,
+      archiveIdStartedBySelf,
+      markArchiveStartRequestedBySelf,
+      resetArchiveStartRequestedBySelf,
       vonageVideoClient: vonageVideoClient.current,
       disconnect,
       joinRoom,
@@ -504,6 +545,8 @@ const SessionProvider = ({ children, initialValue = {} }: SessionProviderProps):
       reconnecting,
       subscriberWrappers,
       layoutMode,
+      recordingAlreadyNotified,
+      setRecordingAlreadyNotified,
       setLayoutMode,
       rightPanelActiveTab,
       toggleParticipantList,
@@ -524,6 +567,11 @@ const SessionProvider = ({ children, initialValue = {} }: SessionProviderProps):
     [
       activeSpeakerId,
       archiveId,
+      archiveIdStartedBySelf,
+      markArchiveStartRequestedBySelf,
+      resetArchiveStartRequestedBySelf,
+      setRecordingAlreadyNotified,
+      recordingAlreadyNotified,
       vonageVideoClient,
       disconnect,
       unreadCount,

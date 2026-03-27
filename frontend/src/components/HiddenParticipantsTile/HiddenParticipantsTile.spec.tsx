@@ -6,6 +6,7 @@ import { Subscriber } from '@vonage/client-sdk-video';
 import { makeTestProvider, providers, ProviderOptions } from '@test/providers';
 import { SubscriberWrapper } from '@app-types/session';
 import HiddenParticipantsTile from './index';
+import { env } from '../../env';
 
 describe('HiddenParticipantsTile', () => {
   const box = { height: 100, width: 100, top: 0, left: 0 };
@@ -94,18 +95,12 @@ describe('HiddenParticipantsTile', () => {
   it('does not toggle participant list when showParticipantList is disabled', async () => {
     const currentHiddenSubscribers = [...hiddenSubscribers, {}] as SubscriberWrapper[];
 
+    env.partialUpdate({
+      SHOW_PARTICIPANT_LIST: false,
+    });
+
     const { sessionContext, getByTestId } = render(
-      <HiddenParticipantsTile box={box} hiddenSubscribers={currentHiddenSubscribers} />,
-      {
-        appConfigContext: {
-          value: {
-            isAppConfigLoaded: false,
-            meetingRoomSettings: {
-              showParticipantList: false,
-            },
-          },
-        },
-      }
+      <HiddenParticipantsTile box={box} hiddenSubscribers={currentHiddenSubscribers} />
     );
 
     const toggleParticipantListSpy = vi.mocked(sessionContext.current.toggleParticipantList);
@@ -119,28 +114,20 @@ describe('HiddenParticipantsTile', () => {
 });
 
 type RenderOptions = {
-  appConfigContext?: ProviderOptions['AppConfigContext'];
   sessionContext?: ProviderOptions['SessionContext'];
   userContext?: ProviderOptions['UserContext'];
 };
 
-function render(
-  ui: ReactElement,
-  { appConfigContext, sessionContext, userContext }: RenderOptions = {}
-) {
-  const { wrapper, ...context } = makeTestProvider(
-    [providers.appConfig, providers.user, providers.session],
-    {
-      sessionContext: {
-        __onCreated: (context) => {
-          vi.spyOn(context, 'toggleParticipantList');
-        },
-        ...sessionContext,
+function render(ui: ReactElement, { sessionContext, userContext }: RenderOptions = {}) {
+  const { wrapper, ...context } = makeTestProvider([providers.user, providers.session], {
+    userContext,
+    sessionContext: {
+      __onCreated: (context) => {
+        vi.spyOn(context, 'toggleParticipantList');
       },
-      appConfigContext,
-      userContext,
-    }
-  );
+      ...sessionContext,
+    },
+  });
 
   return {
     ...context,

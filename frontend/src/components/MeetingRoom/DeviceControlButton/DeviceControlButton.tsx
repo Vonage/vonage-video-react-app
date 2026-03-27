@@ -1,6 +1,5 @@
 import { useState, useRef, useCallback, ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
-import appConfig$ from '@stores/appConfig';
 import usePublisherContext from '@hooks/usePublisherContext';
 import useBackgroundPublisherContext from '@hooks/useBackgroundPublisherContext';
 import getControlButtonTooltip from '@utils/getControlButtonTooltip';
@@ -13,6 +12,7 @@ import Tooltip from '@mui/material/Tooltip';
 import VividIcon from '@components/VividIcon';
 import Box from '@mui/material/Box';
 import usePushToTalk from '@hooks/usePushToTalk';
+import { env } from '../../../env';
 
 export type DeviceControlButtonProps = {
   deviceType: 'audio' | 'video';
@@ -38,20 +38,17 @@ const DeviceControlButton = ({
   const { toggleVideo: toggleBackgroundVideoPublisher } = useBackgroundPublisherContext();
   const theme = useTheme();
 
-  const isMicrophoneControlAllowed = appConfig$.useIsMicrophoneControlAllowed();
-  const isCameraControlAllowed = appConfig$.useIsCameraControlAllowed();
-
   const isAudio = deviceType === 'audio';
   const [open, setOpen] = useState<boolean>(false);
   const anchorRef = useRef<HTMLInputElement | null>(null);
-  const isButtonDisabled = isAudio ? !isMicrophoneControlAllowed : !isCameraControlAllowed;
+  const isButtonDisabled = isAudio ? !env.ALLOW_MICROPHONE_CONTROL : !env.ALLOW_CAMERA_CONTROL;
 
   const tooltipTitle = getControlButtonTooltip({
     isAudio,
     isAudioEnabled,
     isVideoEnabled,
-    allowMicrophoneControl: isMicrophoneControlAllowed,
-    allowCameraControl: isCameraControlAllowed,
+    allowMicrophoneControl: env.ALLOW_MICROPHONE_CONTROL,
+    allowCameraControl: env.ALLOW_CAMERA_CONTROL,
     t,
   });
 
@@ -68,11 +65,11 @@ const DeviceControlButton = ({
 
   const renderControlIcon = () => {
     if (isAudio) {
-      if (!isMicrophoneControlAllowed) {
+      if (!env.ALLOW_MICROPHONE_CONTROL) {
         return (
           <VividIcon
             name="microphone-2-solid"
-            customSize={-6}
+            customSize={-5}
             sx={{ color: theme.colors.disabled }}
           />
         );
@@ -81,7 +78,7 @@ const DeviceControlButton = ({
         return (
           <VividIcon
             name="microphone-2-solid"
-            customSize={-6}
+            customSize={-5}
             data-testid="MicNoneIcon"
             sx={{ color: theme.colors.onDarkGrey }}
           />
@@ -90,21 +87,21 @@ const DeviceControlButton = ({
       return (
         <VividIcon
           name="mic-mute-solid"
-          customSize={-6}
+          customSize={-5}
           data-testid="MicOffToolbar"
           sx={{ color: theme.colors.error, transform: 'scaleX(-1)' }}
         />
       );
     }
 
-    if (!isCameraControlAllowed) {
-      return <VividIcon name="video-solid" customSize={-6} sx={{ color: theme.colors.disabled }} />;
+    if (!env.ALLOW_CAMERA_CONTROL) {
+      return <VividIcon name="video-solid" customSize={-5} sx={{ color: theme.colors.disabled }} />;
     }
     if (isVideoEnabled) {
       return (
         <VividIcon
           name="video-solid"
-          customSize={-6}
+          customSize={-5}
           data-testid="VideocamIcon"
           sx={{ color: theme.colors.onDarkGrey }}
         />
@@ -113,7 +110,7 @@ const DeviceControlButton = ({
     return (
       <VividIcon
         name="video-off-solid"
-        customSize={-6}
+        customSize={-5}
         data-testid="VideocamOffIcon"
         sx={{ color: theme.colors.error }}
       />
@@ -130,7 +127,7 @@ const DeviceControlButton = ({
   };
 
   usePushToTalk({
-    enabled: isAudio && isMicrophoneControlAllowed,
+    enabled: isAudio && env.ALLOW_MICROPHONE_CONTROL,
     isAudioEnabled,
     toggleAudio,
   });
