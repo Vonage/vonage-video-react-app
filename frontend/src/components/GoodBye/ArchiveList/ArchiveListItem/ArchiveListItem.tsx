@@ -10,7 +10,11 @@ import VividIcon from '@ui/VividIcon';
 import formatDuration from '@utils/formatDuration';
 import formatFileSize from '@utils/formatFileSize';
 
-import ArchiveStatusContent from '../ArchiveStatusContent';
+import {
+  ArchiveDownloadLink,
+  ArchiveErrorIndicator,
+  ArchiveLoadingIndicator,
+} from '../ArchiveStatusContent';
 import type { ArchiveListItemProps } from '../ArchiveList.types';
 
 const ArchiveListItem = ({
@@ -20,12 +24,17 @@ const ArchiveListItem = ({
 }: ArchiveListItemProps): ReactElement => {
   const { t } = useTranslation();
 
+  const isArchiveAvailable = archive.status === 'available';
   const isArchivePending = archive.status === 'pending';
-  const shouldRenderSubtitle = archive.status === 'available' || isArchivePending;
+  const shouldRenderSubtitle = isArchiveAvailable || isArchivePending;
+  const archiveDisplayIndex = getArchiveDisplayIndex({
+    archiveCount,
+    archiveIndex,
+  });
   const archiveTitle = isArchivePending
     ? t('archiveList.loading')
     : t('archiveList.archive.index', {
-        index: archiveCount - archiveIndex,
+        index: archiveDisplayIndex,
       });
   const archiveDetails = [
     archive.duration ? formatDuration(archive.duration) : null,
@@ -36,6 +45,17 @@ const ArchiveListItem = ({
   ]
     .filter(Boolean)
     .join(' • ');
+  const archiveStatusElement = (() => {
+    if (isArchiveAvailable) {
+      return <ArchiveDownloadLink url={archive.url} />;
+    }
+
+    if (isArchivePending) {
+      return <ArchiveLoadingIndicator />;
+    }
+
+    return <ArchiveErrorIndicator />;
+  })();
 
   return (
     <Fragment>
@@ -63,14 +83,19 @@ const ArchiveListItem = ({
           )}
         </Box>
 
-        <Box className="mt-1">
-          <ArchiveStatusContent status={archive.status} url={archive.url} />
-        </Box>
+        <Box className="mt-1">{archiveStatusElement}</Box>
       </ListItem>
 
       <Separator width="100%" />
     </Fragment>
   );
 };
+
+function getArchiveDisplayIndex({
+  archiveCount,
+  archiveIndex,
+}: Pick<ArchiveListItemProps, 'archiveCount' | 'archiveIndex'>): number {
+  return archiveCount - archiveIndex;
+}
 
 export default ArchiveListItem;

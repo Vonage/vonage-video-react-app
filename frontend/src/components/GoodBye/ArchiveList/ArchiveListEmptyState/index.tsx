@@ -1,3 +1,1 @@
-import ArchiveListEmptyState from './ArchiveListEmptyState';
-
-export default ArchiveListEmptyState;
+export { default as ArchiveListEmptyState } from './ArchiveListEmptyState';

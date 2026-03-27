@@ -1,3 +1,1 @@
-import ArchiveListErrorState from './ArchiveListErrorState';
-
-export default ArchiveListErrorState;
+export { default as ArchiveListErrorState } from './ArchiveListErrorState';

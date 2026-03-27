@@ -1,3 +1,1 @@
-import ArchiveListItem from './ArchiveListItem';
-
-export default ArchiveListItem;
+export { default as ArchiveListItem } from './ArchiveListItem';

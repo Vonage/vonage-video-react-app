@@ -2,9 +2,9 @@ import Box from '@mui/material/Box';
 import List from '@mui/material/List';
 import type { ReactElement } from 'react';
 
-import ArchiveListEmptyState from './ArchiveListEmptyState';
-import ArchiveListErrorState from './ArchiveListErrorState';
-import ArchiveListItem from './ArchiveListItem';
+import { ArchiveListErrorState } from './ArchiveListErrorState';
+import { ArchiveListEmptyState } from './ArchiveListEmptyState';
+import { ArchiveListItem } from './ArchiveListItem';
 import type { ArchiveListProps } from './ArchiveList.types';
 
 /**
