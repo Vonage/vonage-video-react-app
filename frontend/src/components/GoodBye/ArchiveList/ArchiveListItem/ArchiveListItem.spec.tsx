@@ -18,5 +18,6 @@ describe('ArchiveListItem', () => {
 
     expect(screen.getByText('We are processing your recording')).toBeVisible();
     expect(screen.getByText('Wait a few seconds to download your recording')).toBeVisible();
+    expect(screen.getByTestId('archive-list-item-title-0')).toHaveClass('pending');
   });
 });

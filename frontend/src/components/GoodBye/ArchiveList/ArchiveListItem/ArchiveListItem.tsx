@@ -36,6 +36,12 @@ const ArchiveListItem = ({
     : t('archiveList.archive.index', {
         index: archiveDisplayIndex,
       });
+  const archiveTitleClassName = [
+    'text-vera-text-secondary text-vera-body-extended',
+    isArchivePending ? 'pending' : null,
+  ]
+    .filter(Boolean)
+    .join(' ');
   const archiveDetails = [
     archive.duration ? formatDuration(archive.duration) : null,
     archive.size ? formatFileSize(archive.size) : null,
@@ -70,7 +76,7 @@ const ArchiveListItem = ({
 
         <Box className="flex-1">
           <p
-            className="text-vera-text-secondary text-vera-body-extended"
+            className={archiveTitleClassName}
             data-testid={`archive-list-item-title-${archiveIndex}`}
           >
             {archiveTitle}
