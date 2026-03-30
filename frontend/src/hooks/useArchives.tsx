@@ -1,7 +1,8 @@
-import { useEffect, useRef, useState } from 'react';
+import useCoreArchives from '@core/archives/hooks/useArchives';
 import { useTranslation } from 'react-i18next';
-import { ArchiveResponse, getArchives } from '../api/archiving';
-import { Archive } from '../api/archiving/model';
+
+import { getArchives, type ArchiveResponse } from '../api/archiving';
+import type { Archive } from '../api/archiving/model';
 
 export type UseArchivesProps = {
   roomName: string;
@@ -14,41 +15,29 @@ export type UseArchivesProps = {
  */
 const useArchives = ({ roomName }: UseArchivesProps): Archive[] | 'error' => {
   const { i18n } = useTranslation();
-  const [archives, setArchives] = useState<Archive[] | 'error'>([]);
-  const pollingIntervalRef = useRef<ReturnType<typeof setInterval> | undefined>(undefined);
 
-  useEffect(() => {
-    const fetchArchives = async () => {
-      if (roomName) {
-        let archiveData: ArchiveResponse;
-        try {
-          archiveData = await getArchives(i18n.language, roomName);
-        } catch (error: unknown) {
-          const message = error instanceof Error ? error.message : error;
-          console.error(`Error retrieving archive: ${message}`);
-          setArchives('error');
-          return;
-        }
-        // If we have archives not yet available for download we poll the API every 5s to see if its' available.
-        if (archiveData.hasPending && pollingIntervalRef.current === undefined) {
-          pollingIntervalRef.current = setInterval(() => {
-            void fetchArchives();
-          }, 5000);
-        } else if (!archiveData.hasPending && pollingIntervalRef.current !== undefined) {
-          clearInterval(pollingIntervalRef.current);
-          pollingIntervalRef.current = undefined;
-        }
-        setArchives(archiveData.archives);
-      }
-    };
-    void fetchArchives();
-    return () => {
-      if (pollingIntervalRef.current) {
-        clearInterval(pollingIntervalRef.current);
-      }
-    };
-  }, [roomName, i18n.language]);
-  return archives;
+  return useCoreArchives<Archive>({
+    getArchives: getFrontendArchives,
+    language: i18n.language,
+    onError: logArchiveRetrievalError,
+    roomName,
+  });
 };
+
+function getFrontendArchives({
+  language,
+  roomName,
+}: {
+  language: string;
+  roomName: string;
+}): Promise<ArchiveResponse> {
+  return getArchives(language, roomName);
+}
+
+function logArchiveRetrievalError(error: unknown): void {
+  const message = error instanceof Error ? error.message : String(error);
+
+  console.error(`Error retrieving archive: ${message}`);
+}
 
 export default useArchives;
