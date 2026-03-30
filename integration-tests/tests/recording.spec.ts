@@ -22,9 +22,9 @@ test.describe('Recording Feature', () => {
       '[data-testid="smallViewportHeader"] [data-testid="recordingIndicator"]'
     );
     const endCallButton = pageOne.getByTestId('CallEndIcon');
-    const recordingItem = pageOne.getByTestId('archive-list-item-title-0');
-    const downloadIcon = pageOne.getByTestId('archive-download-button');
-    const archiveEmptyList = pageOne.getByTestId('archive-list-empty');
+    const recordingItem = pageOne.getByTestId('list-item-title-0');
+    const downloadIcon = pageOne.getByTestId('list-action-button');
+    const archiveEmptyList = pageOne.getByTestId('list-empty-state');
 
     await test.step('Open meeting room', async () => {
       await openMeetingRoomWithSettings({
