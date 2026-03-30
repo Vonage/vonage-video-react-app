@@ -159,6 +159,7 @@ export class Env {
   public TUNNEL_DOMAIN: string | undefined;
   public AVOID_FETCHING_APP_CONFIG: boolean;
   public MODE: Mode;
+  public VONAGE_VIDEO_HOST: string | undefined;
 
   constructor(env: Record<string, unknown>) {
     this.raw = { ...env };
@@ -208,6 +209,7 @@ export class Env {
     this.TUNNEL_DOMAIN = parseOptionalString(env.TUNNEL_DOMAIN);
 
     this.MODE = parseMode(env.MODE ?? 'development');
+    this.VONAGE_VIDEO_HOST = parseOptionalString(env.VONAGE_VIDEO_HOST);
   }
 
   /**

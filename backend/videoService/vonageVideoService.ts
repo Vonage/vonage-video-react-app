@@ -22,11 +22,9 @@ class VonageVideoService implements VideoService {
       privateKey: this.config.privateKey,
     });
 
-    const videoHostOptions = this.config.videoHost
-      ? { videoHost: this.config.videoHost }
-      : undefined;
-
-    this.vonageVideo = new Video(this.credentials, videoHostOptions);
+    this.vonageVideo = new Video(this.credentials, {
+      videoHost: this.config.videoHost,
+    });
   }
 
   private static getTokenRole(): string {
