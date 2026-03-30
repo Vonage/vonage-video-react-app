@@ -1,11 +1,13 @@
 import { render, screen } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
 
-import ArchiveListErrorState from './ArchiveListErrorState';
+import ListErrorState from './ListErrorState';
 
-describe('ArchiveListErrorState', () => {
-  it('renders the archives error message', () => {
-    render(<ArchiveListErrorState />);
+describe('ListErrorState', () => {
+  it('renders the error message', () => {
+    render(
+      <ListErrorState errorMessage="There was an error loading recordings for this meeting" />
+    );
 
     expect(
       screen.getByText('There was an error loading recordings for this meeting')

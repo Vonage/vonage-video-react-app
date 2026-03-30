@@ -1,19 +1,18 @@
 import Tooltip from '@mui/material/Tooltip';
 import type { ReactElement } from 'react';
-import { useTranslation } from 'react-i18next';
 
 import VividIcon from '@ui/VividIcon';
 
-const ArchiveErrorIndicator = (): ReactElement => {
-  const { t } = useTranslation();
+import type { ErrorIndicatorProps } from '../../List.types';
 
+const ErrorIndicator = ({ errorTooltip }: ErrorIndicatorProps): ReactElement => {
   return (
-    <Tooltip title={t('archiveList.error.tooltip')}>
+    <Tooltip title={errorTooltip}>
       <span className="flex">
         <VividIcon
           className="text-vera-warning"
           customSize={-6}
-          data-testid="archive-error-icon"
+          data-testid="list-error-icon"
           name="warning-line"
         />
       </span>
@@ -21,4 +20,4 @@ const ArchiveErrorIndicator = (): ReactElement => {
   );
 };
 
-export default ArchiveErrorIndicator;
+export default ErrorIndicator;

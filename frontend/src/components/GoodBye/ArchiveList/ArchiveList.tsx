@@ -1,10 +1,12 @@
-import Box from '@mui/material/Box';
-import List from '@mui/material/List';
+import ListUi, { type ListEntry } from '@ui/List';
 import type { ReactElement } from 'react';
 
-import { ArchiveListErrorState } from './ArchiveListErrorState';
-import { ArchiveListEmptyState } from './ArchiveListEmptyState';
-import { ArchiveListItem } from './ArchiveListItem';
+import type { TFunction } from 'i18next';
+import { useTranslation } from 'react-i18next';
+
+import type { Archive } from '../../../api/archiving/model';
+import formatDuration from '@utils/formatDuration';
+import formatFileSize from '@utils/formatFileSize';
 import type { ArchiveListProps } from './ArchiveList.types';
 
 /**
@@ -16,28 +18,89 @@ import type { ArchiveListProps } from './ArchiveList.types';
  * @returns {ReactElement} - The ArchiveList component.
  */
 const ArchiveList = ({ archives }: ArchiveListProps): ReactElement => {
-  if (archives === 'error') {
-    return <ArchiveListErrorState />;
-  }
+  const { t } = useTranslation();
 
-  if (!archives.length) {
-    return <ArchiveListEmptyState />;
-  }
+  const archiveListEntries: ListEntry[] | 'error' = (() => {
+    if (archives === 'error') {
+      return 'error';
+    }
+
+    return archives.map((archive, archiveIndex) => {
+      return createArchiveListEntry({
+        archive,
+        archiveCount: archives.length,
+        archiveIndex,
+        t,
+      });
+    });
+  })();
 
   return (
-    <Box className="max-h-[190px] w-full overflow-x-hidden overflow-y-auto pr-2">
-      <List className="pt-0">
-        {archives.map((archive, index) => (
-          <ArchiveListItem
-            archive={archive}
-            archiveCount={archives.length}
-            archiveIndex={index}
-            key={archive.id}
-          />
-        ))}
-      </List>
-    </Box>
+    <ListUi
+      actionLabel={t('archiveList.download')}
+      emptyMessage={t('archiveList.empty')}
+      entries={archiveListEntries}
+      errorMessage={t('archiveList.error.text')}
+      errorTooltip={t('archiveList.error.tooltip')}
+    />
   );
 };
+
+function createArchiveListEntry({
+  archive,
+  archiveCount,
+  archiveIndex,
+  t,
+}: {
+  archive: Archive;
+  archiveCount: number;
+  archiveIndex: number;
+  t: TFunction;
+}): ListEntry {
+  const isArchiveAvailable = archive.status === 'available';
+  const isArchivePending = archive.status === 'pending';
+  const archiveDisplayIndex = archiveCount - archiveIndex;
+  const archiveTitle = t('archiveList.archive.index', {
+    index: archiveDisplayIndex,
+  });
+
+  if (isArchiveAvailable) {
+    return {
+      downloadUrl: archive.url,
+      id: archive.id,
+      status: 'available',
+      subtitle: getArchiveDetails({ archive, t }),
+      title: archiveTitle,
+    };
+  }
+
+  if (isArchivePending) {
+    return {
+      id: archive.id,
+      status: 'pending',
+      subtitle: t('archiveList.loading.subtitle'),
+      title: t('archiveList.loading'),
+    };
+  }
+
+  return {
+    id: archive.id,
+    status: 'failed',
+    subtitle: null,
+    title: archiveTitle,
+  };
+}
+
+function getArchiveDetails({ archive, t }: { archive: Archive; t: TFunction }): string {
+  return [
+    archive.duration ? formatDuration(archive.duration) : null,
+    archive.size ? formatFileSize(archive.size) : null,
+    t('archiveList.archive.createdAt', {
+      createdAt: archive.createdAtFormatted,
+    }),
+  ]
+    .filter(Boolean)
+    .join(' • ');
+}
 
 export default ArchiveList;

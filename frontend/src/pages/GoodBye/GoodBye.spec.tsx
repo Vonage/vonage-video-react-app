@@ -40,7 +40,7 @@ describe('GoodBye', () => {
       </BrowserRouter>
     );
     expect(screen.getByText('We are processing your recording')).toBeVisible();
-    expect(screen.getByTestId('archive-loading-spinner')).toBeVisible();
+    expect(screen.getByTestId('list-loading-spinner')).toBeVisible();
   });
 
   it('should display "Rejoining the room" button', () => {
@@ -90,9 +90,9 @@ describe('GoodBye', () => {
         <GoodBye />
       </BrowserRouter>
     );
-    const listItem = screen.getByTestId(`archive-list-item-${availableArchive.id}`);
+    const listItem = screen.getByTestId(`list-item-${availableArchive.id}`);
     expect(listItem).toBeVisible();
-    expect(screen.getByTestId('archive-download-button')).toBeVisible();
+    expect(screen.getByTestId('list-action-button')).toBeVisible();
   });
 
   it('should display failed archive with error icon', () => {
@@ -102,7 +102,7 @@ describe('GoodBye', () => {
         <GoodBye />
       </BrowserRouter>
     );
-    expect(screen.getByTestId('archive-error-icon')).toBeVisible();
+    expect(screen.getByTestId('list-error-icon')).toBeVisible();
   });
 
   it('should display pending archive with loading spinner', () => {
@@ -112,7 +112,7 @@ describe('GoodBye', () => {
         <GoodBye />
       </BrowserRouter>
     );
-    expect(screen.getByTestId('archive-loading-spinner')).toBeVisible();
+    expect(screen.getByTestId('list-loading-spinner')).toBeVisible();
   });
 
   it('should display recordings section title', () => {
