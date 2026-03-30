@@ -35,12 +35,13 @@ const loadConfig = (): Config => {
   if (provider === 'vonage') {
     const applicationId = process.env.VONAGE_APP_ID ?? '';
     const privateKey = process.env.VONAGE_PRIVATE_KEY ?? '';
+    const videoHost = process.env.VONAGE_VIDEO_HOST;
 
     if (!applicationId || !privateKey) {
       throw new Error('Missing config values for Vonage');
     }
 
-    return { ...feedbackConfig, applicationId, privateKey, provider: 'vonage' };
+    return { ...feedbackConfig, applicationId, privateKey, provider: 'vonage', videoHost };
   }
 
   if (provider === 'opentok') {

@@ -259,16 +259,12 @@ const usePreviewPublisher = (
    * @returns {void}
    */
   const destroyPublisher = useCallback(() => {
-    if (publisherRef.current) {
-      attempt(() => {
-        // There is a known race condition in Firefox during navigation where the DOM elements are destroyed before the publisher is destroyed, causing OT to throw an error.
-        publisherRef.current?.destroy();
-      });
-    } else {
-      console.error('pub not destroyed');
-    }
+    if (!publisherRef.current) return;
 
-    publisherRef.current = null;
+    attempt(() => {
+      // There is a known race condition in Firefox during navigation where the DOM elements are destroyed before the publisher is destroyed, causing OT to throw an error.
+      publisherRef.current?.destroy();
+    });
   }, []);
 
   /**

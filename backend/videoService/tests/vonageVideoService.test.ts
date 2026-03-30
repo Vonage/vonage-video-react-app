@@ -33,6 +33,9 @@ await jest.unstable_mockModule('@vonage/video', () => {
       disableCaptions: jest.fn<() => Promise<{ status: number }>>().mockResolvedValue({
         status: 200,
       }),
+      searchArchives: jest.fn<() => Promise<{ items: [] }>>().mockResolvedValue({
+        items: [],
+      }),
     })),
     LayoutType: {
       BEST_FIT: 'bestFit',
@@ -49,11 +52,15 @@ await jest.unstable_mockModule('@vonage/video', () => {
 });
 
 const { default: VonageVideoService } = await import('../vonageVideoService');
+const { Video } = await import('@vonage/video');
 
 describe('VonageVideoService', () => {
   let vonageVideoService: typeof VonageVideoService.prototype;
+  const videoConstructor = jest.mocked(Video);
 
   beforeEach(() => {
+    videoConstructor.mockClear();
+
     vonageVideoService = new VonageVideoService({
       applicationId: mockApplicationId,
       privateKey: mockPrivateKey,
@@ -92,5 +99,21 @@ describe('VonageVideoService', () => {
   it('disables captions', async () => {
     const captionResponse = await vonageVideoService.disableCaptions(mockCaptionId);
     expect(captionResponse).toBe('Captions stopped successfully');
+  });
+
+  it('passes videoHost options to the Video constructor when videoHost is provided', () => {
+    new VonageVideoService({
+      applicationId: mockApplicationId,
+      privateKey: mockPrivateKey,
+      provider: 'vonage',
+      videoHost: 'https://video.api.dev.vonage.com',
+    });
+
+    expect(videoConstructor).toHaveBeenCalledWith(
+      expect.anything(),
+      expect.objectContaining({
+        videoHost: 'https://video.api.dev.vonage.com',
+      })
+    );
   });
 });
