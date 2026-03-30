@@ -36,7 +36,7 @@ class VonageVideoService implements VideoService {
     return sessionId;
   }
 
-  async listArchives(sessionId: string): Promise<SingleArchiveResponse[]> {
+  async searchArchives(sessionId: string): Promise<SingleArchiveResponse[]> {
     const archives = await this.vonageVideo.searchArchives({ sessionId });
     return archives.items;
   }

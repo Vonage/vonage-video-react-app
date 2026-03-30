@@ -11,6 +11,7 @@
   "include": [
     "testBrowser/**/*.tsx",
     "testBrowser/**/*.ts",
+    "testNode/**/*.ts",
     "test/**/*.tsx",
     "test/**/*.ts",
     "srcNode/**/*.ts",

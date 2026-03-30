@@ -34,5 +34,5 @@ export const stopArchiving = async (
  * @returns {Promise<AxiosResponse<any, any>>} The response from the archiving session.
  */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export const listArchives = (roomName: string): Promise<AxiosResponse<any, any>> =>
+export const searchArchives = (roomName: string): Promise<AxiosResponse<any, any>> =>
   axios.get(`${API_URL}/session/${roomName}/archives`);

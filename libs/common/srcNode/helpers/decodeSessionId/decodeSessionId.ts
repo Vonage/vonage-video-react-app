@@ -28,6 +28,7 @@ const decodeSessionId = (sessionId: string): DecodedSessionId => {
     autoArchive: sessionFields.includes('A'),
     version: sessionFields[0],
     partnerId: sessionFields[1],
+    applicationId: sessionFields[1],
     location: sessionFields[2],
     date: sessionFields[3],
   };

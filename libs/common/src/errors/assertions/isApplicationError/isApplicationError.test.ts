@@ -19,7 +19,7 @@ describe('isApplicationError', () => {
 
   it('should return true for objects with fallbackConfig', () => {
     const plainObject: ApplicationErrorState = {
-      values: [],
+      issues: [],
       message: 'Test error',
       statusCode: StatusCodeEnum.ServerErrorInternal,
       severity: 'error',

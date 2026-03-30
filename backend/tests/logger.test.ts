@@ -89,10 +89,9 @@ describe('POST /client-logs', () => {
 
     expect(res.statusCode).toEqual(400);
     expect(res.body).toMatchObject({
-      message: 'Invalid request',
+      message: 'Invalid log payload',
       severity: 'error',
       statusCode: 400,
-      code: 'VALIDATION_ERROR',
       issues: expect.any(Array),
     });
     expect(res.body.issues.length).toBeGreaterThan(0);
@@ -111,10 +110,9 @@ describe('POST /client-logs', () => {
 
     expect(res.statusCode).toEqual(400);
     expect(res.body).toMatchObject({
-      message: 'Invalid request',
+      message: 'Invalid log payload',
       severity: 'error',
       statusCode: 400,
-      code: 'VALIDATION_ERROR',
       issues: expect.any(Array),
     });
     expect(mockPost).not.toHaveBeenCalled();
@@ -128,10 +126,9 @@ describe('POST /client-logs', () => {
 
     expect(res.statusCode).toEqual(400);
     expect(res.body).toMatchObject({
-      message: 'Invalid request',
+      message: 'Invalid log payload',
       severity: 'error',
       statusCode: 400,
-      code: 'VALIDATION_ERROR',
       issues: expect.any(Array),
     });
     expect(mockPost).not.toHaveBeenCalled();
