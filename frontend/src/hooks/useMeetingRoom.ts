@@ -74,26 +74,21 @@ const useMeetingRoom = () => {
     }
   });
 
-  const hasValidRoomName = isValidRoomName(roomName);
-  const invalidRoomNameErrorMessage = t('errors.invalidRoomNameError', { roomName });
+  if (!isValidRoomName(roomName)) {
+    throw new Error(t('errors.invalidRoomNameError', { roomName }));
+  }
+
+  const joinRoomIfNeeded = useEffectEvent(() => {
+    if (!hasValidUsername && !bypass) return;
+    if (joinRoom) void joinRoom(roomName);
+  });
 
   useEffect(() => {
-    if (!hasValidUsername && !bypass) {
-      return;
-    }
-
-    if (joinRoom && hasValidRoomName) {
-      void joinRoom(roomName);
-    }
-
-    if (!hasValidRoomName) {
-      throw new Error(invalidRoomNameErrorMessage);
-    }
+    joinRoomIfNeeded();
     return () => {
       disconnect?.();
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [roomName, hasValidUsername, bypass]);
+  }, [roomName, hasValidUsername, bypass, disconnect]);
 
   useEffect(() => {
     if (!publisherOptions) {

@@ -18,8 +18,9 @@ vi.mock('react-router-dom', async () => {
   };
 });
 
+const mockUseRoomName = vi.fn(() => 'test-room');
 vi.mock('../useRoomName', () => ({
-  default: () => 'test-room',
+  default: () => mockUseRoomName(),
 }));
 
 vi.mock('../useIsSmallViewport', () => ({
@@ -48,6 +49,7 @@ describe('useMeetingRoom', () => {
     vi.clearAllMocks();
     mockLocation.search = '';
     env.BYPASS_WAITING_ROOM = false;
+    mockUseRoomName.mockReturnValue('test-room');
   });
 
   afterEach(() => {
@@ -77,6 +79,12 @@ describe('useMeetingRoom', () => {
     await waitFor(() => {
       expect(result.current.isRecording).toBe(true);
     });
+  });
+
+  it('throws when room name is invalid', () => {
+    mockUseRoomName.mockReturnValue('Invalid@Room?bypass=true');
+
+    expect(() => renderHook(() => useMeetingRoom())).toThrow();
   });
 
   it('navigates to waiting room when username is missing and bypass is false', async () => {

@@ -74,7 +74,7 @@ const UsernameInput = ({
   const handleJoinClick: SubmitEventHandler<HTMLFormElement> = (event) => {
     event.preventDefault();
 
-    if (!validateForm() || !roomName) return;
+    if (!validateForm()) return;
 
     if (!isValidRoomName(roomName)) {
       throw new Error(invalidRoomNameErrorMessage);
