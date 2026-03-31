@@ -2,6 +2,7 @@ import { ReactElement, useCallback } from 'react';
 import { hasMediaProcessorSupport } from '@vonage/client-sdk-video';
 import MenuItem from '@mui/material/MenuItem';
 import Menu from '@mui/material/Menu';
+import Tooltip from '@mui/material/Tooltip';
 import { useTranslation } from 'react-i18next';
 import VividIcon from '@components/VividIcon';
 import backgroundEffectsDialog$ from '@Context/BackgroundEffectsDialog';
@@ -30,7 +31,10 @@ const MenuMoreOptions = ({
   anchorEl,
 }: MenuMoreOptionsWaitingRoomProps): ReactElement => {
   const { t } = useTranslation();
-  const shouldDisplayBackgroundEffects = hasMediaProcessorSupport() && env.ALLOW_BACKGROUND_EFFECTS;
+  const hasSupportedMediaProcessor = hasMediaProcessorSupport();
+  const isBackgroundEffectsSupported = hasSupportedMediaProcessor && env.ALLOW_BACKGROUND_EFFECTS;
+  const isPrecallNetworkTestSupported = hasSupportedMediaProcessor;
+
   const { open: openBackgroundEffects } = backgroundEffectsDialog$.use.actions();
   const { open: openPrecallNetworkTest } = precallNetworkTestDialog$.use.actions();
 
@@ -53,26 +57,44 @@ const MenuMoreOptions = ({
       MenuListProps={{ 'aria-labelledby': 'basic-button' }}
       data-testid="menu-more-options"
     >
-      {shouldDisplayBackgroundEffects && (
-        <MenuItem
-          onClick={() => {
-            handleClickBackgroundEffects();
-          }}
-          key="backgroundEffects-option"
-        >
-          <VividIcon name="gallery-line" customSize={-6} />
-          <span className="ml-2">{t('backgroundEffects.title')}</span>
-        </MenuItem>
-      )}
-      <MenuItem
-        onClick={() => {
-          handleClickNetworkTest();
-        }}
-        key="precallNetworkTest-option"
+      <Tooltip
+        arrow
+        title={isBackgroundEffectsSupported ? '' : t('waitingRoom.unsupportedFeature.tooltip')}
       >
-        <VividIcon name="cell-reception-line" customSize={-6} />
-        <span className="ml-2">{t('waitingRoom.precallNetworkTest.title')}</span>
-      </MenuItem>
+        <div>
+          <MenuItem
+            disabled={!isBackgroundEffectsSupported}
+            onClick={() => {
+              if (!isBackgroundEffectsSupported) return;
+
+              handleClickBackgroundEffects();
+            }}
+            key="backgroundEffects-option"
+          >
+            <VividIcon name="gallery-line" customSize={-6} />
+            <span className="ml-2">{t('backgroundEffects.title')}</span>
+          </MenuItem>
+        </div>
+      </Tooltip>
+      <Tooltip
+        arrow
+        title={isPrecallNetworkTestSupported ? '' : t('waitingRoom.unsupportedFeature.tooltip')}
+      >
+        <div>
+          <MenuItem
+            disabled={!isPrecallNetworkTestSupported}
+            onClick={() => {
+              if (!isPrecallNetworkTestSupported) return;
+
+              handleClickNetworkTest();
+            }}
+            key="precallNetworkTest-option"
+          >
+            <VividIcon name="cell-reception-line" customSize={-6} />
+            <span className="ml-2">{t('waitingRoom.precallNetworkTest.title')}</span>
+          </MenuItem>
+        </div>
+      </Tooltip>
     </Menu>
   );
 };

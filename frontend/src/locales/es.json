@@ -194,6 +194,7 @@
   "unknown.device": "Dispositivo desconocido",
   "user.unknown": "usuario desconocido",
   "user.you": "Tú",
+  "waitingRoom.unsupportedFeature.tooltip": "Tu navegador no soporta esta funcionalidad",
   "waitingRoom.devices.noDevicesFound": "No se han encontrado dispositivos",
   "waitingRoom.title": "Prepararse para unirse",
   "waitingRoom.user.input.title": "Ingresa tu nombre",

@@ -56,22 +56,46 @@ describe('MenuMoreOptions', () => {
     vi.spyOn(clientSdkVideo, 'hasMediaProcessorSupport').mockReturnValue(false);
     render(<MenuMoreOptions onClose={mockOnClose} open anchorEl={mockAnchorEl} />);
 
-    expect(screen.queryByText(/video effects/i)).not.toBeInTheDocument();
+    expect(screen.getByText(/video effects/i).closest('li')).toHaveAttribute(
+      'aria-disabled',
+      'true'
+    );
   });
 
   it('should not display video effects option when background effects are not allowed', () => {
     env.partialUpdate({ ALLOW_BACKGROUND_EFFECTS: false });
     render(<MenuMoreOptions onClose={mockOnClose} open anchorEl={mockAnchorEl} />);
 
-    expect(screen.queryByText(/video effects/i)).not.toBeInTheDocument();
+    expect(screen.getByText(/video effects/i).closest('li')).toHaveAttribute(
+      'aria-disabled',
+      'true'
+    );
   });
 
   it('should still display precall network test when media processor is not supported', () => {
     vi.spyOn(clientSdkVideo, 'hasMediaProcessorSupport').mockReturnValue(false);
     render(<MenuMoreOptions onClose={mockOnClose} open anchorEl={mockAnchorEl} />);
 
-    expect(screen.queryByText(/video effects/i)).not.toBeInTheDocument();
     expect(screen.getByText(/pre-call network test/i)).toBeInTheDocument();
+    expect(screen.getByText(/pre-call network test/i).closest('li')).toHaveAttribute(
+      'aria-disabled',
+      'true'
+    );
+  });
+
+  it('shows an unsupported-feature tooltip for disabled menu items', async () => {
+    const user = userEvent.setup();
+
+    vi.spyOn(clientSdkVideo, 'hasMediaProcessorSupport').mockReturnValue(false);
+    render(<MenuMoreOptions onClose={mockOnClose} open anchorEl={mockAnchorEl} />);
+
+    const videoEffectsMenuItem = screen.getByText(/video effects/i).closest('li');
+
+    await user.hover(videoEffectsMenuItem!.parentElement as HTMLElement);
+
+    expect(
+      await screen.findByText(/your browser does not support this feature/i)
+    ).toBeInTheDocument();
   });
 });
 
