@@ -1,2 +1,2 @@
 export * from '../../src/assertions';
-export { default as assertVonageSessionId } from './assertVonageSessionId';
+export { default as assertSessionId } from './assertSessionId';

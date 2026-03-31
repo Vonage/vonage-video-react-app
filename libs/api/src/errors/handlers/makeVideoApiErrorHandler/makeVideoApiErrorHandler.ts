@@ -21,7 +21,7 @@ import buildThirdPartyErrorHandler, {
  *  ```ts
  *  {
  *    message: 'Unexpected response from OpenTok',
- *    values: ["The url structure must be valid."]
+ *    issues: ["The url structure must be valid."]
  *  }
  * ```
  */
@@ -61,7 +61,7 @@ export function buildVideoApiErrorHandler(arg?: string | BuildThirdPartyErrorHan
         const parsedMessage = json.message
           ? {
               message: prefix.trim().slice(0, -1),
-              values: [json.message],
+              issues: [json.message],
             }
           : err;
 

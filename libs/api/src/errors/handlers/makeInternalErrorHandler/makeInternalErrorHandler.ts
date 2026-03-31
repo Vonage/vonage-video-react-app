@@ -1,6 +1,6 @@
-import StatusCodeEnum from 'status-code-enum';
+import { StatusCode } from 'status-code-enum';
 import ApplicationServerError from '../../ApplicationServerError';
-import { Any } from '@common/types';
+import type { Any } from '@common/types';
 
 export const buildInternalErrorHandler = (fallbackMessage = 'An internal error occurred') => {
   return (error: Any) =>
@@ -8,7 +8,7 @@ export const buildInternalErrorHandler = (fallbackMessage = 'An internal error o
       src: error,
       fallbackConfig: {
         fallbackMessage,
-        statusCode: StatusCodeEnum.ServerErrorInternal,
+        statusCode: StatusCode.ServerErrorInternal,
       },
     });
 };

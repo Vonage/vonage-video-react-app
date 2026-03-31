@@ -49,7 +49,11 @@
       "@ui-test": ["../libs/ui/test"],
       "@ui-test/*": ["../libs/ui/test/*"],
       "@ui/*": ["../libs/ui/src/*"],
-      "@utils/*": ["./src/utils/*"]
+      "@utils/*": ["./src/utils/*"],
+
+      // video-router
+      "@api-lib/*": ["../libs/api/src/*"],
+      "@node/*": ["../libs/common/srcNode/*"]
     },
     "types": ["vite/client", "node", "vitest", "vitest/globals"]
   },

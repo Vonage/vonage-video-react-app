@@ -56,6 +56,11 @@ export type SessionContextType = {
   layoutMode: LayoutMode;
   setLayoutMode: Dispatch<SetStateAction<LayoutMode>>;
   archiveId: string | null;
+  archiveIdStartedBySelf: string | null;
+  recordingAlreadyNotified: boolean;
+  setRecordingAlreadyNotified: Dispatch<SetStateAction<boolean>>;
+  markArchiveStartRequestedBySelf: () => void;
+  resetArchiveStartRequestedBySelf: () => void;
   rightPanelActiveTab: RightPanelActiveTab;
   toggleParticipantList: () => void;
   toggleBackgroundEffects: () => void;
@@ -91,6 +96,11 @@ export const SessionContext = createContext<SessionContextType>({
   layoutMode: 'grid',
   setLayoutMode: () => {},
   archiveId: null,
+  archiveIdStartedBySelf: null,
+  recordingAlreadyNotified: false,
+  setRecordingAlreadyNotified: () => {},
+  markArchiveStartRequestedBySelf: () => {},
+  resetArchiveStartRequestedBySelf: () => {},
   rightPanelActiveTab: 'closed',
   toggleParticipantList: () => {},
   toggleBackgroundEffects: () => {},
@@ -122,6 +132,8 @@ export type SessionContextInitialValue = Partial<
     | 'ownCaptions'
     | 'archiveId'
     | 'activeSpeakerId'
+    | 'recordingAlreadyNotified'
+    | 'archiveIdStartedBySelf'
   >
 >;
 
@@ -170,6 +182,21 @@ const SessionProvider = ({ children, initialValue = {} }: SessionProviderProps):
   );
 
   const [archiveId, setArchiveId] = useState<string | null>(initialValue?.archiveId ?? null);
+  const [archiveIdStartedBySelf, setArchiveIdStartedBySelf] = useState<string | null>(
+    initialValue?.archiveIdStartedBySelf ?? null
+  );
+  const [recordingAlreadyNotified, setRecordingAlreadyNotified] = useState<boolean>(
+    initialValue?.recordingAlreadyNotified ?? false
+  );
+  const archiveStartRequestedBySelfRef = useRef<boolean>(false);
+
+  const markArchiveStartRequestedBySelf = useCallback(() => {
+    archiveStartRequestedBySelfRef.current = true;
+  }, []);
+
+  const resetArchiveStartRequestedBySelf = useCallback(() => {
+    archiveStartRequestedBySelfRef.current = false;
+  }, []);
   const activeSpeakerTracker = useRef<ActiveSpeakerTracker>(new ActiveSpeakerTracker());
   const [activeSpeakerId, setActiveSpeakerId] = useState<string | undefined>(
     initialValue?.activeSpeakerId ?? undefined
@@ -307,10 +334,19 @@ const SessionProvider = ({ children, initialValue = {} }: SessionProviderProps):
 
   const handleArchiveStarted = (id: string) => {
     setArchiveId(id);
+
+    if (!archiveStartRequestedBySelfRef.current) {
+      return;
+    }
+
+    setArchiveIdStartedBySelf(id);
+    archiveStartRequestedBySelfRef.current = false;
   };
 
   const handleArchiveStopped = () => {
     setArchiveId(null);
+    setArchiveIdStartedBySelf(null);
+    archiveStartRequestedBySelfRef.current = false;
   };
 
   const handleSubscriberVideoElementCreated = (subscriberWrapper: SubscriberWrapper) => {
@@ -495,6 +531,9 @@ const SessionProvider = ({ children, initialValue = {} }: SessionProviderProps):
     () => ({
       activeSpeakerId,
       archiveId,
+      archiveIdStartedBySelf,
+      markArchiveStartRequestedBySelf,
+      resetArchiveStartRequestedBySelf,
       vonageVideoClient: vonageVideoClient.current,
       disconnect,
       joinRoom,
@@ -506,6 +545,8 @@ const SessionProvider = ({ children, initialValue = {} }: SessionProviderProps):
       reconnecting,
       subscriberWrappers,
       layoutMode,
+      recordingAlreadyNotified,
+      setRecordingAlreadyNotified,
       setLayoutMode,
       rightPanelActiveTab,
       toggleParticipantList,
@@ -526,6 +567,11 @@ const SessionProvider = ({ children, initialValue = {} }: SessionProviderProps):
     [
       activeSpeakerId,
       archiveId,
+      archiveIdStartedBySelf,
+      markArchiveStartRequestedBySelf,
+      resetArchiveStartRequestedBySelf,
+      setRecordingAlreadyNotified,
+      recordingAlreadyNotified,
       vonageVideoClient,
       disconnect,
       unreadCount,

@@ -8,3 +8,4 @@ export { default as isRecord } from './isRecord';
 export { default as isString } from './isString';
 export { default as isUndefined } from './isUndefined';
 export { default as isNotNil } from './isNotNil';
+export { default as assertString } from './assertString';

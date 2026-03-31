@@ -1,4 +1,4 @@
-import { Box, MenuItem, MenuList, Tooltip, Typography } from '@mui/material';
+import { Box, MenuItem, MenuList, Tooltip } from '@mui/material';
 import type { ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
 import useTheme from '@ui/theme';
@@ -54,8 +54,8 @@ const InputAudioDevices = ({ handleToggle }: InputAudioDevicesProps): ReactEleme
             color: theme.colors.tertiary,
           }}
         >
-          <VividIcon name="microphone-2-line" customSize={-5} />
-          <Typography sx={{ ml: 2 }}>{t('devices.audio.microphone.full')}</Typography>
+          <VividIcon name="microphone-2-line" customSize={-6} />
+          <p className="text-vera-body-extended ml-4">{t('devices.audio.microphone.full')}</p>
         </Box>
         <MenuList>
           {audioInputDevices.map((device) => {
@@ -101,9 +101,7 @@ const InputAudioDevices = ({ handleToggle }: InputAudioDevicesProps): ReactEleme
                     <Box sx={{ minWidth: 36 }} />
                   )}
                   <Tooltip title={device.label} placement="right" arrow>
-                    <Typography component="span" noWrap>
-                      {device.label}
-                    </Typography>
+                    <span className="text-vera-body-extended truncate">{device.label}</span>
                   </Tooltip>
                 </Box>
               </MenuItem>

@@ -3,11 +3,18 @@
 // issue that can surface as `createTheme_default is not a function`.
 import '@mui/material/styles/createTheme';
 
+// runs interceptors before vonage sdk initialize resources (XHR, navigator.mediaDevices clones, etc)
+import '@core/interceptors';
+
+// executes application setup before anything else (e.g. overrides, mocks, etc)
+import './setup';
+
 import ReactDOM from 'react-dom/client';
 import { registerIcon } from '@vonage/vivid';
 import App from './App.jsx';
 import './i18n.js';
 import Logger from './logger';
+import { BackendLoggingProvider } from './logger/providers';
 
 // Register Vivid icons for use throughout the application
 registerIcon();
@@ -20,15 +27,7 @@ const rootElement = document.getElementById('root')!;
 
 const { onUncaughtError, onRecoverableError, onCaughtError } = Logger;
 
-/**
- * Here you should set your actual logging provider configuration.
- * Optional for testing you can uncomment this and use verbose true to see logs in console.
- */
-// Logger.setup(() => ({
-//   verbose: false,
-//   log: (_eventName: string, _payload?: Record<string, unknown>) => {},
-//   reportError: (_error: unknown, _context?: Record<string, unknown>) => {},
-// }));
+Logger.setup(() => new BackendLoggingProvider());
 
 ReactDOM.createRoot(rootElement, {
   onUncaughtError,

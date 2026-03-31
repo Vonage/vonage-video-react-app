@@ -8,13 +8,16 @@ export type FeedbackConfig = {
   androidComponentId?: string;
   epicLink?: string;
   epicUrl?: string;
+  gollumUrl?: string;
 };
 
 export type VonageConfig = {
   provider: 'vonage';
   applicationId: string;
   privateKey: string;
+  videoHost?: string;
 };
+
 export type OpentokConfig = {
   provider: 'opentok';
   apiKey: string;

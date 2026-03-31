@@ -48,13 +48,17 @@ const MenuDevices = ({
 
   const { devices: processedDevices, systemDefaultDeviceId } = useDistinctLabelMediaDevices(
     mediaDeviceKind,
-    undefined,
+    (d) => d,
     {
       systemDefaultLabel: t('devices.defaultLabel'),
       translate: t,
       dependencies: [i18n.language],
     }
   );
+
+  const shouldDisplayDevices =
+    mediaDeviceKind !== 'audiooutput' || isGetActiveAudioOutputDeviceSupported();
+  const shouldDisplayEmptyState = shouldDisplayDevices && processedDevices.length === 0;
 
   return (
     <Menu
@@ -65,7 +69,7 @@ const MenuDevices = ({
       MenuListProps={{ 'aria-labelledby': 'basic-button' }}
       data-testid={`${mediaDeviceKind}-menu`}
     >
-      {(mediaDeviceKind !== 'audiooutput' || isGetActiveAudioOutputDeviceSupported()) &&
+      {shouldDisplayDevices &&
         processedDevices.map((device) => (
           <MenuItem
             data-testid={`${mediaDeviceKind}-menu-item-${device.deviceId}`}
@@ -86,7 +90,13 @@ const MenuDevices = ({
           </MenuItem>
         ))}
 
-      {mediaDeviceKind === 'audiooutput' && (
+      {shouldDisplayEmptyState && (
+        <MenuItem disabled data-testid={`${mediaDeviceKind}-menu-empty-state`}>
+          {t('waitingRoom.devices.noDevicesFound')}
+        </MenuItem>
+      )}
+
+      {mediaDeviceKind === 'audiooutput' && !shouldDisplayEmptyState && (
         <SoundTest>
           <Box sx={{ mr: 1 }}>
             <VividIcon name="hearing-line" customSize={-5} />

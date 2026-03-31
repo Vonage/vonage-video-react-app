@@ -11,7 +11,6 @@ import SoundTest from '../../SoundTest';
 import MenuList from '@mui/material/MenuList';
 import MenuItem from '@mui/material/MenuItem';
 import IconButton from '@mui/material/IconButton';
-import Typography from '@mui/material/Typography';
 import Grow from '@mui/material/Grow';
 import VividIcon from '@components/VividIcon';
 import Box from '@mui/material/Box';
@@ -73,14 +72,14 @@ const ReduceNoiseTestSpeakers = (): ReactElement | false => {
           >
             <Box sx={{ mr: 2 }}>
               <VividIcon
-                customSize={-5}
+                customSize={-6}
                 name="headset-solid"
                 sx={{ color: theme.colors.secondary }}
               />
             </Box>
-            <Typography variant="body1" noWrap sx={{ mr: 2 }}>
+            <p className="text-vera-body-extended mr-4 truncate">
               {t('devices.audio.noiseSuppression')}
-            </Typography>
+            </p>
             <IconButton disableRipple>
               <Grow in={!isToggled} timeout={300}>
                 <ToggleOffIcon
@@ -102,10 +101,10 @@ const ReduceNoiseTestSpeakers = (): ReactElement | false => {
             </IconButton>
           </MenuItem>
         )}
-        <SoundTest>
+        <SoundTest labelClassName="text-vera-body-extended">
           <Box sx={{ mr: 1.5 }}>
             <VividIcon
-              customSize={-4}
+              customSize={-5}
               name="audio-mid-solid"
               sx={{ color: theme.colors.secondary }}
             />

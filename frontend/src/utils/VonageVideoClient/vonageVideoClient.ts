@@ -20,7 +20,6 @@ import {
   LocalCaptionReceived,
   StreamPropertyChangedEvent,
 } from '../../types/session';
-import logOnConnect from '../logOnConnect';
 import createMovingAvgAudioLevelTracker from '../movingAverageAudioLevelTracker';
 import idempotentCallbackWithRetry from '@common/execution/idempotentCallbackWithRetry';
 import frontendLogger from '../../logger';
@@ -329,9 +328,10 @@ class VonageVideoClient extends EventEmitter<VonageVideoClientEvents> {
    */
   private handleSubscriptionError = (error: unknown) => {
     frontendLogger.reportError(error, {
-      source: 'vonageVideoClient.handleSubscriptionError',
+      eventSource: 'vonageVideoClient.handleSubscriptionError',
       sessionId: this.sessionId,
       connectionId: this.connectionId,
+      partnerId: this.credential.apiKey,
     });
 
     this.emit('subscriptionError', error ?? new Error('Unknown subscription error'));
@@ -367,6 +367,7 @@ class VonageVideoClient extends EventEmitter<VonageVideoClientEvents> {
     frontendLogger.log('vonageVideoClient: is reconnecting', {
       sessionId: this.sessionId,
       connectionId: this.connectionId,
+      partnerId: this.credential.apiKey,
     });
 
     this.emit('sessionReconnecting');
@@ -380,6 +381,7 @@ class VonageVideoClient extends EventEmitter<VonageVideoClientEvents> {
     frontendLogger.log('vonageVideoClient: reconnected', {
       sessionId: this.sessionId,
       connectionId: this.connectionId,
+      partnerId: this.credential.apiKey,
     });
 
     this.emit('sessionReconnected');
@@ -398,6 +400,7 @@ class VonageVideoClient extends EventEmitter<VonageVideoClientEvents> {
       reason,
       sessionId,
       connectionId,
+      partnerId: this.credential.apiKey,
     });
 
     this.emit('sessionDisconnected', { reason });
@@ -434,19 +437,19 @@ class VonageVideoClient extends EventEmitter<VonageVideoClientEvents> {
       this.clientSession?.connect(token, (err?: OTError) => {
         if (err) {
           frontendLogger.reportError(err, {
-            source: 'vonageVideoClient.connect.error',
+            eventSource: 'vonageVideoClient.connect.error',
             sessionId,
+            connectionId: this.connectionId,
+            partnerId: apiKey,
           });
 
           reject(err);
         } else {
-          // TODO: Deprecate logOnConnect once Logger + gollum
-          // fully replace opentok-solutions-logging analytics.
-          logOnConnect(apiKey, sessionId, this.clientSession?.connection?.connectionId);
-
-          frontendLogger.log('vonageVideoClient: connected successfully', {
+          frontendLogger.log('EnterMeeting', {
+            eventSource: 'vonageVideoClient.connect.success',
             sessionId,
-            connectionId: this.clientSession?.connection?.connectionId,
+            connectionId: this.connectionId,
+            partnerId: apiKey,
           });
 
           resolve();
@@ -492,10 +495,11 @@ class VonageVideoClient extends EventEmitter<VonageVideoClientEvents> {
       this.clientSession?.publish(publisher, (error) => {
         if (error) {
           frontendLogger.reportError(error, {
-            source: 'vonageVideoClient.publish.error',
+            eventSource: 'vonageVideoClient.publish.error',
             sessionId: this.sessionId,
             connectionId: this.connectionId,
             errorCode: (error as { code?: number })?.code,
+            partnerId: this.credential.apiKey,
           });
           const errorName = error.name || 'OTError';
           const errorMessage = error.message || 'Unknown publish error';

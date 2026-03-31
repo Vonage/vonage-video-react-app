@@ -9,6 +9,7 @@ type UseGoodByePageResult = {
   archives: Archive[] | 'error';
   header: string;
   caption: string;
+  isSelfDeclinedRecording: boolean;
 };
 
 const useGoodByePage = (): UseGoodByePageResult => {
@@ -23,12 +24,14 @@ const useGoodByePage = (): UseGoodByePageResult => {
 
   const header: string = location.state?.header || t('goodbye.default.header');
   const caption: string = location.state?.caption || t('goodbye.default.message');
+  const isSelfDeclinedRecording: boolean = location.state?.isSelfDeclinedRecording || false;
 
   return {
     roomName,
     archives,
     header,
     caption,
+    isSelfDeclinedRecording,
   };
 };
 

@@ -103,8 +103,8 @@ describe('OpentokVideoService', () => {
     expect(archiveResponse).toBe(mockArchiveId);
   });
 
-  it('generates a list of archives', async () => {
-    const archiveResponse = await opentokVideoService.listArchives(mockSessionId);
+  it('searches for archives', async () => {
+    const archiveResponse = await opentokVideoService.searchArchives(mockSessionId);
     expect(archiveResponse).toEqual([{ archiveId: mockArchiveId }]);
   });
 

@@ -2,31 +2,58 @@ import { Request, Response, Router } from 'express';
 import validator from 'validator';
 import createVideoService from '../videoService/videoServiceFactory';
 import getSessionStorageService from '../sessionStorageService';
-import createGetOrCreateSession from './getOrCreateSession';
+import { createVideoClient } from '@api-lib/core';
+import { SessionId } from '@common/types';
+import blockCallsForArgs from '../helpers/blockCallsForArgs';
+import { makeInternalErrorHandler } from '@api-lib/errors';
 
 const sessionRouter = Router();
 const videoService = createVideoService();
 const sessionService = getSessionStorageService();
-const getOrCreateSession = createGetOrCreateSession({
-  videoService,
-  sessionService,
-});
 
 sessionRouter.get('/:room', async (req: Request<{ room: string }>, res: Response) => {
   try {
     const { room: roomName } = req.params;
-    const sessionId = await getOrCreateSession(roomName);
-    const data = videoService.generateToken(sessionId);
+
+    const videoClient = makeVideoClient();
+
     const captionsId = await sessionService.getCaptionsId(roomName);
+
+    // the actual problem is that the roomName is not a valid identifier, and the creation of the session is async.
+    // If the identifier where the sessionId, we wont need to block calls
+    const session = await blockCallsForArgs(async () => {
+      const sessionId = ((await sessionService.getSession(roomName)) as SessionId) ?? null;
+
+      if (sessionId) {
+        return {
+          ...videoClient.decodeSessionId({ sessionId }),
+          sessionId,
+        };
+      }
+
+      const session = await videoClient.createSession();
+
+      await sessionService.setSession(roomName, session.sessionId);
+
+      return session;
+    })(roomName);
+
+    const { token } = videoClient.joinSession({
+      sessionId: session.sessionId,
+    });
+
     res.json({
-      sessionId,
-      token: data.token,
-      apiKey: data.apiKey,
+      ...session,
+      token,
+      apiKey: session.applicationId,
       captionsId,
     });
-  } catch (error: unknown) {
-    const message = error instanceof Error ? error.message : error;
-    res.status(500).send({ message });
+  } catch (error) {
+    const applicationError = makeInternalErrorHandler('Failed to get or create session')(
+      error
+    ).exportSafely();
+
+    res.status(applicationError.statusCode).json(applicationError);
   }
 });
 
@@ -73,7 +100,7 @@ sessionRouter.get('/:room/archives', async (req: Request<{ room: string }>, res:
     const { room: roomName } = req.params;
     const sessionId = await sessionService.getSession(roomName);
     if (sessionId) {
-      const archives = await videoService.listArchives(sessionId);
+      const archives = await videoService.searchArchives(sessionId);
       res.json({
         archives,
         status: 200,
@@ -164,5 +191,18 @@ sessionRouter.post(
     }
   }
 );
+
+function makeVideoClient() {
+  return createVideoClient({
+    auth: {
+      authType: 'jwt',
+      applicationId: process.env.VONAGE_APP_ID!,
+      privateKey: process.env.VONAGE_PRIVATE_KEY!,
+    },
+    videoParams: {
+      videoHost: process.env.VONAGE_VIDEO_HOST,
+    },
+  });
+}
 
 export default sessionRouter;

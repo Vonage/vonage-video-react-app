@@ -4271,6 +4271,16 @@
   resolved "https://registry.yarnpkg.com/@tootallnate/once/-/once-2.0.0.tgz#f544a148d3ab35801c1f633a7441fd87c2e484bf"
   integrity sha512-XCuKFP5PS55gnMVu3dty8KPatLqUoy/ZYzDzAGCQ8JNFCkLXzmI7vNHCR+XpbZaMWQK/vQubr7PkYq8g470J/A==
 
+"@trpc/client@^11.11.0":
+  version "11.11.0"
+  resolved "https://registry.yarnpkg.com/@trpc/client/-/client-11.11.0.tgz#d63800e685b2d32de72d05606e2e3e832b36a94e"
+  integrity sha512-tIPeetFO8GT/o0In+Lk5JA3f29m8qCBSaKNatQdAx6BOfZFjpqHOaoAsCmE/MdUu9AVhPRPorcoqUlZUdDc5gA==
+
+"@trpc/server@^11.11.0":
+  version "11.11.0"
+  resolved "https://registry.yarnpkg.com/@trpc/server/-/server-11.11.0.tgz#03a0c7f48f43eba0941329f00b11d8d00ad732f5"
+  integrity sha512-5CBK5Oit8qv2k2zgIHrUsa12tnCIVpZIJLvMa4n2tejuWz/d7Qb1B1v9zZioapr7y8sEvnk8zPcNnxcT2LlQxg==
+
 "@trysound/sax@0.2.0":
   version "0.2.0"
   resolved "https://registry.yarnpkg.com/@trysound/sax/-/sax-0.2.0.tgz#cccaab758af56761eb7bf37af6f03f326dd798ad"

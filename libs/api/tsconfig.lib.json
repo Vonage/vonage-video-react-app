@@ -1,5 +1,5 @@
 {
-  "extends": ["./tsconfig.json"],
+  "extends": "./tsconfig.json",
   "compilerOptions": {
     "composite": true,
     "outDir": "dist",
@@ -8,6 +8,12 @@
     "types": ["node"],
     "tsBuildInfoFile": "dist/tsconfig.lib.tsbuildinfo"
   },
-  "include": ["src/**/*.ts", "../common/src/**/*.ts"],
-  "exclude": ["**/*.spec.*", "**/*.test.*"]
+  "include": [
+    "src/**/*.ts",
+    "../common/src/**/*.ts",
+    "../common/srcNode/**/*.ts",
+    "../common/test/**/*.ts",
+    "../common/testNode/**/*.ts"
+  ],
+  "exclude": ["**/*.spec.*", "**/*.test.*", "../common/**/*.spec.*", "../common/**/*.test.*"]
 }

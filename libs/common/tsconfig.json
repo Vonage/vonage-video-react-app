@@ -1,7 +1,7 @@
 {
   "extends": "../../tsconfig.base.json",
   "files": [],
-  "include": ["eslint.config.mjs"],
+  "include": ["eslint.config.mjs", "./test/**/*", "./testBrowser/**/*", "./testNode/**/*"],
   "references": [{ "path": "./tsconfig.lib.json" }, { "path": "./tsconfig.spec.json" }],
   "compilerOptions": {
     "rootDir": "..",
@@ -17,7 +17,9 @@
       "@common-test": ["./test"],
       "@common-test/*": ["./test/*"],
       "@web-test": ["./testBrowser"],
-      "@web-test/*": ["./testBrowser/*"]
+      "@web-test/*": ["./testBrowser/*"],
+      "@node-test": ["./testNode"],
+      "@node-test/*": ["./testNode/*"]
     },
     "composite": true,
     "lib": ["DOM", "DOM.Iterable", "ESNext"]
