@@ -61,7 +61,7 @@ const SmallViewportHeader = (): ReactElement => {
     return selected && isRearFacingLabel(selected.label) ? 'rear' : 'front';
   });
 
-  const handleCameraToggle = () => {
+  const handleCameraToggle = async () => {
     if (!publisher) return;
 
     const nextFacing = facing === 'front' ? 'rear' : 'front';
@@ -74,23 +74,21 @@ const SmallViewportHeader = (): ReactElement => {
 
     setFacing(nextFacing);
 
-    void (async () => {
-      if (isAndroid()) {
-        publisher.publishVideo(false);
-        await wait(100);
-      }
-      // Android: facingMode resolution finds the correct physical camera ID.
-      // iOS: device IDs are stable; skipping getUserMedia avoids interrupting
-      // the active stream, which would cause a layout shift.
-      const resolvedDeviceId = isAndroid()
-        ? await resolveMobileVideoSource(target.deviceId, target.label)
-        : target.deviceId;
-      await publisher.setVideoSource(resolvedDeviceId);
-      if (isAndroid()) {
-        publisher.publishVideo(isVideoEnabled);
-      }
-      await mediaDevices$.actions.selectDevice('videoinput', resolvedDeviceId);
-    })();
+    if (isAndroid()) {
+      publisher.publishVideo(false);
+      await wait(100);
+    }
+    // Android: facingMode resolution finds the correct physical camera ID.
+    // iOS: device IDs are stable; skipping getUserMedia avoids interrupting
+    // the active stream, which would cause a layout shift.
+    const resolvedDeviceId = isAndroid()
+      ? await resolveMobileVideoSource(target.deviceId, target.label)
+      : target.deviceId;
+    await publisher.setVideoSource(resolvedDeviceId);
+    if (isAndroid()) {
+      publisher.publishVideo(isVideoEnabled);
+    }
+    await mediaDevices$.actions.selectDevice('videoinput', resolvedDeviceId);
   };
 
   return (
