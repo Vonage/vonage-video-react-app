@@ -12,7 +12,7 @@ function attempt<T extends AnyCallback>(
   callback: T,
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   onError?: (error: any) => void
-): ReturnType<T> {
+): void {
   try {
     const result = callback();
 
@@ -24,8 +24,6 @@ function attempt<T extends AnyCallback>(
   } catch (error) {
     onError?.(error);
   }
-
-  return undefined as ReturnType<T>;
 }
 
 export default attempt;

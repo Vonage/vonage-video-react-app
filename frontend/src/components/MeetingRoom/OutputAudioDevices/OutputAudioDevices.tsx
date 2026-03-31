@@ -3,7 +3,6 @@ import { useTranslation } from 'react-i18next';
 import type { MediaDeviceInfoJSON } from '@web/types';
 import DropdownSeparator from '../DropdownSeparator';
 import Box from '@mui/material/Box';
-import Typography from '@mui/material/Typography';
 import MenuList from '@mui/material/MenuList';
 import MenuItem from '@mui/material/MenuItem';
 import VividIcon from '@components/VividIcon';
@@ -66,9 +65,9 @@ const OutputAudioDevices = ({ handleToggle }: OutputAudioDevicesProps): ReactEle
           }}
         >
           <VividIcon name="audio-mid-line" customSize={-5} />
-          <Typography sx={{ ml: 2 }} data-testid="output-device-title">
+          <p className="text-vera-body-extended ml-4" data-testid="output-device-title">
             {t('devices.audio.speakers.full')}
-          </Typography>
+          </p>
         </Box>
 
         <MenuList data-testid="output-devices">
@@ -116,9 +115,7 @@ const OutputAudioDevices = ({ handleToggle }: OutputAudioDevicesProps): ReactEle
                     <Box sx={{ minWidth: 36 }} />
                   )}
                   <Tooltip title={device.label} placement="right" arrow>
-                    <Typography component="span" noWrap>
-                      {device.label}
-                    </Typography>
+                    <span className="text-vera-body-extended truncate">{device.label}</span>
                   </Tooltip>
                 </Box>
               </MenuItem>

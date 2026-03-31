@@ -81,7 +81,7 @@ class OpenTokVideoService implements VideoService {
     });
   }
 
-  listArchives(sessionId: string): Promise<OpenTok.Archive[] | undefined> {
+  searchArchives(sessionId: string): Promise<OpenTok.Archive[] | undefined> {
     return new Promise((resolve, reject) => {
       const options = { sessionId };
       this.opentok.listArchives(options, (error, archives) => {

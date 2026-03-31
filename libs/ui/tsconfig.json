@@ -19,7 +19,11 @@
       "@web-test": ["../common/testBrowser"],
       "@web-test/*": ["../common/testBrowser/*"],
       "@core": ["../core/src"],
-      "@core/*": ["../core/src/*"]
+      "@core/*": ["../core/src/*"],
+
+      // video-router paths (this is just for linter and types)
+      "@api-lib/*": ["../api/src/*"],
+      "@node/*": ["../common/srcNode/*"]
     },
     "lib": ["DOM", "DOM.Iterable", "ESNext"]
   }

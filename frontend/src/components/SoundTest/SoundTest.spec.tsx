@@ -99,6 +99,16 @@ describe('SoundTest', () => {
     expect(displayedText).toBeInTheDocument();
   });
 
+  it('applies custom label classes', () => {
+    render(
+      <SoundTest labelClassName="text-vera-body-extended">
+        <VividIcon name="hearing-line" customSize={-5} />
+      </SoundTest>
+    );
+
+    expect(screen.getByTestId('soundTestLabel')).toHaveClass('text-vera-body-extended');
+  });
+
   it('does not throw if setSinkId is undefined', () => {
     global.Audio = vi.fn().mockImplementation(() => ({
       play: playMock,

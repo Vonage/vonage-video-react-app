@@ -51,7 +51,7 @@ describe('AddBackgroundEffectLayout', () => {
       <AddBackgroundEffectLayout backgroundSelected="0" customBackgroundImageChange={vi.fn()} />
     );
     expect(screen.getByTestId('background-add-background')).toBeInTheDocument();
-    expect(screen.getByTestId('vivid-icon-gallery-line')).toBeInTheDocument();
+    expect(screen.getByTestId('vivid-icon-add-image-line')).toBeInTheDocument();
   });
 
   it('shows error for invalid file type', async () => {

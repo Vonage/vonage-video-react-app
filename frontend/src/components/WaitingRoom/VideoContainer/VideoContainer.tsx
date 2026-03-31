@@ -53,7 +53,7 @@ const VideoContainer = ({ username }: VideoContainerProps): ReactElement => {
         'bg-vera-surface',
         'rounded-vera-none sm:rounded-vera-large',
         '[-webkit-mask:linear-gradient(var(--vera-surface)_0_0)]',
-        'box-border w-dvw sm:w-[584px] md:w-full'
+        'box-border w-dvw sm:w-146 md:w-full'
       )}
     >
       <div
@@ -66,7 +66,7 @@ const VideoContainer = ({ username }: VideoContainerProps): ReactElement => {
           'child:aspect-video',
           'child:w-dvw',
           'child:rounded-none',
-          'md:child:w-[585px]',
+          'md:child:w-146.25',
           `child:md:h-[${VIDEO_CONTAINER_HEIGHT_WR}px]`,
           'md:child:rounded-vera-large',
           'bg-vera-secondary',

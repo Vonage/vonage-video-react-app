@@ -92,6 +92,7 @@ const ToolbarOverflowMenu = ({
       isScreenSharePresent={isViewingScreenShare}
       isPinningPresent={isPinningPresent}
       isOverflowButton
+      onLayoutModeChange={closeMenu}
       key="LayoutButton"
     />,
     <CaptionsButton

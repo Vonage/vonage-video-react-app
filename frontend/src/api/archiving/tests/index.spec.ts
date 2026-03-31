@@ -1,15 +1,15 @@
 import { describe, expect, it, Mock, vi } from 'vitest';
 import { AxiosError, AxiosResponse } from 'axios';
-import { listArchives } from '../routes';
+import { searchArchives } from '../routes';
 import { mockResponse } from './data';
 import { getArchives } from '..';
 
 vi.mock('../routes.ts');
-const mockListArchives = listArchives as Mock<[], ReturnType<typeof listArchives>>;
+const mockSearchArchives = searchArchives as Mock<[], ReturnType<typeof searchArchives>>;
 
 describe('getArchives', () => {
   it('it returns an object with array of Archives and hasPending flag', async () => {
-    mockListArchives.mockResolvedValue(mockResponse);
+    mockSearchArchives.mockResolvedValue(mockResponse);
     const archives = await getArchives('en', 'roomName');
     expect(archives).toEqual({
       archives: [
@@ -46,7 +46,7 @@ describe('getArchives', () => {
   });
 
   it('it returns object with empty array when no archives', async () => {
-    mockListArchives.mockResolvedValue({
+    mockSearchArchives.mockResolvedValue({
       headers: {
         'content-length': '28',
         'content-type': 'application/json; charset=utf-8',
@@ -65,8 +65,8 @@ describe('getArchives', () => {
     });
   });
 
-  it('it throws with error when api call throws', () => {
-    mockListArchives.mockRejectedValue(new AxiosError('Network Error', 'ERR_NETWORK'));
-    void expect(getArchives('en', 'roomName')).rejects.toThrowError();
+  it('it throws with error when api call throws', async () => {
+    mockSearchArchives.mockRejectedValue(new AxiosError('Network Error', 'ERR_NETWORK'));
+    await expect(getArchives('en', 'roomName')).rejects.toThrowError();
   });
 });

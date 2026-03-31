@@ -1,5 +1,5 @@
-import { render, screen } from '@testing-library/react';
-import { describe, it, vi, expect, beforeAll } from 'vitest';
+import { act, render, screen, waitFor } from '@testing-library/react';
+import { describe, it, vi, expect, beforeEach, afterEach } from 'vitest';
 import userEvent from '@testing-library/user-event';
 import { makeMediaDeviceInfos, setupWindowNavigatorMock } from '@web-test/fixtures';
 
@@ -10,18 +10,38 @@ import mediaDevices$ from '@core/stores/devices';
 const someDevices = makeMediaDeviceInfos();
 
 describe('MenuDevices Component', () => {
-  beforeAll(() => {
-    // Mock enumerateDevices before importing the store to prevent the disruptive mock from throwing
+  beforeEach(() => {
     setupWindowNavigatorMock({
       mediaDevices: {
+        addEventListener: vi.fn(),
+        dispatchEvent: vi.fn().mockReturnValue(true),
         enumerateDevices: Promise.resolve(someDevices),
+        removeEventListener: vi.fn(),
+      },
+      permissions: {
+        query: Promise.resolve({
+          addEventListener: vi.fn(),
+          removeEventListener: vi.fn(),
+          state: 'granted',
+        } as unknown as PermissionStatus),
       },
     });
 
+    mediaDevices$.reset();
     mediaDevices$.setState((state) => ({
       ...state,
       mediaDeviceInfo: someDevices,
     }));
+  });
+
+  afterEach(() => {
+    act(() => {
+      mediaDevices$.reset();
+      mediaDevices$.setState((state) => ({
+        ...state,
+        mediaDeviceInfo: someDevices,
+      }));
+    });
   });
 
   it('calls deviceChangeHandler and onClose when device is clicked', async () => {
@@ -50,7 +70,7 @@ describe('MenuDevices Component', () => {
     expect(mockOnClose).toHaveBeenCalled();
   });
 
-  it('does not render audio output devices when browser does not support it', () => {
+  it('does not render audio output devices when browser does not support it', async () => {
     vi.spyOn(util, 'isGetActiveAudioOutputDeviceSupported').mockReturnValue(false);
 
     const mockOnClose = vi.fn();
@@ -72,12 +92,14 @@ describe('MenuDevices Component', () => {
       />
     );
 
-    expect(
-      screen.queryByTestId(`${kind}-menu-item-${firstDevice.deviceId}`)
-    ).not.toBeInTheDocument();
-    expect(
-      screen.queryByTestId(`${kind}-menu-item-${secondDevice.deviceId}`)
-    ).not.toBeInTheDocument();
+    await waitFor(() => {
+      expect(
+        screen.queryByTestId(`${kind}-menu-item-${firstDevice.deviceId}`)
+      ).not.toBeInTheDocument();
+      expect(
+        screen.queryByTestId(`${kind}-menu-item-${secondDevice.deviceId}`)
+      ).not.toBeInTheDocument();
+    });
   });
 
   it('only renders devices of the specified kind', () => {
@@ -86,6 +108,35 @@ describe('MenuDevices Component', () => {
     testDeviceKindRendering('audioinput');
     testDeviceKindRendering('audiooutput');
     testDeviceKindRendering('videoinput');
+  });
+
+  it('renders an empty state when no devices are available', async () => {
+    const mockOnClose = vi.fn();
+    const mockDeviceChangeHandler = vi.fn();
+    const anchorEl = document.createElement('div');
+
+    act(() => {
+      mediaDevices$.setState((state) => ({
+        ...state,
+        mediaDeviceInfo: [],
+        audioinput: undefined,
+      }));
+    });
+
+    render(
+      <MenuDevices
+        mediaDeviceKind="audioinput"
+        onClose={mockOnClose}
+        open
+        anchorEl={anchorEl}
+        deviceChangeHandler={mockDeviceChangeHandler}
+      />
+    );
+
+    await waitFor(() => {
+      expect(screen.getByTestId('audioinput-menu-empty-state')).toBeInTheDocument();
+      expect(screen.getByText('No devices found')).toBeInTheDocument();
+    });
   });
 });
 
@@ -97,10 +148,12 @@ function testDeviceKindRendering(kind: MediaDeviceKind) {
   const firstDevice = devicesOfKind[0];
 
   // Set the first device as selected in the store for this kind
-  mediaDevices$.setState((state) => ({
-    ...state,
-    [kind]: firstDevice.deviceId,
-  }));
+  act(() => {
+    mediaDevices$.setState((state) => ({
+      ...state,
+      [kind]: firstDevice.deviceId,
+    }));
+  });
 
   const { unmount } = render(
     <MenuDevices

@@ -1,7 +1,6 @@
 import { ReactElement, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import Box from '@mui/material/Box';
-import useTheme from '@ui/theme';
 import useSessionContext from '../../../hooks/useSessionContext';
 import useRoomName from '../../../hooks/useRoomName';
 import useRoomShareUrl from '../../../hooks/useRoomShareUrl';
@@ -19,6 +18,7 @@ import {
   resolveMobileVideoSource,
 } from '@utils/cameraSwitch';
 import usePreferredDevices from '@hooks/usePreferredDevices';
+import RecordingIndicator from '../RecordingIndicator';
 
 /**
  * SmallViewportHeader Component
@@ -29,7 +29,6 @@ import usePreferredDevices from '@hooks/usePreferredDevices';
  */
 const SmallViewportHeader = (): ReactElement => {
   const { t } = useTranslation();
-  const theme = useTheme();
   const { archiveId } = useSessionContext();
   const isRecording = !!archiveId;
   const roomName = useRoomName();
@@ -97,65 +96,34 @@ const SmallViewportHeader = (): ReactElement => {
   return (
     <Box
       data-testid="smallViewportHeader"
-      sx={{
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        backgroundColor: theme.colors.darkBackground,
-        paddingX: 2,
-        paddingTop: 2,
-        color: theme.colors.onDarkGrey,
-      }}
+      className="flex items-center justify-between bg-vera-dark-background px-4 pt-2 text-vera-on-dark-grey"
     >
-      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, paddingX: 0.5 }}>
-        {isRecording && (
-          <VividIcon
-            name="radio-checked-2-solid"
-            customSize={-6}
-            sx={{ color: theme.colors.error }}
-            data-testid="RadioButtonCheckedIcon"
-          />
-        )}
-        <Box
-          sx={{
-            overflow: 'hidden',
-            textOverflow: 'ellipsis',
-            display: '-webkit-box',
-            WebkitLineClamp: 1,
-            WebkitBoxOrient: 'vertical',
-          }}
-        >
+      <Box className="flex min-w-0 items-center gap-1 px-0.5">
+        {isRecording && <RecordingIndicator isCompact />}
+        <Box className="ml-1 min-w-0 overflow-hidden text-ellipsis whitespace-nowrap">
           {roomName}
         </Box>
       </Box>
-      <Box sx={{ marginX: -1, display: 'flex', alignItems: 'center', gap: 1 }}>
+      <Box className="-mx-1 flex items-center gap-1">
         {isVideoEnabled && videoInputDevices.length > 1 && (
           <Tooltip title={t('devices.video.camera.switch')} placement="bottom">
-            <IconButton sx={{ color: theme.colors.onDarkGrey }} onClick={handleCameraToggle}>
-              <VividIcon name="camera-switch-line" customSize={-4} />
+            <IconButton className="text-vera-on-dark-grey" onClick={handleCameraToggle}>
+              <VividIcon
+                name="camera-switch-line"
+                customSize={-4}
+                className="text-vera-on-dark-grey"
+              />
             </IconButton>
           </Tooltip>
         )}
         <Fade in timeout={500}>
           <Tooltip title={isCopied ? t('chat.copied') : t('chat.copy')} placement="bottom">
             <Box>
-              <IconButton
-                sx={{ color: theme.colors.onDarkGrey }}
-                onClick={copyUrl}
-                disabled={isCopied}
-              >
+              <IconButton className="text-vera-on-dark-grey" onClick={copyUrl} disabled={isCopied}>
                 {isCopied ? (
-                  <VividIcon
-                    customSize={-4}
-                    name="check-sent-line"
-                    sx={{ color: theme.colors.success }}
-                  />
+                  <VividIcon customSize={-4} name="check-sent-line" className="text-vera-success" />
                 ) : (
-                  <VividIcon
-                    customSize={-4}
-                    name="copy-line"
-                    sx={{ color: theme.colors.onDarkGrey }}
-                  />
+                  <VividIcon customSize={-4} name="copy-line" className="text-vera-on-dark-grey" />
                 )}
               </IconButton>
             </Box>

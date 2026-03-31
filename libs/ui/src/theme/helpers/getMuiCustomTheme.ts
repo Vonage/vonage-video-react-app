@@ -22,7 +22,12 @@ declare module '@mui/material' {
   }
 }
 
-const getMuiCustomTheme = ({ tokens }: { tokens: Theme }) => {
+export type GetMuiCustomThemeProps = {
+  tokens: Theme;
+  container?: HTMLElement | null;
+};
+
+const getMuiCustomTheme = ({ tokens, container }: GetMuiCustomThemeProps) => {
   const buttonSx = {
     height: 40, // 40px
     textTransform: 'none',
@@ -200,6 +205,20 @@ const getMuiCustomTheme = ({ tokens }: { tokens: Theme }) => {
           caption: createResponsiveTypography(tokens, 'caption', 'caption'),
         },
       },
+      // Redirect MUI portals into the shadow root when running as an embed.
+      // Without this, Popper/Modal/Popover render into document.body, which is
+      // outside the shadow root, and therefore miss all Emotion-injected styles.
+      ...(container && {
+        MuiPopper: {
+          defaultProps: { container },
+        },
+        MuiModal: {
+          defaultProps: { container },
+        },
+        MuiPopover: {
+          defaultProps: { container },
+        },
+      }),
     },
     typography: {
       fontFamily: tokens.typography.typeface.plain.value,

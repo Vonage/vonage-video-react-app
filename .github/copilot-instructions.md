@@ -46,6 +46,7 @@ TypeScript version: `^5.8.3`
   - `libs/ui` for visual components  
   - `libs/core` if it is faceless (non-visual logic).
   - `libs/common` for helpers, utilities, and hooks that are agnostic of the project.
+- **Rule:** If the code is **backend-oriented** and represents **agnostic Vonage Video API orchestration**, it must be placed in `libs/api`.
 - **Rule:** Vera-specific business logic (roles, permissions, product policy/decisions) must stay in the app layer (`frontend`/`backend`).
 - **Rule:** This is **especially enforced** for video-related components such as publishers, subscribers, sessions, `videoView`s, etc.
 - **Rule:** Helpers, utilities, and hooks that are agnostic of the project must be placed in `libs/common`.
@@ -151,13 +152,13 @@ if (isUserEligible(user)) {
 if (isNil(data)) return;
 ```
 
-- **Rule:** Acronyms in names are banned across the codebase, except `req` and `res` when working with Express `Request` and `Response`.
+- **Rule:** Abbreviated or shortened names are banned across the codebase, except `req` and `res` when working with Express `Request` and `Response`.
 - **Rule:** Use fully descriptive names, even if they are longer. Minification handles bundle size.
 
 **Violation:**
 
 ```tsx
-// Bad
+// Bad: abbreviating "User Details" to "UsrDtls"
 function fetchUsrDtls() {
     // ...
 }
@@ -166,7 +167,7 @@ function fetchUsrDtls() {
 **Correct:**
 
 ```tsx
-// Good
+// Good: fully spelled out words
 function fetchUserDetails() {
     // ...
 }
@@ -175,14 +176,14 @@ function fetchUserDetails() {
 **Violation:**
 
 ```tsx
-// Bad
+// Bad: abbreviating "VideoClient" to "vc"
 const vc = new VideoClient();
 ```
 
 **Correct:**
 
 ```tsx
-// Good
+// Good: fully spelled out variable name
 const videoClient = new VonageVideoClient();
 ```
 

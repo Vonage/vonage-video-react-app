@@ -2,12 +2,13 @@ import { ReactElement, useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import ClickAwayListener from '@mui/material/ClickAwayListener';
 import MenuItem from '@mui/material/MenuItem';
-import Typography from '@mui/material/Typography';
 import useTheme from '@ui/theme';
 import { mediaDevices$ } from '@core/stores';
+import { twMerge } from 'tailwind-merge';
 
 export type SoundTestProps = {
   children: ReactElement;
+  labelClassName?: string;
 };
 
 /**
@@ -16,9 +17,10 @@ export type SoundTestProps = {
  * Renders a menu item to test the speakers by playing a sound through the active audio output device.
  * @param {SoundTestProps} props - The props for the component.
  *  @property {ReactElement} children - The icon to be rendered for the sound test.
+ *  @property {string} labelClassName - Additional Tailwind classes for the label.
  * @returns {ReactElement} The SoundTest component
  */
-const SoundTest = ({ children }: SoundTestProps): ReactElement => {
+const SoundTest = ({ children, labelClassName }: SoundTestProps): ReactElement => {
   const { t } = useTranslation();
   const theme = useTheme();
   const [audioIsPlaying, setAudioIsPlaying] = useState(false);
@@ -61,9 +63,12 @@ const SoundTest = ({ children }: SoundTestProps): ReactElement => {
         }}
       >
         {children}
-        <Typography variant="body1">
+        <span
+          data-testid="soundTestLabel"
+          className={twMerge('text-vera-body-base', labelClassName)}
+        >
           {!audioIsPlaying ? t('soundTest.start') : t('soundTest.stop')}
-        </Typography>
+        </span>
       </MenuItem>
     </ClickAwayListener>
   );

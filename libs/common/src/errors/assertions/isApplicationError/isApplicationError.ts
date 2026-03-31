@@ -7,7 +7,7 @@ import type ApplicationError from '../../ApplicationError';
 export const isApplicationError = (source: unknown): source is ApplicationError =>
   isRecord(source) &&
   [
-    source.values,
+    source.issues,
     source.severity,
     source.statusCode,
     source.fallbackConfig,

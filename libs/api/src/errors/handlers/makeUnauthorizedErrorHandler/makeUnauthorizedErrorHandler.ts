@@ -1,4 +1,4 @@
-import StatusCodeEnum from 'status-code-enum';
+import { StatusCode } from 'status-code-enum';
 import ApplicationServerError from '../../ApplicationServerError';
 import type { Any } from '@common/types';
 
@@ -8,7 +8,7 @@ export const buildUnauthorizedErrorHandler = (fallbackMessage = 'Unauthorized ac
       src: error,
       fallbackConfig: {
         fallbackMessage,
-        statusCode: StatusCodeEnum.ClientErrorUnauthorized,
+        statusCode: StatusCode.ClientErrorUnauthorized,
       },
     });
 };

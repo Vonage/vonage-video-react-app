@@ -25,7 +25,11 @@
       "@common-test": ["../common/test"],
       "@common-test/*": ["../common/test/*"],
       "@web-test": ["../common/testBrowser"],
-      "@web-test/*": ["../common/testBrowser/*"]
+      "@web-test/*": ["../common/testBrowser/*"],
+
+      // video-router
+      "@api-lib/*": ["../api/src/*"],
+      "@node/*": ["../common/srcNode/*"]
     },
     "lib": ["DOM", "DOM.Iterable", "ESNext"]
   }

@@ -29,17 +29,21 @@ const loadConfig = (): Config => {
     androidComponentId: process.env.JIRA_ANDROID_COMPONENT_ID,
     epicLink: process.env.JIRA_EPIC_LINK,
     epicUrl: process.env.JIRA_EPIC_URL,
+    gollumUrl: process.env.GOLLUM_BASE_URL,
   };
+
   if (provider === 'vonage') {
     const applicationId = process.env.VONAGE_APP_ID ?? '';
     const privateKey = process.env.VONAGE_PRIVATE_KEY ?? '';
+    const videoHost = process.env.VONAGE_VIDEO_HOST;
 
     if (!applicationId || !privateKey) {
       throw new Error('Missing config values for Vonage');
     }
 
-    return { ...feedbackConfig, applicationId, privateKey, provider: 'vonage' };
+    return { ...feedbackConfig, applicationId, privateKey, provider: 'vonage', videoHost };
   }
+
   if (provider === 'opentok') {
     const apiKey = process.env.OT_API_KEY ?? '';
     const apiSecret = process.env.OT_API_SECRET ?? '';
@@ -50,6 +54,7 @@ const loadConfig = (): Config => {
 
     return { ...feedbackConfig, apiKey, apiSecret, provider: 'opentok' };
   }
+
   throw new Error(`Unknown video service provider: ${provider || 'undefined'}`);
 };
 

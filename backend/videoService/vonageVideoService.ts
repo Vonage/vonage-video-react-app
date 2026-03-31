@@ -21,7 +21,10 @@ class VonageVideoService implements VideoService {
       applicationId: this.config.applicationId,
       privateKey: this.config.privateKey,
     });
-    this.vonageVideo = new Video(this.credentials);
+
+    this.vonageVideo = new Video(this.credentials, {
+      videoHost: this.config.videoHost,
+    });
   }
 
   private static getTokenRole(): string {
@@ -36,7 +39,7 @@ class VonageVideoService implements VideoService {
     return sessionId;
   }
 
-  async listArchives(sessionId: string): Promise<SingleArchiveResponse[]> {
+  async searchArchives(sessionId: string): Promise<SingleArchiveResponse[]> {
     const archives = await this.vonageVideo.searchArchives({ sessionId });
     return archives.items;
   }

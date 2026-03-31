@@ -6,16 +6,38 @@ import { Archive } from 'opentok';
 import InMemorySessionStorage from '../storage/inMemorySessionStorage';
 import mockOpentokConfig from '../helpers/__mocks__/config';
 
+// base64('2~vonageAppId~0.0.0.0~2024-01-01') — valid format for decodeSessionId
+const validSessionId = '1_Mn52b25hZ2VBcHBJZH4wLjAuMC4wfjIwMjQtMDEtMDE=';
+
 await jest.unstable_mockModule('../helpers/config', mockOpentokConfig);
 
 const mockVcrSessionStorage = {
-  getSession: jest.fn().mockReturnValue('someSessionId'),
+  getSession: jest.fn().mockReturnValue(validSessionId),
   setSession: jest.fn().mockReturnValue(true),
 };
 
 jest.mock('../storage/vcrSessionStorage', () => {
   return jest.fn().mockImplementation(() => mockVcrSessionStorage);
 });
+
+// Mock third-party Vonage SDKs only
+const actualAuth = await import('@vonage/auth');
+const actualVideo = await import('@vonage/video');
+
+await jest.unstable_mockModule('@vonage/auth', () => ({
+  ...actualAuth,
+  Auth: jest.fn().mockImplementation(() => ({})),
+}));
+
+await jest.unstable_mockModule('@vonage/video', () => ({
+  ...actualVideo,
+  Video: jest.fn().mockImplementation(() => ({
+    createSession: jest
+      .fn<() => Promise<{ sessionId: string }>>()
+      .mockResolvedValue({ sessionId: validSessionId }),
+    generateClientToken: jest.fn().mockReturnValue('someToken'),
+  })),
+}));
 
 await jest.unstable_mockModule('../videoService/opentokVideoService.ts', () => {
   return {
@@ -31,8 +53,8 @@ await jest.unstable_mockModule('../videoService/opentokVideoService.ts', () => {
             token: 'someToken',
             apiKey: 'someApiKey',
           }),
-        createSession: jest.fn<() => Promise<string>>().mockResolvedValue('someSessionId'),
-        listArchives: jest
+        createSession: jest.fn<() => Promise<string>>().mockResolvedValue(validSessionId),
+        searchArchives: jest
           .fn<() => Promise<Archive[]>>()
           .mockResolvedValue([{ id: 'archive1' }, { id: 'archive2' }] as unknown as Archive[]),
       };
@@ -51,7 +73,7 @@ describe.each([
 
   beforeAll(async () => {
     server = await startServer(0);
-    await sessionStorage.setSession('awesomeRoomName', 'someSessionId');
+    await sessionStorage.setSession('awesomeRoomName', validSessionId);
   });
 
   afterAll((done) => {
@@ -65,7 +87,7 @@ describe.each([
     });
 
     it('returns a 200 and a list of archives when getting archives', async () => {
-      await sessionStorage.setSession('awesomeRoomName', 'someSessionId');
+      await sessionStorage.setSession('awesomeRoomName', validSessionId);
       const res = await request(server).get(`/session/${roomName}/archives`);
       expect(res.statusCode).toEqual(200);
       expect(res.body.archives).toEqual([{ id: 'archive1' }, { id: 'archive2' }]);

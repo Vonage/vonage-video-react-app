@@ -69,7 +69,7 @@ const DeviceControlButton = ({
         return (
           <VividIcon
             name="microphone-2-solid"
-            customSize={-6}
+            customSize={-5}
             sx={{ color: theme.colors.disabled }}
           />
         );
@@ -78,7 +78,7 @@ const DeviceControlButton = ({
         return (
           <VividIcon
             name="microphone-2-solid"
-            customSize={-6}
+            customSize={-5}
             data-testid="MicNoneIcon"
             sx={{ color: theme.colors.onDarkGrey }}
           />
@@ -87,7 +87,7 @@ const DeviceControlButton = ({
       return (
         <VividIcon
           name="mic-mute-solid"
-          customSize={-6}
+          customSize={-5}
           data-testid="MicOffToolbar"
           sx={{ color: theme.colors.error, transform: 'scaleX(-1)' }}
         />
@@ -95,13 +95,13 @@ const DeviceControlButton = ({
     }
 
     if (!env.ALLOW_CAMERA_CONTROL) {
-      return <VividIcon name="video-solid" customSize={-6} sx={{ color: theme.colors.disabled }} />;
+      return <VividIcon name="video-solid" customSize={-5} sx={{ color: theme.colors.disabled }} />;
     }
     if (isVideoEnabled) {
       return (
         <VividIcon
           name="video-solid"
-          customSize={-6}
+          customSize={-5}
           data-testid="VideocamIcon"
           sx={{ color: theme.colors.onDarkGrey }}
         />
@@ -110,7 +110,7 @@ const DeviceControlButton = ({
     return (
       <VividIcon
         name="video-off-solid"
-        customSize={-6}
+        customSize={-5}
         data-testid="VideocamOffIcon"
         sx={{ color: theme.colors.error }}
       />

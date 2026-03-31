@@ -2,7 +2,7 @@ import { LAYOUT_MODES, type LayoutMode } from './types/session';
 
 declare const __APP_ENV__: Record<string, string | undefined>;
 
-export type Lang = 'en' | 'it' | 'es' | 'es-MX' | 'en-US';
+export type Lang = 'en' | 'it' | 'es' | 'es-MX' | 'en-US' | 'de';
 
 export const RESOLUTIONS = [
   '1920x1080',
@@ -61,7 +61,7 @@ function parseOptionalString(value: unknown): string | undefined {
   return value;
 }
 
-const LANGS: Lang[] = ['en', 'it', 'es', 'es-MX', 'en-US'];
+const LANGS: Lang[] = ['en', 'it', 'es', 'es-MX', 'en-US', 'de'];
 
 function parseLang(value: unknown, fallback: Lang): Lang {
   if (value === undefined || value === null || value === '') return fallback;
@@ -159,6 +159,7 @@ export class Env {
   public TUNNEL_DOMAIN: string | undefined;
   public AVOID_FETCHING_APP_CONFIG: boolean;
   public MODE: Mode;
+  public VONAGE_VIDEO_HOST: string | undefined;
 
   constructor(env: Record<string, unknown>) {
     this.raw = { ...env };
@@ -208,6 +209,7 @@ export class Env {
     this.TUNNEL_DOMAIN = parseOptionalString(env.TUNNEL_DOMAIN);
 
     this.MODE = parseMode(env.MODE ?? 'development');
+    this.VONAGE_VIDEO_HOST = parseOptionalString(env.VONAGE_VIDEO_HOST);
   }
 
   /**
