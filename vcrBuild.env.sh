@@ -1,5 +1,6 @@
 #!/bin/bash
 
+export VONAGE_VIDEO_HOST='https://video.api.dev.vonage.com'
 export ENABLE_REPORT_ISSUE=true
 export I18N_FALLBACK_LANGUAGE='en'
 export I18N_SUPPORTED_LANGUAGES='en|en-US|es|es-MX|it|de'

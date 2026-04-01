@@ -7,6 +7,28 @@ import replace from '@rollup/plugin-replace';
 import checker from 'vite-plugin-checker';
 import tailwindcss from '@tailwindcss/vite';
 import * as path from 'node:path';
+import * as fs from 'node:fs';
+
+/**
+ * Parses shell `export KEY='value'` lines from a .sh file so that
+ * vite.config.ts can read env variables without requiring the user
+ * to source the file manually before running the dev server.
+ */
+function loadShellEnvFile(filePath: string): Record<string, string> {
+  try {
+    const content = fs.readFileSync(filePath, 'utf-8');
+    const result: Record<string, string> = {};
+    for (const line of content.split('\n')) {
+      const match = line.match(/^export\s+([A-Z_][A-Z0-9_]*)=(.*)$/);
+      if (!match) continue;
+      const [, key, rawValue] = match;
+      result[key] = rawValue.replace(/^['"]|['"]$/g, '');
+    }
+    return result;
+  } catch {
+    return {};
+  }
+}
 
 const vitestConfig: VitestUserConfigInterface = defineVitestConfig({
   test: {
@@ -39,6 +61,7 @@ const vitestConfig: VitestUserConfigInterface = defineVitestConfig({
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, __dirname, '');
+  const vcrEnv = loadShellEnvFile(path.resolve(__dirname, '../vcrBuild.env.sh'));
 
   const isDevelopment = mode === 'development';
   const isTest = mode === 'test';
@@ -72,11 +95,16 @@ export default defineConfig(({ mode }) => {
     'DEFAULT_LAYOUT_MODE',
     'API_URL',
     'TUNNEL_DOMAIN',
+    'VONAGE_VIDEO_HOST',
   ] as const;
 
   const appEnvObject = {
     MODE: mode,
-    ...(isTest ? {} : Object.fromEntries(appEnvKeys.map((key) => [key, env[key] ?? '']))),
+    ...(isTest
+      ? {}
+      : Object.fromEntries(
+          appEnvKeys.map((key) => [key, env[key] || process.env[key] || vcrEnv[key] || ''])
+        )),
   };
 
   return mergeConfig(vitestConfig, {
