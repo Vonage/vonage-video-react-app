@@ -1,8 +1,10 @@
-import { ReactElement, useCallback } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
+import type { FocusEvent, MouseEvent, ReactElement } from 'react';
 import { hasMediaProcessorSupport } from '@vonage/client-sdk-video';
 import MenuItem from '@mui/material/MenuItem';
 import Menu from '@mui/material/Menu';
-import Tooltip from '@mui/material/Tooltip';
+import Paper from '@mui/material/Paper';
+import Popper from '@mui/material/Popper';
 import { useTranslation } from 'react-i18next';
 import VividIcon from '@components/VividIcon';
 import backgroundEffectsDialog$ from '@Context/BackgroundEffectsDialog';
@@ -34,68 +36,118 @@ const MenuMoreOptions = ({
   const hasSupportedMediaProcessor = hasMediaProcessorSupport();
   const isBackgroundEffectsSupported = hasSupportedMediaProcessor && env.ALLOW_BACKGROUND_EFFECTS;
   const isPrecallNetworkTestSupported = hasSupportedMediaProcessor;
+  const unsupportedFeatureTooltipTitle = t('waitingRoom.unsupportedFeature.tooltip');
+  const [tooltipAnchorElement, setTooltipAnchorElement] = useState<HTMLElement | null>(null);
+  const shouldIgnoreInitialUnsupportedTooltipFocusRef = useRef(false);
 
   const { open: openBackgroundEffects } = backgroundEffectsDialog$.use.actions();
   const { open: openPrecallNetworkTest } = precallNetworkTestDialog$.use.actions();
 
+  useEffect(() => {
+    if (!open) {
+      shouldIgnoreInitialUnsupportedTooltipFocusRef.current = false;
+      return;
+    }
+
+    shouldIgnoreInitialUnsupportedTooltipFocusRef.current = true;
+
+    const timeoutId = window.setTimeout(() => {
+      shouldIgnoreInitialUnsupportedTooltipFocusRef.current = false;
+    }, 0);
+
+    return () => {
+      window.clearTimeout(timeoutId);
+      shouldIgnoreInitialUnsupportedTooltipFocusRef.current = false;
+    };
+  }, [open]);
+
+  const handleMenuClose = useCallback(() => {
+    setTooltipAnchorElement(null);
+    onClose();
+  }, [onClose]);
+
   const handleClickBackgroundEffects = useCallback(() => {
     openBackgroundEffects();
-    onClose();
-  }, [openBackgroundEffects, onClose]);
+    handleMenuClose();
+  }, [handleMenuClose, openBackgroundEffects]);
 
   const handleClickNetworkTest = useCallback(() => {
     openPrecallNetworkTest();
-    onClose();
-  }, [openPrecallNetworkTest, onClose]);
+    handleMenuClose();
+  }, [handleMenuClose, openPrecallNetworkTest]);
+
+  const handleOpenUnsupportedTooltip = useCallback(
+    (event: FocusEvent<HTMLElement> | MouseEvent<HTMLElement>) => {
+      if (event.type === 'focus' && shouldIgnoreInitialUnsupportedTooltipFocusRef.current) {
+        return;
+      }
+
+      setTooltipAnchorElement(event.currentTarget);
+    },
+    []
+  );
+
+  const handleCloseUnsupportedTooltip = useCallback(() => {
+    setTooltipAnchorElement(null);
+  }, []);
 
   return (
-    <Menu
-      id="menu-more-options"
-      anchorEl={anchorEl}
-      open={open}
-      onClose={onClose}
-      MenuListProps={{ 'aria-labelledby': 'basic-button' }}
-      data-testid="menu-more-options"
-    >
-      <Tooltip
-        arrow
-        title={isBackgroundEffectsSupported ? '' : t('waitingRoom.unsupportedFeature.tooltip')}
+    <>
+      <Menu
+        id="menu-more-options"
+        anchorEl={anchorEl}
+        open={open}
+        onClose={handleMenuClose}
+        MenuListProps={{ 'aria-labelledby': 'basic-button' }}
+        TransitionProps={{ onExited: handleCloseUnsupportedTooltip }}
+        data-testid="menu-more-options"
       >
-        <div>
-          <MenuItem
-            disabled={!isBackgroundEffectsSupported}
-            onClick={() => {
-              if (!isBackgroundEffectsSupported) return;
+        <MenuItem
+          aria-disabled={!isBackgroundEffectsSupported || undefined}
+          className={!isBackgroundEffectsSupported ? 'cursor-not-allowed opacity-50' : undefined}
+          key="backgroundEffects-option"
+          onBlur={!isBackgroundEffectsSupported ? handleCloseUnsupportedTooltip : undefined}
+          onClick={() => {
+            if (!isBackgroundEffectsSupported) return;
 
-              handleClickBackgroundEffects();
-            }}
-            key="backgroundEffects-option"
-          >
-            <VividIcon name="gallery-line" customSize={-6} />
-            <span className="ml-2">{t('backgroundEffects.title')}</span>
-          </MenuItem>
-        </div>
-      </Tooltip>
-      <Tooltip
-        arrow
-        title={isPrecallNetworkTestSupported ? '' : t('waitingRoom.unsupportedFeature.tooltip')}
+            handleClickBackgroundEffects();
+          }}
+          onFocus={!isBackgroundEffectsSupported ? handleOpenUnsupportedTooltip : undefined}
+          onMouseEnter={!isBackgroundEffectsSupported ? handleOpenUnsupportedTooltip : undefined}
+          onMouseLeave={!isBackgroundEffectsSupported ? handleCloseUnsupportedTooltip : undefined}
+        >
+          <VividIcon name="gallery-line" customSize={-6} />
+          <span className="ml-2">{t('backgroundEffects.title')}</span>
+        </MenuItem>
+        <MenuItem
+          aria-disabled={!isPrecallNetworkTestSupported || undefined}
+          className={!isPrecallNetworkTestSupported ? 'cursor-not-allowed opacity-50' : undefined}
+          key="precallNetworkTest-option"
+          onBlur={!isPrecallNetworkTestSupported ? handleCloseUnsupportedTooltip : undefined}
+          onClick={() => {
+            if (!isPrecallNetworkTestSupported) return;
+
+            handleClickNetworkTest();
+          }}
+          onFocus={!isPrecallNetworkTestSupported ? handleOpenUnsupportedTooltip : undefined}
+          onMouseEnter={!isPrecallNetworkTestSupported ? handleOpenUnsupportedTooltip : undefined}
+          onMouseLeave={!isPrecallNetworkTestSupported ? handleCloseUnsupportedTooltip : undefined}
+        >
+          <VividIcon name="cell-reception-line" customSize={-6} />
+          <span className="ml-2">{t('waitingRoom.precallNetworkTest.title')}</span>
+        </MenuItem>
+      </Menu>
+      <Popper
+        anchorEl={tooltipAnchorElement}
+        className="z-1500"
+        open={open && tooltipAnchorElement !== null}
+        placement="bottom"
       >
-        <div>
-          <MenuItem
-            disabled={!isPrecallNetworkTestSupported}
-            onClick={() => {
-              if (!isPrecallNetworkTestSupported) return;
-
-              handleClickNetworkTest();
-            }}
-            key="precallNetworkTest-option"
-          >
-            <VividIcon name="cell-reception-line" customSize={-6} />
-            <span className="ml-2">{t('waitingRoom.precallNetworkTest.title')}</span>
-          </MenuItem>
-        </div>
-      </Tooltip>
-    </Menu>
+        <Paper className="ml-2 rounded-md bg-vera-dark-background px-2 py-1 text-vera-caption text-vera-text-secondary-dark">
+          {unsupportedFeatureTooltipTitle}
+        </Paper>
+      </Popper>
+    </>
   );
 };
 
