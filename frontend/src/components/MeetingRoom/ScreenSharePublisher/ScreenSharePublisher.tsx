@@ -20,6 +20,7 @@ export type ScreenSharePublisherProps = {
  *   @property {Box} box - Box specifying position and size of Video Tile
  *   @property {HTMLElement | HTMLObjectElement | undefined} element - VideoElement
  *   @property {Publisher | null} publisher-- Publisher object for local screen share
+ *   @property {boolean} isEntireScreen - Whether the local user is sharing the entire screen
  * @returns {ReactElement | undefined} - ScreenSharePublisher Component
  */
 const ScreenSharePublisher = ({
