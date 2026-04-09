@@ -180,6 +180,7 @@
   "screenSharing.dialog.action": "Comenzar a compartir pantalla",
   "screenSharing.dialog.content": "Alguien más está compartiendo pantalla. Si continúas, su pantalla dejará de mostrarse.",
   "screenSharing.dialog.title": "¿Quieres compartir tu pantalla?",
+  "screenSharing.dialog.hiddenMessage": "Estás compartiendo tu pantalla.",
   "screenSharing.title.start": "Iniciar compartir pantalla",
   "screenSharing.title.stop": "Dejar de compartir pantalla",
   "screenSharing.tooltip.ariaLabel": "Iniciar o detener compartir pantalla",

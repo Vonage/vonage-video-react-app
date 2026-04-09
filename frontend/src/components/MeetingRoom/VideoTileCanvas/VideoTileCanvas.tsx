@@ -18,6 +18,7 @@ import Box from '@mui/material/Box';
 
 export type VideoTileCanvasProps = {
   isSharingScreen: boolean;
+  isEntireScreen: boolean;
   screensharingPublisher: OTPublisher | null;
   screenshareVideoElement: HTMLVideoElement | HTMLObjectElement | undefined;
   isRightPanelOpen: boolean;
@@ -29,10 +30,17 @@ export type VideoTileCanvasProps = {
  *
  * A resizable container to layout and display all video tiles.
  * @param {VideoTileCanvasProps} videoTileCanvas props
+ *   @property {boolean} isSharingScreen - Whether the local user is currently sharing their screen
+ *   @property {boolean} isEntireScreen - Whether the local user is sharing the entire screen
+ *   @property {OTPublisher | null} screensharingPublisher - Local screenshare publisher
+ *   @property {HTMLVideoElement | HTMLObjectElement | undefined} screenshareVideoElement - Local screenshare video element
+ *   @property {boolean} isRightPanelOpen - Whether the right panel is open
+ *   @property {boolean} fullSize - Whether the canvas should use the full available size
  * @returns {ReactElement} VideoTileCanvas
  */
 const VideoTileCanvas = ({
   isSharingScreen,
+  isEntireScreen,
   screensharingPublisher,
   screenshareVideoElement,
   isRightPanelOpen,
@@ -120,6 +128,7 @@ const VideoTileCanvas = ({
             publisher={screensharingPublisher}
             box={layoutBoxes.localScreenshareBox}
             element={screenshareVideoElement}
+            isEntireScreen={isEntireScreen}
           />
         )}
         {// Note: we still render hidden subscribers with flag `hidden`

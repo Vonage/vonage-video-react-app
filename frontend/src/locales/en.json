@@ -182,6 +182,7 @@
   "screenSharing.dialog.action": "Start sharing your screen",
   "screenSharing.dialog.content": "Looks like there is someone else sharing their screen. If you continue, their screen is no longer going to be shared.",
   "screenSharing.dialog.title": "Do you want to share your screen?",
+  "screenSharing.dialog.hiddenMessage": "You are sharing your screen.",
   "screenSharing.title.start": "Start screen share",
   "screenSharing.title.stop": "Stop screen share",
   "screenSharing.tooltip.ariaLabel": "Start or stop screen share",

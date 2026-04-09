@@ -12,6 +12,7 @@ import useUserContext from './useUserContext';
 export type UseScreenShareType = {
   toggleShareScreen: () => Promise<void>;
   isSharingScreen: boolean;
+  isEntireScreen: boolean;
   screensharingPublisher: Publisher | null;
   screenshareVideoElement: HTMLVideoElement | HTMLObjectElement | undefined;
 };
@@ -30,12 +31,14 @@ const useScreenShare = (): UseScreenShareType => {
 
   // State to track sharing status
   const [isSharingScreen, setIsSharingScreen] = useState<boolean>(false);
+  const [isEntireScreen, setIsEntireScreen] = useState<boolean>(false);
   const [screenshareVideoElement, setScreenshareVideoElement] = useState<
     HTMLVideoElement | HTMLObjectElement
   >();
 
   const onScreenShareStopped = useCallback(() => {
     setIsSharingScreen(false);
+    setIsEntireScreen(false);
     setScreenshareVideoElement(undefined);
     screenSharingPubRef.current = null;
   }, []);
@@ -44,6 +47,7 @@ const useScreenShare = (): UseScreenShareType => {
     if (screenSharingPubRef.current) {
       unpublish(screenSharingPubRef.current);
       setIsSharingScreen(false);
+      setIsEntireScreen(false);
     }
   }, [unpublish]);
 
@@ -80,7 +84,24 @@ const useScreenShare = (): UseScreenShareType => {
         });
 
         screenSharingPubRef.current?.on('videoElementCreated', (e) => {
-          setScreenshareVideoElement(e.element);
+          const videoEl = e.element as HTMLVideoElement;
+          setScreenshareVideoElement(videoEl);
+          const mediaStream = videoEl.srcObject as MediaStream | null;
+          const track = mediaStream?.getVideoTracks?.()[0];
+          const settings = track?.getSettings?.();
+          const displaySurface = settings?.displaySurface;
+
+          const width = settings?.width;
+          const height = settings?.height;
+
+          const isMonitor =
+            displaySurface === 'monitor' ||
+            (!displaySurface &&
+              width !== undefined &&
+              height !== undefined &&
+              width * height >= window.screen.width * window.screen.height);
+
+          setIsEntireScreen(isMonitor);
         });
 
         screenSharingPubRef.current?.on('streamDestroyed', () => {
@@ -115,6 +136,7 @@ const useScreenShare = (): UseScreenShareType => {
   return {
     toggleShareScreen,
     isSharingScreen,
+    isEntireScreen,
     screenshareVideoElement,
     /**
      * On the first render this will return null
