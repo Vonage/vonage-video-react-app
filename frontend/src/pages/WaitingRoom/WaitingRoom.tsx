@@ -8,6 +8,7 @@ import VideoContainer from '@components/WaitingRoom/VideoContainer';
 import UsernameInput from '@components/WaitingRoom/UserNameInput';
 import DeviceAccessAlert from '@components/DeviceAccessAlert';
 import { DEVICE_ACCESS_STATUS } from '@utils/constants';
+import advancedSettingsDialog$ from '@Context/AdvancedSettingsDialog';
 import backgroundEffectsDialog$ from '@Context/BackgroundEffectsDialog';
 import precallNetworkTestDialog$ from '@Context/PrecallNetworkTestDialog';
 import VideoContainerSkeleton from '@components/WaitingRoom/VideoContainer/VideoContainer.skeleton';
@@ -46,61 +47,63 @@ const WaitingRoom: FC = () => {
   } = useWaitingRoom();
 
   return (
-    <backgroundEffectsDialog$.Provider>
-      <precallNetworkTestDialog$.Provider>
-        <Box data-testid="waitingRoom">
-          <PageLayout>
-            <PageLayout.Banner>
-              <Banner />
-            </PageLayout.Banner>
+    <advancedSettingsDialog$.Provider>
+      <backgroundEffectsDialog$.Provider>
+        <precallNetworkTestDialog$.Provider>
+          <Box data-testid="waitingRoom">
+            <PageLayout>
+              <PageLayout.Banner>
+                <Banner />
+              </PageLayout.Banner>
 
-            <PageLayout.Left>
-              <Box
-                className={`relative flex flex-col sm:inline-flex h-auto max-w-full sm:h-100 animate-fade-in`}
-              >
+              <PageLayout.Left>
+                <Box
+                  className={`relative flex flex-col sm:inline-flex h-auto max-w-full sm:h-100 animate-fade-in`}
+                >
+                  {isRoomReady && (
+                    <>
+                      <VideoContainer username={username} />
+
+                      <ControlPanel
+                        handleAudioInputOpen={handleAudioInputOpen}
+                        handleVideoInputOpen={handleVideoInputOpen}
+                        handleAudioOutputOpen={handleAudioOutputOpen}
+                        handleClose={handleClose}
+                        openAudioInput={openAudioInput}
+                        openVideoInput={openVideoInput}
+                        openAudioOutput={openAudioOutput}
+                        anchorEl={anchorEl}
+                      />
+                    </>
+                  )}
+
+                  {!isRoomReady && <VideoContainerSkeleton />}
+                </Box>
+              </PageLayout.Left>
+
+              <PageLayout.Right>
                 {isRoomReady && (
-                  <>
-                    <VideoContainer username={username} />
-
-                    <ControlPanel
-                      handleAudioInputOpen={handleAudioInputOpen}
-                      handleVideoInputOpen={handleVideoInputOpen}
-                      handleAudioOutputOpen={handleAudioOutputOpen}
-                      handleClose={handleClose}
-                      openAudioInput={openAudioInput}
-                      openVideoInput={openVideoInput}
-                      openAudioOutput={openAudioOutput}
-                      anchorEl={anchorEl}
-                    />
-                  </>
+                  <UsernameInput
+                    className={`flex-col sm:inline-flex h-auto sm:h-100 animate-fade-in`}
+                    username={username}
+                    setUsername={setUsername}
+                  />
                 )}
 
-                {!isRoomReady && <VideoContainerSkeleton />}
-              </Box>
-            </PageLayout.Left>
+                {!isRoomReady && <UsernameInputSkeleton />}
+              </PageLayout.Right>
 
-            <PageLayout.Right>
-              {isRoomReady && (
-                <UsernameInput
-                  className={`flex-col sm:inline-flex h-auto sm:h-100 animate-fade-in`}
-                  username={username}
-                  setUsername={setUsername}
-                />
-              )}
-
-              {!isRoomReady && <UsernameInputSkeleton />}
-            </PageLayout.Right>
-
-            <PageLayout.Footer>
-              <Footer />
-            </PageLayout.Footer>
-          </PageLayout>
-          {accessStatus !== DEVICE_ACCESS_STATUS.ACCEPTED && (
-            <DeviceAccessAlert accessStatus={accessStatus} />
-          )}
-        </Box>
-      </precallNetworkTestDialog$.Provider>
-    </backgroundEffectsDialog$.Provider>
+              <PageLayout.Footer>
+                <Footer />
+              </PageLayout.Footer>
+            </PageLayout>
+            {accessStatus !== DEVICE_ACCESS_STATUS.ACCEPTED && (
+              <DeviceAccessAlert accessStatus={accessStatus} />
+            )}
+          </Box>
+        </precallNetworkTestDialog$.Provider>
+      </backgroundEffectsDialog$.Provider>
+    </advancedSettingsDialog$.Provider>
   );
 };
 

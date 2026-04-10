@@ -36,7 +36,7 @@ const GoodBye = (): ReactElement => {
       <PageLayout.Right>
         <Stack direction="column" gap={4} className="w-full items-center">
           <Card className="w-full max-w-125">
-            <p className="text-xl font-medium font-vera-plain text-vera-secondary mb-3 w-full text-left">
+            <p className="font-vera-plain text-vera-heading-4 text-vera-secondary mb-3 w-full text-left">
               {t('goodBye.title')}
             </p>
             <div className="mb-6 w-full">
@@ -46,7 +46,7 @@ const GoodBye = (): ReactElement => {
           </Card>
           {!isSelfDeclinedRecording && (
             <Card className="w-full max-w-125">
-              <p className="text-xl font-medium font-vera-plain text-vera-secondary mb-6">
+              <p className="font-vera-plain text-vera-heading-4 text-vera-secondary mb-6">
                 {t('archiveList.label')}
               </p>
               <ArchiveList archives={archives} />

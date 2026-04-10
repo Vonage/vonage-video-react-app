@@ -29,14 +29,14 @@ const GoodByeStage: FC = () => {
       <PageLayoutEmbed.Right>
         <Stack direction="column" gap={4}>
           <Card className="lg:min-w-125 items-center">
-            <p className="text-xl font-medium font-vera-plain text-vera-secondary mb-3 w-full text-left">
+            <p className="font-vera-plain text-vera-heading-4 text-vera-secondary mb-3 w-full text-left">
               {t('goodBye.title')}
             </p>
             <ReenterRoomButton roomName={roomName} />
           </Card>
 
           <Card className="min-w-full lg:min-w-125">
-            <p className="text-xl font-medium font-vera-plain text-vera-secondary mb-6">
+            <p className="font-vera-plain text-vera-heading-4 text-vera-secondary mb-6">
               {t('archiveList.label')}
             </p>
             <ArchiveList archives={archives} />

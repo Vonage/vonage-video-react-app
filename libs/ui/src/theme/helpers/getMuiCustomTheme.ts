@@ -28,6 +28,8 @@ export type GetMuiCustomThemeProps = {
 };
 
 const getMuiCustomTheme = ({ tokens, container }: GetMuiCustomThemeProps) => {
+  const isDarkThemeMode = isDarkMode();
+
   const buttonSx = {
     height: 40, // 40px
     textTransform: 'none',
@@ -38,7 +40,7 @@ const getMuiCustomTheme = ({ tokens, container }: GetMuiCustomThemeProps) => {
 
   return createTheme({
     palette: {
-      mode: isDarkMode() ? 'dark' : 'light',
+      mode: isDarkThemeMode ? 'dark' : 'light',
       primary: {
         main: colors.primary,
         contrastText: colors.onPrimary,
@@ -140,6 +142,9 @@ const getMuiCustomTheme = ({ tokens, container }: GetMuiCustomThemeProps) => {
           paper: {
             backgroundColor: colors.surface,
             color: colors.onSurface,
+            borderWidth: isDarkThemeMode ? '1px' : 0,
+            borderStyle: 'solid',
+            borderColor: isDarkThemeMode ? colors.border : 'transparent',
           },
         },
       },

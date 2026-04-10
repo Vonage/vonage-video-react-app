@@ -10,6 +10,8 @@ import useToolbarButtons, {
 } from '@hooks/useToolbarButtons';
 import { RIGHT_PANEL_BUTTON_COUNT } from '@utils/constants';
 import { makeTestProvider } from '@test/providers';
+import advancedSettingsDialog$ from '@Context/AdvancedSettingsDialog';
+import composeProviders from '@web/helpers/composeProviders';
 import Toolbar, { ToolbarProps, CaptionsState } from './Toolbar';
 
 const mockedRoomName = { roomName: 'test-room-name' };
@@ -112,6 +114,7 @@ describe('Toolbar', () => {
       />
     );
     expect(screen.queryByTestId('archiving-button')).toBeVisible();
+    expect(screen.queryByTestId('advanced-settings-button')).toBeVisible();
     expect(screen.queryByTestId('screensharing-button')).toBeVisible();
     expect(screen.queryByTestId('emoji-grid-button')).toBeVisible();
     expect(screen.queryByTestId('captions-button')).toBeVisible();
@@ -120,9 +123,10 @@ describe('Toolbar', () => {
 
 function render(ui: ReactElement) {
   const { wrapper, ...context } = makeTestProvider([]);
+  const combinedWrapper = composeProviders(advancedSettingsDialog$.Provider, wrapper);
 
   return {
     ...context,
-    ...renderBase(ui, { wrapper }),
+    ...renderBase(ui, { wrapper: combinedWrapper }),
   };
 }

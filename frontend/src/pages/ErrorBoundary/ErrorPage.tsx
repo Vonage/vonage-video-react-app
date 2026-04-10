@@ -32,16 +32,16 @@ const ErrorPage = ({ error }: ErrorPageProps): ReactElement => {
         className="flex w-full max-w-[560px] flex-col gap-6 rounded-2xl p-8"
         style={{ backgroundColor: theme.colors.surface }}
       >
-        <h1 className="text-xl font-semibold" style={{ color: theme.colors.error }}>
+        <h1 className="text-vera-heading-4" style={{ color: theme.colors.error }}>
           {t('errorPage.title')}
         </h1>
 
-        <p className="text-sm" style={{ color: theme.colors.onSurface }}>
+        <p className="text-vera-body-base" style={{ color: theme.colors.onSurface }}>
           {t('errorPage.description')}
         </p>
 
         <pre
-          className="overflow-x-auto whitespace-pre-wrap break-words rounded-lg p-4 text-xs"
+          className="overflow-x-auto whitespace-pre-wrap break-words rounded-lg p-4 text-vera-caption"
           style={{ backgroundColor: theme.colors.background, color: theme.colors.error }}
         >
           {error.message}

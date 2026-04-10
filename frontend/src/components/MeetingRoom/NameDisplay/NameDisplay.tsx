@@ -24,7 +24,7 @@ const NameDisplay = ({ name, containerWidth }: NameDisplayProps): ReactElement =
         maxWidth: Math.max(0, safeMaxWidth - 32),
       }}
     >
-      <span className="text-base font-vera-plain">{name}</span>
+      <span className="font-vera-plain text-vera-body-extended">{name}</span>
     </div>
   );
 };

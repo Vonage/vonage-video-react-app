@@ -3,6 +3,7 @@ import { render as renderBase, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { ReactElement } from 'react';
 import * as clientSdkVideo from '@vonage/client-sdk-video';
+import advancedSettingsDialog$ from '@Context/AdvancedSettingsDialog';
 import backgroundEffectsDialog$ from '@Context/BackgroundEffectsDialog';
 import precallNetworkTestDialog$ from '@Context/PrecallNetworkTestDialog';
 import composeProviders from '@web/helpers/composeProviders';
@@ -27,7 +28,23 @@ describe('MenuMoreOptions', () => {
   it('should not render menu items when open is false', () => {
     render(<MenuMoreOptions onClose={mockOnClose} open={false} anchorEl={mockAnchorEl} />);
 
+    expect(screen.queryByText(/^settings$/i)).not.toBeInTheDocument();
     expect(screen.queryByText(/video effects/i)).not.toBeInTheDocument();
+  });
+
+  it('should display settings option', () => {
+    render(<MenuMoreOptions onClose={mockOnClose} open anchorEl={mockAnchorEl} />);
+
+    expect(screen.getByText(/^settings$/i)).toBeInTheDocument();
+  });
+
+  it('should call onClose when clicking on settings option', async () => {
+    const user = userEvent.setup();
+    render(<MenuMoreOptions onClose={mockOnClose} open anchorEl={mockAnchorEl} />);
+
+    await user.click(screen.getByText(/^settings$/i));
+
+    expect(mockOnClose).toHaveBeenCalledTimes(1);
   });
 
   it('should display video effects option when media processor is supported', () => {
@@ -77,6 +94,7 @@ describe('MenuMoreOptions', () => {
 
 function render(ui: ReactElement) {
   const wrapper = composeProviders(
+    advancedSettingsDialog$.Provider,
     backgroundEffectsDialog$.Provider,
     precallNetworkTestDialog$.Provider
   );

@@ -11,6 +11,8 @@ import VoiceIndicatorIcon from '../../MeetingRoom/VoiceIndicator/VoiceIndicator'
 import VignetteEffect from '../VignetteEffect';
 import BackgroundEffectsDialog from '../BackgroundEffects/BackgroundEffectsDialog';
 import BackgroundEffectsButton from '../BackgroundEffects/BackgroundEffectsButton';
+import AdvancedSettingsDialog from '../AdvancedSettings/AdvancedSettingsDialog';
+import advancedSettingsDialog$ from '@Context/AdvancedSettingsDialog';
 import backgroundEffectsDialog$ from '@Context/BackgroundEffectsDialog';
 import PrecallNetworkTestDialog from '../PrecallNetworkTestDialog';
 import precallNetworkTestDialog$ from '@Context/PrecallNetworkTestDialog';
@@ -31,6 +33,8 @@ export type VideoContainerProps = {
  */
 const VideoContainer = ({ username }: VideoContainerProps): ReactElement => {
   const containerRef = useRef<HTMLDivElement>(null);
+  const [{ isOpen: isAdvancedSettingsOpen }, { close: closeAdvancedSettings }] =
+    advancedSettingsDialog$.use();
   const [{ isOpen: isBackgroundEffectsOpen }, { open, close }] = backgroundEffectsDialog$.use();
   const [{ isOpen: isPrecallNetworkTestOpen }, { close: closePrecallTest }] =
     precallNetworkTestDialog$.use();
@@ -106,6 +110,12 @@ const VideoContainer = ({ username }: VideoContainerProps): ReactElement => {
               <BackgroundEffectsDialog
                 isBackgroundEffectsOpen={true}
                 setIsBackgroundEffectsOpen={close}
+              />
+            )}
+            {isAdvancedSettingsOpen && (
+              <AdvancedSettingsDialog
+                isAdvancedSettingsOpen={isAdvancedSettingsOpen}
+                setIsAdvancedSettingsOpen={closeAdvancedSettings}
               />
             )}
             {isPrecallNetworkTestOpen && (

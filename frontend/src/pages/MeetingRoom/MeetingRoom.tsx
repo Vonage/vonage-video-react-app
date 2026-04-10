@@ -1,5 +1,7 @@
 import type { ReactElement } from 'react';
 import Box, { BoxProps } from '@mui/material/Box';
+import advancedSettingsDialog$ from '@Context/AdvancedSettingsDialog';
+import AdvancedSettingsDialog from '@components/WaitingRoom/AdvancedSettings/AdvancedSettingsDialog';
 import PopupAlert from '@components/MeetingRoom/PopupAlert';
 import Toolbar from '../../components/MeetingRoom/Toolbar';
 import VideoTileCanvas from '../../components/MeetingRoom/VideoTileCanvas';
@@ -33,6 +35,14 @@ const MeetingRoom = ({
   className,
   // ...props
 }: MeetingRoomProps): ReactElement => {
+  return (
+    <advancedSettingsDialog$.Provider>
+      <MeetingRoomContent fullSize={fullSize} className={className} />
+    </advancedSettingsDialog$.Provider>
+  );
+};
+
+function MeetingRoomContent({ fullSize = false, className }: MeetingRoomProps): ReactElement {
   const {
     t,
     isSmallViewport,
@@ -62,6 +72,8 @@ const MeetingRoom = ({
     latestNotifiedArchiveId,
     handleRecordingNotified,
   } = useMeetingRoom();
+  const [{ isOpen: isAdvancedSettingsOpen }, { close: closeAdvancedSettings }] =
+    advancedSettingsDialog$.use();
 
   return (
     <Box
@@ -120,6 +132,12 @@ const MeetingRoom = ({
         }
         captionsState={captionsState}
       />
+      {isAdvancedSettingsOpen && (
+        <AdvancedSettingsDialog
+          isAdvancedSettingsOpen={isAdvancedSettingsOpen}
+          setIsAdvancedSettingsOpen={closeAdvancedSettings}
+        />
+      )}
       {recordingAlreadyNotified &&
         !archiveIdStartedBySelf &&
         isRecording &&
@@ -148,6 +166,6 @@ const MeetingRoom = ({
       )}
     </Box>
   );
-};
+}
 
 export default MeetingRoom;

@@ -5,6 +5,7 @@ import Menu from '@mui/material/Menu';
 import { useTranslation } from 'react-i18next';
 import VividIcon from '@components/VividIcon';
 import backgroundEffectsDialog$ from '@Context/BackgroundEffectsDialog';
+import advancedSettingsDialog$ from '@Context/AdvancedSettingsDialog';
 import precallNetworkTestDialog$ from '@Context/PrecallNetworkTestDialog';
 import { env } from '../../../env';
 
@@ -31,8 +32,14 @@ const MenuMoreOptions = ({
 }: MenuMoreOptionsWaitingRoomProps): ReactElement => {
   const { t } = useTranslation();
   const shouldDisplayBackgroundEffects = hasMediaProcessorSupport() && env.ALLOW_BACKGROUND_EFFECTS;
+  const { open: openAdvancedSettings } = advancedSettingsDialog$.use.actions();
   const { open: openBackgroundEffects } = backgroundEffectsDialog$.use.actions();
   const { open: openPrecallNetworkTest } = precallNetworkTestDialog$.use.actions();
+
+  const handleClickAdvancedSettings = useCallback(() => {
+    openAdvancedSettings();
+    onClose();
+  }, [openAdvancedSettings, onClose]);
 
   const handleClickBackgroundEffects = useCallback(() => {
     openBackgroundEffects();
@@ -53,6 +60,15 @@ const MenuMoreOptions = ({
       MenuListProps={{ 'aria-labelledby': 'basic-button' }}
       data-testid="menu-more-options"
     >
+      <MenuItem
+        onClick={() => {
+          handleClickAdvancedSettings();
+        }}
+        key="advancedSettings-option"
+      >
+        <VividIcon name="gear-line" customSize={-6} />
+        <span className="ml-2">{t('advancedSettings.title')}</span>
+      </MenuItem>
       {shouldDisplayBackgroundEffects && (
         <MenuItem
           onClick={() => {

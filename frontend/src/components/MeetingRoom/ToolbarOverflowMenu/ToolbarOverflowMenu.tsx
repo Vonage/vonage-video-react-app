@@ -5,6 +5,7 @@ import EmojiGridButton from '../EmojiGridButton';
 import ParticipantListButton from '../ParticipantListButton';
 import ChatButton from '../ChatButton';
 import ReportIssueButton from '../ReportIssueButton';
+import AdvancedSettingsButton from '../AdvancedSettingsButton';
 import LayoutButton from '../LayoutButton';
 import useSessionContext from '../../../hooks/useSessionContext';
 import ScreenSharingButton from '../../ScreenSharingButton';
@@ -109,6 +110,7 @@ const ToolbarOverflowMenu = ({
       key="EmojiGridButton"
     />,
     <ArchivingButton isOverflowButton handleClick={closeMenu} key="ArchivingButton" />,
+    <AdvancedSettingsButton isOverflowButton key="AdvancedSettingsButton" />,
     isReportIssueEnabled() && (
       <ReportIssueButton
         isOpen={rightPanelActiveTab === 'issues'}
