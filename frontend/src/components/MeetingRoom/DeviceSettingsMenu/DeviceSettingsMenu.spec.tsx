@@ -129,7 +129,7 @@ describe('DeviceSettingsMenu Component', () => {
       expect(selectDeviceSpy).toHaveBeenCalledWith('audiooutput', bluetoothSpeakers.deviceId);
     });
 
-    it('and renders the default output device if the browser does not support setting audioOutput device', async () => {
+    it('and does not render the output devices section if the browser does not support setting audioOutput device', async () => {
       vi.mocked(isSinkIdSupported).mockReturnValue(false);
 
       render(
@@ -144,22 +144,8 @@ describe('DeviceSettingsMenu Component', () => {
         />
       );
 
-      const outputDevicesElement = screen.getByTestId('output-devices');
-      await waitFor(() => expect(outputDevicesElement.children).to.have.length(1));
-      expect(outputDevicesElement.firstChild).toHaveTextContent('System Default');
-      expect(
-        (outputDevicesElement.firstChild as HTMLOptionElement).classList.contains('Mui-selected')
-      ).toBe(true);
-
-      act(() => {
-        fireEvent.click(outputDevicesElement.firstChild as HTMLOptionElement);
-      });
-
-      // Verify the Vonage SDK function was not called
-      expect(mockSetAudioOutputDevice).not.toHaveBeenCalled();
-      expect(
-        (outputDevicesElement.firstChild as HTMLOptionElement).classList.contains('Mui-selected')
-      ).toBe(true);
+      expect(screen.queryByTestId('output-device-title')).not.toBeInTheDocument();
+      expect(screen.queryByTestId('output-devices')).not.toBeInTheDocument();
     });
 
     it('and renders the speaker test if the browser supports audio output device selection', async () => {

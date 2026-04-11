@@ -31,12 +31,12 @@ describe('selectDevice', () => {
 
   it('should clear device when deviceId is null', async () => {
     const boundSelectDevice = selectDevice.bind(mediaDevices$.actions);
-    const action = boundSelectDevice('audioinput', undefined);
+    const action = boundSelectDevice('audioinput', null);
 
     await action(mediaDevices$);
 
     const state = mediaDevices$.getState();
-    expect(state.audioinput).toBeUndefined();
+    expect(state.audioinput).toBeNull();
   });
 
   it('should select a valid device', async () => {

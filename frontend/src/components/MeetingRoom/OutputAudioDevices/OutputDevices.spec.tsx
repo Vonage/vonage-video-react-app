@@ -68,17 +68,13 @@ describe('OutputAudioDevices Component', () => {
     expect(screen.getByText(bluetoothSpeakers.label)).toBeInTheDocument();
   });
 
-  it('renders only default device when audio output is not supported', () => {
-    //  Mock isSinkIdSupported to return false
+  it('does not render when audio output is not supported', () => {
     vi.mocked(isSinkIdSupported).mockReturnValue(false);
 
     render(<OutputAudioDevices handleToggle={mockHandleToggle} />);
 
-    expect(screen.getByText('Speakers')).toBeInTheDocument();
-    expect(screen.getByText('System Default')).toBeInTheDocument();
-
-    // Should not render the actual audio output devices
-    expect(screen.queryByText(defaultSpeakers.label)).not.toBeInTheDocument();
+    expect(screen.queryByTestId('output-device-title')).not.toBeInTheDocument();
+    expect(screen.queryByTestId('output-devices')).not.toBeInTheDocument();
   });
 
   it('changes audio output device on menu item click when supported', async () => {
@@ -97,17 +93,14 @@ describe('OutputAudioDevices Component', () => {
     });
   });
 
-  it('does not call selectDevice when audio output is not supported', () => {
+  it('does not render when audio output is not supported (no selectDevice called)', () => {
     vi.mocked(isSinkIdSupported).mockReturnValue(false);
 
     const selectDeviceSpy = vi.spyOn(mediaDevices$.actions, 'selectDevice');
 
     render(<OutputAudioDevices handleToggle={mockHandleToggle} />);
 
-    const defaultItem = screen.getByText('System Default');
-    fireEvent.click(defaultItem);
-
-    expect(mockHandleToggle).toHaveBeenCalledTimes(1);
+    expect(screen.queryByTestId('output-devices')).not.toBeInTheDocument();
     expect(selectDeviceSpy).not.toHaveBeenCalled();
   });
 
@@ -125,12 +118,14 @@ describe('OutputAudioDevices Component', () => {
     });
   });
 
-  it('shows check icon for default device when only one device available', () => {
-    vi.mocked(isSinkIdSupported).mockReturnValue(false);
+  it('shows check icon for selected device', () => {
+    mediaDevices$.setState((state) => ({
+      ...state,
+      audiooutput: defaultSpeakers.deviceId,
+    }));
 
     render(<OutputAudioDevices handleToggle={mockHandleToggle} />);
 
-    // When only default device is available (length === 1), it should be selected.
     const checkIcon = screen.getByTestId('vivid-icon-check-line');
     expect(checkIcon).toBeInTheDocument();
   });

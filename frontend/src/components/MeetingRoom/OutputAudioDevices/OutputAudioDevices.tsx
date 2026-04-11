@@ -32,26 +32,23 @@ const OutputAudioDevices = ({ handleToggle }: OutputAudioDevicesProps): ReactEle
   const currentAudioOutputId = mediaDevices$.useDeviceId('audiooutput');
 
   const availableDevices = useDistinctLabelMediaDevices('audiooutput', (devices) =>
-    isSinkIdSupported()
-      ? devices.map((device) =>
-          // Rename default audio output device to user-friendly label
-          device.deviceId === 'default'
-            ? { ...device, label: t('devices.audio.defaultLabel') }
-            : device
-        )
-      : [{ deviceId: 'default', label: t('devices.audio.defaultLabel') } as MediaDeviceInfoJSON]
+    devices.map((device) =>
+      // Rename default audio output device to user-friendly label
+      device.deviceId === 'default'
+        ? { ...device, label: t('devices.audio.defaultLabel') }
+        : device
+    )
   );
 
   const handleChangeAudioOutput = async (deviceId: string) => {
     handleToggle();
-
-    if (!isSinkIdSupported()) return;
-
     await mediaDevices$.actions.selectDevice('audiooutput', deviceId);
   };
 
   return (
-    env.MEETING_ROOM_ALLOW_DEVICE_SELECTION && (
+    env.MEETING_ROOM_ALLOW_DEVICE_SELECTION &&
+    isSinkIdSupported() &&
+    availableDevices.length > 0 && (
       <>
         <DropdownSeparator />
         <Box
@@ -72,9 +69,7 @@ const OutputAudioDevices = ({ handleToggle }: OutputAudioDevicesProps): ReactEle
 
         <MenuList data-testid="output-devices">
           {availableDevices?.map((device: MediaDeviceInfoJSON) => {
-            // If audio output device selection is not supported we show the default device as selected
-            const isSelected =
-              device.deviceId === currentAudioOutputId || availableDevices.length === 1;
+            const isSelected = device.deviceId === currentAudioOutputId;
 
             return (
               <MenuItem

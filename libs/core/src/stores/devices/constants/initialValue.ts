@@ -5,21 +5,21 @@ import { MediaDeviceInfoJSON, Prettify } from '@web/types';
  * and the selected devices for audio output, audio input and video input.
  */
 const initialValue = () => {
-  const selection: Record<MediaDeviceKind, string | undefined> = {
+  const selection: Record<MediaDeviceKind, string | null> = {
     /**
      * Selected audio input.
      */
-    audioinput: undefined,
+    audioinput: null,
 
     /**
-     * Selected audio output. Note that if the browser does not support selecting audio output devices, this will always be undefined and the app should fallback to using the default audio output device.
+     * Selected audio output. null means no device has been selected yet. Will also be null when the browser does not support setSinkId (i.e. audio output selection is unavailable).
      */
-    audiooutput: undefined,
+    audiooutput: null,
 
     /**
      * Selected video input.
      */
-    videoinput: undefined,
+    videoinput: null,
   };
 
   return Object.assign(selection, {

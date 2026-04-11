@@ -3,7 +3,7 @@ import mediaDevices$ from '../devicesStore';
 /**
  * Returns the selected device ID for the given media device kind.
  */
-function useDeviceId(kind: MediaDeviceKind): string | undefined {
+function useDeviceId(kind: MediaDeviceKind): string | null {
   return mediaDevices$.use.select((state) => state[kind], [kind]);
 }
 
