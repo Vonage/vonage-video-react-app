@@ -2,7 +2,7 @@ import { isSinkIdSupported } from '@web/platform';
 import organizeMediaDevicesByKind from './organizeMediaDevicesByKind';
 import type { DevicesStoreState } from '../types';
 
-type Result = Partial<Record<MediaDeviceKind, string | null>>;
+type Result = Partial<Record<MediaDeviceKind, string | undefined>>;
 
 /**
  * Reconciles the current media selection with the available media devices info and returns the necessary updates to make the selection valid.
@@ -24,7 +24,7 @@ const reviseMediaSelection = (state: DevicesStoreState): Result | null => {
     }
 
     // Auto-select first available video input when current selection is invalid
-    return Object.values(videoInputMap)[0]?.deviceId ?? null;
+    return Object.values(videoInputMap)[0]?.deviceId ?? undefined;
   })();
 
   const audioinput = (() => {
@@ -33,17 +33,17 @@ const reviseMediaSelection = (state: DevicesStoreState): Result | null => {
     }
 
     // Auto-select first available audio input when current selection is invalid
-    return Object.values(audioInputMap)[0]?.deviceId ?? null;
+    return Object.values(audioInputMap)[0]?.deviceId ?? undefined;
   })();
 
   const audiooutput = (() => {
     // doesn't support audio output selection, nothing to revise
-    if (!isSinkIdSupported()) return null;
+    if (!isSinkIdSupported()) return undefined;
     if (selection.audiooutput && audioOutputMap[selection.audiooutput]) {
       return selection.audiooutput;
     }
 
-    return Object.values(audioOutputMap)[0]?.deviceId ?? null;
+    return Object.values(audioOutputMap)[0]?.deviceId ?? undefined;
   })();
 
   const didVideoInputChange = videoinput !== selection.videoinput;

@@ -36,7 +36,7 @@ describe('selectDevice', () => {
     await action(mediaDevices$);
 
     const state = mediaDevices$.getState();
-    expect(state.audioinput).toBeNull();
+    expect(state.audioinput).toBeUndefined();
   });
 
   it('should select a valid device', async () => {

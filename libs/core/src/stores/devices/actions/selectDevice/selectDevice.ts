@@ -20,7 +20,7 @@ function selectDevice(
     if (!deviceId) {
       store.setState((state) => ({
         ...state,
-        [kind]: null,
+        [kind]: undefined,
       }));
 
       return;

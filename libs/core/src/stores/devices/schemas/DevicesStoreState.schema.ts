@@ -6,7 +6,7 @@ export const DevicesStoreSchema = z.intersection(
   z.object({
     mediaDeviceInfo: z.array(MediaDeviceInfoJSONSchema),
   }),
-  z.record(DeviceKindSchema, z.string().nullable())
+  z.record(DeviceKindSchema, z.string().optional())
 );
 
 export function assertDevicesStoreState(data: unknown): asserts data is DevicesStoreState {
@@ -18,7 +18,7 @@ export function safelyParseDevicesStoreState(data: unknown) {
     {
       mediaDeviceInfo: MediaDeviceInfoJSON[];
     } & {
-      [K in MediaDeviceKind]: string | null;
+      [K in MediaDeviceKind]: string | undefined;
     }
   >;
 }
