@@ -14,6 +14,7 @@ export type {
   SessionOptions,
   VideoPayload,
   VideoRouterConfig,
+  SessionSigning,
 } from '../schemas';
 
 export type * from './IVideoRouter';
@@ -27,3 +28,4 @@ export * from './TokenRole';
 export * from './VideoAction';
 export type * from './HandlerConfig';
 export type * from './HandlersConfig';
+export type * from './HandlersDefaults';

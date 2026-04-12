@@ -30,13 +30,47 @@ const runCommand = (command: string, { preserveNodeOptions = false } = {}) => {
 };
 
 /**
- * Runs all integration tests across all browsers.
+ * Checks if the given path points to an API integration test inside tests/api/.
+ */
+const isApiTestPath = (testPath: string): boolean => {
+  return testPath.includes('test-api/') || testPath.includes('apiIntegrity');
+};
+
+/**
+ * Runs API integration tests (Jest-based tests in tests/api/).
+ * Optionally filters by a specific test file path.
+ */
+const runApiTests = (testFilePath?: string) => {
+  const target = testFilePath ? `file: ${testFilePath}` : 'all API tests';
+  console.log(`\n🤖 Running API integration tests: ${target}\n`);
+  const testPattern = testFilePath ? ` --testPathPattern="${testFilePath}"` : '';
+  const command = `bash -c 'source ../../vcrBuild.env.sh && jest --maxWorkers=1${testPattern}'`;
+  console.log(`\n🚀 Running: ${command}\n`);
+  execSync(command, {
+    stdio: 'inherit',
+    cwd: 'integration-tests/test-api',
+    env: { ...process.env, NODE_OPTIONS: '--experimental-vm-modules' },
+  });
+};
+
+/**
+ * Runs all Playwright integration tests across all browsers.
  * Uses Playwright's default configuration (Chrome, Firefox, Mobile Chrome).
  * Uses nx target for caching benefits.
  */
-const runAllTests = () => {
-  console.log('\n🤖 Running all integration tests (Chrome, Firefox, Mobile Chrome)...\n');
+const runAllPlaywrightTests = () => {
+  console.log(
+    '\n🤖 Running all Playwright integration tests (Chrome, Firefox, Mobile Chrome)...\n'
+  );
   runCommand('nx run integration-tests:test');
+};
+
+/**
+ * Runs all integration tests: API tests (Jest) + Playwright tests.
+ */
+const runAllTests = () => {
+  runApiTests();
+  runAllPlaywrightTests();
 };
 
 /**
@@ -184,6 +218,11 @@ const main = () => {
 
   if (isUpdateMode) {
     updateScreenshots(secondArg);
+    return;
+  }
+
+  if (isApiTestPath(firstArg)) {
+    runApiTests(firstArg);
     return;
   }
 

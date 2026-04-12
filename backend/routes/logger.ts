@@ -1,6 +1,4 @@
 import express, { Request, Response, Router } from 'express';
-import { StatusCode } from 'status-code-enum';
-import attempt from '@common/execution/attempt';
 import { forward } from '../services/loggerService';
 import { ClientLogEventSchema } from '@common/types';
 import { makeBadRequestErrorHandler } from '@api-lib/errors';
@@ -14,19 +12,25 @@ const loggerRouter = Router();
  *
  * 50kb limit only
  */
-loggerRouter.post('/', express.json({ limit: '50kb' }), (req: Request, res: Response) => {
-  const parsed = ClientLogEventSchema.safeParse(req.body);
+loggerRouter.post('/', express.json({ limit: '50kb' }), async (req: Request, res: Response) => {
+  try {
+    const parsed = ClientLogEventSchema.safeParse(req.body);
 
-  if (!parsed.success) {
-    const validationError = makeBadRequestErrorHandler('Invalid log payload')(parsed.error);
+    if (!parsed.success) {
+      throw makeBadRequestErrorHandler('Invalid log payload')(parsed.error);
+    }
 
-    return res.status(StatusCode.ClientErrorBadRequest).json(validationError.exportSafely());
+    const event = parsed.data;
+    await forward(event);
+
+    return res.sendStatus(204);
+  } catch (error) {
+    const applicationError = makeBadRequestErrorHandler('Unexpected error in log forwarding')(
+      error
+    );
+
+    return res.status(applicationError.statusCode).json(applicationError.exportSafely());
   }
-
-  const event = parsed.data;
-  attempt(() => forward(event), console.error);
-
-  return res.sendStatus(204);
 });
 
 /**
@@ -35,20 +39,30 @@ loggerRouter.post('/', express.json({ limit: '50kb' }), (req: Request, res: Resp
  *
  * 50mb limit only
  */
-loggerRouter.post('/batch', express.json({ limit: '50mb' }), (req: Request, res: Response) => {
-  const parsed = ClientLogEventSchema.array().safeParse(req.body);
+loggerRouter.post(
+  '/batch',
+  express.json({ limit: '50mb' }),
+  async (req: Request, res: Response) => {
+    try {
+      const parsed = ClientLogEventSchema.array().safeParse(req.body);
 
-  if (!parsed.success) {
-    const validationError = makeBadRequestErrorHandler('Invalid log batch payload')(parsed.error);
+      if (!parsed.success) {
+        throw makeBadRequestErrorHandler('Invalid log batch payload')(parsed.error);
+      }
 
-    return res.status(StatusCode.ClientErrorBadRequest).json(validationError.exportSafely());
+      for (const event of parsed.data) {
+        await forward(event);
+      }
+
+      return res.sendStatus(204);
+    } catch (error) {
+      const applicationError = makeBadRequestErrorHandler('Unexpected error in log forwarding')(
+        error
+      );
+
+      return res.status(applicationError.statusCode).json(applicationError.exportSafely());
+    }
   }
-
-  for (const event of parsed.data) {
-    attempt(() => forward(event), console.error);
-  }
-
-  return res.sendStatus(204);
-});
+);
 
 export default loggerRouter;

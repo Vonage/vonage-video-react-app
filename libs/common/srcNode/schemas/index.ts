@@ -1,5 +1,6 @@
 export * from '../../src/schemas';
 export * from './SessionId.schema';
+export * from './SessionKey.schema';
 export * from './LayoutType.schema';
 export * from './ArchiveOutputMode.schema';
 export * from './MediaMode.schema';

@@ -1,3 +1,4 @@
+export { default as assertNotEmptyString } from './assertNotEmptyString';
 export { default as assertRecord } from './assertRecord';
 export { default as isErrorLike } from './isErrorLike';
 export { default as isFunction } from './isFunction';
@@ -9,3 +10,4 @@ export { default as isString } from './isString';
 export { default as isUndefined } from './isUndefined';
 export { default as isNotNil } from './isNotNil';
 export { default as assertString } from './assertString';
+export { default as isValidRoomName } from './isValidRoomName';

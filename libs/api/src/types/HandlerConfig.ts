@@ -10,7 +10,7 @@ export type HandlerConfig<
    */
   selectInput?: (input: Payload) => Partial<Payload>;
 
-  defaults: Partial<Payload> | ((payload: Partial<Payload>) => Partial<Payload>);
+  defaults?: Partial<Payload> | ((payload: Partial<Payload>) => Partial<Payload>);
 };
 
 export default HandlerConfig;

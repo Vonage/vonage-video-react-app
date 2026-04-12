@@ -1,9 +1,23 @@
-import axios from 'axios';
 import { describe, expect, it, beforeEach, jest } from '@jest/globals';
 import type { ClientLogEvent } from '@common/types';
-import { forwardToGollum, forward, logOnConnect } from '../loggerService';
 
-jest.mock('axios');
+jest.unstable_mockModule('../../helpers/config', () => ({
+  default: jest.fn().mockImplementation(() => ({
+    apiKey: 'test-api-key',
+    apiSecret: 'test-api-secret',
+    applicationId: 'test-application-id',
+    privateKey: 'test-private-key',
+    provider: 'opentok',
+    gollumUrl: 'https://example.com',
+    loggerVerbose: false,
+  })),
+}));
+jest.unstable_mockModule('axios', () => ({
+  default: { post: jest.fn(() => Promise.resolve({ status: 200 })) },
+}));
+
+const { default: axiosMock } = await import('axios');
+const { forwardToGollum, forward, logOnConnect } = await import('../loggerService');
 
 const createValidClientLogEvent = (overrides?: Partial<ClientLogEvent>): ClientLogEvent => ({
   action: 'EnterMeeting',
@@ -20,7 +34,7 @@ const createValidClientLogEvent = (overrides?: Partial<ClientLogEvent>): ClientL
 });
 
 describe('loggerService', () => {
-  const mockPost = jest.spyOn(axios, 'post');
+  const mockPost = axiosMock.post as jest.MockedFunction<typeof axiosMock.post>;
 
   beforeEach(() => {
     jest.clearAllMocks();

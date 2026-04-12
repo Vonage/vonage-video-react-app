@@ -1,3 +1,4 @@
+export * from './Metadata.schema';
 export * from './VideoPayload.schema';
 export * from './VideoRouterConfig.schema';
 export * from './EnableCaptionsPayload.schema';
@@ -24,3 +25,4 @@ export * from './SessionOptions.schema';
 export * from './CreateEphemeralTokenPayload.schema';
 export * from './JoinSessionPayload.schema';
 export * from './TRPCRuntimeConfigOptions.schema';
+export * from './SessionSigning.schema';

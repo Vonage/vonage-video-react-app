@@ -7,10 +7,13 @@ import type { ClientTokenOptions } from '@vonage/video';
 /**
  * Creates an ephemeral client token with a default 30 seconds expiration time
  * This token is meant to be used for server-to-server operations that require a token
+ *
+ * By default EphemeralToken use MODERATOR role and a 30s expiration time, but these can be overridden via the payload
  */
 function createEphemeralToken(this: IVideoClient, payload: CreateEphemeralTokenPayload): string {
   try {
-    const { sessionId, clientTokenOptions } = payload;
+    const { sessionKey, clientTokenOptions } = payload;
+    const { sessionId } = this.decodeSessionKey({ sessionKey });
 
     const tokenOptions: ClientTokenOptions = {
       role: TokenRole.MODERATOR,

@@ -6,7 +6,6 @@ import {
 } from '@web-test/fixtures';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import useSessionContext from '@hooks/useSessionContext';
-import useRoomName from '@hooks/useRoomName';
 import useRoomShareUrl from '@hooks/useRoomShareUrl';
 import usePublisherContext from '@hooks/usePublisherContext';
 import { PublisherContextType } from '@Context/PublisherProvider';
@@ -14,7 +13,6 @@ import mediaDevices$ from '@core/stores/devices';
 import SmallViewportHeader from './SmallViewportHeader';
 
 vi.mock('@hooks/useSessionContext');
-vi.mock('@hooks/useRoomName');
 vi.mock('@hooks/useRoomShareUrl');
 vi.mock('@hooks/usePublisherContext');
 vi.mock('@web/platform', async (importOriginal) => {
@@ -58,7 +56,6 @@ describe('SmallViewportHeader component', () => {
   });
 
   beforeEach(() => {
-    (useRoomName as Mock).mockReturnValue(mockedRoomName);
     (useRoomShareUrl as Mock).mockReturnValue('https://example.com/room/test-room-name');
 
     publisherContext = {
@@ -76,7 +73,7 @@ describe('SmallViewportHeader component', () => {
   });
 
   it('renders the room name', () => {
-    (useSessionContext as Mock).mockReturnValue({ archiveId: null });
+    (useSessionContext as Mock).mockReturnValue({ archiveId: null, roomName: mockedRoomName });
 
     render(<SmallViewportHeader />);
 
@@ -84,7 +81,7 @@ describe('SmallViewportHeader component', () => {
   });
 
   it('shows the recording icon if it is currently in progress', () => {
-    (useSessionContext as Mock).mockReturnValue({ archiveId: '123-456' });
+    (useSessionContext as Mock).mockReturnValue({ archiveId: '123-456', roomName: mockedRoomName });
 
     render(<SmallViewportHeader />);
 
@@ -92,7 +89,7 @@ describe('SmallViewportHeader component', () => {
   });
 
   it('does not show the recording icon if it there is not one happening', () => {
-    (useSessionContext as Mock).mockReturnValue({ archiveId: null });
+    (useSessionContext as Mock).mockReturnValue({ archiveId: null, roomName: mockedRoomName });
 
     render(<SmallViewportHeader />);
 
@@ -100,7 +97,7 @@ describe('SmallViewportHeader component', () => {
   });
 
   it('copies room share URL to clipboard', async () => {
-    (useSessionContext as Mock).mockReturnValue({ archiveId: null });
+    (useSessionContext as Mock).mockReturnValue({ archiveId: null, roomName: mockedRoomName });
     render(<SmallViewportHeader />);
 
     const copyButton = screen.getByTestId('vivid-icon-copy-line');
@@ -115,7 +112,7 @@ describe('SmallViewportHeader component', () => {
   });
 
   it('shows the camera switch button when video is enabled', () => {
-    (useSessionContext as Mock).mockReturnValue({ archiveId: null });
+    (useSessionContext as Mock).mockReturnValue({ archiveId: null, roomName: mockedRoomName });
     mockUsePublisherContext.mockReturnValue({
       publisherContext: { cycleVideo: vi.fn() } as unknown as PublisherContextType['publisher'],
       isVideoEnabled: true,
@@ -127,7 +124,7 @@ describe('SmallViewportHeader component', () => {
   });
 
   it('does not show the camera switch button when video is disabled', () => {
-    (useSessionContext as Mock).mockReturnValue({ archiveId: null });
+    (useSessionContext as Mock).mockReturnValue({ archiveId: null, roomName: mockedRoomName });
     mockUsePublisherContext.mockReturnValue({
       publisherContext: { cycleVideo: vi.fn() } as unknown as PublisherContextType['publisher'],
       isVideoEnabled: false,
@@ -141,7 +138,7 @@ describe('SmallViewportHeader component', () => {
   });
 
   it('does not show the camera switch button when only one video input device is available', () => {
-    (useSessionContext as Mock).mockReturnValue({ archiveId: null });
+    (useSessionContext as Mock).mockReturnValue({ archiveId: null, roomName: mockedRoomName });
 
     mockUsePublisherContext.mockReturnValue({
       publisherContext: { cycleVideo: vi.fn() } as unknown as PublisherContextType['publisher'],
@@ -170,7 +167,7 @@ describe('SmallViewportHeader component', () => {
   it('toggles to the opposite camera device when clicked', () => {
     const videoInputDevice1 = videoDevices[0];
 
-    (useSessionContext as Mock).mockReturnValue({ archiveId: null });
+    (useSessionContext as Mock).mockReturnValue({ archiveId: null, roomName: mockedRoomName });
     const setVideoSource = vi.fn();
     const getVideoSource = vi.fn(() => ({
       deviceId: videoInputDevice1.deviceId,

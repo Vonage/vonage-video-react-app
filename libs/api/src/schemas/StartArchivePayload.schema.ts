@@ -4,7 +4,7 @@ import type { SessionId } from '@common/types';
 import { ArchiveOptionsSchema } from '@node/schemas';
 
 export const StartArchivePayloadSchema = VideoPayloadSchema.extend({
-  archiveOptions: ArchiveOptionsSchema,
+  archiveOptions: ArchiveOptionsSchema.optional(),
 });
 
 export type StartArchivePayload = z.infer<typeof StartArchivePayloadSchema>;

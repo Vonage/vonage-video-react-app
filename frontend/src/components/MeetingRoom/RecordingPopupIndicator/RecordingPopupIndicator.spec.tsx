@@ -1,9 +1,10 @@
-import { beforeEach, describe, expect, it, Mock, vi } from 'vitest';
-import { fireEvent, render, screen, waitFor } from '@testing-library/react';
-import useRoomName from '@hooks/useRoomName';
+import { ReactElement } from 'react';
+import { describe, expect, it, vi } from 'vitest';
+import { fireEvent, render as renderBase, screen, waitFor } from '@testing-library/react';
 import RecordingPopUpIndicator from './RecordingPopupIndicator';
-
-vi.mock('@hooks/useRoomName');
+import { makeTestProvider, providers } from '@test/providers';
+import { setupWindowNavigatorMock } from '@web-test/fixtures';
+import jwt from 'jsonwebtoken';
 
 const mockNavigate = vi.fn();
 
@@ -35,12 +36,16 @@ vi.mock('react-i18next', () => {
 });
 
 describe('RecordingPopUpIndicator', () => {
-  const mockedRoomName = 'test-room-name';
-  const mockUseRoomName = useRoomName as Mock<[], string>;
-
   beforeEach(() => {
-    vi.clearAllMocks();
-    mockUseRoomName.mockReturnValue(mockedRoomName);
+    setupWindowNavigatorMock({
+      mediaDevices: {
+        addEventListener: vi.fn(),
+        enumerateDevices: Promise.resolve([]),
+      },
+      permissions: {
+        query: Promise.resolve({ state: 'granted' } as PermissionStatus),
+      },
+    });
   });
 
   it('renders the consent dialog with translated text', () => {
@@ -58,12 +63,11 @@ describe('RecordingPopUpIndicator', () => {
     fireEvent.click(screen.getByText(translationsByKey['recording.consent.dialog.decline']));
 
     expect(mockNavigate).toHaveBeenCalledWith(
-      '/goodbye',
+      `/goodbye/${sessionKey}`,
       expect.objectContaining({
         state: {
           header: translationsByKey['recording.consent.goodbye.header'],
           caption: translationsByKey['recording.consent.goodbye.message'],
-          roomName: mockedRoomName,
           isSelfDeclinedRecording: true,
         },
       })
@@ -84,3 +88,31 @@ describe('RecordingPopUpIndicator', () => {
     expect(mockNavigate).not.toHaveBeenCalled();
   });
 });
+
+const sessionId = '1_MX4xMjM0NTY3OH4-VGh1IEZlYiAyNyAwODozMjozNCBQU1QgMjAyMH4wLjI0NDYxMjE';
+const sessionKey = jwt.sign({ sessionId, roomName: 'test-room-name' }, 'test', {
+  algorithm: 'HS256',
+});
+
+function render(component: ReactElement) {
+  const { wrapper, ...context } = makeTestProvider(
+    [providers.user, providers.session, providers.publisher, providers.backgroundPublisher],
+    {
+      sessionContext: {
+        initialValue: {
+          sessionKey,
+        },
+      },
+      userContext: undefined,
+      publisherContext: undefined,
+      backgroundPublisherContext: undefined,
+    }
+  );
+
+  return {
+    ...context,
+    ...renderBase(component, {
+      wrapper,
+    }),
+  };
+}

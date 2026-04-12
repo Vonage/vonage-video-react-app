@@ -27,6 +27,6 @@ describe('buildThirdPartyErrorHandler', () => {
     });
     const error = handler(new Error('API error'));
 
-    expect(error.exportSafely().issues).toEqual([]);
+    expect(error.exportSafely().issues).toBeUndefined();
   });
 });

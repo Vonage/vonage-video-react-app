@@ -51,7 +51,7 @@ const InnerApp = () => {
         <Routes>
           <Route element={<RedirectToUnsupportedBrowserPage />}>
             <Route
-              path="/waiting-room/:roomName"
+              path="/waiting-room/:roomIdentifier"
               element={
                 <SuspenseBoundary fallback={<WaitingRoomSkeleton />}>
                   <RoomProvider>
@@ -64,7 +64,7 @@ const InnerApp = () => {
             />
 
             <Route
-              path="/room/:roomName"
+              path="/room/:roomIdentifier"
               element={
                 <RedirectToWaitingRoom>
                   <SuspenseBoundary fallback={<MeetingRoomSkeleton />}>
@@ -82,7 +82,7 @@ const InnerApp = () => {
             />
           </Route>
 
-          <Route path="/goodbye" element={<GoodBye />} />
+          <Route path="/goodbye/:roomIdentifier?" element={<GoodBye />} />
           <Route path="*" element={<LandingPage />} />
           <Route path="/unsupported-browser" element={<UnsupportedBrowserPage />} />
         </Routes>

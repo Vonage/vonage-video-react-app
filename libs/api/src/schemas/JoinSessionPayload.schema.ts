@@ -1,6 +1,6 @@
 import { z } from 'zod';
 import VideoPayloadSchema from './VideoPayload.schema';
-import { SessionId } from '@common/types';
+import type { SessionId } from '@common/types';
 import ClientTokenOptionsSchema from './ClientTokenOptions.schema';
 
 export const JoinSessionPayloadSchema = VideoPayloadSchema.extend({

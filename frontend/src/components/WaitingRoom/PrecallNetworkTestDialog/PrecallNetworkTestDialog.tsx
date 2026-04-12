@@ -9,7 +9,8 @@ import VividIcon from '@components/VividIcon';
 import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
 import CircularProgress from '@mui/material/CircularProgress';
-import useRoomName from '@hooks/useRoomName';
+import useSessionKeyParam from '@hooks/useSessionKeyParam';
+import useDecodedSessionKey from '@hooks/useDecodedSessionKey';
 import tryCatch from '@common/execution/tryCatch';
 import PrecallNetworkTestQualityRow from './PrecallNetworkTestQualityRow';
 import DialogActionsRow from './DialogActionsRow';
@@ -35,7 +36,9 @@ const PrecallNetworkTestDialog = ({
 }: PrecallNetworkTestDialogProps): ReactElement => {
   const { t } = useTranslation();
   const theme = useTheme();
-  const roomName = useRoomName();
+  const { sessionKey, sessionKeyStatus } = useSessionKeyParam();
+  const { roomName } = useDecodedSessionKey({ sessionKey, sessionKeyStatus });
+
   const { state, testQuality, stopTest, clearResults } = useNetworkTest();
 
   const [hasUserStoppedTest, setHasUserStoppedTest] = useState(false);

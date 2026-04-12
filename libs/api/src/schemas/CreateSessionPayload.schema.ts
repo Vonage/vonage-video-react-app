@@ -1,7 +1,9 @@
 import z from 'zod';
 import SessionOptionsSchema from './SessionOptions.schema';
+import { RoomNameSchema } from '@common/schemas';
 
 export const CreateSessionPayloadSchema = z.object({
+  roomName: RoomNameSchema.optional().nullable(),
   sessionOptions: SessionOptionsSchema.optional(),
 });
 

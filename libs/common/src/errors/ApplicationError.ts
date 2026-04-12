@@ -2,6 +2,7 @@ import { StatusCode } from 'status-code-enum';
 import type { ApplicationErrorState, ApplicationErrorFallbackConfig, ErrorSeverity } from './types';
 import mapSourceToState from './helpers/mapSourceToState';
 import { Any } from '@common/types';
+import { removeUndefinedProps } from '@common/helpers';
 
 class ApplicationError extends Error {
   /**
@@ -107,7 +108,10 @@ class ApplicationError extends Error {
     fallbackMessage?: string;
     statusCode: StatusCode;
   } => {
-    const { fallbackConfig, message, severity, stack, issues, statusCode } = this;
+    const { fallbackConfig, message, severity, stack, statusCode } = this;
+    const issues = removeUndefinedProps({
+      issues: this.issues.length ? this.issues : undefined,
+    });
 
     // Prevent disclosure of private sensitive info
     if (globalThis.process?.env?.NODE_ENV === 'development') {
@@ -116,8 +120,8 @@ class ApplicationError extends Error {
         message,
         severity,
         stack,
-        issues,
         statusCode,
+        ...issues,
       };
     }
 
@@ -125,8 +129,8 @@ class ApplicationError extends Error {
       // prevent disclosing unhandled messages on production
       message: fallbackConfig.fallbackMessage,
       severity,
-      issues,
       statusCode,
+      ...issues,
     };
   };
 }

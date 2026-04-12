@@ -7,7 +7,6 @@
     "ms-playwright.playwright",
     "esbenp.prettier-vscode",
     "bradlc.vscode-tailwindcss",
-    "github.copilot-chat",
-    "github.copilot"
+    "github.copilot-chat"
   ]
 }

@@ -8,7 +8,8 @@ async function startArchive(
   payload: StartArchivePayload
 ): Promise<SingleArchiveResponse> {
   try {
-    const { sessionId, archiveOptions } = payload;
+    const { sessionKey, archiveOptions } = payload;
+    const { sessionId } = this.decodeSessionKey({ sessionKey });
 
     const archive = await assertResult(
       () => this._video.startArchive(sessionId, archiveOptions),

@@ -9,7 +9,7 @@ class VcrSessionStorage implements SessionStorage {
     // if you try to access a room after the expiry time, you will land on a different session.
     await this.dbState.expire(key, ENTRY_EXPIRATION_TIME);
   }
-  async getSession(roomName: string): Promise<string | null> {
+  async getSessionKey({ roomName }: { roomName: string }): Promise<string | null> {
     const key = `sessions:${roomName}`;
     const session: string | null = await this.dbState.get(key);
     if (!session) {
@@ -21,22 +21,34 @@ class VcrSessionStorage implements SessionStorage {
     return session;
   }
 
-  async setSession(roomName: string, sessionId: string): Promise<void> {
+  async setSession({
+    roomName,
+    sessionKey,
+  }: {
+    roomName: string;
+    sessionKey: string;
+  }): Promise<void> {
     const key = `sessions:${roomName}`;
-    await this.dbState.set(key, sessionId);
+    await this.dbState.set(key, sessionKey);
     // setting expiry on the set command in case the room is
     // created before hand but never accessed.
     await this.setKeyExpiry(key);
   }
 
-  async setCaptionsId(roomName: string, captionsId: string): Promise<void> {
-    const key = `captionsIds:${roomName}`;
+  async setCaptionsId({
+    sessionKey,
+    captionsId,
+  }: {
+    sessionKey: string;
+    captionsId: string;
+  }): Promise<void> {
+    const key = `captionsIds:${sessionKey}`;
     await this.dbState.set(key, captionsId);
     await this.setKeyExpiry(key);
   }
 
-  async getCaptionsId(roomName: string): Promise<string | null> {
-    const key = `captionsIds:${roomName}`;
+  async getCaptionsId({ sessionKey }: { sessionKey: string }): Promise<string | null> {
+    const key = `captionsIds:${sessionKey}`;
     const captionsId: string | null = await this.dbState.get(key);
     if (!captionsId) {
       return null;
@@ -44,8 +56,8 @@ class VcrSessionStorage implements SessionStorage {
     return captionsId;
   }
 
-  async incrementCaptionsUserCount(roomName: string): Promise<number> {
-    const key = `captionsUserCount:${roomName}`;
+  async incrementCaptionsUserCount({ sessionKey }: { sessionKey: string }): Promise<number> {
+    const key = `captionsUserCount:${sessionKey}`;
     const currentCaptionsUsersCount = await this.dbState.get(key);
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
@@ -58,8 +70,8 @@ class VcrSessionStorage implements SessionStorage {
     return newCaptionsUsersCount;
   }
 
-  async decrementCaptionsUserCount(roomName: string): Promise<number> {
-    const key = `captionsUserCount:${roomName}`;
+  async decrementCaptionsUserCount({ sessionKey }: { sessionKey: string }): Promise<number> {
+    const key = `captionsUserCount:${sessionKey}`;
     const currentCaptionsUsersCount = await this.dbState.get(key);
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore

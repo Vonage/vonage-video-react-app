@@ -1,9 +1,13 @@
 // eslint-disable-next-line @nx/enforce-module-boundaries
 import type { IVideoRouter } from '../../../../api/src/types/IVideoRouter';
 import { createTRPCClient, httpBatchLink } from '@trpc/client';
-import type { Prettify } from '@common/types';
+import type { Prettify, Any } from '@common/types';
 
-type VideoClient = Prettify<ReturnType<typeof createTRPCClient<IVideoRouter>>>;
+type AnyRouter = {
+  [K in Extract<keyof IVideoRouter, string>]: Any;
+};
+
+type VideoClient<Router extends AnyRouter> = Prettify<ReturnType<typeof createTRPCClient<Router>>>;
 
 type Options = Prettify<Parameters<typeof createTRPCClient<IVideoRouter>>[0]>;
 
@@ -24,7 +28,7 @@ type LinkOptions = Parameters<typeof httpBatchLink<IVideoRouter>>[0];
  * videoClient.createSession.mutate({ sessionId: 'existing-session-id' }); // uses an existing session
  * ```
  */
-function createVideoClient(linkOptions: LinkOptions): VideoClient;
+function createVideoClient(linkOptions: LinkOptions): VideoClient<IVideoRouter>;
 
 /**
  * Creates a video client for interacting with the video API.
@@ -43,9 +47,9 @@ function createVideoClient(linkOptions: LinkOptions): VideoClient;
  * videoClient.createSession.mutate({ sessionId: 'existing-session-id' }); // uses an existing session
  * ```
  */
-function createVideoClient(links: Links): VideoClient;
+function createVideoClient(links: Links): VideoClient<IVideoRouter>;
 
-function createVideoClient(args: Links | LinkOptions): VideoClient {
+function createVideoClient(args: Links | LinkOptions): VideoClient<IVideoRouter> {
   const options: Options = (() => {
     if (Array.isArray(args)) {
       return { links: args };
