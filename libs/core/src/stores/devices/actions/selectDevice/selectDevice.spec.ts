@@ -31,7 +31,7 @@ describe('selectDevice', () => {
 
   it('should clear device when deviceId is null', async () => {
     const boundSelectDevice = selectDevice.bind(mediaDevices$.actions);
-    const action = boundSelectDevice('audioinput', null);
+    const action = boundSelectDevice('audioinput', undefined);
 
     await action(mediaDevices$);
 

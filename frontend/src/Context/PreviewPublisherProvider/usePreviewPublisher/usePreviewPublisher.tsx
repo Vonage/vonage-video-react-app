@@ -239,8 +239,8 @@ const usePreviewPublisher = (
       resolution: env.DEFAULT_RESOLUTION,
       publishAudio: isAudioEnabled,
       publishVideo: isVideoEnabled,
-      audioSource: audioSourceId ?? undefined,
-      videoSource: videoSourceId ?? undefined,
+      audioSource: audioSourceId,
+      videoSource: videoSourceId,
     };
 
     publisherRef.current = initPublisher(undefined, publisherOptions, (err: unknown) => {

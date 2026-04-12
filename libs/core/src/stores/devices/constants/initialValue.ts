@@ -12,7 +12,7 @@ const initialValue = () => {
     audioinput: undefined,
 
     /**
-     * Selected audio output. undefined means no device has been selected yet. Will also be undefined when the browser does not support setSinkId (i.e. audio output selection is unavailable).
+     * Selected audio output. Note that if the browser does not support selecting audio output devices, this will always be undefined and the app should fallback to using the default audio output device.
      */
     audiooutput: undefined,
 

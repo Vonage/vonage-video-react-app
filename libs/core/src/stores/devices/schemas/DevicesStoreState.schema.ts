@@ -18,7 +18,7 @@ export function safelyParseDevicesStoreState(data: unknown) {
     {
       mediaDeviceInfo: MediaDeviceInfoJSON[];
     } & {
-      [K in MediaDeviceKind]: string | undefined;
+      [K in MediaDeviceKind]: MediaDeviceInfoJSON | undefined;
     }
   >;
 }

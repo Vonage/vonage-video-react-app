@@ -12,7 +12,7 @@ import { setAudioOutputDevice as setVonageAudioOutputDevice } from '@vonage/clie
 function selectDevice(
   this: DevicesAPI['actions'],
   kind: MediaDeviceKind,
-  deviceId: string | null
+  deviceId: string | undefined
 ) {
   return async (store: DevicesAPI): Promise<void> => {
     assertDeviceKind(kind);

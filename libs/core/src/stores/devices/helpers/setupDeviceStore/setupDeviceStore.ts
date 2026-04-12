@@ -31,7 +31,7 @@ function setupDeviceStore(api: unknown) {
   meta.__getUserMedia = __getUserMedia.bind(navigator.mediaDevices);
 
   attempt(() => {
-    void setVonageAudioOutputDevice(api.getState().audiooutput);
+    void setVonageAudioOutputDevice(api.getState().audiooutput!);
   });
 
   const syncMediaDevicesInfoDebounced = debounce(async () => {

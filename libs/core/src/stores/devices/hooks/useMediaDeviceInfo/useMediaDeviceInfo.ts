@@ -52,8 +52,7 @@ function getDeviceInfo(
   }
 
   const selected = mediaDevices.getState()[kind];
-  if (!selected) return null;
-  return state[kind][selected] ?? null;
+  return state[kind][selected!] ?? null;
 }
 
 type Options = Omit<
