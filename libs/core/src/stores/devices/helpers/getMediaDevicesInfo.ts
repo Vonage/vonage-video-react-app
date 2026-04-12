@@ -39,12 +39,12 @@ const getMediaDevicesInfo$ = actions<DevicesAPI>()({
           // On WebKit (Safari), device enumeration can transiently return fewer devices
           // than currently known during a device change event. Throw to trigger a retry,
           // giving the browser time to settle and return the complete list.
-          const currentDeviceCount = getState().mediaDeviceInfo.length;
-          const isTransientDeviceLoss = isWebKit() && devices.length < currentDeviceCount;
+          const previousDeviceCount = getState().mediaDeviceInfo.length;
+          const isTransientDeviceLoss = isWebKit() && devices.length < previousDeviceCount;
 
           if (isTransientDeviceLoss) {
             throw new Error(
-              `WebKit transient device loss: expected at least ${currentDeviceCount} devices, got ${devices.length}`
+              `WebKit transient device loss: expected at least ${previousDeviceCount} devices, got ${devices.length}`
             );
           }
 
