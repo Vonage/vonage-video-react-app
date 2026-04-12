@@ -46,7 +46,7 @@ const usePublisherOptions = ({
     const options = {
       audioFallback: { publisher: true },
       audioFilter,
-      audioSource,
+      audioSource: audioSource ?? undefined,
       initials,
       insertDefaultUI: false,
       name,
@@ -55,7 +55,7 @@ const usePublisherOptions = ({
       publishVideo: env.ALLOW_VIDEO_ON_JOIN && publishVideo && isVideoEnabled,
       resolution: env.DEFAULT_RESOLUTION,
       videoFilter,
-      videoSource,
+      videoSource: videoSource ?? undefined,
     };
 
     return options;

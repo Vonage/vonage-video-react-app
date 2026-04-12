@@ -206,7 +206,7 @@ const useBackgroundPublisher = (
       insertDefaultUI: false,
       videoFilter,
       resolution: '1280x720',
-      videoSource: mediaDevices$.getState().videoinput,
+      videoSource: mediaDevices$.getState().videoinput ?? undefined,
       publishAudio: false,
       publishVideo: isVideoEnabled,
     };
