@@ -2,12 +2,14 @@ import { idempotentCallbackWithRetry } from '@common/execution';
 import type { MediaDeviceInfoJSON } from '@web/types';
 import { DevicesAPI } from '../types';
 import { actions } from 'react-global-state-hooks';
+import { isWebKit } from '@web/platform';
+
 /**
  * Retrieves the list of media devices from the browser.
  */
 const getMediaDevicesInfo$ = actions<DevicesAPI>()({
   getMediaDevicesInfo() {
-    return ({ getMetadata }): Promise<MediaDeviceInfoJSON[]> => {
+    return ({ getMetadata, getState }): Promise<MediaDeviceInfoJSON[]> => {
       const { isStoreReady } = getMetadata();
 
       /**
@@ -22,8 +24,8 @@ const getMediaDevicesInfo$ = actions<DevicesAPI>()({
           // Convert MediaDeviceInfo objects to plain JSON-serializable objects
           // native MediaDeviceInfo objects have methods and properties that may not be serializable, or work well when destructured,
           // so we create plain objects with the same properties.
-          return navigator.mediaDevices.enumerateDevices().then((devices) =>
-            devices
+          const devices = await navigator.mediaDevices.enumerateDevices().then((rawDevices) =>
+            rawDevices
               .map((device) => ({
                 deviceId: device.deviceId,
                 kind: device.kind,
@@ -33,6 +35,20 @@ const getMediaDevicesInfo$ = actions<DevicesAPI>()({
               // In case there are remaining devices without deviceId
               .filter((device) => device.deviceId)
           );
+
+          // On WebKit (Safari), device enumeration can transiently return fewer devices
+          // than currently known during a device change event. Throw to trigger a retry,
+          // giving the browser time to settle and return the complete list.
+          const previousDeviceCount = getState().mediaDeviceInfo.length;
+          const isTransientDeviceLoss = isWebKit() && devices.length < previousDeviceCount;
+
+          if (isTransientDeviceLoss) {
+            throw new Error(
+              `WebKit transient device loss: expected at least ${previousDeviceCount} devices, got ${devices.length}`
+            );
+          }
+
+          return devices;
         },
         {
           delayMs: 100,
