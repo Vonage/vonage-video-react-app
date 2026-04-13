@@ -4,7 +4,14 @@ import { execSync } from 'child_process';
 
 const args = process.argv.slice(2);
 
-const VALID_MODES = ['debug', 'inspect', 'canon', 'update', 'updateScreenshots'] as const;
+const VALID_MODES = [
+  'debug',
+  'inspect',
+  'canon',
+  'update',
+  'updateScreenshots',
+  'playwright',
+] as const;
 
 type ValidMode = (typeof VALID_MODES)[number];
 
@@ -149,6 +156,7 @@ const updateScreenshots = (testNameOrPath?: string) => {
  *
  * @modes
  * - (no args)             - Run all tests in all browsers (headless)
+ * - playwright            - Run only Playwright tests (skip API tests)
  * - debug [test-name]     - Debug mode (Playwright Inspector + Chrome DevTools, timeout disabled)
  * - inspect [test-name]   - Inspect mode (Chrome DevTools, headed mode)
  * - canon [test-name]     - Generate canonical screenshots (baseline for visual regression)
@@ -157,6 +165,7 @@ const updateScreenshots = (testNameOrPath?: string) => {
  *
  * @example
  * yarn test:integration
+ * yarn test:integration playwright
  * yarn test:integration callQuality
  * yarn test:integration debug
  * yarn test:integration debug callQuality
@@ -173,6 +182,7 @@ const main = () => {
   const isInspectMode = firstArg === 'inspect';
   const isCanonMode = firstArg === 'canon';
   const isUpdateMode = firstArg === 'update' || firstArg === 'updateScreenshots';
+  const isPlaywrightMode = firstArg === 'playwright';
   const isKnownMode = VALID_MODES.includes(firstArg as ValidMode);
 
   if (noArgs) {
@@ -187,6 +197,7 @@ const main = () => {
     if (firstArg.startsWith('-') || firstArg.startsWith('--')) {
       console.error(`\n❌ Error: Unknown mode '${firstArg}'\n`);
       console.error('Valid modes:');
+      console.error('  • playwright - Run only Playwright tests (skip API tests)');
       console.error('  • debug      - Debug mode (Playwright Inspector, no timeout)');
       console.error('  • inspect    - Inspect mode (Chrome DevTools, headed)');
       console.error('  • canon      - Generate canonical screenshots');
@@ -199,6 +210,11 @@ const main = () => {
       console.error('  yarn test:integration update\n');
       process.exit(1);
     }
+  }
+
+  if (isPlaywrightMode) {
+    runAllPlaywrightTests();
+    return;
   }
 
   if (isDebugMode) {

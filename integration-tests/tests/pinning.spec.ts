@@ -12,9 +12,6 @@ test.describe('participant pinning', () => {
   }) => {
     const roomName = crypto.randomBytes(5).toString('hex');
 
-    const pageTwo = await context.newPage();
-    const pageThree = await context.newPage();
-
     await openMeetingRoomWithSettings({
       page: pageOne,
       username: 'User One',
@@ -24,7 +21,10 @@ test.describe('participant pinning', () => {
     });
     // These clicks and waits are needed for firefox
     await waitUntilReady(pageOne, browserName);
+    // Wait for publisher before opening next page to reduce resource contention
+    await pageOne.waitForSelector('.publisher', { state: 'visible' });
 
+    const pageTwo = await context.newPage();
     await openMeetingRoomWithSettings({
       page: pageTwo,
       username: 'User Two',
@@ -33,6 +33,9 @@ test.describe('participant pinning', () => {
       browserName,
     });
     await waitUntilReady(pageTwo, browserName);
+    await pageTwo.waitForSelector('.publisher', { state: 'visible' });
+
+    const pageThree = await context.newPage();
     await openMeetingRoomWithSettings({
       page: pageThree,
       username: 'User Three',

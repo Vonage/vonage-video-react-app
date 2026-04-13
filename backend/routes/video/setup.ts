@@ -3,8 +3,31 @@ import getSessionStorageService from '../../sessionStorageService';
 import { makeInternalErrorHandler } from '@api-lib/errors';
 import { videoHandler } from './video';
 import { isNil } from '@node/assertions';
+import { getOrCreateSessionKeyFromRoomName } from '../../helpers';
 
 const sessionService = getSessionStorageService();
+
+/**
+ * [TODO] This is a temporary solution to support legacy vera functionality without depending on the old routers
+ * This override checks if a session already exists for the given roomName and reuses it.
+ */
+videoHandler.override$(VideoAction.createSession, async (opts) => {
+  try {
+    const { assertInput, videoClient } = opts;
+
+    const input = assertInput(opts.input);
+    const { roomName } = input ?? {};
+
+    if (!roomName) return videoClient.createSession(input);
+
+    const sessionKey = await getOrCreateSessionKeyFromRoomName({ videoClient, roomName });
+    const sessionDetails = videoClient.decodeSessionKey({ sessionKey });
+
+    return { ...sessionDetails, roomName };
+  } catch (error) {
+    throw makeInternalErrorHandler('Failed to create session')(error);
+  }
+});
 
 /**
  * TODO: An easier approach will be only use ensureCaptions in the client and only clean captions when the session is closed

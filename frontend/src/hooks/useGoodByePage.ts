@@ -2,10 +2,10 @@ import { useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import type { Archive } from '../api/archiving/model';
 import useArchives from './useArchives';
-import useRoomName from './useRoomName';
+import useSessionKeyParam from './useSessionKeyParam';
 
 type UseGoodByePageResult = {
-  roomName: string;
+  sessionKey: string | null;
   archives: Archive[] | 'error';
   header: string;
   caption: string;
@@ -15,19 +15,16 @@ type UseGoodByePageResult = {
 const useGoodByePage = (): UseGoodByePageResult => {
   const { t } = useTranslation();
   const location = useLocation();
+  const { sessionKey } = useSessionKeyParam();
 
-  const roomName = useRoomName({
-    useLocationState: true,
-  });
-
-  const archives = useArchives({ roomName });
+  const archives = useArchives({ sessionKey });
 
   const header: string = location.state?.header || t('goodbye.default.header');
   const caption: string = location.state?.caption || t('goodbye.default.message');
   const isSelfDeclinedRecording: boolean = location.state?.isSelfDeclinedRecording || false;
 
   return {
-    roomName,
+    sessionKey,
     archives,
     header,
     caption,

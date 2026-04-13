@@ -21,7 +21,7 @@ const getOrCreateSessionKeyFromRoomName = async ({
       throw makeBadRequestErrorHandler(`Invalid room name: ${roomName}.`)(null);
     }
 
-    const session = await videoClient.createSession();
+    const session = await videoClient.createSession({ roomName });
 
     await sessionService.setSession({ roomName, sessionKey: session.sessionKey });
 

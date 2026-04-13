@@ -36,19 +36,6 @@ sessionRouter.get('/:room', async (req: Request<{ room: string }>, res: Response
   }
 });
 
-sessionRouter.get('/:room/resolve', async (req: Request<{ room: string }>, res: Response) => {
-  try {
-    const { room: roomName } = req.params;
-    const sessionKey = await getOrCreateSessionKeyFromRoomName({ videoClient, roomName });
-
-    res.json({ sessionKey });
-  } catch (error) {
-    const applicationError = parseError('Failed to resolve session key', error);
-
-    res.status(applicationError.statusCode).json(applicationError);
-  }
-});
-
 sessionRouter.post('/:room/startArchive', async (req: Request<{ room: string }>, res: Response) => {
   try {
     const { room: roomName } = req.params;

@@ -1,7 +1,7 @@
 import { SetStateAction, Dispatch, ReactElement, ChangeEvent } from 'react';
 import { useTranslation } from 'react-i18next';
 import TextField from '@mui/material/TextField';
-import isValidRoomName from '../../utils/isValidRoomName';
+import { isValidRoomName } from '@common/assertions';
 
 export type RoomNameInputProps = {
   setRoomName: Dispatch<SetStateAction<string>>;

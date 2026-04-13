@@ -50,6 +50,8 @@
       "@ui-test/*": ["../libs/ui/test/*"],
       "@ui/*": ["../libs/ui/src/*"],
       "@utils/*": ["./src/utils/*"],
+      "@services": ["./src/services"],
+      "@services/*": ["./src/services/*"],
 
       // video-router
       "@api-lib/*": ["../libs/api/src/*"],

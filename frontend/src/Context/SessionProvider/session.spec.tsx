@@ -1,5 +1,5 @@
 import { ReactElement, useEffect } from 'react';
-import { describe, expect, it, vi, beforeEach, Mock } from 'vitest';
+import { describe, expect, it, vi, beforeEach } from 'vitest';
 import { act, render as renderBase, waitFor } from '@testing-library/react';
 import EventEmitter from 'events';
 import { Publisher, Stream } from '@vonage/client-sdk-video';

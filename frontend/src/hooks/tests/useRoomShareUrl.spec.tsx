@@ -1,20 +1,11 @@
 import { renderHook } from '@testing-library/react';
-import { beforeAll, describe, expect, it, vi, vitest, Mock } from 'vitest';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { beforeAll, describe, expect, it, vi } from 'vitest';
 import useRoomShareUrl from '../useRoomShareUrl';
+import { makeTestProvider, providers } from '@test/providers';
 
-const mockedParams = { roomName: 'test-room-name' };
-const mockNavigate = vi.fn();
-
-vitest.mock('react-router-dom', async () => {
-  const mod = await vi.importActual<typeof import('react-router-dom')>('react-router-dom');
-  return {
-    ...mod,
-    useParams: () => mockedParams,
-    useNavigate: vi.fn(),
-    useLocation: vi.fn(),
-  };
-});
+// A valid fake JWT containing sessionId: '1_MX4xMjM0NTY3OH4-VGh1IEZlYiAyNyAwODozMjozNCBQU1QgMjAyMH4wLjI0NDYxMjE'
+const mockSessionKey =
+  'eyJhbGciOiJIUzI1NiJ9.eyJzZXNzaW9uSWQiOiIxX01YNHhNak0wTlRZM09INC1WR2gxSUVabFlpQXlOeUF3T0Rvek1qb3pOQ0JRVTFRZ01qQXlNSDR3TGpJME5EWXhNakUiLCJyb29tTmFtZSI6IlRlc3RDb21wb25lbnRSb29tIn0.fakesig';
 
 describe('useRoomShareUrl', () => {
   beforeAll(() => {
@@ -22,12 +13,16 @@ describe('useRoomShareUrl', () => {
       origin: 'https://example.com',
     } as unknown as Location);
   });
+
   it('should return link to waiting room', () => {
-    (useNavigate as Mock).mockReturnValue(mockNavigate);
-    (useLocation as Mock).mockReturnValue({
-      state: mockedParams,
+    const { wrapper } = makeTestProvider([providers.user, providers.session], {
+      sessionContext: {
+        initialValue: { sessionKey: mockSessionKey },
+      },
+      userContext: undefined,
     });
-    const hook = renderHook(() => useRoomShareUrl());
-    expect(hook.result.current).toBe('https://example.com/waiting-room/test-room-name');
+
+    const { result } = renderHook(() => useRoomShareUrl(), { wrapper });
+    expect(result.current).toBe(`https://example.com/waiting-room/${mockSessionKey}`);
   });
 });

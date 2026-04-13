@@ -14,6 +14,13 @@ import wait from '@common/execution/wait';
 import frontendLogger from '../../logger';
 
 vi.mock('@vonage/client-sdk-video');
+vi.mock('@common/helpers', () => ({
+  decodeSessionKey: () => ({
+    sessionId: 'session-id',
+    applicationId: 'api-key',
+    sessionKey: 'fake.session.key',
+  }),
+}));
 const mockProvider = { log: vi.fn(), reportError: vi.fn() };
 
 frontendLogger.setup(() => mockProvider);
@@ -31,10 +38,12 @@ const mockPublish = vi.fn();
 type TestSession = Session & EventEmitter;
 
 const fakeCredentials: Credential = {
-  apiKey: 'api-key',
-  sessionId: 'session-id',
+  sessionKey: 'fake.session.key',
   token: 'toe-ken',
 };
+
+const fakeSessionId = 'session-id';
+const fakeApplicationId = 'api-key';
 
 describe('VonageVideoClient', () => {
   let vonageVideoClient: VonageVideoClient | null;
@@ -50,7 +59,7 @@ describe('VonageVideoClient', () => {
       forceMuteStream: vi.fn(),
       publish: mockPublish,
       unpublish: vi.fn(),
-      sessionId: fakeCredentials.sessionId,
+      sessionId: fakeSessionId,
       connection: {
         connectionId: 'connection-id',
       },
@@ -86,9 +95,9 @@ describe('VonageVideoClient', () => {
         'EnterMeeting',
         expect.objectContaining({
           eventSource: 'vonageVideoClient.connect.success',
-          sessionId: fakeCredentials.sessionId,
+          sessionId: fakeSessionId,
           connectionId: 'connection-id',
-          partnerId: fakeCredentials.apiKey,
+          partnerId: fakeApplicationId,
         })
       );
       expect(console.error).not.toHaveBeenCalled();
@@ -313,9 +322,9 @@ describe('VonageVideoClient', () => {
         'EnterMeeting',
         expect.objectContaining({
           eventSource: 'vonageVideoClient.connect.success',
-          sessionId: fakeCredentials.sessionId,
+          sessionId: fakeSessionId,
           connectionId: 'connection-id',
-          partnerId: fakeCredentials.apiKey,
+          partnerId: fakeApplicationId,
         })
       );
     });

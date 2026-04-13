@@ -77,9 +77,7 @@ describe('createVideoHandler', () => {
         sessionId: mockSessionId,
       });
 
-      expect(h.createSessionSpy).toHaveBeenCalledWith({
-        mediaMode: MediaMode.ROUTED,
-      });
+      expect(h.createSessionSpy).toHaveBeenCalledWith(undefined);
     });
 
     it('should create a session with custom options', async () => {
@@ -102,10 +100,7 @@ describe('createVideoHandler', () => {
         .send({ sessionOptions: customOptions })
         .expect(200);
 
-      expect(h.createSessionSpy).toHaveBeenCalledWith({
-        mediaMode: MediaMode.ROUTED,
-        ...customOptions,
-      });
+      expect(h.createSessionSpy).toHaveBeenCalledWith(customOptions);
     });
 
     it('should return an error response when creating a session fails', async () => {
@@ -325,7 +320,7 @@ describe('createVideoHandler', () => {
       const response = await request(app).get(`/video/searchArchives?input=${input}`).expect(200);
 
       expect(h.searchArchivesSpy).toHaveBeenCalledWith({
-        sessionKey: mockSessionKey,
+        sessionId: mockSessionId,
       });
 
       const data = extractResponseData(response.body);

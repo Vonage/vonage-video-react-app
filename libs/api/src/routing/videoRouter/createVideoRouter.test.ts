@@ -39,20 +39,6 @@ vi.mock('@vonage/video', async () => {
   }));
 });
 
-/**
- * Extracts the response data from the TRPC JSON response body.
- */
-function extractResponseData<T>(body: unknown): T {
-  return (body as { result: { data: T } }).result.data;
-}
-
-/**
- * Encodes input for TRPC GET query string parameters.
- */
-function encodeTrpcQueryInput<T>(input: T): string {
-  return encodeURIComponent(JSON.stringify(input));
-}
-
 describe('createVideoHandler', () => {
   beforeEach(() => {
     vi.clearAllMocks();
@@ -77,9 +63,7 @@ describe('createVideoHandler', () => {
         sessionId: mockSessionId,
       });
 
-      expect(h.createSessionSpy).toHaveBeenCalledWith({
-        mediaMode: MediaMode.ROUTED,
-      });
+      expect(h.createSessionSpy).toHaveBeenCalledWith(undefined);
     });
 
     it('should create a session and join it successfully', async () => {
@@ -127,10 +111,7 @@ describe('createVideoHandler', () => {
         .send({ sessionOptions: customOptions })
         .expect(200);
 
-      expect(h.createSessionSpy).toHaveBeenCalledWith({
-        mediaMode: MediaMode.ROUTED,
-        ...customOptions,
-      });
+      expect(h.createSessionSpy).toHaveBeenCalledWith(customOptions);
     });
 
     it('should return an error response when creating a session fails', async () => {
@@ -349,7 +330,7 @@ describe('createVideoHandler', () => {
       const response = await request(app).get(`/video/searchArchives?input=${input}`).expect(200);
 
       expect(h.searchArchivesSpy).toHaveBeenCalledWith({
-        sessionKey: mockSessionKey,
+        sessionId: mockSessionId,
       });
 
       const data = extractResponseData(response.body);
@@ -565,4 +546,18 @@ function createTestApp() {
   app.use('/video', handler);
 
   return app;
+}
+
+/**
+ * Extracts the response data from the TRPC JSON response body.
+ */
+function extractResponseData<T>(body: unknown): T {
+  return (body as { result: { data: T } }).result.data;
+}
+
+/**
+ * Encodes input for TRPC GET query string parameters.
+ */
+function encodeTrpcQueryInput<T>(input: T): string {
+  return encodeURIComponent(JSON.stringify(input));
 }

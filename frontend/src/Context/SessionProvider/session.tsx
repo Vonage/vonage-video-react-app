@@ -482,16 +482,16 @@ const SessionProvider = ({ children, initialValue = {} }: SessionProviderProps):
    * @param {string} params.sessionKey - The session key to join.
    */
   const joinRoom = useCallback(
-    async ({ sessionKey }: { sessionKey: string }) => {
+    async (args: { sessionKey: string }) => {
       const session = await videoClient.joinSession.mutate({
-        sessionKey,
+        sessionKey: args.sessionKey,
       });
 
-      setSessionKey(sessionKey);
-      window.history.replaceState(null, '', `/room/${sessionKey}`);
+      setSessionKey(args.sessionKey);
+      window.history.replaceState(null, '', `/room/${args.sessionKey}`);
 
       return connect({
-        sessionKey,
+        sessionKey: args.sessionKey,
         token: session.token,
       });
     },

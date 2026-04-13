@@ -35,6 +35,11 @@ vi.mock('react-i18next', () => {
   };
 });
 
+const sessionId = '1_MX4xMjM0NTY3OH4-VGh1IEZlYiAyNyAwODozMjozNCBQU1QgMjAyMH4wLjI0NDYxMjE';
+const sessionKey = jwt.sign({ sessionId, roomName: 'test-room-name' }, 'test', {
+  algorithm: 'HS256',
+});
+
 describe('RecordingPopUpIndicator', () => {
   beforeEach(() => {
     setupWindowNavigatorMock({
@@ -87,11 +92,6 @@ describe('RecordingPopUpIndicator', () => {
 
     expect(mockNavigate).not.toHaveBeenCalled();
   });
-});
-
-const sessionId = '1_MX4xMjM0NTY3OH4-VGh1IEZlYiAyNyAwODozMjozNCBQU1QgMjAyMH4wLjI0NDYxMjE';
-const sessionKey = jwt.sign({ sessionId, roomName: 'test-room-name' }, 'test', {
-  algorithm: 'HS256',
 });
 
 function render(component: ReactElement) {

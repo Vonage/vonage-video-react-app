@@ -2,11 +2,20 @@ import { useState, useEffect, useEffectEvent } from 'react';
 import type { MouseEvent, TouchEvent } from 'react';
 import usePreviewPublisherContext from './usePreviewPublisherContext';
 import useBackgroundPublisherContext from './useBackgroundPublisherContext';
+import useSessionKeyParam from './useSessionKeyParam';
+import useDecodedSessionKey from './useDecodedSessionKey';
 import { getStorageItem, STORAGE_KEYS } from '../utils/storage';
 import { DEVICE_ACCESS_STATUS } from '../utils/constants';
 import { env } from '../env';
 
 const useWaitingRoom = () => {
+  const { sessionKey, sessionKeyStatus } = useSessionKeyParam();
+
+  const { roomName } = useDecodedSessionKey({
+    sessionKey,
+    sessionKeyStatus,
+  });
+
   const { initLocalPublisher, publisher, accessStatus, destroyPublisher, isVideoLoading } =
     usePreviewPublisherContext();
 
@@ -83,6 +92,8 @@ const useWaitingRoom = () => {
     setUsername,
     accessStatus,
     isRoomReady,
+    roomName,
+    sessionKey,
     handleAudioInputOpen,
     handleVideoInputOpen,
     handleAudioOutputOpen,
