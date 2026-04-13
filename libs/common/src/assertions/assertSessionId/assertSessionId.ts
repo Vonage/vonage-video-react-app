@@ -1,6 +1,6 @@
 import { assertString } from '@common/assertions';
-import { SessionId } from '../../types';
-import decodeSessionId from '../../../src/helpers/decodeSessionId';
+import type { SessionId } from '../../types';
+import decodeSessionId from '../../helpers/decodeSessionId';
 
 function assertSessionId(value: unknown): asserts value is SessionId {
   assertString(value, 'SessionId must be a string');

@@ -1,5 +1,5 @@
 import z from 'zod';
-import isValidSessionId from '../assertions/isValidSessionId';
+import { isValidSessionId } from '../../src/assertions';
 
 export const SessionIdSchema = z
   .string()

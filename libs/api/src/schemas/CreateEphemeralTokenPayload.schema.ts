@@ -8,10 +8,4 @@ export const CreateEphemeralTokenPayloadSchema = VideoPayloadSchema.extend({
 
 export type CreateEphemeralTokenPayload = z.infer<typeof CreateEphemeralTokenPayloadSchema>;
 
-export function assertCreateEphemeralTokenPayload(
-  payload: unknown
-): asserts payload is CreateEphemeralTokenPayload {
-  CreateEphemeralTokenPayloadSchema.parse(payload);
-}
-
 export default CreateEphemeralTokenPayloadSchema;

@@ -10,7 +10,7 @@ import {
 import { VideoFilter } from '@vonage/client-sdk-video';
 import { getStorageItem, STORAGE_KEYS } from '../utils/storage';
 import { parseVideoFilter } from '../utils/util';
-import { DeepPartial } from '@app-types';
+import type { DeepPartial } from '@common/types';
 
 // Define the shape of the User context
 export type UserContextType = {

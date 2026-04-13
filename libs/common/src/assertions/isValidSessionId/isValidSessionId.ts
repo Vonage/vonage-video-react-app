@@ -1,7 +1,7 @@
 import { tryCatch } from '@common/execution';
-import { SessionId } from '../types';
-import { assertString } from '../assertions';
-import assertSessionId from './assertSessionId';
+import type { SessionId } from '../../types';
+import { assertString } from '@common/assertions';
+import assertSessionId from '../assertSessionId';
 
 function isValidSessionId(value: unknown): value is SessionId {
   const { error } = tryCatch(() => {

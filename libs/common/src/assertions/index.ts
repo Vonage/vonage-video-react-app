@@ -11,3 +11,8 @@ export { default as isUndefined } from './isUndefined';
 export { default as isNotNil } from './isNotNil';
 export { default as assertString } from './assertString';
 export { default as isValidRoomName } from './isValidRoomName';
+export { default as isSessionKeyLike } from './isSessionKeyLike';
+export { default as isSessionIdLike } from './isSessionIdLike';
+export { default as assertSessionId } from './assertSessionId';
+export { default as isValidSessionId } from './isValidSessionId';
+export { default as isValidSessionKey } from './isValidSessionKey';

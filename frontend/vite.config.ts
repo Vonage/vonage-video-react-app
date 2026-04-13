@@ -41,6 +41,14 @@ const vitestConfig: VitestUserConfigInterface = defineVitestConfig({
     coverage: {
       provider: 'v8',
       reporter: ['text', 'lcov'],
+      allowExternal: true,
+      include: [
+        `${path.resolve(__dirname, 'src')}/**/*.{ts,tsx}`,
+        `${path.resolve(__dirname, '../libs/common/src')}/**/*.{ts,tsx}`,
+        `${path.resolve(__dirname, '../libs/common/srcBrowser')}/**/*.{ts,tsx}`,
+        `${path.resolve(__dirname, '../libs/core/src')}/**/*.{ts,tsx}`,
+        `${path.resolve(__dirname, '../libs/ui/src')}/**/*.{ts,tsx}`,
+      ],
       exclude: [
         '**/test/**',
         '**/index.ts',

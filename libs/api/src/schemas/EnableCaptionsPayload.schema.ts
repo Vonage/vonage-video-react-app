@@ -8,10 +8,4 @@ export const EnableCaptionsPayloadSchema = VideoPayloadSchema.extend({
 
 export type EnableCaptionsPayload = z.infer<typeof EnableCaptionsPayloadSchema>;
 
-export function assertEnableCaptionsPayload(
-  payload: unknown
-): asserts payload is EnableCaptionsPayload {
-  EnableCaptionsPayloadSchema.parse(payload);
-}
-
 export default EnableCaptionsPayloadSchema;

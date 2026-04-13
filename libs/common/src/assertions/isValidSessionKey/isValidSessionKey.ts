@@ -1,5 +1,5 @@
 import { tryCatch } from '@common/execution';
-import { assertString } from '../assertions';
+import { assertString } from '@common/assertions';
 import { decodeSessionKey } from '@common/helpers';
 
 function isValidSessionKey(value: unknown): value is string {
