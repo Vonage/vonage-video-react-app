@@ -1,0 +1,3 @@
+import AdvancedSettingsCustomVideoBitrateField from './AdvancedSettingsCustomVideoBitrateField';
+
+export default AdvancedSettingsCustomVideoBitrateField;

@@ -15,9 +15,11 @@ import type {
   AdvancedSettingsCodecMode,
   AdvancedSettingsDialogProps,
   AdvancedSettingsFrameRate,
+  AdvancedSettingsManualCodecOrder,
   AdvancedSettingsResolution,
   AdvancedSettingsTab,
 } from './AdvancedSettingsDialog.types';
+import { ADVANCED_SETTINGS_CODEC_MODE } from './AdvancedSettingsDialog.types';
 
 /**
  * AdvancedSettingsDialog Component
@@ -30,7 +32,14 @@ const AdvancedSettingsDialog = ({
   const { t } = useTranslation();
   const [selectedTab, setSelectedTab] = useState<AdvancedSettingsTab>('general');
   const [bitrateMode, setBitrateMode] = useState<AdvancedSettingsBitrateMode>('default');
-  const [codecMode, setCodecMode] = useState<AdvancedSettingsCodecMode>('automatic');
+  const [codecMode, setCodecMode] = useState<AdvancedSettingsCodecMode>(
+    ADVANCED_SETTINGS_CODEC_MODE.automatic
+  );
+  const [codecPriority, setCodecPriority] = useState<AdvancedSettingsManualCodecOrder>([
+    'vp9',
+    'vp8',
+    'h264',
+  ]);
   const [frameRate, setFrameRate] = useState<AdvancedSettingsFrameRate>(30);
   const [resolution, setResolution] = useState<AdvancedSettingsResolution>('640x480');
   const [audioBitrate, setAudioBitrate] = useState<AdvancedSettingsAudioBitrate>(128);
@@ -54,6 +63,8 @@ const AdvancedSettingsDialog = ({
           setBitrateMode={setBitrateMode}
           codecMode={codecMode}
           setCodecMode={setCodecMode}
+          codecPriority={codecPriority}
+          setCodecPriority={setCodecPriority}
           frameRate={frameRate}
           setFrameRate={setFrameRate}
           resolution={resolution}

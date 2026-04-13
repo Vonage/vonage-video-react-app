@@ -1,20 +1,25 @@
 import type { ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
 import { RESOLUTIONS } from '../../../../../env';
+import AdvancedSettingsCodecPriorityField from '../AdvancedSettingsCodecPriorityField';
 import AdvancedSettingsSelectField from '../AdvancedSettingsSelectField';
 import type {
   AdvancedSettingsBitrateMode,
   AdvancedSettingsCodecMode,
   AdvancedSettingsFrameRate,
+  AdvancedSettingsManualCodecOrder,
   AdvancedSettingsResolution,
   AdvancedSettingsSelectOption,
 } from '../AdvancedSettingsDialog.types';
+import { ADVANCED_SETTINGS_CODEC_MODE } from '../AdvancedSettingsDialog.types';
 
 type AdvancedSettingsVideoTabProps = {
   bitrateMode: AdvancedSettingsBitrateMode;
   setBitrateMode: (value: AdvancedSettingsBitrateMode) => void;
   codecMode: AdvancedSettingsCodecMode;
   setCodecMode: (value: AdvancedSettingsCodecMode) => void;
+  codecPriority: AdvancedSettingsManualCodecOrder;
+  setCodecPriority: (value: AdvancedSettingsManualCodecOrder) => void;
   frameRate: AdvancedSettingsFrameRate;
   setFrameRate: (value: AdvancedSettingsFrameRate) => void;
   resolution: AdvancedSettingsResolution;
@@ -26,6 +31,8 @@ const AdvancedSettingsVideoTab = ({
   setBitrateMode,
   codecMode,
   setCodecMode,
+  codecPriority,
+  setCodecPriority,
   frameRate,
   setFrameRate,
   resolution,
@@ -51,11 +58,11 @@ const AdvancedSettingsVideoTab = ({
 
   const codecOptions: AdvancedSettingsSelectOption<AdvancedSettingsCodecMode>[] = [
     {
-      value: 'automatic',
+      value: ADVANCED_SETTINGS_CODEC_MODE.automatic,
       label: t('advancedSettings.video.codec.options.automatic'),
     },
     {
-      value: 'manual',
+      value: ADVANCED_SETTINGS_CODEC_MODE.manual,
       label: t('advancedSettings.video.codec.options.manual'),
     },
   ];
@@ -94,6 +101,13 @@ const AdvancedSettingsVideoTab = ({
           onChange={setCodecMode}
           description={t('advancedSettings.video.codec.description')}
         />
+
+        {codecMode === ADVANCED_SETTINGS_CODEC_MODE.manual ? (
+          <AdvancedSettingsCodecPriorityField
+            codecPriority={codecPriority}
+            setCodecPriority={setCodecPriority}
+          />
+        ) : null}
 
         <AdvancedSettingsSelectField
           label={t('advancedSettings.video.frameRate.label')}

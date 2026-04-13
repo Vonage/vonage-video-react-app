@@ -12,6 +12,19 @@ export type AdvancedSettingsBitrateMode =
 
 export type AdvancedSettingsCodecMode = 'automatic' | 'manual';
 
+export const ADVANCED_SETTINGS_CODEC_MODE = {
+  automatic: 'automatic' as AdvancedSettingsCodecMode,
+  manual: 'manual' as AdvancedSettingsCodecMode,
+};
+
+export type AdvancedSettingsVideoCodec = 'vp8' | 'vp9' | 'h264';
+
+export type AdvancedSettingsManualCodecOrder = [
+  AdvancedSettingsVideoCodec,
+  AdvancedSettingsVideoCodec,
+  AdvancedSettingsVideoCodec,
+];
+
 export type AdvancedSettingsFrameRate = NonNullable<
   import('@vonage/client-sdk-video').GetUserMediaProperties['frameRate']
 >;
