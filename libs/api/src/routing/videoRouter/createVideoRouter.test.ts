@@ -129,7 +129,7 @@ describe('createVideoHandler', () => {
     it('should decode a valid sessionId via VideoClient method (not a TRPC route)', async () => {
       const app = createTestApp();
 
-      const input = encodeTrpcQueryInput({ sessionId: mockSessionId });
+      const input = encodeURIComponent(JSON.stringify({ sessionId: mockSessionId }));
 
       // decodeSessionId is not exposed as a TRPC route
       const response = await request(app).get(`/video/decodeSessionId?input=${input}`);
@@ -139,7 +139,7 @@ describe('createVideoHandler', () => {
     it('should return an error response for invalid sessionId', async () => {
       const app = createTestApp();
 
-      const input = encodeTrpcQueryInput({ sessionId: 'invalid-session-id' });
+      const input = encodeURIComponent(JSON.stringify({ sessionId: 'invalid-session-id' }));
 
       const response = await request(app).get(`/video/decodeSessionId?input=${input}`);
 
@@ -325,9 +325,10 @@ describe('createVideoHandler', () => {
 
       const app = createTestApp();
 
-      const input = encodeTrpcQueryInput({ sessionKey: mockSessionKey });
-
-      const response = await request(app).get(`/video/searchArchives?input=${input}`).expect(200);
+      const response = await request(app)
+        .post('/video/searchArchives')
+        .send({ sessionKey: mockSessionKey })
+        .expect(200);
 
       expect(h.searchArchivesSpy).toHaveBeenCalledWith({
         sessionId: mockSessionId,
@@ -349,9 +350,9 @@ describe('createVideoHandler', () => {
 
       const app = createTestApp();
 
-      const input = encodeTrpcQueryInput({ sessionKey: mockSessionKey });
-
-      const response = await request(app).get(`/video/searchArchives?input=${input}`);
+      const response = await request(app)
+        .post('/video/searchArchives')
+        .send({ sessionKey: mockSessionKey });
 
       expect(response.status).toBeGreaterThanOrEqual(400);
     });
@@ -496,14 +497,15 @@ describe('createVideoHandler', () => {
       });
     });
 
-    it('should accept queries with TRPC json-wrapped input', async () => {
+    it('should accept mutations with TRPC json-wrapped body for searchArchives', async () => {
       h.searchArchivesSpy.mockResolvedValue({ items: [], count: 0 });
 
       const app = createTestApp();
 
-      const input = encodeURIComponent(JSON.stringify({ json: { sessionKey: mockSessionKey } }));
-
-      const response = await request(app).get(`/video/searchArchives?input=${input}`).expect(200);
+      const response = await request(app)
+        .post('/video/searchArchives')
+        .send({ json: { sessionKey: mockSessionKey } })
+        .expect(200);
 
       const data = extractResponseData(response.body);
 
@@ -513,14 +515,15 @@ describe('createVideoHandler', () => {
       });
     });
 
-    it('should accept queries with raw input', async () => {
+    it('should accept mutations with raw body for searchArchives', async () => {
       h.searchArchivesSpy.mockResolvedValue({ items: [], count: 0 });
 
       const app = createTestApp();
 
-      const input = encodeTrpcQueryInput({ sessionKey: mockSessionKey });
-
-      const response = await request(app).get(`/video/searchArchives?input=${input}`).expect(200);
+      const response = await request(app)
+        .post('/video/searchArchives')
+        .send({ sessionKey: mockSessionKey })
+        .expect(200);
 
       const data = extractResponseData(response.body);
 
@@ -553,11 +556,4 @@ function createTestApp() {
  */
 function extractResponseData<T>(body: unknown): T {
   return (body as { result: { data: T } }).result.data;
-}
-
-/**
- * Encodes input for TRPC GET query string parameters.
- */
-function encodeTrpcQueryInput<T>(input: T): string {
-  return encodeURIComponent(JSON.stringify(input));
 }

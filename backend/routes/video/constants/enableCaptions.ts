@@ -1,7 +1,7 @@
 import { HandlersConfig } from '@api-lib';
 
 const enableCaptions: HandlersConfig['enableCaptions'] = {
-  defaults: ({ sessionKey, captionOptions }) => ({
+  addDefaults: ({ sessionKey, captionOptions }) => ({
     sessionKey,
     captionOptions: {
       // The full list of supported languages can be found here: https://developer.vonage.com/en/video/guides/live-caption#supported-languages

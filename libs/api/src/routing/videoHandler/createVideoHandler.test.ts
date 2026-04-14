@@ -46,13 +46,6 @@ function extractResponseData<T>(body: unknown): T {
   return (body as { result: { data: T } }).result.data;
 }
 
-/**
- * Encodes input for TRPC GET query string parameters.
- */
-function encodeTrpcQueryInput<T>(input: T): string {
-  return encodeURIComponent(JSON.stringify(input));
-}
-
 describe('createVideoHandler', () => {
   beforeEach(() => {
     vi.clearAllMocks();
@@ -118,7 +111,7 @@ describe('createVideoHandler', () => {
     it('should decode a valid sessionId', async () => {
       const app = createTestApp();
 
-      const input = encodeTrpcQueryInput({ sessionId: mockSessionId });
+      const input = encodeURIComponent(JSON.stringify({ sessionId: mockSessionId }));
 
       const response = await request(app).get(`/video/decodeSessionId?input=${input}`);
 
@@ -129,7 +122,7 @@ describe('createVideoHandler', () => {
     it('should return an error response for invalid sessionId', async () => {
       const app = createTestApp();
 
-      const input = encodeTrpcQueryInput({ sessionId: 'invalid-session-id' });
+      const input = encodeURIComponent(JSON.stringify({ sessionId: 'invalid-session-id' }));
 
       const response = await request(app).get(`/video/decodeSessionId?input=${input}`);
 
@@ -315,9 +308,10 @@ describe('createVideoHandler', () => {
 
       const app = createTestApp();
 
-      const input = encodeTrpcQueryInput({ sessionKey: mockSessionKey });
-
-      const response = await request(app).get(`/video/searchArchives?input=${input}`).expect(200);
+      const response = await request(app)
+        .post('/video/searchArchives')
+        .send({ sessionKey: mockSessionKey })
+        .expect(200);
 
       expect(h.searchArchivesSpy).toHaveBeenCalledWith({
         sessionId: mockSessionId,
@@ -339,9 +333,9 @@ describe('createVideoHandler', () => {
 
       const app = createTestApp();
 
-      const input = encodeTrpcQueryInput({ sessionKey: mockSessionKey });
-
-      const response = await request(app).get(`/video/searchArchives?input=${input}`);
+      const response = await request(app)
+        .post('/video/searchArchives')
+        .send({ sessionKey: mockSessionKey });
 
       expect(response.status).toBeGreaterThanOrEqual(400);
     });

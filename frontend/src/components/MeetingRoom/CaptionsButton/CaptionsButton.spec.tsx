@@ -13,8 +13,8 @@ import { env } from '../../../env';
 vi.mock('@hooks/useSessionContext');
 vi.mock('@services/videoClient', () => ({
   default: {
-    enableCaptions: { mutate: vi.fn() },
-    disableCaptions: { mutate: vi.fn() },
+    enableCaptions: vi.fn(),
+    disableCaptions: vi.fn(),
   },
 }));
 
@@ -56,8 +56,8 @@ describe('CaptionsButton', () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
-    (videoClient.enableCaptions.mutate as Mock).mockResolvedValue({ captionsId: '1-2-3-4' });
-    (videoClient.disableCaptions.mutate as Mock).mockResolvedValue({});
+    (videoClient.enableCaptions as Mock).mockResolvedValue({ captionsId: '1-2-3-4' });
+    (videoClient.disableCaptions as Mock).mockResolvedValue({});
     sessionContext = {
       subscriberWrappers: [createSubscriberWrapper('subscriber-1')],
       sessionKey: mockedSessionKey,
@@ -85,7 +85,7 @@ describe('CaptionsButton', () => {
     act(() => screen.getByTestId('captions-button').click());
 
     await waitFor(() => {
-      expect(videoClient.enableCaptions.mutate).toHaveBeenCalledWith({
+      expect(videoClient.enableCaptions).toHaveBeenCalledWith({
         sessionKey: mockedSessionKey,
       });
     });

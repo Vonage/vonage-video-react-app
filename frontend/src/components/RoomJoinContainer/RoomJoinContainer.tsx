@@ -21,7 +21,7 @@ const RoomJoinContainer = (): ReactElement => {
   const handleNewRoom = async () => {
     const randomRoom = generateRoomName();
 
-    const { sessionKey } = await videoClient.createSession.mutate({ roomName: randomRoom });
+    const { sessionKey } = await videoClient.createSession({ roomName: randomRoom });
 
     navigate(`/waiting-room/${sessionKey}`);
   };

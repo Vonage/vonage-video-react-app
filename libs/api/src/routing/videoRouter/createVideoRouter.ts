@@ -1,19 +1,19 @@
+import { initTRPC, TRPCBuilder, type AnyMutationProcedure } from '@trpc/server';
 import {
-  initTRPC,
-  TRPCBuilder,
-  type AnyQueryProcedure,
-  type AnyMutationProcedure,
-} from '@trpc/server';
-import { assertVideoRouterConfig, type VideoRouterConfig } from '@api-lib/schemas';
+  assertVideoRouterConfig,
+  CreateSessionAndJoinPayloadSchema,
+  JoinSessionPayloadSchema,
+  type VideoRouterConfig,
+} from '@api-lib/schemas';
 import { VideoClient } from '@api-lib/core';
-import type { HandlerConfig } from '@api-lib/types';
+import type { HandlerConfig, HandlersConfig, HandlersDefaults } from '@api-lib/types';
 import { VideoAction } from '@api-lib/types';
 import { Any, Prettify } from '@common/types';
 import { makeBadRequestErrorHandler, makeInternalErrorHandler } from '@api-lib/errors';
 import { toTRPCError } from '@api-lib/errors/helpers';
 import { schemasByAction } from '@api-lib/constants';
-import type { HandlersDefaults } from '@api-lib/types';
 import { assertResult } from '@common/execution';
+import { isFunction } from '@common/assertions';
 
 export const OKAY = Symbol('OKAY');
 
@@ -34,6 +34,10 @@ function createVideoRouter<
 
   const { auth, videoParams, routerOptions, handlersConfig } = routerConfig;
 
+  const handlersDefaults: HandlersDefaults = Object.fromEntries(
+    Object.entries(handlersConfig ?? {}).map(([action, config]) => [action, config?.addDefaults])
+  );
+
   const trpcRoot = (initTRPC as unknown as TRPCBuilder<Context, TMeta>).create({
     errorFormatter: ({ error: unsafeError }) => {
       const error = makeInternalErrorHandler('An internal error occurred')(
@@ -48,7 +52,7 @@ function createVideoRouter<
   // prettify is necessary to hide the internal TRPC types and prevent d.ts errors.
   type TRPCRouter = Prettify<typeof router>;
 
-  type ProcedureResolverOptions<Result> = {
+  type ProcedureResolverOptions<Input> = {
     ctx: Context;
     path: string;
     signal: AbortSignal | undefined;
@@ -64,7 +68,7 @@ function createVideoRouter<
      * const input = assertInput(opts.input); // input is now correctly typed and validated
      * ```
      */
-    assertInput(input: unknown): Result;
+    assertInput(input: unknown): Input;
 
     /**
      * Contains known video client methods
@@ -110,7 +114,7 @@ function createVideoRouter<
   ) => {
     return assertResult(
       () => schemasByAction[actionKey].parse(input),
-      makeBadRequestErrorHandler(`Invalid payload for action ${actionKey}`)
+      makeBadRequestErrorHandler(`Invalid input for action ${actionKey}`)
     );
   };
 
@@ -175,96 +179,153 @@ function createVideoRouter<
     }
   };
 
-  // We used callbacks to easily track the orchestrator methods and their types
+  // We used callbacks to easily track the videoClient methods and their types
   const router = trpcRoot.router({
     createSession: makeMutation({
       key: VideoAction.createSession,
       config: handlersConfig?.createSession,
-      callback: (orchestrator, payload) => {
-        return orchestrator.createSession(payload);
-      },
-    }),
-
-    createSessionAndJoin: makeMutation({
-      key: VideoAction.createSessionAndJoin,
-      config: handlersConfig?.createSessionAndJoin,
-      callback: async (orchestrator, payload) => {
-        return orchestrator.createSessionAndJoin(payload);
+      callback: (videoClient, input) => {
+        return videoClient.createSession(input);
       },
     }),
 
     startArchive: makeMutation({
       key: VideoAction.startArchive,
       config: handlersConfig?.startArchive,
-      callback: (orchestrator, payload) => {
-        return orchestrator.startArchive(payload);
+      callback: (videoClient, input) => {
+        return videoClient.startArchive(input);
       },
     }),
 
     stopArchive: makeMutation({
       key: VideoAction.stopArchive,
       config: handlersConfig?.stopArchive,
-      callback: (orchestrator, payload) => {
-        return orchestrator.stopArchive(payload);
+      callback: (videoClient, input) => {
+        return videoClient.stopArchive(input);
       },
     }),
 
-    searchArchives: makeQuery({
+    searchArchives: makeMutation({
       key: VideoAction.searchArchives,
       config: handlersConfig?.searchArchives,
-      callback: (orchestrator, payload) => {
-        return orchestrator.searchArchives(payload);
+      callback: (videoClient, input) => {
+        return videoClient.searchArchives(input);
       },
     }),
 
     enableCaptions: makeMutation({
       key: VideoAction.enableCaptions,
       config: handlersConfig?.enableCaptions,
-      callback: (orchestrator, payload) => {
-        return orchestrator.enableCaptions(payload);
+      callback: (videoClient, input) => {
+        return videoClient.enableCaptions(input);
       },
     }),
 
     ensureCaptionsEnabled: makeMutation({
       key: VideoAction.ensureCaptionsEnabled,
-      config: handlersConfig?.ensureCaptionsEnabled,
-      callback: (orchestrator, payload) => {
-        return orchestrator.ensureCaptionsEnabled(payload);
+      config: handlersConfig?.enableCaptions,
+      callback: (videoClient, input) => {
+        return videoClient.ensureCaptionsEnabled(input);
       },
     }),
 
     disableCaptions: makeMutation({
       key: VideoAction.disableCaptions,
       config: handlersConfig?.disableCaptions,
-      callback: (orchestrator, payload) => {
-        return orchestrator.disableCaptions(payload);
+      callback: (videoClient, input) => {
+        return videoClient.disableCaptions(input);
       },
     }),
 
     joinSession: makeMutation({
       key: VideoAction.joinSession,
       config: {
-        selectInput: (payload) => {
-          const { clientTokenOptions: options, ...rest } =
-            handlersConfig?.joinSession?.selectInput?.(payload) ?? payload;
+        transformInput: (opts) => {
+          // potentially allow extra properties as long as the basic schema is valid
+          const {
+            clientTokenOptions: {
+              // remove sensitive options from the input
+              role: _role,
+              expireTime: _expireTime,
 
-          const { role: _role, expireTime: _expireTime, ...clientTokenOptions } = options ?? {};
+              ...clientTokenOptions
+            } = {},
+            ...rest
+          } = JoinSessionPayloadSchema.loose().parse(opts.input);
 
           const input = {
             ...rest,
             clientTokenOptions,
           };
 
-          return input as Prettify<
-            Required<typeof rest> & {
-              clientTokenOptions?: typeof clientTokenOptions;
-            }
-          >;
+          return handlersConfig?.joinSession?.transformInput?.({ ...opts, input }) ?? input;
         },
-        defaults: handlersConfig?.joinSession?.defaults,
+        defaults: handlersConfig?.joinSession?.addDefaults,
       },
-      callback: (orchestrator, payload) => {
-        return orchestrator.joinSession(payload);
+      callback: (videoClient, input) => {
+        return videoClient.joinSession(input);
+      },
+    }),
+
+    createSessionAndJoin: makeMutation({
+      key: VideoAction.createSessionAndJoin,
+      config: {
+        transformInput: (opts) => {
+          // potentially allow extra properties as long as the basic schema is valid
+          const {
+            clientTokenOptions: {
+              // remove sensitive options from the input
+              role: _role,
+              expireTime: _expireTime,
+
+              ...clientTokenOptions
+            } = {},
+            ...rest
+          } = CreateSessionAndJoinPayloadSchema.loose().parse(opts.input) ?? {};
+
+          const input = {
+            ...rest,
+            clientTokenOptions,
+          };
+
+          return (
+            handlersConfig?.createSessionAndJoin?.transformInput?.({ ...opts, input }) ?? input
+          );
+        },
+
+        /**
+         * Combines the defaults of createSession and joinSession handlers
+         */
+        addDefaults: (() => {
+          if (handlersConfig?.createSessionAndJoin?.addDefaults) {
+            return handlersConfig.createSessionAndJoin.addDefaults;
+          }
+
+          if (!handlersConfig?.createSession && !handlersConfig?.joinSession) {
+            return undefined;
+          }
+
+          const createSessionDefaults = (
+            isFunction(handlersConfig?.createSession?.addDefaults)
+              ? handlersConfig.createSession.addDefaults
+              : (payload: unknown) => payload
+          ) as (payload: unknown) => Record<string, unknown>;
+
+          const joinSessionDefaults = (
+            isFunction(handlersConfig?.joinSession?.addDefaults)
+              ? handlersConfig.joinSession.addDefaults
+              : (payload: unknown) => payload
+          ) as (payload: unknown) => Record<string, unknown>;
+
+          return (input) => ({
+            ...input,
+            ...(createSessionDefaults(input) ?? {}),
+            ...(joinSessionDefaults(input) ?? {}),
+          });
+        })() as HandlersConfig['createSessionAndJoin']['addDefaults'],
+      },
+      callback: async (videoClient, input) => {
+        return videoClient.createSessionAndJoin(input);
       },
     }),
   }) satisfies IVideoRouterContract;
@@ -284,13 +345,20 @@ function createVideoRouter<
 
   function makeInput<
     ActionKey extends PublicActionKey,
-    Config extends HandlerConfig<ActionKey, Parameters<VideoClient[ActionKey]>[0]>,
+    Config extends HandlerConfig<AsActionKey<ActionKey>, Parameters<VideoClient[ActionKey]>[0]>,
   >(videoAction: ActionKey, config: Config | undefined) {
     type Input = Parameters<VideoClient[ActionKey]>[0];
 
-    // input validation is performed by video orchestrator handlers
+    // input validation is performed by video videoClient handlers
     // trpc requires an input schema to parse the request body, so we provide dummy parser with the correct type
-    const parser = (config?.selectInput ?? ((val: unknown) => val)) as (val: unknown) => Input;
+    const parser = (input: unknown): Input => {
+      if (!config?.transformInput) return input as Input;
+
+      return config.transformInput({
+        input,
+        assertInput: (val: unknown) => tryAssertInput(videoAction, val),
+      }) as Input;
+    };
 
     const input = trpcRoot.procedure.use(setupPipeline).input(async (rawInput) => {
       try {
@@ -310,10 +378,10 @@ function createVideoRouter<
   function makeMutation<
     ActionKey extends PublicActionKey,
     Action extends (
-      orchestrator: VideoClient,
-      payload: Parameters<VideoClient[ActionKey]>[0]
+      videoClient: VideoClient,
+      input: Parameters<VideoClient[ActionKey]>[0]
     ) => ReturnType<VideoClient[ActionKey]>,
-    Config extends HandlerConfig<ActionKey, Parameters<VideoClient[ActionKey]>[0]>,
+    Config extends HandlerConfig<AsActionKey<ActionKey>, Parameters<VideoClient[ActionKey]>[0]>,
   >({ key, callback, config }: { key: ActionKey; callback: Action; config: Config | undefined }) {
     const { input, parser } = makeInput(key, config);
 
@@ -330,42 +398,11 @@ function createVideoRouter<
           return override(args) as ReturnType<Action>;
         }
 
-        const payload = parser(opts.input) as Parameters<VideoClient[ActionKey]>[0];
+        const input = parser(opts.input) as Parameters<VideoClient[ActionKey]>[0];
 
-        return callback(opts.ctx.videoClient, payload) as unknown as ReturnType<Action>;
+        return callback(opts.ctx.videoClient, input) as unknown as ReturnType<Action>;
       } catch (error) {
         throw makeInternalErrorHandler(`Failed to execute mutation ${key}`)(error);
-      }
-    });
-  }
-
-  function makeQuery<
-    ActionKey extends PublicActionKey,
-    Action extends (
-      orchestrator: VideoClient,
-      payload: Parameters<VideoClient[ActionKey]>[0]
-    ) => ReturnType<VideoClient[ActionKey]>,
-    Config extends HandlerConfig<ActionKey, Parameters<VideoClient[ActionKey]>[0]>,
-  >({ key, callback, config }: { key: ActionKey; callback: Action; config: Config | undefined }) {
-    const { input, parser } = makeInput(key, config);
-
-    return input.query(async (opts) => {
-      try {
-        const override = overrides.get(key);
-        if (override) {
-          const args = Object.assign(opts, {
-            assertInput: (input: unknown) => tryAssertInput(key, input),
-            videoClient: opts.ctx.videoClient,
-          }) as ProcedureResolverOptions<unknown>;
-
-          return override(args) as ReturnType<VideoClient[ActionKey]>;
-        }
-
-        const payload = parser(opts.input) as Parameters<VideoClient[ActionKey]>[0];
-
-        return callback(opts.ctx.videoClient, payload);
-      } catch (error) {
-        throw makeInternalErrorHandler(`Failed to execute query ${key}`)(error);
       }
     });
   }
@@ -379,7 +416,7 @@ function createVideoRouter<
     return new VideoClient({
       auth,
       videoParams,
-      handlersDefaults: routerConfig as Partial<HandlersDefaults>,
+      handlersDefaults,
     });
   }
 
@@ -480,10 +517,12 @@ export type IVideoRouter = ReturnType<typeof createVideoRouter>;
 
 type IVideoRouterContract = {
   // exclude private handlers
-  [K in Exclude<VideoAction, 'createEphemeralToken'>]: AnyQueryProcedure | AnyMutationProcedure;
+  [K in Exclude<`${VideoAction}`, 'createEphemeralToken'>]: AnyMutationProcedure;
 };
 
 type PublicActionKey = keyof IVideoRouterContract;
+
+type AsActionKey<T> = T extends VideoAction ? T : never;
 
 export type NextResult = {
   [OKAY]: true;

@@ -39,7 +39,7 @@ const JoinWaitRoomButton = ({
      * [TODO] If the session already exists returns the session key,
      * Right now the createSession endpoint has a patch to support the legacy roomName functionality
      */
-    const session = await videoClient.createSession.mutate({ roomName });
+    const session = await videoClient.createSession({ roomName });
 
     navigate(`/waiting-room/${session.sessionKey}`);
   };

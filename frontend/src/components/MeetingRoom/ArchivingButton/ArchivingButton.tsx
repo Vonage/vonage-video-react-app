@@ -80,7 +80,7 @@ const ArchivingButton = ({
         markArchiveStartRequestedBySelf();
         setTimeout(async () => {
           try {
-            await videoClient.startArchive.mutate({ sessionKey: sessionKey! });
+            await videoClient.startArchive({ sessionKey: sessionKey! });
           } catch (err) {
             resetArchiveStartRequestedBySelf();
             console.log(err);
@@ -88,7 +88,7 @@ const ArchivingButton = ({
         }, RECORDING_START_DELAY);
       }
     } else if (archiveId) {
-      void videoClient.stopArchive.mutate({ sessionKey: sessionKey!, archiveId });
+      void videoClient.stopArchive({ sessionKey: sessionKey!, archiveId });
     }
   };
 

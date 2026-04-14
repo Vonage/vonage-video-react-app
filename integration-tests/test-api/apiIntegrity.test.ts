@@ -125,7 +125,7 @@ describe('API Integrity', () => {
 
   describe('createSession', () => {
     it('returns the new session id', async () => {
-      const response = await videoClient.createSession.mutate();
+      const response = await videoClient.createSession();
 
       expect(response).toMatchObject({ sessionId: validSessionId });
     });
@@ -133,7 +133,7 @@ describe('API Integrity', () => {
     it('rejects when the Video SDK fails', async () => {
       mockCreateSession.mockRejectedValueOnce(new Error('SDK unavailable'));
 
-      await expect(videoClient.createSession.mutate()).rejects.toThrow();
+      await expect(videoClient.createSession()).rejects.toThrow();
     });
   });
 
@@ -141,14 +141,14 @@ describe('API Integrity', () => {
 
   describe('joinSession', () => {
     it('returns a client token for a valid session id', async () => {
-      const response = await videoClient.joinSession.mutate({ sessionKey: validSessionKey });
+      const response = await videoClient.joinSession({ sessionKey: validSessionKey });
 
       expect(response).toMatchObject({ token: 'some-token' });
     });
 
     it('rejects when sessionKey is missing', async () => {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      await expect(videoClient.joinSession.mutate({} as any)).rejects.toThrow();
+      await expect(videoClient.joinSession({} as any)).rejects.toThrow();
     });
   });
 
@@ -156,14 +156,14 @@ describe('API Integrity', () => {
 
   describe('startArchive', () => {
     it('returns the started archive data', async () => {
-      const response = await videoClient.startArchive.mutate({ sessionKey: validSessionKey });
+      const response = await videoClient.startArchive({ sessionKey: validSessionKey });
 
       expect(response).toMatchObject({ id: 'archive-1', status: 'started' });
     });
 
     it('rejects when sessionKey is missing', async () => {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      await expect(videoClient.startArchive.mutate({} as any)).rejects.toThrow();
+      await expect(videoClient.startArchive({} as any)).rejects.toThrow();
     });
   });
 
@@ -171,7 +171,7 @@ describe('API Integrity', () => {
 
   describe('stopArchive', () => {
     it('returns the stopped archive data', async () => {
-      const response = await videoClient.stopArchive.mutate({
+      const response = await videoClient.stopArchive({
         archiveId: 'archive-1',
         sessionKey: validSessionKey,
       });
@@ -181,7 +181,7 @@ describe('API Integrity', () => {
 
     it('rejects when the Video SDK rejects the archive id', async () => {
       await expect(
-        videoClient.stopArchive.mutate({ archiveId: 'bad-archive-id', sessionKey: validSessionKey })
+        videoClient.stopArchive({ archiveId: 'bad-archive-id', sessionKey: validSessionKey })
       ).rejects.toThrow();
     });
   });
@@ -190,7 +190,7 @@ describe('API Integrity', () => {
 
   describe('searchArchives', () => {
     it('returns a list of archives', async () => {
-      const response = await videoClient.searchArchives.query({ sessionKey: validSessionKey });
+      const response = await videoClient.searchArchives({ sessionKey: validSessionKey });
 
       expect(response).toMatchObject({
         count: 2,
@@ -201,9 +201,7 @@ describe('API Integrity', () => {
     it('rejects when the Video SDK fails', async () => {
       mockSearchArchives.mockRejectedValueOnce(new Error('SDK failure'));
 
-      await expect(
-        videoClient.searchArchives.query({ sessionKey: validSessionKey })
-      ).rejects.toThrow();
+      await expect(videoClient.searchArchives({ sessionKey: validSessionKey })).rejects.toThrow();
     });
   });
 
@@ -211,16 +209,14 @@ describe('API Integrity', () => {
 
   describe('enableCaptions', () => {
     it('resolves when captions are enabled', async () => {
-      const roomName = 'captions-test-room';
-      const sessionResponse = await request(server).get(`/session/${roomName}`);
-      const { sessionKey } = sessionResponse.body;
+      const { sessionKey } = await videoClient.createSession({ roomName: 'captions-test-room' });
 
-      await expect(videoClient.enableCaptions.mutate({ sessionKey })).resolves.toBeDefined();
+      await expect(videoClient.enableCaptions({ sessionKey })).resolves.toBeDefined();
     });
 
     it('rejects when sessionKey is missing', async () => {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      await expect(videoClient.enableCaptions.mutate({} as any)).rejects.toThrow();
+      await expect(videoClient.enableCaptions({} as any)).rejects.toThrow();
     });
   });
 
@@ -228,15 +224,13 @@ describe('API Integrity', () => {
 
   describe('disableCaptions', () => {
     it('resolves when captions are disabled', async () => {
-      const roomName = 'captions-disable-room';
-      const sessionResponse = await request(server).get(`/session/${roomName}`);
-      const { sessionKey } = sessionResponse.body;
+      const { sessionKey } = await videoClient.createSession({ roomName: 'captions-disable-room' });
 
       // Enable captions first so the room has a captions user count
-      await videoClient.enableCaptions.mutate({ sessionKey });
+      await videoClient.enableCaptions({ sessionKey });
 
       await expect(
-        videoClient.disableCaptions.mutate({
+        videoClient.disableCaptions({
           captionsId: 'mock-captions-id',
           sessionKey,
         })
@@ -244,13 +238,11 @@ describe('API Integrity', () => {
     });
 
     it('rejects when the Video SDK rejects the captions id', async () => {
-      const roomName = 'captions-fail-room';
-      const sessionResponse = await request(server).get(`/session/${roomName}`);
-      const { sessionKey } = sessionResponse.body;
-      await videoClient.enableCaptions.mutate({ sessionKey });
+      const { sessionKey } = await videoClient.createSession({ roomName: 'captions-fail-room' });
+      await videoClient.enableCaptions({ sessionKey });
 
       await expect(
-        videoClient.disableCaptions.mutate({
+        videoClient.disableCaptions({
           captionsId: 'wrongCaptionId',
           sessionKey,
         })
@@ -389,10 +381,12 @@ describe('API Integrity', () => {
       });
     });
 
-    describe('GET /v2/searchArchives', () => {
+    describe('POST /v2/searchArchives', () => {
       it('returns a list of archives', async () => {
-        const input = encodeURIComponent(JSON.stringify({ sessionKey: validSessionKey }));
-        const response = await request(server).get(`/v2/searchArchives?input=${input}`).expect(200);
+        const response = await request(server)
+          .post('/v2/searchArchives')
+          .send({ sessionKey: validSessionKey })
+          .expect(200);
 
         const data = extractData<{ items: Array<{ id: string }>; count: number }>(response.body);
         expect(data).toMatchObject({
@@ -404,8 +398,9 @@ describe('API Integrity', () => {
       it('returns an error when the SDK fails', async () => {
         mockSearchArchives.mockRejectedValueOnce(new Error('SDK failure'));
 
-        const input = encodeURIComponent(JSON.stringify({ sessionKey: validSessionKey }));
-        const response = await request(server).get(`/v2/searchArchives?input=${input}`);
+        const response = await request(server)
+          .post('/v2/searchArchives')
+          .send({ sessionKey: validSessionKey });
 
         expect(response.status).toBeGreaterThanOrEqual(400);
         expect(response.body.error).toBeDefined();
@@ -414,9 +409,11 @@ describe('API Integrity', () => {
 
     describe('POST /v2/enableCaptions', () => {
       it('resolves when captions are enabled', async () => {
-        const roomName = 'fetch-captions-room';
-        const sessionResponse = await request(server).get(`/session/${roomName}`);
-        const { sessionKey } = sessionResponse.body;
+        const createResponse = await request(server)
+          .post('/v2/createSession')
+          .send({ roomName: 'fetch-captions-room' })
+          .expect(200);
+        const { sessionKey } = extractData<{ sessionKey: string }>(createResponse.body);
 
         const response = await request(server)
           .post('/v2/enableCaptions')
@@ -436,9 +433,11 @@ describe('API Integrity', () => {
 
     describe('POST /v2/disableCaptions', () => {
       it('resolves when captions are disabled', async () => {
-        const roomName = 'fetch-disable-room';
-        const sessionResponse = await request(server).get(`/session/${roomName}`);
-        const { sessionKey } = sessionResponse.body;
+        const createResponse = await request(server)
+          .post('/v2/createSession')
+          .send({ roomName: 'fetch-disable-room' })
+          .expect(200);
+        const { sessionKey } = extractData<{ sessionKey: string }>(createResponse.body);
         await request(server).post('/v2/enableCaptions').send({ sessionKey });
 
         const response = await request(server)
@@ -453,9 +452,11 @@ describe('API Integrity', () => {
       });
 
       it('returns an error when the captions id is invalid', async () => {
-        const roomName = 'fetch-disable-fail-room';
-        const sessionResponse = await request(server).get(`/session/${roomName}`);
-        const { sessionKey } = sessionResponse.body;
+        const createResponse = await request(server)
+          .post('/v2/createSession')
+          .send({ roomName: 'fetch-disable-fail-room' })
+          .expect(200);
+        const { sessionKey } = extractData<{ sessionKey: string }>(createResponse.body);
         await request(server).post('/v2/enableCaptions').send({ sessionKey });
 
         const response = await request(server).post('/v2/disableCaptions').send({

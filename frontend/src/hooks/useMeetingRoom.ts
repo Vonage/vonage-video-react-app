@@ -106,7 +106,7 @@ const useMeetingRoom = () => {
          * [TODO]: This is a temporary solution to support legacy vera functionality without depending on the old routers
          * If the roomName already exists, the backend will return the existing sessionKey, otherwise it will create a new session and return its sessionKey.
          */
-        const session = await videoClient.createSession.mutate({ roomName: sessionKey });
+        const session = await videoClient.createSession({ roomName: sessionKey });
 
         return session.sessionKey;
       })();

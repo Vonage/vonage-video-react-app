@@ -23,9 +23,7 @@ const mockCreateSessionMutate = vi.fn();
 vi.mock('@services/videoClient', () => ({
   __esModule: true,
   default: {
-    createSession: {
-      mutate: (...args: unknown[]) => mockCreateSessionMutate(...args) as unknown,
-    },
+    createSession: (...args: unknown[]) => mockCreateSessionMutate(...args) as unknown,
   },
 }));
 vi.mock('../JoinContainerSeparator', () => ({

@@ -28,9 +28,7 @@ const validSessionKey =
 
 vi.mock('@services', () => ({
   videoClient: {
-    joinSession: {
-      mutate: (...args: unknown[]) => mockJoinSessionMutate(...args) as unknown,
-    },
+    joinSession: (...args: unknown[]) => mockJoinSessionMutate(...args) as unknown,
   },
 }));
 
@@ -476,7 +474,7 @@ describe('SessionProvider', () => {
     await waitFor(() => expect(vonageVideoClient.forceMuteStream).toHaveBeenCalledTimes(1));
   });
 
-  it('joinRoom should call joinSession.mutate and connect', async () => {
+  it('joinRoom should call joinSession and connect', async () => {
     await renderAndWaitForConnection();
 
     await waitFor(() => {

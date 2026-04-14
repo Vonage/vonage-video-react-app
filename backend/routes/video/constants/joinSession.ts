@@ -4,7 +4,7 @@ import { TokenRole } from '@api-lib';
 const threeHoursInMilliseconds = 3 * 60 * 60 * 1000;
 
 const joinSession: HandlersConfig['joinSession'] = {
-  defaults: (payload) => ({
+  addDefaults: (payload) => ({
     ...payload,
     clientTokenOptions: {
       role: TokenRole.MODERATOR,

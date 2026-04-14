@@ -38,12 +38,8 @@ const mockJoinSessionMutate = vi
 
 vi.mock('@services', () => ({
   videoClient: {
-    createSession: {
-      mutate: (...args: unknown[]) => mockCreateSessionMutate(...args) as unknown,
-    },
-    joinSession: {
-      mutate: (...args: unknown[]) => mockJoinSessionMutate(...args) as unknown,
-    },
+    createSession: (...args: unknown[]) => mockCreateSessionMutate(...args) as unknown,
+    joinSession: (...args: unknown[]) => mockJoinSessionMutate(...args) as unknown,
   },
 }));
 

@@ -12,8 +12,8 @@ vi.mock('@hooks/useSessionContext');
 
 vi.mock('@services/videoClient', () => ({
   default: {
-    startArchive: { mutate: vi.fn() },
-    stopArchive: { mutate: vi.fn() },
+    startArchive: vi.fn(),
+    stopArchive: vi.fn(),
   },
 }));
 
@@ -52,7 +52,7 @@ describe('ArchivingButton', () => {
 
   it('triggers the start archiving when button is pressed', async () => {
     vi.useFakeTimers();
-    (videoClient.startArchive.mutate as Mock).mockResolvedValue({ data: { success: true } });
+    (videoClient.startArchive as Mock).mockResolvedValue({ data: { success: true } });
     render(<ArchivingButton handleClick={mockHandleCloseMenu} />);
 
     act(() => screen.getByTestId('archiving-button').click());
@@ -65,7 +65,7 @@ describe('ArchivingButton', () => {
       await vi.runAllTimersAsync();
     });
 
-    expect(videoClient.startArchive.mutate).toHaveBeenCalledWith({ sessionKey: mockedSessionKey });
+    expect(videoClient.startArchive).toHaveBeenCalledWith({ sessionKey: mockedSessionKey });
 
     vi.useRealTimers();
   });
@@ -106,7 +106,7 @@ describe('ArchivingButton', () => {
       await vi.runAllTimersAsync();
     });
 
-    expect(videoClient.stopArchive.mutate).toHaveBeenCalledWith({
+    expect(videoClient.stopArchive).toHaveBeenCalledWith({
       sessionKey: mockedSessionKey,
       archiveId: testArchiveId,
     });

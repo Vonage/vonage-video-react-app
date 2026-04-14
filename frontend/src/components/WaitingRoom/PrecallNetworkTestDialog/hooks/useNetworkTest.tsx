@@ -138,8 +138,7 @@ const useNetworkTest = () => {
       return (testPromiseRef.current = new CancelablePromise<QualityResults>(
         async (resolve, reject, { isCanceled, reportProgress, onCancel }) => {
           try {
-            const { applicationId, sessionId, token } =
-              await videoClient.createSessionAndJoin.mutate();
+            const { applicationId, sessionId, token } = await videoClient.createSessionAndJoin();
 
             if (isCanceled()) return;
 

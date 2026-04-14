@@ -1,4 +1,8 @@
-import { makeInternalErrorHandler, makeThirdPartyErrorHandler } from '@api-lib/errors';
+import {
+  isHttpErrorLike,
+  makeInternalErrorHandler,
+  makeThirdPartyErrorHandler,
+} from '@api-lib/errors';
 import type { EnableCaptionsPayload } from '@api-lib/schemas';
 import type { IVideoClient } from '@api-lib/types';
 import { isErrorLike } from '@common/assertions';
@@ -17,11 +21,12 @@ async function ensureCaptionsEnabled(
 ): Promise<EnableCaptionResponse> {
   try {
     const { sessionKey, captionOptions } = payload;
+    const { sessionId } = this.decodeSessionKey({ sessionKey });
 
     const clientToken = this.createEphemeralToken({ sessionKey });
 
     const { error, result } = await tryCatch(() =>
-      this._video.enableCaptions(sessionKey, clientToken, captionOptions)
+      this._video.enableCaptions(sessionId, clientToken, captionOptions)
     );
 
     if (error && isErrorLike(error)) {
@@ -31,6 +36,9 @@ async function ensureCaptionsEnabled(
 
       // If live captions have already been started for the session, we can consider the action successful
       if (isLiveCaptionsAlreadyStarted) return { captionsId: null };
+
+      const isCaptionsAlreadyEnabled = isHttpErrorLike(error) && error.response.status === 409;
+      if (isCaptionsAlreadyEnabled) return { captionsId: null };
 
       throw makeThirdPartyErrorHandler(error.message)(error);
     }

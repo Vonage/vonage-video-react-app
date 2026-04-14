@@ -14,8 +14,8 @@ const { mockCreateSessionMutate, mockJoinSessionMutate, mockVideoClient } = vi.h
   const mockCreateSessionMutate = vi.fn();
   const mockJoinSessionMutate = vi.fn();
   const mockVideoClient = {
-    createSession: { mutate: (...args: unknown[]) => mockCreateSessionMutate(...args) as unknown },
-    joinSession: { mutate: (...args: unknown[]) => mockJoinSessionMutate(...args) as unknown },
+    createSession: (...args: unknown[]) => mockCreateSessionMutate(...args) as unknown,
+    joinSession: (...args: unknown[]) => mockJoinSessionMutate(...args) as unknown,
   };
   return { mockCreateSessionMutate, mockJoinSessionMutate, mockVideoClient };
 });

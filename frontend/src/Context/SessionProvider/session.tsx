@@ -483,7 +483,7 @@ const SessionProvider = ({ children, initialValue = {} }: SessionProviderProps):
    */
   const joinRoom = useCallback(
     async (args: { sessionKey: string }) => {
-      const session = await videoClient.joinSession.mutate({
+      const session = await videoClient.joinSession({
         sessionKey: args.sessionKey,
       });
 

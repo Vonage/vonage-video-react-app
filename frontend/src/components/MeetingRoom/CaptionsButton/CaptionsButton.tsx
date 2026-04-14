@@ -37,7 +37,7 @@ const CaptionsButton = ({
   captionsState,
 }: CaptionsButtonProps): ReactElement | false => {
   const { t } = useTranslation();
-  const { sessionKey, connected } = useSessionContext();
+  const { sessionKey } = useSessionContext();
   const [captionsId, setCaptionsId] = useState<string>('');
   const { isUserCaptionsEnabled, setIsUserCaptionsEnabled, setCaptionsErrorResponse } =
     captionsState;
@@ -50,8 +50,6 @@ const CaptionsButton = ({
     }
   };
 
-  const sessionCaptionsEnabled = connected && !!captionsId;
-
   const handleCaptionsErrorResponse = (message: string | null) => {
     setCaptionsErrorResponse(message || t('errors.unknown'));
     setCaptionsId('');
@@ -60,8 +58,8 @@ const CaptionsButton = ({
 
   const handleCaptionsEnable = async () => {
     try {
-      const response = await videoClient.enableCaptions.mutate({ sessionKey: sessionKey! });
-      setCaptionsId(response.captionsId);
+      const response = await videoClient.enableCaptions({ sessionKey: sessionKey! });
+      setCaptionsId(response?.captionsId ?? '-1');
       setIsUserCaptionsEnabled(true);
     } catch (error) {
       if (error instanceof AxiosError) {
@@ -74,7 +72,11 @@ const CaptionsButton = ({
   const handleCaptionsDisable = async () => {
     try {
       setCaptionsId('');
-      await videoClient.disableCaptions.mutate({ sessionKey: sessionKey!, captionsId });
+
+      if (captionsId && captionsId !== '-1') {
+        await videoClient.disableCaptions({ sessionKey: sessionKey!, captionsId });
+      }
+
       setIsUserCaptionsEnabled(false);
     } catch (error) {
       if (error instanceof AxiosError) {
@@ -87,7 +89,7 @@ const CaptionsButton = ({
   const handleCaptions = async (action: 'enable' | 'disable') => {
     if (action === 'enable') {
       await handleCaptionsEnable();
-    } else if (action === 'disable' && sessionCaptionsEnabled) {
+    } else if (action === 'disable') {
       await handleCaptionsDisable();
     }
   };

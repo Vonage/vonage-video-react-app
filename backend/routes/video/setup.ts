@@ -1,8 +1,6 @@
-import { VideoAction } from '@api-lib';
 import getSessionStorageService from '../../sessionStorageService';
 import { makeInternalErrorHandler } from '@api-lib/errors';
 import { videoHandler } from './video';
-import { isNil } from '@node/assertions';
 import { getOrCreateSessionKeyFromRoomName } from '../../helpers';
 
 const sessionService = getSessionStorageService();
@@ -11,7 +9,7 @@ const sessionService = getSessionStorageService();
  * [TODO] This is a temporary solution to support legacy vera functionality without depending on the old routers
  * This override checks if a session already exists for the given roomName and reuses it.
  */
-videoHandler.override$(VideoAction.createSession, async (opts) => {
+videoHandler.override$('createSession', async (opts) => {
   try {
     const { assertInput, videoClient } = opts;
 
@@ -32,7 +30,7 @@ videoHandler.override$(VideoAction.createSession, async (opts) => {
 /**
  * TODO: An easier approach will be only use ensureCaptions in the client and only clean captions when the session is closed
  */
-videoHandler.override$(VideoAction.enableCaptions, async (opts) => {
+videoHandler.override$('enableCaptions', async (opts) => {
   try {
     const { assertInput, videoClient } = opts;
     const { sessionKey } = assertInput(opts.input);
@@ -47,9 +45,10 @@ videoHandler.override$(VideoAction.enableCaptions, async (opts) => {
       // If captions were already enable returns the saved captionsId, otherwise returns the new captionsId
       const captionsId = result.captionsId ?? savedCaptionsId;
 
-      if (isNil(captionsId)) {
-        throw makeInternalErrorHandler('Unable to retrieve captionsId')(null);
-      }
+      // [TODO]: This is why we cannot relay on our state to know if captions are enable or not.
+      // if (isNil(captionsId)) {
+      //   throw makeInternalErrorHandler('Unable to retrieve captionsId')(null);
+      // }
 
       return { captionsId };
     })();
@@ -64,7 +63,7 @@ videoHandler.override$(VideoAction.enableCaptions, async (opts) => {
   }
 });
 
-videoHandler.override$(VideoAction.disableCaptions, async (opts) => {
+videoHandler.override$('disableCaptions', async (opts) => {
   try {
     const { assertInput, videoClient } = opts;
     const { captionsId, sessionKey } = assertInput(opts.input);

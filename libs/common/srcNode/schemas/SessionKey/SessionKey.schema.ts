@@ -1,5 +1,5 @@
 import z from 'zod';
-import { isValidSessionKey } from '../../src/assertions';
+import { isValidSessionKey } from '../../../src/assertions';
 
 export const SessionKeySchema = z
   .string()

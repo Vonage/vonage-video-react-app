@@ -39,18 +39,32 @@ class VideoClient implements IVideoClient {
 
   public readonly _video: Video;
 
-  public readonly _handlersDefaults: Partial<HandlersDefaults> | undefined;
+  public readonly _handlersDefaults:
+    | Partial<
+        HandlersDefaults &
+          // these handlers inherit the defaults from the other handlers
+          {
+            ensureCaptionsEnabled: HandlersDefaults['enableCaptions'];
+          }
+      >
+    | undefined;
 
   public readonly _sessionSigning: SessionSigning;
 
   constructor(config: VideoClientConfig) {
     assertVideoClientConfig(config);
 
-    const { auth, videoParams } = config;
+    const { auth, videoParams, handlersDefaults } = config;
 
     this._auth = auth instanceof Auth ? auth : new Auth(auth);
     this._video = new Video(this._auth, videoParams);
-    this._handlersDefaults = config.handlersDefaults;
+
+    // some defaults are shared between handlers
+    this._handlersDefaults = {
+      ensureCaptionsEnabled: handlersDefaults?.enableCaptions,
+
+      ...handlersDefaults,
+    };
 
     // This provides lightweight integrity verification of session keys,
     // It is not intended for authentication or authorization.

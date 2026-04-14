@@ -8,12 +8,13 @@ import {
   StartArchivePayloadSchema,
   StopArchivePayloadSchema,
   CreateEphemeralTokenPayloadSchema,
+  CreateSessionAndJoinPayloadSchema,
 } from '../schemas';
 import type { ZodType } from 'zod';
 
 const schemasByAction = {
   [VideoAction.createSession]: CreateSessionPayloadSchema.optional(),
-  [VideoAction.createSessionAndJoin]: CreateSessionPayloadSchema.optional(),
+  [VideoAction.createSessionAndJoin]: CreateSessionAndJoinPayloadSchema.optional(),
   [VideoAction.startArchive]: StartArchivePayloadSchema,
   [VideoAction.stopArchive]: StopArchivePayloadSchema,
   [VideoAction.searchArchives]: SearchArchivesPayloadSchema,

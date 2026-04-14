@@ -4,6 +4,7 @@ export * from './VideoRouterConfig.schema';
 export * from './EnableCaptionsPayload.schema';
 export * from './DisableCaptionsPayload.schema';
 export * from './CreateSessionPayload.schema';
+export * from './CreateSessionAndJoinPayload.schema';
 export * from './DecodeSessionIdPayload.schema';
 export * from './SearchArchivesPayload.schema';
 export * from './StartArchivePayload.schema';

@@ -8,9 +8,7 @@ const mockMutate = vi.fn();
 
 vi.mock('@services', () => ({
   videoClient: {
-    createSession: {
-      mutate: (...args: unknown[]): unknown => mockMutate(...args),
-    },
+    createSession: (...args: unknown[]): unknown => mockMutate(...args),
   },
 }));
 

@@ -1,14 +1,17 @@
 import { makeInternalErrorHandler } from '@api-lib/errors';
-import type { IVideoClient, CreateSessionPayload } from '@api-lib/types';
+import type { IVideoClient, CreateSessionAndJoinPayload } from '@api-lib/types';
 import { VideoSessionDetailsWithToken } from '@common/types';
 
 async function createSessionAndJoin(
   this: IVideoClient,
-  payload?: CreateSessionPayload
+  payload?: CreateSessionAndJoinPayload
 ): Promise<VideoSessionDetailsWithToken> {
   try {
-    const session = await this.createSession.call(this, payload);
-    const { token } = this.joinSession.call(this, { sessionKey: session.sessionKey });
+    const session = await this.createSession(payload);
+    const { token } = this.joinSession({
+      sessionKey: session.sessionKey,
+      clientTokenOptions: payload?.clientTokenOptions,
+    });
 
     return { ...session, token };
   } catch (error) {

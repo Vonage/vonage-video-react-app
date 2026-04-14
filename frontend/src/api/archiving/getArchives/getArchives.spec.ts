@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from 'vitest';
-import { serverArchives } from './data';
-import { getArchives } from '..';
+import { serverArchives } from '../tests/data';
+import getArchives from './getArchives';
 import type { ServerArchive } from '../model';
 
 const mockSearchArchivesQuery = vi.fn((_args?: unknown) =>
@@ -16,7 +16,7 @@ vi.mock('@services/videoClient', () => ({
 }));
 
 describe('getArchives', () => {
-  it('it returns an object with array of Archives and hasPending flag', async () => {
+  it('returns an object with array of Archives and hasPending flag', async () => {
     mockSearchArchivesQuery.mockResolvedValue({ items: serverArchives });
     const archives = await getArchives({ locale: 'en', sessionKey: 'test-session-id' });
     expect(archives).toEqual({
@@ -53,7 +53,7 @@ describe('getArchives', () => {
     });
   });
 
-  it('it returns object with empty array when no archives', async () => {
+  it('returns object with empty array when no archives', async () => {
     mockSearchArchivesQuery.mockResolvedValue({ items: [] });
     const archives = await getArchives({ locale: 'en', sessionKey: 'test-session-id' });
     expect(archives).toEqual({
@@ -62,7 +62,7 @@ describe('getArchives', () => {
     });
   });
 
-  it('it throws with error when api call throws', async () => {
+  it('throws with error when api call throws', async () => {
     mockSearchArchivesQuery.mockRejectedValue(new Error('Network Error'));
     await expect(
       getArchives({ locale: 'en', sessionKey: 'test-session-id' })

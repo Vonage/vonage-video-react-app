@@ -4,6 +4,7 @@ export type * from './IVideoClient';
 export type {
   VideoClientConfig,
   CreateSessionPayload,
+  CreateSessionAndJoinPayload,
   DecodeSessionIdPayload,
   CreateEphemeralTokenPayload,
   StartArchivePayload,

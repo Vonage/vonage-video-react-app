@@ -2,7 +2,7 @@ import { HandlersConfig } from '@api-lib';
 import { LayoutType, Resolution } from '@vonage/video';
 
 const startArchive: HandlersConfig['startArchive'] = {
-  defaults: ({ sessionKey, archiveOptions }) => ({
+  addDefaults: ({ sessionKey, archiveOptions }) => ({
     sessionKey,
     archiveOptions: {
       resolution: Resolution.FHD_LANDSCAPE,
