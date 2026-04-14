@@ -23,6 +23,7 @@ const AdvancedSettingsBooleanField = ({
           <input
             type="checkbox"
             className="peer sr-only"
+            aria-label={label}
             checked={checked}
             onChange={(event) => {
               onChange(event.target.checked);

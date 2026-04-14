@@ -20,6 +20,7 @@ const customWordList = [
   'unstub',
   'vonageAPIURL',
   'kbps',
+  'Mbps',
 ];
 
 export default customWordList;

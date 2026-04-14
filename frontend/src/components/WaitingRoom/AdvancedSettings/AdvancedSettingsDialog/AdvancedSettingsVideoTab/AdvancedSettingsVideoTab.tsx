@@ -2,20 +2,27 @@ import type { ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
 import { RESOLUTIONS } from '../../../../../env';
 import AdvancedSettingsCodecPriorityField from '../AdvancedSettingsCodecPriorityField';
+import AdvancedSettingsCustomVideoBitrateField from '../AdvancedSettingsCustomVideoBitrateField';
 import AdvancedSettingsSelectField from '../AdvancedSettingsSelectField';
 import type {
   AdvancedSettingsBitrateMode,
   AdvancedSettingsCodecMode,
+  AdvancedSettingsCustomVideoBitrate,
   AdvancedSettingsFrameRate,
   AdvancedSettingsManualCodecOrder,
   AdvancedSettingsResolution,
   AdvancedSettingsSelectOption,
 } from '../AdvancedSettingsDialog.types';
-import { ADVANCED_SETTINGS_CODEC_MODE } from '../AdvancedSettingsDialog.types';
+import {
+  ADVANCED_SETTINGS_BITRATE_MODE,
+  ADVANCED_SETTINGS_CODEC_MODE,
+} from '../AdvancedSettingsDialog.types';
 
 type AdvancedSettingsVideoTabProps = {
   bitrateMode: AdvancedSettingsBitrateMode;
   setBitrateMode: (value: AdvancedSettingsBitrateMode) => void;
+  customVideoBitrate: AdvancedSettingsCustomVideoBitrate;
+  setCustomVideoBitrate: (value: AdvancedSettingsCustomVideoBitrate) => void;
   codecMode: AdvancedSettingsCodecMode;
   setCodecMode: (value: AdvancedSettingsCodecMode) => void;
   codecPriority: AdvancedSettingsManualCodecOrder;
@@ -29,6 +36,8 @@ type AdvancedSettingsVideoTabProps = {
 const AdvancedSettingsVideoTab = ({
   bitrateMode,
   setBitrateMode,
+  customVideoBitrate,
+  setCustomVideoBitrate,
   codecMode,
   setCodecMode,
   codecPriority,
@@ -43,16 +52,20 @@ const AdvancedSettingsVideoTab = ({
 
   const bitrateOptions: AdvancedSettingsSelectOption<AdvancedSettingsBitrateMode>[] = [
     {
-      value: 'default',
+      value: ADVANCED_SETTINGS_BITRATE_MODE.default,
       label: t('advancedSettings.video.bitrate.options.default'),
     },
     {
-      value: 'bw_saver',
+      value: ADVANCED_SETTINGS_BITRATE_MODE.bwSaver,
       label: t('advancedSettings.video.bitrate.options.bw_saver'),
     },
     {
-      value: 'extra_bw_saver',
+      value: ADVANCED_SETTINGS_BITRATE_MODE.extraBwSaver,
       label: t('advancedSettings.video.bitrate.options.extra_bw_saver'),
+    },
+    {
+      value: ADVANCED_SETTINGS_BITRATE_MODE.custom,
+      label: t('advancedSettings.video.bitrate.options.custom'),
     },
   ];
 
@@ -94,6 +107,13 @@ const AdvancedSettingsVideoTab = ({
           description={t('advancedSettings.video.bitrate.description')}
         />
 
+        {bitrateMode === ADVANCED_SETTINGS_BITRATE_MODE.custom && (
+          <AdvancedSettingsCustomVideoBitrateField
+            customVideoBitrate={customVideoBitrate}
+            setCustomVideoBitrate={setCustomVideoBitrate}
+          />
+        )}
+
         <AdvancedSettingsSelectField
           label={t('advancedSettings.video.codec.label')}
           value={codecMode}
@@ -102,12 +122,12 @@ const AdvancedSettingsVideoTab = ({
           description={t('advancedSettings.video.codec.description')}
         />
 
-        {codecMode === ADVANCED_SETTINGS_CODEC_MODE.manual ? (
+        {codecMode === ADVANCED_SETTINGS_CODEC_MODE.manual && (
           <AdvancedSettingsCodecPriorityField
             codecPriority={codecPriority}
             setCodecPriority={setCodecPriority}
           />
-        ) : null}
+        )}
 
         <AdvancedSettingsSelectField
           label={t('advancedSettings.video.frameRate.label')}

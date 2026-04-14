@@ -15,6 +15,7 @@ describe('AdvancedSettingsBooleanField', () => {
     );
 
     expect(screen.getByRole('heading', { name: /enable stats/i })).toBeInTheDocument();
+    expect(screen.getByRole('checkbox', { name: /enable stats/i })).toBeInTheDocument();
     expect(screen.getByText(/collect live metrics/i)).toBeInTheDocument();
   });
 
@@ -31,7 +32,7 @@ describe('AdvancedSettingsBooleanField', () => {
       />
     );
 
-    await user.click(screen.getByRole('checkbox'));
+    await user.click(screen.getByRole('checkbox', { name: /enable stats/i }));
 
     expect(onChange).toHaveBeenCalledWith(true);
   });

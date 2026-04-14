@@ -1,11 +1,21 @@
 import type { ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
 import AdvancedSettingsBooleanField from '../AdvancedSettingsBooleanField';
-import type { AdvancedSettingsAudioBitrate } from '../AdvancedSettingsDialog.types';
+import AdvancedSettingsSelectField from '../AdvancedSettingsSelectField';
+import type {
+  AdvancedSettingsAudioBitrateMode,
+  AdvancedSettingsCustomAudioBitrate,
+  AdvancedSettingsSelectOption,
+} from '../AdvancedSettingsDialog.types';
+import { ADVANCED_SETTINGS_AUDIO_BITRATE_MODE } from '../AdvancedSettingsDialog.types';
 
 type AdvancedSettingsAudioTabProps = {
-  audioBitrate: AdvancedSettingsAudioBitrate;
-  setAudioBitrate: (value: AdvancedSettingsAudioBitrate) => void;
+  audioBitrateMode: AdvancedSettingsAudioBitrateMode;
+  setAudioBitrateMode: (value: AdvancedSettingsAudioBitrateMode) => void;
+  customAudioBitrate: AdvancedSettingsCustomAudioBitrate;
+  setCustomAudioBitrate: (value: AdvancedSettingsCustomAudioBitrate) => void;
+  enableDtx: boolean;
+  setEnableDtx: (value: boolean) => void;
   publisherAudioFallbackEnabled: boolean;
   setPublisherAudioFallbackEnabled: (value: boolean) => void;
   subscriberAudioFallbackEnabled: boolean;
@@ -13,14 +23,28 @@ type AdvancedSettingsAudioTabProps = {
 };
 
 const AdvancedSettingsAudioTab = ({
-  audioBitrate,
-  setAudioBitrate,
+  audioBitrateMode,
+  setAudioBitrateMode,
+  customAudioBitrate,
+  setCustomAudioBitrate,
+  enableDtx,
+  setEnableDtx,
   publisherAudioFallbackEnabled,
   setPublisherAudioFallbackEnabled,
   subscriberAudioFallbackEnabled,
   setSubscriberAudioFallbackEnabled,
 }: AdvancedSettingsAudioTabProps): ReactElement => {
   const { t } = useTranslation();
+  const audioBitrateOptions: AdvancedSettingsSelectOption<AdvancedSettingsAudioBitrateMode>[] = [
+    {
+      value: ADVANCED_SETTINGS_AUDIO_BITRATE_MODE.automatic,
+      label: t('advancedSettings.audio.bitrate.options.automatic'),
+    },
+    {
+      value: ADVANCED_SETTINGS_AUDIO_BITRATE_MODE.custom,
+      label: t('advancedSettings.audio.bitrate.options.custom'),
+    },
+  ];
 
   return (
     <div className="flex flex-col gap-8">
@@ -28,35 +52,54 @@ const AdvancedSettingsAudioTab = ({
         {t('advancedSettings.tabs.audio')}
       </h2>
 
-      <div className="flex flex-col gap-1.5">
-        <h3 className="font-vera-plain text-vera-body-extended-semibold text-vera-secondary">
-          {t('advancedSettings.audio.bitrate.label')}
-        </h3>
+      <div className="flex flex-col gap-4">
+        <AdvancedSettingsSelectField
+          label={t('advancedSettings.audio.bitrate.label')}
+          value={audioBitrateMode}
+          options={audioBitrateOptions}
+          onChange={setAudioBitrateMode}
+          description={t('advancedSettings.audio.bitrate.description')}
+        />
 
-        <div className="px-1">
-          <input
-            type="range"
-            className="w-full accent-vera-primary"
-            min={6}
-            max={510}
-            value={audioBitrate}
-            onChange={(event) => {
-              setAudioBitrate(Number(event.target.value));
-            }}
-          />
-          <div className="mt-2 flex items-center justify-between font-vera-plain text-vera-caption text-vera-tertiary">
-            <span>6 kbps</span>
-            <span className="rounded-full bg-vera-background px-1 py-1 text-vera-secondary">
-              {audioBitrate} kbps
-            </span>
-            <span>510 kbps</span>
+        {audioBitrateMode === ADVANCED_SETTINGS_AUDIO_BITRATE_MODE.custom && (
+          <div className="flex flex-col gap-3 rounded-vera-medium border-vera-border bg-vera-background px-4 py-3">
+            <p className="font-vera-plain text-vera-body-base-semibold text-vera-secondary">
+              {t('advancedSettings.audio.bitrate.customLabel')}
+            </p>
+
+            <div className="px-1">
+              <input
+                type="range"
+                className="w-full accent-vera-primary"
+                min={6}
+                max={510}
+                value={customAudioBitrate}
+                onChange={(event) => {
+                  setCustomAudioBitrate(Number(event.target.value));
+                }}
+                data-testid="advanced-settings-custom-audio-bitrate-slider"
+                aria-label={t('advancedSettings.audio.bitrate.customLabel')}
+              />
+              <div className="mt-2 flex items-center justify-between font-vera-plain text-vera-caption text-vera-tertiary">
+                <span>{t('advancedSettings.audio.bitrate.minimum')}</span>
+                <span className="rounded-full bg-vera-surface px-1 py-1 text-vera-secondary">
+                  {t('advancedSettings.audio.bitrate.currentValue', {
+                    value: customAudioBitrate,
+                  })}
+                </span>
+                <span>{t('advancedSettings.audio.bitrate.maximum')}</span>
+              </div>
+            </div>
           </div>
-        </div>
-
-        <p className="font-vera-plain text-vera-body-base text-vera-tertiary">
-          {t('advancedSettings.audio.bitrate.description')}
-        </p>
+        )}
       </div>
+
+      <AdvancedSettingsBooleanField
+        label={t('advancedSettings.audio.enableDtx.label')}
+        checked={enableDtx}
+        onChange={setEnableDtx}
+        description={t('advancedSettings.audio.enableDtx.description')}
+      />
 
       <AdvancedSettingsBooleanField
         label={t('advancedSettings.audio.publisherAudioFallback.label')}

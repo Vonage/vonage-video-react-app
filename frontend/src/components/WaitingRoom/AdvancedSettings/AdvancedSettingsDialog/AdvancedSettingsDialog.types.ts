@@ -7,8 +7,16 @@ export type AdvancedSettingsDialogProps = {
 
 export type AdvancedSettingsTab = 'general' | 'video' | 'audio' | 'statistics';
 
-export type AdvancedSettingsBitrateMode =
-  import('@vonage/client-sdk-video').VideoBitratePresetInput;
+export type AdvancedSettingsBitrateMode = import('@vonage/client-sdk-video').VideoBitratePreset;
+
+export const ADVANCED_SETTINGS_BITRATE_MODE = {
+  default: 'default' as AdvancedSettingsBitrateMode,
+  bwSaver: 'bw_saver' as AdvancedSettingsBitrateMode,
+  extraBwSaver: 'extra_bw_saver' as AdvancedSettingsBitrateMode,
+  custom: 'custom' as AdvancedSettingsBitrateMode,
+};
+
+export type AdvancedSettingsCustomVideoBitrate = number;
 
 export type AdvancedSettingsCodecMode = 'automatic' | 'manual';
 
@@ -31,7 +39,14 @@ export type AdvancedSettingsFrameRate = NonNullable<
 
 export type AdvancedSettingsResolution = Resolution;
 
-export type AdvancedSettingsAudioBitrate = number;
+export type AdvancedSettingsAudioBitrateMode = 'automatic' | 'custom';
+
+export const ADVANCED_SETTINGS_AUDIO_BITRATE_MODE = {
+  automatic: 'automatic' as AdvancedSettingsAudioBitrateMode,
+  custom: 'custom' as AdvancedSettingsAudioBitrateMode,
+};
+
+export type AdvancedSettingsCustomAudioBitrate = number;
 
 export type AdvancedSettingsSelectOption<TValue extends string | number = string> = {
   value: TValue;

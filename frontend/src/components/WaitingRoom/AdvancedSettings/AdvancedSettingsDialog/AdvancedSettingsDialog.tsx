@@ -10,16 +10,22 @@ import AdvancedSettingsSidebar from './AdvancedSettingsSidebar';
 import AdvancedSettingsStatisticsTab from './AdvancedSettingsStatisticsTab';
 import AdvancedSettingsVideoTab from './AdvancedSettingsVideoTab';
 import type {
-  AdvancedSettingsAudioBitrate,
+  AdvancedSettingsAudioBitrateMode,
   AdvancedSettingsBitrateMode,
   AdvancedSettingsCodecMode,
+  AdvancedSettingsCustomAudioBitrate,
+  AdvancedSettingsCustomVideoBitrate,
   AdvancedSettingsDialogProps,
   AdvancedSettingsFrameRate,
   AdvancedSettingsManualCodecOrder,
   AdvancedSettingsResolution,
   AdvancedSettingsTab,
 } from './AdvancedSettingsDialog.types';
-import { ADVANCED_SETTINGS_CODEC_MODE } from './AdvancedSettingsDialog.types';
+import {
+  ADVANCED_SETTINGS_AUDIO_BITRATE_MODE,
+  ADVANCED_SETTINGS_BITRATE_MODE,
+  ADVANCED_SETTINGS_CODEC_MODE,
+} from './AdvancedSettingsDialog.types';
 
 /**
  * AdvancedSettingsDialog Component
@@ -31,7 +37,11 @@ const AdvancedSettingsDialog = ({
 }: AdvancedSettingsDialogProps): ReactElement => {
   const { t } = useTranslation();
   const [selectedTab, setSelectedTab] = useState<AdvancedSettingsTab>('general');
-  const [bitrateMode, setBitrateMode] = useState<AdvancedSettingsBitrateMode>('default');
+  const [bitrateMode, setBitrateMode] = useState<AdvancedSettingsBitrateMode>(
+    ADVANCED_SETTINGS_BITRATE_MODE.default
+  );
+  const [customVideoBitrate, setCustomVideoBitrate] =
+    useState<AdvancedSettingsCustomVideoBitrate>(500_000);
   const [codecMode, setCodecMode] = useState<AdvancedSettingsCodecMode>(
     ADVANCED_SETTINGS_CODEC_MODE.automatic
   );
@@ -42,7 +52,12 @@ const AdvancedSettingsDialog = ({
   ]);
   const [frameRate, setFrameRate] = useState<AdvancedSettingsFrameRate>(30);
   const [resolution, setResolution] = useState<AdvancedSettingsResolution>('640x480');
-  const [audioBitrate, setAudioBitrate] = useState<AdvancedSettingsAudioBitrate>(128);
+  const [audioBitrateMode, setAudioBitrateMode] = useState<AdvancedSettingsAudioBitrateMode>(
+    ADVANCED_SETTINGS_AUDIO_BITRATE_MODE.automatic
+  );
+  const [customAudioBitrate, setCustomAudioBitrate] =
+    useState<AdvancedSettingsCustomAudioBitrate>(128);
+  const [enableDtx, setEnableDtx] = useState(false);
   const [publisherAudioFallbackEnabled, setPublisherAudioFallbackEnabled] = useState(false);
   const [subscriberAudioFallbackEnabled, setSubscriberAudioFallbackEnabled] = useState(false);
   const [publisherStatisticsEnabled, setPublisherStatisticsEnabled] = useState(false);
@@ -61,6 +76,8 @@ const AdvancedSettingsDialog = ({
         <AdvancedSettingsVideoTab
           bitrateMode={bitrateMode}
           setBitrateMode={setBitrateMode}
+          customVideoBitrate={customVideoBitrate}
+          setCustomVideoBitrate={setCustomVideoBitrate}
           codecMode={codecMode}
           setCodecMode={setCodecMode}
           codecPriority={codecPriority}
@@ -76,8 +93,12 @@ const AdvancedSettingsDialog = ({
     if (selectedTab === 'audio') {
       return (
         <AdvancedSettingsAudioTab
-          audioBitrate={audioBitrate}
-          setAudioBitrate={setAudioBitrate}
+          audioBitrateMode={audioBitrateMode}
+          setAudioBitrateMode={setAudioBitrateMode}
+          customAudioBitrate={customAudioBitrate}
+          setCustomAudioBitrate={setCustomAudioBitrate}
+          enableDtx={enableDtx}
+          setEnableDtx={setEnableDtx}
           publisherAudioFallbackEnabled={publisherAudioFallbackEnabled}
           setPublisherAudioFallbackEnabled={setPublisherAudioFallbackEnabled}
           subscriberAudioFallbackEnabled={subscriberAudioFallbackEnabled}
