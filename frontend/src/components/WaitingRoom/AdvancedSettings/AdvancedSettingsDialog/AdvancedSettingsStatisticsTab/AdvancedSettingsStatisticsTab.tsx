@@ -1,7 +1,7 @@
 import type { ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
 import AdvancedSettingsBooleanField from '../AdvancedSettingsBooleanField';
-import AdvancedSettingsStatisticsList from '../AdvancedSettingsStatisticsList';
+import AdvancedSettingsStatisticsGroup from '../AdvancedSettingsStatisticsGroup';
 
 type AdvancedSettingsStatisticsTabProps = {
   publisherStatisticsEnabled: boolean;
@@ -13,32 +13,20 @@ const AdvancedSettingsStatisticsTab = ({
   setPublisherStatisticsEnabled,
 }: AdvancedSettingsStatisticsTabProps): ReactElement => {
   const { t } = useTranslation();
-
-  const statisticItems = [
-    'packetsSent',
-    'packetsLostSent',
-    'bytesSent',
-    'packetsReceived',
-    'packetsLostReceived',
-    'bytesReceived',
-    'maxAssignedBitrate',
-    'estimatedBandwidth',
-  ].map((key) => ({
-    label: t(`advancedSettings.statistics.metrics.${key}`),
-    value: '--',
-  }));
+  const publisherAudioStatistics: { label: string; value: string }[] = [];
+  const publisherVideoStatistics: { label: string; value: string }[] = [];
+  const subscriberStatisticsGroups: Array<{
+    title: string;
+    audioItems: { label: string; value: string }[];
+    videoItems: { label: string; value: string }[];
+  }> = [];
 
   return (
     <div className="flex flex-col gap-8">
       <h2 className="font-vera-plain text-vera-heading-2 text-vera-secondary">
         {t('advancedSettings.tabs.statistics')}
       </h2>
-
       <div className="flex flex-col gap-1.5">
-        <h3 className="font-vera-plain text-vera-body-extended-semibold text-vera-secondary">
-          {t('advancedSettings.statistics.collection.label')}
-        </h3>
-
         <AdvancedSettingsBooleanField
           label={t('advancedSettings.statistics.collection.enablePublisher.label')}
           checked={publisherStatisticsEnabled}
@@ -47,15 +35,29 @@ const AdvancedSettingsStatisticsTab = ({
         />
       </div>
 
-      <AdvancedSettingsStatisticsList
-        title={t('advancedSettings.statistics.sections.audio')}
-        items={statisticItems}
-      />
+      <div className="flex flex-col gap-4">
+        <AdvancedSettingsStatisticsGroup
+          title={t('advancedSettings.statistics.groups.publisher')}
+          audioTitle={t('advancedSettings.statistics.sections.audio')}
+          videoTitle={t('advancedSettings.statistics.sections.video')}
+          audioItems={publisherAudioStatistics}
+          videoItems={publisherVideoStatistics}
+          emptyLabel={t('advancedSettings.statistics.empty')}
+          defaultExpanded
+        />
 
-      <AdvancedSettingsStatisticsList
-        title={t('advancedSettings.statistics.sections.video')}
-        items={statisticItems}
-      />
+        {subscriberStatisticsGroups.map((subscriberStatisticsGroup) => (
+          <AdvancedSettingsStatisticsGroup
+            key={subscriberStatisticsGroup.title}
+            title={subscriberStatisticsGroup.title}
+            audioTitle={t('advancedSettings.statistics.sections.audio')}
+            videoTitle={t('advancedSettings.statistics.sections.video')}
+            audioItems={subscriberStatisticsGroup.audioItems}
+            videoItems={subscriberStatisticsGroup.videoItems}
+            emptyLabel={t('advancedSettings.statistics.empty')}
+          />
+        ))}
+      </div>
     </div>
   );
 };

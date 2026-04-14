@@ -3,7 +3,7 @@ import { describe, expect, it, vi } from 'vitest';
 import AdvancedSettingsStatisticsTab from './AdvancedSettingsStatisticsTab';
 
 describe('AdvancedSettingsStatisticsTab', () => {
-  it('renders collection and both statistics lists', () => {
+  it('renders collection and an empty publisher statistics group', () => {
     render(
       <AdvancedSettingsStatisticsTab
         publisherStatisticsEnabled={false}
@@ -12,12 +12,11 @@ describe('AdvancedSettingsStatisticsTab', () => {
     );
 
     expect(screen.getByRole('heading', { name: /^statistics$/i })).toBeInTheDocument();
-    expect(screen.getByRole('heading', { name: /collection/i })).toBeInTheDocument();
     expect(
       screen.getByRole('heading', { name: /enable publisher statistics/i })
     ).toBeInTheDocument();
-    expect(screen.getAllByRole('heading', { name: /audio/i }).length).toBeGreaterThan(0);
-    expect(screen.getAllByRole('heading', { name: /video/i }).length).toBeGreaterThan(0);
-    expect(screen.getAllByText(/packets sent/i).length).toBe(2);
+    expect(screen.getByRole('button', { name: /publisher/i })).toBeInTheDocument();
+    expect(screen.getByText(/no statistics available yet/i)).toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: /subscriber/i })).not.toBeInTheDocument();
   });
 });

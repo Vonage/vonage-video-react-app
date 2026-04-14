@@ -93,12 +93,12 @@ const AdvancedSettingsVideoTab = ({
     }));
 
   return (
-    <div className="flex flex-col gap-8">
+    <div className="flex flex-col gap-6">
       <h2 className="font-vera-plain text-vera-heading-2 text-vera-secondary">
         {t('advancedSettings.tabs.video')}
       </h2>
 
-      <div className="flex flex-col gap-8">
+      <div className="flex flex-col gap-6">
         <AdvancedSettingsSelectField
           label={t('advancedSettings.video.bitrate.label')}
           value={bitrateMode}

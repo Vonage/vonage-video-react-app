@@ -16,9 +16,9 @@ const AdvancedSettingsStatisticsList = ({
 }: AdvancedSettingsStatisticsListProps): ReactElement => {
   return (
     <div className="flex flex-col gap-1.5">
-      <h3 className="font-vera-plain text-vera-body-extended-semibold text-vera-secondary">
+      <h4 className="font-vera-plain text-vera-body-extended-semibold text-vera-secondary">
         {title}
-      </h3>
+      </h4>
 
       <div className="flex flex-col gap-1">
         {items.map((item) => (
