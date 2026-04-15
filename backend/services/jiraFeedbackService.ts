@@ -32,7 +32,7 @@ class JiraFeedbackService implements FeedbackService {
     this.jiraSeverityId = this.config.severityId as string;
   }
 
-  async reportIssue(data: FeedbackData): Promise<ReportIssueReturn | null> {
+  async reportIssue(data: FeedbackData): Promise<ReportIssueReturn> {
     const feedbackIssueData = {
       fields: {
         project: {
@@ -89,6 +89,9 @@ class JiraFeedbackService implements FeedbackService {
     ticketData: ReportIssueReturn,
     key: string
   ): Promise<ReportIssueReturn> {
+    if (!/^[A-Z]+-\d+$/.test(key)) {
+      throw new Error(`Invalid Jira issue key: ${key}`);
+    }
     const fileBuffer = Buffer.from(attachment, 'base64');
     const formData = new FormData();
     formData.append('file', fileBuffer, {

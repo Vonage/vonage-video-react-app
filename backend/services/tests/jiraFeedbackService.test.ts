@@ -20,7 +20,7 @@ describe('JiraFeedbackService', () => {
 
   beforeAll(() => {
     jest.resetModules();
-    process.env = { ...originalEnv, VIDEO_SERVICE_PROVIDER: 'opentok' };
+    process.env = { ...originalEnv, VIDEO_SERVICE_PROVIDER: 'opentok', JIRA_SEVERITY_ID: '12345' };
     jiraFeedbackService = new JiraFeedbackService();
   });
 
@@ -57,7 +57,7 @@ describe('JiraFeedbackService', () => {
             },
           ],
           [jiraFeedbackService.jiraEpicLink]: jiraFeedbackService.jiraEpicUrl,
-          customfield_12403: { id: jiraFeedbackService.jiraSeverityId },
+          customfield_12403: { id: '12345' },
           customfield_26112: 'Reported via user feedback form',
           customfield_13112: sharedData.issue,
         },
@@ -87,7 +87,7 @@ describe('JiraFeedbackService', () => {
     const mockScreenShotResponse = {
       status: 200,
       data: {
-        key: '2024',
+        key: 'VIDSOL-2024',
       },
     };
 
@@ -127,7 +127,7 @@ describe('JiraFeedbackService', () => {
             },
           ],
           [jiraFeedbackService.jiraEpicLink]: jiraFeedbackService.jiraEpicUrl,
-          customfield_12403: { id: jiraFeedbackService.jiraSeverityId },
+          customfield_12403: { id: '12345' },
           customfield_26112: 'Reported via user feedback form',
           customfield_13112: sharedData.issue,
         },
@@ -138,6 +138,25 @@ describe('JiraFeedbackService', () => {
           Authorization: `Basic ${jiraFeedbackService.jiraToken}`,
         },
       }
+    );
+  });
+
+  it('should throw with Jira error details when the request fails with a 400', async () => {
+    const feedbackData: FeedbackData = { ...sharedData, attachment: '' };
+    const axiosError = {
+      isAxiosError: true,
+      message: 'Request failed with status code 400',
+      response: {
+        data: {
+          errors: { customfield_12403: 'Severity is required.' },
+        },
+      },
+    };
+    mockPost.mockRejectedValue(axiosError);
+    jest.spyOn(axios, 'isAxiosError').mockReturnValue(true);
+
+    await expect(jiraFeedbackService.reportIssue(feedbackData)).rejects.toThrow(
+      'Jira API error: {"customfield_12403":"Severity is required."}'
     );
   });
 
@@ -171,7 +190,7 @@ describe('JiraFeedbackService', () => {
             },
           ],
           [jiraFeedbackService.jiraEpicLink]: jiraFeedbackService.jiraEpicUrl,
-          customfield_12403: { id: jiraFeedbackService.jiraSeverityId },
+          customfield_12403: { id: '12345' },
           customfield_26112: 'Reported via user feedback form',
           customfield_13112: sharedData.issue,
         },
