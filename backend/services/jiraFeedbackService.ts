@@ -15,6 +15,7 @@ class JiraFeedbackService implements FeedbackService {
   jiraAndroidComponentId: string;
   jiraEpicUrl: string;
   jiraEpicLink: string;
+  jiraSeverityId: string;
   config: Config;
 
   constructor() {
@@ -28,6 +29,7 @@ class JiraFeedbackService implements FeedbackService {
     this.jiraUrl = this.config.url as string;
     this.jiraEpicUrl = this.config.epicUrl as string;
     this.jiraEpicLink = this.config.epicLink as string;
+    this.jiraSeverityId = this.config.severityId as string;
   }
 
   async reportIssue(data: FeedbackData): Promise<ReportIssueReturn | null> {
@@ -47,6 +49,9 @@ class JiraFeedbackService implements FeedbackService {
           },
         ],
         [this.jiraEpicLink]: this.jiraEpicUrl,
+        customfield_12403: { id: this.jiraSeverityId },
+        customfield_26112: 'Reported via user feedback form',
+        customfield_13112: data.issue,
       },
     };
 
@@ -70,8 +75,12 @@ class JiraFeedbackService implements FeedbackService {
       }
       return await this.addAttachment(data.attachment, ticketData, response.data.key);
     } catch (error) {
-      console.log('Response Error:', error);
-      return null;
+      if (axios.isAxiosError(error)) {
+        const errors = error.response?.data?.errors;
+        const message = errors ? JSON.stringify(errors) : error.message;
+        throw new Error(`Jira API error: ${message}`);
+      }
+      throw error;
     }
   }
 

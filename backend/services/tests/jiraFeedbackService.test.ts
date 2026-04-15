@@ -57,6 +57,9 @@ describe('JiraFeedbackService', () => {
             },
           ],
           [jiraFeedbackService.jiraEpicLink]: jiraFeedbackService.jiraEpicUrl,
+          customfield_12403: { id: jiraFeedbackService.jiraSeverityId },
+          customfield_26112: 'Reported via user feedback form',
+          customfield_13112: sharedData.issue,
         },
       },
       {
@@ -124,6 +127,9 @@ describe('JiraFeedbackService', () => {
             },
           ],
           [jiraFeedbackService.jiraEpicLink]: jiraFeedbackService.jiraEpicUrl,
+          customfield_12403: { id: jiraFeedbackService.jiraSeverityId },
+          customfield_26112: 'Reported via user feedback form',
+          customfield_13112: sharedData.issue,
         },
       },
       {
@@ -165,6 +171,9 @@ describe('JiraFeedbackService', () => {
             },
           ],
           [jiraFeedbackService.jiraEpicLink]: jiraFeedbackService.jiraEpicUrl,
+          customfield_12403: { id: jiraFeedbackService.jiraSeverityId },
+          customfield_26112: 'Reported via user feedback form',
+          customfield_13112: sharedData.issue,
         },
       },
       {

@@ -29,6 +29,7 @@ const loadConfig = (): Config => {
     androidComponentId: process.env.JIRA_ANDROID_COMPONENT_ID,
     epicLink: process.env.JIRA_EPIC_LINK,
     epicUrl: process.env.JIRA_EPIC_URL,
+    severityId: process.env.JIRA_SEVERITY_ID,
     gollumUrl: process.env.GOLLUM_BASE_URL,
   };
 
