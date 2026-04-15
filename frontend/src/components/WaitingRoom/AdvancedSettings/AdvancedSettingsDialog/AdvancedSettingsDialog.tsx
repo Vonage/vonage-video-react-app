@@ -29,7 +29,7 @@ import {
 
 /**
  * AdvancedSettingsDialog Component
- * Renders the visual-only advanced settings dialog for the waiting room.
+ * Renders the visual-only advanced settings dialog.
  */
 const AdvancedSettingsDialog = ({
   isAdvancedSettingsOpen,
