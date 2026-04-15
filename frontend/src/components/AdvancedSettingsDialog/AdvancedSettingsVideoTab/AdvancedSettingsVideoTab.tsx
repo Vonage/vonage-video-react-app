@@ -1,6 +1,6 @@
 import type { ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
-import { RESOLUTIONS } from '../../../../../env';
+import { RESOLUTIONS } from '../../../env';
 import AdvancedSettingsCodecPriorityField from '../AdvancedSettingsCodecPriorityField';
 import AdvancedSettingsCustomVideoBitrateField from '../AdvancedSettingsCustomVideoBitrateField';
 import AdvancedSettingsSelectField from '../AdvancedSettingsSelectField';

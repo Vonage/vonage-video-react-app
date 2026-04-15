@@ -1,4 +1,4 @@
-import type { Resolution } from '../../../../env';
+import type { Resolution } from '../../env';
 
 export type AdvancedSettingsDialogProps = {
   isAdvancedSettingsOpen: boolean;

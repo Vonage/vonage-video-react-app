@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import type { ReactElement } from 'react';
 import CollapsibleSection from '@ui/CollapsibleSection';
 import LabeledValueList from '@ui/LabeledValueList';

@@ -11,7 +11,7 @@ import VoiceIndicatorIcon from '../../MeetingRoom/VoiceIndicator/VoiceIndicator'
 import VignetteEffect from '../VignetteEffect';
 import BackgroundEffectsDialog from '../BackgroundEffects/BackgroundEffectsDialog';
 import BackgroundEffectsButton from '../BackgroundEffects/BackgroundEffectsButton';
-import AdvancedSettingsDialog from '../AdvancedSettings/AdvancedSettingsDialog';
+import AdvancedSettingsDialog from '@components/AdvancedSettingsDialog';
 import advancedSettingsDialog$ from '@Context/AdvancedSettingsDialog';
 import backgroundEffectsDialog$ from '@Context/BackgroundEffectsDialog';
 import PrecallNetworkTestDialog from '../PrecallNetworkTestDialog';
