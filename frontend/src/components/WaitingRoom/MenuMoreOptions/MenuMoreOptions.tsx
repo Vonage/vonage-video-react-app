@@ -2,6 +2,7 @@ import { useCallback, useState } from 'react';
 import type { FocusEvent, MouseEvent, ReactElement } from 'react';
 import { hasMediaProcessorSupport } from '@vonage/client-sdk-video';
 import MenuItem from '@mui/material/MenuItem';
+import type { MenuItemProps } from '@mui/material/MenuItem';
 import Menu from '@mui/material/Menu';
 import Paper from '@mui/material/Paper';
 import Popper from '@mui/material/Popper';
@@ -91,7 +92,7 @@ const MenuMoreOptions = ({
     setTooltipAnchorElement(null);
   }, []);
 
-  const backgroundEffectsAvailabilityProps = isBackgroundEffectsSupported
+  const backgroundEffectsAvailabilityProps: MenuItemProps = isBackgroundEffectsSupported
     ? {
         onClick: handleClickBackgroundEffects,
       }
@@ -104,7 +105,7 @@ const MenuMoreOptions = ({
         onMouseLeave: handleCloseUnsupportedTooltip,
       };
 
-  const precallNetworkTestAvailabilityProps = isPrecallNetworkTestSupported
+  const precallNetworkTestAvailabilityProps: MenuItemProps = isPrecallNetworkTestSupported
     ? {
         onClick: handleClickNetworkTest,
       }
