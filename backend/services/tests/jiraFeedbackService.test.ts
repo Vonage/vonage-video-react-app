@@ -141,6 +141,19 @@ describe('JiraFeedbackService', () => {
     );
   });
 
+  it('should throw when the Jira issue key returned is invalid', async () => {
+    const feedbackData: FeedbackData = {
+      ...sharedData,
+      attachment: 'somerandomimagevalues',
+    };
+
+    mockPost.mockResolvedValue({ status: 200, data: { key: '2026' } });
+
+    await expect(jiraFeedbackService.reportIssue(feedbackData)).rejects.toThrow(
+      'Invalid Jira issue key: 2026'
+    );
+  });
+
   it('should throw with Jira error details when the request fails with a 400', async () => {
     const feedbackData: FeedbackData = { ...sharedData, attachment: '' };
     const axiosError = {
