@@ -31,6 +31,7 @@ feedbackRouter.post('/report', async (req: Request, res: Response) => {
     return res.status(200).json({ feedbackData });
   } catch (error: unknown) {
     const message = error instanceof Error ? error.message : error;
+    console.error('[feedback] reportIssue failed:', message);
     return res.status(500).json({ message: `Error reporting issue: ${message}` });
   }
 });
