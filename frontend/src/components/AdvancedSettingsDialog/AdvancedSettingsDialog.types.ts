@@ -7,14 +7,14 @@ export type AdvancedSettingsDialogProps = {
 
 export type AdvancedSettingsTab = 'general' | 'video' | 'audio' | 'statistics';
 
-export type AdvancedSettingsBitrateMode = import('@vonage/client-sdk-video').VideoBitratePreset;
+export type AdvancedSettingsBitrateMode = 'default' | 'bw_saver' | 'extra_bw_saver' | 'custom';
 
 export const ADVANCED_SETTINGS_BITRATE_MODE = {
-  default: 'default' as AdvancedSettingsBitrateMode,
-  bwSaver: 'bw_saver' as AdvancedSettingsBitrateMode,
-  extraBwSaver: 'extra_bw_saver' as AdvancedSettingsBitrateMode,
-  custom: 'custom' as AdvancedSettingsBitrateMode,
-};
+  default: 'default',
+  bwSaver: 'bw_saver',
+  extraBwSaver: 'extra_bw_saver',
+  custom: 'custom',
+} as const satisfies Record<string, AdvancedSettingsBitrateMode>;
 
 export type AdvancedSettingsCustomVideoBitrate = number;
 

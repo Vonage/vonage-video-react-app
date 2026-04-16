@@ -54,7 +54,7 @@
   "advancedSettings.video.resolution.options.320x240": "320x240",
   "advancedSettings.video.resolution.options.320x180": "320x180",
   "advancedSettings.audio.bitrate.label": "Audio-Bitrate",
-  "advancedSettings.audio.bitrate.description": "Wählen Sie Automatisch, um den Standardwert des SDK zu verwenden, oder Benutzerdefiniert, um die maximale Audio-Kodierungsbitrate für die Sitzung festzulegen.",
+  "advancedSettings.audio.bitrate.description": "Verwendet automatisch den Standardwert des SDK, oder wählen Sie Benutzerdefiniert, um die maximale Audio-Kodierungsbitrate für die Sitzung festzulegen.",
   "advancedSettings.audio.bitrate.options.automatic": "Automatisch",
   "advancedSettings.audio.bitrate.options.custom": "Benutzerdefiniert",
   "advancedSettings.audio.bitrate.customLabel": "Benutzerdefinierte Audio-Bitrate",
