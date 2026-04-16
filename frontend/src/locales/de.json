@@ -174,6 +174,7 @@
   "screenSharing.dialog.action": "Starten Sie, Ihren Bildschirm zu teilen",
   "screenSharing.dialog.content": "Es sieht so aus, als würde jemand anderes seinen Bildschirm teilen. Wenn Sie fortfahren, wird ihr Bildschirm nicht mehr geteilt.",
   "screenSharing.dialog.title": "Möchten Sie Ihren Bildschirm teilen?",
+  "screenSharing.dialog.hiddenMessage": "Sie teilen gerade Ihren Bildschirm.",
   "screenSharing.title.start": "Bildschirmfreigabe starten",
   "screenSharing.title.stop": "Bildschirmfreigabe stoppen",
   "screenSharing.tooltip.ariaLabel": "Bildschirmfreigabe starten oder stoppen",

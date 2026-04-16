@@ -1,5 +1,5 @@
 import { Archive, createArchiveFromServer, hasPending, type ServerArchive } from './model';
-import { listArchives, startArchiving, stopArchiving } from './routes';
+import { searchArchives, startArchiving, stopArchiving } from './routes';
 
 export type ArchiveResponse = {
   archives: Archive[];
@@ -13,7 +13,7 @@ export type ArchiveResponse = {
  * @returns {Promise<ArchiveResponse>} The archives from the meeting room (if any) and whether any archives are pending.
  */
 const getArchives = async (locale: string, roomName: string): Promise<ArchiveResponse> => {
-  const response = await listArchives(roomName);
+  const response = await searchArchives(roomName);
   const archivesFromServer = response?.data?.archives;
   if (archivesFromServer instanceof Array) {
     const archives = archivesFromServer.map((archiveFromServer: ServerArchive) =>

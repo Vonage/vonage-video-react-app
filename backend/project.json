@@ -9,7 +9,7 @@
       "executor": "nx:run-commands",
       "options": {
         "cwd": "backend",
-        "command": "nodemon --watch . --ext ts,tsx,json --ignore dist --exec \"sh -c 'tsc --noEmit -p tsconfig.json --pretty true && node --import tsx index.ts'\""
+        "command": "nodemon --watch . --watch ../libs --ext ts,tsx,json --ignore dist --exec \"sh -c 'tsc --noEmit -p tsconfig.json --pretty true && node --import tsx index.ts'\""
       }
     },
     "start": {
@@ -48,7 +48,14 @@
       "executor": "nx:run-commands",
       "options": {
         "cwd": "backend",
-        "command": "nodemon --watch . --ext ts,tsx,json --ignore dist --exec \"sh -c 'tsc --noEmit -p tsconfig.json --pretty true && node --inspect --import tsx index.ts'\""
+        "command": "nodemon --watch . --watch ../libs --ext ts,tsx,json --ignore dist --exec \"sh -c 'tsc --noEmit -p tsconfig.json --pretty true && node --inspect --import tsx index.ts'\""
+      }
+    },
+    "debug:wait": {
+      "executor": "nx:run-commands",
+      "options": {
+        "cwd": "backend",
+        "command": "nodemon --watch . --watch ../libs --ext ts,tsx,json --ignore dist --exec \"sh -c 'tsc --noEmit -p tsconfig.json --pretty true && node --inspect-brk --import tsx index.ts'\""
       }
     },
     "test": {

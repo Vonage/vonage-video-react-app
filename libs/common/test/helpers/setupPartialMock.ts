@@ -37,7 +37,16 @@ function setupPartialMock<T extends object>(
   entries.forEach((key) => {
     const value = source[key as keyof T];
     const currentValue = target[key as keyof T];
-    const desc = Object.getOwnPropertyDescriptor(target, key);
+
+    const desc = (() => {
+      const desc = Object.getOwnPropertyDescriptor(target, key);
+      if (desc) return desc;
+
+      const proto = Object.getPrototypeOf(target);
+      if (!proto) return undefined;
+
+      return Object.getOwnPropertyDescriptor(proto, key);
+    })();
 
     // trying to mock or override something that does not exist on the target
     if (!desc) {

@@ -1,4 +1,4 @@
-import StatusCodeEnum from 'status-code-enum';
+import { StatusCode } from 'status-code-enum';
 import ApplicationServerError from '../../ApplicationServerError';
 
 // ApplicationServerError
@@ -8,7 +8,7 @@ const makeBadRequestErrorHandler = (fallbackMessage = 'Bad request') => {
       src: error,
       fallbackConfig: {
         fallbackMessage,
-        statusCode: StatusCodeEnum.ClientErrorBadRequest,
+        statusCode: StatusCode.ClientErrorBadRequest,
       },
     });
 };

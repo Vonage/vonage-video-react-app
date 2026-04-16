@@ -9,6 +9,7 @@ import { Server } from 'http';
 import router from './routes/index';
 import { errorHandler } from './middleware/errorHandler';
 import { fileURLToPath } from 'url';
+import { createVideoHandler } from '@api-lib';
 
 /**
  * The runtimeDirectory works different on CJS and ESM
@@ -30,6 +31,20 @@ app.use(cors({ origin: true, credentials: true }));
 app.use(bodyParser.json());
 app.set('trust proxy', true);
 app.use(router);
+
+app.use(
+  '/v2',
+  createVideoHandler({
+    auth: {
+      authType: 'jwt',
+      applicationId: process.env.VONAGE_APP_ID!,
+      privateKey: process.env.VONAGE_PRIVATE_KEY!,
+    },
+    videoParams: {
+      videoHost: process.env.VONAGE_VIDEO_HOST,
+    },
+  })
+);
 
 app.use((_req, res, next) => {
   // This is needed to remove the deployed application from being indexed by Search engines

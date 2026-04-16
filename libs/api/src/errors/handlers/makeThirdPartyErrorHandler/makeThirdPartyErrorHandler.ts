@@ -1,5 +1,5 @@
 import { isErrorLike, isNil, isString } from '@common/assertions';
-import StatusCodeEnum from 'status-code-enum';
+import { StatusCode } from 'status-code-enum';
 import ApplicationServerError from '../../ApplicationServerError';
 import type { Any } from '@common/types';
 
@@ -41,8 +41,8 @@ export function buildThirdPartyErrorHandler(
       src: error,
       fallbackConfig: {
         fallbackMessage,
-        statusCode: StatusCodeEnum.ServerErrorBadGateway,
-        values: mapThirdPartyErrors && isErrorLike(error) ? [error.message] : [],
+        statusCode: StatusCode.ServerErrorBadGateway,
+        issues: mapThirdPartyErrors && isErrorLike(error) ? [error.message] : [],
       },
     });
 }

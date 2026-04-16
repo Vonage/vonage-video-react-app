@@ -1,7 +1,8 @@
 import { afterEach, beforeEach, describe, expect, it, jest } from '@jest/globals';
 import type { Request, Response, NextFunction } from 'express';
+import { StatusCode } from 'status-code-enum';
 import { errorHandler } from '../middleware/errorHandler';
-import { ValidationError } from '../errors/ValidationError';
+import ApplicationServerError from '@api-lib/errors/ApplicationServerError';
 
 function createMockRequest(overrides: Partial<Request> = {}): Request {
   return {
@@ -72,10 +73,18 @@ describe('errorHandler', () => {
     );
   });
 
-  it('preserves ValidationError statusCode and returns JSON', () => {
+  it('preserves validation error statusCode and returns JSON', () => {
     const req = createMockRequest({ headers: { accept: 'application/json' } });
     const res = createMockResponse();
-    const validationError = new ValidationError([{ path: ['field'], message: 'Invalid' }]);
+    const validationError = new ApplicationServerError({
+      src: new Error('Invalid'),
+      fallbackConfig: {
+        fallbackMessage: 'Invalid request',
+        statusCode: StatusCode.ClientErrorBadRequest,
+        severity: 'error',
+        issues: ['field: Invalid'],
+      },
+    });
 
     errorHandler(validationError, req, res, noopNext);
 

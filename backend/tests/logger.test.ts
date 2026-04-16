@@ -89,10 +89,9 @@ describe('POST /client-logs', () => {
 
     expect(res.statusCode).toEqual(400);
     expect(res.body).toMatchObject({
-      message: 'Invalid request',
+      message: 'Invalid log payload',
       severity: 'error',
       statusCode: 400,
-      code: 'VALIDATION_ERROR',
       issues: expect.any(Array),
     });
     expect(res.body.issues.length).toBeGreaterThan(0);
@@ -111,10 +110,9 @@ describe('POST /client-logs', () => {
 
     expect(res.statusCode).toEqual(400);
     expect(res.body).toMatchObject({
-      message: 'Invalid request',
+      message: 'Invalid log payload',
       severity: 'error',
       statusCode: 400,
-      code: 'VALIDATION_ERROR',
       issues: expect.any(Array),
     });
     expect(mockPost).not.toHaveBeenCalled();
@@ -128,10 +126,9 @@ describe('POST /client-logs', () => {
 
     expect(res.statusCode).toEqual(400);
     expect(res.body).toMatchObject({
-      message: 'Invalid request',
+      message: 'Invalid log payload',
       severity: 'error',
       statusCode: 400,
-      code: 'VALIDATION_ERROR',
       issues: expect.any(Array),
     });
     expect(mockPost).not.toHaveBeenCalled();
@@ -161,5 +158,114 @@ describe('POST /client-logs', () => {
       }),
       expect.any(Object)
     );
+  });
+});
+
+describe('POST /client-logs/batch', () => {
+  let server: Server;
+  const mockPost = jest.spyOn(axios, 'post');
+
+  beforeAll(async () => {
+    server = await startServer(0);
+  });
+
+  afterAll((done) => {
+    server.close(done);
+  });
+
+  beforeEach(() => {
+    mockPost.mockClear();
+    mockPost.mockResolvedValue({ status: 200 });
+  });
+
+  it('returns 204 and forwards each event in a valid batch', async () => {
+    const batch = [
+      createValidLogPayload({
+        action: 'vonageVideoClient.connect.success',
+        sessionId: 's1',
+        connectionId: 'c1',
+      }),
+      createValidLogPayload({ action: 'EnterMeeting', sessionId: 's2', connectionId: 'c2' }),
+    ];
+
+    const res = await request(server)
+      .post('/client-logs/batch')
+      .set('Content-Type', 'application/json')
+      .send(batch);
+
+    expect(res.statusCode).toEqual(204);
+    expect(mockPost).toHaveBeenCalledTimes(batch.length);
+  });
+
+  it('returns 400 when one event in the batch is invalid', async () => {
+    const batch = [
+      createValidLogPayload(),
+      { action: 'SomeAction' }, // missing required fields
+    ];
+
+    const res = await request(server)
+      .post('/client-logs/batch')
+      .set('Content-Type', 'application/json')
+      .send(batch);
+
+    expect(res.statusCode).toEqual(400);
+    expect(res.body).toMatchObject({
+      message: 'Invalid log batch payload',
+      severity: 'error',
+      statusCode: 400,
+      issues: expect.any(Array),
+    });
+    expect(res.body.issues.length).toBeGreaterThan(0);
+    expect(mockPost).not.toHaveBeenCalled();
+  });
+
+  it('returns 400 when body is not an array', async () => {
+    const res = await request(server)
+      .post('/client-logs/batch')
+      .set('Content-Type', 'application/json')
+      .send(createValidLogPayload());
+
+    expect(res.statusCode).toEqual(400);
+    expect(res.body).toMatchObject({
+      message: 'Invalid log batch payload',
+      severity: 'error',
+      statusCode: 400,
+      issues: expect.any(Array),
+    });
+    expect(mockPost).not.toHaveBeenCalled();
+  });
+
+  it('returns 400 for empty body', async () => {
+    const res = await request(server)
+      .post('/client-logs/batch')
+      .set('Content-Type', 'application/json')
+      .send({});
+
+    expect(res.statusCode).toEqual(400);
+    expect(res.body).toMatchObject({
+      message: 'Invalid log batch payload',
+      severity: 'error',
+      statusCode: 400,
+      issues: expect.any(Array),
+    });
+    expect(mockPost).not.toHaveBeenCalled();
+  });
+
+  it('returns 400 when an event in the batch has an invalid level', async () => {
+    const batch = [createValidLogPayload(), createValidLogPayload({ level: 'debug' })];
+
+    const res = await request(server)
+      .post('/client-logs/batch')
+      .set('Content-Type', 'application/json')
+      .send(batch);
+
+    expect(res.statusCode).toEqual(400);
+    expect(res.body).toMatchObject({
+      message: 'Invalid log batch payload',
+      severity: 'error',
+      statusCode: 400,
+      issues: expect.any(Array),
+    });
+    expect(mockPost).not.toHaveBeenCalled();
   });
 });

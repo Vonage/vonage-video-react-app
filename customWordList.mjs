@@ -19,6 +19,8 @@ const customWordList = [
   'PWDEBUG',
   'unstub',
   'interceptable',
+  'vonageAPIURL',
+  'interceptable',
 ];
 
 export default customWordList;

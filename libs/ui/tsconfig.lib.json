@@ -22,7 +22,11 @@
     "../common/testBrowser/**/*.ts",
     "../common/testBrowser/**/*.tsx",
     "../core/src/**/*.ts",
-    "../core/src/**/*.tsx"
+    "../core/src/**/*.tsx",
+
+    // video-router(this is just for linter and types)
+    "../api/src/**/*.ts",
+    "../common/srcNode/**/*.ts"
   ],
-  "exclude": ["**/*.spec.*", "**/*.test.*"]
+  "exclude": ["**/*.spec.*", "**/*.test.*", "../api/**/*.test.*", "../api/**/*.spec.*"]
 }

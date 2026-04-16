@@ -1,1 +1,1 @@
-export { default as mapServerSourceToState } from './mapServerSourceToState';
+export { default } from './mapServerSourceToState';

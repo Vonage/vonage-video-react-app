@@ -21,7 +21,11 @@
       "@common": ["../common/src"],
       "@common/*": ["../common/src/*"],
       "@node": ["../common/srcNode"],
-      "@node/*": ["../common/srcNode/*"]
+      "@node/*": ["../common/srcNode/*"],
+      "@common-test": ["../common/test"],
+      "@common-test/*": ["../common/test/*"],
+      "@node-test": ["../common/testNode"],
+      "@node-test/*": ["../common/testNode/*"]
     },
     "lib": ["ESNext"]
   }
