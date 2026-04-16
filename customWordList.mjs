@@ -20,7 +20,6 @@ const customWordList = [
   'unstub',
   'interceptable',
   'vonageAPIURL',
-  'interceptable',
 ];
 
 export default customWordList;
