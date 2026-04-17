@@ -4,10 +4,10 @@ import { waitFor } from '@testing-library/dom';
 import mediaDevices$ from '../../devices$';
 import { setupPartialMock } from '@common-test/helpers';
 import { SPY_MARK } from '@common/types';
-import { setupWindowNavigatorMock } from '@web-test/fixtures';
+import { setupWindowNavigatorMock, makeMediaDeviceInfos } from '@web-test/fixtures';
 import * as vonageClientSdk from '@vonage/client-sdk-video';
 import * as isFirefoxModule from '@web/platform/isFirefox';
-import { makeMediaDeviceInfos } from '@web-test/fixtures';
+import { mediaDevicesEnvelop } from '@core/interceptors';
 
 const someDevices = makeMediaDeviceInfos();
 
@@ -22,6 +22,8 @@ describe('setupDeviceStore', () => {
         enumerateDevices: Promise.resolve(someDevices),
       },
     });
+
+    mediaDevicesEnvelop.rebind(navigator);
   });
 
   it('should initialize device sync and register event listener', async () => {
@@ -190,6 +192,8 @@ describe('setupDeviceStore', () => {
         },
       });
 
+      mediaDevicesEnvelop.rebind(navigator);
+
       const api$ = makeApiClone();
 
       setupDeviceStore(api$);
@@ -235,6 +239,8 @@ describe('setupDeviceStore', () => {
         },
       });
 
+      mediaDevicesEnvelop.rebind(navigator);
+
       const api$ = makeApiClone();
 
       setupDeviceStore(api$);
@@ -250,6 +256,35 @@ describe('setupDeviceStore', () => {
   });
 
   describe('Firefox permission handling', () => {
+    it('should resolve store readiness and sync devices when Firefox labels are already present', async () => {
+      vi.spyOn(isFirefoxModule, 'default').mockReturnValue(true);
+
+      const api$ = makeApiClone();
+
+      setupWindowNavigatorMock({
+        mediaDevices: {
+          addEventListener: vi.fn(),
+          enumerateDevices: vi.fn().mockResolvedValue([
+            { deviceId: 'device1', kind: 'audioinput', label: 'Microphone' },
+            { deviceId: 'device2', kind: 'videoinput', label: 'Camera' },
+          ]),
+          getUserMedia: vi.fn(),
+        },
+      });
+
+      mediaDevicesEnvelop.rebind(navigator);
+
+      setupDeviceStore(api$);
+
+      await waitFor(
+        async () => {
+          await expect(api$.getMetadata().isStoreReady).resolves.toBeUndefined();
+          expect(mediaDevices$.actions.syncMediaDevicesInfo).toHaveBeenCalledWith();
+        },
+        { timeout: 200 }
+      );
+    });
+
     it('should request permissions when on Firefox and device labels are empty', async () => {
       vi.spyOn(isFirefoxModule, 'default').mockReturnValue(true);
 
@@ -271,6 +306,8 @@ describe('setupDeviceStore', () => {
           getUserMedia: getUserMediaSpy,
         },
       });
+
+      mediaDevicesEnvelop.rebind(navigator);
 
       const api$ = makeApiClone();
 
@@ -304,6 +341,8 @@ describe('setupDeviceStore', () => {
         },
       });
 
+      mediaDevicesEnvelop.rebind(navigator);
+
       const api$ = makeApiClone();
 
       setupDeviceStore(api$);
@@ -326,6 +365,8 @@ describe('setupDeviceStore', () => {
           getUserMedia: vi.fn(),
         },
       });
+
+      mediaDevicesEnvelop.rebind(navigator);
 
       const api$ = makeApiClone();
 
@@ -350,8 +391,8 @@ describe('setupDeviceStore', () => {
   // in the test environment. The monkey patching behavior is verified via
   // integration tests in a real browser environment.
 
-  describe('metadata setup', () => {
-    it('should set __getUserMedia on metadata', () => {
+  describe('envelope original method access', () => {
+    it('should make getUserMedia available via the mediaDevices envelope', () => {
       const originalGetUserMedia = vi.fn();
 
       setupWindowNavigatorMock({
@@ -361,12 +402,16 @@ describe('setupDeviceStore', () => {
         },
       });
 
+      mediaDevicesEnvelop.rebind(navigator);
+
       const api$ = makeApiClone();
 
       setupDeviceStore(api$);
 
-      const metadata = api$.getMetadata();
-      expect(metadata.__getUserMedia).toBeDefined();
+      const envelopGetUserMedia = mediaDevicesEnvelop.getOriginal('getUserMedia');
+
+      expect(envelopGetUserMedia).toBeDefined();
+      expect(typeof envelopGetUserMedia).toBe('function');
     });
   });
 
@@ -381,6 +426,8 @@ describe('setupDeviceStore', () => {
           enumerateDevices: vi.fn().mockReturnValue(neverResolve),
         },
       });
+
+      mediaDevicesEnvelop.rebind(navigator);
 
       const api$ = makeApiClone();
 

@@ -270,6 +270,7 @@
   "unknown.device": "Unknown Device",
   "user.unknown": "unknown user",
   "user.you": "You",
+  "waitingRoom.unsupportedFeature.tooltip": "Your browser does not support this feature",
   "waitingRoom.devices.noDevicesFound": "No devices found",
   "waitingRoom.title": "Prepare to join",
   "waitingRoom.user.input.title": "Enter your name",

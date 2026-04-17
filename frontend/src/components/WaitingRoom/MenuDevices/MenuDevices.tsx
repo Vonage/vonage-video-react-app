@@ -86,13 +86,18 @@ const MenuDevices = ({
         </MenuItem>
       )}
 
-      {mediaDeviceKind === 'audiooutput' && !shouldDisplayEmptyState && (
-        <SoundTest>
-          <Box sx={{ mr: 1 }}>
-            <VividIcon name="hearing-line" customSize={-5} />
-          </Box>
-        </SoundTest>
-      )}
+      {mediaDeviceKind === 'audiooutput' &&
+        (processedDevices.length > 0 ? (
+          <SoundTest>
+            <Box sx={{ mr: 1 }}>
+              <VividIcon name="hearing-line" customSize={-5} />
+            </Box>
+          </SoundTest>
+        ) : (
+          <MenuItem disabled data-testid={`${mediaDeviceKind}-menu-empty-state`}>
+            {t('waitingRoom.devices.noDevicesFound')}
+          </MenuItem>
+        ))}
     </Menu>
   );
 };

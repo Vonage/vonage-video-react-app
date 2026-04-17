@@ -18,9 +18,12 @@ const customWordList = [
   'gollum',
   'PWDEBUG',
   'unstub',
+  'interceptable',
   'vonageAPIURL',
   'kbps',
   'Mbps',
+  'customfield',
+  'VIDSOL',
 ];
 
 export default customWordList;

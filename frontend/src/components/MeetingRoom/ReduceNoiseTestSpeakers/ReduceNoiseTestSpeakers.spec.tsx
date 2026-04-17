@@ -7,6 +7,8 @@ import { defaultAudioDevice } from '@utils/mockData/device';
 import usePublisherContext from '@hooks/usePublisherContext';
 import { PublisherContextType } from '@Context/PublisherProvider';
 import { makeTestProvider } from '@test/providers';
+import { makeMediaDeviceInfos } from '@web-test/fixtures';
+import { mediaDevices$ } from '@core/stores';
 import ReduceNoiseTestSpeakers from './ReduceNoiseTestSpeakers';
 import { env } from '../../../env';
 
@@ -26,6 +28,8 @@ describe('ReduceNoiseTestSpeakers', () => {
   let publisherContext: PublisherContextType;
 
   beforeEach(() => {
+    mediaDevices$.reset();
+
     // Mock HTMLMediaElement methods used by SoundTest component
     vi.spyOn(HTMLMediaElement.prototype, 'pause').mockImplementation(() => {});
     vi.spyOn(HTMLMediaElement.prototype, 'play').mockResolvedValue(undefined);
@@ -140,6 +144,24 @@ describe('ReduceNoiseTestSpeakers', () => {
     render(<ReduceNoiseTestSpeakers />);
 
     expect(screen.queryByText('Advanced Noise Suppression')).not.toBeInTheDocument();
+  });
+
+  it('does not render the SoundTest if no audiooutput devices are available', () => {
+    mediaDevices$.reset();
+
+    render(<ReduceNoiseTestSpeakers />);
+
+    expect(screen.queryByTestId('soundTest')).not.toBeInTheDocument();
+  });
+
+  it('renders the SoundTest if audiooutput devices are available', () => {
+    const devices = makeMediaDeviceInfos();
+
+    mediaDevices$.setState((state) => ({ ...state, mediaDeviceInfo: devices }));
+
+    render(<ReduceNoiseTestSpeakers />);
+
+    expect(screen.getByTestId('soundTest')).toBeInTheDocument();
   });
 });
 
