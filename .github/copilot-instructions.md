@@ -1,4 +1,3 @@
-
 # Instruction
 
 All rules in this document should be treated as strict coding and architectural requirements for this repository.  
@@ -20,7 +19,7 @@ This is a mono repo containing:
 
 - Libs: `ui`, `core`, `common`, `api`
 - Main projects: `frontend`, `backend`
-- `integration-test`
+- `integration-tests`
 
 ---
 
@@ -405,7 +404,7 @@ type User = {
 **Correct:**
 
 ```tsx
-declare const _brand: unique symbol;
+declare const __brand: unique symbol;
 
 // Good
 type UserId = string & { [__brand]: 'UserId' };
@@ -426,6 +425,7 @@ declare const UserIdBrand: unique symbol;
 // Try to avoid duplicating prefixes and brands but if necessary use symbols
 type UserId = `user:${string}` & { [__brand]: typeof UserIdBrand };
 ```
+
 ---
 
 # Folder and File Structure
@@ -535,7 +535,7 @@ export const calculateAge = (birthDate: Date): number;
 
 - **Rule:** The default export of a file should be visible at first glance when opening the file.
 - **Rule:** A file may contain a small number of internal helpers, but:
-  - They should be declared as **function expressions** (not hoisted arrow functions) to keep linting and hoisting behavior predictable.
+  - They should be declared as **function declarations** (using the `function` keyword, not `const` arrow functions) — function declarations are hoisted, which allows them to be placed _after_ the main export in the file while remaining accessible throughout it, keeping the main export visible at first glance.
   - If there are more than 2 helpers, prefer splitting them into separate files inside the same domain/feature folder.
 
 **Violation:**
