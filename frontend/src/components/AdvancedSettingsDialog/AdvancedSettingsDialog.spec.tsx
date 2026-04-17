@@ -27,6 +27,30 @@ describe('AdvancedSettingsDialog', () => {
     expect(screen.getByRole('heading', { name: /codec/i })).toBeInTheDocument();
   });
 
+  it('switches to the audio tab', async () => {
+    const user = userEvent.setup();
+    render(<AdvancedSettingsDialog />);
+
+    await user.click(screen.getByRole('button', { name: /audio/i }));
+
+    expect(screen.getByRole('heading', { name: /^audio$/i })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: /audio bitrate/i })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: /enable opus dtx/i })).toBeInTheDocument();
+  });
+
+  it('switches to the statistics tab', async () => {
+    const user = userEvent.setup();
+    render(<AdvancedSettingsDialog />);
+
+    await user.click(screen.getByRole('button', { name: /statistics/i }));
+
+    expect(screen.getByRole('heading', { name: /^statistics$/i })).toBeInTheDocument();
+    expect(
+      screen.getByRole('heading', { name: /enable publisher statistics/i })
+    ).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /publisher/i })).toBeInTheDocument();
+  });
+
   it('closes the dialog through context on close', async () => {
     render(<AdvancedSettingsDialog />);
 

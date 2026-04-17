@@ -21,6 +21,25 @@ describe('AdvancedSettingsStatisticsGroup', () => {
     expect(screen.getByText(/no statistics available yet/i)).toBeInTheDocument();
   });
 
+  it('renders both audio and video statistics sections when data exists', () => {
+    render(
+      <AdvancedSettingsStatisticsGroup
+        title="Publisher"
+        audioTitle="Audio"
+        videoTitle="Video"
+        audioItems={[{ label: 'Packets sent', value: '--' }]}
+        videoItems={[{ label: 'Bytes received', value: '1.2 Mbps' }]}
+        emptyLabel="No statistics available yet"
+        defaultExpanded
+      />
+    );
+
+    expect(screen.getByRole('heading', { name: /audio/i })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: /video/i })).toBeInTheDocument();
+    expect(screen.getByText(/packets sent/i)).toBeInTheDocument();
+    expect(screen.getByText(/bytes received/i)).toBeInTheDocument();
+  });
+
   it('collapses and expands the group body', async () => {
     const user = userEvent.setup();
 
