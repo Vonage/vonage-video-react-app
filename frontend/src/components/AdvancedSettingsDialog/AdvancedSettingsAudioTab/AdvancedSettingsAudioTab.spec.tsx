@@ -2,7 +2,7 @@ import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, expect, it, vi } from 'vitest';
 import AdvancedSettingsAudioTab from './AdvancedSettingsAudioTab';
-import { ADVANCED_SETTINGS_AUDIO_BITRATE_MODE } from '../AdvancedSettingsDialog.types';
+import { ADVANCED_SETTINGS_AUDIO_BITRATE_MODE } from '../types/types';
 
 const AUTOMATIC_AUDIO_BITRATE_MODE_VALUE = 'automatic';
 const CUSTOM_AUDIO_BITRATE_MODE_VALUE = 'custom';

@@ -6,8 +6,8 @@ import type {
   AdvancedSettingsAudioBitrateMode,
   AdvancedSettingsCustomAudioBitrate,
   AdvancedSettingsSelectOption,
-} from '../AdvancedSettingsDialog.types';
-import { ADVANCED_SETTINGS_AUDIO_BITRATE_MODE } from '../AdvancedSettingsDialog.types';
+} from '../types/types';
+import { ADVANCED_SETTINGS_AUDIO_BITRATE_MODE } from '../types/types';
 
 type AdvancedSettingsAudioTabProps = {
   audioBitrateMode: AdvancedSettingsAudioBitrateMode;

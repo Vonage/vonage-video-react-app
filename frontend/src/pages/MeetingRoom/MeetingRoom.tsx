@@ -77,8 +77,7 @@ function MeetingRoomContent({
     latestNotifiedArchiveId,
     handleRecordingNotified,
   } = useMeetingRoom();
-  const [{ isOpen: isAdvancedSettingsOpen }, { close: closeAdvancedSettings }] =
-    advancedSettingsDialog$.use();
+  const isAdvancedSettingsOpen = advancedSettingsDialog$.use.select((state) => state.isOpen);
 
   return (
     <Box
@@ -139,12 +138,7 @@ function MeetingRoomContent({
         }
         captionsState={captionsState}
       />
-      {isAdvancedSettingsOpen && (
-        <AdvancedSettingsDialog
-          isAdvancedSettingsOpen={isAdvancedSettingsOpen}
-          setIsAdvancedSettingsOpen={closeAdvancedSettings}
-        />
-      )}
+      {isAdvancedSettingsOpen && <AdvancedSettingsDialog />}
       {recordingAlreadyNotified &&
         !archiveIdStartedBySelf &&
         isRecording &&

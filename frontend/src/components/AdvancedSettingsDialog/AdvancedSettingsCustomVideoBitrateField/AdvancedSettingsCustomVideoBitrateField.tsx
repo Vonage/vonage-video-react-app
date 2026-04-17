@@ -1,6 +1,6 @@
 import type { ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
-import type { AdvancedSettingsCustomVideoBitrate } from '../AdvancedSettingsDialog.types';
+import type { AdvancedSettingsCustomVideoBitrate } from '../types/types';
 
 export const MIN_CUSTOM_VIDEO_BITRATE_BPS = 5_000;
 export const MAX_CUSTOM_VIDEO_BITRATE_BPS = 10_000_000;

@@ -36,12 +36,17 @@ describe('AdvancedSettingsStatisticsGroup', () => {
       />
     );
 
-    await user.click(screen.getByRole('button', { name: /publisher/i }));
+    const toggleButton = screen.getByRole('button', { name: /publisher/i });
+    const statisticsItem = screen.getByText(/packets sent/i);
 
-    expect(screen.queryByText(/packets sent/i)).not.toBeInTheDocument();
+    await user.click(toggleButton);
 
-    await user.click(screen.getByRole('button', { name: /publisher/i }));
+    expect(toggleButton).toHaveAttribute('aria-expanded', 'false');
+    expect(statisticsItem).not.toBeVisible();
 
-    expect(screen.getByText(/packets sent/i)).toBeInTheDocument();
+    await user.click(toggleButton);
+
+    expect(toggleButton).toHaveAttribute('aria-expanded', 'true');
+    expect(statisticsItem).toBeVisible();
   });
 });

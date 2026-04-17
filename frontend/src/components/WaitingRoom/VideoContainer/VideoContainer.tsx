@@ -35,8 +35,7 @@ export type VideoContainerProps = {
  */
 const VideoContainer = ({ username }: VideoContainerProps): ReactElement => {
   const containerRef = useRef<HTMLDivElement>(null);
-  const [{ isOpen: isAdvancedSettingsOpen }, { close: closeAdvancedSettings }] =
-    advancedSettingsDialog$.use();
+  const isAdvancedSettingsOpen = advancedSettingsDialog$.use.select((state) => state.isOpen);
   const [{ isOpen: isBackgroundEffectsOpen }, { open, close }] = backgroundEffectsDialog$.use();
   const [{ isOpen: isPrecallNetworkTestOpen }, { close: closePrecallTest }] =
     precallNetworkTestDialog$.use();
@@ -120,12 +119,7 @@ const VideoContainer = ({ username }: VideoContainerProps): ReactElement => {
                 setIsBackgroundEffectsOpen={close}
               />
             )}
-            {isAdvancedSettingsOpen && (
-              <AdvancedSettingsDialog
-                isAdvancedSettingsOpen={isAdvancedSettingsOpen}
-                setIsAdvancedSettingsOpen={closeAdvancedSettings}
-              />
-            )}
+            {isAdvancedSettingsOpen && <AdvancedSettingsDialog />}
             {isPrecallNetworkTestOpen && (
               <PrecallNetworkTestDialog
                 isPrecallNetworkTestOpen={isPrecallNetworkTestOpen}

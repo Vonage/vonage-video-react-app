@@ -12,11 +12,10 @@ import type {
   AdvancedSettingsManualCodecOrder,
   AdvancedSettingsResolution,
   AdvancedSettingsSelectOption,
-} from '../AdvancedSettingsDialog.types';
-import {
-  ADVANCED_SETTINGS_BITRATE_MODE,
-  ADVANCED_SETTINGS_CODEC_MODE,
-} from '../AdvancedSettingsDialog.types';
+} from '../types/types';
+import { ADVANCED_SETTINGS_BITRATE_MODE, ADVANCED_SETTINGS_CODEC_MODE } from '../types/types';
+
+const SUPPORTED_FRAME_RATES: AdvancedSettingsFrameRate[] = [30, 15, 7, 1];
 
 type AdvancedSettingsVideoTabProps = {
   bitrateMode: AdvancedSettingsBitrateMode;
@@ -48,7 +47,6 @@ const AdvancedSettingsVideoTab = ({
   setResolution,
 }: AdvancedSettingsVideoTabProps): ReactElement => {
   const { t } = useTranslation();
-  const supportedFrameRates: AdvancedSettingsFrameRate[] = [30, 15, 7, 1];
 
   const bitrateOptions: AdvancedSettingsSelectOption<AdvancedSettingsBitrateMode>[] = [
     {
@@ -81,7 +79,7 @@ const AdvancedSettingsVideoTab = ({
   ];
 
   const frameRateOptions: AdvancedSettingsSelectOption<AdvancedSettingsFrameRate>[] =
-    supportedFrameRates.map((supportedFrameRate) => ({
+    SUPPORTED_FRAME_RATES.map((supportedFrameRate) => ({
       value: supportedFrameRate,
       label: t(`advancedSettings.video.frameRate.options.${supportedFrameRate}`),
     }));

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { Activity, useState } from 'react';
 import type { ReactElement, ReactNode } from 'react';
 import VividIcon from '../VividIcon';
 
@@ -36,7 +36,9 @@ const CollapsibleSection = ({
         />
       </button>
 
-      {isExpanded ? <div className="border-t border-vera-border px-4 py-4">{children}</div> : null}
+      <Activity mode={isExpanded ? 'visible' : 'hidden'}>
+        <div className="border-t border-vera-border px-4 py-4">{children}</div>
+      </Activity>
     </div>
   );
 };

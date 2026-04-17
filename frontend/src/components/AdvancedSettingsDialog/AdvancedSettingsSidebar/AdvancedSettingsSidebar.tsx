@@ -1,7 +1,7 @@
 import type { ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
 import classNames from 'classnames';
-import type { AdvancedSettingsTab } from '../AdvancedSettingsDialog.types';
+import type { AdvancedSettingsTab } from '../types/types';
 
 type AdvancedSettingsSidebarProps = {
   selectedTab: AdvancedSettingsTab;

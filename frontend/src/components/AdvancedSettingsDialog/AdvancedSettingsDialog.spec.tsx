@@ -1,12 +1,13 @@
 import { render as renderBase, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import type { ReactElement } from 'react';
-import { describe, expect, it, vi } from 'vitest';
+import type { ReactElement, ReactNode } from 'react';
+import { describe, expect, it } from 'vitest';
+import advancedSettingsDialog$ from '@Context/AdvancedSettingsDialog';
 import AdvancedSettingsDialog from './AdvancedSettingsDialog';
 
 describe('AdvancedSettingsDialog', () => {
   it('renders dialog when open', async () => {
-    render(<AdvancedSettingsDialog isAdvancedSettingsOpen setIsAdvancedSettingsOpen={() => {}} />);
+    render(<AdvancedSettingsDialog />);
 
     await waitFor(() => {
       expect(screen.getByRole('dialog')).toBeInTheDocument();
@@ -18,7 +19,7 @@ describe('AdvancedSettingsDialog', () => {
 
   it('switches to the video tab', async () => {
     const user = userEvent.setup();
-    render(<AdvancedSettingsDialog isAdvancedSettingsOpen setIsAdvancedSettingsOpen={() => {}} />);
+    render(<AdvancedSettingsDialog />);
 
     await user.click(screen.getByRole('button', { name: /video/i }));
 
@@ -26,21 +27,25 @@ describe('AdvancedSettingsDialog', () => {
     expect(screen.getByRole('heading', { name: /codec/i })).toBeInTheDocument();
   });
 
-  it('calls setAdvancedSettingsOpen(false) on close', async () => {
-    const setAdvancedSettingsOpen = vi.fn();
-    render(
-      <AdvancedSettingsDialog
-        isAdvancedSettingsOpen
-        setIsAdvancedSettingsOpen={setAdvancedSettingsOpen}
-      />
-    );
+  it('closes the dialog through context on close', async () => {
+    render(<AdvancedSettingsDialog />);
 
     await userEvent.click(screen.getByLabelText(/close/i));
 
-    expect(setAdvancedSettingsOpen).toHaveBeenCalledWith(false);
+    await waitFor(() => {
+      expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
+    });
   });
 });
 
 function render(ui: ReactElement) {
-  return renderBase(ui);
+  return renderBase(ui, { wrapper: AdvancedSettingsDialogTestProvider });
+}
+
+function AdvancedSettingsDialogTestProvider({ children }: { children: ReactNode }): ReactElement {
+  return (
+    <advancedSettingsDialog$.Provider value={{ isOpen: true }}>
+      {children}
+    </advancedSettingsDialog$.Provider>
+  );
 }

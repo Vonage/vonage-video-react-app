@@ -1,9 +1,4 @@
-import type { Resolution } from '../../env';
-
-export type AdvancedSettingsDialogProps = {
-  isAdvancedSettingsOpen: boolean;
-  setIsAdvancedSettingsOpen: (open: boolean) => void;
-};
+import type { Resolution } from '../../../env';
 
 export type AdvancedSettingsTab = 'general' | 'video' | 'audio' | 'statistics';
 

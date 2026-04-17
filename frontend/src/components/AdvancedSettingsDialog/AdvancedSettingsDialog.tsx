@@ -3,6 +3,7 @@ import type { ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
 import Dialog from '@mui/material/Dialog';
 import classNames from 'classnames';
+import advancedSettingsDialog$ from '@Context/AdvancedSettingsDialog';
 import VividIcon from '@components/VividIcon';
 import AdvancedSettingsAudioTab from './AdvancedSettingsAudioTab';
 import AdvancedSettingsGeneralTab from './AdvancedSettingsGeneralTab';
@@ -15,27 +16,25 @@ import type {
   AdvancedSettingsCodecMode,
   AdvancedSettingsCustomAudioBitrate,
   AdvancedSettingsCustomVideoBitrate,
-  AdvancedSettingsDialogProps,
   AdvancedSettingsFrameRate,
   AdvancedSettingsManualCodecOrder,
   AdvancedSettingsResolution,
   AdvancedSettingsTab,
-} from './AdvancedSettingsDialog.types';
+} from './types/types';
 import {
   ADVANCED_SETTINGS_AUDIO_BITRATE_MODE,
   ADVANCED_SETTINGS_BITRATE_MODE,
   ADVANCED_SETTINGS_CODEC_MODE,
-} from './AdvancedSettingsDialog.types';
+} from './types/types';
 
 /**
  * AdvancedSettingsDialog Component
  * Renders the visual-only advanced settings dialog.
  */
-const AdvancedSettingsDialog = ({
-  isAdvancedSettingsOpen,
-  setIsAdvancedSettingsOpen,
-}: AdvancedSettingsDialogProps): ReactElement => {
+const AdvancedSettingsDialog = (): ReactElement => {
   const { t } = useTranslation();
+  const isAdvancedSettingsOpen = advancedSettingsDialog$.use.select((state) => state.isOpen);
+  const { close } = advancedSettingsDialog$.use.actions();
   const [selectedTab, setSelectedTab] = useState<AdvancedSettingsTab>('general');
   const [bitrateMode, setBitrateMode] = useState<AdvancedSettingsBitrateMode>(
     ADVANCED_SETTINGS_BITRATE_MODE.default
@@ -63,7 +62,7 @@ const AdvancedSettingsDialog = ({
   const [publisherStatisticsEnabled, setPublisherStatisticsEnabled] = useState(false);
 
   const handleClose = () => {
-    setIsAdvancedSettingsOpen(false);
+    close();
   };
 
   const tabContent = (() => {
