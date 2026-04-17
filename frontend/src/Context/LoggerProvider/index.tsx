@@ -1,2 +1,1 @@
-export * from './LoggerProvider';
-export { default } from './LoggerProvider';
+export { default } from './LoggerSynchronizer';

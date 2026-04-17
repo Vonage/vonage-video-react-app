@@ -34,7 +34,6 @@ frontend/src/test/
 │   ├── makeAudioOutputProviderWrapper.ts
 │   ├── makePreviewPublisherProviderWrapper.ts
 │   ├── makeBackgroundPublisherProviderWrapper.ts
-│   ├── makeLoggerProviderWrapper.ts
 │   └── index.ts
 ├── globals.ts         # Global test configuration
 └── setup.ts           # Test setup and teardown
@@ -88,7 +87,6 @@ Use `makeTestProvider` with the `providers` enum to compose exactly the provider
 | `providers.publisher` | PublisherProvider (depends on user, session) |
 | `providers.backgroundPublisher` | BackgroundPublisherProvider (depends on user, session, publisher) |
 | `providers.previewPublisher` | PreviewPublisherProvider (depends on user) |
-| `providers.logger` | LoggerProvider (depends on user, session) |
 
 Dependencies are resolved automatically — you only need to list the providers your component directly requires and `makeTestProvider` will include their dependencies.
 
@@ -99,7 +97,6 @@ Individual wrappers are also available if you only need one:
 - `makeUserProviderWrapper()`
 - `makePreviewPublisherProviderWrapper()`
 - `makeBackgroundPublisherProviderWrapper()`
-- `makeLoggerProviderWrapper()`
 
 ---
 
@@ -362,11 +359,11 @@ function render(ui: ReactElement, { userContext, sessionContext }: RenderOptions
 }
 ```
 
-### Hook test
+### Headless synchronizer test
 
 ```typescript
-describe('useLoggerContext', () => {
-  it('calls setContext with sessionId and connectionId on mount', () => {
+describe('LoggerSynchronizer', () => {
+  it('syncs userId, sessionId, and connectionId into the logger on mount', () => {
     render({
       sessionContext: {
         __interceptor: (ctx) => {
@@ -386,12 +383,12 @@ describe('useLoggerContext', () => {
 function render({ userContext, sessionContext }: RenderOptions = {}) {
   const { wrapper, ...context } = makeTestProvider([providers.user, providers.session] as const, {
     userContext: {
-      value: { defaultSettings: { name: 'user-1', ... } },
+      value: { defaultSettings: { name: 'user-1' } },
       ...userContext,
     },
     sessionContext,
   });
-  return { ...context, ...renderHookBase(() => useLoggerContext(), { wrapper }) };
+  return { ...context, ...renderBase(<LoggerSynchronizer />, { wrapper }) };
 }
 ```
 
