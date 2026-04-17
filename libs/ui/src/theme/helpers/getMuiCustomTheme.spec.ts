@@ -52,29 +52,31 @@ describe('customTheme', () => {
   it('should add a border to dialog paper in dark mode', () => {
     const originalMatchMedia = globalThis.matchMedia;
 
-    globalThis.matchMedia = (() => ({
-      matches: true,
-      media: '(prefers-color-scheme: dark)',
-      onchange: null,
-      addListener() {},
-      removeListener() {},
-      addEventListener() {},
-      removeEventListener() {},
-      dispatchEvent() {
-        return false;
-      },
-    })) as typeof globalThis.matchMedia;
+    try {
+      globalThis.matchMedia = (() => ({
+        matches: true,
+        media: '(prefers-color-scheme: dark)',
+        onchange: null,
+        addListener() {},
+        removeListener() {},
+        addEventListener() {},
+        removeEventListener() {},
+        dispatchEvent() {
+          return false;
+        },
+      })) as typeof globalThis.matchMedia;
 
-    const darkTheme = getMuiCustomTheme({
-      tokens: getTokensByMode('dark'),
-    });
+      const darkTheme = getMuiCustomTheme({
+        tokens: getTokensByMode('dark'),
+      });
 
-    expect(darkTheme.components?.MuiDialog?.styleOverrides?.paper).toMatchObject({
-      borderWidth: '1px',
-      borderStyle: 'solid',
-      borderColor: darkTheme.palette.divider,
-    });
-
-    globalThis.matchMedia = originalMatchMedia;
+      expect(darkTheme.components?.MuiDialog?.styleOverrides?.paper).toMatchObject({
+        borderWidth: '1px',
+        borderStyle: 'solid',
+        borderColor: darkTheme.palette.divider,
+      });
+    } finally {
+      globalThis.matchMedia = originalMatchMedia;
+    }
   });
 });

@@ -1,7 +1,7 @@
 import type { ReactElement } from 'react';
 import Box, { BoxProps } from '@mui/material/Box';
 import advancedSettingsDialog$ from '@Context/AdvancedSettingsDialog';
-import AdvancedSettingsDialog from '@components/AdvancedSettingsDialog';
+import AdvancedSettingsDialog from '@components/AdvancedSettings/Dialog';
 import PopupAlert from '@components/MeetingRoom/PopupAlert';
 import Toolbar from '../../components/MeetingRoom/Toolbar';
 import VideoTileCanvas from '../../components/MeetingRoom/VideoTileCanvas';
@@ -33,16 +33,20 @@ type MeetingRoomProps = BoxProps & {
 const MeetingRoom = ({
   fullSize = false,
   className,
-  // ...props
+  ...boxProps
 }: MeetingRoomProps): ReactElement => {
   return (
     <advancedSettingsDialog$.Provider>
-      <MeetingRoomContent fullSize={fullSize} className={className} />
+      <MeetingRoomContent fullSize={fullSize} className={className} {...boxProps} />
     </advancedSettingsDialog$.Provider>
   );
 };
 
-function MeetingRoomContent({ fullSize = false, className }: MeetingRoomProps): ReactElement {
+function MeetingRoomContent({
+  fullSize = false,
+  className,
+  ...boxProps
+}: MeetingRoomProps): ReactElement {
   const {
     t,
     isSmallViewport,
@@ -78,6 +82,7 @@ function MeetingRoomContent({ fullSize = false, className }: MeetingRoomProps): 
   return (
     <Box
       data-testid="meetingRoom"
+      {...boxProps}
       className={classNames(
         twMerge('h-[calc(100dvh-80px)] w-screen bg-vera-dark-background', className),
         {
