@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { describe, it, expect, vi } from 'vitest';
 import { render as renderBase, act, waitFor } from '@testing-library/react';
 import frontendLogger from '../../logger';
 import { makeTestProvider, providers, type ProviderOptions } from '@test/providers';
@@ -17,10 +17,6 @@ const mockClearContext = vi.mocked(frontendLogger.clearContext);
 const mockVonageVideoClient = { sessionId: 'session-1', connectionId: 'connection-1' } as any;
 
 describe('LoggerSynchronizer', () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-  });
-
   it('syncs userId, sessionId, and connectionId into the logger on mount', () => {
     render({
       sessionContext: {
