@@ -51,6 +51,7 @@ function MeetingRoomContent({
     t,
     isSmallViewport,
     isSharingScreen,
+    isEntireScreen,
     screensharingPublisher,
     screenshareVideoElement,
     toggleShareScreen,
@@ -103,6 +104,7 @@ function MeetingRoomContent({
 
       <VideoTileCanvas
         isSharingScreen={isSharingScreen}
+        isEntireScreen={isEntireScreen}
         screensharingPublisher={screensharingPublisher}
         screenshareVideoElement={screenshareVideoElement}
         isRightPanelOpen={rightPanelActiveTab !== 'closed'}
