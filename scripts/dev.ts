@@ -74,6 +74,13 @@ function devRoom(): void {
 }
 
 /**
+ * Runs Vera Studio dev server (Express + Vite middleware on port 5000).
+ */
+function devStudio(): void {
+  runCommand('nx run vera-studio:dev');
+}
+
+/**
  * Main entry point for dev commands.
  *
  * Targets:
@@ -90,7 +97,8 @@ function devRoom(): void {
  * - yarn dev backend debug wait (run only backend with --inspect-brk, waits for debugger)
  * - yarn dev debug              (run frontend + backend with --inspect on port 9229)
  * - yarn dev debug wait         (run frontend + backend with --inspect-brk, waits for debugger)
- * - yarn dev room      (build and serve VeraRoom example)
+ * - yarn dev room         (build and serve VeraRoom example)
+ * - yarn dev vera-studio  (run Vera Studio dev server)
  */
 function main(): void {
   const [target, subTarget] = args;
@@ -124,6 +132,9 @@ function main(): void {
       return;
     case 'room':
       devRoom();
+      return;
+    case 'vera-studio':
+      devStudio();
       return;
     default:
       devAll();

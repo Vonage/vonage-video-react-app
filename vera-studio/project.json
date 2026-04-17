@@ -1,0 +1,52 @@
+{
+  "$schema": "../node_modules/nx/schemas/project-schema.json",
+  "name": "vera-studio",
+  "projectType": "application",
+  "root": "vera-studio",
+  "sourceRoot": "vera-studio/src",
+  "targets": {
+    "dev": {
+      "executor": "nx:run-commands",
+      "options": {
+        "cwd": "vera-studio",
+        "command": "nodemon --watch src --watch frontend/src --ext ts,tsx,json --ignore dist --exec \"sh -c 'tsc --noEmit -p tsconfig.app.json --pretty true && node --import tsx src/index.ts'\""
+      }
+    },
+    "test": {
+      "executor": "nx:run-commands",
+      "options": {
+        "cwd": "vera-studio",
+        "command": "vitest run --passWithNoTests"
+      }
+    },
+    "test:watch": {
+      "executor": "nx:run-commands",
+      "options": {
+        "cwd": "vera-studio",
+        "command": "vitest --passWithNoTests"
+      }
+    },
+    "lint": {
+      "executor": "nx:run-commands",
+      "options": {
+        "cwd": "vera-studio",
+        "command": "eslint '**/*.{ts,tsx}' --report-unused-disable-directives --max-warnings 0"
+      }
+    },
+    "lint:fix": {
+      "executor": "nx:run-commands",
+      "options": {
+        "cwd": "vera-studio",
+        "command": "eslint '**/*.{ts,tsx}' --fix --report-unused-disable-directives --max-warnings 0"
+      }
+    },
+    "ts-check": {
+      "executor": "nx:run-commands",
+      "options": {
+        "cwd": "vera-studio",
+        "command": "tsc -p tsconfig.app.json --noEmit --pretty true"
+      }
+    }
+  },
+  "tags": []
+}
