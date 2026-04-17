@@ -1,0 +1,19 @@
+{
+  "extends": "../tsconfig.base.json",
+  "compilerOptions": {
+    "composite": false,
+    "target": "ESNext",
+    "lib": ["ESNext"],
+    "module": "ESNext",
+    "moduleResolution": "Node",
+    "outDir": "./dist",
+    "types": ["node"],
+    "baseUrl": ".",
+    "paths": {
+      "@common": ["../libs/common/src"],
+      "@common/*": ["../libs/common/src/*"],
+      "@ui": ["../libs/ui/src"],
+      "@ui/*": ["../libs/ui/src/*"]
+    }
+  }
+}
