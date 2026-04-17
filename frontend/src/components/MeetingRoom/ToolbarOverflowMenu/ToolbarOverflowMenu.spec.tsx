@@ -75,7 +75,7 @@ describe('ToolbarOverflowMenu', () => {
     expect(screen.getByTestId('archiving-button')).toBeVisible();
     expect(screen.getByTestId('captions-button')).toBeVisible();
     expect(screen.getByTestId('emoji-grid-button')).toBeVisible();
-    expect(screen.getByTestId('advanced-settings-button')).toBeVisible();
+    expect(screen.queryByTestId('advanced-settings-button')).not.toBeInTheDocument();
     expect(screen.getByTestId('report-issue-button')).toBeVisible();
     expect(screen.getByTestId('participant-list-button')).toBeVisible();
     expect(screen.getByTestId('chat-button')).toBeVisible();
@@ -89,7 +89,7 @@ describe('ToolbarOverflowMenu', () => {
     expect(screen.getByTestId('archiving-button')).toBeVisible();
     expect(screen.getByTestId('captions-button')).toBeVisible();
     expect(screen.getByTestId('emoji-grid-button')).toBeVisible();
-    expect(screen.getByTestId('advanced-settings-button')).toBeVisible();
+    expect(screen.queryByTestId('advanced-settings-button')).not.toBeInTheDocument();
     expect(screen.queryByTestId('report-issue-button')).not.toBeInTheDocument();
     expect(screen.getByTestId('participant-list-button')).toBeVisible();
     expect(screen.getByTestId('chat-button')).toBeVisible();
