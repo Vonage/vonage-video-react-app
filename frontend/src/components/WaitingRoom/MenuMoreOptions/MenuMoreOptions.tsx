@@ -136,15 +136,15 @@ const MenuMoreOptions = ({
         TransitionProps={{ onExited: handleCloseUnsupportedTooltip }}
         data-testid="menu-more-options"
       >
-      <MenuItem
-        onClick={() => {
-          handleClickAdvancedSettings();
-        }}
-        key="advancedSettings-option"
-      >
-        <VividIcon name="gear-line" customSize={-6} />
-        <span className="ml-2">{t('advancedSettings.title')}</span>
-      </MenuItem>
+        <MenuItem
+          onClick={() => {
+            handleClickAdvancedSettings();
+          }}
+          key="advancedSettings-option"
+        >
+          <VividIcon name="gear-line" customSize={-6} />
+          <span className="ml-2">{t('advancedSettings.title')}</span>
+        </MenuItem>
         <MenuItem key="backgroundEffects-option" {...backgroundEffectsAvailabilityProps}>
           <VividIcon name="gallery-line" customSize={-6} />
           <span className="ml-2">{t('backgroundEffects.title')}</span>
