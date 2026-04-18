@@ -7,6 +7,8 @@ import { Card, PageLayoutEmbed } from '@ui';
 import type { FC } from 'react';
 import { useTranslation } from 'react-i18next';
 
+import type { Archive } from '../../../api/archiving/model';
+
 /**
  * GoodByeStage
  *
@@ -19,7 +21,9 @@ import { useTranslation } from 'react-i18next';
  */
 const GoodByeStage: FC = () => {
   const { t } = useTranslation();
-  const { roomName, archives, header, caption } = useGoodByePage();
+  const { roomName, archives, archivesError, header, caption } = useGoodByePage();
+
+  const archiveListValue: Archive[] | 'error' = archivesError ? 'error' : (archives ?? []);
 
   return (
     <PageLayoutEmbed>
@@ -39,7 +43,7 @@ const GoodByeStage: FC = () => {
             <p className="text-xl font-medium font-vera-plain text-vera-secondary mb-6">
               {t('archiveList.label')}
             </p>
-            <ArchiveList archives={archives} />
+            <ArchiveList archives={archiveListValue} />
           </Card>
         </Stack>
       </PageLayoutEmbed.Right>

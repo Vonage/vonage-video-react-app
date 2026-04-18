@@ -22,3 +22,8 @@ export {
   default as makeBackgroundPublisherProviderWrapper,
   type BackgroundPublisherProviderWrapperOptions,
 } from './makeBackgroundPublisherProviderWrapper';
+
+export {
+  default as makeRuntimeProviderWrapper,
+  type RuntimeProviderWrapperOptions,
+} from './makeRuntimeProviderWrapper';

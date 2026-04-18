@@ -3,7 +3,7 @@ import type { IVideoRouter } from '../../../../api/src/types/IVideoRouter';
 import { createTRPCClient, httpBatchLink } from '@trpc/client';
 import type { Prettify } from '@common/types';
 
-type VideoClient = Prettify<ReturnType<typeof createTRPCClient<IVideoRouter>>>;
+export type VideoClient = Prettify<ReturnType<typeof createTRPCClient<IVideoRouter>>>;
 
 type Options = Prettify<Parameters<typeof createTRPCClient<IVideoRouter>>[0]>;
 

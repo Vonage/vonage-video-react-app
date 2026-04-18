@@ -10,6 +10,7 @@ import GoToLandingPageButton from '@components/GoodBye/GoToLandingPageButton';
 import Card from '@ui/Card';
 import Stack from '@mui/material/Stack';
 import useGoodByePage from '../../hooks/useGoodByePage';
+import type { Archive } from '../../api/archiving/model';
 
 /**
  * GoodBye Component
@@ -23,7 +24,10 @@ import useGoodByePage from '../../hooks/useGoodByePage';
  */
 const GoodBye = (): ReactElement => {
   const { t } = useTranslation();
-  const { roomName, archives, header, caption, isSelfDeclinedRecording } = useGoodByePage();
+  const { roomName, archives, archivesError, header, caption, isSelfDeclinedRecording } =
+    useGoodByePage();
+
+  const archiveListValue: Archive[] | 'error' = archivesError ? 'error' : (archives ?? []);
 
   return (
     <PageLayout>
@@ -49,7 +53,7 @@ const GoodBye = (): ReactElement => {
               <p className="text-xl font-medium font-vera-plain text-vera-secondary mb-6">
                 {t('archiveList.label')}
               </p>
-              <ArchiveList archives={archives} />
+              <ArchiveList archives={archiveListValue} />
             </Card>
           )}
         </Stack>

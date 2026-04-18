@@ -21,11 +21,15 @@ const mockUseArchives = useArchives as Mock;
 const mockUseRoomName = useRoomName as Mock;
 const mockUseLocation = useLocation as Mock;
 
+function mockArchivesResult(overrides = {}) {
+  return { data: undefined, error: null, isLoading: false, refetch: vi.fn(), ...overrides };
+}
+
 describe('useGoodByePage', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     mockUseRoomName.mockReturnValue('my-room');
-    mockUseArchives.mockReturnValue([]);
+    mockUseArchives.mockReturnValue(mockArchivesResult());
   });
 
   it('returns the roomName from useRoomName', () => {
@@ -39,17 +43,18 @@ describe('useGoodByePage', () => {
   });
 
   it('forwards archives from useArchives', () => {
-    mockUseArchives.mockReturnValue([availableArchive]);
+    mockUseArchives.mockReturnValue(mockArchivesResult({ data: [availableArchive] }));
 
     const { result } = renderHook(() => useGoodByePage());
     expect(result.current.archives).toEqual([availableArchive]);
   });
 
-  it('forwards "error" from useArchives when archives fail to load', () => {
-    mockUseArchives.mockReturnValue('error');
+  it('exposes error from useArchives when archives fail to load', () => {
+    const archiveError = new Error('failed');
+    mockUseArchives.mockReturnValue(mockArchivesResult({ error: archiveError }));
 
     const { result } = renderHook(() => useGoodByePage());
-    expect(result.current.archives).toBe('error');
+    expect(result.current.archivesError).toBe(archiveError);
   });
 
   it('uses location.state header when provided', () => {

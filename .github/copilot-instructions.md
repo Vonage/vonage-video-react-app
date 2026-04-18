@@ -55,6 +55,11 @@ TypeScript version: `^5.8.3`
 - **Rule:** Do not add new state management libraries. Use only existing tooling.
 - **Rule:** Components must be kept small, focused, and composable.
 
+## Testing Guidelines
+
+- **Rule:** Avoid overtesting. Simple helpers should be covered by only a couple of high-value use cases.
+- **Rule:** Prefer tests that validate real functionality and behavior over redundant input permutations.
+
 ## Import rules
 
 - **Rule:** Always prefer specific imports over deep namespace imports.

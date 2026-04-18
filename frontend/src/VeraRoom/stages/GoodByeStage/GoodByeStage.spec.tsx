@@ -47,7 +47,10 @@ describe('GoodByeStage', () => {
   beforeEach(() => {
     mockUseGoodByePage.mockReturnValue({
       roomName: 'test-room',
-      archives: [],
+      archives: undefined,
+      archivesError: null,
+      isLoadingArchives: false,
+      refetchArchives: vi.fn(),
       header: 'You have left the meeting',
       caption: 'Thank you for joining!',
     });
@@ -71,6 +74,9 @@ describe('GoodByeStage', () => {
     mockUseGoodByePage.mockReturnValue({
       roomName: 'test-room',
       archives,
+      archivesError: null,
+      isLoadingArchives: false,
+      refetchArchives: vi.fn(),
       header: 'Gone',
       caption: 'Bye',
     });
@@ -83,7 +89,10 @@ describe('GoodByeStage', () => {
   it('renders the ArchiveList with "error" when archives failed to load', () => {
     mockUseGoodByePage.mockReturnValue({
       roomName: 'test-room',
-      archives: 'error',
+      archives: undefined,
+      archivesError: new Error('failed'),
+      isLoadingArchives: false,
+      refetchArchives: vi.fn(),
       header: 'Gone',
       caption: 'Bye',
     });

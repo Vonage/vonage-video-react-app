@@ -6,7 +6,10 @@ import useRoomName from './useRoomName';
 
 type UseGoodByePageResult = {
   roomName: string;
-  archives: Archive[] | 'error';
+  archives: Archive[] | undefined;
+  archivesError: Error | null;
+  isLoadingArchives: boolean;
+  refetchArchives: () => void;
   header: string;
   caption: string;
   isSelfDeclinedRecording: boolean;
@@ -20,7 +23,14 @@ const useGoodByePage = (): UseGoodByePageResult => {
     useLocationState: true,
   });
 
-  const archives = useArchives({ roomName });
+  const {
+    data: archives,
+    error: archivesQueryError,
+    isLoading: isLoadingArchives,
+    refetch: refetchArchives,
+  } = useArchives({ roomName });
+
+  const archivesError = archivesQueryError instanceof Error ? archivesQueryError : null;
 
   const header: string = location.state?.header || t('goodbye.default.header');
   const caption: string = location.state?.caption || t('goodbye.default.message');
@@ -29,6 +39,9 @@ const useGoodByePage = (): UseGoodByePageResult => {
   return {
     roomName,
     archives,
+    archivesError,
+    isLoadingArchives,
+    refetchArchives,
     header,
     caption,
     isSelfDeclinedRecording,

@@ -1,4 +1,5 @@
 export { default as assertRecord } from './assertRecord';
+export { default as assertNotNil } from './assertNotNil';
 export { default as isErrorLike } from './isErrorLike';
 export { default as isFunction } from './isFunction';
 export { default as isNil } from './isNil';

@@ -6,7 +6,11 @@ import useArchives from '../../hooks/useArchives';
 import { availableArchive, failedArchive, pendingArchive } from '../../api/archiving/tests/data';
 
 vi.mock('../../hooks/useArchives');
-const mockUseArchives = useArchives as Mock<[], ReturnType<typeof useArchives>>;
+const mockUseArchives = useArchives as Mock;
+
+function mockArchivesResult(overrides = {}) {
+  return { data: undefined, error: null, isLoading: false, refetch: vi.fn(), ...overrides };
+}
 
 vi.mock('react-router-dom', async () => {
   const mod = await vi.importActual<typeof import('react-router-dom')>('react-router-dom');
@@ -18,7 +22,7 @@ vi.mock('react-router-dom', async () => {
 
 describe('GoodBye', () => {
   beforeEach(() => {
-    mockUseArchives.mockReturnValue([]);
+    mockUseArchives.mockReturnValue(mockArchivesResult());
   });
 
   it('should render', () => {
@@ -33,7 +37,9 @@ describe('GoodBye', () => {
   });
 
   it('should fetch and display archives', () => {
-    mockUseArchives.mockReturnValue([availableArchive, failedArchive, pendingArchive]);
+    mockUseArchives.mockReturnValue(
+      mockArchivesResult({ data: [availableArchive, failedArchive, pendingArchive] })
+    );
     render(
       <BrowserRouter>
         <GoodBye />
@@ -62,7 +68,7 @@ describe('GoodBye', () => {
   });
 
   it('should display empty message when there are no archives', () => {
-    mockUseArchives.mockReturnValue([]);
+    mockUseArchives.mockReturnValue(mockArchivesResult({ data: [] }));
     render(
       <BrowserRouter>
         <GoodBye />
@@ -72,7 +78,7 @@ describe('GoodBye', () => {
   });
 
   it('should display error message when archives fail to load', () => {
-    mockUseArchives.mockReturnValue('error');
+    mockUseArchives.mockReturnValue(mockArchivesResult({ error: new Error('failed') }));
     render(
       <BrowserRouter>
         <GoodBye />
@@ -84,7 +90,7 @@ describe('GoodBye', () => {
   });
 
   it('should display available archive with download button', () => {
-    mockUseArchives.mockReturnValue([availableArchive]);
+    mockUseArchives.mockReturnValue(mockArchivesResult({ data: [availableArchive] }));
     render(
       <BrowserRouter>
         <GoodBye />
@@ -96,7 +102,7 @@ describe('GoodBye', () => {
   });
 
   it('should display failed archive with error icon', () => {
-    mockUseArchives.mockReturnValue([failedArchive]);
+    mockUseArchives.mockReturnValue(mockArchivesResult({ data: [failedArchive] }));
     render(
       <BrowserRouter>
         <GoodBye />
@@ -106,7 +112,7 @@ describe('GoodBye', () => {
   });
 
   it('should display pending archive with loading spinner', () => {
-    mockUseArchives.mockReturnValue([pendingArchive]);
+    mockUseArchives.mockReturnValue(mockArchivesResult({ data: [pendingArchive] }));
     render(
       <BrowserRouter>
         <GoodBye />
@@ -116,7 +122,7 @@ describe('GoodBye', () => {
   });
 
   it('should display recordings section title', () => {
-    mockUseArchives.mockReturnValue([availableArchive]);
+    mockUseArchives.mockReturnValue(mockArchivesResult({ data: [availableArchive] }));
     render(
       <BrowserRouter>
         <GoodBye />
