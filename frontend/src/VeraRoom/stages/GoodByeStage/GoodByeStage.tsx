@@ -2,6 +2,7 @@ import ArchiveList from '@components/GoodBye/ArchiveList';
 import GoodByeMessage from '@components/GoodBye/GoodbyeMessage';
 import ReenterRoomButton from '@components/GoodBye/ReenterRoomButton';
 import useGoodByePage from '@hooks/useGoodByePage';
+import { Stack } from '@mui/material';
 import { Card, PageLayoutEmbed } from '@ui';
 import type { FC } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -26,7 +27,7 @@ const GoodByeStage: FC = () => {
         <GoodByeMessage header={header} message={caption} />
       </PageLayoutEmbed.Left>
       <PageLayoutEmbed.Right>
-        <div className="flex flex-col gap-8">
+        <Stack direction="column" gap={4}>
           <Card className="lg:min-w-125 items-center">
             <p className="text-xl font-medium font-vera-plain text-vera-secondary mb-3 w-full text-left">
               {t('goodBye.title')}
@@ -40,7 +41,7 @@ const GoodByeStage: FC = () => {
             </p>
             <ArchiveList archives={archives} />
           </Card>
-        </div>
+        </Stack>
       </PageLayoutEmbed.Right>
     </PageLayoutEmbed>
   );

@@ -7,12 +7,14 @@ import bridge$, {
   bridgeAttributes,
   initialState,
 } from './stores/bridge';
+import { runtime$ } from '@core/stores';
 import type { Any, KebabToCamel } from '@common/types';
 import { ShadowStylesProvider } from './providers';
 import veraStyles from './styles.css?inline';
 import { defer } from 'easy-cancelable-promise';
 import { BridgeAPI } from './stores/bridge/types';
 import { registerIcon } from '@vonage/vivid';
+import { videoClient } from '../services';
 
 type BridgeState = ReturnType<BridgeAPI['getState']>;
 type BridgeContext = ReturnType<typeof bridge$.Provider.makeProviderWrapper>['context'];
@@ -81,9 +83,11 @@ class VeraRoomElement extends HTMLElement {
 
     this.root?.render(
       <BridgeProvider value={initialState}>
-        <ShadowStylesProvider shadowRoot={this.shadow}>
-          <VeraRoom />
-        </ShadowStylesProvider>
+        <runtime$.Provider videoClient={videoClient} language={initialState.language}>
+          <ShadowStylesProvider shadowRoot={this.shadow}>
+            <VeraRoom />
+          </ShadowStylesProvider>
+        </runtime$.Provider>
       </BridgeProvider>
     );
   }

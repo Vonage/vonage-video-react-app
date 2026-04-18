@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useState } from 'react';
 import type { RefCreator } from '../useStableRef.types';
 import { stable_ref_unique_symbol } from '../useStableRef.types';
 import shallowCompare from 'react-global-state-hooks/shallowCompare';
@@ -12,13 +12,10 @@ function useNonDisposableStableRef<T>(
   builder: RefCreator<T>,
   dependencies: React.DependencyList
 ): React.RefObject<T> {
-  const ref = useMemo(
-    () => ({
-      current: undefined as T | undefined,
-      dependencies: undefined as React.DependencyList | undefined,
-    }),
-    []
-  );
+  const [ref] = useState(() => ({
+    current: undefined as T | undefined,
+    dependencies: undefined as React.DependencyList | undefined,
+  }));
 
   const isFirstRun = ref.current === stable_ref_unique_symbol;
 

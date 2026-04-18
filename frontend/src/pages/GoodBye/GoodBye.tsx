@@ -8,6 +8,7 @@ import GoodByeMessage from '../../components/GoodBye/GoodbyeMessage';
 import ReenterRoomButton from '@components/GoodBye/ReenterRoomButton';
 import GoToLandingPageButton from '@components/GoodBye/GoToLandingPageButton';
 import Card from '@ui/Card';
+import Stack from '@mui/material/Stack';
 import useGoodByePage from '../../hooks/useGoodByePage';
 
 /**
@@ -33,7 +34,7 @@ const GoodBye = (): ReactElement => {
         <GoodByeMessage header={header} message={caption} />
       </PageLayout.Left>
       <PageLayout.Right>
-        <div className="flex w-full flex-col items-center gap-8">
+        <Stack direction="column" gap={4} className="w-full items-center">
           <Card className="w-full max-w-125">
             <p className="text-xl font-medium font-vera-plain text-vera-secondary mb-3 w-full text-left">
               {t('goodBye.title')}
@@ -51,7 +52,7 @@ const GoodBye = (): ReactElement => {
               <ArchiveList archives={archives} />
             </Card>
           )}
-        </div>
+        </Stack>
       </PageLayout.Right>
       <PageLayout.Footer>
         <Footer />
