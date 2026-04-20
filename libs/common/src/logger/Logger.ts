@@ -57,7 +57,7 @@ export type LogContext = {
  * Logger base class for error reporting and event logging.
  */
 export class LoggerBase implements LoggerProviderConfig {
-  private context: LogContext = {};
+  private readonly context: LogContext = {};
   /**
    * Indicates whether the lack of a logger provider or one of its features has been acknowledged.
    */
