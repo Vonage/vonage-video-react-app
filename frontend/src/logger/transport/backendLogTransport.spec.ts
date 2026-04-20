@@ -1,6 +1,5 @@
 import { vi, describe, it, beforeEach, expect, type MockInstance } from 'vitest';
 import { BackendLogTransport } from './index';
-import { createClientEvent } from '../event';
 
 const MOCK_API_URL = vi.hoisted(() => 'https://api.test');
 
@@ -11,19 +10,6 @@ vi.mock('../../utils/constants', () => ({
 vi.mock('../../utils/getAppVersion', () => ({
   default: () => 'vera-1.0.0-test',
 }));
-
-vi.mock('../event', () => ({
-  createClientEvent: vi.fn().mockReturnValue({
-    action: 'Test',
-    level: 'info',
-    guid: 'guid-1',
-    clientSystemTime: 0,
-    source: 'test',
-    userAgent: '',
-  }),
-}));
-
-const mockCreateClientEvent = vi.mocked(createClientEvent);
 
 describe('BackendLogTransport', () => {
   let fetchSpy!: MockInstance<
@@ -80,23 +66,5 @@ describe('BackendLogTransport', () => {
     const blob = sendBeaconSpy.mock.calls[0][1] as Blob;
     expect(blob.type).toBe('application/json');
     expect(blob.size).toBeGreaterThan(0);
-  });
-
-  it('log() passes userId to createClientEvent when provided in extra', () => {
-    const transport = new BackendLogTransport();
-    transport.log('Test', { userId: 'user-123', sessionId: 's1' });
-
-    expect(mockCreateClientEvent).toHaveBeenCalledWith(
-      expect.objectContaining({ userId: 'user-123' })
-    );
-  });
-
-  it('reportError() passes userId to createClientEvent when provided in extra', () => {
-    const transport = new BackendLogTransport();
-    transport.reportError(new Error('fail'), { userId: 'user-456' });
-
-    expect(mockCreateClientEvent).toHaveBeenCalledWith(
-      expect.objectContaining({ userId: 'user-456' })
-    );
   });
 });

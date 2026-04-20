@@ -207,14 +207,16 @@ export class LoggerBase implements LoggerProviderConfig {
    * Sets persistent context fields that are automatically merged into every log and reportError call.
    */
   public setContext(context: Partial<LogContext>): void {
-    this.context = { ...this.context, ...context };
+    Object.assign(this.context, context);
   }
 
   /**
    * Clears all persistent context (e.g. on session disconnect or user logout).
    */
   public clearContext(): void {
-    this.context = {};
+    (Object.keys(this.context) as Array<keyof LogContext>).forEach((key) => {
+      delete this.context[key];
+    });
   }
 
   public group<T extends Record<string, unknown>>(groupName: string, context?: T) {
