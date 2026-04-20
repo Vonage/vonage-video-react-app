@@ -3,6 +3,7 @@ import SpeakingDetector from './speakingDetector';
 import { waitForEvent } from '../async';
 import { setupWindowNavigatorMock } from '@web-test/fixtures';
 import { mediaDevices$ } from '@core/stores';
+import { mediaDevicesEnvelop } from '@core/interceptors';
 
 const mockCreateMediaStreamSource = vi.fn(() => ({ connect: vi.fn(), disconnect: vi.fn() }));
 
@@ -46,6 +47,8 @@ beforeEach(() => {
       addEventListener: vi.fn(),
     },
   });
+
+  mediaDevicesEnvelop.rebind(navigator);
 
   mediaDevices$.reset();
 });

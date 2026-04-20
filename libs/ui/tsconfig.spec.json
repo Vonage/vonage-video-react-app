@@ -26,6 +26,8 @@
     "../common/testBrowser/**/*.ts",
     "../common/testBrowser/**/*.tsx",
     "../common/test/**/*.ts",
+    "../common/testBrowser/**/*.ts",
+    "../common/srcBrowser/**/*.ts",
     "../core/src/**/*.ts"
   ]
 }

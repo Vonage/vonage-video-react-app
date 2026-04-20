@@ -89,6 +89,7 @@ const usePreviewPublisher = (
   const [speechLevel, setSpeechLevel] = useState(initialValue?.speechLevel ?? 0);
   const { setAccessStatus, accessStatus } = usePermissions();
   const publisherRef = useRef<Publisher | null>(null);
+
   const [isPublishing, setIsPublishing] = useState<boolean>(initialValue?.isPublishing ?? false);
   const initialBackgroundRef = useRef<VideoFilter | undefined>(
     user.defaultSettings.backgroundFilter
@@ -227,7 +228,6 @@ const usePreviewPublisher = (
       return;
     }
 
-    // Set videoFilter based on user's selected background
     let videoFilter: VideoFilter | undefined;
     if (initialBackgroundRef.current && hasMediaProcessorSupport()) {
       videoFilter = initialBackgroundRef.current;
@@ -251,6 +251,7 @@ const usePreviewPublisher = (
         }
       }
     });
+
     addPublisherListeners(publisherRef.current);
   });
 

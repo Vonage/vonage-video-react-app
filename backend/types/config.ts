@@ -8,6 +8,7 @@ export type FeedbackConfig = {
   androidComponentId?: string;
   epicLink?: string;
   epicUrl?: string;
+  severityId?: string;
   gollumUrl?: string;
 };
 

@@ -110,6 +110,57 @@ describe('MenuDevices Component', () => {
     testDeviceKindRendering('videoinput');
   });
 
+  it('renders SoundTest when audiooutput devices are available', async () => {
+    vi.spyOn(util, 'isGetActiveAudioOutputDeviceSupported').mockReturnValue(true);
+
+    vi.spyOn(HTMLMediaElement.prototype, 'pause').mockImplementation(() => {});
+    vi.spyOn(HTMLMediaElement.prototype, 'play').mockResolvedValue(undefined);
+
+    const anchorEl = document.createElement('div');
+
+    render(
+      <MenuDevices
+        mediaDeviceKind="audiooutput"
+        onClose={vi.fn()}
+        open
+        anchorEl={anchorEl}
+        deviceChangeHandler={vi.fn()}
+      />
+    );
+
+    await waitFor(() => {
+      expect(screen.getByTestId('soundTest')).toBeInTheDocument();
+    });
+  });
+
+  it('does not render SoundTest when no audiooutput devices are available', async () => {
+    vi.spyOn(util, 'isGetActiveAudioOutputDeviceSupported').mockReturnValue(true);
+
+    act(() => {
+      mediaDevices$.setState((state) => ({
+        ...state,
+        mediaDeviceInfo: someDevices.filter((d) => d.kind !== 'audiooutput'),
+        audiooutput: undefined,
+      }));
+    });
+
+    const anchorEl = document.createElement('div');
+
+    render(
+      <MenuDevices
+        mediaDeviceKind="audiooutput"
+        onClose={vi.fn()}
+        open
+        anchorEl={anchorEl}
+        deviceChangeHandler={vi.fn()}
+      />
+    );
+
+    await waitFor(() => {
+      expect(screen.queryByTestId('soundTest')).not.toBeInTheDocument();
+    });
+  });
+
   it('renders an empty state when no devices are available', async () => {
     const mockOnClose = vi.fn();
     const mockDeviceChangeHandler = vi.fn();

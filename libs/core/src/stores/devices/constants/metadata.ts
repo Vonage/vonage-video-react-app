@@ -27,9 +27,9 @@ const metadata = () => {
     isStoreReady: CancelablePromise.resolve(),
 
     /**
-     * bound vanilla getUserMedia function
+     * Tracks whether the next media devices query is the bootstrap query executed while the store readiness promise is still being created.
      */
-    __getUserMedia: undefined as typeof globalThis.navigator.mediaDevices.getUserMedia | undefined,
+    isFirstMediaDevicesInfoQuery: true,
   };
 
   markDevicesApiMetadata(meta);
