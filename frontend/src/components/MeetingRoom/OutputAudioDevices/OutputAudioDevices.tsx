@@ -6,7 +6,7 @@ import Box from '@mui/material/Box';
 import MenuList from '@mui/material/MenuList';
 import MenuItem from '@mui/material/MenuItem';
 import VividIcon from '@components/VividIcon';
-import { useDistinctLabelMediaDevices } from '@ui/hooks';
+import useMergedMediaDevices from '../../../hooks/useMergedMediaDevices';
 import { isSinkIdSupported } from '@web/platform';
 import mediaDevices$ from '@core/stores/devices';
 import useTheme from '@ui/theme';
@@ -26,16 +26,12 @@ export type OutputAudioDevicesProps = {
  * @returns {ReactElement | false} - The OutputAudioDevices component.
  */
 const OutputAudioDevices = ({ handleToggle }: OutputAudioDevicesProps): ReactElement | false => {
-  const { t, i18n } = useTranslation();
+  const { t } = useTranslation();
   const theme = useTheme();
 
   const currentAudioOutputId = mediaDevices$.useDeviceId('audiooutput');
 
-  const mergedOutputDevices = useDistinctLabelMediaDevices('audiooutput', undefined, {
-    systemDefaultLabel: t('devices.defaultLabel'),
-    translate: t,
-    dependencies: [i18n.language],
-  });
+  const mergedOutputDevices = useMergedMediaDevices('audiooutput');
 
   const { devices: availableDevices, systemDefaultDeviceId } = isSinkIdSupported()
     ? mergedOutputDevices

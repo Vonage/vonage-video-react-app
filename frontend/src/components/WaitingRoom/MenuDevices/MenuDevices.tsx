@@ -4,7 +4,7 @@ import MenuItem from '@mui/material/MenuItem';
 import Menu from '@mui/material/Menu';
 import VividIcon from '@components/VividIcon';
 import Box from '@mui/material/Box';
-import { useDistinctLabelMediaDevices } from '@ui/hooks';
+import useMergedMediaDevices from '../../../hooks/useMergedMediaDevices';
 import SoundTest from '../../SoundTest';
 import { isGetActiveAudioOutputDeviceSupported } from '@utils/util';
 import mediaDevices$ from '@core/stores/devices';
@@ -38,7 +38,7 @@ const MenuDevices = ({
   anchorEl,
   deviceChangeHandler,
 }: MenuDevicesWaitingRoomProps): ReactElement => {
-  const { t, i18n } = useTranslation();
+  const { t } = useTranslation();
   const localSource = mediaDevices$.useDeviceId(mediaDeviceKind);
 
   const handleClick = (deviceId: string) => {
@@ -46,15 +46,8 @@ const MenuDevices = ({
     onClose();
   };
 
-  const { devices: processedDevices, systemDefaultDeviceId } = useDistinctLabelMediaDevices(
-    mediaDeviceKind,
-    (d) => d,
-    {
-      systemDefaultLabel: t('devices.defaultLabel'),
-      translate: t,
-      dependencies: [i18n.language],
-    }
-  );
+  const { devices: processedDevices, systemDefaultDeviceId } =
+    useMergedMediaDevices(mediaDeviceKind);
 
   const shouldDisplayDevices =
     mediaDeviceKind !== 'audiooutput' || isGetActiveAudioOutputDeviceSupported();

@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import useTheme from '@ui/theme';
 import { Box, MenuList, MenuItem, Tooltip, BoxProps } from '@mui/material';
 import VividIcon from '@components/VividIcon';
-import { useDistinctLabelMediaDevices } from '@ui/hooks';
+import useMergedMediaDevices from '../../../hooks/useMergedMediaDevices';
 import mediaDevices$ from '@core/stores/devices';
 import { env } from '../../../env';
 
@@ -24,20 +24,15 @@ const VideoDevices = ({
   className,
   ...boxProps
 }: VideoDevicesProps): ReactElement | false => {
-  const { t, i18n } = useTranslation();
+  const { t } = useTranslation();
   const theme = useTheme();
 
   // Use store's selection as source of truth, not publisher.getVideoSource() which can be stale
   const selectedDeviceId = mediaDevices$.useDeviceId('videoinput');
 
-  const { devices: devicesAvailable, systemDefaultDeviceId } = useDistinctLabelMediaDevices(
+  const { devices: devicesAvailable, systemDefaultDeviceId } = useMergedMediaDevices(
     'videoinput',
-    (devices) => devices.map((d) => ({ ...d, label: d.label ?? t('unknown.device') })),
-    {
-      systemDefaultLabel: t('devices.defaultLabel'),
-      translate: t,
-      dependencies: [i18n.language],
-    }
+    (devices) => devices.map((d) => ({ ...d, label: d.label ?? t('unknown.device') }))
   );
 
   const handleChangeVideoSource = (deviceId: string) => {
