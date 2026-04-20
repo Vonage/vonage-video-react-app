@@ -20,8 +20,8 @@ const translateMediaDeviceLabel = ({ label, translate }: TranslateMediaDeviceLab
   }
 
   return label
-    .replace(/^Default\b/iu, translate('devices.label.defaultPrefix'))
-    .replace(/\bBuilt(?:-|\s)in\b/giu, translate('devices.label.builtIn'));
+    .replaceAll(/^Default\b/giu, translate('devices.label.defaultPrefix'))
+    .replaceAll(/\bBuilt(?:-|\s)in\b/giu, translate('devices.label.builtIn'));
 };
 
 export default translateMediaDeviceLabel;
