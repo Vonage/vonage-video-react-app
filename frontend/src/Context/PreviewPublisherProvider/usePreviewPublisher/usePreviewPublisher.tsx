@@ -14,14 +14,8 @@ import mediaDevices$ from '@core/stores/devices';
 import useSyncPublisherDevices from '@Context/PublisherProvider/usePublisher/hooks/useSyncPublisherDevices/useSyncPublisherDevices';
 import waitUntilPlaying from '@utils/waitUntilPlaying';
 import { attempt } from '@common/execution';
-import wait from '@common/execution/wait';
 import { useMountEffect } from '@web/hooks';
-import { isAndroid } from '@utils/util';
-import { resolveMobileVideoSource } from '@utils/cameraSwitch';
 import { env } from '../../../env';
-
-/** Delay before switching camera on Android to allow the previous camera to fully release. */
-const ANDROID_CAMERA_SWITCH_DELAY_MS = 100;
 
 type PublisherVideoElementCreatedEvent = Event<'videoElementCreated', Publisher> & {
   element: HTMLVideoElement | HTMLObjectElement;
@@ -95,7 +89,6 @@ const usePreviewPublisher = (
   const [speechLevel, setSpeechLevel] = useState(initialValue?.speechLevel ?? 0);
   const { setAccessStatus, accessStatus } = usePermissions();
   const publisherRef = useRef<Publisher | null>(null);
-  const isInitializingPublisherRef = useRef(false);
   const [isPublishing, setIsPublishing] = useState<boolean>(initialValue?.isPublishing ?? false);
   const initialBackgroundRef = useRef<VideoFilter | undefined>(
     user.defaultSettings.backgroundFilter
@@ -165,58 +158,26 @@ const usePreviewPublisher = (
   );
 
   /**
-   * Change video camera in use.
-   * On mobile, resolves the actual accessible camera via facingMode constraints to handle
-   * devices like Samsung S24+ that enumerate multiple cameras, some of which are inaccessible.
-   * On Android, stops video first and waits for camera release before switching.
+   * Change video camera in use
    * @returns {void}
    */
-  const getVideoDeviceLabel = (deviceId: string | null | undefined): string | null => {
-    if (!deviceId) return null;
-    const entry = mediaDevices$.mediaDevicesMap$.getState()['videoinput']?.[deviceId];
-    return typeof entry?.label === 'string' ? entry.label : null;
-  };
-
   const changeVideoSource = useCallback(
     (deviceId: string) => {
-      void (async () => {
-        if (!deviceId || !publisherRef.current) {
-          return;
-        }
-        const publisher = publisherRef.current;
-        const currentDeviceId = publisher.getVideoSource()?.deviceId;
-        if (deviceId === currentDeviceId) return;
+      if (!deviceId || !publisherRef.current) {
+        return;
+      }
 
-        // Android: release camera before getUserMedia acquires the new one.
-        if (isAndroid()) {
-          publisher.publishVideo(false);
-          await wait(ANDROID_CAMERA_SWITCH_DELAY_MS);
-        }
+      void publisherRef.current.setVideoSource(deviceId);
+      void mediaDevices$.actions.selectDevice('videoinput', deviceId);
 
-        // Android: facingMode resolution finds the correct physical camera ID.
-        // iOS: device IDs are stable; skipping getUserMedia avoids interrupting
-        // the active stream, which would cause a layout shift.
-        const resolvedDeviceId = isAndroid()
-          ? await resolveMobileVideoSource(deviceId, getVideoDeviceLabel(deviceId))
-          : deviceId;
-
-        await publisher.setVideoSource(resolvedDeviceId);
-
-        if (isAndroid()) {
-          publisher.publishVideo(isVideoEnabled);
-        }
-
-        await mediaDevices$.actions.selectDevice('videoinput', resolvedDeviceId);
-
-        if (setUser) {
-          setUser((prevUser: UserType) => ({
-            ...prevUser,
-            defaultSettings: { ...prevUser.defaultSettings, videoSource: deviceId },
-          }));
-        }
-      })();
+      if (setUser) {
+        setUser((prevUser: UserType) => ({
+          ...prevUser,
+          defaultSettings: { ...prevUser.defaultSettings, videoSource: deviceId },
+        }));
+      }
     },
-    [setUser, isVideoEnabled]
+    [setUser]
   );
 
   const handleAccessDenied = useCallback(
@@ -262,54 +223,34 @@ const usePreviewPublisher = (
   });
 
   const initLocalPublisher = useStableCallback(() => {
-    if (publisherRef.current || isInitializingPublisherRef.current) {
+    if (publisherRef.current) {
       return;
     }
-    isInitializingPublisherRef.current = true;
 
-    void (async () => {
-      try {
-        // On mobile, resolve the actual accessible camera via facingMode so devices
-        // use a working camera rather than an inaccessible enumerated deviceId.
-        const resolvedVideoSourceId = videoSourceId
-          ? await resolveMobileVideoSource(videoSourceId, getVideoDeviceLabel(videoSourceId))
-          : videoSourceId;
+    let videoFilter: VideoFilter | undefined;
+    if (initialBackgroundRef.current && hasMediaProcessorSupport()) {
+      videoFilter = initialBackgroundRef.current;
+    }
 
-        if (resolvedVideoSourceId && resolvedVideoSourceId !== videoSourceId) {
-          await mediaDevices$.actions.selectDevice('videoinput', resolvedVideoSourceId);
+    const publisherOptions: PublisherProperties = {
+      insertDefaultUI: false,
+      videoFilter,
+      resolution: env.DEFAULT_RESOLUTION,
+      publishAudio: isAudioEnabled,
+      publishVideo: isVideoEnabled,
+      audioSource: audioSourceId,
+      videoSource: videoSourceId,
+    };
+
+    publisherRef.current = initPublisher(undefined, publisherOptions, (err: unknown) => {
+      if (err instanceof Error) {
+        publisherRef.current = null;
+        if (err.name === 'OT_USER_MEDIA_ACCESS_DENIED') {
+          console.error('initPublisher error: ', err);
         }
-
-        if (publisherRef.current) return;
-
-        // Set videoFilter based on user's selected background
-        let videoFilter: VideoFilter | undefined;
-        if (initialBackgroundRef.current && hasMediaProcessorSupport()) {
-          videoFilter = initialBackgroundRef.current;
-        }
-
-        const publisherOptions: PublisherProperties = {
-          insertDefaultUI: false,
-          videoFilter,
-          resolution: env.DEFAULT_RESOLUTION,
-          publishAudio: isAudioEnabled,
-          publishVideo: isVideoEnabled,
-          audioSource: audioSourceId,
-          videoSource: resolvedVideoSourceId,
-        };
-
-        publisherRef.current = initPublisher(undefined, publisherOptions, (err: unknown) => {
-          if (err instanceof Error) {
-            publisherRef.current = null;
-            if (err.name === 'OT_USER_MEDIA_ACCESS_DENIED') {
-              console.error('initPublisher error: ', err);
-            }
-          }
-        });
-        addPublisherListeners(publisherRef.current);
-      } finally {
-        isInitializingPublisherRef.current = false;
       }
-    })();
+    });
+    addPublisherListeners(publisherRef.current);
   });
 
   /**

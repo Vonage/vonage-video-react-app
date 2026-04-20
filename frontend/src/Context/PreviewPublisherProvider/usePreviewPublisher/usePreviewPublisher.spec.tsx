@@ -10,18 +10,7 @@ import renderAsyncHook from '@web-test/renderAsyncHook';
 import composeProviders from '@web/helpers/composeProviders';
 import SuspenseBoundary from '@web/components/SuspenseBoundary';
 import { setupWindowNavigatorMock } from '@web-test/fixtures';
-import { resolveMobileVideoSource } from '@utils/cameraSwitch';
-import { isAndroid } from '@utils/util';
-import mediaDevices$ from '@core/stores/devices';
-
 vi.mock('@vonage/client-sdk-video');
-vi.mock('@utils/cameraSwitch', () => ({
-  resolveMobileVideoSource: vi.fn((deviceId: string) => Promise.resolve(deviceId)),
-}));
-vi.mock('@utils/util', async (importOriginal) => {
-  const actual = await importOriginal<typeof import('@utils/util')>();
-  return { ...actual, isAndroid: vi.fn(() => false) };
-});
 
 describe('usePreviewPublisher', () => {
   const mockPublisher = Object.assign(new EventEmitter(), {
@@ -223,108 +212,6 @@ describe('usePreviewPublisher', () => {
       act(emitAccessDeniedError);
 
       expect(console.error).toHaveBeenCalledWith('Error querying permissions:', expect.any(Error));
-    });
-  });
-
-  describe('getVideoDeviceLabel', () => {
-    beforeEach(() => {
-      vi.mocked(isAndroid).mockReturnValue(true);
-      (mockPublisher as unknown as { setVideoSource: Mock }).setVideoSource = vi
-        .fn()
-        .mockResolvedValue(undefined);
-      (mockPublisher as unknown as { publishVideo: Mock }).publishVideo = vi.fn();
-      mockedInitPublisher.mockReturnValue(mockPublisher);
-      vi.mocked(resolveMobileVideoSource).mockImplementation((deviceId) =>
-        Promise.resolve(deviceId)
-      );
-      vi.spyOn(mediaDevices$.actions, 'selectDevice').mockResolvedValue(undefined);
-    });
-
-    it('passes the device label from the store to resolveMobileVideoSource', async () => {
-      vi.spyOn(mediaDevices$.mediaDevicesMap$, 'getState').mockReturnValue({
-        audioinput: {},
-        audiooutput: {},
-        videoinput: {
-          'video-input-1': {
-            deviceId: 'video-input-1',
-            kind: 'videoinput' as MediaDeviceKind,
-            label: 'Default Camera',
-            groupId: 'group-2',
-          },
-        },
-      });
-
-      const { result } = await render();
-      act(() => {
-        result.current.initLocalPublisher();
-      });
-
-      act(() => {
-        result.current.changeVideoSource('video-input-1');
-      });
-
-      await waitFor(() => {
-        expect(resolveMobileVideoSource).toHaveBeenCalledWith('video-input-1', 'Default Camera');
-      });
-    });
-
-    it('passes null as the label when the device is not in the store', async () => {
-      const { result } = await render();
-      act(() => {
-        result.current.initLocalPublisher();
-      });
-
-      act(() => {
-        result.current.changeVideoSource('unknown-device-id');
-      });
-
-      await waitFor(() => {
-        expect(resolveMobileVideoSource).toHaveBeenCalledWith('unknown-device-id', null);
-      });
-    });
-  });
-
-  describe('initLocalPublisher - resolved deviceId written to store', () => {
-    beforeEach(() => {
-      vi.mocked(isAndroid).mockReturnValue(true);
-      mockedInitPublisher.mockReturnValue(mockPublisher);
-      vi.spyOn(mediaDevices$.actions, 'selectDevice').mockResolvedValue(undefined);
-    });
-
-    it('writes resolved deviceId to store when resolution returns a different id', async () => {
-      mediaDevices$.setState((state) => ({ ...state, videoinput: 'initial-device-id' }));
-      vi.mocked(resolveMobileVideoSource).mockResolvedValue('resolved-device-id');
-
-      const { result } = await render();
-      act(() => {
-        result.current.initLocalPublisher();
-      });
-
-      await waitFor(() => {
-        expect(mediaDevices$.actions.selectDevice).toHaveBeenCalledWith(
-          'videoinput',
-          'resolved-device-id'
-        );
-      });
-    });
-
-    it('does not write to store when resolved deviceId matches the original', async () => {
-      mediaDevices$.setState((state) => ({ ...state, videoinput: 'same-device-id' }));
-      vi.mocked(resolveMobileVideoSource).mockResolvedValue('same-device-id');
-
-      const { result } = await render();
-      act(() => {
-        result.current.initLocalPublisher();
-      });
-
-      await waitFor(() => {
-        expect(mockedInitPublisher).toHaveBeenCalled();
-      });
-
-      expect(mediaDevices$.actions.selectDevice).not.toHaveBeenCalledWith(
-        'videoinput',
-        'same-device-id'
-      );
     });
   });
 });

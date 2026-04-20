@@ -10,13 +10,7 @@ import Fade from '@mui/material/Fade';
 import VividIcon from '@components/VividIcon';
 import usePublisherContext from '@hooks/usePublisherContext';
 import mediaDevices$ from '@core/stores/devices';
-import wait from '@common/execution/wait';
-import { isAndroid } from '@utils/util';
-import {
-  isRearFacingLabel,
-  isFrontFacingLabel,
-  resolveMobileVideoSource,
-} from '@utils/cameraSwitch';
+import { isRearFacingLabel, isFrontFacingLabel } from '@utils/cameraSwitch';
 import usePreferredDevices from '@hooks/usePreferredDevices';
 import RecordingIndicator from '../RecordingIndicator';
 
@@ -74,21 +68,8 @@ const SmallViewportHeader = (): ReactElement => {
 
     setFacing(nextFacing);
 
-    if (isAndroid()) {
-      publisher.publishVideo(false);
-      await wait(100);
-    }
-    // Android: facingMode resolution finds the correct physical camera ID.
-    // iOS: device IDs are stable; skipping getUserMedia avoids interrupting
-    // the active stream, which would cause a layout shift.
-    const resolvedDeviceId = isAndroid()
-      ? await resolveMobileVideoSource(target.deviceId, target.label)
-      : target.deviceId;
-    await publisher.setVideoSource(resolvedDeviceId);
-    if (isAndroid()) {
-      publisher.publishVideo(isVideoEnabled);
-    }
-    await mediaDevices$.actions.selectDevice('videoinput', resolvedDeviceId);
+    await publisher.setVideoSource(target.deviceId);
+    await mediaDevices$.actions.selectDevice('videoinput', target.deviceId);
   };
 
   return (

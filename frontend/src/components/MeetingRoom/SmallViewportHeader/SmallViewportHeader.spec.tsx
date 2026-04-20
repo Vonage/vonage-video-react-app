@@ -1,4 +1,4 @@
-import { vi, describe, it, Mock, expect, beforeEach, beforeAll, afterEach } from 'vitest';
+import { vi, describe, it, Mock, expect, beforeEach, beforeAll } from 'vitest';
 import {
   makeMediaDeviceInfos,
   makeMediaStreamMock,
@@ -11,8 +11,6 @@ import useRoomShareUrl from '@hooks/useRoomShareUrl';
 import usePublisherContext from '@hooks/usePublisherContext';
 import { PublisherContextType } from '@Context/PublisherProvider';
 import mediaDevices$ from '@core/stores/devices';
-import { isAndroid } from '@utils/util';
-import { resolveMobileVideoSource } from '@utils/cameraSwitch';
 import SmallViewportHeader from './SmallViewportHeader';
 
 vi.mock('@hooks/useSessionContext');
@@ -26,21 +24,6 @@ vi.mock('@web/platform', async (importOriginal) => {
     isMobile: () => false,
   };
 });
-
-vi.mock('@utils/util', async (importOriginal) => {
-  const actual = await importOriginal<typeof import('@utils/util')>();
-  return { ...actual, isAndroid: vi.fn(() => false) };
-});
-
-vi.mock('@utils/cameraSwitch', async (importOriginal) => {
-  const actual = await importOriginal<typeof import('@utils/cameraSwitch')>();
-  return {
-    ...actual,
-    resolveMobileVideoSource: vi.fn((deviceId: string) => Promise.resolve(deviceId)),
-  };
-});
-
-vi.mock('@common/execution/wait', () => ({ default: vi.fn(() => Promise.resolve()) }));
 
 const mockUsePublisherContext = usePublisherContext as Mock<[], PublisherContextType>;
 
@@ -272,127 +255,5 @@ describe('SmallViewportHeader component', () => {
 
     fireEvent.click(cameraIcon);
     await waitFor(() => expect(setVideoSource).toHaveBeenCalledWith(frontCamera.deviceId));
-  });
-
-  describe('camera toggle - Android', () => {
-    let publishVideo: Mock;
-    let setVideoSource: Mock;
-
-    const frontCamera = {
-      deviceId: 'front-camera',
-      kind: 'videoinput' as MediaDeviceKind,
-      label: 'camera 1, facing front',
-      groupId: 'group-front',
-      toJSON: () => ({
-        deviceId: 'front-camera',
-        kind: 'videoinput' as MediaDeviceKind,
-        label: 'camera 1, facing front',
-        groupId: 'group-front',
-      }),
-    } as MediaDeviceInfo;
-    const rearCamera = {
-      deviceId: 'rear-camera',
-      kind: 'videoinput' as MediaDeviceKind,
-      label: 'camera 0, facing back',
-      groupId: 'group-rear',
-      toJSON: () => ({
-        deviceId: 'rear-camera',
-        kind: 'videoinput' as MediaDeviceKind,
-        label: 'camera 0, facing back',
-        groupId: 'group-rear',
-      }),
-    } as MediaDeviceInfo;
-
-    beforeEach(() => {
-      vi.mocked(isAndroid).mockReturnValue(true);
-      vi.mocked(resolveMobileVideoSource).mockResolvedValue('resolved-device-id');
-      (useSessionContext as Mock).mockReturnValue({ archiveId: null });
-
-      publishVideo = vi.fn();
-      setVideoSource = vi.fn().mockResolvedValue(undefined);
-
-      mediaDevices$.setState((state) => ({
-        ...state,
-        mediaDeviceInfo: [
-          ...devices.filter((d) => d.kind !== 'videoinput'),
-          frontCamera,
-          rearCamera,
-        ],
-      }));
-
-      mockUsePublisherContext.mockReturnValue({
-        publisher: {
-          setVideoSource,
-          publishVideo,
-        } as unknown as PublisherContextType['publisher'],
-        isVideoEnabled: true,
-      } as unknown as PublisherContextType);
-    });
-
-    afterEach(() => {
-      vi.mocked(isAndroid).mockReturnValue(false);
-    });
-
-    it('calls publishVideo(false) before resolving the camera on Android', async () => {
-      const callOrder: string[] = [];
-      publishVideo.mockImplementation(() => callOrder.push('publishVideo'));
-      vi.mocked(resolveMobileVideoSource).mockImplementation((deviceId) => {
-        callOrder.push('resolve');
-        return Promise.resolve(deviceId);
-      });
-
-      render(<SmallViewportHeader />);
-      fireEvent.click(screen.getByTestId('vivid-icon-camera-switch-line'));
-
-      await waitFor(() => expect(callOrder).toContain('resolve'));
-
-      expect(callOrder[0]).toBe('publishVideo');
-      expect(publishVideo).toHaveBeenCalledWith(false);
-    });
-
-    it('re-enables video after switching on Android', async () => {
-      render(<SmallViewportHeader />);
-      fireEvent.click(screen.getByTestId('vivid-icon-camera-switch-line'));
-
-      await waitFor(() => {
-        expect(publishVideo).toHaveBeenCalledWith(false);
-        expect(publishVideo).toHaveBeenCalledWith(true);
-      });
-    });
-
-    it('updates device store with the resolved deviceId after toggle', async () => {
-      render(<SmallViewportHeader />);
-      fireEvent.click(screen.getByTestId('vivid-icon-camera-switch-line'));
-
-      await waitFor(() => {
-        expect(mediaDevices$.actions.selectDevice).toHaveBeenCalledWith(
-          'videoinput',
-          'resolved-device-id'
-        );
-      });
-    });
-
-    it('calls setVideoSource with the resolved deviceId', async () => {
-      render(<SmallViewportHeader />);
-      fireEvent.click(screen.getByTestId('vivid-icon-camera-switch-line'));
-
-      await waitFor(() => {
-        expect(setVideoSource).toHaveBeenCalledWith('resolved-device-id');
-      });
-    });
-
-    it('does not call publishVideo or resolveMobileVideoSource on non-Android', async () => {
-      vi.mocked(isAndroid).mockReturnValue(false);
-
-      render(<SmallViewportHeader />);
-      fireEvent.click(screen.getByTestId('vivid-icon-camera-switch-line'));
-
-      await waitFor(() => {
-        expect(setVideoSource).toHaveBeenCalledWith(rearCamera.deviceId);
-      });
-
-      expect(publishVideo).not.toHaveBeenCalled();
-      expect(resolveMobileVideoSource).not.toHaveBeenCalled();
-    });
   });
 });
