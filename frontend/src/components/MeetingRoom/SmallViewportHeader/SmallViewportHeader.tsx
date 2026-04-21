@@ -10,7 +10,7 @@ import Fade from '@mui/material/Fade';
 import VividIcon from '@components/VividIcon';
 import usePublisherContext from '@hooks/usePublisherContext';
 import { isRearFacingLabel, isFrontFacingLabel } from '@utils/cameraSwitch';
-import usePreferredCameras from '@hooks/usePreferredCameras';
+import useDistinctLabelMediaDevices from '../../../hooks/useDistinctLabelMediaDevices';
 import RecordingIndicator from '../RecordingIndicator';
 
 /**
@@ -27,7 +27,7 @@ const SmallViewportHeader = (): ReactElement => {
   const roomName = useRoomName();
 
   // Get preferred video input devices (cameras)
-  const videoInputDevices = usePreferredCameras();
+  const videoInputDevices = useDistinctLabelMediaDevices('videoinput');
 
   const roomShareUrl = useRoomShareUrl();
   const [isCopied, setIsCopied] = useState<boolean>(false);
