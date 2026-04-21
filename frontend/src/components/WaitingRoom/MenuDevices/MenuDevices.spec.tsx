@@ -9,6 +9,23 @@ import mediaDevices$ from '@core/stores/devices';
 
 const someDevices = makeMediaDeviceInfos();
 
+const devicesWithDefaultOutput = [
+  ...someDevices.filter((d) => d.kind !== 'audiooutput'),
+  {
+    deviceId: 'default',
+    kind: 'audiooutput' as MediaDeviceKind,
+    label: 'Default',
+    groupId: 'group-3',
+    toJSON: () => ({
+      deviceId: 'default',
+      kind: 'audiooutput' as MediaDeviceKind,
+      label: 'Default',
+      groupId: 'group-3',
+    }),
+  },
+  ...someDevices.filter((d) => d.kind === 'audiooutput'),
+] as MediaDeviceInfo[];
+
 describe('MenuDevices Component', () => {
   beforeEach(() => {
     setupWindowNavigatorMock({
@@ -158,6 +175,61 @@ describe('MenuDevices Component', () => {
 
     await waitFor(() => {
       expect(screen.queryByTestId('soundTest')).not.toBeInTheDocument();
+    });
+  });
+
+  it('merges system default audio output device into matching physical device', async () => {
+    vi.spyOn(util, 'isGetActiveAudioOutputDeviceSupported').mockReturnValue(true);
+
+    act(() => {
+      mediaDevices$.setState((state) => ({
+        ...state,
+        mediaDeviceInfo: devicesWithDefaultOutput,
+      }));
+    });
+
+    const anchorEl = document.createElement('div');
+    render(
+      <MenuDevices
+        mediaDeviceKind="audiooutput"
+        onClose={vi.fn()}
+        open
+        anchorEl={anchorEl}
+        deviceChangeHandler={vi.fn()}
+      />
+    );
+
+    await waitFor(() => {
+      expect(screen.queryByTestId('audiooutput-menu-item-default')).not.toBeInTheDocument();
+      expect(screen.getByText('Default Speakers - System Default')).toBeInTheDocument();
+    });
+  });
+
+  it('shows merged system default device as selected when localSource is default', async () => {
+    vi.spyOn(util, 'isGetActiveAudioOutputDeviceSupported').mockReturnValue(true);
+
+    act(() => {
+      mediaDevices$.setState((state) => ({
+        ...state,
+        mediaDeviceInfo: devicesWithDefaultOutput,
+        audiooutput: 'default',
+      }));
+    });
+
+    const anchorEl = document.createElement('div');
+    render(
+      <MenuDevices
+        mediaDeviceKind="audiooutput"
+        onClose={vi.fn()}
+        open
+        anchorEl={anchorEl}
+        deviceChangeHandler={vi.fn()}
+      />
+    );
+
+    await waitFor(() => {
+      const item = screen.getByTestId('audiooutput-menu-item-audio-output-1');
+      expect(item).toHaveClass('Mui-selected');
     });
   });
 

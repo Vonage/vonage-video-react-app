@@ -4,7 +4,8 @@ import MenuItem from '@mui/material/MenuItem';
 import Menu from '@mui/material/Menu';
 import VividIcon from '@components/VividIcon';
 import Box from '@mui/material/Box';
-import cleanAndDedupeDeviceLabels from '@utils/cleanAndDedupeDeviceLabels/cleanAndDedupeDeviceLabels';
+import cleanAndDedupeDeviceLabels from '@utils/cleanAndDedupeDeviceLabels';
+import mergeAudioDeviceLabel from '@utils/mergeAudioDeviceLabel';
 import SoundTest from '../../SoundTest';
 import { isGetActiveAudioOutputDeviceSupported } from '@utils/util';
 import mediaDevices$ from '@core/stores/devices';
@@ -48,7 +49,14 @@ const MenuDevices = ({
     onClose();
   };
 
-  const processedDevices = useMemo(() => cleanAndDedupeDeviceLabels(devices), [devices]);
+  const { devices: processedDevices, systemDefaultId } = useMemo(() => {
+    const cleaned = cleanAndDedupeDeviceLabels(devices);
+    if (mediaDeviceKind !== 'audiooutput') {
+      return { devices: cleaned, systemDefaultId: null };
+    }
+    return mergeAudioDeviceLabel(cleaned, t('devices.audio.defaultLabel'));
+  }, [devices, mediaDeviceKind, t]);
+
   const shouldDisplayDevices =
     mediaDeviceKind !== 'audiooutput' || isGetActiveAudioOutputDeviceSupported();
   const shouldDisplayEmptyState = shouldDisplayDevices && processedDevices.length === 0;
@@ -74,7 +82,10 @@ const MenuDevices = ({
               handleClick(device.deviceId);
             }}
             key={device.deviceId}
-            selected={device.deviceId === localSource}
+            selected={
+              device.deviceId === localSource ||
+              (localSource === 'default' && device.deviceId === systemDefaultId)
+            }
           >
             {device.label}
           </MenuItem>

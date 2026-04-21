@@ -24,6 +24,23 @@ vi.mock('@web/platform', async () => {
 
 const someDevices = makeMediaDeviceInfos();
 
+const devicesWithDefaultOutput = [
+  ...someDevices.filter((d) => d.kind !== 'audiooutput'),
+  {
+    deviceId: 'default',
+    kind: 'audiooutput' as MediaDeviceKind,
+    label: 'Default',
+    groupId: 'group-3',
+    toJSON: () => ({
+      deviceId: 'default',
+      kind: 'audiooutput' as MediaDeviceKind,
+      label: 'Default',
+      groupId: 'group-3',
+    }),
+  },
+  ...someDevices.filter((d) => d.kind === 'audiooutput'),
+] as MediaDeviceInfo[];
+
 describe('OutputAudioDevices Component', () => {
   const mockHandleToggle = vi.fn();
 
@@ -144,6 +161,35 @@ describe('OutputAudioDevices Component', () => {
 
     expect(screen.queryByTestId('output-device-title')).not.toBeInTheDocument();
     expect(screen.queryByTestId('output-devices')).not.toBeInTheDocument();
+  });
+
+  it('merges system default device into matching physical device by groupId', () => {
+    mediaDevices$.setState((state) => ({
+      ...state,
+      mediaDeviceInfo: devicesWithDefaultOutput,
+    }));
+
+    render(<OutputAudioDevices handleToggle={mockHandleToggle} />);
+
+    expect(screen.queryByText('Default')).not.toBeInTheDocument();
+    expect(screen.getByText('Default Speakers - System Default')).toBeInTheDocument();
+    expect(screen.getByText(usbHeadsetSpeakers.label)).toBeInTheDocument();
+    expect(screen.getByText(bluetoothSpeakers.label)).toBeInTheDocument();
+  });
+
+  it('shows the merged system default device as selected when store has audiooutput: default', () => {
+    mediaDevices$.setState((state) => ({
+      ...state,
+      mediaDeviceInfo: devicesWithDefaultOutput,
+      audiooutput: 'default',
+    }));
+
+    render(<OutputAudioDevices handleToggle={mockHandleToggle} />);
+
+    const systemDefaultItem = screen
+      .getByText('Default Speakers - System Default')
+      .closest('[role="menuitem"]');
+    expect(systemDefaultItem).toHaveClass('Mui-selected');
   });
 });
 

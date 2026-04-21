@@ -1,4 +1,4 @@
-import { ReactElement } from 'react';
+import { ReactElement, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import type { MediaDeviceInfoJSON } from '@web/types';
 import DropdownSeparator from '../DropdownSeparator';
@@ -12,6 +12,7 @@ import mediaDevices$ from '@core/stores/devices';
 import useTheme from '@ui/theme';
 import { Tooltip } from '@mui/material';
 import { env } from '../../../env';
+import mergeAudioDeviceLabel from '@utils/mergeAudioDeviceLabel';
 
 export type OutputAudioDevicesProps = {
   handleToggle: () => void;
@@ -30,17 +31,22 @@ const OutputAudioDevices = ({ handleToggle }: OutputAudioDevicesProps): ReactEle
   const theme = useTheme();
 
   const currentAudioOutputId = mediaDevices$.useDeviceId('audiooutput');
+  const systemDefaultLabel = t('devices.audio.defaultLabel');
 
-  const availableDevices = useDistinctLabelMediaDevices('audiooutput', (devices) =>
-    isSinkIdSupported()
-      ? devices.map((device) =>
-          // Rename default audio output device to user-friendly label
-          device.deviceId === 'default'
-            ? { ...device, label: t('devices.audio.defaultLabel') }
-            : device
-        )
-      : [{ deviceId: 'default', label: t('devices.audio.defaultLabel') } as MediaDeviceInfoJSON]
-  );
+  const cleanedDevices = useDistinctLabelMediaDevices('audiooutput');
+
+  const { devices: availableDevices, systemDefaultId } = useMemo(() => {
+    if (!isSinkIdSupported()) {
+      const fallbackDevice: MediaDeviceInfoJSON = {
+        deviceId: 'default',
+        label: systemDefaultLabel,
+        kind: 'audiooutput',
+        groupId: '',
+      };
+      return { devices: [fallbackDevice], systemDefaultId: null };
+    }
+    return mergeAudioDeviceLabel(cleanedDevices, systemDefaultLabel);
+  }, [cleanedDevices, systemDefaultLabel]);
 
   const handleChangeAudioOutput = async (deviceId: string) => {
     handleToggle();
@@ -72,9 +78,10 @@ const OutputAudioDevices = ({ handleToggle }: OutputAudioDevicesProps): ReactEle
 
         <MenuList data-testid="output-devices">
           {availableDevices?.map((device: MediaDeviceInfoJSON) => {
-            // If audio output device selection is not supported we show the default device as selected
             const isSelected =
-              device.deviceId === currentAudioOutputId || availableDevices.length === 1;
+              device.deviceId === currentAudioOutputId ||
+              (currentAudioOutputId === 'default' && device.deviceId === systemDefaultId) ||
+              availableDevices.length === 1;
 
             return (
               <MenuItem
