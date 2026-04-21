@@ -26,12 +26,7 @@ const InputAudioDevices = ({ handleToggle }: InputAudioDevicesProps): ReactEleme
   // Use store's selection as source of truth, not publisher.getAudioSource() which can be stale
   const selectedDeviceId = mediaDevices$.useDeviceId('audioinput');
 
-  const audioInputDevices = useDistinctLabelMediaDevices('audioinput', (devices) =>
-    devices.map((device) => ({
-      ...device,
-      label: device.label || t('unknown.device'),
-    }))
-  );
+  const audioInputDevices = useDistinctLabelMediaDevices('audioinput');
 
   const handleChangeAudioSource = (deviceId: string) => {
     handleToggle();

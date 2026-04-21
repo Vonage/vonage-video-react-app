@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next';
 import useMediaDeviceInfoByKind$ from '@core/stores/devices/hooks/useMediaDeviceInfoByKind$';
 import type { MediaDeviceInfoJSON } from '@web/types';
 import { cleanAndDedupeDeviceLabels } from './helpers';
@@ -54,14 +55,21 @@ function useDistinctLabelMediaDevices<Selection = MediaDeviceInfoJSON[]>(
   selector: Selector = (devices): MediaDeviceInfoJSON[] => devices,
   args?: Options<unknown> | Dependencies
 ): Selection {
+  const { t } = useTranslation();
   const dependencies = Array.isArray(args) ? args : [];
   const options = Array.isArray(args) ? { dependencies } : (args ?? {});
 
   return useMediaDeviceInfoByKind$(
-    (state) => selector(cleanAndDedupeDeviceLabels(Object.values(state[kind]))),
+    (state) =>
+      selector(
+        cleanAndDedupeDeviceLabels(Object.values(state[kind])).map((d) => ({
+          ...d,
+          label: d.label || t('unknown.device'),
+        }))
+      ),
     {
       ...options,
-      dependencies: [kind, ...(options.dependencies ?? [])],
+      dependencies: [kind, t, ...(options.dependencies ?? [])],
       isEqualRoot: (prev, next) => {
         if (options.isEqualRoot) return options.isEqualRoot(prev, next);
 

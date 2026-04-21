@@ -65,4 +65,41 @@ describe('useDistinctLabelMediaDevices', () => {
       expect(result.current).toBeGreaterThan(0);
     });
   });
+
+  it('should apply fallback label when device label is empty', async () => {
+    setupWindowNavigatorMock({
+      mediaDevices: {
+        addEventListener: vi.fn(),
+        enumerateDevices: Promise.resolve([
+          ...devices.filter((d) => d.kind !== 'videoinput'),
+          {
+            deviceId: 'cam-1',
+            kind: 'videoinput',
+            label: '',
+            groupId: 'group-cam',
+            toJSON: () => ({}),
+          } as MediaDeviceInfo,
+        ]),
+        getUserMedia: Promise.resolve({
+          getVideoTracks: () => [],
+          getAudioTracks: () => [],
+        } as unknown as MediaStream),
+      },
+    });
+
+    mediaDevicesEnvelop.rebind(navigator);
+    mediaDevices$.reset();
+
+    const { result } = renderHook<MediaDeviceInfoJSON[], void>(() =>
+      useDistinctLabelMediaDevices('videoinput')
+    );
+
+    await waitFor(() => {
+      expect(result.current.length).toBeGreaterThan(0);
+    });
+
+    const unlabeled = result.current.find((d) => d.deviceId === 'cam-1');
+    expect(unlabeled?.label).toBeTruthy();
+    expect(unlabeled?.label).not.toBe('');
+  });
 });

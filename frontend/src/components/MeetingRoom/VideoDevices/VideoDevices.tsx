@@ -30,12 +30,7 @@ const VideoDevices = ({
   // Use store's selection as source of truth, not publisher.getVideoSource() which can be stale
   const selectedDeviceId = mediaDevices$.useDeviceId('videoinput');
 
-  const devicesAvailable = useDistinctLabelMediaDevices('videoinput', (devices) =>
-    devices.map((device) => ({
-      ...device,
-      label: device.label ?? t('unknown.device'),
-    }))
-  );
+  const devicesAvailable = useDistinctLabelMediaDevices('videoinput');
 
   const handleChangeVideoSource = (deviceId: string) => {
     handleToggle();
