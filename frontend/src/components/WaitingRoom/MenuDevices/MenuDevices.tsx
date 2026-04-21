@@ -4,7 +4,7 @@ import MenuItem from '@mui/material/MenuItem';
 import Menu from '@mui/material/Menu';
 import VividIcon from '@components/VividIcon';
 import Box from '@mui/material/Box';
-import cleanAndDedupeDeviceLabels from '@utils/cleanAndDedupeDeviceLabels';
+import useDistinctLabelMediaDevices from '../../../hooks/useDistinctLabelMediaDevices';
 import mergeAudioDeviceLabel from '@web/helpers/mergeAudioDeviceLabel';
 import SoundTest from '../../SoundTest';
 import { isGetActiveAudioOutputDeviceSupported } from '@utils/util';
@@ -40,8 +40,7 @@ const MenuDevices = ({
   deviceChangeHandler,
 }: MenuDevicesWaitingRoomProps): ReactElement => {
   const { t } = useTranslation();
-  const devices = mediaDevices$.useMediaDevices(mediaDeviceKind, Object.values<MediaDeviceInfo>);
-
+  const cleanedDevices = useDistinctLabelMediaDevices(mediaDeviceKind);
   const localSource = mediaDevices$.useDeviceId(mediaDeviceKind);
 
   const handleClick = (deviceId: string) => {
@@ -50,12 +49,11 @@ const MenuDevices = ({
   };
 
   const { devices: processedDevices, systemDefaultId } = useMemo(() => {
-    const cleaned = cleanAndDedupeDeviceLabels(devices);
     if (mediaDeviceKind !== 'audiooutput') {
-      return { devices: cleaned, systemDefaultId: null };
+      return { devices: cleanedDevices, systemDefaultId: null };
     }
-    return mergeAudioDeviceLabel(cleaned, t('devices.audio.defaultLabel'));
-  }, [devices, mediaDeviceKind, t]);
+    return mergeAudioDeviceLabel(cleanedDevices, t('devices.audio.defaultLabel'));
+  }, [cleanedDevices, mediaDeviceKind, t]);
 
   const shouldDisplayDevices =
     mediaDeviceKind !== 'audiooutput' || isGetActiveAudioOutputDeviceSupported();
