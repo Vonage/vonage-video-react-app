@@ -1,5 +1,6 @@
 import { useState, useRef, useCallback } from 'react';
-import { Publisher, PublisherProperties, initPublisher } from '@vonage/client-sdk-video';
+import { initPublisher } from '@vonage/client-sdk-video';
+import type { Publisher, PublisherProperties } from '@vonage/client-sdk-video';
 import { useTranslation } from 'react-i18next';
 import useSessionContext from './useSessionContext';
 import useUserContext from './useUserContext';

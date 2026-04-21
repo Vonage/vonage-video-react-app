@@ -1,11 +1,13 @@
 import { beforeEach, afterEach, describe, expect, it, vi } from 'vitest';
 import { renderHook as renderHookBase, act } from '@testing-library/react';
-import { Publisher, initPublisher } from '@vonage/client-sdk-video';
+import { initPublisher } from '@vonage/client-sdk-video';
+import type { Publisher } from '@vonage/client-sdk-video';
 import useScreenShare from '../useScreenShare';
-import { makeTestProvider, providers, ProviderOptions } from '@test/providers';
+import { makeTestProvider, providers } from '@test/providers';
+import type { ProviderOptions } from '@test/providers';
 import EventEmitter from 'events';
 import type VonageVideoClient from '../../utils/VonageVideoClient';
-import { type UserContextType } from '../../Context/user';
+import type { UserContextType } from '../../Context/user';
 import { env } from '../../env';
 
 // Mocking dependencies
