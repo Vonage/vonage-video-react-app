@@ -18,6 +18,12 @@ export type UseScreenShareType = {
   screenshareVideoElement: HTMLVideoElement | HTMLObjectElement | undefined;
 };
 
+// `constraints` isn't declared on the SDK's PublisherProperties, but the SDK
+// forwards it verbatim to getDisplayMedia — letting us hint the picker tab.
+type ScreenSharePublisherProperties = PublisherProperties & {
+  constraints?: MediaStreamConstraints;
+};
+
 /**
  * Hook for toggling screen share and getting the current local screen share status (sharing / not sharing)
  * @returns {UseScreenShareType} useScreenShare
@@ -60,19 +66,15 @@ const useScreenShare = (): UseScreenShareType => {
   const toggleShareScreen = useCallback(async () => {
     if (vonageVideoClient) {
       if (!isSharingScreen) {
-        const publisherProperties: PublisherProperties = {
+        const publisherProperties: ScreenSharePublisherProperties = {
           videoSource: 'screen',
           insertDefaultUI: false,
           videoContentHint: 'detail',
           name: t('participants.screen', { participantName: user.defaultSettings.name }),
         };
 
-        // `constraints` isn't in the SDK's PublisherProperties type, but the SDK forwards it
-        // verbatim to getDisplayMedia so we can hint which picker tab the browser pre-selects.
         if (env.DEFAULT_SCREEN_SHARE_SURFACE) {
-          (
-            publisherProperties as PublisherProperties & { constraints: MediaStreamConstraints }
-          ).constraints = {
+          publisherProperties.constraints = {
             video: { displaySurface: env.DEFAULT_SCREEN_SHARE_SURFACE },
             audio: false,
           };
