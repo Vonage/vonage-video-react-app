@@ -100,13 +100,26 @@ const VideoTileCanvas = ({
 
   // Height is 100dvh - toolbar height (80px) and header height (80px) - 24px wrapper margin on small viewport device
   // Height is 100dvh - toolbar height (80px) - 24px wrapper margin on desktop
+  // When the floating PiP layout is active the 24px wrapper margin is zeroed so the canvas is edge-to-edge.
   const wrapperHeight = (() => {
-    if (fullSize) return isSmallViewport ? 'calc(100% - 184px)' : 'calc(100% - 104px)';
-    return isSmallViewport ? 'calc(100dvh - 184px)' : 'calc(100dvh - 104px)';
+    const marginPx = isFloatingPipLayoutActive ? 0 : 24;
+    const smallViewportChrome = 160 + marginPx;
+    const desktopChrome = 80 + marginPx;
+    if (fullSize) {
+      return isSmallViewport
+        ? `calc(100% - ${smallViewportChrome}px)`
+        : `calc(100% - ${desktopChrome}px)`;
+    }
+    return isSmallViewport
+      ? `calc(100dvh - ${smallViewportChrome}px)`
+      : `calc(100dvh - ${desktopChrome}px)`;
   })();
 
   // Width is 100vw - 360px panel width - 24px panel right margin - 24px wrapper margin
   const wrapperWidth = (() => {
+    if (isFloatingPipLayoutActive) {
+      return fullSize ? '100%' : '100vw';
+    }
     if (fullSize) return isRightPanelOpen ? 'calc(100% - 392px)' : 'calc(100% - 24px)';
     return isRightPanelOpen ? 'calc(100vw - 392px)' : 'calc(100vw - 24px)';
   })();
@@ -120,7 +133,7 @@ const VideoTileCanvas = ({
       ref={wrapRef}
       id="wrapper"
       sx={{
-        padding: 3,
+        padding: isFloatingPipLayoutActive ? 0 : 3,
         width: wrapperWidth,
         height: wrapperHeight,
       }}
