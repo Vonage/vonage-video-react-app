@@ -6,8 +6,8 @@ export type WindowSize = {
 };
 
 const readWindowSize = (): WindowSize => ({
-  width: typeof globalThis.window === 'undefined' ? 0 : globalThis.window.innerWidth,
-  height: typeof globalThis.window === 'undefined' ? 0 : globalThis.window.innerHeight,
+  width: globalThis.window === undefined ? 0 : globalThis.window.innerWidth,
+  height: globalThis.window === undefined ? 0 : globalThis.window.innerHeight,
 });
 
 /**
@@ -20,7 +20,7 @@ const useWindowSize = (): WindowSize => {
   const [size, setSize] = useState<WindowSize>(readWindowSize);
 
   useEffect(() => {
-    if (typeof globalThis.window === 'undefined') return undefined;
+    if (globalThis.window === undefined) return undefined;
     const handleResize = () => setSize(readWindowSize());
     globalThis.window.addEventListener('resize', handleResize);
     return () => globalThis.window.removeEventListener('resize', handleResize);

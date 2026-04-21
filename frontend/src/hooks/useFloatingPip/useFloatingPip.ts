@@ -86,7 +86,7 @@ const useFloatingPip = ({
   onTap,
 }: UseFloatingPipArgs): UseFloatingPipResult => {
   const [position, setPosition] = useState<FloatingPipPosition | null>(() => {
-    if (typeof globalThis.window === 'undefined') return null;
+    if (globalThis.window === undefined) return null;
     const rect = canvasRef.current?.getBoundingClientRect();
     const width = rect?.width || globalThis.window.innerWidth;
     const height = rect?.height || globalThis.window.innerHeight;
