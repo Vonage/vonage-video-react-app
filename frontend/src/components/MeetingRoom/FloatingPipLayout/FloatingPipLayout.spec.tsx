@@ -11,8 +11,8 @@ vi.mock('@hooks/usePublisherContext', () => ({ default: vi.fn() }));
 vi.mock('@hooks/useSessionContext', () => ({ default: vi.fn() }));
 vi.mock('@hooks/usePreferredCameras', () => ({ default: vi.fn() }));
 vi.mock('../../Subscriber', () => ({
-  default: ({ subscriberWrapper }: { subscriberWrapper: { id: string } }) => (
-    <div data-testid={`subscriber-stub-${subscriberWrapper.id}`} />
+  default: ({ subscriberWrapper, fit }: { subscriberWrapper: { id: string }; fit?: string }) => (
+    <div data-testid={`subscriber-stub-${subscriberWrapper.id}`} data-fit={fit ?? 'contain'} />
   ),
 }));
 vi.mock('@vonage/client-sdk-video', () => ({
@@ -105,6 +105,14 @@ describe('FloatingPipLayout', () => {
     expect(screen.getByTestId('floating-pip-layout')).toBeInTheDocument();
     expect(screen.getByTestId('floating-pip-remote-remote-1')).toBeInTheDocument();
     expect(screen.getByTestId('floating-pip-self')).toBeInTheDocument();
+  });
+
+  it('renders the remote subscriber with fit="cover" to fill the canvas edge-to-edge', () => {
+    mockCameras([]);
+
+    render(<FloatingPipLayout remoteSubscriber={makeRemoteSubscriber()} />);
+
+    expect(screen.getByTestId('subscriber-stub-remote-1')).toHaveAttribute('data-fit', 'cover');
   });
 
   it('hides the camera switch and background effects buttons by default', () => {

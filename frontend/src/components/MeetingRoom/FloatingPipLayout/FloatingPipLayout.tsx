@@ -61,6 +61,7 @@ const FloatingPipLayout = ({ remoteSubscriber }: FloatingPipLayoutProps): ReactE
           isHidden={false}
           box={remoteBox}
           isActiveSpeaker
+          fit="cover"
         />
       </Box>
       <FloatingPipSelfView canvasRef={canvasRef} />

@@ -156,4 +156,39 @@ describe('Subscriber', () => {
     expect(screen.getByTestId(`subscriber-container-${mockedSubscriberId}`)).toBeVisible();
     expect(screen.queryByTestId('pin-button')).not.toBeInTheDocument();
   });
+
+  it('applies object-fit: contain to the remote video element by default', () => {
+    const mockedSubscriberId = 'default-fit-subscriber';
+    const subscriberWrapper = createSubscriberWrapper(mockedSubscriberId, false);
+    const mockedBox = createMockBox(10, 10, 10, 10);
+
+    render(
+      <Subscriber
+        subscriberWrapper={subscriberWrapper}
+        isHidden={false}
+        box={mockedBox}
+        isActiveSpeaker={false}
+      />
+    );
+
+    expect(subscriberWrapper.element.style.objectFit).toBe('contain');
+  });
+
+  it('applies object-fit: cover to the remote video element when fit="cover"', () => {
+    const mockedSubscriberId = 'cover-fit-subscriber';
+    const subscriberWrapper = createSubscriberWrapper(mockedSubscriberId, false);
+    const mockedBox = createMockBox(10, 10, 10, 10);
+
+    render(
+      <Subscriber
+        subscriberWrapper={subscriberWrapper}
+        isHidden={false}
+        box={mockedBox}
+        isActiveSpeaker={false}
+        fit="cover"
+      />
+    );
+
+    expect(subscriberWrapper.element.style.objectFit).toBe('cover');
+  });
 });

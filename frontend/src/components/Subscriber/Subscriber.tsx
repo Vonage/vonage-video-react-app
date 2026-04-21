@@ -21,6 +21,7 @@ export type SubscriberProps = {
   isHidden: boolean;
   box: Box | undefined;
   isActiveSpeaker: boolean;
+  fit?: 'cover' | 'contain';
 };
 
 /**
@@ -33,6 +34,10 @@ export type SubscriberProps = {
  *  @property {boolean} isHidden - Whether the participant is hidden.
  *  @property {Box | undefined} box - The Box of the parent element.
  *  @property {boolean} isActiveSpeaker - Whether the participant is the active speaker.
+ *  @property {'cover' | 'contain'} [fit='contain'] - How the remote video element fills its tile.
+ *    Defaults to `'contain'` (letterboxes to preserve the source aspect ratio — the standard
+ *    multiparty behavior). The floating PiP layout passes `'cover'` so the remote fills the
+ *    full canvas edge-to-edge on wide viewports.
  * @returns {ReactElement} - The Subscriber component.
  */
 const Subscriber = ({
@@ -40,6 +45,7 @@ const Subscriber = ({
   isHidden,
   box,
   isActiveSpeaker,
+  fit = 'contain',
 }: SubscriberProps): ReactElement => {
   const { isMaxPinned, pinSubscriber } = useSessionContext();
   const theme = useTheme();
@@ -70,11 +76,11 @@ const Subscriber = ({
       element.style.height = '100%';
       element.style.position = 'absolute';
       element.style.borderRadius = theme.shapes.borderRadiusLarge;
-      element.style.objectFit = 'contain';
+      element.style.objectFit = fit;
 
       subRef.current.appendChild(element);
     }
-  }, [subscriberWrapper, isScreenShare, theme.shapes.borderRadiusLarge]);
+  }, [subscriberWrapper, isScreenShare, theme.shapes.borderRadiusLarge, fit]);
 
   const handlePinClick = (clickEvent: MouseEvent<HTMLButtonElement>) => {
     pinSubscriber(subscriberWrapper.id);
