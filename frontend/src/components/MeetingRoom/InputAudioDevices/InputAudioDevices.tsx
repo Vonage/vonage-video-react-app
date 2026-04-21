@@ -3,7 +3,7 @@ import type { ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
 import useTheme from '@ui/theme';
 import VividIcon from '@components/VividIcon';
-import { useDistinctLabelMediaDevices } from '@ui/hooks';
+import useDistinctLabelMediaDevices from '../../../hooks/useDistinctLabelMediaDevices';
 import mediaDevices$ from '@core/stores/devices';
 import { env } from '../../../env';
 

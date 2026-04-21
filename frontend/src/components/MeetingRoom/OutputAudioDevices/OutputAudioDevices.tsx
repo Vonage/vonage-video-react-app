@@ -6,7 +6,7 @@ import Box from '@mui/material/Box';
 import MenuList from '@mui/material/MenuList';
 import MenuItem from '@mui/material/MenuItem';
 import VividIcon from '@components/VividIcon';
-import { useDistinctLabelMediaDevices } from '@ui/hooks';
+import useDistinctLabelMediaDevices from '../../../hooks/useDistinctLabelMediaDevices';
 import { isSinkIdSupported } from '@web/platform';
 import mediaDevices$ from '@core/stores/devices';
 import useTheme from '@ui/theme';
