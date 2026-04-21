@@ -5,7 +5,7 @@ import Menu from '@mui/material/Menu';
 import VividIcon from '@components/VividIcon';
 import Box from '@mui/material/Box';
 import cleanAndDedupeDeviceLabels from '@utils/cleanAndDedupeDeviceLabels';
-import mergeAudioDeviceLabel from '@utils/mergeAudioDeviceLabel';
+import mergeAudioDeviceLabel from '@web/helpers/mergeAudioDeviceLabel';
 import SoundTest from '../../SoundTest';
 import { isGetActiveAudioOutputDeviceSupported } from '@utils/util';
 import mediaDevices$ from '@core/stores/devices';
@@ -79,7 +79,7 @@ const MenuDevices = ({
                 return;
               }
 
-              handleClick(device.deviceId);
+              handleClick(device.deviceId === systemDefaultId ? 'default' : device.deviceId);
             }}
             key={device.deviceId}
             selected={

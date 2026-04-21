@@ -191,6 +191,23 @@ describe('OutputAudioDevices Component', () => {
       .closest('[role="menuitem"]');
     expect(systemDefaultItem).toHaveClass('Mui-selected');
   });
+
+  it('calls selectDevice with "default" when annotated system default device is clicked', () => {
+    const selectDeviceSpy = vi
+      .spyOn(mediaDevices$.actions, 'selectDevice')
+      .mockResolvedValue(undefined);
+
+    mediaDevices$.setState((state) => ({
+      ...state,
+      mediaDeviceInfo: devicesWithDefaultOutput,
+    }));
+
+    render(<OutputAudioDevices handleToggle={mockHandleToggle} />);
+
+    fireEvent.click(screen.getByText('Default Speakers - System Default'));
+
+    expect(selectDeviceSpy).toHaveBeenCalledWith('audiooutput', 'default');
+  });
 });
 
 function render(ui: ReactElement) {

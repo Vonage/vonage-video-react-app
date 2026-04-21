@@ -233,6 +233,40 @@ describe('MenuDevices Component', () => {
     });
   });
 
+  it('calls deviceChangeHandler with "default" when annotated system default device is clicked', async () => {
+    vi.spyOn(util, 'isGetActiveAudioOutputDeviceSupported').mockReturnValue(true);
+    vi.spyOn(HTMLMediaElement.prototype, 'pause').mockImplementation(() => {});
+    vi.spyOn(HTMLMediaElement.prototype, 'play').mockResolvedValue(undefined);
+
+    const mockDeviceChangeHandler = vi.fn();
+
+    act(() => {
+      mediaDevices$.setState((state) => ({
+        ...state,
+        mediaDeviceInfo: devicesWithDefaultOutput,
+      }));
+    });
+
+    const anchorEl = document.createElement('div');
+    render(
+      <MenuDevices
+        mediaDeviceKind="audiooutput"
+        onClose={vi.fn()}
+        open
+        anchorEl={anchorEl}
+        deviceChangeHandler={mockDeviceChangeHandler}
+      />
+    );
+
+    await waitFor(() => {
+      expect(screen.getByTestId('audiooutput-menu-item-audio-output-1')).toBeInTheDocument();
+    });
+
+    await userEvent.click(screen.getByTestId('audiooutput-menu-item-audio-output-1'));
+
+    expect(mockDeviceChangeHandler).toHaveBeenCalledWith('default');
+  });
+
   it('renders an empty state when no devices are available', async () => {
     const mockOnClose = vi.fn();
     const mockDeviceChangeHandler = vi.fn();

@@ -25,6 +25,18 @@ describe('mergeAudioDeviceLabel', () => {
     expect(result.systemDefaultId).toBeNull();
   });
 
+  it('returns devices unchanged when default device has empty groupId (pre-permission state)', () => {
+    const devices = [
+      makeDevice({ deviceId: 'default', label: '', groupId: '' }),
+      makeDevice({ deviceId: 'speaker-1', label: '', groupId: '' }),
+    ];
+
+    const result = mergeAudioDeviceLabel(devices, SYSTEM_DEFAULT_LABEL);
+
+    expect(result.devices).toBe(devices);
+    expect(result.systemDefaultId).toBeNull();
+  });
+
   it('merges default device into matching physical device by groupId', () => {
     const devices = [
       makeDevice({ deviceId: 'default', label: 'Default', groupId: 'group-1' }),

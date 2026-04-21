@@ -12,7 +12,7 @@ import mediaDevices$ from '@core/stores/devices';
 import useTheme from '@ui/theme';
 import { Tooltip } from '@mui/material';
 import { env } from '../../../env';
-import mergeAudioDeviceLabel from '@utils/mergeAudioDeviceLabel';
+import mergeAudioDeviceLabel from '@web/helpers/mergeAudioDeviceLabel';
 
 export type OutputAudioDevicesProps = {
   handleToggle: () => void;
@@ -87,7 +87,11 @@ const OutputAudioDevices = ({ handleToggle }: OutputAudioDevicesProps): ReactEle
               <MenuItem
                 key={device.deviceId}
                 selected={isSelected}
-                onClick={() => handleChangeAudioOutput(device.deviceId)}
+                onClick={() =>
+                  handleChangeAudioOutput(
+                    device.deviceId === systemDefaultId ? 'default' : device.deviceId
+                  )
+                }
                 sx={{
                   backgroundColor: 'transparent',
                   '&.Mui-selected': {
