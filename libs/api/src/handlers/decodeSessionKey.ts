@@ -53,7 +53,7 @@ function decodeSessionKey(
 
     return details;
   } catch (error) {
-    throw makeBadRequestErrorHandler('Invalid session key')(error);
+    throw makeBadRequestErrorHandler(`Invalid sessionKey: \n${sessionKey}`)(error);
   }
 }
 

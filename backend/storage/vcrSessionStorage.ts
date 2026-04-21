@@ -10,7 +10,7 @@ class VcrSessionStorage implements SessionStorage {
     await this.dbState.expire(key, ENTRY_EXPIRATION_TIME);
   }
   async getSessionKey({ roomName }: { roomName: string }): Promise<string | null> {
-    const key = `sessions:${roomName}`;
+    const key = `sessionKey:${roomName}`;
     const session: string | null = await this.dbState.get(key);
     if (!session) {
       return null;
@@ -28,7 +28,7 @@ class VcrSessionStorage implements SessionStorage {
     roomName: string;
     sessionKey: string;
   }): Promise<void> {
-    const key = `sessions:${roomName}`;
+    const key = `sessionKey:${roomName}`;
     await this.dbState.set(key, sessionKey);
     // setting expiry on the set command in case the room is
     // created before hand but never accessed.
