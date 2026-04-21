@@ -9,6 +9,8 @@ import useTheme from '@ui/theme';
 export type LayoutButtonProps = {
   isScreenSharePresent: boolean;
   isPinningPresent: boolean;
+  isFloatingPipLayoutActive?: boolean;
+  isOneToOneCall?: boolean;
   isOverflowButton?: boolean;
   onLayoutModeChange?: () => void;
 };
@@ -26,13 +28,16 @@ export type LayoutButtonProps = {
 const LayoutButton = ({
   isScreenSharePresent,
   isPinningPresent,
+  isFloatingPipLayoutActive = false,
+  isOneToOneCall = false,
   isOverflowButton = false,
   onLayoutModeChange,
 }: LayoutButtonProps): ReactElement => {
   const { t } = useTranslation();
   const { layoutMode, setLayoutMode } = useSessionContext();
   const isGrid = layoutMode === 'grid';
-  const isDisabled = isScreenSharePresent || isPinningPresent;
+  const isDisabled =
+    isScreenSharePresent || isPinningPresent || isFloatingPipLayoutActive || isOneToOneCall;
   const theme = useTheme();
   const handleClick = () => {
     if (isDisabled) {
@@ -44,11 +49,17 @@ const LayoutButton = ({
   };
 
   const getTooltipTitle = () => {
+    if (isFloatingPipLayoutActive) {
+      return t('layout.tooltip.isFloatingPipLayoutActive');
+    }
     if (isScreenSharePresent) {
       return t('layout.tooltip.isScreenSharePresent');
     }
     if (isPinningPresent) {
       return t('layout.tooltip.isPinningPresent');
+    }
+    if (isOneToOneCall) {
+      return t('layout.tooltip.isOneToOneCall');
     }
     return isGrid ? t('layout.tooltip.switchToActiveSpeaker') : t('layout.tooltip.switchToGrid');
   };

@@ -8,9 +8,7 @@ import IconButton from '@mui/material/IconButton';
 import Tooltip from '@mui/material/Tooltip';
 import Fade from '@mui/material/Fade';
 import VividIcon from '@components/VividIcon';
-import usePublisherContext from '@hooks/usePublisherContext';
-import { isRearFacingLabel, isFrontFacingLabel } from '@utils/cameraSwitch';
-import usePreferredCameras from '@hooks/usePreferredCameras';
+import useCameraToggle from '@hooks/useCameraToggle';
 import RecordingIndicator from '../RecordingIndicator';
 
 /**
@@ -26,8 +24,7 @@ const SmallViewportHeader = (): ReactElement => {
   const isRecording = !!archiveId;
   const roomName = useRoomName();
 
-  // Get preferred video input devices (cameras)
-  const videoInputDevices = usePreferredCameras();
+  const { canSwitch: canSwitchCamera, handleToggle: handleCameraToggle } = useCameraToggle();
 
   const roomShareUrl = useRoomShareUrl();
   const [isCopied, setIsCopied] = useState<boolean>(false);
@@ -42,33 +39,6 @@ const SmallViewportHeader = (): ReactElement => {
     }, 3000);
   };
 
-  const { publisher, isVideoEnabled } = usePublisherContext();
-
-  const handleCameraToggle = () => {
-    if (!publisher) return;
-
-    const currentSource = publisher.getVideoSource?.();
-
-    const currentDevice = videoInputDevices.find((d) => d.deviceId === currentSource?.deviceId);
-    const currentIsFront = isFrontFacingLabel(currentDevice?.label);
-
-    const pickFront = () =>
-      videoInputDevices.find((d) => isFrontFacingLabel(d.label)) ||
-      videoInputDevices.find((d) => d.deviceId !== currentSource?.deviceId);
-
-    const pickRear = () =>
-      videoInputDevices.find((d) => isRearFacingLabel(d.label)) ||
-      videoInputDevices.find(
-        (d) => !isFrontFacingLabel(d.label) && d.deviceId !== currentSource?.deviceId
-      );
-
-    const target = currentIsFront ? pickRear() : pickFront();
-
-    if (target?.deviceId && target.deviceId !== currentSource?.deviceId) {
-      void publisher.setVideoSource(target.deviceId);
-    }
-  };
-
   return (
     <Box
       data-testid="smallViewportHeader"
@@ -81,7 +51,7 @@ const SmallViewportHeader = (): ReactElement => {
         </Box>
       </Box>
       <Box className="-mx-1 flex items-center gap-1">
-        {isVideoEnabled && videoInputDevices.length > 1 && (
+        {canSwitchCamera && (
           <Tooltip title={t('devices.video.camera.switch')} placement="bottom">
             <IconButton className="text-vera-on-dark-grey" onClick={handleCameraToggle}>
               <VividIcon

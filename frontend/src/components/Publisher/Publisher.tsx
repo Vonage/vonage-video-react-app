@@ -13,6 +13,7 @@ import toRemValue from '@common/helpers/toRemValue';
 
 export type PublisherProps = {
   box: Box;
+  hideName?: boolean;
 };
 
 /**
@@ -24,7 +25,7 @@ export type PublisherProps = {
  *  @property {Box} box - the box in which the component is displayed
  * @returns {ReactElement} The publisher component.
  */
-const Publisher = ({ box }: PublisherProps): ReactElement => {
+const Publisher = ({ box, hideName = false }: PublisherProps): ReactElement => {
   const {
     publisherVideoElement: element,
     isVideoEnabled,
@@ -101,7 +102,7 @@ const Publisher = ({ box }: PublisherProps): ReactElement => {
           indicatorColor={theme.colors.accent}
         />
       )}
-      <NameDisplay name={username} containerWidth={box.width} />
+      {!hideName && <NameDisplay name={username} containerWidth={box.width} />}
     </VideoTile>
   );
 };

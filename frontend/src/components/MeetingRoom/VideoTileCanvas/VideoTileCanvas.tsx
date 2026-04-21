@@ -13,6 +13,8 @@ import useSubscribersInDisplayOrder from '../../../hooks/useSubscribersInDisplay
 import getLayoutBoxes from '../../../utils/helpers/getLayoutBoxes';
 import useActiveSpeaker from '../../../hooks/useActiveSpeaker';
 import useIsSmallViewport from '../../../hooks/useIsSmallViewport';
+import useIsFloatingPipLayoutActive from '../../../hooks/useIsFloatingPipLayoutActive';
+import FloatingPipLayout from '../FloatingPipLayout';
 import CircularProgress from '@mui/material/CircularProgress';
 import Box from '@mui/material/Box';
 
@@ -94,6 +96,8 @@ const VideoTileCanvas = ({
 
   const isSmallViewport = useIsSmallViewport();
 
+  const isFloatingPipLayoutActive = useIsFloatingPipLayoutActive({ isSharingScreen });
+
   // Height is 100dvh - toolbar height (80px) and header height (80px) - 24px wrapper margin on small viewport device
   // Height is 100dvh - toolbar height (80px) - 24px wrapper margin on desktop
   const wrapperHeight = (() => {
@@ -122,7 +126,12 @@ const VideoTileCanvas = ({
       }}
     >
       <Box id="video-container" sx={{ position: 'relative', width: '100%', height: '100%' }}>
-        {layoutBoxes.publisherBox && <Publisher box={layoutBoxes.publisherBox} />}
+        {isFloatingPipLayoutActive && (
+          <FloatingPipLayout remoteSubscriber={subscriberWrappers[0]} />
+        )}
+        {!isFloatingPipLayoutActive && layoutBoxes.publisherBox && (
+          <Publisher box={layoutBoxes.publisherBox} />
+        )}
         {isSharingScreen && (
           <ScreenSharePublisher
             publisher={screensharingPublisher}
@@ -131,23 +140,26 @@ const VideoTileCanvas = ({
             isEntireScreen={isEntireScreen}
           />
         )}
-        {// Note: we still render hidden subscribers with flag `hidden`
-        // inside the subscriber component we will unsubscribe to video to save bandwidth
-        [...subscribersInDisplayOrder, ...hiddenSubscribers]?.map((subscriberWrapper, index) => (
-          <Subscriber
-            key={subscriberWrapper.id}
-            subscriberWrapper={subscriberWrapper}
-            isHidden={!subscribersInDisplayOrder.includes(subscriberWrapper)}
-            box={layoutBoxes.subscriberBoxes?.[index]}
-            isActiveSpeaker={activeSpeakerId === subscriberWrapper.id}
-          />
-        ))}
-        {!!hiddenSubscribers.length && layoutBoxes.hiddenParticipantsBox && (
-          <HiddenParticipantsTile
-            hiddenSubscribers={hiddenSubscribers}
-            box={layoutBoxes.hiddenParticipantsBox}
-          />
-        )}
+        {!isFloatingPipLayoutActive &&
+          // Note: we still render hidden subscribers with flag `hidden`
+          // inside the subscriber component we will unsubscribe to video to save bandwidth
+          [...subscribersInDisplayOrder, ...hiddenSubscribers]?.map((subscriberWrapper, index) => (
+            <Subscriber
+              key={subscriberWrapper.id}
+              subscriberWrapper={subscriberWrapper}
+              isHidden={!subscribersInDisplayOrder.includes(subscriberWrapper)}
+              box={layoutBoxes.subscriberBoxes?.[index]}
+              isActiveSpeaker={activeSpeakerId === subscriberWrapper.id}
+            />
+          ))}
+        {!isFloatingPipLayoutActive &&
+          !!hiddenSubscribers.length &&
+          layoutBoxes.hiddenParticipantsBox && (
+            <HiddenParticipantsTile
+              hiddenSubscribers={hiddenSubscribers}
+              box={layoutBoxes.hiddenParticipantsBox}
+            />
+          )}
 
         {shouldShowProgress && (
           <CircularProgress

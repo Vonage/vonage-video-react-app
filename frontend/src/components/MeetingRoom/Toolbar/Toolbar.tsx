@@ -10,6 +10,7 @@ import ScreenSharingButton from '../../ScreenSharingButton';
 import TimeRoomNameMeetingRoom from '../TimeRoomName';
 import ExitButton from '../ExitButton';
 import LayoutButton from '../LayoutButton';
+import useIsFloatingPipLayoutActive from '../../../hooks/useIsFloatingPipLayoutActive';
 import ParticipantListButton from '../ParticipantListButton';
 import ArchivingButton from '../ArchivingButton';
 import CaptionsButton from '../CaptionsButton';
@@ -77,6 +78,8 @@ const Toolbar = ({
   const isViewingScreenShare = subscriberWrappers.some((subWrapper) => subWrapper.isScreenshare);
   const isScreenSharePresent = isViewingScreenShare || isSharingScreen;
   const isPinningPresent = subscriberWrappers.some((subWrapper) => subWrapper.isPinned);
+  const isFloatingPipLayoutActive = useIsFloatingPipLayoutActive({ isSharingScreen });
+  const isOneToOneCall = subscriberWrappers.length === 1 && !isScreenSharePresent;
   const handleLeave = useCallback(() => {
     if (!disconnect) {
       return;
@@ -99,6 +102,8 @@ const Toolbar = ({
       isScreenSharePresent={isScreenSharePresent}
       key="LayoutButton"
       isPinningPresent={isPinningPresent}
+      isFloatingPipLayoutActive={isFloatingPipLayoutActive}
+      isOneToOneCall={isOneToOneCall}
     />,
     <EmojiGridButton
       isEmojiGridOpen={openEmojiGridDesktop}
