@@ -4,6 +4,13 @@ import userEvent from '@testing-library/user-event';
 import { ReactElement } from 'react';
 import LayoutButton from './LayoutButton';
 import { makeTestProvider, providers, type ProviderOptions } from '@test/providers';
+import useIsSmallViewport from '../../../hooks/useIsSmallViewport';
+
+vi.mock('../../../hooks/useIsSmallViewport', () => ({ default: vi.fn(() => false) }));
+vi.mock('@web/platform', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('@web/platform')>();
+  return { ...actual, isMobile: () => false };
+});
 
 describe('LayoutButton', () => {
   beforeEach(() => {
@@ -169,6 +176,55 @@ describe('LayoutButton', () => {
     const tooltip = await screen.findByRole('tooltip');
     expect(tooltip).toBeInTheDocument();
     expect(tooltip.textContent).toBe('Cannot switch layout while a participant is pinned');
+  });
+
+  it('shows the 1:1 tooltip and disables the button on a wide desktop 1:1 call', async () => {
+    const mockSetLayoutMode = vi.fn();
+    render(<LayoutButton isScreenSharePresent={false} isPinningPresent={false} />, {
+      sessionContext: {
+        __interceptor: (context) => {
+          if (context) {
+            context.layoutMode = 'grid';
+            context.setLayoutMode = mockSetLayoutMode;
+            context.subscriberWrappers = [
+              { id: 'remote-1', isPinned: false, isScreenshare: false },
+            ] as unknown as typeof context.subscriberWrappers;
+          }
+        },
+      },
+    });
+    const button = await screen.findByRole('button');
+    await userEvent.hover(button);
+    const tooltip = await screen.findByRole('tooltip');
+    expect(tooltip.textContent).toBe('No layout to switch in 1:1 calls');
+
+    await userEvent.click(button);
+    expect(mockSetLayoutMode).not.toHaveBeenCalled();
+  });
+
+  it('shows the floating PiP tooltip when the floating PiP layout is active', async () => {
+    vi.mocked(useIsSmallViewport).mockReturnValueOnce(true);
+    const mockSetLayoutMode = vi.fn();
+    render(<LayoutButton isScreenSharePresent={false} isPinningPresent={false} />, {
+      sessionContext: {
+        __interceptor: (context) => {
+          if (context) {
+            context.layoutMode = 'grid';
+            context.setLayoutMode = mockSetLayoutMode;
+            context.subscriberWrappers = [
+              { id: 'remote-1', isPinned: false, isScreenshare: false },
+            ] as unknown as typeof context.subscriberWrappers;
+          }
+        },
+      },
+    });
+    const button = await screen.findByRole('button');
+    await userEvent.hover(button);
+    const tooltip = await screen.findByRole('tooltip');
+    expect(tooltip.textContent).toBe('Optimized 1:1 layout is active on small screens');
+
+    await userEvent.click(button);
+    expect(mockSetLayoutMode).not.toHaveBeenCalled();
   });
 });
 

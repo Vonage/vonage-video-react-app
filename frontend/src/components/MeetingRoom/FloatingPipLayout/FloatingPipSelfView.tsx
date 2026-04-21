@@ -1,4 +1,13 @@
-import { ReactElement, RefObject, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import {
+  KeyboardEvent as ReactKeyboardEvent,
+  ReactElement,
+  RefObject,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 import Box from '@mui/material/Box';
 import IconButton from '@mui/material/IconButton';
 import Tooltip from '@mui/material/Tooltip';
@@ -7,7 +16,7 @@ import { hasMediaProcessorSupport } from '@vonage/client-sdk-video';
 import { useTranslation } from 'react-i18next';
 import useTheme from '@ui/theme';
 import VividIcon from '@components/VividIcon';
-import useWindowWidth from '@hooks/useWindowWidth';
+import useWindowSize from '@hooks/useWindowSize';
 import usePublisherContext from '@hooks/usePublisherContext';
 import useSessionContext from '@hooks/useSessionContext';
 import useCameraToggle from '@hooks/useCameraToggle';
@@ -65,8 +74,7 @@ const FloatingPipSelfView = ({ canvasRef }: FloatingPipSelfViewProps): ReactElem
   const theme = useTheme();
   const hideControlsTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  const viewportWidth = useWindowWidth();
-  const viewportHeight = typeof window === 'undefined' ? viewportWidth : window.innerHeight;
+  const { width: viewportWidth, height: viewportHeight } = useWindowSize();
   const [sourceAspect, setSourceAspect] = useState<number>(PIP_FALLBACK_ASPECT);
   const { width: pipWidth, height: pipHeight } = useMemo(
     () => computePipSize(viewportWidth, viewportHeight, sourceAspect),
@@ -90,14 +98,25 @@ const FloatingPipSelfView = ({ canvasRef }: FloatingPipSelfViewProps): ReactElem
     });
   }, [scheduleHideControls]);
 
-  const { position, isDragging, onPointerDown, onPointerMove, onPointerUp } = useFloatingPip({
-    canvasRef,
-    pipWidth,
-    pipHeight,
-    margin: PIP_MARGIN,
-    initialCorner: 'bottom-right',
-    onTap: handleTap,
-  });
+  const { position, isDragging, onPointerDown, onPointerMove, onPointerUp, onPointerCancel } =
+    useFloatingPip({
+      canvasRef,
+      pipWidth,
+      pipHeight,
+      margin: PIP_MARGIN,
+      initialCorner: 'bottom-right',
+      onTap: handleTap,
+    });
+
+  const onKeyDown = useCallback(
+    (event: ReactKeyboardEvent<HTMLElement>) => {
+      if (event.key === 'Enter' || event.key === ' ') {
+        event.preventDefault();
+        handleTap();
+      }
+    },
+    [handleTap]
+  );
 
   useEffect(
     () => () => {
@@ -152,7 +171,8 @@ const FloatingPipSelfView = ({ canvasRef }: FloatingPipSelfViewProps): ReactElem
       onPointerDown={onPointerDown}
       onPointerMove={onPointerMove}
       onPointerUp={onPointerUp}
-      onPointerCancel={onPointerUp}
+      onPointerCancel={onPointerCancel}
+      onKeyDown={onKeyDown}
       sx={{
         position: 'absolute',
         left: position ? `${position.x}px` : undefined,

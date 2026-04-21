@@ -1,6 +1,8 @@
 import { ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
+import { isMobile } from '@web/platform';
 import useSessionContext from '../../../hooks/useSessionContext';
+import useIsSmallViewport from '../../../hooks/useIsSmallViewport';
 import ToolbarButton from '../ToolbarButton';
 import Tooltip from '@mui/material/Tooltip';
 import VividIcon from '@components/VividIcon';
@@ -9,8 +11,6 @@ import useTheme from '@ui/theme';
 export type LayoutButtonProps = {
   isScreenSharePresent: boolean;
   isPinningPresent: boolean;
-  isFloatingPipLayoutActive?: boolean;
-  isOneToOneCall?: boolean;
   isOverflowButton?: boolean;
   onLayoutModeChange?: () => void;
 };
@@ -19,6 +19,9 @@ export type LayoutButtonProps = {
  * LayoutButton Component
  *
  * Displays a button to toggle the meeting room layout for the user between `grid` and `active-speaker`.
+ * The button disables itself (with a descriptive tooltip) when layout switching does not apply:
+ * during screenshare, while a participant is pinned, during a 1:1 call, or while the floating PiP
+ * layout is engaged.
  * @param {LayoutButtonProps} props - the props for the component.
  *  @property {boolean} isScreenSharePresent - Indicates whether there is a screenshare currently in the session.
  *  @property {boolean} isPinningPresent - Indicates whether there is a participant currently pinned.
@@ -28,14 +31,15 @@ export type LayoutButtonProps = {
 const LayoutButton = ({
   isScreenSharePresent,
   isPinningPresent,
-  isFloatingPipLayoutActive = false,
-  isOneToOneCall = false,
   isOverflowButton = false,
   onLayoutModeChange,
 }: LayoutButtonProps): ReactElement => {
   const { t } = useTranslation();
-  const { layoutMode, setLayoutMode } = useSessionContext();
+  const { layoutMode, setLayoutMode, subscriberWrappers } = useSessionContext();
+  const isSmallViewport = useIsSmallViewport();
   const isGrid = layoutMode === 'grid';
+  const isOneToOneCall = subscriberWrappers.length === 1 && !isScreenSharePresent;
+  const isFloatingPipLayoutActive = (isMobile() || isSmallViewport) && isOneToOneCall;
   const isDisabled =
     isScreenSharePresent || isPinningPresent || isFloatingPipLayoutActive || isOneToOneCall;
   const theme = useTheme();

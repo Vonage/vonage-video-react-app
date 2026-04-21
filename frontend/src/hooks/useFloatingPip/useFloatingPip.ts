@@ -30,6 +30,7 @@ export type UseFloatingPipResult = {
   onPointerDown: (event: ReactPointerEvent<HTMLElement>) => void;
   onPointerMove: (event: ReactPointerEvent<HTMLElement>) => void;
   onPointerUp: (event: ReactPointerEvent<HTMLElement>) => void;
+  onPointerCancel: (event: ReactPointerEvent<HTMLElement>) => void;
 };
 
 const clamp = (value: number, min: number, max: number): number =>
@@ -204,7 +205,22 @@ const useFloatingPip = ({
     [canvasRef, pipWidth, pipHeight, margin, tapMovementThreshold]
   );
 
-  return { position, isDragging, onPointerDown, onPointerMove, onPointerUp };
+  const onPointerCancel = useCallback((event: ReactPointerEvent<HTMLElement>) => {
+    if (!dragState.current) return;
+    if (event.pointerId !== dragState.current.pointerId) return;
+    dragState.current = null;
+    setIsDragging(false);
+    const target = event.currentTarget;
+    if (target.releasePointerCapture && target.hasPointerCapture?.(event.pointerId)) {
+      try {
+        target.releasePointerCapture(event.pointerId);
+      } catch {
+        /* releasePointerCapture may fail if capture was lost */
+      }
+    }
+  }, []);
+
+  return { position, isDragging, onPointerDown, onPointerMove, onPointerUp, onPointerCancel };
 };
 
 export default useFloatingPip;

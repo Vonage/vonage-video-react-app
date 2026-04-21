@@ -20,9 +20,12 @@ export type PublisherProps = {
  * Publisher component
  *
  * This component renders a VideoTile with Publisher video and an overlay.
- * It consists of a video stream, initials, a publisher speaking indicator, and the user's name.
+ * It consists of a video stream, initials, a publisher speaking indicator, and
+ * optionally the user's name (hidden when `hideName` is true — used by the
+ * floating PiP layout where space is too tight for a name label).
  * @param {PublisherProps} props - the props for the component
  *  @property {Box} box - the box in which the component is displayed
+ *  @property {boolean} [hideName=false] - when true, the name label is not rendered
  * @returns {ReactElement} The publisher component.
  */
 const Publisher = ({ box, hideName = false }: PublisherProps): ReactElement => {
