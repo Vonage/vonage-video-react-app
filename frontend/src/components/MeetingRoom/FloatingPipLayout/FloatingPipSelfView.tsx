@@ -42,6 +42,7 @@ const PIP_ICON_BUTTON_SIZE = 32;
 // the drag container exactly.
 const PUBLISHER_BOX_HORIZONTAL_PADDING = 14;
 const PUBLISHER_BOX_VERTICAL_PADDING = 8;
+const CONTROL_BUTTON_CLASS = 'bg-vera-dark-grey-opacity text-vera-on-dark-grey';
 
 const computePipSize = (
   viewportWidth: number,
@@ -205,7 +206,7 @@ const FloatingPipSelfView = ({ canvasRef }: FloatingPipSelfViewProps): ReactElem
         >
           <Tooltip title={t('devices.video.camera.switch')} placement="top">
             <IconButton
-              className="bg-vera-dark-grey-opacity text-vera-on-dark-grey"
+              className={CONTROL_BUTTON_CLASS}
               data-testid="floating-pip-camera-switch"
               onClick={() => {
                 handleCameraSwitch();
@@ -236,7 +237,7 @@ const FloatingPipSelfView = ({ canvasRef }: FloatingPipSelfViewProps): ReactElem
         >
           <Tooltip title={t('backgroundEffects.title')} placement="top">
             <IconButton
-              className="bg-vera-dark-grey-opacity text-vera-on-dark-grey"
+              className={CONTROL_BUTTON_CLASS}
               data-testid="floating-pip-background-effects"
               onClick={() => {
                 toggleBackgroundEffects();

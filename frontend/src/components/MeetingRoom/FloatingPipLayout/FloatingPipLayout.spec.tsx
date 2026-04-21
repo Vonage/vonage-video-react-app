@@ -65,12 +65,28 @@ const mockSession = () =>
       typeof useSessionContext
     >);
 
+const VIDEOINPUT = 'videoinput';
+const FRONT_DEVICE_ID = 'front-1';
+const REAR_DEVICE_ID = 'rear-1';
+const FRONT_CAMERA_LABEL = 'Front camera';
+const REAR_CAMERA_LABEL = 'Back camera';
+const CAMERA_SWITCH_TESTID = 'floating-pip-camera-switch';
+const BACKGROUND_EFFECTS_TESTID = 'floating-pip-background-effects';
+const SELF_TESTID = 'floating-pip-self';
+
+const FRONT_CAMERA = {
+  deviceId: FRONT_DEVICE_ID,
+  label: FRONT_CAMERA_LABEL,
+  kind: VIDEOINPUT,
+};
+const REAR_CAMERA = { deviceId: REAR_DEVICE_ID, label: REAR_CAMERA_LABEL, kind: VIDEOINPUT };
+
 const mockCameras = (devices: Array<{ deviceId: string; label: string; kind: string }>): void => {
   vi.mocked(usePreferredCameras).mockReturnValue(devices as unknown);
 };
 
 const tapSelfPip = () => {
-  const selfPip = screen.getByTestId('floating-pip-self');
+  const selfPip = screen.getByTestId(SELF_TESTID);
   fireEvent.pointerDown(selfPip, { pointerId: 1, clientX: 10, clientY: 10 });
   fireEvent.pointerUp(selfPip, { pointerId: 1, clientX: 10, clientY: 10 });
 };
@@ -82,10 +98,7 @@ describe('FloatingPipLayout', () => {
   });
 
   it('renders canvas, remote container, and self PiP', () => {
-    mockCameras([
-      { deviceId: 'front-1', label: 'Front camera', kind: 'videoinput' },
-      { deviceId: 'rear-1', label: 'Back camera', kind: 'videoinput' },
-    ]);
+    mockCameras([FRONT_CAMERA, REAR_CAMERA]);
 
     render(<FloatingPipLayout remoteSubscriber={makeRemoteSubscriber()} />);
 
@@ -95,60 +108,51 @@ describe('FloatingPipLayout', () => {
   });
 
   it('hides the camera switch and background effects buttons by default', () => {
-    mockCameras([
-      { deviceId: 'front-1', label: 'Front camera', kind: 'videoinput' },
-      { deviceId: 'rear-1', label: 'Back camera', kind: 'videoinput' },
-    ]);
+    mockCameras([FRONT_CAMERA, REAR_CAMERA]);
 
     render(<FloatingPipLayout remoteSubscriber={makeRemoteSubscriber()} />);
 
-    expect(screen.queryByTestId('floating-pip-camera-switch')).not.toBeInTheDocument();
-    expect(screen.queryByTestId('floating-pip-background-effects')).not.toBeInTheDocument();
+    expect(screen.queryByTestId(CAMERA_SWITCH_TESTID)).not.toBeInTheDocument();
+    expect(screen.queryByTestId(BACKGROUND_EFFECTS_TESTID)).not.toBeInTheDocument();
   });
 
   it('reveals the camera switch button on tap when multiple cameras exist', () => {
-    mockCameras([
-      { deviceId: 'front-1', label: 'Front camera', kind: 'videoinput' },
-      { deviceId: 'rear-1', label: 'Back camera', kind: 'videoinput' },
-    ]);
+    mockCameras([FRONT_CAMERA, REAR_CAMERA]);
 
     render(<FloatingPipLayout remoteSubscriber={makeRemoteSubscriber()} />);
     act(() => {
       tapSelfPip();
     });
 
-    expect(screen.getByTestId('floating-pip-camera-switch')).toBeInTheDocument();
+    expect(screen.getByTestId(CAMERA_SWITCH_TESTID)).toBeInTheDocument();
   });
 
   it('keeps the camera switch button hidden after tap when only one camera exists', () => {
-    mockCameras([{ deviceId: 'front-1', label: 'Front camera', kind: 'videoinput' }]);
+    mockCameras([FRONT_CAMERA]);
 
     render(<FloatingPipLayout remoteSubscriber={makeRemoteSubscriber()} />);
     act(() => {
       tapSelfPip();
     });
 
-    expect(screen.queryByTestId('floating-pip-camera-switch')).not.toBeInTheDocument();
+    expect(screen.queryByTestId(CAMERA_SWITCH_TESTID)).not.toBeInTheDocument();
   });
 
   it('auto-hides the revealed controls after the hide delay', () => {
     vi.useFakeTimers({ shouldAdvanceTime: true });
-    mockCameras([
-      { deviceId: 'front-1', label: 'Front camera', kind: 'videoinput' },
-      { deviceId: 'rear-1', label: 'Back camera', kind: 'videoinput' },
-    ]);
+    mockCameras([FRONT_CAMERA, REAR_CAMERA]);
 
     render(<FloatingPipLayout remoteSubscriber={makeRemoteSubscriber()} />);
     act(() => {
       tapSelfPip();
     });
-    expect(screen.getByTestId('floating-pip-camera-switch')).toBeInTheDocument();
+    expect(screen.getByTestId(CAMERA_SWITCH_TESTID)).toBeInTheDocument();
 
     act(() => {
       vi.advanceTimersByTime(3500);
     });
 
-    expect(screen.queryByTestId('floating-pip-camera-switch')).not.toBeInTheDocument();
+    expect(screen.queryByTestId(CAMERA_SWITCH_TESTID)).not.toBeInTheDocument();
     vi.useRealTimers();
   });
 
@@ -160,6 +164,6 @@ describe('FloatingPipLayout', () => {
       tapSelfPip();
     });
 
-    expect(screen.getByTestId('floating-pip-background-effects')).toBeInTheDocument();
+    expect(screen.getByTestId(BACKGROUND_EFFECTS_TESTID)).toBeInTheDocument();
   });
 });
