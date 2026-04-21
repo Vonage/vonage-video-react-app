@@ -1,4 +1,9 @@
-import { LAYOUT_MODES, type LayoutMode } from './types/session';
+import {
+  DISPLAY_SURFACES,
+  LAYOUT_MODES,
+  type DisplaySurface,
+  type LayoutMode,
+} from './types/session';
 
 declare const __APP_ENV__: Record<string, string | undefined>;
 
@@ -107,6 +112,22 @@ function parseResolution(value: unknown, fallback: Resolution | undefined): Reso
   return value as Resolution;
 }
 
+function parseDisplaySurface(value: unknown): DisplaySurface | undefined {
+  if (value === undefined || value === null || value === '') return undefined;
+
+  if (typeof value !== 'string') {
+    throw new Error(`Invalid display surface type: ${toDisplayString(value)}`);
+  }
+
+  if (!(DISPLAY_SURFACES as readonly string[]).includes(value)) {
+    throw new Error(
+      `Invalid DEFAULT_SCREEN_SHARE_SURFACE: "${value}". Allowed values: ${DISPLAY_SURFACES.join(', ')}`
+    );
+  }
+
+  return value as DisplaySurface;
+}
+
 function parseLayoutMode(value: unknown, fallback: LayoutMode): LayoutMode {
   if (value === undefined || value === null || value === '') return fallback;
 
@@ -152,6 +173,7 @@ export class Env {
   public MEETING_ROOM_ALLOW_DEVICE_SELECTION: boolean;
   public ALLOW_EMOJIS: boolean;
   public ALLOW_SCREEN_SHARE: boolean;
+  public DEFAULT_SCREEN_SHARE_SURFACE: DisplaySurface | undefined;
   public DEFAULT_LAYOUT_MODE: LayoutMode;
   public SHOW_PARTICIPANT_LIST: boolean;
   public SHOW_VIDEO_STATS: boolean;
@@ -196,6 +218,7 @@ export class Env {
     );
     this.ALLOW_EMOJIS = parseBoolean(env.ALLOW_EMOJIS, true);
     this.ALLOW_SCREEN_SHARE = parseBoolean(env.ALLOW_SCREEN_SHARE, true);
+    this.DEFAULT_SCREEN_SHARE_SURFACE = parseDisplaySurface(env.DEFAULT_SCREEN_SHARE_SURFACE);
     this.SHOW_PARTICIPANT_LIST = parseBoolean(env.SHOW_PARTICIPANT_LIST, true);
     this.SHOW_VIDEO_STATS = parseBoolean(env.SHOW_VIDEO_STATS, false);
     this.BYPASS_WAITING_ROOM = parseBoolean(env.BYPASS_WAITING_ROOM, false);

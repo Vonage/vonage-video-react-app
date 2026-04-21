@@ -6,6 +6,7 @@ import { makeTestProvider, providers, ProviderOptions } from '@test/providers';
 import EventEmitter from 'events';
 import type VonageVideoClient from '../../utils/VonageVideoClient';
 import { type UserContextType } from '../../Context/user';
+import { env } from '../../env';
 
 // Mocking dependencies
 vi.mock('@vonage/client-sdk-video', () => ({
@@ -262,6 +263,69 @@ describe('useScreenSharing', () => {
     });
 
     expect(result.current.isEntireScreen).toBe(true);
+  });
+
+  it.each(['monitor', 'window', 'browser'] as const)(
+    'passes displaySurface=%s when DEFAULT_SCREEN_SHARE_SURFACE env is set',
+    async (surface) => {
+      env.partialUpdate({ DEFAULT_SCREEN_SHARE_SURFACE: surface });
+
+      const { result } = render({
+        userContext: {
+          __interceptor: (context: UserContextType | null) => {
+            context!.user.defaultSettings.name = 'TestUser';
+          },
+        },
+        sessionContext: {
+          __interceptor: (context) => {
+            if (context) {
+              context.vonageVideoClient = mockVonageVideoClient as unknown as VonageVideoClient;
+              context.publish = mockPublish;
+              context.unpublish = mockUnpublish;
+            }
+          },
+        },
+      });
+
+      await act(async () => {
+        await result.current.toggleShareScreen();
+      });
+
+      expect(initPublisher).toHaveBeenCalledWith(
+        undefined,
+        expect.objectContaining({
+          videoSource: 'screen',
+          constraints: { video: { displaySurface: surface }, audio: false },
+        }),
+        expect.any(Function)
+      );
+    }
+  );
+
+  it('does not pass a constraints property when DEFAULT_SCREEN_SHARE_SURFACE env is unset', async () => {
+    const { result } = render({
+      userContext: {
+        __interceptor: (context: UserContextType | null) => {
+          context!.user.defaultSettings.name = 'TestUser';
+        },
+      },
+      sessionContext: {
+        __interceptor: (context) => {
+          if (context) {
+            context.vonageVideoClient = mockVonageVideoClient as unknown as VonageVideoClient;
+            context.publish = mockPublish;
+            context.unpublish = mockUnpublish;
+          }
+        },
+      },
+    });
+
+    await act(async () => {
+      await result.current.toggleShareScreen();
+    });
+
+    const [, properties] = (initPublisher as ReturnType<typeof vi.fn>).mock.calls[0];
+    expect(properties).not.toHaveProperty('constraints');
   });
 
   it('does not initialize publisher if session is null', async () => {

@@ -446,6 +446,7 @@ All feature flags are **boolean** (`true` / `false`).
 |----------|---------|-----------------|-------------|
 | `DEFAULT_RESOLUTION` | `1280x720` | `1920x1080` \| `1280x960` \| `1280x720` \| `640x480` \| `640x360` \| `320x240` \| `320x180` | Default outgoing video resolution |
 | `DEFAULT_LAYOUT_MODE` | `active-speaker` | `active-speaker` \| `grid` | Default in-room layout when a participant joins |
+| `DEFAULT_SCREEN_SHARE_SURFACE` | *(unset)* | `monitor` \| `window` \| `browser` | Pre-selects the tab shown in the browser's screen-share picker. Unset = browser default. Honoured by Chromium; partial/no effect in Firefox and Safari. |
 
 > **Note:** `DEFAULT_LAYOUT_MODE` and `ALLOW_AUDIO_ON_JOIN` / `ALLOW_VIDEO_ON_JOIN` require the participant to **rejoin the room** to take effect after being changed.
 

@@ -18,5 +18,6 @@ export ALLOW_CHAT=true
 export DEVICE_SELECTION=true
 export ALLOW_EMOJIS=true
 export ALLOW_SCREEN_SHARE=true
+# export DEFAULT_SCREEN_SHARE_SURFACE='monitor'  # or 'window' | 'browser'; unset = normal picker
 export DEFAULT_LAYOUT_MODE='active-speaker'
 export SHOW_PARTICIPANT_LIST=true

@@ -1,8 +1,9 @@
 import { useState, useRef, useCallback } from 'react';
-import { Publisher, initPublisher } from '@vonage/client-sdk-video';
+import { Publisher, PublisherProperties, initPublisher } from '@vonage/client-sdk-video';
 import { useTranslation } from 'react-i18next';
 import useSessionContext from './useSessionContext';
 import useUserContext from './useUserContext';
+import { env } from '../env';
 
 /**
  * @typedef {object} UseScreenShareType
@@ -59,21 +60,30 @@ const useScreenShare = (): UseScreenShareType => {
   const toggleShareScreen = useCallback(async () => {
     if (vonageVideoClient) {
       if (!isSharingScreen) {
+        const publisherProperties: PublisherProperties = {
+          videoSource: 'screen',
+          insertDefaultUI: false,
+          videoContentHint: 'detail',
+          name: t('participants.screen', { participantName: user.defaultSettings.name }),
+        };
+
+        // `constraints` isn't in the SDK's PublisherProperties type, but the SDK forwards it
+        // verbatim to getDisplayMedia so we can hint which picker tab the browser pre-selects.
+        if (env.DEFAULT_SCREEN_SHARE_SURFACE) {
+          (
+            publisherProperties as PublisherProperties & { constraints: MediaStreamConstraints }
+          ).constraints = {
+            video: { displaySurface: env.DEFAULT_SCREEN_SHARE_SURFACE },
+            audio: false,
+          };
+        }
+
         // Initializing the publisher for screen sharing
-        screenSharingPubRef.current = initPublisher(
-          undefined,
-          {
-            videoSource: 'screen',
-            insertDefaultUI: false,
-            videoContentHint: 'detail',
-            name: t('participants.screen', { participantName: user.defaultSettings.name }),
-          },
-          (err) => {
-            if (err) {
-              onScreenShareStopped();
-            }
+        screenSharingPubRef.current = initPublisher(undefined, publisherProperties, (err) => {
+          if (err) {
+            onScreenShareStopped();
           }
-        );
+        });
 
         // Adding class for screen sharing styling
         screenSharingPubRef.current?.element?.classList.add('OT_big');
