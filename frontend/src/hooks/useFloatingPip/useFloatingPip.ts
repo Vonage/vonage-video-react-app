@@ -86,10 +86,10 @@ const useFloatingPip = ({
   onTap,
 }: UseFloatingPipArgs): UseFloatingPipResult => {
   const [position, setPosition] = useState<FloatingPipPosition | null>(() => {
-    if (typeof window === 'undefined') return null;
+    if (typeof globalThis.window === 'undefined') return null;
     const rect = canvasRef.current?.getBoundingClientRect();
-    const width = rect?.width || window.innerWidth;
-    const height = rect?.height || window.innerHeight;
+    const width = rect?.width || globalThis.window.innerWidth;
+    const height = rect?.height || globalThis.window.innerHeight;
     return cornerToPosition(initialCorner, width, height, pipWidth, pipHeight, margin);
   });
   const [isDragging, setIsDragging] = useState<boolean>(false);
