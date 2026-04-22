@@ -1,5 +1,5 @@
 import { describe, expect, it } from '@jest/globals';
-import StatusCodeEnum from 'status-code-enum';
+import { StatusCode } from 'status-code-enum';
 import { ValidationError, type ValidationIssue } from '../errors/ValidationError';
 
 describe('ValidationError', () => {
@@ -15,7 +15,7 @@ describe('ValidationError', () => {
     expect(error.message).toBe('Invalid request');
     expect(error.name).toBe('ValidationError');
     expect(error.code).toBe('VALIDATION_ERROR');
-    expect(error.statusCode).toBe(StatusCodeEnum.ClientErrorBadRequest);
+    expect(error.statusCode).toBe(StatusCode.ClientErrorBadRequest);
   });
 
   it('creates error with issues and custom message', () => {

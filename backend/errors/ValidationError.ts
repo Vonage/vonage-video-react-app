@@ -1,4 +1,4 @@
-import StatusCodeEnum from 'status-code-enum';
+import { StatusCode } from 'status-code-enum';
 import ApplicationError from '@common/errors/ApplicationError';
 
 export type ValidationIssue = {
@@ -15,7 +15,7 @@ export class ValidationError extends ApplicationError {
       src: new Error(message),
       fallbackConfig: {
         fallbackMessage: message,
-        statusCode: StatusCodeEnum.ClientErrorBadRequest,
+        statusCode: StatusCode.ClientErrorBadRequest,
         severity: 'error',
       },
     });
