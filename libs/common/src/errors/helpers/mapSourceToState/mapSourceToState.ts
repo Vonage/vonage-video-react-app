@@ -17,12 +17,14 @@ export const mapSourceToState = (src: unknown): Partial<ApplicationErrorState> =
       if (isApplicationError(src) || isApplicationErrorLike(src)) {
         const copy: Partial<ApplicationErrorState> = {
           message: src.message,
-          fallbackConfig: src.fallbackConfig,
-          severity: src.severity,
-          stack: src.stack,
-          values: src.values,
-          statusCode: src.statusCode,
         };
+
+        // avoid adding non present properties
+        if (Object.hasOwn(src, 'fallbackConfig')) copy.fallbackConfig = src.fallbackConfig;
+        if (Object.hasOwn(src, 'severity')) copy.severity = src.severity;
+        if (Object.hasOwn(src, 'stack')) copy.stack = src.stack;
+        if (Object.hasOwn(src, 'issues')) copy.issues = src.issues;
+        if (Object.hasOwn(src, 'statusCode')) copy.statusCode = src.statusCode;
 
         return copy;
       }

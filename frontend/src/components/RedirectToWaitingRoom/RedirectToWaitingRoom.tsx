@@ -1,6 +1,6 @@
 import { ReactElement } from 'react';
 import { Navigate, useLocation } from 'react-router-dom';
-import useRoomName from '../../hooks/useRoomName';
+import useSessionKeyParam from '../../hooks/useSessionKeyParam';
 import { env } from '../../env';
 
 export type RedirectToWaitingRoomProps = {
@@ -18,16 +18,17 @@ export type RedirectToWaitingRoomProps = {
  */
 const RedirectToWaitingRoom = ({ children }: RedirectToWaitingRoomProps): ReactElement => {
   const location = useLocation();
-  const roomName = useRoomName();
+  const { sessionKey } = useSessionKeyParam();
   const hasAccess = !!location.state?.hasAccess;
 
   const searchParams = new URLSearchParams(location.search);
   const bypass = searchParams.get('bypass') === 'true' || env.BYPASS_WAITING_ROOM;
   const mustEnterWaitingRoom = !hasAccess && !bypass;
+
   return mustEnterWaitingRoom ? (
     <Navigate
       to={{
-        pathname: `/waiting-room/${roomName}`,
+        pathname: `/waiting-room/${sessionKey}`,
       }}
     />
   ) : (

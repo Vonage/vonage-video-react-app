@@ -1,7 +1,6 @@
 import { ReactElement, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import useRoomName from '@hooks/useRoomName';
 import PopupDialog, { type DialogTexts } from '../PopupDialog';
 import useSessionContext from '@hooks/useSessionContext';
 
@@ -20,10 +19,9 @@ const RecordingPopUpIndicator = ({
   shouldPromptRecordingConsent = false,
   onNotified,
 }: RecordingPopUpIndicatorProps): ReactElement => {
-  const { setRecordingAlreadyNotified } = useSessionContext();
+  const { setRecordingAlreadyNotified, sessionKey } = useSessionContext();
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const roomName = useRoomName();
 
   const [hasBeenNotified, setHasBeenNotified] = useState<boolean>(false);
 
@@ -37,11 +35,10 @@ const RecordingPopUpIndicator = ({
   }, [t]);
 
   const redirectToGoodbye = () => {
-    navigate('/goodbye', {
+    navigate(`/goodbye/${sessionKey}`, {
       state: {
         header: t('recording.consent.goodbye.header'),
         caption: t('recording.consent.goodbye.message'),
-        roomName,
         isSelfDeclinedRecording: true,
       },
     });

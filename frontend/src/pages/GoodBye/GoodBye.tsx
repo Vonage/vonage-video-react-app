@@ -23,7 +23,7 @@ import useGoodByePage from '../../hooks/useGoodByePage';
  */
 const GoodBye = (): ReactElement => {
   const { t } = useTranslation();
-  const { roomName, archives, header, caption, isSelfDeclinedRecording } = useGoodByePage();
+  const { archives, header, caption, isSelfDeclinedRecording } = useGoodByePage();
 
   return (
     <PageLayout>
@@ -40,7 +40,7 @@ const GoodBye = (): ReactElement => {
               {t('goodBye.title')}
             </p>
             <div className="mb-6 w-full">
-              <ReenterRoomButton roomName={roomName} />
+              <ReenterRoomButton />
             </div>
             <GoToLandingPageButton />
           </Card>

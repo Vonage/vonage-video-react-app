@@ -25,15 +25,11 @@
       "@common/*": ["../libs/common/src/*"],
       "@web": ["../libs/common/srcBrowser"],
       "@web/*": ["../libs/common/srcBrowser/*"],
-      "@common-test": ["../libs/common/test"],
-      "@common-test/*": ["../libs/common/test/*"],
-      "@web-test": ["../libs/common/testBrowser"],
-      "@web-test/*": ["../libs/common/testBrowser/*"],
+
       "@components": ["./src/components"],
       "@components/*": ["./src/components/*"],
       "@core": ["../libs/core/src"],
-      "@core-test": ["../libs/core/test"],
-      "@core-test/*": ["../libs/core/test/*"],
+
       "@core/*": ["../libs/core/src/*"],
       "@hooks": ["./src/hooks"],
       "@hooks/*": ["./src/hooks/*"],
@@ -43,13 +39,28 @@
       "@pages/*": ["./src/pages/*"],
       "@stores": ["./src/stores"],
       "@stores/*": ["./src/stores/*"],
+
+      "@ui": ["../libs/ui/src"],
+      "@ui/*": ["../libs/ui/src/*"],
+      "@utils/*": ["./src/utils/*"],
+      "@services": ["./src/services"],
+      "@services/*": ["./src/services/*"],
+
+      // test
       "@test/*": ["./src/test/*"],
       "@tests/*": ["./src/tests/*"],
-      "@ui": ["../libs/ui/src"],
+      "@common-test": ["../libs/common/test"],
+      "@common-test/*": ["../libs/common/test/*"],
+      "@web-test": ["../libs/common/testBrowser"],
+      "@web-test/*": ["../libs/common/testBrowser/*"],
+      "@core-test": ["../libs/core/test"],
+      "@core-test/*": ["../libs/core/test/*"],
       "@ui-test": ["../libs/ui/test"],
       "@ui-test/*": ["../libs/ui/test/*"],
-      "@ui/*": ["../libs/ui/src/*"],
-      "@utils/*": ["./src/utils/*"]
+
+      // video-router
+      "@api-lib/*": ["../libs/api/src/*"],
+      "@node/*": ["../libs/common/srcNode/*"]
     },
     "types": ["vite/client", "node", "vitest", "vitest/globals"]
   },

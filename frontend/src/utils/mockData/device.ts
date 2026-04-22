@@ -1,5 +1,4 @@
 import type { MediaDeviceInfoJSON } from '@web/types';
-import { AllMediaDevices } from '../../types';
 
 /**
  * Default mocked audio input device.
@@ -92,17 +91,3 @@ export const defaultVideoDevice = {
   deviceId: 'default-video-device-id',
   kind: 'videoInput',
 };
-
-/**
- * An object containing all available media devices.
- * @property {Array<object>} audioInputDevices - all available audio input devices.
- * @property {Array<object>} videoInputDevices - all available video input devices.
- * @property {Array<object>} audioOutputDevices - all available audio output devices.
- */
-export const allMediaDevices: AllMediaDevices = {
-  audioInputDevices,
-  videoInputDevices,
-  audioOutputDevices,
-};
-
-export default allMediaDevices;

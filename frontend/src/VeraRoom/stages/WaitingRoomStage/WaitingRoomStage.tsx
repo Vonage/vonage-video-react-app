@@ -1,5 +1,5 @@
 import { type FC } from 'react';
-import { Navigate, useParams } from 'react-router-dom';
+import { Navigate } from 'react-router-dom';
 import Typography from '@mui/material/Typography';
 import bridge$ from '../../stores/bridge';
 import { PreviewPublisherProvider } from '@Context/PreviewPublisherProvider';
@@ -25,16 +25,15 @@ import { PageLayoutEmbed } from '@ui';
  * Navigation to the meeting room is handled by UsernameInput via react-router-dom,
  * which resolves against the parent MemoryRouter in VeraRoom.
  *
- * If mounted at /waiting-room (no :roomName param) but bridge$ has a sessionIdentifier,
+ * If mounted at /waiting-room (no :roomIdentifier param) but bridge$ has a sessionIdentifier,
  * redirects to /waiting-room/:sessionIdentifier so useRoomName() resolves correctly.
  */
 const WaitingRoomStage: FC = () => {
-  const { roomName } = useParams<{ roomName?: string }>();
   const sessionIdentifier = bridge$.use.select((state) => state.sessionIdentifier);
 
-  const missingRoomName = !roomName;
-  const canRedirect = missingRoomName && !!sessionIdentifier;
-  const isConfigError = missingRoomName && !sessionIdentifier;
+  const missingRoomIdentifier = !sessionIdentifier;
+  const canRedirect = missingRoomIdentifier && !!sessionIdentifier;
+  const isConfigError = missingRoomIdentifier && !sessionIdentifier;
 
   if (canRedirect) {
     return <Navigate to={`/waiting-room/${sessionIdentifier}`} replace />;
@@ -67,6 +66,7 @@ function WaitingRoomStageContent() {
     setUsername,
     accessStatus,
     isRoomReady,
+    roomName,
     handleAudioInputOpen,
     handleVideoInputOpen,
     handleAudioOutputOpen,
@@ -109,6 +109,7 @@ function WaitingRoomStageContent() {
                   className={`flex-col sm:inline-flex h-auto animate-fade-in`}
                   username={username}
                   setUsername={setUsername}
+                  roomName={roomName}
                 />
               )}
 

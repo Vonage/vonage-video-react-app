@@ -6,7 +6,7 @@ import path from 'path';
 import bodyParser from 'body-parser';
 import cors from 'cors';
 import { Server } from 'http';
-import router from './routes/index';
+import router from './routes';
 import { errorHandler } from './middleware/errorHandler';
 import { fileURLToPath } from 'url';
 

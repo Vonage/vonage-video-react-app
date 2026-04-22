@@ -19,7 +19,7 @@ import { useTranslation } from 'react-i18next';
  */
 const GoodByeStage: FC = () => {
   const { t } = useTranslation();
-  const { roomName, archives, header, caption } = useGoodByePage();
+  const { archives, header, caption } = useGoodByePage();
 
   return (
     <PageLayoutEmbed>
@@ -32,7 +32,7 @@ const GoodByeStage: FC = () => {
             <p className="text-xl font-medium font-vera-plain text-vera-secondary mb-3 w-full text-left">
               {t('goodBye.title')}
             </p>
-            <ReenterRoomButton roomName={roomName} />
+            <ReenterRoomButton />
           </Card>
 
           <Card className="min-w-full lg:min-w-125">

@@ -8,7 +8,7 @@ export type ValidationIssue = {
 
 export class ValidationError extends ApplicationError {
   public readonly code = 'VALIDATION_ERROR';
-  public readonly issues: ValidationIssue[];
+  public override readonly issues: ValidationIssue[];
 
   constructor(issues: ValidationIssue[], message = 'Invalid request') {
     super({
@@ -28,7 +28,7 @@ export class ValidationError extends ApplicationError {
     return {
       ...base,
       code: 'VALIDATION_ERROR',
-      issues: this.issues,
+      issues: this.issues as unknown as string[],
       statusCode: base.statusCode ?? this.statusCode ?? 400,
     };
   };

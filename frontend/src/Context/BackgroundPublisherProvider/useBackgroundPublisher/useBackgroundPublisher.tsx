@@ -20,6 +20,7 @@ import useSyncPublisherDevices from '@Context/PublisherProvider/usePublisher/hoo
 import { getStorageItem, STORAGE_KEYS } from '@utils/storage';
 import attempt from '@common/execution/attempt/attempt';
 import { useMountEffect } from '@web/hooks';
+import { env } from '../../../env';
 
 export type BackgroundPublisherContextType = {
   isPublishing: boolean;
@@ -196,7 +197,6 @@ const useBackgroundPublisher = (
   const initBackgroundLocalPublisher = useCallback(() => {
     if (backgroundPublisherRef.current) return;
 
-    // Set videoFilter based on user's selected background
     let videoFilter: VideoFilter | undefined;
     if (initialBackgroundRef.current && hasMediaProcessorSupport()) {
       videoFilter = initialBackgroundRef.current;
@@ -205,7 +205,7 @@ const useBackgroundPublisher = (
     const publisherOptions: PublisherProperties = {
       insertDefaultUI: false,
       videoFilter,
-      resolution: '1280x720',
+      resolution: env.DEFAULT_RESOLUTION,
       videoSource: mediaDevices$.getState().videoinput,
       publishAudio: false,
       publishVideo: isVideoEnabled,

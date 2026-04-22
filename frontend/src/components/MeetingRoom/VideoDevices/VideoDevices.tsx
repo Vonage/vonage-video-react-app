@@ -1,7 +1,7 @@
 import { ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
 import useTheme from '@ui/theme';
-import { Box, Typography, MenuList, MenuItem, Tooltip, BoxProps } from '@mui/material';
+import { Box, MenuList, MenuItem, Tooltip, BoxProps } from '@mui/material';
 import VividIcon from '@components/VividIcon';
 import { useDistinctLabelMediaDevices } from '@ui/hooks';
 import mediaDevices$ from '@core/stores/devices';
@@ -57,7 +57,7 @@ const VideoDevices = ({
           {...boxProps}
         >
           <VividIcon name="video-line" customSize={-5} />
-          <Typography sx={{ ml: 2 }}>{t('devices.video.camera.full')}</Typography>
+          <p className="text-vera-body-extended ml-4">{t('devices.video.camera.full')}</p>
         </Box>
         <MenuList id="split-button-menu">
           {devicesAvailable.map((option) => {
@@ -101,9 +101,7 @@ const VideoDevices = ({
                     <Box sx={{ minWidth: 36 }} /> // Placeholder when CheckIcon is not displayed
                   )}
                   <Tooltip title={option.label} placement="right" arrow>
-                    <Typography component="span" noWrap>
-                      {option.label}
-                    </Typography>
+                    <span className="text-vera-body-extended truncate">{option.label}</span>
                   </Tooltip>
                 </Box>
               </MenuItem>

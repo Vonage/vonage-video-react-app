@@ -1,3 +1,4 @@
+export { default as assertNotEmptyString } from './assertNotEmptyString';
 export { default as assertRecord } from './assertRecord';
 export { default as isErrorLike } from './isErrorLike';
 export { default as isFunction } from './isFunction';
@@ -8,3 +9,10 @@ export { default as isRecord } from './isRecord';
 export { default as isString } from './isString';
 export { default as isUndefined } from './isUndefined';
 export { default as isNotNil } from './isNotNil';
+export { default as assertString } from './assertString';
+export { default as isValidRoomName } from './isValidRoomName';
+export { default as isSessionKeyLike } from './isSessionKeyLike';
+export { default as isSessionIdLike } from './isSessionIdLike';
+export { default as assertSessionId } from './assertSessionId';
+export { default as isValidSessionId } from './isValidSessionId';
+export { default as isValidSessionKey } from './isValidSessionKey';

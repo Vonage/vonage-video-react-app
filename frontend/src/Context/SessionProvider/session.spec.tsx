@@ -1,13 +1,12 @@
 import { ReactElement, useEffect } from 'react';
-import { describe, expect, it, vi, beforeEach, Mock } from 'vitest';
+import { describe, expect, it, vi, beforeEach } from 'vitest';
 import { act, render as renderBase, waitFor } from '@testing-library/react';
 import EventEmitter from 'events';
 import { Publisher, Stream } from '@vonage/client-sdk-video';
 import useSessionContext from '@hooks/useSessionContext';
 import ActiveSpeakerTracker from '@utils/ActiveSpeakerTracker';
 import VonageVideoClient from '@utils/VonageVideoClient';
-import { Credential, StreamPropertyChangedEvent, SubscriberWrapper } from '@app-types/session';
-import fetchCredentials from '@api/fetchCredentials';
+import { StreamPropertyChangedEvent, SubscriberWrapper } from '@app-types/session';
 import { makeTestProvider, ProviderOptions, providers } from '@test/providers';
 
 vi.mock('@utils/ActiveSpeakerTracker');
@@ -21,7 +20,17 @@ vi.mock('@utils/constants', () => ({
 
 vi.mock('@api/fetchCredentials');
 
-const mockFetchCredentials = fetchCredentials as Mock;
+const mockJoinSessionMutate = vi.fn();
+
+// A valid fake JWT containing sessionId: '1_MX4xMjM0NTY3OH4-VGh1IEZlYiAyNyAwODozMjozNCBQU1QgMjAyMH4wLjI0NDYxMjE'
+const validSessionKey =
+  'eyJhbGciOiJIUzI1NiJ9.eyJzZXNzaW9uSWQiOiIxX01YNHhNak0wTlRZM09INC1WR2gxSUVabFlpQXlOeUF3T0Rvek1qb3pOQ0JRVTFRZ01qQXlNSDR3TGpJME5EWXhNakUiLCJyb29tTmFtZSI6IlRlc3RDb21wb25lbnRSb29tIn0.fakesig';
+
+vi.mock('@services', () => ({
+  videoClient: {
+    joinSession: (...args: unknown[]) => mockJoinSessionMutate(...args) as unknown,
+  },
+}));
 
 describe('SessionProvider', () => {
   let activeSpeakerTracker: ActiveSpeakerTracker;
@@ -46,7 +55,7 @@ describe('SessionProvider', () => {
 
     useEffect(() => {
       if (joinRoom) {
-        void joinRoom('TestComponentRoom');
+        void joinRoom({ sessionKey: validSessionKey });
       }
     }, [joinRoom]);
 
@@ -140,18 +149,22 @@ describe('SessionProvider', () => {
     }) as unknown as VonageVideoClient;
 
     const mockedActiveSpeakerTracker = vi.mocked(ActiveSpeakerTracker);
+
     mockedActiveSpeakerTracker.mockImplementation(() => {
       return activeSpeakerTracker;
     });
+
     const mockedVonageVideoClient = vi.mocked(VonageVideoClient);
+
     mockedVonageVideoClient.mockImplementation(() => {
       return vonageVideoClient;
     });
-    mockFetchCredentials.mockResolvedValue({
-      apiKey: 'apiKey',
-      sessionId: 'sessionId',
+
+    mockJoinSessionMutate.mockResolvedValue({
       token: 'token',
-    } as Credential);
+      sessionId: 'sessionId',
+      sessionKey: validSessionKey,
+    });
   });
 
   async function renderAndWaitForConnection() {
@@ -461,11 +474,11 @@ describe('SessionProvider', () => {
     await waitFor(() => expect(vonageVideoClient.forceMuteStream).toHaveBeenCalledTimes(1));
   });
 
-  it('joinRoom should call fetchCredentials and connect', async () => {
+  it('joinRoom should call joinSession and connect', async () => {
     await renderAndWaitForConnection();
 
     await waitFor(() => {
-      expect(mockFetchCredentials).toHaveBeenCalledTimes(1);
+      expect(mockJoinSessionMutate).toHaveBeenCalledTimes(1);
       expect(vonageVideoClient.connect).toHaveBeenCalledTimes(1);
     });
   });

@@ -9,6 +9,9 @@ export default defineConfig(() => ({
     alias: {
       '@api-lib': path.resolve(__dirname, './src'),
       '@common': path.resolve(__dirname, '../common/src'),
+      '@node': path.resolve(__dirname, '../common/srcNode'),
+      '@common-test': path.resolve(__dirname, '../common/test'),
+      '@node-test': path.resolve(__dirname, '../common/testNode'),
     },
   },
   test: {
@@ -23,6 +26,13 @@ export default defineConfig(() => ({
       reportsDirectory: './coverage',
       provider: 'v8' as const,
       reporter: ['text', 'lcov'],
+      allowExternal: true,
+      include: [
+        `${path.resolve(__dirname, 'src')}/**/*.{ts,tsx}`,
+        `${path.resolve(__dirname, '../common/src')}/**/*.{ts,tsx}`,
+        `${path.resolve(__dirname, '../common/srcNode')}/**/*.{ts,tsx}`,
+      ],
+      exclude: ['test/**', '**/index.ts'],
     },
   },
 }));

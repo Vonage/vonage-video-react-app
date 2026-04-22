@@ -1,13 +1,13 @@
 import { Dispatch, ReactElement, useState, SetStateAction } from 'react';
 import { AxiosError } from 'axios';
 import { useTranslation } from 'react-i18next';
-import { disableCaptions, enableCaptions } from '@api/captions';
-import useRoomName from '@hooks/useRoomName';
+import useSessionContext from '@hooks/useSessionContext';
 import ToolbarButton from '../ToolbarButton';
 import Tooltip from '@mui/material/Tooltip';
 import VividIcon from '@components/VividIcon';
 import useTheme from '@ui/theme';
 import { env } from '../../../env';
+import videoClient from '@services/videoClient';
 
 export type CaptionsState = {
   isUserCaptionsEnabled: boolean;
@@ -37,7 +37,7 @@ const CaptionsButton = ({
   captionsState,
 }: CaptionsButtonProps): ReactElement | false => {
   const { t } = useTranslation();
-  const roomName = useRoomName();
+  const { sessionKey } = useSessionContext();
   const [captionsId, setCaptionsId] = useState<string>('');
   const { isUserCaptionsEnabled, setIsUserCaptionsEnabled, setCaptionsErrorResponse } =
     captionsState;
@@ -50,8 +50,6 @@ const CaptionsButton = ({
     }
   };
 
-  const sessionCaptionsEnabled = !!roomName && !!captionsId;
-
   const handleCaptionsErrorResponse = (message: string | null) => {
     setCaptionsErrorResponse(message || t('errors.unknown'));
     setCaptionsId('');
@@ -60,8 +58,8 @@ const CaptionsButton = ({
 
   const handleCaptionsEnable = async () => {
     try {
-      const response = await enableCaptions(roomName);
-      setCaptionsId(response.data.captionsId);
+      const response = await videoClient.enableCaptions({ sessionKey: sessionKey! });
+      setCaptionsId(response?.captionsId ?? '-1');
       setIsUserCaptionsEnabled(true);
     } catch (error) {
       if (error instanceof AxiosError) {
@@ -74,7 +72,11 @@ const CaptionsButton = ({
   const handleCaptionsDisable = async () => {
     try {
       setCaptionsId('');
-      await disableCaptions(roomName, captionsId);
+
+      if (captionsId && captionsId !== '-1') {
+        await videoClient.disableCaptions({ sessionKey: sessionKey!, captionsId });
+      }
+
       setIsUserCaptionsEnabled(false);
     } catch (error) {
       if (error instanceof AxiosError) {
@@ -87,7 +89,7 @@ const CaptionsButton = ({
   const handleCaptions = async (action: 'enable' | 'disable') => {
     if (action === 'enable') {
       await handleCaptionsEnable();
-    } else if (action === 'disable' && sessionCaptionsEnabled) {
+    } else if (action === 'disable') {
       await handleCaptionsDisable();
     }
   };

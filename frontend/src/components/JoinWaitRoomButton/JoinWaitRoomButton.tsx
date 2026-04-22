@@ -2,6 +2,7 @@ import Button from '@mui/material/Button';
 import { Dispatch, MouseEvent, ReactElement, SetStateAction } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
+import { videoClient } from '@services';
 
 export type JoinWaitRoomButtonProps = {
   roomName: string;
@@ -27,13 +28,20 @@ const JoinWaitRoomButton = ({
   const { t } = useTranslation();
   const navigate = useNavigate();
 
-  const handleJoin = (event: MouseEvent) => {
+  const handleJoin = async (event: MouseEvent) => {
     event.preventDefault();
     if (roomName === '') {
       setHasError(true);
       return;
     }
-    navigate(`/waiting-room/${roomName}`);
+
+    /**
+     * [TODO] If the session already exists returns the session key,
+     * Right now the createSession endpoint has a patch to support the legacy roomName functionality
+     */
+    const session = await videoClient.createSession({ roomName });
+
+    navigate(`/waiting-room/${session.sessionKey}`);
   };
 
   return (

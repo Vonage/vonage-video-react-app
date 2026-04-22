@@ -2,7 +2,6 @@ import type { Request, Response, NextFunction } from 'express';
 import StatusCodeEnum from 'status-code-enum';
 import { isApplicationError } from '@common/errors/assertions';
 import ApplicationServerError from '@api-lib/errors/ApplicationServerError';
-import { ValidationError } from '../errors/ValidationError';
 
 const isDevelopment = process.env.NODE_ENV !== 'production';
 
@@ -12,8 +11,6 @@ function tryToLogApplicationError(error: unknown): void {
       console.error('[ApplicationServerError]', error.retrieveErrorLogDetails());
     } else if (isApplicationError(error)) {
       console.error('[ApplicationError]', error.message);
-    } else if (error instanceof ValidationError) {
-      console.error('[ValidationError]', JSON.stringify({ issues: error.issues }));
     } else {
       console.error('[Error]', error);
     }
@@ -50,23 +47,8 @@ export function errorHandler(
   });
 
   // avoids exposing sensitive information while still providing useful error information
-  let safeError = applicationError.exportSafely();
-  let statusCode =
-    applicationError.statusCode ?? (safeError as { statusCode?: number }).statusCode ?? 500;
-
-  // ValidationError: use its exportSafely for proper statusCode and issues (avoids ESM/instanceof quirks)
-  if (
-    typeof error === 'object' &&
-    error !== null &&
-    (error as { code?: string }).code === 'VALIDATION_ERROR' &&
-    Array.isArray((error as { issues?: unknown }).issues)
-  ) {
-    const validationSafe = (error as ValidationError).exportSafely();
-    safeError = validationSafe;
-    statusCode = validationSafe.statusCode ?? 400;
-  }
-
-  const safeErrorWithStatus = { ...safeError, statusCode };
+  const safeError = applicationError.exportSafely();
+  const { statusCode } = safeError;
 
   const accepts = req.headers.accept ?? '';
 
@@ -76,7 +58,7 @@ export function errorHandler(
     req.headers?.['content-type']?.includes('application/json');
 
   if (isJsonRequest) {
-    res.status(statusCode).json(safeErrorWithStatus);
+    res.status(safeError.statusCode).json(safeError);
     return;
   }
 
@@ -84,7 +66,7 @@ export function errorHandler(
 
   if (isHtmlRequest) {
     res.status(statusCode).render('index', {
-      error: safeErrorWithStatus,
+      error: safeError,
     });
 
     return;

@@ -1,5 +1,6 @@
-export { default as buildThirdPartyErrorHandler } from './makeThirdPartyErrorHandler';
-export { default as buildInternalErrorHandler } from './makeInternalErrorHandler';
-export { default as buildUnauthorizedErrorHandler } from './makeUnauthorizedErrorHandler';
-export { default as buildBadRequestErrorHandler } from './makeBadRequestErrorHandler';
-export { default as buildVideoApiErrorHandler } from './makeVideoApiErrorHandler';
+export { default as makeThirdPartyErrorHandler } from './makeThirdPartyErrorHandler';
+export { default as makeInternalErrorHandler } from './makeInternalErrorHandler';
+export { default as makeUnauthorizedErrorHandler } from './makeUnauthorizedErrorHandler';
+export { default as makeBadRequestErrorHandler } from './makeBadRequestErrorHandler';
+export { default as makeNotFoundErrorHandler } from './makeNotFoundErrorHandler';
+export { default as makeVideoApiErrorHandler } from './makeVideoApiErrorHandler';

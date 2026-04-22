@@ -10,6 +10,7 @@ const mockOpentokConfig = () => {
         privateKey: 'test-private-key',
         provider: 'opentok',
         gollumUrl: 'https://example.com',
+        loggerVerbose: false,
       };
     }),
   };

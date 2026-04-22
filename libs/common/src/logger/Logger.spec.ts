@@ -253,6 +253,82 @@ describe('LoggerBase', () => {
     });
   });
 
+  describe('setContext / clearContext', () => {
+    it('merges context into log() calls automatically', async () => {
+      const provider = { ...minimalProvider, log: vi.fn() };
+      loggerBase.setup(() => provider);
+
+      loggerBase.setContext({ userId: 'u1', sessionId: 's1' });
+      loggerBase.log('TestEvent');
+
+      await waitFor(() => {
+        expect(provider.log).toHaveBeenCalledWith(
+          'TestEvent',
+          expect.objectContaining({ userId: 'u1', sessionId: 's1' })
+        );
+      });
+    });
+
+    it('merges context into reportError() calls automatically', async () => {
+      const provider = { ...minimalProvider, reportError: vi.fn() };
+      loggerBase.setup(() => provider);
+
+      loggerBase.setContext({ userId: 'u1', connectionId: 'c1' });
+      loggerBase.reportError(new Error('oops'));
+
+      await waitFor(() => {
+        expect(provider.reportError).toHaveBeenCalledWith(
+          expect.objectContaining({ message: 'oops' }),
+          expect.objectContaining({ userId: 'u1', connectionId: 'c1' })
+        );
+      });
+    });
+
+    it('extra passed to log() takes precedence over context', async () => {
+      const provider = { ...minimalProvider, log: vi.fn() };
+      loggerBase.setup(() => provider);
+
+      loggerBase.setContext({ sessionId: 'from-context' });
+      loggerBase.log('TestEvent', { sessionId: 'from-extra' });
+
+      await waitFor(() => {
+        expect(provider.log).toHaveBeenCalledWith(
+          'TestEvent',
+          expect.objectContaining({ sessionId: 'from-extra' })
+        );
+      });
+    });
+
+    it('clearContext() removes context from subsequent log() calls', async () => {
+      const provider = { ...minimalProvider, log: vi.fn() };
+      loggerBase.setup(() => provider);
+
+      loggerBase.setContext({ userId: 'u1' });
+      loggerBase.clearContext();
+      loggerBase.log('TestEvent');
+
+      await waitFor(() => {
+        expect(provider.log).toHaveBeenCalledWith('TestEvent', {});
+      });
+    });
+
+    it('setContext() merges with previously set context fields', async () => {
+      const provider = { ...minimalProvider, log: vi.fn() };
+      loggerBase.setup(() => provider);
+
+      loggerBase.setContext({ userId: 'u1' });
+      loggerBase.setContext({ sessionId: 's1' });
+      loggerBase.log('TestEvent');
+
+      await waitFor(() => {
+        expect(provider.log).toHaveBeenCalledWith(
+          'TestEvent',
+          expect.objectContaining({ userId: 'u1', sessionId: 's1' })
+        );
+      });
+    });
+  });
+
   describe('setup with synchronous callback returning invalid result', () => {
     it.each([
       ['null', () => null],

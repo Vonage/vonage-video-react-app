@@ -24,3 +24,5 @@ spec:
   owner: group:orgdata/vdk
   system: video-react-ref-app
   lifecycle: production
+  dependsOn:
+    - component:default/video-js-sdk

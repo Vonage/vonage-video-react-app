@@ -73,6 +73,7 @@ export default [
             'libs/ui/.storybook/main.ts',
             'libs/ui/.storybook/preview.tsx',
             'backend/jest/documentPolyfill.js',
+            'integration-tests/test-api/jest.config.js',
             // add more config files here if needed, e.g.
           ],
         },

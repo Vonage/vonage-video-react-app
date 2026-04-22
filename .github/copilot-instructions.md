@@ -46,6 +46,7 @@ TypeScript version: `^5.8.3`
   - `libs/ui` for visual components  
   - `libs/core` if it is faceless (non-visual logic).
   - `libs/common` for helpers, utilities, and hooks that are agnostic of the project.
+- **Rule:** If the code is **backend-oriented** and represents **agnostic Vonage Video API orchestration**, it must be placed in `libs/api`.
 - **Rule:** Vera-specific business logic (roles, permissions, product policy/decisions) must stay in the app layer (`frontend`/`backend`).
 - **Rule:** This is **especially enforced** for video-related components such as publishers, subscribers, sessions, `videoView`s, etc.
 - **Rule:** Helpers, utilities, and hooks that are agnostic of the project must be placed in `libs/common`.
@@ -151,13 +152,13 @@ if (isUserEligible(user)) {
 if (isNil(data)) return;
 ```
 
-- **Rule:** Acronyms in names are banned across the codebase, except `req` and `res` when working with Express `Request` and `Response`.
+- **Rule:** Abbreviated or shortened names are banned across the codebase, except `req` and `res` when working with Express `Request` and `Response`.
 - **Rule:** Use fully descriptive names, even if they are longer. Minification handles bundle size.
 
 **Violation:**
 
 ```tsx
-// Bad
+// Bad: abbreviating "User Details" to "UsrDtls"
 function fetchUsrDtls() {
     // ...
 }
@@ -166,7 +167,7 @@ function fetchUsrDtls() {
 **Correct:**
 
 ```tsx
-// Good
+// Good: fully spelled out words
 function fetchUserDetails() {
     // ...
 }
@@ -175,14 +176,14 @@ function fetchUserDetails() {
 **Violation:**
 
 ```tsx
-// Bad
+// Bad: abbreviating "VideoClient" to "vc"
 const vc = new VideoClient();
 ```
 
 **Correct:**
 
 ```tsx
-// Good
+// Good: fully spelled out variable name
 const videoClient = new VonageVideoClient();
 ```
 
@@ -687,13 +688,11 @@ export const SurveyForm = () => {
 
 # Async Logic & Suspense Usage Rules
 
-- **Rule:** `setState` + `useEffect` patterns must not be used for async operations.
+- **Rule:** `setState` + `useEffect` patterns should be rather used and strongly justified. Prefer linear non reactive code.
 - **Rule:** Native `React.Suspense` and `React.use` must not be used directly.  
-  Only `Suspense$` and `use$`/suspense-specific hooks provided by Vera are allowed.
-- **Rule:** Asynchronous operations must be handled through:
-  - `Suspense$` component
-  - `use$`, `useSuspenseMemo`, or compatible Vera hooks
-- **Rule:** `use$` must only be used inside a `Suspense$` boundary; by design it will throw an explicit error otherwise.
+  Only `SuspenseBoundary` and `use$` which are boundary aware.
+- **Rule:** Asynchronous operations must be handle gracefully, consider using skeletons or placeholders instead of spinners or loading indicators. Take also advantage of tools like `Suspense` and `useSuspenseMemo`.
+- **Rule:** `use$` must only be used inside a `SuspenseBoundary` boundary; by design it will throw an explicit error otherwise.
 
 **Violation (async with state/effect):**
 
@@ -812,7 +811,7 @@ const ParentComponent = () => {
 - **Rule:** Context state should either:
   - be stable enough that you do not need fine-grained granularity, or
   - be granular enough that consumers can subscribe to specific portions of the state.
-- **Rule:** Context APIs must not be reactive. They should not re-render consumers unnecessarily.
+- **Rule:** Context APIs must not be reactive highly reactive. They should not re-render consumers unnecessarily.
 
 **Violation (manual React context for simple use case):**
 
@@ -1586,7 +1585,7 @@ const useComplexLogic = () => {
 ```
 
 - **Rule:** Reactive effect architectures are banned.
-  - Effects must be used only for component lifecycle, not as a state reaction graph for side effects like fetching.
+  - Effects must be preferred for component lifecycle, not as a state reaction graph for side effects like fetching.
 
 **Violation (reactive effect fetching):**
 

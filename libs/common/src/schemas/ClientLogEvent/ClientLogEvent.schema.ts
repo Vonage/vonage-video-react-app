@@ -19,6 +19,7 @@ export const ClientLogEventSchema = z.object({
   sdkId: z.string().optional(),
   componentId: z.string().optional(),
   partnerId: z.string().optional(),
+  userId: z.string().optional(),
   logVersion: z.string().optional(),
   name: z.string().optional(),
 });

@@ -16,6 +16,7 @@ export default defineConfig(() => ({
       '@common': path.resolve(__dirname, './src'),
       '@common-test': path.resolve(__dirname, './test'),
       '@web-test': path.resolve(__dirname, './testBrowser'),
+      '@node-test': path.resolve(__dirname, './testNode'),
       '@web': path.resolve(__dirname, './srcBrowser'),
       '@node': path.resolve(__dirname, './srcNode'),
     },
@@ -58,7 +59,7 @@ export default defineConfig(() => ({
       provider: 'v8' as const,
       reporter: ['text', 'lcov'],
       include: ['src/**/*.{ts,tsx}', 'srcBrowser/**/*.{ts,tsx}', 'srcNode/**/*.{ts,tsx}'],
-      exclude: ['test/**', 'testBrowser/**', '**/index.ts'],
+      exclude: ['test/**', 'testBrowser/**', 'testNode/**', '**/index.ts'],
     },
   },
 }));

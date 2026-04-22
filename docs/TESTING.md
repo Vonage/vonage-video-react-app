@@ -27,6 +27,7 @@ frontend/src/test/
 ├── mocks/             # External dependency mocks (SDK, browser APIs)
 │   └── vonageVideo.ts
 ├── providers/         # Provider wrappers and composers
+│   ├── makeTestProvider.ts                    # Preferred: compose multiple providers
 │   ├── makeUserProviderWrapper.ts
 │   ├── makeSessionProviderWrapper.ts
 │   ├── makePublisherProviderWrapper.ts
@@ -77,128 +78,152 @@ vi.mock('@hooks/useUserContext');
 
 ## Available Wrappers
 
-- `makePublisherProviderWrapper()` - Publisher + Session + User
-- `makeSessionProviderWrapper()` - Session + User  
-- `makeUserProviderWrapper()` - User only
-- `makeAudioOutputProviderWrapper()` - AudioOutput only
-- `makePreviewPublisherProviderWrapper()` - PreviewPublisher only
-- `makeBackgroundPublisherProviderWrapper()` - BackgroundPublisher only
+Use `makeTestProvider` with the `providers` enum to compose exactly the providers your test needs:
+
+| Provider key | Wraps |
+|---|---|
+| `providers.user` | UserProvider |
+| `providers.session` | SessionProvider (depends on user) |
+| `providers.publisher` | PublisherProvider (depends on user, session) |
+| `providers.backgroundPublisher` | BackgroundPublisherProvider (depends on user, session, publisher) |
+| `providers.previewPublisher` | PreviewPublisherProvider (depends on user) |
+
+Dependencies are resolved automatically — you only need to list the providers your component directly requires and `makeTestProvider` will include their dependencies.
+
+Individual wrappers are also available if you only need one:
+
+- `makePublisherProviderWrapper()`
+- `makeSessionProviderWrapper()`
+- `makeUserProviderWrapper()`
+- `makePreviewPublisherProviderWrapper()`
+- `makeBackgroundPublisherProviderWrapper()`
 
 ---
 
 ## Setup
 
-Create a custom `render` helper function that wraps components with providers:
+Create a local `render` (or `renderHook`) helper that uses `makeTestProvider` to compose providers. Pass the wrapper to `@testing-library/react`.
+
+### Component test
 
 ```typescript
 import { render as renderBase } from '@testing-library/react';
-import { makePublisherProviderWrapper, PublisherProviderWrapperOptions } from '@test/providers';
+import { makeTestProvider, providers, type ProviderOptions } from '@test/providers';
 
-function render(ui: ReactElement, options: PublisherProviderWrapperOptions = {}) {
-  const { PublisherProviderWrapper, ...props } = makePublisherProviderWrapper(options);
+type RenderOptions = {
+  userContext?: ProviderOptions['UserContext'];
+  sessionContext?: ProviderOptions['SessionContext'];
+};
+
+function render(ui: ReactElement, { userContext, sessionContext }: RenderOptions = {}) {
+  const { wrapper, ...context } = makeTestProvider([providers.user, providers.session], {
+    userContext,
+    sessionContext,
+  });
 
   return {
-    ...props,
-    ...renderBase(ui, { wrapper: PublisherProviderWrapper }),
+    ...context,
+    ...renderBase(ui, { wrapper }),
   };
 }
-
-// Use in tests
-const { sessionContext, publisherContext } = render(<MyComponent />, {
-  publisherContext: {
-    initialValue: {
-      publisher: mockPublisher,
-      isPublishing: true,
-    },
-  },
-  sessionContext: {
-    initialValue: {
-      connected: true,
-    },
-  },
-});
-
-// Access context values
-expect(sessionContext.current.connected).toBe(true);
 ```
 
-### Initial State with `initialValue`
+`makeTestProvider` returns `{ wrapper, userContext, sessionContext, ... }`. Destructuring into `{ wrapper, ...context }` gives you:
+- `wrapper` — the composed React wrapper to pass to `render` or `renderHook`
+- `context.userContext` — a ref (`{ current }`) pointing to the live `UserContext` value
+- `context.sessionContext` — a ref pointing to the live `SessionContext` value
+- (one ref per provider you listed)
 
-Use `initialValue` to set the initial state of a context provider declaratively:
+Spreading `...context` into the return lets tests access and mutate live context values:
+
+```typescript
+const { sessionContext } = render(<MyComponent />);
+
+// Read live context value
+expect(sessionContext.current.connected).toBe(true);
+
+// Trigger a state change via the context setter
+act(() => sessionContext.current.setConnected(false));
+```
+
+### Hook test
+
+```typescript
+import { renderHook as renderHookBase } from '@testing-library/react';
+import { makeTestProvider, providers, type ProviderOptions } from '@test/providers';
+
+type RenderOptions = {
+  userContext?: ProviderOptions['UserContext'];
+  sessionContext?: ProviderOptions['SessionContext'];
+};
+
+function render({ userContext, sessionContext }: RenderOptions = {}) {
+  const { wrapper, ...context } = makeTestProvider([providers.user, providers.session], {
+    userContext,
+    sessionContext,
+  });
+
+  return {
+    ...context,
+    ...renderHookBase(() => useMyHook(), { wrapper }),
+  };
+}
+```
+
+### Overriding initial user state with `value`
+
+Pass `value` inside a context option to seed the provider's initial state:
 
 ```typescript
 render(<MyComponent />, {
-  publisherContext: {
-    initialValue: {
-      publisher: mockPublisher,
-      isPublishing: true,
-      isVideoEnabled: true,
-    },
-  },
-  sessionContext: {
-    initialValue: {
-      connected: true,
-      layoutMode: 'active-speaker',
+  userContext: {
+    value: {
+      defaultSettings: { name: 'Alice', publishAudio: true },
     },
   },
 });
 ```
 
-### Mocking Methods with `__onCreated`
+### Injecting values with `__interceptor`
 
-Use `__onCreated` callback to mock methods on context. Create the mock outside for assertions:
+Use `__interceptor` to inject or override values on a context object on every render. This is the preferred way to provide objects that are managed internally by a provider (e.g. `vonageVideoClient`):
 
 ```typescript
-const publishMock = vi.fn();
-const joinRoomMock = vi.fn();
+const mockForceMute = vi.fn();
 
-const { sessionContext, publisherContext } = render(<MyComponent />, {
-  publisherContext: {
-    __onCreated: (context) => {
-      context.publish = publishMock;  // Assign external mock
-    },
-  },
+render(<AudioIndicator />, {
   sessionContext: {
-    __onCreated: (context) => {
-      context.joinRoom = joinRoomMock;
+    __interceptor: (ctx) => {
+      if (ctx) ctx.forceMute = mockForceMute;
     },
   },
 });
-
-// Assert on external mock
-expect(joinRoomMock).toHaveBeenCalledWith('room-name');
-expect(publishMock).toHaveBeenCalledTimes(1);
 ```
 
-### Combining `initialValue` and `__onCreated`
-
-You can use both together - `initialValue` for state, `__onCreated` for methods:
+The interceptor is called on every render, so it stays in sync when the context updates. Call the caller's interceptor at the end to allow chaining:
 
 ```typescript
-const publishMock = vi.fn();
-
-const { rerender, sessionContext } = render(<MeetingRoom />, {
-  publisherContext: {
-    initialValue: {
-      isVideoEnabled: true,
-      quality: 'poor',
-    },
-    __onCreated: (context) => {
-      context.publish = publishMock;
-    },
+// In a shared render helper
+sessionContext: {
+  ...sessionContext,
+  __interceptor: (ctx) => {
+    if (ctx) ctx.publish = mockedPublish;
+    sessionContext?.__interceptor?.(ctx);  // chain caller's interceptor
   },
+},
+```
+
+### One-time setup with `__onCreated`
+
+Use `__onCreated` when you only need to set something up once at context creation (not on every re-render):
+
+```typescript
+render(<MyComponent />, {
   sessionContext: {
-    initialValue: {
-      connected: false,
+    __onCreated: (ctx) => {
+      ctx.joinRoom = vi.fn();
     },
   },
-});
-
-sessionContext.current.connected = true;
-rerender(<MyComponent />);
-
-await waitFor(() => {
-  expect(screen.queryByTestId('spinner')).not.toBeInTheDocument();
 });
 ```
 
@@ -307,27 +332,64 @@ await waitFor(() => expect(alert).toBeInTheDocument());
 
 ## Examples
 
-### Component Test
+### Component test
 
 ```typescript
-describe('MicButton', () => {
-  it('displays muted state', () => {
-    render(<MicButton />, {
-      publisherContext: { initialValue: { isAudioEnabled: false } },
+describe('AudioIndicator', () => {
+  const mockForceMute = vi.fn();
+
+  it('renders Mic icon when unmuted', () => {
+    render(<AudioIndicator hasAudio stream={mockStream} />, {
+      sessionContext: {
+        __interceptor: (ctx) => {
+          if (ctx) ctx.forceMute = mockForceMute;
+        },
+      },
     });
-    expect(screen.getByRole('button')).toHaveAttribute('aria-pressed', 'false');
+    expect(screen.getByTestId('MicIcon')).toBeInTheDocument();
   });
 });
+
+function render(ui: ReactElement, { userContext, sessionContext }: RenderOptions = {}) {
+  const { wrapper, ...context } = makeTestProvider([providers.user, providers.session], {
+    userContext,
+    sessionContext,
+  });
+  return { ...context, ...renderBase(ui, { wrapper }) };
+}
 ```
 
-### Hook Test
+### Headless synchronizer test
 
 ```typescript
-const { PublisherProviderWrapper } = makePublisherProviderWrapper({
-  publisherContext: { initialValue: { isAudioEnabled: false } },
+describe('LoggerSynchronizer', () => {
+  it('syncs userId, sessionId, and connectionId into the logger on mount', () => {
+    render({
+      sessionContext: {
+        __interceptor: (ctx) => {
+          if (ctx) ctx.vonageVideoClient = mockVonageVideoClient;
+        },
+      },
+    });
+
+    expect(mockSetContext).toHaveBeenCalledWith({
+      userId: 'user-1',
+      sessionId: 'session-1',
+      connectionId: 'connection-1',
+    });
+  });
 });
-const { result } = renderHook(() => usePublisherOptions(), { wrapper: PublisherProviderWrapper });
-expect(result.current.publishAudio).toBe(false);
+
+function render({ userContext, sessionContext }: RenderOptions = {}) {
+  const { wrapper, ...context } = makeTestProvider([providers.user, providers.session] as const, {
+    userContext: {
+      value: { defaultSettings: { name: 'user-1' } },
+      ...userContext,
+    },
+    sessionContext,
+  });
+  return { ...context, ...renderBase(<LoggerSynchronizer />, { wrapper }) };
+}
 ```
 
 ## Additional Resources

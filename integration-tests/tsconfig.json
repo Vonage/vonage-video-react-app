@@ -1,6 +1,7 @@
 {
   "extends": "../tsconfig.base.json",
   "compilerOptions": {
+    "composite": false,
     "target": "ESNext",
     "module": "commonjs",
     "moduleResolution": "Node",
@@ -12,5 +13,7 @@
     // [TODO]: enable strict mode once all issues are fixed
     "strictNullChecks": false,
     "noImplicitAny": false
-  }
+  },
+  "include": ["**/*.ts"],
+  "exclude": ["test-api"]
 }

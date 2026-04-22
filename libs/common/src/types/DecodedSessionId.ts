@@ -8,8 +8,14 @@ export type DecodedSessionId = {
   /** The version of the session */
   version: string;
 
-  /** The partner ID associated with the session */
+  /**
+   * @deprecated Use applicationId instead. This value is the same as applicationId */
   partnerId: string;
+
+  /*
+   * The application ID associated with the session. This is typically the same as the partner ID, but can be different in some cases.
+   */
+  applicationId: string;
 
   /** The location hint (IP address or region) used when the session was created for media routing */
   location: string;

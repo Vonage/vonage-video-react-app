@@ -10,23 +10,23 @@ describe('buildThirdPartyErrorHandler', () => {
     expect(error.statusCode).toBe(StatusCodeEnum.ServerErrorBadGateway);
   });
 
-  it('should map third party errors to values when enabled', () => {
+  it('should map third party errors to issues when enabled', () => {
     const handler = buildThirdPartyErrorHandler({
       fallbackMessage: 'Service error',
       mapThirdPartyErrors: true,
     });
     const error = handler(new Error('API error'));
 
-    expect(error.exportSafely().values).toEqual(['API error']);
+    expect(error.exportSafely().issues).toEqual(['API error']);
   });
 
-  it('should not map third party errors to values when disabled', () => {
+  it('should not map third party errors to issues when disabled', () => {
     const handler = buildThirdPartyErrorHandler({
       fallbackMessage: 'Service error',
       mapThirdPartyErrors: false,
     });
     const error = handler(new Error('API error'));
 
-    expect(error.exportSafely().values).toEqual([]);
+    expect(error.exportSafely().issues).toBeUndefined();
   });
 });

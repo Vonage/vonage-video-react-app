@@ -18,6 +18,8 @@ If you're new to Vonage, you can [sign up for a Vonage API account](https://dash
 - [Requirements](#requirements)
 - [Running Locally](#running-locally)
 - [Storybook](#storybook)
+- [UI Customization](#ui-customization)
+- [Environment Configuration](#environment-configuration)
 - [Testing on Multiple Devices](#testing-on-multiple-devices)
 - [Deployment to Vonage Cloud Runtime](#deployment-to-vonage-cloud-runtime)
 - [Testing](#testing)
@@ -81,11 +83,6 @@ This application provides features for common conferencing use cases, such as:
   
     <img src="docs/assets/BGEffects.png" alt="Screenshot of video effects">
   </details>
-- <details>
-    <summary>
-      Configurable features: adapt the app to your specific use cases and roles.
-      Configuration is handled through environment variables defined in <em>vcrBuild.env.sh</em>. Edit that file to enable or disable features such as camera control, microphone control, background effects, screen sharing, chat, emojis, archiving, captions, device selection, default resolution, layout mode, and more. Some settings (for example: "default layout" or "audio on join") require rejoining the room to take effect.
-    </summary>
 - <details>
     <summary>Composed archiving capabilities to record your meetings.</summary>
     <img src="docs/assets/Archiving.png" alt="Screenshot of archiving dialog box">
@@ -182,16 +179,18 @@ These reference apps share the same backend infrastructure and demonstrate consi
 
 - **Environment Variables**
 
-  In the root project directory, create the environment files by running:
+  In the root project directory, create the backend environment file by running:
 
   ``` bash
-  cp backend/.env.example backend/.env && cp frontend/.env.example frontend/.env
+  cp backend/.env.example backend/.env
   ```
 
   Then, open **backend/.env** and fill in the required configuration:
 
   - **VONAGE_APP_ID** – This is the ID of your Vonage application. You can find it on the [Applications page](https://dashboard.vonage.com/applications).
   - **VONAGE_PRIVATE_KEY** – If you've already generated a private key, use that. Otherwise, use the key you downloaded when creating the app.
+
+  Frontend feature flags and display settings are configured in [`vcrBuild.env.sh`](vcrBuild.env.sh). The defaults work out of the box — edit that file only when you need to customise behaviour. See [Environment Configuration](#environment-configuration) for the full list of available options.
 
 </br>
 
@@ -224,6 +223,233 @@ yarn storybook:ui
 ```
 
 This will start the Storybook dev server at [http://localhost:6007](http://localhost:6007).
+
+## UI Customization
+
+The app's look and feel is driven by a **design token system**. Tokens are the building blocks of the UI theme and are defined in TypeScript source files. When you edit them and regenerate, the changes propagate consistently through both the MUI theme and the Tailwind CSS configuration used across the entire interface.
+
+### Token files
+
+All token files live under `libs/ui/src/theme/helpers/designTokens/tokens/`.
+
+| File | What it controls |
+|------|------------------|
+| `color.ts` | All semantic colors for both **light** and **dark** modes (brand palette, backgrounds, surfaces, states such as error/warning/success/info, borders, disabled styles, etc.) |
+| `shape.ts` | Corner radius scale used on buttons, cards, modals, and other components (`none` → `extra-large`) |
+| `typography/typeface.ts` | Primary font family stack |
+| `typography/typescale.ts` | Font sizes, line heights, and font weights for every text role (`headline`, `subtitle`, `heading-1–4`, `body-*`, `caption-*`) on both **desktop** and **mobile** breakpoints |
+| `typography/weight.ts` | Font weight definitions per text role |
+
+### Step-by-step customization
+
+1. **Edit the token file(s)** that match what you want to change.
+
+   **Colors** — open `libs/ui/src/theme/helpers/designTokens/tokens/color.ts`.
+   The file contains two sections: `lightColors` and `darkColors`. Each entry maps a semantic token name to a hex value. For example, to change the primary brand color:
+
+   ```ts
+   // Before
+   primary: {
+     value: colorVariables.cta[500], // #9941FF
+     ...
+   },
+
+   // After – replace with your brand color
+   primary: {
+     value: '#0066CC',
+     ...
+   },
+   ```
+
+   > **Tip:** Keep both `lightColors` and `darkColors` in sync so dark mode reflects your brand correctly.
+
+   **Font family** — open `libs/ui/src/theme/helpers/designTokens/tokens/typography/typeface.ts` and update the `value` field:
+
+   ```ts
+   plain: {
+     value: 'Roboto, sans-serif, system-ui',
+     ...
+   },
+   ```
+
+   **Border radius** — open `libs/ui/src/theme/helpers/designTokens/tokens/shape.ts` and adjust any radius step:
+
+   ```ts
+   small: {
+     value: '8px', // was 4px
+     ...
+   },
+   ```
+
+   **Font sizes / weights** — edit `typescale.ts` or `weight.ts` in the same `typography/` folder.
+
+2. **Regenerate the token artifacts** (the `designTokens.json` consumed by Tailwind and the MUI theme):
+
+   ```bash
+   yarn generate:tokens
+   ```
+
+   This runs two scripts in sequence:
+   - `tokensToJson.ts` — serialises the tokens to `libs/ui/src/theme/helpers/designTokens/designTokens.json`.
+   - `generateTailwindPlugin.ts` — rebuilds the Tailwind plugin with the updated values.
+
+3. **Restart the development server** (if it is already running) to pick up the regenerated files:
+
+   ```bash
+   yarn dev
+   ```
+
+### Watch mode
+
+When iterating on tokens you can run the generator in watch mode so it rebuilds automatically on every save:
+
+```bash
+yarn generate:tokens watch
+```
+
+The watcher monitors the entire `libs/ui/src/theme/helpers/designTokens/` directory and re-runs generation whenever a `.ts` token file changes.
+
+---
+
+## Environment Configuration
+
+The app has two parts — a **backend** server and a **frontend** UI. The backend is configured through `backend/.env`. Frontend settings are configured through [`vcrBuild.env.sh`](vcrBuild.env.sh), which is the single place for all frontend configuration.
+
+Create the backend configuration file by running:
+
+```bash
+cp backend/.env.example backend/.env
+```
+
+Then open it in a text editor and fill in the values described below.
+
+---
+
+### Backend (`backend/.env`)
+
+Open `backend/.env` and configure the following variables.
+
+#### Video service provider
+
+Exactly one provider block must be configured.
+
+**Vonage Video API (default)**
+
+| Variable | Required | Description |
+|----------|----------|-------------|
+| `VIDEO_SERVICE_PROVIDER` | ✅ | Must be `vonage` |
+| `VONAGE_APP_ID` | ✅ | Your Vonage application ID from the [dashboard](https://dashboard.vonage.com/applications) |
+| `VONAGE_PRIVATE_KEY` | ✅ | Contents of the private key file downloaded when creating the application |
+
+```ini
+VIDEO_SERVICE_PROVIDER='vonage'
+VONAGE_APP_ID='xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx'
+VONAGE_PRIVATE_KEY='-----BEGIN PRIVATE KEY-----
+...
+-----END PRIVATE KEY-----'
+```
+
+**OpenTok (TokBox) SDK**
+
+| Variable | Required | Description |
+|----------|----------|-------------|
+| `VIDEO_SERVICE_PROVIDER` | ✅ | Must be `opentok` |
+| `OT_API_KEY` | ✅ | Your OpenTok API key |
+| `OT_API_SECRET` | ✅ | Your OpenTok API secret |
+
+```ini
+VIDEO_SERVICE_PROVIDER='opentok'
+OT_API_KEY='your-api-key'
+OT_API_SECRET='your-api-secret'
+```
+
+#### Vonage Cloud Runtime (VCR)
+
+| Variable | Required | Description |
+|----------|----------|-------------|
+| `VCR_PORT` | ⚠️ VCR only | Port exposed by VCR (typically `3345`). **Do not set this locally** — its presence switches the app to VCR storage. |
+
+#### Jira feedback integration (optional)
+
+Enables the in-call issue reporting tool to file tickets directly into Jira.
+
+| Variable | Description |
+|----------|-------------|
+| `JIRA_URL` | Base URL of your Jira instance |
+| `JIRA_API_URL` | Jira REST API base URL |
+| `JIRA_TOKEN` | API token for authentication |
+| `JIRA_PROJECT_KEY` | Target project key |
+| `JIRA_COMPONENT_ID` | Default component ID for filed issues |
+| `JIRA_iOS_COMPONENT_ID` | Component ID for iOS issues |
+| `JIRA_ANDROID_COMPONENT_ID` | Component ID for Android issues |
+| `JIRA_EPIC_LINK` | Epic link field value |
+| `JIRA_EPIC_URL` | URL to the target epic |
+
+---
+
+### Frontend
+
+Frontend settings control which features are visible, what language the app uses, and how the video room behaves by default. **All frontend configuration lives in a single file: [`vcrBuild.env.sh`](vcrBuild.env.sh).**
+
+This file is loaded automatically whenever the app is built or deployed. To change a setting, open [`vcrBuild.env.sh`](vcrBuild.env.sh), update the relevant `export` line, and restart or rebuild:
+
+```bash
+# vcrBuild.env.sh
+export ALLOW_CHAT=false
+export DEFAULT_LAYOUT_MODE='grid'
+export I18N_SUPPORTED_LANGUAGES='en|es'
+```
+
+> **Note:** After editing [`vcrBuild.env.sh`](vcrBuild.env.sh) you need to restart the app (`yarn dev`) or trigger a new build for the changes to take effect.
+
+#### Network
+
+| Variable | Default | Description |
+|----------|---------|-------------|
+| `API_URL` | `http://localhost:3345` (local) / `window.location.origin` (production) | URL of the backend API server |
+| `TUNNEL_DOMAIN` | — | ngrok (or similar) domain used when testing across devices. See [Testing on Multiple Devices](#testing-on-multiple-devices) |
+
+#### Internationalisation
+
+| Variable | Default | Accepted values | Description |
+|----------|---------|-----------------|-------------|
+| `I18N_FALLBACK_LANGUAGE` | `en` | `en` \| `en-US` \| `es` \| `es-MX` \| `it` | Language used when the user's locale is not supported |
+| `I18N_SUPPORTED_LANGUAGES` | `en` | Pipe-separated list, e.g. `en\|es\|it` | Languages offered in the UI |
+
+#### Feature flags
+
+All feature flags are **boolean** (`true` / `false`).
+
+| Variable | Default | Description |
+|----------|---------|-------------|
+| `ALLOW_BACKGROUND_EFFECTS` | `true` | Enable virtual background and blur effects |
+| `ALLOW_CAMERA_CONTROL` | `true` | Show the camera on/off toggle |
+| `ALLOW_VIDEO_ON_JOIN` | `true` | Start with camera enabled when joining |
+| `ALLOW_ADVANCED_NOISE_SUPPRESSION` | `true` | Enable the advanced noise-suppression toggle |
+| `ALLOW_AUDIO_ON_JOIN` | `true` | Start with microphone enabled when joining |
+| `ALLOW_MICROPHONE_CONTROL` | `true` | Show the microphone on/off toggle |
+| `WAITING_ROOM_ALLOW_DEVICE_SELECTION` | `true` | Show device selectors in the waiting room |
+| `MEETING_ROOM_ALLOW_DEVICE_SELECTION` | `true` | Show device selectors inside the meeting room |
+| `ALLOW_ARCHIVING` | `true` | Enable meeting recording (archiving) |
+| `ALLOW_CAPTIONS` | `true` | Enable live captions |
+| `ALLOW_CHAT` | `true` | Enable the in-call group chat |
+| `ALLOW_EMOJIS` | `true` | Enable emoji reactions |
+| `ALLOW_SCREEN_SHARE` | `true` | Enable screen sharing |
+| `SHOW_PARTICIPANT_LIST` | `true` | Show the participant list panel |
+| `ENABLE_REPORT_ISSUE` | `false` | Show the in-call issue reporting tool |
+| `BYPASS_WAITING_ROOM` | `false` | Skip the waiting room and join directly |
+| `AVOID_FETCHING_APP_CONFIG` | `true` | Skip fetching remote app configuration on startup |
+
+#### Display defaults
+
+| Variable | Default | Accepted values | Description |
+|----------|---------|-----------------|-------------|
+| `DEFAULT_RESOLUTION` | `1280x720` | `1920x1080` \| `1280x960` \| `1280x720` \| `640x480` \| `640x360` \| `320x240` \| `320x180` | Default outgoing video resolution |
+| `DEFAULT_LAYOUT_MODE` | `active-speaker` | `active-speaker` \| `grid` | Default in-room layout when a participant joins |
+
+> **Note:** `DEFAULT_LAYOUT_MODE` and `ALLOW_AUDIO_ON_JOIN` / `ALLOW_VIDEO_ON_JOIN` require the participant to **rejoin the room** to take effect after being changed.
+
+---
 
 ## Testing on Multiple Devices
 
@@ -277,16 +503,14 @@ To test the video API across multiple devices on your local network, you can use
 
     </br>
 
-5. Copy the domains from both outputs and update your **frontend/.env** file:
+5. Copy the domains from both outputs and update [`vcrBuild.env.sh`](vcrBuild.env.sh):
 
-    ``` ini
-    # Frontend tunnel domain
-    TUNNEL_DOMAIN=your-frontend-domain.ngrok.io
-    # Backend tunnel domain  
-    API_URL=https://your-backend-domain.ngrok.io
+    ``` bash
+    export TUNNEL_DOMAIN=your-frontend-domain.ngrok.io
+    export API_URL=https://your-backend-domain.ngrok.io
     ```
 
-    **Note:** ngrok assigns temporary domains. You'll need to update your environment variables each time the domains change.
+    **Note:** ngrok assigns temporary domains. You'll need to update these values each time the domains change.
 
   </br>
 

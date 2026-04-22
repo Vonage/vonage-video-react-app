@@ -35,7 +35,11 @@
       "executor": "nx:run-commands",
       "options": {
         "cwd": "libs/api",
-        "command": "tsc -p tsconfig.lib.json --pretty true --noEmit"
+        "commands": [
+          "tsc -p tsconfig.lib.json --pretty true --noEmit",
+          "tsc -p tsconfig.spec.json --pretty true --noEmit"
+        ],
+        "parallel": false
       }
     }
   },

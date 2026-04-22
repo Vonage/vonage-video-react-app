@@ -1,6 +1,6 @@
 import type { ReactElement } from 'react';
 import Box, { BoxProps } from '@mui/material/Box';
-import ConnectionAlert from '../../components/MeetingRoom/ConnectionAlert';
+import PopupAlert from '@components/MeetingRoom/PopupAlert';
 import Toolbar from '../../components/MeetingRoom/Toolbar';
 import VideoTileCanvas from '../../components/MeetingRoom/VideoTileCanvas';
 import SmallViewportHeader from '../../components/MeetingRoom/SmallViewportHeader';
@@ -22,6 +22,8 @@ import usePublisherContext from '../../hooks/usePublisherContext';
 import useUserContext from '../../hooks/useUserContext';
 import { twMerge } from 'tailwind-merge';
 import RecordingIndicator from '../../components/MeetingRoom/RecordingIndicator';
+import RecordingPopUpIndicator from '@components/MeetingRoom/RecordingPopupIndicator';
+import { RECORDING_POPUP_TIMEOUT_MS } from '@utils/constants';
 
 /**
  * MeetingRoom Component
@@ -36,15 +38,12 @@ type MeetingRoomProps = BoxProps & {
   fullSize?: boolean;
 };
 
-const MeetingRoom = ({
-  fullSize = false,
-  className,
-  // ...props
-}: MeetingRoomProps): ReactElement => {
+const MeetingRoom = ({ fullSize = false, className }: MeetingRoomProps): ReactElement => {
   const {
     t,
     isSmallViewport,
     isSharingScreen,
+    isEntireScreen,
     screensharingPublisher,
     screenshareVideoElement,
     toggleShareScreen,
@@ -63,6 +62,12 @@ const MeetingRoom = ({
     captionsErrorResponse,
     setCaptionsErrorResponse,
     captionsState,
+    recordingAlreadyNotified,
+    archiveIdStartedBySelf,
+    archiveId,
+    shouldPromptRecordingConsent,
+    latestNotifiedArchiveId,
+    handleRecordingNotified,
   } = useMeetingRoom();
   const isRaiseHandAllowed = env.ALLOW_RAISE_HAND;
   const isGestureDetectionAllowed = env.ALLOW_GESTURE_DETECTION ?? false;
@@ -124,6 +129,7 @@ const MeetingRoom = ({
 
       <VideoTileCanvas
         isSharingScreen={isSharingScreen}
+        isEntireScreen={isEntireScreen}
         screensharingPublisher={screensharingPublisher}
         screenshareVideoElement={screenshareVideoElement}
         isRightPanelOpen={rightPanelActiveTab !== 'closed'}
@@ -142,6 +148,12 @@ const MeetingRoom = ({
           setCaptionsErrorResponse={setCaptionsErrorResponse}
         />
       )}
+      {!recordingAlreadyNotified && (
+        <RecordingPopUpIndicator
+          shouldPromptRecordingConsent={shouldPromptRecordingConsent}
+          onNotified={handleRecordingNotified}
+        />
+      )}
       <Toolbar
         isSharingScreen={isSharingScreen}
         toggleShareScreen={toggleShareScreen}
@@ -155,15 +167,26 @@ const MeetingRoom = ({
         }
         captionsState={captionsState}
       />
+      {recordingAlreadyNotified &&
+        !archiveIdStartedBySelf &&
+        isRecording &&
+        archiveId !== latestNotifiedArchiveId && (
+          <PopupAlert
+            title={t('recording.popup.title')}
+            message={t('recording.popup.subtitle')}
+            severity="info"
+            timeout={RECORDING_POPUP_TIMEOUT_MS}
+          />
+        )}
       {reconnecting && (
-        <ConnectionAlert
+        <PopupAlert
           title={t('connectionAlert.reconnecting.title')}
           message={t('connectionAlert.reconnecting.message')}
           severity="error"
         />
       )}
       {!reconnecting && quality !== 'good' && isVideoEnabled && (
-        <ConnectionAlert
+        <PopupAlert
           closable
           title={t('connectionAlert.quality.title')}
           message={t('connectionAlert.quality.message')}

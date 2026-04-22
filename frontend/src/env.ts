@@ -156,11 +156,13 @@ export class Env {
   public ALLOW_SCREEN_SHARE: boolean;
   public DEFAULT_LAYOUT_MODE: LayoutMode;
   public SHOW_PARTICIPANT_LIST: boolean;
+  public SHOW_VIDEO_STATS: boolean;
   public BYPASS_WAITING_ROOM: boolean;
   public API_URL: string;
   public TUNNEL_DOMAIN: string | undefined;
   public AVOID_FETCHING_APP_CONFIG: boolean;
   public MODE: Mode;
+  public VONAGE_VIDEO_HOST: string | undefined;
 
   constructor(env: Record<string, unknown>) {
     this.raw = { ...env };
@@ -199,6 +201,7 @@ export class Env {
     this.ALLOW_GESTURE_DETECTION = parseBoolean(env.ALLOW_GESTURE_DETECTION, true);
     this.ALLOW_SCREEN_SHARE = parseBoolean(env.ALLOW_SCREEN_SHARE, true);
     this.SHOW_PARTICIPANT_LIST = parseBoolean(env.SHOW_PARTICIPANT_LIST, true);
+    this.SHOW_VIDEO_STATS = parseBoolean(env.SHOW_VIDEO_STATS, false);
     this.BYPASS_WAITING_ROOM = parseBoolean(env.BYPASS_WAITING_ROOM, false);
     this.AVOID_FETCHING_APP_CONFIG = parseBoolean(env.AVOID_FETCHING_APP_CONFIG, true);
 
@@ -212,6 +215,7 @@ export class Env {
     this.TUNNEL_DOMAIN = parseOptionalString(env.TUNNEL_DOMAIN);
 
     this.MODE = parseMode(env.MODE ?? 'development');
+    this.VONAGE_VIDEO_HOST = parseOptionalString(env.VONAGE_VIDEO_HOST);
   }
 
   /**

@@ -2,40 +2,39 @@ import { renderHook } from '@testing-library/react';
 import { describe, it, expect, vi, beforeEach, type Mock } from 'vitest';
 import useGoodByePage from '../useGoodByePage';
 import useArchives from '../useArchives';
-import useRoomName from '../useRoomName';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useParams } from 'react-router-dom';
 import { availableArchive } from '../../api/archiving/tests/data';
 
 vi.mock('../useArchives');
-vi.mock('../useRoomName');
 
 vi.mock('react-router-dom', async () => {
   const actual = await vi.importActual<typeof import('react-router-dom')>('react-router-dom');
   return {
     ...actual,
     useLocation: vi.fn(() => ({ state: null, search: '', pathname: '/goodbye', hash: '' })),
+    useParams: vi.fn(() => ({ roomIdentifier: 'my-session-key' })),
   };
 });
 
 const mockUseArchives = useArchives as Mock;
-const mockUseRoomName = useRoomName as Mock;
+const mockUseParams = useParams as Mock;
 const mockUseLocation = useLocation as Mock;
 
 describe('useGoodByePage', () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    mockUseRoomName.mockReturnValue('my-room');
+    mockUseParams.mockReturnValue({ roomIdentifier: 'my-session-key' });
     mockUseArchives.mockReturnValue([]);
   });
 
-  it('returns the roomName from useRoomName', () => {
+  it('returns the sessionKey from URL params', () => {
     const { result } = renderHook(() => useGoodByePage());
-    expect(result.current.roomName).toBe('my-room');
+    expect(result.current.sessionKey).toBe('my-session-key');
   });
 
-  it('calls useRoomName with useLocationState: true', () => {
+  it('passes sessionKey to useArchives', () => {
     renderHook(() => useGoodByePage());
-    expect(mockUseRoomName).toHaveBeenCalledWith({ useLocationState: true });
+    expect(mockUseArchives).toHaveBeenCalledWith({ sessionKey: 'my-session-key' });
   });
 
   it('forwards archives from useArchives', () => {

@@ -8,6 +8,7 @@ export type FeedbackConfig = {
   androidComponentId?: string;
   epicLink?: string;
   epicUrl?: string;
+  severityId?: string;
   gollumUrl?: string;
 };
 
@@ -15,11 +16,17 @@ export type VonageConfig = {
   provider: 'vonage';
   applicationId: string;
   privateKey: string;
+  videoHost?: string;
 };
+
 export type OpentokConfig = {
   provider: 'opentok';
   apiKey: string;
   apiSecret: string;
 };
 
-export type Config = (VonageConfig | OpentokConfig) & FeedbackConfig;
+export type Config = (VonageConfig | OpentokConfig) &
+  FeedbackConfig & {
+    sessionKeySecret: string;
+    loggerVerbose: boolean;
+  };

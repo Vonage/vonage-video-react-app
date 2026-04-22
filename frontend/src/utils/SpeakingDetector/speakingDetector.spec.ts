@@ -1,8 +1,10 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import SpeakingDetector from './speakingDetector';
-import { waitForEvent } from '../async';
+// eslint-disable-next-line @nx/enforce-module-boundaries
+import { waitForEvent } from '../../../../libs/common/testNode/helpers';
 import { setupWindowNavigatorMock } from '@web-test/fixtures';
 import { mediaDevices$ } from '@core/stores';
+import { mediaDevicesEnvelop } from '@core/interceptors';
 
 const mockCreateMediaStreamSource = vi.fn(() => ({ connect: vi.fn(), disconnect: vi.fn() }));
 
@@ -46,6 +48,8 @@ beforeEach(() => {
       addEventListener: vi.fn(),
     },
   });
+
+  mediaDevicesEnvelop.rebind(navigator);
 
   mediaDevices$.reset();
 });

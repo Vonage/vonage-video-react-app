@@ -34,7 +34,35 @@ function devBackend(): void {
 }
 
 /**
- * Runs Storybook focused on VeraRoom component.
+ * Runs only the backend in debug mode (node --inspect on port 9229).
+ */
+function devBackendDebug(): void {
+  runCommand('nx run backend:debug');
+}
+
+/**
+ * Runs only the backend in debug mode with --inspect-brk (waits for debugger).
+ */
+function devBackendDebugWait(): void {
+  runCommand('nx run backend:debug:wait');
+}
+
+/**
+ * Runs frontend in dev mode and backend in debug mode (node --inspect on port 9229).
+ */
+function devDebug(): void {
+  runCommand("concurrently 'nx run frontend:dev' 'nx run backend:debug'");
+}
+
+/**
+ * Runs frontend in dev mode and backend in debug mode with --inspect-brk (waits for debugger).
+ */
+function devDebugWait(): void {
+  runCommand("concurrently 'nx run frontend:dev' 'nx run backend:debug:wait'");
+}
+
+/**
+ * Builds VeraRoom and serves the example page with http-server.
  */
 function devRoom(): void {
   const storyPath = '/story/veraroom-veraroomelement--default';
@@ -57,18 +85,42 @@ function devRoom(): void {
  * Usage:
  * - yarn dev           (run frontend and backend)
  * - yarn dev frontend  (run only frontend)
- * - yarn dev backend   (run only backend)
- * - yarn dev room      (run Storybook for VeraRoom)
+ * - yarn dev backend             (run only backend)
+ * - yarn dev backend debug      (run only backend with --inspect on port 9229)
+ * - yarn dev backend debug wait (run only backend with --inspect-brk, waits for debugger)
+ * - yarn dev debug              (run frontend + backend with --inspect on port 9229)
+ * - yarn dev debug wait         (run frontend + backend with --inspect-brk, waits for debugger)
+ * - yarn dev room      (build and serve VeraRoom example)
  */
 function main(): void {
-  const [target] = args;
+  const [target, subTarget] = args;
 
   switch (target) {
     case 'frontend':
       devFrontend();
       return;
     case 'backend':
+      if (subTarget === 'debug') {
+        const backendSubTarget = args[2];
+
+        if (backendSubTarget === 'wait') {
+          devBackendDebugWait();
+          return;
+        }
+
+        devBackendDebug();
+        return;
+      }
+
       devBackend();
+      return;
+    case 'debug':
+      if (subTarget === 'wait') {
+        devDebugWait();
+        return;
+      }
+
+      devDebug();
       return;
     case 'room':
       devRoom();

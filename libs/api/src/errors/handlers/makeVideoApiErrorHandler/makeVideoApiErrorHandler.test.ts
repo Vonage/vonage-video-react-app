@@ -1,3 +1,4 @@
+import { describe, it, expect, beforeEach } from 'vitest';
 import makeVideoApiErrorHandler from './makeVideoApiErrorHandler';
 
 describe('makeVideoApiErrorHandler', () => {
@@ -22,7 +23,7 @@ describe('makeVideoApiErrorHandler', () => {
     const error = handler(src).exportSafely();
 
     expect(error.message).toBe(safeMessage);
-    expect(error.values).toEqual([unsafeMessage]);
+    expect(error.issues).toEqual([unsafeMessage]);
   });
 
   it('should correctly handle application errors', () => {
@@ -31,7 +32,7 @@ describe('makeVideoApiErrorHandler', () => {
     const error = handler(applicationError).exportSafely();
 
     expect(error.message).toBe(src);
-    expect(error.values).toEqual([]);
+    expect(error.issues).toBeUndefined();
   });
 
   it('should correctly handle opentok errors', () => {
@@ -43,6 +44,6 @@ describe('makeVideoApiErrorHandler', () => {
     const error = applicationError.exportSafely();
 
     expect(error.message).toBe('Unexpected response from OpenTok');
-    expect(error.values).toEqual(['The url structure must be valid.']);
+    expect(error.issues).toEqual(['The url structure must be valid.']);
   });
 });

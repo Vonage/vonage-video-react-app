@@ -8,7 +8,12 @@ import { defaultAudioDevice } from '../../../utils/mockData/device';
 describe('ScreenSharePublisher component', () => {
   it('renders nothing if box is undefined', () => {
     const { container } = render(
-      <ScreenSharePublisher box={undefined} element={undefined} publisher={null} />
+      <ScreenSharePublisher
+        box={undefined}
+        element={undefined}
+        publisher={null}
+        isEntireScreen={false}
+      />
     );
     expect(container).toBeEmptyDOMElement();
   });
@@ -31,12 +36,29 @@ describe('ScreenSharePublisher component', () => {
     const element = document.createElement('div');
     element.className = 'original-class';
 
-    render(<ScreenSharePublisher box={box} element={element} publisher={mockPublisher} />);
+    render(
+      <ScreenSharePublisher
+        box={box}
+        element={element}
+        publisher={mockPublisher}
+        isEntireScreen={false}
+      />
+    );
 
     expect(screen.getByText('Test Stream')).toBeInTheDocument();
     expect(element.style.width).toBe('100%');
     expect(element.style.position).toBe('absolute');
     expect(element.style.borderRadius).toBe('12px');
     expect(element.style.objectFit).toBe('contain');
+  });
+
+  it('renders hidden message when entire screen is shared', () => {
+    const box = { height: 100, width: 100, top: 0, left: 0 };
+
+    render(
+      <ScreenSharePublisher box={box} element={undefined} publisher={null} isEntireScreen={true} />
+    );
+
+    expect(screen.getByText('You are sharing your screen.')).toBeInTheDocument();
   });
 });
