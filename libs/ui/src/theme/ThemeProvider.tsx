@@ -1,54 +1,16 @@
 import { ThemeProvider as ThemeProviderBase } from '@mui/material';
-import React, { PropsWithChildren, useMemo, useState } from 'react';
-import getTokensByMode from './helpers/getTokensByMode';
-import isDarkMode from './helpers/isDarkMode';
+import React, { PropsWithChildren, useMemo } from 'react';
 import useSynchronizeThemeAndMedia from './hooks/useSynchronizeThemeAndMedia/useSynchronizeThemeAndMedia';
 import getMuiCustomTheme, { GetMuiCustomThemeProps } from './helpers/getMuiCustomTheme';
-import Theme, { PartialTheme } from './ThemeProvider.types';
-import { mergeThemeConfigurations } from './helpers/mergeThemeConfigurations';
 
-const defaultLightValue: Theme = getTokensByMode('light');
-const defaultDarkValue: Theme = getTokensByMode('dark');
+export type ThemeProviderProps = PropsWithChildren<GetMuiCustomThemeProps>;
 
-export type ThemeProviderPropsBase = {
-  theme?: {
-    lightMode: PartialTheme;
-    darkMode?: PartialTheme;
-    base?: Omit<GetMuiCustomThemeProps, 'tokens'>;
-  };
-};
+export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children, container }) => {
+  const theme = useMemo(() => getMuiCustomTheme({ container }), [container]);
 
-export type ThemeProviderProps = PropsWithChildren<ThemeProviderPropsBase>;
+  useSynchronizeThemeAndMedia();
 
-export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children, theme }) => {
-  const themeSource: {
-    light: Theme;
-    dark: Theme;
-  } = useMemo(() => {
-    return {
-      light: mergeThemeConfigurations({
-        defaultValue: defaultLightValue,
-        overrides: theme?.lightMode ?? {},
-      }),
-      dark: mergeThemeConfigurations({
-        defaultValue: defaultDarkValue,
-        overrides: theme?.darkMode ?? {},
-      }),
-    };
-  }, [theme]);
-
-  const [tokens, setTokens] = useState<Theme>(() => {
-    return isDarkMode() ? themeSource.dark : themeSource.light;
-  });
-
-  const muiTheme = useMemo(
-    () => getMuiCustomTheme({ ...theme?.base, tokens }),
-    [tokens, theme?.base]
-  );
-
-  useSynchronizeThemeAndMedia({ setTokens });
-
-  return <ThemeProviderBase theme={muiTheme}>{children}</ThemeProviderBase>;
+  return <ThemeProviderBase theme={theme}>{children}</ThemeProviderBase>;
 };
 
 export default ThemeProvider;

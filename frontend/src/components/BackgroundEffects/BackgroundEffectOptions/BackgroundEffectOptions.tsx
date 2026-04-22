@@ -43,10 +43,11 @@ const BackgroundEffectOptions = ({ mode }: BackgroundEffectOptionsProps): ReactE
         }}
       >
         <Box
-          display="grid"
-          gridTemplateColumns={`repeat(auto-fill, minmax(${DEFAULT_SELECTABLE_OPTION_WIDTH}px, 1fr))`}
-          gap={0.5}
-          className={classNames({
+          sx={{
+            gridTemplateColumns: `repeat(auto-fill, minmax(${DEFAULT_SELECTABLE_OPTION_WIDTH}px, 1fr))`,
+            gap: 0.5,
+          }}
+          className={classNames('grid', {
             'choose-background-effect-grid': mode === 'meeting',
             'choose-background-effect-grid-waiting': mode !== 'meeting',
           })}

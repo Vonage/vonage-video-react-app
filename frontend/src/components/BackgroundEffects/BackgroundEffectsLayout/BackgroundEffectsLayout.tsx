@@ -132,20 +132,20 @@ const BackgroundEffectsLayout = ({
   // WaitingRoom layout
   return (
     <>
-      <Box display="flex" flexDirection={{ xs: 'column', md: 'row' }} gap={2}>
+      <Box sx={{ flexDirection: { xs: 'column', md: 'row' }, gap: 2 }} className="flex">
         <Box
-          flex={1}
-          minWidth={0}
-          display="flex"
-          flexDirection="column"
-          justifyContent="space-between"
+          sx={{
+            minWidth: 0,
+            flexDirection: 'column',
+            justifyContent: 'space-between',
+          }}
+          className="flex-1 flex"
         >
           <Box
-            flexGrow={1}
-            display="flex"
-            alignItems="center"
-            justifyContent="center"
-            minHeight={0}
+            sx={{
+              minHeight: 0,
+            }}
+            className="flex-1 flex items-center justify-center"
           >
             <BackgroundVideoContainer
               publisherVideoElement={publisherVideoElement}

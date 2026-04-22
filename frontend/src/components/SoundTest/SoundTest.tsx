@@ -1,7 +1,8 @@
-import { ReactElement, useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
+import type { ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
 import ClickAwayListener from '@mui/material/ClickAwayListener';
-import MenuItem from '@mui/material/MenuItem';
+import Box from '@mui/material/Box';
 import { mediaDevices$ } from '@core/stores';
 import { twMerge } from 'tailwind-merge';
 
@@ -13,7 +14,7 @@ export type SoundTestProps = {
 /**
  * SoundTest
  *
- * Renders a menu item to test the speakers by playing a sound through the active audio output device.
+ * Renders a clickable row to test the speakers by playing a sound through the active audio output device.
  * @param {SoundTestProps} props - The props for the component.
  *  @property {ReactElement} children - The icon to be rendered for the sound test.
  *  @property {string} labelClassName - Additional Tailwind classes for the label.
@@ -51,10 +52,12 @@ const SoundTest = ({ children, labelClassName }: SoundTestProps): ReactElement =
 
   return (
     <ClickAwayListener onClickAway={() => stopAudio()}>
-      <MenuItem
+      <Box
+        component="button"
+        type="button"
         onClick={handlePlayAudio}
         data-testid="soundTest"
-        className="hover:bg-vera-background"
+        className="flex w-full items-center gap-4 rounded-none border-0 bg-transparent px-4 py-1.5 text-left hover:bg-vera-background"
       >
         {children}
         <span
@@ -63,7 +66,7 @@ const SoundTest = ({ children, labelClassName }: SoundTestProps): ReactElement =
         >
           {!audioIsPlaying ? t('soundTest.start') : t('soundTest.stop')}
         </span>
-      </MenuItem>
+      </Box>
     </ClickAwayListener>
   );
 };

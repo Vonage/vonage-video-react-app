@@ -32,10 +32,13 @@ const RoomJoinContainer = (): ReactElement => {
         {t('button.startNewRoom')}
       </h6>
       <NewRoomButton handleNewRoom={handleNewRoom} />
+
       <JoinContainerSeparator />
+
       <h6 className="text-xl font-medium font-vera-plain text-vera-secondary mb-4">
         {t('button.joinExistingMeeting')}
       </h6>
+
       <JoinExistingRoom />
     </Card>
   );

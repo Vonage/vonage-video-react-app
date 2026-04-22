@@ -1,7 +1,6 @@
 import { ReactElement } from 'react';
 import useSessionContext from '../../../hooks/useSessionContext';
 import useIsSmallViewport from '../../../hooks/useIsSmallViewport';
-import Grid from '@mui/material/Grid';
 import Button from '@mui/material/Button';
 
 export type SendEmojiButtonProps = {
@@ -22,7 +21,7 @@ const SendEmojiButton = ({ emoji }: SendEmojiButtonProps): ReactElement => {
   const size = isSmallViewport ? 'small' : 'large';
 
   return (
-    <Grid item xs={xs} sx={{ display: 'flex', justifyContent: 'center' }}>
+    <div className="flex justify-center" style={{ gridColumn: `span ${xs}` }}>
       <Button
         size={size}
         onClick={() => sendEmoji(emoji)}
@@ -31,7 +30,7 @@ const SendEmojiButton = ({ emoji }: SendEmojiButtonProps): ReactElement => {
       >
         {emoji}
       </Button>
-    </Grid>
+    </div>
   );
 };
 

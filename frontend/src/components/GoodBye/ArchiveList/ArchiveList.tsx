@@ -10,7 +10,6 @@ import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
-import Stack from '@mui/material/Stack';
 import Tooltip from '@mui/material/Tooltip';
 import Typography from '@mui/material/Typography';
 
@@ -51,7 +50,7 @@ const ArchiveStatusContent = ({ status, url }: { status: ArchiveStatus; url: str
   if (status === 'available') {
     return (
       <Link href={url ?? undefined} target="_blank" sx={{ textDecoration: 'none' }}>
-        <Stack direction="row" alignItems="center" spacing={0.5}>
+        <div className="flex items-center gap-1">
           <IconButton size="small">
             <VividIcon
               name="download-line"
@@ -63,7 +62,7 @@ const ArchiveStatusContent = ({ status, url }: { status: ArchiveStatus; url: str
           <Typography variant="caption" className="text-vera-text-primary">
             {t('archiveList.download')}
           </Typography>
-        </Stack>
+        </div>
       </Link>
     );
   }
@@ -103,18 +102,12 @@ const ArchiveList = ({ archives }: ArchiveListProps): ReactElement => {
   if (!archives.length) {
     return (
       <>
-        <Stack
-          data-testid="archive-list-empty"
-          direction="row"
-          alignItems="center"
-          spacing={1.5}
-          sx={{ mb: 2 }}
-        >
+        <div className="mb-4 flex items-center gap-3" data-testid="archive-list-empty">
           <VividIcon name="video-active-line" customSize={-4} className="text-vera-secondary" />
           <Typography variant="body1" className="text-vera-text-secondary">
             {t('archiveList.empty')}
           </Typography>
-        </Stack>
+        </div>
         <Separator width="100%" />
       </>
     );

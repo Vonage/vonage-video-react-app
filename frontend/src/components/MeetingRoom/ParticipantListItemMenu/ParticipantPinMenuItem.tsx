@@ -1,6 +1,6 @@
-import { ReactElement } from 'react';
+import type { ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
-import { SubscriberWrapper } from '../../../types/session';
+import type { SubscriberWrapper } from '../../../types/session';
 import useSessionContext from '../../../hooks/useSessionContext';
 import MenuItem from '@mui/material/MenuItem';
 import ListItemIcon from '@mui/material/ListItemIcon';

@@ -19,9 +19,9 @@ const Banner = (): ReactElement => {
       }}
     >
       <Box
-        flex={1}
         className="bg-vera-surface"
         sx={{
+          flex: 1,
           p: { xs: 3, sm: 5 },
         }}
       >
@@ -29,9 +29,9 @@ const Banner = (): ReactElement => {
       </Box>
 
       <Box
-        flex={1}
         className="bg-vera-surface vera-desktop:bg-vera-background"
         sx={{
+          flex: 1,
           p: { xs: 3, sm: 5 },
           display: 'flex',
           justifyContent: 'flex-end',

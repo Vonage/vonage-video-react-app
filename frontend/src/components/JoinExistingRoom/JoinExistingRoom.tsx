@@ -1,5 +1,4 @@
 import { ReactElement, useState } from 'react';
-import Stack from '@mui/material/Stack';
 import JoinWaitRoomButton from '../JoinWaitRoomButton';
 import RoomNameInput from '../RoomNameInput';
 
@@ -14,7 +13,7 @@ const JoinExistingRoom = (): ReactElement => {
   const [hasError, setHasError] = useState(false);
 
   return (
-    <Stack direction="column" data-testid="JoinExistingRoom" spacing={3} sx={{ width: '100%' }}>
+    <div className="flex w-full flex-col gap-6" data-testid="JoinExistingRoom">
       <RoomNameInput
         setRoomName={setRoomName}
         roomName={roomName}
@@ -23,7 +22,7 @@ const JoinExistingRoom = (): ReactElement => {
       />
 
       <JoinWaitRoomButton roomName={roomName} isDisabled={false} setHasError={setHasError} />
-    </Stack>
+    </div>
   );
 };
 
