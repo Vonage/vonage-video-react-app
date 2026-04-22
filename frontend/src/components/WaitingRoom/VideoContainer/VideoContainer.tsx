@@ -15,6 +15,8 @@ import backgroundEffectsDialog$ from '@Context/BackgroundEffectsDialog';
 import PrecallNetworkTestDialog from '../PrecallNetworkTestDialog';
 import precallNetworkTestDialog$ from '@Context/PrecallNetworkTestDialog';
 import classNames from 'classnames';
+import { env } from '../../../env';
+import VideoStatsOverlay from '../VideoStatsOverlay';
 
 export type VideoContainerProps = {
   username: string;
@@ -79,6 +81,12 @@ const VideoContainer = ({ username }: VideoContainerProps): ReactElement => {
       ></div>
 
       <VignetteEffect />
+
+      {env.SHOW_VIDEO_STATS && isVideoEnabled && !isVideoLoading && (
+        <div className="absolute left-4 top-3 z-10">
+          <VideoStatsOverlay />
+        </div>
+      )}
 
       {isVideoLoading && <VideoLoading className="animate-fade-in" />}
 

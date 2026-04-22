@@ -5,10 +5,10 @@ import NetworkTest, {
   type QualityTestResults,
 } from '@vonage/video-client-network-test';
 import OT from '@vonage/client-sdk-video';
-import fetchCredentials from '@api/fetchCredentials';
 import CancelablePromise from 'easy-cancelable-promise/CancelablePromise';
 import attempt from '@common/execution/attempt';
 import useMountEffect from '@web/hooks/useMountEffect';
+import { videoClient } from '@services';
 
 export type QualityResults = {
   video?: {
@@ -138,16 +138,14 @@ const useNetworkTest = () => {
       return (testPromiseRef.current = new CancelablePromise<QualityResults>(
         async (resolve, reject, { isCanceled, reportProgress, onCancel }) => {
           try {
-            const credentials = await fetchCredentials(roomName);
+            const { applicationId, sessionId, token } = await videoClient.createSessionAndJoin();
 
             if (isCanceled()) return;
-
-            const { apiKey, sessionId, token } = credentials.data;
 
             const networkTest = new NetworkTest(
               OT,
               {
-                applicationId: apiKey,
+                applicationId,
                 sessionId,
                 token,
               },

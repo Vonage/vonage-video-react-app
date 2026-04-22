@@ -59,7 +59,7 @@ export default defineConfig(() => ({
       provider: 'v8' as const,
       reporter: ['text', 'lcov'],
       include: ['src/**/*.{ts,tsx}', 'srcBrowser/**/*.{ts,tsx}', 'srcNode/**/*.{ts,tsx}'],
-      exclude: ['test/**', 'testBrowser/**', '**/index.ts'],
+      exclude: ['test/**', 'testBrowser/**', 'testNode/**', '**/index.ts'],
     },
   },
 }));

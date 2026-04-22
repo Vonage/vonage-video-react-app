@@ -1,7 +1,6 @@
 import { ReactElement, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import useRoomName from '@hooks/useRoomName';
-import { startArchiving, stopArchiving } from '@api/archiving';
+import videoClient from '@services/videoClient';
 import useSessionContext from '@hooks/useSessionContext';
 import ToolbarButton from '../ToolbarButton';
 import PopupDialog, { DialogTexts } from '../PopupDialog';
@@ -33,10 +32,16 @@ const ArchivingButton = ({
   handleClick,
 }: ArchivingButtonProps): ReactElement | false => {
   const { t } = useTranslation();
-  const roomName = useRoomName();
   const theme = useTheme();
-  const { archiveId, markArchiveStartRequestedBySelf, resetArchiveStartRequestedBySelf } =
-    useSessionContext();
+
+  const {
+    archiveId,
+    markArchiveStartRequestedBySelf,
+    resetArchiveStartRequestedBySelf,
+    sessionKey,
+    connected,
+  } = useSessionContext();
+
   const isRecording = !!archiveId;
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const title = isRecording ? t('recording.stop.title') : t('recording.start.title');
@@ -71,19 +76,19 @@ const ArchivingButton = ({
 
   const handleDialogClick = (action: 'start' | 'stop') => {
     if (action === 'start') {
-      if (!archiveId && roomName) {
+      if (!archiveId && connected) {
         markArchiveStartRequestedBySelf();
         setTimeout(async () => {
           try {
-            await startArchiving(roomName);
+            await videoClient.startArchive({ sessionKey: sessionKey! });
           } catch (err) {
             resetArchiveStartRequestedBySelf();
             console.log(err);
           }
         }, RECORDING_START_DELAY);
       }
-    } else if (archiveId && roomName) {
-      void stopArchiving(roomName, archiveId);
+    } else if (archiveId) {
+      void videoClient.stopArchive({ sessionKey: sessionKey!, archiveId });
     }
   };
 

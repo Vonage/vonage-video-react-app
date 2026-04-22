@@ -1,7 +1,28 @@
 import { expect } from '@playwright/test';
 import * as crypto from 'crypto';
-import { test } from '../fixtures/testWithLogging';
-import { openMeetingRoomWithSettings, waitUntilReady } from './utils';
+import { test, baseURL } from '../fixtures/testWithLogging';
+import { waitUntilReady } from './utils';
+import type { Page } from '@playwright/test';
+
+/**
+ * Joins a meeting room directly with bypass, setting the username in localStorage.
+ * This avoids the full waiting room cycle to reduce setup time for multi-page tests.
+ */
+async function joinRoomDirectly({
+  page,
+  username,
+  roomName,
+  browserName,
+}: {
+  page: Page;
+  username: string;
+  roomName: string;
+  browserName: string;
+}) {
+  await page.addInitScript((name) => localStorage.setItem('username', name), username);
+  await page.goto(`${baseURL}room/${roomName}?bypass=true`);
+  await waitUntilReady(page, browserName);
+}
 
 test.describe('participant pinning', () => {
   test('pinned participants should be larger', async ({
@@ -12,35 +33,15 @@ test.describe('participant pinning', () => {
   }) => {
     const roomName = crypto.randomBytes(5).toString('hex');
 
+    await joinRoomDirectly({ page: pageOne, username: 'User One', roomName, browserName });
+    await pageOne.waitForSelector('.publisher', { state: 'visible' });
+
     const pageTwo = await context.newPage();
+    await joinRoomDirectly({ page: pageTwo, username: 'User Two', roomName, browserName });
+    await pageTwo.waitForSelector('.publisher', { state: 'visible' });
+
     const pageThree = await context.newPage();
-
-    await openMeetingRoomWithSettings({
-      page: pageOne,
-      username: 'User One',
-      roomName,
-      audioOff: true,
-      browserName,
-    });
-    // These clicks and waits are needed for firefox
-    await waitUntilReady(pageOne, browserName);
-
-    await openMeetingRoomWithSettings({
-      page: pageTwo,
-      username: 'User Two',
-      roomName,
-      audioOff: true,
-      browserName,
-    });
-    await waitUntilReady(pageTwo, browserName);
-    await openMeetingRoomWithSettings({
-      page: pageThree,
-      username: 'User Three',
-      roomName,
-      audioOff: true,
-      browserName,
-    });
-    await waitUntilReady(pageThree, browserName);
+    await joinRoomDirectly({ page: pageThree, username: 'User Three', roomName, browserName });
 
     await pageThree.waitForSelector('.publisher', { state: 'visible' });
     await pageThree.waitForSelector('.subscriber', { state: 'visible' });

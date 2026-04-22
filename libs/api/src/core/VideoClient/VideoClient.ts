@@ -9,13 +9,22 @@ import {
   stopArchive,
   searchArchives,
   enableCaptions,
+  ensureCaptionsEnabled,
   disableCaptions,
   createEphemeralToken,
   joinSession,
+  decodeSessionKey,
+  createSessionAndJoin,
 } from '@api-lib/handlers';
-import { VideoAction, type VideoClientConfig } from '@api-lib/types';
+import {
+  type HandlersDefaults,
+  VideoAction,
+  type VideoClientConfig,
+  type SessionSigning,
+} from '@api-lib/types';
 import schemasByAction from '@api-lib/constants/schemasByAction';
 import { makeBadRequestErrorHandler } from '@api-lib/errors';
+import { isFunction } from '@common/assertions';
 
 /**
  * Forces VideoClient to have a method for each VideoAction
@@ -30,13 +39,40 @@ class VideoClient implements IVideoClient {
 
   public readonly _video: Video;
 
+  public readonly _handlersDefaults:
+    | Partial<
+        HandlersDefaults &
+          // these handlers inherit the defaults from the other handlers
+          {
+            ensureCaptionsEnabled: HandlersDefaults['enableCaptions'];
+          }
+      >
+    | undefined;
+
+  public readonly _sessionSigning: SessionSigning;
+
   constructor(config: VideoClientConfig) {
     assertVideoClientConfig(config);
 
-    const { auth, videoParams } = config;
+    const { auth, videoParams, handlersDefaults } = config;
 
     this._auth = auth instanceof Auth ? auth : new Auth(auth);
     this._video = new Video(this._auth, videoParams);
+
+    // some defaults are shared between handlers
+    this._handlersDefaults = {
+      ensureCaptionsEnabled: handlersDefaults?.enableCaptions,
+
+      ...handlersDefaults,
+    };
+
+    // This provides lightweight integrity verification of session keys,
+    // It is not intended for authentication or authorization.
+    // Consumers are responsible for implementing proper auth at the application level.
+    this._sessionSigning = {
+      secret: config.sessionSigning?.secret || this._auth.applicationId || this._auth.apiKey,
+      algorithm: config.sessionSigning?.algorithm || 'HS256',
+    };
   }
 
   /**
@@ -56,9 +92,28 @@ class VideoClient implements IVideoClient {
         throw makeBadRequestErrorHandler(`Invalid payload for action ${videoAction}`)(error);
       }
 
-      return callback(payload);
+      const defaultsSrc = this._handlersDefaults?.[videoAction as keyof HandlersDefaults];
+      const defaults = (isFunction(defaultsSrc) ? defaultsSrc(payload) : defaultsSrc) as Record<
+        string,
+        unknown
+      >;
+
+      return callback({
+        ...defaults,
+        ...payload,
+      });
     }) as Action;
   }
+
+  /**
+   * Decodes a session key to retrieve the session details.
+   */
+  public decodeSessionKey = decodeSessionKey;
+
+  /**
+   * Decodes a sessionId and returns its components
+   */
+  public decodeSessionId = decodeSessionId;
 
   /**
    * Creates an ephemeral client token with a default 30 seconds expiration time
@@ -70,14 +125,18 @@ class VideoClient implements IVideoClient {
   );
 
   /**
-   * Creates or retrieves a session based on the provided sessionId
+   * Creates or retrieves a session based on the provided sessionKey
    */
   public createSession = this.createVideoHandler(VideoAction.createSession, createSession);
 
   /**
-   * Decodes a sessionId and returns its components
+   * Creates a session and generates a token to join it in one step. This is useful to avoid
+   * multiple round trips when both creating a session and joining it are required.
    */
-  public decodeSessionId = this.createVideoHandler(VideoAction.decodeSessionId, decodeSessionId);
+  public createSessionAndJoin = this.createVideoHandler(
+    VideoAction.createSessionAndJoin,
+    createSessionAndJoin
+  );
 
   /**
    * Starts an archive for a given session
@@ -95,9 +154,17 @@ class VideoClient implements IVideoClient {
   public searchArchives = this.createVideoHandler(VideoAction.searchArchives, searchArchives);
 
   /**
-   *  Enables captions for a given session
+   *  Enables captions for a given session, returns the captions response
    */
   public enableCaptions = this.createVideoHandler(VideoAction.enableCaptions, enableCaptions);
+
+  /**
+   * Ensures captions are enabled for a given session, returns void
+   */
+  public ensureCaptionsEnabled = this.createVideoHandler(
+    VideoAction.ensureCaptionsEnabled,
+    ensureCaptionsEnabled
+  );
 
   /**
    * Disables captions for a given session

@@ -1,16 +1,24 @@
-import { describe, expect, it, Mock, vi } from 'vitest';
-import { AxiosError, AxiosResponse } from 'axios';
-import { searchArchives } from '../routes';
-import { mockResponse } from './data';
+import { describe, expect, it, vi } from 'vitest';
+import { serverArchives } from './data';
 import { getArchives } from '..';
+import type { ServerArchive } from '../model';
 
-vi.mock('../routes.ts');
-const mockSearchArchives = searchArchives as Mock<[], ReturnType<typeof searchArchives>>;
+const mockSearchArchivesQuery = vi.fn((_args?: unknown) =>
+  Promise.resolve({ items: [] as ServerArchive[] })
+);
+
+vi.mock('@services/videoClient', () => ({
+  default: {
+    searchArchives: (...args: unknown[]) => mockSearchArchivesQuery(...args),
+    startArchive: vi.fn(),
+    stopArchive: vi.fn(),
+  },
+}));
 
 describe('getArchives', () => {
   it('it returns an object with array of Archives and hasPending flag', async () => {
-    mockSearchArchives.mockResolvedValue(mockResponse);
-    const archives = await getArchives('en', 'roomName');
+    mockSearchArchivesQuery.mockResolvedValue({ items: serverArchives });
+    const archives = await getArchives({ locale: 'en', sessionKey: 'test-session-id' });
     expect(archives).toEqual({
       archives: [
         {
@@ -46,19 +54,8 @@ describe('getArchives', () => {
   });
 
   it('it returns object with empty array when no archives', async () => {
-    mockSearchArchives.mockResolvedValue({
-      headers: {
-        'content-length': '28',
-        'content-type': 'application/json; charset=utf-8',
-      },
-      status: 200,
-      statusText: 'OK',
-      data: {
-        archives: [],
-      },
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    } as unknown as AxiosResponse<any, any>);
-    const archives = await getArchives('en', 'roomName');
+    mockSearchArchivesQuery.mockResolvedValue({ items: [] });
+    const archives = await getArchives({ locale: 'en', sessionKey: 'test-session-id' });
     expect(archives).toEqual({
       archives: [],
       hasPending: false,
@@ -66,7 +63,9 @@ describe('getArchives', () => {
   });
 
   it('it throws with error when api call throws', async () => {
-    mockSearchArchives.mockRejectedValue(new AxiosError('Network Error', 'ERR_NETWORK'));
-    await expect(getArchives('en', 'roomName')).rejects.toThrowError();
+    mockSearchArchivesQuery.mockRejectedValue(new Error('Network Error'));
+    await expect(
+      getArchives({ locale: 'en', sessionKey: 'test-session-id' })
+    ).rejects.toThrowError();
   });
 });

@@ -1,6 +1,6 @@
 import { ReactElement } from 'react';
 import useDateTime from '../../../hooks/useDateTime';
-import useRoomName from '../../../hooks/useRoomName';
+import useSessionContext from '../../../hooks/useSessionContext';
 import Box from '@mui/material/Box';
 import useTheme from '@ui/theme';
 
@@ -13,7 +13,7 @@ import useTheme from '@ui/theme';
 const TimeRoomName = (): ReactElement => {
   const { time } = useDateTime();
   const theme = useTheme();
-  const roomName = useRoomName();
+  const { sessionDetails } = useSessionContext();
 
   return (
     <Box
@@ -26,7 +26,7 @@ const TimeRoomName = (): ReactElement => {
         color: theme.colors.accent,
       }}
     >
-      {time} | {roomName}
+      {time} | {sessionDetails?.roomName}
     </Box>
   );
 };

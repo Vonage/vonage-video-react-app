@@ -144,7 +144,9 @@ test.describe('display name for screenshare', () => {
     await screenshareButton.click();
 
     await expect(
-      await pageOne.getByTestId('screen-publisher-container').getByText(`User One's screen`)
+      await pageOne
+        .getByTestId('screen-publisher-container')
+        .getByText(`You are sharing your screen.`)
     ).toBeVisible();
 
     // Wait for the screen-subscriber to appear

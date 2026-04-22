@@ -12,14 +12,18 @@ export class BackendLogTransport {
   private readonly endpoint = `${API_URL}/client-logs`;
 
   log(event: string, extra?: Record<string, unknown>): void {
-    const { sessionId, connectionId, partnerId, ...rest } = extra ?? {};
+    const { sessionId, connectionId, partnerId, userId, ...rest } = (extra ?? {}) as Record<
+      string,
+      string | undefined
+    >;
     const clientEvent = {
       ...createClientEvent({
         level: 'info',
         action: event,
-        sessionId: typeof sessionId === 'string' ? sessionId : undefined,
-        connectionId: typeof connectionId === 'string' ? connectionId : undefined,
-        partnerId: typeof partnerId === 'string' ? partnerId : undefined,
+        sessionId,
+        connectionId,
+        partnerId,
+        userId,
         payload: rest,
       }),
       variation: 'Success',
@@ -28,7 +32,10 @@ export class BackendLogTransport {
   }
 
   reportError(error: unknown, extra?: Record<string, unknown>): void {
-    const { sessionId, connectionId, partnerId, ...rest } = extra ?? {};
+    const { sessionId, connectionId, partnerId, userId, ...rest } = (extra ?? {}) as Record<
+      string,
+      string | undefined
+    >;
     const errorPayload = {
       error: isErrorLike(error)
         ? {
@@ -43,9 +50,10 @@ export class BackendLogTransport {
       ...createClientEvent({
         level: 'error',
         action: 'Error',
-        sessionId: typeof sessionId === 'string' ? sessionId : undefined,
-        connectionId: typeof connectionId === 'string' ? connectionId : undefined,
-        partnerId: typeof partnerId === 'string' ? partnerId : undefined,
+        sessionId,
+        connectionId,
+        partnerId,
+        userId,
         payload: errorPayload,
       }),
       variation: isErrorLike(error) ? ((error as Error).name ?? 'Error') : 'Failure',

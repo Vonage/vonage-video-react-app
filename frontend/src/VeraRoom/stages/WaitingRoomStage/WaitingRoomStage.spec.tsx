@@ -66,11 +66,24 @@ vi.mock('@ui', async () => {
 type RenderOptions = {
   userContext?: ProviderOptions['UserContext'];
   initialRoute?: string;
+  sessionIdentifier?: string;
 };
+
+function SetBridgeState({ sessionIdentifier }: { sessionIdentifier?: string }) {
+  const actions = bridge$.use.actions();
+  if (sessionIdentifier) {
+    actions.partialUpdate({ sessionIdentifier });
+  }
+  return null;
+}
 
 function render(
   ui: ReactElement,
-  { userContext, initialRoute = '/waiting-room/my-room' }: RenderOptions = {}
+  {
+    userContext,
+    initialRoute = '/waiting-room/my-room',
+    sessionIdentifier = 'my-room',
+  }: RenderOptions = {}
 ) {
   const { wrapper: ProvidersWrapper, ...context } = makeTestProvider([providers.user], {
     userContext,
@@ -80,10 +93,11 @@ function render(
     ...context,
     ...renderBase(
       <bridge$.Provider>
+        <SetBridgeState sessionIdentifier={sessionIdentifier} />
         <ProvidersWrapper>
           <MemoryRouter initialEntries={[initialRoute]}>
             <Routes>
-              <Route path="/waiting-room/:roomName" element={ui} />
+              <Route path="/waiting-room/:roomIdentifier" element={ui} />
               <Route path="/waiting-room" element={ui} />
               <Route path="/meeting-room" element={<div data-testid="meeting-room" />} />
             </Routes>
@@ -105,8 +119,8 @@ describe('WaitingRoomStage', () => {
     localStorage.clear();
   });
 
-  it('renders content when roomName is in URL params', () => {
-    render(<WaitingRoomStage />, { initialRoute: '/waiting-room/my-room' });
+  it('renders content when sessionIdentifier is set', () => {
+    render(<WaitingRoomStage />, { sessionIdentifier: 'my-room' });
     expect(screen.getByTestId('video-container')).toBeInTheDocument();
     expect(screen.getByTestId('username-input')).toBeInTheDocument();
     expect(screen.getByTestId('control-panel')).toBeInTheDocument();
@@ -114,43 +128,20 @@ describe('WaitingRoomStage', () => {
 
   it('renders skeletons when isRoomReady is false', () => {
     localStorage.setItem('videoSourceEnabled', 'true');
-    render(<WaitingRoomStage />, { initialRoute: '/waiting-room/my-room' });
+    render(<WaitingRoomStage />, { sessionIdentifier: 'my-room' });
 
     expect(screen.getByTestId('video-container-skeleton')).toBeInTheDocument();
     expect(screen.getByTestId('username-input-skeleton')).toBeInTheDocument();
     expect(screen.queryByTestId('video-container')).not.toBeInTheDocument();
   });
 
-  it('shows config error message when no roomName and no sessionIdentifier', () => {
-    render(<WaitingRoomStage />, { initialRoute: '/waiting-room' });
+  it('shows config error message when no sessionIdentifier is set', () => {
+    render(<WaitingRoomStage />, { initialRoute: '/waiting-room', sessionIdentifier: '' });
     expect(screen.getByText(/session-identifier/i)).toBeInTheDocument();
   });
 
-  it('redirects to /waiting-room/:sessionIdentifier when roomName is absent but bridge has a sessionIdentifier', () => {
-    const Wrapper = () => {
-      // Set bridge state inside a component rendered within the provider
-      const actions = bridge$.use.actions();
-      actions.partialUpdate({ sessionIdentifier: 'bridge-room' });
-
-      return (
-        <MemoryRouter initialEntries={['/waiting-room']}>
-          <Routes>
-            <Route
-              path="/waiting-room/:roomName"
-              element={<div data-testid="redirected-to-room" />}
-            />
-            <Route path="/waiting-room" element={<WaitingRoomStage />} />
-          </Routes>
-        </MemoryRouter>
-      );
-    };
-
-    renderBase(
-      <bridge$.Provider>
-        <Wrapper />
-      </bridge$.Provider>
-    );
-
-    expect(screen.getByTestId('redirected-to-room')).toBeInTheDocument();
+  it('renders content when bridge has a sessionIdentifier', () => {
+    render(<WaitingRoomStage />, { sessionIdentifier: 'bridge-room' });
+    expect(screen.getByTestId('video-container')).toBeInTheDocument();
   });
 });

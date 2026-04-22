@@ -40,5 +40,9 @@ instance:
       secret: JIRA_EPIC_LINK
     - name: JIRA_EPIC_URL
       secret: JIRA_EPIC_URL
+    - name: JIRA_SEVERITY_ID
+      secret: JIRA_SEVERITY_ID
+    - name: SESSION_KEY_SECRET
+      secret: SESSION_KEY_SECRET
 debug:
   entrypoint: [node, bundle.cjs]

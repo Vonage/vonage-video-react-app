@@ -1,4 +1,3 @@
-import { SessionIdSchema } from '@node/schemas';
 import type { ArchiveSearchFilter } from '@vonage/video';
 import z from 'zod';
 
@@ -16,11 +15,6 @@ export const ArchiveSearchFilterSchema = z.object({
    * Default is 50, with a maximum of 1000.
    */
   count: z.number().int().min(1).max(1000).optional(),
-
-  /**
-   * Retrieve archives for a specific session ID.
-   */
-  sessionId: SessionIdSchema.optional(),
 }) satisfies z.ZodType<ArchiveSearchFilter>;
 
 export default ArchiveSearchFilterSchema;

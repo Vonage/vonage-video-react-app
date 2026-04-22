@@ -13,3 +13,8 @@ export type * from './ObjectKeys';
 export type * from './SessionId';
 export type * from './SameKeys';
 export type * from './IsOptionalKey';
+export type * from './SessionKeyPayload';
+export type * from './VideoSessionDetails';
+export type * from './VideoSessionDetailsWithToken';
+export type * from './SessionKey';
+export type * from './DeepPartial';

@@ -44,9 +44,20 @@ export type LoggerProviderConfig = {
 };
 
 /**
+ * Persistent context that is automatically merged into every log and reportError call.
+ */
+export type LogContext = {
+  userId?: string;
+  sessionId?: string;
+  connectionId?: string;
+  partnerId?: string;
+};
+
+/**
  * Logger base class for error reporting and event logging.
  */
 export class LoggerBase implements LoggerProviderConfig {
+  private readonly context: LogContext = {};
   /**
    * Indicates whether the lack of a logger provider or one of its features has been acknowledged.
    */
@@ -192,6 +203,22 @@ export class LoggerBase implements LoggerProviderConfig {
     };
   }
 
+  /**
+   * Sets persistent context fields that are automatically merged into every log and reportError call.
+   */
+  public setContext(context: Partial<LogContext>): void {
+    Object.assign(this.context, context);
+  }
+
+  /**
+   * Clears all persistent context (e.g. on session disconnect or user logout).
+   */
+  public clearContext(): void {
+    (Object.keys(this.context) as Array<keyof LogContext>).forEach((key) => {
+      delete this.context[key];
+    });
+  }
+
   public group<T extends Record<string, unknown>>(groupName: string, context?: T) {
     const groupId = crypto.randomUUID();
 
@@ -228,7 +255,7 @@ export class LoggerBase implements LoggerProviderConfig {
         }
       : error;
 
-    const extraRecord = extra ?? {};
+    const extraRecord = { ...this.context, ...(extra ?? {}) };
 
     void this.tryExecuteFeature(LoggerFeature.ReportError).then((feature) =>
       feature?.(normalizedError, extraRecord)
@@ -241,7 +268,8 @@ export class LoggerBase implements LoggerProviderConfig {
    * @param extra Additional data associated with the event.
    */
   public log(event: string, extra: Record<string, unknown> = {}) {
-    void this.tryExecuteFeature(LoggerFeature.Log).then((feature) => feature?.(event, extra));
+    const merged = { ...this.context, ...extra };
+    void this.tryExecuteFeature(LoggerFeature.Log).then((feature) => feature?.(event, merged));
   }
 }
 

@@ -28,10 +28,7 @@ feedbackRouter.post('/report', async (req: Request, res: Response) => {
       attachment,
       origin,
     });
-    if (feedbackData) {
-      return res.status(200).json({ feedbackData });
-    }
-    return res.status(500).json({ message: 'Failed to create a report ticket' });
+    return res.status(200).json({ feedbackData });
   } catch (error: unknown) {
     const message = error instanceof Error ? error.message : error;
     return res.status(500).json({ message: `Error reporting issue: ${message}` });

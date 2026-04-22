@@ -60,6 +60,13 @@ export default defineConfig(() => ({
       reportsDirectory: './coverage',
       provider: 'v8' as const,
       reporter: ['text', 'lcov'],
+      allowExternal: true,
+      include: [
+        `${path.resolve(__dirname, 'src')}/**/*.{ts,tsx}`,
+        `${path.resolve(__dirname, '../common/src')}/**/*.{ts,tsx}`,
+        `${path.resolve(__dirname, '../common/srcBrowser')}/**/*.{ts,tsx}`,
+        `${path.resolve(__dirname, '../core/src')}/**/*.{ts,tsx}`,
+      ],
       exclude: ['test/**', '**/index.ts'],
     },
   },

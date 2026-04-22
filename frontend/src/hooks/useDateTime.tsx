@@ -43,7 +43,7 @@ const useDateTime = () => {
     // eslint-disable-next-line react-hooks/set-state-in-effect
     updateTime();
     updateDate();
-    changeTime();
+    return changeTime();
   }, [changeTime, updateTime, updateDate]);
 
   return {

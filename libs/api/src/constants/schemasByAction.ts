@@ -3,22 +3,23 @@ import {
   EnableCaptionsPayloadSchema,
   DisableCaptionsPayloadSchema,
   CreateSessionPayloadSchema,
-  DecodeSessionIdPayloadSchema,
   JoinSessionPayloadSchema,
   SearchArchivesPayloadSchema,
   StartArchivePayloadSchema,
   StopArchivePayloadSchema,
   CreateEphemeralTokenPayloadSchema,
+  CreateSessionAndJoinPayloadSchema,
 } from '../schemas';
 import type { ZodType } from 'zod';
 
 const schemasByAction = {
   [VideoAction.createSession]: CreateSessionPayloadSchema.optional(),
-  [VideoAction.decodeSessionId]: DecodeSessionIdPayloadSchema,
+  [VideoAction.createSessionAndJoin]: CreateSessionAndJoinPayloadSchema.optional(),
   [VideoAction.startArchive]: StartArchivePayloadSchema,
   [VideoAction.stopArchive]: StopArchivePayloadSchema,
   [VideoAction.searchArchives]: SearchArchivesPayloadSchema,
   [VideoAction.enableCaptions]: EnableCaptionsPayloadSchema,
+  [VideoAction.ensureCaptionsEnabled]: EnableCaptionsPayloadSchema,
   [VideoAction.disableCaptions]: DisableCaptionsPayloadSchema,
   [VideoAction.createEphemeralToken]: CreateEphemeralTokenPayloadSchema,
   [VideoAction.joinSession]: JoinSessionPayloadSchema,

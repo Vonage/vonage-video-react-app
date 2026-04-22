@@ -1,26 +1,14 @@
 import { makeInternalErrorHandler } from '@api-lib/errors';
-import { assertResult } from '@api-lib/executions';
-import { type IVideoClient, TokenRole, type JoinSessionPayload } from '@api-lib/types';
-import { decodeSessionId } from '@node/helpers';
-
-const threeHoursInMilliseconds = 3 * 60 * 60 * 1000;
+import { type IVideoClient, type JoinSessionPayload } from '@api-lib/types';
 
 function joinSession(this: IVideoClient, payload: JoinSessionPayload) {
   try {
-    const { sessionId, clientTokenOptions } = payload;
-
-    const session = assertResult(
-      () => decodeSessionId(sessionId),
-      makeInternalErrorHandler(`Unable to decode sessionId ${sessionId}`)
-    );
+    const { sessionKey, clientTokenOptions } = payload;
+    const session = this.decodeSessionKey({ sessionKey });
 
     const token = this.createEphemeralToken({
-      sessionId,
-      clientTokenOptions: {
-        role: TokenRole.MODERATOR,
-        expireTime: Date.now() + threeHoursInMilliseconds,
-        ...clientTokenOptions,
-      },
+      sessionKey,
+      clientTokenOptions,
     });
 
     return {

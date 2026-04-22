@@ -12,6 +12,7 @@ type ClientEventInput = {
   sessionId?: string;
   connectionId?: string;
   partnerId?: string;
+  userId?: string;
   variation?: string;
   logVersion?: string;
   timestamp?: number;
@@ -48,5 +49,6 @@ export function createClientEvent(input: ClientEventInput): ClientLogEvent {
     ...(input.sessionId != null && { sessionId: input.sessionId }),
     ...(input.connectionId != null && { connectionId: input.connectionId }),
     ...(input.partnerId != null && { partnerId: input.partnerId }),
+    ...(input.userId != null && { userId: input.userId }),
   };
 }

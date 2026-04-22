@@ -1,7 +1,7 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { render as renderBase, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { ReactElement } from 'react';
+import type { ReactElement } from 'react';
 import * as clientSdkVideo from '@vonage/client-sdk-video';
 import backgroundEffectsDialog$ from '@Context/BackgroundEffectsDialog';
 import precallNetworkTestDialog$ from '@Context/PrecallNetworkTestDialog';
@@ -14,14 +14,29 @@ describe('MenuMoreOptions', () => {
   const mockAnchorEl = document.createElement('button');
 
   beforeEach(() => {
-    mockOnClose.mockClear();
+    env.reset();
+    mockOnClose.mockReset();
     vi.spyOn(clientSdkVideo, 'hasMediaProcessorSupport').mockReturnValue(true);
+  });
+
+  afterEach(() => {
+    env.reset();
   });
 
   it('should render when open is true', () => {
     render(<MenuMoreOptions onClose={mockOnClose} open anchorEl={mockAnchorEl} />);
 
     expect(screen.getByTestId('menu-more-options')).toBeInTheDocument();
+  });
+
+  it('should keep menu items as direct children of the menu list', () => {
+    render(<MenuMoreOptions onClose={mockOnClose} open anchorEl={mockAnchorEl} />);
+
+    const menuListElement = screen.getByRole('menu');
+
+    expect(Array.from(menuListElement.children).every((child) => child.tagName === 'LI')).toBe(
+      true
+    );
   });
 
   it('should not render menu items when open is false', () => {
@@ -56,22 +71,55 @@ describe('MenuMoreOptions', () => {
     vi.spyOn(clientSdkVideo, 'hasMediaProcessorSupport').mockReturnValue(false);
     render(<MenuMoreOptions onClose={mockOnClose} open anchorEl={mockAnchorEl} />);
 
-    expect(screen.queryByText(/video effects/i)).not.toBeInTheDocument();
+    expect(screen.getByText(/video effects/i).closest('li')).toHaveAttribute(
+      'aria-disabled',
+      'true'
+    );
   });
 
   it('should not display video effects option when background effects are not allowed', () => {
     env.partialUpdate({ ALLOW_BACKGROUND_EFFECTS: false });
     render(<MenuMoreOptions onClose={mockOnClose} open anchorEl={mockAnchorEl} />);
 
-    expect(screen.queryByText(/video effects/i)).not.toBeInTheDocument();
+    expect(screen.getByText(/video effects/i).closest('li')).toHaveAttribute(
+      'aria-disabled',
+      'true'
+    );
   });
 
   it('should still display precall network test when media processor is not supported', () => {
     vi.spyOn(clientSdkVideo, 'hasMediaProcessorSupport').mockReturnValue(false);
     render(<MenuMoreOptions onClose={mockOnClose} open anchorEl={mockAnchorEl} />);
 
-    expect(screen.queryByText(/video effects/i)).not.toBeInTheDocument();
     expect(screen.getByText(/pre-call network test/i)).toBeInTheDocument();
+    expect(screen.getByText(/pre-call network test/i).closest('li')).toHaveAttribute(
+      'aria-disabled',
+      'true'
+    );
+  });
+
+  it('shows an unsupported-feature tooltip for disabled menu items', async () => {
+    const user = userEvent.setup();
+
+    vi.spyOn(clientSdkVideo, 'hasMediaProcessorSupport').mockReturnValue(false);
+    render(<MenuMoreOptions onClose={mockOnClose} open anchorEl={mockAnchorEl} />);
+
+    const videoEffectsMenuItem = screen.getByRole('menuitem', { name: /video effects/i });
+
+    await user.hover(videoEffectsMenuItem);
+
+    expect(
+      await screen.findByText(/your browser does not support this feature/i)
+    ).toBeInTheDocument();
+  });
+
+  it('does not show the unsupported-feature tooltip when the menu first opens', () => {
+    vi.spyOn(clientSdkVideo, 'hasMediaProcessorSupport').mockReturnValue(false);
+    render(<MenuMoreOptions onClose={mockOnClose} open anchorEl={mockAnchorEl} />);
+
+    expect(
+      screen.queryByText(/your browser does not support this feature/i)
+    ).not.toBeInTheDocument();
   });
 });
 

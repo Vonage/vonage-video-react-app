@@ -1,22 +1,21 @@
 import { describe, expect, it, vi, beforeEach, Mock } from 'vitest';
 import { render as renderBase, screen, act, waitFor } from '@testing-library/react';
-import type { AxiosResponse } from 'axios';
 import { Subscriber } from '@vonage/client-sdk-video';
 import { ReactElement } from 'react';
-import useRoomName from '@hooks/useRoomName';
 import { SessionContextType } from '@Context/SessionProvider/session';
 import useSessionContext from '@hooks/useSessionContext';
 import { SubscriberWrapper } from '@app-types/session';
 import { makeTestProvider } from '@test/providers';
-import { enableCaptions, disableCaptions } from '@api/captions';
+import videoClient from '@services/videoClient';
 import CaptionsButton, { CaptionsState } from './CaptionsButton';
 import { env } from '../../../env';
 
 vi.mock('@hooks/useSessionContext');
-vi.mock('@hooks/useRoomName');
-vi.mock('@api/captions', () => ({
-  enableCaptions: vi.fn(),
-  disableCaptions: vi.fn(),
+vi.mock('@services/videoClient', () => ({
+  default: {
+    enableCaptions: vi.fn(),
+    disableCaptions: vi.fn(),
+  },
 }));
 
 const mockUseSessionContext = useSessionContext as Mock<[], SessionContextType>;
@@ -31,7 +30,7 @@ describe('CaptionsButton', () => {
     setIsUserCaptionsEnabled: mockSetIsUserCaptionsEnabled,
     setCaptionsErrorResponse: mockSetCaptionsErrorResponse,
   } as CaptionsState;
-  const mockedRoomName = 'test-room-name';
+  const mockedSessionKey = 'test-session-key';
   let sessionContext: SessionContextType;
 
   const createSubscriberWrapper = (id: string): SubscriberWrapper => {
@@ -57,15 +56,12 @@ describe('CaptionsButton', () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
-    (useRoomName as Mock).mockReturnValue(mockedRoomName);
-    (enableCaptions as Mock).mockResolvedValue({
-      data: { captions: { captionsId: '1-2-3-4', status: 200 } },
-    } as AxiosResponse);
-    (disableCaptions as Mock).mockResolvedValue({
-      data: { status: 200 },
-    } as AxiosResponse);
+    (videoClient.enableCaptions as Mock).mockResolvedValue({ captionsId: '1-2-3-4' });
+    (videoClient.disableCaptions as Mock).mockResolvedValue({});
     sessionContext = {
       subscriberWrappers: [createSubscriberWrapper('subscriber-1')],
+      sessionKey: mockedSessionKey,
+      connected: true,
     } as unknown as SessionContextType;
     mockUseSessionContext.mockReturnValue(sessionContext as unknown as SessionContextType);
   });
@@ -89,7 +85,9 @@ describe('CaptionsButton', () => {
     act(() => screen.getByTestId('captions-button').click());
 
     await waitFor(() => {
-      expect(enableCaptions).toHaveBeenCalledWith(mockedRoomName);
+      expect(videoClient.enableCaptions).toHaveBeenCalledWith({
+        sessionKey: mockedSessionKey,
+      });
     });
   });
 

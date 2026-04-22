@@ -2,6 +2,7 @@ import { renderHook, waitFor } from '@testing-library/react';
 import mediaDevices$ from './devices$';
 import { vi, it, expect, describe, beforeEach } from 'vitest';
 import { makeMediaDeviceInfos, setupWindowNavigatorMock } from '@web-test/fixtures';
+import { mediaDevicesEnvelop } from '@core/interceptors';
 
 describe('mediaDevices$ namespace', () => {
   beforeEach(() => {
@@ -15,6 +16,8 @@ describe('mediaDevices$ namespace', () => {
         } as unknown as MediaStream),
       },
     });
+
+    mediaDevicesEnvelop.rebind(navigator);
   });
 
   it('should update devices when devicechange event triggers', async () => {

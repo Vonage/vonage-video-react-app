@@ -40,7 +40,7 @@
     "start:backend": "Run backend server. Usage: 'yarn start:backend' (dev mode), 'yarn start:backend debug' (debug mode), 'yarn start:backend bundled' (bundled dev mode)",
     "test:backend": "Run backend tests. Usage: 'yarn test:backend' (all), 'yarn test:backend <path>' (specific), 'yarn test:backend watch <path>' (watch mode), 'yarn test:backend debug <path>' (debug mode)",
     "test:frontend": "Run frontend tests. Usage: 'yarn test:frontend' (all), 'yarn test:frontend <path>' (specific), 'yarn test:frontend watch <path>' (watch mode), 'yarn test:frontend debug <path>' (debug mode)",
-    "test:integration": "Run Playwright tests. Usage: 'yarn test:integration' (all browsers), 'yarn test:integration <name>' (headed), 'yarn test:integration debug|inspect|canon [name]', 'yarn test:integration update [name]' (screenshots)",
+    "test:integration": "Run integration tests. Usage: 'yarn test:integration' (all), 'yarn test:integration playwright' (Playwright only), 'yarn test:integration <name>' (headed), 'yarn test:integration debug|inspect|canon [name]', 'yarn test:integration update [name]' (screenshots)",
     "vcr:dev": "Manage VCR dev instance. Usage: 'yarn vcr:dev' (deploy), 'yarn vcr:dev rm' or 'yarn vcr:dev --rm' (remove instance). Note: Copy vcr.yml.example as vcr-dev.yml and add your application ID before deploying"
   },
   "repository": {
@@ -77,6 +77,7 @@
     "@types/cors": "^2.8.13",
     "@types/express": "^4.17.17",
     "@types/jest": "^29.5.12",
+    "@types/jsonwebtoken": "^9.0.10",
     "@types/lodash": "^4.17.1",
     "@types/node": "20.19.9",
     "@types/opentok": "^2.14.0",
@@ -177,6 +178,7 @@
     "i18next": "^25.3.2",
     "i18next-browser-languagedetector": "^8.2.0",
     "json-storage-formatter": "^3.0.2",
+    "jsonwebtoken": "^9.0.3",
     "lodash": "^4.17.21",
     "normalize-range": "^0.1.2",
     "opentok": "2.22.0",

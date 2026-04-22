@@ -1,5 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { setupWindowNavigatorMock } from '@web-test/fixtures';
+import VeraRoomElement from './VeraRoomElement';
 
 // Mock CSSStyleSheet since JSDOM doesn't support replaceSync
 class MockCSSStyleSheet {
@@ -22,34 +23,29 @@ beforeEach(() => {
 });
 
 describe('VeraRoomElement', () => {
-  it('is registered as a custom element', async () => {
-    await import('./VeraRoomElement');
+  it('is registered as a custom element', () => {
     expect(customElements.get('vera-room')).toBeDefined();
   });
 
-  it('has correct tag name', async () => {
-    const { default: VeraRoomElement } = await import('./VeraRoomElement');
+  it('has correct tag name', () => {
     expect(VeraRoomElement.tagName).toBe('vera-room');
   });
 
-  it('creates a shadow root when appended to DOM', async () => {
-    await import('./VeraRoomElement');
+  it('creates a shadow root when appended to DOM', () => {
     const element = document.createElement('vera-room');
     document.body.appendChild(element);
     expect(element.shadowRoot).not.toBeNull();
     element.remove();
   });
 
-  it('has mode open for shadow root', async () => {
-    await import('./VeraRoomElement');
+  it('has mode open for shadow root', () => {
     const element = document.createElement('vera-room');
     document.body.appendChild(element);
     expect(element.shadowRoot?.mode).toBe('open');
     element.remove();
   });
 
-  it('contains a mount div inside shadow root', async () => {
-    await import('./VeraRoomElement');
+  it('contains a mount div inside shadow root', () => {
     const element = document.createElement('vera-room');
     document.body.appendChild(element);
     const mountDiv = element.shadowRoot?.querySelector('.vera-room-root');
@@ -61,7 +57,6 @@ describe('VeraRoomElement', () => {
 it('does nothing when newValue is null (null-string bug guard)', async () => {
   // This is the regression case: previously a null newValue could be coerced to the
   // string "null" by String(value) in tryParseAttribute, corrupting the bridge state.
-  const { default: VeraRoomElement } = await import('./VeraRoomElement');
   const element = new VeraRoomElement();
   document.body.appendChild(element);
 
@@ -77,7 +72,6 @@ it('does nothing when newValue is null (null-string bug guard)', async () => {
 });
 
 it('does nothing for an unrecognised attribute name', async () => {
-  const { default: VeraRoomElement } = await import('./VeraRoomElement');
   const element = new VeraRoomElement();
   document.body.appendChild(element);
 
@@ -93,7 +87,6 @@ it('does nothing for an unrecognised attribute name', async () => {
 });
 
 it('calls partialUpdate with parsed value when attribute changes to a new string', async () => {
-  const { default: VeraRoomElement } = await import('./VeraRoomElement');
   const element = new VeraRoomElement();
   document.body.appendChild(element);
 
@@ -110,7 +103,6 @@ it('calls partialUpdate with parsed value when attribute changes to a new string
 });
 
 it('waits for isBridgeReady before dispatching when bridge is not yet ready', async () => {
-  const { default: VeraRoomElement } = await import('./VeraRoomElement');
   // Create but do NOT append to DOM so renderReactTree / bridge never runs
   const element = new VeraRoomElement();
 

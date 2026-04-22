@@ -1,4 +1,3 @@
-import { AxiosResponse } from 'axios';
 import { Archive, ServerArchive } from '../model';
 
 export const startedServerArchive: ServerArchive = {
@@ -109,16 +108,3 @@ export const serverArchives: ServerArchive[] = [
   availableServerArchive,
   failedServerArchive,
 ];
-
-export const mockResponse = {
-  headers: {
-    'content-length': '28',
-    'content-type': 'application/json; charset=utf-8',
-  },
-  status: 200,
-  statusText: 'OK',
-  data: {
-    archives: serverArchives,
-  },
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-} as unknown as AxiosResponse<any, any>;

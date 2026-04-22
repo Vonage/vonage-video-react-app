@@ -2,7 +2,6 @@ import { ReactElement, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import Box from '@mui/material/Box';
 import useSessionContext from '../../../hooks/useSessionContext';
-import useRoomName from '../../../hooks/useRoomName';
 import useRoomShareUrl from '../../../hooks/useRoomShareUrl';
 import IconButton from '@mui/material/IconButton';
 import Tooltip from '@mui/material/Tooltip';
@@ -22,9 +21,8 @@ import RecordingIndicator from '../RecordingIndicator';
  */
 const SmallViewportHeader = (): ReactElement => {
   const { t } = useTranslation();
-  const { archiveId } = useSessionContext();
+  const { archiveId, sessionDetails } = useSessionContext();
   const isRecording = !!archiveId;
-  const roomName = useRoomName();
 
   // Get preferred video input devices (cameras)
   const videoInputDevices = usePreferredCameras();
@@ -77,7 +75,7 @@ const SmallViewportHeader = (): ReactElement => {
       <Box className="flex min-w-0 items-center gap-1 px-0.5">
         {isRecording && <RecordingIndicator isCompact />}
         <Box className="ml-1 min-w-0 overflow-hidden text-ellipsis whitespace-nowrap">
-          {roomName}
+          {sessionDetails?.roomName}
         </Box>
       </Box>
       <Box className="-mx-1 flex items-center gap-1">

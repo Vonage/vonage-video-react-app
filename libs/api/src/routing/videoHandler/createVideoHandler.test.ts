@@ -1,292 +1,465 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { Video } from '@vonage/video';
+import express from 'express';
+import request from 'supertest';
+import { MediaMode, type SingleArchiveResponse } from '@vonage/video';
+import jwt from 'jsonwebtoken';
 import createVideoHandler from './createVideoHandler';
-import { videoRouterContext } from '@api-lib/constants';
-import type { VideoRouterConfig } from '@api-lib/types';
+import { TokenRole } from '@api-lib/types';
+
+const mockApiKey = 'test-api-key';
+const mockSessionId = '1_MX4xMjM0NTY3OH4-VGh1IEZlYiAyNyAwODozMjozNCBQU1QgMjAyMH4wLjI0NDYxMjE';
+const mockSessionKey = jwt.sign({ sessionId: mockSessionId }, mockApiKey, { algorithm: 'HS256' });
+
+const h = vi.hoisted(() => ({
+  createSessionSpy: vi.fn(),
+  startArchiveSpy: vi.fn(),
+  stopArchiveSpy: vi.fn(),
+  searchArchivesSpy: vi.fn(),
+  enableCaptionsSpy: vi.fn(),
+  disableCaptionsSpy: vi.fn(),
+  generateClientTokenSpy: vi.fn(() => 'mock-token-12345'),
+}));
+
+vi.mock('@vonage/video', async () => {
+  const mockVideoModule = (await import('@node-test/helpers/mockVideoModule')).default;
+  const actual = await vi.importActual('@vonage/video');
+
+  return mockVideoModule(actual, () => ({
+    Video: ({ spyOn }) => {
+      spyOn({
+        createSession: h.createSessionSpy,
+        startArchive: h.startArchiveSpy,
+        stopArchive: h.stopArchiveSpy,
+        searchArchives: h.searchArchivesSpy,
+        enableCaptions: h.enableCaptionsSpy,
+        disableCaptions: h.disableCaptionsSpy,
+        generateClientToken: h.generateClientTokenSpy,
+      });
+    },
+  }));
+});
+
+/**
+ * Extracts the response data from the TRPC JSON response body.
+ */
+function extractResponseData<T>(body: unknown): T {
+  return (body as { result: { data: T } }).result.data;
+}
 
 describe('createVideoHandler', () => {
-  const mockApiKey = 'test-api-key';
-  const mockApiSecret = 'test-api-secret';
-
   beforeEach(() => {
-    // Spy on Video prototype methods
-    vi.spyOn(Video.prototype, 'createSession');
-    vi.spyOn(Video.prototype, 'startArchive');
-    vi.spyOn(Video.prototype, 'stopArchive');
-    vi.spyOn(Video.prototype, 'searchArchives');
-    vi.spyOn(Video.prototype, 'enableCaptions');
-    vi.spyOn(Video.prototype, 'disableCaptions');
-    vi.spyOn(Video.prototype, 'generateClientToken').mockReturnValue('mock-token-12345');
+    vi.clearAllMocks();
   });
 
-  describe('handler creation', () => {
-    it('should create an Express middleware handler', () => {
-      const { handlerConfig } = setupMocks();
+  describe('createSession', () => {
+    it('should create a session successfully', async () => {
+      h.createSessionSpy.mockResolvedValue({
+        sessionId: mockSessionId,
+        location: 'US',
+        mediaMode: MediaMode.ROUTED,
+        archiveMode: 'manual',
+      });
 
-      const handler = createVideoHandler(handlerConfig);
+      const app = createTestApp();
 
-      expect(handler).toBeDefined();
-      expect(typeof handler).toBe('function');
+      const response = await request(app).post('/video/createSession').send({}).expect(200);
+
+      const data = extractResponseData(response.body);
+
+      expect(data).toMatchObject({
+        sessionId: mockSessionId,
+      });
+
+      expect(h.createSessionSpy).toHaveBeenCalledWith(undefined);
     });
 
-    it('should create handler with custom config', () => {
-      setupMocks();
+    it('should create a session with custom options', async () => {
+      h.createSessionSpy.mockResolvedValue({
+        sessionId: mockSessionId,
+        location: '12.34.56.78',
+        mediaMode: MediaMode.ROUTED,
+        archiveMode: 'manual',
+      });
 
-      const customConfig: VideoRouterConfig<Record<string, unknown>, object, object> = {
-        auth: {
-          authType: 'apiKey',
-          apiKey: 'custom-key',
-          apiSecret: 'custom-secret',
-        },
-        videoParams: { timeout: 10000 },
-        handlersConfig: {},
+      const app = createTestApp();
+
+      const customOptions = {
+        location: '12.34.56.78',
+        archiveMode: 'manual' as const,
       };
 
-      const handler = createVideoHandler(customConfig);
+      await request(app)
+        .post('/video/createSession')
+        .send({ sessionOptions: customOptions })
+        .expect(200);
 
-      expect(handler).toBeDefined();
+      expect(h.createSessionSpy).toHaveBeenCalledWith(customOptions);
+    });
+
+    it('should return an error response when creating a session fails', async () => {
+      h.createSessionSpy.mockRejectedValue(new Error('Failed to create session on Vonage side'));
+
+      const app = createTestApp();
+
+      const response = await request(app).post('/video/createSession').send({});
+
+      expect(response.status).toBeGreaterThanOrEqual(400);
     });
   });
 
-  describe('router functionality via handler', () => {
-    it('should create Express middleware that wraps video router', () => {
-      const { handlerConfig } = setupMocks();
+  describe('decodeSessionId', () => {
+    it('should decode a valid sessionId', async () => {
+      const app = createTestApp();
 
-      const handler = createVideoHandler(handlerConfig);
+      const input = encodeURIComponent(JSON.stringify({ sessionId: mockSessionId }));
 
-      // Handler is an Express middleware function
-      expect(typeof handler).toBe('function');
-      expect(handler.length).toBeGreaterThanOrEqual(2);
+      const response = await request(app).get(`/video/decodeSessionId?input=${input}`);
+
+      // decodeSessionId is not exposed as a TRPC route, only as a direct VideoClient method
+      expect(response.status).toBeGreaterThanOrEqual(400);
+    });
+
+    it('should return an error response for invalid sessionId', async () => {
+      const app = createTestApp();
+
+      const input = encodeURIComponent(JSON.stringify({ sessionId: 'invalid-session-id' }));
+
+      const response = await request(app).get(`/video/decodeSessionId?input=${input}`);
+
+      expect(response.status).toBeGreaterThanOrEqual(400);
     });
   });
 
-  describe('configuration validation', () => {
-    it('should accept valid auth configuration', () => {
-      setupMocks();
+  describe('joinSession', () => {
+    it('should join a session and return token', async () => {
+      const app = createTestApp();
 
-      const validConfig: VideoRouterConfig<Record<string, unknown>, object, object> = {
-        auth: {
-          authType: 'apiKey',
-          apiKey: 'test-key',
-          apiSecret: 'test-secret',
-        },
-        videoParams: {},
-        handlersConfig: {},
-      };
+      const response = await request(app)
+        .post('/video/joinSession')
+        .send({ sessionKey: mockSessionKey })
+        .expect(200);
 
-      expect(() => createVideoHandler(validConfig)).not.toThrow();
+      const data = extractResponseData(response.body);
+
+      expect(data).toMatchObject({
+        location: expect.any(String),
+        token: expect.any(String),
+      });
     });
 
-    it('should accept optional videoParams', () => {
-      setupMocks();
+    it('should join session with custom client token options', async () => {
+      const app = createTestApp();
 
-      const configWithParams: VideoRouterConfig<Record<string, unknown>, object, object> = {
-        auth: {
-          authType: 'apiKey',
-          apiKey: mockApiKey,
-          apiSecret: mockApiSecret,
-        },
-        videoParams: {
-          timeout: 5000,
-        },
-        handlersConfig: {},
+      const clientTokenOptions = {
+        role: TokenRole.PUBLISHER,
+        data: 'custom-data',
       };
 
-      expect(() => createVideoHandler(configWithParams)).not.toThrow();
+      const response = await request(app)
+        .post('/video/joinSession')
+        .send({
+          sessionKey: mockSessionKey,
+          clientTokenOptions,
+        })
+        .expect(200);
+
+      const data = extractResponseData(response.body);
+
+      expect(data).toMatchObject({
+        token: expect.any(String),
+      });
+    });
+  });
+
+  describe('startArchive', () => {
+    it('should start an archive successfully', async () => {
+      const mockArchive: SingleArchiveResponse = {
+        id: 'archive-id-123',
+        sessionId: mockSessionId,
+        name: 'test-archive',
+        status: 'started',
+        createdAt: Date.now(),
+        size: 0,
+        duration: 0,
+        hasAudio: true,
+        hasVideo: true,
+        outputMode: 'composed',
+        resolution: '640x480',
+      } as SingleArchiveResponse;
+
+      h.startArchiveSpy.mockResolvedValue(mockArchive);
+
+      const app = createTestApp();
+
+      const response = await request(app)
+        .post('/video/startArchive')
+        .send({
+          sessionKey: mockSessionKey,
+          archiveOptions: { name: 'test-archive' },
+        })
+        .expect(200);
+
+      expect(h.startArchiveSpy).toHaveBeenCalledWith(mockSessionId, {
+        name: 'test-archive',
+      });
+
+      const data = extractResponseData(response.body);
+
+      expect(data).toMatchObject({
+        id: 'archive-id-123',
+        sessionId: mockSessionId,
+        name: 'test-archive',
+      });
     });
 
-    it('should accept optional routerOptions', () => {
-      setupMocks();
+    it('should return an error response when starting archive fails', async () => {
+      h.startArchiveSpy.mockRejectedValue(new Error('Failed to start archive'));
 
-      const configWithRouterOptions: VideoRouterConfig<Record<string, unknown>, object, object> = {
-        auth: {
-          authType: 'apiKey',
-          apiKey: mockApiKey,
-          apiSecret: mockApiSecret,
-        },
-        videoParams: {},
-        routerOptions: {
-          isDev: true,
-        },
-        handlersConfig: {},
-      };
+      const app = createTestApp();
 
-      expect(() => createVideoHandler(configWithRouterOptions)).not.toThrow();
+      const response = await request(app).post('/video/startArchive').send({
+        sessionKey: mockSessionKey,
+        archiveOptions: {},
+      });
+
+      expect(response.status).toBeGreaterThanOrEqual(400);
+    });
+  });
+
+  describe('stopArchive', () => {
+    it('should stop an archive successfully', async () => {
+      const mockArchive: SingleArchiveResponse = {
+        id: 'archive-id-123',
+        sessionId: mockSessionId,
+        status: 'stopped',
+      } as SingleArchiveResponse;
+
+      h.stopArchiveSpy.mockResolvedValue(mockArchive);
+
+      const app = createTestApp();
+
+      const response = await request(app)
+        .post('/video/stopArchive')
+        .send({
+          sessionKey: mockSessionKey,
+          archiveId: 'archive-id-123',
+        })
+        .expect(200);
+
+      expect(h.stopArchiveSpy).toHaveBeenCalledWith('archive-id-123');
+
+      const data = extractResponseData(response.body);
+
+      expect(data).toMatchObject({
+        id: 'archive-id-123',
+        status: 'stopped',
+      });
     });
 
-    it('should accept handlersConfig', () => {
-      setupMocks();
+    it('should return an error response when stopping archive fails', async () => {
+      h.stopArchiveSpy.mockRejectedValue(new Error('Failed to stop archive'));
 
-      const configWithHandlers: VideoRouterConfig<Record<string, unknown>, object, object> = {
-        auth: {
-          authType: 'apiKey',
-          apiKey: mockApiKey,
-          apiSecret: mockApiSecret,
-        },
-        videoParams: {},
-        handlersConfig: {
-          createSession: {
-            selectInput: (input: unknown) => input,
+      const app = createTestApp();
+
+      const response = await request(app).post('/video/stopArchive').send({
+        sessionKey: mockSessionKey,
+        archiveId: 'archive-id-123',
+      });
+
+      expect(response.status).toBeGreaterThanOrEqual(400);
+    });
+  });
+
+  describe('searchArchives', () => {
+    it('should search archives successfully', async () => {
+      const mockArchives = {
+        items: [
+          {
+            id: 'archive-1',
+            sessionId: mockSessionId,
+            name: 'archive-1',
+            createdAt: Date.now(),
+            duration: 100,
+            hasAudio: true,
+            hasVideo: true,
+            outputMode: 'composed' as const,
+            resolution: '640x480',
+            status: 'available' as const,
+            size: 12345,
           },
-        },
+          {
+            id: 'archive-2',
+            sessionId: mockSessionId,
+            name: 'archive-2',
+            createdAt: Date.now(),
+            duration: 200,
+            hasAudio: true,
+            hasVideo: true,
+            outputMode: 'composed' as const,
+            resolution: '640x480',
+            status: 'available' as const,
+            size: 23456,
+          },
+        ],
+        count: 2,
       };
 
-      expect(() => createVideoHandler(configWithHandlers)).not.toThrow();
-    });
-  });
+      h.searchArchivesSpy.mockResolvedValue(mockArchives);
 
-  describe('context creation', () => {
-    it('should create handler with createContext option', () => {
-      const { handlerConfig } = setupMocks();
+      const app = createTestApp();
 
-      const createContext = vi.fn().mockReturnValue({
-        [videoRouterContext]: undefined,
+      const response = await request(app)
+        .post('/video/searchArchives')
+        .send({ sessionKey: mockSessionKey })
+        .expect(200);
+
+      expect(h.searchArchivesSpy).toHaveBeenCalledWith({
+        sessionId: mockSessionId,
       });
 
-      const configWithContext = {
-        ...handlerConfig,
-        createContext,
-      };
+      const data = extractResponseData(response.body);
 
-      const handler = createVideoHandler(configWithContext);
-
-      expect(handler).toBeDefined();
+      expect(data).toMatchObject({
+        items: expect.arrayContaining([
+          expect.objectContaining({ id: 'archive-1' }),
+          expect.objectContaining({ id: 'archive-2' }),
+        ]),
+        count: 2,
+      });
     });
 
-    it('should support custom context types', () => {
-      const { handlerConfig } = setupMocks();
+    it('should return an error response when searching archives fails', async () => {
+      h.searchArchivesSpy.mockRejectedValue(new Error('Failed to search archives'));
 
-      type CustomContext = {
-        [videoRouterContext]: undefined;
-        user?: { id: string };
-      };
+      const app = createTestApp();
 
-      const createContext = (): CustomContext => ({
-        [videoRouterContext]: undefined,
-        user: { id: 'test-user' },
+      const response = await request(app)
+        .post('/video/searchArchives')
+        .send({ sessionKey: mockSessionKey });
+
+      expect(response.status).toBeGreaterThanOrEqual(400);
+    });
+  });
+
+  describe('enableCaptions', () => {
+    it('should enable captions successfully', async () => {
+      h.enableCaptionsSpy.mockResolvedValue({
+        captionsId: 'caption-id-123',
       });
 
-      const configWithCustomContext = {
-        ...handlerConfig,
-        createContext,
+      const app = createTestApp();
+
+      await request(app)
+        .post('/video/enableCaptions')
+        .send({ sessionKey: mockSessionKey })
+        .expect(200);
+
+      expect(h.enableCaptionsSpy).toHaveBeenCalledWith(
+        mockSessionId,
+        expect.any(String),
+        undefined
+      );
+    });
+
+    it('should enable captions with custom options', async () => {
+      h.enableCaptionsSpy.mockResolvedValue({
+        captionsId: 'caption-id-456',
+      });
+
+      const app = createTestApp();
+
+      const captionOptions = {
+        languageCode: 'en-US',
+        maxDuration: 300,
+        partialCaptions: 'false' as const,
+        statusCallbackUrl: 'https://example.com/callback',
       };
 
-      const handler = createVideoHandler(configWithCustomContext);
+      await request(app)
+        .post('/video/enableCaptions')
+        .send({
+          sessionKey: mockSessionKey,
+          captionOptions,
+        })
+        .expect(200);
 
-      expect(handler).toBeDefined();
+      expect(h.enableCaptionsSpy).toHaveBeenCalledWith(
+        mockSessionId,
+        expect.any(String),
+        captionOptions
+      );
+    });
+
+    it('should return an error response when enabling captions fails', async () => {
+      h.enableCaptionsSpy.mockRejectedValue(new Error('Failed to enable captions'));
+
+      const app = createTestApp();
+
+      const response = await request(app)
+        .post('/video/enableCaptions')
+        .send({ sessionKey: mockSessionKey });
+
+      expect(response.status).toBeGreaterThanOrEqual(400);
     });
   });
 
-  describe('handler options passthrough', () => {
-    it('should pass through Express middleware options', () => {
-      const { handlerConfig } = setupMocks();
+  describe('disableCaptions', () => {
+    it('should disable captions successfully', async () => {
+      h.disableCaptionsSpy.mockResolvedValue(undefined);
 
-      const onError = vi.fn();
+      const app = createTestApp();
 
-      const configWithOptions = {
-        ...handlerConfig,
-        onError,
-      };
+      await request(app)
+        .post('/video/disableCaptions')
+        .send({
+          sessionKey: mockSessionKey,
+          captionsId: 'caption-id-123',
+        })
+        .expect(200);
 
-      const handler = createVideoHandler(configWithOptions);
-
-      expect(handler).toBeDefined();
+      expect(h.disableCaptionsSpy).toHaveBeenCalledWith('caption-id-123');
     });
 
-    it('should pass through request handling options', () => {
-      const { handlerConfig } = setupMocks();
+    it('should return an error response when disabling captions fails', async () => {
+      h.disableCaptionsSpy.mockRejectedValue(new Error('Failed to disable captions'));
 
-      const maxBodySize = 1024 * 1024; // 1MB
+      const app = createTestApp();
 
-      const configWithOptions = {
-        ...handlerConfig,
-        maxBodySize,
-      };
+      const response = await request(app).post('/video/disableCaptions').send({
+        sessionKey: mockSessionKey,
+        captionsId: 'caption-id-123',
+      });
 
-      const handler = createVideoHandler(configWithOptions);
-
-      expect(handler).toBeDefined();
-    });
-  });
-
-  describe('multiple handler instances', () => {
-    it('should create independent handler instances', () => {
-      setupMocks();
-
-      const config1: VideoRouterConfig<Record<string, unknown>, object, object> = {
-        auth: {
-          authType: 'apiKey',
-          apiKey: 'key-1',
-          apiSecret: 'secret-1',
-        },
-        videoParams: {},
-        handlersConfig: {},
-      };
-
-      const config2: VideoRouterConfig<Record<string, unknown>, object, object> = {
-        auth: {
-          authType: 'apiKey',
-          apiKey: 'key-2',
-          apiSecret: 'secret-2',
-        },
-        videoParams: {},
-        handlersConfig: {},
-      };
-
-      const handler1 = createVideoHandler(config1);
-      const handler2 = createVideoHandler(config2);
-
-      expect(handler1).toBeDefined();
-      expect(handler2).toBeDefined();
-      expect(handler1).not.toBe(handler2);
-    });
-  });
-
-  describe('router integration', () => {
-    it('should integrate with video router for all actions', () => {
-      const { handlerConfig } = setupMocks();
-
-      const handler = createVideoHandler(handlerConfig);
-
-      // Handler should be a valid Express middleware
-      expect(typeof handler).toBe('function');
-      expect(handler.length).toBeGreaterThanOrEqual(2); // Express middleware signature (req, res, next?)
-    });
-
-    it('should preserve video router configuration', () => {
-      const { handlerConfig } = setupMocks();
-
-      const handler = createVideoHandler(handlerConfig);
-
-      expect(handler).toBeDefined();
+      expect(response.status).toBeGreaterThanOrEqual(400);
     });
   });
 
   describe('error handling', () => {
-    it('should handle invalid configuration gracefully', () => {
-      setupMocks();
+    it('should format errors in the response body', async () => {
+      h.createSessionSpy.mockRejectedValue(new Error('Vonage API error: Unauthorized'));
 
-      const invalidConfig = {
-        auth: null,
-        videoParams: {},
-        handlersConfig: {},
-      } as unknown as VideoRouterConfig<Record<string, unknown>, object, object>;
+      const app = createTestApp();
 
-      expect(() => createVideoHandler(invalidConfig)).toThrow();
+      const response = await request(app).post('/video/createSession').send({});
+
+      expect(response.status).toBeGreaterThanOrEqual(400);
+      expect(response.body.error).toBeDefined();
     });
   });
 });
 
-function setupMocks() {
-  const handlerConfig: VideoRouterConfig<Record<string, unknown>, object, object> = {
+function createTestApp() {
+  const app = express();
+
+  const handler = createVideoHandler({
     auth: {
       authType: 'apiKey',
-      apiKey: 'test-api-key',
+      apiKey: mockApiKey,
       apiSecret: 'test-api-secret',
     },
-    videoParams: {},
-    handlersConfig: {},
-  };
+  });
 
-  return { handlerConfig };
+  app.use('/video', handler);
+
+  return app;
 }

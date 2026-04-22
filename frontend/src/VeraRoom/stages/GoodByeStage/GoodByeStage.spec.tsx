@@ -19,9 +19,7 @@ vi.mock('@components/GoodBye/GoodbyeMessage', () => ({
 }));
 
 vi.mock('@components/GoodBye/ReenterRoomButton', () => ({
-  default: ({ roomName }: { roomName: string }) => (
-    <div data-testid="reenter-room-button" data-room={roomName} />
-  ),
+  default: () => <div data-testid="reenter-room-button" />,
 }));
 
 vi.mock('@ui', async () => {
@@ -46,7 +44,7 @@ const mockUseGoodByePage = useGoodByePage as Mock;
 describe('GoodByeStage', () => {
   beforeEach(() => {
     mockUseGoodByePage.mockReturnValue({
-      roomName: 'test-room',
+      sessionKey: 'test-session-key',
       archives: [],
       header: 'You have left the meeting',
       caption: 'Thank you for joining!',
@@ -60,16 +58,15 @@ describe('GoodByeStage', () => {
     expect(message).toHaveAttribute('data-message', 'Thank you for joining!');
   });
 
-  it('renders the ReenterRoomButton with the roomName from the hook', () => {
+  it('renders the ReenterRoomButton', () => {
     renderStage();
-    const button = screen.getByTestId('reenter-room-button');
-    expect(button).toHaveAttribute('data-room', 'test-room');
+    expect(screen.getByTestId('reenter-room-button')).toBeInTheDocument();
   });
 
   it('renders the ArchiveList with archives from the hook', () => {
     const archives = [{ id: 'archive-1', status: 'available' }];
     mockUseGoodByePage.mockReturnValue({
-      roomName: 'test-room',
+      sessionKey: 'test-session-key',
       archives,
       header: 'Gone',
       caption: 'Bye',
@@ -82,7 +79,7 @@ describe('GoodByeStage', () => {
 
   it('renders the ArchiveList with "error" when archives failed to load', () => {
     mockUseGoodByePage.mockReturnValue({
-      roomName: 'test-room',
+      sessionKey: 'test-session-key',
       archives: 'error',
       header: 'Gone',
       caption: 'Bye',

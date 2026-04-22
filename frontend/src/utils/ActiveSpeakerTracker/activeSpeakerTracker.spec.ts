@@ -2,7 +2,8 @@ import throttle from 'lodash/throttle';
 import { DebouncedFunc } from 'lodash';
 import { beforeEach, describe, expect, test, vi } from 'vitest';
 import ActiveSpeakerTracker from './activeSpeakerTracker';
-import { waitForEvent } from '../async';
+// eslint-disable-next-line @nx/enforce-module-boundaries
+import { waitForEvent } from '../../../../libs/common/testNode/helpers';
 
 vi.mock('lodash/throttle');
 

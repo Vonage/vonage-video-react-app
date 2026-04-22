@@ -12,7 +12,7 @@ test('should navigate to waiting room then publish in room via room name textbox
 
   await page.locator('button:text("Join waiting room")').click();
 
-  await expect(page).toHaveURL(`${baseURL}waiting-room/some-room`);
+  await expect(page).toHaveURL(new RegExp(`${baseURL}waiting-room/.+`));
 
   await page.waitForSelector('.video__element', { state: 'visible' });
 
@@ -20,7 +20,7 @@ test('should navigate to waiting room then publish in room via room name textbox
   await page.getByLabel('Name').fill('some-user');
   await page.getByRole('button', { name: 'Join meeting' }).click();
 
-  await expect(page).toHaveURL(`${baseURL}room/some-room`);
+  await expect(page).toHaveURL(new RegExp(`${baseURL}room/.+`));
 
   await page.waitForSelector('.publisher', { state: 'visible' });
 });
@@ -30,7 +30,7 @@ test('should navigate to waiting room then publish in room via Create room butto
 }) => {
   await page.getByRole('button', { name: 'Create a new room' }).click();
 
-  await expect(page.url()).toContain('waiting-room/');
+  await expect(page).toHaveURL(new RegExp(`${baseURL}waiting-room/.+`));
 
   await page.waitForSelector('.video__element', { state: 'visible' });
 
@@ -38,7 +38,7 @@ test('should navigate to waiting room then publish in room via Create room butto
   await page.getByLabel('Name').fill('some-user');
   await page.getByRole('button', { name: 'Join meeting' }).click();
 
-  await expect(page.url()).toContain('room/');
+  await expect(page).toHaveURL(/\/room\/.+/);
 
   await page.waitForSelector('.publisher', { state: 'visible' });
 });
@@ -57,7 +57,7 @@ test('User should be able to navigate to the next page using enter key', async (
 
   await page.keyboard.press('Enter');
 
-  await expect(page).toHaveURL(`${baseURL}waiting-room/some-room`);
+  await expect(page).toHaveURL(new RegExp(`${baseURL}waiting-room/.+`));
   await page.waitForLoadState('domcontentloaded');
 
   // This is needed for the DeviceAccessAlert to hide
@@ -70,7 +70,7 @@ test('User should be able to navigate to the next page using enter key', async (
 
   await page.keyboard.press('Enter');
 
-  await expect(page).toHaveURL(`${baseURL}room/some-room`);
+  await expect(page).toHaveURL(new RegExp(`${baseURL}room/.+`));
   await page.waitForLoadState('networkidle');
 
   await page.waitForSelector('.publisher', { state: 'visible', timeout: 10000 });
