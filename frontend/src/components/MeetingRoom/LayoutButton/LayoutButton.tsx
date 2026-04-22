@@ -1,10 +1,10 @@
 import { ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
+import classNames from 'classnames';
 import useSessionContext from '../../../hooks/useSessionContext';
 import ToolbarButton from '../ToolbarButton';
 import Tooltip from '@mui/material/Tooltip';
 import VividIcon from '@components/VividIcon';
-import useTheme from '@ui/theme';
 
 export type LayoutButtonProps = {
   isScreenSharePresent: boolean;
@@ -33,7 +33,6 @@ const LayoutButton = ({
   const { layoutMode, setLayoutMode } = useSessionContext();
   const isGrid = layoutMode === 'grid';
   const isDisabled = isScreenSharePresent || isPinningPresent;
-  const theme = useTheme();
   const handleClick = () => {
     if (isDisabled) {
       return;
@@ -64,14 +63,20 @@ const LayoutButton = ({
               name="layout-2-solid"
               customSize={-5}
               data-testid="ViewSidebarIcon"
-              sx={{ color: isDisabled ? theme.colors.disabled : theme.colors.onSecondary }}
+              className={classNames({
+                'text-vera-disabled': isDisabled,
+                'text-vera-on-secondary': !isDisabled,
+              })}
             />
           ) : (
             <VividIcon
               name="apps-solid"
               customSize={-5}
               data-testid="ViewSidebarIcon"
-              sx={{ color: isDisabled ? theme.colors.disabled : theme.colors.onSecondary }}
+              className={classNames({
+                'text-vera-disabled': isDisabled,
+                'text-vera-on-secondary': !isDisabled,
+              })}
             />
           )
         }

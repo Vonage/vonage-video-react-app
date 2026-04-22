@@ -1,6 +1,5 @@
 import { ReactElement, RefObject, Dispatch, SetStateAction } from 'react';
 import { hasMediaProcessorSupport } from '@vonage/client-sdk-video';
-import useTheme from '@ui/theme';
 import InputDevices from '../InputAudioDevices';
 import OutputDevices from '../OutputAudioDevices';
 import ReduceNoiseTestSpeakers from '../ReduceNoiseTestSpeakers';
@@ -52,8 +51,6 @@ const DeviceSettingsMenu = ({
   handleClose,
   setIsOpen,
 }: DeviceSettingsMenuProps): ReactElement | false => {
-  const theme = useTheme();
-
   const isAudio = deviceType === 'audio';
   const shouldDisplayBackgroundEffects = hasMediaProcessorSupport() && env.ALLOW_BACKGROUND_EFFECTS;
 
@@ -105,9 +102,8 @@ const DeviceSettingsMenu = ({
           <Box sx={{ textAlign: 'left', fontWeight: 'normal' }}>
             <ClickAwayListener onClickAway={handleClose}>
               <Paper
+                className="bg-vera-surface! text-vera-on-surface"
                 sx={(t) => ({
-                  backgroundColor: theme.colors.surface,
-                  color: theme.colors.onSurface,
                   padding: { xs: 1, sm: 2 },
                   borderRadius: 2,
                   zIndex: 1,

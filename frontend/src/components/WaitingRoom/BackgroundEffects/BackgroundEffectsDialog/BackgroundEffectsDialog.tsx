@@ -4,7 +4,6 @@ import Dialog from '@mui/material/Dialog';
 import DialogTitle from '@mui/material/DialogTitle';
 import IconButton from '@mui/material/IconButton';
 import DialogContent from '@mui/material/DialogContent';
-import useTheme from '@ui/theme';
 import VividIcon from '@components/VividIcon';
 import Typography from '@mui/material/Typography';
 import BackgroundEffectsLayout from '../../../BackgroundEffects/BackgroundEffectsLayout';
@@ -31,17 +30,16 @@ const BackgroundEffectsDialog = ({
     setIsBackgroundEffectsOpen(false);
   };
   const { t } = useTranslation();
-  const theme = useTheme();
 
   return (
     <Dialog open={isBackgroundEffectsOpen} onClose={handleClose} maxWidth="md" fullWidth>
-      <DialogTitle sx={{ m: 0, p: 2, pl: 3, pt: 3, backgroundColor: theme.colors.surface }}>
+      <DialogTitle className="bg-vera-surface" sx={{ m: 0, p: 2, pl: 3, pt: 3 }}>
         <Typography
           component="div"
           variant="h5"
+          className="text-vera-text-secondary"
           sx={{
-            fontWeight: theme.typography.weight['body-base'].value,
-            color: theme.colors.textSecondary,
+            fontWeight: 500,
           }}
         >
           {t('backgroundEffects.title')}
@@ -49,17 +47,17 @@ const BackgroundEffectsDialog = ({
         <IconButton
           aria-label={t('button.close')}
           onClick={handleClose}
+          className="text-vera-secondary"
           sx={{
             position: 'absolute',
             right: 16,
             top: 16,
-            color: theme.colors.secondary,
           }}
         >
           <VividIcon name="close-line" customSize={-5} />
         </IconButton>
       </DialogTitle>
-      <DialogContent sx={{ backgroundColor: theme.colors.surface }}>
+      <DialogContent className="bg-vera-surface">
         <BackgroundEffectsLayout
           mode="waiting"
           isOpen={isBackgroundEffectsOpen}

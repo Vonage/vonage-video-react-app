@@ -5,7 +5,6 @@ import { isMobile } from '@web/platform';
 import ToolbarButton from '../MeetingRoom/ToolbarButton';
 import PopupDialog, { DialogTexts } from '../MeetingRoom/PopupDialog';
 import VividIcon from '@components/VividIcon';
-import useTheme from '@ui/theme';
 import { env } from '../../env';
 
 export type ScreenShareButtonProps = {
@@ -33,7 +32,6 @@ const ScreenSharingButton = ({
   isOverflowButton = false,
 }: ScreenShareButtonProps): ReactElement | false => {
   const { t } = useTranslation();
-  const theme = useTheme();
   const title = isSharingScreen ? t('screenSharing.title.stop') : t('screenSharing.title.start');
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
 
@@ -72,14 +70,14 @@ const ScreenSharingButton = ({
                 <VividIcon
                   name="screen-share-solid"
                   customSize={-5}
-                  sx={{ color: theme.colors.onSecondary }}
+                  className="text-vera-on-secondary"
                   data-testid="ScreenShareIcon"
                 />
               ) : (
                 <VividIcon
                   name="screen-share-off-solid"
                   customSize={-5}
-                  sx={{ color: theme.colors.onSecondary }}
+                  className="text-vera-on-secondary"
                   data-testid="ScreenShareIcon"
                 />
               )
@@ -88,8 +86,8 @@ const ScreenSharingButton = ({
               marginTop: isOverflowButton ? '0px' : '4px',
               marginLeft: isOverflowButton ? '12px' : '0px',
               backgroundColor: isSharingScreen
-                ? `${theme.colors.onSecondary}55`
-                : theme.colors.darkGrey,
+                ? 'color-mix(in srgb, var(--vera-on-secondary) 33%, transparent) !important'
+                : undefined,
             }}
             isOverflowButton={isOverflowButton}
           />

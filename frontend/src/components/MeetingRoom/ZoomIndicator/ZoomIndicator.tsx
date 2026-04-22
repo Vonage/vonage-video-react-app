@@ -5,7 +5,6 @@ import Tooltip from '@mui/material/Tooltip';
 import IconButton from '@mui/material/IconButton';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
-import useTheme from '@ui/theme';
 import VividIcon from '@components/VividIcon';
 
 export type ZoomIndicatorProps = {
@@ -37,7 +36,6 @@ const ZoomIndicator = ({
   const isZoomed = zoomLevel !== 1;
   const [tooltipOpen, setTooltipOpen] = useState(false);
   const { t } = useTranslation();
-  const theme = useTheme();
 
   // Check if we can zoom in/out more
   const canZoomIn = zoomLevel < MAX_ZOOM;
@@ -59,6 +57,7 @@ const ZoomIndicator = ({
 
   return (
     <Box
+      className="bg-vera-dark-grey-opacity rounded-vera-large"
       sx={{
         position: 'absolute',
         bottom: 8,
@@ -66,8 +65,6 @@ const ZoomIndicator = ({
         display: 'flex',
         alignItems: 'center',
         gap: isZoomed ? 1 : 0,
-        borderRadius: theme.shapes.borderRadiusLarge,
-        backgroundColor: theme.colors.darkGreyOpacity,
         p: 0.75,
         cursor: isZoomed ? 'default' : 'pointer',
       }}
@@ -90,17 +87,9 @@ const ZoomIndicator = ({
           }}
         >
           {isZoomed ? (
-            <VividIcon
-              customSize={-6}
-              name="zoom-out-solid"
-              sx={{ color: theme.colors.onDarkGrey }}
-            />
+            <VividIcon customSize={-6} name="zoom-out-solid" className="text-vera-on-dark-grey" />
           ) : (
-            <VividIcon
-              customSize={-6}
-              name="zoom-in-solid"
-              sx={{ color: theme.colors.onDarkGrey }}
-            />
+            <VividIcon customSize={-6} name="zoom-in-solid" className="text-vera-on-dark-grey" />
           )}
         </IconButton>
       </Tooltip>
@@ -114,13 +103,10 @@ const ZoomIndicator = ({
                 <IconButton
                   onClick={zoomOut}
                   disabled={!canZoomOut}
+                  className="text-vera-on-dark-grey disabled:text-vera-disabled"
                   data-testid="zoom-out-button"
                   sx={{
                     p: 0.5,
-                    color: theme.colors.onDarkGrey,
-                    '&:disabled': {
-                      color: theme.colors.disabled,
-                    },
                   }}
                 >
                   <VividIcon customSize={-6} name="minus-solid" />
@@ -133,7 +119,8 @@ const ZoomIndicator = ({
               <Tooltip arrow title={t('zoom.current')}>
                 <Typography
                   component="span"
-                  sx={{ mx: 1, cursor: 'default', color: theme.colors.onDarkGrey }}
+                  className="text-vera-on-dark-grey"
+                  sx={{ mx: 1, cursor: 'default' }}
                   data-testid="zoom-level"
                 >
                   {Math.round(zoomLevel * 100)}%
@@ -145,13 +132,10 @@ const ZoomIndicator = ({
                 <IconButton
                   onClick={zoomIn}
                   disabled={!canZoomIn}
+                  className="text-vera-on-dark-grey disabled:text-vera-disabled"
                   data-testid="zoom-in-button"
                   sx={{
                     p: 0.5,
-                    color: theme.colors.onDarkGrey,
-                    '&:disabled': {
-                      color: theme.colors.disabled,
-                    },
                   }}
                 >
                   <VividIcon customSize={-6} name="plus-solid" />

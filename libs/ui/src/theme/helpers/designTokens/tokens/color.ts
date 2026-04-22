@@ -1,4 +1,4 @@
-import type { ThemeTokens } from '../../../themeContext.types';
+import type { ThemeTokens } from '../../../ThemeProvider.types';
 
 /**
  * Color Tokens

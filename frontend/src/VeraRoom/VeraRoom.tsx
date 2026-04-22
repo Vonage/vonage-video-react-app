@@ -7,7 +7,6 @@ import WaitingRoomStage from './stages/WaitingRoomStage';
 import MeetingRoomStage from './stages/MeetingRoomStage';
 import GoodByeStage from './stages/GoodByeStage';
 import useLanguageSync from './hooks/useLanguageSync';
-import { ThemeProviderPropsBase } from '@ui/theme/themeContext';
 import { useMountEffect } from '@web/hooks';
 
 type BridgeProps = {
@@ -41,7 +40,7 @@ type VeraRoomProps = ComponentProps<'div'> & BridgeProps;
 const VeraRoom: FC<VeraRoomProps> = ({ className, ...props }) => {
   useLanguageSync();
 
-  const theme = useMemo((): ThemeProviderPropsBase['theme'] => {
+  const theme = useMemo(() => {
     const container = globalThis.document.createElement('div');
     return { lightMode: {}, darkMode: {}, base: { container: container } };
   }, []);

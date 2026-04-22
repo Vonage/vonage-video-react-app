@@ -2,7 +2,6 @@ import { ReactElement, useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import ClickAwayListener from '@mui/material/ClickAwayListener';
 import MenuItem from '@mui/material/MenuItem';
-import useTheme from '@ui/theme';
 import { mediaDevices$ } from '@core/stores';
 import { twMerge } from 'tailwind-merge';
 
@@ -22,7 +21,6 @@ export type SoundTestProps = {
  */
 const SoundTest = ({ children, labelClassName }: SoundTestProps): ReactElement => {
   const { t } = useTranslation();
-  const theme = useTheme();
   const [audioIsPlaying, setAudioIsPlaying] = useState(false);
   const audioElement = useMemo(() => new Audio('/sound.mp3'), []);
   const currentAudioOutputDevice = mediaDevices$.useDeviceId('audiooutput');
@@ -56,11 +54,7 @@ const SoundTest = ({ children, labelClassName }: SoundTestProps): ReactElement =
       <MenuItem
         onClick={handlePlayAudio}
         data-testid="soundTest"
-        sx={{
-          '&:hover': {
-            backgroundColor: theme.colors.background,
-          },
-        }}
+        className="hover:bg-vera-background"
       >
         {children}
         <span

@@ -5,7 +5,6 @@ import isReportIssueEnabled from '@utils/isReportIssueEnabled';
 import useToolbarButtons from '@hooks/useToolbarButtons';
 import useBackgroundPublisherContext from '@hooks/useBackgroundPublisherContext';
 import Box from '@mui/material/Box';
-import useTheme from '@ui/theme';
 import ScreenSharingButton from '../../ScreenSharingButton';
 import TimeRoomNameMeetingRoom from '../TimeRoomName';
 import ExitButton from '../ExitButton';
@@ -71,7 +70,6 @@ const Toolbar = ({
   participantCount,
   captionsState,
 }: ToolbarProps): ReactElement => {
-  const theme = useTheme();
   const { disconnect, subscriberWrappers } = useSessionContext();
   const { destroyBackgroundPublisher } = useBackgroundPublisherContext();
   const isViewingScreenShare = subscriberWrappers.some((subWrapper) => subWrapper.isScreenshare);
@@ -159,6 +157,7 @@ const Toolbar = ({
   return (
     <Box
       ref={toolbarRef}
+      className="bg-vera-dark-background"
       sx={{
         position: 'absolute',
         bottom: 0,
@@ -169,7 +168,6 @@ const Toolbar = ({
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'space-between',
-        backgroundColor: theme.colors.darkBackground,
         padding: 2,
       }}
     >

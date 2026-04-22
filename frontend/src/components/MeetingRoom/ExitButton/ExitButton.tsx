@@ -4,7 +4,6 @@ import { ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
 import ToolbarButton from '../ToolbarButton';
 import useSessionContext from '@hooks/useSessionContext';
-import useTheme from '@ui/theme';
 import VividIcon from '@components/VividIcon';
 
 export type ExitButtonProps = {
@@ -23,7 +22,6 @@ const ExitButton = ({ handleLeave }: ExitButtonProps): ReactElement => {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const { sessionKey } = useSessionContext();
-  const theme = useTheme();
 
   const isSessionReady = !!sessionKey;
 
@@ -37,18 +35,13 @@ const ExitButton = ({ handleLeave }: ExitButtonProps): ReactElement => {
       <ToolbarButton
         disabled={!isSessionReady}
         onClick={handleExit}
-        sx={{
-          backgroundColor: theme.colors.error,
-          '&:hover': {
-            backgroundColor: theme.colors.errorHover,
-          },
-        }}
+        className="bg-vera-error! hover:bg-vera-error-hover!"
         icon={
           <VividIcon
             name="end-call-solid"
             customSize={-4}
             data-testid="CallEndIcon"
-            sx={{ color: theme.colors.onSecondary }}
+            className="text-vera-on-secondary"
           />
         }
       />

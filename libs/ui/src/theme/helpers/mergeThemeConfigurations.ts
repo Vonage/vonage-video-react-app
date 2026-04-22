@@ -1,4 +1,4 @@
-import Theme, { PartialTheme } from '../themeContext.types';
+import Theme, { PartialTheme } from '../ThemeProvider.types';
 
 export function mergeThemeConfigurations({
   defaultValue,
@@ -27,9 +27,9 @@ export function mergeThemeConfigurations({
       ...defaultValue.colors,
       ...overrides.colors,
     },
-    shapes: {
-      ...defaultValue.shapes,
-      ...overrides.shapes,
+    border: {
+      ...defaultValue.border,
+      ...overrides.border,
     },
     typography: {
       typeface,

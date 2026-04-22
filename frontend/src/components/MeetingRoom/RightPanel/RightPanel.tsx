@@ -6,7 +6,6 @@ import type { RightPanelActiveTab } from '../../../hooks/useRightPanel';
 import BackgroundEffectsLayout from '../../BackgroundEffects/BackgroundEffectsLayout';
 import Box from '@mui/material/Box';
 import type { BoxProps } from '@mui/material/Box';
-import useTheme from '@ui/theme';
 import classNames from 'classnames';
 import { twMerge } from 'tailwind-merge';
 
@@ -25,13 +24,11 @@ export type RightPanelProps = {
  * @returns {ReactElement} RightPanel Component
  */
 const RightPanel = ({
-  activeTab,
   handleClose,
+  activeTab,
   className,
   ...boxProps
 }: RightPanelProps): ReactElement => {
-  const theme = useTheme();
-
   return (
     <Box
       data-testid="right-panel"
@@ -40,6 +37,7 @@ const RightPanel = ({
           'w-dvw vera-desktop:w-[350px]',
           'h-[calc(100dvh-80px)] vera-desktop:h-[calc(100dvh-96px)]',
           'mr-0 vera-desktop:mr-4 mt-0 vera-desktop:mt-4',
+          'bg-vera-surface',
           className,
         ])
       )}
@@ -49,7 +47,6 @@ const RightPanel = ({
         right: activeTab === 'closed' ? '-380px' : 0,
         display: activeTab === 'closed' ? 'none' : 'block',
         overflow: 'hidden',
-        bgcolor: theme.colors.surface,
         transition: 'right 0.3s',
         borderRadius: 2,
       }}

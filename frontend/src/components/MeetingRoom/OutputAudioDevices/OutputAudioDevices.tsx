@@ -1,6 +1,7 @@
 import { ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
 import type { MediaDeviceInfoJSON } from '@web/types';
+import classNames from 'classnames';
 import DropdownSeparator from '../DropdownSeparator';
 import Box from '@mui/material/Box';
 import MenuList from '@mui/material/MenuList';
@@ -9,7 +10,6 @@ import VividIcon from '@components/VividIcon';
 import { useDistinctLabelMediaDevices } from '@ui/hooks';
 import { isSinkIdSupported } from '@web/platform';
 import mediaDevices$ from '@core/stores/devices';
-import useTheme from '@ui/theme';
 import { Tooltip } from '@mui/material';
 import { env } from '../../../env';
 
@@ -27,8 +27,6 @@ export type OutputAudioDevicesProps = {
  */
 const OutputAudioDevices = ({ handleToggle }: OutputAudioDevicesProps): ReactElement | false => {
   const { t } = useTranslation();
-  const theme = useTheme();
-
   const currentAudioOutputId = mediaDevices$.useDeviceId('audiooutput');
 
   const availableDevices = useDistinctLabelMediaDevices('audiooutput', (devices) =>
@@ -55,13 +53,13 @@ const OutputAudioDevices = ({ handleToggle }: OutputAudioDevicesProps): ReactEle
       <>
         <DropdownSeparator />
         <Box
+          className="text-vera-tertiary"
           sx={{
             display: 'flex',
             alignItems: 'center',
             ml: 2,
             mt: 2,
             mb: 0.5,
-            color: theme.colors.tertiary,
           }}
         >
           <VividIcon name="audio-mid-line" customSize={-5} />
@@ -81,24 +79,18 @@ const OutputAudioDevices = ({ handleToggle }: OutputAudioDevicesProps): ReactEle
                 key={device.deviceId}
                 selected={isSelected}
                 onClick={() => handleChangeAudioOutput(device.deviceId)}
-                sx={{
-                  backgroundColor: 'transparent',
-                  '&.Mui-selected': {
-                    backgroundColor: 'transparent',
-                    color: theme.colors.onBackground,
-                  },
-                  '&:hover': {
-                    backgroundColor: theme.colors.background,
-                  },
-                }}
+                className="[&.Mui-selected]:bg-transparent [&.Mui-selected]:text-vera-on-background hover:bg-vera-background"
               >
                 <Box
                   key={`${device.deviceId}-input-device`}
+                  className={classNames({
+                    'text-vera-text-primary': isSelected,
+                    'text-vera-text-secondary': !isSelected,
+                  })}
                   sx={{
                     display: 'flex',
                     mb: 0.5,
                     overflow: 'hidden',
-                    color: isSelected ? theme.colors.textPrimary : theme.colors.textSecondary,
                   }}
                 >
                   {isSelected ? (
@@ -106,9 +98,10 @@ const OutputAudioDevices = ({ handleToggle }: OutputAudioDevicesProps): ReactEle
                       <VividIcon
                         name="check-line"
                         customSize={-6}
-                        sx={{
-                          color: isSelected ? theme.colors.textPrimary : theme.colors.textSecondary,
-                        }}
+                        className={classNames({
+                          'text-vera-text-primary': isSelected,
+                          'text-vera-text-secondary': !isSelected,
+                        })}
                       />
                     </Box>
                   ) : (

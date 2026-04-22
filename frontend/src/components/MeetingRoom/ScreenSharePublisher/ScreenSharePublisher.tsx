@@ -3,7 +3,6 @@ import { Box } from 'opentok-layout-js';
 import { Publisher } from '@vonage/client-sdk-video';
 import VideoTile from '../VideoTile';
 import ScreenShareNameDisplay from '../../ScreenShareNameDisplay';
-import useTheme from '@ui/theme';
 import { useTranslation } from 'react-i18next';
 
 export type ScreenSharePublisherProps = {
@@ -29,20 +28,19 @@ const ScreenSharePublisher = ({
   publisher,
   isEntireScreen,
 }: ScreenSharePublisherProps): ReactElement | undefined => {
-  const theme = useTheme();
   const containerRef = useRef<HTMLDivElement>(null);
   const { t } = useTranslation();
   useEffect(() => {
     if (element && containerRef.current) {
+      element.classList.add('rounded-vera-large');
       Object.assign(element.style, {
         width: '100%',
         position: 'absolute',
-        borderRadius: theme.shapes.borderRadiusLarge,
         objectFit: 'contain',
       });
       containerRef.current.appendChild(element);
     }
-  }, [element, theme.shapes.borderRadiusLarge]);
+  }, [element]);
   const streamName = publisher?.stream?.name ?? '';
   return (
     box && (

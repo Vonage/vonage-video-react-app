@@ -6,7 +6,6 @@ import ListItem from '@mui/material/ListItem';
 import ListItemText from '@mui/material/ListItemText';
 import Avatar from '@mui/material/Avatar';
 import Typography from '@mui/material/Typography';
-import useTheme from '@ui/theme';
 
 export type ChatMessageProps = {
   avatarColor: string;
@@ -36,7 +35,6 @@ const ChatMessage = ({
   timestamp,
 }: ChatMessageProps): ReactElement => {
   const { i18n } = useTranslation();
-  const theme = useTheme();
 
   return (
     <ListItem alignItems="flex-start" data-testid="chat-message">
@@ -58,7 +56,8 @@ const ChatMessage = ({
             <Typography
               component="span"
               variant="body2"
-              sx={{ color: theme.colors.textSecondary, display: 'inline' }}
+              className="text-vera-text-secondary"
+              sx={{ display: 'inline' }}
               data-testid="chat-msg-participant-name"
             >
               {name}
@@ -66,7 +65,8 @@ const ChatMessage = ({
             <Typography
               component="span"
               variant="body2"
-              sx={{ paddingLeft: '8px', color: theme.colors.textSecondary, display: 'inline' }}
+              className="text-vera-text-secondary"
+              sx={{ paddingLeft: '8px', display: 'inline' }}
               data-testid="chat-msg-timestamp"
             >
               {getFormattedTime(i18n.language, timestamp)}
@@ -77,7 +77,8 @@ const ChatMessage = ({
           <Typography
             variant="body2"
             component="span"
-            sx={{ color: theme.colors.textSecondary, overflowWrap: 'break-word' }}
+            className="text-vera-text-secondary"
+            sx={{ overflowWrap: 'break-word' }}
             data-testid="chat-msg-content"
           >
             <FormattedMessageBody message={message} />

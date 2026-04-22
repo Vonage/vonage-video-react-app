@@ -6,7 +6,6 @@ import Popper from '@mui/material/Popper';
 import ClickAwayListener from '@mui/material/ClickAwayListener';
 import Paper from '@mui/material/Paper';
 import VividIcon from '@components/VividIcon';
-import useTheme from '@ui/theme';
 
 export type ParticipantListItemMenuProps = {
   participantName: string;
@@ -25,7 +24,6 @@ const ParticipantListItemMenu = ({
   participantName,
   subscriberWrapper,
 }: ParticipantListItemMenuProps): ReactElement => {
-  const theme = useTheme();
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const isOpen = !!anchorEl;
   const handleClick = (event: MouseEvent<HTMLButtonElement>) => {
@@ -41,7 +39,7 @@ const ParticipantListItemMenu = ({
         <VividIcon
           name="more-vertical-solid"
           customSize={-6}
-          color={theme.colors.tertiary}
+          className="text-vera-tertiary"
           data-testid="MoreVertIcon"
         />
       </IconButton>

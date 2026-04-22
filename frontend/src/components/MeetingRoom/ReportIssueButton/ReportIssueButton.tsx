@@ -1,8 +1,8 @@
 import Tooltip from '@mui/material/Tooltip';
 import { ReactElement, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
+import classNames from 'classnames';
 import ToolbarButton from '../ToolbarButton';
-import useTheme from '@ui/theme';
 import VividIcon from '@components/VividIcon';
 
 export type ReportIssueButtonProps = {
@@ -27,7 +27,6 @@ const ReportIssueButton = ({
   isOverflowButton = false,
 }: ReportIssueButtonProps): ReactElement => {
   const { t } = useTranslation();
-  const theme = useTheme();
   const anchorRef = useRef<HTMLButtonElement>(null);
 
   return (
@@ -46,7 +45,10 @@ const ReportIssueButton = ({
           <VividIcon
             customSize={-5}
             name="feedback-solid"
-            sx={{ color: isOpen ? theme.colors.secondary : theme.colors.onSecondary }}
+            className={classNames({
+              'text-vera-secondary': isOpen,
+              'text-vera-on-secondary': !isOpen,
+            })}
           />
         }
         ref={anchorRef}

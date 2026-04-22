@@ -2,7 +2,6 @@ import { useRef, useState, useEffect, ReactElement } from 'react';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { useTranslation } from 'react-i18next';
 import CircularProgress from '@mui/material/CircularProgress';
-import useTheme from '@ui/theme';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import waitUntilPlaying from '../../../utils/waitUntilPlaying';
@@ -34,20 +33,15 @@ const BackgroundVideoContainer = ({
   const isMDViewport = useMediaQuery(`(max-width:768px)`);
   const isTabletViewport = useIsTabletViewport();
   const isLGViewport = useMediaQuery(`(max-width:1199px)`);
-  const theme = useTheme();
 
   useEffect(() => {
     if (publisherVideoElement && containerRef.current) {
       containerRef.current.appendChild(publisherVideoElement);
       const myVideoElement = publisherVideoElement as HTMLElement;
-      myVideoElement.classList.add('video__element');
+      myVideoElement.classList.add('video__element', 'rounded-vera-large');
 
       // eslint-disable-next-line react-hooks/immutability
       myVideoElement.title = 'publisher-preview';
-
-      // eslint-disable-next-line react-hooks/immutability
-      myVideoElement.style.borderRadius = theme.shapes.borderRadiusLarge;
-      myVideoElement.style.maxHeight = isTabletViewport ? '80%' : '450px';
 
       let width = '100%';
       if (
@@ -57,14 +51,17 @@ const BackgroundVideoContainer = ({
       ) {
         width = '95%';
       }
-      myVideoElement.style.width = width;
 
-      myVideoElement.style.marginLeft = 'auto';
-      myVideoElement.style.marginRight = 'auto';
-      myVideoElement.style.marginBottom = '1px';
-      myVideoElement.style.transform = 'scaleX(-1)';
-      myVideoElement.style.objectFit = 'contain';
-      myVideoElement.style.aspectRatio = '16 / 9';
+      Object.assign(myVideoElement.style, {
+        maxHeight: isTabletViewport ? '80%' : '450px',
+        width,
+        marginLeft: 'auto',
+        marginRight: 'auto',
+        marginBottom: '1px',
+        transform: 'scaleX(-1)',
+        objectFit: 'contain',
+        aspectRatio: '16 / 9',
+      });
 
       void waitUntilPlaying(publisherVideoElement).then(() => {
         setIsVideoLoading(false);
@@ -78,7 +75,6 @@ const BackgroundVideoContainer = ({
     isFixedWidth,
     isParentVideoEnabled,
     isLGViewport,
-    theme.shapes.borderRadiusLarge,
   ]);
 
   let containerWidth = '100%';
@@ -92,22 +88,22 @@ const BackgroundVideoContainer = ({
     <Box sx={{ mt: 1, width: containerWidth }} data-testid="background-video-container">
       {!isParentVideoEnabled && (
         <Box
+          className="bg-vera-secondary"
           sx={{
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
             maxHeight: isTabletViewport ? '80%' : '450px',
-            background: theme.colors.secondary,
-            borderRadius: theme.shapes.borderRadiusMedium,
+            borderRadius: '8px',
             aspectRatio: '16 / 9',
             padding: '1rem',
           }}
         >
           <Typography
             variant="h6"
+            className="text-vera-on-secondary"
             sx={{
-              fontWeight: theme.typography.weight['body-base'].value,
-              color: theme.colors.onSecondary,
+              fontWeight: 500,
             }}
           >
             {t('backgroundEffects.video.disabled')}

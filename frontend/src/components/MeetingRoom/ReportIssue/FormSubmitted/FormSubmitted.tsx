@@ -4,7 +4,6 @@ import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import Link from '@mui/material/Link';
-import useTheme from '@ui/theme';
 
 export type TicketResponseType = {
   message: string;
@@ -31,7 +30,6 @@ const FormSubmitted = ({
   ticketResponse,
 }: FormSubmittedProps): ReactElement => {
   const { t } = useTranslation();
-  const theme = useTheme();
 
   return (
     <>
@@ -71,8 +69,8 @@ const FormSubmitted = ({
                 href={ticketResponse.ticketUrl}
                 target="_blank"
                 rel="noreferrer"
+                className="text-vera-information"
                 sx={{
-                  color: theme.colors.information,
                   textDecoration: 'none',
                   '&:hover': {
                     textDecoration: 'underline',
@@ -86,7 +84,7 @@ const FormSubmitted = ({
             <Typography
               variant="body1"
               data-testid="error-text"
-              sx={{ color: theme.colors.textSecondary }}
+              className="text-vera-text-secondary"
             >
               {t('feedbackForm.submitted.error')}
             </Typography>

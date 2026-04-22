@@ -2,7 +2,6 @@ import React from 'react';
 import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
 import type { BoxProps } from '@mui/material/Box';
-import useTheme from '../theme';
 import { isFunction } from '@common/assertions';
 
 type WithChildren = { children: React.ReactNode };
@@ -17,8 +16,6 @@ export enum PageLayoutRegions {
 }
 
 const PageLayout = ({ children, sx, ...props }: PageLayoutProps): React.ReactNode => {
-  const theme = useTheme();
-
   const childrenArray = React.Children.toArray(children);
 
   const banner = pickChild(childrenArray, PageLayoutRegions.Banner);
@@ -51,12 +48,12 @@ const PageLayout = ({ children, sx, ...props }: PageLayoutProps): React.ReactNod
       >
         {left && (
           <Box
+            className="bg-vera-surface"
             sx={{
               flex: { xs: 0, md: 1 },
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              bgcolor: { xs: theme.colors.surface, md: theme.colors.surface },
               overflow: 'hidden',
               px: { xs: 0, sm: 5 },
             }}
@@ -67,12 +64,12 @@ const PageLayout = ({ children, sx, ...props }: PageLayoutProps): React.ReactNod
 
         {right && (
           <Box
+            className="bg-vera-surface vera-desktop:bg-vera-background"
             sx={{
               flex: { xs: 0, md: 1 },
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              bgcolor: { xs: theme.colors.surface, md: theme.colors.background },
               py: 1,
               px: { xs: 3, sm: 5 },
             }}

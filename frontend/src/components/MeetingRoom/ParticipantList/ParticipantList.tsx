@@ -15,9 +15,8 @@ import Fade from '@mui/material/Fade';
 import List from '@mui/material/List';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
-import useTheme from '@ui/theme';
-import Stack from '@mui/material/Stack';
 import VividIcon from '@components/VividIcon';
+import Stack from '@mui/material/Stack';
 import TextField from '@mui/material/TextField';
 import InputAdornment from '@mui/material/InputAdornment';
 
@@ -42,7 +41,6 @@ export type ParticipantListProps = {
  */
 const ParticipantList = ({ handleClose, isOpen }: ParticipantListProps): ReactElement | false => {
   const { t } = useTranslation();
-  const theme = useTheme();
   const { subscriberWrappers } = useSessionContext();
   const publisherAudio = useAudioLevels();
   const [isCopied, setIsCopied] = useState<boolean>(false);
@@ -100,7 +98,7 @@ const ParticipantList = ({ handleClose, isOpen }: ParticipantListProps): ReactEl
             pl: 3,
           }}
         >
-          <Stack sx={{ textAlign: 'left', color: theme.colors.textSecondary }}>
+          <Stack className="text-vera-text-secondary" sx={{ textAlign: 'left' }}>
             <Typography variant="subtitle2">{t('chat.meetingUrl')}</Typography>
             <Typography
               variant="body2"
@@ -118,7 +116,8 @@ const ParticipantList = ({ handleClose, isOpen }: ParticipantListProps): ReactEl
           </Stack>
           <IconButton
             size="large"
-            sx={{ color: theme.colors.tertiary, mr: 0.75 }}
+            className="text-vera-tertiary"
+            sx={{ mr: 0.75 }}
             onClick={copyUrl}
             disabled={isCopied}
           >
@@ -129,11 +128,7 @@ const ParticipantList = ({ handleClose, isOpen }: ParticipantListProps): ReactEl
               TransitionProps={{ timeout: 500 }}
             >
               {isCopied ? (
-                <VividIcon
-                  name="check-sent-line"
-                  customSize={-4}
-                  sx={{ color: theme.colors.success }}
-                />
+                <VividIcon name="check-sent-line" customSize={-4} className="text-vera-success" />
               ) : (
                 <VividIcon name="copy-line" customSize={-4} />
               )}

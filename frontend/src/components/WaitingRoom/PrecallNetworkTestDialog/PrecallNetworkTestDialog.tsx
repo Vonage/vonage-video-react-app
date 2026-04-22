@@ -4,7 +4,6 @@ import Dialog from '@mui/material/Dialog';
 import DialogTitle from '@mui/material/DialogTitle';
 import IconButton from '@mui/material/IconButton';
 import DialogContent from '@mui/material/DialogContent';
-import useTheme from '@ui/theme';
 import VividIcon from '@components/VividIcon';
 import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
@@ -35,7 +34,6 @@ const PrecallNetworkTestDialog = ({
   setIsPrecallNetworkTestOpen,
 }: PrecallNetworkTestDialogProps): ReactElement => {
   const { t } = useTranslation();
-  const theme = useTheme();
   const { sessionKey, sessionKeyStatus } = useSessionKeyParam();
   const { roomName } = useDecodedSessionKey({ sessionKey, sessionKeyStatus });
 
@@ -132,11 +130,11 @@ const PrecallNetworkTestDialog = ({
   return (
     <Dialog open={isPrecallNetworkTestOpen} onClose={handleClose} maxWidth="md" fullWidth>
       <DialogTitle
+        className="bg-vera-surface"
         sx={{
           m: 0,
           p: 3,
           pb: 1,
-          backgroundColor: theme.colors.surface,
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-between',
@@ -145,9 +143,9 @@ const PrecallNetworkTestDialog = ({
         <Typography
           component="span"
           variant="h5"
+          className="text-vera-text-secondary"
           sx={{
-            fontWeight: theme.typography.weight['body-base'].value,
-            color: theme.colors.textSecondary,
+            fontWeight: 500,
           }}
         >
           {t('waitingRoom.precallNetworkTest.title')}
@@ -155,20 +153,18 @@ const PrecallNetworkTestDialog = ({
         <IconButton
           aria-label={t('button.close')}
           onClick={handleClose}
-          sx={{
-            color: theme.colors.secondary,
-          }}
+          className="text-vera-secondary"
         >
           <VividIcon name="close-line" customSize={-5} />
         </IconButton>
       </DialogTitle>
-      <DialogContent sx={{ backgroundColor: theme.colors.surface }}>
+      <DialogContent className="bg-vera-surface">
         <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
           <Typography
             variant="body1"
+            className="text-vera-text-secondary"
             sx={{
-              color: theme.colors.textSecondary,
-              fontWeight: theme.typography.weight['body-base'].value,
+              fontWeight: 500,
               textAlign: 'left',
             }}
           >
@@ -210,22 +206,10 @@ const PrecallNetworkTestDialog = ({
                   minHeight: 100,
                 }}
               >
-                <Typography
-                  variant="h6"
-                  sx={{
-                    color: theme.colors.textSecondary,
-                    textAlign: 'center',
-                  }}
-                >
+                <Typography variant="h6" className="text-vera-text-secondary text-center">
                   {t('waitingRoom.precallNetworkTest.stoppedTitle')}
                 </Typography>
-                <Typography
-                  variant="body2"
-                  sx={{
-                    color: theme.colors.textSecondary,
-                    textAlign: 'center',
-                  }}
-                >
+                <Typography variant="body2" className="text-vera-text-secondary text-center">
                   {t('waitingRoom.precallNetworkTest.stoppedMessage')}
                 </Typography>
               </Box>
@@ -254,8 +238,8 @@ const PrecallNetworkTestDialog = ({
                 >
                   <Typography
                     variant="h6"
+                    className="text-vera-error"
                     sx={{
-                      color: theme.colors.error,
                       textAlign: 'center',
                       display: 'flex',
                       alignItems: 'center',
@@ -265,16 +249,11 @@ const PrecallNetworkTestDialog = ({
                     <VividIcon
                       name="close-circle-line"
                       customSize={0}
-                      sx={{
-                        color: theme.colors.error,
-                      }}
+                      className="text-vera-error"
                     />
                     {t('waitingRoom.precallNetworkTest.error')}
                   </Typography>
-                  <Typography
-                    variant="body2"
-                    sx={{ color: theme.colors.textSecondary, textAlign: 'center' }}
-                  >
+                  <Typography variant="body2" className="text-vera-text-secondary text-center">
                     {state.error.message}
                   </Typography>
                 </Box>

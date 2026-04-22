@@ -1,6 +1,6 @@
 import { ReactElement } from 'react';
+import classNames from 'classnames';
 import Box from '@mui/material/Box';
-import useTheme from '@ui/theme';
 import EffectOptionButtons from '../EffectOptionButtons/EffectOptionButtons';
 import BackgroundGallery from '../BackgroundGallery/BackgroundGallery';
 import { DEFAULT_SELECTABLE_OPTION_WIDTH } from '@utils/constants';
@@ -19,8 +19,6 @@ type BackgroundEffectOptionsProps = {
  * @returns {ReactElement} The background effect tabs component.
  */
 const BackgroundEffectOptions = ({ mode }: BackgroundEffectOptionsProps): ReactElement => {
-  const theme = useTheme();
-
   return (
     <Box
       sx={{
@@ -34,12 +32,11 @@ const BackgroundEffectOptions = ({ mode }: BackgroundEffectOptionsProps): ReactE
       }}
     >
       <Box
+        className="rounded-vera-large bg-vera-surface"
         sx={{
           display: 'flex',
           maxHeight: '100%',
           overflow: 'hidden',
-          borderRadius: theme.shapes.borderRadiusLarge,
-          backgroundColor: theme.colors.surface,
           justifyContent: 'center',
           flex: 1,
           minWidth: 0,
@@ -49,11 +46,10 @@ const BackgroundEffectOptions = ({ mode }: BackgroundEffectOptionsProps): ReactE
           display="grid"
           gridTemplateColumns={`repeat(auto-fill, minmax(${DEFAULT_SELECTABLE_OPTION_WIDTH}px, 1fr))`}
           gap={0.5}
-          className={
-            mode === 'meeting'
-              ? 'choose-background-effect-grid'
-              : 'choose-background-effect-grid-waiting'
-          }
+          className={classNames({
+            'choose-background-effect-grid': mode === 'meeting',
+            'choose-background-effect-grid-waiting': mode !== 'meeting',
+          })}
         >
           <EffectOptionButtons />
           <BackgroundGallery />

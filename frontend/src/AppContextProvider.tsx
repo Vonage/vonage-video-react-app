@@ -1,7 +1,6 @@
 import React, { type PropsWithChildren } from 'react';
 import UserProvider from '@Context/user';
-import { ThemeProvider } from '@ui/theme';
-import { ThemeProviderPropsBase } from '@ui/theme/themeContext';
+import { ThemeProvider, type ThemeProviderPropsBase } from '@ui/theme';
 
 type AppContextProviderProps = PropsWithChildren<ThemeProviderPropsBase>;
 

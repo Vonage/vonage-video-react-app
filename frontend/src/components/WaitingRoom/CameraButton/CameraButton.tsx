@@ -1,9 +1,9 @@
 import { ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
+import classNames from 'classnames';
 import usePreviewPublisherContext from '@hooks/usePreviewPublisherContext';
 import useBackgroundPublisherContext from '@hooks/useBackgroundPublisherContext';
 import { VIDEO_CONTAINER_BUTTON_SIZE_WR } from '@utils/constants';
-import useTheme from '@ui/theme';
 import Tooltip from '@mui/material/Tooltip';
 import Box from '@mui/material/Box';
 import VividIcon from '@components/VividIcon';
@@ -20,7 +20,6 @@ const CameraButton = (): ReactElement | false => {
   const { t } = useTranslation();
   const { isVideoEnabled, toggleVideo } = usePreviewPublisherContext();
   const { toggleVideo: toggleBackgroundVideoPublisher } = useBackgroundPublisherContext();
-  const theme = useTheme();
 
   const title = isVideoEnabled
     ? t('devices.video.camera.state.off')
@@ -35,6 +34,10 @@ const CameraButton = (): ReactElement | false => {
     env.ALLOW_CAMERA_CONTROL && (
       <Box
         data-testid="camera-button-wrapper"
+        className={classNames({
+          'border border-vera-on-secondary': isVideoEnabled,
+          'border-none': !isVideoEnabled,
+        })}
         sx={{
           display: 'flex',
           position: 'relative',
@@ -43,34 +46,30 @@ const CameraButton = (): ReactElement | false => {
           width: `${VIDEO_CONTAINER_BUTTON_SIZE_WR}px`,
           height: `${VIDEO_CONTAINER_BUTTON_SIZE_WR}px`,
           borderRadius: '50%',
-          border: isVideoEnabled ? `1px solid ${theme.colors.onSecondary}` : 'none',
           overflow: 'hidden',
         }}
       >
         <Tooltip arrow title={title} aria-label={t('devices.video.camera.ariaLabel')}>
           <VideoContainerButton
             onClick={handleToggleVideo}
+            className={classNames(
+              'hover:bg-[color-mix(in_srgb,var(--vera-on-secondary)_60%,transparent)]!',
+              {
+                'bg-vera-alert-background! hover:bg-vera-alert-background-hover!': !isVideoEnabled,
+              }
+            )}
             sx={{
-              backgroundColor: isVideoEnabled ? '' : theme.colors.alertBackground,
               '&:hover': {
                 backgroundColor: isVideoEnabled
-                  ? `${theme.colors.onSecondary}99`
-                  : `${theme.colors.alertBackgroundHover}`,
+                  ? 'color-mix(in srgb, var(--vera-on-secondary) 60%, transparent)'
+                  : undefined,
               },
             }}
             icon={
               isVideoEnabled ? (
-                <VividIcon
-                  name="video-line"
-                  customSize={-5}
-                  sx={{ color: theme.colors.onSecondary }}
-                />
+                <VividIcon name="video-line" customSize={-5} className="text-vera-on-secondary" />
               ) : (
-                <VividIcon
-                  name="video-off-line"
-                  customSize={-5}
-                  sx={{ color: theme.colors.alertText }}
-                />
+                <VividIcon name="video-off-line" customSize={-5} className="text-vera-alert-text" />
               )
             }
           />

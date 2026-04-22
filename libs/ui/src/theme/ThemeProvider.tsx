@@ -1,16 +1,14 @@
-import { ThemeProvider as ThemeProviderBase, CssBaseline } from '@mui/material';
+import { ThemeProvider as ThemeProviderBase } from '@mui/material';
 import React, { PropsWithChildren, useMemo, useState } from 'react';
 import getTokensByMode from './helpers/getTokensByMode';
 import isDarkMode from './helpers/isDarkMode';
 import useSynchronizeThemeAndMedia from './hooks/useSynchronizeThemeAndMedia/useSynchronizeThemeAndMedia';
 import getMuiCustomTheme, { GetMuiCustomThemeProps } from './helpers/getMuiCustomTheme';
-import Theme, { PartialTheme } from './themeContext.types';
+import Theme, { PartialTheme } from './ThemeProvider.types';
 import { mergeThemeConfigurations } from './helpers/mergeThemeConfigurations';
 
 const defaultLightValue: Theme = getTokensByMode('light');
 const defaultDarkValue: Theme = getTokensByMode('dark');
-
-const themeContext = React.createContext(defaultLightValue);
 
 export type ThemeProviderPropsBase = {
   theme?: {
@@ -50,12 +48,7 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children, theme })
 
   useSynchronizeThemeAndMedia({ setTokens });
 
-  return (
-    <themeContext.Provider value={tokens}>
-      <CssBaseline />
-      <ThemeProviderBase theme={muiTheme}>{children}</ThemeProviderBase>
-    </themeContext.Provider>
-  );
+  return <ThemeProviderBase theme={muiTheme}>{children}</ThemeProviderBase>;
 };
 
-export default themeContext;
+export default ThemeProvider;

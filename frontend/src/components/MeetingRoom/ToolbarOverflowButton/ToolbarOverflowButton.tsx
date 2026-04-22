@@ -1,8 +1,8 @@
 import { Dispatch, ReactElement, useState, SetStateAction } from 'react';
+import classNames from 'classnames';
 import Tooltip from '@mui/material/Tooltip';
 import VividIcon from '@components/VividIcon';
 import { useTranslation } from 'react-i18next';
-import useTheme from '@ui/theme';
 import ToolbarButton from '../ToolbarButton';
 import ToolbarOverflowMenu from '../ToolbarOverflowMenu';
 import UnreadMessagesBadge from '../UnreadMessagesBadge';
@@ -39,7 +39,6 @@ const ToolbarOverflowButton = ({
   captionsState,
 }: ToolbarOverflowButtonProps): ReactElement => {
   const { t } = useTranslation();
-  const theme = useTheme();
   const [isToolbarOverflowMenuOpen, setIsToolbarOverflowMenuOpen] = useState<boolean>(false);
   const [openEmojiGridMobile, setOpenEmojiGridMobile] = useState<boolean>(true);
 
@@ -70,9 +69,10 @@ const ToolbarOverflowButton = ({
                 name="more-vertical-solid"
                 customSize={-5}
                 data-testid="MoreVertIcon"
-                sx={{
-                  color: isToolbarOverflowMenuOpen ? theme.colors.onSurface : theme.colors.surface,
-                }}
+                className={classNames({
+                  'text-vera-on-surface': isToolbarOverflowMenuOpen,
+                  'text-vera-surface': !isToolbarOverflowMenuOpen,
+                })}
               />
             }
             sx={{

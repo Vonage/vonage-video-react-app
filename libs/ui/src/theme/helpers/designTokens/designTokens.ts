@@ -1,11 +1,11 @@
 import typography from './tokens/typography';
 import color from './tokens/color';
-import shape from './tokens/shape';
+import border from './tokens/border';
 
 const designTokens = {
   typography,
   color,
-  shape,
+  border,
 };
 
 export default designTokens;
