@@ -2,7 +2,6 @@ import { ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
-import useTheme from '@ui/theme';
 
 /**
  * UnsupportedBrowserMessage Component
@@ -12,7 +11,6 @@ import useTheme from '@ui/theme';
  */
 const UnsupportedBrowserMessage = (): ReactElement => {
   const { t } = useTranslation();
-  const theme = useTheme();
 
   return (
     <Box
@@ -26,17 +24,17 @@ const UnsupportedBrowserMessage = (): ReactElement => {
     >
       <Typography
         variant="h2"
+        className="text-vera-text-secondary"
         sx={{
           pb: { xs: 0, md: 5 },
-          color: theme.colors.textSecondary,
         }}
       >
         {t('unsupportedBrowser.header')}
       </Typography>
       <Typography
         variant="h4"
+        className="text-vera-text-tertiary"
         sx={{
-          color: theme.colors.textTertiary,
           display: {
             xs: 'none',
             sm: 'block',

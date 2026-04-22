@@ -4,7 +4,6 @@ import usePreviewPublisherContext from '@hooks/usePreviewPublisherContext';
 import useIsSmallViewport from '@hooks/useIsSmallViewport';
 import Box from '@mui/material/Box';
 import type { SxProps } from '@mui/material';
-import useTheme from '@ui/theme';
 import VividIcon from '@components/VividIcon';
 import ButtonBase from '@mui/material/ButtonBase';
 import MenuDevicesWaitingRoom from '../MenuDevices';
@@ -77,16 +76,10 @@ const ControlPanel = ({
 
   const { changeAudioSource, changeVideoSource } = usePreviewPublisherContext();
 
-  const theme = useTheme();
-
   const buttonSx: SxProps = {
     display: 'flex',
     alignItems: 'center',
     gap: 1.5,
-    '&:hover': {
-      backgroundColor: theme.colors.background,
-    },
-    color: theme.colors.textSecondary,
   };
 
   return (
@@ -108,6 +101,7 @@ const ControlPanel = ({
         }}
       >
         <ButtonBase
+          className="text-vera-text-secondary hover:bg-vera-background"
           sx={buttonSx}
           aria-controls={openAudioInput ? 'basic-menu' : undefined}
           aria-haspopup="true"
@@ -134,6 +128,7 @@ const ControlPanel = ({
 
         <ButtonBase
           onClick={handleVideoInputOpen}
+          className="text-vera-text-secondary hover:bg-vera-background"
           sx={buttonSx}
           aria-controls={openVideoInput ? 'basic-menu' : undefined}
           aria-haspopup="true"
@@ -157,6 +152,7 @@ const ControlPanel = ({
 
         <ButtonBase
           onClick={handleAudioOutputOpen}
+          className="text-vera-text-secondary hover:bg-vera-background"
           sx={buttonSx}
           aria-controls={openAudioOutput ? 'basic-menu' : undefined}
           aria-haspopup="true"
@@ -180,7 +176,11 @@ const ControlPanel = ({
           }}
         />
 
-        <ButtonBase onClick={handleOpenMoreOptions} sx={buttonSx}>
+        <ButtonBase
+          onClick={handleOpenMoreOptions}
+          className="text-vera-text-secondary hover:bg-vera-background"
+          sx={buttonSx}
+        >
           <VividIcon name="more-vertical-solid" customSize={-5} />
         </ButtonBase>
         <MenuMoreOptions

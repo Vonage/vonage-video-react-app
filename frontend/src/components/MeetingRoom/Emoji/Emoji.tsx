@@ -3,7 +3,6 @@ import { EmojiWrapper } from '../../../hooks/useEmoji';
 import { EMOJI_DISPLAY_DURATION } from '../../../utils/constants';
 import Chip from '@mui/material/Chip';
 import Box from '@mui/material/Box';
-import useTheme from '@ui/theme';
 import useIsSmallViewport from '@hooks/useIsSmallViewport';
 
 export type EmojiProps = {
@@ -18,7 +17,6 @@ export type EmojiProps = {
  * @returns {ReactElement} - The Emoji Component.
  */
 const Emoji = ({ emojiWrapper }: EmojiProps): ReactElement => {
-  const theme = useTheme();
   const isSmallViewport = useIsSmallViewport();
   const { emoji, name } = emojiWrapper;
   const style: CSSProperties = {
@@ -40,25 +38,20 @@ const Emoji = ({ emojiWrapper }: EmojiProps): ReactElement => {
         ml: isSmallViewport ? 5 : '15%',
         display: 'flex',
         flexDirection: 'column',
-        fontSize: isSmallViewport
-          ? theme.typography.typeScale.mobile['subtitle'].fontSize.value
-          : theme.typography.typeScale.desktop['subtitle'].fontSize.value,
+        fontSize: isSmallViewport ? '1.875rem' : '3.25rem',
       }}
     >
       {emoji}
       <Chip
         label={name}
         size="small"
+        className="text-vera-on-dark-grey bg-vera-dark-grey"
         sx={{
           mt: isSmallViewport ? 0.5 : 2,
-          color: theme.colors.onDarkGrey,
-          backgroundColor: theme.colors.darkGrey,
           overflow: 'hidden',
           textOverflow: 'ellipsis',
           whiteSpace: 'nowrap',
-          fontSize: isSmallViewport
-            ? theme.typography.typeScale.mobile['body-base'].fontSize.value
-            : theme.typography.typeScale.desktop['body-base'].fontSize.value,
+          fontSize: '0.875rem',
         }}
       />
     </Box>

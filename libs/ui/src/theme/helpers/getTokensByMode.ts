@@ -20,13 +20,13 @@ const getTokensByMode = (mode: 'light' | 'dark'): Theme => {
       return acc;
     }, {} as ThemeColors),
 
-    shapes: {
-      borderRadiusNone: designTokens.shape.none.value,
-      borderRadiusExtraSmall: designTokens.shape['extra-small'].value,
-      borderRadiusSmall: designTokens.shape.small.value,
-      borderRadiusMedium: designTokens.shape.medium.value,
-      borderRadiusLarge: designTokens.shape.large.value,
-      borderRadiusExtraLarge: designTokens.shape['extra-large'].value,
+    border: {
+      borderRadiusNone: designTokens.border.none.value,
+      borderRadiusExtraSmall: designTokens.border['extra-small'].value,
+      borderRadiusSmall: designTokens.border.small.value,
+      borderRadiusMedium: designTokens.border.medium.value,
+      borderRadiusLarge: designTokens.border.large.value,
+      borderRadiusExtraLarge: designTokens.border['extra-large'].value,
     },
 
     typography: designTokens.typography,

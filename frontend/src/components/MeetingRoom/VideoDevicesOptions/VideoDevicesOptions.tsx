@@ -1,7 +1,6 @@
 import { ReactElement } from 'react';
 import PortraitIcon from '@mui/icons-material/Portrait';
 import { useTranslation } from 'react-i18next';
-import useTheme from '@ui/theme';
 import MenuList from '@mui/material/MenuList';
 import MenuItem from '@mui/material/MenuItem';
 import Typography from '@mui/material/Typography';
@@ -22,7 +21,6 @@ const VideoDevicesOptions = ({
   toggleBackgroundEffects,
 }: VideoDevicesOptionsProps): ReactElement => {
   const { t } = useTranslation();
-  const theme = useTheme();
 
   return (
     <MenuList
@@ -32,15 +30,7 @@ const VideoDevicesOptions = ({
         mt: 1,
       }}
     >
-      <MenuItem
-        onClick={toggleBackgroundEffects}
-        sx={{
-          backgroundColor: 'transparent',
-          '&:hover': {
-            backgroundColor: theme.colors.background,
-          },
-        }}
-      >
+      <MenuItem onClick={toggleBackgroundEffects} className="hover:bg-vera-background">
         <PortraitIcon sx={{ fontSize: 22, mr: 2 }} />
         <Typography data-testid="background-effects-text" sx={{ mr: 2 }}>
           {t('backgroundEffects.title')}

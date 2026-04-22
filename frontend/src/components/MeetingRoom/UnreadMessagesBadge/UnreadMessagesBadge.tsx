@@ -1,7 +1,6 @@
 import Badge from '@mui/material/Badge';
 import { ForwardedRef, forwardRef, ReactElement } from 'react';
 import useSessionContext from '@hooks/useSessionContext';
-import useTheme from '@ui/theme';
 import { env } from '../../../env';
 
 export type UnreadMessagesBadgeProps = {
@@ -22,8 +21,6 @@ const UnreadMessagesBadge = forwardRef(function UnreadMessagesBadge(
   props: UnreadMessagesBadgeProps,
   ref: ForwardedRef<HTMLSpanElement>
 ) {
-  const theme = useTheme();
-
   const { children, isToolbarOverflowMenuOpen, ...rest } = props;
   const { unreadCount } = useSessionContext();
   // If the chat button is not shown, the unread messages badge should also be hidden
@@ -32,14 +29,11 @@ const UnreadMessagesBadge = forwardRef(function UnreadMessagesBadge(
   return (
     <Badge
       {...rest}
+      className="[&_.MuiBadge-badge]:text-vera-on-warning [&_.MuiBadge-badge]:bg-vera-warning"
       badgeContent={unreadCount}
       data-testid="chat-button-unread-count"
       invisible={isInvisible}
       sx={{
-        '& .MuiBadge-badge': {
-          color: theme.colors.onWarning,
-          backgroundColor: theme.colors.warning,
-        },
         marginRight: '12px',
       }}
       overlap="circular"

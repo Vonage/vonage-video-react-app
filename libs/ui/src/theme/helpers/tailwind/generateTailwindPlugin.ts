@@ -163,14 +163,14 @@ function generateColorTokens(
  * Generates border radius tokens with vera- prefix.
  * Tokens are sorted alphabetically for consistent output.
  */
-function generateBorderRadiusTokens(shape: Record<string, string>): Record<string, string> {
+function generateBorderRadiusTokens(border: Record<string, string>): Record<string, string> {
   const borderRadius: Record<string, string> = {};
 
   // Sort keys alphabetically for consistent output
-  const sortedKeys = Object.keys(shape).sort((a, b) => a.localeCompare(b));
+  const sortedKeys = Object.keys(border).sort((a, b) => a.localeCompare(b));
 
   for (const key of sortedKeys) {
-    borderRadius[`vera-${key}`] = shape[key];
+    borderRadius[`vera-${key}`] = border[key];
   }
 
   return borderRadius;

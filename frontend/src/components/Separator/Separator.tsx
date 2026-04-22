@@ -1,6 +1,5 @@
 import Box from '@mui/material/Box';
 import { ReactElement } from 'react';
-import useTheme from '@ui/theme';
 
 export type SeparatorProps = {
   orientation?: 'left' | 'right';
@@ -17,16 +16,15 @@ export type SeparatorProps = {
  * @returns {ReactElement} The separator component.
  */
 const Separator = ({ orientation = 'left', width = '50%' }: SeparatorProps): ReactElement => {
-  const theme = useTheme();
   return (
     <Box
       data-testid="separator"
       sx={{
         width: width,
         borderBottom: '1px solid',
-        borderColor: theme.colors.border,
         ...(orientation === 'left' ? { marginRight: 1 } : { marginLeft: 1 }),
       }}
+      className="border-vera-border!"
     />
   );
 };

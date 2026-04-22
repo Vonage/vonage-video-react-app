@@ -3,7 +3,6 @@ import { useTranslation } from 'react-i18next';
 import usePublisherContext from '@hooks/usePublisherContext';
 import useBackgroundPublisherContext from '@hooks/useBackgroundPublisherContext';
 import getControlButtonTooltip from '@utils/getControlButtonTooltip';
-import useTheme from '@ui/theme';
 import DeviceSettingsMenu from '../DeviceSettingsMenu';
 import MutedAlert from '../../MutedAlert';
 import ButtonGroup from '@mui/material/ButtonGroup';
@@ -36,7 +35,6 @@ const DeviceControlButton = ({
   const { t } = useTranslation();
   const { isVideoEnabled, toggleAudio, toggleVideo, isAudioEnabled } = usePublisherContext();
   const { toggleVideo: toggleBackgroundVideoPublisher } = useBackgroundPublisherContext();
-  const theme = useTheme();
 
   const isAudio = deviceType === 'audio';
   const [open, setOpen] = useState<boolean>(false);
@@ -67,11 +65,7 @@ const DeviceControlButton = ({
     if (isAudio) {
       if (!env.ALLOW_MICROPHONE_CONTROL) {
         return (
-          <VividIcon
-            name="microphone-2-solid"
-            customSize={-5}
-            sx={{ color: theme.colors.disabled }}
-          />
+          <VividIcon name="microphone-2-solid" customSize={-5} className="text-vera-disabled" />
         );
       }
       if (isAudioEnabled) {
@@ -80,7 +74,7 @@ const DeviceControlButton = ({
             name="microphone-2-solid"
             customSize={-5}
             data-testid="MicNoneIcon"
-            sx={{ color: theme.colors.onDarkGrey }}
+            className="text-vera-on-dark-grey"
           />
         );
       }
@@ -89,13 +83,14 @@ const DeviceControlButton = ({
           name="mic-mute-solid"
           customSize={-5}
           data-testid="MicOffToolbar"
-          sx={{ color: theme.colors.error, transform: 'scaleX(-1)' }}
+          className="text-vera-error"
+          sx={{ transform: 'scaleX(-1)' }}
         />
       );
     }
 
     if (!env.ALLOW_CAMERA_CONTROL) {
-      return <VividIcon name="video-solid" customSize={-5} sx={{ color: theme.colors.disabled }} />;
+      return <VividIcon name="video-solid" customSize={-5} className="text-vera-disabled" />;
     }
     if (isVideoEnabled) {
       return (
@@ -103,7 +98,7 @@ const DeviceControlButton = ({
           name="video-solid"
           customSize={-5}
           data-testid="VideocamIcon"
-          sx={{ color: theme.colors.onDarkGrey }}
+          className="text-vera-on-dark-grey"
         />
       );
     }
@@ -112,7 +107,7 @@ const DeviceControlButton = ({
         name="video-off-solid"
         customSize={-5}
         data-testid="VideocamOffIcon"
-        sx={{ color: theme.colors.error }}
+        className="text-vera-error"
       />
     );
   };
@@ -140,9 +135,9 @@ const DeviceControlButton = ({
         sx={{
           mr: 2,
           mt: 0.25,
-          backgroundColor: theme.colors.darkGrey,
           borderRadius: '30px',
         }}
+        className="bg-vera-dark-grey"
         variant="contained"
         ref={anchorRef}
         aria-label={t('devices.buttons.ariaLabel')}
@@ -161,14 +156,10 @@ const DeviceControlButton = ({
             <VividIcon
               name="chevron-down-line"
               customSize={-6}
-              sx={{ color: theme.colors.onDarkGrey }}
+              className="text-vera-on-dark-grey"
             />
           ) : (
-            <VividIcon
-              name="chevron-up-line"
-              customSize={-6}
-              sx={{ color: theme.colors.onDarkGrey }}
-            />
+            <VividIcon name="chevron-up-line" customSize={-6} className="text-vera-on-dark-grey" />
           )}
         </IconButton>
         <Tooltip title={tooltipTitle} aria-label={t('devices.settings.ariaLabel')}>

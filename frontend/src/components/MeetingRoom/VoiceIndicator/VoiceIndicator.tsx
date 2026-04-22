@@ -1,5 +1,4 @@
 import { ReactElement } from 'react';
-import useTheme from '@ui/theme';
 import type { SxProps } from '@mui/material';
 import Box from '@mui/material/Box';
 
@@ -36,7 +35,6 @@ const VoiceIndicatorIcon = ({
   sx,
   size,
 }: VoiceIndicatorProps): ReactElement => {
-  const theme = useTheme();
   const barHeights = calculateBarHeights(publisherAudioLevel);
   const isAnimating = publisherAudioLevel >= 5;
 
@@ -51,8 +49,8 @@ const VoiceIndicatorIcon = ({
           height: size,
           width: size,
           borderRadius: '50%',
-          backgroundColor: theme.colors.primary,
         }}
+        className="bg-vera-primary"
       >
         {barHeights.map((height, i) => (
           <Box
@@ -63,8 +61,8 @@ const VoiceIndicatorIcon = ({
               height: height / 4,
               minHeight: '10%',
               width: '10%',
-              backgroundColor: theme.colors.background,
             }}
+            className="bg-vera-background"
           >
             <Box
               sx={{

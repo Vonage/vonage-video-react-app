@@ -14,7 +14,7 @@ type FontSize = {
 type UnwrappedTokens = {
   lightColor: Record<string, string>;
   darkColor: Record<string, string>;
-  shape: Record<string, string>;
+  border: Record<string, string>;
   elevation: Record<string, string>;
   state: Record<string, string>;
   motion: {
@@ -59,7 +59,7 @@ function designTokensToJson() {
       light: unwrappedTokens.lightColor,
       dark: unwrappedTokens.darkColor,
     },
-    borderRadius: unwrappedTokens.shape,
+    borderRadius: unwrappedTokens.border,
     boxShadow: unwrappedTokens.elevation,
     opacity: unwrappedTokens.state,
     transitionDuration: unwrappedTokens.motion?.duration,

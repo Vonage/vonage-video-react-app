@@ -13,7 +13,6 @@ import { hasMediaProcessorSupport } from '@vonage/client-sdk-video';
 import getBoxStyle from '../../../utils/helpers/getBoxStyle';
 import ZoomIndicator from '../ZoomIndicator';
 import { MAX_ZOOM, MIN_ZOOM, ZOOM_STEP } from '../../../utils/constants';
-import useTheme from '@ui/theme';
 import CustomBox from '@mui/material/Box';
 
 export type ScreenshareVideoTileProps = {
@@ -46,7 +45,6 @@ const ScreenshareVideoTile = forwardRef(
     }: ScreenshareVideoTileProps,
     ref: ForwardedRef<HTMLDivElement>
   ): ReactElement => {
-    const theme = useTheme();
     const isZoomSupported = hasMediaProcessorSupport();
     // Zoom state management
     const [zoomLevel, setZoomLevel] = useState<number>(1);
@@ -190,6 +188,7 @@ const ScreenshareVideoTile = forwardRef(
       >
         <CustomBox
           ref={ref}
+          className="rounded-vera-large bg-vera-dark-grey-opacity"
           sx={{
             position: 'relative',
             left: 0,
@@ -197,12 +196,11 @@ const ScreenshareVideoTile = forwardRef(
             width: '100%',
             height: '100%',
             overflow: 'hidden',
-            borderRadius: theme.shapes.borderRadiusLarge,
-            backgroundColor: theme.colors.darkGreyOpacity,
             ...getTransformStyle(),
           }}
         />
         <CustomBox
+          className="rounded-vera-large bg-vera-dark-grey-opacity"
           sx={{
             position: 'relative',
             left: 0,
@@ -211,8 +209,6 @@ const ScreenshareVideoTile = forwardRef(
             width: '100%',
             height: '100%',
             overflow: 'hidden',
-            borderRadius: theme.shapes.borderRadiusLarge,
-            backgroundColor: theme.colors.darkGreyOpacity,
             ...getTransformStyle(),
           }}
         />

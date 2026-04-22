@@ -7,7 +7,6 @@ import Button from '@mui/material/Button';
 import IconButton from '@mui/material/IconButton';
 import Tooltip from '@mui/material/Tooltip';
 import Typography from '@mui/material/Typography';
-import useTheme from '@ui/theme';
 import VividIcon from '@components/VividIcon';
 
 // Setting the maximum file size to 20MB
@@ -30,7 +29,6 @@ const FilePicker = ({
   const [imageSrc, setImageSrc] = useState<string>('');
   const imageRef = useRef<HTMLImageElement | null>(null);
   const [maximumSizeError, setMaximumSizeError] = useState<boolean>(false);
-  const theme = useTheme();
 
   const checkIfSizeAllowed = (file: File) => {
     if (file.size > maxFileSize) {
@@ -94,7 +92,7 @@ const FilePicker = ({
       <Box sx={{ my: 1 }}>
         {maximumSizeError && (
           <Typography
-            color={theme.colors.error}
+            className="text-vera-error"
             sx={{
               mb: 0.75,
               textAlign: 'left',
@@ -157,22 +155,19 @@ const FilePicker = ({
                 <IconButton
                   data-testid="delete-screenshot"
                   onClick={handleDeleteFile}
+                  className="bg-vera-tertiary hover:bg-vera-tertiary-hover"
                   sx={{
                     position: 'absolute',
                     top: 0,
                     right: 10,
                     transform: 'translate(50%, -50%)',
                     borderRadius: '50%',
-                    backgroundColor: theme.colors.tertiary,
-                    '&:hover': {
-                      backgroundColor: theme.colors.tertiaryHover,
-                    },
                   }}
                 >
                   <VividIcon
                     customSize={-6}
                     name="delete-solid"
-                    sx={{ color: theme.colors.onTertiary }}
+                    className="text-vera-on-tertiary"
                   />
                 </IconButton>
               </Tooltip>

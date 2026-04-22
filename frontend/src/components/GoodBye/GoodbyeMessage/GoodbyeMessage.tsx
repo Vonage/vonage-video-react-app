@@ -1,7 +1,6 @@
 import { ReactElement } from 'react';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
-import useTheme from '@ui/theme';
 
 export type GoodByeMessageProps = {
   header: string;
@@ -15,8 +14,6 @@ export type GoodByeMessageProps = {
  * @returns {ReactElement} The GoodByeMessage component.
  */
 const GoodByeMessage = ({ header, message }: GoodByeMessageProps): ReactElement => {
-  const theme = useTheme();
-
   return (
     <Box
       sx={{
@@ -31,10 +28,10 @@ const GoodByeMessage = ({ header, message }: GoodByeMessageProps): ReactElement 
     >
       <Typography
         variant="h2"
+        className="text-vera-text-secondary"
         sx={{
           width: { xs: '100%', md: '80%' },
           paddingBottom: 2,
-          color: theme.colors.textSecondary,
         }}
         data-testid="header-message"
       >
@@ -42,8 +39,8 @@ const GoodByeMessage = ({ header, message }: GoodByeMessageProps): ReactElement 
       </Typography>
       <Typography
         variant="h4"
+        className="text-vera-text-tertiary"
         sx={{
-          color: theme.colors.textTertiary,
           display: { xs: 'none', sm: 'block' },
         }}
         data-testid="goodbye-message"

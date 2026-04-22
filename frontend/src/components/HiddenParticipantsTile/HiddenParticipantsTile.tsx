@@ -1,4 +1,5 @@
 import { ReactElement } from 'react';
+import classNames from 'classnames';
 import { Box } from 'opentok-layout-js';
 import { SubscriberWrapper } from '@app-types/session';
 import getBoxStyle from '@utils/helpers/getBoxStyle';
@@ -6,7 +7,6 @@ import useSessionContext from '@hooks/useSessionContext';
 import AvatarInitials from '../AvatarInitials';
 import AvatarGroup from '@mui/material/AvatarGroup';
 import ButtonBase from '@mui/material/ButtonBase';
-import useTheme from '@ui/theme';
 import { env } from '../../env';
 
 export type HiddenParticipantsTileProps = {
@@ -29,14 +29,15 @@ const HiddenParticipantsTile = ({
 }: HiddenParticipantsTileProps): ReactElement => {
   const { toggleParticipantList } = useSessionContext();
 
-  const theme = useTheme();
-
   const { height, width } = box;
   const diameter = Math.min(height, width) * 0.38;
   return (
     <ButtonBase
       id="hidden-participants"
       data-testid="hidden-participants"
+      className={classNames('bg-vera-dark-grey', {
+        'hover:bg-vera-dark-grey-hover': env.SHOW_PARTICIPANT_LIST,
+      })}
       sx={{
         m: 0.5,
         position: 'absolute',
@@ -44,14 +45,8 @@ const HiddenParticipantsTile = ({
         alignItems: 'center',
         justifyContent: 'center',
         borderRadius: 3,
-        backgroundColor: theme.colors.darkGrey,
         transition: 'background-color 150ms',
         cursor: env.SHOW_PARTICIPANT_LIST ? 'pointer' : 'default',
-        ...(env.SHOW_PARTICIPANT_LIST && {
-          '&:hover': {
-            backgroundColor: theme.colors.darkGreyHover,
-          },
-        }),
         ...getBoxStyle(box),
       }}
       onClick={env.SHOW_PARTICIPANT_LIST ? toggleParticipantList : () => {}}

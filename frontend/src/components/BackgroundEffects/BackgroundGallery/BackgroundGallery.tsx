@@ -1,10 +1,10 @@
 import { ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
+import classNames from 'classnames';
 import Box from '@mui/material/Box';
 import Tooltip from '@mui/material/Tooltip';
 import IconButton from '@mui/material/IconButton';
 import VividIcon from '@components/VividIcon';
-import useTheme from '@ui/theme';
 import { BACKGROUNDS_PATH } from '@utils/constants';
 import SelectableOption from '../SelectableOption';
 import useBackgroundPublisherContext from '@hooks/useBackgroundPublisherContext';
@@ -19,7 +19,6 @@ const BackgroundGallery = (): ReactElement => {
   const { backgroundSelected, handleBackgroundChange, customImages, deleteCustomImage } =
     useBackgroundPublisherContext();
   const { t } = useTranslation();
-  const theme = useTheme();
 
   const backgrounds = [
     {
@@ -73,17 +72,16 @@ const BackgroundGallery = (): ReactElement => {
                     }
                   }}
                   size="small"
+                  className={classNames({
+                    'text-vera-text-disabled bg-vera-disabled cursor-default': isSelected,
+                    'text-vera-background bg-vera-on-background hover:bg-vera-background cursor-pointer':
+                      !isSelected,
+                  })}
                   sx={{
-                    color: isSelected ? theme.colors.textDisabled : theme.colors.background,
                     position: 'absolute',
                     top: -8,
                     right: -8,
                     zIndex: 10,
-                    cursor: isSelected ? 'default' : 'pointer',
-                    backgroundColor: isSelected ? theme.colors.disabled : theme.colors.onBackground,
-                    '&:hover': {
-                      backgroundColor: isSelected ? theme.colors.disabled : theme.colors.background,
-                    },
                   }}
                 >
                   <VividIcon name="delete-solid" customSize={-6} />

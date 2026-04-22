@@ -31,7 +31,7 @@ const getMuiCustomTheme = ({ tokens, container }: GetMuiCustomThemeProps) => {
   const buttonSx = {
     height: 40, // 40px
     textTransform: 'none',
-    borderRadius: tokens.shapes.borderRadiusMedium,
+    borderRadius: tokens.border.borderRadiusMedium,
   } as const;
 
   const { colors } = tokens;
@@ -147,7 +147,7 @@ const getMuiCustomTheme = ({ tokens, container }: GetMuiCustomThemeProps) => {
         styleOverrides: {
           root: {
             backgroundColor: colors.surface,
-            borderRadius: tokens.shapes.borderRadiusMedium,
+            borderRadius: tokens.border.borderRadiusMedium,
             backgroundClip: 'padding-box',
           },
         },

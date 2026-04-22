@@ -3,7 +3,6 @@ import Box from '@mui/material/Box';
 import Header from '@ui/Header';
 import BannerLogo from '../BannerLogo';
 import BannerLanguage from '../BannerLanguage';
-import useTheme from '@ui/theme';
 
 /**
  * Banner Component
@@ -12,8 +11,6 @@ import useTheme from '@ui/theme';
  * @returns {ReactElement} - the banner component.
  */
 const Banner = (): ReactElement => {
-  const theme = useTheme();
-
   return (
     <Header
       appBarProps={{
@@ -23,8 +20,8 @@ const Banner = (): ReactElement => {
     >
       <Box
         flex={1}
+        className="bg-vera-surface"
         sx={{
-          bgcolor: theme.colors.surface,
           p: { xs: 3, sm: 5 },
         }}
       >
@@ -33,11 +30,8 @@ const Banner = (): ReactElement => {
 
       <Box
         flex={1}
+        className="bg-vera-surface vera-desktop:bg-vera-background"
         sx={{
-          bgcolor: {
-            xs: theme.colors.surface,
-            md: theme.colors.background,
-          },
           p: { xs: 3, sm: 5 },
           display: 'flex',
           justifyContent: 'flex-end',
