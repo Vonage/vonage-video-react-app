@@ -12,8 +12,10 @@ import Stack from '@mui/material/Stack';
 const Footer = (): ReactElement => {
   return (
     <Stack
-      direction="row"
-      alignItems="center"
+      sx={{
+        flexDirection: 'row',
+        alignItems: 'center',
+      }}
       data-testid="footer-content"
       className="bg-vera-background"
     >

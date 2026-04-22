@@ -1,6 +1,7 @@
 import { cleanup } from '@testing-library/react';
 import { vi } from 'vitest';
 import { setupCancelablePromiseHook, cancelablePromiseTracker } from '../../test/environment';
+import './helpers/setupMuiMaterialStylesMock';
 
 import {
   setupScrollIntoViewMock,

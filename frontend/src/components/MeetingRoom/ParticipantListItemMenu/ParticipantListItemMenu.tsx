@@ -1,9 +1,11 @@
-import { useState, MouseEvent, ReactElement } from 'react';
-import { SubscriberWrapper } from '../../../types/session';
+import { useState, MouseEvent } from 'react';
+import type { ReactElement } from 'react';
+import type { SubscriberWrapper } from '../../../types/session';
 import ParticipantPinMenuItem from './ParticipantPinMenuItem';
 import IconButton from '@mui/material/IconButton';
 import Popper from '@mui/material/Popper';
 import ClickAwayListener from '@mui/material/ClickAwayListener';
+import MenuList from '@mui/material/MenuList';
 import Paper from '@mui/material/Paper';
 import VividIcon from '@components/VividIcon';
 
@@ -54,11 +56,13 @@ const ParticipantListItemMenu = ({
               position: 'relative',
             }}
           >
-            <ParticipantPinMenuItem
-              handleClick={handleClose}
-              subscriberWrapper={subscriberWrapper}
-              participantName={participantName}
-            />
+            <MenuList autoFocusItem={isOpen} disablePadding>
+              <ParticipantPinMenuItem
+                handleClick={handleClose}
+                subscriberWrapper={subscriberWrapper}
+                participantName={participantName}
+              />
+            </MenuList>
           </Paper>
         </ClickAwayListener>
       </Popper>

@@ -40,9 +40,8 @@ type VeraRoomProps = ComponentProps<'div'> & BridgeProps;
 const VeraRoom: FC<VeraRoomProps> = ({ className, ...props }) => {
   useLanguageSync();
 
-  const theme = useMemo(() => {
-    const container = globalThis.document.createElement('div');
-    return { lightMode: {}, darkMode: {}, base: { container: container } };
+  const container = useMemo(() => {
+    return globalThis.document.createElement('div');
   }, []);
 
   const mainContainer = useRef<HTMLDivElement>(null);
@@ -51,11 +50,11 @@ const VeraRoom: FC<VeraRoomProps> = ({ className, ...props }) => {
   const initialEntry = sessionIdentifier ? `/waiting-room/${sessionIdentifier}` : '/waiting-room';
 
   useMountEffect(() => {
-    mainContainer.current?.appendChild(theme?.base?.container || document.createElement('div'));
+    mainContainer.current?.appendChild(container);
   });
 
   return (
-    <AppContextProvider theme={theme}>
+    <AppContextProvider container={container}>
       <div
         ref={mainContainer}
         className={['VeraRoom', 'h-full', className].filter(Boolean).join(' ')}

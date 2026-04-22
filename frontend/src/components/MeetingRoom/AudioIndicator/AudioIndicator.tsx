@@ -98,7 +98,7 @@ const AudioIndicator = ({
             <VividIcon
               customSize={-5}
               name="mic-mute-solid"
-              className="text-vera-error"
+              className="text-vera-error!"
               sx={{
                 ...sxProperties,
                 transform: 'scaleX(-1) scale(0.8)',

@@ -71,23 +71,25 @@ const ChatInput = (): ReactElement => {
           paddingLeft: '24px',
         },
       }}
-      InputProps={{
-        endAdornment: (
-          <InputAdornment position="end">
-            <IconButton sx={{ height: '40px' }} onClick={handleSendMessage}>
-              <VividIcon
-                name="message-sent-solid"
-                customSize={-5}
-                className={classNames({
-                  'text-vera-disabled': text === '',
-                  'text-vera-primary': text !== '',
-                })}
-                data-testid="SendIcon"
-              />
-            </IconButton>
-          </InputAdornment>
-        ),
-        disableUnderline: true,
+      slotProps={{
+        input: {
+          endAdornment: (
+            <InputAdornment position="end">
+              <IconButton sx={{ height: '40px' }} onClick={handleSendMessage}>
+                <VividIcon
+                  name="message-sent-solid"
+                  customSize={-5}
+                  className={classNames({
+                    'text-vera-disabled': text === '',
+                    'text-vera-primary': text !== '',
+                  })}
+                  data-testid="SendIcon"
+                />
+              </IconButton>
+            </InputAdornment>
+          ),
+          disableUnderline: true,
+        },
       }}
     />
   );

@@ -45,13 +45,7 @@ const JoinWaitRoomButton = ({
   };
 
   return (
-    <Button
-      variant="outlined"
-      disabled={isDisabled}
-      sx={{ ml: 1 }}
-      onClick={handleJoin}
-      type="submit"
-    >
+    <Button variant="outlined" disabled={isDisabled} onClick={handleJoin} type="submit">
       {t('button.joinWaitingRoom')}
     </Button>
   );

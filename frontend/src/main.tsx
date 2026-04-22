@@ -1,8 +1,3 @@
-// Workaround: ensure MUI createTheme module is evaluated before any component
-// (e.g. Box) reads the default theme. This avoids a Vite optimizeDeps init-order
-// issue that can surface as `createTheme_default is not a function`.
-import '@mui/material/styles/createTheme';
-
 // runs interceptors before vonage sdk initialize resources (XHR, navigator.mediaDevices clones, etc)
 import '@core/interceptors';
 

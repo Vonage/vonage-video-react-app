@@ -126,7 +126,7 @@ const FeedbackForm = ({
           sx={{
             mb: '22px',
           }}
-          inputProps={{ maxLength: REPORT_TITLE_LIMIT }}
+          slotProps={{ htmlInput: { maxLength: REPORT_TITLE_LIMIT } }}
         />
         <Typography
           variant="body1"
@@ -158,7 +158,7 @@ const FeedbackForm = ({
             mr: 4,
             mb: 2,
           }}
-          inputProps={{ maxLength: REPORT_NAME_LIMIT }}
+          slotProps={{ htmlInput: { maxLength: REPORT_NAME_LIMIT } }}
         />
 
         <Typography
@@ -194,7 +194,7 @@ const FeedbackForm = ({
             mr: 4,
             mb: 1,
           }}
-          inputProps={{ maxLength: REPORT_DESCRIPTION_LIMIT }}
+          slotProps={{ htmlInput: { maxLength: REPORT_DESCRIPTION_LIMIT } }}
         />
 
         <Typography

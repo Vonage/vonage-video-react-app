@@ -11,12 +11,10 @@ import RightPanelTitle from '../RightPanel/RightPanelTitle';
 import usePublisherContext from '@hooks/usePublisherContext';
 import IconButton from '@mui/material/IconButton';
 import Tooltip from '@mui/material/Tooltip';
-import Fade from '@mui/material/Fade';
 import List from '@mui/material/List';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import VividIcon from '@components/VividIcon';
-import Stack from '@mui/material/Stack';
 import TextField from '@mui/material/TextField';
 import InputAdornment from '@mui/material/InputAdornment';
 
@@ -98,7 +96,7 @@ const ParticipantList = ({ handleClose, isOpen }: ParticipantListProps): ReactEl
             pl: 3,
           }}
         >
-          <Stack className="text-vera-text-secondary" sx={{ textAlign: 'left' }}>
+          <div className="text-vera-text-secondary text-left">
             <Typography variant="subtitle2">{t('chat.meetingUrl')}</Typography>
             <Typography
               variant="body2"
@@ -113,7 +111,7 @@ const ParticipantList = ({ handleClose, isOpen }: ParticipantListProps): ReactEl
             >
               {window.location.href}
             </Typography>
-          </Stack>
+          </div>
           <IconButton
             size="large"
             className="text-vera-tertiary"
@@ -121,12 +119,7 @@ const ParticipantList = ({ handleClose, isOpen }: ParticipantListProps): ReactEl
             onClick={copyUrl}
             disabled={isCopied}
           >
-            <Tooltip
-              arrow
-              title={isCopied ? t('chat.copied') : t('chat.copy')}
-              TransitionComponent={Fade}
-              TransitionProps={{ timeout: 500 }}
-            >
+            <Tooltip arrow title={isCopied ? t('chat.copied') : t('chat.copy')}>
               {isCopied ? (
                 <VividIcon name="check-sent-line" customSize={-4} className="text-vera-success" />
               ) : (
@@ -142,12 +135,14 @@ const ParticipantList = ({ handleClose, isOpen }: ParticipantListProps): ReactEl
             placeholder={t('participants.search') || 'Search participants'}
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            InputProps={{
-              startAdornment: (
-                <InputAdornment position="start">
-                  <VividIcon name="search-line" customSize={-6} />
-                </InputAdornment>
-              ),
+            slotProps={{
+              input: {
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <VividIcon name="search-line" customSize={-6} />
+                  </InputAdornment>
+                ),
+              },
             }}
           />
         </Box>
