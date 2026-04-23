@@ -56,6 +56,7 @@ const RaiseHandPill = (): ReactElement => {
         {({ TransitionProps }) => (
           <Fade {...TransitionProps} timeout={150}>
             <div
+              role="tooltip"
               data-testid="raise-hand-pill-popover"
               onMouseEnter={() => setHoverOpen(true)}
               onMouseLeave={() => setHoverOpen(false)}

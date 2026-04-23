@@ -67,11 +67,11 @@ const GestureProgressRing = ({
             strokeDasharray={1}
             strokeDashoffset={isCompleted ? 0 : undefined}
             style={
-              !isCompleted
-                ? {
+              isCompleted
+                ? undefined
+                : {
                     animation: `gesture-ring-fill ${durationMs}ms linear forwards`,
                   }
-                : undefined
             }
           />
         </svg>

@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, afterEach, beforeEach } from 'vitest';
 import { renderHook, act } from '@testing-library/react';
-import { useRef, MutableRefObject } from 'react';
+import { useRef, RefObject } from 'react';
 import { useAutoLowerOnDominantSpeaker } from '../useAutoLowerOnDominantSpeaker';
 import { RaiseHandState } from '../../types/session';
 
@@ -37,7 +37,7 @@ const useTestHarness = ({
 }: {
   publisherAudioLevel: number;
   handRaised: boolean;
-}): MutableRefObject<Map<string, RaiseHandState>> => {
+}): RefObject<Map<string, RaiseHandState>> => {
   const raisedHandsMapRef = useRef<Map<string, RaiseHandState>>(buildMap(handRaised));
   raisedHandsMapRef.current = buildMap(handRaised);
   useAutoLowerOnDominantSpeaker({
