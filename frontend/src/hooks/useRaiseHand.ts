@@ -6,6 +6,9 @@ import { RaiseHandState, SignalEvent, SignalType, SubscriberWrapper } from '../t
 // Signal payload shapes
 // ---------------------------------------------------------------------------
 
+/** Signal type used for all raise-hand events. */
+const RAISE_HAND_SIGNAL = 'raiseHand' as const;
+
 type RaiseHandPayload =
   | { raisedHand: true; timestamp: number }
   | { raisedHand: false; timestamp: null; loweredBy?: string };
@@ -173,7 +176,7 @@ const useRaiseHand = ({
       return next;
     });
 
-    signal({ type: 'raiseHand', data: JSON.stringify(payload) });
+    signal({ type: RAISE_HAND_SIGNAL, data: JSON.stringify(payload) });
   }, [signal, getConnectionId, localUserName]);
 
   const lowerHand = useCallback(
@@ -197,7 +200,7 @@ const useRaiseHand = ({
       });
 
       signal({
-        type: 'raiseHand',
+        type: RAISE_HAND_SIGNAL,
         data: JSON.stringify({ ...payload, connectionId: targetConnectionId }),
       });
     },
@@ -222,7 +225,7 @@ const useRaiseHand = ({
     currentMap.forEach((state) => {
       if (state.raisedHand) {
         signal({
-          type: 'raiseHand',
+          type: RAISE_HAND_SIGNAL,
           data: JSON.stringify({ ...payload, connectionId: state.connectionId }),
         });
       }
@@ -256,7 +259,7 @@ const useRaiseHand = ({
           raisedHand: true,
           timestamp: localState.raisedHandTimestamp,
         };
-        currentSignal({ type: 'raiseHand', data: JSON.stringify(payload) });
+        currentSignal({ type: RAISE_HAND_SIGNAL, data: JSON.stringify(payload) });
       }
     } else {
       setRaisedHandsMap(new Map());
@@ -319,7 +322,7 @@ const useRaiseHand = ({
         timestamp: localState.raisedHandTimestamp,
       };
       currentSignal({
-        type: 'raiseHand',
+        type: RAISE_HAND_SIGNAL,
         data: JSON.stringify(payload),
         to: connection,
       });
