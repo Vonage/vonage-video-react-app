@@ -15,8 +15,6 @@ export type UseRaiseHandProps = {
   signal: ((data: SignalType) => void) | undefined;
   /** Returns the connection ID of the local user. */
   getConnectionId: () => string | undefined;
-  /** All current subscriber wrappers (used to look up participant names). */
-  subscriberWrappers: SubscriberWrapper[];
   /** Local user's display name (for late-joiner sync payload). */
   localUserName: string;
 };
@@ -144,8 +142,6 @@ const useRaiseHand = ({
             raisedHandTimestamp: payload.timestamp,
           });
         } else {
-          // Keep the entry but set raisedHand: false so components know it
-          // was lowered (e.g. toast showing "your hand was lowered by…")
           next.delete(connectionId);
         }
         return next;
@@ -276,7 +272,13 @@ const useRaiseHand = ({
       const { data, from: sendingConnection } = event;
       if (!data || !sendingConnection) return;
 
-      const parsed = JSON.parse(data) as RaiseHandPayload & { connectionId?: string };
+      let parsed: RaiseHandPayload & { connectionId?: string };
+      try {
+        parsed = JSON.parse(data) as RaiseHandPayload & { connectionId?: string };
+      } catch (err) {
+        console.warn('useRaiseHand: failed to parse raiseHand signal payload', err);
+        return;
+      }
       const senderConnectionId = sendingConnection.connectionId;
       const localConnectionId = getConnectionId();
 

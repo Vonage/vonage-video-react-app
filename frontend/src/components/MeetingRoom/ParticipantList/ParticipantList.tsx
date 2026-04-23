@@ -25,6 +25,7 @@ import createNameMatcher from '@utils/participantList/createNameMatcher';
 import getFilteredSubscribers from '@utils/participantList/getFilteredSubscribers';
 import shouldShowUser from '@utils/participantList/shouldShowUser';
 import RaisedHandsSection from '../RaisedHandsSection';
+import { env } from '../../../env';
 
 export type ParticipantListProps = {
   handleClose: () => void;
@@ -157,7 +158,7 @@ const ParticipantList = ({ handleClose, isOpen }: ParticipantListProps): ReactEl
             }}
           />
         </Box>
-        {raisedHandCount > 0 && <RaisedHandsSection />}
+        {env.ALLOW_RAISE_HAND && raisedHandCount > 0 && <RaisedHandsSection />}
         <List sx={{ overflowX: 'auto', height: 'calc(100dvh - 296px)' }}>
           {isUserVisible && (
             <ParticipantListItem

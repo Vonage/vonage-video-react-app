@@ -45,8 +45,8 @@ const ParticipantListButton = ({
       >
         {/* Outer badge: raised-hand count indicator (primary color) */}
         <Badge
-          badgeContent={raisedHandCount > 0 ? '✋' : null}
-          invisible={raisedHandCount === 0}
+          badgeContent={env.ALLOW_RAISE_HAND && raisedHandCount > 0 ? '✋' : null}
+          invisible={!env.ALLOW_RAISE_HAND || raisedHandCount === 0}
           data-testid="raised-hand-count-badge"
           overlap="circular"
           anchorOrigin={{ vertical: 'top', horizontal: 'left' }}

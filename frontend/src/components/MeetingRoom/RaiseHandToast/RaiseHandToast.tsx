@@ -40,8 +40,7 @@ const RaiseHandToast = (): ReactElement => {
 
   const [toast, setToast] = useState<ToastState>({ open: false, message: '' });
 
-  // Track previously-seen raised hand count for delta detection
-  const prevRaisedHandCountRef = useRef<number>(0);
+  // Track previously-seen raised hands for delta detection
   const prevRaisedHandsRef = useRef<typeof raisedHands>([]);
 
   // Coalescing: pending raises to be batched into one toast
@@ -128,7 +127,6 @@ const RaiseHandToast = (): ReactElement => {
       hasChimedRef.current = false;
     }
 
-    prevRaisedHandCountRef.current = raisedHandCount;
     prevRaisedHandsRef.current = raisedHands;
 
     // Cleanup: clear any pending coalesce timer (also runs on unmount)

@@ -37,12 +37,14 @@ const makeSubscriberWrapper = (connectionId: string, name: string): SubscriberWr
 const defaultProps = {
   signal: mockSignal,
   getConnectionId: mockGetConnectionId,
-  subscriberWrappers: [],
   localUserName: 'Alice',
 };
 
 describe('useRaiseHand', () => {
   beforeEach(() => {
+    // shouldAdvanceTime keeps testing-library's waitFor / async helpers
+    // working with fake timers (otherwise polling never sees state updates).
+    vi.useFakeTimers({ shouldAdvanceTime: true });
     mockGetConnectionId.mockReturnValue(LOCAL_CONNECTION_ID);
   });
 

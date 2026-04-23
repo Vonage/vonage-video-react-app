@@ -100,7 +100,7 @@ const MeetingRoom = ({ fullSize = false, className }: MeetingRoomProps): ReactEl
 
   const gestureProgress = useGestureDetection({
     enabled: isGestureDetectionAllowed && isVideoEnabled && !hasBackgroundEffect,
-    videoElement: publisherVideoElement as HTMLVideoElement | null,
+    videoElement: publisherVideoElement instanceof HTMLVideoElement ? publisherVideoElement : null,
     onHandRaised: isRaiseHandAllowed && !localHandIsRaised ? raiseHand : () => {},
     onThumbsUp: () => sendEmoji(emojiMap.THUMBS_UP),
     onThumbsDown: () => sendEmoji(emojiMap.THUMBS_DOWN),

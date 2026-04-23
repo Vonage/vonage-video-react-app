@@ -261,7 +261,6 @@ const SessionProvider = ({ children, initialValue = {} }: SessionProviderProps):
   } = useRaiseHand({
     signal: vonageVideoClient.current?.signal,
     getConnectionId,
-    subscriberWrappers,
     localUserName: user?.defaultSettings.name ?? '',
   });
   const {

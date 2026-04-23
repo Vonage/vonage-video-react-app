@@ -117,8 +117,8 @@ const EmojiGrid = ({
                 </Grid>
                 {isRaiseHandAllowed && (
                   <>
-                    <Divider sx={{ my: 1, borderColor: theme.colors.darkGrey }} />
-                    <Box sx={{ width: '100%', px: 0.5 }}>
+                    <Divider className="my-2 border-vera-dark-grey" />
+                    <Box className="w-full px-1">
                       <RaiseHandButton />
                     </Box>
                   </>

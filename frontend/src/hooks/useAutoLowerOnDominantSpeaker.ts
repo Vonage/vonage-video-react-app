@@ -42,11 +42,20 @@ export function useAutoLowerOnDominantSpeaker({
   const autoLowerTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const wasSpeakingRef = useRef<boolean>(false);
 
+  // Refs for `signal` and `getConnectionId` so the timer callback always reads
+  // the latest values without re-subscribing to publisherAudioLevel changes.
+  const signalRef = useRef(signal);
+  const getConnectionIdRef = useRef(getConnectionId);
+  useEffect(() => {
+    signalRef.current = signal;
+    getConnectionIdRef.current = getConnectionId;
+  }, [signal, getConnectionId]);
+
   // -------------------------------------------------------------------------
   // Auto-lower: if local user speaks for >2 s while hand is raised
   // -------------------------------------------------------------------------
   useEffect(() => {
-    const localConnectionId = getConnectionId();
+    const localConnectionId = getConnectionIdRef.current();
     const localHandUp = localConnectionId
       ? raisedHandsMapRef.current.get(localConnectionId)?.raisedHand === true
       : false;
@@ -57,8 +66,9 @@ export function useAutoLowerOnDominantSpeaker({
       // Start the 2-second timer
       wasSpeakingRef.current = true;
       autoLowerTimerRef.current = setTimeout(() => {
-        const currentLocalConnectionId = getConnectionId();
-        if (!currentLocalConnectionId || !signal) return;
+        const currentSignal = signalRef.current;
+        const currentLocalConnectionId = getConnectionIdRef.current();
+        if (!currentLocalConnectionId || !currentSignal) return;
         const currentState = raisedHandsMapRef.current.get(currentLocalConnectionId);
         if (!currentState?.raisedHand) return;
 
@@ -68,7 +78,7 @@ export function useAutoLowerOnDominantSpeaker({
           next.delete(currentLocalConnectionId);
           return next;
         });
-        signal({
+        currentSignal({
           type: 'raiseHand',
           data: JSON.stringify({
             raisedHand: false,

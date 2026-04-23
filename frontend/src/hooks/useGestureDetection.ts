@@ -5,7 +5,7 @@ import { useEffect, useRef, useState } from 'react';
 // Constants
 // ---------------------------------------------------------------------------
 
-/** Default interval (ms) between gesture recognition runs on a video frame. */
+/** Default interval (ms) between gesture recognition runs on a video frame (4 FPS). */
 const DEFAULT_DETECTION_INTERVAL_MS = 250;
 
 /** Default minimum duration (ms) the Open_Palm gesture must be sustained before triggering. */
@@ -58,7 +58,7 @@ export type UseGestureDetectionProps = {
   onThumbsDown?: () => void;
   /** Minimum duration (ms) the gesture must be sustained before triggering. Defaults to 2 000 ms. */
   detectionDurationMs?: number;
-  /** Interval (ms) between gesture recognition runs. Defaults to 500 ms. */
+  /** Interval (ms) between gesture recognition runs. Defaults to 250 ms. */
   detectionIntervalMs?: number;
   /** Minimum confidence (0–1) for a gesture to count. Defaults to 0.45. */
   gestureConfidence?: number;
@@ -74,7 +74,7 @@ export type UseGestureDetectionProps = {
  * Detects when the local user shows an open palm in front of the camera for
  * a configurable duration (default 2 s) and triggers `onHandRaised`.
  *
- * Uses MediaPipe GestureRecognizer running at 2 FPS (every 500 ms) on the
+ * Uses MediaPipe GestureRecognizer running at 4 FPS (every 250 ms) on the
  * publisher's video element. The model is lazy-loaded from CDN when `enabled`
  * first becomes true, and disposed when `enabled` becomes false to free memory.
  *
@@ -101,6 +101,21 @@ const useGestureDetection = ({
   // Stable refs to avoid stale closures inside the interval callback.
   const callbacksRef = useRef({ onHandRaised, onThumbsUp, onThumbsDown });
   callbacksRef.current = { onHandRaised, onThumbsUp, onThumbsDown };
+
+  // Tunable options held in a ref so prop changes are picked up by the interval
+  // callback without restarting the model load / detection loop.
+  const optionsRef = useRef({
+    delegate,
+    detectionIntervalMs,
+    detectionDurationMs,
+    gestureConfidence,
+  });
+  optionsRef.current = {
+    delegate,
+    detectionIntervalMs,
+    detectionDurationMs,
+    gestureConfidence,
+  };
 
   const recognizerRef = useRef<import('@mediapipe/tasks-vision').GestureRecognizer | null>(null);
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
@@ -152,7 +167,7 @@ const useGestureDetection = ({
           );
 
           await recognizerRef.current.setOptions({
-            baseOptions: { delegate },
+            baseOptions: { delegate: optionsRef.current.delegate },
             runningMode: 'VIDEO',
             numHands: 1,
           });
@@ -178,9 +193,10 @@ const useGestureDetection = ({
 
         try {
           const result = recognizer.recognizeForVideo(videoElement, performance.now());
-          const detected = detectGesture(result, gestureConfidence);
+          const detected = detectGesture(result, optionsRef.current.gestureConfidence);
           const state = gestureStateRef.current;
           const callbacks = callbacksRef.current;
+          const currentDurationMs = optionsRef.current.detectionDurationMs;
 
           // Map gesture names to their callbacks
           const gestureCallbacks: Record<GestureName, (() => void) | undefined> = {
@@ -199,7 +215,7 @@ const useGestureDetection = ({
                 setGestureProgress({
                   gesture,
                   state: 'detecting',
-                  durationMs: detectionDurationMs,
+                  durationMs: currentDurationMs,
                 });
               }
               state[gesture].consecutiveDetections += 1;
@@ -216,7 +232,7 @@ const useGestureDetection = ({
                 setGestureProgress({
                   gesture,
                   state: 'completed',
-                  durationMs: detectionDurationMs,
+                  durationMs: currentDurationMs,
                 });
                 completionTimeoutRef.current = setTimeout(() => {
                   setGestureProgress(null);
@@ -235,7 +251,7 @@ const useGestureDetection = ({
         } catch (err) {
           console.warn('[useGestureDetection] Frame processing error:', err);
         }
-      }, detectionIntervalMs);
+      }, optionsRef.current.detectionIntervalMs);
     };
 
     void start();
