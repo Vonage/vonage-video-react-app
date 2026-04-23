@@ -134,124 +134,122 @@ const useGestureDetection = ({
     Math.ceil(detectionDurationMs / detectionIntervalMs)
   );
 
+  // Helpers below close over refs/state setters defined above.
+
+  /** Load and configure the GestureRecognizer model. Returns true on success. */
+  const loadRecognizer = async (cancelled: () => boolean): Promise<boolean> => {
+    if (recognizerRef.current || isLoadingRef.current) return !!recognizerRef.current;
+
+    isLoadingRef.current = true;
+    try {
+      const { FilesetResolver, GestureRecognizer } = await import('@mediapipe/tasks-vision');
+      if (cancelled()) return false;
+
+      const vision = await FilesetResolver.forVisionTasks(MEDIAPIPE_WASM_CDN);
+      if (cancelled()) return false;
+
+      const recognizer = await GestureRecognizer.createFromModelPath(
+        vision,
+        GESTURE_RECOGNIZER_MODEL
+      );
+      await recognizer.setOptions({
+        baseOptions: { delegate: optionsRef.current.delegate },
+        runningMode: 'VIDEO',
+        numHands: 1,
+      });
+      recognizerRef.current = recognizer;
+      return true;
+    } catch (err) {
+      console.warn('[useGestureDetection] Failed to load GestureRecognizer:', err);
+      return false;
+    } finally {
+      isLoadingRef.current = false;
+    }
+  };
+
+  /** Advance state for a single gesture for the current tick. Returns true if this gesture is actively being detected. */
+  const advanceGestureState = (
+    gesture: GestureName,
+    detected: GestureName | null,
+    gestureCallbacks: Record<GestureName, (() => void) | undefined>,
+    currentDurationMs: number
+  ): boolean => {
+    const state = gestureStateRef.current;
+    if (detected !== gesture) {
+      state[gesture].consecutiveDetections = 0;
+      state[gesture].hasFired = false;
+      return false;
+    }
+
+    if (state[gesture].consecutiveDetections === 0) {
+      setGestureProgress({ gesture, state: 'detecting', durationMs: currentDurationMs });
+    }
+    state[gesture].consecutiveDetections += 1;
+
+    const cb = gestureCallbacks[gesture];
+    const sustained = state[gesture].consecutiveDetections >= requiredConsecutiveDetections;
+    if (sustained && !state[gesture].hasFired && cb) {
+      state[gesture].hasFired = true;
+      cb();
+      setGestureProgress({ gesture, state: 'completed', durationMs: currentDurationMs });
+      completionTimeoutRef.current = setTimeout(() => setGestureProgress(null), 400);
+    }
+    return true;
+  };
+
+  /** Run one detection tick on the current video frame. */
+  const runDetectionTick = (videoEl: HTMLVideoElement) => {
+    const recognizer = recognizerRef.current;
+    if (!recognizer || videoEl.readyState < 2) return;
+
+    try {
+      const result = recognizer.recognizeForVideo(videoEl, performance.now());
+      const detected = detectGesture(result, optionsRef.current.gestureConfidence);
+      const callbacks = callbacksRef.current;
+      const currentDurationMs = optionsRef.current.detectionDurationMs;
+
+      const gestureCallbacks: Record<GestureName, (() => void) | undefined> = {
+        Open_Palm: callbacks.onHandRaised,
+        Thumb_Up: callbacks.onThumbsUp,
+        Thumb_Down: callbacks.onThumbsDown,
+      };
+
+      const anyActive = (Object.keys(gestureStateRef.current) as GestureName[]).reduce(
+        (active, gesture) =>
+          advanceGestureState(gesture, detected, gestureCallbacks, currentDurationMs) || active,
+        false
+      );
+
+      if (!anyActive) setGestureProgress(null);
+    } catch (err) {
+      console.warn('[useGestureDetection] Frame processing error:', err);
+    }
+  };
+
   useEffect(() => {
     if (!enabled || !videoElement) {
       cleanup();
       return;
     }
 
+    // Guard: browser must support WebAssembly (required by MediaPipe WASM runtime)
+    if (typeof WebAssembly === 'undefined') {
+      console.warn('[useGestureDetection] WebAssembly not supported — skipping detection');
+      return;
+    }
+
     let cancelled = false;
+    const isCancelled = () => cancelled;
 
     const start = async () => {
-      // Guard: browser must support WebAssembly (required by MediaPipe WASM runtime)
-      if (typeof WebAssembly === 'undefined') {
-        console.warn('[useGestureDetection] WebAssembly not supported — skipping detection');
-        return;
-      }
+      const loaded = await loadRecognizer(isCancelled);
+      if (cancelled || !loaded) return;
 
-      // Load the recognizer if not already loaded
-      if (!recognizerRef.current && !isLoadingRef.current) {
-        isLoadingRef.current = true;
-        try {
-          const { FilesetResolver, GestureRecognizer } = await import('@mediapipe/tasks-vision');
-
-          if (cancelled) return;
-
-          const vision = await FilesetResolver.forVisionTasks(MEDIAPIPE_WASM_CDN);
-
-          if (cancelled) return;
-
-          recognizerRef.current = await GestureRecognizer.createFromModelPath(
-            vision,
-            GESTURE_RECOGNIZER_MODEL
-          );
-
-          await recognizerRef.current.setOptions({
-            baseOptions: { delegate: optionsRef.current.delegate },
-            runningMode: 'VIDEO',
-            numHands: 1,
-          });
-        } catch (err) {
-          console.warn('[useGestureDetection] Failed to load GestureRecognizer:', err);
-          isLoadingRef.current = false;
-          return;
-        }
-        isLoadingRef.current = false;
-      }
-
-      if (cancelled || !recognizerRef.current) return;
-
-      // Reset detection state for all gestures
       resetGestureState();
-
-      // Start the detection loop
-      intervalRef.current = setInterval(() => {
-        const recognizer = recognizerRef.current;
-        if (!recognizer || !videoElement || videoElement.readyState < 2) {
-          return;
-        }
-
-        try {
-          const result = recognizer.recognizeForVideo(videoElement, performance.now());
-          const detected = detectGesture(result, optionsRef.current.gestureConfidence);
-          const state = gestureStateRef.current;
-          const callbacks = callbacksRef.current;
-          const currentDurationMs = optionsRef.current.detectionDurationMs;
-
-          // Map gesture names to their callbacks
-          const gestureCallbacks: Record<GestureName, (() => void) | undefined> = {
-            Open_Palm: callbacks.onHandRaised,
-            Thumb_Up: callbacks.onThumbsUp,
-            Thumb_Down: callbacks.onThumbsDown,
-          };
-
-          // Track whether any gesture is actively being detected this tick
-          let activeGesture: GestureName | null = null;
-
-          for (const gesture of Object.keys(state) as GestureName[]) {
-            if (detected === gesture) {
-              // First detection — start the ring animation
-              if (state[gesture].consecutiveDetections === 0) {
-                setGestureProgress({
-                  gesture,
-                  state: 'detecting',
-                  durationMs: currentDurationMs,
-                });
-              }
-              state[gesture].consecutiveDetections += 1;
-              activeGesture = gesture;
-              const cb = gestureCallbacks[gesture];
-              if (
-                state[gesture].consecutiveDetections >= requiredConsecutiveDetections &&
-                !state[gesture].hasFired &&
-                cb
-              ) {
-                state[gesture].hasFired = true;
-                cb();
-                // Show completed ring briefly, then clear
-                setGestureProgress({
-                  gesture,
-                  state: 'completed',
-                  durationMs: currentDurationMs,
-                });
-                completionTimeoutRef.current = setTimeout(() => {
-                  setGestureProgress(null);
-                }, 400);
-              }
-            } else {
-              state[gesture].consecutiveDetections = 0;
-              state[gesture].hasFired = false;
-            }
-          }
-
-          // Clear progress only if NO gesture is active this tick
-          if (!activeGesture) {
-            setGestureProgress(null);
-          }
-        } catch (err) {
-          console.warn('[useGestureDetection] Frame processing error:', err);
-        }
-      }, optionsRef.current.detectionIntervalMs);
+      intervalRef.current = setInterval(
+        () => runDetectionTick(videoElement),
+        optionsRef.current.detectionIntervalMs
+      );
     };
 
     void start();
