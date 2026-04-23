@@ -1,3 +1,5 @@
+import '@web-test/environment/helpers/setupMuiMaterialStylesMock';
+
 import { render, screen } from '@testing-library/react';
 import { describe, it, expect, beforeEach } from 'vitest';
 import bridge$ from './stores/bridge';

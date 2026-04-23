@@ -38,6 +38,7 @@ const PreviewAvatar = ({
 
   return initials ? (
     <AvatarInitials
+      data-testid="PersonIcon"
       initials={initials}
       sx={{
         position: 'absolute',
@@ -49,6 +50,7 @@ const PreviewAvatar = ({
     />
   ) : (
     <Avatar
+      data-testid="PersonIcon"
       className="bg-vera-success"
       sx={{
         position: 'absolute',
