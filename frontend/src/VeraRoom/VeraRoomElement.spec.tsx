@@ -1,3 +1,5 @@
+import '@web-test/environment/helpers/setupMuiMaterialStylesMock';
+
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { setupWindowNavigatorMock } from '@web-test/fixtures';
 import VeraRoomElement from './VeraRoomElement';

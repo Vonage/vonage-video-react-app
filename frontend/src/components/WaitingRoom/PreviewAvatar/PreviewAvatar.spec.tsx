@@ -26,9 +26,12 @@ describe('PreviewAvatar', () => {
   });
 
   it('should render avatar when no initials are provided', () => {
-    render(<PreviewAvatar initials="" username="" isVideoEnabled={false} isVideoLoading={false} />);
+    const { container } = render(
+      <PreviewAvatar initials="" username="" isVideoEnabled={false} isVideoLoading={false} />
+    );
 
-    expect(screen.getByTestId('PersonIcon')).toBeVisible();
+    const avatar = container.querySelector('[data-testid="PersonIcon"]');
+    expect(avatar).toBeVisible();
   });
 
   describe('should not be rendered', () => {

@@ -28,7 +28,3 @@ vi.mock('@mui/material/styles', async (importOriginal) => {
     createTheme,
   };
 });
-
-const setupMuiMaterialStylesMock = () => undefined;
-
-export default setupMuiMaterialStylesMock;

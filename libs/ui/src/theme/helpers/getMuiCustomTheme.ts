@@ -1,4 +1,4 @@
-import { createTheme } from '@mui/material/styles';
+import { createTheme, Theme } from '@mui/material/styles';
 import designTokens from './designTokens/designTokens.json';
 import {
   veraTypographyCssVariableNames,
@@ -12,7 +12,7 @@ export type GetMuiCustomThemeProps = {
 
 const temporaryTypographyVariables = getTemporaryTypographyVariables();
 
-const getMuiCustomTheme = ({ container }: GetMuiCustomThemeProps = {}) => {
+const getMuiCustomTheme = ({ container }: GetMuiCustomThemeProps = {}): Theme => {
   const lightColors = designTokens.colors.light;
   const desktopFontSize = designTokens.fontSize.desktop;
   const bodyBaseDesktopTypography = desktopFontSize['body-base'];
@@ -58,11 +58,15 @@ const getMuiCustomTheme = ({ container }: GetMuiCustomThemeProps = {}) => {
     borderRadius: getCssVariable(mediumBorderRadiusVariableName, mediumBorderRadius),
   } as const;
 
+  const cssVariables = container
+    ? {
+        rootSelector: ':host',
+        colorSchemeSelector: ':host(.%s)',
+      }
+    : true;
+
   return createTheme({
-    cssVariables: {
-      rootSelector: ':host',
-      colorSchemeSelector: ':host(.%s)',
-    },
+    cssVariables,
     palette: {
       primary: {
         main: getCssVariable('--vera-primary', lightColors.primary),
