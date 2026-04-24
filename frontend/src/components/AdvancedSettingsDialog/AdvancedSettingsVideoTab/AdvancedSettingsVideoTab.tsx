@@ -1,54 +1,31 @@
 import type { ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
-import { RESOLUTIONS } from '../../../env';
-import AdvancedSettingsCodecPriorityField from '../AdvancedSettingsCodecPriorityField';
-import AdvancedSettingsCustomVideoBitrateField from '../AdvancedSettingsCustomVideoBitrateField';
-import AdvancedSettingsSelectField from '../AdvancedSettingsSelectField';
+import { env, RESOLUTIONS } from '../../../env';
+import advancedSettingsDialog$ from '@Context/AdvancedSettingsDialog';
+import { AdvancedSettingsCodecPriorityField } from '../AdvancedSettingsCodecPriorityField';
+import { AdvancedSettingsCustomVideoBitrateField } from '../AdvancedSettingsCustomVideoBitrateField';
+import { AdvancedSettingsSelectField } from '../AdvancedSettingsSelectField';
 import type {
-  AdvancedSettingsBitrateMode,
-  AdvancedSettingsCodecMode,
-  AdvancedSettingsCustomVideoBitrate,
   AdvancedSettingsFrameRate,
-  AdvancedSettingsManualCodecOrder,
   AdvancedSettingsResolution,
   AdvancedSettingsSelectOption,
 } from '../types/types';
 import { ADVANCED_SETTINGS_BITRATE_MODE, ADVANCED_SETTINGS_CODEC_MODE } from '../types/types';
 
-const SUPPORTED_FRAME_RATES: AdvancedSettingsFrameRate[] = [30, 15, 7, 1];
-
-type AdvancedSettingsVideoTabProps = {
-  bitrateMode: AdvancedSettingsBitrateMode;
-  setBitrateMode: (value: AdvancedSettingsBitrateMode) => void;
-  customVideoBitrate: AdvancedSettingsCustomVideoBitrate;
-  setCustomVideoBitrate: (value: AdvancedSettingsCustomVideoBitrate) => void;
-  codecMode: AdvancedSettingsCodecMode;
-  setCodecMode: (value: AdvancedSettingsCodecMode) => void;
-  codecPriority: AdvancedSettingsManualCodecOrder;
-  setCodecPriority: (value: AdvancedSettingsManualCodecOrder) => void;
-  frameRate: AdvancedSettingsFrameRate;
-  setFrameRate: (value: AdvancedSettingsFrameRate) => void;
-  resolution: AdvancedSettingsResolution;
-  setResolution: (value: AdvancedSettingsResolution) => void;
-};
-
-const AdvancedSettingsVideoTab = ({
-  bitrateMode,
-  setBitrateMode,
-  customVideoBitrate,
-  setCustomVideoBitrate,
-  codecMode,
-  setCodecMode,
-  codecPriority,
-  setCodecPriority,
-  frameRate,
-  setFrameRate,
-  resolution,
-  setResolution,
-}: AdvancedSettingsVideoTabProps): ReactElement => {
+const AdvancedSettingsVideoTab = (): ReactElement => {
   const { t } = useTranslation();
+  const { bitrateMode, codecMode, codecPriority, frameRate, resolution } =
+    advancedSettingsDialog$.use.select((state) => ({
+      bitrateMode: state.bitrateMode,
+      codecMode: state.codecMode,
+      codecPriority: state.codecPriority,
+      frameRate: state.frameRate,
+      resolution: state.resolution,
+    }));
+  const { setBitrateMode, setCodecMode, setCodecPriority, setFrameRate, setResolution } =
+    advancedSettingsDialog$.use.actions();
 
-  const bitrateOptions: AdvancedSettingsSelectOption<AdvancedSettingsBitrateMode>[] = [
+  const bitrateOptions = [
     {
       value: ADVANCED_SETTINGS_BITRATE_MODE.default,
       label: t('advancedSettings.video.bitrate.options.default'),
@@ -67,7 +44,7 @@ const AdvancedSettingsVideoTab = ({
     },
   ];
 
-  const codecOptions: AdvancedSettingsSelectOption<AdvancedSettingsCodecMode>[] = [
+  const codecOptions = [
     {
       value: ADVANCED_SETTINGS_CODEC_MODE.automatic,
       label: t('advancedSettings.video.codec.options.automatic'),
@@ -78,11 +55,12 @@ const AdvancedSettingsVideoTab = ({
     },
   ];
 
-  const frameRateOptions: AdvancedSettingsSelectOption<AdvancedSettingsFrameRate>[] =
-    SUPPORTED_FRAME_RATES.map((supportedFrameRate) => ({
-      value: supportedFrameRate,
-      label: t(`advancedSettings.video.frameRate.options.${supportedFrameRate}`),
-    }));
+  const frameRateOptions: AdvancedSettingsSelectOption<AdvancedSettingsFrameRate>[] = (
+    env.SUPPORTED_FRAME_RATES as AdvancedSettingsFrameRate[]
+  ).map((supportedFrameRate) => ({
+    value: supportedFrameRate,
+    label: t(`advancedSettings.video.frameRate.options.${supportedFrameRate}`),
+  }));
 
   const resolutionOptions: AdvancedSettingsSelectOption<AdvancedSettingsResolution>[] =
     RESOLUTIONS.map((supportedResolution) => ({
@@ -106,10 +84,7 @@ const AdvancedSettingsVideoTab = ({
         />
 
         {bitrateMode === ADVANCED_SETTINGS_BITRATE_MODE.custom && (
-          <AdvancedSettingsCustomVideoBitrateField
-            customVideoBitrate={customVideoBitrate}
-            setCustomVideoBitrate={setCustomVideoBitrate}
-          />
+          <AdvancedSettingsCustomVideoBitrateField />
         )}
 
         <AdvancedSettingsSelectField

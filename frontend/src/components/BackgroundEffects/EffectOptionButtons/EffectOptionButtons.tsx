@@ -1,6 +1,6 @@
 import { ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
-import VividIcon from '@components/VividIcon';
+import VividIcon from '@ui/VividIcon';
 import SelectableOption from '../SelectableOption';
 import AddBackgroundEffectLayout from '../AddBackgroundEffect/AddBackgroundEffectLayout/AddBackgroundEffectLayout';
 import useBackgroundPublisherContext from '@hooks/useBackgroundPublisherContext';

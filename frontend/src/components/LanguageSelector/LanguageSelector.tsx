@@ -8,7 +8,7 @@ import type { SelectChangeEvent } from '@mui/material/Select';
 import useTheme from '@ui/theme';
 import { LanguageOption, LanguageSelectorProps } from './LanguageSelector.types';
 import useIsSmallViewport from '../../hooks/useIsSmallViewport';
-import VividIcon from '../VividIcon/VividIcon';
+import VividIcon from '@ui/VividIcon';
 import { env } from '../../env';
 
 const languageOptions: LanguageOption[] = [
@@ -21,7 +21,7 @@ const languageOptions: LanguageOption[] = [
 ];
 
 const ChevronIcon = ({ color, ...props }: { color: string } & Record<string, unknown>) => (
-  <VividIcon name="chevron-down-line" customSize={-5} sx={{ color }} {...props} />
+  <VividIcon name="chevron-down-line" customSize={-5} style={{ color }} {...props} />
 );
 
 const SelectIconComponent =

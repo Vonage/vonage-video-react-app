@@ -1,3 +1,1 @@
-import AdvancedSettingsStatisticsTab from './AdvancedSettingsStatisticsTab';
-
-export default AdvancedSettingsStatisticsTab;
+export { default as AdvancedSettingsStatisticsTab } from './AdvancedSettingsStatisticsTab';

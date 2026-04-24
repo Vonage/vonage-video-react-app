@@ -138,13 +138,15 @@ const getMuiCustomTheme = ({ tokens, container }: GetMuiCustomThemeProps) => {
         },
       },
       MuiDialog: {
+        defaultProps: {
+          PaperProps: {
+            className: 'dark:border dark:border-vera-border',
+          },
+        },
         styleOverrides: {
           paper: {
             backgroundColor: colors.surface,
             color: colors.onSurface,
-            borderWidth: isDarkThemeMode ? '1px' : 0,
-            borderStyle: 'solid',
-            borderColor: isDarkThemeMode ? colors.border : 'transparent',
           },
         },
       },

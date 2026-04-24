@@ -70,10 +70,8 @@ describe('customTheme', () => {
         tokens: getTokensByMode('dark'),
       });
 
-      expect(darkTheme.components?.MuiDialog?.styleOverrides?.paper).toMatchObject({
-        borderWidth: '1px',
-        borderStyle: 'solid',
-        borderColor: darkTheme.palette.divider,
+      expect(darkTheme.components?.MuiDialog?.defaultProps?.PaperProps).toMatchObject({
+        className: expect.stringContaining('dark:border'),
       });
     } finally {
       globalThis.matchMedia = originalMatchMedia;

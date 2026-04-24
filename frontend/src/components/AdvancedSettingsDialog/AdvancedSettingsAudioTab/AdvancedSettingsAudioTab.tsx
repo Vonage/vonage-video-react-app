@@ -1,41 +1,34 @@
 import type { ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
-import AdvancedSettingsBooleanField from '../AdvancedSettingsBooleanField';
-import AdvancedSettingsSelectField from '../AdvancedSettingsSelectField';
-import type {
-  AdvancedSettingsAudioBitrateMode,
-  AdvancedSettingsCustomAudioBitrate,
-  AdvancedSettingsSelectOption,
-} from '../types/types';
+import advancedSettingsDialog$ from '@Context/AdvancedSettingsDialog';
+import { AdvancedSettingsBooleanField } from '../AdvancedSettingsBooleanField';
+import { AdvancedSettingsSelectField } from '../AdvancedSettingsSelectField';
 import { ADVANCED_SETTINGS_AUDIO_BITRATE_MODE } from '../types/types';
 
-type AdvancedSettingsAudioTabProps = {
-  audioBitrateMode: AdvancedSettingsAudioBitrateMode;
-  setAudioBitrateMode: (value: AdvancedSettingsAudioBitrateMode) => void;
-  customAudioBitrate: AdvancedSettingsCustomAudioBitrate;
-  setCustomAudioBitrate: (value: AdvancedSettingsCustomAudioBitrate) => void;
-  enableDtx: boolean;
-  setEnableDtx: (value: boolean) => void;
-  publisherAudioFallbackEnabled: boolean;
-  setPublisherAudioFallbackEnabled: (value: boolean) => void;
-  subscriberAudioFallbackEnabled: boolean;
-  setSubscriberAudioFallbackEnabled: (value: boolean) => void;
-};
-
-const AdvancedSettingsAudioTab = ({
-  audioBitrateMode,
-  setAudioBitrateMode,
-  customAudioBitrate,
-  setCustomAudioBitrate,
-  enableDtx,
-  setEnableDtx,
-  publisherAudioFallbackEnabled,
-  setPublisherAudioFallbackEnabled,
-  subscriberAudioFallbackEnabled,
-  setSubscriberAudioFallbackEnabled,
-}: AdvancedSettingsAudioTabProps): ReactElement => {
+const AdvancedSettingsAudioTab = (): ReactElement => {
   const { t } = useTranslation();
-  const audioBitrateOptions: AdvancedSettingsSelectOption<AdvancedSettingsAudioBitrateMode>[] = [
+  const {
+    audioBitrateMode,
+    customAudioBitrate,
+    enableDtx,
+    publisherAudioFallbackEnabled,
+    subscriberAudioFallbackEnabled,
+  } = advancedSettingsDialog$.use.select((state) => ({
+    audioBitrateMode: state.audioBitrateMode,
+    customAudioBitrate: state.customAudioBitrate,
+    enableDtx: state.enableDtx,
+    publisherAudioFallbackEnabled: state.publisherAudioFallbackEnabled,
+    subscriberAudioFallbackEnabled: state.subscriberAudioFallbackEnabled,
+  }));
+  const {
+    setAudioBitrateMode,
+    setCustomAudioBitrate,
+    setEnableDtx,
+    setPublisherAudioFallbackEnabled,
+    setSubscriberAudioFallbackEnabled,
+  } = advancedSettingsDialog$.use.actions();
+
+  const audioBitrateOptions = [
     {
       value: ADVANCED_SETTINGS_AUDIO_BITRATE_MODE.automatic,
       label: t('advancedSettings.audio.bitrate.options.automatic'),

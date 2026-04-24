@@ -4,7 +4,7 @@ import ToolbarButton from '../ToolbarButton';
 import UnreadMessagesBadge from '../UnreadMessagesBadge';
 import Tooltip from '@mui/material/Tooltip';
 import useTheme from '@ui/theme';
-import VividIcon from '@components/VividIcon';
+import VividIcon from '@ui/VividIcon';
 import { env } from '../../../env';
 
 export type ChatButtonProps = {
@@ -47,7 +47,7 @@ const ChatButton = ({
               <VividIcon
                 customSize={-5}
                 name="chat-solid"
-                sx={{ color: isOpen ? theme.colors.secondary : theme.colors.onSecondary }}
+                style={{ color: isOpen ? theme.colors.secondary : theme.colors.onSecondary }}
                 data-testid="ChatIcon"
               />
             }

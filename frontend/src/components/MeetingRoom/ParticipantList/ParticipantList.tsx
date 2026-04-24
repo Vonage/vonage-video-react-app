@@ -17,7 +17,7 @@ import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import useTheme from '@ui/theme';
 import Stack from '@mui/material/Stack';
-import VividIcon from '@components/VividIcon';
+import VividIcon from '@ui/VividIcon';
 import TextField from '@mui/material/TextField';
 import InputAdornment from '@mui/material/InputAdornment';
 

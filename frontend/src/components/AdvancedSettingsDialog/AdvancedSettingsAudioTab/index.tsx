@@ -1,3 +1,1 @@
-import AdvancedSettingsAudioTab from './AdvancedSettingsAudioTab';
-
-export default AdvancedSettingsAudioTab;
+export { default as AdvancedSettingsAudioTab } from './AdvancedSettingsAudioTab';

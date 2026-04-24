@@ -1,11 +1,13 @@
-import { render, screen } from '@testing-library/react';
+import { render as renderBase, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { describe, expect, it, vi } from 'vitest';
+import type { ReactElement } from 'react';
+import { describe, expect, it } from 'vitest';
+import { makeTestProvider, providers } from '@test/providers';
 import AdvancedSettingsSidebar from './AdvancedSettingsSidebar';
 
 describe('AdvancedSettingsSidebar', () => {
   it('renders all tabs', () => {
-    render(<AdvancedSettingsSidebar selectedTab="general" setSelectedTab={() => {}} />);
+    render(<AdvancedSettingsSidebar />);
 
     expect(screen.getByRole('button', { name: /general/i })).toBeInTheDocument();
     expect(screen.getByRole('button', { name: /video/i })).toBeInTheDocument();
@@ -13,14 +15,18 @@ describe('AdvancedSettingsSidebar', () => {
     expect(screen.getByRole('button', { name: /statistics/i })).toBeInTheDocument();
   });
 
-  it('calls setSelectedTab when clicking another tab', async () => {
+  it('updates selected tab when clicking another tab', async () => {
     const user = userEvent.setup();
-    const setSelectedTab = vi.fn();
-
-    render(<AdvancedSettingsSidebar selectedTab="general" setSelectedTab={setSelectedTab} />);
+    render(<AdvancedSettingsSidebar />);
 
     await user.click(screen.getByRole('button', { name: /statistics/i }));
 
-    expect(setSelectedTab).toHaveBeenCalledWith('statistics');
+    expect(screen.getByRole('button', { name: /statistics/i })).toHaveClass('bg-vera-surface');
   });
 });
+
+function render(ui: ReactElement) {
+  const { wrapper } = makeTestProvider([providers.advancedSettings]);
+
+  return renderBase(ui, { wrapper });
+}

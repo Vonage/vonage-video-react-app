@@ -35,11 +35,7 @@ const MeetingRoom = ({
   className,
   ...boxProps
 }: MeetingRoomProps): ReactElement => {
-  return (
-    <advancedSettingsDialog$.Provider>
-      <MeetingRoomContent fullSize={fullSize} className={className} {...boxProps} />
-    </advancedSettingsDialog$.Provider>
-  );
+  return <MeetingRoomContent fullSize={fullSize} className={className} {...boxProps} />;
 };
 
 function MeetingRoomContent({

@@ -1,21 +1,16 @@
 import type { ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
-import type { AdvancedSettingsCustomVideoBitrate } from '../types/types';
+import { env } from '../../../env';
+import advancedSettingsDialog$ from '@Context/AdvancedSettingsDialog';
 
-export const MIN_CUSTOM_VIDEO_BITRATE_BPS = 5_000;
-export const MAX_CUSTOM_VIDEO_BITRATE_BPS = 10_000_000;
 const CUSTOM_VIDEO_BITRATE_STEP_BPS = 5_000;
 
-type AdvancedSettingsCustomVideoBitrateFieldProps = {
-  customVideoBitrate: AdvancedSettingsCustomVideoBitrate;
-  setCustomVideoBitrate: (value: AdvancedSettingsCustomVideoBitrate) => void;
-};
-
-const AdvancedSettingsCustomVideoBitrateField = ({
-  customVideoBitrate,
-  setCustomVideoBitrate,
-}: AdvancedSettingsCustomVideoBitrateFieldProps): ReactElement => {
+const AdvancedSettingsCustomVideoBitrateField = (): ReactElement => {
   const { t } = useTranslation();
+  const customVideoBitrate = advancedSettingsDialog$.use.select(
+    (state) => state.customVideoBitrate
+  );
+  const { setCustomVideoBitrate } = advancedSettingsDialog$.use.actions();
   const currentCustomVideoBitrate = Number(customVideoBitrate);
 
   return (
@@ -31,8 +26,8 @@ const AdvancedSettingsCustomVideoBitrateField = ({
       <div className="px-1">
         <input
           type="range"
-          min={MIN_CUSTOM_VIDEO_BITRATE_BPS}
-          max={MAX_CUSTOM_VIDEO_BITRATE_BPS}
+          min={env.MIN_CUSTOM_VIDEO_BITRATE_BPS}
+          max={env.MAX_CUSTOM_VIDEO_BITRATE_BPS}
           step={CUSTOM_VIDEO_BITRATE_STEP_BPS}
           value={customVideoBitrate}
           onChange={(event) => {
@@ -60,12 +55,12 @@ const AdvancedSettingsCustomVideoBitrateField = ({
 };
 
 function clampCustomVideoBitrate(customVideoBitrate: number): number {
-  if (customVideoBitrate < MIN_CUSTOM_VIDEO_BITRATE_BPS) {
-    return MIN_CUSTOM_VIDEO_BITRATE_BPS;
+  if (customVideoBitrate < env.MIN_CUSTOM_VIDEO_BITRATE_BPS) {
+    return env.MIN_CUSTOM_VIDEO_BITRATE_BPS;
   }
 
-  if (customVideoBitrate > MAX_CUSTOM_VIDEO_BITRATE_BPS) {
-    return MAX_CUSTOM_VIDEO_BITRATE_BPS;
+  if (customVideoBitrate > env.MAX_CUSTOM_VIDEO_BITRATE_BPS) {
+    return env.MAX_CUSTOM_VIDEO_BITRATE_BPS;
   }
 
   return customVideoBitrate;

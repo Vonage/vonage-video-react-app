@@ -1,5 +1,6 @@
 import composeProviders, { type ProviderComponent } from '@web/helpers/composeProviders';
 import {
+  makeAdvancedSettingsProviderWrapper,
   makeBackgroundPublisherProviderWrapper,
   makePreviewPublisherProviderWrapper,
   makePublisherProviderWrapper,
@@ -11,6 +12,7 @@ import {
  * Keep updated accordingly to the providers you have and their dependencies.
  */
 export enum providers {
+  advancedSettings = 'advancedSettings',
   user = 'user',
   session = 'session',
   publisher = 'publisher',
@@ -22,6 +24,7 @@ export enum providers {
  * Keep updated accordingly to the providers you have and their dependencies.
  */
 const MAKERS = {
+  [providers.advancedSettings]: makeAdvancedSettingsProviderWrapper,
   [providers.user]: makeUserProviderWrapper,
   [providers.session]: makeSessionProviderWrapper,
   [providers.publisher]: makePublisherProviderWrapper,
@@ -35,6 +38,7 @@ type ProvidersMakers = typeof MAKERS;
  * Keep updated accordingly to the providers you have and their dependencies.
  */
 const PROVIDER_DEPENDENCIES = {
+  [providers.advancedSettings]: [],
   [providers.user]: [],
   [providers.session]: [providers.user],
   [providers.publisher]: [providers.user, providers.session],
@@ -46,14 +50,16 @@ const PROVIDER_DEPENDENCIES = {
  * Infer the possible parameters for the provided keys
  */
 type ProviderOptionsFor<Keys extends readonly providers[]> = {
-  [K in Keys[number] as `${K}Context`]: Parameters<ProvidersMakers[K]>[0] | undefined;
+  [K in Keys[number] as `${K}Context`]?: Parameters<ProvidersMakers[K]>[0] | undefined;
 };
 
 /**
- * Infer the context britches for the provided keys
+ * Infer the context refs for the provided keys, excluding providers that have no context.
  */
 type ProviderContextsFor<Keys extends readonly providers[]> = {
-  [K in Keys[number] as `${K}Context`]: NonNullable<ReturnType<ProvidersMakers[K]>['context']>;
+  [K in Keys[number] as ReturnType<ProvidersMakers[K]>['context'] extends undefined
+    ? never
+    : `${K}Context`]: NonNullable<ReturnType<ProvidersMakers[K]>['context']>;
 };
 
 function makeTestProvider<
@@ -103,6 +109,8 @@ function makeTestProvider<
     wrapper,
     ...providers.reduce((acc, { context }, index) => {
       const key = keys[index];
+
+      if (context === undefined) return acc;
 
       return {
         ...acc,

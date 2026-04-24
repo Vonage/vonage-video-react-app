@@ -6,7 +6,7 @@ import useRoomShareUrl from '../../../hooks/useRoomShareUrl';
 import IconButton from '@mui/material/IconButton';
 import Tooltip from '@mui/material/Tooltip';
 import Fade from '@mui/material/Fade';
-import VividIcon from '@components/VividIcon';
+import VividIcon from '@ui/VividIcon';
 import usePublisherContext from '@hooks/usePublisherContext';
 import { isRearFacingLabel, isFrontFacingLabel } from '@utils/cameraSwitch';
 import usePreferredCameras from '@hooks/usePreferredCameras';

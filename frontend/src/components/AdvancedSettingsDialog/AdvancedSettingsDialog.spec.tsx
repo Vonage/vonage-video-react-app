@@ -1,8 +1,8 @@
 import { render as renderBase, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import type { ReactElement, ReactNode } from 'react';
+import type { ReactElement } from 'react';
 import { describe, expect, it } from 'vitest';
-import advancedSettingsDialog$ from '@Context/AdvancedSettingsDialog';
+import { makeTestProvider, providers } from '@test/providers';
 import AdvancedSettingsDialog from './AdvancedSettingsDialog';
 
 describe('AdvancedSettingsDialog', () => {
@@ -63,13 +63,9 @@ describe('AdvancedSettingsDialog', () => {
 });
 
 function render(ui: ReactElement) {
-  return renderBase(ui, { wrapper: AdvancedSettingsDialogTestProvider });
-}
+  const { wrapper } = makeTestProvider([providers.advancedSettings], {
+    advancedSettingsContext: { dialogState: { isOpen: true } },
+  });
 
-function AdvancedSettingsDialogTestProvider({ children }: { children: ReactNode }): ReactElement {
-  return (
-    <advancedSettingsDialog$.Provider value={{ isOpen: true }}>
-      {children}
-    </advancedSettingsDialog$.Provider>
-  );
+  return renderBase(ui, { wrapper });
 }

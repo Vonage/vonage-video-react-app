@@ -67,12 +67,6 @@ vi.mock('@mui/material/useMediaQuery', () => ({
   default: vi.fn(),
 }));
 
-// vi.mock('../../env', () => ({
-//   default: {
-//     BYPASS_WAITING_ROOM: false,
-//   },
-// }));
-
 vi.mock('@hooks/useSpeakingDetector');
 vi.mock('@hooks/useLayoutManager');
 vi.mock('@hooks/useActiveSpeaker');
@@ -565,7 +559,7 @@ function render(
   } = {}
 ) {
   const { wrapper, ...context } = makeTestProvider(
-    [providers.user, providers.session, providers.publisher],
+    [providers.advancedSettings, providers.user, providers.session, providers.publisher],
     {
       userContext: {
         ...userContext,

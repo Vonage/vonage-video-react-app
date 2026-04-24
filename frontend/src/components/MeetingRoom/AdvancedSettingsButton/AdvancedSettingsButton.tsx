@@ -3,7 +3,7 @@ import Tooltip from '@mui/material/Tooltip';
 import { useTranslation } from 'react-i18next';
 import useTheme from '@ui/theme';
 import advancedSettingsDialog$ from '@Context/AdvancedSettingsDialog';
-import VividIcon from '@components/VividIcon';
+import VividIcon from '@ui/VividIcon';
 import ToolbarButton from '../ToolbarButton';
 
 export type AdvancedSettingsButtonProps = {
@@ -15,7 +15,7 @@ const AdvancedSettingsButton = ({
 }: AdvancedSettingsButtonProps): ReactElement => {
   const { t } = useTranslation();
   const theme = useTheme();
-  const [{ isOpen }, { open, close }] = advancedSettingsDialog$.use();
+  const [isOpen, { open, close }] = advancedSettingsDialog$.use(({ isOpen }) => isOpen);
 
   const handleClick = () => {
     if (isOpen) {
@@ -42,7 +42,7 @@ const AdvancedSettingsButton = ({
           <VividIcon
             name="gear-solid"
             customSize={-5}
-            sx={{ color: isOpen ? theme.colors.secondary : theme.colors.onSecondary }}
+            style={{ color: isOpen ? theme.colors.secondary : theme.colors.onSecondary }}
           />
         }
         isOverflowButton={isOverflowButton}

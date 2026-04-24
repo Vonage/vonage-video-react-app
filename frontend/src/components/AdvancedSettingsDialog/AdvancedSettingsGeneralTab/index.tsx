@@ -1,3 +1,1 @@
-import AdvancedSettingsGeneralTab from './AdvancedSettingsGeneralTab';
-
-export default AdvancedSettingsGeneralTab;
+export { default as AdvancedSettingsGeneralTab } from './AdvancedSettingsGeneralTab';

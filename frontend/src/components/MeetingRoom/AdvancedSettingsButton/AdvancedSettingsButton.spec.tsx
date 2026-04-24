@@ -2,8 +2,7 @@ import { render as renderBase, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import type { ReactElement } from 'react';
 import { describe, expect, it } from 'vitest';
-import advancedSettingsDialog$ from '@Context/AdvancedSettingsDialog';
-import composeProviders from '@web/helpers/composeProviders';
+import { makeTestProvider, providers } from '@test/providers';
 import AdvancedSettingsButton from './AdvancedSettingsButton';
 
 describe('AdvancedSettingsButton', () => {
@@ -24,7 +23,7 @@ describe('AdvancedSettingsButton', () => {
 });
 
 function render(ui: ReactElement) {
-  const wrapper = composeProviders(advancedSettingsDialog$.Provider);
+  const { wrapper } = makeTestProvider([providers.advancedSettings]);
 
   return renderBase(ui, { wrapper });
 }

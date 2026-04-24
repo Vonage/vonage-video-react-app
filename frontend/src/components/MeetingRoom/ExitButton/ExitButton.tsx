@@ -5,7 +5,7 @@ import { useTranslation } from 'react-i18next';
 import ToolbarButton from '../ToolbarButton';
 import useSessionContext from '@hooks/useSessionContext';
 import useTheme from '@ui/theme';
-import VividIcon from '@components/VividIcon';
+import VividIcon from '@ui/VividIcon';
 
 export type ExitButtonProps = {
   handleLeave: () => void;

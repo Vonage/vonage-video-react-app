@@ -3,7 +3,7 @@ import { ReactElement, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import ToolbarButton from '../ToolbarButton';
 import useTheme from '@ui/theme';
-import VividIcon from '@components/VividIcon';
+import VividIcon from '@ui/VividIcon';
 
 export type ReportIssueButtonProps = {
   handleClick: () => void;
@@ -46,7 +46,7 @@ const ReportIssueButton = ({
           <VividIcon
             customSize={-5}
             name="feedback-solid"
-            sx={{ color: isOpen ? theme.colors.secondary : theme.colors.onSecondary }}
+            style={{ color: isOpen ? theme.colors.secondary : theme.colors.onSecondary }}
           />
         }
         ref={anchorRef}

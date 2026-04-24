@@ -1,3 +1,1 @@
-import AdvancedSettingsDialog from './AdvancedSettingsDialog';
-
-export default AdvancedSettingsDialog;
+export { default as AdvancedSettingsDialog } from './AdvancedSettingsDialog';

@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import isMouseEventInsideBox from '../../../utils/isMouseEventInsideBox';
 import Tooltip from '@mui/material/Tooltip';
 import IconButton from '@mui/material/IconButton';
-import VividIcon from '@components/VividIcon';
+import VividIcon from '@ui/VividIcon';
 import Box from '@mui/material/Box';
 import useTheme from '@ui/theme';
 import { ABSOLUTE_DISTANCE_THRESHOLD_REM_VALUE } from '@utils/constants';
@@ -113,9 +113,9 @@ const PinButton = ({
             }}
           >
             {isTileHovered && isPinned ? (
-              <VividIcon name="pin-2-off-solid" customSize={-6} sx={iconSx} />
+              <VividIcon name="pin-2-off-solid" customSize={-6} style={iconSx} />
             ) : (
-              <VividIcon name="pin-2-solid" customSize={-6} sx={iconSx} />
+              <VividIcon name="pin-2-solid" customSize={-6} style={iconSx} />
             )}
           </IconButton>
         </Tooltip>

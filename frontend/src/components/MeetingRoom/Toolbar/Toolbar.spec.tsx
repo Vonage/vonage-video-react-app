@@ -114,7 +114,7 @@ describe('Toolbar', () => {
       />
     );
     expect(screen.queryByTestId('archiving-button')).toBeVisible();
-    expect(screen.queryByTestId('advanced-settings-button')).not.toBeInTheDocument();
+    expect(screen.queryByTestId('advanced-settings-button')).toBeVisible();
     expect(screen.queryByTestId('screensharing-button')).toBeVisible();
     expect(screen.queryByTestId('emoji-grid-button')).toBeVisible();
     expect(screen.queryByTestId('captions-button')).toBeVisible();

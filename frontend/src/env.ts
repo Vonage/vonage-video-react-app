@@ -107,6 +107,25 @@ function parseResolution(value: unknown, fallback: Resolution | undefined): Reso
   return value as Resolution;
 }
 
+function parsePositiveInt(value: unknown, name: string, defaultValue: number): number {
+  if (value === undefined || value === null || value === '') return defaultValue;
+  const n = Number(value);
+  if (!Number.isInteger(n) || n <= 0) {
+    throw new Error(`${name} must be a positive integer, got: ${toDisplayString(value)}`);
+  }
+  return n;
+}
+
+function parseIntList(value: unknown, name: string, fallback: number[]): number[] {
+  if (!value) return fallback;
+  if (typeof value !== 'string') throw new Error(`Invalid ${name}`);
+  return value.split('|').map((v) => {
+    const n = Number(v.trim());
+    if (!Number.isInteger(n) || n <= 0) throw new Error(`Invalid value in ${name}: ${v}`);
+    return n;
+  });
+}
+
 function parseLayoutMode(value: unknown, fallback: LayoutMode): LayoutMode {
   if (value === undefined || value === null || value === '') return fallback;
 
@@ -142,6 +161,9 @@ export class Env {
   public ALLOW_CAMERA_CONTROL: boolean;
   public ALLOW_VIDEO_ON_JOIN: boolean;
   public DEFAULT_RESOLUTION: Resolution | undefined;
+  public MIN_CUSTOM_VIDEO_BITRATE_BPS: number;
+  public MAX_CUSTOM_VIDEO_BITRATE_BPS: number;
+  public SUPPORTED_FRAME_RATES: number[];
   public ALLOW_ADVANCED_NOISE_SUPPRESSION: boolean;
   public ALLOW_AUDIO_ON_JOIN: boolean;
   public ALLOW_MICROPHONE_CONTROL: boolean;
@@ -202,6 +224,23 @@ export class Env {
     this.AVOID_FETCHING_APP_CONFIG = parseBoolean(env.AVOID_FETCHING_APP_CONFIG, true);
 
     this.DEFAULT_RESOLUTION = parseResolution(env.DEFAULT_RESOLUTION, '1280x720');
+    this.MIN_CUSTOM_VIDEO_BITRATE_BPS = parsePositiveInt(
+      env.MIN_CUSTOM_VIDEO_BITRATE_BPS,
+      'MIN_CUSTOM_VIDEO_BITRATE_BPS',
+      5_000
+    );
+
+    this.MAX_CUSTOM_VIDEO_BITRATE_BPS = parsePositiveInt(
+      env.MAX_CUSTOM_VIDEO_BITRATE_BPS,
+      'MAX_CUSTOM_VIDEO_BITRATE_BPS',
+      10_000_000
+    );
+
+    this.SUPPORTED_FRAME_RATES = parseIntList(
+      env.SUPPORTED_FRAME_RATES,
+      'SUPPORTED_FRAME_RATES',
+      [30, 15, 7, 1]
+    );
 
     this.DEFAULT_LAYOUT_MODE = parseLayoutMode(env.DEFAULT_LAYOUT_MODE, 'active-speaker');
 

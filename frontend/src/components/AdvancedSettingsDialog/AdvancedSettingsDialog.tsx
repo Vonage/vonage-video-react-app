@@ -1,123 +1,34 @@
-import { useState } from 'react';
 import type { ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
 import Dialog from '@mui/material/Dialog';
 import classNames from 'classnames';
 import advancedSettingsDialog$ from '@Context/AdvancedSettingsDialog';
-import VividIcon from '@components/VividIcon';
-import AdvancedSettingsAudioTab from './AdvancedSettingsAudioTab';
-import AdvancedSettingsGeneralTab from './AdvancedSettingsGeneralTab';
-import AdvancedSettingsSidebar from './AdvancedSettingsSidebar';
-import AdvancedSettingsStatisticsTab from './AdvancedSettingsStatisticsTab';
-import AdvancedSettingsVideoTab from './AdvancedSettingsVideoTab';
-import type {
-  AdvancedSettingsAudioBitrateMode,
-  AdvancedSettingsBitrateMode,
-  AdvancedSettingsCodecMode,
-  AdvancedSettingsCustomAudioBitrate,
-  AdvancedSettingsCustomVideoBitrate,
-  AdvancedSettingsFrameRate,
-  AdvancedSettingsManualCodecOrder,
-  AdvancedSettingsResolution,
-  AdvancedSettingsTab,
-} from './types/types';
-import {
-  ADVANCED_SETTINGS_AUDIO_BITRATE_MODE,
-  ADVANCED_SETTINGS_BITRATE_MODE,
-  ADVANCED_SETTINGS_CODEC_MODE,
-} from './types/types';
+import VividIcon from '@ui/VividIcon';
+import { AdvancedSettingsAudioTab } from './AdvancedSettingsAudioTab';
+import { AdvancedSettingsGeneralTab } from './AdvancedSettingsGeneralTab';
+import { AdvancedSettingsSidebar } from './AdvancedSettingsSidebar';
+import { AdvancedSettingsStatisticsTab } from './AdvancedSettingsStatisticsTab';
+import { AdvancedSettingsVideoTab } from './AdvancedSettingsVideoTab';
 
-/**
- * AdvancedSettingsDialog Component
- * Renders the visual-only advanced settings dialog.
- */
 const AdvancedSettingsDialog = (): ReactElement => {
   const { t } = useTranslation();
-  const isAdvancedSettingsOpen = advancedSettingsDialog$.use.select((state) => state.isOpen);
+  const { isOpen, selectedTab } = advancedSettingsDialog$.use.select((state) => ({
+    isOpen: state.isOpen,
+    selectedTab: state.selectedTab,
+  }));
   const { close } = advancedSettingsDialog$.use.actions();
-  const [selectedTab, setSelectedTab] = useState<AdvancedSettingsTab>('general');
-  const [bitrateMode, setBitrateMode] = useState<AdvancedSettingsBitrateMode>(
-    ADVANCED_SETTINGS_BITRATE_MODE.default
-  );
-  const [customVideoBitrate, setCustomVideoBitrate] =
-    useState<AdvancedSettingsCustomVideoBitrate>(500_000);
-  const [codecMode, setCodecMode] = useState<AdvancedSettingsCodecMode>(
-    ADVANCED_SETTINGS_CODEC_MODE.automatic
-  );
-  const [codecPriority, setCodecPriority] = useState<AdvancedSettingsManualCodecOrder>([
-    'vp9',
-    'vp8',
-    'h264',
-  ]);
-  const [frameRate, setFrameRate] = useState<AdvancedSettingsFrameRate>(30);
-  const [resolution, setResolution] = useState<AdvancedSettingsResolution>('640x480');
-  const [audioBitrateMode, setAudioBitrateMode] = useState<AdvancedSettingsAudioBitrateMode>(
-    ADVANCED_SETTINGS_AUDIO_BITRATE_MODE.automatic
-  );
-  const [customAudioBitrate, setCustomAudioBitrate] =
-    useState<AdvancedSettingsCustomAudioBitrate>(128);
-  const [enableDtx, setEnableDtx] = useState(false);
-  const [publisherAudioFallbackEnabled, setPublisherAudioFallbackEnabled] = useState(false);
-  const [subscriberAudioFallbackEnabled, setSubscriberAudioFallbackEnabled] = useState(false);
-  const [publisherStatisticsEnabled, setPublisherStatisticsEnabled] = useState(false);
-
-  const handleClose = () => {
-    close();
-  };
 
   const tabContent = (() => {
-    if (selectedTab === 'general') {
-      return <AdvancedSettingsGeneralTab />;
-    }
-
-    if (selectedTab === 'video') {
-      return (
-        <AdvancedSettingsVideoTab
-          bitrateMode={bitrateMode}
-          setBitrateMode={setBitrateMode}
-          customVideoBitrate={customVideoBitrate}
-          setCustomVideoBitrate={setCustomVideoBitrate}
-          codecMode={codecMode}
-          setCodecMode={setCodecMode}
-          codecPriority={codecPriority}
-          setCodecPriority={setCodecPriority}
-          frameRate={frameRate}
-          setFrameRate={setFrameRate}
-          resolution={resolution}
-          setResolution={setResolution}
-        />
-      );
-    }
-
-    if (selectedTab === 'audio') {
-      return (
-        <AdvancedSettingsAudioTab
-          audioBitrateMode={audioBitrateMode}
-          setAudioBitrateMode={setAudioBitrateMode}
-          customAudioBitrate={customAudioBitrate}
-          setCustomAudioBitrate={setCustomAudioBitrate}
-          enableDtx={enableDtx}
-          setEnableDtx={setEnableDtx}
-          publisherAudioFallbackEnabled={publisherAudioFallbackEnabled}
-          setPublisherAudioFallbackEnabled={setPublisherAudioFallbackEnabled}
-          subscriberAudioFallbackEnabled={subscriberAudioFallbackEnabled}
-          setSubscriberAudioFallbackEnabled={setSubscriberAudioFallbackEnabled}
-        />
-      );
-    }
-
-    return (
-      <AdvancedSettingsStatisticsTab
-        publisherStatisticsEnabled={publisherStatisticsEnabled}
-        setPublisherStatisticsEnabled={setPublisherStatisticsEnabled}
-      />
-    );
+    if (selectedTab === 'general') return <AdvancedSettingsGeneralTab />;
+    if (selectedTab === 'video') return <AdvancedSettingsVideoTab />;
+    if (selectedTab === 'audio') return <AdvancedSettingsAudioTab />;
+    return <AdvancedSettingsStatisticsTab />;
   })();
 
   return (
     <Dialog
-      open={isAdvancedSettingsOpen}
-      onClose={handleClose}
+      open={isOpen}
+      onClose={close}
       maxWidth="md"
       fullWidth
       PaperProps={{
@@ -133,7 +44,7 @@ const AdvancedSettingsDialog = (): ReactElement => {
           <button
             type="button"
             aria-label={t('button.close')}
-            onClick={handleClose}
+            onClick={close}
             className={classNames(
               'cursor-pointer absolute right-4 top-4 flex h-10 w-10 items-center justify-center rounded-full',
               'text-vera-secondary transition-colors hover:bg-vera-background'
@@ -144,7 +55,7 @@ const AdvancedSettingsDialog = (): ReactElement => {
         </div>
 
         <div className="flex min-h-0 flex-1">
-          <AdvancedSettingsSidebar selectedTab={selectedTab} setSelectedTab={setSelectedTab} />
+          <AdvancedSettingsSidebar />
 
           <div className="flex-1 overflow-y-auto p-6">{tabContent}</div>
         </div>

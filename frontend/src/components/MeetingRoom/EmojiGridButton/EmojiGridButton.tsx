@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next';
 import useTheme from '@ui/theme';
 import ToolbarButton from '../ToolbarButton';
 import EmojiGrid from '../EmojiGrid/EmojiGrid';
-import VividIcon from '@components/VividIcon';
+import VividIcon from '@ui/VividIcon';
 import { env } from '../../../env';
 
 export type EmojiGridProps = {

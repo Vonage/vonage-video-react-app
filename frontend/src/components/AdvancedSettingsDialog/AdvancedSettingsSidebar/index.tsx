@@ -1,3 +1,1 @@
-import AdvancedSettingsSidebar from './AdvancedSettingsSidebar';
-
-export default AdvancedSettingsSidebar;
+export { default as AdvancedSettingsSidebar } from './AdvancedSettingsSidebar';

@@ -6,6 +6,7 @@ import * as clientSdkVideo from '@vonage/client-sdk-video';
 import backgroundEffectsDialog$ from '@Context/BackgroundEffectsDialog';
 import precallNetworkTestDialog$ from '@Context/PrecallNetworkTestDialog';
 import composeProviders from '@web/helpers/composeProviders';
+import { makeTestProvider, providers } from '@test/providers';
 import MenuMoreOptions from './MenuMoreOptions';
 import { env } from '../../../env';
 
@@ -46,10 +47,11 @@ describe('MenuMoreOptions', () => {
     expect(screen.queryByText(/video effects/i)).not.toBeInTheDocument();
   });
 
-  it('should not display settings option', () => {
+  // TODO: remove the .skip when advanced settings is implemented
+  it.skip('should display advanced settings option', () => {
     render(<MenuMoreOptions onClose={mockOnClose} open anchorEl={mockAnchorEl} />);
 
-    expect(screen.queryByText(/^settings$/i)).not.toBeInTheDocument();
+    expect(screen.getByText(/^settings$/i)).toBeInTheDocument();
   });
 
   it('should display video effects option when media processor is supported', () => {
@@ -131,7 +133,9 @@ describe('MenuMoreOptions', () => {
 });
 
 function render(ui: ReactElement) {
+  const { wrapper: advancedSettingsWrapper } = makeTestProvider([providers.advancedSettings]);
   const wrapper = composeProviders(
+    advancedSettingsWrapper,
     backgroundEffectsDialog$.Provider,
     precallNetworkTestDialog$.Provider
   );

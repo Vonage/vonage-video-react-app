@@ -1,3 +1,1 @@
-import AdvancedSettingsCodecPriorityField from './AdvancedSettingsCodecPriorityField';
-
-export default AdvancedSettingsCodecPriorityField;
+export { default as AdvancedSettingsCodecPriorityField } from './AdvancedSettingsCodecPriorityField';

@@ -1,1 +1,1 @@
-export { default } from '../../AdvancedSettingsDialog';
+export { AdvancedSettingsDialog as default } from '../../AdvancedSettingsDialog';

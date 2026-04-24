@@ -1,15 +1,12 @@
-import { render, screen } from '@testing-library/react';
-import { describe, expect, it, vi } from 'vitest';
+import { render as renderBase, screen } from '@testing-library/react';
+import type { ReactElement } from 'react';
+import { describe, expect, it } from 'vitest';
+import { makeTestProvider, providers } from '@test/providers';
 import AdvancedSettingsStatisticsTab from './AdvancedSettingsStatisticsTab';
 
 describe('AdvancedSettingsStatisticsTab', () => {
   it('renders collection and an empty publisher statistics group', () => {
-    render(
-      <AdvancedSettingsStatisticsTab
-        publisherStatisticsEnabled={false}
-        setPublisherStatisticsEnabled={vi.fn()}
-      />
-    );
+    render(<AdvancedSettingsStatisticsTab />);
 
     expect(screen.getByRole('heading', { name: /^statistics$/i })).toBeInTheDocument();
     expect(
@@ -20,3 +17,9 @@ describe('AdvancedSettingsStatisticsTab', () => {
     expect(screen.queryByRole('button', { name: /subscriber/i })).not.toBeInTheDocument();
   });
 });
+
+function render(ui: ReactElement) {
+  const { wrapper } = makeTestProvider([providers.advancedSettings]);
+
+  return renderBase(ui, { wrapper });
+}

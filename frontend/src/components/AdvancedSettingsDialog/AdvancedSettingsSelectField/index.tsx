@@ -1,3 +1,1 @@
-import AdvancedSettingsSelectField from './AdvancedSettingsSelectField';
-
-export default AdvancedSettingsSelectField;
+export { default as AdvancedSettingsSelectField } from './AdvancedSettingsSelectField';

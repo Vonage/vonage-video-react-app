@@ -1,15 +1,13 @@
-import { fireEvent, render, screen } from '@testing-library/react';
-import { describe, expect, it, vi } from 'vitest';
+import { fireEvent, render as renderBase, screen } from '@testing-library/react';
+import type { ReactElement } from 'react';
+import { describe, expect, it } from 'vitest';
+import { makeTestProvider, providers } from '@test/providers';
+import type { AdvancedSettingsDialogState } from '@Context/AdvancedSettingsDialog';
 import AdvancedSettingsCustomVideoBitrateField from './AdvancedSettingsCustomVideoBitrateField';
 
 describe('AdvancedSettingsCustomVideoBitrateField', () => {
   it('renders the current bitrate and range labels', () => {
-    render(
-      <AdvancedSettingsCustomVideoBitrateField
-        customVideoBitrate={500_000}
-        setCustomVideoBitrate={vi.fn()}
-      />
-    );
+    render(<AdvancedSettingsCustomVideoBitrateField />);
 
     expect(screen.getByText(/custom bitrate/i)).toBeInTheDocument();
     expect(screen.getByTestId('advanced-settings-custom-video-bitrate-slider')).toHaveAttribute(
@@ -22,19 +20,26 @@ describe('AdvancedSettingsCustomVideoBitrateField', () => {
   });
 
   it('clamps the value into the supported range', () => {
-    const setCustomVideoBitrate = vi.fn();
-
-    render(
-      <AdvancedSettingsCustomVideoBitrateField
-        customVideoBitrate={9_995_000}
-        setCustomVideoBitrate={setCustomVideoBitrate}
-      />
-    );
-
-    fireEvent.change(screen.getByTestId('advanced-settings-custom-video-bitrate-slider'), {
-      target: { value: '20000000' },
+    render(<AdvancedSettingsCustomVideoBitrateField />, {
+      dialogState: { customVideoBitrate: 9_995_000 },
     });
 
-    expect(setCustomVideoBitrate).toHaveBeenCalledWith(10_000_000);
+    const slider = screen.getByTestId('advanced-settings-custom-video-bitrate-slider');
+
+    fireEvent.change(slider, { target: { value: '20000000' } });
+
+    expect(slider).toHaveValue('10000000');
   });
 });
+
+type RenderOptions = {
+  dialogState?: Partial<AdvancedSettingsDialogState>;
+};
+
+function render(ui: ReactElement, { dialogState }: RenderOptions = {}) {
+  const { wrapper } = makeTestProvider([providers.advancedSettings], {
+    advancedSettingsContext: { dialogState },
+  });
+
+  return renderBase(ui, { wrapper });
+}

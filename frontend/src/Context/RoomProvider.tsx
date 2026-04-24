@@ -1,4 +1,5 @@
 import { PropsWithChildren } from 'react';
+import advancedSettingsDialog$ from '@Context/AdvancedSettingsDialog';
 import { BackgroundPublisherProvider } from './BackgroundPublisherProvider';
 
 /**
@@ -7,7 +8,9 @@ import { BackgroundPublisherProvider } from './BackgroundPublisherProvider';
  * @returns {ReactElement} The context.
  */
 const RoomProvider: React.FC<PropsWithChildren> = ({ children }) => (
-  <BackgroundPublisherProvider>{children}</BackgroundPublisherProvider>
+  <advancedSettingsDialog$.Provider>
+    <BackgroundPublisherProvider>{children}</BackgroundPublisherProvider>
+  </advancedSettingsDialog$.Provider>
 );
 
 export default RoomProvider;

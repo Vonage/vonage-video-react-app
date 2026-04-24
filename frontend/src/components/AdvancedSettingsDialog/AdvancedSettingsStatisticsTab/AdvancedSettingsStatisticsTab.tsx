@@ -1,20 +1,21 @@
 import type { ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
-import AdvancedSettingsBooleanField from '../AdvancedSettingsBooleanField';
-import AdvancedSettingsStatisticsGroup from '../AdvancedSettingsStatisticsGroup';
+import advancedSettingsDialog$ from '@Context/AdvancedSettingsDialog';
+import { AdvancedSettingsBooleanField } from '../AdvancedSettingsBooleanField';
+import { AdvancedSettingsStatisticsGroup } from '../AdvancedSettingsStatisticsGroup';
 
-type AdvancedSettingsStatisticsTabProps = {
-  publisherStatisticsEnabled: boolean;
-  setPublisherStatisticsEnabled: (value: boolean) => void;
-};
-
-const AdvancedSettingsStatisticsTab = ({
-  publisherStatisticsEnabled,
-  setPublisherStatisticsEnabled,
-}: AdvancedSettingsStatisticsTabProps): ReactElement => {
+const AdvancedSettingsStatisticsTab = (): ReactElement => {
   const { t } = useTranslation();
+  const publisherStatisticsEnabled = advancedSettingsDialog$.use.select(
+    (state) => state.publisherStatisticsEnabled
+  );
+  const { setPublisherStatisticsEnabled } = advancedSettingsDialog$.use.actions();
+
+  // TODO: populate from live publisher stats once SDK wiring is in place
   const publisherAudioStatistics: { label: string; value: string }[] = [];
+  // TODO: populate from live publisher stats once SDK wiring is in place
   const publisherVideoStatistics: { label: string; value: string }[] = [];
+  // TODO: populate per-subscriber stats groups once SDK wiring is in place
   const subscriberStatisticsGroups: Array<{
     title: string;
     audioItems: { label: string; value: string }[];

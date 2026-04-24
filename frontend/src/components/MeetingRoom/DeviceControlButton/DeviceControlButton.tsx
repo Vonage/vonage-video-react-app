@@ -9,7 +9,7 @@ import MutedAlert from '../../MutedAlert';
 import ButtonGroup from '@mui/material/ButtonGroup';
 import IconButton from '@mui/material/IconButton';
 import Tooltip from '@mui/material/Tooltip';
-import VividIcon from '@components/VividIcon';
+import VividIcon from '@ui/VividIcon';
 import Box from '@mui/material/Box';
 import usePushToTalk from '@hooks/usePushToTalk';
 import { env } from '../../../env';
@@ -95,7 +95,9 @@ const DeviceControlButton = ({
     }
 
     if (!env.ALLOW_CAMERA_CONTROL) {
-      return <VividIcon name="video-solid" customSize={-5} sx={{ color: theme.colors.disabled }} />;
+      return (
+        <VividIcon name="video-solid" customSize={-5} style={{ color: theme.colors.disabled }} />
+      );
     }
     if (isVideoEnabled) {
       return (

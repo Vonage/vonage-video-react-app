@@ -4,7 +4,7 @@ import ToolbarButton from '../ToolbarButton';
 import Badge from '@mui/material/Badge';
 import Tooltip from '@mui/material/Tooltip';
 import useTheme from '@ui/theme';
-import VividIcon from '@components/VividIcon';
+import VividIcon from '@ui/VividIcon';
 import { env } from '../../../env';
 
 export type ParticipantListButtonProps = {
@@ -64,7 +64,7 @@ const ParticipantListButton = ({
                 name="group-solid"
                 customSize={-4}
                 data-testid="PeopleIcon"
-                sx={{ color: isOpen ? theme.colors.secondary : theme.colors.onSecondary }}
+                style={{ color: isOpen ? theme.colors.secondary : theme.colors.onSecondary }}
               />
             }
             isOverflowButton={isOverflowButton}

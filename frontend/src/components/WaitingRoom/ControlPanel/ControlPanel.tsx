@@ -5,7 +5,7 @@ import useIsSmallViewport from '@hooks/useIsSmallViewport';
 import Box from '@mui/material/Box';
 import type { SxProps } from '@mui/material';
 import useTheme from '@ui/theme';
-import VividIcon from '@components/VividIcon';
+import VividIcon from '@ui/VividIcon';
 import ButtonBase from '@mui/material/ButtonBase';
 import MenuDevicesWaitingRoom from '../MenuDevices';
 import MenuMoreOptions from '../MenuMoreOptions/MenuMoreOptions';

@@ -15,7 +15,7 @@ import Typography from '@mui/material/Typography';
 import useTheme from '@ui/theme';
 
 import Separator from '@components/Separator';
-import VividIcon from '@components/VividIcon';
+import VividIcon from '@ui/VividIcon';
 
 import { Archive, ArchiveStatus } from '../../../api/archiving/model';
 import formatDuration from '@utils/formatDuration';
@@ -100,7 +100,7 @@ const ArchiveList = ({ archives }: ArchiveListProps): ReactElement => {
   if (archives === 'error') {
     return (
       <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-        <VividIcon name="warning-line" customSize={-4} sx={{ color: theme.colors.warning }} />
+        <VividIcon name="warning-line" customSize={-4} style={{ color: theme.colors.warning }} />
         <Typography variant="h6" sx={{ color: theme.colors.textTertiary }}>
           {t('archiveList.error.text')}
         </Typography>

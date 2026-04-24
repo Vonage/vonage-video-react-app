@@ -1,4 +1,4 @@
-import VividIcon from '@components/VividIcon';
+import VividIcon from '@ui/VividIcon';
 import useSessionKeyParam from '@hooks/useSessionKeyParam';
 import Button from '@mui/material/Button';
 import { ReactElement } from 'react';

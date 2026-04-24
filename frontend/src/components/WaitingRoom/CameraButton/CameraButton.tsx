@@ -6,7 +6,7 @@ import { VIDEO_CONTAINER_BUTTON_SIZE_WR } from '@utils/constants';
 import useTheme from '@ui/theme';
 import Tooltip from '@mui/material/Tooltip';
 import Box from '@mui/material/Box';
-import VividIcon from '@components/VividIcon';
+import VividIcon from '@ui/VividIcon';
 import VideoContainerButton from '../VideoContainerButton';
 import { env } from '../../../env';
 
