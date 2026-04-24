@@ -82,15 +82,15 @@ const WaitingRoom: FC = () => {
                 </Box>
               </PageLayout.Left>
 
-            <PageLayout.Right>
-              {isRoomReady && (
-                <UsernameInput
-                  className={`flex-col sm:inline-flex h-auto sm:h-100 animate-fade-in`}
-                  username={username}
-                  setUsername={setUsername}
-                  roomName={roomName}
-                />
-              )}
+              <PageLayout.Right>
+                {isRoomReady && (
+                  <UsernameInput
+                    className={`flex-col sm:inline-flex h-auto sm:h-100 animate-fade-in`}
+                    username={username}
+                    setUsername={setUsername}
+                    roomName={roomName}
+                  />
+                )}
 
                 {!isRoomReady && <UsernameInputSkeleton />}
               </PageLayout.Right>

@@ -105,26 +105,15 @@ function WaitingRoomStageContent() {
                 </Box>
               </PageLayoutEmbed.Left>
 
-<<<<<<< vidsol-686-advanced-settings-foundation
               <PageLayoutEmbed.Right>
                 {isRoomReady && (
                   <UsernameInput
                     className={`flex-col sm:inline-flex h-auto animate-fade-in`}
                     username={username}
                     setUsername={setUsername}
+                    roomName={roomName}
                   />
                 )}
-=======
-            <PageLayoutEmbed.Right>
-              {isRoomReady && (
-                <UsernameInput
-                  className={`flex-col sm:inline-flex h-auto animate-fade-in`}
-                  username={username}
-                  setUsername={setUsername}
-                  roomName={roomName}
-                />
-              )}
->>>>>>> develop
 
                 {!isRoomReady && <UsernameInputSkeleton />}
               </PageLayoutEmbed.Right>
