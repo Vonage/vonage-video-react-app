@@ -21,9 +21,13 @@ type NetworkTestHook = {
 
 const mockRoomName = 'test-room';
 
-vi.mock('@hooks/useRoomName', () => ({
-  default: () => mockRoomName,
-}));
+vi.mock('react-router-dom', async () => {
+  const mod = await vi.importActual<typeof import('react-router-dom')>('react-router-dom');
+  return {
+    ...mod,
+    useParams: () => ({ roomIdentifier: mockRoomName }),
+  };
+});
 
 const mockUseNetworkTest = vi.fn<[], NetworkTestHook>();
 

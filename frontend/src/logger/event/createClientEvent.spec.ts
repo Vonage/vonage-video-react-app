@@ -80,6 +80,25 @@ describe('createClientEvent', () => {
     expect(event).toMatchObject({ action: 'TestAction', payload: { key: 'value' } });
   });
 
+  it('includes userId in the event when provided', () => {
+    const event = createClientEvent({
+      level: 'info',
+      action: 'TestAction',
+      userId: 'user-123',
+    });
+
+    expect(event).toHaveProperty('userId', 'user-123');
+  });
+
+  it('omits userId when not provided', () => {
+    const event = createClientEvent({
+      level: 'info',
+      action: 'TestAction',
+    });
+
+    expect(event).not.toHaveProperty('userId');
+  });
+
   it('uses the same guid for all events from the same module (same page load)', () => {
     const event1 = createClientEvent({
       level: 'info',

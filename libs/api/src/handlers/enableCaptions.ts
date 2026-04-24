@@ -1,33 +1,25 @@
 import { makeInternalErrorHandler, makeThirdPartyErrorHandler } from '@api-lib/errors';
 import type { EnableCaptionsPayload } from '@api-lib/schemas';
 import type { IVideoClient } from '@api-lib/types';
-import { isErrorLike } from '@common/assertions';
-import { tryCatch } from '@common/execution';
+import { assertResult } from '@common/execution';
+import type { EnableCaptionResponse } from '@vonage/video';
 
-async function enableCaptions(this: IVideoClient, payload: EnableCaptionsPayload): Promise<void> {
+async function enableCaptions(
+  this: IVideoClient,
+  payload: EnableCaptionsPayload
+): Promise<EnableCaptionResponse> {
   try {
-    const { sessionId, captionOptions } = payload;
+    const { sessionKey, captionOptions } = payload;
+    const { sessionId } = this.decodeSessionKey({ sessionKey });
 
-    const clientToken = this.createEphemeralToken({ sessionId });
+    const clientToken = this.createEphemeralToken({ sessionKey });
 
-    const { error } = await tryCatch(() =>
-      this._video.enableCaptions(sessionId, clientToken, captionOptions)
+    const captionsResponse = await assertResult(
+      () => this._video.enableCaptions(sessionId, clientToken, captionOptions),
+      makeThirdPartyErrorHandler('Failed to enable captions')
     );
 
-    if (error && isErrorLike(error)) {
-      const isLiveCaptionsAlreadyStarted = error.message
-        .toLowerCase()
-        .includes('live captions have already started for this session');
-
-      // If live captions have already been started for the session, we can consider the action successful
-      if (isLiveCaptionsAlreadyStarted) return;
-
-      throw makeThirdPartyErrorHandler(error.message)(error);
-    }
-
-    if (!error) return;
-
-    throw makeThirdPartyErrorHandler('Failed to enable captions')(error);
+    return captionsResponse;
   } catch (error) {
     throw makeInternalErrorHandler('Failed to enable captions')(error);
   }

@@ -2,56 +2,80 @@
 import { SessionStorage } from './sessionStorage';
 
 interface SessionData {
-  sessionId: string;
+  sessionKey: string;
   captionsId: string | null;
   captionsUserCount: number;
 }
 
 class InMemorySessionStorage implements SessionStorage {
   private sessions: { [key: string]: SessionData } = {};
+  private roomNameBySessionKey: { [sessionKey: string]: string } = {};
 
-  async getSession(roomName: string): Promise<string | null> {
-    return this.sessions[roomName]?.sessionId || null;
+  async getSessionKey({ roomName }: { roomName: string }): Promise<string | null> {
+    return this.sessions[roomName]?.sessionKey || null;
   }
 
-  async setSession(roomName: string, sessionId: string): Promise<void> {
+  async setSession({
+    roomName,
+    sessionKey,
+  }: {
+    roomName: string;
+    sessionKey: string;
+  }): Promise<void> {
     this.sessions[roomName] = {
-      sessionId,
+      sessionKey,
       captionsId: null,
       captionsUserCount: 0,
     };
+    this.roomNameBySessionKey[sessionKey] = roomName;
   }
 
-  async setCaptionsId(roomName: string, captionsId: string): Promise<void> {
-    if (!this.sessions[roomName]) {
-      throw new Error(`Session for room: ${roomName} does not exist. Cannot set captionsId.`);
-    } else {
-      this.sessions[roomName].captionsId = captionsId;
-    }
+  private getSessionByKey(sessionKey: string): SessionData | undefined {
+    const roomName = this.roomNameBySessionKey[sessionKey];
+    if (!roomName) return undefined;
+    return this.sessions[roomName];
   }
 
-  async getCaptionsId(roomName: string): Promise<string | null> {
-    return this.sessions[roomName]?.captionsId || null;
+  async setCaptionsId({
+    sessionKey,
+    captionsId,
+  }: {
+    sessionKey: string;
+    captionsId: string;
+  }): Promise<void> {
+    const session = this.getSessionByKey(sessionKey);
+    if (!session) {
+      throw new Error(`Session for key: ${sessionKey} does not exist. Cannot set captionsId.`);
+    }
+    session.captionsId = captionsId;
   }
 
-  async incrementCaptionsUserCount(roomName: string): Promise<number> {
-    if (!this.sessions[roomName]) {
-      throw new Error(`Session for room: ${roomName} does not exist. Cannot add captions user.`);
-    }
-    this.sessions[roomName].captionsUserCount += 1;
-
-    return this.sessions[roomName].captionsUserCount;
+  async getCaptionsId({ sessionKey }: { sessionKey: string }): Promise<string | null> {
+    return this.getSessionByKey(sessionKey)?.captionsId || null;
   }
 
-  async decrementCaptionsUserCount(roomName: string): Promise<number> {
-    if (!this.sessions[roomName]) {
-      throw new Error(`Session for room: ${roomName} does not exist. Cannot remove captions user.`);
+  async incrementCaptionsUserCount({ sessionKey }: { sessionKey: string }): Promise<number> {
+    const session = this.getSessionByKey(sessionKey);
+    if (!session) {
+      throw new Error(`Session for key: ${sessionKey} does not exist. Cannot add captions user.`);
+    }
+    session.captionsUserCount += 1;
+
+    return session.captionsUserCount;
+  }
+
+  async decrementCaptionsUserCount({ sessionKey }: { sessionKey: string }): Promise<number> {
+    const session = this.getSessionByKey(sessionKey);
+    if (!session) {
+      throw new Error(
+        `Session for key: ${sessionKey} does not exist. Cannot remove captions user.`
+      );
     }
 
-    if (this.sessions[roomName].captionsUserCount > 0) {
-      this.sessions[roomName].captionsUserCount -= 1;
+    if (session.captionsUserCount > 0) {
+      session.captionsUserCount -= 1;
     }
-    return this.sessions[roomName].captionsUserCount;
+    return session.captionsUserCount;
   }
 }
 export default InMemorySessionStorage;

@@ -1,8 +1,10 @@
+export * from './Metadata.schema';
 export * from './VideoPayload.schema';
 export * from './VideoRouterConfig.schema';
 export * from './EnableCaptionsPayload.schema';
 export * from './DisableCaptionsPayload.schema';
 export * from './CreateSessionPayload.schema';
+export * from './CreateSessionAndJoinPayload.schema';
 export * from './DecodeSessionIdPayload.schema';
 export * from './SearchArchivesPayload.schema';
 export * from './StartArchivePayload.schema';
@@ -24,3 +26,4 @@ export * from './SessionOptions.schema';
 export * from './CreateEphemeralTokenPayload.schema';
 export * from './JoinSessionPayload.schema';
 export * from './TRPCRuntimeConfigOptions.schema';
+export * from './SessionSigning.schema';

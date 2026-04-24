@@ -18,6 +18,9 @@ dotenv.config({ path: path.join(runtimeDir, '.env') });
 
 const loadConfig = (): Config => {
   const provider = process.env.VIDEO_SERVICE_PROVIDER ?? '';
+  const sessionKeySecret = process.env.SESSION_KEY_SECRET ?? '';
+
+  const loggerVerbose = process.env.LOGGER_VERBOSE === 'true';
 
   const feedbackConfig: FeedbackConfig = {
     url: process.env.JIRA_URL,
@@ -42,7 +45,15 @@ const loadConfig = (): Config => {
       throw new Error('Missing config values for Vonage');
     }
 
-    return { ...feedbackConfig, applicationId, privateKey, provider: 'vonage', videoHost };
+    return {
+      ...feedbackConfig,
+      applicationId,
+      privateKey,
+      provider: 'vonage',
+      videoHost,
+      sessionKeySecret,
+      loggerVerbose,
+    };
   }
 
   if (provider === 'opentok') {
@@ -53,7 +64,14 @@ const loadConfig = (): Config => {
       throw new Error('Missing config values for OpenTok');
     }
 
-    return { ...feedbackConfig, apiKey, apiSecret, provider: 'opentok' };
+    return {
+      ...feedbackConfig,
+      apiKey,
+      apiSecret,
+      provider: 'opentok',
+      sessionKeySecret,
+      loggerVerbose,
+    };
   }
 
   throw new Error(`Unknown video service provider: ${provider || 'undefined'}`);

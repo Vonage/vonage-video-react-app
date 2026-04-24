@@ -24,6 +24,7 @@ import { execSync } from 'child_process';
 const PROJECT_ROOTS: Record<string, string> = {
   frontend: 'frontend',
   backend: 'backend',
+  api: 'libs/api',
   core: 'libs/core',
   ui: 'libs/ui',
   common: 'libs/common',

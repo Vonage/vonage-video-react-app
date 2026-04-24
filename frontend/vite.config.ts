@@ -8,6 +8,8 @@ import checker from 'vite-plugin-checker';
 import tailwindcss from '@tailwindcss/vite';
 import * as path from 'node:path';
 
+const VITEST_WEB_SOCKET_PORT = 51205;
+
 const vitestConfig: VitestUserConfigInterface = defineVitestConfig({
   test: {
     globalSetup: './src/test/globals.ts',
@@ -15,6 +17,21 @@ const vitestConfig: VitestUserConfigInterface = defineVitestConfig({
     environment: 'jsdom',
     setupFiles: './src/test/setup.ts',
     css: true,
+    onConsoleLog(log) {
+      if (
+        log.includes('MUI: You are providing a disabled') ||
+        log.includes('OpenTok:') ||
+        log.includes('@layer')
+      ) {
+        return false;
+      }
+
+      return true;
+    },
+    api: {
+      port: VITEST_WEB_SOCKET_PORT,
+      strictPort: false,
+    },
     server: {
       deps: {
         fallbackCJS: true,
@@ -24,6 +41,14 @@ const vitestConfig: VitestUserConfigInterface = defineVitestConfig({
     coverage: {
       provider: 'v8',
       reporter: ['text', 'lcov'],
+      allowExternal: true,
+      include: [
+        `${path.resolve(__dirname, 'src')}/**/*.{ts,tsx}`,
+        `${path.resolve(__dirname, '../libs/common/src')}/**/*.{ts,tsx}`,
+        `${path.resolve(__dirname, '../libs/common/srcBrowser')}/**/*.{ts,tsx}`,
+        `${path.resolve(__dirname, '../libs/core/src')}/**/*.{ts,tsx}`,
+        `${path.resolve(__dirname, '../libs/ui/src')}/**/*.{ts,tsx}`,
+      ],
       exclude: [
         '**/test/**',
         '**/index.ts',
@@ -73,6 +98,7 @@ export default defineConfig(({ mode }) => {
     'API_URL',
     'TUNNEL_DOMAIN',
     'SHOW_VIDEO_STATS',
+    'VONAGE_VIDEO_HOST',
   ] as const;
 
   const appEnvObject = {
@@ -118,6 +144,8 @@ export default defineConfig(({ mode }) => {
         '@tests': '/src/tests',
         '@app-types': '/src/types',
         '@utils': '/src/utils',
+        '@stores': '/src/stores',
+        '@services': '/src/services',
         '@test': '/src/test',
         '@ui': path.resolve(__dirname, '../libs/ui/src'),
         '@common': path.resolve(__dirname, '../libs/common/src'),
@@ -127,7 +155,6 @@ export default defineConfig(({ mode }) => {
         '@web-test': path.resolve(__dirname, '../libs/common/testBrowser'),
         '@core-test': path.resolve(__dirname, '../libs/core/test'),
         '@ui-test': path.resolve(__dirname, '../libs/ui/test'),
-        '@stores': '/src/stores',
       },
     },
 

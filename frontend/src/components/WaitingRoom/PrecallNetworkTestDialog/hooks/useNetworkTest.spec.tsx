@@ -1,6 +1,5 @@
-import { describe, it, expect, vi, beforeEach, Mock } from 'vitest';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { renderHook, waitFor, act } from '@testing-library/react';
-import fetchCredentials from '@api/fetchCredentials';
 import NetworkTestConstructor from '@vonage/video-client-network-test';
 
 const mockNetworkTest = vi.hoisted(() => ({
@@ -27,7 +26,15 @@ vi.mock('@vonage/client-sdk-video', () => ({
 }));
 
 vi.mock('@api/fetchCredentials');
-const mockFetchCredentials = fetchCredentials as Mock;
+
+const mockCreateSessionAndJoinMutate = vi.fn();
+
+vi.mock('@services', () => ({
+  videoClient: {
+    createSessionAndJoin: (...args: unknown[]) =>
+      mockCreateSessionAndJoinMutate(...args) as unknown,
+  },
+}));
 
 const mockT = vi.fn((key: string) => key);
 vi.mock('react-i18next', () => ({
@@ -42,11 +49,9 @@ import CancelablePromise from 'easy-cancelable-promise';
 
 describe('useNetworkTest', () => {
   const mockCredentials = {
-    data: {
-      apiKey: 'test-api-key',
-      sessionId: 'test-session-id',
-      token: 'test-token',
-    },
+    applicationId: 'test-api-key',
+    sessionId: 'test-session-id',
+    token: 'test-token',
   };
 
   const mockQualityResults: QualityResults = {
@@ -70,7 +75,7 @@ describe('useNetworkTest', () => {
   beforeEach(() => {
     mockNetworkTest.testQuality.mockReset();
     mockNetworkTest.stop.mockReset();
-    mockFetchCredentials.mockResolvedValue(mockCredentials);
+    mockCreateSessionAndJoinMutate.mockResolvedValue(mockCredentials);
     mockNetworkTest.testQuality.mockResolvedValue(mockQualityResults);
   });
 
@@ -94,7 +99,7 @@ describe('useNetworkTest', () => {
       await result.current.testQuality('test-room');
     });
 
-    expect(mockFetchCredentials).toHaveBeenCalledWith('test-room');
+    expect(mockCreateSessionAndJoinMutate).toHaveBeenCalled();
     expect(NetworkTestConstructor).toHaveBeenCalledWith(
       expect.anything(),
       {

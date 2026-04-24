@@ -3,9 +3,11 @@ import OTKAnalytics from 'opentok-solutions-logging';
 import loadConfig from '../helpers/config';
 import type { ClientLogEvent } from '@common/types';
 
-const { gollumUrl } = loadConfig();
+const { gollumUrl, loggerVerbose } = loadConfig();
 
 const LOG_ACTION_ENTER_MEETING = 'EnterMeeting';
+
+let gollumWarningAcknowledged = false;
 
 /**
  * Polyfill for document.cookie required by opentok-solutions-logging in Node.js.
@@ -31,10 +33,15 @@ function ensureDocumentPolyfill(): void {
  * Throws on error so the route can catch and handle.
  */
 export async function forwardToGollum(event: ClientLogEvent): Promise<void> {
+  if (!gollumUrl && gollumWarningAcknowledged) return;
+
   if (!gollumUrl) {
-    throw new Error(
+    console.warn(
       '[logger] GOLLUM_BASE_URL not configured - logs will not be forwarded to Kibana. Set GOLLUM_BASE_URL in backend .env if you need log ingestion.'
     );
+    gollumWarningAcknowledged = true;
+
+    return;
   }
 
   const body = {
@@ -85,9 +92,20 @@ export function logOnConnect(event: ClientLogEvent): void {
  * Forwards a validated ClientLogEvent: always to Gollum, and for EnterMeeting also via OTKAnalytics.
  */
 export async function forward(event: ClientLogEvent): Promise<void> {
-  await forwardToGollum(event);
+  if (loggerVerbose) {
+    console.log('[logger]', event.action, event);
+  }
 
   if (event.action === LOG_ACTION_ENTER_MEETING) {
     logOnConnect(event);
   }
+
+  await forwardToGollum(event);
+}
+
+/**
+ * Resets the Gollum warning flag. Intended for tests only.
+ */
+export function resetGollumWarning(): void {
+  gollumWarningAcknowledged = false;
 }

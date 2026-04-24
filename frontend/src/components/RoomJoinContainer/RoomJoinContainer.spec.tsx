@@ -17,6 +17,15 @@ vi.mock('../../utils/generateRoomName', () => ({
   __esModule: true,
   default: () => 'mocked-room',
 }));
+
+const mockCreateSessionMutate = vi.fn();
+
+vi.mock('@services/videoClient', () => ({
+  __esModule: true,
+  default: {
+    createSession: (...args: unknown[]) => mockCreateSessionMutate(...args) as unknown,
+  },
+}));
 vi.mock('../JoinContainerSeparator', () => ({
   __esModule: true,
   default: () => <div data-testid="separator" />,
@@ -29,6 +38,7 @@ vi.mock('../JoinExistingRoom', () => ({
 describe('RoomJoinContainer', () => {
   beforeEach(() => {
     (useNavigate as Mock).mockReturnValue(mockNavigate);
+    mockCreateSessionMutate.mockResolvedValue({ sessionKey: 'mock-session-key' });
   });
 
   it('renders NewRoomButton, JoinContainerSeparator and JoinExistingRoom components', () => {
@@ -42,7 +52,7 @@ describe('RoomJoinContainer', () => {
     expect(screen.getByTestId('join-existing-room')).toBeInTheDocument();
   });
 
-  it('navigates to the waiting room when NewRoomButton is clicked', () => {
+  it('navigates to the waiting room when NewRoomButton is clicked', async () => {
     render(
       <MemoryRouter>
         <RoomJoinContainer />
@@ -50,6 +60,8 @@ describe('RoomJoinContainer', () => {
     );
 
     screen.getByTestId('new-room-button').click();
-    expect(mockNavigate).toHaveBeenCalledWith('/waiting-room/mocked-room');
+    await vi.waitFor(() => {
+      expect(mockNavigate).toHaveBeenCalledWith('/waiting-room/mock-session-key');
+    });
   });
 });

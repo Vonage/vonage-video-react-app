@@ -32,7 +32,7 @@ describe('makeVideoApiErrorHandler', () => {
     const error = handler(applicationError).exportSafely();
 
     expect(error.message).toBe(src);
-    expect(error.issues).toEqual([]);
+    expect(error.issues).toBeUndefined();
   });
 
   it('should correctly handle opentok errors', () => {

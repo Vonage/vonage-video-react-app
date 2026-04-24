@@ -25,4 +25,8 @@ export type OpentokConfig = {
   apiSecret: string;
 };
 
-export type Config = (VonageConfig | OpentokConfig) & FeedbackConfig;
+export type Config = (VonageConfig | OpentokConfig) &
+  FeedbackConfig & {
+    sessionKeySecret: string;
+    loggerVerbose: boolean;
+  };

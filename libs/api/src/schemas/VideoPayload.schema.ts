@@ -1,8 +1,8 @@
-import { SessionIdSchema } from '@node/schemas';
 import z from 'zod';
+import { SessionKeySchema } from '@node/schemas';
 
 export const VideoPayloadSchema = z.object({
-  sessionId: SessionIdSchema,
+  sessionKey: SessionKeySchema,
 });
 
 export type VideoPayload = z.infer<typeof VideoPayloadSchema>;

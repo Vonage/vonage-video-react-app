@@ -15,7 +15,6 @@ import useRightPanel, { RightPanelActiveTab } from '@hooks/useRightPanel';
 import useUserContext from '@hooks/useUserContext';
 import useChat from '@hooks/useChat';
 import useEmoji, { EmojiWrapper } from '@hooks/useEmoji';
-import fetchCredentials from '@api/fetchCredentials';
 import ActiveSpeakerTracker from '@utils/ActiveSpeakerTracker';
 import {
   Credential,
@@ -38,15 +37,20 @@ import VonageVideoClient from '@utils/VonageVideoClient';
 import wait from '@common/execution/wait';
 import { env } from '../../env';
 import frontendLogger from '../../logger';
+import { videoClient } from '@services';
+import { decodeSessionKey } from '@common/helpers';
+import type { VideoSessionDetails } from '@common/types';
 
 export type { ChatMessageType } from '@app-types/chat';
 
 export type SessionContextType = {
   vonageVideoClient: null | VonageVideoClient;
   disconnect: null | (() => void);
-  joinRoom: null | ((roomName: string) => Promise<void>);
+  joinRoom: null | ((params: { sessionKey: string }) => Promise<void>);
   forceMute: null | ((stream: Stream) => Promise<void>);
   connected: null | boolean;
+  sessionKey: string | null;
+  sessionDetails: VideoSessionDetails | null;
   unreadCount: number;
   messages: ChatMessageType[];
   sendChatMessage: (text: string) => void;
@@ -87,6 +91,8 @@ export const SessionContext = createContext<SessionContextType>({
   joinRoom: null,
   forceMute: null,
   connected: null,
+  sessionKey: null,
+  sessionDetails: null,
   unreadCount: 0,
   messages: [],
   sendChatMessage: () => {},
@@ -134,6 +140,7 @@ export type SessionContextInitialValue = Partial<
     | 'activeSpeakerId'
     | 'recordingAlreadyNotified'
     | 'archiveIdStartedBySelf'
+    | 'sessionKey'
   >
 >;
 
@@ -300,6 +307,13 @@ const SessionProvider = ({ children, initialValue = {} }: SessionProviderProps):
 
   const { user } = useUserContext();
   const [connected, setConnected] = useState(initialValue?.connected ?? false);
+  const [sessionKey, setSessionKey] = useState<string | null>(initialValue?.sessionKey ?? null);
+
+  const sessionDetails = useMemo(() => {
+    if (!sessionKey) return null;
+
+    return decodeSessionKey({ sessionKey });
+  }, [sessionKey]);
 
   /**
    * Handles changes to stream properties. This triggers a re-render when a stream property changes
@@ -425,7 +439,7 @@ const SessionProvider = ({ children, initialValue = {} }: SessionProviderProps):
 
   /**
    * Connects to the session using the provided credentials.
-   * @param {Credential} credential - The credentials for the session.
+   * @param {Credential} credential - The sessionKey and token for the session.
    * @returns {Promise<void>} A promise that resolves when the session is connected.
    */
   const connect = useCallback(async (credential: Credential) => {
@@ -433,9 +447,6 @@ const SessionProvider = ({ children, initialValue = {} }: SessionProviderProps):
       return;
     }
     try {
-      // initialize the session object and set up the relevant event listeners
-      // https://tokbox.com/developer/sdks/js/reference/Session.html#events for opentok
-      // https://vonage.github.io/conversation-docs/video-js-reference/latest/Session.html#events for unified environment
       vonageVideoClient.current = new VonageVideoClient(credential);
       vonageVideoClient.current.on('streamPropertyChanged', handleStreamPropertyChanged);
       vonageVideoClient.current.on('sessionReconnecting', handleReconnecting);
@@ -466,16 +477,23 @@ const SessionProvider = ({ children, initialValue = {} }: SessionProviderProps):
   }, []);
 
   /**
-   * Joins a room by fetching the necessary credentials and connecting to the session.
-   * @param {string} roomName - The name of the room to join.
+   * Joins a room by fetching an ephemeral token for the given sessionKey and connecting.
+   * @param {object} params - The join parameters.
+   * @param {string} params.sessionKey - The session key to join.
    */
   const joinRoom = useCallback(
-    (roomName: string) => {
-      return fetchCredentials(roomName)
-        .then((credentials) => {
-          return connect(credentials.data);
-        })
-        .catch(console.warn);
+    async (args: { sessionKey: string }) => {
+      const session = await videoClient.joinSession({
+        sessionKey: args.sessionKey,
+      });
+
+      setSessionKey(args.sessionKey);
+      window.history.replaceState(null, '', `/room/${args.sessionKey}`);
+
+      return connect({
+        sessionKey: args.sessionKey,
+        token: session.token,
+      });
     },
     [connect]
   );
@@ -539,6 +557,8 @@ const SessionProvider = ({ children, initialValue = {} }: SessionProviderProps):
       joinRoom,
       forceMute,
       connected,
+      sessionKey,
+      sessionDetails,
       unreadCount,
       messages,
       sendChatMessage,
@@ -580,6 +600,8 @@ const SessionProvider = ({ children, initialValue = {} }: SessionProviderProps):
       joinRoom,
       forceMute,
       connected,
+      sessionKey,
+      sessionDetails,
       reconnecting,
       subscriberWrappers,
       layoutMode,

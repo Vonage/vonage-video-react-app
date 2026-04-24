@@ -1,7 +1,8 @@
 import { describe, it, expect, vi, type Mock } from 'vitest';
-import { Video, MediaMode, type SingleArchiveResponse, ArchiveMode } from '@vonage/video';
+import { Video, type SingleArchiveResponse, ArchiveMode } from '@vonage/video';
 import { Auth } from '@vonage/auth';
-import { createVideoClient } from '.';
+import jwt from 'jsonwebtoken';
+import VideoClient from '.';
 import { TokenRole } from '@api-lib/types';
 
 vi.mock('@vonage/video');
@@ -11,12 +12,23 @@ describe('VideoClient', () => {
   const mockApiKey = 'test-api-key';
   const mockApiSecret = 'test-api-secret';
   const mockSessionId = '1_MX4xMjM0NTY3OH4-VGh1IEZlYiAyNyAwODozMjozNCBQU1QgMjAyMH4wLjI0NDYxMjE';
+  const mockSessionKey = jwt.sign({ sessionId: mockSessionId }, mockApiKey, { algorithm: 'HS256' });
+
+  const expectedDecodedSession = {
+    version: '1',
+    partnerId: '12345678',
+    applicationId: '12345678',
+    p2p: false,
+    autoArchive: false,
+    location: expect.any(String),
+    date: expect.any(String),
+  };
 
   describe('constructor', () => {
-    it('should create orchestrator with auth config', () => {
-      const orchestrator = createTestOrchestrator();
+    it('should create VideoClient with auth config', () => {
+      const videoClient = createVideoClient();
 
-      expect(orchestrator).toBeDefined();
+      expect(videoClient).toBeDefined();
       expect(Auth).toHaveBeenCalledWith({
         authType: 'apiKey',
         apiKey: mockApiKey,
@@ -24,12 +36,12 @@ describe('VideoClient', () => {
       });
     });
 
-    it('should create orchestrator with video params', () => {
+    it('should create VideoClient with video params', () => {
       vi.clearAllMocks();
 
       const videoParams = { timeout: 5000 };
 
-      createTestOrchestrator({ videoParams });
+      createVideoClient({ videoParams });
 
       // VideoClient creates Auth instance from config, so Video receives Auth instance
       expect(Video).toHaveBeenCalledWith(
@@ -41,28 +53,27 @@ describe('VideoClient', () => {
 
   describe('createSession', () => {
     it('should create a session with default options', async () => {
-      const { orchestrator, mocks } = createTestOrchestrator();
+      const { videoClient, mocks } = createVideoClient();
 
       mocks.video.createSession.mockResolvedValue({
         sessionId: mockSessionId,
       });
 
-      const result = await orchestrator.createSession();
+      const result = await videoClient.createSession();
 
-      expect(mocks.video.createSession).toHaveBeenCalledWith({
-        mediaMode: MediaMode.ROUTED,
-      });
+      expect(mocks.video.createSession).toHaveBeenCalledWith(undefined);
+      expect(result.sessionId).toBe(mockSessionId);
 
-      // Result includes decoded session info (from decodeSessionId) + sessionId
-      expect(result).toMatchObject({
-        sessionId: mockSessionId,
-        location: expect.any(String),
-        p2p: expect.any(Boolean),
-      });
+      // Verify a signed session key was generated containing the session ID
+      const decodedSessionKey = jwt.verify(result.sessionKey, mockApiKey) as { sessionId: string };
+      expect(decodedSessionKey.sessionId).toBe(mockSessionId);
+
+      // Verify decoded session metadata from the session ID is included
+      expect(result).toMatchObject(expectedDecodedSession);
     });
 
     it('should create a session with custom options', async () => {
-      const { orchestrator, mocks } = createTestOrchestrator();
+      const { videoClient, mocks } = createVideoClient();
 
       mocks.video.createSession.mockResolvedValue({
         sessionId: mockSessionId,
@@ -73,163 +84,179 @@ describe('VideoClient', () => {
         archiveMode: ArchiveMode.ALWAYS,
       };
 
-      const result = await orchestrator.createSession({ sessionOptions });
+      const result = await videoClient.createSession({ sessionOptions });
 
-      expect(mocks.video.createSession).toHaveBeenCalledWith({
-        mediaMode: MediaMode.ROUTED,
-        ...sessionOptions,
+      expect(mocks.video.createSession).toHaveBeenCalledWith(sessionOptions);
+      expect(result.sessionId).toBe(mockSessionId);
+
+      const decodedSessionKey = jwt.verify(result.sessionKey, mockApiKey) as { sessionId: string };
+      expect(decodedSessionKey.sessionId).toBe(mockSessionId);
+    });
+
+    it('should include roomName in the session key and result', async () => {
+      const { videoClient, mocks } = createVideoClient();
+
+      mocks.video.createSession.mockResolvedValue({
+        sessionId: mockSessionId,
       });
 
-      expect(result.sessionId).toBe(mockSessionId);
+      const result = await videoClient.createSession({ roomName: 'my-room' });
+
+      expect(result.roomName).toBe('my-room');
+
+      const decodedSessionKey = jwt.verify(result.sessionKey, mockApiKey) as {
+        sessionId: string;
+        roomName: string;
+      };
+      expect(decodedSessionKey.sessionId).toBe(mockSessionId);
+      expect(decodedSessionKey.roomName).toBe('my-room');
     });
 
     it('should handle errors from Vonage API', async () => {
-      const { orchestrator, mocks } = createTestOrchestrator();
+      const { videoClient, mocks } = createVideoClient();
 
       mocks.video.createSession.mockRejectedValue(new Error('Vonage API error'));
 
-      await expect(orchestrator.createSession()).rejects.toThrow('Failed to create session');
+      await expect(videoClient.createSession()).rejects.toThrow('Failed to create session');
     });
   });
 
   describe('decodeSessionId', () => {
     it('should decode a valid sessionId', () => {
-      const { orchestrator } = createTestOrchestrator();
+      const { videoClient } = createVideoClient();
 
-      const result = orchestrator.decodeSessionId({ sessionId: mockSessionId });
+      const result = videoClient.decodeSessionId({ sessionId: mockSessionId });
 
-      expect(result).toMatchObject({
-        location: expect.any(String),
-        p2p: expect.any(Boolean),
-        autoArchive: expect.any(Boolean),
-        version: expect.any(String),
-        partnerId: expect.any(String),
-      });
+      expect(result).toMatchObject(expectedDecodedSession);
     });
 
     it('should handle invalid sessionId format', () => {
-      const { orchestrator } = createTestOrchestrator();
+      const { videoClient } = createVideoClient();
 
       expect(() => {
-        orchestrator.decodeSessionId({ sessionId: 'invalid-session-id' });
+        videoClient.decodeSessionId({ sessionId: 'invalid-session-id' });
       }).toThrow();
     });
 
     it('should handle empty sessionId', () => {
-      const { orchestrator } = createTestOrchestrator();
+      const { videoClient } = createVideoClient();
 
       expect(() => {
-        orchestrator.decodeSessionId({ sessionId: '' });
+        videoClient.decodeSessionId({ sessionId: '' });
       }).toThrow();
     });
   });
 
   describe('createEphemeralToken', () => {
     it('should create token with default options', () => {
-      const { orchestrator } = createTestOrchestrator();
+      const { videoClient } = createVideoClient();
 
-      const result = orchestrator.createEphemeralToken({ sessionId: mockSessionId });
+      const result = videoClient.createEphemeralToken({ sessionKey: mockSessionKey });
 
-      expect(result).toBeDefined();
       expect(typeof result).toBe('string');
+      expect(result.length).toBeGreaterThan(0);
     });
 
     it('should create token with custom role', () => {
-      const { orchestrator } = createTestOrchestrator();
+      const { videoClient } = createVideoClient();
 
-      const result = orchestrator.createEphemeralToken({
-        sessionId: mockSessionId,
+      const result = videoClient.createEphemeralToken({
+        sessionKey: mockSessionKey,
         clientTokenOptions: {
           role: TokenRole.PUBLISHER,
         },
       });
 
-      expect(result).toBeDefined();
+      expect(typeof result).toBe('string');
+      expect(result.length).toBeGreaterThan(0);
     });
 
     it('should create token with custom expiration', () => {
-      const { orchestrator } = createTestOrchestrator();
+      const { videoClient } = createVideoClient();
 
       const customExpireTime = Date.now() + 3600000;
 
-      const result = orchestrator.createEphemeralToken({
-        sessionId: mockSessionId,
+      const result = videoClient.createEphemeralToken({
+        sessionKey: mockSessionKey,
         clientTokenOptions: {
           expireTime: customExpireTime,
         },
       });
 
-      expect(result).toBeDefined();
+      expect(typeof result).toBe('string');
+      expect(result.length).toBeGreaterThan(0);
     });
 
     it('should create token with custom data', () => {
-      const { orchestrator } = createTestOrchestrator();
+      const { videoClient } = createVideoClient();
 
-      const result = orchestrator.createEphemeralToken({
-        sessionId: mockSessionId,
+      const result = videoClient.createEphemeralToken({
+        sessionKey: mockSessionKey,
         clientTokenOptions: {
           data: 'custom-user-data',
         },
       });
 
-      expect(result).toBeDefined();
+      expect(typeof result).toBe('string');
+      expect(result.length).toBeGreaterThan(0);
     });
 
     it('should create token with initial layout class list', () => {
-      const { orchestrator } = createTestOrchestrator();
+      const { videoClient } = createVideoClient();
 
-      const result = orchestrator.createEphemeralToken({
-        sessionId: mockSessionId,
+      const result = videoClient.createEphemeralToken({
+        sessionKey: mockSessionKey,
         clientTokenOptions: {
           initialLayoutClassList: ['focus', 'presenter'],
         },
       });
 
-      expect(result).toBeDefined();
+      expect(typeof result).toBe('string');
+      expect(result.length).toBeGreaterThan(0);
     });
   });
 
   describe('joinSession', () => {
-    it('should join session and return token', () => {
-      const { orchestrator } = createTestOrchestrator();
+    it('should join session and return decoded session info with token', () => {
+      const { videoClient } = createVideoClient();
 
-      const result = orchestrator.joinSession({ sessionId: mockSessionId });
+      const result = videoClient.joinSession({ sessionKey: mockSessionKey });
 
-      expect(result).toMatchObject({
-        location: expect.any(String),
-        p2p: expect.any(Boolean),
-        token: expect.any(String),
-      });
+      // Verify decoded session metadata from the sessionKey
+      expect(result).toMatchObject(expectedDecodedSession);
+
+      expect(typeof result.token).toBe('string');
+      expect(result.token.length).toBeGreaterThan(0);
     });
 
     it('should join session with custom token options', () => {
-      const { orchestrator } = createTestOrchestrator();
+      const { videoClient } = createVideoClient();
 
-      const result = orchestrator.joinSession({
-        sessionId: mockSessionId,
+      const result = videoClient.joinSession({
+        sessionKey: mockSessionKey,
         clientTokenOptions: {
           role: TokenRole.SUBSCRIBER,
           data: 'viewer-data',
         },
       });
 
-      expect(result).toMatchObject({
-        token: expect.any(String),
-      });
+      expect(result).toMatchObject(expectedDecodedSession);
+      expect(typeof result.token).toBe('string');
+      expect(result.token.length).toBeGreaterThan(0);
     });
 
     it('should handle invalid sessionId when joining', () => {
-      const { orchestrator } = createTestOrchestrator();
+      const { videoClient } = createVideoClient();
 
       expect(() => {
-        orchestrator.joinSession({ sessionId: 'invalid' });
+        videoClient.joinSession({ sessionKey: 'invalid' });
       }).toThrow();
     });
   });
 
   describe('startArchive', () => {
     it('should start archive successfully', async () => {
-      const { orchestrator, mocks } = createTestOrchestrator();
+      const { videoClient, mocks } = createVideoClient();
 
       const mockArchive: SingleArchiveResponse = {
         id: 'archive-123',
@@ -247,8 +274,8 @@ describe('VideoClient', () => {
 
       mocks.video.startArchive.mockResolvedValue(mockArchive);
 
-      const result = await orchestrator.startArchive({
-        sessionId: mockSessionId,
+      const result = await videoClient.startArchive({
+        sessionKey: mockSessionKey,
         archiveOptions: {},
       });
 
@@ -257,7 +284,7 @@ describe('VideoClient', () => {
     });
 
     it('should start archive with options', async () => {
-      const { orchestrator, mocks } = createTestOrchestrator();
+      const { videoClient, mocks } = createVideoClient();
 
       const mockArchive: SingleArchiveResponse = {
         id: 'archive-123',
@@ -274,8 +301,8 @@ describe('VideoClient', () => {
         hasVideo: true,
       };
 
-      await orchestrator.startArchive({
-        sessionId: mockSessionId,
+      await videoClient.startArchive({
+        sessionKey: mockSessionKey,
         archiveOptions,
       });
 
@@ -283,14 +310,14 @@ describe('VideoClient', () => {
     });
 
     it('should handle errors when starting archive', async () => {
-      const { orchestrator, mocks } = createTestOrchestrator();
+      const { videoClient, mocks } = createVideoClient();
 
       mocks.video.startArchive.mockRejectedValue(new Error('Archive error'));
 
       await expect(
-        orchestrator.startArchive({
+        videoClient.startArchive({
           archiveOptions: {},
-          sessionId: mockSessionId,
+          sessionKey: mockSessionKey,
         })
       ).rejects.toThrow();
     });
@@ -298,7 +325,7 @@ describe('VideoClient', () => {
 
   describe('stopArchive', () => {
     it('should stop archive successfully', async () => {
-      const { orchestrator, mocks } = createTestOrchestrator();
+      const { videoClient, mocks } = createVideoClient();
 
       const mockArchive: SingleArchiveResponse = {
         id: 'archive-123',
@@ -307,8 +334,8 @@ describe('VideoClient', () => {
 
       mocks.video.stopArchive.mockResolvedValue(mockArchive);
 
-      const result = await orchestrator.stopArchive({
-        sessionId: mockSessionId,
+      const result = await videoClient.stopArchive({
+        sessionKey: mockSessionKey,
         archiveId: 'archive-123',
       });
 
@@ -317,13 +344,13 @@ describe('VideoClient', () => {
     });
 
     it('should handle errors when stopping archive', async () => {
-      const { orchestrator, mocks } = createTestOrchestrator();
+      const { videoClient, mocks } = createVideoClient();
 
       mocks.video.stopArchive.mockRejectedValue(new Error('Stop error'));
 
       await expect(
-        orchestrator.stopArchive({
-          sessionId: mockSessionId,
+        videoClient.stopArchive({
+          sessionKey: mockSessionKey,
           archiveId: 'archive-123',
         })
       ).rejects.toThrow();
@@ -332,7 +359,7 @@ describe('VideoClient', () => {
 
   describe('searchArchives', () => {
     it('should search archives successfully', async () => {
-      const { orchestrator, mocks } = createTestOrchestrator();
+      const { videoClient, mocks } = createVideoClient();
 
       const mockArchives = {
         items: [
@@ -344,8 +371,8 @@ describe('VideoClient', () => {
 
       mocks.video.searchArchives.mockResolvedValue(mockArchives);
 
-      const result = await orchestrator.searchArchives({
-        sessionId: mockSessionId,
+      const result = await videoClient.searchArchives({
+        sessionKey: mockSessionKey,
       });
 
       expect(mocks.video.searchArchives).toHaveBeenCalledWith({
@@ -356,31 +383,35 @@ describe('VideoClient', () => {
     });
 
     it('should search archives with filters', async () => {
-      const { orchestrator, mocks } = createTestOrchestrator();
+      const { videoClient, mocks } = createVideoClient();
 
       const mockArchives = { items: [], count: 0 };
 
       mocks.video.searchArchives.mockResolvedValue(mockArchives);
 
       const filters = {
-        sessionId: mockSessionId,
+        sessionKey: mockSessionKey,
         offset: 10,
         count: 20,
       };
 
-      await orchestrator.searchArchives(filters);
+      await videoClient.searchArchives(filters);
 
-      expect(mocks.video.searchArchives).toHaveBeenCalledWith(filters);
+      expect(mocks.video.searchArchives).toHaveBeenCalledWith({
+        sessionId: mockSessionId,
+        offset: 10,
+        count: 20,
+      });
     });
 
     it('should handle errors when searching archives', async () => {
-      const { orchestrator, mocks } = createTestOrchestrator();
+      const { videoClient, mocks } = createVideoClient();
 
       mocks.video.searchArchives.mockRejectedValue(new Error('Search error'));
 
       await expect(
-        orchestrator.searchArchives({
-          sessionId: mockSessionId,
+        videoClient.searchArchives({
+          sessionKey: mockSessionKey,
         })
       ).rejects.toThrow();
     });
@@ -388,12 +419,12 @@ describe('VideoClient', () => {
 
   describe('enableCaptions', () => {
     it('should enable captions successfully', async () => {
-      const { orchestrator, mocks } = createTestOrchestrator();
+      const { videoClient, mocks } = createVideoClient();
 
       mocks.video.enableCaptions.mockResolvedValue(undefined);
 
-      await orchestrator.enableCaptions({
-        sessionId: mockSessionId,
+      await videoClient.enableCaptions({
+        sessionKey: mockSessionKey,
       });
 
       expect(mocks.video.enableCaptions).toHaveBeenCalledWith(
@@ -404,7 +435,7 @@ describe('VideoClient', () => {
     });
 
     it('should enable captions with options', async () => {
-      const { orchestrator, mocks } = createTestOrchestrator();
+      const { videoClient, mocks } = createVideoClient();
 
       mocks.video.enableCaptions.mockResolvedValue(undefined);
 
@@ -415,8 +446,8 @@ describe('VideoClient', () => {
         statusCallbackUrl: 'https://example.com/callback',
       };
 
-      await orchestrator.enableCaptions({
-        sessionId: mockSessionId,
+      await videoClient.enableCaptions({
+        sessionKey: mockSessionKey,
         captionOptions,
       });
 
@@ -428,13 +459,13 @@ describe('VideoClient', () => {
     });
 
     it('should handle errors when enabling captions', async () => {
-      const { orchestrator, mocks } = createTestOrchestrator();
+      const { videoClient, mocks } = createVideoClient();
 
       mocks.video.enableCaptions.mockRejectedValue(new Error('Captions error'));
 
       await expect(
-        orchestrator.enableCaptions({
-          sessionId: mockSessionId,
+        videoClient.enableCaptions({
+          sessionKey: mockSessionKey,
         })
       ).rejects.toThrow();
     });
@@ -442,12 +473,12 @@ describe('VideoClient', () => {
 
   describe('disableCaptions', () => {
     it('should disable captions successfully', async () => {
-      const { orchestrator, mocks } = createTestOrchestrator();
+      const { videoClient, mocks } = createVideoClient();
 
       mocks.video.disableCaptions.mockResolvedValue(undefined);
 
-      await orchestrator.disableCaptions({
-        sessionId: mockSessionId,
+      await videoClient.disableCaptions({
+        sessionKey: mockSessionKey,
         captionsId: 'caption-123',
       });
 
@@ -455,13 +486,13 @@ describe('VideoClient', () => {
     });
 
     it('should handle errors when disabling captions', async () => {
-      const { orchestrator, mocks } = createTestOrchestrator();
+      const { videoClient, mocks } = createVideoClient();
 
       mocks.video.disableCaptions.mockRejectedValue(new Error('Disable error'));
 
       await expect(
-        orchestrator.disableCaptions({
-          sessionId: mockSessionId,
+        videoClient.disableCaptions({
+          sessionKey: mockSessionKey,
           captionsId: 'caption-123',
         })
       ).rejects.toThrow();
@@ -471,7 +502,7 @@ describe('VideoClient', () => {
   /**
    * Helper function to create a VideoClient instance with mocked dependencies
    */
-  function createTestOrchestrator(options?: { videoParams?: object }) {
+  function createVideoClient(options?: { videoParams?: object }) {
     const mockVideoInstance = {
       createSession: vi.fn(),
       startArchive: vi.fn(),
@@ -489,7 +520,7 @@ describe('VideoClient', () => {
     (Auth as unknown as Mock).mockImplementation(() => mockAuthInstance);
     (Video as unknown as Mock).mockImplementation(() => mockVideoInstance);
 
-    const orchestrator = createVideoClient({
+    const videoClient = new VideoClient({
       auth: {
         authType: 'apiKey',
         apiKey: mockApiKey,
@@ -499,7 +530,7 @@ describe('VideoClient', () => {
     });
 
     return {
-      orchestrator,
+      videoClient,
       mocks: {
         video: mockVideoInstance,
         auth: mockAuthInstance,

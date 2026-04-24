@@ -13,12 +13,11 @@ export type SubscriberWrapper = {
 
 /**
  * Represents the credentials required to connect to a session.
- * For Opentok the apiKey is the project Id
- * For Vonage Unified the apiKey is the application Id
+ * The sessionKey is a JWT encoding the sessionId, roomName, and other session metadata.
+ * The token is an ephemeral token used to authenticate with the Vonage Video API.
  */
 export type Credential = {
-  apiKey: string;
-  sessionId: string;
+  sessionKey: string;
   token: string;
 };
 

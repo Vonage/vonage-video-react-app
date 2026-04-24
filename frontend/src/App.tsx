@@ -18,6 +18,7 @@ import SuspenseBoundary from '@web/components/SuspenseBoundary/SuspenseBoundary'
 import WaitingRoomSkeleton from '@pages/WaitingRoom/WaitingRoom.skeleton';
 import MeetingRoomSkeleton from '@pages/MeetingRoom/MeetingRoom.skeleton';
 import SessionProvider from '@Context/SessionProvider/session';
+import LoggerSynchronizer from '@Context/LoggerSynchronizer';
 import ErrorBoundary from './components/ErrorBoundary';
 import EnvGuard from './components/EnvGuard';
 import { ErrorPage } from './pages/ErrorBoundary';
@@ -50,7 +51,7 @@ const InnerApp = () => {
         <Routes>
           <Route element={<RedirectToUnsupportedBrowserPage />}>
             <Route
-              path="/waiting-room/:roomName"
+              path="/waiting-room/:roomIdentifier"
               element={
                 <SuspenseBoundary fallback={<WaitingRoomSkeleton />}>
                   <RoomProvider>
@@ -63,12 +64,13 @@ const InnerApp = () => {
             />
 
             <Route
-              path="/room/:roomName"
+              path="/room/:roomIdentifier"
               element={
                 <RedirectToWaitingRoom>
                   <SuspenseBoundary fallback={<MeetingRoomSkeleton />}>
                     <RoomProvider>
                       <SessionProvider>
+                        <LoggerSynchronizer />
                         <PublisherProvider>
                           <MeetingRoom />
                         </PublisherProvider>
@@ -80,7 +82,7 @@ const InnerApp = () => {
             />
           </Route>
 
-          <Route path="/goodbye" element={<GoodBye />} />
+          <Route path="/goodbye/:roomIdentifier?" element={<GoodBye />} />
           <Route path="*" element={<LandingPage />} />
           <Route path="/unsupported-browser" element={<UnsupportedBrowserPage />} />
         </Routes>

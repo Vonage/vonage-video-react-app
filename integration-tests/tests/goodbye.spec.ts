@@ -10,16 +10,19 @@ test('should render `Reenter` button when exiting a room and it should return us
 
   await page.goto(`${baseURL}${roomUrl}?bypass=true`);
 
-  await page.getByTestId('CallEndIcon').click();
+  // Wait for the exit button to become enabled (session must be established first)
+  const exitButton = page.getByTestId('CallEndIcon');
+  await expect(exitButton).toBeEnabled();
+  await exitButton.click();
 
   // Checking we navigated to the goodbye page
-  await expect(page.url()).toContain('goodbye');
+  await expect(page).toHaveURL(/goodbye/);
   const reenterButton = page.getByRole('button', { name: 'Go back to meeting' });
   await expect(reenterButton).toBeVisible();
 
   // Checking that you can reenter the exited room
   await reenterButton.click();
-  await expect(page.url()).toContain(roomUrl);
+  await expect(page).toHaveURL(/waiting-room/);
 });
 
 test('should not render `Reenter` button when navigating directly to goodbye', async ({ page }) => {

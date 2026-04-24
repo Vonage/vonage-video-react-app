@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
 import ToolbarButton from '../ToolbarButton';
-import useRoomName from '../../../hooks/useRoomName';
+import useSessionContext from '@hooks/useSessionContext';
 import useTheme from '@ui/theme';
 import VividIcon from '@components/VividIcon';
 
@@ -22,17 +22,20 @@ export type ExitButtonProps = {
 const ExitButton = ({ handleLeave }: ExitButtonProps): ReactElement => {
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const roomName = useRoomName();
+  const { sessionKey } = useSessionContext();
   const theme = useTheme();
+
+  const isSessionReady = !!sessionKey;
 
   const handleExit = () => {
     handleLeave();
-    navigate('/goodbye', { state: { roomName } });
+    navigate(`/goodbye/${sessionKey ?? ''}`);
   };
 
   return (
     <Tooltip title={t('room.exit.tooltip')} aria-label={t('room.exit.ariaLabel')}>
       <ToolbarButton
+        disabled={!isSessionReady}
         onClick={handleExit}
         sx={{
           backgroundColor: theme.colors.error,

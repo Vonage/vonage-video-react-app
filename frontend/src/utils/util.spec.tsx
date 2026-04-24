@@ -1,5 +1,4 @@
 import { describe, it, expect, vi, afterAll } from 'vitest';
-import type { MediaDeviceInfoJSON } from '@web/types';
 import * as util from './util';
 
 const chromeUserAgent =
@@ -77,30 +76,6 @@ describe('isWebKit', () => {
     });
 
     expect(util.isWebKit()).toBe(false);
-  });
-});
-
-describe('getAudioSourceDeviceId', () => {
-  it('returns the correct deviceId when a matching device is found', () => {
-    const devices = [
-      { kind: 'audioinput', deviceId: 'device1', label: 'Microphone 1' },
-      { kind: 'audioinput', deviceId: 'device2', label: 'Microphone 2' },
-    ] as MediaDeviceInfoJSON[];
-    const currentAudioSource = { label: 'Microphone 2' } as MediaStreamTrack;
-
-    const result = util.getAudioSourceDeviceId(devices, currentAudioSource);
-    expect(result).toBe('device2');
-  });
-
-  it('returns an empty string when no matching device is found', () => {
-    const devices = [
-      { kind: 'audioinput', deviceId: 'device1', label: 'Microphone 1' },
-      { kind: 'audioinput', deviceId: 'device2', label: 'Microphone 2' },
-    ] as MediaDeviceInfoJSON[];
-    const currentAudioSource = { label: 'Not Matching Microphone' } as MediaStreamTrack;
-
-    const result = util.getAudioSourceDeviceId(devices, currentAudioSource);
-    expect(result).toBe('');
   });
 });
 

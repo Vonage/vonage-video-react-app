@@ -6,6 +6,23 @@ import MemoryRouter from '@test/RouterWrapper';
 import { DEVICE_ACCESS_STATUS } from '@utils/constants';
 import { env } from '../../env';
 
+const mockSessionId = '1_MX4xMjM0NTY3OH4-VGh1IEZlYiAyNyAwODozMjozNCBQU1QgMjAyMH4wLjI0NDYxMjE';
+const validSessionKey =
+  'eyJhbGciOiJIUzI1NiJ9.eyJzZXNzaW9uSWQiOiIxX01YNHhNak0wTlRZM09INC1WR2gxSUVabFlpQXlOeUF3T0Rvek1qb3pOQ0JRVTFRZ01qQXlNSDR3TGpJME5EWXhNakUiLCJyb29tTmFtZSI6IlRlc3RDb21wb25lbnRSb29tIn0.fakesig';
+
+const { mockCreateSessionMutate, mockJoinSessionMutate, mockVideoClient } = vi.hoisted(() => {
+  const mockCreateSessionMutate = vi.fn();
+  const mockJoinSessionMutate = vi.fn();
+  const mockVideoClient = {
+    createSession: (...args: unknown[]) => mockCreateSessionMutate(...args) as unknown,
+    joinSession: (...args: unknown[]) => mockJoinSessionMutate(...args) as unknown,
+  };
+  return { mockCreateSessionMutate, mockJoinSessionMutate, mockVideoClient };
+});
+
+vi.mock('@services/videoClient', () => ({ default: mockVideoClient }));
+vi.mock('@services', () => ({ videoClient: mockVideoClient }));
+
 const mockNavigate = vi.fn();
 const mockLocation = { search: '' };
 
@@ -15,12 +32,9 @@ vi.mock('react-router-dom', async () => {
     ...actual,
     useNavigate: () => mockNavigate,
     useLocation: () => mockLocation,
+    useParams: () => ({ roomIdentifier: 'test-room' }),
   };
 });
-
-vi.mock('../useRoomName', () => ({
-  default: () => 'test-room',
-}));
 
 vi.mock('../useIsSmallViewport', () => ({
   default: () => false,
@@ -48,6 +62,8 @@ describe('useMeetingRoom', () => {
     vi.clearAllMocks();
     mockLocation.search = '';
     env.BYPASS_WAITING_ROOM = false;
+    mockCreateSessionMutate.mockResolvedValue({ sessionKey: validSessionKey });
+    mockJoinSessionMutate.mockResolvedValue({ token: 'mock-token', sessionId: mockSessionId });
   });
 
   afterEach(() => {
@@ -103,7 +119,7 @@ describe('useMeetingRoom', () => {
     });
 
     await waitFor(() => {
-      expect(mockJoinRoom).toHaveBeenCalledWith('test-room');
+      expect(mockJoinRoom).toHaveBeenCalledWith({ sessionKey: validSessionKey });
     });
     expect(mockNavigate).not.toHaveBeenCalledWith('/waiting-room/test-room');
   });
@@ -121,7 +137,7 @@ describe('useMeetingRoom', () => {
 
     await waitFor(() => {
       expect(mockNavigate).toHaveBeenCalledWith(
-        '/goodbye',
+        '/goodbye/test-room',
         expect.objectContaining({
           state: expect.objectContaining({
             header: 'Publisher error',
@@ -145,7 +161,7 @@ describe('useMeetingRoom', () => {
     });
 
     await new Promise((r) => setTimeout(r, 50));
-    expect(mockNavigate).not.toHaveBeenCalledWith('/goodbye', expect.anything());
+    expect(mockNavigate).not.toHaveBeenCalledWith('/goodbye/test-room', expect.anything());
   });
 });
 

@@ -1,12 +1,14 @@
 import { makeInternalErrorHandler } from '@api-lib/errors';
-import type { IVideoClient, DecodeSessionIdPayload } from '@api-lib/types';
+import type { IVideoClient } from '@api-lib/types';
+import { DecodedSessionId } from '@common/types';
 import { decodeSessionId as decodeSessionIdHelper } from '@node/helpers';
 
-function decodeSessionId(this: IVideoClient, payload: DecodeSessionIdPayload) {
+function decodeSessionId(
+  this: IVideoClient,
+  { sessionId }: { sessionId: string }
+): DecodedSessionId {
   try {
-    const { sessionId } = payload;
-
-    const decodedSession = decodeSessionIdHelper(sessionId);
+    const decodedSession = decodeSessionIdHelper({ sessionId });
 
     return decodedSession;
   } catch (error) {

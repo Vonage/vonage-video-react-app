@@ -3,14 +3,18 @@ import type { IVideoClient } from './IVideoClient';
 
 export type HandlerConfig<
   Action extends VideoAction,
-  Payload = Parameters<IVideoClient[Action]>[0],
+  Input = Parameters<IVideoClient[Action]>[0],
+  Defaults = Partial<Omit<Input, 'sessionKey'>>,
 > = {
   /**
-   * Define the public input for the web client service.
+   * Optional function to transform the input before it's passed to the the videoClient instance.
    */
-  selectInput?: (input: Payload) => Partial<Payload>;
+  transformInput?: (args: { input: unknown; assertInput(input: unknown): Input }) => Partial<Input>;
 
-  defaults: Partial<Payload> | ((payload: Partial<Payload>) => Partial<Payload>);
+  /**
+   * Optional default values for the specific video action
+   */
+  addDefaults?: Defaults | ((input: Input) => Defaults);
 };
 
 export default HandlerConfig;

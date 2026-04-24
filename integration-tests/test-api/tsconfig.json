@@ -1,0 +1,25 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "composite": false,
+    "target": "ESNext",
+    "lib": ["ESNext"],
+    "module": "ESNext",
+    "moduleResolution": "Node",
+    "allowSyntheticDefaultImports": true,
+    "outDir": "./dist",
+    "types": ["node", "jest"],
+    "baseUrl": ".",
+    "paths": {
+      "@api-lib": ["../../libs/api/src"],
+      "@api-lib/*": ["../../libs/api/src/*"],
+      "@common": ["../../libs/common/src"],
+      "@common/*": ["../../libs/common/src/*"],
+      "@common-test": ["../../libs/common/test"],
+      "@common-test/*": ["../../libs/common/test/*"],
+      "@node": ["../../libs/common/srcNode"],
+      "@node/*": ["../../libs/common/srcNode/*"]
+    }
+  },
+  "include": ["**/*.ts"]
+}

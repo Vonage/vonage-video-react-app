@@ -8,6 +8,14 @@ import { setupWindowNavigatorMock } from '@web-test/fixtures';
 
 vi.mock('@vonage/client-sdk-video');
 
+vi.mock('react-router-dom', async () => {
+  const actual = await vi.importActual<typeof import('react-router-dom')>('react-router-dom');
+  return {
+    ...actual,
+    useParams: () => ({ roomIdentifier: 'test-room' }),
+  };
+});
+
 vi.mock('../useBackgroundPublisherContext', () => ({
   default: () => ({
     initBackgroundLocalPublisher: vi.fn(),

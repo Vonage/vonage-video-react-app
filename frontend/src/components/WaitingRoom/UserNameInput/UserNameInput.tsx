@@ -8,16 +8,16 @@ import Typography from '@mui/material/Typography';
 import Card from '@ui/Card';
 import useUserContext from '@hooks/useUserContext';
 import { UserType } from '@Context/user';
-import useRoomName from '@hooks/useRoomName';
-import isValidRoomName from '@utils/isValidRoomName';
 import isValidUserName from '@utils/isValidUserName';
 import { setStorageItem, STORAGE_KEYS } from '@utils/storage';
 import Separator from '@components/Separator';
 import { CardProps } from '@mui/material';
 import { twMerge } from 'tailwind-merge';
+import { isValidRoomName } from '@common/assertions';
 
 export type UserNameInputProps = Omit<CardProps, 'sx'> & {
   username: string;
+  roomName: string;
   setUsername: Dispatch<SetStateAction<string>>;
 };
 
@@ -31,6 +31,7 @@ export type UserNameInputProps = Omit<CardProps, 'sx'> & {
  * @returns {ReactElement} The UsernameInput component.
  */
 const UsernameInput = ({
+  roomName,
   username,
   setUsername,
   className,
@@ -39,7 +40,7 @@ const UsernameInput = ({
   const { t } = useTranslation();
   const { setUser } = useUserContext();
   const navigate = useNavigate();
-  const roomName = useRoomName();
+
   const [isUserNameInvalid, setIsUserNameInvalid] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
 

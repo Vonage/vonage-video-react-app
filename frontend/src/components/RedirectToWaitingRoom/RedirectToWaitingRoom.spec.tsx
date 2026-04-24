@@ -7,13 +7,13 @@ import { ReactElement } from 'react';
 import { env } from '../../env';
 import RedirectToWaitingRoom from './RedirectToWaitingRoom';
 
-const mockedRoomName = { roomName: 'test-room-name' };
+const mockedParams = { roomIdentifier: 'test-room-name' };
 
 vi.mock('react-router-dom', async () => {
   const mod = await vi.importActual<typeof import('react-router-dom')>('react-router-dom');
   return {
     ...mod,
-    useParams: () => mockedRoomName,
+    useParams: () => mockedParams,
   };
 });
 
@@ -26,7 +26,7 @@ describe('RedirectToWaitingRoom Component', () => {
     const { container } = render(
       <MemoryRouter initialEntries={[{ pathname: '/room', state: { hasAccess: false } }]}>
         <Routes>
-          <Route path="/waiting-room/:roomName" element={<div>In waiting room</div>} />
+          <Route path="/waiting-room/:roomIdentifier" element={<div>In waiting room</div>} />
           <Route
             path="*"
             element={
@@ -48,7 +48,7 @@ describe('RedirectToWaitingRoom Component', () => {
     const { container } = render(
       <MemoryRouter initialEntries={['/room?bypass=false']}>
         <Routes>
-          <Route path="/waiting-room/:roomName" element={<div>In waiting room</div>} />
+          <Route path="/waiting-room/:roomIdentifier" element={<div>In waiting room</div>} />
           <Route
             path="*"
             element={

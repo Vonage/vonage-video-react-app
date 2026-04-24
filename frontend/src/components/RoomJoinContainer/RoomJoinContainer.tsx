@@ -6,6 +6,7 @@ import generateRoomName from '../../utils/generateRoomName';
 import NewRoomButton from '../NewRoomButton';
 import JoinContainerSeparator from '../JoinContainerSeparator';
 import JoinExistingRoom from '../JoinExistingRoom';
+import videoClient from '@services/videoClient';
 
 /**
  * RoomJoinContainer Component
@@ -16,10 +17,13 @@ import JoinExistingRoom from '../JoinExistingRoom';
 const RoomJoinContainer = (): ReactElement => {
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const randomRoom = generateRoomName();
 
-  const handleNewRoom = () => {
-    navigate(`/waiting-room/${randomRoom}`);
+  const handleNewRoom = async () => {
+    const randomRoom = generateRoomName();
+
+    const { sessionKey } = await videoClient.createSession({ roomName: randomRoom });
+
+    navigate(`/waiting-room/${sessionKey}`);
   };
 
   return (

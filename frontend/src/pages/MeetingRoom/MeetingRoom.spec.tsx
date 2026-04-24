@@ -23,8 +23,25 @@ import type { Box } from 'opentok-layout-js';
 import { setupWindowNavigatorMock } from '@web-test/fixtures';
 
 const mockedNavigate = vi.fn();
-const mockedParams = { roomName: 'test-room-name' };
+const mockedParams = { roomIdentifier: 'test-room-name' };
 const mockedLocation = vi.fn<[], ReturnType<typeof import('react-router-dom').useLocation>>();
+
+const mockSessionId = '1_MX4xMjM0NTY3OH4-VGh1IEZlYiAyNyAwODozMjozNCBQU1QgMjAyMH4wLjI0NDYxMjE';
+// A valid fake JWT containing the above sessionId
+const validSessionKey =
+  'eyJhbGciOiJIUzI1NiJ9.eyJzZXNzaW9uSWQiOiIxX01YNHhNak0wTlRZM09INC1WR2gxSUVabFlpQXlOeUF3T0Rvek1qb3pOQ0JRVTFRZ01qQXlNSDR3TGpJME5EWXhNakUiLCJyb29tTmFtZSI6IlRlc3RDb21wb25lbnRSb29tIn0.fakesig';
+
+const mockCreateSessionMutate = vi.fn();
+const mockJoinSessionMutate = vi
+  .fn()
+  .mockResolvedValue({ token: 'mock-token', sessionId: mockSessionId });
+
+vi.mock('@services', () => ({
+  videoClient: {
+    createSession: (...args: unknown[]) => mockCreateSessionMutate(...args) as unknown,
+    joinSession: (...args: unknown[]) => mockJoinSessionMutate(...args) as unknown,
+  },
+}));
 
 vi.mock('@hooks/useBackgroundPublisherContext', () => ({
   __esModule: true,
@@ -132,6 +149,12 @@ describe('MeetingRoom', () => {
       },
     });
 
+    mockCreateSessionMutate.mockResolvedValue({
+      sessionKey: validSessionKey,
+    });
+
+    mockJoinSessionMutate.mockResolvedValue({ token: 'mock-token', sessionId: mockSessionId });
+
     mockedLocation.mockReturnValue({
       pathname: '/room/test-room-name',
       search: '',
@@ -226,7 +249,9 @@ describe('MeetingRoom', () => {
     });
 
     await waitFor(() => {
-      expect(sessionContext.current.joinRoom).toHaveBeenCalledWith('test-room-name');
+      expect(sessionContext.current.joinRoom).toHaveBeenCalledWith({
+        sessionKey: validSessionKey,
+      });
     });
     await waitFor(() => {
       expect(sessionContext.current.joinRoom).toHaveBeenCalledTimes(1);
@@ -459,10 +484,9 @@ describe('MeetingRoom', () => {
 
     await waitFor(() => {
       expect(mockedNavigate).toHaveBeenCalledOnce();
-      expect(mockedNavigate).toHaveBeenCalledWith('/goodbye', {
+      expect(mockedNavigate).toHaveBeenCalledWith(expect.stringContaining('/goodbye/'), {
         state: {
           header: 'Difficulties joining room',
-          roomName: 'test-room-name',
           caption:
             "We're having trouble connecting you with others in the meeting room. Please check your network and try again.",
         },

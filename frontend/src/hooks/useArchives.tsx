@@ -4,7 +4,7 @@ import { ArchiveResponse, getArchives } from '../api/archiving';
 import { Archive } from '../api/archiving/model';
 
 export type UseArchivesProps = {
-  roomName: string;
+  sessionKey: string | null;
 };
 
 /**
@@ -12,17 +12,20 @@ export type UseArchivesProps = {
  * @param { UseArchivesProps} props - The props for the hook.
  * @returns {Archive[] | 'error'} An array of Archives, or the text, `error`.
  */
-const useArchives = ({ roomName }: UseArchivesProps): Archive[] | 'error' => {
+const useArchives = ({ sessionKey }: UseArchivesProps): Archive[] | 'error' => {
   const { i18n } = useTranslation();
   const [archives, setArchives] = useState<Archive[] | 'error'>([]);
   const pollingIntervalRef = useRef<ReturnType<typeof setInterval> | undefined>(undefined);
 
   useEffect(() => {
     const fetchArchives = async () => {
-      if (roomName) {
+      if (sessionKey) {
         let archiveData: ArchiveResponse;
         try {
-          archiveData = await getArchives(i18n.language, roomName);
+          archiveData = await getArchives({
+            sessionKey,
+            locale: i18n.language,
+          });
         } catch (error: unknown) {
           const message = error instanceof Error ? error.message : error;
           console.error(`Error retrieving archive: ${message}`);
@@ -47,7 +50,7 @@ const useArchives = ({ roomName }: UseArchivesProps): Archive[] | 'error' => {
         clearInterval(pollingIntervalRef.current);
       }
     };
-  }, [roomName, i18n.language]);
+  }, [sessionKey, i18n.language]);
   return archives;
 };
 

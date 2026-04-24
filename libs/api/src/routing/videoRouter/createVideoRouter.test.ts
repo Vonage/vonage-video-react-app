@@ -1,10 +1,14 @@
-import { describe, it, expect, vi } from 'vitest';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
+import express from 'express';
+import request from 'supertest';
 import { MediaMode, type SingleArchiveResponse } from '@vonage/video';
-import createVideoRouter from './createVideoRouter';
-import { videoRouterContext } from '@api-lib/constants';
+import jwt from 'jsonwebtoken';
+import createVideoHandler from '../videoHandler/createVideoHandler';
 import { TokenRole } from '@api-lib/types';
 
+const mockApiKey = 'test-api-key';
 const mockSessionId = '1_MX4xMjM0NTY3OH4-VGh1IEZlYiAyNyAwODozMjozNCBQU1QgMjAyMH4wLjI0NDYxMjE';
+const mockSessionKey = jwt.sign({ sessionId: mockSessionId }, mockApiKey, { algorithm: 'HS256' });
 
 const h = vi.hoisted(() => ({
   createSessionSpy: vi.fn(),
@@ -35,18 +39,9 @@ vi.mock('@vonage/video', async () => {
   }));
 });
 
-describe('createVideoRouter', () => {
-  // Helper to create procedure call options with required fields
-  const createCallOpts = <T>(input: T, type: 'mutation' | 'query' = 'mutation') => ({
-    ctx: {
-      [videoRouterContext]: undefined,
-    },
-    type,
-    path: '',
-    input,
-    getRawInput: () => Promise.resolve(input),
-    signal: new AbortController().signal,
-    batchIndex: 0,
+describe('createVideoHandler', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
   });
 
   describe('createSession', () => {
@@ -58,18 +53,41 @@ describe('createVideoRouter', () => {
         archiveMode: 'manual',
       });
 
-      const router = createTestRouter();
+      const app = createTestApp();
 
-      const result = await router.createSession(createCallOpts({}));
+      const response = await request(app).post('/video/createSession').send({}).expect(200);
 
-      expect(h.createSessionSpy).toHaveBeenCalledWith({
-        mediaMode: MediaMode.ROUTED,
+      const data = extractResponseData(response.body);
+
+      expect(data).toMatchObject({
+        sessionId: mockSessionId,
       });
 
-      expect(result).toMatchObject({
+      expect(h.createSessionSpy).toHaveBeenCalledWith(undefined);
+    });
+
+    it('should create a session and join it successfully', async () => {
+      h.createSessionSpy.mockResolvedValue({
         sessionId: mockSessionId,
+        location: 'US',
+        mediaMode: MediaMode.ROUTED,
+        archiveMode: 'manual',
+      });
+
+      const app = createTestApp();
+
+      await request(app).post('/video/createSession').send({}).expect(200);
+
+      const joinResponse = await request(app)
+        .post('/video/joinSession')
+        .send({ sessionKey: mockSessionKey })
+        .expect(200);
+
+      const joinData = extractResponseData(joinResponse.body);
+
+      expect(joinData).toMatchObject({
         location: expect.any(String),
-        p2p: expect.any(Boolean),
+        token: expect.any(String),
       });
     });
 
@@ -81,81 +99,90 @@ describe('createVideoRouter', () => {
         archiveMode: 'manual',
       });
 
-      const router = createTestRouter();
+      const app = createTestApp();
 
       const customOptions = {
         location: '12.34.56.78',
         archiveMode: 'manual' as const,
       };
 
-      await router.createSession(createCallOpts({ sessionOptions: customOptions }));
+      await request(app)
+        .post('/video/createSession')
+        .send({ sessionOptions: customOptions })
+        .expect(200);
 
-      expect(h.createSessionSpy).toHaveBeenCalledWith({
-        mediaMode: MediaMode.ROUTED,
-        ...customOptions,
-      });
+      expect(h.createSessionSpy).toHaveBeenCalledWith(customOptions);
     });
 
-    it('should handle errors when creating a session', async () => {
+    it('should return an error response when creating a session fails', async () => {
       h.createSessionSpy.mockRejectedValue(new Error('Failed to create session on Vonage side'));
 
-      const router = createTestRouter();
+      const app = createTestApp();
 
-      await expect(router.createSession(createCallOpts({}))).rejects.toThrow();
+      const response = await request(app).post('/video/createSession').send({});
+
+      expect(response.status).toBeGreaterThanOrEqual(400);
     });
   });
 
   describe('decodeSessionId', () => {
-    it('should decode a valid sessionId', async () => {
-      const router = createTestRouter();
+    it('should decode a valid sessionId via VideoClient method (not a TRPC route)', async () => {
+      const app = createTestApp();
 
-      const result = await router.decodeSessionId(
-        createCallOpts({ sessionId: mockSessionId }, 'query')
-      );
+      const input = encodeURIComponent(JSON.stringify({ sessionId: mockSessionId }));
 
-      expect(result).toMatchObject({
-        location: expect.any(String),
-        p2p: expect.any(Boolean),
-      });
+      // decodeSessionId is not exposed as a TRPC route
+      const response = await request(app).get(`/video/decodeSessionId?input=${input}`);
+      expect(response.status).toBeGreaterThanOrEqual(400);
     });
 
-    it('should handle invalid sessionId', async () => {
-      const router = createTestRouter();
+    it('should return an error response for invalid sessionId', async () => {
+      const app = createTestApp();
 
-      await expect(
-        router.decodeSessionId(createCallOpts({ sessionId: 'invalid-session-id' }, 'query'))
-      ).rejects.toThrow();
+      const input = encodeURIComponent(JSON.stringify({ sessionId: 'invalid-session-id' }));
+
+      const response = await request(app).get(`/video/decodeSessionId?input=${input}`);
+
+      expect(response.status).toBeGreaterThanOrEqual(400);
     });
   });
 
   describe('joinSession', () => {
     it('should join a session and return token', async () => {
-      const router = createTestRouter();
+      const app = createTestApp();
 
-      const result = await router.joinSession(createCallOpts({ sessionId: mockSessionId }));
+      const response = await request(app)
+        .post('/video/joinSession')
+        .send({ sessionKey: mockSessionKey })
+        .expect(200);
 
-      expect(result).toMatchObject({
+      const data = extractResponseData(response.body);
+
+      expect(data).toMatchObject({
         location: expect.any(String),
         token: expect.any(String),
       });
     });
 
     it('should join session with custom client token options', async () => {
-      const router = createTestRouter();
+      const app = createTestApp();
 
       const clientTokenOptions = {
         role: TokenRole.PUBLISHER,
         data: 'custom-data',
       };
 
-      const result = await router.joinSession(
-        createCallOpts({
-          sessionId: mockSessionId,
+      const response = await request(app)
+        .post('/video/joinSession')
+        .send({
+          sessionKey: mockSessionKey,
           clientTokenOptions,
         })
-      );
+        .expect(200);
 
-      expect(result).toMatchObject({
+      const data = extractResponseData(response.body);
+
+      expect(data).toMatchObject({
         token: expect.any(String),
       });
     });
@@ -179,39 +206,40 @@ describe('createVideoRouter', () => {
 
       h.startArchiveSpy.mockResolvedValue(mockArchive);
 
-      const router = createTestRouter();
+      const app = createTestApp();
 
-      const result = await router.startArchive(
-        createCallOpts({
-          sessionId: mockSessionId,
+      const response = await request(app)
+        .post('/video/startArchive')
+        .send({
+          sessionKey: mockSessionKey,
           archiveOptions: { name: 'test-archive' },
         })
-      );
+        .expect(200);
 
       expect(h.startArchiveSpy).toHaveBeenCalledWith(mockSessionId, {
         name: 'test-archive',
       });
 
-      expect(result).toMatchObject({
+      const data = extractResponseData(response.body);
+
+      expect(data).toMatchObject({
         id: 'archive-id-123',
         sessionId: mockSessionId,
         name: 'test-archive',
       });
     });
 
-    it('should handle errors when starting archive', async () => {
+    it('should return an error response when starting archive fails', async () => {
       h.startArchiveSpy.mockRejectedValue(new Error('Failed to start archive'));
 
-      const router = createTestRouter();
+      const app = createTestApp();
 
-      await expect(
-        router.startArchive(
-          createCallOpts({
-            sessionId: mockSessionId,
-            archiveOptions: {},
-          })
-        )
-      ).rejects.toThrow();
+      const response = await request(app).post('/video/startArchive').send({
+        sessionKey: mockSessionKey,
+        archiveOptions: {},
+      });
+
+      expect(response.status).toBeGreaterThanOrEqual(400);
     });
   });
 
@@ -225,30 +253,37 @@ describe('createVideoRouter', () => {
 
       h.stopArchiveSpy.mockResolvedValue(mockArchive);
 
-      const router = createTestRouter();
+      const app = createTestApp();
 
-      const result = await router.stopArchive(
-        createCallOpts({ sessionId: mockSessionId, archiveId: 'archive-id-123' })
-      );
+      const response = await request(app)
+        .post('/video/stopArchive')
+        .send({
+          sessionKey: mockSessionKey,
+          archiveId: 'archive-id-123',
+        })
+        .expect(200);
 
       expect(h.stopArchiveSpy).toHaveBeenCalledWith('archive-id-123');
 
-      expect(result).toMatchObject({
+      const data = extractResponseData(response.body);
+
+      expect(data).toMatchObject({
         id: 'archive-id-123',
         status: 'stopped',
       });
     });
 
-    it('should handle errors when stopping archive', async () => {
+    it('should return an error response when stopping archive fails', async () => {
       h.stopArchiveSpy.mockRejectedValue(new Error('Failed to stop archive'));
 
-      const router = createTestRouter();
+      const app = createTestApp();
 
-      await expect(
-        router.stopArchive(
-          createCallOpts({ sessionId: mockSessionId, archiveId: 'archive-id-123' })
-        )
-      ).rejects.toThrow();
+      const response = await request(app).post('/video/stopArchive').send({
+        sessionKey: mockSessionKey,
+        archiveId: 'archive-id-123',
+      });
+
+      expect(response.status).toBeGreaterThanOrEqual(400);
     });
   });
 
@@ -288,17 +323,20 @@ describe('createVideoRouter', () => {
 
       h.searchArchivesSpy.mockResolvedValue(mockArchives);
 
-      const router = createTestRouter();
+      const app = createTestApp();
 
-      const result = await router.searchArchives(
-        createCallOpts({ sessionId: mockSessionId }, 'query')
-      );
+      const response = await request(app)
+        .post('/video/searchArchives')
+        .send({ sessionKey: mockSessionKey })
+        .expect(200);
 
       expect(h.searchArchivesSpy).toHaveBeenCalledWith({
         sessionId: mockSessionId,
       });
 
-      expect(result).toMatchObject({
+      const data = extractResponseData(response.body);
+
+      expect(data).toMatchObject({
         items: expect.arrayContaining([
           expect.objectContaining({ id: 'archive-1' }),
           expect.objectContaining({ id: 'archive-2' }),
@@ -307,14 +345,16 @@ describe('createVideoRouter', () => {
       });
     });
 
-    it('should handle errors when searching archives', async () => {
+    it('should return an error response when searching archives fails', async () => {
       h.searchArchivesSpy.mockRejectedValue(new Error('Failed to search archives'));
 
-      const router = createTestRouter();
+      const app = createTestApp();
 
-      await expect(
-        router.searchArchives(createCallOpts({ sessionId: mockSessionId }, 'query'))
-      ).rejects.toThrow();
+      const response = await request(app)
+        .post('/video/searchArchives')
+        .send({ sessionKey: mockSessionKey });
+
+      expect(response.status).toBeGreaterThanOrEqual(400);
     });
   });
 
@@ -324,9 +364,12 @@ describe('createVideoRouter', () => {
         captionsId: 'caption-id-123',
       });
 
-      const router = createTestRouter();
+      const app = createTestApp();
 
-      await router.enableCaptions(createCallOpts({ sessionId: mockSessionId }));
+      await request(app)
+        .post('/video/enableCaptions')
+        .send({ sessionKey: mockSessionKey })
+        .expect(200);
 
       expect(h.enableCaptionsSpy).toHaveBeenCalledWith(
         mockSessionId,
@@ -340,7 +383,7 @@ describe('createVideoRouter', () => {
         captionsId: 'caption-id-456',
       });
 
-      const router = createTestRouter();
+      const app = createTestApp();
 
       const captionOptions = {
         languageCode: 'en-US',
@@ -349,12 +392,13 @@ describe('createVideoRouter', () => {
         statusCallbackUrl: 'https://example.com/callback',
       };
 
-      await router.enableCaptions(
-        createCallOpts({
-          sessionId: mockSessionId,
+      await request(app)
+        .post('/video/enableCaptions')
+        .send({
+          sessionKey: mockSessionKey,
           captionOptions,
         })
-      );
+        .expect(200);
 
       expect(h.enableCaptionsSpy).toHaveBeenCalledWith(
         mockSessionId,
@@ -363,14 +407,16 @@ describe('createVideoRouter', () => {
       );
     });
 
-    it('should handle errors when enabling captions', async () => {
+    it('should return an error response when enabling captions fails', async () => {
       h.enableCaptionsSpy.mockRejectedValue(new Error('Failed to enable captions'));
 
-      const router = createTestRouter();
+      const app = createTestApp();
 
-      await expect(
-        router.enableCaptions(createCallOpts({ sessionId: mockSessionId }))
-      ).rejects.toThrow();
+      const response = await request(app)
+        .post('/video/enableCaptions')
+        .send({ sessionKey: mockSessionKey });
+
+      expect(response.status).toBeGreaterThanOrEqual(400);
     });
   });
 
@@ -378,54 +424,136 @@ describe('createVideoRouter', () => {
     it('should disable captions successfully', async () => {
       h.disableCaptionsSpy.mockResolvedValue(undefined);
 
-      const router = createTestRouter();
+      const app = createTestApp();
 
-      await router.disableCaptions(
-        createCallOpts({ sessionId: mockSessionId, captionsId: 'caption-id-123' })
-      );
+      await request(app)
+        .post('/video/disableCaptions')
+        .send({
+          sessionKey: mockSessionKey,
+          captionsId: 'caption-id-123',
+        })
+        .expect(200);
 
       expect(h.disableCaptionsSpy).toHaveBeenCalledWith('caption-id-123');
     });
 
-    it('should handle errors when disabling captions', async () => {
+    it('should return an error response when disabling captions fails', async () => {
       h.disableCaptionsSpy.mockRejectedValue(new Error('Failed to disable captions'));
 
-      const router = createTestRouter();
+      const app = createTestApp();
 
-      await expect(
-        router.disableCaptions(
-          createCallOpts({ sessionId: mockSessionId, captionsId: 'caption-id-123' })
-        )
-      ).rejects.toThrow();
+      const response = await request(app).post('/video/disableCaptions').send({
+        sessionKey: mockSessionKey,
+        captionsId: 'caption-id-123',
+      });
+
+      expect(response.status).toBeGreaterThanOrEqual(400);
     });
   });
 
   describe('error handling', () => {
-    it('should format errors correctly', async () => {
+    it('should format errors in the response body', async () => {
       h.createSessionSpy.mockRejectedValue(new Error('Vonage API error: Unauthorized'));
 
-      const router = createTestRouter();
+      const app = createTestApp();
 
-      try {
-        await router.createSession(createCallOpts({}));
+      const response = await request(app).post('/video/createSession').send({});
 
-        expect.fail('Should have thrown an error');
-      } catch (error) {
-        expect(error).toBeDefined();
-      }
+      expect(response.status).toBeGreaterThanOrEqual(400);
+      expect(response.body.error).toBeDefined();
+    });
+  });
+
+  describe('TRPC client compatibility', () => {
+    it('should accept mutations with TRPC json-wrapped body', async () => {
+      const app = createTestApp();
+
+      const response = await request(app)
+        .post('/video/joinSession')
+        .send({ json: { sessionKey: mockSessionKey } })
+        .expect(200);
+
+      const data = extractResponseData(response.body);
+
+      expect(data).toMatchObject({
+        location: expect.any(String),
+        token: expect.any(String),
+      });
+    });
+
+    it('should accept mutations with raw body', async () => {
+      const app = createTestApp();
+
+      const response = await request(app)
+        .post('/video/joinSession')
+        .send({ sessionKey: mockSessionKey })
+        .expect(200);
+
+      const data = extractResponseData(response.body);
+
+      expect(data).toMatchObject({
+        location: expect.any(String),
+        token: expect.any(String),
+      });
+    });
+
+    it('should accept mutations with TRPC json-wrapped body for searchArchives', async () => {
+      h.searchArchivesSpy.mockResolvedValue({ items: [], count: 0 });
+
+      const app = createTestApp();
+
+      const response = await request(app)
+        .post('/video/searchArchives')
+        .send({ json: { sessionKey: mockSessionKey } })
+        .expect(200);
+
+      const data = extractResponseData(response.body);
+
+      expect(data).toMatchObject({
+        items: expect.any(Array),
+        count: 0,
+      });
+    });
+
+    it('should accept mutations with raw body for searchArchives', async () => {
+      h.searchArchivesSpy.mockResolvedValue({ items: [], count: 0 });
+
+      const app = createTestApp();
+
+      const response = await request(app)
+        .post('/video/searchArchives')
+        .send({ sessionKey: mockSessionKey })
+        .expect(200);
+
+      const data = extractResponseData(response.body);
+
+      expect(data).toMatchObject({
+        items: expect.any(Array),
+        count: 0,
+      });
     });
   });
 });
 
-function createTestRouter() {
-  const mockApiKey = 'test-api-key';
-  const mockApiSecret = 'test-api-secret';
+function createTestApp() {
+  const app = express();
 
-  return createVideoRouter({
+  const handler = createVideoHandler({
     auth: {
       authType: 'apiKey',
       apiKey: mockApiKey,
-      apiSecret: mockApiSecret,
+      apiSecret: 'test-api-secret',
     },
   });
+
+  app.use('/video', handler);
+
+  return app;
+}
+
+/**
+ * Extracts the response data from the TRPC JSON response body.
+ */
+function extractResponseData<T>(body: unknown): T {
+  return (body as { result: { data: T } }).result.data;
 }
