@@ -9,7 +9,7 @@
       "executor": "nx:run-commands",
       "options": {
         "cwd": "vera-studio",
-        "command": "nodemon --watch src --watch frontend/src --ext ts,tsx,json --ignore dist --exec \"sh -c 'tsc --noEmit -p tsconfig.app.json --pretty true && node --import tsx src/index.ts'\""
+        "command": "nodemon --watch src --ext ts,tsx,json --ignore dist --exec \"sh -c 'tsc --noEmit -p tsconfig.app.json --pretty true && node --import tsx src/index.ts'\""
       }
     },
     "test": {

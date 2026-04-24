@@ -4,6 +4,9 @@ import { ComponentProps, memo, PropsWithChildren, useEffect, useRef, forwardRef 
 import '../i18n';
 import './VeraRoomElement';
 import { BridgeAttribute } from './stores/bridge';
+import { env } from '../env';
+
+const entryPoint = `${env.API_URL}/v2`;
 
 type VeraRoomProps = PropsWithChildren<
   {
@@ -27,7 +30,7 @@ const meta: Meta<VeraRoomProps> = {
     entryPoint: {
       control: 'text',
       description: 'Entry point identifier for logging and tracking',
-      defaultValue: 'storybook',
+      defaultValue: entryPoint,
     },
     language: {
       control: 'text',
@@ -43,6 +46,7 @@ const StableVeraRoom = memo(
   forwardRef<HTMLElement, VeraRoomProps>((props, ref) => {
     return (
       <vera-room
+        className="h-screen"
         session-identifier={props.sessionIdentifier}
         entry-point={props.entryPoint}
         language={props.language}
@@ -78,7 +82,7 @@ function VeraRoomWrapper({ sessionIdentifier, entryPoint, language }: VeraRoomPr
 export const Default: Story = {
   args: {
     sessionIdentifier: 'test-123',
-    entryPoint: 'storybook',
+    entryPoint: entryPoint,
     language: 'en',
   },
   render: VeraRoomWrapper,
@@ -87,7 +91,7 @@ export const Default: Story = {
 export const SpanishLanguage: Story = {
   args: {
     sessionIdentifier: 'test-spanish-session',
-    entryPoint: 'storybook',
+    entryPoint: entryPoint,
     language: 'es',
   },
   render: VeraRoomWrapper,
@@ -96,7 +100,7 @@ export const SpanishLanguage: Story = {
 export const CustomSession: Story = {
   args: {
     sessionIdentifier: 'custom-demo-session',
-    entryPoint: 'demo',
+    entryPoint: entryPoint,
     language: 'en',
   },
   render: VeraRoomWrapper,
