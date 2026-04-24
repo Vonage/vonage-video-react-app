@@ -5,6 +5,7 @@ import { MediaMode, type SingleArchiveResponse } from '@vonage/video';
 import jwt from 'jsonwebtoken';
 import createVideoHandler from './createVideoHandler';
 import { TokenRole } from '@api-lib/types';
+import type { NextResult } from '../videoRouter';
 
 const mockApiKey = 'test-api-key';
 const mockSessionId = '1_MX4xMjM0NTY3OH4-VGh1IEZlYiAyNyAwODozMjozNCBQU1QgMjAyMH4wLjI0NDYxMjE';
@@ -431,6 +432,85 @@ describe('createVideoHandler', () => {
       });
 
       expect(response.status).toBeGreaterThanOrEqual(400);
+    });
+  });
+
+  describe('fluent helpers', () => {
+    it('should mount fluent chain from transform$ and use$ directly in app.use', async () => {
+      h.createSessionSpy.mockResolvedValue({
+        sessionId: mockSessionId,
+        location: 'US',
+        mediaMode: MediaMode.ROUTED,
+        archiveMode: 'manual',
+      });
+
+      const middlewareSpy = vi.fn((middlewareParameters: { next: () => NextResult }) => {
+        return middlewareParameters.next();
+      });
+
+      const app = express();
+
+      app.use(
+        '/video',
+        createVideoHandler({
+          auth: {
+            authType: 'apiKey',
+            apiKey: mockApiKey,
+            apiSecret: 'test-api-secret',
+          },
+        })
+          .transform$('createSession', () => ({
+            sessionOptions: { location: '12.34.56.78' },
+          }))
+          .use$(middlewareSpy)
+      );
+
+      await request(app).post('/video/createSession').send({}).expect(200);
+
+      expect(middlewareSpy).toHaveBeenCalledTimes(1);
+      expect(middlewareSpy).toHaveBeenCalledWith(
+        expect.objectContaining({
+          videoAction: 'createSession',
+        })
+      );
+      expect(h.createSessionSpy).toHaveBeenCalledWith({ location: '12.34.56.78' });
+    });
+
+    it('should mount fluent chain from use$ and override$ and bypass default handler', async () => {
+      const actionMiddlewareSpy = vi.fn((middlewareParameters: { next: () => NextResult }) => {
+        return middlewareParameters.next();
+      });
+
+      const app = express();
+
+      app.use(
+        '/video',
+        createVideoHandler({
+          auth: {
+            authType: 'apiKey',
+            apiKey: mockApiKey,
+            apiSecret: 'test-api-secret',
+          },
+        })
+          .use$('searchArchives', actionMiddlewareSpy)
+          .override$('searchArchives', () => ({ items: [], count: 0 }))
+      );
+
+      const response = await request(app)
+        .post('/video/searchArchives')
+        .send({ sessionKey: mockSessionKey })
+        .expect(200);
+
+      const data = extractResponseData<{ items: unknown[]; count: number }>(response.body);
+
+      expect(data).toMatchObject({ items: [], count: 0 });
+      expect(actionMiddlewareSpy).toHaveBeenCalledTimes(1);
+      expect(actionMiddlewareSpy).toHaveBeenCalledWith(
+        expect.objectContaining({
+          videoAction: 'searchArchives',
+        })
+      );
+      expect(h.searchArchivesSpy).not.toHaveBeenCalled();
     });
   });
 

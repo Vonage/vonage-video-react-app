@@ -77,6 +77,7 @@ function devRoom(): void {
  * Runs Vera Studio dev server (Express + Vite middleware on port 5000).
  */
 function devStudio(): void {
+  runCommand('yarn sync:theme-tokens');
   runCommand('nx run vera-studio:dev');
 }
 
