@@ -1,30 +1,87 @@
 #!/usr/bin/env tsx
 /**
- * Generates all JSON files from design tokens
- * Run: npm run generate:tokens
- * Run with watch: npm run generate:tokens watch
+ * Syncs generated theme token artifacts.
+ * Run: yarn sync:theme-tokens
  */
 
-import { watch } from 'fs';
+import * as fs from 'fs';
 import { execSync } from 'child_process';
 import * as path from 'path';
+// eslint-disable-next-line @nx/enforce-module-boundaries
+import tokensToJson from '../libs/ui/src/theme/helpers/designTokens/helpers/tokensToJson';
 
-const scriptsToRun = [
-  'libs/ui/src/theme/helpers/designTokens/helpers/tokensToJson.ts',
-  'libs/ui/src/theme/helpers/tailwind/generateTailwindPlugin.ts',
-];
+const scriptsToRun = ['libs/ui/src/theme/helpers/tailwind/generateTailwindPlugin.ts'];
+const commandName = 'sync:theme-tokens';
+
+const rootDesignTokensFilePath = path.resolve('designTokens.json');
+const pluginDesignTokensFilePath = path.resolve(
+  'libs/ui/src/theme/helpers/designTokens/designTokens.json'
+);
+const generatedPluginFilePath = path.resolve('libs/ui/src/theme/helpers/tailwind/veraUI.cjs');
+
+function syncPluginTokensFromRootOrDefaults(): void {
+  console.log('\x1b[36m→ Syncing plugin token source\x1b[0m');
+
+  if (!fs.existsSync(rootDesignTokensFilePath)) {
+    console.log(
+      '\x1b[36m→ Root designTokens.json not found. Bootstrapping from TS defaults\x1b[0m'
+    );
+
+    tokensToJson('.', 'designTokens.json');
+    const generatedRootTokens = fs.readFileSync(rootDesignTokensFilePath, 'utf-8');
+
+    fs.writeFileSync(pluginDesignTokensFilePath, generatedRootTokens, 'utf-8');
+
+    console.log(
+      `\x1b[32m✔ Root designTokens.json created from defaults at ${rootDesignTokensFilePath}\x1b[0m`
+    );
+
+    console.log(
+      `\x1b[32m✔ Plugin design tokens synced from root at ${pluginDesignTokensFilePath}\x1b[0m`
+    );
+
+    return;
+  }
+
+  console.log('\x1b[36m→ Root designTokens.json found. Using it as source of truth\x1b[0m');
+  const rootTokens = fs.readFileSync(rootDesignTokensFilePath, 'utf-8');
+
+  fs.writeFileSync(
+    pluginDesignTokensFilePath,
+    rootTokens.endsWith('\n') ? rootTokens : `${rootTokens}\n`,
+    'utf-8'
+  );
+
+  console.log(
+    `\x1b[32m✔ Plugin design tokens synced from root at ${pluginDesignTokensFilePath}\x1b[0m`
+  );
+}
 
 /**
- * Generates all design token JSON files and Tailwind plugin.
- * Runs tokensToJson.ts and generateTailwindPlugin.ts in sequence.
+ * Syncs design token JSON files and Tailwind plugin.
+ * - Always regenerates designTokens.example.json from TS defaults.
+ * - Uses root designTokens.json as source of truth when it exists.
+ * - Bootstraps root designTokens.json from defaults when it does not exist.
+ * - Always rebuilds and formats veraUI.cjs.
  * Exits with error code 1 if any script fails.
  */
 const generateTokens = () => {
-  console.log('\x1b[36m🔄 Generating design tokens...\x1b[0m\n');
+  console.log(`\x1b[36m🔄 [${commandName}] Starting token sync\x1b[0m\n`);
+
+  try {
+    console.log('\x1b[36m→ Generating root example token artifact\x1b[0m');
+    tokensToJson('.', 'designTokens.example.json');
+
+    syncPluginTokensFromRootOrDefaults();
+  } catch (error) {
+    console.error('\x1b[31m✖ Failed to generate design token JSON files\x1b[0m', error);
+    process.exit(1);
+  }
 
   for (const script of scriptsToRun) {
     const scriptPath = path.resolve(script);
     try {
+      console.log(`\x1b[36m→ Rebuilding Tailwind plugin via ${script}\x1b[0m`);
       execSync(`tsx ${scriptPath}`, { stdio: 'inherit' });
     } catch (error) {
       console.error(`\x1b[31m✖ Failed to run ${script}\x1b[0m`, error);
@@ -32,54 +89,25 @@ const generateTokens = () => {
     }
   }
 
-  console.log('\n\x1b[32m✔ All design tokens generated successfully!\x1b[0m');
-};
+  try {
+    console.log(`\x1b[36m→ Formatting generated plugin file: ${generatedPluginFilePath}\x1b[0m`);
+    execSync(`npx prettier --write "${generatedPluginFilePath}"`, { stdio: 'inherit' });
+  } catch (error) {
+    console.error('\x1b[31m✖ Failed to format generated plugin file\x1b[0m', error);
+    process.exit(1);
+  }
 
-/**
- * Watches the design tokens directory for changes and regenerates on change.
- * Runs generation once on start, then watches for .ts file changes (excluding tokensToJson.ts).
- */
-const runWatch = () => {
-  const tokensDir = path.resolve('libs/ui/src/theme/helpers/designTokens');
-
-  console.log('\x1b[36m👀 Watching design tokens for changes...\x1b[0m\n');
-
-  // Run once on start
-  generateTokens();
-
-  // Watch for changes
-  watch(tokensDir, { recursive: true }, (eventType, filename) => {
-    if (filename && filename.endsWith('.ts') && !filename.includes('helpers/tokensToJson')) {
-      console.log(`\n\x1b[33m📝 Detected change in ${filename}\x1b[0m`);
-      try {
-        generateTokens();
-      } catch (error) {
-        console.error('\x1b[31m✖ Generation failed\x1b[0m', error);
-      }
-    }
-  });
+  console.log(`\n\x1b[32m✔ [${commandName}] Token sync completed successfully\x1b[0m`);
 };
 
 /**
  * Main entry point for design token generation.
- *
- * Modes:
- * - No args: Generate tokens once
- * - watch/--watch: Watch for changes and regenerate
- *
- * Usage:
- * - yarn generate:tokens         (generate once)
- * - yarn generate:tokens watch   (watch mode)
  */
 const main = () => {
-  const args = process.argv.slice(2);
-  const [firstArg] = args;
-
-  const isWatchMode = firstArg === 'watch' || firstArg === '--watch';
-
-  if (isWatchMode) {
-    runWatch();
-    return;
+  if (process.argv.length > 2) {
+    console.log(
+      `\x1b[33m⚠ [${commandName}] This command no longer accepts modes/arguments. Running default sync flow.\x1b[0m`
+    );
   }
 
   generateTokens();

@@ -12,7 +12,13 @@ export type VeraTypographyTokenKey =
   | 'caption'
   | 'caption-semibold';
 
-type VeraTypographyPropertyKey = 'font-size' | 'line-height' | 'font-weight';
+type VeraTypographyPropertyKey =
+  | 'font-size'
+  | 'line-height'
+  | 'font-weight'
+  | 'mobile-font-size'
+  | 'mobile-line-height'
+  | 'mobile-font-weight';
 
 export type VeraTypographyCssVariable =
   `--vera-typography-${VeraTypographyTokenKey}-${VeraTypographyPropertyKey}`;
@@ -89,7 +95,13 @@ export const veraTypographyCssVariableNames: Record<
   },
 };
 
-export type VeraLayoutCssVariable = '--vera-border-radius-medium';
+export type VeraLayoutCssVariable =
+  | '--vera-border-radius-none'
+  | '--vera-border-radius-extra-small'
+  | '--vera-border-radius-small'
+  | '--vera-border-radius-medium'
+  | '--vera-border-radius-large'
+  | '--vera-border-radius-extra-large';
 export type VeraFontCssVariable = '--vera-font-family-plain';
 
 export type VeraColorCssVariable =
@@ -133,3 +145,100 @@ export type VeraCssVariable =
   | VeraFontCssVariable
   | VeraColorCssVariable
   | VeraTypographyCssVariable;
+
+type VeraTypographyProperties = Partial<{
+  fontSize: string;
+  lineHeight: string;
+  fontWeight: string;
+  mobileFontSize: string;
+  mobileLineHeight: string;
+  mobileFontWeight: string;
+}>;
+
+type VeraColorProperties = Partial<{
+  accent: string;
+  alertBackground: string;
+  alertBackgroundHover: string;
+  alertText: string;
+  background: string;
+  border: string;
+  darkBackground: string;
+  darkGrey: string;
+  darkGreyHover: string;
+  darkGreyOpacity: string;
+  disabled: string;
+  error: string;
+  errorHover: string;
+  information: string;
+  informationBackground: string;
+  informationHover: string;
+  onAccent: string;
+  onBackground: string;
+  onDarkGrey: string;
+  onError: string;
+  onInformation: string;
+  onPrimary: string;
+  onSecondary: string;
+  onSuccess: string;
+  onSurface: string;
+  onTertiary: string;
+  onWarning: string;
+  primary: string;
+  primaryHover: string;
+  secondary: string;
+  secondaryHover: string;
+  skeletonLike: string;
+  success: string;
+  successHover: string;
+  surface: string;
+  tertiary: string;
+  tertiaryHover: string;
+  textDisabled: string;
+  textPrimary: string;
+  textSecondary: string;
+  textTertiary: string;
+  warning: string;
+  warningHover: string;
+}>;
+
+/**
+ * Configuration for the veraUI Tailwind plugin.
+ * Allows overriding design tokens for colors, typography, border radius, and font family.
+ * All tokens are optional and will fall back to design system defaults.
+ *
+ * @example
+ * // Using default values
+ * plugins: [veraUI()]
+ *
+ * @example
+ * // Overriding specific tokens
+ * plugins: [veraUI({
+ *   light: { primary: '#FF5733', accent: '#00FF00' },
+ *   dark: { primary: '#AA2211', accent: '#00AA00' },
+ *   borderRadiusMedium: '12px',
+ *   headline: { fontSize: '5rem' },
+ * })]
+ */
+export type VeraUIConfig = {
+  light?: VeraColorProperties;
+  dark?: VeraColorProperties;
+  borderRadiusNone?: string;
+  borderRadiusExtraSmall?: string;
+  borderRadiusSmall?: string;
+  borderRadiusMedium?: string;
+  borderRadiusLarge?: string;
+  borderRadiusExtraLarge?: string;
+  fontFamilyPlain?: string;
+  headline?: VeraTypographyProperties;
+  subtitle?: VeraTypographyProperties;
+  heading1?: VeraTypographyProperties;
+  heading2?: VeraTypographyProperties;
+  heading3?: VeraTypographyProperties;
+  heading4?: VeraTypographyProperties;
+  bodyExtended?: VeraTypographyProperties;
+  bodyExtendedSemibold?: VeraTypographyProperties;
+  bodyBase?: VeraTypographyProperties;
+  bodyBaseSemibold?: VeraTypographyProperties;
+  caption?: VeraTypographyProperties;
+  captionSemibold?: VeraTypographyProperties;
+};

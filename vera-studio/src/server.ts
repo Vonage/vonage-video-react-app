@@ -56,7 +56,9 @@ const startServer = async (port: number = defaultPort): Promise<Server> => {
 
   return new Promise((resolve) => {
     const server = app.listen(port, () => {
-      console.log(`[\x1b[36m${'vera-studio'}\x1b[0m] Server listening on port ${port}`);
+      console.log(
+        `[\x1b[36m${'vera-studio'}\x1b[0m] Server listening on: \n \x1b[32mhttp://localhost:${port}\x1b[0m`
+      );
       resolve(server);
     });
   });

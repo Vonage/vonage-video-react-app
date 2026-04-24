@@ -98,6 +98,7 @@ function devStudio(): void {
  * - yarn dev debug              (run frontend + backend with --inspect on port 9229)
  * - yarn dev debug wait         (run frontend + backend with --inspect-brk, waits for debugger)
  * - yarn dev room         (build and serve VeraRoom example)
+ * - yarn dev studio       (run Vera Studio dev server)
  * - yarn dev vera-studio  (run Vera Studio dev server)
  */
 function main(): void {
@@ -133,6 +134,7 @@ function main(): void {
     case 'room':
       devRoom();
       return;
+    case 'studio':
     case 'vera-studio':
       devStudio();
       return;

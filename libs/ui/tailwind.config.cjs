@@ -1,5 +1,7 @@
 // eslint-disable-next-line @typescript-eslint/no-require-imports
 const veraUI = require('./src/theme/helpers/tailwind/veraUI.cjs');
+// eslint-disable-next-line @typescript-eslint/no-require-imports
+const designTokens = require('../../designTokens.json');
 
 const config = {
   darkMode: 'class',
@@ -15,7 +17,7 @@ const config = {
   },
   // classes to always allow even if not found in files
   safelist: [...veraUI.safelist],
-  plugins: [veraUI],
+  plugins: [veraUI(designTokens)],
 };
 
 module.exports = config;
