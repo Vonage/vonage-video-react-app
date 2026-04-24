@@ -10,7 +10,7 @@
   "scripts": {
     "prepare": "husky",
     "postinstall": "nx postinstall integration-tests",
-    "generate:tokens": "npx tsx scripts/generateTokens.ts",
+    "sync:theme-tokens": "npx tsx scripts/generateTokens.ts",
     "quality-check": "npx tsx scripts/qualityCheck.ts",
     "build": "npx tsx scripts/build.ts",
     "dev": "npx tsx scripts/dev.ts",
@@ -33,7 +33,8 @@
   },
   "scriptsInfo": {
     "build": "Build projects. Usage: 'yarn build' (frontend+backend), 'yarn build frontend', 'yarn build backend', 'yarn build room' (VeraRoom web component)",
-    "dev": "Run dev servers. Usage: 'yarn dev' (frontend+backend), 'yarn dev frontend', 'yarn dev backend', 'yarn dev debug' (--inspect), 'yarn dev debug wait' (--inspect-brk), 'yarn dev room' (VeraRoom example)",
+    "dev": "Run dev servers. Usage: 'yarn dev' (frontend+backend), 'yarn dev frontend', 'yarn dev backend', 'yarn dev debug' (--inspect), 'yarn dev debug wait' (--inspect-brk), 'yarn dev room' (VeraRoom example), 'yarn dev studio' (Vera Studio)",
+    "sync:theme-tokens": "Sync theme token artifacts. Usage: 'yarn sync:theme-tokens'. Always regenerates designTokens.example.json, uses root designTokens.json as source of truth when present, bootstraps root designTokens.json from defaults when missing, rebuilds veraUI.cjs, and runs Prettier on the generated plugin file.",
     "lint:fix": "Format and lint fix (workspace-wide by default). Optionally scope to a single Nx project: 'yarn lint:fix <project>'",
     "quality-check": "Run ts-check + lint + prettier check (workspace-wide by default). Optionally scope to a single Nx project: 'yarn quality-check <project>'",
     "start": "Start production build. Usage: 'yarn start' (build frontend + start backend), 'yarn start room' (build and serve VeraRoom example)",
