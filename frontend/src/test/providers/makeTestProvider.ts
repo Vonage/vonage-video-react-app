@@ -54,9 +54,14 @@ type ProviderContextsByKey = {
 const PROVIDER_DEPENDENCIES = {
   [providers.runtime]: [],
   [providers.user]: [],
-  [providers.session]: [providers.user],
-  [providers.publisher]: [providers.user, providers.session],
-  [providers.backgroundPublisher]: [providers.user, providers.session, providers.publisher],
+  [providers.session]: [providers.runtime, providers.user],
+  [providers.publisher]: [providers.runtime, providers.user, providers.session],
+  [providers.backgroundPublisher]: [
+    providers.runtime,
+    providers.user,
+    providers.session,
+    providers.publisher,
+  ],
   [providers.previewPublisher]: [providers.user],
 } as const;
 
@@ -107,9 +112,39 @@ function makeTestProvider<
   })();
 
   /**
+   * Sort providers in topological dependency order so that parents are always
+   * rendered as ancestors of the components that depend on them.
+   * composeProviders(reduceRight) makes the first element the outermost wrapper.
+   */
+  const sortedKeys = (() => {
+    const visited = new Set<providers>();
+    const result: providers[] = [];
+
+    const visit = (key: providers) => {
+      if (visited.has(key)) return;
+
+      visited.add(key);
+
+      for (const dependency of PROVIDER_DEPENDENCIES[key]) {
+        if ((keys as readonly providers[]).includes(dependency)) {
+          visit(dependency);
+        }
+      }
+
+      result.push(key);
+    };
+
+    for (const key of keys) {
+      visit(key);
+    }
+
+    return result;
+  })();
+
+  /**
    * Create the providers wrappers and contexts for the provided keys
    */
-  const providerWrappers = keys.map((key) => {
+  const providerWrappers = sortedKeys.map((key) => {
     switch (key) {
       case providers.runtime:
         return makeRuntimeProviderWrapper(
@@ -147,7 +182,7 @@ function makeTestProvider<
   return {
     wrapper,
     ...providerWrappers.reduce((acc, { context }, index) => {
-      const key = keys[index];
+      const key = sortedKeys[index];
 
       return {
         ...acc,

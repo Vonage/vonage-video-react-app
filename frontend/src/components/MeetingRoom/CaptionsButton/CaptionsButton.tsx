@@ -6,7 +6,7 @@ import ToolbarButton from '../ToolbarButton';
 import Tooltip from '@mui/material/Tooltip';
 import VividIcon from '@components/VividIcon';
 import { env } from '../../../env';
-import videoClient from '@services/videoClient';
+import { runtime$ } from '@core/stores';
 
 export type CaptionsState = {
   isUserCaptionsEnabled: boolean;
@@ -35,6 +35,7 @@ const CaptionsButton = ({
   handleClick,
   captionsState,
 }: CaptionsButtonProps): ReactElement | false => {
+  const videoClient = runtime$.useVideoClient();
   const { t } = useTranslation();
   const { sessionKey } = useSessionContext();
   const [captionsId, setCaptionsId] = useState<string>('');

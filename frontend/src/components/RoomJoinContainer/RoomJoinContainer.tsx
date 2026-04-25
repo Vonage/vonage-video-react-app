@@ -1,12 +1,12 @@
 import { useNavigate } from 'react-router-dom';
 import { ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
+import { runtime$ } from '@core/stores';
 import Card from '@ui/Card';
 import generateRoomName from '../../utils/generateRoomName';
 import NewRoomButton from '../NewRoomButton';
 import JoinContainerSeparator from '../JoinContainerSeparator';
 import JoinExistingRoom from '../JoinExistingRoom';
-import videoClient from '@services/videoClient';
 
 /**
  * RoomJoinContainer Component
@@ -15,6 +15,7 @@ import videoClient from '@services/videoClient';
  * @returns {ReactElement} The room join container component.
  */
 const RoomJoinContainer = (): ReactElement => {
+  const videoClient = runtime$.useVideoClient();
   const { t } = useTranslation();
   const navigate = useNavigate();
 

@@ -5,6 +5,7 @@ import { makeTestProvider, ProviderOptions, providers } from '@test/providers';
 import MemoryRouter from '@test/RouterWrapper';
 import { DEVICE_ACCESS_STATUS } from '@utils/constants';
 import { env } from '../../env';
+import type { VideoClient } from '@core/services';
 
 const mockSessionId = '1_MX4xMjM0NTY3OH4-VGh1IEZlYiAyNyAwODozMjozNCBQU1QgMjAyMH4wLjI0NDYxMjE';
 const validSessionKey =
@@ -19,9 +20,6 @@ const { mockCreateSessionMutate, mockJoinSessionMutate, mockVideoClient } = vi.h
   };
   return { mockCreateSessionMutate, mockJoinSessionMutate, mockVideoClient };
 });
-
-vi.mock('@services/videoClient', () => ({ default: mockVideoClient }));
-vi.mock('@services', () => ({ videoClient: mockVideoClient }));
 
 const mockNavigate = vi.fn();
 const mockLocation = { search: '' };
@@ -176,7 +174,7 @@ function renderHook<Result>(
   { userContext, sessionContext, publisherContext }: RenderOptions = {}
 ) {
   const { wrapper: ProvidersWrapper, ...context } = makeTestProvider(
-    [providers.user, providers.session, providers.publisher],
+    [providers.user, providers.session, providers.publisher, providers.runtime],
     {
       userContext: {
         value: { defaultSettings: { name: 'Test User' } },
@@ -184,6 +182,7 @@ function renderHook<Result>(
       },
       sessionContext,
       publisherContext,
+      runtimeContext: { videoClient: mockVideoClient as unknown as VideoClient },
     }
   );
 

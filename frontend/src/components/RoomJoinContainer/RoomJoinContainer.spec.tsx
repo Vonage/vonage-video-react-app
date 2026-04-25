@@ -1,7 +1,9 @@
-import { render, screen } from '@testing-library/react';
+import { render as renderBase, screen } from '@testing-library/react';
 import { beforeEach, describe, expect, it, Mock, vi } from 'vitest';
 import { useNavigate } from 'react-router-dom';
 import MemoryRouter from '@test/RouterWrapper';
+import { makeTestProvider, providers } from '@test/providers';
+import type { VideoClient } from '@core/services';
 import RoomJoinContainer from './index';
 
 vi.mock('react-router-dom', async () => {
@@ -19,13 +21,10 @@ vi.mock('../../utils/generateRoomName', () => ({
 }));
 
 const mockCreateSessionMutate = vi.fn();
+const mockVideoClient = {
+  createSession: (...args: unknown[]) => mockCreateSessionMutate(...args) as unknown,
+} as unknown as VideoClient;
 
-vi.mock('@services/videoClient', () => ({
-  __esModule: true,
-  default: {
-    createSession: (...args: unknown[]) => mockCreateSessionMutate(...args) as unknown,
-  },
-}));
 vi.mock('../JoinContainerSeparator', () => ({
   __esModule: true,
   default: () => <div data-testid="separator" />,
@@ -65,3 +64,10 @@ describe('RoomJoinContainer', () => {
     });
   });
 });
+
+function render(ui: React.ReactElement) {
+  const { wrapper } = makeTestProvider([providers.runtime], {
+    runtimeContext: { videoClient: mockVideoClient },
+  });
+  return renderBase(ui, { wrapper });
+}

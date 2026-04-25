@@ -2,23 +2,24 @@ import { describe, expect, it, vi } from 'vitest';
 import { serverArchives } from './data';
 import { getArchives } from '..';
 import type { ServerArchive } from '../model';
+import type { VideoClient } from '@core/services';
 
 const mockSearchArchivesQuery = vi.fn((_args?: unknown) =>
   Promise.resolve({ items: [] as ServerArchive[] })
 );
 
-vi.mock('@services/videoClient', () => ({
-  default: {
-    searchArchives: (...args: unknown[]) => mockSearchArchivesQuery(...args),
-    startArchive: vi.fn(),
-    stopArchive: vi.fn(),
-  },
-}));
+const mockVideoClient = {
+  searchArchives: (...args: unknown[]) => mockSearchArchivesQuery(...args),
+} as unknown as VideoClient;
 
 describe('getArchives', () => {
   it('it returns an object with array of Archives and hasPending flag', async () => {
     mockSearchArchivesQuery.mockResolvedValue({ items: serverArchives });
-    const archives = await getArchives({ locale: 'en', sessionKey: 'test-session-id' });
+    const archives = await getArchives({
+      locale: 'en',
+      sessionKey: 'test-session-id',
+      videoClient: mockVideoClient,
+    });
     expect(archives).toEqual({
       archives: [
         {
@@ -55,7 +56,11 @@ describe('getArchives', () => {
 
   it('it returns object with empty array when no archives', async () => {
     mockSearchArchivesQuery.mockResolvedValue({ items: [] });
-    const archives = await getArchives({ locale: 'en', sessionKey: 'test-session-id' });
+    const archives = await getArchives({
+      locale: 'en',
+      sessionKey: 'test-session-id',
+      videoClient: mockVideoClient,
+    });
     expect(archives).toEqual({
       archives: [],
       hasPending: false,
@@ -65,7 +70,7 @@ describe('getArchives', () => {
   it('it throws with error when api call throws', async () => {
     mockSearchArchivesQuery.mockRejectedValue(new Error('Network Error'));
     await expect(
-      getArchives({ locale: 'en', sessionKey: 'test-session-id' })
+      getArchives({ locale: 'en', sessionKey: 'test-session-id', videoClient: mockVideoClient })
     ).rejects.toThrowError();
   });
 });

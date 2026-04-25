@@ -37,7 +37,7 @@ import VonageVideoClient from '@utils/VonageVideoClient';
 import wait from '@common/execution/wait';
 import { env } from '../../env';
 import frontendLogger from '../../logger';
-import { videoClient } from '@services';
+import { runtime$ } from '@core/stores';
 import { decodeSessionKey } from '@common/helpers';
 import type { VideoSessionDetails } from '@common/types';
 
@@ -165,6 +165,7 @@ const MAX_PIN_COUNT = isMobile() ? MAX_PIN_COUNT_MOBILE : MAX_PIN_COUNT_DESKTOP;
  * @returns {SessionContextType} a context provider for a publisher preview
  */
 const SessionProvider = ({ children, initialValue = {} }: SessionProviderProps): ReactElement => {
+  const videoClient = runtime$.useVideoClient();
   const [lastStreamUpdate, setLastStreamUpdate] = useState<StreamPropertyChangedEvent | null>(
     initialValue?.lastStreamUpdate ?? null
   );
@@ -495,7 +496,7 @@ const SessionProvider = ({ children, initialValue = {} }: SessionProviderProps):
         token: session.token,
       });
     },
-    [connect]
+    [connect, videoClient]
   );
 
   /**

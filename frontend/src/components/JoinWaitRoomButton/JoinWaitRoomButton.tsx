@@ -2,7 +2,7 @@ import Button from '@mui/material/Button';
 import { Dispatch, MouseEvent, ReactElement, SetStateAction } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import { videoClient } from '@services';
+import { runtime$ } from '@core/stores';
 
 export type JoinWaitRoomButtonProps = {
   roomName: string;
@@ -25,6 +25,7 @@ const JoinWaitRoomButton = ({
   isDisabled,
   setHasError,
 }: JoinWaitRoomButtonProps): ReactElement => {
+  const videoClient = runtime$.useVideoClient();
   const { t } = useTranslation();
   const navigate = useNavigate();
 

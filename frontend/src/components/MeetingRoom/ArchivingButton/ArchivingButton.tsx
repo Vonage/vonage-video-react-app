@@ -1,6 +1,6 @@
 import { ReactElement, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import videoClient from '@services/videoClient';
+import { runtime$ } from '@core/stores';
 import useSessionContext from '@hooks/useSessionContext';
 import ToolbarButton from '../ToolbarButton';
 import PopupDialog, { DialogTexts } from '../PopupDialog';
@@ -30,6 +30,7 @@ const ArchivingButton = ({
   isOverflowButton = false,
   handleClick,
 }: ArchivingButtonProps): ReactElement | false => {
+  const videoClient = runtime$.useVideoClient();
   const { t } = useTranslation();
   const {
     archiveId,

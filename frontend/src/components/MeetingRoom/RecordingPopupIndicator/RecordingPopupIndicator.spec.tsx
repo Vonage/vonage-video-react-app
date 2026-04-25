@@ -96,7 +96,13 @@ describe('RecordingPopUpIndicator', () => {
 
 function render(component: ReactElement) {
   const { wrapper, ...context } = makeTestProvider(
-    [providers.user, providers.session, providers.publisher, providers.backgroundPublisher],
+    [
+      providers.user,
+      providers.session,
+      providers.publisher,
+      providers.backgroundPublisher,
+      providers.runtime,
+    ],
     {
       sessionContext: {
         initialValue: {
@@ -106,6 +112,7 @@ function render(component: ReactElement) {
       userContext: undefined,
       publisherContext: undefined,
       backgroundPublisherContext: undefined,
+      runtimeContext: undefined,
     }
   );
 

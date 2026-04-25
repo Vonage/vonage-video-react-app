@@ -1,6 +1,8 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { renderHook, waitFor, act } from '@testing-library/react';
 import NetworkTestConstructor from '@vonage/video-client-network-test';
+import { makeTestProvider, providers } from '@test/providers';
+import type { VideoClient } from '@core/services';
 
 const mockNetworkTest = vi.hoisted(() => ({
   testQuality: vi.fn(),
@@ -29,12 +31,9 @@ vi.mock('@api/fetchCredentials');
 
 const mockCreateSessionAndJoinMutate = vi.fn();
 
-vi.mock('@services', () => ({
-  videoClient: {
-    createSessionAndJoin: (...args: unknown[]) =>
-      mockCreateSessionAndJoinMutate(...args) as unknown,
-  },
-}));
+const mockVideoClient = {
+  createSessionAndJoin: (...args: unknown[]) => mockCreateSessionAndJoinMutate(...args) as unknown,
+} as unknown as VideoClient;
 
 const mockT = vi.fn((key: string) => key);
 vi.mock('react-i18next', () => ({
@@ -46,6 +45,14 @@ vi.mock('react-i18next', () => ({
 import useNetworkTest, { type QualityResults } from './useNetworkTest';
 import wait from '@common/execution/wait/wait';
 import CancelablePromise from 'easy-cancelable-promise';
+
+const { wrapper } = makeTestProvider([providers.runtime], {
+  runtimeContext: { videoClient: mockVideoClient },
+});
+
+function render<T>(hook: () => T) {
+  return renderHook(hook, { wrapper });
+}
 
 describe('useNetworkTest', () => {
   const mockCredentials = {
@@ -80,7 +87,7 @@ describe('useNetworkTest', () => {
   });
 
   it('returns initial state correctly', () => {
-    const { result } = renderHook(() => useNetworkTest());
+    const { result } = render(() => useNetworkTest());
 
     expect(result.current).not.toBeNull();
     expect(result.current).toBeDefined();
@@ -93,7 +100,7 @@ describe('useNetworkTest', () => {
   });
 
   it('testQuality fetches credentials and creates NetworkTest instance', async () => {
-    const { result } = renderHook(() => useNetworkTest());
+    const { result } = render(() => useNetworkTest());
 
     await act(async () => {
       await result.current.testQuality('test-room');
@@ -112,7 +119,7 @@ describe('useNetworkTest', () => {
   });
 
   it('testQuality returns quality results', async () => {
-    const { result } = renderHook(() => useNetworkTest());
+    const { result } = render(() => useNetworkTest());
 
     let returnedResults: QualityResults | undefined;
     await act(async () => {
@@ -123,7 +130,7 @@ describe('useNetworkTest', () => {
   });
 
   it('testQuality handles errors correctly', async () => {
-    const { result } = renderHook(() => useNetworkTest());
+    const { result } = render(() => useNetworkTest());
     const mockError = new Error('Network test failed');
     mockError.name = 'NetworkError';
     mockNetworkTest.testQuality.mockRejectedValue(mockError);
@@ -143,7 +150,7 @@ describe('useNetworkTest', () => {
    * TODO: We need to find a way of tell vitest that the unhandled reject is actually expected here.
    */
   it('stopTest stops the network test instance', async () => {
-    const { result } = renderHook(() => useNetworkTest());
+    const { result } = render(() => useNetworkTest());
     let promise: CancelablePromise<QualityResults>;
 
     vi.spyOn(mockNetworkTest, 'testQuality').mockImplementation(() => wait(10));
@@ -167,7 +174,7 @@ describe('useNetworkTest', () => {
   });
 
   it('stopTest does nothing when no test is running', () => {
-    const { result } = renderHook(() => useNetworkTest());
+    const { result } = render(() => useNetworkTest());
 
     act(() => {
       result.current.stopTest();
@@ -178,7 +185,7 @@ describe('useNetworkTest', () => {
   });
 
   it('stopTest prevents late quality results from updating state', async () => {
-    const { result } = renderHook(() => useNetworkTest());
+    const { result } = render(() => useNetworkTest());
 
     let promise: CancelablePromise<QualityResults> | null = null;
 
@@ -216,7 +223,7 @@ describe('useNetworkTest', () => {
   });
 
   it('clearResults resets state to initial values', async () => {
-    const { result } = renderHook(() => useNetworkTest());
+    const { result } = render(() => useNetworkTest());
 
     await act(async () => {
       await result.current.testQuality('test-room');

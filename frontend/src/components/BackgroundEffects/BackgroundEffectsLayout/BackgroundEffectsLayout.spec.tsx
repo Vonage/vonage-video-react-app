@@ -182,6 +182,7 @@ function render(ui: ReactElement) {
     providers.publisher,
     providers.backgroundPublisher,
     providers.previewPublisher,
+    providers.runtime,
   ]);
 
   const wrapper = composeProviders(SuspenseBoundary, roomWrapper);
