@@ -158,6 +158,7 @@
     "@mui/material": "^9.0.0",
     "@trpc/client": "^11.11.0",
     "@trpc/server": "^11.11.0",
+    "@tanstack/react-query": "^5.75.5",
     "@vonage/auth": "^1.13.1",
     "@vonage/client-sdk-video": "2.33.1",
     "@vonage/server-sdk": "3.25.1",
