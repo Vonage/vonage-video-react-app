@@ -63,3 +63,4 @@ vitest.config.*.timestamp*
 vcr-dev.yml
 
 /frontend/distRoom
+room.zip

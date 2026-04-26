@@ -23,7 +23,7 @@ export type SoundTestProps = {
 const SoundTest = ({ children, labelClassName }: SoundTestProps): ReactElement => {
   const { t } = useTranslation();
   const [audioIsPlaying, setAudioIsPlaying] = useState(false);
-  const audioElement = useMemo(() => new Audio('/sound.mp3'), []);
+  const audioElement = useMemo(() => new Audio('/assets/sound.mp3'), []);
   const currentAudioOutputDevice = mediaDevices$.useDeviceId('audiooutput');
 
   const stopAudio = useCallback(() => {

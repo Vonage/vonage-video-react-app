@@ -1,7 +1,11 @@
 import classNames from 'classnames';
 import type { FC } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { paths, backendIntegrationContent } from '../features/integration/constants';
+import {
+  paths,
+  backendIntegrationContent,
+  frontendIntegrationContent,
+} from '../features/integration/constants';
 import { useNavBarSelection } from '../hooks';
 import { twMerge } from 'tailwind-merge';
 
@@ -14,8 +18,8 @@ const options = [
     routePath: paths.integration.backend.root,
   },
   {
-    label: '2 - Client Integration',
-    description: 'Integrate the Vonage Video Room in your frontend.',
+    label: frontendIntegrationContent.title,
+    description: frontendIntegrationContent.description,
     routePath: paths.integration.frontend.root,
   },
 ];
