@@ -5,6 +5,7 @@ import {
   paths,
   backendIntegrationContent,
   frontendIntegrationContent,
+  buildContent,
 } from '../features/integration/constants';
 import { useNavBarSelection } from '../hooks';
 import { twMerge } from 'tailwind-merge';
@@ -21,6 +22,11 @@ const options = [
     label: frontendIntegrationContent.title,
     description: frontendIntegrationContent.description,
     routePath: paths.integration.frontend.root,
+  },
+  {
+    label: buildContent.title,
+    description: buildContent.description,
+    routePath: paths.integration.build.root,
   },
 ];
 

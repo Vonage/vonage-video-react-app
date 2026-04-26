@@ -21,6 +21,8 @@ import {
   RoomIntegrationExample,
   ClientIntegrationExample,
   IntegrationLandingPage,
+  CustomizeRoom,
+  BuildRoom,
 } from './features/integration/components';
 import { integrationExamples$ } from './features/integration/stores';
 
@@ -34,6 +36,7 @@ const futureConfig: Partial<FutureConfig> = {
 
 const backendPaths = paths.integration.backend;
 const frontendPaths = paths.integration.frontend;
+const buildPaths = paths.integration.build;
 
 export default function App() {
   const [tokens] = useVeraStudio((state) => state.tokens);
@@ -147,6 +150,16 @@ export default function App() {
                 <Route path={frontendPaths.client.root} element={<ClientIntegrationExample />} />
 
                 <Route path="*" element={<Navigate to={frontendPaths.room.root} />} />
+              </Route>
+
+              <Route path={buildPaths.root}>
+                <Route index element={<Navigate to={buildPaths.customize.root} />} />
+
+                <Route path={buildPaths.customize.root} element={<CustomizeRoom />} />
+
+                <Route path={buildPaths.buildRoom.root} element={<BuildRoom />} />
+
+                <Route path="*" element={<Navigate to={buildPaths.customize.root} />} />
               </Route>
 
               <Route path="*" element={<Navigate to={backendPaths.root} />} />

@@ -3,3 +3,4 @@ export { default as backendIntegrationContent } from './backendIntegrationConten
 export { default as leftNavBarItems } from './leftNavBarItems';
 export { default as frontendIntegrationContent } from './frontendIntegrationContent';
 export { default as integrationContent } from './integrationContent';
+export { default as buildContent } from './buildContent';

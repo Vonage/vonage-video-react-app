@@ -47,16 +47,22 @@ class VeraRoomElement extends HTMLElement {
     // Additional host-level styles
     const hostStyle = document.createElement('style');
     hostStyle.textContent = `
-      :host {
-        display: block;
-        position: relative;
-      }
-      .vera-room-root {
-        width: 100%;
-        height: 100%;
-        overflow: auto;
-      }
-    `;
+:host {
+  display: block;
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.vera-room-root {
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+}
+  
+:host, .vera-room-root {
+  min-height: 0;
+}`;
 
     this.shadow.appendChild(hostStyle);
     this.shadow.appendChild(this.mount);

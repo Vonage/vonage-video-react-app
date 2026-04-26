@@ -9,19 +9,39 @@ import { Button } from '../components';
 
 type StudioHeaderProps = ComponentProps<'div'> & {};
 
+type LocationState = {
+  returnTo?: string;
+};
+
 const StudioHeader: FC<StudioHeaderProps> = ({ className, ...props }) => {
-  const { pathname } = useLocation();
+  const { pathname, state } = useLocation();
   const navigate = useNavigate();
   const [isLoading] = useVeraStudio((state) => state.isLoading);
   const isDesignRoute = pathname.startsWith('/design');
   const [isSaving] = useVeraStudio((state) => state.isSaving);
 
-  const onSaveClick = () => {
+  const returnTo = (state as LocationState | null)?.returnTo;
+
+  const onSaveClick = async () => {
     const shouldSave = window.confirm('Save current token changes?');
 
     if (!shouldSave) return;
 
-    void useVeraStudio.actions.saveTokens();
+    await useVeraStudio.actions.saveTokens();
+
+    if (returnTo) {
+      navigate(returnTo);
+    }
+  };
+
+  const onBuildRoomClick = async () => {
+    const shouldSave = window.confirm('Save current token changes and go to Build Room?');
+
+    if (!shouldSave) return;
+
+    await useVeraStudio.actions.saveTokens();
+
+    navigate(paths.integration.build.buildRoom.root);
   };
 
   const shouldShowSaveButton = isDesignRoute && !isLoading;
@@ -50,9 +70,17 @@ const StudioHeader: FC<StudioHeaderProps> = ({ className, ...props }) => {
       </button>
 
       {shouldShowSaveButton && (
-        <Button onClick={onSaveClick} disabled={isSaving} variant="secondary">
-          {isSaving ? 'Saving...' : 'Save'}
-        </Button>
+        <div className="flex gap-2">
+          <Button onClick={onSaveClick} disabled={isSaving} variant="secondary">
+            {isSaving ? 'Saving...' : 'Save'}
+          </Button>
+
+          {returnTo && (
+            <Button onClick={onBuildRoomClick} disabled={isSaving}>
+              Build room
+            </Button>
+          )}
+        </div>
       )}
     </header>
   );

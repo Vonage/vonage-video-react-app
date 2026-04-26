@@ -27,6 +27,16 @@ const paths = {
         root: '/integration/web/client',
       },
     },
+    build: {
+      root: '/integration/build',
+
+      customize: {
+        root: '/integration/build/customize',
+      },
+      buildRoom: {
+        root: '/integration/build/room',
+      },
+    },
   },
 } as const;
 
@@ -39,6 +49,10 @@ export const flatPaths = {
   frontend: paths.integration.frontend.root,
   room: paths.integration.frontend.room.root,
   client: paths.integration.frontend.client.root,
+
+  build: paths.integration.build.root,
+  buildCustomize: paths.integration.build.customize.root,
+  buildRoom: paths.integration.build.buildRoom.root,
 
   design: paths.design.root,
 } as const;

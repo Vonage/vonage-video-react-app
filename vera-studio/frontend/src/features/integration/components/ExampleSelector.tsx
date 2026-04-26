@@ -1,5 +1,10 @@
 import classNames from 'classnames';
-import { backendIntegrationContent, frontendIntegrationContent, flatPaths } from '../constants';
+import {
+  backendIntegrationContent,
+  frontendIntegrationContent,
+  buildContent,
+  flatPaths,
+} from '../constants';
 import { useNavigate } from 'react-router-dom';
 import { twMerge } from 'tailwind-merge';
 import { useNavBarSelection } from '../../../hooks';
@@ -7,6 +12,7 @@ import { Separator } from '../../../components';
 
 const { createHandler, expressIntegration, advancedUsage } = backendIntegrationContent.middlePanel;
 const { room, client } = frontendIntegrationContent.middlePanel;
+const { customizeRoom, buildRoom } = buildContent.middlePanel;
 
 const serverExamples = [
   {
@@ -39,19 +45,39 @@ const clientExamples = [
   },
 ] as const;
 
+const buildExamples = [
+  {
+    path: flatPaths.buildCustomize,
+    label: customizeRoom.title,
+    description: customizeRoom.description,
+  },
+  {
+    path: flatPaths.buildRoom,
+    label: buildRoom.title,
+    description: buildRoom.description,
+  },
+] as const;
+
 export const ExampleSelector = () => {
   const { selectedPath } = useNavBarSelection();
   const navigate = useNavigate();
 
   const isServerIntegration = selectedPath.startsWith('/integration/server');
-  const examples = isServerIntegration ? serverExamples : clientExamples;
+  const isBuildSection = selectedPath.startsWith('/integration/build');
+  const examples = (() => {
+    if (isServerIntegration) return serverExamples;
+    if (isBuildSection) return buildExamples;
+    return clientExamples;
+  })();
 
   return (
     <div className="flex flex-col gap-4 py-4">
       <label className="text-xs font-semibold text-slate-700">
-        {isServerIntegration
-          ? backendIntegrationContent.middlePanel.title
-          : frontendIntegrationContent.middlePanel.title}
+        {(() => {
+          if (isServerIntegration) return backendIntegrationContent.middlePanel.title;
+          if (isBuildSection) return buildContent.middlePanel.title;
+          return frontendIntegrationContent.middlePanel.title;
+        })()}
       </label>
 
       <Separator />

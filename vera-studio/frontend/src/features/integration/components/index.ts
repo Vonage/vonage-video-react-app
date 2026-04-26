@@ -7,3 +7,5 @@ export { default as ExpressIntegrationExamples } from './ExpressIntegrationExamp
 export { default as RoomIntegrationExample } from './RoomIntegrationExample';
 export { default as ClientIntegrationExample } from './ClientIntegrationExample';
 export { default as IntegrationLandingPage } from './IntegrationLandingPage';
+export { default as CustomizeRoom } from './CustomizeRoom';
+export { default as BuildRoom } from './BuildRoom';

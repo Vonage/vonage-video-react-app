@@ -24,7 +24,6 @@ function startAll(): void {
  * Builds VeraRoom and serves the example page with http-server.
  */
 function startRoom(): void {
-  const backendPort = 3345;
   const roomPort = 3350;
 
   // Build
@@ -38,27 +37,13 @@ function startRoom(): void {
   const backend = spawn('npx', ['nx', 'run', 'backend:start'], {
     stdio: 'inherit',
     shell: true,
+    env: { ...process.env, FRONTEND_TARGET: `http://localhost:${roomPort}/example.html` },
   });
 
   // Start room example on separate port
   const roomServer = spawn('npx', ['http-server', distRoomPath, '-c-1', '-p', String(roomPort)], {
-    stdio: ['inherit', 'pipe', 'inherit'],
+    stdio: 'inherit',
     shell: true,
-  });
-
-  roomServer.stdout?.on('data', (data: Buffer) => {
-    const output = data.toString();
-    process.stdout.write(output);
-
-    // Print URLs once room server is ready
-    if (output.includes('Available on')) {
-      console.log('\n' + '='.repeat(50));
-      console.log('🌐 VeraRoom Example:');
-      console.log(`   http://localhost:${roomPort}/example.html`);
-      console.log('🔌 Backend API:');
-      console.log(`   http://localhost:${backendPort}`);
-      console.log('='.repeat(50) + '\n');
-    }
   });
 
   const shutdown = () => {
