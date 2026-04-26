@@ -1,5 +1,9 @@
 import runtimeStore from '../runtimeStore';
 
-const useVideoClient = runtimeStore.use.createSelectorHook(({ videoClient }) => videoClient);
+const useVideoClient = () => {
+  return runtimeStore.use.select(({ videoClient }) => {
+    return videoClient;
+  });
+};
 
 export default useVideoClient;

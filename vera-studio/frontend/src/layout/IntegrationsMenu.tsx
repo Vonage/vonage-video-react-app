@@ -14,7 +14,7 @@ const options = [
     routePath: paths.integration.backend.root,
   },
   {
-    label: 'Client Integration',
+    label: '2 - Client Integration',
     description: 'Integrate the Vonage Video Room in your frontend.',
     routePath: paths.integration.frontend.root,
   },

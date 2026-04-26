@@ -1,6 +1,5 @@
-import classNames from 'classnames';
 import integrationExamples$ from '../stores/integrationExamples$';
-import { CodeDisplay, Separator } from '../../../components';
+import { Button, CodeDisplay, Separator } from '../../../components';
 import { generateHandlerConfigSnippet } from '../helpers/generateSnippets';
 import { backendIntegrationContent } from '../constants';
 
@@ -8,7 +7,9 @@ export const CreateHandlerExample = () => {
   const selectedAuthType = integrationExamples$.use.select((state) => state.selectedAuthType);
   const { selectAuthType } = integrationExamples$.use.actions();
 
-  const codeSnippet = generateHandlerConfigSnippet(selectedAuthType);
+  const codeSnippet = `import { createVideoHandler } from '@vonage/video-api';
+
+${generateHandlerConfigSnippet(selectedAuthType)}`;
 
   return (
     <>
@@ -29,20 +30,15 @@ export const CreateHandlerExample = () => {
           };
 
           return (
-            <button
+            <Button
               key={authType}
               onClick={handleSelectAuth}
-              className={classNames(
-                'px-3 py-1.5 rounded text-xs font-medium transition-colors',
-                selectedAuthType === authType
-                  ? 'bg-blue-600 text-white'
-                  : 'bg-slate-200 text-slate-700 hover:bg-slate-300'
-              )}
+              variant={selectedAuthType === authType ? 'primary' : 'secondary'}
             >
               {authType === 'jwt' && 'JWT'}
               {authType === 'apiKey' && 'API Key'}
               {authType === 'signature' && 'Signature'}
-            </button>
+            </Button>
           );
         })}
       </div>

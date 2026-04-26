@@ -1,9 +1,24 @@
+import { CodeDisplay, Separator } from '../../../components';
+import { frontendIntegrationContent } from '../constants';
+
+const usageSnippet = `<vera-room
+  session-identifier="<session-key>"
+  entry-point="http://my-awesome-api/vonage-video-handler"
+/>`;
+
 const RoomIntegrationExample = () => {
+  const { content } = frontendIntegrationContent.middlePanel.room;
+
   return (
-    <div className="p-4">
-      <h2 className="text-lg font-bold mb-2">Room Integration</h2>
-      <p>Room integration content coming soon...</p>
-    </div>
+    <>
+      <label className="block text-xs font-semibold text-slate-700">{content.title}</label>
+
+      <p className="text-xs text-slate-600 leading-relaxed">{content.description}</p>
+
+      <Separator />
+
+      <CodeDisplay code={usageSnippet} language="html" />
+    </>
   );
 };
 

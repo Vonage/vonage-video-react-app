@@ -26,7 +26,7 @@ const Example = () => {
               session-identifier="test-room-session"
               entry-point={`${env.API_URL}/v2`}
               language="en"
-              className="h-screen"
+              className="h-full"
             />
           </div>
         </section>

@@ -1,4 +1,4 @@
-import classNames from 'classnames';
+import { Button } from '../../../components';
 import integrationExamples$, { type AuthType } from '../stores/integrationExamples$';
 
 const AUTH_TYPES: { value: AuthType; label: string; description: string }[] = [
@@ -31,18 +31,13 @@ export const AuthTypeSelector = () => {
       <label className="block text-xs font-semibold text-slate-700">Authentication Type</label>
       <div className="flex gap-4">
         {AUTH_TYPES.map(({ value, label }) => (
-          <button
+          <Button
             key={value}
             onClick={() => selectAuthType(value)}
-            className={classNames(
-              'px-3 py-2 rounded-lg text-xs font-medium transition-colors cursor-pointer',
-              selectedAuthType === value
-                ? 'bg-blue-600 text-white'
-                : 'bg-slate-200 text-slate-700 hover:bg-slate-300'
-            )}
+            variant={selectedAuthType === value ? 'primary' : 'secondary'}
           >
             {label}
-          </button>
+          </Button>
         ))}
       </div>
     </div>

@@ -1,45 +1,42 @@
 const backendIntegrationContent = {
-  title: 'Server Integration',
-  description: 'Set up the Vonage Video handler in your backend.',
+  title: '1 - Server Integration',
+  description: 'Set up your backend to power video sessions.',
 
   middlePanel: {
-    title: 'Examples',
+    title: 'Server setup',
 
     createHandler: {
       title: 'Create Handler',
-      description: 'Set up a basic handler.',
+      description: 'Initialize the video handler.',
 
       content: {
-        title: 'Authentication Method',
-        description: 'Select the authentication method you want to use to see an example.',
+        title: 'Authentication',
+        description: 'Choose the authentication method to connect with the Vonage Video API.',
       },
     },
 
     expressIntegration: {
       title: 'Express',
-      description: 'Use the handler in your Express app.',
+      description: 'Mount the handler in your app.',
 
       content: {
         title: 'Getting Started',
-        description:
-          'You can add the Vonage Video handler to your Express app just like any other router.',
+        description: 'Add the video handler as a route in your Express app.',
       },
     },
 
     advancedUsage: {
       title: 'Advanced',
-      description: 'Customize the video experience.',
+      description: 'Only if you need more control.',
 
       content: {
-        title: `Let's see some real-world patterns`,
-        description: `You can use the video handler with any Node.js framework and customize it to fit your needs. Here are some examples of advanced patterns you can implement.`,
-
+        title: 'Extend the handler',
+        description: 'Use middleware or custom logic to extend the handler.',
         examples1: {
-          title: 'Middleware Decoration',
+          title: 'Middleware',
         },
-
         examples2: {
-          title: 'Context and in-built tools',
+          title: 'Context',
         },
       },
     },

@@ -16,6 +16,7 @@ import useSessionKeyParam from './useSessionKeyParam';
 
 const useMeetingRoom = () => {
   const videoClient = runtime$.useVideoClient();
+
   const { t } = useTranslation();
   const navigate = useNavigate();
   const location = useLocation();

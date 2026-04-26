@@ -6,7 +6,7 @@ import bridge$ from './stores/bridge';
 import WaitingRoomStage from './stages/WaitingRoomStage';
 import MeetingRoomStage from './stages/MeetingRoomStage';
 import GoodByeStage from './stages/GoodByeStage';
-import useLanguageSync from './hooks/useLanguageSync';
+import useStateSynchronizer from './hooks/useStateSynchronizer';
 import { useMountEffect } from '@web/hooks';
 
 type BridgeProps = {
@@ -38,7 +38,7 @@ type VeraRoomProps = ComponentProps<'div'> & BridgeProps;
  * reconciliation ensures that only what changed actually re-renders.
  */
 const VeraRoom: FC<VeraRoomProps> = ({ className, ...props }) => {
-  useLanguageSync();
+  useStateSynchronizer();
 
   const container = useMemo(() => {
     return globalThis.document.createElement('div');

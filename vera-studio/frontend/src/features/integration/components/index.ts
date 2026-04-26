@@ -6,3 +6,4 @@ export { default as AdvancesIntegrationExamples } from './AdvancesIntegrationExa
 export { default as ExpressIntegrationExamples } from './ExpressIntegrationExamples';
 export { default as RoomIntegrationExample } from './RoomIntegrationExample';
 export { default as ClientIntegrationExample } from './ClientIntegrationExample';
+export { default as IntegrationLandingPage } from './IntegrationLandingPage';

@@ -44,7 +44,7 @@
       "executor": "nx:run-commands",
       "options": {
         "cwd": "vera-studio",
-        "command": "tsc -p tsconfig.app.json --noEmit --pretty true"
+        "command": "tsc -p tsconfig.app.json --noEmit --pretty true && tsc -p frontend/tsconfig.json --noEmit --pretty true"
       }
     }
   },

@@ -18,8 +18,8 @@ export function generateHandlerConfigSnippet(authType: AuthType): string {
     return `createVideoHandler({
   auth: {
     authType: 'jwt',
-    applicationId: '1a2b3c4d-5e6f-7g8h-9i0j-1k2l3m4n5o6p',
-    privateKey: \`-----BEGIN PRIVATE KEY----- ... \`,
+    applicationId: '<example>1a2b3c4d-5e6f-7g8h-9i0j-1k2l3m4n5o6p<example>',
+    privateKey: \`<example> -----BEGIN PRIVATE KEY----- <example>\`,
   },
 })`;
   }
@@ -28,7 +28,7 @@ export function generateHandlerConfigSnippet(authType: AuthType): string {
     return `createVideoHandler({
   auth: {
     authType: 'signature',
-    apiKey: '12345678',
+    apiKey: '<example>12345678<example>',
     signature: {
       secret: 'your-signature-secret-here',
       algorithm: 'sha256',
@@ -40,7 +40,7 @@ export function generateHandlerConfigSnippet(authType: AuthType): string {
   return `createVideoHandler({
   auth: {
     authType: 'apiKey',
-    apiKey: '12345678',
+    apiKey: '<example>12345678<example>',
     apiSecret: 'your-api-secret-here',
   },
 })`;

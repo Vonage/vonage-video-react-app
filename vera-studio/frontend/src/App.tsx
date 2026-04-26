@@ -1,12 +1,12 @@
 import { BrowserRouter, Route, Routes, FutureConfig, Outlet, Navigate } from 'react-router-dom';
 
+import { Separator } from './components';
 import {
   StudioLeftNavigation,
   StudioTopNavigation,
-  Separator,
   StudioHeader,
   IntegrationsMenu,
-} from './components';
+} from './layout';
 
 import { useVeraStudio } from './hooks';
 import { DesignPage } from './features';
@@ -20,6 +20,7 @@ import {
   ExpressIntegrationExamples,
   RoomIntegrationExample,
   ClientIntegrationExample,
+  IntegrationLandingPage,
 } from './features/integration/components';
 import { integrationExamples$ } from './features/integration/stores';
 
@@ -107,13 +108,11 @@ export default function App() {
                         <Outlet />
                       </div>
                     </div>
-
-                    <Outlet />
                   </div>
                 </>
               }
             >
-              <Route index element={<Navigate to={backendPaths.root} />} />
+              <Route index element={<IntegrationLandingPage />} />
 
               <Route
                 path={backendPaths.root}
