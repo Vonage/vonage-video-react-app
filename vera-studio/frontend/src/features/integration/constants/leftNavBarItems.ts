@@ -4,7 +4,7 @@ const leftNavBarItems = [
   {
     label: 'Integration',
     iconName: 'code-line',
-    path: flatPaths.backend,
+    path: flatPaths.createHandler,
   },
   {
     label: 'Design',

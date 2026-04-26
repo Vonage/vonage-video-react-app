@@ -28,6 +28,8 @@ const PROJECT_ROOTS: Record<string, string> = {
   ui: 'libs/ui',
   common: 'libs/common',
   'integration-tests': 'integration-tests',
+  studio: 'vera-studio',
+  'vera-studio': 'vera-studio',
 };
 
 function runCommand(command: string) {
@@ -74,14 +76,16 @@ function main() {
     process.exit(1);
   }
 
+  const resolvedProjectName = projectName ? PROJECT_ROOTS[projectName] : null;
+
   const taskRunnerCommand = (() => {
     if (!projectName) return 'yarn nx run-many -t ts-check,lint --parallel';
-    return `yarn nx run-many -t ts-check,lint -p ${projectName} --parallel`;
+    return `yarn nx run-many -t ts-check,lint -p ${resolvedProjectName} --parallel`;
   })();
 
   runCommand(taskRunnerCommand);
 
-  const prettierTarget = projectName ? PROJECT_ROOTS[projectName] : '.';
+  const prettierTarget = resolvedProjectName ?? '.';
 
   runCommand(`yarn prettier ${prettierTarget} --check --log-level warn`);
 }

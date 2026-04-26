@@ -48,6 +48,12 @@ const createApp = async (): Promise<{ app: Express; viteDevServer: ViteDevServer
     res.status(200).set({ 'Content-Type': 'text/html' }).end(template);
   });
 
+  // SESSION_KEY_SECRET;
+  // VONAGE_APP_ID;
+  // VONAGE_PRIVATE_KEY;
+  // STUDIO_API_URL = 'http://localhost:3345/';
+  // Example
+
   return { app, viteDevServer };
 };
 

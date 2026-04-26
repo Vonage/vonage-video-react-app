@@ -6,6 +6,7 @@ import path from 'path';
 
 const workspaceRoot = process.env.npm_config_local_prefix as string;
 const designTokensPath = path.join(workspaceRoot, 'designTokens.json');
+const shouldSyncThemeTokens = process.env.VERA_STUDIO_SYNC_THEME_TOKENS === '1';
 
 const tokensRouter = Router();
 
@@ -36,7 +37,9 @@ tokensRouter.post('/', (req: Request, res: Response) => {
 
     fs.writeFileSync(designTokensPath, JSON.stringify(tokens, null, 2) + '\n', 'utf-8');
 
-    execSync('yarn sync:theme-tokens', { cwd: workspaceRoot, stdio: 'inherit' });
+    if (shouldSyncThemeTokens) {
+      execSync('yarn sync:theme-tokens', { cwd: workspaceRoot, stdio: 'inherit' });
+    }
 
     res.status(200).json({ success: true });
   } catch {

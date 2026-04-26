@@ -33,10 +33,10 @@
   },
   "scriptsInfo": {
     "build": "Build projects. Usage: 'yarn build' (frontend+backend), 'yarn build frontend', 'yarn build backend', 'yarn build room' (VeraRoom artifact), 'yarn build room zip' (zip VeraRoom artifact)",
-    "dev": "Run dev servers. Usage: 'yarn dev' (frontend+backend), 'yarn dev frontend', 'yarn dev backend', 'yarn dev debug' (--inspect), 'yarn dev debug wait' (--inspect-brk), 'yarn dev room' (VeraRoom example), 'yarn dev studio' (Vera Studio)",
+    "dev": "Run dev servers. Usage: 'yarn dev' (frontend+backend), 'yarn dev frontend', 'yarn dev backend', 'yarn dev debug' (--inspect), 'yarn dev debug wait' (--inspect-brk), 'yarn dev room' (VeraRoom example), 'yarn dev studio' (Vera Studio + backend + Storybook)",
     "sync:theme-tokens": "Sync theme token artifacts. Usage: 'yarn sync:theme-tokens'. Always regenerates designTokens.example.json, uses root designTokens.json as source of truth when present, bootstraps root designTokens.json from defaults when missing, rebuilds veraUI.cjs, and runs Prettier on the generated plugin file.",
     "lint:fix": "Format and lint fix (workspace-wide by default). Optionally scope to a single Nx project: 'yarn lint:fix <project>'",
-    "quality-check": "Run ts-check + lint + prettier check (workspace-wide by default). Optionally scope to a single Nx project: 'yarn quality-check <project>'",
+    "quality-check": "Run ts-check + lint + prettier check (workspace-wide by default). Optionally scope to a single project alias: 'yarn quality-check frontend', 'yarn quality-check studio', 'yarn quality-check vera-studio'",
     "ts-check": "Run TypeScript checks (workspace-wide by default). Optionally scope to a single project alias: 'yarn ts-check frontend', 'yarn ts-check studio'",
     "start": "Start production build. Usage: 'yarn start' (build frontend + start backend), 'yarn start room' (build VeraRoom artifact + example and serve example)",
     "start:backend": "Run backend server. Usage: 'yarn start:backend' (dev mode), 'yarn start:backend debug' (debug mode), 'yarn start:backend bundled' (bundled dev mode)",

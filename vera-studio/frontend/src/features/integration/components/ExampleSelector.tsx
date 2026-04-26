@@ -12,7 +12,7 @@ import { Separator } from '../../../components';
 
 const { createHandler, expressIntegration, advancedUsage } = backendIntegrationContent.middlePanel;
 const { room, client } = frontendIntegrationContent.middlePanel;
-const { customizeRoom, buildRoom } = buildContent.middlePanel;
+const { customizeRoom } = buildContent.middlePanel;
 
 const serverExamples = [
   {
@@ -50,11 +50,6 @@ const buildExamples = [
     path: flatPaths.buildCustomize,
     label: customizeRoom.title,
     description: customizeRoom.description,
-  },
-  {
-    path: flatPaths.buildRoom,
-    label: buildRoom.title,
-    description: buildRoom.description,
   },
 ] as const;
 

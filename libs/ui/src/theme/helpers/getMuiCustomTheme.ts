@@ -37,7 +37,7 @@ const getMuiCustomTheme = ({ container }: GetMuiCustomThemeProps = {}): Theme =>
   const cssVariables = container
     ? {
         rootSelector: ':host',
-        colorSchemeSelector: ':host(.%s)',
+        colorSchemeSelector: 'class',
       }
     : true;
 

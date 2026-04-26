@@ -1,8 +1,10 @@
 import { useState } from 'react';
-import { Button, Separator } from '../../../../components';
-import { buildContent } from '../../../integration/constants';
+import { useNavigate } from 'react-router-dom';
+import { Button, Separator } from '../../../components';
+import { buildContent, paths } from '../constants';
+import PreviewAnchor from './PreviewAnchor';
 
-const { content } = buildContent.middlePanel.buildRoom;
+const { content } = buildContent.middlePanel.customizeRoom;
 
 type BuildStatus = 'idle' | 'building' | 'done' | 'error';
 
@@ -24,12 +26,19 @@ type SaveFilePickerType = (options?: {
   }>;
 }>;
 
-function BuildRoomPage() {
+const CustomizeRoomPage = () => {
+  const navigate = useNavigate();
   const [buildStatus, setBuildStatus] = useState<BuildStatus>('idle');
   const [stageIndex, setStageIndex] = useState(0);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
-  async function handleBuildClick() {
+  const handleCustomizeClick = () => {
+    navigate(paths.design.root, {
+      state: { returnTo: paths.integration.build.root },
+    });
+  };
+
+  const handleRoomBuild = async () => {
     setBuildStatus('building');
     setErrorMessage(null);
     setStageIndex(0);
@@ -44,30 +53,38 @@ function BuildRoomPage() {
       clearInterval(stageInterval);
 
       if (!response.ok) {
-        const body = (await response.json()) as { error?: string };
-        throw new Error(body.error ?? 'Build failed');
+        const responseBody = (await response.json()) as { error?: string };
+        throw new Error(responseBody.error ?? 'Build failed');
       }
 
-      const blob = await response.blob();
+      const roomBundle = await response.blob();
       setBuildStatus('done');
 
-      await saveFile(blob, 'room.zip');
+      await saveFile(roomBundle, 'room.zip');
     } catch (error) {
       clearInterval(stageInterval);
       setBuildStatus('error');
       setErrorMessage(error instanceof Error ? error.message : 'An unexpected error occurred');
     }
-  }
+  };
 
   const isBuilding = buildStatus === 'building';
 
   return (
-    <>
+    <div className="h-full min-h-0 flex flex-col gap-4">
       <label className="block text-xs font-semibold text-slate-700">{content.title}</label>
 
       <p className="text-xs text-slate-600 leading-relaxed">{content.description}</p>
 
-      <Separator />
+      <div className="flex gap-2">
+        <Button variant="secondary" onClick={handleCustomizeClick}>
+          Customize
+        </Button>
+
+        <Button onClick={handleRoomBuild} disabled={isBuilding}>
+          {buildStatus === 'done' ? 'Build again' : 'Build and download'}
+        </Button>
+      </div>
 
       {isBuilding && (
         <div className="flex flex-col gap-3 p-4 bg-slate-50 border border-slate-200 rounded-lg">
@@ -113,20 +130,22 @@ function BuildRoomPage() {
         </div>
       )}
 
-      <Button onClick={handleBuildClick} disabled={isBuilding}>
-        {buildStatus === 'done' ? 'Build again' : 'Build room'}
-      </Button>
-    </>
+      <Separator />
+
+      <PreviewAnchor />
+    </div>
   );
-}
+};
 
 function downloadBlob(blob: Blob, filename: string) {
-  const url = URL.createObjectURL(blob);
-  const anchor = document.createElement('a');
-  anchor.href = url;
-  anchor.download = filename;
-  anchor.click();
-  URL.revokeObjectURL(url);
+  const objectUrl = URL.createObjectURL(blob);
+  const anchorElement = document.createElement('a');
+
+  anchorElement.href = objectUrl;
+  anchorElement.download = filename;
+  anchorElement.click();
+
+  URL.revokeObjectURL(objectUrl);
 }
 
 async function saveFile(blob: Blob, filename: string) {
@@ -150,15 +169,17 @@ async function saveFile(blob: Blob, filename: string) {
         },
       ],
     });
-    const writable = await fileHandle.createWritable();
-    await writable.write(blob);
-    await writable.close();
+
+    const writableFile = await fileHandle.createWritable();
+    await writableFile.write(blob);
+    await writableFile.close();
   } catch (error) {
     const isAbort = error instanceof DOMException && error.name === 'AbortError';
+
     if (!isAbort) {
       downloadBlob(blob, filename);
     }
   }
 }
 
-export default BuildRoomPage;
+export default CustomizeRoomPage;

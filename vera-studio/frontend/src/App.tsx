@@ -1,4 +1,12 @@
-import { BrowserRouter, Route, Routes, FutureConfig, Outlet, Navigate } from 'react-router-dom';
+import {
+  BrowserRouter,
+  Route,
+  Routes,
+  FutureConfig,
+  Outlet,
+  Navigate,
+  useLocation,
+} from 'react-router-dom';
 
 import { Separator } from './components';
 import {
@@ -21,8 +29,7 @@ import {
   RoomIntegrationExample,
   ClientIntegrationExample,
   IntegrationLandingPage,
-  CustomizeRoom,
-  BuildRoom,
+  CustomizeRoomPage,
 } from './features/integration/components';
 import { integrationExamples$ } from './features/integration/stores';
 
@@ -37,8 +44,9 @@ const futureConfig: Partial<FutureConfig> = {
 const backendPaths = paths.integration.backend;
 const frontendPaths = paths.integration.frontend;
 const buildPaths = paths.integration.build;
+const storyPath = 'http://localhost:6006/?path=/story/veraroom-veraroomelement--default';
 
-export default function App() {
+function InnerApp() {
   const [tokens] = useVeraStudio((state) => state.tokens);
   const [isLoading] = useVeraStudio((state) => state.isLoading);
   const [loadError] = useVeraStudio((state) => state.loadError);
@@ -89,32 +97,7 @@ export default function App() {
           >
             <Route index path={paths.design.root} element={<DesignPage />} />
 
-            <Route
-              path={paths.integration.root}
-              element={
-                <>
-                  <div className="min-h-0 flex flex-col gap-4 p-3">
-                    <IntegrationsMenu />
-                  </div>
-
-                  <Separator orientation="vertical" />
-
-                  <div className="min-h-0">
-                    <div className="h-full flex flex-col md:flex-row gap-4">
-                      <aside className="md:w-64 shrink-0">
-                        <ExampleSelector />
-                      </aside>
-
-                      <Separator orientation="vertical" className="h-full" />
-
-                      <div className="flex-1 min-w-0 overflow-auto p-4 flex flex-col gap-4 pb-32 md:pb-92">
-                        <Outlet />
-                      </div>
-                    </div>
-                  </div>
-                </>
-              }
-            >
+            <Route path={paths.integration.root} element={<IntegrationLayout />}>
               <Route index element={<IntegrationLandingPage />} />
 
               <Route
@@ -155,9 +138,7 @@ export default function App() {
               <Route path={buildPaths.root}>
                 <Route index element={<Navigate to={buildPaths.customize.root} />} />
 
-                <Route path={buildPaths.customize.root} element={<CustomizeRoom />} />
-
-                <Route path={buildPaths.buildRoom.root} element={<BuildRoom />} />
+                <Route path={buildPaths.customize.root} element={<CustomizeRoomPage />} />
 
                 <Route path="*" element={<Navigate to={buildPaths.customize.root} />} />
               </Route>
@@ -172,3 +153,56 @@ export default function App() {
     </div>
   );
 }
+
+function IntegrationLayout() {
+  const { pathname } = useLocation();
+  const isBuildSection = pathname.startsWith(buildPaths.root);
+
+  return (
+    <>
+      <div className="min-h-0 flex flex-col gap-4 p-3">
+        <IntegrationsMenu />
+      </div>
+
+      <Separator orientation="vertical" />
+
+      <div className="min-h-0">
+        <div className="h-full flex flex-col md:flex-row gap-4">
+          {!isBuildSection && (
+            <>
+              <aside className="md:w-64 shrink-0">
+                <ExampleSelector />
+              </aside>
+
+              <Separator orientation="vertical" className="h-full" />
+            </>
+          )}
+
+          <div className="flex-1 min-w-0 overflow-auto p-4 flex flex-col gap-4 pb-32 md:pb-92">
+            <Outlet />
+          </div>
+        </div>
+      </div>
+    </>
+  );
+}
+
+export default () => {
+  return (
+    <>
+      <InnerApp />
+      <div
+        id="vera-room-preview"
+        className="min-h-125 lg:h-screen"
+        style={{ visibility: 'hidden' }}
+      >
+        <iframe
+          title="Vera Room preview"
+          src={storyPath}
+          allow="camera; microphone"
+          className="w-full h-full"
+        />
+      </div>
+    </>
+  );
+};

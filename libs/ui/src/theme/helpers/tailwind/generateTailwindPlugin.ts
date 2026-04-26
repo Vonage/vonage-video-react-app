@@ -470,10 +470,10 @@ return plugin(
 
     // Add CSS variables for theme-aware colors
     addBase({
-      ':root': {
+      ':host, :root': {
 ${rootVars}
       },
-      'html.vera-dark-mode': {
+      ':host(.vera-dark-mode), :host(.dark), html.vera-dark-mode': {
 ${darkVars}
       },
     });

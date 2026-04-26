@@ -29,19 +29,11 @@ const StudioHeader: FC<StudioHeaderProps> = ({ className, ...props }) => {
 
     await useVeraStudio.actions.saveTokens();
 
+    alert(`Tokens saved successfully!${returnTo ? ' Returning to preview page...' : ''}`);
+
     if (returnTo) {
       navigate(returnTo);
     }
-  };
-
-  const onBuildRoomClick = async () => {
-    const shouldSave = window.confirm('Save current token changes and go to Build Room?');
-
-    if (!shouldSave) return;
-
-    await useVeraStudio.actions.saveTokens();
-
-    navigate(paths.integration.build.buildRoom.root);
   };
 
   const shouldShowSaveButton = isDesignRoute && !isLoading;
@@ -74,12 +66,6 @@ const StudioHeader: FC<StudioHeaderProps> = ({ className, ...props }) => {
           <Button onClick={onSaveClick} disabled={isSaving} variant="secondary">
             {isSaving ? 'Saving...' : 'Save'}
           </Button>
-
-          {returnTo && (
-            <Button onClick={onBuildRoomClick} disabled={isSaving}>
-              Build room
-            </Button>
-          )}
         </div>
       )}
     </header>

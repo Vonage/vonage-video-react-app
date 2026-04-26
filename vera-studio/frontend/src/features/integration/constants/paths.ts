@@ -33,9 +33,6 @@ const paths = {
       customize: {
         root: '/integration/build/customize',
       },
-      buildRoom: {
-        root: '/integration/build/room',
-      },
     },
   },
 } as const;
@@ -52,7 +49,6 @@ export const flatPaths = {
 
   build: paths.integration.build.root,
   buildCustomize: paths.integration.build.customize.root,
-  buildRoom: paths.integration.build.buildRoom.root,
 
   design: paths.design.root,
 } as const;

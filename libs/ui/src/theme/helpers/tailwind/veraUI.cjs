@@ -101,7 +101,7 @@ const veraUI = (config = {}) => {
 
       // Add CSS variables for theme-aware colors
       addBase({
-        ':root': {
+        ':host, :root': {
           '--vera-accent': config.accent ?? light.accent ?? '#FFFFFF',
           '--vera-accent-light': config.accent ?? light.accent ?? '#FFFFFF',
           '--vera-accent-dark': config.accent ?? dark.accent ?? '#FFFFFF',
@@ -374,7 +374,7 @@ const veraUI = (config = {}) => {
           '--vera-typography-caption-semibold-mobile-font-weight':
             config.captionSemibold?.mobileFontWeight ?? '600',
         },
-        'html.vera-dark-mode': {
+        ':host(.vera-dark-mode), :host(.dark), html.vera-dark-mode': {
           '--vera-accent': config.accent ?? dark.accent ?? '#FFFFFF',
           '--vera-alert-background': config.alertBackground ?? dark.alertBackground ?? '#3E0004',
           '--vera-alert-background-hover':

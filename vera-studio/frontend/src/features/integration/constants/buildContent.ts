@@ -15,16 +15,6 @@ const buildContent = {
           'Use the design editor to style your room and preview how it will look for your users. Once you are happy with the result, continue to bundle it.',
       },
     },
-
-    buildRoom: {
-      title: 'Build room',
-      description: 'Bundle your customized room into a deployable artifact.',
-
-      content: {
-        title: 'Build room',
-        description: 'Build and download your customized room as a ready-to-deploy zip artifact.',
-      },
-    },
   },
 } as const;
 
