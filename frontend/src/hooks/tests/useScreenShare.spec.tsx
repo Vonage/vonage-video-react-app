@@ -297,7 +297,7 @@ describe('useScreenSharing', () => {
         undefined,
         expect.objectContaining({
           videoSource: 'screen',
-          constraints: { video: { displaySurface: surface }, audio: false },
+          constraints: { video: { displaySurface: surface } },
         }),
         expect.any(Function)
       );

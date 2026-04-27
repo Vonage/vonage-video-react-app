@@ -58,7 +58,3 @@ export type StreamPropertyChangedEvent = {
 export const LAYOUT_MODES = ['grid', 'active-speaker'] as const;
 
 export type LayoutMode = (typeof LAYOUT_MODES)[number];
-
-export const DISPLAY_SURFACES = ['monitor', 'window', 'browser'] as const;
-
-export type DisplaySurface = (typeof DISPLAY_SURFACES)[number];

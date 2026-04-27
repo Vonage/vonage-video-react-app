@@ -1,6 +1,5 @@
 import { useState, useRef, useCallback } from 'react';
-import { initPublisher } from '@vonage/client-sdk-video';
-import type { Publisher, PublisherProperties } from '@vonage/client-sdk-video';
+import { initPublisher, type Publisher } from '@vonage/client-sdk-video';
 import { useTranslation } from 'react-i18next';
 import useSessionContext from './useSessionContext';
 import useUserContext from './useUserContext';
@@ -17,12 +16,6 @@ export type UseScreenShareType = {
   isEntireScreen: boolean;
   screensharingPublisher: Publisher | null;
   screenshareVideoElement: HTMLVideoElement | HTMLObjectElement | undefined;
-};
-
-// `constraints` isn't declared on the SDK's PublisherProperties, but the SDK
-// forwards it verbatim to getDisplayMedia — letting us hint the picker tab.
-type ScreenSharePublisherProperties = PublisherProperties & {
-  constraints?: MediaStreamConstraints;
 };
 
 /**
@@ -67,19 +60,19 @@ const useScreenShare = (): UseScreenShareType => {
   const toggleShareScreen = useCallback(async () => {
     if (vonageVideoClient) {
       if (!isSharingScreen) {
-        const publisherProperties: ScreenSharePublisherProperties = {
-          videoSource: 'screen',
+        // `constraints` isn't declared on the SDK's PublisherProperties, but the SDK
+        // forwards it verbatim to getDisplayMedia — letting us hint the picker tab.
+        const publisherProperties = {
+          videoSource: 'screen' as const,
           insertDefaultUI: false,
-          videoContentHint: 'detail',
+          videoContentHint: 'detail' as const,
           name: t('participants.screen', { participantName: user.defaultSettings.name }),
+          ...(env.DEFAULT_SCREEN_SHARE_SURFACE && {
+            constraints: {
+              video: { displaySurface: env.DEFAULT_SCREEN_SHARE_SURFACE },
+            },
+          }),
         };
-
-        if (env.DEFAULT_SCREEN_SHARE_SURFACE) {
-          publisherProperties.constraints = {
-            video: { displaySurface: env.DEFAULT_SCREEN_SHARE_SURFACE },
-            audio: false,
-          };
-        }
 
         // Initializing the publisher for screen sharing
         screenSharingPubRef.current = initPublisher(undefined, publisherProperties, (err) => {

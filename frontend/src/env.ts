@@ -1,9 +1,5 @@
-import {
-  DISPLAY_SURFACES,
-  LAYOUT_MODES,
-  type DisplaySurface,
-  type LayoutMode,
-} from './types/session';
+import { DISPLAY_SURFACES, type DisplaySurface } from './types/screenShare';
+import { LAYOUT_MODES, type LayoutMode } from './types/session';
 
 declare const __APP_ENV__: Record<string, string | undefined>;
 
@@ -112,20 +108,20 @@ function parseResolution(value: unknown, fallback: Resolution | undefined): Reso
   return value as Resolution;
 }
 
-function parseDisplaySurface(value: unknown): DisplaySurface | undefined {
-  if (value === undefined || value === null || value === '') return undefined;
+function parseDisplaySurface(rawValue: unknown): DisplaySurface | undefined {
+  if (rawValue === undefined || rawValue === null || rawValue === '') return undefined;
 
-  if (typeof value !== 'string') {
-    throw new Error(`Invalid display surface type: ${toDisplayString(value)}`);
+  if (typeof rawValue !== 'string') {
+    throw new Error(`Invalid display surface type: ${toDisplayString(rawValue)}`);
   }
 
-  if (!(DISPLAY_SURFACES as readonly string[]).includes(value)) {
+  if (!(DISPLAY_SURFACES as readonly string[]).includes(rawValue)) {
     throw new Error(
-      `Invalid DEFAULT_SCREEN_SHARE_SURFACE: "${value}". Allowed values: ${DISPLAY_SURFACES.join(', ')}`
+      `Invalid DEFAULT_SCREEN_SHARE_SURFACE: "${rawValue}". Allowed values: ${DISPLAY_SURFACES.join(', ')}`
     );
   }
 
-  return value as DisplaySurface;
+  return rawValue as DisplaySurface;
 }
 
 function parseLayoutMode(value: unknown, fallback: LayoutMode): LayoutMode {
