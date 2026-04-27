@@ -14,6 +14,20 @@ const DEFAULT_DETECTION_DURATION_MS = 2000;
 /** Default minimum confidence for the Open_Palm gesture to count as a detection. */
 const DEFAULT_GESTURE_CONFIDENCE = 0.45;
 
+/**
+ * Default number of recent frames inspected when checking whether the hand is waving.
+ * At the default 4 FPS this is ~1.5 s of motion history.
+ */
+const DEFAULT_WAVE_WINDOW_FRAMES = 6;
+
+/**
+ * Default lateral motion threshold (in normalized image-x units, range 0–1).
+ * If the wrist's x-coordinate range across the wave window exceeds this value,
+ * the hand is considered to be waving and Open_Palm detection is suppressed.
+ * 0.10 ≈ 10% of frame width.
+ */
+const DEFAULT_WAVE_RANGE_THRESHOLD = 0.1;
+
 /** CDN path for the MediaPipe Vision WASM runtime files. */
 const MEDIAPIPE_WASM_CDN = 'https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.32/wasm';
 
@@ -64,6 +78,19 @@ export type UseGestureDetectionProps = {
   gestureConfidence?: number;
   /** Inference delegate: 'GPU' (WebGL, default) or 'CPU' (XNNPACK). */
   delegate?: 'GPU' | 'CPU';
+  /**
+   * Number of recent frames inspected when deciding whether the hand is waving.
+   * Larger values demand a longer, steadier hold; smaller values react sooner
+   * but may miss slow waves. Defaults to 6 (~1.5 s at 4 FPS).
+   */
+  waveWindowFrames?: number;
+  /**
+   * Lateral motion threshold for the wave detector, in normalized image-x units (0–1).
+   * If the wrist's x-coordinate range across `waveWindowFrames` exceeds this value,
+   * Open_Palm detection is suppressed (treated as a wave). Defaults to 0.1 (~10% of frame width).
+   * Set to a value > 1 to effectively disable wave suppression.
+   */
+  waveRangeThreshold?: number;
 };
 
 // ---------------------------------------------------------------------------
@@ -97,6 +124,8 @@ const useGestureDetection = ({
   detectionIntervalMs = DEFAULT_DETECTION_INTERVAL_MS,
   gestureConfidence = DEFAULT_GESTURE_CONFIDENCE,
   delegate = 'GPU',
+  waveWindowFrames = DEFAULT_WAVE_WINDOW_FRAMES,
+  waveRangeThreshold = DEFAULT_WAVE_RANGE_THRESHOLD,
 }: UseGestureDetectionProps): GestureProgress => {
   // Stable refs to avoid stale closures inside the interval callback.
   const callbacksRef = useRef({ onHandRaised, onThumbsUp, onThumbsDown });
@@ -109,12 +138,16 @@ const useGestureDetection = ({
     detectionIntervalMs,
     detectionDurationMs,
     gestureConfidence,
+    waveWindowFrames,
+    waveRangeThreshold,
   });
   optionsRef.current = {
     delegate,
     detectionIntervalMs,
     detectionDurationMs,
     gestureConfidence,
+    waveWindowFrames,
+    waveRangeThreshold,
   };
 
   const recognizerRef = useRef<import('@mediapipe/tasks-vision').GestureRecognizer | null>(null);
@@ -126,6 +159,8 @@ const useGestureDetection = ({
   });
   const isLoadingRef = useRef(false);
   const completionTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  /** Rolling history of wrist-x positions used by the wave detector. */
+  const wristXHistoryRef = useRef<number[]>([]);
 
   const [gestureProgress, setGestureProgress] = useState<GestureProgress>(null);
 
@@ -197,6 +232,33 @@ const useGestureDetection = ({
     return true;
   };
 
+  /**
+   * Tracks the wrist's x-coordinate over a rolling window and decides whether
+   * the hand is currently waving (large lateral motion). Used to suppress
+   * Open_Palm detection during a wave-goodbye gesture.
+   */
+  const isHandWaving = (
+    result: import('@mediapipe/tasks-vision').GestureRecognizerResult
+  ): boolean => {
+    const wristX = result.landmarks?.[0]?.[0]?.x;
+    const history = wristXHistoryRef.current;
+
+    if (typeof wristX !== 'number') {
+      // No hand detected this frame — clear the history so we start fresh next time.
+      history.length = 0;
+      return false;
+    }
+
+    history.push(wristX);
+    const windowSize = Math.max(2, optionsRef.current.waveWindowFrames);
+    while (history.length > windowSize) history.shift();
+
+    if (history.length < windowSize) return false;
+
+    const range = Math.max(...history) - Math.min(...history);
+    return range > optionsRef.current.waveRangeThreshold;
+  };
+
   /** Run one detection tick on the current video frame. */
   const runDetectionTick = (videoEl: HTMLVideoElement) => {
     const recognizer = recognizerRef.current;
@@ -205,6 +267,8 @@ const useGestureDetection = ({
     try {
       const result = recognizer.recognizeForVideo(videoEl, performance.now());
       const detected = detectGesture(result, optionsRef.current.gestureConfidence);
+      // Suppress Open_Palm detection while the hand is waving (e.g., goodbye wave).
+      const effectiveDetected = detected === 'Open_Palm' && isHandWaving(result) ? null : detected;
       const callbacks = callbacksRef.current;
       const currentDurationMs = optionsRef.current.detectionDurationMs;
 
@@ -216,7 +280,8 @@ const useGestureDetection = ({
 
       const anyActive = (Object.keys(gestureStateRef.current) as GestureName[]).reduce(
         (active, gesture) =>
-          advanceGestureState(gesture, detected, gestureCallbacks, currentDurationMs) || active,
+          advanceGestureState(gesture, effectiveDetected, gestureCallbacks, currentDurationMs) ||
+          active,
         false
       );
 
@@ -266,6 +331,7 @@ const useGestureDetection = ({
       gestureStateRef.current[gesture].consecutiveDetections = 0;
       gestureStateRef.current[gesture].hasFired = false;
     }
+    wristXHistoryRef.current.length = 0;
   }
 
   function cleanup() {
