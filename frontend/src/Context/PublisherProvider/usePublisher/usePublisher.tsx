@@ -142,7 +142,7 @@ const usePublisher = (initialValue: PublisherContextInitialValue = {}): Publishe
 
   // Sync publisher with selected devices from store (handles device changes and disconnections)
   useSyncPublisherDevices(publisherRef, { setIsAudioEnabled, setIsVideoEnabled });
-  useApplyAdvancedSettings(publisherRef.current);
+  useApplyAdvancedSettings(isPublishing ? publisherRef.current : null);
 
   // If we do not have audio input or video input access, we cannot publish.
   useEffect(() => {
