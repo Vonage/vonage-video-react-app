@@ -27,6 +27,8 @@ const usePublisherOptions = ({
   const { user } = useUserContext();
   const resolution = advancedSettingsDialog$.use.select((state) => state.resolution);
   const frameRate = advancedSettingsDialog$.use.select((state) => state.frameRate);
+  const codecMode = advancedSettingsDialog$.use.select((state) => state.codecMode);
+  const codecPriority = advancedSettingsDialog$.use.select((state) => state.codecPriority);
 
   // Extract individual properties to avoid object reference changes
   const { name, noiseSuppression, backgroundFilter, publishAudio, publishVideo, publishCaptions } =
@@ -57,6 +59,9 @@ const usePublisherOptions = ({
       publishCaptions,
       publishVideo: env.ALLOW_VIDEO_ON_JOIN && publishVideo && isVideoEnabled,
       frameRate,
+      preferredVideoCodecs: (codecMode === 'automatic'
+        ? 'automatic'
+        : codecPriority) as PublisherProperties['preferredVideoCodecs'],
       resolution,
       videoFilter,
       videoSource,
@@ -82,6 +87,8 @@ const usePublisherOptions = ({
       isVideoEnabled,
       resolution,
       frameRate,
+      codecMode,
+      codecPriority,
     ]
   );
 };

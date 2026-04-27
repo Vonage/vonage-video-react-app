@@ -60,6 +60,7 @@ describe('usePublisherOptions', () => {
       expect(result.current).toEqual({
         frameRate: 30,
         resolution: '1280x720',
+        preferredVideoCodecs: 'automatic',
         publishAudio: false,
         publishVideo: false,
         audioSource: undefined,
@@ -131,6 +132,7 @@ describe('usePublisherOptions', () => {
       expect(result.current).toEqual({
         frameRate: 30,
         resolution: '1280x720',
+        preferredVideoCodecs: 'automatic',
         publishAudio: true,
         publishVideo: true,
         audioSource: audioDevice.deviceId,
