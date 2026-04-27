@@ -62,24 +62,29 @@ const useScreenShare = (): UseScreenShareType => {
       if (!isSharingScreen) {
         // `constraints` isn't declared on the SDK's PublisherProperties, but the SDK
         // forwards it verbatim to getDisplayMedia — letting us hint the picker tab.
-        const publisherProperties = {
-          videoSource: 'screen' as const,
-          insertDefaultUI: false,
-          videoContentHint: 'detail' as const,
-          name: t('participants.screen', { participantName: user.defaultSettings.name }),
-          ...(env.DEFAULT_SCREEN_SHARE_SURFACE && {
-            constraints: {
-              video: { displaySurface: env.DEFAULT_SCREEN_SHARE_SURFACE },
-            },
-          }),
-        };
-
-        // Initializing the publisher for screen sharing
-        screenSharingPubRef.current = initPublisher(undefined, publisherProperties, (err) => {
-          if (err) {
-            onScreenShareStopped();
+        // Inlining the literal lets TS contextually type the SDK fields, while the
+        // `constraints` field rides in via the spread so excess-property checks don't fire.
+        screenSharingPubRef.current = initPublisher(
+          undefined,
+          {
+            videoSource: 'screen',
+            insertDefaultUI: false,
+            videoContentHint: 'detail',
+            name: t('participants.screen', { participantName: user.defaultSettings.name }),
+            ...(env.DEFAULT_SCREEN_SHARE_SURFACE
+              ? {
+                  constraints: {
+                    video: { displaySurface: env.DEFAULT_SCREEN_SHARE_SURFACE },
+                  },
+                }
+              : {}),
+          },
+          (err) => {
+            if (err) {
+              onScreenShareStopped();
+            }
           }
-        });
+        );
 
         // Adding class for screen sharing styling
         screenSharingPubRef.current?.element?.classList.add('OT_big');
