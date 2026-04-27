@@ -164,6 +164,10 @@ describe('MeetingRoom', () => {
       videoWidth: () => 1280,
       videoHeight: () => 720,
       getVideoFilter: vi.fn(() => undefined),
+      setPreferredFrameRate: vi.fn().mockResolvedValue(undefined),
+      setPreferredResolution: vi.fn().mockResolvedValue(undefined),
+      setMaxVideoBitrate: vi.fn().mockResolvedValue(undefined),
+      setVideoBitratePreset: vi.fn().mockResolvedValue(undefined),
     }) as unknown as Publisher;
 
     mockUseSpeakingDetector.mockReturnValue(false);

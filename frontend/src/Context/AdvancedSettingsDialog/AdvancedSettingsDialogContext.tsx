@@ -15,6 +15,7 @@ import {
   ADVANCED_SETTINGS_BITRATE_MODE,
   ADVANCED_SETTINGS_CODEC_MODE,
 } from '@components/AdvancedSettingsDialog/types/types';
+import { env } from '../../env';
 
 const INITIAL_STATE = {
   isOpen: false,
@@ -24,7 +25,7 @@ const INITIAL_STATE = {
   codecMode: ADVANCED_SETTINGS_CODEC_MODE.automatic,
   codecPriority: ['vp9', 'vp8', 'h264'] as AdvancedSettingsManualCodecOrder,
   frameRate: 30 as AdvancedSettingsFrameRate,
-  resolution: '640x480' as AdvancedSettingsResolution,
+  resolution: env.DEFAULT_RESOLUTION ?? '1280x720',
   audioBitrateMode: ADVANCED_SETTINGS_AUDIO_BITRATE_MODE.automatic,
   customAudioBitrate: 128 as AdvancedSettingsCustomAudioBitrate,
   enableDtx: false,

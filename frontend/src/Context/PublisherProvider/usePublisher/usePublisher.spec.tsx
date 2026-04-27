@@ -52,6 +52,10 @@ describe('usePublisher', () => {
       clearVideoFilter: vi.fn(),
       publishAudio: publishAudioSpy,
       publishVideo: publishVideoSpy,
+      setPreferredFrameRate: vi.fn().mockResolvedValue(undefined),
+      setPreferredResolution: vi.fn().mockResolvedValue(undefined),
+      setMaxVideoBitrate: vi.fn().mockResolvedValue(undefined),
+      setVideoBitratePreset: vi.fn().mockResolvedValue(undefined),
     }) as unknown as Publisher;
 
     vi.mocked(initPublisher).mockImplementation(mockedInitPublisher);
@@ -589,7 +593,7 @@ function renderHook<Result, Props>(
   { userContext, sessionContext }: RenderOptions = {}
 ) {
   const { wrapper: MainWrapper, ...context } = makeTestProvider(
-    [providers.user, providers.session],
+    [providers.advancedSettings, providers.user, providers.session],
     {
       userContext: {
         ...userContext,

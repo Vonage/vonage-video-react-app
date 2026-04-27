@@ -10,6 +10,7 @@ import getInitials from '@utils/getInitials';
 import { useDeviceId } from '@core/stores/devices/hooks';
 import useStableCallback from '@web/hooks/useStableCallback';
 import { env } from '../../../env';
+import advancedSettingsDialog$ from '@Context/AdvancedSettingsDialog';
 
 /**
  * React hook to get PublisherProperties combining default options and options set in UserContext
@@ -24,6 +25,8 @@ const usePublisherOptions = ({
   isVideoEnabled: boolean;
 }): PublisherProperties => {
   const { user } = useUserContext();
+  const resolution = advancedSettingsDialog$.use.select((state) => state.resolution);
+  const frameRate = advancedSettingsDialog$.use.select((state) => state.frameRate);
 
   // Extract individual properties to avoid object reference changes
   const { name, noiseSuppression, backgroundFilter, publishAudio, publishVideo, publishCaptions } =
@@ -53,7 +56,8 @@ const usePublisherOptions = ({
       publishAudio: env.ALLOW_AUDIO_ON_JOIN && publishAudio && isAudioEnabled,
       publishCaptions,
       publishVideo: env.ALLOW_VIDEO_ON_JOIN && publishVideo && isVideoEnabled,
-      resolution: env.DEFAULT_RESOLUTION,
+      frameRate,
+      resolution,
       videoFilter,
       videoSource,
     };
@@ -76,6 +80,8 @@ const usePublisherOptions = ({
       videoSource,
       isAudioEnabled,
       isVideoEnabled,
+      resolution,
+      frameRate,
     ]
   );
 };
