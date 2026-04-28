@@ -65,9 +65,11 @@ export function errorHandler(
   const isHtmlRequest = accepts.includes('text/html');
 
   if (isHtmlRequest) {
-    res.status(statusCode).render('index', {
-      error: safeError,
-    });
+    res
+      .status(statusCode)
+      .send(
+        `<!DOCTYPE html><html><body><h1>${statusCode}</h1><p>${safeError.message}</p></body></html>`
+      );
 
     return;
   }

@@ -1,7 +1,7 @@
 import { Router } from 'express';
-import healthRouter from './health';
-import tokensRouter from './tokens';
-import buildRouter from './buildRoom';
+import healthRouter from '../health';
+import tokensRouter from '../tokens';
+import buildRouter from '../buildRoom';
 
 const router = Router();
 

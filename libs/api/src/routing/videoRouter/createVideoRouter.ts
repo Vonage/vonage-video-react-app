@@ -243,7 +243,7 @@ function createVideoRouter<
               ...clientTokenOptions
             } = {},
             ...rest
-          } = CreateSessionAndJoinPayloadSchema.loose().parse(opts.input) ?? {};
+          } = CreateSessionAndJoinPayloadSchema.loose().optional().parse(opts.input) ?? {};
 
           const input = {
             ...rest,

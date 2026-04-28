@@ -20,6 +20,8 @@ import LoggerSynchronizer from '@Context/LoggerSynchronizer';
 import ErrorBoundary from './components/ErrorBoundary';
 import EnvGuard from './components/EnvGuard';
 import { ErrorPage } from './pages/ErrorBoundary';
+import { runtime$ } from '@core/stores';
+import { videoClient } from './services';
 
 const futureConfig: Partial<FutureConfig> = {
   /**
@@ -84,7 +86,9 @@ const App = () => {
     <AppContextProvider>
       <ErrorBoundary fallback={(error) => <ErrorPage error={error} />}>
         <EnvGuard />
-        <InnerApp />
+        <runtime$.Provider videoClient={videoClient}>
+          <InnerApp />
+        </runtime$.Provider>
       </ErrorBoundary>
     </AppContextProvider>
   );

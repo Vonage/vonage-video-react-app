@@ -9,6 +9,8 @@ import { fileURLToPath } from 'url';
 import type { ViteDevServer } from 'vite';
 import router from './routes/index';
 
+// import { createVideoHandler } from '@api-lib';
+
 const runtimeDirectory = path.dirname(fileURLToPath(import.meta.url));
 const defaultPort = Number(process.env.VERA_STUDIO_PORT ?? 5000);
 
@@ -40,6 +42,20 @@ const createApp = async (): Promise<{ app: Express; viteDevServer: ViteDevServer
 
   app.use(viteDevServer.middlewares);
 
+  // VONAGE_APP_ID;
+  // VONAGE_PRIVATE_KEY;
+
+  // app.use(
+  //   '/video',
+  //   createVideoHandler({
+  //     auth: {
+  //       authType: 'jwt',
+  //       applicationId: process.env.VONAGE_APP_ID!,
+  //       privateKey: process.env.VONAGE_PRIVATE_KEY!,
+  //     },
+  //   })
+  // );
+
   app.get('*', async (req: Request, res: Response) => {
     const url = req.originalUrl;
     const htmlPath = path.resolve(runtimeDirectory, '../frontend/index.html');
@@ -47,12 +63,6 @@ const createApp = async (): Promise<{ app: Express; viteDevServer: ViteDevServer
     template = await viteDevServer.transformIndexHtml(url, template);
     res.status(200).set({ 'Content-Type': 'text/html' }).end(template);
   });
-
-  // SESSION_KEY_SECRET;
-  // VONAGE_APP_ID;
-  // VONAGE_PRIVATE_KEY;
-  // STUDIO_API_URL = 'http://localhost:3345/';
-  // Example
 
   return { app, viteDevServer };
 };

@@ -3,8 +3,9 @@ import { Router } from 'express';
 import { execSync } from 'child_process';
 import fs from 'fs';
 import path from 'path';
+import getWorkspaceRootPath from './getWorkspaceRootPath';
 
-const workspaceRoot = process.env.npm_config_local_prefix as string;
+const workspaceRoot = getWorkspaceRootPath();
 const designTokensPath = path.join(workspaceRoot, 'designTokens.json');
 const shouldSyncThemeTokens = process.env.VERA_STUDIO_SYNC_THEME_TOKENS === '1';
 
