@@ -5,6 +5,12 @@ import { stdin, stdout } from 'node:process';
 import type { PipelineContext, StepExecutionResult, TestScope } from '../types';
 
 async function askTestScope(context: PipelineContext): Promise<StepExecutionResult> {
+  const cliPathArgument = process.argv[2]?.trim() ?? '';
+
+  if (cliPathArgument) {
+    return resolvePathScope({ context, rawPath: cliPathArgument, selectedOption: 'cli-arg' });
+  }
+
   const commandLineInterface = createInterface({ input: stdin, output: stdout });
   let selectedOption = '';
   let providedPath = 'n/a';
@@ -43,27 +49,38 @@ async function askTestScope(context: PipelineContext): Promise<StepExecutionResu
 
     const rawPath = (await commandLineInterface.question('Enter file/path: ')).trim();
 
-    if (!rawPath) {
-      throw new Error('Path/file cannot be empty when option 3 is selected.');
-    }
-
-    const absolutePath = resolve(process.cwd(), rawPath);
-    await stat(absolutePath);
-    providedPath = rawPath;
-
-    context.testScope = {
-      type: 'path',
-      path: rawPath,
-    };
-
-    return buildStepExecutionResult({
-      providedPath,
-      selectedOption,
-      selectedScope: context.testScope,
-    });
+    return resolvePathScope({ context, rawPath, selectedOption });
   } finally {
     commandLineInterface.close();
   }
+}
+
+type ResolvePathScopeArgs = {
+  context: PipelineContext;
+  rawPath: string;
+  selectedOption: string;
+};
+
+async function resolvePathScope(args: ResolvePathScopeArgs): Promise<StepExecutionResult> {
+  const { context, rawPath, selectedOption } = args;
+
+  if (!rawPath) {
+    throw new Error('Path/file cannot be empty when option 3 is selected.');
+  }
+
+  const absolutePath = resolve(process.cwd(), rawPath);
+  await stat(absolutePath);
+
+  context.testScope = {
+    type: 'path',
+    path: rawPath,
+  };
+
+  return buildStepExecutionResult({
+    providedPath: rawPath,
+    selectedOption,
+    selectedScope: context.testScope,
+  });
 }
 
 function validateSelectedOption(selectedOption: string): void {

@@ -1,14 +1,16 @@
 import getReadableErrorMessage from './helpers/getReadableErrorMessage';
 import executeStepPipeline from './helpers/executeStepPipeline';
-import askTestScope from './steps/01_AskTestScope';
-import resolveAffectedFiles from './steps/02_ResolveAffectedFiles';
-import processFiles from './steps/03_ProcessFiles';
+import askTestScope from './steps/AskTestScope';
+import resolveAffectedFiles from './steps/ResolveAffectedFiles';
+import normalizeCoverageData from './steps/NormalizeCoverageData';
+import processFiles from './steps/ProcessFiles';
 import type { PipelineContext, PipelineStep, TestScope } from './types';
 
 async function runPipeline(): Promise<void> {
   const context: PipelineContext = {
     testScope: null,
     affectedFiles: null,
+    normalizedCoverageData: null,
   };
 
   const pipelineSteps: PipelineStep<PipelineContext>[] = [
@@ -19,6 +21,10 @@ async function runPipeline(): Promise<void> {
     {
       name: 'Resolve affected files',
       execute: resolveAffectedFiles,
+    },
+    {
+      name: 'Normalize coverage data',
+      execute: normalizeCoverageData,
     },
     {
       name: 'Process files',

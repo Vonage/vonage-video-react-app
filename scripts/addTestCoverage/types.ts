@@ -1,3 +1,5 @@
+import type { NormalizeCoverageData } from './steps/NormalizeCoverageData/helpers/normalizeCoverageDataSchema';
+
 export type TestScope =
   | { type: 'last-commit' }
   | { type: 'working-tree' }
@@ -6,6 +8,7 @@ export type TestScope =
 export type PipelineContext = {
   testScope: TestScope | null;
   affectedFiles: string[] | null;
+  normalizedCoverageData: NormalizeCoverageData | null;
 };
 
 export type FilePipelineContext = {

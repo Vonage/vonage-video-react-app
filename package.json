@@ -29,7 +29,8 @@
     "test:ui": "npx tsx scripts/testLibs.ts ui",
     "test:common": "npx tsx scripts/testLibs.ts common",
     "ts-check": "nx run-many --target=ts-check",
-    "vcr:dev": "npx tsx scripts/vcrDev.ts"
+    "vcr:dev": "npx tsx scripts/vcrDev.ts",
+    "add-coverage": "npx tsx scripts/addTestCoverage/addTestCoverage.ts"
   },
   "scriptsInfo": {
     "build": "Build projects. Usage: 'yarn build' (frontend+backend), 'yarn build frontend', 'yarn build backend', 'yarn build room' (VeraRoom web component)",
