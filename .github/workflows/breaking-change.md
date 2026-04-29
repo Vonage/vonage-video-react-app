@@ -1,8 +1,8 @@
 ---
 on:
-  workflow_dispatch:
   pull_request:
     types: [opened, synchronize]
+
     paths:
       - "package.json"
       - "package-lock.json"
