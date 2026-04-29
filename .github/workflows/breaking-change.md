@@ -18,7 +18,7 @@ tools:
   web-search:
 
 secrets:
-  COPILOT_GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 ---
 
 # Breaking Change Detector
