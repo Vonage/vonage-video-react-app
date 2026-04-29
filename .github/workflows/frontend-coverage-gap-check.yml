@@ -1,0 +1,58 @@
+name: Frontend Coverage Gap Check
+
+on:
+  pull_request:
+    paths:
+      - 'frontend/**'
+      - 'integration-tests/**'
+      - '.github/workflows/frontend-coverage-gap-check.yml'
+      - 'scripts/checkFrontendCoverageGapRegression.mjs'
+      - 'scripts/generateFrontendCoverageSummary.mjs'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  frontend-coverage-gap-check:
+    name: Verify Frontend Coverage Gap Regression
+    runs-on: ubuntu-22.04
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+
+      - name: Generate PR summary
+        run: |
+          node scripts/generateFrontendCoverageSummary.mjs /tmp/head-frontend-coverage-summary.md
+
+      - name: Fetch base branch
+        run: |
+          git fetch origin "${{ github.base_ref }}" --depth=1
+
+      - name: Create base worktree
+        run: |
+          git worktree add /tmp/base-worktree "origin/${{ github.base_ref }}"
+
+      - name: Generate base summary
+        run: |
+          cd /tmp/base-worktree
+          node scripts/generateFrontendCoverageSummary.mjs /tmp/base-frontend-coverage-summary.md
+
+      - name: Compare base vs head coverage gaps
+        run: |
+          node scripts/checkFrontendCoverageGapRegression.mjs \
+            /tmp/base-frontend-coverage-summary.md \
+            /tmp/head-frontend-coverage-summary.md
+
+      - name: Cleanup base worktree
+        if: always()
+        run: |
+          git worktree remove /tmp/base-worktree --force
