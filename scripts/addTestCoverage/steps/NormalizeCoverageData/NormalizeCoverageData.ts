@@ -26,7 +26,6 @@ async function normalizeCoverageData(context: PipelineContext): Promise<StepExec
         projectType: normalizedData.pipelineContext.projectType,
         testFramework: normalizedData.pipelineContext.testFramework,
         normalizedFileCount: normalizedData.files.length,
-        thresholds: normalizedData.thresholds,
       },
       null,
       2

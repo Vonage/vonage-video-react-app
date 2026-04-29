@@ -3,6 +3,7 @@ import { resolve } from 'node:path';
 import { spawn } from 'node:child_process';
 import NormalizeCoverageDataSchema from './normalizeCoverageDataSchema';
 import type { NormalizeCoverageData } from './normalizeCoverageDataSchema';
+import withLoadingIndicator from '../../../helpers/withLoadingIndicator';
 
 const MAX_RETRIES = 10;
 const COPILOT_TIMEOUT_MILLISECONDS = 120_000; // 2 minutes
@@ -19,11 +20,10 @@ async function promptCopilotForNormalization(
   const fullPrompt = buildFullPrompt({ promptTemplate, affectedFiles });
 
   for (let attempt = 1; attempt <= MAX_RETRIES; attempt++) {
-    const rawOutput = await invokeCopilotModel(fullPrompt);
-
-    console.log(`\n--- Copilot raw output (attempt ${attempt}) ---`);
-    console.log(rawOutput);
-    console.log('--- End of raw output ---\n');
+    const rawOutput = await withLoadingIndicator({
+      message: `Waiting for Copilot response (attempt ${attempt}/${MAX_RETRIES})`,
+      task: () => invokeCopilotModel(fullPrompt),
+    });
 
     const parseResult = tryParseAndValidate(rawOutput);
 

@@ -86,7 +86,6 @@ function logStepReport<Context>(args: LogStepReportArgs<Context>): void {
     label,
   } = args;
 
-  const readableErrorMessage = error ? getReadableErrorMessage(error) : 'None';
   const prefix = label ? `[${label}] ` : '';
 
   const reportLines = [
@@ -105,11 +104,13 @@ function logStepReport<Context>(args: LogStepReportArgs<Context>): void {
     '',
     'Step Output:',
     stepExecutionResult?.outputSummary ?? 'Unavailable due to early failure.',
-    '',
-    `Error: ${readableErrorMessage}`,
-  ].join('\n');
+  ];
 
-  console.log(reportLines);
+  if (error) {
+    reportLines.push('', `Error: ${getReadableErrorMessage(error)}`);
+  }
+
+  console.log(reportLines.join('\n'));
 }
 
 function serializeContext<Context>(context: Context): string {

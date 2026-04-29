@@ -13,7 +13,7 @@ async function askTestScope(context: PipelineContext): Promise<StepExecutionResu
 
   const commandLineInterface = createInterface({ input: stdin, output: stdout });
   let selectedOption = '';
-  let providedPath = 'n/a';
+  const providedPath = 'n/a';
 
   try {
     console.log('What are the tests for?');

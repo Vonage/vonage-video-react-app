@@ -27,13 +27,10 @@ Produce a **strict JSON response** that can be consumed by downstream pipeline s
   "pipelineContext": {
     "projectType": "node|react|angular|unknown",
     "testFramework": "jest|vitest|mocha|unknown",
-    "coverageTool": "istanbul|c8|nyc|unknown",
     "commands": {
-      "install": "string",
       "test": "string",
       "coverage": "string"
-    },
-    "dependencies": ["string"]
+    }
   },
   "files": [
     {
@@ -44,39 +41,25 @@ Produce a **strict JSON response** that can be consumed by downstream pipeline s
       "directTestFileMatch": "string|null",
       "testFilePatternMatch": "direct|related|none",
       "testFiles": ["string"],
-      "coverage": {
-        "statements": number,
-        "branches": number,
-        "functions": number,
-        "lines": number
-      },
-      "coverageStatus": "good|partial|missing",
       "execution": {
         "runTestCommand": "string",
-        "runCoverageCommand": "string",
-        "notes": "string"
+        "runCoverageCommand": "string"
       },
       "recommendation": {
         "action": "skip|improve|create",
-        "reason": "string"
+        "reason": "string (max 4 words)"
       },
       "testStrategy": "unit|integration|snapshot|unknown",
       "confidence": number
     }
-  ],
-  "thresholds": {
-    "statements": 85,
-    "branches": 80,
-    "functions": 85,
-    "lines": 85
-  }
+  ]
 }
 
 ---
 
 ## Instructions
 
-1. Detect project type, test framework, and coverage tool
+1. Detect project type and test framework
 
 2. For each source file:
    - Detect if tests exist
@@ -94,31 +77,16 @@ Produce a **strict JSON response** that can be consumed by downstream pipeline s
      - set "hasDirectTestFile" = false
      - set "testFilePatternMatch" = "none"
 
-3. Extract coverage metrics if available
-   - If not available, set coverageStatus = "missing"
-
-4. Provide commands to:
-   - install dependencies
+3. Provide commands to:
    - run tests
    - run coverage
 
-5. Provide per-file execution commands scoped to the file when possible
+4. Provide per-file execution commands scoped to the file when possible
 
-6. Assign recommendation:
-   - "skip" → coverage meets thresholds
-   - "improve" → tests exist but coverage below threshold
+5. Assign recommendation:
+   - "skip" → tests already exist and cover the file
+   - "improve" → tests exist but incomplete
    - "create" → no tests exist
-
-7. Assign a confidence score (0 to 1)
-
----
-
-## Thresholds
-
-- statements: 85
-- branches: 80
-- functions: 85
-- lines: 85
 
 ---
 
