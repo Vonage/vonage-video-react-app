@@ -19,15 +19,13 @@ const languageOptions: LanguageOption[] = [
   { code: 'es-MX', name: 'Español (México)', flag: 'flag-mexico' },
 ];
 
-const ChevronIcon = ({ className, ...props }: { className: string } & Record<string, unknown>) => (
-  <VividIcon name="chevron-down-line" customSize={-5} className={className} {...props} />
+const ChevronIcon = ({ className }: { className: string }) => (
+  <VividIcon name="chevron-down-line" customSize={-5} className={className} />
 );
 
-const SelectIconComponent =
-  (iconClassName: string) =>
-  (props: Record<string, unknown>): ReactElement => (
-    <ChevronIcon className={iconClassName} {...props} />
-  );
+const SelectIconComponent = (iconClassName: string) => (): ReactElement => (
+  <ChevronIcon className={iconClassName} />
+);
 
 /**
  * LanguageSelector Component
@@ -59,17 +57,7 @@ const LanguageSelector = ({ showFlag = true }: LanguageSelectorProps): ReactElem
         onChange={handleLanguageChange}
         IconComponent={SelectIconComponent('text-vera-text-secondary')}
         displayEmpty
-        sx={{
-          '& .MuiOutlinedInput-notchedOutline': {
-            border: 'none',
-          },
-          '& .MuiSelect-select': {
-            backgroundColor: 'var(--vera-surface)',
-            '@media (min-width: 768px)': {
-              backgroundColor: 'var(--vera-background)',
-            },
-          },
-        }}
+        className="bg-transparent! *:border-none"
         renderValue={(value) => {
           const selectedOption = supportedLanguages.find((option) => option.code === value);
           if (!selectedOption) {

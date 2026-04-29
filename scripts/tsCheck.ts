@@ -9,8 +9,6 @@ const PROJECT_ALIASES: Record<string, string> = {
   ui: 'ui',
   common: 'common',
   'integration-tests': 'integration-tests',
-  studio: 'vera-studio',
-  'vera-studio': 'vera-studio',
 };
 
 function runCommand(command: string) {

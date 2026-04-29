@@ -6,12 +6,11 @@ import bridge$ from './stores/bridge';
 import { runtime$ } from '@core/stores';
 import VeraRoom from './VeraRoom';
 import { setupWindowNavigatorMock } from '@web-test/fixtures';
-import { Any } from '@common/types';
 
 const renderWithBridge = (ui: React.ReactElement) =>
   render(
     <bridge$.Provider>
-      <runtime$.Provider videoClient={{} as Any}>{ui}</runtime$.Provider>
+      <runtime$.Provider videoClient="some-url">{ui}</runtime$.Provider>
     </bridge$.Provider>
   );
 

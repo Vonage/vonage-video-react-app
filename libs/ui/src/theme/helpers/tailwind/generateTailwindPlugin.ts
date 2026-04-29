@@ -486,6 +486,9 @@ ${darkVars}
       lineHeight: '1.5rem',
       fontWeight: '400',
     };
+
+    const desktop = fontSizeDesktop[key] ?? mobile;
+
     const desktopVariableNames = veraTypographyVariableNames[key as VeraTypographyTokenKey];
 
     plugin += `    // ${key}\n`;
@@ -494,9 +497,9 @@ ${darkVars}
     plugin += `      lineHeight: '${mobile.lineHeight}',\n`;
     plugin += `      fontWeight: ${mobile.fontWeight},\n`;
     plugin += `      '@media (min-width: 768px)': {\n`;
-    plugin += `        fontSize: 'var(${desktopVariableNames.fontSize})',\n`;
-    plugin += `        lineHeight: 'var(${desktopVariableNames.lineHeight})',\n`;
-    plugin += `        fontWeight: 'var(${desktopVariableNames.fontWeight})',\n`;
+    plugin += `        fontSize: 'var(${desktopVariableNames.fontSize}, ${desktop.fontSize})',\n`;
+    plugin += `        lineHeight: 'var(${desktopVariableNames.lineHeight}, ${desktop.lineHeight})',\n`;
+    plugin += `        fontWeight: 'var(${desktopVariableNames.fontWeight}, ${desktop.fontWeight})',\n`;
     plugin += `      },\n`;
     plugin += `    };\n\n`;
 
@@ -504,7 +507,7 @@ ${darkVars}
     plugin += `    fontWeightUtilities['.font-vera-${key}'] = {\n`;
     plugin += `      fontWeight: ${mobile.fontWeight},\n`;
     plugin += `      '@media (min-width: 768px)': {\n`;
-    plugin += `        fontWeight: 'var(${desktopVariableNames.fontWeight})',\n`;
+    plugin += `        fontWeight: 'var(${desktopVariableNames.fontWeight}, ${desktop.fontWeight})',\n`;
     plugin += `      },\n`;
     plugin += `    };\n\n`;
   }

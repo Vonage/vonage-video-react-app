@@ -34,6 +34,7 @@ If you're new to Vonage, you can [sign up for a Vonage API account](https://dash
   - [File names](#file-names)
 - [Documentation Generation](#documentation-generation)
 - [Code of Conduct](#code-of-conduct)
+- [Maintainers](#maintainers)
 - [Getting Involved](#getting-involved)
 - [Known Issues](#known-issues)
 - [Report Issues](#report-issues)
@@ -595,6 +596,12 @@ yarn nx run frontend:docs
 ## Code of Conduct
 
 Please read our [Code of Conduct](CODE_OF_CONDUCT.md).
+
+## Maintainers
+
+This repository is actively maintained by the Vonage Video team.
+
+For maintainer responsibilities, review expectations, and project ownership guidelines, see [MAINTAINERS.md](./MAINTAINERS.md).
 
 ## Getting Involved
 

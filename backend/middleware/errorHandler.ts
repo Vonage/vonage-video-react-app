@@ -65,11 +65,16 @@ export function errorHandler(
   const isHtmlRequest = accepts.includes('text/html');
 
   if (isHtmlRequest) {
+    const safeMessage = safeError.message
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#39;');
+
     res
       .status(statusCode)
-      .send(
-        `<!DOCTYPE html><html><body><h1>${statusCode}</h1><p>${safeError.message}</p></body></html>`
-      );
+      .send(`<!DOCTYPE html><html><body><h1>${statusCode}</h1><p>${safeMessage}</p></body></html>`);
 
     return;
   }

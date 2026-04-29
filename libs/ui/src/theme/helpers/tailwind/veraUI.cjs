@@ -428,16 +428,16 @@ const veraUI = (config = {}) => {
         lineHeight: '2.5rem',
         fontWeight: 500,
         '@media (min-width: 768px)': {
-          fontSize: 'var(--vera-typography-headline-font-size)',
-          lineHeight: 'var(--vera-typography-headline-line-height)',
-          fontWeight: 'var(--vera-typography-headline-font-weight)',
+          fontSize: 'var(--vera-typography-headline-font-size, 4.125rem)',
+          lineHeight: 'var(--vera-typography-headline-line-height, 5.5rem)',
+          fontWeight: 'var(--vera-typography-headline-font-weight, 500)',
         },
       };
 
       fontWeightUtilities['.font-vera-headline'] = {
         fontWeight: 500,
         '@media (min-width: 768px)': {
-          fontWeight: 'var(--vera-typography-headline-font-weight)',
+          fontWeight: 'var(--vera-typography-headline-font-weight, 500)',
         },
       };
 
@@ -447,16 +447,16 @@ const veraUI = (config = {}) => {
         lineHeight: '2.375rem',
         fontWeight: 500,
         '@media (min-width: 768px)': {
-          fontSize: 'var(--vera-typography-subtitle-font-size)',
-          lineHeight: 'var(--vera-typography-subtitle-line-height)',
-          fontWeight: 'var(--vera-typography-subtitle-font-weight)',
+          fontSize: 'var(--vera-typography-subtitle-font-size, 3.25rem)',
+          lineHeight: 'var(--vera-typography-subtitle-line-height, 4.25rem)',
+          fontWeight: 'var(--vera-typography-subtitle-font-weight, 500)',
         },
       };
 
       fontWeightUtilities['.font-vera-subtitle'] = {
         fontWeight: 500,
         '@media (min-width: 768px)': {
-          fontWeight: 'var(--vera-typography-subtitle-font-weight)',
+          fontWeight: 'var(--vera-typography-subtitle-font-weight, 500)',
         },
       };
 
@@ -466,16 +466,16 @@ const veraUI = (config = {}) => {
         lineHeight: '2.25rem',
         fontWeight: 500,
         '@media (min-width: 768px)': {
-          fontSize: 'var(--vera-typography-heading-1-font-size)',
-          lineHeight: 'var(--vera-typography-heading-1-line-height)',
-          fontWeight: 'var(--vera-typography-heading-1-font-weight)',
+          fontSize: 'var(--vera-typography-heading-1-font-size, 2.5rem)',
+          lineHeight: 'var(--vera-typography-heading-1-line-height, 3.25rem)',
+          fontWeight: 'var(--vera-typography-heading-1-font-weight, 500)',
         },
       };
 
       fontWeightUtilities['.font-vera-heading-1'] = {
         fontWeight: 500,
         '@media (min-width: 768px)': {
-          fontWeight: 'var(--vera-typography-heading-1-font-weight)',
+          fontWeight: 'var(--vera-typography-heading-1-font-weight, 500)',
         },
       };
 
@@ -485,16 +485,16 @@ const veraUI = (config = {}) => {
         lineHeight: '2rem',
         fontWeight: 500,
         '@media (min-width: 768px)': {
-          fontSize: 'var(--vera-typography-heading-2-font-size)',
-          lineHeight: 'var(--vera-typography-heading-2-line-height)',
-          fontWeight: 'var(--vera-typography-heading-2-font-weight)',
+          fontSize: 'var(--vera-typography-heading-2-font-size, 2rem)',
+          lineHeight: 'var(--vera-typography-heading-2-line-height, 2.75rem)',
+          fontWeight: 'var(--vera-typography-heading-2-font-weight, 500)',
         },
       };
 
       fontWeightUtilities['.font-vera-heading-2'] = {
         fontWeight: 500,
         '@media (min-width: 768px)': {
-          fontWeight: 'var(--vera-typography-heading-2-font-weight)',
+          fontWeight: 'var(--vera-typography-heading-2-font-weight, 500)',
         },
       };
 
@@ -504,16 +504,16 @@ const veraUI = (config = {}) => {
         lineHeight: '1.75rem',
         fontWeight: 500,
         '@media (min-width: 768px)': {
-          fontSize: 'var(--vera-typography-heading-3-font-size)',
-          lineHeight: 'var(--vera-typography-heading-3-line-height)',
-          fontWeight: 'var(--vera-typography-heading-3-font-weight)',
+          fontSize: 'var(--vera-typography-heading-3-font-size, 1.625rem)',
+          lineHeight: 'var(--vera-typography-heading-3-line-height, 2.25rem)',
+          fontWeight: 'var(--vera-typography-heading-3-font-weight, 500)',
         },
       };
 
       fontWeightUtilities['.font-vera-heading-3'] = {
         fontWeight: 500,
         '@media (min-width: 768px)': {
-          fontWeight: 'var(--vera-typography-heading-3-font-weight)',
+          fontWeight: 'var(--vera-typography-heading-3-font-weight, 500)',
         },
       };
 
@@ -523,16 +523,16 @@ const veraUI = (config = {}) => {
         lineHeight: '1.5rem',
         fontWeight: 500,
         '@media (min-width: 768px)': {
-          fontSize: 'var(--vera-typography-heading-4-font-size)',
-          lineHeight: 'var(--vera-typography-heading-4-line-height)',
-          fontWeight: 'var(--vera-typography-heading-4-font-weight)',
+          fontSize: 'var(--vera-typography-heading-4-font-size, 1.25rem)',
+          lineHeight: 'var(--vera-typography-heading-4-line-height, 1.75rem)',
+          fontWeight: 'var(--vera-typography-heading-4-font-weight, 500)',
         },
       };
 
       fontWeightUtilities['.font-vera-heading-4'] = {
         fontWeight: 500,
         '@media (min-width: 768px)': {
-          fontWeight: 'var(--vera-typography-heading-4-font-weight)',
+          fontWeight: 'var(--vera-typography-heading-4-font-weight, 500)',
         },
       };
 
@@ -542,16 +542,16 @@ const veraUI = (config = {}) => {
         lineHeight: '1.5rem',
         fontWeight: 400,
         '@media (min-width: 768px)': {
-          fontSize: 'var(--vera-typography-body-extended-font-size)',
-          lineHeight: 'var(--vera-typography-body-extended-line-height)',
-          fontWeight: 'var(--vera-typography-body-extended-font-weight)',
+          fontSize: 'var(--vera-typography-body-extended-font-size, 1rem)',
+          lineHeight: 'var(--vera-typography-body-extended-line-height, 1.5rem)',
+          fontWeight: 'var(--vera-typography-body-extended-font-weight, 400)',
         },
       };
 
       fontWeightUtilities['.font-vera-body-extended'] = {
         fontWeight: 400,
         '@media (min-width: 768px)': {
-          fontWeight: 'var(--vera-typography-body-extended-font-weight)',
+          fontWeight: 'var(--vera-typography-body-extended-font-weight, 400)',
         },
       };
 
@@ -561,16 +561,16 @@ const veraUI = (config = {}) => {
         lineHeight: '1.5rem',
         fontWeight: 600,
         '@media (min-width: 768px)': {
-          fontSize: 'var(--vera-typography-body-extended-semibold-font-size)',
-          lineHeight: 'var(--vera-typography-body-extended-semibold-line-height)',
-          fontWeight: 'var(--vera-typography-body-extended-semibold-font-weight)',
+          fontSize: 'var(--vera-typography-body-extended-semibold-font-size, 1rem)',
+          lineHeight: 'var(--vera-typography-body-extended-semibold-line-height, 1.5rem)',
+          fontWeight: 'var(--vera-typography-body-extended-semibold-font-weight, 600)',
         },
       };
 
       fontWeightUtilities['.font-vera-body-extended-semibold'] = {
         fontWeight: 600,
         '@media (min-width: 768px)': {
-          fontWeight: 'var(--vera-typography-body-extended-semibold-font-weight)',
+          fontWeight: 'var(--vera-typography-body-extended-semibold-font-weight, 600)',
         },
       };
 
@@ -580,16 +580,16 @@ const veraUI = (config = {}) => {
         lineHeight: '1.25rem',
         fontWeight: 400,
         '@media (min-width: 768px)': {
-          fontSize: 'var(--vera-typography-body-base-font-size)',
-          lineHeight: 'var(--vera-typography-body-base-line-height)',
-          fontWeight: 'var(--vera-typography-body-base-font-weight)',
+          fontSize: 'var(--vera-typography-body-base-font-size, 0.875rem)',
+          lineHeight: 'var(--vera-typography-body-base-line-height, 1.25rem)',
+          fontWeight: 'var(--vera-typography-body-base-font-weight, 400)',
         },
       };
 
       fontWeightUtilities['.font-vera-body-base'] = {
         fontWeight: 400,
         '@media (min-width: 768px)': {
-          fontWeight: 'var(--vera-typography-body-base-font-weight)',
+          fontWeight: 'var(--vera-typography-body-base-font-weight, 400)',
         },
       };
 
@@ -599,16 +599,16 @@ const veraUI = (config = {}) => {
         lineHeight: '1.25rem',
         fontWeight: 600,
         '@media (min-width: 768px)': {
-          fontSize: 'var(--vera-typography-body-base-semibold-font-size)',
-          lineHeight: 'var(--vera-typography-body-base-semibold-line-height)',
-          fontWeight: 'var(--vera-typography-body-base-semibold-font-weight)',
+          fontSize: 'var(--vera-typography-body-base-semibold-font-size, 0.875rem)',
+          lineHeight: 'var(--vera-typography-body-base-semibold-line-height, 1.25rem)',
+          fontWeight: 'var(--vera-typography-body-base-semibold-font-weight, 600)',
         },
       };
 
       fontWeightUtilities['.font-vera-body-base-semibold'] = {
         fontWeight: 600,
         '@media (min-width: 768px)': {
-          fontWeight: 'var(--vera-typography-body-base-semibold-font-weight)',
+          fontWeight: 'var(--vera-typography-body-base-semibold-font-weight, 600)',
         },
       };
 
@@ -618,16 +618,16 @@ const veraUI = (config = {}) => {
         lineHeight: '1rem',
         fontWeight: 400,
         '@media (min-width: 768px)': {
-          fontSize: 'var(--vera-typography-caption-font-size)',
-          lineHeight: 'var(--vera-typography-caption-line-height)',
-          fontWeight: 'var(--vera-typography-caption-font-weight)',
+          fontSize: 'var(--vera-typography-caption-font-size, 0.75rem)',
+          lineHeight: 'var(--vera-typography-caption-line-height, 1rem)',
+          fontWeight: 'var(--vera-typography-caption-font-weight, 400)',
         },
       };
 
       fontWeightUtilities['.font-vera-caption'] = {
         fontWeight: 400,
         '@media (min-width: 768px)': {
-          fontWeight: 'var(--vera-typography-caption-font-weight)',
+          fontWeight: 'var(--vera-typography-caption-font-weight, 400)',
         },
       };
 
@@ -637,16 +637,16 @@ const veraUI = (config = {}) => {
         lineHeight: '1rem',
         fontWeight: 600,
         '@media (min-width: 768px)': {
-          fontSize: 'var(--vera-typography-caption-semibold-font-size)',
-          lineHeight: 'var(--vera-typography-caption-semibold-line-height)',
-          fontWeight: 'var(--vera-typography-caption-semibold-font-weight)',
+          fontSize: 'var(--vera-typography-caption-semibold-font-size, 0.75rem)',
+          lineHeight: 'var(--vera-typography-caption-semibold-line-height, 1rem)',
+          fontWeight: 'var(--vera-typography-caption-semibold-font-weight, 600)',
         },
       };
 
       fontWeightUtilities['.font-vera-caption-semibold'] = {
         fontWeight: 600,
         '@media (min-width: 768px)': {
-          fontWeight: 'var(--vera-typography-caption-semibold-font-weight)',
+          fontWeight: 'var(--vera-typography-caption-semibold-font-weight, 600)',
         },
       };
 

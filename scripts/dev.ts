@@ -76,23 +76,6 @@ function devRoom(): void {
 }
 
 /**
- * Runs Vera Studio + backend + frontend Storybook.
- */
-function devStudio(): void {
-  const storyPath = '/story/veraroom-veraroomelement--default';
-
-  console.log('\n🧩 Starting Vera Studio + backend + frontend Storybook...\n');
-  console.log('🌐 Vera Studio: http://localhost:5000');
-  console.log('🌐 Backend: http://localhost:8080');
-  console.log(`🌐 Storybook: http://localhost:6006/?path=${storyPath}\n`);
-
-  runCommand('yarn sync:theme-tokens');
-  runCommand(
-    `concurrently --names "studio,storybook,server" "nx run vera-studio:dev" "nx run frontend:storybook -- --initial-path='${storyPath}'" "nx run backend:dev"`
-  );
-}
-
-/**
  * Main entry point for dev commands.
  *
  * Targets:
@@ -111,7 +94,6 @@ function devStudio(): void {
  * - yarn dev debug wait         (run frontend + backend with --inspect-brk, waits for debugger)
  * - yarn dev room         (run VeraRoom Storybook and backend)
  * - yarn dev studio       (run Vera Studio + backend + frontend Storybook)
- * - yarn dev vera-studio  (run Vera Studio + backend + frontend Storybook)
  */
 function main(): void {
   const [target, subTarget] = args;
@@ -145,10 +127,6 @@ function main(): void {
       return;
     case 'room':
       devRoom();
-      return;
-    case 'studio':
-    case 'vera-studio':
-      devStudio();
       return;
     default:
       devAll();
