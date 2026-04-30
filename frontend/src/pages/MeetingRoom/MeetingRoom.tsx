@@ -5,8 +5,6 @@ import Toolbar from '../../components/MeetingRoom/Toolbar';
 import VideoTileCanvas from '../../components/MeetingRoom/VideoTileCanvas';
 import SmallViewportHeader from '../../components/MeetingRoom/SmallViewportHeader';
 import EmojisOrigin from '../../components/MeetingRoom/EmojisOrigin';
-import RaiseHandToast from '../../components/MeetingRoom/RaiseHandToast';
-import RaiseHandPill from '../../components/MeetingRoom/RaiseHandPill';
 import { env } from '../../env';
 import useAudioLevels from '../../hooks/useAudioLevels';
 import { useAutoLowerOnDominantSpeaker } from '../../hooks/useAutoLowerOnDominantSpeaker';
@@ -76,7 +74,6 @@ const MeetingRoom = ({ fullSize = false, className }: MeetingRoomProps): ReactEl
     setRaisedHandsMap,
     raisedHandsMapRef,
     signal,
-    raisedHandCount,
     localHandIsRaised,
     raiseHand,
     sendEmoji,
@@ -139,8 +136,6 @@ const MeetingRoom = ({ fullSize = false, className }: MeetingRoomProps): ReactEl
 
       <RightPanel activeTab={rightPanelActiveTab} handleClose={closeRightPanel} />
       <EmojisOrigin />
-      {isRaiseHandAllowed && <RaiseHandToast />}
-      {isRaiseHandAllowed && raisedHandCount > 0 && <RaiseHandPill />}
       {isUserCaptionsEnabled && <CaptionsBox />}
       {captionsErrorResponse && (
         <CaptionsError

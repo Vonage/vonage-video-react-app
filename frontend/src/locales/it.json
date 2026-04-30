@@ -230,13 +230,5 @@
   "raiseHand.lowerAll.dialogTitle": "Abbassare tutte le mani?",
   "raiseHand.lowerAll.dialogBody": "Verrà abbassata {{count}} mano alzata.",
   "raiseHand.lowerAll.dialogBody_plural": "Verranno abbassate {{count}} mani alzate.",
-  "raiseHand.lowerAll.confirmButton": "Abbassa tutte le mani",
-  "raiseHand.toast.singleRaised": "{{name}} ha alzato la mano",
-  "raiseHand.toast.multipleRaised": "{{count}} partecipanti hanno alzato la mano",
-  "raiseHand.toast.viewQueue": "Vedi coda",
-  "raiseHand.pill.ariaLabel": "Mani alzate — primo in coda: {{name}}. Clicca per aprire il pannello partecipanti.",
-  "raiseHand.pill.popoverTitle": "Mani alzate",
-  "raiseHand.pill.viewAll": "Vedi tutti ({{count}}) >",
-  "raiseHand.selfLowerPill.ariaLabel": "Abbassa la tua mano alzata",
-  "raiseHand.selfLowerPill.label": "Abbassa la mano"
+  "raiseHand.lowerAll.confirmButton": "Abbassa tutte le mani"
 }

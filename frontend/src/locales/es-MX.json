@@ -230,13 +230,5 @@
   "raiseHand.lowerAll.dialogTitle": "¿Bajar todas las manos?",
   "raiseHand.lowerAll.dialogBody": "Se bajará {{count}} mano levantada.",
   "raiseHand.lowerAll.dialogBody_plural": "Se bajarán {{count}} manos levantadas.",
-  "raiseHand.lowerAll.confirmButton": "Bajar todas las manos",
-  "raiseHand.toast.singleRaised": "{{name}} levantó la mano",
-  "raiseHand.toast.multipleRaised": "{{count}} participantes levantaron la mano",
-  "raiseHand.toast.viewQueue": "Ver fila",
-  "raiseHand.pill.ariaLabel": "Manos levantadas — primero en la fila: {{name}}. Haz clic para abrir el panel de participantes.",
-  "raiseHand.pill.popoverTitle": "Manos levantadas",
-  "raiseHand.pill.viewAll": "Ver todos ({{count}}) >",
-  "raiseHand.selfLowerPill.ariaLabel": "Bajar tu mano levantada",
-  "raiseHand.selfLowerPill.label": "Bajar mano"
+  "raiseHand.lowerAll.confirmButton": "Bajar todas las manos"
 }

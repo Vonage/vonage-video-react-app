@@ -3,11 +3,9 @@ import { useTranslation } from 'react-i18next';
 import ToolbarButton from '../ToolbarButton';
 import Badge from '@mui/material/Badge';
 import Tooltip from '@mui/material/Tooltip';
-import Box from '@mui/material/Box';
 import useTheme from '@ui/theme';
 import VividIcon from '@components/VividIcon';
 import { env } from '../../../env';
-import useSessionContext from '@hooks/useSessionContext';
 
 export type ParticipantListButtonProps = {
   handleClick: () => void;
@@ -35,7 +33,6 @@ const ParticipantListButton = ({
 }: ParticipantListButtonProps): ReactElement | false => {
   const theme = useTheme();
   const { t } = useTranslation();
-  const { raisedHandCount } = useSessionContext();
 
   return (
     env.SHOW_PARTICIPANT_LIST && (
@@ -43,57 +40,33 @@ const ParticipantListButton = ({
         title={isOpen ? t('participants.list.close') : t('participants.list.open')}
         aria-label={t('participants.list.ariaLabel')}
       >
-        {/* Outer badge: raised-hand count indicator (primary color) */}
         <Badge
-          badgeContent={env.ALLOW_RAISE_HAND && raisedHandCount > 0 ? '✋' : null}
-          invisible={!env.ALLOW_RAISE_HAND || raisedHandCount === 0}
-          data-testid="raised-hand-count-badge"
-          overlap="circular"
-          anchorOrigin={{ vertical: 'top', horizontal: 'left' }}
+          badgeContent={participantCount}
           sx={{
             '& .MuiBadge-badge': {
-              fontSize: '0.6rem',
-              minWidth: '16px',
-              height: '16px',
-              padding: '0 2px',
-              backgroundColor: theme.colors.primary,
-              color: theme.colors.onPrimary,
+              color: theme.colors.onTertiary,
+              backgroundColor: theme.colors.tertiary,
             },
-            marginRight: '12px',
-            zIndex: 1,
           }}
+          overlap="circular"
         >
-          {/* Inner badge: participant count (tertiary color) */}
-          <Badge
-            badgeContent={participantCount}
+          <ToolbarButton
+            data-testid="participant-list-button"
             sx={{
-              '& .MuiBadge-badge': {
-                color: theme.colors.onTertiary,
-                backgroundColor: theme.colors.tertiary,
-              },
+              marginTop: '0px',
+              marginRight: '0px',
             }}
-            overlap="circular"
-          >
-            <ToolbarButton
-              data-testid="participant-list-button"
-              sx={{
-                marginTop: '0px',
-                marginRight: '0px',
-              }}
-              onClick={handleClick}
-              icon={
-                <Box sx={{ position: 'relative', display: 'flex' }}>
-                  <VividIcon
-                    name="group-solid"
-                    customSize={-4}
-                    data-testid="PeopleIcon"
-                    sx={{ color: isOpen ? theme.colors.secondary : theme.colors.onSecondary }}
-                  />
-                </Box>
-              }
-              isOverflowButton={isOverflowButton}
-            />
-          </Badge>
+            onClick={handleClick}
+            icon={
+              <VividIcon
+                name="group-solid"
+                customSize={-4}
+                data-testid="PeopleIcon"
+                sx={{ color: isOpen ? theme.colors.secondary : theme.colors.onSecondary }}
+              />
+            }
+            isOverflowButton={isOverflowButton}
+          />
         </Badge>
       </Tooltip>
     )

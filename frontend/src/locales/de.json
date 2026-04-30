@@ -224,13 +224,5 @@
   "raiseHand.lowerAll.dialogTitle": "Alle Hände senken?",
   "raiseHand.lowerAll.dialogBody": "Dies senkt {{count}} gehobene Hand.",
   "raiseHand.lowerAll.dialogBody_plural": "Dies senkt {{count}} gehobene Hände.",
-  "raiseHand.lowerAll.confirmButton": "Alle Hände senken",
-  "raiseHand.toast.singleRaised": "{{name}} hat die Hand gehoben",
-  "raiseHand.toast.multipleRaised": "{{count}} Teilnehmer haben die Hand gehoben",
-  "raiseHand.toast.viewQueue": "Warteschlange anzeigen",
-  "raiseHand.pill.ariaLabel": "Gehobene Hände — zuerst in der Warteschlange: {{name}}. Klicken, um das Teilnehmerpanel zu öffnen.",
-  "raiseHand.pill.popoverTitle": "Gehobene Hände",
-  "raiseHand.pill.viewAll": "Alle anzeigen ({{count}}) >",
-  "raiseHand.selfLowerPill.ariaLabel": "Eigene gehobene Hand senken",
-  "raiseHand.selfLowerPill.label": "Hand senken"
+  "raiseHand.lowerAll.confirmButton": "Alle Hände senken"
 }
