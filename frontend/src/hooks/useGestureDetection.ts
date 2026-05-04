@@ -1,48 +1,18 @@
 /* cspell:words mediapipe MEDIAPIPE XNNPACK normalised fileset */
 import { useEffect, useRef, useState } from 'react';
 
-// ---------------------------------------------------------------------------
-// Constants
-// ---------------------------------------------------------------------------
-
-/** Default interval (ms) between gesture recognition runs on a video frame (4 FPS). */
 const DEFAULT_DETECTION_INTERVAL_MS = 250;
-
-/** Default minimum duration (ms) the Open_Palm gesture must be sustained before triggering. */
 const DEFAULT_DETECTION_DURATION_MS = 2000;
-
-/** Default minimum confidence for the Open_Palm gesture to count as a detection. */
 const DEFAULT_GESTURE_CONFIDENCE = 0.45;
-
-/**
- * Default number of recent frames inspected when checking whether the hand is waving.
- * At the default 4 FPS this is ~1.5 s of motion history.
- */
 const DEFAULT_WAVE_WINDOW_FRAMES = 6;
-
-/**
- * Default lateral motion threshold (in normalized image-x units, range 0–1).
- * If the wrist's x-coordinate range across the wave window exceeds this value,
- * the hand is considered to be waving and Open_Palm detection is suppressed.
- * 0.10 ≈ 10% of frame width.
- */
 const DEFAULT_WAVE_RANGE_THRESHOLD = 0.1;
 
-/** CDN path for the MediaPipe Vision WASM runtime files. */
 const MEDIAPIPE_WASM_CDN = 'https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.32/wasm';
-
-/** CDN path for the GestureRecognizer model. */
 const GESTURE_RECOGNIZER_MODEL =
   'https://storage.googleapis.com/mediapipe-models/gesture_recognizer/gesture_recognizer/float16/1/gesture_recognizer.task';
 
-// ---------------------------------------------------------------------------
-// Types
-// ---------------------------------------------------------------------------
-
-/** Gesture names returned by the MediaPipe GestureRecognizer model. */
 export type GestureName = 'Open_Palm' | 'Thumb_Up' | 'Thumb_Down';
 
-/** Maps each tracked gesture to the emoji shown in the progress ring. */
 export const GESTURE_EMOJI_MAP: Record<GestureName, string> = {
   Open_Palm: '✋',
   Thumb_Up: '👍',
@@ -93,22 +63,6 @@ export type UseGestureDetectionProps = {
   waveRangeThreshold?: number;
 };
 
-// ---------------------------------------------------------------------------
-// Hook
-// ---------------------------------------------------------------------------
-
-/**
- * Detects when the local user shows an open palm in front of the camera for
- * a configurable duration (default 2 s) and triggers `onHandRaised`.
- *
- * Uses MediaPipe GestureRecognizer running at 4 FPS (every 250 ms) on the
- * publisher's video element. The model is lazy-loaded from CDN when `enabled`
- * first becomes true, and disposed when `enabled` becomes false to free memory.
- *
- * Detection criteria:
- * - Gesture classified as `Open_Palm` with confidence ≥ configurable threshold (default 0.45)
- */
-/** Per-gesture tracking state for sustained detection. */
 type GestureState = {
   consecutiveDetections: number;
   hasFired: boolean;
@@ -127,12 +81,11 @@ const useGestureDetection = ({
   waveWindowFrames = DEFAULT_WAVE_WINDOW_FRAMES,
   waveRangeThreshold = DEFAULT_WAVE_RANGE_THRESHOLD,
 }: UseGestureDetectionProps): GestureProgress => {
-  // Stable refs to avoid stale closures inside the interval callback.
+  // Refs let the interval callback see latest values without restarting the
+  // model load loop on every render.
   const callbacksRef = useRef({ onHandRaised, onThumbsUp, onThumbsDown });
   callbacksRef.current = { onHandRaised, onThumbsUp, onThumbsDown };
 
-  // Tunable options held in a ref so prop changes are picked up by the interval
-  // callback without restarting the model load / detection loop.
   const optionsRef = useRef({
     delegate,
     detectionIntervalMs,
@@ -159,7 +112,6 @@ const useGestureDetection = ({
   });
   const isLoadingRef = useRef(false);
   const completionTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  /** Rolling history of wrist-x positions used by the wave detector. */
   const wristXHistoryRef = useRef<number[]>([]);
 
   const [gestureProgress, setGestureProgress] = useState<GestureProgress>(null);
@@ -169,9 +121,6 @@ const useGestureDetection = ({
     Math.ceil(detectionDurationMs / detectionIntervalMs)
   );
 
-  // Helpers below close over refs/state setters defined above.
-
-  /** Load and configure the GestureRecognizer model. Returns true on success. */
   const loadRecognizer = async (cancelled: () => boolean): Promise<boolean> => {
     if (recognizerRef.current || isLoadingRef.current) return !!recognizerRef.current;
 
@@ -233,9 +182,8 @@ const useGestureDetection = ({
   };
 
   /**
-   * Tracks the wrist's x-coordinate over a rolling window and decides whether
-   * the hand is currently waving (large lateral motion). Used to suppress
-   * Open_Palm detection during a wave-goodbye gesture.
+   * Suppresses Open_Palm during a goodbye-wave by checking the wrist's
+   * lateral motion over a rolling window.
    */
   const isHandWaving = (
     result: import('@mediapipe/tasks-vision').GestureRecognizerResult
@@ -244,7 +192,6 @@ const useGestureDetection = ({
     const history = wristXHistoryRef.current;
 
     if (typeof wristX !== 'number') {
-      // No hand detected this frame — clear the history so we start fresh next time.
       history.length = 0;
       return false;
     }
@@ -259,7 +206,6 @@ const useGestureDetection = ({
     return range > optionsRef.current.waveRangeThreshold;
   };
 
-  /** Run one detection tick on the current video frame. */
   const runDetectionTick = (videoEl: HTMLVideoElement) => {
     const recognizer = recognizerRef.current;
     if (!recognizer || videoEl.readyState < 2) return;
@@ -267,7 +213,6 @@ const useGestureDetection = ({
     try {
       const result = recognizer.recognizeForVideo(videoEl, performance.now());
       const detected = detectGesture(result, optionsRef.current.gestureConfidence);
-      // Suppress Open_Palm detection while the hand is waving (e.g., goodbye wave).
       const effectiveDetected = detected === 'Open_Palm' && isHandWaving(result) ? null : detected;
       const callbacks = callbacksRef.current;
       const currentDurationMs = optionsRef.current.detectionDurationMs;
@@ -297,7 +242,6 @@ const useGestureDetection = ({
       return;
     }
 
-    // Guard: browser must support WebAssembly (required by MediaPipe WASM runtime)
     if (typeof WebAssembly === 'undefined') {
       console.warn('[useGestureDetection] WebAssembly not supported — skipping detection');
       return;
@@ -346,7 +290,6 @@ const useGestureDetection = ({
     resetGestureState();
     setGestureProgress(null);
 
-    // Dispose the model to free memory when detection is disabled
     if (recognizerRef.current) {
       recognizerRef.current.close();
       recognizerRef.current = null;
@@ -357,11 +300,6 @@ const useGestureDetection = ({
   return gestureProgress;
 };
 
-// ---------------------------------------------------------------------------
-// Detection logic
-// ---------------------------------------------------------------------------
-
-/** Gestures we track from the MediaPipe model. */
 const TRACKED_GESTURES: ReadonlySet<string> = new Set<GestureName>([
   'Open_Palm',
   'Thumb_Up',
@@ -369,11 +307,9 @@ const TRACKED_GESTURES: ReadonlySet<string> = new Set<GestureName>([
 ]);
 
 /**
- * Returns the detected {@link GestureName} if the top gesture is one we track
- * and meets the confidence threshold, or `null` otherwise.
- *
- * We rely on gesture classification (sustained for a configurable duration)
- * rather than wrist position. MediaPipe's normalised wrist y-coordinates are
+ * Returns the detected gesture if the top classification is one we track and
+ * meets the confidence threshold. We rely on gesture classification rather
+ * than wrist position because MediaPipe's normalised wrist y-coordinates are
  * unreliable in typical video-call framing (head + shoulders).
  */
 function detectGesture(

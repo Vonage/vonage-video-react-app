@@ -2,11 +2,6 @@ import { Dispatch, SetStateAction, useCallback, useEffect, useMemo, useRef, useS
 import { Connection } from '@vonage/client-sdk-video';
 import { RaiseHandState, SignalEvent, SignalType, SubscriberWrapper } from '../types/session';
 
-// ---------------------------------------------------------------------------
-// Signal payload shapes
-// ---------------------------------------------------------------------------
-
-/** Signal type used for all raise-hand events. */
 const RAISE_HAND_SIGNAL = 'raiseHand' as const;
 
 type RaiseHandPayload =
@@ -77,28 +72,18 @@ const useRaiseHand = ({
   getConnectionId,
   localUserName,
 }: UseRaiseHandProps): UseRaiseHand => {
-  // Map<connectionId, RaiseHandState> — source of truth for all raised hands
   const [raisedHandsMap, setRaisedHandsMap] = useState<Map<string, RaiseHandState>>(new Map());
 
-  // Ref so signal callbacks (closures) always see the latest map without a
-  // stale closure, and so the auto-lower timer always has the current state.
+  // Refs so signal callbacks always see the latest map and signal function;
+  // `onConnectionCreated` is registered once on the EventEmitter and would
+  // otherwise capture the first-render `signal` (often still undefined).
   const raisedHandsMapRef = useRef<Map<string, RaiseHandState>>(raisedHandsMap);
-
-  // Ref to the latest `signal` function so that `onConnectionCreated` (which
-  // is registered once with an EventEmitter inside `connect()` and therefore
-  // captures the first-render value of `signal`) always calls the up-to-date
-  // signal function rather than the stale `undefined` it saw at mount time.
   const signalRef = useRef(signal);
 
-  // Sync both refs in a single effect — one effect per hook guideline.
   useEffect(() => {
     raisedHandsMapRef.current = raisedHandsMap;
     signalRef.current = signal;
   }, [raisedHandsMap, signal]);
-
-  // -------------------------------------------------------------------------
-  // Derived state
-  // -------------------------------------------------------------------------
 
   const raisedHands = useMemo<RaiseHandState[]>(() => {
     const raised = [...raisedHandsMap.values()].filter((s) => s.raisedHand);
@@ -114,11 +99,6 @@ const useRaiseHand = ({
     return raisedHandsMap.get(localConnectionId)?.raisedHand === true;
   }, [raisedHandsMap, getConnectionId]);
 
-  // -------------------------------------------------------------------------
-  // Helpers
-  // -------------------------------------------------------------------------
-
-  /** Returns the display name for a given connectionId by looking up subscriber wrappers. */
   const getParticipantName = useCallback(
     (connectionId: string, wrappers: SubscriberWrapper[]): string => {
       const wrapper = wrappers.find(
@@ -128,10 +108,6 @@ const useRaiseHand = ({
     },
     []
   );
-
-  // -------------------------------------------------------------------------
-  // State updater
-  // -------------------------------------------------------------------------
 
   const updateHandState = useCallback(
     (connectionId: string, participantName: string, payload: RaiseHandPayload) => {
@@ -152,10 +128,6 @@ const useRaiseHand = ({
     },
     []
   );
-
-  // -------------------------------------------------------------------------
-  // Public actions
-  // -------------------------------------------------------------------------
 
   const raiseHand = useCallback(() => {
     const localConnectionId = getConnectionId();
@@ -221,7 +193,6 @@ const useRaiseHand = ({
     // Optimistic UI — clear all
     setRaisedHandsMap(new Map());
 
-    // Broadcast a lower for each raised hand
     currentMap.forEach((state) => {
       if (state.raisedHand) {
         signal({
@@ -240,20 +211,18 @@ const useRaiseHand = ({
   const resetAllHands = useCallback(() => {
     const localConnectionId = getConnectionId();
     const currentSignal = signalRef.current;
-
-    // Capture local hand state before clearing
     const localState = localConnectionId
       ? raisedHandsMapRef.current.get(localConnectionId)
       : undefined;
 
-    // Clear all remote hands — they will re-sync via connectionCreated
+    // Remote hands re-sync via connectionCreated; the local hand is kept with
+    // its original timestamp and re-broadcast so our queue position survives
+    // the reconnect.
     if (localState?.raisedHand && localState.raisedHandTimestamp !== null && localConnectionId) {
-      // Preserve local hand with original timestamp
       const preserved = new Map<string, RaiseHandState>();
       preserved.set(localConnectionId, localState);
       setRaisedHandsMap(preserved);
 
-      // Re-broadcast to all participants so they restore our queue position
       if (currentSignal) {
         const payload: RaiseHandPayload = {
           raisedHand: true,
@@ -265,10 +234,6 @@ const useRaiseHand = ({
       setRaisedHandsMap(new Map());
     }
   }, [getConnectionId]);
-
-  // -------------------------------------------------------------------------
-  // Inbound signal handler
-  // -------------------------------------------------------------------------
 
   const onRaiseHandSignal = useCallback(
     (event: SignalEvent, currentSubscriberWrappers: SubscriberWrapper[]) => {
@@ -286,7 +251,6 @@ const useRaiseHand = ({
       const localConnectionId = getConnectionId();
 
       if (parsed.raisedHand) {
-        // A participant raised their hand
         const name =
           senderConnectionId === localConnectionId
             ? localUserName
@@ -296,7 +260,7 @@ const useRaiseHand = ({
           timestamp: parsed.timestamp,
         });
       } else {
-        // A hand was lowered — figure out whose
+        // For moderator lowers the target is the lowered participant, not the sender.
         const targetConnectionId = parsed.connectionId ?? senderConnectionId;
         updateHandState(targetConnectionId, '', { raisedHand: false, timestamp: null });
       }
@@ -304,10 +268,8 @@ const useRaiseHand = ({
     [getConnectionId, getParticipantName, localUserName, updateHandState]
   );
 
-  // -------------------------------------------------------------------------
-  // Late-joiner sync: unicast current raised state to any new connection
-  // -------------------------------------------------------------------------
-
+  // Unicast our current raised-hand state to a newly-joined connection so
+  // late-joiners see the existing queue immediately.
   const onConnectionCreated = useCallback(
     (connection: Connection) => {
       const localConnectionId = getConnectionId();
@@ -330,10 +292,6 @@ const useRaiseHand = ({
     [getConnectionId] // signalRef is a stable ref — no need to re-create the callback when signal changes
   );
 
-  // -------------------------------------------------------------------------
-  // Connection destroyed → clear that participant's hand
-  // -------------------------------------------------------------------------
-
   const onConnectionDestroyed = useCallback((connectionId: string) => {
     setRaisedHandsMap((prev) => {
       if (!prev.has(connectionId)) return prev;
@@ -342,8 +300,6 @@ const useRaiseHand = ({
       return next;
     });
   }, []);
-
-  // -------------------------------------------------------------------------
 
   return {
     raisedHands,

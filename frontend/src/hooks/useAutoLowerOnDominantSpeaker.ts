@@ -38,12 +38,11 @@ export function useAutoLowerOnDominantSpeaker({
   signal,
   setRaisedHandsMap,
 }: UseAutoLowerOnDominantSpeakerProps): void {
-  // Track speaking timer for auto-lower
   const autoLowerTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const wasSpeakingRef = useRef<boolean>(false);
 
-  // Refs for `signal` and `getConnectionId` so the timer callback always reads
-  // the latest values without re-subscribing to publisherAudioLevel changes.
+  // Refs so the timer callback always reads the latest values without
+  // re-subscribing to publisherAudioLevel changes.
   const signalRef = useRef(signal);
   const getConnectionIdRef = useRef(getConnectionId);
   useEffect(() => {
@@ -51,9 +50,6 @@ export function useAutoLowerOnDominantSpeaker({
     getConnectionIdRef.current = getConnectionId;
   }, [signal, getConnectionId]);
 
-  // -------------------------------------------------------------------------
-  // Auto-lower: if local user speaks for >2 s while hand is raised
-  // -------------------------------------------------------------------------
   useEffect(() => {
     const localConnectionId = getConnectionIdRef.current();
     const localHandUp = localConnectionId
@@ -63,7 +59,6 @@ export function useAutoLowerOnDominantSpeaker({
     const isLocalSpeaking = publisherAudioLevel > SPEAKING_THRESHOLD;
 
     if (isLocalSpeaking && localHandUp && !wasSpeakingRef.current) {
-      // Start the 2-second timer
       wasSpeakingRef.current = true;
       autoLowerTimerRef.current = setTimeout(() => {
         const currentSignal = signalRef.current;
@@ -72,7 +67,6 @@ export function useAutoLowerOnDominantSpeaker({
         const currentState = raisedHandsMapRef.current.get(currentLocalConnectionId);
         if (!currentState?.raisedHand) return;
 
-        // Auto-lower with 'auto-speak' marker
         setRaisedHandsMap((prev) => {
           const next = new Map(prev);
           next.delete(currentLocalConnectionId);
@@ -89,7 +83,6 @@ export function useAutoLowerOnDominantSpeaker({
         });
       }, AUTO_SPEAK_LOWER_THRESHOLD_MS);
     } else if (!isLocalSpeaking || !localHandUp) {
-      // Cancel any pending auto-lower timer
       wasSpeakingRef.current = false;
       if (autoLowerTimerRef.current) {
         clearTimeout(autoLowerTimerRef.current);

@@ -3,14 +3,8 @@ import { useTranslation } from 'react-i18next';
 import useSessionContext from '@hooks/useSessionContext';
 
 /**
- * RaiseHandButton Component
- *
- * A full-width labelled button rendered inside the Reactions (Emoji) panel.
- * Toggles the local user's raised-hand state. Label and aria-label swap between
- * "Raise hand" and "Lower hand" to reflect the current state.
- *
- * Active state (hand raised) uses the VERA primary highlight token so the
- * participant has clear visual confirmation their hand is up.
+ * Toggles the local user's raised-hand state. Rendered inside the Reactions
+ * (Emoji) panel.
  */
 const RaiseHandButton = (): ReactElement => {
   const { t } = useTranslation();

@@ -15,12 +15,7 @@ export type LowerAllDialogProps = {
 };
 
 /**
- * LowerAllDialog Component
- *
- * Confirmation dialog before lowering all raised hands.
- * Prevents accidental mass-lower by requiring explicit user confirmation.
- * @param {LowerAllDialogProps} props
- * @returns {ReactElement}
+ * Confirmation dialog gating the moderator "Lower all hands" action.
  */
 const LowerAllDialog = ({
   open,

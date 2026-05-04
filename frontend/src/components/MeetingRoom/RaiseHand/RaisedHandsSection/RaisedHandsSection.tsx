@@ -5,14 +5,8 @@ import { isModeratorRole } from '../../../../utils/raiseHandRole';
 import LowerAllDialog from './LowerAllDialog';
 
 /**
- * RaisedHandsSection Component
- *
- * Renders a dedicated section at the top of the Participants panel listing all
- * participants who have raised their hand, ordered chronologically (first raised
- * = first in queue). Visible only when raisedHandCount > 0.
- *
- * Moderators can lower individual hands or all hands at once (guarded by
- * isModeratorRole() — always true in v1).
+ * Section at the top of the Participants panel listing raised hands in
+ * queue order. Moderators can lower individual or all hands.
  */
 const RaisedHandsSection = (): ReactElement => {
   const { t } = useTranslation();
@@ -28,7 +22,6 @@ const RaisedHandsSection = (): ReactElement => {
 
   return (
     <>
-      {/* Section header */}
       <div
         className="flex items-center justify-between px-6 pb-1 pt-3"
         data-testid="raised-hands-section"
@@ -57,7 +50,6 @@ const RaisedHandsSection = (): ReactElement => {
         )}
       </div>
 
-      {/* Queue list */}
       <ul className="m-0 list-none px-2 py-0">
         {raisedHands.map((state) => (
           <li
@@ -88,7 +80,6 @@ const RaisedHandsSection = (): ReactElement => {
 
       <hr className="mx-4 mt-2 border-vera-border" />
 
-      {/* Confirmation dialog */}
       <LowerAllDialog
         open={isLowerAllDialogOpen}
         raisedHandCount={raisedHandCount}
