@@ -346,4 +346,156 @@ describe('useRaiseHand', () => {
     act(() => result.current.onConnectionCreated(newConnection));
     expect(mockSignal).not.toBeCalled();
   });
+
+  it('onConnectionCreated re-uses the original raisedHandTimestamp (not Date.now())', () => {
+    vi.setSystemTime(50_000);
+    const { result } = renderRaiseHand();
+    act(() => result.current.raiseHand());
+
+    // Time passes; new connection joins later.
+    vi.setSystemTime(60_000);
+    mockSignal.mockClear();
+
+    const newConnection = { connectionId: 'new-conn', creationTime: 1, data: '' } as Connection;
+    act(() => result.current.onConnectionCreated(newConnection));
+
+    const data = JSON.parse(mockSignal.mock.calls[0][0].data as string) as Record<string, unknown>;
+    // Must be the original raise time so the late-joiner slots us at the right
+    // queue position, not the moment they joined.
+    expect(data.timestamp).toBe(50_000);
+  });
+
+  // ---------------------------------------------------------------------------
+  // resetAllHands behavior on reconnect
+  // ---------------------------------------------------------------------------
+
+  it('resetAllHands preserves the local hand and re-broadcasts the original timestamp', async () => {
+    vi.setSystemTime(7_000);
+    const wrapper = makeSubscriberWrapper(REMOTE_CONNECTION_ID, 'Bob');
+    const { result } = renderRaiseHand();
+
+    // Local raises then someone remote raises too.
+    act(() => result.current.raiseHand());
+    act(() => {
+      result.current.onRaiseHandSignal(
+        makeRemoteSignalEvent({ raisedHand: true, timestamp: 8_000 }),
+        [wrapper]
+      );
+    });
+    await waitFor(() => expect(result.current.raisedHandCount).toBe(2));
+    mockSignal.mockClear();
+
+    act(() => result.current.resetAllHands());
+
+    // The remote hand drops (will re-sync on reconnect via connectionCreated);
+    // the local hand stays.
+    await waitFor(() => expect(result.current.raisedHandCount).toBe(1));
+    expect(result.current.localHandIsRaised).toBe(true);
+
+    // And we re-broadcast our raise with the *original* timestamp so other
+    // peers slot us back into the right queue position.
+    expect(mockSignal).toBeCalledTimes(1);
+    const data = JSON.parse(mockSignal.mock.calls[0][0].data as string) as Record<string, unknown>;
+    expect(data.raisedHand).toBe(true);
+    expect(data.timestamp).toBe(7_000);
+  });
+
+  it('resetAllHands clears everything and sends nothing when the local hand was not raised', async () => {
+    const wrapper = makeSubscriberWrapper(REMOTE_CONNECTION_ID, 'Bob');
+    const { result } = renderRaiseHand();
+    act(() => {
+      result.current.onRaiseHandSignal(makeRemoteSignalEvent({ raisedHand: true, timestamp: 1 }), [
+        wrapper,
+      ]);
+    });
+    await waitFor(() => expect(result.current.raisedHandCount).toBe(1));
+    mockSignal.mockClear();
+
+    act(() => result.current.resetAllHands());
+
+    await waitFor(() => expect(result.current.raisedHandCount).toBe(0));
+    expect(mockSignal).not.toBeCalled();
+  });
+
+  // ---------------------------------------------------------------------------
+  // Robustness — malformed payloads / missing dependencies
+  // ---------------------------------------------------------------------------
+
+  it('onRaiseHandSignal swallows malformed JSON instead of crashing', () => {
+    const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
+    const { result } = renderRaiseHand();
+    const wrapper = makeSubscriberWrapper(REMOTE_CONNECTION_ID, 'Bob');
+
+    const event = {
+      type: 'signal:raiseHand',
+      data: '{not json',
+      from: { connectionId: REMOTE_CONNECTION_ID, creationTime: 1, data: '' } as Connection,
+    } as SignalEvent;
+
+    expect(() => act(() => result.current.onRaiseHandSignal(event, [wrapper]))).not.toThrow();
+    expect(warnSpy).toHaveBeenCalled();
+    expect(result.current.raisedHandCount).toBe(0);
+    warnSpy.mockRestore();
+  });
+
+  it('raise / lower / lowerAll are no-ops when the signal function is unavailable', () => {
+    const { result } = renderHook(() => useRaiseHand({ ...defaultProps, signal: undefined }), {
+      wrapper,
+    });
+
+    act(() => result.current.raiseHand());
+    act(() => result.current.lowerHand());
+    act(() => result.current.lowerHand(REMOTE_CONNECTION_ID));
+    act(() => result.current.lowerAllHands());
+
+    // Nothing was sent, and the store stays empty.
+    expect(mockSignal).not.toBeCalled();
+  });
+
+  it('lowerAllHands sends one signal per raised hand (not per entry in the map)', async () => {
+    const wrapperA = makeSubscriberWrapper('conn-a', 'A');
+    const wrapperB = makeSubscriberWrapper('conn-b', 'B');
+    const wrapperC = makeSubscriberWrapper('conn-c', 'C');
+    const { result } = renderRaiseHand();
+
+    act(() => {
+      // Three raises…
+      result.current.onRaiseHandSignal(
+        {
+          type: 'signal:raiseHand',
+          data: JSON.stringify({ raisedHand: true, timestamp: 1 }),
+          from: { connectionId: 'conn-a', creationTime: 1, data: '' } as Connection,
+        },
+        [wrapperA, wrapperB, wrapperC]
+      );
+      result.current.onRaiseHandSignal(
+        {
+          type: 'signal:raiseHand',
+          data: JSON.stringify({ raisedHand: true, timestamp: 2 }),
+          from: { connectionId: 'conn-b', creationTime: 1, data: '' } as Connection,
+        },
+        [wrapperA, wrapperB, wrapperC]
+      );
+      result.current.onRaiseHandSignal(
+        {
+          type: 'signal:raiseHand',
+          data: JSON.stringify({ raisedHand: true, timestamp: 3 }),
+          from: { connectionId: 'conn-c', creationTime: 1, data: '' } as Connection,
+        },
+        [wrapperA, wrapperB, wrapperC]
+      );
+    });
+
+    await waitFor(() => expect(result.current.raisedHandCount).toBe(3));
+    mockSignal.mockClear();
+
+    act(() => result.current.lowerAllHands());
+
+    expect(mockSignal).toBeCalledTimes(3);
+    const targets = mockSignal.mock.calls.map((c) => {
+      const data = JSON.parse(c[0].data as string) as { connectionId: string };
+      return data.connectionId;
+    });
+    expect(new Set(targets)).toEqual(new Set(['conn-a', 'conn-b', 'conn-c']));
+  });
 });

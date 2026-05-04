@@ -101,4 +101,48 @@ describe('RaisedHandsSection', () => {
     fireEvent.click(screen.getByTestId('lower-hand-conn-a'));
     expect(mockLowerHand).toHaveBeenCalledWith('conn-a');
   });
+
+  it('renders an empty queue without crashing (parent gates visibility, but be defensive)', () => {
+    setHands([]);
+    render(<RaisedHandsSection />);
+    expect(screen.getByTestId('raised-hands-section')).toBeInTheDocument();
+    expect(screen.queryByTestId(/^raised-hand-item-/)).not.toBeInTheDocument();
+  });
+
+  it('exposes the correct count badge for the visible queue', () => {
+    setHands(twoHands);
+    render(<RaisedHandsSection />);
+    expect(screen.getByTestId('raised-hands-count-badge')).toHaveTextContent('2');
+  });
+
+  it('preserves the queue order received from the store (does not re-sort)', () => {
+    // Bob first, Alice second — RaisedHandsSection should render in this order
+    // because sorting happens in the useRaisedHands selector, not the view.
+    setHands([twoHands[1], twoHands[0]]);
+    render(<RaisedHandsSection />);
+    const items = screen.getAllByTestId(/^raised-hand-item-/);
+    expect(items).toHaveLength(2);
+    expect(items[0]).toHaveAttribute('data-testid', 'raised-hand-item-conn-b');
+    expect(items[1]).toHaveAttribute('data-testid', 'raised-hand-item-conn-a');
+  });
+
+  it('renders an aria-label on each lower button so screen readers know whose hand is targeted', () => {
+    setHands(twoHands);
+    render(<RaisedHandsSection />);
+    expect(screen.getByLabelText("Lower Alice's hand")).toBeInTheDocument();
+    expect(screen.getByLabelText("Lower Bob's hand")).toBeInTheDocument();
+  });
+
+  it('does NOT call lowerAllHands when the dialog is dismissed via Escape', async () => {
+    setHands(twoHands);
+    render(<RaisedHandsSection />);
+    fireEvent.click(screen.getByTestId('lower-all-button'));
+    await waitFor(() => expect(screen.getByTestId('lower-all-dialog')).toBeInTheDocument());
+
+    fireEvent.keyDown(screen.getByTestId('lower-all-dialog'), { key: 'Escape' });
+    await waitFor(() => {
+      expect(screen.queryByTestId('lower-all-dialog')).not.toBeInTheDocument();
+    });
+    expect(mockLowerAllHands).not.toHaveBeenCalled();
+  });
 });
