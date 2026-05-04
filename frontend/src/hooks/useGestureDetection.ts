@@ -4,8 +4,6 @@ import { useEffect, useRef, useState } from 'react';
 const DEFAULT_DETECTION_INTERVAL_MS = 250;
 const DEFAULT_DETECTION_DURATION_MS = 2000;
 const DEFAULT_GESTURE_CONFIDENCE = 0.45;
-const DEFAULT_WAVE_WINDOW_FRAMES = 6;
-const DEFAULT_WAVE_RANGE_THRESHOLD = 0.1;
 
 // Self-hosted from frontend/public/mediapipe — see scripts/prepareMediaPipeAssets.ts.
 // Avoids the runtime supply-chain risk and offline failure mode of an external
@@ -51,19 +49,6 @@ export type UseGestureDetectionProps = {
   gestureConfidence?: number;
   /** Inference delegate: 'GPU' (WebGL, default) or 'CPU' (XNNPACK). */
   delegate?: 'GPU' | 'CPU';
-  /**
-   * Number of recent frames inspected when deciding whether the hand is waving.
-   * Larger values demand a longer, steadier hold; smaller values react sooner
-   * but may miss slow waves. Defaults to 6 (~1.5 s at 4 FPS).
-   */
-  waveWindowFrames?: number;
-  /**
-   * Lateral motion threshold for the wave detector, in normalized image-x units (0–1).
-   * If the wrist's x-coordinate range across `waveWindowFrames` exceeds this value,
-   * Open_Palm detection is suppressed (treated as a wave). Defaults to 0.1 (~10% of frame width).
-   * Set to a value > 1 to effectively disable wave suppression.
-   */
-  waveRangeThreshold?: number;
 };
 
 type GestureState = {
@@ -81,8 +66,6 @@ const useGestureDetection = ({
   detectionIntervalMs = DEFAULT_DETECTION_INTERVAL_MS,
   gestureConfidence = DEFAULT_GESTURE_CONFIDENCE,
   delegate = 'GPU',
-  waveWindowFrames = DEFAULT_WAVE_WINDOW_FRAMES,
-  waveRangeThreshold = DEFAULT_WAVE_RANGE_THRESHOLD,
 }: UseGestureDetectionProps): GestureProgress => {
   // Refs let the interval callback see latest values without restarting the
   // model load loop on every render.
@@ -94,16 +77,12 @@ const useGestureDetection = ({
     detectionIntervalMs,
     detectionDurationMs,
     gestureConfidence,
-    waveWindowFrames,
-    waveRangeThreshold,
   });
   optionsRef.current = {
     delegate,
     detectionIntervalMs,
     detectionDurationMs,
     gestureConfidence,
-    waveWindowFrames,
-    waveRangeThreshold,
   };
 
   const recognizerRef = useRef<import('@mediapipe/tasks-vision').GestureRecognizer | null>(null);
@@ -115,7 +94,6 @@ const useGestureDetection = ({
   });
   const isLoadingRef = useRef(false);
   const completionTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const wristXHistoryRef = useRef<number[]>([]);
 
   const [gestureProgress, setGestureProgress] = useState<GestureProgress>(null);
 
@@ -184,31 +162,6 @@ const useGestureDetection = ({
     return true;
   };
 
-  /**
-   * Suppresses Open_Palm during a goodbye-wave by checking the wrist's
-   * lateral motion over a rolling window.
-   */
-  const isHandWaving = (
-    result: import('@mediapipe/tasks-vision').GestureRecognizerResult
-  ): boolean => {
-    const wristX = result.landmarks?.[0]?.[0]?.x;
-    const history = wristXHistoryRef.current;
-
-    if (typeof wristX !== 'number') {
-      history.length = 0;
-      return false;
-    }
-
-    history.push(wristX);
-    const windowSize = Math.max(2, optionsRef.current.waveWindowFrames);
-    while (history.length > windowSize) history.shift();
-
-    if (history.length < windowSize) return false;
-
-    const range = Math.max(...history) - Math.min(...history);
-    return range > optionsRef.current.waveRangeThreshold;
-  };
-
   const runDetectionTick = (videoEl: HTMLVideoElement) => {
     const recognizer = recognizerRef.current;
     if (!recognizer || videoEl.readyState < 2) return;
@@ -216,7 +169,6 @@ const useGestureDetection = ({
     try {
       const result = recognizer.recognizeForVideo(videoEl, performance.now());
       const detected = detectGesture(result, optionsRef.current.gestureConfidence);
-      const effectiveDetected = detected === 'Open_Palm' && isHandWaving(result) ? null : detected;
       const callbacks = callbacksRef.current;
       const currentDurationMs = optionsRef.current.detectionDurationMs;
 
@@ -228,8 +180,7 @@ const useGestureDetection = ({
 
       const anyActive = (Object.keys(gestureStateRef.current) as GestureName[]).reduce(
         (active, gesture) =>
-          advanceGestureState(gesture, effectiveDetected, gestureCallbacks, currentDurationMs) ||
-          active,
+          advanceGestureState(gesture, detected, gestureCallbacks, currentDurationMs) || active,
         false
       );
 
@@ -278,7 +229,6 @@ const useGestureDetection = ({
       gestureStateRef.current[gesture].consecutiveDetections = 0;
       gestureStateRef.current[gesture].hasFired = false;
     }
-    wristXHistoryRef.current.length = 0;
   }
 
   function cleanup() {

@@ -6,8 +6,6 @@ import VideoTileCanvas from '../../components/MeetingRoom/VideoTileCanvas';
 import SmallViewportHeader from '../../components/MeetingRoom/SmallViewportHeader';
 import EmojisOrigin from '../../components/MeetingRoom/EmojisOrigin';
 import { env } from '../../env';
-import useAudioLevels from '../../hooks/useAudioLevels';
-import { useAutoLowerOnDominantSpeaker } from '../../hooks/useAutoLowerOnDominantSpeaker';
 import useGestureDetection from '../../hooks/useGestureDetection';
 import emojiMap from '../../utils/emojis/emojis';
 import RightPanel from '../../components/MeetingRoom/RightPanel';
@@ -69,31 +67,14 @@ const MeetingRoom = ({ fullSize = false, className }: MeetingRoomProps): ReactEl
   } = useMeetingRoom();
   const isRaiseHandAllowed = env.ALLOW_RAISE_HAND;
   const isGestureDetectionAllowed = env.ALLOW_GESTURE_DETECTION ?? false;
-  const {
-    getConnectionId,
-    setRaisedHandsMap,
-    raisedHandsMapRef,
-    signal,
-    localHandIsRaised,
-    raiseHand,
-    sendEmoji,
-  } = useSessionContext();
+  const { localHandIsRaised, raiseHand, sendEmoji } = useSessionContext();
   const { publisherVideoElement } = usePublisherContext();
   const {
     user: {
       defaultSettings: { backgroundFilter },
     },
   } = useUserContext();
-  const publisherAudioLevel = useAudioLevels();
   const hasBackgroundEffect = !!backgroundFilter;
-
-  useAutoLowerOnDominantSpeaker({
-    publisherAudioLevel,
-    getConnectionId,
-    raisedHandsMapRef,
-    signal,
-    setRaisedHandsMap,
-  });
 
   const gestureProgress = useGestureDetection({
     enabled: isGestureDetectionAllowed && isVideoEnabled && !hasBackgroundEffect,

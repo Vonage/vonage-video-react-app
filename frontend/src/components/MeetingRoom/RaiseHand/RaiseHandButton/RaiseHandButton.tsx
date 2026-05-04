@@ -1,6 +1,7 @@
 import { ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
 import useSessionContext from '@hooks/useSessionContext';
+import emojiMap from '../../../../utils/emojis';
 
 /**
  * Toggles the local user's raised-hand state. Rendered inside the Reactions
@@ -36,7 +37,7 @@ const RaiseHandButton = (): ReactElement => {
       ].join(' ')}
     >
       <span aria-hidden="true" className="shrink-0 text-xl leading-none">
-        ✋
+        {emojiMap.RAISED_HAND}
       </span>
       <span className="truncate">{label}</span>
     </button>

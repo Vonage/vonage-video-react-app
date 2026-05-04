@@ -2,6 +2,7 @@ import { ReactElement, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import useSessionContext from '@hooks/useSessionContext';
 import { isModeratorRole } from '../../../../utils/raiseHandRole';
+import emojiMap from '../../../../utils/emojis';
 import LowerAllDialog from './LowerAllDialog';
 
 /**
@@ -32,7 +33,7 @@ const RaisedHandsSection = (): ReactElement => {
           </span>
           <span
             data-testid="raised-hands-count-badge"
-            className="inline-flex h-5 min-w-[20px] items-center justify-center rounded-full bg-vera-primary px-1.5 text-[0.7rem] text-vera-on-primary"
+            className="inline-flex h-5 min-w-5 items-center justify-center rounded-full bg-vera-primary px-1.5 text-[0.7rem] text-vera-on-primary"
           >
             {raisedHandCount}
           </span>
@@ -70,7 +71,7 @@ const RaisedHandsSection = (): ReactElement => {
                 title={t('raiseHand.section.lowerParticipant', { name: state.participantName })}
               >
                 <span role="img" aria-hidden="true">
-                  ✋
+                  {emojiMap.RAISED_HAND}
                 </span>
               </button>
             )}

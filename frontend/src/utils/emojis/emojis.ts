@@ -1,6 +1,7 @@
 const emojiMap = {
   THUMBS_UP: '👍',
   THUMBS_DOWN: '👎',
+  RAISED_HAND: '✋',
   WAVE: '👋',
   CLAP: '👏',
   ROCKET: '🚀',

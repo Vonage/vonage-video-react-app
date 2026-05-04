@@ -298,14 +298,6 @@ describe('useRaiseHand', () => {
     await waitFor(() => expect(result.current.raisedHandCount).toBe(0));
   });
 
-  // ---------------------------------------------------------------------------
-  // Auto-lower: local user becomes dominant speaker
-  // ---------------------------------------------------------------------------
-
-  // ---------------------------------------------------------------------------
-  // Late-joiner sync
-  // ---------------------------------------------------------------------------
-
   it('onConnectionCreated unicasts the local hand state to a new connection', () => {
     vi.setSystemTime(99_000);
     const { result } = renderHook(() => useRaiseHand(defaultProps));

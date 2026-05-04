@@ -1,4 +1,4 @@
-import { Dispatch, SetStateAction, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Connection } from '@vonage/client-sdk-video';
 import { RaiseHandState, SignalEvent, SignalType, SubscriberWrapper } from '../types/session';
 
@@ -52,17 +52,13 @@ export type UseRaiseHand = {
   onConnectionDestroyed: (connectionId: string) => void;
   /** Reset all raised hands (call on session reconnect). */
   resetAllHands: () => void;
-  /** State setter for the raised-hands map (used by useAutoLowerOnDominantSpeaker). */
-  setRaisedHandsMap: Dispatch<SetStateAction<Map<string, RaiseHandState>>>;
-  /** Ref to the live raised-hands map (used by useAutoLowerOnDominantSpeaker). */
-  raisedHandsMapRef: React.RefObject<Map<string, RaiseHandState>>;
 };
 
 /**
  * useRaiseHand — core hook for the raise-hand feature.
  *
  * Manages the local and remote raised-hand state, handles signal send / receive,
- * late-joiner sync, auto-lower on dominant speaker, and session-reconnect cleanup.
+ * late-joiner sync, and session-reconnect cleanup.
  *
  * @param {UseRaiseHandProps} props
  * @returns {UseRaiseHand}
@@ -312,8 +308,6 @@ const useRaiseHand = ({
     onConnectionCreated,
     onConnectionDestroyed,
     resetAllHands,
-    setRaisedHandsMap,
-    raisedHandsMapRef,
   };
 };
 
