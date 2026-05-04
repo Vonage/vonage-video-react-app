@@ -7,9 +7,12 @@ const DEFAULT_GESTURE_CONFIDENCE = 0.45;
 const DEFAULT_WAVE_WINDOW_FRAMES = 6;
 const DEFAULT_WAVE_RANGE_THRESHOLD = 0.1;
 
-const MEDIAPIPE_WASM_CDN = 'https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.32/wasm';
-const GESTURE_RECOGNIZER_MODEL =
-  'https://storage.googleapis.com/mediapipe-models/gesture_recognizer/gesture_recognizer/float16/1/gesture_recognizer.task';
+// Self-hosted from frontend/public/mediapipe — see scripts/prepareMediaPipeAssets.ts.
+// Avoids the runtime supply-chain risk and offline failure mode of an external
+// CDN. Files are pre-compressed to .br at build time and served with the
+// correct Content-Encoding by express-static-gzip.
+const MEDIAPIPE_WASM_CDN = '/mediapipe/wasm';
+const GESTURE_RECOGNIZER_MODEL = '/mediapipe/gesture_recognizer.task';
 
 export type GestureName = 'Open_Palm' | 'Thumb_Up' | 'Thumb_Down';
 
