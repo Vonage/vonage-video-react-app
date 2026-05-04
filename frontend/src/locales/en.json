@@ -232,5 +232,6 @@
   "raiseHand.lowerAll.dialogTitle": "Lower all hands?",
   "raiseHand.lowerAll.dialogBody": "This will lower {{count}} raised hand.",
   "raiseHand.lowerAll.dialogBody_plural": "This will lower {{count}} raised hands.",
-  "raiseHand.lowerAll.confirmButton": "Lower all hands"
+  "raiseHand.lowerAll.confirmButton": "Lower all hands",
+  "raiseHand.badge.ariaLabel": "Hand raised"
 }

@@ -224,5 +224,6 @@
   "raiseHand.lowerAll.dialogTitle": "Alle Hände senken?",
   "raiseHand.lowerAll.dialogBody": "Dies senkt {{count}} gehobene Hand.",
   "raiseHand.lowerAll.dialogBody_plural": "Dies senkt {{count}} gehobene Hände.",
-  "raiseHand.lowerAll.confirmButton": "Alle Hände senken"
+  "raiseHand.lowerAll.confirmButton": "Alle Hände senken",
+  "raiseHand.badge.ariaLabel": "Hand gehoben"
 }

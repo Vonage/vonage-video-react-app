@@ -9,6 +9,7 @@ import EmojiGrid from '../EmojiGrid/EmojiGrid';
 import VividIcon from '@components/VividIcon';
 import { env } from '../../../env';
 import { useLocalHandIsRaised } from '../../../stores/raiseHand';
+import emojiMap from '../../../utils/emojis';
 
 export type EmojiGridProps = {
   isEmojiGridOpen: boolean;
@@ -48,7 +49,7 @@ const EmojiGridButton = ({
         <Tooltip title={t('emoji.tooltip')} aria-label={t('emoji.ariaLabel')}>
           <Badge
             data-testid="raise-hand-active-badge"
-            badgeContent={localHandIsRaised ? '✋' : null}
+            badgeContent={localHandIsRaised ? emojiMap.RAISED_HAND : null}
             invisible={!localHandIsRaised}
             overlap="circular"
             sx={{

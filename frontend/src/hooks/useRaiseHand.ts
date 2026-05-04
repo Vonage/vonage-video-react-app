@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef } from 'react';
-import { Connection } from '@vonage/client-sdk-video';
+import type { Connection } from '@vonage/client-sdk-video';
 import raiseHand$ from '../stores/raiseHand/raiseHand$';
 import { RaiseHandState, SignalEvent, SignalType, SubscriberWrapper } from '../types/session';
 

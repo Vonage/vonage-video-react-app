@@ -1,4 +1,5 @@
 import { ReactElement } from 'react';
+import { useTranslation } from 'react-i18next';
 import emojiMap from '../../../../utils/emojis';
 
 export type RaiseHandBadgeProps = {
@@ -13,6 +14,7 @@ export type RaiseHandBadgeProps = {
 };
 
 const RaiseHandBadge = ({ tileWidth }: RaiseHandBadgeProps): ReactElement => {
+  const { t } = useTranslation();
   // Scale by tile width (~8% font, ~1.5% offset) so the badge keeps the same
   // visual proportion at every tile size, with a viewport-relative fallback.
   const fontSize = tileWidth
@@ -22,7 +24,7 @@ const RaiseHandBadge = ({ tileWidth }: RaiseHandBadgeProps): ReactElement => {
 
   return (
     <div
-      aria-label="Hand raised"
+      aria-label={t('raiseHand.badge.ariaLabel')}
       data-testid="raise-hand-badge"
       className="absolute leading-none select-none pointer-events-none z-10 drop-shadow-[0_1px_3px_var(--vera-dark-grey-opacity)] animate-raise-hand-in"
       style={{ fontSize, top: offset, left: offset }}

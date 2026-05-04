@@ -7,7 +7,7 @@ import SmallViewportHeader from '../../components/MeetingRoom/SmallViewportHeade
 import EmojisOrigin from '../../components/MeetingRoom/EmojisOrigin';
 import { env } from '../../env';
 import useGestureDetection from '../../hooks/useGestureDetection';
-import emojiMap from '../../utils/emojis/emojis';
+import emojiMap from '../../utils/emojis';
 import RightPanel from '../../components/MeetingRoom/RightPanel';
 import CaptionsBox from '../../components/MeetingRoom/CaptionsButton/CaptionsBox';
 import CaptionsError from '../../components/MeetingRoom/CaptionsError';

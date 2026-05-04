@@ -157,6 +157,9 @@ const useGestureDetection = ({
       state[gesture].hasFired = true;
       cb();
       setGestureProgress({ gesture, state: 'completed', durationMs: currentDurationMs });
+      // Cancel any in-flight completion timeout from a previous gesture so
+      // it can't fire and clear the new ring 400ms after we set it.
+      if (completionTimeoutRef.current) clearTimeout(completionTimeoutRef.current);
       completionTimeoutRef.current = setTimeout(() => setGestureProgress(null), 400);
     }
     return true;

@@ -230,5 +230,6 @@
   "raiseHand.lowerAll.dialogTitle": "Abbassare tutte le mani?",
   "raiseHand.lowerAll.dialogBody": "Verrà abbassata {{count}} mano alzata.",
   "raiseHand.lowerAll.dialogBody_plural": "Verranno abbassate {{count}} mani alzate.",
-  "raiseHand.lowerAll.confirmButton": "Abbassa tutte le mani"
+  "raiseHand.lowerAll.confirmButton": "Abbassa tutte le mani",
+  "raiseHand.badge.ariaLabel": "Mano alzata"
 }
