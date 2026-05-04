@@ -2,7 +2,7 @@ import type { ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
 import Dialog from '@mui/material/Dialog';
 import classNames from 'classnames';
-import advancedSettingsDialog$ from '@Context/AdvancedSettingsDialog';
+import advancedSettings$ from '@Context/AdvancedSettings';
 import VividIcon from '@ui/VividIcon';
 import { AdvancedSettingsAudioTab } from './AdvancedSettingsAudioTab';
 import { AdvancedSettingsGeneralTab } from './AdvancedSettingsGeneralTab';
@@ -12,11 +12,10 @@ import { AdvancedSettingsVideoTab } from './AdvancedSettingsVideoTab';
 
 const AdvancedSettingsDialog = (): ReactElement => {
   const { t } = useTranslation();
-  const { isOpen, selectedTab } = advancedSettingsDialog$.use.select((state) => ({
+  const { isOpen, selectedTab } = advancedSettings$.use.select((state) => ({
     isOpen: state.isOpen,
     selectedTab: state.selectedTab,
   }));
-  const { close } = advancedSettingsDialog$.use.actions();
 
   const tabContent = (() => {
     if (selectedTab === 'general') return <AdvancedSettingsGeneralTab />;
@@ -28,7 +27,7 @@ const AdvancedSettingsDialog = (): ReactElement => {
   return (
     <Dialog
       open={isOpen}
-      onClose={close}
+      onClose={advancedSettings$.actions.close}
       maxWidth="md"
       fullWidth
       PaperProps={{
@@ -44,7 +43,7 @@ const AdvancedSettingsDialog = (): ReactElement => {
           <button
             type="button"
             aria-label={t('button.close')}
-            onClick={close}
+            onClick={advancedSettings$.actions.close}
             className={classNames(
               'cursor-pointer absolute right-4 top-4 flex h-10 w-10 items-center justify-center rounded-full',
               'text-vera-secondary transition-colors hover:bg-vera-background'

@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import type { Publisher } from '@vonage/client-sdk-video';
-import advancedSettingsDialog$ from '@Context/AdvancedSettingsDialog';
+import advancedSettings$ from '@Context/AdvancedSettings';
 import { ADVANCED_SETTINGS_BITRATE_MODE } from '@components/AdvancedSettingsDialog/types/types';
 import type { AdvancedSettingsResolution } from '@components/AdvancedSettingsDialog/types/types';
 
@@ -10,12 +10,10 @@ const parseResolution = (resolution: AdvancedSettingsResolution) => {
 };
 
 const useApplyAdvancedSettings = (publisher: Publisher | null): void => {
-  const frameRate = advancedSettingsDialog$.use.select((state) => state.frameRate);
-  const resolution = advancedSettingsDialog$.use.select((state) => state.resolution);
-  const bitrateMode = advancedSettingsDialog$.use.select((state) => state.bitrateMode);
-  const customVideoBitrate = advancedSettingsDialog$.use.select(
-    (state) => state.customVideoBitrate
-  );
+  const frameRate = advancedSettings$.use.select((state) => state.frameRate);
+  const resolution = advancedSettings$.use.select((state) => state.resolution);
+  const bitrateMode = advancedSettings$.use.select((state) => state.bitrateMode);
+  const customVideoBitrate = advancedSettings$.use.select((state) => state.customVideoBitrate);
 
   useEffect(() => {
     if (!publisher) return;

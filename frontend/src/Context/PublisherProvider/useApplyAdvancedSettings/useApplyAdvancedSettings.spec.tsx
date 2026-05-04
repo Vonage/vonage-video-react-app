@@ -2,7 +2,7 @@ import { describe, expect, it, vi, beforeEach } from 'vitest';
 import { act, renderHook as renderHookBase, waitFor } from '@testing-library/react';
 import type { Publisher } from '@vonage/client-sdk-video';
 import { makeTestProvider, providers, type ProviderOptions } from '@test/providers';
-import advancedSettingsDialog$ from '@Context/AdvancedSettingsDialog';
+import advancedSettings$ from '@Context/AdvancedSettings';
 import useApplyAdvancedSettings from './useApplyAdvancedSettings';
 
 const createMockPublisher = () =>
@@ -37,7 +37,7 @@ describe('useApplyAdvancedSettings', () => {
       const { result } = renderHook(
         () => {
           useApplyAdvancedSettings(publisher);
-          return advancedSettingsDialog$.use.actions();
+          return advancedSettings$.use.actions();
         },
         { advancedSettingsContext: { dialogState: { frameRate: 30 } } }
       );
@@ -118,7 +118,7 @@ describe('useApplyAdvancedSettings', () => {
       const { result } = renderHook(
         () => {
           useApplyAdvancedSettings(publisher);
-          return advancedSettingsDialog$.use.actions();
+          return advancedSettings$.use.actions();
         },
         { advancedSettingsContext: { dialogState: { resolution: '1280x720' } } }
       );
@@ -205,7 +205,7 @@ describe('useApplyAdvancedSettings', () => {
       const { result } = renderHook(
         () => {
           useApplyAdvancedSettings(publisher);
-          return advancedSettingsDialog$.use.actions();
+          return advancedSettings$.use.actions();
         },
         {
           advancedSettingsContext: {

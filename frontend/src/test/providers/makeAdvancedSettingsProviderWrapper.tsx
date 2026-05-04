@@ -1,6 +1,6 @@
 import type { PropsWithChildren } from 'react';
-import advancedSettingsDialog$ from '@Context/AdvancedSettingsDialog';
-import type { AdvancedSettingsDialogState } from '@Context/AdvancedSettingsDialog';
+import advancedSettings$ from '@Context/AdvancedSettings';
+import type { AdvancedSettingsDialogState } from '@Context/AdvancedSettings';
 
 export type AdvancedSettingsProviderWrapperOptions = {
   dialogState?: Partial<AdvancedSettingsDialogState>;
@@ -10,9 +10,9 @@ function makeAdvancedSettingsProviderWrapper(options: AdvancedSettingsProviderWr
   const { dialogState = {} } = options;
 
   const wrapper = ({ children }: PropsWithChildren) => (
-    <advancedSettingsDialog$.Provider value={(initial) => ({ ...initial, ...dialogState })}>
+    <advancedSettings$.Provider value={(initial) => ({ ...initial, ...dialogState })}>
       {children}
-    </advancedSettingsDialog$.Provider>
+    </advancedSettings$.Provider>
   );
 
   return { wrapper, context: undefined };

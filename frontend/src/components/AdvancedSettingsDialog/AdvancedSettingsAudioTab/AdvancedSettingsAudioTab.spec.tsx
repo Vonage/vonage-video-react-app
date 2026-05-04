@@ -3,7 +3,7 @@ import userEvent from '@testing-library/user-event';
 import type { ReactElement } from 'react';
 import { describe, expect, it } from 'vitest';
 import { makeTestProvider, providers } from '@test/providers';
-import type { AdvancedSettingsDialogState } from '@Context/AdvancedSettingsDialog';
+import type { AdvancedSettingsDialogState } from '@Context/AdvancedSettings';
 import AdvancedSettingsAudioTab from './AdvancedSettingsAudioTab';
 
 describe('AdvancedSettingsAudioTab', () => {

@@ -1,7 +1,7 @@
 import { describe, expect, it, vi, afterEach } from 'vitest';
 import { act, render as renderBase, screen, cleanup } from '@testing-library/react';
 import { ReactElement } from 'react';
-import advancedSettingsDialog$ from '@Context/AdvancedSettingsDialog';
+import advancedSettings$ from '@Context/AdvancedSettings';
 import { makeTestProvider, providers, type ProviderOptions } from '@test/providers';
 import composeProviders from '@web/helpers/composeProviders';
 import ToolbarOverflowButton from './ToolbarOverflowButton';
@@ -96,7 +96,7 @@ function render(ui: ReactElement, { userContext, sessionContext }: RenderOptions
     userContext,
     sessionContext,
   });
-  const combinedWrapper = composeProviders(advancedSettingsDialog$.Provider, wrapper);
+  const combinedWrapper = composeProviders(advancedSettings$.Provider, wrapper);
 
   return {
     ...context,

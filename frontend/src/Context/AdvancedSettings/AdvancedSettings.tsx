@@ -1,4 +1,5 @@
-import createContext from 'react-global-state-hooks/createContext';
+import createGlobalState from 'react-global-state-hooks/createGlobalState';
+import actions from 'react-global-state-hooks/actions';
 import type {
   AdvancedSettingsAudioBitrateMode,
   AdvancedSettingsBitrateMode,
@@ -36,84 +37,109 @@ const INITIAL_STATE = {
 
 export type AdvancedSettingsDialogState = typeof INITIAL_STATE;
 
-const advancedSettingsDialog$ = createContext(INITIAL_STATE, {
+const advancedSettings$ = createGlobalState(INITIAL_STATE, {
+  localStorage: {
+    key: 'advancedSettings',
+    selector: (state) =>
+      ({
+        ...state,
+        isOpen: false,
+      }) as AdvancedSettingsDialogState,
+
+    validator: (_state) => {
+      // zod
+      // advancedSettingsSchema.parse(state);
+    },
+  },
   actions: {
     open() {
-      return ({ setState }) => {
-        setState((state) => ({ ...state, isOpen: true }));
+      return () => {
+        partialUpdate({ isOpen: true });
       };
     },
     close() {
-      return ({ setState }) => {
-        setState((state) => ({ ...state, isOpen: false }));
+      return () => {
+        partialUpdate({ isOpen: false });
       };
     },
     setSelectedTab(tab: AdvancedSettingsTab) {
-      return ({ setState }) => {
-        setState((state) => ({ ...state, selectedTab: tab }));
+      return () => {
+        partialUpdate({ selectedTab: tab });
       };
     },
     setBitrateMode(value: AdvancedSettingsBitrateMode) {
-      return ({ setState }) => {
-        setState((state) => ({ ...state, bitrateMode: value }));
+      return () => {
+        partialUpdate({ bitrateMode: value });
       };
     },
     setCustomVideoBitrate(value: AdvancedSettingsCustomVideoBitrate) {
-      return ({ setState }) => {
-        setState((state) => ({ ...state, customVideoBitrate: value }));
+      return () => {
+        partialUpdate({ customVideoBitrate: value });
       };
     },
     setCodecMode(value: AdvancedSettingsCodecMode) {
-      return ({ setState }) => {
-        setState((state) => ({ ...state, codecMode: value }));
+      return () => {
+        partialUpdate({ codecMode: value });
       };
     },
     setCodecPriority(value: AdvancedSettingsManualCodecOrder) {
-      return ({ setState }) => {
-        setState((state) => ({ ...state, codecPriority: value }));
+      return () => {
+        partialUpdate({ codecPriority: value });
       };
     },
     setFrameRate(value: AdvancedSettingsFrameRate) {
-      return ({ setState }) => {
-        setState((state) => ({ ...state, frameRate: value }));
+      return () => {
+        partialUpdate({ frameRate: value });
       };
     },
     setResolution(value: AdvancedSettingsResolution) {
-      return ({ setState }) => {
-        setState((state) => ({ ...state, resolution: value }));
+      return () => {
+        partialUpdate({ resolution: value });
       };
     },
     setAudioBitrateMode(value: AdvancedSettingsAudioBitrateMode) {
-      return ({ setState }) => {
-        setState((state) => ({ ...state, audioBitrateMode: value }));
+      return () => {
+        partialUpdate({ audioBitrateMode: value });
       };
     },
     setCustomAudioBitrate(value: AdvancedSettingsCustomAudioBitrate) {
-      return ({ setState }) => {
-        setState((state) => ({ ...state, customAudioBitrate: value }));
+      return () => {
+        partialUpdate({ customAudioBitrate: value });
       };
     },
     setEnableDtx(value: boolean) {
-      return ({ setState }) => {
-        setState((state) => ({ ...state, enableDtx: value }));
+      return () => {
+        partialUpdate({ enableDtx: value });
       };
     },
     setPublisherAudioFallbackEnabled(value: boolean) {
-      return ({ setState }) => {
-        setState((state) => ({ ...state, publisherAudioFallbackEnabled: value }));
+      return () => {
+        partialUpdate({ publisherAudioFallbackEnabled: value });
       };
     },
     setSubscriberAudioFallbackEnabled(value: boolean) {
-      return ({ setState }) => {
-        setState((state) => ({ ...state, subscriberAudioFallbackEnabled: value }));
+      return () => {
+        partialUpdate({ subscriberAudioFallbackEnabled: value });
       };
     },
     setPublisherStatisticsEnabled(value: boolean) {
-      return ({ setState }) => {
-        setState((state) => ({ ...state, publisherStatisticsEnabled: value }));
+      return () => {
+        partialUpdate({ publisherStatisticsEnabled: value });
       };
     },
   },
 });
 
-export default advancedSettingsDialog$;
+const internals = actions(advancedSettings$, {
+  update: (updatedValues: Partial<AdvancedSettingsDialogState>) => {
+    return ({ setState }) => {
+      setState((state) => ({ ...state, ...updatedValues }));
+    };
+  },
+});
+
+function partialUpdate(partialState: Partial<AdvancedSettingsDialogState>) {
+  internals.update(partialState);
+}
+
+export default advancedSettings$;

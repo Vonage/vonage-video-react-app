@@ -10,7 +10,7 @@ import useToolbarButtons, {
 } from '@hooks/useToolbarButtons';
 import { RIGHT_PANEL_BUTTON_COUNT } from '@utils/constants';
 import { makeTestProvider } from '@test/providers';
-import advancedSettingsDialog$ from '@Context/AdvancedSettingsDialog';
+import advancedSettings$ from '@Context/AdvancedSettings';
 import composeProviders from '@web/helpers/composeProviders';
 import Toolbar, { ToolbarProps, CaptionsState } from './Toolbar';
 
@@ -123,7 +123,7 @@ describe('Toolbar', () => {
 
 function render(ui: ReactElement) {
   const { wrapper, ...context } = makeTestProvider([]);
-  const combinedWrapper = composeProviders(advancedSettingsDialog$.Provider, wrapper);
+  const combinedWrapper = composeProviders(advancedSettings$.Provider, wrapper);
 
   return {
     ...context,

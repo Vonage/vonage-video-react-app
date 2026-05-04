@@ -4,7 +4,7 @@ import { ReactElement, useRef } from 'react';
 import userEvent from '@testing-library/user-event';
 import { isMobile } from '@web/platform';
 import isReportIssueEnabled from '@utils/isReportIssueEnabled';
-import advancedSettingsDialog$ from '@Context/AdvancedSettingsDialog';
+import advancedSettings$ from '@Context/AdvancedSettings';
 import { makeTestProvider, providers, ProviderOptions } from '@test/providers';
 import composeProviders from '@web/helpers/composeProviders';
 import ToolbarOverflowMenu, { CaptionsState } from './ToolbarOverflowMenu';
@@ -131,7 +131,7 @@ function render(ui: ReactElement, { sessionContext, userContext }: RenderOptions
     sessionContext,
     userContext,
   });
-  const combinedWrapper = composeProviders(advancedSettingsDialog$.Provider, wrapper);
+  const combinedWrapper = composeProviders(advancedSettings$.Provider, wrapper);
 
   return {
     ...context,

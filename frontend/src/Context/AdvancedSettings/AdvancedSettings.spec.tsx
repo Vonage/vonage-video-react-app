@@ -1,15 +1,15 @@
 import { act, renderHook } from '@testing-library/react';
 import type { ReactNode } from 'react';
 import { describe, expect, it } from 'vitest';
-import advancedSettingsDialog$ from './AdvancedSettingsDialogContext';
+import advancedSettings$ from './AdvancedSettings';
 
 describe('AdvancedSettingsDialogContext', () => {
   it('opens and closes the dialog through context actions', () => {
     const wrapper = ({ children }: { children: ReactNode }) => (
-      <advancedSettingsDialog$.Provider>{children}</advancedSettingsDialog$.Provider>
+      <advancedSettings$.Provider>{children}</advancedSettings$.Provider>
     );
 
-    const { result } = renderHook(() => advancedSettingsDialog$.use(), { wrapper });
+    const { result } = renderHook(() => advancedSettings$.use(), { wrapper });
 
     expect(result.current[0].isOpen).toBe(false);
 
