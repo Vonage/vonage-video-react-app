@@ -1,6 +1,7 @@
 import { ReactElement, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import useSessionContext from '@hooks/useSessionContext';
+import { useRaisedHands, useRaisedHandCount } from '../../../../stores/raiseHand';
 import { isModeratorRole } from '../../../../utils/raiseHandRole';
 import emojiMap from '../../../../utils/emojis';
 import LowerAllDialog from './LowerAllDialog';
@@ -11,7 +12,9 @@ import LowerAllDialog from './LowerAllDialog';
  */
 const RaisedHandsSection = (): ReactElement => {
   const { t } = useTranslation();
-  const { raisedHands, raisedHandCount, lowerHand, lowerAllHands } = useSessionContext();
+  const { lowerHand, lowerAllHands } = useSessionContext();
+  const raisedHands = useRaisedHands();
+  const raisedHandCount = useRaisedHandCount();
   const [isLowerAllDialogOpen, setIsLowerAllDialogOpen] = useState(false);
 
   const handleLowerAllClick = () => setIsLowerAllDialogOpen(true);

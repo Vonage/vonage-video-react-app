@@ -1,6 +1,7 @@
 import { ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
 import useSessionContext from '@hooks/useSessionContext';
+import { useLocalHandIsRaised } from '../../../../stores/raiseHand';
 import emojiMap from '../../../../utils/emojis';
 
 /**
@@ -9,7 +10,8 @@ import emojiMap from '../../../../utils/emojis';
  */
 const RaiseHandButton = (): ReactElement => {
   const { t } = useTranslation();
-  const { localHandIsRaised, raiseHand, lowerHand } = useSessionContext();
+  const { raiseHand, lowerHand } = useSessionContext();
+  const localHandIsRaised = useLocalHandIsRaised();
 
   const handleClick = () => {
     if (localHandIsRaised) {

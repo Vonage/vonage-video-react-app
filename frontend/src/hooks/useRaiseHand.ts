@@ -1,5 +1,6 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef } from 'react';
 import { Connection } from '@vonage/client-sdk-video';
+import raiseHand$ from '../stores/raiseHand/raiseHand$';
 import { RaiseHandState, SignalEvent, SignalType, SubscriberWrapper } from '../types/session';
 
 const RAISE_HAND_SIGNAL = 'raiseHand' as const;
@@ -18,12 +19,6 @@ export type UseRaiseHandProps = {
 };
 
 export type UseRaiseHand = {
-  /** All currently-raised hands, sorted oldest-first (queue order). */
-  raisedHands: RaiseHandState[];
-  /** Convenience count of raised hands. */
-  raisedHandCount: number;
-  /** Whether the local user's hand is currently raised. */
-  localHandIsRaised: boolean;
   /** Raise the local user's hand. */
   raiseHand: () => void;
   /**
@@ -40,60 +35,42 @@ export type UseRaiseHand = {
    */
   onRaiseHandSignal: (event: SignalEvent, currentSubscriberWrappers: SubscriberWrapper[]) => void;
   /**
-   * Connection-created handler — call this from the SessionProvider on each
-   * `connectionCreated` event so we can unicast the local hand state to
-   * late-joiners.
+   * Connection-created handler — sends the local hand state via unicast to a newly-joined
+   * connection so late-joiners see the queue.
    */
   onConnectionCreated: (connection: Connection) => void;
-  /**
-   * Connection-destroyed / stream-destroyed handler — call this from the
-   * SessionProvider to clear any raised hand for a departing participant.
-   */
+  /** Connection-destroyed handler — clears any raised hand for a departing participant. */
   onConnectionDestroyed: (connectionId: string) => void;
   /** Reset all raised hands (call on session reconnect). */
   resetAllHands: () => void;
 };
 
 /**
- * useRaiseHand — core hook for the raise-hand feature.
+ * Coordinates the raise-hand feature with the global `raiseHand$` store.
  *
- * Manages the local and remote raised-hand state, handles signal send / receive,
- * late-joiner sync, and session-reconnect cleanup.
- *
- * @param {UseRaiseHandProps} props
- * @returns {UseRaiseHand}
+ * State (the handsMap) lives in the store so the SessionContext doesn't churn
+ * on every raise/lower; this hook only handles the session-side wiring:
+ * sending signals, parsing inbound signals, and reacting to connection events.
  */
 const useRaiseHand = ({
   signal,
   getConnectionId,
   localUserName,
 }: UseRaiseHandProps): UseRaiseHand => {
-  const [raisedHandsMap, setRaisedHandsMap] = useState<Map<string, RaiseHandState>>(new Map());
+  // Subscribe to the store at the hook level so we can call its actions /
+  // read its state from non-render callbacks. `use.actions()` and `use.api()`
+  // internally call `useContext`, so they must be invoked here (React
+  // render time), not from inside event handlers.
+  const storeActions = raiseHand$.use.actions();
+  const storeApi = raiseHand$.use.api();
 
-  // Refs so signal callbacks always see the latest map and signal function;
-  // `onConnectionCreated` is registered once on the EventEmitter and would
-  // otherwise capture the first-render `signal` (often still undefined).
-  const raisedHandsMapRef = useRef<Map<string, RaiseHandState>>(raisedHandsMap);
+  // Ref to the latest signal function. `onConnectionCreated` is registered
+  // once on the EventEmitter and would otherwise capture the first-render
+  // value (often still undefined).
   const signalRef = useRef(signal);
-
   useEffect(() => {
-    raisedHandsMapRef.current = raisedHandsMap;
     signalRef.current = signal;
-  }, [raisedHandsMap, signal]);
-
-  const raisedHands = useMemo<RaiseHandState[]>(() => {
-    const raised = [...raisedHandsMap.values()].filter((s) => s.raisedHand);
-    raised.sort((a, b) => (a.raisedHandTimestamp ?? 0) - (b.raisedHandTimestamp ?? 0));
-    return raised;
-  }, [raisedHandsMap]);
-
-  const raisedHandCount = raisedHands.length;
-
-  const localHandIsRaised = useMemo(() => {
-    const localConnectionId = getConnectionId();
-    if (!localConnectionId) return false;
-    return raisedHandsMap.get(localConnectionId)?.raisedHand === true;
-  }, [raisedHandsMap, getConnectionId]);
+  }, [signal]);
 
   const getParticipantName = useCallback(
     (connectionId: string, wrappers: SubscriberWrapper[]): string => {
@@ -105,26 +82,6 @@ const useRaiseHand = ({
     []
   );
 
-  const updateHandState = useCallback(
-    (connectionId: string, participantName: string, payload: RaiseHandPayload) => {
-      setRaisedHandsMap((prev) => {
-        const next = new Map(prev);
-        if (payload.raisedHand) {
-          next.set(connectionId, {
-            connectionId,
-            participantName,
-            raisedHand: true,
-            raisedHandTimestamp: payload.timestamp,
-          });
-        } else {
-          next.delete(connectionId);
-        }
-        return next;
-      });
-    },
-    []
-  );
-
   const raiseHand = useCallback(() => {
     const localConnectionId = getConnectionId();
     if (!localConnectionId || !signal) return;
@@ -132,20 +89,16 @@ const useRaiseHand = ({
     const timestamp = Date.now();
     const payload: RaiseHandPayload = { raisedHand: true, timestamp };
 
-    // Optimistic UI — update local state immediately
-    setRaisedHandsMap((prev) => {
-      const next = new Map(prev);
-      next.set(localConnectionId, {
-        connectionId: localConnectionId,
-        participantName: localUserName,
-        raisedHand: true,
-        raisedHandTimestamp: timestamp,
-      });
-      return next;
+    // Optimistic UI — update store immediately, then signal.
+    storeActions.setHand(localConnectionId, {
+      connectionId: localConnectionId,
+      participantName: localUserName,
+      raisedHand: true,
+      raisedHandTimestamp: timestamp,
     });
 
     signal({ type: RAISE_HAND_SIGNAL, data: JSON.stringify(payload) });
-  }, [signal, getConnectionId, localUserName]);
+  }, [signal, getConnectionId, localUserName, storeActions]);
 
   const lowerHand = useCallback(
     (connectionId?: string) => {
@@ -161,25 +114,21 @@ const useRaiseHand = ({
       };
 
       // Optimistic UI
-      setRaisedHandsMap((prev) => {
-        const next = new Map(prev);
-        next.delete(targetConnectionId);
-        return next;
-      });
+      storeActions.removeHand(targetConnectionId);
 
       signal({
         type: RAISE_HAND_SIGNAL,
         data: JSON.stringify({ ...payload, connectionId: targetConnectionId }),
       });
     },
-    [signal, getConnectionId]
+    [signal, getConnectionId, storeActions]
   );
 
   const lowerAllHands = useCallback(() => {
     const localConnectionId = getConnectionId();
     if (!signal) return;
 
-    const currentMap = raisedHandsMapRef.current;
+    const currentMap = storeApi.getState().handsMap;
     const payload: RaiseHandPayload = {
       raisedHand: false,
       timestamp: null,
@@ -187,7 +136,7 @@ const useRaiseHand = ({
     };
 
     // Optimistic UI — clear all
-    setRaisedHandsMap(new Map());
+    storeActions.clear();
 
     currentMap.forEach((state) => {
       if (state.raisedHand) {
@@ -197,27 +146,24 @@ const useRaiseHand = ({
         });
       }
     });
-  }, [signal, getConnectionId]);
+  }, [signal, getConnectionId, storeActions, storeApi]);
 
   /**
-   * Reset all raised hands on session reconnect.
-   * If the local user had their hand raised, re-broadcast the original
-   * timestamp so their queue position is preserved for other participants.
+   * On reconnect, drop remote hands (they re-sync via connectionCreated) but
+   * preserve the local hand with its original timestamp and re-broadcast it
+   * so our queue position survives the reconnect.
    */
   const resetAllHands = useCallback(() => {
     const localConnectionId = getConnectionId();
     const currentSignal = signalRef.current;
     const localState = localConnectionId
-      ? raisedHandsMapRef.current.get(localConnectionId)
+      ? storeApi.getState().handsMap.get(localConnectionId)
       : undefined;
 
-    // Remote hands re-sync via connectionCreated; the local hand is kept with
-    // its original timestamp and re-broadcast so our queue position survives
-    // the reconnect.
     if (localState?.raisedHand && localState.raisedHandTimestamp !== null && localConnectionId) {
       const preserved = new Map<string, RaiseHandState>();
       preserved.set(localConnectionId, localState);
-      setRaisedHandsMap(preserved);
+      storeActions.replaceAll(preserved);
 
       if (currentSignal) {
         const payload: RaiseHandPayload = {
@@ -227,9 +173,9 @@ const useRaiseHand = ({
         currentSignal({ type: RAISE_HAND_SIGNAL, data: JSON.stringify(payload) });
       }
     } else {
-      setRaisedHandsMap(new Map());
+      storeActions.clear();
     }
-  }, [getConnectionId]);
+  }, [getConnectionId, storeActions, storeApi]);
 
   const onRaiseHandSignal = useCallback(
     (event: SignalEvent, currentSubscriberWrappers: SubscriberWrapper[]) => {
@@ -251,28 +197,28 @@ const useRaiseHand = ({
           senderConnectionId === localConnectionId
             ? localUserName
             : getParticipantName(senderConnectionId, currentSubscriberWrappers);
-        updateHandState(senderConnectionId, name, {
+        storeActions.setHand(senderConnectionId, {
+          connectionId: senderConnectionId,
+          participantName: name,
           raisedHand: true,
-          timestamp: parsed.timestamp,
+          raisedHandTimestamp: parsed.timestamp,
         });
       } else {
         // For moderator lowers the target is the lowered participant, not the sender.
         const targetConnectionId = parsed.connectionId ?? senderConnectionId;
-        updateHandState(targetConnectionId, '', { raisedHand: false, timestamp: null });
+        storeActions.removeHand(targetConnectionId);
       }
     },
-    [getConnectionId, getParticipantName, localUserName, updateHandState]
+    [getConnectionId, getParticipantName, localUserName, storeActions]
   );
 
-  // Unicast our current raised-hand state to a newly-joined connection so
-  // late-joiners see the existing queue immediately.
   const onConnectionCreated = useCallback(
     (connection: Connection) => {
       const localConnectionId = getConnectionId();
       const currentSignal = signalRef.current;
       if (!currentSignal || !localConnectionId) return;
 
-      const localState = raisedHandsMapRef.current.get(localConnectionId);
+      const localState = storeApi.getState().handsMap.get(localConnectionId);
       if (!localState?.raisedHand || localState.raisedHandTimestamp === null) return;
 
       const payload: RaiseHandPayload = {
@@ -285,22 +231,17 @@ const useRaiseHand = ({
         to: connection,
       });
     },
-    [getConnectionId] // signalRef is a stable ref — no need to re-create the callback when signal changes
+    [getConnectionId, storeApi] // signalRef is a stable ref
   );
 
-  const onConnectionDestroyed = useCallback((connectionId: string) => {
-    setRaisedHandsMap((prev) => {
-      if (!prev.has(connectionId)) return prev;
-      const next = new Map(prev);
-      next.delete(connectionId);
-      return next;
-    });
-  }, []);
+  const onConnectionDestroyed = useCallback(
+    (connectionId: string) => {
+      storeActions.removeHand(connectionId);
+    },
+    [storeActions]
+  );
 
   return {
-    raisedHands,
-    raisedHandCount,
-    localHandIsRaised,
     raiseHand,
     lowerHand,
     lowerAllHands,

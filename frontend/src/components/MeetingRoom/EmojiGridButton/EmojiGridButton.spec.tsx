@@ -12,6 +12,9 @@ vi.mock('@mui/material/useMediaQuery', () => ({
 vi.mock('@utils/emojis', () => ({
   default: { FAVORITE: '🦧' },
 }));
+vi.mock('../../../stores/raiseHand', () => ({
+  useLocalHandIsRaised: () => false,
+}));
 
 const TestComponent = ({ defaultOpenEmojiGrid = false }: { defaultOpenEmojiGrid?: boolean }) => {
   const [isEmojiGridOpen, setIsEmojiGridOpen] = useState(defaultOpenEmojiGrid);

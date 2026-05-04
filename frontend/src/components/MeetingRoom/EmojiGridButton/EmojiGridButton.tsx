@@ -8,7 +8,7 @@ import ToolbarButton from '../ToolbarButton';
 import EmojiGrid from '../EmojiGrid/EmojiGrid';
 import VividIcon from '@components/VividIcon';
 import { env } from '../../../env';
-import useSessionContext from '@hooks/useSessionContext';
+import { useLocalHandIsRaised } from '../../../stores/raiseHand';
 
 export type EmojiGridProps = {
   isEmojiGridOpen: boolean;
@@ -36,7 +36,7 @@ const EmojiGridButton = ({
 }: EmojiGridProps): ReactElement | false => {
   const { t } = useTranslation();
   const theme = useTheme();
-  const { localHandIsRaised } = useSessionContext();
+  const localHandIsRaised = useLocalHandIsRaised();
   const anchorRef = useRef<HTMLButtonElement>(null);
   const handleToggle = () => {
     setIsEmojiGridOpen((prevOpen) => !prevOpen);

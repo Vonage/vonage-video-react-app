@@ -1,7 +1,9 @@
 import { describe, it, expect, vi, afterEach, beforeEach } from 'vitest';
 import { renderHook, act, waitFor } from '@testing-library/react';
 import { Connection } from '@vonage/client-sdk-video';
+import { ReactNode } from 'react';
 import useRaiseHand from '../useRaiseHand';
+import raiseHand$, { useRaisedHands, useRaisedHandCount } from '../../stores/raiseHand';
 import { SignalEvent, SubscriberWrapper } from '../../types/session';
 
 const mockSignal = vi.fn();
@@ -40,6 +42,29 @@ const defaultProps = {
   localUserName: 'Alice',
 };
 
+const wrapper = ({ children }: { children: ReactNode }) => (
+  <raiseHand$.Provider>{children}</raiseHand$.Provider>
+);
+
+/**
+ * Combined render that returns the hook's actions/handlers PLUS the store
+ * state slices that the old single-hook API used to expose. Lets the existing
+ * assertions keep working after the architectural split.
+ */
+const renderRaiseHand = () =>
+  renderHook(
+    () => {
+      const hook = useRaiseHand(defaultProps);
+      const raisedHands = useRaisedHands();
+      const raisedHandCount = useRaisedHandCount();
+      const [{ handsMap }] = raiseHand$.use();
+      const localConnId = mockGetConnectionId() as string | undefined;
+      const localHandIsRaised = !!localConnId && handsMap.get(localConnId)?.raisedHand === true;
+      return { ...hook, raisedHands, raisedHandCount, localHandIsRaised };
+    },
+    { wrapper }
+  );
+
 describe('useRaiseHand', () => {
   beforeEach(() => {
     // shouldAdvanceTime keeps testing-library's waitFor / async helpers
@@ -58,7 +83,7 @@ describe('useRaiseHand', () => {
   // ---------------------------------------------------------------------------
 
   it('starts with no raised hands', () => {
-    const { result } = renderHook(() => useRaiseHand(defaultProps));
+    const { result } = renderRaiseHand();
     expect(result.current.raisedHands).toEqual([]);
     expect(result.current.raisedHandCount).toBe(0);
     expect(result.current.localHandIsRaised).toBe(false);
@@ -70,7 +95,7 @@ describe('useRaiseHand', () => {
 
   it('raiseHand sends the correct signal payload', () => {
     vi.setSystemTime(12_000_000);
-    const { result } = renderHook(() => useRaiseHand(defaultProps));
+    const { result } = renderRaiseHand();
 
     act(() => {
       result.current.raiseHand();
@@ -85,7 +110,7 @@ describe('useRaiseHand', () => {
   });
 
   it('raiseHand updates localHandIsRaised optimistically', () => {
-    const { result } = renderHook(() => useRaiseHand(defaultProps));
+    const { result } = renderRaiseHand();
 
     act(() => {
       result.current.raiseHand();
@@ -99,7 +124,7 @@ describe('useRaiseHand', () => {
   // ---------------------------------------------------------------------------
 
   it('lowerHand (own) sends the correct signal payload', () => {
-    const { result } = renderHook(() => useRaiseHand(defaultProps));
+    const { result } = renderRaiseHand();
 
     act(() => result.current.raiseHand());
     mockSignal.mockClear();
@@ -113,7 +138,7 @@ describe('useRaiseHand', () => {
   });
 
   it('lowerHand (own) clears localHandIsRaised', () => {
-    const { result } = renderHook(() => useRaiseHand(defaultProps));
+    const { result } = renderRaiseHand();
     act(() => result.current.raiseHand());
     act(() => result.current.lowerHand());
     expect(result.current.localHandIsRaised).toBe(false);
@@ -124,7 +149,7 @@ describe('useRaiseHand', () => {
   // ---------------------------------------------------------------------------
 
   it('lowerHand(connectionId) sends a signal including loweredBy', () => {
-    const { result } = renderHook(() => useRaiseHand(defaultProps));
+    const { result } = renderRaiseHand();
 
     act(() => result.current.lowerHand(REMOTE_CONNECTION_ID));
 
@@ -140,7 +165,7 @@ describe('useRaiseHand', () => {
 
   it('onRaiseHandSignal adds a remote participant to raisedHands', async () => {
     const wrapper = makeSubscriberWrapper(REMOTE_CONNECTION_ID, 'Bob');
-    const { result } = renderHook(() => useRaiseHand(defaultProps));
+    const { result } = renderRaiseHand();
 
     const event = makeRemoteSignalEvent({ raisedHand: true, timestamp: 5000 });
 
@@ -157,7 +182,7 @@ describe('useRaiseHand', () => {
 
   it('onRaiseHandSignal removes a participant when raisedHand: false', async () => {
     const wrapper = makeSubscriberWrapper(REMOTE_CONNECTION_ID, 'Bob');
-    const { result } = renderHook(() => useRaiseHand(defaultProps));
+    const { result } = renderRaiseHand();
 
     // First raise
     act(() => {
@@ -191,7 +216,7 @@ describe('useRaiseHand', () => {
   it('raisedHands is sorted by timestamp ascending (queue order)', async () => {
     const wrapperA = makeSubscriberWrapper('conn-a', 'Alice-remote');
     const wrapperB = makeSubscriberWrapper('conn-b', 'Bob-remote');
-    const { result } = renderHook(() => useRaiseHand(defaultProps));
+    const { result } = renderRaiseHand();
 
     act(() => {
       // Bob raised first (lower timestamp)
@@ -224,7 +249,7 @@ describe('useRaiseHand', () => {
   it('lowerAllHands clears all raised hands and sends signals for each', async () => {
     const wrapperA = makeSubscriberWrapper('conn-a', 'A');
     const wrapperB = makeSubscriberWrapper('conn-b', 'B');
-    const { result } = renderHook(() => useRaiseHand(defaultProps));
+    const { result } = renderRaiseHand();
 
     act(() => {
       result.current.onRaiseHandSignal(
@@ -261,7 +286,7 @@ describe('useRaiseHand', () => {
 
   it('onConnectionDestroyed removes the departed participant from the queue', async () => {
     const wrapper = makeSubscriberWrapper(REMOTE_CONNECTION_ID, 'Bob');
-    const { result } = renderHook(() => useRaiseHand(defaultProps));
+    const { result } = renderRaiseHand();
 
     act(() => {
       result.current.onRaiseHandSignal(
@@ -283,7 +308,7 @@ describe('useRaiseHand', () => {
 
   it('resetAllHands clears all raised hands immediately', async () => {
     const wrapper = makeSubscriberWrapper(REMOTE_CONNECTION_ID, 'Bob');
-    const { result } = renderHook(() => useRaiseHand(defaultProps));
+    const { result } = renderRaiseHand();
 
     act(() => {
       result.current.onRaiseHandSignal(makeRemoteSignalEvent({ raisedHand: true, timestamp: 1 }), [
@@ -300,7 +325,7 @@ describe('useRaiseHand', () => {
 
   it('onConnectionCreated unicasts the local hand state to a new connection', () => {
     vi.setSystemTime(99_000);
-    const { result } = renderHook(() => useRaiseHand(defaultProps));
+    const { result } = renderRaiseHand();
 
     act(() => result.current.raiseHand());
     mockSignal.mockClear();
@@ -316,7 +341,7 @@ describe('useRaiseHand', () => {
   });
 
   it('onConnectionCreated does nothing if local hand is not raised', () => {
-    const { result } = renderHook(() => useRaiseHand(defaultProps));
+    const { result } = renderRaiseHand();
     const newConnection = { connectionId: 'new-conn', creationTime: 1, data: '' } as Connection;
     act(() => result.current.onConnectionCreated(newConnection));
     expect(mockSignal).not.toBeCalled();

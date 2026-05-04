@@ -14,6 +14,7 @@ import CaptionsError from '../../components/MeetingRoom/CaptionsError';
 import classNames from 'classnames';
 import useMeetingRoom from '../../hooks/useMeetingRoom';
 import useSessionContext from '../../hooks/useSessionContext';
+import { useLocalHandIsRaised } from '../../stores/raiseHand';
 import usePublisherContext from '../../hooks/usePublisherContext';
 import useUserContext from '../../hooks/useUserContext';
 import { twMerge } from 'tailwind-merge';
@@ -67,7 +68,8 @@ const MeetingRoom = ({ fullSize = false, className }: MeetingRoomProps): ReactEl
   } = useMeetingRoom();
   const isRaiseHandAllowed = env.ALLOW_RAISE_HAND;
   const isGestureDetectionAllowed = env.ALLOW_GESTURE_DETECTION ?? false;
-  const { localHandIsRaised, raiseHand, sendEmoji } = useSessionContext();
+  const { raiseHand, sendEmoji } = useSessionContext();
+  const localHandIsRaised = useLocalHandIsRaised();
   const { publisherVideoElement } = usePublisherContext();
   const {
     user: {

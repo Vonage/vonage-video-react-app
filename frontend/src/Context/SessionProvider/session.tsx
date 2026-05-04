@@ -16,7 +16,7 @@ import useUserContext from '@hooks/useUserContext';
 import useChat from '@hooks/useChat';
 import useEmoji, { EmojiWrapper } from '@hooks/useEmoji';
 import useRaiseHand from '@hooks/useRaiseHand';
-import type { RaiseHandState } from '@app-types/session';
+import raiseHand$ from '../../stores/raiseHand';
 import ActiveSpeakerTracker from '@utils/ActiveSpeakerTracker';
 import {
   Credential,
@@ -79,9 +79,6 @@ export type SessionContextType = {
   ownCaptions: string | null;
   sendEmoji: (emoji: string) => void;
   emojiQueue: EmojiWrapper[];
-  raisedHands: RaiseHandState[];
-  raisedHandCount: number;
-  localHandIsRaised: boolean;
   raiseHand: () => void;
   lowerHand: (connectionId?: string) => void;
   lowerAllHands: () => void;
@@ -129,9 +126,6 @@ export const SessionContext = createContext<SessionContextType>({
   ownCaptions: null,
   sendEmoji: () => {},
   emojiQueue: [],
-  raisedHands: [],
-  raisedHandCount: 0,
-  localHandIsRaised: false,
   raiseHand: () => {},
   lowerHand: () => {},
   lowerAllHands: () => {},
@@ -183,7 +177,10 @@ const MAX_PIN_COUNT = isMobile() ? MAX_PIN_COUNT_MOBILE : MAX_PIN_COUNT_DESKTOP;
  * @param {SessionProviderProps} props - The provider properties
  * @returns {SessionContextType} a context provider for a publisher preview
  */
-const SessionProvider = ({ children, initialValue = {} }: SessionProviderProps): ReactElement => {
+const SessionProviderInner = ({
+  children,
+  initialValue = {},
+}: SessionProviderProps): ReactElement => {
   const [lastStreamUpdate, setLastStreamUpdate] = useState<StreamPropertyChangedEvent | null>(
     initialValue?.lastStreamUpdate ?? null
   );
@@ -242,9 +239,6 @@ const SessionProvider = ({ children, initialValue = {} }: SessionProviderProps):
   const { user } = useUserContext();
 
   const {
-    raisedHands,
-    raisedHandCount,
-    localHandIsRaised,
     raiseHand,
     lowerHand,
     lowerAllHands,
@@ -632,9 +626,6 @@ const SessionProvider = ({ children, initialValue = {} }: SessionProviderProps):
       ownCaptions,
       sendEmoji,
       emojiQueue,
-      raisedHands,
-      raisedHandCount,
-      localHandIsRaised,
       raiseHand,
       lowerHand,
       lowerAllHands,
@@ -678,9 +669,6 @@ const SessionProvider = ({ children, initialValue = {} }: SessionProviderProps):
       ownCaptions,
       sendEmoji,
       emojiQueue,
-      raisedHands,
-      raisedHandCount,
-      localHandIsRaised,
       raiseHand,
       lowerHand,
       lowerAllHands,
@@ -694,4 +682,16 @@ const SessionProvider = ({ children, initialValue = {} }: SessionProviderProps):
 
   return <SessionContext.Provider value={value}>{children}</SessionContext.Provider>;
 };
+
+/**
+ * Wraps the inner provider with the raise-hand global store so any raise-hand
+ * action / state read inside the session works without callers having to mount
+ * the store provider themselves.
+ */
+const SessionProvider = (props: SessionProviderProps): ReactElement => (
+  <raiseHand$.Provider>
+    <SessionProviderInner {...props} />
+  </raiseHand$.Provider>
+);
+
 export default SessionProvider;

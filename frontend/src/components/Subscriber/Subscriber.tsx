@@ -17,6 +17,7 @@ import toRemValue from '@common/helpers/toRemValue';
 import attempt from '@common/execution/attempt';
 import RaiseHandBadge from '../MeetingRoom/RaiseHand/RaiseHandBadge';
 import { env } from '../../env';
+import { useIsHandRaisedFor } from '../../stores/raiseHand';
 
 export type SubscriberProps = {
   subscriberWrapper: SubscriberWrapper;
@@ -43,11 +44,11 @@ const Subscriber = ({
   box,
   isActiveSpeaker,
 }: SubscriberProps): ReactElement => {
-  const { isMaxPinned, pinSubscriber, raisedHands } = useSessionContext();
+  const { isMaxPinned, pinSubscriber } = useSessionContext();
   const isRaiseHandAllowed = env.ALLOW_RAISE_HAND;
   const connectionId = subscriberWrapper.subscriber.stream?.connection?.connectionId ?? '';
-  const isHandRaised =
-    isRaiseHandAllowed && raisedHands.some((h) => h.connectionId === connectionId);
+  const isParticipantHandRaised = useIsHandRaisedFor(connectionId);
+  const isHandRaised = isRaiseHandAllowed && isParticipantHandRaised;
   const theme = useTheme();
   const { isPinned, subscriber } = subscriberWrapper;
   const isScreenShare = subscriber?.stream?.videoType === 'screen';

@@ -23,6 +23,9 @@ vi.mock('react-router-dom', () => ({
 vi.mock('@hooks/useSpeakingDetector');
 vi.mock('@utils/isReportIssueEnabled');
 vi.mock('@hooks/useToolbarButtons');
+vi.mock('../../../stores/raiseHand', () => ({
+  useLocalHandIsRaised: () => false,
+}));
 
 const mockUseSpeakingDetector = useSpeakingDetector as Mock<[], boolean>;
 const mockIsReportIssueEnabled = isReportIssueEnabled as Mock<[], boolean>;

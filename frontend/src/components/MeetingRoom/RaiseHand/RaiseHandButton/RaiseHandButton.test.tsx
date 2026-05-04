@@ -2,11 +2,16 @@ import { describe, it, expect, vi, beforeEach, Mock } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
 import useSessionContext from '@hooks/useSessionContext';
 import { SessionContextType } from '@Context/SessionProvider/session';
+import { useLocalHandIsRaised } from '../../../../stores/raiseHand';
 import RaiseHandButton from './RaiseHandButton';
 
 vi.mock('@hooks/useSessionContext');
+vi.mock('../../../../stores/raiseHand', () => ({
+  useLocalHandIsRaised: vi.fn(),
+}));
 
 const mockUseSessionContext = useSessionContext as Mock<[], SessionContextType>;
+const mockUseLocalHandIsRaised = useLocalHandIsRaised as Mock<[], boolean>;
 
 describe('RaiseHandButton', () => {
   const mockRaiseHand = vi.fn();
@@ -15,10 +20,10 @@ describe('RaiseHandButton', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     mockUseSessionContext.mockReturnValue({
-      localHandIsRaised: false,
       raiseHand: mockRaiseHand,
       lowerHand: mockLowerHand,
     } as unknown as SessionContextType);
+    mockUseLocalHandIsRaised.mockReturnValue(false);
   });
 
   it('renders "Raise hand" label when hand is not raised', () => {
@@ -27,11 +32,7 @@ describe('RaiseHandButton', () => {
   });
 
   it('renders "Lower hand" label when hand is raised', () => {
-    mockUseSessionContext.mockReturnValue({
-      localHandIsRaised: true,
-      raiseHand: mockRaiseHand,
-      lowerHand: mockLowerHand,
-    } as unknown as SessionContextType);
+    mockUseLocalHandIsRaised.mockReturnValue(true);
     render(<RaiseHandButton />);
     expect(screen.getByTestId('raise-hand-button')).toHaveTextContent('Lower hand');
   });
@@ -42,11 +43,7 @@ describe('RaiseHandButton', () => {
   });
 
   it('has correct aria-pressed when hand is raised', () => {
-    mockUseSessionContext.mockReturnValue({
-      localHandIsRaised: true,
-      raiseHand: mockRaiseHand,
-      lowerHand: mockLowerHand,
-    } as unknown as SessionContextType);
+    mockUseLocalHandIsRaised.mockReturnValue(true);
     render(<RaiseHandButton />);
     expect(screen.getByTestId('raise-hand-button')).toHaveAttribute('aria-pressed', 'true');
   });
@@ -58,11 +55,7 @@ describe('RaiseHandButton', () => {
   });
 
   it('calls lowerHand() on click when hand is raised', () => {
-    mockUseSessionContext.mockReturnValue({
-      localHandIsRaised: true,
-      raiseHand: mockRaiseHand,
-      lowerHand: mockLowerHand,
-    } as unknown as SessionContextType);
+    mockUseLocalHandIsRaised.mockReturnValue(true);
     render(<RaiseHandButton />);
     fireEvent.click(screen.getByTestId('raise-hand-button'));
     expect(mockLowerHand).toHaveBeenCalledOnce();

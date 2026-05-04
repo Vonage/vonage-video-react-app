@@ -25,6 +25,7 @@ import createNameMatcher from '@utils/participantList/createNameMatcher';
 import getFilteredSubscribers from '@utils/participantList/getFilteredSubscribers';
 import shouldShowUser from '@utils/participantList/shouldShowUser';
 import RaisedHandsSection from '../RaiseHand/RaisedHandsSection';
+import { useRaisedHandCount } from '../../../stores/raiseHand';
 import { env } from '../../../env';
 
 export type ParticipantListProps = {
@@ -45,7 +46,8 @@ export type ParticipantListProps = {
 const ParticipantList = ({ handleClose, isOpen }: ParticipantListProps): ReactElement | false => {
   const { t } = useTranslation();
   const theme = useTheme();
-  const { subscriberWrappers, raisedHandCount } = useSessionContext();
+  const { subscriberWrappers } = useSessionContext();
+  const raisedHandCount = useRaisedHandCount();
   const publisherAudio = useAudioLevels();
   const [isCopied, setIsCopied] = useState<boolean>(false);
   const [query, setQuery] = useState<string>('');
