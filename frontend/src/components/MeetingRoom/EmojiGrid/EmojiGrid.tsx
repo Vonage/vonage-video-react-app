@@ -18,7 +18,7 @@ import Divider from '@mui/material/Divider';
 import useIsSmallViewport from '../../../hooks/useIsSmallViewport';
 import SendEmojiButton from '../SendEmojiButton';
 import emojiMap from '../../../utils/emojis';
-import RaiseHandButton from '../RaiseHandButton';
+import RaiseHandButton from '../RaiseHand/RaiseHandButton';
 import { env } from '../../../env';
 
 export type EmojiGridProps = {

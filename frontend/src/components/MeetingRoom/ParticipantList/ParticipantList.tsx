@@ -24,7 +24,7 @@ import InputAdornment from '@mui/material/InputAdornment';
 import createNameMatcher from '@utils/participantList/createNameMatcher';
 import getFilteredSubscribers from '@utils/participantList/getFilteredSubscribers';
 import shouldShowUser from '@utils/participantList/shouldShowUser';
-import RaisedHandsSection from '../RaisedHandsSection';
+import RaisedHandsSection from '../RaiseHand/RaisedHandsSection';
 import { env } from '../../../env';
 
 export type ParticipantListProps = {

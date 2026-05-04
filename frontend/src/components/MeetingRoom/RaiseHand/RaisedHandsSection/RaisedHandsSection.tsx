@@ -1,7 +1,7 @@
 import { ReactElement, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import useSessionContext from '@hooks/useSessionContext';
-import { isModeratorRole } from '../../../utils/raiseHandRole';
+import { isModeratorRole } from '../../../../utils/raiseHandRole';
 import LowerAllDialog from './LowerAllDialog';
 
 /**

@@ -15,7 +15,7 @@ import useTheme from '@ui/theme';
 import { ABSOLUTE_DISTANCE_THRESHOLD_REM_VALUE } from '@utils/constants';
 import toRemValue from '@common/helpers/toRemValue';
 import attempt from '@common/execution/attempt';
-import RaiseHandBadge from '../MeetingRoom/RaiseHandBadge';
+import RaiseHandBadge from '../MeetingRoom/RaiseHand/RaiseHandBadge';
 import { env } from '../../env';
 
 export type SubscriberProps = {

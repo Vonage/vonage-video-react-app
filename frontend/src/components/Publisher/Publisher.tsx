@@ -10,7 +10,7 @@ import VideoTile from '../MeetingRoom/VideoTile';
 import useTheme from '@ui/theme';
 import { ABSOLUTE_DISTANCE_THRESHOLD_REM_VALUE } from '@utils/constants';
 import toRemValue from '@common/helpers/toRemValue';
-import RaiseHandBadge from '../MeetingRoom/RaiseHandBadge';
+import RaiseHandBadge from '../MeetingRoom/RaiseHand/RaiseHandBadge';
 import GestureProgressRing from '../MeetingRoom/GestureProgressRing/GestureProgressRing';
 import type { GestureProgress } from '../../hooks/useGestureDetection';
 import useSessionContext from '../../hooks/useSessionContext';
