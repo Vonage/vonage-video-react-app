@@ -177,6 +177,7 @@ describe('BackgroundEffects (Waiting Room)', () => {
 
 function render(ui: ReactElement) {
   const { wrapper: roomWrapper, ...context } = makeTestProvider([
+    providers.advancedSettings,
     providers.user,
     providers.session,
     providers.publisher,

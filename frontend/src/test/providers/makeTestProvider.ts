@@ -41,8 +41,13 @@ const PROVIDER_DEPENDENCIES = {
   [providers.advancedSettings]: [],
   [providers.user]: [],
   [providers.session]: [providers.user],
-  [providers.publisher]: [providers.user, providers.session],
-  [providers.backgroundPublisher]: [providers.user, providers.session, providers.publisher],
+  [providers.publisher]: [providers.advancedSettings, providers.user, providers.session],
+  [providers.backgroundPublisher]: [
+    providers.advancedSettings,
+    providers.user,
+    providers.session,
+    providers.publisher,
+  ],
   [providers.previewPublisher]: [providers.user],
 } as const;
 

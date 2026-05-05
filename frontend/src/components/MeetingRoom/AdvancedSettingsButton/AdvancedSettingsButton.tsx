@@ -2,7 +2,7 @@ import type { ReactElement } from 'react';
 import Tooltip from '@mui/material/Tooltip';
 import { useTranslation } from 'react-i18next';
 import useTheme from '@ui/theme';
-import advancedSettingsDialog$ from '@Context/AdvancedSettingsDialog';
+import advancedSettings$ from '@Context/AdvancedSettings';
 import VividIcon from '@ui/VividIcon';
 import ToolbarButton from '../ToolbarButton';
 
@@ -15,7 +15,7 @@ const AdvancedSettingsButton = ({
 }: AdvancedSettingsButtonProps): ReactElement => {
   const { t } = useTranslation();
   const theme = useTheme();
-  const [isOpen, { open, close }] = advancedSettingsDialog$.use(({ isOpen }) => isOpen);
+  const [isOpen, { open, close }] = advancedSettings$.use(({ isOpen }) => isOpen);
 
   const handleClick = () => {
     if (isOpen) {

@@ -1,21 +1,31 @@
+import { useEffect } from 'react';
 import type { PropsWithChildren } from 'react';
-import advancedSettingsDialog$ from '@Context/AdvancedSettingsDialog';
-import type { AdvancedSettingsDialogState } from '@Context/AdvancedSettingsDialog';
+import advancedSettings$ from '@Context/AdvancedSettings';
+import type { advancedSettings } from '@Context/AdvancedSettings';
 
 export type AdvancedSettingsProviderWrapperOptions = {
-  dialogState?: Partial<AdvancedSettingsDialogState>;
+  dialogState?: Partial<advancedSettings>;
 };
 
 function makeAdvancedSettingsProviderWrapper(options: AdvancedSettingsProviderWrapperOptions = {}) {
   const { dialogState = {} } = options;
+  const previousState = advancedSettings$.getState();
 
-  const wrapper = ({ children }: PropsWithChildren) => (
-    <advancedSettingsDialog$.Provider value={(initial) => ({ ...initial, ...dialogState })}>
-      {children}
-    </advancedSettingsDialog$.Provider>
-  );
+  if (Object.keys(dialogState).length > 0) {
+    advancedSettings$.setState((state) => ({ ...state, ...dialogState }));
+  }
 
-  return { wrapper, context: undefined };
+  const Wrapper = ({ children }: PropsWithChildren) => {
+    useEffect(() => {
+      return () => {
+        advancedSettings$.setState(previousState);
+      };
+    }, []);
+
+    return children;
+  };
+
+  return { wrapper: Wrapper, context: undefined };
 }
 
 export default makeAdvancedSettingsProviderWrapper;

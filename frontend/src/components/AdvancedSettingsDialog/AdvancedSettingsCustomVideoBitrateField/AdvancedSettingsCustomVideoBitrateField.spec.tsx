@@ -2,7 +2,7 @@ import { fireEvent, render as renderBase, screen } from '@testing-library/react'
 import type { ReactElement } from 'react';
 import { describe, expect, it } from 'vitest';
 import { makeTestProvider, providers } from '@test/providers';
-import type { AdvancedSettingsDialogState } from '@Context/AdvancedSettingsDialog';
+import type { advancedSettings } from '@Context/AdvancedSettings';
 import AdvancedSettingsCustomVideoBitrateField from './AdvancedSettingsCustomVideoBitrateField';
 
 describe('AdvancedSettingsCustomVideoBitrateField', () => {
@@ -33,7 +33,7 @@ describe('AdvancedSettingsCustomVideoBitrateField', () => {
 });
 
 type RenderOptions = {
-  dialogState?: Partial<AdvancedSettingsDialogState>;
+  dialogState?: Partial<advancedSettings>;
 };
 
 function render(ui: ReactElement, { dialogState }: RenderOptions = {}) {

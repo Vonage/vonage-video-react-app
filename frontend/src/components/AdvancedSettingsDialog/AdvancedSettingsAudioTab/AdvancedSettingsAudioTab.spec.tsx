@@ -3,7 +3,7 @@ import userEvent from '@testing-library/user-event';
 import type { ReactElement } from 'react';
 import { describe, expect, it } from 'vitest';
 import { makeTestProvider, providers } from '@test/providers';
-import type { AdvancedSettingsDialogState } from '@Context/AdvancedSettingsDialog';
+import type { advancedSettings } from '@Context/AdvancedSettings';
 import AdvancedSettingsAudioTab from './AdvancedSettingsAudioTab';
 
 describe('AdvancedSettingsAudioTab', () => {
@@ -49,7 +49,7 @@ describe('AdvancedSettingsAudioTab', () => {
   });
 });
 type RenderOptions = {
-  dialogState?: Partial<AdvancedSettingsDialogState>;
+  dialogState?: Partial<advancedSettings>;
 };
 function render(ui: ReactElement, { dialogState }: RenderOptions = {}) {
   const { wrapper } = makeTestProvider([providers.advancedSettings], {

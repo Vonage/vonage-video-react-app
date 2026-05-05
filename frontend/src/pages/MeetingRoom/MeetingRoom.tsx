@@ -1,6 +1,6 @@
 import type { ReactElement } from 'react';
 import Box, { BoxProps } from '@mui/material/Box';
-import advancedSettingsDialog$ from '@Context/AdvancedSettingsDialog';
+import advancedSettings$ from '@Context/AdvancedSettings';
 import AdvancedSettingsDialog from '@components/AdvancedSettings/Dialog';
 import PopupAlert from '@components/MeetingRoom/PopupAlert';
 import Toolbar from '../../components/MeetingRoom/Toolbar';
@@ -73,7 +73,7 @@ function MeetingRoomContent({
     latestNotifiedArchiveId,
     handleRecordingNotified,
   } = useMeetingRoom();
-  const isAdvancedSettingsOpen = advancedSettingsDialog$.use.select((state) => state.isOpen);
+  const isAdvancedSettingsOpen = advancedSettings$.use.select((state) => state.isOpen);
 
   return (
     <Box

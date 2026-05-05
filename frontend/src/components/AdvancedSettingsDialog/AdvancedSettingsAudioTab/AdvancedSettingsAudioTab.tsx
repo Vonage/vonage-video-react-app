@@ -1,9 +1,17 @@
 import type { ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
-import advancedSettingsDialog$ from '@Context/AdvancedSettingsDialog';
+import advancedSettings$ from '@Context/AdvancedSettings';
 import { AdvancedSettingsBooleanField } from '../AdvancedSettingsBooleanField';
 import { AdvancedSettingsSelectField } from '../AdvancedSettingsSelectField';
 import { ADVANCED_SETTINGS_AUDIO_BITRATE_MODE } from '../types/types';
+
+const {
+  setAudioBitrateMode,
+  setCustomAudioBitrate,
+  setEnableDtx,
+  setPublisherAudioFallbackEnabled,
+  setSubscriberAudioFallbackEnabled,
+} = advancedSettings$.actions;
 
 const AdvancedSettingsAudioTab = (): ReactElement => {
   const { t } = useTranslation();
@@ -13,20 +21,13 @@ const AdvancedSettingsAudioTab = (): ReactElement => {
     enableDtx,
     publisherAudioFallbackEnabled,
     subscriberAudioFallbackEnabled,
-  } = advancedSettingsDialog$.use.select((state) => ({
+  } = advancedSettings$.use.select((state) => ({
     audioBitrateMode: state.audioBitrateMode,
     customAudioBitrate: state.customAudioBitrate,
     enableDtx: state.enableDtx,
     publisherAudioFallbackEnabled: state.publisherAudioFallbackEnabled,
     subscriberAudioFallbackEnabled: state.subscriberAudioFallbackEnabled,
   }));
-  const {
-    setAudioBitrateMode,
-    setCustomAudioBitrate,
-    setEnableDtx,
-    setPublisherAudioFallbackEnabled,
-    setSubscriberAudioFallbackEnabled,
-  } = advancedSettingsDialog$.use.actions();
 
   const audioBitrateOptions = [
     {

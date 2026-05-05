@@ -34,7 +34,7 @@
   "advancedSettings.video.codec.label": "Codec",
   "advancedSettings.video.codec.options.automatic": "Automatico",
   "advancedSettings.video.codec.options.manual": "Manuale",
-  "advancedSettings.video.codec.description": "L'SDK seleziona automaticamente il codec migliore in base alle condizioni di rete e alle capacità dei partecipanti.",
+  "advancedSettings.video.codec.description": "L'SDK seleziona automaticamente il codec migliore in base alle condizioni di rete e alle capacità dei partecipanti. Le modifiche si applicano alla chiamata successiva.",
   "advancedSettings.video.codec.priority.label": "Priorità codec",
   "advancedSettings.video.codec.priority.description": "Trascina per scegliere l'ordine di preferenza dei codec, dal primo all'ultimo.",
   "advancedSettings.video.codec.priority.options.vp9": "VP9",

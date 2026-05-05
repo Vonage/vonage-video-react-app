@@ -58,7 +58,9 @@ describe('usePublisherOptions', () => {
     );
     await waitFor(() => {
       expect(result.current).toEqual({
+        frameRate: 30,
         resolution: '1280x720',
+        preferredVideoCodecs: 'automatic',
         publishAudio: false,
         publishVideo: false,
         audioSource: undefined,
@@ -128,7 +130,9 @@ describe('usePublisherOptions', () => {
 
     await waitFor(() => {
       expect(result.current).toEqual({
+        frameRate: 30,
         resolution: '1280x720',
+        preferredVideoCodecs: 'automatic',
         publishAudio: true,
         publishVideo: true,
         audioSource: audioDevice.deviceId,
@@ -178,17 +182,14 @@ describe('usePublisherOptions', () => {
       });
     });
 
-    it('should configure resolution from config', async () => {
-      env.partialUpdate({
-        DEFAULT_RESOLUTION: '640x480',
-      });
-
-      const { result } = renderHook(() =>
-        usePublisherOptions({ isAudioEnabled: true, isVideoEnabled: true })
+    it('should configure resolution from advanced settings context', async () => {
+      const { result } = renderHook(
+        () => usePublisherOptions({ isAudioEnabled: true, isVideoEnabled: true }),
+        { advancedSettingsContext: { dialogState: { resolution: '1280x720' } } }
       );
 
       await waitFor(() => {
-        expect(result.current?.resolution).toBe('640x480');
+        expect(result.current?.resolution).toBe('1280x720');
       });
     });
   });
@@ -228,13 +229,15 @@ describe('usePublisherOptions', () => {
 
 type RenderOptions = {
   userContext?: ProviderOptions['UserContext'];
+  advancedSettingsContext?: ProviderOptions['AdvancedSettingsContext'];
 };
 
 function renderHook<Result, Props>(
   render: (initialProps: Props) => Result,
-  { userContext }: RenderOptions = {}
+  { userContext, advancedSettingsContext }: RenderOptions = {}
 ) {
-  const { wrapper, ...context } = makeTestProvider([providers.user], {
+  const { wrapper, ...context } = makeTestProvider([providers.advancedSettings, providers.user], {
+    advancedSettingsContext,
     userContext: {
       value: {
         ...userContext?.value,

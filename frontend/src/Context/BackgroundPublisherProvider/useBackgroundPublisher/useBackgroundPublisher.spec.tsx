@@ -16,6 +16,10 @@ describe('useBackgroundPublisher', () => {
     getVideoSource: () => defaultVideoDevice,
     applyVideoFilter: vi.fn(),
     clearVideoFilter: vi.fn(),
+    setPreferredFrameRate: vi.fn().mockResolvedValue(undefined),
+    setPreferredResolution: vi.fn().mockResolvedValue(undefined),
+    setMaxVideoBitrate: vi.fn().mockResolvedValue(undefined),
+    setVideoBitratePreset: vi.fn().mockResolvedValue(undefined),
   }) as unknown as Publisher;
 
   const mockedInitPublisher = vi.fn();
@@ -240,7 +244,13 @@ function render({
   backgroundPublisherContext,
 }: RenderOptions = {}) {
   const { wrapper, ...context } = makeTestProvider(
-    [providers.user, providers.session, providers.publisher, providers.backgroundPublisher],
+    [
+      providers.advancedSettings,
+      providers.user,
+      providers.session,
+      providers.publisher,
+      providers.backgroundPublisher,
+    ],
     {
       userContext,
       sessionContext,

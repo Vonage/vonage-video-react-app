@@ -2,7 +2,6 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { cleanup, screen, render as renderBase } from '@testing-library/react';
 import { ReactElement } from 'react';
 import { makeTestProvider, providers, ProviderOptions } from '@test/providers';
-import advancedSettingsDialog$ from '@Context/AdvancedSettingsDialog';
 import backgroundEffectsDialog$ from '@Context/BackgroundEffectsDialog';
 import precallNetworkTestDialog$ from '@Context/PrecallNetworkTestDialog';
 import ControlPanel from '.';
@@ -161,6 +160,7 @@ function render(
 ) {
   const { wrapper: ControlPanelWrapper, ...context } = makeTestProvider(
     [
+      providers.advancedSettings,
       providers.user,
       providers.session,
       providers.publisher,
@@ -179,7 +179,6 @@ function render(
   const wrapper = composeProviders(
     SuspenseBoundary,
     ControlPanelWrapper,
-    advancedSettingsDialog$.Provider,
     backgroundEffectsDialog$.Provider,
     precallNetworkTestDialog$.Provider
   );

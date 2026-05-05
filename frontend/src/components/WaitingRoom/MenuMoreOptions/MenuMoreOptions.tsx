@@ -9,7 +9,7 @@ import Popper from '@mui/material/Popper';
 import { useTranslation } from 'react-i18next';
 import VividIcon from '@ui/VividIcon';
 import backgroundEffectsDialog$ from '@Context/BackgroundEffectsDialog';
-import advancedSettingsDialog$ from '@Context/AdvancedSettingsDialog';
+// import advancedSettings$ from '@Context/AdvancedSettings';
 import precallNetworkTestDialog$ from '@Context/PrecallNetworkTestDialog';
 import useStableRef from '@web/hooks/useStableRef';
 import { env } from '../../../env';
@@ -19,6 +19,8 @@ export type MenuMoreOptionsWaitingRoomProps = {
   open: boolean;
   anchorEl: HTMLElement | null;
 };
+
+// const { open: openAdvancedSettings } = advancedSettings$.actions;
 
 /**
  * MenuMoreOptions Component
@@ -38,7 +40,6 @@ const MenuMoreOptions = ({
   const { t } = useTranslation();
   const hasSupportedMediaProcessor = hasMediaProcessorSupport();
   const isBackgroundEffectsSupported = hasSupportedMediaProcessor && env.ALLOW_BACKGROUND_EFFECTS;
-  const { open: openAdvancedSettings } = advancedSettingsDialog$.use.actions();
   const isPrecallNetworkTestSupported = hasSupportedMediaProcessor;
   const unsupportedFeatureTooltipTitle = t('waitingRoom.unsupportedFeature.tooltip');
   const [tooltipAnchorElement, setTooltipAnchorElement] = useState<HTMLElement | null>(null);
@@ -63,10 +64,10 @@ const MenuMoreOptions = ({
 
   const { open: openBackgroundEffects } = backgroundEffectsDialog$.use.actions();
   const { open: openPrecallNetworkTest } = precallNetworkTestDialog$.use.actions();
-  const handleClickAdvancedSettings = useCallback(() => {
-    openAdvancedSettings();
-    onClose();
-  }, [openAdvancedSettings, onClose]);
+  // const handleClickAdvancedSettings = useCallback(() => {
+  //   openAdvancedSettings();
+  //   onClose();
+  // }, [onClose]);
 
   const handleMenuClose = useCallback(() => {
     setTooltipAnchorElement(null);
@@ -135,7 +136,7 @@ const MenuMoreOptions = ({
         TransitionProps={{ onExited: handleCloseUnsupportedTooltip }}
         data-testid="menu-more-options"
       >
-        <MenuItem
+        {/* <MenuItem
           onClick={() => {
             handleClickAdvancedSettings();
           }}
@@ -143,7 +144,7 @@ const MenuMoreOptions = ({
         >
           <VividIcon name="gear-line" customSize={-6} />
           <span className="ml-2">{t('advancedSettings.title')}</span>
-        </MenuItem>
+        </MenuItem> */}
 
         <MenuItem key="backgroundEffects-option" {...backgroundEffectsAvailabilityProps}>
           <VividIcon name="gallery-line" customSize={-6} />

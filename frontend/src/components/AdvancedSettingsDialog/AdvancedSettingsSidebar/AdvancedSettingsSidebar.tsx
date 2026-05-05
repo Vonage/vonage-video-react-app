@@ -1,15 +1,15 @@
 import type { ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
 import classNames from 'classnames';
-import advancedSettingsDialog$ from '@Context/AdvancedSettingsDialog';
+import advancedSettings$ from '@Context/AdvancedSettings';
 import type { AdvancedSettingsTab } from '../types/types';
 
 const tabs: AdvancedSettingsTab[] = ['general', 'video', 'audio', 'statistics'];
+const { setSelectedTab } = advancedSettings$.actions;
 
 const AdvancedSettingsSidebar = (): ReactElement => {
   const { t } = useTranslation();
-  const selectedTab = advancedSettingsDialog$.use.select((state) => state.selectedTab);
-  const { setSelectedTab } = advancedSettingsDialog$.use.actions();
+  const selectedTab = advancedSettings$.use.select((state) => state.selectedTab);
 
   return (
     <div className="flex h-full sm:w-45 md:w-55 w-25 flex-col gap-0.5 border-r border-vera-border bg-vera-background p-1">

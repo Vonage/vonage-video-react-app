@@ -1,7 +1,7 @@
 import type { ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
 import { env, RESOLUTIONS } from '../../../env';
-import advancedSettingsDialog$ from '@Context/AdvancedSettingsDialog';
+import advancedSettings$ from '@Context/AdvancedSettings';
 import { AdvancedSettingsCodecPriorityField } from '../AdvancedSettingsCodecPriorityField';
 import { AdvancedSettingsCustomVideoBitrateField } from '../AdvancedSettingsCustomVideoBitrateField';
 import { AdvancedSettingsSelectField } from '../AdvancedSettingsSelectField';
@@ -12,18 +12,19 @@ import type {
 } from '../types/types';
 import { ADVANCED_SETTINGS_BITRATE_MODE, ADVANCED_SETTINGS_CODEC_MODE } from '../types/types';
 
+const { setBitrateMode, setCodecMode, setCodecPriority, setFrameRate, setResolution } =
+  advancedSettings$.actions;
+
 const AdvancedSettingsVideoTab = (): ReactElement => {
   const { t } = useTranslation();
   const { bitrateMode, codecMode, codecPriority, frameRate, resolution } =
-    advancedSettingsDialog$.use.select((state) => ({
+    advancedSettings$.use.select((state) => ({
       bitrateMode: state.bitrateMode,
       codecMode: state.codecMode,
       codecPriority: state.codecPriority,
       frameRate: state.frameRate,
       resolution: state.resolution,
     }));
-  const { setBitrateMode, setCodecMode, setCodecPriority, setFrameRate, setResolution } =
-    advancedSettingsDialog$.use.actions();
 
   const bitrateOptions = [
     {

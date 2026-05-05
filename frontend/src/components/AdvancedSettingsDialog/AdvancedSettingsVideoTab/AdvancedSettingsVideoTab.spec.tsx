@@ -2,11 +2,11 @@ import { render as renderBase, screen } from '@testing-library/react';
 import type { ReactElement } from 'react';
 import { describe, expect, it } from 'vitest';
 import { makeTestProvider, providers } from '@test/providers';
-import type { AdvancedSettingsDialogState } from '@Context/AdvancedSettingsDialog';
+import type { advancedSettings } from '@Context/AdvancedSettings';
 import AdvancedSettingsVideoTab from './AdvancedSettingsVideoTab';
 
 type RenderOptions = {
-  dialogState?: Partial<AdvancedSettingsDialogState>;
+  dialogState?: Partial<advancedSettings>;
 };
 
 describe('AdvancedSettingsVideoTab', () => {

@@ -1,16 +1,14 @@
 import type { ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
 import { env } from '../../../env';
-import advancedSettingsDialog$ from '@Context/AdvancedSettingsDialog';
+import advancedSettings$ from '@Context/AdvancedSettings';
 
 const CUSTOM_VIDEO_BITRATE_STEP_BPS = 5_000;
+const { setCustomVideoBitrate } = advancedSettings$.actions;
 
 const AdvancedSettingsCustomVideoBitrateField = (): ReactElement => {
   const { t } = useTranslation();
-  const customVideoBitrate = advancedSettingsDialog$.use.select(
-    (state) => state.customVideoBitrate
-  );
-  const { setCustomVideoBitrate } = advancedSettingsDialog$.use.actions();
+  const customVideoBitrate = advancedSettings$.use.select((state) => state.customVideoBitrate);
   const currentCustomVideoBitrate = Number(customVideoBitrate);
 
   return (
@@ -56,11 +54,11 @@ const AdvancedSettingsCustomVideoBitrateField = (): ReactElement => {
 
 function clampCustomVideoBitrate(customVideoBitrate: number): number {
   if (customVideoBitrate < env.MIN_CUSTOM_VIDEO_BITRATE_BPS) {
-    return env.MIN_CUSTOM_VIDEO_BITRATE_BPS;
+    return Number(env.MIN_CUSTOM_VIDEO_BITRATE_BPS);
   }
 
   if (customVideoBitrate > env.MAX_CUSTOM_VIDEO_BITRATE_BPS) {
-    return env.MAX_CUSTOM_VIDEO_BITRATE_BPS;
+    return Number(env.MAX_CUSTOM_VIDEO_BITRATE_BPS);
   }
 
   return customVideoBitrate;
