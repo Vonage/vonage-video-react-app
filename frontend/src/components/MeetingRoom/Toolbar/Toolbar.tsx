@@ -15,7 +15,7 @@ import ArchivingButton from '../ArchivingButton';
 import CaptionsButton from '../CaptionsButton';
 import ChatButton from '../ChatButton';
 import ReportIssueButton from '../ReportIssueButton';
-import AdvancedSettingsButton from '../AdvancedSettingsButton';
+// import AdvancedSettingsButton from '../AdvancedSettingsButton';
 import ToolbarOverflowButton from '../ToolbarOverflowButton';
 import EmojiGridButton from '../EmojiGridButton';
 import DeviceControlButton from '../DeviceControlButton';
@@ -109,7 +109,7 @@ const Toolbar = ({
     />,
     <CaptionsButton key="CaptionsButton" captionsState={captionsState} />,
     <ArchivingButton key="ArchivingButton" />,
-    <AdvancedSettingsButton key="AdvancedSettingsButton" />,
+    // <AdvancedSettingsButton key="AdvancedSettingsButton" />,
     isReportIssueEnabled() && (
       <ReportIssueButton
         isOpen={rightPanelActiveTab === 'issues'}

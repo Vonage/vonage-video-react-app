@@ -54,11 +54,11 @@ const AdvancedSettingsCustomVideoBitrateField = (): ReactElement => {
 
 function clampCustomVideoBitrate(customVideoBitrate: number): number {
   if (customVideoBitrate < env.MIN_CUSTOM_VIDEO_BITRATE_BPS) {
-    return env.MIN_CUSTOM_VIDEO_BITRATE_BPS;
+    return Number(env.MIN_CUSTOM_VIDEO_BITRATE_BPS);
   }
 
   if (customVideoBitrate > env.MAX_CUSTOM_VIDEO_BITRATE_BPS) {
-    return env.MAX_CUSTOM_VIDEO_BITRATE_BPS;
+    return Number(env.MAX_CUSTOM_VIDEO_BITRATE_BPS);
   }
 
   return customVideoBitrate;

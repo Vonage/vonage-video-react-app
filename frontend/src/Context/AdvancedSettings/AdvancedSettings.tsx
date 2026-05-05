@@ -35,7 +35,7 @@ const INITIAL_STATE = {
   publisherStatisticsEnabled: false,
 };
 
-export type AdvancedSettingsDialogState = typeof INITIAL_STATE;
+export type advancedSettings = typeof INITIAL_STATE;
 
 const advancedSettings$ = createGlobalState(INITIAL_STATE, {
   localStorage: {
@@ -44,7 +44,7 @@ const advancedSettings$ = createGlobalState(INITIAL_STATE, {
       ({
         ...state,
         isOpen: false,
-      }) as AdvancedSettingsDialogState,
+      }) as advancedSettings,
 
     validator: (_state) => {
       // zod
@@ -131,14 +131,14 @@ const advancedSettings$ = createGlobalState(INITIAL_STATE, {
 });
 
 const internals = actions(advancedSettings$, {
-  update: (updatedValues: Partial<AdvancedSettingsDialogState>) => {
+  update: (updatedValues: Partial<advancedSettings>) => {
     return ({ setState }) => {
       setState((state) => ({ ...state, ...updatedValues }));
     };
   },
 });
 
-function partialUpdate(partialState: Partial<AdvancedSettingsDialogState>) {
+function partialUpdate(partialState: Partial<advancedSettings>) {
   internals.update(partialState);
 }
 

@@ -1,28 +1,27 @@
 import { act, renderHook } from '@testing-library/react';
-import type { ReactNode } from 'react';
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, afterEach } from 'vitest';
 import advancedSettings$ from './AdvancedSettings';
 
 describe('AdvancedSettingsDialogContext', () => {
+  afterEach(() => {
+    advancedSettings$.setState((state) => ({ ...state, isOpen: false }));
+  });
+
   it('opens and closes the dialog through context actions', () => {
-    const wrapper = ({ children }: { children: ReactNode }) => (
-      <advancedSettings$.Provider>{children}</advancedSettings$.Provider>
-    );
+    const { result } = renderHook(() => advancedSettings$.use.select((state) => state.isOpen));
 
-    const { result } = renderHook(() => advancedSettings$.use(), { wrapper });
-
-    expect(result.current[0].isOpen).toBe(false);
+    expect(result.current).toBe(false);
 
     act(() => {
-      result.current[1].open();
+      advancedSettings$.use.actions.open();
     });
 
-    expect(result.current[0].isOpen).toBe(true);
+    expect(result.current).toBe(true);
 
     act(() => {
-      result.current[1].close();
+      advancedSettings$.use.actions.close();
     });
 
-    expect(result.current[0].isOpen).toBe(false);
+    expect(result.current).toBe(false);
   });
 });

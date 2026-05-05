@@ -37,7 +37,7 @@ describe('useApplyAdvancedSettings', () => {
       const { result } = renderHook(
         () => {
           useApplyAdvancedSettings(publisher);
-          return advancedSettings$.use.actions();
+          return advancedSettings$.use.actions;
         },
         { advancedSettingsContext: { dialogState: { frameRate: 30 } } }
       );
@@ -118,7 +118,7 @@ describe('useApplyAdvancedSettings', () => {
       const { result } = renderHook(
         () => {
           useApplyAdvancedSettings(publisher);
-          return advancedSettings$.use.actions();
+          return advancedSettings$.use.actions;
         },
         { advancedSettingsContext: { dialogState: { resolution: '1280x720' } } }
       );
@@ -205,7 +205,7 @@ describe('useApplyAdvancedSettings', () => {
       const { result } = renderHook(
         () => {
           useApplyAdvancedSettings(publisher);
-          return advancedSettings$.use.actions();
+          return advancedSettings$.use.actions;
         },
         {
           advancedSettingsContext: {

@@ -4,9 +4,7 @@ import { ReactElement, useRef } from 'react';
 import userEvent from '@testing-library/user-event';
 import { isMobile } from '@web/platform';
 import isReportIssueEnabled from '@utils/isReportIssueEnabled';
-import advancedSettings$ from '@Context/AdvancedSettings';
 import { makeTestProvider, providers, ProviderOptions } from '@test/providers';
-import composeProviders from '@web/helpers/composeProviders';
 import ToolbarOverflowMenu, { CaptionsState } from './ToolbarOverflowMenu';
 import Button from '@mui/material/Button';
 
@@ -75,7 +73,7 @@ describe('ToolbarOverflowMenu', () => {
     expect(screen.getByTestId('archiving-button')).toBeVisible();
     expect(screen.getByTestId('captions-button')).toBeVisible();
     expect(screen.getByTestId('emoji-grid-button')).toBeVisible();
-    expect(screen.getByTestId('advanced-settings-button')).toBeVisible();
+    // expect(screen.getByTestId('advanced-settings-button')).toBeVisible();
     expect(screen.getByTestId('report-issue-button')).toBeVisible();
     expect(screen.getByTestId('participant-list-button')).toBeVisible();
     expect(screen.getByTestId('chat-button')).toBeVisible();
@@ -89,7 +87,7 @@ describe('ToolbarOverflowMenu', () => {
     expect(screen.getByTestId('archiving-button')).toBeVisible();
     expect(screen.getByTestId('captions-button')).toBeVisible();
     expect(screen.getByTestId('emoji-grid-button')).toBeVisible();
-    expect(screen.getByTestId('advanced-settings-button')).toBeVisible();
+    // expect(screen.getByTestId('advanced-settings-button')).toBeVisible();
     expect(screen.queryByTestId('report-issue-button')).not.toBeInTheDocument();
     expect(screen.getByTestId('participant-list-button')).toBeVisible();
     expect(screen.getByTestId('chat-button')).toBeVisible();
@@ -131,7 +129,7 @@ function render(ui: ReactElement, { sessionContext, userContext }: RenderOptions
     sessionContext,
     userContext,
   });
-  const combinedWrapper = composeProviders(advancedSettings$.Provider, wrapper);
+  const combinedWrapper = wrapper;
 
   return {
     ...context,
