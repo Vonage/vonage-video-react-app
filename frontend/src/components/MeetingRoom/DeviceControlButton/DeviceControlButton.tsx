@@ -113,7 +113,7 @@ const DeviceControlButton = ({
       <VividIcon
         name="video-off-solid"
         customSize={-5}
-        data-testid="VideoamOffIcon"
+        data-testid="VideoCamOffIcon"
         style={{ color: theme.colors.error }}
       />
     );

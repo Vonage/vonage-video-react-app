@@ -70,7 +70,7 @@ test('The buttons in the meeting room should match those in the waiting room wit
   expect(page.url()).toContain('room/test-room');
   await page.waitForSelector('.publisher', { state: 'visible' });
 
-  await expect(page.getByTestId('VideocamOffIcon')).toBeVisible();
+  await expect(page.getByTestId('VideoCamOffIcon')).toBeVisible();
   await expect(page.getByTestId('MicOffToolbar')).toBeVisible();
 
   // Skipping this step for FF as we don't support BG replacement on FF
