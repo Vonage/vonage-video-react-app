@@ -70,7 +70,7 @@ const DeviceControlButton = ({
           <VividIcon
             name="microphone-2-solid"
             customSize={-5}
-            sx={{ color: theme.colors.disabled }}
+            style={{ color: theme.colors.disabled }}
           />
         );
       }
@@ -80,7 +80,7 @@ const DeviceControlButton = ({
             name="microphone-2-solid"
             customSize={-5}
             data-testid="MicNoneIcon"
-            sx={{ color: theme.colors.onDarkGrey }}
+            style={{ color: theme.colors.onDarkGrey }}
           />
         );
       }
@@ -89,7 +89,7 @@ const DeviceControlButton = ({
           name="mic-mute-solid"
           customSize={-5}
           data-testid="MicOffToolbar"
-          sx={{ color: theme.colors.error, transform: 'scaleX(-1)' }}
+          style={{ color: theme.colors.error, transform: 'scaleX(-1)' }}
         />
       );
     }
@@ -104,8 +104,8 @@ const DeviceControlButton = ({
         <VividIcon
           name="video-solid"
           customSize={-5}
-          data-testid="VideocamIcon"
-          sx={{ color: theme.colors.onDarkGrey }}
+          data-testid="VideoCamIcon"
+          style={{ color: theme.colors.onDarkGrey }}
         />
       );
     }
@@ -113,8 +113,8 @@ const DeviceControlButton = ({
       <VividIcon
         name="video-off-solid"
         customSize={-5}
-        data-testid="VideocamOffIcon"
-        sx={{ color: theme.colors.error }}
+        data-testid="VideoamOffIcon"
+        style={{ color: theme.colors.error }}
       />
     );
   };
@@ -163,13 +163,13 @@ const DeviceControlButton = ({
             <VividIcon
               name="chevron-down-line"
               customSize={-6}
-              sx={{ color: theme.colors.onDarkGrey }}
+              style={{ color: theme.colors.onDarkGrey }}
             />
           ) : (
             <VividIcon
               name="chevron-up-line"
               customSize={-6}
-              sx={{ color: theme.colors.onDarkGrey }}
+              style={{ color: theme.colors.onDarkGrey }}
             />
           )}
         </IconButton>

@@ -64,14 +64,14 @@ const LayoutButton = ({
               name="layout-2-solid"
               customSize={-5}
               data-testid="ViewSidebarIcon"
-              sx={{ color: isDisabled ? theme.colors.disabled : theme.colors.onSecondary }}
+              style={{ color: isDisabled ? theme.colors.disabled : theme.colors.onSecondary }}
             />
           ) : (
             <VividIcon
               name="apps-solid"
               customSize={-5}
               data-testid="ViewSidebarIcon"
-              sx={{ color: isDisabled ? theme.colors.disabled : theme.colors.onSecondary }}
+              style={{ color: isDisabled ? theme.colors.disabled : theme.colors.onSecondary }}
             />
           )
         }

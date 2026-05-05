@@ -63,13 +63,13 @@ const CameraButton = (): ReactElement | false => {
                 <VividIcon
                   name="video-line"
                   customSize={-5}
-                  sx={{ color: theme.colors.onSecondary }}
+                  style={{ color: theme.colors.onSecondary }}
                 />
               ) : (
                 <VividIcon
                   name="video-off-line"
                   customSize={-5}
-                  sx={{ color: theme.colors.alertText }}
+                  style={{ color: theme.colors.alertText }}
                 />
               )
             }

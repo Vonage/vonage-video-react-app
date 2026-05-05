@@ -57,13 +57,13 @@ const MicButton = (): ReactElement | false => {
                 <VividIcon
                   name="microphone-line"
                   customSize={-5}
-                  sx={{ color: theme.colors.onSecondary }}
+                  style={{ color: theme.colors.onSecondary }}
                 />
               ) : (
                 <VividIcon
                   name="mic-mute-line"
                   customSize={-5}
-                  sx={{ color: theme.colors.alertText, transform: 'scaleX(-1)' }}
+                  style={{ color: theme.colors.alertText, transform: 'scaleX(-1)' }}
                 />
               )
             }

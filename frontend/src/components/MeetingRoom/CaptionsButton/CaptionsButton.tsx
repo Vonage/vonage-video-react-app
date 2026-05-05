@@ -110,13 +110,13 @@ const CaptionsButton = ({
               <VividIcon
                 name="closed-captioning-solid"
                 customSize={-5}
-                sx={{ color: theme.colors.onSecondary }}
+                style={{ color: theme.colors.onSecondary }}
               />
             ) : (
               <VividIcon
                 name="closed-captioning-off-solid"
                 customSize={-5}
-                sx={{ color: theme.colors.error }}
+                style={{ color: theme.colors.error }}
               />
             )
           }

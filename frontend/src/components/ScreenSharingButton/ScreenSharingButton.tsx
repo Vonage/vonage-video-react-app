@@ -72,14 +72,14 @@ const ScreenSharingButton = ({
                 <VividIcon
                   name="screen-share-solid"
                   customSize={-5}
-                  sx={{ color: theme.colors.onSecondary }}
+                  style={{ color: theme.colors.onSecondary }}
                   data-testid="ScreenShareIcon"
                 />
               ) : (
                 <VividIcon
                   name="screen-share-off-solid"
                   customSize={-5}
-                  sx={{ color: theme.colors.onSecondary }}
+                  style={{ color: theme.colors.onSecondary }}
                   data-testid="ScreenShareIcon"
                 />
               )

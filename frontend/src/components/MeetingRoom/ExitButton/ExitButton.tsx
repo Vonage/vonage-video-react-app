@@ -48,7 +48,7 @@ const ExitButton = ({ handleLeave }: ExitButtonProps): ReactElement => {
             name="end-call-solid"
             customSize={-4}
             data-testid="CallEndIcon"
-            sx={{ color: theme.colors.onSecondary }}
+            style={{ color: theme.colors.onSecondary }}
           />
         }
       />
