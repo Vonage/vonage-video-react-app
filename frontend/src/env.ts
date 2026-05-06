@@ -1,3 +1,4 @@
+import isNil from '@common/assertions/isNil';
 import { DISPLAY_SURFACES, type DisplaySurface } from './types/screenShare';
 import { LAYOUT_MODES, type LayoutMode } from './types/session';
 
@@ -109,7 +110,7 @@ function parseResolution(value: unknown, fallback: Resolution | undefined): Reso
 }
 
 function parseDisplaySurface(rawValue: unknown): DisplaySurface | undefined {
-  if (rawValue === undefined || rawValue === null || rawValue === '') return undefined;
+  if (isNil(rawValue) || rawValue === '') return undefined;
 
   if (typeof rawValue !== 'string') {
     throw new Error(`Invalid display surface type: ${toDisplayString(rawValue)}`);
