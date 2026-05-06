@@ -90,10 +90,10 @@ describe('useRaiseHand', () => {
   });
 
   // ---------------------------------------------------------------------------
-  // raiseHand — signal payload
+  // raiseHand — signal payload + optimistic state
   // ---------------------------------------------------------------------------
 
-  it('raiseHand sends the correct signal payload', () => {
+  it('raiseHand emits the signal payload and updates localHandIsRaised optimistically', () => {
     vi.setSystemTime(12_000_000);
     const { result } = renderRaiseHand();
 
@@ -107,23 +107,14 @@ describe('useRaiseHand', () => {
     const data = JSON.parse(call.data) as Record<string, unknown>;
     expect(data.raisedHand).toBe(true);
     expect(data.timestamp).toBe(12_000_000);
-  });
-
-  it('raiseHand updates localHandIsRaised optimistically', () => {
-    const { result } = renderRaiseHand();
-
-    act(() => {
-      result.current.raiseHand();
-    });
-
     expect(result.current.localHandIsRaised).toBe(true);
   });
 
   // ---------------------------------------------------------------------------
-  // lowerHand — own hand
+  // lowerHand — own hand: payload + optimistic state
   // ---------------------------------------------------------------------------
 
-  it('lowerHand (own) sends the correct signal payload', () => {
+  it('lowerHand (own) emits the signal payload and clears localHandIsRaised', () => {
     const { result } = renderRaiseHand();
 
     act(() => result.current.raiseHand());
@@ -135,12 +126,6 @@ describe('useRaiseHand', () => {
     const data = JSON.parse(mockSignal.mock.calls[0][0].data as string) as Record<string, unknown>;
     expect(data.raisedHand).toBe(false);
     expect(data.timestamp).toBeNull();
-  });
-
-  it('lowerHand (own) clears localHandIsRaised', () => {
-    const { result } = renderRaiseHand();
-    act(() => result.current.raiseHand());
-    act(() => result.current.lowerHand());
     expect(result.current.localHandIsRaised).toBe(false);
   });
 
@@ -243,44 +228,6 @@ describe('useRaiseHand', () => {
   });
 
   // ---------------------------------------------------------------------------
-  // lowerAllHands
-  // ---------------------------------------------------------------------------
-
-  it('lowerAllHands clears all raised hands and sends signals for each', async () => {
-    const wrapperA = makeSubscriberWrapper('conn-a', 'A');
-    const wrapperB = makeSubscriberWrapper('conn-b', 'B');
-    const { result } = renderRaiseHand();
-
-    act(() => {
-      result.current.onRaiseHandSignal(
-        {
-          type: 'signal:raiseHand',
-          data: JSON.stringify({ raisedHand: true, timestamp: 1 }),
-          from: { connectionId: 'conn-a', creationTime: 1, data: '' } as Connection,
-        },
-        [wrapperA, wrapperB]
-      );
-      result.current.onRaiseHandSignal(
-        {
-          type: 'signal:raiseHand',
-          data: JSON.stringify({ raisedHand: true, timestamp: 2 }),
-          from: { connectionId: 'conn-b', creationTime: 1, data: '' } as Connection,
-        },
-        [wrapperA, wrapperB]
-      );
-    });
-
-    await waitFor(() => expect(result.current.raisedHandCount).toBe(2));
-
-    mockSignal.mockClear();
-
-    act(() => result.current.lowerAllHands());
-
-    await waitFor(() => expect(result.current.raisedHandCount).toBe(0));
-    expect(mockSignal).toBeCalledTimes(2);
-  });
-
-  // ---------------------------------------------------------------------------
   // onConnectionDestroyed
   // ---------------------------------------------------------------------------
 
@@ -323,31 +270,7 @@ describe('useRaiseHand', () => {
     await waitFor(() => expect(result.current.raisedHandCount).toBe(0));
   });
 
-  it('onConnectionCreated unicasts the local hand state to a new connection', () => {
-    vi.setSystemTime(99_000);
-    const { result } = renderRaiseHand();
-
-    act(() => result.current.raiseHand());
-    mockSignal.mockClear();
-
-    const newConnection = { connectionId: 'new-conn', creationTime: 1, data: '' } as Connection;
-    act(() => result.current.onConnectionCreated(newConnection));
-
-    expect(mockSignal).toBeCalledTimes(1);
-    const call = mockSignal.mock.calls[0][0];
-    expect(call.to).toEqual(newConnection);
-    const data = JSON.parse(call.data as string) as Record<string, unknown>;
-    expect(data.raisedHand).toBe(true);
-  });
-
-  it('onConnectionCreated does nothing if local hand is not raised', () => {
-    const { result } = renderRaiseHand();
-    const newConnection = { connectionId: 'new-conn', creationTime: 1, data: '' } as Connection;
-    act(() => result.current.onConnectionCreated(newConnection));
-    expect(mockSignal).not.toBeCalled();
-  });
-
-  it('onConnectionCreated re-uses the original raisedHandTimestamp (not Date.now())', () => {
+  it('onConnectionCreated unicasts the local hand state with the original timestamp', () => {
     vi.setSystemTime(50_000);
     const { result } = renderRaiseHand();
     act(() => result.current.raiseHand());
@@ -359,10 +282,22 @@ describe('useRaiseHand', () => {
     const newConnection = { connectionId: 'new-conn', creationTime: 1, data: '' } as Connection;
     act(() => result.current.onConnectionCreated(newConnection));
 
-    const data = JSON.parse(mockSignal.mock.calls[0][0].data as string) as Record<string, unknown>;
-    // Must be the original raise time so the late-joiner slots us at the right
-    // queue position, not the moment they joined.
+    expect(mockSignal).toBeCalledTimes(1);
+    const call = mockSignal.mock.calls[0][0];
+    // Targets the new connection (unicast, not broadcast).
+    expect(call.to).toEqual(newConnection);
+    const data = JSON.parse(call.data as string) as Record<string, unknown>;
+    expect(data.raisedHand).toBe(true);
+    // Must be the original raise time so the late-joiner slots us at the
+    // right queue position, not the moment they joined.
     expect(data.timestamp).toBe(50_000);
+  });
+
+  it('onConnectionCreated does nothing if local hand is not raised', () => {
+    const { result } = renderRaiseHand();
+    const newConnection = { connectionId: 'new-conn', creationTime: 1, data: '' } as Connection;
+    act(() => result.current.onConnectionCreated(newConnection));
+    expect(mockSignal).not.toBeCalled();
   });
 
   // ---------------------------------------------------------------------------

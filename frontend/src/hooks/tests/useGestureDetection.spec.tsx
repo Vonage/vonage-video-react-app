@@ -61,53 +61,46 @@ describe('useGestureDetection', () => {
   // Guards
   // ---------------------------------------------------------------------------
 
-  it('returns null progress when disabled', () => {
+  it.each([
+    ['enabled: false, video provided', { enabled: false, videoElement: makeVideo() }],
+    ['enabled: true, videoElement: null', { enabled: true, videoElement: null }],
+  ])('returns null progress when %s', (_label, props) => {
     const { result } = renderHook(() =>
       useGestureDetection({
-        enabled: false,
-        videoElement: makeVideo(),
+        ...props,
         onHandRaised: noop,
       })
     );
     expect(result.current).toBeNull();
   });
 
-  it('returns null progress when videoElement is null', () => {
-    const { result } = renderHook(() =>
-      useGestureDetection({
-        enabled: true,
-        videoElement: null,
-        onHandRaised: noop,
-      })
-    );
-    expect(result.current).toBeNull();
-  });
-
-  it('cleanup runs without throwing when enabled flips false', async () => {
+  it('tears down cleanly on disable and on unmount (model disposed, no throws)', async () => {
     const video = makeVideo();
-    const { result, rerender } = renderHook(
+
+    // Path 1: enabled flips false.
+    const {
+      result,
+      rerender,
+      unmount: unmount1,
+    } = renderHook(
       ({ enabled }: { enabled: boolean }) =>
         useGestureDetection({ enabled, videoElement: video, onHandRaised: noop }),
       { initialProps: { enabled: true } }
     );
     await flushModelLoad();
-
     expect(() => rerender({ enabled: false })).not.toThrow();
     expect(result.current).toBeNull();
-    // Disposing the model is part of cleanup.
     expect(close).toHaveBeenCalled();
-  });
+    unmount1();
 
-  it('unmount with enabled=true does not throw', async () => {
-    const { unmount } = renderHook(() =>
-      useGestureDetection({
-        enabled: true,
-        videoElement: makeVideo(),
-        onHandRaised: noop,
-      })
+    // Path 2: unmount while enabled is still true.
+    close.mockClear();
+    const { unmount: unmount2 } = renderHook(() =>
+      useGestureDetection({ enabled: true, videoElement: video, onHandRaised: noop })
     );
     await flushModelLoad();
-    expect(() => unmount()).not.toThrow();
+    expect(() => unmount2()).not.toThrow();
+    expect(close).toHaveBeenCalled();
   });
 
   // ---------------------------------------------------------------------------
@@ -150,7 +143,7 @@ describe('useGestureDetection', () => {
     expect(onHandRaised).not.toHaveBeenCalled();
   });
 
-  it('does not fire any callback for an unsupported gesture', async () => {
+  it('ignores untracked gestures and below-threshold confidence — no callback fires', async () => {
     const onHandRaised = vi.fn();
     const onThumbsUp = vi.fn();
     const onThumbsDown = vi.fn();
@@ -164,12 +157,20 @@ describe('useGestureDetection', () => {
         onThumbsDown,
         detectionIntervalMs: 100,
         detectionDurationMs: 200,
+        gestureConfidence: 0.8, // strict threshold
       })
     );
     await flushModelLoad();
 
-    // Pointing_Up is not in the tracked-gestures set.
-    recognizeForVideo.mockReturnValue(gestureResult('Pointing_Up'));
+    // Mix of two reasons a tick should be discarded: an untracked gesture
+    // (Pointing_Up) and a tracked gesture below the confidence threshold
+    // (Open_Palm at 0.5 < 0.8). Either way nothing should fire.
+    recognizeForVideo
+      .mockReturnValueOnce(gestureResult('Pointing_Up'))
+      .mockReturnValueOnce(gestureResult('Open_Palm', 0.5))
+      .mockReturnValueOnce(gestureResult('Pointing_Up'))
+      .mockReturnValueOnce(gestureResult('Open_Palm', 0.5))
+      .mockReturnValue(gestureResult('Pointing_Up'));
     await act(async () => {
       vi.advanceTimersByTime(500);
       await Promise.resolve();
@@ -178,29 +179,5 @@ describe('useGestureDetection', () => {
     expect(onHandRaised).not.toHaveBeenCalled();
     expect(onThumbsUp).not.toHaveBeenCalled();
     expect(onThumbsDown).not.toHaveBeenCalled();
-  });
-
-  it('ignores low-confidence detections below the configured threshold', async () => {
-    const onHandRaised = vi.fn();
-    const video = makeVideo();
-    renderHook(() =>
-      useGestureDetection({
-        enabled: true,
-        videoElement: video,
-        onHandRaised,
-        detectionIntervalMs: 100,
-        detectionDurationMs: 200,
-        gestureConfidence: 0.8, // strict threshold
-      })
-    );
-    await flushModelLoad();
-
-    // 0.5 < 0.8 → discarded every tick.
-    recognizeForVideo.mockReturnValue(gestureResult('Open_Palm', 0.5));
-    await act(async () => {
-      vi.advanceTimersByTime(500);
-      await Promise.resolve();
-    });
-    expect(onHandRaised).not.toHaveBeenCalled();
   });
 });
