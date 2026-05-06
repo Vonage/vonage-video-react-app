@@ -5,18 +5,11 @@ import Toolbar from '../../components/MeetingRoom/Toolbar';
 import VideoTileCanvas from '../../components/MeetingRoom/VideoTileCanvas';
 import SmallViewportHeader from '../../components/MeetingRoom/SmallViewportHeader';
 import EmojisOrigin from '../../components/MeetingRoom/EmojisOrigin';
-import { env } from '../../env';
-import useGestureDetection from '../../hooks/useGestureDetection';
-import emojiMap from '../../utils/emojis';
 import RightPanel from '../../components/MeetingRoom/RightPanel';
 import CaptionsBox from '../../components/MeetingRoom/CaptionsButton/CaptionsBox';
 import CaptionsError from '../../components/MeetingRoom/CaptionsError';
 import classNames from 'classnames';
 import useMeetingRoom from '../../hooks/useMeetingRoom';
-import useSessionContext from '../../hooks/useSessionContext';
-import { useIsHandRaisedFor } from '@core/stores';
-import usePublisherContext from '../../hooks/usePublisherContext';
-import useUserContext from '../../hooks/useUserContext';
 import { twMerge } from 'tailwind-merge';
 import RecordingIndicator from '../../components/MeetingRoom/RecordingIndicator';
 import RecordingPopUpIndicator from '@components/MeetingRoom/RecordingPopupIndicator';
@@ -66,26 +59,6 @@ const MeetingRoom = ({ fullSize = false, className }: MeetingRoomProps): ReactEl
     latestNotifiedArchiveId,
     handleRecordingNotified,
   } = useMeetingRoom();
-  const isRaiseHandAllowed = env.ALLOW_RAISE_HAND;
-  const isGestureDetectionAllowed = env.ALLOW_GESTURE_DETECTION ?? false;
-  const { raiseHand, sendEmoji, getConnectionId } = useSessionContext();
-  const localHandIsRaised = useIsHandRaisedFor(getConnectionId());
-  const { publisherVideoElement } = usePublisherContext();
-  const {
-    user: {
-      defaultSettings: { backgroundFilter },
-    },
-  } = useUserContext();
-  const hasBackgroundEffect = !!backgroundFilter;
-
-  const gestureProgress = useGestureDetection({
-    enabled: isGestureDetectionAllowed && isVideoEnabled && !hasBackgroundEffect,
-    videoElement: publisherVideoElement instanceof HTMLVideoElement ? publisherVideoElement : null,
-    onHandRaised: isRaiseHandAllowed && !localHandIsRaised ? raiseHand : () => {},
-    onThumbsUp: () => sendEmoji(emojiMap.THUMBS_UP),
-    onThumbsDown: () => sendEmoji(emojiMap.THUMBS_DOWN),
-  });
-
   return (
     <Box
       data-testid="meetingRoom"
@@ -114,7 +87,6 @@ const MeetingRoom = ({ fullSize = false, className }: MeetingRoomProps): ReactEl
         screenshareVideoElement={screenshareVideoElement}
         isRightPanelOpen={rightPanelActiveTab !== 'closed'}
         fullSize={fullSize}
-        gestureProgress={gestureProgress}
       />
 
       <RightPanel activeTab={rightPanelActiveTab} handleClose={closeRightPanel} />

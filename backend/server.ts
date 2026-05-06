@@ -2,7 +2,6 @@
 import './helpers/config';
 
 import express, { Express, Request, Response } from 'express';
-import expressStaticGzip from 'express-static-gzip';
 import path from 'path';
 import bodyParser from 'body-parser';
 import cors from 'cors';
@@ -40,16 +39,7 @@ app.use((_req, res, next) => {
 
 const veraPath = path.join(runtimeDir, './dist');
 
-// Serve precomputed .br (Brotli) and .gz files when the client supports them,
-// falling back to the original asset. Saves ~66% over raw on the MediaPipe
-// WASM and gesture-recognizer model — see scripts/prepareMediaPipeAssets.ts.
-app.use(
-  expressStaticGzip(veraPath, {
-    enableBrotli: true,
-    orderPreference: ['br', 'gz'],
-    serveStatic: { fallthrough: true, maxAge: '7d' },
-  })
-);
+app.use(express.static(veraPath));
 
 app.get('/*', (_req: Request, res: Response) => {
   res.sendFile(path.join(veraPath, 'index.html'));

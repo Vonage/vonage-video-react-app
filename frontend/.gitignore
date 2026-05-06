@@ -13,9 +13,6 @@ dist-ssr
 *.local
 docs
 
-# MediaPipe assets self-hosted at build time (postinstall + prebuild)
-public/mediapipe
-
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json

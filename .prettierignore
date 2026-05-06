@@ -18,6 +18,3 @@ integration-tests/test-results/
 # Public compiled assets
 public/js/
 
-# Self-hosted MediaPipe WASM/model assets (regenerated at build time)
-frontend/public/mediapipe/
-

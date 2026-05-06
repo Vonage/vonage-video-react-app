@@ -11,15 +11,12 @@ import useTheme from '@ui/theme';
 import { ABSOLUTE_DISTANCE_THRESHOLD_REM_VALUE } from '@utils/constants';
 import toRemValue from '@common/helpers/toRemValue';
 import RaiseHandBadge from '../MeetingRoom/RaiseHand/RaiseHandBadge';
-import GestureProgressRing from '../MeetingRoom/GestureProgressRing/GestureProgressRing';
-import type { GestureProgress } from '../../hooks/useGestureDetection';
 import { useIsHandRaisedFor } from '@core/stores';
 import useSessionContext from '../../hooks/useSessionContext';
 import { env } from '../../env';
 
 export type PublisherProps = {
   box: Box;
-  gestureProgress?: GestureProgress;
 };
 
 /**
@@ -31,7 +28,7 @@ export type PublisherProps = {
  *  @property {Box} box - the box in which the component is displayed
  * @returns {ReactElement} The publisher component.
  */
-const Publisher = ({ box, gestureProgress }: PublisherProps): ReactElement => {
+const Publisher = ({ box }: PublisherProps): ReactElement => {
   const {
     publisherVideoElement: element,
     isVideoEnabled,
@@ -91,14 +88,6 @@ const Publisher = ({ box, gestureProgress }: PublisherProps): ReactElement => {
       hasVideo={hasVideo}
     >
       {isRaiseHandAllowed && localHandIsRaised && <RaiseHandBadge tileWidth={box.width} />}
-      {gestureProgress && (
-        <GestureProgressRing
-          gesture={gestureProgress.gesture}
-          state={gestureProgress.state}
-          durationMs={gestureProgress.durationMs}
-          tileWidth={box.width}
-        />
-      )}
       {!hasVideo && (
         <AvatarInitials
           initials={initials}

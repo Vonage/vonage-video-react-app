@@ -10,7 +10,7 @@
       "outputs": ["{projectRoot}/dist"],
       "options": {
         "cwd": "frontend",
-        "command": "bash -c 'source ../vcrBuild.env.sh && npx tsx ../scripts/prepareMediaPipeAssets.ts && vite build && nx run frontend:cp-build'"
+        "command": "bash -c 'source ../vcrBuild.env.sh && vite build && nx run frontend:cp-build'"
       }
     },
     "build-room": {
