@@ -388,14 +388,13 @@ describe('useRaiseHand', () => {
     expect(mockSignal).not.toBeCalled();
   });
 
-  it('lowerAllHands sends one signal per raised hand (not per entry in the map)', async () => {
+  it('lowerAllHands sends a single broadcast and clears the queue', async () => {
     const wrapperA = makeSubscriberWrapper('conn-a', 'A');
     const wrapperB = makeSubscriberWrapper('conn-b', 'B');
     const wrapperC = makeSubscriberWrapper('conn-c', 'C');
     const { result } = renderRaiseHand();
 
     act(() => {
-      // Three raises…
       result.current.onRaiseHandSignal(
         {
           type: 'signal:raiseHand',
@@ -427,11 +426,72 @@ describe('useRaiseHand', () => {
 
     act(() => result.current.lowerAllHands());
 
-    expect(mockSignal).toBeCalledTimes(3);
-    const targets = mockSignal.mock.calls.map((c) => {
-      const data = JSON.parse(c[0].data as string) as { connectionId: string };
-      return data.connectionId;
+    // One broadcast for the whole queue, not N — peers process locally.
+    expect(mockSignal).toBeCalledTimes(1);
+    const data = JSON.parse(mockSignal.mock.calls[0][0].data as string) as Record<string, unknown>;
+    expect(data.raisedHand).toBe(false);
+    expect(data.lowerAll).toBe(true);
+    expect(data.loweredBy).toBe(LOCAL_CONNECTION_ID);
+  });
+
+  it('processes a remote `lowerAll` broadcast by clearing the queue', async () => {
+    const wrapperA = makeSubscriberWrapper('conn-a', 'A');
+    const wrapperB = makeSubscriberWrapper('conn-b', 'B');
+    const { result } = renderRaiseHand();
+
+    act(() => {
+      result.current.onRaiseHandSignal(
+        {
+          type: 'signal:raiseHand',
+          data: JSON.stringify({ raisedHand: true, timestamp: 1 }),
+          from: { connectionId: 'conn-a', creationTime: 1, data: '' } as Connection,
+        },
+        [wrapperA, wrapperB]
+      );
+      result.current.onRaiseHandSignal(
+        {
+          type: 'signal:raiseHand',
+          data: JSON.stringify({ raisedHand: true, timestamp: 2 }),
+          from: { connectionId: 'conn-b', creationTime: 1, data: '' } as Connection,
+        },
+        [wrapperA, wrapperB]
+      );
     });
-    expect(new Set(targets)).toEqual(new Set(['conn-a', 'conn-b', 'conn-c']));
+    await waitFor(() => expect(result.current.raisedHandCount).toBe(2));
+
+    act(() => {
+      result.current.onRaiseHandSignal(
+        {
+          type: 'signal:raiseHand',
+          data: JSON.stringify({
+            raisedHand: false,
+            timestamp: null,
+            lowerAll: true,
+            loweredBy: 'moderator-conn',
+          }),
+          from: { connectionId: 'moderator-conn', creationTime: 1, data: '' } as Connection,
+        },
+        [wrapperA, wrapperB]
+      );
+    });
+
+    await waitFor(() => expect(result.current.raisedHandCount).toBe(0));
+  });
+
+  it('rejects payloads with a non-finite timestamp (NaN poisons sort)', () => {
+    const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
+    const wrapper = makeSubscriberWrapper(REMOTE_CONNECTION_ID, 'Bob');
+    const { result } = renderRaiseHand();
+
+    const event = {
+      type: 'signal:raiseHand',
+      data: JSON.stringify({ raisedHand: true, timestamp: 'not-a-number' }),
+      from: { connectionId: REMOTE_CONNECTION_ID, creationTime: 1, data: '' } as Connection,
+    } as SignalEvent;
+
+    expect(() => act(() => result.current.onRaiseHandSignal(event, [wrapper]))).not.toThrow();
+    expect(warnSpy).toHaveBeenCalled();
+    expect(result.current.raisedHandCount).toBe(0);
+    warnSpy.mockRestore();
   });
 });

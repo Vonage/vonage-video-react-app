@@ -2,9 +2,15 @@ import { ReactElement, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import useSessionContext from '@hooks/useSessionContext';
 import { useRaisedHands } from '@core/stores';
-import { isModeratorRole } from '../../../../utils/raiseHandRole';
 import emojiMap from '../../../../utils/emojis';
 import LowerAllDialog from './LowerAllDialog';
+
+// v1: every participant is a moderator and may lower other participants'
+// hands. VERA does not yet have a server-side role model; lowering uses the
+// same broadcast signal channel as raising, so there is no privileged
+// backend path. When real roles ship, replace this with the actual check
+// — every moderator-gated branch below reads from `isModerator`.
+const IS_MODERATOR = true;
 
 /**
  * Section at the top of the Participants panel listing raised hands in
@@ -14,10 +20,7 @@ const RaisedHandsSection = (): ReactElement => {
   const { t } = useTranslation();
   const { lowerHand, lowerAllHands } = useSessionContext();
   const raisedHands = useRaisedHands();
-  // Hoist once: when the real role check ships and `isModeratorRole()`
-  // becomes a context lookup, calling it three times per render gets
-  // expensive.
-  const isModerator = isModeratorRole();
+  const isModerator = IS_MODERATOR;
   const [isLowerAllDialogOpen, setIsLowerAllDialogOpen] = useState(false);
 
   const handleLowerAllClick = () => setIsLowerAllDialogOpen(true);

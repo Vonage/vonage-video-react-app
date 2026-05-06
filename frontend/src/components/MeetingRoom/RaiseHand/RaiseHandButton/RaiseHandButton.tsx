@@ -1,5 +1,6 @@
 import { ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
+import { twMerge } from 'tailwind-merge';
 import useSessionContext from '@hooks/useSessionContext';
 import { useIsHandRaisedFor } from '@core/stores';
 import emojiMap from '../../../../utils/emojis';
@@ -30,13 +31,12 @@ const RaiseHandButton = (): ReactElement => {
       onClick={handleClick}
       aria-label={label}
       aria-pressed={localHandIsRaised}
-      className={[
-        'flex w-full items-center justify-center gap-1.5 rounded px-3 py-2 text-sm',
-        'border transition-colors',
+      className={twMerge(
+        'flex w-full items-center justify-center gap-1.5 rounded border px-3 py-2 text-sm transition-colors',
         localHandIsRaised
           ? 'border-vera-primary bg-vera-primary text-vera-on-primary hover:bg-vera-primary-hover'
-          : 'border-transparent bg-transparent text-vera-on-dark-grey hover:bg-vera-dark-grey-hover',
-      ].join(' ')}
+          : 'border-transparent bg-transparent text-vera-on-dark-grey hover:bg-vera-dark-grey-hover'
+      )}
     >
       <span aria-hidden="true" className="shrink-0 text-xl leading-none">
         {emojiMap.RAISED_HAND}

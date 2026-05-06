@@ -1,13 +1,37 @@
 import { useCallback, useEffect, useRef } from 'react';
 import type { Connection } from '@vonage/client-sdk-video';
 import { raiseHand$, type RaisedHandEntry } from '@core/stores';
+import tryCatch from '@common/execution/tryCatch';
 import { SignalEvent, SignalType, SubscriberWrapper } from '../types/session';
 
 const RAISE_HAND_SIGNAL = 'raiseHand' as const;
 
+/**
+ * Wire format. `lowerAll: true` is a single broadcast that every peer
+ * processes locally to clear their own copy of the queue (avoids the
+ * N-signals-in-a-tight-loop pattern that risks out-of-order delivery
+ * leaving participants with inconsistent state).
+ */
 type RaiseHandPayload =
   | { raisedHand: true; timestamp: number }
-  | { raisedHand: false; timestamp: null; loweredBy?: string };
+  | { raisedHand: false; timestamp: null; connectionId?: string; loweredBy?: string }
+  | { raisedHand: false; timestamp: null; lowerAll: true; loweredBy?: string };
+
+/** Type guard validating a parsed signal payload from the wire. */
+const isValidPayload = (v: unknown): v is RaiseHandPayload => {
+  if (!v || typeof v !== 'object') return false;
+  const o = v as Record<string, unknown>;
+  if (o.raisedHand === true) {
+    // Reject NaN, Infinity, missing, or non-finite timestamps. These would
+    // poison the queue-order comparator (NaN-NaN = NaN; sort becomes
+    // implementation-defined for any pair containing it).
+    return typeof o.timestamp === 'number' && Number.isFinite(o.timestamp);
+  }
+  if (o.raisedHand === false) {
+    return o.timestamp === null;
+  }
+  return false;
+};
 
 export type UseRaiseHandProps = {
   /** Function to send a signal (broadcast or unicast). */
@@ -51,22 +75,23 @@ export type UseRaiseHand = {
  * State (the handsMap) lives in the store so the SessionContext doesn't churn
  * on every raise/lower; this hook only handles the session-side wiring:
  * sending signals, parsing inbound signals, and reacting to connection events.
+ *
+ * All outbound sends use `signalRef.current` rather than the captured
+ * `signal` so callbacks stay stable across `signal` identity changes — and
+ * so EventEmitter-registered handlers (`onConnectionCreated`) always see
+ * the latest function rather than the first-render value (often undefined).
  */
 const useRaiseHand = ({
   signal,
   getConnectionId,
   localUserName,
 }: UseRaiseHandProps): UseRaiseHand => {
-  // Subscribe to the store at the hook level so we can call its actions /
-  // read its state from non-render callbacks. `use.actions()` and `use.api()`
-  // internally call `useContext`, so they must be invoked here (React
-  // render time), not from inside event handlers.
+  // Subscribe to the store at hook level — `use.actions()` / `use.api()`
+  // call `useContext` and must be invoked at React render time, not from
+  // inside event handlers.
   const storeActions = raiseHand$.use.actions();
   const storeApi = raiseHand$.use.api();
 
-  // Ref to the latest signal function. `onConnectionCreated` is registered
-  // once on the EventEmitter and would otherwise capture the first-render
-  // value (often still undefined).
   const signalRef = useRef(signal);
   useEffect(() => {
     signalRef.current = signal;
@@ -83,8 +108,9 @@ const useRaiseHand = ({
   );
 
   const raiseHand = useCallback(() => {
+    const send = signalRef.current;
     const localConnectionId = getConnectionId();
-    if (!localConnectionId || !signal) return;
+    if (!localConnectionId || !send) return;
 
     const timestamp = Date.now();
     const payload: RaiseHandPayload = { raisedHand: true, timestamp };
@@ -97,55 +123,53 @@ const useRaiseHand = ({
       raisedHandTimestamp: timestamp,
     });
 
-    signal({ type: RAISE_HAND_SIGNAL, data: JSON.stringify(payload) });
-  }, [signal, getConnectionId, localUserName, storeActions]);
+    send({ type: RAISE_HAND_SIGNAL, data: JSON.stringify(payload) });
+  }, [getConnectionId, localUserName, storeActions]);
 
   const lowerHand = useCallback(
     (connectionId?: string) => {
+      const send = signalRef.current;
       const localConnectionId = getConnectionId();
       const targetConnectionId = connectionId ?? localConnectionId;
-      if (!targetConnectionId || !signal) return;
+      if (!targetConnectionId || !send) return;
 
       const isRemoteLower = !!connectionId && connectionId !== localConnectionId;
       const payload: RaiseHandPayload = {
         raisedHand: false,
         timestamp: null,
+        connectionId: targetConnectionId,
         ...(isRemoteLower ? { loweredBy: localConnectionId } : {}),
       };
 
       // Optimistic UI
       storeActions.removeHand(targetConnectionId);
 
-      signal({
-        type: RAISE_HAND_SIGNAL,
-        data: JSON.stringify({ ...payload, connectionId: targetConnectionId }),
-      });
+      send({ type: RAISE_HAND_SIGNAL, data: JSON.stringify(payload) });
     },
-    [signal, getConnectionId, storeActions]
+    [getConnectionId, storeActions]
   );
 
   const lowerAllHands = useCallback(() => {
+    const send = signalRef.current;
+    if (!send) return;
     const localConnectionId = getConnectionId();
-    if (!signal) return;
 
-    const currentMap = storeApi.getState().handsMap;
+    // Single broadcast — every peer (including ourselves) processes it once
+    // and clears their own queue. Avoids the N-signals-in-a-tight-loop
+    // pattern that risks out-of-order delivery leaving participants with
+    // inconsistent state.
     const payload: RaiseHandPayload = {
       raisedHand: false,
       timestamp: null,
+      lowerAll: true,
       loweredBy: localConnectionId,
     };
 
-    // Optimistic UI — clear all
+    // Optimistic UI
     storeActions.clear();
 
-    // Store invariant: every entry in the map is raised, so no need to check.
-    currentMap.forEach((state) => {
-      signal({
-        type: RAISE_HAND_SIGNAL,
-        data: JSON.stringify({ ...payload, connectionId: state.connectionId }),
-      });
-    });
-  }, [signal, getConnectionId, storeActions, storeApi]);
+    send({ type: RAISE_HAND_SIGNAL, data: JSON.stringify(payload) });
+  }, [getConnectionId, storeActions]);
 
   /**
    * On reconnect, drop remote hands (they re-sync via connectionCreated) but
@@ -153,8 +177,8 @@ const useRaiseHand = ({
    * so our queue position survives the reconnect.
    */
   const resetAllHands = useCallback(() => {
+    const send = signalRef.current;
     const localConnectionId = getConnectionId();
-    const currentSignal = signalRef.current;
     const localState = localConnectionId
       ? storeApi.getState().handsMap.get(localConnectionId)
       : undefined;
@@ -166,12 +190,12 @@ const useRaiseHand = ({
       preserved.set(localConnectionId, localState);
       storeActions.replaceAll(preserved);
 
-      if (currentSignal) {
+      if (send) {
         const payload: RaiseHandPayload = {
           raisedHand: true,
           timestamp: localState.raisedHandTimestamp,
         };
-        currentSignal({ type: RAISE_HAND_SIGNAL, data: JSON.stringify(payload) });
+        send({ type: RAISE_HAND_SIGNAL, data: JSON.stringify(payload) });
       }
     } else {
       storeActions.clear();
@@ -183,13 +207,12 @@ const useRaiseHand = ({
       const { data, from: sendingConnection } = event;
       if (!data || !sendingConnection) return;
 
-      let parsed: RaiseHandPayload & { connectionId?: string };
-      try {
-        parsed = JSON.parse(data) as RaiseHandPayload & { connectionId?: string };
-      } catch (err) {
-        console.warn('useRaiseHand: failed to parse raiseHand signal payload', err);
+      const { result: parsed, error } = tryCatch(() => JSON.parse(data) as unknown);
+      if (error || !isValidPayload(parsed)) {
+        console.warn('useRaiseHand: ignoring malformed raiseHand signal', error);
         return;
       }
+
       const senderConnectionId = sendingConnection.connectionId;
       const localConnectionId = getConnectionId();
 
@@ -197,8 +220,8 @@ const useRaiseHand = ({
         // The SDK echoes our own signal back to us; we already wrote the
         // entry optimistically in `raiseHand()`, so re-applying it would
         // be a needless store write + re-render. Lower signals must still
-        // process — they may target a different participant (moderator
-        // action).
+        // process — they may target a different participant or be a
+        // `lowerAll` broadcast.
         if (senderConnectionId === localConnectionId) return;
         const name = getParticipantName(senderConnectionId, currentSubscriberWrappers);
         storeActions.setHand(senderConnectionId, {
@@ -207,9 +230,13 @@ const useRaiseHand = ({
           raisedHand: true,
           raisedHandTimestamp: parsed.timestamp,
         });
+      } else if ('lowerAll' in parsed && parsed.lowerAll === true) {
+        // Single moderator broadcast — clear the whole queue locally.
+        storeActions.clear();
       } else {
         // For moderator lowers the target is the lowered participant, not the sender.
-        const targetConnectionId = parsed.connectionId ?? senderConnectionId;
+        const targetConnectionId =
+          ('connectionId' in parsed && parsed.connectionId) || senderConnectionId;
         storeActions.removeHand(targetConnectionId);
       }
     },
@@ -218,9 +245,9 @@ const useRaiseHand = ({
 
   const onConnectionCreated = useCallback(
     (connection: Connection) => {
+      const send = signalRef.current;
       const localConnectionId = getConnectionId();
-      const currentSignal = signalRef.current;
-      if (!currentSignal || !localConnectionId) return;
+      if (!send || !localConnectionId) return;
 
       const localState = storeApi.getState().handsMap.get(localConnectionId);
       if (!localState) return;
@@ -229,13 +256,13 @@ const useRaiseHand = ({
         raisedHand: true,
         timestamp: localState.raisedHandTimestamp,
       };
-      currentSignal({
+      send({
         type: RAISE_HAND_SIGNAL,
         data: JSON.stringify(payload),
         to: connection,
       });
     },
-    [getConnectionId, storeApi] // signalRef is a stable ref
+    [getConnectionId, storeApi]
   );
 
   const onConnectionDestroyed = useCallback(
