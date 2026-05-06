@@ -25,7 +25,7 @@ import createNameMatcher from '@utils/participantList/createNameMatcher';
 import getFilteredSubscribers from '@utils/participantList/getFilteredSubscribers';
 import shouldShowUser from '@utils/participantList/shouldShowUser';
 import RaisedHandsSection from '../RaiseHand/RaisedHandsSection';
-import { useRaisedHandCount } from '../../../stores/raiseHand';
+import { useRaisedHandCount } from '@core/stores';
 import { env } from '../../../env';
 
 export type ParticipantListProps = {

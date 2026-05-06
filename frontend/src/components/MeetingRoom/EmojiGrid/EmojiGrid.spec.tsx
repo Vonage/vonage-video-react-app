@@ -19,8 +19,8 @@ vi.mock('../SendEmojiButton');
 vi.mock('../../../utils/emojis', () => ({
   default: { FAVORITE: '🦧' },
 }));
-vi.mock('../../../stores/raiseHand', () => ({
-  useLocalHandIsRaised: () => false,
+vi.mock('@core/stores', () => ({
+  useIsHandRaisedFor: () => false,
 }));
 
 const mockSendEmojiButton = SendEmojiButton as Mock<[], ReactElement>;

@@ -8,7 +8,8 @@ import ToolbarButton from '../ToolbarButton';
 import EmojiGrid from '../EmojiGrid/EmojiGrid';
 import VividIcon from '@components/VividIcon';
 import { env } from '../../../env';
-import { useLocalHandIsRaised } from '../../../stores/raiseHand';
+import { useIsHandRaisedFor } from '@core/stores';
+import useSessionContext from '@hooks/useSessionContext';
 import emojiMap from '../../../utils/emojis';
 
 export type EmojiGridProps = {
@@ -37,7 +38,8 @@ const EmojiGridButton = ({
 }: EmojiGridProps): ReactElement | false => {
   const { t } = useTranslation();
   const theme = useTheme();
-  const localHandIsRaised = useLocalHandIsRaised();
+  const { getConnectionId } = useSessionContext();
+  const localHandIsRaised = useIsHandRaisedFor(getConnectionId());
   const anchorRef = useRef<HTMLButtonElement>(null);
   const handleToggle = () => {
     setIsEmojiGridOpen((prevOpen) => !prevOpen);

@@ -17,7 +17,7 @@ import toRemValue from '@common/helpers/toRemValue';
 import attempt from '@common/execution/attempt';
 import RaiseHandBadge from '../MeetingRoom/RaiseHand/RaiseHandBadge';
 import { env } from '../../env';
-import { useIsHandRaisedFor } from '../../stores/raiseHand';
+import { useIsHandRaisedFor } from '@core/stores';
 
 export type SubscriberProps = {
   subscriberWrapper: SubscriberWrapper;

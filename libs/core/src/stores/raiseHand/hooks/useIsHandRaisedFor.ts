@@ -7,7 +7,9 @@ import raiseHand$ from '../raiseHand$';
 const useIsHandRaisedFor = (connectionId: string | undefined): boolean => {
   const [{ handsMap }] = raiseHand$.use();
   if (!connectionId) return false;
-  return handsMap.get(connectionId)?.raisedHand === true;
+  // The store only ever holds raised hands (removeHand deletes the entry),
+  // so presence in the map is equivalent to "currently raised".
+  return handsMap.has(connectionId);
 };
 
 export default useIsHandRaisedFor;

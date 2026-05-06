@@ -2,21 +2,18 @@ import { describe, it, expect, vi, beforeEach, Mock } from 'vitest';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import useSessionContext from '@hooks/useSessionContext';
 import { SessionContextType } from '@Context/SessionProvider/session';
-import { RaiseHandState } from '@app-types/session';
-import { useRaisedHands, useRaisedHandCount } from '../../../../stores/raiseHand';
+import { useRaisedHands, type RaisedHandEntry } from '@core/stores';
 import RaisedHandsSection from './RaisedHandsSection';
 
 vi.mock('@hooks/useSessionContext');
-vi.mock('../../../../stores/raiseHand', () => ({
+vi.mock('@core/stores', () => ({
   useRaisedHands: vi.fn(),
-  useRaisedHandCount: vi.fn(),
 }));
 
 const mockUseSessionContext = useSessionContext as Mock<[], SessionContextType>;
-const mockUseRaisedHands = useRaisedHands as Mock<[], RaiseHandState[]>;
-const mockUseRaisedHandCount = useRaisedHandCount as Mock<[], number>;
+const mockUseRaisedHands = useRaisedHands as Mock<[], RaisedHandEntry[]>;
 
-const twoHands: RaiseHandState[] = [
+const twoHands: RaisedHandEntry[] = [
   { connectionId: 'conn-a', participantName: 'Alice', raisedHand: true, raisedHandTimestamp: 1000 },
   { connectionId: 'conn-b', participantName: 'Bob', raisedHand: true, raisedHandTimestamp: 2000 },
 ];
@@ -25,9 +22,8 @@ describe('RaisedHandsSection', () => {
   const mockLowerHand = vi.fn();
   const mockLowerAllHands = vi.fn();
 
-  const setHands = (hands: RaiseHandState[]) => {
+  const setHands = (hands: RaisedHandEntry[]) => {
     mockUseRaisedHands.mockReturnValue(hands);
-    mockUseRaisedHandCount.mockReturnValue(hands.length);
   };
 
   beforeEach(() => {

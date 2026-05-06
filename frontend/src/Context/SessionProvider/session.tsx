@@ -16,7 +16,7 @@ import useUserContext from '@hooks/useUserContext';
 import useChat from '@hooks/useChat';
 import useEmoji, { EmojiWrapper } from '@hooks/useEmoji';
 import useRaiseHand from '@hooks/useRaiseHand';
-import raiseHand$ from '../../stores/raiseHand';
+import { raiseHand$ } from '@core/stores';
 import ActiveSpeakerTracker from '@utils/ActiveSpeakerTracker';
 import {
   Credential,

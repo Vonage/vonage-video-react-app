@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useRef } from 'react';
 import type { Connection } from '@vonage/client-sdk-video';
-import raiseHand$ from '../stores/raiseHand/raiseHand$';
-import { RaiseHandState, SignalEvent, SignalType, SubscriberWrapper } from '../types/session';
+import { raiseHand$, type RaisedHandEntry } from '@core/stores';
+import { SignalEvent, SignalType, SubscriberWrapper } from '../types/session';
 
 const RAISE_HAND_SIGNAL = 'raiseHand' as const;
 
@@ -138,13 +138,12 @@ const useRaiseHand = ({
     // Optimistic UI — clear all
     storeActions.clear();
 
+    // Store invariant: every entry in the map is raised, so no need to check.
     currentMap.forEach((state) => {
-      if (state.raisedHand) {
-        signal({
-          type: RAISE_HAND_SIGNAL,
-          data: JSON.stringify({ ...payload, connectionId: state.connectionId }),
-        });
-      }
+      signal({
+        type: RAISE_HAND_SIGNAL,
+        data: JSON.stringify({ ...payload, connectionId: state.connectionId }),
+      });
     });
   }, [signal, getConnectionId, storeActions, storeApi]);
 
@@ -160,8 +159,10 @@ const useRaiseHand = ({
       ? storeApi.getState().handsMap.get(localConnectionId)
       : undefined;
 
-    if (localState?.raisedHand && localState.raisedHandTimestamp !== null && localConnectionId) {
-      const preserved = new Map<string, RaiseHandState>();
+    // Store invariant: if `localState` is set, it's a raised entry (the type
+    // narrows `raisedHand` to `true` already).
+    if (localState && localConnectionId) {
+      const preserved = new Map<string, RaisedHandEntry>();
       preserved.set(localConnectionId, localState);
       storeActions.replaceAll(preserved);
 
@@ -193,10 +194,13 @@ const useRaiseHand = ({
       const localConnectionId = getConnectionId();
 
       if (parsed.raisedHand) {
-        const name =
-          senderConnectionId === localConnectionId
-            ? localUserName
-            : getParticipantName(senderConnectionId, currentSubscriberWrappers);
+        // The SDK echoes our own signal back to us; we already wrote the
+        // entry optimistically in `raiseHand()`, so re-applying it would
+        // be a needless store write + re-render. Lower signals must still
+        // process — they may target a different participant (moderator
+        // action).
+        if (senderConnectionId === localConnectionId) return;
+        const name = getParticipantName(senderConnectionId, currentSubscriberWrappers);
         storeActions.setHand(senderConnectionId, {
           connectionId: senderConnectionId,
           participantName: name,
@@ -209,7 +213,7 @@ const useRaiseHand = ({
         storeActions.removeHand(targetConnectionId);
       }
     },
-    [getConnectionId, getParticipantName, localUserName, storeActions]
+    [getConnectionId, getParticipantName, storeActions]
   );
 
   const onConnectionCreated = useCallback(
@@ -219,7 +223,7 @@ const useRaiseHand = ({
       if (!currentSignal || !localConnectionId) return;
 
       const localState = storeApi.getState().handsMap.get(localConnectionId);
-      if (!localState?.raisedHand || localState.raisedHandTimestamp === null) return;
+      if (!localState) return;
 
       const payload: RaiseHandPayload = {
         raisedHand: true,

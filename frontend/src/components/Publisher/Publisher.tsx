@@ -13,7 +13,8 @@ import toRemValue from '@common/helpers/toRemValue';
 import RaiseHandBadge from '../MeetingRoom/RaiseHand/RaiseHandBadge';
 import GestureProgressRing from '../MeetingRoom/GestureProgressRing/GestureProgressRing';
 import type { GestureProgress } from '../../hooks/useGestureDetection';
-import { useLocalHandIsRaised } from '../../stores/raiseHand';
+import { useIsHandRaisedFor } from '@core/stores';
+import useSessionContext from '../../hooks/useSessionContext';
 import { env } from '../../env';
 
 export type PublisherProps = {
@@ -40,7 +41,8 @@ const Publisher = ({ box, gestureProgress }: PublisherProps): ReactElement => {
   const audioLevel = useAudioLevels();
   const theme = useTheme();
   const isRaiseHandAllowed = env.ALLOW_RAISE_HAND;
-  const localHandIsRaised = useLocalHandIsRaised();
+  const { getConnectionId } = useSessionContext();
+  const localHandIsRaised = useIsHandRaisedFor(getConnectionId());
   // We store this in a ref to get a reference to the div so that we can append a video to it
   const pubContainerRef = useRef<HTMLDivElement>(null);
   useEffect(() => {

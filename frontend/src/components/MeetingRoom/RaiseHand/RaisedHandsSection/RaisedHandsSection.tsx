@@ -1,7 +1,7 @@
 import { ReactElement, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import useSessionContext from '@hooks/useSessionContext';
-import { useRaisedHands, useRaisedHandCount } from '../../../../stores/raiseHand';
+import { useRaisedHands } from '@core/stores';
 import { isModeratorRole } from '../../../../utils/raiseHandRole';
 import emojiMap from '../../../../utils/emojis';
 import LowerAllDialog from './LowerAllDialog';
@@ -14,7 +14,10 @@ const RaisedHandsSection = (): ReactElement => {
   const { t } = useTranslation();
   const { lowerHand, lowerAllHands } = useSessionContext();
   const raisedHands = useRaisedHands();
-  const raisedHandCount = useRaisedHandCount();
+  // Hoist once: when the real role check ships and `isModeratorRole()`
+  // becomes a context lookup, calling it three times per render gets
+  // expensive.
+  const isModerator = isModeratorRole();
   const [isLowerAllDialogOpen, setIsLowerAllDialogOpen] = useState(false);
 
   const handleLowerAllClick = () => setIsLowerAllDialogOpen(true);
@@ -38,11 +41,11 @@ const RaisedHandsSection = (): ReactElement => {
             data-testid="raised-hands-count-badge"
             className="inline-flex h-5 min-w-5 items-center justify-center rounded-full bg-vera-primary px-1.5 text-[0.7rem] text-vera-on-primary"
           >
-            {raisedHandCount}
+            {raisedHands.length}
           </span>
         </div>
 
-        {isModeratorRole() && (
+        {isModerator && (
           <button
             type="button"
             data-testid="lower-all-button"
@@ -59,10 +62,10 @@ const RaisedHandsSection = (): ReactElement => {
           <li
             key={state.connectionId}
             data-testid={`raised-hand-item-${state.connectionId}`}
-            className={`flex items-center py-1 pl-4 ${isModeratorRole() ? 'pr-12' : 'pr-2'}`}
+            className={`flex items-center py-1 pl-4 ${isModerator ? 'pr-12' : 'pr-2'}`}
           >
             <span className="flex-1 truncate text-sm">{state.participantName}</span>
-            {isModeratorRole() && (
+            {isModerator && (
               <button
                 type="button"
                 aria-label={t('raiseHand.section.lowerParticipant', {
@@ -86,7 +89,7 @@ const RaisedHandsSection = (): ReactElement => {
 
       <LowerAllDialog
         open={isLowerAllDialogOpen}
-        raisedHandCount={raisedHandCount}
+        raisedHandCount={raisedHands.length}
         onConfirm={handleLowerAllConfirm}
         onCancel={handleLowerAllCancel}
       />
