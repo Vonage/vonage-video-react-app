@@ -1,6 +1,8 @@
 import { ReactElement, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import Box from '@mui/material/Box';
+import Snackbar from '@mui/material/Snackbar';
+import Alert from '@mui/material/Alert';
 import useSessionContext from '../../../hooks/useSessionContext';
 import useRoomShareUrl from '../../../hooks/useRoomShareUrl';
 import IconButton from '@mui/material/IconButton';
@@ -10,6 +12,7 @@ import VividIcon from '@components/VividIcon';
 import usePublisherContext from '@hooks/usePublisherContext';
 import { isRearFacingLabel, isFrontFacingLabel } from '@utils/cameraSwitch';
 import usePreferredCameras from '@hooks/usePreferredCameras';
+import useCameraSwitch from '@hooks/useCameraSwitch';
 import RecordingIndicator from '../RecordingIndicator';
 
 /**
@@ -41,8 +44,9 @@ const SmallViewportHeader = (): ReactElement => {
   };
 
   const { publisher, isVideoEnabled } = usePublisherContext();
+  const { switchCamera, cameraError, dismissCameraError } = useCameraSwitch(publisher);
 
-  const handleCameraToggle = () => {
+  const handleCameraToggle = async () => {
     if (!publisher) return;
 
     const currentSource = publisher.getVideoSource?.();
@@ -63,48 +67,72 @@ const SmallViewportHeader = (): ReactElement => {
     const target = currentIsFront ? pickRear() : pickFront();
 
     if (target?.deviceId && target.deviceId !== currentSource?.deviceId) {
-      void publisher.setVideoSource(target.deviceId);
+      await switchCamera(target.deviceId);
     }
   };
 
   return (
-    <Box
-      data-testid="smallViewportHeader"
-      className="flex items-center justify-between bg-vera-dark-background px-4 pt-2 text-vera-on-dark-grey"
-    >
-      <Box className="flex min-w-0 items-center gap-1 px-0.5">
-        {isRecording && <RecordingIndicator isCompact />}
-        <Box className="ml-1 min-w-0 overflow-hidden text-ellipsis whitespace-nowrap">
-          {sessionDetails?.roomName}
+    <>
+      <Snackbar
+        open={!!cameraError}
+        onClose={dismissCameraError}
+        autoHideDuration={5000}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+      >
+        <Alert onClose={dismissCameraError} severity="error" variant="filled">
+          {cameraError && t(cameraError)}
+        </Alert>
+      </Snackbar>
+      <Box
+        data-testid="smallViewportHeader"
+        className="flex items-center justify-between bg-vera-dark-background px-4 pt-2 text-vera-on-dark-grey"
+      >
+        <Box className="flex min-w-0 items-center gap-1 px-0.5">
+          {isRecording && <RecordingIndicator isCompact />}
+          <Box className="ml-1 min-w-0 overflow-hidden text-ellipsis whitespace-nowrap">
+            {sessionDetails?.roomName}
+          </Box>
+        </Box>
+        <Box className="-mx-1 flex items-center gap-1">
+          {isVideoEnabled && videoInputDevices.length > 1 && (
+            <Tooltip title={t('devices.video.camera.switch')} placement="bottom">
+              <IconButton className="text-vera-on-dark-grey" onClick={handleCameraToggle}>
+                <VividIcon
+                  name="camera-switch-line"
+                  customSize={-4}
+                  className="text-vera-on-dark-grey"
+                />
+              </IconButton>
+            </Tooltip>
+          )}
+          <Fade in timeout={500}>
+            <Tooltip title={isCopied ? t('chat.copied') : t('chat.copy')} placement="bottom">
+              <Box>
+                <IconButton
+                  className="text-vera-on-dark-grey"
+                  onClick={copyUrl}
+                  disabled={isCopied}
+                >
+                  {isCopied ? (
+                    <VividIcon
+                      customSize={-4}
+                      name="check-sent-line"
+                      className="text-vera-success"
+                    />
+                  ) : (
+                    <VividIcon
+                      customSize={-4}
+                      name="copy-line"
+                      className="text-vera-on-dark-grey"
+                    />
+                  )}
+                </IconButton>
+              </Box>
+            </Tooltip>
+          </Fade>
         </Box>
       </Box>
-      <Box className="-mx-1 flex items-center gap-1">
-        {isVideoEnabled && videoInputDevices.length > 1 && (
-          <Tooltip title={t('devices.video.camera.switch')} placement="bottom">
-            <IconButton className="text-vera-on-dark-grey" onClick={handleCameraToggle}>
-              <VividIcon
-                name="camera-switch-line"
-                customSize={-4}
-                className="text-vera-on-dark-grey"
-              />
-            </IconButton>
-          </Tooltip>
-        )}
-        <Fade in timeout={500}>
-          <Tooltip title={isCopied ? t('chat.copied') : t('chat.copy')} placement="bottom">
-            <Box>
-              <IconButton className="text-vera-on-dark-grey" onClick={copyUrl} disabled={isCopied}>
-                {isCopied ? (
-                  <VividIcon customSize={-4} name="check-sent-line" className="text-vera-success" />
-                ) : (
-                  <VividIcon customSize={-4} name="copy-line" className="text-vera-on-dark-grey" />
-                )}
-              </IconButton>
-            </Box>
-          </Tooltip>
-        </Fade>
-      </Box>
-    </Box>
+    </>
   );
 };
 

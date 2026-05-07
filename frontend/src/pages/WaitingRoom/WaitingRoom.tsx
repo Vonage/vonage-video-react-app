@@ -1,5 +1,8 @@
 import { FC } from 'react';
+import { useTranslation } from 'react-i18next';
 import Box from '@mui/material/Box';
+import Snackbar from '@mui/material/Snackbar';
+import Alert from '@mui/material/Alert';
 import PageLayout from '@ui/PageLayout';
 import Banner from '@components/Banner';
 import Footer from '@components/Footer/Footer';
@@ -13,6 +16,7 @@ import precallNetworkTestDialog$ from '@Context/PrecallNetworkTestDialog';
 import VideoContainerSkeleton from '@components/WaitingRoom/VideoContainer/VideoContainer.skeleton';
 import UsernameInputSkeleton from '@components/WaitingRoom/UserNameInput/UserNameInput.skeleton';
 import useWaitingRoom from '@hooks/useWaitingRoom';
+import usePreviewPublisherContext from '@hooks/usePreviewPublisherContext';
 
 /**
  * WaitingRoom Component
@@ -30,6 +34,7 @@ import useWaitingRoom from '@hooks/useWaitingRoom';
  * @returns {ReactElement} - The waiting room.
  */
 const WaitingRoom: FC = () => {
+  const { t } = useTranslation();
   const {
     anchorEl,
     openAudioInput,
@@ -45,6 +50,7 @@ const WaitingRoom: FC = () => {
     handleAudioOutputOpen,
     handleClose,
   } = useWaitingRoom();
+  const { cameraError, dismissCameraError } = usePreviewPublisherContext();
 
   return (
     <backgroundEffectsDialog$.Provider>
@@ -100,6 +106,16 @@ const WaitingRoom: FC = () => {
           {accessStatus !== DEVICE_ACCESS_STATUS.ACCEPTED && (
             <DeviceAccessAlert accessStatus={accessStatus} />
           )}
+          <Snackbar
+            open={!!cameraError}
+            onClose={dismissCameraError}
+            autoHideDuration={5000}
+            anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+          >
+            <Alert onClose={dismissCameraError} severity="error" variant="filled">
+              {cameraError && t(cameraError)}
+            </Alert>
+          </Snackbar>
         </Box>
       </precallNetworkTestDialog$.Provider>
     </backgroundEffectsDialog$.Provider>

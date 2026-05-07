@@ -1,10 +1,12 @@
 import { ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
 import useTheme from '@ui/theme';
-import { Box, MenuList, MenuItem, Tooltip, BoxProps } from '@mui/material';
+import { Box, MenuList, MenuItem, Tooltip, BoxProps, Snackbar, Alert } from '@mui/material';
 import VividIcon from '@components/VividIcon';
 import { useDistinctLabelMediaDevices } from '@ui/hooks';
 import mediaDevices$ from '@core/stores/devices';
+import usePublisherContext from '@hooks/usePublisherContext';
+import useCameraSwitch from '@hooks/useCameraSwitch';
 import { env } from '../../../env';
 
 export type VideoDevicesProps = BoxProps & {
@@ -26,6 +28,8 @@ const VideoDevices = ({
 }: VideoDevicesProps): ReactElement | false => {
   const { t } = useTranslation();
   const theme = useTheme();
+  const { publisher } = usePublisherContext();
+  const { switchCamera, cameraError, dismissCameraError } = useCameraSwitch(publisher);
 
   // Use store's selection as source of truth, not publisher.getVideoSource() which can be stale
   const selectedDeviceId = mediaDevices$.useDeviceId('videoinput');
@@ -37,14 +41,28 @@ const VideoDevices = ({
     }))
   );
 
-  const handleChangeVideoSource = (deviceId: string) => {
+  const handleChangeVideoSource = async (deviceId: string) => {
     handleToggle();
-    void mediaDevices$.actions.selectDevice('videoinput', deviceId);
+    if (!publisher) {
+      await mediaDevices$.actions.selectDevice('videoinput', deviceId);
+      return;
+    }
+    await switchCamera(deviceId);
   };
 
   return (
     env.MEETING_ROOM_ALLOW_DEVICE_SELECTION && (
       <>
+        <Snackbar
+          open={!!cameraError}
+          onClose={dismissCameraError}
+          autoHideDuration={5000}
+          anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+        >
+          <Alert onClose={dismissCameraError} severity="error" variant="filled">
+            {cameraError && t(cameraError)}
+          </Alert>
+        </Snackbar>
         <Box
           sx={{
             display: 'flex',

@@ -93,9 +93,9 @@ describe('VideoDevices Component', () => {
     fireEvent.click(cameraItem);
 
     expect(mockHandleToggle).toHaveBeenCalledTimes(1);
-    expect(selectDeviceSpy).toHaveBeenCalledWith('videoinput', secondDevice.deviceId);
-    // Note: publisher.setVideoSource is now called by useSyncPublisherDevices hook,
-    // not by the VideoDevices component directly
+    await waitFor(() => {
+      expect(selectDeviceSpy).toHaveBeenCalledWith('videoinput', secondDevice.deviceId);
+    });
 
     await waitForDeviceSelectionReconciliation(secondDevice.deviceId);
   });
@@ -114,9 +114,40 @@ describe('VideoDevices Component', () => {
 
     // Should still select device in store even if publisher is not initialized
     expect(mockHandleToggle).toHaveBeenCalledTimes(1);
-    expect(selectDeviceSpy).toHaveBeenCalledWith('videoinput', secondDevice.deviceId);
+    await waitFor(() => {
+      expect(selectDeviceSpy).toHaveBeenCalledWith('videoinput', secondDevice.deviceId);
+    });
 
     await waitForDeviceSelectionReconciliation(secondDevice.deviceId);
+  });
+
+  it('shows error snackbar when setVideoSource rejects', async () => {
+    const selectDeviceSpy = vi.spyOn(mediaDevices$.actions, 'selectDevice');
+    const rejectingSetVideoSource = vi.fn().mockRejectedValueOnce(new Error('Camera unavailable'));
+    const mockPublisher = {
+      setVideoSource: rejectingSetVideoSource,
+      on: vi.fn(),
+      off: vi.fn(),
+      once: vi.fn(),
+    } as unknown as import('@vonage/client-sdk-video').Publisher;
+
+    render(<VideoDevices handleToggle={mockHandleToggle} />, {
+      publisherContext: { initialValue: { publisher: mockPublisher } },
+    });
+
+    const videoDevices = someDevices.filter((d) => d.kind === 'videoinput');
+    const secondDevice = videoDevices[1];
+
+    const cameraItem = screen.getByText(secondDevice.label);
+    fireEvent.click(cameraItem);
+
+    await waitFor(() => {
+      expect(
+        screen.getByText('This camera is not available. Please select a different camera.')
+      ).toBeInTheDocument();
+    });
+
+    expect(selectDeviceSpy).not.toHaveBeenCalled();
   });
 });
 

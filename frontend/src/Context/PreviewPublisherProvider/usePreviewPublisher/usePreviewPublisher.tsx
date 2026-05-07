@@ -10,6 +10,7 @@ import { setStorageItem, getStorageItem, STORAGE_KEYS } from '../../../utils/sto
 import applyBackgroundFilter from '../../../utils/backgroundFilter/applyBackgroundFilter/applyBackgroundFilter';
 import handlePublisherAccessDenied from '../../../utils/publisher/handlePublisherAccessDenied';
 import useStableCallback from '@web/hooks/useStableCallback';
+import frontendLogger from '../../../logger';
 import mediaDevices$ from '@core/stores/devices';
 import useSyncPublisherDevices from '@Context/PublisherProvider/usePublisher/hooks/useSyncPublisherDevices/useSyncPublisherDevices';
 import waitUntilPlaying from '@utils/waitUntilPlaying';
@@ -34,10 +35,12 @@ export type PreviewPublisherContextType = {
   backgroundFilter: VideoFilter | undefined;
   accessStatus: string | null;
   changeAudioSource: (deviceId: string) => void;
-  changeVideoSource: (deviceId: string) => void;
+  changeVideoSource: (deviceId: string) => Promise<void>;
   initLocalPublisher: () => void;
   speechLevel: number;
   isVideoLoading: boolean;
+  cameraError: string | null;
+  dismissCameraError: () => void;
 };
 
 export type PreviewPublisherInitialValue = Partial<
@@ -89,6 +92,7 @@ const usePreviewPublisher = (
   const [speechLevel, setSpeechLevel] = useState(initialValue?.speechLevel ?? 0);
   const { setAccessStatus, accessStatus } = usePermissions();
   const publisherRef = useRef<Publisher | null>(null);
+  const [cameraError, setCameraError] = useState<string | null>(null);
 
   const [isPublishing, setIsPublishing] = useState<boolean>(initialValue?.isPublishing ?? false);
   const initialBackgroundRef = useRef<VideoFilter | undefined>(
@@ -158,18 +162,24 @@ const usePreviewPublisher = (
     [setUser]
   );
 
-  /**
-   * Change video camera in use
-   * @returns {void}
-   */
+  const dismissCameraError = useCallback(() => setCameraError(null), []);
+
   const changeVideoSource = useCallback(
-    (deviceId: string) => {
+    async (deviceId: string) => {
       if (!deviceId || !publisherRef.current) {
         return;
       }
 
-      void publisherRef.current.setVideoSource(deviceId);
-      void mediaDevices$.actions.selectDevice('videoinput', deviceId);
+      try {
+        await publisherRef.current.setVideoSource(deviceId);
+      } catch (err) {
+        frontendLogger.reportError(err, { source: 'usePreviewPublisher: changeVideoSource' });
+        setCameraError('devices.video.camera.unavailable');
+        return;
+      }
+
+      setCameraError(null);
+      await mediaDevices$.actions.selectDevice('videoinput', deviceId);
 
       if (setUser) {
         setUser((prevUser: UserType) => ({
@@ -335,6 +345,8 @@ const usePreviewPublisher = (
     accessStatus,
     speechLevel,
     isVideoLoading,
+    cameraError,
+    dismissCameraError,
   };
 };
 export default usePreviewPublisher;
