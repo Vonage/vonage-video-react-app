@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import MenuItem from '@mui/material/MenuItem';
 import Menu from '@mui/material/Menu';
 import Snackbar from '@mui/material/Snackbar';
-import Alert from '@mui/material/Alert';
+import IconButton from '@mui/material/IconButton';
 import VividIcon from '@components/VividIcon';
 import Box from '@mui/material/Box';
 import cleanAndDedupeDeviceLabels from '@utils/cleanAndDedupeDeviceLabels/cleanAndDedupeDeviceLabels';
@@ -136,11 +136,13 @@ const MenuDevices = ({
         onClose={() => setCameraError(null)}
         autoHideDuration={5000}
         anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
-      >
-        <Alert onClose={() => setCameraError(null)} severity="error" variant="filled">
-          {cameraError}
-        </Alert>
-      </Snackbar>
+        message={cameraError}
+        action={
+          <IconButton size="small" color="inherit" onClick={() => setCameraError(null)}>
+            <VividIcon name="close-line" customSize={-4} />
+          </IconButton>
+        }
+      />
     </>
   );
 };
