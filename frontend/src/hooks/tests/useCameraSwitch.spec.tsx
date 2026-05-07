@@ -5,23 +5,9 @@ import mediaDevices$ from '@core/stores/devices';
 import frontendLogger from '../../logger';
 import useCameraSwitch from '../useCameraSwitch';
 
-const makeLiveTrack = (overrides: Partial<MediaStreamTrack> = {}): MediaStreamTrack =>
-  ({
-    readyState: 'live',
-    muted: false,
-    addEventListener: vi.fn(),
-    removeEventListener: vi.fn(),
-    ...overrides,
-  }) as unknown as MediaStreamTrack;
-
 const makePublisher = (overrides: Partial<Publisher> = {}) =>
   ({
     setVideoSource: vi.fn().mockResolvedValue(undefined),
-    getVideoSource: vi.fn().mockReturnValue({
-      deviceId: 'device-1',
-      type: 'camera',
-      track: makeLiveTrack(),
-    }),
     ...overrides,
   }) as unknown as Publisher;
 
@@ -34,7 +20,6 @@ describe('useCameraSwitch', () => {
 
   afterEach(() => {
     vi.restoreAllMocks();
-    vi.useRealTimers();
   });
 
   describe('switchCamera — guard clauses', () => {
@@ -101,7 +86,7 @@ describe('useCameraSwitch', () => {
     });
 
     it('clears cameraError on successful switch after a previous failure', async () => {
-      vi.spyOn(console, 'error').mockImplementation(() => {});
+      vi.spyOn(frontendLogger, 'reportError').mockImplementation(() => {});
       const setVideoSource = vi
         .fn()
         .mockRejectedValueOnce(new Error('OT_HARDWARE_UNAVAILABLE'))
@@ -123,8 +108,9 @@ describe('useCameraSwitch', () => {
     });
   });
 
-  describe('switchCamera — setVideoSource throws (explicit error)', () => {
+  describe('switchCamera — setVideoSource throws', () => {
     it('sets cameraError and returns false when setVideoSource rejects', async () => {
+      vi.spyOn(frontendLogger, 'reportError').mockImplementation(() => {});
       const publisher = makePublisher({
         setVideoSource: vi.fn().mockRejectedValue(new Error('OT_HARDWARE_UNAVAILABLE')),
       });
@@ -142,6 +128,7 @@ describe('useCameraSwitch', () => {
     });
 
     it('does not call selectDevice when setVideoSource rejects', async () => {
+      vi.spyOn(frontendLogger, 'reportError').mockImplementation(() => {});
       const publisher = makePublisher({
         setVideoSource: vi.fn().mockRejectedValue(new Error('OT_HARDWARE_UNAVAILABLE')),
       });
@@ -172,107 +159,9 @@ describe('useCameraSwitch', () => {
     });
   });
 
-  describe('switchCamera — silent track failure (black screen, no thrown error)', () => {
-    it('sets cameraError and returns false when track is null', async () => {
-      const publisher = makePublisher({
-        getVideoSource: vi.fn().mockReturnValue({ deviceId: null, type: null, track: null }),
-      });
-      const { result } = renderHook(() => useCameraSwitch(publisher));
-
-      let success: boolean | undefined;
-      await act(async () => {
-        success = await result.current.switchCamera('device-1');
-      });
-
-      expect(success).toBe(false);
-      await waitFor(() =>
-        expect(result.current.cameraError).toBe('devices.video.camera.hardware-error')
-      );
-      expect(selectDeviceSpy).not.toHaveBeenCalled();
-    });
-
-    it('sets cameraError and returns false when track.readyState is ended', async () => {
-      const publisher = makePublisher({
-        getVideoSource: vi.fn().mockReturnValue({
-          deviceId: 'device-1',
-          type: 'camera',
-          track: makeLiveTrack({ readyState: 'ended' }),
-        }),
-      });
-      const { result } = renderHook(() => useCameraSwitch(publisher));
-
-      let success: boolean | undefined;
-      await act(async () => {
-        success = await result.current.switchCamera('device-1');
-      });
-
-      expect(success).toBe(false);
-      await waitFor(() =>
-        expect(result.current.cameraError).toBe('devices.video.camera.hardware-error')
-      );
-      expect(selectDeviceSpy).not.toHaveBeenCalled();
-    });
-
-    it('sets cameraError and returns false when track stays muted (black screen)', async () => {
-      vi.useFakeTimers();
-
-      const mutedTrack = makeLiveTrack({
-        muted: true,
-        // addEventListener is a no-op — no unmute event ever fires
-        addEventListener: vi.fn(),
-        removeEventListener: vi.fn(),
-      });
-      const publisher = makePublisher({
-        getVideoSource: vi
-          .fn()
-          .mockReturnValue({ deviceId: 'device-1', type: 'camera', track: mutedTrack }),
-      });
-      const { result } = renderHook(() => useCameraSwitch(publisher));
-
-      const switchPromise = result.current.switchCamera('device-1');
-
-      await act(async () => {
-        await vi.runAllTimersAsync();
-      });
-
-      const success = await switchPromise;
-
-      expect(success).toBe(false);
-      expect(result.current.cameraError).toBe('devices.video.camera.no-video');
-      expect(selectDeviceSpy).not.toHaveBeenCalled();
-    });
-
-    it('returns true and calls selectDevice when muted track fires unmute before timeout', async () => {
-      // Mock fires the unmute callback in the next microtask after addEventListener is called,
-      // simulating a camera that briefly mutes then starts delivering frames.
-      const mutedTrack = makeLiveTrack({
-        muted: true,
-        addEventListener: vi.fn().mockImplementation((event: string, cb: () => void) => {
-          if (event === 'unmute') void Promise.resolve().then(cb);
-        }),
-        removeEventListener: vi.fn(),
-      });
-      const publisher = makePublisher({
-        getVideoSource: vi
-          .fn()
-          .mockReturnValue({ deviceId: 'device-1', type: 'camera', track: mutedTrack }),
-      });
-      const { result } = renderHook(() => useCameraSwitch(publisher));
-
-      let success: boolean | undefined;
-      await act(async () => {
-        success = await result.current.switchCamera('device-1');
-      });
-
-      expect(success).toBe(true);
-      expect(result.current.cameraError).toBeNull();
-      expect(selectDeviceSpy).toHaveBeenCalledWith('videoinput', 'device-1');
-    });
-  });
-
   describe('dismissCameraError', () => {
     it('clears cameraError', async () => {
-      vi.spyOn(console, 'error').mockImplementation(() => {});
+      vi.spyOn(frontendLogger, 'reportError').mockImplementation(() => {});
       const publisher = makePublisher({
         setVideoSource: vi.fn().mockRejectedValue(new Error('OT_HARDWARE_UNAVAILABLE')),
       });

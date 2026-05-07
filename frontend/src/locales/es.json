@@ -87,8 +87,6 @@
   "devices.video.camera.state.off": "Desactivar cámara",
   "devices.video.camera.full": "Cámara",
   "devices.video.camera.unavailable": "Esta cámara no está disponible. Selecciona una cámara diferente.",
-  "devices.video.camera.hardware-error": "Error de hardware de cámara. Por favor verifica la conexión e inténtalo de nuevo.",
-  "devices.video.camera.no-video": "La cámara no está produciendo video. Puede que no sea compatible con la configuración actual.",
   "devices.video.disable": "Desactivar video",
   "devices.video.enable": "Activar video",
   "emoji.ariaLabel": "abrir menú de emojis",

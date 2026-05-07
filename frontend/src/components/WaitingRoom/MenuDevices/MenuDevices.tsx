@@ -1,13 +1,28 @@
-import { ReactElement, useMemo } from 'react';
+import { ReactElement, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import MenuItem from '@mui/material/MenuItem';
 import Menu from '@mui/material/Menu';
+import Snackbar from '@mui/material/Snackbar';
+import Alert from '@mui/material/Alert';
 import VividIcon from '@components/VividIcon';
 import Box from '@mui/material/Box';
 import cleanAndDedupeDeviceLabels from '@utils/cleanAndDedupeDeviceLabels/cleanAndDedupeDeviceLabels';
 import SoundTest from '../../SoundTest';
-import { isGetActiveAudioOutputDeviceSupported } from '@utils/util';
+import { isGetActiveAudioOutputDeviceSupported, isAndroid } from '@utils/util';
 import mediaDevices$ from '@core/stores/devices';
+
+const isVideoDeviceAvailable = async (deviceId: string): Promise<boolean> => {
+  try {
+    const stream = await navigator.mediaDevices.getUserMedia({
+      video: { deviceId: { exact: deviceId } },
+      audio: false,
+    });
+    stream.getTracks().forEach((track) => track.stop());
+    return true;
+  } catch {
+    return false;
+  }
+};
 
 export type MenuDevicesWaitingRoomProps = {
   onClose: () => void;
@@ -42,13 +57,21 @@ const MenuDevices = ({
   const devices = mediaDevices$.useMediaDevices(mediaDeviceKind, Object.values<MediaDeviceInfo>);
 
   const localSource = mediaDevices$.useDeviceId(mediaDeviceKind);
+  const [cameraError, setCameraError] = useState<string | null>(null);
 
-  const handleClick = (deviceId: string) => {
-    // check if the device is available instead of calling await publisherRef.current.setVideoSource(deviceId);
-    // this only happens when is video
-    // this only happens when is android.
-    // this only happen when the video inputs also appears as audio devices.
-    // so if all those conditions match, we need to check if the camera is actually available/useful.
+  const handleClick = async (deviceId: string) => {
+    if (mediaDeviceKind === 'videoinput' && isAndroid()) {
+      const audioDeviceMap = mediaDevices$.mediaDevicesMap$.getState().audioinput;
+      const alsoAppearsAsAudio = deviceId in audioDeviceMap;
+
+      if (alsoAppearsAsAudio) {
+        const available = await isVideoDeviceAvailable(deviceId);
+        if (!available) {
+          setCameraError(t('devices.video.camera.unavailable'));
+          return;
+        }
+      }
+    }
 
     deviceChangeHandler(deviceId);
 
@@ -61,51 +84,64 @@ const MenuDevices = ({
   const shouldDisplayEmptyState = shouldDisplayDevices && processedDevices.length === 0;
 
   return (
-    <Menu
-      id="basic-menu"
-      anchorEl={anchorEl}
-      open={open}
-      onClose={onClose}
-      MenuListProps={{ 'aria-labelledby': 'basic-button' }}
-      data-testid={`${mediaDeviceKind}-menu`}
-    >
-      {shouldDisplayDevices &&
-        processedDevices.map((device) => (
-          <MenuItem
-            data-testid={`${mediaDeviceKind}-menu-item-${device.deviceId}`}
-            onClick={() => {
-              if (!device.deviceId) {
-                return;
-              }
+    <>
+      <Menu
+        id="basic-menu"
+        anchorEl={anchorEl}
+        open={open}
+        onClose={onClose}
+        MenuListProps={{ 'aria-labelledby': 'basic-button' }}
+        data-testid={`${mediaDeviceKind}-menu`}
+      >
+        {shouldDisplayDevices &&
+          processedDevices.map((device) => (
+            <MenuItem
+              data-testid={`${mediaDeviceKind}-menu-item-${device.deviceId}`}
+              onClick={() => {
+                if (!device.deviceId) {
+                  return;
+                }
 
-              handleClick(device.deviceId);
-            }}
-            key={device.deviceId}
-            selected={device.deviceId === localSource}
-          >
-            {device.label}
-          </MenuItem>
-        ))}
+                void handleClick(device.deviceId);
+              }}
+              key={device.deviceId}
+              selected={device.deviceId === localSource}
+            >
+              {device.label}
+            </MenuItem>
+          ))}
 
-      {shouldDisplayEmptyState && (
-        <MenuItem disabled data-testid={`${mediaDeviceKind}-menu-empty-state`}>
-          {t('waitingRoom.devices.noDevicesFound')}
-        </MenuItem>
-      )}
-
-      {mediaDeviceKind === 'audiooutput' &&
-        (processedDevices.length > 0 ? (
-          <SoundTest>
-            <Box sx={{ mr: 1 }}>
-              <VividIcon name="hearing-line" customSize={-5} />
-            </Box>
-          </SoundTest>
-        ) : (
+        {shouldDisplayEmptyState && (
           <MenuItem disabled data-testid={`${mediaDeviceKind}-menu-empty-state`}>
             {t('waitingRoom.devices.noDevicesFound')}
           </MenuItem>
-        ))}
-    </Menu>
+        )}
+
+        {mediaDeviceKind === 'audiooutput' &&
+          (processedDevices.length > 0 ? (
+            <SoundTest>
+              <Box sx={{ mr: 1 }}>
+                <VividIcon name="hearing-line" customSize={-5} />
+              </Box>
+            </SoundTest>
+          ) : (
+            <MenuItem disabled data-testid={`${mediaDeviceKind}-menu-empty-state`}>
+              {t('waitingRoom.devices.noDevicesFound')}
+            </MenuItem>
+          ))}
+      </Menu>
+
+      <Snackbar
+        open={!!cameraError}
+        onClose={() => setCameraError(null)}
+        autoHideDuration={5000}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+      >
+        <Alert onClose={() => setCameraError(null)} severity="error" variant="filled">
+          {cameraError}
+        </Alert>
+      </Snackbar>
+    </>
   );
 };
 

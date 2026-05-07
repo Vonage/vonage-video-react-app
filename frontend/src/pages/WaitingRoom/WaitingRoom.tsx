@@ -16,7 +16,8 @@ import precallNetworkTestDialog$ from '@Context/PrecallNetworkTestDialog';
 import VideoContainerSkeleton from '@components/WaitingRoom/VideoContainer/VideoContainer.skeleton';
 import UsernameInputSkeleton from '@components/WaitingRoom/UserNameInput/UserNameInput.skeleton';
 import useWaitingRoom from '@hooks/useWaitingRoom';
-import usePreviewPublisherContext from '@hooks/usePreviewPublisherContext';
+import usePublisherContext from '@hooks/usePublisherContext';
+import useCameraSwitch from '@hooks/useCameraSwitch';
 
 /**
  * WaitingRoom Component
@@ -50,7 +51,9 @@ const WaitingRoom: FC = () => {
     handleAudioOutputOpen,
     handleClose,
   } = useWaitingRoom();
-  const { cameraError, dismissCameraError } = usePreviewPublisherContext();
+
+  const { publisher } = usePublisherContext();
+  const { cameraError, dismissCameraError } = useCameraSwitch(publisher);
 
   return (
     <backgroundEffectsDialog$.Provider>

@@ -1,8 +1,5 @@
 import mediaDevices$ from '@core/stores/devices';
 
-// reverted filter by mobile camera
-// import filterMobileCameras from './helpers/filterMobileCameras';
-
 /**
  * React hook that returns filtered video input devices for camera selection.
  *

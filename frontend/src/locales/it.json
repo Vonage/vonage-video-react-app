@@ -87,8 +87,6 @@
   "devices.video.camera.state.off": "Disattiva camera",
   "devices.video.camera.full": "Camera",
   "devices.video.camera.unavailable": "Questa fotocamera non è disponibile. Seleziona una fotocamera diversa.",
-  "devices.video.camera.hardware-error": "Errore hardware della fotocamera. Controlla la connessione e riprova.",
-  "devices.video.camera.no-video": "La fotocamera non produce video. Potrebbe non essere compatibile con le impostazioni attuali.",
   "devices.video.disable": "Disattiva video",
   "devices.video.enable": "Attiva video",
   "emoji.ariaLabel": "apri menu emoji",

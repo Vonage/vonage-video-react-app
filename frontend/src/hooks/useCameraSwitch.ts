@@ -4,31 +4,6 @@ import mediaDevices$ from '@core/stores/devices';
 import frontendLogger from '../logger';
 import tryCatch from '@common/execution/tryCatch';
 
-const UNMUTE_TIMEOUT_MS = 1000;
-
-/**
- * Some cameras accept setVideoSource without throwing but produce black video:
- * the track starts muted and never delivers frames (e.g. face-mode incompatibility on mobile).
- * Wait up to UNMUTE_TIMEOUT_MS for the track to start delivering frames.
- */
-const waitForUnmute = (track: MediaStreamTrack): Promise<boolean> =>
-  new Promise((resolve) => {
-    if (!track.muted) {
-      resolve(true);
-      return;
-    }
-
-    const timer = setTimeout(() => resolve(false), UNMUTE_TIMEOUT_MS);
-
-    const cleanAndResolve = (ok: boolean) => {
-      clearTimeout(timer);
-      resolve(ok);
-    };
-
-    track.addEventListener('unmute', () => cleanAndResolve(true), { once: true });
-    track.addEventListener('ended', () => cleanAndResolve(false), { once: true });
-  });
-
 const useCameraSwitch = (publisher: Publisher | null) => {
   const [cameraError, setCameraError] = useState<string | null>(null);
 
@@ -41,20 +16,6 @@ const useCameraSwitch = (publisher: Publisher | null) => {
       if (error) {
         frontendLogger.reportError(error, { source: 'useCameraSwitch: setVideoSource' });
         setCameraError('devices.video.camera.unavailable');
-        return false;
-      }
-
-      const { track } = publisher.getVideoSource();
-
-      // Explicit hardware failure — track died during switch
-      if (!track || track.readyState === 'ended') {
-        setCameraError('devices.video.camera.hardware-error');
-        return false;
-      }
-
-      // Silent black-screen failure — track live but not delivering frames
-      if (!(await waitForUnmute(track))) {
-        setCameraError('devices.video.camera.no-video');
         return false;
       }
 

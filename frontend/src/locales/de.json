@@ -88,8 +88,6 @@
   "devices.video.camera.state.off": "Kamera deaktivieren",
   "devices.video.camera.full": "Kamera",
   "devices.video.camera.unavailable": "Diese Kamera ist nicht verfügbar. Bitte wähle eine andere Kamera aus.",
-  "devices.video.camera.hardware-error": "Kamera-Hardwarefehler. Bitte überprüfe die Verbindung und versuche es erneut.",
-  "devices.video.camera.no-video": "Die Kamera liefert kein Bild. Sie ist möglicherweise mit den aktuellen Einstellungen nicht kompatibel.",
   "devices.video.disable": "Video deaktivieren",
   "devices.video.disabled": "Kamerasteuerung ist in dieser Anwendung deaktiviert",
   "devices.video.enable": "Video aktivieren",

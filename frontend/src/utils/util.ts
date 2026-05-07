@@ -4,6 +4,8 @@ import { isMobile, isWebKit } from '@web/platform';
 // Re-export platform helpers for backwards compatibility
 export { isMobile, isWebKit };
 
+export const isAndroid = () => navigator.userAgent.toLowerCase().includes('android');
+
 /**
  * Checks if the browser support the Vonage Video getActiveAudioOutputDevice API
  * @returns {boolean} - Returns `true` if the current browser supports the API, else `false`.
@@ -13,9 +15,7 @@ export const isGetActiveAudioOutputDeviceSupported = () => {
 
   const isFirefox = userAgent.includes('firefox');
 
-  const isAndroid = userAgent.includes('android');
-
-  return !isFirefox && !isWebKit() && !isAndroid;
+  return !isFirefox && !isWebKit() && !isAndroid();
 };
 
 /**
