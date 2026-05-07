@@ -47,6 +47,8 @@ const InnerApp = () => {
         height: '100dvh',
       }}
     >
+      {/* <PortalForNotifications /> */}
+
       <Router future={futureConfig}>
         <Routes>
           <Route element={<RedirectToUnsupportedBrowserPage />}>

@@ -43,6 +43,7 @@ const VideoDevices = ({
 
   const handleChangeVideoSource = async (deviceId: string) => {
     handleToggle();
+
     if (!publisher) {
       await mediaDevices$.actions.selectDevice('videoinput', deviceId);
       return;

@@ -44,7 +44,14 @@ const MenuDevices = ({
   const localSource = mediaDevices$.useDeviceId(mediaDeviceKind);
 
   const handleClick = (deviceId: string) => {
+    // check if the device is available instead of calling await publisherRef.current.setVideoSource(deviceId);
+    // this only happens when is video
+    // this only happens when is android.
+    // this only happen when the video inputs also appears as audio devices.
+    // so if all those conditions match, we need to check if the camera is actually available/useful.
+
     deviceChangeHandler(deviceId);
+
     onClose();
   };
 

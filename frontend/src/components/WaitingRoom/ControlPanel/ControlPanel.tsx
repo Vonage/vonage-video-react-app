@@ -75,7 +75,7 @@ const ControlPanel = ({
   const { t } = useTranslation();
   const isSmallViewport = useIsSmallViewport();
 
-  const { changeAudioSource, changeVideoSource } = usePreviewPublisherContext();
+  const { changeAudioSource } = usePreviewPublisherContext();
 
   const theme = useTheme();
 
@@ -152,7 +152,6 @@ const ControlPanel = ({
           open={openVideoInput}
           onClose={handleClose}
           anchorEl={anchorEl}
-          deviceChangeHandler={changeVideoSource}
         />
 
         <ButtonBase
