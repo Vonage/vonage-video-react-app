@@ -139,7 +139,7 @@ const MenuDevices = ({
         message={cameraError}
         action={
           <IconButton size="small" color="inherit" onClick={() => setCameraError(null)}>
-            <VividIcon name="close-line" customSize={-4} />
+            <VividIcon name="close-line" customSize={-6} />
           </IconButton>
         }
       />
