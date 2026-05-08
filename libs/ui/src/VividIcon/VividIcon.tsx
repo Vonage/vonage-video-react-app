@@ -34,7 +34,7 @@ const VividIcon = ({ name, customSize, style, ...props }: VividIconProps) => {
 };
 
 function captureRefComponent(element: HTMLElement | null) {
-  if (!element || hasMediaProcessorSupport()) return;
+  if (!element || hasMediaProcessorSupport('both')) return;
 
   void customElements.whenDefined('vwc-icon').then(() => {
     const elementWithShadow = element as HTMLElement & { shadowRoot: ShadowRoot | null };
