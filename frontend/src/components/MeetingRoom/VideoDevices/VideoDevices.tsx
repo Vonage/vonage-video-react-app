@@ -1,7 +1,6 @@
 import { ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Box, MenuList, MenuItem, Tooltip, BoxProps, Snackbar } from '@mui/material';
-import IconButton from '@mui/material/IconButton';
+import { Box, MenuList, MenuItem, Tooltip, BoxProps, Snackbar, Alert } from '@mui/material';
 import classNames from 'classnames';
 import VividIcon from '@components/VividIcon';
 import { useDistinctLabelMediaDevices } from '@ui/hooks';
@@ -28,7 +27,6 @@ const VideoDevices = ({
   ...boxProps
 }: VideoDevicesProps): ReactElement | false => {
   const { t } = useTranslation();
-  const theme = useTheme();
   const { publisher } = usePublisherContext();
   const { switchCamera, cameraError, dismissCameraError } = useCameraSwitch(publisher);
 
