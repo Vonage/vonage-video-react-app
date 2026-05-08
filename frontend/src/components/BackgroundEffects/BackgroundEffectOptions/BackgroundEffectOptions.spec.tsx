@@ -48,6 +48,7 @@ function render(ui: ReactElement) {
     providers.session,
     providers.publisher,
     providers.backgroundPublisher,
+    providers.runtime,
   ]);
 
   return {

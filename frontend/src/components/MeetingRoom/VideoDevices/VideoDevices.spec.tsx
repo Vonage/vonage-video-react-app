@@ -162,11 +162,12 @@ function render(
   { userContext, sessionContext, publisherContext }: RenderOptions = {}
 ) {
   const { wrapper, ...context } = makeTestProvider(
-    [providers.user, providers.session, providers.publisher],
+    [providers.user, providers.session, providers.publisher, providers.runtime],
     {
       userContext,
       sessionContext,
       publisherContext,
+      runtimeContext: undefined,
     }
   );
 

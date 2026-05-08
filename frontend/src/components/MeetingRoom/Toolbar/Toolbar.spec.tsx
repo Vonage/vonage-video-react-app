@@ -9,7 +9,7 @@ import useToolbarButtons, {
   UseToolbarButtonsProps,
 } from '@hooks/useToolbarButtons';
 import { RIGHT_PANEL_BUTTON_COUNT } from '@utils/constants';
-import { makeTestProvider } from '@test/providers';
+import { makeTestProvider, providers } from '@test/providers';
 import Toolbar, { ToolbarProps, CaptionsState } from './Toolbar';
 
 const mockedRoomName = { roomName: 'test-room-name' };
@@ -119,7 +119,7 @@ describe('Toolbar', () => {
 });
 
 function render(ui: ReactElement) {
-  const { wrapper, ...context } = makeTestProvider([]);
+  const { wrapper, ...context } = makeTestProvider([providers.runtime]);
 
   return {
     ...context,

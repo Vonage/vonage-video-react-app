@@ -125,8 +125,7 @@ const MenuMoreOptions = ({
         anchorEl={anchorEl}
         open={open}
         onClose={handleMenuClose}
-        MenuListProps={{ 'aria-labelledby': 'basic-button' }}
-        TransitionProps={{ onExited: handleCloseUnsupportedTooltip }}
+        slotProps={{ list: { 'aria-labelledby': 'basic-button' } }}
         data-testid="menu-more-options"
       >
         <MenuItem key="backgroundEffects-option" {...backgroundEffectsAvailabilityProps}>

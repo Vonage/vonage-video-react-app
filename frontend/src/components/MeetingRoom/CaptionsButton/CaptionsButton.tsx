@@ -5,9 +5,8 @@ import useSessionContext from '@hooks/useSessionContext';
 import ToolbarButton from '../ToolbarButton';
 import Tooltip from '@mui/material/Tooltip';
 import VividIcon from '@components/VividIcon';
-import useTheme from '@ui/theme';
 import { env } from '../../../env';
-import videoClient from '@services/videoClient';
+import { runtime$ } from '@core/stores';
 
 export type CaptionsState = {
   isUserCaptionsEnabled: boolean;
@@ -36,13 +35,13 @@ const CaptionsButton = ({
   handleClick,
   captionsState,
 }: CaptionsButtonProps): ReactElement | false => {
+  const videoClient = runtime$.useVideoClient();
   const { t } = useTranslation();
   const { sessionKey } = useSessionContext();
   const [captionsId, setCaptionsId] = useState<string>('');
   const { isUserCaptionsEnabled, setIsUserCaptionsEnabled, setCaptionsErrorResponse } =
     captionsState;
   const title = isUserCaptionsEnabled ? t('captions.disable') : t('captions.enable');
-  const theme = useTheme();
 
   const handleClose = () => {
     if (isOverflowButton && handleClick) {
@@ -110,13 +109,13 @@ const CaptionsButton = ({
               <VividIcon
                 name="closed-captioning-solid"
                 customSize={-5}
-                sx={{ color: theme.colors.onSecondary }}
+                className="text-vera-on-secondary"
               />
             ) : (
               <VividIcon
                 name="closed-captioning-off-solid"
                 customSize={-5}
-                sx={{ color: theme.colors.error }}
+                className="text-vera-error"
               />
             )
           }

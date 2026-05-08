@@ -8,6 +8,7 @@
     "test": {
       "executor": "nx:run-commands",
       "description": "Run all Playwright tests in Chrome, Firefox, and Mobile Chrome",
+      "cache": false,
       "options": {
         "cwd": "integration-tests",
         "command": "playwright test --project='Google Chrome Fake Devices' --project=firefox --project='Mobile Chrome'"

@@ -119,25 +119,25 @@ export type ColorsTokens = {
   'skeleton-like': ColorTokenItem;
 };
 
-export type ShapeTokenItem = {
+export type BorderTokenItem = {
   value: string;
   type: 'radius';
   description: string;
 };
 
-export type ShapesTokens = {
-  none: ShapeTokenItem;
-  'extra-small': ShapeTokenItem;
-  small: ShapeTokenItem;
-  medium: ShapeTokenItem;
-  large: ShapeTokenItem;
-  'extra-large': ShapeTokenItem;
+export type BorderTokens = {
+  none: BorderTokenItem;
+  'extra-small': BorderTokenItem;
+  small: BorderTokenItem;
+  medium: BorderTokenItem;
+  large: BorderTokenItem;
+  'extra-large': BorderTokenItem;
 };
 
 export type ThemeTokens = {
   typography: TypographyTokens;
   colors: ColorsTokens;
-  shapes: ShapesTokens;
+  border: BorderTokens;
 };
 
 export type Camelize<S extends string> = S extends `${infer Head}-${infer Tail}`
@@ -146,7 +146,7 @@ export type Camelize<S extends string> = S extends `${infer Head}-${infer Tail}`
 
 export type ThemeColors = Record<Camelize<keyof ColorsTokens>, string>;
 
-export type ThemeShapes = {
+export type ThemeBorder = {
   borderRadiusNone: string;
   borderRadiusExtraSmall: string;
   borderRadiusSmall: string;
@@ -165,13 +165,13 @@ export type ThemeWeight = keyof ThemeTypography['weight'];
 
 export type Theme = {
   colors: ThemeColors;
-  shapes: ThemeShapes;
+  border: ThemeBorder;
   typography: ThemeTypography;
 };
 
 export type PartialTheme = {
   colors?: Partial<ThemeColors>;
-  shapes?: Partial<ThemeShapes>;
+  border?: Partial<ThemeBorder>;
   typography?: {
     typeface?: Partial<Record<string, TypefaceTokenItem>>;
     typeScale?: Partial<Record<Device, Partial<TypeScaleTokens>>>;

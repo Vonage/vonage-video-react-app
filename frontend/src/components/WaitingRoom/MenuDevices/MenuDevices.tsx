@@ -84,23 +84,22 @@ const MenuDevices = ({
   const shouldDisplayEmptyState = shouldDisplayDevices && processedDevices.length === 0;
 
   return (
-    <>
-      <Menu
-        id="basic-menu"
-        anchorEl={anchorEl}
-        open={open}
-        onClose={onClose}
-        MenuListProps={{ 'aria-labelledby': 'basic-button' }}
-        data-testid={`${mediaDeviceKind}-menu`}
-      >
-        {shouldDisplayDevices &&
-          processedDevices.map((device) => (
-            <MenuItem
-              data-testid={`${mediaDeviceKind}-menu-item-${device.deviceId}`}
-              onClick={() => {
-                if (!device.deviceId) {
-                  return;
-                }
+    <Menu
+      id="basic-menu"
+      anchorEl={anchorEl}
+      open={open}
+      onClose={onClose}
+      slotProps={{ list: { 'aria-labelledby': 'basic-button' } }}
+      data-testid={`${mediaDeviceKind}-menu`}
+    >
+      {shouldDisplayDevices &&
+        processedDevices.map((device) => (
+          <MenuItem
+            data-testid={`${mediaDeviceKind}-menu-item-${device.deviceId}`}
+            onClick={() => {
+              if (!device.deviceId) {
+                return;
+              }
 
                 void handleClick(device.deviceId);
               }}

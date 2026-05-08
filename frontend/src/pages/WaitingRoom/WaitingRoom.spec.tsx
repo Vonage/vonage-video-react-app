@@ -323,6 +323,7 @@ async function render(
       providers.publisher,
       providers.backgroundPublisher,
       providers.previewPublisher,
+      providers.runtime,
     ],
     {
       userContext,
@@ -330,6 +331,7 @@ async function render(
       publisherContext,
       backgroundPublisherContext,
       previewPublisherContext,
+      runtimeContext: undefined,
     }
   );
 

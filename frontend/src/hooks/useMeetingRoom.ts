@@ -11,10 +11,12 @@ import type { PublishingErrorType } from '../Context/PublisherProvider/usePublis
 import useUserContext from './useUserContext';
 import { env } from '../env';
 import useMountEffect from '@web/hooks/useMountEffect';
-import { videoClient } from '@services';
+import { runtime$ } from '@core/stores';
 import useSessionKeyParam from './useSessionKeyParam';
 
 const useMeetingRoom = () => {
+  const videoClient = runtime$.useVideoClient();
+
   const { t } = useTranslation();
   const navigate = useNavigate();
   const location = useLocation();

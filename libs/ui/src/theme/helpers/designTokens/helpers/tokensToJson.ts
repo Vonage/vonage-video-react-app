@@ -1,149 +1,145 @@
 import * as fs from 'node:fs';
 import * as path from 'node:path';
+import { fileURLToPath } from 'node:url';
 import designTokens from '../designTokens.js';
-import type { Device, ThemeTypeface, ThemeTypeScale, ThemeWeight } from '@ui/theme';
-
-const outputFile = path.resolve('libs/ui/src/theme/helpers/designTokens/designTokens.json');
-
-type FontSize = {
-  fontSize: string;
-  lineHeight: string;
-  fontWeight: string;
-};
-
-type UnwrappedTokens = {
-  lightColor: Record<string, string>;
-  darkColor: Record<string, string>;
-  shape: Record<string, string>;
-  elevation: Record<string, string>;
-  state: Record<string, string>;
-  motion: {
-    duration: Record<string, string>;
-    easing: Record<string, string>;
-  };
-  typography: {
-    typeface: Record<ThemeTypeface, string>;
-    weight: Record<ThemeWeight, string>;
-    typeScale: Record<
-      Device,
-      Record<
-        ThemeTypeScale,
-        {
-          fontSize: string;
-          lineHeight: string;
-          fontWeight: number;
-        }
-      >
-    >;
-  };
-};
+import type { VeraUIConfig } from '@ui/theme/helpers/veraUI.types';
 
 /**
- * Converts the design tokens to tailwind format and writes them to a JSON file.
+ * Transforms design tokens into VeraUIConfig shape and writes to JSON file.
+ * @param outputDirPath - Directory to write output file
+ * @param outputFileName - Name of output file
  */
-function designTokensToJson() {
-  // Ensure parent directory exists
-  fs.mkdirSync(path.dirname(outputFile), { recursive: true });
+export function tokensToJson(outputDirPath: string, outputFileName: string): void {
+  const outputFilePath = path.resolve(outputDirPath, outputFileName);
+  const veraConfig = buildVeraUIConfig();
 
-  const unwrappedTokens = unwrapValue({
-    ...designTokens,
-    lightColor: designTokens.color.light,
-    darkColor: designTokens.color.dark,
-  }) as UnwrappedTokens;
+  fs.mkdirSync(path.dirname(outputFilePath), { recursive: true });
+  fs.writeFileSync(outputFilePath, JSON.stringify(veraConfig, null, 2) + '\n', { flag: 'w' });
 
-  const desktopFontSize = parseResponsiveFontSize(unwrappedTokens.typography.typeScale.desktop);
-  const mobileFontSize = parseResponsiveFontSize(unwrappedTokens.typography.typeScale.mobile);
-
-  const tailwindExtend = {
-    colors: {
-      light: unwrappedTokens.lightColor,
-      dark: unwrappedTokens.darkColor,
-    },
-    borderRadius: unwrappedTokens.shape,
-    boxShadow: unwrappedTokens.elevation,
-    opacity: unwrappedTokens.state,
-    transitionDuration: unwrappedTokens.motion?.duration,
-    transitionTimingFunction: unwrappedTokens.motion?.easing,
-    fontFamily: unwrappedTokens.typography?.typeface,
-    fontSize: {
-      desktop: desktopFontSize,
-      mobile: mobileFontSize,
-    },
-    fontWeight: unwrappedTokens.typography?.weight,
-  };
-
-  // Write or overwrite the file
-  fs.writeFileSync(outputFile, JSON.stringify(tailwindExtend, null, 2) + '\n', {
-    flag: 'w',
-  });
-
-  console.log(`\x1b[32m✔ Design tokens JSON written to ${outputFile}\x1b[0m`);
+  console.log(`\x1b[32m✔ Design tokens JSON written to ${outputFilePath}\x1b[0m`);
 }
 
 /**
- * Recursively unwraps the `value` properties from the design tokens.
- * @param {unknown} obj - The object to unwrap.
- * @returns {unknown} The unwrapped object.
+ * Transforms unwrapped design tokens into VeraUIConfig shape.
+ */
+function buildVeraUIConfig(): VeraUIConfig {
+  const unwrapped = unwrapValue(designTokens) as Record<string, unknown>;
+
+  const kebabToCamelCase = (str: string): string =>
+    str.replace(/-([a-z0-9])/g, (_, c: string) => c.toUpperCase());
+
+  // Light colors
+  const colorObj = unwrapped.color as Record<string, Record<string, string>> | undefined;
+  const lightColor = colorObj?.light ?? {};
+
+  const light = Object.fromEntries(
+    Object.entries(lightColor)
+      .sort(([a], [b]) => a.localeCompare(b))
+      .map(([k, v]) => [kebabToCamelCase(k), v])
+  );
+
+  // Dark colors
+  const darkColor = colorObj?.dark ?? {};
+
+  const dark = Object.fromEntries(
+    Object.entries(darkColor)
+      .sort(([a], [b]) => a.localeCompare(b))
+      .map(([k, v]) => [kebabToCamelCase(k), v])
+  );
+
+  // Border radius
+  const border = (unwrapped.border as Record<string, string> | undefined) ?? {};
+  const borderRadiusConfig = Object.fromEntries(
+    Object.entries(border)
+      .sort(([a], [b]) => a.localeCompare(b))
+      .map(([k, v]) => [`borderRadius${kebabToCamelCase(`-${k}`)}`, v])
+  );
+
+  // Font family
+  const typography = (unwrapped.typography as Record<string, unknown> | undefined) ?? {};
+  const typeface = (typography.typeface as Record<string, string> | undefined) ?? {};
+
+  const fontFamilyConfig = Object.fromEntries(
+    Object.entries(typeface)
+      .sort(([a], [b]) => a.localeCompare(b))
+      .map(([k, v]) => [`fontFamily${kebabToCamelCase(`-${k}`)}`, v])
+  );
+
+  // Typography
+  const typeScaleObj = typography.typeScale as
+    | Record<string, Record<string, Record<string, unknown>>>
+    | undefined;
+  const typeScale = typeScaleObj ?? {};
+  const desktop = (typeScale.desktop as Record<string, Record<string, unknown>> | undefined) ?? {};
+  const mobile = (typeScale.mobile as Record<string, Record<string, unknown>> | undefined) ?? {};
+
+  const typographyKeysByConfig = {
+    headline: 'headline',
+    subtitle: 'subtitle',
+    heading1: 'heading-1',
+    heading2: 'heading-2',
+    heading3: 'heading-3',
+    heading4: 'heading-4',
+    bodyExtended: 'body-extended',
+    bodyExtendedSemibold: 'body-extended-semibold',
+    bodyBase: 'body-base',
+    bodyBaseSemibold: 'body-base-semibold',
+    caption: 'caption',
+    captionSemibold: 'caption-semibold',
+  } as const;
+
+  const typographyConfig = Object.fromEntries(
+    Object.entries(typographyKeysByConfig).map(([configKey, tokenKey]) => {
+      const dtObj = desktop[tokenKey] ?? {};
+      const mtObj = mobile[tokenKey] ?? {};
+
+      const fontSize = dtObj.fontSize as string | undefined;
+      const lineHeight = dtObj.lineHeight as string | undefined;
+      const fontWeight = dtObj.fontWeight as string | number | undefined;
+      const mobileFontSize = mtObj.fontSize as string | undefined;
+      const mobileLineHeight = mtObj.lineHeight as string | undefined;
+      const mobileFontWeight = mtObj.fontWeight as string | number | undefined;
+
+      return [
+        configKey,
+        {
+          ...(fontSize !== undefined ? { fontSize } : {}),
+          ...(lineHeight !== undefined ? { lineHeight } : {}),
+          ...(fontWeight !== undefined ? { fontWeight: String(fontWeight) } : {}),
+          ...(mobileFontSize !== undefined ? { mobileFontSize } : {}),
+          ...(mobileLineHeight !== undefined ? { mobileLineHeight } : {}),
+          ...(mobileFontWeight !== undefined ? { mobileFontWeight: String(mobileFontWeight) } : {}),
+        },
+      ];
+    })
+  );
+
+  return {
+    light: light as VeraUIConfig['light'],
+    dark: dark as VeraUIConfig['dark'],
+    ...borderRadiusConfig,
+    ...fontFamilyConfig,
+    ...typographyConfig,
+  } as VeraUIConfig;
+}
+
+/**
+ * Recursively unwraps `value` properties from token objects.
  */
 function unwrapValue(obj: unknown): unknown {
-  if (!isRecord(obj)) {
-    return obj;
-  }
-  if (!isUndefined(obj.value)) {
-    return obj.value;
-  }
+  if (typeof obj !== 'object' || obj === null) return obj;
+  if (typeof (obj as Record<string, unknown>).value !== 'undefined')
+    return (obj as Record<string, unknown>).value;
 
   return Object.fromEntries(
-    Object.entries(obj)
-      .filter(([, value]) => value !== undefined)
-      .map(([key, value]) => [key, unwrapValue(value)])
+    Object.entries(obj as Record<string, unknown>)
+      .filter(([, v]) => v !== undefined)
+      .map(([k, v]) => [k, unwrapValue(v)])
   );
 }
 
-/**
- * Type guard to check if a value is a Record<string, unknown>.
- * @param {unknown} value - The value to check.
- * @returns {boolean} True if the value is a Record<string, unknown>, false otherwise.
- */
-function isRecord(value: unknown): value is Record<string, unknown> {
-  return typeof value === 'object' && value !== null;
+if (process.argv[1] === fileURLToPath(import.meta.url)) {
+  tokensToJson('.', 'designTokens.example.json');
 }
 
-/**
- * Type guard to check if a value is undefined.
- * @param {unknown} value - The value to check.
- * @returns {boolean} True if the value is undefined, false otherwise.
- */
-function isUndefined(value: unknown): value is undefined {
-  return typeof value === 'undefined';
-}
-
-/**
- * Transforms responsive font size objects into the desired format.
- * @param {Record<TypeScale, any>} fontSizes - The font size objects to transform.
- * @returns {Record<string, FontSize>} The transformed font sizes.
- */
-function parseResponsiveFontSize(
-  fontSizes: Record<
-    ThemeTypeScale,
-    {
-      fontSize: string;
-      lineHeight: string;
-      fontWeight: number;
-    }
-  >
-): Record<string, FontSize> {
-  return Object.entries(fontSizes).reduce(
-    (acc, [key, val]) => {
-      acc[key] = {
-        fontSize: val.fontSize,
-        lineHeight: val.lineHeight,
-        fontWeight: val.fontWeight.toString(),
-      };
-      return acc;
-    },
-    {} as Record<string, FontSize>
-  );
-}
-
-designTokensToJson();
+export default tokensToJson;

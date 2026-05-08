@@ -62,7 +62,7 @@ function devDebugWait(): void {
 }
 
 /**
- * Builds VeraRoom and serves the example page with http-server.
+ * Runs VeraRoom Storybook and backend in dev mode.
  */
 function devRoom(): void {
   const storyPath = '/story/veraroom-veraroomelement--default';
@@ -70,7 +70,9 @@ function devRoom(): void {
   console.log('\n📚 Starting Storybook for VeraRoom...\n');
   console.log(`🌐 Opening: http://localhost:6006/?path=${storyPath}\n`);
 
-  runCommand(`nx run frontend:storybook -- --initial-path="${storyPath}"`);
+  runCommand(
+    `concurrently "nx run frontend:storybook -- --initial-path='${storyPath}'" "nx run backend:dev"`
+  );
 }
 
 /**
@@ -80,7 +82,7 @@ function devRoom(): void {
  * - No args: Run both frontend and backend in dev mode
  * - frontend: Run only frontend dev server
  * - backend: Run only backend dev server
- * - room: Run Storybook focused on VeraRoom component
+ * - room: Run Storybook focused on VeraRoom component and backend dev server
  *
  * Usage:
  * - yarn dev           (run frontend and backend)
@@ -90,7 +92,8 @@ function devRoom(): void {
  * - yarn dev backend debug wait (run only backend with --inspect-brk, waits for debugger)
  * - yarn dev debug              (run frontend + backend with --inspect on port 9229)
  * - yarn dev debug wait         (run frontend + backend with --inspect-brk, waits for debugger)
- * - yarn dev room      (build and serve VeraRoom example)
+ * - yarn dev room         (run VeraRoom Storybook and backend)
+ * - yarn dev studio       (run Vera Studio + backend + frontend Storybook)
  */
 function main(): void {
   const [target, subTarget] = args;

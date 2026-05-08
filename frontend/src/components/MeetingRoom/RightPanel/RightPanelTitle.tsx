@@ -3,7 +3,6 @@ import { ReactElement } from 'react';
 import VividIcon from '@components/VividIcon';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
-import useTheme from '@ui/theme';
 
 export type RightPanelTitleProps = {
   handleClose: () => void;
@@ -20,7 +19,6 @@ export type RightPanelTitleProps = {
  * @returns {ReactElement} - RightPanelTitle component
  */
 const RightPanelTitle = ({ handleClose, title }: RightPanelTitleProps): ReactElement => {
-  const theme = useTheme();
   return (
     <Box
       data-testid="right-panel-title"
@@ -35,18 +33,13 @@ const RightPanelTitle = ({ handleClose, title }: RightPanelTitleProps): ReactEle
         pr: 0.5,
       }}
     >
-      <Typography
-        variant="body1"
-        sx={{
-          color: theme.colors.textTertiary,
-        }}
-      >
+      <Typography variant="body1" className="text-vera-text-tertiary">
         {title}
       </Typography>
       <IconButton
         onClick={handleClose}
         size="large"
-        sx={{ color: theme.colors.secondary }}
+        className="text-vera-secondary"
         data-testid="CloseIcon"
       >
         <VividIcon name="close-line" customSize={-5} />

@@ -119,15 +119,19 @@ type RenderOptions = {
 };
 
 function render(ui: ReactElement, { sessionContext, userContext }: RenderOptions = {}) {
-  const { wrapper, ...context } = makeTestProvider([providers.user, providers.session], {
-    userContext,
-    sessionContext: {
-      __onCreated: (context) => {
-        vi.spyOn(context, 'toggleParticipantList');
+  const { wrapper, ...context } = makeTestProvider(
+    [providers.user, providers.session, providers.runtime],
+    {
+      sessionContext: {
+        __onCreated: (ctx) => {
+          vi.spyOn(ctx, 'toggleParticipantList');
+        },
+        ...sessionContext,
       },
-      ...sessionContext,
-    },
-  });
+      userContext,
+      runtimeContext: undefined,
+    }
+  );
 
   return {
     ...context,

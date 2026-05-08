@@ -112,9 +112,11 @@ const UsernameInput = ({
           autoComplete="nickname"
           autoFocus
           value={username}
-          inputProps={{ maxLength: 60 }}
+          slotProps={{
+            htmlInput: { maxLength: 60 },
+            inputLabel: { required: false },
+          }}
           inputRef={inputRef}
-          InputLabelProps={{ required: false }}
         />
       </Box>
 

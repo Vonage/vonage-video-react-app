@@ -1,10 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import getMuiCustomTheme from './getMuiCustomTheme';
-import getTokensByMode from './getTokensByMode';
 
-const customTheme = getMuiCustomTheme({
-  tokens: getTokensByMode('light'),
-});
+const customTheme = getMuiCustomTheme();
 
 describe('customTheme', () => {
   it('should have palette defined', () => {
@@ -34,18 +31,9 @@ describe('customTheme', () => {
     expect(customTheme.components?.MuiButton?.styleOverrides).toBeDefined();
   });
 
-  it('should have custom palette colors', () => {
-    const { palette } = customTheme;
-    expect(palette.tertiary).toBeDefined();
-    expect(palette.hover).toBeDefined();
-    expect(palette.disabled).toBeDefined();
-  });
-
   it('should have text colors defined', () => {
     const { text } = customTheme.palette;
     expect(text.primary).toBeDefined();
     expect(text.secondary).toBeDefined();
-    expect(text.tertiary).toBeDefined();
-    expect(text.main).toBeDefined();
   });
 });

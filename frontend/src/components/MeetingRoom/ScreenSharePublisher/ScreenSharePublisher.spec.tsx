@@ -48,7 +48,7 @@ describe('ScreenSharePublisher component', () => {
     expect(screen.getByText('Test Stream')).toBeInTheDocument();
     expect(element.style.width).toBe('100%');
     expect(element.style.position).toBe('absolute');
-    expect(element.style.borderRadius).toBe('12px');
+    expect(element.classList.contains('rounded-vera-large')).toBe(true);
     expect(element.style.objectFit).toBe('contain');
   });
 

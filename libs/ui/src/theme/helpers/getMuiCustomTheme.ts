@@ -1,96 +1,103 @@
-import { createTheme, type PaletteColor, type PaletteColorOptions } from '@mui/material';
-import type { Theme } from '@ui/theme';
-import isDarkMode from './isDarkMode';
-
-// Extend theme options
-declare module '@mui/material' {
-  interface TypeText {
-    tertiary: string;
-    main: string;
-  }
-
-  interface Palette {
-    tertiary: PaletteColor;
-    hover: PaletteColor;
-    disabled: PaletteColor;
-  }
-
-  interface PaletteOptions {
-    tertiary?: PaletteColorOptions;
-    hover?: PaletteColorOptions;
-    disabled?: PaletteColorOptions;
-  }
-}
+import { createTheme, Theme } from '@mui/material/styles';
+import {
+  veraTypographyCssVariableNames,
+  type VeraCssVariable,
+  type VeraTypographyTokenKey,
+} from './veraUI.types';
 
 export type GetMuiCustomThemeProps = {
-  tokens: Theme;
   container?: HTMLElement | null;
 };
 
-const getMuiCustomTheme = ({ tokens, container }: GetMuiCustomThemeProps) => {
+const temporaryTypographyVariables = getTemporaryTypographyVariables();
+
+const getMuiCustomTheme = ({ container }: GetMuiCustomThemeProps = {}): Theme => {
+  const getCssVariable = (name: VeraCssVariable): string => {
+    return `var(${name})`;
+  };
+
+  const getTemporaryTypography = (
+    variant: keyof ReturnType<typeof getTemporaryTypographyVariables>
+  ) => {
+    const variableNames = temporaryTypographyVariables[variant].desktop;
+
+    return {
+      fontSize: getCssVariable(variableNames.fontSize),
+      lineHeight: getCssVariable(variableNames.lineHeight),
+      fontWeight: getCssVariable(variableNames.fontWeight),
+    };
+  };
+
   const buttonSx = {
     height: 40, // 40px
     textTransform: 'none',
-    borderRadius: tokens.shapes.borderRadiusMedium,
+    borderRadius: getCssVariable('--vera-border-radius-medium'),
   } as const;
 
-  const { colors } = tokens;
+  const cssVariables = container
+    ? {
+        rootSelector: ':host',
+        colorSchemeSelector: 'class',
+      }
+    : true;
 
   return createTheme({
+    cssVariables,
     palette: {
-      mode: isDarkMode() ? 'dark' : 'light',
       primary: {
-        main: colors.primary,
-        contrastText: colors.onPrimary,
-        dark: colors.primary,
-        light: colors.background,
+        main: getCssVariable('--vera-primary'),
+        contrastText: getCssVariable('--vera-on-primary'),
+        dark: getCssVariable('--vera-primary-dark'),
+        light: getCssVariable('--vera-primary-light'),
       },
       secondary: {
-        main: colors.secondary,
-        contrastText: colors.onSecondary,
-        dark: colors.secondary,
-        light: colors.background,
+        main: getCssVariable('--vera-secondary'),
+        contrastText: getCssVariable('--vera-on-secondary'),
+        dark: getCssVariable('--vera-secondary-dark'),
+        light: getCssVariable('--vera-secondary-light'),
       },
       tertiary: {
-        main: colors.tertiary,
-        contrastText: colors.onTertiary,
-        dark: colors.tertiary,
-        light: colors.background,
+        main: getCssVariable('--vera-tertiary'),
+        contrastText: getCssVariable('--vera-on-tertiary'),
+        dark: getCssVariable('--vera-tertiary-dark'),
+        light: getCssVariable('--vera-tertiary-light'),
       },
       success: {
-        main: colors.success,
-        contrastText: colors.onSuccess,
-        dark: colors.successHover,
-        light: colors.background,
+        main: getCssVariable('--vera-success'),
+        contrastText: getCssVariable('--vera-on-success'),
+        dark: getCssVariable('--vera-success-hover'),
+        light: getCssVariable('--vera-success-light'),
       },
       warning: {
-        main: colors.warning,
-        contrastText: colors.onWarning,
-        dark: colors.warningHover,
-        light: colors.background,
+        main: getCssVariable('--vera-warning'),
+        contrastText: getCssVariable('--vera-on-warning'),
+        dark: getCssVariable('--vera-warning-hover'),
+        light: getCssVariable('--vera-warning-light'),
       },
       error: {
-        main: colors.error,
-        contrastText: colors.onError,
-        dark: colors.errorHover,
-        light: colors.background,
+        main: getCssVariable('--vera-error'),
+        contrastText: getCssVariable('--vera-on-error'),
+        dark: getCssVariable('--vera-error-hover'),
+        light: getCssVariable('--vera-error-light'),
       },
       background: {
-        default: colors.background,
-        paper: colors.surface,
+        default: getCssVariable('--vera-background'),
+        paper: getCssVariable('--vera-surface'),
       },
       text: {
-        primary: colors.textSecondary, // This is the default text color
-        main: colors.textPrimary, // This is primary color for specific uses
-        secondary: colors.textSecondary,
-        tertiary: colors.textTertiary,
+        primary: getCssVariable('--vera-text-secondary'),
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
+        main: getCssVariable('--vera-text-primary'),
+        secondary: getCssVariable('--vera-text-secondary'),
+        tertiary: getCssVariable('--vera-text-tertiary'),
       },
-      divider: colors.border,
+      divider: getCssVariable('--vera-border'),
       hover: {
-        main: colors.primaryHover,
+        main: getCssVariable('--vera-primary-hover'),
       },
       disabled: {
-        main: colors.disabled,
+        main: getCssVariable('--vera-disabled'),
       },
     },
     components: {
@@ -98,12 +105,12 @@ const getMuiCustomTheme = ({ tokens, container }: GetMuiCustomThemeProps) => {
         styleOverrides: {
           root: {
             ...buttonSx,
-            fontSize: tokens.typography.typeScale.desktop['body-base'].fontSize.value,
-            lineHeight: tokens.typography.typeScale.desktop['body-base'].lineHeight.value,
-            fontWeight: tokens.typography.weight['caption-semibold'].value,
+            fontSize: getCssVariable('--vera-typography-body-base-font-size'),
+            lineHeight: getCssVariable('--vera-typography-body-base-line-height'),
+            fontWeight: getCssVariable('--vera-typography-caption-semibold-font-weight'),
           },
           outlined: {
-            borderColor: colors.primary,
+            borderColor: getCssVariable('--vera-primary'),
           },
         },
       },
@@ -122,87 +129,91 @@ const getMuiCustomTheme = ({ tokens, container }: GetMuiCustomThemeProps) => {
       MuiAppBar: {
         styleOverrides: {
           root: {
-            backgroundColor: colors.surface,
-            color: colors.onSurface,
+            backgroundColor: getCssVariable('--vera-surface'),
+            color: getCssVariable('--vera-on-surface'),
           },
         },
       },
       MuiPaper: {
         styleOverrides: {
           root: {
-            backgroundColor: colors.background,
-            color: colors.onBackground,
+            backgroundColor: getCssVariable('--vera-background'),
+            color: getCssVariable('--vera-on-background'),
           },
         },
       },
       MuiDialog: {
         styleOverrides: {
           paper: {
-            backgroundColor: colors.surface,
-            color: colors.onSurface,
+            backgroundColor: getCssVariable('--vera-surface'),
+            color: getCssVariable('--vera-on-surface'),
           },
         },
       },
       MuiOutlinedInput: {
         styleOverrides: {
           root: {
-            backgroundColor: colors.surface,
-            borderRadius: tokens.shapes.borderRadiusMedium,
+            backgroundColor: getCssVariable('--vera-surface'),
+            borderRadius: getCssVariable('--vera-border-radius-medium'),
             backgroundClip: 'padding-box',
+          },
+          input: {
+            // backward compatibility after migrating to mui9
+            '&:-webkit-autofill': {
+              WebkitBoxShadow: 'unset',
+              WebkitTextFillColor: 'unset',
+              caretColor: 'unset',
+            },
           },
         },
       },
       MuiInputLabel: {
         styleOverrides: {
           sizeSmall: {
-            fontSize: tokens.typography.typeScale.desktop['body-base'].fontSize.value,
-            lineHeight: tokens.typography.typeScale.desktop['body-base'].lineHeight.value,
+            fontSize: getCssVariable('--vera-typography-body-base-font-size'),
+            lineHeight: getCssVariable('--vera-typography-body-base-line-height'),
           },
         },
       },
       MuiFormHelperText: {
         styleOverrides: {
           root: {
-            color: colors.onSurface,
+            color: getCssVariable('--vera-on-surface'),
           },
         },
       },
       MuiMenuItem: {
         styleOverrides: {
           root: {
-            color: colors.textSecondary,
-            fontSize: tokens.typography.typeScale.desktop['body-base'].fontSize.value,
-            lineHeight: tokens.typography.typeScale.desktop['body-base'].lineHeight.value,
+            color: getCssVariable('--vera-text-secondary'),
+            fontSize: getCssVariable('--vera-typography-body-base-font-size'),
+            lineHeight: getCssVariable('--vera-typography-body-base-line-height'),
           },
         },
       },
       MuiList: {
         styleOverrides: {
           root: {
-            backgroundColor: colors.onSecondary,
-            color: colors.textSecondary,
-            fontSize: tokens.typography.typeScale.desktop['body-base'].fontSize.value,
-            lineHeight: tokens.typography.typeScale.desktop['body-base'].lineHeight.value,
+            backgroundColor: getCssVariable('--vera-on-secondary'),
+            color: getCssVariable('--vera-text-secondary'),
+            fontSize: getCssVariable('--vera-typography-body-base-font-size'),
+            lineHeight: getCssVariable('--vera-typography-body-base-line-height'),
           },
         },
       },
       MuiTypography: {
         styleOverrides: {
-          h1: createResponsiveTypography(tokens, 'headline', 'headline'),
-          h2: createResponsiveTypography(tokens, 'subtitle', 'subtitle'),
-          h3: createResponsiveTypography(tokens, 'heading-1', 'heading-1'),
-          h4: createResponsiveTypography(tokens, 'heading-2', 'heading-2'),
-          h5: createResponsiveTypography(tokens, 'heading-3', 'heading-3'),
-          h6: createResponsiveTypography(tokens, 'heading-4', 'heading-4'),
-          subtitle1: createResponsiveTypography(
-            tokens,
-            'body-extended-semibold',
-            'body-extended-semibold'
-          ),
-          subtitle2: createResponsiveTypography(tokens, 'body-base-semibold', 'body-base-semibold'),
-          body1: createResponsiveTypography(tokens, 'body-extended', 'body-extended'),
-          body2: createResponsiveTypography(tokens, 'body-base', 'body-base'),
-          caption: createResponsiveTypography(tokens, 'caption', 'caption'),
+          h1: createResponsiveTypography('headline'),
+          h2: createResponsiveTypography('subtitle'),
+          h3: createResponsiveTypography('heading-1'),
+          h4: createResponsiveTypography('heading-2'),
+          h5: createResponsiveTypography('heading-3'),
+          h6: createResponsiveTypography('heading-4'),
+          subtitle1: createResponsiveTypography('body-extended-semibold'),
+          subtitle2: createResponsiveTypography('body-base-semibold'),
+          body1: createResponsiveTypography('body-extended'),
+          body2: createResponsiveTypography('body-base'),
+          caption: createResponsiveTypography('caption'),
         },
       },
       // Redirect MUI portals into the shadow root when running as an embed.
@@ -221,82 +232,73 @@ const getMuiCustomTheme = ({ tokens, container }: GetMuiCustomThemeProps) => {
       }),
     },
     typography: {
-      fontFamily: tokens.typography.typeface.plain.value,
-      h1: {
-        fontSize: tokens.typography.typeScale.desktop.headline.fontSize.value,
-        lineHeight: tokens.typography.typeScale.desktop.headline.lineHeight.value,
-        fontWeight: tokens.typography.typeScale.desktop.headline.fontWeight.value,
-      },
-      h2: {
-        fontSize: tokens.typography.typeScale.desktop.subtitle.fontSize.value,
-        lineHeight: tokens.typography.typeScale.desktop.subtitle.lineHeight.value,
-        fontWeight: tokens.typography.typeScale.desktop.subtitle.fontWeight.value,
-      },
-      h3: {
-        fontSize: tokens.typography.typeScale.desktop['heading-1'].fontSize.value,
-        lineHeight: tokens.typography.typeScale.desktop['heading-1'].lineHeight.value,
-        fontWeight: tokens.typography.typeScale.desktop['heading-1'].fontWeight.value,
-      },
-      h4: {
-        fontSize: tokens.typography.typeScale.desktop['heading-2'].fontSize.value,
-        lineHeight: tokens.typography.typeScale.desktop['heading-2'].lineHeight.value,
-        fontWeight: tokens.typography.typeScale.desktop['heading-2'].fontWeight.value,
-      },
-      h5: {
-        fontSize: tokens.typography.typeScale.desktop['heading-3'].fontSize.value,
-        lineHeight: tokens.typography.typeScale.desktop['heading-3'].lineHeight.value,
-        fontWeight: tokens.typography.typeScale.desktop['heading-3'].fontWeight.value,
-      },
-      h6: {
-        fontSize: tokens.typography.typeScale.desktop['heading-4'].fontSize.value,
-        lineHeight: tokens.typography.typeScale.desktop['heading-4'].lineHeight.value,
-        fontWeight: tokens.typography.typeScale.desktop['heading-4'].fontWeight.value,
-      },
-      subtitle1: {
-        fontSize: tokens.typography.typeScale.desktop['body-extended-semibold'].fontSize.value,
-        lineHeight: tokens.typography.typeScale.desktop['body-extended-semibold'].lineHeight.value,
-        fontWeight: tokens.typography.typeScale.desktop['body-extended-semibold'].fontWeight.value,
-      },
-      subtitle2: {
-        fontSize: tokens.typography.typeScale.desktop['body-base-semibold'].fontSize.value,
-        lineHeight: tokens.typography.typeScale.desktop['body-base-semibold'].lineHeight.value,
-        fontWeight: tokens.typography.typeScale.desktop['body-base-semibold'].fontWeight.value,
-      },
-      body1: {
-        fontSize: tokens.typography.typeScale.desktop['body-extended'].fontSize.value,
-        lineHeight: tokens.typography.typeScale.desktop['body-extended'].lineHeight.value,
-        fontWeight: tokens.typography.typeScale.desktop['body-extended'].fontWeight.value,
-      },
-      body2: {
-        fontSize: tokens.typography.typeScale.desktop['body-base'].fontSize.value,
-        lineHeight: tokens.typography.typeScale.desktop['body-base'].lineHeight.value,
-        fontWeight: tokens.typography.typeScale.desktop['body-base'].fontWeight.value,
-      },
-      caption: {
-        fontSize: tokens.typography.typeScale.desktop.caption.fontSize.value,
-        lineHeight: tokens.typography.typeScale.desktop.caption.lineHeight.value,
-        fontWeight: tokens.typography.typeScale.desktop.caption.fontWeight.value,
-      },
+      fontFamily: getCssVariable('--vera-font-family-plain'),
+      h1: getTemporaryTypography('headline'),
+      h2: getTemporaryTypography('subtitle'),
+      h3: getTemporaryTypography('heading-1'),
+      h4: getTemporaryTypography('heading-2'),
+      h5: getTemporaryTypography('heading-3'),
+      h6: getTemporaryTypography('heading-4'),
+      subtitle1: getTemporaryTypography('body-extended-semibold'),
+      subtitle2: getTemporaryTypography('body-base-semibold'),
+      body1: getTemporaryTypography('body-extended'),
+      body2: getTemporaryTypography('body-base'),
+      caption: getTemporaryTypography('caption'),
     },
   });
 };
 
-// Helper function to generate responsive typography
+function getTemporaryTypographyVariables() {
+  type TypographyTokenKeyForTheme = Exclude<VeraTypographyTokenKey, 'caption-semibold'>;
+
+  function createTypographyVariablesByToken(tokenKey: TypographyTokenKeyForTheme) {
+    return {
+      desktop: {
+        fontSize: veraTypographyCssVariableNames[tokenKey].fontSize,
+        lineHeight: veraTypographyCssVariableNames[tokenKey].lineHeight,
+        fontWeight: veraTypographyCssVariableNames[tokenKey].fontWeight,
+      },
+      mobile: {
+        fontSize: `--vera-typography-${tokenKey}-mobile-font-size` as VeraCssVariable,
+        lineHeight: `--vera-typography-${tokenKey}-mobile-line-height` as VeraCssVariable,
+        fontWeight: `--vera-typography-${tokenKey}-mobile-font-weight` as VeraCssVariable,
+      },
+    };
+  }
+
+  return {
+    headline: createTypographyVariablesByToken('headline'),
+    subtitle: createTypographyVariablesByToken('subtitle'),
+    'heading-1': createTypographyVariablesByToken('heading-1'),
+    'heading-2': createTypographyVariablesByToken('heading-2'),
+    'heading-3': createTypographyVariablesByToken('heading-3'),
+    'heading-4': createTypographyVariablesByToken('heading-4'),
+    'body-extended': createTypographyVariablesByToken('body-extended'),
+    'body-extended-semibold': createTypographyVariablesByToken('body-extended-semibold'),
+    'body-base': createTypographyVariablesByToken('body-base'),
+    'body-base-semibold': createTypographyVariablesByToken('body-base-semibold'),
+    caption: createTypographyVariablesByToken('caption'),
+  } as const;
+}
+
 function createResponsiveTypography(
-  tokens: Theme,
-  desktopVariant: keyof typeof tokens.typography.typeScale.desktop,
-  mobileVariant: keyof typeof tokens.typography.typeScale.mobile
+  variant: keyof ReturnType<typeof getTemporaryTypographyVariables>
 ) {
+  const variableKey = temporaryTypographyVariables[variant];
+  const mobileVariableNames = variableKey.mobile;
+  const isHeadline = variant === 'headline';
+  const tabletScale = isHeadline ? 1.5 : 1.15;
+
   return {
     '@media (max-width:1199px)': {
-      fontSize: `calc(${tokens.typography.typeScale.mobile[mobileVariant].fontSize.value} * ${desktopVariant === 'headline' ? 1.5 : 1.15})`,
-      lineHeight: `calc(${tokens.typography.typeScale.mobile[mobileVariant].lineHeight.value} * ${desktopVariant === 'headline' ? 1.5 : 1.15})`,
-      fontWeight: tokens.typography.typeScale.mobile[mobileVariant].fontWeight.value,
+      fontSize: `calc(var(${mobileVariableNames.fontSize}) * ${tabletScale})`,
+      lineHeight: `calc(var(${mobileVariableNames.lineHeight}) * ${tabletScale})`,
+      fontWeight: `var(${mobileVariableNames.fontWeight})`,
     },
     '@media (max-width:899px)': {
-      fontSize: tokens.typography.typeScale.mobile[mobileVariant].fontSize.value,
-      lineHeight: tokens.typography.typeScale.mobile[mobileVariant].lineHeight.value,
-      fontWeight: tokens.typography.typeScale.mobile[mobileVariant].fontWeight.value,
+      fontSize: `var(${mobileVariableNames.fontSize})`,
+      lineHeight: `var(${mobileVariableNames.lineHeight})`,
+      fontWeight: `var(${mobileVariableNames.fontWeight})`,
     },
   };
 }

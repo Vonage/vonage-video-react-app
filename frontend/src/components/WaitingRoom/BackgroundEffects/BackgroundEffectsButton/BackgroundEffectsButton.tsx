@@ -4,7 +4,6 @@ import PortraitIcon from '@mui/icons-material/Portrait';
 import { useTranslation } from 'react-i18next';
 import Box from '@mui/material/Box';
 import Tooltip from '@mui/material/Tooltip';
-import useTheme from '@ui/theme';
 import { VIDEO_CONTAINER_BUTTON_SIZE_WR } from '@utils/constants';
 import VideoContainerButton from '../../VideoContainerButton';
 import { env } from '../../../../env';
@@ -26,17 +25,16 @@ const BackgroundEffectsButton = ({
 }: BackgroundEffectsButtonProps): ReactElement | false => {
   const shouldDisplayBackgroundEffects = hasMediaProcessorSupport() && env.ALLOW_BACKGROUND_EFFECTS;
   const { t } = useTranslation();
-  const theme = useTheme();
 
   return (
     shouldDisplayBackgroundEffects && (
       <Box
+        className="border border-vera-on-secondary"
         sx={{
           display: 'flex',
           width: `${VIDEO_CONTAINER_BUTTON_SIZE_WR}px`,
           height: `${VIDEO_CONTAINER_BUTTON_SIZE_WR}px`,
           borderRadius: '50%',
-          border: `1px solid ${theme.colors.onSecondary}`,
           overflow: 'hidden',
         }}
       >
@@ -47,14 +45,11 @@ const BackgroundEffectsButton = ({
         >
           <VideoContainerButton
             onClick={onClick}
-            sx={{
-              '&:hover': {
-                backgroundColor: `${theme.colors.onSecondary}99`,
-              },
-            }}
+            className="hover:bg-[color-mix(in_srgb,var(--vera-on-secondary)_60%,transparent)]!"
             icon={
               <PortraitIcon
-                sx={{ fontSize: '24px', color: theme.colors.onSecondary }}
+                sx={{ fontSize: '24px' }}
+                className="text-vera-on-secondary"
                 data-testid="portraitIcon"
               />
             }

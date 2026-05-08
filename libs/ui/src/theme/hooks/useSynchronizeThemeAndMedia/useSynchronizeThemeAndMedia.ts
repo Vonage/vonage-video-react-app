@@ -1,17 +1,10 @@
-import React from 'react';
 import isDarkMode from '../../helpers/isDarkMode';
-import getTokensByMode from '../../helpers/getTokensByMode';
-import type { Theme } from '@ui/theme';
 import useStableRef from '@web/hooks/useStableRef';
 import useMountEffect from '@web/hooks/useMountEffect';
 
 const VERA_DARK_MODE_CLASSES = ['vera-dark-mode', 'dark'];
 
-const useSynchronizeThemeAndMedia = ({
-  setTokens,
-}: {
-  setTokens: React.Dispatch<React.SetStateAction<Theme>>;
-}) => {
+const useSynchronizeThemeAndMedia = () => {
   const modeRef = useStableRef<'light' | 'dark'>(isDarkMode() ? 'dark' : 'light');
 
   useMountEffect(() => {
@@ -26,20 +19,19 @@ const useSynchronizeThemeAndMedia = ({
 
       if (mode === 'dark') {
         documentElement.classList.add(...VERA_DARK_MODE_CLASSES);
-      } else {
-        documentElement.classList.remove(...VERA_DARK_MODE_CLASSES);
+        return;
       }
+
+      documentElement.classList.remove(...VERA_DARK_MODE_CLASSES);
     };
 
     const toggleTheme = () => {
       const newMode = isDarkMode() ? 'dark' : 'light';
       const didChange = modeRef.current !== newMode;
 
-      if (!didChange) {
-        return;
-      }
+      if (!didChange) return;
 
-      setTokens(getTokensByMode(newMode));
+      modeRef.current = newMode;
       setDocumentMode(newMode);
     };
 

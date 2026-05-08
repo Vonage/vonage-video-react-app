@@ -15,11 +15,12 @@ describe('useRoomShareUrl', () => {
   });
 
   it('should return link to waiting room', () => {
-    const { wrapper } = makeTestProvider([providers.user, providers.session], {
+    const { wrapper } = makeTestProvider([providers.user, providers.session, providers.runtime], {
       sessionContext: {
         initialValue: { sessionKey: mockSessionKey },
       },
       userContext: undefined,
+      runtimeContext: undefined,
     });
 
     const { result } = renderHook(() => useRoomShareUrl(), { wrapper });

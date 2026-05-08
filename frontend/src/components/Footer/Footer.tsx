@@ -2,7 +2,6 @@ import { ReactElement } from 'react';
 import Box from '@mui/material/Box';
 import FooterLinks from '@components/FooterLinks';
 import Stack from '@mui/material/Stack';
-import useTheme from '@ui/theme';
 
 /**
  * Footer Component
@@ -11,32 +10,30 @@ import useTheme from '@ui/theme';
  * @returns {ReactElement} - the footer component.
  */
 const Footer = (): ReactElement => {
-  const theme = useTheme();
-
   return (
     <Stack
-      direction="row"
-      alignItems="center"
-      data-testid="footer-content"
       sx={{
-        bgcolor: theme.colors.background,
+        flexDirection: 'row',
+        alignItems: 'center',
       }}
+      data-testid="footer-content"
+      className="bg-vera-background"
     >
       <Box
+        className="bg-vera-surface"
         sx={{
           flex: 1,
-          bgcolor: theme.colors.surface,
           display: { xs: 'none', md: 'block' },
           minHeight: '60px',
         }}
       />
 
       <Box
+        className="bg-vera-surface vera-desktop:bg-vera-background"
         sx={{
           display: 'flex',
           flex: 1,
           justifyContent: 'center',
-          bgcolor: { xs: theme.colors.surface, md: theme.colors.background },
         }}
       >
         <FooterLinks />

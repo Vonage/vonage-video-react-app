@@ -134,10 +134,14 @@ type RenderOptions = {
 };
 
 function render(ui: ReactElement, { userContext, sessionContext }: RenderOptions = {}) {
-  const { wrapper, ...context } = makeTestProvider([providers.user, providers.session], {
-    userContext,
-    sessionContext,
-  });
+  const { wrapper, ...context } = makeTestProvider(
+    [providers.user, providers.session, providers.runtime],
+    {
+      sessionContext,
+      userContext,
+      runtimeContext: undefined,
+    }
+  );
 
   return {
     ...context,

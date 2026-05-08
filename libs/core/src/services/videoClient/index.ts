@@ -1,1 +1,1 @@
-export { default } from './createVideoClient';
+export { default, type VideoClient } from './createVideoClient';

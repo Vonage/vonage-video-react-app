@@ -9,7 +9,7 @@ import MeetingRoom from '@pages/MeetingRoom';
  * Embeddable version of the meeting room. Provides SessionProvider and PublisherProvider.
  */
 const MeetingRoomStage: FC = () => (
-  <SessionProvider>
+  <SessionProvider skipBrowserUrlUpdate>
     <PublisherProvider>
       <MeetingRoom className="h-full w-full" fullSize />
     </PublisherProvider>

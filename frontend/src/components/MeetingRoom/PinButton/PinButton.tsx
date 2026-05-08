@@ -1,11 +1,11 @@
 import { MouseEvent, ReactElement, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import classNames from 'classnames';
 import isMouseEventInsideBox from '../../../utils/isMouseEventInsideBox';
 import Tooltip from '@mui/material/Tooltip';
 import IconButton from '@mui/material/IconButton';
 import VividIcon from '@components/VividIcon';
 import Box from '@mui/material/Box';
-import useTheme from '@ui/theme';
 import { ABSOLUTE_DISTANCE_THRESHOLD_REM_VALUE } from '@utils/constants';
 import toRemValue from '@common/helpers/toRemValue';
 
@@ -37,14 +37,10 @@ const PinButton = ({
   handleClick,
 }: PinButtonProps): ReactElement | false => {
   const { t } = useTranslation();
-  const theme = useTheme();
   const isDisabled = isMaxPinned && !isPinned;
   const anchorRef = useRef<HTMLDivElement | null>(null);
   const [isHoveringButton, setIsHoveringButton] = useState<boolean>(false);
-  const iconSx = {
-    color: isDisabled ? theme.colors.disabled : theme.colors.accent,
-    cursor: 'pointer',
-  };
+  const iconColorClassName = isDisabled ? 'text-vera-disabled' : 'text-vera-accent';
 
   const getTooltipText = () => {
     if (isDisabled) {
@@ -82,6 +78,7 @@ const PinButton = ({
     shouldShowIcon && (
       <Box
         ref={anchorRef}
+        className="rounded-vera-large"
         sx={{
           position: 'absolute',
           left: toRemValue(pinButtonLeftOffsetRemValue),
@@ -92,7 +89,6 @@ const PinButton = ({
           height: '24px',
           alignItems: 'center',
           justifyContent: 'center',
-          borderRadius: theme.shapes.borderRadiusLarge,
         }}
         data-testid="pin-button"
         onPointerEnter={() => setIsHoveringButton(true)}
@@ -103,19 +99,20 @@ const PinButton = ({
           <IconButton
             disabled={isDisabled}
             onClick={onClick}
+            className={classNames('[&.Mui-focusVisible]:bg-vera-dark-grey-hover', {
+              'bg-vera-dark-grey hover:bg-vera-dark-grey-hover': isTileHovered,
+            })}
             sx={{
               height: 24,
               width: 24,
               borderRadius: '50%',
               cursor: 'pointer',
-              backgroundColor: isTileHovered ? theme.colors.darkGrey : 'none',
-              '&:hover, &.Mui-focusVisible': { backgroundColor: theme.colors.darkGreyHover },
             }}
           >
             {isTileHovered && isPinned ? (
-              <VividIcon name="pin-2-off-solid" customSize={-6} sx={iconSx} />
+              <VividIcon name="pin-2-off-solid" customSize={-6} className={iconColorClassName} />
             ) : (
-              <VividIcon name="pin-2-solid" customSize={-6} sx={iconSx} />
+              <VividIcon name="pin-2-solid" customSize={-6} className={iconColorClassName} />
             )}
           </IconButton>
         </Tooltip>

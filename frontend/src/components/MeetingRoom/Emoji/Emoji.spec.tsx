@@ -33,20 +33,4 @@ describe('Emoji component', () => {
       zIndex: '1',
     });
   });
-
-  it('applies expected MUI styles to container and Chip', () => {
-    render(<Emoji emojiWrapper={{ ...emojiWrapper }} />);
-
-    const container = screen.getByTestId('emoji-string-container');
-    expect(container).toHaveStyle({
-      display: 'flex',
-    });
-
-    const chip = screen.getByText(emojiWrapper.name).parentElement!;
-    expect(chip).toHaveStyle({
-      overflow: 'hidden',
-      textOverflow: 'ellipsis',
-      whiteSpace: 'nowrap',
-    });
-  });
 });

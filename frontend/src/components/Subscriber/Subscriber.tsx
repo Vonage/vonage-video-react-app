@@ -11,7 +11,6 @@ import PinButton from '../MeetingRoom/PinButton';
 import useSessionContext from '../../hooks/useSessionContext';
 import isMouseEventInsideBox from '../../utils/isMouseEventInsideBox';
 import ScreenshareVideoTile from '../MeetingRoom/ScreenshareVideoTile';
-import useTheme from '@ui/theme';
 import { ABSOLUTE_DISTANCE_THRESHOLD_REM_VALUE } from '@utils/constants';
 import toRemValue from '@common/helpers/toRemValue';
 import attempt from '@common/execution/attempt';
@@ -42,7 +41,6 @@ const Subscriber = ({
   isActiveSpeaker,
 }: SubscriberProps): ReactElement => {
   const { isMaxPinned, pinSubscriber } = useSessionContext();
-  const theme = useTheme();
   const { isPinned, subscriber } = subscriberWrapper;
   const isScreenShare = subscriber?.stream?.videoType === 'screen';
   const subRef = useRef<HTMLDivElement>(null);
@@ -63,18 +61,16 @@ const Subscriber = ({
 
       // eslint-disable-next-line react-hooks/immutability
       element.id = subscriberWrapper.id;
-      element.classList.add('video__element');
+      element.classList.add('video__element', 'rounded-vera-large');
 
-      // Apply MUI-style inline styles instead of Tailwind classes
       element.style.width = '100%';
       element.style.height = '100%';
       element.style.position = 'absolute';
-      element.style.borderRadius = theme.shapes.borderRadiusLarge;
       element.style.objectFit = 'contain';
 
       subRef.current.appendChild(element);
     }
-  }, [subscriberWrapper, isScreenShare, theme.shapes.borderRadiusLarge]);
+  }, [subscriberWrapper, isScreenShare]);
 
   const handlePinClick = (clickEvent: MouseEvent<HTMLButtonElement>) => {
     pinSubscriber(subscriberWrapper.id);
@@ -98,11 +94,9 @@ const Subscriber = ({
   const username = subscriberWrapper.subscriber?.stream?.name ?? '';
   const hasAudio = subscriberWrapper.subscriber.stream?.hasAudio;
   const audioIndicatorStyle: React.CSSProperties = {
-    borderRadius: theme.shapes.borderRadiusLarge,
     position: 'absolute',
     top: toRemValue(ABSOLUTE_DISTANCE_THRESHOLD_REM_VALUE),
     right: toRemValue(ABSOLUTE_DISTANCE_THRESHOLD_REM_VALUE),
-    backgroundColor: theme.colors.darkBackground,
     height: '1.5rem',
     width: '1.5rem',
     display: 'flex',
@@ -147,7 +141,8 @@ const Subscriber = ({
         hasAudio={hasAudio}
         stream={subscriber.stream}
         indicatorStyle={audioIndicatorStyle}
-        indicatorColor={theme.colors.accent}
+        indicatorClassName="rounded-vera-large bg-vera-dark-background text-vera-accent"
+        indicatorColor="currentColor"
         participantName={username}
       />
 

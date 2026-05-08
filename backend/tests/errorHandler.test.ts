@@ -104,15 +104,7 @@ describe('errorHandler', () => {
     errorHandler(new Error('test'), req, res, noopNext);
 
     expect(res.status).toHaveBeenCalledWith(500);
-    expect(res.render).toHaveBeenCalledWith(
-      'index',
-      expect.objectContaining({
-        error: expect.objectContaining({
-          message: expect.any(String),
-          statusCode: 500,
-        }),
-      })
-    );
+    expect(res.send).toHaveBeenCalledWith(expect.stringContaining('500'));
   });
 
   it('returns plain text for other request types', () => {

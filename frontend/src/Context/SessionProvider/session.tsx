@@ -37,7 +37,7 @@ import VonageVideoClient from '@utils/VonageVideoClient';
 import wait from '@common/execution/wait';
 import { env } from '../../env';
 import frontendLogger from '../../logger';
-import { videoClient } from '@services';
+import { runtime$ } from '@core/stores';
 import { decodeSessionKey } from '@common/helpers';
 import type { VideoSessionDetails } from '@common/types';
 
@@ -148,10 +148,13 @@ export type SessionContextInitialValue = Partial<
  * @typedef {object} SessionProviderProps
  * @property {ReactNode} children - The content to be rendered as children.
  * @property {SessionContextInitialValue} initialValue - Optional initial values for session context state.
+ * @property {boolean} skipBrowserUrlUpdate - When true, skips updating the browser URL on join (for MemoryRouter / embedded contexts).
  */
 export type SessionProviderProps = {
   children: ReactNode;
   initialValue?: SessionContextInitialValue;
+  /** Set to true when running inside a MemoryRouter to avoid overwriting the host page URL. */
+  skipBrowserUrlUpdate?: boolean;
 };
 
 const MAX_PIN_COUNT = isMobile() ? MAX_PIN_COUNT_MOBILE : MAX_PIN_COUNT_DESKTOP;
@@ -164,7 +167,12 @@ const MAX_PIN_COUNT = isMobile() ? MAX_PIN_COUNT_MOBILE : MAX_PIN_COUNT_DESKTOP;
  * @param {SessionProviderProps} props - The provider properties
  * @returns {SessionContextType} a context provider for a publisher preview
  */
-const SessionProvider = ({ children, initialValue = {} }: SessionProviderProps): ReactElement => {
+const SessionProvider = ({
+  children,
+  initialValue = {},
+  skipBrowserUrlUpdate = false,
+}: SessionProviderProps): ReactElement => {
+  const videoClient = runtime$.useVideoClient();
   const [lastStreamUpdate, setLastStreamUpdate] = useState<StreamPropertyChangedEvent | null>(
     initialValue?.lastStreamUpdate ?? null
   );
@@ -488,14 +496,16 @@ const SessionProvider = ({ children, initialValue = {} }: SessionProviderProps):
       });
 
       setSessionKey(args.sessionKey);
-      window.history.replaceState(null, '', `/room/${args.sessionKey}`);
+      if (!skipBrowserUrlUpdate) {
+        window.history.replaceState(null, '', `/room/${args.sessionKey}`);
+      }
 
       return connect({
         sessionKey: args.sessionKey,
         token: session.token,
       });
     },
-    [connect]
+    [connect, videoClient, skipBrowserUrlUpdate]
   );
 
   /**

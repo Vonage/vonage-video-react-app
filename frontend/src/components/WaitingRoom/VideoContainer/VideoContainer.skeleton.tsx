@@ -17,13 +17,13 @@ const VideoContainerSkeleton: FC<VideoContainerSkeletonProps> = ({ className, ..
           'bg-vera-surface',
           'rounded-vera-none sm:rounded-vera-large',
           '[-webkit-mask:linear-gradient(var(--vera-surface)_0_0)]',
-          'box-border w-dvw sm:w-[584px] md:w-full',
+          'box-border w-dvw sm:w-146 md:w-full',
 
           // visibility & positioning
           'opacity-80',
 
           // aspect & size
-          'sm:h-[328px]',
+          'sm:h-82',
 
           // background & shape
           'bg-black md:rounded-xl overflow-hidden',

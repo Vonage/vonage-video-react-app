@@ -11,12 +11,9 @@ import RightPanelTitle from '../RightPanel/RightPanelTitle';
 import usePublisherContext from '@hooks/usePublisherContext';
 import IconButton from '@mui/material/IconButton';
 import Tooltip from '@mui/material/Tooltip';
-import Fade from '@mui/material/Fade';
 import List from '@mui/material/List';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
-import useTheme from '@ui/theme';
-import Stack from '@mui/material/Stack';
 import VividIcon from '@components/VividIcon';
 import TextField from '@mui/material/TextField';
 import InputAdornment from '@mui/material/InputAdornment';
@@ -42,7 +39,6 @@ export type ParticipantListProps = {
  */
 const ParticipantList = ({ handleClose, isOpen }: ParticipantListProps): ReactElement | false => {
   const { t } = useTranslation();
-  const theme = useTheme();
   const { subscriberWrappers } = useSessionContext();
   const publisherAudio = useAudioLevels();
   const [isCopied, setIsCopied] = useState<boolean>(false);
@@ -100,7 +96,7 @@ const ParticipantList = ({ handleClose, isOpen }: ParticipantListProps): ReactEl
             pl: 3,
           }}
         >
-          <Stack sx={{ textAlign: 'left', color: theme.colors.textSecondary }}>
+          <div className="text-vera-text-secondary text-left">
             <Typography variant="subtitle2">{t('chat.meetingUrl')}</Typography>
             <Typography
               variant="body2"
@@ -115,25 +111,17 @@ const ParticipantList = ({ handleClose, isOpen }: ParticipantListProps): ReactEl
             >
               {window.location.href}
             </Typography>
-          </Stack>
+          </div>
           <IconButton
             size="large"
-            sx={{ color: theme.colors.tertiary, mr: 0.75 }}
+            className="text-vera-tertiary"
+            sx={{ mr: 0.75 }}
             onClick={copyUrl}
             disabled={isCopied}
           >
-            <Tooltip
-              arrow
-              title={isCopied ? t('chat.copied') : t('chat.copy')}
-              TransitionComponent={Fade}
-              TransitionProps={{ timeout: 500 }}
-            >
+            <Tooltip arrow title={isCopied ? t('chat.copied') : t('chat.copy')}>
               {isCopied ? (
-                <VividIcon
-                  name="check-sent-line"
-                  customSize={-4}
-                  sx={{ color: theme.colors.success }}
-                />
+                <VividIcon name="check-sent-line" customSize={-4} className="text-vera-success" />
               ) : (
                 <VividIcon name="copy-line" customSize={-4} />
               )}
@@ -147,12 +135,14 @@ const ParticipantList = ({ handleClose, isOpen }: ParticipantListProps): ReactEl
             placeholder={t('participants.search') || 'Search participants'}
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            InputProps={{
-              startAdornment: (
-                <InputAdornment position="start">
-                  <VividIcon name="search-line" customSize={-6} />
-                </InputAdornment>
-              ),
+            slotProps={{
+              input: {
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <VividIcon name="search-line" customSize={-6} />
+                  </InputAdornment>
+                ),
+              },
             }}
           />
         </Box>

@@ -39,7 +39,7 @@ const HelperText = ({
   };
 
   return (
-    <Box component="span" display="flex" justifyContent="space-between" width="100%">
+    <Box component="span" className="flex justify-between w-full">
       <span
         data-testid={testId}
         style={{

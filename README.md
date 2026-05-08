@@ -34,6 +34,7 @@ If you're new to Vonage, you can [sign up for a Vonage API account](https://dash
   - [File names](#file-names)
 - [Documentation Generation](#documentation-generation)
 - [Code of Conduct](#code-of-conduct)
+- [Maintainers](#maintainers)
 - [Getting Involved](#getting-involved)
 - [Known Issues](#known-issues)
 - [Report Issues](#report-issues)
@@ -226,88 +227,18 @@ This will start the Storybook dev server at [http://localhost:6007](http://local
 
 ## UI Customization
 
-The app's look and feel is driven by a **design token system**. Tokens are the building blocks of the UI theme and are defined in TypeScript source files. When you edit them and regenerate, the changes propagate consistently through both the MUI theme and the Tailwind CSS configuration used across the entire interface.
+The app theme is configured through the root `designTokens.json` file.
 
-### Token files
+### Customize your theme
 
-All token files live under `libs/ui/src/theme/helpers/designTokens/tokens/`.
-
-| File | What it controls |
-|------|------------------|
-| `color.ts` | All semantic colors for both **light** and **dark** modes (brand palette, backgrounds, surfaces, states such as error/warning/success/info, borders, disabled styles, etc.) |
-| `shape.ts` | Corner radius scale used on buttons, cards, modals, and other components (`none` → `extra-large`) |
-| `typography/typeface.ts` | Primary font family stack |
-| `typography/typescale.ts` | Font sizes, line heights, and font weights for every text role (`headline`, `subtitle`, `heading-1–4`, `body-*`, `caption-*`) on both **desktop** and **mobile** breakpoints |
-| `typography/weight.ts` | Font weight definitions per text role |
-
-### Step-by-step customization
-
-1. **Edit the token file(s)** that match what you want to change.
-
-   **Colors** — open `libs/ui/src/theme/helpers/designTokens/tokens/color.ts`.
-   The file contains two sections: `lightColors` and `darkColors`. Each entry maps a semantic token name to a hex value. For example, to change the primary brand color:
-
-   ```ts
-   // Before
-   primary: {
-     value: colorVariables.cta[500], // #9941FF
-     ...
-   },
-
-   // After – replace with your brand color
-   primary: {
-     value: '#0066CC',
-     ...
-   },
-   ```
-
-   > **Tip:** Keep both `lightColors` and `darkColors` in sync so dark mode reflects your brand correctly.
-
-   **Font family** — open `libs/ui/src/theme/helpers/designTokens/tokens/typography/typeface.ts` and update the `value` field:
-
-   ```ts
-   plain: {
-     value: 'Roboto, sans-serif, system-ui',
-     ...
-   },
-   ```
-
-   **Border radius** — open `libs/ui/src/theme/helpers/designTokens/tokens/shape.ts` and adjust any radius step:
-
-   ```ts
-   small: {
-     value: '8px', // was 4px
-     ...
-   },
-   ```
-
-   **Font sizes / weights** — edit `typescale.ts` or `weight.ts` in the same `typography/` folder.
-
-2. **Regenerate the token artifacts** (the `designTokens.json` consumed by Tailwind and the MUI theme):
-
-   ```bash
-   yarn generate:tokens
-   ```
-
-   This runs two scripts in sequence:
-   - `tokensToJson.ts` — serialises the tokens to `libs/ui/src/theme/helpers/designTokens/designTokens.json`.
-   - `generateTailwindPlugin.ts` — rebuilds the Tailwind plugin with the updated values.
-
-3. **Restart the development server** (if it is already running) to pick up the regenerated files:
-
-   ```bash
-   yarn dev
-   ```
-
-### Watch mode
-
-When iterating on tokens you can run the generator in watch mode so it rebuilds automatically on every save:
+1. Edit `designTokens.json` at the project root with your palette/theme values.
+2. Sync theme artifacts:
 
 ```bash
-yarn generate:tokens watch
+yarn sync:theme-tokens
 ```
 
-The watcher monitors the entire `libs/ui/src/theme/helpers/designTokens/` directory and re-runs generation whenever a `.ts` token file changes.
+This command always regenerates `designTokens.example.json`, syncs `libs/ui/src/theme/helpers/designTokens/designTokens.json` from root `designTokens.json` when present, creates root `designTokens.json` from defaults when missing, rebuilds the Tailwind plugin, and formats the generated plugin file.
 
 ---
 
@@ -665,6 +596,12 @@ yarn nx run frontend:docs
 ## Code of Conduct
 
 Please read our [Code of Conduct](CODE_OF_CONDUCT.md).
+
+## Maintainers
+
+This repository is actively maintained by the Vonage Video team.
+
+For maintainer responsibilities, review expectations, and project ownership guidelines, see [MAINTAINERS.md](./MAINTAINERS.md).
 
 ## Getting Involved
 
