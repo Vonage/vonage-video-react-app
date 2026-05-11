@@ -3,7 +3,7 @@ import { renderHook, act, waitFor } from '@testing-library/react';
 import { Connection } from '@vonage/client-sdk-video';
 import { ReactNode } from 'react';
 import useRaiseHand from '../useRaiseHand';
-import { raiseHand$, useRaisedHands, useRaisedHandCount } from '@core/stores';
+import { raiseHand$, useIsHandRaisedFor, useRaisedHandCount, useRaisedHands } from '@core/stores';
 import { SignalEvent, SubscriberWrapper } from '../../types/session';
 
 const mockSignal = vi.fn();
@@ -57,10 +57,7 @@ const renderRaiseHand = () =>
       const hook = useRaiseHand(defaultProps);
       const raisedHands = useRaisedHands();
       const raisedHandCount = useRaisedHandCount();
-      const [{ handsMap }] = raiseHand$.use();
-      const localConnId = mockGetConnectionId() as string | undefined;
-      // Store invariant: presence in handsMap == hand is raised.
-      const localHandIsRaised = !!localConnId && handsMap.has(localConnId);
+      const localHandIsRaised = useIsHandRaisedFor(mockGetConnectionId() as string | undefined);
       return { ...hook, raisedHands, raisedHandCount, localHandIsRaised };
     },
     { wrapper }
