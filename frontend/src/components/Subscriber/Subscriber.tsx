@@ -142,7 +142,7 @@ const Subscriber = ({
         stream={subscriber.stream}
         indicatorStyle={audioIndicatorStyle}
         indicatorClassName="rounded-vera-large bg-vera-dark-background text-vera-accent"
-        indicatorColor="currentColor"
+        indicatorColor="var(--vera-accent)"
         participantName={username}
       />
 

@@ -98,10 +98,9 @@ const OutputAudioDevices = ({ handleToggle }: OutputAudioDevicesProps): ReactEle
                       <VividIcon
                         name="check-line"
                         customSize={-6}
-                        className={classNames({
-                          'text-vera-text-primary': isSelected,
-                          'text-vera-text-secondary': !isSelected,
-                        })}
+                        sx={{
+                          color: `${isSelected ? 'var(--vera-primary)' : 'var(--vera-text-secondary)'} !important`,
+                        }}
                       />
                     </Box>
                   ) : (

@@ -114,7 +114,7 @@ const ParticipantList = ({ handleClose, isOpen }: ParticipantListProps): ReactEl
           </div>
           <IconButton
             size="large"
-            className="text-vera-tertiary"
+            className="text-vera-tertiary!"
             sx={{ mr: 0.75 }}
             onClick={copyUrl}
             disabled={isCopied}

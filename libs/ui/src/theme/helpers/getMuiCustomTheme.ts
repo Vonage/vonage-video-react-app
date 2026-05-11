@@ -101,6 +101,13 @@ const getMuiCustomTheme = ({ container }: GetMuiCustomThemeProps = {}): Theme =>
       },
     },
     components: {
+      MuiTextField: {
+        styleOverrides: {
+          root: {
+            borderColor: getCssVariable('--vera-border'),
+          },
+        },
+      },
       MuiButton: {
         styleOverrides: {
           root: {
@@ -156,6 +163,9 @@ const getMuiCustomTheme = ({ container }: GetMuiCustomThemeProps = {}): Theme =>
             backgroundColor: getCssVariable('--vera-surface'),
             borderRadius: getCssVariable('--vera-border-radius-medium'),
             backgroundClip: 'padding-box',
+          },
+          notchedOutline: {
+            borderColor: getCssVariable('--vera-border'),
           },
           input: {
             // backward compatibility after migrating to mui9
