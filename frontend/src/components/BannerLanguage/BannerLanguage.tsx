@@ -12,7 +12,7 @@ type BannerLanguageProps = BoxProps;
  */
 const BannerLanguage: React.FC<BannerLanguageProps> = (props) => {
   return (
-    <Box display="flex" alignItems="center" data-testid="banner-language" {...props}>
+    <Box className="flex items-center" data-testid="banner-language" {...props}>
       <LanguageSelector />
     </Box>
   );

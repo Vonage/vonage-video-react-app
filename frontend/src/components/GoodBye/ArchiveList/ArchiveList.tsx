@@ -1,5 +1,6 @@
 import { Fragment, ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
+import type { Archive, ArchiveStatus } from '../../../api/archiving/model';
 
 import Box from '@mui/material/Box';
 import CircularProgress from '@mui/material/CircularProgress';
@@ -9,22 +10,17 @@ import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
-import Stack from '@mui/material/Stack';
 import Tooltip from '@mui/material/Tooltip';
 import Typography from '@mui/material/Typography';
-import useTheme from '@ui/theme';
 
 import Separator from '@components/Separator';
 import VividIcon from '@components/VividIcon';
-
-import { Archive, ArchiveStatus } from '../../../api/archiving/model';
 import formatDuration from '@utils/formatDuration';
 import formatFileSize from '@utils/formatFileSize';
 import classNames from 'classnames';
 
 const ArchiveErrorIcon = () => {
   const { t } = useTranslation();
-  const theme = useTheme();
 
   return (
     <Tooltip title={t('archiveList.error.tooltip')}>
@@ -32,44 +28,41 @@ const ArchiveErrorIcon = () => {
         name="warning-line"
         customSize={-6}
         data-testid="archive-error-icon"
-        sx={{ color: theme.colors.warning }}
+        className="text-vera-warning"
       />
     </Tooltip>
   );
 };
 
 const ArchivingLoadingIcon = () => {
-  const theme = useTheme();
-
   return (
     <CircularProgress
       size={20}
       data-testid="archive-loading-spinner"
-      sx={{ color: theme.colors.primary }}
+      className="text-vera-primary"
     />
   );
 };
 
 const ArchiveStatusContent = ({ status, url }: { status: ArchiveStatus; url: string | null }) => {
   const { t } = useTranslation();
-  const theme = useTheme();
 
   if (status === 'available') {
     return (
       <Link href={url ?? undefined} target="_blank" sx={{ textDecoration: 'none' }}>
-        <Stack direction="row" alignItems="center" spacing={0.5}>
+        <div className="flex items-center gap-1">
           <IconButton size="small">
             <VividIcon
               name="download-line"
               customSize={-6}
               data-testid="archive-download-button"
-              sx={{ color: theme.colors.textPrimary }}
+              className="text-vera-text-primary"
             />
           </IconButton>
-          <Typography variant="caption" sx={{ color: theme.colors.textPrimary }}>
+          <Typography variant="caption" className="text-vera-text-primary">
             {t('archiveList.download')}
           </Typography>
-        </Stack>
+        </div>
       </Link>
     );
   }
@@ -95,13 +88,12 @@ export type ArchiveListProps = {
  */
 const ArchiveList = ({ archives }: ArchiveListProps): ReactElement => {
   const { t } = useTranslation();
-  const theme = useTheme();
 
   if (archives === 'error') {
     return (
       <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-        <VividIcon name="warning-line" customSize={-4} sx={{ color: theme.colors.warning }} />
-        <Typography variant="h6" sx={{ color: theme.colors.textTertiary }}>
+        <VividIcon name="warning-line" customSize={-4} className="text-vera-warning" />
+        <Typography variant="h6" className="text-vera-text-tertiary">
           {t('archiveList.error.text')}
         </Typography>
       </Box>
@@ -110,22 +102,12 @@ const ArchiveList = ({ archives }: ArchiveListProps): ReactElement => {
   if (!archives.length) {
     return (
       <>
-        <Stack
-          data-testid="archive-list-empty"
-          direction="row"
-          alignItems="center"
-          spacing={1.5}
-          sx={{ mb: 2 }}
-        >
-          <VividIcon
-            name="video-active-line"
-            customSize={-4}
-            sx={{ color: theme.colors.secondary }}
-          />
-          <Typography variant="body1" sx={{ color: theme.colors.textSecondary }}>
+        <div className="mb-4 flex items-center gap-3" data-testid="archive-list-empty">
+          <VividIcon name="video-active-line" customSize={-4} className="text-vera-secondary" />
+          <Typography variant="body1" className="text-vera-text-secondary">
             {t('archiveList.empty')}
           </Typography>
-        </Stack>
+        </div>
         <Separator width="100%" />
       </>
     );
@@ -149,7 +131,7 @@ const ArchiveList = ({ archives }: ArchiveListProps): ReactElement => {
                 <VividIcon
                   name="video-active-line"
                   customSize={-4}
-                  sx={{ color: theme.colors.secondary }}
+                  className="text-vera-secondary"
                 />
               </ListItemIcon>
 
@@ -172,7 +154,7 @@ const ArchiveList = ({ archives }: ArchiveListProps): ReactElement => {
                   }
                   secondary={
                     (archive.status === 'available' || archive.status === 'pending') && (
-                      <Typography variant="caption" sx={{ color: theme.colors.textTertiary }}>
+                      <Typography variant="caption" className="text-vera-text-tertiary">
                         {archive.status === 'pending' ? (
                           t('archiveList.loading.subtitle')
                         ) : (

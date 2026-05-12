@@ -9,7 +9,7 @@ import useToolbarButtons, {
   UseToolbarButtonsProps,
 } from '@hooks/useToolbarButtons';
 import { RIGHT_PANEL_BUTTON_COUNT } from '@utils/constants';
-import { makeTestProvider } from '@test/providers';
+import { makeTestProvider, providers } from '@test/providers';
 import Toolbar, { ToolbarProps, CaptionsState } from './Toolbar';
 
 const mockedRoomName = { roomName: 'test-room-name' };
@@ -23,9 +23,13 @@ vi.mock('react-router-dom', () => ({
 vi.mock('@hooks/useSpeakingDetector');
 vi.mock('@utils/isReportIssueEnabled');
 vi.mock('@hooks/useToolbarButtons');
-vi.mock('@core/stores', () => ({
-  useIsHandRaisedFor: () => false,
-}));
+vi.mock('@core/stores', async (importOriginal) => {
+  const actual = await importOriginal<Record<string, unknown>>();
+  return {
+    ...actual,
+    useIsHandRaisedFor: () => false,
+  };
+});
 
 const mockUseSpeakingDetector = useSpeakingDetector as Mock<[], boolean>;
 const mockIsReportIssueEnabled = isReportIssueEnabled as Mock<[], boolean>;
@@ -122,7 +126,7 @@ describe('Toolbar', () => {
 });
 
 function render(ui: ReactElement) {
-  const { wrapper, ...context } = makeTestProvider([]);
+  const { wrapper, ...context } = makeTestProvider([providers.runtime]);
 
   return {
     ...context,

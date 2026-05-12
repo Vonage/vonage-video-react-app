@@ -8,6 +8,7 @@ import ActiveSpeakerTracker from '@utils/ActiveSpeakerTracker';
 import VonageVideoClient from '@utils/VonageVideoClient';
 import { StreamPropertyChangedEvent, SubscriberWrapper } from '@app-types/session';
 import { makeTestProvider, ProviderOptions, providers } from '@test/providers';
+import type { VideoClient } from '@core/services';
 
 vi.mock('@utils/ActiveSpeakerTracker');
 vi.mock('@utils/VonageVideoClient');
@@ -21,16 +22,13 @@ vi.mock('@utils/constants', () => ({
 vi.mock('@api/fetchCredentials');
 
 const mockJoinSessionMutate = vi.fn();
+const mockVideoClient = {
+  joinSession: (...args: unknown[]) => mockJoinSessionMutate(...args) as unknown,
+} as unknown as VideoClient;
 
 // A valid fake JWT containing sessionId: '1_MX4xMjM0NTY3OH4-VGh1IEZlYiAyNyAwODozMjozNCBQU1QgMjAyMH4wLjI0NDYxMjE'
 const validSessionKey =
   'eyJhbGciOiJIUzI1NiJ9.eyJzZXNzaW9uSWQiOiIxX01YNHhNak0wTlRZM09INC1WR2gxSUVabFlpQXlOeUF3T0Rvek1qb3pOQ0JRVTFRZ01qQXlNSDR3TGpJME5EWXhNakUiLCJyb29tTmFtZSI6IlRlc3RDb21wb25lbnRSb29tIn0.fakesig';
-
-vi.mock('@services', () => ({
-  videoClient: {
-    joinSession: (...args: unknown[]) => mockJoinSessionMutate(...args) as unknown,
-  },
-}));
 
 describe('SessionProvider', () => {
   let activeSpeakerTracker: ActiveSpeakerTracker;
@@ -490,22 +488,26 @@ type RenderOptions = {
 };
 
 function render(ui: ReactElement, { userContext, sessionContext }: RenderOptions = {}) {
-  const { wrapper, ...context } = makeTestProvider([providers.user, providers.session], {
-    userContext: {
-      ...userContext,
-      value: {
-        defaultSettings: {
-          publishAudio: false,
-          publishVideo: false,
-          name: '',
-          noiseSuppression: true,
-          publishCaptions: false,
-          ...userContext?.value?.defaultSettings,
+  const { wrapper, ...context } = makeTestProvider(
+    [providers.user, providers.session, providers.runtime],
+    {
+      userContext: {
+        ...userContext,
+        value: {
+          defaultSettings: {
+            publishAudio: false,
+            publishVideo: false,
+            name: '',
+            noiseSuppression: true,
+            publishCaptions: false,
+            ...userContext?.value?.defaultSettings,
+          },
         },
       },
-    },
-    sessionContext,
-  });
+      sessionContext,
+      runtimeContext: { videoClient: mockVideoClient },
+    }
+  );
 
   return {
     ...context,

@@ -1,6 +1,5 @@
 import type { ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
-import useTheme from '@ui/theme';
 
 type ErrorPageProps = {
   error: Error;
@@ -19,31 +18,19 @@ type ErrorPageProps = {
  * @returns {ReactElement}
  */
 const ErrorPage = ({ error }: ErrorPageProps): ReactElement => {
-  const theme = useTheme();
   const { t } = useTranslation();
 
   return (
     <div
       data-testid="error-page"
-      className="flex min-h-dvh items-center justify-center p-8"
-      style={{ backgroundColor: theme.colors.background }}
+      className="flex min-h-dvh items-center justify-center p-8 bg-vera-background"
     >
-      <div
-        className="flex w-full max-w-[560px] flex-col gap-6 rounded-2xl p-8"
-        style={{ backgroundColor: theme.colors.surface }}
-      >
-        <h1 className="text-xl font-semibold" style={{ color: theme.colors.error }}>
-          {t('errorPage.title')}
-        </h1>
+      <div className="flex w-full max-w-[560px] flex-col gap-6 rounded-2xl p-8 bg-vera-surface">
+        <h1 className="text-xl font-semibold text-vera-error">{t('errorPage.title')}</h1>
 
-        <p className="text-sm" style={{ color: theme.colors.onSurface }}>
-          {t('errorPage.description')}
-        </p>
+        <p className="text-sm text-vera-on-surface">{t('errorPage.description')}</p>
 
-        <pre
-          className="overflow-x-auto whitespace-pre-wrap break-words rounded-lg p-4 text-xs"
-          style={{ backgroundColor: theme.colors.background, color: theme.colors.error }}
-        >
+        <pre className="overflow-x-auto whitespace-pre-wrap break-words rounded-lg p-4 text-xs bg-vera-background text-vera-error">
           {error.message}
         </pre>
       </div>

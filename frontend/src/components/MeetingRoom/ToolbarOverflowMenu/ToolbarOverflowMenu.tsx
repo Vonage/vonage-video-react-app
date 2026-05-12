@@ -14,7 +14,6 @@ import Box from '@mui/material/Box';
 import ClickAwayListener from '@mui/material/ClickAwayListener';
 import Grow from '@mui/material/Grow';
 import Portal from '@mui/material/Portal';
-import useTheme from '@ui/theme';
 
 export type CaptionsState = {
   isUserCaptionsEnabled: boolean;
@@ -69,7 +68,6 @@ const ToolbarOverflowMenu = ({
   const participantCount =
     subscriberWrappers.filter(({ isScreenshare }) => !isScreenshare).length + 1;
   const isPinningPresent = subscriberWrappers.some((subWrapper) => subWrapper.isPinned);
-  const theme = useTheme();
 
   const closeMenuWrapper = (onClick?: () => void) => () => {
     if (onClick) {
@@ -138,9 +136,8 @@ const ToolbarOverflowMenu = ({
         <Grow in={isOpen}>
           <Box
             data-testid="toolbar-overflow-menu"
+            className="bg-vera-dark-grey-opacity text-vera-on-dark-grey"
             sx={{
-              backgroundColor: theme.colors.darkGreyOpacity,
-              color: theme.colors.onDarkGrey,
               padding: { xs: 1 },
               borderRadius: 2,
               zIndex: 1,

@@ -1,11 +1,10 @@
 import { ReactElement, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import videoClient from '@services/videoClient';
+import { runtime$ } from '@core/stores';
 import useSessionContext from '@hooks/useSessionContext';
 import ToolbarButton from '../ToolbarButton';
 import PopupDialog, { DialogTexts } from '../PopupDialog';
 import Tooltip from '@mui/material/Tooltip';
-import useTheme from '@ui/theme';
 import VividIcon from '@components/VividIcon';
 import classNames from 'classnames';
 import { env } from '../../../env';
@@ -31,9 +30,8 @@ const ArchivingButton = ({
   isOverflowButton = false,
   handleClick,
 }: ArchivingButtonProps): ReactElement | false => {
+  const videoClient = runtime$.useVideoClient();
   const { t } = useTranslation();
-  const theme = useTheme();
-
   const {
     archiveId,
     markArchiveStartRequestedBySelf,
@@ -109,16 +107,14 @@ const ArchivingButton = ({
               <VividIcon
                 name={isRecording ? 'radio-checked-2-line' : 'radio-checked-2-solid'}
                 customSize={-5}
-                style={{
-                  color: theme.colors.onSecondary,
-                }}
+                className="text-vera-on-secondary"
               />
             }
             sx={{
               marginTop: isOverflowButton ? '0px' : '4px',
               backgroundColor: isRecording
-                ? `${theme.colors.onSecondary}55`
-                : theme.colors.darkGrey,
+                ? 'color-mix(in srgb, var(--vera-on-secondary) 33%, transparent)'
+                : undefined,
             }}
             isOverflowButton={isOverflowButton}
           />

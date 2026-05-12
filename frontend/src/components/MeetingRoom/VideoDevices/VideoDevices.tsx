@@ -1,7 +1,7 @@
 import { ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
-import useTheme from '@ui/theme';
 import { Box, MenuList, MenuItem, Tooltip, BoxProps } from '@mui/material';
+import classNames from 'classnames';
 import VividIcon from '@components/VividIcon';
 import { useDistinctLabelMediaDevices } from '@ui/hooks';
 import mediaDevices$ from '@core/stores/devices';
@@ -25,7 +25,6 @@ const VideoDevices = ({
   ...boxProps
 }: VideoDevicesProps): ReactElement | false => {
   const { t } = useTranslation();
-  const theme = useTheme();
 
   // Use store's selection as source of truth, not publisher.getVideoSource() which can be stale
   const selectedDeviceId = mediaDevices$.useDeviceId('videoinput');
@@ -46,14 +45,13 @@ const VideoDevices = ({
     env.MEETING_ROOM_ALLOW_DEVICE_SELECTION && (
       <>
         <Box
+          className={classNames('text-vera-tertiary', className)}
           sx={{
             display: 'flex',
             ml: 2,
             mt: 1,
             mb: 0.5,
-            color: theme.colors.tertiary,
           }}
-          className={className}
           {...boxProps}
         >
           <VividIcon name="video-line" customSize={-5} />
@@ -67,21 +65,15 @@ const VideoDevices = ({
                 key={option.deviceId}
                 selected={isSelected}
                 onClick={() => handleChangeVideoSource(option.deviceId)}
-                sx={{
-                  backgroundColor: 'transparent',
-                  '&.Mui-selected': {
-                    backgroundColor: 'transparent',
-                    color: theme.colors.onBackground,
-                  },
-                  '&:hover': {
-                    backgroundColor: theme.colors.background,
-                  },
-                }}
+                className="[&.Mui-selected]:bg-transparent [&.Mui-selected]:text-vera-on-background hover:bg-vera-background"
               >
                 <Box
                   key={`${option.deviceId}-video-device`}
+                  className={classNames({
+                    'text-vera-text-primary': isSelected,
+                    'text-vera-text-secondary': !isSelected,
+                  })}
                   sx={{
-                    color: isSelected ? theme.colors.textPrimary : theme.colors.textSecondary,
                     display: 'flex',
                     mb: 0.5,
                     overflow: 'hidden',
@@ -92,9 +84,10 @@ const VideoDevices = ({
                       <VividIcon
                         name="check-line"
                         customSize={-6}
-                        sx={{
-                          color: isSelected ? theme.colors.textPrimary : theme.colors.textSecondary,
-                        }}
+                        className={classNames({
+                          'text-vera-text-primary': isSelected,
+                          'text-vera-text-secondary': !isSelected,
+                        })}
                       />
                     </Box>
                   ) : (

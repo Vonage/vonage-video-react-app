@@ -2,7 +2,6 @@ import { ReactElement, useMemo } from 'react';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import VividIcon from '@components/VividIcon';
-import useTheme from '@ui/theme';
 import { useTranslation } from 'react-i18next';
 
 export type PrecallNetworkTestQualityRowProps = {
@@ -16,7 +15,6 @@ const PrecallNetworkTestQualityRow = ({
   score,
   supportTitle,
 }: PrecallNetworkTestQualityRowProps): ReactElement => {
-  const theme = useTheme();
   const { t } = useTranslation();
 
   const isSupported = useMemo(() => score !== null && score >= 3, [score]);
@@ -41,40 +39,28 @@ const PrecallNetworkTestQualityRow = ({
     >
       <Typography
         variant="h6"
+        className="text-vera-text-secondary"
         sx={{
-          color: theme.colors.textSecondary,
-          fontWeight: theme.typography.weight['body-base'].value,
+          fontWeight: 500,
         }}
       >
         {label}
       </Typography>
       <Typography variant="h5" sx={{ lineHeight: 1 }}>
         {isSupported ? (
-          <VividIcon
-            name="check-circle-line"
-            customSize={-3}
-            sx={{
-              color: theme.colors.success,
-            }}
-          />
+          <VividIcon name="check-circle-line" customSize={-3} className="text-vera-success" />
         ) : (
-          <VividIcon
-            name="close-circle-line"
-            customSize={-3}
-            sx={{
-              color: theme.colors.error,
-            }}
-          />
+          <VividIcon name="close-circle-line" customSize={-3} className="text-vera-error" />
         )}
       </Typography>
-      <Typography variant="body1" sx={{ color: theme.colors.textSecondary, ml: 2 }}>
+      <Typography variant="body1" className="text-vera-text-secondary" sx={{ ml: 2 }}>
         {t('waitingRoom.precallNetworkTest.qualityLabel')}
       </Typography>
       <Typography
         variant="h6"
+        className="text-vera-text-secondary"
         sx={{
-          color: theme.colors.textSecondary,
-          fontWeight: theme.typography.weight['body-base'].value,
+          fontWeight: 500,
         }}
       >
         {formattedScore}

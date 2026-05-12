@@ -1,5 +1,6 @@
-import { render, screen } from '@testing-library/react';
+import { render as renderBase, screen } from '@testing-library/react';
 import { describe, it, expect, vi } from 'vitest';
+import { makeTestProvider, providers } from '@test/providers';
 import JoinExistingRoom from './index';
 
 vi.mock('react-router-dom', async () => {
@@ -12,7 +13,8 @@ vi.mock('react-router-dom', async () => {
 
 describe('JoinExistingRoom', () => {
   it('should display the correct JoinExistingRoom', () => {
-    render(<JoinExistingRoom />);
+    const { wrapper } = makeTestProvider([providers.runtime]);
+    renderBase(<JoinExistingRoom />, { wrapper });
 
     expect(screen.getByTestId('JoinExistingRoom')).toBeInTheDocument();
     expect(screen.getByText('Join waiting room')).toBeInTheDocument();

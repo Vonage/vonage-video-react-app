@@ -1,5 +1,13 @@
 @import 'tailwindcss';
 
+/* Keeps output pixel exact after migration from muiV5 to muiV9 */
+@layer base {
+  * {
+    letter-spacing: 0.15008px;
+    -webkit-font-smoothing: antialiased;
+  }
+}
+
 /* Tailwind CSS v4 config directive */
 @config '../../tailwind.config.cjs';
 

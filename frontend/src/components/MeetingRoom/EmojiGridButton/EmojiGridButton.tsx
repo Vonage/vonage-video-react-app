@@ -1,9 +1,8 @@
 import Tooltip from '@mui/material/Tooltip';
 import Badge from '@mui/material/Badge';
-import Box from '@mui/material/Box';
 import { Dispatch, ReactElement, SetStateAction, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
-import useTheme from '@ui/theme';
+import classNames from 'classnames';
 import ToolbarButton from '../ToolbarButton';
 import EmojiGrid from '../EmojiGrid/EmojiGrid';
 import VividIcon from '@components/VividIcon';
@@ -37,7 +36,6 @@ const EmojiGridButton = ({
   isOverflowButton = false,
 }: EmojiGridProps): ReactElement | false => {
   const { t } = useTranslation();
-  const theme = useTheme();
   const { getConnectionId } = useSessionContext();
   const localHandIsRaised = useIsHandRaisedFor(getConnectionId());
   const anchorRef = useRef<HTMLButtonElement>(null);
@@ -54,29 +52,23 @@ const EmojiGridButton = ({
             badgeContent={localHandIsRaised ? emojiMap.RAISED_HAND : null}
             invisible={!localHandIsRaised}
             overlap="circular"
-            sx={{
-              '& .MuiBadge-badge': {
-                fontSize: '0.7rem',
-                minWidth: '16px',
-                height: '16px',
-                padding: '0 2px',
-                backgroundColor: theme.colors.primary,
-                color: theme.colors.onPrimary,
+            slotProps={{
+              badge: {
+                className: 'bg-vera-primary text-vera-on-primary text-[0.7rem] min-w-4 h-4 px-0.5',
               },
             }}
           >
             <ToolbarButton
               onClick={handleToggle}
               icon={
-                <Box sx={{ position: 'relative', display: 'flex' }}>
-                  <VividIcon
-                    name="emoji-solid"
-                    customSize={-5}
-                    sx={{
-                      color: isEmojiGridOpen ? theme.colors.secondary : theme.colors.onSecondary,
-                    }}
-                  />
-                </Box>
+                <VividIcon
+                  name="emoji-solid"
+                  customSize={-5}
+                  className={classNames({
+                    'text-vera-secondary': isEmojiGridOpen,
+                    'text-vera-on-secondary': !isEmojiGridOpen,
+                  })}
+                />
               }
               ref={anchorRef}
               data-testid="emoji-grid-button"

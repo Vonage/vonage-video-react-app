@@ -41,6 +41,14 @@ const buildRoom = () => {
 };
 
 /**
+ * Builds and packages the VeraRoom artifact into a zip file.
+ */
+const buildRoomZip = () => {
+  runCommand('nx run frontend:build-room');
+  runCommand('rm -f room.zip && cd frontend/distRoom && zip -rq ../../room.zip .');
+};
+
+/**
  * Main entry point for build commands.
  *
  * Targets:
@@ -48,15 +56,17 @@ const buildRoom = () => {
  * - frontend: Build only frontend
  * - backend: Build only backend
  * - room: Build VeraRoom web component
+ * - room zip: Build and zip VeraRoom artifact
  *
  * Usage:
  * - yarn build           (build frontend and backend)
  * - yarn build frontend  (build only frontend)
  * - yarn build backend   (build only backend)
  * - yarn build room      (build VeraRoom web component)
+ * - yarn build room zip  (build and zip VeraRoom artifact)
  */
 const main = () => {
-  const [target] = args;
+  const [target, subTarget] = args;
 
   switch (target) {
     case 'frontend':
@@ -66,6 +76,11 @@ const main = () => {
       buildBackend();
       return;
     case 'room':
+      if (subTarget === 'zip') {
+        buildRoomZip();
+        return;
+      }
+
       buildRoom();
       return;
     default:

@@ -59,7 +59,7 @@ const MenuDevices = ({
       anchorEl={anchorEl}
       open={open}
       onClose={onClose}
-      MenuListProps={{ 'aria-labelledby': 'basic-button' }}
+      slotProps={{ list: { 'aria-labelledby': 'basic-button' } }}
       data-testid={`${mediaDeviceKind}-menu`}
     >
       {shouldDisplayDevices &&

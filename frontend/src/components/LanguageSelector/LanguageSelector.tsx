@@ -5,7 +5,6 @@ import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
 import type { SelectChangeEvent } from '@mui/material/Select';
-import useTheme from '@ui/theme';
 import { LanguageOption, LanguageSelectorProps } from './LanguageSelector.types';
 import useIsSmallViewport from '../../hooks/useIsSmallViewport';
 import VividIcon from '../VividIcon/VividIcon';
@@ -20,13 +19,15 @@ const languageOptions: LanguageOption[] = [
   { code: 'es-MX', name: 'Español (México)', flag: 'flag-mexico' },
 ];
 
-const ChevronIcon = ({ color, ...props }: { color: string } & Record<string, unknown>) => (
-  <VividIcon name="chevron-down-line" customSize={-5} sx={{ color }} {...props} />
+const ChevronIcon = ({ className, ...props }: { className: string } & Record<string, unknown>) => (
+  <VividIcon name="chevron-down-line" customSize={-5} className={className} {...props} />
 );
 
 const SelectIconComponent =
-  (themeColor: string) =>
-  (props: Record<string, unknown>): ReactElement => <ChevronIcon color={themeColor} {...props} />;
+  (iconClassName: string) =>
+  (props: Record<string, unknown>): ReactElement => (
+    <ChevronIcon className={iconClassName} {...props} />
+  );
 
 /**
  * LanguageSelector Component
@@ -38,7 +39,6 @@ const SelectIconComponent =
  */
 const LanguageSelector = ({ showFlag = true }: LanguageSelectorProps): ReactElement => {
   const { i18n } = useTranslation();
-  const theme = useTheme();
   const isSmallViewport = useIsSmallViewport();
 
   const supportedLanguages = languageOptions.filter((option) =>
@@ -57,19 +57,9 @@ const LanguageSelector = ({ showFlag = true }: LanguageSelectorProps): ReactElem
       <Select
         value={currentLanguage}
         onChange={handleLanguageChange}
-        IconComponent={SelectIconComponent(theme.colors.textSecondary)}
+        IconComponent={SelectIconComponent('text-vera-text-secondary')}
         displayEmpty
-        sx={{
-          '& .MuiOutlinedInput-notchedOutline': {
-            border: 'none',
-          },
-          '& .MuiSelect-select': {
-            backgroundColor: {
-              xs: theme.colors.surface,
-              md: theme.colors.background,
-            },
-          },
-        }}
+        className="bg-transparent! *:border-none!"
         renderValue={(value) => {
           const selectedOption = supportedLanguages.find((option) => option.code === value);
           if (!selectedOption) {

@@ -1,8 +1,8 @@
 import { ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
+import classNames from 'classnames';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
-import useTheme from '@ui/theme';
 
 /**
  * LandingPageWelcome Component
@@ -11,7 +11,6 @@ import useTheme from '@ui/theme';
  */
 const LandingPageWelcome = (): ReactElement => {
   const { t } = useTranslation();
-  const theme = useTheme();
   const primaryWord = t('landing.primary.word');
 
   const renderTitle = (titleKey: string) => {
@@ -22,9 +21,10 @@ const LandingPageWelcome = (): ReactElement => {
       <Typography
         key={titleKey}
         variant="h1"
-        sx={{
-          color: isPrimaryWord ? theme.colors.textPrimary : theme.colors.textSecondary,
-        }}
+        className={classNames({
+          'text-vera-text-primary': isPrimaryWord,
+          'text-vera-text-secondary': !isPrimaryWord,
+        })}
       >
         {text}
       </Typography>
@@ -42,10 +42,10 @@ const LandingPageWelcome = (): ReactElement => {
       }}
     >
       <Box
+        className="text-vera-text-secondary"
         sx={{
           pl: { xs: 3, sm: 0 },
           pb: { xs: 0, md: 5 },
-          color: theme.colors.textSecondary,
           display: 'flex',
           flexWrap: 'wrap',
           flexDirection: { xs: 'row', md: 'column' },
@@ -62,8 +62,8 @@ const LandingPageWelcome = (): ReactElement => {
 
       <Typography
         variant="h4"
+        className="text-vera-text-tertiary"
         sx={{
-          color: theme.colors.textTertiary,
           display: {
             xs: 'none',
             sm: 'block',

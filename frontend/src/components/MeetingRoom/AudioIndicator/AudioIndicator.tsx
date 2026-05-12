@@ -8,12 +8,11 @@ import IconButton from '@mui/material/IconButton';
 import Tooltip from '@mui/material/Tooltip';
 import VividIcon from '@components/VividIcon';
 import Box from '@mui/material/Box';
-import useTheme from '@ui/theme';
-
 export type AudioIndicatorProps = {
   hasAudio: boolean | undefined;
   indicatorStyle?: React.CSSProperties;
   indicatorColor?: string;
+  indicatorClassName?: string;
   stream?: Stream;
   audioLevel?: number;
   participantName?: string;
@@ -35,12 +34,12 @@ const AudioIndicator = ({
   hasAudio,
   indicatorStyle,
   indicatorColor,
+  indicatorClassName,
   stream,
   audioLevel,
   participantName,
 }: AudioIndicatorProps): ReactElement => {
   const { t } = useTranslation();
-  const theme = useTheme();
   const { forceMute } = useSessionContext();
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
 
@@ -75,7 +74,7 @@ const AudioIndicator = ({
   }
 
   return (
-    <Box style={indicatorStyle} data-testid="audio-indicator">
+    <Box className={indicatorClassName} style={indicatorStyle} data-testid="audio-indicator">
       <Tooltip title={hasAudio ? t('participants.mute.tooltip', { participantName }) : ''}>
         <IconButton
           disableRipple={!hasAudio}
@@ -99,9 +98,9 @@ const AudioIndicator = ({
             <VividIcon
               customSize={-5}
               name="mic-mute-solid"
+              className="text-vera-error!"
               sx={{
                 ...sxProperties,
-                color: theme.colors.error,
                 transform: 'scaleX(-1) scale(0.8)',
               }}
             />

@@ -1,11 +1,11 @@
 /**
- * Shape Tokens
+ * Border Tokens
  *
  * These tokens define the corner radius values used throughout the design system.
  * They provide a consistent approach to rounding corners on various UI components,
  * enhancing the overall visual coherence and user experience.
  */
-const shape = {
+const border = {
   none: {
     value: '0px',
     type: 'radius',
@@ -38,4 +38,4 @@ const shape = {
   },
 };
 
-export default shape;
+export default border;

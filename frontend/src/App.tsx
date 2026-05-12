@@ -10,8 +10,6 @@ import { PublisherProvider } from './Context/PublisherProvider';
 import RedirectToWaitingRoom from './components/RedirectToWaitingRoom';
 import UnsupportedBrowserPage from './pages/UnsupportedBrowserPage';
 import RoomProvider from './Context/RoomProvider';
-import Box from '@mui/material/Box';
-import useTheme from '@ui/theme';
 import AppContextProvider from './AppContextProvider';
 import RedirectToUnsupportedBrowserPage from '@components/RedirectToUnsupportedBrowserPage';
 import SuspenseBoundary from '@web/components/SuspenseBoundary/SuspenseBoundary';
@@ -22,6 +20,8 @@ import LoggerSynchronizer from '@Context/LoggerSynchronizer';
 import ErrorBoundary from './components/ErrorBoundary';
 import EnvGuard from './components/EnvGuard';
 import { ErrorPage } from './pages/ErrorBoundary';
+import { runtime$ } from '@core/stores';
+import { videoClient } from './services';
 
 const futureConfig: Partial<FutureConfig> = {
   /**
@@ -32,21 +32,8 @@ const futureConfig: Partial<FutureConfig> = {
 };
 
 const InnerApp = () => {
-  const theme = useTheme();
-
   return (
-    <Box
-      sx={{
-        backgroundColor: {
-          xs: theme.colors.surface,
-          md: theme.colors.background,
-        },
-        position: 'relative',
-        overflowX: 'hidden',
-        overflowY: 'auto',
-        height: '100dvh',
-      }}
-    >
+    <div className="bg-vera-surface vera-desktop:bg-vera-background relative overflow-x-hidden overflow-y-auto h-dvh">
       <Router future={futureConfig}>
         <Routes>
           <Route element={<RedirectToUnsupportedBrowserPage />}>
@@ -87,7 +74,7 @@ const InnerApp = () => {
           <Route path="/unsupported-browser" element={<UnsupportedBrowserPage />} />
         </Routes>
       </Router>
-    </Box>
+    </div>
   );
 };
 
@@ -99,7 +86,9 @@ const App = () => {
     <AppContextProvider>
       <ErrorBoundary fallback={(error) => <ErrorPage error={error} />}>
         <EnvGuard />
-        <InnerApp />
+        <runtime$.Provider videoClient={videoClient}>
+          <InnerApp />
+        </runtime$.Provider>
       </ErrorBoundary>
     </AppContextProvider>
   );

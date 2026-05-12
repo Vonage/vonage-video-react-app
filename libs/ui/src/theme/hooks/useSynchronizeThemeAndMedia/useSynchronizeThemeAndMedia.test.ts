@@ -8,7 +8,6 @@ describe('useSynchronizeThemeAndMedia', () => {
   });
 
   it('should set initial light mode classes and subscribe to media changes', () => {
-    const setTokens = vi.fn();
     const addEventListenerSpy = vi.fn();
     const matchMediaMock = vi.fn().mockReturnValue({
       matches: false,
@@ -17,7 +16,7 @@ describe('useSynchronizeThemeAndMedia', () => {
 
     vi.spyOn(window, 'matchMedia').mockImplementation(matchMediaMock);
 
-    renderHook(() => useSynchronizeThemeAndMedia({ setTokens }));
+    renderHook(() => useSynchronizeThemeAndMedia());
 
     expect(document.documentElement.classList.contains('vera-dark-mode')).toBe(false);
     expect(document.documentElement.classList.contains('dark')).toBe(false);
@@ -30,7 +29,6 @@ describe('useSynchronizeThemeAndMedia', () => {
   });
 
   it('should set initial dark mode classes when media prefers dark', () => {
-    const setTokens = vi.fn();
     const matchMediaMock = vi.fn().mockReturnValue({
       matches: true,
       addEventListener: vi.fn(),
@@ -38,41 +36,44 @@ describe('useSynchronizeThemeAndMedia', () => {
 
     vi.spyOn(window, 'matchMedia').mockImplementation(matchMediaMock);
 
-    renderHook(() => useSynchronizeThemeAndMedia({ setTokens }));
+    renderHook(() => useSynchronizeThemeAndMedia());
 
     expect(document.documentElement.classList.contains('vera-dark-mode')).toBe(true);
     expect(document.documentElement.classList.contains('dark')).toBe(true);
   });
 
-  it('should call setTokens when media query changes', () => {
-    const setTokens = vi.fn();
-    let changeHandler: (() => void) | undefined;
+  it('should synchronize classes when media query changes', () => {
+    let isDarkModeEnabled = false;
+    let changeHandler: ((event: MediaQueryListEvent) => void) | undefined;
     const addEventListenerSpy = vi.fn((event, handler) => {
       if (event === 'change') {
         changeHandler = handler;
       }
     });
 
-    const matchMediaMock = vi.fn().mockReturnValue({
-      matches: false,
+    const matchMediaMock = vi.fn().mockImplementation(() => ({
+      matches: isDarkModeEnabled,
       addEventListener: addEventListenerSpy,
-    });
+    }));
 
     vi.spyOn(window, 'matchMedia').mockImplementation(matchMediaMock);
 
-    renderHook(() => useSynchronizeThemeAndMedia({ setTokens }));
+    renderHook(() => useSynchronizeThemeAndMedia());
 
-    // Change to dark mode
-    matchMediaMock.mockReturnValue({ matches: true, addEventListener: vi.fn() });
-    changeHandler!();
+    isDarkModeEnabled = true;
+    changeHandler!({ matches: true } as MediaQueryListEvent);
 
-    expect(setTokens).toHaveBeenCalled();
     expect(document.documentElement.classList.contains('vera-dark-mode')).toBe(true);
     expect(document.documentElement.classList.contains('dark')).toBe(true);
+
+    isDarkModeEnabled = false;
+    changeHandler!({ matches: false } as MediaQueryListEvent);
+
+    expect(document.documentElement.classList.contains('vera-dark-mode')).toBe(false);
+    expect(document.documentElement.classList.contains('dark')).toBe(false);
   });
 
   it('should cleanup by aborting the controller', () => {
-    const setTokens = vi.fn();
     const abortController = new AbortController();
     const abortSpy = vi.spyOn(abortController, 'abort');
     const addEventListenerSpy = vi.fn();
@@ -86,7 +87,7 @@ describe('useSynchronizeThemeAndMedia', () => {
 
     vi.spyOn(window, 'matchMedia').mockImplementation(matchMediaMock);
 
-    const { unmount } = renderHook(() => useSynchronizeThemeAndMedia({ setTokens }));
+    const { unmount } = renderHook(() => useSynchronizeThemeAndMedia());
 
     unmount();
 

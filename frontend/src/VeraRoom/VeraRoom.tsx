@@ -6,8 +6,7 @@ import bridge$ from './stores/bridge';
 import WaitingRoomStage from './stages/WaitingRoomStage';
 import MeetingRoomStage from './stages/MeetingRoomStage';
 import GoodByeStage from './stages/GoodByeStage';
-import useLanguageSync from './hooks/useLanguageSync';
-import { ThemeProviderPropsBase } from '@ui/theme/themeContext';
+import useStateSynchronizer from './hooks/useStateSynchronizer';
 import { useMountEffect } from '@web/hooks';
 
 type BridgeProps = {
@@ -39,11 +38,10 @@ type VeraRoomProps = ComponentProps<'div'> & BridgeProps;
  * reconciliation ensures that only what changed actually re-renders.
  */
 const VeraRoom: FC<VeraRoomProps> = ({ className, ...props }) => {
-  useLanguageSync();
+  useStateSynchronizer();
 
-  const theme = useMemo((): ThemeProviderPropsBase['theme'] => {
-    const container = globalThis.document.createElement('div');
-    return { lightMode: {}, darkMode: {}, base: { container: container } };
+  const container = useMemo(() => {
+    return globalThis.document.createElement('div');
   }, []);
 
   const mainContainer = useRef<HTMLDivElement>(null);
@@ -52,11 +50,11 @@ const VeraRoom: FC<VeraRoomProps> = ({ className, ...props }) => {
   const initialEntry = sessionIdentifier ? `/waiting-room/${sessionIdentifier}` : '/waiting-room';
 
   useMountEffect(() => {
-    mainContainer.current?.appendChild(theme?.base?.container || document.createElement('div'));
+    mainContainer.current?.appendChild(container);
   });
 
   return (
-    <AppContextProvider theme={theme}>
+    <AppContextProvider container={container}>
       <div
         ref={mainContainer}
         className={['VeraRoom', 'h-full', className].filter(Boolean).join(' ')}

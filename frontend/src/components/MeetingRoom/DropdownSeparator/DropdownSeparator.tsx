@@ -1,6 +1,5 @@
 import { ReactElement } from 'react';
 import Box from '@mui/material/Box';
-import useTheme from '@ui/theme';
 
 /**
  * DropdownSeparator Component
@@ -9,15 +8,13 @@ import useTheme from '@ui/theme';
  * @returns {ReactElement} The DropdownSeparator component.
  */
 const DropdownSeparator = (): ReactElement => {
-  const theme = useTheme();
-
   return (
     <Box
       data-testid="dropdown-separator"
+      className="border-vera-border!"
       sx={{
         width: '100%',
         borderBottom: '1px solid',
-        borderColor: theme.colors.border,
       }}
     />
   );

@@ -1,8 +1,11 @@
 import IconButton from '@mui/material/IconButton';
+import type { IconButtonProps } from '@mui/material/IconButton';
 import type { SxProps } from '@mui/material';
 import { ForwardedRef, forwardRef, ReactElement } from 'react';
+import classNames from 'classnames';
+import { twMerge } from 'tailwind-merge';
 
-export type VideoContainerButtonProps = {
+export type VideoContainerButtonProps = IconButtonProps & {
   onClick: () => void;
   icon: ReactElement;
   sx?: SxProps;
@@ -22,17 +25,13 @@ const VideoContainerButton = forwardRef(function VideoContainerButton(
   props: VideoContainerButtonProps,
   ref: ForwardedRef<HTMLButtonElement>
 ): ReactElement {
-  const { icon: Icon, sx = {}, ...rest } = props;
+  const { icon: Icon, className, ...rest } = props;
   return (
     <IconButton
       {...rest}
+      className={classNames(twMerge('w-full h-full', className))}
       data-testid="video-container-button"
       ref={ref}
-      sx={{
-        height: '100%',
-        width: '100%',
-        ...sx,
-      }}
     >
       {Icon}
     </IconButton>

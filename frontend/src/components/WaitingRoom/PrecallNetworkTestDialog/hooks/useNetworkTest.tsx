@@ -8,7 +8,7 @@ import OT from '@vonage/client-sdk-video';
 import CancelablePromise from 'easy-cancelable-promise/CancelablePromise';
 import attempt from '@common/execution/attempt';
 import useMountEffect from '@web/hooks/useMountEffect';
-import { videoClient } from '@services';
+import { runtime$ } from '@core/stores';
 
 export type QualityResults = {
   video?: {
@@ -88,6 +88,7 @@ type NetworkTestState = {
  * @returns {NetworkTestHookType} Object containing test state and methods
  */
 const useNetworkTest = () => {
+  const videoClient = runtime$.useVideoClient();
   const { t } = useTranslation();
 
   const testPromiseRef = useRef<CancelablePromise<QualityResults> | null>(null);
@@ -213,7 +214,7 @@ const useNetworkTest = () => {
         }
       ));
     },
-    [t]
+    [t, videoClient]
   );
 
   useMountEffect(() => {

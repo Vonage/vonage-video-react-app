@@ -2,7 +2,6 @@ import { Box as LayoutBox } from 'opentok-layout-js';
 import { ForwardedRef, forwardRef, ReactElement, ReactNode } from 'react';
 import getBoxStyle from '../../../utils/helpers/getBoxStyle';
 import Box from '@mui/material/Box';
-import useTheme from '@ui/theme';
 
 export type VideoTileProps = {
   'data-testid': string;
@@ -53,8 +52,6 @@ const VideoTile = forwardRef(
     }: VideoTileProps,
     ref: ForwardedRef<HTMLDivElement>
   ): ReactElement => {
-    const theme = useTheme();
-
     return (
       <Box
         id={id}
@@ -72,6 +69,7 @@ const VideoTile = forwardRef(
       >
         <Box
           ref={ref}
+          className="rounded-vera-large bg-vera-dark-grey"
           sx={{
             position: 'relative',
             left: isScreenshare ? 0 : '4px',
@@ -79,15 +77,14 @@ const VideoTile = forwardRef(
             width: '100%',
             height: '100%',
             overflow: 'hidden',
-            borderRadius: theme.shapes.borderRadiusLarge,
-            backgroundColor: theme.colors.darkGrey,
             display: hasVideo ? 'block' : 'none',
             ...(isTalking && {
-              outline: `2px solid ${theme.colors.primary}`,
+              outline: '2px solid var(--vera-primary)',
             }),
           }}
         />
         <Box
+          className="rounded-vera-large bg-vera-dark-grey"
           sx={{
             position: 'relative',
             left: isScreenshare ? 0 : '4px',
@@ -95,11 +92,9 @@ const VideoTile = forwardRef(
             width: '100%',
             height: '100%',
             overflow: 'hidden',
-            borderRadius: theme.shapes.borderRadiusLarge,
-            backgroundColor: theme.colors.darkGrey,
             display: hasVideo ? 'none' : 'block',
             ...(isTalking && {
-              outline: `2px solid ${theme.colors.primary}`,
+              outline: '2px solid var(--vera-primary)',
             }),
           }}
         />

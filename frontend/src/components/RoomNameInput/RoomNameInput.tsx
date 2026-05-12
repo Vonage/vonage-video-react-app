@@ -56,8 +56,8 @@ const RoomNameInput = ({
       onChange={handleChange}
       error={hasError}
       helperText={hasError ? t('room.input.helper') : ''}
-      InputProps={{
-        inputProps: { maxLength: 60 },
+      slotProps={{
+        htmlInput: { maxLength: 60 },
       }}
     />
   );

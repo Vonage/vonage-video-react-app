@@ -1,5 +1,5 @@
 import { ReactElement } from 'react';
-import useTheme from '@ui/theme';
+import classNames from 'classnames';
 import { Box, Button } from '@mui/material';
 
 export type DialogActionsRowProps = {
@@ -19,10 +19,8 @@ const DialogActionsRow = function DialogActionsRow({
   textColor,
   primaryTextColor,
 }: DialogActionsRowProps): ReactElement {
-  const theme = useTheme();
-
-  const resolvedTextColor = textColor ?? theme.colors.textSecondary;
-  const resolvedPrimaryTextColor = primaryTextColor ?? theme.colors.onPrimary;
+  const resolvedTextColor = textColor;
+  const resolvedPrimaryTextColor = primaryTextColor;
 
   return (
     <Box
@@ -35,6 +33,9 @@ const DialogActionsRow = function DialogActionsRow({
       <Button
         variant="text"
         onClick={onClose}
+        className={classNames({
+          'text-vera-text-secondary': !resolvedTextColor,
+        })}
         sx={{
           mr: 1,
           color: resolvedTextColor,
@@ -45,6 +46,9 @@ const DialogActionsRow = function DialogActionsRow({
       <Button
         variant="contained"
         onClick={onActionClick}
+        className={classNames({
+          'text-vera-on-primary': !resolvedPrimaryTextColor,
+        })}
         sx={{
           color: resolvedPrimaryTextColor,
           minWidth: 100,

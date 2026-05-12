@@ -165,6 +165,7 @@ function render(
       providers.publisher,
       providers.backgroundPublisher,
       providers.previewPublisher,
+      providers.runtime,
     ],
     {
       userContext,
@@ -172,6 +173,7 @@ function render(
       publisherContext,
       backgroundPublisherContext,
       previewPublisherContext,
+      runtimeContext: undefined,
     }
   );
 
