@@ -30,8 +30,10 @@ const AdvancedSettingsDialog = (): ReactElement => {
       onClose={advancedSettings$.actions.close}
       maxWidth="md"
       fullWidth
-      PaperProps={{
-        className: 'h-[640px] max-h-[640px] overflow-hidden rounded-vera-large bg-vera-surface',
+      slotProps={{
+        paper: {
+          className: 'h-[640px] max-h-[640px] overflow-hidden rounded-vera-large bg-vera-surface',
+        },
       }}
       data-testid="advanced-settings-dialog"
     >

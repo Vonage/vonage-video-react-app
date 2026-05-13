@@ -5,18 +5,17 @@ import { ReactElement } from 'react';
 import { SessionContextType } from '@Context/SessionProvider/session';
 import useSessionContext from '@hooks/useSessionContext';
 import { SubscriberWrapper } from '@app-types/session';
-import { makeTestProvider } from '@test/providers';
-import videoClient from '@services/videoClient';
+import { makeTestProvider, providers } from '@test/providers';
 import CaptionsButton, { CaptionsState } from './CaptionsButton';
 import { env } from '../../../env';
+import type { VideoClient } from '@core/services';
 
 vi.mock('@hooks/useSessionContext');
-vi.mock('@services/videoClient', () => ({
-  default: {
-    enableCaptions: vi.fn(),
-    disableCaptions: vi.fn(),
-  },
-}));
+
+const mockVideoClient: VideoClient = {
+  enableCaptions: vi.fn(),
+  disableCaptions: vi.fn(),
+} as unknown as VideoClient;
 
 const mockUseSessionContext = useSessionContext as Mock<[], SessionContextType>;
 
@@ -56,8 +55,8 @@ describe('CaptionsButton', () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
-    (videoClient.enableCaptions as Mock).mockResolvedValue({ captionsId: '1-2-3-4' });
-    (videoClient.disableCaptions as Mock).mockResolvedValue({});
+    (mockVideoClient.enableCaptions as Mock).mockResolvedValue({ captionsId: '1-2-3-4' });
+    (mockVideoClient.disableCaptions as Mock).mockResolvedValue({});
     sessionContext = {
       subscriberWrappers: [createSubscriberWrapper('subscriber-1')],
       sessionKey: mockedSessionKey,
@@ -85,7 +84,7 @@ describe('CaptionsButton', () => {
     act(() => screen.getByTestId('captions-button').click());
 
     await waitFor(() => {
-      expect(videoClient.enableCaptions).toHaveBeenCalledWith({
+      expect(mockVideoClient.enableCaptions).toHaveBeenCalledWith({
         sessionKey: mockedSessionKey,
       });
     });
@@ -102,7 +101,9 @@ describe('CaptionsButton', () => {
 });
 
 function render(ui: ReactElement) {
-  const { wrapper, ...context } = makeTestProvider([]);
+  const { wrapper, ...context } = makeTestProvider([providers.runtime], {
+    runtimeContext: { videoClient: mockVideoClient },
+  });
 
   return {
     ...context,

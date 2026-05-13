@@ -4,14 +4,23 @@ import {
   makeBackgroundPublisherProviderWrapper,
   makePreviewPublisherProviderWrapper,
   makePublisherProviderWrapper,
+  makeRuntimeProviderWrapper,
   makeSessionProviderWrapper,
   makeUserProviderWrapper,
+  type AdvancedSettingsProviderWrapperOptions,
+  type BackgroundPublisherProviderWrapperOptions,
+  type PublisherProviderWrapperOptions,
+  type PreviewPublisherProviderWrapperOptions,
+  type RuntimeProviderWrapperOptions,
+  type SessionProviderWrapperOptions,
+  type UserProviderWrapperOptions,
 } from './makersIndex';
 
 /**
  * Keep updated accordingly to the providers you have and their dependencies.
  */
 export enum providers {
+  runtime = 'runtime',
   advancedSettings = 'advancedSettings',
   user = 'user',
   session = 'session',
@@ -20,30 +29,40 @@ export enum providers {
   previewPublisher = 'previewPublisher',
 }
 
-/**
- * Keep updated accordingly to the providers you have and their dependencies.
- */
-const MAKERS = {
-  [providers.advancedSettings]: makeAdvancedSettingsProviderWrapper,
-  [providers.user]: makeUserProviderWrapper,
-  [providers.session]: makeSessionProviderWrapper,
-  [providers.publisher]: makePublisherProviderWrapper,
-  [providers.backgroundPublisher]: makeBackgroundPublisherProviderWrapper,
-  [providers.previewPublisher]: makePreviewPublisherProviderWrapper,
-} as const;
+type ProviderOptionsByKey = {
+  [providers.runtime]: RuntimeProviderWrapperOptions;
+  [providers.advancedSettings]: AdvancedSettingsProviderWrapperOptions;
+  [providers.user]: UserProviderWrapperOptions;
+  [providers.session]: SessionProviderWrapperOptions;
+  [providers.publisher]: PublisherProviderWrapperOptions;
+  [providers.backgroundPublisher]: BackgroundPublisherProviderWrapperOptions;
+  [providers.previewPublisher]: PreviewPublisherProviderWrapperOptions;
+};
 
-type ProvidersMakers = typeof MAKERS;
+type ProviderContextsByKey = {
+  [providers.runtime]: NonNullable<ReturnType<typeof makeRuntimeProviderWrapper>['context']>;
+  [providers.user]: NonNullable<ReturnType<typeof makeUserProviderWrapper>['context']>;
+  [providers.session]: NonNullable<ReturnType<typeof makeSessionProviderWrapper>['context']>;
+  [providers.publisher]: NonNullable<ReturnType<typeof makePublisherProviderWrapper>['context']>;
+  [providers.backgroundPublisher]: NonNullable<
+    ReturnType<typeof makeBackgroundPublisherProviderWrapper>['context']
+  >;
+  [providers.previewPublisher]: NonNullable<
+    ReturnType<typeof makePreviewPublisherProviderWrapper>['context']
+  >;
+};
 
 /**
  * Keep updated accordingly to the providers you have and their dependencies.
  */
 const PROVIDER_DEPENDENCIES = {
+  [providers.runtime]: [],
   [providers.advancedSettings]: [],
   [providers.user]: [],
-  [providers.session]: [providers.user],
-  [providers.publisher]: [providers.advancedSettings, providers.user, providers.session],
+  [providers.session]: [providers.runtime, providers.user],
+  [providers.publisher]: [providers.runtime, providers.user, providers.session],
   [providers.backgroundPublisher]: [
-    providers.advancedSettings,
+    providers.runtime,
     providers.user,
     providers.session,
     providers.publisher,
@@ -55,16 +74,21 @@ const PROVIDER_DEPENDENCIES = {
  * Infer the possible parameters for the provided keys
  */
 type ProviderOptionsFor<Keys extends readonly providers[]> = {
-  [K in Keys[number] as `${K}Context`]?: Parameters<ProvidersMakers[K]>[0] | undefined;
+  [K in Keys[number] as `${K}Context`]?: ProviderOptionsByKey[K] | undefined;
 };
 
 /**
  * Infer the context refs for the provided keys, excluding providers that have no context.
  */
 type ProviderContextsFor<Keys extends readonly providers[]> = {
-  [K in Keys[number] as ReturnType<ProvidersMakers[K]>['context'] extends undefined
-    ? never
-    : `${K}Context`]: NonNullable<ReturnType<ProvidersMakers[K]>['context']>;
+  [K in Keys[number] as K extends keyof ProviderContextsByKey
+    ? `${K}Context`
+    : never]: K extends keyof ProviderContextsByKey ? ProviderContextsByKey[K] : never;
+};
+
+type ProviderWrapperResult = {
+  wrapper: ProviderComponent;
+  context?: unknown;
 };
 
 function makeTestProvider<
@@ -100,28 +124,124 @@ function makeTestProvider<
   })();
 
   /**
+   * Sort providers in topological dependency order so that parents are always
+   * rendered as ancestors of the components that depend on them.
+   * composeProviders(reduceRight) makes the first element the outermost wrapper.
+   */
+  const sortedKeys = (() => {
+    const visited = new Set<providers>();
+    const result: providers[] = [];
+
+    const visit = (key: providers) => {
+      if (visited.has(key)) return;
+
+      visited.add(key);
+
+      for (const dependency of PROVIDER_DEPENDENCIES[key]) {
+        if ((keys as readonly providers[]).includes(dependency)) {
+          visit(dependency);
+        }
+      }
+
+      result.push(key);
+    };
+
+    for (const key of keys) {
+      visit(key);
+    }
+
+    return result;
+  })();
+
+  /**
    * Create the providers wrappers and contexts for the provided keys
    */
-  const providers = keys.map((key) => {
-    const maker = MAKERS[key];
-    const makerOptions = options?.[`${key}Context` as keyof Options] ?? {};
-    return maker(makerOptions);
-  });
+  const providerWrappers: ProviderWrapperResult[] = [];
 
-  const wrapper = composeProviders(...providers.map(({ wrapper }) => wrapper));
+  for (const key of sortedKeys) {
+    switch (key) {
+      case providers.runtime: {
+        const runtimeProviderWrapper = makeRuntimeProviderWrapper(
+          (options as ProviderOptionsFor<[providers.runtime]> | undefined)?.runtimeContext
+        );
+
+        providerWrappers.push(runtimeProviderWrapper);
+        break;
+      }
+      case providers.advancedSettings: {
+        const advancedSettingsProviderWrapper = makeAdvancedSettingsProviderWrapper(
+          (options as ProviderOptionsFor<[providers.advancedSettings]> | undefined)
+            ?.advancedSettingsContext
+        );
+
+        providerWrappers.push(advancedSettingsProviderWrapper as ProviderWrapperResult);
+        break;
+      }
+      case providers.user: {
+        const userProviderWrapper = makeUserProviderWrapper(
+          (options as ProviderOptionsFor<[providers.user]> | undefined)?.userContext
+        );
+
+        providerWrappers.push(userProviderWrapper);
+        break;
+      }
+      case providers.session: {
+        const sessionProviderWrapper = makeSessionProviderWrapper(
+          (options as ProviderOptionsFor<[providers.session]> | undefined)?.sessionContext
+        );
+
+        providerWrappers.push(sessionProviderWrapper);
+        break;
+      }
+      case providers.publisher: {
+        const publisherProviderWrapper = makePublisherProviderWrapper(
+          (options as ProviderOptionsFor<[providers.publisher]> | undefined)?.publisherContext
+        );
+
+        providerWrappers.push(publisherProviderWrapper);
+        break;
+      }
+      case providers.backgroundPublisher: {
+        const backgroundPublisherProviderWrapper = makeBackgroundPublisherProviderWrapper(
+          (options as ProviderOptionsFor<[providers.backgroundPublisher]> | undefined)
+            ?.backgroundPublisherContext
+        );
+
+        providerWrappers.push(backgroundPublisherProviderWrapper);
+        break;
+      }
+      case providers.previewPublisher: {
+        const previewPublisherProviderWrapper = makePreviewPublisherProviderWrapper(
+          (options as ProviderOptionsFor<[providers.previewPublisher]> | undefined)
+            ?.previewPublisherContext
+        );
+
+        providerWrappers.push(previewPublisherProviderWrapper);
+        break;
+      }
+      default:
+        throw new Error(`Unknown provider: ${key}`);
+    }
+  }
+
+  const wrapper = composeProviders(
+    ...providerWrappers.map(({ wrapper: providerWrapper }) => providerWrapper)
+  );
+
+  const contexts = providerWrappers.reduce<Record<string, unknown>>((acc, { context }, index) => {
+    const key = sortedKeys[index];
+
+    if (context === undefined) return acc;
+
+    return {
+      ...acc,
+      [`${key}Context`]: context,
+    };
+  }, {});
 
   return {
     wrapper,
-    ...providers.reduce((acc, { context }, index) => {
-      const key = keys[index];
-
-      if (context === undefined) return acc;
-
-      return {
-        ...acc,
-        [`${key}Context` as keyof ProviderContextsFor<Keys>]: context,
-      };
-    }, {} as ProviderContextsFor<Keys>),
+    ...(contexts as ProviderContextsFor<Keys>),
   };
 }
 
@@ -129,7 +249,7 @@ function makeTestProvider<
  * All parameters
  */
 export type ProviderOptions = {
-  [K in providers as `${Capitalize<K>}Context`]?: Parameters<ProvidersMakers[K]>[0];
+  [K in providers as `${Capitalize<K>}Context`]?: ProviderOptionsByKey[K];
 };
 
 export default makeTestProvider;

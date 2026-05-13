@@ -1,10 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import getMuiCustomTheme from './getMuiCustomTheme';
-import getTokensByMode from './getTokensByMode';
 
-const customTheme = getMuiCustomTheme({
-  tokens: getTokensByMode('light'),
-});
+const customTheme = getMuiCustomTheme();
 
 describe('customTheme', () => {
   it('should have palette defined', () => {
@@ -34,47 +31,15 @@ describe('customTheme', () => {
     expect(customTheme.components?.MuiButton?.styleOverrides).toBeDefined();
   });
 
-  it('should have custom palette colors', () => {
-    const { palette } = customTheme;
-    expect(palette.tertiary).toBeDefined();
-    expect(palette.hover).toBeDefined();
-    expect(palette.disabled).toBeDefined();
-  });
-
   it('should have text colors defined', () => {
     const { text } = customTheme.palette;
     expect(text.primary).toBeDefined();
     expect(text.secondary).toBeDefined();
-    expect(text.tertiary).toBeDefined();
-    expect(text.main).toBeDefined();
   });
 
   it('should add a border to dialog paper in dark mode', () => {
-    const originalMatchMedia = globalThis.matchMedia;
-
-    try {
-      globalThis.matchMedia = (() => ({
-        matches: true,
-        media: '(prefers-color-scheme: dark)',
-        onchange: null,
-        addListener() {},
-        removeListener() {},
-        addEventListener() {},
-        removeEventListener() {},
-        dispatchEvent() {
-          return false;
-        },
-      })) as typeof globalThis.matchMedia;
-
-      const darkTheme = getMuiCustomTheme({
-        tokens: getTokensByMode('dark'),
-      });
-
-      expect(darkTheme.components?.MuiDialog?.defaultProps?.PaperProps).toMatchObject({
-        className: expect.stringContaining('dark:border'),
-      });
-    } finally {
-      globalThis.matchMedia = originalMatchMedia;
-    }
+    expect(customTheme.components?.MuiDialog?.defaultProps?.slotProps?.paper).toMatchObject({
+      className: expect.stringContaining('dark:border'),
+    });
   });
 });

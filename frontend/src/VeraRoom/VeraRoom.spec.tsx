@@ -1,11 +1,18 @@
+import '@web-test/environment/helpers/setupMuiMaterialStylesMock';
+
 import { render, screen } from '@testing-library/react';
 import { describe, it, expect, beforeEach } from 'vitest';
 import bridge$ from './stores/bridge';
+import { runtime$ } from '@core/stores';
 import VeraRoom from './VeraRoom';
 import { setupWindowNavigatorMock } from '@web-test/fixtures';
 
 const renderWithBridge = (ui: React.ReactElement) =>
-  render(<bridge$.Provider>{ui}</bridge$.Provider>);
+  render(
+    <bridge$.Provider>
+      <runtime$.Provider videoClient="some-url">{ui}</runtime$.Provider>
+    </bridge$.Provider>
+  );
 
 beforeEach(() => {
   setupWindowNavigatorMock({

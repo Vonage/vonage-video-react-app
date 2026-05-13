@@ -1,21 +1,19 @@
 import { describe, expect, it, vi, beforeEach, Mock } from 'vitest';
 import { render as renderBase, screen, act } from '@testing-library/react';
 import { ReactElement } from 'react';
-import videoClient from '@services/videoClient';
 import useSessionContext from '@hooks/useSessionContext';
 import { SessionContextType } from '@Context/SessionProvider/session';
-import { makeTestProvider } from '@test/providers';
+import { makeTestProvider, providers } from '@test/providers';
 import ArchivingButton from './ArchivingButton';
 import { env } from '../../../env';
+import type { VideoClient } from '@core/services';
 
 vi.mock('@hooks/useSessionContext');
 
-vi.mock('@services/videoClient', () => ({
-  default: {
-    startArchive: vi.fn(),
-    stopArchive: vi.fn(),
-  },
-}));
+const mockVideoClient: VideoClient = {
+  startArchive: vi.fn(),
+  stopArchive: vi.fn(),
+} as unknown as VideoClient;
 
 describe('ArchivingButton', () => {
   const mockHandleCloseMenu = vi.fn();
@@ -52,7 +50,7 @@ describe('ArchivingButton', () => {
 
   it('triggers the start archiving when button is pressed', async () => {
     vi.useFakeTimers();
-    (videoClient.startArchive as Mock).mockResolvedValue({ data: { success: true } });
+    (mockVideoClient.startArchive as Mock).mockResolvedValue({ data: { success: true } });
     render(<ArchivingButton handleClick={mockHandleCloseMenu} />);
 
     act(() => screen.getByTestId('archiving-button').click());
@@ -65,7 +63,7 @@ describe('ArchivingButton', () => {
       await vi.runAllTimersAsync();
     });
 
-    expect(videoClient.startArchive).toHaveBeenCalledWith({ sessionKey: mockedSessionKey });
+    expect(mockVideoClient.startArchive).toHaveBeenCalledWith({ sessionKey: mockedSessionKey });
 
     vi.useRealTimers();
   });
@@ -106,7 +104,7 @@ describe('ArchivingButton', () => {
       await vi.runAllTimersAsync();
     });
 
-    expect(videoClient.stopArchive).toHaveBeenCalledWith({
+    expect(mockVideoClient.stopArchive).toHaveBeenCalledWith({
       sessionKey: mockedSessionKey,
       archiveId: testArchiveId,
     });
@@ -125,7 +123,9 @@ describe('ArchivingButton', () => {
 });
 
 function render(ui: ReactElement) {
-  const { wrapper, ...context } = makeTestProvider([]);
+  const { wrapper, ...context } = makeTestProvider([providers.runtime], {
+    runtimeContext: { videoClient: mockVideoClient },
+  });
 
   return {
     ...context,

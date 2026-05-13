@@ -24,33 +24,45 @@ function startAll(): void {
  * Builds VeraRoom and serves the example page with http-server.
  */
 function startRoom(): void {
+  const roomPort = 3350;
+
   // Build
   console.log('\n📦 Building VeraRoom...\n');
   runCommand('nx run frontend:build-room');
+  runCommand('nx run frontend:build-room-example');
 
   const distRoomPath = path.resolve(__dirname, '../frontend/distRoom');
 
-  // Start http-server on port 3345
-  const server = spawn('npx', ['http-server', distRoomPath, '-c-1', '-p', '3345'], {
-    stdio: ['inherit', 'pipe', 'inherit'],
+  // Start backend on default port 3345
+  const backend = spawn('npx', ['nx', 'run', 'backend:start'], {
+    stdio: 'inherit',
+    shell: true,
+    env: { ...process.env, FRONTEND_TARGET: `http://localhost:${roomPort}/example.html` },
+  });
+
+  // Start room example on separate port
+  const roomServer = spawn('npx', ['http-server', distRoomPath, '-c-1', '-p', String(roomPort)], {
+    stdio: 'inherit',
     shell: true,
   });
 
-  server.stdout?.on('data', (data: Buffer) => {
-    const output = data.toString();
-    process.stdout.write(output);
+  const shutdown = () => {
+    backend.kill('SIGTERM');
+    roomServer.kill('SIGTERM');
+  };
 
-    // Print URL once server is ready
-    if (output.includes('Available on')) {
-      console.log('\n' + '='.repeat(50));
-      console.log('🌐 VeraRoom Example:');
-      console.log('   http://localhost:3345/example.html');
-      console.log('='.repeat(50) + '\n');
-    }
+  process.on('SIGINT', shutdown);
+  process.on('SIGTERM', shutdown);
+
+  backend.on('error', (err) => {
+    console.error('Failed to start backend:', err);
+    shutdown();
+    process.exit(1);
   });
 
-  server.on('error', (err) => {
+  roomServer.on('error', (err) => {
     console.error('Failed to start http-server:', err);
+    shutdown();
     process.exit(1);
   });
 }

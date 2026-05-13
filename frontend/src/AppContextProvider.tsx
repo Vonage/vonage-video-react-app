@@ -1,13 +1,12 @@
 import React, { type PropsWithChildren } from 'react';
 import UserProvider from '@Context/user';
-import { ThemeProvider } from '@ui/theme';
-import { ThemeProviderPropsBase } from '@ui/theme/themeContext';
+import { ThemeProvider, type ThemeProviderProps } from '@ui/theme';
 
-type AppContextProviderProps = PropsWithChildren<ThemeProviderPropsBase>;
+type AppContextProviderProps = PropsWithChildren<ThemeProviderProps>;
 
-const AppContextProvider: React.FC<AppContextProviderProps> = ({ children, theme }) => {
+const AppContextProvider: React.FC<AppContextProviderProps> = ({ children, container }) => {
   return (
-    <ThemeProvider theme={theme}>
+    <ThemeProvider container={container}>
       <UserProvider>{children}</UserProvider>
     </ThemeProvider>
   );

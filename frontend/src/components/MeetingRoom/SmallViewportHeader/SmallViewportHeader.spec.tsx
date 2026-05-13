@@ -189,7 +189,7 @@ function render(
   component: React.ReactElement,
   sessionContext?: { initialValue?: { sessionKey?: string; archiveId?: string | null } }
 ) {
-  const { wrapper } = makeTestProvider([providers.user, providers.session], {
+  const { wrapper } = makeTestProvider([providers.user, providers.session, providers.runtime], {
     userContext: undefined,
     sessionContext: {
       initialValue: {
@@ -197,6 +197,7 @@ function render(
         ...sessionContext?.initialValue,
       },
     },
+    runtimeContext: undefined,
   });
 
   return renderBase(component, { wrapper });

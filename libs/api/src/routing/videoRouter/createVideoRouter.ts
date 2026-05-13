@@ -52,48 +52,7 @@ function createVideoRouter<
   // prettify is necessary to hide the internal TRPC types and prevent d.ts errors.
   type TRPCRouter = Prettify<typeof router>;
 
-  type ProcedureResolverOptions<Input> = {
-    ctx: Context;
-    path: string;
-    signal: AbortSignal | undefined;
-    batchIndex?: number | undefined;
-    input: unknown;
-
-    /**
-     * Use this function to validate the input against the Zod schema for the given action. It will throw a TRPCError with code 'BAD_REQUEST' if the validation fails.
-     *
-     * @example
-     * ```ts
-     * const { assertInput } = opts;
-     * const input = assertInput(opts.input); // input is now correctly typed and validated
-     * ```
-     */
-    assertInput(input: unknown): Input;
-
-    /**
-     * Contains known video client methods
-     */
-    videoClient: VideoClient;
-  };
-
-  type InnerNextFn<Input> = {
-    (): NextResult;
-
-    (opts: { ctx?: Context; input?: Input }): NextResult;
-  };
-
-  type InnerNextParameters<Input> = Parameters<InnerNextFn<Input>>[0];
-
-  type CustomMiddlewareParameters<Result> = Prettify<
-    ProcedureResolverOptions<Result> & {
-      next: InnerNextFn<Result>;
-      videoAction: VideoAction;
-    }
-  >;
-
   type Middleware = Parameters<typeof trpcRoot.procedure.use>[0];
-
-  type InputOf<ActionKey extends PublicActionKey> = Parameters<VideoClient[ActionKey]>[0];
 
   /**
    * These maps are used to store the custom logic added by the transform$, override$ and use$ callbacks.
@@ -101,11 +60,14 @@ function createVideoRouter<
    * When a request is made, we check if there's a custom callback for the action and execute it if it exists.
    */
   const transforms = new Map<PublicActionKey, (input: unknown) => unknown>();
-  const overrides = new Map<PublicActionKey, (opts: ProcedureResolverOptions<Any>) => Any>();
+  const overrides = new Map<
+    PublicActionKey,
+    (opts: ProcedureResolverOptions<Any, Context>) => Any
+  >();
 
   const middlewaresPerAction = new Map<
     PublicActionKey | null,
-    ((opts: CustomMiddlewareParameters<Any>) => NextResult | Promise<NextResult>)[]
+    ((opts: CustomMiddlewareParameters<Any, Context>) => NextResult | Promise<NextResult>)[]
   >();
 
   const tryAssertInput = <ActionKey extends PublicActionKey>(
@@ -140,9 +102,9 @@ function createVideoRouter<
         next: innerNextFn,
         videoAction: actionKey,
         videoClient: ctx.videoClient,
-      }) as CustomMiddlewareParameters<Any>;
+      }) as CustomMiddlewareParameters<Any, Context>;
 
-      function innerNextFn(opts$?: InnerNextParameters<Any>): NextResult {
+      function innerNextFn(opts$?: InnerNextParameters<Any, Context>): NextResult {
         if (!opts$) return OKAY_RESULT;
 
         if (opts$.ctx) {
@@ -281,7 +243,7 @@ function createVideoRouter<
               ...clientTokenOptions
             } = {},
             ...rest
-          } = CreateSessionAndJoinPayloadSchema.loose().parse(opts.input) ?? {};
+          } = CreateSessionAndJoinPayloadSchema.loose().optional().parse(opts.input) ?? {};
 
           const input = {
             ...rest,
@@ -393,7 +355,7 @@ function createVideoRouter<
           const args = Object.assign(opts, {
             assertInput: (input: unknown) => tryAssertInput(key, input),
             videoClient: opts.ctx.videoClient,
-          }) as ProcedureResolverOptions<unknown>;
+          }) as ProcedureResolverOptions<unknown, Context>;
 
           return override(args) as ReturnType<Action>;
         }
@@ -432,7 +394,7 @@ function createVideoRouter<
    */
   function use$(
     this: typeof extensions,
-    middleware: (opts: CustomMiddlewareParameters<Any>) => NextResult | Promise<NextResult>
+    middleware: (opts: CustomMiddlewareParameters<Any, Context>) => NextResult | Promise<NextResult>
   ): typeof extensions;
 
   /**
@@ -448,24 +410,28 @@ function createVideoRouter<
   function use$<ActionKey extends PublicActionKey, Result = InputOf<ActionKey>>(
     this: typeof extensions,
     actionKey: ActionKey,
-    handler: (opts: CustomMiddlewareParameters<Result>) => NextResult | Promise<NextResult>
+    handler: (opts: CustomMiddlewareParameters<Result, Context>) => NextResult | Promise<NextResult>
   ): typeof extensions;
 
   function use$<ActionKey extends PublicActionKey>(
     this: typeof extensions,
-    arg1: ActionKey | ((opts: CustomMiddlewareParameters<Any>) => NextResult | Promise<NextResult>),
-    arg2?: (opts: CustomMiddlewareParameters<Any>) => NextResult | Promise<NextResult>
+    arg1:
+      | ActionKey
+      | ((opts: CustomMiddlewareParameters<Any, Context>) => NextResult | Promise<NextResult>),
+    arg2?: (opts: CustomMiddlewareParameters<Any, Context>) => NextResult | Promise<NextResult>
   ) {
     const actionKey = arg2 ? (arg1 as ActionKey) : null;
     const handler = (arg2 ?? arg1) as (
-      opts: CustomMiddlewareParameters<Any>
+      opts: CustomMiddlewareParameters<Any, Context>
     ) => NextResult | Promise<NextResult>;
 
     let middlewares = middlewaresPerAction.get(actionKey);
     if (!middlewares) middlewaresPerAction.set(actionKey, (middlewares = []));
 
     middlewares.push(
-      handler as (opts: CustomMiddlewareParameters<Any>) => NextResult | Promise<NextResult>
+      handler as (
+        opts: CustomMiddlewareParameters<Any, Context>
+      ) => NextResult | Promise<NextResult>
     );
 
     return this;
@@ -493,7 +459,7 @@ function createVideoRouter<
       Output = Awaited<ReturnType<VideoClient[ActionKey]>>,
     >(
       actionKey: ActionKey,
-      handler: (opts: ProcedureResolverOptions<Input>) => Output | Promise<Output>
+      handler: (opts: ProcedureResolverOptions<Input, Context>) => Output | Promise<Output>
     ) {
       overrides.set(actionKey, handler);
       return extensions;
@@ -520,12 +486,63 @@ type IVideoRouterContract = {
   [K in Exclude<`${VideoAction}`, 'createEphemeralToken'>]: AnyMutationProcedure;
 };
 
-type PublicActionKey = keyof IVideoRouterContract;
+export type PublicActionKey = keyof IVideoRouterContract;
 
-type AsActionKey<T> = T extends VideoAction ? T : never;
+export type AsActionKey<T> = T extends VideoAction ? T : never;
 
 export type NextResult = {
   [OKAY]: true;
 };
+
+export type ProcedureResolverOptions<
+  Input,
+  Context extends {
+    videoClient: VideoClient;
+  },
+> = {
+  ctx: Context;
+  path: string;
+  signal: AbortSignal | undefined;
+  batchIndex?: number | undefined;
+  input: unknown;
+
+  /**
+   * Use this function to validate the input against the Zod schema for the given action. It will throw a TRPCError with code 'BAD_REQUEST' if the validation fails.
+   *
+   * @example
+   * ```ts
+   * const { assertInput } = opts;
+   * const input = assertInput(opts.input); // input is now correctly typed and validated
+   * ```
+   */
+  assertInput(input: unknown): Input;
+
+  /**
+   * Contains known video client methods
+   */
+  videoClient: VideoClient;
+};
+
+export type InnerNextFn<Input, Context extends { videoClient: VideoClient }> = {
+  (): NextResult;
+
+  (opts: { ctx?: Context; input?: Input }): NextResult;
+};
+
+export type InnerNextParameters<Input, Context extends { videoClient: VideoClient }> = Parameters<
+  InnerNextFn<Input, Context>
+>[0];
+
+export type CustomMiddlewareParameters<
+  Result,
+  Context extends { videoClient: VideoClient },
+> = Prettify<
+  ProcedureResolverOptions<Result, Context> & {
+    next: InnerNextFn<Result, Context>;
+    videoAction: VideoAction;
+  }
+>;
+
+export type InputOf<ActionKey extends PublicActionKey> = Parameters<VideoClient[ActionKey]>[0];
 
 export default createVideoRouter;

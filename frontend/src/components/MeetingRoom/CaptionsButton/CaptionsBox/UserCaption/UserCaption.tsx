@@ -4,7 +4,6 @@ import Typography from '@mui/material/Typography';
 import { useTranslation } from 'react-i18next';
 import useReceivingCaptions from '../../../../../hooks/useReceivingCaptions';
 import { CAPTION_DISPLAY_DURATION_MS } from '../../../../../utils/constants';
-import useTheme from '@ui/theme';
 
 export type UserCaptionProps = {
   subscriber: Subscriber | null;
@@ -29,7 +28,6 @@ const UserCaption = ({
   const { caption: captionText, isReceivingCaptions } = useReceivingCaptions({
     subscriber,
   });
-  const theme = useTheme();
 
   const displayCaption = caption ?? captionText;
   const isActive = Boolean(caption ?? isReceivingCaptions);
@@ -68,12 +66,12 @@ const UserCaption = ({
     <div>
       <Typography
         variant="body2"
+        className="text-vera-on-dark-grey"
         sx={{
           mb: 0.5,
           wordBreak: 'break-word',
           lineHeight: 1.4,
           textAlign: 'left',
-          color: theme.colors.onDarkGrey,
           fontSize: isSmallViewPort ? '1rem' : '1.25rem',
         }}
       >

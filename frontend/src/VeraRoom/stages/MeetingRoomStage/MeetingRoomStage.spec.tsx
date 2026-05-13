@@ -20,10 +20,12 @@ type RenderOptions = {
 
 function render(ui: ReactElement, { sessionContext, userContext }: RenderOptions = {}) {
   const { wrapper, ...context } = makeTestProvider(
-    [providers.advancedSettings, providers.user, providers.session],
+    [providers.advancedSettings, providers.user, providers.session, providers.runtime],
+
     {
       sessionContext,
       userContext,
+      runtimeContext: undefined,
     }
   );
 

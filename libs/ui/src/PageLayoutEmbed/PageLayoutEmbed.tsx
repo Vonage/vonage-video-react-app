@@ -2,7 +2,6 @@ import React from 'react';
 import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
 import type { BoxProps } from '@mui/material/Box';
-import useTheme from '../theme';
 import { isFunction } from '@common/assertions';
 
 type WithChildren = { children: React.ReactNode };
@@ -17,8 +16,6 @@ export enum PageLayoutEmbedRegions {
 }
 
 const PageLayoutEmbed = ({ children, sx, ...props }: PageLayoutEmbedProps): React.ReactNode => {
-  const theme = useTheme();
-
   const childrenArray = React.Children.toArray(children);
 
   const left = pickChild(childrenArray, PageLayoutEmbedRegions.Left);
@@ -49,12 +46,12 @@ const PageLayoutEmbed = ({ children, sx, ...props }: PageLayoutEmbedProps): Reac
       >
         {left && (
           <Box
+            className="bg-vera-surface"
             sx={{
               flex: 1,
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              bgcolor: theme.colors.surface,
               pt: { xs: 2, md: 0 },
               px: { xs: 0, md: 5 },
             }}
@@ -65,12 +62,12 @@ const PageLayoutEmbed = ({ children, sx, ...props }: PageLayoutEmbedProps): Reac
 
         {right && (
           <Box
+            className="bg-vera-surface vera-desktop:bg-vera-background"
             sx={{
               flex: 1,
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              bgcolor: { xs: theme.colors.surface, md: theme.colors.background },
               py: 1,
               px: { xs: 3, sm: 5 },
             }}

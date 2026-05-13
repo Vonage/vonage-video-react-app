@@ -193,12 +193,14 @@ function render(
       providers.session,
       providers.publisher,
       providers.backgroundPublisher,
+      providers.runtime,
     ],
     {
       userContext,
       sessionContext,
       publisherContext,
       backgroundPublisherContext,
+      runtimeContext: undefined,
     }
   );
 

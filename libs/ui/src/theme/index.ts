@@ -1,3 +1,2 @@
-export type * from './themeContext.types';
-export { ThemeProvider } from './themeContext';
-export { default } from './hooks/useTheme';
+export type * from './ThemeProvider.types';
+export { ThemeProvider, type ThemeProviderProps } from './ThemeProvider';

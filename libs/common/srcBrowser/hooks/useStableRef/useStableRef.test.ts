@@ -1,6 +1,7 @@
 import { describe, it, expect, vi } from 'vitest';
 import { renderHook } from '@testing-library/react';
 import useStableRef from './';
+import { STABLE_REF_UNSAFE_RENDER_WARNING } from './hooks/useDisposableStableRef';
 
 describe('useStableRef', () => {
   describe('Simple ref (value only)', () => {
@@ -108,7 +109,7 @@ describe('useStableRef', () => {
           // Trying to access during render
           return ref.current;
         });
-      }).toThrow('Stable ref is not available during render phase.');
+      }).toThrow(STABLE_REF_UNSAFE_RENDER_WARNING);
     });
 
     it('should call cleanup when dependencies change', () => {

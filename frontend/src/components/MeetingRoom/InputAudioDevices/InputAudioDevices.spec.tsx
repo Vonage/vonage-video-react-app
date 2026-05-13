@@ -181,7 +181,13 @@ function render(
   }) as unknown as Publisher;
 
   const { wrapper, ...context } = makeTestProvider(
-    [providers.advancedSettings, providers.user, providers.session, providers.publisher],
+    [
+      providers.advancedSettings,
+      providers.user,
+      providers.session,
+      providers.publisher,
+      providers.runtime,
+    ],
     {
       userContext,
       sessionContext,
@@ -192,6 +198,7 @@ function render(
           ...publisherContext?.initialValue,
         },
       },
+      runtimeContext: undefined,
     }
   );
 

@@ -1,5 +1,5 @@
 import { ForwardedRef, forwardRef, ReactElement } from 'react';
-import useTheme from '@ui/theme';
+import classNames from 'classnames';
 import { IconButton, IconButtonProps } from '@mui/material';
 
 export type ToolbarButtonProps = IconButtonProps & {
@@ -23,11 +23,10 @@ const ToolbarButton = forwardRef(function ToolbarButton(
   ref: ForwardedRef<HTMLButtonElement>
 ) {
   const { className, icon: Icon, sx = {}, isOverflowButton, ...rest } = props;
-  const theme = useTheme();
 
   return (
     <IconButton
-      className={className}
+      className={classNames('bg-vera-dark-grey! hover:bg-vera-dark-grey-opacity', className)}
       {...rest}
       edge="start"
       size="small"
@@ -38,10 +37,6 @@ const ToolbarButton = forwardRef(function ToolbarButton(
         marginRight: '12px',
         width: isOverflowButton ? '35px' : '48px',
         height: isOverflowButton ? '35px' : '48px',
-        backgroundColor: theme.colors.darkGrey,
-        '&:hover': {
-          backgroundColor: theme.colors.darkGreyOpacity,
-        },
         ...sx,
       }}
     >

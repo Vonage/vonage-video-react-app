@@ -4,7 +4,6 @@ import Grid from '@mui/material/Grid';
 import Grow from '@mui/material/Grow';
 import Paper from '@mui/material/Paper';
 import Popper from '@mui/material/Popper';
-import useTheme from '@ui/theme';
 import {
   Dispatch,
   ReactElement,
@@ -44,7 +43,6 @@ const EmojiGrid = ({
 }: EmojiGridProps): ReactElement => {
   const isSmallViewport = useIsSmallViewport();
 
-  const theme = useTheme();
   const [isAnchorReady, setIsAnchorReady] = useState<boolean>(false);
 
   useEffect(() => {
@@ -89,12 +87,11 @@ const EmojiGrid = ({
             <ClickAwayListener onClickAway={handleClickAway}>
               <Paper
                 data-testid="emoji-grid"
+                className="bg-vera-dark-grey-opacity text-vera-on-dark-grey"
                 sx={{
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
-                  backgroundColor: theme.colors.darkGreyOpacity,
-                  color: theme.colors.onDarkGrey,
                   padding: { xs: 1 },
                   borderRadius: 2,
                   zIndex: 1,

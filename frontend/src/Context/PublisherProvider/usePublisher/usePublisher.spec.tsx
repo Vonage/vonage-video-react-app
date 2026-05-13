@@ -593,7 +593,7 @@ function renderHook<Result, Props>(
   { userContext, sessionContext }: RenderOptions = {}
 ) {
   const { wrapper: MainWrapper, ...context } = makeTestProvider(
-    [providers.advancedSettings, providers.user, providers.session],
+    [providers.advancedSettings, providers.user, providers.session, providers.runtime],
     {
       userContext: {
         ...userContext,
@@ -619,6 +619,7 @@ function renderHook<Result, Props>(
           sessionContext?.__interceptor?.(ctx);
         },
       },
+      runtimeContext: undefined,
     }
   );
 

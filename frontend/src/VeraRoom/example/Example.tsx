@@ -1,4 +1,5 @@
 import React from 'react';
+import { env } from '../../env';
 
 const Example = () => {
   return (
@@ -22,9 +23,10 @@ const Example = () => {
             style={{ height: '600px' }}
           >
             <vera-room
-              session-identifier="demo-room"
+              session-identifier="test-room-session"
+              entry-point={`${env.API_URL}/v2`}
               language="en"
-              style={{ width: '100%', height: '100%' }}
+              className="h-full"
             />
           </div>
         </section>

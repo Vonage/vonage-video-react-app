@@ -1,5 +1,4 @@
 import { ReactElement } from 'react';
-import useTheme from '@ui/theme';
 import type { SxProps } from '@mui/material';
 import Box from '@mui/material/Box';
 
@@ -36,35 +35,29 @@ const VoiceIndicatorIcon = ({
   sx,
   size,
 }: VoiceIndicatorProps): ReactElement => {
-  const theme = useTheme();
   const barHeights = calculateBarHeights(publisherAudioLevel);
   const isAnimating = publisherAudioLevel >= 5;
 
   return (
-    <Box sx={{ ...sx }} key={20} display="flex" flexDirection="column" gap={2} alignItems="center">
+    <Box key={20} sx={{ ...sx, gap: 2 }} className="flex flex-col items-center">
       <Box
         sx={{
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
           gap: '8%',
           height: size,
           width: size,
           borderRadius: '50%',
-          backgroundColor: theme.colors.primary,
         }}
+        className="flex items-center justify-center bg-vera-primary"
       >
         {barHeights.map((height, i) => (
           <Box
             key={i} // NOSONAR
             sx={{
-              display: 'flex',
-              alignItems: 'center',
               height: height / 4,
               minHeight: '10%',
               width: '10%',
-              backgroundColor: theme.colors.background,
             }}
+            className="flex items-center bg-vera-background"
           >
             <Box
               sx={{

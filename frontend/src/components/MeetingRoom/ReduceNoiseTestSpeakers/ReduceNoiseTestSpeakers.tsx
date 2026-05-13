@@ -3,7 +3,6 @@ import { hasMediaProcessorSupport } from '@vonage/client-sdk-video';
 import ToggleOffIcon from '@mui/icons-material/ToggleOff';
 import ToggleOnIcon from '@mui/icons-material/ToggleOn';
 import { useTranslation } from 'react-i18next';
-import useTheme from '@ui/theme';
 import usePublisherContext from '@hooks/usePublisherContext';
 import { setStorageItem, STORAGE_KEYS } from '@utils/storage';
 import { mediaDevices$ } from '@core/stores';
@@ -26,7 +25,6 @@ import { env } from '../../../env';
  */
 const ReduceNoiseTestSpeakers = (): ReactElement | false => {
   const { t } = useTranslation();
-  const theme = useTheme();
   const { publisher, isPublishing } = usePublisherContext();
 
   const [isToggled, setIsToggled] = useState(false);
@@ -67,20 +65,9 @@ const ReduceNoiseTestSpeakers = (): ReactElement | false => {
         }}
       >
         {shouldDisplayANS && (
-          <MenuItem
-            onClick={handleToggle}
-            sx={{
-              '&:hover': {
-                backgroundColor: theme.colors.background,
-              },
-            }}
-          >
+          <MenuItem onClick={handleToggle} className="hover:bg-vera-background">
             <Box sx={{ mr: 2 }}>
-              <VividIcon
-                customSize={-6}
-                name="headset-solid"
-                sx={{ color: theme.colors.secondary }}
-              />
+              <VividIcon customSize={-6} name="headset-solid" className="text-vera-secondary" />
             </Box>
             <p className="text-vera-body-extended mr-4 truncate">
               {t('devices.audio.noiseSuppression')}
@@ -90,16 +77,17 @@ const ReduceNoiseTestSpeakers = (): ReactElement | false => {
                 <ToggleOffIcon
                   data-testid="toggle-off-icon"
                   fontSize="large"
-                  sx={{ position: 'absolute', color: theme.colors.secondary }}
+                  className="text-vera-secondary"
+                  sx={{ position: 'absolute' }}
                 />
               </Grow>
               <Grow in={isToggled} timeout={300}>
                 <ToggleOnIcon
                   data-testid="toggle-on-icon"
                   fontSize="large"
+                  className="text-vera-secondary"
                   sx={{
                     position: 'absolute',
-                    color: theme.colors.secondary,
                   }}
                 />
               </Grow>
@@ -109,11 +97,7 @@ const ReduceNoiseTestSpeakers = (): ReactElement | false => {
         {hasSpeakerDevices && (
           <SoundTest labelClassName="text-vera-body-extended">
             <Box sx={{ mr: 1.5 }}>
-              <VividIcon
-                customSize={-5}
-                name="audio-mid-solid"
-                sx={{ color: theme.colors.secondary }}
-              />
+              <VividIcon customSize={-5} name="audio-mid-solid" className="text-vera-secondary" />
             </Box>
           </SoundTest>
         )}

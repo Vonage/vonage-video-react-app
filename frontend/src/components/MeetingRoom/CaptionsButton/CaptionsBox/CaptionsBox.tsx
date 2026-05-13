@@ -3,7 +3,6 @@ import Box from '@mui/material/Box';
 import UserCaption from './UserCaption';
 import useSessionContext from '../../../../hooks/useSessionContext';
 import useIsSmallViewport from '../../../../hooks/useIsSmallViewport';
-import useTheme from '@ui/theme';
 
 /**
  * CaptionsBox Component
@@ -14,15 +13,12 @@ import useTheme from '@ui/theme';
 const CaptionsBox = (): ReactElement => {
   const { subscriberWrappers, ownCaptions } = useSessionContext();
   const isSmallViewPort = useIsSmallViewport();
-  const theme = useTheme();
 
   const sxBox = {
     position: 'absolute',
     bottom: isSmallViewPort ? 100 : 80,
     left: '50%',
     transform: 'translateX(-50%)',
-    backgroundColor: theme.colors.darkGreyOpacity,
-    color: theme.colors.onDarkGrey,
     px: 2,
     py: isSmallViewPort ? 1 : 1.5,
     borderRadius: 2,
@@ -36,7 +32,11 @@ const CaptionsBox = (): ReactElement => {
   };
 
   return (
-    <Box data-testid="captions-box" sx={sxBox}>
+    <Box
+      data-testid="captions-box"
+      className="bg-vera-dark-grey-opacity text-vera-on-dark-grey"
+      sx={sxBox}
+    >
       {ownCaptions && (
         <UserCaption
           key="local-publisher"

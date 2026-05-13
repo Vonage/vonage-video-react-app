@@ -1,7 +1,6 @@
 import type { ReactElement } from 'react';
 import Tooltip from '@mui/material/Tooltip';
 import { useTranslation } from 'react-i18next';
-import useTheme from '@ui/theme';
 import advancedSettings$ from '@Context/AdvancedSettings';
 import VividIcon from '@ui/VividIcon';
 import ToolbarButton from '../ToolbarButton';
@@ -14,7 +13,6 @@ const AdvancedSettingsButton = ({
   isOverflowButton = false,
 }: AdvancedSettingsButtonProps): ReactElement => {
   const { t } = useTranslation();
-  const theme = useTheme();
   const [isOpen, { open, close }] = advancedSettings$.use(({ isOpen }) => isOpen);
 
   const handleClick = () => {
@@ -42,7 +40,7 @@ const AdvancedSettingsButton = ({
           <VividIcon
             name="gear-solid"
             customSize={-5}
-            style={{ color: isOpen ? theme.colors.secondary : theme.colors.onSecondary }}
+            className={isOpen ? 'text-vera-secondary' : 'text-vera-on-secondary'}
           />
         }
         isOverflowButton={isOverflowButton}

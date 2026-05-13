@@ -1,6 +1,5 @@
 import { ReactElement } from 'react';
 import Box from '@mui/material/Box';
-import useTheme from '@ui/theme';
 import { VIDEO_CONTAINER_HEIGHT_WR } from '@utils/constants';
 
 /**
@@ -11,15 +10,14 @@ import { VIDEO_CONTAINER_HEIGHT_WR } from '@utils/constants';
  * @returns {ReactElement} - The VignetteEffect component.
  */
 const VignetteEffect = (): ReactElement => {
-  const theme = useTheme();
-
   return (
     <Box
       sx={{
         position: 'absolute',
         height: `${VIDEO_CONTAINER_HEIGHT_WR + 1}px`,
         width: '100%',
-        boxShadow: `inset 0px 100px 30px -20px ${theme.colors.secondary}66, inset 0px -100px 30px -20px ${theme.colors.secondary}66`,
+        boxShadow:
+          'inset 0px 100px 30px -20px color-mix(in srgb, var(--vera-secondary) 40%, transparent), inset 0px -100px 30px -20px color-mix(in srgb, var(--vera-secondary) 40%, transparent)',
       }}
     />
   );

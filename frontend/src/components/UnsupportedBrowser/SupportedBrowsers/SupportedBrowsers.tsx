@@ -5,7 +5,6 @@ import Typography from '@mui/material/Typography';
 import { SUPPORTED_BROWSERS } from '../../../utils/constants';
 import SupportedBrowserListItem from '../SupportedBrowserListItem';
 import Card from '@ui/Card';
-import useTheme from '@ui/theme';
 
 /**
  * SupportedBrowsers Component
@@ -15,7 +14,6 @@ import useTheme from '@ui/theme';
  */
 const SupportedBrowsers = (): ReactElement => {
   const { t } = useTranslation();
-  const theme = useTheme();
 
   return (
     <Card
@@ -26,9 +24,9 @@ const SupportedBrowsers = (): ReactElement => {
     >
       <Typography
         variant="h6"
+        className="text-vera-text-secondary"
         sx={{
           paddingBottom: 2,
-          color: theme.colors.textSecondary,
         }}
       >
         {t('unsupportedBrowser.supported.title')}

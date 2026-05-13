@@ -102,6 +102,7 @@ function render(component: ReactElement) {
       providers.session,
       providers.publisher,
       providers.backgroundPublisher,
+      providers.runtime,
     ],
     {
       sessionContext: {
@@ -112,6 +113,7 @@ function render(component: ReactElement) {
       userContext: undefined,
       publisherContext: undefined,
       backgroundPublisherContext: undefined,
+      runtimeContext: undefined,
     }
   );
 

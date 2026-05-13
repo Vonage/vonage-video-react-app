@@ -39,12 +39,12 @@ describe('ChatButton', () => {
 
   it('should have a white icon when the list is closed', () => {
     render(<ChatButton handleClick={() => {}} isOpen={false} />);
-    expect(screen.getByTestId('ChatIcon')).toHaveStyle('color: rgb(255, 255, 255)');
+    expect(screen.getByTestId('ChatIcon')).toHaveClass('text-vera-on-secondary');
   });
 
   it('should have a blue icon when the chat is open', () => {
     render(<ChatButton handleClick={() => {}} isOpen />);
-    expect(screen.getByTestId('ChatIcon')).toHaveStyle('color: rgb(0, 0, 0)');
+    expect(screen.getByTestId('ChatIcon')).toHaveClass('text-vera-secondary');
   });
 
   it('should invoke callback on click', () => {
@@ -70,10 +70,14 @@ type RenderOptions = {
 };
 
 function render(ui: ReactElement, { sessionContext, userContext }: RenderOptions = {}) {
-  const { wrapper, ...context } = makeTestProvider([providers.user, providers.session], {
-    userContext,
-    sessionContext,
-  });
+  const { wrapper, ...context } = makeTestProvider(
+    [providers.user, providers.session, providers.runtime],
+    {
+      sessionContext,
+      userContext,
+      runtimeContext: undefined,
+    }
+  );
 
   return {
     ...context,

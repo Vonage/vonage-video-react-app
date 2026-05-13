@@ -13,7 +13,6 @@ import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
 import CircularProgress from '@mui/material/CircularProgress';
-import useTheme from '@ui/theme';
 
 export type FormType = {
   title: string;
@@ -36,11 +35,10 @@ export type FeedbackFormType = {
   onFileSelect: (fileData: string) => void;
 };
 
-const getStyleTypography = ({ theme }: { theme: ReturnType<typeof useTheme> }) => {
+const getStyleTypography = () => {
   return {
     marginBottom: '4px',
     textAlign: 'left',
-    color: theme.colors.textSecondary,
   };
 };
 
@@ -67,7 +65,6 @@ const FeedbackForm = ({
   onFileSelect,
 }: FeedbackFormType): ReactElement => {
   const { t } = useTranslation();
-  const theme = useTheme();
   const isSmallViewport = useIsSmallViewport();
   // 224px = 64px panel header + 96px toolbar if normal viewport + (40px submit button + 24px submit button margin)
   // 208px = 64px panel header + 80px toolbar if small viewport + (40px submit button + 24px submit button margin)
@@ -77,7 +74,7 @@ const FeedbackForm = ({
   const width = isSmallViewport ? 'calc(100dvw - 50px)' : '300px';
 
   const getColorStyle = (value: string, maxLength: number) => {
-    return value.length >= maxLength || value.length === 0 ? theme.colors.error : 'inherit';
+    return value.length >= maxLength || value.length === 0 ? 'var(--vera-error)' : 'inherit';
   };
 
   return loading ? (
@@ -103,7 +100,8 @@ const FeedbackForm = ({
         <Typography
           variant="body1"
           data-testid="title-report-issue"
-          sx={getStyleTypography({ theme: theme })}
+          className="text-vera-text-secondary"
+          sx={getStyleTypography()}
         >
           {t('feedbackForm.field.title.label')}
         </Typography>
@@ -128,12 +126,13 @@ const FeedbackForm = ({
           sx={{
             mb: '22px',
           }}
-          inputProps={{ maxLength: REPORT_TITLE_LIMIT }}
+          slotProps={{ htmlInput: { maxLength: REPORT_TITLE_LIMIT } }}
         />
         <Typography
           variant="body1"
           data-testid="name-report-issue"
-          sx={getStyleTypography({ theme: theme })}
+          className="text-vera-text-secondary"
+          sx={getStyleTypography()}
         >
           {t('feedbackForm.field.name.label')}
         </Typography>
@@ -159,13 +158,14 @@ const FeedbackForm = ({
             mr: 4,
             mb: 2,
           }}
-          inputProps={{ maxLength: REPORT_NAME_LIMIT }}
+          slotProps={{ htmlInput: { maxLength: REPORT_NAME_LIMIT } }}
         />
 
         <Typography
           data-testid="description-report-issue"
           variant="body1"
-          sx={getStyleTypography({ theme: theme })}
+          className="text-vera-text-secondary"
+          sx={getStyleTypography()}
         >
           {t('feedbackForm.field.issue.label')}
         </Typography>
@@ -194,13 +194,14 @@ const FeedbackForm = ({
             mr: 4,
             mb: 1,
           }}
-          inputProps={{ maxLength: REPORT_DESCRIPTION_LIMIT }}
+          slotProps={{ htmlInput: { maxLength: REPORT_DESCRIPTION_LIMIT } }}
         />
 
         <Typography
           variant="body2"
+          className="text-vera-text-secondary"
           sx={{
-            ...getStyleTypography({ theme: theme }),
+            ...getStyleTypography(),
           }}
         >
           {t('feedbackForm.disclaiamer.label')}
@@ -208,8 +209,9 @@ const FeedbackForm = ({
         <Typography
           variant="body2"
           color="textPrimary"
+          className="text-vera-text-secondary"
           sx={{
-            ...getStyleTypography({ theme: theme }),
+            ...getStyleTypography(),
           }}
         >
           {t('feedbackForm.disclaiamer.screenshot')}

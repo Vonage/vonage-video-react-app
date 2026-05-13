@@ -1,7 +1,7 @@
 // eslint-disable-next-line @nx/enforce-module-boundaries
 import type { IVideoRouter } from '../../../../api/src/types/IVideoRouter';
 import { createTRPCClient, httpBatchLink } from '@trpc/client';
-import type { Prettify, Any, AnyFunction } from '@common/types';
+import type { Prettify, AnyFunction } from '@common/types';
 
 /**
  * Creates a video client for interacting with the video API.
@@ -16,7 +16,7 @@ import type { Prettify, Any, AnyFunction } from '@common/types';
  * videoClient.createSession({ sessionId: 'existing-session-id' }); // uses an existing session
  * ```
  */
-function createVideoClient(linkOptions: LinkOptions): VideoClient<IVideoRouter>;
+function createVideoClient(linkOptions: LinkOptions): VideoClient;
 
 /**
  * Creates a video client for interacting with the video API.
@@ -35,9 +35,9 @@ function createVideoClient(linkOptions: LinkOptions): VideoClient<IVideoRouter>;
  * videoClient.createSession({ sessionId: 'existing-session-id' }); // uses an existing session
  * ```
  */
-function createVideoClient(links: Links): VideoClient<IVideoRouter>;
+function createVideoClient(links: Links): VideoClient;
 
-function createVideoClient(args: Links | LinkOptions): VideoClient<IVideoRouter> {
+function createVideoClient(args: Links | LinkOptions): VideoClient {
   const options: Options = (() => {
     if (Array.isArray(args)) {
       return { links: args };
@@ -61,26 +61,31 @@ function createVideoClient(args: Links | LinkOptions): VideoClient<IVideoRouter>
 
       return (procedure as MutateProcedure).mutate;
     },
-  }) as unknown as VideoClient<IVideoRouter>;
+  }) as unknown as VideoClient;
 
   return proxy;
 }
 
-type AnyRouter = {
-  [K in Extract<keyof IVideoRouter, string>]: Any;
-};
-
-type VideoClientBase<Router extends AnyRouter> = ReturnType<typeof createTRPCClient<Router>>;
+type VideoClientBase = ReturnType<typeof createTRPCClient<IVideoRouter>>;
 
 type MutateProcedure = {
   mutate: AnyFunction;
 };
 
-type VideoClient<Router extends AnyRouter> = Prettify<{
-  [K in keyof VideoClientBase<Router>]: VideoClientBase<Router>[K] extends MutateProcedure
-    ? VideoClientBase<Router>[K]['mutate']
-    : VideoClientBase<Router>[K];
-}>;
+type Normalize<T> = {
+  [K in keyof T]: T[K] extends MutateProcedure ? T[K]['mutate'] : T[K];
+};
+
+type OnlyFunctions<T> = {
+  [K in keyof T as T[K] extends AnyFunction ? K : never]: T[K];
+};
+
+type SanitizedVideoClient = OnlyFunctions<Normalize<VideoClientBase>>;
+
+/**
+ * Video client to communicate with a vonage video handler.
+ */
+export type VideoClient = Prettify<SanitizedVideoClient>;
 
 type Options = Prettify<Parameters<typeof createTRPCClient<IVideoRouter>>[0]>;
 

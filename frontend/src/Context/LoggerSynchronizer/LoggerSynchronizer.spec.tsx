@@ -81,13 +81,17 @@ type RenderOptions = {
 };
 
 function render({ userContext, sessionContext }: RenderOptions = {}) {
-  const { wrapper, ...context } = makeTestProvider([providers.user, providers.session] as const, {
-    userContext: {
-      value: { defaultSettings: { name: 'user-1' } },
-      ...userContext,
-    },
-    sessionContext,
-  });
+  const { wrapper, ...context } = makeTestProvider(
+    [providers.user, providers.session, providers.runtime] as const,
+    {
+      userContext: {
+        value: { defaultSettings: { name: 'user-1' } },
+        ...userContext,
+      },
+      sessionContext,
+      runtimeContext: undefined,
+    }
+  );
 
   const rendered = renderBase(<LoggerSynchronizer />, { wrapper });
 

@@ -21,6 +21,7 @@ import useMediaQuery from '@mui/material/useMediaQuery';
 import MeetingRoom from './MeetingRoom';
 import type { Box } from 'opentok-layout-js';
 import { setupWindowNavigatorMock } from '@web-test/fixtures';
+import type { VideoClient } from '@core/services';
 
 const mockedNavigate = vi.fn();
 const mockedParams = { roomIdentifier: 'test-room-name' };
@@ -36,12 +37,10 @@ const mockJoinSessionMutate = vi
   .fn()
   .mockResolvedValue({ token: 'mock-token', sessionId: mockSessionId });
 
-vi.mock('@services', () => ({
-  videoClient: {
-    createSession: (...args: unknown[]) => mockCreateSessionMutate(...args) as unknown,
-    joinSession: (...args: unknown[]) => mockJoinSessionMutate(...args) as unknown,
-  },
-}));
+const mockVideoClient = {
+  createSession: (...args: unknown[]) => mockCreateSessionMutate(...args) as unknown,
+  joinSession: (...args: unknown[]) => mockJoinSessionMutate(...args) as unknown,
+} as unknown as VideoClient;
 
 vi.mock('@hooks/useBackgroundPublisherContext', () => ({
   __esModule: true,
@@ -563,7 +562,13 @@ function render(
   } = {}
 ) {
   const { wrapper, ...context } = makeTestProvider(
-    [providers.advancedSettings, providers.user, providers.session, providers.publisher],
+    [
+      providers.advancedSettings,
+      providers.user,
+      providers.session,
+      providers.publisher,
+      providers.runtime,
+    ],
     {
       userContext: {
         ...userContext,
@@ -576,6 +581,7 @@ function render(
       },
       sessionContext,
       publisherContext,
+      runtimeContext: { videoClient: mockVideoClient },
     }
   );
 

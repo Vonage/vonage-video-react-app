@@ -7,6 +7,10 @@ metadata:
   description: Vonage Video API JS React reference application
   annotations:
     vonage.com/jira-id: VPF # video general projects
+    vonage.com/maintainers: |
+      - Hossein Movahed @Hossein-Movahed
+      - Johnny Esteban Quesada @johnny-quesada-developer
+      - Oscar Fava @OscarFava
 spec:
   type: library
   owner: group:orgdata/vdk # helm "owner" orgdata squad id or general orgdata/vid
@@ -19,6 +23,10 @@ metadata:
   description: Video React Ref App Component
   annotations:
     github.com/project-slug: Vonage/vonage-video-react-app # GH repo
+    vonage.com/maintainers: |
+      - Hossein Movahed @Hossein-Movahed
+      - Johnny Esteban Quesada @johnny-quesada-developer
+      - Oscar Fava @OscarFava
 spec:
   type: library
   owner: group:orgdata/vdk

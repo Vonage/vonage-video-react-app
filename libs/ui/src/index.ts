@@ -15,5 +15,3 @@ export {
 } from './SelectField';
 export { default as SwitchField, type SwitchFieldProps } from './SwitchField';
 export { default as VividIcon, type VividIconProps } from './VividIcon';
-
-export { default as theme } from './theme';
