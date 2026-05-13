@@ -106,7 +106,7 @@ const DeviceControlButton = ({
       <VividIcon
         name="video-off-solid"
         customSize={-5}
-        data-testid="VideocamOffIcon"
+        data-testid="VideoCamOffIcon"
         className="text-vera-error"
       />
     );
