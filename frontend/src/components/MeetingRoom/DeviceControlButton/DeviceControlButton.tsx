@@ -97,7 +97,7 @@ const DeviceControlButton = ({
         <VividIcon
           name="video-solid"
           customSize={-5}
-          data-testid="VideocamIcon"
+          data-testid="VideoCamIcon"
           className="text-vera-on-dark-grey"
         />
       );
