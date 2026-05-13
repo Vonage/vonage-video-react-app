@@ -7,6 +7,14 @@ instance:
   entrypoint: [node, bundle.cjs]
   # The placeholder <DOMAIN> will be replaced by sed in .github/workflows/deploy-to-vcr.yml
   domains: <DOMAIN>
+  security:
+    access: authenticated
+    auth-method: vonage_basic
+    override:
+      - path: /_/health
+        access: public
+      - path: /.well-known
+        access: public
   environment:
     - name: VIDEO_SERVICE_PROVIDER
       secret: VIDEO_SERVICE_PROVIDER
