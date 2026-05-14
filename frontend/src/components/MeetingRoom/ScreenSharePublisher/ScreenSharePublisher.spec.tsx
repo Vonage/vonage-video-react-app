@@ -56,6 +56,40 @@ describe('ScreenSharePublisher component', () => {
     expect(element.style.objectFit).toBe('contain');
   });
 
+  it('renders show preview button when entire screen preview is hidden', () => {
+    const box = { height: 100, width: 100, top: 0, left: 0 };
+
+    render(
+      <ScreenSharePublisher
+        box={box}
+        element={undefined}
+        publisher={null}
+        isEntireScreen={true}
+        showLocalScreensharePreview={false}
+        toggleLocalScreensharePreview={vi.fn()}
+      />
+    );
+
+    expect(screen.getByText('Show preview')).toBeInTheDocument();
+  });
+
+  it('renders hide preview button when local preview is shown', () => {
+    const box = { height: 100, width: 100, top: 0, left: 0 };
+
+    render(
+      <ScreenSharePublisher
+        box={box}
+        element={undefined}
+        publisher={null}
+        isEntireScreen={true}
+        showLocalScreensharePreview={true}
+        toggleLocalScreensharePreview={vi.fn()}
+      />
+    );
+
+    expect(screen.getByText('Hide preview')).toBeInTheDocument();
+  });
+
   it('renders hidden message when entire screen is shared', () => {
     const box = { height: 100, width: 100, top: 0, left: 0 };
 
