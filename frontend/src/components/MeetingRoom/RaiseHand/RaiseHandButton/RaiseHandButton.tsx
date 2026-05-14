@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { twMerge } from 'tailwind-merge';
 import useSessionContext from '@hooks/useSessionContext';
 import { useIsHandRaisedFor } from '@core/stores';
-import emojiMap from '../../../../utils/emojis';
+import { RAISED_HAND_EMOJI } from '../../../../utils/emojis';
 
 /**
  * Toggles the local user's raised-hand state. Rendered inside the Reactions
@@ -32,14 +32,14 @@ const RaiseHandButton = (): ReactElement => {
       aria-label={label}
       aria-pressed={localHandIsRaised}
       className={twMerge(
-        'flex w-full items-center justify-center gap-1.5 rounded border px-3 py-2 text-sm transition-colors',
+        'flex w-full items-center justify-center gap-1.5 rounded border px-3 py-2 text-vera-body-base transition-colors',
         localHandIsRaised
           ? 'border-vera-primary bg-vera-primary text-vera-on-primary hover:bg-vera-primary-hover'
           : 'border-transparent bg-transparent text-vera-on-dark-grey hover:bg-vera-dark-grey-hover'
       )}
     >
-      <span aria-hidden="true" className="shrink-0 text-xl leading-none">
-        {emojiMap.RAISED_HAND}
+      <span aria-hidden="true" className="shrink-0 text-vera-heading-4 leading-none">
+        {RAISED_HAND_EMOJI}
       </span>
       <span className="truncate">{label}</span>
     </button>

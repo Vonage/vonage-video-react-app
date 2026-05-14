@@ -3,9 +3,9 @@ import { useTranslation } from 'react-i18next';
 import Dialog from '@mui/material/Dialog';
 import DialogTitle from '@mui/material/DialogTitle';
 import DialogContent from '@mui/material/DialogContent';
+import DialogContentText from '@mui/material/DialogContentText';
 import DialogActions from '@mui/material/DialogActions';
 import Button from '@mui/material/Button';
-import Typography from '@mui/material/Typography';
 
 export type LowerAllDialogProps = {
   open: boolean;
@@ -30,25 +30,20 @@ const LowerAllDialog = ({
       open={open}
       onClose={onCancel}
       aria-labelledby="lower-all-dialog-title"
+      aria-describedby="lower-all-dialog-description"
       data-testid="lower-all-dialog"
     >
       <DialogTitle id="lower-all-dialog-title">{t('raiseHand.lowerAll.dialogTitle')}</DialogTitle>
       <DialogContent>
-        <Typography variant="body1">
+        <DialogContentText id="lower-all-dialog-description">
           {t('raiseHand.lowerAll.dialogBody', { count: raisedHandCount })}
-        </Typography>
+        </DialogContentText>
       </DialogContent>
       <DialogActions>
         <Button onClick={onCancel} data-testid="lower-all-cancel-button">
           {t('button.cancel')}
         </Button>
-        <Button
-          onClick={onConfirm}
-          variant="contained"
-          color="primary"
-          data-testid="lower-all-confirm-button"
-          autoFocus
-        >
+        <Button onClick={onConfirm} data-testid="lower-all-confirm-button" autoFocus>
           {t('raiseHand.lowerAll.confirmButton')}
         </Button>
       </DialogActions>

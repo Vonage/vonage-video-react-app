@@ -1,6 +1,6 @@
 import { ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
-import emojiMap from '../../../../utils/emojis';
+import { RAISED_HAND_EMOJI } from '../../../../utils/emojis';
 
 export type RaiseHandBadgeProps = {
   /**
@@ -30,7 +30,7 @@ const RaiseHandBadge = ({ tileWidth }: RaiseHandBadgeProps): ReactElement => {
       style={{ fontSize, top: offset, left: offset }}
     >
       <span role="img" aria-hidden="true">
-        {emojiMap.RAISED_HAND}
+        {RAISED_HAND_EMOJI}
       </span>
     </div>
   );

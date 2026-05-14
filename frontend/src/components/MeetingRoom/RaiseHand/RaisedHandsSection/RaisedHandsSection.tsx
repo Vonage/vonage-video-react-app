@@ -2,14 +2,14 @@ import { ReactElement, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import useSessionContext from '@hooks/useSessionContext';
 import { useRaisedHands } from '@core/stores';
-import emojiMap from '../../../../utils/emojis';
+import { RAISED_HAND_EMOJI } from '../../../../utils/emojis';
 import LowerAllDialog from './LowerAllDialog';
 
 // v1: every participant is a moderator and may lower other participants'
 // hands. VERA does not yet have a server-side role model; lowering uses the
 // same broadcast signal channel as raising, so there is no privileged
-// backend path. When real roles ship, replace this with the actual check
-// — every moderator-gated branch below reads from `isModerator`.
+// backend path. When real roles ship, replace this constant with the actual
+// check — every moderator-gated branch below reads from `IS_MODERATOR`.
 const IS_MODERATOR = true;
 
 /**
@@ -20,7 +20,6 @@ const RaisedHandsSection = (): ReactElement => {
   const { t } = useTranslation();
   const { lowerHand, lowerAllHands } = useSessionContext();
   const raisedHands = useRaisedHands();
-  const isModerator = IS_MODERATOR;
   const [isLowerAllDialogOpen, setIsLowerAllDialogOpen] = useState(false);
 
   const handleLowerAllClick = () => setIsLowerAllDialogOpen(true);
@@ -37,23 +36,23 @@ const RaisedHandsSection = (): ReactElement => {
         data-testid="raised-hands-section"
       >
         <div className="flex items-center gap-2">
-          <span className="text-sm font-medium text-vera-text-secondary">
+          <span className="text-vera-body-base-semibold text-vera-text-secondary">
             {t('raiseHand.section.title')}
           </span>
           <span
             data-testid="raised-hands-count-badge"
-            className="inline-flex h-5 min-w-5 items-center justify-center rounded-full bg-vera-primary px-1.5 text-[0.7rem] text-vera-on-primary"
+            className="inline-flex h-5 min-w-5 items-center justify-center rounded-full bg-vera-primary px-1.5 text-vera-caption text-vera-on-primary"
           >
             {raisedHands.length}
           </span>
         </div>
 
-        {isModerator && (
+        {IS_MODERATOR && (
           <button
             type="button"
             data-testid="lower-all-button"
             onClick={handleLowerAllClick}
-            className="cursor-pointer border-none bg-transparent p-0 text-[0.8rem] text-vera-text-primary hover:underline"
+            className="cursor-pointer border-none bg-transparent p-0 text-vera-caption text-vera-text-primary hover:underline"
           >
             {t('raiseHand.section.lowerAll')}
           </button>
@@ -65,10 +64,10 @@ const RaisedHandsSection = (): ReactElement => {
           <li
             key={state.connectionId}
             data-testid={`raised-hand-item-${state.connectionId}`}
-            className={`flex items-center py-1 pl-4 ${isModerator ? 'pr-12' : 'pr-2'}`}
+            className={`flex items-center py-1 pl-4 ${IS_MODERATOR ? 'pr-12' : 'pr-2'}`}
           >
-            <span className="flex-1 truncate text-sm">{state.participantName}</span>
-            {isModerator && (
+            <span className="flex-1 truncate text-vera-body-base">{state.participantName}</span>
+            {IS_MODERATOR && (
               <button
                 type="button"
                 aria-label={t('raiseHand.section.lowerParticipant', {
@@ -76,11 +75,11 @@ const RaisedHandsSection = (): ReactElement => {
                 })}
                 data-testid={`lower-hand-${state.connectionId}`}
                 onClick={() => lowerHand(state.connectionId)}
-                className="cursor-pointer border-none bg-transparent p-1 text-base text-vera-text-tertiary hover:opacity-80"
+                className="cursor-pointer border-none bg-transparent p-1 text-vera-body-extended text-vera-text-tertiary hover:opacity-80"
                 title={t('raiseHand.section.lowerParticipant', { name: state.participantName })}
               >
                 <span role="img" aria-hidden="true">
-                  {emojiMap.RAISED_HAND}
+                  {RAISED_HAND_EMOJI}
                 </span>
               </button>
             )}

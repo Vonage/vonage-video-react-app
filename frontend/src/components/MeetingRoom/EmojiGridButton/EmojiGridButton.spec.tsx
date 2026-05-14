@@ -11,6 +11,7 @@ vi.mock('@mui/material/useMediaQuery', () => ({
 }));
 vi.mock('@utils/emojis', () => ({
   default: { FAVORITE: '🦧' },
+  RAISED_HAND_EMOJI: '✋',
 }));
 vi.mock('@core/stores', () => ({
   useIsHandRaisedFor: () => false,

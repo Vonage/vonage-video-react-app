@@ -18,6 +18,7 @@ vi.mock('@mui/material/useMediaQuery', () => ({
 vi.mock('../SendEmojiButton');
 vi.mock('../../../utils/emojis', () => ({
   default: { FAVORITE: '🦧' },
+  RAISED_HAND_EMOJI: '✋',
 }));
 vi.mock('@core/stores', () => ({
   useIsHandRaisedFor: () => false,

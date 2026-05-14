@@ -9,7 +9,7 @@ import VividIcon from '@components/VividIcon';
 import { env } from '../../../env';
 import { useIsHandRaisedFor } from '@core/stores';
 import useSessionContext from '@hooks/useSessionContext';
-import emojiMap from '../../../utils/emojis';
+import { RAISED_HAND_EMOJI } from '../../../utils/emojis';
 
 export type EmojiGridProps = {
   isEmojiGridOpen: boolean;
@@ -49,12 +49,13 @@ const EmojiGridButton = ({
         <Tooltip title={t('emoji.tooltip')} aria-label={t('emoji.ariaLabel')}>
           <Badge
             data-testid="raise-hand-active-badge"
-            badgeContent={localHandIsRaised ? emojiMap.RAISED_HAND : null}
+            badgeContent={localHandIsRaised ? RAISED_HAND_EMOJI : null}
             invisible={!localHandIsRaised}
             overlap="circular"
             slotProps={{
               badge: {
-                className: 'bg-vera-primary text-vera-on-primary text-[0.7rem] min-w-4 h-4 px-0.5',
+                className:
+                  'bg-vera-primary text-vera-on-primary text-vera-caption min-w-4 h-4 px-0.5',
               },
             }}
           >
@@ -72,9 +73,7 @@ const EmojiGridButton = ({
               }
               ref={anchorRef}
               data-testid="emoji-grid-button"
-              sx={{
-                marginTop: isOverflowButton ? '0px' : '4px',
-              }}
+              className={isOverflowButton ? 'mt-0!' : 'mt-1!'}
               isOverflowButton={isOverflowButton}
             />
           </Badge>
