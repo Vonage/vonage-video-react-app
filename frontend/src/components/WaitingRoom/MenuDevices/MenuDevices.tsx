@@ -138,8 +138,12 @@ const MenuDevices = ({
         anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
         message={cameraError}
         action={
-          <IconButton size="small" color="inherit" onClick={() => setCameraError(null)}>
-            <VividIcon name="close-line" customSize={-6} />
+          <IconButton
+            size="small"
+            className="text-vera-secondary"
+            onClick={() => setCameraError(null)}
+          >
+            <VividIcon name="close-line" customSize={-5} />
           </IconButton>
         }
       />

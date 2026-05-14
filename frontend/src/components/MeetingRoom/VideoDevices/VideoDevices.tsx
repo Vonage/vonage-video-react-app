@@ -1,6 +1,7 @@
 import { ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Box, MenuList, MenuItem, Tooltip, BoxProps, Snackbar, Alert } from '@mui/material';
+import { Box, MenuList, MenuItem, Tooltip, BoxProps, Snackbar } from '@mui/material';
+import IconButton from '@mui/material/IconButton';
 import classNames from 'classnames';
 import VividIcon from '@components/VividIcon';
 import { useDistinctLabelMediaDevices } from '@ui/hooks';
@@ -58,11 +59,13 @@ const VideoDevices = ({
           onClose={dismissCameraError}
           autoHideDuration={5000}
           anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
-        >
-          <Alert onClose={dismissCameraError} severity="error" variant="filled">
-            {cameraError && t(cameraError)}
-          </Alert>
-        </Snackbar>
+          message={cameraError && t(cameraError)}
+          action={
+            <IconButton size="small" className="text-vera-secondary" onClick={dismissCameraError}>
+              <VividIcon name="close-line" customSize={-5} />
+            </IconButton>
+          }
+        />
         <Box
           className={classNames('text-vera-tertiary', className)}
           sx={{

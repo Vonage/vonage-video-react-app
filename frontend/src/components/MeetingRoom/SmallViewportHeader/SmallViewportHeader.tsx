@@ -2,7 +2,6 @@ import { ReactElement, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import Box from '@mui/material/Box';
 import Snackbar from '@mui/material/Snackbar';
-import Alert from '@mui/material/Alert';
 import useSessionContext from '../../../hooks/useSessionContext';
 import useRoomShareUrl from '../../../hooks/useRoomShareUrl';
 import IconButton from '@mui/material/IconButton';
@@ -78,11 +77,13 @@ const SmallViewportHeader = (): ReactElement => {
         onClose={dismissCameraError}
         autoHideDuration={5000}
         anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
-      >
-        <Alert onClose={dismissCameraError} severity="error" variant="filled">
-          {cameraError && t(cameraError)}
-        </Alert>
-      </Snackbar>
+        message={cameraError && t(cameraError)}
+        action={
+          <IconButton size="small" className="text-vera-secondary" onClick={dismissCameraError}>
+            <VividIcon name="close-line" customSize={-5} />
+          </IconButton>
+        }
+      />
       <Box
         data-testid="smallViewportHeader"
         className="flex items-center justify-between bg-vera-dark-background px-4 pt-2 text-vera-on-dark-grey"

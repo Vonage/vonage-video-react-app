@@ -2,7 +2,8 @@ import { FC } from 'react';
 import { useTranslation } from 'react-i18next';
 import Box from '@mui/material/Box';
 import Snackbar from '@mui/material/Snackbar';
-import Alert from '@mui/material/Alert';
+import IconButton from '@mui/material/IconButton';
+import VividIcon from '@components/VividIcon';
 import PageLayout from '@ui/PageLayout';
 import Banner from '@components/Banner';
 import Footer from '@components/Footer/Footer';
@@ -114,11 +115,13 @@ const WaitingRoom: FC = () => {
             onClose={dismissCameraError}
             autoHideDuration={5000}
             anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
-          >
-            <Alert onClose={dismissCameraError} severity="error" variant="filled">
-              {cameraError && t(cameraError)}
-            </Alert>
-          </Snackbar>
+            message={cameraError && t(cameraError)}
+            action={
+              <IconButton size="small" className="text-vera-secondary" onClick={dismissCameraError}>
+                <VividIcon name="close-line" customSize={-5} />
+              </IconButton>
+            }
+          />
         </Box>
       </precallNetworkTestDialog$.Provider>
     </backgroundEffectsDialog$.Provider>

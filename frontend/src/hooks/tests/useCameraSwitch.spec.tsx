@@ -22,163 +22,94 @@ describe('useCameraSwitch', () => {
     vi.restoreAllMocks();
   });
 
-  describe('switchCamera — guard clauses', () => {
-    it('returns false and skips all calls when publisher is null', async () => {
-      const { result } = renderHook(() => useCameraSwitch(null));
+  it('returns false and skips all calls when publisher is null or deviceId is empty', async () => {
+    const publisher = makePublisher();
+    const { result: nullPublisher } = renderHook(() => useCameraSwitch(null));
+    const { result: emptyId } = renderHook(() => useCameraSwitch(publisher));
 
-      let success: boolean | undefined;
-      await act(async () => {
-        success = await result.current.switchCamera('device-1');
-      });
-
-      expect(success).toBe(false);
-      expect(selectDeviceSpy).not.toHaveBeenCalled();
+    let a: boolean | undefined;
+    let b: boolean | undefined;
+    await act(async () => {
+      a = await nullPublisher.current.switchCamera('device-1');
+      b = await emptyId.current.switchCamera('');
     });
 
-    it('returns false and skips all calls when deviceId is empty', async () => {
-      const publisher = makePublisher();
-      const { result } = renderHook(() => useCameraSwitch(publisher));
-
-      let success: boolean | undefined;
-      await act(async () => {
-        success = await result.current.switchCamera('');
-      });
-
-      expect(success).toBe(false);
-      expect(publisher.setVideoSource).not.toHaveBeenCalled();
-      expect(selectDeviceSpy).not.toHaveBeenCalled();
-    });
+    expect(a).toBe(false);
+    expect(b).toBe(false);
+    expect(publisher.setVideoSource).not.toHaveBeenCalled();
+    expect(selectDeviceSpy).not.toHaveBeenCalled();
   });
 
-  describe('switchCamera — happy path', () => {
-    it('calls setVideoSource with the given deviceId', async () => {
-      const publisher = makePublisher();
-      const { result } = renderHook(() => useCameraSwitch(publisher));
+  it('calls setVideoSource then selectDevice and returns true on success', async () => {
+    const publisher = makePublisher();
+    const { result } = renderHook(() => useCameraSwitch(publisher));
 
-      await act(async () => {
-        await result.current.switchCamera('device-1');
-      });
-
-      expect(publisher.setVideoSource).toHaveBeenCalledWith('device-1');
+    let success: boolean | undefined;
+    await act(async () => {
+      success = await result.current.switchCamera('device-1');
     });
 
-    it('calls selectDevice after successful setVideoSource', async () => {
-      const publisher = makePublisher();
-      const { result } = renderHook(() => useCameraSwitch(publisher));
-
-      await act(async () => {
-        await result.current.switchCamera('device-1');
-      });
-
-      expect(selectDeviceSpy).toHaveBeenCalledWith('videoinput', 'device-1');
-    });
-
-    it('returns true on success', async () => {
-      const publisher = makePublisher();
-      const { result } = renderHook(() => useCameraSwitch(publisher));
-
-      let success: boolean | undefined;
-      await act(async () => {
-        success = await result.current.switchCamera('device-1');
-      });
-
-      expect(success).toBe(true);
-    });
-
-    it('clears cameraError on successful switch after a previous failure', async () => {
-      vi.spyOn(frontendLogger, 'reportError').mockImplementation(() => {});
-      const setVideoSource = vi
-        .fn()
-        .mockRejectedValueOnce(new Error('OT_HARDWARE_UNAVAILABLE'))
-        .mockResolvedValue(undefined);
-      const publisher = makePublisher({ setVideoSource });
-      const { result } = renderHook(() => useCameraSwitch(publisher));
-
-      await act(async () => {
-        await result.current.switchCamera('device-1');
-      });
-      await waitFor(() =>
-        expect(result.current.cameraError).toBe('devices.video.camera.unavailable')
-      );
-
-      await act(async () => {
-        await result.current.switchCamera('device-2');
-      });
-      await waitFor(() => expect(result.current.cameraError).toBeNull());
-    });
+    expect(publisher.setVideoSource).toHaveBeenCalledWith('device-1');
+    expect(selectDeviceSpy).toHaveBeenCalledWith('videoinput', 'device-1');
+    expect(success).toBe(true);
   });
 
-  describe('switchCamera — setVideoSource throws', () => {
-    it('sets cameraError and returns false when setVideoSource rejects', async () => {
-      vi.spyOn(frontendLogger, 'reportError').mockImplementation(() => {});
-      const publisher = makePublisher({
-        setVideoSource: vi.fn().mockRejectedValue(new Error('OT_HARDWARE_UNAVAILABLE')),
-      });
-      const { result } = renderHook(() => useCameraSwitch(publisher));
+  it('sets cameraError, skips selectDevice, reports error, returns false when setVideoSource rejects', async () => {
+    const reportErrorSpy = vi.spyOn(frontendLogger, 'reportError').mockImplementation(() => {});
+    const err = new Error('OT_HARDWARE_UNAVAILABLE');
+    const publisher = makePublisher({ setVideoSource: vi.fn().mockRejectedValue(err) });
+    const { result } = renderHook(() => useCameraSwitch(publisher));
 
-      let success: boolean | undefined;
-      await act(async () => {
-        success = await result.current.switchCamera('device-1');
-      });
-
-      expect(success).toBe(false);
-      await waitFor(() =>
-        expect(result.current.cameraError).toBe('devices.video.camera.unavailable')
-      );
+    let success: boolean | undefined;
+    await act(async () => {
+      success = await result.current.switchCamera('device-1');
     });
 
-    it('does not call selectDevice when setVideoSource rejects', async () => {
-      vi.spyOn(frontendLogger, 'reportError').mockImplementation(() => {});
-      const publisher = makePublisher({
-        setVideoSource: vi.fn().mockRejectedValue(new Error('OT_HARDWARE_UNAVAILABLE')),
-      });
-      const { result } = renderHook(() => useCameraSwitch(publisher));
-
-      await act(async () => {
-        await result.current.switchCamera('device-1');
-      });
-
-      expect(selectDeviceSpy).not.toHaveBeenCalled();
-    });
-
-    it('reports the error via frontendLogger when setVideoSource rejects', async () => {
-      const reportErrorSpy = vi.spyOn(frontendLogger, 'reportError').mockImplementation(() => {});
-      const err = new Error('OT_HARDWARE_UNAVAILABLE');
-      const publisher = makePublisher({
-        setVideoSource: vi.fn().mockRejectedValue(err),
-      });
-      const { result } = renderHook(() => useCameraSwitch(publisher));
-
-      await act(async () => {
-        await result.current.switchCamera('device-1');
-      });
-
-      expect(reportErrorSpy).toHaveBeenCalledWith(err, {
-        source: 'useCameraSwitch: setVideoSource',
-      });
-    });
+    expect(success).toBe(false);
+    await waitFor(() =>
+      expect(result.current.cameraError).toBe('devices.video.camera.unavailable')
+    );
+    expect(selectDeviceSpy).not.toHaveBeenCalled();
+    expect(reportErrorSpy).toHaveBeenCalledWith(err, { source: 'useCameraSwitch: setVideoSource' });
   });
 
-  describe('dismissCameraError', () => {
-    it('clears cameraError', async () => {
-      vi.spyOn(frontendLogger, 'reportError').mockImplementation(() => {});
-      const publisher = makePublisher({
-        setVideoSource: vi.fn().mockRejectedValue(new Error('OT_HARDWARE_UNAVAILABLE')),
-      });
-      const { result } = renderHook(() => useCameraSwitch(publisher));
+  it('clears cameraError on successful retry', async () => {
+    vi.spyOn(frontendLogger, 'reportError').mockImplementation(() => {});
+    const setVideoSource = vi
+      .fn()
+      .mockRejectedValueOnce(new Error('OT_HARDWARE_UNAVAILABLE'))
+      .mockResolvedValue(undefined);
+    const publisher = makePublisher({ setVideoSource });
+    const { result } = renderHook(() => useCameraSwitch(publisher));
 
-      await act(async () => {
-        await result.current.switchCamera('device-1');
-      });
-      await waitFor(() =>
-        expect(result.current.cameraError).toBe('devices.video.camera.unavailable')
-      );
-
-      act(() => {
-        result.current.dismissCameraError();
-      });
-
-      expect(result.current.cameraError).toBeNull();
+    await act(async () => {
+      await result.current.switchCamera('device-1');
     });
+    await waitFor(() =>
+      expect(result.current.cameraError).toBe('devices.video.camera.unavailable')
+    );
+
+    await act(async () => {
+      await result.current.switchCamera('device-2');
+    });
+    await waitFor(() => expect(result.current.cameraError).toBeNull());
+  });
+
+  it('dismissCameraError clears cameraError', async () => {
+    vi.spyOn(frontendLogger, 'reportError').mockImplementation(() => {});
+    const publisher = makePublisher({
+      setVideoSource: vi.fn().mockRejectedValue(new Error('OT_HARDWARE_UNAVAILABLE')),
+    });
+    const { result } = renderHook(() => useCameraSwitch(publisher));
+
+    await act(async () => {
+      await result.current.switchCamera('device-1');
+    });
+    await waitFor(() =>
+      expect(result.current.cameraError).toBe('devices.video.camera.unavailable')
+    );
+
+    act(() => result.current.dismissCameraError());
+    expect(result.current.cameraError).toBeNull();
   });
 });
