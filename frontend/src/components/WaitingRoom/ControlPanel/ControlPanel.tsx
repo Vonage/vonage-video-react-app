@@ -101,7 +101,7 @@ const ControlPanel = ({
         }}
       >
         <ButtonBase
-          className="text-vera-text-secondary hover:bg-vera-background"
+          className="text-vera-text-secondary! hover:bg-vera-background!"
           sx={buttonSx}
           aria-controls={openAudioInput ? 'basic-menu' : undefined}
           aria-haspopup="true"
@@ -128,7 +128,7 @@ const ControlPanel = ({
 
         <ButtonBase
           onClick={handleVideoInputOpen}
-          className="text-vera-text-secondary hover:bg-vera-background"
+          className="text-vera-text-secondary! hover:bg-vera-background!"
           sx={buttonSx}
           aria-controls={openVideoInput ? 'basic-menu' : undefined}
           aria-haspopup="true"
@@ -152,7 +152,7 @@ const ControlPanel = ({
 
         <ButtonBase
           onClick={handleAudioOutputOpen}
-          className="text-vera-text-secondary hover:bg-vera-background"
+          className="text-vera-text-secondary! hover:bg-vera-background!"
           sx={buttonSx}
           aria-controls={openAudioOutput ? 'basic-menu' : undefined}
           aria-haspopup="true"
@@ -178,7 +178,7 @@ const ControlPanel = ({
 
         <ButtonBase
           onClick={handleOpenMoreOptions}
-          className="text-vera-text-secondary hover:bg-vera-background"
+          className="text-vera-text-secondary! hover:bg-vera-background!"
           sx={buttonSx}
         >
           <VividIcon name="more-vertical-solid" customSize={-5} />

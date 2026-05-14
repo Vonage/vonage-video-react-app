@@ -25,7 +25,10 @@ const VividIcon = ({ name, customSize, style, ...props }: VividIconProps) => {
     size: customSize,
     name,
     'data-testid': `vivid-icon-${name}`,
-    style,
+    style: {
+      color: 'var(--vera-text-secondary)',
+      ...style,
+    },
     ...props,
   });
 };

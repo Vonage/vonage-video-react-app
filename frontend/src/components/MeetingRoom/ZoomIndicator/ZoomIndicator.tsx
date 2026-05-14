@@ -117,7 +117,11 @@ const ZoomIndicator = ({
                     p: 0.5,
                   }}
                 >
-                  <VividIcon customSize={-6} name="minus-solid" />
+                  <VividIcon
+                    customSize={-6}
+                    name="minus-solid"
+                    style={{ color: 'var(--vera-on-dark-grey)' }}
+                  />
                 </IconButton>
               </Box>
             </Tooltip>
@@ -146,7 +150,11 @@ const ZoomIndicator = ({
                     p: 0.5,
                   }}
                 >
-                  <VividIcon customSize={-6} name="plus-solid" />
+                  <VividIcon
+                    customSize={-6}
+                    name="plus-solid"
+                    style={{ color: 'var(--vera-on-dark-grey)' }}
+                  />
                 </IconButton>
               </Box>
             </Tooltip>
