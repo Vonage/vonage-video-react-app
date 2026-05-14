@@ -62,7 +62,11 @@ const OutputAudioDevices = ({ handleToggle }: OutputAudioDevicesProps): ReactEle
             mb: 0.5,
           }}
         >
-          <VividIcon name="audio-mid-line" customSize={-5} />
+          <VividIcon
+            name="audio-mid-line"
+            customSize={-5}
+            style={{ color: 'var(--vera-text-secondary) !important' }}
+          />
           <p className="text-vera-body-extended ml-4" data-testid="output-device-title">
             {t('devices.audio.speakers.full')}
           </p>
@@ -98,8 +102,10 @@ const OutputAudioDevices = ({ handleToggle }: OutputAudioDevicesProps): ReactEle
                       <VividIcon
                         name="check-line"
                         customSize={-6}
-                        sx={{
-                          color: `${isSelected ? 'var(--vera-primary)' : 'var(--vera-text-secondary)'} !important`,
+                        style={{
+                          color: isSelected
+                            ? 'var(--vera-text-primary)'
+                            : 'var(--vera-text-secondary)',
                         }}
                       />
                     </Box>

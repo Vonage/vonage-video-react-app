@@ -33,7 +33,11 @@ const SupportedBrowserListItem = ({
         secondaryAction={
           <Link href={url} target="_blank" sx={{ textDecoration: 'none' }}>
             <IconButton>
-              <VividIcon name="open-line" customSize={-6} className="text-vera-primary" />
+              <VividIcon
+                name="open-line"
+                customSize={-6}
+                style={{ color: 'var(--vera-primary)' }}
+              />
             </IconButton>
             <Typography
               variant="body2"

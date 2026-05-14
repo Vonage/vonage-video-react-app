@@ -167,7 +167,7 @@ const FilePicker = ({
                   <VividIcon
                     customSize={-6}
                     name="delete-solid"
-                    className="text-vera-on-tertiary"
+                    style={{ color: 'var(--vera-on-tertiary)' }}
                   />
                 </IconButton>
               </Tooltip>

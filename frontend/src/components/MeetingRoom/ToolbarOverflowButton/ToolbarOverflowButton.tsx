@@ -1,5 +1,4 @@
 import { Dispatch, ReactElement, useState, SetStateAction } from 'react';
-import classNames from 'classnames';
 import Tooltip from '@mui/material/Tooltip';
 import VividIcon from '@components/VividIcon';
 import { useTranslation } from 'react-i18next';
@@ -69,10 +68,11 @@ const ToolbarOverflowButton = ({
                 name="more-vertical-solid"
                 customSize={-5}
                 data-testid="MoreVertIcon"
-                className={classNames({
-                  'text-vera-on-surface': isToolbarOverflowMenuOpen,
-                  'text-vera-surface': !isToolbarOverflowMenuOpen,
-                })}
+                style={{
+                  color: isToolbarOverflowMenuOpen
+                    ? 'var(--vera-on-surface)'
+                    : 'var(--vera-surface)',
+                }}
               />
             }
             sx={{

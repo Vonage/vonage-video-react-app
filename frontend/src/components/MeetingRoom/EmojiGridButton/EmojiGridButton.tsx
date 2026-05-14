@@ -46,7 +46,7 @@ const EmojiGridButton = ({
               <VividIcon
                 name="emoji-solid"
                 customSize={-5}
-                sx={{
+                style={{
                   color: `${isEmojiGridOpen ? 'var(--vera-secondary)' : 'var(--vera-on-secondary)'} !important`,
                 }}
               />

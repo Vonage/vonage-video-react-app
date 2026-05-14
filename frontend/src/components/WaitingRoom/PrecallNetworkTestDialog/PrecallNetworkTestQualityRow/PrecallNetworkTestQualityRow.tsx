@@ -48,9 +48,17 @@ const PrecallNetworkTestQualityRow = ({
       </Typography>
       <Typography variant="h5" sx={{ lineHeight: 1 }}>
         {isSupported ? (
-          <VividIcon name="check-circle-line" customSize={-3} className="text-vera-success" />
+          <VividIcon
+            name="check-circle-line"
+            customSize={-3}
+            style={{ color: 'var(--vera-success)' }}
+          />
         ) : (
-          <VividIcon name="close-circle-line" customSize={-3} className="text-vera-error" />
+          <VividIcon
+            name="close-circle-line"
+            customSize={-3}
+            style={{ color: 'var(--vera-error)' }}
+          />
         )}
       </Typography>
       <Typography variant="body1" className="text-vera-text-secondary" sx={{ ml: 2 }}>

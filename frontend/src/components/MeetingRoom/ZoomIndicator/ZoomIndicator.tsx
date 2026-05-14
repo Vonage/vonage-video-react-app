@@ -87,9 +87,17 @@ const ZoomIndicator = ({
           }}
         >
           {isZoomed ? (
-            <VividIcon customSize={-6} name="zoom-out-solid" className="text-vera-on-dark-grey" />
+            <VividIcon
+              customSize={-6}
+              name="zoom-out-solid"
+              style={{ color: 'var(--vera-on-dark-grey)' }}
+            />
           ) : (
-            <VividIcon customSize={-6} name="zoom-in-solid" className="text-vera-on-dark-grey" />
+            <VividIcon
+              customSize={-6}
+              name="zoom-in-solid"
+              style={{ color: 'var(--vera-on-dark-grey)' }}
+            />
           )}
         </IconButton>
       </Tooltip>

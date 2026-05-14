@@ -1,6 +1,5 @@
 import { ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
-import classNames from 'classnames';
 import ToolbarButton from '../ToolbarButton';
 import UnreadMessagesBadge from '../UnreadMessagesBadge';
 import Tooltip from '@mui/material/Tooltip';
@@ -46,10 +45,7 @@ const ChatButton = ({
               <VividIcon
                 customSize={-5}
                 name="chat-solid"
-                className={classNames({
-                  'text-vera-secondary': isOpen,
-                  'text-vera-on-secondary': !isOpen,
-                })}
+                style={{ color: isOpen ? 'var(--vera-secondary)' : 'var(--vera-on-secondary)' }}
                 data-testid="ChatIcon"
               />
             }

@@ -76,7 +76,7 @@ const ParticipantListItem = ({
           <VividIcon
             customSize={-6}
             name="pin-2-solid"
-            sx={{
+            style={{
               position: 'fixed',
             }}
           />

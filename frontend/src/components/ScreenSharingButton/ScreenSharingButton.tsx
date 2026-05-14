@@ -70,14 +70,14 @@ const ScreenSharingButton = ({
                 <VividIcon
                   name="screen-share-solid"
                   customSize={-5}
-                  className="text-vera-on-secondary"
+                  style={{ color: 'var(--vera-on-secondary)' }}
                   data-testid="ScreenShareIcon"
                 />
               ) : (
                 <VividIcon
                   name="screen-share-off-solid"
                   customSize={-5}
-                  className="text-vera-on-secondary"
+                  style={{ color: 'var(--vera-on-secondary)' }}
                   data-testid="ScreenShareIcon"
                 />
               )
