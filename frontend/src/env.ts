@@ -167,6 +167,8 @@ export class Env {
   public ALLOW_ADVANCED_NOISE_SUPPRESSION: boolean;
   public ALLOW_AUDIO_ON_JOIN: boolean;
   public ALLOW_MICROPHONE_CONTROL: boolean;
+  public MEETING_ROOM_ALLOW_ADVANCED_SETTINGS: boolean;
+  public WAITING_ROOM_ALLOW_ADVANCED_SETTINGS: boolean;
   public WAITING_ROOM_ALLOW_DEVICE_SELECTION: boolean;
   public ALLOW_ARCHIVING: boolean;
   public ALLOW_CAPTIONS: boolean;
@@ -205,6 +207,14 @@ export class Env {
     );
     this.ALLOW_AUDIO_ON_JOIN = parseBoolean(env.ALLOW_AUDIO_ON_JOIN, true);
     this.ALLOW_MICROPHONE_CONTROL = parseBoolean(env.ALLOW_MICROPHONE_CONTROL, true);
+    this.MEETING_ROOM_ALLOW_ADVANCED_SETTINGS = parseBoolean(
+      env.MEETING_ROOM_ALLOW_ADVANCED_SETTINGS,
+      false
+    );
+    this.WAITING_ROOM_ALLOW_ADVANCED_SETTINGS = parseBoolean(
+      env.WAITING_ROOM_ALLOW_ADVANCED_SETTINGS,
+      false
+    );
     this.WAITING_ROOM_ALLOW_DEVICE_SELECTION = parseBoolean(
       env.WAITING_ROOM_ALLOW_DEVICE_SELECTION,
       true

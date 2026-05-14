@@ -9,7 +9,7 @@ import Popper from '@mui/material/Popper';
 import { useTranslation } from 'react-i18next';
 import VividIcon from '@ui/VividIcon';
 import backgroundEffectsDialog$ from '@Context/BackgroundEffectsDialog';
-// import advancedSettings$ from '@Context/AdvancedSettings';
+import advancedSettings$ from '@Context/AdvancedSettings';
 import precallNetworkTestDialog$ from '@Context/PrecallNetworkTestDialog';
 import useStableRef from '@web/hooks/useStableRef';
 import { env } from '../../../env';
@@ -20,7 +20,7 @@ export type MenuMoreOptionsWaitingRoomProps = {
   anchorEl: HTMLElement | null;
 };
 
-// const { open: openAdvancedSettings } = advancedSettings$.actions;
+const { open: openAdvancedSettings } = advancedSettings$.actions;
 
 /**
  * MenuMoreOptions Component
@@ -64,15 +64,16 @@ const MenuMoreOptions = ({
 
   const { open: openBackgroundEffects } = backgroundEffectsDialog$.use.actions();
   const { open: openPrecallNetworkTest } = precallNetworkTestDialog$.use.actions();
-  // const handleClickAdvancedSettings = useCallback(() => {
-  //   openAdvancedSettings();
-  //   onClose();
-  // }, [onClose]);
 
   const handleMenuClose = useCallback(() => {
     setTooltipAnchorElement(null);
     onClose();
   }, [onClose]);
+
+  const handleClickAdvancedSettings = useCallback(() => {
+    openAdvancedSettings();
+    handleMenuClose();
+  }, [handleMenuClose]);
 
   const handleClickBackgroundEffects = useCallback(() => {
     openBackgroundEffects();
@@ -135,15 +136,12 @@ const MenuMoreOptions = ({
         slotProps={{ list: { 'aria-labelledby': 'basic-button' } }}
         data-testid="menu-more-options"
       >
-        {/* <MenuItem
-          onClick={() => {
-            handleClickAdvancedSettings();
-          }}
-          key="advancedSettings-option"
-        >
-          <VividIcon name="gear-line" customSize={-6} />
-          <span className="ml-2">{t('advancedSettings.title')}</span>
-        </MenuItem> */}
+        {env.WAITING_ROOM_ALLOW_ADVANCED_SETTINGS && (
+          <MenuItem onClick={handleClickAdvancedSettings} key="advancedSettings-option">
+            <VividIcon name="gear-line" customSize={-6} />
+            <span className="ml-2">{t('advancedSettings.title')}</span>
+          </MenuItem>
+        )}
 
         <MenuItem key="backgroundEffects-option" {...backgroundEffectsAvailabilityProps}>
           <VividIcon name="gallery-line" customSize={-6} />

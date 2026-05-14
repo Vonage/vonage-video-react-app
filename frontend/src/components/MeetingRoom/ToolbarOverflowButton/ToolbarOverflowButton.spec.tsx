@@ -98,10 +98,9 @@ function render(ui: ReactElement, { userContext, sessionContext }: RenderOptions
       runtimeContext: undefined,
     }
   );
-  const combinedWrapper = wrapper;
 
   return {
     ...context,
-    ...renderBase(ui, { wrapper: combinedWrapper }),
+    ...renderBase(ui, { wrapper }),
   };
 }

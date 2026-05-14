@@ -1,8 +1,8 @@
 import type { ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
 import advancedSettings$ from '@Context/AdvancedSettings';
-import { AdvancedSettingsBooleanField } from '../AdvancedSettingsBooleanField';
-import { AdvancedSettingsSelectField } from '../AdvancedSettingsSelectField';
+import SelectField from '@ui/SelectField';
+import SwitchField from '@ui/SwitchField';
 import { ADVANCED_SETTINGS_AUDIO_BITRATE_MODE } from '../types/types';
 
 const {
@@ -15,19 +15,17 @@ const {
 
 const AdvancedSettingsAudioTab = (): ReactElement => {
   const { t } = useTranslation();
-  const {
-    audioBitrateMode,
-    customAudioBitrate,
-    enableDtx,
-    publisherAudioFallbackEnabled,
-    subscriberAudioFallbackEnabled,
-  } = advancedSettings$.use.select((state) => ({
-    audioBitrateMode: state.audioBitrateMode,
-    customAudioBitrate: state.customAudioBitrate,
-    enableDtx: state.enableDtx,
-    publisherAudioFallbackEnabled: state.publisherAudioFallbackEnabled,
-    subscriberAudioFallbackEnabled: state.subscriberAudioFallbackEnabled,
-  }));
+  const audioBitrateMode = advancedSettings$.use.select(({ audioBitrateMode }) => audioBitrateMode);
+  const customAudioBitrate = advancedSettings$.use.select(
+    ({ customAudioBitrate }) => customAudioBitrate
+  );
+  const enableDtx = advancedSettings$.use.select(({ enableDtx }) => enableDtx);
+  const publisherAudioFallbackEnabled = advancedSettings$.use.select(
+    ({ publisherAudioFallbackEnabled }) => publisherAudioFallbackEnabled
+  );
+  const subscriberAudioFallbackEnabled = advancedSettings$.use.select(
+    ({ subscriberAudioFallbackEnabled }) => subscriberAudioFallbackEnabled
+  );
 
   const audioBitrateOptions = [
     {
@@ -47,7 +45,7 @@ const AdvancedSettingsAudioTab = (): ReactElement => {
       </h2>
 
       <div className="flex flex-col gap-4">
-        <AdvancedSettingsSelectField
+        <SelectField
           label={t('advancedSettings.audio.bitrate.label')}
           value={audioBitrateMode}
           options={audioBitrateOptions}
@@ -88,21 +86,21 @@ const AdvancedSettingsAudioTab = (): ReactElement => {
         )}
       </div>
 
-      <AdvancedSettingsBooleanField
+      <SwitchField
         label={t('advancedSettings.audio.enableDtx.label')}
         checked={enableDtx}
         onChange={setEnableDtx}
         description={t('advancedSettings.audio.enableDtx.description')}
       />
 
-      <AdvancedSettingsBooleanField
+      <SwitchField
         label={t('advancedSettings.audio.publisherAudioFallback.label')}
         checked={publisherAudioFallbackEnabled}
         onChange={setPublisherAudioFallbackEnabled}
         description={t('advancedSettings.audio.publisherAudioFallback.description')}
       />
 
-      <AdvancedSettingsBooleanField
+      <SwitchField
         label={t('advancedSettings.audio.subscriberAudioFallback.label')}
         checked={subscriberAudioFallbackEnabled}
         onChange={setSubscriberAudioFallbackEnabled}

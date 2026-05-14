@@ -12,10 +12,8 @@ import { AdvancedSettingsVideoTab } from './AdvancedSettingsVideoTab';
 
 const AdvancedSettingsDialog = (): ReactElement => {
   const { t } = useTranslation();
-  const { isOpen, selectedTab } = advancedSettings$.use.select((state) => ({
-    isOpen: state.isOpen,
-    selectedTab: state.selectedTab,
-  }));
+  const isOpen = advancedSettings$.use.select(({ isOpen }) => isOpen);
+  const selectedTab = advancedSettings$.use.select(({ selectedTab }) => selectedTab);
 
   const tabContent = (() => {
     if (selectedTab === 'general') return <AdvancedSettingsGeneralTab />;
@@ -32,7 +30,8 @@ const AdvancedSettingsDialog = (): ReactElement => {
       fullWidth
       slotProps={{
         paper: {
-          className: 'h-[640px] max-h-[640px] overflow-hidden rounded-vera-large bg-vera-surface',
+          className:
+            'm-0 h-dvh max-h-dvh max-w-none overflow-hidden rounded-none bg-vera-surface sm:m-8 sm:h-[640px] sm:max-h-[640px] sm:rounded-vera-large md:max-w-3xl',
         },
       }}
       data-testid="advanced-settings-dialog"
@@ -55,10 +54,10 @@ const AdvancedSettingsDialog = (): ReactElement => {
           </button>
         </div>
 
-        <div className="flex min-h-0 flex-1">
+        <div className="flex min-h-0 flex-1 flex-col md:flex-row">
           <AdvancedSettingsSidebar />
 
-          <div className="flex-1 overflow-y-auto p-6">{tabContent}</div>
+          <div className="flex-1 overflow-y-auto p-4 sm:p-6">{tabContent}</div>
         </div>
       </div>
     </Dialog>

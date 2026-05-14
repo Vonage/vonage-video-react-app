@@ -12,7 +12,7 @@ const AdvancedSettingsSidebar = (): ReactElement => {
   const selectedTab = advancedSettings$.use.select((state) => state.selectedTab);
 
   return (
-    <div className="flex h-full sm:w-45 md:w-55 w-25 flex-col gap-0.5 border-r border-vera-border bg-vera-background p-1">
+    <div className="flex w-full flex-row gap-1 overflow-x-auto border-b border-vera-border bg-vera-background p-1 md:h-full md:w-55 md:flex-col md:gap-0.5 md:overflow-x-visible md:border-b-0 md:border-r">
       {tabs.map((tab) => {
         const isSelected = selectedTab === tab;
 
@@ -22,7 +22,7 @@ const AdvancedSettingsSidebar = (): ReactElement => {
             type="button"
             onClick={() => setSelectedTab(tab)}
             className={classNames(
-              'rounded-xl px-4 py-3 text-left font-vera-plain text-vera-body-base-semibold transition-colors',
+              'shrink-0 rounded-xl px-4 py-3 text-center font-vera-plain text-vera-body-base-semibold transition-colors md:text-left',
               {
                 'bg-vera-surface text-vera-secondary': isSelected,
                 'bg-transparent text-vera-tertiary hover:bg-vera-surface hover:text-vera-secondary':

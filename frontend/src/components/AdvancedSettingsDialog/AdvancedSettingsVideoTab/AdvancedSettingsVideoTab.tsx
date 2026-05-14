@@ -2,9 +2,9 @@ import type { ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
 import { env, RESOLUTIONS } from '../../../env';
 import advancedSettings$ from '@Context/AdvancedSettings';
+import SelectField from '@ui/SelectField';
 import { AdvancedSettingsCodecPriorityField } from '../AdvancedSettingsCodecPriorityField';
 import { AdvancedSettingsCustomVideoBitrateField } from '../AdvancedSettingsCustomVideoBitrateField';
-import { AdvancedSettingsSelectField } from '../AdvancedSettingsSelectField';
 import type {
   AdvancedSettingsFrameRate,
   AdvancedSettingsResolution,
@@ -17,14 +17,11 @@ const { setBitrateMode, setCodecMode, setCodecPriority, setFrameRate, setResolut
 
 const AdvancedSettingsVideoTab = (): ReactElement => {
   const { t } = useTranslation();
-  const { bitrateMode, codecMode, codecPriority, frameRate, resolution } =
-    advancedSettings$.use.select((state) => ({
-      bitrateMode: state.bitrateMode,
-      codecMode: state.codecMode,
-      codecPriority: state.codecPriority,
-      frameRate: state.frameRate,
-      resolution: state.resolution,
-    }));
+  const bitrateMode = advancedSettings$.use.select(({ bitrateMode }) => bitrateMode);
+  const codecMode = advancedSettings$.use.select(({ codecMode }) => codecMode);
+  const codecPriority = advancedSettings$.use.select(({ codecPriority }) => codecPriority);
+  const frameRate = advancedSettings$.use.select(({ frameRate }) => frameRate);
+  const resolution = advancedSettings$.use.select(({ resolution }) => resolution);
 
   const bitrateOptions = [
     {
@@ -66,7 +63,7 @@ const AdvancedSettingsVideoTab = (): ReactElement => {
   const resolutionOptions: AdvancedSettingsSelectOption<AdvancedSettingsResolution>[] =
     RESOLUTIONS.map((supportedResolution) => ({
       value: supportedResolution,
-      label: t(`advancedSettings.video.resolution.options.${supportedResolution}`),
+      label: supportedResolution,
     }));
 
   return (
@@ -76,7 +73,7 @@ const AdvancedSettingsVideoTab = (): ReactElement => {
       </h2>
 
       <div className="flex flex-col gap-6">
-        <AdvancedSettingsSelectField
+        <SelectField
           label={t('advancedSettings.video.bitrate.label')}
           value={bitrateMode}
           options={bitrateOptions}
@@ -88,7 +85,7 @@ const AdvancedSettingsVideoTab = (): ReactElement => {
           <AdvancedSettingsCustomVideoBitrateField />
         )}
 
-        <AdvancedSettingsSelectField
+        <SelectField
           label={t('advancedSettings.video.codec.label')}
           value={codecMode}
           options={codecOptions}
@@ -103,14 +100,14 @@ const AdvancedSettingsVideoTab = (): ReactElement => {
           />
         )}
 
-        <AdvancedSettingsSelectField
+        <SelectField
           label={t('advancedSettings.video.frameRate.label')}
           value={frameRate}
           options={frameRateOptions}
           onChange={setFrameRate}
         />
 
-        <AdvancedSettingsSelectField
+        <SelectField
           label={t('advancedSettings.video.resolution.label')}
           value={resolution}
           options={resolutionOptions}

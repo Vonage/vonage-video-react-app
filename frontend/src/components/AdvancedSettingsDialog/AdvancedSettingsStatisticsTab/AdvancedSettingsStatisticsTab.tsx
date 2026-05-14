@@ -1,7 +1,7 @@
 import type { ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
 import advancedSettings$ from '@Context/AdvancedSettings';
-import { AdvancedSettingsBooleanField } from '../AdvancedSettingsBooleanField';
+import SwitchField from '@ui/SwitchField';
 import { AdvancedSettingsStatisticsGroup } from '../AdvancedSettingsStatisticsGroup';
 
 const { setPublisherStatisticsEnabled } = advancedSettings$.actions;
@@ -29,7 +29,7 @@ const AdvancedSettingsStatisticsTab = (): ReactElement => {
         {t('advancedSettings.tabs.statistics')}
       </h2>
       <div className="flex flex-col gap-1.5">
-        <AdvancedSettingsBooleanField
+        <SwitchField
           label={t('advancedSettings.statistics.collection.enablePublisher.label')}
           checked={publisherStatisticsEnabled}
           onChange={setPublisherStatisticsEnabled}
@@ -40,11 +40,8 @@ const AdvancedSettingsStatisticsTab = (): ReactElement => {
       <div className="flex flex-col gap-4">
         <AdvancedSettingsStatisticsGroup
           title={t('advancedSettings.statistics.groups.publisher')}
-          audioTitle={t('advancedSettings.statistics.sections.audio')}
-          videoTitle={t('advancedSettings.statistics.sections.video')}
           audioItems={publisherAudioStatistics}
           videoItems={publisherVideoStatistics}
-          emptyLabel={t('advancedSettings.statistics.empty')}
           defaultExpanded
         />
 
@@ -52,11 +49,8 @@ const AdvancedSettingsStatisticsTab = (): ReactElement => {
           <AdvancedSettingsStatisticsGroup
             key={subscriberStatisticsGroup.title}
             title={subscriberStatisticsGroup.title}
-            audioTitle={t('advancedSettings.statistics.sections.audio')}
-            videoTitle={t('advancedSettings.statistics.sections.video')}
             audioItems={subscriberStatisticsGroup.audioItems}
             videoItems={subscriberStatisticsGroup.videoItems}
-            emptyLabel={t('advancedSettings.statistics.empty')}
           />
         ))}
       </div>

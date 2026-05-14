@@ -5,7 +5,6 @@ import EmojiGridButton from '../EmojiGridButton';
 import ParticipantListButton from '../ParticipantListButton';
 import ChatButton from '../ChatButton';
 import ReportIssueButton from '../ReportIssueButton';
-// import AdvancedSettingsButton from '../AdvancedSettingsButton';
 import LayoutButton from '../LayoutButton';
 import useSessionContext from '../../../hooks/useSessionContext';
 import ScreenSharingButton from '../../ScreenSharingButton';
@@ -15,6 +14,8 @@ import Box from '@mui/material/Box';
 import ClickAwayListener from '@mui/material/ClickAwayListener';
 import Grow from '@mui/material/Grow';
 import Portal from '@mui/material/Portal';
+import { env } from '../../../env';
+import AdvancedSettingsButton from '../AdvancedSettingsButton';
 
 export type CaptionsState = {
   isUserCaptionsEnabled: boolean;
@@ -108,7 +109,9 @@ const ToolbarOverflowMenu = ({
       key="EmojiGridButton"
     />,
     <ArchivingButton isOverflowButton handleClick={closeMenu} key="ArchivingButton" />,
-    // <AdvancedSettingsButton isOverflowButton key="AdvancedSettingsButton" />,
+    env.MEETING_ROOM_ALLOW_ADVANCED_SETTINGS && (
+      <AdvancedSettingsButton isOverflowButton key="AdvancedSettingsButton" />
+    ),
     isReportIssueEnabled() && (
       <ReportIssueButton
         isOpen={rightPanelActiveTab === 'issues'}
