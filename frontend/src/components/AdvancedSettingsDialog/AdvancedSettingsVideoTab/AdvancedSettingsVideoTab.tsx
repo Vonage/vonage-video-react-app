@@ -11,9 +11,9 @@ import type {
   AdvancedSettingsSelectOption,
 } from '../types/types';
 import { ADVANCED_SETTINGS_BITRATE_MODE, ADVANCED_SETTINGS_CODEC_MODE } from '../types/types';
+import useAdvancedSettingsVideoHandlers from './useAdvancedSettingsVideoHandlers';
 
-const { setBitrateMode, setCodecMode, setCodecPriority, setFrameRate, setResolution } =
-  advancedSettings$.actions;
+const { setCodecMode, setCodecPriority } = advancedSettings$.actions;
 
 const AdvancedSettingsVideoTab = (): ReactElement => {
   const { t } = useTranslation();
@@ -22,6 +22,16 @@ const AdvancedSettingsVideoTab = (): ReactElement => {
   const codecPriority = advancedSettings$.use.select(({ codecPriority }) => codecPriority);
   const frameRate = advancedSettings$.use.select(({ frameRate }) => frameRate);
   const resolution = advancedSettings$.use.select(({ resolution }) => resolution);
+  const customVideoBitrate = advancedSettings$.use.select(
+    ({ customVideoBitrate }) => customVideoBitrate
+  );
+
+  const {
+    handleFrameRateChange,
+    handleResolutionChange,
+    handleBitrateModeChange,
+    handleCustomVideoBitrateChange,
+  } = useAdvancedSettingsVideoHandlers({ bitrateMode, customVideoBitrate });
 
   const bitrateOptions = [
     {
@@ -77,12 +87,12 @@ const AdvancedSettingsVideoTab = (): ReactElement => {
           label={t('advancedSettings.video.bitrate.label')}
           value={bitrateMode}
           options={bitrateOptions}
-          onChange={setBitrateMode}
+          onChange={handleBitrateModeChange}
           description={t('advancedSettings.video.bitrate.description')}
         />
 
         {bitrateMode === ADVANCED_SETTINGS_BITRATE_MODE.custom && (
-          <AdvancedSettingsCustomVideoBitrateField />
+          <AdvancedSettingsCustomVideoBitrateField onChange={handleCustomVideoBitrateChange} />
         )}
 
         <SelectField
@@ -104,14 +114,14 @@ const AdvancedSettingsVideoTab = (): ReactElement => {
           label={t('advancedSettings.video.frameRate.label')}
           value={frameRate}
           options={frameRateOptions}
-          onChange={setFrameRate}
+          onChange={handleFrameRateChange}
         />
 
         <SelectField
           label={t('advancedSettings.video.resolution.label')}
           value={resolution}
           options={resolutionOptions}
-          onChange={setResolution}
+          onChange={handleResolutionChange}
         />
       </div>
     </div>

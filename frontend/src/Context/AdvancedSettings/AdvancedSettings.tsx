@@ -1,5 +1,6 @@
 import createGlobalState from 'react-global-state-hooks/createGlobalState';
 import actions from 'react-global-state-hooks/actions';
+import { z } from 'zod';
 import type {
   AdvancedSettingsAudioBitrateMode,
   AdvancedSettingsBitrateMode,
@@ -16,7 +17,7 @@ import {
   ADVANCED_SETTINGS_BITRATE_MODE,
   ADVANCED_SETTINGS_CODEC_MODE,
 } from '@components/AdvancedSettingsDialog/types/types';
-import { env } from '../../env';
+import { env, RESOLUTIONS } from '../../env';
 
 const INITIAL_STATE = {
   isOpen: false,
@@ -37,6 +38,37 @@ const INITIAL_STATE = {
 
 export type advancedSettings = typeof INITIAL_STATE;
 
+const advancedSettingsSchema: z.ZodType<advancedSettings> = z.object({
+  isOpen: z.boolean(),
+  selectedTab: z.enum(['general', 'video', 'audio', 'statistics']),
+  bitrateMode: z.enum(['default', 'bw_saver', 'extra_bw_saver', 'custom']),
+  customVideoBitrate: z
+    .number()
+    .int()
+    .min(env.MIN_CUSTOM_VIDEO_BITRATE_BPS)
+    .max(env.MAX_CUSTOM_VIDEO_BITRATE_BPS),
+  codecMode: z.enum(['automatic', 'manual']),
+  codecPriority: z.tuple([
+    z.enum(['vp8', 'vp9', 'h264']),
+    z.enum(['vp8', 'vp9', 'h264']),
+    z.enum(['vp8', 'vp9', 'h264']),
+  ]),
+  frameRate: z.custom<AdvancedSettingsFrameRate>(
+    (value): value is AdvancedSettingsFrameRate =>
+      typeof value === 'number' &&
+      Number.isInteger(value) &&
+      env.SUPPORTED_FRAME_RATES.includes(value),
+    { message: 'Unsupported frame rate' }
+  ),
+  resolution: z.enum(RESOLUTIONS),
+  audioBitrateMode: z.enum(['automatic', 'custom']),
+  customAudioBitrate: z.number().int().min(6).max(510),
+  enableDtx: z.boolean(),
+  publisherAudioFallbackEnabled: z.boolean(),
+  subscriberAudioFallbackEnabled: z.boolean(),
+  publisherStatisticsEnabled: z.boolean(),
+});
+
 const advancedSettings$ = createGlobalState(INITIAL_STATE, {
   localStorage: {
     key: 'advancedSettings',
@@ -46,9 +78,17 @@ const advancedSettings$ = createGlobalState(INITIAL_STATE, {
         isOpen: false,
       }) as advancedSettings,
 
-    validator: (_state) => {
-      // zod
-      // advancedSettingsSchema.parse(state);
+    validator: ({ restored, initial }): advancedSettings => {
+      const restoredState = advancedSettingsSchema.safeParse(restored);
+      const fallbackState = initial as advancedSettings;
+
+      if (restoredState.success) {
+        return restoredState.data;
+      }
+
+      console.error('AdvancedSettings: invalid restored localStorage state', restoredState.error);
+
+      return fallbackState;
     },
   },
   actions: {

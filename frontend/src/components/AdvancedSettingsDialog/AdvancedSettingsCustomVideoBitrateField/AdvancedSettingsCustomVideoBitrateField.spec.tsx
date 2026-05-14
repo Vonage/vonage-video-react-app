@@ -1,13 +1,13 @@
 import { fireEvent, render as renderBase, screen } from '@testing-library/react';
 import type { ReactElement } from 'react';
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import { makeTestProvider, providers } from '@test/providers';
 import type { advancedSettings } from '@Context/AdvancedSettings';
 import AdvancedSettingsCustomVideoBitrateField from './AdvancedSettingsCustomVideoBitrateField';
 
 describe('AdvancedSettingsCustomVideoBitrateField', () => {
   it('renders the current bitrate and range labels', () => {
-    render(<AdvancedSettingsCustomVideoBitrateField />);
+    render(<AdvancedSettingsCustomVideoBitrateField onChange={vi.fn()} />);
 
     expect(screen.getByText(/custom bitrate/i)).toBeInTheDocument();
     expect(screen.getByTestId('advanced-settings-custom-video-bitrate-slider')).toHaveAttribute(
@@ -19,8 +19,10 @@ describe('AdvancedSettingsCustomVideoBitrateField', () => {
     expect(screen.getByText(/^500 kbps$/i)).toBeInTheDocument();
   });
 
-  it('clamps the value into the supported range', () => {
-    render(<AdvancedSettingsCustomVideoBitrateField />, {
+  it('calls onChange with the clamped value when slider exceeds the maximum', () => {
+    const handleChange = vi.fn();
+
+    render(<AdvancedSettingsCustomVideoBitrateField onChange={handleChange} />, {
       dialogState: { customVideoBitrate: 9_995_000 },
     });
 
@@ -28,7 +30,7 @@ describe('AdvancedSettingsCustomVideoBitrateField', () => {
 
     fireEvent.change(slider, { target: { value: '20000000' } });
 
-    expect(slider).toHaveValue('10000000');
+    expect(handleChange).toHaveBeenCalledWith(10_000_000);
   });
 });
 

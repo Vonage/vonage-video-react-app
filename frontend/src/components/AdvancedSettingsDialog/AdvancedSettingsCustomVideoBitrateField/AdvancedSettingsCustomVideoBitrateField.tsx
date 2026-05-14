@@ -2,11 +2,15 @@ import type { ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
 import { env } from '../../../env';
 import advancedSettings$ from '@Context/AdvancedSettings';
+import type { AdvancedSettingsCustomVideoBitrate } from '../types/types';
 
 const CUSTOM_VIDEO_BITRATE_STEP_BPS = 5_000;
-const { setCustomVideoBitrate } = advancedSettings$.actions;
 
-const AdvancedSettingsCustomVideoBitrateField = (): ReactElement => {
+type Props = {
+  onChange: (value: AdvancedSettingsCustomVideoBitrate) => void;
+};
+
+const AdvancedSettingsCustomVideoBitrateField = ({ onChange }: Props): ReactElement => {
   const { t } = useTranslation();
   const customVideoBitrate = advancedSettings$.use.select((state) => state.customVideoBitrate);
   const currentCustomVideoBitrate = Number(customVideoBitrate);
@@ -29,7 +33,7 @@ const AdvancedSettingsCustomVideoBitrateField = (): ReactElement => {
           step={CUSTOM_VIDEO_BITRATE_STEP_BPS}
           value={customVideoBitrate}
           onChange={(event) => {
-            setCustomVideoBitrate(clampCustomVideoBitrate(Number(event.target.value)));
+            onChange(clampCustomVideoBitrate(Number(event.target.value)));
           }}
           className="w-full accent-vera-primary"
           data-testid="advanced-settings-custom-video-bitrate-slider"
