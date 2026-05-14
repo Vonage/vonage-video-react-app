@@ -9,7 +9,7 @@ test.beforeEach(async ({ page }) => {
 test('should keep the selected resolution after reopening settings in the waiting room', async ({
   page,
 }) => {
-  await page.getByTestId('MoreVertIcon').click();
+  await getMoreOptionsButton(page).click();
   await expect(page.getByTestId('menu-more-options')).toBeVisible();
 
   await page.getByText('Settings', { exact: true }).click();
@@ -28,9 +28,13 @@ test('should keep the selected resolution after reopening settings in the waitin
   await page.getByRole('button', { name: 'Close' }).click();
   await expect(page.getByTestId('advanced-settings-dialog')).toBeHidden();
 
-  await page.getByTestId('MoreVertIcon').click();
+  await getMoreOptionsButton(page).click();
   await page.getByText('Settings', { exact: true }).click();
 
   await expect(page.getByTestId('advanced-settings-dialog')).toBeVisible();
   await expect(resolutionSelect).toHaveValue('640x480');
 });
+
+function getMoreOptionsButton(page) {
+  return page.locator('button').filter({ has: page.getByTestId('vivid-icon-more-vertical-solid') });
+}
