@@ -185,6 +185,8 @@ describe('MeetingRoom', () => {
       toggleShareScreen: () => Promise.resolve(),
       isSharingScreen: false,
       isEntireScreen: false,
+      showLocalScreensharePreview: false,
+      toggleLocalScreensharePreview: vi.fn(),
       screenshareVideoElement: undefined,
       screensharingPublisher: null,
     });

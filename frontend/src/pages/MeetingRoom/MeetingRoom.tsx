@@ -34,6 +34,8 @@ const MeetingRoom = ({ fullSize = false, className }: MeetingRoomProps): ReactEl
     isSmallViewport,
     isSharingScreen,
     isEntireScreen,
+    showLocalScreensharePreview,
+    toggleLocalScreensharePreview,
     screensharingPublisher,
     screenshareVideoElement,
     toggleShareScreen,
@@ -83,6 +85,8 @@ const MeetingRoom = ({ fullSize = false, className }: MeetingRoomProps): ReactEl
       <VideoTileCanvas
         isSharingScreen={isSharingScreen}
         isEntireScreen={isEntireScreen}
+        showLocalScreensharePreview={showLocalScreensharePreview}
+        toggleLocalScreensharePreview={toggleLocalScreensharePreview}
         screensharingPublisher={screensharingPublisher}
         screenshareVideoElement={screenshareVideoElement}
         isRightPanelOpen={rightPanelActiveTab !== 'closed'}

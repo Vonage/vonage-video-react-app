@@ -13,6 +13,8 @@ describe('ScreenSharePublisher component', () => {
         element={undefined}
         publisher={null}
         isEntireScreen={false}
+        showLocalScreensharePreview={false}
+        toggleLocalScreensharePreview={vi.fn()}
       />
     );
     expect(container).toBeEmptyDOMElement();
@@ -42,6 +44,8 @@ describe('ScreenSharePublisher component', () => {
         element={element}
         publisher={mockPublisher}
         isEntireScreen={false}
+        showLocalScreensharePreview={false}
+        toggleLocalScreensharePreview={vi.fn()}
       />
     );
 
@@ -56,7 +60,14 @@ describe('ScreenSharePublisher component', () => {
     const box = { height: 100, width: 100, top: 0, left: 0 };
 
     render(
-      <ScreenSharePublisher box={box} element={undefined} publisher={null} isEntireScreen={true} />
+      <ScreenSharePublisher
+        box={box}
+        element={undefined}
+        publisher={null}
+        isEntireScreen={true}
+        showLocalScreensharePreview={false}
+        toggleLocalScreensharePreview={vi.fn()}
+      />
     );
 
     expect(screen.getByText('You are sharing your screen.')).toBeInTheDocument();

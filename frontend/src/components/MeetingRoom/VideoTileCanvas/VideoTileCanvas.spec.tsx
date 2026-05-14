@@ -18,6 +18,8 @@ describe('VideoTileCanvas', () => {
       <VideoTileCanvas
         isSharingScreen={false}
         isEntireScreen={false}
+        showLocalScreensharePreview={false}
+        toggleLocalScreensharePreview={vi.fn()}
         screensharingPublisher={null}
         screenshareVideoElement={undefined}
         isRightPanelOpen={false}
@@ -32,6 +34,8 @@ describe('VideoTileCanvas', () => {
       <VideoTileCanvas
         isSharingScreen={true}
         isEntireScreen={true}
+        showLocalScreensharePreview={false}
+        toggleLocalScreensharePreview={vi.fn()}
         screensharingPublisher={{} as unknown as never}
         screenshareVideoElement={undefined}
         isRightPanelOpen={false}
@@ -42,6 +46,8 @@ describe('VideoTileCanvas', () => {
 
     const props = mockScreenSharePublisher.mock.calls[0][0] as {
       isEntireScreen: boolean;
+      showLocalScreensharePreview: boolean;
+      toggleLocalScreensharePreview: () => void;
     };
 
     expect(props.isEntireScreen).toBe(true);
