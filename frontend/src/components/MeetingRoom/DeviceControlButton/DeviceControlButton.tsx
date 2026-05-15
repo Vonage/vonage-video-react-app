@@ -78,7 +78,7 @@ const DeviceControlButton = ({
             name="microphone-2-solid"
             customSize={-5}
             data-testid="MicNoneIcon"
-            style={{ color: 'var(--vera-on-secondary)' }}
+            style={{ color: 'var(--vera-on-secondary-light)' }}
           />
         );
       }
@@ -103,7 +103,7 @@ const DeviceControlButton = ({
           name="video-solid"
           customSize={-5}
           data-testid="VideocamIcon"
-          style={{ color: 'var(--vera-on-secondary)' }}
+          style={{ color: 'var(--vera-on-secondary-light)' }}
         />
       );
     }
@@ -161,13 +161,13 @@ const DeviceControlButton = ({
             <VividIcon
               name="chevron-down-line"
               customSize={-6}
-              style={{ color: 'var(--vera-on-secondary)' }}
+              style={{ color: 'var(--vera-on-secondary-light)' }}
             />
           ) : (
             <VividIcon
               name="chevron-up-line"
               customSize={-6}
-              style={{ color: 'var(--vera-on-secondary)' }}
+              style={{ color: 'var(--vera-on-secondary-light)' }}
             />
           )}
         </IconButton>

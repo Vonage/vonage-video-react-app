@@ -45,7 +45,9 @@ const ChatButton = ({
               <VividIcon
                 customSize={-5}
                 name="chat-solid"
-                style={{ color: isOpen ? 'var(--vera-secondary)' : 'var(--vera-on-secondary)' }}
+                style={{
+                  color: isOpen ? 'var(--vera-secondary-light)' : 'var(--vera-on-secondary-light)',
+                }}
                 data-testid="ChatIcon"
               />
             }

@@ -44,7 +44,7 @@ const ReportIssueButton = ({
           <VividIcon
             customSize={-5}
             name="feedback-solid"
-            style={{ color: isOpen ? 'var(--vera-secondary)' : 'var(--vera-on-secondary)' }}
+            style={{ color: isOpen ? 'var(--vera-secondary)' : 'var(--vera-on-secondary-light)' }}
           />
         }
         ref={anchorRef}

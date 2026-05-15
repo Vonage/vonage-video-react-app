@@ -109,7 +109,7 @@ const CaptionsButton = ({
               <VividIcon
                 name="closed-captioning-solid"
                 customSize={-5}
-                style={{ color: 'var(--vera-on-secondary)' }}
+                style={{ color: 'var(--vera-on-secondary-light)' }}
               />
             ) : (
               <VividIcon

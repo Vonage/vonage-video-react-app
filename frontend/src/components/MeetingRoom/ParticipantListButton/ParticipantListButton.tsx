@@ -59,7 +59,9 @@ const ParticipantListButton = ({
                 name="group-solid"
                 customSize={-4}
                 data-testid="PeopleIcon"
-                style={{ color: isOpen ? 'var(--vera-secondary)' : 'var(--vera-on-secondary)' }}
+                style={{
+                  color: isOpen ? 'var(--vera-secondary)' : 'var(--vera-on-secondary-light)',
+                }}
               />
             }
             isOverflowButton={isOverflowButton}

@@ -47,7 +47,7 @@ const EmojiGridButton = ({
                 name="emoji-solid"
                 customSize={-5}
                 style={{
-                  color: `${isEmojiGridOpen ? 'var(--vera-secondary)' : 'var(--vera-on-secondary)'} !important`,
+                  color: `${isEmojiGridOpen ? 'var(--vera-secondary-light)' : 'var(--vera-on-secondary-light)'} !important`,
                 }}
               />
             }

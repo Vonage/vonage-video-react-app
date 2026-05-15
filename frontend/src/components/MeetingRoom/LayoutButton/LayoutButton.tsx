@@ -62,14 +62,22 @@ const LayoutButton = ({
               name="layout-2-solid"
               customSize={-5}
               data-testid="ViewSidebarIcon"
-              style={{ color: isDisabled ? 'var(--vera-disabled)' : 'var(--vera-on-secondary)' }}
+              style={{
+                color: isDisabled
+                  ? 'var(--vera-secondary-light)'
+                  : 'var(--vera-on-secondary-light)',
+              }}
             />
           ) : (
             <VividIcon
               name="apps-solid"
               customSize={-5}
               data-testid="ViewSidebarIcon"
-              style={{ color: isDisabled ? 'var(--vera-disabled)' : 'var(--vera-on-secondary)' }}
+              style={{
+                color: isDisabled
+                  ? 'var(--vera-secondary-light)'
+                  : 'var(--vera-on-secondary-light)',
+              }}
             />
           )
         }
