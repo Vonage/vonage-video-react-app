@@ -35,7 +35,7 @@ const RaiseHandButton = (): ReactElement => {
         'flex w-full items-center justify-center gap-1.5 rounded border px-3 py-2 text-vera-body-base transition-colors',
         localHandIsRaised
           ? 'border-vera-primary bg-vera-primary text-vera-on-primary hover:bg-vera-primary-hover'
-          : 'border-transparent bg-transparent text-vera-on-dark-grey hover:bg-vera-dark-grey-hover'
+          : 'border-transparent bg-transparent text-vera-secondary hover:bg-vera-secondary/10'
       )}
     >
       <span aria-hidden="true" className="shrink-0 text-vera-heading-4 leading-none">
