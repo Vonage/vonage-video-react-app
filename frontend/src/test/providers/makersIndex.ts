@@ -24,11 +24,6 @@ export {
 } from './makeBackgroundPublisherProviderWrapper';
 
 export {
-  default as makeAdvancedSettingsProviderWrapper,
-  type AdvancedSettingsProviderWrapperOptions,
-} from './makeAdvancedSettingsProviderWrapper';
-
-export {
   default as makeRuntimeProviderWrapper,
   type RuntimeProviderWrapperOptions,
 } from './makeRuntimeProviderWrapper';

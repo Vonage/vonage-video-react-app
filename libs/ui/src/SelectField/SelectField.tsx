@@ -1,4 +1,4 @@
-import type { ChangeEvent, ReactElement } from 'react';
+import type { ChangeEvent, ComponentProps, ReactElement } from 'react';
 import VividIcon from '../VividIcon';
 
 export type SelectFieldOption<TValue extends string | number = string> = {
@@ -6,7 +6,11 @@ export type SelectFieldOption<TValue extends string | number = string> = {
   label: string;
 };
 
-export type SelectFieldProps<TValue extends string | number = string> = {
+export type SelectFieldProps<TValue extends string | number = string> = Omit<
+  ComponentProps<'select'>,
+  'value' | 'onChange' | 'children'
+> & {
+  id: string;
   label: string;
   value: TValue;
   options: SelectFieldOption<TValue>[];
@@ -15,11 +19,13 @@ export type SelectFieldProps<TValue extends string | number = string> = {
 };
 
 const SelectField = <TValue extends string | number>({
+  id,
   label,
   value,
   options,
   onChange,
   description,
+  ...selectProps
 }: SelectFieldProps<TValue>): ReactElement => {
   const handleChange = (event: ChangeEvent<HTMLSelectElement>) => {
     const selectedOption = options.find((option) => String(option.value) === event.target.value);
@@ -31,14 +37,19 @@ const SelectField = <TValue extends string | number>({
 
   return (
     <div className="flex flex-col gap-1.5">
-      <h3 className="font-vera-plain text-vera-body-extended-semibold text-vera-secondary">
+      <label
+        htmlFor={id}
+        className="font-vera-plain text-vera-body-extended-semibold text-vera-secondary"
+      >
         {label}
-      </h3>
+      </label>
       <div className="relative">
         <select
+          id={id}
           value={value}
           onChange={handleChange}
           className="w-full appearance-none rounded-vera-medium border border-vera-border bg-vera-surface px-3 py-2 pr-10 font-vera-plain text-vera-body-base text-vera-secondary outline-none transition-colors focus:border-vera-primary"
+          {...selectProps}
         >
           {options.map((option) => (
             <option key={String(option.value)} value={option.value}>

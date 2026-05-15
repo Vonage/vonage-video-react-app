@@ -84,6 +84,7 @@ const AdvancedSettingsVideoTab = (): ReactElement => {
 
       <div className="flex flex-col gap-6">
         <SelectField
+          id="advanced-settings-video-bitrate"
           label={t('advancedSettings.video.bitrate.label')}
           value={bitrateMode}
           options={bitrateOptions}
@@ -96,6 +97,7 @@ const AdvancedSettingsVideoTab = (): ReactElement => {
         )}
 
         <SelectField
+          id="advanced-settings-video-codec"
           label={t('advancedSettings.video.codec.label')}
           value={codecMode}
           options={codecOptions}
@@ -111,6 +113,7 @@ const AdvancedSettingsVideoTab = (): ReactElement => {
         )}
 
         <SelectField
+          id="advanced-settings-video-frame-rate"
           label={t('advancedSettings.video.frameRate.label')}
           value={frameRate}
           options={frameRateOptions}
@@ -118,6 +121,7 @@ const AdvancedSettingsVideoTab = (): ReactElement => {
         />
 
         <SelectField
+          id="advanced-settings-video-resolution"
           label={t('advancedSettings.video.resolution.label')}
           value={resolution}
           options={resolutionOptions}

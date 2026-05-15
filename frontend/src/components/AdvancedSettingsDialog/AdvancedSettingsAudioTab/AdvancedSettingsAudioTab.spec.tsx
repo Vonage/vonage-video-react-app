@@ -1,12 +1,16 @@
 import { render as renderBase, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import type { ReactElement } from 'react';
-import { describe, expect, it } from 'vitest';
-import { makeTestProvider, providers } from '@test/providers';
+import { afterEach, describe, expect, it } from 'vitest';
 import type { advancedSettings } from '@Context/AdvancedSettings';
+import advancedSettings$ from '@Context/AdvancedSettings';
 import AdvancedSettingsAudioTab from './AdvancedSettingsAudioTab';
 
 describe('AdvancedSettingsAudioTab', () => {
+  afterEach(() => {
+    advancedSettings$.reset();
+  });
+
   it('renders all audio controls with automatic bitrate selected by default', () => {
     render(<AdvancedSettingsAudioTab />);
 
@@ -52,9 +56,9 @@ type RenderOptions = {
   dialogState?: Partial<advancedSettings>;
 };
 function render(ui: ReactElement, { dialogState }: RenderOptions = {}) {
-  const { wrapper } = makeTestProvider([providers.advancedSettings], {
-    advancedSettingsContext: { dialogState },
-  });
+  if (dialogState) {
+    advancedSettings$.setState((state) => ({ ...state, ...dialogState }));
+  }
 
-  return renderBase(ui, { wrapper });
+  return renderBase(ui);
 }

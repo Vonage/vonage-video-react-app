@@ -1,7 +1,6 @@
 import { render as renderBase, screen } from '@testing-library/react';
 import type { ReactElement } from 'react';
 import { describe, expect, it } from 'vitest';
-import { makeTestProvider, providers } from '@test/providers';
 import AdvancedSettingsStatisticsTab from './AdvancedSettingsStatisticsTab';
 
 describe('AdvancedSettingsStatisticsTab', () => {
@@ -19,7 +18,5 @@ describe('AdvancedSettingsStatisticsTab', () => {
 });
 
 function render(ui: ReactElement) {
-  const { wrapper } = makeTestProvider([providers.advancedSettings]);
-
-  return renderBase(ui, { wrapper });
+  return renderBase(ui);
 }

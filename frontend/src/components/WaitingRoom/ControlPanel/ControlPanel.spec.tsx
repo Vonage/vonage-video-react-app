@@ -160,7 +160,6 @@ function render(
 ) {
   const { wrapper: ControlPanelWrapper, ...context } = makeTestProvider(
     [
-      providers.advancedSettings,
       providers.user,
       providers.session,
       providers.publisher,

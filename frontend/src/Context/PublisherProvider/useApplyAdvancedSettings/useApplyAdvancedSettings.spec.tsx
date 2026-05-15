@@ -1,7 +1,8 @@
-import { describe, expect, it, vi, beforeEach } from 'vitest';
+import { afterEach, describe, expect, it, vi, beforeEach } from 'vitest';
 import { renderHook as renderHookBase, waitFor } from '@testing-library/react';
 import type { Publisher } from '@vonage/client-sdk-video';
-import { makeTestProvider, providers, type ProviderOptions } from '@test/providers';
+import type { advancedSettings } from '@Context/AdvancedSettings';
+import advancedSettings$ from '@Context/AdvancedSettings';
 import useApplyAdvancedSettings from './useApplyAdvancedSettings';
 
 const createMockPublisher = () =>
@@ -17,13 +18,15 @@ describe('useApplyAdvancedSettings', () => {
     vi.restoreAllMocks();
   });
 
+  afterEach(() => {
+    advancedSettings$.reset();
+  });
+
   it('applies all current settings when publisher becomes available', async () => {
     const publisher = createMockPublisher();
 
     renderHook(() => useApplyAdvancedSettings(publisher), {
-      advancedSettingsContext: {
-        dialogState: { frameRate: 15, resolution: '640x480', bitrateMode: 'default' },
-      },
+      dialogState: { frameRate: 15, resolution: '640x480', bitrateMode: 'default' },
     });
 
     await waitFor(() => {
@@ -37,9 +40,7 @@ describe('useApplyAdvancedSettings', () => {
     const publisher = createMockPublisher();
 
     renderHook(() => useApplyAdvancedSettings(publisher), {
-      advancedSettingsContext: {
-        dialogState: { bitrateMode: 'custom', customVideoBitrate: 750_000 },
-      },
+      dialogState: { bitrateMode: 'custom', customVideoBitrate: 750_000 },
     });
 
     await waitFor(() => {
@@ -52,7 +53,7 @@ describe('useApplyAdvancedSettings', () => {
     const publisher = createMockPublisher();
 
     renderHook(() => useApplyAdvancedSettings(null), {
-      advancedSettingsContext: { dialogState: { frameRate: 15 } },
+      dialogState: { frameRate: 15 },
     });
 
     expect(publisher.setPreferredFrameRate).not.toHaveBeenCalled();
@@ -63,7 +64,7 @@ describe('useApplyAdvancedSettings', () => {
     let currentPublisher: Publisher | null = null;
 
     const { rerender } = renderHook(() => useApplyAdvancedSettings(currentPublisher), {
-      advancedSettingsContext: { dialogState: { frameRate: 7 } },
+      dialogState: { frameRate: 7 },
     });
 
     expect(publisher.setPreferredFrameRate).not.toHaveBeenCalled();
@@ -78,13 +79,13 @@ describe('useApplyAdvancedSettings', () => {
 });
 
 type RenderOptions = {
-  advancedSettingsContext?: ProviderOptions['AdvancedSettingsContext'];
+  dialogState?: Partial<advancedSettings>;
 };
 
-function renderHook<Result>(render: () => Result, { advancedSettingsContext }: RenderOptions = {}) {
-  const { wrapper } = makeTestProvider([providers.advancedSettings], {
-    advancedSettingsContext,
-  });
+function renderHook<Result>(render: () => Result, { dialogState }: RenderOptions = {}) {
+  if (dialogState) {
+    advancedSettings$.setState((state) => ({ ...state, ...dialogState }));
+  }
 
-  return renderHookBase(render, { wrapper });
+  return renderHookBase(render);
 }

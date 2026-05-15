@@ -593,7 +593,7 @@ function renderHook<Result, Props>(
   { userContext, sessionContext }: RenderOptions = {}
 ) {
   const { wrapper: MainWrapper, ...context } = makeTestProvider(
-    [providers.advancedSettings, providers.user, providers.session, providers.runtime],
+    [providers.user, providers.session, providers.runtime],
     {
       userContext: {
         ...userContext,

@@ -1,11 +1,19 @@
 import { render as renderBase, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import type { ReactElement } from 'react';
-import { describe, expect, it } from 'vitest';
-import { makeTestProvider, providers } from '@test/providers';
+import { beforeEach, afterEach, describe, expect, it } from 'vitest';
+import advancedSettings$ from '@Context/AdvancedSettings';
 import AdvancedSettingsDialog from './AdvancedSettingsDialog';
 
 describe('AdvancedSettingsDialog', () => {
+  beforeEach(() => {
+    advancedSettings$.setState((state) => ({ ...state, isOpen: true }));
+  });
+
+  afterEach(() => {
+    advancedSettings$.reset();
+  });
+
   it('renders dialog when open', async () => {
     render(<AdvancedSettingsDialog />);
 
@@ -63,9 +71,5 @@ describe('AdvancedSettingsDialog', () => {
 });
 
 function render(ui: ReactElement) {
-  const { wrapper } = makeTestProvider([providers.advancedSettings], {
-    advancedSettingsContext: { dialogState: { isOpen: true } },
-  });
-
-  return renderBase(ui, { wrapper });
+  return renderBase(ui);
 }

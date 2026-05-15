@@ -7,7 +7,6 @@ import advancedSettings$ from '@Context/AdvancedSettings';
 import backgroundEffectsDialog$ from '@Context/BackgroundEffectsDialog';
 import precallNetworkTestDialog$ from '@Context/PrecallNetworkTestDialog';
 import composeProviders from '@web/helpers/composeProviders';
-import { makeTestProvider, providers } from '@test/providers';
 import MenuMoreOptions from './MenuMoreOptions';
 import { env } from '../../../env';
 
@@ -154,9 +153,7 @@ describe('MenuMoreOptions', () => {
 });
 
 function render(ui: ReactElement) {
-  const { wrapper: advancedSettingsWrapper } = makeTestProvider([providers.advancedSettings]);
   const wrapper = composeProviders(
-    advancedSettingsWrapper,
     backgroundEffectsDialog$.Provider,
     precallNetworkTestDialog$.Provider
   );

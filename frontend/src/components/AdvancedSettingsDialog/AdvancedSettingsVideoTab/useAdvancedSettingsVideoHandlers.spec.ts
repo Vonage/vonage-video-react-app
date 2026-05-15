@@ -1,5 +1,5 @@
 import { renderHook, waitFor } from '@testing-library/react';
-import { describe, expect, it, vi, beforeEach } from 'vitest';
+import { afterEach, describe, expect, it, vi, beforeEach } from 'vitest';
 import type { Mock } from 'vitest';
 import type { Publisher } from '@vonage/client-sdk-video';
 import type { PublisherContextType } from '@Context/PublisherProvider';
@@ -7,7 +7,6 @@ import type { PreviewPublisherContextType } from '@Context/PreviewPublisherProvi
 import usePublisherContext from '@hooks/usePublisherContext';
 import usePreviewPublisherContext from '@hooks/usePreviewPublisherContext';
 import advancedSettings$ from '@Context/AdvancedSettings';
-import { makeTestProvider, providers } from '@test/providers';
 import useAdvancedSettingsVideoHandlers from './useAdvancedSettingsVideoHandlers';
 
 vi.mock('@hooks/usePublisherContext');
@@ -36,15 +35,17 @@ describe('useAdvancedSettingsVideoHandlers', () => {
     } as unknown as PreviewPublisherContextType);
   });
 
+  afterEach(() => {
+    advancedSettings$.reset();
+  });
+
   describe('handleFrameRateChange', () => {
     it('applies frame rate to publisher then updates store', async () => {
       const publisher = createMockPublisher();
       mockUsePublisherContext.mockReturnValue({ publisher } as PublisherContextType);
 
-      const { result } = renderHook(
-        () =>
-          useAdvancedSettingsVideoHandlers({ bitrateMode: 'default', customVideoBitrate: 500_000 }),
-        { wrapper: makeTestProvider([providers.advancedSettings]).wrapper }
+      const { result } = renderHook(() =>
+        useAdvancedSettingsVideoHandlers({ bitrateMode: 'default', customVideoBitrate: 500_000 })
       );
 
       result.current.handleFrameRateChange(15);
@@ -56,10 +57,8 @@ describe('useAdvancedSettingsVideoHandlers', () => {
     });
 
     it('still updates store when no publisher is active', async () => {
-      const { result } = renderHook(
-        () =>
-          useAdvancedSettingsVideoHandlers({ bitrateMode: 'default', customVideoBitrate: 500_000 }),
-        { wrapper: makeTestProvider([providers.advancedSettings]).wrapper }
+      const { result } = renderHook(() =>
+        useAdvancedSettingsVideoHandlers({ bitrateMode: 'default', customVideoBitrate: 500_000 })
       );
 
       result.current.handleFrameRateChange(7);
@@ -76,10 +75,8 @@ describe('useAdvancedSettingsVideoHandlers', () => {
 
       const initialFrameRate = advancedSettings$.getState().frameRate;
 
-      const { result } = renderHook(
-        () =>
-          useAdvancedSettingsVideoHandlers({ bitrateMode: 'default', customVideoBitrate: 500_000 }),
-        { wrapper: makeTestProvider([providers.advancedSettings]).wrapper }
+      const { result } = renderHook(() =>
+        useAdvancedSettingsVideoHandlers({ bitrateMode: 'default', customVideoBitrate: 500_000 })
       );
 
       result.current.handleFrameRateChange(15);
@@ -97,10 +94,8 @@ describe('useAdvancedSettingsVideoHandlers', () => {
       const publisher = createMockPublisher();
       mockUsePublisherContext.mockReturnValue({ publisher } as PublisherContextType);
 
-      const { result } = renderHook(
-        () =>
-          useAdvancedSettingsVideoHandlers({ bitrateMode: 'default', customVideoBitrate: 500_000 }),
-        { wrapper: makeTestProvider([providers.advancedSettings]).wrapper }
+      const { result } = renderHook(() =>
+        useAdvancedSettingsVideoHandlers({ bitrateMode: 'default', customVideoBitrate: 500_000 })
       );
 
       result.current.handleBitrateModeChange('bw_saver');
@@ -117,10 +112,8 @@ describe('useAdvancedSettingsVideoHandlers', () => {
         publisher: previewPublisher,
       } as unknown as PreviewPublisherContextType);
 
-      const { result } = renderHook(
-        () =>
-          useAdvancedSettingsVideoHandlers({ bitrateMode: 'default', customVideoBitrate: 500_000 }),
-        { wrapper: makeTestProvider([providers.advancedSettings]).wrapper }
+      const { result } = renderHook(() =>
+        useAdvancedSettingsVideoHandlers({ bitrateMode: 'default', customVideoBitrate: 500_000 })
       );
 
       result.current.handleBitrateModeChange('bw_saver');

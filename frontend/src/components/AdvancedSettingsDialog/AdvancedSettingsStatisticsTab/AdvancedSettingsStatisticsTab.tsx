@@ -28,14 +28,13 @@ const AdvancedSettingsStatisticsTab = (): ReactElement => {
       <h2 className="font-vera-plain text-vera-heading-2 text-vera-secondary">
         {t('advancedSettings.tabs.statistics')}
       </h2>
-      <div className="flex flex-col gap-1.5">
-        <SwitchField
-          label={t('advancedSettings.statistics.collection.enablePublisher.label')}
-          checked={publisherStatisticsEnabled}
-          onChange={setPublisherStatisticsEnabled}
-          description={t('advancedSettings.statistics.collection.enablePublisher.description')}
-        />
-      </div>
+      <SwitchField
+        id="advanced-settings-statistics-enable-publisher"
+        label={t('advancedSettings.statistics.collection.enablePublisher.label')}
+        checked={publisherStatisticsEnabled}
+        onChange={setPublisherStatisticsEnabled}
+        description={t('advancedSettings.statistics.collection.enablePublisher.description')}
+      />
 
       <div className="flex flex-col gap-4">
         <AdvancedSettingsStatisticsGroup

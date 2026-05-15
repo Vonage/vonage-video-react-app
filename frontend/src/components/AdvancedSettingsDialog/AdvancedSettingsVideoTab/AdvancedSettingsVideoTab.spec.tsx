@@ -1,8 +1,8 @@
 import { render as renderBase, screen } from '@testing-library/react';
 import type { ReactElement } from 'react';
-import { describe, expect, it } from 'vitest';
-import { makeTestProvider, providers } from '@test/providers';
+import { afterEach, describe, expect, it } from 'vitest';
 import type { advancedSettings } from '@Context/AdvancedSettings';
+import advancedSettings$ from '@Context/AdvancedSettings';
 import AdvancedSettingsVideoTab from './AdvancedSettingsVideoTab';
 
 type RenderOptions = {
@@ -10,6 +10,10 @@ type RenderOptions = {
 };
 
 describe('AdvancedSettingsVideoTab', () => {
+  afterEach(() => {
+    advancedSettings$.reset();
+  });
+
   it('renders all video sections', () => {
     render(<AdvancedSettingsVideoTab />);
 
@@ -42,9 +46,9 @@ describe('AdvancedSettingsVideoTab', () => {
 });
 
 function render(ui: ReactElement, { dialogState }: RenderOptions = {}) {
-  const { wrapper } = makeTestProvider([providers.advancedSettings], {
-    advancedSettingsContext: { dialogState },
-  });
+  if (dialogState) {
+    advancedSettings$.setState((state) => ({ ...state, ...dialogState }));
+  }
 
-  return renderBase(ui, { wrapper });
+  return renderBase(ui);
 }

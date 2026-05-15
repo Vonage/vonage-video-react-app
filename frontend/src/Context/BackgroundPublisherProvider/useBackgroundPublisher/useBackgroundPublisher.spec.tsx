@@ -245,7 +245,6 @@ function render({
 }: RenderOptions = {}) {
   const { wrapper, ...context } = makeTestProvider(
     [
-      providers.advancedSettings,
       providers.user,
       providers.session,
       providers.publisher,

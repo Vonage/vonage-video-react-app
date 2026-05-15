@@ -97,7 +97,6 @@ describe('RecordingPopUpIndicator', () => {
 function render(component: ReactElement) {
   const { wrapper, ...context } = makeTestProvider(
     [
-      providers.advancedSettings,
       providers.user,
       providers.session,
       providers.publisher,

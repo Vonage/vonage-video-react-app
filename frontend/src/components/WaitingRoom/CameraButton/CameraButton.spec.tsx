@@ -157,7 +157,6 @@ function render(
 ) {
   const { wrapper: ButtonWrapper, ...context } = makeTestProvider(
     [
-      providers.advancedSettings,
       providers.user,
       providers.session,
       providers.publisher,

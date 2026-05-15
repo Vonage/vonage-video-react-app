@@ -30,19 +30,7 @@ type MeetingRoomProps = BoxProps & {
   fullSize?: boolean;
 };
 
-const MeetingRoom = ({
-  fullSize = false,
-  className,
-  ...boxProps
-}: MeetingRoomProps): ReactElement => {
-  return <MeetingRoomContent fullSize={fullSize} className={className} {...boxProps} />;
-};
-
-function MeetingRoomContent({
-  fullSize = false,
-  className,
-  ...boxProps
-}: MeetingRoomProps): ReactElement {
+function MeetingRoom({ fullSize = false, className, ...boxProps }: MeetingRoomProps): ReactElement {
   const {
     t,
     isSmallViewport,

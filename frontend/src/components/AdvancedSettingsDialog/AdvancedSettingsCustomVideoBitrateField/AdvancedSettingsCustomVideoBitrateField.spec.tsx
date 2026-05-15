@@ -1,11 +1,15 @@
 import { fireEvent, render as renderBase, screen } from '@testing-library/react';
 import type { ReactElement } from 'react';
-import { describe, expect, it, vi } from 'vitest';
-import { makeTestProvider, providers } from '@test/providers';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 import type { advancedSettings } from '@Context/AdvancedSettings';
+import advancedSettings$ from '@Context/AdvancedSettings';
 import AdvancedSettingsCustomVideoBitrateField from './AdvancedSettingsCustomVideoBitrateField';
 
 describe('AdvancedSettingsCustomVideoBitrateField', () => {
+  afterEach(() => {
+    advancedSettings$.reset();
+  });
+
   it('renders the current bitrate and range labels', () => {
     render(<AdvancedSettingsCustomVideoBitrateField onChange={vi.fn()} />);
 
@@ -39,9 +43,9 @@ type RenderOptions = {
 };
 
 function render(ui: ReactElement, { dialogState }: RenderOptions = {}) {
-  const { wrapper } = makeTestProvider([providers.advancedSettings], {
-    advancedSettingsContext: { dialogState },
-  });
+  if (dialogState) {
+    advancedSettings$.setState((state) => ({ ...state, ...dialogState }));
+  }
 
-  return renderBase(ui, { wrapper });
+  return renderBase(ui);
 }

@@ -318,7 +318,6 @@ async function render(
 ) {
   const { wrapper: MainWrapper, ...contexts } = makeTestProvider(
     [
-      providers.advancedSettings,
       providers.user,
       providers.session,
       providers.publisher,

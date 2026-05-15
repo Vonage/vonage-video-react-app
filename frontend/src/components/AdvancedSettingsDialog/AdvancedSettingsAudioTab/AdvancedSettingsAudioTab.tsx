@@ -46,6 +46,7 @@ const AdvancedSettingsAudioTab = (): ReactElement => {
 
       <div className="flex flex-col gap-4">
         <SelectField
+          id="advanced-settings-audio-bitrate"
           label={t('advancedSettings.audio.bitrate.label')}
           value={audioBitrateMode}
           options={audioBitrateOptions}
@@ -87,6 +88,7 @@ const AdvancedSettingsAudioTab = (): ReactElement => {
       </div>
 
       <SwitchField
+        id="advanced-settings-audio-enable-dtx"
         label={t('advancedSettings.audio.enableDtx.label')}
         checked={enableDtx}
         onChange={setEnableDtx}
@@ -94,6 +96,7 @@ const AdvancedSettingsAudioTab = (): ReactElement => {
       />
 
       <SwitchField
+        id="advanced-settings-audio-publisher-fallback"
         label={t('advancedSettings.audio.publisherAudioFallback.label')}
         checked={publisherAudioFallbackEnabled}
         onChange={setPublisherAudioFallbackEnabled}
@@ -101,6 +104,7 @@ const AdvancedSettingsAudioTab = (): ReactElement => {
       />
 
       <SwitchField
+        id="advanced-settings-audio-subscriber-fallback"
         label={t('advancedSettings.audio.subscriberAudioFallback.label')}
         checked={subscriberAudioFallbackEnabled}
         onChange={setSubscriberAudioFallbackEnabled}

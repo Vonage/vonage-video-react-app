@@ -2,7 +2,6 @@ import { render as renderBase, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import type { ReactElement } from 'react';
 import { describe, expect, it } from 'vitest';
-import { makeTestProvider, providers } from '@test/providers';
 import AdvancedSettingsSidebar from './AdvancedSettingsSidebar';
 
 describe('AdvancedSettingsSidebar', () => {
@@ -26,7 +25,5 @@ describe('AdvancedSettingsSidebar', () => {
 });
 
 function render(ui: ReactElement) {
-  const { wrapper } = makeTestProvider([providers.advancedSettings]);
-
-  return renderBase(ui, { wrapper });
+  return renderBase(ui);
 }

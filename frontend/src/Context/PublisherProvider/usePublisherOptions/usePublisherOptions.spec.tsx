@@ -1,9 +1,11 @@
-import { describe, expect, it, vi, beforeEach, afterAll } from 'vitest';
+import { describe, expect, it, vi, beforeEach, afterEach, afterAll } from 'vitest';
 import { renderHook as renderHookBase, waitFor } from '@testing-library/react';
 import OT from '@vonage/client-sdk-video';
 import localStorageMock from '@utils/mockData/localStorageMock';
 import mediaDevices$ from '@core/stores/devices';
 import { makeTestProvider, providers, ProviderOptions } from '@test/providers';
+import type { advancedSettings } from '@Context/AdvancedSettings';
+import advancedSettings$ from '@Context/AdvancedSettings';
 import makeMediaDeviceInfos from '@web-test/fixtures/makeMediaDeviceInfos';
 import { setupWindowNavigatorMock } from '@web-test/fixtures';
 import usePublisherOptions from './usePublisherOptions';
@@ -45,6 +47,7 @@ describe('usePublisherOptions', () => {
 
   afterEach(() => {
     vi.restoreAllMocks();
+    advancedSettings$.reset();
   });
 
   afterAll(() => {
@@ -185,7 +188,7 @@ describe('usePublisherOptions', () => {
     it('should configure resolution from advanced settings context', async () => {
       const { result } = renderHook(
         () => usePublisherOptions({ isAudioEnabled: true, isVideoEnabled: true }),
-        { advancedSettingsContext: { dialogState: { resolution: '1280x720' } } }
+        { dialogState: { resolution: '1280x720' } }
       );
 
       await waitFor(() => {
@@ -229,15 +232,18 @@ describe('usePublisherOptions', () => {
 
 type RenderOptions = {
   userContext?: ProviderOptions['UserContext'];
-  advancedSettingsContext?: ProviderOptions['AdvancedSettingsContext'];
+  dialogState?: Partial<advancedSettings>;
 };
 
 function renderHook<Result, Props>(
   render: (initialProps: Props) => Result,
-  { userContext, advancedSettingsContext }: RenderOptions = {}
+  { userContext, dialogState }: RenderOptions = {}
 ) {
-  const { wrapper, ...context } = makeTestProvider([providers.advancedSettings, providers.user], {
-    advancedSettingsContext,
+  if (dialogState) {
+    advancedSettings$.setState((state) => ({ ...state, ...dialogState }));
+  }
+
+  const { wrapper, ...context } = makeTestProvider([providers.user], {
     userContext: {
       value: {
         ...userContext?.value,

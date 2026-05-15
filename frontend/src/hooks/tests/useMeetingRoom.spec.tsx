@@ -174,13 +174,7 @@ function renderHook<Result>(
   { userContext, sessionContext, publisherContext }: RenderOptions = {}
 ) {
   const { wrapper: ProvidersWrapper, ...context } = makeTestProvider(
-    [
-      providers.advancedSettings,
-      providers.user,
-      providers.session,
-      providers.publisher,
-      providers.runtime,
-    ],
+    [providers.user, providers.session, providers.publisher, providers.runtime],
     {
       userContext: {
         value: { defaultSettings: { name: 'Test User' } },
