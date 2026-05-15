@@ -151,8 +151,12 @@ const useRaiseHand = ({
 
   const lowerAllHands = useCallback(() => {
     const send = signalRef.current;
-    if (!send) return;
     const localConnectionId = getConnectionId();
+    // Guard symmetric with raiseHand(): without a local connection ID we
+    // can't attribute `loweredBy`, and an unattributed broadcast would
+    // serialize `loweredBy` as missing on the wire — moderator-action
+    // attribution gets lost while the action still fires for receivers.
+    if (!localConnectionId || !send) return;
 
     // Single broadcast — every peer (including ourselves) processes it once
     // and clears their own queue. Avoids the N-signals-in-a-tight-loop
