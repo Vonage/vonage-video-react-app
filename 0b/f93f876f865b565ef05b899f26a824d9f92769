@@ -1,0 +1,150 @@
+frontend/src/components/GoodBye/ReenterRoomButton/ReenterRoomButton.tsx
+  ai_agent 25-31
+frontend/src/Context/PublisherProvider/usePublisherOptions/usePublisherOptions.tsx
+  ai_agent 39,44
+frontend/src/components/MeetingRoom/DeviceControlButton/DeviceControlButton.tsx
+  ai_agent 68-72,81,90,96-98,106,115,164,167-171
+frontend/src/components/MeetingRoom/ArchivingButton/ArchivingButton.tsx
+  ai_agent 110-112,115,118
+frontend/src/components/MeetingRoom/ReduceNoiseTestSpeakers/ReduceNoiseTestSpeakers.tsx
+  ai_agent 31,70-74,104-108
+frontend/src/components/MeetingRoom/RightPanel/RightPanelTitle.tsx
+  ai_agent 42
+frontend/src/components/MeetingRoom/ParticipantListItemMenu/ParticipantListItemMenu.tsx
+  ai_agent 44
+frontend/src/components/MeetingRoom/ReportIssue/FeedbackForm/FilePicker/FilePicker.tsx
+  ai_agent 170
+frontend/src/components/MeetingRoom/VideoDevices/VideoDevices.tsx
+  s_f78c8911823a8a::t_fe76dd1e542e77 79-83
+frontend/src/components/MeetingRoom/AudioIndicator/AudioIndicator.tsx
+  ai_agent 66,95,101-103
+frontend/src/components/Footer/Footer.tsx
+  ai_agent 1,12,14,16,18,20-21
+frontend/src/components/LanguageSelector/LanguageSelector.tsx
+  ai_agent 22-33,37-38
+frontend/src/components/MeetingRoom/CaptionsButton/CaptionsButton.tsx
+  ai_agent 112,118
+frontend/src/components/MeetingRoom/ZoomIndicator/ZoomIndicator.tsx
+  ai_agent 90-94,96-100,120-124,153-157
+frontend/src/components/NewRoomButton/NewRoomButton.tsx
+  ai_agent 25-27
+frontend/src/components/WaitingRoom/MenuMoreOptions/MenuMoreOptions.tsx
+  ai_agent 38
+frontend/src/Context/BackgroundPublisherProvider/useBackgroundPublisher/useBackgroundPublisher.tsx
+  ai_agent 201
+frontend/src/components/MeetingRoom/InputAudioDevices/InputAudioDevices.tsx
+  ai_agent 53-57,87-91
+frontend/src/components/Publisher/Publisher.tsx
+  ai_agent 95
+frontend/src/components/MeetingRoom/CaptionsError/CaptionsError.tsx
+  ai_agent 36
+frontend/src/components/MeetingRoom/ToolbarOverflowButton/ToolbarOverflowButton.tsx
+  ai_agent 71-75
+frontend/src/components/MeetingRoom/Emoji/Emoji.tsx
+  ai_agent 47
+frontend/src/components/MeetingRoom/LayoutButton/LayoutButton.tsx
+  ai_agent 65-69,76-80
+frontend/src/components/WaitingRoom/BackgroundEffects/BackgroundEffectsButton/BackgroundEffectsButton.tsx
+  ai_agent 26-27
+frontend/src/components/MeetingRoom/ParticipantListButton/ParticipantsListButton.spec.tsx
+  ai_agent 13
+frontend/src/components/MeetingRoom/EmojiGrid/EmojiGrid.tsx
+  ai_agent 90
+frontend/src/components/MeetingRoom/EmojiGridButton/EmojiGridButton.tsx
+  ai_agent 49-51
+frontend/src/components/HiddenParticipantsTile/HiddenParticipantsTile.tsx
+  ai_agent 38
+frontend/src/components/UnsupportedBrowser/SupportedBrowserListItem/SupportedBrowserListItem.tsx
+  ai_agent 36-40
+yarn.lock
+  ai_agent 5102-5105
+frontend/src/components/GoodBye/ArchiveList/ArchiveList.tsx
+  ai_agent 31,59,95,106-110,138
+frontend/src/components/WaitingRoom/ControlPanel/ControlPanel.tsx
+  ai_agent 104,131,155,181
+frontend/src/utils/backgroundFilter/applyBackgroundFilter/applyBackgroundFilter.ts
+  ai_agent 35
+frontend/src/components/MeetingRoom/ParticipantListItem/ParticipantListItem.tsx
+  ai_agent 61,79
+frontend/src/components/MeetingRoom/ChatButton/ChatButton.tsx
+  ai_agent 48-50
+frontend/src/components/DeviceAccessAlert/DeviceAccessAlert.tsx
+  ai_agent 51
+frontend/src/components/WaitingRoom/PrecallNetworkTestDialog/PrecallNetworkTestQualityRow/PrecallNetworkTestQualityRow.tsx
+  ai_agent 51-55,57-61
+frontend/src/components/WaitingRoom/CameraButton/CameraButton.tsx
+  ai_agent 70-74,76-80
+frontend/src/components/ScreenSharingButton/ScreenSharingButton.tsx
+  ai_agent 73,80,89
+frontend/src/components/WaitingRoom/PrecallNetworkTestDialog/PrecallNetworkTestDialog.tsx
+  ai_agent 252
+package.json
+  ai_agent 169
+frontend/src/components/WaitingRoom/MicButton/MicButton.tsx
+  ai_agent 67,73
+frontend/src/components/Banner/Banner.tsx
+  ai_agent 1,20,22,24,26-27,29
+frontend/src/components/MeetingRoom/ExitButton/ExitButton.tsx
+  ai_agent 44
+frontend/src/components/MeetingRoom/ChatInput/ChatInput.tsx
+  ai_agent 81
+frontend/src/components/MutedAlert/MutedAlert.tsx
+  ai_agent 34,47
+frontend/src/components/MeetingRoom/PopupAlert/PopupAlert.tsx
+  ai_agent 76
+frontend/src/components/MeetingRoom/PinButton/PinButton.tsx
+  ai_agent 43,113,115
+frontend/src/components/MeetingRoom/OutputAudioDevices/OutputAudioDevices.tsx
+  ai_agent 65-69,105-109
+frontend/src/components/Subscriber/Subscriber.tsx
+  ai_agent 145
+frontend/src/components/MeetingRoom/ReportIssueButton/ReportIssueButton.tsx
+  ai_agent 47
+libs/ui/src/PageLayout/PageLayout.tsx
+  ai_agent 3,7,16,25,28,30,32,36,38,40,43
+frontend/src/components/MeetingRoom/DeviceSettingsMenu/DeviceSettingsMenu.tsx
+  ai_agent 55-56
+frontend/src/Context/PreviewPublisherProvider/usePreviewPublisher/usePreviewPublisher.tsx
+  ai_agent 232
+frontend/src/components/MeetingRoom/ParticipantListButton/ParticipantListButton.tsx
+  ai_agent 62-64
+frontend/src/components/AvatarInitials/AvatarInitials.tsx
+  ai_agent 40
+libs/ui/src/theme/helpers/getMuiCustomTheme.ts
+  ai_agent 104-110,167-168
+frontend/src/components/MeetingRoom/ParticipantList/ParticipantList.tsx
+  ai_agent 117,124-128,130-134
+frontend/src/components/GHRepoButton/GHRepoButton.tsx
+  ai_agent 21-25
+frontend/src/components/MeetingRoom/ToolbarButton/ToolbarButton.tsx
+  ai_agent 4,30-32
+frontend/src/components/MeetingRoom/ScreenshareVideoTile/ScreenshareVideoTile.tsx
+  ai_agent 48
+frontend/src/css/index.css
+  ai_agent 25-40
+frontend/src/components/BackgroundEffects/BackgroundGallery/BackgroundGallery.tsx
+  ai_agent 87-93
+frontend/src/components/MeetingRoom/ParticipantListItemMenu/ParticipantPinMenuItem.tsx
+  ai_agent 59-63,65-69,72
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.4.8",
+  "base_commit_sha": "0bf93f876f865b565ef05b899f26a824d9f92769",
+  "prompts": {},
+  "humans": {
+    "h_c939f8fae0de97": {
+      "author": "Hossein Movahed <hr.movahed6@gmail.com>"
+    }
+  },
+  "sessions": {
+    "s_f78c8911823a8a": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "3c957e82-f0c3-4f7b-9360-e22abe2c32db",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "Hossein Movahed <hr.movahed6@gmail.com>"
+    }
+  }
+}
