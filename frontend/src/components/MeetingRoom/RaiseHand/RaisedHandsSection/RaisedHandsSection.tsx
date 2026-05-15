@@ -1,4 +1,4 @@
-import { ReactElement, useState } from 'react';
+import { MouseEvent, ReactElement, useCallback, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import useSessionContext from '@hooks/useSessionContext';
 import { useRaisedHands } from '@core/stores';
@@ -28,6 +28,17 @@ const RaisedHandsSection = (): ReactElement => {
     setIsLowerAllDialogOpen(false);
   };
   const handleLowerAllCancel = () => setIsLowerAllDialogOpen(false);
+
+  // Single stable handler shared by every row — reads the target connection
+  // ID from the button's data attribute. Avoids creating a new arrow per row
+  // on every render (`onClick={() => lowerHand(state.connectionId)}`).
+  const handleLowerParticipantClick = useCallback(
+    (event: MouseEvent<HTMLButtonElement>) => {
+      const connectionId = event.currentTarget.dataset.connectionId;
+      if (connectionId) lowerHand(connectionId);
+    },
+    [lowerHand]
+  );
 
   return (
     <>
@@ -60,31 +71,35 @@ const RaisedHandsSection = (): ReactElement => {
       </div>
 
       <ul className="m-0 list-none px-2 py-0">
-        {raisedHands.map((state) => (
-          <li
-            key={state.connectionId}
-            data-testid={`raised-hand-item-${state.connectionId}`}
-            className={`flex items-center py-1 pl-4 ${IS_MODERATOR ? 'pr-12' : 'pr-2'}`}
-          >
-            <span className="flex-1 truncate text-vera-body-base">{state.participantName}</span>
-            {IS_MODERATOR && (
-              <button
-                type="button"
-                aria-label={t('raiseHand.section.lowerParticipant', {
-                  name: state.participantName,
-                })}
-                data-testid={`lower-hand-${state.connectionId}`}
-                onClick={() => lowerHand(state.connectionId)}
-                className="cursor-pointer border-none bg-transparent p-1 text-vera-body-extended text-vera-text-tertiary hover:opacity-80"
-                title={t('raiseHand.section.lowerParticipant', { name: state.participantName })}
-              >
-                <span role="img" aria-hidden="true">
-                  {RAISED_HAND_EMOJI}
-                </span>
-              </button>
-            )}
-          </li>
-        ))}
+        {raisedHands.map((state) => {
+          const lowerLabel = t('raiseHand.section.lowerParticipant', {
+            name: state.participantName,
+          });
+          return (
+            <li
+              key={state.connectionId}
+              data-testid={`raised-hand-item-${state.connectionId}`}
+              className={`flex items-center py-1 pl-4 ${IS_MODERATOR ? 'pr-12' : 'pr-2'}`}
+            >
+              <span className="flex-1 truncate text-vera-body-base">{state.participantName}</span>
+              {IS_MODERATOR && (
+                <button
+                  type="button"
+                  aria-label={lowerLabel}
+                  title={lowerLabel}
+                  data-testid={`lower-hand-${state.connectionId}`}
+                  data-connection-id={state.connectionId}
+                  onClick={handleLowerParticipantClick}
+                  className="cursor-pointer border-none bg-transparent p-1 text-vera-body-extended text-vera-text-tertiary hover:opacity-80"
+                >
+                  <span role="img" aria-hidden="true">
+                    {RAISED_HAND_EMOJI}
+                  </span>
+                </button>
+              )}
+            </li>
+          );
+        })}
       </ul>
 
       <hr className="mx-4 mt-2 border-vera-border" />
