@@ -35,7 +35,7 @@ const HiddenParticipantsTile = ({
     <ButtonBase
       id="hidden-participants"
       data-testid="hidden-participants"
-      className={classNames('bg-vera-dark-grey', {
+      className={classNames('bg-vera-dark-grey!', {
         'hover:bg-vera-dark-grey-hover': env.SHOW_PARTICIPANT_LIST,
       })}
       sx={{

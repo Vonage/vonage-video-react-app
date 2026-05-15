@@ -34,4 +34,8 @@
   .vera-dark-mode input:-webkit-autofill {
     box-shadow: rgb(38, 103, 152) 0px 0px 0px 100px inset !important;
   }
+
+  .Mui-selected {
+    background-color: rgba(153, 65, 255, 0.08) !important;
+  }
 }
