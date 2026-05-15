@@ -1,6 +1,5 @@
 import { ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
-import classNames from 'classnames';
 import useSessionContext from '../../../hooks/useSessionContext';
 import ToolbarButton from '../ToolbarButton';
 import Tooltip from '@mui/material/Tooltip';
@@ -63,20 +62,22 @@ const LayoutButton = ({
               name="layout-2-solid"
               customSize={-5}
               data-testid="ViewSidebarIcon"
-              className={classNames({
-                'text-vera-disabled': isDisabled,
-                'text-vera-on-secondary': !isDisabled,
-              })}
+              style={{
+                color: isDisabled
+                  ? 'var(--vera-secondary-light)'
+                  : 'var(--vera-on-secondary-light)',
+              }}
             />
           ) : (
             <VividIcon
               name="apps-solid"
               customSize={-5}
               data-testid="ViewSidebarIcon"
-              className={classNames({
-                'text-vera-disabled': isDisabled,
-                'text-vera-on-secondary': !isDisabled,
-              })}
+              style={{
+                color: isDisabled
+                  ? 'var(--vera-secondary-light)'
+                  : 'var(--vera-on-secondary-light)',
+              }}
             />
           )
         }

@@ -229,7 +229,7 @@ const usePreviewPublisher = (
     }
 
     let videoFilter: VideoFilter | undefined;
-    if (initialBackgroundRef.current && hasMediaProcessorSupport()) {
+    if (initialBackgroundRef.current && hasMediaProcessorSupport('both')) {
       videoFilter = initialBackgroundRef.current;
     }
 

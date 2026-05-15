@@ -1,5 +1,4 @@
-import { ReactElement } from 'react';
-import Box from '@mui/material/Box';
+import type { ReactElement } from 'react';
 import Header from '@ui/Header';
 import BannerLogo from '../BannerLogo';
 import BannerLanguage from '../BannerLanguage';
@@ -18,37 +17,16 @@ const Banner = (): ReactElement => {
         className: 'banner-header',
       }}
     >
-      <Box
-        className="bg-vera-surface"
-        sx={{
-          flex: 1,
-          p: { xs: 3, sm: 5 },
-        }}
-      >
+      <div className="bg-vera-surface flex-1 max-sm:p-6 p-10">
         <BannerLogo />
-      </Box>
+      </div>
 
-      <Box
-        className="bg-vera-surface vera-desktop:bg-vera-background"
-        sx={{
-          flex: 1,
-          p: { xs: 3, sm: 5 },
-          display: 'flex',
-          justifyContent: 'flex-end',
-          alignItems: 'center',
-          height: '100%',
-        }}
-      >
+      <div className="bg-vera-surface vera-desktop:bg-vera-background! flex-1 max-sm:p-6 p-10 flex justify-end items-center h-full">
         <BannerLanguage
-          sx={{
-            mr: {
-              // necessary to align the down arrow of the selector with the layout padding
-              xs: '-8px',
-              sm: 'unset',
-            },
-          }}
+          // necessary to align the down arrow of the selector with the layout padding on mobile
+          className="max-sm:-mr-2"
         />
-      </Box>
+      </div>
     </Header>
   );
 };

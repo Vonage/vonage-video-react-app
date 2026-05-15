@@ -37,6 +37,7 @@ const AvatarInitials = ({
   return (
     <Avatar
       data-testid={dataTestId}
+      className="border-none!"
       sx={{
         bgcolor: getParticipantColor(username),
         width: `${diameter}px`,

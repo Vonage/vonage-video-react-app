@@ -114,16 +114,24 @@ const ParticipantList = ({ handleClose, isOpen }: ParticipantListProps): ReactEl
           </div>
           <IconButton
             size="large"
-            className="text-vera-tertiary"
+            className="text-vera-tertiary!"
             sx={{ mr: 0.75 }}
             onClick={copyUrl}
             disabled={isCopied}
           >
             <Tooltip arrow title={isCopied ? t('chat.copied') : t('chat.copy')}>
               {isCopied ? (
-                <VividIcon name="check-sent-line" customSize={-4} className="text-vera-success" />
+                <VividIcon
+                  name="check-sent-line"
+                  customSize={-4}
+                  style={{ color: 'var(--vera-success)' }}
+                />
               ) : (
-                <VividIcon name="copy-line" customSize={-4} />
+                <VividIcon
+                  name="copy-line"
+                  customSize={-4}
+                  style={{ color: 'var(--vera-text-secondary)' }}
+                />
               )}
             </Tooltip>
           </IconButton>

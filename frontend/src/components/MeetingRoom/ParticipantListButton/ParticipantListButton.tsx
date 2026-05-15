@@ -1,6 +1,5 @@
 import { ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
-import classNames from 'classnames';
 import ToolbarButton from '../ToolbarButton';
 import Badge from '@mui/material/Badge';
 import Tooltip from '@mui/material/Tooltip';
@@ -60,10 +59,9 @@ const ParticipantListButton = ({
                 name="group-solid"
                 customSize={-4}
                 data-testid="PeopleIcon"
-                className={classNames({
-                  'text-vera-secondary': isOpen,
-                  'text-vera-on-secondary': !isOpen,
-                })}
+                style={{
+                  color: isOpen ? 'var(--vera-secondary)' : 'var(--vera-on-secondary-light)',
+                }}
               />
             }
             isOverflowButton={isOverflowButton}

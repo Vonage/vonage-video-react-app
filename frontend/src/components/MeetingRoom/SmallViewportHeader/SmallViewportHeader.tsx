@@ -101,7 +101,7 @@ const SmallViewportHeader = (): ReactElement => {
                 <VividIcon
                   name="camera-switch-line"
                   customSize={-4}
-                  className="text-vera-on-dark-grey"
+                  style={{ color: 'var(--vera-on-dark-grey)' }}
                 />
               </IconButton>
             </Tooltip>
@@ -118,13 +118,13 @@ const SmallViewportHeader = (): ReactElement => {
                     <VividIcon
                       customSize={-4}
                       name="check-sent-line"
-                      className="text-vera-success"
+                      style={{ color: 'var(--vera-success)' }}
                     />
                   ) : (
                     <VividIcon
                       customSize={-4}
                       name="copy-line"
-                      className="text-vera-on-dark-grey"
+                      style={{ color: 'var(--vera-on-dark-grey)' }}
                     />
                   )}
                 </IconButton>

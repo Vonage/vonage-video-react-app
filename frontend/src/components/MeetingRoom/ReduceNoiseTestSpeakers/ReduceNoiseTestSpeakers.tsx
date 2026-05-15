@@ -28,7 +28,7 @@ const ReduceNoiseTestSpeakers = (): ReactElement | false => {
   const { publisher, isPublishing } = usePublisherContext();
 
   const [isToggled, setIsToggled] = useState(false);
-  const shouldDisplayANS = hasMediaProcessorSupport() && env.ALLOW_ADVANCED_NOISE_SUPPRESSION;
+  const shouldDisplayANS = hasMediaProcessorSupport('both') && env.ALLOW_ADVANCED_NOISE_SUPPRESSION;
   const hasSpeakerDevices = mediaDevices$.useMediaDevices(
     'audiooutput',
     (devices) => Object.values(devices).length > 0
@@ -67,7 +67,11 @@ const ReduceNoiseTestSpeakers = (): ReactElement | false => {
         {shouldDisplayANS && (
           <MenuItem onClick={handleToggle} className="hover:bg-vera-background">
             <Box sx={{ mr: 2 }}>
-              <VividIcon customSize={-6} name="headset-solid" className="text-vera-secondary" />
+              <VividIcon
+                customSize={-6}
+                name="headset-solid"
+                style={{ color: 'var(--vera-secondary)' }}
+              />
             </Box>
             <p className="text-vera-body-extended mr-4 truncate">
               {t('devices.audio.noiseSuppression')}
@@ -97,7 +101,11 @@ const ReduceNoiseTestSpeakers = (): ReactElement | false => {
         {hasSpeakerDevices && (
           <SoundTest labelClassName="text-vera-body-extended">
             <Box sx={{ mr: 1.5 }}>
-              <VividIcon customSize={-5} name="audio-mid-solid" className="text-vera-secondary" />
+              <VividIcon
+                customSize={-5}
+                name="audio-mid-solid"
+                style={{ color: 'var(--vera-secondary)' }}
+              />
             </Box>
           </SoundTest>
         )}

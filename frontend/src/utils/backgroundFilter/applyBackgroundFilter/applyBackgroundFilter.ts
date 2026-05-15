@@ -32,7 +32,7 @@ const applyBackgroundFilter = async ({
   if (!publisher) {
     return;
   }
-  if (!hasMediaProcessorSupport()) {
+  if (!hasMediaProcessorSupport('both')) {
     console.error('Media Processor is not supported in this environment.');
     return;
   }
