@@ -65,7 +65,11 @@ const DeviceControlButton = ({
     if (isAudio) {
       if (!env.ALLOW_MICROPHONE_CONTROL) {
         return (
-          <VividIcon name="microphone-2-solid" customSize={-5} className="text-vera-disabled" />
+          <VividIcon
+            name="microphone-2-solid"
+            customSize={-5}
+            style={{ color: 'var(--vera-disabled)' }}
+          />
         );
       }
       if (isAudioEnabled) {
@@ -74,7 +78,7 @@ const DeviceControlButton = ({
             name="microphone-2-solid"
             customSize={-5}
             data-testid="MicNoneIcon"
-            className="text-vera-on-dark-grey"
+            style={{ color: 'var(--vera-on-secondary-light)' }}
           />
         );
       }
@@ -83,14 +87,15 @@ const DeviceControlButton = ({
           name="mic-mute-solid"
           customSize={-5}
           data-testid="MicOffToolbar"
-          className="text-vera-error"
-          sx={{ transform: 'scaleX(-1)' }}
+          style={{ color: 'var(--vera-error)', transform: 'scaleX(-1)' }}
         />
       );
     }
 
     if (!env.ALLOW_CAMERA_CONTROL) {
-      return <VividIcon name="video-solid" customSize={-5} className="text-vera-disabled" />;
+      return (
+        <VividIcon name="video-solid" customSize={-5} style={{ color: 'var(--vera-disabled)' }} />
+      );
     }
     if (isVideoEnabled) {
       return (
@@ -98,7 +103,7 @@ const DeviceControlButton = ({
           name="video-solid"
           customSize={-5}
           data-testid="VideocamIcon"
-          className="text-vera-on-dark-grey"
+          style={{ color: 'var(--vera-on-secondary-light)' }}
         />
       );
     }
@@ -107,7 +112,7 @@ const DeviceControlButton = ({
         name="video-off-solid"
         customSize={-5}
         data-testid="VideocamOffIcon"
-        className="text-vera-error"
+        style={{ color: 'var(--vera-error)' }}
       />
     );
   };
@@ -156,10 +161,14 @@ const DeviceControlButton = ({
             <VividIcon
               name="chevron-down-line"
               customSize={-6}
-              className="text-vera-on-dark-grey"
+              style={{ color: 'var(--vera-on-secondary-light)' }}
             />
           ) : (
-            <VividIcon name="chevron-up-line" customSize={-6} className="text-vera-on-dark-grey" />
+            <VividIcon
+              name="chevron-up-line"
+              customSize={-6}
+              style={{ color: 'var(--vera-on-secondary-light)' }}
+            />
           )}
         </IconButton>
         <Tooltip title={tooltipTitle} aria-label={t('devices.settings.ariaLabel')}>

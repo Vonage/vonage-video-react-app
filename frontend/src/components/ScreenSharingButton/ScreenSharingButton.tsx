@@ -70,14 +70,14 @@ const ScreenSharingButton = ({
                 <VividIcon
                   name="screen-share-solid"
                   customSize={-5}
-                  className="text-vera-on-secondary"
+                  style={{ color: 'var(--vera-on-secondary-light)' }}
                   data-testid="ScreenShareIcon"
                 />
               ) : (
                 <VividIcon
                   name="screen-share-off-solid"
                   customSize={-5}
-                  className="text-vera-on-secondary"
+                  style={{ color: 'var(--vera-on-secondary-light)' }}
                   data-testid="ScreenShareIcon"
                 />
               )
@@ -86,7 +86,7 @@ const ScreenSharingButton = ({
               marginTop: isOverflowButton ? '0px' : '4px',
               marginLeft: isOverflowButton ? '12px' : '0px',
               backgroundColor: isSharingScreen
-                ? 'color-mix(in srgb, var(--vera-on-secondary) 33%, transparent) !important'
+                ? 'color-mix(in srgb, var(--vera-on-secondary-light) 33%, transparent) !important'
                 : undefined,
             }}
             isOverflowButton={isOverflowButton}

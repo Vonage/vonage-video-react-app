@@ -107,13 +107,15 @@ const ArchivingButton = ({
               <VividIcon
                 name={isRecording ? 'radio-checked-2-line' : 'radio-checked-2-solid'}
                 customSize={-5}
-                className="text-vera-on-secondary"
+                style={{
+                  color: 'var(--vera-on-secondary-light)',
+                }}
               />
             }
-            sx={{
+            style={{
               marginTop: isOverflowButton ? '0px' : '4px',
               backgroundColor: isRecording
-                ? 'color-mix(in srgb, var(--vera-on-secondary) 33%, transparent)'
+                ? 'color-mix(in srgb, var(--vera-on-secondary-light) 33%, transparent) !important'
                 : undefined,
             }}
             isOverflowButton={isOverflowButton}

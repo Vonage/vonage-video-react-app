@@ -1,6 +1,7 @@
 import { ForwardedRef, forwardRef, ReactElement } from 'react';
 import classNames from 'classnames';
 import { IconButton, IconButtonProps } from '@mui/material';
+import { twMerge } from 'tailwind-merge';
 
 export type ToolbarButtonProps = IconButtonProps & {
   icon: ReactElement;
@@ -26,7 +27,9 @@ const ToolbarButton = forwardRef(function ToolbarButton(
 
   return (
     <IconButton
-      className={classNames('bg-vera-dark-grey! hover:bg-vera-dark-grey-opacity', className)}
+      className={twMerge(
+        classNames('bg-vera-dark-grey! hover:bg-vera-dark-grey-opacity', className)
+      )}
       {...rest}
       edge="start"
       size="small"

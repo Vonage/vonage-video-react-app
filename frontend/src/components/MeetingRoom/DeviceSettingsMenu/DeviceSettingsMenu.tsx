@@ -52,7 +52,8 @@ const DeviceSettingsMenu = ({
   setIsOpen,
 }: DeviceSettingsMenuProps): ReactElement | false => {
   const isAudio = deviceType === 'audio';
-  const shouldDisplayBackgroundEffects = hasMediaProcessorSupport() && env.ALLOW_BACKGROUND_EFFECTS;
+  const shouldDisplayBackgroundEffects =
+    hasMediaProcessorSupport('both') && env.ALLOW_BACKGROUND_EFFECTS;
 
   const handleToggleBackgroundEffects = () => {
     toggleBackgroundEffects();

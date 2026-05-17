@@ -2,7 +2,6 @@ import Tooltip from '@mui/material/Tooltip';
 import Badge from '@mui/material/Badge';
 import { Dispatch, ReactElement, SetStateAction, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
-import classNames from 'classnames';
 import ToolbarButton from '../ToolbarButton';
 import EmojiGrid from '../EmojiGrid/EmojiGrid';
 import VividIcon from '@components/VividIcon';
@@ -65,10 +64,9 @@ const EmojiGridButton = ({
                 <VividIcon
                   name="emoji-solid"
                   customSize={-5}
-                  className={classNames({
-                    'text-vera-secondary': isEmojiGridOpen,
-                    'text-vera-on-secondary': !isEmojiGridOpen,
-                  })}
+                  style={{
+                    color: `${isEmojiGridOpen ? 'var(--vera-secondary-light)' : 'var(--vera-on-secondary-light)'} !important`,
+                  }}
                 />
               }
               ref={anchorRef}

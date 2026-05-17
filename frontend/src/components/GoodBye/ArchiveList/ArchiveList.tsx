@@ -28,7 +28,7 @@ const ArchiveErrorIcon = () => {
         name="warning-line"
         customSize={-6}
         data-testid="archive-error-icon"
-        className="text-vera-warning"
+        style={{ color: 'var(--vera-warning)' }}
       />
     </Tooltip>
   );
@@ -56,7 +56,7 @@ const ArchiveStatusContent = ({ status, url }: { status: ArchiveStatus; url: str
               name="download-line"
               customSize={-6}
               data-testid="archive-download-button"
-              className="text-vera-text-primary"
+              style={{ color: 'var(--vera-text-primary)' }}
             />
           </IconButton>
           <Typography variant="caption" className="text-vera-text-primary">
@@ -92,7 +92,7 @@ const ArchiveList = ({ archives }: ArchiveListProps): ReactElement => {
   if (archives === 'error') {
     return (
       <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-        <VividIcon name="warning-line" customSize={-4} className="text-vera-warning" />
+        <VividIcon name="warning-line" customSize={-4} style={{ color: 'var(--vera-warning)' }} />
         <Typography variant="h6" className="text-vera-text-tertiary">
           {t('archiveList.error.text')}
         </Typography>
@@ -103,7 +103,11 @@ const ArchiveList = ({ archives }: ArchiveListProps): ReactElement => {
     return (
       <>
         <div className="mb-4 flex items-center gap-3" data-testid="archive-list-empty">
-          <VividIcon name="video-active-line" customSize={-4} className="text-vera-secondary" />
+          <VividIcon
+            name="video-active-line"
+            customSize={-4}
+            style={{ color: 'var(--vera-secondary)' }}
+          />
           <Typography variant="body1" className="text-vera-text-secondary">
             {t('archiveList.empty')}
           </Typography>
@@ -131,7 +135,7 @@ const ArchiveList = ({ archives }: ArchiveListProps): ReactElement => {
                 <VividIcon
                   name="video-active-line"
                   customSize={-4}
-                  className="text-vera-secondary"
+                  style={{ color: 'var(--vera-secondary)' }}
                 />
               </ListItemIcon>
 

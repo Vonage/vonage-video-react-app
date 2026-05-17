@@ -54,7 +54,11 @@ const VideoDevices = ({
           }}
           {...boxProps}
         >
-          <VividIcon name="video-line" customSize={-5} />
+          <VividIcon
+            name="video-line"
+            customSize={-5}
+            style={{ color: 'var(--vera-text-secondary)' }}
+          />
           <p className="text-vera-body-extended ml-4">{t('devices.video.camera.full')}</p>
         </Box>
         <MenuList id="split-button-menu">
@@ -84,10 +88,11 @@ const VideoDevices = ({
                       <VividIcon
                         name="check-line"
                         customSize={-6}
-                        className={classNames({
-                          'text-vera-text-primary': isSelected,
-                          'text-vera-text-secondary': !isSelected,
-                        })}
+                        style={{
+                          color: `${
+                            isSelected ? 'var(--vera-text-primary)' : 'var(--vera-text-secondary)'
+                          } !important`,
+                        }}
                       />
                     </Box>
                   ) : (

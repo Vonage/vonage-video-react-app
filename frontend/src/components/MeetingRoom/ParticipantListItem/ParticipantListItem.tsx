@@ -58,7 +58,7 @@ const ParticipantListItem = ({
             hasAudio={hasAudio}
             stream={stream}
             participantName={name}
-            indicatorColor="currentColor"
+            indicatorColor="var(--vera-secondary)"
             indicatorStyle={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}
           />
           {subscriberWrapper && (
@@ -76,7 +76,7 @@ const ParticipantListItem = ({
           <VividIcon
             customSize={-6}
             name="pin-2-solid"
-            sx={{
+            style={{
               position: 'fixed',
             }}
           />

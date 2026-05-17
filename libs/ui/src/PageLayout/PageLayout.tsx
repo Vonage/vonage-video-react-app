@@ -1,12 +1,10 @@
 import React from 'react';
-import Box from '@mui/material/Box';
-import Stack from '@mui/material/Stack';
-import type { BoxProps } from '@mui/material/Box';
 import { isFunction } from '@common/assertions';
+import { twMerge } from 'tailwind-merge';
 
 type WithChildren = { children: React.ReactNode };
 
-export type PageLayoutProps = BoxProps;
+export type PageLayoutProps = React.ComponentProps<'section'>;
 
 export enum PageLayoutRegions {
   Banner = 'Banner',
@@ -15,7 +13,7 @@ export enum PageLayoutRegions {
   Footer = 'Footer',
 }
 
-const PageLayout = ({ children, sx, ...props }: PageLayoutProps): React.ReactNode => {
+const PageLayout = ({ children, className, ...props }: PageLayoutProps): React.ReactNode => {
   const childrenArray = React.Children.toArray(children);
 
   const banner = pickChild(childrenArray, PageLayoutRegions.Banner);
@@ -24,63 +22,25 @@ const PageLayout = ({ children, sx, ...props }: PageLayoutProps): React.ReactNod
   const footer = pickChild(childrenArray, PageLayoutRegions.Footer);
 
   return (
-    <Box
-      component="section"
-      sx={{
-        display: 'flex',
-        flexDirection: 'column',
-        minHeight: '100vh',
-        gap: { xs: 4, sm: 'unset' },
-        ...sx,
-      }}
-      {...props}
-    >
+    <section className={twMerge('flex flex-col min-h-screen max-sm:gap-8', className)} {...props}>
       {banner}
 
-      <Stack
-        direction={{ xs: 'column', md: 'row' }}
-        sx={{
-          gap: { xs: 2, md: 0 },
-          flex: 2,
-          width: '100%',
-          mt: 2,
-        }}
-      >
+      <div className="flex flex-col vera-desktop:flex-row gap-4 vera-desktop:gap-0 flex-2 w-full mt-4">
         {left && (
-          <Box
-            className="bg-vera-surface"
-            sx={{
-              flex: { xs: 0, md: 1 },
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              overflow: 'hidden',
-              px: { xs: 0, sm: 5 },
-            }}
-          >
+          <div className="bg-vera-surface flex-none vera-desktop:flex-1 flex items-center justify-center overflow-hidden max-sm:px-0 px-10">
             {left}
-          </Box>
+          </div>
         )}
 
         {right && (
-          <Box
-            className="bg-vera-surface vera-desktop:bg-vera-background"
-            sx={{
-              flex: { xs: 0, md: 1 },
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              py: 1,
-              px: { xs: 3, sm: 5 },
-            }}
-          >
+          <div className="bg-vera-surface vera-desktop:bg-vera-background flex-none vera-desktop:flex-1 flex items-center justify-center py-2 px-6 vera-desktop:px-10">
             {right}
-          </Box>
+          </div>
         )}
-      </Stack>
+      </div>
 
       {footer}
-    </Box>
+    </section>
   );
 };
 

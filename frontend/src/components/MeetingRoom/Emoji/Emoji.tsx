@@ -44,7 +44,7 @@ const Emoji = ({ emojiWrapper }: EmojiProps): ReactElement => {
       <Chip
         label={name}
         size="small"
-        className="text-vera-on-dark-grey bg-vera-dark-grey overflow-hidden text-ellipsis whitespace-nowrap"
+        className="text-vera-on-dark-grey! bg-vera-dark-grey overflow-hidden text-ellipsis whitespace-nowrap"
         sx={{
           mt: isSmallViewport ? 0.5 : 2,
           fontSize: 'var(--vera-typography-body-base-font-size)',
