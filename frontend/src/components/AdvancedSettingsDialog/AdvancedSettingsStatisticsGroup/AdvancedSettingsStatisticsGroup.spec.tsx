@@ -13,7 +13,7 @@ describe('AdvancedSettingsStatisticsGroup', () => {
       />
     );
 
-    expect(screen.getByRole('button', { name: /publisher/i })).toBeInTheDocument();
+    expect(screen.getAllByText(/publisher/i).length).toBeGreaterThan(0);
     expect(screen.queryByRole('heading', { name: /audio/i })).not.toBeInTheDocument();
     expect(screen.getByRole('heading', { name: /video/i })).toBeInTheDocument();
     expect(screen.getByText(/bytes received/i)).toBeInTheDocument();

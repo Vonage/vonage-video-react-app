@@ -11,10 +11,11 @@ describe('CollapsibleSection', () => {
       </CollapsibleSection>
     );
 
-    const toggleButton = screen.getByRole('button', { name: /publisher statistics/i });
+    const details = screen.getByText(/publisher statistics/i).closest('details');
+
     const content = screen.getByText(/packets sent/i);
 
-    expect(toggleButton).toHaveAttribute('aria-expanded', 'false');
+    expect(details).not.toHaveAttribute('open');
     expect(content).toBeInTheDocument();
     expect(content).not.toBeVisible();
   });
@@ -28,21 +29,23 @@ describe('CollapsibleSection', () => {
       </CollapsibleSection>
     );
 
-    const toggleButton = screen.getByRole('button', { name: /publisher statistics/i });
+    const summary = screen.getByText(/publisher statistics/i);
+    const details = summary.closest('details');
+
     const content = screen.getByText(/packets sent/i);
 
-    expect(toggleButton).toHaveAttribute('aria-expanded', 'true');
+    expect(details).toHaveAttribute('open');
     expect(content).toBeVisible();
 
-    await user.click(toggleButton);
+    await user.click(summary);
 
-    expect(toggleButton).toHaveAttribute('aria-expanded', 'false');
+    expect(details).not.toHaveAttribute('open');
     expect(content).toBeInTheDocument();
     expect(content).not.toBeVisible();
 
-    await user.click(toggleButton);
+    await user.click(summary);
 
-    expect(toggleButton).toHaveAttribute('aria-expanded', 'true');
+    expect(details).toHaveAttribute('open');
     expect(content).toBeVisible();
   });
 });

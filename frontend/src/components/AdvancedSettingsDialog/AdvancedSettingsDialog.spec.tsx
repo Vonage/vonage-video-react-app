@@ -31,8 +31,8 @@ describe('AdvancedSettingsDialog', () => {
 
     await user.click(screen.getByRole('button', { name: /video/i }));
 
-    expect(screen.getByRole('heading', { name: /bitrate/i })).toBeInTheDocument();
-    expect(screen.getByRole('heading', { name: /codec/i })).toBeInTheDocument();
+    expect(screen.getByLabelText(/bitrate/i)).toBeInTheDocument();
+    expect(screen.getByLabelText(/codec/i)).toBeInTheDocument();
   });
 
   it('switches to the audio tab', async () => {
@@ -42,8 +42,8 @@ describe('AdvancedSettingsDialog', () => {
     await user.click(screen.getByRole('button', { name: /audio/i }));
 
     expect(screen.getByRole('heading', { name: /^audio$/i })).toBeInTheDocument();
-    expect(screen.getByRole('heading', { name: /audio bitrate/i })).toBeInTheDocument();
-    expect(screen.getByRole('heading', { name: /enable opus dtx/i })).toBeInTheDocument();
+    expect(screen.getByLabelText(/audio bitrate/i)).toBeInTheDocument();
+    expect(screen.getByLabelText(/enable opus dtx/i)).toBeInTheDocument();
   });
 
   it('switches to the statistics tab', async () => {
@@ -53,10 +53,8 @@ describe('AdvancedSettingsDialog', () => {
     await user.click(screen.getByRole('button', { name: /statistics/i }));
 
     expect(screen.getByRole('heading', { name: /^statistics$/i })).toBeInTheDocument();
-    expect(
-      screen.getByRole('heading', { name: /enable publisher statistics/i })
-    ).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: /publisher/i })).toBeInTheDocument();
+    expect(screen.getByLabelText(/enable publisher statistics/i)).toBeInTheDocument();
+    expect(screen.getAllByText(/publisher/i).length).toBeGreaterThan(0);
   });
 
   it('closes the dialog through context on close', async () => {

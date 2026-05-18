@@ -18,10 +18,10 @@ describe('AdvancedSettingsVideoTab', () => {
     render(<AdvancedSettingsVideoTab />);
 
     expect(screen.getByRole('heading', { name: /video/i })).toBeInTheDocument();
-    expect(screen.getByRole('heading', { name: /bitrate/i })).toBeInTheDocument();
-    expect(screen.getByRole('heading', { name: /codec/i })).toBeInTheDocument();
-    expect(screen.getByRole('heading', { name: /frame rate/i })).toBeInTheDocument();
-    expect(screen.getByRole('heading', { name: /resolution/i })).toBeInTheDocument();
+    expect(screen.getByLabelText(/bitrate/i)).toBeInTheDocument();
+    expect(screen.getByLabelText(/codec/i)).toBeInTheDocument();
+    expect(screen.getByLabelText(/frame rate/i)).toBeInTheDocument();
+    expect(screen.getByLabelText(/resolution/i)).toBeInTheDocument();
   });
 
   it('renders codec priority drag and drop when codec mode is manual', () => {

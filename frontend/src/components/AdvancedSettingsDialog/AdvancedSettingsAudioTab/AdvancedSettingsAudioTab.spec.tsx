@@ -15,14 +15,14 @@ describe('AdvancedSettingsAudioTab', () => {
     render(<AdvancedSettingsAudioTab />);
 
     expect(screen.getByRole('heading', { name: /^audio$/i })).toBeInTheDocument();
-    expect(screen.getByRole('heading', { name: /audio bitrate/i })).toBeInTheDocument();
+    expect(screen.getByLabelText(/audio bitrate/i)).toBeInTheDocument();
     expect(screen.getByRole('combobox')).toHaveValue('automatic');
     expect(
       screen.queryByTestId('advanced-settings-custom-audio-bitrate-slider')
     ).not.toBeInTheDocument();
-    expect(screen.getByRole('heading', { name: /enable opus dtx/i })).toBeInTheDocument();
-    expect(screen.getByRole('heading', { name: /publisher audio fallback/i })).toBeInTheDocument();
-    expect(screen.getByRole('heading', { name: /subscriber audio fallback/i })).toBeInTheDocument();
+    expect(screen.getByLabelText(/enable opus dtx/i)).toBeInTheDocument();
+    expect(screen.getByLabelText(/publisher audio fallback/i)).toBeInTheDocument();
+    expect(screen.getByLabelText(/subscriber audio fallback/i)).toBeInTheDocument();
   });
 
   it('renders the custom audio bitrate slider when custom mode is selected', () => {
