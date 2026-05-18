@@ -17,10 +17,7 @@ test('should keep the selected resolution after reopening settings in the waitin
 
   await page.getByRole('button', { name: 'Video' }).click();
 
-  const resolutionSelect = page
-    .getByRole('heading', { name: 'Resolution' })
-    .locator('xpath=..')
-    .getByRole('combobox');
+  const resolutionSelect = page.getByLabel('Resolution');
 
   await resolutionSelect.selectOption('640x480');
   await expect(resolutionSelect).toHaveValue('640x480');

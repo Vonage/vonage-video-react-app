@@ -23,7 +23,8 @@ export type BackgroundEffectsButtonProps = {
 const BackgroundEffectsButton = ({
   onClick,
 }: BackgroundEffectsButtonProps): ReactElement | false => {
-  const shouldDisplayBackgroundEffects = hasMediaProcessorSupport() && env.ALLOW_BACKGROUND_EFFECTS;
+  const shouldDisplayBackgroundEffects =
+    hasMediaProcessorSupport('both') && env.ALLOW_BACKGROUND_EFFECTS;
   const { t } = useTranslation();
 
   return (

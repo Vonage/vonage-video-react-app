@@ -28,7 +28,7 @@ const ReduceNoiseTestSpeakers = (): ReactElement | false => {
   const { publisher, isPublishing } = usePublisherContext();
 
   const [isToggled, setIsToggled] = useState(false);
-  const shouldDisplayANS = hasMediaProcessorSupport() && env.ALLOW_ADVANCED_NOISE_SUPPRESSION;
+  const shouldDisplayANS = hasMediaProcessorSupport('both') && env.ALLOW_ADVANCED_NOISE_SUPPRESSION;
   const hasSpeakerDevices = mediaDevices$.useMediaDevices(
     'audiooutput',
     (devices) => Object.values(devices).length > 0
