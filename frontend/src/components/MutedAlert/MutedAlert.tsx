@@ -31,7 +31,7 @@ const MutedAlert = (): ReactElement => {
   }, [isForceMuted, isSpeakingWhileMuted]);
 
   return (
-    <Fade in={open}>
+    <Fade in={open} data-component="MutedAlert" className="bg-vera-background!">
       <Alert
         severity="warning"
         onClose={() => setOpen(false)}
@@ -44,7 +44,7 @@ const MutedAlert = (): ReactElement => {
           maxWidth: '320px',
         }}
       >
-        {messageToDisplay}
+        <span className="text-vera-text-disabled-dark">{messageToDisplay}</span>
       </Alert>
     </Fade>
   );

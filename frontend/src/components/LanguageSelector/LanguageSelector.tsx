@@ -19,15 +19,23 @@ const languageOptions: LanguageOption[] = [
   { code: 'es-MX', name: 'Español (México)', flag: 'flag-mexico' },
 ];
 
-const ChevronIcon = ({ className, ...props }: { className: string } & Record<string, unknown>) => (
-  <VividIcon name="chevron-down-line" customSize={-5} className={className} {...props} />
+const ChevronIcon = ({ className, ...props }: { className?: string } & Record<string, unknown>) => (
+  <span
+    className={className}
+    style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center' }}
+    {...props}
+  >
+    <VividIcon
+      name="chevron-down-line"
+      customSize={-5}
+      style={{ color: 'var(--vera-text-secondary)' }}
+    />
+  </span>
 );
 
 const SelectIconComponent =
-  (iconClassName: string) =>
-  (props: Record<string, unknown>): ReactElement => (
-    <ChevronIcon className={iconClassName} {...props} />
-  );
+  (_iconClassName: string) =>
+  (props: Record<string, unknown>): ReactElement => <ChevronIcon {...props} />;
 
 /**
  * LanguageSelector Component

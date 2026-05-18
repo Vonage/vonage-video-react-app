@@ -40,7 +40,7 @@ const PinButton = ({
   const isDisabled = isMaxPinned && !isPinned;
   const anchorRef = useRef<HTMLDivElement | null>(null);
   const [isHoveringButton, setIsHoveringButton] = useState<boolean>(false);
-  const iconColorClassName = isDisabled ? 'text-vera-disabled' : 'text-vera-accent';
+  const iconStyle = { color: isDisabled ? 'var(--vera-disabled)' : 'var(--vera-accent)' };
 
   const getTooltipText = () => {
     if (isDisabled) {
@@ -110,9 +110,9 @@ const PinButton = ({
             }}
           >
             {isTileHovered && isPinned ? (
-              <VividIcon name="pin-2-off-solid" customSize={-6} className={iconColorClassName} />
+              <VividIcon name="pin-2-off-solid" customSize={-6} style={iconStyle} />
             ) : (
-              <VividIcon name="pin-2-solid" customSize={-6} className={iconColorClassName} />
+              <VividIcon name="pin-2-solid" customSize={-6} style={iconStyle} />
             )}
           </IconButton>
         </Tooltip>

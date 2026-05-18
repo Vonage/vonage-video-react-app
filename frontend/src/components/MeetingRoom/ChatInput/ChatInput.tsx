@@ -1,6 +1,5 @@
 import { KeyboardEvent, ReactElement, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import classNames from 'classnames';
 import useSessionContext from '../../../hooks/useSessionContext';
 import IconButton from '@mui/material/IconButton';
 import InputAdornment from '@mui/material/InputAdornment';
@@ -79,10 +78,7 @@ const ChatInput = (): ReactElement => {
                 <VividIcon
                   name="message-sent-solid"
                   customSize={-5}
-                  className={classNames({
-                    'text-vera-disabled': text === '',
-                    'text-vera-primary': text !== '',
-                  })}
+                  style={{ color: text === '' ? 'var(--vera-disabled)' : 'var(--vera-primary)' }}
                   data-testid="SendIcon"
                 />
               </IconButton>

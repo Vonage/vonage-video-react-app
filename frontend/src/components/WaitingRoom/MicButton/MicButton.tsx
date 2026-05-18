@@ -64,14 +64,13 @@ const MicButton = (): ReactElement | false => {
                 <VividIcon
                   name="microphone-line"
                   customSize={-5}
-                  className="text-vera-on-secondary"
+                  style={{ color: 'var(--vera-on-secondary)' }}
                 />
               ) : (
                 <VividIcon
                   name="mic-mute-line"
                   customSize={-5}
-                  className="text-vera-alert-text"
-                  sx={{ transform: 'scaleX(-1)' }}
+                  style={{ color: 'var(--vera-alert-text)', transform: 'scaleX(-1)' }}
                 />
               )
             }

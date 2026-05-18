@@ -56,11 +56,20 @@ const ParticipantPinMenuItem = ({
     >
       <ListItemIcon>
         {isPinned ? (
-          <VividIcon customSize={-6} name="pin-2-off-solid" className="text-vera-secondary" />
+          <VividIcon
+            customSize={-6}
+            name="pin-2-off-solid"
+            style={{ color: 'var(--vera-secondary)' }}
+          />
         ) : (
-          <VividIcon customSize={-6} name="pin-2-solid" className="text-vera-secondary" />
+          <VividIcon
+            customSize={-6}
+            name="pin-2-solid"
+            style={{ color: 'var(--vera-secondary)' }}
+          />
         )}
       </ListItemIcon>
+
       <ListItemText
         sx={{
           '.MuiTypography-root': {

@@ -63,7 +63,7 @@ const AudioIndicator = ({
     }
   };
 
-  const sxProperties = {
+  const styles = {
     color: indicatorColor,
     cursor: hasAudio ? 'pointer' : 'default',
     transform: 'scale(0.8)',
@@ -92,15 +92,15 @@ const AudioIndicator = ({
               customSize={-5}
               name="microphone-2-solid"
               data-testid="MicIcon"
-              sx={sxProperties}
+              style={styles}
             />
           ) : (
             <VividIcon
               customSize={-5}
               name="mic-mute-solid"
-              className="text-vera-error!"
-              sx={{
-                ...sxProperties,
+              style={{
+                ...styles,
+                color: 'var(--vera-error)',
                 transform: 'scaleX(-1) scale(0.8)',
               }}
             />

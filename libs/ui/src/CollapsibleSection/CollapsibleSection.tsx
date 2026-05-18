@@ -41,7 +41,7 @@ const CollapsibleSection = ({
         <VividIcon
           name={isExpanded ? 'chevron-up-line' : 'chevron-down-line'}
           customSize={-5}
-          className="text-vera-tertiary"
+          style={{ color: 'var(--vera-text-tertiary)' }}
         />
       </summary>
 

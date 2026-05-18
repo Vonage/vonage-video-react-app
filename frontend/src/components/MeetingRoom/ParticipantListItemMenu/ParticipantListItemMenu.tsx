@@ -41,7 +41,7 @@ const ParticipantListItemMenu = ({
         <VividIcon
           name="more-vertical-solid"
           customSize={-6}
-          className="text-vera-tertiary"
+          style={{ color: 'var(--vera-tertiary)' }}
           data-testid="MoreVertIcon"
         />
       </IconButton>

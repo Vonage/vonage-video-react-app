@@ -22,4 +22,20 @@
   ::file-selector-button {
     border-color: var(--color-gray-200, currentcolor);
   }
+
+  /* Default body text color to avoid black text on dark backgrounds */
+  body {
+    color: var(--vera-text-secondary);
+  }
+
+  /*
+    Backward compatibility after migrating from mui5 to mui9
+  */
+  .vera-dark-mode input:-webkit-autofill {
+    box-shadow: rgb(38, 103, 152) 0px 0px 0px 100px inset !important;
+  }
+
+  .Mui-selected {
+    background-color: rgba(153, 65, 255, 0.08) !important;
+  }
 }

@@ -22,7 +22,13 @@ const ReenterRoomButton = (): ReactElement | string => {
   return (
     sessionKey && (
       <Button
-        startIcon={<VividIcon name="enter-line" customSize={-5} />}
+        startIcon={
+          <VividIcon
+            name="enter-line"
+            customSize={-5}
+            style={{ color: 'var(--vera-on-primary)' }}
+          />
+        }
         variant="contained"
         data-testid="reenterButton"
         onClick={handleReenter}

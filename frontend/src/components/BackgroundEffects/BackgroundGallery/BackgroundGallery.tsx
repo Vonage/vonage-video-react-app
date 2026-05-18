@@ -84,7 +84,13 @@ const BackgroundGallery = (): ReactElement => {
                     zIndex: 10,
                   }}
                 >
-                  <VividIcon name="delete-solid" customSize={-6} />
+                  <VividIcon
+                    name="delete-solid"
+                    customSize={-6}
+                    style={{
+                      color: isSelected ? 'var(--vera-text-disabled)' : 'var(--vera-background)',
+                    }}
+                  />
                 </IconButton>
               </Tooltip>
             </SelectableOption>

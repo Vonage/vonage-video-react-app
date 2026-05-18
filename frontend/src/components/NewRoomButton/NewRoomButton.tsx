@@ -22,7 +22,9 @@ const NewRoomButton = ({ handleNewRoom }: NewRoomButtonProps): ReactElement => {
     <Button
       data-testid="new-room-button"
       variant="contained"
-      startIcon={<VividIcon name="plus-line" customSize={-5} />}
+      startIcon={
+        <VividIcon name="plus-line" customSize={-5} style={{ color: 'var(--vera-on-primary)' }} />
+      }
       onClick={handleNewRoom}
       fullWidth
     >

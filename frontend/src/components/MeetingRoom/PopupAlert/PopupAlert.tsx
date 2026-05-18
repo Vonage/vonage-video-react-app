@@ -73,6 +73,7 @@ const PopupAlert = ({
           width: '100%',
           maxWidth: '320px',
         }}
+        className="bg-vera-surface!"
       >
         <AlertTitle>{title}</AlertTitle>
         {message}

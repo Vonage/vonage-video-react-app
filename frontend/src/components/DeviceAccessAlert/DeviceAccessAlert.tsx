@@ -48,7 +48,7 @@ const DeviceAccessAlert = ({ accessStatus }: DeviceAccessAlertProps): ReactEleme
         spacing={3}
       >
         {accessStatus && (
-          <Dialog open>
+          <Dialog open className="bg-vera-surface!">
             <Alert severity={severity} variant="outlined" sx={{ width: '100%' }}>
               <AlertTitle>{messageToDisplay}</AlertTitle>
               <Box

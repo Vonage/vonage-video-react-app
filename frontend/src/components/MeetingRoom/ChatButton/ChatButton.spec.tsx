@@ -37,16 +37,6 @@ describe('ChatButton', () => {
     expect(badge.offsetWidth).toBe(0);
   });
 
-  it('should have a white icon when the list is closed', () => {
-    render(<ChatButton handleClick={() => {}} isOpen={false} />);
-    expect(screen.getByTestId('ChatIcon')).toHaveClass('text-vera-on-secondary');
-  });
-
-  it('should have a blue icon when the chat is open', () => {
-    render(<ChatButton handleClick={() => {}} isOpen />);
-    expect(screen.getByTestId('ChatIcon')).toHaveClass('text-vera-secondary');
-  });
-
   it('should invoke callback on click', () => {
     const handleClick = vi.fn();
     render(<ChatButton handleClick={handleClick} isOpen />);

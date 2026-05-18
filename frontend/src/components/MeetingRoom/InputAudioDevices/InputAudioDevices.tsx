@@ -50,7 +50,11 @@ const InputAudioDevices = ({ handleToggle }: InputAudioDevicesProps): ReactEleme
             mb: 0.5,
           }}
         >
-          <VividIcon name="microphone-2-line" customSize={-6} />
+          <VividIcon
+            name="microphone-2-line"
+            customSize={-6}
+            style={{ color: 'var(--vera-text-secondary) !important' }}
+          />
           <p className="text-vera-body-extended ml-4">{t('devices.audio.microphone.full')}</p>
         </Box>
         <MenuList>
@@ -80,10 +84,11 @@ const InputAudioDevices = ({ handleToggle }: InputAudioDevicesProps): ReactEleme
                       <VividIcon
                         name="check-line"
                         customSize={-6}
-                        className={classNames({
-                          'text-vera-text-primary': isSelected,
-                          'text-vera-text-secondary': !isSelected,
-                        })}
+                        style={{
+                          color: `${
+                            isSelected ? 'var(--vera-text-primary)' : 'var(--vera-text-secondary)'
+                          } !important`,
+                        }}
                       />
                     </Box>
                   ) : (

@@ -60,7 +60,14 @@ const SelectField = <TValue extends string | number>({
         <VividIcon
           name="chevron-down-line"
           customSize={-5}
-          className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-vera-tertiary"
+          style={{
+            color: 'var(--vera-text-tertiary)',
+            pointerEvents: 'none',
+            position: 'absolute',
+            right: '0.75rem',
+            top: '50%',
+            transform: 'translateY(-50%)',
+          }}
         />
       </div>
       {description ? (

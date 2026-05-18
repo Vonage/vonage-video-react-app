@@ -1,43 +1,37 @@
 import { hasMediaProcessorSupport } from '@vonage/client-sdk-video';
-import type { SxProps, Theme } from '@mui/material';
 import { createElement, type CSSProperties } from 'react';
 
 export type VividIconProps = {
   name: string;
   customSize?: -6 | -5 | -4 | -3 | -2 | -1 | 0 | 1 | 2 | 3 | 4 | 5;
-  className?: string;
-  sx?: SxProps<Theme>;
+  /**
+   * Use `style` instead. Tailwind classes cannot reach Vivid's internal shadow DOM,
+   * so color set via `className` will be silently overridden by MUI and never applied.
+   * @deprecated
+   */
+  className?: never;
+  /**
+   * Use `style` instead. MUI `sx` is being removed from this codebase.
+   * VividIcon accepts `style` directly — pass CSS vars there.
+   * @deprecated
+   */
+  sx?: never;
   style?: CSSProperties;
 } & Record<string, unknown>;
 
-const VividIcon = ({ name, customSize, className, sx, style, ...props }: VividIconProps) => {
-  const convertedStyle = convertSxToStyle(sx, style);
-
+const VividIcon = ({ name, customSize, style, ...props }: VividIconProps) => {
   return createElement('vwc-icon', {
     ref: captureRefComponent,
     size: customSize,
     name,
     'data-testid': `vivid-icon-${name}`,
-    className,
-    style: convertedStyle,
+    style: {
+      color: 'var(--vera-text-secondary)',
+      ...style,
+    },
     ...props,
   });
 };
-
-function convertSxToStyle(sx?: SxProps<Theme>, style?: CSSProperties): CSSProperties | undefined {
-  if (!sx && !style) return undefined;
-
-  let convertedSx: CSSProperties = {};
-
-  if (sx && typeof sx === 'object' && !Array.isArray(sx)) {
-    convertedSx = sx as CSSProperties;
-  }
-
-  return {
-    ...convertedSx,
-    ...style,
-  };
-}
 
 function captureRefComponent(element: HTMLElement | null) {
   if (!element || hasMediaProcessorSupport()) return;

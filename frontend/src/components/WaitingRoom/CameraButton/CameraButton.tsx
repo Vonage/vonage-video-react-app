@@ -67,9 +67,17 @@ const CameraButton = (): ReactElement | false => {
             }}
             icon={
               isVideoEnabled ? (
-                <VividIcon name="video-line" customSize={-5} className="text-vera-on-secondary" />
+                <VividIcon
+                  name="video-line"
+                  customSize={-5}
+                  style={{ color: 'var(--vera-on-secondary)' }}
+                />
               ) : (
-                <VividIcon name="video-off-line" customSize={-5} className="text-vera-alert-text" />
+                <VividIcon
+                  name="video-off-line"
+                  customSize={-5}
+                  style={{ color: 'var(--vera-alert-text)' }}
+                />
               )
             }
           />

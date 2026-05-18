@@ -249,7 +249,7 @@ const PrecallNetworkTestDialog = ({
                     <VividIcon
                       name="close-circle-line"
                       customSize={0}
-                      className="text-vera-error"
+                      style={{ color: 'var(--vera-error)' }}
                     />
                     {t('waitingRoom.precallNetworkTest.error')}
                   </Typography>

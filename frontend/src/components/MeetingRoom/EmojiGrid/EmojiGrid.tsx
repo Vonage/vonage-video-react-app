@@ -87,7 +87,7 @@ const EmojiGrid = ({
             <ClickAwayListener onClickAway={handleClickAway}>
               <Paper
                 data-testid="emoji-grid"
-                className="bg-vera-dark-grey-opacity text-vera-on-dark-grey"
+                className="bg-vera-dark-grey-opacity! text-vera-on-dark-grey"
                 sx={{
                   display: 'flex',
                   alignItems: 'center',

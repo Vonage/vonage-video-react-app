@@ -92,7 +92,7 @@ const Publisher = ({ box }: PublisherProps): ReactElement => {
           hasAudio={isAudioEnabled}
           indicatorStyle={audioIndicatorStyle}
           indicatorClassName="rounded-vera-large bg-vera-dark-background text-vera-accent"
-          indicatorColor="currentColor"
+          indicatorColor="var(--vera-accent)"
         />
       )}
       <NameDisplay name={username} containerWidth={box.width} />
