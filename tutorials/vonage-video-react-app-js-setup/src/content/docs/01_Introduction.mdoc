@@ -1,0 +1,55 @@
+---
+title: Introduction
+description: An overview of the Vonage Video API Reference App for React (Vera) and what you will learn in this tutorial.
+---
+
+# Configure and Run Vonage Video API Reference App for React
+
+## What is Vera?
+
+The **Vonage Video API Reference App for React** (Vera) is an open-source video conferencing application built with the [Vonage Video API](https://developer.vonage.com/en/video/client-sdks/web/overview) and the React framework.
+
+It demonstrates best practices for integrating the Vonage Video API into a production-grade application and comes with a rich set of features out of the box:
+
+- Landing page to create and join meeting rooms
+- Waiting room with audio/video device preview
+- Video conferencing room supporting up to 25 participants
+- Screen sharing, group chat, and emoji reactions
+- Composed archiving (meeting recording)
+- Live captions
+- Background blur and virtual background effects
+- Active-speaker detection and dynamic layout management
+
+## What you will learn
+
+By the end of this tutorial you will be able to:
+
+1. **Create a Vonage application** in the developer dashboard and obtain the credentials needed to power the Video API.
+2. **Configure the backend** by supplying your `VONAGE_APP_ID` and `VONAGE_PRIVATE_KEY` to the environment file.
+3. **Install dependencies** using Yarn.
+4. **Start the app** in development mode and access it in the browser.
+
+## Project architecture
+
+Vera is a monorepo managed by [Nx](https://nx.dev). The two main workspaces are:
+
+| Workspace | Description |
+|-----------|-------------|
+| `frontend` | React + Vite application served on port **5173** in development |
+| `backend`  | Express API server served on port **3345** |
+
+The backend generates Vonage Video API session tokens and manages session lifecycle. The frontend connects to those sessions and renders the video conferencing UI.
+
+## Prerequisites
+
+Make sure the following tools are installed on your machine before continuing:
+
+- **Node.js 22** – [Download](https://nodejs.org/en/download/releases/)
+- **Yarn** – [Install instructions](https://yarnpkg.com/getting-started/install)
+- A **Vonage API account** – [Sign up for free](https://dashboard.vonage.com/?utm_source=DEV_REL&utm_medium=github&utm_campaign=vonage-video-react-app)
+
+> **Tip:** Use [nvm](https://github.com/nvm-sh/nvm) to manage Node.js versions. A `.nvmrc` file is included in the repository — run `nvm use` from the project root to switch to the correct version automatically.
+
+---
+
+In the next step you will create a Vonage application and download the private key that the backend needs to authenticate with the Video API.

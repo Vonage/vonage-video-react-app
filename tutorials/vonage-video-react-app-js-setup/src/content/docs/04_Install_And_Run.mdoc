@@ -1,0 +1,72 @@
+---
+title: Install Dependencies and Run the App
+description: Install Node.js dependencies with Yarn and start Vera in development mode.
+---
+
+# Install Dependencies and Run the App
+
+## 1. Install dependencies
+
+From the project root, run:
+
+```bash
+yarn install
+```
+
+Yarn reads `yarn.lock` and installs the exact dependency versions used by the project. This only needs to be done once (or whenever dependencies change).
+
+> **Note:** The setup script ran this command for you automatically. You only need to re-run it if you add or update packages.
+
+---
+
+## 2. Start the application in development mode
+
+```bash
+yarn dev
+```
+
+This single command starts two servers concurrently:
+
+| Server | URL | Description |
+|--------|-----|-------------|
+| **Frontend** (Vite) | [http://localhost:5173](http://localhost:5173) | React application with hot-module replacement |
+| **Backend** (Express) | [http://localhost:3345](http://localhost:3345) | API server that issues Video API tokens |
+
+The terminal output will confirm both servers are running:
+
+```
+[frontend] VITE ready in Xms ➜  Local: http://localhost:5173/
+[backend]  Server listening on port 3345
+```
+
+---
+
+## 3. Open the app in your browser
+
+Navigate to [http://localhost:5173](http://localhost:5173).
+
+You should see the Vera landing page where you can type a room name and join a video call.
+
+---
+
+## Troubleshooting
+
+| Problem | Solution |
+|---------|----------|
+| `Error: VONAGE_APP_ID is not set` | Open `backend/.env` and make sure `VONAGE_APP_ID` is filled in correctly. |
+| `Error: VONAGE_PRIVATE_KEY is not set` | Make sure the full private key (including header/footer lines) is present in `backend/.env`. |
+| Port already in use | Another process is using port 3345 or 5173. Stop it or change the port in `vcrBuild.env.sh` (`API_URL`) and `backend/.env`. |
+| Camera / microphone not working | The browser requires a secure context (HTTPS or `localhost`). Make sure you are opening `http://localhost:5173`, not a different hostname. |
+
+---
+
+## What's next?
+
+Now that the application is running locally, you can explore the codebase and customise it for your use case:
+
+- **Frontend feature flags** – edit [`vcrBuild.env.sh`](../../../vcrBuild.env.sh) to toggle chat, archiving, captions, and more.
+- **UI theming** – edit `designTokens.json` and run `yarn sync:theme-tokens` to update the colour palette.
+- **Storybook** – run `yarn storybook` to browse and develop UI components in isolation.
+- **Tests** – run `yarn test` to execute the full unit-test suite.
+
+For the full list of available options see the [README](../../../README.md).

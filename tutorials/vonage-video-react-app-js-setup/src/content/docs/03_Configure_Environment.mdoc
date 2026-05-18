@@ -1,0 +1,85 @@
+---
+title: Configure Environment Variables
+description: Set up the backend .env file with your Vonage Application ID and private key so the server can authenticate with the Video API.
+---
+
+# Configure Environment Variables
+
+The backend reads its configuration from a file called `backend/.env`. A template with all available variables is provided at `backend/.env.example`.
+
+The setup script already copied that template for you. Open `backend/.env` in the editor now — it looks like this:
+
+```ini
+# backend/.env
+
+VIDEO_SERVICE_PROVIDER='vonage'
+VONAGE_APP_ID=''
+VONAGE_PRIVATE_KEY=''
+
+SESSION_KEY_SECRET=''
+```
+
+You need to fill in three values.
+
+---
+
+## VONAGE_APP_ID
+
+Replace the empty string with the Application ID you copied from the Vonage dashboard in the previous step:
+
+```ini
+VONAGE_APP_ID='xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx'
+```
+
+---
+
+## VONAGE_PRIVATE_KEY
+
+Open the `private.key` file you downloaded from the dashboard in a text editor. Copy the **entire contents** of the file — including the `-----BEGIN PRIVATE KEY-----` header and `-----END PRIVATE KEY-----` footer — and paste it as the value, keeping the surrounding single quotes:
+
+```ini
+VONAGE_PRIVATE_KEY='-----BEGIN PRIVATE KEY-----
+MIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQC7...
+-----END PRIVATE KEY-----
+'
+```
+
+> **Note:** The closing `'` must appear on its own line, after the key footer.
+
+---
+
+## SESSION_KEY_SECRET
+
+This secret is used to sign the JWT cookies that track meeting-room sessions. Set it to any long, random string — for example:
+
+```ini
+SESSION_KEY_SECRET='change-me-to-a-long-random-secret-string'
+```
+
+> **Security tip:** In production, generate this value with a cryptographically secure random generator, for example:
+> ```bash
+> node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"
+> ```
+
+---
+
+## Complete example
+
+After filling in all three values, your `backend/.env` should look similar to:
+
+```ini
+VIDEO_SERVICE_PROVIDER='vonage'
+VONAGE_APP_ID='12d0d0-aaaa-bbb-ccc-26b780fb'
+VONAGE_PRIVATE_KEY='-----BEGIN PRIVATE KEY-----
+MIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQC7...
+-----END PRIVATE KEY-----
+'
+
+SESSION_KEY_SECRET='a1b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6e7f8a9b0c1d2e3f4a5b6c7d8e9f0a1b2'
+```
+
+> **Do not commit** `backend/.env` to source control — it is already listed in `.gitignore`.
+
+---
+
+The backend is now fully configured. In the next step you will install the project dependencies and start the application.

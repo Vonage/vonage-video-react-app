@@ -1,0 +1,53 @@
+---
+title: Create a Vonage Application
+description: Create a Vonage application in the dashboard and download the private key required by the backend.
+---
+
+# Create a Vonage Application
+
+The Vonage Video API backend requires two credentials:
+
+- **Application ID** – uniquely identifies your Vonage application.
+- **Private Key** – used to sign JSON Web Tokens (JWTs) that authenticate API requests.
+
+Follow the steps below to obtain both.
+
+## 1. Sign in to the Vonage API Dashboard
+
+Go to [https://dashboard.vonage.com](https://dashboard.vonage.com) and sign in with your Vonage account. If you do not have an account yet, [sign up for free](https://dashboard.vonage.com/?utm_source=DEV_REL&utm_medium=github&utm_campaign=vonage-video-react-app) — new accounts include free credit.
+
+## 2. Navigate to Applications
+
+From the main dashboard menu, open the **Applications** section:
+
+> **Dashboard → Applications**
+
+You will see a list of existing applications, or an empty state if this is your first time.
+
+## 3. Create a new application
+
+Click **Create a new application** and fill in the form:
+
+| Field | Value |
+|-------|-------|
+| **Application name** | Choose any descriptive name, for example `vera-local` |
+| **Public / Private keys** | Click **Generate public and private key** — the private key (`private.key`) will download automatically to your machine. Keep it safe. |
+| **Capabilities → Video** | Toggle **Video** to the **on** position |
+
+Click **Generate new application** to save.
+
+## 4. Note your Application ID
+
+After saving, the dashboard displays your new application. Copy the **Application ID** (a UUID that looks like `xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx`) — you will need it in the next step.
+
+> **Where to find it:** The Application ID appears in the application detail page and also in the URL:
+> `https://dashboard.vonage.com/applications/<your-application-id>`
+
+---
+
+You now have:
+
+- ✅ A **Vonage Application ID**
+- ✅ A **private key file** (`private.key`) downloaded to your machine
+
+In the next step you will add these credentials to the backend environment file.
