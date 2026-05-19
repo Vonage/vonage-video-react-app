@@ -30,7 +30,7 @@ const INITIAL_STATE = {
   resolution: env.DEFAULT_RESOLUTION ?? '1280x720',
   audioBitrateMode: ADVANCED_SETTINGS_AUDIO_BITRATE_MODE.automatic,
   customAudioBitrate: 128 as AdvancedSettingsCustomAudioBitrate,
-  enableDtx: false,
+  enableDtx: true,
   publisherAudioFallbackEnabled: false,
   subscriberAudioFallbackEnabled: false,
   publisherStatisticsEnabled: false,

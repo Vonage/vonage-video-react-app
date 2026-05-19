@@ -20,7 +20,7 @@ describe('AdvancedSettingsAudioTab', () => {
     expect(
       screen.queryByTestId('advanced-settings-custom-audio-bitrate-slider')
     ).not.toBeInTheDocument();
-    expect(screen.getByLabelText(/enable opus dtx/i)).toBeInTheDocument();
+    expect(screen.getByLabelText(/enable opus dtx/i)).toBeChecked();
     expect(screen.getByLabelText(/publisher audio fallback/i)).toBeInTheDocument();
     expect(screen.getByLabelText(/subscriber audio fallback/i)).toBeInTheDocument();
   });
@@ -49,7 +49,7 @@ describe('AdvancedSettingsAudioTab', () => {
 
     await user.click(screen.getByRole('checkbox', { name: /enable opus dtx/i }));
 
-    expect(screen.getByRole('checkbox', { name: /enable opus dtx/i })).toBeChecked();
+    expect(screen.getByRole('checkbox', { name: /enable opus dtx/i })).not.toBeChecked();
   });
 });
 type RenderOptions = {

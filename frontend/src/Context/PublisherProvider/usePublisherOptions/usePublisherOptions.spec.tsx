@@ -75,6 +75,7 @@ describe('usePublisherOptions', () => {
         audioFilter: {
           type: 'advancedNoiseSuppression',
         },
+        enableDtx: true,
         videoFilter: undefined,
         name: '',
         initials: '',
@@ -145,6 +146,7 @@ describe('usePublisherOptions', () => {
           publisher: true,
         },
         audioFilter: undefined,
+        enableDtx: true,
         videoFilter: {
           type: 'backgroundBlur',
           blurStrength: 'high',
@@ -193,6 +195,17 @@ describe('usePublisherOptions', () => {
 
       await waitFor(() => {
         expect(result.current?.resolution).toBe('1280x720');
+      });
+    });
+
+    it('should configure opus dtx from advanced settings context', async () => {
+      const { result } = renderHook(
+        () => usePublisherOptions({ isAudioEnabled: true, isVideoEnabled: true }),
+        { dialogState: { enableDtx: false } }
+      );
+
+      await waitFor(() => {
+        expect(result.current?.enableDtx).toBe(false);
       });
     });
   });

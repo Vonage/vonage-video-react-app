@@ -25,6 +25,7 @@ const usePublisherOptions = ({
   isVideoEnabled: boolean;
 }): PublisherProperties => {
   const { user } = useUserContext();
+  const enableDtx = advancedSettings$.use.select((state) => state.enableDtx);
   const resolution = advancedSettings$.use.select((state) => state.resolution);
   const frameRate = advancedSettings$.use.select((state) => state.frameRate);
   const codecMode = advancedSettings$.use.select((state) => state.codecMode);
@@ -52,6 +53,7 @@ const usePublisherOptions = ({
       audioFallback: { publisher: true },
       audioFilter,
       audioSource,
+      enableDtx,
       initials,
       insertDefaultUI: false,
       name,
@@ -77,6 +79,7 @@ const usePublisherOptions = ({
       getOptions,
       audioSource,
       backgroundFilter,
+      enableDtx,
       name,
       noiseSuppression,
       publishAudio,
