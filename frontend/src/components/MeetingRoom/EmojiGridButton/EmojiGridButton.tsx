@@ -8,7 +8,27 @@ import VividIcon from '@components/VividIcon';
 import { env } from '../../../env';
 import { useIsHandRaisedFor } from '@core/stores';
 import useSessionContext from '@hooks/useSessionContext';
-import { RAISED_HAND_EMOJI } from '../../../utils/emojis';
+
+/**
+ * Monochrome raised-hand glyph for the toolbar indicator badge.
+ * Inline SVG (rather than the `RAISED_HAND_EMOJI` codepoint used elsewhere)
+ * so it picks up the badge's text color via `fill="currentColor"` — the unicode
+ * emoji renders with the OS emoji font's fixed yellow palette and ignores
+ * `text-vera-on-primary`, which made the badge yellow-on-purple instead of
+ * white-on-purple.
+ */
+const RaisedHandIndicator = (): ReactElement => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    viewBox="0 0 24 24"
+    width="0.9em"
+    height="0.9em"
+    fill="currentColor"
+    aria-hidden="true"
+  >
+    <path d="M14 2a2 2 0 0 1 2 2v4h.5a2 2 0 0 1 2 2v6a6 6 0 0 1-6 6h-1.17a6 6 0 0 1-4.24-1.76l-3.3-3.3a2 2 0 0 1 2.83-2.82L7 15.34V4a2 2 0 1 1 4 0v6h1V4a2 2 0 0 1 2-2z" />
+  </svg>
+);
 
 export type EmojiGridProps = {
   isEmojiGridOpen: boolean;
@@ -48,7 +68,7 @@ const EmojiGridButton = ({
         <Tooltip title={t('emoji.tooltip')} aria-label={t('emoji.ariaLabel')}>
           <Badge
             data-testid="raise-hand-active-badge"
-            badgeContent={localHandIsRaised ? RAISED_HAND_EMOJI : null}
+            badgeContent={localHandIsRaised ? <RaisedHandIndicator /> : null}
             invisible={!localHandIsRaised}
             overlap="circular"
             slotProps={{
