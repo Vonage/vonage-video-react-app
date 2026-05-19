@@ -86,7 +86,12 @@ const RaisedHandsSection = (): ReactElement => {
             <li
               key={state.connectionId}
               data-testid={`raised-hand-item-${state.connectionId}`}
-              className={`flex items-center py-1 pl-6 ${IS_MODERATOR ? 'pr-12' : 'pr-2'}`}
+              // `pl-[60px]` aligns the name with the participant names below the
+              // divider: MUI ListItem's 16px gutter + 32px avatar + 12px name
+              // margin = 60px from panel-left. `pr-[68px]` mirrors the
+              // ParticipantListItem's `paddingRight: '68px'` so the lower-hand
+              // button sits under the same column as the audio / menu icons.
+              className={`flex items-center py-1 pl-[60px] ${IS_MODERATOR ? 'pr-[68px]' : 'pr-2'}`}
             >
               {/*
                 `min-w-0` is the canonical Safari fix for `flex-1` + `truncate`:
