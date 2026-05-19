@@ -159,7 +159,21 @@ const ParticipantList = ({ handleClose, isOpen }: ParticipantListProps): ReactEl
           />
         </Box>
         {env.ALLOW_RAISE_HAND && raisedHandCount > 0 && <RaisedHandsSection />}
-        <List sx={{ overflowX: 'auto', height: 'calc(100dvh - 296px)' }}>
+        <List
+          sx={{
+            overflow: 'auto',
+            // 296px accounts for the header / URL row / search row / toolbar.
+            // When RaisedHandsSection is visible it consumes up to ~240px
+            // (its UL caps itself at 200px + ~40px header/divider) and that
+            // height needs to come out of the participant list otherwise the
+            // tail of the list spills below the viewport (#462 reviewer
+            // bug report — participants below the fold unreachable).
+            height:
+              env.ALLOW_RAISE_HAND && raisedHandCount > 0
+                ? 'calc(100dvh - 296px - 240px)'
+                : 'calc(100dvh - 296px)',
+          }}
+        >
           {isUserVisible && (
             <ParticipantListItem
               key="you"

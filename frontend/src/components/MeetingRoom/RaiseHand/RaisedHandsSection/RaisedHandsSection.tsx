@@ -70,7 +70,7 @@ const RaisedHandsSection = (): ReactElement => {
         )}
       </div>
 
-      <ul className="m-0 list-none px-2 py-0">
+      <ul className="m-0 max-h-[200px] list-none overflow-y-auto px-2 py-0">
         {raisedHands.map((state) => {
           const lowerLabel = t('raiseHand.section.lowerParticipant', {
             name: state.participantName,
