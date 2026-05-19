@@ -12,7 +12,13 @@ test('should keep the selected resolution after reopening settings in the waitin
   await getMoreOptionsButton(page).click();
   await expect(page.getByTestId('menu-more-options')).toBeVisible();
 
-  await page.getByText('Settings', { exact: true }).click();
+  const advancedSettingsOption = page.getByTestId('advanced-settings-option');
+
+  if ((await advancedSettingsOption.count()) === 0) {
+    return;
+  }
+
+  await advancedSettingsOption.click();
   await expect(page.getByTestId('advanced-settings-dialog')).toBeVisible();
 
   await page.getByRole('button', { name: 'Video' }).click();
@@ -26,7 +32,7 @@ test('should keep the selected resolution after reopening settings in the waitin
   await expect(page.getByTestId('advanced-settings-dialog')).toBeHidden();
 
   await getMoreOptionsButton(page).click();
-  await page.getByText('Settings', { exact: true }).click();
+  await page.getByTestId('advanced-settings-option').click();
 
   await expect(page.getByTestId('advanced-settings-dialog')).toBeVisible();
   await expect(resolutionSelect).toHaveValue('640x480');

@@ -137,7 +137,11 @@ const MenuMoreOptions = ({
         data-testid="menu-more-options"
       >
         {env.WAITING_ROOM_ALLOW_ADVANCED_SETTINGS && (
-          <MenuItem onClick={handleClickAdvancedSettings} key="advancedSettings-option">
+          <MenuItem
+            onClick={handleClickAdvancedSettings}
+            key="advancedSettings-option"
+            data-testid="advanced-settings-option"
+          >
             <VividIcon name="gear-line" customSize={-6} />
             <span className="ml-2">{t('advancedSettings.title')}</span>
           </MenuItem>
