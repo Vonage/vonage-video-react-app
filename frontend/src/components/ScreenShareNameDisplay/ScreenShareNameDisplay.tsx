@@ -1,5 +1,5 @@
-import { Box } from 'opentok-layout-js';
-import { ReactElement } from 'react';
+import type { Box } from 'opentok-layout-js';
+import type { ReactElement } from 'react';
 
 export type ScreenShareNameDisplayProps = {
   name: string;
