@@ -1,7 +1,11 @@
 import { MouseEvent, ReactElement, useCallback, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import Avatar from '@mui/material/Avatar';
+import Typography from '@mui/material/Typography';
 import useSessionContext from '@hooks/useSessionContext';
 import { useRaisedHands } from '@core/stores';
+import getInitials from '@utils/getInitials';
+import getParticipantColor from '@utils/getParticipantColor';
 import { RAISED_HAND_EMOJI } from '../../../../utils/emojis';
 import LowerAllDialog from './LowerAllDialog';
 
@@ -86,24 +90,39 @@ const RaisedHandsSection = (): ReactElement => {
             <li
               key={state.connectionId}
               data-testid={`raised-hand-item-${state.connectionId}`}
-              // `pl-[60px]` aligns the name with the participant names below the
-              // divider: MUI ListItem's 16px gutter + 32px avatar + 12px name
-              // margin = 60px from panel-left. `pr-[68px]` mirrors the
-              // ParticipantListItem's `paddingRight: '68px'` so the lower-hand
-              // button sits under the same column as the audio / menu icons.
-              className={`flex items-center py-1 pl-[60px] ${IS_MODERATOR ? 'pr-[68px]' : 'pr-2'}`}
+              // Mirrors `ParticipantListItem`'s layout so the row visually
+              // matches the rows below the divider: 16px left gutter (MUI
+              // ListItem default), then a 32px Avatar with 12px right margin,
+              // then the name, with the action column reserved by `pr-[68px]`
+              // to align with the list's secondaryAction (audio + menu).
+              // Row height matches `h-14` (= 56px) too.
+              className={`flex h-14 items-center pl-4 ${IS_MODERATOR ? 'pr-[68px]' : 'pr-2'}`}
             >
+              <Avatar
+                sx={{
+                  bgcolor: getParticipantColor(state.participantName),
+                  width: '32px',
+                  height: '32px',
+                  fontSize: '14px',
+                }}
+              >
+                {getInitials(state.participantName)}
+              </Avatar>
               {/*
-                `min-w-0` is the canonical Safari fix for `flex-1` + `truncate`:
-                without it WebKit uses `min-width: auto` (the intrinsic content
-                width) on the flex item, which fights `white-space: nowrap` and
-                pushes the text out of view rather than truncating it.
-                `text-left` is defensive — the panel sits inside MUI Box trees
-                that occasionally inject `text-align: center` higher up.
+                `variant="body1"` matches `ParticipantListItem`'s name
+                Typography exactly (1rem) so the two lists look uniform.
+                `minWidth: 0` is the canonical Safari fix for `flex: 1` +
+                truncate (`noWrap`): without it WebKit uses `min-width: auto`
+                (= intrinsic content width) and the name overflows the row
+                rather than truncating.
               */}
-              <span className="min-w-0 flex-1 truncate text-left text-vera-body-base">
+              <Typography
+                variant="body1"
+                noWrap
+                sx={{ marginLeft: '12px', minWidth: 0, flex: 1, textAlign: 'left' }}
+              >
                 {state.participantName}
-              </span>
+              </Typography>
               {IS_MODERATOR && (
                 <button
                   type="button"
