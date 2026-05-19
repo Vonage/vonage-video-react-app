@@ -40,7 +40,9 @@ const AdvancedSettingsButton = ({
           <VividIcon
             name="gear-solid"
             customSize={-5}
-            style={{ color: isOpen ? 'var(--vera-secondary)' : 'var(--vera-on-secondary)' }}
+            style={{
+              color: isOpen ? 'var(--vera-secondary-light)' : 'var(--vera-on-secondary-light)',
+            }}
           />
         }
         isOverflowButton={isOverflowButton}
