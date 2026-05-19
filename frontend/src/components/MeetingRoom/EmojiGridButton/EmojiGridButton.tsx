@@ -71,12 +71,14 @@ const EmojiGridButton = ({
             badgeContent={localHandIsRaised ? <RaisedHandIndicator /> : null}
             invisible={!localHandIsRaised}
             overlap="circular"
-            slotProps={{
-              badge: {
-                className:
-                  'bg-vera-tertiary text-vera-on-tertiary text-vera-caption min-w-4 h-4 px-0.5',
-              },
-            }}
+            // Same className pattern as ParticipantListButton's
+            // participant-count badge — the `[&_.MuiBadge-badge]:` arbitrary
+            // variant has high enough CSS specificity to beat MUI's internal
+            // `.MuiBadge-badge { color: … }` rule, which `slotProps.badge.className`
+            // alone doesn't. Without this, the SVG's `currentColor` would
+            // resolve to MUI's default instead of `text-vera-on-tertiary` and
+            // the hand would render in MUI's default badge color.
+            className="[&_.MuiBadge-badge]:bg-vera-tertiary [&_.MuiBadge-badge]:text-vera-on-tertiary [&_.MuiBadge-badge]:text-vera-caption [&_.MuiBadge-badge]:min-w-4 [&_.MuiBadge-badge]:h-4 [&_.MuiBadge-badge]:px-0.5"
           >
             <ToolbarButton
               onClick={handleToggle}
