@@ -74,7 +74,7 @@ const EmojiGridButton = ({
             slotProps={{
               badge: {
                 className:
-                  'bg-vera-primary text-vera-on-primary text-vera-caption min-w-4 h-4 px-0.5',
+                  'bg-vera-tertiary text-vera-on-tertiary text-vera-caption min-w-4 h-4 px-0.5',
               },
             }}
           >
