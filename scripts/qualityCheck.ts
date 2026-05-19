@@ -28,6 +28,8 @@ const PROJECT_ROOTS: Record<string, string> = {
   ui: 'libs/ui',
   common: 'libs/common',
   'integration-tests': 'integration-tests',
+  studio: 'vera-studio',
+  'vera-studio': 'vera-studio',
 };
 
 function runCommand(command: string) {

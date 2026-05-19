@@ -1,0 +1,7 @@
+{
+  "name": "vera-studio",
+  "version": "1.0.0",
+  "description": "Design token configurator and room builder for Vera",
+  "private": true,
+  "type": "module"
+}

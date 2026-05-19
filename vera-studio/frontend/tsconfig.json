@@ -1,0 +1,23 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "composite": false,
+    "target": "ESNext",
+    "lib": ["ES2022", "DOM", "DOM.Iterable"],
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "jsx": "react-jsx",
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "noEmit": true,
+    "strict": true,
+    "baseUrl": "./",
+    "paths": {
+      "@ui/*": ["../../libs/ui/src/*"],
+      "@common/*": ["../../libs/common/src/*"],
+      "@web/*": ["../../libs/common/srcBrowser/*"]
+    }
+  },
+  "include": ["src"],
+  "exclude": ["dist", "build"]
+}
