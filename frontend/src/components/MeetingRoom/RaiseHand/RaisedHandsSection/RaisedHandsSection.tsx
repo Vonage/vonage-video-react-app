@@ -70,7 +70,14 @@ const RaisedHandsSection = (): ReactElement => {
         )}
       </div>
 
-      <ul className="m-0 max-h-[200px] list-none overflow-y-auto px-2 py-0">
+      {/*
+        `p-0` kills the browser-default `<ul>` `padding-inline-start: 40px` that
+        was pushing every raised-hand row ~40px to the right of the section
+        header — `px-2` is `padding-left: 0.5rem` (physical), which in some
+        browsers doesn't reliably win the cascade over the user-agent logical-
+        property default. Each row now carries its full indent on `<li>`.
+      */}
+      <ul className="m-0 max-h-[200px] list-none overflow-y-auto p-0">
         {raisedHands.map((state) => {
           const lowerLabel = t('raiseHand.section.lowerParticipant', {
             name: state.participantName,
@@ -79,15 +86,17 @@ const RaisedHandsSection = (): ReactElement => {
             <li
               key={state.connectionId}
               data-testid={`raised-hand-item-${state.connectionId}`}
-              className={`flex items-center py-1 pl-4 ${IS_MODERATOR ? 'pr-12' : 'pr-2'}`}
+              className={`flex items-center py-1 pl-6 ${IS_MODERATOR ? 'pr-12' : 'pr-2'}`}
             >
               {/*
                 `min-w-0` is the canonical Safari fix for `flex-1` + `truncate`:
                 without it WebKit uses `min-width: auto` (the intrinsic content
                 width) on the flex item, which fights `white-space: nowrap` and
                 pushes the text out of view rather than truncating it.
+                `text-left` is defensive — the panel sits inside MUI Box trees
+                that occasionally inject `text-align: center` higher up.
               */}
-              <span className="min-w-0 flex-1 truncate text-vera-body-base">
+              <span className="min-w-0 flex-1 truncate text-left text-vera-body-base">
                 {state.participantName}
               </span>
               {IS_MODERATOR && (
