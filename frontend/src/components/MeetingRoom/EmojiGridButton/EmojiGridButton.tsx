@@ -85,7 +85,17 @@ const EmojiGridButton = ({
                   name="emoji-solid"
                   customSize={-5}
                   style={{
-                    color: `${isEmojiGridOpen ? 'var(--vera-secondary-light)' : 'var(--vera-on-secondary-light)'} !important`,
+                    // No `!important` here — React'\''s inline-style setter goes
+                    // through `style.color = "..."`, which per CSSOM SILENTLY
+                    // REJECTS values containing the `!important` keyword
+                    // (only `setProperty(name, value, "important")` sets inline
+                    // important). Chrome leniently extracts the value before
+                    // the keyword; Safari rejects the whole declaration and
+                    // the icon falls back to VividIcon'\''s default
+                    // `var(--vera-text-secondary)` — black in light theme.
+                    color: isEmojiGridOpen
+                      ? 'var(--vera-secondary-light)'
+                      : 'var(--vera-on-secondary-light)',
                   }}
                 />
               }

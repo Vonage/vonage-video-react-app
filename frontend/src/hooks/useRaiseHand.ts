@@ -13,7 +13,7 @@ const RAISE_HAND_SIGNAL = 'raiseHand' as const;
  * leaving participants with inconsistent state).
  */
 type RaiseHandPayload =
-  | { raisedHand: true; timestamp: number }
+  | { raisedHand: true; timestamp: number; participantName?: string }
   | { raisedHand: false; timestamp: null; connectionId?: string; loweredBy?: string }
   | { raisedHand: false; timestamp: null; lowerAll: true; loweredBy?: string };
 
@@ -25,7 +25,10 @@ const isValidPayload = (v: unknown): v is RaiseHandPayload => {
     // Reject NaN, Infinity, missing, or non-finite timestamps. These would
     // poison the queue-order comparator (NaN-NaN = NaN; sort becomes
     // implementation-defined for any pair containing it).
-    return typeof o.timestamp === 'number' && Number.isFinite(o.timestamp);
+    if (typeof o.timestamp !== 'number' || !Number.isFinite(o.timestamp)) return false;
+    // participantName is optional (older peers / legacy signals omit it);
+    // when present it must be a string.
+    return o.participantName === undefined || typeof o.participantName === 'string';
   }
   if (o.raisedHand === false) {
     return o.timestamp === null;
@@ -113,7 +116,16 @@ const useRaiseHand = ({
     if (!localConnectionId || !send) return;
 
     const timestamp = Date.now();
-    const payload: RaiseHandPayload = { raisedHand: true, timestamp };
+    // Include `participantName` so peers don't have to do a subscriber-wrapper
+    // lookup to learn who raised. Critical for late joiners — the unicast
+    // rebroadcast in `onConnectionCreated` arrives before the joiner has
+    // subscribed to existing streams, so the lookup returns '' and the queue
+    // entry shows up without a name.
+    const payload: RaiseHandPayload = {
+      raisedHand: true,
+      timestamp,
+      participantName: localUserName,
+    };
 
     // Optimistic UI — update store immediately, then signal.
     storeActions.setHand(localConnectionId, {
@@ -198,13 +210,14 @@ const useRaiseHand = ({
         const payload: RaiseHandPayload = {
           raisedHand: true,
           timestamp: localState.raisedHandTimestamp,
+          participantName: localUserName,
         };
         send({ type: RAISE_HAND_SIGNAL, data: JSON.stringify(payload) });
       }
     } else {
       storeActions.clear();
     }
-  }, [getConnectionId, storeActions, storeApi]);
+  }, [getConnectionId, localUserName, storeActions, storeApi]);
 
   const onRaiseHandSignal = useCallback(
     (event: SignalEvent, currentSubscriberWrappers: SubscriberWrapper[]) => {
@@ -227,7 +240,14 @@ const useRaiseHand = ({
         // process — they may target a different participant or be a
         // `lowerAll` broadcast.
         if (senderConnectionId === localConnectionId) return;
-        const name = getParticipantName(senderConnectionId, currentSubscriberWrappers);
+        // Prefer the name carried on the payload (the sender knows their
+        // own display name). The wrapper lookup is a fallback for legacy
+        // signals that omit it — and the late-joiner case where the
+        // wrapper hasn't subscribed yet would otherwise return '' and the
+        // queue entry would render without a name.
+        const name =
+          parsed.participantName ||
+          getParticipantName(senderConnectionId, currentSubscriberWrappers);
         storeActions.setHand(senderConnectionId, {
           connectionId: senderConnectionId,
           participantName: name,
@@ -256,9 +276,14 @@ const useRaiseHand = ({
       const localState = storeApi.getState().handsMap.get(localConnectionId);
       if (!localState) return;
 
+      // Critical for late-joiners: when this unicast arrives, the new peer
+      // hasn't subscribed to our stream yet, so their subscriber-wrapper
+      // name lookup returns ''. We attach our display name so they can use
+      // it directly instead of relying on a lookup that hasn't resolved.
       const payload: RaiseHandPayload = {
         raisedHand: true,
         timestamp: localState.raisedHandTimestamp,
+        participantName: localState.participantName || localUserName,
       };
       send({
         type: RAISE_HAND_SIGNAL,
@@ -266,7 +291,7 @@ const useRaiseHand = ({
         to: connection,
       });
     },
-    [getConnectionId, storeApi]
+    [getConnectionId, localUserName, storeApi]
   );
 
   const onConnectionDestroyed = useCallback(
