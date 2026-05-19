@@ -81,7 +81,15 @@ const RaisedHandsSection = (): ReactElement => {
               data-testid={`raised-hand-item-${state.connectionId}`}
               className={`flex items-center py-1 pl-4 ${IS_MODERATOR ? 'pr-12' : 'pr-2'}`}
             >
-              <span className="flex-1 truncate text-vera-body-base">{state.participantName}</span>
+              {/*
+                `min-w-0` is the canonical Safari fix for `flex-1` + `truncate`:
+                without it WebKit uses `min-width: auto` (the intrinsic content
+                width) on the flex item, which fights `white-space: nowrap` and
+                pushes the text out of view rather than truncating it.
+              */}
+              <span className="min-w-0 flex-1 truncate text-vera-body-base">
+                {state.participantName}
+              </span>
               {IS_MODERATOR && (
                 <button
                   type="button"
