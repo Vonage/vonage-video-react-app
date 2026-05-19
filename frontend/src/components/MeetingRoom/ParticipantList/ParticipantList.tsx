@@ -85,7 +85,15 @@ const ParticipantList = ({ handleClose, isOpen }: ParticipantListProps): ReactEl
   };
   return (
     isOpen && (
-      <>
+      // Flex-column wrapper so the participant `<List>` naturally fills
+      // whatever vertical space remains after the title / URL row / search /
+      // RaisedHandsSection have taken theirs — instead of relying on a
+      // fragile `calc(100dvh - …)` that doesn't know about RightPanel's
+      // own `overflow: hidden` clipping. `h-full` matches RightPanel's
+      // fixed height; `min-h-0` on the flex item is needed so the List
+      // can shrink below its intrinsic content height and let its own
+      // `overflow: auto` actually scroll.
+      <Box sx={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
         <RightPanelTitle
           title={`${t('participants.title')} (${participantCount})`}
           handleClose={handleClose}
@@ -161,17 +169,14 @@ const ParticipantList = ({ handleClose, isOpen }: ParticipantListProps): ReactEl
         {env.ALLOW_RAISE_HAND && raisedHandCount > 0 && <RaisedHandsSection />}
         <List
           sx={{
+            // flex: 1 → take whatever vertical space the siblings above
+            // didn't claim. minHeight: 0 → let the List shrink below the
+            // intrinsic height of its children so `overflow: auto` can
+            // actually scroll them (without this, the List grows to fit
+            // all rows and overflows the panel's `overflow: hidden` clip).
+            flex: 1,
+            minHeight: 0,
             overflow: 'auto',
-            // 296px accounts for the header / URL row / search row / toolbar.
-            // When RaisedHandsSection is visible it consumes up to ~240px
-            // (its UL caps itself at 200px + ~40px header/divider) and that
-            // height needs to come out of the participant list otherwise the
-            // tail of the list spills below the viewport (#462 reviewer
-            // bug report — participants below the fold unreachable).
-            height:
-              env.ALLOW_RAISE_HAND && raisedHandCount > 0
-                ? 'calc(100dvh - 296px - 240px)'
-                : 'calc(100dvh - 296px)',
           }}
         >
           {isUserVisible && (
@@ -204,7 +209,7 @@ const ParticipantList = ({ handleClose, isOpen }: ParticipantListProps): ReactEl
             );
           })}
         </List>
-      </>
+      </Box>
     )
   );
 };
