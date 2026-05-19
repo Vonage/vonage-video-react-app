@@ -69,7 +69,11 @@ const EmojiGridButton = ({
           <Badge
             data-testid="raise-hand-active-badge"
             badgeContent={localHandIsRaised ? <RaisedHandIndicator /> : null}
-            invisible={!localHandIsRaised}
+            // Hide the badge while the panel is open — the panel renders a
+            // dedicated "Lower hand" CTA, so a redundant ✋ indicator floating
+            // above it is just noise. Badge is only useful as a closed-panel
+            // status reminder.
+            invisible={!localHandIsRaised || isEmojiGridOpen}
             overlap="circular"
             // Same className pattern as ParticipantListButton's
             // participant-count badge — the `[&_.MuiBadge-badge]:` arbitrary
@@ -78,7 +82,12 @@ const EmojiGridButton = ({
             // alone doesn't. Without this, the SVG's `currentColor` would
             // resolve to MUI's default instead of `text-vera-on-tertiary` and
             // the hand would render in MUI's default badge color.
-            className="[&_.MuiBadge-badge]:bg-vera-tertiary [&_.MuiBadge-badge]:text-vera-on-tertiary [&_.MuiBadge-badge]:text-vera-caption [&_.MuiBadge-badge]:min-w-4 [&_.MuiBadge-badge]:h-4 [&_.MuiBadge-badge]:px-0.5"
+            //
+            // `[&_.MuiBadge-badge]:z-0` keeps the badge under the EmojiGrid
+            // Popper Paper (which has `zIndex: 1`) — without it the badge's
+            // parent button creates a stacking context that lets the badge
+            // poke through the panel's bottom edge when the panel is open.
+            className="[&_.MuiBadge-badge]:bg-vera-tertiary [&_.MuiBadge-badge]:text-vera-on-tertiary [&_.MuiBadge-badge]:text-vera-caption [&_.MuiBadge-badge]:min-w-4 [&_.MuiBadge-badge]:h-4 [&_.MuiBadge-badge]:px-0.5 [&_.MuiBadge-badge]:z-0"
           >
             <ToolbarButton
               onClick={handleToggle}
