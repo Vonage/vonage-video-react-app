@@ -93,10 +93,12 @@ const RaisedHandsSection = (): ReactElement => {
               // Mirrors `ParticipantListItem`'s layout so the row visually
               // matches the rows below the divider: 16px left gutter (MUI
               // ListItem default), then a 32px Avatar with 12px right margin,
-              // then the name, with the action column reserved by `pr-[68px]`
-              // to align with the list's secondaryAction (audio + menu).
-              // Row height matches `h-14` (= 56px) too.
-              className={`flex h-14 items-center pl-4 ${IS_MODERATOR ? 'pr-[68px]' : 'pr-2'}`}
+              // then the name. Row height matches `h-14` (= 56px) too. The
+              // lower-hand button is rendered as an absolutely-positioned
+              // secondary action (MUI ListItem's pattern) so it sits at the
+              // same right-column x-position as the participant rows' audio
+              // / menu icons below.
+              className={`relative flex h-14 items-center pl-4 ${IS_MODERATOR ? 'pr-[68px]' : 'pr-2'}`}
             >
               <Avatar
                 sx={{
@@ -124,6 +126,10 @@ const RaisedHandsSection = (): ReactElement => {
                 {state.participantName}
               </Typography>
               {IS_MODERATOR && (
+                // Absolutely positioned to match MUI ListItem's `secondaryAction`
+                // column on the rows below: `right: 16px` lands the icon at
+                // the same x as the audio/menu icons in `ParticipantListItem`,
+                // independent of the participant name length.
                 <button
                   type="button"
                   aria-label={lowerLabel}
@@ -131,7 +137,7 @@ const RaisedHandsSection = (): ReactElement => {
                   data-testid={`lower-hand-${state.connectionId}`}
                   data-connection-id={state.connectionId}
                   onClick={handleLowerParticipantClick}
-                  className="cursor-pointer border-none bg-transparent p-1 text-vera-body-extended text-vera-text-tertiary hover:opacity-80"
+                  className="absolute right-4 top-1/2 -translate-y-1/2 cursor-pointer border-none bg-transparent p-1 text-vera-body-extended text-vera-text-tertiary hover:opacity-80"
                 >
                   <span role="img" aria-hidden="true">
                     {RAISED_HAND_EMOJI}
