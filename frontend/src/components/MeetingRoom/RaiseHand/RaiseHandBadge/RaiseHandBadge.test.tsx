@@ -29,7 +29,7 @@ describe('RaiseHandBadge', () => {
       render(<RaiseHandBadge />);
       const badge = screen.getByTestId('raise-hand-badge');
       expect(badge).toHaveStyle({ fontSize: 'clamp(16px, 3vw, 96px)' });
-      expect(badge).toHaveStyle({ top: '12px', left: '12px' });
+      expect(badge).toHaveStyle({ bottom: '12px', right: '12px' });
     });
 
     it.each([
@@ -41,7 +41,7 @@ describe('RaiseHandBadge', () => {
       render(<RaiseHandBadge tileWidth={tileWidth} />);
       const badge = screen.getByTestId('raise-hand-badge');
       expect(badge).toHaveStyle({ fontSize: `${expectedFont}px` });
-      expect(badge).toHaveStyle({ top: `${expectedOffset}px`, left: `${expectedOffset}px` });
+      expect(badge).toHaveStyle({ bottom: `${expectedOffset}px`, right: `${expectedOffset}px` });
     });
 
     it('clamps to a 16 px font / 8 px offset on tiny tiles', () => {
@@ -49,7 +49,7 @@ describe('RaiseHandBadge', () => {
       const badge = screen.getByTestId('raise-hand-badge');
       // 50 * 0.08 = 4 → clamped to 16, 50 * 0.015 = 0.75 → clamped to 8
       expect(badge).toHaveStyle({ fontSize: '16px' });
-      expect(badge).toHaveStyle({ top: '8px', left: '8px' });
+      expect(badge).toHaveStyle({ bottom: '8px', right: '8px' });
     });
   });
 });
