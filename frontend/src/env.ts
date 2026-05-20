@@ -1,3 +1,4 @@
+import { z } from 'zod';
 import { LAYOUT_MODES, type LayoutMode } from './types/session';
 
 declare const __APP_ENV__: Record<string, string | undefined>;
@@ -22,196 +23,149 @@ export type EnvArg = {
   [key: string]: unknown;
 };
 
-function toDisplayString(value: unknown): string {
-  if (value === null || value === undefined) return String(value);
-  if (typeof value === 'object' || typeof value === 'function') return JSON.stringify(value);
-  return String(value as string | number | bigint | boolean);
-}
+const langValues = ['en', 'it', 'es', 'es-MX', 'en-US', 'de'] as const satisfies readonly Lang[];
+const langEnum = z.enum([...langValues] as [Lang, ...Lang[]]);
 
-function parseBoolean(value: unknown, defaultValue: boolean): boolean {
-  if (value === undefined || value === null || value === '') return defaultValue;
+const boolField = (defaultValue: boolean) =>
+  z.preprocess((val) => {
+    if (val === undefined || val === null || val === '') return defaultValue;
+    if (typeof val === 'boolean') return val;
+    if (val === 'true') return true;
+    if (val === 'false') return false;
+    return val;
+  }, z.boolean());
 
-  if (typeof value === 'boolean') return value;
+const positiveIntField = (defaultValue: number) =>
+  z.preprocess(
+    (val) => (val === undefined || val === null || val === '' ? defaultValue : Number(val)),
+    z.number().int().positive()
+  );
 
-  if (typeof value === 'string') {
-    if (value === 'true') return true;
-    if (value === 'false') return false;
-  }
+const intListField = (fallback: number[]) =>
+  z.preprocess((val) => {
+    if (!val) return fallback;
+    if (typeof val !== 'string') throw new Error('Expected pipe-separated integer list');
+    return val.split('|').map((v) => {
+      const n = Number(v.trim());
+      if (!Number.isInteger(n) || n <= 0) throw new Error(`Invalid integer value in list: ${v}`);
+      return n;
+    });
+  }, z.array(z.number().int().positive()));
 
-  throw new Error(`Invalid boolean env value: ${toDisplayString(value)}`);
-}
+const optionalStringField = z.preprocess(
+  (val) => (val === undefined || val === null || val === '' ? undefined : val),
+  z.string().optional()
+);
 
-function parseString(value: unknown, name: string, defaultValue?: string): string {
-  if (value === undefined || value === null || value === '') {
-    if (defaultValue !== undefined) return defaultValue;
-    throw new Error(`Env ${name} is required`);
-  }
+const langListField = (fallback: Lang) =>
+  z.preprocess((val) => {
+    if (!val) return [fallback];
+    if (typeof val !== 'string') throw new Error('Invalid I18N_SUPPORTED_LANGUAGES');
+    return val.split('|').map((l) => {
+      const lang = l.trim();
+      if (!langValues.includes(lang as Lang))
+        throw new Error(`Invalid supported language: ${lang}`);
+      return lang;
+    });
+  }, z.array(langEnum));
 
-  if (typeof value !== 'string') {
-    throw new Error(`Env ${name} must be a string`);
-  }
-
-  return value;
-}
-
-function parseOptionalString(value: unknown): string | undefined {
-  if (value === undefined || value === null || value === '') return undefined;
-  if (typeof value !== 'string')
-    throw new Error(`Invalid string env value: ${toDisplayString(value)}`);
-  return value;
-}
-
-const LANGS: Lang[] = ['en', 'it', 'es', 'es-MX', 'en-US', 'de'];
-
-function parseLang(value: unknown, fallback: Lang): Lang {
-  if (value === undefined || value === null || value === '') return fallback;
-
-  if (typeof value !== 'string') {
-    throw new Error(`Invalid language type: ${toDisplayString(value)}`);
-  }
-
-  if (!LANGS.includes(value as Lang)) {
-    throw new Error(`Invalid language: ${toDisplayString(value)}`);
-  }
-
-  return value as Lang;
-}
-
-function parseLangList(value: unknown, fallback: Lang): Lang[] {
-  if (!value) return [fallback];
-
-  if (typeof value !== 'string') {
-    throw new Error(`Invalid I18N_SUPPORTED_LANGUAGES`);
-  }
-
-  return value.split('|').map((l) => {
-    const lang = l.trim();
-    if (!LANGS.includes(lang as Lang)) {
-      throw new Error(`Invalid supported language: ${lang}`);
-    }
-    return lang as Lang;
-  });
-}
-
-function parseResolution(value: unknown, fallback: Resolution | undefined): Resolution | undefined {
-  if (value === undefined || value === null || value === '') return fallback;
-
-  if (typeof value !== 'string') {
-    throw new Error(`Invalid resolution type: ${toDisplayString(value)}`);
-  }
-
-  if (!RESOLUTIONS.includes(value as Resolution)) {
-    throw new Error(`Invalid DEFAULT_RESOLUTION: ${toDisplayString(value)}`);
-  }
-
-  return value as Resolution;
-}
-
-function parseLayoutMode(value: unknown, fallback: LayoutMode): LayoutMode {
-  if (value === undefined || value === null || value === '') return fallback;
-
-  if (typeof value !== 'string') {
-    throw new Error(`Invalid layout mode type: ${toDisplayString(value)}`);
-  }
-
-  if (!(LAYOUT_MODES as readonly string[]).includes(value)) {
-    throw new Error(
-      `Invalid DEFAULT_LAYOUT_MODE: "${value}". Allowed values: ${LAYOUT_MODES.join(', ')}`
-    );
-  }
-
-  return value as LayoutMode;
-}
-
-function parseMode(value: unknown): Mode {
-  if (value === 'development' || value === 'production' || value === 'test') {
-    return value;
-  }
-  throw new Error(`Invalid MODE: ${toDisplayString(value)}`);
-}
+const envSchema = z
+  .object({
+    I18N_FALLBACK_LANGUAGE: z.preprocess(
+      (v) => (v === undefined || v === null || v === '' ? 'en' : v),
+      langEnum
+    ),
+    I18N_SUPPORTED_LANGUAGES: z.union([z.string(), z.null(), z.undefined()]).optional(),
+    ENABLE_REPORT_ISSUE: boolField(false),
+    ALLOW_BACKGROUND_EFFECTS: boolField(true),
+    ALLOW_CAMERA_CONTROL: boolField(true),
+    ALLOW_VIDEO_ON_JOIN: boolField(true),
+    DEFAULT_RESOLUTION: z.preprocess(
+      (v) => (v === undefined || v === null || v === '' ? undefined : v),
+      z.enum([...RESOLUTIONS] as [Resolution, ...Resolution[]]).optional()
+    ),
+    MIN_CUSTOM_VIDEO_BITRATE_BPS: positiveIntField(5_000),
+    MAX_CUSTOM_VIDEO_BITRATE_BPS: positiveIntField(10_000_000),
+    SUPPORTED_FRAME_RATES: intListField([30, 15, 7, 1]),
+    ALLOW_ADVANCED_NOISE_SUPPRESSION: boolField(true),
+    ALLOW_AUDIO_ON_JOIN: boolField(true),
+    ALLOW_MICROPHONE_CONTROL: boolField(true),
+    MEETING_ROOM_ALLOW_ADVANCED_SETTINGS: boolField(false),
+    WAITING_ROOM_ALLOW_ADVANCED_SETTINGS: boolField(false),
+    WAITING_ROOM_ALLOW_DEVICE_SELECTION: boolField(true),
+    ALLOW_ARCHIVING: boolField(true),
+    ALLOW_CAPTIONS: boolField(true),
+    ALLOW_CHAT: boolField(true),
+    MEETING_ROOM_ALLOW_DEVICE_SELECTION: boolField(true),
+    ALLOW_EMOJIS: boolField(true),
+    ALLOW_SCREEN_SHARE: boolField(true),
+    DEFAULT_LAYOUT_MODE: z.preprocess(
+      (v) => (v === undefined || v === null || v === '' ? 'active-speaker' : v),
+      z.enum([...LAYOUT_MODES] as [LayoutMode, ...LayoutMode[]])
+    ),
+    SHOW_PARTICIPANT_LIST: boolField(true),
+    SHOW_VIDEO_STATS: boolField(false),
+    BYPASS_WAITING_ROOM: boolField(false),
+    API_URL: z.preprocess((v) => (v === undefined || v === null || v === '' ? '' : v), z.string()),
+    TUNNEL_DOMAIN: optionalStringField,
+    AVOID_FETCHING_APP_CONFIG: boolField(true),
+    MODE: z.preprocess(
+      (v) => v ?? 'development',
+      z.enum(['development', 'production', 'test'] as const)
+    ),
+    VONAGE_VIDEO_HOST: optionalStringField,
+  })
+  .transform(({ I18N_FALLBACK_LANGUAGE, I18N_SUPPORTED_LANGUAGES, ...rest }) => ({
+    ...rest,
+    I18N_FALLBACK_LANGUAGE,
+    I18N_SUPPORTED_LANGUAGES: langListField(I18N_FALLBACK_LANGUAGE).parse(I18N_SUPPORTED_LANGUAGES),
+  }));
 
 export class Env {
   private raw: Partial<EnvArg>;
   private initialRaw: Partial<EnvArg>;
 
-  public ENABLE_REPORT_ISSUE: boolean;
-  public I18N_FALLBACK_LANGUAGE: Lang;
-  public I18N_SUPPORTED_LANGUAGES: Lang[];
+  public ENABLE_REPORT_ISSUE!: boolean;
+  public I18N_FALLBACK_LANGUAGE!: Lang;
+  public I18N_SUPPORTED_LANGUAGES!: Lang[];
 
-  public ALLOW_BACKGROUND_EFFECTS: boolean;
-  public ALLOW_CAMERA_CONTROL: boolean;
-  public ALLOW_VIDEO_ON_JOIN: boolean;
-  public DEFAULT_RESOLUTION: Resolution | undefined;
-  public ALLOW_ADVANCED_NOISE_SUPPRESSION: boolean;
-  public ALLOW_AUDIO_ON_JOIN: boolean;
-  public ALLOW_MICROPHONE_CONTROL: boolean;
-  public WAITING_ROOM_ALLOW_DEVICE_SELECTION: boolean;
-  public ALLOW_ARCHIVING: boolean;
-  public ALLOW_CAPTIONS: boolean;
-  public ALLOW_CHAT: boolean;
-  public MEETING_ROOM_ALLOW_DEVICE_SELECTION: boolean;
-  public ALLOW_EMOJIS: boolean;
-  public ALLOW_SCREEN_SHARE: boolean;
-  public DEFAULT_LAYOUT_MODE: LayoutMode;
-  public SHOW_PARTICIPANT_LIST: boolean;
-  public SHOW_VIDEO_STATS: boolean;
-  public BYPASS_WAITING_ROOM: boolean;
-  public API_URL: string;
-  public TUNNEL_DOMAIN: string | undefined;
-  public AVOID_FETCHING_APP_CONFIG: boolean;
-  public MODE: Mode;
-  public VONAGE_VIDEO_HOST: string | undefined;
+  public ALLOW_BACKGROUND_EFFECTS!: boolean;
+  public ALLOW_CAMERA_CONTROL!: boolean;
+  public ALLOW_VIDEO_ON_JOIN!: boolean;
+  public DEFAULT_RESOLUTION!: Resolution | undefined;
+  public MIN_CUSTOM_VIDEO_BITRATE_BPS!: number;
+  public MAX_CUSTOM_VIDEO_BITRATE_BPS!: number;
+  public SUPPORTED_FRAME_RATES!: number[];
+  public ALLOW_ADVANCED_NOISE_SUPPRESSION!: boolean;
+  public ALLOW_AUDIO_ON_JOIN!: boolean;
+  public ALLOW_MICROPHONE_CONTROL!: boolean;
+  public MEETING_ROOM_ALLOW_ADVANCED_SETTINGS!: boolean;
+  public WAITING_ROOM_ALLOW_ADVANCED_SETTINGS!: boolean;
+  public WAITING_ROOM_ALLOW_DEVICE_SELECTION!: boolean;
+  public ALLOW_ARCHIVING!: boolean;
+  public ALLOW_CAPTIONS!: boolean;
+  public ALLOW_CHAT!: boolean;
+  public MEETING_ROOM_ALLOW_DEVICE_SELECTION!: boolean;
+  public ALLOW_EMOJIS!: boolean;
+  public ALLOW_SCREEN_SHARE!: boolean;
+  public DEFAULT_LAYOUT_MODE!: LayoutMode;
+  public SHOW_PARTICIPANT_LIST!: boolean;
+  public SHOW_VIDEO_STATS!: boolean;
+  public BYPASS_WAITING_ROOM!: boolean;
+  public API_URL!: string;
+  public TUNNEL_DOMAIN!: string | undefined;
+  public AVOID_FETCHING_APP_CONFIG!: boolean;
+  public MODE!: Mode;
+  public VONAGE_VIDEO_HOST!: string | undefined;
 
   constructor(env: Record<string, unknown>) {
     this.raw = { ...env };
     this.initialRaw = { ...env };
 
-    this.I18N_FALLBACK_LANGUAGE = parseLang(env.I18N_FALLBACK_LANGUAGE, 'en');
+    const parsed = envSchema.parse(env);
+    Object.assign(this, parsed);
 
-    this.I18N_SUPPORTED_LANGUAGES = parseLangList(
-      env.I18N_SUPPORTED_LANGUAGES,
-      this.I18N_FALLBACK_LANGUAGE
-    );
-
-    this.ENABLE_REPORT_ISSUE = parseBoolean(env.ENABLE_REPORT_ISSUE, false);
-    this.ALLOW_BACKGROUND_EFFECTS = parseBoolean(env.ALLOW_BACKGROUND_EFFECTS, true);
-    this.ALLOW_CAMERA_CONTROL = parseBoolean(env.ALLOW_CAMERA_CONTROL, true);
-    this.ALLOW_VIDEO_ON_JOIN = parseBoolean(env.ALLOW_VIDEO_ON_JOIN, true);
-    this.ALLOW_ADVANCED_NOISE_SUPPRESSION = parseBoolean(
-      env.ALLOW_ADVANCED_NOISE_SUPPRESSION,
-      true
-    );
-    this.ALLOW_AUDIO_ON_JOIN = parseBoolean(env.ALLOW_AUDIO_ON_JOIN, true);
-    this.ALLOW_MICROPHONE_CONTROL = parseBoolean(env.ALLOW_MICROPHONE_CONTROL, true);
-    this.WAITING_ROOM_ALLOW_DEVICE_SELECTION = parseBoolean(
-      env.WAITING_ROOM_ALLOW_DEVICE_SELECTION,
-      true
-    );
-    this.ALLOW_ARCHIVING = parseBoolean(env.ALLOW_ARCHIVING, true);
-    this.ALLOW_CAPTIONS = parseBoolean(env.ALLOW_CAPTIONS, true);
-    this.ALLOW_CHAT = parseBoolean(env.ALLOW_CHAT, true);
-    this.MEETING_ROOM_ALLOW_DEVICE_SELECTION = parseBoolean(
-      env.MEETING_ROOM_ALLOW_DEVICE_SELECTION,
-      true
-    );
-    this.ALLOW_EMOJIS = parseBoolean(env.ALLOW_EMOJIS, true);
-    this.ALLOW_SCREEN_SHARE = parseBoolean(env.ALLOW_SCREEN_SHARE, true);
-    this.SHOW_PARTICIPANT_LIST = parseBoolean(env.SHOW_PARTICIPANT_LIST, true);
-    this.SHOW_VIDEO_STATS = parseBoolean(env.SHOW_VIDEO_STATS, false);
-    this.BYPASS_WAITING_ROOM = parseBoolean(env.BYPASS_WAITING_ROOM, false);
-    this.AVOID_FETCHING_APP_CONFIG = parseBoolean(env.AVOID_FETCHING_APP_CONFIG, true);
-
-    this.DEFAULT_RESOLUTION = parseResolution(env.DEFAULT_RESOLUTION, '1280x720');
-
-    this.DEFAULT_LAYOUT_MODE = parseLayoutMode(env.DEFAULT_LAYOUT_MODE, 'active-speaker');
-
-    this.API_URL = parseString(env.API_URL, 'API_URL', '');
-    this.setApiUrl(this.API_URL);
-
-    this.TUNNEL_DOMAIN = parseOptionalString(env.TUNNEL_DOMAIN);
-
-    this.MODE = parseMode(env.MODE ?? 'development');
-    this.VONAGE_VIDEO_HOST = parseOptionalString(env.VONAGE_VIDEO_HOST);
+    this.setApiUrl(parsed.API_URL);
   }
 
   /**
@@ -267,7 +221,7 @@ export class Env {
    * @param {unknown} value - Raw language string, e.g. "en|es|it".
    */
   setSupportedLanguages(value: unknown) {
-    this.I18N_SUPPORTED_LANGUAGES = parseLangList(value, this.I18N_FALLBACK_LANGUAGE);
+    this.I18N_SUPPORTED_LANGUAGES = langListField(this.I18N_FALLBACK_LANGUAGE).parse(value);
   }
 }
 

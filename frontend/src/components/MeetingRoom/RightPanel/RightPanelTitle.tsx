@@ -1,6 +1,6 @@
 import IconButton from '@mui/material/IconButton';
 import { ReactElement } from 'react';
-import VividIcon from '@components/VividIcon';
+import VividIcon from '@ui/VividIcon';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 

@@ -19,6 +19,8 @@ const customWordList = [
   'PWDEBUG',
   'unstub',
   'vonageAPIURL',
+  'kbps',
+  'Mbps',
   'customfield',
   'VIDSOL',
 ];

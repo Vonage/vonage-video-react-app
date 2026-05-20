@@ -1,7 +1,7 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { act, render as renderBase, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import VividIcon from '@components/VividIcon';
+import VividIcon from '@ui/VividIcon';
 import SoundTest from './SoundTest';
 import { nativeDevices } from '../../utils/mockData/device';
 import { makeTestProvider } from '@test/providers';

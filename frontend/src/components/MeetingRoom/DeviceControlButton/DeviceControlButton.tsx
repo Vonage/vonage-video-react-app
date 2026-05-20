@@ -8,7 +8,7 @@ import MutedAlert from '../../MutedAlert';
 import ButtonGroup from '@mui/material/ButtonGroup';
 import IconButton from '@mui/material/IconButton';
 import Tooltip from '@mui/material/Tooltip';
-import VividIcon from '@components/VividIcon';
+import VividIcon from '@ui/VividIcon';
 import Box from '@mui/material/Box';
 import usePushToTalk from '@hooks/usePushToTalk';
 import { env } from '../../../env';
@@ -102,7 +102,7 @@ const DeviceControlButton = ({
         <VividIcon
           name="video-solid"
           customSize={-5}
-          data-testid="VideocamIcon"
+          data-testid="VideoCamIcon"
           style={{ color: 'var(--vera-on-secondary-light)' }}
         />
       );
@@ -111,7 +111,7 @@ const DeviceControlButton = ({
       <VividIcon
         name="video-off-solid"
         customSize={-5}
-        data-testid="VideocamOffIcon"
+        data-testid="VideoCamOffIcon"
         style={{ color: 'var(--vera-error)' }}
       />
     );

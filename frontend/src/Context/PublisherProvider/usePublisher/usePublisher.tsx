@@ -12,6 +12,7 @@ import { getStorageItem, setStorageItem, STORAGE_KEYS } from '@utils/storage';
 import usePublisherQuality, { NetworkQuality } from '../usePublisherQuality/usePublisherQuality';
 import useSyncPublisherDevices from './hooks/useSyncPublisherDevices/useSyncPublisherDevices';
 import usePublisherOptions from '../usePublisherOptions';
+import useApplyAdvancedSettings from '../useApplyAdvancedSettings';
 import useSessionContext from '../../../hooks/useSessionContext';
 import applyBackgroundFilter from '../../../utils/backgroundFilter/applyBackgroundFilter/applyBackgroundFilter';
 import idempotentCallbackWithRetry from '@common/execution/idempotentCallbackWithRetry';
@@ -141,6 +142,7 @@ const usePublisher = (initialValue: PublisherContextInitialValue = {}): Publishe
 
   // Sync publisher with selected devices from store (handles device changes and disconnections)
   useSyncPublisherDevices(publisherRef, { setIsAudioEnabled, setIsVideoEnabled });
+  useApplyAdvancedSettings(isPublishing ? publisherRef.current : null);
 
   // If we do not have audio input or video input access, we cannot publish.
   useEffect(() => {

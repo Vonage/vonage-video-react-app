@@ -28,9 +28,13 @@ const videoDevices = devices.filter((d) => d.kind === 'videoinput');
 
 const mockSessionId = '1_MX4xMjM0NTY3OH4-VGh1IEZlYiAyNyAwODozMjozNCBQU1QgMjAyMH4wLjI0NDYxMjE';
 const mockedRoomName = 'test-room-name';
-const mockSessionKey = jwt.sign({ sessionId: mockSessionId, roomName: mockedRoomName }, 'test', {
-  algorithm: 'HS256',
-});
+const mockSessionKey: string = jwt.sign(
+  { sessionId: mockSessionId, roomName: mockedRoomName },
+  'test',
+  {
+    algorithm: 'HS256',
+  }
+);
 
 describe('SmallViewportHeader component', () => {
   let publisherContext: PublisherContextType;

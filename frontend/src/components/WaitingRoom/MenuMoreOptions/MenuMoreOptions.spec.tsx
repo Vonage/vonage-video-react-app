@@ -3,6 +3,7 @@ import { render as renderBase, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import type { ReactElement } from 'react';
 import * as clientSdkVideo from '@vonage/client-sdk-video';
+import advancedSettings$ from '@Context/AdvancedSettings';
 import backgroundEffectsDialog$ from '@Context/BackgroundEffectsDialog';
 import precallNetworkTestDialog$ from '@Context/PrecallNetworkTestDialog';
 import composeProviders from '@web/helpers/composeProviders';
@@ -42,7 +43,35 @@ describe('MenuMoreOptions', () => {
   it('should not render menu items when open is false', () => {
     render(<MenuMoreOptions onClose={mockOnClose} open={false} anchorEl={mockAnchorEl} />);
 
+    expect(screen.queryByText(/^settings$/i)).not.toBeInTheDocument();
     expect(screen.queryByText(/video effects/i)).not.toBeInTheDocument();
+  });
+
+  it('should not display advanced settings option when the flag is disabled', () => {
+    render(<MenuMoreOptions onClose={mockOnClose} open anchorEl={mockAnchorEl} />);
+
+    expect(screen.queryByText(/^settings$/i)).not.toBeInTheDocument();
+  });
+
+  it('should display advanced settings option when the flag is enabled', () => {
+    env.partialUpdate({ WAITING_ROOM_ALLOW_ADVANCED_SETTINGS: true });
+    render(<MenuMoreOptions onClose={mockOnClose} open anchorEl={mockAnchorEl} />);
+
+    expect(screen.getByText(/^settings$/i)).toBeInTheDocument();
+  });
+
+  it('should open advanced settings and close the menu when clicking the option', async () => {
+    const user = userEvent.setup();
+
+    env.partialUpdate({ WAITING_ROOM_ALLOW_ADVANCED_SETTINGS: true });
+    render(<MenuMoreOptions onClose={mockOnClose} open anchorEl={mockAnchorEl} />);
+
+    const advancedSettingsMenuItem = screen.getByText(/^settings$/i);
+
+    await user.click(advancedSettingsMenuItem);
+
+    expect(mockOnClose).toHaveBeenCalledTimes(1);
+    expect(advancedSettings$.getState().isOpen).toBe(true);
   });
 
   it('should display video effects option when media processor is supported', () => {

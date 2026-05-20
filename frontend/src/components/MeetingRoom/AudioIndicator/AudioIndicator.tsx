@@ -6,7 +6,7 @@ import VoiceIndicatorIcon from '../VoiceIndicator/VoiceIndicator';
 import useSessionContext from '../../../hooks/useSessionContext';
 import IconButton from '@mui/material/IconButton';
 import Tooltip from '@mui/material/Tooltip';
-import VividIcon from '@components/VividIcon';
+import VividIcon from '@ui/VividIcon';
 import Box from '@mui/material/Box';
 export type AudioIndicatorProps = {
   hasAudio: boolean | undefined;

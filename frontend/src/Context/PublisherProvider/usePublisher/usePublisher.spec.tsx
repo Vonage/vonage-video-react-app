@@ -52,6 +52,10 @@ describe('usePublisher', () => {
       clearVideoFilter: vi.fn(),
       publishAudio: publishAudioSpy,
       publishVideo: publishVideoSpy,
+      setPreferredFrameRate: vi.fn().mockResolvedValue(undefined),
+      setPreferredResolution: vi.fn().mockResolvedValue(undefined),
+      setMaxVideoBitrate: vi.fn().mockResolvedValue(undefined),
+      setVideoBitratePreset: vi.fn().mockResolvedValue(undefined),
     }) as unknown as Publisher;
 
     vi.mocked(initPublisher).mockImplementation(mockedInitPublisher);

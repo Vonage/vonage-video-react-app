@@ -174,6 +174,10 @@ function render(
     getAudioSource: mockGetAudioSource,
     setVideoSource: vi.fn(),
     getVideoSource: vi.fn(),
+    setPreferredFrameRate: vi.fn().mockResolvedValue(undefined),
+    setPreferredResolution: vi.fn().mockResolvedValue(undefined),
+    setMaxVideoBitrate: vi.fn().mockResolvedValue(undefined),
+    setVideoBitratePreset: vi.fn().mockResolvedValue(undefined),
   }) as unknown as Publisher;
 
   const { wrapper, ...context } = makeTestProvider(

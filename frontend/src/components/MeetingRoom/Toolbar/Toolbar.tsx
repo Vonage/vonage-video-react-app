@@ -5,6 +5,7 @@ import isReportIssueEnabled from '@utils/isReportIssueEnabled';
 import useToolbarButtons from '@hooks/useToolbarButtons';
 import useBackgroundPublisherContext from '@hooks/useBackgroundPublisherContext';
 import Box from '@mui/material/Box';
+import { env } from '../../../env';
 import ScreenSharingButton from '../../ScreenSharingButton';
 import TimeRoomNameMeetingRoom from '../TimeRoomName';
 import ExitButton from '../ExitButton';
@@ -14,6 +15,7 @@ import ArchivingButton from '../ArchivingButton';
 import CaptionsButton from '../CaptionsButton';
 import ChatButton from '../ChatButton';
 import ReportIssueButton from '../ReportIssueButton';
+import AdvancedSettingsButton from '../AdvancedSettingsButton';
 import ToolbarOverflowButton from '../ToolbarOverflowButton';
 import EmojiGridButton from '../EmojiGridButton';
 import DeviceControlButton from '../DeviceControlButton';
@@ -106,6 +108,9 @@ const Toolbar = ({
     />,
     <CaptionsButton key="CaptionsButton" captionsState={captionsState} />,
     <ArchivingButton key="ArchivingButton" />,
+    env.MEETING_ROOM_ALLOW_ADVANCED_SETTINGS && (
+      <AdvancedSettingsButton key="AdvancedSettingsButton" />
+    ),
     isReportIssueEnabled() && (
       <ReportIssueButton
         isOpen={rightPanelActiveTab === 'issues'}

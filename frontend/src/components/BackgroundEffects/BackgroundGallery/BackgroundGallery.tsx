@@ -4,7 +4,7 @@ import classNames from 'classnames';
 import Box from '@mui/material/Box';
 import Tooltip from '@mui/material/Tooltip';
 import IconButton from '@mui/material/IconButton';
-import VividIcon from '@components/VividIcon';
+import VividIcon from '@ui/VividIcon';
 import { BACKGROUNDS_PATH } from '@utils/constants';
 import SelectableOption from '../SelectableOption';
 import useBackgroundPublisherContext from '@hooks/useBackgroundPublisherContext';

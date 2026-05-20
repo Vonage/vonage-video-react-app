@@ -4,7 +4,7 @@ import useSessionContext from '../../../hooks/useSessionContext';
 import IconButton from '@mui/material/IconButton';
 import InputAdornment from '@mui/material/InputAdornment';
 import TextField from '@mui/material/TextField';
-import VividIcon from '@components/VividIcon';
+import VividIcon from '@ui/VividIcon';
 
 /**
  * ChatInput component

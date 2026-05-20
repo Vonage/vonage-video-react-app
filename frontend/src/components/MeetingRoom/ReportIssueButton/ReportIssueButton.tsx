@@ -2,7 +2,7 @@ import Tooltip from '@mui/material/Tooltip';
 import { ReactElement, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import ToolbarButton from '../ToolbarButton';
-import VividIcon from '@components/VividIcon';
+import VividIcon from '@ui/VividIcon';
 
 export type ReportIssueButtonProps = {
   handleClick: () => void;

@@ -5,16 +5,16 @@ const Example = () => {
   return (
     <div className="min-h-screen bg-vera-surface flex flex-col font-sans">
       <header className="bg-vera-surface px-8 py-4 border-b border-vera-border">
-        <h1 className="text-vera-primary text-2xl font-semibold">Vera Room</h1>
-        <p className="text-vera-text-tertiary text-sm mt-1">
+        <h1 className="text-vera-primary text-vera-heading-2">Vera Room</h1>
+        <p className="text-vera-text-tertiary text-vera-body-base mt-1">
           Embeddable Video Conferencing Web Component
         </p>
       </header>
 
       <main className="flex-1 p-8 flex flex-col gap-8 bg-vera-background">
         <section className="bg-vera-surface rounded-lg p-6 border border-vera-border">
-          <h2 className="text-vera-text-secondary text-lg font-medium mb-4">Live Example</h2>
-          <p className="text-vera-text-tertiary text-sm mb-4">
+          <h2 className="text-vera-text-secondary text-vera-heading-4 mb-4">Live Example</h2>
+          <p className="text-vera-text-tertiary text-vera-body-base mb-4">
             The component below is a fully functional video room embedded using the{' '}
             <code className="text-vera-primary">&lt;vera-room&gt;</code> custom element.
           </p>
@@ -32,8 +32,8 @@ const Example = () => {
         </section>
 
         <section className="bg-vera-surface rounded-lg p-6 border border-vera-border">
-          <h2 className="text-vera-text-secondary text-lg font-medium mb-4">Usage</h2>
-          <p className="text-vera-text-tertiary text-sm mb-4">
+          <h2 className="text-vera-text-secondary text-vera-heading-4 mb-4">Usage</h2>
+          <p className="text-vera-text-tertiary text-vera-body-base mb-4">
             Add the script to your page and use the custom element:
           </p>
           <CodeBlock>
@@ -53,10 +53,10 @@ const Example = () => {
         </section>
 
         <section className="bg-vera-surface rounded-lg p-6 border border-vera-border">
-          <h2 className="text-vera-text-secondary text-lg font-medium mb-4">
+          <h2 className="text-vera-text-secondary text-vera-heading-4 mb-4">
             Styling the Container
           </h2>
-          <p className="text-vera-text-tertiary text-sm mb-4">
+          <p className="text-vera-text-tertiary text-vera-body-base mb-4">
             The component fills its container. Set dimensions on the parent or the element itself:
           </p>
           <CodeBlock>
@@ -89,7 +89,7 @@ const Example = () => {
 function CodeBlock({ children }: { children: React.ReactNode }) {
   return (
     <div className="rounded bg-vera-background p-4 overflow-x-auto">
-      <pre className="font-mono text-sm text-vera-text-secondary">{children}</pre>
+      <pre className="font-mono text-vera-body-base text-vera-text-secondary">{children}</pre>
     </div>
   );
 }

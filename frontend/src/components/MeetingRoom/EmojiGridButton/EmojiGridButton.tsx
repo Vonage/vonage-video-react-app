@@ -3,7 +3,7 @@ import { Dispatch, ReactElement, SetStateAction, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import ToolbarButton from '../ToolbarButton';
 import EmojiGrid from '../EmojiGrid/EmojiGrid';
-import VividIcon from '@components/VividIcon';
+import VividIcon from '@ui/VividIcon';
 import { env } from '../../../env';
 
 export type EmojiGridProps = {

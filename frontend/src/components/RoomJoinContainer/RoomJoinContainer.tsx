@@ -29,14 +29,14 @@ const RoomJoinContainer = (): ReactElement => {
 
   return (
     <Card component="form" className="lg:max-w-125">
-      <h6 className="text-xl font-medium font-vera-plain text-vera-secondary mb-4">
+      <h6 className="font-vera-plain text-vera-heading-4 text-vera-secondary mb-4">
         {t('button.startNewRoom')}
       </h6>
       <NewRoomButton handleNewRoom={handleNewRoom} />
 
       <JoinContainerSeparator />
 
-      <h6 className="text-xl font-medium font-vera-plain text-vera-secondary mb-4">
+      <h6 className="font-vera-plain text-vera-heading-4 text-vera-secondary mb-4">
         {t('button.joinExistingMeeting')}
       </h6>
 

@@ -5,7 +5,7 @@ import LanguageSelector from './LanguageSelector';
 import { env } from '../../env';
 
 // Mock VividIcon component
-vi.mock('../VividIcon/VividIcon', () => ({
+vi.mock('@ui/VividIcon', () => ({
   default: ({ name, customSize }: { name: string; customSize: number }) => (
     <div data-testid={`vivid-icon-${name}`} data-size={customSize}>
       {name}

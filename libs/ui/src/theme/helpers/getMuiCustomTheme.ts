@@ -150,6 +150,13 @@ const getMuiCustomTheme = ({ container }: GetMuiCustomThemeProps = {}): Theme =>
         },
       },
       MuiDialog: {
+        defaultProps: {
+          slotProps: {
+            paper: {
+              className: 'dark:border dark:border-vera-border',
+            },
+          },
+        },
         styleOverrides: {
           paper: {
             backgroundColor: getCssVariable('--vera-surface'),

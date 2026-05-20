@@ -377,6 +377,9 @@ All feature flags are **boolean** (`true` / `false`).
 |----------|---------|-----------------|-------------|
 | `DEFAULT_RESOLUTION` | `1280x720` | `1920x1080` \| `1280x960` \| `1280x720` \| `640x480` \| `640x360` \| `320x240` \| `320x180` | Default outgoing video resolution |
 | `DEFAULT_LAYOUT_MODE` | `active-speaker` | `active-speaker` \| `grid` | Default in-room layout when a participant joins |
+| `MIN_CUSTOM_VIDEO_BITRATE_BPS` | `5000` | Positive integer (bps) | Minimum selectable custom video bitrate in the Advanced Settings dialog |
+| `MAX_CUSTOM_VIDEO_BITRATE_BPS` | `10000000` | Positive integer (bps) | Maximum selectable custom video bitrate in the Advanced Settings dialog |
+| `SUPPORTED_FRAME_RATES` | `30\|15\|7\|1` | `\|`-separated positive integers (fps) | Frame rate options shown in the Advanced Settings video tab |
 
 > **Note:** `DEFAULT_LAYOUT_MODE` and `ALLOW_AUDIO_ON_JOIN` / `ALLOW_VIDEO_ON_JOIN` require the participant to **rejoin the room** to take effect after being changed.
 

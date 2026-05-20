@@ -10,6 +10,7 @@ import useToolbarButtons, {
 } from '@hooks/useToolbarButtons';
 import { RIGHT_PANEL_BUTTON_COUNT } from '@utils/constants';
 import { makeTestProvider, providers } from '@test/providers';
+import { env } from '../../../env';
 import Toolbar, { ToolbarProps, CaptionsState } from './Toolbar';
 
 const mockedRoomName = { roomName: 'test-room-name' };
@@ -33,6 +34,7 @@ const mockUseToolbarButtons = useToolbarButtons as Mock<
 
 describe('Toolbar', () => {
   beforeEach(() => {
+    env.reset();
     (useLocation as Mock).mockReturnValue({
       state: mockedRoomName,
     });
@@ -51,6 +53,7 @@ describe('Toolbar', () => {
   });
 
   afterAll(() => {
+    env.reset();
     vi.restoreAllMocks();
     vi.unstubAllEnvs();
   });
@@ -100,6 +103,7 @@ describe('Toolbar', () => {
   });
 
   it('on a normal viewport, displays all of the toolbar buttons', () => {
+    env.partialUpdate({ MEETING_ROOM_ALLOW_ADVANCED_SETTINGS: true });
     render(
       <Toolbar
         {...{
@@ -112,9 +116,16 @@ describe('Toolbar', () => {
       />
     );
     expect(screen.queryByTestId('archiving-button')).toBeVisible();
+    expect(screen.queryByTestId('advanced-settings-button')).toBeVisible();
     expect(screen.queryByTestId('screensharing-button')).toBeVisible();
     expect(screen.queryByTestId('emoji-grid-button')).toBeVisible();
     expect(screen.queryByTestId('captions-button')).toBeVisible();
+  });
+
+  it('does not render advanced settings when the flag is disabled', () => {
+    render(<Toolbar {...defaultProps} />);
+
+    expect(screen.queryByTestId('advanced-settings-button')).not.toBeInTheDocument();
   });
 });
 

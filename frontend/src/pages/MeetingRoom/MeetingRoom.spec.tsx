@@ -66,12 +66,6 @@ vi.mock('@mui/material/useMediaQuery', () => ({
   default: vi.fn(),
 }));
 
-// vi.mock('../../env', () => ({
-//   default: {
-//     BYPASS_WAITING_ROOM: false,
-//   },
-// }));
-
 vi.mock('@hooks/useSpeakingDetector');
 vi.mock('@hooks/useLayoutManager');
 vi.mock('@hooks/useActiveSpeaker');
@@ -169,6 +163,10 @@ describe('MeetingRoom', () => {
       videoWidth: () => 1280,
       videoHeight: () => 720,
       getVideoFilter: vi.fn(() => undefined),
+      setPreferredFrameRate: vi.fn().mockResolvedValue(undefined),
+      setPreferredResolution: vi.fn().mockResolvedValue(undefined),
+      setMaxVideoBitrate: vi.fn().mockResolvedValue(undefined),
+      setVideoBitratePreset: vi.fn().mockResolvedValue(undefined),
     }) as unknown as Publisher;
 
     mockUseSpeakingDetector.mockReturnValue(false);

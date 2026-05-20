@@ -1,7 +1,7 @@
 import { ReactElement, useMemo } from 'react';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
-import VividIcon from '@components/VividIcon';
+import VividIcon from '@ui/VividIcon';
 import { useTranslation } from 'react-i18next';
 
 export type PrecallNetworkTestQualityRowProps = {

@@ -14,7 +14,7 @@ import Tooltip from '@mui/material/Tooltip';
 import List from '@mui/material/List';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
-import VividIcon from '@components/VividIcon';
+import VividIcon from '@ui/VividIcon';
 import TextField from '@mui/material/TextField';
 import InputAdornment from '@mui/material/InputAdornment';
 

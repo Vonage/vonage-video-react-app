@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next';
 import useSessionContext from '@hooks/useSessionContext';
 import ToolbarButton from '../ToolbarButton';
 import Tooltip from '@mui/material/Tooltip';
-import VividIcon from '@components/VividIcon';
+import VividIcon from '@ui/VividIcon';
 import { env } from '../../../env';
 import { runtime$ } from '@core/stores';
 

@@ -4,7 +4,7 @@ import ListItem from '@mui/material/ListItem';
 import Link from '@mui/material/Link';
 import IconButton from '@mui/material/IconButton';
 import ListItemText from '@mui/material/ListItemText';
-import VividIcon from '@components/VividIcon';
+import VividIcon from '@ui/VividIcon';
 import { Typography } from '@mui/material';
 import Separator from '@components/Separator';
 import Box from '@mui/material/Box';

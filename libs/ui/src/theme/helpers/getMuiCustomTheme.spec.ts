@@ -36,4 +36,10 @@ describe('customTheme', () => {
     expect(text.primary).toBeDefined();
     expect(text.secondary).toBeDefined();
   });
+
+  it('should add a border to dialog paper in dark mode', () => {
+    expect(customTheme.components?.MuiDialog?.defaultProps?.slotProps?.paper).toMatchObject({
+      className: expect.stringContaining('dark:border'),
+    });
+  });
 });

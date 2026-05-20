@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import ToolbarButton from '../ToolbarButton';
 import UnreadMessagesBadge from '../UnreadMessagesBadge';
 import Tooltip from '@mui/material/Tooltip';
-import VividIcon from '@components/VividIcon';
+import VividIcon from '@ui/VividIcon';
 import { env } from '../../../env';
 
 export type ChatButtonProps = {

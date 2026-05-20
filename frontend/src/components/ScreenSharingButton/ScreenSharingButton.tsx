@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { isMobile } from '@web/platform';
 import ToolbarButton from '../MeetingRoom/ToolbarButton';
 import PopupDialog, { DialogTexts } from '../MeetingRoom/PopupDialog';
-import VividIcon from '@components/VividIcon';
+import VividIcon from '@ui/VividIcon';
 import { env } from '../../env';
 
 export type ScreenShareButtonProps = {

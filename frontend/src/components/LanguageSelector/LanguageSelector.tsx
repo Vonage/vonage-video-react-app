@@ -7,7 +7,7 @@ import Select from '@mui/material/Select';
 import type { SelectChangeEvent } from '@mui/material/Select';
 import { LanguageOption, LanguageSelectorProps } from './LanguageSelector.types';
 import useIsSmallViewport from '../../hooks/useIsSmallViewport';
-import VividIcon from '../VividIcon/VividIcon';
+import VividIcon from '@ui/VividIcon';
 import { env } from '../../env';
 
 const languageOptions: LanguageOption[] = [

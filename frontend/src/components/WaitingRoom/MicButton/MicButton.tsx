@@ -4,7 +4,7 @@ import classNames from 'classnames';
 import usePreviewPublisherContext from '@hooks/usePreviewPublisherContext';
 import Box from '@mui/material/Box';
 import Tooltip from '@mui/material/Tooltip';
-import VividIcon from '@components/VividIcon';
+import VividIcon from '@ui/VividIcon';
 import { VIDEO_CONTAINER_BUTTON_SIZE_WR } from '@utils/constants';
 import VideoContainerButton from '../VideoContainerButton';
 import { env } from '../../../env';

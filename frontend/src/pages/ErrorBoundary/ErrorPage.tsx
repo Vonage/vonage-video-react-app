@@ -26,11 +26,11 @@ const ErrorPage = ({ error }: ErrorPageProps): ReactElement => {
       className="flex min-h-dvh items-center justify-center p-8 bg-vera-background"
     >
       <div className="flex w-full max-w-[560px] flex-col gap-6 rounded-2xl p-8 bg-vera-surface">
-        <h1 className="text-xl font-semibold text-vera-error">{t('errorPage.title')}</h1>
+        <h1 className="text-vera-heading-4 text-vera-error">{t('errorPage.title')}</h1>
 
-        <p className="text-sm text-vera-on-surface">{t('errorPage.description')}</p>
+        <p className="text-vera-body-base text-vera-on-surface">{t('errorPage.description')}</p>
 
-        <pre className="overflow-x-auto whitespace-pre-wrap break-words rounded-lg p-4 text-xs bg-vera-background text-vera-error">
+        <pre className="overflow-x-auto whitespace-pre-wrap break-words rounded-lg p-4 text-vera-caption bg-vera-background text-vera-error">
           {error.message}
         </pre>
       </div>
