@@ -18,7 +18,7 @@ const ScreenShareNameDisplay = ({ name, box }: ScreenShareNameDisplayProps): Rea
 
   return (
     <div
-      className="absolute bottom-0 left-1.5 mb-2 overflow-hidden whitespace-nowrap rounded-vera-medium bg-vera-dark-grey-opacity px-2 py-1 text-ellipsis text-vera-accent"
+      className="absolute bottom-1 left-1.5 mb-2 overflow-hidden whitespace-nowrap rounded-vera-medium bg-vera-dark-grey-opacity px-2 py-1 text-ellipsis text-vera-accent"
       style={{
         maxWidth: Math.max(0, safeMaxWidth - 32),
       }}
