@@ -14,7 +14,7 @@ const getOrCreateSessionKeyFromRoomName = async ({
   videoClient: VideoClient;
 }) => {
   return blockCallsForArgs(async () => {
-    const storedSessionKey = await sessionService.getSessionKey({ roomName });
+    const storedSessionKey = await sessionService.getSessionKeyByRoomName({ roomName });
     if (storedSessionKey) return storedSessionKey;
 
     if (!isValidRoomName(roomName)) {
@@ -22,8 +22,13 @@ const getOrCreateSessionKeyFromRoomName = async ({
     }
 
     const session = await videoClient.createSession({ roomName });
+    const { sessionKey, sessionId } = session;
 
-    await sessionService.setSession({ roomName, sessionKey: session.sessionKey });
+    await sessionService.setSession({
+      roomName,
+      sessionKey,
+      sessionId,
+    });
 
     return session.sessionKey;
   })(roomName);

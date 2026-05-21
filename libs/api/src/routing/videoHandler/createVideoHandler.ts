@@ -5,6 +5,8 @@ import createVideoRouter, {
   CustomMiddlewareParameters,
   InputOf,
   NextResult,
+  OnSettledParameters,
+  OutputOf,
   ProcedureResolverOptions,
   PublicActionKey,
 } from '../videoRouter';
@@ -33,7 +35,13 @@ function createVideoHandler<
 }: VideoRouterConfig<Context, TMeta> &
   Omit<Parameters<typeof createExpressMiddleware>[0], 'router'>) {
   const router$ = createVideoRouter({ auth, videoParams, routerOptions, handlersConfig });
-  const { transform$, override$, use$: use$Base, makeVideoClient$ } = router$;
+  const {
+    transform$,
+    override$,
+    use$: use$Base,
+    onSettled$: onSettled$Base,
+    makeVideoClient$,
+  } = router$;
 
   type Extensions = typeof extensions;
 
@@ -92,6 +100,33 @@ function createVideoHandler<
     return middleware as VideoHandler;
   }
 
+  function onSettled$(
+    this: VideoHandler,
+    handler: (opts: OnSettledParameters<Any, Any, Context>) => void | Promise<void>
+  ): VideoHandler;
+
+  function onSettled$<
+    ActionKey extends PublicActionKey,
+    Output = OutputOf<ActionKey>,
+    Input = InputOf<ActionKey>,
+  >(
+    this: VideoHandler,
+    actionKey: ActionKey,
+    handler: (opts: OnSettledParameters<Output, Input, Context>) => void | Promise<void>
+  ): VideoHandler;
+
+  function onSettled$<ActionKey extends PublicActionKey>(
+    this: typeof extensions,
+    arg1: ActionKey | ((opts: OnSettledParameters<Any, Any, Context>) => void | Promise<void>),
+    arg2?: (opts: OnSettledParameters<Any, Any, Context>) => void | Promise<void>
+  ): VideoHandler {
+    const args = [arg1, arg2] as Parameters<typeof onSettled$Base>;
+
+    onSettled$Base.call(router$, ...args);
+
+    return middleware as VideoHandler;
+  }
+
   const extensions = {
     /**
      * Use this callback if you need to transform the raw input before it's evaluated by the handlers,
@@ -122,9 +157,12 @@ function createVideoHandler<
 
     use$,
 
+    onSettled$,
+
     makeVideoClient$: (...args: Parameters<typeof makeVideoClient$>) => {
       return makeVideoClient$(...args);
     },
+
     router$,
   };
 

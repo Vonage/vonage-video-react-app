@@ -15,7 +15,7 @@ async function enableCaptions(
     const clientToken = this.createEphemeralToken({ sessionKey });
 
     const captionsResponse = await assertResult(
-      () => this._video.enableCaptions(sessionId, clientToken, captionOptions),
+      () => this.video.enableCaptions(sessionId, clientToken, captionOptions),
       makeThirdPartyErrorHandler('Failed to enable captions')
     );
 

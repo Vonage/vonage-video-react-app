@@ -11,7 +11,7 @@ async function stopArchive(
     const { archiveId } = payload;
 
     const archiveResponse = await assertResult(
-      () => this._video.stopArchive(archiveId),
+      () => this.video.stopArchive(archiveId),
       makeThirdPartyErrorHandler('Failed to stop archive')
     );
 

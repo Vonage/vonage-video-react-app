@@ -12,7 +12,7 @@ async function startArchive(
     const { sessionId } = this.decodeSessionKey({ sessionKey });
 
     const archive = await assertResult(
-      () => this._video.startArchive(sessionId, archiveOptions),
+      () => this.video.startArchive(sessionId, archiveOptions),
       makeThirdPartyErrorHandler('Failed to start archive')
     );
 

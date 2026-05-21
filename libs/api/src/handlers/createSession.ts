@@ -14,7 +14,7 @@ async function createSession(
     const { roomName, sessionOptions } = payload ?? {};
 
     const session = await assertResult(() => {
-      return this._video.createSession(sessionOptions);
+      return this.video.createSession(sessionOptions);
     }, makeThirdPartyErrorHandler('Failed to create session'));
 
     const sessionKeyPayload = removeUndefinedProps({

@@ -12,7 +12,7 @@ import { Any, Prettify } from '@common/types';
 import { makeBadRequestErrorHandler, makeInternalErrorHandler } from '@api-lib/errors';
 import { toTRPCError } from '@api-lib/errors/helpers';
 import { schemasByAction } from '@api-lib/constants';
-import { assertResult } from '@common/execution';
+import { assertResult, tryCatch } from '@common/execution';
 import { isFunction } from '@common/assertions';
 
 export const OKAY = Symbol('OKAY');
@@ -68,6 +68,11 @@ function createVideoRouter<
   const middlewaresPerAction = new Map<
     PublicActionKey | null,
     ((opts: CustomMiddlewareParameters<Any, Context>) => NextResult | Promise<NextResult>)[]
+  >();
+
+  const settledPerAction = new Map<
+    PublicActionKey | null,
+    ((opts: OnSettledParameters<Any, Any, Context>) => void | Promise<void>)[]
   >();
 
   const tryAssertInput = <ActionKey extends PublicActionKey>(
@@ -348,6 +353,49 @@ function createVideoRouter<
     const { input, parser } = makeInput(key, config);
 
     return input.mutation(async (opts) => {
+      const handleSettledError = makeInternalErrorHandler((error) => ({
+        fallbackMessage: `Failed to execute onSettled$ for action ${key}`,
+        issues: [
+          !error
+            ? 'The action executed successfully, but the onSettled$ callback threw an error.'
+            : 'The action threw an error, and the onSettled$ callback also threw.',
+        ],
+      }));
+
+      const executeOnSettledAndResolve = async ({
+        result,
+        error,
+        didFail,
+      }: {
+        result: unknown;
+        error: unknown;
+        didFail: boolean;
+      }): Promise<ReturnType<Action>> => {
+        const globalSettled = settledPerAction.get(null) ?? [];
+        const actionSettled = settledPerAction.get(key) ?? [];
+
+        // onSettled$ callbacks execute here — after the action, before responding to the client.
+        // Runs even if the action threw an error. If a callback throws, it is wrapped and re-thrown,
+        // preventing the response from being sent.
+        for (const settled of [...globalSettled, ...actionSettled]) {
+          await Promise.resolve(
+            settled({
+              result,
+              error,
+              ctx: opts.ctx as Context,
+              videoAction: key as unknown as VideoAction,
+              input,
+            })
+          ).catch((settledError: unknown) => {
+            throw handleSettledError(settledError);
+          });
+        }
+
+        if (didFail) throw error;
+
+        return result as ReturnType<Action>;
+      };
+
       try {
         const override = overrides.get(key);
 
@@ -357,12 +405,20 @@ function createVideoRouter<
             videoClient: opts.ctx.videoClient,
           }) as ProcedureResolverOptions<unknown, Context>;
 
-          return override(args) as ReturnType<Action>;
+          const { result, error, didFail } = await tryCatch(
+            () => override(args) as ReturnType<Action>
+          );
+
+          return executeOnSettledAndResolve({ result, error, didFail });
         }
 
         const input = parser(opts.input) as Parameters<VideoClient[ActionKey]>[0];
 
-        return callback(opts.ctx.videoClient, input) as unknown as ReturnType<Action>;
+        const onSettleArgs = await tryCatch(() => callback(opts.ctx.videoClient, input));
+
+        const result = await executeOnSettledAndResolve(onSettleArgs);
+
+        return result as ReturnType<Action>;
       } catch (error) {
         throw makeInternalErrorHandler(`Failed to execute mutation ${key}`)(error);
       }
@@ -437,6 +493,39 @@ function createVideoRouter<
     return this;
   }
 
+  function onSettled$(
+    this: typeof extensions,
+    handler: (opts: OnSettledParameters<Any, Any, Context>) => void | Promise<void>
+  ): typeof extensions;
+
+  function onSettled$<
+    ActionKey extends PublicActionKey,
+    Output = OutputOf<ActionKey>,
+    Input = InputOf<ActionKey>,
+  >(
+    this: typeof extensions,
+    actionKey: ActionKey,
+    handler: (opts: OnSettledParameters<Output, Input, Context>) => void | Promise<void>
+  ): typeof extensions;
+
+  function onSettled$<ActionKey extends PublicActionKey>(
+    this: typeof extensions,
+    arg1: ActionKey | ((opts: OnSettledParameters<Any, Any, Context>) => void | Promise<void>),
+    arg2?: (opts: OnSettledParameters<Any, Any, Context>) => void | Promise<void>
+  ) {
+    const actionKey = arg2 ? (arg1 as ActionKey) : null;
+    const handler = (arg2 ?? arg1) as (
+      opts: OnSettledParameters<Any, Any, Context>
+    ) => void | Promise<void>;
+
+    let settled = settledPerAction.get(actionKey);
+    if (!settled) settledPerAction.set(actionKey, (settled = []));
+
+    settled.push(handler);
+
+    return this;
+  }
+
   const extensions = {
     /**
      * Use this callback if you need to transform the raw input before it's evaluated by the handlers,
@@ -469,6 +558,23 @@ function createVideoRouter<
      * Use this callback to run custom code before the original handlers, for example to implement custom authorization logic.
      */
     use$,
+
+    /**
+     * Use this callback to run custom code after the action executes but before the response is sent.
+     * Receives both the result and any error from the action, runs even if the action threw.
+     * Errors thrown inside onSettled$ callbacks will propagate and prevent the response from being sent.
+     *
+     * @example For all actions
+     * ```ts
+     * videoHandler.onSettled$(({ videoAction, input, result, error }) => { ... });
+     * ```
+     *
+     * @example For a specific action
+     * ```ts
+     * videoHandler.onSettled$('createSession', ({ input, result, error }) => { ... });
+     * ```
+     */
+    onSettled$,
 
     /**
      * Make a vonage client instance with the configuration provided to the router.
@@ -544,5 +650,21 @@ export type CustomMiddlewareParameters<
 >;
 
 export type InputOf<ActionKey extends PublicActionKey> = Parameters<VideoClient[ActionKey]>[0];
+
+export type OutputOf<ActionKey extends PublicActionKey> = Awaited<
+  ReturnType<VideoClient[ActionKey]>
+>;
+
+export type OnSettledParameters<
+  Output,
+  Input,
+  Context extends { videoClient: VideoClient },
+> = Prettify<{
+  videoAction: VideoAction;
+  input: Input;
+  result: Output | null;
+  error: unknown;
+  ctx: Context;
+}>;
 
 export default createVideoRouter;

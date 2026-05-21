@@ -8,7 +8,7 @@ async function searchArchives(this: IVideoClient, payload: SearchArchivesPayload
     const { sessionId } = this.decodeSessionKey({ sessionKey });
 
     const archives = await assertResult(
-      () => this._video.searchArchives({ sessionId, ...filter }),
+      () => this.video.searchArchives({ sessionId, ...filter }),
       makeThirdPartyErrorHandler(
         `Failed to search archives with filters ${JSON.stringify(payload)}`
       )

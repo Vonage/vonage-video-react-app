@@ -35,9 +35,9 @@ type IVideoClient = {
 };
 
 class VideoClient implements IVideoClient {
-  public readonly _auth: Auth;
+  public readonly auth: Auth;
 
-  public readonly _video: Video;
+  public readonly video: Video;
 
   public readonly _handlersDefaults:
     | Partial<
@@ -56,8 +56,8 @@ class VideoClient implements IVideoClient {
 
     const { auth, videoParams, handlersDefaults } = config;
 
-    this._auth = auth instanceof Auth ? auth : new Auth(auth);
-    this._video = new Video(this._auth, videoParams);
+    this.auth = auth instanceof Auth ? auth : new Auth(auth);
+    this.video = new Video(this.auth, videoParams);
 
     // some defaults are shared between handlers
     this._handlersDefaults = {
@@ -70,7 +70,7 @@ class VideoClient implements IVideoClient {
     // It is not intended for authentication or authorization.
     // Consumers are responsible for implementing proper auth at the application level.
     this._sessionSigning = {
-      secret: config.sessionSigning?.secret || this._auth.applicationId || this._auth.apiKey,
+      secret: config.sessionSigning?.secret || this.auth.applicationId || this.auth.apiKey,
       algorithm: config.sessionSigning?.algorithm || 'HS256',
     };
   }

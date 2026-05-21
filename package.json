@@ -42,7 +42,7 @@
     "start:backend": "Run backend server. Usage: 'yarn start:backend' (dev mode), 'yarn start:backend debug' (debug mode), 'yarn start:backend bundled' (bundled dev mode)",
     "test:backend": "Run backend tests. Usage: 'yarn test:backend' (all), 'yarn test:backend <path>' (specific), 'yarn test:backend watch <path>' (watch mode), 'yarn test:backend debug <path>' (debug mode)",
     "test:frontend": "Run frontend tests. Usage: 'yarn test:frontend' (all), 'yarn test:frontend <path>' (specific), 'yarn test:frontend watch <path>' (watch mode), 'yarn test:frontend debug <path>' (debug mode)",
-    "test:integration": "Run integration tests. Usage: 'yarn test:integration' (all), 'yarn test:integration playwright' (Playwright only), 'yarn test:integration <name>' (headed), 'yarn test:integration debug|inspect|canon [name]', 'yarn test:integration update [name]' (screenshots)",
+    "test:integration": "Run integration tests. Usage: 'yarn test:integration' (all), 'yarn test:integration api' (API/Jest only), 'yarn test:integration playwright' (Playwright only), 'yarn test:integration <name>' (headed), 'yarn test:integration debug|inspect|canon [name]', 'yarn test:integration update [name]' (screenshots)",
     "vcr:dev": "Manage VCR dev instance. Usage: 'yarn vcr:dev' (deploy), 'yarn vcr:dev rm' or 'yarn vcr:dev --rm' (remove instance). Note: Copy vcr.yml.example as vcr-dev.yml and add your application ID before deploying"
   },
   "repository": {
