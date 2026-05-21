@@ -289,5 +289,6 @@
   "zoom.in": "Zoom in",
   "zoom.current": "Current zoom",
   "errorPage.title": "Something went wrong",
-  "errorPage.description": "The application could not start. Please reload the page or contact support if the problem persists."
+  "errorPage.description": "The application could not start. Please reload the page or contact support if the problem persists.",
+  "notification.dismiss": "Dismiss notification"
 }

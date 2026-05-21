@@ -22,7 +22,7 @@ export type ApplicationErrorFallbackConfig = {
   statusCode: StatusCode;
 
   /**
-   * Indicates if the error is recoverable.
+   * Type of the error, used for categorization and handling logic.
    */
-  recoverable?: boolean | null;
+  type?: string;
 };

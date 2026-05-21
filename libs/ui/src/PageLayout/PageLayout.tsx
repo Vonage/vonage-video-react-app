@@ -1,25 +1,40 @@
 import React from 'react';
-import { isFunction } from '@common/assertions';
+import { findSlotByDisplayName } from '../helpers';
 import { twMerge } from 'tailwind-merge';
 
 type WithChildren = { children: React.ReactNode };
 
 export type PageLayoutProps = React.ComponentProps<'section'>;
 
-export enum PageLayoutRegions {
-  Banner = 'Banner',
-  Left = 'Left',
-  Right = 'Right',
-  Footer = 'Footer',
+export enum PageLayoutSlots {
+  Banner = 'PageLayout.Banner',
+  Left = 'PageLayout.Left',
+  Right = 'PageLayout.Right',
+  Footer = 'PageLayout.Footer',
 }
 
 const PageLayout = ({ children, className, ...props }: PageLayoutProps): React.ReactNode => {
   const childrenArray = React.Children.toArray(children);
 
-  const banner = pickChild(childrenArray, PageLayoutRegions.Banner);
-  const left = pickChild(childrenArray, PageLayoutRegions.Left);
-  const right = pickChild(childrenArray, PageLayoutRegions.Right);
-  const footer = pickChild(childrenArray, PageLayoutRegions.Footer);
+  const banner = findSlotByDisplayName({
+    children: childrenArray,
+    displayName: PageLayoutSlots.Banner,
+  });
+
+  const left = findSlotByDisplayName({
+    children: childrenArray,
+    displayName: PageLayoutSlots.Left,
+  });
+
+  const right = findSlotByDisplayName({
+    children: childrenArray,
+    displayName: PageLayoutSlots.Right,
+  });
+
+  const footer = findSlotByDisplayName({
+    children: childrenArray,
+    displayName: PageLayoutSlots.Footer,
+  });
 
   return (
     <section className={twMerge('flex flex-col min-h-screen max-sm:gap-8', className)} {...props}>
@@ -60,10 +75,10 @@ const PageLayoutFooter: React.FC<WithChildren> = ({ children }) => {
   return children;
 };
 
-PageLayoutBanner.displayName = PageLayoutRegions.Banner;
-PageLayoutLeft.displayName = PageLayoutRegions.Left;
-PageLayoutRight.displayName = PageLayoutRegions.Right;
-PageLayoutFooter.displayName = PageLayoutRegions.Footer;
+PageLayoutBanner.displayName = PageLayoutSlots.Banner;
+PageLayoutLeft.displayName = PageLayoutSlots.Left;
+PageLayoutRight.displayName = PageLayoutSlots.Right;
+PageLayoutFooter.displayName = PageLayoutSlots.Footer;
 
 /**
  * Banner that will be displayed at the top of the layout
@@ -81,19 +96,8 @@ PageLayout.Left = PageLayoutLeft;
 PageLayout.Right = PageLayoutRight;
 
 /**
- * Content for the left column
+ * Content for the footer
  */
 PageLayout.Footer = PageLayoutFooter;
-
-function pickChild(children: React.ReactNode[], identifier: PageLayoutRegions): React.ReactNode {
-  return (
-    children.find((child: unknown) => {
-      const isValidElement = React.isValidElement(child) && isFunction(child.type);
-      if (!isValidElement) return false;
-
-      return (child.type as React.ComponentType).displayName === identifier;
-    }) ?? null
-  );
-}
 
 export default PageLayout;

@@ -123,6 +123,16 @@ export class LoggerBase implements LoggerProviderConfig {
     });
   }
 
+  /**
+   * Resets the logger state, clearing the provider, any stored error, acknowledged features, and context.
+   */
+  public reset() {
+    this.provider = null;
+    this.error = null;
+    this.acknowledged = Object.create(null);
+    this.clearContext();
+  }
+
   protected logLoggerEvent<T extends LoggerFeature>(
     feature: T,
     ...args: Parameters<(typeof this)[T]>

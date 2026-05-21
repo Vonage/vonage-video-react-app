@@ -23,6 +23,8 @@ export class ApplicationServerError extends ApplicationError {
    */
   public code?: HttpErrorLike['code'];
 
+  public override type = 'server_error';
+
   constructor({
     src,
     fallbackConfig,
@@ -129,6 +131,7 @@ export class ApplicationServerError extends ApplicationError {
         statusText,
         url,
       }),
+      serverError: true,
     };
   };
 }
