@@ -16,6 +16,8 @@ import waitUntilPlaying from '@utils/waitUntilPlaying';
 import { attempt } from '@common/execution';
 import { useMountEffect } from '@web/hooks';
 import { env } from '../../../env';
+import advancedSettings$ from '@Context/AdvancedSettings';
+import useApplyAdvancedSettings from '@Context/PublisherProvider/useApplyAdvancedSettings';
 
 type PublisherVideoElementCreatedEvent = Event<'videoElementCreated', Publisher> & {
   element: HTMLVideoElement | HTMLObjectElement;
@@ -233,10 +235,14 @@ const usePreviewPublisher = (
       videoFilter = initialBackgroundRef.current;
     }
 
+    const { resolution, frameRate, codecMode, codecPriority } = advancedSettings$.getState();
+
     const publisherOptions: PublisherProperties = {
       insertDefaultUI: false,
       videoFilter,
-      resolution: env.DEFAULT_RESOLUTION,
+      resolution: resolution ?? env.DEFAULT_RESOLUTION,
+      frameRate,
+      preferredVideoCodecs: codecMode === 'automatic' ? 'automatic' : codecPriority,
       publishAudio: isAudioEnabled,
       publishVideo: isVideoEnabled,
       audioSource: audioSourceId,
@@ -316,6 +322,8 @@ const usePreviewPublisher = (
       destroyPublisher();
     };
   });
+
+  useApplyAdvancedSettings(isPublishing ? publisherRef.current : null);
 
   return {
     isAudioEnabled,

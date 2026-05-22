@@ -1,5 +1,7 @@
 import type { ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
+import Snackbar from '@mui/material/Snackbar';
+import Alert from '@mui/material/Alert';
 import { env, RESOLUTIONS } from '../../../env';
 import advancedSettings$ from '@Context/AdvancedSettings';
 import SelectField from '@ui/SelectField';
@@ -31,6 +33,8 @@ const AdvancedSettingsVideoTab = (): ReactElement => {
     handleResolutionChange,
     handleBitrateModeChange,
     handleCustomVideoBitrateChange,
+    errorMessage,
+    clearErrorMessage,
   } = useAdvancedSettingsVideoHandlers({ bitrateMode, customVideoBitrate });
 
   const bitrateOptions = [
@@ -128,6 +132,16 @@ const AdvancedSettingsVideoTab = (): ReactElement => {
           onChange={handleResolutionChange}
         />
       </div>
+
+      <Snackbar
+        open={!!errorMessage}
+        onClose={clearErrorMessage}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+      >
+        <Alert severity="warning" onClose={clearErrorMessage} className="bg-vera-background!">
+          <span className="text-vera-text-disabled-dark">{errorMessage && t(errorMessage)}</span>
+        </Alert>
+      </Snackbar>
     </div>
   );
 };

@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import usePublisherContext from '@hooks/usePublisherContext';
 import usePreviewPublisherContext from '@hooks/usePreviewPublisherContext';
 import advancedSettings$ from '@Context/AdvancedSettings';
@@ -28,6 +29,8 @@ type UseAdvancedSettingsVideoHandlers = {
   handleResolutionChange: (value: AdvancedSettingsResolution) => void;
   handleBitrateModeChange: (value: AdvancedSettingsBitrateMode) => void;
   handleCustomVideoBitrateChange: (value: AdvancedSettingsCustomVideoBitrate) => void;
+  errorMessage: string | null;
+  clearErrorMessage: () => void;
 };
 
 const useAdvancedSettingsVideoHandlers = ({
@@ -37,11 +40,23 @@ const useAdvancedSettingsVideoHandlers = ({
   const { publisher: meetingRoomPublisher } = usePublisherContext();
   const { publisher: previewPublisher } = usePreviewPublisherContext();
   const publisher = meetingRoomPublisher ?? previewPublisher ?? null;
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+
+  const showError = (message: string) => {
+    setErrorMessage(message);
+  };
+
+  const clearErrorMessage = () => {
+    setErrorMessage(null);
+  };
 
   const handleFrameRateChange = (value: AdvancedSettingsFrameRate) => {
     void (async () => {
       const { error } = await tryCatch(() => applyFrameRate(publisher, value));
-      if (error) return;
+      if (error) {
+        showError('advancedSettings.video.error.frameRateNotSupported');
+        return;
+      }
       setFrameRate(value);
     })();
   };
@@ -49,7 +64,10 @@ const useAdvancedSettingsVideoHandlers = ({
   const handleResolutionChange = (value: AdvancedSettingsResolution) => {
     void (async () => {
       const { error } = await tryCatch(() => applyResolution(publisher, value));
-      if (error) return;
+      if (error) {
+        showError('advancedSettings.video.error.resolutionNotSupported');
+        return;
+      }
       setResolution(value);
     })();
   };
@@ -57,7 +75,10 @@ const useAdvancedSettingsVideoHandlers = ({
   const handleBitrateModeChange = (value: AdvancedSettingsBitrateMode) => {
     void (async () => {
       const { error } = await tryCatch(() => applyBitrate(publisher, value, customVideoBitrate));
-      if (error) return;
+      if (error) {
+        showError('advancedSettings.video.error.bitrateNotSupported');
+        return;
+      }
       setBitrateMode(value);
     })();
   };
@@ -66,7 +87,10 @@ const useAdvancedSettingsVideoHandlers = ({
     void (async () => {
       if (bitrateMode === ADVANCED_SETTINGS_BITRATE_MODE.custom) {
         const { error } = await tryCatch(() => applyBitrate(publisher, bitrateMode, value));
-        if (error) return;
+        if (error) {
+          showError('advancedSettings.video.error.bitrateNotSupported');
+          return;
+        }
       }
       setCustomVideoBitrate(value);
     })();
@@ -77,6 +101,8 @@ const useAdvancedSettingsVideoHandlers = ({
     handleResolutionChange,
     handleBitrateModeChange,
     handleCustomVideoBitrateChange,
+    errorMessage,
+    clearErrorMessage,
   };
 };
 
