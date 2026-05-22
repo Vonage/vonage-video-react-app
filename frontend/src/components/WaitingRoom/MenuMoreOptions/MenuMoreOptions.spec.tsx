@@ -48,6 +48,7 @@ describe('MenuMoreOptions', () => {
   });
 
   it('should not display advanced settings option when the flag is disabled', () => {
+    env.partialUpdate({ WAITING_ROOM_ALLOW_ADVANCED_SETTINGS: false });
     render(<MenuMoreOptions onClose={mockOnClose} open anchorEl={mockAnchorEl} />);
 
     expect(screen.queryByText(/^settings$/i)).not.toBeInTheDocument();

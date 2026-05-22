@@ -84,6 +84,7 @@ describe('ToolbarOverflowMenu', () => {
   });
 
   it('does not render Report Issue button in overflow menu if it was disabled', () => {
+    env.partialUpdate({ MEETING_ROOM_ALLOW_ADVANCED_SETTINGS: false });
     render(<TestComponent defaultOpen />);
 
     expect(screen.getByTestId('screensharing-button')).toBeVisible();

@@ -123,6 +123,7 @@ describe('Toolbar', () => {
   });
 
   it('does not render advanced settings when the flag is disabled', () => {
+    env.partialUpdate({ MEETING_ROOM_ALLOW_ADVANCED_SETTINGS: false });
     render(<Toolbar {...defaultProps} />);
 
     expect(screen.queryByTestId('advanced-settings-button')).not.toBeInTheDocument();
