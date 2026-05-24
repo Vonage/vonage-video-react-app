@@ -1,5 +1,5 @@
 import { EventEmitter } from 'events';
-import throttle from 'lodash/throttle';
+import throttle from '@common/execution/throttle';
 
 export type SubscriberAudioLevels = Record<string, number>;
 

@@ -1,15 +1,14 @@
-import throttle from 'lodash/throttle';
-import { DebouncedFunc } from 'lodash';
+import throttle from '@common/execution/throttle';
 import { beforeEach, describe, expect, test, vi } from 'vitest';
 import ActiveSpeakerTracker from './activeSpeakerTracker';
 // eslint-disable-next-line @nx/enforce-module-boundaries
 import { waitForEvent } from '../../../../libs/common/testNode/helpers';
 
-vi.mock('lodash/throttle');
+vi.mock('@common/execution/throttle');
 
 describe('ActiveSpeakerTracker', () => {
   beforeEach(() => {
-    vi.mocked(throttle).mockImplementation((fn) => fn as DebouncedFunc<typeof fn>);
+    vi.mocked(throttle).mockImplementation((fn) => fn);
   });
 
   test('activeSpeakerChanged fired when participant audio level updated', async () => {

@@ -1,5 +1,5 @@
 import { Dimensions } from '@vonage/client-sdk-video';
-import { throttle } from 'lodash';
+import throttle from '@common/execution/throttle';
 import { RefObject, useEffect, useRef, useState } from 'react';
 
 export type UseElementDimensionsProps = {

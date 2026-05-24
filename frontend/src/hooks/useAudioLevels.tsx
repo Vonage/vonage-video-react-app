@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo, Dispatch, SetStateAction } from 'react';
-import { throttle } from 'lodash';
+import throttle from '@common/execution/throttle';
 import usePublisherContext from './usePublisherContext';
 import createMovingAvgAudioLevelTracker from '../utils/movingAverageAudioLevelTracker'; // Adjust import as needed
 
