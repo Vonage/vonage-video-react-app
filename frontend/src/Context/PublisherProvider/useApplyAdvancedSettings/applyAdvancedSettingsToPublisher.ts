@@ -12,7 +12,9 @@ export const applyFrameRate = async (
   publisher: Publisher | null,
   frameRate: AdvancedSettingsFrameRate
 ): Promise<void> => {
-  if (!publisher) return;
+  const hasVideoTrack = publisher?.getVideoSource()?.track;
+  if (!hasVideoTrack) return;
+
   await publisher.setPreferredFrameRate(frameRate);
 };
 
@@ -20,7 +22,9 @@ export const applyResolution = async (
   publisher: Publisher | null,
   resolution: AdvancedSettingsResolution
 ): Promise<void> => {
-  if (!publisher) return;
+  const hasVideoTrack = publisher?.getVideoSource()?.track;
+  if (!hasVideoTrack) return;
+
   const [width, height] = resolution.split('x').map(Number);
   await publisher.setPreferredResolution({ width, height });
 };
@@ -30,7 +34,9 @@ export const applyBitrate = async (
   bitrateMode: AdvancedSettingsBitrateMode,
   customVideoBitrate: AdvancedSettingsCustomVideoBitrate
 ): Promise<void> => {
-  if (!publisher) return;
+  const hasVideoTrack = publisher?.getVideoSource()?.track;
+  if (!hasVideoTrack) return;
+
   if (bitrateMode === ADVANCED_SETTINGS_BITRATE_MODE.custom) {
     await publisher.setMaxVideoBitrate(customVideoBitrate);
   } else {
@@ -50,6 +56,7 @@ const applyAdvancedSettingsToPublisher = async (
   const { frameRate, resolution, bitrateMode, customVideoBitrate } = args;
 
   const { error: frameRateError } = await tryCatch(() => applyFrameRate(publisher, frameRate));
+
   if (frameRateError)
     console.error('applyAdvancedSettingsToPublisher: setPreferredFrameRate failed', frameRateError);
 
@@ -63,6 +70,7 @@ const applyAdvancedSettingsToPublisher = async (
   const { error: bitrateError } = await tryCatch(() =>
     applyBitrate(publisher, bitrateMode, customVideoBitrate)
   );
+
   if (bitrateError) {
     const methodName =
       bitrateMode === ADVANCED_SETTINGS_BITRATE_MODE.custom
