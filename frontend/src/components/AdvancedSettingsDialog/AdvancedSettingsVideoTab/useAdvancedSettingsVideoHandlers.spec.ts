@@ -1,4 +1,4 @@
-import { renderHook, waitFor } from '@testing-library/react';
+import { act, renderHook, waitFor } from '@testing-library/react';
 import { afterEach, describe, expect, it, vi, beforeEach } from 'vitest';
 import type { Mock } from 'vitest';
 import type { Publisher } from '@vonage/client-sdk-video';
@@ -48,7 +48,9 @@ describe('useAdvancedSettingsVideoHandlers', () => {
         useAdvancedSettingsVideoHandlers({ bitrateMode: 'default', customVideoBitrate: 500_000 })
       );
 
-      result.current.handleFrameRateChange(15);
+      act(() => {
+        result.current.handleFrameRateChange(15);
+      });
 
       await waitFor(() => {
         expect(publisher.setPreferredFrameRate).toHaveBeenCalledWith(15);
@@ -61,7 +63,9 @@ describe('useAdvancedSettingsVideoHandlers', () => {
         useAdvancedSettingsVideoHandlers({ bitrateMode: 'default', customVideoBitrate: 500_000 })
       );
 
-      result.current.handleFrameRateChange(7);
+      act(() => {
+        result.current.handleFrameRateChange(7);
+      });
 
       await waitFor(() => {
         expect(advancedSettings$.getState().frameRate).toBe(7);
@@ -79,13 +83,86 @@ describe('useAdvancedSettingsVideoHandlers', () => {
         useAdvancedSettingsVideoHandlers({ bitrateMode: 'default', customVideoBitrate: 500_000 })
       );
 
-      result.current.handleFrameRateChange(15);
+      act(() => {
+        result.current.handleFrameRateChange(15);
+      });
 
       await waitFor(() => {
         expect(publisher.setPreferredFrameRate).toHaveBeenCalledWith(15);
       });
 
       expect(advancedSettings$.getState().frameRate).toBe(initialFrameRate);
+    });
+
+    it('stores an error message and can clear it after a failed frame rate update', async () => {
+      const publisher = createMockPublisher();
+      (publisher.setPreferredFrameRate as Mock).mockRejectedValue(new Error('hardware error'));
+      mockUsePublisherContext.mockReturnValue({ publisher } as PublisherContextType);
+
+      const { result } = renderHook(() =>
+        useAdvancedSettingsVideoHandlers({ bitrateMode: 'default', customVideoBitrate: 500_000 })
+      );
+
+      act(() => {
+        result.current.handleFrameRateChange(15);
+      });
+
+      await waitFor(() => {
+        expect(result.current.errorMessage).toBe(
+          'advancedSettings.video.error.frameRateNotSupported'
+        );
+      });
+
+      act(() => {
+        result.current.clearErrorMessage();
+      });
+
+      await waitFor(() => {
+        expect(result.current.errorMessage).toBeNull();
+      });
+    });
+  });
+
+  describe('handleResolutionChange', () => {
+    it('applies resolution to publisher then updates store', async () => {
+      const publisher = createMockPublisher();
+      mockUsePublisherContext.mockReturnValue({ publisher } as PublisherContextType);
+
+      const { result } = renderHook(() =>
+        useAdvancedSettingsVideoHandlers({ bitrateMode: 'default', customVideoBitrate: 500_000 })
+      );
+
+      act(() => {
+        result.current.handleResolutionChange('640x480');
+      });
+
+      await waitFor(() => {
+        expect(publisher.setPreferredResolution).toHaveBeenCalledWith({ width: 640, height: 480 });
+        expect(advancedSettings$.getState().resolution).toBe('640x480');
+      });
+    });
+
+    it('does not update store when resolution update fails', async () => {
+      const publisher = createMockPublisher();
+      (publisher.setPreferredResolution as Mock).mockRejectedValue(new Error('unsupported'));
+      mockUsePublisherContext.mockReturnValue({ publisher } as PublisherContextType);
+      const initialResolution = advancedSettings$.getState().resolution;
+
+      const { result } = renderHook(() =>
+        useAdvancedSettingsVideoHandlers({ bitrateMode: 'default', customVideoBitrate: 500_000 })
+      );
+
+      act(() => {
+        result.current.handleResolutionChange('640x480');
+      });
+
+      await waitFor(() => {
+        expect(result.current.errorMessage).toBe(
+          'advancedSettings.video.error.resolutionNotSupported'
+        );
+      });
+
+      expect(advancedSettings$.getState().resolution).toBe(initialResolution);
     });
   });
 
@@ -98,7 +175,9 @@ describe('useAdvancedSettingsVideoHandlers', () => {
         useAdvancedSettingsVideoHandlers({ bitrateMode: 'default', customVideoBitrate: 500_000 })
       );
 
-      result.current.handleBitrateModeChange('bw_saver');
+      act(() => {
+        result.current.handleBitrateModeChange('bw_saver');
+      });
 
       await waitFor(() => {
         expect(publisher.setVideoBitratePreset).toHaveBeenCalledWith('bw_saver');
@@ -116,11 +195,99 @@ describe('useAdvancedSettingsVideoHandlers', () => {
         useAdvancedSettingsVideoHandlers({ bitrateMode: 'default', customVideoBitrate: 500_000 })
       );
 
-      result.current.handleBitrateModeChange('bw_saver');
+      act(() => {
+        result.current.handleBitrateModeChange('bw_saver');
+      });
 
       await waitFor(() => {
         expect(previewPublisher.setVideoBitratePreset).toHaveBeenCalledWith('bw_saver');
       });
+    });
+
+    it('does not update store when bitrate preset update fails', async () => {
+      const publisher = createMockPublisher();
+      (publisher.setVideoBitratePreset as Mock).mockRejectedValue(new Error('unsupported'));
+      mockUsePublisherContext.mockReturnValue({ publisher } as PublisherContextType);
+      const initialBitrateMode = advancedSettings$.getState().bitrateMode;
+
+      const { result } = renderHook(() =>
+        useAdvancedSettingsVideoHandlers({ bitrateMode: 'default', customVideoBitrate: 500_000 })
+      );
+
+      act(() => {
+        result.current.handleBitrateModeChange('bw_saver');
+      });
+
+      await waitFor(() => {
+        expect(result.current.errorMessage).toBe(
+          'advancedSettings.video.error.bitrateNotSupported'
+        );
+      });
+
+      expect(advancedSettings$.getState().bitrateMode).toBe(initialBitrateMode);
+    });
+  });
+
+  describe('handleCustomVideoBitrateChange', () => {
+    it('applies custom bitrate to publisher then updates store when mode is custom', async () => {
+      const publisher = createMockPublisher();
+      mockUsePublisherContext.mockReturnValue({ publisher } as PublisherContextType);
+
+      const { result } = renderHook(() =>
+        useAdvancedSettingsVideoHandlers({ bitrateMode: 'custom', customVideoBitrate: 500_000 })
+      );
+
+      act(() => {
+        result.current.handleCustomVideoBitrateChange(750_000);
+      });
+
+      await waitFor(() => {
+        expect(publisher.setMaxVideoBitrate).toHaveBeenCalledWith(750_000);
+        expect(advancedSettings$.getState().customVideoBitrate).toBe(750_000);
+      });
+    });
+
+    it('updates store without calling the publisher when mode is not custom', async () => {
+      const publisher = createMockPublisher();
+      mockUsePublisherContext.mockReturnValue({ publisher } as PublisherContextType);
+
+      const { result } = renderHook(() =>
+        useAdvancedSettingsVideoHandlers({ bitrateMode: 'default', customVideoBitrate: 500_000 })
+      );
+
+      act(() => {
+        result.current.handleCustomVideoBitrateChange(750_000);
+      });
+
+      await waitFor(() => {
+        expect(advancedSettings$.getState().customVideoBitrate).toBe(750_000);
+      });
+
+      expect(publisher.setMaxVideoBitrate).not.toHaveBeenCalled();
+      expect(publisher.setVideoBitratePreset).not.toHaveBeenCalled();
+    });
+
+    it('does not update store when custom bitrate update fails', async () => {
+      const publisher = createMockPublisher();
+      (publisher.setMaxVideoBitrate as Mock).mockRejectedValue(new Error('unsupported'));
+      mockUsePublisherContext.mockReturnValue({ publisher } as PublisherContextType);
+      const initialCustomVideoBitrate = advancedSettings$.getState().customVideoBitrate;
+
+      const { result } = renderHook(() =>
+        useAdvancedSettingsVideoHandlers({ bitrateMode: 'custom', customVideoBitrate: 500_000 })
+      );
+
+      act(() => {
+        result.current.handleCustomVideoBitrateChange(750_000);
+      });
+
+      await waitFor(() => {
+        expect(result.current.errorMessage).toBe(
+          'advancedSettings.video.error.bitrateNotSupported'
+        );
+      });
+
+      expect(advancedSettings$.getState().customVideoBitrate).toBe(initialCustomVideoBitrate);
     });
   });
 });
