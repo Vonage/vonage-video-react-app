@@ -26,7 +26,6 @@ const usePublisherOptions = ({
 }): PublisherProperties => {
   const { user } = useUserContext();
   const enableDtx = advancedSettings$.use.select((state) => state.enableDtx);
-  const resolution = advancedSettings$.use.select((state) => state.resolution);
   const frameRate = advancedSettings$.use.select((state) => state.frameRate);
   const codecMode = advancedSettings$.use.select((state) => state.codecMode);
   const codecPriority = advancedSettings$.use.select((state) => state.codecPriority);
@@ -64,7 +63,7 @@ const usePublisherOptions = ({
       preferredVideoCodecs: (codecMode === 'automatic'
         ? 'automatic'
         : codecPriority) as PublisherProperties['preferredVideoCodecs'],
-      resolution,
+      resolution: '1920x1080' as const,
       videoFilter,
       videoSource,
     };
@@ -88,7 +87,6 @@ const usePublisherOptions = ({
       videoSource,
       isAudioEnabled,
       isVideoEnabled,
-      resolution,
       frameRate,
       codecMode,
       codecPriority,

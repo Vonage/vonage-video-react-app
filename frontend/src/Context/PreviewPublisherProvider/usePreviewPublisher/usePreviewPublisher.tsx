@@ -15,7 +15,6 @@ import useSyncPublisherDevices from '@Context/PublisherProvider/usePublisher/hoo
 import waitUntilPlaying from '@utils/waitUntilPlaying';
 import { attempt } from '@common/execution';
 import { useMountEffect } from '@web/hooks';
-import { env } from '../../../env';
 import advancedSettings$ from '@Context/AdvancedSettings';
 import useApplyAdvancedSettings from '@Context/PublisherProvider/useApplyAdvancedSettings';
 
@@ -235,12 +234,12 @@ const usePreviewPublisher = (
       videoFilter = initialBackgroundRef.current;
     }
 
-    const { resolution, frameRate, codecMode, codecPriority } = advancedSettings$.getState();
+    const { frameRate, codecMode, codecPriority } = advancedSettings$.getState();
 
     const publisherOptions: PublisherProperties = {
       insertDefaultUI: false,
       videoFilter,
-      resolution: resolution ?? env.DEFAULT_RESOLUTION,
+      resolution: '1920x1080',
       frameRate,
       preferredVideoCodecs: codecMode === 'automatic' ? 'automatic' : codecPriority,
       publishAudio: isAudioEnabled,

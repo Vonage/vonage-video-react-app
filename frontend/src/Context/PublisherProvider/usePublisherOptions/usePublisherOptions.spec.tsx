@@ -62,7 +62,7 @@ describe('usePublisherOptions', () => {
     await waitFor(() => {
       expect(result.current).toEqual({
         frameRate: 30,
-        resolution: '1280x720',
+        resolution: '1920x1080',
         preferredVideoCodecs: 'automatic',
         publishAudio: false,
         publishVideo: false,
@@ -135,7 +135,7 @@ describe('usePublisherOptions', () => {
     await waitFor(() => {
       expect(result.current).toEqual({
         frameRate: 30,
-        resolution: '1280x720',
+        resolution: '1920x1080',
         preferredVideoCodecs: 'automatic',
         publishAudio: true,
         publishVideo: true,
@@ -187,14 +187,14 @@ describe('usePublisherOptions', () => {
       });
     });
 
-    it('should configure resolution from advanced settings context', async () => {
+    it('should always use max resolution for publisher initialization', async () => {
       const { result } = renderHook(
         () => usePublisherOptions({ isAudioEnabled: true, isVideoEnabled: true }),
         { dialogState: { resolution: '1280x720' } }
       );
 
       await waitFor(() => {
-        expect(result.current?.resolution).toBe('1280x720');
+        expect(result.current?.resolution).toBe('1920x1080');
       });
     });
 
