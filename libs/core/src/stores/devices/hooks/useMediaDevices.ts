@@ -35,7 +35,7 @@ function useMediaDevices<Selection>(
  */
 function useMediaDevices<Selection>(
   kind: MediaDeviceKind,
-  selector: (state: Record<string, MediaDeviceInfo>) => Selection,
+  selector: (state: Record<string, MediaDeviceInfoJSON>) => Selection,
   options?: Options<Selection>
 ): Selection;
 
@@ -44,7 +44,7 @@ function useMediaDevices<Selection>(
  */
 function useMediaDevices<Selection>(
   kind: MediaDeviceKind,
-  selector: (state: Record<string, MediaDeviceInfo>) => Selection,
+  selector: (state: Record<string, MediaDeviceInfoJSON>) => Selection,
   dependencies?: Dependencies
 ): Selection;
 

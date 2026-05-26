@@ -47,7 +47,7 @@ function selectDevice(
 
     assertMediaDeviceInfo(devicesInfo);
 
-    if (kind !== 'audiooutput') await assertMediaStreamAccess({ kind, deviceId });
+    if (kind !== 'audiooutput') await assertMediaStreamAccess(devicesInfo);
 
     // reconcile audio output device with Vonage SDK if it changed
     if (kind === 'audiooutput' && isSinkIdSupported()) {

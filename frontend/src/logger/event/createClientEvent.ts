@@ -1,9 +1,10 @@
 import type { ClientLogEvent } from '@common/types';
 import getAppVersion from '@utils/getAppVersion';
 import OT from '@vonage/client-sdk-video';
+import uniqueId from 'react-global-state-hooks/uniqueId';
 
 /** Correlation id: same for all events from this page load. Enables grouping in Kibana. */
-const correlationIdForPageLoad = crypto.randomUUID();
+const correlationIdForPageLoad = uniqueId('page-load:');
 
 type ClientEventInput = {
   level: ClientLogEvent['level'];

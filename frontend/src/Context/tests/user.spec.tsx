@@ -40,8 +40,6 @@ describe('UserContext', () => {
         name: '',
         backgroundFilter: undefined,
         noiseSuppression: false,
-        audioSource: undefined,
-        videoSource: undefined,
         publishCaptions: true,
       },
       issues: {

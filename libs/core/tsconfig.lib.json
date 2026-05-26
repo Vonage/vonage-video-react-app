@@ -24,7 +24,8 @@
 
     // video-router(this is just for linter and types)
     "../api/src/**/*.ts",
-    "../common/srcNode/**/*.ts"
+    "../common/srcNode/**/*.ts",
+    "../common/src/types/FacingMode.ts"
   ],
   "exclude": [
     "**/*.spec.*",

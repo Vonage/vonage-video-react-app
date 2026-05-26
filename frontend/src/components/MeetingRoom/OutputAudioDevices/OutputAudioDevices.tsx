@@ -12,6 +12,9 @@ import { isSinkIdSupported } from '@web/platform';
 import mediaDevices$ from '@core/stores/devices';
 import { Tooltip } from '@mui/material';
 import { env } from '../../../env';
+import useSelectDeviceHandler from '@hooks/useSelectDeviceHandler';
+import { makeApplicationErrorMapper } from '@core/errors';
+import { handleClientApplicationError } from '@ui/helpers';
 
 export type OutputAudioDevicesProps = {
   handleToggle: () => void;
@@ -40,12 +43,21 @@ const OutputAudioDevices = ({ handleToggle }: OutputAudioDevicesProps): ReactEle
       : [{ deviceId: 'default', label: t('devices.audio.defaultLabel') } as MediaDeviceInfoJSON]
   );
 
+  const { handleSelectDevice } = useSelectDeviceHandler();
+
   const handleChangeAudioOutput = async (deviceId: string) => {
-    handleToggle();
+    try {
+      handleToggle();
 
-    if (!isSinkIdSupported()) return;
+      if (!isSinkIdSupported()) return;
 
-    await mediaDevices$.actions.selectDevice('audiooutput', deviceId);
+      await handleSelectDevice({
+        deviceId,
+        mediaDeviceKind: 'audiooutput',
+      });
+    } catch (error) {
+      handleClientApplicationError(makeApplicationErrorMapper()(error));
+    }
   };
 
   return (

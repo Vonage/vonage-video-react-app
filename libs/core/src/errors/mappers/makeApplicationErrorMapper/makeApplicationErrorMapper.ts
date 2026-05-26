@@ -1,24 +1,28 @@
 import ApplicationClientError from '../../ApplicationClientError/ApplicationClientError';
-import { isErrorLike, isString } from '@common/assertions';
+import { isNil, isString } from '@common/assertions';
+import { t } from 'i18next';
 
 export type ApplicationErrorMapperConfig = {
   fallbackMessage: string;
   type: string;
 };
 
+function makeApplicationErrorMapper(): ApplicationErrorMapper;
+
 function makeApplicationErrorMapper(fallbackMessage: string): ApplicationErrorMapper;
 
 function makeApplicationErrorMapper(config: ApplicationErrorMapperConfig): ApplicationErrorMapper;
 
 function makeApplicationErrorMapper(
-  arg: string | ApplicationErrorMapperConfig
+  arg?: string | ApplicationErrorMapperConfig
 ): ApplicationErrorMapper {
-  const config = isString(arg)
-    ? {
-        fallbackMessage: arg ?? 'An unexpected error occurred',
-        type: 'error',
-      }
-    : arg;
+  const config =
+    isString(arg) || isNil(arg)
+      ? {
+          fallbackMessage: arg ?? t('errors.unknown'),
+          type: 'error',
+        }
+      : arg;
 
   return (source: unknown): ApplicationClientError => {
     const { fallbackMessage, type } = config;
@@ -26,8 +30,6 @@ function makeApplicationErrorMapper(
     return new ApplicationClientError({
       src: source,
       fallbackConfig: {
-        // errors on the client always are considered safe to expose
-        issues: isErrorLike(source) ? [source.message] : undefined,
         fallbackMessage,
         type,
       },

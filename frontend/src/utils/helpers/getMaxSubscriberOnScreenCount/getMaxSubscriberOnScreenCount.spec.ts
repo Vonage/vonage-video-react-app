@@ -1,8 +1,8 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { isMobile } from '../../util';
+import { isMobile } from '@web/platform';
 import getMaxSubscriberOnScreenCount from './getMaxSubscriberOnScreenCount';
 
-vi.mock('../../util');
+vi.mock('@web/platform');
 
 describe('getMaxSubscribersOnScreenCount', () => {
   const mockedIsMobile = vi.mocked(isMobile);

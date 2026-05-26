@@ -8,9 +8,9 @@ import Tooltip from '@mui/material/Tooltip';
 import Fade from '@mui/material/Fade';
 import VividIcon from '@ui/VividIcon';
 import usePublisherContext from '@hooks/usePublisherContext';
-import { isRearFacingLabel, isFrontFacingLabel } from '@utils/cameraSwitch';
-import usePreferredCameras from '@hooks/usePreferredCameras';
 import RecordingIndicator from '../RecordingIndicator';
+import useDistinctLabelMediaDevices from '@ui/hooks/useDistinctLabelMediaDevices/useDistinctLabelMediaDevices';
+import { useSwitchCameraFacingModeHandler } from './hooks';
 
 /**
  * SmallViewportHeader Component
@@ -25,10 +25,11 @@ const SmallViewportHeader = (): ReactElement => {
   const isRecording = !!archiveId;
 
   // Get preferred video input devices (cameras)
-  const videoInputDevices = usePreferredCameras();
+  const videoInputDevices = useDistinctLabelMediaDevices('videoinput');
 
   const roomShareUrl = useRoomShareUrl();
   const [isCopied, setIsCopied] = useState<boolean>(false);
+
   const copyUrl = () => {
     void navigator.clipboard.writeText(roomShareUrl);
 
@@ -40,32 +41,9 @@ const SmallViewportHeader = (): ReactElement => {
     }, 3000);
   };
 
-  const { publisher, isVideoEnabled } = usePublisherContext();
+  const { isVideoEnabled } = usePublisherContext();
 
-  const handleCameraToggle = () => {
-    if (!publisher) return;
-
-    const currentSource = publisher.getVideoSource?.();
-
-    const currentDevice = videoInputDevices.find((d) => d.deviceId === currentSource?.deviceId);
-    const currentIsFront = isFrontFacingLabel(currentDevice?.label);
-
-    const pickFront = () =>
-      videoInputDevices.find((d) => isFrontFacingLabel(d.label)) ||
-      videoInputDevices.find((d) => d.deviceId !== currentSource?.deviceId);
-
-    const pickRear = () =>
-      videoInputDevices.find((d) => isRearFacingLabel(d.label)) ||
-      videoInputDevices.find(
-        (d) => !isFrontFacingLabel(d.label) && d.deviceId !== currentSource?.deviceId
-      );
-
-    const target = currentIsFront ? pickRear() : pickFront();
-
-    if (target?.deviceId && target.deviceId !== currentSource?.deviceId) {
-      void publisher.setVideoSource(target.deviceId);
-    }
-  };
+  const { switchCameraFacingModeHandler } = useSwitchCameraFacingModeHandler();
 
   return (
     <Box
@@ -81,7 +59,7 @@ const SmallViewportHeader = (): ReactElement => {
       <Box className="-mx-1 flex items-center gap-1">
         {isVideoEnabled && videoInputDevices.length > 1 && (
           <Tooltip title={t('devices.video.camera.switch')} placement="bottom">
-            <IconButton className="text-vera-on-dark-grey" onClick={handleCameraToggle}>
+            <IconButton className="text-vera-on-dark-grey" onClick={switchCameraFacingModeHandler}>
               <VividIcon
                 name="camera-switch-line"
                 customSize={-4}

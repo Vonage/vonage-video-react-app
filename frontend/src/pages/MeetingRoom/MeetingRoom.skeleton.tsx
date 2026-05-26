@@ -1,17 +1,17 @@
 import React from 'react';
-import useIsSmallViewport from '@hooks/useIsSmallViewport';
 import SmallViewportHeader from '@components/MeetingRoom/SmallViewportHeader';
 import Box from '@mui/material/Box';
 import type { BoxProps } from '@mui/material/Box';
 import CircularProgress from '@mui/material/CircularProgress';
 import classNames from 'classnames';
 import { twMerge } from 'tailwind-merge';
+import { isMobile } from '@web/platform';
+
+const isMobileDevice = isMobile();
 
 type MeetingRoomSkeletonProps = BoxProps;
 
 const MeetingRoomSkeleton: React.FC<MeetingRoomSkeletonProps> = ({ className, ...props }) => {
-  const isSmallViewport = useIsSmallViewport();
-
   return (
     <Box
       data-testid="meetingRoom"
@@ -23,7 +23,7 @@ const MeetingRoomSkeleton: React.FC<MeetingRoomSkeletonProps> = ({ className, ..
         )
       )}
     >
-      {isSmallViewport && <SmallViewportHeader />}
+      {isMobileDevice && <SmallViewportHeader />}
 
       {/* VideoTileCanvas Skeleton */}
       <Box className="px-6 flex-1">
@@ -34,7 +34,7 @@ const MeetingRoomSkeleton: React.FC<MeetingRoomSkeletonProps> = ({ className, ..
 
       {/* Toolbar Skeleton */}
       <Box className="flex flex-row gap-6 justify-center items-center h-20 p-4">
-        {!isSmallViewport && (
+        {!isMobileDevice && (
           <>
             <ButtonGroupSkeleton>
               <ToolBarButtonSkeleton isTransparent />

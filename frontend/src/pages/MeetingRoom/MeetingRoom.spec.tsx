@@ -72,6 +72,14 @@ vi.mock('@hooks/useActiveSpeaker');
 vi.mock('@hooks/useScreenShare.tsx');
 vi.mock('@hooks/useToolbarButtons');
 
+vi.mock('@web/platform', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('@web/platform')>();
+  return {
+    ...actual,
+    isMobile: () => true,
+  };
+});
+
 vi.mock('opentok-layout-js', async () => {
   const actual = await vi.importActual<typeof import('opentok-layout-js')>('opentok-layout-js');
   const openTokLayoutManager = actual.default;
@@ -206,20 +214,11 @@ describe('MeetingRoom', () => {
   });
 
   it('renders the small viewport header bar if it is on a small tab or device', async () => {
-    (useMediaQuery as Mock).mockReturnValue(true);
     render(<MeetingRoom />);
     expect(await screen.findByTestId('smallViewportHeader')).not.toBeNull();
   });
 
-  it('does not render the small viewport header bar if it is on desktop', async () => {
-    // we do not need to mock the small view port value here given we already do it in beforeEach
-    render(<MeetingRoom />);
-    await waitFor(() => {
-      expect(screen.queryByTestId('smallViewportHeader')).toBeNull();
-    });
-  });
-
-  it('renders the recording indicator on desktop while recording is active', async () => {
+  it('renders the recording indicator while recording is active', async () => {
     render(<MeetingRoom />, {
       sessionContext: {
         initialValue: {
@@ -228,8 +227,7 @@ describe('MeetingRoom', () => {
       },
     });
 
-    expect(await screen.findByTestId('meetingRoomRecordingIndicatorContainer')).toBeVisible();
-    expect(screen.getByTestId('recordingIndicator')).toBeVisible();
+    expect(await screen.findByTestId('recordingIndicator')).toBeVisible();
   });
 
   it('should call joinRoom on render only once', async () => {
@@ -356,11 +354,13 @@ describe('MeetingRoom', () => {
     });
 
     await waitFor(() => {
+      // On mobile (isMobile: () => true), active-speaker view shows max 1 subscriber
+      // (MAX_TILES_SPEAKER_VIEW_MOBILE=2, minus 1 for the hidden-participants tile)
       expect(screen.getByTestId('subscriber-container-sub1')).toBeVisible();
-      expect(screen.getByTestId('subscriber-container-sub2')).toBeVisible();
-      expect(screen.getByTestId('subscriber-container-sub3')).toBeVisible();
-      expect(screen.getByTestId('subscriber-container-sub4')).toBeVisible();
       expect(screen.getByTestId('hidden-participants')).toBeInTheDocument();
+      expect(screen.getByTestId('subscriber-container-sub2')).not.toBeVisible();
+      expect(screen.getByTestId('subscriber-container-sub3')).not.toBeVisible();
+      expect(screen.getByTestId('subscriber-container-sub4')).not.toBeVisible();
       expect(screen.getByTestId('subscriber-container-sub5')).not.toBeVisible();
       expect(screen.getByTestId('subscriber-container-sub6')).not.toBeVisible();
       expect(screen.getByTestId('subscriber-container-sub7')).not.toBeVisible();

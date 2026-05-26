@@ -1,5 +1,9 @@
 export * from '../../test/fixtures';
-export { default as makeMediaDeviceInfos } from './makeMediaDeviceInfos';
+export {
+  default as makeMediaDeviceInfos,
+  frontCameraId,
+  rearCameraId,
+} from './makeMediaDeviceInfos';
 export { default as mockPlatformModule } from './mockPlatformModule';
 export { default as makeWindowNavigatorMock } from './makeWindowNavigatorMock';
 export { default as makeMediaStreamMock } from './makeMediaStreamMock';

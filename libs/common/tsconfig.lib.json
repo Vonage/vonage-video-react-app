@@ -18,7 +18,8 @@
     "srcBrowser/**/*.tsx",
     "srcBrowser/**/*.ts",
     "src/**/*.tsx",
-    "src/**/*.ts"
+    "src/**/*.ts",
+    "src/types/FacingMode.ts"
   ],
   "exclude": ["**/*.spec.*", "**/*.test.*"]
 }

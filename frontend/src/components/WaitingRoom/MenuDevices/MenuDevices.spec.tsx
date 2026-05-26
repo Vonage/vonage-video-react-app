@@ -44,29 +44,24 @@ describe('MenuDevices Component', () => {
     });
   });
 
-  it('calls deviceChangeHandler and onClose when device is clicked', async () => {
+  it('calls selectDevice and onClose when device is clicked', async () => {
     const user = userEvent.setup();
     const mockOnClose = vi.fn();
-    const mockDeviceChangeHandler = vi.fn();
     const anchorEl = document.createElement('div');
 
     const kind = 'audioinput';
     const audioInputDevices = someDevices.filter((d) => d.kind === kind);
     const secondDevice = audioInputDevices[1];
 
-    render(
-      <MenuDevices
-        mediaDeviceKind={kind}
-        onClose={mockOnClose}
-        open
-        anchorEl={anchorEl}
-        deviceChangeHandler={mockDeviceChangeHandler}
-      />
-    );
+    const selectDeviceSpy = vi
+      .spyOn(mediaDevices$.actions, 'selectDevice')
+      .mockResolvedValue(undefined as never);
+
+    render(<MenuDevices mediaDeviceKind={kind} onClose={mockOnClose} open anchorEl={anchorEl} />);
 
     await user.click(screen.getByTestId(`${kind}-menu-item-${secondDevice.deviceId}`));
 
-    expect(mockDeviceChangeHandler).toHaveBeenCalledWith(secondDevice.deviceId);
+    expect(selectDeviceSpy).toHaveBeenCalledWith(kind, secondDevice.deviceId);
     expect(mockOnClose).toHaveBeenCalled();
   });
 
@@ -74,7 +69,6 @@ describe('MenuDevices Component', () => {
     vi.spyOn(util, 'isGetActiveAudioOutputDeviceSupported').mockReturnValue(false);
 
     const mockOnClose = vi.fn();
-    const mockDeviceChangeHandler = vi.fn();
     const anchorEl = document.createElement('div');
 
     const kind = 'audiooutput';
@@ -82,15 +76,7 @@ describe('MenuDevices Component', () => {
     const firstDevice = audioOutputDevices[0];
     const secondDevice = audioOutputDevices[1];
 
-    render(
-      <MenuDevices
-        mediaDeviceKind={kind}
-        onClose={mockOnClose}
-        open
-        anchorEl={anchorEl}
-        deviceChangeHandler={mockDeviceChangeHandler}
-      />
-    );
+    render(<MenuDevices mediaDeviceKind={kind} onClose={mockOnClose} open anchorEl={anchorEl} />);
 
     await waitFor(() => {
       expect(
@@ -119,13 +105,7 @@ describe('MenuDevices Component', () => {
     const anchorEl = document.createElement('div');
 
     render(
-      <MenuDevices
-        mediaDeviceKind="audiooutput"
-        onClose={vi.fn()}
-        open
-        anchorEl={anchorEl}
-        deviceChangeHandler={vi.fn()}
-      />
+      <MenuDevices mediaDeviceKind="audiooutput" onClose={vi.fn()} open anchorEl={anchorEl} />
     );
 
     await waitFor(() => {
@@ -147,13 +127,7 @@ describe('MenuDevices Component', () => {
     const anchorEl = document.createElement('div');
 
     render(
-      <MenuDevices
-        mediaDeviceKind="audiooutput"
-        onClose={vi.fn()}
-        open
-        anchorEl={anchorEl}
-        deviceChangeHandler={vi.fn()}
-      />
+      <MenuDevices mediaDeviceKind="audiooutput" onClose={vi.fn()} open anchorEl={anchorEl} />
     );
 
     await waitFor(() => {
@@ -163,7 +137,6 @@ describe('MenuDevices Component', () => {
 
   it('renders an empty state when no devices are available', async () => {
     const mockOnClose = vi.fn();
-    const mockDeviceChangeHandler = vi.fn();
     const anchorEl = document.createElement('div');
 
     act(() => {
@@ -175,13 +148,7 @@ describe('MenuDevices Component', () => {
     });
 
     render(
-      <MenuDevices
-        mediaDeviceKind="audioinput"
-        onClose={mockOnClose}
-        open
-        anchorEl={anchorEl}
-        deviceChangeHandler={mockDeviceChangeHandler}
-      />
+      <MenuDevices mediaDeviceKind="audioinput" onClose={mockOnClose} open anchorEl={anchorEl} />
     );
 
     await waitFor(() => {
@@ -193,7 +160,6 @@ describe('MenuDevices Component', () => {
 
 function testDeviceKindRendering(kind: MediaDeviceKind) {
   const mockOnClose = vi.fn();
-  const mockDeviceChangeHandler = vi.fn();
   const anchorEl = document.createElement('div');
   const devicesOfKind = someDevices.filter((d) => d.kind === kind);
   const firstDevice = devicesOfKind[0];
@@ -207,13 +173,7 @@ function testDeviceKindRendering(kind: MediaDeviceKind) {
   });
 
   const { unmount } = render(
-    <MenuDevices
-      mediaDeviceKind={kind}
-      onClose={mockOnClose}
-      open
-      anchorEl={anchorEl}
-      deviceChangeHandler={mockDeviceChangeHandler}
-    />
+    <MenuDevices mediaDeviceKind={kind} onClose={mockOnClose} open anchorEl={anchorEl} />
   );
 
   devicesOfKind.forEach((device) => {

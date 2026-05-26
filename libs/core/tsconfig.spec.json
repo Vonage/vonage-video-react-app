@@ -16,7 +16,8 @@
     "../common/test/**/*.ts",
     "../common/test/**/*.tsx",
     "../common/testBrowser/**/*.ts",
-    "../common/testBrowser/**/*.tsx"
+    "../common/testBrowser/**/*.tsx",
+    "../common/src/types/FacingMode.ts"
   ],
   "tsBuildInfoFile": "dist/tsconfig.spec.tsbuildinfo"
 }

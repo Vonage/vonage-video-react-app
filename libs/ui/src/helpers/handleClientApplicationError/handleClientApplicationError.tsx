@@ -1,16 +1,31 @@
 import notifications$ from '@core/stores/notifications';
-import type { ApplicationClientError } from '@core/errors';
+import { makeApplicationErrorMapper, type ApplicationClientError } from '@core/errors';
 import { Collapsible } from '../../components';
 import classNames from 'classnames';
 import type { ZodIssue } from '@common/errors';
 import logger from '@core/logger';
+import { isString } from '@common/assertions';
 
-function handleClientApplicationError(error: ApplicationClientError): void {
+/**
+ * Handles application errors on the client by showing a notification with the error message and details
+ */
+function handleClientApplicationError(error: ApplicationClientError): void;
+
+/**
+ * Handles application errors on the client by showing a notification with the error message and details.
+ * The fallbackMessage only will be shown to the user if the exception is not an ApplicationClientError.
+ */
+function handleClientApplicationError(fallbackMessage: string, error: unknown): void;
+
+function handleClientApplicationError(arg0: ApplicationClientError | string, arg1?: unknown): void {
+  const fallbackMessage = isString(arg0) ? arg0 : arg0.fallbackConfig.fallbackMessage;
+  const error = isString(arg0) ? makeApplicationErrorMapper(fallbackMessage)(arg1) : arg0;
+
   notifications$.actions.push({
     type: 'warning',
-    message: error.message,
+    message: error.fallbackMessage,
     expirationMs: null,
-    children: error.issues?.length ? makeErrorDetails(error) : undefined,
+    children: error.issues.length ? makeErrorDetails(error) : undefined,
   });
 
   logger.reportError(error);

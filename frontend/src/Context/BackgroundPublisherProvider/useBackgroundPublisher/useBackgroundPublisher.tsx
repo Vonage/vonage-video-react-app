@@ -31,9 +31,7 @@ export type BackgroundPublisherContextType = {
   toggleVideo: () => void;
   changeBackground: (backgroundSelected: string) => Promise<void>;
   backgroundFilter: VideoFilter | undefined;
-  localVideoSource: string | undefined;
   accessStatus: string | null;
-  changeVideoSource: (deviceId: string) => void;
   initBackgroundLocalPublisher: () => void;
   customImages: StoredImage[];
   addCustomImage: (dataUrl: string) => void;
@@ -51,7 +49,6 @@ type PublisherVideoElementCreatedEvent = Event<'videoElementCreated', Publisher>
 export type BackgroundPublisherContextInitialValue = Partial<
   Pick<
     BackgroundPublisherContextType,
-    | 'localVideoSource'
     | 'publisherVideoElement'
     | 'isPublishing'
     | 'isVideoEnabled'
@@ -73,9 +70,7 @@ export type BackgroundPublisherContextInitialValue = Partial<
  * @property {Function} toggleVideo - Method to toggle camera on/off. State updated internally, can be read via isVideoEnabled.
  * @property {Function} changeBackground - Method to change background effect
  * @property {VideoFilter | undefined} backgroundFilter - Current background filter applied to publisher
- * @property {string | undefined} localVideoSource - Current video source device ID
  * @property {string | null} accessStatus - Current device access status
- * @property {Function} changeVideoSource - Method to change video source device ID
  * @property {Function} initBackgroundLocalPublisher - Method to initialize the background publisher
  * @returns {BackgroundPublisherContextType} Background context
  */
@@ -102,10 +97,6 @@ const useBackgroundPublisher = (
 
   const [isVideoEnabled, setIsVideoEnabled] = useState<boolean>(
     initialValue?.isVideoEnabled ?? getStorageItem(STORAGE_KEYS.VIDEO_SOURCE_ENABLED) !== 'false'
-  );
-
-  const [localVideoSource, setLocalVideoSource] = useState<string | undefined>(
-    initialValue?.localVideoSource ?? undefined
   );
 
   const [customImages, setCustomImages] = useState<StoredImage[]>(
@@ -142,18 +133,6 @@ const useBackgroundPublisher = (
     },
     [setBackgroundFilter]
   );
-
-  /**
-   * Change video camera in use
-   * @returns {void}
-   */
-  const changeVideoSource = useCallback((deviceId: string) => {
-    if (!deviceId || !backgroundPublisherRef.current) {
-      return;
-    }
-    void backgroundPublisherRef.current.setVideoSource(deviceId);
-    setLocalVideoSource(deviceId);
-  }, []);
 
   const handleBackgroundAccessDenied = useCallback(
     async (event: AccessDeniedEvent) => {
@@ -327,8 +306,6 @@ const useBackgroundPublisher = (
     toggleVideo,
     changeBackground,
     backgroundFilter,
-    changeVideoSource,
-    localVideoSource,
     accessStatus,
 
     customImages,

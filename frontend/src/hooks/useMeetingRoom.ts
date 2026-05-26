@@ -4,7 +4,6 @@ import { useTranslation } from 'react-i18next';
 import usePublisherContext from './usePublisherContext';
 import useSessionContext from './useSessionContext';
 import useScreenShare from './useScreenShare';
-import useIsSmallViewport from './useIsSmallViewport';
 import useBackgroundPublisherContext from './useBackgroundPublisherContext';
 import { DEVICE_ACCESS_STATUS } from '../utils/constants';
 import type { PublishingErrorType } from '../Context/PublisherProvider/usePublisher/usePublisher';
@@ -69,8 +68,6 @@ const useMeetingRoom = () => {
     screenshareVideoElement,
     toggleShareScreen,
   } = useScreenShare();
-
-  const isSmallViewport = useIsSmallViewport();
 
   const [isUserCaptionsEnabled, setIsUserCaptionsEnabled] = useState<boolean>(false);
   const [captionsErrorResponse, setCaptionsErrorResponse] = useState<string | null>('');
@@ -172,7 +169,6 @@ const useMeetingRoom = () => {
 
   return {
     t,
-    isSmallViewport,
     isSharingScreen,
     isEntireScreen,
     screensharingPublisher,

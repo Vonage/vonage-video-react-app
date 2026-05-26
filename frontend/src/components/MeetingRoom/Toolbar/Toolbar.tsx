@@ -212,7 +212,6 @@ const Toolbar = ({
           <ExitButton handleLeave={handleLeave} />
         </Box>
       </Box>
-
       <Box
         ref={rightPanelControlsRef}
         sx={{

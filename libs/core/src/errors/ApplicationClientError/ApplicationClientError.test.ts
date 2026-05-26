@@ -18,11 +18,11 @@ describe('ApplicationClientError', () => {
 
     expect(error.type).toBe('server_error');
     expect(error.message).toBe('Invalid credentials');
-    expect(error.fallbackMessage).toBe('Please check your input');
+    expect(error.fallbackMessage).toBe('Invalid credentials');
 
     const exported = error.exportSafely();
 
-    expect(exported.message).toBe('Please check your input');
+    expect(exported.message).toBe('Invalid credentials');
     expect(exported.type).toBe('server_error');
     expect(exported.statusCode).toBe(StatusCode.ClientErrorBadRequest);
   });

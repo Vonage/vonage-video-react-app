@@ -73,7 +73,6 @@ describe('useMeetingRoom', () => {
 
     await waitFor(() => {
       expect(result.current).toMatchObject({
-        isSmallViewport: false,
         isSharingScreen: false,
         subscriberWrappers: [],
         reconnecting: false,

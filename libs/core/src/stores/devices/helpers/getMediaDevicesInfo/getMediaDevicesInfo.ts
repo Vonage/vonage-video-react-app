@@ -1,7 +1,10 @@
 import { idempotentCallbackWithRetry } from '@common/execution';
 import type { MediaDeviceInfoJSON } from '@web/types';
-import { DevicesAPI } from '../types';
+import { DevicesAPI } from '../../types';
 import { actions } from 'react-global-state-hooks';
+import { FacingMode } from '@common/types';
+import { frontFacingKeywords, rearFacingKeywords } from '../../constants';
+import { isMobile } from '@web/platform';
 
 /**
  * Retrieves the list of media devices from the browser.
@@ -30,14 +33,17 @@ const getMediaDevicesInfo$ = actions<DevicesAPI>()({
           // so we create plain objects with the same properties.
           return navigator.mediaDevices.enumerateDevices().then((devices) =>
             devices
-              .map((device) => ({
-                deviceId: device.deviceId,
-                kind: device.kind,
-                label: device.label,
-                groupId: device.groupId,
-              }))
               // In case there are remaining devices without deviceId
               .filter((device) => device.deviceId)
+              .map(
+                (device): MediaDeviceInfoJSON => ({
+                  deviceId: device.deviceId,
+                  kind: device.kind,
+                  label: device.label,
+                  groupId: device.groupId,
+                  inferredFacingMode: inferFacingModeFromLabel({ device }),
+                })
+              )
           );
         },
         {
@@ -47,5 +53,22 @@ const getMediaDevicesInfo$ = actions<DevicesAPI>()({
     };
   },
 });
+
+function inferFacingModeFromLabel({ device }: { device: MediaDeviceInfo }): FacingMode | null {
+  const shouldInferFacingMode = isMobile() && device.kind === 'videoinput' && device.label;
+  if (!shouldInferFacingMode) return null;
+
+  const label = device.label.toLowerCase();
+
+  if (frontFacingKeywords.some((keyword) => label.includes(keyword))) {
+    return FacingMode.user;
+  }
+
+  if (rearFacingKeywords.some((keyword) => label.includes(keyword))) {
+    return FacingMode.environment;
+  }
+
+  return FacingMode.unknown;
+}
 
 export default getMediaDevicesInfo$;

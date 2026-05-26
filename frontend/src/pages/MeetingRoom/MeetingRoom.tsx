@@ -16,6 +16,7 @@ import { twMerge } from 'tailwind-merge';
 import RecordingIndicator from '../../components/MeetingRoom/RecordingIndicator';
 import RecordingPopUpIndicator from '@components/MeetingRoom/RecordingPopupIndicator';
 import { RECORDING_POPUP_TIMEOUT_MS } from '@utils/constants';
+import { isMobile } from '@web/platform';
 
 /**
  * MeetingRoom Component
@@ -30,10 +31,11 @@ type MeetingRoomProps = BoxProps & {
   fullSize?: boolean;
 };
 
+const isMobileDevice = isMobile();
+
 function MeetingRoom({ fullSize = false, className, ...boxProps }: MeetingRoomProps): ReactElement {
   const {
     t,
-    isSmallViewport,
     isSharingScreen,
     isEntireScreen,
     screensharingPublisher,
@@ -74,7 +76,7 @@ function MeetingRoom({ fullSize = false, className, ...boxProps }: MeetingRoomPr
         }
       )}
     >
-      {isRecording && !isSmallViewport && (
+      {isRecording && !isMobileDevice && (
         <Box
           data-testid="meetingRoomRecordingIndicatorContainer"
           className="pointer-events-none absolute left-4 top-4 z-10 flex h-8 w-8 items-center justify-center rounded-full bg-vera-dark-grey-opacity backdrop-blur-sm"
@@ -83,7 +85,7 @@ function MeetingRoom({ fullSize = false, className, ...boxProps }: MeetingRoomPr
         </Box>
       )}
 
-      {isSmallViewport && <SmallViewportHeader />}
+      {isMobileDevice && <SmallViewportHeader />}
 
       <VideoTileCanvas
         isSharingScreen={isSharingScreen}

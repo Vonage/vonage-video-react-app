@@ -68,7 +68,7 @@ function NotificationItem({
       className={twMerge(
         classNames(
           'animate-fade-in',
-          'w-90 grid grid-cols-[auto_1fr_auto]',
+          'max-sm:w-full w-90 grid grid-cols-[auto_1fr_auto]',
           'pointer-events-auto! items-start gap-3 p-3 rounded-lg text-vera-body-base shadow-md border border-vera-border bg-vera-background',
           className
         )
@@ -80,7 +80,11 @@ function NotificationItem({
       </div>
 
       <div className={'flex flex-1 flex-col gap-3 text-left'}>
-        {isString(message) ? <p>{message}</p> : message}
+        {isString(message) ? (
+          <p dangerouslySetInnerHTML={{ __html: message }} className="wrap-anywhere" />
+        ) : (
+          message
+        )}
 
         {children}
       </div>

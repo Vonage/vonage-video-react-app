@@ -12,12 +12,16 @@ import mediaDevices$ from '@core/stores/devices';
 import { makeTestProvider, providers } from '@test/providers';
 import SmallViewportHeader from './SmallViewportHeader';
 
+const { mockIsMobile } = vi.hoisted(() => ({
+  mockIsMobile: vi.fn().mockReturnValue(false),
+}));
+
 vi.mock('@hooks/usePublisherContext');
 vi.mock('@web/platform', async (importOriginal) => {
   const actual = await importOriginal<typeof import('@web/platform')>();
   return {
     ...actual,
-    isMobile: () => false,
+    isMobile: mockIsMobile,
   };
 });
 
@@ -158,30 +162,55 @@ describe('SmallViewportHeader component', () => {
     }));
   });
 
-  it('toggles to the opposite camera device when clicked', () => {
-    const videoInputDevice1 = videoDevices[0];
+  it('toggles to the opposite camera device when clicked', async () => {
+    const currentDeviceId = videoDevices[0].deviceId;
+    const targetDeviceId = videoDevices[1].deviceId;
 
-    const setVideoSource = vi.fn();
-    const getVideoSource = vi.fn(() => ({
-      deviceId: videoInputDevice1.deviceId,
-      label: videoInputDevice1.label,
-      kind: 'videoInput',
-    }));
+    const mockTrack = {
+      getSettings: vi.fn(() => ({ deviceId: targetDeviceId })),
+      stop: vi.fn(),
+    } as unknown as MediaStreamTrack;
+
+    const mockStream = makeMediaStreamMock({
+      getVideoTracks: [mockTrack],
+      getTracks: [mockTrack],
+    });
+
+    setupWindowNavigatorMock({
+      mediaDevices: {
+        addEventListener: vi.fn(),
+        dispatchEvent: vi.fn().mockReturnValue(true),
+        enumerateDevices: Promise.resolve(devices),
+        getUserMedia: Promise.resolve(mockStream),
+      },
+    });
+
+    // Allow getFacingMode to run without throwing (requires mobile)
+    mockIsMobile.mockReturnValueOnce(true);
+
+    const selectDeviceSpy = vi
+      .spyOn(mediaDevices$.actions, 'selectDevice')
+      .mockResolvedValue(undefined as never);
 
     mockUsePublisherContext.mockReturnValue({
       publisher: {
-        setVideoSource,
-        getVideoSource,
+        getVideoSource: vi.fn().mockReturnValue({
+          track: { getSettings: () => ({ facingMode: 'user' }) } as unknown as MediaStreamTrack,
+          deviceId: currentDeviceId,
+        }),
       } as unknown as PublisherContextType['publisher'],
       isVideoEnabled: true,
     } as unknown as PublisherContextType);
 
     render(<SmallViewportHeader />);
+
     const cameraIcon = screen.getByTestId('vivid-icon-camera-switch-line');
     fireEvent.click(cameraIcon);
 
-    expect(setVideoSource).toHaveBeenCalledTimes(1);
-    expect(setVideoSource).toHaveBeenCalledWith(videoDevices[1].deviceId);
+    await waitFor(() => {
+      expect(selectDeviceSpy).toHaveBeenCalledTimes(1);
+      expect(selectDeviceSpy).toHaveBeenCalledWith('videoinput', targetDeviceId);
+    });
   });
 });
 

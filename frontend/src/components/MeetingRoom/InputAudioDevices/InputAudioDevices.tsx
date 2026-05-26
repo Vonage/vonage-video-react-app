@@ -6,6 +6,9 @@ import VividIcon from '@ui/VividIcon';
 import { useDistinctLabelMediaDevices } from '@ui/hooks';
 import mediaDevices$ from '@core/stores/devices';
 import { env } from '../../../env';
+import useSelectDeviceHandler from '@hooks/useSelectDeviceHandler';
+import { handleClientApplicationError } from '@ui/helpers';
+import { makeApplicationErrorMapper } from '@core/errors';
 
 export type InputAudioDevicesProps = {
   handleToggle: () => void;
@@ -32,9 +35,19 @@ const InputAudioDevices = ({ handleToggle }: InputAudioDevicesProps): ReactEleme
     }))
   );
 
-  const handleChangeAudioSource = (deviceId: string) => {
-    handleToggle();
-    void mediaDevices$.actions.selectDevice('audioinput', deviceId);
+  const { handleSelectDevice } = useSelectDeviceHandler();
+
+  const handleChangeAudioSource = async (deviceId: string) => {
+    try {
+      handleToggle();
+
+      await handleSelectDevice({
+        deviceId,
+        mediaDeviceKind: 'audioinput',
+      });
+    } catch (error) {
+      handleClientApplicationError(makeApplicationErrorMapper()(error));
+    }
   };
 
   return (

@@ -25,10 +25,10 @@ const NotificationsContainer = ({
 };
 
 const variants = tv({
-  base: 'fixed z-[1400] flex flex-col gap-3 pointer-events-none',
+  base: 'fixed z-1400 flex flex-col gap-3 pointer-events-none max-sm:w-[calc(100%-12px)] pl-3',
   variants: {
     position: {
-      'top-right': 'top-4 right-4',
+      'top-right': 'top-4 right-3',
       'bottom-center': 'bottom-4 left-1/2 -translate-x-1/2 items-center',
     },
   },

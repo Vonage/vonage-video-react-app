@@ -1,8 +1,11 @@
+export const frontCameraId = 'video-input-1';
+export const rearCameraId = 'video-input-2';
+
 /**
  * Some media device info fixtures for testing purposes.
  * Do not add logic here.
  */
-const makeMediaDeviceInfos = () =>
+const makeMediaDeviceInfos = (): MediaDeviceInfo[] =>
   [
     {
       deviceId: 'audio-input-1',
@@ -41,26 +44,26 @@ const makeMediaDeviceInfos = () =>
       }),
     },
     {
-      deviceId: 'video-input-1',
+      deviceId: frontCameraId,
       kind: 'videoinput',
-      label: 'Default Camera',
+      label: 'Front Camera',
       groupId: 'group-2',
       toJSON: () => ({
-        deviceId: 'video-input-1',
+        deviceId: frontCameraId,
         kind: 'videoinput' as MediaDeviceKind,
-        label: 'Default Camera',
+        label: 'Front Camera',
         groupId: 'group-2',
       }),
     },
     {
-      deviceId: 'video-input-2',
+      deviceId: rearCameraId,
       kind: 'videoinput',
-      label: 'USB Webcam',
+      label: 'Back Camera',
       groupId: 'group-6',
       toJSON: () => ({
-        deviceId: 'video-input-2',
+        deviceId: rearCameraId,
         kind: 'videoinput' as MediaDeviceKind,
-        label: 'USB Webcam',
+        label: 'Back Camera',
         groupId: 'group-6',
       }),
     },

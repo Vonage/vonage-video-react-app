@@ -1,8 +1,5 @@
 import { VideoFilter } from '@vonage/client-sdk-video';
-import { isMobile, isWebKit } from '@web/platform';
-
-// Re-export platform helpers for backwards compatibility
-export { isMobile, isWebKit };
+import { isWebKit } from '@web/platform';
 
 /**
  * Checks if the browser support the Vonage Video getActiveAudioOutputDevice API

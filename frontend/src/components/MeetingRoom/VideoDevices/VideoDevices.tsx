@@ -6,6 +6,9 @@ import VividIcon from '@ui/VividIcon';
 import { useDistinctLabelMediaDevices } from '@ui/hooks';
 import mediaDevices$ from '@core/stores/devices';
 import { env } from '../../../env';
+import useSelectDeviceHandler from '@hooks/useSelectDeviceHandler';
+import { makeApplicationErrorMapper } from '@core/errors';
+import { handleClientApplicationError } from '@ui/helpers';
 
 export type VideoDevicesProps = BoxProps & {
   handleToggle: () => void;
@@ -36,9 +39,19 @@ const VideoDevices = ({
     }))
   );
 
-  const handleChangeVideoSource = (deviceId: string) => {
-    handleToggle();
-    void mediaDevices$.actions.selectDevice('videoinput', deviceId);
+  const { handleSelectDevice } = useSelectDeviceHandler();
+
+  const handleChangeVideoSource = async (deviceId: string) => {
+    try {
+      handleToggle();
+
+      await handleSelectDevice({
+        deviceId,
+        mediaDeviceKind: 'videoinput',
+      });
+    } catch (error) {
+      handleClientApplicationError(makeApplicationErrorMapper()(error));
+    }
   };
 
   return (

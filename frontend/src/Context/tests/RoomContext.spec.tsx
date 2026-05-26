@@ -93,8 +93,6 @@ async function render(ui: ReactElement, { userContext }: RenderOptions = {}) {
           publishVideo: true,
           name: fakeName,
           noiseSuppression: false,
-          audioSource: undefined,
-          videoSource: undefined,
           publishCaptions: true,
           ...userContext?.value?.defaultSettings,
         },

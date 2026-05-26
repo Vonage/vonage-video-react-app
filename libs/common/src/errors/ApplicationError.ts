@@ -67,8 +67,8 @@ class ApplicationError extends Error {
     this.statusCode = state.statusCode ?? StatusCode.ServerErrorInternal;
 
     // optional properties
-    this.type = state.type;
     this.name = state.name ?? this.constructor.name;
+    this.type = state.type ?? this.fallbackConfig.type ?? this.type;
   }
 
   /**

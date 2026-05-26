@@ -4,7 +4,7 @@ import {
   MAX_TILES_SPEAKER_VIEW_DESKTOP,
   MAX_TILES_SPEAKER_VIEW_MOBILE,
 } from '../../constants';
-import { isMobile } from '../../util';
+import { isMobile } from '@web/platform';
 
 export type GetMaxSubscriberOnScreenCountProps = {
   isViewingLargeTile: boolean;

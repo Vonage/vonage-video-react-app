@@ -1,7 +1,7 @@
 import { ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
 import { DEVICE_ACCESS_STATUS } from '../../utils/constants';
-import { isWebKit } from '../../utils/util';
+import { isWebKit } from '@web/platform';
 import Alert from '@mui/material/Alert';
 import Dialog from '@mui/material/Dialog';
 import Box from '@mui/material/Box';

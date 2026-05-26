@@ -1,7 +1,6 @@
-import { StatusCode } from 'status-code-enum';
 import ApplicationError from '@common/errors/ApplicationError';
 import type ClientErrorFallbackConfig from './types/ClientErrorFallbackConfig';
-import { isRecord } from '@common/assertions';
+import { isErrorLike } from '@common/assertions';
 
 class ApplicationClientError extends ApplicationError {
   public override type: string = 'error';
@@ -13,30 +12,33 @@ class ApplicationClientError extends ApplicationError {
     src: unknown;
     fallbackConfig: ClientErrorFallbackConfig;
   }) {
+    const clientDefaults = {
+      statusCode: -1,
+      message: 'Unexpected error occurred.',
+    };
+
     super({
       src,
       fallbackConfig: {
-        // client error do not have status code by default
-        statusCode: -1 as unknown as StatusCode,
+        ...clientDefaults,
         ...fallbackConfig,
       },
     });
 
-    /**
-     * Api errors are safe to display as they are already mapped to have user-friendly messages.
-     * The following code prevents treating the exception as unhandled which will hide the already safe message returned from the server.
-     */
-    const shouldAvoidHidingSafeError = isRecord(src) && src.type === 'server_error';
-    if (!shouldAvoidHidingSafeError) return;
+    this.type = (() => {
+      if (!isErrorLike(src)) return this.fallbackConfig.type ?? this.type;
+      return (src as { type?: string }).type ?? this.fallbackConfig.type ?? this.type;
+    })();
 
-    const applicationError = src as Partial<ApplicationError>;
+    if (this.type === 'server_error' && isErrorLike(src)) {
+      // prevents hiding the original message behind the fallback message
+      this.fallbackMessage = src.message;
+    }
 
-    this.type = applicationError.type ?? this.type;
-    this.message = applicationError.message ?? this.message;
-    this.fallbackConfig = {
-      ...this.fallbackConfig,
-      fallbackMessage: applicationError.fallbackMessage ?? this.message,
-    };
+    const shouldAddDetails = !this.issues.length && this.fallbackMessage !== this.message;
+    if (!shouldAddDetails) return;
+
+    this.issues.push(this.message);
   }
 }
 

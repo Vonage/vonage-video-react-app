@@ -35,8 +35,6 @@ export type PreviewPublisherContextType = {
   changeBackground: (backgroundSelected: string) => Promise<void>;
   backgroundFilter: VideoFilter | undefined;
   accessStatus: string | null;
-  changeAudioSource: (deviceId: string) => void;
-  changeVideoSource: (deviceId: string) => void;
   initLocalPublisher: () => void;
   speechLevel: number;
   isVideoLoading: boolean;
@@ -72,8 +70,6 @@ export type PreviewPublisherInitialValue = Partial<
  * @property {string | undefined} localVideoSource - Current video source device ID
  * @property {string | undefined} localAudioSource - Current audio source device ID
  * @property {string | null} accessStatus - Current device access status
- * @property {Function} changeAudioSource - Method to change audio source device ID
- * @property {Function} changeVideoSource - Method to change video source device ID
  * @property {Function} initLocalPublisher - Method to initialize the preview publisher
  * @property {number} speechLevel - Current speech level for audio visualization
  * @returns {PreviewPublisherContextType} preview context
@@ -135,52 +131,6 @@ const usePreviewPublisher = (
       });
     },
     [setBackgroundFilter, setUser]
-  );
-
-  /**
-   * Change microphone
-   * @returns {void}
-   */
-  const changeAudioSource = useCallback(
-    (deviceId: string) => {
-      if (!deviceId || !publisherRef.current) {
-        return;
-      }
-
-      void publisherRef.current.setAudioSource(deviceId);
-      void mediaDevices$.actions.selectDevice('audioinput', deviceId);
-
-      if (setUser) {
-        setUser((prevUser: UserType) => ({
-          ...prevUser,
-          defaultSettings: { ...prevUser.defaultSettings, audioSource: deviceId },
-        }));
-      }
-    },
-    [setUser]
-  );
-
-  /**
-   * Change video camera in use
-   * @returns {void}
-   */
-  const changeVideoSource = useCallback(
-    (deviceId: string) => {
-      if (!deviceId || !publisherRef.current) {
-        return;
-      }
-
-      void publisherRef.current.setVideoSource(deviceId);
-      void mediaDevices$.actions.selectDevice('videoinput', deviceId);
-
-      if (setUser) {
-        setUser((prevUser: UserType) => ({
-          ...prevUser,
-          defaultSettings: { ...prevUser.defaultSettings, videoSource: deviceId },
-        }));
-      }
-    },
-    [setUser]
   );
 
   const handleAccessDenied = useCallback(
@@ -338,8 +288,6 @@ const usePreviewPublisher = (
     toggleVideo,
     changeBackground,
     backgroundFilter,
-    changeAudioSource,
-    changeVideoSource,
     accessStatus,
     speechLevel,
     isVideoLoading,

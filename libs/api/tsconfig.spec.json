@@ -15,6 +15,7 @@
     "../common/src/**/*.ts",
     "../common/srcNode/**/*.ts",
     "../common/test/**/*.ts",
-    "../common/testNode/**/*.ts"
+    "../common/testNode/**/*.ts",
+    "../common/src/types/FacingMode.ts"
   ]
 }

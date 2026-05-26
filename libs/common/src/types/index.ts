@@ -18,3 +18,4 @@ export type * from './VideoSessionDetails';
 export type * from './VideoSessionDetailsWithToken';
 export type * from './SessionKey';
 export type * from './DeepPartial';
+export * from './FacingMode';
