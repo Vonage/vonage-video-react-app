@@ -8,6 +8,7 @@ import applyAdvancedSettingsToPublisher, {
 
 const createMockPublisher = () =>
   ({
+    getVideoSource: vi.fn().mockReturnValue({ track: {} }),
     setPreferredFrameRate: vi.fn().mockResolvedValue(undefined),
     setPreferredResolution: vi.fn().mockResolvedValue(undefined),
     setMaxVideoBitrate: vi.fn().mockResolvedValue(undefined),
