@@ -1,6 +1,6 @@
 import { Dispatch, ReactElement, SetStateAction } from 'react';
 import { useTranslation } from 'react-i18next';
-import { CAPTION_ERROR_DISPLAY_DURATION_MS } from '../../../utils/constants';
+import { env } from '../../../env';
 import useIsSmallViewport from '../../../hooks/useIsSmallViewport';
 import Snackbar from '@mui/material/Snackbar';
 import Alert from '@mui/material/Alert';
@@ -28,7 +28,7 @@ const CaptionsError = ({
   return (
     <Snackbar
       open={!!captionsErrorResponse}
-      autoHideDuration={CAPTION_ERROR_DISPLAY_DURATION_MS}
+      autoHideDuration={env.NOTIFICATION_DURATION_MS}
       onClose={() => setCaptionsErrorResponse(null)}
       anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
       sx={{ mb: isSmallViewport ? 10 : 6 }}

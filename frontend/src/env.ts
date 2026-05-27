@@ -5,8 +5,6 @@ declare const __APP_ENV__: Record<string, string | undefined>;
 
 export type Lang = 'en' | 'it' | 'es' | 'es-MX' | 'en-US' | 'de';
 
-export const PUBLISHER_MAX_RES = '1920x1080' as const;
-
 export const RESOLUTIONS = [
   '1920x1080',
   '1280x960',
@@ -86,14 +84,19 @@ const envSchema = z
       (v) => (v === undefined || v === null || v === '' ? undefined : v),
       z.enum([...RESOLUTIONS] as [Resolution, ...Resolution[]]).optional()
     ),
+    PUBLISHER_MAX_RESOLUTION: z.preprocess(
+      (v) => (v === undefined || v === null || v === '' ? '1920x1080' : v),
+      z.enum([...RESOLUTIONS] as [Resolution, ...Resolution[]])
+    ),
+    NOTIFICATION_DURATION_MS: positiveIntField(4_000),
     MIN_CUSTOM_VIDEO_BITRATE_BPS: positiveIntField(5_000),
     MAX_CUSTOM_VIDEO_BITRATE_BPS: positiveIntField(10_000_000),
     SUPPORTED_FRAME_RATES: intListField([30, 15, 7, 1]),
     ALLOW_ADVANCED_NOISE_SUPPRESSION: boolField(true),
     ALLOW_AUDIO_ON_JOIN: boolField(true),
     ALLOW_MICROPHONE_CONTROL: boolField(true),
-    MEETING_ROOM_ALLOW_ADVANCED_SETTINGS: boolField(true),
-    WAITING_ROOM_ALLOW_ADVANCED_SETTINGS: boolField(true),
+    MEETING_ROOM_ALLOW_ADVANCED_SETTINGS: boolField(false),
+    WAITING_ROOM_ALLOW_ADVANCED_SETTINGS: boolField(false),
     WAITING_ROOM_ALLOW_DEVICE_SELECTION: boolField(true),
     ALLOW_ARCHIVING: boolField(true),
     ALLOW_CAPTIONS: boolField(true),
@@ -135,6 +138,8 @@ export class Env {
   public ALLOW_CAMERA_CONTROL!: boolean;
   public ALLOW_VIDEO_ON_JOIN!: boolean;
   public DEFAULT_RESOLUTION!: Resolution | undefined;
+  public PUBLISHER_MAX_RESOLUTION!: Resolution;
+  public NOTIFICATION_DURATION_MS!: number;
   public MIN_CUSTOM_VIDEO_BITRATE_BPS!: number;
   public MAX_CUSTOM_VIDEO_BITRATE_BPS!: number;
   public SUPPORTED_FRAME_RATES!: number[];
