@@ -2,7 +2,7 @@ import { describe, expect, it, vi, afterEach, Mock, beforeEach } from 'vitest';
 import { fireEvent, render as renderBase, screen, waitFor } from '@testing-library/react';
 import { EventEmitter } from 'stream';
 import { Publisher } from '@vonage/client-sdk-video';
-import { ReactElement } from 'react';
+import type { ReactElement } from 'react';
 import { defaultAudioDevice } from '@utils/mockData/device';
 import usePublisherContext from '@hooks/usePublisherContext';
 import { PublisherContextType } from '@Context/PublisherProvider';
@@ -67,8 +67,7 @@ describe('ReduceNoiseTestSpeakers', () => {
     render(<ReduceNoiseTestSpeakers />);
 
     expect(screen.getByText('Advanced Noise Suppression')).toBeInTheDocument();
-    expect(screen.getByTestId('toggle-off-icon')).toBeInTheDocument();
-    expect(screen.getByTestId('toggle-on-icon')).toBeInTheDocument();
+    expect(screen.getByLabelText('Advanced Noise Suppression')).not.toBeChecked();
   });
 
   it('does not render the component if media processor is not supported', () => {
@@ -84,20 +83,18 @@ describe('ReduceNoiseTestSpeakers', () => {
 
     render(<ReduceNoiseTestSpeakers />);
 
-    // Click the Advanced Noise Suppression button
-    const toggleButton = screen.getByTestId('toggle-on-icon');
+    const toggleButton = screen.getByLabelText('Advanced Noise Suppression');
     fireEvent.click(toggleButton);
 
-    // Wait for async state change (toggle between on and off)
     await waitFor(() => expect(mockPublisher.applyAudioFilter).toHaveBeenCalledTimes(1));
     expect(mockPublisher.applyAudioFilter).toHaveBeenCalledWith({
       type: 'advancedNoiseSuppression',
     });
+    expect(toggleButton).toBeChecked();
 
-    // Click the button again to toggle off
-    const toggleOffButton = screen.getByTestId('toggle-off-icon');
-    fireEvent.click(toggleOffButton);
+    fireEvent.click(toggleButton);
     await waitFor(() => expect(mockPublisher.clearAudioFilter).toHaveBeenCalledTimes(1));
+    expect(toggleButton).not.toBeChecked();
   });
 
   it('should update the UI when toggling the button', async () => {
@@ -105,34 +102,18 @@ describe('ReduceNoiseTestSpeakers', () => {
 
     render(<ReduceNoiseTestSpeakers />);
 
-    const toggleButton = screen.getByText('Advanced Noise Suppression');
+    const toggleButton = screen.getByLabelText('Advanced Noise Suppression');
 
-    const toggleOffIcon = screen.getByTestId('toggle-off-icon');
-    const toggleOnIcon = screen.getByTestId('toggle-on-icon');
+    expect(toggleButton).not.toBeChecked();
 
-    // Check initial state: enabled
-    await waitFor(() => {
-      const computedStyle = getComputedStyle(toggleOnIcon);
-      expect(toggleOnIcon).toBeInTheDocument(); // still in the DOM but with hidden styles
-      expect(computedStyle.visibility).toBe('hidden');
-    });
-
-    // Click to disable noise suppression
     fireEvent.click(toggleButton);
     await waitFor(() => {
-      // After toggling, toggle-off icon should have styles indicating it's hidden
-      const computedStyle = getComputedStyle(toggleOffIcon);
-      expect(toggleOffIcon).toBeInTheDocument();
-      expect(computedStyle.visibility).toBe('hidden');
+      expect(toggleButton).toBeChecked();
     });
 
-    // Click to enable noise suppression
     fireEvent.click(toggleButton);
     await waitFor(() => {
-      // After toggling, toggle-on icon should have styles indicating it's hidden
-      const computedStyle = getComputedStyle(toggleOnIcon);
-      expect(toggleOnIcon).toBeInTheDocument();
-      expect(computedStyle.visibility).toBe('hidden');
+      expect(toggleButton).not.toBeChecked();
     });
   });
 

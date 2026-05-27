@@ -69,11 +69,23 @@ const VideoDevices = ({
                 key={option.deviceId}
                 selected={isSelected}
                 onClick={() => handleChangeVideoSource(option.deviceId)}
-                className="[&.Mui-selected]:bg-transparent [&.Mui-selected]:text-vera-on-background hover:bg-vera-background"
+                className="[&.Mui-selected]:text-vera-on-background"
+                sx={{
+                  transition: 'background-color 160ms ease',
+                  '&&.Mui-selected': {
+                    backgroundColor: 'var(--vera-background)',
+                  },
+                  '&&.Mui-selected:hover': {
+                    backgroundColor: 'var(--vera-background)',
+                  },
+                  '&&:hover': {
+                    backgroundColor: 'var(--vera-background)',
+                  },
+                }}
               >
                 <Box
                   key={`${option.deviceId}-video-device`}
-                  className={classNames({
+                  className={classNames('w-full items-center', {
                     'text-vera-text-primary': isSelected,
                     'text-vera-text-secondary': !isSelected,
                   })}

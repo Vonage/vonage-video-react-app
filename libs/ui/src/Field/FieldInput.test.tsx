@@ -35,6 +35,31 @@ describe('FieldInput', () => {
 
       expect((getByRole('checkbox') as HTMLInputElement).disabled).toBe(true);
     });
+
+    it('renders the small switch size classes when requested', () => {
+      const { container } = render(
+        <FieldInput
+          variant="switch"
+          id="test-switch"
+          checked={false}
+          onChange={vi.fn()}
+          size="small"
+        />
+      );
+
+      expect(container.querySelector('span')).toHaveClass('h-5', 'w-9', 'after:h-4', 'after:w-4');
+    });
+
+    it('toggles when the visible switch track is clicked', () => {
+      const onChange = vi.fn();
+      const { container } = render(
+        <FieldInput variant="switch" id="test-switch" checked={false} onChange={onChange} />
+      );
+
+      fireEvent.click(container.querySelector('span')!);
+
+      expect(onChange).toHaveBeenCalledWith(true);
+    });
   });
 
   describe('native input variant', () => {

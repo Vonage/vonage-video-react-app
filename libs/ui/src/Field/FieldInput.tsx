@@ -6,6 +6,7 @@ type SwitchInputProps = {
   checked: boolean;
   onChange: (checked: boolean) => void;
   disabled?: boolean;
+  size?: 'default' | 'small';
 };
 
 type NativeInputProps = ComponentProps<'input'> & { variant?: never };
@@ -14,10 +15,14 @@ export type FieldInputProps = SwitchInputProps | NativeInputProps;
 
 const FieldInput = (props: FieldInputProps): ReactElement => {
   if (props.variant === 'switch') {
-    const { id, checked, onChange, disabled } = props;
+    const { id, checked, onChange, disabled, size = 'default' } = props;
+    const switchSizeClassName =
+      size === 'small'
+        ? 'h-5 w-9 after:left-0.5 after:top-0.5 after:h-4 after:w-4 peer-checked:after:translate-x-4'
+        : 'h-6 w-11 after:left-0.5 after:top-0.5 after:h-5 after:w-5 peer-checked:after:translate-x-5';
 
     return (
-      <div className="relative inline-flex cursor-pointer items-center">
+      <label htmlFor={id} className="relative inline-flex cursor-pointer items-center">
         <input
           id={id}
           type="checkbox"
@@ -26,8 +31,13 @@ const FieldInput = (props: FieldInputProps): ReactElement => {
           disabled={disabled}
           onChange={() => onChange(!checked)}
         />
-        <span className="h-6 w-11 rounded-full bg-vera-border transition-colors after:absolute after:left-0.5 after:top-0.5 after:h-5 after:w-5 after:rounded-full after:bg-vera-surface after:transition-transform after:content-[''] peer-checked:bg-vera-primary peer-checked:after:translate-x-5" />
-      </div>
+        <span
+          className={[
+            "rounded-full bg-vera-border transition-colors after:absolute after:rounded-full after:bg-vera-surface after:transition-transform after:content-[''] peer-checked:bg-vera-primary",
+            switchSizeClassName,
+          ].join(' ')}
+        />
+      </label>
     );
   }
 

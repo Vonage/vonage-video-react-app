@@ -65,11 +65,23 @@ const InputAudioDevices = ({ handleToggle }: InputAudioDevicesProps): ReactEleme
                 key={device.deviceId}
                 selected={isSelected}
                 onClick={() => handleChangeAudioSource(device.deviceId)}
-                className="[&.Mui-selected]:bg-transparent [&.Mui-selected]:text-vera-on-background hover:bg-vera-background"
+                className="[&.Mui-selected]:text-vera-on-background"
+                sx={{
+                  transition: 'background-color 160ms ease',
+                  '&&.Mui-selected': {
+                    backgroundColor: 'var(--vera-background)',
+                  },
+                  '&&.Mui-selected:hover': {
+                    backgroundColor: 'var(--vera-background)',
+                  },
+                  '&&:hover': {
+                    backgroundColor: 'var(--vera-background)',
+                  },
+                }}
               >
                 <Box
                   key={`${device.deviceId}-input-device`}
-                  className={classNames({
+                  className={classNames('w-full items-center', {
                     'text-vera-text-primary': isSelected,
                     'text-vera-text-secondary': !isSelected,
                   })}
