@@ -42,10 +42,6 @@ const useAdvancedSettingsVideoHandlers = ({
   const publisher = meetingRoomPublisher ?? previewPublisher ?? null;
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
-  const showError = (message: string) => {
-    setErrorMessage(message);
-  };
-
   const clearErrorMessage = () => {
     setErrorMessage(null);
   };
@@ -54,7 +50,7 @@ const useAdvancedSettingsVideoHandlers = ({
     void (async () => {
       const { error } = await tryCatch(() => applyFrameRate(publisher, value));
       if (error) {
-        showError('advancedSettings.video.error.frameRateNotSupported');
+        setErrorMessage('advancedSettings.video.error.frameRateNotSupported');
         return;
       }
       setFrameRate(value);
@@ -65,7 +61,7 @@ const useAdvancedSettingsVideoHandlers = ({
     void (async () => {
       const { error } = await tryCatch(() => applyResolution(publisher, value));
       if (error) {
-        showError('advancedSettings.video.error.resolutionNotSupported');
+        setErrorMessage('advancedSettings.video.error.resolutionNotSupported');
         return;
       }
       setResolution(value);
@@ -76,7 +72,7 @@ const useAdvancedSettingsVideoHandlers = ({
     void (async () => {
       const { error } = await tryCatch(() => applyBitrate(publisher, value, customVideoBitrate));
       if (error) {
-        showError('advancedSettings.video.error.bitrateNotSupported');
+        setErrorMessage('advancedSettings.video.error.bitrateNotSupported');
         return;
       }
       setBitrateMode(value);
@@ -88,7 +84,7 @@ const useAdvancedSettingsVideoHandlers = ({
       if (bitrateMode === ADVANCED_SETTINGS_BITRATE_MODE.custom) {
         const { error } = await tryCatch(() => applyBitrate(publisher, bitrateMode, value));
         if (error) {
-          showError('advancedSettings.video.error.bitrateNotSupported');
+          setErrorMessage('advancedSettings.video.error.bitrateNotSupported');
           return;
         }
       }

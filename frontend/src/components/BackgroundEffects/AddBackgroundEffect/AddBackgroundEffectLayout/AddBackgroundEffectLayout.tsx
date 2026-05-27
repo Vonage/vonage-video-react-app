@@ -4,7 +4,11 @@ import Box from '@mui/material/Box';
 import Snackbar from '@mui/material/Snackbar';
 import Alert from '@mui/material/Alert';
 import VividIcon from '@ui/VividIcon';
-import { ALLOWED_TYPES, MAX_SIZE_MB } from '../../../../utils/constants';
+import {
+  ALLOWED_TYPES,
+  CAPTION_ERROR_DISPLAY_DURATION_MS,
+  MAX_SIZE_MB,
+} from '../../../../utils/constants';
 import useImageStorage from '@utils/useImageStorage/useImageStorage';
 import SelectableOption from '@components/BackgroundEffects/SelectableOption';
 
@@ -99,7 +103,7 @@ const AddBackgroundEffectLayout = ({
 
       <Snackbar
         open={showError && !!errorMessage}
-        autoHideDuration={6000}
+        autoHideDuration={CAPTION_ERROR_DISPLAY_DURATION_MS}
         onClose={handleCloseError}
         anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
       >

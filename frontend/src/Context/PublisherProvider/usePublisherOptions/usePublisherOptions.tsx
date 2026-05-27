@@ -9,7 +9,7 @@ import useUserContext from '@hooks/useUserContext';
 import getInitials from '@utils/getInitials';
 import { useDeviceId } from '@core/stores/devices/hooks';
 import useStableCallback from '@web/hooks/useStableCallback';
-import { env } from '../../../env';
+import { env, PUBLISHER_MAX_RES } from '../../../env';
 import advancedSettings$ from '@Context/AdvancedSettings';
 
 /**
@@ -63,7 +63,7 @@ const usePublisherOptions = ({
       preferredVideoCodecs: (codecMode === 'automatic'
         ? 'automatic'
         : codecPriority) as PublisherProperties['preferredVideoCodecs'],
-      resolution: '1920x1080' as const,
+      resolution: PUBLISHER_MAX_RES,
       videoFilter,
       videoSource,
     };

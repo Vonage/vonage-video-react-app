@@ -14,6 +14,7 @@ import type {
 } from '../types/types';
 import { ADVANCED_SETTINGS_BITRATE_MODE, ADVANCED_SETTINGS_CODEC_MODE } from '../types/types';
 import useAdvancedSettingsVideoHandlers from './useAdvancedSettingsVideoHandlers';
+import { CAPTION_ERROR_DISPLAY_DURATION_MS } from '@utils/constants';
 
 const { setCodecMode, setCodecPriority } = advancedSettings$.actions;
 
@@ -135,6 +136,7 @@ const AdvancedSettingsVideoTab = (): ReactElement => {
 
       <Snackbar
         open={!!errorMessage}
+        autoHideDuration={CAPTION_ERROR_DISPLAY_DURATION_MS}
         onClose={clearErrorMessage}
         anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
       >

@@ -9,7 +9,7 @@ import advancedSettings$ from '@Context/AdvancedSettings';
 import makeMediaDeviceInfos from '@web-test/fixtures/makeMediaDeviceInfos';
 import { setupWindowNavigatorMock } from '@web-test/fixtures';
 import usePublisherOptions from './usePublisherOptions';
-import { env } from '../../../env';
+import { env, PUBLISHER_MAX_RES } from '../../../env';
 
 const devices = makeMediaDeviceInfos();
 const audioDevice = devices.find((d) => d.kind === 'audioinput')!;
@@ -62,7 +62,7 @@ describe('usePublisherOptions', () => {
     await waitFor(() => {
       expect(result.current).toEqual({
         frameRate: 30,
-        resolution: '1920x1080',
+        resolution: PUBLISHER_MAX_RES,
         preferredVideoCodecs: 'automatic',
         publishAudio: false,
         publishVideo: false,
@@ -135,7 +135,7 @@ describe('usePublisherOptions', () => {
     await waitFor(() => {
       expect(result.current).toEqual({
         frameRate: 30,
-        resolution: '1920x1080',
+        resolution: PUBLISHER_MAX_RES,
         preferredVideoCodecs: 'automatic',
         publishAudio: true,
         publishVideo: true,
@@ -194,7 +194,7 @@ describe('usePublisherOptions', () => {
       );
 
       await waitFor(() => {
-        expect(result.current?.resolution).toBe('1920x1080');
+        expect(result.current?.resolution).toBe(PUBLISHER_MAX_RES);
       });
     });
 

@@ -1,4 +1,4 @@
-import { describe, expect, it, vi, beforeEach, afterEach } from 'vitest';
+import { describe, expect, it, vi, beforeEach } from 'vitest';
 import type { Publisher } from '@vonage/client-sdk-video';
 import applyAdvancedSettingsToPublisher, {
   applyBitrate,
@@ -16,10 +16,6 @@ const createMockPublisher = () =>
 
 describe('applyAdvancedSettingsToPublisher', () => {
   beforeEach(() => {
-    vi.restoreAllMocks();
-  });
-
-  afterEach(() => {
     vi.restoreAllMocks();
   });
 

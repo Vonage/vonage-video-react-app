@@ -17,6 +17,7 @@ import { attempt } from '@common/execution';
 import { useMountEffect } from '@web/hooks';
 import advancedSettings$ from '@Context/AdvancedSettings';
 import useApplyAdvancedSettings from '@Context/PublisherProvider/useApplyAdvancedSettings';
+import { PUBLISHER_MAX_RES } from '../../../env';
 
 type PublisherVideoElementCreatedEvent = Event<'videoElementCreated', Publisher> & {
   element: HTMLVideoElement | HTMLObjectElement;
@@ -239,7 +240,7 @@ const usePreviewPublisher = (
     const publisherOptions: PublisherProperties = {
       insertDefaultUI: false,
       videoFilter,
-      resolution: '1920x1080',
+      resolution: PUBLISHER_MAX_RES,
       frameRate,
       preferredVideoCodecs: codecMode === 'automatic' ? 'automatic' : codecPriority,
       publishAudio: isAudioEnabled,

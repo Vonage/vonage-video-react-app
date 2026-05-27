@@ -5,6 +5,8 @@ declare const __APP_ENV__: Record<string, string | undefined>;
 
 export type Lang = 'en' | 'it' | 'es' | 'es-MX' | 'en-US' | 'de';
 
+export const PUBLISHER_MAX_RES = '1920x1080' as const;
+
 export const RESOLUTIONS = [
   '1920x1080',
   '1280x960',
