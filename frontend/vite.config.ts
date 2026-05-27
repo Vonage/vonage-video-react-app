@@ -7,8 +7,41 @@ import replace from '@rollup/plugin-replace';
 import checker from 'vite-plugin-checker';
 import tailwindcss from '@tailwindcss/vite';
 import * as path from 'node:path';
+import fs from 'node:fs';
 
 const VITEST_WEB_SOCKET_PORT = 51205;
+
+// Explicitly list every key the Env class reads.
+// In test mode we skip all custom vars so the Env class defaults apply
+const appEnvKeys = [
+  'I18N_FALLBACK_LANGUAGE',
+  'I18N_SUPPORTED_LANGUAGES',
+  'ENABLE_REPORT_ISSUE',
+  'ALLOW_BACKGROUND_EFFECTS',
+  'ALLOW_CAMERA_CONTROL',
+  'ALLOW_VIDEO_ON_JOIN',
+  'ALLOW_ADVANCED_NOISE_SUPPRESSION',
+  'ALLOW_AUDIO_ON_JOIN',
+  'ALLOW_MICROPHONE_CONTROL',
+  'MEETING_ROOM_ALLOW_ADVANCED_SETTINGS',
+  'WAITING_ROOM_ALLOW_ADVANCED_SETTINGS',
+  'WAITING_ROOM_ALLOW_DEVICE_SELECTION',
+  'ALLOW_ARCHIVING',
+  'ALLOW_CAPTIONS',
+  'ALLOW_CHAT',
+  'MEETING_ROOM_ALLOW_DEVICE_SELECTION',
+  'ALLOW_EMOJIS',
+  'ALLOW_SCREEN_SHARE',
+  'SHOW_PARTICIPANT_LIST',
+  'BYPASS_WAITING_ROOM',
+  'AVOID_FETCHING_APP_CONFIG',
+  'DEFAULT_RESOLUTION',
+  'DEFAULT_LAYOUT_MODE',
+  'API_URL',
+  'TUNNEL_DOMAIN',
+  'SHOW_VIDEO_STATS',
+  'VONAGE_VIDEO_HOST',
+] as const;
 
 const vitestConfig: VitestUserConfigInterface = defineVitestConfig({
   test: {
@@ -61,51 +94,69 @@ const vitestConfig: VitestUserConfigInterface = defineVitestConfig({
   },
 });
 
+function loadDotEnvFile(filePath: string): Record<string, string> {
+  if (!fs.existsSync(filePath)) {
+    return {};
+  }
+
+  const fileContent = fs.readFileSync(filePath, 'utf-8');
+
+  const lines = fileContent.split('\n');
+
+  const meaningfulLines = lines.filter((line) => {
+    const trimmedLine = line.trim();
+
+    return trimmedLine !== '' && !trimmedLine.startsWith('#');
+  });
+
+  const parseDotEnvLine = (line: string): [string, string] | null => {
+    const equalsIndex = line.indexOf('=');
+    if (equalsIndex === -1) return null;
+
+    const rawKey = line.slice(0, equalsIndex);
+    const rawValue = line.slice(equalsIndex + 1);
+
+    const key = rawKey.trim();
+    const value = rawValue.trim().replace(/^['"]|['"]$/g, '');
+
+    if (key === '') {
+      return null;
+    }
+
+    return [key, value];
+  };
+
+  const envEntries = meaningfulLines
+    .map(parseDotEnvLine)
+    .filter((entry): entry is [string, string] => entry !== null);
+
+  return Object.fromEntries(envEntries);
+}
+
+const getLocalEnvironmentValues = ({ mode }: { mode: string }) => {
+  type EnvKey = (typeof appEnvKeys)[number];
+  const fileEnv: Record<EnvKey, string> = {} as Record<EnvKey, string>;
+
+  for (const file of ['.env', `.env.${mode}`]) {
+    Object.assign(fileEnv, loadDotEnvFile(path.resolve(__dirname, file)));
+  }
+
+  return fileEnv;
+};
+
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, __dirname, '');
+  const fileEnv = getLocalEnvironmentValues({ mode });
 
   const isDevelopment = mode === 'development';
   const isTest = mode === 'test';
 
-  // Explicitly list every key the Env class reads.
-  // In test mode we skip all custom vars so the Env class defaults apply
-  // (avoids injecting values sourced from vcrBuild.env.sh into tests).
-  // In non-test mode we expose only these known keys — no leakage of
-  // PATH, secrets, etc. that envPrefix: '' would expose.
-  const appEnvKeys = [
-    'I18N_FALLBACK_LANGUAGE',
-    'I18N_SUPPORTED_LANGUAGES',
-    'ENABLE_REPORT_ISSUE',
-    'ALLOW_BACKGROUND_EFFECTS',
-    'ALLOW_CAMERA_CONTROL',
-    'ALLOW_VIDEO_ON_JOIN',
-    'ALLOW_ADVANCED_NOISE_SUPPRESSION',
-    'ALLOW_AUDIO_ON_JOIN',
-    'ALLOW_MICROPHONE_CONTROL',
-    'MEETING_ROOM_ALLOW_ADVANCED_SETTINGS',
-    'WAITING_ROOM_ALLOW_ADVANCED_SETTINGS',
-    'WAITING_ROOM_ALLOW_DEVICE_SELECTION',
-    'ALLOW_ARCHIVING',
-    'ALLOW_CAPTIONS',
-    'ALLOW_CHAT',
-    'MEETING_ROOM_ALLOW_DEVICE_SELECTION',
-    'ALLOW_EMOJIS',
-    'ALLOW_SCREEN_SHARE',
-    'SHOW_PARTICIPANT_LIST',
-    'BYPASS_WAITING_ROOM',
-    'AVOID_FETCHING_APP_CONFIG',
-    'DEFAULT_RESOLUTION',
-    'DEFAULT_LAYOUT_MODE',
-    'API_URL',
-    'TUNNEL_DOMAIN',
-    'SHOW_VIDEO_STATS',
-    'VONAGE_VIDEO_HOST',
-  ] as const;
-
   const appEnvObject = {
     MODE: mode,
-    ...(isTest ? {} : Object.fromEntries(appEnvKeys.map((key) => [key, env[key] ?? '']))),
+    ...(isTest
+      ? {}
+      : Object.fromEntries(appEnvKeys.map((key) => [key, fileEnv[key] ?? env[key] ?? '']))),
   };
 
   return mergeConfig(vitestConfig, {

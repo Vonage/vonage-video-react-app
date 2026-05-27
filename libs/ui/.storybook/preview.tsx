@@ -1,6 +1,9 @@
 import type { Preview } from '@storybook/react';
+import { registerIcon } from '@vonage/vivid';
 import { ThemeProvider } from '../src/theme';
 import '../src/styles.css';
+
+registerIcon();
 
 const preview: Preview = {
   decorators: [

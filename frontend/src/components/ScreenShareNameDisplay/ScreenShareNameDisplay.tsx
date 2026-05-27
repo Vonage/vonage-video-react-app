@@ -1,6 +1,5 @@
-import Chip from '@mui/material/Chip';
-import { Box } from 'opentok-layout-js';
-import { ReactElement } from 'react';
+import type { Box } from 'opentok-layout-js';
+import type { ReactElement } from 'react';
 
 export type ScreenShareNameDisplayProps = {
   name: string;
@@ -18,20 +17,14 @@ const ScreenShareNameDisplay = ({ name, box }: ScreenShareNameDisplayProps): Rea
   const safeMaxWidth = typeof box.width === 'number' && Number.isFinite(box.width) ? box.width : 0;
 
   return (
-    <Chip
-      label={name}
-      size="small"
-      className="text-vera-on-dark-grey bg-vera-dark-grey-opacity"
-      sx={{
-        position: 'absolute',
-        bottom: '10px',
-        left: '10px',
-        overflow: 'hidden',
-        textOverflow: 'ellipsis',
-        whiteSpace: 'nowrap',
+    <div
+      className="absolute bottom-1 left-2.5 overflow-hidden whitespace-nowrap rounded-vera-medium bg-vera-dark-grey-opacity px-2 py-1 text-ellipsis text-vera-accent"
+      style={{
         maxWidth: Math.max(0, safeMaxWidth - 32),
       }}
-    />
+    >
+      <span className="font-vera-plain text-vera-body-base">{name}</span>
+    </div>
   );
 };
 

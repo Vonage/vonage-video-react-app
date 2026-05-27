@@ -1,4 +1,4 @@
-import { ReactElement } from 'react';
+import type { ReactElement } from 'react';
 
 export type NameDisplayProps = {
   containerWidth: number;
@@ -24,7 +24,7 @@ const NameDisplay = ({ name, containerWidth }: NameDisplayProps): ReactElement =
         maxWidth: Math.max(0, safeMaxWidth - 32),
       }}
     >
-      <span className="font-vera-plain text-vera-body-extended">{name}</span>
+      <span className="font-vera-plain text-vera-body-base">{name}</span>
     </div>
   );
 };

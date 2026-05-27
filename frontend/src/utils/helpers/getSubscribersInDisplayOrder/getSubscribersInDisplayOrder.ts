@@ -1,4 +1,3 @@
-import { difference } from 'lodash';
 import { SubscriberWrapper } from '../../../types/session';
 
 /* Subscriber Display Order
@@ -83,8 +82,11 @@ const getSubscribersIdsInDisplayOrder = (
   subscribersToDisplay: string[],
   previousDisplayOrder: string[]
 ): string[] => {
-  const newIds = difference(subscribersToDisplay, previousDisplayOrder);
-  const removedIds = difference(previousDisplayOrder, subscribersToDisplay);
+  const subscribersToDisplaySet = new Set(subscribersToDisplay);
+  const previousDisplayOrderSet = new Set(previousDisplayOrder);
+
+  const newIds = subscribersToDisplay.filter((id) => !previousDisplayOrderSet.has(id));
+  const removedIds = previousDisplayOrder.filter((id) => !subscribersToDisplaySet.has(id));
 
   // Loop through previous order
   const previousOrderMapped = previousDisplayOrder

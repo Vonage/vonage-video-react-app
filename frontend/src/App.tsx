@@ -7,7 +7,7 @@ import WaitingRoom from './pages/WaitingRoom';
 import { PreviewPublisherProvider } from './Context/PreviewPublisherProvider';
 import LandingPage from './pages/LandingPage';
 import { PublisherProvider } from './Context/PublisherProvider';
-import RedirectToWaitingRoom from './components/RedirectToWaitingRoom';
+import { RedirectToWaitingRoom, ErrorBoundary, EnvGuard } from './components';
 import UnsupportedBrowserPage from './pages/UnsupportedBrowserPage';
 import RoomProvider from './Context/RoomProvider';
 import AppContextProvider from './AppContextProvider';
@@ -17,11 +17,11 @@ import WaitingRoomSkeleton from '@pages/WaitingRoom/WaitingRoom.skeleton';
 import MeetingRoomSkeleton from '@pages/MeetingRoom/MeetingRoom.skeleton';
 import SessionProvider from '@Context/SessionProvider/session';
 import LoggerSynchronizer from '@Context/LoggerSynchronizer';
-import ErrorBoundary from './components/ErrorBoundary';
-import EnvGuard from './components/EnvGuard';
 import { ErrorPage } from './pages/ErrorBoundary';
 import { runtime$ } from '@core/stores';
 import { videoClient } from './services';
+import { NotificationsContainer } from '@ui/components';
+import { BackendLoggingProvider } from './logger/providers';
 
 const futureConfig: Partial<FutureConfig> = {
   /**
@@ -78,6 +78,8 @@ const InnerApp = () => {
   );
 };
 
+export const loggerProvider = new BackendLoggingProvider();
+
 /**
  * The wrapper is necessary temporarily since app also need to have access to theme context.
  */
@@ -86,7 +88,8 @@ const App = () => {
     <AppContextProvider>
       <ErrorBoundary fallback={(error) => <ErrorPage error={error} />}>
         <EnvGuard />
-        <runtime$.Provider videoClient={videoClient}>
+        <runtime$.Provider videoClient={videoClient} loggerProvider={loggerProvider}>
+          <NotificationsContainer />
           <InnerApp />
         </runtime$.Provider>
       </ErrorBoundary>

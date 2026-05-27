@@ -60,24 +60,6 @@ TypeScript version: `^5.8.3`
 - **Rule:** Avoid overtesting. Simple helpers should be covered by only a couple of high-value use cases.
 - **Rule:** Prefer tests that validate real functionality and behavior over redundant input permutations.
 
-## Import rules
-
-- **Rule:** Always prefer specific imports over deep namespace imports.
-
-**Violation:**
-
-```tsx
-// Bad
-import { isNil } from 'lodash';
-```
-
-**Correct:**
-
-```tsx
-// Good
-import isNil from 'lodash/isNil';
-```
-
 ---
 
 # Coding Style & Programming Patterns

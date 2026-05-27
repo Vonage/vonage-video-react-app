@@ -1,18 +1,20 @@
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, expect, it } from 'vitest';
-import CollapsibleSection from './CollapsibleSection';
+import Collapsible from './Collapsible';
 
 describe('CollapsibleSection', () => {
   it('renders collapsed by default and keeps the content mounted', () => {
     render(
-      <CollapsibleSection title="Publisher statistics">
-        <div>Packets sent</div>
-      </CollapsibleSection>
+      <Collapsible>
+        <Collapsible.Summary>Publisher statistics</Collapsible.Summary>
+        <Collapsible.Details>
+          <div>Packets sent</div>
+        </Collapsible.Details>
+      </Collapsible>
     );
 
     const details = screen.getByText(/publisher statistics/i).closest('details');
-
     const content = screen.getByText(/packets sent/i);
 
     expect(details).not.toHaveAttribute('open');
@@ -24,14 +26,16 @@ describe('CollapsibleSection', () => {
     const user = userEvent.setup();
 
     render(
-      <CollapsibleSection title="Publisher statistics" defaultExpanded>
-        <div>Packets sent</div>
-      </CollapsibleSection>
+      <Collapsible open>
+        <Collapsible.Summary>Publisher statistics</Collapsible.Summary>
+        <Collapsible.Details>
+          <div>Packets sent</div>
+        </Collapsible.Details>
+      </Collapsible>
     );
 
     const summary = screen.getByText(/publisher statistics/i);
     const details = summary.closest('details');
-
     const content = screen.getByText(/packets sent/i);
 
     expect(details).toHaveAttribute('open');

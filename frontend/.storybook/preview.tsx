@@ -1,6 +1,9 @@
 import type { Preview } from '@storybook/react';
 import { MemoryRouter } from 'react-router-dom';
 import '../src/css/index.css';
+import { registerIcon } from '@vonage/vivid';
+
+registerIcon();
 
 const preview: Preview = {
   decorators: [

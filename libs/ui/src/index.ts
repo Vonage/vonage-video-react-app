@@ -1,5 +1,5 @@
 export { default as Card, type CardProps } from './Card';
-export { default as CollapsibleSection, type CollapsibleSectionProps } from './CollapsibleSection';
+export { default as Collapsible } from './components/Collapsible';
 export { default as Field, type FieldInputProps } from './Field';
 export { default as Header, type HeaderProps } from './Header';
 export {

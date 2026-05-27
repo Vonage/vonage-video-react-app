@@ -1,6 +1,6 @@
 import { useCallback, useMemo, useState } from 'react';
 import { Connection } from '@vonage/client-sdk-video';
-import { throttle } from 'lodash';
+import throttle from '@common/execution/throttle';
 import { EMOJI_DISPLAY_DURATION } from '../utils/constants';
 import { SignalEvent, SignalType, SubscriberWrapper } from '../types/session';
 

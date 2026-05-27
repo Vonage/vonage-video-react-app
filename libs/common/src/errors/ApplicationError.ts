@@ -17,6 +17,19 @@ class ApplicationError extends Error {
   public fallbackConfig: ApplicationErrorFallbackConfig;
 
   /**
+   * A string to categorize the error, useful for error tracking and analytics.
+   */
+  public type?: string;
+
+  public get fallbackMessage() {
+    return this.fallbackConfig.fallbackMessage;
+  }
+
+  public set fallbackMessage(message: string) {
+    this.fallbackConfig.fallbackMessage = message;
+  }
+
+  /**
    * Creates a new instance of the custom application error.
    * @param src - The source of the error, can be a string, an instance of `IApplicationError`, or an `Error` object.
    * @param fallbackConfig - In case the source is not an `IApplicationError`, this config will be used to create the error.
@@ -52,6 +65,10 @@ class ApplicationError extends Error {
     this.issues = state.issues ?? [];
     this.fallbackConfig = state.fallbackConfig;
     this.statusCode = state.statusCode ?? StatusCode.ServerErrorInternal;
+
+    // optional properties
+    this.type = state.type;
+    this.name = state.name ?? this.constructor.name;
   }
 
   /**
@@ -107,30 +124,38 @@ class ApplicationError extends Error {
     stack?: string;
     fallbackMessage?: string;
     statusCode: StatusCode;
+    type: string | undefined;
+    name: string;
   } => {
-    const { fallbackConfig, message, severity, stack, statusCode } = this;
-    const issues = removeUndefinedProps({
+    const { fallbackConfig, message, severity, stack, statusCode, type, name } = this;
+
+    const optionals = removeUndefinedProps({
       issues: this.issues.length ? this.issues : undefined,
+      type,
     });
 
     // Prevent disclosure of private sensitive info
     if (globalThis.process?.env?.NODE_ENV === 'development') {
       return {
+        name,
         fallbackMessage: fallbackConfig.fallbackMessage,
         message,
         severity,
         stack,
         statusCode,
-        ...issues,
+        ...optionals,
       };
     }
 
     return {
+      name,
+
       // prevent disclosing unhandled messages on production
       message: fallbackConfig.fallbackMessage,
       severity,
       statusCode,
-      ...issues,
+
+      ...optionals,
     };
   };
 }

@@ -1,5 +1,5 @@
 import { RefObject, useEffect, useRef, useState } from 'react';
-import { throttle } from 'lodash';
+import throttle from '@common/execution/throttle';
 import ResizeObserverPolyfill from 'resize-observer-polyfill';
 import { RIGHT_PANEL_BUTTON_COUNT } from '../utils/constants';
 

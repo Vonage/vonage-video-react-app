@@ -9,7 +9,6 @@
 - [@testing-library/jest-dom](https://www.npmjs.com/package/@testing-library/jest-dom) Custom jest matchers to test the state of the DOM
 - [@testing-library/react](https://www.npmjs.com/package/@testing-library/react) Simple and complete React DOM testing utilities that encourage good testing practices.
 - [@testing-library/user-event](https://www.npmjs.com/package/@testing-library/user-event) Fire events the same way the user does
-- [@types/lodash](https://www.npmjs.com/package/@types/lodash) TypeScript definitions for lodash
 - [@types/react-dom](https://www.npmjs.com/package/@types/react-dom) TypeScript definitions for react-dom
 - [@types/react-router-dom](https://www.npmjs.com/package/@types/react-router-dom) TypeScript definitions for react-router-dom
 - [@types/react](https://www.npmjs.com/package/@types/react) TypeScript definitions for react
@@ -25,7 +24,6 @@
 - [axios](https://www.npmjs.com/package/axios) Promise based HTTP client for the browser and node.js
 - [events](https://www.npmjs.com/package/events) Node's event emitter for all engines.
 - [jsdom](https://www.npmjs.com/package/jsdom) A JavaScript implementation of many web standards
-- [lodash](https://www.npmjs.com/package/lodash) Lodash modular utilities.
 - [opentok-layout-js](https://www.npmjs.com/package/opentok-layout-js) Automatic layout of video elements (publisher and subscriber) minimising white-space for the OpenTok on WebRTC API. This is intended for use with the OpenTok on WebRTC JS API.
 - [opentok-solutions-logging](https://www.npmjs.com/package/opentok-solutions-logging) OpenTok Solutions analytics logging for JavaScript
 - [postcss](https://www.npmjs.com/package/postcss) Tool for transforming styles with JS plugins
