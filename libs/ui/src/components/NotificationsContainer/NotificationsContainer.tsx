@@ -25,7 +25,7 @@ const NotificationsContainer = ({
 };
 
 const variants = tv({
-  base: 'fixed z-50 flex flex-col gap-3 pointer-events-none',
+  base: 'fixed z-[1400] flex flex-col gap-3 pointer-events-none',
   variants: {
     position: {
       'top-right': 'top-4 right-4',

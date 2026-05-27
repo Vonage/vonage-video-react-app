@@ -7,16 +7,21 @@ import type { PreviewPublisherContextType } from '@Context/PreviewPublisherProvi
 import usePublisherContext from '@hooks/usePublisherContext';
 import usePreviewPublisherContext from '@hooks/usePreviewPublisherContext';
 import advancedSettings$ from '@Context/AdvancedSettings';
+import { handleClientApplicationError } from '@ui/helpers';
 import useAdvancedSettingsVideoHandlers from './useAdvancedSettingsVideoHandlers';
 
 vi.mock('@hooks/usePublisherContext');
 vi.mock('@hooks/usePreviewPublisherContext');
+vi.mock('@ui/helpers', () => ({
+  handleClientApplicationError: vi.fn(),
+}));
 
 const mockUsePublisherContext = usePublisherContext as Mock<[], PublisherContextType>;
 const mockUsePreviewPublisherContext = usePreviewPublisherContext as Mock<
   [],
   PreviewPublisherContextType
 >;
+const mockHandleClientApplicationError = vi.mocked(handleClientApplicationError);
 
 const createMockPublisher = () =>
   ({
@@ -49,8 +54,8 @@ describe('useAdvancedSettingsVideoHandlers', () => {
         useAdvancedSettingsVideoHandlers({ bitrateMode: 'default', customVideoBitrate: 500_000 })
       );
 
-      act(() => {
-        result.current.handleFrameRateChange(15);
+      await act(async () => {
+        await result.current.handleFrameRateChange(15);
       });
 
       await waitFor(() => {
@@ -64,8 +69,8 @@ describe('useAdvancedSettingsVideoHandlers', () => {
         useAdvancedSettingsVideoHandlers({ bitrateMode: 'default', customVideoBitrate: 500_000 })
       );
 
-      act(() => {
-        result.current.handleFrameRateChange(7);
+      await act(async () => {
+        await result.current.handleFrameRateChange(7);
       });
 
       await waitFor(() => {
@@ -84,8 +89,8 @@ describe('useAdvancedSettingsVideoHandlers', () => {
         useAdvancedSettingsVideoHandlers({ bitrateMode: 'default', customVideoBitrate: 500_000 })
       );
 
-      act(() => {
-        result.current.handleFrameRateChange(15);
+      await act(async () => {
+        await result.current.handleFrameRateChange(15);
       });
 
       await waitFor(() => {
@@ -95,7 +100,7 @@ describe('useAdvancedSettingsVideoHandlers', () => {
       expect(advancedSettings$.getState().frameRate).toBe(initialFrameRate);
     });
 
-    it('stores an error message and can clear it after a failed frame rate update', async () => {
+    it('reports a notification after a failed frame rate update', async () => {
       const publisher = createMockPublisher();
       (publisher.setPreferredFrameRate as Mock).mockRejectedValue(new Error('hardware error'));
       mockUsePublisherContext.mockReturnValue({ publisher } as PublisherContextType);
@@ -104,22 +109,12 @@ describe('useAdvancedSettingsVideoHandlers', () => {
         useAdvancedSettingsVideoHandlers({ bitrateMode: 'default', customVideoBitrate: 500_000 })
       );
 
-      act(() => {
-        result.current.handleFrameRateChange(15);
+      await act(async () => {
+        await result.current.handleFrameRateChange(15);
       });
 
       await waitFor(() => {
-        expect(result.current.errorMessage).toBe(
-          'advancedSettings.video.error.frameRateNotSupported'
-        );
-      });
-
-      act(() => {
-        result.current.clearErrorMessage();
-      });
-
-      await waitFor(() => {
-        expect(result.current.errorMessage).toBeNull();
+        expect(mockHandleClientApplicationError).toHaveBeenCalledTimes(1);
       });
     });
   });
@@ -133,8 +128,8 @@ describe('useAdvancedSettingsVideoHandlers', () => {
         useAdvancedSettingsVideoHandlers({ bitrateMode: 'default', customVideoBitrate: 500_000 })
       );
 
-      act(() => {
-        result.current.handleResolutionChange('640x480');
+      await act(async () => {
+        await result.current.handleResolutionChange('640x480');
       });
 
       await waitFor(() => {
@@ -153,14 +148,12 @@ describe('useAdvancedSettingsVideoHandlers', () => {
         useAdvancedSettingsVideoHandlers({ bitrateMode: 'default', customVideoBitrate: 500_000 })
       );
 
-      act(() => {
-        result.current.handleResolutionChange('640x480');
+      await act(async () => {
+        await result.current.handleResolutionChange('640x480');
       });
 
       await waitFor(() => {
-        expect(result.current.errorMessage).toBe(
-          'advancedSettings.video.error.resolutionNotSupported'
-        );
+        expect(mockHandleClientApplicationError).toHaveBeenCalledTimes(1);
       });
 
       expect(advancedSettings$.getState().resolution).toBe(initialResolution);
@@ -176,8 +169,8 @@ describe('useAdvancedSettingsVideoHandlers', () => {
         useAdvancedSettingsVideoHandlers({ bitrateMode: 'default', customVideoBitrate: 500_000 })
       );
 
-      act(() => {
-        result.current.handleBitrateModeChange('bw_saver');
+      await act(async () => {
+        await result.current.handleBitrateModeChange('bw_saver');
       });
 
       await waitFor(() => {
@@ -196,8 +189,8 @@ describe('useAdvancedSettingsVideoHandlers', () => {
         useAdvancedSettingsVideoHandlers({ bitrateMode: 'default', customVideoBitrate: 500_000 })
       );
 
-      act(() => {
-        result.current.handleBitrateModeChange('bw_saver');
+      await act(async () => {
+        await result.current.handleBitrateModeChange('bw_saver');
       });
 
       await waitFor(() => {
@@ -215,14 +208,12 @@ describe('useAdvancedSettingsVideoHandlers', () => {
         useAdvancedSettingsVideoHandlers({ bitrateMode: 'default', customVideoBitrate: 500_000 })
       );
 
-      act(() => {
-        result.current.handleBitrateModeChange('bw_saver');
+      await act(async () => {
+        await result.current.handleBitrateModeChange('bw_saver');
       });
 
       await waitFor(() => {
-        expect(result.current.errorMessage).toBe(
-          'advancedSettings.video.error.bitrateNotSupported'
-        );
+        expect(mockHandleClientApplicationError).toHaveBeenCalledTimes(1);
       });
 
       expect(advancedSettings$.getState().bitrateMode).toBe(initialBitrateMode);
@@ -238,8 +229,8 @@ describe('useAdvancedSettingsVideoHandlers', () => {
         useAdvancedSettingsVideoHandlers({ bitrateMode: 'custom', customVideoBitrate: 500_000 })
       );
 
-      act(() => {
-        result.current.handleCustomVideoBitrateChange(750_000);
+      await act(async () => {
+        await result.current.handleCustomVideoBitrateChange(750_000);
       });
 
       await waitFor(() => {
@@ -256,8 +247,8 @@ describe('useAdvancedSettingsVideoHandlers', () => {
         useAdvancedSettingsVideoHandlers({ bitrateMode: 'default', customVideoBitrate: 500_000 })
       );
 
-      act(() => {
-        result.current.handleCustomVideoBitrateChange(750_000);
+      await act(async () => {
+        await result.current.handleCustomVideoBitrateChange(750_000);
       });
 
       await waitFor(() => {
@@ -278,14 +269,12 @@ describe('useAdvancedSettingsVideoHandlers', () => {
         useAdvancedSettingsVideoHandlers({ bitrateMode: 'custom', customVideoBitrate: 500_000 })
       );
 
-      act(() => {
-        result.current.handleCustomVideoBitrateChange(750_000);
+      await act(async () => {
+        await result.current.handleCustomVideoBitrateChange(750_000);
       });
 
       await waitFor(() => {
-        expect(result.current.errorMessage).toBe(
-          'advancedSettings.video.error.bitrateNotSupported'
-        );
+        expect(mockHandleClientApplicationError).toHaveBeenCalledTimes(1);
       });
 
       expect(advancedSettings$.getState().customVideoBitrate).toBe(initialCustomVideoBitrate);
