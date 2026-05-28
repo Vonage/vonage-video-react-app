@@ -74,7 +74,7 @@ const BackgroundGallery = (): ReactElement => {
                   size="small"
                   className={classNames({
                     'text-vera-text-disabled bg-vera-disabled cursor-default': isSelected,
-                    'text-vera-background bg-vera-on-background hover:bg-vera-background cursor-pointer':
+                    'bg-vera-dark-grey-opacity! text-vera-on-dark-grey hover:bg-vera-dark-grey! cursor-pointer':
                       !isSelected,
                   })}
                   sx={{
@@ -88,7 +88,7 @@ const BackgroundGallery = (): ReactElement => {
                     name="delete-solid"
                     customSize={-6}
                     style={{
-                      color: isSelected ? 'var(--vera-text-disabled)' : 'var(--vera-background)',
+                      color: isSelected ? 'var(--vera-text-disabled)' : 'var(--vera-on-dark-grey)',
                     }}
                   />
                 </IconButton>
