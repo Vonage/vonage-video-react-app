@@ -1,4 +1,4 @@
-# Contributing to Vonage Video iOS App
+# Contributing to Vonage Video React App
 
 ## Welcome to Contributors
 Thank you for your interest in contributing to our open source reference application! We're excited to have you join our community and help improve this project.
@@ -17,7 +17,7 @@ Contributions are declined or returned when they arrive as large undiscussed dif
 Before you begin, please review the following:
 - Read our [Code of Conduct](../CODE_OF_CONDUCT.md) to understand our community standards.
 - Check the [README.md](../README.md) for an overview of the project and setup instructions.
-- Browse the [open issues](https://github.com/Vonage/vonage-video-ios-app/issues) to see what needs attention.
+- Browse the [open issues](https://github.com/Vonage/vonage-video-react-app/issues) to see what needs attention.
 
 ## Contributing
 
@@ -92,7 +92,7 @@ Please keep your pull request active once opened. If maintainers request changes
 We may close pull requests that appear abandoned, especially when they have unresolved review feedback, failing checks, or no contributor response for an extended period. Closed pull requests can be reopened later when the contributor is ready to continue and the branch is brought back into a reviewable state.
 
 ### Branching
-Our `main` branch is the evergreen source of truth for the Vonage Video iOS Reference App. All new development should be done in the `develop` branch. Contributions should be made by branching off `develop`, and pull requests should be submitted against `develop`. Periodically, `develop` will be merged into `main` as a batch.
+Our `main` branch is the evergreen source of truth for the Vonage Video React Reference App. All new development should be done in the `develop` branch. Contributions should be made by branching off `develop`, and pull requests should be submitted against `develop`. Periodically, `develop` will be merged into `main` as a batch.
 
 Internally, we use Jira for issue tracking. Internal branches use the format `DEVELOPERNAME/TICKETNUMBER-SHORTDESCRIPTION`, for example `alicesmith/VIDCS-123-fix-broken-icon`. If you'd like to contribute a pull request from your fork, please use a descriptive branch name, for example `fix-broken-icon`.
 
