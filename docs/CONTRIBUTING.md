@@ -1,30 +1,99 @@
-# Getting Involved
+# Contributing to Vonage Video iOS App
 
 ## Welcome to Contributors
 Thank you for your interest in contributing to our open source reference application! We're excited to have you join our community and help improve this project.
 
+## Before you start — what gets accepted
+To set expectations clearly, contributions are accepted when they:
+- Address a discussed and approved issue for anything beyond a bug fix
+- Are scoped small, with one concern per PR, split across multiple PRs if the feature is large
+- Pass CI checks: tests, coverage on new code, and complexity thresholds
+- Are architecturally coherent with the existing codebase
+- Come from a contributor who can explain and maintain what they submitted
+
+Contributions are declined or returned when they arrive as large undiscussed diffs, skip the issue-first step, bundle multiple unrelated changes, or cannot be explained by the contributor.
+
 ## Getting Started
 Before you begin, please review the following:
-- Read our Code of Conduct to understand our community standards.
-- Check the README.md for an overview of the project and setup instructions.
-- Browse the open issues to see what needs attention.
+- Read our [Code of Conduct](../CODE_OF_CONDUCT.md) to understand our community standards.
+- Check the [README.md](../README.md) for an overview of the project and setup instructions.
+- Browse the [open issues](https://github.com/Vonage/vonage-video-ios-app/issues) to see what needs attention.
 
 ## Contributing
 
-### Opening an Issue - Bug Reports or Feature Requests
+### Opening an Issue — Bug Reports or Feature Requests
+We always welcome feedback. If you've seen something that isn't quite right or you have a suggestion for a new feature, please go ahead and open an issue. Select the appropriate template and include as much information as you have. It really helps.
 
-We always welcome feedback, if you've seen something that isn't quite right or you have a suggestion for a new feature, please go ahead and open an issue in this project. Select the appropriate template and include as much information as you have, it really helps.
+When opening an issue for a feature request or non-trivial change, please include:
+- Problem: What are you trying to solve?
+- Proposed solution: How do you plan to approach it?
+- Alternatives considered: What other options did you evaluate and why did you rule them out?
+- Architectural impact: Does this affect existing layers, patterns, or contracts in the codebase?
 
 ### Making a Code Change
+We're always open to pull requests, but these should be small and clearly described so that we can understand what you're trying to do.
 
-We're always open to pull requests, but these should be small and clearly described so that we can understand what you're trying to do. Feel free to open an issue first and get some discussion going.
+For anything beyond a straightforward bug fix, please open and discuss an issue before writing code. This creates space for design alignment early, which saves time for both you and the reviewers. A PR that arrives without a linked issue and prior discussion may be held until that conversation happens.
 
-When you're ready to start coding, fork this repository to your own GitHub account and make your changes in a new branch based on develop. Once you're happy, open a pull request to merge into develop and explain what the change is and why you think we should include it in our project.
+When you're ready to start coding, fork this repository to your own GitHub account and make your changes in a new branch based on `develop`. Once you're happy, open a pull request to merge into `develop` and explain what the change is and why you think we should include it.
 
-### Branching 
+#### Pull Request Checklist
+Before marking your PR as ready for review, please verify:
+- [ ] A linked issue exists and has been discussed
+- [ ] The change is scoped as small as reasonably possible
+- [ ] New or updated logic is covered by tests
+- [ ] No new dependencies have been introduced without prior discussion
+- [ ] You can explain the change and are prepared to maintain it going forward
 
-Our *main* branch is the evergreen source of truth for the Vonage Video API Reference App for React. However, all new development should be done in the develop branch. Contributions should be made by branching off develop, and pull requests should be submitted against develop. Periodically, develop will be merged into main as a batch.
- 
-Internally, we use Jira for issue tracking. Issue and feature branches use the format DEVELOPERNAME/TICKETNUMBER-SHORTDESCRIPTION e.g. alicesmith/VIDCS-123-fix-broken-icon. If you'd like to contribute a pull request, please use a branch on your fork with a descriptive name e.g. fix-broken-icon.
+#### Review Expectations by PR Size
+We apply different levels of scrutiny depending on scope:
 
-Release versions use the format rc-RELEASENUMBER number, e.g. rc-1.0.0. We use [semantic versioning](https://semver.org/) for our releases. 
+| PR type | Criteria | Review process |
+| --- | --- | --- |
+| Small / focused | Single concern, one layer affected, minimal diff | Lightweight review, 1 approval |
+| Large / cross-cutting | Multiple layers, significant new logic, new dependencies | In-depth review required; design discussion in the issue beforehand is strongly recommended |
+
+If you're unsure which category your PR falls into, err on the side of opening an issue first.
+
+#### Splitting large features into smaller PRs
+Features that span multiple layers or require significant new logic must be broken down into a sequence of small, independently reviewable PRs. Each PR in the sequence should:
+- Represent a single coherent unit of work: a layer, a component, or a well-defined step
+- Be understandable on its own, without the reviewer needing the full feature context
+- Reference the parent issue and indicate its position in the sequence, for example `[1/3] Add data model` or `[2/3] Add service layer`
+
+A PR that bundles an entire feature in a single large diff will be returned with a request to split it, regardless of code quality. If you're unsure how to break a feature down, propose the sequence in the issue. Maintainers will help before you write any code.
+
+#### How we think about task and PR decomposition
+When splitting a feature, apply these principles:
+- Verb + noun naming. Every PR title should describe the work, not the intent.
+	- `Implement password reset API endpoint`
+	- `Add email confirmation screen`
+	- Avoid vague titles such as `Work on login` or `Backend stuff`
+- Vertical slicing over layer slicing. Prefer PRs that deliver a working slice of behavior end to end, rather than PRs that own an entire technical layer.
+	- `Fetch user profile data from API`, then `Display user profile data in UI`
+	- Avoid `Do all the frontend` or `Do all the backend`
+- Sizing. Each PR should represent roughly 4 to 16 hours of work. If a PR would likely take longer than two days, split it further.
+- Cover all work types. A feature is not done when the code is done. Consider whether your sequence of PRs includes design, development, testing, and documentation when relevant.
+- Current scope only. Break down the story at hand. Do not speculate or plan ahead for future iterations in the same PR sequence.
+
+### Responsibility and AI-Assisted Contributions
+You are welcome to use AI coding tools such as Copilot, Cursor, or Claude to help write code. However, the contributor is responsible for understanding, explaining, and maintaining every line of code submitted, regardless of how it was generated.
+
+This means:
+- Do not submit code you cannot explain or defend in a review
+- AI-generated code is held to the same quality and architectural standards as hand-written code
+- Reviewers may ask questions about any part of a PR; not being the original author is not an accepted reason for not knowing the answer
+
+This is not a policy against AI tools. It is a policy for contributor accountability.
+
+### Pull Request Activity and Abandonment
+Please keep your pull request active once opened. If maintainers request changes, clarification, or additional context, respond within a reasonable time and keep the discussion moving.
+
+We may close pull requests that appear abandoned, especially when they have unresolved review feedback, failing checks, or no contributor response for an extended period. Closed pull requests can be reopened later when the contributor is ready to continue and the branch is brought back into a reviewable state.
+
+### Branching
+Our `main` branch is the evergreen source of truth for the Vonage Video iOS Reference App. All new development should be done in the `develop` branch. Contributions should be made by branching off `develop`, and pull requests should be submitted against `develop`. Periodically, `develop` will be merged into `main` as a batch.
+
+Internally, we use Jira for issue tracking. Internal branches use the format `DEVELOPERNAME/TICKETNUMBER-SHORTDESCRIPTION`, for example `alicesmith/VIDCS-123-fix-broken-icon`. If you'd like to contribute a pull request from your fork, please use a descriptive branch name, for example `fix-broken-icon`.
+
+Release versions use the format `rc-RELEASENUMBER`, for example `rc-1.0.0`. We follow [Semantic Versioning](https://semver.org/).
