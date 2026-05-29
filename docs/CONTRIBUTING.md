@@ -77,7 +77,9 @@ When splitting a feature, apply these principles:
 - Current scope only. Break down the story at hand. Do not speculate or plan ahead for future iterations in the same PR sequence.
 
 ### Responsibility and AI-Assisted Contributions
-You are welcome to use AI coding tools such as Copilot, Cursor, or Claude to help write code. However, the contributor is responsible for understanding, explaining, and maintaining every line of code submitted, regardless of how it was generated.
+You are welcome to use AI coding tools such as Copilot, Cursor, or Claude to help write code. However, the contributor is responsible for understanding and being able to explain every line of code submitted, regardless of how it was generated.
+
+Once a contribution is merged, ongoing maintenance of that code becomes the responsibility of the project maintainers. This is precisely why we hold contributions to a high standard: we need to be confident we can own, extend, and debug what gets merged.
 
 This means:
 - Do not submit code you cannot explain or defend in a review
