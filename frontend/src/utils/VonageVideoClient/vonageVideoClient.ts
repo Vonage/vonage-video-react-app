@@ -164,8 +164,13 @@ class VonageVideoClient extends EventEmitter<VonageVideoClientEvents> {
             }
           );
 
+          if (!subscriber) {
+            reject(new Error('Vonage subscriber was not created.'));
+            return;
+          }
+
           this.setupSubscriberListeners({
-            subscriber: subscriber!,
+            subscriber,
             streamId,
             isScreenshare,
           });
