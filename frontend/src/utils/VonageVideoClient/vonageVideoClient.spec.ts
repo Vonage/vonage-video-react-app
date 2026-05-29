@@ -201,6 +201,32 @@ describe('VonageVideoClient', () => {
 
       await audioLevelUpdatedPromise;
     });
+
+    it('emits subscriptionError when subscribe returns null and does not attach subscriber listeners', async () => {
+      const streamId = 'null-subscriber-stream';
+
+      await vonageVideoClient?.connect();
+
+      const nullSubscriber = new EventEmitter() as unknown as TestSubscriber;
+      mockSubscribe.mockReturnValue(undefined);
+
+      const subscriptionErrorPromise = new Promise<unknown>((resolve) => {
+        vonageVideoClient?.on('subscriptionError', resolve);
+      });
+
+      mockSession.emit('streamCreated', {
+        stream: { streamId, videoType: 'camera' } as unknown as Stream,
+      });
+
+      const error = await subscriptionErrorPromise;
+
+      expect(error).toBeInstanceOf(Error);
+      expect((error as Error).message).toBe('Vonage subscriber was not created.');
+      // setupSubscriberListeners should never have been called — no subscriber to attach to
+      expect(nullSubscriber.listenerCount('videoElementCreated')).toBe(0);
+      expect(nullSubscriber.listenerCount('destroyed')).toBe(0);
+      expect(nullSubscriber.listenerCount('audioLevelUpdated')).toBe(0);
+    });
   });
 
   it('disconnect should disconnect from the session and cleanup', async () => {
