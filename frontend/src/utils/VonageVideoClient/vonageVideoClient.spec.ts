@@ -146,7 +146,7 @@ describe('VonageVideoClient', () => {
 
       await vonageVideoClient?.connect();
 
-      vi.spyOn(vonageVideoClient!.clientSession!, 'subscribe').mockImplementation(
+      vi.spyOn(vonageVideoClient!.clientSession, 'subscribe').mockImplementation(
         (_a, _b, _c, callback) => {
           queueMicrotask(() => {
             callback!();

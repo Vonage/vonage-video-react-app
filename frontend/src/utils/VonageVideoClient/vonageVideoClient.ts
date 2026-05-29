@@ -55,12 +55,13 @@ type VonageVideoClientEvents = {
  * @augments {EventEmitter}
  */
 class VonageVideoClient extends EventEmitter<VonageVideoClientEvents> {
-  public clientSession: Session | null;
+  public clientSession: Session;
   private readonly credential: Credential;
   private readonly applicationId: string;
   public readonly sessionId: string;
   private hiddenSubscriber: Subscriber | null = null;
   private readonly streams = new Map<string, Stream>();
+  private disconnected = false;
 
   /**
    * Creates an instance of VonageVideoClient.
@@ -88,9 +89,6 @@ class VonageVideoClient extends EventEmitter<VonageVideoClientEvents> {
    * @private
    */
   private attachEventListeners = () => {
-    if (!this.clientSession) {
-      return;
-    }
     this.clientSession.on('archiveStarted', (event) => this.handleArchiveStarted(event));
     this.clientSession.on('archiveStopped', () => this.handleArchiveStopped());
     this.clientSession.on('sessionDisconnected', (event) => this.handleSessionDisconnected(event));
@@ -113,9 +111,10 @@ class VonageVideoClient extends EventEmitter<VonageVideoClientEvents> {
    * @private
    */
   private async handleStreamCreated(event: StreamCreatedEvent) {
-    if (this.clientSession === null) {
+    if (this.disconnected) {
       return;
     }
+
     const { stream } = event;
     const { streamId } = stream;
 
@@ -131,7 +130,7 @@ class VonageVideoClient extends EventEmitter<VonageVideoClientEvents> {
   }
 
   private subscribeToStream = async (stream: Stream) => {
-    if (this.clientSession === null) {
+    if (this.disconnected) {
       return;
     }
 
@@ -151,7 +150,7 @@ class VonageVideoClient extends EventEmitter<VonageVideoClientEvents> {
     try {
       const subscribe = () =>
         new Promise<Subscriber>((resolve, reject) => {
-          const subscriber = this.clientSession?.subscribe(
+          const subscriber = this.clientSession.subscribe(
             stream,
             undefined,
             subscriberOptions,
@@ -160,7 +159,7 @@ class VonageVideoClient extends EventEmitter<VonageVideoClientEvents> {
                 reject(error);
                 return;
               }
-              resolve(subscriber!);
+              resolve(subscriber);
             }
           );
 
@@ -218,7 +217,7 @@ class VonageVideoClient extends EventEmitter<VonageVideoClientEvents> {
   };
 
   resubscribeToStreamId = async (streamId: string): Promise<void> => {
-    if (this.clientSession === null) {
+    if (this.disconnected) {
       return;
     }
 
@@ -428,10 +427,7 @@ class VonageVideoClient extends EventEmitter<VonageVideoClientEvents> {
     const { token } = this.credential;
 
     return new Promise((resolve, reject) => {
-      if (!this.clientSession) {
-        reject(new Error('Session has not been initialized.'));
-      }
-      this.clientSession?.connect(token, (err?: OTError) => {
+      this.clientSession.connect(token, (err?: OTError) => {
         if (err) {
           frontendLogger.reportError(err, {
             eventSource: 'vonageVideoClient.connect.error',
@@ -459,14 +455,20 @@ class VonageVideoClient extends EventEmitter<VonageVideoClientEvents> {
    * Disconnects from the current session and cleans up the session object.
    */
   disconnect = () => {
+    if (this.disconnected) {
+      return;
+    }
+
+    this.disconnected = true;
+
     // Clean up the hidden subscriber used for captions
     if (this.hiddenSubscriber) {
-      this.clientSession?.unsubscribe(this.hiddenSubscriber);
+      this.clientSession.unsubscribe(this.hiddenSubscriber);
       this.hiddenSubscriber = null;
     }
 
-    this.clientSession?.disconnect();
-    this.clientSession = null;
+    this.clientSession.disconnect();
+    this.clientSession = null as unknown as Session;
   };
 
   /**
@@ -474,7 +476,7 @@ class VonageVideoClient extends EventEmitter<VonageVideoClientEvents> {
    * @param {Stream} stream - The stream to be muted.
    */
   forceMuteStream = async (stream: Stream) => {
-    await this.clientSession?.forceMuteStream(stream);
+    await this.clientSession.forceMuteStream(stream);
   };
 
   /**
@@ -484,12 +486,7 @@ class VonageVideoClient extends EventEmitter<VonageVideoClientEvents> {
    */
   publish = (publisher: Publisher): Promise<void> => {
     return new Promise((resolve, reject) => {
-      if (!this.clientSession) {
-        reject(new Error('Session is not initialized.'));
-        return;
-      }
-
-      this.clientSession?.publish(publisher, (error) => {
+      this.clientSession.publish(publisher, (error) => {
         if (error) {
           frontendLogger.reportError(error, {
             eventSource: 'vonageVideoClient.publish.error',
@@ -506,7 +503,7 @@ class VonageVideoClient extends EventEmitter<VonageVideoClientEvents> {
         // More information: https://developer.vonage.com/en/video/guides/live-caption#receiving-your-own-live-captions
         if (publisher.stream) {
           this.hiddenSubscriber =
-            this.clientSession?.subscribe(publisher.stream, document.createElement('div'), {
+            this.clientSession.subscribe(publisher.stream, document.createElement('div'), {
               audioVolume: 0,
             }) ?? null;
 
@@ -525,7 +522,7 @@ class VonageVideoClient extends EventEmitter<VonageVideoClientEvents> {
    * @param {SignalType} data - The signal data to be sent.
    */
   signal = (data: SignalType) => {
-    this.clientSession?.signal(data);
+    this.clientSession.signal(data);
   };
 
   /**
@@ -535,11 +532,11 @@ class VonageVideoClient extends EventEmitter<VonageVideoClientEvents> {
   unpublish = (publisher: Publisher) => {
     // Clean up the hidden subscriber used for captions
     if (this.hiddenSubscriber) {
-      this.clientSession?.unsubscribe(this.hiddenSubscriber);
+      this.clientSession.unsubscribe(this.hiddenSubscriber);
       this.hiddenSubscriber = null;
     }
 
-    this.clientSession?.unpublish(publisher);
+    this.clientSession.unpublish(publisher);
   };
 
   /**
@@ -547,7 +544,7 @@ class VonageVideoClient extends EventEmitter<VonageVideoClientEvents> {
    * @returns {string | undefined} The connection ID.
    */
   get connectionId(): string | undefined {
-    return this.clientSession?.connection?.connectionId;
+    return this.clientSession.connection?.connectionId;
   }
 }
 
