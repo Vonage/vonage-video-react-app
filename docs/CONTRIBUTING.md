@@ -31,9 +31,9 @@ When opening an issue for a feature request or non-trivial change, please includ
 - Architectural impact: Does this affect existing layers, patterns, or contracts in the codebase?
 
 ### Making a Code Change
-We're always open to pull requests, but these should be small and clearly described so that we can understand what you're trying to do.
+Pull requests submitted without a linked issue or prior discussion may be labeled as Proof of Concept (PoC) and held until the proposal has been discussed and prioritized with the product team.
 
-For anything beyond a straightforward bug fix, please open and discuss an issue before writing code. This creates space for design alignment early, which saves time for both you and the reviewers. A PR that arrives without a linked issue and prior discussion may be held until that conversation happens.
+PRs should be kept small and focused. Only minor bug fixes submitted without prior discussion are likely to be considered for review.
 
 When you're ready to start coding, fork this repository to your own GitHub account and make your changes in a new branch based on `develop`. Once you're happy, open a pull request to merge into `develop` and explain what the change is and why you think we should include it.
 
