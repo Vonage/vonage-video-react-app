@@ -1,0 +1,16 @@
+name: AI Adoption Report
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+  workflow_dispatch:
+    inputs:
+      pr_number:
+        description: 'PR number to analyze'
+        required: true
+        type: number
+
+jobs:
+  ai-adoption:
+    uses: vonage-technology/api-ept-ai-forge/.github/workflows/ai-adoption-v2.yml@main
+    secrets: inherit
