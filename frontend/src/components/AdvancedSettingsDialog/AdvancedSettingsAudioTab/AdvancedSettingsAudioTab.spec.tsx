@@ -2,6 +2,7 @@ import { render as renderBase, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import type { ReactElement } from 'react';
 import { afterEach, describe, expect, it } from 'vitest';
+import { MemoryRouter } from 'react-router-dom';
 import type { advancedSettings } from '@Context/AdvancedSettings';
 import advancedSettings$ from '@Context/AdvancedSettings';
 import AdvancedSettingsAudioTab from './AdvancedSettingsAudioTab';
@@ -54,11 +55,15 @@ describe('AdvancedSettingsAudioTab', () => {
 });
 type RenderOptions = {
   dialogState?: Partial<advancedSettings>;
+  initialPath?: string;
 };
-function render(ui: ReactElement, { dialogState }: RenderOptions = {}) {
+function render(
+  ui: ReactElement,
+  { dialogState, initialPath = '/waiting-room' }: RenderOptions = {}
+) {
   if (dialogState) {
     advancedSettings$.setState((state) => ({ ...state, ...dialogState }));
   }
 
-  return renderBase(ui);
+  return renderBase(<MemoryRouter initialEntries={[initialPath]}>{ui}</MemoryRouter>);
 }

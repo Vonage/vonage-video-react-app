@@ -2,6 +2,7 @@ import { render as renderBase, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import type { ReactElement } from 'react';
 import { beforeEach, afterEach, describe, expect, it } from 'vitest';
+import { MemoryRouter } from 'react-router-dom';
 import advancedSettings$ from '@Context/AdvancedSettings';
 import AdvancedSettingsDialog from './AdvancedSettingsDialog';
 
@@ -69,5 +70,5 @@ describe('AdvancedSettingsDialog', () => {
 });
 
 function render(ui: ReactElement) {
-  return renderBase(ui);
+  return renderBase(<MemoryRouter initialEntries={['/waiting-room']}>{ui}</MemoryRouter>);
 }
