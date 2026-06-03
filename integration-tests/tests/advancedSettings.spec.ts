@@ -1,5 +1,3 @@
-// git-ai test comment
-// added by GitHub Copilot AI
 import { expect } from '@playwright/test';
 import { test, baseURL } from '../fixtures/testWithLogging';
 
