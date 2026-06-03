@@ -1,5 +1,5 @@
 frontend/src/components/AdvancedSettingsDialog/AdvancedSettingsAudioTab/AdvancedSettingsAudioTab.spec.tsx
-  s_ca128bf1eb68e8::t_e38b09acf166ad 5,58,62,68
+  s_ca128bf1eb68e8::t_e38b09acf166ad 5,58,60-63,68
 frontend/src/components/AdvancedSettingsDialog/AdvancedSettingsDialog.spec.tsx
   s_ca128bf1eb68e8::t_e38b09acf166ad 5,73
 ---
