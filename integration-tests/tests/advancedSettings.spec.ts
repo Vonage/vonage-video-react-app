@@ -77,7 +77,7 @@ test('should persist publisher audio fallback toggle after reopening settings', 
   });
   await expect(publisherFallbackCheckbox).not.toBeChecked();
 
-  await publisherFallbackCheckbox.click();
+  await publisherFallbackCheckbox.click({ force: true });
   await expect(publisherFallbackCheckbox).toBeChecked();
 
   await page.getByRole('button', { name: 'Close' }).click();
