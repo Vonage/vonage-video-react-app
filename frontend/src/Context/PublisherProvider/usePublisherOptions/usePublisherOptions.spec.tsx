@@ -210,6 +210,25 @@ describe('usePublisherOptions', () => {
         expect(result.current?.enableDtx).toBe(false);
       });
     });
+
+    it('should apply publisher and subscriber audio fallback toggles from advanced settings', async () => {
+      const { result } = renderHook(
+        () => usePublisherOptions({ isAudioEnabled: true, isVideoEnabled: true }),
+        {
+          dialogState: {
+            publisherAudioFallbackEnabled: true,
+            subscriberAudioFallbackEnabled: true,
+          },
+        }
+      );
+
+      await waitFor(() => {
+        expect(result.current?.audioFallback).toEqual({
+          publisher: true,
+          subscriber: true,
+        });
+      });
+    });
   });
 
   it('should disable audio and video based on isAudioEnabled and isVideoEnabled params', async () => {
