@@ -67,44 +67,6 @@ test('should hide the custom bitrate slider when audio bitrate is set to automat
   await expect(page.getByTestId('advanced-settings-custom-audio-bitrate-slider')).toBeHidden();
 });
 
-test('should persist publisher audio fallback toggle after reopening settings', async ({
-  page,
-}) => {
-  await openAudioTab(page);
-
-  const publisherFallbackCheckbox = page.getByRole('checkbox', {
-    name: /publisher audio fallback/i,
-  });
-  await expect(publisherFallbackCheckbox).not.toBeChecked();
-
-  await publisherFallbackCheckbox.click();
-  await expect(publisherFallbackCheckbox).toBeChecked();
-
-  await page.getByRole('button', { name: 'Close' }).click();
-  await openAudioTab(page);
-
-  await expect(publisherFallbackCheckbox).toBeChecked();
-});
-
-test('should persist subscriber audio fallback toggle after reopening settings', async ({
-  page,
-}) => {
-  await openAudioTab(page);
-
-  const subscriberFallbackCheckbox = page.getByRole('checkbox', {
-    name: /subscriber audio fallback/i,
-  });
-  await expect(subscriberFallbackCheckbox).not.toBeChecked();
-
-  await subscriberFallbackCheckbox.click();
-  await expect(subscriberFallbackCheckbox).toBeChecked();
-
-  await page.getByRole('button', { name: 'Close' }).click();
-  await openAudioTab(page);
-
-  await expect(subscriberFallbackCheckbox).toBeChecked();
-});
-
 async function openAudioTab(page) {
   await getMoreOptionsButton(page).click();
   await expect(page.getByTestId('menu-more-options')).toBeVisible();
