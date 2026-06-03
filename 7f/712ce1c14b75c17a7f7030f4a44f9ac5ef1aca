@@ -1,0 +1,14 @@
+integration-tests/tests/advancedSettings.spec.ts
+  h_737cf808c1c597 44,62
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.2",
+  "base_commit_sha": "7f712ce1c14b75c17a7f7030f4a44f9ac5ef1aca",
+  "prompts": {},
+  "humans": {
+    "h_737cf808c1c597": {
+      "author": "OscarFava <Oscar.Fava@vonage.com>"
+    }
+  }
+}
