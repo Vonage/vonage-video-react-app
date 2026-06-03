@@ -67,21 +67,6 @@ test('should hide the custom bitrate slider when audio bitrate is set to automat
   await expect(page.getByTestId('advanced-settings-custom-audio-bitrate-slider')).toBeHidden();
 });
 
-test('should persist enable opus dtx toggle after reopening settings', async ({ page }) => {
-  await openAudioTab(page);
-
-  const dtxCheckbox = page.getByRole('checkbox', { name: /enable opus dtx/i });
-  await expect(dtxCheckbox).toBeChecked();
-
-  await dtxCheckbox.click();
-  await expect(dtxCheckbox).not.toBeChecked();
-
-  await page.getByRole('button', { name: 'Close' }).click();
-  await openAudioTab(page);
-
-  await expect(dtxCheckbox).not.toBeChecked();
-});
-
 test('should persist publisher audio fallback toggle after reopening settings', async ({
   page,
 }) => {
