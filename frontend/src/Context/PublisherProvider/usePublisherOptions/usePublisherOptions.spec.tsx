@@ -70,7 +70,8 @@ describe('usePublisherOptions', () => {
         videoSource: undefined,
         insertDefaultUI: false,
         audioFallback: {
-          publisher: true,
+          publisher: false,
+          subscriber: false,
         },
         audioFilter: {
           type: 'advancedNoiseSuppression',
@@ -143,7 +144,8 @@ describe('usePublisherOptions', () => {
         videoSource: videoDevice.deviceId,
         insertDefaultUI: false,
         audioFallback: {
-          publisher: true,
+          publisher: false,
+          subscriber: false,
         },
         audioFilter: undefined,
         enableDtx: true,
