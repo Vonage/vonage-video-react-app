@@ -63,6 +63,8 @@
   "advancedSettings.audio.publisherAudioFallback.description": "Cuando está habilitado, tu video deja de renderizarse en otros dispositivos durante condiciones de red deficientes para preservar el audio.",
   "advancedSettings.audio.subscriberAudioFallback.label": "Audio de respaldo del suscriptor",
   "advancedSettings.audio.subscriberAudioFallback.description": "Cuando está habilitado, recibes solo audio de otros participantes durante condiciones de red deficientes.",
+  "advancedSettings.audio.nextCallWarningWaitingRoom": "Los cambios se aplicarán al unirte a la llamada.",
+  "advancedSettings.audio.nextCallWarningMeetingRoom": "Los cambios se aplicarán en tu próxima llamada o al refrescar.",
   "advancedSettings.statistics.collection.enablePublisher.label": "Habilitar estadísticas del emisor",
   "advancedSettings.statistics.collection.enablePublisher.description": "Cuando está habilitado, el SDK recopila y reporta métricas de red en tiempo real para el publicador local.",
   "advancedSettings.statistics.groups.publisher": "Publicador",

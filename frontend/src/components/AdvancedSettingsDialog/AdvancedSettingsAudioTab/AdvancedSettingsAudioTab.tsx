@@ -1,5 +1,6 @@
 import type { ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useLocation } from 'react-router-dom';
 import advancedSettings$ from '@Context/AdvancedSettings';
 import SelectField from '@ui/SelectField';
 import SwitchField from '@ui/SwitchField';
@@ -15,6 +16,11 @@ const {
 
 const AdvancedSettingsAudioTab = (): ReactElement => {
   const { t } = useTranslation();
+  const { pathname } = useLocation();
+  const isInWaitingRoom = pathname.startsWith('/waiting-room');
+  const nextCallWarningKey = isInWaitingRoom
+    ? 'advancedSettings.audio.nextCallWarningWaitingRoom'
+    : 'advancedSettings.audio.nextCallWarningMeetingRoom';
   const audioBitrateMode = advancedSettings$.use.select(({ audioBitrateMode }) => audioBitrateMode);
   const customAudioBitrate = advancedSettings$.use.select(
     ({ customAudioBitrate }) => customAudioBitrate
@@ -43,6 +49,10 @@ const AdvancedSettingsAudioTab = (): ReactElement => {
       <h2 className="font-vera-plain text-vera-heading-2 text-vera-secondary">
         {t('advancedSettings.tabs.audio')}
       </h2>
+
+      <p className="rounded-vera-medium border border-vera-warning bg-vera-warning/10 px-4 py-3 font-vera-plain text-vera-body-base text-vera-warning">
+        {t(nextCallWarningKey)}
+      </p>
 
       <div className="flex flex-col gap-4">
         <SelectField

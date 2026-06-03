@@ -63,6 +63,8 @@
   "advancedSettings.audio.publisherAudioFallback.description": "Wenn aktiviert, wird Ihr Video bei schlechter Netzwerkqualität auf anderen Geräten nicht mehr gerendert, um das Audio zu erhalten.",
   "advancedSettings.audio.subscriberAudioFallback.label": "Audio-Fallback des Subscribers",
   "advancedSettings.audio.subscriberAudioFallback.description": "Wenn aktiviert, empfangen Sie bei schlechter Netzwerkqualität nur Audio von anderen Teilnehmern.",
+  "advancedSettings.audio.nextCallWarningWaitingRoom": "Änderungen werden wirksam, wenn Sie dem Anruf beitreten.",
+  "advancedSettings.audio.nextCallWarningMeetingRoom": "Änderungen werden beim nächsten Anruf oder nach dem Aktualisieren der Seite wirksam.",
   "advancedSettings.statistics.collection.enablePublisher.label": "Publisher-Statistiken aktivieren",
   "advancedSettings.statistics.collection.enablePublisher.description": "Wenn aktiviert, erfasst und meldet das SDK Netzwerkmetriken in Echtzeit für den lokalen Publisher.",
   "advancedSettings.statistics.groups.publisher": "Publisher",
