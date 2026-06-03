@@ -1,3 +1,4 @@
+// git-ai test comment
 import { expect } from '@playwright/test';
 import { test, baseURL } from '../fixtures/testWithLogging';
 
