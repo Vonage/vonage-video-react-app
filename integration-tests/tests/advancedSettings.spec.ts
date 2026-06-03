@@ -41,7 +41,7 @@ test('should keep the selected resolution after reopening settings in the waitin
 test('should keep the selected audio bitrate mode after reopening settings', async ({ page }) => {
   await openAudioTab(page);
 
-  const bitrateSelect = page.getByLabel('Audio bitrate');
+  const bitrateSelect = page.getByLabel('Audio bitrate', { exact: true });
   await bitrateSelect.selectOption('custom');
   await expect(bitrateSelect).toHaveValue('custom');
 
@@ -59,7 +59,7 @@ test('should hide the custom bitrate slider when audio bitrate is set to automat
 }) => {
   await openAudioTab(page);
 
-  const bitrateSelect = page.getByLabel('Audio bitrate');
+  const bitrateSelect = page.getByLabel('Audio bitrate', { exact: true });
   await bitrateSelect.selectOption('custom');
   await expect(page.getByTestId('advanced-settings-custom-audio-bitrate-slider')).toBeVisible();
 
