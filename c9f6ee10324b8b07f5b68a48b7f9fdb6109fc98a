@@ -3,7 +3,8 @@ frontend/src/locales/en.json
 frontend/src/locales/es.json
   h_737cf808c1c597 73-81,89
 frontend/src/components/AdvancedSettingsDialog/AdvancedSettingsStatisticsTab/AdvancedSettingsStatisticsTab.tsx
-  h_737cf808c1c597 4-6,9,15-18,23-54,56-60,62-68,70-76,78-84,86-104,106,108-182,205,207,218-286,288-299
+  s_cbf8e24bc263403a::t_a695f1bc00833956 4-6,9,15-18,23-54
+  h_737cf808c1c597 56-60,62-68,70-76,78-84,86-104,106,108-182,205,207,218-286,288-299
 frontend/src/locales/es-MX.json
   h_737cf808c1c597 73-81,89
 frontend/src/locales/de.json
@@ -12,15 +13,15 @@ frontend/src/components/AdvancedSettingsDialog/AdvancedSettingsStatisticsTab/use
   s_b45b0d17ffabfc::t_69fe8581444977 19
   s_de8b76ef08d15e::t_9e5320a65242a7 18,194,198,249
   s_6aeb9e27b1feb4::t_2ceb350615b3b8 48,165
-  h_737cf808c1c597 1-17,20-40,54-157,171-193,199-248,250-299
+  s_cbf8e24bc263403a::t_a695f1bc00833956 1-17,20-40,54-157,171-193,199-248,250-299
   s_fd9844319b0bb6::t_ef8e7764905072 41-47,49-53,158-164,166-170,195-197
 frontend/src/components/AdvancedSettingsDialog/AdvancedSettingsStatisticsTab/useStatisticsInspectorData/useStatisticsInspectorData.ts
-  h_737cf808c1c597 1-415
+  s_cbf8e24bc263403a::t_a695f1bc00833956 1-415
 frontend/src/components/AdvancedSettingsDialog/AdvancedSettingsStatisticsTab/AdvancedSettingsStatisticsTab.spec.tsx
-  h_737cf808c1c597 1,3-9,22-100,103-107,123-124,126-127
+  s_cbf8e24bc263403a::t_a695f1bc00833956 1,3-9,22-100,103-107,123-124,126-127
   s_2ab458d17d774f::t_090065a855c80c 108-120,125
 frontend/src/components/AdvancedSettingsDialog/AdvancedSettingsStatisticsTab/useStatisticsInspectorData/index.ts
-  h_737cf808c1c597 1-6
+  s_cbf8e24bc263403a::t_a695f1bc00833956 1-6
 frontend/src/locales/it.json
   h_737cf808c1c597 80-89
 ---
@@ -72,6 +73,14 @@ frontend/src/locales/it.json
         "tool": "mock_ai",
         "id": "ai-thread-1780936968410161000",
         "model": "unknown"
+      },
+      "human_author": "OscarFava <Oscar.Fava@vonage.com>"
+    },
+    "s_cbf8e24bc263403a": {
+      "agent_id": {
+        "tool": "github-copilot",
+        "id": "ai-thread-copilot-agent-mode",
+        "model": "claude-sonnet-4-6"
       },
       "human_author": "OscarFava <Oscar.Fava@vonage.com>"
     }
