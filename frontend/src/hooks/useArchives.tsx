@@ -1,60 +1,56 @@
-import { useEffect, useRef, useState } from 'react';
+import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { runtime$ } from '@core/stores';
-import { ArchiveResponse, getArchives } from '../api/archiving';
-import { Archive } from '../api/archiving/model';
+import { useArchives as useArchivesBase } from '@core/hooks';
+import { createArchiveFromServer, ServerArchive } from '../api/archiving/model';
+import { SingleArchiveResponse } from '@vonage/video';
 
 export type UseArchivesProps = {
-  sessionKey: string | null;
+  sessionKey: string | undefined;
 };
+
+const pollingIntervalMs = 5000;
 
 /**
  * Returns the archives from a session, or `error` if there is an error.
  * @param { UseArchivesProps} props - The props for the hook.
  * @returns {Archive[] | 'error'} An array of Archives, or the text, `error`.
  */
-const useArchives = ({ sessionKey }: UseArchivesProps): Archive[] | 'error' => {
-  const videoClient = runtime$.useVideoClient();
-  const { i18n } = useTranslation();
-  const [archives, setArchives] = useState<Archive[] | 'error'>([]);
-  const pollingIntervalRef = useRef<ReturnType<typeof setInterval> | undefined>(undefined);
+const useArchives = ({ sessionKey }: UseArchivesProps) => {
+  const { data, ...rest } = useArchivesBase({
+    sessionKey,
+    queryOptions: {
+      enabled: !!sessionKey,
+      refetchInterval: (query) => {
+        const archives = query.state.data?.items;
 
-  useEffect(() => {
-    const fetchArchives = async () => {
-      if (sessionKey) {
-        let archiveData: ArchiveResponse;
-        try {
-          archiveData = await getArchives({
-            sessionKey,
-            locale: i18n.language,
-            videoClient,
-          });
-        } catch (error: unknown) {
-          const message = error instanceof Error ? error.message : error;
-          console.error(`Error retrieving archive: ${message}`);
-          setArchives('error');
-          return;
+        if (!archives || !hasPending(archives)) {
+          return false;
         }
-        // If we have archives not yet available for download we poll the API every 5s to see if its' available.
-        if (archiveData.hasPending && pollingIntervalRef.current === undefined) {
-          pollingIntervalRef.current = setInterval(() => {
-            void fetchArchives();
-          }, 5000);
-        } else if (!archiveData.hasPending && pollingIntervalRef.current !== undefined) {
-          clearInterval(pollingIntervalRef.current);
-          pollingIntervalRef.current = undefined;
-        }
-        setArchives(archiveData.archives);
-      }
-    };
-    void fetchArchives();
-    return () => {
-      if (pollingIntervalRef.current) {
-        clearInterval(pollingIntervalRef.current);
-      }
-    };
-  }, [sessionKey, i18n.language, videoClient]);
-  return archives;
+
+        return pollingIntervalMs;
+      },
+    },
+  });
+
+  const { i18n } = useTranslation();
+
+  return {
+    ...rest,
+    data: useMemo(() => {
+      if (!data) return undefined;
+
+      return {
+        ...data,
+        items: data.items.map((archive) => {
+          return createArchiveFromServer(i18n.language, archive as ServerArchive);
+        }),
+      };
+    }, [data, i18n.language]),
+  };
 };
+
+function hasPending<T extends SingleArchiveResponse>(archives: T[]): boolean {
+  return archives.some((archive) => !['available', 'failed'].includes(archive.status));
+}
 
 export default useArchives;

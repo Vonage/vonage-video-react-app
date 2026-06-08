@@ -5,7 +5,7 @@ import { assertResult } from '@common/execution';
 async function searchArchives(this: IVideoClient, payload: SearchArchivesPayload) {
   try {
     const { sessionKey, ...filter } = payload;
-    const { sessionId } = this.decodeSessionKey({ sessionKey });
+    const { sessionId } = sessionKey ? this.decodeSessionKey({ sessionKey }) : {};
 
     const archives = await assertResult(
       () => this.video.searchArchives({ sessionId, ...filter }),

@@ -18,6 +18,7 @@ import VividIcon from '@ui/VividIcon';
 import formatDuration from '@utils/formatDuration';
 import formatFileSize from '@utils/formatFileSize';
 import classNames from 'classnames';
+import { isString } from '@common/assertions';
 
 const ArchiveErrorIcon = () => {
   const { t } = useTranslation();
@@ -89,7 +90,8 @@ export type ArchiveListProps = {
 const ArchiveList = ({ archives }: ArchiveListProps): ReactElement => {
   const { t } = useTranslation();
 
-  if (archives === 'error') {
+  const isError = isString(archives);
+  if (isError) {
     return (
       <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
         <VividIcon name="warning-line" customSize={-4} style={{ color: 'var(--vera-warning)' }} />

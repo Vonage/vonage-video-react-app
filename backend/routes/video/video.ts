@@ -1,12 +1,11 @@
 import { Router } from 'express';
-import { createVideoHandler } from '@api-lib';
+import { createVideoHandler, VideoAction } from '@api-lib';
 import { createSession, startArchive, enableCaptions, joinSession } from './constants';
 import type { Request, Response } from 'express';
 import { makeInternalErrorHandler } from '@api-lib/errors';
 import SessionHookPayloadSchema from './schemas/SessionHookPayload.schema';
 import CaptionsHookPayloadSchema from './schemas/CaptionsHookPayload.schema';
 import ArchiveHookPayloadSchema from './schemas/ArchiveHookPayload.schema';
-import { VideoAction } from '@api-lib';
 import { VideoSessionDetails } from '@common/types';
 import { assertResult } from '@api-lib/executions';
 import getSessionStorageService from '../../sessionStorageService';
