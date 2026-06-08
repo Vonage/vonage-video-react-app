@@ -1,0 +1,24 @@
+integration-tests/tests/advancedSettings.spec.ts
+  s_51a8c11b232d92::t_12f0204f38c558 70-88
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.2",
+  "base_commit_sha": "81e3ecf3aee22a6ed5c192c774a302120330f7bc",
+  "prompts": {},
+  "humans": {
+    "h_737cf808c1c597": {
+      "author": "OscarFava <Oscar.Fava@vonage.com>"
+    }
+  },
+  "sessions": {
+    "s_51a8c11b232d92": {
+      "agent_id": {
+        "tool": "github-copilot",
+        "id": "ai-thread-copilot-agent-mode",
+        "model": "claude-sonnet-4-5"
+      },
+      "human_author": "OscarFava <Oscar.Fava@vonage.com>"
+    }
+  }
+}

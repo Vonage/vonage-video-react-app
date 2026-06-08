@@ -1,0 +1,21 @@
+frontend/src/components/AdvancedSettingsDialog/AdvancedSettingsAudioTab/AdvancedSettingsAudioTab.spec.tsx
+  s_ca128bf1eb68e8::t_e38b09acf166ad 5,58,60-63,68
+frontend/src/components/AdvancedSettingsDialog/AdvancedSettingsDialog.spec.tsx
+  s_ca128bf1eb68e8::t_e38b09acf166ad 5,73
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.2",
+  "base_commit_sha": "266c441db0623d92f600ec94d1f0b76412ded514",
+  "prompts": {},
+  "sessions": {
+    "s_ca128bf1eb68e8": {
+      "agent_id": {
+        "tool": "mock_ai",
+        "id": "ai-thread-1780482494253132000",
+        "model": "unknown"
+      },
+      "human_author": "OscarFava <Oscar.Fava@vonage.com>"
+    }
+  }
+}
