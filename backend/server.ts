@@ -7,8 +7,8 @@ import bodyParser from 'body-parser';
 import cors from 'cors';
 import { Server } from 'http';
 import router from './routes';
-import { errorHandler } from './middleware/errorHandler';
 import { fileURLToPath } from 'url';
+import { errorHandler, helmetMiddleware, rateLimitMiddleware } from './middleware';
 
 /**
  * The runtimeDirectory works different on CJS and ESM
@@ -24,10 +24,16 @@ if (process.env.__IS_CJS__) {
 const defaultPort = Number(process.env.VCR_PORT ?? 3345);
 
 const app: Express = express();
+
+app.use(helmetMiddleware);
+app.use(rateLimitMiddleware);
 app.use(express.json({ limit: '20mb' }));
 app.use(express.urlencoded({ limit: '20mb', extended: true }));
 app.use(cors({ origin: true, credentials: true }));
 app.use(bodyParser.json());
+
+// Trust only the immediate reverse proxy.
+// Avoid `true` because clients can spoof X-Forwarded-For and bypass IP rate limits.
 app.set('trust proxy', true);
 app.use(router);
 
@@ -38,7 +44,6 @@ app.use((_req, res, next) => {
 });
 
 const veraPath = path.join(runtimeDir, './dist');
-
 app.use(express.static(veraPath));
 
 app.get('/*', (_req: Request, res: Response) => {
