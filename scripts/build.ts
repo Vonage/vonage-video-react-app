@@ -1,6 +1,7 @@
 #!/usr/bin/env npx tsx
 
 import { execSync } from 'child_process';
+import { writeFileSync } from 'node:fs';
 
 const args = process.argv.slice(2);
 
@@ -16,7 +17,24 @@ const runCommand = (command: string) => {
  * Builds both frontend and backend projects.
  */
 const buildAll = () => {
-  runCommand('nx run-many -t build -p frontend backend');
+  // clean FE and BE dist folders
+  runCommand('rm -rf ./frontend/dist ./backend/dist');
+
+  // Build frontend, backend and room in parallel
+  runCommand(
+    "bash -c 'nx run frontend:build & nx run backend:build & nx run frontend:build-room & wait'"
+  );
+
+  // Copy frontend assets to backend dist for serving
+  runCommand(
+    'mkdir -p backend/dist/dist/assets && cp -R frontend/dist/assets/. backend/dist/dist/assets/'
+  );
+
+  // Copy room.js to backend dist for serving
+  runCommand('cp frontend/distRoom/room.js backend/dist/dist/assets/room.js');
+
+  // Write a manifest file with a timestamp to force cache busting of the VeraRoom web component
+  writeFileSync('backend/dist/dist/assets/room-manifest.json', JSON.stringify({ v: Date.now() }));
 };
 
 /**
@@ -37,14 +55,14 @@ const buildBackend = () => {
  * Builds the VeraRoom web component.
  */
 const buildRoom = () => {
-  runCommand('nx run frontend:build-room');
+  runCommand('nx run frontend:build-room:standalone');
 };
 
 /**
  * Builds and packages the VeraRoom artifact into a zip file.
  */
 const buildRoomZip = () => {
-  runCommand('nx run frontend:build-room');
+  runCommand('nx run frontend:build-room:standalone');
   runCommand('rm -f room.zip && cd frontend/distRoom && zip -rq ../../room.zip .');
 };
 
