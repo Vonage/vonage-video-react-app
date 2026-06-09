@@ -1,0 +1,32 @@
+frontend/src/locales/de.json
+  h_737cf808c1c597 66-67
+frontend/src/locales/it.json
+  h_737cf808c1c597 66-67
+frontend/src/locales/es.json
+  h_737cf808c1c597 66-67
+frontend/src/locales/es-MX.json
+  h_737cf808c1c597 66-67
+frontend/src/components/AdvancedSettingsDialog/AdvancedSettingsStatisticsTab/formatters.spec.ts
+  h_737cf808c1c597 1-84
+frontend/src/components/AdvancedSettingsDialog/AdvancedSettingsStatisticsTab/AdvancedSettingsStatisticsTab.tsx
+  h_737cf808c1c597 9-18,119,218
+frontend/src/locales/en.json
+  h_737cf808c1c597 66-67
+frontend/src/components/AdvancedSettingsDialog/AdvancedSettingsStatisticsTab/useStatisticsInspectorData/useStatisticsInspectorData.spec.ts
+  h_737cf808c1c597 109,122-124,250-257
+frontend/src/components/AdvancedSettingsDialog/AdvancedSettingsStatisticsTab/useStatisticsInspectorData/useStatisticsInspectorData.ts
+  h_737cf808c1c597 88,120-123,130-133,211-213
+frontend/src/components/AdvancedSettingsDialog/AdvancedSettingsStatisticsTab/formatters.ts
+  h_737cf808c1c597 1-84
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.6",
+  "base_commit_sha": "532f98dbab66cea00ac7bd9abeab89d7b85967a2",
+  "prompts": {},
+  "humans": {
+    "h_737cf808c1c597": {
+      "author": "OscarFava <Oscar.Fava@vonage.com>"
+    }
+  }
+}
