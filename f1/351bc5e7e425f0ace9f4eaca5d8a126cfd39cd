@@ -1,0 +1,29 @@
+frontend/src/locales/es.json
+  h_737cf808c1c597 66-67
+frontend/src/components/AdvancedSettingsDialog/AdvancedSettingsStatisticsTab/useStatisticsInspectorData/useStatisticsInspectorData.spec.ts
+  h_737cf808c1c597 109,122-124,250-257
+frontend/src/components/AdvancedSettingsDialog/AdvancedSettingsStatisticsTab/useStatisticsInspectorData/useStatisticsInspectorData.ts
+  h_737cf808c1c597 88,120-123,130-133,211-213
+frontend/src/locales/en.json
+  h_737cf808c1c597 66-67
+frontend/src/locales/es-MX.json
+  h_737cf808c1c597 66-67
+frontend/src/locales/it.json
+  h_737cf808c1c597 66-67
+frontend/src/locales/de.json
+  h_737cf808c1c597 66-67
+frontend/src/components/AdvancedSettingsDialog/AdvancedSettingsStatisticsTab/AdvancedSettingsStatisticsTab.spec.tsx
+  h_737cf808c1c597 17
+frontend/src/components/AdvancedSettingsDialog/AdvancedSettingsStatisticsTab/formatters.spec.ts
+  h_737cf808c1c597 1-84
+frontend/src/components/AdvancedSettingsDialog/AdvancedSettingsStatisticsTab/formatters.ts
+  h_737cf808c1c597 1-84
+frontend/src/components/AdvancedSettingsDialog/AdvancedSettingsStatisticsTab/AdvancedSettingsStatisticsTab.tsx
+  h_737cf808c1c597 9-18,119,218
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.6",
+  "base_commit_sha": "f1351bc5e7e425f0ace9f4eaca5d8a126cfd39cd",
+  "prompts": {}
+}
