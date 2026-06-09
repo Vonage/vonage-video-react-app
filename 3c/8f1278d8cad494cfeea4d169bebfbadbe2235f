@@ -1,0 +1,14 @@
+frontend/src/components/AdvancedSettingsDialog/AdvancedSettingsDialog.spec.tsx
+  h_737cf808c1c597 56
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.6",
+  "base_commit_sha": "3c8f1278d8cad494cfeea4d169bebfbadbe2235f",
+  "prompts": {},
+  "humans": {
+    "h_737cf808c1c597": {
+      "author": "OscarFava <Oscar.Fava@vonage.com>"
+    }
+  }
+}
