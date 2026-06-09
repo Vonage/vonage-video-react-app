@@ -37,6 +37,7 @@
 - [uuid](https://www.npmjs.com/package/uuid) RFC9562 UUIDs
 - [vite](https://www.npmjs.com/package/vite) Native-ESM powered web dev build tool
 - [vitest](https://www.npmjs.com/package/vitest) Next generation testing framework powered by Vite
+- [@tanstack/react-query](https://www.npmjs.com/package/@tanstack/react-query) Hooks for fetching, caching and updating asynchronous data in React
 
 # Backend Dependencies
 - [@jest/globals](https://www.npmjs.com/package/@jest/globals) 
@@ -62,3 +63,5 @@
 - [supertest](https://www.npmjs.com/package/supertest) SuperAgent driven library for testing HTTP servers
 - [ts-jest](https://www.npmjs.com/package/ts-jest) A Jest transformer with source map support that lets you use Jest to test projects written in TypeScript
 - [tsx](https://www.npmjs.com/package/tsx) TypeScript Execute (tsx): Node.js enhanced with esbuild to run TypeScript & ESM files
+- [express-rate-limit](https://www.npmjs.com/package/express-rate-limit) Basic IP rate-limiting middleware for Express. Use to limit repeated requests to public APIs and/or endpoints such as password reset.
+- [helmet](https://www.npmjs.com/package/helmet) Helmet helps you secure your Express apps by setting various HTTP headers. It's not a silver bullet, but it can help!

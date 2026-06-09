@@ -2,7 +2,7 @@
   const shouldOverride = localStorage.getItem('error-test');
   if (shouldOverride) return;
 
-  const NativeRTCPeerConnection = window.RTCPeerConnection;
+  const NativeRTCPeerConnection = globalThis.RTCPeerConnection;
   if (!NativeRTCPeerConnection) return;
 
   Object.defineProperty(NativeRTCPeerConnection.prototype, 'addEventListener', {
@@ -17,3 +17,5 @@
     configurable: true,
   });
 })();
+
+export {};

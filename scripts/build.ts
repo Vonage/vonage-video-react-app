@@ -17,13 +17,26 @@ const runCommand = (command: string) => {
  * Builds both frontend and backend projects.
  */
 const buildAll = () => {
-  // clean FE and BE dist folders
-  runCommand('rm -rf ./frontend/dist ./backend/dist');
+  // webpack does not clean its output dir - delete it manually before building.
+  // frontend/dist and frontend/distRoom are cleaned by Vite's emptyOutDir: true.
+  runCommand('rm -rf ./backend/dist');
 
   // Build frontend, backend and room in parallel
-  runCommand(
-    "bash -c 'nx run frontend:build & nx run backend:build & nx run frontend:build-room & wait'"
-  );
+  runCommand(`
+    bash -c '
+      nx run frontend:build & pid1=$!
+      nx run backend:build & pid2=$!
+      nx run frontend:build-room & pid3=$!
+
+      status=0
+
+      wait "$pid1" || status=1
+      wait "$pid2" || status=1
+      wait "$pid3" || status=1
+
+      exit "$status"
+    '
+  `);
 
   // Copy frontend assets to backend dist for serving
   runCommand(
@@ -48,6 +61,8 @@ const buildFrontend = () => {
  * Builds only the backend project.
  */
 const buildBackend = () => {
+  // webpack does not clean its output dir - delete it manually before building.
+  runCommand('rm -rf ./backend/dist');
   runCommand('nx run backend:build');
 };
 

@@ -69,17 +69,23 @@ function runDebug(testFilePath?: string) {
  * Generates coverage reports for code quality analysis.
  * Optionally runs coverage for a specific test file.
  */
-function runCoverage(testFilePath?: string) {
+function runCoverage(testFilePath?: string, html = false) {
   const target = testFilePath ? `file: ${testFilePath}` : 'all tests';
   console.log(`\n📊 Coverage mode activated for ${target}\n`);
+
+  const htmlReporter = html ? ' --coverageReporters=html' : '';
+
   if (testFilePath) {
-    execSync(`yarn nx test backend --configuration=coverage --testPathPattern="${testFilePath}"`, {
-      stdio: 'inherit',
-    });
+    execSync(
+      `yarn nx test backend --configuration=coverage --testPathPattern="${testFilePath}"${htmlReporter}`,
+      {
+        stdio: 'inherit',
+      }
+    );
     return;
   }
 
-  execSync('yarn nx test backend --configuration=coverage', {
+  execSync(`yarn nx test backend --configuration=coverage${htmlReporter}`, {
     stdio: 'inherit',
   });
 }
@@ -92,11 +98,12 @@ function runCoverage(testFilePath?: string) {
  * Defaults to running a specific test file if the first argument doesn't match a mode.
  *
  * @modes
- * - (no args)           - Run all backend tests
- * - watch [file-path]   - Watch mode (re-run on changes with coverage)
- * - debug [file-path]   - Debug mode (attach Node debugger, run serially)
- * - coverage [file-path]- Run with coverage reports
- * - <file-path>         - Run specific test file
+ * - (no args)                - Run all backend tests
+ * - watch [file-path]        - Watch mode (re-run on changes with coverage)
+ * - debug [file-path]        - Debug mode (attach Node debugger, run serially)
+ * - coverage [file-path]     - Run with coverage reports
+ * - coverage html [file-path]- Run with HTML coverage report
+ * - <file-path>              - Run specific test file
  *
  * @example
  * yarn test:backend
@@ -106,10 +113,12 @@ function runCoverage(testFilePath?: string) {
  * yarn test:backend debug services/feedbackService.test.ts
  * yarn test:backend coverage
  * yarn test:backend coverage videoService
+ * yarn test:backend coverage html
+ * yarn test:backend coverage html routes/session.test.ts
  */
 function main() {
   const args = process.argv.slice(2);
-  const [firstArg, secondArg] = args;
+  const [firstArg, secondArg, thirdArg] = args;
 
   const noArgs = args.length === 0;
   const isDebugMode = firstArg === 'debug';
@@ -149,7 +158,10 @@ function main() {
   }
 
   if (isCoverageMode) {
-    runCoverage(secondArg);
+    const isHtmlCoverage = secondArg === 'html';
+    const testFilePath = isHtmlCoverage ? thirdArg : secondArg;
+
+    runCoverage(testFilePath, isHtmlCoverage);
     return;
   }
 

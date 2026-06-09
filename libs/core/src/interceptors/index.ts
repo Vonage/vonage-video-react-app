@@ -1,5 +1,5 @@
 /**
- * The path should be applied before importing any file,
+ * The patch should be applied before importing any file,
  * Fixes compatibility issues of web-rtc-adapter browsers/environments.
  */
 import './webrtc-adapter.patch';
