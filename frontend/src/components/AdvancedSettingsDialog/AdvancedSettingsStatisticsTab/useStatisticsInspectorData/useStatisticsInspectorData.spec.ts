@@ -106,7 +106,7 @@ function makeSubscriberWrapper(statsOverride: Record<string, unknown> = {}): Sub
 // ─── Tests ────────────────────────────────────────────────────────────────────
 
 describe('useStatisticsInspectorData', () => {
-  it('returns empty data when publisher stats are disabled', async () => {
+  it('collects publisher stats but omits connectionEstimatedBandwidthBps when the flag is disabled', async () => {
     const publisher = makePublisherWithStats();
 
     const { result } = renderHook(() =>
@@ -119,8 +119,9 @@ describe('useStatisticsInspectorData', () => {
     );
 
     await waitFor(() => {
-      expect(result.current.publisher).toBeNull();
-      expect(result.current.subscribers).toHaveLength(0);
+      expect(result.current.publisher).not.toBeNull();
+      expect(result.current.publisher?.frameRate).toBe(30);
+      expect(result.current.publisher?.connectionEstimatedBandwidthBps).toBeNull();
     });
   });
 
@@ -246,14 +247,14 @@ describe('useStatisticsInspectorData', () => {
 
     await waitFor(() => {
       expect(result.current.subscribers).toHaveLength(1);
-      const sub = result.current.subscribers[0];
-      expect(sub.title).toBe('Alice');
-      expect(sub.video.codec).toBe('VP8');
-      expect(sub.video.decodedFrameRate).toBe(24);
-      expect(sub.video.freezeCount).toBe(2);
-      expect(sub.video.totalFreezesDuration).toBe(350);
-      expect(sub.connectionEstimatedBandwidthBps).toBe(1_500_000);
-      expect(sub.remotePublisherConnectionEstimatedBandwidthBps).toBe(1_800_000);
+      const subscriberStatistics = result.current.subscribers[0];
+      expect(subscriberStatistics.title).toBe('Alice');
+      expect(subscriberStatistics.video.codec).toBe('VP8');
+      expect(subscriberStatistics.video.decodedFrameRate).toBe(24);
+      expect(subscriberStatistics.video.freezeCount).toBe(2);
+      expect(subscriberStatistics.video.totalFreezesDuration).toBe(350);
+      expect(subscriberStatistics.connectionEstimatedBandwidthBps).toBe(1_500_000);
+      expect(subscriberStatistics.remotePublisherConnectionEstimatedBandwidthBps).toBe(1_800_000);
     });
   });
 

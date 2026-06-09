@@ -85,6 +85,7 @@ const useStatisticsInspectorData = ({
   useEffect(() => {
     const publisher = meetingPublisher ?? previewPublisher ?? null;
     let isCancelled = false;
+    let timeoutIdentifier: ReturnType<typeof setTimeout> | null = null;
 
     const poll = async () => {
       const [publisherStatistics, subscriberStatistics] = await Promise.all([
@@ -116,16 +117,20 @@ const useStatisticsInspectorData = ({
           subscribers: subscriberStatistics,
         };
       });
+
+      timeoutIdentifier = setTimeout(() => {
+        void poll();
+      }, POLL_INTERVAL_MS);
     };
 
     void poll();
-    const intervalIdentifier = setInterval(() => {
-      void poll();
-    }, POLL_INTERVAL_MS);
 
     return () => {
       isCancelled = true;
-      clearInterval(intervalIdentifier);
+
+      if (timeoutIdentifier) {
+        clearTimeout(timeoutIdentifier);
+      }
     };
   }, [meetingPublisher, previewPublisher, publisherStatisticsEnabled, subscriberWrappers]);
 
@@ -144,7 +149,7 @@ async function readPublisherInspectorStatistics({
     timestamp: number;
   } | null>;
 }): Promise<PublisherInspectorStatistics | null> {
-  if (!publisher || !publisherStatisticsEnabled) {
+  if (!publisher) {
     previousPublisherVideoSampleRef.current = null;
     return null;
   }
@@ -203,7 +208,9 @@ async function readPublisherInspectorStatistics({
     packetLossRatio,
     audio: audioTotals,
     video: videoTotals,
-    connectionEstimatedBandwidthBps,
+    connectionEstimatedBandwidthBps: publisherStatisticsEnabled
+      ? connectionEstimatedBandwidthBps
+      : null,
     videoLayers: firstPublisherStatsContainer?.stats.video?.layers ?? null,
   };
 }

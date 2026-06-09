@@ -14,7 +14,7 @@ describe('AdvancedSettingsStatisticsTab', () => {
     render(<AdvancedSettingsStatisticsTab />);
 
     expect(screen.getByRole('heading', { name: /^statistics$/i })).toBeInTheDocument();
-    expect(screen.getByLabelText(/enable publisher statistics/i)).toBeInTheDocument();
+    expect(screen.getByLabelText(/enable publisher bandwidth estimate/i)).toBeInTheDocument();
     expect(screen.getAllByText(/publisher/i).length).toBeGreaterThan(0);
     expect(screen.getByText(/no statistics available yet/i)).toBeInTheDocument();
     expect(screen.queryByText(/subscriber/i)).not.toBeInTheDocument();
