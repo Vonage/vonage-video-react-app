@@ -42,7 +42,7 @@ const Example = () => {
               {'\n'}
               <span className="text-vera-primary">&lt;script</span>{' '}
               <span className="text-vera-warning">src</span>=
-              <span className="text-vera-success">"vera-room.js"</span>
+              <span className="text-vera-success">"room.js"</span>
               <span className="text-vera-primary">&gt;&lt;/script&gt;</span>
               {'\n\n'}
               <span className="text-vera-text-tertiary">{`<!-- 2. Use the component -->`}</span>

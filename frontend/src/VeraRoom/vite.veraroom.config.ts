@@ -21,7 +21,7 @@ export default defineConfig((env) => {
         entry: path.resolve(__dirname, './index.ts'),
         name: 'VeraRoom',
         formats: ['iife'],
-        fileName: () => 'vera-room.js',
+        fileName: () => 'room.js',
       },
 
       rollupOptions: {

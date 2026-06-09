@@ -1,1 +1,1 @@
-export { default as htmlAttributes$ } from './bridge';
+export { default as bridge$ } from './bridge';
