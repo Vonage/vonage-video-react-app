@@ -46,6 +46,7 @@ describe('useScreenSharing', () => {
     } as unknown as MediaStream);
 
     // JSDOM does not provide navigator.mediaDevices; define the whole property.
+    originalMediaDevices = navigator.mediaDevices;
     Object.defineProperty(navigator, 'mediaDevices', {
       value: { getDisplayMedia: mockGetDisplayMedia },
       writable: true,
