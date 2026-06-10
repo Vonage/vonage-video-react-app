@@ -57,71 +57,100 @@ const useScreenShare = (): UseScreenShareType => {
 
   // Using useCallback to memoize the function to avoid unnecessary re-renders
   const toggleShareScreen = useCallback(async () => {
-    if (vonageVideoClient) {
-      if (!isSharingScreen) {
-        // Initializing the publisher for screen sharing
-        screenSharingPubRef.current = initPublisher(
-          undefined,
-          {
-            videoSource: 'screen',
-            insertDefaultUI: false,
-            videoContentHint: 'detail',
-            name: t('participants.screen', { participantName: user.defaultSettings.name }),
-          },
-          (err) => {
-            if (err) {
-              onScreenShareStopped();
-            }
-          }
-        );
-
-        // Adding class for screen sharing styling
-        screenSharingPubRef.current?.element?.classList.add('OT_big');
-
-        // Handling stream creation event
-        screenSharingPubRef.current?.on('streamCreated', () => {
-          setIsSharingScreen(true);
-        });
-
-        screenSharingPubRef.current?.on('videoElementCreated', (e) => {
-          const videoEl = e.element as HTMLVideoElement;
-          setScreenshareVideoElement(videoEl);
-          const mediaStream = videoEl.srcObject as MediaStream | null;
-          const track = mediaStream?.getVideoTracks?.()[0];
-          const settings = track?.getSettings?.();
-          const displaySurface = settings?.displaySurface;
-
-          const width = settings?.width;
-          const height = settings?.height;
-
-          const isMonitor =
-            displaySurface === 'monitor' ||
-            (!displaySurface &&
-              width !== undefined &&
-              height !== undefined &&
-              width * height >= window.screen.width * window.screen.height);
-
-          setIsEntireScreen(isMonitor);
-        });
-
-        screenSharingPubRef.current?.on('streamDestroyed', () => {
-          onScreenShareStopped();
-        });
-
-        // Handling media stopped event
-        screenSharingPubRef.current?.on('mediaStopped', () => {
-          onScreenShareStopped();
-        });
-
-        // Publishing the screen sharing stream
-        await publish(screenSharingPubRef.current);
-
-        vonageVideoClient?.on('screenshareStreamCreated', handleStreamCreated);
-      } else if (screenSharingPubRef.current) {
-        unpublishScreenshare();
-        vonageVideoClient?.off('screenshareStreamCreated', handleStreamCreated);
-      }
+    if (!vonageVideoClient) {
+      return;
     }
+
+    if (isSharingScreen) {
+      if (screenSharingPubRef.current) {
+        unpublishScreenshare();
+        vonageVideoClient.off('screenshareStreamCreated', handleStreamCreated);
+      }
+      return;
+    }
+
+    // We are calling display media before initializing the publisher to avoid SDK log errors.
+    // By calling getDisplayMedia ourselves first, we can handle the cancel case avoiding unwanted error logs.
+    let videoTrack: MediaStreamTrack;
+    try {
+      const displayStream = await navigator.mediaDevices.getDisplayMedia({
+        video: true,
+        audio: false,
+      });
+      const videoTracks = displayStream.getVideoTracks();
+      if (videoTracks.length === 0) {
+        return;
+      }
+      videoTrack = videoTracks[0];
+    } catch {
+      // User cancelled the screen picker or permission was denied – exit silently.
+      return;
+    }
+
+    // Initializing the publisher for screen sharing
+    screenSharingPubRef.current = initPublisher(
+      undefined,
+      {
+        videoSource: videoTrack,
+        insertDefaultUI: false,
+        videoContentHint: 'detail',
+        name: t('participants.screen', { participantName: user.defaultSettings.name }),
+      },
+      (err) => {
+        if (err) {
+          videoTrack.stop();
+          onScreenShareStopped();
+        }
+      }
+    );
+
+    // Adding class for screen sharing styling
+    screenSharingPubRef.current?.element?.classList.add('OT_big');
+
+    // Handling stream creation event
+    screenSharingPubRef.current?.on('streamCreated', () => {
+      setIsSharingScreen(true);
+    });
+
+    screenSharingPubRef.current?.on('videoElementCreated', (e) => {
+      const videoEl = e.element as HTMLVideoElement;
+      setScreenshareVideoElement(videoEl);
+      const mediaStream = videoEl.srcObject as MediaStream | null;
+      const track = mediaStream?.getVideoTracks?.()[0];
+      const settings = track?.getSettings?.();
+      const displaySurface = settings?.displaySurface;
+
+      const width = settings?.width;
+      const height = settings?.height;
+
+      const isMonitor =
+        displaySurface === 'monitor' ||
+        (!displaySurface &&
+          width !== undefined &&
+          height !== undefined &&
+          width * height >= window.screen.width * window.screen.height);
+
+      setIsEntireScreen(isMonitor);
+    });
+
+    screenSharingPubRef.current?.on('streamDestroyed', () => {
+      onScreenShareStopped();
+    });
+
+    // Handling media stopped event
+    screenSharingPubRef.current?.on('mediaStopped', () => {
+      onScreenShareStopped();
+    });
+
+    // Publishing the screen sharing stream
+    try {
+      await publish(screenSharingPubRef.current);
+    } catch {
+      videoTrack.stop();
+      onScreenShareStopped();
+    }
+
+    vonageVideoClient.on('screenshareStreamCreated', handleStreamCreated);
   }, [
     vonageVideoClient,
     isSharingScreen,

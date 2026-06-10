@@ -15,9 +15,11 @@ vi.mock('@vonage/client-sdk-video', () => ({
 describe('useScreenSharing', () => {
   let mockVonageVideoClient: Partial<VonageVideoClient>;
   let mockPublisher: Partial<Publisher>;
+  let mockVideoTrack: MediaStreamTrack;
   let handlers: Record<string, (...args: unknown[]) => void>;
   const mockPublish = vi.fn();
   const mockUnpublish = vi.fn();
+  const mockGetDisplayMedia = vi.fn();
 
   beforeEach(() => {
     handlers = {};
@@ -32,6 +34,23 @@ describe('useScreenSharing', () => {
       }),
       destroy: vi.fn(),
     } as unknown as Partial<Publisher>;
+
+    mockVideoTrack = {
+      kind: 'video',
+      stop: vi.fn(),
+      getSettings: vi.fn().mockReturnValue({}),
+    } as unknown as MediaStreamTrack;
+
+    mockGetDisplayMedia.mockResolvedValue({
+      getVideoTracks: () => [mockVideoTrack],
+    } as unknown as MediaStream);
+
+    // JSDOM does not provide navigator.mediaDevices; define the whole property.
+    Object.defineProperty(navigator, 'mediaDevices', {
+      value: { getDisplayMedia: mockGetDisplayMedia },
+      writable: true,
+      configurable: true,
+    });
 
     (initPublisher as ReturnType<typeof vi.fn>).mockReturnValue(mockPublisher as Publisher);
   });
@@ -66,7 +85,7 @@ describe('useScreenSharing', () => {
     expect(initPublisher).toHaveBeenCalledWith(
       undefined,
       {
-        videoSource: 'screen',
+        videoSource: mockVideoTrack,
         insertDefaultUI: false,
         videoContentHint: 'detail',
         name: "TestUser's screen",
@@ -287,6 +306,40 @@ describe('useScreenSharing', () => {
     });
 
     expect(initPublisher).not.toHaveBeenCalled();
+  });
+
+  it('handles canceled screen share prompt without throwing', async () => {
+    expect.assertions(3);
+
+    // Simulate the user cancelling the browser screen-picker before the SDK is involved.
+    mockGetDisplayMedia.mockRejectedValueOnce(
+      new DOMException('Permission denied', 'NotAllowedError')
+    );
+
+    const { result } = render({
+      userContext: {
+        __interceptor: (context: UserContextType | null) => {
+          context!.user.defaultSettings.name = 'TestUser';
+        },
+      },
+      sessionContext: {
+        __interceptor: (context) => {
+          if (context) {
+            context.vonageVideoClient = mockVonageVideoClient as unknown as VonageVideoClient;
+            context.publish = mockPublish;
+            context.unpublish = mockUnpublish;
+          }
+        },
+      },
+    });
+
+    await act(async () => {
+      await expect(result.current.toggleShareScreen()).resolves.toBeUndefined();
+    });
+
+    // initPublisher must never be called – the SDK should not be involved in the cancel path.
+    expect(initPublisher).not.toHaveBeenCalled();
+    expect(result.current.isSharingScreen).toBe(false);
   });
 });
 
