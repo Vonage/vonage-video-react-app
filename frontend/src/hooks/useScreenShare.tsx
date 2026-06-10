@@ -135,20 +135,23 @@ const useScreenShare = (): UseScreenShareType => {
       setIsEntireScreen(isMonitor);
     });
 
-    screenSharingPubRef.current?.on('streamDestroyed', () => {
+    const screensharingPublisher = screenSharingPubRef.current;
+
+    const handleScreenshareStopped = () => {
       videoTrack.stop();
+
+      if (screenSharingPubRef.current !== screensharingPublisher) {
+        return;
+      }
+
       vonageVideoClient.off('screenshareStreamCreated', handleStreamCreated);
-      screenSharingPubRef.current?.destroy();
       onScreenShareStopped();
-    });
+    };
+
+    screensharingPublisher?.on('streamDestroyed', handleScreenshareStopped);
 
     // Handling media stopped event
-    screenSharingPubRef.current?.on('mediaStopped', () => {
-      videoTrack.stop();
-      vonageVideoClient.off('screenshareStreamCreated', handleStreamCreated);
-      screenSharingPubRef.current?.destroy();
-      onScreenShareStopped();
-    });
+    screensharingPublisher?.on('mediaStopped', handleScreenshareStopped);
 
     // Publishing the screen sharing stream
     try {
