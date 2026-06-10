@@ -1,0 +1,16 @@
+frontend/src/hooks/useScreenShare.tsx
+  h_737cf808c1c597 60-62,66-67,69,72-88,90,94,97-101,103,105-114,122-125,132-144,147-150,152-153
+frontend/src/hooks/tests/useScreenShare.spec.tsx
+  h_737cf808c1c597 18,22,38-54,88,310-341
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.6",
+  "base_commit_sha": "cb7ae9bc1ba5b511ac64271069fdbeeff7d38ebd",
+  "prompts": {},
+  "humans": {
+    "h_737cf808c1c597": {
+      "author": "OscarFava <Oscar.Fava@vonage.com>"
+    }
+  }
+}
