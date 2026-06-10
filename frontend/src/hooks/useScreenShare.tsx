@@ -65,9 +65,9 @@ const useScreenShare = (): UseScreenShareType => {
       if (screenSharingPubRef.current) {
         unpublishScreenshare();
         screenSharingPubRef.current.destroy();
-        screenSharingPubRef.current = null;
         vonageVideoClient.off('screenshareStreamCreated', handleStreamCreated);
       }
+      onScreenShareStopped();
       return;
     }
 
