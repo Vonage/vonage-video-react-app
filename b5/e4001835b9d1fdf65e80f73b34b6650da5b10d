@@ -1,0 +1,12 @@
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.6",
+  "base_commit_sha": "b5e4001835b9d1fdf65e80f73b34b6650da5b10d",
+  "prompts": {},
+  "humans": {
+    "h_737cf808c1c597": {
+      "author": "OscarFava <Oscar.Fava@vonage.com>"
+    }
+  }
+}
