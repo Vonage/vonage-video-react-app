@@ -64,6 +64,7 @@ const useScreenShare = (): UseScreenShareType => {
     if (isSharingScreen) {
       if (screenSharingPubRef.current) {
         unpublishScreenshare();
+        screenSharingPubRef.current.getVideoSource()?.track?.stop();
         screenSharingPubRef.current.destroy();
         vonageVideoClient.off('screenshareStreamCreated', handleStreamCreated);
       }
