@@ -18,9 +18,11 @@ describe('useScreenSharing', () => {
   let mockVideoTrack: MediaStreamTrack;
   let originalMediaDevices: MediaDevices | undefined;
   let handlers: Record<string, (...args: unknown[]) => void>;
-  const mockPublish = vi.fn();
-  const mockUnpublish = vi.fn();
-  const mockGetDisplayMedia = vi.fn();
+  const mockPublish = vi.fn((_publisher: Publisher) => Promise.resolve());
+  const mockUnpublish = vi.fn((_publisher: Publisher) => undefined);
+  const mockGetDisplayMedia = vi.fn(() =>
+    Promise.resolve({ getVideoTracks: () => [] } as unknown as MediaStream)
+  );
   beforeEach(() => {
     handlers = {};
     mockVonageVideoClient = Object.assign(new EventEmitter(), {
@@ -53,10 +55,16 @@ describe('useScreenSharing', () => {
       configurable: true,
     });
 
-    (initPublisher as ReturnType<typeof vi.fn>).mockReturnValue(mockPublisher as Publisher);
+    vi.mocked(initPublisher).mockReturnValue(mockPublisher as Publisher);
   });
 
   afterEach(() => {
+    Object.defineProperty(navigator, 'mediaDevices', {
+      value: originalMediaDevices,
+      writable: true,
+      configurable: true,
+    });
+
     vi.clearAllMocks();
   });
 
@@ -71,8 +79,10 @@ describe('useScreenSharing', () => {
         __interceptor: (context) => {
           if (context) {
             context.vonageVideoClient = mockVonageVideoClient as unknown as VonageVideoClient;
-            context.publish = mockPublish;
-            context.unpublish = mockUnpublish;
+            context.publish = async (publisher) => mockPublish(publisher);
+            context.unpublish = (publisher) => {
+              mockUnpublish(publisher);
+            };
           }
         },
       },
@@ -109,8 +119,10 @@ describe('useScreenSharing', () => {
         __interceptor: (context) => {
           if (context) {
             context.vonageVideoClient = mockVonageVideoClient as unknown as VonageVideoClient;
-            context.publish = mockPublish;
-            context.unpublish = mockUnpublish;
+            context.publish = async (publisher) => mockPublish(publisher);
+            context.unpublish = (publisher) => {
+              mockUnpublish(publisher);
+            };
           }
         },
       },
@@ -119,11 +131,24 @@ describe('useScreenSharing', () => {
     await act(async () => {
       // toggling screen share on
       await result.current.toggleShareScreen();
+    });
+
+    act(() => {
+      handlers['streamCreated']();
+    });
+
+    await act(async () => {
       // toggling screen share off
       await result.current.toggleShareScreen();
     });
 
     expect(result.current.isSharingScreen).toBe(false);
+    expect(mockUnpublish).toHaveBeenCalledWith(mockPublisher);
+    expect(mockPublisher.destroy).toHaveBeenCalledTimes(1);
+    expect(mockVonageVideoClient.off).toHaveBeenCalledWith(
+      'screenshareStreamCreated',
+      expect.any(Function)
+    );
   });
 
   it('sets isEntireScreen to true when displaySurface is monitor', async () => {
@@ -137,8 +162,10 @@ describe('useScreenSharing', () => {
         __interceptor: (context) => {
           if (context) {
             context.vonageVideoClient = mockVonageVideoClient as unknown as VonageVideoClient;
-            context.publish = mockPublish;
-            context.unpublish = mockUnpublish;
+            context.publish = async (publisher) => mockPublish(publisher);
+            context.unpublish = (publisher) => {
+              mockUnpublish(publisher);
+            };
           }
         },
       },
@@ -173,8 +200,10 @@ describe('useScreenSharing', () => {
         __interceptor: (context) => {
           if (context) {
             context.vonageVideoClient = mockVonageVideoClient as unknown as VonageVideoClient;
-            context.publish = mockPublish;
-            context.unpublish = mockUnpublish;
+            context.publish = async (publisher) => mockPublish(publisher);
+            context.unpublish = (publisher) => {
+              mockUnpublish(publisher);
+            };
           }
         },
       },
@@ -208,8 +237,10 @@ describe('useScreenSharing', () => {
         __interceptor: (context) => {
           if (context) {
             context.vonageVideoClient = mockVonageVideoClient as unknown as VonageVideoClient;
-            context.publish = mockPublish;
-            context.unpublish = mockUnpublish;
+            context.publish = async (publisher) => mockPublish(publisher);
+            context.unpublish = (publisher) => {
+              mockUnpublish(publisher);
+            };
           }
         },
       },
@@ -252,8 +283,10 @@ describe('useScreenSharing', () => {
         __interceptor: (context) => {
           if (context) {
             context.vonageVideoClient = mockVonageVideoClient as unknown as VonageVideoClient;
-            context.publish = mockPublish;
-            context.unpublish = mockUnpublish;
+            context.publish = async (publisher) => mockPublish(publisher);
+            context.unpublish = (publisher) => {
+              mockUnpublish(publisher);
+            };
           }
         },
       },
@@ -295,8 +328,10 @@ describe('useScreenSharing', () => {
         __interceptor: (context) => {
           if (context) {
             context.vonageVideoClient = null;
-            context.publish = mockPublish;
-            context.unpublish = mockUnpublish;
+            context.publish = async (publisher) => mockPublish(publisher);
+            context.unpublish = (publisher) => {
+              mockUnpublish(publisher);
+            };
           }
         },
       },
@@ -327,8 +362,10 @@ describe('useScreenSharing', () => {
         __interceptor: (context) => {
           if (context) {
             context.vonageVideoClient = mockVonageVideoClient as unknown as VonageVideoClient;
-            context.publish = mockPublish;
-            context.unpublish = mockUnpublish;
+            context.publish = async (publisher) => mockPublish(publisher);
+            context.unpublish = (publisher) => {
+              mockUnpublish(publisher);
+            };
           }
         },
       },
@@ -341,6 +378,138 @@ describe('useScreenSharing', () => {
     // initPublisher must never be called – the SDK should not be involved in the cancel path.
     expect(initPublisher).not.toHaveBeenCalled();
     expect(result.current.isSharingScreen).toBe(false);
+  });
+
+  it('does not initialize publisher when getDisplayMedia returns no video tracks', async () => {
+    mockGetDisplayMedia.mockResolvedValueOnce({
+      getVideoTracks: () => [],
+    } as unknown as MediaStream);
+
+    const { result } = render(
+      makeRenderOptions({ mockVonageVideoClient, mockPublish, mockUnpublish })
+    );
+
+    await act(async () => {
+      await result.current.toggleShareScreen();
+    });
+
+    expect(initPublisher).not.toHaveBeenCalled();
+    expect(mockPublish).not.toHaveBeenCalled();
+    expect(result.current.isSharingScreen).toBe(false);
+  });
+
+  it('stops the track and resets state when initPublisher reports an error', async () => {
+    expect.assertions(4);
+
+    const { result } = render(
+      makeRenderOptions({ mockVonageVideoClient, mockPublish, mockUnpublish })
+    );
+
+    await act(async () => {
+      await result.current.toggleShareScreen();
+    });
+
+    const publisherErrorCallback = vi.mocked(initPublisher).mock.calls[0]?.[2];
+
+    act(() => {
+      publisherErrorCallback?.(new Error('publisher failed'));
+    });
+
+    expect(publisherErrorCallback).toEqual(expect.any(Function));
+    expect(mockVideoTrack.stop).toHaveBeenCalledTimes(1);
+    expect(result.current.isSharingScreen).toBe(false);
+    expect(result.current.screensharingPublisher).toBe(null);
+  });
+
+  it('destroys the publisher and stops the track when publish fails', async () => {
+    expect.assertions(6);
+
+    mockPublish.mockRejectedValueOnce(new Error('publish failed'));
+
+    const { result } = render(
+      makeRenderOptions({ mockVonageVideoClient, mockPublish, mockUnpublish })
+    );
+
+    await act(async () => {
+      await expect(result.current.toggleShareScreen()).resolves.toBeUndefined();
+    });
+
+    expect(mockPublish).toHaveBeenCalledWith(mockPublisher);
+    expect(mockVideoTrack.stop).toHaveBeenCalledTimes(1);
+    expect(mockPublisher.destroy).toHaveBeenCalledTimes(1);
+    expect(result.current.isSharingScreen).toBe(false);
+    expect(result.current.screensharingPublisher).toBe(null);
+  });
+
+  it('unpublishes the current share when another screenshare stream is created', async () => {
+    const { result } = render(
+      makeRenderOptions({ mockVonageVideoClient, mockPublish, mockUnpublish })
+    );
+
+    await act(async () => {
+      await result.current.toggleShareScreen();
+    });
+
+    act(() => {
+      handlers['streamCreated']();
+    });
+
+    const streamCreatedHandlerCall = vi
+      .mocked(mockVonageVideoClient.on!)
+      .mock.calls.find(([eventName]) => eventName === 'screenshareStreamCreated');
+    const streamCreatedHandler = streamCreatedHandlerCall?.[1] as (() => void) | undefined;
+
+    act(() => {
+      streamCreatedHandler?.();
+    });
+
+    expect(streamCreatedHandler).toEqual(expect.any(Function));
+    expect(mockUnpublish).toHaveBeenCalledWith(mockPublisher);
+    expect(result.current.isSharingScreen).toBe(false);
+  });
+
+  it('keeps entire-screen detection false when video metadata is unavailable', async () => {
+    const { result } = render(
+      makeRenderOptions({ mockVonageVideoClient, mockPublish, mockUnpublish })
+    );
+
+    await act(async () => {
+      await result.current.toggleShareScreen();
+    });
+
+    const mockVideoElement = {
+      srcObject: null,
+    } as unknown as HTMLVideoElement;
+
+    act(() => {
+      handlers['videoElementCreated']({ element: mockVideoElement });
+    });
+
+    expect(result.current.screenshareVideoElement).toBe(mockVideoElement);
+    expect(result.current.isEntireScreen).toBe(false);
+  });
+
+  it('stops the track and clears state when media sharing stops', async () => {
+    const { result } = render(
+      makeRenderOptions({ mockVonageVideoClient, mockPublish, mockUnpublish })
+    );
+
+    await act(async () => {
+      await result.current.toggleShareScreen();
+    });
+
+    act(() => {
+      handlers['streamCreated']();
+      handlers['mediaStopped']();
+    });
+
+    expect(mockVideoTrack.stop).toHaveBeenCalledTimes(1);
+    expect(mockVonageVideoClient.off).toHaveBeenCalledWith(
+      'screenshareStreamCreated',
+      expect.any(Function)
+    );
+    expect(result.current.isSharingScreen).toBe(false);
+    expect(result.current.screensharingPublisher).toBe(null);
   });
 });
 
@@ -364,5 +533,34 @@ function render({ userContext, sessionContext }: RenderOptions = {}) {
     ...renderHookBase(() => useScreenShare(), {
       wrapper,
     }),
+  };
+}
+
+function makeRenderOptions({
+  mockVonageVideoClient,
+  mockPublish,
+  mockUnpublish,
+}: {
+  mockVonageVideoClient: Partial<VonageVideoClient>;
+  mockPublish: (publisher: Publisher) => Promise<void>;
+  mockUnpublish: (publisher: Publisher) => void;
+}): RenderOptions {
+  return {
+    userContext: {
+      __interceptor: (context: UserContextType | null) => {
+        context!.user.defaultSettings.name = 'TestUser';
+      },
+    },
+    sessionContext: {
+      __interceptor: (context) => {
+        if (context) {
+          context.vonageVideoClient = mockVonageVideoClient as unknown as VonageVideoClient;
+          context.publish = async (publisher) => mockPublish(publisher);
+          context.unpublish = (publisher) => {
+            mockUnpublish(publisher);
+          };
+        }
+      },
+    },
   };
 }
