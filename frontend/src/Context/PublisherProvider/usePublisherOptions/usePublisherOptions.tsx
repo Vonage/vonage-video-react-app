@@ -29,6 +29,12 @@ const usePublisherOptions = ({
   const frameRate = advancedSettings$.use.select((state) => state.frameRate);
   const codecMode = advancedSettings$.use.select((state) => state.codecMode);
   const codecPriority = advancedSettings$.use.select((state) => state.codecPriority);
+  const publisherAudioFallbackEnabled = advancedSettings$.use.select(
+    (state) => state.publisherAudioFallbackEnabled
+  );
+  const subscriberAudioFallbackEnabled = advancedSettings$.use.select(
+    (state) => state.subscriberAudioFallbackEnabled
+  );
 
   // Extract individual properties to avoid object reference changes
   const { name, noiseSuppression, backgroundFilter, publishAudio, publishVideo, publishCaptions } =
@@ -49,7 +55,10 @@ const usePublisherOptions = ({
       backgroundFilter && hasMediaProcessorSupport('both') ? backgroundFilter : undefined;
 
     const options = {
-      audioFallback: { publisher: true },
+      audioFallback: {
+        publisher: publisherAudioFallbackEnabled,
+        subscriber: subscriberAudioFallbackEnabled,
+      },
       audioFilter,
       audioSource,
       enableDtx,
@@ -90,6 +99,8 @@ const usePublisherOptions = ({
       frameRate,
       codecMode,
       codecPriority,
+      publisherAudioFallbackEnabled,
+      subscriberAudioFallbackEnabled,
     ]
   );
 };
