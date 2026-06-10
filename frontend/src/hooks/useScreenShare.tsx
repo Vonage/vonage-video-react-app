@@ -149,7 +149,9 @@ const useScreenShare = (): UseScreenShareType => {
       await publish(screenSharingPubRef.current);
     } catch {
       videoTrack.stop();
+      screenSharingPubRef.current?.destroy();
       onScreenShareStopped();
+      return;
     }
 
     vonageVideoClient.on('screenshareStreamCreated', handleStreamCreated);
