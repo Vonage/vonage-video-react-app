@@ -16,11 +16,11 @@ describe('useScreenSharing', () => {
   let mockVonageVideoClient: Partial<VonageVideoClient>;
   let mockPublisher: Partial<Publisher>;
   let mockVideoTrack: MediaStreamTrack;
+  let originalMediaDevices: MediaDevices | undefined;
   let handlers: Record<string, (...args: unknown[]) => void>;
   const mockPublish = vi.fn();
   const mockUnpublish = vi.fn();
   const mockGetDisplayMedia = vi.fn();
-
   beforeEach(() => {
     handlers = {};
     mockVonageVideoClient = Object.assign(new EventEmitter(), {
