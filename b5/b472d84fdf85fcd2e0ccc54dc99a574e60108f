@@ -1,0 +1,22 @@
+frontend/src/test/providers/makeTestProvider.ts
+  h_737cf808c1c597 9,16,23,33,43-45,62,157-161
+libs/core/src/metrics/ResolutionValue/ResolutionValue.test.ts
+  h_737cf808c1c597 20
+frontend/src/components/AdvancedSettingsDialog/components/AdvancedSettingsStatisticsTab/AdvancedSettingsStatisticsTab.spec.tsx
+  h_737cf808c1c597 41-42,45,65,121,130-136,140,148
+frontend/src/test/providers/makersIndex.ts
+  h_737cf808c1c597 30-34
+frontend/src/components/AdvancedSettingsDialog/components/AdvancedSettingsCodecPriorityField/AdvancedSettingsCodecPriorityField.tsx
+  h_737cf808c1c597 5-6,8
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.6",
+  "base_commit_sha": "b5b472d84fdf85fcd2e0ccc54dc99a574e60108f",
+  "prompts": {},
+  "humans": {
+    "h_737cf808c1c597": {
+      "author": "OscarFava <Oscar.Fava@vonage.com>"
+    }
+  }
+}
