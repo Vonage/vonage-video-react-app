@@ -1,3 +1,13 @@
+frontend/src/locales/es-MX.json
+  h_737cf808c1c597 66-67
+frontend/src/locales/it.json
+  h_737cf808c1c597 66-67
+frontend/src/locales/es.json
+  h_737cf808c1c597 66-67
+frontend/src/locales/de.json
+  h_737cf808c1c597 66-67
+frontend/src/locales/en.json
+  h_737cf808c1c597 66-67
 ---
 {
   "schema_version": "authorship/3.0.0",
