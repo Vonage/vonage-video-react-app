@@ -4,11 +4,11 @@ import Dialog from '@mui/material/Dialog';
 import classNames from 'classnames';
 import advancedSettings$ from '@Context/AdvancedSettings';
 import VividIcon from '@ui/VividIcon';
-import { AdvancedSettingsAudioTab } from './AdvancedSettingsAudioTab';
-import { AdvancedSettingsGeneralTab } from './AdvancedSettingsGeneralTab';
-import { AdvancedSettingsSidebar } from './AdvancedSettingsSidebar';
-import { AdvancedSettingsStatisticsTab } from './AdvancedSettingsStatisticsTab';
-import { AdvancedSettingsVideoTab } from './AdvancedSettingsVideoTab';
+import { AdvancedSettingsAudioTab } from './components/AdvancedSettingsAudioTab';
+import { AdvancedSettingsGeneralTab } from './components/AdvancedSettingsGeneralTab';
+import { AdvancedSettingsSidebar } from './components/AdvancedSettingsSidebar';
+import { AdvancedSettingsStatisticsTab } from './components/AdvancedSettingsStatisticsTab';
+import { AdvancedSettingsVideoTab } from './components/AdvancedSettingsVideoTab';
 
 const AdvancedSettingsDialog = (): ReactElement => {
   const { t } = useTranslation();

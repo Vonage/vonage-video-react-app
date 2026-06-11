@@ -68,7 +68,7 @@
   "advancedSettings.statistics.collection.enablePublisher.label": "Habilitar estimación de ancho de banda del emisor",
   "advancedSettings.statistics.collection.enablePublisher.description": "Cuando está habilitado, muestra el ancho de banda de salida estimado para el publicador local.",
   "advancedSettings.statistics.groups.publisher": "Publicador",
-  "advancedSettings.statistics.groups.subscriber": "Suscriptor {{index}}",
+  "advancedSettings.statistics.groups.subscribers": "Suscriptores",
   "advancedSettings.statistics.empty": "Todavía no hay estadísticas disponibles.",
   "advancedSettings.statistics.sections.audio": "Audio",
   "advancedSettings.statistics.sections.video": "Video",

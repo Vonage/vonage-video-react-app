@@ -68,7 +68,7 @@
   "advancedSettings.statistics.collection.enablePublisher.label": "Enable publisher bandwidth estimate",
   "advancedSettings.statistics.collection.enablePublisher.description": "When enabled, shows the estimated available outbound bandwidth for the local publisher.",
   "advancedSettings.statistics.groups.publisher": "Publisher",
-  "advancedSettings.statistics.groups.subscriber": "Subscriber {{index}}",
+  "advancedSettings.statistics.groups.subscribers": "Subscribers",
   "advancedSettings.statistics.empty": "No statistics available yet.",
   "advancedSettings.statistics.sections.audio": "Audio",
   "advancedSettings.statistics.sections.video": "Video",

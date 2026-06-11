@@ -2,7 +2,7 @@ import type { ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
 import classNames from 'classnames';
 import advancedSettings$ from '@Context/AdvancedSettings';
-import type { AdvancedSettingsTab } from '../types/types';
+import type { AdvancedSettingsTab } from '../../types/types';
 
 const tabs: AdvancedSettingsTab[] = ['general', 'video', 'audio', 'statistics'];
 const { setSelectedTab } = advancedSettings$.actions;

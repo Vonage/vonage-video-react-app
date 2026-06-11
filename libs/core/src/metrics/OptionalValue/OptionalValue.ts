@@ -1,3 +1,4 @@
+import { isNil } from '@common/assertions';
 import type { MetricFormatArgs } from '../MetricValue/MetricValue';
 
 export type OptionalMetricFormatArgs = MetricFormatArgs & {
@@ -17,10 +18,10 @@ export type OptionalValue<TResult extends { value: unknown }> =
 
 export function optionalValue<TResult extends { value: unknown }, TValue>(
   ValueClass: ValueConstructor<TResult, TValue>,
-  value: TValue | null,
+  value: TValue | null | undefined,
   args?: OptionalMetricFormatArgs
 ): OptionalValue<TResult> {
-  if (value === null) {
+  if (isNil(value)) {
     const fallback = args?.fallback ?? '';
 
     return {

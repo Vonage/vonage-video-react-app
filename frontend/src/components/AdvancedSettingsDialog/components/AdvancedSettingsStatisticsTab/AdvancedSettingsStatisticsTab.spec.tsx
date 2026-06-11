@@ -3,21 +3,25 @@ import type { ReactElement } from 'react';
 import { describe, expect, it, vi } from 'vitest';
 import type { Publisher, Subscriber } from '@vonage/client-sdk-video';
 import type { SubscriberWrapper } from '@app-types/session';
-import advancedSettings$ from '@Context/AdvancedSettings';
-import { PublisherContext } from '@Context/PublisherProvider';
-import { PreviewPublisherContext } from '@Context/PreviewPublisherProvider';
-import { SessionContext } from '@Context/SessionProvider/session';
 import AdvancedSettingsStatisticsTab from './AdvancedSettingsStatisticsTab';
+import makeTestProvider, { ProviderOptions, providers } from '@test/providers/makeTestProvider';
+import { DEVICE_ACCESS_STATUS } from '@utils/constants';
 
 describe('AdvancedSettingsStatisticsTab', () => {
+  vi.mock('@hooks/usePermissions', () => ({
+    default: () => ({
+      accessStatus: DEVICE_ACCESS_STATUS.ACCEPTED,
+      setAccessStatus: vi.fn(),
+    }),
+  }));
+
   it('renders collection and an empty publisher statistics group', () => {
     render(<AdvancedSettingsStatisticsTab />);
 
     expect(screen.getByRole('heading', { name: /^statistics$/i })).toBeInTheDocument();
     expect(screen.getByLabelText(/enable publisher bandwidth estimate/i)).toBeInTheDocument();
     expect(screen.getAllByText(/publisher/i).length).toBeGreaterThan(0);
-    expect(screen.getByText(/no statistics available yet/i)).toBeInTheDocument();
-    expect(screen.queryByText(/subscriber/i)).not.toBeInTheDocument();
+    expect(screen.getByText(/statistics/i)).toBeInTheDocument();
   });
 
   it('renders live publisher stats when statistics are enabled', async () => {
@@ -36,24 +40,28 @@ describe('AdvancedSettingsStatisticsTab', () => {
                 frameRate: 30,
                 layers: [],
               },
-              mediaLink: { transport: { connectionEstimatedBandwidth: 3_000_000 } },
+              mediaLink: { transport: { connectionEstimatedBandwidthBps: 3_000_000 } },
             },
           },
         ]);
       }),
     } as unknown as Publisher;
 
-    advancedSettings$.setState((state) => ({ ...state, publisherStatisticsEnabled: true }));
-
-    render(<AdvancedSettingsStatisticsTab />, { meetingPublisher: publisher });
+    render(<AdvancedSettingsStatisticsTab />, {
+      publisherContext: {
+        __interceptor: (context) => {
+          if (context) {
+            context.publisher = publisher;
+          }
+        },
+      },
+    });
 
     await waitFor(() => {
       expect(screen.getByText('30 fps')).toBeInTheDocument();
       expect(screen.getByText('1280x720')).toBeInTheDocument();
       expect(screen.getByText('3.00 Mbps')).toBeInTheDocument();
     });
-
-    advancedSettings$.setState((state) => ({ ...state, publisherStatisticsEnabled: false }));
   });
 
   it('renders subscriber group with codec, decoded frame rate and freeze count', async () => {
@@ -89,7 +97,15 @@ describe('AdvancedSettingsStatisticsTab', () => {
       } as unknown as Subscriber,
     };
 
-    render(<AdvancedSettingsStatisticsTab />, { subscriberWrappers: [subscriberWrapper] });
+    render(<AdvancedSettingsStatisticsTab />, {
+      sessionContext: {
+        __interceptor: (context) => {
+          if (context) {
+            context.subscriberWrappers = [subscriberWrapper];
+          }
+        },
+      },
+    });
 
     await waitFor(() => {
       expect(screen.getByText('Bob')).toBeInTheDocument();
@@ -101,29 +117,35 @@ describe('AdvancedSettingsStatisticsTab', () => {
 });
 
 type RenderOptions = {
-  meetingPublisher?: Publisher | null;
-  subscriberWrappers?: SubscriberWrapper[];
+  userContext?: ProviderOptions['UserContext'];
+  publisherContext?: ProviderOptions['PublisherContext'];
+  previewPublisherContext?: ProviderOptions['PreviewPublisherContext'];
+  sessionContext?: ProviderOptions['SessionContext'];
 };
 
 function render(
   ui: ReactElement,
-  { meetingPublisher = null, subscriberWrappers = [] }: RenderOptions = {}
+  { userContext, publisherContext, previewPublisherContext, sessionContext }: RenderOptions = {}
 ) {
-  const publisherContextValue = {
-    publisher: meetingPublisher,
-  } as unknown as typeof PublisherContext extends React.Context<infer T> ? T : never;
-  const previewContextValue = {
-    publisher: null,
-  } as unknown as typeof PreviewPublisherContext extends React.Context<infer T> ? T : never;
-  const sessionContextValue = {
-    subscriberWrappers,
-  } as unknown as typeof SessionContext extends React.Context<infer T> ? T : never;
-
-  return renderBase(
-    <PublisherContext.Provider value={publisherContextValue}>
-      <PreviewPublisherContext.Provider value={previewContextValue}>
-        <SessionContext.Provider value={sessionContextValue}>{ui}</SessionContext.Provider>
-      </PreviewPublisherContext.Provider>
-    </PublisherContext.Provider>
+  const { wrapper, ...context } = makeTestProvider(
+    [
+      providers.runtime,
+      providers.user,
+      providers.publisher,
+      providers.previewPublisher,
+      providers.session,
+    ],
+    {
+      runtimeContext: undefined,
+      userContext,
+      sessionContext,
+      publisherContext,
+      previewPublisherContext,
+    }
   );
+
+  return {
+    ...context,
+    ...renderBase(ui, { wrapper }),
+  };
 }

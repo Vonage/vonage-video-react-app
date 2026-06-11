@@ -1,6 +1,6 @@
 import type { ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
-import { env, RESOLUTIONS } from '../../../env';
+import { env, RESOLUTIONS } from '../../../../env';
 import advancedSettings$ from '@Context/AdvancedSettings';
 import SelectField from '@ui/SelectField';
 import { AdvancedSettingsCodecPriorityField } from '../AdvancedSettingsCodecPriorityField';
@@ -9,8 +9,8 @@ import type {
   AdvancedSettingsFrameRate,
   AdvancedSettingsResolution,
   AdvancedSettingsSelectOption,
-} from '../types/types';
-import { ADVANCED_SETTINGS_BITRATE_MODE, ADVANCED_SETTINGS_CODEC_MODE } from '../types/types';
+} from '../../types/types';
+import { ADVANCED_SETTINGS_BITRATE_MODE, ADVANCED_SETTINGS_CODEC_MODE } from '../../types/types';
 import useAdvancedSettingsVideoHandlers from './useAdvancedSettingsVideoHandlers';
 
 const { setCodecMode, setCodecPriority } = advancedSettings$.actions;

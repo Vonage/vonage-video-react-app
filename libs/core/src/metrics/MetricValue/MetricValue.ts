@@ -1,6 +1,6 @@
 import assertResult from '@common/execution/assertResult';
-import ApplicationError from '@common/errors/ApplicationError';
 import { assertNotNil, isString } from '@common/assertions';
+import { ApplicationClientError } from '@core/errors';
 
 export type MetricFormatArgs = {
   locales?: Intl.LocalesArgument;
@@ -66,7 +66,7 @@ export abstract class MetricValue {
         return Number(value.trim());
       },
       (error) =>
-        new ApplicationError({
+        new ApplicationClientError({
           src: error,
           fallbackConfig: {
             fallbackMessage: `${this.name}: Invalid value`,

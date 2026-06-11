@@ -5,6 +5,8 @@ import usePublisherContext from '@hooks/usePublisherContext';
 import SwitchField from '@ui/SwitchField';
 import PublisherStatistics from './components/PublisherStatistics';
 import usePreviewPublisherContext from '@hooks/usePreviewPublisherContext';
+import SubscriberStatistics from './components/SubscriberStatistics';
+import useSessionContext from '@hooks/useSessionContext';
 
 const { setPublisherStatisticsEnabled } = advancedSettings$.actions;
 
@@ -12,7 +14,7 @@ const AdvancedSettingsStatisticsTab = (): ReactElement => {
   const { t } = useTranslation();
   const { publisher: meetingPublisher } = usePublisherContext();
   const { publisher: previewPublisher } = usePreviewPublisherContext();
-  // const { subscriberWrappers } = useSessionContext();
+  const { subscriberWrappers } = useSessionContext();
 
   const publisher = meetingPublisher ?? previewPublisher;
 
@@ -36,14 +38,15 @@ const AdvancedSettingsStatisticsTab = (): ReactElement => {
       <div className="flex flex-col gap-4">
         {publisher && <PublisherStatistics publisher={publisher} />}
 
-        {/*subscriberStatisticsGroups.map((subscriberStatisticsGroup) => (
-          <AdvancedSettingsStatisticsGroup
-            key={subscriberStatisticsGroup.id}
-            title={subscriberStatisticsGroup.title}
-            audioItems={subscriberStatisticsGroup.audioItems}
-            videoItems={subscriberStatisticsGroup.videoItems}
-          />
-        ))*/}
+        {subscriberWrappers.length > 0 && (
+          <h4 className="font-vera-plain text-vera-heading-4 text-vera-secondary">
+            {t('advancedSettings.statistics.groups.subscribers')}
+          </h4>
+        )}
+
+        {subscriberWrappers.map(({ subscriber }, index) => (
+          <SubscriberStatistics subscriber={subscriber} key={subscriber.id ?? index} />
+        ))}
       </div>
     </div>
   );

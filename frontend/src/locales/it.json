@@ -68,7 +68,7 @@
   "advancedSettings.statistics.collection.enablePublisher.label": "Abilita stima della larghezza di banda del publisher",
   "advancedSettings.statistics.collection.enablePublisher.description": "Quando è abilitato, mostra la larghezza di banda in uscita stimata per il publisher locale.",
   "advancedSettings.statistics.groups.publisher": "Publisher",
-  "advancedSettings.statistics.groups.subscriber": "Subscriber {{index}}",
+  "advancedSettings.statistics.groups.subscribers": "Subscribers",
   "advancedSettings.statistics.empty": "Non ci sono ancora statistiche disponibili.",
   "advancedSettings.statistics.sections.audio": "Audio",
   "advancedSettings.statistics.sections.video": "Video",

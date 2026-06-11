@@ -4,7 +4,7 @@ import { useLocation } from 'react-router-dom';
 import advancedSettings$ from '@Context/AdvancedSettings';
 import SelectField from '@ui/SelectField';
 import SwitchField from '@ui/SwitchField';
-import { ADVANCED_SETTINGS_AUDIO_BITRATE_MODE } from '../types/types';
+import { ADVANCED_SETTINGS_AUDIO_BITRATE_MODE } from '../../types/types';
 
 const {
   setAudioBitrateMode,

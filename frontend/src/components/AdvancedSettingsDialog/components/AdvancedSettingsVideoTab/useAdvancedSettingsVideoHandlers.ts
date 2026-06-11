@@ -14,8 +14,8 @@ import type {
   AdvancedSettingsCustomVideoBitrate,
   AdvancedSettingsFrameRate,
   AdvancedSettingsResolution,
-} from '../types/types';
-import { ADVANCED_SETTINGS_BITRATE_MODE } from '../types/types';
+} from '../../types/types';
+import { ADVANCED_SETTINGS_BITRATE_MODE } from '../../types/types';
 
 const { setBitrateMode, setCustomVideoBitrate, setFrameRate, setResolution } =
   advancedSettings$.actions;
