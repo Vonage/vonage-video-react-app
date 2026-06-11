@@ -27,3 +27,8 @@ export {
   default as makeRuntimeProviderWrapper,
   type RuntimeProviderWrapperOptions,
 } from './makeRuntimeProviderWrapper';
+
+export {
+  default as makeAdvancedSettingsProviderWrapper,
+  type AdvancedSettingsProviderWrapperOptions,
+} from './makeAdvancedSettingsProviderWrapper';

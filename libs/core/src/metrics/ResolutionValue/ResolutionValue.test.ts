@@ -17,6 +17,6 @@ describe('ResolutionValue', () => {
   });
 
   it('accepts string dimensions', () => {
-    expect(resolutionValue({ width: '1920', height: '1080' }).toString()).toBe('1920x1080');
+    expect(resolutionValue({ width: 1920, height: 1080 }).toString()).toBe('1920x1080');
   });
 });

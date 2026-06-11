@@ -2,7 +2,10 @@ import { useState } from 'react';
 import type { DragEvent, ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
 import classNames from 'classnames';
-import type { AdvancedSettingsManualCodecOrder, AdvancedSettingsVideoCodec } from '../../types/types';
+import type {
+  AdvancedSettingsManualCodecOrder,
+  AdvancedSettingsVideoCodec,
+} from '../../types/types';
 
 type AdvancedSettingsCodecPriorityFieldProps = {
   codecPriority: AdvancedSettingsManualCodecOrder;
