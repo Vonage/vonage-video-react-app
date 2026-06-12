@@ -125,18 +125,22 @@ test.describe('display name for screenshare', () => {
     context,
   }) => {
     const roomName = crypto.randomBytes(5).toString('hex');
+
     await openMeetingRoomWithSettings({
       page: pageOne,
       username: 'User One',
       roomName,
     });
+    await waitUntilReady(pageOne, 'chromium');
 
     const pageTwo = await context.newPage();
+
     await openMeetingRoomWithSettings({
       page: pageTwo,
       username: 'User Two',
       roomName,
     });
+    await waitUntilReady(pageTwo, 'chromium');
 
     await pageOne.waitForSelector('.publisher', { state: 'visible' });
     await pageTwo.waitForSelector('.subscriber', { state: 'visible' });
@@ -144,16 +148,14 @@ test.describe('display name for screenshare', () => {
     await screenshareButton.click();
 
     await expect(
-      await pageOne
-        .getByTestId('screen-publisher-container')
-        .getByText(`You are sharing your screen.`)
+      pageOne.getByTestId('screen-publisher-container').getByText(`You are sharing your screen.`)
     ).toBeVisible();
 
     // Wait for the screen-subscriber to appear
     await pageTwo.waitForSelector('.screen-subscriber', { state: 'visible' });
 
     await expect(
-      await pageTwo.locator('.screen-subscriber').getByText(`User One's screen`)
+      pageTwo.locator('.screen-subscriber').getByText(`User One's screen`)
     ).toBeVisible();
   });
 });
