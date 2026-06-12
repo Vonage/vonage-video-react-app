@@ -23,7 +23,7 @@ export type ScreenSharePublisherProps = {
  *   @property {Publisher | null} publisher-- Publisher object for local screen share
  *   @property {boolean} isEntireScreen - Whether the local user is sharing the entire screen
  *   @property {boolean} showLocalScreensharePreview - Whether local screenshare preview is visible
- *   @property {boolean} toggleLocalScreensharePreview - Toggle local screenshare preview visibility
+ *   @property {() => void} toggleLocalScreensharePreview - Toggle local screenshare preview visibility
  * @returns {ReactElement | undefined} - ScreenSharePublisher Component
  */
 const ScreenSharePublisher = ({
@@ -75,7 +75,7 @@ const ScreenSharePublisher = ({
             {isEntireScreen && (
               <button
                 type="button"
-                className="absolute text-vera-heading-4 top-4 right-4 z-10 rounded bg-vera-primary px-4 py-2 text-sm text-vera-on-secondary"
+                className="absolute top-4 right-4 z-10 rounded bg-vera-primary px-4 py-2 text-sm text-vera-on-secondary"
                 onClick={toggleLocalScreensharePreview}
               >
                 {t('screenSharing.dialog.hidePreview')}
