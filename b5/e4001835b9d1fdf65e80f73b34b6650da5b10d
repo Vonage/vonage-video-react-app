@@ -1,3 +1,13 @@
+libs/core/src/hooks/useSubscriberStats/useSubscriberStats.ts
+  h_737cf808c1c597 12-17,21
+libs/core/src/hooks/usePublisherStats/usePublisherStats.utils.ts
+  h_737cf808c1c597 1-112
+libs/core/src/hooks/usePublisherStats/usePublisherStats.ts
+  h_737cf808c1c597 12,14-21
+libs/core/src/hooks/useSubscriberStats/useSubscriberStats.utils.ts
+  h_737cf808c1c597 1-44
+libs/core/src/hooks/useSubscriberStats/useSubscriberStats.spec.ts
+  h_737cf808c1c597 1-110
 ---
 {
   "schema_version": "authorship/3.0.0",

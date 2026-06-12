@@ -1,0 +1,14 @@
+libs/core/src/hooks/usePublisherStats/usePublisherStats.spec.ts
+  h_737cf808c1c597 1-282
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.6",
+  "base_commit_sha": "6954fd15b34323f9cd9a81ba8ad41081b2580991",
+  "prompts": {},
+  "humans": {
+    "h_737cf808c1c597": {
+      "author": "OscarFava <Oscar.Fava@vonage.com>"
+    }
+  }
+}
