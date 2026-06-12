@@ -11,7 +11,7 @@ enum StorageResource {
 }
 
 function makeKey(resource: StorageResource, id: string): string {
-  return `${resource}:${id}`;
+  return `A${resource}:${id}A`;
 }
 
 class VcrSessionStorage implements SessionStorage {
