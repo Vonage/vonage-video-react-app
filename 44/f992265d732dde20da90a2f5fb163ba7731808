@@ -1,0 +1,14 @@
+frontend/src/hooks/tests/useScreenShare.spec.tsx
+  h_737cf808c1c597 344-476
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.6",
+  "base_commit_sha": "44f992265d732dde20da90a2f5fb163ba7731808",
+  "prompts": {},
+  "humans": {
+    "h_737cf808c1c597": {
+      "author": "OscarFava <Oscar.Fava@vonage.com>"
+    }
+  }
+}
