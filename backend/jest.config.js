@@ -20,6 +20,7 @@ export default {
     '!**/storage/sessionStorage.ts',
   ],
   moduleNameMapper: {
+    '^@vonage/vcr-sdk$': '<rootDir>/__mocks__/@vonage/vcr-sdk.ts',
     '^@api-lib$': '<rootDir>/../libs/api/src',
     '^@api-lib/(.*)$': '<rootDir>/../libs/api/src/$1',
     '^@common$': '<rootDir>/../libs/common/src',
