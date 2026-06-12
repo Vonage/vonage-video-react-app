@@ -43,7 +43,7 @@ describe('useScreenSharing', () => {
 
     mockGetDisplayMedia.mockResolvedValue({
       getVideoTracks: () => [mockVideoTrack],
-    } as unknown as MediaStream);
+    });
 
     // JSDOM does not provide navigator.mediaDevices; define the whole property.
     Object.defineProperty(navigator, 'mediaDevices', {
@@ -345,7 +345,7 @@ describe('useScreenSharing', () => {
   it('returns early when display stream contains no video tracks', async () => {
     mockGetDisplayMedia.mockResolvedValueOnce({
       getVideoTracks: () => [],
-    } as unknown as MediaStream);
+    });
 
     const { result } = render({
       userContext: {
@@ -379,7 +379,7 @@ describe('useScreenSharing', () => {
     (initPublisher as ReturnType<typeof vi.fn>).mockImplementation(
       (_target, _options, callback) => {
         publisherCallback = callback;
-        return mockPublisher as Publisher;
+        return mockPublisher;
       }
     );
 
