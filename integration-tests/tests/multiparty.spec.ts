@@ -123,34 +123,33 @@ test.describe('display name for screenshare', () => {
   test('should display username on screenshare publisher and subscribers', async ({
     page: pageOne,
     context,
-    browserName,
   }) => {
     const roomName = crypto.randomBytes(5).toString('hex');
-
     await openMeetingRoomWithSettings({
       page: pageOne,
       username: 'User One',
       roomName,
     });
-    await waitUntilReady(pageOne, browserName);
 
     const pageTwo = await context.newPage();
-
     await openMeetingRoomWithSettings({
       page: pageTwo,
       username: 'User Two',
       roomName,
     });
-    await waitUntilReady(pageTwo, browserName);
 
     await pageOne.waitForSelector('.publisher', { state: 'visible' });
     await pageTwo.waitForSelector('.subscriber', { state: 'visible' });
-    const screenshareButton = await pageOne.getByTestId('ScreenShareIcon');
+    const screenshareButton = pageOne.getByTestId('ScreenShareIcon');
     await screenshareButton.click();
 
     await expect(
       pageOne.getByTestId('screen-publisher-container').getByText(`You are sharing your screen.`)
     ).toBeVisible();
+
+    await expect
+      .poll(async () => await pageTwo.locator('.video__element').count(), { timeout: 10000 })
+      .toBe(2);
 
     // Wait for the screen-subscriber to appear
     await pageTwo.waitForSelector('.screen-subscriber', { state: 'visible' });
