@@ -123,6 +123,7 @@ test.describe('display name for screenshare', () => {
   test('should display username on screenshare publisher and subscribers', async ({
     page: pageOne,
     context,
+    browserName,
   }) => {
     const roomName = crypto.randomBytes(5).toString('hex');
 
@@ -131,7 +132,7 @@ test.describe('display name for screenshare', () => {
       username: 'User One',
       roomName,
     });
-    await waitUntilReady(pageOne, 'chromium');
+    await waitUntilReady(pageOne, browserName);
 
     const pageTwo = await context.newPage();
 
@@ -140,7 +141,7 @@ test.describe('display name for screenshare', () => {
       username: 'User Two',
       roomName,
     });
-    await waitUntilReady(pageTwo, 'chromium');
+    await waitUntilReady(pageTwo, browserName);
 
     await pageOne.waitForSelector('.publisher', { state: 'visible' });
     await pageTwo.waitForSelector('.subscriber', { state: 'visible' });
