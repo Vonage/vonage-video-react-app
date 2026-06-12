@@ -341,6 +341,139 @@ describe('useScreenSharing', () => {
     expect(initPublisher).not.toHaveBeenCalled();
     expect(result.current.isSharingScreen).toBe(false);
   });
+
+  it('returns early when display stream contains no video tracks', async () => {
+    mockGetDisplayMedia.mockResolvedValueOnce({
+      getVideoTracks: () => [],
+    } as unknown as MediaStream);
+
+    const { result } = render({
+      userContext: {
+        __interceptor: (context: UserContextType | null) => {
+          context!.user.defaultSettings.name = 'TestUser';
+        },
+      },
+      sessionContext: {
+        __interceptor: (context) => {
+          if (context) {
+            context.vonageVideoClient = mockVonageVideoClient as unknown as VonageVideoClient;
+            context.publish = mockPublish;
+            context.unpublish = mockUnpublish;
+          }
+        },
+      },
+    });
+
+    await act(async () => {
+      await result.current.toggleShareScreen();
+    });
+
+    expect(initPublisher).not.toHaveBeenCalled();
+    expect(mockPublish).not.toHaveBeenCalled();
+    expect(result.current.isSharingScreen).toBe(false);
+  });
+
+  it('stops video track when initPublisher callback receives an error', async () => {
+    let publisherCallback: ((err?: Error) => void) | undefined;
+
+    (initPublisher as ReturnType<typeof vi.fn>).mockImplementation(
+      (_target, _options, callback) => {
+        publisherCallback = callback;
+        return mockPublisher as Publisher;
+      }
+    );
+
+    const { result } = render({
+      userContext: {
+        __interceptor: (context: UserContextType | null) => {
+          context!.user.defaultSettings.name = 'TestUser';
+        },
+      },
+      sessionContext: {
+        __interceptor: (context) => {
+          if (context) {
+            context.vonageVideoClient = mockVonageVideoClient as unknown as VonageVideoClient;
+            context.publish = mockPublish;
+            context.unpublish = mockUnpublish;
+          }
+        },
+      },
+    });
+
+    await act(async () => {
+      await result.current.toggleShareScreen();
+    });
+
+    act(() => {
+      publisherCallback?.(new Error('publisher failed'));
+    });
+
+    expect(mockVideoTrack.stop).toHaveBeenCalled();
+    expect(result.current.isSharingScreen).toBe(false);
+    expect(result.current.isEntireScreen).toBe(false);
+    expect(result.current.screenshareVideoElement).toBeUndefined();
+  });
+
+  it('stops video track when publish fails', async () => {
+    mockPublish.mockRejectedValueOnce(new Error('publish failed'));
+
+    const { result } = render({
+      userContext: {
+        __interceptor: (context: UserContextType | null) => {
+          context!.user.defaultSettings.name = 'TestUser';
+        },
+      },
+      sessionContext: {
+        __interceptor: (context) => {
+          if (context) {
+            context.vonageVideoClient = mockVonageVideoClient as unknown as VonageVideoClient;
+            context.publish = mockPublish;
+            context.unpublish = mockUnpublish;
+          }
+        },
+      },
+    });
+
+    await act(async () => {
+      await result.current.toggleShareScreen();
+    });
+
+    expect(mockVideoTrack.stop).toHaveBeenCalled();
+    expect(result.current.isSharingScreen).toBe(false);
+    expect(result.current.isEntireScreen).toBe(false);
+    expect(result.current.screenshareVideoElement).toBeUndefined();
+  });
+
+  it('resets state when mediaStopped event fires', async () => {
+    const { result } = render({
+      userContext: {
+        __interceptor: (context: UserContextType | null) => {
+          context!.user.defaultSettings.name = 'TestUser';
+        },
+      },
+      sessionContext: {
+        __interceptor: (context) => {
+          if (context) {
+            context.vonageVideoClient = mockVonageVideoClient as unknown as VonageVideoClient;
+            context.publish = mockPublish;
+            context.unpublish = mockUnpublish;
+          }
+        },
+      },
+    });
+
+    await act(async () => {
+      await result.current.toggleShareScreen();
+    });
+
+    act(() => {
+      handlers['mediaStopped']();
+    });
+
+    expect(result.current.isSharingScreen).toBe(false);
+    expect(result.current.isEntireScreen).toBe(false);
+    expect(result.current.screenshareVideoElement).toBeUndefined();
+  });
 });
 
 type RenderOptions = {
