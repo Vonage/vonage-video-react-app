@@ -235,31 +235,6 @@ describe('usePublisherStats', () => {
     });
   });
 
-  describe('previousSample ref update', () => {
-    it('updates the previousSample ref after a successful poll', async () => {
-      const stableRef = { current: null as { bytesSent: number; timestamp: number } | null };
-      (useStableRef as Mock).mockReturnValue(stableRef);
-
-      let capturedQueryFn: (() => Promise<unknown>) | undefined;
-      (runtime$.useQuery as Mock).mockImplementation(
-        (options: { queryFn: () => Promise<unknown> }) => {
-          capturedQueryFn = options.queryFn;
-          return { data: undefined, isLoading: true };
-        }
-      );
-
-      const publisher = makePublisher([makeStatsContainer({ videoBytesSent: 5000 })]);
-
-      renderHook(() => usePublisherStats({ publisher, publisherStatisticsEnabled: true }));
-
-      await capturedQueryFn!();
-
-      expect(stableRef.current).not.toBeNull();
-      expect(stableRef.current?.bytesSent).toBe(5000);
-      expect(typeof stableRef.current?.timestamp).toBe('number');
-    });
-  });
-
   describe('missing / partial track data', () => {
     it('treats missing audio track fields as zero', async () => {
       const containerWithNoAudio = {

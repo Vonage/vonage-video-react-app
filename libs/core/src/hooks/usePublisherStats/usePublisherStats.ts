@@ -3,20 +3,22 @@ import type { QueryOptions } from '@core/types';
 import {
   BitrateValue,
   FrameRateValue,
-  integerValue,
   IntegerValue,
   optionalValue,
   OptionalValue,
   PacketLossValue,
   ResolutionValue,
 } from '@core/metrics';
-import type {
-  Publisher,
-  PublisherStats,
-  PublisherStatsArr,
-  VideoLayerStats,
-} from '@vonage/client-sdk-video';
+import type { Publisher, VideoLayerStats } from '@vonage/client-sdk-video';
 import useStableRef from '@web/hooks/useStableRef/useStableRef';
+import {
+  aggregateOutgoingTrackTotals,
+  calculateBitrateFromDelta,
+  calculatePacketLossRatio,
+  readPublisherFrameRate,
+  readPublisherResolution,
+  readPublisherStatsSafely,
+} from './usePublisherStats.utils';
 
 const POLL_INTERVAL_MS = 2000;
 
@@ -128,112 +130,5 @@ const usePublisherStats = <Selected = PublisherInspectorStatistics | null>({
     ...queryOptions,
   });
 };
-
-function calculateBitrateFromDelta({
-  currentBytesSent,
-  currentTimestamp,
-  previousSample,
-}: {
-  currentBytesSent: number;
-  currentTimestamp: number;
-  previousSample: { bytesSent: number; timestamp: number } | null;
-}): number | null {
-  if (!previousSample) {
-    return null;
-  }
-
-  const elapsedMilliseconds = currentTimestamp - previousSample.timestamp;
-  const deltaBytes = currentBytesSent - previousSample.bytesSent;
-
-  if (elapsedMilliseconds <= 0 || deltaBytes < 0) {
-    return null;
-  }
-
-  return Math.round((deltaBytes * 8 * 1000) / elapsedMilliseconds);
-}
-
-function readPublisherFrameRate(stats?: PublisherStats): number | null {
-  const frameRate = stats?.video?.frameRate;
-
-  if (frameRate === null || frameRate === undefined) {
-    return null;
-  }
-
-  return frameRate;
-}
-
-function readPublisherResolution(publisher: Publisher): { width: number; height: number } | null {
-  const width = publisher.videoWidth();
-  const height = publisher.videoHeight();
-
-  if (width == null || height == null) {
-    return null;
-  }
-
-  return { width, height };
-}
-
-function aggregateOutgoingTrackTotals(
-  publisherStatsContainers: PublisherStatsArr,
-  getTrack: (container: PublisherStatsArr[number]) => {
-    packetsSent?: number;
-    packetsLost?: number;
-    bytesSent?: number;
-  }
-): OutgoingTrackTotals {
-  return publisherStatsContainers.reduce<OutgoingTrackTotals>(
-    (accumulator, container) => {
-      const track = getSafeOutgoingTrackTotals(getTrack(container));
-
-      return {
-        packetsSent: integerValue(accumulator.packetsSent.value + track.packetsSent.value),
-        packetsLost: integerValue(accumulator.packetsLost.value + track.packetsLost.value),
-        bytesSent: integerValue(accumulator.bytesSent.value + track.bytesSent.value),
-      };
-    },
-    { packetsSent: integerValue(0), packetsLost: integerValue(0), bytesSent: integerValue(0) }
-  );
-}
-
-function getSafeOutgoingTrackTotals(track?: {
-  packetsSent?: number;
-  packetsLost?: number;
-  bytesSent?: number;
-}): OutgoingTrackTotals {
-  return {
-    packetsSent: integerValue(track?.packetsSent ?? 0),
-    packetsLost: integerValue(track?.packetsLost ?? 0),
-    bytesSent: integerValue(track?.bytesSent ?? 0),
-  };
-}
-
-function readPublisherStatsSafely(publisher: Publisher): Promise<PublisherStatsArr | null> {
-  return new Promise((resolve) => {
-    publisher.getStats((error, stats) => {
-      if (error || !stats) {
-        resolve(null);
-        return;
-      }
-
-      resolve(stats);
-    });
-  });
-}
-
-function calculatePacketLossRatio({
-  packetsLost,
-  packetsSuccessful,
-}: {
-  packetsLost: IntegerValue;
-  packetsSuccessful: IntegerValue;
-}): number | null {
-  const totalPackets = packetsLost.value + packetsSuccessful.value;
-
-  if (totalPackets <= 0) {
-    return null;
-  }
-
-  return packetsLost.value / totalPackets;
-}
 
 export default usePublisherStats;
