@@ -1,0 +1,36 @@
+frontend/src/components/RoomJoinContainer/RoomJoinContainer.tsx
+  h_737cf808c1c597 27
+frontend/src/components/BannerLogo/BannerLogo.tsx
+  h_737cf808c1c597 16
+frontend/src/hooks/useMeetingRoom.ts
+  h_737cf808c1c597 88,233,277
+frontend/src/components/GoodBye/GoToLandingPageButton/GoToLandingPageButton.tsx
+  h_737cf808c1c597 16
+frontend/src/App.tsx
+  h_737cf808c1c597 1,29
+frontend/src/components/JoinWaitRoomButton/JoinWaitRoomButton.tsx
+  h_737cf808c1c597 45
+frontend/src/test/RouterWrapper.tsx
+  h_737cf808c1c597 9,13
+frontend/src/components/MeetingRoom/RecordingPopupIndicator/RecordingPopupIndicator.tsx
+  h_737cf808c1c597 38
+package.json
+  h_737cf808c1c597 200
+frontend/src/components/GoodBye/ReenterRoomButton/ReenterRoomButton.tsx
+  h_737cf808c1c597 20
+frontend/src/components/MeetingRoom/ExitButton/ExitButton.tsx
+  h_737cf808c1c597 30
+frontend/src/components/WaitingRoom/UserNameInput/UserNameInput.tsx
+  h_737cf808c1c597 82
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.7",
+  "base_commit_sha": "0cffc10d8bb32e09846103501121904cd6e5c56a",
+  "prompts": {},
+  "humans": {
+    "h_737cf808c1c597": {
+      "author": "OscarFava <Oscar.Fava@vonage.com>"
+    }
+  }
+}
