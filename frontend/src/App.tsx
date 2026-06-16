@@ -1,4 +1,4 @@
-import { BrowserRouter as Router, Route, Routes, FutureConfig } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import './css/App.css';
 import './css/index.css';
 import MeetingRoom from './pages/MeetingRoom';
@@ -23,18 +23,10 @@ import { videoClient } from './services';
 import { NotificationsContainer } from '@ui/components';
 import { BackendLoggingProvider } from './logger/providers';
 
-const futureConfig: Partial<FutureConfig> = {
-  /**
-   * Enable relative splat paths to ensure that dynamic imports in the app work correctly regardless of the base path.
-   */
-  v7_relativeSplatPath: true,
-  v7_startTransition: true,
-};
-
 const InnerApp = () => {
   return (
     <div className="bg-vera-surface vera-desktop:bg-vera-background relative overflow-x-hidden overflow-y-auto h-dvh">
-      <Router future={futureConfig}>
+      <Router>
         <Routes>
           <Route element={<RedirectToUnsupportedBrowserPage />}>
             <Route
