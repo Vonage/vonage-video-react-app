@@ -25,8 +25,9 @@ const helmetHandler = helmet({
           // Allow images from self, inline/base64 images, blob URLs, and any HTTPS image source.
           'img-src': ["'self'", 'data:', 'blob:', 'https:'],
 
-          // Allow workers created by the SDK/app, including blob-based workers.
-          'worker-src': ["'self'", 'blob:'],
+          // Allow workers created by the SDK/app, including blob-based and inline data: workers.
+          // The Vonage SDK spawns feature-detection workers via data: URLs.
+          'worker-src': ["'self'", 'blob:', 'data:'],
 
           // Allow media resources from self, blob URLs, and HTTPS sources.
           'media-src': ["'self'", 'blob:', 'https:'],
