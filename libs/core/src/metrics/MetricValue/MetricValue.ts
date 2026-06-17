@@ -1,5 +1,5 @@
 import assertResult from '@common/execution/assertResult';
-import { assertNotNil, isString } from '@common/assertions';
+import { assertNotNil, assertNumericString, isNumber } from '@common/assertions';
 import { ApplicationClientError } from '@core/errors';
 
 export type MetricFormatArgs = {
@@ -7,7 +7,24 @@ export type MetricFormatArgs = {
   options?: Intl.NumberFormatOptions;
 };
 
-export abstract class MetricValue {
+export interface IMetricValue {
+  /**
+   * The name of the metric value, used for identification and error reporting.
+   */
+  readonly name: string;
+
+  /**
+   * The numeric value of the metric.
+   */
+  readonly value: number;
+
+  /**
+   * Returns a string representation of the metric value, formatted according to the specified locales and options.
+   */
+  toString(): string;
+}
+
+export abstract class MetricValue implements IMetricValue {
   public readonly name: string;
 
   public readonly value: number;
@@ -87,27 +104,3 @@ export abstract class MetricValue {
 }
 
 export default MetricValue;
-
-function isNumber(value: unknown): value is number {
-  return typeof value === 'number' && Number.isFinite(value);
-}
-
-function isNumericString(value: unknown): value is string {
-  if (!isString(value)) {
-    return false;
-  }
-
-  const trimmed = value.trim();
-
-  if (!trimmed) {
-    return false;
-  }
-
-  return Number.isFinite(Number(trimmed));
-}
-
-function assertNumericString(value: unknown, message?: string): asserts value is string {
-  if (!isNumericString(value)) {
-    throw new TypeError(message ?? `${String(value)} is not a valid number string`);
-  }
-}

@@ -1,2 +1,1 @@
-export { default, type MetricFormatArgs } from './MetricValue';
-export type { default as MetricValueClass } from './MetricValue';
+export { default, type MetricFormatArgs, type IMetricValue } from './MetricValue';
