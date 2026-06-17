@@ -1,5 +1,1 @@
-export {
-  default as optionalValue,
-  type OptionalMetricFormatArgs,
-  type OptionalValue,
-} from './OptionalValue';
+export { default, optionalValue } from './OptionalValue';

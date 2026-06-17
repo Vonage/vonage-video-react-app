@@ -1,11 +1,11 @@
-import type { MetricFormatArgs } from '../MetricValue/MetricValue';
+import type { IMetricValue, MetricFormatArgs } from '../MetricValue/MetricValue';
 
 export type Resolution = {
   width: number | null;
   height: number | null;
 };
 
-export class ResolutionValue {
+export class ResolutionValue implements IMetricValue<Resolution> {
   public readonly name = 'ResolutionValue';
 
   public readonly value: Resolution;

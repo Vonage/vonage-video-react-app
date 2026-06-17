@@ -1,8 +1,8 @@
-import MetricValue, { type MetricFormatArgs } from '../MetricValue/MetricValue';
+import MetricValue, { type MetricFormatArgs, type IMetricValue } from '../MetricValue';
 
 const emptyValue = '–';
 
-export class BitrateValue extends MetricValue {
+export class BitrateValue extends MetricValue implements IMetricValue {
   constructor(value: number | string, args?: MetricFormatArgs) {
     super({ name: 'BitrateValue', value, ...args });
   }

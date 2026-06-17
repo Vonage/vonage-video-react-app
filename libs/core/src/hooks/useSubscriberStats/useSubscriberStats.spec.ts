@@ -1,67 +1,38 @@
-import { describe, expect, it, vi, beforeEach, type Mock } from 'vitest';
-import { renderHook } from '@testing-library/react';
+import { describe, expect, it, vi } from 'vitest';
+import { renderHook as renderHookBase, waitFor } from '@testing-library/react';
 import type { Subscriber, SubscriberStats } from '@vonage/client-sdk-video';
-import { runtime$ } from '@core/stores';
-import useSubscriberStats from '.';
-import { SubscriberInspectorStatistics } from './useSubscriberStats';
-
-vi.mock('@core/stores', async () => {
-  const actual = await vi.importActual<typeof import('@core/stores')>('@core/stores');
-
-  return {
-    ...actual,
-    runtime$: {
-      ...actual.runtime$,
-      useQuery: vi.fn(),
-    },
-  };
-});
-
-function makeSubscriber(stats: SubscriberStats | null, error?: Error): Subscriber {
-  return {
-    id: 'subscriber-1',
-    stream: {
-      name: 'Test Subscriber',
-    },
-    getStats: vi.fn((callback) => {
-      callback(error ?? null, stats);
-    }),
-  } as unknown as Subscriber;
-}
-
-async function executeQueryFn(subscriber: Subscriber | null) {
-  let queryFn: (() => Promise<unknown>) | undefined;
-
-  (runtime$.useQuery as Mock).mockImplementation((options) => {
-    queryFn = options.queryFn;
-    return {};
-  });
-
-  renderHook(() => useSubscriberStats({ subscriber }));
-
-  return queryFn?.();
-}
+import useSubscriberStats, { SubscriberInspectorStatistics } from './useSubscriberStats';
+import { ProviderOptions, makeTestProvider, providers } from '@core-test';
+import SuspenseBoundary from '@web/components/SuspenseBoundary';
+import { composeProviders } from '@web/helpers';
+import { StrictMode } from 'react';
+import { type UseQueryResult } from '@tanstack/react-query';
+import { wait } from '@common/execution';
 
 describe('useSubscriberStats', () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-  });
+  it('returns null when subscriber is null or getStats returns error', async () => {
+    expect.assertions(2);
 
-  it('returns null when subscriber is null', async () => {
-    const result = await executeQueryFn(null);
+    let subscriber = makeSubscriber(null, undefined);
 
-    expect(result).toBeNull();
-  });
+    let { result } = renderHook(() => useSubscriberStats({ subscriber }));
 
-  it('returns null when getStats returns error', async () => {
-    const subscriber = makeSubscriber(null, new Error('stats error'));
+    let data = await waitForStatsToLoad(result);
 
-    const result = await executeQueryFn(subscriber);
+    expect(data).toBeNull();
 
-    expect(result).toBeNull();
+    subscriber = makeSubscriber(null, new Error('stats error'));
+
+    ({ result } = renderHook(() => useSubscriberStats({ subscriber })));
+
+    data = await waitForStatsToLoad(result);
+
+    expect(data).toBeNull();
   });
 
   it('returns subscriber statistics', async () => {
+    expect.assertions(8);
+
     const subscriber = makeSubscriber({
       audio: {
         packetsReceived: 100,
@@ -84,15 +55,27 @@ describe('useSubscriberStats', () => {
       },
     } as SubscriberStats);
 
-    const result = await executeQueryFn(subscriber);
+    const { result } = renderHook(() => useSubscriberStats({ subscriber }));
 
-    expect(result).toMatchObject({
+    const data = await waitForStatsToLoad(result);
+
+    expect(data).toMatchObject({
       id: 'subscriber-1',
       title: 'Test Subscriber',
     });
+
+    expect(data.audio.bytesReceived.toString()).toBe('1,000');
+    expect(data.video.codec).toBe('H264');
+    expect(data.video.frameRate.toString()).toBe('30 fps');
+    expect(data.video.decodedFrameRate.toString()).toBe('30 fps');
+    expect(data.video.bitrateBps.toString()).toBe('500.0 kbps');
+    expect(data.packetLossRatio.toString()).toBe('1.96%');
+    expect(data.connectionEstimatedBandwidthBps.toString()).toBe('1.00 Mbps');
   });
 
   it('returns fallback bandwidth when value is negative', async () => {
+    expect.assertions(1);
+
     const subscriber = makeSubscriber({
       audio: {},
       video: {},
@@ -103,8 +86,60 @@ describe('useSubscriberStats', () => {
       },
     } as SubscriberStats);
 
-    const result = (await executeQueryFn(subscriber)) as SubscriberInspectorStatistics;
+    const { result } = renderHook(() => useSubscriberStats({ subscriber }));
 
-    expect(result.packetLossRatio.toString()).toBe('-');
+    const data = await waitForStatsToLoad(result);
+
+    expect(data.packetLossRatio.toString()).toBe('-');
   });
 });
+
+function makeSubscriber(stats: SubscriberStats | null, error?: Error): Subscriber {
+  return {
+    id: 'subscriber-1',
+    stream: {
+      name: 'Test Subscriber',
+    },
+    getStats: vi.fn(async (callback) => {
+      await wait(1);
+
+      callback(error ?? null, stats);
+    }),
+  } as unknown as Subscriber;
+}
+
+async function waitForStatsToLoad(args: {
+  current: UseQueryResult<SubscriberInspectorStatistics | null, unknown>;
+}) {
+  await waitFor(() => {
+    if (args.current.isLoading || args.current.isFetching) {
+      throw new Error('Still loading');
+    }
+
+    if (args.current.data === undefined) {
+      throw new Error('Stats not loaded');
+    }
+  });
+
+  return args.current.data!;
+}
+type RenderOptions = {
+  runtimeContext?: ProviderOptions['RuntimeContext'];
+};
+
+function renderHook<Result, Props>(
+  render: (initialProps: Props) => Result,
+  { runtimeContext }: RenderOptions = {}
+) {
+  const { wrapper: MainWrapper, ...context } = makeTestProvider([providers.runtime], {
+    runtimeContext,
+  });
+
+  const wrapper = composeProviders(StrictMode, SuspenseBoundary, MainWrapper);
+  const result = renderHookBase(render, { wrapper });
+
+  return {
+    ...context,
+    ...result,
+  };
+}

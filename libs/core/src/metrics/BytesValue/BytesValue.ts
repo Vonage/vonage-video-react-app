@@ -1,6 +1,6 @@
-import MetricValue, { type MetricFormatArgs } from '../MetricValue/MetricValue';
+import MetricValue, { type MetricFormatArgs, type IMetricValue } from '../MetricValue';
 
-export class BytesValue extends MetricValue {
+export class BytesValue extends MetricValue implements IMetricValue {
   constructor(value: number | string, args?: MetricFormatArgs) {
     super({ name: 'BytesValue', value, ...args });
   }

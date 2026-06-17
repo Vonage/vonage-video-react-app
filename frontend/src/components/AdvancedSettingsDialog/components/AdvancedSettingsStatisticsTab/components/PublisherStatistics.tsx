@@ -10,6 +10,8 @@ interface PublisherStatisticsProps {
   publisher: Publisher;
 }
 
+const optionalValueArgs = { fallback: '–' };
+
 const PublisherStatistics = ({ publisher }: PublisherStatisticsProps): ReactElement => {
   const { t } = useTranslation();
 
@@ -27,15 +29,15 @@ const PublisherStatistics = ({ publisher }: PublisherStatisticsProps): ReactElem
     return [
       {
         label: t('advancedSettings.statistics.metrics.packetsSent'),
-        value: data.audio.packetsSent.toString(),
+        value: data.audio.packetsSent,
       },
       {
         label: t('advancedSettings.statistics.metrics.packetsLostSent'),
-        value: data.audio.packetsLost.toString(),
+        value: data.audio.packetsLost,
       },
       {
         label: t('advancedSettings.statistics.metrics.bytesSent'),
-        value: data.audio.bytesSent.toString(),
+        value: data.audio.bytesSent,
       },
     ];
   }, [data, t]);
@@ -48,52 +50,48 @@ const PublisherStatistics = ({ publisher }: PublisherStatisticsProps): ReactElem
     return [
       {
         label: t('advancedSettings.statistics.metrics.resolution'),
-        value: data.resolution.toString(),
+        value: data.resolution,
       },
       {
         label: t('advancedSettings.statistics.metrics.frameRate'),
-        value: data.frameRate.toString(),
+        value: data.frameRate,
       },
       {
         label: t('advancedSettings.statistics.metrics.bitrate'),
-        value: data.bitrateBps.toString(),
+        value: data.bitrateBps,
       },
       {
         label: t('advancedSettings.statistics.metrics.packetLoss'),
-        value: data.packetLossRatio.toString(),
+        value: data.packetLossRatio,
       },
       {
         label: t('advancedSettings.statistics.metrics.packetsSent'),
-        value: data.video.packetsSent.toString(),
+        value: data.video.packetsSent,
       },
       {
         label: t('advancedSettings.statistics.metrics.packetsLostSent'),
-        value: data.video.packetsLost.toString(),
+        value: data.video.packetsLost,
       },
       {
         label: t('advancedSettings.statistics.metrics.bytesSent'),
-        value: data.video.bytesSent.toString(),
+        value: data.video.bytesSent,
       },
       {
         label: t('advancedSettings.statistics.metrics.estimatedBandwidth'),
-        value: data.connectionEstimatedBandwidthBps.toString(),
+        value: data.connectionEstimatedBandwidthBps,
       },
+
       ...(data.videoLayers ?? []).map((layer, index) => ({
         label: t('advancedSettings.statistics.metrics.videoLayer', {
           index: index + 1,
           codec: layer.codec,
         }),
+
         value: [
-          optionalValue(
-            ResolutionValue,
-            { width: layer.width, height: layer.height },
-            { fallback: '–' }
-          ).toString(),
-          optionalValue(FrameRateValue, layer.encodedFrameRate, { fallback: '–' }).toString(),
-          optionalValue(BitrateValue, layer.bitrate, { fallback: '–' }).toString(),
-          layer.qualityLimitationReason && layer.qualityLimitationReason !== 'none'
-            ? layer.qualityLimitationReason
-            : null,
+          optionalValue(ResolutionValue, layer, optionalValueArgs),
+          optionalValue(FrameRateValue, layer.encodedFrameRate, optionalValueArgs),
+          optionalValue(BitrateValue, layer.bitrate, optionalValueArgs),
+          layer.qualityLimitationReason !== 'none' ? layer.qualityLimitationReason : null,
         ]
           .filter(Boolean)
           .join(' · '),

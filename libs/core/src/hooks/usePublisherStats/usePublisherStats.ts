@@ -4,21 +4,15 @@ import {
   BitrateValue,
   FrameRateValue,
   IntegerValue,
+  integerValue,
   optionalValue,
   OptionalValue,
   PacketLossValue,
   ResolutionValue,
 } from '@core/metrics';
-import type { Publisher, VideoLayerStats } from '@vonage/client-sdk-video';
+import type { Publisher, PublisherStatsArr, VideoLayerStats } from '@vonage/client-sdk-video';
 import useStableRef from '@web/hooks/useStableRef/useStableRef';
-import {
-  aggregateOutgoingTrackTotals,
-  calculateBitrateFromDelta,
-  calculatePacketLossRatio,
-  readPublisherFrameRate,
-  readPublisherResolution,
-  readPublisherStatsSafely,
-} from './usePublisherStats.utils';
+import { isNil } from '@common/assertions';
 
 const POLL_INTERVAL_MS = 2000;
 
@@ -50,24 +44,19 @@ const usePublisherStats = <Selected = PublisherInspectorStatistics | null>({
   publisher,
   publisherStatisticsEnabled,
 }: UsePublisherStatsProps<Selected>) => {
-  const previousPublisherVideoSampleRef = useStableRef<{
-    bytesSent: number;
-    timestamp: number;
-  } | null>(() => null, []);
+  const previousPublisherVideoSampleRef = useStableRef<PreviousPublisherVideoSample | null>(
+    () => null,
+    []
+  );
 
   return runtime$.useQuery({
     queryKey: ['publisherStats', publisher?.id, publisherStatisticsEnabled],
     refetchInterval: POLL_INTERVAL_MS,
     queryFn: async () => {
-      if (!publisher) {
-        return null;
-      }
+      if (!publisher) return null;
 
-      const publisherStatsContainers = await readPublisherStatsSafely(publisher);
-
-      if (!publisherStatsContainers || publisherStatsContainers.length === 0) {
-        return null;
-      }
+      const publisherStatsContainers = await getPublisherStats(publisher);
+      if (!publisherStatsContainers?.length) return null;
 
       const audioTotals = aggregateOutgoingTrackTotals(
         publisherStatsContainers,
@@ -80,36 +69,38 @@ const usePublisherStats = <Selected = PublisherInspectorStatistics | null>({
       );
 
       const firstPublisherStatsContainer = publisherStatsContainers[0];
-      const frameRate = readPublisherFrameRate(firstPublisherStatsContainer?.stats);
-      const resolution = readPublisherResolution(publisher);
+      const stats = firstPublisherStatsContainer?.stats;
+
+      const frameRate = stats?.video?.frameRate ?? null;
+
+      const width = publisher.videoWidth();
+      const height = publisher.videoHeight();
+      const resolution = isNil(width) || isNil(height) ? null : { width, height };
+
       const connectionEstimatedBandwidthValues = publisherStatsContainers
         .map((container) => container.stats.mediaLink?.transport?.connectionEstimatedBandwidth)
-        .filter((value): value is number => typeof value === 'number');
-      const connectionEstimatedBandwidthBps = (() => {
-        if (connectionEstimatedBandwidthValues.length === 0) {
-          return null;
-        }
+        .filter((value): value is number => typeof value === 'number' && value >= 0);
 
-        const maxBandwidth = Math.max(...connectionEstimatedBandwidthValues);
-        return maxBandwidth === undefined || maxBandwidth < 0 ? null : maxBandwidth;
-      })();
+      const connectionEstimatedBandwidthBps = connectionEstimatedBandwidthValues?.length
+        ? Math.max(...connectionEstimatedBandwidthValues)
+        : null;
+
       const packetLossRatio = calculatePacketLossRatio({
         packetsLost: videoTotals.packetsLost,
         packetsSuccessful: videoTotals.packetsSent,
       });
 
-      const currentTimestamp = Date.now();
       // Bitrate is intentionally null on the first poll because we need two samples
-      // to compute a delta. It will resolve on the second tick (~1s after panel open).
+      // to compute a delta. It will resolve on the second tick.
       const bitrateBps = calculateBitrateFromDelta({
         currentBytesSent: videoTotals.bytesSent.value,
-        currentTimestamp,
+        currentTimestamp: stats.timestamp,
         previousSample: previousPublisherVideoSampleRef.current,
       });
 
       previousPublisherVideoSampleRef.current = {
         bytesSent: videoTotals.bytesSent.value,
-        timestamp: currentTimestamp,
+        timestamp: stats.timestamp,
       };
 
       return {
@@ -124,11 +115,84 @@ const usePublisherStats = <Selected = PublisherInspectorStatistics | null>({
           publisherStatisticsEnabled ? connectionEstimatedBandwidthBps : null,
           { fallback: '-' }
         ),
-        videoLayers: firstPublisherStatsContainer?.stats.video?.layers ?? null,
+        videoLayers: stats?.video?.layers ?? null,
       };
     },
     ...queryOptions,
   });
 };
+
+type PreviousPublisherVideoSample = {
+  bytesSent: number;
+  timestamp: number;
+};
+
+function getPublisherStats(publisher: Publisher): Promise<PublisherStatsArr | null> {
+  return new Promise((resolve) => {
+    publisher.getStats((error, stats) => {
+      if (error) return resolve(null);
+      resolve(stats ?? null);
+    });
+  });
+}
+
+function aggregateOutgoingTrackTotals(
+  publisherStatsContainers: PublisherStatsArr,
+  getTrack: (container: PublisherStatsArr[number]) => {
+    packetsSent: number;
+    packetsLost: number;
+    bytesSent: number;
+  }
+): OutgoingTrackTotals {
+  return publisherStatsContainers.reduce<OutgoingTrackTotals>(
+    (accumulator, container) => {
+      const track = getTrack(container);
+
+      return {
+        packetsSent: integerValue(accumulator.packetsSent.value + (track?.packetsSent ?? 0)),
+        packetsLost: integerValue(accumulator.packetsLost.value + (track?.packetsLost ?? 0)),
+        bytesSent: integerValue(accumulator.bytesSent.value + (track?.bytesSent ?? 0)),
+      };
+    },
+    {
+      packetsSent: integerValue(0),
+      packetsLost: integerValue(0),
+      bytesSent: integerValue(0),
+    }
+  );
+}
+
+function calculateBitrateFromDelta({
+  currentBytesSent,
+  currentTimestamp,
+  previousSample,
+}: {
+  currentBytesSent: number;
+  currentTimestamp: number;
+  previousSample: PreviousPublisherVideoSample | null;
+}): number | null {
+  if (!previousSample) return null;
+
+  const elapsedMilliseconds = currentTimestamp - previousSample.timestamp;
+  const deltaBytes = currentBytesSent - previousSample.bytesSent;
+
+  const canCalculateBitrate = elapsedMilliseconds > 0 && deltaBytes >= 0;
+  if (!canCalculateBitrate) return null;
+
+  return Math.round((deltaBytes * 8 * 1000) / elapsedMilliseconds);
+}
+
+function calculatePacketLossRatio({
+  packetsLost,
+  packetsSuccessful,
+}: {
+  packetsLost: IntegerValue;
+  packetsSuccessful: IntegerValue;
+}): number | null {
+  const totalPackets = packetsLost.value + packetsSuccessful.value;
+  if (totalPackets <= 0) return null;
+
+  return packetsLost.value / totalPackets;
+}
 
 export default usePublisherStats;

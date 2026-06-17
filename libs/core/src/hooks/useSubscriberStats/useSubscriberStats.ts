@@ -5,16 +5,12 @@ import {
   ResolutionValue,
   FrameRateValue,
   IntegerValue,
+  integerValue,
   OptionalValue,
   optionalValue,
   PacketLossValue,
 } from '@core/metrics';
-import type { Subscriber } from '@vonage/client-sdk-video';
-import {
-  calculatePacketLossRatio,
-  getSafeIncomingTrackTotals,
-  readSubscriberStatsSafely,
-} from './useSubscriberStats.utils';
+import type { Subscriber, SubscriberStats } from '@vonage/client-sdk-video';
 
 const POLL_INTERVAL_MS = 2000;
 
@@ -59,32 +55,40 @@ const useSubscriberStats = <Selected = SubscriberInspectorStatistics | null>({
         return null;
       }
 
-      const stats = await readSubscriberStatsSafely(subscriber);
+      const stats = await getSubscriberStats(subscriber);
 
       if (!stats) {
         return null;
       }
 
-      const audio = getSafeIncomingTrackTotals(stats.audio);
-      const video = getSafeIncomingTrackTotals(stats.video);
+      const audio: IncomingTrackTotals = {
+        packetsReceived: integerValue(stats.audio?.packetsReceived ?? 0),
+        packetsLost: integerValue(stats.audio?.packetsLost ?? 0),
+        bytesReceived: integerValue(stats.audio?.bytesReceived ?? 0),
+      };
+
+      const video: IncomingTrackTotals = {
+        packetsReceived: integerValue(stats.video?.packetsReceived ?? 0),
+        packetsLost: integerValue(stats.video?.packetsLost ?? 0),
+        bytesReceived: integerValue(stats.video?.bytesReceived ?? 0),
+      };
 
       const packetLossRatio = calculatePacketLossRatio({
         packetsLost: video.packetsLost,
         packetsSuccessful: video.packetsReceived,
       });
 
+      const connectionEstimatedBandwidth = stats.mediaLink?.transport?.connectionEstimatedBandwidth;
+
+      const remotePublisherConnectionEstimatedBandwidth =
+        stats.mediaLink?.remotePublisherTransport?.connectionEstimatedBandwidth;
+
       return {
         id: subscriber.id,
         title: subscriber.stream?.name ?? subscriber.id,
-        audio: {
-          packetsReceived: audio.packetsReceived,
-          packetsLost: audio.packetsLost,
-          bytesReceived: audio.bytesReceived,
-        },
+        audio,
         video: {
-          packetsReceived: video.packetsReceived,
-          packetsLost: video.packetsLost,
-          bytesReceived: video.bytesReceived,
+          ...video,
           resolution: optionalValue(ResolutionValue, stats.video),
           codec: stats.video?.codec ?? null,
           frameRate: optionalValue(FrameRateValue, stats.video?.frameRate, { fallback: '-' }),
@@ -106,20 +110,19 @@ const useSubscriberStats = <Selected = SubscriberInspectorStatistics | null>({
         packetLossRatio: optionalValue(PacketLossValue, packetLossRatio, { fallback: '-' }),
         connectionEstimatedBandwidthBps: optionalValue(
           BitrateValue,
-          stats.mediaLink?.transport?.connectionEstimatedBandwidth === undefined ||
-            stats.mediaLink?.transport?.connectionEstimatedBandwidth < 0
+          connectionEstimatedBandwidth === undefined || connectionEstimatedBandwidth < 0
             ? null
-            : stats.mediaLink?.transport?.connectionEstimatedBandwidth,
+            : connectionEstimatedBandwidth,
           {
             fallback: '-',
           }
         ),
         remotePublisherConnectionEstimatedBandwidthBps: optionalValue(
           BitrateValue,
-          stats.mediaLink?.remotePublisherTransport?.connectionEstimatedBandwidth === undefined ||
-            stats.mediaLink?.remotePublisherTransport?.connectionEstimatedBandwidth < 0
+          remotePublisherConnectionEstimatedBandwidth === undefined ||
+            remotePublisherConnectionEstimatedBandwidth < 0
             ? null
-            : stats.mediaLink?.remotePublisherTransport?.connectionEstimatedBandwidth,
+            : remotePublisherConnectionEstimatedBandwidth,
           {
             fallback: '-',
           }
@@ -129,5 +132,30 @@ const useSubscriberStats = <Selected = SubscriberInspectorStatistics | null>({
     ...queryOptions,
   });
 };
+
+function getSubscriberStats(subscriber: Subscriber): Promise<SubscriberStats | null> {
+  return new Promise((resolve) => {
+    subscriber.getStats((error, stats) => {
+      if (error) return resolve(null);
+      resolve(stats ?? null);
+    });
+  });
+}
+
+function calculatePacketLossRatio({
+  packetsLost,
+  packetsSuccessful,
+}: {
+  packetsLost: IntegerValue;
+  packetsSuccessful: IntegerValue;
+}): number | null {
+  const totalPackets = packetsLost.value + packetsSuccessful.value;
+
+  if (totalPackets <= 0) {
+    return null;
+  }
+
+  return packetsLost.value / totalPackets;
+}
 
 export default useSubscriberStats;

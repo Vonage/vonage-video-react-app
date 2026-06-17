@@ -1,6 +1,6 @@
-import MetricValue, { type MetricFormatArgs } from '../MetricValue/MetricValue';
+import MetricValue, { type MetricFormatArgs, type IMetricValue } from '../MetricValue';
 
-export class DurationValue extends MetricValue {
+export class DurationValue extends MetricValue implements IMetricValue {
   constructor(value: number | string, args?: MetricFormatArgs) {
     super({ name: 'DurationValue', value, ...args });
   }

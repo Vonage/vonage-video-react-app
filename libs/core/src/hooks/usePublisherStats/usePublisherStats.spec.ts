@@ -1,29 +1,413 @@
-import { describe, expect, it, vi, beforeEach, afterEach, type Mock } from 'vitest';
-import { renderHook } from '@testing-library/react';
-import type { Publisher, PublisherStatsArr } from '@vonage/client-sdk-video';
-import usePublisherStats from './usePublisherStats';
+import { describe, expect, it, vi } from 'vitest';
+import { renderHook as renderHookBase, waitFor, act } from '@testing-library/react';
+import type { Publisher, PublisherStatsArr, VideoLayerStats } from '@vonage/client-sdk-video';
+import usePublisherStats, { PublisherInspectorStatistics } from './usePublisherStats';
+import { wait } from '@common/execution';
+import { ProviderOptions, makeTestProvider, providers } from '@core-test';
+import SuspenseBoundary from '@web/components/SuspenseBoundary';
+import { composeProviders } from '@web/helpers';
+import { StrictMode } from 'react';
+import { UseQueryResult } from '@tanstack/react-query';
+import { DeepPartial } from '@common/types';
 
-vi.mock('@core/stores', async () => {
-  const actual = await vi.importActual<typeof import('@core/stores')>('@core/stores');
-  return {
-    ...actual,
-    runtime$: {
-      ...actual.runtime$,
-      useQuery: vi.fn(),
-    },
-  };
+describe('usePublisherStats', () => {
+  describe('resolution', () => {
+    it('maps valid publisher dimensions and video frame rate', async () => {
+      expect.assertions(2);
+
+      const publisher = makePublisher(
+        [
+          makeStatsContainer({
+            video: {
+              frameRate: 30,
+            },
+          }),
+        ],
+        {
+          videoWidth: 1280,
+          videoHeight: 720,
+        }
+      );
+
+      const { result } = renderHook(() =>
+        usePublisherStats({
+          publisher,
+          publisherStatisticsEnabled: true,
+          queryOptions: {
+            refetchInterval: false,
+          },
+        })
+      );
+
+      const stats = await waitForStatsToLoad(result);
+
+      // optionalValue wraps the value; the fallback '-' should NOT be used
+      expect(stats.resolution.value).toEqual({
+        width: 1280,
+        height: 720,
+      });
+
+      expect(stats.frameRate.value).toBe(30);
+    });
+  });
+
+  describe('frameRate', () => {
+    it('does NOT treat 0 fps as missing because it is a valid value', async () => {
+      expect.assertions(1);
+
+      const publisher = makePublisher([
+        makeStatsContainer({
+          video: {
+            frameRate: 0,
+          },
+        }),
+      ]);
+
+      const { result } = renderHook(() =>
+        usePublisherStats({
+          publisher,
+          publisherStatisticsEnabled: true,
+          queryOptions: {
+            refetchInterval: false,
+          },
+        })
+      );
+
+      const stats = await waitForStatsToLoad(result);
+
+      // 0 fps is a real value; the formatted output should not be the fallback '-'
+      expect(stats.frameRate.value).toBe(0);
+    });
+  });
+
+  describe('bitrateBps', () => {
+    it('calculates bitrate correctly when a previous sample is available', async () => {
+      expect.assertions(3);
+
+      const publisher = makePublisher([
+        makeStatsContainer({
+          video: {
+            bytesSent: 0,
+          },
+          timestamp: 0,
+        }),
+      ]);
+
+      const { result } = renderHook(() =>
+        usePublisherStats({
+          publisher,
+          publisherStatisticsEnabled: true,
+          queryOptions: {
+            refetchInterval: false,
+            staleTime: 0,
+          },
+        })
+      );
+
+      let data = await waitForStatsToLoad(result);
+
+      // first render there is no previous sample, so the bitrate should be the fallback '-'
+      expect(data.bitrateBps.toString()).toBe('-');
+
+      vi.spyOn(publisher, 'getStats').mockImplementationOnce((callback) => {
+        callback(undefined, [
+          makeStatsContainer({
+            video: {
+              bytesSent: 1000,
+            },
+            timestamp: 1000,
+          }),
+        ]);
+      });
+
+      await act(async () => {
+        await result.current.refetch();
+      });
+
+      data = await waitForStatsToLoad(result);
+
+      expect(data.bitrateBps.toString()).toBe('8.0 kbps');
+
+      expect(data.bitrateBps.value).toBe(8000);
+    });
+  });
+
+  describe('packetLossRatio', () => {
+    it('calculates packet loss ratio from aggregated video packet totals', async () => {
+      expect.assertions(3);
+
+      // 4 lost out of 204 total means ~1.96 %
+      const container1 = makeStatsContainer({
+        video: {
+          packetsSent: 100,
+          packetsLost: 2,
+        },
+      });
+
+      const container2 = makeStatsContainer({
+        video: {
+          packetsSent: 100,
+          packetsLost: 2,
+        },
+      });
+
+      const publisher = makePublisher([container1, container2]);
+
+      const { result } = renderHook(() =>
+        usePublisherStats({
+          publisher,
+          publisherStatisticsEnabled: true,
+          queryOptions: {
+            refetchInterval: false,
+          },
+        })
+      );
+
+      const stats = await waitForStatsToLoad(result);
+
+      expect(stats.video.packetsSent.value).toBe(200);
+      expect(stats.video.packetsLost.value).toBe(4);
+      expect(stats.packetLossRatio.value).toBeCloseTo(4 / 204);
+    });
+  });
+
+  describe('connectionEstimatedBandwidthBps', () => {
+    it('picks the maximum valid bandwidth across multiple containers when publisherStatisticsEnabled is true', async () => {
+      expect.assertions(1);
+
+      const container1 = makeStatsContainer({
+        mediaLink: {
+          transport: {
+            connectionEstimatedBandwidth: -1,
+          },
+        },
+      });
+
+      const container2 = makeStatsContainer({
+        mediaLink: {
+          transport: {
+            connectionEstimatedBandwidth: 500_000,
+          },
+        },
+      });
+
+      const container3 = makeStatsContainer({
+        mediaLink: {
+          transport: {
+            connectionEstimatedBandwidth: 2_000_000,
+          },
+        },
+      });
+
+      const publisher = makePublisher([container1, container2, container3]);
+
+      const { result } = renderHook(() =>
+        usePublisherStats({
+          publisher,
+          publisherStatisticsEnabled: true,
+          queryOptions: {
+            refetchInterval: false,
+          },
+        })
+      );
+
+      const stats = await waitForStatsToLoad(result);
+
+      expect(stats.connectionEstimatedBandwidthBps.value).toBe(2_000_000);
+    });
+
+    it('returns fallback when publisherStatisticsEnabled is false', async () => {
+      expect.assertions(1);
+
+      const publisher = makePublisher([
+        makeStatsContainer({
+          mediaLink: {
+            transport: {
+              connectionEstimatedBandwidth: 2_000_000,
+            },
+          },
+        }),
+      ]);
+
+      const { result } = renderHook(() =>
+        usePublisherStats({
+          publisher,
+          publisherStatisticsEnabled: false,
+          queryOptions: {
+            refetchInterval: false,
+          },
+        })
+      );
+
+      const stats = await waitForStatsToLoad(result);
+
+      expect(stats.connectionEstimatedBandwidthBps.toString()).toBe('-');
+    });
+  });
+
+  describe('videoLayers', () => {
+    it('returns videoLayers from the first stats container', async () => {
+      expect.assertions(1);
+
+      const layers = [
+        {
+          spatialLayerId: 0,
+        },
+        {
+          spatialLayerId: 1,
+        },
+      ] as unknown as VideoLayerStats[];
+
+      const publisher = makePublisher([
+        makeStatsContainer({
+          video: {
+            layers,
+          },
+        }),
+      ]);
+
+      const { result } = renderHook(() =>
+        usePublisherStats({
+          publisher,
+          publisherStatisticsEnabled: true,
+          queryOptions: {
+            refetchInterval: false,
+          },
+        })
+      );
+
+      const stats = await waitForStatsToLoad(result);
+
+      expect(stats.videoLayers).toEqual(layers);
+    });
+
+    it('returns null when video layers are absent', async () => {
+      expect.assertions(1);
+
+      const containerWithoutLayers = {
+        stats: {
+          timestamp: 0,
+          audio: {
+            packetsSent: 100,
+            packetsLost: 0,
+            bytesSent: 1000,
+          },
+          video: {
+            packetsSent: 100,
+            packetsLost: 0,
+            bytesSent: 5000,
+            frameRate: 30,
+          },
+          mediaLink: {
+            transport: {
+              connectionEstimatedBandwidth: 1_000_000,
+            },
+          },
+        },
+      } as unknown as PublisherStatsArr[number];
+
+      const publisher = makePublisher([containerWithoutLayers]);
+
+      const { result } = renderHook(() =>
+        usePublisherStats({
+          publisher,
+          publisherStatisticsEnabled: true,
+          queryOptions: {
+            refetchInterval: false,
+          },
+        })
+      );
+
+      const stats = await waitForStatsToLoad(result);
+
+      expect(stats.videoLayers).toBeNull();
+    });
+  });
+
+  describe('missing / partial track data', () => {
+    it('treats missing audio track fields as zero', async () => {
+      expect.assertions(3);
+
+      const containerWithNoAudio = {
+        stats: {
+          timestamp: 0,
+          audio: {},
+          video: {
+            packetsSent: 100,
+            packetsLost: 0,
+            bytesSent: 5000,
+            frameRate: 30,
+            layers: [],
+          },
+          mediaLink: {
+            transport: {
+              connectionEstimatedBandwidth: 1_000_000,
+            },
+          },
+        },
+      } as unknown as PublisherStatsArr[number];
+
+      const publisher = makePublisher([containerWithNoAudio]);
+
+      const { result } = renderHook(() =>
+        usePublisherStats({
+          publisher,
+          publisherStatisticsEnabled: true,
+          queryOptions: {
+            refetchInterval: false,
+          },
+        })
+      );
+
+      const stats = await waitForStatsToLoad(result);
+
+      expect(stats.audio.packetsSent.value).toBe(0);
+      expect(stats.audio.packetsLost.value).toBe(0);
+      expect(stats.audio.bytesSent.value).toBe(0);
+    });
+  });
 });
 
-vi.mock('@web/hooks/useStableRef/useStableRef', () => ({
-  default: vi.fn((initializer: () => unknown) => ({ current: initializer() })),
-}));
+type RenderOptions = {
+  runtimeContext?: ProviderOptions['RuntimeContext'];
+};
 
-import { runtime$ } from '@core/stores';
-import useStableRef from '@web/hooks/useStableRef/useStableRef';
+function renderHook<Result, Props>(
+  render: (initialProps: Props) => Result,
+  { runtimeContext }: RenderOptions = {}
+) {
+  const { wrapper: MainWrapper, ...context } = makeTestProvider([providers.runtime], {
+    runtimeContext,
+  });
+
+  const wrapper = composeProviders(StrictMode, SuspenseBoundary, MainWrapper);
+  const result = renderHookBase(render, { wrapper });
+
+  return {
+    ...context,
+    ...result,
+  };
+}
+
+async function waitForStatsToLoad(args: {
+  current: UseQueryResult<PublisherInspectorStatistics | null, unknown>;
+}) {
+  await waitFor(() => {
+    if (args.current.isLoading || args.current.isFetching) {
+      throw new Error('Still loading');
+    }
+
+    if (args.current.data === undefined) {
+      throw new Error('Stats not loaded');
+    }
+  });
+
+  return args.current.data!;
+}
 
 /**
  * Builds a minimal Publisher mock whose getStats callback resolves with the
- * provided stats array (or an error when `error` is truthy).
+ * provided stats array or an error when `error` is truthy.
  */
 function makePublisher(
   statsArr: PublisherStatsArr | null = null,
@@ -33,9 +417,13 @@ function makePublisher(
     id: 'publisher-id-1',
     videoWidth: vi.fn().mockReturnValue(options.videoWidth ?? 1280),
     videoHeight: vi.fn().mockReturnValue(options.videoHeight ?? 720),
-    getStats: vi.fn((callback: (error: Error | null, stats: PublisherStatsArr | null) => void) => {
-      callback(options.error ?? null, statsArr);
-    }),
+    getStats: vi.fn(
+      async (callback: (error: Error | null, stats: PublisherStatsArr | null) => void) => {
+        await wait(1);
+
+        callback(options.error ?? null, statsArr);
+      }
+    ),
   } as unknown as Publisher;
 }
 
@@ -43,215 +431,31 @@ function makePublisher(
  * Builds a minimal PublisherStatsArr entry.
  */
 function makeStatsContainer(
-  overrides: {
-    audioPacketsSent?: number;
-    audioPacketsLost?: number;
-    audioBytesSent?: number;
-    videoPacketsSent?: number;
-    videoPacketsLost?: number;
-    videoBytesSent?: number;
-    videoFrameRate?: number | null;
-    videoLayers?: unknown[];
-    connectionEstimatedBandwidth?: number;
-  } = {}
-): PublisherStatsArr[number] {
+  stats: DeepPartial<PublisherStatsArr[0]['stats']> = {}
+): PublisherStatsArr[0] {
   return {
     stats: {
+      timestamp: stats.timestamp ?? 0,
       audio: {
-        packetsSent: overrides.audioPacketsSent ?? 100,
-        packetsLost: overrides.audioPacketsLost ?? 2,
-        bytesSent: overrides.audioBytesSent ?? 5000,
+        packetsSent: 100,
+        packetsLost: 2,
+        bytesSent: 5000,
+        ...stats.audio,
       },
       video: {
-        packetsSent: overrides.videoPacketsSent ?? 200,
-        packetsLost: overrides.videoPacketsLost ?? 4,
-        bytesSent: overrides.videoBytesSent ?? 20000,
-        frameRate: overrides.videoFrameRate ?? 30,
-        layers: overrides.videoLayers ?? [],
+        packetsSent: 200,
+        packetsLost: 4,
+        bytesSent: 20000,
+        frameRate: 30,
+        layers: [],
+        ...stats.video,
       },
       mediaLink: {
         transport: {
-          connectionEstimatedBandwidth: overrides.connectionEstimatedBandwidth ?? 1_000_000,
+          connectionEstimatedBandwidth: 1_000_000,
+          ...stats.mediaLink?.transport,
         },
       },
     },
   } as unknown as PublisherStatsArr[number];
 }
-
-/**
- * Captures the `queryFn` passed to `runtime$.useQuery` and executes it so
- * tests can assert on the resolved value without needing a real React Query
- * provider.
- */
-async function executeQueryFn(
-  publisher: Publisher | null | undefined,
-  publisherStatisticsEnabled: boolean,
-  previousSample: { bytesSent: number; timestamp: number } | null = null
-) {
-  let capturedQueryFn: (() => Promise<unknown>) | undefined;
-
-  (runtime$.useQuery as Mock).mockImplementation((options: { queryFn: () => Promise<unknown> }) => {
-    capturedQueryFn = options.queryFn;
-    return { data: undefined, isLoading: true };
-  });
-
-  (useStableRef as Mock).mockReturnValue({ current: previousSample });
-
-  renderHook(() => usePublisherStats({ publisher, publisherStatisticsEnabled }));
-
-  if (!capturedQueryFn) {
-    throw new Error('queryFn was not captured — runtime$.useQuery was not called');
-  }
-
-  return capturedQueryFn();
-}
-
-describe('usePublisherStats', () => {
-  beforeEach(() => {
-    vi.useFakeTimers();
-    (runtime$.useQuery as Mock).mockReturnValue({ data: null, isLoading: false });
-    (useStableRef as Mock).mockReturnValue({ current: null });
-  });
-
-  afterEach(() => {
-    vi.useRealTimers();
-  });
-
-  describe('resolution', () => {
-    it('includes resolution when publisher reports valid dimensions', async () => {
-      const publisher = makePublisher([makeStatsContainer()], {
-        videoWidth: 1280,
-        videoHeight: 720,
-      });
-
-      const result = (await executeQueryFn(publisher, true)) as Record<string, unknown>;
-
-      expect(result.resolution).toBeDefined();
-      // optionalValue wraps the value; the fallback '-' should NOT be used
-      expect((result.resolution as { value: unknown }).value).not.toBe('-');
-    });
-  });
-
-  describe('frameRate', () => {
-    it('includes frameRate when stats contain a valid frame rate', async () => {
-      const publisher = makePublisher([makeStatsContainer({ videoFrameRate: 30 })]);
-
-      const result = (await executeQueryFn(publisher, true)) as Record<string, unknown>;
-
-      expect(result.frameRate).toBeDefined();
-      expect((result.frameRate as { formatted: string }).formatted).not.toBe('-');
-    });
-
-    it('does NOT treat 0 fps as missing — it is a valid value', async () => {
-      const publisher = makePublisher([makeStatsContainer({ videoFrameRate: 0 })]);
-
-      const result = (await executeQueryFn(publisher, true)) as Record<string, unknown>;
-
-      // 0 fps is a real value; the formatted output should not be the fallback '-'
-      expect((result.frameRate as { formatted: string }).formatted).not.toBe('-');
-    });
-  });
-
-  describe('bitrateBps', () => {
-    it('calculates bitrate correctly when a previous sample is available', async () => {
-      const previousSample = { bytesSent: 0, timestamp: Date.now() - 1000 };
-      const publisher = makePublisher([makeStatsContainer({ videoBytesSent: 1000 })]);
-
-      // 1000 bytes in 1000 ms → 8000 bps
-      const result = (await executeQueryFn(publisher, true, previousSample)) as Record<
-        string,
-        unknown
-      >;
-
-      expect((result.bitrateBps as { formatted: string }).formatted).not.toBe('-');
-    });
-  });
-
-  describe('packetLossRatio', () => {
-    it('calculates packet loss ratio correctly', async () => {
-      // 4 lost out of 204 total → ~1.96 %
-      const publisher = makePublisher([
-        makeStatsContainer({ videoPacketsSent: 200, videoPacketsLost: 4 }),
-      ]);
-
-      const result = (await executeQueryFn(publisher, true)) as Record<string, unknown>;
-
-      expect((result.packetLossRatio as { formatted: string }).formatted).not.toBe('-');
-    });
-  });
-
-  describe('connectionEstimatedBandwidthBps', () => {
-    it('includes bandwidth estimate when publisherStatisticsEnabled is true', async () => {
-      const publisher = makePublisher([
-        makeStatsContainer({ connectionEstimatedBandwidth: 2_000_000 }),
-      ]);
-
-      const result = (await executeQueryFn(publisher, true)) as Record<string, unknown>;
-
-      expect((result.connectionEstimatedBandwidthBps as { formatted: string }).formatted).not.toBe(
-        '-'
-      );
-    });
-
-    it('picks the maximum bandwidth across multiple containers', async () => {
-      const container1 = makeStatsContainer({ connectionEstimatedBandwidth: 500_000 });
-      const container2 = makeStatsContainer({ connectionEstimatedBandwidth: 2_000_000 });
-      const publisher = makePublisher([container1, container2]);
-
-      const result = (await executeQueryFn(publisher, true)) as Record<string, unknown>;
-
-      // The value should reflect the max (2_000_000), not the first container's value
-      expect((result.connectionEstimatedBandwidthBps as { formatted: string }).formatted).not.toBe(
-        '-'
-      );
-    });
-  });
-
-  describe('videoLayers', () => {
-    it('returns videoLayers from the first stats container', async () => {
-      const layers = [{ spatialLayerId: 0 }, { spatialLayerId: 1 }];
-      const publisher = makePublisher([makeStatsContainer({ videoLayers: layers })]);
-
-      const result = (await executeQueryFn(publisher, true)) as Record<string, unknown>;
-
-      expect(result.videoLayers).toEqual(layers);
-    });
-
-    it('returns null when video layers are absent', async () => {
-      const containerWithoutLayers = {
-        stats: {
-          audio: { packetsSent: 100, packetsLost: 0, bytesSent: 1000 },
-          video: { packetsSent: 100, packetsLost: 0, bytesSent: 5000, frameRate: 30 },
-          // no layers property
-          mediaLink: { transport: { connectionEstimatedBandwidth: 1_000_000 } },
-        },
-      } as unknown as PublisherStatsArr[number];
-
-      const publisher = makePublisher([containerWithoutLayers]);
-
-      const result = (await executeQueryFn(publisher, true)) as Record<string, unknown>;
-
-      expect(result.videoLayers).toBeNull();
-    });
-  });
-
-  describe('missing / partial track data', () => {
-    it('treats missing audio track fields as zero', async () => {
-      const containerWithNoAudio = {
-        stats: {
-          audio: {}, // all fields missing
-          video: { packetsSent: 100, packetsLost: 0, bytesSent: 5000, frameRate: 30, layers: [] },
-          mediaLink: { transport: { connectionEstimatedBandwidth: 1_000_000 } },
-        },
-      } as unknown as PublisherStatsArr[number];
-
-      const publisher = makePublisher([containerWithNoAudio]);
-
-      const result = (await executeQueryFn(publisher, true)) as Record<string, unknown>;
-
-      expect((result.audio as { packetsSent: { value: number } }).packetsSent.value).toBe(0);
-      expect((result.audio as { packetsLost: { value: number } }).packetsLost.value).toBe(0);
-      expect((result.audio as { bytesSent: { value: number } }).bytesSent.value).toBe(0);
-    });
-  });
-});

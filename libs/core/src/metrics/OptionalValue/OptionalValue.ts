@@ -1,36 +1,91 @@
-import { isNil } from '@common/assertions';
-import type { MetricFormatArgs } from '../MetricValue/MetricValue';
+import { isNil, isRecord } from '@common/assertions';
+import {
+  type IMetricValue,
+  type MetricFormatArgs as MetricFormatArgsBase,
+} from '../MetricValue/MetricValue';
+import { Any } from '@common/types';
 
-export type OptionalMetricFormatArgs = MetricFormatArgs & {
+type MetricFormatArgs = MetricFormatArgsBase & {
   fallback?: string;
 };
 
-type ValueConstructor<TResult, TValue> = new (value: TValue, args?: MetricFormatArgs) => TResult;
+type IMetricClass<Metric extends IMetricValue<Any>> = new (
+  value: Metric['value'],
+  args?: MetricFormatArgs
+) => Metric;
 
-export type OptionalValueFallback = {
-  value: null;
-  toString(): string;
-};
+class OptionalValue<Metric extends IMetricValue<Any>> implements IMetricValue<Metric | null> {
+  public readonly name = 'OptionalValue';
 
-export type OptionalValue<TResult extends { value: unknown }> =
-  | (TResult & TResult['value'])
-  | OptionalValueFallback;
+  public readonly fallback: string = '';
 
-export function optionalValue<TResult extends { value: unknown }, TValue>(
-  ValueClass: ValueConstructor<TResult, TValue>,
-  value: TValue | null | undefined,
-  args?: OptionalMetricFormatArgs
-): OptionalValue<TResult> {
-  if (isNil(value)) {
-    const fallback = args?.fallback ?? '';
+  public readonly metric: Metric | null;
 
-    return {
-      value: null,
-      toString: () => fallback,
-    };
+  public get value(): Metric['value'] | null {
+    if (isNil(this.metric)) return null;
+    return this.metric.value as Metric['value'];
   }
 
-  return new ValueClass(value, args) as TResult & { value: TValue };
+  constructor(metric: IMetricClass<Metric>, args?: MetricFormatArgs);
+
+  constructor(
+    MetricClass: IMetricClass<Metric>,
+    value: Metric['value'] | null | undefined,
+    args?: MetricFormatArgs
+  );
+
+  constructor(
+    arg1: IMetricClass<Metric> | Metric['value'] | null | undefined,
+    arg2?: Metric['value'] | MetricFormatArgs | null,
+    arg3?: MetricFormatArgs
+  ) {
+    const isMetricValue =
+      isRecord(arg1) && Object.hasOwn(arg1, 'value') && Object.hasOwn(arg1, 'toString');
+
+    const args = (isMetricValue ? arg2 : arg3) as MetricFormatArgs | undefined;
+
+    const metric = (() => {
+      if (isMetricValue) return arg1 as Metric;
+
+      const MetricClass = arg1 as IMetricClass<Metric>;
+      const value = arg2 as Metric['value'] | null | undefined;
+
+      if (isNil(value)) return null;
+
+      return new MetricClass(value, args);
+    })();
+
+    this.metric = metric;
+    this.fallback = args?.fallback ?? '';
+  }
+
+  toString(): string {
+    if (isNil(this.metric)) return this.fallback;
+    return this.metric.toString();
+  }
 }
 
-export default optionalValue;
+/**
+ * Creates an instance of `OptionalValue` for the specified metric class and value.
+ */
+export function optionalValue<Metric extends IMetricValue<Any>>(
+  metric: IMetricClass<Metric>,
+  args?: MetricFormatArgs
+): OptionalValue<Metric>;
+
+/**
+ * Creates an instance of `OptionalValue` for the specified metric.
+ */
+export function optionalValue<Metric extends IMetricValue<Any>>(
+  MetricClass: IMetricClass<Metric>,
+  value: Metric['value'] | null | undefined,
+  args?: MetricFormatArgs
+): OptionalValue<Metric>;
+
+export function optionalValue<Metric extends IMetricValue<Any>>(
+  ...args: ConstructorParameters<typeof OptionalValue<Metric>>
+) {
+  return new OptionalValue(...args);
+}
+
+export default OptionalValue;

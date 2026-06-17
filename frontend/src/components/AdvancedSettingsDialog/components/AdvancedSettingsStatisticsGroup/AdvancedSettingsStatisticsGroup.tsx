@@ -1,11 +1,13 @@
-import { type ReactElement } from 'react';
+import { useMemo, type ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Collapsible } from '@ui/components';
 import LabeledValueList from '@ui/LabeledValueList';
+import type { IMetricValue } from '@core/metrics';
+import type { Any } from '@common/types';
 
 type AdvancedSettingsStatisticItem = {
   label: string;
-  value: string;
+  value: IMetricValue<Any> | string;
 };
 
 type AdvancedSettingsStatisticsGroupProps = {
@@ -23,6 +25,24 @@ const AdvancedSettingsStatisticsGroup = ({
 }: AdvancedSettingsStatisticsGroupProps): ReactElement => {
   const { t } = useTranslation();
   const hasStatistics = audioItems.length > 0 || videoItems.length > 0;
+
+  const formattedAudioItems = useMemo(
+    () =>
+      audioItems.map(({ label, value }) => ({
+        label,
+        value: value.toString(),
+      })),
+    [audioItems]
+  );
+
+  const formattedVideoItems = useMemo(
+    () =>
+      videoItems.map(({ label, value }) => ({
+        label,
+        value: value.toString(),
+      })),
+    [videoItems]
+  );
 
   return (
     <Collapsible
@@ -43,14 +63,14 @@ const AdvancedSettingsStatisticsGroup = ({
             {audioItems.length > 0 && (
               <LabeledValueList
                 title={t('advancedSettings.statistics.sections.audio')}
-                items={audioItems}
+                items={formattedAudioItems}
               />
             )}
 
             {videoItems.length > 0 && (
               <LabeledValueList
                 title={t('advancedSettings.statistics.sections.video')}
-                items={videoItems}
+                items={formattedVideoItems}
               />
             )}
           </div>

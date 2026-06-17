@@ -7,16 +7,16 @@ export type MetricFormatArgs = {
   options?: Intl.NumberFormatOptions;
 };
 
-export interface IMetricValue {
+export interface IMetricValue<TValue = number> {
   /**
    * The name of the metric value, used for identification and error reporting.
    */
   readonly name: string;
 
   /**
-   * The numeric value of the metric.
+   * The value of the metric.
    */
-  readonly value: number;
+  readonly value: TValue;
 
   /**
    * Returns a string representation of the metric value, formatted according to the specified locales and options.
@@ -24,7 +24,7 @@ export interface IMetricValue {
   toString(): string;
 }
 
-export abstract class MetricValue implements IMetricValue {
+export abstract class MetricValue implements IMetricValue<number> {
   public readonly name: string;
 
   public readonly value: number;
