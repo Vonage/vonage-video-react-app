@@ -1,0 +1,17 @@
+libs/core/src/metrics/index.ts
+  h_737cf808c1c597 1-9
+libs/core/src/metrics/OptionalValue/OptionalValue.ts
+  h_737cf808c1c597 2,4-6,8,12-15,39,42,44-48,50,54,56-59,62
+libs/core/src/metrics/BitrateValue/BitrateValue.ts
+  h_737cf808c1c597 1,5
+libs/core/src/metrics/ResolutionValue/ResolutionValue.ts
+  h_737cf808c1c597 1,8
+libs/core/src/metrics/OptionalValue/index.ts
+  h_737cf808c1c597 1
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.8",
+  "base_commit_sha": "eca276c8393e1f1d8ccff86d4f460bb540ea1c01",
+  "prompts": {}
+}
