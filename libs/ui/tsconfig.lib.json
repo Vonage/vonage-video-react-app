@@ -28,5 +28,12 @@
     "../api/src/**/*.ts",
     "../common/srcNode/**/*.ts"
   ],
-  "exclude": ["**/*.spec.*", "**/*.test.*", "../api/**/*.test.*", "../api/**/*.spec.*"]
+  "exclude": [
+    "**/*.spec.*",
+    "**/*.test.*",
+    "../api/**/*.test.*",
+    "../api/**/*.spec.*",
+    "../core/**/*.test.*",
+    "../core/**/*.spec.*"
+  ]
 }

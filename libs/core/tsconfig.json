@@ -1,7 +1,7 @@
 {
   "extends": "../../tsconfig.base.json",
   "files": [],
-  "include": ["eslint.config.mjs", "./test/setup.ts"],
+  "include": ["eslint.config.mjs", "./test/setup.ts", "./test/**/*.ts", "./test/**/*.tsx"],
   "references": [
     {
       "path": "./tsconfig.lib.json"
@@ -13,6 +13,7 @@
   "compilerOptions": {
     "rootDir": "..",
     "baseUrl": "./",
+    "jsx": "react-jsx",
     "moduleResolution": "bundler",
     "composite": true,
     "paths": {
@@ -20,6 +21,8 @@
       "@common/*": ["../common/src/*"],
       "@core": ["./src"],
       "@core/*": ["./src/*"],
+      "@core-test": ["./test"],
+      "@core-test/*": ["./test/*"],
       "@web": ["../common/srcBrowser"],
       "@web/*": ["../common/srcBrowser/*"],
       "@common-test": ["../common/test"],

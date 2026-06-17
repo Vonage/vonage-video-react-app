@@ -14,13 +14,12 @@ sessionRouter.get('/:room', async (req: Request<{ room: string }>, res: Response
     const { room: roomName } = req.params;
     const sessionKey = await getOrCreateSessionKeyFromRoomName({ videoClient, roomName });
 
-    const captionsId = await sessionService.getCaptionsId({ sessionKey });
-
     const { token } = videoClient.joinSession({
       sessionKey,
     });
 
     const session = videoClient.decodeSessionKey({ sessionKey });
+    const captionsId = await sessionService.getCaptionsId({ sessionId: session.sessionId });
 
     res.json({
       ...session,
@@ -103,15 +102,16 @@ sessionRouter.post(
     try {
       const { room: roomName } = req.params;
       const sessionKey = await getSessionKeyFromRoomName({ roomName });
+      const { sessionId } = videoClient.decodeSessionKey({ sessionKey });
 
       const newCaptionCount = await sessionService.incrementCaptionsUserCount({ sessionKey });
 
       if (newCaptionCount === 1) {
         const { captionsId } = await videoClient.enableCaptions({ sessionKey });
-        await sessionService.setCaptionsId({ sessionKey, captionsId });
+        await sessionService.setCaptionsId({ sessionId, captionsId });
         res.status(200).json({ captionsId, status: 200 });
       } else {
-        const captionsId = await sessionService.getCaptionsId({ sessionKey });
+        const captionsId = await sessionService.getCaptionsId({ sessionId });
         res.status(200).json({ captionsId, status: 200 });
       }
     } catch (error: unknown) {
@@ -128,12 +128,13 @@ sessionRouter.post(
     try {
       const { room: roomName, captionsId } = req.params;
       const sessionKey = await getSessionKeyFromRoomName({ roomName });
+      const { sessionId } = videoClient.decodeSessionKey({ sessionKey });
 
       const captionsUserCount = await sessionService.decrementCaptionsUserCount({ sessionKey });
 
       if (captionsUserCount === 0) {
         await videoClient.disableCaptions({ sessionKey, captionsId });
-        await sessionService.setCaptionsId({ sessionKey, captionsId: '' });
+        await sessionService.setCaptionsId({ sessionId, captionsId: null });
       }
 
       res.status(200).json({ status: 200 });

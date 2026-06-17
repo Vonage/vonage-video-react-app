@@ -18,7 +18,12 @@
       "outputs": ["{projectRoot}/distRoom"],
       "options": {
         "cwd": "frontend",
-        "command": "bash -c 'source ../vcrBuild.env.sh && vite build --config src/VeraRoom/vite.veraroom.config.ts && find distRoom/assets -type f ! -name \"*.js\" ! -name \"*.mp3\" -delete'"
+        "command": "bash -c 'source ../vcrBuild.env.sh && BUILD_TARGET=vcr vite build --config src/VeraRoom/vite.veraroom.config.ts'"
+      },
+      "configurations": {
+        "standalone": {
+          "command": "bash -c 'source ../vcrBuild.env.sh && BUILD_TARGET=standalone vite build --config src/VeraRoom/vite.veraroom.config.ts && find distRoom/assets -type f ! -name \"*.js\" ! -name \"*.mp3\" -delete'"
+        }
       }
     },
     "build-room-example": {

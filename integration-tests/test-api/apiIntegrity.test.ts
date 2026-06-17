@@ -87,6 +87,16 @@ await jest.unstable_mockModule('../../backend/services/getFeedbackService.ts', (
   default: jest.fn(() => ({ reportIssue: mockReportIssue })),
 }));
 
+const mockForward = jest.fn<() => Promise<void>>();
+
+// eslint-disable-next-line @nx/enforce-module-boundaries
+const actualLoggerService = await import('../../backend/services/loggerService');
+
+await jest.unstable_mockModule('../../backend/services/loggerService.ts', () => ({
+  ...actualLoggerService,
+  forward: mockForward,
+}));
+
 // ─── Server setup ─────────────────────────────────────────────────────────────
 
 process.env.VIDEO_SERVICE_PROVIDER = 'opentok';
@@ -278,6 +288,14 @@ describe('API Integrity', () => {
   // ─── POST /client-logs (no tRPC equivalent) ─────────────────────────────────
 
   describe('POST /client-logs', () => {
+    beforeEach(() => {
+      mockForward.mockResolvedValue(undefined);
+    });
+
+    afterEach(() => {
+      mockForward.mockReset();
+    });
+
     it('returns 204 when a valid log event is received', async () => {
       const res = await request(server)
         .post('/client-logs')
@@ -467,6 +485,103 @@ describe('API Integrity', () => {
         expect(response.status).toBeGreaterThanOrEqual(400);
         expect(response.body.error).toBeDefined();
       });
+    });
+  });
+
+  // ─── Session lifecycle with observability webhooks ────────────────────────────
+
+  describe('session lifecycle with observability webhooks', () => {
+    const lifecycleCaptionsId = 'lifecycle-captions-id';
+    const lifecycleArchiveId = 'lifecycle-archive-id';
+    const lifecycleRoomName = 'lifecycle-room';
+
+    it('creates a session, enables captions and an archive, then cleans up on sessionDestroyed', async () => {
+      mockEnableCaptions.mockResolvedValueOnce({ captionsId: lifecycleCaptionsId });
+      mockStartArchive.mockResolvedValueOnce({ id: lifecycleArchiveId, status: 'started' });
+
+      // Create a session and store state via onSettled$ — use videoClient so sessionKey is registered in storage
+      const { sessionKey } = await videoClient.createSession({ roomName: lifecycleRoomName });
+
+      // Enable captions — stores captionsId keyed by sessionId
+      await videoClient.enableCaptions({ sessionKey });
+
+      // Start archive — archiveId gets stored via /hooks/archive webhook
+      await videoClient.startArchive({ sessionKey });
+
+      // Simulate Vonage webhook: archive started
+      await request(server)
+        .post('/v2/hooks/archive')
+        .send({
+          sessionId: validSessionId,
+          id: lifecycleArchiveId,
+          status: 'started',
+          createdAt: Date.now(),
+          size: 0,
+          duration: 0,
+          name: '',
+          partnerId: 'test-partner',
+          reason: '',
+          sha256sum: '',
+          password: '',
+          updatedAt: Date.now(),
+          resolution: '640x480',
+          streamMode: 'auto',
+          multiArchiveTag: '',
+          url: null,
+          event: 'archive',
+        })
+        .expect(200);
+
+      // Simulate Vonage webhook: captions started
+      await request(server)
+        .post('/v2/hooks/captions')
+        .send({
+          captionId: lifecycleCaptionsId,
+          projectId: 'test-project',
+          sessionId: validSessionId,
+          status: 'started',
+          createdAt: Date.now(),
+          updatedAt: Date.now(),
+          provider: 'aws-transcribe',
+          languageCode: 'en-US',
+          stream: { streamId: 'test-stream', streamStatus: 'started' },
+          group: 'captions',
+        })
+        .expect(200);
+
+      // Simulate Vonage webhook: session destroyed — should trigger disableCaptions + stopArchive
+      mockDisableCaptions.mockResolvedValueOnce(undefined);
+      mockStopArchive.mockResolvedValueOnce({ id: lifecycleArchiveId, status: 'stopped' });
+
+      await request(server)
+        .post('/v2/hooks/session')
+        .send({
+          sessionId: validSessionId,
+          event: 'sessionDestroyed',
+          timestamp: Date.now(),
+          reason: 'clientDisconnected',
+        })
+        .expect(200);
+
+      expect(mockDisableCaptions).toHaveBeenCalledWith(lifecycleCaptionsId);
+      expect(mockStopArchive).toHaveBeenCalledWith(lifecycleArchiveId);
+    });
+
+    it('handles a second sessionDestroyed gracefully when state is already cleared', async () => {
+      const callsBefore = mockDisableCaptions.mock.calls.length + mockStopArchive.mock.calls.length;
+
+      await request(server)
+        .post('/v2/hooks/session')
+        .send({
+          sessionId: validSessionId,
+          event: 'sessionDestroyed',
+          timestamp: Date.now(),
+          reason: 'clientDisconnected',
+        })
+        .expect(200);
+
+      const callsAfter = mockDisableCaptions.mock.calls.length + mockStopArchive.mock.calls.length;
+      expect(callsAfter).toBe(callsBefore);
     });
   });
 });

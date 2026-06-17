@@ -26,7 +26,7 @@ async function ensureCaptionsEnabled(
     const clientToken = this.createEphemeralToken({ sessionKey });
 
     const { error, result } = await tryCatch(() =>
-      this._video.enableCaptions(sessionId, clientToken, captionOptions)
+      this.video.enableCaptions(sessionId, clientToken, captionOptions)
     );
 
     if (error && isErrorLike(error)) {

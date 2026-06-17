@@ -2,28 +2,34 @@ import { StatusCode } from 'status-code-enum';
 import ApplicationServerError from '../../ApplicationServerError';
 import type { Any } from '@common/types';
 import type { ApplicationErrorFallbackConfig } from '../../types';
-import { isNil, isString } from '@common/assertions';
+import { isFunction, isNil, isString } from '@common/assertions';
 
 export function buildInternalErrorHandler(fallbackMessage?: string): InternalErrorHandler;
 
 export function buildInternalErrorHandler(args: FallbackConfigArgs): InternalErrorHandler;
 
 export function buildInternalErrorHandler(
-  argsOrMessage?: string | FallbackConfigArgs
+  callback: (error: unknown) => FallbackConfigArgs
+): InternalErrorHandler;
+
+export function buildInternalErrorHandler(
+  arg0?: string | FallbackConfigArgs | ((error: unknown) => FallbackConfigArgs)
 ): InternalErrorHandler {
-  const { fallbackMessage, issues } = (() => {
-    if (isString(argsOrMessage) || isNil(argsOrMessage)) {
-      return {
-        fallbackMessage: argsOrMessage ?? 'An internal error occurred',
-        issues: undefined,
-      };
-    }
+  return (error: Any) => {
+    const { fallbackMessage, issues } = (() => {
+      if (isFunction(arg0)) return arg0(error);
 
-    return argsOrMessage;
-  })();
+      if (isString(arg0) || isNil(arg0)) {
+        return {
+          fallbackMessage: arg0 ?? 'An internal error occurred',
+          issues: undefined,
+        };
+      }
 
-  return (error: Any) =>
-    new ApplicationServerError({
+      return arg0;
+    })();
+
+    return new ApplicationServerError({
       src: error,
       fallbackConfig: {
         fallbackMessage,
@@ -31,6 +37,7 @@ export function buildInternalErrorHandler(
         issues,
       },
     });
+  };
 }
 
 type InternalErrorHandler = (error: Any) => ApplicationServerError;

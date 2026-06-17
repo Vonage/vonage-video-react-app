@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import express from 'express';
 import request from 'supertest';
-import { MediaMode, type SingleArchiveResponse } from '@vonage/video';
+import { MediaMode, type SingleArchiveResponse, ArchiveMode } from '@vonage/video';
 import jwt from 'jsonwebtoken';
 import createVideoHandler from '../videoHandler/createVideoHandler';
 import { TokenRole } from '@api-lib/types';
@@ -39,11 +39,18 @@ vi.mock('@vonage/video', async () => {
   }));
 });
 
-describe('createVideoHandler', () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-  });
+beforeEach(() => {
+  h.createSessionSpy.mockReset();
+  h.startArchiveSpy.mockReset();
+  h.stopArchiveSpy.mockReset();
+  h.searchArchivesSpy.mockReset();
+  h.enableCaptionsSpy.mockReset();
+  h.disableCaptionsSpy.mockReset();
+  h.generateClientTokenSpy.mockReset();
+  h.generateClientTokenSpy.mockReturnValue('mock-token-12345');
+});
 
+describe('createVideoHandler', () => {
   describe('createSession', () => {
     it('should create a session successfully', async () => {
       h.createSessionSpy.mockResolvedValue({
@@ -420,6 +427,48 @@ describe('createVideoHandler', () => {
     });
   });
 
+  describe('ensureCaptionsEnabled', () => {
+    it('should ensure captions are enabled, treat idempotent failures as success, and fail when session does not exist', async () => {
+      expect.assertions(6);
+
+      const app = createTestApp();
+      const requestEnsureCaptionsEnabled = () => {
+        return request(app)
+          .post('/video/ensureCaptionsEnabled')
+          .send({ sessionKey: mockSessionKey });
+      };
+
+      h.enableCaptionsSpy
+        .mockResolvedValueOnce({ captionsId: 'caption-id-789' })
+        .mockRejectedValueOnce(new Error('Live captions have already started for this session'))
+        .mockRejectedValueOnce(new Error('Session does not exist'));
+
+      const successfulResponse = await requestEnsureCaptionsEnabled().expect(200);
+      const alreadyStartedResponse = await requestEnsureCaptionsEnabled().expect(200);
+      const missingSessionResponse = await requestEnsureCaptionsEnabled();
+
+      expect(missingSessionResponse.status).toBeGreaterThanOrEqual(400);
+      expect(missingSessionResponse.body.error).toBeDefined();
+      expect(h.enableCaptionsSpy).toHaveBeenCalledTimes(3);
+      expect(h.enableCaptionsSpy).toHaveBeenCalledWith(
+        mockSessionId,
+        expect.any(String),
+        undefined
+      );
+
+      const successfulData = extractResponseData<{ captionsId: string | null }>(
+        successfulResponse.body
+      );
+
+      const alreadyStartedData = extractResponseData<{ captionsId: string | null }>(
+        alreadyStartedResponse.body
+      );
+
+      expect(successfulData).toMatchObject({ captionsId: 'caption-id-789' });
+      expect(alreadyStartedData).toMatchObject({ captionsId: null });
+    });
+  });
+
   describe('disableCaptions', () => {
     it('should disable captions successfully', async () => {
       h.disableCaptionsSpy.mockResolvedValue(undefined);
@@ -461,6 +510,110 @@ describe('createVideoHandler', () => {
 
       expect(response.status).toBeGreaterThanOrEqual(400);
       expect(response.body.error).toBeDefined();
+    });
+  });
+
+  describe('onSettled$', () => {
+    it('should execute global onSettled after createSession success', async () => {
+      h.createSessionSpy.mockResolvedValue({
+        sessionId: mockSessionId,
+        location: 'US',
+        mediaMode: MediaMode.ROUTED,
+        archiveMode: 'manual',
+      });
+
+      const onSettledSpy = vi.fn();
+      const app = createTestApp((videoHandler) => {
+        videoHandler.onSettled$(onSettledSpy);
+      });
+
+      await request(app).post('/video/createSession').send({}).expect(200);
+
+      expect(onSettledSpy).toHaveBeenCalledTimes(1);
+      expect(onSettledSpy).toHaveBeenCalledWith(
+        expect.objectContaining({
+          videoAction: 'createSession',
+          error: null,
+          result: expect.objectContaining({ sessionId: mockSessionId }),
+        })
+      );
+    });
+
+    it('should execute action onSettled when createSession fails', async () => {
+      h.createSessionSpy.mockRejectedValue(new Error('Failed to create session in onSettled test'));
+
+      const onSettledSpy = vi.fn();
+      const app = createTestApp((videoHandler) => {
+        videoHandler.onSettled$('createSession', onSettledSpy);
+      });
+
+      const response = await request(app).post('/video/createSession').send({});
+
+      expect(response.status).toBeGreaterThanOrEqual(400);
+      expect(onSettledSpy).toHaveBeenCalledTimes(1);
+      expect(onSettledSpy).toHaveBeenCalledWith(
+        expect.objectContaining({
+          videoAction: 'createSession',
+          result: null,
+          error: expect.any(Error),
+        })
+      );
+
+      const settledCall = onSettledSpy.mock.calls[0]?.[0] as { error: Error };
+      expect(settledCall.error.message).toContain('Failed to create session');
+    });
+  });
+
+  describe('use$', () => {
+    it('should allow middleware to transform createSession input', async () => {
+      h.createSessionSpy.mockResolvedValue({
+        sessionId: mockSessionId,
+        location: 'US',
+        mediaMode: MediaMode.ROUTED,
+        archiveMode: 'manual',
+      });
+
+      const app = createTestApp((videoHandler) => {
+        videoHandler.use$('createSession', ({ input, next }) => {
+          const baseInput = (input ?? {}) as Record<string, unknown>;
+
+          return next({
+            input: {
+              ...baseInput,
+              sessionOptions: {
+                location: '12.34.56.78',
+                archiveMode: ArchiveMode.MANUAL,
+              },
+            },
+          });
+        });
+      });
+
+      await request(app).post('/video/createSession').send({}).expect(200);
+
+      expect(h.createSessionSpy).toHaveBeenCalledWith({
+        location: '12.34.56.78',
+        archiveMode: 'manual',
+      });
+    });
+
+    it('should fail when middleware does not return next()', async () => {
+      h.createSessionSpy.mockResolvedValue({
+        sessionId: mockSessionId,
+        location: 'US',
+        mediaMode: MediaMode.ROUTED,
+        archiveMode: 'manual',
+      });
+
+      const app = createTestApp((videoHandler) => {
+        videoHandler.use$('createSession', () => {
+          return {} as never;
+        });
+      });
+
+      const response = await request(app).post('/video/createSession').send({});
+
+      expect(response.status).toBeGreaterThanOrEqual(400);
     });
   });
 
@@ -535,7 +688,9 @@ describe('createVideoHandler', () => {
   });
 });
 
-function createTestApp() {
+function createTestApp(
+  setupHandler?: (videoHandler: ReturnType<typeof createVideoHandler>) => void
+) {
   const app = express();
 
   const handler = createVideoHandler({
@@ -545,6 +700,10 @@ function createTestApp() {
       apiSecret: 'test-api-secret',
     },
   });
+
+  if (setupHandler) {
+    setupHandler(handler);
+  }
 
   app.use('/video', handler);
 

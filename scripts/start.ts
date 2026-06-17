@@ -28,7 +28,7 @@ function startRoom(): void {
 
   // Build
   console.log('\n📦 Building VeraRoom...\n');
-  runCommand('nx run frontend:build-room');
+  runCommand('nx run frontend:build-room:standalone');
   runCommand('nx run frontend:build-room-example');
 
   const distRoomPath = path.resolve(__dirname, '../frontend/distRoom');

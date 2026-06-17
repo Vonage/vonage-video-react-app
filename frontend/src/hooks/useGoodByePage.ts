@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import type { Archive } from '../api/archiving/model';
 import useArchives from './useArchives';
 import useSessionKeyParam from './useSessionKeyParam';
+import { isErrorLike } from '@common/assertions';
 
 type UseGoodByePageResult = {
   sessionKey: string | null;
@@ -17,7 +18,7 @@ const useGoodByePage = (): UseGoodByePageResult => {
   const location = useLocation();
   const { sessionKey } = useSessionKeyParam();
 
-  const archives = useArchives({ sessionKey });
+  const { data, error } = useArchives({ sessionKey });
 
   const header: string = location.state?.header || t('goodbye.default.header');
   const caption: string = location.state?.caption || t('goodbye.default.message');
@@ -25,7 +26,7 @@ const useGoodByePage = (): UseGoodByePageResult => {
 
   return {
     sessionKey,
-    archives,
+    archives: data ? data.items : ((isErrorLike(error) ? error.message : 'error') as 'error'),
     header,
     caption,
     isSelfDeclinedRecording,

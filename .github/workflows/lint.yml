@@ -37,7 +37,7 @@ jobs:
           cache: yarn
 
       - name: Install Dependencies
-        run: yarn
+        run: yarn install --ignore-scripts --frozen-lockfile
 
       - name: Run ${{ matrix.check.name }}
         run: ${{ matrix.check.command }}
@@ -76,7 +76,7 @@ jobs:
           cache: yarn
 
       - name: Install Dependencies
-        run: yarn
+        run: yarn install --ignore-scripts --frozen-lockfile
 
       - name: Run license check
         run: |

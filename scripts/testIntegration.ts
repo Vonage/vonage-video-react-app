@@ -5,6 +5,7 @@ import { execSync } from 'child_process';
 const args = process.argv.slice(2);
 
 const VALID_MODES = [
+  'api',
   'debug',
   'inspect',
   'canon',
@@ -40,7 +41,7 @@ const runCommand = (command: string, { preserveNodeOptions = false } = {}) => {
  * Checks if the given path points to an API integration test inside tests/api/.
  */
 const isApiTestPath = (testPath: string): boolean => {
-  return testPath.includes('test-api/') || testPath.includes('apiIntegrity');
+  return testPath === 'api' || testPath.includes('test-api/') || testPath.includes('apiIntegrity');
 };
 
 /**
@@ -156,6 +157,7 @@ const updateScreenshots = (testNameOrPath?: string) => {
  *
  * @modes
  * - (no args)             - Run all tests in all browsers (headless)
+ * - api                   - Run only API integration tests (Jest)
  * - playwright            - Run only Playwright tests (skip API tests)
  * - debug [test-name]     - Debug mode (Playwright Inspector + Chrome DevTools, timeout disabled)
  * - inspect [test-name]   - Inspect mode (Chrome DevTools, headed mode)
@@ -165,6 +167,7 @@ const updateScreenshots = (testNameOrPath?: string) => {
  *
  * @example
  * yarn test:integration
+ * yarn test:integration api
  * yarn test:integration playwright
  * yarn test:integration callQuality
  * yarn test:integration debug
@@ -238,7 +241,7 @@ const main = () => {
   }
 
   if (isApiTestPath(firstArg)) {
-    runApiTests(firstArg);
+    runApiTests(firstArg === 'api' ? undefined : firstArg);
     return;
   }
 

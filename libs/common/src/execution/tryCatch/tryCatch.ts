@@ -5,10 +5,15 @@ type TryCatchResult<
   T extends (...args: any) => any,
   Fallback extends ReturnType<T> | undefined,
 > = T extends () => Promise<infer R>
-  ? Promise<{ result: Fallback extends undefined ? R | null : NonNullable<R>; error: any }>
+  ? Promise<{
+      result: Fallback extends undefined ? R | null : NonNullable<R>;
+      error: any;
+      didFail: boolean;
+    }>
   : {
       result: Fallback extends undefined ? ReturnType<T> | null : NonNullable<ReturnType<T>>;
       error: any;
+      didFail: boolean;
     };
 
 type AnyFunction = (...args: any[]) => any;
@@ -32,13 +37,16 @@ function tryCatch<T extends AnyFunction, Fallback extends Awaited<ReturnType<T>>
 
     if (isPromise(result)) {
       return result
-        .then((res) => ({ result: res, error: null }))
-        .catch((error) => ({ result: fallback ?? null, error })) as TryCatchResult<T, Fallback>;
+        .then((res) => ({ result: res, error: null, didFail: false }))
+        .catch((error) => ({ result: fallback ?? null, error, didFail: true })) as TryCatchResult<
+        T,
+        Fallback
+      >;
     }
 
-    return { result, error: null } as TryCatchResult<T, Fallback>;
+    return { result, error: null, didFail: false } as TryCatchResult<T, Fallback>;
   } catch (error) {
-    return { result: fallback ?? null, error } as TryCatchResult<T, Fallback>;
+    return { result: fallback ?? null, error, didFail: true } as TryCatchResult<T, Fallback>;
   }
 }
 

@@ -28,7 +28,7 @@ export default defineConfig((env) => {
     plugins: [renameOutputHtml()],
     build: {
       outDir: path.resolve(__dirname, '../../../distRoom'),
-      emptyOutDir: false, // Don't clear - vera-room.js should already be there
+      emptyOutDir: false, // Don't clear - room.js should already be there
       rollupOptions: {
         input: path.resolve(__dirname, './index.html'),
       },

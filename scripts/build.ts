@@ -1,6 +1,7 @@
 #!/usr/bin/env npx tsx
 
 import { execSync } from 'child_process';
+import { writeFileSync } from 'node:fs';
 
 const args = process.argv.slice(2);
 
@@ -16,7 +17,37 @@ const runCommand = (command: string) => {
  * Builds both frontend and backend projects.
  */
 const buildAll = () => {
-  runCommand('nx run-many -t build -p frontend backend');
+  // webpack does not clean its output dir - delete it manually before building.
+  // frontend/dist and frontend/distRoom are cleaned by Vite's emptyOutDir: true.
+  runCommand('rm -rf ./backend/dist');
+
+  // Build frontend, backend and room in parallel
+  runCommand(`
+    bash -c '
+      nx run frontend:build & pid1=$!
+      nx run backend:build & pid2=$!
+      nx run frontend:build-room & pid3=$!
+
+      status=0
+
+      wait "$pid1" || status=1
+      wait "$pid2" || status=1
+      wait "$pid3" || status=1
+
+      exit "$status"
+    '
+  `);
+
+  // Copy frontend assets to backend dist for serving
+  runCommand(
+    'mkdir -p backend/dist/dist/assets && cp -R frontend/dist/assets/. backend/dist/dist/assets/'
+  );
+
+  // Copy room.js to backend dist for serving
+  runCommand('cp frontend/distRoom/room.js backend/dist/dist/assets/room.js');
+
+  // Write a manifest file with a timestamp to force cache busting of the VeraRoom web component
+  writeFileSync('backend/dist/dist/assets/room-manifest.json', JSON.stringify({ v: Date.now() }));
 };
 
 /**
@@ -30,6 +61,8 @@ const buildFrontend = () => {
  * Builds only the backend project.
  */
 const buildBackend = () => {
+  // webpack does not clean its output dir - delete it manually before building.
+  runCommand('rm -rf ./backend/dist');
   runCommand('nx run backend:build');
 };
 
@@ -37,14 +70,14 @@ const buildBackend = () => {
  * Builds the VeraRoom web component.
  */
 const buildRoom = () => {
-  runCommand('nx run frontend:build-room');
+  runCommand('nx run frontend:build-room:standalone');
 };
 
 /**
  * Builds and packages the VeraRoom artifact into a zip file.
  */
 const buildRoomZip = () => {
-  runCommand('nx run frontend:build-room');
+  runCommand('nx run frontend:build-room:standalone');
   runCommand('rm -f room.zip && cd frontend/distRoom && zip -rq ../../room.zip .');
 };
 

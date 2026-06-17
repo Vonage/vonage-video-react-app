@@ -5,6 +5,7 @@ import { Server } from 'http';
 import { Archive } from 'opentok';
 import InMemorySessionStorage from '../storage/inMemorySessionStorage';
 import mockOpentokConfig from '../helpers/__mocks__/config';
+import getSessionStorageService from '../sessionStorageService';
 
 // base64('2~vonageAppId~0.0.0.0~2024-01-01') — valid format for decodeSessionId
 const validSessionId = '1_Mn52b25hZ2VBcHBJZH4wLjAuMC4wfjIwMjQtMDEtMDE=';
@@ -86,6 +87,7 @@ await jest.unstable_mockModule('../videoService/opentokVideoService.ts', () => {
 });
 
 const startServer = (await import('../server')).default;
+const sessionService = getSessionStorageService();
 
 describe.each([['InMemorySessionStorage', new InMemorySessionStorage()]])(
   '/session using %s',
@@ -98,6 +100,7 @@ describe.each([['InMemorySessionStorage', new InMemorySessionStorage()]])(
       await sessionStorage.setSession({
         roomName,
         sessionKey: validSessionKey,
+        sessionId: validSessionId,
       });
     });
 
@@ -115,6 +118,7 @@ describe.each([['InMemorySessionStorage', new InMemorySessionStorage()]])(
         await sessionStorage.setSession({
           roomName: 'awesome-room-name',
           sessionKey: validSessionKey,
+          sessionId: validSessionId,
         });
         const res = await request(server).get(`/session/${roomName}/archives`);
         expect(res.statusCode).toEqual(200);
@@ -201,6 +205,194 @@ describe.each([['InMemorySessionStorage', new InMemorySessionStorage()]])(
           expect(res.statusCode).toEqual(404);
         });
       });
+
+      describe('/v2 hooks', () => {
+        beforeAll(async () => {
+          await sessionService.setSession({
+            roomName,
+            sessionKey: validSessionKey,
+            sessionId: validSessionId,
+          });
+        });
+
+        it('stores session key via onSettled after createSession', async () => {
+          const roomNameFromHook = 'hooks-on-settled-room';
+
+          const response = await request(server)
+            .post('/v2/createSession')
+            .set('Content-Type', 'application/json')
+            .send({ roomName: roomNameFromHook });
+
+          const sessionKey = await sessionService.getSessionKeyByRoomName({
+            roomName: roomNameFromHook,
+          });
+
+          expect(response.statusCode).toEqual(200);
+          expect(sessionKey).toEqual(expect.any(String));
+        });
+
+        it('handles non-actionable and actionable captions events', async () => {
+          await sessionService.setCaptionsId({
+            sessionId: validSessionId,
+            captionsId: 'captions-id-initial',
+          });
+
+          const ignoredResponse = await request(server)
+            .post('/v2/hooks/captions')
+            .set('Content-Type', 'application/json')
+            .send(createCaptionsHookPayload({ status: 'transcribing' }));
+
+          const captionsIdAfterIgnored = await sessionService.getCaptionsId({
+            sessionId: validSessionId,
+          });
+
+          const startedResponse = await request(server)
+            .post('/v2/hooks/captions')
+            .set('Content-Type', 'application/json')
+            .send(
+              createCaptionsHookPayload({
+                status: 'started',
+                captionId: 'captions-id-updated',
+              })
+            );
+
+          const captionsIdAfterStarted = await sessionService.getCaptionsId({
+            sessionId: validSessionId,
+          });
+
+          expect(ignoredResponse.statusCode).toEqual(200);
+          expect(captionsIdAfterIgnored).toEqual('captions-id-initial');
+          expect(startedResponse.statusCode).toEqual(200);
+          expect(captionsIdAfterStarted).toEqual('captions-id-updated');
+        });
+
+        it('handles non-actionable, started, and stopped archive events', async () => {
+          await sessionService.setArchiveIds({
+            sessionId: validSessionId,
+            archiveIds: ['archive-id-1', 'archive-id-2'],
+          });
+
+          const ignoredResponse = await request(server)
+            .post('/v2/hooks/archive')
+            .set('Content-Type', 'application/json')
+            .send(createArchiveHookPayload({ status: 'paused', id: 'archive-id-paused' }));
+
+          const archiveIdsAfterIgnored = await sessionService.getArchiveIds({
+            sessionId: validSessionId,
+          });
+
+          const startedResponse = await request(server)
+            .post('/v2/hooks/archive')
+            .set('Content-Type', 'application/json')
+            .send(createArchiveHookPayload({ status: 'started', id: 'archive-id-3' }));
+
+          const archiveIdsAfterStarted = await sessionService.getArchiveIds({
+            sessionId: validSessionId,
+          });
+
+          const stoppedResponse = await request(server)
+            .post('/v2/hooks/archive')
+            .set('Content-Type', 'application/json')
+            .send(createArchiveHookPayload({ status: 'stopped', id: 'archive-id-2' }));
+
+          const archiveIdsAfterStopped = await sessionService.getArchiveIds({
+            sessionId: validSessionId,
+          });
+
+          expect(ignoredResponse.statusCode).toEqual(200);
+          expect(archiveIdsAfterIgnored).toEqual(['archive-id-1', 'archive-id-2']);
+          expect(startedResponse.statusCode).toEqual(200);
+          expect(archiveIdsAfterStarted).toEqual(['archive-id-1', 'archive-id-2', 'archive-id-3']);
+          expect(stoppedResponse.statusCode).toEqual(200);
+          expect(archiveIdsAfterStopped).toEqual(['archive-id-1', 'archive-id-3']);
+        });
+
+        it('ignores non-destroyed session events and cleans up on sessionDestroyed', async () => {
+          await sessionService.setCaptionsId({
+            sessionId: validSessionId,
+            captionsId: '123e4567-a12b-41a2-a123-123456789012',
+          });
+
+          await sessionService.setArchiveIds({
+            sessionId: validSessionId,
+            archiveIds: ['archive-id-1'],
+          });
+
+          const ignoredResponse = await request(server)
+            .post('/v2/hooks/session')
+            .set('Content-Type', 'application/json')
+            .send(createSessionHookPayload({ event: 'sessionCreated' }));
+
+          const captionsIdAfterIgnored = await sessionService.getCaptionsId({
+            sessionId: validSessionId,
+          });
+          const archiveIdsAfterIgnored = await sessionService.getArchiveIds({
+            sessionId: validSessionId,
+          });
+
+          const destroyedResponse = await request(server)
+            .post('/v2/hooks/session')
+            .set('Content-Type', 'application/json')
+            .send(createSessionHookPayload({ event: 'sessionDestroyed' }));
+
+          const captionsIdAfterDestroyed = await sessionService.getCaptionsId({
+            sessionId: validSessionId,
+          });
+          const archiveIdsAfterDestroyed = await sessionService.getArchiveIds({
+            sessionId: validSessionId,
+          });
+
+          expect(ignoredResponse.statusCode).toEqual(200);
+          expect(captionsIdAfterIgnored).toEqual('123e4567-a12b-41a2-a123-123456789012');
+          expect(archiveIdsAfterIgnored).toEqual(['archive-id-1']);
+          expect(destroyedResponse.statusCode).toEqual(200);
+          expect(captionsIdAfterDestroyed).toBeNull();
+          expect(archiveIdsAfterDestroyed).toEqual([]);
+        });
+      });
     });
   }
 );
+
+function createCaptionsHookPayload(overrides: Partial<Record<string, unknown>> = {}) {
+  return {
+    captionId: 'caption-id-1',
+    projectId: 'project-id-1',
+    sessionId: validSessionId,
+    status: 'started',
+    createdAt: Date.now(),
+    updatedAt: Date.now(),
+    provider: 'aws-transcribe',
+    languageCode: 'en-US',
+    stream: {
+      streamId: 'stream-id-1',
+      streamStatus: 'started',
+    },
+    group: 'captions',
+    ...overrides,
+  };
+}
+
+function createArchiveHookPayload(overrides: Partial<Record<string, unknown>> = {}) {
+  return {
+    id: 'archive-id-1',
+    event: 'archive',
+    sessionId: validSessionId,
+    status: 'started',
+    createdAt: Date.now(),
+    duration: 0,
+    partnerId: 'partner-id-1',
+    size: 0,
+    url: null,
+    reason: 'none',
+    ...overrides,
+  };
+}
+
+function createSessionHookPayload(overrides: Partial<Record<string, unknown>> = {}) {
+  return {
+    sessionId: validSessionId,
+    event: 'sessionDestroyed',
+    ...overrides,
+  };
+}

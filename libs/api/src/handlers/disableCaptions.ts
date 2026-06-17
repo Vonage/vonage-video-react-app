@@ -8,7 +8,7 @@ async function disableCaptions(this: IVideoClient, payload: DisableCaptionsPaylo
   try {
     const { captionsId } = payload;
 
-    const { error } = await tryCatch(() => this._video.disableCaptions(captionsId));
+    const { error } = await tryCatch(() => this.video.disableCaptions(captionsId));
 
     if (error && isErrorLike(error)) {
       const isCaptionsNotFound = error.message.toLowerCase().includes('caption not found');

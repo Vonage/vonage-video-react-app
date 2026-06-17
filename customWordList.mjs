@@ -23,6 +23,10 @@ const customWordList = [
   'Mbps',
   'customfield',
   'VIDSOL',
+  'Frameguard',
+  'hsts',
+  'clickjacking',
+  'COEP',
 ];
 
 export default customWordList;

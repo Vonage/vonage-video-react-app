@@ -26,7 +26,7 @@ jobs:
         with:
           node-version: 22
       - name: Install dependencies
-        run: yarn install
+        run: yarn install --ignore-scripts --frozen-lockfile
       - name: Run dependency update script
         run: node scripts/generateDependenciesList.js
       - name: Auto-commit updated dependencies file

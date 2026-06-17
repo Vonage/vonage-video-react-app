@@ -25,7 +25,7 @@ function createEphemeralToken(this: IVideoClient, payload: CreateEphemeralTokenP
     };
 
     const token = assertResult(
-      () => this._video.generateClientToken(sessionId, tokenOptions),
+      () => this.video.generateClientToken(sessionId, tokenOptions),
       makeThirdPartyErrorHandler('Failed to generate client token')
     );
 

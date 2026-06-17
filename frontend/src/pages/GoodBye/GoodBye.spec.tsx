@@ -18,7 +18,13 @@ vi.mock('react-router-dom', async () => {
 
 describe('GoodBye', () => {
   beforeEach(() => {
-    mockUseArchives.mockReturnValue([]);
+    mockUseArchives.mockReturnValue({
+      data: {
+        items: [],
+        count: 0,
+      },
+      error: null,
+    } as unknown as ReturnType<typeof useArchives>);
   });
 
   it('should render', () => {
@@ -33,7 +39,10 @@ describe('GoodBye', () => {
   });
 
   it('should fetch and display archives', () => {
-    mockUseArchives.mockReturnValue([availableArchive, failedArchive, pendingArchive]);
+    mockUseArchives.mockReturnValue({
+      data: { items: [availableArchive, failedArchive, pendingArchive] },
+      error: null,
+    } as unknown as ReturnType<typeof useArchives>);
     render(
       <BrowserRouter>
         <GoodBye />
@@ -62,7 +71,9 @@ describe('GoodBye', () => {
   });
 
   it('should display empty message when there are no archives', () => {
-    mockUseArchives.mockReturnValue([]);
+    mockUseArchives.mockReturnValue({ data: { items: [] }, error: null } as unknown as ReturnType<
+      typeof useArchives
+    >);
     render(
       <BrowserRouter>
         <GoodBye />
@@ -72,7 +83,10 @@ describe('GoodBye', () => {
   });
 
   it('should display error message when archives fail to load', () => {
-    mockUseArchives.mockReturnValue('error');
+    mockUseArchives.mockReturnValue({
+      data: null,
+      error: new Error('Failed'),
+    } as unknown as ReturnType<typeof useArchives>);
     render(
       <BrowserRouter>
         <GoodBye />
@@ -84,7 +98,10 @@ describe('GoodBye', () => {
   });
 
   it('should display available archive with download button', () => {
-    mockUseArchives.mockReturnValue([availableArchive]);
+    mockUseArchives.mockReturnValue({
+      data: { items: [availableArchive] },
+      error: null,
+    } as unknown as ReturnType<typeof useArchives>);
     render(
       <BrowserRouter>
         <GoodBye />
@@ -96,7 +113,10 @@ describe('GoodBye', () => {
   });
 
   it('should display failed archive with error icon', () => {
-    mockUseArchives.mockReturnValue([failedArchive]);
+    mockUseArchives.mockReturnValue({
+      data: { items: [failedArchive] },
+      error: null,
+    } as unknown as ReturnType<typeof useArchives>);
     render(
       <BrowserRouter>
         <GoodBye />
@@ -106,7 +126,10 @@ describe('GoodBye', () => {
   });
 
   it('should display pending archive with loading spinner', () => {
-    mockUseArchives.mockReturnValue([pendingArchive]);
+    mockUseArchives.mockReturnValue({
+      data: { items: [pendingArchive] },
+      error: null,
+    } as unknown as ReturnType<typeof useArchives>);
     render(
       <BrowserRouter>
         <GoodBye />
@@ -116,7 +139,10 @@ describe('GoodBye', () => {
   });
 
   it('should display recordings section title', () => {
-    mockUseArchives.mockReturnValue([availableArchive]);
+    mockUseArchives.mockReturnValue({
+      data: { items: [availableArchive] },
+      error: null,
+    } as unknown as ReturnType<typeof useArchives>);
     render(
       <BrowserRouter>
         <GoodBye />

@@ -5,6 +5,8 @@ import { getOrCreateSessionKeyFromRoomName } from '../../helpers';
 
 const sessionService = getSessionStorageService();
 
+// #region Legacy endpoints for android and old links with roomName.
+
 /**
  * [TODO] This is a temporary solution to support legacy vera functionality without depending on the old routers
  * This override checks if a session already exists for the given roomName and reuses it.
@@ -34,8 +36,9 @@ videoHandler.override$('enableCaptions', async (opts) => {
   try {
     const { assertInput, videoClient } = opts;
     const { sessionKey } = assertInput(opts.input);
+    const { sessionId } = videoClient.decodeSessionKey({ sessionKey });
 
-    const savedCaptionsId = await sessionService.getCaptionsId({ sessionKey });
+    const savedCaptionsId = await sessionService.getCaptionsId({ sessionId });
 
     const { captionsId } = await (async () => {
       const result = await videoClient.ensureCaptionsEnabled({
@@ -78,3 +81,5 @@ videoHandler.override$('disableCaptions', async (opts) => {
     throw makeInternalErrorHandler('Failed to enable captions')(error);
   }
 });
+
+// #endregion Legacy endpoints for android and old links with roomName.
