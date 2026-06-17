@@ -8,7 +8,17 @@ const helmetHandler = helmet({
     ? false
     : {
         directives: {
-          ...helmet.contentSecurityPolicy.getDefaultDirectives(),
+          // Allow scripts from self and Vonage/OpenTok static assets.
+          // Needed by the Vonage/OpenTok SDK to load MediaPipe transformer assets,
+          // including task-vision.js and worker-side scripts loaded through importScripts(...).
+          'script-src': [
+            "'self'",
+            // required for web assembly
+            "'wasm-unsafe-eval'",
+            'blob:',
+            'data:',
+            'https://static.opentok.com',
+          ],
 
           // Allow connections to self and Vonage/OpenTok backend services.
           // Needed for signaling, logging, REST calls, and WebSocket traffic.
@@ -20,14 +30,16 @@ const helmetHandler = helmet({
             'wss://*.opentok.com',
             'wss://*.tokbox.com',
             'wss://*.vonage.com',
+            'https://static.opentok.com',
           ],
 
           // Allow images from self, inline/base64 images, blob URLs, and any HTTPS image source.
           'img-src': ["'self'", 'data:', 'blob:', 'https:'],
 
           // Allow workers created by the SDK/app, including blob-based and inline data: workers.
-          // The Vonage SDK spawns feature-detection workers via data: URLs.
-          'worker-src': ["'self'", 'blob:', 'data:'],
+          // Also allow Vonage/OpenTok static assets because MediaPipe may load worker-side
+          // scripts from static.opentok.com.
+          'worker-src': ["'self'", 'blob:', 'data:', 'https://static.opentok.com'],
 
           // Allow media resources from self, blob URLs, and HTTPS sources.
           'media-src': ["'self'", 'blob:', 'https:'],
