@@ -1,0 +1,19 @@
+package.json
+  s_da1e302f9c7452::t_8194c424be5cc8 173
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.8",
+  "base_commit_sha": "286ff452448bd27694c8b9e652561e87b6ccdcaa",
+  "prompts": {},
+  "sessions": {
+    "s_da1e302f9c7452": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "a6dd4faf-2258-4525-be1b-d7c5c67b00e0",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "Hossein Movahed <hr.movahed6@gmail.com>"
+    }
+  }
+}
