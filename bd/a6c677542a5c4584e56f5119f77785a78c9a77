@@ -1,0 +1,26 @@
+frontend/src/components/WaitingRoom/PrecallNetworkTestDialog/hooks/useNetworkTest.tsx
+  h_737cf808c1c597 167,171-172
+frontend/src/locales/de.json
+  h_737cf808c1c597 290
+frontend/src/locales/en.json
+  h_737cf808c1c597 298
+frontend/src/locales/es-MX.json
+  h_737cf808c1c597 296
+frontend/src/locales/it.json
+  h_737cf808c1c597 296
+frontend/src/locales/es.json
+  h_737cf808c1c597 296
+package.json
+  h_737cf808c1c597 172
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.7",
+  "base_commit_sha": "bda6c677542a5c4584e56f5119f77785a78c9a77",
+  "prompts": {},
+  "humans": {
+    "h_737cf808c1c597": {
+      "author": "OscarFava <Oscar.Fava@vonage.com>"
+    }
+  }
+}
