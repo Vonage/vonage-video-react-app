@@ -14,7 +14,7 @@ const helmetHandler = helmet({
           'script-src': [
             "'self'",
             // required for web assembly
-            "'wasm-unsafe-eval'",
+            "'unsafe-eval'",
             'blob:',
             'data:',
             'https://static.opentok.com',
