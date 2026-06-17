@@ -1,4 +1,4 @@
-import type { ReactElement } from 'react';
+import { type ReactElement, useMemo } from 'react';
 import { usePublisherStats } from '@core/hooks';
 import { useTranslation } from 'react-i18next';
 import advancedSettings$ from '@Context/AdvancedSettings';
@@ -19,7 +19,7 @@ const PublisherStatistics = ({ publisher }: PublisherStatisticsProps): ReactElem
 
   const { data } = usePublisherStats({ publisher, publisherStatisticsEnabled });
 
-  const publisherAudioStatistics = (() => {
+  const publisherAudioStatistics = useMemo(() => {
     if (!data?.audio) {
       return [];
     }
@@ -38,9 +38,9 @@ const PublisherStatistics = ({ publisher }: PublisherStatisticsProps): ReactElem
         value: data.audio.bytesSent.toString(),
       },
     ];
-  })();
+  }, [data, t]);
 
-  const publisherVideoStatistics = (() => {
+  const publisherVideoStatistics = useMemo(() => {
     if (!data?.video) {
       return [];
     }
@@ -99,7 +99,7 @@ const PublisherStatistics = ({ publisher }: PublisherStatisticsProps): ReactElem
           .join(' · '),
       })),
     ];
-  })();
+  }, [data, t]);
 
   return (
     <AdvancedSettingsStatisticsGroup

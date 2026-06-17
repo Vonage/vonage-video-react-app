@@ -1,4 +1,4 @@
-import type { ReactElement } from 'react';
+import { useMemo, type ReactElement } from 'react';
 import { useSubscriberStats } from '@core/hooks';
 import { useTranslation } from 'react-i18next';
 import { AdvancedSettingsStatisticsGroup } from '../../AdvancedSettingsStatisticsGroup';
@@ -13,7 +13,7 @@ const SubscriberStatistics = ({ subscriber }: SubscriberStatisticsProps): ReactE
 
   const { data } = useSubscriberStats({ subscriber });
 
-  const subscriberStatisticsGroups = (() => {
+  const subscriberStatisticsGroups = useMemo(() => {
     if (!data) {
       return {
         id: 'no-stats',
@@ -95,7 +95,7 @@ const SubscriberStatistics = ({ subscriber }: SubscriberStatisticsProps): ReactE
         },
       ],
     };
-  })();
+  }, [data, t]);
 
   return (
     <AdvancedSettingsStatisticsGroup
