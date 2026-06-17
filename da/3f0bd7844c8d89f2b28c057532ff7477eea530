@@ -1,0 +1,11 @@
+libs/core/src/hooks/useSubscriberStats/useSubscriberStats.spec.ts
+  h_737cf808c1c597 1-2,4-7,10,12-14,16,18,20,22,24,26,28,30,58,60,62,89-91,95-97,104-105
+libs/core/src/hooks/usePublisherStats/usePublisherStats.spec.ts
+  h_737cf808c1c597 64,126,129,212,279,319
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.8",
+  "base_commit_sha": "da3f0bd7844c8d89f2b28c057532ff7477eea530",
+  "prompts": {}
+}
