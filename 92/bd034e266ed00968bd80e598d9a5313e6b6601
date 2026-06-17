@@ -1,3 +1,13 @@
+libs/core/src/metrics/OptionalValue/index.ts
+  h_737cf808c1c597 1
+libs/core/src/metrics/ResolutionValue/ResolutionValue.ts
+  h_737cf808c1c597 1,8
+libs/core/src/metrics/OptionalValue/OptionalValue.ts
+  h_737cf808c1c597 2,4-6,8,12-15,39,41-43,45,47,51,53-56,59
+libs/core/src/metrics/BitrateValue/BitrateValue.ts
+  h_737cf808c1c597 1,5
+libs/core/src/metrics/index.ts
+  h_737cf808c1c597 2-9
 ---
 {
   "schema_version": "authorship/3.0.0",
