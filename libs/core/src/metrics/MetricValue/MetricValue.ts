@@ -70,11 +70,7 @@ export abstract class MetricValue implements IMetricValue<number> {
       () => {
         assertNotNil(value, `${this.name}: value cannot be null or undefined`);
 
-        if (typeof value === 'number') {
-          if (!isNumber(value)) {
-            throw new TypeError(`${this.name}: ${value} is not a finite number`);
-          }
-
+        if (isNumber(value)) {
           return value;
         }
 

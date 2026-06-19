@@ -2,6 +2,8 @@ import { runtime$ } from '@core/stores';
 import type { QueryOptions } from '@core/types';
 import {
   BitrateValue,
+  bytesValue,
+  BytesValue,
   FrameRateValue,
   IntegerValue,
   integerValue,
@@ -19,7 +21,7 @@ const POLL_INTERVAL_MS = 2000;
 export type OutgoingTrackTotals = {
   packetsSent: IntegerValue;
   packetsLost: IntegerValue;
-  bytesSent: IntegerValue;
+  bytesSent: BytesValue;
 };
 
 export type PublisherInspectorStatistics = {
@@ -99,7 +101,7 @@ const usePublisherStats = <Selected = PublisherInspectorStatistics | null>({
       });
 
       previousPublisherVideoSampleRef.current = {
-        bytesSent: videoTotals.bytesSent.value,
+        bytesSent: videoTotals.bytesSent,
         timestamp: stats.timestamp,
       };
 
@@ -123,7 +125,7 @@ const usePublisherStats = <Selected = PublisherInspectorStatistics | null>({
 };
 
 type PreviousPublisherVideoSample = {
-  bytesSent: number;
+  bytesSent: BytesValue;
   timestamp: number;
 };
 
@@ -151,13 +153,13 @@ function aggregateOutgoingTrackTotals(
       return {
         packetsSent: integerValue(accumulator.packetsSent.value + (track?.packetsSent ?? 0)),
         packetsLost: integerValue(accumulator.packetsLost.value + (track?.packetsLost ?? 0)),
-        bytesSent: integerValue(accumulator.bytesSent.value + (track?.bytesSent ?? 0)),
+        bytesSent: bytesValue(accumulator.bytesSent.value + (track?.bytesSent ?? 0)),
       };
     },
     {
       packetsSent: integerValue(0),
       packetsLost: integerValue(0),
-      bytesSent: integerValue(0),
+      bytesSent: bytesValue(0),
     }
   );
 }
@@ -174,7 +176,7 @@ function calculateBitrateFromDelta({
   if (!previousSample) return null;
 
   const elapsedMilliseconds = currentTimestamp - previousSample.timestamp;
-  const deltaBytes = currentBytesSent - previousSample.bytesSent;
+  const deltaBytes = currentBytesSent - previousSample.bytesSent.value;
 
   const canCalculateBitrate = elapsedMilliseconds > 0 && deltaBytes >= 0;
   if (!canCalculateBitrate) return null;
