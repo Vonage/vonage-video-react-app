@@ -33,6 +33,7 @@ describe('usePublisherStats', () => {
         usePublisherStats({
           publisher,
           publisherStatisticsEnabled: true,
+          fixedFrameRate: 30,
           queryOptions: {
             refetchInterval: false,
           },
@@ -67,6 +68,7 @@ describe('usePublisherStats', () => {
         usePublisherStats({
           publisher,
           publisherStatisticsEnabled: true,
+          fixedFrameRate: 0,
           queryOptions: {
             refetchInterval: false,
           },

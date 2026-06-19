@@ -39,7 +39,7 @@ export type UsePublisherStatsProps<TData = PublisherInspectorStatistics> = {
   queryOptions?: QueryOptions<PublisherInspectorStatistics | null, TData>;
   publisher: Publisher | null | undefined;
   publisherStatisticsEnabled: boolean;
-  fixedFrameRate: number | null;
+  fixedFrameRate?: number | null;
 };
 
 const usePublisherStats = <Selected = PublisherInspectorStatistics | null>({
