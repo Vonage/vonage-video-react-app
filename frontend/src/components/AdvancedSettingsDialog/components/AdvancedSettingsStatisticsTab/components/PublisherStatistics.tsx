@@ -18,8 +18,13 @@ const PublisherStatistics = ({ publisher }: PublisherStatisticsProps): ReactElem
   const publisherStatisticsEnabled = advancedSettings$.use.select(
     (state) => state.publisherStatisticsEnabled
   );
+  const fixedFrameRate = advancedSettings$.use.select((state) => state.frameRate);
 
-  const { data } = usePublisherStats({ publisher, publisherStatisticsEnabled });
+  const { data } = usePublisherStats({
+    publisher,
+    publisherStatisticsEnabled,
+    fixedFrameRate: fixedFrameRate ?? null,
+  });
 
   const publisherAudioStatistics = useMemo(() => {
     if (!data?.audio) {

@@ -39,12 +39,14 @@ export type UsePublisherStatsProps<TData = PublisherInspectorStatistics> = {
   queryOptions?: QueryOptions<PublisherInspectorStatistics | null, TData>;
   publisher: Publisher | null | undefined;
   publisherStatisticsEnabled: boolean;
+  fixedFrameRate: number | null;
 };
 
 const usePublisherStats = <Selected = PublisherInspectorStatistics | null>({
   queryOptions,
   publisher,
   publisherStatisticsEnabled,
+  fixedFrameRate,
 }: UsePublisherStatsProps<Selected>) => {
   const previousPublisherVideoSampleRef = useStableRef<PreviousPublisherVideoSample | null>(
     () => null,
@@ -73,7 +75,7 @@ const usePublisherStats = <Selected = PublisherInspectorStatistics | null>({
       const firstPublisherStatsContainer = publisherStatsContainers[0];
       const stats = firstPublisherStatsContainer?.stats;
 
-      const frameRate = stats?.video?.frameRate ?? null;
+      const frameRate = fixedFrameRate ?? null;
 
       const width = publisher.videoWidth();
       const height = publisher.videoHeight();
