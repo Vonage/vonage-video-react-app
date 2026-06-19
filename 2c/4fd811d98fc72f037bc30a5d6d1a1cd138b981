@@ -1,0 +1,16 @@
+libs/core/src/hooks/usePublisherStats/usePublisherStats.ts
+  h_737cf808c1c597 5-6,24,104,128,156,162,179
+libs/core/src/metrics/MetricValue/MetricValue.ts
+  h_737cf808c1c597 73
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.8",
+  "base_commit_sha": "2c4fd811d98fc72f037bc30a5d6d1a1cd138b981",
+  "prompts": {},
+  "humans": {
+    "h_737cf808c1c597": {
+      "author": "OscarFava <Oscar.Fava@vonage.com>"
+    }
+  }
+}
