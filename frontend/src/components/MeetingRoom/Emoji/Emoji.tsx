@@ -1,8 +1,6 @@
 import { CSSProperties, ReactElement } from 'react';
 import { EmojiWrapper } from '../../../hooks/useEmoji';
 import { EMOJI_DISPLAY_DURATION } from '../../../utils/constants';
-import Chip from '@mui/material/Chip';
-import Box from '@mui/material/Box';
 import useIsSmallViewport from '@hooks/useIsSmallViewport';
 
 export type EmojiProps = {
@@ -32,25 +30,33 @@ const Emoji = ({ emojiWrapper }: EmojiProps): ReactElement => {
   const { emoji, name } = emojiWrapper;
 
   return (
-    <Box
+    <div
       data-testid="emoji-string-container"
-      className="text-vera-subtitle flex flex-col"
-      sx={{
+      className="text-vera-subtitle absolute z-1 flex flex-col max-w-[35%]"
+      style={{
         ...style,
-        ml: isSmallViewport ? 5 : '15%',
+        marginLeft: isSmallViewport ? '1.25rem' : '15%',
       }}
     >
       {emoji}
-      <Chip
-        label={name}
-        size="small"
-        className="text-vera-on-dark-grey! bg-vera-dark-grey overflow-hidden text-ellipsis whitespace-nowrap"
-        sx={{
-          mt: isSmallViewport ? 0.5 : 2,
-          fontSize: 'var(--vera-typography-body-base-font-size)',
-        }}
-      />
-    </Box>
+
+      <span
+        className={`
+          text-vera-body-base
+          text-vera-accent
+          overflow-hidden
+          text-ellipsis
+          whitespace-nowrap
+          rounded-2xl
+          px-3
+          py-1
+          bg-vera-on-accent
+          ${isSmallViewport ? 'mt-0.5' : 'mt-2'}
+        `}
+      >
+        {name}
+      </span>
+    </div>
   );
 };
 
