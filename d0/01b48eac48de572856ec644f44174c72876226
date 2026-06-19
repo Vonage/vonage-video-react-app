@@ -1,0 +1,9 @@
+libs/core/src/metrics/OptionalValue/OptionalValue.ts
+  h_737cf808c1c597 1,28
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.8",
+  "base_commit_sha": "d001b48eac48de572856ec644f44174c72876226",
+  "prompts": {}
+}
