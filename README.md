@@ -23,15 +23,15 @@ If you're new to Vonage, you can [sign up for a Vonage API account](https://dash
 - [Testing on Multiple Devices](#testing-on-multiple-devices)
 - [Deployment to Vonage Cloud Runtime](#deployment-to-vonage-cloud-runtime)
 - [Testing](#testing)
-  - [Integration Tests](#integration-tests)
-    - [Screenshot tests or Visual comparisons](#screenshot-tests-or-visual-comparisons)
-    - [Generating and Updating Screenshots](#generating-and-updating-screenshots)
-  - [Running the backend and frontend test suites](#running-the-backend-and-frontend-test-suites)
-  - [Backend Suite](#backend-suite)
-  - [Frontend Suite](#frontend-suite)
+ - [Integration Tests](#integration-tests)
+ - [Screenshot tests or Visual comparisons](#screenshot-tests-or-visual-comparisons)
+ - [Generating and Updating Screenshots](#generating-and-updating-screenshots)
+ - [Running the backend and frontend test suites](#running-the-backend-and-frontend-test-suites)
+ - [Backend Suite](#backend-suite)
+ - [Frontend Suite](#frontend-suite)
 - [Code style](#code-style)
-  - [Linting and auto-formatting](#linting-and-auto-formatting)
-  - [File names](#file-names)
+ - [Linting and auto-formatting](#linting-and-auto-formatting)
+ - [File names](#file-names)
 - [Documentation Generation](#documentation-generation)
 - [Code of Conduct](#code-of-conduct)
 - [Maintainers](#maintainers)
@@ -55,59 +55,62 @@ As a commercial open-source project, you can also count on a solid information s
 This application provides features for common conferencing use cases, such as:
 
 - <details>
-    <summary>A landing page for users to create and join meeting rooms.</summary>
-    <img src="docs/assets/Welcome.png" alt="Screenshot of landing page">
-  </details>
+ <summary>A landing page for users to create and join meeting rooms.</summary>
+ <img src="docs/assets/Welcome.png" alt="Screenshot of landing page">
+ </details>
 - <details>
-    <summary>A waiting room for users to preview their audio and video device settings and set their name before entering a meeting room.</summary>
-    <img src="docs/assets/WaitingRoom.png" alt="Screenshot of waiting room">
-  </details>
+ <summary>A waiting room for users to preview their audio and video device settings and set their name before entering a meeting room.</summary>
+ <img src="docs/assets/WaitingRoom.png" alt="Screenshot of waiting room">
+ </details>
 - <details>
-    <summary>A post-call page to navigate users to the landing page, re-enter the left room, and display archive(s), if any.</summary>
-    <img src="docs/assets/Goodbye.png" alt="Screenshot of goodbye page">
-  </details>
-- A video conferencing “room” supporting up to 25 participants and the following features:
+ <summary>A post-call page to navigate users to the landing page, re-enter the left room, and display archive(s), if any.</summary>
+ <img src="docs/assets/Goodbye.png" alt="Screenshot of goodbye page">
+ </details>
+- A video conferencing "room" supporting up to 25 participants and the following features:
 - <details>
-    <summary>Input and output device selectors.</summary>
-    <img src="docs/assets/DeviceSelector.png" alt="Screenshot of audio devices selector">
-  </details>
+ <summary>Input and output device selectors.</summary>
+ <img src="docs/assets/DeviceSelector.png" alt="Screenshot of audio devices selector">
+ </details>
 - <details>
-    <summary>Noise suppression toggles in meeting room</summary>
-    <img src="docs/assets/NoiseSupression.png" alt="Screenshot of noise supression toggle">
-  </details>
+ <summary>Noise suppression toggles in meeting room</summary>
+ <img src="docs/assets/NoiseSupression.png" alt="Screenshot of noise supression toggle">
+ </details>
 - <details>
-    <summary>
-      Video effects in meeting and waiting room. You can set predefined images, custom image or slight/strong background blur. Images can be uploaded from local device or URL in these formats: JPG, PNG, GIF or BMP. Video effects are not supported in non-Chromium-based browsers or on iOS.
-      
-    Please see [OT.hasMediaProcessorSupport](https://vonage.github.io/video-docs/video-js-reference/latest/OT.html#hasMediaProcessorSupport) for more information.
-    </summary>
-  
-    <img src="docs/assets/BGEffects.png" alt="Screenshot of video effects">
-  </details>
+ <summary>
+ Video effects in meeting and waiting room. You can set predefined images, custom image or slight/strong background blur. Images can be uploaded from local device or URL in these formats: JPG, PNG, GIF or BMP. Video effects are not supported in non-Chromium-based browsers or on iOS.
+ 
+ Please see [OT.hasMediaProcessorSupport](https://vonage.github.io/video-docs/video-js-reference/latest/OT.html#hasMediaProcessorSupport) for more information.
+ </summary>
+ 
+ <img src="docs/assets/BGEffects.png" alt="Screenshot of video effects">
+ </details>
 - <details>
-    <summary>Composed archiving capabilities to record your meetings.</summary>
-    <img src="docs/assets/Archiving.png" alt="Screenshot of archiving dialog box">
-  </details>
+ <summary>Composed archiving capabilities to record your meetings.</summary>
+ <img src="docs/assets/Archiving.png" alt="Screenshot of archiving dialog box">
+ </details>
 - <details>
-    <summary>In-call tools such as screen sharing (subscriber can zoom in/out if hasMediaProcessorSupport), group chat function, and emoji reactions.</summary>
-    <img src="docs/assets/Emojis.png" alt="Screenshot of emojis">
-  </details>
+ <summary>In-call tools such as screen sharing (subscriber can zoom in/out if hasMediaProcessorSupport), group chat function, and emoji reactions.</summary>
+ <img src="docs/assets/Emojis.png" alt="Screenshot of emojis">
+ </details>
 - Active speaker detection.
 - Layout manager with options to display active speaker, screen share, or all participants in a grid view.
-- The dynamic display adjusts to show new joiners, hide video tiles to conserve bandwidth, and show the “next” participant when someone previously speaking leaves.
+- The dynamic display adjusts to show new joiners, hide video tiles to conserve bandwidth, and show the "next" participant when someone previously speaking leaves.
 - <details>
-    <summary>Ability to mute other participants during the meeting.</summary>
-    <img src="docs/assets/MutingParticipant.png" alt="Screenshot of muting participant dialog box">
-  </details>
+ <summary>Ability to mute other participants during the meeting.</summary>
+ <img src="docs/assets/MutingParticipant.png" alt="Screenshot of muting participant dialog box">
+ </details>
 - <details>
-    <summary>Call participant list with audio on/off indicator.</summary>
-    <img src="docs/assets/ParticipantList.png" alt="Screenshot of participant list">
-  </details>
+ <summary>Call participant list with audio on/off indicator.</summary>
+ <img src="docs/assets/ParticipantList.png" alt="Screenshot of participant list">
+ </details>
 - Meeting information with an easy-to-share URL to join the meeting.
 - <details>
-    <summary>A reporting tool to enable participants to file any in-call issues.</summary>
-    <img src="docs/assets/ReportIssue.png" alt="Screenshot of report issue pane">
-  </details>
+ <summary>A reporting tool to enable participants to file any in-call issues.</summary>
+ <img src="docs/assets/ReportIssue.png" alt="Screenshot of report issue pane">
+ </details>
+- <details>
+ <summary>Advanced settings panel available in both the waiting room and meeting room, allowing fine-grained control over video, audio and metrics</summary>
+ </details>
 
 ## Project Architecture
 
@@ -146,62 +149,62 @@ These reference apps share the same backend infrastructure and demonstrate consi
 
 - **Ensure You Have a Vonage Account**
 
-  You can create one at the [Vonage API Dashboard](https://dashboard.vonage.com/applications).
+ You can create one at the [Vonage API Dashboard](https://dashboard.vonage.com/applications).
 
 - **Create an Application in the Dashboard**
 
-  Once logged in, navigate to the [Applications page](https://dashboard.vonage.com/applications) via the main dashboard menu:
+ Once logged in, navigate to the [Applications page](https://dashboard.vonage.com/applications) via the main dashboard menu:
 
-  <details close>
-  <summary>Applications dashboard view</summary>
-  <img src="./docs/assets/readme/1-dashboard-applications.png" alt="Applications dashboard" style="max-width: 100%; height: auto;" />
-  </details>
+ <details close>
+ <summary>Applications dashboard view</summary>
+ <img src="./docs/assets/readme/1-dashboard-applications.png" alt="Applications dashboard" style="max-width: 100%; height: auto;" />
+ </details>
 
-  If you don’t already have an application, create a new one:
+ If you don't already have an application, create a new one:
 
-  <details close>
-  <summary>Create new app</summary>
-  <img src="./docs/assets/readme/2-create-app.png" alt="Create app button" style="max-width: 100%; height: auto;" />
-  </details>
+ <details close>
+ <summary>Create new app</summary>
+ <img src="./docs/assets/readme/2-create-app.png" alt="Create app button" style="max-width: 100%; height: auto;" />
+ </details>
 
-  During the setup process, make sure to:
+ During the setup process, make sure to:
 
-  - Provide a name for your application.
-  - Generate and download the public and private keys.
-  - Enable **Video** capabilities.
+ - Provide a name for your application.
+ - Generate and download the public and private keys.
+ - Enable **Video** capabilities.
 
-  Refer to the following image for visual guidance:
+ Refer to the following image for visual guidance:
 
-  <details close>
-  <summary>Configuring a new app</summary>
-  <img src="./docs/assets/readme/3-create-app-form.png" alt="Create app form" style="max-width: 100%; height: auto;" />
-  </details>
-  </br>
+ <details close>
+ <summary>Configuring a new app</summary>
+ <img src="./docs/assets/readme/3-create-app-form.png" alt="Create app form" style="max-width: 100%; height: auto;" />
+ </details>
+ </br>
 
 - **Environment Variables**
 
-  In the root project directory, create the backend environment file by running:
+ In the root project directory, create the backend environment file by running:
 
-  ``` bash
-  cp backend/.env.example backend/.env
-  ```
+ ``` bash
+ cp backend/.env.example backend/.env
+ ```
 
-  Then, open **backend/.env** and fill in the required configuration:
+ Then, open **backend/.env** and fill in the required configuration:
 
-  - **VONAGE_APP_ID** – This is the ID of your Vonage application. You can find it on the [Applications page](https://dashboard.vonage.com/applications).
-  - **VONAGE_PRIVATE_KEY** – If you've already generated a private key, use that. Otherwise, use the key you downloaded when creating the app.
+ - **VONAGE_APP_ID** – This is the ID of your Vonage application. You can find it on the [Applications page](https://dashboard.vonage.com/applications).
+ - **VONAGE_PRIVATE_KEY** – If you've already generated a private key, use that. Otherwise, use the key you downloaded when creating the app.
 
-  Frontend feature flags and display settings are configured in [`vcrBuild.env.sh`](vcrBuild.env.sh). The defaults work out of the box — edit that file only when you need to customise behaviour. See [Environment Configuration](#environment-configuration) for the full list of available options.
+ Frontend feature flags and display settings are configured in [`vcrBuild.env.sh`](vcrBuild.env.sh). The defaults work out of the box — edit that file only when you need to customise behaviour. See [Environment Configuration](#environment-configuration) for the full list of available options.
 
 </br>
 
--  **Start in Development Mode**
+- **Start in Development Mode**
 
-    ``` bash
-    yarn dev
-    ```
+ ``` bash
+ yarn dev
+ ```
 
-    This starts both the backend server (port **3345**) and the frontend Vite dev server (port **5173**). You can now access the app at [http://localhost:5173](http://localhost:5173).
+ This starts both the backend server (port **3345**) and the frontend Vite dev server (port **5173**). You can now access the app at [http://localhost:5173](http://localhost:5173).
 
 ## Storybook
 
@@ -370,6 +373,13 @@ All feature flags are **boolean** (`true` / `false`).
 | `ENABLE_REPORT_ISSUE` | `false` | Show the in-call issue reporting tool |
 | `BYPASS_WAITING_ROOM` | `false` | Skip the waiting room and join directly |
 | `AVOID_FETCHING_APP_CONFIG` | `true` | Skip fetching remote app configuration on startup |
+| `WAITING_ROOM_ALLOW_ADVANCED_SETTINGS` | `true` | Show the Advanced Settings panel in the waiting room |
+| `MEETING_ROOM_ALLOW_ADVANCED_SETTINGS` | `true` | Show the Advanced Settings panel inside the meeting room |
+| `DEFAULT_RESOLUTION` | `1920x1080` | Default video resolution for the publisher |
+| `MIN_CUSTOM_VIDEO_BITRATE_BPS` | `5000` | Minimum custom video bitrate available in Advanced Settings (bps) |
+| `MAX_CUSTOM_VIDEO_BITRATE_BPS` | `10000000` | Maximum custom video bitrate available in Advanced Settings (bps) |
+| `SUPPORTED_FRAME_RATES` | `30\|15\|7\|1` | Frame rate options available in the Advanced Settings video tab |
+
 
 #### Display defaults
 
@@ -395,58 +405,58 @@ To test the video API across multiple devices on your local network, you can use
 
 3. **Start the application locally first:**
 
-    ``` bash
-    yarn dev
-    ```
+ ``` bash
+ yarn dev
+ ```
 
-    Make sure both the backend server (port 3345) and frontend dev server (port 5173) are running before proceeding to the next step.
+ Make sure both the backend server (port 3345) and frontend dev server (port 5173) are running before proceeding to the next step.
 
 4. Create secure tunnels for both frontend and backend:
 
-    **Set up ngrok configuration:**
-    
-    First, find your ngrok config file location:
-    ``` bash
-    ngrok config check
-    ```
+ **Set up ngrok configuration:**
+ 
+ First, find your ngrok config file location:
+ ``` bash
+ ngrok config check
+ ```
 
-    Create or edit the ngrok configuration file (typically located at `~/Library/Application Support/ngrok/ngrok.yml` on macOS; `~/.config/ngrok/ngrok.yml` on Linux and `%HOMEPATH%\AppData\Local\ngrok\ngrok.yml` on Windows) with the following content:
+ Create or edit the ngrok configuration file (typically located at `~/Library/Application Support/ngrok/ngrok.yml` on macOS; `~/.config/ngrok/ngrok.yml` on Linux and `%HOMEPATH%\AppData\Local\ngrok\ngrok.yml` on Windows) with the following content:
 
-    ``` yaml
-    version: "2"
-    tunnels:
-      frontend:
-        addr: 5173
-        proto: http
-      backend:
-        addr: 3345
-        proto: http
-    ```
+ ``` yaml
+ version: "2"
+ tunnels:
+  frontend:
+  addr: 5173
+  proto: http
+  backend:
+  addr: 3345
+  proto: http
+ ```
 
-    **Start both tunnels:**
-    ``` bash
-    ngrok start backend frontend
-    ```
+ **Start both tunnels:**
+ ``` bash
+ ngrok start backend frontend
+ ```
 
-    This command will create publicly accessible HTTPS URLs for both your frontend and backend. The output will appear in your terminal, similar to the image below:
+ This command will create publicly accessible HTTPS URLs for both your frontend and backend. The output will appear in your terminal, similar to the image below:
 
-    <details close>
-    <summary>ngrok output example</summary>
-    <img src="./docs/assets/readme/4-forwarding.png" alt="ngrok tunnel example" style="max-width: 100%; height: auto;" />
-    </details>
+ <details close>
+ <summary>ngrok output example</summary>
+ <img src="./docs/assets/readme/4-forwarding.png" alt="ngrok tunnel example" style="max-width: 100%; height: auto;" />
+ </details>
 
-    </br>
+ </br>
 
 5. Copy the domains from both outputs and update [`vcrBuild.env.sh`](vcrBuild.env.sh):
 
-    ``` bash
-    export TUNNEL_DOMAIN=your-frontend-domain.ngrok.io
-    export API_URL=https://your-backend-domain.ngrok.io
-    ```
+ ``` bash
+ export TUNNEL_DOMAIN=your-frontend-domain.ngrok.io
+ export API_URL=https://your-backend-domain.ngrok.io
+ ```
 
-    **Note:** ngrok assigns temporary domains. You'll need to update these values each time the domains change.
+ **Note:** ngrok assigns temporary domains. You'll need to update these values each time the domains change.
 
-  </br>
+ </br>
 
 6. Open the provided frontend **Forwarding** URL in your browser. This exposes your entire application publicly, allowing devices on any network to access it.
 
@@ -461,42 +471,42 @@ You can deploy the application to Vonage Cloud Runtime (VCR) for testing in a cl
 For quick development deployments directly from your local machine, you can use the `vcr:dev` script:
 
 1. **Install the VCR CLI** (if not already installed):
-   
-   Follow the installation instructions at https://developer.vonage.com/en/vonage-cloud-runtime/getting-started/working-locally#cli-installation
+ 
+ Follow the installation instructions at https://developer.vonage.com/en/vonage-cloud-runtime/getting-started/working-locally#cli-installation
 
 2. **Configure VCR with your credentials**:
 
-   ```bash
-   vcr configure
-   ```
+ ```bash
+ vcr configure
+ ```
 
-   Enter your Vonage API Key and Secret, and select a region.
+ Enter your Vonage API Key and Secret, and select a region.
 
 3. **Generate application keys**:
 
-   ```bash
-   vcr app generate-keys --app-id <app-id> --region <region>
-   ```
+ ```bash
+ vcr app generate-keys --app-id <app-id> --region <region>
+ ```
 
-   Replace `<app-id>` with your Vonage application ID and `<region>` with your region.
-   
-   > ⚠️ **Warning**: You should use a **separate** Vonage application for VCR deployment (different from the `VONAGE_APP_ID` in your `backend/.env` file) to avoid issues with your private key.
+ Replace `<app-id>` with your Vonage application ID and `<region>` with your region.
+ 
+ > ⚠️ **Warning**: You should use a **separate** Vonage application for VCR deployment (different from the `VONAGE_APP_ID` in your `backend/.env` file) to avoid issues with your private key.
 
 4. **Set up your development configuration**:
 
-   Copy the development configuration example file:
+ Copy the development configuration example file:
 
-   ```bash
-   cp vcr.yml.example vcr-dev.yml
-   ```
+ ```bash
+ cp vcr.yml.example vcr-dev.yml
+ ```
 
-   Open `vcr-dev.yml` and add your application ID.
+ Open `vcr-dev.yml` and add your application ID.
 
 5. **Deploy to development**:
 
-   ```bash
-   yarn vcr:dev
-   ```
+ ```bash
+ yarn vcr:dev
+ ```
 
 This will deploy using your local development configuration and code, making it quick to test changes in a cloud environment.
 
