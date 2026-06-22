@@ -1,0 +1,14 @@
+frontend/src/components/MeetingRoom/Emoji/Emoji.tsx
+  h_737cf808c1c597 33,35-36,38,42-59
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.8",
+  "base_commit_sha": "a4e1192751da6ceb4444037dd99931b53d95a894",
+  "prompts": {},
+  "humans": {
+    "h_737cf808c1c597": {
+      "author": "OscarFava <Oscar.Fava@vonage.com>"
+    }
+  }
+}
