@@ -5285,9 +5285,7 @@
     node-fetch "2.7.0"
 
 "@vonage/video-client-network-test@^5.0.0":
-  version "5.0.0"
-  resolved "https://registry.yarnpkg.com/@vonage/video-client-network-test/-/video-client-network-test-5.0.0.tgz#c5d0a19f227c056bfed0fc747ea5d646c868ab5a"
-  integrity sha512-c+/thVawDDqJoih2kbc5y5oY8WgPbtrlkxvzgWSzoUroePPgB81htZHaN7ytk59YfrJ1WZC7BcAxCjdFm+2zWA==
+  version "5.1.2"
   dependencies:
     axios "^1.8.3"
     opentok-solutions-logging "^1.1.1"
