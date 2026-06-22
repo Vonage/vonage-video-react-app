@@ -304,6 +304,7 @@
   "waitingRoom.precallNetworkTest.video": "Video",
   "waitingRoom.precallNetworkTest.qualityLabel": "Quality:",
   "waitingRoom.precallNetworkTest.error": "Test failed",
+  "waitingRoom.precallNetworkTest.error.timeout": "Test timed out. Please, try it again.",
   "waitingRoom.precallNetworkTest.audioSupported": "Audio is supported",
   "waitingRoom.precallNetworkTest.audioNotSupported": "Audio is not supported",
   "waitingRoom.precallNetworkTest.videoSupported": "Video is supported",

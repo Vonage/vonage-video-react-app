@@ -302,6 +302,7 @@
   "waitingRoom.precallNetworkTest.video": "Video",
   "waitingRoom.precallNetworkTest.qualityLabel": "Calidad:",
   "waitingRoom.precallNetworkTest.error": "La prueba falló",
+  "waitingRoom.precallNetworkTest.error.timeout": "La prueba ha excedido el tiempo. Por favor, inténtalo de nuevo.",
   "waitingRoom.precallNetworkTest.audioSupported": "El audio es compatible",
   "waitingRoom.precallNetworkTest.audioNotSupported": "El audio no es compatible",
   "waitingRoom.precallNetworkTest.videoSupported": "El video es compatible",
