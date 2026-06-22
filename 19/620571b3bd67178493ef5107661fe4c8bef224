@@ -1,0 +1,48 @@
+libs/common/src/assertions/isEmptyString/index.ts
+  h_6029769cf9ac60 1
+libs/common/src/assertions/isEmptyString/isEmptyString.test.ts
+  h_6029769cf9ac60 1-9
+frontend/src/env.ts
+  h_6029769cf9ac60 3-4,16,25-26,32-41,43-57,62-64,74,111,180-217
+frontend/src/api/archiving/index.ts
+  h_6029769cf9ac60 1
+libs/core/src/hooks/useArchives/useArchives.ts
+  h_6029769cf9ac60 4,6,43-52,63-66
+frontend/src/Context/AdvancedSettings/AdvancedSettings.tsx
+  h_6029769cf9ac60 21,64
+libs/common/src/schemas/index.ts
+  h_6029769cf9ac60 5-6
+libs/common/src/assertions/assertNotEmptyString.ts
+  h_6029769cf9ac60 1,4
+libs/core/src/interceptors/patch-sdk-console-log.ts
+  h_6029769cf9ac60 1-10
+integration-tests/playwright.config.ts
+  h_6029769cf9ac60 142,147
+libs/common/src/assertions/index.ts
+  h_6029769cf9ac60 20-23
+libs/common/src/schemas/FacingMode.schema.ts
+  h_6029769cf9ac60 2,4-8
+libs/common/srcNode/schemas/BaseArchiveOptions.schema.ts
+  h_6029769cf9ac60 6
+libs/common/src/assertions/isEmptyString/isEmptyString.ts
+  h_6029769cf9ac60 1-6
+libs/common/src/schemas/Resolution.schema.ts
+  h_6029769cf9ac60 1-45
+customWordList.mjs
+  h_6029769cf9ac60 30-31
+libs/core/src/interceptors/index.ts
+  h_6029769cf9ac60 6
+README.md
+  h_6029769cf9ac60 323,325,334,336,338-343,345,349-352,354,358-434
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.9",
+  "base_commit_sha": "19620571b3bd67178493ef5107661fe4c8bef224",
+  "prompts": {},
+  "humans": {
+    "h_6029769cf9ac60": {
+      "author": "Johnny Esteban Quesada <johnny.quesadachaves@vonage.com>"
+    }
+  }
+}
