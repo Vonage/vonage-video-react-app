@@ -1,0 +1,14 @@
+README.md
+  h_737cf808c1c597 69,81,84,97,111,163,416,421,423,434,439,441,473,491
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.9",
+  "base_commit_sha": "8495c29f86dd44b33759c771b5e87852b8841f50",
+  "prompts": {},
+  "humans": {
+    "h_737cf808c1c597": {
+      "author": "OscarFava <Oscar.Fava@vonage.com>"
+    }
+  }
+}
