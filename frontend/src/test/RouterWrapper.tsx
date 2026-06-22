@@ -5,17 +5,12 @@ import {
   MemoryRouter as ReactMemoryRouter,
 } from 'react-router-dom';
 
-const routerFutureConfig = {
-  v7_startTransition: true,
-  v7_relativeSplatPath: true,
-};
-
 export const BrowserRouter = (props: ComponentProps<typeof ReactBrowserRouter>) => {
-  return <ReactBrowserRouter {...props} future={routerFutureConfig} />;
+  return <ReactBrowserRouter {...props} />;
 };
 
 const MemoryRouter = (props: ComponentProps<typeof ReactMemoryRouter>) => {
-  return <ReactMemoryRouter {...props} future={routerFutureConfig} />;
+  return <ReactMemoryRouter {...props} />;
 };
 
 export default MemoryRouter;
