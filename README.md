@@ -379,6 +379,7 @@ All feature flags are **boolean** (`true` / `false`).
 | `MIN_CUSTOM_VIDEO_BITRATE_BPS` | `5000` | Minimum custom video bitrate available in Advanced Settings (bps) |
 | `MAX_CUSTOM_VIDEO_BITRATE_BPS` | `10000000` | Maximum custom video bitrate available in Advanced Settings (bps) |
 | `SUPPORTED_FRAME_RATES` | `30\|15\|7\|1` | Frame rate options available in the Advanced Settings video tab |
+| `SHOW_VIDEO_STATS` | `false` | Show overlay video stats on the waiting room |
 
 #### Display defaults
 
