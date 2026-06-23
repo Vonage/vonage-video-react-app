@@ -108,6 +108,9 @@ This application provides features for common conferencing use cases, such as:
     <summary>A reporting tool to enable participants to file any in-call issues.</summary>
     <img src="docs/assets/ReportIssue.png" alt="Screenshot of report issue pane">
   </details>
+  - <details>
+ <summary>Advanced settings panel available in both the waiting room and meeting room, allowing fine-grained control over video, audio and metrics</summary>
+ </details>
 
 ## Project Architecture
 
@@ -370,6 +373,12 @@ All feature flags are **boolean** (`true` / `false`).
 | `ENABLE_REPORT_ISSUE` | `false` | Show the in-call issue reporting tool |
 | `BYPASS_WAITING_ROOM` | `false` | Skip the waiting room and join directly |
 | `AVOID_FETCHING_APP_CONFIG` | `true` | Skip fetching remote app configuration on startup |
+| `WAITING_ROOM_ALLOW_ADVANCED_SETTINGS` | `true` | Show the Advanced Settings panel in the waiting room |
+| `MEETING_ROOM_ALLOW_ADVANCED_SETTINGS` | `true` | Show the Advanced Settings panel inside the meeting room |
+| `DEFAULT_RESOLUTION` | `1920x1080` | Default video resolution for the publisher |
+| `MIN_CUSTOM_VIDEO_BITRATE_BPS` | `5000` | Minimum custom video bitrate available in Advanced Settings (bps) |
+| `MAX_CUSTOM_VIDEO_BITRATE_BPS` | `10000000` | Maximum custom video bitrate available in Advanced Settings (bps) |
+| `SUPPORTED_FRAME_RATES` | `30\|15\|7\|1` | Frame rate options available in the Advanced Settings video tab |
 
 #### Display defaults
 

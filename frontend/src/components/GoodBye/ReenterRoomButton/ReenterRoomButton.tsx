@@ -17,7 +17,7 @@ const ReenterRoomButton = (): ReactElement | string => {
   const { sessionKey } = useSessionKeyParam();
 
   const handleReenter = () => {
-    navigate(`/waiting-room/${sessionKey}`);
+    void navigate(`/waiting-room/${sessionKey}`);
   };
   return (
     sessionKey && (

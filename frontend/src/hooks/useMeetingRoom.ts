@@ -85,7 +85,7 @@ const useMeetingRoom = () => {
 
   useMountEffect(() => {
     if (!hasValidUsername && !bypass) {
-      navigate(`/waiting-room/${sessionKey}`);
+      void navigate(`/waiting-room/${sessionKey}`);
     }
   });
 
@@ -230,7 +230,7 @@ function useRedirectOnPublisherError({
 
     const { header, caption } = publishingError;
 
-    navigate(`/goodbye/${sessionKey ?? ''}`, {
+    void navigate(`/goodbye/${sessionKey ?? ''}`, {
       state: {
         header,
         caption,
@@ -274,7 +274,7 @@ function useRedirectOnSubscriberError({
       return;
     }
 
-    navigate(`/goodbye/${sessionKey || ''}`, {
+    void navigate(`/goodbye/${sessionKey || ''}`, {
       state: {
         header: t('subscribingErrors.blocked.title'),
         caption: t('subscribingErrors.blocked.message'),

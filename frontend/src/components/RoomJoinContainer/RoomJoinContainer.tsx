@@ -24,7 +24,7 @@ const RoomJoinContainer = (): ReactElement => {
 
     const { sessionKey } = await videoClient.createSession({ roomName: randomRoom });
 
-    navigate(`/waiting-room/${sessionKey}`);
+    void navigate(`/waiting-room/${sessionKey}`);
   };
 
   return (

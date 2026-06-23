@@ -54,7 +54,7 @@ describe('AdvancedSettingsDialog', () => {
     await user.click(screen.getByRole('button', { name: /statistics/i }));
 
     expect(screen.getByRole('heading', { name: /^statistics$/i })).toBeInTheDocument();
-    expect(screen.getByLabelText(/enable publisher statistics/i)).toBeInTheDocument();
+    expect(screen.getByLabelText(/enable publisher bandwidth estimate/i)).toBeInTheDocument();
     expect(screen.getAllByText(/publisher/i).length).toBeGreaterThan(0);
   });
 

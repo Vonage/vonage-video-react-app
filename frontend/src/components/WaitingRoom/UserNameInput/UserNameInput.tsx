@@ -79,7 +79,7 @@ const UsernameInput = ({
       // This takes the user to the meeting room and allows them to enter it
       // Otherwise if they entered the room directly, they are going to be redirected back to the waiting room
       // Setting hasAccess is required so that we are not redirected back to the waiting room
-      navigate(`/room/${roomName}`, {
+      void navigate(`/room/${roomName}`, {
         state: {
           hasAccess: true,
         },

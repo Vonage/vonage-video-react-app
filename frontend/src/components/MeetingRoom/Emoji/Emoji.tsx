@@ -1,24 +1,12 @@
-import { CSSProperties, ReactElement } from 'react';
-import { EmojiWrapper } from '../../../hooks/useEmoji';
+import { ReactElement, type ComponentProps } from 'react';
+import type { EmojiWrapper } from '../../../hooks/useEmoji';
 import { EMOJI_DISPLAY_DURATION } from '../../../utils/constants';
-import Chip from '@mui/material/Chip';
-import Box from '@mui/material/Box';
-import useIsSmallViewport from '@hooks/useIsSmallViewport';
+import classNames from 'classnames';
+import { twMerge } from 'tailwind-merge';
 
 export type EmojiProps = {
   emojiWrapper: EmojiWrapper;
-};
-
-const style: CSSProperties = {
-  position: 'absolute',
-  animationName: 'moveEmoji',
-  // Adding an extra 100 ms to ensure the emoji does not re-render at bottom of page on animation end
-  animationDuration: `${EMOJI_DISPLAY_DURATION + 100}ms`,
-  animationTimingFunction: 'linear',
-  animationIterationCount: 1,
-  maxWidth: '35%',
-  zIndex: 1,
-};
+} & ComponentProps<'div'>;
 
 /**
  * Emoji Component
@@ -27,30 +15,41 @@ const style: CSSProperties = {
  * @param {EmojiProps} props - The props for the component.
  * @returns {ReactElement} - The Emoji Component.
  */
-const Emoji = ({ emojiWrapper }: EmojiProps): ReactElement => {
-  const isSmallViewport = useIsSmallViewport();
+const Emoji = ({ emojiWrapper, className, style, ...props }: EmojiProps): ReactElement => {
   const { emoji, name } = emojiWrapper;
 
   return (
-    <Box
+    <div
       data-testid="emoji-string-container"
-      className="text-vera-subtitle flex flex-col"
-      sx={{
+      className={twMerge(
+        'text-vera-subtitle absolute z-1 flex flex-col max-w-[35%]',
+        'animate-[moveEmoji_1ms_linear_1]',
+        'ml-5 vera-desktop:ml-[15%]',
+        className
+      )}
+      style={{
+        animationDuration: `${EMOJI_DISPLAY_DURATION}ms`,
         ...style,
-        ml: isSmallViewport ? 5 : '15%',
       }}
+      {...props}
     >
       {emoji}
-      <Chip
-        label={name}
-        size="small"
-        className="text-vera-on-dark-grey! bg-vera-dark-grey overflow-hidden text-ellipsis whitespace-nowrap"
-        sx={{
-          mt: isSmallViewport ? 0.5 : 2,
-          fontSize: 'var(--vera-typography-body-base-font-size)',
-        }}
-      />
-    </Box>
+      <span
+        className={classNames(
+          'text-vera-body-base',
+          'text-vera-accent',
+          'overflow-hidden',
+          'text-ellipsis',
+          'whitespace-nowrap',
+          'rounded-2xl',
+          'px-3 py-1',
+          'bg-vera-on-accent',
+          'mt-0.5 vera-desktop:mt-2'
+        )}
+      >
+        {name}
+      </span>
+    </div>
   );
 };
 

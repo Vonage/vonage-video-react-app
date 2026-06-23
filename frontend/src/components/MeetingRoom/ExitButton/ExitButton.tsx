@@ -27,7 +27,7 @@ const ExitButton = ({ handleLeave }: ExitButtonProps): ReactElement => {
 
   const handleExit = () => {
     handleLeave();
-    navigate(`/goodbye/${sessionKey ?? ''}`);
+    void navigate(`/goodbye/${sessionKey ?? ''}`);
   };
 
   return (

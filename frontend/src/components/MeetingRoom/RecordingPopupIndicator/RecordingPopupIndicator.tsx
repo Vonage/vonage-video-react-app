@@ -35,7 +35,7 @@ const RecordingPopUpIndicator = ({
   }, [t]);
 
   const redirectToGoodbye = () => {
-    navigate(`/goodbye/${sessionKey}`, {
+    void navigate(`/goodbye/${sessionKey}`, {
       state: {
         header: t('recording.consent.goodbye.header'),
         caption: t('recording.consent.goodbye.message'),
