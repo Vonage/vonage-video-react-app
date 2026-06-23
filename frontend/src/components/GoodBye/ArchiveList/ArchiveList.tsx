@@ -1,6 +1,6 @@
-import { Fragment, ReactElement } from 'react';
+import { type ComponentProps, Fragment, ReactElement, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import type { Archive, ArchiveStatus } from '../../../api/archiving/model';
+import { getFormattedDate, getFormattedTime } from '../../../utils/dateTime';
 
 import Box from '@mui/material/Box';
 import CircularProgress from '@mui/material/CircularProgress';
@@ -18,65 +18,13 @@ import VividIcon from '@ui/VividIcon';
 import formatDuration from '@utils/formatDuration';
 import formatFileSize from '@utils/formatFileSize';
 import classNames from 'classnames';
-import { isString } from '@common/assertions';
+import { useArchives, UseArchivesProps } from '@core/hooks';
+import useSessionKeyParam from '@hooks/useSessionKeyParam';
+import i18n from '../../../i18n';
+import type { SingleArchiveResponse } from '@vonage/video';
 
-const ArchiveErrorIcon = () => {
-  const { t } = useTranslation();
-
-  return (
-    <Tooltip title={t('archiveList.error.tooltip')}>
-      <VividIcon
-        name="warning-line"
-        customSize={-6}
-        data-testid="archive-error-icon"
-        style={{ color: 'var(--vera-warning)' }}
-      />
-    </Tooltip>
-  );
-};
-
-const ArchivingLoadingIcon = () => {
-  return (
-    <CircularProgress
-      size={20}
-      data-testid="archive-loading-spinner"
-      className="text-vera-primary"
-    />
-  );
-};
-
-const ArchiveStatusContent = ({ status, url }: { status: ArchiveStatus; url: string | null }) => {
-  const { t } = useTranslation();
-
-  if (status === 'available') {
-    return (
-      <Link href={url ?? undefined} target="_blank" sx={{ textDecoration: 'none' }}>
-        <div className="flex items-center gap-1">
-          <IconButton size="small">
-            <VividIcon
-              name="download-line"
-              customSize={-6}
-              data-testid="archive-download-button"
-              style={{ color: 'var(--vera-text-primary)' }}
-            />
-          </IconButton>
-          <Typography variant="caption" className="text-vera-text-primary">
-            {t('archiveList.download')}
-          </Typography>
-        </div>
-      </Link>
-    );
-  }
-
-  if (status === 'pending') {
-    return <ArchivingLoadingIcon />;
-  }
-
-  return <ArchiveErrorIcon />;
-};
-
-export type ArchiveListProps = {
-  archives: Archive[] | 'error';
+export type ArchiveListProps = ComponentProps<'div'> & {
+  queryOptions?: UseArchivesProps['queryOptions'];
 };
 
 /**
@@ -87,11 +35,23 @@ export type ArchiveListProps = {
  *  @property {Archive[] | 'error'} archives - Array of archives, or 'error'.
  * @returns {ReactElement} - The ArchiveList component.
  */
-const ArchiveList = ({ archives }: ArchiveListProps): ReactElement => {
+const ArchiveList = ({ className, queryOptions, ...props }: ArchiveListProps): ReactElement => {
+  const { sessionKey } = useSessionKeyParam();
+
+  const { data, error } = useArchives({
+    sessionKey,
+    queryOptions,
+  });
+
   const { t } = useTranslation();
 
-  const isError = isString(archives);
-  if (isError) {
+  const archives = useMemo(() => {
+    return (data?.items ?? []).map((archive) => {
+      return createArchiveFromServer(i18n.language, archive);
+    });
+  }, [data]);
+
+  if (error) {
     return (
       <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
         <VividIcon name="warning-line" customSize={-4} style={{ color: 'var(--vera-warning)' }} />
@@ -101,7 +61,8 @@ const ArchiveList = ({ archives }: ArchiveListProps): ReactElement => {
       </Box>
     );
   }
-  if (!archives.length) {
+
+  if (archives.length === 0) {
     return (
       <>
         <div className="mb-4 flex items-center gap-3" data-testid="archive-list-empty">
@@ -118,8 +79,16 @@ const ArchiveList = ({ archives }: ArchiveListProps): ReactElement => {
       </>
     );
   }
+
   return (
-    <Box sx={{ width: '100%', maxHeight: '190px', overflowY: 'auto', overflowX: 'hidden' }}>
+    <div
+      className={classNames(
+        'ArchiveList',
+        'w-full max-h-47.5 overflow-y-auto overflow-x-hidden',
+        className
+      )}
+      {...props}
+    >
       <List sx={{ pt: 0 }}>
         {archives.map((archive, index) => (
           <Fragment key={archive.id}>
@@ -179,7 +148,7 @@ const ArchiveList = ({ archives }: ArchiveListProps): ReactElement => {
               </Box>
 
               <Box sx={{ mt: '4px' }}>
-                <ArchiveStatusContent url={archive.url} status={archive.status} />
+                <ArchiveStatusContent url={archive.url!} status={archive.status} />
               </Box>
             </ListItem>
 
@@ -187,8 +156,99 @@ const ArchiveList = ({ archives }: ArchiveListProps): ReactElement => {
           </Fragment>
         ))}
       </List>
-    </Box>
+    </div>
   );
 };
 
+function ArchiveErrorIcon() {
+  const { t } = useTranslation();
+
+  return (
+    <Tooltip title={t('archiveList.error.tooltip')}>
+      <VividIcon
+        name="warning-line"
+        customSize={-6}
+        data-testid="archive-error-icon"
+        style={{ color: 'var(--vera-warning)' }}
+      />
+    </Tooltip>
+  );
+}
+
+function ArchivingLoadingIcon() {
+  return (
+    <CircularProgress
+      size={20}
+      data-testid="archive-loading-spinner"
+      className="text-vera-primary"
+    />
+  );
+}
+
+function ArchiveStatusContent({ status, url }: { status: string; url: string | null }) {
+  const { t } = useTranslation();
+
+  if (status === 'available') {
+    return (
+      <Link href={url ?? undefined} target="_blank" sx={{ textDecoration: 'none' }}>
+        <div className="flex items-center gap-1">
+          <IconButton size="small">
+            <VividIcon
+              name="download-line"
+              customSize={-6}
+              data-testid="archive-download-button"
+              style={{ color: 'var(--vera-text-primary)' }}
+            />
+          </IconButton>
+          <Typography variant="caption" className="text-vera-text-primary">
+            {t('archiveList.download')}
+          </Typography>
+        </div>
+      </Link>
+    );
+  }
+
+  if (status === 'pending') {
+    return <ArchivingLoadingIcon />;
+  }
+
+  return <ArchiveErrorIcon />;
+}
+
 export default ArchiveList;
+
+/**
+ * Modifies an archive retrieved from the server to be easily consumable.
+ * @param {string} locale - current locale
+ * @param {ServerArchive} serverArchive - The archive to be modified.
+ * @returns {Archive} The modified archive.
+ */
+function createArchiveFromServer(locale: string, serverArchive: SingleArchiveResponse) {
+  return {
+    id: serverArchive.id,
+    url: serverArchive.url,
+    status: getArchiveStatus(serverArchive.status),
+    createdAt: serverArchive.createdAt,
+    createdAtFormatted: getDateString(locale, serverArchive.createdAt),
+    duration: serverArchive.duration,
+    size: serverArchive.size,
+  };
+}
+
+function getDateString(locale: string, timestamp: number) {
+  return `${getFormattedDate(locale, timestamp)} ${getFormattedTime(locale, timestamp)}`;
+}
+
+function getArchiveStatus(status: SingleArchiveResponse['status']) {
+  switch (status) {
+    case 'available':
+      return 'available';
+    case 'started':
+    case 'stopped':
+    case 'uploaded':
+    case 'paused':
+      return 'pending';
+    default:
+      return 'failed';
+  }
+}

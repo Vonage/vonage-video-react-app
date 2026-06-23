@@ -101,7 +101,7 @@ class SpeakingDetector extends EventEmitter {
         if (!this.analyser) {
           return;
         }
-        if (document.visibilityState === 'visible') {
+        if (globalThis.document.visibilityState === 'visible') {
           this.analyser.getByteTimeDomainData(timeDomainData);
 
           let max = 0;

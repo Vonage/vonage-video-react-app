@@ -2,7 +2,7 @@ import { waitFor, renderHook as renderHookBase } from '@testing-library/react';
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import useMeetingRoom from '../useMeetingRoom';
 import { makeTestProvider, ProviderOptions, providers } from '@test/providers';
-import MemoryRouter from '@test/RouterWrapper';
+import { MemoryRouter } from 'react-router-dom';
 import { DEVICE_ACCESS_STATUS } from '@utils/constants';
 import { env } from '../../env';
 import type { VideoClient } from '@core/services';

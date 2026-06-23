@@ -118,20 +118,6 @@ describe('LanguageSelector', () => {
         expect(screen.getByTestId('language-option-de')).toBeInTheDocument();
       });
     });
-
-    it('falls back to en when no supported languages env var', async () => {
-      env.setSupportedLanguages('');
-
-      render(<LanguageSelector />);
-
-      const selectButton = screen.getByRole('combobox');
-      fireEvent.mouseDown(selectButton);
-
-      await waitFor(() => {
-        expect(screen.getByTestId('language-option-en')).toBeInTheDocument();
-        expect(screen.queryByTestId('language-option-es')).not.toBeInTheDocument();
-      });
-    });
   });
 
   describe('Language Selection', () => {
@@ -238,13 +224,11 @@ describe('LanguageSelector', () => {
       expect(screen.getByTestId('vivid-icon-flag-germany')).toBeInTheDocument();
     });
 
-    it('handles unsupported language gracefully', () => {
+    it('throws when the selected language is not supported', () => {
       env.setSupportedLanguages('en|es');
       mockI18n.language = 'fr';
 
-      render(<LanguageSelector />);
-
-      expect(screen.getByDisplayValue('fr')).toBeInTheDocument();
+      expect(() => render(<LanguageSelector />)).toThrow();
     });
   });
 

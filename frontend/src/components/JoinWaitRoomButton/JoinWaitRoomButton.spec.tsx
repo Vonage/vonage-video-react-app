@@ -1,6 +1,6 @@
 import { render as renderBase, screen, fireEvent, waitFor } from '@testing-library/react';
 import { useNavigate } from 'react-router-dom';
-import MemoryRouter from '@test/RouterWrapper';
+import { MemoryRouter } from 'react-router-dom';
 import { describe, expect, it, Mock, vi, beforeEach } from 'vitest';
 import { makeTestProvider, providers } from '@test/providers';
 import type { VideoClient } from '@core/services';

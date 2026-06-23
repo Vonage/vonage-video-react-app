@@ -2,7 +2,7 @@ import { describe, it, expect, vi } from 'vitest';
 
 import { render } from '@testing-library/react';
 import { Route, Routes } from 'react-router-dom';
-import MemoryRouter from '@test/RouterWrapper';
+import { MemoryRouter } from 'react-router-dom';
 import { ReactElement } from 'react';
 import { env } from '../../env';
 import RedirectToWaitingRoom from './RedirectToWaitingRoom';

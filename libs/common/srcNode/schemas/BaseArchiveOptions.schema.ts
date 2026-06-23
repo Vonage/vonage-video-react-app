@@ -1,9 +1,9 @@
 import { z } from 'zod';
 import ArchiveLayoutSchema from './ArchiveLayout.schema';
 import ArchiveOutputModeSchema from './ArchiveOutputMode.schema';
-import ResolutionSchema from './Resolution.schema';
 import StreamModeSchema from './StreamMode.schema';
 import TranscriptionPropertiesSchema from './TranscriptionProperties.schema';
+import { ResolutionSchema } from '@common/schemas';
 
 export const BaseArchiveOptionsSchema = z.object({
   hasAudio: z.boolean().optional(),

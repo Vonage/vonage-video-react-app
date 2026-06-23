@@ -10,6 +10,7 @@ import makeMediaDeviceInfos from '@web-test/fixtures/makeMediaDeviceInfos';
 import { setupWindowNavigatorMock } from '@web-test/fixtures';
 import usePublisherOptions from './usePublisherOptions';
 import { env } from '../../../env';
+import { Resolution } from '@common/types';
 
 const devices = makeMediaDeviceInfos();
 const audioDevice = devices.find((d) => d.kind === 'audioinput')!;
@@ -27,7 +28,7 @@ describe('usePublisherOptions', () => {
     env.partialUpdate({
       ALLOW_VIDEO_ON_JOIN: true,
       ALLOW_AUDIO_ON_JOIN: true,
-      DEFAULT_RESOLUTION: '1280x720',
+      DEFAULT_RESOLUTION: Resolution.HD_LANDSCAPE,
     });
 
     Object.defineProperty(window, 'localStorage', {
@@ -188,7 +189,7 @@ describe('usePublisherOptions', () => {
     it('should always use max resolution for publisher initialization', async () => {
       const { result } = renderHook(
         () => usePublisherOptions({ isAudioEnabled: true, isVideoEnabled: true }),
-        { dialogState: { resolution: '1280x720' } }
+        { dialogState: { resolution: Resolution.HD_LANDSCAPE } }
       );
 
       await waitFor(() => {

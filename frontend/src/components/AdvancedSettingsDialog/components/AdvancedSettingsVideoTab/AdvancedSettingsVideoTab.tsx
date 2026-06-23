@@ -1,17 +1,14 @@
 import type { ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
-import { env, RESOLUTIONS } from '../../../../env';
+import { env } from '../../../../env';
 import advancedSettings$ from '@Context/AdvancedSettings';
 import SelectField from '@ui/SelectField';
 import { AdvancedSettingsCodecPriorityField } from '../AdvancedSettingsCodecPriorityField';
 import { AdvancedSettingsCustomVideoBitrateField } from '../AdvancedSettingsCustomVideoBitrateField';
-import type {
-  AdvancedSettingsFrameRate,
-  AdvancedSettingsResolution,
-  AdvancedSettingsSelectOption,
-} from '../../types/types';
+import type { AdvancedSettingsFrameRate, AdvancedSettingsSelectOption } from '../../types/types';
 import { ADVANCED_SETTINGS_BITRATE_MODE, ADVANCED_SETTINGS_CODEC_MODE } from '../../types/types';
 import useAdvancedSettingsVideoHandlers from './useAdvancedSettingsVideoHandlers';
+import { Resolution } from '@common/types';
 
 const { setCodecMode, setCodecPriority } = advancedSettings$.actions;
 
@@ -70,11 +67,12 @@ const AdvancedSettingsVideoTab = (): ReactElement => {
     label: t(`advancedSettings.video.frameRate.options.${supportedFrameRate}`),
   }));
 
-  const resolutionOptions: AdvancedSettingsSelectOption<AdvancedSettingsResolution>[] =
-    RESOLUTIONS.map((supportedResolution) => ({
-      value: supportedResolution,
-      label: supportedResolution,
-    }));
+  const resolutionOptions: AdvancedSettingsSelectOption<Resolution>[] = Object.values(
+    Resolution
+  ).map((value) => ({
+    value: value,
+    label: value,
+  }));
 
   return (
     <div className="flex flex-col gap-6">

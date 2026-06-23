@@ -1,6 +1,6 @@
 import { render, screen } from '@testing-library/react';
 import { useNavigate } from 'react-router-dom';
-import MemoryRouter from '@test/RouterWrapper';
+import { MemoryRouter } from 'react-router-dom';
 import { describe, expect, it, Mock, vi, beforeEach, afterAll } from 'vitest';
 import GoodByeMessage from './GoodbyeMessage';
 

@@ -52,7 +52,7 @@ const runApiTests = (testFilePath?: string) => {
   const target = testFilePath ? `file: ${testFilePath}` : 'all API tests';
   console.log(`\n🤖 Running API integration tests: ${target}\n`);
   const testPattern = testFilePath ? ` --testPathPattern="${testFilePath}"` : '';
-  const command = `bash -c 'source ../../vcrBuild.env.sh && jest --maxWorkers=1${testPattern}'`;
+  const command = `bash -c 'source ../../env.sh && jest --maxWorkers=1${testPattern}'`;
   console.log(`\n🚀 Running: ${command}\n`);
   execSync(command, {
     stdio: 'inherit',

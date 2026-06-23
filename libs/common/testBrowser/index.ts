@@ -6,3 +6,5 @@ export * from './mocks';
 export { default as makeGenericProviderWrapper } from './makeGenericProviderWrapper';
 export { default as renderAsyncComponent } from './renderAsyncComponent';
 export { default as renderAsyncHook } from './renderAsyncHook';
+
+export * from './providers';

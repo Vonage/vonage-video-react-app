@@ -1,5 +1,3 @@
-import type { Resolution } from '../../../env';
-
 export type AdvancedSettingsTab = 'general' | 'video' | 'audio' | 'statistics';
 
 export type AdvancedSettingsBitrateMode = 'default' | 'bw_saver' | 'extra_bw_saver' | 'custom';
@@ -31,8 +29,6 @@ export type AdvancedSettingsManualCodecOrder = [
 export type AdvancedSettingsFrameRate = NonNullable<
   import('@vonage/client-sdk-video').GetUserMediaProperties['frameRate']
 >;
-
-export type AdvancedSettingsResolution = Resolution;
 
 export type AdvancedSettingsAudioBitrateMode = 'automatic' | 'custom';
 
