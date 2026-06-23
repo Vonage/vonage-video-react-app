@@ -1,0 +1,14 @@
+package.json
+  h_c939f8fae0de97 146,172-173,175,200
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.9",
+  "base_commit_sha": "fdd40bbdaa1c45fb845c7a40094e2fdefb2d1808",
+  "prompts": {},
+  "humans": {
+    "h_c939f8fae0de97": {
+      "author": "Hossein Movahed <hr.movahed6@gmail.com>"
+    }
+  }
+}
