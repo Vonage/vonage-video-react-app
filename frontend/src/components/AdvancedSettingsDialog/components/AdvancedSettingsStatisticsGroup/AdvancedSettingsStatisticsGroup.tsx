@@ -1,9 +1,9 @@
 import { useMemo, type ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Collapsible } from '@ui/components';
-import LabeledValueList from '@ui/LabeledValueList';
 import type { IMetricValue } from '@core/metrics';
 import type { Any } from '@common/types';
+import LabeledValueList from '../LabeledValueList';
 
 type AdvancedSettingsStatisticItem = {
   label: string;

@@ -1,5 +1,5 @@
 import type { ReactElement } from 'react';
-import Header from '@ui/Header';
+import { Header } from '@ui';
 import BannerLogo from '../BannerLogo';
 import BannerLanguage from '../BannerLanguage';
 

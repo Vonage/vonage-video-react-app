@@ -2,7 +2,7 @@ import { Box, MenuItem, MenuList, Tooltip } from '@mui/material';
 import classNames from 'classnames';
 import type { ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
-import VividIcon from '@ui/VividIcon';
+import VividIcon from '@ui/components/VividIcon';
 import { useDistinctLabelMediaDevices } from '@ui/hooks';
 import mediaDevices$ from '@core/stores/devices';
 import { env } from '../../../env';

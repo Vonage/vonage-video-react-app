@@ -1,7 +1,7 @@
 import { render, screen } from '@testing-library/react';
 import { describe, it, expect, vi } from 'vitest';
 import React from 'react';
-import Card from './';
+import Card from '.';
 
 describe('Card', () => {
   it('renders children correctly', () => {

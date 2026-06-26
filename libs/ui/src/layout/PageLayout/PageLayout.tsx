@@ -1,5 +1,5 @@
 import React from 'react';
-import { findSlotByDisplayName } from '../helpers';
+import { findSlotByDisplayName } from '../../helpers';
 import { twMerge } from 'tailwind-merge';
 
 type WithChildren = { children: React.ReactNode };
