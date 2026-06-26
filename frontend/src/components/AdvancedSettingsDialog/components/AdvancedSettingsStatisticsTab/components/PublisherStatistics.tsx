@@ -104,11 +104,29 @@ const PublisherStatistics = ({ publisher }: PublisherStatisticsProps): ReactElem
     ];
   }, [data, t]);
 
+  const publisherNetworkStatistics = useMemo(() => {
+    if (!data?.network) {
+      return [];
+    }
+
+    return [
+      {
+        label: t('advancedSettings.statistics.metrics.networkCondition'),
+        value: data.network.score,
+      },
+      {
+        label: t('advancedSettings.statistics.metrics.networkConditionReason'),
+        value: data.network.reason,
+      },
+    ];
+  }, [data, t]);
+
   return (
     <AdvancedSettingsStatisticsGroup
       title={t('advancedSettings.statistics.groups.publisher')}
       audioItems={publisherAudioStatistics}
       videoItems={publisherVideoStatistics}
+      networkItems={publisherNetworkStatistics}
       defaultExpanded
     />
   );

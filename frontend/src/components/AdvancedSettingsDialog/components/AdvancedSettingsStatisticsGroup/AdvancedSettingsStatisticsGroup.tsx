@@ -14,6 +14,7 @@ type AdvancedSettingsStatisticsGroupProps = {
   title: string;
   audioItems: AdvancedSettingsStatisticItem[];
   videoItems: AdvancedSettingsStatisticItem[];
+  networkItems: AdvancedSettingsStatisticItem[];
   defaultExpanded?: boolean;
 };
 
@@ -21,10 +22,11 @@ const AdvancedSettingsStatisticsGroup = ({
   title,
   audioItems,
   videoItems,
+  networkItems,
   defaultExpanded = false,
 }: AdvancedSettingsStatisticsGroupProps): ReactElement => {
   const { t } = useTranslation();
-  const hasStatistics = audioItems.length > 0 || videoItems.length > 0;
+  const hasStatistics = audioItems.length > 0 || videoItems.length > 0 || networkItems.length > 0;
 
   const formattedAudioItems = useMemo(
     () =>
@@ -42,6 +44,15 @@ const AdvancedSettingsStatisticsGroup = ({
         value: value.toString(),
       })),
     [videoItems]
+  );
+
+  const formattedNetworkItems = useMemo(
+    () =>
+      networkItems.map(({ label, value }) => ({
+        label,
+        value: value.toString(),
+      })),
+    [networkItems]
   );
 
   return (
@@ -71,6 +82,13 @@ const AdvancedSettingsStatisticsGroup = ({
               <LabeledValueList
                 title={t('advancedSettings.statistics.sections.video')}
                 items={formattedVideoItems}
+              />
+            )}
+
+            {networkItems.length > 0 && (
+              <LabeledValueList
+                title={t('advancedSettings.statistics.sections.network')}
+                items={formattedNetworkItems}
               />
             )}
           </div>

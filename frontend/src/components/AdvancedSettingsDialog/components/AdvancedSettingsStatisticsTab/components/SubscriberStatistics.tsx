@@ -20,6 +20,7 @@ const SubscriberStatistics = ({ subscriber }: SubscriberStatisticsProps): ReactE
         title: '...',
         audioItems: [],
         videoItems: [],
+        networkItems: [],
       };
     }
 
@@ -94,6 +95,16 @@ const SubscriberStatistics = ({ subscriber }: SubscriberStatisticsProps): ReactE
           value: data.remotePublisherConnectionEstimatedBandwidthBps,
         },
       ],
+      networkItems: [
+        {
+          label: t('advancedSettings.statistics.metrics.networkCondition'),
+          value: data.network.score,
+        },
+        {
+          label: t('advancedSettings.statistics.metrics.networkConditionReason'),
+          value: data.network.reason,
+        },
+      ],
     };
   }, [data, t]);
 
@@ -103,6 +114,7 @@ const SubscriberStatistics = ({ subscriber }: SubscriberStatisticsProps): ReactE
       title={subscriberStatisticsGroups.title ?? '...'}
       audioItems={subscriberStatisticsGroups.audioItems}
       videoItems={subscriberStatisticsGroups.videoItems}
+      networkItems={subscriberStatisticsGroups.networkItems}
     />
   );
 };

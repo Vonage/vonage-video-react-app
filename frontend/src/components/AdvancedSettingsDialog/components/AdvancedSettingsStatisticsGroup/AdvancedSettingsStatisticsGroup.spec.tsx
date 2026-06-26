@@ -9,6 +9,7 @@ describe('AdvancedSettingsStatisticsGroup', () => {
         title="Publisher"
         audioItems={[]}
         videoItems={[{ label: 'Bytes received', value: '1.2 Mbps' }]}
+        networkItems={[]}
         defaultExpanded
       />
     );
