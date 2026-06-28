@@ -1,0 +1,48 @@
+libs/core/src/hooks/useSubscriberStats/useSubscriberStats.ts
+  h_737cf808c1c597 12-13,29-32,96-108
+frontend/src/components/AdvancedSettingsDialog/components/AdvancedSettingsStatisticsTab/components/SubscriberStatistics.tsx
+  h_737cf808c1c597 23,98-107,117
+frontend/src/locales/es-MX.json
+  h_737cf808c1c597 75,85-86
+libs/core/src/metrics/NetworkConditionReason/NetworkConditionReason.test.ts
+  h_737cf808c1c597 1-14
+libs/core/src/metrics/index.ts
+  h_737cf808c1c597 10-14
+frontend/src/components/AdvancedSettingsDialog/components/AdvancedSettingsStatisticsTab/components/PublisherStatistics.tsx
+  h_737cf808c1c597 107-123,129
+frontend/src/locales/en.json
+  h_737cf808c1c597 75,85-86
+libs/core/src/metrics/NetworkConditionValue/index.ts
+  h_737cf808c1c597 1
+frontend/src/components/AdvancedSettingsDialog/components/AdvancedSettingsStatisticsGroup/AdvancedSettingsStatisticsGroup.tsx
+  h_737cf808c1c597 17,25,29,49-57,87-91
+frontend/src/locales/es.json
+  h_737cf808c1c597 75,85-86
+libs/core/src/metrics/NetworkConditionReason/index.ts
+  h_737cf808c1c597 1
+libs/core/src/metrics/NetworkConditionReason/NetworkConditionReason.ts
+  h_737cf808c1c597 1-34
+frontend/src/locales/de.json
+  h_737cf808c1c597 75,93-94
+libs/core/src/metrics/NetworkConditionValue/NetworkConditionValue.test.ts
+  h_737cf808c1c597 1-17
+libs/core/src/metrics/NetworkConditionValue/NetworkConditionValue.ts
+  h_737cf808c1c597 1-34
+frontend/src/components/AdvancedSettingsDialog/components/AdvancedSettingsStatisticsGroup/AdvancedSettingsStatisticsGroup.spec.tsx
+  h_737cf808c1c597 12
+frontend/src/locales/it.json
+  h_737cf808c1c597 75,93-94
+libs/core/src/hooks/usePublisherStats/usePublisherStats.ts
+  h_737cf808c1c597 14-15,34-37,121-132
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.3",
+  "base_commit_sha": "f66152f2c8796ba04b0dfbaa5a32f8aab94cfe2e",
+  "prompts": {},
+  "humans": {
+    "h_737cf808c1c597": {
+      "author": "OscarFava <Oscar.Fava@vonage.com>"
+    }
+  }
+}

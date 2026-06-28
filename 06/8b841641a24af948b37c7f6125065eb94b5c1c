@@ -1,0 +1,16 @@
+vcrBuild.env.sh
+  h_737cf808c1c597 30
+README.md
+  h_737cf808c1c597 382
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.10",
+  "base_commit_sha": "068b841641a24af948b37c7f6125065eb94b5c1c",
+  "prompts": {},
+  "humans": {
+    "h_737cf808c1c597": {
+      "author": "OscarFava <Oscar.Fava@vonage.com>"
+    }
+  }
+}

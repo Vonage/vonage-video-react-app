@@ -1,0 +1,148 @@
+frontend/src/components/MeetingRoom/OutputAudioDevices/OutputAudioDevices.tsx
+  h_6029769cf9ac60 9
+frontend/src/pages/WaitingRoom/WaitingRoom.tsx
+  h_6029769cf9ac60 3
+frontend/src/components/MeetingRoom/ParticipantListButton/ParticipantListButton.tsx
+  h_6029769cf9ac60 6
+frontend/src/components/UnsupportedBrowser/SupportedBrowsers/SupportedBrowsers.tsx
+  h_6029769cf9ac60 7
+frontend/src/components/MeetingRoom/ParticipantListItemMenu/ParticipantPinMenuItem.tsx
+  h_6029769cf9ac60 8
+frontend/src/components/BackgroundEffects/BackgroundGallery/BackgroundGallery.tsx
+  h_6029769cf9ac60 7
+frontend/src/components/WaitingRoom/CameraButton/CameraButton.tsx
+  h_6029769cf9ac60 9
+frontend/src/components/AdvancedSettingsDialog/components/AdvancedSettingsAudioTab/AdvancedSettingsAudioTab.tsx
+  h_6029769cf9ac60 5
+frontend/src/components/MeetingRoom/UnreadMessagesBadge/UnreadMessagesBadge.spec.tsx
+  h_6029769cf9ac60 3
+frontend/src/components/MeetingRoom/PinButton/PinButton.tsx
+  h_6029769cf9ac60 7
+frontend/src/components/MeetingRoom/ZoomIndicator/ZoomIndicator.tsx
+  h_6029769cf9ac60 8
+libs/ui/src/components/Card/Card.spec.tsx
+  h_6029769cf9ac60 4
+frontend/src/components/ScreenSharingButton/ScreenSharingButton.tsx
+  h_6029769cf9ac60 7
+frontend/src/components/MeetingRoom/LayoutButton/LayoutButton.tsx
+  h_6029769cf9ac60 6
+frontend/src/pages/LandingPage/LandingPage.tsx
+  h_6029769cf9ac60 2
+frontend/src/components/MeetingRoom/SmallViewportHeader/SmallViewportHeader.tsx
+  h_6029769cf9ac60 9
+frontend/src/components/MeetingRoom/AdvancedSettingsButton/AdvancedSettingsButton.tsx
+  h_6029769cf9ac60 5
+frontend/src/components/VividIcon/VividIcon.tsx
+  h_6029769cf9ac60 1
+frontend/src/components/WaitingRoom/BackgroundEffects/BackgroundEffectsDialog/BackgroundEffectsDialog.tsx
+  h_6029769cf9ac60 7
+frontend/src/components/MeetingRoom/AudioIndicator/AudioIndicator.tsx
+  h_6029769cf9ac60 9
+frontend/src/components/MeetingRoom/ArchivingButton/ArchivingButton.tsx
+  h_6029769cf9ac60 8
+frontend/src/components/AdvancedSettingsDialog/components/AdvancedSettingsStatisticsGroup/AdvancedSettingsStatisticsGroup.tsx
+  h_6029769cf9ac60 6
+frontend/src/components/WaitingRoom/MicButton/MicButton.tsx
+  h_6029769cf9ac60 7
+frontend/src/components/SoundTest/SoundTest.spec.tsx
+  h_6029769cf9ac60 4
+frontend/src/components/MeetingRoom/ReportIssue/FeedbackForm/FilePicker/FilePicker.tsx
+  h_6029769cf9ac60 10
+frontend/src/components/MeetingRoom/ToolbarOverflowButton/ToolbarOverflowButton.tsx
+  h_6029769cf9ac60 3
+frontend/src/components/MeetingRoom/EmojiGridButton/EmojiGridButton.tsx
+  h_6029769cf9ac60 6
+frontend/src/components/BackgroundEffects/EffectOptionButtons/EffectOptionButtons.tsx
+  h_6029769cf9ac60 3
+frontend/src/components/WaitingRoom/ControlPanel/ControlPanel.tsx
+  h_6029769cf9ac60 6
+frontend/src/pages/WaitingRoom/WaitingRoom.skeleton.tsx
+  h_6029769cf9ac60 7
+libs/ui/src/components/NotificationItem/NotificationItem.tsx
+  h_6029769cf9ac60 10
+frontend/src/components/MeetingRoom/CaptionsButton/CaptionsButton.tsx
+  h_6029769cf9ac60 7
+frontend/src/components/AdvancedSettingsDialog/components/AdvancedSettingsVideoTab/AdvancedSettingsVideoTab.tsx
+  h_6029769cf9ac60 5
+frontend/src/components/RoomJoinContainer/RoomJoinContainer.tsx
+  h_6029769cf9ac60 5
+frontend/src/components/MeetingRoom/ExitButton/ExitButton.tsx
+  h_6029769cf9ac60 7
+frontend/src/components/MeetingRoom/ParticipantListItem/ParticipantListItem.tsx
+  h_6029769cf9ac60 10
+frontend/src/components/AdvancedSettingsDialog/components/AdvancedSettingsStatisticsTab/AdvancedSettingsStatisticsTab.tsx
+  h_6029769cf9ac60 5
+frontend/src/components/WaitingRoom/PrecallNetworkTestDialog/PrecallNetworkTestQualityRow/PrecallNetworkTestQualityRow.tsx
+  h_6029769cf9ac60 4
+frontend/src/components/AdvancedSettingsDialog/AdvancedSettingsDialog.tsx
+  h_6029769cf9ac60 6
+frontend/src/components/MeetingRoom/RightPanel/RightPanelTitle.tsx
+  h_6029769cf9ac60 3
+libs/ui/src/components/Collapsible/components/Icon.tsx
+  h_6029769cf9ac60 1
+frontend/src/components/LanguageSelector/LanguageSelector.spec.tsx
+  h_6029769cf9ac60 8
+frontend/src/components/WaitingRoom/PrecallNetworkTestDialog/PrecallNetworkTestDialog.tsx
+  h_6029769cf9ac60 7
+frontend/src/components/WaitingRoom/MenuDevices/MenuDevices.tsx
+  h_6029769cf9ac60 5
+frontend/src/components/GoodBye/ArchiveList/ArchiveList.tsx
+  h_6029769cf9ac60 17
+frontend/src/pages/UnsupportedBrowserPage/UnsupportedBrowserPage.tsx
+  h_6029769cf9ac60 2
+frontend/src/components/LanguageSelector/LanguageSelector.tsx
+  h_6029769cf9ac60 10
+frontend/src/pages/GoodBye/GoodBye.tsx
+  h_6029769cf9ac60 3
+frontend/src/components/Banner/Banner.tsx
+  h_6029769cf9ac60 2
+libs/ui/src/components/index.ts
+  h_6029769cf9ac60 4-8
+frontend/src/components/MeetingRoom/InputAudioDevices/InputAudioDevices.tsx
+  h_6029769cf9ac60 5
+frontend/src/components/WaitingRoom/UserNameInput/UserNameInput.tsx
+  h_6029769cf9ac60 8
+frontend/src/components/MeetingRoom/ChatButton/ChatButton.tsx
+  h_6029769cf9ac60 6
+frontend/src/components/MeetingRoom/ChatInput/ChatInput.tsx
+  h_6029769cf9ac60 7
+frontend/src/components/UnsupportedBrowser/SupportedBrowserListItem/SupportedBrowserListItem.tsx
+  h_6029769cf9ac60 7
+libs/ui/src/layout/index.ts
+  h_6029769cf9ac60 1-3
+frontend/src/components/MeetingRoom/VideoDevices/VideoDevices.tsx
+  h_6029769cf9ac60 5
+frontend/src/components/MeetingRoom/ReportIssueButton/ReportIssueButton.tsx
+  h_6029769cf9ac60 5
+frontend/src/components/BackgroundEffects/AddBackgroundEffect/AddBackgroundEffectLayout/AddBackgroundEffectLayout.tsx
+  h_6029769cf9ac60 6
+frontend/src/components/GHRepoButton/GHRepoButton.tsx
+  h_6029769cf9ac60 6
+frontend/src/components/NewRoomButton/NewRoomButton.tsx
+  h_6029769cf9ac60 5
+frontend/src/components/GoodBye/ReenterRoomButton/ReenterRoomButton.tsx
+  h_6029769cf9ac60 1
+frontend/src/components/MeetingRoom/ParticipantList/ParticipantList.tsx
+  h_6029769cf9ac60 17
+frontend/src/components/MeetingRoom/DeviceControlButton/DeviceControlButton.tsx
+  h_6029769cf9ac60 11
+libs/ui/src/index.ts
+  h_6029769cf9ac60 1,3-6,11-13
+frontend/src/components/MeetingRoom/ParticipantListItemMenu/ParticipantListItemMenu.tsx
+  h_6029769cf9ac60 10
+frontend/src/components/WaitingRoom/MenuMoreOptions/MenuMoreOptions.tsx
+  h_6029769cf9ac60 10
+frontend/src/components/MeetingRoom/ReduceNoiseTestSpeakers/ReduceNoiseTestSpeakers.tsx
+  h_6029769cf9ac60 7,12
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.3",
+  "base_commit_sha": "499420997dcd42d8d36d08bdb50afdb3b42b8bdb",
+  "prompts": {},
+  "humans": {
+    "h_6029769cf9ac60": {
+      "author": "Johnny Esteban Quesada <johnny.quesadachaves@vonage.com>"
+    }
+  }
+}
